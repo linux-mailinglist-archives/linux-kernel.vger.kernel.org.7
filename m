@@ -1,101 +1,85 @@
-Return-Path: <linux-kernel+bounces-892712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76833C45A72
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:32:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B735C45A75
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:32:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F054E189067C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:32:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D65833A7C5D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:32:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AE973002B3;
-	Mon, 10 Nov 2025 09:31:58 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2876E2F691A;
+	Mon, 10 Nov 2025 09:32:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ghppzoIr"
+Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3BF32E8E0E;
-	Mon, 10 Nov 2025 09:31:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D18C11E47C5
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 09:32:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762767118; cv=none; b=JCtlwJ1vRJ5Pg/Bra3FUsA/BHLd1d6+kOkzcG5jTt87r7ZD4YWI3dDunAJI7GNXCgnImVxfHFd0KtHmYoH3pjlKHcHGy6w4hF7vrWoyXN6tElgpQ/8EKpTmi7oe6k5t2KkeoOH+tzR9q8a3HVHiWtaRTvF8qxRR380F9a26QDgo=
+	t=1762767133; cv=none; b=E7SCh7CGWP0LCkFwCeZnVj7z6bGvuPhzFBqLFjEY4CR0Q41GD1xtkqkA/LJgKZPg6n/NtKF/VPfZMEo78uR6fIgeGyhEToXPeTOZ+KmAXZ7Cwtn6G5j1laH3I2IQ+l4dkHH8XIRU75nhbU+icqWk7kqb+1AsbWcgoBlAab8asBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762767118; c=relaxed/simple;
-	bh=nmuldyuZD2nRGq42cOH+SbbeN+lRYZeaUiYdGciqMnA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aV17MXE4ptAyi5sADaT/m1TItS9kFOqz366VOQatCGnfcrWTKl3b/W3X8ZifPLtUJ1+qk6yXCC2tpGKEqg4CMUStzaxuPCvKnishTsH7HZyQLZZHpRmWXq1YPL6Tg31ggC8OY/g8mSp7C/3VGmdvOzAV0NXDlbruBS3prVCzYWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 5D2FF227A87; Mon, 10 Nov 2025 10:31:41 +0100 (CET)
-Date: Mon, 10 Nov 2025 10:31:40 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Florian Weimer <fw@deneb.enyo.de>
-Cc: Christoph Hellwig <hch@lst.de>, Florian Weimer <fweimer@redhat.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Hans Holmberg <hans.holmberg@wdc.com>, linux-xfs@vger.kernel.org,
-	Carlos Maiolino <cem@kernel.org>,
-	Dave Chinner <david@fromorbit.com>,
-	"Darrick J . Wong" <djwong@kernel.org>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	libc-alpha@sourceware.org
-Subject: Re: [RFC] xfs: fake fallocate success for always CoW inodes
-Message-ID: <20251110093140.GA22674@lst.de>
-References: <20251106133530.12927-1-hans.holmberg@wdc.com> <lhuikfngtlv.fsf@oldenburg.str.redhat.com> <20251106135212.GA10477@lst.de> <aQyz1j7nqXPKTYPT@casper.infradead.org> <lhu4ir7gm1r.fsf@oldenburg.str.redhat.com> <20251106170501.GA25601@lst.de> <878qgg4sh1.fsf@mid.deneb.enyo.de>
+	s=arc-20240116; t=1762767133; c=relaxed/simple;
+	bh=lwruCbuKvcI/RXTiWfORSD6gncR7qrSJQBoWWSJVSQ8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Mg71q8VNn8/w94wN0TNg1XVuW1R+NyXMKC++EN/D2cmzRiHoAW1v8gNgrwgiCe2EMfmaNc7UPD1e4C9I4riMMFnuuWXDhx3OKPtuN/cUdJA8777le3r7NZCPyVvkQM25DRAPS/nYrwh9MP/W73A7wVdNcnx43AmDuvTDBHZ2ORA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ghppzoIr; arc=none smtp.client-ip=95.215.58.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <b3f05987-74d9-4e6e-a18d-31e64c92337e@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1762767125;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2ClMFlGw+3oW+Mx09+T/4s8CBInH2qbgvOkap9Vt6M8=;
+	b=ghppzoIr9fx6cD8ZMfCbFqa2KZA907YF/YA668q73DyyK8bg2shk1VN85RWbYu0Kpyi5Vb
+	6sblyfDy7g/nARJGFPlCAaj3C5TbcF1ndDGoSWRerKBQGaRhUdXAlTefbbfVdYs4x7suy+
+	s/7TalOfMqKoUWP1tamsbc7gZXJJSYw=
+Date: Mon, 10 Nov 2025 17:31:48 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <878qgg4sh1.fsf@mid.deneb.enyo.de>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Subject: Re: [syzbot ci] Re: mm/hugetlb: fix possible deadlock in
+ __hugetlb_zap_begin
+Content-Language: en-US
+To: syzbot ci <syzbot+ci5a676d3d210999ee@syzkaller.appspotmail.com>
+Cc: syzbot@lists.linux.dev, osalvador@suse.de,
+ syzbot@syzkaller.appspotmail.com, linux-kernel@vger.kernel.org,
+ david@redhat.com, akpm@linux-foundation.org,
+ syzkaller-bugs@googlegroups.com, linux-mm@kvack.org, muchun.song@linux.dev
+References: <6911ad38.a70a0220.22f260.00dc.GAE@google.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Lance Yang <lance.yang@linux.dev>
+In-Reply-To: <6911ad38.a70a0220.22f260.00dc.GAE@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Sat, Nov 08, 2025 at 01:30:18PM +0100, Florian Weimer wrote:
-> main(void)
-> {
->   FILE *fp = tmpfile();
->   if (fp == NULL)
->     abort();
->   int fd = fileno(fp);
->   posix_fallocate(fd, 0, 1);
->   char *p = mmap(NULL, 1, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
->   *p = 1;
-> }
+
+
+On 2025/11/10 17:15, syzbot ci wrote:
+> syzbot ci has tested the following series
 > 
-> should not crash even if the file system does not support fallocate.
-> I hope we can agree on that.  I expect avoiding SIGBUS errors because
-> of insufficient file size is a common use case for posix_fallocate.
-> This use is not really an optimization, it's required to get mmap
-> working properly.
+> [v1] mm/hugetlb: fix possible deadlock in __hugetlb_zap_begin
+> https://lore.kernel.org/all/20251110051421.29436-1-lance.yang@linux.dev
+> * [PATCH 1/1] mm/hugetlb: fix possible deadlock in __hugetlb_zap_begin
+> 
+> and found the following issues:
+> * possible deadlock in move_hugetlb_page_tables
+> * possible deadlock in remove_inode_hugepages
+> * possible deadlock in unmap_vmas
 
-That's a weird use of posix_fallocate, but if an interface to increase
-the file without the chance of reducing it is useful that's for
-sure something we could add.
+Oops, this fix was incomplete, as other code paths with the reverse locking
+order still exist, leading to the deadlocks reported by syzbot ...
 
-> If we can get an fallocate mode that we can use as a fallback to
-> increase the file size with a zero flag argument, we can definitely
-> use that in posix_fallocate (replacing the fallback path on kernels
-> that support it).  All local file systems should be able to implement
-> that (but perhaps not efficiently).  Basically, what we need here is a
-> non-destructive ftruncate.
-
-fallocate seems like an odd interface choice for that, but given that
-(f)truncate doesn't have a flags argument that might still be the
-least unexpected version.
-
-> Maybe add two flags, one for the ftruncate replacement, and one that
-> instructs the file system that the range will be used with mmap soon?
-> I expect this could be useful information to the file system.  We
-> wouldn't use it in posix_fallocate, but applications calling fallocate
-> directly might.
-
-What do you think "to be used with mmap" flag could be useful for
-in the file system?  For file systems mmap I/O isn't very different
-from other use cases.
-
+Let me take a closer look ...
 
