@@ -1,295 +1,164 @@
-Return-Path: <linux-kernel+bounces-892448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A76D6C451E3
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 07:45:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6C1FC451E6
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 07:46:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FA0E188F1B0
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 06:46:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C2F93A25BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 06:46:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 421A021B905;
-	Mon, 10 Nov 2025 06:45:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1A3E218AB0;
+	Mon, 10 Nov 2025 06:46:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A0Wbm6VK"
-Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com [209.85.222.49])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RP50pboa"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C38E634D38B
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 06:45:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C74634D38B
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 06:46:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762757126; cv=none; b=IhBrDMcWHyJ39a/maCQ0qcwCV/B7895tSDiMkktQOxaqI9355mSjYkT1VUV9bep9nDE35XdB5c9gmTYJ70+CL3aT3DMdgbdE1VqnqjLEKJeTljfzLzTLBJBp0gyuSCGycLbIVuXZwhqDeyj2uS6ObURGZG7F7BSiuQHryPANyOk=
+	t=1762757165; cv=none; b=YrtGCEHa0o87DRxaCWtPLIdeFx3UklKdy2WUBr4ru5Nm6aipUQnoMb69MtlaP/F8HgwiH6I8Gpn6CHxT1BfBeLBSM1LIo1cUN6FdWxZW2Y0eAbbxrujm+0K60DmdNAddE6MxEWULCMtv+V2sJE+8xcx4bnXB5Y3zZYAw447WW8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762757126; c=relaxed/simple;
-	bh=SWhRAqoJWYfwuU+QfxmwEFfoLW7aWiiZJRRnU+Smsew=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Y7TGg1o6meOFgQLFxYlfuXW/dKTBhj0IX9oWNTmVWrbB0cCch3Lgosa6lCy82RJKy28r28BRnGp+XP7AeaGrimV4e46EmxDtTC5sbkqdQ8DTh7VhSshNfnk4vOMMWei3ubLl9QyM74I/uEQ3YGxl0ucI0xlNF8eQBCmNysEZfIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A0Wbm6VK; arc=none smtp.client-ip=209.85.222.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f49.google.com with SMTP id a1e0cc1a2514c-89018e9f902so1294525241.0
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 22:45:24 -0800 (PST)
+	s=arc-20240116; t=1762757165; c=relaxed/simple;
+	bh=lYwuLN473OxBWExBwnMZ8BirNa7UvPGxy7Z7qn7dsis=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XzLivBi1PzY26DEDnObUsvm9t0GXsb/6BuRnIudW8S16cSDeQmo0QkVlE/UYxpm2PzGIcoIWEPtjeVrDJfv++IlZMA5pmURVi1wYryuBBtsOBBJvOssb9jSLacAqOCAAQ4wGqU1o2zGIyqnes8GSkmjU4/bzlOLPqxS5imlNbPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RP50pboa; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-42b32a5494dso462593f8f.2
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 22:46:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762757123; x=1763361923; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TJ7LYF5rARcfLsBpxePOybR+1y8/o3ZLz4XlyN978+M=;
-        b=A0Wbm6VKGDvlrEppg4WgZXHlE32wq8ku+dNXBIfbvQfOx7q4rRtyU+YBYkOZbPcBbd
-         35FOJW+jsSQSnB3j6vpjWVgSmV4aYw03TGWBE+eg2IfuqwKXtSlQRvrDEKA0ougXQU27
-         1WYbR+4PuDXyigo8/ijGnaOBKObVZ24vWOz0G9AbKfgWlm4ahTBzszscNjQOKiFm098g
-         1vJFFRaUFQXpofFu47koadjAs96R3xXx7LzFd1Gi9bw8t57cGOC8cf/YHnpuyAefaWDt
-         EyiUKyh48pS62FtzZeYsNumOU5limhlfItCn7G9lSDhzyWxL0/SLA12eALkk3Zq3raTS
-         cG+Q==
+        d=linaro.org; s=google; t=1762757161; x=1763361961; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Pu1XhH2ZxG6Wd4en1D4CkiVWQG6H8ikgU7y2tqQz8Z4=;
+        b=RP50pboavOa7gYiiCs8yZ5LGgannydWkIg/SBu/V1ji45Q5VwUjGcOPMGW6rTVRQ6M
+         pQwRK6sXt9l3TqKF4CfSb0IjzqIoVbZUEMoEMtjYwuSUSS0nWgaGbTvUpBj7cf0gX0yW
+         ve71mFcC6bMZp90A37bKECZJZcN4TOkOau4CY9OP9PzfAyzFnjkW4VHRjPkeuir7wHGc
+         v3/rZYjgMVtzA+dplJNV7vm3aY6jvBXSYMBjCgpjNb7wws4gyRNMguXwqEDGDToWQLnT
+         XpFny93LPwDCMJjc/ggN8d4dJh0AzgXbRae3ikRswQcRhBEneOCbV4MBEPthkQuNxkiH
+         rPqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762757123; x=1763361923;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=TJ7LYF5rARcfLsBpxePOybR+1y8/o3ZLz4XlyN978+M=;
-        b=bJaOIGT4czeZQdwJXZZNAguipOQCSZdPJi2c0R7Zuu0tPMRj2N45/r5uWfKzEq7L3y
-         v9IfXC8LImxIl45GEjSFwFycmqaSvnV/PJJcXhWHXvL+Qts94qlIFGZv9IMRxTBC/+vs
-         IcP2sO8R8pbJY+tPHSCf4xKNyeKrtPyRygEp+ZBXCyPswPER1csJ4qucIXtCF6DpaXGG
-         EOZ3QF4B4aeYmw9pB/JBDHuAnrq59d6vFQFLBGbQrk7LquiA/tjXUZXZOpweor6FheZB
-         nIxPe9rDsKqHtI9oMc4NaR6gWSF0KPT5YlbsSTX/a8MfRmpgmgoo8DJUuwf6YWrZlVro
-         En3g==
-X-Forwarded-Encrypted: i=1; AJvYcCX1kH+bVj6WiuEXPRyOBqfPHd4qZpqOPOq0Tsey7FnBCliAP7Gj6Ak+eLYOvglXudoBjWewQRU0nFx+gF4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGZBGLBVvsIGD+RWIVkWfdJy/H/Gmz10cCR5rLVm0l3APxGKsh
-	CI+CblD3Qu/UdJ3QLM4xJHnMYEKeyhbaciddfKCcC3ukXELoiwvxYrq3dTHnZ987Z9MwOVGBMlU
-	MCBFW/pI5ahZXjkTDB04ZB0GmDxLNSd0=
-X-Gm-Gg: ASbGncsY56GzU1qSjsbPO6zXOR9/iOpUoG5QtFrK0rRa+Krn9Yf9nPE+tFgeUaIIftr
-	/8gHkOi/TOUAKD4ozrxuMNtoKdrPeKAjmUe7jB2vq28Jo5FHgtu3Jnh6kVJiFPC6YYeVGgSR8ih
-	h/OpHzkigt5uM7INyQROTQmH+sJ3D8jstmUTbMh2192DLF3trhgSCpVTqHo/IRZy9yFlcv4Tft1
-	HdCAoOESm9AM7OSe/sZcqmO7Vl+mCXWRUf6+VzAULBKco20Hl0OADSX54n4gZkRvbqWKg==
-X-Google-Smtp-Source: AGHT+IF+gs9QIahGISXKJRHjGuXprvZlDgmBa+ZvpM71d+5sssU4cyVVLoFXELWcuPET2oDoTXg/lkyadapsy4GEvcw=
-X-Received: by 2002:a05:6102:c51:b0:5dd:a69a:b935 with SMTP id
- ada2fe7eead31-5ddc468ea63mr2373148137.16.1762757123612; Sun, 09 Nov 2025
- 22:45:23 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762757161; x=1763361961;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Pu1XhH2ZxG6Wd4en1D4CkiVWQG6H8ikgU7y2tqQz8Z4=;
+        b=GU1gNyO6yyHPmfX/xbb3/vtu3hGFaJXtYVnzW34/A/ClsGnYOA70VvbxdXS5sCmRn/
+         EgTrZAY/UE9MzDqEYXUep6GkFwjKIqFpBLUL75gXceGWFhgyngg+GcPm/On46g8RywaZ
+         SkN6tbNGNrc2yt4byCqfmwV5E0C+VcgvOzaU4SmgN22os6k7EmksKFo0m1fjdNQglyoU
+         b7Lr4YDy3XQQ4nvJ75CWf85RoFWHtwuSldC6/Egmc5YqKhhgViBnyyP6qsyqCTAcAeCK
+         dqoPttI8hUpAvIhPmN17MNyKuaK1a0ZPPj1fPKm4g0Xf+PQAhY4rSixMUr4LuO2/p0LX
+         ueOg==
+X-Forwarded-Encrypted: i=1; AJvYcCVo0SpclKhWE3eyXQGKqaGkJgh8ZQU9M3nH7rHKzQlImMQ9t2yJskvh0ImEppOO42pxYTTU4BTY0vXtLnw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxm3YYdH27yFtLOzKqvoBHPDLo1ixxKwWIlgQ8d4nwvjuz50EZB
+	dKkt9ERCG1aKjwnXn0w76xaprsmKH3mlU+PyYonk/tKyJvX/o71DF8FhCmIqAi2TkHQ=
+X-Gm-Gg: ASbGncuWGtSdU0Kyy9CJnCOwqj5fP5KA60iUdZk93/R7SmAm9FvnWcQr7ydOBWNHRPG
+	57JeKVUvUOjBOys84frkdew7aNTcBeqBYgGHRCvg055EQUR1luuyKOy9Kaj7ymboSEeKC9KANpy
+	RpRox2rAObhRbGt9yMsS4ynUNl7gWFmXOY34+5FDlzN0lVErbMDk4cvaXhSCvnxfHLM3eUbnOe4
+	fymc4ibQCubJVHiDpiYcE43O/c+8i3TQJi5c56CE3EjwXZkggaE+0icJ+Ag+akAM8/Ssj0IumqL
+	+vvdCS1/Ogj9i3ckvyedxp+8FXAT73ubeR7YPzCGs2utorYC2NgPEb75o8ElOl2ajJ5uKfG/YUM
+	ZLcP2c8PKdDa8gBvJX5+U93c7QQZcFr8fqasboNQZ1EQIMlPl+s/rYBaV+e2JJCNnoOYLIPv5ae
+	7CKeh8jKg75Niw4Vkx
+X-Google-Smtp-Source: AGHT+IH7hyQPKhcZy8yzJus1HIGOBdpu+NzRSyrvlskw5IUKjuHbd1YMpjBQn0eJHTMLn2IbItWT0w==
+X-Received: by 2002:a05:6000:1847:b0:429:cf88:f7ac with SMTP id ffacd0b85a97d-42b2dca2e52mr5114061f8f.44.1762757161534;
+        Sun, 09 Nov 2025 22:46:01 -0800 (PST)
+Received: from [10.11.12.107] ([5.12.85.52])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b2dd927d5sm13577288f8f.24.2025.11.09.22.46.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 09 Nov 2025 22:46:01 -0800 (PST)
+Message-ID: <7d8b0062-a6ec-43a9-ab00-3e11f0e2fb26@linaro.org>
+Date: Mon, 10 Nov 2025 08:45:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20250929042917epcas2p43d95408c9c43ff49ff6674136d7c64d3@epcas2p4.samsung.com>
- <20250929043110.3631025-1-hy_fifty.lee@samsung.com> <20250929043110.3631025-4-hy_fifty.lee@samsung.com>
-In-Reply-To: <20250929043110.3631025-4-hy_fifty.lee@samsung.com>
-From: Inki Dae <daeinki@gmail.com>
-Date: Mon, 10 Nov 2025 15:44:46 +0900
-X-Gm-Features: AWmQ_bnm9xQ99kNtPGcygx_UKQxpZ_ctsO76xXZQ0SPcCmu0BnofZ2Xoq2-JZF4
-Message-ID: <CAAQKjZMDe-nXN14qQQTHR9HMwqCcbTospjMg_P98G0e=XAO5NQ@mail.gmail.com>
-Subject: Re: [PATCH 3/3] drm/exynos: Move mode_config setup from fb.c to drv.c
-To: Hoyoung Lee <hy_fifty.lee@samsung.com>
-Cc: Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/4] mtd: spi-nor: micron-st: enable 8D-8D-8D mode and die
+ erase for mt35xu02gcba
+To: Haibo Chen <haibo.chen@nxp.com>, Pratyush Yadav <pratyush@kernel.org>,
+ Michael Walle <mwalle@kernel.org>, Miquel Raynal
+ <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>,
+ Vignesh Raghavendra <vigneshr@ti.com>
+Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+ imx@lists.linux.dev
+References: <20251110-nor-v1-0-cde50c81db05@nxp.com>
+ <20251110-nor-v1-4-cde50c81db05@nxp.com>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <20251110-nor-v1-4-cde50c81db05@nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-2025=EB=85=84 9=EC=9B=94 29=EC=9D=BC (=EC=9B=94) =EC=98=A4=ED=9B=84 1:29, H=
-oyoung Lee <hy_fifty.lee@samsung.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
->
-> Relocate exynos_drm_mode_config_init() and the mode_config funcs/helpers
-> from exynos_drm_fb.c to exynos_drm_drv.c, and invoke
-> drm_mode_config_init() from inside exynos_drm_mode_config_init().
->
-> Rationale: resolve the historical fb.c placement, align with common DRM
-> layering (mode_config is device-wide policy that belongs in the core
-> driver), and make initialization order explicit before creating KMS
-> objects and binding components.
->
-> No functional change intended.
 
-This patch looks fine to me.
-However, since the second patch should be applied first, please repost
-them as v2.
 
-Thanks,
-Inki Dae
-
->
-> Signed-off-by: Hoyoung Lee <hy_fifty.lee@samsung.com>
+On 11/10/25 6:02 AM, Haibo Chen wrote:
+> mt35xu02gcba is similar with mt35xu01gbba and mt35xu512aba, but with
+> four dies inside. And it also support 8D-8D-8D mode, but SFDP lack
+> SNOR_F_IO_MODE_EN_VOLATILE, so add this fixup flags here.
+> 
+> Link: https://datasheet.octopart.com/MT35XU02GCBA1G12-0AAT-Micron-datasheet-138896808.pdf
+> Signed-off-by: Haibo Chen <haibo.chen@nxp.com>
 > ---
->  drivers/gpu/drm/exynos/exynos_drm_drv.c | 47 ++++++++++++++++++++++---
->  drivers/gpu/drm/exynos/exynos_drm_fb.c  | 34 ++----------------
->  drivers/gpu/drm/exynos/exynos_drm_fb.h  |  7 ++--
->  3 files changed, 49 insertions(+), 39 deletions(-)
->
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/ex=
-ynos/exynos_drm_drv.c
-> index 1aea71778ab1..6362cd417a4e 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-> @@ -233,6 +233,43 @@ static struct component_match *exynos_drm_match_add(=
-struct device *dev)
->         return match ?: ERR_PTR(-ENODEV);
->  }
->
-> +static struct drm_mode_config_helper_funcs exynos_drm_mode_config_helper=
-s =3D {
-> +       .atomic_commit_tail =3D drm_atomic_helper_commit_tail_rpm,
+
+please dump the SFDP data for every flash that you touch, it helps
+us with the sfdp database
+
+>  drivers/mtd/spi-nor/micron-st.c | 11 +++++++++--
+>  1 file changed, 9 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/mtd/spi-nor/micron-st.c b/drivers/mtd/spi-nor/micron-st.c
+> index f724313f4dd3720908968c670e8d3d58f41c099c..b36174436b7aa0f7768dbe48e4ad4927c08a3d6d 100644
+> --- a/drivers/mtd/spi-nor/micron-st.c
+> +++ b/drivers/mtd/spi-nor/micron-st.c
+> @@ -214,6 +214,12 @@ static const struct spi_nor_fixups mt35xu01gbba_fixups = {
+>  	.late_init = micron_st_nor_two_die_late_init,
+>  };
+>  
+> +static const struct spi_nor_fixups mt35xu02gcba_fixups = {
+> +	.default_init = mt35xu512aba_default_init,
+> +	.post_sfdp = mt35xu512aba_post_sfdp_fixup,
+> +	.late_init = micron_st_nor_four_die_late_init,
 > +};
 > +
-> +static const struct drm_mode_config_funcs exynos_drm_mode_config_funcs =
-=3D {
-> +       .fb_create =3D exynos_user_fb_create,
-> +       .atomic_check =3D drm_atomic_helper_check,
-> +       .atomic_commit =3D drm_atomic_helper_commit,
-> +};
-> +
-> +static int exynos_drm_mode_config_init(struct drm_device *dev)
-> +{
-> +       int ret;
-> +
-> +       ret =3D drmm_mode_config_init(dev);
-> +       if (ret)
-> +               return ret;
-> +
-> +       dev->mode_config.min_width =3D 0;
-> +       dev->mode_config.min_height =3D 0;
-> +
-> +       /*
-> +        * set max width and height as default value(4096x4096).
-> +        * this value would be used to check framebuffer size limitation
-> +        * at drm_mode_addfb().
-> +        */
-> +       dev->mode_config.max_width =3D 4096;
-> +       dev->mode_config.max_height =3D 4096;
-> +
-> +       dev->mode_config.funcs =3D &exynos_drm_mode_config_funcs;
-> +       dev->mode_config.helper_private =3D &exynos_drm_mode_config_helpe=
-rs;
-> +
-> +       dev->mode_config.normalize_zpos =3D true;
-> +
-> +       return 0;
-> +}
-> +
->  static int exynos_drm_bind(struct device *dev)
->  {
->         struct exynos_drm_private *private;
-> @@ -257,9 +294,9 @@ static int exynos_drm_bind(struct device *dev)
->         dev_set_drvdata(dev, drm);
->         drm->dev_private =3D (void *)private;
->
-> -       drmm_mode_config_init(drm);
-> -
-> -       exynos_drm_mode_config_init(drm);
-> +       ret =3D exynos_drm_mode_config_init(drm);
-> +       if (ret)
-> +               goto err_free_private;
->
->         /* setup possible_clones. */
->         clone_mask =3D 0;
-> @@ -272,7 +309,7 @@ static int exynos_drm_bind(struct device *dev)
->         /* Try to bind all sub drivers. */
->         ret =3D component_bind_all(drm->dev, drm);
->         if (ret)
-> -               goto err_mode_config_cleanup;
-> +               goto err_free_private;
->
->         ret =3D drm_vblank_init(drm, drm->mode_config.num_crtc);
->         if (ret)
-> @@ -296,7 +333,7 @@ static int exynos_drm_bind(struct device *dev)
->         drm_kms_helper_poll_fini(drm);
->  err_unbind_all:
->         component_unbind_all(drm->dev, drm);
-> -err_mode_config_cleanup:
-> +err_free_private:
->         exynos_drm_cleanup_dma(drm);
->         kfree(private);
->         dev_set_drvdata(dev, NULL);
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fb.c b/drivers/gpu/drm/exy=
-nos/exynos_drm_fb.c
-> index ddd73e7f26a3..c118a079d308 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_fb.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_fb.c
-> @@ -8,8 +8,7 @@
->   *     Seung-Woo Kim <sw0312.kim@samsung.com>
->   */
->
-> -#include <drm/drm_atomic.h>
-> -#include <drm/drm_atomic_helper.h>
-> +#include <drm/drm_modeset_helper.h>
->  #include <drm/drm_crtc.h>
->  #include <drm/drm_framebuffer.h>
->  #include <drm/drm_fourcc.h>
-> @@ -93,7 +92,7 @@ exynos_drm_framebuffer_init(struct drm_device *dev,
->         return ERR_PTR(ret);
->  }
->
-> -static struct drm_framebuffer *
-> +struct drm_framebuffer *
->  exynos_user_fb_create(struct drm_device *dev, struct drm_file *file_priv=
-,
->                       const struct drm_format_info *info,
->                       const struct drm_mode_fb_cmd2 *mode_cmd)
-> @@ -150,32 +149,3 @@ dma_addr_t exynos_drm_fb_dma_addr(struct drm_framebu=
-ffer *fb, int index)
->         exynos_gem =3D to_exynos_gem(fb->obj[index]);
->         return exynos_gem->dma_addr + fb->offsets[index];
->  }
-> -
-> -static struct drm_mode_config_helper_funcs exynos_drm_mode_config_helper=
-s =3D {
-> -       .atomic_commit_tail =3D drm_atomic_helper_commit_tail_rpm,
-> -};
-> -
-> -static const struct drm_mode_config_funcs exynos_drm_mode_config_funcs =
-=3D {
-> -       .fb_create =3D exynos_user_fb_create,
-> -       .atomic_check =3D drm_atomic_helper_check,
-> -       .atomic_commit =3D drm_atomic_helper_commit,
-> -};
-> -
-> -void exynos_drm_mode_config_init(struct drm_device *dev)
-> -{
-> -       dev->mode_config.min_width =3D 0;
-> -       dev->mode_config.min_height =3D 0;
-> -
-> -       /*
-> -        * set max width and height as default value(4096x4096).
-> -        * this value would be used to check framebuffer size limitation
-> -        * at drm_mode_addfb().
-> -        */
-> -       dev->mode_config.max_width =3D 4096;
-> -       dev->mode_config.max_height =3D 4096;
-> -
-> -       dev->mode_config.funcs =3D &exynos_drm_mode_config_funcs;
-> -       dev->mode_config.helper_private =3D &exynos_drm_mode_config_helpe=
-rs;
-> -
-> -       dev->mode_config.normalize_zpos =3D true;
-> -}
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fb.h b/drivers/gpu/drm/exy=
-nos/exynos_drm_fb.h
-> index fdc6cb40cc9c..0c79ce5d4a8d 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_fb.h
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_fb.h
-> @@ -19,8 +19,11 @@ exynos_drm_framebuffer_init(struct drm_device *dev,
->                             struct exynos_drm_gem **exynos_gem,
->                             int count);
->
-> -dma_addr_t exynos_drm_fb_dma_addr(struct drm_framebuffer *fb, int index)=
-;
-> +struct drm_framebuffer *
-> +exynos_user_fb_create(struct drm_device *dev, struct drm_file *file_priv=
-,
-> +                     const struct drm_format_info *info,
-> +                     const struct drm_mode_fb_cmd2 *mode_cmd);
->
-> -void exynos_drm_mode_config_init(struct drm_device *dev);
-> +dma_addr_t exynos_drm_fb_dma_addr(struct drm_framebuffer *fb, int index)=
-;
->
->  #endif
-> --
-> 2.34.1
->
->
+>  static const struct flash_info micron_nor_parts[] = {
+>  	{
+>  		.id = SNOR_ID(0x2c, 0x5b, 0x1a),
+> @@ -237,12 +243,13 @@ static const struct flash_info micron_nor_parts[] = {
+>  		.fixups = &mt35xu01gbba_fixups,
+>  	}, {
+>  		.id = SNOR_ID(0x2c, 0x5b, 0x1c),
+> -		.name = "mt35xu02g",
+> +		.name = "mt35xu02gcba",
+
+we don't care about the name, drop the name and add it as a comment.
+
+>  		.sector_size = SZ_128K,
+>  		.size = SZ_256M,
+>  		.no_sfdp_flags = SECT_4K | SPI_NOR_OCTAL_READ,
+>  		.mfr_flags = USE_FSR,
+> -		.fixup_flags = SPI_NOR_4B_OPCODES,
+> +		.fixup_flags = SPI_NOR_4B_OPCODES | SPI_NOR_IO_MODE_EN_VOLATILE,
+
+Whenever you can, remove the non-sfdp static data and rely on the SFDP
+driver to handle it. Can you please drop sector_size, no_sfdp_flags and
+SPI_NOR_4B_OPCODES?
+
+Then do the testing and sysfs/debugfs dumps to prove the flash works okay.
+Thanks!
+ta> +		.fixups = &mt35xu02gcba_fixups,
+>  	},
+>  };
+>  
+> 
+
 
