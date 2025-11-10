@@ -1,86 +1,108 @@
-Return-Path: <linux-kernel+bounces-892444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F663C451C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 07:41:21 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18DABC451CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 07:41:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DA023B1854
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 06:41:20 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D9D2A4E81F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 06:41:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2657D2E92C3;
-	Mon, 10 Nov 2025 06:41:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 984A42E973D;
+	Mon, 10 Nov 2025 06:41:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="ct5Gjmpg"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b="OV0QTbla"
+Received: from mail-m155101.qiye.163.com (mail-m155101.qiye.163.com [101.71.155.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98DB7238C2F;
-	Mon, 10 Nov 2025 06:41:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52FC8238C2F;
+	Mon, 10 Nov 2025 06:41:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762756871; cv=none; b=XhWiC9NI/c9Dy89NvjKrT8vGOWGoz4prdO3rI2gUDa3x3Ss8dqYWRkJ3h+tWh7J41N//xoOpPwHYwyzjqbgwgVgyKLABt4leLth7BXzRNTXI1Wi9a46TV9ER0eP7lBn8WvaSbDwCTa1lIZMEc7wCrJ1GNzJmCHecJn+VjNec9/4=
+	t=1762756903; cv=none; b=fCbIenirFsMZ69VhuBz8mdjdSS9eXp6yP0yaBLFMJx5uM5cDtXFMCQMNuYm206k1E8OfPXWtx09r6IMGGwmgd8HHkPmFjrfpr/wNmCZwY5kXvngJkak5m3sTqJIxtzNXewQEqHlsTsxYr7V1ibECSHbRtLOqbtgxWY/WQK/4MdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762756871; c=relaxed/simple;
-	bh=e2Ol+VcL+8k+1I/AMS3disA32Dlzpaf6SdIJSGyIEfU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=coU/jvxMCWpkTRl9pstXanlrvUH99m2h7uPtkZdVt7tZ6uaFw6SLUe+wofN9aC20IphshIZyLXC0ckvDE0cS2uEep0WV3mOsq2JyblibLVQLGw9BW3IWK7x20pIiL3ilWmO2qo+GEEjXry/D+S2RAw2+UVaRRVBjwShL3mseyAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=ct5Gjmpg; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=e2Ol+VcL+8k+1I/AMS3disA32Dlzpaf6SdIJSGyIEfU=; b=ct5GjmpgnYFeBCCfeAZyg9SchR
-	eytNo2Sb7yT6m/Z9eGbQqHP4UjGcBiqQPvwQBpV8FWz4mUqB9OnJ1lDz9EIIdwUHHlBZzIFEbgESX
-	YPOPHJImzN1tTOPJlooxhL3lwGlBj5Bm7LDY/bYcV46ymEd6yVBGgnxbri6nLMpJRexq8QH4N24JV
-	roReEOl1mLY14Du4ohknCHd5PKb+Qh43Gg48n04fq2/cbwcnau4wucVQfgx2UAh8mwRaVGrYE0H7u
-	hXKg9sK4q0WdsXFOC37e3OFJXR4kV5KqH26ExO9fAdZXInJK/AImrgL7CbOlQ73F2k3VdvUFVWKyH
-	A9NmJlUA==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vILaM-00000000v0y-48tu;
-	Mon, 10 Nov 2025 06:41:07 +0000
-Date: Mon, 10 Nov 2025 06:41:06 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: brauner@kernel.org, jack@suse.cz, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [MEH PATCH] fs: move fd_install() slowpath into a dedicated
- routine and provide commentary
-Message-ID: <20251110064106.GM2441659@ZenIV>
-References: <20251109120259.1283435-1-mjguzik@gmail.com>
+	s=arc-20240116; t=1762756903; c=relaxed/simple;
+	bh=XvInWD4YDIsbjQg0CufQQIeLJBWyvGpg4CPfSDljVCg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tuSF8zwrBJGt/g9tWW8vnG9tYvtMoeczcf1NW3E0K2YSvC07N5kKmQMZ+JLgMUx6PAYXImW9ZFdQYqV2RDlfm+bEaq7D+xKe0dJeaR60MxCScmHn5ovWAOFSy53KW01oXRWMDyyuPVSFwEuId6GCYqPAf0Zs6gkfCWE3xZnOjWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn; spf=pass smtp.mailfrom=seu.edu.cn; dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b=OV0QTbla; arc=none smtp.client-ip=101.71.155.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seu.edu.cn
+Received: from LAPTOP-N070L597.localdomain (unknown [58.241.16.34])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 28ffac50d;
+	Mon, 10 Nov 2025 14:41:29 +0800 (GMT+08:00)
+From: Zilin Guan <zilin@seu.edu.cn>
+To: steffen.klassert@secunet.com
+Cc: herbert@gondor.apana.org.au,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	jianhao.xu@seu.edu.cn,
+	Zilin Guan <zilin@seu.edu.cn>
+Subject: [PATCH v2] xfrm: fix memory leak in xfrm_add_acquire()
+Date: Mon, 10 Nov 2025 06:41:25 +0000
+Message-Id: <20251110064125.593311-1-zilin@seu.edu.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251109120259.1283435-1-mjguzik@gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a9a6c7f893603a1kunmd83e9b74a470ac
+X-HM-MType: 10
+X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlDSEhJVkNISh5MTh9LGBpNT1YeHw5VEwETFhoSFy
+	QUDg9ZV1kYEgtZQVlOQ1VJT0pVSk1VSE9ZV1kWGg8SFR0UWUFZS1VLVUtVS1kG
+DKIM-Signature: a=rsa-sha256;
+	b=OV0QTblaJYocRxIrfHICh09eF7WQzLcaO2Wa7tHqxKnoYw988xd8tAxzsCrHBrEal6aQ08HkeiIQgy/Re0NLkkJe13k8VHKICyzvoKJAc6LCHbFEeELZ15fN4li9US9Opa8ptFlpzrszSm2zoRKduhUaDa6LQh9QcmbdKmHLxtE=; s=default; c=relaxed/relaxed; d=seu.edu.cn; v=1;
+	bh=bnkrxG6S1dEm57sCj5qfB+0gdHrttimcVXVzZ43XaOQ=;
+	h=date:mime-version:subject:message-id:from;
 
-On Sun, Nov 09, 2025 at 01:02:59PM +0100, Mateusz Guzik wrote:
+The xfrm_add_acquire() function constructs an xfrm policy by calling
+xfrm_policy_construct(). This allocates the policy structure and
+potentially associates a security context and a device policy with it.
 
-> +/*
-> + * Install a file pointer in the fd array while it is being resized.
-> + *
-> + * We need to make sure our update to the array does not get lost as the resizing
-> + * thread can be copying the content as we modify it.
-> + *
-> + * We have two ways to do it:
-> + * - go off CPU waiting for resize_in_progress to clear
-> + * - take the spin lock
-> + *
-> + * The latter is trivial to implement and saves us from having to might_sleep()
-> + * for debugging purposes.
-> + *
-> + * This is moved out of line from fd_install() to convince gcc to optimize that
-> + * routine better.
-> + */
+However, at the end of the function, the policy object is freed using
+only kfree() . This skips the necessary cleanup for the security context
+and device policy, leading to a memory leak.
 
-Does it become seriously worse if you move rcu_read_unlock_sched() into the caller?
+To fix this, invoke the proper cleanup functions xfrm_dev_policy_delete(),
+xfrm_dev_policy_free(), and security_xfrm_policy_free() before freeing the
+policy object. This approach mirrors the error handling path in
+xfrm_add_policy(), ensuring that all associated resources are correctly
+released.
+
+Fixes: 980ebd25794f ("[IPSEC]: Sync series - acquire insert")
+Signed-off-by: Zilin Guan <zilin@seu.edu.cn>
+---
+Changes in v2:
+- Use the correct cleanup functions as per xfrm_add_policy().
+---
+ net/xfrm/xfrm_user.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/net/xfrm/xfrm_user.c b/net/xfrm/xfrm_user.c
+index 010c9e6638c0..441d5fa319f4 100644
+--- a/net/xfrm/xfrm_user.c
++++ b/net/xfrm/xfrm_user.c
+@@ -3035,6 +3035,9 @@ static int xfrm_add_acquire(struct sk_buff *skb, struct nlmsghdr *nlh,
+ 	}
+ 
+ 	xfrm_state_free(x);
++	xfrm_dev_policy_delete(xp);
++	xfrm_dev_policy_free(xp);
++	security_xfrm_policy_free(xp->security);
+ 	kfree(xp);
+ 
+ 	return 0;
+-- 
+2.34.1
+
 
