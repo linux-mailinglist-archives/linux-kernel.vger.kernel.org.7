@@ -1,183 +1,197 @@
-Return-Path: <linux-kernel+bounces-893580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14122C47C3B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:05:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9721FC47E51
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:20:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C79818870F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:56:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 955954A3D3A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:56:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A16EF257859;
-	Mon, 10 Nov 2025 15:55:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75D541925BC;
+	Mon, 10 Nov 2025 15:55:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="OeOErnBo"
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b="Xk8vrMgZ"
+Received: from mail.cybernetics.com (mail.cybernetics.com [72.215.153.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6C39153BD9;
-	Mon, 10 Nov 2025 15:55:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13BBE27A12B
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 15:55:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.215.153.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762790118; cv=none; b=C/qVMFCmSx99bni6TFyzILjTQP7tVzPoDNdfBCYYlN7QDSe/iFE87UpRDx2yZSjmv0CYCmLmpprnDInafdp4zYBzcymjzTPidT+JCgQ+x6Lsa3IuVDG2jBivhYVah2CBEwsMwTGn/k6I05n14rj+HFU6AQf1aQk0mFKcl6amRnE=
+	t=1762790125; cv=none; b=BKPn1Qlkf8bs7XPIiiogTKKpYQTmID9FkR+SHL9GbdMTu7lHdMTZ/lCem7iYTtahP9WTozeL4d3anU69ULDATIgXmbUT1tbJMWCiGCzDwAcU0ji435UNEQZqhIdbv1GraJmlK2OMoB5H1n+NNuoHHHLO3PKNgzvBG+02cyWWmh8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762790118; c=relaxed/simple;
-	bh=gSx9MBu8gjn4oE9VzLVRyN+WHpggTZuPNrEcukKkUn4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=jifVKAqcbjYTkHaUq60cCx/mSNARU9TBn2wdHATpD7Kw+pMhfKb8omyPBWkoeIS1j8WiFGEzpPToxQ0QZdDdgjS9TkKhjZgnJ7AWuOBowPZ0gRPAVvqr4gZnAoFX/uwkH8gpolnx56khuB1ekhAUEubdW20/PzLIMA5guZmntXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=OeOErnBo; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4d4vPk1GXqz9tKJ;
-	Mon, 10 Nov 2025 16:55:06 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1762790106; h=from:from:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gSx9MBu8gjn4oE9VzLVRyN+WHpggTZuPNrEcukKkUn4=;
-	b=OeOErnBoYp88WzbiTOzrWCmskeaH93Xv429Um4Wxcuq+I+CiQTMlCSARoiyxXMnhV45WQs
-	Y6zWy2+jD8xmLORNLsq98NcjWg9KfV/iOrspAm3QP/joWlQxmoezIJ827Guxi4RRBqe23S
-	unbS7ik3p2ytnT6hBrjWu1vG3idocJnyPwZ2a8ZumVNCc9fDGWwG/Jw1d+MRSL9w5wC/WZ
-	VicEe1grW160S+of2vTD366OpK7X+Pu9EbMfpFPNz6J2rGq8wxW2g2uFVmL2kJ23i61jC1
-	yNJY32Gihuo2d03NEzmKLsEPVfIGaCs4Yaf2e53ORI0roleRTl4lZX5Ytop4Ug==
-Message-ID: <589a1be140f3c8623a2647b107a1130289eb00ba.camel@mailbox.org>
-Subject: Re: [PATCH] drm/sched: Fix UB in spsc_queue
-From: Philipp Stanner <phasta@mailbox.org>
-Reply-To: phasta@kernel.org
-To: Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, 
- phasta@kernel.org, David Airlie <airlied@gmail.com>, Simona Vetter
- <simona@ffwll.ch>, Alex Deucher <alexander.deucher@amd.com>, Andrey
- Grodzovsky <Andrey.Grodzovsky@amd.com>, dakr@kernel.org, Matthew Brost
- <matthew.brost@intel.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org
-Date: Mon, 10 Nov 2025 16:55:01 +0100
-In-Reply-To: <05603d39-0aeb-493e-a1ed-8051a99dfc41@amd.com>
-References: <20251110081903.11539-2-phasta@kernel.org>
-	 <ee63ca7d-77d2-44d8-973b-7276f8c4d4a5@amd.com>
-	 <ee9fe54f3764bc0ee4ebafe5c10ad4afe748ef19.camel@mailbox.org>
-	 <2c72eb6e-7792-4212-b06f-5300bc9a42f9@amd.com>
-	 <987527ead1fe93877139a9ee8b6d2ee55eefa1ee.camel@mailbox.org>
-	 <05603d39-0aeb-493e-a1ed-8051a99dfc41@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1762790125; c=relaxed/simple;
+	bh=prwM2erQJBoAUiKcky6/s46AeDF3eHYC6Vq40o7tYOI=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=VGNkM4xeqmsfRV7AhXhrsmQoV5T9AdfTS4+CArmpaaY4t2Tffv6LHnLAv9J5SYhZzuSVeCEM7s8gotao9Xhkoh85dH5R0261Yx/JL/LLwjUmngggQn0eiOSs3DdFMIwrxfgrydAY3nFlI9tIYQCfGW5AHhStF7gX4RWoqUUrtFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com; spf=pass smtp.mailfrom=cybernetics.com; dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b=Xk8vrMgZ; arc=none smtp.client-ip=72.215.153.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cybernetics.com
+Received: from cybernetics.com ([10.10.4.126]) by mail.cybernetics.com with ESMTP id WJd5cWeT332vPg8I; Mon, 10 Nov 2025 10:55:22 -0500 (EST)
+X-Barracuda-Envelope-From: tonyb@cybernetics.com
+X-Barracuda-RBL-Trusted-Forwarder: 10.10.4.126
+X-ASG-Whitelist: Client
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cybernetics.com; s=mail;
+	bh=RsvdXDvFlxutXVLeJjSGyKGTWr1UCiHzYOJ6OB1CC7M=;
+	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:Cc:To:From:
+	Content-Language:Subject:MIME-Version:Date:Message-ID; b=Xk8vrMgZi7OIvWVJI09y
+	CsECjShel9u3A99N94t+1iiEhXtGIV4QqJt+oARYaIDmz7eg8Db0C6Sl1Gn8mz05UXcbuOStz+pYK
+	KHpCDyMh7/AEouwQtV70DlQ0eWSLvzYcH3OvZBvZBym/6Sv4Q6xCZ/9TF3i1domFLOEeOrINO4=
+Received: from [10.157.2.224] (HELO [192.168.200.1])
+  by cybernetics.com (CommuniGate SPEC SMTP 8.0.5)
+  with ESMTPS id 14272443; Mon, 10 Nov 2025 10:55:22 -0500
+Message-ID: <1a221699-969b-4f28-8ea4-395d2f7a7c0a@cybernetics.com>
+X-Barracuda-RBL-Trusted-Forwarder: 10.157.2.224
+Date: Mon, 10 Nov 2025 10:55:22 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MBO-RS-ID: 09f38a7b37e36746f60
-X-MBO-RS-META: wyff56gqh5tm8fspikhhsbztuksxd1kw
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH v3 07/16] scsi: qla2xxx: fix term exchange when cmd_sent_to_fw
+ == 1
+Content-Language: en-US
+X-ASG-Orig-Subj: [PATCH v3 07/16] scsi: qla2xxx: fix term exchange when cmd_sent_to_fw
+ == 1
+From: Tony Battersby <tonyb@cybernetics.com>
+To: Nilesh Javali <njavali@marvell.com>,
+ GR-QLogic-Storage-Upstream@marvell.com,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi <linux-scsi@vger.kernel.org>, target-devel@vger.kernel.org,
+ scst-devel@lists.sourceforge.net,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Dmitry Bogdanov <d.bogdanov@yadro.com>,
+ Xose Vazquez Perez <xose.vazquez@gmail.com>
+References: <aaea0ab0-da8b-4153-9369-60db7507ff7a@cybernetics.com>
+In-Reply-To: <aaea0ab0-da8b-4153-9369-60db7507ff7a@cybernetics.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Barracuda-Connect: UNKNOWN[10.10.4.126]
+X-Barracuda-Start-Time: 1762790122
+X-Barracuda-URL: https://10.10.4.122:443/cgi-mod/mark.cgi
+X-Barracuda-BRTS-Status: 1
+X-Virus-Scanned: by bsmtpd at cybernetics.com
+X-Barracuda-Scan-Msg-Size: 3622
+X-ASG-Debug-ID: 1762790122-1cf439139110cd60001-xx1T2L
 
-On Mon, 2025-11-10 at 16:14 +0100, Christian K=C3=B6nig wrote:
-> On 11/10/25 15:20, Philipp Stanner wrote:
-> > On Mon, 2025-11-10 at 15:07 +0100, Christian K=C3=B6nig wrote:
-> > > On 11/10/25 13:27, Philipp Stanner wrote:
-> > > The problem isn't the burned CPU cycles, but rather the cache lines m=
-oved between CPUs.
-> >=20
-> > Which cache lines? The spinlock's?
-> >=20
-> > The queue data needs to move from one CPU to the other in either case.
-> > It's the same data that is being moved with spinlock protection.
-> >=20
-> > A spinlock doesn't lead to more cache line moves as long as there's
-> > still just a single consumer / producer.
->=20
-> Looking at a couple of examples:
->=20
-> 1. spinlock + double linked list (which is what the scheduler used initia=
-lly).
->=20
-> =C2=A0=C2=A0 You have to touch 3-4 different cache lines, the lock, the p=
-revious, the current and the next element (next and prev are usually the sa=
-me with the lock).
+(target mode)
 
-list when pushing:
+Properly set the nport_handle field of the terminate exchange message.
+Previously when this field was not set properly, the term exchange would
+fail when cmd_sent_to_fw == 1 but work when cmd_sent_to_fw == 0 (i.e. it
+would fail when the HW was actively transferring data or status for the
+cmd but work when the HW was idle).  With this change, term exchange
+works in any cmd state, which now makes it possible to abort a command
+that is locked up in the HW.
 
-Lock + head (same cache line) + head->next
-head->next->next
+Signed-off-by: Tony Battersby <tonyb@cybernetics.com>
+---
 
-when popping:
+v2 -> v3: no changes
 
-Lock + head + head->previous
-head->previous->previous
+v1 -> v2: no changes
 
-I don't see why you need a "current" element when you're always only
-touching head or tail.
+ drivers/scsi/qla2xxx/qla_target.c | 52 ++++++++++++++++++-------------
+ 1 file changed, 31 insertions(+), 21 deletions(-)
+
+diff --git a/drivers/scsi/qla2xxx/qla_target.c b/drivers/scsi/qla2xxx/qla_target.c
+index 72c74f8f5375..b700bfc642b3 100644
+--- a/drivers/scsi/qla2xxx/qla_target.c
++++ b/drivers/scsi/qla2xxx/qla_target.c
+@@ -3622,14 +3622,35 @@ static int __qlt_send_term_exchange(struct qla_qpair *qpair,
+ 	struct qla_tgt_cmd *cmd,
+ 	struct atio_from_isp *atio)
+ {
+-	struct scsi_qla_host *vha = qpair->vha;
+ 	struct ctio7_to_24xx *ctio24;
+-	request_t *pkt;
+-	int ret = 0;
++	struct scsi_qla_host *vha;
++	uint16_t loop_id;
+ 	uint16_t temp;
+ 
+-	if (cmd)
++	if (cmd) {
+ 		vha = cmd->vha;
++		loop_id = cmd->loop_id;
++	} else {
++		port_id_t id = be_to_port_id(atio->u.isp24.fcp_hdr.s_id);
++		struct qla_hw_data *ha;
++		struct fc_port *sess;
++		unsigned long flags;
++
++		vha = qpair->vha;
++		ha = vha->hw;
++
++		/*
++		 * CTIO7_NHANDLE_UNRECOGNIZED works when aborting an idle
++		 * command but not when aborting a command with an active CTIO
++		 * exchange.
++		 */
++		loop_id = CTIO7_NHANDLE_UNRECOGNIZED;
++		spin_lock_irqsave(&ha->tgt.sess_lock, flags);
++		sess = qla2x00_find_fcport_by_nportid(vha, &id, 1);
++		if (sess)
++			loop_id = sess->loop_id;
++		spin_unlock_irqrestore(&ha->tgt.sess_lock, flags);
++	}
+ 
+ 	if (cmd) {
+ 		ql_dbg(ql_dbg_tgt_mgt, vha, 0xe009,
+@@ -3642,31 +3663,20 @@ static int __qlt_send_term_exchange(struct qla_qpair *qpair,
+ 		    vha->vp_idx, le32_to_cpu(atio->u.isp24.exchange_addr));
+ 	}
+ 
+-	pkt = (request_t *)qla2x00_alloc_iocbs_ready(qpair, NULL);
+-	if (pkt == NULL) {
++	ctio24 = qla2x00_alloc_iocbs_ready(qpair, NULL);
++	if (!ctio24) {
+ 		ql_dbg(ql_dbg_tgt, vha, 0xe050,
+ 		    "qla_target(%d): %s failed: unable to allocate "
+ 		    "request packet\n", vha->vp_idx, __func__);
+ 		return -ENOMEM;
+ 	}
+ 
+-	if (cmd != NULL) {
+-		if (cmd->state < QLA_TGT_STATE_PROCESSED) {
+-			ql_dbg(ql_dbg_tgt, vha, 0xe051,
+-			    "qla_target(%d): Terminating cmd %p with "
+-			    "incorrect state %d\n", vha->vp_idx, cmd,
+-			    cmd->state);
+-		} else
+-			ret = 1;
+-	}
+-
+ 	qpair->tgt_counters.num_term_xchg_sent++;
+-	pkt->entry_count = 1;
+-	pkt->handle = QLA_TGT_SKIP_HANDLE | CTIO_COMPLETION_HANDLE_MARK;
+ 
+-	ctio24 = (struct ctio7_to_24xx *)pkt;
+ 	ctio24->entry_type = CTIO_TYPE7;
+-	ctio24->nport_handle = cpu_to_le16(CTIO7_NHANDLE_UNRECOGNIZED);
++	ctio24->entry_count = 1;
++	ctio24->handle = QLA_TGT_SKIP_HANDLE | CTIO_COMPLETION_HANDLE_MARK;
++	ctio24->nport_handle = cpu_to_le16(loop_id);
+ 	ctio24->timeout = cpu_to_le16(QLA_TGT_TIMEOUT);
+ 	ctio24->vp_index = vha->vp_idx;
+ 	ctio24->initiator_id = be_id_to_le(atio->u.isp24.fcp_hdr.s_id);
+@@ -3683,7 +3693,7 @@ static int __qlt_send_term_exchange(struct qla_qpair *qpair,
+ 		qpair->reqq_start_iocbs(qpair);
+ 	else
+ 		qla2x00_start_iocbs(vha, qpair->req);
+-	return ret;
++	return 0;
+ }
+ 
+ static void qlt_send_term_exchange(struct qla_qpair *qpair,
+-- 
+2.43.0
 
 
->=20
-> 2. kfifo (attempt #2):
->=20
-> =C2=A0=C2=A0 3 cache lines, one for the array, one for the rptr/wptr and =
-one for the element.
-> =C2=A0=C2=A0 Plus the problem that you need to come up with some upper bo=
-und for it.
->=20
-> 3. spsc (attempt #3)
->=20
-> =C2=A0=C2=A0 2-3 cache lines, one for the queue (head/tail), one for the =
-element and one for the previous element (but it is quite likely that this =
-is pre-fetched).
->=20
-> Saying this I just realized we could potentially trivially replace the sp=
-sc with an single linked list+pointer to the end+spinlock and have the same=
- efficiency. We don't need all the lockless stuff for that at all.
->=20
-
-Now we're speaking mostly the same language :]
-
-If you could RB my DRM TODO patches we'd have a section for drm/sched,
-and there we could then soonish add an item for getting rid of spsc.
-
-https://lore.kernel.org/dri-devel/20251107135701.244659-2-phasta@kernel.org=
-/
-
-> > >=20
-
-[=E2=80=A6]
-
-> > > The problem is really to separate the push from the pop side so that =
-as few cache lines as possible are transferred from one CPU to another.=20
-> >=20
-> > With a doubly linked list you can attach at the front and pull from the
-> > tail. How is that transferring many cache lines?
->=20
-> See above.
->=20
-> We have some tests for old and trivial use cases (e.g. GLmark2) which on =
-todays standards pretty much only depend on how fast you can push things to=
- the HW.
->=20
-> We could just extend the scheduler test cases to see how many submissions=
- per second we can pump through a dummy implementation where both producer =
-and consumer are nailed to separate CPUs.
->=20
-
-I disagree. That would be a microbenchmark for a very narrow use case.
-It would only tell us that a specific patch slows things done for the
-microbenchmark, and we could only detect that if a developer runs the
-unit tests with and without his patches.
-
-The few major reworks that touch such essentials have good realistic
-tests anyways, see Tvrtko's CFS series.
-
-
-Lockless magic should always be justified by real world use cases.
-
-By the way, back when spsc_queue was implemented, how large were the
-real world performance gains you meassured by saving that 1 cache line?
-
-
-P.
 
