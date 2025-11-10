@@ -1,258 +1,142 @@
-Return-Path: <linux-kernel+bounces-892428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B3A7C4512F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 07:21:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12D30C45138
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 07:26:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id F0C2634672D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 06:21:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A56603AE4EA
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 06:26:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A05002E7F08;
-	Mon, 10 Nov 2025 06:21:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B747F2E8B86;
+	Mon, 10 Nov 2025 06:26:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b="Cb5ObF5B"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GMH1vK7a"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85DD014D283
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 06:21:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B095A926;
+	Mon, 10 Nov 2025 06:26:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762755663; cv=none; b=HHlGTrQaPbyhxB46+cEL89oI8sZiNmnvBYMftv+PhZ13EteymrhEckKasbE/mSRCCAq/zWfYDXp5XOt+E6edIYiihELT/+wuej/a8Z/gDMGpDUvoXV8gQ4mUKTydk1yzzHnCcPrZOE6NNJ5B9PjKnzS6UW2WmYosQwssqgfeUnQ=
+	t=1762755983; cv=none; b=R1eZQMUKXvFJTSqtzYifyob6dGv9GSu5jcy6c+sAYsM64bDEky7WivfYVT6tqX5mR5EhMPtBf4OELTUW5cipyCb9oUe6uM1c6M9kcgBUR7Ot9UpJTAG5DovLFvqvMVBkbzr8PKTAAsUbvxrA+6oby6UWMhzUXEeDB5UI+AwzVdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762755663; c=relaxed/simple;
-	bh=ZcGxkDYNC5UCv0BkCG8bAreEMmuRiNPiMJ4Eq7NE7RY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gYjZmXkao4zTN3S+0TKXBSxZojSj+9e7z+loe2cmhUrILhdB6zfg9qcZDcMzDwWCDa4len12ovzeghrmKb5dMm7MEytl4XAuDPllx/IFqf8YxLgUpmRkA8dA4xmMY3yu/lsDsRs1FaB2dgDlHdGEZAa1l+g7ZXjJg9YS4NPa4Og=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com; spf=pass smtp.mailfrom=shopee.com; dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b=Cb5ObF5B; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shopee.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-7a9c64dfa6eso1997025b3a.3
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 22:21:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shopee.com; s=shopee.com; t=1762755661; x=1763360461; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2bvd5Yl5uTKxCTPtToTZFSJR27j/IrzDu4M4hsZnd7A=;
-        b=Cb5ObF5BN9Cgdy0dE4ejtoOimvTB7brqeqaglZkMRJXJXUraLErzOC4pTVbyfhVZWS
-         6eytGU4ydDeTY73G1nMSlznWL1CbC94tbs+j4LMNxa7tEqEZtA35DSaXndeqmISShp9Q
-         DcXgecp8pjPDL46P3dlEjMljq5gy4XVDPd/n1DCw8Ye+x4OcEGUtpkenGfLs0GpbSuN/
-         O4phM+TjNYs0hciVMSHCwlFFLUW75qmNUGzYlEh0uny8NBS08Iga0PRYpNYZ18CSYb94
-         yndSuVDtR3NpXpfhqGx2ZbnmRzHWR9zTFA1ksMfXOmthnacu7uTJbPY18b9o8qnrI6xC
-         dJJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762755661; x=1763360461;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=2bvd5Yl5uTKxCTPtToTZFSJR27j/IrzDu4M4hsZnd7A=;
-        b=qTjHoknQWkvFXEfmqDieI4owoCztsTewK3P0ZlkMvbFIsViGQt3/V7FZrct6jvFV1G
-         1ZOSLtQabLDBuER72pZz3LBXEzNT1Sav59pf2YH750ljG8XgfnufjnpzJiqNS5a19rBK
-         kjNhnthAEHHZ1sImb74VaBqEuJBnJxzbbsYX4mJrMzt52bKgibd4tXq6pE0r/xv4HGQK
-         1xEAFqJ0OchF5c7o3TzmxbobyLiem6fTIV/T2eh/xIqfhsYYSIMzik5tNoSrpyOC6wQo
-         GuulMLHdUlR0rEdJEY0DVNNTR8KjZq+OZwZoPfVKflnkDpZKddI1WDcsqhuE269KCdvC
-         JtnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUeHoqxSItSjnCjroFff/LiQ7vrkgUY1Fg55kOGJt5U2wsnLQm/O8WGZ0hc1ZxwQnZJiChPmzoLG/Q/RI4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxaTiYDDTfac6N1LX4Etimq+rDCxYQsHJD08tztkVm9xY7QWhbL
-	w1NAj6/nWf/K0w5yjwdPFGKS1pKJAORVQ867GmTCwKgGnOltfOliU6ngw722Iu7JZwE=
-X-Gm-Gg: ASbGnct4GYSrptrUgLO/Bfc3qaOikl2187gBOcrErn4gaYbvnIfxVMJ5yCZwNZu0rW7
-	EjQrwcMeedC8+/ZCiLBye+vqjOHk2RGTAA5MxoQ+sp9/vhbab0mgp8XXlWCF70uBpPO7/UJACMA
-	pCQDktVW8Dy9vrls7QJfjRFZblbClpYzt1SqqUo8dXi598MlCEA1IpU+c9zlriGP6MK3InzJeS2
-	cW7pCeM0Oik0CFjysI6xHj9eat6jNDx/aYgjg8VtI0x/lPjwcZcoLNpmU+y3P51+YFoSAwdyCTd
-	QaZFAHxxflPv+ItCciIjPuDL/xsdr6NPGbWgNWSGhefhjX0PIUK93ZJU5Ts6HCKPexNRk1GI2L9
-	LsWPx+GypGcQYcPxG6s6vZ44r3DtO7JQIRkVjRoJacHidKMQqjotgE1F/aaHvFsJTW4pFVB+bhl
-	dIhV4OL4tLz6RSCA==
-X-Google-Smtp-Source: AGHT+IHJe19Wgu6Lk1i0m6uGDAjX1Z5fu+nfTMxhKeWaemOIoa7wCp8aZhGxugUb/8NNh1qJMMkGNw==
-X-Received: by 2002:a05:6a20:7f9f:b0:343:72ff:af9b with SMTP id adf61e73a8af0-353a33532d9mr10298637637.41.1762755660784;
-        Sun, 09 Nov 2025 22:21:00 -0800 (PST)
-Received: from .shopee.com ([122.11.166.8])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7b0cc179f77sm10274534b3a.34.2025.11.09.22.20.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Nov 2025 22:21:00 -0800 (PST)
-From: Leon Huang Fu <leon.huangfu@shopee.com>
-To: inwardvessel@gmail.com
-Cc: akpm@linux-foundation.org,
-	cgroups@vger.kernel.org,
-	corbet@lwn.net,
-	hannes@cmpxchg.org,
-	jack@suse.cz,
-	joel.granados@kernel.org,
-	kyle.meyer@hpe.com,
-	lance.yang@linux.dev,
-	laoar.shao@gmail.com,
-	leon.huangfu@shopee.com,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	mclapinski@google.com,
-	mhocko@kernel.org,
-	muchun.song@linux.dev,
-	roman.gushchin@linux.dev,
-	shakeel.butt@linux.dev
-Subject: Re: [PATCH mm-new v2] mm/memcontrol: Flush stats when write stat file
-Date: Mon, 10 Nov 2025 14:20:53 +0800
-Message-ID: <20251110062053.83754-1-leon.huangfu@shopee.com>
-X-Mailer: git-send-email 2.51.2
-In-Reply-To: <37aa86c5-2659-4626-a80b-b3d07c2512c9@gmail.com>
-References: <37aa86c5-2659-4626-a80b-b3d07c2512c9@gmail.com>
+	s=arc-20240116; t=1762755983; c=relaxed/simple;
+	bh=nIzsOd/QzZdIzmfQ95EuRwsHBn8CkRY/XSv7X2cO2sA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jjO5VpPuWJAE703Hkj6hF5vjS6zENtpZEBLpINvFiotFAjYDZ1mJYGdrIowereA9iDiBmxf4m/C8f69Ijbgb6s6FTgW8ejQG0O97FqlzKBNz8b4AKqdYWX7g5Bwky7Ckd0nUNCcowZ705jyLYw+RSKGW58FETeh/egPvwQr4Zo8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GMH1vK7a; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB6C9C19421;
+	Mon, 10 Nov 2025 06:26:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762755982;
+	bh=nIzsOd/QzZdIzmfQ95EuRwsHBn8CkRY/XSv7X2cO2sA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GMH1vK7aSEtTI+tx/lXde7cWNMMNr1alGYm+tr0hLLbau2/dyDztYcjPztDCTegi+
+	 avO5q3O7g+MNrPdMAH6/0EIFTQYWczlQEFlKprIFO/4RyQtHzoNJXxX2mECpUNm7SA
+	 CwtCwggH6JjdbODlqKmswKwivBJHBf7oVQ6lBQFYmUP8Alva8qT8fUzVgAOeiKjFUl
+	 SQ3ER4LQ0ny5f5Y/qjsQIDb0JKsgzKTDbnXk1xu7wE+v8rXeeG+UV8ReQXhAtgKfTB
+	 ImaoTgDzpApv0AcNTessXOhyLv/k/w9HGngSNUEGeR3ibQ72paP6+ne2s0oD3GQk/8
+	 cTI46p/wGCdpg==
+Date: Mon, 10 Nov 2025 11:56:11 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: Sumit Kumar <sumit.kumar@oss.qualcomm.com>, 
+	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, Akhil Vinod <akhil.vinod@oss.qualcomm.com>, 
+	Subramanian Ananthanarayanan <subramanian.ananthanarayanan@oss.qualcomm.com>, linux-kernel@vger.kernel.org, mhi@lists.linux.dev, 
+	linux-arm-msm@vger.kernel.org, quic_vpernami@quicinc.com
+Subject: Re: [PATCH v2 1/3] bus: mhi: host: Add loopback driver with sysfs
+ interface
+Message-ID: <fae5pl3su5mul7qnaealqvsgq37m6hlj2ckabrbjj55dqrixxw@q2dbbuq7pikw>
+References: <20251104-loopback_mhi-v2-0-727a3fd9aa74@oss.qualcomm.com>
+ <20251104-loopback_mhi-v2-1-727a3fd9aa74@oss.qualcomm.com>
+ <g7yr3psfoyya76wvcgjs24xyyofgkllmdsvworjnfjgc3q3qeq@vjkxyh5oabkd>
+ <zkhtvquyhgvdqcft6s3jmfjh76hg62mrwn4wj4qqoecrxprq4y@w5zvgp5vbbn2>
+ <5pfglosaovwja7lgxmjc56jieo6whcugnmvh6krydzfpdynmqe@qfswxlfuvw4n>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <5pfglosaovwja7lgxmjc56jieo6whcugnmvh6krydzfpdynmqe@qfswxlfuvw4n>
 
-On Fri, Nov 7, 2025 at 1:02 AM JP Kobryn <inwardvessel@gmail.com> wrote:
->
-> On 11/4/25 11:49 PM, Leon Huang Fu wrote:
-> > On high-core count systems, memory cgroup statistics can become stale
-> > due to per-CPU caching and deferred aggregation. Monitoring tools and
-> > management applications sometimes need guaranteed up-to-date statistics
-> > at specific points in time to make accurate decisions.
-> >
-> > This patch adds write handlers to both memory.stat and memory.numa_stat
-> > files to allow userspace to explicitly force an immediate flush of
-> > memory statistics. When "1" is written to either file, it triggers
-> > __mem_cgroup_flush_stats(memcg, true), which unconditionally flushes
-> > all pending statistics for the cgroup and its descendants.
-> >
-> > The write operation validates the input and only accepts the value "1",
-> > returning -EINVAL for any other input.
-> >
-> > Usage example:
-> >    # Force immediate flush before reading critical statistics
-> >    echo 1 > /sys/fs/cgroup/mygroup/memory.stat
-> >    cat /sys/fs/cgroup/mygroup/memory.stat
-> >
-> > This provides several benefits:
-> >
-> > 1. On-demand accuracy: Tools can flush only when needed, avoiding
-> >     continuous overhead
-> >
-> > 2. Targeted flushing: Allows flushing specific cgroups when precision
-> >     is required for particular workloads
->
-> I'm curious about your use case. Since you mention required precision,
-> are you planning on manually flushing before every read?
->
+On Sun, Nov 09, 2025 at 10:00:26PM -0600, Bjorn Andersson wrote:
+> On Fri, Nov 07, 2025 at 05:58:18PM +0530, Manivannan Sadhasivam wrote:
+> > On Wed, Nov 05, 2025 at 04:17:41PM -0600, Bjorn Andersson wrote:
+> > > On Tue, Nov 04, 2025 at 11:09:05AM +0530, Sumit Kumar wrote:
+> > > > Add loopback driver for MHI host controllers that provides sysfs based
+> > >   ^--- Here would be e good place to explain why we want this driver. Per
+> > > https://docs.kernel.org/process/submitting-patches.html#describe-your-changes
+> > > start your commit message with a description of the problem you're
+> > > solving.
+> > > 
+> > > > testing interface for data path validation. The driver supports the
+> > > > "LOOPBACK" channel and offers configurable test parameters.
+> > > > 
+> > > > Sysfs interface provides:
+> > > > - size: Configure TRE size
+> > > > - num_tre: Set number of TREs for chained transfers
+> > > > - start: Initiate loopback test
+> > > > - status: Read test results
+> > > 
+> > > The words "loopback" and "testing" gives clear indications that this
+> > > should live in debugfs and not sysfs.
+> > > 
+> > 
+> > Though the wording gives an impression like that, this interface is for a MHI
+> > channel that is defined in the MHI spec, so it is perfectly fine to have it
+> > exposed as a sysfs interface to the users. This channel is intented to be used
+> > for MHI protocol testing.
+> > 
+> 
+> The fact that the protocol is defined in the specification doesn't imply
+> that it's intended to be used by the typical user.
+> 
+> Also, the specification defines the LOOPBACK channel, it doesn't define
+> an interface where the user can request that a certain number of packets
+> of random data is sent and if those come back we can learn about that
+> from a "results" file. Downstream has a completely different
+> implementation of the same specification.
+> 
+> I could imagine that at some point one would want extend this test
+> interface by altering the behavior of the packet generator, inject
+> timestamps etc - to measure raw throughput, latency, jitter etc. Good
+> reasons for not turning this into an ABI.
+> 
 
-Yes, for our use case, manual flushing before critical reads is necessary.
-We're going to run on high-core count servers (224-256 cores), where the
-per-CPU batching threshold (MEMCG_CHARGE_BATCH * num_online_cpus) can
-accumulate up to 16,384 events (on 256 cores) before an automatic flush is
-triggered. This means memory statistics can be likely stale, often exceeding
-acceptable tolerance for critical memory management decisions.
+I missed one important point while replying. This channel has an existing
+interface between the host and endpoint i.e., the MHI based WLAN and modems out
+there in the field already support an *interface* on top of this channel. We
+cannot control the interface unless we change the endpoint firmware (which is
+not feasible). And all the future extensions could only be possible if we could
+modify the endpoint fw.
 
-Our monitoring tools don't need to flush on every read - only when making
-critical decisions like OOM adjustments, container placement, or resource
-limit enforcement. The opt-in nature of this mechanism allows us to pay the
-flush cost only when precision is truly required.
+So for this specific reason, going by the sysfs ABI made sense to me. But to
+admit, this point was never mentioned in the cover letter or in the patch
+description and need to be fixed.
 
-> >
-> > 3. Integration flexibility: Monitoring scripts can decide when to pay
-> >     the flush cost based on their specific accuracy requirements
->
-> [...]
-> > diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> > index c34029e92bab..d6a5d872fbcb 100644
-> > --- a/mm/memcontrol.c
-> > +++ b/mm/memcontrol.c
-> > @@ -4531,6 +4531,17 @@ int memory_stat_show(struct seq_file *m, void *v)
-> >       return 0;
-> >   }
-> >
-> > +int memory_stat_write(struct cgroup_subsys_state *css, struct cftype *cft, u64 val)
-> > +{
-> > +     if (val != 1)
-> > +             return -EINVAL;
-> > +
-> > +     if (css)
-> > +             css_rstat_flush(css);
->
-> This is a kfunc. You can do this right now from a bpf program without
-> any kernel changes.
->
+I also asked the Qcom PCIe team to verify that this interface, just works with
+all kind of MHI devices if the devices support the LOOPBACK channel.
 
-While css_rstat_flush() is indeed available as a BPF kfunc, the practical
-challenge is determining when to call it. The natural hook point would be
-memory_stat_show() using fentry, but this runs into a BPF verifier
-limitation: the function's 'struct seq_file *' argument doesn't provide a
-trusted path to obtain the 'struct cgroup_subsys_state *css' pointer
-required by css_rstat_flush().
+> 
+> Thinking more about the use case, I also presume most MHI devices has a
+> LOOPBACK channel, so every user is going to have this .ko auto-loaded,
+> just so that they can poke sysfs to send some random data... So perhaps
+> we should omit MODULE_DEVICE_TABLE()?
+> 
 
-I attempted to implement this via BPF (code below), but it fails
-verification because deriving the css pointer through
-seq->private->kn->parent->priv results in an untrusted scalar that the
-verifier rejects for the kfunc call:
+I don't want to omit the MODULE_DEVICE_TABLE() since that will require users to
+load the driver manually to use it. If users do not want this interface, then
+they can always decide not to enable the driver while building the kernel :)
 
-    R1 invalid mem access 'scalar'
+- Mani
 
-The verifier error occurs because:
-1. seq->private is rdonly_untrusted_mem
-2. Dereferencing through kernfs_node internals produces untracked pointers
-3. css_rstat_flush() requires a trusted css pointer per its kfunc definition
-
-A direct userspace interface (memory.stat_refresh) avoids these verifier
-limitations and provides a cleaner, more maintainable solution that doesn't
-require BPF expertise or complex workarounds.
-
-Thanks,
-Leon
-
----
-
-
-#include "vmlinux.h"
-
-#include "bpf_helpers.h"
-#include "bpf_tracing.h"
-
-char _license[] SEC("license") = "GPL";
-
-extern void css_rstat_flush(struct cgroup_subsys_state *css) __weak __ksym;
-
-static inline struct cftype *of_cft(struct kernfs_open_file *of)
-{
-	return of->kn->priv;
-}
-
-struct cgroup_subsys_state *of_css(struct kernfs_open_file *of)
-{
-	struct cgroup *cgrp = of->kn->parent->priv;
-	struct cftype *cft = of_cft(of);
-
-	/*
-	 * This is open and unprotected implementation of cgroup_css().
-	 * seq_css() is only called from a kernfs file operation which has
-	 * an active reference on the file.  Because all the subsystem
-	 * files are drained before a css is disassociated with a cgroup,
-	 * the matching css from the cgroup's subsys table is guaranteed to
-	 * be and stay valid until the enclosing operation is complete.
-	 */
-	if (cft->ss)
-		return cgrp->subsys[cft->ss->id];
-	else
-		return &cgrp->self;
-}
-
-static inline struct cgroup_subsys_state *seq_css(struct seq_file *seq)
-{
-	return of_css(seq->private);
-}
-
-SEC("fentry/memory_stat_show")
-int BPF_PROG(memory_stat_show, struct seq_file *seq, void *v)
-{
-	struct cgroup_subsys_state *css = seq_css(seq);
-
-	if (css)
-		css_rstat_flush(css);
-
-	return 0;
-}
+-- 
+மணிவண்ணன் சதாசிவம்
 
