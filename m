@@ -1,121 +1,303 @@
-Return-Path: <linux-kernel+bounces-894340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C322C49CA4
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 00:39:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B467C49C89
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 00:39:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 65C394EF4A0
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 23:38:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA82D188C33E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 23:39:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF9382FE568;
-	Mon, 10 Nov 2025 23:38:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE8CB3019D8;
+	Mon, 10 Nov 2025 23:38:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UvXUmJ7x"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="TMHd2hFq"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAAEA21B196
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 23:38:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6840821B196;
+	Mon, 10 Nov 2025 23:38:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762817920; cv=none; b=swYdjjAnVTpe/UqSZouBz6k076hQIkpdLhgVwoP/x9VrTAQBrazw22qTqEwbw4syLnFhvgVtMS6XHTKPRJnVAGMaaAVbM3Nmpd+Tfm8XG+Y4NJWyl+KQYyLT9Vb1rHI4JwXuR7duPDu2SEuRqMSUkub0hQ17LODL/guuy6I/LIQ=
+	t=1762817931; cv=none; b=gki2rwmjgGUez8+9u7hhrgCyQRn09InCkVnuq9TR8DOnTtWlfHgOjEkMPpwJszZlpCQVZcHpJyqji7DwdIxc3hk/ex9i9FKhG4F9cvAHoIJkt49Zx6wl+zNxtkNY8OUO5a1MoTm3a5hEiBtPyOwNcI2gkH4BQvLd8/locAtPVEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762817920; c=relaxed/simple;
-	bh=1BkOzUxSSedtqRPqjCFUt6WI3IiHiKYSTgbLQupojII=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FsMYxvIC6WhWbgHSLjkt70ZzejNXYCECkQzP8Zmrc+ZR+VS/NmglnGPypW4g67rbXtOyzrTn8vxkTRg3hGk3uByqntdjFyJLuz0D24vnpj9WkaI4eVwTDXYaCfHfinudMFGhqkun1yXnKODXZRHBwbc6oWgJsRZioblGYJfJc0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UvXUmJ7x; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-29586626fbeso32133195ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 15:38:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762817918; x=1763422718; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1BkOzUxSSedtqRPqjCFUt6WI3IiHiKYSTgbLQupojII=;
-        b=UvXUmJ7x3TFDhikIkdX2moxHG3ubtVqkOYHeXcup9fwnhrc4lB8/rMriAn6mOrtI4Q
-         13Pqd3Hin19usfl32931uRDBiMUvdPMiXmyWoNuIGdKlmSKQ1DtgWvZ/3YIs7bM7fidx
-         hXn0ywaqTTAi/07hxvy4dcCEETtYTnDVJr72bCs7X9YABlBvx8O9pp/Jv/69qbhchG+w
-         1QjFrYj8BOW+3oEJQuqV973M/4dQ2vNWXdDGelvcEZbCWvkvcBrYzc/S9xErzv542kTD
-         O0OPp8DxptsT2ualHN8NZlEr2B7grg1Ogq8jx+UlGlY61+BkOVVeq/rWQ4CdXI+ieQtJ
-         vtMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762817918; x=1763422718;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1BkOzUxSSedtqRPqjCFUt6WI3IiHiKYSTgbLQupojII=;
-        b=MPzU4K01HPbthwiEG7qXIOmqIxd6U+qCe1Y9wXCA84ZU/ZGCffnrpiUQmNiK72J0ok
-         BPZO1ft3HAktoOGpl8moga553Ow5ZY84DoSWJqKIc3gao0HX7pDJPHfklHzCx95kqB30
-         FTlSrW25Om5dsoFxtUpgo6ONFtGmhL0hBkTmAWnXDhB4iVNv47AXeEd36dNr4uZyWS8S
-         Wp74CDd+/uGTZphawgzEzMRMQHFQYIghvCSFMbrHgdrieqwFvciuF+eNhsT+5In1+5s6
-         2BrVJ8DamMyi5xmnFBeNHc0CjLi9pXzIdqtpqa4wuJaWNMbR7gU0sMeuCiZ54H+p2res
-         UgSQ==
-X-Gm-Message-State: AOJu0Yx9Ldk5qkQFLAMbbvuJaBHzTxb6a1YAJVlTfRnC0/1z/PeuQdHu
-	/0LJrKM7gqIR42+TlKBHffZBFT7pBk5MqN20bZSdC0IIW9nWxyVxCFod
-X-Gm-Gg: ASbGncs4nALiciwcDovzd01dNGhSdCkz+boUSwOcYGs/XMHNLIjD/JuSMF2DTTFbToR
-	EkiPd2zr9FWeRmUoldnAQ7MJVyVIYWN1NoGDHbiDrFY0wYUEiahcVmgG2+PM33/odrW6PUi/lZK
-	smTt/XQTmiDEv91vYMCrVDvKYmg6SKEtrFcIsfHxbQ8B5B1bhBFokKwGvK+SW+TihNP0BtfHYyp
-	FNzhRPB7wiLgu+TvxcGxB0xthDkq4MZ8D9lkFqLx0mtr12yu2dTghP/FU8KbpBSGY1C0wHe1cxA
-	SUDbx0OR17OO4IT8B0IG1k+N4ZV+amVmMPpXBatNHXWEzaXZDYqXaVjzOp1k2bz55oA0aaCywv6
-	n40lXPiMHdWC2LYXKm7qBbmtBGUYVUm+yBmAH5fWEPM61ngOm/L+Q+jQpL9wlKjJgPa80kzdCAH
-	fw
-X-Google-Smtp-Source: AGHT+IEi4+N5BDziRzYZppfNwadzwEcVAGlfkTK26ZrdelRRWzwfF3onPDRQ6fnIWoeut03gtLxsdA==
-X-Received: by 2002:a17:903:3387:b0:295:4d97:84fc with SMTP id d9443c01a7336-297e56be1eamr90395435ad.32.1762817918122;
-        Mon, 10 Nov 2025 15:38:38 -0800 (PST)
-Received: from archie.me ([210.87.74.117])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-297f2d9c971sm78403165ad.55.2025.11.10.15.38.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Nov 2025 15:38:36 -0800 (PST)
-Received: by archie.me (Postfix, from userid 1000)
-	id 7C0B741D950E; Tue, 11 Nov 2025 06:38:34 +0700 (WIB)
-Date: Tue, 11 Nov 2025 06:38:34 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Documentation <linux-doc@vger.kernel.org>,
-	openipmi-developer@lists.sourceforge.net
-Cc: Corey Minyard <corey@minyard.net>, Jonathan Corbet <corbet@lwn.net>,
-	Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH] Documentation: ipmb: Indent boot time loading steps
-Message-ID: <aRJ3ehfBJRWrWXzm@archie.me>
-References: <20251105125449.45643-1-bagasdotme@gmail.com>
+	s=arc-20240116; t=1762817931; c=relaxed/simple;
+	bh=sR43zrzrdmlvoBwZ64SsCIgT5y5AVagDKmg9rPhaoxU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Z2IoC4s+PIug6fAQcpn/q82ZZ3Rw9rkw8f2MEX3J+lSlWEeZB5XIqXC6sQN/bXSVfToiYY+k1lNNx27xlVHo5TDYbz8iPgCd+6dtMURJf/v5r3l+9xGQWEFbukrsSKbb9yQ8quEc4u4s93GWXfPjkuuU9iVGGLM1+PJbwF2bryE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=TMHd2hFq; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1762817918;
+	bh=9+n8g7Oe9NC8CoA1EbspLz1bfjTzk0COygqpR6OrGWs=;
+	h=Date:From:To:Cc:Subject:From;
+	b=TMHd2hFqVdpC/DVSfVnmat3/dUC/bZpxo/YLMSqzt8eDSwy8vSXtk21YTg1EtQfPR
+	 Bk4jMUcDeWFAEoGfaJZ44scMuTI+g3KJzqfFwawOg+RLiJLwK2HzP2S6s6VC00d0G6
+	 quRPFMV981VFgGjyGLlIPIFc9zLDBcYLbVhEV8Y4hEKPZNzcRYFmmYJwqKvGRKnCJz
+	 F/ci82lOtwUXf4Ph9EL4DABe+Dzk/qTDjJDwgONeFv6XOkFvJkJQmcNM2VMQek7oV8
+	 7KPH6nBY1k0GvOvJulpJcaU3WZasvc/+JO+tLlgoiyg95ew9E7Biq7GHUsya8+ngGA
+	 lih91MUZpr1dg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4d55hZ4kggz4wBD;
+	Tue, 11 Nov 2025 10:38:38 +1100 (AEDT)
+Date: Tue, 11 Nov 2025 10:38:37 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Christian Brauner <brauner@kernel.org>, Anna Schumaker
+ <anna@kernel.org>, Trond Myklebust <trondmy@gmail.com>
+Cc: Anna Schumaker <anna.schumaker@oracle.com>, Mike Snitzer
+ <snitzer@kernel.org>, NFS Mailing List <linux-nfs@vger.kernel.org>, Linux
+ Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the vfs-brauner tree with the nfs-anna
+ tree
+Message-ID: <20251111103837.0ecdf26d@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Mv2ump0qL64iQ07O"
-Content-Disposition: inline
-In-Reply-To: <20251105125449.45643-1-bagasdotme@gmail.com>
+Content-Type: multipart/signed; boundary="Sig_/TDV1KL+3TQeTorugdiyX=w5";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
+--Sig_/TDV1KL+3TQeTorugdiyX=w5
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
---Mv2ump0qL64iQ07O
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Hi all,
 
-On Wed, Nov 05, 2025 at 07:54:49PM +0700, Bagas Sanjaya wrote:
-> Steps for loading IPMB driver at boot time, written as enumerated
-> sublist, is indented instead on the same level as its parent list.
-> Indent them as appropriate.
+Today's linux-next merge of the vfs-brauner tree got a conflict in:
 
-review ping
+  fs/nfs/localio.c
 
---Mv2ump0qL64iQ07O
-Content-Type: application/pgp-signature; name=signature.asc
+between commits:
+
+  51a491f2708d ("nfs/localio: remove unecessary ENOTBLK handling in DIO WRI=
+TE support")
+  f2060bdc21d7 ("nfs/localio: add refcounting for each iocb IO associated w=
+ith NFS pgio header")
+  d0497dd27452 ("nfs/localio: backfill missing partial read support for mis=
+aligned DIO")
+  6a218b9c3183 ("nfs/localio: do not issue misaligned DIO out-of-order")
+
+from the nfs-anna tree and commit:
+
+  94afb627dfc2 ("nfs: use credential guards in nfs_local_call_read()")
+
+from the vfs-brauner tree.
+
+I fixed it up (I think - see below) and can carry the fix as
+necessary. This is now fixed as far as linux-next is concerned, but any
+non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc fs/nfs/localio.c
+index 656976b4f42c,0c89a9d1e089..000000000000
+--- a/fs/nfs/localio.c
++++ b/fs/nfs/localio.c
+@@@ -620,37 -595,30 +620,34 @@@ static void nfs_local_call_read(struct=20
+  	struct nfs_local_kiocb *iocb =3D
+  		container_of(work, struct nfs_local_kiocb, work);
+  	struct file *filp =3D iocb->kiocb.ki_filp;
+- 	const struct cred *save_cred;
+ +	bool force_done =3D false;
+  	ssize_t status;
+ +	int n_iters;
+ =20
+- 	save_cred =3D override_creds(filp->f_cred);
++ 	scoped_with_creds(filp->f_cred) {
+ -		for (int i =3D 0; i < iocb->n_iters ; i++) {
+++		n_iters =3D atomic_read(&iocb->n_iters);
+++		for (int i =3D 0; i < n_iters ; i++) {
++ 			if (iocb->iter_is_dio_aligned[i]) {
++ 				iocb->kiocb.ki_flags |=3D IOCB_DIRECT;
+ -				iocb->kiocb.ki_complete =3D nfs_local_read_aio_complete;
+ -				iocb->aio_complete_work =3D nfs_local_read_aio_complete_work;
+ -			}
+++				/* Only use AIO completion if DIO-aligned segment is last */
+++				if (i =3D=3D iocb->end_iter_index) {
+++					iocb->kiocb.ki_complete =3D nfs_local_read_aio_complete;
+++					iocb->aio_complete_work =3D nfs_local_read_aio_complete_work;
+++				}
+++			} else
+++				iocb->kiocb.ki_flags &=3D ~IOCB_DIRECT;
+ =20
+- 	n_iters =3D atomic_read(&iocb->n_iters);
+- 	for (int i =3D 0; i < n_iters ; i++) {
+- 		if (iocb->iter_is_dio_aligned[i]) {
+- 			iocb->kiocb.ki_flags |=3D IOCB_DIRECT;
+- 			/* Only use AIO completion if DIO-aligned segment is last */
+- 			if (i =3D=3D iocb->end_iter_index) {
+- 				iocb->kiocb.ki_complete =3D nfs_local_read_aio_complete;
+- 				iocb->aio_complete_work =3D nfs_local_read_aio_complete_work;
+- 			}
+- 		} else
+- 			iocb->kiocb.ki_flags &=3D ~IOCB_DIRECT;
+-=20
+- 		status =3D filp->f_op->read_iter(&iocb->kiocb, &iocb->iters[i]);
+- 		if (status !=3D -EIOCBQUEUED) {
+- 			if (unlikely(status >=3D 0 && status < iocb->iters[i].count))
+- 				force_done =3D true; /* Partial read */
+- 			if (nfs_local_pgio_done(iocb, status, force_done)) {
+- 				nfs_local_read_iocb_done(iocb);
+- 				break;
+ -			iocb->kiocb.ki_pos =3D iocb->offset[i];
++ 			status =3D filp->f_op->read_iter(&iocb->kiocb, &iocb->iters[i]);
++ 			if (status !=3D -EIOCBQUEUED) {
+ -				nfs_local_pgio_done(iocb->hdr, status);
+ -				if (iocb->hdr->task.tk_status)
+++				if (unlikely(status >=3D 0 && status < iocb->iters[i].count))
+++					force_done =3D true; /* Partial read */
+++				if (nfs_local_pgio_done(iocb, status, force_done)) {
+++					nfs_local_read_iocb_done(iocb);
++ 					break;
+++				}
+  			}
+  		}
+  	}
+--
+- 	revert_creds(save_cred);
+ -	if (status !=3D -EIOCBQUEUED) {
+ -		nfs_local_read_done(iocb, status);
+ -		nfs_local_pgio_release(iocb);
+ -	}
+  }
+ =20
+  static int
+@@@ -820,47 -781,78 +817,55 @@@ static void nfs_local_write_aio_complet
+  	nfs_local_pgio_aio_complete(iocb); /* Calls nfs_local_write_aio_complete=
+_work */
+  }
+ =20
+- static void nfs_local_call_write(struct work_struct *work)
++ static ssize_t do_nfs_local_call_write(struct nfs_local_kiocb *iocb,
++ 				       struct file *filp)
+  {
+- 	struct nfs_local_kiocb *iocb =3D
+- 		container_of(work, struct nfs_local_kiocb, work);
+- 	struct file *filp =3D iocb->kiocb.ki_filp;
+- 	unsigned long old_flags =3D current->flags;
+- 	const struct cred *save_cred;
+ +	bool force_done =3D false;
+  	ssize_t status;
+ +	int n_iters;
+ =20
+- 	current->flags |=3D PF_LOCAL_THROTTLE | PF_MEMALLOC_NOIO;
+- 	save_cred =3D override_creds(filp->f_cred);
+-=20
+  	file_start_write(filp);
+ -	for (int i =3D 0; i < iocb->n_iters ; i++) {
+ +	n_iters =3D atomic_read(&iocb->n_iters);
+ +	for (int i =3D 0; i < n_iters ; i++) {
+  		if (iocb->iter_is_dio_aligned[i]) {
+  			iocb->kiocb.ki_flags |=3D IOCB_DIRECT;
+ -			iocb->kiocb.ki_complete =3D nfs_local_write_aio_complete;
+ -			iocb->aio_complete_work =3D nfs_local_write_aio_complete_work;
+ -		}
+ -retry:
+ -		iocb->kiocb.ki_pos =3D iocb->offset[i];
+ +			/* Only use AIO completion if DIO-aligned segment is last */
+ +			if (i =3D=3D iocb->end_iter_index) {
+ +				iocb->kiocb.ki_complete =3D nfs_local_write_aio_complete;
+ +				iocb->aio_complete_work =3D nfs_local_write_aio_complete_work;
+ +			}
+ +		} else
+ +			iocb->kiocb.ki_flags &=3D ~IOCB_DIRECT;
+ +
+  		status =3D filp->f_op->write_iter(&iocb->kiocb, &iocb->iters[i]);
+  		if (status !=3D -EIOCBQUEUED) {
+ -			if (unlikely(status >=3D 0 && status < iocb->iters[i].count)) {
+ -				/* partial write */
+ -				if (i =3D=3D iocb->end_iter_index) {
+ -					/* Must not account partial end, otherwise, due
+ -					 * to end being issued before middle: the partial
+ -					 * write accounting in nfs_local_write_done()
+ -					 * would incorrectly advance hdr->args.offset
+ -					 */
+ -					status =3D 0;
+ -				} else {
+ -					/* Partial write at start or buffered middle,
+ -					 * exit early.
+ -					 */
+ -					nfs_local_pgio_done(iocb->hdr, status);
+ -					break;
+ -				}
+ -			} else if (unlikely(status =3D=3D -ENOTBLK &&
+ -					    (iocb->kiocb.ki_flags & IOCB_DIRECT))) {
+ -				/* VFS will return -ENOTBLK if DIO WRITE fails to
+ -				 * invalidate the page cache. Retry using buffered IO.
+ -				 */
+ -				iocb->kiocb.ki_flags &=3D ~IOCB_DIRECT;
+ -				iocb->kiocb.ki_complete =3D NULL;
+ -				iocb->aio_complete_work =3D NULL;
+ -				goto retry;
+ -			}
+ -			nfs_local_pgio_done(iocb->hdr, status);
+ -			if (iocb->hdr->task.tk_status)
+ +			if (unlikely(status >=3D 0 && status < iocb->iters[i].count))
+ +				force_done =3D true; /* Partial write */
+ +			if (nfs_local_pgio_done(iocb, status, force_done)) {
+ +				nfs_local_write_iocb_done(iocb);
+  				break;
+ +			}
+  		}
+  	}
+  	file_end_write(filp);
+ =20
+- 	revert_creds(save_cred);
++ 	return status;
++ }
++=20
++ static void nfs_local_call_write(struct work_struct *work)
++ {
++ 	struct nfs_local_kiocb *iocb =3D
++ 		container_of(work, struct nfs_local_kiocb, work);
++ 	struct file *filp =3D iocb->kiocb.ki_filp;
++ 	unsigned long old_flags =3D current->flags;
++ 	ssize_t status;
++=20
++ 	current->flags |=3D PF_LOCAL_THROTTLE | PF_MEMALLOC_NOIO;
++=20
++ 	scoped_with_creds(filp->f_cred)
++ 		status =3D do_nfs_local_call_write(iocb, filp);
++=20
+  	current->flags =3D old_flags;
+ -
+ -	if (status !=3D -EIOCBQUEUED) {
+ -		nfs_local_write_done(iocb, status);
+ -		nfs_local_vfs_getattr(iocb);
+ -		nfs_local_pgio_release(iocb);
+ -	}
+  }
+ =20
+  static int
+
+--Sig_/TDV1KL+3TQeTorugdiyX=w5
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaRJ3dAAKCRD2uYlJVVFO
-ozgtAP9FBSCB6sCH2m2OzgdgvYFnDNhf4q8lD0YGD0CZMa798AD+Oa5ZvTB46NoN
-+wJXKtedF9+doRDFvq87lIIDuxXTsAM=
-=iucy
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmkSd30ACgkQAVBC80lX
+0GwQ8Qf+JNBhJW3HHY9s99XWPThbcmK/3t6eMDCUnS9dUKhIyD0jTAkoe2ugAX+o
+EEaAycevgrLcaUDWjXFN8kak3CARIfgZbLUDmoH5pL9oL5KfeQxSP6RO+Pb9C32h
+srguHNv0E8KJglMpFXxwtFJN9npR2Ce+FudgfdouseCFKxLP26VLd/EpsDDaiXbu
+y9shhSUD8Fyq3RtUbWp7wr5gF+mQz/+7LTlpp7LW/YFs9depCeMg9I0t9dErzUue
+fJz9VB9wACvrIcBplZMbGxpy3yf9u4ap0tz6jDa6jqK3dQTPHE1ok6lgOGnE5Aw6
+gtvGRLgzEeqN5tlEtQJmgGKSHrRTaw==
+=4z7x
 -----END PGP SIGNATURE-----
 
---Mv2ump0qL64iQ07O--
+--Sig_/TDV1KL+3TQeTorugdiyX=w5--
 
