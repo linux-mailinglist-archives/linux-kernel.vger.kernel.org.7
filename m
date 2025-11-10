@@ -1,125 +1,111 @@
-Return-Path: <linux-kernel+bounces-892279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 330A3C44C14
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 03:07:55 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F8B7C44C2D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 03:12:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D14B3AFBF1
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 02:07:52 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 669E44E43E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 02:12:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87F8D23ABA1;
-	Mon, 10 Nov 2025 02:07:43 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EA2622B5AD;
+	Mon, 10 Nov 2025 02:12:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="HlIGB8AS"
+Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCBD02747B;
-	Mon, 10 Nov 2025 02:07:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F7B842AA9;
+	Mon, 10 Nov 2025 02:12:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762740463; cv=none; b=jZwfWyZvd0mAmDRRMqwKYwIQtP3/y13UNDX/ZISkx/2lAs6o01UklhtY87nhVcrYctcBPf0HjpKT51yHboNPRdiLdpFErpgUihRYDXWKdF1MwfHM/frM99F1MA+Vt4rRkwLqf8tXwtQ6JxbDNmn54TbfuSM/ji6J22HIcxklYmQ=
+	t=1762740730; cv=none; b=dvy47Of0L0IC50GNdTocn3ic0RmDcpQdGubmpiicnQ1lKgDBMeU9fpo6pqqlsFGo3KmQs+EnPiaDGIBxWR+lgShckPWKeryYEAnwq8i6P/YAXKK7dMMyQMxrbEvQ4O6WCJ5GLx+CusGnjNvNap1gZ+T4m8J46CzdHllKrrN+S34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762740463; c=relaxed/simple;
-	bh=X2I1F/yDa7DktzrVXLN/G9326ra+lTHr8o2fcN0+B6w=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=pkoVKAfgtFxNPptRLMKsn3SRs/g0symxZoir6b8mkW7+hLl7jJwhygpAGK+l7ccrpENM1+dtGWGI25IntovyqdLKvYM2sJMNJbOBymlTt2zd3oCnJiOqPdEL0D4KQZRZ5EDdO+XYPswZ7fjnB3j3gj6gxqkB7F6DHVB6GBmHcCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4d4Y2Z4K56zKHMWF;
-	Mon, 10 Nov 2025 10:07:18 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 8E22C1A084D;
-	Mon, 10 Nov 2025 10:07:32 +0800 (CST)
-Received: from hulk-vt.huawei.com (unknown [10.67.174.121])
-	by APP1 (Coremail) with SMTP id cCh0CgBXkUrUSBFpPBDaAA--.6382S5;
-	Mon, 10 Nov 2025 10:07:32 +0800 (CST)
-From: Chen Ridong <chenridong@huaweicloud.com>
-To: longman@redhat.com,
-	tj@kernel.org,
-	hannes@cmpxchg.org,
-	mkoutny@suse.com
-Cc: cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lujialin4@huawei.com,
-	chenridong@huawei.com
-Subject: [PATCH -next 3/3] cpuset: remove need_rebuild_sched_domains
-Date: Mon, 10 Nov 2025 01:52:28 +0000
-Message-Id: <20251110015228.897736-4-chenridong@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251110015228.897736-1-chenridong@huaweicloud.com>
-References: <20251110015228.897736-1-chenridong@huaweicloud.com>
+	s=arc-20240116; t=1762740730; c=relaxed/simple;
+	bh=VY1Aa2jKWQ8DhbaDGiVvCPYd4OpwjppIHA7NyUmGw5k=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=OO1MvWEe5Jg21D+1cf3+3WIqLQ758eXF6WBhdeibgG3ZE4jDkD05kxoyiTxvGyzd95i4epUckbaIyQSNWylWAVpjsUqlyUEyk04VVN5/9TacQbf9by5EzdurlLdzjms8WPIIDB2z7NQwF5VCTKzg4POjbfdrM2bfzbsZFO2siPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=HlIGB8AS; arc=none smtp.client-ip=115.124.30.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1762740719; h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	bh=h2Vc1MCnbF/ttJ2+MkLrZKM08vvpbJ9pspqnCXu4l4I=;
+	b=HlIGB8ASJ7rHoXQy+eClzh/5fVjhWG/ekEp04HGdmN4Wn1q7QZEeRs3cEXkUdKqMgyYtw8yY+5tnAM8mYMpjpyrK2HMJAK0K2XODOPNwrSqRa/QDWbO+D0hF33GE3eN5DwxIW+PkaDCTo0T2496IahGVIQLm2BFllWKXfI+rX8M=
+Received: from DESKTOP-5N7EMDA(mailfrom:ying.huang@linux.alibaba.com fp:SMTPD_---0Wrz7d2o_1762739770 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Mon, 10 Nov 2025 09:56:19 +0800
+From: "Huang, Ying" <ying.huang@linux.alibaba.com>
+To: Kairui Song via B4 Relay <devnull+kasong.tencent.com@kernel.org>
+Cc: linux-mm@kvack.org,  kasong@tencent.com,  Andrew Morton
+ <akpm@linux-foundation.org>,  Kemeng Shi <shikemeng@huaweicloud.com>,
+  Nhat Pham <nphamcs@gmail.com>,  Baoquan He <bhe@redhat.com>,  Barry Song
+ <baohua@kernel.org>,  Chris Li <chrisl@kernel.org>,  Johannes Weiner
+ <hannes@cmpxchg.org>,  Yosry Ahmed <yosry.ahmed@linux.dev>,  Chengming
+ Zhou <chengming.zhou@linux.dev>,  Youngjun Park <youngjun.park@lge.com>,
+  Kairui Song <ryncsn@gmail.com>,  linux-kernel@vger.kernel.org,
+  stable@vger.kernel.org, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Subject: Re: [PATCH] Revert "mm, swap: avoid redundant swap device pinning"
+In-Reply-To: <20251110-revert-78524b05f1a3-v1-1-88313f2b9b20@tencent.com>
+	(Kairui Song via's message of "Mon, 10 Nov 2025 02:06:03 +0800")
+References: <20251110-revert-78524b05f1a3-v1-1-88313f2b9b20@tencent.com>
+Date: Mon, 10 Nov 2025 09:56:09 +0800
+Message-ID: <875xbiodl2.fsf@DESKTOP-5N7EMDA>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgBXkUrUSBFpPBDaAA--.6382S5
-X-Coremail-Antispam: 1UD129KBjvJXoW7KrW5tryDGw47ZF4xWF4fAFb_yoW8Jw48pF
-	1kua1jq3yjqr1Uuw4DAa9rur93Ka9Fvasrt3s8G3s2qF17K3W2g3Wjg3W3Jr9a9rn7uF13
-	AFsFk3y2qF1jyrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Kb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUWw
-	A2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
-	w2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
-	W8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMc
-	Ij6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_
-	Jr0_Gr1lF7xvr2IYc2Ij64vIr41lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vIr4
-	1l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK
-	67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI
-	8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAv
-	wI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14
-	v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUrbyCDUUUU
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+Content-Type: text/plain; charset=ascii
 
-From: Chen Ridong <chenridong@huawei.com>
+Hi, Kairui,
 
-Previously, update_cpumasks_hier() used need_rebuild_sched_domains to
-decide whether to invoke rebuild_sched_domains_locked(). Now that
-rebuild_sched_domains_locked() only sets force_rebuild, the flag is
-redundant. Hence, remove it.
+Kairui Song via B4 Relay <devnull+kasong.tencent.com@kernel.org> writes:
 
-Signed-off-by: Chen Ridong <chenridong@huawei.com>
+> From: Kairui Song <kasong@tencent.com>
+>
+> This reverts commit 78524b05f1a3e16a5d00cc9c6259c41a9d6003ce.
+>
+> While reviewing recent leaf entry changes, I noticed that commit
+> 78524b05f1a3 ("mm, swap: avoid redundant swap device pinning") isn't
+> correct. It's true that most all callers of __read_swap_cache_async are
+> already holding a swap entry reference, so the repeated swap device
+> pinning isn't needed on the same swap device, but it is possible that
+> VMA readahead (swap_vma_readahead()) may encounter swap entries from a
+> different swap device when there are multiple swap devices, and call
+> __read_swap_cache_async without holding a reference to that swap device.
+>
+> So it is possible to cause a UAF if swapoff of device A raced with
+> swapin on device B, and VMA readahead tries to read swap entries from
+> device A. It's not easy to trigger but in theory possible to cause real
+> issues. And besides, that commit made swap more vulnerable to issues
+> like corrupted page tables.
+>
+> Just revert it. __read_swap_cache_async isn't that sensitive to
+> performance after all, as it's mostly used for SSD/HDD swap devices with
+> readahead. SYNCHRONOUS_IO devices may fallback onto it for swap count >
+> 1 entries, but very soon we will have a new helper and routine for
+> such devices, so they will never touch this helper or have redundant
+> swap device reference overhead.
+
+Is it better to add get_swap_device() in swap_vma_readahead()?  Whenever
+we get a swap entry, the first thing we need to do is call
+get_swap_device() to check the validity of the swap entry and prevent
+the backing swap device from going under us.  This helps us to avoid
+checking the validity of the swap entry in every swap function.  Does
+this sound reasonable?
+
+> Fixes: 78524b05f1a3 ("mm, swap: avoid redundant swap device pinning")
+> Signed-off-by: Kairui Song <kasong@tencent.com>
+
+[snip]
+
 ---
- kernel/cgroup/cpuset.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
-
-diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index c357bfb69fe2..22084d8bdc3f 100644
---- a/kernel/cgroup/cpuset.c
-+++ b/kernel/cgroup/cpuset.c
-@@ -2184,7 +2184,6 @@ static void update_cpumasks_hier(struct cpuset *cs, struct tmpmasks *tmp,
- {
- 	struct cpuset *cp;
- 	struct cgroup_subsys_state *pos_css;
--	bool need_rebuild_sched_domains = false;
- 	int old_prs, new_prs;
- 
- 	rcu_read_lock();
-@@ -2348,15 +2347,12 @@ static void update_cpumasks_hier(struct cpuset *cs, struct tmpmasks *tmp,
- 		if (!cpumask_empty(cp->cpus_allowed) &&
- 		    is_sched_load_balance(cp) &&
- 		   (!cpuset_v2() || is_partition_valid(cp)))
--			need_rebuild_sched_domains = true;
-+			cpuset_force_rebuild();
- 
- 		rcu_read_lock();
- 		css_put(&cp->css);
- 	}
- 	rcu_read_unlock();
--
--	if (need_rebuild_sched_domains)
--		cpuset_force_rebuild();
- }
- 
- /**
--- 
-2.34.1
-
+Best Regards,
+Huang, Ying
 
