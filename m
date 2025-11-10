@@ -1,76 +1,210 @@
-Return-Path: <linux-kernel+bounces-892982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46B04C46440
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:30:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C732C4645D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:31:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05E8E3A52EA
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:30:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E71E03BA5B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:31:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8940D3081CD;
-	Mon, 10 Nov 2025 11:30:21 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BEF130BB94;
+	Mon, 10 Nov 2025 11:30:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="vdlF668r";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="+l21lIjW";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="vdlF668r";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="+l21lIjW"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C3AE19ADBA
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 11:30:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E33330C348
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 11:30:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762774221; cv=none; b=UGTb295mHo1Tw0Fevq0yz9gbl9Jlze6op2cqhoVyvAe3xKAL6AQFeVIn7MPPDZTX1Rqz1x8WGsM/cSd1wFPrqlpyLz+dpYUC8FccsW0QKXMhkQ1yc9I8oZmygxyuHmxUWLPl8UHPTlzu4N4qFUcFPhfelYUO7ohwvlkLR01inJk=
+	t=1762774253; cv=none; b=lWNZaIRRPiuR2Spjmx9ZQs6iT6aW0VS2pENGpiXC8Hyva7nI5PmY+d9/CAAciZ5/GP50kkp53ijEWian2g3VlpsYp0kWu3hGJoT1kdhj4yyKQ3hhIhi22Q4ib+Ir1rh5MggNAbAhf5IdpuZbVSJYKpxU/H++sr+rnc398xXlfes=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762774221; c=relaxed/simple;
-	bh=MEEeUMT83wOSlf68SlJW/AhbsEbzcApqyXOX0Fpyln0=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=rDLBDQum2/FiZK4MucaDjgNw7I0hJThQQmDMptkRlT//q6zQDD1E5e0msjGpEHGvBCoeiGNeQsgmxTdGWhwqPNsH91wwQqu0cvaGe9C6auyxn2y6z+iVTWIyXEDHRts1Pk9zvRapwQvU6A37XHeqJAk6Z46ilDLI7+xzF/9/20k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-945c705df24so253988039f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 03:30:18 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762774218; x=1763379018;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MEEeUMT83wOSlf68SlJW/AhbsEbzcApqyXOX0Fpyln0=;
-        b=sN9ZjHgzUhv+oqe10S96KfoIagcZa6SeoZT2qsUNJW4Lf6zSWtHZUvIrBghc7ZfJHs
-         wHxBTDHyEIcwBvmpN4xtnnwBoIiXEkwDbMViCbI1Ih1067gw4AMUDX1ZZPcU324i/zSs
-         3Wb6EwexqU1sCjvrBPKuMQc14m8Gnt4Cl7OKYmkQCrnlH4zDxj8hTXpheISCz4mLRrCR
-         MVVaI4pHBAEeALOJfH0F06T7tEggefLk5Sk3hBAs4YIeU37OGe/y1GlviwAui6S7Oy55
-         pTY2Vscs6E/Cq/leWrQaU7iyukbnuiOn331uqm+W1Xup/d8g+Zohtw75fR7NxrQ7BDgM
-         +BFQ==
-X-Gm-Message-State: AOJu0YyG0jRY5+csNk+QNhf9WYWqOCqPkF/hoDvXkAfinfFeulD+f06y
-	LAJZpUv20GXK6Zch/YzVqToBEJTWZIgmIId+5Qp/pUVziJeUTH/DiNN6Vv0nM5I747cQvxJR2/3
-	6Z1kUJyFaPiZWzE810LMF7ifrAGM15V8IPCrgJtMK+w72V8tqQbBxO+qbPzE=
-X-Google-Smtp-Source: AGHT+IEag/u+DM0tvnQ5OFU34OXnvKeNCpo4S1dH5naA2HpNIWTubDUWo0sjK5OjhySlwuO6T2OOST1/pzdJ2XnU/OaPitoyL+yT
+	s=arc-20240116; t=1762774253; c=relaxed/simple;
+	bh=OoCAVZI0ODO0xjNB4eMphg5EnwxHAzR51SdjYdc6spg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m4YCuOxwf/E4Ug1h6/mewODFX/4HEwP5lsxf1C56G8y1x02dO2ZvS5JnxMgUfnWf+kVbjFO+y92EDpQz26JcPUd/Foi9GRhMKICA5/uOymydmyiRpCO5lPAYLvp3q4GHHnZWKZ74cSoGNd8nrjZAPiM6LD+z1nwGOrfEs/795QA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=vdlF668r; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=+l21lIjW; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=vdlF668r; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=+l21lIjW; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id A33661F445;
+	Mon, 10 Nov 2025 11:30:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762774248; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pxS0+Y+8aWU+WXGUz5FS1LZd+SzhEBie98VixeoLL1Y=;
+	b=vdlF668rSvDWzW8jhD0I8kBgY7UeqfjAOVYoyhd7WiPbxK/WabeeFs+rhFU3yYbCBOtQNr
+	l1ZII0vj1+Q3taeYoCbNuR3mewdN7QsDc2ilsRtLGMGy850k0FlVnQ7Oc5dqqbocJxUS3b
+	iLo45yFktiZehyvrhzG/ObElUcCYo/g=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762774248;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pxS0+Y+8aWU+WXGUz5FS1LZd+SzhEBie98VixeoLL1Y=;
+	b=+l21lIjWmNCdC5n8dzP2Hv0PBstxOGGtXJou2EQKQXC+bVAzS8mqh+SIgV+HelSjxVu5QX
+	6S/rOh2fKluUWlBw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=vdlF668r;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=+l21lIjW
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762774248; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pxS0+Y+8aWU+WXGUz5FS1LZd+SzhEBie98VixeoLL1Y=;
+	b=vdlF668rSvDWzW8jhD0I8kBgY7UeqfjAOVYoyhd7WiPbxK/WabeeFs+rhFU3yYbCBOtQNr
+	l1ZII0vj1+Q3taeYoCbNuR3mewdN7QsDc2ilsRtLGMGy850k0FlVnQ7Oc5dqqbocJxUS3b
+	iLo45yFktiZehyvrhzG/ObElUcCYo/g=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762774248;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pxS0+Y+8aWU+WXGUz5FS1LZd+SzhEBie98VixeoLL1Y=;
+	b=+l21lIjWmNCdC5n8dzP2Hv0PBstxOGGtXJou2EQKQXC+bVAzS8mqh+SIgV+HelSjxVu5QX
+	6S/rOh2fKluUWlBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9989E14385;
+	Mon, 10 Nov 2025 11:30:48 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 7vp0JejMEWnXXwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 10 Nov 2025 11:30:48 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 37F2AA28B1; Mon, 10 Nov 2025 12:30:40 +0100 (CET)
+Date: Mon, 10 Nov 2025 12:30:40 +0100
+From: Jan Kara <jack@suse.cz>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2] fs: avoid calls to legitimize_links() if possible
+Message-ID: <iwsvdaw4u2o366ndbk2dzj2ehjbwpynpkcym435qvndoiwqg6a@mlbbmml23747>
+References: <20251110100503.1434167-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1788:b0:433:2d7d:b8d8 with SMTP id
- e9e14a558f8ab-43367dd0592mr119632135ab.1.1762774218248; Mon, 10 Nov 2025
- 03:30:18 -0800 (PST)
-Date: Mon, 10 Nov 2025 03:30:18 -0800
-In-Reply-To: <6906424b.050a0220.29fc44.0007.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6911ccca.a70a0220.22f260.00e6.GAE@google.com>
-Subject: Forwarded: test
-From: syzbot <syzbot+f5a5b157b7336d1fda1d@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251110100503.1434167-1-mjguzik@gmail.com>
+X-Rspamd-Queue-Id: A33661F445
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_TO(0.00)[gmail.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DWL_DNSWL_BLOCKED(0.00)[suse.cz:dkim];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:email,suse.cz:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -4.01
+X-Spam-Level: 
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On Mon 10-11-25 11:05:03, Mateusz Guzik wrote:
+> The routine is always called towards the end of lookup.
+> 
+> According to bpftrace on my boxen and boxen of people I asked, the depth
+> count is almost always 0, thus the call can be avoided in the common case.
+> 
+> one-liner:
+> bpftrace -e 'kprobe:legitimize_links { @[((struct nameidata *)arg0)->depth] = count(); }'
+> 
+> sample results from few minutes of tracing:
+> @[1]: 59
+> @[0]: 147236
+> 
+> @[2]: 1
+> @[1]: 12087
+> @[0]: 5926235
+> 
+> And of course the venerable kernel build:
+> @[1]: 3563
+> @[0]: 6625425
+> 
+> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
 
-***
+Looks good. Feel free to add:
 
-Subject: test
-Author: yun.zhou@windriver.com
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-#syz test
+								Honza
+
+> ---
+> 
+> v2:
+> - drop 'noinline'
+> - spell out the check at call sites
+> 
+> verified no change in asm
+> 
+>  fs/namei.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 2a112b2c0951..0de0344a2ab2 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -882,7 +882,7 @@ static bool try_to_unlazy(struct nameidata *nd)
+>  
+>  	BUG_ON(!(nd->flags & LOOKUP_RCU));
+>  
+> -	if (unlikely(!legitimize_links(nd)))
+> +	if (unlikely(nd->depth && !legitimize_links(nd)))
+>  		goto out1;
+>  	if (unlikely(!legitimize_path(nd, &nd->path, nd->seq)))
+>  		goto out;
+> @@ -917,7 +917,7 @@ static bool try_to_unlazy_next(struct nameidata *nd, struct dentry *dentry)
+>  	int res;
+>  	BUG_ON(!(nd->flags & LOOKUP_RCU));
+>  
+> -	if (unlikely(!legitimize_links(nd)))
+> +	if (unlikely(nd->depth && !legitimize_links(nd)))
+>  		goto out2;
+>  	res = __legitimize_mnt(nd->path.mnt, nd->m_seq);
+>  	if (unlikely(res)) {
+> -- 
+> 2.48.1
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
