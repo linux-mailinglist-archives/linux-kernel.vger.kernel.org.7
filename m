@@ -1,109 +1,183 @@
-Return-Path: <linux-kernel+bounces-893579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA1F8C47C53
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:06:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14122C47C3B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:05:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A63B04F8DAA
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:56:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C79818870F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:56:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39F97276028;
-	Mon, 10 Nov 2025 15:55:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A16EF257859;
+	Mon, 10 Nov 2025 15:55:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FkEcibiS"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="OeOErnBo"
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2857F153BD9
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 15:55:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6C39153BD9;
+	Mon, 10 Nov 2025 15:55:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762790108; cv=none; b=fr0b6M/849aTHwu6B9eH5ilu9HHIlCYoo1utNRL/ABvubdi5PF2t0cv+UuAVpeIC2azG7bl5iSCzUYCOcOeeF23abLU1K+wJ8/kBeIl9mWXmRNqBeHQBMcu0mt4hXg6s0czsiJV2AU5XbuXmTjKpGQ4UYqn4TB/Iv8DYZ32xgQc=
+	t=1762790118; cv=none; b=C/qVMFCmSx99bni6TFyzILjTQP7tVzPoDNdfBCYYlN7QDSe/iFE87UpRDx2yZSjmv0CYCmLmpprnDInafdp4zYBzcymjzTPidT+JCgQ+x6Lsa3IuVDG2jBivhYVah2CBEwsMwTGn/k6I05n14rj+HFU6AQf1aQk0mFKcl6amRnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762790108; c=relaxed/simple;
-	bh=UIjh5OHK+/m1SacpjkCMs9vMDSevjykGUGOzGYpUTAE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XeaQp1DMc2Vo66YvXF3mwCOwWeO+dxOrgwjzR8pTWxX9AXPNpc88Y23ACqYtca/NBn6vgsNzkUp4ROXOwJOzBubcFwDHWuAtEFPCt6oXeMp6TkUwlEqky26TPbqlXSgtHwoAlUGND10UQA6b4z/q9NiPmwXnTJZ61+UsPXBuGGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FkEcibiS; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-340c1c05feeso2634683a91.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 07:55:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762790106; x=1763394906; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=6R6wcVAFeAUcZ6mJYKCCW0Bji6CCIjd7Ps1e8q5bT4A=;
-        b=FkEcibiSNDFhNrAHibdnFVvu88HjyjVWY7EAdCoWSDGir1vSkuPocBJrwXrBhbMXD9
-         wsIjT579AV5dRQ0p//O9/pKfTvYgg4W453FUFfb9bRdd06x5S2pU8MswRAUk87vtTpCv
-         ogYM9+V5rnhDxhN/PCmHAyuF4gbA6czzk9YGT/5vtM74mjdvUSSVoWsg9PCMISGWk4ph
-         oU196O2PWIdenwioZMMSRMbc1siiqq93NsTwP7gLyXKpwZGy/ewqwRFoLpbMSOHYDmEr
-         RoSf+WjsaXFOJ40O3rGiK4n6+eBNG/erZRFY1dLIs1R9O5OSaZoM9HJlIlRCuzyus+h5
-         IrDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762790106; x=1763394906;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6R6wcVAFeAUcZ6mJYKCCW0Bji6CCIjd7Ps1e8q5bT4A=;
-        b=B1UIy5k6TiFH44xqs480lV73MeHrIDMAJDaio3AAF3VvlCzwbdnnodIdWymcW/j4Ew
-         Nzx7LBtu5U2QhublBLbCwvsFAKGDxFPZ+yUNQjTSi0x5xjm8R2gyHIsz3UXydUJLH/5s
-         u8ZNV2DFEY0WIaPmoL3pnISzzLp/1OCbz+DnUP2BM303x3h3brnnbJlqh7D6sNpmKsoP
-         7/BJ0q12RwijF8uN05BZDQC1jiu9yMl6apUGjogDe2uiTucQkRXeogqwdw5UDphlWRYe
-         SVEvTY+ioMAHNKiY3cvatN20okxZNdXxcev+/RdR+9TTfT+peZMiRNBLINQ/0HBhWqA/
-         E6bQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVVZA8LmzqCd4rDSw3r3vEDrvx67Yzq9NHIUjM+inK1A3xwcRJRrcpU6ryZcu041yU/ePw6n4muTxN/emA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvN/HbYK/BHUWkCo2CuteDnFo2G3uwTrOZCtBvY2ofgN5NAPW9
-	7V0IsZ3A1PoQqIR1s732fFcI3Yq9bneQ0ZOKTeZWne9VfL+I5VbN2/MZAzPP3gjOV33IKqjuiad
-	ObHXNbJlv+sUYXIofqAVGmfClilWuXL8=
-X-Gm-Gg: ASbGncsC68HQL6RWM/oWF4YuRf3Fa68XggGqB05f75G8J2nkS2o5Gcyoa92TEsgcwFm
-	nz18iLRUpnLt1sc2FZJpmFk7T8Zu79LcJxPO2DL8qDHSoc5Rp8xt5wIcxF5EAivRKiGwVRKrXeh
-	1so8d81xraIBzwBWdrQm8eO65J+jPvaPftpUUKf7/buiNAUawdXJh1dJ6s3V8np792n7Of/WEuO
-	ehvP9banqkWjqHWr+BtwGMadInbbPaRscwTdsGMv8WWQ7YG1XqBHaZGkPg=
-X-Google-Smtp-Source: AGHT+IHCrQU0UlElplZd+YPzXUqH9miCN+y+iRChbMn/h7fN73CjNrmEf5PFWQKDUy/hBQwfC1VOyq54JxIn8cvEg2E=
-X-Received: by 2002:a17:90b:54c3:b0:33e:2334:ef05 with SMTP id
- 98e67ed59e1d1-3436cd06506mr9221689a91.28.1762790106437; Mon, 10 Nov 2025
- 07:55:06 -0800 (PST)
+	s=arc-20240116; t=1762790118; c=relaxed/simple;
+	bh=gSx9MBu8gjn4oE9VzLVRyN+WHpggTZuPNrEcukKkUn4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=jifVKAqcbjYTkHaUq60cCx/mSNARU9TBn2wdHATpD7Kw+pMhfKb8omyPBWkoeIS1j8WiFGEzpPToxQ0QZdDdgjS9TkKhjZgnJ7AWuOBowPZ0gRPAVvqr4gZnAoFX/uwkH8gpolnx56khuB1ekhAUEubdW20/PzLIMA5guZmntXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=OeOErnBo; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4d4vPk1GXqz9tKJ;
+	Mon, 10 Nov 2025 16:55:06 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1762790106; h=from:from:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gSx9MBu8gjn4oE9VzLVRyN+WHpggTZuPNrEcukKkUn4=;
+	b=OeOErnBoYp88WzbiTOzrWCmskeaH93Xv429Um4Wxcuq+I+CiQTMlCSARoiyxXMnhV45WQs
+	Y6zWy2+jD8xmLORNLsq98NcjWg9KfV/iOrspAm3QP/joWlQxmoezIJ827Guxi4RRBqe23S
+	unbS7ik3p2ytnT6hBrjWu1vG3idocJnyPwZ2a8ZumVNCc9fDGWwG/Jw1d+MRSL9w5wC/WZ
+	VicEe1grW160S+of2vTD366OpK7X+Pu9EbMfpFPNz6J2rGq8wxW2g2uFVmL2kJ23i61jC1
+	yNJY32Gihuo2d03NEzmKLsEPVfIGaCs4Yaf2e53ORI0roleRTl4lZX5Ytop4Ug==
+Message-ID: <589a1be140f3c8623a2647b107a1130289eb00ba.camel@mailbox.org>
+Subject: Re: [PATCH] drm/sched: Fix UB in spsc_queue
+From: Philipp Stanner <phasta@mailbox.org>
+Reply-To: phasta@kernel.org
+To: Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, 
+ phasta@kernel.org, David Airlie <airlied@gmail.com>, Simona Vetter
+ <simona@ffwll.ch>, Alex Deucher <alexander.deucher@amd.com>, Andrey
+ Grodzovsky <Andrey.Grodzovsky@amd.com>, dakr@kernel.org, Matthew Brost
+ <matthew.brost@intel.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
+Date: Mon, 10 Nov 2025 16:55:01 +0100
+In-Reply-To: <05603d39-0aeb-493e-a1ed-8051a99dfc41@amd.com>
+References: <20251110081903.11539-2-phasta@kernel.org>
+	 <ee63ca7d-77d2-44d8-973b-7276f8c4d4a5@amd.com>
+	 <ee9fe54f3764bc0ee4ebafe5c10ad4afe748ef19.camel@mailbox.org>
+	 <2c72eb6e-7792-4212-b06f-5300bc9a42f9@amd.com>
+	 <987527ead1fe93877139a9ee8b6d2ee55eefa1ee.camel@mailbox.org>
+	 <05603d39-0aeb-493e-a1ed-8051a99dfc41@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250630202703.13844-1-gert.wollny@collabora.com>
- <20251110144625.18653-1-gert.wollny@collabora.com> <20251110144625.18653-2-gert.wollny@collabora.com>
-In-Reply-To: <20251110144625.18653-2-gert.wollny@collabora.com>
-From: Christian Gmeiner <christian.gmeiner@gmail.com>
-Date: Mon, 10 Nov 2025 16:54:54 +0100
-X-Gm-Features: AWmQ_bm2wmrOPItOxwhoBd9H4sTLBEoxQE9s611ak2i40wnU7FFtiRLd5trLVSQ
-Message-ID: <CAH9NwWcYOfrjbL==PBZ8z-Ta-C9EVQSypovqturj4=ROCfxpqQ@mail.gmail.com>
-Subject: Re: [PATCH v4 1/5] drm/etnaviv: Add command stream definitions
- required for a PPU flop reset
-To: gert.wollny@collabora.com
-Cc: Lucas Stach <l.stach@pengutronix.de>, Russell King <linux+etnaviv@armlinux.org.uk>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, etnaviv@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-MBO-RS-ID: 09f38a7b37e36746f60
+X-MBO-RS-META: wyff56gqh5tm8fspikhhsbztuksxd1kw
 
->
-> From: Gert Wollny <gert.wollny@collabora.com>
->
-> v2: move some defines that resided in etnaviv_flop_reset.c
->     into the header as well
->
-> v3: fix spacing/tab stops
->
-> Signed-off-by: Gert Wollny <gert.wollny@collabora.com>
+On Mon, 2025-11-10 at 16:14 +0100, Christian K=C3=B6nig wrote:
+> On 11/10/25 15:20, Philipp Stanner wrote:
+> > On Mon, 2025-11-10 at 15:07 +0100, Christian K=C3=B6nig wrote:
+> > > On 11/10/25 13:27, Philipp Stanner wrote:
+> > > The problem isn't the burned CPU cycles, but rather the cache lines m=
+oved between CPUs.
+> >=20
+> > Which cache lines? The spinlock's?
+> >=20
+> > The queue data needs to move from one CPU to the other in either case.
+> > It's the same data that is being moved with spinlock protection.
+> >=20
+> > A spinlock doesn't lead to more cache line moves as long as there's
+> > still just a single consumer / producer.
+>=20
+> Looking at a couple of examples:
+>=20
+> 1. spinlock + double linked list (which is what the scheduler used initia=
+lly).
+>=20
+> =C2=A0=C2=A0 You have to touch 3-4 different cache lines, the lock, the p=
+revious, the current and the next element (next and prev are usually the sa=
+me with the lock).
 
-Reviewed-by: Christian Gmeiner <cgmeiner@igalia.com>
+list when pushing:
 
--- 
-greets
---
-Christian Gmeiner, MSc
+Lock + head (same cache line) + head->next
+head->next->next
 
-https://christian-gmeiner.info/privacypolicy
+when popping:
+
+Lock + head + head->previous
+head->previous->previous
+
+I don't see why you need a "current" element when you're always only
+touching head or tail.
+
+
+>=20
+> 2. kfifo (attempt #2):
+>=20
+> =C2=A0=C2=A0 3 cache lines, one for the array, one for the rptr/wptr and =
+one for the element.
+> =C2=A0=C2=A0 Plus the problem that you need to come up with some upper bo=
+und for it.
+>=20
+> 3. spsc (attempt #3)
+>=20
+> =C2=A0=C2=A0 2-3 cache lines, one for the queue (head/tail), one for the =
+element and one for the previous element (but it is quite likely that this =
+is pre-fetched).
+>=20
+> Saying this I just realized we could potentially trivially replace the sp=
+sc with an single linked list+pointer to the end+spinlock and have the same=
+ efficiency. We don't need all the lockless stuff for that at all.
+>=20
+
+Now we're speaking mostly the same language :]
+
+If you could RB my DRM TODO patches we'd have a section for drm/sched,
+and there we could then soonish add an item for getting rid of spsc.
+
+https://lore.kernel.org/dri-devel/20251107135701.244659-2-phasta@kernel.org=
+/
+
+> > >=20
+
+[=E2=80=A6]
+
+> > > The problem is really to separate the push from the pop side so that =
+as few cache lines as possible are transferred from one CPU to another.=20
+> >=20
+> > With a doubly linked list you can attach at the front and pull from the
+> > tail. How is that transferring many cache lines?
+>=20
+> See above.
+>=20
+> We have some tests for old and trivial use cases (e.g. GLmark2) which on =
+todays standards pretty much only depend on how fast you can push things to=
+ the HW.
+>=20
+> We could just extend the scheduler test cases to see how many submissions=
+ per second we can pump through a dummy implementation where both producer =
+and consumer are nailed to separate CPUs.
+>=20
+
+I disagree. That would be a microbenchmark for a very narrow use case.
+It would only tell us that a specific patch slows things done for the
+microbenchmark, and we could only detect that if a developer runs the
+unit tests with and without his patches.
+
+The few major reworks that touch such essentials have good realistic
+tests anyways, see Tvrtko's CFS series.
+
+
+Lockless magic should always be justified by real world use cases.
+
+By the way, back when spsc_queue was implemented, how large were the
+real world performance gains you meassured by saving that 1 cache line?
+
+
+P.
 
