@@ -1,466 +1,217 @@
-Return-Path: <linux-kernel+bounces-893193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0765C46C38
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:05:16 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BA1BC46BD5
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:02:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6567C188244A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:05:41 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 77FEA34698F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:02:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B83D30F939;
-	Mon, 10 Nov 2025 13:05:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A0A9305968;
+	Mon, 10 Nov 2025 13:02:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="S9W3yQkO";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="mq3mpTSm"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lMk8+nm1"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C05E91AF4D5;
-	Mon, 10 Nov 2025 13:05:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762779905; cv=fail; b=BDcBZEgg3a+FqXThQCybn4HumrsibmWt2n/spq9g8DhFQaTVAmMUZx0PODmptDoVkpOFeQjWstl5MA4s/V27loFSJvc8akILpd/EpFgFdByKkw6KIkDOuU5oIU8oJHH2NzGnFx6O8NcI85Ea2zhx3qIbM6OSkZXT3O/sNS0NuqQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762779905; c=relaxed/simple;
-	bh=xPFq9EMDGyFV+We9z4ewynjcWcHi5fVFIW5Do9EF7eA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=jEYfltqKEs+rxcsvTQdTtk413thAi1gOqc/bygVZJqGzRhD/IEQIxzXsqKjLQ6UNHixceE630GJohESvzxF9+h9cywvJBg9f1K1KjFwcsLmIkIU9ZxpQp3f15f4VWPax//w0aQZBBJ6GatllIiMjAzTq+cXA9egB1HnwdDrLdI0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=S9W3yQkO; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=mq3mpTSm; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5AAD0dVD021115;
-	Mon, 10 Nov 2025 13:01:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=bb2iQtD8LpjYPFW9pR
-	CvcxO9GJUATPJYF2sm9c8HY88=; b=S9W3yQkOYAgkiHurVMT4U44SHLUb3v7Zx8
-	83wXmG5IZk7WJ+UIWNRZ7W+skgWY7YdNzLqACdZhC2kcgTdDGqTumRVnE53bCeT+
-	oGxGSGsq1wfWXDJjVlGOHO4XTHbhVl8S4TJdgbSsfFzFLj+2EZnPgj2LrabU5hmK
-	J84NSAE2ngFDA1z/z/GJd3X7qcFNCVxg6zcO/uSHjkwHvEh/5LRvNhuv3tF8FG6g
-	z+1dbDvRSriV2pQUN6zyDM7Ag/4JPYXGsaCI/vt3FyQlVhlUAy1vIAteAFFo1SQo
-	/BLTbu4RqlA5ZVzxmCMkSUZ5g0eOMj8e4RskFD2nhJhIgFeBiquQ==
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4abgj30023-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 10 Nov 2025 13:01:46 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5AACFg9C007564;
-	Mon, 10 Nov 2025 13:01:45 GMT
-Received: from mw6pr02cu001.outbound.protection.outlook.com (mail-westus2azon11012024.outbound.protection.outlook.com [52.101.48.24])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4a9va8mvht-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 10 Nov 2025 13:01:45 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qdXDqAtbmI4GVTUOzSBMqaKDOI7jnqpXXIhBSmrIRjkVVRdFvesDxwVoIbFCouuNSyy/arXWfD264qNR1ljfh6AD08YzRSpXXQFiiHdbOyCtNTmQpo3Rjy5WYSp2yUc4yjEXpjs7UIopplqXnKrB8uzPd8w1mrMwX9VgNRk/94RX2qM+rKPQRIrBd4I+jrqX3fQSclstY4Zp+gAkMn9qZu4jMyTBY92LEG9ff7+ZuCIQvkcDumEi7TBa+GYGY9XKZPQr2Ao8bi8LnkejthVxWyMTPMSXngHy9YtgmxJ6aZU2rwEdOuXhd7lulf9r4oEliviZeX735LPqMcO7A6Oq8Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bb2iQtD8LpjYPFW9pRCvcxO9GJUATPJYF2sm9c8HY88=;
- b=v844FufjUliLWV0eoN4Z4R6XIlnTD9iw+FWu9+2Avd+jwceE8GNRJq+zgl5jK5cd7xfpYIby0LRO5aGnjB72nDNJoBuBiY9s3fzvkZj1ol9zzVN6/LBzmhUdp8/D7nK9pKJAoNjgfyzoR+CmhKOnEMMhcE1R4ShPBFv/6n5TjLiD5Ia0LQzsVUi6vHDgwHgVzMM7a35f3TuL6AokGSSqcCJuZ5JUlV70omPYa91D8DZ319yCTq8uppJfAbcF0p90Fa0MmBAeRgaH3yUudrpRpkAIHEyditjGUzrKgUqA0avfaju8WafnTnhxBunnyaIwh2TPv348WSb+wInddVveQA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bb2iQtD8LpjYPFW9pRCvcxO9GJUATPJYF2sm9c8HY88=;
- b=mq3mpTSm4cSrh5A3O1vpCLmHBHSgXhUSb0ug8OAOLalSBN5JU08uI2J27kEi8XBjABxJyMukNpWVt+AuDY+1a0tDNeaS1ktyFXlfvUo0TjOKPDFwMAMsmQxqdFfYTkDYuwq+FKfSG0LKwRA2eND8ph2GMmBiN6MQPb7J3EdEEqM=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by IA4PR10MB8398.namprd10.prod.outlook.com (2603:10b6:208:56d::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Mon, 10 Nov
- 2025 13:01:38 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2%7]) with mapi id 15.20.9298.010; Mon, 10 Nov 2025
- 13:01:38 +0000
-Date: Mon, 10 Nov 2025 13:01:36 +0000
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Mike Rapoport <rppt@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        Claudio Imbrenda <imbrenda@linux.ibm.com>,
-        David Hildenbrand <david@redhat.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>, Peter Xu <peterx@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-        Arnd Bergmann <arnd@arndb.de>, Zi Yan <ziy@nvidia.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
-        Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
-        Lance Yang <lance.yang@linux.dev>, Muchun Song <muchun.song@linux.dev>,
-        Oscar Salvador <osalvador@suse.de>, Vlastimil Babka <vbabka@suse.cz>,
-        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
-        Matthew Brost <matthew.brost@intel.com>,
-        Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
-        Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>,
-        Ying Huang <ying.huang@linux.alibaba.com>,
-        Alistair Popple <apopple@nvidia.com>,
-        Axel Rasmussen <axelrasmussen@google.com>,
-        Yuanchu Xie <yuanchu@google.com>, Wei Xu <weixugc@google.com>,
-        Kemeng Shi <shikemeng@huaweicloud.com>,
-        Kairui Song <kasong@tencent.com>, Nhat Pham <nphamcs@gmail.com>,
-        Baoquan He <bhe@redhat.com>, Chris Li <chrisl@kernel.org>,
-        SeongJae Park <sj@kernel.org>, Matthew Wilcox <willy@infradead.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
-        Xu Xin <xu.xin16@zte.com.cn>,
-        Chengming Zhou <chengming.zhou@linux.dev>,
-        Jann Horn <jannh@google.com>, Miaohe Lin <linmiaohe@huawei.com>,
-        Naoya Horiguchi <nao.horiguchi@gmail.com>,
-        Pedro Falcato <pfalcato@suse.de>,
-        Pasha Tatashin <pasha.tatashin@soleen.com>,
-        Rik van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>,
-        Hugh Dickins <hughd@google.com>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, damon@lists.linux.dev
-Subject: Re: [PATCH v2 01/16] mm: correctly handle UFFD PTE markers
-Message-ID: <1a77db9b-ddb2-42bc-8e8f-f4794a5bfc6d@lucifer.local>
-References: <cover.1762621567.git.lorenzo.stoakes@oracle.com>
- <0b50fd4b1d3241d0965e6b969fb49bcc14704d9b.1762621568.git.lorenzo.stoakes@oracle.com>
- <aRHJ0RDu9fJGEBF8@kernel.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aRHJ0RDu9fJGEBF8@kernel.org>
-X-ClientProxiedBy: LO4P123CA0423.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:18b::14) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B70191AF4D5;
+	Mon, 10 Nov 2025 13:02:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762779733; cv=none; b=EYRmKhZlnta2aT+DGGlNjJb4435g2OfTjuYY5c1fImU4NML0LezhVxXmHY8zZyvARjuTUv0YVQ4yPm82Nur81C5AB8RaY2GdcIBS6wspMpGGjRqFHkEEaekk8Mp5sZqD4OTW+gQzc84iGCwohe4ttuZf1Snst0M8atVPDY1UByo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762779733; c=relaxed/simple;
+	bh=/iRpT42Ct0JcZ/9l/Gf0HpbKDJYGvChbpDpCuuz26Hs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=DJszB2iHM9R/mdmoDL03dFLm/6vXimRil1xHWceTO6nq5JaOEqzWpSkxV/9dZAmgnJ4ZmDBd4uzdbhVdnNqbBHytATFxeI4rYXb0s4yGOl2YcE1Tx1nTqR6KdRZXyiw/H+Dq8BmFROiP3zYa68UVhlrCEGJsG/4JonwMNVxUvdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lMk8+nm1; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AA9EjjR2992484;
+	Mon, 10 Nov 2025 13:01:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	64uSw9MBieeARPXvcbyqf8qMx9t2B+6dl1TjRtx1sKQ=; b=lMk8+nm1I9pj1Oe3
+	JKzz1xRjxp8t83T6GgvpZ1heWrtRMpU0PbPJq8HqAcBTavlQ3GEbG0XB3fZyPuFJ
+	dIShtbr4lSx0Xvlhk0hkX4nxEaZJ5DIoDEGSUu22WJnbkGr3gZHJg0oKHTqf0Ul0
+	Ap2spkViV1Cv9qPKaIZ1q0Fpt2TKSIDj6KnGcuyttV9dortOpfMat5FGcYpMiTwQ
+	hcrepzb/Ewjg6471pAtNN7sWhdwZKds49bKx9kTQ08+3z4Gept1fkufHnmRa4+MA
+	TrgGKEu9zq6ZJuYOwW6bpB6XCK+3JV0oHRi97xsRuZGSc6JKVV8wcqFCJI3v+PNx
+	5wi/Eg==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4abd88rmx0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Nov 2025 13:01:54 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5AAD1rDx029704
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Nov 2025 13:01:53 GMT
+Received: from [10.253.12.191] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Mon, 10 Nov
+ 2025 05:01:50 -0800
+Message-ID: <78fa2388-3815-4ba5-84c8-38d85e880221@quicinc.com>
+Date: Mon, 10 Nov 2025 21:01:47 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|IA4PR10MB8398:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6b15a444-2e73-45a4-6152-08de2059490e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ChA6ZFoscs3eh45uYzgNHrEhlFCTgPcXiFhOL+jNFGV6mtCVZ66IQ8pmKnCz?=
- =?us-ascii?Q?25eLQh6T3Y6EdAxAZMNVPBiWZhuVWpAGoW4EoEOdzhVJ1zqFJtXeze2M5KVn?=
- =?us-ascii?Q?dfwPVQ/D99Kk0pDntnPNeaeoYMQMPsQoNK5SyqLsZt9HJcLcXkrfCSGTIylk?=
- =?us-ascii?Q?refW/u3Ra8m8+shxSTa/rwqoYGmsanGwI7N8ti2E0RxBXIrnmk5nqWcFQzaZ?=
- =?us-ascii?Q?ijfj7bktgL5MiSAtUBpMQU3c+4yOhoocCgq2/jurU79CJTrE4MTug2YugPaN?=
- =?us-ascii?Q?K7Nzj2+eCHLAVwfdVb/7YSO6QcbFOcPhDvX0uCWMIsb+cV0SGY+azArNjQgL?=
- =?us-ascii?Q?BVqcGXa2e6oVrZK/+MskDky43VjC+R1wwzN2jTGS5WwT2xUP3AJfm+j53oNb?=
- =?us-ascii?Q?v2C5tlpEz+WcUuOCZs/fM+S4oVoXuGKpPs2qIgy7Kqwtj6pvVtshLlYsQnlY?=
- =?us-ascii?Q?SBPZqaafxbIewKwqJJza189UEmvh4vYGbVvCHdoKsjzWGm3kQlyLJMMvevDh?=
- =?us-ascii?Q?m4CBgmAQRhcclowSqVz2bhX7r4vpRfbIh06gydvZ6+bOrxA+hf/ShcYYrx9X?=
- =?us-ascii?Q?g3W4uy0MbS8V9FAOucicnISvzCiv3R7gq5dBeIufxuWnZzgqpumvFKPnv08H?=
- =?us-ascii?Q?SgWnftSTMGhBd2tglmr9u1erKEbLWaesdwpxcaArL7Xh3kdJvVDNABPScTJp?=
- =?us-ascii?Q?wjK12TIf7V9TePg/6vED1/TksNd+PDHluxRQiSXcfsehG10kb2nQ8cDL3FYK?=
- =?us-ascii?Q?jy3r62O7zqcCixGtChlRzsADlv53UHe/21upQjZASyTU+ZBbWnaMSV0rWxRV?=
- =?us-ascii?Q?Kc6cs15S6wETKUibmKli1fPoYqRE3T5aMMPbv4HgIN9/P1V2hFe/qGtCeHF9?=
- =?us-ascii?Q?q+/A2yOHvI683IEUpLFQBU4SBh/DWf6XEke2vCSpMsNzYGjkCeYcbPBrqVlY?=
- =?us-ascii?Q?mqJhJRh/ffrBmx4zBt5D0uEo/hJqP0JlNbLlq5CxjnR3f38Ip69Qf9pu2Cc8?=
- =?us-ascii?Q?30lyw4XbhsqcW7wA1c15wRDRaP30zoI70ljz6ogPzJ/Y1twI/HwcViJiBDLy?=
- =?us-ascii?Q?2JuxIBgqBLgbhrUTSvGX6Uez25kY12HE3ubO80YKJWdNr89MUUFuZ2n+8s9U?=
- =?us-ascii?Q?XxQe5+IT7zOWA/fgH63JayRU0FILTTTR2ajou2kss0MtcZsNT3vJUVC2Q0E7?=
- =?us-ascii?Q?o2dGybXXARiJnuk8bVnMq5+/A+EYVXVvuHrPHbC2oJWBbvQLBd0MwMCHNJmz?=
- =?us-ascii?Q?JY/UDi9wzKLndZtBxFttGFWrdcUQ5EV2VbACvNRELjWIV+gcQ1tZkZRgiz7D?=
- =?us-ascii?Q?GrwTWZiTm1/msBGvAw8p2+e9KI92c83+Ubib5LQ1QN7uDF/jLUjgUUtJ7ye2?=
- =?us-ascii?Q?1DeJQ+XyEeNVuqH9YpgSZHGbQlEMVIEznovvXDqBR9UHaLj3yoD3rqB0YpYC?=
- =?us-ascii?Q?wJCQCrXU0LYSvdSzsYlpZolgaU7ZEghs?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?gATNXeMPbfL1FuYZJgyoe8CBym8zao9PsHnIjQSlLG70t0A9WK7oiI1noRnk?=
- =?us-ascii?Q?sDOR2EWdluTbJe4Kuwzoye0KLU0j5oYhhUbpBmGon+8XKAV8Rus2jNbHRIyn?=
- =?us-ascii?Q?/6H8Hp85ViZfh9oTyqe9mHL3V2RGcT4d/XLstCfVDbJNPPskVReJJ7XkQ5hK?=
- =?us-ascii?Q?moqeO+p46dODG1fxBFXdiITa2T0Je4QjphAQqa+DvFGT1R4//ouZi57OerSm?=
- =?us-ascii?Q?PySNvLclFkna8FD/BnxLItp0oPaKsakC13gcFGZkgdvZtNTkbfX8hBR8C9Zj?=
- =?us-ascii?Q?K9x60UEE3TNc96uxnW/MuupU89aUyv5J7x05ETjz6ApVoZMLBpG4SmPwz/4G?=
- =?us-ascii?Q?8z4ccoFdsMUp3LvZxXqXpldzUJUIYStcMNtI1/aVQWWrjzeoZhc6dMMd7kUo?=
- =?us-ascii?Q?AEj5QAmROBf+ZyJ5t0KOCHmsFkssh7odcxkjfh/Q+jEgQvXhDpjLgoQ7y7zj?=
- =?us-ascii?Q?hHkleFCRYuADDDp2Xibvq46jnZ4+W63xLOIS6Ra14RCUWW3ScwutIDxb5TSb?=
- =?us-ascii?Q?FS6RH3D/l0cocjz5edBoX2X1Xp1eY2Tm0CYhLlqQEmhfq7iUakCcWn5VrbuF?=
- =?us-ascii?Q?p7IJ7ozkg0s74RxlFHn4JOUDFkOsH54Y/lm6+Ju5yIF7CUWOAX/jjdsZ1KP+?=
- =?us-ascii?Q?qa5cClNSsRaO3+ESzKIEV3yp96KRjQg9VSmeoq+IQySPMIjAfnABYUoPh/ze?=
- =?us-ascii?Q?4YB86Q7ICVk2JZTmSGJ5424AZCqdg0VJmnz4d1dwirbrHgocsnofaYIEvKhy?=
- =?us-ascii?Q?u82tpp6P4XeIEgx3Bg89mYoMvx8KmVjciVyNmbGYTrHoiRrvhZw9tuy5oVal?=
- =?us-ascii?Q?TrxuiGibnv/yAC53Gs79DOCpsfmZ5NwUPKpDNe5Yu15tmxSH53MXz3Mbrhmj?=
- =?us-ascii?Q?lIxH2G7ZzLYsFO2LSd+EPqQqlRMSrNCiT89zYDLCOnoE6Gdt4icidx7EbTg7?=
- =?us-ascii?Q?7GOiLmaGxfmTidYvA5dbckm7zA/KV1Q+7wv1IfxmZFYv80Yk4NADNEijwKJy?=
- =?us-ascii?Q?BTrNimv7x1fnafH8AMJKh2aWyBxDqyEu+JwPkD3eF8mYcB371J6dt1EH+wkO?=
- =?us-ascii?Q?7ORpT0qLq2QbEaRw1973zXrAPI06Bau3iVv52GL/N/hjZM4H6dcFnOGrtnYl?=
- =?us-ascii?Q?6xckEFHEwMsTSKZuu3UdSlP5N8HrfaJeLvuFNACW2xluc0D1xU+TQyUge/QB?=
- =?us-ascii?Q?svwHe8Za0WanX3Zgj1ZUdmOPsIdbGXgCupGMmIop4r1R4ZWrKvmIw8xvNpV9?=
- =?us-ascii?Q?SyQibP+yvP32taibJWm2eGlL7t9d7NGJAGV2rWPROBF07y9dHuoX1THNE4UZ?=
- =?us-ascii?Q?rs+0W1UP7Nyk3dMXPz+/8xMnbt+4/hP3urfB1rkqvxaSvq9/tO6eXy4EzZkD?=
- =?us-ascii?Q?Wk6qnGNPvjn0JUQ9R4rh9WN5vkzSn8M3GOZJYVjp/08jYHCuICT+lnvv37yi?=
- =?us-ascii?Q?OYSVI6wQOBey0YhjWS8OPfj1AkzQAQ7m6DgkpwwfzECKniBDAGB4w/3wQeL6?=
- =?us-ascii?Q?PPUnkZTE1o7qNKXLxndTTPP4ZCpozvq1FbuSvl2xpZ7fNTA69DUcsuLqpQqO?=
- =?us-ascii?Q?Td7ZYhMPh9rU+YmgvSUxTAMIL4zThDtrmMC5oxxTc8bC1PhGJGdH7NcF2l9A?=
- =?us-ascii?Q?PA=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	kZYbvugGGdca7rS+d8aBE/WgR1wYCEgTiwuGOz/JFVXfSsZax3a5vraRCtkBiRdr+D7ZkmamwjtqoQXJk88PKdRWD0abNfbSBwHLaha9UUhNep6C+YgHAfpClOv6Qt36Ap+mFRKBkSU3VWVThpWfWtnc+3hXnqcYLG0oaWUe5+XZtkSSGwvyxMbCa8JKIsGZHBDm5k09+YG+4cEdwL+GHbfZbT8QboT2SkQDWfNcKQFD3irvdFtEW+c7AeYMF17pn7+DzaalJJ5uTHJFDvkfQTYAN7SJvIL4diJxZ7MaeuQ6LncaTHuBklVmUFJ3oqkyl9WlfVERgH8lfoLgm3GL0JAIgJPI35Jaddh7rqe7qTMzx2g5pHNJnvv84Cof7pL/9FCEr+jhlhFtPx/6eUb6+7T2y0jEmy/6Q2DuEsmxJpFXnTxfsrknJb88XpQwQgXhKH1hODCgI5GS3mHH9/fHzlGctw+rEQaOyUYMV3i5i+/HnOQ+MwhmnwPkH4OS7dVEXmI1QVKa8ksCF1wG3oEozfDnH4S2PUQ4QPC9FuQDalKQZQepgWOty72SN5GOZFCtjQFlO0fHEgO+7/KZYQZiCrZ85QJWomsn9Bz3YcykHxI=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6b15a444-2e73-45a4-6152-08de2059490e
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Nov 2025 13:01:38.4811
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 4UgVfAW4v3POpGRsql5tkk6EVRKHtDfve8qGiZflet29ILjCB2kewUSO4QyAHhgcbLGYT90kPWyKG29KaoXC5s4ZISsLK+zv44cHQNIXAO4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA4PR10MB8398
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/1] Bluetooth: btusb: add default nvm file
+To: Paul Menzel <pmenzel@molgen.mpg.de>
+CC: Marcel Holtmann <marcel@holtmann.org>,
+        Luiz Augusto von Dentz
+	<luiz.dentz@gmail.com>,
+        <linux-bluetooth@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <quic_chejiang@quicinc.com>,
+        <quic_jiaymao@quicinc.com>, <quic_chezhou@quicinc.com>
+References: <20251110034134.1016537-1-quic_shuaz@quicinc.com>
+ <20251110034134.1016537-2-quic_shuaz@quicinc.com>
+ <5dc5f0f7-3dfa-403a-821d-b4fdb800d1e8@molgen.mpg.de>
+Content-Language: en-US
+From: Shuai Zhang <quic_shuaz@quicinc.com>
+In-Reply-To: <5dc5f0f7-3dfa-403a-821d-b4fdb800d1e8@molgen.mpg.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: IfDscjtEhmrTXSPNvQDboxpHTbSEiO-P
+X-Authority-Analysis: v=2.4 cv=PL4COPqC c=1 sm=1 tr=0 ts=6911e242 cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=COk6AnOGAAAA:8 a=94ha7TBJcUfFed-zCi4A:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEwMDExNCBTYWx0ZWRfX/8nm+4+ptQ8w
+ /qX7VUkrJ7xZJVQSowl2NV/I54ZvhdXXfCt0DcAixw5z+SpUCID0X4uLZ5C1OCCnCk9wlCmugmj
+ JRfhaqRfGN5HDwsnuH1B6h5CS3Mr8VxrqkF0hvLCN3jtP3PTkznoqv+VOyq+cgmEAK3Ffpx8P+C
+ Wij+z93SAYWVE/ek7cnplZw24XdNNmGNzmiVWV67tIPrgeC34dzuHgiSaRcPudGD8fonyweB8dP
+ bGSjfQ9CvGjcAZi2yvThciCpZC45PbOC3mNgCKxQ5ulk8nj4rG6HRhJ0hA/SkHGHZJw7EYdQ3md
+ p0vwqnKtDIjZE6bje6d8swdBjojeCBkduFIkX3IQ45Kbu5EdMP7D/0qP0Rx6jkZ6uziNv+pWxXk
+ wQKC4zAe9pX4nJgDDcEVKJ84MrpCMw==
+X-Proofpoint-ORIG-GUID: IfDscjtEhmrTXSPNvQDboxpHTbSEiO-P
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
  definitions=2025-11-10_05,2025-11-10_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 malwarescore=0 spamscore=0
- mlxscore=0 bulkscore=0 suspectscore=0 mlxlogscore=999 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2510240000
- definitions=main-2511100113
-X-Proofpoint-ORIG-GUID: SusvxHiI7UdIclRZyepLWIsAH_RDLgXh
-X-Authority-Analysis: v=2.4 cv=O6E0fR9W c=1 sm=1 tr=0 ts=6911e23a cx=c_pps
- a=XiAAW1AwiKB2Y8Wsi+sD2Q==:117 a=XiAAW1AwiKB2Y8Wsi+sD2Q==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=6UeiqGixMTsA:10 a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=yPCof4ZbAAAA:8 a=Mq8-zH9WwlAeqdUnB90A:9 a=CjuIK1q_8ugA:10
- a=UhEZJTgQB8St2RibIkdl:22 a=Z5ABNNGmrOfJ6cZ5bIyy:22 a=QOGEsqRv6VhmHaoFNykA:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEwMDExMyBTYWx0ZWRfX0zvOThnPLK/i
- bSl+Y7ZQdHsnZPaMmFRgu0DakZ496kfvRdUyFU0MnLLuDtSG6BH8n4P+IJ5Mudsi7mnmuTImX4A
- iJ9WQexA8H4PjANYxxRYUJNb8OSmzX3kHVuG/fnFF8SLBT8P0U8nc4Ve3z99/4NYxiGQpxorTbc
- OmpCiJWJN/kc75EzLhJa4Uot4x8oAMv6brey+hE0UlXsUJW5FACfdXEY7xEkIjUq7hbko78NxiQ
- bDY27Q2schUrNbseGVtdeQdYhZd1q/YI/JkFilTCFTWCp2bvxtx3skTU+SvEajbtsI2LY7Nm4vC
- e0fg880rprskbRLUa22mkIg394b0ylgf3ij5mE30pPNZpV+Z+CNhrJUxFEcktsNcaEkw2QGwAHV
- nm2D3HmXOnbdszGES8RmXROENYlyqQ==
-X-Proofpoint-GUID: SusvxHiI7UdIclRZyepLWIsAH_RDLgXh
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 suspectscore=0 malwarescore=0 phishscore=0 priorityscore=1501
+ lowpriorityscore=0 clxscore=1015 adultscore=0 bulkscore=0 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511100114
 
-On Mon, Nov 10, 2025 at 01:17:37PM +0200, Mike Rapoport wrote:
-> On Sat, Nov 08, 2025 at 05:08:15PM +0000, Lorenzo Stoakes wrote:
-> > PTE markers were previously only concerned with UFFD-specific logic - that
-> > is, PTE entries with the UFFD WP marker set or those marked via
-> > UFFDIO_POISON.
-> >
-> > However since the introduction of guard markers in commit
-> >  7c53dfbdb024 ("mm: add PTE_MARKER_GUARD PTE marker"), this has no longer
-> >  been the case.
-> >
-> > Issues have been avoided as guard regions are not permitted in conjunction
-> > with UFFD, but it still leaves very confusing logic in place, most notably
-> > the misleading and poorly named pte_none_mostly() and
-> > huge_pte_none_mostly().
-> >
-> > This predicate returns true for PTE entries that ought to be treated as
-> > none, but only in certain circumstances, and on the assumption we are
-> > dealing with H/W poison markers or UFFD WP markers.
-> >
-> > This patch removes these functions and makes each invocation of these
-> > functions instead explicitly check what it needs to check.
-> >
-> > As part of this effort it introduces is_uffd_pte_marker() to explicitly
-> > determine if a marker in fact is used as part of UFFD or not.
-> >
-> > In the HMM logic we note that the only time we would need to check for a
-> > fault is in the case of a UFFD WP marker, otherwise we simply encounter a
-> > fault error (VM_FAULT_HWPOISON for H/W poisoned marker, VM_FAULT_SIGSEGV
-> > for a guard marker), so only check for the UFFD WP case.
-> >
-> > While we're here we also refactor code to make it easier to understand.
-> >
-> > Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
-> > Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> > ---
-> >  fs/userfaultfd.c              | 83 +++++++++++++++++++----------------
-> >  include/asm-generic/hugetlb.h |  8 ----
-> >  include/linux/swapops.h       | 18 --------
-> >  include/linux/userfaultfd_k.h | 21 +++++++++
-> >  mm/hmm.c                      |  2 +-
-> >  mm/hugetlb.c                  | 47 ++++++++++----------
-> >  mm/mincore.c                  | 17 +++++--
-> >  mm/userfaultfd.c              | 27 +++++++-----
-> >  8 files changed, 123 insertions(+), 100 deletions(-)
-> >
-> > diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-> > index 54c6cc7fe9c6..04c66b5001d5 100644
-> > --- a/fs/userfaultfd.c
-> > +++ b/fs/userfaultfd.c
-> > @@ -233,40 +233,46 @@ static inline bool userfaultfd_huge_must_wait(struct userfaultfd_ctx *ctx,
-> >  {
-> >  	struct vm_area_struct *vma = vmf->vma;
-> >  	pte_t *ptep, pte;
-> > -	bool ret = true;
-> >
-> >  	assert_fault_locked(vmf);
-> >
-> >  	ptep = hugetlb_walk(vma, vmf->address, vma_mmu_pagesize(vma));
-> >  	if (!ptep)
-> > -		goto out;
-> > +		return true;
-> >
-> > -	ret = false;
-> >  	pte = huge_ptep_get(vma->vm_mm, vmf->address, ptep);
-> >
-> >  	/*
-> >  	 * Lockless access: we're in a wait_event so it's ok if it
-> > -	 * changes under us.  PTE markers should be handled the same as none
-> > -	 * ptes here.
-> > +	 * changes under us.
-> >  	 */
-> > -	if (huge_pte_none_mostly(pte))
-> > -		ret = true;
-> > +
-> > +	/* If missing entry, wait for handler. */
->
-> It's actually #PF handler that waits ;-)
+Dear Paul
 
-Think I meant uffd userland 'handler' as in handle_userfault(). But this is not
-clear obviously.
+Thank you for taking the time to review it.
 
->
-> When userfaultfd_(huge_)must_wait() return true, it means that process that
-> caused a fault should wait until userspace resolves the fault and return
-> false means that it's ok to retry the #PF.
+On 11/10/2025 4:01 PM, Paul Menzel wrote:
+> Dear Shuai,
+> 
+> 
+> Thank you for the patch.
+> 
+> Am 10.11.25 um 04:41 schrieb Shuai Zhang:
+>> If no NVM file matches the board_id, load the default NVM file.
+> 
+> Maybe also add the comment, that the NVM file is always compatible(?) and just might not give the best performance.
+> 
 
-Yup.
+The default NVM file may differ in functionality and performance because specific NVM files enable certain 
+vendor commands based on chip capabilities. To ensure compatibility, the logic to load a default NVM file is added
+when a dedicated NVM file is not yet available, so that basic BT functionality remains operational.
 
->
-> So the comment here should probably read as
->
-> 	/* entry is still missing, wait for userspace to resolve the fault */
->
+> Also, please add a comment about passing board_id now. (Is that necessary or just an optimization?)
+> 
 
-Will update to make clearer thanks.
+The board_id is used to determine the appropriate NVM file, and it is mandatory.
 
->
-> > +	if (huge_pte_none(pte))
-> > +		return true;
-> > +	/* UFFD PTE markers require handling. */
-> > +	if (is_uffd_pte_marker(pte))
-> > +		return true;
-> > +	/* If VMA has UFFD WP faults enabled and WP fault, wait for handler. */
-> >  	if (!huge_pte_write(pte) && (reason & VM_UFFD_WP))
-> > -		ret = true;
-> > -out:
-> > -	return ret;
-> > +		return true;
-> > +
-> > +	/* Otherwise, if entry isn't present, let fault handler deal with it. */
->
-> Entry is actually present here, e.g because there is a thread that called
-> UFFDIO_COPY in parallel with the fault, so no need to stuck the faulting
-> process.
+I will also update the new patch to include these comments.
 
-Well it might not be? Could be a swap entry, migration entry, etc. unless I'm
-missing cases? Point of comment was 'ok if non-present in a way that doesn't
-require a userfaultfd userland handler the fault handler will deal'
+>> Signed-off-by: Shuai Zhang <quic_shuaz@quicinc.com>
+>> ---
+>>   drivers/bluetooth/btusb.c | 26 +++++++++++++++++---------
+>>   1 file changed, 17 insertions(+), 9 deletions(-)
+>>
+>> diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+>> index dcbff7641..020dbb0ab 100644
+>> --- a/drivers/bluetooth/btusb.c
+>> +++ b/drivers/bluetooth/btusb.c
+>> @@ -3482,15 +3482,14 @@ static int btusb_setup_qca_load_rampatch(struct hci_dev *hdev,
+>>   }
+>>     static void btusb_generate_qca_nvm_name(char *fwname, size_t max_size,
+>> -                    const struct qca_version *ver)
+>> +                    const struct qca_version *ver,
+>> +                    u16 board_id)
+>>   {
+>>       u32 rom_version = le32_to_cpu(ver->rom_version);
+>>       const char *variant, *fw_subdir;
+>>       int len;
+>> -    u16 board_id;
+>>         fw_subdir = qca_get_fw_subdirectory(ver);
+>> -    board_id = qca_extract_board_id(ver);
+>>         switch (le32_to_cpu(ver->ram_version)) {
+>>       case WCN6855_2_0_RAM_VERSION_GF:
+>> @@ -3517,14 +3516,14 @@ static void btusb_generate_qca_nvm_name(char *fwname, size_t max_size,
+>>     static int btusb_setup_qca_load_nvm(struct hci_dev *hdev,
+>>                       struct qca_version *ver,
+>> -                    const struct qca_device_info *info)
+>> +                    const struct qca_device_info *info,
+>> +                    u16 board_id)
+>>   {
+>>       const struct firmware *fw;
+>>       char fwname[80];
+>>       int err;
+>>   -    btusb_generate_qca_nvm_name(fwname, sizeof(fwname), ver);
+>> -
+>> +    btusb_generate_qca_nvm_name(fwname, sizeof(fwname), ver, board_id);
+>>       err = request_firmware(&fw, fwname, &hdev->dev);
+>>       if (err) {
+>>           bt_dev_err(hdev, "failed to request NVM file: %s (%d)",
+>> @@ -3606,10 +3605,19 @@ static int btusb_setup_qca(struct hci_dev *hdev)
+>>       btdata->qca_dump.controller_id = le32_to_cpu(ver.rom_version);
+>>         if (!(status & QCA_SYSCFG_UPDATED)) {
+>> -        err = btusb_setup_qca_load_nvm(hdev, &ver, info);
+>> -        if (err < 0)
+>> -            return err;
+>> +        u16 board_id = qca_extract_board_id(&ver);
+>>   +        err = btusb_setup_qca_load_nvm(hdev, &ver, info, board_id);
+>> +        if (err < 0) {
+>> +            //if the board id is not 0, try to load the defalut nvm file
+> 
+> Did `checkpatch.pl` not complain about the missing space, and misspelling of *default*?
 
-But anyway agree this isn't clear, probably better to just say 'otherwise no
-need for userland uffd handler to do anything here' or similar.
+Sorry for the typo. I will update it. > 
+>> +            if (err == -ENOENT && board_id != 0) {
+>> +                err = btusb_setup_qca_load_nvm(hdev, &ver, info, 0);
+>> +                if (err < 0)
+>> +                    return err;
+>> +            } else {
+>> +                return err;
+>> +            }
+>> +        }
+>>           /* WCN6855 2.1 and later will reset to apply firmware downloaded here, so
+>>            * wait ~100ms for reset Done then go ahead, otherwise, it maybe
+>>            * cause potential enable failure.
+> 
+> Please try to catch the style errors before submitting patches.
+> 
 
-Will update.
+ I will update it. 
 
->
-> > +	return false;
-> >  }
-> >  #else
-> >  static inline bool userfaultfd_huge_must_wait(struct userfaultfd_ctx *ctx,
-> >  					      struct vm_fault *vmf,
-> >  					      unsigned long reason)
-> >  {
-> > -	return false;	/* should never get here */
-> > +	/* Should never get here. */
-> > +	VM_WARN_ON_ONCE(1);
-> > +	return false;
-> >  }
-> >  #endif /* CONFIG_HUGETLB_PAGE */
-> >
-> >  /*
-> > - * Verify the pagetables are still not ok after having reigstered into
-> > + * Verify the pagetables are still not ok after having registered into
-> >   * the fault_pending_wqh to avoid userland having to UFFDIO_WAKE any
-> >   * userfault that has already been resolved, if userfaultfd_read_iter and
-> >   * UFFDIO_COPY|ZEROPAGE are being run simultaneously on two different
-> > @@ -284,53 +290,55 @@ static inline bool userfaultfd_must_wait(struct userfaultfd_ctx *ctx,
-> >  	pmd_t *pmd, _pmd;
-> >  	pte_t *pte;
-> >  	pte_t ptent;
-> > -	bool ret = true;
-> > +	bool ret;
-> >
-> >  	assert_fault_locked(vmf);
-> >
-> >  	pgd = pgd_offset(mm, address);
-> >  	if (!pgd_present(*pgd))
-> > -		goto out;
-> > +		return true;
-> >  	p4d = p4d_offset(pgd, address);
-> >  	if (!p4d_present(*p4d))
-> > -		goto out;
-> > +		return true;
-> >  	pud = pud_offset(p4d, address);
-> >  	if (!pud_present(*pud))
-> > -		goto out;
-> > +		return true;
-> >  	pmd = pmd_offset(pud, address);
-> >  again:
-> >  	_pmd = pmdp_get_lockless(pmd);
-> >  	if (pmd_none(_pmd))
-> > -		goto out;
-> > +		return true;
-> >
-> > -	ret = false;
-> >  	if (!pmd_present(_pmd))
-> > -		goto out;
-> > +		return false;
->
-> This one is actually tricky, maybe it's worth adding a gist of commit log
-> from a365ac09d334 ("mm, userfaultfd, THP: avoid waiting when PMD under THP migration")
-> as a comment.
+> 
+> Kind regards,
+> 
+> Paul
 
-OK.
+Best,regard
+Shuai
 
->
-> >
-> > -	if (pmd_trans_huge(_pmd)) {
-> > -		if (!pmd_write(_pmd) && (reason & VM_UFFD_WP))
-> > -			ret = true;
-> > -		goto out;
-> > -	}
-> > +	if (pmd_trans_huge(_pmd))
-> > +		return !pmd_write(_pmd) && (reason & VM_UFFD_WP);
->
-> ...
->
-> > diff --git a/mm/hmm.c b/mm/hmm.c
-> > index a56081d67ad6..43d4a91035ff 100644
-> > --- a/mm/hmm.c
-> > +++ b/mm/hmm.c
-> > @@ -244,7 +244,7 @@ static int hmm_vma_handle_pte(struct mm_walk *walk, unsigned long addr,
-> >  	uint64_t pfn_req_flags = *hmm_pfn;
-> >  	uint64_t new_pfn_flags = 0;
-> >
-> > -	if (pte_none_mostly(pte)) {
-> > +	if (pte_none(pte) || pte_marker_uffd_wp(pte)) {
->
-> Would be nice to add the note from the changelog as a comment here.
-
-OK will do.
-
->
-> >  		required_fault =
-> >  			hmm_pte_need_fault(hmm_vma_walk, pfn_req_flags, 0);
-> >  		if (required_fault)
->
-> --
-> Sincerely yours,
-> Mike.
-
-Cheers, Lorenzo
 
