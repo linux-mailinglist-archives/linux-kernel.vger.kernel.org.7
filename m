@@ -1,134 +1,336 @@
-Return-Path: <linux-kernel+bounces-894009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7909C4910B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 20:33:23 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4E6CC49127
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 20:34:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D3DE24E1244
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 19:33:00 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BA89A4EDC63
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 19:34:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5268A341650;
-	Mon, 10 Nov 2025 19:29:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 127FD33B969;
+	Mon, 10 Nov 2025 19:30:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rTnk17oz"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Z/cT4Dlk"
+Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010027.outbound.protection.outlook.com [52.101.69.27])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35E30336EFD
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 19:29:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762802957; cv=none; b=dnxxsPZjE1uTXnT1ARpyB/4OQ8yrhsYAgVbQGltl0BX4aWARxk3dL5/SjQUzALSblajkzAbPX3SDkfZL0FF8HOtaQm8H5XQz8RY4Y10fZibaWDbcECG+J6VwCVkBcXNikvveJvwPQXErDIgGQxCUs8MabGMe1OUW1Ld0d8QFt8U=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762802957; c=relaxed/simple;
-	bh=RzBGsCn87G8Sx3N+xmIXdtBJ0l0kWfW0p7tCuHwvI9I=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Fiv6TddtjlcG2jsu17khrJRMZPVHFjO9+vYAj545u50jjuAfdrNz8XcJj9xWVp1YE7oIjh56rWsYYwGf9cLJUEnetEVxVjo2fM3wEalj1sIZW/9wXxJaRcNgaipWJWsT3uRRLTuTAMkW0hwYVDU3EQk4fwXrWNdg+Zxmt6T01hU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rTnk17oz; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b728a43e410so732801966b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 11:29:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762802950; x=1763407750; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jumGSBrz6UJPB93YzP/ypMhQMv7kILadjYtPvrV2cZM=;
-        b=rTnk17ozRBwpoSJoTMGRHP/mdkG1ZwdxIj+43UUty2dcF+hxkGHan0pyeiJoAHEPEH
-         hsya4xIr1KJBlJAen6ShfDd87jB4mRKEWLgfGgocYLq2v7DOEesUuDp4z77d69ltanVS
-         ilrXi3OWebiy6izoNvAtyaJu1xrTZ9lawzz+qhZoNi1OA7y7YkTxVMYlob9jgY/Va+i3
-         B36ueBo8zG6C2w4iP34Ngbu1HOrmQehv4XbEF1IMw0Y1HcMytnWqDt8MuYHGMxo59KWC
-         FWBWarqm5C9lAeaOLZQr5g3SypAhdN5McC8fqliq0dqb8lPnlx2E3YOLeA5IB8Y2I/q3
-         RHrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762802950; x=1763407750;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=jumGSBrz6UJPB93YzP/ypMhQMv7kILadjYtPvrV2cZM=;
-        b=VQmKDHmko/amzUszrPQD5R1/l1PjXb2QyB4tU95CgTa+Mbc+UarXSx7D3MsHsFUFnw
-         uKifNU134PU8RWfD0EINB5BtFUkQxJcBmEic/s/M4kfXSzzPyncrQBnyCwbJBwH76n04
-         d/N80xRR1mlnbUAd6sCTyITX6wnckQtCDTGpWRlaU5YgSYDCU/m5HqgskKoofN/ASGxY
-         9Jr0qU76TEP0EojzcnVxjWhUSCG7J3soat3Ns5+xYcIISkepRuBd/F756/BQukG4tngi
-         dEOdmw8pQoMXzSfM5pjfw1PFL4hXvZNVAbS+bs3xGfsjDZ4GxCpp+rdJBonjUEpoBI4Y
-         mULg==
-X-Forwarded-Encrypted: i=1; AJvYcCUckvuzRQgW+v6ZPS4eUN9R5bKiYYWt/ueeIgQpiW15Wku9jpjC/g6dByjPtDJs0wxx38C1/LScQzwWpIE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxS9xPLaamlF1QYZfsy4ChzNVOBRwFLqZqg+EPGdo5TD0lzDli6
-	lE+mQVirxKE1M5Z/uO8YJMmNgIGXDxhazw3aoHBDZ3X2K4CLi9oaa3aBxdcx1ykpo5Y=
-X-Gm-Gg: ASbGncu7g84qF2z3UWpdbcYcQSlw+XmLfTknL0IyL8uK6M73QFoUwcq52k6m8J2d0iN
-	XDNFMNny44AHz+0Vp/eW0lcdBNRfZZ/wpGEzuJXjbo7CJ4OaDAdxtCEcWcOrca967yEZ8eBATfm
-	c8O3krmqwzLlVHd2uZilTJdocaD++jxLIhwTcsTjUMN0MLVQoMeLbnx3+CZVuLU4++zBgMznaCf
-	pz7I1o39llVbaYZjcdgJWMF31Dy9KYA3EbludoHDV/V+85IKQC2xp16eHPIZ1ONWvXDOLbmYCO6
-	FbQPTrLTDFmfdZKfdsaWigvizh5pvEtgxGYTmKhTV07AtvvNfn0Bkvz3+FtUUH28VBBhqhDPyOA
-	LUyeR7JQETvRi7qMJwi3mv0SNeUnzzSPNG8g9Vy19RrWoRr1sT9tcXssLoksEtsbyGrmaIKp726
-	fzxAghz9AUJ/IZT2idIV6XI8av+sqlTMUZJ/3Lf8rGasHVi4jF1LzO/6HAPNxv
-X-Google-Smtp-Source: AGHT+IFpqR3MayLxCuVGV8uSOt13EYeoXGaPrtL/jHLhv195Pfx49CWhTUu8/3DnrKLv5DW2F0sE3A==
-X-Received: by 2002:a17:907:5c9:b0:b6d:8da0:9a24 with SMTP id a640c23a62f3a-b72e036c9e5mr914118866b.9.1762802949657;
-        Mon, 10 Nov 2025 11:29:09 -0800 (PST)
-Received: from puffmais2.c.googlers.com (254.48.34.34.bc.googleusercontent.com. [34.34.48.254])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bf97d16esm1168178166b.35.2025.11.10.11.29.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Nov 2025 11:29:09 -0800 (PST)
-From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Mon, 10 Nov 2025 19:29:03 +0000
-Subject: [PATCH v4 20/20] regulator: s2mps11: more descriptive gpio
- consumer name
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A3CE336ECC;
+	Mon, 10 Nov 2025 19:30:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.27
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762803038; cv=fail; b=Iv793U++MHpd4QJy0TCx3pJHy/hbt/TFej2QkTxYnxmD+0pG97NSIN2cZnGMurTB3ZV0tAZa/RY1REdcBR6+M0brXBhYqpfXllVuo22Nha8mZ+8eux7W7whNplPZNnQp7Vt8MGHndn19IZTkFwZXvdHBxqvAmhJToeewtEGBA4U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762803038; c=relaxed/simple;
+	bh=UY3cVvCnPkV4/ns/x6onguzmF5fGH6/iptGazlmd8zA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=Z6Z04G+cusNrFXpKT9Eg4joJHuAFj+zNB8peBKezAZi9MUyt0qU9oYR8u+qkEcI2da/T2MY51MwM7dHs5iq4aCTjo0oaxSGB7sCALYK5yo+bkpp5GQ0XhUG4EoSQDVPjLOzr7BpQO2CQ5DjlG5ljH9ws/C15lvlXH4FGaAhHsN8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Z/cT4Dlk; arc=fail smtp.client-ip=52.101.69.27
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=qnpdonMpMAsyYBXL9g/lmxflIjsojze0gewPJ55TPSJoSMK8vyoqtfBg6s1DT6HEYJ74jaHsMCb3hNHDlZ8QxNbu4Vo0MWGomX3a7BCC6GdZHYioOjKDf4/8DDXnP7GlO/Syr9rEYXTQ8SEC1zUa3VTC2TahFW/hAoK25cctgDZevRDb9x2EX7reVwvO28a+5HoF5nxAdF++8/L865LxxK/RgJHjZJFlFvLt5bYoEgzTSiIK7BdMnKdkrmsaex0oXP7h8mIZlQ/5sX2efCus71iW/aBAw5Tgwsv2Q7DXfkwPzAyT5WCVLuZNrn7T5T7oEON5k6ZsUhAVdC//lx/BNA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wmoM2mJZkcaJnsfnkXWuWfhe0ne56G7XC5iAvnKdEk0=;
+ b=R6hPyd/FADZGojebkKgjJpUMe7GMwTkNaQeJFC9J0KIvcJN2cxGgdFJEhcNas3c//4Znkr7UhZhRIWS9R0YZ7oOBIgWxymy2N24v3Sh0SkTN3MV5RnwvuZ0eUpjcFbxZqegkr4OXR6EUP9y4V1GGBp0QXPRPcCzwYtnLerXquHkC+Nla5P/iVarSARPkcTyo4vLah3uKGLipF9IUsEVI3FTBOjRkmVp3dHKxUqcsXxqDrPh951coii0kIo2G/X1ny+FTROYsDyofiDHmNZBJLwnMQEpQpqSUCOvPiBO194VOfqVc2Xh85crJSBCNCBpW4akX5elUDEurVXvBXWtP9w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wmoM2mJZkcaJnsfnkXWuWfhe0ne56G7XC5iAvnKdEk0=;
+ b=Z/cT4DlkRdhZKaVsh7C0PgEhFGds7P0VY2Z/BCzbx3s2neBc8IpZcQauO4BoT8hZd/W/2KX4vmabxXxDa6a/5VAq9A6vGxOr+EquPRRIS5Puvc4DZ57+EjmfrucyEDGdGTUiH0gA6Jrq8ytxjj5dMwNAZb9ySHLHY8OCyvWB7tzGt7cm6JYM2b4rsMehEf0fCszcYKZ2L1dbV25pTfGKvjCRWKPG6E7G3KcGLArInYjjyqENXC408g3l9zs4zpVoxlv5Ai/0kqa4bL9bWXpCzU2KwTBTic2052N8TjKIlkbOT8O3N1UfyF0QThMpJkjLmvWzOxIIxZFlLvJV20x4XA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from DB9PR04MB9626.eurprd04.prod.outlook.com (2603:10a6:10:309::18)
+ by DB9PR04MB9889.eurprd04.prod.outlook.com (2603:10a6:10:4ef::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Mon, 10 Nov
+ 2025 19:30:32 +0000
+Received: from DB9PR04MB9626.eurprd04.prod.outlook.com
+ ([fe80::55ef:fa41:b021:b5dd]) by DB9PR04MB9626.eurprd04.prod.outlook.com
+ ([fe80::55ef:fa41:b021:b5dd%4]) with mapi id 15.20.9298.015; Mon, 10 Nov 2025
+ 19:30:32 +0000
+Date: Mon, 10 Nov 2025 14:30:23 -0500
+From: Frank Li <Frank.li@nxp.com>
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: chester62515@gmail.com, mbrugger@suse.com,
+	ghennadi.procopciuc@oss.nxp.com, s32@nxp.com, bhelgaas@google.com,
+	jingoohan1@gmail.com, lpieralisi@kernel.org, kwilczynski@kernel.org,
+	mani@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, Ionut.Vicovan@nxp.com, larisa.grigore@nxp.com,
+	ciprianmarian.costea@nxp.com, bogdan.hamciuc@nxp.com,
+	linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev, cassel@kernel.org
+Subject: Re: [PATCH 3/4 v4] PCI: s32g: Add initial PCIe support (RC)
+Message-ID: <aRI9T260bl9bok4W@lizhi-Precision-Tower-5810>
+References: <20251110173334.234303-1-vincent.guittot@linaro.org>
+ <20251110173334.234303-4-vincent.guittot@linaro.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251110173334.234303-4-vincent.guittot@linaro.org>
+X-ClientProxiedBy: PH8P222CA0001.NAMP222.PROD.OUTLOOK.COM
+ (2603:10b6:510:2d7::30) To DB9PR04MB9626.eurprd04.prod.outlook.com
+ (2603:10a6:10:309::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20251110-s2mpg1x-regulators-v4-20-94c9e726d4ba@linaro.org>
-References: <20251110-s2mpg1x-regulators-v4-0-94c9e726d4ba@linaro.org>
-In-Reply-To: <20251110-s2mpg1x-regulators-v4-0-94c9e726d4ba@linaro.org>
-To: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Lee Jones <lee@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: Peter Griffin <peter.griffin@linaro.org>, 
- Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
- linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-X-Mailer: b4 0.14.2
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB9PR04MB9626:EE_|DB9PR04MB9889:EE_
+X-MS-Office365-Filtering-Correlation-Id: 284490b7-f924-401b-915d-08de208f9d05
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|7416014|376014|366016|1800799024|19092799006|38350700014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?8mXfDr3rFHr5Y1ebNc3HQmb+rzxJyPkEoKNHkMfY9Ahf8faIUi9gxJps1LQx?=
+ =?us-ascii?Q?QTIjz9pUyLBl97oipMIwuzRYp2bwC1g+p+HcQ/Vlft5YMw95x5rJagjkgCGh?=
+ =?us-ascii?Q?chMS7FAlhiIUBG+J1i4A0+SHi+pIz2IrlbpfHbh9sIXb6Z1g1p7A0B49iAE7?=
+ =?us-ascii?Q?UMnU7lof+B6j50dMsUnaoMRp79TJPbKB3ZZ2OrX6o/PBUxu/fuJeA9WNAYhF?=
+ =?us-ascii?Q?Jz0CoPZiQa0WgBbwJ1E0WXMPJe6kjTM3qHBmW7SO3SSVE4Lh00MqzlkCHf11?=
+ =?us-ascii?Q?5xPQ6mnvqS/RxExlWdFEwOLpEDsKLYuppBLOuw6SJ0vk9FZo7LKdMqqqsCMY?=
+ =?us-ascii?Q?FPJ9yQTDMKzuMUzGxpCa0R+ZueUGfdXTPe7xO2DOkmq5ZD67k+W0UyqkO6Kc?=
+ =?us-ascii?Q?czLhBacWkhNyIPDDT2tRfc0ezRTBdX9gTs19LKK7D/+jpbKOG44W8T8ljtJs?=
+ =?us-ascii?Q?KX/riMYgA/vtWvlR3CWRLzLdDLtyaCHii/hsy/vXua7UWbPQQSygtYdV9VRv?=
+ =?us-ascii?Q?AfwkTReepg980vTyDkM9zKoCd1UR80jHos3YzZKRUkoaOblMdRFTlmXKUTOM?=
+ =?us-ascii?Q?MA8a4fnK0D2q8NJXz+Bn2FtH+5NzdDWjXXIIsw/yZcuhsrvAtctzbQhBaVyr?=
+ =?us-ascii?Q?XXMMr7XbVq9Z0ZnDnMSDbGsVVpK19dMbhqMfAjLpNIDBv0BzVmAu7lkqACsZ?=
+ =?us-ascii?Q?onOwbT3ENCzk7GrcrxmnAxenES+SSae8WHK8FdHVRu7iQlJKxu4D/5WcsEhT?=
+ =?us-ascii?Q?r7p5qDN79CMUScjoIZhuLmAOz3wQeLQOhfcyIYNu0j1XGETOTDOyOE7BtDVc?=
+ =?us-ascii?Q?tcd4kvvi6afYU0N/ho9Zu+9+jclR1bt+0MMT5IgmveM/ggoXSRDjPEWwQ3uC?=
+ =?us-ascii?Q?sVnK3uf30mgx5muRm4VG/8zTAk7uKpYl2sPABDxSOCTqYoy+c2bMbiKyNjk/?=
+ =?us-ascii?Q?s8mxqZe5otBndGL4aHT9BH2WuTv8G+NoS2WQPSwS9en3NC8GcfByMHfItfNW?=
+ =?us-ascii?Q?gVzIm1k6dn0soNISey/7iXv69sFlI+MSipIB7CveJ3BeLbVo2Iq3w2Si5Wt6?=
+ =?us-ascii?Q?7PQLuE3rOuQzaUBZGWiE60UshCWbel3QicYztP2qmgLmbbA4CEP78AfaRBCp?=
+ =?us-ascii?Q?fkr9GTFlt6aSTSyXV00UzemPYr7jNerZOBDaNNcXU3JqPdlNcELJOK5iXW9p?=
+ =?us-ascii?Q?0IPtIuE2dmgd/CsbKvlUvd4tl4e93g5mozYHoCiDuFVtC1ON4mVJBBvesrP9?=
+ =?us-ascii?Q?+V22Or6yfbMuSgvo/XWS04m7wP5YlsnUmvzoZRNgnR7TwQPxSpvj0epfLVG+?=
+ =?us-ascii?Q?BZAnKRXgkOG+IwI/7vnnbyND++xtqvHghP96nPNZPVTqJMgLn3IpwuU/IKKk?=
+ =?us-ascii?Q?pKkKYPTuRsKPOK5/et6SUNH3b7sWBphO5oE+J3+qTJeHsxdp7aGw1ph0EX+0?=
+ =?us-ascii?Q?HBRtOSuycMvppAU5AI4gYB1WJYc7Wb42ZEo9tQJ7GIFfxNFJXNx/x6mrf6l1?=
+ =?us-ascii?Q?faqR6CrruhD2VS2EMo4oAmQ4hsJduoC1pfw4?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB9626.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(7416014)(376014)(366016)(1800799024)(19092799006)(38350700014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?5mIPzCewYBtbfibh7GMlTy983CC9czzXNsbkuDKT67w8/4TA+5rYHM+saCcg?=
+ =?us-ascii?Q?bZnZvXEiKfL+66WjyKaenmcicsU0l/ggdeG+p8LvISAufkUI6n+PqyAciYZH?=
+ =?us-ascii?Q?hZPAgKYnI+aLZejELbv8A9/wgirIQNm+hW1+h9iA8dWY1Q6L9WklHRZ5aTI2?=
+ =?us-ascii?Q?GUNlD1SOnBcVgcWunUzb9zmBPg67WqzF1N2Nmngh7ohN1w5V86ccJXbW3zjY?=
+ =?us-ascii?Q?6GDyvO4Kw1SzfWQesoZ8iNwVYxkiswndJyZjw+bcPPenOGxBDcjB7C5Xo2W8?=
+ =?us-ascii?Q?dcSlgO79cSm0rEK/54Fw+g0QfnW0YdyEliQBAD3dpEzWvvTHYF0sRx8XeFEQ?=
+ =?us-ascii?Q?s9EDhHCfmL9BLuPxOmwYHnxqKriSCGpfwOls4Sol7pMbTWmpKs6N3gg+OgUX?=
+ =?us-ascii?Q?DolBffrS0Fely4h/bGV0rdWTOfbJfq/51jHUX42m8elJv3DYe1qJz4Uj8PN0?=
+ =?us-ascii?Q?NhW4C4ha47l/DuSl9vgY1/RtXTT5aIvnHtntORHWGZ2JoPeX1aCsqI7gLseE?=
+ =?us-ascii?Q?WC8B1HttndqA7XKbgfbtF2ybWbDHVMx/aGPr8V8Pidy4j+UCakCErQ642x0y?=
+ =?us-ascii?Q?5SD6dWEvZhEE8v+SMb6lyuATEhlpL9acIYF9zdjvsF98Ohb1yK3/w8cFz7NH?=
+ =?us-ascii?Q?ZErNrcUwzO6QUxdI35SajnRMGY3Iw3/CPorvO+ORcdKUd+A1VNuzTXDdOmhv?=
+ =?us-ascii?Q?7xxQy84ParmtoXzdnYjL2v0O4g1eufiSV4Z6a+PF47w6V4ta2+M0uBdA6tin?=
+ =?us-ascii?Q?fbQTp7peM3H+3M/AjQ59GNEIx2Kr9BzOHQB9oaENiaxmCczmXw9aE7mJ1q24?=
+ =?us-ascii?Q?OuL2kJWHmspXOXBC0Y/oylS/pquS7B7RXgcxyQeAlP5fYk80CGU2zmDcAJu1?=
+ =?us-ascii?Q?Nw9BbmaFkV6nnQ5oOsRrDl3HsDrA5DZI/jSjrEAuORsvtMMlZGRIo/DrdSXf?=
+ =?us-ascii?Q?XPduLjaex7BLGXoW5NWSchIDJ/8VPyj74XtrO9ovoFxAY4NfUj4loJlQa3t5?=
+ =?us-ascii?Q?9mgOCsHQjzpwO9PSamODDRPIhGY0hehYCqJZ060TXfR2uSXYq6j24KOQqYxB?=
+ =?us-ascii?Q?dVswghrf8kv9AhzhumMKcWQiQDc6mIZgGufyZBUnrZ5I5PXKrAdxEUst3dWq?=
+ =?us-ascii?Q?FTwoap5WKFWKG4HFGgz3P2q3DvAt/r3hu/wGtXLAEq5JLX2C1PkS69MBQ5Lp?=
+ =?us-ascii?Q?UpgjAeCskZWklwT1Df/5TYFYQBgoUdlVPSUdLt9EAs1dsxoml4l2PrWRGgF/?=
+ =?us-ascii?Q?S0rOaRet8UEDIHOell239lae976rxv5Eg0OpCrO9jtNZ+Tf0yZHJtjhQAzP6?=
+ =?us-ascii?Q?J2CIJvw2G5GbQTw1ajfw/Y/MccREoglgGUCOFSkA0S/Cz4pC18SLuNwxF6++?=
+ =?us-ascii?Q?i5GrN5vjjEUEbIUzt4eCHZdg/OvYHKY6n+J4vzIuAKr2Yih7hSwHlLrj7rVX?=
+ =?us-ascii?Q?QoBHFerOHG11ErsHcXOmexXxZW7SuBpYmXi8yZs4GXFUZBj0WSXi2bEyI4Wq?=
+ =?us-ascii?Q?SLw1ht1eAclAVeoaACkVCNX4Pwg8617m5eaDLTlgbzLYeeTGpGrv4jUdwoMM?=
+ =?us-ascii?Q?cyBQnezdi+U2T2vsa1aR+qly4/KfJ8drEIoW3gnU?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 284490b7-f924-401b-915d-08de208f9d05
+X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB9626.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Nov 2025 19:30:32.2526
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: q3NOeDLLwKom7eQgXSRz1CrpQfNiOu9zYL6CEqrj0Np90MYkIluW+8G3kK7d5bGwecuH32tphNQ9ZDNM68c6Ng==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB9889
 
-Currently, GPIOs claimed by this driver for external rail control
-all show up with "s2mps11-regulator" as consumer, which is not
-very informative.
+On Mon, Nov 10, 2025 at 06:33:33PM +0100, Vincent Guittot wrote:
+> Add initial support of the PCIe controller for S32G Soc family. Only
+> host mode is supported.
+>
+> Co-developed-by: Ionut Vicovan <Ionut.Vicovan@nxp.com>
+> Signed-off-by: Ionut Vicovan <Ionut.Vicovan@nxp.com>
+> Co-developed-by: Ciprian Marian Costea <ciprianmarian.costea@nxp.com>
+> Signed-off-by: Ciprian Marian Costea <ciprianmarian.costea@nxp.com>
+> Co-developed-by: Ghennadi Procopciuc <Ghennadi.Procopciuc@nxp.com>
+> Signed-off-by: Ghennadi Procopciuc <Ghennadi.Procopciuc@nxp.com>
+> Co-developed-by: Larisa Grigore <larisa.grigore@nxp.com>
+> Signed-off-by: Larisa Grigore <larisa.grigore@nxp.com>
+> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+> ---
+>  drivers/pci/controller/dwc/Kconfig            |  10 +
+>  drivers/pci/controller/dwc/Makefile           |   1 +
+>  .../pci/controller/dwc/pcie-nxp-s32g-regs.h   |  27 ++
+>  drivers/pci/controller/dwc/pcie-nxp-s32g.c    | 435 ++++++++++++++++++
+>  4 files changed, 473 insertions(+)
+>  create mode 100644 drivers/pci/controller/dwc/pcie-nxp-s32g-regs.h
+>  create mode 100644 drivers/pci/controller/dwc/pcie-nxp-s32g.c
+>
+> diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
+> index 349d4657393c..e276956c3fca 100644
+> --- a/drivers/pci/controller/dwc/Kconfig
+> +++ b/drivers/pci/controller/dwc/Kconfig
+> @@ -256,6 +256,16 @@ config PCIE_TEGRA194_EP
+>  	  in order to enable device-specific features PCIE_TEGRA194_EP must be
+>  	  selected. This uses the DesignWare core.
+>
+> +config PCIE_NXP_S32G
+> +	tristate "NXP S32G PCIe controller (host mode)"
+> +	depends on ARCH_S32 || COMPILE_TEST
+> +	select PCIE_DW_HOST
+> +	help
+> +	  Enable support for the PCIe controller in NXP S32G based boards to
+> +	  work in Host mode. The controller is based on DesignWare IP and
+> +	  can work either as RC or EP. In order to enable host-specific
+> +	  features PCIE_NXP_S32G must be selected.
+> +
+>  config PCIE_DW_PLAT
+>  	bool
+>
+> diff --git a/drivers/pci/controller/dwc/Makefile b/drivers/pci/controller/dwc/Makefile
+> index 7ae28f3b0fb3..3301bbbad78c 100644
+> --- a/drivers/pci/controller/dwc/Makefile
+> +++ b/drivers/pci/controller/dwc/Makefile
+> @@ -10,6 +10,7 @@ obj-$(CONFIG_PCI_DRA7XX) += pci-dra7xx.o
+>  obj-$(CONFIG_PCI_EXYNOS) += pci-exynos.o
+>  obj-$(CONFIG_PCIE_FU740) += pcie-fu740.o
+>  obj-$(CONFIG_PCI_IMX6) += pci-imx6.o
+> +obj-$(CONFIG_PCIE_NXP_S32G) += pcie-nxp-s32g.o
+>  obj-$(CONFIG_PCIE_SPEAR13XX) += pcie-spear13xx.o
+>  obj-$(CONFIG_PCI_KEYSTONE) += pci-keystone.o
+>  obj-$(CONFIG_PCI_LAYERSCAPE) += pci-layerscape.o
+> diff --git a/drivers/pci/controller/dwc/pcie-nxp-s32g-regs.h b/drivers/pci/controller/dwc/pcie-nxp-s32g-regs.h
+> new file mode 100644
+> index 000000000000..c264446a8f21
+> --- /dev/null
+> +++ b/drivers/pci/controller/dwc/pcie-nxp-s32g-regs.h
+> @@ -0,0 +1,27 @@
+> +/* SPDX-License-Identifier: GPL-2.0+ */
+> +/*
+> + * Copyright 2015-2016 Freescale Semiconductor, Inc.
+> + * Copyright 2016-2023, 2025 NXP
+> + */
+> +
+> +#ifndef PCIE_S32G_REGS_H
+> +#define PCIE_S32G_REGS_H
+> +
+> +/* PCIe controller Sub-System */
+> +
+> +/* PCIe controller 0 General Control 1 */
+> +#define PCIE_S32G_PE0_GEN_CTRL_1		0x50
+> +#define DEVICE_TYPE_MASK			GENMASK(3, 0)
+> +#define SRIS_MODE				BIT(8)
+> +
+> +/* PCIe controller 0 General Control 3 */
+> +#define PCIE_S32G_PE0_GEN_CTRL_3		0x58
+> +#define LTSSM_EN				BIT(0)
+> +
+> +/* PCIe Controller 0 Link Debug 2 */
+> +#define PCIE_S32G_PE0_LINK_DBG_2		0xB4
+> +#define SMLH_LTSSM_STATE_MASK			GENMASK(5, 0)
+> +#define SMLH_LINK_UP				BIT(6)
+> +#define RDLH_LINK_UP				BIT(7)
+> +
+> +#endif  /* PCI_S32G_REGS_H */
+> diff --git a/drivers/pci/controller/dwc/pcie-nxp-s32g.c b/drivers/pci/controller/dwc/pcie-nxp-s32g.c
+> new file mode 100644
+> index 000000000000..18bf0fe6f416
+> --- /dev/null
+> +++ b/drivers/pci/controller/dwc/pcie-nxp-s32g.c
+> @@ -0,0 +1,435 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * PCIe host controller driver for NXP S32G SoCs
+> + *
+> + * Copyright 2019-2025 NXP
+> + */
+> +
+...
+> +
+> +#define PCIE_LINKUP	(SMLH_LINK_UP | RDLH_LINK_UP)
+> +
+> +static bool s32g_has_data_phy_link(struct s32g_pcie *s32g_pp)
+> +{
+> +	u32 reg = s32g_pcie_readl_ctrl(s32g_pp, PCIE_S32G_PE0_LINK_DBG_2);
+> +
+> +	if ((reg & PCIE_LINKUP) == PCIE_LINKUP) {
+> +		switch (FIELD_GET(SMLH_LTSSM_STATE_MASK, reg)) {
+> +		case DW_PCIE_LTSSM_L0:
+> +		case DW_PCIE_LTSSM_L0S:
+> +		case DW_PCIE_LTSSM_L1_IDLE:
+> +			return true;
+> +		default:
+> +			return false;
 
-Switch to using the regulator name via desc->name instead, using the
-device name as fallback.
+Are you sure code can go here? I think IP set flag PCIE_LINKUP of
+PCIE_S32G_PE0_LINK_DBG_2 only after LTSSM in above states. Do you know
+which case PCIE_LINKUP is true, but LTSSM is not other state?
 
-Signed-off-by: André Draszik <andre.draszik@linaro.org>
----
- drivers/regulator/s2mps11.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+I remember I asked if DEBUG0 register work? any conclusion?
 
-diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
-index f19140e97b9d7a5e7c07cdc5e002de345aad32d9..3e9da15081e680d7660c60270af54ba2a4f8da1d 100644
---- a/drivers/regulator/s2mps11.c
-+++ b/drivers/regulator/s2mps11.c
-@@ -363,7 +363,8 @@ static int s2mps11_of_parse_gpiod(struct device_node *np,
- 	ena_gpiod = fwnode_gpiod_get_index(of_fwnode_handle(np), con_id, 0,
- 					   GPIOD_OUT_HIGH |
- 					   GPIOD_FLAGS_BIT_NONEXCLUSIVE,
--					   "s2mps11-regulator");
-+					   desc->name
-+					   ? : dev_name(config->dev));
- 	if (IS_ERR(ena_gpiod)) {
- 		ret = PTR_ERR(ena_gpiod);
- 
+> +		}
+> +	}
+> +
+> +	return false;
+> +}
+> +
 
--- 
-2.51.2.1041.gc1ab5b90ca-goog
+...
 
+> +
+> +static int s32g_pcie_parse_port(struct s32g_pcie *s32g_pp, struct device_node *node)
+> +{
+> +	struct device *dev = s32g_pp->pci.dev;
+> +	struct s32g_pcie_port *port;
+> +	int num_lanes;
+> +
+> +	port = devm_kzalloc(dev, sizeof(*port), GFP_KERNEL);
+> +	if (!port)
+> +		return -ENOMEM;
+> +
+> +	port->phy = devm_of_phy_get(dev, node, NULL);
+> +	if (IS_ERR(port->phy))
+> +		return dev_err_probe(dev, PTR_ERR(port->phy),
+> +				"Failed to get serdes PHY\n");
+> +
+> +	INIT_LIST_HEAD(&port->list);
+> +	list_add_tail(&port->list, &s32g_pp->ports);
+> +
+> +	/*
+> +	 * The DWC core initialization code cannot parse yet the num-lanes
+> +	 * attribute in the Root Port node. The S32G only supports one Root
+> +	 * Port for now so its driver can parse the node and set the num_lanes
+> +	 * field of struct dwc_pcie before calling dw_pcie_host_init().
+> +	 */
+> +	if (!of_property_read_u32(node, "num-lanes", &num_lanes))
+> +		s32g_pp->pci.num_lanes = num_lanes;
+
+Can you add this to dwc core driver?
+
+Frank
+
+> +
+> +	return 0;
+> +}
+> +
+...
+> --
+> 2.43.0
+>
 
