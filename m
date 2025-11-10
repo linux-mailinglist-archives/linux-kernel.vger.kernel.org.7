@@ -1,151 +1,188 @@
-Return-Path: <linux-kernel+bounces-892625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA010C4578C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:58:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 113D6C45786
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:57:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70A273B4948
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 08:58:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 671923B4301
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 08:57:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68A952FCBF7;
-	Mon, 10 Nov 2025 08:57:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A001823DD;
+	Mon, 10 Nov 2025 08:57:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="e/j7MBQo"
-Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="xJ4JLcO8";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="UonIxuOO";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="xJ4JLcO8";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="UonIxuOO"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 120C12FD1DB
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 08:57:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 188B42F25F1
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 08:57:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762765072; cv=none; b=nVAhFUi5unEAgfebB4C7drbRkpkfum/SIUEFfFNZ16vQuaEgC2zOz8R/E43ZtYKF0j9dO8ljmnru0eLxAFe7wn4u3IGWOJXS6Cy+tkIBO5y6H/wD4Uef24EziyXHyx9h74MMtp+kIIa1tjPdb6F+Klwv6m/9DqTHsKu2/dK7b8Q=
+	t=1762765064; cv=none; b=jkJIm2twHUOEfX3mlp1XVCDtqlgoRcC5v3BmlXq0E2G0NrKAWb4tPKThkyWBHJA4WEEttzC5nrIl3tMwf16ju41UYFTPqg5EgCSi3rAZBQ63C5IhCz9kPw4kMCcFyhVqpwrUzsdlBsmO/Urn7XYefHDg7iYzrwRcvUFfeA+5HF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762765072; c=relaxed/simple;
-	bh=5GHxvDWQcxyWdVLkU5N2dv4/sQx2GEcWltELKfBhSMg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=E+OFxLTnj7AK5C6CBP34FrIjl7M5MZpoQwtrTd3wKUpaPALbkYfQC89elJOpk6OjGAvz9+Sd39KdJpddC10wKfFtIHtAPPAL+SLlFNCOzQaNJxFL9j+OfJVBbFUNrO2hfAzGhKumostm6rKCuOy/EMnYAGY4tHcFSpbxAAfy+a8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=e/j7MBQo; arc=none smtp.client-ip=209.85.160.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-3c96de7fe7eso1947970fac.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 00:57:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762765070; x=1763369870; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=I+DU4bC9oY8isR66wkaZVD1cgl7C2T/3TuAVsgHOOjs=;
-        b=e/j7MBQorKMv3qhfZeOQYJho6w+nD4h2hGcT7LJ64J8+9Vg+Q51G6QBqasYV2cCoLq
-         8FDDenKGD4F9Swc9Z6VrZ+NrTg3nlf8DC3pLMEJGle3g1sSF6INESYbuI3z/ivk0K6Zq
-         VO1X3xfLKRM11XLURzU86C6NeH9/FvwwF94qgC1KO0swnuJzeQXDE/Y34ALETmvD5hGm
-         s7t2j8VZmwpr03U0qvfkw3NH7kOWhT+x4bNhhMuBxdrGeHup6S2YmXlYOllpjEi9JGV+
-         xql8kq7nIEQdOxUaZ1q9Yl8er0/OxZtxzf4TJmZ3zMpHahpKAe7KvrXu9YpRz20nNdju
-         XG6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762765070; x=1763369870;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=I+DU4bC9oY8isR66wkaZVD1cgl7C2T/3TuAVsgHOOjs=;
-        b=EhAgUhMWsaSOoBdMgf3l/Sd4JxCzNt4S4UVr/T0AnpcAvZzPMO1g8QuSxskQVKO/7i
-         wJT2luz0i9pn4Ou2fea6dBvlM2K99bXOC35AE/3IRTkPBdo2aU9GyveZ/5flg2Lw0pso
-         bjFGe7zn24SxAcaWGC38fg2N6uVO/AuMXXMUMVWCt26csAMigG7XEmAxUrGERCL4BWFA
-         HEXAnuP58pSAQYYifKnZzdYqDHah6NsYkuiNEYawuXIGCWGzo7JrUPjqGdMJzoudh0Me
-         +51SAufACclXfF2R17znzNmQcs7oeqCJp+b/FEynaFEzmB1jsYzHlv2rXkV+EsV9NnHX
-         AyKA==
-X-Forwarded-Encrypted: i=1; AJvYcCVknMJlEpTyfhZiy3UR9gtM47y5EdxfrtsTqGSyA6kv1fkGtCujxkCXnddc/COiZ0zfVbQWYosP2NPSeSU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtX02mTSsHCIb75tUyYDWTJ0CuwgQEJ/5gSxY5MeiwMWUJemG0
-	cIX3zLZYHkN91YkIDESgqhBZvq4nyx1YQguOxq3bdkmsKnopbe2oMxZ+hJwrek9LlR2cak65MkV
-	9bi8RtbXa+KiMNUxmH+HShqbLw51FMWlAGmQ3xG1Zyi/8l1TYJqgfFuQ=
-X-Gm-Gg: ASbGncsRijloCQb8QSTHLqtUGJNRAeD4XzQ3l5zt54xejJM0GOeue/lM+Jv2NLmesqk
-	atK12i6Ue5Vqh0CyqReiZhqHL4YAPuyrBIEbCBfq2fH9biSgmLCKwKGBTqKXRK2kK2GLpa7l9+r
-	85/py8Rqf8TUMMyZtNbD66dGRdOmtP2T2Hp7w5F0HYGLEsW0Rqewaagnwp7gawStpfKsreLS07X
-	5jz7BRmEqcM6dmBqeZOwqjAqgF0h9fz3c8XMxOa+ZsyLd0Rk3TQnMNndjhnsc0+Hg8dP/E6eqWk
-	6ENs
-X-Google-Smtp-Source: AGHT+IEvNSWQF8V50WXZvHvTh5vdg6c1kYKSH5fDM/Ta6RUD/FEZDy3lz08IzLZFRWp24NzfBrjEWgoxjvYDKgubZn0=
-X-Received: by 2002:a05:6870:899a:b0:3d4:760f:544b with SMTP id
- 586e51a60fabf-3e7c294ab31mr5259236fac.46.1762765070045; Mon, 10 Nov 2025
- 00:57:50 -0800 (PST)
+	s=arc-20240116; t=1762765064; c=relaxed/simple;
+	bh=Mf7DE0/QBl+8uf+v8GafQrwvTH2VYLwYYYYQGolrc1o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JTH4NERBgp0iMR28Mh0UUddVLyiMpSWIjhxU46KJKS/XEC+elibiF+SAwjT/aHUqv+Jk2p4bSYiPFKmiskupYW5VMsL/LG9GrLNmz23sTQVm1ErL4nq0tyCPOEvM192K6Wl5NoiXEwc8bfcBvhzBg102zRu1MGzz8xzrMczuNAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=xJ4JLcO8; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=UonIxuOO; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=xJ4JLcO8; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=UonIxuOO; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 478D91F399;
+	Mon, 10 Nov 2025 08:57:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762765061; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=siZRVH70jFKzKR490A0VZN08CJotwp+m2xqJ3CjFvic=;
+	b=xJ4JLcO8x28CraL5R6Q64huVUOrph3Pwm32nv+eUvApWcUKQuLRmp85Q1BsSeUB1fJQasT
+	O/mmdZ/KhPEacYuPo/H9Gl4vbClSCWR7qeslHCK51awvaGP1HEQ2pMOqiWxM7C+wCs9NUM
+	koM9D4IISA84n6X8lUYH55WEun+j+V4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762765061;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=siZRVH70jFKzKR490A0VZN08CJotwp+m2xqJ3CjFvic=;
+	b=UonIxuOOV7xWL0FJW6uBv67cBpSDSg2R4yzHuc5rwFn7uqq18aKyhVEaKAMU7RwUNdswIa
+	2p/hYY/rox1EEjBA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762765061; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=siZRVH70jFKzKR490A0VZN08CJotwp+m2xqJ3CjFvic=;
+	b=xJ4JLcO8x28CraL5R6Q64huVUOrph3Pwm32nv+eUvApWcUKQuLRmp85Q1BsSeUB1fJQasT
+	O/mmdZ/KhPEacYuPo/H9Gl4vbClSCWR7qeslHCK51awvaGP1HEQ2pMOqiWxM7C+wCs9NUM
+	koM9D4IISA84n6X8lUYH55WEun+j+V4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762765061;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=siZRVH70jFKzKR490A0VZN08CJotwp+m2xqJ3CjFvic=;
+	b=UonIxuOOV7xWL0FJW6uBv67cBpSDSg2R4yzHuc5rwFn7uqq18aKyhVEaKAMU7RwUNdswIa
+	2p/hYY/rox1EEjBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 241DB13BCF;
+	Mon, 10 Nov 2025 08:57:41 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id l8VxCAWpEWlzSwAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Mon, 10 Nov 2025 08:57:41 +0000
+Message-ID: <ba25b398-b63e-4bd2-b613-ee1f783524e4@suse.cz>
+Date: Mon, 10 Nov 2025 09:57:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251105-aheev-uninitialized-free-attr-tee-v1-1-2e1ee8483bc5@gmail.com>
-In-Reply-To: <20251105-aheev-uninitialized-free-attr-tee-v1-1-2e1ee8483bc5@gmail.com>
-From: Jens Wiklander <jens.wiklander@linaro.org>
-Date: Mon, 10 Nov 2025 09:57:38 +0100
-X-Gm-Features: AWmQ_bmbfwlbuD27u393tcu35e2C0scPDS3Uy66i-DK7aOy74DFrH1rStFwJq9A
-Message-ID: <CAHUa44GYnZFaZQBNbV0=RSR7r61+ErYdQtEsRObNALz2CwT_Gg@mail.gmail.com>
-Subject: Re: [PATCH] tee: fix uninitialized pointers with free attr
-To: Ally Heev <allyheev@gmail.com>
-Cc: Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>, Sumit Garg <sumit.garg@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, op-tee@lists.trustedfirmware.org, 
-	linux-kernel@vger.kernel.org, Dan Carpenter <dan.carpenter@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm: memcg: dump memcg protection info on oom or alloc
+ failures
+Content-Language: en-US
+To: Shakeel Butt <shakeel.butt@linux.dev>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Muchun Song <muchun.song@linux.dev>, David Rientjes <rientjes@google.com>,
+ linux-mm@kvack.org, cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Meta kernel team <kernel-team@meta.com>
+References: <20251107234041.3632644-1-shakeel.butt@linux.dev>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <20251107234041.3632644-1-shakeel.butt@linux.dev>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,suse.cz:email]
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
+X-Spam-Level: 
 
-Hi,
+On 11/8/25 00:40, Shakeel Butt wrote:
+> Currently kernel dumps memory state on oom and allocation failures. One
+> of the question usually raised on those dumps is why the kernel has not
+> reclaimed the reclaimable memory instead of triggering oom. One
+> potential reason is the usage of memory protection provided by memcg.
+> So, let's also dump the memory protected by the memcg in such reports to
+> ease the debugging.
+> 
+> Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
 
-On Wed, Nov 5, 2025 at 3:20=E2=80=AFPM Ally Heev <allyheev@gmail.com> wrote=
-:
->
-> Uninitialized pointers with `__free` attribute can cause undefined
-> behaviour as the memory assigned(randomly) to the pointer is freed
-> automatically when the pointer goes out of scope
->
-> tee doesn't have any bugs related to this as of now, but
-> it is better to initialize and assign pointers with `__free` attr
-> in one statement to ensure proper scope-based cleanup
->
-> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Closes: https://lore.kernel.org/all/aPiG_F5EBQUjZqsl@stanley.mountain/
-> Signed-off-by: Ally Heev <allyheev@gmail.com>
-> ---
->  drivers/tee/qcomtee/call.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/tee/qcomtee/call.c b/drivers/tee/qcomtee/call.c
-> index ac134452cc9cfd384c28d41547545f2c5748d86c..8b7b4decddd8d1811dc0a7cc4=
-6a4a4fbada45526 100644
-> --- a/drivers/tee/qcomtee/call.c
-> +++ b/drivers/tee/qcomtee/call.c
-> @@ -645,12 +645,13 @@ static void qcomtee_get_version(struct tee_device *=
-teedev,
->  static void qcomtee_get_qtee_feature_list(struct tee_context *ctx, u32 i=
-d,
->                                           u32 *version)
->  {
-> -       struct qcomtee_object_invoke_ctx *oic __free(kfree);
->         struct qcomtee_object *client_env, *service;
->         struct qcomtee_arg u[3] =3D { 0 };
->         int result;
->
-> -       oic =3D qcomtee_object_invoke_ctx_alloc(ctx);
-> +       struct qcomtee_object_invoke_ctx *oic __free(kfree) =3D
-> +               qcomtee_object_invoke_ctx_alloc(ctx);
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
 
-Can we zero-initialize oic at its original location instead? Doing it
-here looks messy.
-
-Thanks,
-Jens
-
-> +
->         if (!oic)
->                 return;
->
->
-> ---
-> base-commit: c9cfc122f03711a5124b4aafab3211cf4d35a2ac
-> change-id: 20251105-aheev-uninitialized-free-attr-tee-0221e45ec5a2
->
-> Best regards,
-> --
-> Ally Heev <allyheev@gmail.com>
->
 
