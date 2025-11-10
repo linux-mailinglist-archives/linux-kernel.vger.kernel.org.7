@@ -1,112 +1,114 @@
-Return-Path: <linux-kernel+bounces-892389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95313C45004
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 06:24:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 800B5C45017
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 06:26:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 833324E74C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 05:24:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D94BB1880871
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 05:27:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DE4F2E7F03;
-	Mon, 10 Nov 2025 05:24:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7A172E8B94;
+	Mon, 10 Nov 2025 05:26:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oAiJFsC4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Wl+2SZRI"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1C5B19F13F;
-	Mon, 10 Nov 2025 05:24:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E6002E5B3D;
+	Mon, 10 Nov 2025 05:26:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762752288; cv=none; b=Ag4NT+7cQG/7+vh7PKJy+LpqNafGAx7D9+LmplYyxRJtmHbsw9LOyE3TvHIi4cvAK+zvehI3DdaaDx+fyDihg/aEm248HYVibCO3Y5DXqO+yaKF9xTRFyYkjw56rGhoeieDbKRQ0L2sKfIYumMRHfGbkOiRRpha06rDqinp18GY=
+	t=1762752390; cv=none; b=JmBLd6pi0/Dw52RLLAy2dDAgwy1X++8+wY7K19b6UiiFJa8KVI/U7uHwGGyv0EGAV/fbeY9yfFmHtpNcN3eWzyrp/XEL73s7FFIgRBqM0nMUnvgnFXBCHf6uXYFNS91Njx93ILWo6KEtq+GqomClmdbaNFjv4egW9gJLMEQdRNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762752288; c=relaxed/simple;
-	bh=gdk7UxmkEKvvMHc9kBpLd+XXCzH6cFQwNXy7/F1XAqc=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=tMn+aBm4+AR1V77gY2BYsAGhy4K2qGuqpDkUypwSv9yAw1Q05Cb9iQ9LB08C8Uys57H95DmsNuM/6gVDxLMeSE8I6UsYoWFU5k6qp0emkkz0JruzgcmMLHnp5E1kpPKg3VnnaK2oxMpZOI8Mt0LbQvE8NN/KldsL83P52n/B8/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oAiJFsC4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28A82C116D0;
-	Mon, 10 Nov 2025 05:24:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762752288;
-	bh=gdk7UxmkEKvvMHc9kBpLd+XXCzH6cFQwNXy7/F1XAqc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=oAiJFsC4Jk1TQGYrQ047DoMfnP9Yk69/c/1dZMEBE/kpju6wWaIC6eZxBbVtilLuH
-	 iKAX3EBkbf+CF2EDnomQaaKQjpH2kqMhGl1D0/GqYb3/vx9cHQHq4oyXdAghBbm0q3
-	 +2aTEdH8hDeYAR6ogUy19t5LQPqc1eglmrwlbMo2R2+Sq/FBB3FXyzf9aPhOSiNh/s
-	 Heo+ogxLRaOrAvSiv1ANfHz/A8te8+8ocofLLhd1SYnOUfSaSht+K4ArYrqe+5UAi0
-	 c3ODonuIIhkSxnYnfNjqAdJY7qVhT95sfZfrajsQy4g2e8jDU0m/YMli+hyN6MixSA
-	 Vc5YKl+85Pvew==
-Date: Mon, 10 Nov 2025 14:24:45 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Masami
- Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
- <akpm@linux-foundation.org>
-Subject: Re: [PATCH 1/2] tracing: Exit out immediately after
- update_marker_trace()
-Message-Id: <20251110142445.db72eb74a64f01cdc6689f43@kernel.org>
-In-Reply-To: <20251106003501.726406870@kernel.org>
-References: <20251106003324.964761749@kernel.org>
-	<20251106003501.726406870@kernel.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1762752390; c=relaxed/simple;
+	bh=wL5I5CT+0Sw7TlLK9lpIO1ktLGl5C5Cx/Oz2HSvRTuA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RD6PUbhV9OZUrjAm1Thgz2wOLJIfv/cQ5Bx1J1nhCgDHiM+8QcCOgdOY3zadICXztc8DXPxqX+at7PLlw0EH64AeNL/uEhPD9QgHafLxIa8Yx6B/w1phwI4BiGu8TEJ7htNGtXl28bUrSqaDyyjOjv+UZ/bqQpEvH+f3vSwnFbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Wl+2SZRI; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762752389; x=1794288389;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=wL5I5CT+0Sw7TlLK9lpIO1ktLGl5C5Cx/Oz2HSvRTuA=;
+  b=Wl+2SZRID0BYDT953JMpVnT2MCrDoUmRiRIJfqjIUD9DiqTtavBw+8za
+   m3Sown2YrUeZS9BPW1r50M6Cei4GYRH62aUntmhk7DK4B16fDxgnK5fB4
+   Ea6LOgBGg33QFa44ZG2I6OTaXCpMCbuT49oGk6eQ8YPVrDTH3xIiYj1ui
+   ohTM3ZnUk+5aOa7J/6T8qYaJsPWHMuUuWlHzx3QjwLE/KJOY0RRYa41ZH
+   BVUEaTFkJc5dsCgI1rEVoFDx3/sQzxd4NC7ZYtJy+nSWoLK7i1GOUSaan
+   EQi+wltMcRxa26L8hcSgf3CheE9QDz1b/rDqURXlNDcfHg1Kk6VPUBh5i
+   g==;
+X-CSE-ConnectionGUID: zipJisqGRQWKTwh6O5enjw==
+X-CSE-MsgGUID: 8yLgHbn/ToaFDX3kkLRrqA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11608"; a="87429397"
+X-IronPort-AV: E=Sophos;i="6.19,293,1754982000"; 
+   d="scan'208";a="87429397"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2025 21:26:28 -0800
+X-CSE-ConnectionGUID: lyN/dndFTY+1Uj/vKCqYTA==
+X-CSE-MsgGUID: nrSbbf2hSraEoB1wjOby6w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,293,1754982000"; 
+   d="scan'208";a="192691430"
+Received: from fpallare-mobl4.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.245.185])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2025 21:26:26 -0800
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1vIKQ2-00000007Llr-3v7s;
+	Mon, 10 Nov 2025 07:26:22 +0200
+Date: Mon, 10 Nov 2025 07:26:22 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Ma Ke <make24@iscas.ac.cn>
+Cc: jic23@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com,
+	andy@kernel.org, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, akpm@linux-foundation.org
+Subject: Re: [PATCH v4 1/2] iio: trigger: add missing mutex_destroy in
+ iio_trig_release
+Message-ID: <aRF3fokq4u0-JYd9@smile.fi.intel.com>
+References: <20251110035701.36691-1-make24@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251110035701.36691-1-make24@iscas.ac.cn>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Wed, 05 Nov 2025 19:33:25 -0500
-Steven Rostedt <rostedt@kernel.org> wrote:
-
-> From: Steven Rostedt <rostedt@goodmis.org>
+On Mon, Nov 10, 2025 at 11:57:01AM +0800, Ma Ke wrote:
+> Add missing mutex_destroy() call in iio_trig_release() to properly
+> clean up the mutex initialized in viio_trigger_alloc(). Ensure proper
+> resource cleanup and follows kernel practices.
 > 
-> The call to update_marker_trace() in set_tracer_flag() performs the update
-> to the tr->trace_flags. There's no reason to perform it again after it is
-> called. Return immediately instead.
-> 
+> Found by code review.
 
-Looks good to me.
+First of all, the patches should form the series and include a cover letter,
+usually it can be done by running
 
-Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+	git format-patch -v<X> --cover-letter --base ...
 
-Thanks,
+against the branch where changes are located on top of.
 
-> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-> ---
->  kernel/trace/trace.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-> index dea1566b3301..07bd10808277 100644
-> --- a/kernel/trace/trace.c
-> +++ b/kernel/trace/trace.c
-> @@ -5285,8 +5285,11 @@ int set_tracer_flag(struct trace_array *tr, u64 mask, int enabled)
->  		}
->  	}
->  
-> -	if (mask == TRACE_ITER(COPY_MARKER))
-> +	if (mask == TRACE_ITER(COPY_MARKER)) {
->  		update_marker_trace(tr, enabled);
-> +		/* update_marker_trace updates the tr->trace_flags */
-> +		return 0;
-> +	}
->  
->  	if (enabled)
->  		tr->trace_flags |= mask;
-> -- 
-> 2.51.0
-> 
-> 
+Then, here makes sense to add
+
+Suggested-by:: Andy Shevchenko <andriy.shevchenko@intel.com>
+
+The change otherwise LGTM (no need to resend this time),
+
+Reviewed-by:: Andy Shevchenko <andriy.shevchenko@intel.com>
 
 
 -- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+With Best Regards,
+Andy Shevchenko
+
+
 
