@@ -1,213 +1,156 @@
-Return-Path: <linux-kernel+bounces-894107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FE65C494C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 21:46:54 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D28C1C49470
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 21:42:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B03533B6FF7
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 20:44:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 956A14EEE63
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 20:41:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D3C72F60DA;
-	Mon, 10 Nov 2025 20:43:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 540102F12AF;
+	Mon, 10 Nov 2025 20:41:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="a6p2ZbQH"
-Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11010012.outbound.protection.outlook.com [52.101.56.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BSaSLsrL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B49202F60A5;
-	Mon, 10 Nov 2025 20:42:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762807379; cv=fail; b=GgsmIvecBxtAE+2pnfAIpPT8puXTDSzpRheNGcp/WB0eMJfwrQpQp/t/vFRz78pp9JJZzURES2LphwxyyF2sBSLIJxGk1f4t2eFJqjaWgx5UtLZUlQeTki/rUmaHdakeFZCejcljMFRU4D+64/Bu9n8J6mGPpLecDs9Si2F7QL8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762807379; c=relaxed/simple;
-	bh=UAlVehZO/BQ/Gxn53y1vcfvwyawrTeQ7k4WK965Triw=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iTtv7eGMaxZBfO6jYFh0+Nvd4mo3jt6G2sNGeVvKwj/J0EkhTOSOG7ezyp78YdOHuJVrte2QE1uwVHOARZgvukGhiXlk5i3ZeL8YR0SdApSW8Gaxi83ZIWlEJP8V/xT6QyFEu16NbVNOOmGNxVfZLaeAUJfOdmS6g4cmHXjsiUw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=a6p2ZbQH; arc=fail smtp.client-ip=52.101.56.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Fvjv+GwQQrVsdFWH/lY3ZEQAHO7YtCpMIztjTILZuvCzrQV69IG8AWeJzO0dnANYLRw30GSYc7jdC6lLdTiPdKYqIm3ir6piaHqa98cWWAjf0EpIjspX3AbApNdUGt8U5froRMIHXU3hyU+cp5gJKzvtGyvw48q4IU9qMfH0Q76GUW1krrzri+U+4unf82fY50SX5iWn9zGL5bwaox5+uchfXs9Vf/rdLsja/B5QMrXWSMLfT7ztH7GAdKHSlcJa+0aaKJOE+Dqptyy4zh6xPg6lf7SAM+iBq+qANQ98ZuREnwaH8D+2ugZnQ+M4CiQEgEhcp5rzWIW4/9yMdKGr5Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ttAQUT9oaBSccgpLNPFsHih6Q/up1j5LBKjPOrlSrGU=;
- b=duWygBa+Kzz3UFIGe0ZsGWwLT7D0V2rMvqF6wLbWdatQ14dkR81bTelfZ2duqQF/TiZiDBt18uCRhZ+H/mvnZ+W5K3/0uotRgYlduSP8ztH2I1cvw1Ns57hg5r5KqAAdUty1V4Ba5W0hAT09doT9xGj2xetuHSmqYx/hFZ2WIK9ePCTk4+sVL+TfFiUb3mcqRDSwX36b+mU9ktRkuwBf31MMa/7Se+f6cBMZfLCTb1xtjta2UNc6v+cZCnRAoN5Q+6PIUXjwpx0lXvPwG2cWMCVuaL9Y8AzWVS1FTqEjgSxv95CRLZJx7JOC+ZVzaHqPMpa6tu3usU07hCtjw6HuTQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ttAQUT9oaBSccgpLNPFsHih6Q/up1j5LBKjPOrlSrGU=;
- b=a6p2ZbQHaZh4BubLctXHWHma62WDI0/uAFp+MBYL1cS9EpMkyKNtzcz33qidzEpFicB7RwG62dS8/NXiyDFoc3TXtrY54g4gPsuMGOSYQqGi0C8Nxmswh0KojixcJteMgK1LFOY18NC6+aRwjT5T4uLoZdeTYEnVxZRywF336lwAUbPfJBKxaN7Nj2VJkZ0Z+1O+0Il7V6/m2Zmdxa7+3LmJoQ/W6yrhTEOkiVIUsUj5f60sWLa5MnhsMKPxkwDZeajvH9lUi7DcIxustO7bTh7c4RRW3If9Sv//gutTGZlzg1f9BCZDdDLMK4Xh6I/sP1fXH7ZTKnMnzN9mrohaLA==
-Received: from SJ0PR05CA0190.namprd05.prod.outlook.com (2603:10b6:a03:330::15)
- by IA0PR12MB7700.namprd12.prod.outlook.com (2603:10b6:208:430::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Mon, 10 Nov
- 2025 20:42:53 +0000
-Received: from MWH0EPF000989EC.namprd02.prod.outlook.com
- (2603:10b6:a03:330:cafe::40) by SJ0PR05CA0190.outlook.office365.com
- (2603:10b6:a03:330::15) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9320.15 via Frontend Transport; Mon,
- 10 Nov 2025 20:42:53 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- MWH0EPF000989EC.mail.protection.outlook.com (10.167.241.139) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9320.13 via Frontend Transport; Mon, 10 Nov 2025 20:42:53 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 10 Nov
- 2025 12:42:35 -0800
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail202.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 10 Nov
- 2025 12:42:35 -0800
-Received: from inno-vm-xubuntu (10.127.8.9) by mail.nvidia.com (10.129.68.9)
- with Microsoft SMTP Server id 15.2.2562.20 via Frontend Transport; Mon, 10
- Nov 2025 12:42:27 -0800
-From: Zhi Wang <zhiw@nvidia.com>
-To: <rust-for-linux@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <dakr@kernel.org>, <aliceryhl@google.com>, <bhelgaas@google.com>,
-	<kwilczynski@kernel.org>, <ojeda@kernel.org>, <alex.gaynor@gmail.com>,
-	<boqun.feng@gmail.com>, <gary@garyguo.net>, <bjorn3_gh@protonmail.com>,
-	<lossin@kernel.org>, <a.hindborg@kernel.org>, <tmgross@umich.edu>,
-	<markus.probst@posteo.de>, <helgaas@kernel.org>, <cjia@nvidia.com>,
-	<smitra@nvidia.com>, <ankita@nvidia.com>, <aniketa@nvidia.com>,
-	<kwankhede@nvidia.com>, <targupta@nvidia.com>, <acourbot@nvidia.com>,
-	<joelagnelf@nvidia.com>, <jhubbard@nvidia.com>, <zhiwang@kernel.org>, "Zhi
- Wang" <zhiw@nvidia.com>
-Subject: [PATCH v6 RESNED 7/7] sample: rust: pci: add tests for config space routines
-Date: Mon, 10 Nov 2025 22:41:19 +0200
-Message-ID: <20251110204119.18351-8-zhiw@nvidia.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251110204119.18351-1-zhiw@nvidia.com>
-References: <20251110204119.18351-1-zhiw@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 946652EC55D
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 20:41:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762807298; cv=none; b=q83x7nbBi962VtEQ980QrDpPduYW8wXFu9xWb72PXIsGQKJvROeYUp8E8OUNc/HRGtFZSwwry+NhhPQJNm4E9Y/eZjZVnR3YUobM+N6ZYYvoIrdPy1y2gKfKgDQ5mFLWr3O8FIpV5AuS7aKAafLDFJmonW9kYHzT07q18DAua/o=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762807298; c=relaxed/simple;
+	bh=W2NlGSaN/DO6Yj79YN5GVEnS2mME/PCSM9o39rbQi1g=;
+	h=Date:From:To:cc:Subject:Message-ID:MIME-Version:Content-Type; b=EnRhDBnXHp/cIqsB5c8XHYlsqP26IYGu/uLlGn3RtUggYKS9blfkKIFW7ZG15Oul5Jb5AQyA7txSUogYXx4PzaLkCmxI7yQEeQJjLdcslBzKG8DyUOUYvsTb0xMgpZik7BWtFMDflMCzkExO5G9XDAbylt7IPeMZLYOCstbEAI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BSaSLsrL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBF22C4CEFB;
+	Mon, 10 Nov 2025 20:41:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762807298;
+	bh=W2NlGSaN/DO6Yj79YN5GVEnS2mME/PCSM9o39rbQi1g=;
+	h=Date:From:To:cc:Subject:From;
+	b=BSaSLsrLmr8NwXa28hPOAXE0zfYmiVMc3mAF7XO8kbQQemm9evXDGdERfrDAoJmwz
+	 KqVI5M0ZJvpzosPdJlhMKRDcTMqcwnOKhS6kv1CUwEyDaKijhiyWTi5/ShQ0DBCSm7
+	 eN9hmGrI7hrI3XfK6POZK0xMw1npSCuzatUkRQ63IFRlT4UbHKQ87o1IjHbSeTVOIc
+	 wB/cZKbRR4XDd27H4DxLzj8oNDclgRNAq9SBtmlQ3zGLmRaF3qGvXL1gI6dj5Dl/bI
+	 KPr/6JUKtOKAbzd9bzIQac7XVbIbXfmt3+VUqTU94mAB5nnjM30RpntN49MSvbSVvr
+	 LGRLjkv/ud+fA==
+Date: Mon, 10 Nov 2025 13:41:32 -0700 (MST)
+From: Paul Walmsley <pjw@kernel.org>
+To: torvalds@linux-foundation.org
+cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] RISC-V updates for v6.18-rc6
+Message-ID: <a7d159e4-8e75-e4be-4405-f10fee270664@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MWH0EPF000989EC:EE_|IA0PR12MB7700:EE_
-X-MS-Office365-Filtering-Correlation-Id: 54f4d464-19e9-458e-7efe-08de2099b889
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|36860700013|1800799024|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?eRraBywqqb2RXy6IKlnQ8ms7PFNhpmoWrtsbFV+6XKUwxbPAvyfQEVZbr/87?=
- =?us-ascii?Q?p+WfAPbz/ntfM6zQAKM7dumvJQa2zRoi+9mceromF893NoxVmURCnqM9UooX?=
- =?us-ascii?Q?86NFvHAVpn97Nwz0w1i1WAN7mRKOUIIyTi2mVkDUOAWP+F88KuGkae5Yq11y?=
- =?us-ascii?Q?tPytH9uEv1b/ATjH8AuxAxKE7HfWyjabkKBkIOFkYWqDqvLCoGqmiwTP//pj?=
- =?us-ascii?Q?O7Kt+MFyb/f28bkawYTMgwW3L6unznqy59vNjy+r+66KLLa2IMZDLjy7JNXq?=
- =?us-ascii?Q?Vb4oCHt3PODYUPmh3WhQnWZ2/dkLkniezrIO2niIhgSbFaPN3tGLn6bHJklz?=
- =?us-ascii?Q?C4pGeh3LnEstCCvQPq0f/a68vig7tNAfp1pNPGQt2NyKhOfXKLcavFu7tp5i?=
- =?us-ascii?Q?nvzIXxzCucGQTqEezQUams6bw52GQUBPdNtEOeEuRH59MclUPDLgJkhI2JtM?=
- =?us-ascii?Q?o8lKtoPHiqpTqwGkNQBfpEuoGDfoTAXRyhDGYTIatNh+hE0epAD+qAfQnlHJ?=
- =?us-ascii?Q?xMyFXrtJqYPRY0mv8drdvxLlvj6rnxevEi9n3HleE/J4BIzaIokl0ycFj64s?=
- =?us-ascii?Q?vmA6l/7wZsh+2h1/VDzNY48ZffftQUoIFw7Uo91Q/UR56FZVkrPa8s/iJ7c2?=
- =?us-ascii?Q?3fX2Mj64yJjdNRAhsMr4XU/R0id3Lgv3iPEc6u0sLxtGsFLb2DKlumnjXlWP?=
- =?us-ascii?Q?7FQtYP+JEQqWcUyZ9oZSHXjX0FIZTzB/K4WJUr4yoNPRBlOPaM+L5CbHYL47?=
- =?us-ascii?Q?sEZe8MVlMI6oYgu4zl0fCC2Xb7xcoUXrvATvh9Mu7soFbaC7NWTvCi2CB/r1?=
- =?us-ascii?Q?q4E/zDB0uAPjGr//U/3AN2T/anvHxJUhFq3pCOlCZvZxy44Kso+qW0DZlETh?=
- =?us-ascii?Q?kjM9QjhQxlu5irx4S3AjrV0lTgtPSYZzmYSS9pj8l++Ggm6vtyjWBC1iTQ6d?=
- =?us-ascii?Q?io+rMoNk0rC44M5fF45p3+nYuqmQ4ivcH5YiTwdxQ4rAf/i6LgX1NjgMGpR5?=
- =?us-ascii?Q?it6KSmrP7nvTwrRcqGOHyrsZBYMegQYYOI2a1CRuTajIADHpIRueCfc2yU1Z?=
- =?us-ascii?Q?TO2+qYb8lG43O+OXWSMtT8IAWZoc9NCl4FxL+WFQJr1vrFZO+w9wxjoj5MV7?=
- =?us-ascii?Q?81mgSY5uh9VYDAUAfUgIxLC53NUUavgDG6ow/W4JFkwcK5LzIqYgyPHBZEIF?=
- =?us-ascii?Q?NxaCEZGBsPd+PhFnZmrbVizQUwaRpK9n6+Y8TOHy6sH1G4YQwGMtoqeoM0In?=
- =?us-ascii?Q?W0bdVNgmjrKVBic/VDXbL23Km6XohNAfjY/OFlKw0ZOyy/hNqEjz18/zy59l?=
- =?us-ascii?Q?dsLFPbjGrhvx3WZt74wbeEuBUF7AFnSI1u9MMeESOKeSB2gU39KCqvqtAATA?=
- =?us-ascii?Q?P4QXKC8+bJk1+duBlQBT3e1Do3E3l83uu3nPrds7zFgOkbB+onQv0bwx42Ej?=
- =?us-ascii?Q?bsBoNmsQOpTOsH09aICIukEjtIcE1Hx7t2i7b5AfORk7yeYbZTaHWAT3v6EB?=
- =?us-ascii?Q?4XriTENEYFg7609YSF2aabf4S8hj897NTkmDNFrkl1Sri3D5ToQl/BWi1/sV?=
- =?us-ascii?Q?j6fnCK2B/gOnT8avQsc=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(7416014)(36860700013)(1800799024)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Nov 2025 20:42:53.0372
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 54f4d464-19e9-458e-7efe-08de2099b889
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	MWH0EPF000989EC.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB7700
+Content-Type: text/plain; charset=US-ASCII
 
-Add tests exercising the PCI configuration space helpers.
+Linus,
 
-Suggested-by: Danilo Krummrich <dakr@kernel.org>
-Signed-off-by: Zhi Wang <zhiw@nvidia.com>
----
- samples/rust/rust_driver_pci.rs | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
+The following changes since commit 225a97d6d45456a7627633da09cb842a43ef1b85:
 
-diff --git a/samples/rust/rust_driver_pci.rs b/samples/rust/rust_driver_pci.rs
-index 74b93ca7c338..8f549b2100bc 100644
---- a/samples/rust/rust_driver_pci.rs
-+++ b/samples/rust/rust_driver_pci.rs
-@@ -67,6 +67,32 @@ fn testdev(index: &TestIndex, bar: &Bar0) -> Result<u32> {
- 
-         Ok(bar.read32(Regs::COUNT))
-     }
-+
-+    fn config_space(pdev: &pci::Device<Core>) -> Result {
-+        let config = pdev.config_space()?;
-+
-+        // TODO: use the register!() macro for defining PCI configuration space registers once it
-+        // has been move out of nova-core.
-+        dev_info!(
-+            pdev.as_ref(),
-+            "pci-testdev config space read8 rev ID: {:x}\n",
-+            config.read8(0x8)
-+        );
-+
-+        dev_info!(
-+            pdev.as_ref(),
-+            "pci-testdev config space read16 vendor ID: {:x}\n",
-+            config.read16(0)
-+        );
-+
-+        dev_info!(
-+            pdev.as_ref(),
-+            "pci-testdev config space read32 BAR 0: {:x}\n",
-+            config.read32(0x10)
-+        );
-+
-+        Ok(())
-+    }
- }
- 
- impl pci::Driver for SampleDriver {
-@@ -98,6 +124,7 @@ fn probe(pdev: &pci::Device<Core>, info: &Self::IdInfo) -> impl PinInit<Self, Er
-                         "pci-testdev data-match count: {}\n",
-                         Self::testdev(info, bar)?
-                     );
-+                    Self::config_space(pdev)?;
-                 },
-                 pdev: pdev.into(),
-             }))
--- 
-2.51.0
+  Merge tag 'riscv-for-linus-6.18-rc5' of git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux (2025-11-06 15:44:18 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux tags/riscv-for-linus-6.18-rc6
+
+for you to fetch changes up to dc20452e6caf962f04ede7f364267b0c37784ab4:
+
+  riscv: Fix CONFIG_AS_HAS_INSN for new .insn usage (2025-11-07 17:39:07 -0700)
+
+
+- Paul
+----------------------------------------------------------------
+RISC-V updates for v6.18-rc6
+
+RISC-V updates for v6.18-rc6, including:
+
+- A fix for a commit in v6.18-rc5 that broke the build on clang
+  versions earlier than 19 and binutils versions earlier than 2.38.
+  (This exposed that we're not properly testing earlier toolchain
+  versions in our linux-next builds and PR submissions.  This was
+  fixed for this PR, and is being addressed more generally for -next
+  builds.)
+
+- A fix to remove some redundant Makefile code
+
+- A fix to avoid building Canaan Kendryte K210-specific code on targets
+  that don't build for the K210
+
+----------------------------------------------------------------
+Feng Jiang (2):
+      riscv: Build loader.bin exclusively for Canaan K210
+      riscv: Remove redundant judgment for the default build target
+
+Nathan Chancellor (1):
+      riscv: Fix CONFIG_AS_HAS_INSN for new .insn usage
+
+ arch/riscv/Kconfig  |  2 +-
+ arch/riscv/Makefile | 17 +----------------
+ 2 files changed, 2 insertions(+), 17 deletions(-)
+
+
+vmlinux size differences in bytes (from 225a97d6d454):
+     text     data     bss       dec      hex filename                             
+        .        .       .         .        . vmlinux.defconfig.gcc-15             
+        .        .       .         .        . vmlinux.nosmp_defconfig.gcc-15       
+        .        .       .         .        . vmlinux.rv32_defconfig.gcc-15        
+        .        .       .         .        . vmlinux.rv32_nosmp_defconfig.gcc-15  
+        .        .       .         .        . vmlinux.nommu_virt_defconfig.gcc-15  
+        .        .       .         .        . vmlinux.defconfig.clang-20           
+        .        .       .         .        . vmlinux.nosmp_defconfig.clang-20     
+        .        .       .         .        . vmlinux.rv32_defconfig.clang-20      
+        .        .       .         .        . vmlinux.rv32_nosmp_defconfig.clang-20
+        .        .       .         .        . vmlinux.nommu_virt_defconfig.clang-20
+        .        .       .         .        . vmlinux.defconfig.gcc-14             
+        .        .       .         .        . vmlinux.nosmp_defconfig.gcc-14       
+        .      -32       .       -32      -20 vmlinux.rv32_defconfig.gcc-14        
+        .        .       .         .        . vmlinux.rv32_nosmp_defconfig.gcc-14  
+        .        .       .         .        . vmlinux.nommu_virt_defconfig.gcc-14  
+        .        .       .         .        . vmlinux.defconfig.clang-19           
+        .        .       .         .        . vmlinux.nosmp_defconfig.clang-19     
+        .        .       .         .        . vmlinux.rv32_defconfig.clang-19      
+        .        .       .         .        . vmlinux.rv32_nosmp_defconfig.clang-19
+        .        .       .         .        . vmlinux.nommu_virt_defconfig.clang-19
+        .        .       .         .        . vmlinux.defconfig.gcc-13             
+        .        .       .         .        . vmlinux.nosmp_defconfig.gcc-13       
+        .        .       .         .        . vmlinux.rv32_defconfig.gcc-13        
+        .        .       .         .        . vmlinux.rv32_nosmp_defconfig.gcc-13  
+        .        .       .         .        . vmlinux.nommu_virt_defconfig.gcc-13  
++13049482 +6347237 +424189 +19820908 +12e716c vmlinux.defconfig.clang-18 [*]          
++12001864 +6160481 +409589 +18571934 +11b629e vmlinux.nosmp_defconfig.clang-18 [*]    
++12120907 +4807041 +312865 +17240813 +10712ed vmlinux.rv32_defconfig.clang-18 [*]     
++11098066 +4628736 +300841 +16027643  +f48ffb vmlinux.rv32_nosmp_defconfig.clang-18 [*]
+ +2775790  +760720 +123053  +3659563  +37d72b vmlinux.nommu_virt_defconfig.clang-18 [*]
+        .        .       .         .        . vmlinux.defconfig.gcc-12             
+        .        .       .         .        . vmlinux.nosmp_defconfig.gcc-12       
+        .        .       .         .        . vmlinux.rv32_defconfig.gcc-12        
+        .        .       .         .        . vmlinux.rv32_nosmp_defconfig.gcc-12  
+        .        .       .         .        . vmlinux.nommu_virt_defconfig.gcc-12  
++13213594 +6340137 +424189 +19977920 +130d6c0 vmlinux.defconfig.clang-17 [*]          
++12131260 +6153709 +409589 +18694558 +11d419e vmlinux.nosmp_defconfig.clang-17 [*]     
++12252639 +4800965 +312865 +17366469 +108fdc5 vmlinux.rv32_defconfig.clang-17 [*]     
++11211650 +4621836 +300841 +16134327  +f630b7 vmlinux.rv32_nosmp_defconfig.clang-17 [*]
+ +2797158  +770580 +123053  +3690791  +385127 vmlinux.nommu_virt_defconfig.clang-17 [*]
+        .        .       .         .        . vmlinux.defconfig.gcc-11             
+        .        .       .         .        . vmlinux.nosmp_defconfig.gcc-11       
+        .      -32       .       -32      -20 vmlinux.rv32_defconfig.gcc-11        
+        .      -32       .       -32      -20 vmlinux.rv32_nosmp_defconfig.gcc-11  
+        .        .       .         .        . vmlinux.nommu_virt_defconfig.gcc-11  
+        .        .       .         .        . vmlinux.allnoconfig.gcc-14           
+        .        .       .         .        . vmlinux.allmodconfig.gcc-14          
+        .        .       .         .        . vmlinux.allnoconfig.clang-19         
+        .        .       .         .        . vmlinux.allmodconfig.clang-19
+
+[*] Build was broken before this patch series
 
 
