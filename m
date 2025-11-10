@@ -1,159 +1,280 @@
-Return-Path: <linux-kernel+bounces-893604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 274A9C47D33
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:14:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7CD3C47E9E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:24:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7EA91890B15
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:06:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B4EA3A564C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:06:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 910B12773F4;
-	Mon, 10 Nov 2025 16:05:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FC622765E2;
+	Mon, 10 Nov 2025 16:05:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TjywY3vc"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b="g5P90CY9"
+Received: from mail.cybernetics.com (mail.cybernetics.com [173.71.130.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87F43205AA1
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 16:05:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 952E6277029
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 16:05:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.71.130.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762790739; cv=none; b=DZep2Jrw0znhIMmPexz96sLeqjhmxjruLJ0beXyfKOGUvTMh8r2e/dKiCbtkZDRRMLMhYUxzRm4G8k74OS/zGT76DqU+93Zt+ubVdGFqBkDc6m9em6G8LJ1DXwXAZgYC5+ImRnTSUgV3IKfp44yfWBgDNiTu6nbw3N/M1KajBYY=
+	t=1762790756; cv=none; b=nHayxRoGSeY9VLntxNT8DBphlJXgNf8SXhnes2e88qmlOmFnk4fmxhD2dPmPQ7YysDBz2FzeCnQk8HLzZxhvGrBBxCiFECOK6Qd0/ooCf0sHUq6YBsyPkpdHfDWnzIk314nNtxmD8vhHhPjYVjqItGHi7tlctnDTPmoJGJgTeQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762790739; c=relaxed/simple;
-	bh=onmwgzWvrykN1fzVZiejcYemdHDzwD/isE77f44YfsU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rZpP/duRWydAHLnkeZTaHQeRYevqs568rLhIutFbJ+MYvQxVjLq60zM60GO+CVUHOu8BuCBiSuwlpS+jfl8ybwtAtu8LUPLrB2gzTuCnz5Gj7hS33y+/UuWiEYr8TUmSRUshPL2elshNoFtS4x1rkPtLgKHPIXy3IpF0FmpEvK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TjywY3vc; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-7aa9be9f03aso2788470b3a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 08:05:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762790737; x=1763395537; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=TgZgArONH6lr9XvODSMICWYyuVWCZCYNoJZs+MKJ66o=;
-        b=TjywY3vcQXDoDhOBL2QUPL3GrA9bfCkCgSDkEN0ZkZ6QUTpCX2HfscTf7vUlOejh2g
-         yGFpKy7Iv3SR+lxHXIrxE3fIEjJtKsLBe0UAkGofwtSPUihwUfEN0JpTE93NTf7XpPt5
-         WjlBK0qsBbipX+zh5dUAy6p/Tn/ay/UbU+vmReprN4QBeRJuPTLHloueGF/yXZd/7fb0
-         M2DRdOrSsiyNULogKUUgFr53pA9Y3sIDfURklD0RF5RW6XWY6sLeqa1z1JxBhHAnZqfD
-         8jT9emaNuxMfzvFBwLpzcxfSE0/IUWRN5D0MAxLeygtGdoQBGl27tx5cH17RaE1oeBTm
-         3pAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762790737; x=1763395537;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TgZgArONH6lr9XvODSMICWYyuVWCZCYNoJZs+MKJ66o=;
-        b=VrVpRM7MiHjnBRa8FX141D1r4hD6wKHCkbqwP1RPZOb8yK7BPZUUznkkeBhMFk2BrA
-         rkNXhMTwzbUvyNeNK1WznhCocs2iMBZOSKKaiR6D7mlddgkKiH1Wx89qt+rbUipW9eJG
-         ZvNg9rUJjA2Zj7K2amWb68xThtaSzhgJQbBoCb8+TrnombWDTalNqp+Q2LncGG2bUETb
-         zZSo+cMYuGQW6st+GBpCji45Cex6F4BP/OPb+ToZu2guFZTOteRwFJRvl/Yn/bdBmli3
-         ZEmTottj1p7I/01dtbpCP8FYBNzqBoOKNy4wcAfef3R/O9obrL+OtMjrtKZaCMGm38eb
-         jFKw==
-X-Forwarded-Encrypted: i=1; AJvYcCWvPGM3saPUE8o0mBKpMXhEfHbg+4Gnf2E2puW2cUoj8qKuuCv2tJbIkE98oh+x38SioOPrDVBtYGeydME=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYhRFBnIq9owLmbKtjgviA8nK9NahyVnZ0+hkUtTyhiGH/POXe
-	KgOPzYjg2zRp+D6nzQ9QWo0e+wqRxJgXKxnp06AGuxYJU9Ou+htSYiAC
-X-Gm-Gg: ASbGncts7+NibJ9DBNrIAQ+cGVVSw/ES4GT1O+BnoYdadMGR20IYqrs91ZwXzIqksXi
-	yiuUS/c+xnQHzF98y/Bt+X7yX4M9sEo01O4UOkXH25IqJ36v+HrUIIcf+b+Kx1C6OO7y/Llr+Qy
-	L+hePm/B2ielDUkiqDTFEAYL+uTCGcF7TtcXUXURpqHjUJWCXFyg50HD0fzDStP4sHlXgAkr23s
-	subk2YTfM0d0Cg7VAEhSF1qbq146OXIWxMnCe/eHliGN9Qw6SEsmKiJ0oCaBiQybri5T1WKy/Ab
-	PT309d7DWb9gJ5WUz4EVkKCVYLhZGstjZXduXyVxXGH9xTdFG80vv0fsQG2NLP8r9Ew+T0X1+HQ
-	NckQZSmfTfdYPNqoc87BjVzOh8wKpkIQ73fPRYCfdKMoO+VuSMaSyW35OC8SkvuBhGFUtGK1mWx
-	bSndfRnlw=
-X-Google-Smtp-Source: AGHT+IF6WNNBzThjDgikYB/HqeiGseOlAPwbhWtHTRN1quM7bZZi7LqL9mv+idqwSvzAApOMFvrtbQ==
-X-Received: by 2002:a05:6a20:1584:b0:344:bf35:2bfa with SMTP id adf61e73a8af0-353a31550dfmr9952656637.33.1762790736506;
-        Mon, 10 Nov 2025 08:05:36 -0800 (PST)
-Received: from localhost ([2408:841b:d00:77aa:3e0a:b50e:a68d:6665])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-ba902207227sm13072965a12.33.2025.11.10.08.05.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Nov 2025 08:05:36 -0800 (PST)
-Date: Tue, 11 Nov 2025 00:05:29 +0800
-From: Encrow Thorne <jyc0019@gmail.com>
-To: Yixun Lan <dlan@gentoo.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: spacemit: fix comment typo
-Message-ID: <20251110160529.GA18666@hailin-HP-Pavilion-Laptop-14-dv0xxx>
-References: <20251029-b4-fix-ccu-mix-typo-v1-1-caddb3580e64@gmail.com>
- <20251029223337-GYA1549833@gentoo.org>
- <20251110141251-GYD1651402@gentoo.org>
+	s=arc-20240116; t=1762790756; c=relaxed/simple;
+	bh=6w62lunbkxNiTEWRi80Ri+F4BB7+2rT1b9KNaF3A/UY=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=C5o1YqP/YH5vXbDBkC1ozucRQ0jzhbje5KvW9Jg6xE10wCfUgiFCGPmaafiMuu6sgLwV1oJInQEuoGOJxUaUNNaMdJyBU6ZPH5esTViSMzwxuRY7HodvKNF4xgiFqQWG3i5ih1lbMlX774IECgu4x7ukyG7qGFRstQ/K1qitTQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com; spf=pass smtp.mailfrom=cybernetics.com; dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b=g5P90CY9; arc=none smtp.client-ip=173.71.130.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cybernetics.com
+Received: from cybernetics.com ([10.10.4.126]) by mail.cybernetics.com with ESMTP id EElOYpSLS81Lp4Ww; Mon, 10 Nov 2025 11:05:53 -0500 (EST)
+X-Barracuda-Envelope-From: tonyb@cybernetics.com
+X-Barracuda-RBL-Trusted-Forwarder: 10.10.4.126
+X-ASG-Whitelist: Client
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cybernetics.com; s=mail;
+	bh=V0TxVUV+FndxwtV4Q0ge1KB4kSUU2OKdE5ljxJPsQmE=;
+	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:Cc:To:From:
+	Content-Language:Subject:MIME-Version:Date:Message-ID; b=g5P90CY9A4FoUPu3N5rq
+	FM5RxBIKQAY5rphiu/YoL6KkJcJLduT7O95gYusIEb7X4kyMn0kYQNUGWx6iIIXcC2+ADAyjt0dO+
+	IcP1bDFuzjYsaW3JBNwLUHVAImkB3c65HA913ib+tYoKmTw9KuPulTdeTBt9DSkz+3xrt7UZxg=
+Received: from [10.157.2.224] (HELO [192.168.200.1])
+  by cybernetics.com (CommuniGate SPEC SMTP 8.0.5)
+  with ESMTPS id 14272446; Mon, 10 Nov 2025 11:05:53 -0500
+Message-ID: <7c7cb574-fe62-42ae-b800-d136d8dd89ca@cybernetics.com>
+X-Barracuda-RBL-Trusted-Forwarder: 10.157.2.224
+Date: Mon, 10 Nov 2025 11:05:53 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251110141251-GYD1651402@gentoo.org>
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH v3 16/16] scsi: qla2xxx: improve safety of cmd lookup by
+ handle
+Content-Language: en-US
+X-ASG-Orig-Subj: [PATCH v3 16/16] scsi: qla2xxx: improve safety of cmd lookup by
+ handle
+From: Tony Battersby <tonyb@cybernetics.com>
+To: Nilesh Javali <njavali@marvell.com>,
+ GR-QLogic-Storage-Upstream@marvell.com,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi <linux-scsi@vger.kernel.org>, target-devel@vger.kernel.org,
+ scst-devel@lists.sourceforge.net,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Dmitry Bogdanov <d.bogdanov@yadro.com>,
+ Xose Vazquez Perez <xose.vazquez@gmail.com>
+References: <aaea0ab0-da8b-4153-9369-60db7507ff7a@cybernetics.com>
+In-Reply-To: <aaea0ab0-da8b-4153-9369-60db7507ff7a@cybernetics.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Barracuda-Connect: UNKNOWN[10.10.4.126]
+X-Barracuda-Start-Time: 1762790753
+X-Barracuda-URL: https://10.10.4.122:443/cgi-mod/mark.cgi
+X-Barracuda-BRTS-Status: 0
+X-Virus-Scanned: by bsmtpd at cybernetics.com
+X-Barracuda-Scan-Msg-Size: 7313
+X-ASG-Debug-ID: 1762790753-1cf439139110d040001-xx1T2L
 
-On Mon, Nov 10, 2025 at 10:12:51PM +0800, Yixun Lan wrote:
-> Hi Encrow,
-> 
-> On 06:33 Thu 30 Oct     , Yixun Lan wrote:
-> > Hi Encrow,
-> > 
-> > On 00:05 Wed 29 Oct     , Encrow Thorne wrote:
-> > > ccumix.h was copied from ccudiv.h and the comment after #endif was not
-> > > updated.
-> > > 
-> > > This patch fixes the incorrect comment to match the filename.
-> > 
-> > Just describe in imperative mode, see
-> > (since this is trivial, I could amend it before apply the patch,
-> > so no need to resend)
-> > https://elixir.bootlin.com/linux/v6.16/source/Documentation/process/submitting-patches.rst#L94
-> > 
-> I have no other clock patch queued this cycle, so how about you respin a v2
-> then let's ping Stephen directly for inclusion?
-> 
-> for commit message, I'd suggest simply as below (short/clean, also enough):
-> 
-> Fix incorrect comment to match the filename.
-> 
- Thanks for your feedback.
- I’ll send out v2 soon.
+(target mode)
 
- 		- Encrow
-> > > 
-> > > Signed-off-by: Encrow Thorne <jyc0019@gmail.com>
-> > > ---
-> > >  drivers/clk/spacemit/ccu_mix.h | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/clk/spacemit/ccu_mix.h b/drivers/clk/spacemit/ccu_mix.h
-> > > index 54d40cd39b27..c406508e3504 100644
-> > > --- a/drivers/clk/spacemit/ccu_mix.h
-> > > +++ b/drivers/clk/spacemit/ccu_mix.h
-> > > @@ -220,4 +220,4 @@ extern const struct clk_ops spacemit_ccu_div_gate_ops;
-> > >  extern const struct clk_ops spacemit_ccu_mux_gate_ops;
-> > >  extern const struct clk_ops spacemit_ccu_mux_div_ops;
-> > >  extern const struct clk_ops spacemit_ccu_mux_div_gate_ops;
-> > > -#endif /* _CCU_DIV_H_ */
-> > > +#endif /* _CCU_MIX_H_ */
-> > > 
-> > > ---
-> > > base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
-> > > change-id: 20251028-b4-fix-ccu-mix-typo-038c19fe30c4
-> > > 
-> > > Best regards,
-> > > -- 
-> > > Encrow Thorne <jyc0019@gmail.com>
-> > > 
-> > 
-> > -- 
-> > Yixun Lan (dlan)
-> > 
-> 
-> -- 
-> Yixun Lan (dlan)
+The driver associates two different structs with numeric handles and
+passes the handles to the hardware.  When the hardware passes the
+handle back to the driver, the driver consults a table of void * to
+convert the handle back to the struct without checking the type of
+struct.  This can lead to type confusion if the HBA firmware misbehaves
+(and some firmware versions do).  So verify the type of struct is what
+is expected before using it.
+
+But we can also do better than that.  Also verify that the exchange
+address of the message sent from the hardware matches the exchange
+address of the command being returned.  This adds an extra guard against
+buggy HBA firmware that returns duplicate messages multiple times
+(which has also been seen) in case the driver has reused the handle for
+a different command of the same type.
+
+These problems were seen on a QLE2694L with firmware 9.08.02 when
+testing SLER / SRR support.  The SRR caused the HBA to flood the
+response queue with hundreds of bogus entries.
+
+Signed-off-by: Tony Battersby <tonyb@cybernetics.com>
+---
+
+v2 -> v3: no changes
+
+v1 -> v2: shorten code comment due to the removal of unsafe code from
+the prior v1 patch "scsi: qla2xxx: fix oops during cmd abort".
+
+ drivers/scsi/qla2xxx/qla_dbg.c    |   2 +-
+ drivers/scsi/qla2xxx/qla_target.c | 109 ++++++++++++++++++++++++------
+ 2 files changed, 90 insertions(+), 21 deletions(-)
+
+diff --git a/drivers/scsi/qla2xxx/qla_dbg.c b/drivers/scsi/qla2xxx/qla_dbg.c
+index 9f56bec26231..a7e3ec9bba47 100644
+--- a/drivers/scsi/qla2xxx/qla_dbg.c
++++ b/drivers/scsi/qla2xxx/qla_dbg.c
+@@ -54,7 +54,7 @@
+  * | Misc                         |       0xd303       | 0xd031-0xd0ff	|
+  * |                              |                    | 0xd101-0xd1fe	|
+  * |                              |                    | 0xd214-0xd2fe	|
+- * | Target Mode		  |	  0xe086       |		|
++ * | Target Mode		  |	  0xe089       |		|
+  * | Target Mode Management	  |	  0xf09b       | 0xf002		|
+  * |                              |                    | 0xf046-0xf049  |
+  * | Target Mode Task Management  |	  0x1000d      |		|
+diff --git a/drivers/scsi/qla2xxx/qla_target.c b/drivers/scsi/qla2xxx/qla_target.c
+index a59742ca51ec..d82c7022f3d7 100644
+--- a/drivers/scsi/qla2xxx/qla_target.c
++++ b/drivers/scsi/qla2xxx/qla_target.c
+@@ -4000,7 +4000,8 @@ static int qlt_prepare_srr_ctio(struct qla_qpair *qpair,
+ 
+ /* ha->hardware_lock supposed to be held on entry */
+ static void *qlt_ctio_to_cmd(struct scsi_qla_host *vha,
+-	struct rsp_que *rsp, uint32_t handle, void *ctio)
++	struct rsp_que *rsp, uint32_t handle, uint8_t cmd_type,
++	const void *ctio)
+ {
+ 	void *cmd = NULL;
+ 	struct req_que *req;
+@@ -4023,29 +4024,97 @@ static void *qlt_ctio_to_cmd(struct scsi_qla_host *vha,
+ 
+ 	h &= QLA_CMD_HANDLE_MASK;
+ 
+-	if (h != QLA_TGT_NULL_HANDLE) {
+-		if (unlikely(h >= req->num_outstanding_cmds)) {
+-			ql_dbg(ql_dbg_tgt, vha, 0xe052,
+-			    "qla_target(%d): Wrong handle %x received\n",
+-			    vha->vp_idx, handle);
+-			return NULL;
+-		}
+-
+-		cmd = req->outstanding_cmds[h];
+-		if (unlikely(cmd == NULL)) {
+-			ql_dbg(ql_dbg_async, vha, 0xe053,
+-			    "qla_target(%d): Suspicious: unable to find the command with handle %x req->id %d rsp->id %d\n",
+-				vha->vp_idx, handle, req->id, rsp->id);
+-			return NULL;
+-		}
+-		req->outstanding_cmds[h] = NULL;
+-	} else if (ctio != NULL) {
++	if (h == QLA_TGT_NULL_HANDLE) {
+ 		/* We can't get loop ID from CTIO7 */
+ 		ql_dbg(ql_dbg_tgt, vha, 0xe054,
+ 		    "qla_target(%d): Wrong CTIO received: QLA24xx doesn't "
+ 		    "support NULL handles\n", vha->vp_idx);
+ 		return NULL;
+ 	}
++	if (unlikely(h >= req->num_outstanding_cmds)) {
++		ql_dbg(ql_dbg_tgt, vha, 0xe052,
++		    "qla_target(%d): Wrong handle %x received\n",
++		    vha->vp_idx, handle);
++		return NULL;
++	}
++
++	/*
++	 * We passed a numeric handle for a cmd to the hardware, and the
++	 * hardware passed the handle back to us.  Look up the associated cmd,
++	 * and validate that the cmd_type and exchange address match what the
++	 * caller expects.  This guards against buggy HBA firmware that returns
++	 * the same CTIO multiple times.
++	 */
++
++	cmd = req->outstanding_cmds[h];
++
++	if (unlikely(cmd == NULL)) {
++		if (cmd_type == TYPE_TGT_CMD) {
++			__le32 ctio_exchange_addr =
++				((const struct ctio7_from_24xx *)ctio)->
++				exchange_address;
++
++			ql_dbg(ql_dbg_tgt_mgt, vha, 0xe053,
++			    "qla_target(%d): tag %u: handle %x: cmd detached; ignoring CTIO (handle %x req->id %d rsp->id %d)\n",
++			    vha->vp_idx, le32_to_cpu(ctio_exchange_addr), h,
++			    handle, req->id, rsp->id);
++		} else {
++			ql_dbg(ql_dbg_tgt_mgt, vha, 0xe053,
++			    "qla_target(%d): cmd detached; ignoring CTIO (handle %x req->id %d rsp->id %d)\n",
++			    vha->vp_idx, handle, req->id, rsp->id);
++		}
++		return NULL;
++	}
++
++	if (unlikely(((srb_t *)cmd)->cmd_type != cmd_type)) {
++		ql_dbg(ql_dbg_tgt_mgt, vha, 0xe087,
++		    "qla_target(%d): handle %x: cmd detached; ignoring CTIO (cmd_type mismatch)\n",
++		    vha->vp_idx, h);
++		return NULL;
++	}
++
++	switch (cmd_type) {
++	case TYPE_TGT_CMD: {
++		__le32 ctio_exchange_addr =
++			((const struct ctio7_from_24xx *)ctio)->
++			exchange_address;
++		__le32 cmd_exchange_addr =
++			((struct qla_tgt_cmd *)cmd)->
++			atio.u.isp24.exchange_addr;
++
++		BUILD_BUG_ON(offsetof(struct ctio7_from_24xx,
++				      exchange_address) !=
++			     offsetof(struct ctio_crc_from_fw,
++				      exchange_address));
++
++		if (unlikely(ctio_exchange_addr != cmd_exchange_addr)) {
++			ql_dbg(ql_dbg_tgt_mgt, vha, 0xe088,
++			    "qla_target(%d): tag %u: handle %x: cmd detached; ignoring CTIO (exchange address mismatch)\n",
++			    vha->vp_idx, le32_to_cpu(ctio_exchange_addr), h);
++			return NULL;
++		}
++		break;
++	}
++
++	case TYPE_TGT_TMCMD: {
++		__le32 ctio_exchange_addr =
++			((const struct abts_resp_from_24xx_fw *)ctio)->
++			exchange_address;
++		__le32 cmd_exchange_addr =
++			((struct qla_tgt_mgmt_cmd *)cmd)->
++			orig_iocb.abts.exchange_address;
++
++		if (unlikely(ctio_exchange_addr != cmd_exchange_addr)) {
++			ql_dbg(ql_dbg_tgt_mgt, vha, 0xe089,
++			    "qla_target(%d): ABTS: handle %x: cmd detached; ignoring CTIO (exchange address mismatch)\n",
++			    vha->vp_idx, h);
++			return NULL;
++		}
++		break;
++	}
++	}
++
++	req->outstanding_cmds[h] = NULL;
+ 
+ 	return cmd;
+ }
+@@ -4074,7 +4143,7 @@ static void qlt_do_ctio_completion(struct scsi_qla_host *vha,
+ 
+ 	ctio_flags = le16_to_cpu(ctio->flags);
+ 
+-	cmd = qlt_ctio_to_cmd(vha, rsp, handle, ctio);
++	cmd = qlt_ctio_to_cmd(vha, rsp, handle, TYPE_TGT_CMD, ctio);
+ 	if (unlikely(cmd == NULL)) {
+ 		if ((handle & ~QLA_TGT_HANDLE_MASK) == QLA_TGT_SKIP_HANDLE &&
+ 		    (ctio_flags & 0xe1ff) == (CTIO7_FLAGS_STATUS_MODE_1 |
+@@ -6836,7 +6905,7 @@ static void qlt_handle_abts_completion(struct scsi_qla_host *vha,
+ 	struct qla_tgt_mgmt_cmd *mcmd;
+ 	struct qla_hw_data *ha = vha->hw;
+ 
+-	mcmd = qlt_ctio_to_cmd(vha, rsp, pkt->handle, pkt);
++	mcmd = qlt_ctio_to_cmd(vha, rsp, pkt->handle, TYPE_TGT_TMCMD, pkt);
+ 	if (mcmd == NULL && h != QLA_TGT_SKIP_HANDLE) {
+ 		ql_dbg(ql_dbg_async, vha, 0xe064,
+ 		    "qla_target(%d): ABTS Comp without mcmd\n",
+-- 
+2.43.0
+
+
 
