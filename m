@@ -1,105 +1,108 @@
-Return-Path: <linux-kernel+bounces-892439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AC85C4519E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 07:38:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E89EC451A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 07:38:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5412B3B1437
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 06:38:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 288383B15A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 06:38:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A7D12E92B4;
-	Mon, 10 Nov 2025 06:38:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12523238C2F;
+	Mon, 10 Nov 2025 06:38:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b="R5HCuqlb"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="l7eRzVtp";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="hOjeE5dF"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF0C123BCE4
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 06:38:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C59682E6CA4
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 06:38:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762756686; cv=none; b=oYcmgfttyKH7hoARNEIhtPGXOSfxSsvqdR0OAdr53rlkICSgHpF5aCka8cOOpb34P0WrwKwBxsSRaSxBJcCqrLk+W0HojUdxJVFbHV5OuHKjn8zb707YMoDtpfu9jBV5NWfslJq2khaCebx77mavUnx5cT0u0Qf4znS+2VbGkwU=
+	t=1762756699; cv=none; b=mJbmSmB2DdH5k9/4rjduPEOxCvssfJaBuAY9JKD2i66dmAkFtSUAVGNT7XhzkQZ4H2kxy3Qb9utFhZTHZKx+IWjyoXzcuWwR+x77BQZxKl3oaRsFJJErEvZdQSCOwedSP8M0SchjI3I8Mg8Jlz2MbRJIhop0gsjYXHzPhLFgTeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762756686; c=relaxed/simple;
-	bh=SUHfIg5GhQcEfjnNTSceZJLkDCfTBJb7plnlPtngbCM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IxOCQrY90fVvu62Aiv5sUUNxMEXmte58/FX0TEBPmJgDiRosiucfcjKf6Z3s+7CIsB/xGqAYidH2ezielOGEALcdQqbMFk1vxF9jkpEpoIPXvxdrBGH/pJ6K4L7LpSDCrwyvZJhyV495qtgADycW6QrIoO6g/urqaKuOoC9Bx74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com; spf=pass smtp.mailfrom=shopee.com; dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b=R5HCuqlb; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shopee.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7af603c06easo2366309b3a.0
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 22:38:04 -0800 (PST)
+	s=arc-20240116; t=1762756699; c=relaxed/simple;
+	bh=q3JNVrxXbb+AXhPvJ9Bpegf2+j2OtGhx+/LfN31RE2k=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jcEP3DNog5UAm34SBBHywnzKslrDsDoOQJ+RLC/nku7sUTMmWobBaslsoycltyjmo9ltv/WllJPDJcWwUvEC1AhOW4Jea/Ters5/gYmU2R6xCSvaIwHV5uNS1igBSzpnG7GDs/EaZiT+HESB+PBtehues9lOjZ+PmmcFRanLkFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=l7eRzVtp; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=hOjeE5dF; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AA0XBtt1808874
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 06:38:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=AH4fOfUq2O4PEbyuB9Tb1ekT9XBUf1NjKPE
+	/rCkAa+g=; b=l7eRzVtpMJ1IcwyHnm1Ofstsa1RumQPAU7z3DEGFEESuys+oT+J
+	fEBJN/2gpik0ffoih0m1UXL54ssIrVh8N9U/L1WbnaQ1JwLwt4a0tfufBcJ6FdrB
+	eVT8vwRJGfWMzRVxduWI0LW+xAzLzOQnQ4bKp8V5OxvS1x7tkL89QuanohUsyiEi
+	RvSGxuu5m54Ijxw5i/sMFs7RvIOKWCxwovDyI4/Tj1Mna3dFjd+03eB9s3UUukAW
+	WIrgp1AcZ6TTtF97mvHNMBJpz4241Cadbz3wkPT2yJoN0MAxVVOMgvWc1hwI72t/
+	QgJPlI7wq3ui+cp4taUN7ti2MBiL/TRaZVg==
+Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com [209.85.215.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ab5m1gr5e-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 06:38:10 +0000 (GMT)
+Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-b62e5979d4fso150358a12.0
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 22:38:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shopee.com; s=shopee.com; t=1762756684; x=1763361484; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wmBVMknsz67ut23E5K5rufi/vJYxx4RPQjR4CpqkZ2E=;
-        b=R5HCuqlbWU2edYGODcWV1pi669v3q6rHIrHoX+G2fxwUP3JOwpuWcweyOYq+KC6pZx
-         Tuptkc8bqnK1emYqAJFUfBXzY+w/+LP2E0SmggulAymi/WlLPSv27GTf/o6GolG/+Cv9
-         b+AFFQZ6ClEk6Xr8tCMXv+cwTBaXaYgi4ZtGmX3dTUhlEn+N39q2np1IUoBNNoMLljaW
-         7mPnV4CNZeR0gf/KQdScareM35zLA3VxKx2QGMXfZ2eZYMtJewhWm5CJvNK8YdB+JpYU
-         nAZ+Du3uO9wYXsY6pTspPRbJ31iDNhY+cboi4MQkjfMCF+XmYxpu207RQdxdUs7Rd8w0
-         kNlQ==
+        d=oss.qualcomm.com; s=google; t=1762756690; x=1763361490; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=AH4fOfUq2O4PEbyuB9Tb1ekT9XBUf1NjKPE/rCkAa+g=;
+        b=hOjeE5dFLJNhiyWEIGR3tE6NMvXSCrQ86YTprOwKdj9cGa9ac2DWckM0gHGjOBPzQ8
+         BZQpO4QWppfsxd27AuEfaoQmvWXv9NxZZ0F9xaW4W7V2hxhkuAwovTH6BjsxUPo2Z8qa
+         T85AoDaOe1PT0fuZyaDrkmZDTQfSW5QBhOKLQL3nAltK9gC+3/xg7jSyIrf1e1jRjBJf
+         S705BcHb8Abd871OdS18B7h13s8fIXJBLntCUZAeVeVSP27jGYfRdjBP4y9OP6xfpaqs
+         OB+dYupIIWoI0Dc4/XeMarhTRyQBXwH8bIREmn6br2HszZ/7ExHWrgoUEzFa4K/G5NpJ
+         gC3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762756684; x=1763361484;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=wmBVMknsz67ut23E5K5rufi/vJYxx4RPQjR4CpqkZ2E=;
-        b=Rgmc5e9Uzj844GemKtM+lUjjAezeWbUBaDsbZH/U1PNBH1cR/PPAb2k43/FijrB0ZW
-         BuLsTzRRCXdJgEItOSMybpO5hUIWz7TUT7/jjD1c5CYcVx+IMh/Md8B5a6RzOjVel52p
-         mhamZkuFnAuAajfeXcJJRQZmFMJ3YgfIHilEHnkIukk4OpHjX9cqgxfrltiVTrxtca8c
-         +XCjk9rVjwvDbqVfFBgFnpLOgrw557vzTa+ve+rRk12PeTq8Nu5z3NCnGHKit9n+IpMu
-         Rgmk47IoXC1f8P/ibLaGnCX+RNU1lV3i6wKyyGkDJCuKTgpY7AUvrjiyi0NaH/Ne7k8N
-         F6og==
-X-Forwarded-Encrypted: i=1; AJvYcCWez3dyVdi+vvq7swIb4f/jA3w9NsDpW4tW7dGWqoJjB3j8GDv+d4kdMLHvxIxIhFmJeH2SLJKeF77Q35U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOEkC+e2da79jdTshBmNlaxAV/dFbjT4ZZdkzNvjVqfxK5Vklt
-	Ii578l/nBGAaArWzE0l8UxxE0EUk0WMz0lWZu+9PcAPIw46v8HuDb1+dWCXfapCjryM=
-X-Gm-Gg: ASbGncuQ7FrGLqdJbW1APP6UbrrqDr5A7Guelg0nBWM2UoeG/iozHMyWTaRWzqkNYvr
-	twdzwlqdOjdv9tg5Jrdst7WFsodeH6NoUCL4ZUe+kVxlaMYWDDObxiXeRyhwbO51Hy6tnleL0tY
-	O+YJ/Leh+m8PO1zBZyVLCA7lgZuIrVrtAMgMkUUueLenAJSp9SM/K2UzrRd4tYLez+GZaPziBcW
-	fH6oDnANNkPrvP7jpes2i3w+qTBomB/Dh4QfvTwtwVV14jCR4Gw9z9jckbZ+Id/WCvqE0EIQI1d
-	U1fnZsg9e2j+yvT7ytlLHf38wX7x4gkeGZr3oxXrjKJNNH5tgtL8G+PueAifc9miNbkDIwNR7xd
-	wjAyVpwX0VfE3OmDP4kFBJVSMp5AsfG5pSA71A+ecuAwxWPrn+4QWOZW86NvitW5AehHrQHjPhU
-	95ZNS8qNvcpTgUoA==
-X-Google-Smtp-Source: AGHT+IGpM2iMSrs4WgXitoPVDoGbl0s8jdXiEXMRW0CSHSXbsOrMNjve/Ihdvic39TubC73LXbxmTQ==
-X-Received: by 2002:a05:6a00:1a8e:b0:78a:f6be:74f2 with SMTP id d2e1a72fcca58-7b218103464mr9344608b3a.5.1762756683995;
-        Sun, 09 Nov 2025 22:38:03 -0800 (PST)
-Received: from .shopee.com ([122.11.166.8])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7b0cc17a688sm10609451b3a.40.2025.11.09.22.37.59
+        d=1e100.net; s=20230601; t=1762756690; x=1763361490;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AH4fOfUq2O4PEbyuB9Tb1ekT9XBUf1NjKPE/rCkAa+g=;
+        b=lVKtvi62XYpzEBf3HlzviDDNkQ15kD7QIVkJpVzNggCl69yanF7yiDcYgzcjcYwswA
+         GQwBJG0yM/Qps+LxL9UtbpuBnZK/i3mLqhFrCJpDBZ80aajjww17KSDIiQUZjLg9BJ9s
+         k/3RaT2UC8oWeAEmBfo41nLBnex7J9n+KTthC7XW+0Co5q+2KwuzbypqnctFOizJnL9C
+         U3OBSfmEbW+/67OdZAdj4wP+93BdCWRSTvbsM+u9+A/UoQFHfT1nU4921J1TremPqh66
+         gidzSTGB/x7sQBxS23j0yDilSekeTb0wg3LKcuCXBGaLs4UxXIFIQrbiBjVSF3sJhEV9
+         dkrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUv4/kdHmNUPDWc8NoI7gAlicR5XED0nelswPU0nmFYxGdyzZEzNDzyoBNSRse0s7YygTS0DW3G5UE1Bis=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxaRjAkc6USl9mkfPak9PXvDClIeF3RzvNhBNXu8uwrB8vcr06D
+	P7M2bVCmSvMHPfUanU/zWDZ8sL6c3iD0AoTb6jvhOejQ+2XMaZAKffRW0UDPE2z6RIO2Z9/1eHM
+	kceDzq1nukX5vcnzl+sZCjcIKT4kBprNBKbtrboUbbpBLgwwMQIM64J0vZhdnGbjnpw==
+X-Gm-Gg: ASbGncuQFjWVEcq7yesf0+tslXHyBvK/LgAZO7YimedTsBSCT2uEfIKHLBI4jKsMRAN
+	6UYQt5bTcs/zJ2rZRF74PxDcQG1RN4LjGEOglYSxRlS8pj8SluF+fCqnSquOWvge9O+dhpioWPM
+	E1UKEr5GdEx7bcuEPoBD0t0iorxNbRr3M9ZtvyMW7VfjzM7c1zkvLZbRV05/EQ9g4PXQ1jXHHuZ
+	R9uvi0SLVUCBxXr267Wqaqy5BkESsKNEl6G7G8Oh3Bp0pMHAbt3eUx2RgsLt4vJUaSnIBReHytF
+	53exawEVrstb8cRl1MkQbkxFJceezPCVadjcGjtR/d7toByazHQ/pcrzt3OaGRr8FvszB87v3TY
+	zffGIwbvHvRRuKtQQSyw+yG3PvOwlQw==
+X-Received: by 2002:a05:6a20:729d:b0:353:946f:fd62 with SMTP id adf61e73a8af0-353a2f44127mr4884754637.3.1762756690149;
+        Sun, 09 Nov 2025 22:38:10 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFC/4Nsj2pQuLupI3eM2rkx7A3zoslP1yulMykcuUQ5KUIQsaeg/izh0mL76mVc/tBPGwubaw==
+X-Received: by 2002:a05:6a20:729d:b0:353:946f:fd62 with SMTP id adf61e73a8af0-353a2f44127mr4884734637.3.1762756689720;
+        Sun, 09 Nov 2025 22:38:09 -0800 (PST)
+Received: from hu-sartgarg-hyd.qualcomm.com ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-baa3c2d92a9sm10729797a12.20.2025.11.09.22.38.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Nov 2025 22:38:03 -0800 (PST)
-From: Leon Huang Fu <leon.huangfu@shopee.com>
-To: shakeel.butt@linux.dev
-Cc: akpm@linux-foundation.org,
-	cgroups@vger.kernel.org,
-	corbet@lwn.net,
-	hannes@cmpxchg.org,
-	inwardvessel@gmail.com,
-	jack@suse.cz,
-	joel.granados@kernel.org,
-	kyle.meyer@hpe.com,
-	lance.yang@linux.dev,
-	laoar.shao@gmail.com,
-	leon.huangfu@shopee.com,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	mclapinski@google.com,
-	mhocko@kernel.org,
-	muchun.song@linux.dev,
-	roman.gushchin@linux.dev,
-	yosry.ahmed@linux.dev
-Subject: Re: [PATCH mm-new v2] mm/memcontrol: Flush stats when write stat file
-Date: Mon, 10 Nov 2025 14:37:57 +0800
-Message-ID: <20251110063757.86725-1-leon.huangfu@shopee.com>
-X-Mailer: git-send-email 2.51.2
-In-Reply-To: <blygjeudtqyxk7bhw5ycveofo4e322nycxyvupdnzq3eg7qtpo@cya4bifb2dlk>
-References: <blygjeudtqyxk7bhw5ycveofo4e322nycxyvupdnzq3eg7qtpo@cya4bifb2dlk>
+        Sun, 09 Nov 2025 22:38:09 -0800 (PST)
+From: Sarthak Garg <sarthak.garg@oss.qualcomm.com>
+To: Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc: linux-mmc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, quic_nguyenb@quicinc.com,
+        quic_rampraka@quicinc.com, quic_pragalla@quicinc.com,
+        quic_sayalil@quicinc.com, quic_nitirawa@quicinc.com,
+        quic_bhaskarv@quicinc.com, kernel@oss.qualcomm.com,
+        Sarthak Garg <sarthak.garg@oss.qualcomm.com>
+Subject: [PATCH V1] mmc: sdhci-msm: Avoid early clock doubling during HS400 transition
+Date: Mon, 10 Nov 2025 12:08:01 +0530
+Message-Id: <20251110063801.641866-1-sarthak.garg@oss.qualcomm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -107,86 +110,60 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEwMDA1NiBTYWx0ZWRfXy+La2CKZVdUP
+ SbG9YvmPoSdaa+45agbzJGtyJqE6KTFmS/6g00EWN57fGh0ngTY7Oqqf4KZJigCgA3JtNEBLIFW
+ 4RCSESfsG+ioybXTeQG+rLMq4crrSMF4kBIvNR2aM30hSs0d9jiwkMCXQI7wK7plYAEffPWBqok
+ qwJ4JOl6RXnsPcM8vumFp2vF2S2RtDJAgkpDF732yMl6xxnbs/EWjPlh/eeu4K2bC8FU5h5gL4J
+ GkCxTdp0TshHcuYklZYtUFUGMDs+Nmx5hBDXtUAJByFyK8p9WxRmwbCnRRA092/SPvMlbCILu/R
+ tBCnpjeLiMP0X4xXOKzKbTWl0EEh4sVxU42uZ/7ydfmBdvhvnPYZoXhJ2zaMynvWrj31UtpHAa0
+ ZJSkdhIdl5vaQ0/8xXE9yBVP6uMFHg==
+X-Authority-Analysis: v=2.4 cv=TsXrRTXh c=1 sm=1 tr=0 ts=69118852 cx=c_pps
+ a=oF/VQ+ItUULfLr/lQ2/icg==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=EUspDBNiAAAA:8 a=hZQ1MXfSydDMrBGxCwYA:9 a=3WC7DwWrALyhR5TkjVHa:22
+X-Proofpoint-ORIG-GUID: fnklCaxh_7LUJ1GOFspG0dV73_I_MVdN
+X-Proofpoint-GUID: fnklCaxh_7LUJ1GOFspG0dV73_I_MVdN
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-10_02,2025-11-06_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 lowpriorityscore=0 clxscore=1015 phishscore=0 spamscore=0
+ malwarescore=0 impostorscore=0 priorityscore=1501 bulkscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511100056
 
-On Fri, Nov 7, 2025 at 7:56 AM Shakeel Butt <shakeel.butt@linux.dev> wrote:
->
-> On Thu, Nov 06, 2025 at 11:30:45AM +0800, Leon Huang Fu wrote:
-> > On Thu, Nov 6, 2025 at 9:19 AM Shakeel Butt <shakeel.butt@linux.dev> wrote:
-> > >
-> > > +Yosry, JP
-> > >
-> > > On Wed, Nov 05, 2025 at 03:49:16PM +0800, Leon Huang Fu wrote:
-> > > > On high-core count systems, memory cgroup statistics can become stale
-> > > > due to per-CPU caching and deferred aggregation. Monitoring tools and
-> > > > management applications sometimes need guaranteed up-to-date statistics
-> > > > at specific points in time to make accurate decisions.
-> > >
-> > > Can you explain a bit more on your environment where you are seeing
-> > > stale stats? More specifically, how often the management applications
-> > > are reading the memcg stats and if these applications are reading memcg
-> > > stats for each nodes of the cgroup tree.
-> > >
-> > > We force flush all the memcg stats at root level every 2 seconds but it
-> > > seems like that is not enough for your case. I am fine with an explicit
-> > > way for users to flush the memcg stats. In that way only users who want
-> > > to has to pay for the flush cost.
-> > >
-> >
-> > Thanks for the feedback. I encountered this issue while running the LTP
-> > memcontrol02 test case [1] on a 256-core server with the 6.6.y kernel on XFS,
-> > where it consistently failed.
-> >
-> > I was aware that Yosry had improved the memory statistics refresh mechanism
-> > in "mm: memcg: subtree stats flushing and thresholds" [2], so I attempted to
-> > backport that patchset to 6.6.y [3]. However, even on the 6.15.0-061500-generic
-> > kernel with those improvements, the test still fails intermittently on XFS.
-> >
-> > I've created a simplified reproducer that mirrors the LTP test behavior. The
-> > test allocates 50 MiB of page cache and then verifies that memory.current and
-> > memory.stat's "file" field are approximately equal (within 5% tolerance).
-> >
-> > The failure pattern looks like:
-> >
-> >   After alloc: memory.current=52690944, memory.stat.file=48496640, size=52428800
-> >   Checks: current>=size=OK, file>0=OK, current~=file(5%)=FAIL
-> >
-> > Here's the reproducer code and test script (attached below for reference).
-> >
-> > To reproduce on XFS:
-> >   sudo ./run.sh --xfs
-> >   for i in {1..100}; do sudo ./run.sh --run; echo "==="; sleep 0.1; done
-> >   sudo ./run.sh --cleanup
-> >
-> > The test fails sporadically, typically a few times out of 100 runs, confirming
-> > that the improved flush isn't sufficient for this workload pattern.
->
-> I was hoping that you have a real world workload/scenario which is
-> facing this issue. For the test a simple 'sleep 2' would be enough.
-> Anyways that is not an argument against adding an inteface for flushing.
->
+According to the hardware programming guide, the clock frequency must
+remain below 52MHz during the transition to HS400 mode.
 
-Fair point. I haven't encountered a production issue yet - this came up during
-our kernel testing phase on high-core count servers (224-256 cores) before
-deploying to production.
+However,in the current implementation, the timing is set to HS400 (a
+DDR mode) before adjusting the clock. This causes the clock to double
+prematurely to 104MHz during the transition phase, violating the
+specification and potentially resulting in CRC errors or CMD timeouts.
 
-The LTP test failure was the indicator that prompted investigation. While
-adding 'sleep 2' would fix the test, it highlights a broader concern: on these
-high-core systems, the batching threshold (MEMCG_CHARGE_BATCH * num_online_cpus)
-can accumulate 14K-16K events before auto-flush, potentially causing significant
-staleness for workloads that need timely statistics.
+This change ensures that clock doubling is avoided during intermediate
+transitions and is applied only when the card requires a 200MHz clock
+for HS400 operation.
 
-We're planning to deploy container workloads on these servers where memory
-statistics drive placement and resource management decisions. Having an explicit
-flush interface would give us confidence that when precision matters (e.g.,
-admission control, OOM decisions), we can get accurate stats on demand rather
-than relying on timing or hoping the 2-second periodic flush happens when needed.
+Signed-off-by: Sarthak Garg <sarthak.garg@oss.qualcomm.com>
+---
+ drivers/mmc/host/sdhci-msm.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-I understand this is more of a "preparing for future needs" rather than "fixing
-current production breakage" situation. However, given the interface provides
-opt-in control with no cost to users who don't need it, I believe it's a
-reasonable addition. I'll prepare a v3 with the dedicated memory.stat_refresh
-file as suggested.
+diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
+index 4e5edbf2fc9b..eca6a09a4547 100644
+--- a/drivers/mmc/host/sdhci-msm.c
++++ b/drivers/mmc/host/sdhci-msm.c
+@@ -355,7 +355,8 @@ static unsigned int msm_get_clock_mult_for_bus_mode(struct sdhci_host *host)
+ 	 */
+ 	if (ios.timing == MMC_TIMING_UHS_DDR50 ||
+ 	    ios.timing == MMC_TIMING_MMC_DDR52 ||
+-	    ios.timing == MMC_TIMING_MMC_HS400 ||
++	    (ios.timing == MMC_TIMING_MMC_HS400 &&
++	    ios.clock == MMC_HS200_MAX_DTR) ||
+ 	    host->flags & SDHCI_HS400_TUNING)
+ 		return 2;
+ 	return 1;
+-- 
+2.34.1
 
-Thanks,
-Leon
 
