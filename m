@@ -1,120 +1,131 @@
-Return-Path: <linux-kernel+bounces-893368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86658C472BC
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:26:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CA29C47322
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:29:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 32B4C349980
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:26:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2E5F3ADE42
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:27:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 424C53148C9;
-	Mon, 10 Nov 2025 14:26:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3540C307AEA;
+	Mon, 10 Nov 2025 14:27:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lceshMQI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="SRYkGJix"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E11E13C3F2;
-	Mon, 10 Nov 2025 14:26:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 868C518A956
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 14:27:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762784788; cv=none; b=si1GPwB3z8To5E/sz7y8bbxFx44tv0D28w/+xNPaNi0pXujNy+F+35BIgmyMH+LhcwypgWgnxE9ANQVbblL10bZmRqWmqxT7bzHRNwr7dqz4Ty2ZfimbdQd3rvOZ4WiuFGBt6V+UWL9ffLtuBpeznUN6ymD+pIWQ4l5d1FonU9k=
+	t=1762784859; cv=none; b=b5gsqk4mwfh0VgJXZWx69p1NvhccLjsEontBD7xZXNi4iuIFPEAhOVcivna4s/8zPnYpLH1BjpYcve4vIz7yN7YUZ+srCDk0org+rmeTw3HUVCK1n8sK5PJseiF9y6b2msx0SGvn5HzmYnLWKFJaPFIuJ2T9XU9e4JS7qkrLdH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762784788; c=relaxed/simple;
-	bh=OzP+cnO1DQo6uc8qjiAg9VlJqhB1pOHopdiRtbozK7E=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=nIj2iRtXXrFyerpjOkxISjGgtea5wwj5p5iv+XMSDEJhTADemW0Sb73T7M/qJUyNOcRITUptztd7l5iTBN8ipj9V+6TDRnYiWJH3TIBVshHMfL6HPKmodJPBSjek0YkBQMmEt6mUk/wsX+8JYbqPnlrkwCkR89REqGjjz4sl20Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lceshMQI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 265EEC4AF0B;
-	Mon, 10 Nov 2025 14:26:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762784788;
-	bh=OzP+cnO1DQo6uc8qjiAg9VlJqhB1pOHopdiRtbozK7E=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=lceshMQI28qNpBr02YLtSEeKB9gFo8ck0Rsj2aa3Bk5/Y+9zICWK8PaewT7i3IIkS
-	 7AF7jU1OfphgeaJh1ZuQ2AC+Pfq4TC/SkbP1RHawnxoaF8UoxmaSd2xTZ8Ybs84ai+
-	 69ZNS/QqfLai16I/HdffsFG4+dY2iFZWkbgiASaV5Es4mSxxecHL/eL+AwNr4IQRh1
-	 bcsMO9XjMsXxZ//marMZvObRP/T69JliYo3DqRg7wq010lC80gOa2q1/ZsBBjun9Qy
-	 2E7SeoLSd9MpQjnRKGlMA1pVJyYqd+amvYDeDFj7lngyVb0KqgOR9M0yRT0KapLw+t
-	 GqBJsN527vi3g==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 188A0CD13D2;
-	Mon, 10 Nov 2025 14:26:28 +0000 (UTC)
-From: David Heidelberg via B4 Relay <devnull+david.ixit.cz@kernel.org>
-Date: Mon, 10 Nov 2025 15:26:26 +0100
-Subject: [PATCH v2 3/3] arm64: dts: qcom: sdm845-xiaomi-beryllium: Enable
- ath10k host-cap skip quirk
+	s=arc-20240116; t=1762784859; c=relaxed/simple;
+	bh=ihoIGUSl5KG1eENwxR/j5csfH6FTtQ5eoSNs9oJA6Vk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AorDeGn9HQGr3yCW6/LhvCcjzlsgZOn4+8afoLjBc1xJ1bPWIRh8jlWHihXp7cmGKvA6nNE1wMDLPu7f3hVCENg1u+iQL7qqUGYq2spO03dlJlCsYVBRkuwChC5x4re69cNcVyU+VNJKJwe7rz2MtO101SyJA1MxklB2Lyqjccw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=SRYkGJix; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-477775d3728so14858025e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 06:27:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1762784855; x=1763389655; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=7Kg3vBr5eIV1bhiU84P8YOC4pYEYEClLlaacpCw0wZo=;
+        b=SRYkGJixCHOd9/Arbun0EwNmU+4bb5C90UQJ1GDHKLanUCCs81mj/owXVdVjpomwxp
+         Mc3My3CUwSe3B94SJciG2Rc5peVIFORE21gU3zUGbMuwK7wBNaVd5mf0cD2DhWoRDTOp
+         htAHD0cYaQgQOFAkK4j+wi3pMFc/H5oLrd0RoVZto7GV4HYF8GfuvVPm7juMLxUfYyvB
+         2VeVtM+rmvpm1n9gAtzavK6F0ejRMkSW7UWdl384HFeCPP+XRQRVJCZzfTPdoL4NT08j
+         e3PkJjEOSHR6GNp2+Cjzajx3rH5Si7yPXOKH9efJ4K/lMd3lIsQ2zY32mU9yJ6OIV4Qz
+         f3yg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762784855; x=1763389655;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7Kg3vBr5eIV1bhiU84P8YOC4pYEYEClLlaacpCw0wZo=;
+        b=nZXu2pMmGawI4Yd6a9SB9FM8hi9JA7VOCS2GvvsbdSgu8t1QB6vR8b4/EGR0FIVNfx
+         VZf1kblq7Gb5A+zC+49wr6PxOLj1FcyWX0sy4BcbDQIg3Vx1hIqPqpeSJCyQmFAO8uJm
+         qCN0LPGQ9DN//yssjByC7dLqsKbiA8mNJ+3HMRNxgMquMqho3aUtooD+50f67SKQ0IiT
+         9HM8btnuQDHqFhKDsyQrbxLa/klOPrTtCSY6ZhYEb4xO4D6Kn2s2y/RqI3ePOQhtaz9i
+         YgEl58J6KDM4I6GmlVkH4mrpWw01bE3D9CvwavU0JupXdnKtqHc1+kqfgV5sa4JSIEPt
+         RqLA==
+X-Forwarded-Encrypted: i=1; AJvYcCX9IolhL2HPi0hqXd88zLQPWdvH4oeY2gUceKoyXwWDueSEO/1lTclnP0fXNIBaACGVtVx7wBPlhiO8F2A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwC70rc/7sItI9v8XNvs7FIOhxH2c3QNZaL0vnmeU30h+YQ6fWS
+	MSA2aqVULeV/Yt8ilrE+rO/oJTkQarGXktkZTLT/D+C3o8VTv/TO+m6jxtcD+CANGsE=
+X-Gm-Gg: ASbGncvjAyFqsVorpT/tCOVpP+PFpJag8GxhI9BqohZY316YVWCkZbK20SnCIZ39oOj
+	OLt9nP6pRs/wRYidkSWpUA0gBrYHdE/ztYDXAIAAqv3bGbJzevgh1lc2N+L0sH9vWn1qX/K4R7t
+	rlyRu/bysUIu5xgwnEFqqYDQFYZK4HyNdK+TZlMSc79OWawT9jsnF2sSfzdjrwrzkTbJ3s8Ezy4
+	BJ0F6yEIPY2XncgRI/DeCafrWxqXLkDimGj5kJjfjnJ5iQ98pY6ecEbGtabjjQzd6D/+BUHMRhr
+	x4MBnm+AzOSpfihW2VkO+9DoJOsHGqQCfa/Iq0awnjUO0ocPo4kEWOe2Wr009C/w4OrXcnbrCcB
+	H2mmrKJ6JjTDUmTD3M13aQdCnE0iioBIgbCig6mOuUHE9/2Qrk9jyg4zsdng/zB8YT3hBmrDrXu
+	h4BGg1dpNDN5aCfY5eFRf/
+X-Google-Smtp-Source: AGHT+IHML8MOqcOYXtiQH3128zZ7cQFznn5BzWZ/x/UpuzVV3JHCT24/iF1D8qaKQPfZa4W9/kkUDg==
+X-Received: by 2002:a05:600c:4f4c:b0:477:7f4a:44a8 with SMTP id 5b1f17b1804b1-4777f4a4945mr17710055e9.29.1762784854868;
+        Mon, 10 Nov 2025 06:27:34 -0800 (PST)
+Received: from blackdock.suse.cz (nat2.prg.suse.com. [195.250.132.146])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47763e4f89fsm116549665e9.3.2025.11.10.06.27.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Nov 2025 06:27:34 -0800 (PST)
+Date: Mon, 10 Nov 2025 15:27:32 +0100
+From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
+To: Chen Ridong <chenridong@huaweicloud.com>
+Cc: longman@redhat.com, tj@kernel.org, hannes@cmpxchg.org, 
+	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, lujialin4@huawei.com, 
+	chenridong@huawei.com
+Subject: Re: [PATCH -next 1/3] cpuset: simplify node setting on error
+Message-ID: <o3daj3fasq66buthgl3rherobjqwkemjge5xlrgfzfyvcjxyme@anbppjgrj77h>
+References: <20251110015228.897736-1-chenridong@huaweicloud.com>
+ <20251110015228.897736-2-chenridong@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251110-skip-host-cam-qmi-req-v2-3-0daf485a987a@ixit.cz>
-References: <20251110-skip-host-cam-qmi-req-v2-0-0daf485a987a@ixit.cz>
-In-Reply-To: <20251110-skip-host-cam-qmi-req-v2-0-0daf485a987a@ixit.cz>
-To: Johannes Berg <johannes@sipsolutions.net>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Jeff Johnson <jjohnson@kernel.org>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-wireless@vger.kernel.org, devicetree@vger.kernel.org, 
- ath10k@lists.infradead.org, linux-kernel@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, phone-devel@vger.kernel.org, 
- David Heidelberg <david@ixit.cz>, Amit Pundir <amit.pundir@linaro.org>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=905; i=david@ixit.cz;
- h=from:subject:message-id;
- bh=qy5oPva7pVvXCU0lnaBR4INc65V2QzpyRC5geVzLuhk=;
- b=owEBbQKS/ZANAwAIAWACP8TTSSByAcsmYgBpEfYSEyRzkJmvfgAJpvXUzBxVbAyessE/n2pdK
- BpH66Qw9QKJAjMEAAEIAB0WIQTXegnP7twrvVOnBHRgAj/E00kgcgUCaRH2EgAKCRBgAj/E00kg
- cuppD/9p2jsuLrWlZBehPEygW/swom728kSdtf3yvGUsD0T0LsJjNgjlZJcamWHr4Bq+LpDxGwL
- ERet9rdAVOH8F/8HBztFeOQz0FPcDcazFT2gru/awNWAJTgfCt/iR/lDGI+Tq59VfUTOzQFfWcj
- wn0ybPhxtjfggD/Rrx3Lb3cD+5G/ye+XXrox3BuhdrKozco5K0qqBIxthDsNb/dXHbRNBX8MMDl
- T7EeTMJKbMoWN3WEOrhUAnfgFAFsMNgXBp+LGmn68Pxft3d5822gIl0nYcawSgDHABfcmB1frGk
- LK21JVcx8cuC/Ap9vpxjx3U0+h9jea3utHU/mEE5+9ZUKc93I5SQ+9Qwi8TlIlV8WC7zSNTLeMs
- jKdVwjel7DJi4d3ppS9V3+cRPW6vaANpQHgnK5K27WzNEcMGyC731H4eat4+g/S4QqwhpRzVuCd
- EQxs9bnHztUmYLOvrahgnuvv7yii4tzb/hmmim2VEI3RteCq2DipwHRpVKkgBRHfZLktY8p3zv4
- aAqM4yhMRLtjmCMAGZLM1gQRZ1HdqEgVJk8DNqC5+DATVQpkJAaBcQDYhb1ezAAziBIrp4fWNvs
- 9gQ8T3LgXsCNgWlQ+XshICR+/5/Xfr8RCOipx6fDIAKbit4tdvVqnc3/y2C8TlInlHh9wEhMLc8
- r8aH0c4r7KRkbrw==
-X-Developer-Key: i=david@ixit.cz; a=openpgp;
- fpr=D77A09CFEEDC2BBD53A7047460023FC4D3492072
-X-Endpoint-Received: by B4 Relay for david@ixit.cz/default with auth_id=355
-X-Original-From: David Heidelberg <david@ixit.cz>
-Reply-To: david@ixit.cz
-
-From: Amit Pundir <amit.pundir@linaro.org>
-
-The WiFi firmware used on Xiaomi PocoPhone F1 (beryllium) phone
-doesn't support the host-capability QMI request, hence enable
-the skip quirk for this device.
-
-Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
-Signed-off-by: David Heidelberg <david@ixit.cz>
----
- arch/arm64/boot/dts/qcom/sdm845-xiaomi-beryllium-common.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/sdm845-xiaomi-beryllium-common.dtsi b/arch/arm64/boot/dts/qcom/sdm845-xiaomi-beryllium-common.dtsi
-index 785006a15e979..a3bfcf56ad3c8 100644
---- a/arch/arm64/boot/dts/qcom/sdm845-xiaomi-beryllium-common.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sdm845-xiaomi-beryllium-common.dtsi
-@@ -636,4 +636,6 @@ &wifi {
- 	vdd-1.3-rfa-supply = <&vreg_l17a_1p3>;
- 	vdd-3.3-ch0-supply = <&vreg_l25a_3p3>;
- 	vdd-3.3-ch1-supply = <&vreg_l23a_3p3>;
-+
-+	qcom,snoc-host-cap-skip-quirk;
- };
-
--- 
-2.51.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ncajuq6cdkyono22"
+Content-Disposition: inline
+In-Reply-To: <20251110015228.897736-2-chenridong@huaweicloud.com>
 
 
+--ncajuq6cdkyono22
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH -next 1/3] cpuset: simplify node setting on error
+MIME-Version: 1.0
+
+On Mon, Nov 10, 2025 at 01:52:26AM +0000, Chen Ridong <chenridong@huaweiclo=
+ud.com> wrote:
+> From: Chen Ridong <chenridong@huawei.com>
+>=20
+> There is no need to jump to the 'done' label upon failure, as no cleanup
+> is required. Return the error code directly instead.
+>=20
+> Signed-off-by: Chen Ridong <chenridong@huawei.com>
+> ---
+>  kernel/cgroup/cpuset.c | 21 +++++++++------------
+>  1 file changed, 9 insertions(+), 12 deletions(-)
+
+Reviewed-by: Michal Koutn=FD <mkoutny@suse.com>
+
+--ncajuq6cdkyono22
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJEEABYKADkWIQRCE24Fn/AcRjnLivR+PQLnlNv4CAUCaRH2UhsUgAAAAAAEAA5t
+YW51MiwyLjUrMS4xMSwyLDIACgkQfj0C55Tb+AjC9wEA3+kvpJFNdj+cvbVOFOqf
+Mdoc4b5dv+sH20VJyQfNcTQBAI6c/7vhNcZfsC3tkOPJETcbP9dC+sU+F8uUm7aq
+jcII
+=MKFE
+-----END PGP SIGNATURE-----
+
+--ncajuq6cdkyono22--
 
