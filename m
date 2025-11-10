@@ -1,153 +1,213 @@
-Return-Path: <linux-kernel+bounces-893857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29675C48859
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 19:23:56 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E80E6C488A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 19:25:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EE8584EA768
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 18:23:54 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6BF6234969E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 18:25:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1279332A3FE;
-	Mon, 10 Nov 2025 18:23:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C70432E73F;
+	Mon, 10 Nov 2025 18:24:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EixBAtBQ"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mYU+YtIQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F05A231CA50
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 18:23:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92E2832E6A7;
+	Mon, 10 Nov 2025 18:24:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762799028; cv=none; b=ouJWKIAEarub5hn8LeLCBTUCldWqQ1FDUTBNS4G/zI1azRHnQLLcBhe0pJL30iDi7WnKYo2A2rQDykKj+mPcbXfeIZL31caN+igKMNc4XW0Qz0VHbyOSlzJuivtki/x2pRyEVOQ0Funv0JFtjLpkEQ+KbT2RsiaCSRD4hdzlpOg=
+	t=1762799064; cv=none; b=G+JxJoPAubeRFjaftNR7mU6GLYH6Yc75PMT6Q39qlyAL9pB365Crv2JQ2yKequ6jGa5efyu0uOmiyJR0ggiKHTRk9p0IQdCF7Oofi7Z4Wfi5akC/SDdJSo+OmhepwW8Zf8wIanCTlZ12jG8SeGUfKyo+hjAwESqYiIQkUm6VI+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762799028; c=relaxed/simple;
-	bh=0B5t6DWhDiwMV6cYZ+zAwswI7QSnPE13XKjJKivILI8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=SGACNMq0EPTjYBCZPBu92vWYA5nh7vKAmwESPjR42mhZRUM0aFRfLEhH2l1tf49koJVb+nb7inLvUjSgowY27GGIB/T2rFp9o9OXCY9FuQtfjGGMOcKXgEPW1mydEYdQj7XQinaaV7geXW0VOJENUNHadVidkRUoDf4dim9Xc+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EixBAtBQ; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2958c80fcabso91476195ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 10:23:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762799026; x=1763403826; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4/RtuixS6ivHaJzMt+cypZgpKYgDJDNLyz12fZKnsp0=;
-        b=EixBAtBQcHIbxnbECgTVfCMhh0Q8b1aqZW6pSgKUZ+tIoKLnyg1izjOhbDQ7gmFLwN
-         8ujkOCVEiUu70iju58EeQj4kMpDPskMwYgEitGyTZMat5qn3nF+Mv+J3scEroxB5Hgtj
-         2QbY+gUKRGtDGuesOZbRAxcLxN+vSiM6nXQrFrP6Jji5Siz1FrP/xP5nIqJnbOvZwhmI
-         qDyjhPVpWo+P3UP7CF31c2p3hSHTCxgq1uyEJ4cDy6u0L9KQwNuE4Jcyx8S/2Kk/oqYd
-         u8x/0IJQqZH/lkxSjte3dYVIZk1hfKmnW093mJyJjtzC3eYD4HoX7EIYtG9AuV58FdwS
-         UNdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762799026; x=1763403826;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4/RtuixS6ivHaJzMt+cypZgpKYgDJDNLyz12fZKnsp0=;
-        b=EUE7wpn6ttYyxh62EBVyQBdwbknzzGKCAjzyQRbNTkbXHzBFtz94gcRNDLgWzdN2ka
-         BCTkGLFs+QmbvObGw4vozXcD5akxFH9ydpoMmlj0MlUIN+4lpQeUM7LQDGAIKdUh8/bS
-         2IJ8GeqPMJvm/sFNI+Dlx8g5SAvg5W+FGl5HGxz70ce+2UaAg+Cc3DDqPQrFBZCjV/AI
-         kjas6xyVVJrq22OD4kLw17n/AcGgvznGURsBOoAE3sxaz7YiCJxJuGSDbhV2w/qo+LQg
-         mmFwp0IB3dT+yQxWR3s851iMWFnCtR6N7K3XLamLrIdWWVDIBzSb70kPD5vvoowrR0oO
-         33Fg==
-X-Forwarded-Encrypted: i=1; AJvYcCXAr3BJenlskHO5apcTSjAGPPhlZMV+2FyZPIH98ef9HX7ziroa7May42BllK+IXgFfwL7us3XW2tgcC0M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6kVusaPe3NUTYnIV0CEjMVaSfKnlsH8ZFYLlUauasKQXMrNkP
-	0GUrlm24TRTWlgDLfCxmQ7qRZzkuWNeEqEkd/6xqd6INidfxqzfWW2IyL1ehDU8ng/BKoK6nlqU
-	izUKnLA==
-X-Google-Smtp-Source: AGHT+IHLjhF/B9JRNWlfF4xQjImNcP66JBbSmi5nz2WQmt8Y80nCa0FnJnmx6rkg3zEfysgHKy0W5hbcKSg=
-X-Received: from plpn7.prod.google.com ([2002:a17:902:9687:b0:296:18d:ea16])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:1a0c:b0:297:f8dd:4d8e
- with SMTP id d9443c01a7336-297f8dd5382mr86324925ad.30.1762799026327; Mon, 10
- Nov 2025 10:23:46 -0800 (PST)
-Date: Mon, 10 Nov 2025 10:23:44 -0800
-In-Reply-To: <690e0be4.a70a0220.22f260.0050.GAE@google.com>
+	s=arc-20240116; t=1762799064; c=relaxed/simple;
+	bh=rNX/qv1b1iAPPSF9UvN11BhMKo9TT2zldKEZXZLB5Uo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=qGQq0BbeS8lbcp4jwyF+gmYGbixck4ngZhwGIrYHVKppjxVYj4FIwNXMfTUzl7w4WHNrYJKkcpc1ESTlM4DMgaYJ//Y01x1vrZ2JVbJe6EOrGVo7aX6u7/owBejgLJ35JCntTiAJ5H6T4NholVBkMzr67iekxoCfIhvgwww370E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mYU+YtIQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D822EC116D0;
+	Mon, 10 Nov 2025 18:24:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762799064;
+	bh=rNX/qv1b1iAPPSF9UvN11BhMKo9TT2zldKEZXZLB5Uo=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=mYU+YtIQo8XQwOFl6334IV7EZGLLffUzMWY2YN+3GrKmU77HZAKI+jOoZbqPd9fSh
+	 7S5pJJC+8kSwRqLqkvZo5RLxJAFVf6JsIzNMXELoS7pRHljGjeTcHfD0ZHmWAjy8di
+	 nvps2BMwZkH2rcqvdYg0/KIkEYp1GsnvqnwYz0hFCuI2J5TiV0LTeh/oLxz+hAbm8S
+	 v2EdktNHapsYFVzShFYwz6clzCYrfwFJF5dA+uDuxozwVGOBj3caU1Sy5Yjaq0Sjfp
+	 gf0ZevQtUoLLm6KqYWWyD8XsEi6Xv9pyVCl8UsaTURjWBx6rG1mnfDK6eU0y+gu1sr
+	 0yUxi5yJJbQxw==
+From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+Date: Mon, 10 Nov 2025 19:23:45 +0100
+Subject: [PATCH net 6/6] selftests: mptcp: join: properly kill background
+ tasks
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <690e0be4.a70a0220.22f260.0050.GAE@google.com>
-Message-ID: <aRItsJNnsja0Wj2W@google.com>
-Subject: Re: [syzbot] [kvm-x86?] WARNING in kvm_arch_can_dequeue_async_page_present
-From: Sean Christopherson <seanjc@google.com>
-To: syzbot <syzbot+6bea72f0c8acbde47c55@syzkaller.appspotmail.com>
-Cc: bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, 
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, mingo@redhat.com, 
-	pbonzini@redhat.com, syzkaller-bugs@googlegroups.com, tglx@linutronix.de, 
-	x86@kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251110-net-mptcp-sft-join-unstable-v1-6-a4332c714e10@kernel.org>
+References: <20251110-net-mptcp-sft-join-unstable-v1-0-a4332c714e10@kernel.org>
+In-Reply-To: <20251110-net-mptcp-sft-join-unstable-v1-0-a4332c714e10@kernel.org>
+To: Mat Martineau <martineau@kernel.org>, Geliang Tang <geliang@kernel.org>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Simon Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>
+Cc: netdev@vger.kernel.org, mptcp@lists.linux.dev, 
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ "Matthieu Baerts (NGI0)" <matttbe@kernel.org>, stable@vger.kernel.org
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4441; i=matttbe@kernel.org;
+ h=from:subject:message-id; bh=rNX/qv1b1iAPPSF9UvN11BhMKo9TT2zldKEZXZLB5Uo=;
+ b=owGbwMvMwCVWo/Th0Gd3rumMp9WSGDKFdI/oNM2oODzD4O70uSH5F56d2nomOPIX25HXJ7jD8
+ nKFQyc6dJSyMIhxMciKKbJIt0Xmz3xexVvi5WcBM4eVCWQIAxenAExExo7hf+QKwz7j0N1Rsy/f
+ StP9YXVi2uuoLu09wZXlLJLVyr/CyxgZ9ik/6ww/J5EhInQ6qv3gxRdrhC0mnfu6rPZVrMGj2wK
+ M/AA=
+X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
+ fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
 
-On Fri, Nov 07, 2025, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    9c0826a5d9aa Add linux-next specific files for 20251107
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=13a67012580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=4f8fcc6438a785e7
-> dashboard link: https://syzkaller.appspot.com/bug?extid=6bea72f0c8acbde47c55
-> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14e110b4580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14ab1114580000
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/6b76dc0ec17f/disk-9c0826a5.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/522b6d2a1d1d/vmlinux-9c0826a5.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/4a58225d70f3/bzImage-9c0826a5.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+6bea72f0c8acbde47c55@syzkaller.appspotmail.com
-> 
-> kvm_intel: L1TF CPU bug present and SMT on, data leak possible. See CVE-2018-3646 and https://www.kernel.org/doc/html/latest/admin-guide/hw-vuln/l1tf.html for details.
-> ------------[ cut here ]------------
-> WARNING: arch/x86/kvm/x86.c:13965 at kvm_arch_can_dequeue_async_page_present+0x1a9/0x2f0 arch/x86/kvm/x86.c:13965, CPU#0: syz.0.17/5998
-> Modules linked in:
-> CPU: 0 UID: 0 PID: 5998 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-> RIP: 0010:kvm_arch_can_dequeue_async_page_present+0x1a9/0x2f0 arch/x86/kvm/x86.c:13965
-> Code: 00 65 48 8b 0d 58 81 72 11 48 3b 4c 24 40 75 21 48 8d 65 d8 5b 41 5c 41 5d 41 5e 41 5f 5d e9 3e af 20 0a cc e8 48 e1 79 00 90 <0f> 0b 90 b0 01 eb c0 e8 4b c1 1d 0a f3 0f 1e fa 4c 8d b3 f8 02 00
-> RSP: 0018:ffffc90003167460 EFLAGS: 00010293
-> RAX: ffffffff8147eee8 RBX: ffff888030280000 RCX: ffff88807fda1e80
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000009
-> RBP: ffffc900031674e8 R08: ffff88803028003f R09: 1ffff11006050007
-> R10: dffffc0000000000 R11: ffffed1006050008 R12: 1ffff9200062ce8c
-> R13: dffffc0000000000 R14: 0000000000000000 R15: dffffc0000000000
-> FS:  000055556a8c3500(0000) GS:ffff888125a79000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000000000000000 CR3: 0000000072cc2000 CR4: 00000000003526f0
-> Call Trace:
->  <TASK>
->  kvm_check_async_pf_completion+0x102/0x3c0 virt/kvm/async_pf.c:158
->  vcpu_enter_guest arch/x86/kvm/x86.c:11209 [inline]
->  vcpu_run+0x26be/0x7760 arch/x86/kvm/x86.c:11650
->  kvm_arch_vcpu_ioctl_run+0x116c/0x1cb0 arch/x86/kvm/x86.c:11995
->  kvm_vcpu_ioctl+0x99a/0xed0 virt/kvm/kvm_main.c:4477
->  vfs_ioctl fs/ioctl.c:51 [inline]
->  __do_sys_ioctl fs/ioctl.c:597 [inline]
->  __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:583
->  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->  do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f1588b8f6c9
-> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007ffdfcd816a8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-> RAX: ffffffffffffffda RBX: 00007f1588de5fa0 RCX: 00007f1588b8f6c9
-> RDX: 0000000000000000 RSI: 000000000000ae80 RDI: 0000000000000006
-> RBP: 00007f1588c11f91 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-> R13: 00007f1588de5fa0 R14: 00007f1588de5fa0 R15: 0000000000000003
->  </TASK>
-> 
-> 
-> ---
+The 'run_tests' function is executed in the background, but killing its
+associated PID would not kill the children tasks running in the
+background.
 
-Now that the buggy patch is gone from linux-next...
+To properly kill all background tasks, 'kill -- -PID' could be used, but
+this requires kill from procps-ng. Instead, all children tasks are
+listed using 'ps', and 'kill' is called with all PIDs of this group.
 
-#syz invalid
+Fixes: 31ee4ad86afd ("selftests: mptcp: join: stop transfer when check is done (part 1)")
+Cc: stable@vger.kernel.org
+Fixes: 04b57c9e096a ("selftests: mptcp: join: stop transfer when check is done (part 2)")
+Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+---
+ tools/testing/selftests/net/mptcp/mptcp_join.sh | 18 +++++++++---------
+ tools/testing/selftests/net/mptcp/mptcp_lib.sh  | 21 +++++++++++++++++++++
+ 2 files changed, 30 insertions(+), 9 deletions(-)
+
+diff --git a/tools/testing/selftests/net/mptcp/mptcp_join.sh b/tools/testing/selftests/net/mptcp/mptcp_join.sh
+index 01273abfdc89..41503c241989 100755
+--- a/tools/testing/selftests/net/mptcp/mptcp_join.sh
++++ b/tools/testing/selftests/net/mptcp/mptcp_join.sh
+@@ -3831,7 +3831,7 @@ userspace_tests()
+ 		chk_mptcp_info subflows 0 subflows 0
+ 		chk_subflows_total 1 1
+ 		kill_events_pids
+-		mptcp_lib_kill_wait $tests_pid
++		mptcp_lib_kill_group_wait $tests_pid
+ 	fi
+ 
+ 	# userspace pm create destroy subflow
+@@ -3859,7 +3859,7 @@ userspace_tests()
+ 		chk_mptcp_info subflows 0 subflows 0
+ 		chk_subflows_total 1 1
+ 		kill_events_pids
+-		mptcp_lib_kill_wait $tests_pid
++		mptcp_lib_kill_group_wait $tests_pid
+ 	fi
+ 
+ 	# userspace pm create id 0 subflow
+@@ -3880,7 +3880,7 @@ userspace_tests()
+ 		chk_mptcp_info subflows 1 subflows 1
+ 		chk_subflows_total 2 2
+ 		kill_events_pids
+-		mptcp_lib_kill_wait $tests_pid
++		mptcp_lib_kill_group_wait $tests_pid
+ 	fi
+ 
+ 	# userspace pm remove initial subflow
+@@ -3904,7 +3904,7 @@ userspace_tests()
+ 		chk_mptcp_info subflows 1 subflows 1
+ 		chk_subflows_total 1 1
+ 		kill_events_pids
+-		mptcp_lib_kill_wait $tests_pid
++		mptcp_lib_kill_group_wait $tests_pid
+ 	fi
+ 
+ 	# userspace pm send RM_ADDR for ID 0
+@@ -3930,7 +3930,7 @@ userspace_tests()
+ 		chk_mptcp_info subflows 1 subflows 1
+ 		chk_subflows_total 1 1
+ 		kill_events_pids
+-		mptcp_lib_kill_wait $tests_pid
++		mptcp_lib_kill_group_wait $tests_pid
+ 	fi
+ }
+ 
+@@ -3960,7 +3960,7 @@ endpoint_tests()
+ 		pm_nl_add_endpoint $ns2 10.0.2.2 flags signal
+ 		pm_nl_check_endpoint "modif is allowed" \
+ 			$ns2 10.0.2.2 id 1 flags signal
+-		mptcp_lib_kill_wait $tests_pid
++		mptcp_lib_kill_group_wait $tests_pid
+ 	fi
+ 
+ 	if reset_with_tcp_filter "delete and re-add" ns2 10.0.3.2 REJECT OUTPUT &&
+@@ -4015,7 +4015,7 @@ endpoint_tests()
+ 			chk_mptcp_info subflows 3 subflows 3
+ 		done
+ 
+-		mptcp_lib_kill_wait $tests_pid
++		mptcp_lib_kill_group_wait $tests_pid
+ 
+ 		kill_events_pids
+ 		chk_evt_nr ns1 MPTCP_LIB_EVENT_LISTENER_CREATED 1
+@@ -4089,7 +4089,7 @@ endpoint_tests()
+ 		wait_mpj $ns2
+ 		chk_subflow_nr "after re-re-add ID 0" 3
+ 		chk_mptcp_info subflows 3 subflows 3
+-		mptcp_lib_kill_wait $tests_pid
++		mptcp_lib_kill_group_wait $tests_pid
+ 
+ 		kill_events_pids
+ 		chk_evt_nr ns1 MPTCP_LIB_EVENT_LISTENER_CREATED 1
+@@ -4137,7 +4137,7 @@ endpoint_tests()
+ 		wait_mpj $ns2
+ 		pm_nl_add_endpoint $ns1 10.0.3.1 id 2 flags signal
+ 		wait_mpj $ns2
+-		mptcp_lib_kill_wait $tests_pid
++		mptcp_lib_kill_group_wait $tests_pid
+ 
+ 		join_syn_tx=3 join_connect_err=1 \
+ 			chk_join_nr 2 2 2
+diff --git a/tools/testing/selftests/net/mptcp/mptcp_lib.sh b/tools/testing/selftests/net/mptcp/mptcp_lib.sh
+index d62e653d48b0..f4388900016a 100644
+--- a/tools/testing/selftests/net/mptcp/mptcp_lib.sh
++++ b/tools/testing/selftests/net/mptcp/mptcp_lib.sh
+@@ -350,6 +350,27 @@ mptcp_lib_kill_wait() {
+ 	wait "${1}" 2>/dev/null
+ }
+ 
++# $1: PID
++mptcp_lib_pid_list_children() {
++	local curr="${1}"
++	# evoke 'ps' only once
++	local pids="${2:-"$(ps o pid,ppid)"}"
++
++	echo "${curr}"
++
++	local pid
++	for pid in $(echo "${pids}" | awk "\$2 == ${curr} { print \$1 }"); do
++		mptcp_lib_pid_list_children "${pid}" "${pids}"
++	done
++}
++
++# $1: PID
++mptcp_lib_kill_group_wait() {
++	# Some users might not have procps-ng: cannot use "kill -- -PID"
++	mptcp_lib_pid_list_children "${1}" | xargs -r kill &>/dev/null
++	wait "${1}" 2>/dev/null
++}
++
+ # $1: IP address
+ mptcp_lib_is_v6() {
+ 	[ -z "${1##*:*}" ]
+
+-- 
+2.51.0
+
 
