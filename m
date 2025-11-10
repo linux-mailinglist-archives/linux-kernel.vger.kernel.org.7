@@ -1,178 +1,107 @@
-Return-Path: <linux-kernel+bounces-893028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 823B5C46621
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:51:10 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E71CC46624
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:51:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 00BC03480C0
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:51:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A66334E9B4A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:51:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E92230C63B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5238B30C616;
 	Mon, 10 Nov 2025 11:50:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="g1ooUKB7"
-Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tbfLQJ9i"
+Received: from mail-ej1-f74.google.com (mail-ej1-f74.google.com [209.85.218.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85B2430BF4B;
-	Mon, 10 Nov 2025 11:50:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25B7D30BF4E
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 11:50:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762775441; cv=none; b=TDkQSSGOK01oh4nqd7nZG7FoHqx0l4bm5QdEq3rPDG7QWt1bqfiuZ77LyY4Erf+IDP0mANdBC5p0n748ndrgbuNgF6bbDzX4eOcbHm+E9x19OT68iT/mqURCRTEEhme2QP61oknXZtraQ+ciXiTWM+Mn8SLsBdUDg+BNuljamjI=
+	t=1762775441; cv=none; b=nyfFydgmBakWQ2z9CL1Ou+MRcBs52Lu3tbldPuLGFGy7iKfOmTCYgJwn6gGXfiqugd3fuhC26YsaBddwHcbn9k8IKibu5E6CzjFNzJMR2cu5P6t24PgVenAhSzQ+kLHEORnfjkL9R+r0U4fwjCjUi9Xa7dY/ITfn6YXVpLkN1+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1762775441; c=relaxed/simple;
-	bh=COHPV+omRxA1EPYbJaNEmdQNtAPu/fCYGXW93KqGFoI=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Q9Ocy70Q94QpHIDsx5lK7L743TEt18liTu8KqD2svVaODxhV/hC6OttX1Vn+jmmsu9/En2jxbG3pAoAOV7z2COcH9p8czAAOg2mq5dLLmEiq13dAnE00yourYK/ShGCJGcKOXG07nOvF9p6MfQkJFLtDdWrWDCQT3Vv/gLZHTzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=g1ooUKB7; arc=none smtp.client-ip=157.90.84.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
-Received: from [192.168.178.76] (business-24-134-207-61.pool2.vodafone-ip.de [24.134.207.61])
-	(Authenticated sender: g.gottleuber@tuxedocomputers.com)
-	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id B3E622FC005B;
-	Mon, 10 Nov 2025 12:50:30 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
-	s=default; t=1762775431;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=DuD0TL8oqAmbLAwRJ96vdYeE8dWYXSklWg5pfSS2mBc=;
-	b=g1ooUKB7+I46ZyuasRTtpI/HZIanAtvTWu00VYCrzZoqLZ+zzcdILJgY3zQeQP40XBx64c
-	pPmNXuI5yV1i0NcfiAHDc+t3Vae42Y5L3MnpOk7/ZdWauBYB5KfekEgtiomm4xxN8iwWO/
-	J3bpxm2H5weeYwuYOE0LNEoi+ZHw708=
-Authentication-Results: mail.tuxedocomputers.com;
-	auth=pass smtp.auth=g.gottleuber@tuxedocomputers.com smtp.mailfrom=g.gottleuber@tuxedocomputers.com
-Message-ID: <d71bae83-039e-4d03-8b77-2af9a8ab255c@tuxedocomputers.com>
-Date: Mon, 10 Nov 2025 12:50:30 +0100
+	bh=m8FS1LKsvEj23KYUxGNEuRyY+Er+5K2VdZOMGbBWuPA=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=YEidpilbT8jCevvZxECU5zggu/2yz0YKBFlCVr3PJGdC9foBAOZbnBwplRR1By1wnpuGazdha7TxQfHLbh1wcq0L4XUURZXQDozYXJD/8eweCBeqqeO2bq13cbzcA+Jl2vWPVUDTXrDCmIu7pkMOMEhANJx86tPNRxkY5YUKzoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tbfLQJ9i; arc=none smtp.client-ip=209.85.218.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-ej1-f74.google.com with SMTP id a640c23a62f3a-b70be4f20deso270410166b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 03:50:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762775438; x=1763380238; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=m8FS1LKsvEj23KYUxGNEuRyY+Er+5K2VdZOMGbBWuPA=;
+        b=tbfLQJ9irZ4UgYbxHdBuCQGlz6pi+O152fJLPmwToJSNVSuIjg8Z/2/TzDmQB0wSKu
+         YtAzMdezswPJLeOz5f/+NjJ1bGweh7X45VSenF/gKIehj+sPcNjx32fP8eIClW18/6dr
+         vcLyY6usgSXfdNzuNUd/9ksixTNqvtb8dbI+hjqJ+8NzUWTtsdbj6kJFNo+eudz918n/
+         X2GAjVGkDlxW56HHziaRBfsfDOm6DeZLR0I7Qn7jpgs+8lFvo1ACVjnMTEARw941Kvwl
+         yROal+T9ZmrGcpPPZZlqbPI3ba/47nTE/Mij/9RK+CoG4nVNHfCS8HrCODrQfZTTF9jX
+         arfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762775438; x=1763380238;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=m8FS1LKsvEj23KYUxGNEuRyY+Er+5K2VdZOMGbBWuPA=;
+        b=MT9sf5akZm1qt+NHzTXJpvP2ecZKXlxUIfd+vwnKYlq+FOnoyi06GzoHzCXbjnjxnQ
+         vI/QWoY0aA7CG6D9jTwCidkRk+M08EprC42lZa0Bo9e1RIgHWzcwC5xErRZesTX9QUlR
+         kw44rw2kOOiXS4TDkFVNj7pexQ18TI2t8DjPapsuxZN8+bHFNYlgDWcfog2mE4+g/gUw
+         jbZiv3/7qGyP1oyiJ3GF2SwgkZPHi1wsFo9fit+cEa/HTRg2Woy3HXEUgGOVVUpzGpN2
+         dyJ9a2DN/+zL/wk4akfHnWvJTlV11Q1MAT1YqmuGbSiGv+DEv+b70XJ1X1CFHnXmrGh3
+         Ef4g==
+X-Forwarded-Encrypted: i=1; AJvYcCXCQ1QlaQ6wyABHw5iy5JHuzciDX0pPH1iDH/UncY2vt6V/GuxOxBwMcBsJ2iSyggnQjn4fZpxGXeGpj6Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNisr01bejEd5Kc16AwY+fTX8wd6JQGkiqxw0T1H6kI+U3qgqu
+	2jEcPP9mOPAlXuPcRcTcanXCnt61NtXsSb4+4CdY/HKKjSDatzbC2fRek4SaLnnmuOBNdvPuGtP
+	Ym9667y71WfTH4S7u2w==
+X-Google-Smtp-Source: AGHT+IEdN/OzNgvJoDSQXjw0rImyZwQBZCotyROrmcQM6Hiiz8GNRc/HF5cFI/FbvnJNkDypZwcJNKuHze4K1U4=
+X-Received: from ejcwb12.prod.google.com ([2002:a17:907:d50c:b0:b72:41e4:755a])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:907:3dac:b0:b72:d2df:641c with SMTP id a640c23a62f3a-b72e04c520bmr672023066b.49.1762775438697;
+ Mon, 10 Nov 2025 03:50:38 -0800 (PST)
+Date: Mon, 10 Nov 2025 11:50:37 +0000
+In-Reply-To: <CANiq72n2TDN9oa7Yu2otk=HfpJQ7NA_X=up4uGO=JszGvaGspg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/7] Add TUXEDO Elite 14 Gen1 (X1E78100)
-From: Georg Gottleuber <g.gottleuber@tuxedocomputers.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Georg Gottleuber <ggo@tuxedocomputers.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Ettore Chimenti <ettore.chimenti@linaro.org>,
- Srinivas Kandagatla <srini@kernel.org>, stefan.schmidt@linaro.org,
- stephan.gerhold@linaro.org, wse@tuxedocomputers.com, cs@tuxedo.de
-References: <20251105154107.148187-1-ggo@tuxedocomputers.com>
- <eccdb13b-e062-4106-8c79-ca57b6839a0e@kernel.org>
- <a3b26b2f-3f23-4a1a-87ef-0f5631e96ce7@tuxedocomputers.com>
-Content-Language: en-US
-Autocrypt: addr=g.gottleuber@tuxedocomputers.com; keydata=
- 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
- bsxTTcOuRnk=
-In-Reply-To: <a3b26b2f-3f23-4a1a-87ef-0f5631e96ce7@tuxedocomputers.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20251110095025.1475896-1-ojeda@kernel.org> <20251110095025.1475896-3-ojeda@kernel.org>
+ <CANiq72n2TDN9oa7Yu2otk=HfpJQ7NA_X=up4uGO=JszGvaGspg@mail.gmail.com>
+Message-ID: <aRHRjaSHO0z9R_Se@google.com>
+Subject: Re: [PATCH 02/18] rust: kbuild: introduce `core-flags` and `core-skip_flags`
+From: Alice Ryhl <aliceryhl@google.com>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	patches@lists.linux.dev
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Nov 10, 2025 at 11:19:19AM +0100, Miguel Ojeda wrote:
+> On Mon, Nov 10, 2025 at 10:51=E2=80=AFAM Miguel Ojeda <ojeda@kernel.org> =
+wrote:
+> >
+> > Thus do so here for `core`, which simplifies a bit the `Makefile`
+> > (including the next commit) and makes it more consistent.
+>=20
+> We may want to eventually use `--cap-lints=3Dallow` here too, but the
+> skip flags here were already feeling a bit more than needed for the
+> series.
 
+Using cap-lints allow for core sgtm.
 
-Am 06.11.25 um 13:56 schrieb Georg Gottleuber:
-> 
-> 
-> Am 06.11.25 um 09:15 schrieb Krzysztof Kozlowski:
->> On 05/11/2025 16:41, Georg Gottleuber wrote:
->>> Initial support for TUXEDO Elite 14 Gen1 laptop. It is based on Qualcomm
->>> Snapdragon X Elite SoC (X1E78100).
->>>
->>> Changes in v2:
->>> - Rebase to v6.18-rc4/master
->>> - Add support for accelerated video decoding
->>> - Add support for audio (speakers, microphones, headset)
->>> - Add support for Bluetooth
->>> - Add support for camera
->>> - Add support for fingerprint reader
->>> - Add support for HDMI-A port
->>> - Add support for QSEECOM
->>> - Add support for USB Type-A
->>> - Add support for USB-C DP altmode
->>> - Add ASL Xiamen Technology Co. Ltd. vendor prefix
->>> - Add TUXEDO vendor prefix
->>> - Add cover letter
->>> - Removal of pointless comments
->>> - Coding style fixes
->>> - Spell check
->>>
->>> The device tree uses the dtschema from Linaro qcom-laptops [1].
->>
->> No, it cannot. You must work on mainline.
->>
->> Specifically, you must use mainline dtschema and I do not understand why
->> you choose it from some 3rd party repo. See writing-schema how to
->> install main dtschema package.
-> 
-> I am building and testing with mainline dtschema, but checking this dts
-> with 'make CHECK_DTBS=y qcom/x1e80100-tuxedo-elite-14-gen1.dtb' has
-> revealed that one property was unevaluated (output: 'data-lanes' was
-> unexpected [see line 1461]).
-> 
-> This data-lane property is described in the following commit
-> https://gitlab.com/Linaro/arm64-laptops/linux/-/commit/3d106a8ac261f81e48e4ee2a31b7484d863e0a4a
-> 
-> Due to the warning from the check tool, I just wanted to point out this
-> commit.
-
-Sorry for not getting that right in my first reply. This commit from
-Linaro was also posted to the lkml:
-
-https://lore.kernel.org/all/20251006-topic-x1e80100-hdmi-v5-1-c006311d59d7@linaro.org/
-
-I will include this requirement in the cover letter.
-Thanks for the review.
-
-Regards,
-Georg
+Alice
 
