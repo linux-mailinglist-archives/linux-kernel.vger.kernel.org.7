@@ -1,176 +1,113 @@
-Return-Path: <linux-kernel+bounces-892774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A4A7C45C47
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:57:08 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 312E5C45CCE
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:04:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BB9F18860EC
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:57:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8D6B64EB86D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:58:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78399302CA2;
-	Mon, 10 Nov 2025 09:56:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD0AC2FE578;
+	Mon, 10 Nov 2025 09:58:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jI6LVB4O"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="O0kz/qFH"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2025301716
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 09:56:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75C30234964
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 09:58:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762768603; cv=none; b=PC2LswATsnvh2P4q//pv1aIk0bM4Ispjf028kfSA7w1JBxYwJZwmXoI4gDjOwE2gdhhjIGOhRspVgvGjTWEtIpxn9iqQuuXbZEaW8ZqQ5Uor+gr+/dEkGUleRWsDQuBJbAs1rtm38RY9AUSuio9qDtGghp/KSui/z8kMQrAPMk0=
+	t=1762768706; cv=none; b=OtMcr4vYQQkvPYjSea7FRVUxFtd+GSpzJcWRuFkgfhszej4lExS+36pW5yW6dClKDo4o/PDhIhmkfyYBhTt7tsPDxBu1Ngf3LALfSOKWVZAKazvxjN/3GhScTYsR6wOXMJ9XoNqS9lWT2p9tcoeX8YmsGnpGK9tyC0RicPLQSas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762768603; c=relaxed/simple;
-	bh=E4pObGjbO5Pdzkea4D/ehF/Yidsew/tPtBkhIyRPUic=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cDPI/VjzToZiotaGKEN3QsNf2tlsFcv7XOHh9s0AUcnV4VHYg1k0GUofTp9ud5CrEkGw9ebCwUQruD1NOFEf3NOqLRuK/FR0frElqmKRUGtSLhr9ctIgr5N+t6DwCt/Y6R84VKtBVux05upo7jCoV7VDslflHwT/56SGt2X1Vbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jI6LVB4O; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-6407e617ad4so4795949a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 01:56:41 -0800 (PST)
+	s=arc-20240116; t=1762768706; c=relaxed/simple;
+	bh=Pr1wJd/7uGgpha5iPQ4Q3WZe4ih/H/T0063vCmTBsVQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=r33Qk4XBjTo6rJxMTuB8gkPfYeGElyOU0DfrGLkw/oemI5trnMWCR8YPVvo+/Nj7/SaYRXy8c+lrg+Tcfgd5oPgY7VhTqOkJVN/pGzfSt+UhEK43IkOybQiUzLeOlVkBuHGipSJ68+5WRPpzq6SWUVbRfysXDC5Km8dlWvp7EWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=O0kz/qFH; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-591c98ebe90so2925476e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 01:58:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762768600; x=1763373400; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=OalheUhAzvO+fY3ksPJYrAH3VrSZlCzAqAQZjc76Aoo=;
-        b=jI6LVB4O1PURkNTFHDjkR04JTpwNuO10Oxjmj3qYk3n7t4FfIfps7tyjRdq9vvc8x2
-         SNxCH+TTlPHN/OSvB+EG2Tbf/U6zNd3YQ4mcvPusBl3/gGbLvYfuUFsEnus1lu0TcO69
-         j7lDZj2l+8JKmXNcFtXEz+zRWZvgKlyYqIh3ZXkybOgkL5DuVySViJPFoAeH79DxbwfH
-         rszPKRGzL5rV0WPX5Q9St2qgDdlDjDIZIWCF64nBKrIIWFHr3bciA0hJOcAaoe33E5yA
-         pd3mTK1CVQJUmCKq8K+HaEh9JBZtX8Nlml+c2MOHHhj6jrMCk5RHLOCeBbi59bg3UEOz
-         T31Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762768600; x=1763373400;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=suse.com; s=google; t=1762768703; x=1763373503; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=OalheUhAzvO+fY3ksPJYrAH3VrSZlCzAqAQZjc76Aoo=;
-        b=qmz3qIRs/a6TjazM4DHddX52ayS9m8xHLpGO9CzV5dQOh7erbZYTZS6SEnH/dg3iSP
-         j9i1tkLCnL3Hd6OKn5eYdA1OAb1GdKaJpbe3VpFoaGvSLEcRzoSNip/IhTGAiFiRzp3a
-         /u2Zap0jnfx+bA5udbxMCUsTqnBRqVgWyqvnlaIdAEjQpHoWtny+9tBoMWdvFuLUSOqk
-         3Wwu6uxotsmebN7O7oT07kRK5Mlmqp3wvRGOIuS+Ai/FUG1KTnpPj0BMYVH/PqMvLg4G
-         VrkjIAwNsdKEt5O4dJYrksYnTUvWXcjHrGh6wVRr5oupeCTBa3LDZb/dhkQHTSHgkk+F
-         IxWA==
-X-Forwarded-Encrypted: i=1; AJvYcCVsg5VZ/sWrCPI609iXj61lsCewxsQHBPG9H/FNHJSoh85QbRSsAnaL0M2CNb/0FaX9omssqbtC0miMKho=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywi8t+H+Xw33QyMRAYd7WvKbRnpFtWaIhmlrtQ2BdSfupuETEYx
-	BKfjfA/3s20fSDQZmSR6tr/GuPQqCRFgOYJdPHu1DrgrqbSg9X/ac29/
-X-Gm-Gg: ASbGncsWULu7J7UHVb9kg/nuLRpseFUl687A3VY7jmaiYIdSJmme7pE8tiPFcbyx9vn
-	BHIBwu2WAvZpr8EIAkFNHFEGDvB5Hh3wzME2p6iXOk6gfyrTmsPmFJ6kan2TjT/N5jVG5lI+Uor
-	zMd6iKtjG9m1qhZETiG5jiMbIWsuOIt2CHugezyzhN9FEu3teNHaliIBd7ViYV190c92yOT2b89
-	rgSmJplCTEYuKmb6GX5TpBZDlOmVMmxZQG8qeTwDvkBcOpnyS24/rqLBSkxiZNyrbj9DPHA430u
-	OrUN1R/lrUxxJ6PJ0zGwzpdsCJVVZ0qSHtl1zja3r+rNK8nZz5Me/DFiZ4Uq0U/pHMc7XN4g3Sl
-	ImyiBpGoOdE5SzeWqv1+xrGCDodyX3AjyfQmPKRWn5UN0ZeGFh6owmeu6jO1NwhZ+nTI406becE
-	NWvTO9iwJmgUiwqfneyapBCLMfhXpCxJiUux87S/B6PgHm6WTcvKaAQJyVZCo=
-X-Google-Smtp-Source: AGHT+IFNHer3HaDaC/ny8jCZ0wS9HKEBPDeqIF/OoQAp1HIY+fQ5eyS5SL9VCxxmqxgG+VZJ7cxQPA==
-X-Received: by 2002:a05:6402:848:b0:63c:3f02:60e7 with SMTP id 4fb4d7f45d1cf-6415a284631mr6384838a12.17.1762768600167;
-        Mon, 10 Nov 2025 01:56:40 -0800 (PST)
-Received: from f.. (cst-prg-14-82.cust.vodafone.cz. [46.135.14.82])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6415b69c366sm6648866a12.23.2025.11.10.01.56.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Nov 2025 01:56:39 -0800 (PST)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: viro@zeniv.linux.org.uk
-Cc: brauner@kernel.org,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH v2] fs: move fd_install() slowpath into a dedicated routine and provide commentary
-Date: Mon, 10 Nov 2025 10:56:34 +0100
-Message-ID: <20251110095634.1433061-1-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        bh=Pr1wJd/7uGgpha5iPQ4Q3WZe4ih/H/T0063vCmTBsVQ=;
+        b=O0kz/qFHrNKb5iwf8nkrqE6EJDPyvFZh/dKJPVOfRjD6JjsrwVdkmqTUcyen6nrRQQ
+         sbGobThUSA6/jhOAqnxZzLK7EDyA9f7tVy2iXvIfaxMcHiujI/6UAegwF9dgaM6bxshO
+         xUp8Ee4ZjNqMv5R/3eEMUJzbJqviGKR28pkORfiNWDpeKz8XdUHqqzGv77kKTfhUiczu
+         0i1+kZz92AwUeFS61/4/CIEuYg7yj2Kj37ZCFZ1DE6Jb+9qn3T7+mjxoaVlvps7gnV2/
+         geziC8jlJ45F/HdnusZAomkSq+U471LAHj8+1KWt59SZ9avggebvss00zdGsx1h3S88s
+         5vug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762768703; x=1763373503;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=Pr1wJd/7uGgpha5iPQ4Q3WZe4ih/H/T0063vCmTBsVQ=;
+        b=T+N5KZAjmMEfQrWtU1nxnMnzvduA16KIV7cfi0vyXMrVytxFSAdNjmPfwr3/cly1yQ
+         pecx10tNHrMmMXOALUQkfXDfikHSNwhWtrEfmKAAOeeju+KJyDph4BeLDUXjHeTj1FK8
+         tnRrN9Hf59B/fzcXFBxT3SsfU3E8DAC6af5au+ANL5xRs5hvRI6vUcWsG5h9Y4peULFv
+         DApQXcVgmf/fBiLE6HMJ95rEgzg7coUF78Q5iOOkfX9F9tZ5YgPfXhn+6C2duTLolu2b
+         lCAN8lpses2TUQP6RzdB1nCa4B7ulWD1WpchmXJZ0kr+U4xw5U6quIXwK2XcCJ9hk+zp
+         kSWA==
+X-Gm-Message-State: AOJu0YzhWI4LhBbvhKavu0Pz8RrM2b2DH0tQtpJxZTvoJWo5Z5kjnsbv
+	h6VE8NfKWCteHVoQ+gySumMp8zvJF+Ua4q4c5CVnt2M3hO8HGPQujOpczCzcs7CNm+bkoxZoNVI
+	uLs72kp3/3wgfl2/vk5UD+KrXXrOfQz/GzpBADVWXdQ==
+X-Gm-Gg: ASbGnctQxJgcAanr7V1HtNLtdfiZRsO+VWozYuWs8JG35VrDOsWoXwVemz9mO8EgMDi
+	ctNNTcxdRgDSyiErf14R7CpXkINpB+zILqZpYRpVA5VQabvbXV7vqub2U/FZ/fd6hNfQzSdLVhd
+	iOnPrJ5eWy5APyvKcvZQk7MOe/vHZEGgTl9wN246oINJ+yL+rcVlmEJpyZx3QxlKeBT6W11Bgaj
+	1TFcAwqvbuw//lf6dKASpNZ0i8HVnqQwt2DjMh7fAlUfBh944nV0gVKZHZd6bKpocdjsyrxDFaO
+	HUzdlIADNXrLafOKoOdJg8xEyuzp
+X-Google-Smtp-Source: AGHT+IH8nzVycdeOgzQi/3FgjBc86W9BwlRBJUJ1/mzPe889ufxIQJ9HVlvKbWPBD1jcEM/roczq0ZhI9VyTgtrOyjM=
+X-Received: by 2002:a05:6512:3d04:b0:594:2df2:84ab with SMTP id
+ 2adb3069b0e04-5945f186cb5mr2251235e87.8.1762768702626; Mon, 10 Nov 2025
+ 01:58:22 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251107152950.293899-1-marco.crivellari@suse.com> <64df8b4e-6cd4-49e4-a0f9-c8f9c017b06c@csgroup.eu>
+In-Reply-To: <64df8b4e-6cd4-49e4-a0f9-c8f9c017b06c@csgroup.eu>
+From: Marco Crivellari <marco.crivellari@suse.com>
+Date: Mon, 10 Nov 2025 10:58:11 +0100
+X-Gm-Features: AWmQ_blCrzzwtNXT5OJKtaKmerZRqaCu4AKrtikaapFNCbK_j5LVXjJ3X5YXl6U
+Message-ID: <CAAofZF4QD_vAon4CpHPQCPpgQpp991QOJ-Zd=Qn0siaWz+jtDg@mail.gmail.com>
+Subject: Re: [PATCH] soc: fsl: qbman: add WQ_PERCPU to alloc_workqueue users
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+	Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, 
+	Frederic Weisbecker <frederic@kernel.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
+	Michal Hocko <mhocko@suse.com>, Kees Cook <kees@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On stock kernel gcc 14 emits avoidable register spillage:
-	endbr64
-	call   ffffffff81374630 <__fentry__>
-	push   %r13
-	push   %r12
-	push   %rbx
-	sub    $0x8,%rsp
-	[snip]
+On Sat, Nov 8, 2025 at 8:44=E2=80=AFPM Christophe Leroy
+<christophe.leroy@csgroup.eu> wrote:
+> IIUC this patch is part of a wide work on workqueues. I assume the will
+> go via the workqueue tree. Let me know if you want me to take it via soc
+> fsl.
+>
+> Acked-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 
-Total fast path is 99 bytes.
+Hi,
 
-Moving the slowpath out avoids it and shortens the fast path to 74
-bytes.
+Every maintainer is using its own tree, so I think it is fine if you
+use soc fsl.
+The change here is indeed under soc fsl, adding explicitly WQ_PERCPU.
 
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
----
+Many thanks!
 
-v2:
-- keep rcu_read_unlock_sched in fd_install
+--=20
 
-does not alter the fast path
+Marco Crivellari
 
- fs/file.c | 35 +++++++++++++++++++++++++++++------
- 1 file changed, 29 insertions(+), 6 deletions(-)
-
-diff --git a/fs/file.c b/fs/file.c
-index 28743b742e3c..3f56890068aa 100644
---- a/fs/file.c
-+++ b/fs/file.c
-@@ -641,6 +641,34 @@ void put_unused_fd(unsigned int fd)
- 
- EXPORT_SYMBOL(put_unused_fd);
- 
-+/*
-+ * Install a file pointer in the fd array while it is being resized.
-+ *
-+ * We need to make sure our update to the array does not get lost as the resizing
-+ * thread can be copying the content as we modify it.
-+ *
-+ * We have two ways to do it:
-+ * - go off CPU waiting for resize_in_progress to clear
-+ * - take the spin lock
-+ *
-+ * The latter is trivial to implement and saves us from having to might_sleep()
-+ * for debugging purposes.
-+ *
-+ * This is moved out of line from fd_install() to convince gcc to optimize that
-+ * routine better.
-+ */
-+static void noinline fd_install_slowpath(unsigned int fd, struct file *file)
-+{
-+	struct files_struct *files = current->files;
-+	struct fdtable *fdt;
-+
-+	spin_lock(&files->file_lock);
-+	fdt = files_fdtable(files);
-+	VFS_BUG_ON(rcu_access_pointer(fdt->fd[fd]) != NULL);
-+	rcu_assign_pointer(fdt->fd[fd], file);
-+	spin_unlock(&files->file_lock);
-+}
-+
- /**
-  * fd_install - install a file pointer in the fd array
-  * @fd: file descriptor to install the file in
-@@ -658,14 +686,9 @@ void fd_install(unsigned int fd, struct file *file)
- 		return;
- 
- 	rcu_read_lock_sched();
--
- 	if (unlikely(files->resize_in_progress)) {
- 		rcu_read_unlock_sched();
--		spin_lock(&files->file_lock);
--		fdt = files_fdtable(files);
--		VFS_BUG_ON(rcu_access_pointer(fdt->fd[fd]) != NULL);
--		rcu_assign_pointer(fdt->fd[fd], file);
--		spin_unlock(&files->file_lock);
-+		fd_install_slowpath(fd, file);
- 		return;
- 	}
- 	/* coupled with smp_wmb() in expand_fdtable() */
--- 
-2.48.1
-
+L3 Support Engineer, Technology & Product
 
