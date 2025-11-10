@@ -1,88 +1,131 @@
-Return-Path: <linux-kernel+bounces-892635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AF43C457F3
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:03:40 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4304CC45808
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:04:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD1A1188A391
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:04:04 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E2878347A27
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:04:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 562BA2FC896;
-	Mon, 10 Nov 2025 09:03:34 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 683082FE593;
+	Mon, 10 Nov 2025 09:04:12 +0000 (UTC)
+Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com [209.85.222.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47CB92F83BB
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 09:03:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4639D2FE577
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 09:04:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762765414; cv=none; b=TZNLUWXUQa2RG2J1SKc32MhT58momVzcqyk/4hjcdUfxCyx+TCj3DDITgl2JqAN0bAtkKldsShzuTJ8l3V/xOHe0pJ9rqwKa+a/GHWCNpmSOnBT+cthj4b33tAmownius4KEpj7FceC5NW7wi3FI9Yc7Ejd1eumHOfC2cs4AWHQ=
+	t=1762765452; cv=none; b=h5Vf7blova+uQYHRuXJ4jzI3zvodMHnX6EIY6zfNjdjwvWl6VpmG5xO8j0v2zWrCExKIiLgGqXzQUdeCi6onmT2kGBIRQBeONca8vBD71m3TsKnE1EMAB+Ow1n37pY+5imqs4az+Af2ouQvm/qlltVPoL+sZ6OY4JmdP2zwfjZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762765414; c=relaxed/simple;
-	bh=pSdqTcO76SLf+ieSPI/7/KBN+zgZ3jmlRkgvs+drUH0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ot9R7UOTbZuT3HipIwCPhTZw1M7yssbcDMOuHqH0qq/TVEEU5aNJHx/xkABWekoXbQhePePsDrfETxlhyM+9L6cPT0ftQg2KycXLfp5CiZ/3TMpEzk3cRTfv7zXlqwvtQer2bq8X9hHldbjCQ9EH1QZyLDOp815sQCjosg3u9po=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vINo9-0002CV-W2; Mon, 10 Nov 2025 10:03:30 +0100
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vINo9-007zaw-26;
-	Mon, 10 Nov 2025 10:03:29 +0100
-Received: from pza by lupine with local (Exim 4.98.2)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vINo9-000000005KM-2Q9j;
-	Mon, 10 Nov 2025 10:03:29 +0100
-Message-ID: <418b2ecced5fae262030dd3f8b3947ec9525f15f.camel@pengutronix.de>
-Subject: Re: [PATCH v3] reset: fix BIT macro reference
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Encrow Thorne <jyc0019@gmail.com>, Troy Mitchell
- <troy.mitchell@linux.dev>
-Cc: linux-kernel@vger.kernel.org
-Date: Mon, 10 Nov 2025 10:03:29 +0100
-In-Reply-To: <20251110-rfc-reset-include-bits-v3-1-39614338fd43@gmail.com>
-References: <20251110-rfc-reset-include-bits-v3-1-39614338fd43@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1-1+deb13u1 
+	s=arc-20240116; t=1762765452; c=relaxed/simple;
+	bh=iMmeLUV3xBgFjt2Cqbl9hMdgFQ6BlMWa/0ymtrQbpCo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=it7B01ye0CcJSrz0mIXiJhHQil6FL96xTG5GDMjmd7PVZ2RLWWkY3zDiN9NU0ZU1aQBw7YADEmmYr6GrtCG62cnEbILv0aXF7QP1Tr1PaQ4e8w2SDPIXwiX/lNETbLCobeIPRSinfOCimvsHguPt7JDMYGq/sKl4niT1osMDV9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-89018e9f902so1345130241.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 01:04:09 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762765448; x=1763370248;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gZFprYnk3afJ7bXwWWifURut5yD9UujyFxRDAYwHR2A=;
+        b=A6V0mbsbBmQM85XbZArOxhDvnKyIEgdVWlJ1qnIneeucrh9ijTgGU8hIQNkoigwXbH
+         OoW0e8XqIIt+YObW5sm6ec7JWlRzEO6QjlCtZpvQR9ksxnW+luRwZ1k54ZK/0a+yiSDE
+         /cxA7/MCb7grLffU0uQfOiUpeX2e5PjVbYbf1APU0W+sICTBRL7H6nqiB8wkqMsn0j5/
+         kCq2n1muEqEFo/QbHlTm6Oyy1kSgZwepU/aF+4R17Opt8bGeLglKRQGnAe/jLKrkeU/4
+         glBUoKdI0qqNRYler0ZXHJWrF2mhaBMDGx9u01+49uulSgpNktocS7z6BVOSuGBVjbHL
+         eBOA==
+X-Forwarded-Encrypted: i=1; AJvYcCXHDab++MZxwpg3Wp/tU9tSgFxKG/SjMfMHjevpi0jabcZuYwcHhkmgU3YCCni3Gv2BwRmMAdgM8ujEVik=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyR3KiDiQKUAB3RHK97FpgaFr3rrBlFSyHa/PATdl/g0KGtci+o
+	Z/zkICQGDXHvFNhIv9+jQ5cN6vovtuyu099LCgxcfEEoctSeT7+irXUnA6LobZeT
+X-Gm-Gg: ASbGncuGOIgkdtNtLq/8Ih1Ck2rnLattZLSSjyWjOs2YCfqPQ4MhJNICxvMb03pa+ig
+	hsX7EmGz4SfGK0dExDziOKPmtm8GaygoLmA2gQxg+qcOeGR5Eencp+TUzuD9Y6R8iF3a+qaTa4z
+	o8euaqMdCZlFavF61qtNOzJ+0yyclHpqwVV5TdV1RIcSjY678TCDcAjIyBu8MmxGw+IxDuktdgw
+	NF+vgZMUur0A4oSCvlrUA6Mykx/nUA26BGRdD/eOvA7aMSAmBb++GtHECeOYr6zDjbmsQ9pdhQ2
+	KudFxXPYcddSnCv/Ht6Gosnl0ZIjaelBbxHvSLIE00UjqMacptNB36bRV9q5Zsm5Nu+HvHYRC37
+	K96ZjAft368dLxzJPk9mB+6MRex1XI95Dw85jr3iCsEz/PkxoeU1KKXthUHRptFDItyi89Sm4nD
+	V63z7QOOmJ1Dm5mgWpXUHgE/ixrTQNMgSp7ifa8Hgzkw==
+X-Google-Smtp-Source: AGHT+IG0HEM5Bck9HYdGODCku4nel2Da4k6veeaOftMhHcruNDMq7QJQbQYg9/SdrCuruZxHJY4UbA==
+X-Received: by 2002:a05:6102:41a3:b0:5db:cc25:dd7a with SMTP id ada2fe7eead31-5ddc474f9c3mr2924985137.28.1762765447714;
+        Mon, 10 Nov 2025 01:04:07 -0800 (PST)
+Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com. [209.85.222.52])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-9370898da95sm5642636241.13.2025.11.10.01.04.07
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Nov 2025 01:04:07 -0800 (PST)
+Received: by mail-ua1-f52.google.com with SMTP id a1e0cc1a2514c-89018e9f902so1345121241.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 01:04:07 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUyD5eH+jK4qo01pD7SyhaGEoowLaaWMy9wwU6cXeqYzdMB126IrwOPFNkvxFs3Iic2hqkCxgNF3QGB9kU=@vger.kernel.org
+X-Received: by 2002:a05:6102:c54:b0:5db:c9cd:673d with SMTP id
+ ada2fe7eead31-5ddc4751f8bmr2299299137.26.1762765446858; Mon, 10 Nov 2025
+ 01:04:06 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <cover.1762588494.git.gaohan@iscas.ac.cn> <bc141425b71f0cfc8f3ef0a3c6d08104fde1281f.1762588494.git.gaohan@iscas.ac.cn>
+In-Reply-To: <bc141425b71f0cfc8f3ef0a3c6d08104fde1281f.1762588494.git.gaohan@iscas.ac.cn>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 10 Nov 2025 10:03:55 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVtAmM6MySzaUZZMZLY2z_99Pb-zcvyQd+q5-NS3A=c_Q@mail.gmail.com>
+X-Gm-Features: AWmQ_blbgQuyL2K-QWPxMEybBZ_lWHdEHYJOPJXLh-zobJqSsJnJFWv08QlcdnY
+Message-ID: <CAMuHMdVtAmM6MySzaUZZMZLY2z_99Pb-zcvyQd+q5-NS3A=c_Q@mail.gmail.com>
+Subject: Re: [PATCH 3/3] riscv: defconfig: enable SUNXI_XUANTIE and SUNXI_ANDES
+To: gaohan@iscas.ac.cn
+Cc: Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Yixun Lan <dlan@gentoo.org>, Drew Fustini <fustini@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Guodong Xu <guodong@riscstar.com>, 
+	Haylen Chu <heylenay@4d2.org>, Joel Stanley <joel@jms.id.au>, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
+	Han Gao <rabenda.cn@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mo, 2025-11-10 at 14:10 +0800, Encrow Thorne wrote:
-> RESET_CONTROL_FLAGS_BIT_* macros use BIT(), but reset.h does not
-> include bits.h. This causes compilation errors when including
-> reset.h standalone.
->=20
-> Include bits.h to make reset.h self-contained.
->=20
-> Suggested-by: Troy Mitchell <troy.mitchell@linux.dev>
-> Reviewed-by: Troy Mitchell <troy.mitchell@linux.dev>
-> Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
-> Signed-off-by: Encrow Thorne <jyc0019@gmail.com>
+Hi Gaohan,
 
-Applied to reset/next, thanks!
+On Sat, 8 Nov 2025 at 09:21, <gaohan@iscas.ac.cn> wrote:
+> From: Han Gao <gaohan@iscas.ac.cn>
+>
+> These options need to be enabled to prepare for v821/v861/v881.
+>
+> Signed-off-by: Han Gao <gaohan@iscas.ac.cn>
 
-[1/1] reset: fix BIT macro reference
-      https://git.pengutronix.de/cgit/pza/linux/commit/?id=3Ddae9b0708255
+Thanks for your patch!
 
-regards
-Philipp
+> --- a/arch/riscv/configs/defconfig
+> +++ b/arch/riscv/configs/defconfig
+> @@ -29,6 +29,8 @@ CONFIG_ARCH_SOPHGO=y
+>  CONFIG_ARCH_SPACEMIT=y
+>  CONFIG_SOC_STARFIVE=y
+>  CONFIG_ARCH_SUNXI=y
+> +CONFIG_ARCH_SUNXI_XUANTIE=y
+> +CONFIG_ARCH_SUNXI_ANDES=y
+>  CONFIG_ARCH_THEAD=y
+>  CONFIG_ARCH_VIRT=y
+>  CONFIG_ARCH_CANAAN=y
+
+Other subarchs handle this with "default y" in drivers/soc/*/Kconfig.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
