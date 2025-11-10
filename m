@@ -1,123 +1,116 @@
-Return-Path: <linux-kernel+bounces-894304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9BB1C49B85
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 00:17:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1C5DC49B88
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 00:18:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BECDD1889942
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 23:17:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9955A1889D87
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 23:18:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACDE2242D78;
-	Mon, 10 Nov 2025 23:17:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5160A2EBB87;
+	Mon, 10 Nov 2025 23:18:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="ATeWa4Fq"
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="fVWPRZl0"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E7C1231A21
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 23:17:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E97E1B0413
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 23:18:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762816630; cv=none; b=Q0ZHZG1jta+M962Ma3jMh92hsKPEW7M8s/zYxMqOwJ7cQwN3A553RoGAn51AzRD719mV8R5fyw3RPFsSpboYVGcdBtnZ7nE+ZEQz/J87E2vwuokCHO2ESFWzYkaGs3wfqcDcKtz+VZ9+mkSHBs0JVEDACTLS1n+/bzWumd2PHCU=
+	t=1762816693; cv=none; b=QsddItKqqW0T5mynu1JAzJ/YX0MCm68AoyAdTj3tipI3tVrw26KMOn+W1C0hxr2IaKfvTFhxdLBHXi2nRJoPciOYdwKFZfMv3o+fVFAG6fAuxoVISf3LkBSJMpQMUKTQLWXP9U1apOqWD9tFjogkPDTamTupJ2sqlU55M9EF16w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762816630; c=relaxed/simple;
-	bh=bvOQVAW4xZu//+HiMJtkilK7EJbPJne5AV/st98p1Tc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bE0f8Uaq+3wARB/pPh/S4PPQ6rpuH2T7F/wXZsVI50K90+mUGlzIJCAImkyrDzODMEz2xaF9Y6IzP1lJeVtViKbI+XQ3CRjUDlMmQxf/Sh2Trphd5bLyche2+Fj5UN8XWZwBWcxecJq9hDSwzMWmyCcCBdvw9isu9kvnPxZaOzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=ATeWa4Fq; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from trampoline.thunk.org (pool-173-48-122-154.bstnma.fios.verizon.net [173.48.122.154])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 5AANGT4N030494
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Nov 2025 18:16:30 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1762816594; bh=pz5MQEMeQZEfyQeXRoiXDtdCcCqVSnlw8NgqWs3tuxg=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=ATeWa4FqGLrAKrokLxXk6CjEuAJO1/g9AYh5xC3gtbjG3UPdLLdXHJkk2TCh8WiSK
-	 ovqALsp+PvnqZ4NcBjaLbyRUJx6g/7Nq0bn8WmZfkmocTaK6FDYxwcJJHLXDlCjGF4
-	 inYcHNG7dDJGZ1CTkJpyzCTr9tQt5adaZfFW58kXBekAAs6H3dDOP0Q+TPvKXUlg7L
-	 nopwhMBvjsOgUlCKMIafhovP2rAdHGbSSlaZFswiAJRspYXkHDCpH+0BY0vfTpAbw8
-	 EHaEckVN9VlVPMWs2l68ZqF9b+1rg2QbY0HkJmMk4iNijSZJIpW4hYVycje6zy1DYm
-	 GiBztfqiaSmig==
-Received: by trampoline.thunk.org (Postfix, from userid 15806)
-	id 8468A2E00D9; Mon, 10 Nov 2025 18:16:29 -0500 (EST)
-Date: Mon, 10 Nov 2025 18:16:29 -0500
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Mike Rapoport <rppt@kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org,
-        "workflows@vger.kernel.org" <workflows@vger.kernel.org>,
-        "ksummit@lists.linux.dev" <ksummit@lists.linux.dev>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Sasha Levin <sashal@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <kees@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Miguel Ojeda <ojeda@kernel.org>, Shuah Khan <shuah@kernel.org>
-Subject: Re: [PATCH] [v2] Documentation: Provide guidelines for
- tool-generated content
-Message-ID: <20251110231629.GI2988753@mit.edu>
-References: <20251105231514.3167738-1-dave.hansen@linux.intel.com>
- <653b4187-ec4f-4f5d-ae76-d37f46070cb4@suse.cz>
- <20251110-weiht-etablieren-39e7b63ef76d@brauner>
- <20251110172507.GA21641@pendragon.ideasonboard.com>
- <CAHk-=wgEPve=BO=SOmgEOd4kv76bSbm0jWFzRzcs4Y7EedpgfA@mail.gmail.com>
- <aRIxYkjX7EzalSoI@kernel.org>
- <CAHk-=wir-u3so=9NiFgG+bWfZHakc47iNy9vZXmSNWSZ+=Ue8g@mail.gmail.com>
- <A274AB1C-8B6B-4004-A2BC-D540260A5771@zytor.com>
- <CAHk-=whczwG=+-sAzoWoTY_VOwdFH3b5AkvQbgh+z98=p1iaXA@mail.gmail.com>
- <20251110145405.5bc87cc5@gandalf.local.home>
+	s=arc-20240116; t=1762816693; c=relaxed/simple;
+	bh=GXrt3DoXmGxOkDnnai5lG0ysICE5Vy7Q5tTdWDIx50o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UqthHhm9StKoPIghdD1/ZZmMk23lKAElqwRCX45Z2N/zMknAxb9Pibsgf6TqeZQa9NAu45bDh0Y+jWYv6i3tK+PeL1Q7bkLqytBbjTH8GYRqxCyKJ8FUM6pVUpnFrl6GzqqEve5CCvrDzjpkkhzy+R0kdrz0BlbEJMhTAleyG1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=fVWPRZl0; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-3437ea05540so2029597a91.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 15:18:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1762816691; x=1763421491; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=x9dxpaS+pG9DKgBRneeU6Do+Nbkb/F4ct4uEaRlcouw=;
+        b=fVWPRZl0eIR3/EgKYXkJZVdAykxyINGy3vz9/6Nc9IO5DoQ8pHtdUgY0psiALwLlL1
+         o9ljoWcbXI18R5XeLomLEcQCCIwJZF/h6bbPdswjFnQqY7LkGUZEBnhPEVSB+JVPT7xt
+         nxNwenrfA865fM5uttI6funX+YmotMYUEcQPCBb2zAcfWtFyy+h3xANkYn494qHw8xr7
+         6KhxJtewMEQ/+egCBMomQUrEjSueDEqsNFifvr2sQ2RbgvDC8lzhEDZsmC8hENjA74Cf
+         woITLnWCSsGjEZv+GP1z6XB+Mf+smwLZi5fReGUHNSwQGfXgHWws6clrPK/RFNSZFtLK
+         cMYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762816691; x=1763421491;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=x9dxpaS+pG9DKgBRneeU6Do+Nbkb/F4ct4uEaRlcouw=;
+        b=EITJDOnrJRyg24bir9W/EW807i60d1Fv/HbWJOTayc5N39+O/CsTlZ8pi5cHub3uqW
+         Yr22/hiBt+sTQO9zmB2ep9aWmHBmY1KKSTBMRUymmlvPC9jtCnbgzw0pYTV6ae5ubzzV
+         gz+tGtur0auQY0IC2tjualtRgz4JCQSVlKxiD727QNgckr5EwF4XZ03rC/DwV2TkVT8B
+         NfEmtrHlZtTIK26om+Alu0dS2UA4ZR3bP2E8kReXpt15KSleDdCtZwjOPNu3nq9sueQ+
+         Q/OtAtTulYC8fSjifO7akvDWMziZq3Q+VUNnHI7C9gOWlo5XyxIzv63XpYxeDPhx5f5e
+         SHzw==
+X-Forwarded-Encrypted: i=1; AJvYcCUhNnPlAhoIwVpy8YdquWYb1pDAzzL1BwEMDvLuKGj85tN16VO3qJxg/OXYmiDK35Ys9VECdrwEUtOZSio=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPCQjup7e1SW/4y9aWRb2JlVqt9s6GuBKX+jSgOR0yL2qaDGMK
+	CGBLIlzmkuP7XqFchZM89gHFTCNG3IunUuH5cJEbnhJL/niIECl1cc7BWNhzwVLqHwiHI72IV/l
+	3xR2w6EmHpjXp+VPOhVRLjtWf2pvsen1wRVavwrrKH1ds2I3wBpPIJg==
+X-Gm-Gg: ASbGncvPSQC3K2cRLDk5VEPZRfOCcsxo9VWiTZ602V3xLjDhxYCgnHr9325QHsDWH62
+	89dQFnfb20zEgx5DJWNW8azN1n+GMsLYnHfPbDgO34ZGoQroX33BTv3oC3dgGSf+NW59GwB5fBV
+	sVBs15pTm2bhaGBgSEawhQr7wEziWl3N8aC7Ej7RLh8klaCgId88H2xaC36aV5gZ5o31UD9GeKI
+	s7HI63gWnOvEYE5aaccsq8oHrsYnuCrGhjsQAZ7PTb01fU/8pXqg7qPfElY
+X-Google-Smtp-Source: AGHT+IE3y41ANhcAACEEKJqpNkU2rgaAJk0qVLd/UxShgD/TGrSc/ZK/SDru9UmMG7TZ4Cq277UW70rih/JQ3dOB8hc=
+X-Received: by 2002:a17:90b:5710:b0:340:a5b2:c30b with SMTP id
+ 98e67ed59e1d1-3436cb21a6dmr15345674a91.9.1762816691500; Mon, 10 Nov 2025
+ 15:18:11 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251110145405.5bc87cc5@gandalf.local.home>
+References: <CAHtS328bOsw=7u0sN8P0F7Mj2xo6HCQLVkZXMBwp3rqTrAY-eQ@mail.gmail.com>
+In-Reply-To: <CAHtS328bOsw=7u0sN8P0F7Mj2xo6HCQLVkZXMBwp3rqTrAY-eQ@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 10 Nov 2025 18:17:58 -0500
+X-Gm-Features: AWmQ_bkL-SHTxE8x0CAC6uh3Kme3nFOr_dVVJyGPshXpwxXJr9FKgI9YSDA9D3A
+Message-ID: <CAHC9VhQw2yXuwhVSZERXiOREXzuO7aU=LTUiL1go6v5m5sx3Mg@mail.gmail.com>
+Subject: Re: [PATCH] security: Add KUnit tests for rootid_owns_currentns()
+To: ryan foster <foster.ryan.r@gmail.com>
+Cc: linux-security-module@vger.kernel, linux-kernel@vger.kernel.org, 
+	kunit-dev@googlegroups.com, serge@hallyn.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 10, 2025 at 02:54:05PM -0500, Steven Rostedt wrote:
-> Probably no difference. I would guess the real liability is for those that
-> use AI to submit patches. With the usual disclaimers of IANAL, I'm assuming
-> that when you place your "Signed-off-by", you are stating that you have the
-> right to submit this code. If it comes down that you did not have the right
-> to submit the code, the original submitter is liable.
-> 
-> I guess the question also is, is the maintainer that took that patch and
-> added their SoB also liable?
+On Sun, Nov 9, 2025 at 8:13=E2=80=AFPM ryan foster <foster.ryan.r@gmail.com=
+> wrote:
+>
+>    Please review this patch that adds KUnit tests for
+>    rootid_owns_currentns() function in security/commoncap.c
 
-ObDisclaimer: Although I have take one or two law classes at the MIT
-Sloan School (e.g., "Law for the I/T Manager"), I am not a lawyer, and
-more importantly, I am not *your* lawyer.  So this is not legal
-advice. 
+Hi Ryan,
 
-Maintainers are always assuming that code that has a Signed-Off-By is
-code that the submitter has a right to submit.  This is true before
-AI, and it will be true today, after the advent of AI.  If I receive a
-patch from someone who works for Google, or Microoft, or Amazon, how
-do I know that they haven't cut and pasted code from their compan's
-internal proprieatry code base?  I don't.  I rely on the Signed-off-by
-and the good faith of the code submitter, and if someone sends me code
-that they aren't authorized, it is my personal belief that I wouldn't be
-liable; only the submitter.
+In case you haven't already seen this, it would be a good idea to read
+the doc below on how to submit patches to the upstream Linux kernel
+lists.  For example, sending patches as attachment is frowned upon as
+it is difficult to properly review patches that way.
 
-What is true for code written by human (who might or might not have
-cut and pasted from their internal code search), it should just be as
-true for AI-generated code.
+* https://docs.kernel.org/process/submitting-patches.html
 
-In fact, from a strict legal liability perspective, I'd be happier not
-knowing whether or not a particlar patch had some kind of LLM
-involved.  What I don't know, I can't *possibly* be held liable.
+If you are having difficulty configuring git to send email, you may
+want to look at the "b4" tool, doc link below.  One of its primary
+goals is to make it easier for people to post kernel patches for
+review.
 
-						- Ted
+https://b4.docs.kernel.org/en/latest
+
+Good luck!
+
+--=20
+paul-moore.com
 
