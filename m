@@ -1,301 +1,302 @@
-Return-Path: <linux-kernel+bounces-892952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84619C462FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:18:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 789EFC4633C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:19:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 640C54E9D66
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:18:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F76A3B0DD2
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:18:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDD1E3093D8;
-	Mon, 10 Nov 2025 11:18:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BAFA309EE0;
+	Mon, 10 Nov 2025 11:18:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="suAfZZSb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FC4kTTES"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F403923B616;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A755242D60;
 	Mon, 10 Nov 2025 11:18:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762773481; cv=none; b=KExwkPNlDcHCckFBlni4cnATEvlB+wKJ1qtVF3gkf4I5/xjovHumznKjqVjtwXWg8VLHOqvO5XYlueD7SWvw8wRBKfs3q/4VNPVbW/rB5CbHr9pxmrAQz7Dl9gQLS1Bv2qj5bKDzpFvd8OouIbP+1cbxfbLV01BQmfya/BGyFDI=
+	t=1762773481; cv=none; b=s9JqK5O26FnNBKd6Toz2L4DvJ/MxwYVKoRWdFCJA1WGtOzlsBkkZXSEbOVOXLHS4jlGdZeyBxgy+P2lkoXJEdBLtCYZe8RqA9G/AzmwdaZTKSiRBDuo4CivQ3AeS5b+BC99W7IN8ySzSwC6VHed6675by0TZy0gLgfGLjuOkNVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1762773481; c=relaxed/simple;
-	bh=Kl3noGEumLrebFoTSEUpT8n+WyWcc5CDX7vO2T8znyo=;
+	bh=NIAAx4JunbkrPcpYLtzJRP0ejun2IKiSU8XUZ9l2/Eg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SsD3yyKFanaEOK8PRxPgK3aHYTh0IdcJuqY8lF/WU4iLKAK0ki3EMd2RBdobcDuyq32kDEGR25WjXuQz4JTyFB8XzvjWcfOza/Iwtb7zzU/frx4e5Bno2hMCK1Lvfz88nMUd0VSUNG26TapWJ+495NN53CrZnaZwc3kjTY+INGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=suAfZZSb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4C43C116B1;
-	Mon, 10 Nov 2025 11:17:41 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=rZIEjbhYLBpy9KfnfGndL5bEqc8RbPMHj0nw52r04opy7jGQ+0pQ/x8mUT3XP/aWCGo1DEmaQLNQnia8tCMjyMQ+y5OmAN1VAzDLGTVQgTcB0GVvQHm/baayS3/Sbkzci68WJwZcFnBa7Oe7migJHxWdnTF6ZS1xBOIvScA3eL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FC4kTTES; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D9DDC4AF09;
+	Mon, 10 Nov 2025 11:17:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1762773480;
-	bh=Kl3noGEumLrebFoTSEUpT8n+WyWcc5CDX7vO2T8znyo=;
+	bh=NIAAx4JunbkrPcpYLtzJRP0ejun2IKiSU8XUZ9l2/Eg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=suAfZZSbiazW8sFc3Ab8Dx4NBPVEAhiluxobak9p2W7fV7tGaO7etyuexr+Wd3vCj
-	 PqHxUnnNW7q++eT7YBuJNwAJ3rvKAo7XoOn6lFdrMFjUD3WX+vxmv61jmLfPOYOs4S
-	 kgsdkCyDsNIp911BsonJsPQag0KfEYtcFcMSuVKaDEiv4/3VDw0E9C2G+b/HLgSKiW
-	 SvzHr4R5cUfu3krfZf0NcIhD1aEvXuOLOydf18+trvSrzMjKoRzc936vRumSNGLv/7
-	 zHFW012E2kZECXgXkvGjDJltpN+//CUP2yGc+d3k9TyonAEyXSC/gzEyX+zosgPkV/
-	 y+Taz5qHRrJ5A==
-Date: Mon, 10 Nov 2025 13:17:37 +0200
-From: Mike Rapoport <rppt@kernel.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Janosch Frank <frankja@linux.ibm.com>,
-	Claudio Imbrenda <imbrenda@linux.ibm.com>,
-	David Hildenbrand <david@redhat.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>, Peter Xu <peterx@redhat.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Arnd Bergmann <arnd@arndb.de>, Zi Yan <ziy@nvidia.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
-	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
-	Lance Yang <lance.yang@linux.dev>,
-	Muchun Song <muchun.song@linux.dev>,
-	Oscar Salvador <osalvador@suse.de>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Matthew Brost <matthew.brost@intel.com>,
-	Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
-	Byungchul Park <byungchul@sk.com>,
-	Gregory Price <gourry@gourry.net>,
-	Ying Huang <ying.huang@linux.alibaba.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	Axel Rasmussen <axelrasmussen@google.com>,
-	Yuanchu Xie <yuanchu@google.com>, Wei Xu <weixugc@google.com>,
-	Kemeng Shi <shikemeng@huaweicloud.com>,
-	Kairui Song <kasong@tencent.com>, Nhat Pham <nphamcs@gmail.com>,
-	Baoquan He <bhe@redhat.com>, Chris Li <chrisl@kernel.org>,
-	SeongJae Park <sj@kernel.org>, Matthew Wilcox <willy@infradead.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
-	Xu Xin <xu.xin16@zte.com.cn>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Jann Horn <jannh@google.com>, Miaohe Lin <linmiaohe@huawei.com>,
-	Naoya Horiguchi <nao.horiguchi@gmail.com>,
-	Pedro Falcato <pfalcato@suse.de>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>,
-	Rik van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>,
-	Hugh Dickins <hughd@google.com>, linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org, linux-s390@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-arch@vger.kernel.org, damon@lists.linux.dev
-Subject: Re: [PATCH v2 01/16] mm: correctly handle UFFD PTE markers
-Message-ID: <aRHJ0RDu9fJGEBF8@kernel.org>
-References: <cover.1762621567.git.lorenzo.stoakes@oracle.com>
- <0b50fd4b1d3241d0965e6b969fb49bcc14704d9b.1762621568.git.lorenzo.stoakes@oracle.com>
+	b=FC4kTTES4inuLVRkpM9Knzu/Vo8ICIwXu8gJws08E2DEeIakmSJ9OLrucvNnKu+d/
+	 TEcsvUnsBQ8KoT4hJXsNteTaYKAMXCZAihELXRm90w35gav+O+H1fUQyvAH6/DW/0T
+	 PdvhHwjK8TIwS1wnav0U2mv8Y4ZZv3Ehj7yq5emuOIDd3bvdzmM68MMIAMcixvtmTX
+	 JNaeJfLt3XW0QSwSByZHq62hgT3q4Vfj24bUJcL6RzEiRQBhJF+wReRfrxKCTZnV5l
+	 glUfYUzgQyFF0SNc5seTGv5pbzpohUBP1I/QKih+p0rh1hUkHfOxJv4BPFJ1hBoPi/
+	 dpJN+8zU3jTZQ==
+Date: Mon, 10 Nov 2025 12:17:57 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-pwm@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+	Biju Das <biju.das.au@gmail.com>
+Subject: Re: [PATCH v24 4/4] pwm: rzg2l-gpt: Add support for gpt linking with
+ poeg
+Message-ID: <mipf6ogg45h5bsdekr27sf3nfllbbylkqjiowutg5cugbyosy4@r4glajhjcorn>
+References: <20250226144531.176819-1-biju.das.jz@bp.renesas.com>
+ <20250226144531.176819-5-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="gj6zsmmzisxrp5zc"
 Content-Disposition: inline
-In-Reply-To: <0b50fd4b1d3241d0965e6b969fb49bcc14704d9b.1762621568.git.lorenzo.stoakes@oracle.com>
+In-Reply-To: <20250226144531.176819-5-biju.das.jz@bp.renesas.com>
 
-On Sat, Nov 08, 2025 at 05:08:15PM +0000, Lorenzo Stoakes wrote:
-> PTE markers were previously only concerned with UFFD-specific logic - that
-> is, PTE entries with the UFFD WP marker set or those marked via
-> UFFDIO_POISON.
-> 
-> However since the introduction of guard markers in commit
->  7c53dfbdb024 ("mm: add PTE_MARKER_GUARD PTE marker"), this has no longer
->  been the case.
-> 
-> Issues have been avoided as guard regions are not permitted in conjunction
-> with UFFD, but it still leaves very confusing logic in place, most notably
-> the misleading and poorly named pte_none_mostly() and
-> huge_pte_none_mostly().
-> 
-> This predicate returns true for PTE entries that ought to be treated as
-> none, but only in certain circumstances, and on the assumption we are
-> dealing with H/W poison markers or UFFD WP markers.
-> 
-> This patch removes these functions and makes each invocation of these
-> functions instead explicitly check what it needs to check.
-> 
-> As part of this effort it introduces is_uffd_pte_marker() to explicitly
-> determine if a marker in fact is used as part of UFFD or not.
-> 
-> In the HMM logic we note that the only time we would need to check for a
-> fault is in the case of a UFFD WP marker, otherwise we simply encounter a
-> fault error (VM_FAULT_HWPOISON for H/W poisoned marker, VM_FAULT_SIGSEGV
-> for a guard marker), so only check for the UFFD WP case.
-> 
-> While we're here we also refactor code to make it easier to understand.
-> 
-> Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+
+--gj6zsmmzisxrp5zc
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v24 4/4] pwm: rzg2l-gpt: Add support for gpt linking with
+ poeg
+MIME-Version: 1.0
+
+On Wed, Feb 26, 2025 at 02:45:23PM +0000, Biju Das wrote:
+> The General PWM Timer (GPT) is capable of detecting "dead time error
+> and short-circuits between output pins" and send Output disable
+> request to poeg(Port Output Enable for GPT).
+>=20
+> Add support for linking poeg group with gpt, so that
+> gpt can control the output disable function.
+>=20
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 > ---
->  fs/userfaultfd.c              | 83 +++++++++++++++++++----------------
->  include/asm-generic/hugetlb.h |  8 ----
->  include/linux/swapops.h       | 18 --------
->  include/linux/userfaultfd_k.h | 21 +++++++++
->  mm/hmm.c                      |  2 +-
->  mm/hugetlb.c                  | 47 ++++++++++----------
->  mm/mincore.c                  | 17 +++++--
->  mm/userfaultfd.c              | 27 +++++++-----
->  8 files changed, 123 insertions(+), 100 deletions(-)
-> 
-> diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-> index 54c6cc7fe9c6..04c66b5001d5 100644
-> --- a/fs/userfaultfd.c
-> +++ b/fs/userfaultfd.c
-> @@ -233,40 +233,46 @@ static inline bool userfaultfd_huge_must_wait(struct userfaultfd_ctx *ctx,
->  {
->  	struct vm_area_struct *vma = vmf->vma;
->  	pte_t *ptep, pte;
-> -	bool ret = true;
->  
->  	assert_fault_locked(vmf);
->  
->  	ptep = hugetlb_walk(vma, vmf->address, vma_mmu_pagesize(vma));
->  	if (!ptep)
-> -		goto out;
-> +		return true;
->  
-> -	ret = false;
->  	pte = huge_ptep_get(vma->vm_mm, vmf->address, ptep);
->  
->  	/*
->  	 * Lockless access: we're in a wait_event so it's ok if it
-> -	 * changes under us.  PTE markers should be handled the same as none
-> -	 * ptes here.
-> +	 * changes under us.
->  	 */
-> -	if (huge_pte_none_mostly(pte))
-> -		ret = true;
+> v23->v24:
+>  * No change.
+> v22>v23:
+>  * No change
+> v21>v22:
+>  * No change
+> v20->21:
+>  * Dropped local variable offs for calculating RZG2L_GTINTAD channel regi=
+ster
+>    and instead using the macro RZG2L_GTINTAD(ch).
+> v19->v20:
+>  * No change
+> v18->v19:
+>  * No change
+> v17->v18:
+>  * Moved bitpos near to the user.
+> v16->v17:
+>  * No change
+> v15->v16:
+>  * No change.
+> v14->v15:
+>  * Updated commit description by replacing "This patch add"-> "Add".
+> v3->v14:
+>  * Removed the parenthesis for RZG2L_MAX_POEG_GROUPS.
+>  * Renamed rzg2l_gpt_parse_properties()->rzg2l_gpt_poeg_init() as it not =
+only parse
+>    the properties but also implements the needed register writes.
+>  * Added acomment here about the purpose of the function rzg2l_gpt_poeg_i=
+nit()
+>  * Removed magic numbers from rzg2l_gpt_poeg_init()
+>  * Fixed resource leak in rzg2l_gpt_poeg_init().
+>  * Moved the patch from series[1] to here
+>  [1] https://lore.kernel.org/linux-renesas-soc/20221215205843.4074504-1-b=
+iju.das.jz@bp.renesas.com/T/#t
+> v2->v3:
+>  * Updated commit header and description
+>  * Added check for poeg group in rzg2l_gpt_parse_properties().
+> v1->v2:
+>  * Replaced id->poeg-id as per poeg bindings.
+> This patch depend upon [1]
+> [1] https://patchwork.kernel.org/project/linux-renesas-soc/patch/20221214=
+132232.2835828-3-biju.das.jz@bp.renesas.com/
+> ---
+>  drivers/pwm/pwm-rzg2l-gpt.c | 83 +++++++++++++++++++++++++++++++++++++
+>  1 file changed, 83 insertions(+)
+>=20
+> diff --git a/drivers/pwm/pwm-rzg2l-gpt.c b/drivers/pwm/pwm-rzg2l-gpt.c
+> index 2ddbb13f50aa..a551554aec77 100644
+> --- a/drivers/pwm/pwm-rzg2l-gpt.c
+> +++ b/drivers/pwm/pwm-rzg2l-gpt.c
+> @@ -39,6 +39,7 @@
+>  #define RZG2L_GTCR(ch)		(0x2c + RZG2L_GET_CH_OFFS(ch))
+>  #define RZG2L_GTUDDTYC(ch)	(0x30 + RZG2L_GET_CH_OFFS(ch))
+>  #define RZG2L_GTIOR(ch)		(0x34 + RZG2L_GET_CH_OFFS(ch))
+> +#define RZG2L_GTINTAD(ch)	(0x38 + RZG2L_GET_CH_OFFS(ch))
+>  #define RZG2L_GTBER(ch)		(0x40 + RZG2L_GET_CH_OFFS(ch))
+>  #define RZG2L_GTCNT(ch)		(0x48 + RZG2L_GET_CH_OFFS(ch))
+>  #define RZG2L_GTCCR(ch, sub_ch)	(0x4c + RZG2L_GET_CH_OFFS(ch) + 4 * (sub=
+_ch))
+> @@ -55,12 +56,21 @@
+>  #define RZG2L_GTUDDTYC_UP_COUNTING	(RZG2L_GTUDDTYC_UP | RZG2L_GTUDDTYC_U=
+DF)
+> =20
+>  #define RZG2L_GTIOR_GTIOA	GENMASK(4, 0)
+> +#define RZG2L_GTIOR_OADF	GENMASK(10, 9)
+>  #define RZG2L_GTIOR_GTIOB	GENMASK(20, 16)
+> +#define RZG2L_GTIOR_OBDF	GENMASK(26, 25)
 > +
-> +	/* If missing entry, wait for handler. */
-
-It's actually #PF handler that waits ;-)
-
-When userfaultfd_(huge_)must_wait() return true, it means that process that
-caused a fault should wait until userspace resolves the fault and return
-false means that it's ok to retry the #PF.
-
-So the comment here should probably read as
-
-	/* entry is still missing, wait for userspace to resolve the fault */
-
-and the rest of the comments here and in userfaultfd_must_wait() need
-similar update.
-
-> +	if (huge_pte_none(pte))
-> +		return true;
-> +	/* UFFD PTE markers require handling. */
-> +	if (is_uffd_pte_marker(pte))
-> +		return true;
-> +	/* If VMA has UFFD WP faults enabled and WP fault, wait for handler. */
->  	if (!huge_pte_write(pte) && (reason & VM_UFFD_WP))
-> -		ret = true;
-> -out:
-> -	return ret;
-> +		return true;
+>  #define RZG2L_GTIOR_GTIOx(sub_ch)	((sub_ch) ? RZG2L_GTIOR_GTIOB : RZG2L_=
+GTIOR_GTIOA)
 > +
-> +	/* Otherwise, if entry isn't present, let fault handler deal with it. */
+>  #define RZG2L_GTIOR_OAE		BIT(8)
+>  #define RZG2L_GTIOR_OBE		BIT(24)
+>  #define RZG2L_GTIOR_OxE(sub_ch)		((sub_ch) ? RZG2L_GTIOR_OBE : RZG2L_GTI=
+OR_OAE)
+> =20
+> +#define RZG2L_GTIOR_OADF_HIGH_IMP_ON_OUT_DISABLE	BIT(9)
+> +#define RZG2L_GTIOR_OBDF_HIGH_IMP_ON_OUT_DISABLE	BIT(25)
+> +#define RZG2L_GTIOR_PIN_DISABLE_SETTING \
+> +	(RZG2L_GTIOR_OADF_HIGH_IMP_ON_OUT_DISABLE | RZG2L_GTIOR_OBDF_HIGH_IMP_O=
+N_OUT_DISABLE)
+> +
+>  #define RZG2L_INIT_OUT_HI_OUT_HI_END_TOGGLE	0x1b
+>  #define RZG2L_GTIOR_GTIOA_OUT_HI_END_TOGGLE_CMP_MATCH \
+>  	(RZG2L_INIT_OUT_HI_OUT_HI_END_TOGGLE | RZG2L_GTIOR_OAE)
+> @@ -71,12 +81,17 @@
+>  	((sub_ch) ? RZG2L_GTIOR_GTIOB_OUT_HI_END_TOGGLE_CMP_MATCH : \
+>  	 RZG2L_GTIOR_GTIOA_OUT_HI_END_TOGGLE_CMP_MATCH)
+> =20
+> +#define RZG2L_GTINTAD_GRP_MASK	GENMASK(25, 24)
+> +
+>  #define RZG2L_MAX_HW_CHANNELS	8
+>  #define RZG2L_CHANNELS_PER_IO	2
+>  #define RZG2L_MAX_PWM_CHANNELS	(RZG2L_MAX_HW_CHANNELS * RZG2L_CHANNELS_P=
+ER_IO)
+>  #define RZG2L_MAX_SCALE_FACTOR	1024
+>  #define RZG2L_MAX_TICKS		((u64)U32_MAX * RZG2L_MAX_SCALE_FACTOR)
+> =20
+> +#define RZG2L_MAX_POEG_GROUPS	4
+> +#define RZG2L_LAST_POEG_GROUP	3
+> +
+>  struct rzg2l_gpt_chip {
+>  	void __iomem *mmio;
+>  	struct mutex lock; /* lock to protect shared channel resources */
+> @@ -84,6 +99,7 @@ struct rzg2l_gpt_chip {
+>  	u32 period_ticks[RZG2L_MAX_HW_CHANNELS];
+>  	u32 channel_request_count[RZG2L_MAX_HW_CHANNELS];
+>  	u32 channel_enable_count[RZG2L_MAX_HW_CHANNELS];
+> +	DECLARE_BITMAP(poeg_gpt_link, RZG2L_MAX_POEG_GROUPS * RZG2L_MAX_HW_CHAN=
+NELS);
+>  };
+> =20
+>  static inline struct rzg2l_gpt_chip *to_rzg2l_gpt_chip(struct pwm_chip *=
+chip)
+> @@ -362,6 +378,72 @@ static const struct pwm_ops rzg2l_gpt_ops =3D {
+>  	.apply =3D rzg2l_gpt_apply,
+>  };
+> =20
+> +/*
+> + * This function links a poeg group{A,B,C,D} with a gpt channel{0..7} and
+> + * configure the pin for output disable.
+> + */
+> +static void rzg2l_gpt_poeg_init(struct platform_device *pdev,
+> +				struct rzg2l_gpt_chip *rzg2l_gpt)
+> +{
+> +	struct of_phandle_args of_args;
+> +	unsigned int i;
+> +	u32 poeg_grp;
+> +	u32 bitpos;
+> +	int cells;
+> +	int ret;
+> +
+> +	cells =3D of_property_count_u32_elems(pdev->dev.of_node, "renesas,poegs=
+");
+> +	if (cells =3D=3D -EINVAL)
+> +		return;
 
-Entry is actually present here, e.g because there is a thread that called
-UFFDIO_COPY in parallel with the fault, so no need to stuck the faulting
-process.
+Please catch other errors, too.
 
-> +	return false;
->  }
->  #else
->  static inline bool userfaultfd_huge_must_wait(struct userfaultfd_ctx *ctx,
->  					      struct vm_fault *vmf,
->  					      unsigned long reason)
->  {
-> -	return false;	/* should never get here */
-> +	/* Should never get here. */
-> +	VM_WARN_ON_ONCE(1);
-> +	return false;
->  }
->  #endif /* CONFIG_HUGETLB_PAGE */
->  
->  /*
-> - * Verify the pagetables are still not ok after having reigstered into
-> + * Verify the pagetables are still not ok after having registered into
->   * the fault_pending_wqh to avoid userland having to UFFDIO_WAKE any
->   * userfault that has already been resolved, if userfaultfd_read_iter and
->   * UFFDIO_COPY|ZEROPAGE are being run simultaneously on two different
-> @@ -284,53 +290,55 @@ static inline bool userfaultfd_must_wait(struct userfaultfd_ctx *ctx,
->  	pmd_t *pmd, _pmd;
->  	pte_t *pte;
->  	pte_t ptent;
-> -	bool ret = true;
-> +	bool ret;
->  
->  	assert_fault_locked(vmf);
->  
->  	pgd = pgd_offset(mm, address);
->  	if (!pgd_present(*pgd))
-> -		goto out;
-> +		return true;
->  	p4d = p4d_offset(pgd, address);
->  	if (!p4d_present(*p4d))
-> -		goto out;
-> +		return true;
->  	pud = pud_offset(p4d, address);
->  	if (!pud_present(*pud))
-> -		goto out;
-> +		return true;
->  	pmd = pmd_offset(pud, address);
->  again:
->  	_pmd = pmdp_get_lockless(pmd);
->  	if (pmd_none(_pmd))
-> -		goto out;
-> +		return true;
->  
-> -	ret = false;
->  	if (!pmd_present(_pmd))
-> -		goto out;
-> +		return false;
+> +	cells >>=3D 1;
 
-This one is actually tricky, maybe it's worth adding a gist of commit log
-from a365ac09d334 ("mm, userfaultfd, THP: avoid waiting when PMD under THP migration")
-as a comment.
+Is it an error if cells is an odd number?
 
->  
-> -	if (pmd_trans_huge(_pmd)) {
-> -		if (!pmd_write(_pmd) && (reason & VM_UFFD_WP))
-> -			ret = true;
-> -		goto out;
-> -	}
-> +	if (pmd_trans_huge(_pmd))
-> +		return !pmd_write(_pmd) && (reason & VM_UFFD_WP);
+> +	for (i =3D 0; i < cells; i++) {
+> +		ret =3D of_parse_phandle_with_fixed_args(pdev->dev.of_node,
+> +						       "renesas,poegs", 1, i,
+> +						       &of_args);
+> +		if (ret) {
+> +			dev_err(&pdev->dev,
+> +				"Failed to parse 'renesas,poegs' property\n");
+> +			return;
 
-...
+So .probe() might emit an error message now, but it doesn't fail. I
+would suggest to change the latter.
 
-> diff --git a/mm/hmm.c b/mm/hmm.c
-> index a56081d67ad6..43d4a91035ff 100644
-> --- a/mm/hmm.c
-> +++ b/mm/hmm.c
-> @@ -244,7 +244,7 @@ static int hmm_vma_handle_pte(struct mm_walk *walk, unsigned long addr,
->  	uint64_t pfn_req_flags = *hmm_pfn;
->  	uint64_t new_pfn_flags = 0;
->  
-> -	if (pte_none_mostly(pte)) {
-> +	if (pte_none(pte) || pte_marker_uffd_wp(pte)) {
+> +		}
+> +
+> +		if (of_args.args[0] >=3D RZG2L_MAX_HW_CHANNELS) {
+> +			dev_err(&pdev->dev, "Invalid channel %d >=3D %d\n",
+> +				of_args.args[0], RZG2L_MAX_HW_CHANNELS);
+> +			of_node_put(of_args.np);
+> +			return;
+> +		}
+> +
+> +		if (!of_device_is_available(of_args.np)) {
+> +			/* It's fine to have a phandle to a non-enabled poeg. */
+> +			of_node_put(of_args.np);
+> +			continue;
 
-Would be nice to add the note from the changelog as a comment here.
+Does of_device_is_available() return false if the poeg is enabled, but
+not yet probed? In that case .probe() should return -EPROBE_DEFER.
 
->  		required_fault =
->  			hmm_pte_need_fault(hmm_vma_walk, pfn_req_flags, 0);
->  		if (required_fault)
+> +		}
+> +
+> +		if (!of_property_read_u32(of_args.np, "renesas,poeg-id", &poeg_grp)) {
+> +			if (poeg_grp > RZG2L_LAST_POEG_GROUP) {
+> +				dev_err(&pdev->dev, "Invalid poeg group %d > %d\n",
+> +					poeg_grp, RZG2L_LAST_POEG_GROUP);
+> +				of_node_put(of_args.np);
+> +				return;
+> +			}
+> +
+> +			bitpos =3D of_args.args[0] + poeg_grp * RZG2L_MAX_HW_CHANNELS;
+> +			set_bit(bitpos, rzg2l_gpt->poeg_gpt_link);
+> +
+> +			rzg2l_gpt_modify(rzg2l_gpt, RZG2L_GTINTAD(of_args.args[0]),
+> +					 RZG2L_GTINTAD_GRP_MASK,
+> +					 poeg_grp << 24);
+> +
+> +			rzg2l_gpt_modify(rzg2l_gpt, RZG2L_GTIOR(of_args.args[0]),
+> +					 RZG2L_GTIOR_OBDF | RZG2L_GTIOR_OADF,
+> +					 RZG2L_GTIOR_PIN_DISABLE_SETTING);
+> +		}
+> +
+> +		of_node_put(of_args.np);
+> +	}
+> +}
 
--- 
-Sincerely yours,
-Mike.
+Best regards
+Uwe
+
+--gj6zsmmzisxrp5zc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmkRyeMACgkQj4D7WH0S
+/k7s9wgApCZDVIdO2bIqi/aIZVXoUJ7Wp6EJTjtihSWwg8QQGUNZvLY7h2KtzLXq
+1z6r02LlanMr2QZebHLRE8mqx/vBx+QiyNQgoPwXO5m3jhN9J2x+hv1LzWfCVhFg
+ylmuLMg4bl16xcPQANUbZqsoJDf/babU3GS/BI/LsOZ3Xhnf2uByJMCfBeS2cMXJ
+Vp1tm7331KdC22xhQPiJfCd6ws/X/OfECyZgnI244w2/VW4QJg9dM2tvE9KKJxXI
+Pp4X/8A4JMKJHansRYlFAHVEH7aUi6s3nLARDi5prF6RvRnGvosJu1xcoXCG3+u7
+rBtbrkSzlGsES6hQYLQ29fDXwG8B+Q==
+=t5A5
+-----END PGP SIGNATURE-----
+
+--gj6zsmmzisxrp5zc--
 
