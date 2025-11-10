@@ -1,98 +1,110 @@
-Return-Path: <linux-kernel+bounces-892611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20C54C45732
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:52:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 583C4C45741
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:52:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A54C8345D2C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 08:52:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFF953AEFC1
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 08:52:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D08C52FD7C3;
-	Mon, 10 Nov 2025 08:52:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB7D32FE05F;
+	Mon, 10 Nov 2025 08:52:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b="SEsYRy3t"
-Received: from mail-m49198.qiye.163.com (mail-m49198.qiye.163.com [45.254.49.198])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="a+c+LxcM"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A21E248891;
-	Mon, 10 Nov 2025 08:52:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C226EA926;
+	Mon, 10 Nov 2025 08:52:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762764732; cv=none; b=KHLCLv3K5bMM57Zh+gQq18am2rG/cjk7O5pg0vLYSEsH76O3Aacs4yj95L6oXiq8dsewv9S/AAfpvcfz47tmcOX3Xpn+FgEq31ktay4+yqjEyS+Hd9uFN32LV2+AmZWrsWHZgj17aBlfMBaKUxy+/Va5W0wk/yv91pKKNtmAwbw=
+	t=1762764744; cv=none; b=lIhCVmqpz0kTVxPl7P5ZHTWo+D8ejFZ/TG5SJNHhWPJ9F4PWc9MdONx+4+ruU6rhIT/AN8RJWkn7SJ0RnXMtRH1+BeZxql8HBTKZdYNMIcIUe4o2qejZ//jK85uNKo80IBAkcmBD03qkEUI4k3h4Rd/rjLUygSsscIDQi2pVIFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762764732; c=relaxed/simple;
-	bh=K+XaybmtfpqHcjKaCkJr8J+VLm4wYXeR6iV5x1IR+HQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=X/Gvpx6YIRYNmTq1iqTpmk8Af5g8+xw28q4qcOOolcU8itvcUWoV4OLiEOKyvusHvrf590Aj6oYqelkCUpIlICp/h3ewovMMHf4AtkOPva1I0b2BPsDsNXdfbCXeG8N9L+ml01zBnGa4YDGu0pckRUqnrWvVxhdtMttAlAdXd+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn; spf=pass smtp.mailfrom=seu.edu.cn; dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b=SEsYRy3t; arc=none smtp.client-ip=45.254.49.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seu.edu.cn
-Received: from LAPTOP-N070L597.localdomain (unknown [223.112.146.162])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 29056feac;
-	Mon, 10 Nov 2025 16:52:01 +0800 (GMT+08:00)
-From: Zilin Guan <zilin@seu.edu.cn>
-To: keguang.zhang@gmail.com
-Cc: vkoul@kernel.org,
-	linux-mips@vger.kernel.org,
-	dmaengine@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	jianhao.xu@seu.edu.cn,
-	Zilin Guan <zilin@seu.edu.cn>
-Subject: [PATCH] dmaengine: Loongson1: Fix memory leak in ls1x_dma_prep_dma_cyclic()
-Date: Mon, 10 Nov 2025 08:51:59 +0000
-Message-Id: <20251110085159.754528-1-zilin@seu.edu.cn>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1762764744; c=relaxed/simple;
+	bh=9yaWt4J/YCTVdEjS+KQm9t8jdwbgGWgJOXd95kUi6m0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TjBnUtfaC0mOwO5Jy4bSdInvjA3hDDbAsRTJn2KRCU0HHGD0z+YEqSgPH+r9sNCVSFfdBhtlyJLjlzspTrHLqJFywr159lPIik6+TZgSRNsdLteVvsQqSjU6fY6z33n3i+8vhi/xYV0YmjDXpt6DGCiHDG4SAR71YQ3Le2bfLv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=a+c+LxcM; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=8gIELCuPU4s4dS0eT/lo51+RpmsRIzDjRKzivzFowRo=; b=a+c+LxcMIG8ZkyPPfYrmEIzCTV
+	Wfd6RRv3N1x0mAdRYhkcE3ZJlo9YqwteRgBPoDDsogfocqT6qPU8v1TxBAT3A9NWr1vvkVU3XYZlm
+	cNayLkPDPx9ezCIaQqx1TN7X7cgnKUgyWM5xhuUHsZL0GHTLsGWMjljsHQ7pdFY7QAYaBo4aVlbHw
+	nK68JX+50bJEXM1IVcTxNYHYZ0Ped73ZfGbVTq9XRTsSTmZ1QetRcMjgxY03KGtPiDabCFfVIqr55
+	mk0wtyA4VVoTwyG1/HZyy4sak5Ku/npid2aDZqGfj6aXSvaX8eg4aYIqyNhfJCBohx7Ffz7fn3jgK
+	V5EqqvEA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vINdD-0000000AxAa-2UtE;
+	Mon, 10 Nov 2025 08:52:11 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 203FC30029E; Mon, 10 Nov 2025 09:52:10 +0100 (CET)
+Date: Mon, 10 Nov 2025 09:52:10 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Tao Chen <chen.dylane@linux.dev>
+Cc: mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
+	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	Yonghong Song <yonghong.song@linux.dev>
+Subject: Re: [PATCH bpf-next v5 2/3] perf: Add atomic operation in
+ get_recursion_context
+Message-ID: <20251110085210.GV3245006@noisy.programming.kicks-ass.net>
+References: <20251109163559.4102849-1-chen.dylane@linux.dev>
+ <20251109163559.4102849-3-chen.dylane@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a9a6cf70cca03a1kunm6f9f71c9a59337
-X-HM-MType: 10
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlCSkNCVhlOGRhITEhPT0lLTFYeHw5VEwETFhoSFy
-	QUDg9ZV1kYEgtZQVlJSUhVSkpJVUpPTVVKTUlZV1kWGg8SFR0UWUFZT0tIVUpLSUJDQ0xVSktLVU
-	tZBg++
-DKIM-Signature: a=rsa-sha256;
-	b=SEsYRy3t70QomWfnKUNX5YgGVIArj7EpAQYHNlAYLTj1Io55hjZYFyRRHCw3arKl81YBcSDxEmgUteCqvuawSlBur7Ji5HoEj3dBs7q8T8qCpHsIEaMmSu1FWjXc7f0ZVF4d467rQdyDZGAvMssDqyl1Mfh1q4T93tvbEO6dc3o=; s=default; c=relaxed/relaxed; d=seu.edu.cn; v=1;
-	bh=diZNDUepMPp6k3NXFNNQrzxv9BkBiMSl8tvoJAuqeyo=;
-	h=date:mime-version:subject:message-id:from;
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251109163559.4102849-3-chen.dylane@linux.dev>
 
-In ls1x_dma_prep_dma_cyclic(), a descriptor is allocated with
-ls1x_dma_alloc_desc(). If the subsequent allocation for the scatterlist
-fails, the function returns NULL without freeing the descriptor, which
-causes a memory leak.
+On Mon, Nov 10, 2025 at 12:35:58AM +0800, Tao Chen wrote:
+> From BPF side, preemption usually is enabled. Yonghong said, it is
+> possible that both tasks (at process level) may reach right before
+> "recursion[rctx]++;". In such cases, both tasks will be able to get
+> buffer and this is not right.
+> 
+> Signed-off-by: Yonghong Song <yonghong.song@linux.dev>
+> Signed-off-by: Tao Chen <chen.dylane@linux.dev>
+> ---
 
-Fix this by calling ls1x_dma_free_desc() in the error path to ensure
-the descriptor is freed.
+Nope, this function really is meant to be used with preemption disabled.
+If BPF doesn't abide, fix that.
 
-Fixes: e06c432312148 ("dmaengine: Loongson1: Add Loongson-1 APB DMA driver")
-Signed-off-by: Zilin Guan <zilin@seu.edu.cn>
----
- drivers/dma/loongson1-apb-dma.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/dma/loongson1-apb-dma.c b/drivers/dma/loongson1-apb-dma.c
-index 255fe7eca212..5ee829bc5c77 100644
---- a/drivers/dma/loongson1-apb-dma.c
-+++ b/drivers/dma/loongson1-apb-dma.c
-@@ -336,8 +336,10 @@ ls1x_dma_prep_dma_cyclic(struct dma_chan *dchan, dma_addr_t buf_addr,
- 	/* allocate the scatterlist */
- 	sg_len = buf_len / period_len;
- 	sgl = kmalloc_array(sg_len, sizeof(*sgl), GFP_NOWAIT);
--	if (!sgl)
-+	if (!sgl) {
-+		ls1x_dma_free_desc(&desc->vd);
- 		return NULL;
-+	}
- 
- 	sg_init_table(sgl, sg_len);
- 	for (i = 0; i < sg_len; ++i) {
--- 
-2.34.1
-
+>  kernel/events/internal.h | 5 +----
+>  1 file changed, 1 insertion(+), 4 deletions(-)
+> 
+> diff --git a/kernel/events/internal.h b/kernel/events/internal.h
+> index d9cc5708309..684bde972ba 100644
+> --- a/kernel/events/internal.h
+> +++ b/kernel/events/internal.h
+> @@ -214,12 +214,9 @@ static inline int get_recursion_context(u8 *recursion)
+>  {
+>  	unsigned char rctx = interrupt_context_level();
+>  
+> -	if (recursion[rctx])
+> +	if (cmpxchg(&recursion[rctx], 0, 1) != 0)
+>  		return -1;
+>  
+> -	recursion[rctx]++;
+> -	barrier();
+> -
+>  	return rctx;
+>  }
+>  
+> -- 
+> 2.48.1
+> 
 
