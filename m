@@ -1,91 +1,128 @@
-Return-Path: <linux-kernel+bounces-893616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73CBEC47CAD
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:09:57 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8316C47E48
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:20:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 17B7334A0F3
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:09:57 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 91AD14F4634
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:11:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA65D28152A;
-	Mon, 10 Nov 2025 16:09:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SXfklI48"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EAAD2777F9;
+	Mon, 10 Nov 2025 16:11:07 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 256F4273810;
-	Mon, 10 Nov 2025 16:08:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51B0C22FDEC;
+	Mon, 10 Nov 2025 16:11:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762790940; cv=none; b=HIRDse4I0ezGk6Ged73m+LF3N0AE9t7BzEhiVl0+7feVcAdhi401TCqyoSK3/0e6rpSM0jfoqaLyrjIlsIIl83tPSfBt02INisEXGBpdr25sML+TlSds2U+S04yXJ/WU58CoOKYOeW+vnbgMiqpblACqECnc39Ra10KAvxZezZg=
+	t=1762791067; cv=none; b=UvNteOdHf5WX9PxPf76ja2IefPkxHqAWZVZI1pNQXuLoINM4kKZ8bplaV76yUyGKWLXeD0gVPAO02XpbxBoKGcEVobcs/VtEUKvjPeQbgVGAEgNTW3qBvWHS81HBgJHakwV5/iYXuXJRtG6Cq0N6ze8xJzuUf2grloj8Rt5806A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762790940; c=relaxed/simple;
-	bh=NBpmB+hnjguA3i8RznuHTjw2pYgzLf3scts8qyLJMp0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iXr/0XN3xwADwVzsTe/BIne/Uy/bNB0ViL14P2ZMuEaWOm1PbTKcJ+8QsfJ58b7TWNYgBMbBnZa0cEeu9Rxi3tTd0nLIRnizuiVyR5GSihIgr9+Hmblv/2fxoFxsLnTamENN8OUDwTjMMrB7JiPzc42gTGxFaFrJKfuCZItcsv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SXfklI48; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 814E9C4CEF5;
-	Mon, 10 Nov 2025 16:08:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762790939;
-	bh=NBpmB+hnjguA3i8RznuHTjw2pYgzLf3scts8qyLJMp0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SXfklI48xka0u1XmkPhtnSmR1XEDxmu+7Taf8hYhiJ7QRil2tCKIyZtMwR4tWraN3
-	 iC05e2irCvyqiahWc0SzhpdYkG1SETpyhLw+q60RUZy5VV+Q7PLG+Q4rsRDAo2oyGJ
-	 KeSg0nlhWIkLLZ9fxs5dKTQuyFDmVj3JN8b95snltBjqiiMKelwj5t7VG+vnwLODC7
-	 aQzd+VztkmpRN+DrUKNCN728sml9i9uYoJdgAutBp+4FkppZYOlzVvYqoEpR/uYMk8
-	 hn3hp614soPecuUjiOfaL/3M9y2u5P0oPbrcqdeYlvR1OV2L/+bydl6eEOrZlEJZrt
-	 +pEnLKy21BO3A==
-Date: Mon, 10 Nov 2025 06:08:58 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Andrea Righi <arighi@nvidia.com>
-Cc: David Vernet <void@manifault.com>, Changwoo Min <changwoo@igalia.com>,
-	Dan Schatzberg <schatzberg.dan@gmail.com>,
-	Emil Tsalapatis <etsal@meta.com>, sched-ext@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Patrick Lu <patlu@meta.com>
-Subject: Re: [PATCH 01/13] sched_ext: Don't set ddsp_dsq_id during select_cpu
- in bypass mode
-Message-ID: <aRIOGt4S42czxMAT@slm.duckdns.org>
-References: <20251109183112.2412147-1-tj@kernel.org>
- <20251109183112.2412147-2-tj@kernel.org>
- <aRGMzjXMkOsU-2le@gpd4>
+	s=arc-20240116; t=1762791067; c=relaxed/simple;
+	bh=WzOv8NXNcifmk9Zr6KwL2Xm62FjbQz/VGh1p1ppXMwc=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=el+8aPopV39D0Gb55CAxELVJjxNq2JbtXvcQWNpKwIw4NAMBbXmX1wvXqlcFu5aeHQwtcb97N1QW9NYgSdDDS02i2T7yVYXsl1EmPD015VYZLM2pQQ4Sui+YAk/opWZBxaZZr+BOXvuX6P1KEa+rT/3chD5kWDhXw236KeVOW/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4d4vlY4rJ8zJ46Bd;
+	Tue, 11 Nov 2025 00:10:33 +0800 (CST)
+Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
+	by mail.maildlp.com (Postfix) with ESMTPS id 27CB114033C;
+	Tue, 11 Nov 2025 00:11:03 +0800 (CST)
+Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
+ (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.36; Mon, 10 Nov
+ 2025 16:11:01 +0000
+Date: Mon, 10 Nov 2025 16:11:00 +0000
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Ben Horgan <ben.horgan@arm.com>
+CC: <james.morse@arm.com>, <amitsinght@marvell.com>,
+	<baisheng.gao@unisoc.com>, <baolin.wang@linux.alibaba.com>,
+	<bobo.shaobowang@huawei.com>, <carl@os.amperecomputing.com>,
+	<catalin.marinas@arm.com>, <dakr@kernel.org>, <dave.martin@arm.com>,
+	<david@redhat.com>, <dfustini@baylibre.com>, <fenghuay@nvidia.com>,
+	<gregkh@linuxfoundation.org>, <gshan@redhat.com>, <guohanjun@huawei.com>,
+	<jeremy.linton@arm.com>, <kobak@nvidia.com>, <lcherian@marvell.com>,
+	<lenb@kernel.org>, <linux-acpi@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<lpieralisi@kernel.org>, <peternewman@google.com>, <quic_jiles@quicinc.com>,
+	<rafael@kernel.org>, <robh@kernel.org>, <rohit.mathew@arm.com>,
+	<scott@os.amperecomputing.com>, <sdonthineni@nvidia.com>,
+	<sudeep.holla@arm.com>, <tan.shaopeng@fujitsu.com>, <will@kernel.org>,
+	<xhao@linux.alibaba.com>
+Subject: Re: [PATCH 08/33] ACPI: Define acpi_put_table cleanup handler and
+ acpi_get_table_ret() helper
+Message-ID: <20251110161100.000039f3@huawei.com>
+In-Reply-To: <20251107123450.664001-9-ben.horgan@arm.com>
+References: <20251107123450.664001-1-ben.horgan@arm.com>
+	<20251107123450.664001-9-ben.horgan@arm.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aRGMzjXMkOsU-2le@gpd4>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100010.china.huawei.com (7.191.174.197) To
+ dubpeml100005.china.huawei.com (7.214.146.113)
 
-Hello,
+On Fri, 7 Nov 2025 12:34:25 +0000
+Ben Horgan <ben.horgan@arm.com> wrote:
 
-On Mon, Nov 10, 2025 at 07:57:18AM +0100, Andrea Righi wrote:
-> On Sun, Nov 09, 2025 at 08:31:00AM -1000, Tejun Heo wrote:
-> > In the default CPU selection path used during bypass mode, select_task_rq_scx()
-> > set p->scx.ddsp_dsq_id to SCX_DSQ_LOCAL to emulate direct dispatch. However,
-> > do_enqueue_task() ignores ddsp_dsq_id in bypass mode and queues to the global
-> > DSQ, leaving ddsp_dsq_id dangling. This triggers WARN_ON_ONCE() in
-> > mark_direct_dispatch() if the task later gets direct dispatched.
+> Define a cleanup helper for use with __free to release the acpi table when
+> the pointer goes out of scope. Also, introduce the helper
+> acpi_get_table_ret() to simplify a commonly used pattern involving
+> acpi_get_table().
 > 
-> The patch makes sense and I was actually testing something similar to fix
-> https://github.com/sched-ext/scx/issues/2758.
+> These are first used in a subsequent commit.
 > 
-> However, in dispatch_enqueue() we're always clearing p->scx.ddsp_dsq_id
-> (SCX_DSQ_INVALID), even when we're targeting the global DSQ due to bypass
-> mode, so in this scenario we shouldn't see a stale ddsp_dsq_id. Am I
-> missing something?
+> Signed-off-by: Ben Horgan <ben.horgan@arm.com>
 
-I think you're right. The bug fix part was a wrong assumption on my part.
-Will update the description.
+Seems useful enough to be to be worth having. Needs input from
+Rafael.
 
-Thanks.
+Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
 
--- 
-tejun
+> ---
+>  include/linux/acpi.h | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+> 
+> diff --git a/include/linux/acpi.h b/include/linux/acpi.h
+> index a9dbacabdf89..1124b7dc79fd 100644
+> --- a/include/linux/acpi.h
+> +++ b/include/linux/acpi.h
+> @@ -8,6 +8,7 @@
+>  #ifndef _LINUX_ACPI_H
+>  #define _LINUX_ACPI_H
+>  
+> +#include <linux/cleanup.h>
+>  #include <linux/errno.h>
+>  #include <linux/ioport.h>	/* for struct resource */
+>  #include <linux/resource_ext.h>
+> @@ -221,6 +222,17 @@ void acpi_reserve_initial_tables (void);
+>  void acpi_table_init_complete (void);
+>  int acpi_table_init (void);
+>  
+> +static inline struct acpi_table_header *acpi_get_table_ret(char *signature, u32 instance)
+> +{
+> +	struct acpi_table_header *table;
+> +	int status = acpi_get_table(signature, instance, &table);
+> +
+> +	if (ACPI_FAILURE(status))
+> +		return ERR_PTR(-ENOENT);
+> +	return table;
+> +}
+> +DEFINE_FREE(acpi_put_table, struct acpi_table_header *, if (!IS_ERR_OR_NULL(_T)) acpi_put_table(_T))
+> +
+>  int acpi_table_parse(char *id, acpi_tbl_table_handler handler);
+>  int __init_or_acpilib acpi_table_parse_entries(char *id,
+>  		unsigned long table_size, int entry_id,
+
 
