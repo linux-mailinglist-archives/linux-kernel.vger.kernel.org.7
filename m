@@ -1,166 +1,92 @@
-Return-Path: <linux-kernel+bounces-892640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75341C45811
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:04:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E6F2C45826
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:05:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 585B34E6DA6
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:04:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E44D718900E3
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:06:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01EDB2FD690;
-	Mon, 10 Nov 2025 09:04:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="THzC1+oh";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="+Nqx/ogP"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D73EE2FDC22;
-	Mon, 10 Nov 2025 09:04:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7985D2FD675;
+	Mon, 10 Nov 2025 09:05:32 +0000 (UTC)
+Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [13.76.142.27])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDF5F2F7AA6;
+	Mon, 10 Nov 2025 09:05:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.76.142.27
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762765462; cv=none; b=kZi9NBOupBlPf+vJqK/yY91af2kiDUK+ZOjncdmRcUNtJaBNz3AncwBW3SYaxp1XLuAsVWO1nZoE5XwGqpevSkQJ/2Uovqgwb2+d3du+1TndNneDChtQC37EaB1OCH1atUnz2JK6kSljZOqAF5u1bn2GhT42fvuhNMzOS6PivCU=
+	t=1762765532; cv=none; b=mvVlFcMx3nPB5JujjoaWXD/0KIlVQBxRjakgaW3mLr/4VvKeKybpjJHFyXo6j5GGJ5toJAuD5/SqIU06qjPISNIkvqaaCu9x5MV0kRjpEDzUKz/CZGRKXE1vM/qnALeaidZKhwaXhxC5FyKNyq0mWFeg5P/CQNuLygX7aSCyGnA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762765462; c=relaxed/simple;
-	bh=3ydwZExzPTVL5H7Bph6AACoiEJH6uJ/+bxisIogOO3A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dsXUHOUB8IsIFDRLnWsIbLHhs12NfFoQqC4bjGeulFdyrga0EKK7Pz9QLFbWRBcuGSWWnPE1KMo/l8Rp2i6c43dWVjnN7u66iS8IZQEkuUgYJCTLjRtko6OeVPW+m50gCeiAzgie0/wUfehbnE0a8lA53IOoGPSrGQYzJvXosLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=THzC1+oh; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=+Nqx/ogP; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 10 Nov 2025 10:04:17 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1762765458;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=t7Guwo0wpxf95Dj+W5UROJyXFGtl7LdcWRhhh/Qf98U=;
-	b=THzC1+ohs7W95eY6RMSRaFJ23VdVBGm5I563I8YASdM00wmofpB9awW1xssuqstq1G4GN9
-	sOp/H73rX5A8lDzddsuk8aEuXZEoY8VatUS8uqdA4P1QwSycvK5U5xYCvCQW9Q155hvtp3
-	7ckU266rRRDn0XAp4JFw8QggWtZsAdOzRHV27wCZCUOuJXVoY4kNpRUGWB5Gkn9W3A+Nid
-	ZNdYJVGJc5HIjFvYZ80gZ8VPKbKpROUhWLEJnGJX/MlPmmtBKOsGsmRMNFy48oFYgIc0zU
-	W+Yiule8nXEF4YfdxOus7DWnvJkK4zQXI2Nc/NhrrTfeic27du8bXWM6BV1vSQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1762765458;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=t7Guwo0wpxf95Dj+W5UROJyXFGtl7LdcWRhhh/Qf98U=;
-	b=+Nqx/ogPinQ4vfSfKxwtwM9MURpLI4OvfJJe18bf22Qbmt21zd133O7NoOhjUAYH62UQVr
-	zbqasc8HiwXrEsDA==
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-To: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc: Andy Lutomirski <luto@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Vincenzo Frascino <vincenzo.frascino@arm.com>, 
-	Arnd Bergmann <arnd@arndb.de>, "David S. Miller" <davem@davemloft.net>, 
-	Andreas Larsson <andreas@gaisler.com>, Nick Alcock <nick.alcock@oracle.com>, 
-	John Stultz <jstultz@google.com>, Stephen Boyd <sboyd@kernel.org>, 
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Shuah Khan <shuah@kernel.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Theodore Ts'o <tytso@mit.edu>, 
-	Russell King <linux@armlinux.org.uk>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
-	Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, Huacai Chen <chenhuacai@kernel.org>, 
-	WANG Xuerui <kernel@xen0n.name>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
-	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Sven Schnelle <svens@linux.ibm.com>, Shannon Nelson <sln@onemain.com>, linux-kernel@vger.kernel.org, 
-	sparclinux@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev, 
-	linux-mips@vger.kernel.org, linux-s390@vger.kernel.org
-Subject: Re: [PATCH v5 19/34] random: vDSO: only access vDSO datapage after
- random_init()
-Message-ID: <20251110094555-353883a9-1950-4cc6-a774-bb0ef5db11c5@linutronix.de>
-References: <20251106-vdso-sparc64-generic-2-v5-0-97ff2b6542f7@linutronix.de>
- <20251106-vdso-sparc64-generic-2-v5-19-97ff2b6542f7@linutronix.de>
- <aQ6EvdukQytvqK-u@zx2c4.com>
+	s=arc-20240116; t=1762765532; c=relaxed/simple;
+	bh=q7iy3M5XtjR+vKa52AD6sRFGTz30GoU7Cr4qhdOdvxE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=twtfM+Onzpm1wbANhe++KT+FWbWKwricxYcuceZlAswd0RDgy/RMCJlp6XMw7n8sJ9f8gsCVBvXQTC6a4Sa1AXwf8rk+4VGzMHB4OeOBr8s7d4mC0nncoiMVv/rZehuntgEhyhzn9dLv0QKy7Z4p0cRwcsGbE9taE195FIz/0aE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=13.76.142.27
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
+Received: from E0005152DT.eswin.cn (unknown [10.12.96.41])
+	by app1 (Coremail) with SMTP id TAJkCgAnIWnEqhFpkMNyAA--.16992S2;
+	Mon, 10 Nov 2025 17:05:09 +0800 (CST)
+From: dongxuyang@eswincomputing.com
+To: ben.dooks@codethink.co.uk
+Cc: linux-pwm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	thierry.reding@gmail.com,
+	krzysztof.kozlowski+dt@linaro.org,
+	greentime.hu@sifive.com,
+	jarkko.nikula@linux.intel.com,
+	u.kleine-koenig@pengutronix.de,
+	linmin@eswincomputing.com,
+	dongxuyang@eswincomputing.com
+Subject: Re: [PATCH v9 6/6] pwm: dwc: add of/platform support
+Date: Mon, 10 Nov 2025 17:05:08 +0800
+Message-Id: <20251110090508.739-1-dongxuyang@eswincomputing.com>
+X-Mailer: git-send-email 2.31.1.windows.1
+In-Reply-To: <20230907161242.67190-7-ben.dooks@codethink.co.uk>
+References: <20230907161242.67190-7-ben.dooks@codethink.co.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aQ6EvdukQytvqK-u@zx2c4.com>
+Content-Transfer-Encoding: quoted-printable
+X-CM-TRANSID:TAJkCgAnIWnEqhFpkMNyAA--.16992S2
+X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUO27AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E
+	6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28Cjx
+	kF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8I
+	cVCY1x0267AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87
+	Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE
+	6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72
+	CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7
+	M4IIrI8v6xkF7I0E8cxan2IY04v7M4kE6xkIj40Ew7xC0wCY02Avz4vE-syl42xK82IYc2
+	Ij64vIr41l4c8EcI0Ec7CjxVAaw2AFwI0_Jw0_GFyl4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l
+	4IxYO2xFxVAFwI0_Jrv_JF1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxV
+	WUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAF
+	wI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcI
+	k0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j
+	6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUrJ5rDUUUU
+X-CM-SenderInfo: pgrqw5xx1d0w46hv4xpqfrz1xxwl0woofrz/
 
-On Sat, Nov 08, 2025 at 12:46:05AM +0100, Jason A. Donenfeld wrote:
-> I'm not a huge fan of this change:
-> 
-> On Thu, Nov 06, 2025 at 11:02:12AM +0100, Thomas Weißschuh wrote:
-> > +static DEFINE_STATIC_KEY_FALSE(random_vdso_is_ready);
-> >  
-> >  /* Control how we warn userspace. */
-> >  static struct ratelimit_state urandom_warning =
-> > @@ -252,6 +253,9 @@ static void random_vdso_update_generation(unsigned long next_gen)
-> >  	if (!IS_ENABLED(CONFIG_VDSO_GETRANDOM))
-> >  		return;
-> >  
-> > +	if (!static_branch_likely(&random_vdso_is_ready))
-> > +		return;
-> > +
-> >  	/* base_crng.generation's invalid value is ULONG_MAX, while
-> >  	 * vdso_k_rng_data->generation's invalid value is 0, so add one to the
-> >  	 * former to arrive at the latter. Use smp_store_release so that this
-> > @@ -274,6 +278,9 @@ static void random_vdso_set_ready(void)
-> >  	if (!IS_ENABLED(CONFIG_VDSO_GETRANDOM))
-> >  		return;
-> >  
-> > +	if (!static_branch_likely(&random_vdso_is_ready))
-> > +		return;
-> > +
-> >  	WRITE_ONCE(vdso_k_rng_data->is_ready, true);
-> >  }
-> >  
-> > @@ -925,6 +932,9 @@ void __init random_init(void)
-> >  	_mix_pool_bytes(&entropy, sizeof(entropy));
-> >  	add_latent_entropy();
-> >  
-> > +	if (IS_ENABLED(CONFIG_VDSO_GETRANDOM))
-> > +		static_branch_enable(&random_vdso_is_ready);
-> > +
-> >  	/*
-> >  	 * If we were initialized by the cpu or bootloader before jump labels
-> >  	 * or workqueues are initialized, then we should enable the static
-> > @@ -934,8 +944,10 @@ void __init random_init(void)
-> >  		crng_set_ready(NULL);
-> >  
-> >  	/* Reseed if already seeded by earlier phases. */
-> > -	if (crng_ready())
-> > +	if (crng_ready()) {
-> >  		crng_reseed(NULL);
-> > +		random_vdso_set_ready();
-> > +	}
-> 
-> The fact that the vdso datapage is set up by the time random_init() is
-> called seems incredibly contingent on init details. Why not, instead,
-> make this a necessary part of the structure of vdso setup code, which
-> can actually know about what happens when?
+> The dwc pwm controller can be used in non-PCI systems, so allow=0D
+> either platform or OF based probing.=0D
+>=0D
+=0D
+Hi Ben,=0D
+=0D
+We're currently working on a platform driver for the DW_apb_timers PWM =0D
+controller used in our EIC7700 SoC. We noticed that you submitted a patch =
+=0D
+for a DW PWM platform controller back in 2023, and we would like to kindly =
+=0D
+ask about its current status. Do you have any plans to get it merged =0D
+into mainline?=0D
+=0D
+Regards,=0D
+Xuyang Dong=
 
-The whole early init is "carefully" ordered in any case. I would have been
-happy to allocate the data pages before the random initialization, but the
-allocator is not yet usable by then.
-We could also make the ordering more visible by having the vDSO datastore call
-into a dedicated function to allow the random core to touch the data pages:
-random_vdso_enable_datapages().
-
-> For example, one clean way of
-> doing that would be to make vdso_k_rng_data always valid by having it
-> initially point to __initdata memory, and then when it's time to
-> initialize the real datapage, memcpy() the __initdata memory to the new
-> specially allocated memory. Then we don't need the complex state
-> tracking that this commit and the prior one introduce.
-
-Wouldn't that require synchronization between the update path and the memcpy()
-path? Also if the pointer is going to change at some point we'll probably need
-to use READ_ONCE()/WRITE_ONCE(). In general I would be happy about a cleaner
-solution for this but didn't find a great one.
-
-
-Thomas
 
