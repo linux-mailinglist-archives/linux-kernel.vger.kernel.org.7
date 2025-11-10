@@ -1,102 +1,102 @@
-Return-Path: <linux-kernel+bounces-893699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99C2EC482D8
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 18:03:45 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5DCEC48297
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:59:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8E44B4EF3AA
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:47:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B4BD94F7E0E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:47:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7078832C33D;
-	Mon, 10 Nov 2025 16:39:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BE6232AABF;
+	Mon, 10 Nov 2025 16:39:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="NfloY2Uc";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="F/1wypH+"
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="SyeuIyz6";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Lkl2h6V7"
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78D8D32C336
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 16:39:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70C8F31770B
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 16:39:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762792782; cv=none; b=JdVyyQtmCRWcx+iNkmR1/vj4b7vOQx2aMr95A1KDhUJbQ8muntY/7bIf6bqd5EnbfG/9/5DLzuSDdcbceasnhJKbc6AlVXAHTP4TdD3Z0ao7Ggh5Xy+GRuvgvwb9jV9isuNGcSUvWj37pibr0vbQWhy8FAeqYV8o+g/62XzmSt4=
+	t=1762792790; cv=none; b=hc9hf68PBDqx2piHY9qu+4CDwflEyW0YGyuY4UQriufe/MG4CVf30vuU4zevcayhN5R2XNWuOsG/+V8nEmSWz3Yjz28s1tuOCCgtWX/m059ycON3cLm/WmUvSizmnVexe1iLV9BS9GjXAkzBBZaGEr4gjTgQ+XvIEktRDCyvRGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762792782; c=relaxed/simple;
-	bh=LWOc612J9bhiyGK31kvlUfk/uc8PZDAIZt+/ViUR8y4=;
+	s=arc-20240116; t=1762792790; c=relaxed/simple;
+	bh=fzcOZoDy4nq3d1scAOabdvRSkEECFucdbBehDf9L/KI=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Q49TCDXBPqptZym40HmCJwe5NJPIsbI41Ebguk1C7hROuX0U3KP/shxQ86Etpw/EOilFfn2a9le02WbFTppoR1Ek7w6x8FLniBeDwsjSE6LgquOi3qZahubnC62dX1AfDKj9LPM4iZYsysvz0kijp1PpchMJLEDSFKO2GAF4iJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=NfloY2Uc; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=F/1wypH+; arc=none smtp.client-ip=205.220.180.131
+	 In-Reply-To:To:Cc; b=DnYhgerE0/Lq4JgE+7jHfHi8HPeNHj+PO/FfSCbyonPx1cAGIq6AuCz0LlYutr8xk17L1GYjiGErQ0f9xId6hafRp4I6pqgGg/Q7pMh/n5fGsIEt5KbXwzDXP4b/OtY0Pfbl3yf/XnXDhfGk2L1Gx4DoueFkBJqaKJIW9xbE1Hs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=SyeuIyz6; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Lkl2h6V7; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AAFQ09T4071296
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 16:39:39 GMT
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AAFiVuG3987183
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 16:39:47 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	qhWAU4GwkZc/7vJbgqlZua/hMbE+FKAm5HguK+Q4/xI=; b=NfloY2UcabBEHbGh
-	fl9Eps4ZBX7fNEkkBh8BEYS+32vOxrIK2m6yXUnyWDwM+rERBerTUbwIy0uBH/SL
-	u/3DOWkDZeUjVkRKjme4f50ly78gXxUsNDnxiJV+ILo/qTdHLAmqpVtQ0P87xvIc
-	ZFH9bvL+B39iKMvKb4P0QavNQ2z/VPkJSrxjl/EZq92g2HwjDzSWFkmwDpxDZSzo
-	ZZLF+B6RrkPZLbAZgLbUssgeTb+j8BWwv3up7KXy/9GrwZPlU8z0twkUmiExaCpV
-	8RjBZJYAZtzr3kDYlgmwAZDngc/mHntvaZ4GGSo5eIOo2vKfCzjvu/0JD2CBbaAw
-	Cunn5Q==
-Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com [209.85.215.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4abjpgr91c-1
+	jVLv/uuU3JLI+2HIhCPmdUPs+Ebzue4D+35QDRwfYvo=; b=SyeuIyz6FatLdy85
+	2+R2RrYS/LZQlPTNKhjelJkKMXoqwAE+ll8dntF4uoosoiZYfd0yzzIXRdHNd42h
+	H0o1CV0SeN7So+TAQfEufvTlaX2BqQHhdT7MJXAGhXuV/Q76jkXTkQWcWiw0qdIl
+	jlhDw0lEANwP02sulVTYTJOkQdTwcp9sHOJlz2Hrg5vEivBArOZhBjAw0eCQRHHV
+	svzQ2FQfZENUbur/QwDwRHnhhWcB+5vcteZn+DQm+VsJRTExcuxfk86qvkoV+jLk
+	2CcvL48hUC7rwW48X5VRokkli5psjR4iAj0UXdRrQ8WLMuB+apK+TFegXrz6GRlB
+	fkrelw==
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4abjxqg6ug-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 16:39:39 +0000 (GMT)
-Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-b6ce1b57b9cso2957502a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 08:39:39 -0800 (PST)
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 16:39:47 +0000 (GMT)
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-341aec498fdso5191826a91.2
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 08:39:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1762792778; x=1763397578; darn=vger.kernel.org;
+        d=oss.qualcomm.com; s=google; t=1762792786; x=1763397586; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=qhWAU4GwkZc/7vJbgqlZua/hMbE+FKAm5HguK+Q4/xI=;
-        b=F/1wypH+b+2X4JvJFaO/c1vFFB+xPYBRsfMdemURQEtACA0zee/Vmb4hKSIPIyOgsl
-         +oE5DUmL0syOKu24soc2fIPF2srO5K4ZDf+rqrtTsGETEQHzXYo950zygvruwWYYJQLu
-         abgHj9fWo/PDTxZSMHXDeoNwsQa4V6OoFvAg+0lCpUOgWo6FMJjbEyjKSWIWqYpTxTh8
-         1WqouQDlFA8kc28iZHtHeN0cywSya7isM4dRSN2HowXUUDmXCw9wtFhFxfqBVG+fq8nG
-         er6PR1Spp/xuMuLx/KZ/OsFJmNvNMRM9hG0sRBqIkJCRIj7e3IszVX/1QPnfcAF/LUjt
-         HiGQ==
+        bh=jVLv/uuU3JLI+2HIhCPmdUPs+Ebzue4D+35QDRwfYvo=;
+        b=Lkl2h6V7cpuGY+7upzwQY8Sv9eMxWRjn6+W/r3r5Ok2WmD6XFwJ+O47ThPcmiOqAHp
+         W303BQ8D77cQYoorA29JL+y7gSrs541kcVGo94oQWA1jI/7IZGB9eEiTQ/ygKqlzocyy
+         a1vEMXrxnod48nZxvcBmd1bANBWVlnRHlfZHQa2PRWyCAaiDdr6Ju2Bgz3j2vr5d+EvF
+         GlC3G+XLAjBCHlLxDzCW8zKQHIgBNjZXBHt3+FS/fh19dVOMCPa6O89OKhPUwGveTKV1
+         UEzKiZm8kd4qp3ngTP0JJdL5pwefwNgjyQrrSBVoVCjcHXbz+ZpVENpXcFV1Uo+KynID
+         cbhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762792778; x=1763397578;
+        d=1e100.net; s=20230601; t=1762792786; x=1763397586;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=qhWAU4GwkZc/7vJbgqlZua/hMbE+FKAm5HguK+Q4/xI=;
-        b=nRkSiGIE253x49if3lm9VK8bUT5b9sWIc6S/llqotuegV+ALQFwWgb+cHzi0jYHuaM
-         BxdjmvD96bRVDWJd+bVLlH4ACMtONfNFGv+gfrK/84zL2D3gWe7uqte+93g1V9pt5ONU
-         zPbCSWk6bOUA7LRuvY2qLcVYJTL/dos8c0uct/T+kRKbJ7GJFyjcpqbnwp4oD7tKo17w
-         tLmlbuwUWhoRXmqCBYfgdy3V5WPMVXP8+U2Ad+Ntn/pVd7brZitFZz//W3u/J7uy06OW
-         AegKzWZQT11XsxQINl2rpcdnXWWyn3gxX4WbNbm/aLXgpaLnLjb9j2edDfuk5mCSXj4m
-         rgPg==
-X-Forwarded-Encrypted: i=1; AJvYcCWsV23IK5bQBz6aSxcuiaT/Td6FdsXCqKjC8SlCkflr6qeAZ38O4kGO3rLE8lpJjCDZtMm/8cYFzwj2dXA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKDWiKF7T2uh/C4zyYHDRULwObWcFVXYinMnIuL/P7aBUEJFVy
-	/lh1jGaEgsITWA/jwH3vLjLcFG28/+WR92QtvsQDHLDH8dECuZq1vqrkCSQa+jy54K/r3BQsGbh
-	aI+XNqEq2YUOjX2QP5ARGOaiXK5EFyHYcISSqEDJLV3O13DlhnJWbux28evGjuXuPDmg=
-X-Gm-Gg: ASbGncsE1zBvPDVZKBotBIlRVbF5ZI3g26PXy04dMuQrLk2vFqXA0//DmQP86BYKgpY
-	sZMICov7EqjTkuYHZc11Xr3EaivmmMaDYADrB4kOBgcp30z7u0NYyTuf2yiWAGCOlaKnG4EX8jz
-	yKKe/Q6yfZVuN7taDZLCRIgucBwjawy1QLznsL0sRCN/rMXaVryFOjIMdo5auHQle3+5NYp5zFv
-	NIDlVx0OXyWArfA4wM+TZoJLK/D2ZT6iwotvVmof+1FZIWoHtgJd7H2e2B2PBM1y4adkpRo+pBB
-	Zk66mWEcq4XB+5CgbClW0HGFHrdNHvIDUhBr3S9kasx2RCx/kgXWRLmE1ZKdit4VFzKonxgoq2d
-	HvzG3ZLqOcsElxP3AmDauVNY=
-X-Received: by 2002:a17:90b:3b52:b0:340:25f0:a9b with SMTP id 98e67ed59e1d1-3436cbc74d5mr10535190a91.33.1762792778276;
-        Mon, 10 Nov 2025 08:39:38 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGKuivtP5bPOxg4eqYPpqCiRonwpKyitk9efo7oMRmT6OqAejXcK+KdVc51LUlDkH4mfwy14w==
-X-Received: by 2002:a17:90b:3b52:b0:340:25f0:a9b with SMTP id 98e67ed59e1d1-3436cbc74d5mr10535152a91.33.1762792777713;
-        Mon, 10 Nov 2025 08:39:37 -0800 (PST)
+        bh=jVLv/uuU3JLI+2HIhCPmdUPs+Ebzue4D+35QDRwfYvo=;
+        b=b9mTuTt0LkLurG+1M4st3sZkfcKwDIy8ncEQCP+26481rD2E7Q7fFsbmx6sP3N7Pn5
+         lukfDsC27qibkiSnHg8kKoTRzHd7IvRUYQ9dnl11N269fM0eDlEhTMluaYP8VT986BPb
+         RdzGXBNu39ep6phSmhpoAtW4fOK2WdFLaW+oEsMEO4OnZAQCYvVLIMm8ShvGLzERZ/rT
+         pcpJ8pnRKknkaXZV1o85cK3/ebuJatIPFpkIDDl/fbvTLBzvzrkPAsQapfZzFqkVdkTe
+         Lmy5MQp33At45ViOEUsA1iz40OaXIR+rDT79BmkNJ4JBAZX1NbKeKl7QlZg9qqFbNjZ1
+         cHQw==
+X-Forwarded-Encrypted: i=1; AJvYcCXMEBBAPxLDh5GmfQFwQDsV7bJyvjY+YXZtii3TgY5upSQffHe9WNBEuTqLnxRvShatYcDYegFWk8M7D9Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEbV7nbORgZpfJ2dlAjAEawy5QUzvmhSwzVZSe6QyhszujqG+2
+	DUrUW2OvLJHE1i1lVdIjaRUKbBUjK/uuIlZbaeJRg7POHHebbXx8ry9Vu39iZBPZgBtZNZbpHx7
+	dImXuSRI+vZhVVleslpqdpikcUUC+MxgbGUW2kVYWc3p1NkLoBSWZm72YDSFgC8rLlR8=
+X-Gm-Gg: ASbGncvV/RDi0rInLMPicklJXpKlJ/XZ12mzUhdYbY2wUuDySg3jdxTwl22o09iTt52
+	uHWXBdwkWckK07c3r115qTk5iNStS3rezXXASbcqXFMshRG2xKhktcqSNCSlrlnPvvVM0x0DLXx
+	fBRNH/P+SvfKoMlFSL0OOLAaaOcn8bDqrnJdmF3esRTPAYOqhp39BBfholHjkowM0IRur8XWjsH
+	w6GRUG+vh6mbEQpfJoM4WWwQ+Txm465aNIoQ8M/ApimlsHZA8vfq5SPFBi+cIH94EiQ95RM9jFW
+	f2p4NOYD42dhWHAL5lwO2DRqmhugSmSox1h2LeRbsVsoXURcaoA2DHBbGLK9rSdWc4g95Rn0cq0
+	HlUJxxkadFIHFihd4vemTFWE=
+X-Received: by 2002:a17:90b:4a4d:b0:340:dd2c:a3d9 with SMTP id 98e67ed59e1d1-3436cb29cafmr13753889a91.12.1762792786297;
+        Mon, 10 Nov 2025 08:39:46 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEIvIbTFe8vuD1Bz6N5pB1xeotjvWHsTfTNEQm7fcGL0bvPFEvHnVFmeK5opyNFF8Eu0di/Wg==
+X-Received: by 2002:a17:90b:4a4d:b0:340:dd2c:a3d9 with SMTP id 98e67ed59e1d1-3436cb29cafmr13753847a91.12.1762792785680;
+        Mon, 10 Nov 2025 08:39:45 -0800 (PST)
 Received: from hu-akhilpo-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3434c337b20sm11468922a91.13.2025.11.10.08.39.30
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3434c337b20sm11468922a91.13.2025.11.10.08.39.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Nov 2025 08:39:37 -0800 (PST)
+        Mon, 10 Nov 2025 08:39:45 -0800 (PST)
 From: Akhil P Oommen <akhilpo@oss.qualcomm.com>
-Date: Mon, 10 Nov 2025 22:07:17 +0530
-Subject: [PATCH v2 11/21] drm/msm/a6xx: Improve MX rail fallback in RPMH
- vote init
+Date: Mon, 10 Nov 2025 22:07:18 +0530
+Subject: [PATCH v2 12/21] drm/msm/a6xx: Share dependency vote table with
+ GMU
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -105,7 +105,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251110-kaana-gpu-support-v2-11-bef18acd5e94@oss.qualcomm.com>
+Message-Id: <20251110-kaana-gpu-support-v2-12-bef18acd5e94@oss.qualcomm.com>
 References: <20251110-kaana-gpu-support-v2-0-bef18acd5e94@oss.qualcomm.com>
 In-Reply-To: <20251110-kaana-gpu-support-v2-0-bef18acd5e94@oss.qualcomm.com>
 To: Rob Clark <robin.clark@oss.qualcomm.com>,
@@ -131,111 +131,237 @@ Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
         devicetree@vger.kernel.org, Akhil P Oommen <akhilpo@oss.qualcomm.com>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1762792679; l=2950;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1762792679; l=6454;
  i=akhilpo@oss.qualcomm.com; s=20240726; h=from:subject:message-id;
- bh=LWOc612J9bhiyGK31kvlUfk/uc8PZDAIZt+/ViUR8y4=;
- b=Dyz4d2Rpgtz4n2FITe1odQAEtosB0h0Bg9zoRd3AwbZUYYMJMDaf74l7QdElyyEqfnmryp4KJ
- 0My+qrkFhbTAtvi+hF5ODj3d82ls447n7pfXlXg7IJLPvV878p2Eal8
+ bh=fzcOZoDy4nq3d1scAOabdvRSkEECFucdbBehDf9L/KI=;
+ b=VcSuVp5pUILjkNbbAkvSmqBrk4aayo/fsTUBVzwaNTz3CHX2AlKGXQ5LaBwdFwJi1nzrR73j/
+ q9575BU+fqzCv6CY6sZocpNExlHPL3t9jvx/n4wB/kI2MbotaH6lCK9
 X-Developer-Key: i=akhilpo@oss.qualcomm.com; a=ed25519;
  pk=lmVtttSHmAUYFnJsQHX80IIRmYmXA4+CzpGcWOOsfKA=
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEwMDE0MCBTYWx0ZWRfXyRxrdYBDtL7V
- dgF843NtaRS3F+t/EhJgl2UNx3wXvRqFF3EEcIOb57946DApgL3xPTGGmwXBs08KbULhcVUc8Pj
- ksTQNhuS4ZTEUHxt3XhQ9zo3cOprGkhignXVwi82qHn7f9/QUhgmN38d3mY+oaL9A1LyZRPyNi/
- 1lPsdM5NDM0E8ffOwhCtvNm27rM7Zqqp89ah/tt/xFBPtQiMnRWDJI4q3Rr9YrfcBoCiDVTfGpZ
- 1lxmUNvgldH4ZXK68sb8jTbejG80Fv/nl+etRgnL6zbhNLnVsdF0aHxvrea/gwe+XfbFydcp3VF
- xxcE+dzi6eb96Vl2vzw6SBP5EQz1dHjIoDIdikJyssO9RXc7kwFDPCyIUMnLKEbscZO/+lWytEe
- WofJjZOrlEVS0iqCZVPPI5k5vMgEjQ==
-X-Authority-Analysis: v=2.4 cv=br5BxUai c=1 sm=1 tr=0 ts=6912154b cx=c_pps
- a=oF/VQ+ItUULfLr/lQ2/icg==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEwMDE0MCBTYWx0ZWRfX5pokAxdD8ywH
+ C4Nakmorq41Pd4x7KTPlcXgigszyV74k0u0ICgDzeelp8/UHDsmIjMxgjUPhW86sxoyYx1WzbxD
+ xHy3f7LauVYH28hK7y36Tt5Xg6G9sRYpQk5QmHobNEGzPmEgHAf2KXed9LoiFJh0wIcLbj7d3xh
+ dPGzVxCb5DoOzgMf+OT/OZNGWcxlFRCO3nuhPZZx5yrWurxJU/xhju09b1VJSey+qv1//U3vI/e
+ khDDrDvPhKhgYy9UjFEnlZ15ApWaBynJpnQZdx24x2YHwAsqyDksQ4n0iIgUxIIM32OY5NwDpQF
+ 2/lA64xXFnr3IekJo57/T6dw97di2McgmRM/FR8WDOLCslwlkpTkB8rUbcj3DM1MABf446n/I2f
+ KpLH+dEhCvQ8A8q0JwDDps/ugyWoIA==
+X-Authority-Analysis: v=2.4 cv=CsKys34D c=1 sm=1 tr=0 ts=69121553 cx=c_pps
+ a=RP+M6JBNLl+fLTcSJhASfg==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
  a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=feIks7WodE12ze-Om1wA:9
- a=QEXdDO2ut3YA:10 a=3WC7DwWrALyhR5TkjVHa:22
-X-Proofpoint-GUID: QajQHqTJ3TCRvnP-39nI8dOxvJnbV1Eb
-X-Proofpoint-ORIG-GUID: QajQHqTJ3TCRvnP-39nI8dOxvJnbV1Eb
+ a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=jvJuTtenM57zLa_9FEIA:9
+ a=QEXdDO2ut3YA:10 a=iS9zxrgQBfv6-_F4QbHw:22
+X-Proofpoint-ORIG-GUID: QSynN0tsgiRMqcGIu5y7mNmBNstktgVD
+X-Proofpoint-GUID: QSynN0tsgiRMqcGIu5y7mNmBNstktgVD
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
  definitions=2025-11-10_06,2025-11-10_02,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 lowpriorityscore=0 adultscore=0 spamscore=0 clxscore=1015
- priorityscore=1501 bulkscore=0 impostorscore=0 phishscore=0 suspectscore=0
+ suspectscore=0 impostorscore=0 bulkscore=0 clxscore=1015 phishscore=0
+ adultscore=0 malwarescore=0 priorityscore=1501 lowpriorityscore=0 spamscore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
  reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511100140
 
-Current logic assumes that the voltage corners in both MxG and MxA are
-always same. This is not true for recent targets. So, rework the rpmh init
-sequence to probe and calculate the votes with the respective rails, ie,
-GX rails should use MxG as secondary rail and Cx rail should use MxA as
-the secondary rail.
+A8x GMU firmwares expect a separate vote table which describes the
+relationship between the Gx rail and MxA rail (and possibly Cx rail).
+Create this new vote table and implement the new HFI message which
+allows passing vote tables to send this data to GMU.
 
-Fixes: d6225e0cd096 ("drm/msm/adreno: Add support for X185 GPU")
 Signed-off-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
 ---
- drivers/gpu/drm/msm/adreno/a6xx_gmu.c | 26 +++++++++++++++-----------
- 1 file changed, 15 insertions(+), 11 deletions(-)
+ drivers/gpu/drm/msm/adreno/a6xx_gmu.c | 54 +++++++++++++++++++++++++++++++++++
+ drivers/gpu/drm/msm/adreno/a6xx_gmu.h |  1 +
+ drivers/gpu/drm/msm/adreno/a6xx_hfi.c | 53 ++++++++++++++++++++++++++++++++++
+ drivers/gpu/drm/msm/adreno/a6xx_hfi.h | 17 +++++++++++
+ 4 files changed, 125 insertions(+)
 
 diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-index 112ef7ea320f..8597d7adf2f7 100644
+index 8597d7adf2f7..396da035cbe8 100644
 --- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
 +++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-@@ -1519,13 +1519,14 @@ static unsigned int a6xx_gmu_get_arc_level(struct device *dev,
+@@ -1591,6 +1591,57 @@ static int a6xx_gmu_rpmh_arc_votes_init(struct device *dev, u32 *votes,
+ 	return 0;
  }
  
- static int a6xx_gmu_rpmh_arc_votes_init(struct device *dev, u32 *votes,
--		unsigned long *freqs, int freqs_count, const char *id)
-+		unsigned long *freqs, int freqs_count,
-+		const char *pri_id, const char *sec_id)
- {
- 	int i, j;
- 	const u16 *pri, *sec;
- 	size_t pri_count, sec_count;
- 
--	pri = cmd_db_read_aux_data(id, &pri_count);
-+	pri = cmd_db_read_aux_data(pri_id, &pri_count);
- 	if (IS_ERR(pri))
- 		return PTR_ERR(pri);
- 	/*
-@@ -1536,13 +1537,7 @@ static int a6xx_gmu_rpmh_arc_votes_init(struct device *dev, u32 *votes,
- 	if (!pri_count)
- 		return -EINVAL;
- 
--	/*
--	 * Some targets have a separate gfx mxc rail. So try to read that first and then fall back
--	 * to regular mx rail if it is missing
--	 */
--	sec = cmd_db_read_aux_data("gmxc.lvl", &sec_count);
--	if (IS_ERR(sec) && sec != ERR_PTR(-EPROBE_DEFER))
--		sec = cmd_db_read_aux_data("mx.lvl", &sec_count);
-+	sec = cmd_db_read_aux_data(sec_id, &sec_count);
- 	if (IS_ERR(sec))
- 		return PTR_ERR(sec);
- 
-@@ -1610,15 +1605,24 @@ static int a6xx_gmu_rpmh_votes_init(struct a6xx_gmu *gmu)
- 	struct adreno_gpu *adreno_gpu = &a6xx_gpu->base;
- 	const struct a6xx_info *info = adreno_gpu->info->a6xx;
- 	struct msm_gpu *gpu = &adreno_gpu->base;
-+	const char *sec_id;
-+	const u16 *gmxc;
- 	int ret;
- 
-+	gmxc = cmd_db_read_aux_data("gmxc.lvl", NULL);
-+	if (gmxc == ERR_PTR(-EPROBE_DEFER))
-+		return -EPROBE_DEFER;
++static int a6xx_gmu_rpmh_dep_votes_init(struct device *dev, u32 *votes,
++		unsigned long *freqs, int freqs_count)
++{
++	const u16 *mx;
++	size_t count;
 +
-+	/* If GMxC is present, prefer that as secondary rail for GX votes */
-+	sec_id = IS_ERR_OR_NULL(gmxc) ? "mx.lvl" : "gmxc.lvl";
++	mx = cmd_db_read_aux_data("mx.lvl", &count);
++	if (IS_ERR(mx))
++		return PTR_ERR(mx);
++	/*
++	 * The data comes back as an array of unsigned shorts so adjust the
++	 * count accordingly
++	 */
++	count >>= 1;
++	if (!count)
++		return -EINVAL;
 +
- 	/* Build the GX votes */
- 	ret = a6xx_gmu_rpmh_arc_votes_init(&gpu->pdev->dev, gmu->gx_arc_votes,
--		gmu->gpu_freqs, gmu->nr_gpu_freqs, "gfx.lvl");
-+		gmu->gpu_freqs, gmu->nr_gpu_freqs, "gfx.lvl", sec_id);
- 
- 	/* Build the CX votes */
++	/* Fix the vote for zero frequency */
++	votes[0] = 0xffffffff;
++
++	/* Construct a vote for rest of the corners */
++	for (int i = 1; i < freqs_count; i++) {
++		u8 j, index = 0;
++		unsigned int level = a6xx_gmu_get_arc_level(dev, freqs[i]);
++
++		/* Get the primary index that matches the arc level */
++		for (j = 0; j < count; j++) {
++			if (mx[j] >= level) {
++				index = j;
++				break;
++			}
++		}
++
++		if (j == count) {
++			DRM_DEV_ERROR(dev,
++				      "Mx Level %u not found in the RPMh list\n",
++				      level);
++			DRM_DEV_ERROR(dev, "Available levels:\n");
++			for (j = 0; j < count; j++)
++				DRM_DEV_ERROR(dev, "  %u\n", mx[j]);
++
++			return -EINVAL;
++		}
++
++		/* Construct the vote */
++		votes[i] = (0x3fff << 14) | (index << 8) | (0xff);
++	}
++
++	return 0;
++}
++
+ /*
+  * The GMU votes with the RPMh for itself and on behalf of the GPU but we need
+  * to construct the list of votes on the CPU and send it over. Query the RPMh
+@@ -1624,6 +1675,9 @@ static int a6xx_gmu_rpmh_votes_init(struct a6xx_gmu *gmu)
  	ret |= a6xx_gmu_rpmh_arc_votes_init(gmu->dev, gmu->cx_arc_votes,
--		gmu->gmu_freqs, gmu->nr_gmu_freqs, "cx.lvl");
-+		gmu->gmu_freqs, gmu->nr_gmu_freqs, "cx.lvl", "mx.lvl");
+ 		gmu->gmu_freqs, gmu->nr_gmu_freqs, "cx.lvl", "mx.lvl");
  
++	ret |= a6xx_gmu_rpmh_dep_votes_init(gmu->dev, gmu->dep_arc_votes,
++		gmu->gpu_freqs, gmu->nr_gpu_freqs);
++
  	/* Build the interconnect votes */
  	if (info->bcms && gmu->nr_gpu_bws > 1)
+ 		ret |= a6xx_gmu_rpmh_bw_votes_init(adreno_gpu, info, gmu);
+diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.h b/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
+index edf6c282cd76..2af074c8e8cf 100644
+--- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
++++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
+@@ -97,6 +97,7 @@ struct a6xx_gmu {
+ 	int nr_gpu_freqs;
+ 	unsigned long gpu_freqs[GMU_MAX_GX_FREQS];
+ 	u32 gx_arc_votes[GMU_MAX_GX_FREQS];
++	u32 dep_arc_votes[GMU_MAX_GX_FREQS];
+ 	struct a6xx_hfi_acd_table acd_table;
+ 
+ 	int nr_gpu_bws;
+diff --git a/drivers/gpu/drm/msm/adreno/a6xx_hfi.c b/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
+index 550de6ad68ef..64618fd69305 100644
+--- a/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
++++ b/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
+@@ -23,6 +23,7 @@ static const char * const a6xx_hfi_msg_id[] = {
+ 	HFI_MSG_ID(HFI_H2F_MSG_START),
+ 	HFI_MSG_ID(HFI_H2F_FEATURE_CTRL),
+ 	HFI_MSG_ID(HFI_H2F_MSG_CORE_FW_START),
++	HFI_MSG_ID(HFI_H2F_MSG_TABLE),
+ 	HFI_MSG_ID(HFI_H2F_MSG_GX_BW_PERF_VOTE),
+ 	HFI_MSG_ID(HFI_H2F_MSG_PREPARE_SLUMBER),
+ };
+@@ -255,11 +256,63 @@ static int a6xx_hfi_send_perf_table_v1(struct a6xx_gmu *gmu)
+ 		NULL, 0);
+ }
+ 
++static int a8xx_hfi_send_perf_table(struct a6xx_gmu *gmu)
++{
++	unsigned int num_gx_votes = 3, num_cx_votes = 2;
++	struct a6xx_hfi_table_entry *entry;
++	struct a6xx_hfi_table *tbl;
++	int ret, i;
++	u32 size;
++
++	size = sizeof(*tbl) +  (2 * sizeof(tbl->entry[0])) +
++		(gmu->nr_gpu_freqs * num_gx_votes * sizeof(gmu->gx_arc_votes[0])) +
++		(gmu->nr_gmu_freqs * num_cx_votes * sizeof(gmu->cx_arc_votes[0]));
++	tbl = devm_kzalloc(gmu->dev, size, GFP_KERNEL);
++	tbl->type = HFI_TABLE_GPU_PERF;
++
++	/* First fill GX votes */
++	entry = &tbl->entry[0];
++	entry->count = gmu->nr_gpu_freqs;
++	entry->stride = num_gx_votes;
++
++	for (i = 0; i < gmu->nr_gpu_freqs; i++) {
++		unsigned int base = i * entry->stride;
++
++		entry->data[base+0] = gmu->gx_arc_votes[i];
++		entry->data[base+1] = gmu->dep_arc_votes[i];
++		entry->data[base+2] = gmu->gpu_freqs[i] / 1000;
++	}
++
++	/* Then fill CX votes */
++	entry = (struct a6xx_hfi_table_entry *)
++		&tbl->entry[0].data[gmu->nr_gpu_freqs * num_gx_votes];
++
++	entry->count = gmu->nr_gmu_freqs;
++	entry->stride = num_cx_votes;
++
++	for (i = 0; i < gmu->nr_gmu_freqs; i++) {
++		unsigned int base = i * entry->stride;
++
++		entry->data[base] = gmu->cx_arc_votes[i];
++		entry->data[base+1] = gmu->gmu_freqs[i] / 1000;
++	}
++
++	ret = a6xx_hfi_send_msg(gmu, HFI_H2F_MSG_TABLE, tbl, size, NULL, 0);
++
++	devm_kfree(gmu->dev, tbl);
++	return ret;
++}
++
+ static int a6xx_hfi_send_perf_table(struct a6xx_gmu *gmu)
+ {
++	struct a6xx_gpu *a6xx_gpu = container_of(gmu, struct a6xx_gpu, gmu);
++	struct adreno_gpu *adreno_gpu = &a6xx_gpu->base;
+ 	struct a6xx_hfi_msg_perf_table msg = { 0 };
+ 	int i;
+ 
++	if (adreno_is_a8xx(adreno_gpu))
++		return a8xx_hfi_send_perf_table(gmu);
++
+ 	msg.num_gpu_levels = gmu->nr_gpu_freqs;
+ 	msg.num_gmu_levels = gmu->nr_gmu_freqs;
+ 
+diff --git a/drivers/gpu/drm/msm/adreno/a6xx_hfi.h b/drivers/gpu/drm/msm/adreno/a6xx_hfi.h
+index 653ef720e2da..e12866110cb8 100644
+--- a/drivers/gpu/drm/msm/adreno/a6xx_hfi.h
++++ b/drivers/gpu/drm/msm/adreno/a6xx_hfi.h
+@@ -185,6 +185,23 @@ struct a6xx_hfi_msg_core_fw_start {
+ 	u32 handle;
+ };
+ 
++#define HFI_H2F_MSG_TABLE 15
++
++struct a6xx_hfi_table_entry {
++	u32 count;
++	u32 stride;
++	u32 data[];
++};
++
++struct a6xx_hfi_table {
++	u32 header;
++	u32 version;
++#define HFI_TABLE_BW_VOTE 0
++#define HFI_TABLE_GPU_PERF 1
++	u32 type;
++	struct a6xx_hfi_table_entry entry[];
++};
++
+ #define HFI_H2F_MSG_GX_BW_PERF_VOTE 30
+ 
+ struct a6xx_hfi_gx_bw_perf_vote_cmd {
 
 -- 
 2.51.0
