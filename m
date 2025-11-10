@@ -1,133 +1,98 @@
-Return-Path: <linux-kernel+bounces-892610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A44FFC45726
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:51:24 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20C54C45732
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:52:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D0C8188FBFC
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 08:51:49 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A54C8345D2C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 08:52:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C5782FD697;
-	Mon, 10 Nov 2025 08:51:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D08C52FD7C3;
+	Mon, 10 Nov 2025 08:52:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IxamUy5f"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b="SEsYRy3t"
+Received: from mail-m49198.qiye.163.com (mail-m49198.qiye.163.com [45.254.49.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F9922FD693
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 08:51:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A21E248891;
+	Mon, 10 Nov 2025 08:52:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762764665; cv=none; b=huRUa28gj3mZlbLHpEsCDcRBTIhOwBmQ/FnYFoN1g0wKRhHL5jYVA5OLtY69Vy3vynBMc4g2SC60+Wij50rkTC/UGEWMFD9ZT1qnNBtdidObLMjmrdI4hVy7p1I4jv62kQ6p1D0f76hzz6MuQs6NQaNQ3QCupIhhzXly+Vyy4Nw=
+	t=1762764732; cv=none; b=KHLCLv3K5bMM57Zh+gQq18am2rG/cjk7O5pg0vLYSEsH76O3Aacs4yj95L6oXiq8dsewv9S/AAfpvcfz47tmcOX3Xpn+FgEq31ktay4+yqjEyS+Hd9uFN32LV2+AmZWrsWHZgj17aBlfMBaKUxy+/Va5W0wk/yv91pKKNtmAwbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762764665; c=relaxed/simple;
-	bh=HICpxDEAAop30JD/2xaSQaJSlMCODSC3b+mqQGoAk4s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KKJ6Tot/hDwQxgJp31nnZu3dSsWiZZ2tL+bQM9g6hi1GOAbJ6xV1H/xRb7hAqZxfhBVYXknHznE6RKrmXbJA0SWm2p9CFXedIDbDHnqb966zo3iYe4J3PTS/SHepLpmUPma4rwV9ODcKVNUXJ6fNAH/4ESl7ABwodfDRlNJYuw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IxamUy5f; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762764664; x=1794300664;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=HICpxDEAAop30JD/2xaSQaJSlMCODSC3b+mqQGoAk4s=;
-  b=IxamUy5fYmqQHBFASjsM/Iz4uqkwJlF3Upp7T/Bup5HBt9T49MLE7JrX
-   /2A9F2arvEvP5U1h141tSBBriRG5Vzoe7GjMd8HBrbn3debJn052uWCAP
-   UErhhiaHq73f8UELEfmipqbffRnOgTpItThjMmb1mAbbOSeaHvek9tBn7
-   PBycv+0ibFEDlEPReVqm2Se/URSZFTr6r7HUGSkacZkAAD65/Bhr7Gp1k
-   ltRj9HTx0/hB/RhS26eKkq9RIIzPeGJJFFfZHHOenC09eg0VU5YO/38TR
-   qkyjYPgpgbzA6kqMBsbLosjjA2sWRa1euyGG9KlKl1IEt69r7+MgsDYFr
-   g==;
-X-CSE-ConnectionGUID: Gpp/+lgBR3S2fCDFGiuYyw==
-X-CSE-MsgGUID: QEjdK4OiTI64dGyQ+SEAKg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11608"; a="64016932"
-X-IronPort-AV: E=Sophos;i="6.19,293,1754982000"; 
-   d="scan'208";a="64016932"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 00:51:04 -0800
-X-CSE-ConnectionGUID: xf658jH4TyiUTDsVG8IFOg==
-X-CSE-MsgGUID: RYBkIJePSzGsqkovY4YVUA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,293,1754982000"; 
-   d="scan'208";a="193801340"
-Received: from kniemiec-mobl1.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.245.235])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 00:51:02 -0800
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1vINc3-00000007PI0-0nu9;
-	Mon, 10 Nov 2025 10:50:59 +0200
-Date: Mon, 10 Nov 2025 10:50:58 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Alison Schofield <alison.schofield@intel.com>
-Cc: Ira Weiny <ira.weiny@intel.com>, nvdimm@lists.linux.dev,
+	s=arc-20240116; t=1762764732; c=relaxed/simple;
+	bh=K+XaybmtfpqHcjKaCkJr8J+VLm4wYXeR6iV5x1IR+HQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=X/Gvpx6YIRYNmTq1iqTpmk8Af5g8+xw28q4qcOOolcU8itvcUWoV4OLiEOKyvusHvrf590Aj6oYqelkCUpIlICp/h3ewovMMHf4AtkOPva1I0b2BPsDsNXdfbCXeG8N9L+ml01zBnGa4YDGu0pckRUqnrWvVxhdtMttAlAdXd+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn; spf=pass smtp.mailfrom=seu.edu.cn; dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b=SEsYRy3t; arc=none smtp.client-ip=45.254.49.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seu.edu.cn
+Received: from LAPTOP-N070L597.localdomain (unknown [223.112.146.162])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 29056feac;
+	Mon, 10 Nov 2025 16:52:01 +0800 (GMT+08:00)
+From: Zilin Guan <zilin@seu.edu.cn>
+To: keguang.zhang@gmail.com
+Cc: vkoul@kernel.org,
+	linux-mips@vger.kernel.org,
+	dmaengine@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Dan Williams <dan.j.williams@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>
-Subject: Re: [PATCH v1 1/1] libnvdimm/labels: Get rid of redundant 'else'
-Message-ID: <aRGncoEEcbq_D6mV@smile.fi.intel.com>
-References: <20251105183743.1800500-1-andriy.shevchenko@linux.intel.com>
- <690d4178c4d4_29fa161007f@iweiny-mobl.notmuch>
- <aQ2iJUZUDf5FLAW-@smile.fi.intel.com>
- <690e1d0428207_301e35100f6@iweiny-mobl.notmuch>
- <aRERqoS2aetTyDvL@aschofie-mobl2.lan>
+	jianhao.xu@seu.edu.cn,
+	Zilin Guan <zilin@seu.edu.cn>
+Subject: [PATCH] dmaengine: Loongson1: Fix memory leak in ls1x_dma_prep_dma_cyclic()
+Date: Mon, 10 Nov 2025 08:51:59 +0000
+Message-Id: <20251110085159.754528-1-zilin@seu.edu.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aRERqoS2aetTyDvL@aschofie-mobl2.lan>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a9a6cf70cca03a1kunm6f9f71c9a59337
+X-HM-MType: 10
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlCSkNCVhlOGRhITEhPT0lLTFYeHw5VEwETFhoSFy
+	QUDg9ZV1kYEgtZQVlJSUhVSkpJVUpPTVVKTUlZV1kWGg8SFR0UWUFZT0tIVUpLSUJDQ0xVSktLVU
+	tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=SEsYRy3t70QomWfnKUNX5YgGVIArj7EpAQYHNlAYLTj1Io55hjZYFyRRHCw3arKl81YBcSDxEmgUteCqvuawSlBur7Ji5HoEj3dBs7q8T8qCpHsIEaMmSu1FWjXc7f0ZVF4d467rQdyDZGAvMssDqyl1Mfh1q4T93tvbEO6dc3o=; s=default; c=relaxed/relaxed; d=seu.edu.cn; v=1;
+	bh=diZNDUepMPp6k3NXFNNQrzxv9BkBiMSl8tvoJAuqeyo=;
+	h=date:mime-version:subject:message-id:from;
 
-On Sun, Nov 09, 2025 at 02:11:54PM -0800, Alison Schofield wrote:
-> On Fri, Nov 07, 2025 at 10:23:32AM -0600, Ira Weiny wrote:
-> > 
-> > Yea putting this in the commit message but more importantly knowing you
-> > looked through the logic of how claim class is used is what I'm looking
-> > for.
-> 
-> Coming back around to this patch after a few days, after initially
-> commenting on the unexplained behavior change, I realize a better
-> response would have been a simple NAK.
-> 
-> This patch demonstrates why style-only cleanups are generally discouraged
-> outside of drivers/staging. It creates code churn without fixing bugs
-> or adding functionality, the changes aren't justified in the commit
-> message, it adds risk, and consumes limited reviewer and maintainer
-> bandwidth.
-> 
-> To recoup value from the time already spent on this, I suggest using
-> this opportunity to set a clear position and precedent, like:
-> 
-> 	"Style cleanups are not welcomed in the NVDIMM subsystem unless
-> 	they're part of a fix or a patch series that includes substantive
-> 	changes to the same code area."
+In ls1x_dma_prep_dma_cyclic(), a descriptor is allocated with
+ls1x_dma_alloc_desc(). If the subsequent allocation for the scatterlist
+fails, the function returns NULL without freeing the descriptor, which
+causes a memory leak.
 
-Let's rotten it with the old APIs and style then :-)
+Fix this by calling ls1x_dma_free_desc() in the error path to ensure
+the descriptor is freed.
 
-I have heard you and I won't try even bring any new patch in this subsystem, thanks.
+Fixes: e06c432312148 ("dmaengine: Loongson1: Add Loongson-1 APB DMA driver")
+Signed-off-by: Zilin Guan <zilin@seu.edu.cn>
+---
+ drivers/dma/loongson1-apb-dma.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-> FWIW, if folks are looking to dive into this code, there is a patchset
-> in review here[1] that adds new functionality to this area. Reviews,
-> including style reviews, are welcomed.
-> 
-> Regardless of a commit message update or a change to the code, this
-> one is a NAK from me.
-> 
-> [1] https://lore.kernel.org/nvdimm/20250917132940.1566437-1-s.neeraj@samsung.com/
-
+diff --git a/drivers/dma/loongson1-apb-dma.c b/drivers/dma/loongson1-apb-dma.c
+index 255fe7eca212..5ee829bc5c77 100644
+--- a/drivers/dma/loongson1-apb-dma.c
++++ b/drivers/dma/loongson1-apb-dma.c
+@@ -336,8 +336,10 @@ ls1x_dma_prep_dma_cyclic(struct dma_chan *dchan, dma_addr_t buf_addr,
+ 	/* allocate the scatterlist */
+ 	sg_len = buf_len / period_len;
+ 	sgl = kmalloc_array(sg_len, sizeof(*sgl), GFP_NOWAIT);
+-	if (!sgl)
++	if (!sgl) {
++		ls1x_dma_free_desc(&desc->vd);
+ 		return NULL;
++	}
+ 
+ 	sg_init_table(sgl, sg_len);
+ 	for (i = 0; i < sg_len; ++i) {
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.34.1
 
 
