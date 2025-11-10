@@ -1,109 +1,185 @@
-Return-Path: <linux-kernel+bounces-893606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AF26C47FEF
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:38:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC7B7C47E8A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:23:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 327E83B81A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:07:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF775420D38
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:07:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 690092773D4;
-	Mon, 10 Nov 2025 16:07:12 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4320D2773D4;
+	Mon, 10 Nov 2025 16:07:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b="P1xGl5XN"
+Received: from mail.cybernetics.com (mail.cybernetics.com [72.215.153.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D33127586C;
-	Mon, 10 Nov 2025 16:07:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E96A326FA77
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 16:07:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.215.153.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762790832; cv=none; b=Bx8VxYItdbbIvqPUlx/rwjYrq+4DnE/vuYMV6B6gjfZnF9MHxCCFEXAhq76YKLmk353V+xbC4PDY+PPtfvvNX1YcAn+DRaOcSuhQ1geIjXgUNC+i//BmrZ4prqsURdVRD8bT4iaggvX0sbwdViJRCBcVq9WnZpJN2y/f8O76Z/Q=
+	t=1762790860; cv=none; b=Daltzt3zi+BWtnAnmgtF4+rQHSCHMRh8topFHyiLQRtZyJDgFpqP416tugDWENHGT0roHQInSrhbdHaASBZig6t1oi04b63wkxbJFebfJsG2jaLQm8oOkqKrUl66Kp3DMX7XTekeUZroLKPzgfeZ92obbDk/S2cVHNbjPPJcvdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762790832; c=relaxed/simple;
-	bh=27EsfNgxEBEVFQ27RkKtff0JAT6UJpl26AOBpOldN38=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ykkp7Hm52M8/wDKo5hqyWht0Skh5ueB2rTjt4XOV4Z9fY0kp0NeoYYqtIMYPYzIkQVNxsQk7QyUXpTBv9KAYsO3RxlXbfgwgiGo+JP0HQHbqmqo2/Efv/05orI/hRXSscIpuEQVG5XxOup6PV5Dj7rc66M9Yw0PU29N8JUU6MP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4d4vg25B99zJ46dN;
-	Tue, 11 Nov 2025 00:06:38 +0800 (CST)
-Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
-	by mail.maildlp.com (Postfix) with ESMTPS id 3350D14033C;
-	Tue, 11 Nov 2025 00:07:08 +0800 (CST)
-Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
- (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.36; Mon, 10 Nov
- 2025 16:07:06 +0000
-Date: Mon, 10 Nov 2025 16:07:05 +0000
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Ben Horgan <ben.horgan@arm.com>
-CC: <james.morse@arm.com>, <amitsinght@marvell.com>,
-	<baisheng.gao@unisoc.com>, <baolin.wang@linux.alibaba.com>,
-	<bobo.shaobowang@huawei.com>, <carl@os.amperecomputing.com>,
-	<catalin.marinas@arm.com>, <dakr@kernel.org>, <dave.martin@arm.com>,
-	<david@redhat.com>, <dfustini@baylibre.com>, <fenghuay@nvidia.com>,
-	<gregkh@linuxfoundation.org>, <gshan@redhat.com>, <guohanjun@huawei.com>,
-	<jeremy.linton@arm.com>, <kobak@nvidia.com>, <lcherian@marvell.com>,
-	<lenb@kernel.org>, <linux-acpi@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<lpieralisi@kernel.org>, <peternewman@google.com>, <quic_jiles@quicinc.com>,
-	<rafael@kernel.org>, <robh@kernel.org>, <rohit.mathew@arm.com>,
-	<scott@os.amperecomputing.com>, <sdonthineni@nvidia.com>,
-	<sudeep.holla@arm.com>, <tan.shaopeng@fujitsu.com>, <will@kernel.org>,
-	<xhao@linux.alibaba.com>
-Subject: Re: [PATCH 07/33] platform: Define platform_device_put cleanup
- handler
-Message-ID: <20251110160705.00007387@huawei.com>
-In-Reply-To: <20251107123450.664001-8-ben.horgan@arm.com>
-References: <20251107123450.664001-1-ben.horgan@arm.com>
-	<20251107123450.664001-8-ben.horgan@arm.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1762790860; c=relaxed/simple;
+	bh=lXO9DupS+4T46HArb030FjuM8yTb39HpUvWvwihutRA=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=B2G6QlasPbYi17jSR5Bxvh1cBmeLuMdqleoiWI0l2tS9kNwZ6/++NvUhknFuLGeljwXJqO9KtwQ02W7IO25ljxMpWsUWdIq9QPrz5yPCmBtodFy9hJf96cMgXPf1fEgWJyyBUbz31Pihn4rD9DwUhgh5lN5mv1WUD3+Kc7NaQZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com; spf=pass smtp.mailfrom=cybernetics.com; dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b=P1xGl5XN; arc=none smtp.client-ip=72.215.153.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cybernetics.com
+Received: from cybernetics.com ([10.10.4.126]) by mail.cybernetics.com with ESMTP id 6FQUcIu7d07VVBPc; Mon, 10 Nov 2025 11:07:37 -0500 (EST)
+X-Barracuda-Envelope-From: tonyb@cybernetics.com
+X-Barracuda-RBL-Trusted-Forwarder: 10.10.4.126
+X-ASG-Whitelist: Client
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cybernetics.com; s=mail;
+	bh=7J0+/76MVsWm73gx/FbY9QMdNv2poNYNZtlcfogECYo=;
+	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:Cc:To:From:
+	Content-Language:Subject:MIME-Version:Date:Message-ID; b=P1xGl5XNELvwEktOiegp
+	mt9iI3Td9/pa+TUxiqzTyGhfl48gaKEtb14LOtOapLtteVTSAmMTZlcW6flKRUq2GV1HNkN0GkrNp
+	QZtpUQgBkzqLYo2byZXC1+Mnm8Bb/FcWkZDzbkNibS/06FqbEARB8iUsD2UF1pLChtf9HuK7xw=
+Received: from [10.157.2.224] (HELO [192.168.200.1])
+  by cybernetics.com (CommuniGate SPEC SMTP 8.0.5)
+  with ESMTPS id 14272504; Mon, 10 Nov 2025 11:07:37 -0500
+Message-ID: <0e7e5d26-e7a0-42d1-8235-40eeb27f3e98@cybernetics.com>
+X-Barracuda-RBL-Trusted-Forwarder: 10.157.2.224
+Date: Mon, 10 Nov 2025 11:07:37 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH v3 08/16] scsi: qla2xxx: clear cmds after chip reset
+Content-Language: en-US
+X-ASG-Orig-Subj: [PATCH v3 08/16] scsi: qla2xxx: clear cmds after chip reset
+From: Tony Battersby <tonyb@cybernetics.com>
+To: Nilesh Javali <njavali@marvell.com>,
+ GR-QLogic-Storage-Upstream@marvell.com,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi <linux-scsi@vger.kernel.org>, target-devel@vger.kernel.org,
+ scst-devel@lists.sourceforge.net,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Dmitry Bogdanov <d.bogdanov@yadro.com>,
+ Xose Vazquez Perez <xose.vazquez@gmail.com>
+References: <aaea0ab0-da8b-4153-9369-60db7507ff7a@cybernetics.com>
+In-Reply-To: <aaea0ab0-da8b-4153-9369-60db7507ff7a@cybernetics.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100010.china.huawei.com (7.191.174.197) To
- dubpeml100005.china.huawei.com (7.214.146.113)
+X-Barracuda-Connect: UNKNOWN[10.10.4.126]
+X-Barracuda-Start-Time: 1762790857
+X-Barracuda-URL: https://10.10.4.122:443/cgi-mod/mark.cgi
+X-Barracuda-BRTS-Status: 0
+X-Virus-Scanned: by bsmtpd at cybernetics.com
+X-Barracuda-Scan-Msg-Size: 3932
+X-ASG-Debug-ID: 1762790857-1cf439139110d0f0001-xx1T2L
 
-On Fri, 7 Nov 2025 12:34:24 +0000
-Ben Horgan <ben.horgan@arm.com> wrote:
+Commit aefed3e5548f ("scsi: qla2xxx: target: Fix offline port handling
+and host reset handling") caused two problems:
 
-> Define a cleanup helper for use with __free to destroy platform devices
-> automatically when the pointer goes out of scope. This is only intended to
-> be used in error cases and so should be used with return_ptr() or
-> no_free_ptr() directly to avoid the automatic destruction on success.
-> 
-> A first use of this is introduced in a subsequent commit.
-> 
-> Signed-off-by: Ben Horgan <ben.horgan@arm.com>
+1. Commands sent to FW, after chip reset got stuck and never freed as FW
+   is not going to respond to them anymore.
 
-I'm fine with this but probably needs a tag from Greg KH.
+2. BUG_ON(cmd->sg_mapped) in qlt_free_cmd().  Commit 26f9ce53817a
+   ("scsi: qla2xxx: Fix missed DMA unmap for aborted commands")
+   attempted to fix this, but introduced another bug under different
+   circumstances when two different CPUs were racing to call
+   qlt_unmap_sg() at the same time: BUG_ON(!valid_dma_direction(dir)) in
+   dma_unmap_sg_attrs().
 
-Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+So revert "scsi: qla2xxx: Fix missed DMA unmap for aborted commands" and
+partially revert "scsi: qla2xxx: target: Fix offline port handling and
+host reset handling" at __qla2x00_abort_all_cmds.
 
-> ---
->  include/linux/platform_device.h | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/include/linux/platform_device.h b/include/linux/platform_device.h
-> index 074754c23d33..23a30ada2d4c 100644
-> --- a/include/linux/platform_device.h
-> +++ b/include/linux/platform_device.h
-> @@ -232,6 +232,7 @@ extern int platform_device_add_data(struct platform_device *pdev,
->  extern int platform_device_add(struct platform_device *pdev);
->  extern void platform_device_del(struct platform_device *pdev);
->  extern void platform_device_put(struct platform_device *pdev);
-> +DEFINE_FREE(platform_device_put, struct platform_device *, if (_T) platform_device_put(_T))
->  
->  struct platform_driver {
->  	int (*probe)(struct platform_device *);
+Fixes: aefed3e5548f ("scsi: qla2xxx: target: Fix offline port handling and host reset handling")
+Fixes: 26f9ce53817a ("scsi: qla2xxx: Fix missed DMA unmap for aborted commands")
+Signed-off-by: Tony Battersby <tonyb@cybernetics.com>
+Signed-off-by: Dmitry Bogdanov <d.bogdanov@yadro.com>
+---
+
+v2 -> v3: no changes
+
+v1 -> v2: This patch is a new addition in v2.
+
+ drivers/scsi/qla2xxx/qla_os.c     | 20 ++++++++++++++++++--
+ drivers/scsi/qla2xxx/qla_target.c |  5 +----
+ drivers/scsi/qla2xxx/qla_target.h |  1 +
+ 3 files changed, 20 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
+index f0b77f13628d..739137ddfd68 100644
+--- a/drivers/scsi/qla2xxx/qla_os.c
++++ b/drivers/scsi/qla2xxx/qla_os.c
+@@ -1875,10 +1875,26 @@ __qla2x00_abort_all_cmds(struct qla_qpair *qp, int res)
+ 					continue;
+ 				}
+ 				cmd = (struct qla_tgt_cmd *)sp;
+-				cmd->aborted = 1;
++
++				if (cmd->sg_mapped)
++					qlt_unmap_sg(vha, cmd);
++
++				if (cmd->state == QLA_TGT_STATE_NEED_DATA) {
++					cmd->aborted = 1;
++					cmd->write_data_transferred = 0;
++					cmd->state = QLA_TGT_STATE_DATA_IN;
++					ha->tgt.tgt_ops->handle_data(cmd);
++				} else {
++					ha->tgt.tgt_ops->free_cmd(cmd);
++				}
+ 				break;
+ 			case TYPE_TGT_TMCMD:
+-				/* Skip task management functions. */
++				/*
++				 * Currently, only ABTS response gets on the
++				 * outstanding_cmds[]
++				 */
++				ha->tgt.tgt_ops->free_mcmd(
++					(struct qla_tgt_mgmt_cmd *) sp);
+ 				break;
+ 			default:
+ 				break;
+diff --git a/drivers/scsi/qla2xxx/qla_target.c b/drivers/scsi/qla2xxx/qla_target.c
+index b700bfc642b3..2abdb8ce0302 100644
+--- a/drivers/scsi/qla2xxx/qla_target.c
++++ b/drivers/scsi/qla2xxx/qla_target.c
+@@ -2447,7 +2447,7 @@ static int qlt_pci_map_calc_cnt(struct qla_tgt_prm *prm)
+ 	return -1;
+ }
+ 
+-static void qlt_unmap_sg(struct scsi_qla_host *vha, struct qla_tgt_cmd *cmd)
++void qlt_unmap_sg(struct scsi_qla_host *vha, struct qla_tgt_cmd *cmd)
+ {
+ 	struct qla_hw_data *ha;
+ 	struct qla_qpair *qpair;
+@@ -3795,9 +3795,6 @@ int qlt_abort_cmd(struct qla_tgt_cmd *cmd)
+ 
+ 	spin_lock_irqsave(&cmd->cmd_lock, flags);
+ 	if (cmd->aborted) {
+-		if (cmd->sg_mapped)
+-			qlt_unmap_sg(vha, cmd);
+-
+ 		spin_unlock_irqrestore(&cmd->cmd_lock, flags);
+ 		/*
+ 		 * It's normal to see 2 calls in this path:
+diff --git a/drivers/scsi/qla2xxx/qla_target.h b/drivers/scsi/qla2xxx/qla_target.h
+index 15a59c125c53..c483966d0a84 100644
+--- a/drivers/scsi/qla2xxx/qla_target.h
++++ b/drivers/scsi/qla2xxx/qla_target.h
+@@ -1058,6 +1058,7 @@ extern int qlt_abort_cmd(struct qla_tgt_cmd *);
+ extern void qlt_xmit_tm_rsp(struct qla_tgt_mgmt_cmd *);
+ extern void qlt_free_mcmd(struct qla_tgt_mgmt_cmd *);
+ extern void qlt_free_cmd(struct qla_tgt_cmd *cmd);
++extern void qlt_unmap_sg(struct scsi_qla_host *vha, struct qla_tgt_cmd *cmd);
+ extern void qlt_async_event(uint16_t, struct scsi_qla_host *, uint16_t *);
+ extern void qlt_enable_vha(struct scsi_qla_host *);
+ extern void qlt_vport_create(struct scsi_qla_host *, struct qla_hw_data *);
+-- 
+2.43.0
+
 
 
