@@ -1,118 +1,221 @@
-Return-Path: <linux-kernel+bounces-892920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F128DC461FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:08:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1104C461FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:08:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 712B31894E79
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:08:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8B583BB3AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:07:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B1693090CD;
-	Mon, 10 Nov 2025 11:07:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE1113074B1;
+	Mon, 10 Nov 2025 11:07:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AYl3H+E6"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="uu5Vk6RF";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="SZYqnQdx";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="uu5Vk6RF";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="SZYqnQdx"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9D9A273F9
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 11:07:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79EBC30596D
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 11:07:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762772850; cv=none; b=OVjBdT9EkOAmkF6aEJoKBwNUerYV371a32+B45w5xvOmPrQqfqDE4HsgfNoFsYki3pKEBrzo6uQ61zVtvClO3orcm6+s8I73xN/Nugf9cPAfh7pqioTM2UAezIz0e1KhkujiOKZ2FI3BksDwb28lFdA2jIR9iVv89yOTwGd7oik=
+	t=1762772867; cv=none; b=LUY4tMiYV5hxViEiF44gRgmwaZgDatzELl6fTH46tZkLElQLpiUDb03zi/jAalUZp4ikvX+FOKm32Ki6DMg1zdvtkLuyCGeebzVZOafGXznMot84zV2ciw5ffmgtX3hi2PP6nZqaaFzsHb3Gh7hSs+c5eVAD227LEGsQq42wX40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762772850; c=relaxed/simple;
-	bh=P9gC+lGzjtMArrtoyqNulbP4U/Rr/r9sqlbgUdghZh0=;
+	s=arc-20240116; t=1762772867; c=relaxed/simple;
+	bh=GtKnFa82UUHG8brBBYExKhnUuIs8KUv537EUGXool2k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pNY132f8JBz/rmApLYBSPydGMz7jupM1/L4RHhKmh8qXmYy/1+nlTxw/UFaWsA5pSge3mxyEbF3jpCelxLYDk0wNMxY2JRSV+6lKq9mEXfEJllHsNFpaAB57AxYgm9VdclUYN246Sd+gli8+qU1SGloLPEE2+glsa1HsyUOehfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AYl3H+E6; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7aa9be9f03aso2449860b3a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 03:07:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762772848; x=1763377648; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=l1rfVf8CR6nXwtwA2s4abFfmksXss6f4ONY3gj9LEKk=;
-        b=AYl3H+E6yMrrrrIq0CYTN5ssxJXa2EHFHx+ESaNyCZaBPjsB5yBPVFN07QC3IfzdZv
-         fc/RFcb0W0kPOxXNr6K5+PF1zTjSKLkWduJKAEoZbbzN8eyDl5LZenrQzhU1BXYrv2r3
-         gu/00GVcSMvK5lyVdh1b9K/GsBNFyLrpGLMl8KjaiaJr0Odninhk5h0U9CfHW4Srn6MJ
-         luLr6bJBgYPzMCCmO3TNhzq2QD3H6OpURz2oWLGwIKRSeLl6dUKBG/nxfrQz3w1eIma0
-         zRxeyvfdSqu1Ab1dPi3Dqln5EiAW4BEOPZvjJd566QxOQSDsUC4XmTTqsZJoO2EFGnJb
-         IgYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762772848; x=1763377648;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=l1rfVf8CR6nXwtwA2s4abFfmksXss6f4ONY3gj9LEKk=;
-        b=JAcQqNwRTZM3aiy7MPMM84HHfyU2I5Z1IY0yXHqx/7AMk2NIx+d58ZTYOsRm9LBYYb
-         FqesBSZVZCeiB5nbiH6Byg/oy97/sA74b/SDDvgCy4ynH1Jj3MnTvj7zE3VjnpDFx03D
-         slrwzZBq3npzDyZAyNUbPieZ3g0omv8r1zFHme4VPKce0Aqqs5N4Gwwmh3ozixARssk/
-         TSSSb1XoQ+dp9JPmKSwlA51crsXy5YHyG4CBvBDK98ZSKwd8ZaF4t5jlySZCUzFagx2e
-         JUxbCxWwi2vG8/K5VjNx3st3oJ2xjGAZEBltKpEH8iB0VFPq+dZRYzMm3k9Gny8n8TNP
-         nhCw==
-X-Forwarded-Encrypted: i=1; AJvYcCUyl+gNbqzAjdm1kq5J7C/k+ZVzEyi17QM4WApisq+GrqjQyezZ8RkpPSMcXLqarXL53fw/YnCTYSXZWjQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwaP6I831Leuu5RrR2+x6pC17UtsbwLFP3nKFlTAAYMxnqleov8
-	mi3MCXpv00zGLCmDxk7FnywAYYsbmZ2R8z2uOvPbvg4EXbdL/ndogA9S+EHwDQuK9D8=
-X-Gm-Gg: ASbGncsHWvUFN4VEYJEvcV/98Hcn7sZEAUrdLfIWOTFulr8VDSxQsCTlh099W0B5eaZ
-	UpEDMX9nFGCBqeV4M+jK7Ag9mQckDMoJLviPUhamIL57IVhitVnwpV4Zy0WfxJJj/3XN5AVe9qK
-	OSQBIt72ik+dUQxiNpElP5BpF+wJzZypx0KKIwoGSNbKKGzE2sw+1rjtKn7YJNEFfYvBmpqkPXZ
-	RxarU5vQwYuPMs0Ampj4HmXQ+b5GRqUV4vxrUM9/zEIgbmotT6icI842erihTuDuXKSNdE8DYFq
-	g43/QWfULqw8GbyyJ/Zje71iNSENRV/MhO9BC/I5tnXRGgE2iVK0+ZeJHFhCmjzq8/JW0XK0xfD
-	F/udV4DWXBzK+2qH/g3yknH46zZhlFnD32RZynCOwqIxiI2eCoGHxHLQjwdDwdlGduFOP6PS3eT
-	jb
-X-Google-Smtp-Source: AGHT+IFLmvoREqyCOsxdVYWioPfB8QTyekqamyvK/6SevugbTh8+Sr7Hzt8HMarNXUtUBmALUpoibA==
-X-Received: by 2002:a17:903:46c5:b0:295:fbc7:d282 with SMTP id d9443c01a7336-297e566886emr96785235ad.27.1762772847847;
-        Mon, 10 Nov 2025 03:07:27 -0800 (PST)
-Received: from localhost ([122.172.86.94])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29651c8ef47sm143941675ad.74.2025.11.10.03.07.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Nov 2025 03:07:27 -0800 (PST)
-Date: Mon, 10 Nov 2025 16:37:25 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Yangtao Li <tiny.windzz@gmail.com>, 
-	Chen-Yu Tsai <wens@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Samuel Holland <samuel@sholland.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Nicolas Ferre <nicolas.ferre@microchip.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>, Maximilian Luz <luzmaximilian@gmail.com>, 
-	Hans de Goede <hansg@kernel.org>, Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, 
-	Daniel Lezcano <daniel.lezcano@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, linux-sunxi@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
-	platform-driver-x86@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 03/13] cpufreq: mediatek: Simplify with
- of_machine_get_match_data()
-Message-ID: <elghyjazfcsbwh4tmyfgfrbstfgpijgmlfu5kytbg7yvjtx2rf@v3riwtqr4itv>
-References: <20251106-b4-of-match-matchine-data-v1-0-d780ea1780c2@linaro.org>
- <20251106-b4-of-match-matchine-data-v1-3-d780ea1780c2@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JFsomVyJFbd0+D5y+sISVa7Lhqm0tCLr2FmLBB8rVSsnXgA6767/AGzztYt7dCCbjOXeypx9fNKPVv8AmlRQ7dMFnDNXHza+TQQKRiQwhg6OmuOWziK1AZVvN7rYC2fIdbTSjryEaGJ5qomMWy+L+ID6AAYj4m6GVK/vt3+CZ60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=uu5Vk6RF; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=SZYqnQdx; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=uu5Vk6RF; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=SZYqnQdx; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id A444421ECE;
+	Mon, 10 Nov 2025 11:07:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762772863; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6I4hHav4AAVyBAbi9Ov1eplEZvkyFsaDRFVXMuzOs08=;
+	b=uu5Vk6RFhUEUwm8355gsdD9wVZzmfE81ghPhkDKGuhUYZzxt98szn4SA5CW4Qi6kP1RUVd
+	cv8OKDM7XwlEitUfBhv+Vwfzhf+9hd3FbgHBomgZc2K8VvhydZ0TegXG7/aaEyslcuDdpz
+	8cn5xGGJ2Yl15RzmmVGV3czbHkuXtU4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762772863;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6I4hHav4AAVyBAbi9Ov1eplEZvkyFsaDRFVXMuzOs08=;
+	b=SZYqnQdxVX9yTNHhA+FBRpnFXkWFKQZXjLzGE4leQ2kuTaNhg3f2ZC7w3tLCwQsceuBdE4
+	K6/8GMb1pRrDVYCg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762772863; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6I4hHav4AAVyBAbi9Ov1eplEZvkyFsaDRFVXMuzOs08=;
+	b=uu5Vk6RFhUEUwm8355gsdD9wVZzmfE81ghPhkDKGuhUYZzxt98szn4SA5CW4Qi6kP1RUVd
+	cv8OKDM7XwlEitUfBhv+Vwfzhf+9hd3FbgHBomgZc2K8VvhydZ0TegXG7/aaEyslcuDdpz
+	8cn5xGGJ2Yl15RzmmVGV3czbHkuXtU4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762772863;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6I4hHav4AAVyBAbi9Ov1eplEZvkyFsaDRFVXMuzOs08=;
+	b=SZYqnQdxVX9yTNHhA+FBRpnFXkWFKQZXjLzGE4leQ2kuTaNhg3f2ZC7w3tLCwQsceuBdE4
+	K6/8GMb1pRrDVYCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 969981436E;
+	Mon, 10 Nov 2025 11:07:43 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id z8i/JH/HEWlFSQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 10 Nov 2025 11:07:43 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 4F538A28B1; Mon, 10 Nov 2025 12:07:35 +0100 (CET)
+Date: Mon, 10 Nov 2025 12:07:35 +0100
+From: Jan Kara <jack@suse.cz>
+To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Darren Hart <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>, 
+	=?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>, Anna-Maria Behnsen <anna-maria@linutronix.de>, 
+	Frederic Weisbecker <frederic@kernel.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] select: store end_time as timespec64 in restart block
+Message-ID: <whgf74jjaztowr36aivxcufbxdivfr6j3ef5u2yns5tdv73wmh@6ibbldmnuwbw>
+References: <20251110-restart-block-expiration-v1-0-5d39cc93df4f@linutronix.de>
+ <20251110-restart-block-expiration-v1-1-5d39cc93df4f@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20251106-b4-of-match-matchine-data-v1-3-d780ea1780c2@linaro.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251110-restart-block-expiration-v1-1-5d39cc93df4f@linutronix.de>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MISSING_XM_UA(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,linutronix.de:email,imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
 
-On 06-11-25, 20:07, Krzysztof Kozlowski wrote:
-> Replace open-coded getting root OF node, matching against it and getting
-> the match data with new of_machine_get_match_data() helper.
+On Mon 10-11-25 10:38:51, Thomas Weiﬂschuh wrote:
+> Storing the end time seconds as 'unsigned long' can lead to truncation
+> on 32-bit architectures if assigned from the 64-bit timespec64::tv_sec.
+> As the select() core uses timespec64 consistently, also use that in the
+> restart block.
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> This also allows the simplification of the accessors.
+> 
+> Signed-off-by: Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Looks good. Feel free to add:
 
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
+> ---
+>  fs/select.c                   | 12 ++++--------
+>  include/linux/restart_block.h |  4 ++--
+>  2 files changed, 6 insertions(+), 10 deletions(-)
+> 
+> diff --git a/fs/select.c b/fs/select.c
+> index 082cf60c7e2357dfd419c2128e38da95e3ef2ef3..5c3ce16bd251df9dfeaa562620483a257d7fd5d8 100644
+> --- a/fs/select.c
+> +++ b/fs/select.c
+> @@ -1042,14 +1042,11 @@ static long do_restart_poll(struct restart_block *restart_block)
+>  {
+>  	struct pollfd __user *ufds = restart_block->poll.ufds;
+>  	int nfds = restart_block->poll.nfds;
+> -	struct timespec64 *to = NULL, end_time;
+> +	struct timespec64 *to = NULL;
+>  	int ret;
+>  
+> -	if (restart_block->poll.has_timeout) {
+> -		end_time.tv_sec = restart_block->poll.tv_sec;
+> -		end_time.tv_nsec = restart_block->poll.tv_nsec;
+> -		to = &end_time;
+> -	}
+> +	if (restart_block->poll.has_timeout)
+> +		to = &restart_block->poll.end_time;
+>  
+>  	ret = do_sys_poll(ufds, nfds, to);
+>  
+> @@ -1081,8 +1078,7 @@ SYSCALL_DEFINE3(poll, struct pollfd __user *, ufds, unsigned int, nfds,
+>  		restart_block->poll.nfds = nfds;
+>  
+>  		if (timeout_msecs >= 0) {
+> -			restart_block->poll.tv_sec = end_time.tv_sec;
+> -			restart_block->poll.tv_nsec = end_time.tv_nsec;
+> +			restart_block->poll.end_time = end_time;
+>  			restart_block->poll.has_timeout = 1;
+>  		} else
+>  			restart_block->poll.has_timeout = 0;
+> diff --git a/include/linux/restart_block.h b/include/linux/restart_block.h
+> index 7e50bbc94e476c599eb1185e02b6e87854fc3eb8..0798a4ae67c6c75749c38c4673ab8ea012261319 100644
+> --- a/include/linux/restart_block.h
+> +++ b/include/linux/restart_block.h
+> @@ -6,6 +6,7 @@
+>  #define __LINUX_RESTART_BLOCK_H
+>  
+>  #include <linux/compiler.h>
+> +#include <linux/time64.h>
+>  #include <linux/types.h>
+>  
+>  struct __kernel_timespec;
+> @@ -50,8 +51,7 @@ struct restart_block {
+>  			struct pollfd __user *ufds;
+>  			int nfds;
+>  			int has_timeout;
+> -			unsigned long tv_sec;
+> -			unsigned long tv_nsec;
+> +			struct timespec64 end_time;
+>  		} poll;
+>  	};
+>  };
+> 
+> -- 
+> 2.51.0
+> 
 -- 
-viresh
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
