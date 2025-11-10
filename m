@@ -1,198 +1,122 @@
-Return-Path: <linux-kernel+bounces-893739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCF8CC4839E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 18:10:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D87AC48419
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 18:16:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD7A4421324
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:59:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8786C3B8A4A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:08:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 101A528314E;
-	Mon, 10 Nov 2025 16:59:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a7Xym/2h"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C1302F693A;
+	Mon, 10 Nov 2025 17:08:55 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0013.hostedemail.com [216.40.44.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E926727FD43
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 16:59:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FC8B28CF66;
+	Mon, 10 Nov 2025 17:08:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762793951; cv=none; b=c3KOEp2y2KkI81ZKtAR/nrYHOZuGMUGTPzp/mKzv3VXqxZ4b/U82MJ7fQuaTajZxhZ4heAk5NGHVy3ZSqXTh4ejzX8UG7ZbUqnUBkTw4Ak3Q/it57PJfjePMJgNuXKco7qKZ35E7aYdfiAOP3f80VdIjKsN4YQ5frzjMMtMkFSs=
+	t=1762794534; cv=none; b=kVN2CetqQips5RdojYnRYw6rMQuDqVDBIBfZ2atUcITgfB8fKmOdfQbt1/Ly6DA3oxzAQIJkBeIZXB76iJ0ZnIYVXYsneooGiC3vsnrqxBTx/f1gmj1lQWM/z/42ShrlAgw3xEFg3YIGOBdvPBGarGQLTUikuW6i9QvkJBAAYzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762793951; c=relaxed/simple;
-	bh=LYbjQEMZCCtkEu/DlDOm6lolA/HDUDt5lHXbIgawNAw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mGZ8bwD806MqCLnyzKzFNbrJhF+M5TOPbkz6uS+TGBDNXHvW0H5lcogGBldHEVmYkQrZJz3mN+fhB2Yh8UiFt6nRTSMKcm1Urq2iwphq4GPlzyBzTk7UxAkqITKBGrJejgkkaJ/uBrdz77SP9fVx3VsyPffbgMMvTQ4ScXb4JCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a7Xym/2h; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-6419e6dab7fso1452331a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 08:59:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762793947; x=1763398747; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6E8F8bYQt96owYWb+j7C22xaikBLl8OvGV7Z+ov47cs=;
-        b=a7Xym/2hUspby0lnzO9y/i5EVgs7s8Q/AN0fkm9y7Fet66uCaOKaOxPNWOxhuOmfiG
-         WOwECjuUbpSKMDA2/UBgoZIY2fSBdRo8RHvB3Rdt9ZZgv/ATaIxokc1ejO99yYkGL69I
-         /UwvDWMcZCnb9LjL/Xz5sJRLji9ACCkESjyLQ3znR71d3AtqnERRSqc0VGaNOtaz+fQw
-         eip4JiHsMtiWElrtwP1oDmZbc9Fu638A6dfOIG0JydEUuIJ9cpPkJ8kSs3kPZVIRoNC8
-         /ROhad0ozbYMs04YI3eARP4pNV+1PySAvO84mC1mtNtg6d8kfcDRqVUD5NhuItwkGNW0
-         dejg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762793947; x=1763398747;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6E8F8bYQt96owYWb+j7C22xaikBLl8OvGV7Z+ov47cs=;
-        b=Q8/n0cZjTFwudsSUe1O9FXxsoY08HiGlB9DsdVhg+0LR71U5WlZQ9SyShDADAUC7n5
-         PcGIibx2wK9fRVO70zHfm1PI4Uk3ZyrTHbmeJdOHKFYK3O8C1n463QyrbsBwMi1OOGt8
-         diTxT4S8Hf2C9ZLkOVMuNJEqE9hdKlEJos81i2rU0GqBuDf8CCdjfrPoehmkWvpmLTmg
-         m17o7EAAvwSgENatyAmqtQfNTyrf73nDY4f0kMUlCFolpWAMPaumAj8qMXvizVOIURcY
-         MiOl9q5vmQnGcbFQ/jNKTadSelgTiE3PqF/Kuem0U/8yvoKc9pKArYUhBRX4qdAEkQ5h
-         CVcA==
-X-Forwarded-Encrypted: i=1; AJvYcCW0WxjN7Q/3rMSWw54Hw8JoHx26pglHTvsdOIJxkHrk5yxt/mFELLGphiKhbctBiFLkkd8/SvTIO0RNgBI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywe0s+n5kIs0FEmL71AYZsb1u2Idi2ZEtiFIXoZ4jRf1KOz2DMC
-	KwScRj3Jz5oOYTLs0DMdnsLizrQ4kyA669qrhj/0F1upB6I7TfWgaGxE
-X-Gm-Gg: ASbGncvEN733ygw0kPlQvmQ0Au7p7Lz/Gd+UtaELXHUaO5iyGZf/SJV/Ii4NQ+CazNb
-	OUHi6sUxxbsLHd5P2g6zjWNhf/6JayLzX3bv3wNM4Lo2vWi+eVXKgfi8VvQaiSjrxQIP5vZohEQ
-	1PPCWqT1StN/S/sSYtVCx1b+HzR4ZLTGiA6zo/ZydD7pOc3JYDsmT3x42y6H7IvXnwSyM6Yk26x
-	mC9DutSLB5LeLY0raTtgsERkFej6sXufv41hbIZ2ZSs1p892dFh/oIWV6f4xZNzDGauq5Mq7GgW
-	hZGbXc7uwUbgS7VBiJ9M92QhAoYWCf2c8UOuz4E4EaMui1+7bi7ox5XzYqtbC5A3yDkVnqPTNz3
-	xfLOfuR9WZ91cYFdtiJUqX/OYwX7zQrw3QcFej9FyTzpf0Sj2IiyAUu8ty8S+o2h4FVLQ1Gxhu9
-	WDyYfw4TBQkFdl58F4+x1sp70h3tBXRJvqstRMv50slQ9i/xe9
-X-Google-Smtp-Source: AGHT+IH9HXzouFHF6eIXCeLRTXtlUoXhQtjoFHj+QNHModjG38wGnKmb7jL9MvhrQdpTz+2QkN+Buw==
-X-Received: by 2002:a05:6402:51ce:b0:641:72a8:c91b with SMTP id 4fb4d7f45d1cf-64172a8d095mr5839822a12.34.1762793947130;
-        Mon, 10 Nov 2025 08:59:07 -0800 (PST)
-Received: from f.. (cst-prg-14-82.cust.vodafone.cz. [46.135.14.82])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6411f86e0cesm11894917a12.33.2025.11.10.08.59.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Nov 2025 08:59:06 -0800 (PST)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: viro@zeniv.linux.org.uk
-Cc: brauner@kernel.org,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH v4] fs: add predicts based on nd->depth
-Date: Mon, 10 Nov 2025 17:59:01 +0100
-Message-ID: <20251110165901.1491476-1-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1762794534; c=relaxed/simple;
+	bh=sPyIuEy8M2xGyscr0ZqxVwNQTghpKPhthp/45Asx9tk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XikPigamfV9Xp759jyn+sZqGmwJ/IL+pMAEOSTsD5mJe3JWwTHC+oUPmjEuCaSFKBP3MNLRSex5I61WXYicSZhheh3Yxk/YUCncdPUSIpCZwG01xofCJ55wVT3UsaKcZNRV6/Uxv75gBlJYeIXsCD3sa+vBN/1DcLBWUwI0Pb+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf14.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay01.hostedemail.com (Postfix) with ESMTP id 220901DE3A8;
+	Mon, 10 Nov 2025 16:59:02 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf14.hostedemail.com (Postfix) with ESMTPA id 150E433;
+	Mon, 10 Nov 2025 16:58:56 +0000 (UTC)
+Date: Mon, 10 Nov 2025 11:59:05 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Joel Fernandes <joelagnelf@nvidia.com>
+Cc: Timur Tabi <ttabi@nvidia.com>, John Hubbard <jhubbard@nvidia.com>,
+ "dakr@kernel.org" <dakr@kernel.org>, "lossin@kernel.org"
+ <lossin@kernel.org>, "ojeda@kernel.org" <ojeda@kernel.org>,
+ "boqun.feng@gmail.com" <boqun.feng@gmail.com>, "a.hindborg@kernel.org"
+ <a.hindborg@kernel.org>, "simona@ffwll.ch" <simona@ffwll.ch>,
+ "tmgross@umich.edu" <tmgross@umich.edu>, "alex.gaynor@gmail.com"
+ <alex.gaynor@gmail.com>, "mripard@kernel.org" <mripard@kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>,
+ "rust-for-linux@vger.kernel.org" <rust-for-linux@vger.kernel.org>,
+ "gary@garyguo.net" <gary@garyguo.net>, "bjorn3_gh@protonmail.com"
+ <bjorn3_gh@protonmail.com>, "tzimmermann@suse.de" <tzimmermann@suse.de>,
+ "airlied@gmail.com" <airlied@gmail.com>, "aliceryhl@google.com"
+ <aliceryhl@google.com>, Alexandre Courbot <acourbot@nvidia.com>,
+ "joel@joelfernandes.org" <joel@joelfernandes.org>, Alistair Popple
+ <apopple@nvidia.com>
+Subject: Re: [PATCH v2 08/12] nova-core: sequencer: Add register opcodes
+Message-ID: <20251110115905.68bd2826@gandalf.local.home>
+In-Reply-To: <b07b21e8-5dd4-4d40-bcad-dd8dc4fbaef4@nvidia.com>
+References: <20251102235920.3784592-1-joelagnelf@nvidia.com>
+	<20251102235920.3784592-9-joelagnelf@nvidia.com>
+	<d6c9c7f2-098e-4b55-b754-4287b698fc1c@nvidia.com>
+	<0FF9536C-8740-42C3-8EF1-5C8CD5520E49@nvidia.com>
+	<93c758298250d2be9262256a698c243343b64ebc.camel@nvidia.com>
+	<3c625930-348a-4c96-a63a-6a3e98e59734@nvidia.com>
+	<acc56fbb56c3f40119e5a6abf9f13093d7f4c7e7.camel@nvidia.com>
+	<ac85d8be-3cbd-4a51-a627-3a1a9926d801@nvidia.com>
+	<b07b21e8-5dd4-4d40-bcad-dd8dc4fbaef4@nvidia.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: bo8n554brdybxe8tzkoe4zkojd6htetn
+X-Rspamd-Server: rspamout01
+X-Rspamd-Queue-Id: 150E433
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1+H1piAeME0Nak4QTI1kjlWaClalfQMSFM=
+X-HE-Tag: 1762793936-15452
+X-HE-Meta: U2FsdGVkX18TeH8c44PwmQl/1Qx235QkyrGTE7kzUCFZNeIues/vHHR9gVsLOKSe70MgRYhlbKVtXukGhUco+yVUjRsy9xPF+C8Y6/xUVN5JPLrB93Fwkk+2uuXkJjtAhswbXwYHgrCXgdQD1BfUR5/5QQyUoDoJHnFAhiQDpwM4PX63cOWwTdQKoO+XwzmFExHfqne3daMVosLc3oQ91W7DlejwGHdcbYTjjLoD/wmQl5oDz8Sq3jfGi7KsTCxslWalMmXuHYU/O0p3AaaTW/IHAEv2no9GbmaY7vN9KIk+Ae3tCkrmiWoPoe1qBt0iabYI3JpUK9WBEmdsWBaqrBOTGQFbwqXz
 
-Stats from nd->depth usage during the venerable kernel build collected like so:
-bpftrace -e 'kprobe:terminate_walk,kprobe:walk_component,kprobe:legitimize_links
-{ @[probe] = lhist(((struct nameidata *)arg0)->depth, 0, 8, 1); }'
+On Mon, 10 Nov 2025 10:16:45 -0500
+Joel Fernandes <joelagnelf@nvidia.com> wrote:
 
-@[kprobe:legitimize_links]:
-[0, 1)           6554906 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
-[1, 2)              3534 |                                                    |
+> > IMO, the best way to do this is the tracing subsystem. It is the lowest overhead
+> > runtime kernel logging system that I know off, lockless, independent of the
+> > serial console etc, next to no runtime overhead when off, etc.
+> > 
+> > I recommend we use the tracing subsystem for "trace" and even "spam" level
+> > logging levels for Nova. The brave souls can always ask the tracing subsystem to
+> > also spam to kernel logs if they so wish.
+> > 
+> > ++ Tracing Czar Steven Rostedt as well. Steve, Nova is a new modern Nvidia GPU
+> > driver.
 
-@[kprobe:terminate_walk]:
-[0, 1)          12153664 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+Not sure if there was a question here, but you can enable tracing via the
+kernel command line and it will record into the ring buffer, and read it
+out via /sys/kernel/tracing/trace. You could also create instances by the
+kernel command line that will place events in different ring buffer
+instances (/sys/kernel/tracing/instances/<instance>/trace). You could even
+filter the events based on the trace event fields, process ID, CPU, etc.
 
-@[kprobe:walk_component]:
-[0, 1)          53075749 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
-[1, 2)            971421 |                                                    |
-[2, 3)             84946 |                                                    |
+There's also a tp_printk kernel command line option that will turn every
+trace event into a printk() statement. You need to be careful of what
+events you enable when doing this, as some events (like locking events) can
+live lock the system if they are piped to printk().
 
-Given these results:
-1. terminate_walk() is called towards the end of the lookup. I failed
-   run into a case where it has any depth to clean up. For now predict
-   it does not.
-2. legitimize_links() is also called towards the end of lookup and most
-   of the time there s 0 depth. Patch consumers to avoid calling into it
-   in that case.
-3. walk_component() is typically called with WALK_MORE and zero depth,
-   checked in that order. Check depth first and predict it is 0.
-4. link_path_walk() predicts not dealing with a symlink, but the other
-   part of symlink handling fails to make the same predict. Add it.
+After boot up, you can turn off the tp_printk with:
 
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
----
+  echo 0 > /proc/sys/kernel/tracepoint_printk
 
-v4:
-- fix backwards predict in link_path_walk
+-- Steve
 
-v3:
-- more predicts
-
-This obsoletes the previous patch which only took care of
-legitimize_links().
-
- fs/namei.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
-
-diff --git a/fs/namei.c b/fs/namei.c
-index 2a112b2c0951..11295fcf877c 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -785,7 +785,8 @@ static void leave_rcu(struct nameidata *nd)
- 
- static void terminate_walk(struct nameidata *nd)
- {
--	drop_links(nd);
-+	if (unlikely(nd->depth))
-+		drop_links(nd);
- 	if (!(nd->flags & LOOKUP_RCU)) {
- 		int i;
- 		path_put(&nd->path);
-@@ -882,7 +883,7 @@ static bool try_to_unlazy(struct nameidata *nd)
- 
- 	BUG_ON(!(nd->flags & LOOKUP_RCU));
- 
--	if (unlikely(!legitimize_links(nd)))
-+	if (unlikely(nd->depth && !legitimize_links(nd)))
- 		goto out1;
- 	if (unlikely(!legitimize_path(nd, &nd->path, nd->seq)))
- 		goto out;
-@@ -917,7 +918,7 @@ static bool try_to_unlazy_next(struct nameidata *nd, struct dentry *dentry)
- 	int res;
- 	BUG_ON(!(nd->flags & LOOKUP_RCU));
- 
--	if (unlikely(!legitimize_links(nd)))
-+	if (unlikely(nd->depth && !legitimize_links(nd)))
- 		goto out2;
- 	res = __legitimize_mnt(nd->path.mnt, nd->m_seq);
- 	if (unlikely(res)) {
-@@ -2179,7 +2180,7 @@ static const char *walk_component(struct nameidata *nd, int flags)
- 	 * parent relationships.
- 	 */
- 	if (unlikely(nd->last_type != LAST_NORM)) {
--		if (!(flags & WALK_MORE) && nd->depth)
-+		if (unlikely(nd->depth) && !(flags & WALK_MORE))
- 			put_link(nd);
- 		return handle_dots(nd, nd->last_type);
- 	}
-@@ -2191,7 +2192,7 @@ static const char *walk_component(struct nameidata *nd, int flags)
- 		if (IS_ERR(dentry))
- 			return ERR_CAST(dentry);
- 	}
--	if (!(flags & WALK_MORE) && nd->depth)
-+	if (unlikely(nd->depth) && !(flags & WALK_MORE))
- 		put_link(nd);
- 	return step_into(nd, flags, dentry);
- }
-@@ -2544,7 +2545,7 @@ static int link_path_walk(const char *name, struct nameidata *nd)
- 		if (unlikely(!*name)) {
- OK:
- 			/* pathname or trailing symlink, done */
--			if (!depth) {
-+			if (likely(!depth)) {
- 				nd->dir_vfsuid = i_uid_into_vfsuid(idmap, nd->inode);
- 				nd->dir_mode = nd->inode->i_mode;
- 				nd->flags &= ~LOOKUP_PARENT;
--- 
-2.48.1
-
+> > 
+> > I guess we have to decide how to do this - what kind of tracepoints do we need
+> > for Nova. One use case that just came up is RPC message buffer dumps for
+> > debugging communication with the firmware.
 
