@@ -1,476 +1,260 @@
-Return-Path: <linux-kernel+bounces-894185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6D37C496F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 22:39:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A21CC496FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 22:40:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85C781884BB4
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 21:39:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F02351886054
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 21:41:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C708F2F5A02;
-	Mon, 10 Nov 2025 21:38:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 544F632ED35;
+	Mon, 10 Nov 2025 21:40:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O0M0zD4y"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kE3Fwcft"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FCA632D0C4
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 21:38:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762810738; cv=none; b=sBsjI0MeRbJtp/zKtPcC6ANp+kdbQpgYCqg6pfTvg+m+VmZyY3wb7zSHKaaqE5XnuOUveYnbccBiLsNCvHQF47KMNyJuRsfbsC+omaaov4OmDSbPzWTuOcJ9bYklzH0jgyr2yH20mpVqtlDH+K+VTxnOhlMisrYN6WAPkvWKIjg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762810738; c=relaxed/simple;
-	bh=cTdgEbBzQVj0+Jsk5gVE414ysvFa19EZPgFiisqpJ5M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IftA2e4JaVwQsySDeEmXrN7dsHcc+cdd7WRQwRuXaakcaffPspPUwWIoBExA/oM7mOKydCD8YxTBGqpASmgnJZoh+YbDZpoTyb3TxYtsDyQJM3Gq+giDz0XwK4mhejXbEdkiWF0GzrA/JPuU5jFEhlWRfNE/+bwsaTXolLsFwco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O0M0zD4y; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-42b379cd896so1008202f8f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 13:38:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762810735; x=1763415535; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gKeG3s/W/qSrdcqT78Gs/bWuaBXLVMnbI+0M79sKo3Y=;
-        b=O0M0zD4yMInmGF4eOihyFDaAgWyYoOc27QE4JrLLkCp+3LXrp3NR8P8KAz9Zwbu4sz
-         CvCce64n+UxDj+WzS81orgUR/dP7R0YQbkocflym6zejHQ6Zr3+gTYURyW8DD0jzPac9
-         sgGAD9j57W05FcB7zR+k6fWQSZ8mGrRY9Q/akuHecCXjDZZw4w8IakgVK3zaJHv8S0fI
-         pkW4Lf7Jj7D0Pl++zllNNOZ4vt5FNmBwng1jHsAT//tdOo9nUusm0Uy8v9ENXaIk0LIe
-         kr69PjaTMNu9eFN26yE/83INQBKP0/kKgQocIDM9JmJJ31Ot/wxffS9qCNeenM/rQ/Ug
-         mpYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762810735; x=1763415535;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=gKeG3s/W/qSrdcqT78Gs/bWuaBXLVMnbI+0M79sKo3Y=;
-        b=iVTbxjGQP3d35ok3ZKEb2q/dE0EozMnlkUuUN4h64UK29OM/s9XizNffr3NQDVCnQ3
-         uHlNJOQcVkitH4uVj7tsxPp3XyHm0qvV6RavmFLDl3qzkFcXSn4IGN/oOgTWnafLnwqq
-         UfNXKxZbAYbj4dd3uxnxctyWgfol0ke/T9sdV+bTUzUCKvKPqX0pMWhcuoOTX/uOIGKP
-         GVs0J7wt6+fVXusvcsl+hgCr5tgoNZDDGnf/cEKfg8gKgysp6gB91JmaW2+ux/WpazfT
-         TsGPVhl0hAOjNAcHA6OkPncI78WuPDXVSHCtGguXJWk1zKMbhakk6P90IMbQZrNhbLJs
-         GRpg==
-X-Forwarded-Encrypted: i=1; AJvYcCUShKad076vA+6rU+SKjQQjwoAmjhFqyW9IW3Y1UxQ9TZiajYv2HBmUISRU7t+GOp6AyU1bCoXlDbSM+H4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YywHg56dhtOfcpB2mOSjqxL/zIUUyIZj7LKyBKB5GFmiOdrAls9
-	9oprrKyl1a6hnh79QoNGgtF97m0x7m7h1prc7+4nkFEg1DVRytIeAgCoXwV+Q+OhejPTch6+Kc7
-	wKYTnRMSMZiYyyXLCy+Um03kwkYWTEgg=
-X-Gm-Gg: ASbGncsT/y15cHh2eGRonStc7uXFa63QGSgwLWmUwhbe+GAZieF5IRuQ/JvJ5L5WEx4
-	bvgB4F4HH4ZHBpak/ed/WEMQwJXe1I84asQh27g+y3iOfdXKL7vp47vmXcup7PvyEmb/uIkZEip
-	O/xB2ooHr8s87JEpeIB1CpwJjKtp3JP7XCZhx3J4bd/xmkqXBQlCxFCwEciBLzxvl25lBoVdBkl
-	c7LWd6kGZzBEwDbAFYnYyuwsPlxwnSj4R5FUZyIpAx6IA9XITWjENmUaNTFZA==
-X-Google-Smtp-Source: AGHT+IEkjjibfkmx2CZAzFzB++b/Z6pjVW3//MbnY2TuzRb79D5BUaXVRojqYqi9CAVOksR9Vhda87sXtYzfjBEJpEA=
-X-Received: by 2002:a05:6000:200e:b0:427:9d7:86f9 with SMTP id
- ffacd0b85a97d-42b2dca3f67mr8790808f8f.47.1762810734542; Mon, 10 Nov 2025
- 13:38:54 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEA011EF0B9
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 21:40:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762810839; cv=fail; b=noUEDOoyxI/MmNfNnJ0Bzi7q04fied4iPzRFcBE9rT+TaYBxxZG6bKxjdnEpxlV/KudfAjutLxzSM3gLbneUTF+XlVyhk8QKUrU/pKqMSsrwwWVdD8C7ZJDX7Pzta4+pH5VlekAhFsCRGPQhJbwo+uyBKowIR0cacKn7txpjbFI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762810839; c=relaxed/simple;
+	bh=PyWICkO+ffG2jpzVEQIeb12Wf2TKBVUTlcf9J3iBtKs=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=gMv0vpAPCImdYldSuL31I4OQ9MC8QAERaBtkErgyXcVHeEPHup3kH8XpfBCm4XjxvpKwlACyV9Jiq0ipKmKuv8VAehrPXkGCbf5gzRUsz/vFpRxHocCuIjhzTRzS4FJAIuO+K5f11rbOcP/BMd6ewt5PPw/QoQWIIEEQhY+z9gw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kE3Fwcft; arc=fail smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762810839; x=1794346839;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=PyWICkO+ffG2jpzVEQIeb12Wf2TKBVUTlcf9J3iBtKs=;
+  b=kE3FwcftMy0VzYgolBFqf3ZeqBtojTaxx+xzfopITRbhmtzJZuagYD5W
+   v77nROz6FmBkxUeOL9RSXUXMUs1W2VcsghCQzilNnFOatP6VgoFpajQ09
+   Kd5iZP84wUHsk5PlEi9s3Mhw5xLJuGPjXxflPbCtGYKqUSAzWLLswqrDo
+   n7VzmoyfQU8vb32e0c1gFf3BEwbIh9F6tMQyuKfjLV5edsSouDUGDyEan
+   TIoV/vZ3FUXqWfqdQN1ahKx0R6u6TzBEGIFbu02olUOAHVbB2Mb1nPbpy
+   08J+IZ7J57+csijnjh8ZWnRLHRsMFh0Fh8TiRyivF2hSFu522JjsvJyZF
+   Q==;
+X-CSE-ConnectionGUID: tdXzIDFsTmmHTwkVn7aO5g==
+X-CSE-MsgGUID: NiH9sV9IQyiW5cpjLD6c6A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11609"; a="68717880"
+X-IronPort-AV: E=Sophos;i="6.19,294,1754982000"; 
+   d="scan'208";a="68717880"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 13:40:38 -0800
+X-CSE-ConnectionGUID: HrXQlOl9SkiSuxaLFkVV8g==
+X-CSE-MsgGUID: OLddmZKlR++N6MzdSqH8sQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,294,1754982000"; 
+   d="scan'208";a="219495582"
+Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 13:40:37 -0800
+Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
+ fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Mon, 10 Nov 2025 13:40:36 -0800
+Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
+ FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Mon, 10 Nov 2025 13:40:36 -0800
+Received: from SA9PR02CU001.outbound.protection.outlook.com (40.93.196.19) by
+ edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Mon, 10 Nov 2025 13:40:36 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=wUet5QWzAiXNmx6ULZhcmYX0PE1853tMiWC1ezR4GNMrMvrLe8TWq2DlNO/A4MAnbQFY2vtXZOnyi2lafV5C2SR3iva5cg+H3Uypykvr/9yIE5lKSnGPnH0DVEZ+kIXjfXIF6zK7aIjSuNGQlEtevClwctiBuRtCOaxtPE8Wj+mNwGM/d7LRmsQUFgi1hU6Bd+SBKsFoImp5ag9YJ42rh8qENhCrn/bauCScVI+U8kd9BtZk4+LdU8uxDm7CDpgTtbwkXbdK47I/cIiP9jFuLS+OlgjR0kWoswJF0ALFkN39Tf6MddAbb7zGyEaKG1XY+jfj0w4ixCbI5eo7TPTQqw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+fVNIS57CZRZOC6EVvDN1/5f8RaIg9Fz9P5mQWD1xqU=;
+ b=W4OzZJspWcOVx2iREb7U3T/pm04kNc+fa6V7V+K5GUHnN+Djri/jn/YJx9rxceiALCl16ukO59oupvGI4ViaMJtsGgXn1FohxR3s0wGCH1YqVD5RcmErRs8EQr/5VTPgamVOwuyUk/IFNcP6K86YRP3jbjOsC4vxtPcQSOc4aSrf2boW/PIz2FMFZcuJh+KK1ON1yUZLzNoFrhoH/AatyeEl44GfUE31lqSHhN1p+xlDW6C2FuVOn9T3DfSIs4oxWaoZbYq3TkJ18Xrg5b5hdVBs9dsU8oEBEFskX74j+/JdHJNh17Dxv1nPTKJWwHFhFXodRbem9AwIRpHtf8dlTQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
+ by SA2PR11MB4780.namprd11.prod.outlook.com (2603:10b6:806:11d::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Mon, 10 Nov
+ 2025 21:40:34 +0000
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf%3]) with mapi id 15.20.9298.015; Mon, 10 Nov 2025
+ 21:40:34 +0000
+Message-ID: <f5ac9fea-1c57-419a-befd-1caf946d6005@intel.com>
+Date: Mon, 10 Nov 2025 13:40:32 -0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] x86/resctrl: Add io_alloc_min_cbm_all interface for
+ CBM reset
+To: "Luck, Tony" <tony.luck@intel.com>, Babu Moger <bmoger@amd.com>, "Aaron
+ Tomlin" <atomlin@atomlin.com>
+CC: "Dave.Martin@arm.com" <Dave.Martin@arm.com>, "james.morse@arm.com"
+	<james.morse@arm.com>, "babu.moger@amd.com" <babu.moger@amd.com>,
+	"tglx@linutronix.de" <tglx@linutronix.de>, "mingo@redhat.com"
+	<mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20251107012401.224515-1-atomlin@atomlin.com>
+ <20251107012401.224515-2-atomlin@atomlin.com>
+ <2a0b270a-e398-4d88-aa10-421f2769a759@amd.com>
+ <53iuqiul6uo7zj6sfckm2h465cjusaxvpxrtdmnbmhvbzuqiq6@7ogm3zqddzjd>
+ <fa2c3cbc-2af6-4d98-bd70-8ab49cb0d83e@amd.com>
+ <4whfbgq336xfuov4i4nwwrn35ywwlwizuvpdlstmdqzkhvwrq6@eits26xbwyz6>
+ <bcc8e6d2-8e91-4e91-9dab-f1c00f99c408@amd.com>
+ <SJ1PR11MB6083701B503CE361E3D7A656FCCEA@SJ1PR11MB6083.namprd11.prod.outlook.com>
+ <f4a043d2-9cb0-41c9-a45d-31f96fd007d5@amd.com>
+ <SJ1PR11MB60836AB4270419338FBB4D1EFCCEA@SJ1PR11MB6083.namprd11.prod.outlook.com>
+From: Reinette Chatre <reinette.chatre@intel.com>
+Content-Language: en-US
+In-Reply-To: <SJ1PR11MB60836AB4270419338FBB4D1EFCCEA@SJ1PR11MB6083.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: MW4PR02CA0024.namprd02.prod.outlook.com
+ (2603:10b6:303:16d::9) To SJ2PR11MB7573.namprd11.prod.outlook.com
+ (2603:10b6:a03:4d2::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251028165127.991351-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20251028165127.991351-6-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdWSB4OvS5AeWqOBQPNG2J9VMYe9YUeXAp9kPjcJEQm3+g@mail.gmail.com>
-In-Reply-To: <CAMuHMdWSB4OvS5AeWqOBQPNG2J9VMYe9YUeXAp9kPjcJEQm3+g@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Mon, 10 Nov 2025 21:38:28 +0000
-X-Gm-Features: AWmQ_bkBTTeO5RvxzqkAQX0F83hRREO1oo07OyPg6IEMnJcpjj4Wjh6daMvSTc4
-Message-ID: <CA+V-a8sC44HeShCFdk2xwTHMdcOo+8btNh9i0hthTEUMdnhqAQ@mail.gmail.com>
-Subject: Re: [PATCH v2 5/5] clk: renesas: r9a09g077: Add xSPI core and module clocks
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|SA2PR11MB4780:EE_
+X-MS-Office365-Filtering-Correlation-Id: 01464aad-3132-4a3b-630f-08de20a1c77d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?M2tCNzlDajZOemRRVk1RL2JGWUo1U3VyaGFzVHlVdkN0SjJVdWpZVjB0WGhx?=
+ =?utf-8?B?WW8rZVY1QW1YWVpjVlduZ0MzTEpYYTljQ25xTUZmOURFSkg0T2dwdlF4WnRo?=
+ =?utf-8?B?NnpMRVc3K3VyRU1PYXB0SnF2ODJNdFA4d1pMYkxXVDNEaG44RFdmUWw0YkNi?=
+ =?utf-8?B?b3BxRG5JNHZWcW03Tkw2b0FzRmZUbmd6T3hSTDdRTzBqY2pIbEwwZzU0RjNy?=
+ =?utf-8?B?OTI0QUFCY1VGemdReDBxOGdteGFhMHNOa3NkUExLSXNFNmg1QTNMUTAydHZY?=
+ =?utf-8?B?RW1lbHN6TFdWSy9FdW1ISW9MVzhKdjRzVHVyWkcrTkZLQVF5RnFhZzFvRnF0?=
+ =?utf-8?B?Um41MWpkMnVyd0IxOEdiamZsbFdwM0x2N2dwbTVvc2xRQWpPYWpucmUxWXp2?=
+ =?utf-8?B?c1J4dmg2TU9hZDhYeXFZSS91S250dmZkS2NYaTdFRXIwNnF6Q2RjeHdOUXV1?=
+ =?utf-8?B?S3ZsazNmTEhmcHVjbnR5ay9rUVgvMHNjblBDdk5BdEtlV3NjbzVzcmRROFFk?=
+ =?utf-8?B?QnFIZ0pxN3pyblJKRzdxYU43d0txQlpiTTFOdlk2M0pXZWZpWFZzLzRxcnJQ?=
+ =?utf-8?B?a0xYK1hKMGpyY25QTFFreGhNZ3ppcE44dzF5TnBZR2JhR3lkOHUyaVdLVC9B?=
+ =?utf-8?B?Zk00V3pnKzFhK0NqUG03MjY1K1NDWmc1Njg0dWhIbGw4M1ZBR3FuZWlXNkZv?=
+ =?utf-8?B?YSs3TWxmWmVPVTBBMCtBSUVHV2F1NjJRS3NkdzNibW5aZXdUa0NKQktYZDNL?=
+ =?utf-8?B?K3ZnOS94NXk2TDArcVFqcFFwK05rUFdMN0FkZmlucVN5OGlWZGU2ZjNOdVVK?=
+ =?utf-8?B?VGExNnZZdUFxQjJZaEMwMTlwaXlRbndJbERwZm14SnB6c3dnbm91YmF1UWRX?=
+ =?utf-8?B?TDRndDhVckhVTFFmU21CVWtlZFBUUVFqeTladGpjTmtxdjlQODB4RWN3Tmsx?=
+ =?utf-8?B?ZW1PSm41ZzRuNU94SEJJK2ppbjMwRnlVNGpMaFZ6QS9HM2JGdlltcnYwYTlO?=
+ =?utf-8?B?UGVkMkR4eHpOeWNuUm9tSENkdUVEd1lMKzZKUGZxekFVaVVQS1k1OXBObHhB?=
+ =?utf-8?B?SUtvVFpnbEZES05uOGo3aE41WldLZXpkZFRZMzRqQmoxaFJzOXRJRnhNbm5a?=
+ =?utf-8?B?S0lWTEVwL0pkeEN3TEVodUFxT242QVJuZFlITlEyb1VsenZBZnJSY3A1UnIx?=
+ =?utf-8?B?eEtjUE5PejRsNzJuSVdKNEVDMlVtUHV4cGhFait2cFB0RWRJcGQ5MTZac1lo?=
+ =?utf-8?B?M3lESjZpS2VwaWVWN2RETHozdmRxUDdKZWlmMVlmMHRXNFpOK1pNRTU0ampI?=
+ =?utf-8?B?WHJLSjJSY0JMN1FEc0QvQnBqVU13TGxKNGFISUZvcFdGVHVBZHlnekNaR2VJ?=
+ =?utf-8?B?L1VqUTlLTFRmblpjbXVMem04bnBkaFZGdlFSYWtVbkYwc2dWVTNXRU9MZzdu?=
+ =?utf-8?B?emR6NU53eXhhRjdJUWQrcTZveklBc2F0UkE3RC85eVNORk51VGVwVFF2ci9p?=
+ =?utf-8?B?L1BPSjErRitJWnIreEJaV0diWnhFUDJZZWlTMTVkRUFhb3NNbmxhREowbk5V?=
+ =?utf-8?B?SVZvYTJZUk9RMzF2UThVNWlTd3MzMHpQaXpwRjl6ckFvSlRZR1NnWkVzS3pa?=
+ =?utf-8?B?ZHRuWGdxcFBnTm9teW1YVmpSV0RQUmZ1YVJwWnJteTdVUW5Sa1VHaXFwd3E5?=
+ =?utf-8?B?ZzRBdnZtbkgvTEsyMENJdy9tZjdyN2J5N0d0YllDczlZaHNMVFA5cTgzODlP?=
+ =?utf-8?B?eTVLVVpTUkx0ci9VOUFIRmxGVHhock92V3FGeXY1cldiUWF0Z3lXMWVuT0JK?=
+ =?utf-8?B?Z1VMdmVIaHpORklSbGdITzQyTHphZXFZc1NDZWxCalRhbmtKY01qZlQvai9o?=
+ =?utf-8?B?eS9aMkpnM3kxYUtrQ3p4SzEwMU1UQlRUZ0pmbUxtN0xNM3BUUjVNbGNITkJn?=
+ =?utf-8?Q?cZ9aIzrbrGC66W2aW4ZZvSFtKsd56Njc?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?b0gyUk5yaS9uUnhjZGFPSWREeWlDWVZteXRtQXEvS1VKeWVNbjI3NVVGdmV0?=
+ =?utf-8?B?ZDFjZVIxa2ljaHBZRzQralQrWXVkMllUK1NCdE93SlkvcWF1SktOT2ZzVHRZ?=
+ =?utf-8?B?VmtadzI5QXZhUWFHK1diQ3dpdjNPeS9OS2V3R1hzOTdWb0g0OGxSallhcXYz?=
+ =?utf-8?B?TWxWNUxLNmozaC9VeC9YQmMxS3VUVUxVL2N2dUIwT3BaNHFsUlpueTJEZHkx?=
+ =?utf-8?B?K3M5TFlNVTc5c3U3OUZjbGpuRTg4UmkvSkxlaVgzSERpWFpCUmpYd2RhMkpD?=
+ =?utf-8?B?dFNUR2FxNk8ydVErTWxLUXB6c2xTUVNRY0tFM29tWFU4VVlFTml2MTd5Z2pE?=
+ =?utf-8?B?V2RNSmVVckFCdFphS3lQQWFDU0FaekRtaGx4alhtQmFzK3ZrclhRaUZVV2cv?=
+ =?utf-8?B?Z2l5K1Bwak5qQzQrN3kyMm1iK3hrYXNqRVJvZ3laL3k5ckFSY1AzdHZUNVBU?=
+ =?utf-8?B?VDBNZ0tOMGxZaEVjMHpmTDUzUDYxMnJkZ0VXRU82cnRFUHd3TVJhMHg3THQ2?=
+ =?utf-8?B?akJHZTJiOVBJS2o1alJBNnFBc1RyL3Q3MlprN0NQTUNJS1ptTmIwRHdsMnh1?=
+ =?utf-8?B?YzJPdmMrcDJxaE5nY2RVL3R5VTVqTkN4QUJnSENCQUdWTVhYS3JFRmh3dWJy?=
+ =?utf-8?B?aFE0QUh6QXAvTjc4ZjEzWVg1amtPeU5NbnhweXZjeHlrV3dERW9WeFRkcDNn?=
+ =?utf-8?B?UFh2Ry9XUTFHK2cyZUNBVmRyR01hd3psL3daVE5HU0FGVkw2OGhxWE53QmVp?=
+ =?utf-8?B?dmRhelhZM1BnTmJVblFDMFJJTXoxZ2dXY2MzanBqZS9tSnZkWFEvUTdoSHhV?=
+ =?utf-8?B?eDBjemIwc2F1NFl5eUtyaDBrY3NPZjBVcVpMK21yZk44NE8zYS91c3dZcEJL?=
+ =?utf-8?B?Y25wd2d4QnpGWWQybnJlcVZkaUUvL3hGRDBNY3o0V3owb0Q2VVlNeEltd1pS?=
+ =?utf-8?B?WVdvcUQyV2dWa2M0ejJXRFRmVjVsbkpJMG43RXc5ajY4M3RmcE1HWlpFbCt1?=
+ =?utf-8?B?Rk4vdVFBcTRKMWtLd0lzSjl6VVY0TGEydC81RmU0eWUwbC9CdUpETE5CWG5q?=
+ =?utf-8?B?a2gzSUpCY21kV2w2ZS84Qjhsa0hHWC95WkxnM1IxUjQ2anZvVHlHeW50MEhl?=
+ =?utf-8?B?dkpNL2daVEZyMnFDOFNzZW9kRDdLZ2JyR2tacGhMTmVpTk10T0ZvUnBGVlFI?=
+ =?utf-8?B?WUxlTFJmTGVtM0IwVmpzejdkbFNqTmZLTWpTVVZkK3JXM2JCbkU4Zkg0VzE1?=
+ =?utf-8?B?dlNteWdsWHVzZVFuZTl2TXZJNlJyc0dFVHZ6c24zUjBDQWF5VDdzNWlvVnZN?=
+ =?utf-8?B?eDkyTHIxUkVHOFhMUWNiSFlVWHRLY1BzREMyMGk4akFJZExOd3BBYjl1T24x?=
+ =?utf-8?B?UDlnK0o2ZkI1U0cyb2svbEFHYkNCaUd4M1A4by8rZ0NiVytoUTRaQWNjUXF5?=
+ =?utf-8?B?U0ptRWNEMjhaQ1Z4UzZFMDM5Mk5henBURUpLbEFVWDcwdkhpd1VMd3k2M09O?=
+ =?utf-8?B?bUF4SnpYaVhtOFZPSUNsSVRTMy8yQnhua1ZDZW5MZkhUZ3BVSGRRdkk1RUc0?=
+ =?utf-8?B?cHcrSi9qNEpxdW5zbE9SQlVKK2FYQnBpQWgwRFlzUllMNno2U3RxNlo2NXAr?=
+ =?utf-8?B?M3B4TXdNQlg2c0l0ODNtZURlWitGS1FRYTZxTUlNeml4UjBzREhXQkROMlhH?=
+ =?utf-8?B?aDJTNnprYTFuVUF5eG1acGRSZytZOVB2TGlDdThrTUFnTHJ2d09KTjIzNE9p?=
+ =?utf-8?B?b1BMK3V2R05mRFI4OUVrVHhoUnRPN2lraGR0MUhZYldPVGtWbkN4R25JMVhB?=
+ =?utf-8?B?UVVUeWVQODMvWXYyNG1WN0lKekRtRG5FUjRDN3NWT0EzQmY5dXoyd2IzMVhv?=
+ =?utf-8?B?ekFKR2VlektRNUtqdWN4Z3NUbkRSQ21iR0xSTHNicFNkVzZEUjRIN1JseWdI?=
+ =?utf-8?B?b0ozOWZOcHB5UHMycGduc1d3OXJDTmRjMkpRSCt6cDhsUEJYaGVIZXo4L1gr?=
+ =?utf-8?B?RmJ5SDhWNjJ5aVVuUzFzcFNjdEdJSFh1NzBWWUs4TmlySFU2L1BIenFrYW0y?=
+ =?utf-8?B?M0lWSXlzcHNpa3BvbmhodGR3V3FoNkNKYzJ6czUwaUpVNTF5akx4QkR5RHJq?=
+ =?utf-8?B?d2dzOWFkYmhKNWcweENxcXZINjU4TjhYVXpTRUg1djZ1dW9FcVZiclpxVG9P?=
+ =?utf-8?B?U2c9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 01464aad-3132-4a3b-630f-08de20a1c77d
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Nov 2025 21:40:34.6669
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: oAHS5bOBm8TJTWiGP8OZco89OGGJIEI0+W10HtUPf5CgXRItOpLNMcYLcMSGwaN5lZDjitCiK+JZVwrIeYWdDaqCC0eU+dgu+v4/OkR+FOI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR11MB4780
+X-OriginatorOrg: intel.com
 
-Hi Geert,
+Hi Tony,
 
-Thank you for the review.
+On 11/10/25 11:56 AM, Luck, Tony wrote:
+>>> # echo "L2:*=fff" > schemata
+>>>
+>>> would work,. But
+>>>
+>>> # echo "L2:*=ffff" > schemata
+>>>
+>>> would try to set unimplemented bits on some cores and would fail.
+>>
+>>
+>> I would consider this a user error, as the user is expected to know the
+>> supported value for the domain.
+>> This situation can occur even now — we simply report the error and exit.
+> 
+> Babu
+> 
+> Maybe it was a poor explanation on my part.
+> 
+> On a hybrid P-core/E-core system with different L2 cache topology schemata
+> may look like this (8 L2 domains of one type, 4 L2 domains of other type.
+> 
+> $ cat schemata
+> L2:0=ffff;1=ffff;2=ffff;3=ffff;4=ffff;5=ffff;6=ffff;7=ffff;8=7f;9=7f;10=7f;11=7f
+> 
+> The proposed wildcard syntax is only useful to set all domains to a value
+> that is legal for all domains. It cannot be used for the "reset back to defaults"
+> case because different domains have different defaults.
 
-On Mon, Nov 10, 2025 at 1:48=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
-k.org> wrote:
->
-> Hi Prabhakar,
->
-> On Tue, 28 Oct 2025 at 17:52, Prabhakar <prabhakar.csengg@gmail.com> wrot=
-e:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Add core clocks and module clock definitions required by the xSPI
-> > (Expanded SPI) IP on the R9A09G077 SoC.
-> >
-> > Define the new SCKCR fields FSELXSPI0/FSELXSPI1 and DIVSEL_XSPI0/1 and
-> > add two new core clocks XSPI_CLK0 and XSPI_CLK1. The xSPI block uses
-> > PCLKH as its bus clock (use as module clock parent) while the operation
-> > clock (XSPI_CLKn) is derived from PLL4. To support this arrangement
-> > provide mux/div selectors and divider tables for the supported
-> > XSPI operating rates.
-> >
-> > Add CLK_TYPE_RZT2H_FSELXSPI to implement a custom divider/mux clock
-> > where the determine_rate() callback enforces the hardware constraint:
-> > when the parent output is 600MHz only dividers 8 and 16 are valid,
-> > whereas for 800MHz operation the full divider set (6,8,16,32,64) may
-> > be used. The custom determine_rate() picks the best parent/divider pair
-> > to match the requested rate and programs the appropriate SCKCR fields.
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > ---
-> > v1->v2:
-> > - Added custom divider clock type for XSPI clocks to enforce hardware
-> >   constraints on supported operating rates.
->
-> Thanks for the update!
->
-> > --- a/drivers/clk/renesas/r9a09g077-cpg.c
-> > +++ b/drivers/clk/renesas/r9a09g077-cpg.c
->
-> > @@ -54,12 +56,19 @@
-> >  #define DIVSCI3ASYNC   CONF_PACK(SCKCR3, 12, 2)
-> >  #define DIVSCI4ASYNC   CONF_PACK(SCKCR3, 14, 2)
-> >
-> > +#define FSELXSPI0      CONF_PACK(SCKCR, 0, 3)
-> > +#define FSELXSPI1      CONF_PACK(SCKCR, 8, 3)
-> > +#define DIVSEL_XSPI0   CONF_PACK(SCKCR, 6, 1)
-> > +#define DIVSEL_XSPI1   CONF_PACK(SCKCR, 14, 1)
-> >  #define SEL_PLL                CONF_PACK(SCKCR, 22, 1)
-> >
-> > +#define DIVSELXSPI_RATE_600MHZ         600000000UL
-> > +#define DIVSELXSPI_RATE_800MHZ         800000000UL
->
-> I find it a bit weird that the name of the define includes its value.
-> Perhaps just use "600 * MEGA" resp. "800 * MEGA" in the code instead?
-OK.
+Disabling and re-enabling of io_alloc may be substitute for "reset back to defaults".
 
-> But see below...
->
-> > @@ -154,6 +180,15 @@ static const struct cpg_core_clk r9a09g077_core_cl=
-ks[] __initconst =3D {
-> >         DEF_DIV(".sci5async", CLK_SCI5ASYNC, CLK_PLL4D1, DIVSCI5ASYNC,
-> >                 dtable_24_25_30_32),
-> >
-> > +       DEF_FIXED(".pll4d1_div3", CLK_PLL4D1_DIV3, CLK_PLL4D1, 3, 1),
-> > +       DEF_FIXED(".pll4d1_div4", CLK_PLL4D1_DIV4, CLK_PLL4D1, 4, 1),
->
-> Please move these two just below the existing entry for ".pll4d1".
->
-Ok, I will move it below .pll4d1
+The '*' syntax would be useful to initialize domains to minimal allocations ...
+assuming all cache instances support the same minimum. 
 
-> > +       DEF_MUX(".divselxspi0", CLK_DIVSELXSPI0_SCKCR, DIVSEL_XSPI0,
-> > +               sel_clk_pll4d1_div3_div4,
-> > +               ARRAY_SIZE(sel_clk_pll4d1_div3_div4), 0),
-> > +       DEF_MUX(".divselxspi1", CLK_DIVSELXSPI1_SCKCR, DIVSEL_XSPI1,
-> > +               sel_clk_pll4d1_div3_div4,
-> > +               ARRAY_SIZE(sel_clk_pll4d1_div3_div4), 0),
-> > +
-> >         /* Core output clk */
-> >         DEF_DIV("CA55C0", R9A09G077_CLK_CA55C0, CLK_SEL_CLK_PLL0, DIVCA=
-55C0,
-> >                 dtable_1_2),
->
-> > @@ -264,6 +305,116 @@ r9a09g077_cpg_mux_clk_register(struct device *dev=
-,
-> >         return clk_hw->clk;
-> >  }
-> >
-> > +static int r9a09g077_cpg_fselxspi_determine_rate(struct clk_hw *hw,
-> > +                                                struct clk_rate_reques=
-t *req)
-> > +{
-> > +       struct clk_divider *divider =3D to_clk_divider(hw);
-> > +       unsigned long parent_rate, best =3D 0, now;
-> > +       const struct clk_div_table *clkt;
-> > +       unsigned long rate =3D req->rate;
-> > +       int div =3D 0;
->
-> unsigned int
->
-Ok.
+Would it be an issue if user attempts to assign a value that is not supported to
+all domains? resctrl could fail on first invalid bitmask and the last_cmd_status can
+then be expected to indicate the details of error.
 
-> > +
-> > +       if (!rate)
-> > +               rate =3D 1;
-> > +
-> > +       for (clkt =3D divider->table; clkt->div; clkt++) {
-> > +               parent_rate =3D clk_hw_round_rate(req->best_parent_hw, =
-rate * clkt->div);
->
-> I had expected the use of some *_determinate_rate_*() helper, as the
-> parent can be changed to find a better clock rate?
-> Perhaps you should use a composite clock for that?
->
-> > +               /*
-> > +                * DIVSELXSPIx supports 800MHz and 600MHz operation.
-> > +                * When the parent_rate is 600MHz, only dividers of 8 a=
-nd 16
-> > +                * are supported otherwise dividers of 6, 8, 16, 32, 64=
- are supported.
-> > +                * This check ensures that FSELXSPIx is set correctly.
-> > +                */
-> > +               if (parent_rate =3D=3D DIVSELXSPI_RATE_600MHZ &&
->
-> Does this actually work as expected? I doubt parent_rate is guaranteed
-> to be exactly 600 or 800 MHz, and expect it can differ slightly due
-> to rounding.  Hence I would look at clk_fixed_factor.div instead.
->
-With below diff, Ive got the below results for the various freqs
-requested where appropriate parent and divider clocks are picked.
-
-@@ -317,6 +317,7 @@ static int
-r9a09g077_cpg_fselxspi_determine_rate(struct clk_hw *hw,
-
-        for (clkt =3D divider->table; clkt->div; clkt++) {
-                parent_rate =3D clk_hw_round_rate(req->best_parent_hw,
-rate * clkt->div);
-+               pr_err("parent_rate=3D%lu, req-rate=3D%lu div=3D%u\n",
-parent_rate, rate, clkt->div);
-                /*
-                 * DIVSELXSPIx supports 800MHz and 600MHz operation.
-                 * When the parent_rate is 600MHz, only dividers of 8 and 1=
-6
-
-Logs:
----------
-
-Case 0# assigned-clock-rates =3D <133333334>;
-[   15.419300] parent_rate=3D800000000, req-rate=3D133333334 div=3D64
-[   15.437698] parent_rate=3D800000000, req-rate=3D133333334 div=3D32
-[   15.455224] parent_rate=3D800000000, req-rate=3D133333334 div=3D16
-[   15.501291] parent_rate=3D800000000, req-rate=3D133333334 div=3D8
-[   15.507801] parent_rate=3D800000000, req-rate=3D133333334 div=3D6
-[   15.519221] parent_rate=3D800000000, req-rate=3D133333334 div=3D64
-[   15.525789] parent_rate=3D800000000, req-rate=3D133333334 div=3D32
-[   15.549625] parent_rate=3D800000000, req-rate=3D133333334 div=3D16
-[   15.556120] parent_rate=3D800000000, req-rate=3D133333334 div=3D8
-[   15.564110] parent_rate=3D800000000, req-rate=3D133333334 div=3D6
-
-root@rzt2h-evk:~# cat /sys/kernel/debug/clk/clk_summary | grep -e
-"xspi0" -e "XSPI_CLK0" -e "divselxspi0"
-                .divselxspi0         1       1        0
-800000000   0          0     50000      Y                  deviceless
-                    no_connection_id
-                   XSPI_CLK0         1       1        0
-133333334   0          0     50000      Y
-801c0000.spi                    spi
-             xspi0                   0       1        0
-250000000   0          0     50000      N               deviceless
-                 of_clk_get_from_provider
-root@rzt2h-evk:~#
-
-Case 1# assigned-clock-rates =3D <100000000>;
-[   15.496291] parent_rate=3D800000000, req-rate=3D100000000 div=3D64
-[   15.510068] parent_rate=3D800000000, req-rate=3D100000000 div=3D32
-[   15.517142] parent_rate=3D800000000, req-rate=3D100000000 div=3D16
-[   15.524047] parent_rate=3D800000000, req-rate=3D100000000 div=3D8
-[   15.533174] parent_rate=3D600000000, req-rate=3D100000000 div=3D6
-[   15.540096] parent_rate=3D800000000, req-rate=3D100000000 div=3D64
-[   15.548135] parent_rate=3D800000000, req-rate=3D100000000 div=3D32
-[   15.555119] parent_rate=3D800000000, req-rate=3D100000000 div=3D16
-[   15.562395] parent_rate=3D800000000, req-rate=3D100000000 div=3D8
-[   15.573521] parent_rate=3D600000000, req-rate=3D100000000 div=3D6
-
-root@rzt2h-evk:~# cat /sys/kernel/debug/clk/clk_summary | grep -e
-"xspi0" -e "XSPI_CLK0" -e "divselxspi0"
-                .divselxspi0         1       1        0
-800000000   0          0     50000      Y                  deviceless
-                    no_connection_id
-                   XSPI_CLK0         1       1        0
-100000000   0          0     50000      Y
-801c0000.spi                    spi
-             xspi0                   0       1        0
-250000000   0          0     50000      N               deviceless
-                 of_clk_get_from_provider
-root@rzt2h-evk:~#
-
-
-Case 2# assigned-clock-rates =3D <75000000>;
-[   12.288507] parent_rate=3D800000000, req-rate=3D75000000 div=3D64
-[   12.310528] parent_rate=3D800000000, req-rate=3D75000000 div=3D32
-[   12.318426] parent_rate=3D800000000, req-rate=3D75000000 div=3D16
-[   12.326361] parent_rate=3D600000000, req-rate=3D75000000 div=3D8
-[   12.341540] parent_rate=3D0, req-rate=3D75000000 div=3D6
-[   12.347546] parent_rate=3D800000000, req-rate=3D75000000 div=3D64
-[   12.357593] parent_rate=3D800000000, req-rate=3D75000000 div=3D32
-[   12.367148] parent_rate=3D800000000, req-rate=3D75000000 div=3D16
-[   12.418871] parent_rate=3D600000000, req-rate=3D75000000 div=3D8
-[   12.433560] parent_rate=3D0, req-rate=3D75000000 div=3D6
-
-root@rzt2h-evk:~# cat /sys/kernel/debug/clk/clk_summary | grep -e
-"xspi0" -e "XSPI_CLK0" -e "divselxspi0"
-                .divselxspi0         1       1        0
-600000000   0          0     50000      Y                  deviceless
-                    no_connection_id
-                   XSPI_CLK0         1       1        0
-75000000    0          0     50000      Y
-801c0000.spi                    spi
-             xspi0                   0       1        0
-250000000   0          0     50000      N               deviceless
-                 of_clk_get_from_provider
-root@rzt2h-evk:~#
-
-Case 3# assigned-clock-rates =3D <50000000>;
-[   15.240214] parent_rate=3D800000000, req-rate=3D50000000 div=3D64
-[   15.253498] parent_rate=3D800000000, req-rate=3D50000000 div=3D32
-[   15.261521] parent_rate=3D800000000, req-rate=3D50000000 div=3D16
-[   15.272941] parent_rate=3D0, req-rate=3D50000000 div=3D8
-[   15.280532] parent_rate=3D0, req-rate=3D50000000 div=3D6
-[   15.289979] parent_rate=3D800000000, req-rate=3D50000000 div=3D64
-[   15.298745] parent_rate=3D800000000, req-rate=3D50000000 div=3D32
-[   15.309879] parent_rate=3D800000000, req-rate=3D50000000 div=3D16
-[   15.319881] parent_rate=3D0, req-rate=3D50000000 div=3D8
-[   15.327977] parent_rate=3D0, req-rate=3D50000000 div=3D6
-
-root@rzt2h-evk:~# cat /sys/kernel/debug/clk/clk_summary | grep -e
-"xspi0" -e "XSPI_CLK0" -e "divselxspi0"
-                .divselxspi0         1       1        0
-800000000   0          0     50000      Y                  deviceless
-                    no_connection_id
-                   XSPI_CLK0         1       1        0
-50000000    0          0     50000      Y
-801c0000.spi                    spi
-             xspi0                   0       1        0
-250000000   0          0     50000      N               deviceless
-                 of_clk_get_from_provider
-root@rzt2h-evk:~#
-
-
-Case 4# assigned-clock-rates =3D <37500000>;
-[   71.710064] parent_rate=3D800000000, req-rate=3D37500000 div=3D64
-[   71.718567] parent_rate=3D800000000, req-rate=3D37500000 div=3D32
-[   71.725137] parent_rate=3D600000000, req-rate=3D37500000 div=3D16
-[   71.731550] parent_rate=3D0, req-rate=3D37500000 div=3D8
-[   71.740622] parent_rate=3D0, req-rate=3D37500000 div=3D6
-[   71.746376] parent_rate=3D800000000, req-rate=3D37500000 div=3D64
-[   71.752887] parent_rate=3D800000000, req-rate=3D37500000 div=3D32
-[   71.767422] parent_rate=3D600000000, req-rate=3D37500000 div=3D16
-[   71.778671] parent_rate=3D0, req-rate=3D37500000 div=3D8
-[   71.790895] parent_rate=3D0, req-rate=3D37500000 div=3D6
-
-root@rzt2h-evk:~# cat /sys/kernel/debug/clk/clk_summary | grep -e
-"xspi0" -e "XSPI_CLK0" -e "divselxspi0"
-                .divselxspi0         1       1        0
-600000000   0          0     50000      Y                  deviceless
-                    no_connection_id
-                   XSPI_CLK0         1       1        0
-37500000    0          0     50000      Y
-801c0000.spi                    spi
-             xspi0                   0       1        0
-250000000   0          0     50000      N               deviceless
-                 of_clk_get_from_provider
-root@rzt2h-evk:~#
-
-
-Case 5# assigned-clock-rates =3D <25000000>;
-[   12.411660] parent_rate=3D800000000, req-rate=3D25000000 div=3D64
-[   12.429285] parent_rate=3D800000000, req-rate=3D25000000 div=3D32
-[   12.436144] parent_rate=3D0, req-rate=3D25000000 div=3D16
-[   12.448110] parent_rate=3D0, req-rate=3D25000000 div=3D8
-[   12.458785] parent_rate=3D0, req-rate=3D25000000 div=3D6
-[   12.465401] parent_rate=3D800000000, req-rate=3D25000000 div=3D64
-[   12.482547] parent_rate=3D800000000, req-rate=3D25000000 div=3D32
-[   12.497126] parent_rate=3D0, req-rate=3D25000000 div=3D16
-[   12.509619] parent_rate=3D0, req-rate=3D25000000 div=3D8
-[   12.518212] parent_rate=3D0, req-rate=3D25000000 div=3D6
-
-root@rzt2h-evk:~# cat /sys/kernel/debug/clk/clk_summary | grep -e
-"xspi0" -e "XSPI_CLK0" -e "divselxspi0"
-                .divselxspi0         1       1        0
-800000000   0          0     50000      Y                  deviceless
-                    no_connection_id
-                   XSPI_CLK0         1       1        0
-25000000    0          0     50000      Y
-801c0000.spi                    spi
-             xspi0                   0       1        0
-250000000   0          0     50000      N               deviceless
-                 of_clk_get_from_provider
-root@rzt2h-evk:~#
-
-Case 6# assigned-clock-rates =3D <12500000>;
-[   87.409877] parent_rate=3D800000000, req-rate=3D12500000 div=3D64
-[   87.470663] parent_rate=3D0, req-rate=3D12500000 div=3D32
-[   87.485940] parent_rate=3D0, req-rate=3D12500000 div=3D16
-[   87.492760] parent_rate=3D0, req-rate=3D12500000 div=3D8
-[   87.498313] parent_rate=3D0, req-rate=3D12500000 div=3D6
-
-
-root@rzt2h-evk:~# cat /sys/kernel/debug/clk/clk_summary | grep -e
-"xspi0" -e "XSPI_CLK0" -e "divselxspi0"
-                .divselxspi0         1       1        0
-800000000   0          0     50000      Y                  deviceless
-                    no_connection_id
-                   XSPI_CLK0         1       1        0
-12500000    0          0     50000      Y
-801c0000.spi                    spi
-             xspi0                   0       1        0
-250000000   0          0     50000      N               deviceless
-                 of_clk_get_from_provider
-root@rzt2h-evk:~#
-
-Looking at the logs I think I could optimize the code to continue when
- parent_rate =3D=3D 0
-
-Based on the above logs, would you prefer me to represent it as a
-composite clock?
-
-> > +                   (clkt->div !=3D 8 && clkt->div !=3D 16))
-> > +                       continue;
-> > +               now =3D DIV_ROUND_UP_ULL((u64)parent_rate, clkt->div);
->
-> No need to cast to u64 (DIV_ROUND_*_ULL() handle this internally).
->
-> > +               if (abs(rate - now) < abs(rate - best)) {
-> > +                       div =3D clkt->div;
-> > +                       best =3D now;
-> > +                       req->best_parent_rate =3D parent_rate;
-> > +               }
-> > +       }
-> > +
-> > +       if (!div) {
-> > +               u8 maxdiv =3D 0;
-> > +
-> > +               req->best_parent_rate =3D clk_hw_round_rate(req->best_p=
-arent_hw, 1);
-> > +               /*
-> > +                * If DIVSELXSPIx is set to 800MHz set the maximum divi=
-der
-> > +                * or else fall back to divider of 16 which is a maximu=
-m
-> > +                * supported divider for 600MHz operation.
-> > +                */
-> > +               if (req->best_parent_rate =3D=3D DIVSELXSPI_RATE_800MHZ=
-) {
-> > +                       for (clkt =3D divider->table; clkt->div; clkt++=
-) {
-> > +                               if (clkt->div > maxdiv)
-> > +                                       maxdiv =3D clkt->div;
-> > +                       }
-> > +                       div =3D maxdiv;
->
-> Why not hardcode the divider, like in the else branch?
->
-Agreed.
-
-> > +               } else {
-> > +                       div =3D 16;
-> > +               }
-> > +       }
-> > +
-> > +       req->rate =3D DIV_ROUND_UP_ULL((u64)req->best_parent_rate, div)=
-;
->
-> No need to cast to u64.
->
-Ok.
-
-Cheers,
-Prabhakar
+Reinette
 
