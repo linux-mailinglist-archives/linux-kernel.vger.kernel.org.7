@@ -1,217 +1,162 @@
-Return-Path: <linux-kernel+bounces-894147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C07FCC495B7
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 22:06:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 07371C495B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 22:07:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A0993AA3E2
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9493D3AA251
 	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 21:06:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F1362F6917;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69C372F999F;
 	Mon, 10 Nov 2025 21:06:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="HrIxpZ+P"
-Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11010071.outbound.protection.outlook.com [52.101.85.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="MKzCW+zR"
+Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 772082F693E
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 21:06:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.71
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762808804; cv=fail; b=ofngQdO/mrcer2RyVYoFDqnOpEnrau8uCPcOkpu7ceTV/iQ198ATKvu2+9tCn4IDe7bBymyCtKEVSB+/uIT9yFmcM3WCeEzVDyM6ZsH3KCbo+0wT24Z3EIg9yXeibsq0sqC4hU7VQoAZE201T17BF4iJ8D0Q9s4HZW3IUU/R9Lg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 511A92F8BF0
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 21:06:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762808804; cv=none; b=ZCkJla8TRjxS5Sj54F6O3KY/qwp66K8at5u2Wag7LNtWvPfUjkt0yobmHAGWkZdd4WzmKyUL7DsatgIecGixDjRYkRUiplyhxZAHa+zGsibn2pcoKyucYbYdsi0KvmEBdF6duEsFWFu9Vp5db+uykC49S20I8CF4Hcy/0O0VTRs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1762808804; c=relaxed/simple;
-	bh=OejzDTh2XeUs2TM/gMNw2kZDoAJ7V65Vh2UoHgff5Hc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=WDulFuL+uww7f0Uy6TZtGfgxXkiiDA+tLZlwwjOFRy/fz1bomAYreaR8mf/gtGXIDk4GYwDlydpDawdmx4Fs+SFvV9Tipq8Sj/eEdAdoL1fiT7e6iEO5MK5ctplgp6mygt9/Qd9VFpqx+0ogmIh80crqufmI9PvdkzHIQZXrXnQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=HrIxpZ+P; arc=fail smtp.client-ip=52.101.85.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=mRoIbwzvbBRpOnws5GJH8CGoT0mmW3vWTJStUCEKdyJ9Sx1n+GP5YCAk7kGROOcmVbIiYkKIhbeZtrYgFM4D/LV1TKilVaKO87yElpwiL2q7qOXjVm0LJaN2662/zokFAoySGGN+QrAFQcWZ1OEzOh/8BirE/Bjsj+0MEv1cJWKsEERGGAudToQeChNjQmJSSxs2hhO6cPv4vpV89aF6v5yYUpKAxZ1zEK24t2NkuQTqBkpuVJy8FfFhPNF/f5yELP+WbxGf5/K0yOxKaYoz0VCahkhhf1jDUJPUBqUQ+FuuR57AU4LMsdnXTjPr5oH2EuXUCyxnt4b1lfE8aZOO6w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=u7iVZ1DWomWemeivLoaaQPL2XrO4ATQY7VFHGCnj1ys=;
- b=vpFIb8WQAwyd0IvdK/7HFePlVwwSZSV584q5yWLDC9k9dXLVF6uH8N52Q3L9GRgJhJ0acCfo662KOMocfbav70LcVshatfBC/xTsdBAxAO0F2GNStaASDcUyD9QhKxI8cDRPROS7UGnwfMGL2wJbdQ7crqzVjwBrM8pfSrnVWIlI/mXlE9bM6+qmXaCz10FnDtLl4IOuLtlNzahLYy8xLZ6Afn+GE9ecS7LE8WDFrs/hsR5GylO81SQ4C4Ip/aBmycv3G3i0dbflf7KbjTpuuXK5ZSY5agUJXc8ZfVvrgontS35PfmrQPT3HdohsEpik/ww+l15ARwK9XmF0LiOjeA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=u7iVZ1DWomWemeivLoaaQPL2XrO4ATQY7VFHGCnj1ys=;
- b=HrIxpZ+PGjx57IaF4Mgk30WWPd3dKi6p0RPGYlNIewG9jX4+JqBx9USZj1CMOy4e8zLMkTpVu5NVh2BSTXdPc4dZ3eN/gHu3WF6kppi1acTcnkuOh7qdyofftXbUCtLDY7qCWB+3LGRmIuTpzvsxxVFGmFFgz8JcOsannH81a0AYGeeDLAEHlA8wAbJyyhmb0AL29pZ2CGvg0jWPkk1LXIdSvYGh3E22lVUqFyoCXtcR8nyMFLWZBO+GZ/kdvHsv1P6oCNwgf2Vclrr9l8+QmZzgbZei9EJf2iWRXc0+cKvOqWOrpU2mfwF6XeCNhSyStSnUEdXsU9yyz/gquveHQg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
- by SJ0PR12MB7066.namprd12.prod.outlook.com (2603:10b6:a03:4ae::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Mon, 10 Nov
- 2025 21:06:38 +0000
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c]) by LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c%3]) with mapi id 15.20.9298.015; Mon, 10 Nov 2025
- 21:06:37 +0000
-Date: Mon, 10 Nov 2025 22:06:29 +0100
-From: Andrea Righi <arighi@nvidia.com>
-To: Tejun Heo <tj@kernel.org>
-Cc: David Vernet <void@manifault.com>, Changwoo Min <changwoo@igalia.com>,
-	Dan Schatzberg <schatzberg.dan@gmail.com>,
-	Emil Tsalapatis <etsal@meta.com>, sched-ext@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 11/13] sched_ext: Add scx_cpu0 example scheduler
-Message-ID: <aRJT1dbGTmPRw4-p@gpd4>
-References: <20251109183112.2412147-1-tj@kernel.org>
- <20251109183112.2412147-12-tj@kernel.org>
- <aRGkHhAWTWdWELAY@gpd4>
- <aRIyfJWJ6fcW5frO@slm.duckdns.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aRIyfJWJ6fcW5frO@slm.duckdns.org>
-X-ClientProxiedBy: MI0P293CA0002.ITAP293.PROD.OUTLOOK.COM
- (2603:10a6:290:44::7) To LV8PR12MB9620.namprd12.prod.outlook.com
- (2603:10b6:408:2a1::19)
+	bh=p9eImnkzVajZji6ba/40drjhN77svtSkMv7pWURCLRA=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
+	 In-Reply-To:Content-Type; b=KouCDiv/HUK2RHinZkfsi7V3kLIhk50LUrVaypggGJrr69Uyi+YuYTRKZMqX+9yxOFEL5InjIG7yub6wFeZYBxHbTr5mWwmj1gEiVO6slMy7RuqWo5JZAOfO5kK6Q+iCmh7QnejokzyMkIbqikh0qjCLxFaVIn++q5w3u9sSzwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=MKzCW+zR; arc=none smtp.client-ip=209.85.166.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-43320651e53so29320605ab.3
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 13:06:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1762808800; x=1763413600; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :to:from:subject:user-agent:mime-version:date:message-id:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dAnchgHMxAbZYlLtY/QgEWE40Wk8QbLD4OHQ8Memgrg=;
+        b=MKzCW+zRAkaqkyKyqUI0azF458FNsxnV7Is5TNI4u0FMKTceD55fvRvt+BHflE7Cb/
+         cTWLlyAOUVtMh0fxwQMI3sCOQbriZbLVL62dhdicaZv2/41rDHLavTpFb0DAdADoQnw+
+         9vOD2o5j8U+1oUaEVNR1VlsyAYlwt60F10opKc3pCnfhr67zmSvVd7Tr9X39JfHQ/Hj9
+         Viv7cSHo43eYOjgdgsnvPdFYUQpRU8R5Ten5j117lm93cDfiTExD1F9+nKp/BvjtzwaD
+         RTDkdMfSMPU+wMdz2+td8wu0KW4fXGKQjXL91MHCQ1rt0hKLYcVaLi0BI7zHS/9DlxXh
+         yacg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762808800; x=1763413600;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :to:from:subject:user-agent:mime-version:date:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dAnchgHMxAbZYlLtY/QgEWE40Wk8QbLD4OHQ8Memgrg=;
+        b=m2+ZRalDLb9Zz5uKVCq4sG5FTIvoDZ8S0iahmD3IvcS2GmkgQp1fp46Mr4XPPG2+3g
+         d6UpFRhVBRrwjUXAWimYeVnvc9yWk5Pc0I/9Dkp6e48hHfvpUgyq/mHVLlf/LcHD5OOD
+         FkEcGu2yFxzOw6mKXa2dC9W7NdAwnKiinlA6WMe+KwhQsHerMLxsKCzC9J92fR9tJUzX
+         yLYNI9deoM4o36Vwj6H22+K9ZTUZRwcZDUY7oz4OqI0zMTpyHZhl/03t0HmBqLsN/vCo
+         8cBoKHgGkDPd3dyWZThcIzZwF81Kf2uyWfJEICnrvL2QyCRiW4jDrgPKYgZB7Cd1oS5a
+         ZkHg==
+X-Forwarded-Encrypted: i=1; AJvYcCXIRUjs8rsty3hEWvKPTvGpkqKE89xGhmkdTKva85o0UuyDSrBlzd/Y3cmo5bn/qv0PU/s0nzDZTC5PkwU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwfAn2G9FadXViQk5OErYxTbnfV0FJLb0UqjoNAZtavSQ0iM53b
+	WwoAmHQwIILc6Lmu682wLE65OEueR7VBN2uctGyDacsdJC60UXtpD4dev52wJS86jeE=
+X-Gm-Gg: ASbGncu84AvTFR8qSPJV2Fd58DuAPTBIZT5Wk63jW2CGRImBYz4JRGy0iy1ZpBEiElP
+	FzRu1k9WoQBS98F1+36ogcVnq8fpZjW5bEreJQDVEEipeJ1kb/7LWiSmAuq0kz+BUCfoOonL3Yb
+	NuIFdlV6GTsjZIXTC7jO0yBAE2DH39e7QOASPMIDLIBJ/Zn0I1x0jdyug2rOqLO0tjLM2Vvhchy
+	SFQGq0JnG4y74cFzg4RY4EFss/OQ+MwGduU/snRjVJZzSxDdovHvw2pZ5+1Rz1urTAgC9kw6T1A
+	pHauPZE6O62rztVko6oMIv3OZ2IGePIznOu7jNxxnCDnrz/NMwET766piA7g8ogf8TFGEOWMHz8
+	+9jlpx9FBBXRPGDBn1k8QKRSB9rU24lJZNSQMrYv9CKCUx2Fq/+o9GPuCJqEbOv4LYTLXZMPQ7U
+	zqoPGmTliHQZwx38PnLg==
+X-Google-Smtp-Source: AGHT+IE6VCGeW4hCnKDcdc4Jk9D7a1Cpq0cNJpchGvwnc4BuBlnuVqINxxc8VIDdhMLc+uNFs0RpLg==
+X-Received: by 2002:a05:6e02:3e8d:b0:433:79e4:7adb with SMTP id e9e14a558f8ab-43379e47d20mr105680505ab.11.1762808800259;
+        Mon, 10 Nov 2025 13:06:40 -0800 (PST)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-433754f1e7dsm28354825ab.11.2025.11.10.13.06.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Nov 2025 13:06:38 -0800 (PST)
+Message-ID: <dc9790ff-70de-470a-b4a1-d85dc5b1cb23@kernel.dk>
+Date: Mon, 10 Nov 2025 14:06:37 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|SJ0PR12MB7066:EE_
-X-MS-Office365-Filtering-Correlation-Id: c402d988-cfb6-418f-86d7-08de209d0977
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?T/6KFzh8+Zrq5RLybFzi6l5ANKWC22ZfC/Vi8lk0KFD+T8+FIPsD2w6OuF7Z?=
- =?us-ascii?Q?B98TtfFIFgv1IAYmlPGSZcfw1somM9+rNMEjI0VM6SsyKy4yZvDipJ23nNr8?=
- =?us-ascii?Q?TgOlTboUKEzlXVbgDcjcq10v5fevKi8wQsk86aS6ibGMmaW7QY43cnXFN2gH?=
- =?us-ascii?Q?hMDZFvuxE+BkX/a3pFGc8wug0mTl6V02/hAXj+ATCj6YgzBl5n8WJsPxLR0r?=
- =?us-ascii?Q?5hIewbIuSMtwFm030/QaQMFXLf532u/3lL3Eir9l+dWs2vWCCdqyGeUIX84g?=
- =?us-ascii?Q?o76E7Kuh8gOvZNX9TNpx/nCl7t1br9KSzMGSdIWSMvq14PQJPxU2m0SULJPB?=
- =?us-ascii?Q?Ph+M2nm4aLv5zCvMWEWrG5lWr7HtYAb/SOHr0S1rmgdNEFKtQ5KATQBNdYvR?=
- =?us-ascii?Q?H7v2TwgWhueUq0JzsdsygP52cUvHmBiQIJI2EWB0ukjV8+YG8ibituU8M3D7?=
- =?us-ascii?Q?QHvBMAEEM+tVQ/jq0mEPJFZphIhc+DBtoFmu/WJe4VC21z6Uha8mB+NwcKIY?=
- =?us-ascii?Q?5pD8JveLXAUM5fxyiTtvZ7gQh70/Qy+ExNK+7/5DBBLZdE4+ZG3upjb5dCyD?=
- =?us-ascii?Q?GaSlhhhtz+Y7XjFwmvM2ihrEZzpAwYFfE1Oo1SRW2R2RLTsNwOfm6vmWgEoB?=
- =?us-ascii?Q?djYm9ZRjrIsj3Dgtbik7sbBMZYnLnHlnnDF/2pPxOrtYXvsuT3igSSZEq7BK?=
- =?us-ascii?Q?NX+9tti1B34antx7WUL40EQpebQ82Im+e9r0JRrXZophyjzkjtLDdH10+QsX?=
- =?us-ascii?Q?fYiICe2O6VYRuGF5dsUt+omGj2UgWxwx3muTIxU1udhvrYVY8cBhz0GQ6n20?=
- =?us-ascii?Q?ybpeqlmUVsJKVmPsdTtVxmLtNt8glB7OIlxCyinFXYO4t8xBCsQh0m6ITB6h?=
- =?us-ascii?Q?3GicWAIUd+hwES4bcKQdBzcG4cDi88jfjPy4JdiMFKzhortLJ023CZbspbRZ?=
- =?us-ascii?Q?mpdLx7fi4pY9cVox3DG+eb76xBffyuuP4cl+7PQT09f9AqyCLOu91gmhV6wv?=
- =?us-ascii?Q?GNTj/GfVSgu96AJiQgJH3+4MVDMr/A1rIXA36BggY8qQAZJpoleFDZENJA7Y?=
- =?us-ascii?Q?qucn9+/5e3sF+t3rx5WHf4AaM+sn5QCoK3XhyP+48Cmqj0pcX9AN2dVzoiQJ?=
- =?us-ascii?Q?rbQHOBl/+fNKwDX3U+VrcFIGYh9ykRQnwtsDitfaMAFUOc5i5fYyetjPDG+f?=
- =?us-ascii?Q?g6AuGIYcsE5eEij8OaWKGYaFByoY3ztkkGWyYKCD6OoJa3WThNrQFHh4TTSt?=
- =?us-ascii?Q?+F4C0mgr1Xkxi3AJ1SPMT7ctgSpBHQ0NV0fzP3td+Iza9L3kurbPKmG4t4Zd?=
- =?us-ascii?Q?ldtL3pmuge7QUhPk2Jt2fYJk4lQLXWbtV7wG7xqG/3z5HgANiGeos/l5QUzS?=
- =?us-ascii?Q?rW+kYzsFRZYhTL6sB5GxQz6wNsCkOrNc9ODylSaI9yEdwMxrDETZ8fn0TgDN?=
- =?us-ascii?Q?IoC5kPLBz0PyidjUsY8A+gRzGZ3ukwVD?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?SHoKTgyL9zIECkE4ZsggcP/AiUmTy3UleOeDBZhM545GEVvdMT0vZi4WfreS?=
- =?us-ascii?Q?9mW7swbeL6sg4EPWVKehS1emnvciscjac8uzR46HkHsyk2XVv4cAe0+9l1yU?=
- =?us-ascii?Q?1ugrMhmqzSNl5ppFtTDmbCX5e2idPluw1Tmc/3jWUWw2J82GbCNRST8XZ3ec?=
- =?us-ascii?Q?0sicG6wgh6C19S3s3vahn8q0XAdEtV/RAIwd2NOTkTHIyFg37Z2Pxg6lvCO5?=
- =?us-ascii?Q?mNazCjMVSF38815QtW28zipZCF/zaIykOKVxmasYneuJfhE+zOiBs1FKRuTL?=
- =?us-ascii?Q?cMYcLM/48SFV9ELuvOg1kOfiw0HjnbkdfSF09j0OZlUKgy+Spt6EcNhUT7C+?=
- =?us-ascii?Q?2MqGtRu0Owaz53KSUIVVVpzYRbJ6LQUw0nrVwtTu0X505ZB5ORL0WAVoSIQf?=
- =?us-ascii?Q?rJ0+c0U3cxT3VRLquiIi7pNbVrvRlkDZbzm3bcAMto5qmwMrrSk1B1kj9G2V?=
- =?us-ascii?Q?YlgY5Go1bXpD5RcpE5jbziFsZ+g8Iph6IfUcjh0sYm9vT+9vDYW7OqzDB4wr?=
- =?us-ascii?Q?gufH2fmgzq0ZDNoIpwD3I+m07PGrpS16Rld/wnLEQQOslF55AwnQ6518sjip?=
- =?us-ascii?Q?XBFuzukFZZCeeSgIdyjznAmZ1Mjq723J6XvB9DlgRZKKdNR63xDIv/SDaUaG?=
- =?us-ascii?Q?WUR2j3V4+4oHlQaZzCJ102+mS/n3yMUcMBIsk08iorECARQx9Dar5JRAKXUR?=
- =?us-ascii?Q?GfEbA2Rmrln6FgpO0RPzrOeqgkEQ/o65E/fKaFybGohJdmLeROA/4O03B5AX?=
- =?us-ascii?Q?guIg5cdZcP5It+jEFXJm7Yhd/n1t9trh7wSInfYGJC9kvhpmiVvvE32M2VbE?=
- =?us-ascii?Q?3agY3a9NxBHj/l++9x5w8rtjvIUfvCBAxkRhg208HHYH7YJbD83eUUjLPIoR?=
- =?us-ascii?Q?gDwtOflgxGAmItXbVsnK+T18JaNjYF8zXlxBiXwiwvFVb8zSyktjvRs9konF?=
- =?us-ascii?Q?3qgTgnhJhlNv3xND6Qjald1YkRgDUCQvvkxDi6Wbzp9h2LO5tdRc9qiQOZwW?=
- =?us-ascii?Q?3j+SOv+fOMZfK6yyeo02B5DWqrDg/Kmw5kpxhtotCid9ILVb3POK2ynabZDZ?=
- =?us-ascii?Q?l2fQqyPCSFSHmR46GlSmd6QEsZB1kkieYcFwVQ4iojP0EXe8gUjkqBIHt/zN?=
- =?us-ascii?Q?LHMAIinFiQcswoOrTTjyrLgfDOX7unIlytzgT49gcUec6iRv5VaqDdf+fDrt?=
- =?us-ascii?Q?DJPBtM5Q0SY6NfjrYsuJwgqpJdxH6tfPtxqHfrzsYOdogfxnWK+zGjuASJDE?=
- =?us-ascii?Q?YjxwcRi1e+IogwUZbrahvozkTbAY9hSyA49VWF+PSP+Sbw4BCoNqv08eIASE?=
- =?us-ascii?Q?uCbz9rMrJglur5qy9jKAwOaxd6jaPudnZafVWUqhp4FQEMuvSucimbgjgLEm?=
- =?us-ascii?Q?CpfXFAGOiFpPgmmW4auQU6CiM6BypDm9cDt4iMjaQWy4VzUZ6t5PQ0uWL236?=
- =?us-ascii?Q?Ec2mKsV2UiYqmzkek5Sy6kKFizXDHJ68bk1TTVAGp3syOM5A141BQ69iinoe?=
- =?us-ascii?Q?UlLQIn2toDg1rClk15PvV1Eem2r86PxRI0Q1CQ4z7VF3SD4mI85dKEhV3tVs?=
- =?us-ascii?Q?f9GgUt+yVv/Ef2uQkuqeIZ3QGuAByy6i22Mtdlqd?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c402d988-cfb6-418f-86d7-08de209d0977
-X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Nov 2025 21:06:37.7547
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ls1GAsg2kJEueBbshaxEtE0YWFNGD9TMwLyV15Y9SE9CQAI5+vTH5gDEJiQFSwsfBuPOtKvTy8FVUzFVlQTBFQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB7066
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [io-uring?] memory leak in iovec_from_user (2)
+From: Jens Axboe <axboe@kernel.dk>
+To: syzbot <syzbot+3c93637d7648c24e1fd0@syzkaller.appspotmail.com>,
+ io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+ syzkaller-bugs@googlegroups.com
+References: <69122a59.a70a0220.22f260.00fd.GAE@google.com>
+ <bb64cc89-194f-4626-a048-0692239f65dd@kernel.dk>
+Content-Language: en-US
+In-Reply-To: <bb64cc89-194f-4626-a048-0692239f65dd@kernel.dk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Nov 10, 2025 at 08:44:12AM -1000, Tejun Heo wrote:
-> On Mon, Nov 10, 2025 at 09:36:46AM +0100, Andrea Righi wrote:
-> > > +void BPF_STRUCT_OPS(cpu0_enqueue, struct task_struct *p, u64 enq_flags)
-> > > +{
-> > > +	if (p->nr_cpus_allowed < nr_cpus) {
-> > 
-> > We could be even more aggressive with DSQ_CPU0 and check
-> > bpf_cpumask_test_cpu(0, p->cpus_ptr), but this is fine as well.
+On 11/10/25 1:37 PM, Jens Axboe wrote:
+> On 11/10/25 11:09 AM, syzbot wrote:
+>> Hello,
+>>
+>> syzbot found the following issue on:
+>>
+>> HEAD commit:    4a0c9b339199 Merge tag 'probes-fixes-v6.18-rc4' of git://g..
+>> git tree:       upstream
+>> console output: https://syzkaller.appspot.com/x/log.txt?x=12af5342580000
+>> kernel config:  https://syzkaller.appspot.com/x/.config?x=cb128cd5cb439809
+>> dashboard link: https://syzkaller.appspot.com/bug?extid=3c93637d7648c24e1fd0
+>> compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16af5342580000
+>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13664412580000
+>>
+>> Downloadable assets:
+>> disk image: https://storage.googleapis.com/syzbot-assets/bfd02a09ef4d/disk-4a0c9b33.raw.xz
+>> vmlinux: https://storage.googleapis.com/syzbot-assets/ed9a1334f973/vmlinux-4a0c9b33.xz
+>> kernel image: https://storage.googleapis.com/syzbot-assets/e503329437ee/bzImage-4a0c9b33.xz
+>>
+>> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+>> Reported-by: syzbot+3c93637d7648c24e1fd0@syzkaller.appspotmail.com
+>>
+>> BUG: memory leak
+>> unreferenced object 0xffff88812638cc20 (size 32):
+>>   comm "syz.0.17", pid 6104, jiffies 4294942640
+>>   hex dump (first 32 bytes):
+>>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>>   backtrace (crc 0):
+>>     kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
+>>     slab_post_alloc_hook mm/slub.c:4975 [inline]
+>>     slab_alloc_node mm/slub.c:5280 [inline]
+>>     __do_kmalloc_node mm/slub.c:5641 [inline]
+>>     __kmalloc_noprof+0x3e3/0x6b0 mm/slub.c:5654
+>>     kmalloc_noprof include/linux/slab.h:961 [inline]
+>>     kmalloc_array_noprof include/linux/slab.h:1003 [inline]
+>>     iovec_from_user lib/iov_iter.c:1309 [inline]
+>>     iovec_from_user+0x108/0x140 lib/iov_iter.c:1292
+>>     __import_iovec+0x71/0x350 lib/iov_iter.c:1363
+>>     io_import_vec io_uring/rw.c:99 [inline]
+>>     __io_import_rw_buffer+0x1e2/0x260 io_uring/rw.c:120
+>>     io_import_rw_buffer io_uring/rw.c:139 [inline]
+>>     io_rw_do_import io_uring/rw.c:314 [inline]
+>>     io_prep_rw+0xb5/0x120 io_uring/rw.c:326
+>>     io_prep_rwv io_uring/rw.c:344 [inline]
+>>     io_prep_readv+0x20/0x80 io_uring/rw.c:359
+>>     io_init_req io_uring/io_uring.c:2248 [inline]
+>>     io_submit_sqe io_uring/io_uring.c:2295 [inline]
+>>     io_submit_sqes+0x354/0xe80 io_uring/io_uring.c:2447
+>>     __do_sys_io_uring_enter+0x83f/0xcf0 io_uring/io_uring.c:3514
+>>     do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>>     do_syscall_64+0xa4/0xfa0 arch/x86/entry/syscall_64.c:94
+>>     entry_SYSCALL_64_after_hwframe+0x77/0x7f
 > 
-> I did the following instead:
-> 
->   void BPF_STRUCT_OPS(cpu0_enqueue, struct task_struct *p, u64 enq_flags)
->   {
->           /*
->            * select_cpu() always picks CPU0. If @p is not on CPU0, it can't run on
->            * CPU 0. Queue on whichever CPU it's currently only.
->            */
->           if (scx_bpf_task_cpu(p) != 0) {
->                   stat_inc(0);	/* count local queueing */
->                   scx_bpf_dsq_insert(p, SCX_DSQ_LOCAL, SCX_SLICE_DFL, 0);
->                   return;
->           }
-> 
->           stat_inc(1);	/* count cpu0 queueing */
->           scx_bpf_dsq_insert(p, DSQ_CPU0, SCX_SLICE_DFL, enq_flags);
->   }
-> 
-> This should be safe against migration disabled tasks and so on.
+> This one doesn't make any sense to me. The reproducer given only uses
+> a single segment, and hence could never hit the allocation path for
+> an iovec, it'd always just use the embedded vec?!
 
-Looks good.
+Ah nevermind, I see what this is now. We can still alloc for lower
+counts, if we don't have a persistent one already.
 
-> 
-> > > +		stat_inc(0);	/* count local queueing */
-> > > +		scx_bpf_dsq_insert(p, SCX_DSQ_LOCAL, SCX_SLICE_DFL, 0);
-> > 
-> > And this is why I was suggesting to automatically fallback to the new
-> > global default time slice internally. In this case do we want to preserve
-> > the old 20ms default or automatically switch to the new one?
-> 
-> Maybe SCX_SLICE_DFL can become runtime loaded const volatile but anyone
-> who's using it is just saying "I don't care". As long as it's not something
-> that breaks the system left and right, does it matter what exact value it
-> is?
+-- 
+Jens Axboe
 
-I agree that if a scheduler uses SCX_SLICE_DFL it shouldn't care too much
-about the exact value.
-
-My concern was more about those schedulers that are quite paranoid about
-latency and even if something isn't handled properly (directly dispatching
-to a wrong CPU, a task being rescheduled internally, etc.), we'd still have
-a guarantee that a task's time slice can't exceed a known upper bound. But
-this could be managed by being able to set a default time slice (somehow)
-and it can be addressed separately.
-
-So yeah, in this case the exact value of SCX_SLICE_DFL doesn't really
-matter probably.
-
--Andrea
 
