@@ -1,130 +1,162 @@
-Return-Path: <linux-kernel+bounces-893955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5611C48E66
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 20:09:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48BAAC48E7E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 20:10:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2BF844F6EE6
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 19:05:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 131751894E01
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 19:05:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E327533B95E;
-	Mon, 10 Nov 2025 18:55:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A588033CE82;
+	Mon, 10 Nov 2025 18:56:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="DjwEHmzY";
-	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="G8ROzNz3"
-Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W42E23mf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFB4C33B6C8;
-	Mon, 10 Nov 2025 18:55:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 033EA32BF20;
+	Mon, 10 Nov 2025 18:56:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762800920; cv=none; b=dOBJJ123DbBD5TvP05C0qETPqhM+jdZn6zAUgDiMXhSn0LCFPgyAhkBK0WuyOb9UqVBvE+oZLdfdtdA0sTs6qzlHYBog/1jU/mOaSnue5ok7Qbkbsqu1oCKiF27QfvdfPvdKGVNsmR6uPMBZjquqlz1OrlV28jhducP4/mOiw84=
+	t=1762800998; cv=none; b=Y+iJIX46pEcsrxfJe4dmu9t0iXR1Dsa3Ue3Qtkn8AZ6pBINGLTuqJoEsHWm4NvSyXURIL+5KLr+uRgY6Goi0fhGuXPqRW68SHjhotsrbTJXAP0UYf6mBSKmT/m57KJJgXmxPu54fy3CTp/HVlIlwReeQShFLFnvL8LO2Q1Y5d64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762800920; c=relaxed/simple;
-	bh=fPuoTgZC7rNwrfkVKiHzNGBC3fyoM+tBSWoj9cq5rag=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=btyP7oGWz+vNrKUZFEDu0BVCNZkFLZP5ow/xOA78X2z7L3x4+o1h3GTsqgesZl+eUnzGHonkYkAeYCTsz8C8uAMWfhejwxuLJ/tGS9taqwLoasBk15DHmXM0Knc7nTzysdItpxFaBN7MvqiX0mhtBBmAyLVAk3VRM9Ke24/wvkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=DjwEHmzY; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=G8ROzNz3; arc=none smtp.client-ip=5.75.144.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
-DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
-	h=To:Message-Id:Subject:Date:From; t=1762800911; bh=o1J75RrinyqC7VsB+e/l2lA
-	YXB8pWyZVmDUqipNZARA=; b=DjwEHmzYNofsdi1SVeR+varM7x6D9YXGcB8aqKKwTqYAfozFzx
-	y3aL1rSUTexc270IULT9TcmMWUDdAboje8+3wcDOkkYtpDpiLCFpDc7emBCkbW+2J0tCuME56at
-	OEgdqBVgvOndERJAmXu1MiuuZ96rVmxNdsvuK9TpCK/MbTSKpaef3nrDumPIBrYNPR5pvRdvUet
-	33XPPwYhntfwamY5aJr4ZlGSezDi9rfKywF6/LIOnGpwoxaAoCyq1cC9G/xRTJEJXJTdnuBMixt
-	g0zOD+Rf444UBGVQW+EdU/gG+djyE9F80Ssj6lkMqKGICSsyXDsv6/Piu4KLIy/yOuw==;
-DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
-	h=To:Message-Id:Subject:Date:From; t=1762800911; bh=o1J75RrinyqC7VsB+e/l2lA
-	YXB8pWyZVmDUqipNZARA=; b=G8ROzNz3siUq5Fs30OORy1KG0gLtfhwCikze5iEz8+CnExy5gc
-	oX+iodawfVcF/a0EWnWPcjOslKmXJBEoCuAQ==;
-From: Nickolay Goppen <setotau@mainlining.org>
-Date: Mon, 10 Nov 2025 21:55:08 +0300
-Subject: [PATCH v3 3/3] arm64: dts: qcom: sdm630: Add FastRPC nodes to ADSP
+	s=arc-20240116; t=1762800998; c=relaxed/simple;
+	bh=1wKoNGk3+neT78CBoHzPYh7DcF4v4Epl4oWHaKMfgHQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gXHA9+iTJD2bJQYhZM9/UyRpuEAk2t7CP/TjsRydl21QGPbxovamO9qxQIgFotGDEwqTchF1F9VVzKq20Mzwp4k3f5KNjgZebs/lRb92murtGRMjZJfku0CCNrAuydHGjY1q1SZyDyxAKZ+u0048s4UP0weITYM6xEaNeBuChoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W42E23mf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF4C0C4CEF5;
+	Mon, 10 Nov 2025 18:56:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762800997;
+	bh=1wKoNGk3+neT78CBoHzPYh7DcF4v4Epl4oWHaKMfgHQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=W42E23mfndLfNxrsskmb6cNcDZyzYu/9d95uKO6GoGaHAnxrZ5x3HYCrGdmHJV250
+	 jIc+m/nOaJNdBjqwC4kRG3KwxePN1VafeP7sbXTOfc9dfNwZHlm8sJaMNAEjAAs1Y+
+	 NQv4EZSmbxBn3jMnXP1sMtn9PUjcO/Iq3IDYHjmQEVwstNiy3Iu3udpqijiUSWFxRX
+	 ouV/81ee0k5gOl+gTA705TQd9UxRCxSD4Zq0lFih7bFSmZ/p3zztbCW7pc0gtXOTRh
+	 O5s0++HcMMruK3B7OFMcc/Qcw6Rn4hNVBJLjJt/PduzTtiWP4Ct7Cq9Rq8uDM8C/iB
+	 aoRrBVzN7hDbA==
+Date: Mon, 10 Nov 2025 18:56:31 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+Cc: tomm.merciai@gmail.com, linux-renesas-soc@vger.kernel.org,
+	biju.das.jz@bp.renesas.com, Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Peter Rosin <peda@axentia.se>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 04/21] dt-bindings: reset: renesas,rzv2h-usb2phy:
+ Document VBUS_SEL mux
+Message-ID: <20251110-resonate-strict-c3d6c42f3e0d@spud>
+References: <cover.1762773720.git.tommaso.merciai.xr@bp.renesas.com>
+ <8fba0b7235bd398d41329fd087d68f7e98bbbaca.1762773720.git.tommaso.merciai.xr@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251110-qcom-sdm660-cdsp-adsp-dts-v3-3-d1f1c86e2e6d@mainlining.org>
-References: <20251110-qcom-sdm660-cdsp-adsp-dts-v3-0-d1f1c86e2e6d@mainlining.org>
-In-Reply-To: <20251110-qcom-sdm660-cdsp-adsp-dts-v3-0-d1f1c86e2e6d@mainlining.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
- linux@mainlining.org, Nickolay Goppen <setotau@mainlining.org>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1762800909; l=1337;
- i=setotau@mainlining.org; s=20250815; h=from:subject:message-id;
- bh=fPuoTgZC7rNwrfkVKiHzNGBC3fyoM+tBSWoj9cq5rag=;
- b=49e6v70G1J1sJ2637d3khbKFpxqOBJ2rR7JY/MfeW2F2SHSQt8bzHv2o/+AESrwjKKhorzjwX
- IawWcCXhHn0ASPic/aD4n5CusKoa4wkSZQa7O0aoE0/jWZXA1tpPXAG
-X-Developer-Key: i=setotau@mainlining.org; a=ed25519;
- pk=Og7YO6LfW+M2QfcJfjaUaXc8oOr5zoK8+4AtX5ICr4o=
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="GT7BDuKQnZgPdsmF"
+Content-Disposition: inline
+In-Reply-To: <8fba0b7235bd398d41329fd087d68f7e98bbbaca.1762773720.git.tommaso.merciai.xr@bp.renesas.com>
 
-Add FastRPC subnode with compute-cb subnodes to ADSP node.
 
-Signed-off-by: Nickolay Goppen <setotau@mainlining.org>
----
- arch/arm64/boot/dts/qcom/sdm630.dtsi | 33 +++++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+--GT7BDuKQnZgPdsmF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/arm64/boot/dts/qcom/sdm630.dtsi b/arch/arm64/boot/dts/qcom/sdm630.dtsi
-index f4906ee3f0c3..2764666714e6 100644
---- a/arch/arm64/boot/dts/qcom/sdm630.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sdm630.dtsi
-@@ -2342,6 +2342,39 @@ q6routing: routing {
- 						};
- 					};
- 				};
-+
-+				fastrpc {
-+					compatible = "qcom,fastrpc";
-+					qcom,glink-channels = "fastrpcglink-apps-dsp";
-+					label = "adsp";
-+					qcom,non-secure-domain;
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					compute-cb@1 {
-+						compatible = "qcom,fastrpc-compute-cb";
-+						reg = <1>;
-+						iommus = <&lpass_smmu 3>;
-+					};
-+
-+					compute-cb@2 {
-+						compatible = "qcom,fastrpc-compute-cb";
-+						reg = <2>;
-+						iommus = <&lpass_smmu 7>;
-+					};
-+
-+					compute-cb@3 {
-+						compatible = "qcom,fastrpc-compute-cb";
-+						reg = <3>;
-+						iommus = <&lpass_smmu 8>;
-+					};
-+
-+					compute-cb@4 {
-+						compatible = "qcom,fastrpc-compute-cb";
-+						reg = <4>;
-+						iommus = <&lpass_smmu 9>;
-+					};
-+				};
- 			};
- 		};
- 
+On Mon, Nov 10, 2025 at 01:08:04PM +0100, Tommaso Merciai wrote:
+> Document the 'mux-controller' child node in the Renesas RZ/V2H(P)
+> USB2PHY reset binding to support describing the USB VBUS_SEL
+> multiplexer as a mux-controller.
+>=20
+> This is required to properly configure the USB PHY VBUS source on
+> RZ/V2H(P), RZ/G3E SoCs.
+>=20
+> Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+> ---
+> v2->v3:
+>  - Manipulate mux-controller as an internal node.
 
--- 
-2.51.2
+Why is it a child node, rather than just putting the cell in the parent
+reset node?
 
+>  - Improved commit body.
+>=20
+> v1->v2:
+>  - New patch
+>=20
+>  .../bindings/reset/renesas,rzv2h-usb2phy-reset.yaml   | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/reset/renesas,rzv2h-usb2ph=
+y-reset.yaml b/Documentation/devicetree/bindings/reset/renesas,rzv2h-usb2ph=
+y-reset.yaml
+> index c1b800a10b53..03da74ff2d08 100644
+> --- a/Documentation/devicetree/bindings/reset/renesas,rzv2h-usb2phy-reset=
+=2Eyaml
+> +++ b/Documentation/devicetree/bindings/reset/renesas,rzv2h-usb2phy-reset=
+=2Eyaml
+> @@ -37,6 +37,12 @@ properties:
+>    '#reset-cells':
+>      const: 0
+> =20
+> +  mux-controller:
+> +    $ref: /schemas/mux/mux-controller.yaml#
+> +    description: Mux controller for USB VBUS source selection.
+> +    type: object
+> +    unevaluatedProperties: false
+> +
+>  required:
+>    - compatible
+>    - reg
+> @@ -44,6 +50,7 @@ required:
+>    - resets
+>    - power-domains
+>    - '#reset-cells'
+> +  - mux-controller
+> =20
+>  additionalProperties: false
+> =20
+> @@ -58,4 +65,8 @@ examples:
+>          resets =3D <&cpg 0xaf>;
+>          power-domains =3D <&cpg>;
+>          #reset-cells =3D <0>;
+> +
+> +        mux-controller {
+> +          #mux-state-cells =3D <1>;
+> +        };
+>      };
+> --=20
+> 2.43.0
+>=20
+
+--GT7BDuKQnZgPdsmF
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaRI1XwAKCRB4tDGHoIJi
+0jXmAP4n8RG7YkgvdZEpvYgVEeHXPR/DEvUBIKbVbRYcDr7U2QEAjMx9z7JhWZxr
+9bdX7GIsYG0o5CLLuMge8tFJCnC2HQE=
+=x5t9
+-----END PGP SIGNATURE-----
+
+--GT7BDuKQnZgPdsmF--
 
