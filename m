@@ -1,203 +1,166 @@
-Return-Path: <linux-kernel+bounces-893415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 767A9C47522
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:47:58 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2C7CC47549
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:49:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id EF8FF344AB1
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:47:57 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E16B74EBFA1
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:49:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4233D31355A;
-	Mon, 10 Nov 2025 14:47:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D61731355A;
+	Mon, 10 Nov 2025 14:48:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Av7Rfl7F"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qj8t2lOB"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED22123BD1B
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 14:47:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9948A30FC19
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 14:48:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762786070; cv=none; b=CHa4jRh1y5GdrxJn1Ps85G5wc1wuijRo8QjbrPDUUFfdcrJ//2SQuj0dJFsBDiveoY49e/dumHZc1nwH/DI6eBgcgrNfS5vlXdE+XkO3UIVPXX9tnGv68Zs6JrbMKcC4dG07wbP4rKVjZv5FWP1H4/2eGrBZQcxVB/wtBao/3XU=
+	t=1762786137; cv=none; b=fufgTbba/ldzcd1oEXBO7Po31kT+Zs5oP1izp3dyZdRogOQXx4daTikmlQnmxTnAUClP/EfW3Zix2VY1AaK/QCdIoy+A6vt8c/j8aYTqZngsI+V7UJ8TyEn8zK41Sl/z7VDAYfR1ns+lVUvC/WuPoPtGB/c1SINGIy0CiB5bpOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762786070; c=relaxed/simple;
-	bh=dgdLTnC9OagC7TcCvigEKRgst8vGqHZqM0+amuk2YAo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vk7zJaqG2+Ukh8K8/dyqJ/AwQYQbgj686kVy76uP3MCX7Ki9yURBhRlE0vpLWgwuan4GXbCASpZLrozohK1ipw2SWPfbYdLJAKVy2krZh3s4L2Y5za4rOHnst4UqAl/TT0oM/voIzAFZ2tdGDtq9tfVDowh72FRj8wGEidF0378=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Av7Rfl7F; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762786068;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uIeb35oP9Vs/R5h7VhglPZyEdkMXH/upLLEanGBOeTA=;
-	b=Av7Rfl7FzLqMYzwuLuWU+Cns8e2zdqv66+WHDAw4MzeWxtX7efipbRIHv5Qp5derHiCgrV
-	hqR5FX8cIvf5YgeSPu6ezKcbrwViWzxODtO/uzlvYuU7G3M4R3tvVpEaajPSvYVAD1ypgg
-	d18VIj2p7v/ra81YSWdO/PW7d1OyXb8=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-502-b2a0058xO8GOujbU21T91g-1; Mon,
- 10 Nov 2025 09:47:36 -0500
-X-MC-Unique: b2a0058xO8GOujbU21T91g-1
-X-Mimecast-MFC-AGG-ID: b2a0058xO8GOujbU21T91g_1762786050
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 49CC218002CB;
-	Mon, 10 Nov 2025 14:47:28 +0000 (UTC)
-Received: from fedora (unknown [10.44.33.158])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 787811800451;
-	Mon, 10 Nov 2025 14:47:08 +0000 (UTC)
-Received: by fedora (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Mon, 10 Nov 2025 15:47:27 +0100 (CET)
-Date: Mon, 10 Nov 2025 15:47:06 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: Bernd Edlinger <bernd.edlinger@hotmail.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Dmitry Levin <ldv@strace.io>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Alexey Dobriyan <adobriyan@gmail.com>, Kees Cook <kees@kernel.org>,
-	Andy Lutomirski <luto@amacapital.net>,
-	Will Drewry <wad@chromium.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Michal Hocko <mhocko@suse.com>, Serge Hallyn <serge@hallyn.com>,
-	James Morris <jamorris@linux.microsoft.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Yafang Shao <laoar.shao@gmail.com>, Helge Deller <deller@gmx.de>,
-	"Eric W. Biederman" <ebiederm@xmission.com>,
-	Adrian Reber <areber@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>, Jens Axboe <axboe@kernel.dk>,
-	Alexei Starovoitov <ast@kernel.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
-	linux-security-module@vger.kernel.org,
-	tiozhang <tiozhang@didiglobal.com>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	"Paulo Alcantara (SUSE)" <pc@manguebit.com>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	YueHaibing <yuehaibing@huawei.com>,
-	Paul Moore <paul@paul-moore.com>, Aleksa Sarai <cyphar@cyphar.com>,
-	Stefan Roesch <shr@devkernel.io>, Chao Yu <chao@kernel.org>,
-	xu xin <xu.xin16@zte.com.cn>, Jeff Layton <jlayton@kernel.org>,
-	Jan Kara <jack@suse.cz>, David Hildenbrand <david@redhat.com>,
-	Dave Chinner <dchinner@redhat.com>, Shuah Khan <shuah@kernel.org>,
-	Elena Reshetova <elena.reshetova@intel.com>,
-	David Windsor <dwindsor@gmail.com>,
-	Mateusz Guzik <mjguzik@gmail.com>, Ard Biesheuvel <ardb@kernel.org>,
-	"Joel Fernandes (Google)" <joel@joelfernandes.org>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Hans Liljestrand <ishkamiel@gmail.com>,
-	Penglei Jiang <superman.xpt@gmail.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Adrian Ratiu <adrian.ratiu@collabora.com>,
-	Ingo Molnar <mingo@kernel.org>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	Cyrill Gorcunov <gorcunov@gmail.com>,
-	Eric Dumazet <edumazet@google.com>
-Subject: Re: [RFC PATCH 0/3] mt-exec: fix deadlock with ptrace_attach()
-Message-ID: <aRH66lGd-OT4O68C@redhat.com>
-References: <AM8PR10MB470801D01A0CF24BC32C25E7E40E9@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
- <AM8PR10MB470875B22B4C08BEAEC3F77FE4169@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
- <AS8P193MB1285DF698D7524EDE22ABFA1E4A1A@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <AS8P193MB12851AC1F862B97FCE9B3F4FE4AAA@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <AS8P193MB1285FF445694F149B70B21D0E46C2@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <AS8P193MB1285937F9831CECAF2A9EEE2E4752@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <GV2PPF74270EBEEEDE0B9742310DE91E9A7E431A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
- <GV2PPF74270EBEE9EF78827D73D3D7212F7E432A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
- <aRDL3HOB21pMVMWC@redhat.com>
- <GV2PPF74270EBEE83C2CA09B945BC954FA3E4CEA@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+	s=arc-20240116; t=1762786137; c=relaxed/simple;
+	bh=QvLvyRTtOe3YpANvSN2TJE7jXUgDr0aVixqk0y131fg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PA0I0tWWKgC7ScWaoUenLfNIgq8JHALFGBtbeCa4VLiYeMxOwEZwQlJPjB2GFiCBXayYKCYSfRpQ9WJOCbctIk/ifwQbWGiDrycPn6cf15u51j2NJqPZ3ziVYnyNjHuEQxNcae4PhYjYZwmdmVrst+PP16cUGrzT2Qjnl7PUbD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qj8t2lOB; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-3437af8444cso1364736a91.2
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 06:48:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762786135; x=1763390935; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FrgskyzgQxtRPQXe+YA6yojSKzP/1EuspyiSaUY67z8=;
+        b=Qj8t2lOBhL3+SKQ9YLEjjqg5q8RodXiItrSBwp09JDbTitHiWc2eoS7DzbDn1La+GK
+         WhEXzdnwaazwFa8OyTC1iC7dgvuWT7O6DBmsg4dLTImcsEk/nzAnjriVzhrMqePcbYx5
+         L8VQj99YvR2/DiN7pEvhfMcgrCFCpG47JVVH7NURT5avljVkiR8D6Eiw4SWOFaysekxY
+         mEdBNu4LTXcMr0optpyMYvI+6Mx1IqSXVLQkfR21De+RxOn8a6g1BCWt533EaRATrZ5x
+         szULOegP/aUbF7mG/Q1AyOuP/9fygMG5RD8+WT7Blj4xJ7F5v/tA1cp7B5HmCOF2KgWm
+         uNwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762786135; x=1763390935;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FrgskyzgQxtRPQXe+YA6yojSKzP/1EuspyiSaUY67z8=;
+        b=DjMR64VwRp2SWr167y0Oe4NoDYL93OllfVO/LtsEnnyNhVGe2aXdKloK2xyV8a5vpf
+         CINxzx0fg7B89MLM75dp2AJvk4ZEMlSomlix2PBDdoJEM6Pkan1WmECMAA9yKLMlJxRi
+         Bv8Tosw4wM9/1kfLIVyz1TJa/NKaCeveFYj/q0Ey7pjyvOdGQMSbpB/UTiTR8zfGbiJ2
+         FRk3JDJBJ5UFB9FDxG7H8eSYpOSUjg96nHMdvDrePEPP1KtZ+jhsjG95IgXBQWEKsPkg
+         3opBIlINc7XsAvbtoJB4uIXxBEkQlzeEDQQP6lE6Gc5+qqX4xSf1RBoNzZJsPaUyjFw6
+         qJHQ==
+X-Gm-Message-State: AOJu0Yy1aHDzBAvR0/3ZKBbvq9/8g2HWMhLhxx08Sc1uUzyst/yLKNQx
+	+OAqoU1kwmQK8oL7nURSbAELeXIxczRkh+ijaoo/ImmuXDK84VNNI2M1
+X-Gm-Gg: ASbGnctqQKVTkxGN7p0OSbnoxqhzR5xj35QwXmKy6jzfQJJeT1SPauUg5fzYWRzFVCP
+	3LfkUjogJ03CmEUAE+uaQM9NbJAu/9GfkBDdw5tNL4i5nEcwovlX6ZjVejgdWZxYqAwXRU/rp9v
+	YyC3cxL9+p7DmLDbegI9NuZDh1F5NWXIZrYK2yNu2FVJyM4n0zZFK6tvIgPK0oKq+/XFxfecwQT
+	prdpDq4/hruzqZbo18AFsUXxJxdUi1dSjbwCnzJzbGHNUI54VGl+o9uPeHC345++XuzxtPuvv+u
+	/W7HIIPVJug9/y73zqiFrdVC1Crp2w9fiz15JfQTBnQH7LZhV+ktw/u9r3KYZlsjH6eDJbRnV3n
+	T/aVGf4SyNpMP0Gw6E4eePRJwVluAR7p+h2KRROJvw+GtuOS+9+pvaUvO9JczUzQMe5gzFTD9xP
+	ajXfxZiNlTUog3s4L0FRh/aafN
+X-Google-Smtp-Source: AGHT+IFO7qcki/gcHxPVszkVoI6yIC1USYq4fWfL3CjPS2tpRrsdQwNQQWhcDI05RjMTZ5o9QWvvag==
+X-Received: by 2002:a17:90b:3bc6:b0:336:b563:993a with SMTP id 98e67ed59e1d1-3436cbf7f73mr10435722a91.23.1762786134867;
+        Mon, 10 Nov 2025 06:48:54 -0800 (PST)
+Received: from DESKTOP-8TIG9K0.localdomain ([119.28.20.50])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3437221b329sm7579364a91.16.2025.11.10.06.48.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Nov 2025 06:48:54 -0800 (PST)
+From: Xie Yuanbin <qq570070308@gmail.com>
+To: nathan@kernel.org,
+	nick.desaulniers+lkml@gmail.com,
+	morbo@google.com,
+	justinstitt@google.com,
+	qq570070308@gmail.com,
+	masahiroy@kernel.org,
+	jack@suse.cz,
+	akpm@linux-foundation.org,
+	maninder1.s@samsung.com
+Cc: linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev,
+	will@kernel.org
+Subject: [PATCH v2] Fix redundant judgment in WARN_ONCE with clang
+Date: Mon, 10 Nov 2025 22:48:44 +0800
+Message-ID: <20251110144844.1376-1-qq570070308@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <GV2PPF74270EBEE83C2CA09B945BC954FA3E4CEA@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+Content-Transfer-Encoding: 8bit
 
-Hi Bernd,
+For c code:
+```c
+extern int xx;
+void test(void)
+{
+	if (WARN_ONCE(xx, "x"))
+		__asm__ volatile ("nop":::);
+}
+```
 
-On 11/10, Bernd Edlinger wrote:
->
-> When the debugger wants to attach the de_thread the debug-user access rights are
-> checked against the current user and additionally against the new user credentials.
-> This I did by quickly switching the user credenitals to the next user and back again,
-> under the cred_guard_mutex, which should make that safe.
+Clang will generate the following assembly code:
+```assemble
+test:
+	movl	xx(%rip), %eax // Assume xx == 0 (likely case)
+	testl	%eax, %eax // judge once
+	je	.LBB0_3    // jump to .LBB0_3
+	testb	$1, test.__already_done(%rip)
+	je	.LBB0_2
+.LBB0_3:
+	testl	%eax, %eax // judge again
+	je	.LBB0_5    // jump to .LBB0_5
+.LBB0_4:
+	nop
+.LBB0_5:
+	retq
+	// omit
+```
 
-Let me repeat, I can't really comment this part, I don't know if it is
-actually safe. But the very fact your patch changes ->mm and ->cred of
-the execing task in ptrace_attach() makes me worry... At least I think
-you should update or remove this comment in begin_new_exec:
+In the above code, `xx == 0` should be a likely case, but in this case,
+xx has been judged twice.
 
-	/*
-	 * cred_guard_mutex must be held at least to this point to prevent
-	 * ptrace_attach() from altering our determination of the task's
-	 * credentials; any time after this it may be unlocked.
-	 */
-	security_bprm_committed_creds(bprm);
+Test info:
+1. kernel source:
+linux-next
+commit 9c0826a5d9aa4d52206d ("Add linux-next specific files for 20251107")
+2. compiler:
+clang: Debian clang version 21.1.4 (8) with
+Debian LLD 21.1.4 (compatible with GNU linkers)
+3. config:
+base on default x86_64_defconfig, and setting:
+CONFIG_MITIGATION_RETHUNK=n
+CONFIG_STACKPROTECTOR=n
 
-> So at this time I have only one request for you.
-> Could you please try out how the test case in my patch behaves with your fix?
+v1->v2: https://lore.kernel.org/20251109083715.24495-1-qq570070308@gmail.com
+  - Code format adjustment
 
-The new TEST(attach2) added by your patch fails as expected, see 3/3.
+Signed-off-by: Xie Yuanbin <qq570070308@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+---
+ include/linux/once_lite.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-   128  static long thread2_tid;
-   129  static void *thread2(void *arg)
-   130  {
-   131          thread2_tid = syscall(__NR_gettid);
-   132          sleep(2);
-   133          execlp("false", "false", NULL);
-   134          return NULL;
-   135  }
-   136
-   137  TEST(attach2)
-   138  {
-   139          int s, k, pid = fork();
-   140
-   141          if (!pid) {
-   142                  pthread_t pt;
-   143
-   144                  pthread_create(&pt, NULL, thread2, NULL);
-   145                  pthread_join(pt, NULL);
-   146                  return;
-   147          }
-   148
-   149          sleep(1);
-   150          k = ptrace(PTRACE_ATTACH, pid, 0L, 0L);
-   151          ASSERT_EQ(k, 0);
-   152          k = waitpid(-1, &s, 0);
-   153          ASSERT_EQ(k, pid);
-   154          ASSERT_EQ(WIFSTOPPED(s), 1);
-   155          ASSERT_EQ(WSTOPSIG(s), SIGSTOP);
-   156          k = ptrace(PTRACE_SETOPTIONS, pid, 0L, PTRACE_O_TRACEEXIT);
-   157          ASSERT_EQ(k, 0);
-   158          thread2_tid = ptrace(PTRACE_PEEKDATA, pid, &thread2_tid, 0L);
-   159          ASSERT_NE(thread2_tid, -1);
-   160          ASSERT_NE(thread2_tid, 0);
-   161          ASSERT_NE(thread2_tid, pid);
-   162          k = waitpid(-1, &s, WNOHANG);
-   163          ASSERT_EQ(k, 0);
-   164          sleep(2);
-   165          /* deadlock may happen here */
-   166          k = ptrace(PTRACE_ATTACH, thread2_tid, 0L, 0L);
-
-PTRACE_ATTACH fails.
-
-thread2() kills the old leader, takes it pid, execlp() succeeds.
-
-Oleg.
+diff --git a/include/linux/once_lite.h b/include/linux/once_lite.h
+index 27de7bc32a06..236592c4eeb1 100644
+--- a/include/linux/once_lite.h
++++ b/include/linux/once_lite.h
+@@ -16,7 +16,7 @@
+ 		bool __ret_cond = !!(condition);			\
+ 		bool __ret_once = false;				\
+ 									\
+-		if (unlikely(__ret_cond && !__already_done)) {		\
++		if (unlikely(__ret_cond) && unlikely(!__already_done)) {\
+ 			__already_done = true;				\
+ 			__ret_once = true;				\
+ 		}							\
+-- 
+2.51.0
 
 
