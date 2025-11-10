@@ -1,87 +1,146 @@
-Return-Path: <linux-kernel+bounces-894150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85A90C495C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 22:09:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04C38C495E1
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 22:11:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 217E84E607B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 21:08:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A217E3A2DF3
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 21:11:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4C232F533E;
-	Mon, 10 Nov 2025 21:08:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C02442F9D8C;
+	Mon, 10 Nov 2025 21:11:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SzK2pMWu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b="ijnlb97W"
+Received: from mx0a-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F2432F5A3E;
-	Mon, 10 Nov 2025 21:08:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 705DE2F49E9;
+	Mon, 10 Nov 2025 21:11:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.153.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762808920; cv=none; b=WiSNx0GHub7JAu923VihQ+bFB+cclFFVw4lfEAmmMWSBkx+q+YNr4vKYUC49gbnYfx2+k2YumRd7yV5MQv7/T5z0bLidX8DgpAuSDZCn2+qvNJzkiS6Ywh26pDiQbmphQdxRS3pyc0cuRDOMwqPJmXTaTf6CNzAGxWEpxFtlb50=
+	t=1762809095; cv=none; b=LYSQFf6Ek/9QTh14Z7zJm1ugV84ejd+ABOtuRPcW4a7/huXIPB5quFl1leAaVstAO2ze7l+m8+VeFER97Gd2Os0bGgvTFYIToPqEYFPdGZPLnLx4SIs5xuST1o0288L1CvXZfl6E2jVQ0jbH7tWlbZrbas0wO6nbCXL5350NmgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762808920; c=relaxed/simple;
-	bh=WmucaFrI7bJuofCDaZRNIC+CayWlzp1M5K5cIAKTE1k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LKk2vRFCvkUK2ns3/Y0RAKI86Qat60c6vBUBJ1MocpvuP/c2E8DUXM7wtImySk8quyp8NFRFyQnDNn5RuMKtEo1Wwg2Iqv2dI2DnS+WHaYHSWe+TQZsVTIpXLLA1zn9dJavdP8s3kpmmo+3zvBGhKbKraG8h853/QkR1XEqrWmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SzK2pMWu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E35F1C116B1;
-	Mon, 10 Nov 2025 21:08:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762808919;
-	bh=WmucaFrI7bJuofCDaZRNIC+CayWlzp1M5K5cIAKTE1k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SzK2pMWuVz3sx1/VAZ+bnvTBIVzDeFyWdopXWJCN0QXNVvvAgz/CLqWvLeb2jH6Sv
-	 BNpAFiMMFNItLBfwv3XcKAV7CAvM3IcEnlyJTZqaDemuhfKuxQYD6PTiUwyJ+VEM6Q
-	 VN0I+K4SrpW0OeqrCjFWuhud2QfcT2FWMXCottIz8tYwdP1XUFR999gJrC8EVxcrdi
-	 vSjgLwplYB/q7R1wlkF0r5q9M63nr9Eho62ZHjovpbJsPoGl100MDYqr0cslBdZD8z
-	 ZvHY8I8AXzZYtrxI262MqH213vGMGcx08l2AIeiaEeGz20lPLgogHfNOHhdSNS/RH0
-	 uThAo/VD5hBxQ==
-Date: Mon, 10 Nov 2025 14:08:35 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: "Maciej W. Rozycki" <macro@orcam.me.uk>
-Cc: Jens Reidel <adrian@mainlining.org>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, linux-mips@vger.kernel.org,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: Re: [PATCH] mips: Use generic endianness macros instead of
- MIPS-specific ones
-Message-ID: <20251110210835.GA302594@ax162>
-References: <20251108-mips-bpf-fix-v1-1-0467c3ee2613@mainlining.org>
- <20251109233720.GB2977577@ax162>
- <alpine.DEB.2.21.2511100050330.25436@angie.orcam.me.uk>
+	s=arc-20240116; t=1762809095; c=relaxed/simple;
+	bh=XtLh4aBeJsCUgYlUlpw6LH11tppsgh7k6FPs7nJZqIA=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=h0/Dj1RIKRE4I8IzdDK/8vXrG/zfuQqPDwGlYH3E8qW1loLOdHVrGdlChhS5ro0y54UR8OQI3FFmEAvgqlOdrTHyx1FInMCqVFcV+SbpWBpN2uyCmRon640XB69ngUeU4q8VJxR9RH/VfVWx8ju+wzCO3N1dKKOMW4QmY0dOVc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b=ijnlb97W; arc=none smtp.client-ip=67.231.153.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
+Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
+	by m0089730.ppops.net (8.18.1.11/8.18.1.11) with ESMTP id 5AAL4UPd3887404;
+	Mon, 10 Nov 2025 13:11:26 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=s2048-2025-q2; bh=usoWcYooOm9SxHALBG
+	nUyhOdaDMkMi93J1Id1nTpVxY=; b=ijnlb97WQbwSw9VyqYSJ85CLXbeN6GU+kH
+	dsd092V9JRbPZXC20o/8PWa+UoRy9Rx2sAa4jq0XFjkkKy8/Eg0TOaYZj5cNzxJt
+	q5u38W0NkBGVURfa4aeyFUGLtBMo3N3GBwV/qovxtfqj3iWjOrpFHGmFClnwJANg
+	jL3QMvttKOaWDdzH/UxuVzGPMwYL5gtF73k6wD/RuNgzFTpydARPkYqD4MUuGUgb
+	R/75B2eJRj5WiOcPKk/+90Qo+SdHWj7wjVtqNMBDSS+hq3dcQvnKqz1CSmIYoV0z
+	D6IzYMINxr+Vb8T5Gu4kOeKRMl3cmcigoUleXf39O2wEHxJ6+x1g==
+Received: from mail.thefacebook.com ([163.114.134.16])
+	by m0089730.ppops.net (PPS) with ESMTPS id 4abqn6r1sm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Mon, 10 Nov 2025 13:11:26 -0800 (PST)
+Received: from devgpu015.cco6.facebook.com (2620:10d:c085:108::4) by
+ mail.thefacebook.com (2620:10d:c08b:78::c78f) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.2562.20; Mon, 10 Nov 2025 21:11:25 +0000
+From: Alex Mastro <amastro@fb.com>
+Subject: [PATCH 0/4] vfio: selftests: update DMA mapping tests to use
+ queried IOVA ranges
+Date: Mon, 10 Nov 2025 13:10:40 -0800
+Message-ID: <20251110-iova-ranges-v1-0-4d441cf5bf6d@fb.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.2511100050330.25436@angie.orcam.me.uk>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANBUEmkC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1NDQ0MD3cz8skTdIpBMsa5hsoGlqYllWlKambESUEdBUWpaZgXYtOjY2lo
+ A55hn5V0AAAA=
+To: Alex Williamson <alex@shazbot.org>, David Matlack <dmatlack@google.com>,
+        Shuah Khan <shuah@kernel.org>
+CC: <kvm@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Alex Mastro <amastro@fb.com>,
+        Jason Gunthorpe
+	<jgg@ziepe.ca>
+X-Mailer: b4 0.13.0
+X-Proofpoint-GUID: 3EUnko2paFqERd4OIog84LK-XmwoQIXw
+X-Proofpoint-ORIG-GUID: 3EUnko2paFqERd4OIog84LK-XmwoQIXw
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEwMDE3OSBTYWx0ZWRfX8zEXcju1Dkn1
+ +ixjMQT5VhR5/HxSr1Wx4OWcMhTPaGTX9QHHqPsH7AgYSVKStoheXKqrQDJponfKp/cCto7d+Eb
+ cTnuXR1yJYip3+qSBVS/kFTbrRMRPgOQVY466ESDXYtqhrI8t3tOxol/mGED0a5N/bssAtV1V8N
+ hV2qJG0dsWJoQv4jCP+mLm8fYf5PElI2AvK0e+jf0hl7h9bkTnA8fx5zZKn334sryuT9F8ViXtX
+ ISflcaVDyGAbTgH76YC2ZjFPoqrRLOMqFLJvib+FeUC6Q/o1emCM6FWjTt9teObcNZXbt/uLYYk
+ aDSPHxKi1vDiu+K/r2HbqPRZKYQeMG1buMuvtZSfjCYmx+zpZU4Nxpnd8yvIrnQCQua/gVY6iWp
+ hp5ZYpPFPAzlBV+vTwu78s6dTn8rzg==
+X-Authority-Analysis: v=2.4 cv=Qdprf8bv c=1 sm=1 tr=0 ts=691254fe cx=c_pps
+ a=CB4LiSf2rd0gKozIdrpkBw==:117 a=CB4LiSf2rd0gKozIdrpkBw==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=VwQbUJbxAAAA:8 a=r1p2_3pzAAAA:8 a=1XWaLZrsAAAA:8 a=FOH2dFAWAAAA:8
+ a=oiGFUyDcMpD7GGGUmHQA:9 a=QEXdDO2ut3YA:10 a=r_pkcD-q9-ctt7trBg_g:22
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-10_07,2025-11-10_02,2025-10-01_01
 
-On Mon, Nov 10, 2025 at 01:34:19AM +0000, Maciej W. Rozycki wrote:
->  Also please don't review changes based on assumptions, "I assume GCC 
-> does[...]" means that you just don't know (and it's trivial to check).
+Not all IOMMUs support the same virtual address width as the processor,
+for instance older Intel consumer platforms only support 39-bits of
+IOMMU address space.  On such platforms, using the virtual address as
+the IOVA and mappings at the top of the address space both fail.
 
-Yes, that is totally valid. I hastily reviewed this when I should have
-taken the time to check but I did not have a MIPS cross compiler
-available locally to test and I forgot that I can use Godbolt for that
-test. I'll be more mindful of that in the future (or at least being
-clear that I did not actually check but it should be verified before the
-change is merged without providing a tag).
+VFIO and IOMMUFD have facilities for retrieving valid IOVA ranges,
+VFIO_IOMMU_TYPE1_INFO_CAP_IOVA_RANGE and IOMMU_IOAS_IOVA_RANGES,
+respectively.  These provide compatible arrays of ranges from which
+we can construct a simple allocator and record the maximum supported
+IOVA address.
 
-> target macros.  Since our current GCC requirement is 5.1 it will be fine 
+Use this new allocator in place of reusing the virtual address, and
+incorporate the maximum supported IOVA into the limit testing.  This
+latter change doesn't test quite the same absolute end-of-address space
+behavior but still seems to have some value.  Testing for overflow is
+skipped when a reduced address space is supported as the desired errno
+is not generated.
 
-Just an FYI, the minimum GCC version is 8.1 since commit 118c40b7b503
-("kbuild: require gcc-8 and binutils-2.30") in 6.16.
+This series is based on Alex Williamson's "Incorporate IOVA range info"
+[1] along with feedback from the discussion in David Matlack's "Skip
+vfio_dma_map_limit_test if mapping returns -EINVAL" [2].
 
-Cheers,
-Nathan
+Given David's plans to split IOMMU concerns from devices as described in
+[3], this series' home for `struct iova_allocator` is likely to be short
+lived, since it resides in vfio_pci_device.c. I assume that the rework
+can move this functionality to a more appropriate location next to other
+IOMMU-focused code, once such a place exists.
+
+[1] https://lore.kernel.org/all/20251108212954.26477-1-alex@shazbot.org/#t
+[2] https://lore.kernel.org/all/20251107222058.2009244-1-dmatlack@google.com/
+[3] https://lore.kernel.org/all/aRIoKJk0uwLD-yGr@google.com/
+
+Signed-off-by: Alex Mastro <amastro@fb.com>
+---
+Alex Mastro (4):
+      vfio: selftests: add iova range query helpers
+      vfio: selftests: fix map limit tests to use last available iova
+      vfio: selftests: add iova allocator
+      vfio: selftests: update vfio_dma_mapping_test to allocate iovas
+
+ .../testing/selftests/vfio/lib/include/vfio_util.h |  22 +-
+ tools/testing/selftests/vfio/lib/vfio_pci_device.c | 226 ++++++++++++++++++++-
+ .../testing/selftests/vfio/vfio_dma_mapping_test.c |  25 ++-
+ 3 files changed, 268 insertions(+), 5 deletions(-)
+---
+base-commit: 0ed3a30fd996cb0cac872432cf25185fda7e5316
+change-id: 20251110-iova-ranges-1c09549fbf63
+
+Best regards,
+-- 
+Alex Mastro <amastro@fb.com>
+
 
