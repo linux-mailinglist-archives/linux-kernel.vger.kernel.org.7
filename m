@@ -1,125 +1,121 @@
-Return-Path: <linux-kernel+bounces-894315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F6DDC49BC7
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 00:23:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DC39C49BBE
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 00:23:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEEC11883AE2
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 23:24:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 663BE1882A09
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 23:23:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53515302165;
-	Mon, 10 Nov 2025 23:23:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90C5430217E;
+	Mon, 10 Nov 2025 23:22:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="rjYuoLzl"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qd+O2xi3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0161A23504B;
-	Mon, 10 Nov 2025 23:23:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0AC92BE7B8;
+	Mon, 10 Nov 2025 23:22:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762817007; cv=none; b=StPhlC9hfDxzl/hPY1tmbrC4vutt4+Fe26zT+G8BqMUgedTg/vjmq1DmbDMC332JWg+grXERbliYRfZrZMy6BDAa9gGy0X8LcYFdB81yHxG28zMweBqv+g/0PuGz4OlTAVXWEp7/OSjs6CkS7Wt7ImeWX7ZQe5bUvvv/wtvcnjY=
+	t=1762816977; cv=none; b=COTkaXlFR2pUz3dbmJkz4T9Pr4T/JH6i/FSjDY4ZxBOih6CGg4WEQYXcJDGw2HeYHDYX9dzTQEQqiuwQbyE3AYhmtL0fFn/nq5gEP9HKaD1Itx5XTv50fHQMCW4v2VB0YTXNAWfheLW4djMxaTY9JQO57wtoGuPfkMy4pLShiTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762817007; c=relaxed/simple;
-	bh=lgcoh9p9TCLcPD8PGPy9BtJzRmki9rWnfrJ00klkhMQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ENIn/QWUSGNfCGx7phI1cNiRHanqJ5Yxjz6QNK/T6ntkwU7Q62ZnEis4MzXXfswoHkcN62IyifiGH4aXCiKqqwnnn+omgLxVSh65J1zwTMdOND2qBVUG8W43I23oe6nxXuivQ/LG+aWvpPIXdKcIfb/W94fT3S2HUDAAsvz/a2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=rjYuoLzl; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [IPV6:2601:646:8081:9484:a4ce:2dbc:ef8e:acc2] ([IPv6:2601:646:8081:9484:a4ce:2dbc:ef8e:acc2])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 5AANLvc93880957
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Mon, 10 Nov 2025 15:21:58 -0800
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 5AANLvc93880957
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025102301; t=1762816923;
-	bh=BsN8VBFD5PAgYi4bwE42pnqSTmd+qcr29mOqQybepiA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=rjYuoLzlgViwlHxmQg2QGfpz9LPJDhOQAbw4/6aIGNHbpNN57PZ51RsVPdOwQA6yB
-	 2eNjlZzKfZya7G4KhhWgguyHM00AgCEGTcGmu22T0V87nzs1CGXLylHaQ1B7bKomCf
-	 4yz/0LhiJbU3IVmkAeDaty+clqMjGVgwRilI7qypUsrfnmUZvKS2i/+F35IPLAcw7f
-	 BuHueJostF0V0GWeV+jp1PoPSmefFxcdjXd9xrdrNwYM/y51ZIXY3w9UdXd+X2Dg8x
-	 SQzYlmvO8N1yVdVU38QI6EboQsWVZ7uNLIiYngGzemAcHknbmnXkOfw56rFOGv28uz
-	 uQr7m3HHG+8FA==
-Message-ID: <128b82ff-d304-41d6-b914-a44706d8781f@zytor.com>
-Date: Mon, 10 Nov 2025 15:21:52 -0800
+	s=arc-20240116; t=1762816977; c=relaxed/simple;
+	bh=QGYurX67GhE6LJ4m/le6ChiewTr24IY3HUNN+0ZWht4=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=AAkadJNPMjoEUL8qWI+J6iBTnK8UWrmDKRCGu7+SdW4yb33sktD5HSL6qyISxhBuD4EP4ofGl2XqWl1Usd7Ge1rn1urQehG5HrnT6EncXHW0lRw+kf1DZ5eJ/4+Kwk/kO9APq0Xm9+SUhKqG8W9PcshkTIdXCJ+RWJZrzlBV9nE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qd+O2xi3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 597A0C4CEFB;
+	Mon, 10 Nov 2025 23:22:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762816976;
+	bh=QGYurX67GhE6LJ4m/le6ChiewTr24IY3HUNN+0ZWht4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Qd+O2xi3mC33ydo3Nrk2NFszrdqEdSKFTyqsYZ2F3KMDF09vK0wITKmUNXG2wYui+
+	 wJ02C1xG9NOdrf1UzyNGY9+GEzIun8HKNqGilIJweqrG7AE7TsRgPHjU7BqSt4WGhx
+	 ufX/mVqIYIFPFgfzAOGoYSzWlOnwOUyoX95WUib9JeooG11s4ZDkXO9NhmIEmQRL0z
+	 Hb815eW9WurD9/p+yCnuwE5Wz7BQpQn/yjmotbGvRKB/f8dvXpKTVfNDdfK6awwdtT
+	 zm6fWZiXfV6uTQk9/K8sshx2cBC5+LyGkBP+TYXMl7OxUuZZsWV2W1ag4vT4V2mZae
+	 gZz3rVLyZ/zZA==
+Date: Tue, 11 Nov 2025 08:22:51 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>, linux-kselftest@vger.kernel.org,
+ Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Shuah Khan <skhan@linuxfoundation.org>
+Subject: Re: [PATCH] selftests/tracing: Run sample events to clear page
+ cache events
+Message-Id: <20251111082251.2496db7c20b28184cd8cb759@kernel.org>
+In-Reply-To: <20251028122724.4bff9853@gandalf.local.home>
+References: <20251028122724.4bff9853@gandalf.local.home>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/4] Provide the always inline version of some
- functions
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Xie Yuanbin <qq570070308@gmail.com>, david@redhat.com, tglx@linutronix.de,
-        segher@kernel.crashing.org, riel@surriel.com, linux@armlinux.org.uk,
-        mathieu.desnoyers@efficios.com, paulmck@kernel.org, pjw@kernel.org,
-        palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
-        hca@linux.ibm.com, gor@linux.ibm.com, agordeev@linux.ibm.com,
-        borntraeger@linux.ibm.com, svens@linux.ibm.com, davem@davemloft.net,
-        andreas@gaisler.com, luto@kernel.org, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, acme@kernel.org, namhyung@kernel.org,
-        mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-        jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
-        james.clark@linaro.org, anna-maria@linutronix.de, frederic@kernel.org,
-        juri.lelli@redhat.com, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-        mgorman@suse.de, vschneid@redhat.com, nathan@kernel.org,
-        nick.desaulniers+lkml@gmail.com, morbo@google.com,
-        justinstitt@google.com, thuth@redhat.com, brauner@kernel.org,
-        arnd@arndb.de, jlayton@kernel.org, aalbersh@redhat.com,
-        akpm@linux-foundation.org, david@kernel.org,
-        lorenzo.stoakes@oracle.com, max.kellermann@ionos.com,
-        ryan.roberts@arm.com, nysal@linux.ibm.com, urezki@gmail.com,
-        x86@kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, llvm@lists.linux.dev,
-        will@kernel.org
-References: <20251108172346.263590-1-qq570070308@gmail.com>
- <20251108172346.263590-4-qq570070308@gmail.com>
- <04CA2D22-4DE2-4DE1-A2BC-AACE666F5F93@zytor.com>
- <20251109115152.GD2545891@noisy.programming.kicks-ass.net>
-Content-Language: en-US, sv-SE
-From: "H. Peter Anvin" <hpa@zytor.com>
-In-Reply-To: <20251109115152.GD2545891@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset=UTF-8
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 2025-11-09 03:51, Peter Zijlstra wrote:
-> On Sat, Nov 08, 2025 at 02:14:44PM -0800, H. Peter Anvin wrote:
+On Tue, 28 Oct 2025 12:27:24 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
+
+> From: Steven Rostedt <rostedt@goodmis.org>
 > 
->>> +static struct rq *finish_task_switch(struct task_struct *prev)
->>> +{
->>> +	return finish_task_switch_ainline(prev);
->>> +}
->>> +
->>> /**
->>>  * schedule_tail - first thing a freshly forked thread must call.
->>>  * @prev: the thread we just switched away from.
->>
->> There is, in fact: you have to have an always_inline version, and wrap it in a noinline version.
+> The tracing selftest "event-filter-function.tc" was failing because it
+> first runs the "sample_events" function that triggers the kmem_cache_free
+> event and it looks at what function was used during a call to "ls".
 > 
-> Yes, but all of this is particularly retarded, there are exactly _2_
-> callers of this function. Keeping an out-of-line copy for one while
-> inlineing the other makes 0 sense.
+> But the first time it calls this, it could trigger events that are used to
+> pull pages into the page cache.
 > 
-> Also, the amount of crap he needs to mark __always_inline doesn't make
-> much sense to me, is he building with -Os or something?
+> The rest of the test uses the function it finds during that call to see if
+> it will be called in subsequent "sample_events" calls. But if there's no
+> need to pull pages into the page cache, it will not trigger that function
+> and the test will fail.
+> 
+> Call the "sample_events" twice to trigger all the page cache work before
+> it calls it to find a function to use in subsequent checks.
+> 
 
-That's another issue -- unless the second instance of the function is on a
-slow path which wants to be isolated from the rest of its function (unlikely.)
+Looks good to me.
 
-I was merely commenting on the claim that there is no way to control inlining
-on a call site basis - there is.
+Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
-	-hpa
+Thanks,
 
+> Cc: stable@vger.kernel.org
+> Fixes: eb50d0f250e96 ("selftests/ftrace: Choose target function for filter test from samples")
+> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> ---
+>  .../selftests/ftrace/test.d/filter/event-filter-function.tc   | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/tools/testing/selftests/ftrace/test.d/filter/event-filter-function.tc b/tools/testing/selftests/ftrace/test.d/filter/event-filter-function.tc
+> index c62165fabd0c..003f612f57b0 100644
+> --- a/tools/testing/selftests/ftrace/test.d/filter/event-filter-function.tc
+> +++ b/tools/testing/selftests/ftrace/test.d/filter/event-filter-function.tc
+> @@ -20,6 +20,10 @@ sample_events() {
+>  echo 0 > tracing_on
+>  echo 0 > events/enable
+>  
+> +# Clear functions caused by page cache; run sample_events twice
+> +sample_events
+> +sample_events
+> +
+>  echo "Get the most frequently calling function"
+>  echo > trace
+>  sample_events
+> -- 
+> 2.51.0
+> 
+
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
