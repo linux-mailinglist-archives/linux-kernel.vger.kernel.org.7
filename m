@@ -1,115 +1,168 @@
-Return-Path: <linux-kernel+bounces-893234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B5E5C46DE3
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:24:48 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9727C46D6E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:19:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED7BB1887C53
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:25:12 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 95EAE4EB4A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:19:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9C6C2EBB9C;
-	Mon, 10 Nov 2025 13:24:44 +0000 (UTC)
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 304E73101CE;
+	Mon, 10 Nov 2025 13:19:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uzmGqwdC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99871303A39
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 13:24:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C6ED2F7AD5;
+	Mon, 10 Nov 2025 13:19:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762781084; cv=none; b=EB3Pch+leST3UnynmR8YDVmm3f+7JteiQVl6brZILSiEv+CZ+mDWdRr0O7/IwRNjv1EFWZOvlxpM4xWryyolV90DwWo+ZY+R014NUI07ssbY7nycJO/nTvThUD+MozfxAFycvS6RbztdsgRIDg3rPwOlFsRZUkQG5rX+mqgI4yU=
+	t=1762780763; cv=none; b=bSotvs+7p1N6W84NEe8AlDpZi36CrVoKKR4e2RKTaqomdzuMAs2FfHk7Sp19LVal7jpDpqvghZw0GWO3nk5o6vSkwiQgwNMaG66x7OzNWGDdPjbs88+sG25RTJK+ezNBpIqwkX+fzPHupKTdXjMGqYhc4hlpVe1X/tlAwmtrFRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762781084; c=relaxed/simple;
-	bh=wA9BCmDruypxe3smorD0vULZ7Tgi2Cly7mnUgeAvySY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gnkXvg/+vag9DkVhfpI6cZ2KMUYEKeanAd4uGwGNeoOKX+8wQcl7vMZok5pmo0TEMQx+gOk3WV8JAmqFSMc26hMU51jfpuUhBhRtSS3W01lPfFg8O6OWWvicAPbl0v8Vi8VCWtlCisWmo2u7Q8tfWZ0kjLqVVNDGj1f/BJlNYTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-8b272a4ca78so171859785a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 05:24:42 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762781081; x=1763385881;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7x+CI2dPjKNXpWEkjlBqw4SucojwVb7aPiVE+kUAJGs=;
-        b=AOXdkUmk/Jl0FdKPqRQDDRwPT4xx3jnLc78YOZu/cpN6qQNWmTHxyoJMd8e6ENOrGS
-         cFffAYWT4mF2IVph0YOScOo3i+MbfcXI1irdpX37ae4t/3uk9UG5/74AyVcr4sztieq7
-         +01NwnbFXbQI/8n5HmldUOrZ/PqUJFkrtDUGEzIknN378kEqiiQiG/YJTB4cVC+8cfCs
-         XReVMeW30tFaSSFh/DKS5M6TIur1W07m4I1Jkz2IbxCAW4HwZe8/EEBtjMB9Z8F3/Brp
-         ORd2TxfMdsRk60W8FXYA3j+/BFI8+parMWEP8vqQwOD8jTzjkJeZF5M2zlS2Kp0Kve7L
-         9Vaw==
-X-Forwarded-Encrypted: i=1; AJvYcCVyyJ4LMkSXIW6CrvAQLOlHoGT2qWjtbLUjRdR8dwS72iVOgPS3bOAN/2GA/JgC6GCc2Yw55bM8yqxj9C8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBR4ja9IsXftpHea1TTJFKXCGMosgUh8nIZFpzQUiceogDN+35
-	QLxB7JJcJAI8D5SekAIOcTjh8IpWnAsdTyUTv7Pvsb0lY/70/r2BqMwQo/wJJ7LU
-X-Gm-Gg: ASbGncvsChQfGfEv4hM2up2LUbhN8adw1NFtSy/LIXUi0vpFxLZl6pLZ8VWQdJmn3bu
-	NSCCT6tBvhDD975q6llnJ/WskaA71NYEOLR0yqVM81PL6F3bh8JO5LmI7sndw3W8Sgr9yKfiYgg
-	bdIiYkW+1Pg5hQY3wR3cuvYWwP7GRS0YS1AU3o2lTEHD+uH5wkt4zDfwDxQ8mPOplgtQVHiAtkc
-	OS0+5L5or8arhxAL1C7s+goxduAbod75FDnub5O+Y2TgXxSOjvUrpBNX5j1++1do8w9tWbKIY7d
-	nGtxyxNeDpUC85vKsVij9FMB+g421S9MyDpfxcQsNbOSFpNqDJHPcPmkYQ/53nmCqgWPngggsVX
-	+/5VgFqExyAnYWqgruKMk6pX3zoQsavrmowfWqDijz771rvdz/ajPwD03bf+hiddWOfpkN30FGd
-	Ih2/OLUXHmETM75/3UEJRBQGtQ+alptDNXrAWioPxBbLlcFRfI
-X-Google-Smtp-Source: AGHT+IFT8jsoYkEGs5diQ6Bwy3IXEJBQDYQ6wFoXY3ankyP34vbQ9zIkJsGw4TXPRuRPzokuxwQeKQ==
-X-Received: by 2002:a05:620a:2546:b0:88f:561:d956 with SMTP id af79cd13be357-8b257ee0970mr873783385a.13.1762781081313;
-        Mon, 10 Nov 2025 05:24:41 -0800 (PST)
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com. [209.85.219.54])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b2358278c3sm1021149785a.52.2025.11.10.05.24.41
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Nov 2025 05:24:41 -0800 (PST)
-Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-8824ce98111so13234656d6.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 05:24:41 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXwncusGzc/XO9wBWLjA/mRH+wWmLCa6k6d6wnLA8DvrgNgbsx3S87Nn1MPQIumsILnWfP3oCWlAsrAJb0=@vger.kernel.org
-X-Received: by 2002:a05:6102:549e:b0:5d5:f544:a88e with SMTP id
- ada2fe7eead31-5ddc4814e83mr2563556137.35.1762780760163; Mon, 10 Nov 2025
- 05:19:20 -0800 (PST)
+	s=arc-20240116; t=1762780763; c=relaxed/simple;
+	bh=VSiEIjLyYUKVvnPQ7kJVmq9DuKTsVrvaCBPI+TVnr3I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jppEh/l370pqgK5vc/6Sg33kCcbNeh9qqeGGnjTDH2CQEL2Cpke+jv+srKOE76ERejyFQ2rc8J62eV7xXdqfZSy+Skydhh9yIzoeq5lmRkheJDpQyrYYMGk9sxSpZZ0cmwOJ7qKMmoTv6yWjX7DTt2EIJpM0uxkKb3fMJENGDmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uzmGqwdC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90CA3C19425;
+	Mon, 10 Nov 2025 13:19:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762780761;
+	bh=VSiEIjLyYUKVvnPQ7kJVmq9DuKTsVrvaCBPI+TVnr3I=;
+	h=From:To:Cc:Subject:Date:From;
+	b=uzmGqwdCfwkqc+jcuzhbZOI0uWbRrBQ1My5OehR1oF3gkvHxk0vnY91eBDD4xJE/u
+	 4rD2aVzaaR14Z+zw0892FiLUynditRfogNudq8VIc4pWw4phnNQFnzk4zDOe6nJjO9
+	 /3FACDjFRhVmdtnXXkPts1sgGbi4gSoPgfRsjBGyzdNwDqKuJr31Nsqw1G6P9F3oRm
+	 1SRj58ul0QpHoVdIY+o3k2m917FwfE1A6xIqzHRLznkiQVY7UOGeYJWkUHsQtLyqK1
+	 tKHPyqrJsIISIXlBQV7AtF7HHzmUI9ceYhXtvtC+7DINHS+jO085DyoYpxYr98Mm0s
+	 JINt6NRUhAxmQ==
+From: Miguel Ojeda <ojeda@kernel.org>
+To: Sami Tolvanen <samitolvanen@google.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>
+Cc: linux-modules@vger.kernel.org,
+	linux-kbuild@vger.kernel.org,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev,
+	stable@vger.kernel.org,
+	Haiyue Wang <haiyuewa@163.com>
+Subject: [PATCH v2] gendwarfksyms: Skip files with no exports
+Date: Mon, 10 Nov 2025 14:19:13 +0100
+Message-ID: <20251110131913.1789896-1-ojeda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251028165127.991351-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20251028165127.991351-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20251028165127.991351-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 10 Nov 2025 14:19:09 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUoGQVhdy-h6B_6_z3-h03GnNz4AhpS5i0WJf_oAPNktA@mail.gmail.com>
-X-Gm-Features: AWmQ_bmIROBItvdVM9xE3_P83zJy9BKTyQeGOqvTNjEHYV_SlB5kh2Ov6vUy8Lg
-Message-ID: <CAMuHMdUoGQVhdy-h6B_6_z3-h03GnNz4AhpS5i0WJf_oAPNktA@mail.gmail.com>
-Subject: Re: [PATCH v2 3/5] clk: renesas: r9a09g077: Use devm_ helpers for
- divider clock registration
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Tue, 28 Oct 2025 at 17:52, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Convert the divider clock registration in the R9A09G077 CPG driver to use
-> device-managed (devm_) helper functions.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Sami Tolvanen <samitolvanen@google.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk for v6.19.
+Starting with Rust 1.91.0 (released 2025-10-30), in upstream commit
+ab91a63d403b ("Ignore intrinsic calls in cross-crate-inlining cost model")
+[1][2], `bindings.o` stops containing DWARF debug information because the
+`Default` implementations contained `write_bytes()` calls which are now
+ignored in that cost model (note that `CLIPPY=1` does not reproduce it).
 
-Gr{oetje,eeting}s,
+This means `gendwarfksyms` complains:
 
-                        Geert
+      RUSTC L rust/bindings.o
+    error: gendwarfksyms: process_module: dwarf_get_units failed: no debugging information?
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+There are several alternatives that would work here: conditionally
+skipping in the cases needed (but that is subtle and brittle), forcing
+DWARF generation with e.g. a dummy `static` (ugly and we may need to
+do it in several crates), skipping the call to the tool in the Kbuild
+command when there are no exports (fine) or teaching the tool to do so
+itself (simple and clean).
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Thus do the last one: don't attempt to process files if we have no symbol
+versions to calculate.
+
+  [ I used the commit log of my patch linked below since it explained the
+    root issue and expanded it a bit more to summarize the alternatives.
+
+      - Miguel ]
+
+Cc: stable@vger.kernel.org # Needed in 6.12.y and later (Rust is pinned in older LTSs).
+Reported-by: Haiyue Wang <haiyuewa@163.com>
+Closes: https://lore.kernel.org/rust-for-linux/b8c1c73d-bf8b-4bf2-beb1-84ffdcd60547@163.com/
+Suggested-by: Miguel Ojeda <ojeda@kernel.org>
+Link: https://lore.kernel.org/rust-for-linux/CANiq72nKC5r24VHAp9oUPR1HVPqT+=0ab9N0w6GqTF-kJOeiSw@mail.gmail.com/
+Link: https://github.com/rust-lang/rust/commit/ab91a63d403b0105cacd72809cd292a72984ed99 [1]
+Link: https://github.com/rust-lang/rust/pull/145910 [2]
+Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
+Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+---
+ scripts/gendwarfksyms/gendwarfksyms.c | 3 ++-
+ scripts/gendwarfksyms/gendwarfksyms.h | 2 +-
+ scripts/gendwarfksyms/symbols.c       | 4 +++-
+ 3 files changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/scripts/gendwarfksyms/gendwarfksyms.c b/scripts/gendwarfksyms/gendwarfksyms.c
+index 08ae61eb327e..f5203d1640ee 100644
+--- a/scripts/gendwarfksyms/gendwarfksyms.c
++++ b/scripts/gendwarfksyms/gendwarfksyms.c
+@@ -138,7 +138,8 @@ int main(int argc, char **argv)
+ 		error("no input files?");
+ 	}
+
+-	symbol_read_exports(stdin);
++	if (!symbol_read_exports(stdin))
++		return 0;
+
+ 	if (symtypes_file) {
+ 		symfile = fopen(symtypes_file, "w");
+diff --git a/scripts/gendwarfksyms/gendwarfksyms.h b/scripts/gendwarfksyms/gendwarfksyms.h
+index d9c06d2cb1df..32cec8f7695a 100644
+--- a/scripts/gendwarfksyms/gendwarfksyms.h
++++ b/scripts/gendwarfksyms/gendwarfksyms.h
+@@ -123,7 +123,7 @@ struct symbol {
+ typedef void (*symbol_callback_t)(struct symbol *, void *arg);
+
+ bool is_symbol_ptr(const char *name);
+-void symbol_read_exports(FILE *file);
++int symbol_read_exports(FILE *file);
+ void symbol_read_symtab(int fd);
+ struct symbol *symbol_get(const char *name);
+ void symbol_set_ptr(struct symbol *sym, Dwarf_Die *ptr);
+diff --git a/scripts/gendwarfksyms/symbols.c b/scripts/gendwarfksyms/symbols.c
+index 35ed594f0749..ecddcb5ffcdf 100644
+--- a/scripts/gendwarfksyms/symbols.c
++++ b/scripts/gendwarfksyms/symbols.c
+@@ -128,7 +128,7 @@ static bool is_exported(const char *name)
+ 	return for_each(name, NULL, NULL) > 0;
+ }
+
+-void symbol_read_exports(FILE *file)
++int symbol_read_exports(FILE *file)
+ {
+ 	struct symbol *sym;
+ 	char *line = NULL;
+@@ -159,6 +159,8 @@ void symbol_read_exports(FILE *file)
+
+ 	free(line);
+ 	debug("%d exported symbols", nsym);
++
++	return nsym;
+ }
+
+ static void get_symbol(struct symbol *sym, void *arg)
+
+base-commit: e9a6fb0bcdd7609be6969112f3fbfcce3b1d4a7c
+--
+2.51.2
 
