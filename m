@@ -1,191 +1,149 @@
-Return-Path: <linux-kernel+bounces-893013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E141C4654A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:41:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A923BC46552
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:42:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCEC63AEAD1
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:41:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 628AA3AF8C9
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:41:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FE0B309EF6;
-	Mon, 10 Nov 2025 11:41:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A08E30BB9E;
+	Mon, 10 Nov 2025 11:41:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IniNfwEt"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="H2bctr2a"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59862302743;
-	Mon, 10 Nov 2025 11:41:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B095030AACB
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 11:41:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762774901; cv=none; b=ARZO4Zq03Q11OQCinLNsLbiUKCiRVLpA0LVCjwXnuPowj17rNzjO6pIVqOzkrnNv/DJ9iWiQs577ENg6am65TyOsbKyeMfrwRSrrUVPtCIA+H765waUZai3d7oUpN/WGioY5+zX8w9BmICfevMmdKqpl5O2gDOWt4cmi6xE8XZI=
+	t=1762774905; cv=none; b=ZjZanbHDTod1eOWceX5kmRhMIxxwXa9IPnce5Zw1clvKBU2268m0Xb9ivfEWWgjVR8VZqc5Xk4z0VyyOPzsNRDIq20iBS+Bz8ZEKjI/NhyfgIll1LbP0KKVXtcYu4ERG/jsUfOjOHdo7XRIsFjTUuUxvkVeqvw0UAHuSwbh76LM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762774901; c=relaxed/simple;
-	bh=omp3BC0nl5OC+y/Q6uZxJQjCYFP23DTOfobjBhZKdmU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bB/i6F5hymhpoZDjU2cFmakXE21gq5GwmeOkBP5zo5WjRcgQbJEkqdrrMgI3bW+4L+di7syP/5oYHqqP+0rmvtEvfHXpvbKjxgvcCeSVIMg0cE7Vq+8olojBZT4xPPc/lpolSukoraTqqSvgn9brzuY5bsRCvyV/8dTCqQzel5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IniNfwEt; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762774901; x=1794310901;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=omp3BC0nl5OC+y/Q6uZxJQjCYFP23DTOfobjBhZKdmU=;
-  b=IniNfwEt/UM+/IAon84aA+hRkpt7UklrmASV3GLyi31Svqzfr71KHq7a
-   nyrKepKHFgD5BrnjC2Geu/Zlm87NsvnCQ3v7IoWqHXcUHCAuZJEQlnj9p
-   LHcCCnzEKC/3jsWtyy1G136iA0lPYu37uNfbbFOyMxPhSZflc48PL3JLF
-   c0X3hZ3kca+QlAS2JzkaT8D8evFUOn4+mCPLqxqqlJMHTmPYmnHlm0kg0
-   VdgJxw6/qtfbkxJEXa6FSspCUG/NERiBp20IOCSEspZ+S3vG7N4WcOx97
-   xUt5fEGnU4umk/38OzOrcma1Qx6HYFIqvlmsX6p/7B7M7aCeoyRAOlK10
-   w==;
-X-CSE-ConnectionGUID: gtjfaA5mQBu29JBWJyRGvw==
-X-CSE-MsgGUID: ogkbtAIZR7KDzODHLVmi0Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11608"; a="87454172"
-X-IronPort-AV: E=Sophos;i="6.19,293,1754982000"; 
-   d="scan'208";a="87454172"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 03:41:40 -0800
-X-CSE-ConnectionGUID: 10suJJPjRL2utc/Raav2wQ==
-X-CSE-MsgGUID: CvnKniDvTh+fgkSSdOvjpQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,293,1754982000"; 
-   d="scan'208";a="193663550"
-Received: from lkp-server01.sh.intel.com (HELO 7b01c990427b) ([10.239.97.150])
-  by fmviesa004.fm.intel.com with ESMTP; 10 Nov 2025 03:41:35 -0800
-Received: from kbuild by 7b01c990427b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vIQH7-0000MF-1C;
-	Mon, 10 Nov 2025 11:41:33 +0000
-Date: Mon, 10 Nov 2025 19:40:40 +0800
-From: kernel test robot <lkp@intel.com>
-To: Youngjun Park <youngjun.park@lge.com>, akpm@linux-foundation.org,
-	linux-mm@kvack.org
-Cc: oe-kbuild-all@lists.linux.dev, cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org, chrisl@kernel.org, kasong@tencent.com,
-	hannes@cmpxchg.org, mhocko@kernel.org, roman.gushchin@linux.dev,
-	shakeel.butt@linux.dev, muchun.song@linux.dev,
-	shikemeng@huaweicloud.com, nphamcs@gmail.com, bhe@redhat.com,
-	baohua@kernel.org, youngjun.park@lge.com, gunho.lee@lge.com,
-	taejoon.song@lge.com
-Subject: Re: [PATCH 3/3] mm/swap: integrate swap tier infrastructure into
- swap subsystem
-Message-ID: <202511101938.muW3KLKk-lkp@intel.com>
-References: <20251109124947.1101520-4-youngjun.park@lge.com>
+	s=arc-20240116; t=1762774905; c=relaxed/simple;
+	bh=4evboygHfllG7Usog2TgDkAQtAorhUspDMGXw73Mraw=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=Y5CoVBS7QofQJPSu7ZIpZKdSeRMdY2kxJlzLpp0BNiuw3AXN/7nMonZTi60bCMW1o+bc0jVWU4jOofrubG6d4en34jE3cQGeUjwjdOn1lAmA71NAuUT0shHJW9+rZ+vDQzLU6/WpWmzXfaRFnALsLHTlI7rmi+5IgsaZ/OD1v/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=H2bctr2a; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-47777000dadso10155505e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 03:41:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fairphone.com; s=fair; t=1762774902; x=1763379702; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WSv319ON8s5k79NCoOUYSS4YvjAcOb/v3+cIU8nITNc=;
+        b=H2bctr2abnNApyGwXZaxpnLxO8sitS/pjkiy877h2FDVALYcZJe6VFpFT5JevQm2yh
+         up7MPJB1IgL0r9938JlykAZQPx0ef4f8KRQ6tHnG+sgR46U49QE4fDZyUw56ynUS+JOn
+         kyoSEpd+48UDMWJpOnSNYeTfYfAZ2umZkAREfcCo/eAqRMkhD6A6vEH4MifHgW/anaJV
+         kLfrLyD+ADOe2oJy4D1WciBjfvQOgWoR7LRBICyDIMzf7kcBQiBgTXyZo70J6sB9v7gj
+         jqj98/yT2ifei5AAraWLqHEBcTJpJX0PTCamRH7Gb7SMIrvlfIWcXA2Al7ZX2aGm4jYC
+         WHmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762774902; x=1763379702;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WSv319ON8s5k79NCoOUYSS4YvjAcOb/v3+cIU8nITNc=;
+        b=RFPLrJ56YP+B3zG16skBdNnW9l5Zfn8Jvzol+xbqiAcKKlLlDQeMM3U3whZXT07C4V
+         kWrARhTMpwsl/pWCr0UqhqK3U/P60bRhWZ3ROoQQ1J+6UbbBAUA5CLG3fz9JUL63vp4q
+         EoMUt6FjRULZVo9yQ6BZBNEInUbvldytm3DwRqiWeuNA8n/ZAFeWjEb2FdMaAV820TC2
+         RVCLuijcinJFPFNWELCRPd94ugaUYvi+YGjJP0zZDAF/RXJ6D+qIo+gKwHtjaCUaovUL
+         w4IxkKIpFGFiKjIYP6mkKPY20LvnEHwTAkofdRLzaGC609HfsASTdSx4/g4z/GbOEWWt
+         Z8bQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU4sVhBJyTsdVd+S5+z7hIp5QTtQeJE/gO0H6gEGzTsphaL27DSjyiMt76xf9Gz71wsZKVd1lySaDMTJ+4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2OFptuuRNNVsqU/S0/VTfOo/wK86PjVP2Qpn2MPVocT7oSnv8
+	Yc20kKQCxttd66jry7bWDxDnCX/zZPm5DbPsYczrTrqzN0qZuNFKxfLDgNfmWDT6obw=
+X-Gm-Gg: ASbGncubg6W3hGc6qkoB9oMAdElxYMeHIZk9aZqeNn9EI2o6F+i9wrXF5ZTR+aNgiwG
+	x70qaNtQWrzsBH5kqe5n0PMsix83qhoratQm+HXQmajvKXiWo4fpCgWFJJLtQE9t3rRPRexiLAv
+	cUCFAnorsFMSgUAOkxsLkD0a2Z2vgJBe1/yiw7yVsN7hii2AfJIp1BAjbYRVNpYamDEt8lO0DHJ
+	hTqnZmtJ8GfskCdCgznQN2zUMIbuaRvjlxtRHrltTmXIDF361AX+ux97DxVBl1w/vLjc3d9hz6J
+	i9nencYOXZvoOxjhNk/vuKDM5fT64DcD8jIYuZm6nuaJqlfVGFXA9+KjPr0vtEI4ifqlQnhg9xQ
+	eLC/MnmsTbyF+ExLAVtze7VFGH+s6vVCB3d3c4tbma/aTRQBTlZlhfQexfmP5Q72vS0WM23695m
+	P6ICSqKV4id5Yh+DnSZ9xlK2lIpgHzSXHAswOtFurpcM2CkrhFu48xaFTZHw==
+X-Google-Smtp-Source: AGHT+IHgURZ+2ALbsYAeFytpaGuY3bxXAOFksVTI2Vrqto3KQB0fcrxUmYbmcgxUCetGDJMVEYFXbw==
+X-Received: by 2002:a05:600c:1ca7:b0:46f:b43a:aee1 with SMTP id 5b1f17b1804b1-477732a9d90mr72371385e9.38.1762774902061;
+        Mon, 10 Nov 2025 03:41:42 -0800 (PST)
+Received: from localhost (84-115-213-210.cable.dynamic.surfer.at. [84.115.213.210])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4776bd084d4sm247107225e9.14.2025.11.10.03.41.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Nov 2025 03:41:41 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251109124947.1101520-4-youngjun.park@lge.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 10 Nov 2025 12:41:39 +0100
+Message-Id: <DE4ZJT518WU8.1JNHYKMU3IBAQ@fairphone.com>
+From: "Luca Weiss" <luca.weiss@fairphone.com>
+To: <david@ixit.cz>, "Robert Foss" <rfoss@kernel.org>, "Todor Tomov"
+ <todor.too@gmail.com>, "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>,
+ "Vladimir Zapolskiy" <vladimir.zapolskiy@linaro.org>, "Mauro Carvalho
+ Chehab" <mchehab@kernel.org>, "Luca Weiss" <luca.weiss@fairphone.com>,
+ "Petr Hodina" <phodina@protonmail.com>, "Casey Connolly"
+ <casey.connolly@linaro.org>, "Dr. Git" <drgitx@gmail.com>
+Cc: "Joel Selvaraj" <foss@joelselvaraj.com>, <linux-media@vger.kernel.org>,
+ <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <phone-devel@vger.kernel.org>
+Subject: Re: [PATCH RFC 6/8] media: qcom: camss: csiphy-3ph: Use sdm845
+ C-PHY configuration sequence
+X-Mailer: aerc 0.21.0-0-g5549850facc2
+References: <20251109-qcom-cphy-v1-0-165f7e79b0e1@ixit.cz>
+ <20251109-qcom-cphy-v1-6-165f7e79b0e1@ixit.cz>
+In-Reply-To: <20251109-qcom-cphy-v1-6-165f7e79b0e1@ixit.cz>
 
-Hi Youngjun,
+On Sun Nov 9, 2025 at 10:39 AM CET, David Heidelberg via B4 Relay wrote:
+> From: David Heidelberg <david@ixit.cz>
+>
+> Enable the 3-phase (3PH) lane configuration introduced earlier when
+> C-PHY mode is requested on the SDM845 platform. This ensures the proper
+> initialization sequence is used for C-PHY operation.
+>
+> Signed-off-by: David Heidelberg <david@ixit.cz>
+> ---
+>  drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c | 10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c b/d=
+rivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
+> index c2adbde6b4e0d..03f5c4676e89a 100644
+> --- a/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
+> +++ b/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
+> @@ -1103,8 +1103,14 @@ static void csiphy_lanes_enable(struct csiphy_devi=
+ce *csiphy,
+> =20
+>  	switch (csiphy->camss->res->version) {
+>  	case CAMSS_845:
+> -		regs->lane_regs =3D &lane_regs_sdm845[0];
+> -		regs->lane_array_size =3D ARRAY_SIZE(lane_regs_sdm845);
+> +		if (c->cphy) {
+> +			regs->lane_regs =3D &lane_regs_sdm845_3ph[0];
+> +			regs->lane_array_size =3D ARRAY_SIZE(lane_regs_sdm845_3ph);
+> +
+> +		} else {
+> +			regs->lane_regs =3D &lane_regs_sdm845[0];
+> +			regs->lane_array_size =3D ARRAY_SIZE(lane_regs_sdm845);
+> +		}
 
-kernel test robot noticed the following build warnings:
+Why not add this directly in the commit adding the sequence? Otherwise
+the other commit adding lane_regs_sdm845_3ph will just have an unused
+variable warning until this patch.
 
-[auto build test WARNING on akpm-mm/mm-everything]
+I think it's one logical change.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Youngjun-Park/mm-swap-introduce-swap-tier-infrastructure/20251109-215033
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/20251109124947.1101520-4-youngjun.park%40lge.com
-patch subject: [PATCH 3/3] mm/swap: integrate swap tier infrastructure into swap subsystem
-config: s390-randconfig-001-20251110 (https://download.01.org/0day-ci/archive/20251110/202511101938.muW3KLKk-lkp@intel.com/config)
-compiler: s390-linux-gcc (GCC) 8.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251110/202511101938.muW3KLKk-lkp@intel.com/reproduce)
+Regards
+Luca
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202511101938.muW3KLKk-lkp@intel.com/
+>  		break;
+>  	case CAMSS_2290:
+>  		regs->lane_regs =3D &lane_regs_qcm2290[0];
 
-All warnings (new ones prefixed by >>):
-
-   In file included from mm/page_io.c:29:
-   mm/swap_tier.h:71:1: error: expected identifier or '(' before '{' token
-    {
-    ^
->> mm/swap_tier.h:70:19: warning: 'swap_tiers_collect_compare_mask' declared 'static' but never defined [-Wunused-function]
-    static inline int swap_tiers_collect_compare_mask(struct mem_cgroup *memcg);
-                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
---
-   In file included from mm/swapfile.c:52:
-   mm/swap_tier.h:71:1: error: expected identifier or '(' before '{' token
-    {
-    ^
-   mm/swapfile.c: In function 'swap_alloc_entry':
-   mm/swapfile.c:1309:29: error: 'struct swap_info_struct' has no member named 'tier_idx'
-      if (swap_tiers_test_off(si->tier_idx, mask))
-                                ^~
-   In file included from mm/swapfile.c:52:
-   mm/swapfile.c: At top level:
->> mm/swap_tier.h:70:19: warning: 'swap_tiers_collect_compare_mask' used but never defined
-    static inline int swap_tiers_collect_compare_mask(struct mem_cgroup *memcg);
-                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
---
-   In file included from mm/memcontrol.c:71:
-   mm/swap_tier.h:71:1: error: expected identifier or '(' before '{' token
-    {
-    ^
-   mm/memcontrol.c: In function 'mem_cgroup_free':
-   mm/memcontrol.c:3734:2: error: implicit declaration of function 'swap_tiers_put_mask'; did you mean 'swap_tiers_release'? [-Werror=implicit-function-declaration]
-     swap_tiers_put_mask(memcg);
-     ^~~~~~~~~~~~~~~~~~~
-     swap_tiers_release
-   In file included from mm/memcontrol.c:71:
-   mm/memcontrol.c: At top level:
->> mm/swap_tier.h:70:19: warning: 'swap_tiers_collect_compare_mask' declared 'static' but never defined [-Wunused-function]
-    static inline int swap_tiers_collect_compare_mask(struct mem_cgroup *memcg);
-                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   cc1: some warnings being treated as errors
-
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for OF_GPIO
-   Depends on [n]: GPIOLIB [=y] && OF [=y] && HAS_IOMEM [=n]
-   Selected by [y]:
-   - REGULATOR_RT5133 [=y] && REGULATOR [=y] && I2C [=y] && GPIOLIB [=y] && OF [=y]
-
-
-vim +70 mm/swap_tier.h
-
-c17fe68325c921 Youngjun Park 2025-11-09  41  
-c17fe68325c921 Youngjun Park 2025-11-09  42  void swap_tiers_init(void);
-c17fe68325c921 Youngjun Park 2025-11-09  43  int swap_tiers_add(struct tiers_desc desc[], int nr);
-c17fe68325c921 Youngjun Park 2025-11-09  44  int swap_tiers_remove(struct tiers_desc desc[], int nr);
-c17fe68325c921 Youngjun Park 2025-11-09  45  ssize_t swap_tiers_show_sysfs(char *buf);
-c17fe68325c921 Youngjun Park 2025-11-09  46  void swap_tiers_show_memcg(struct seq_file *m, struct mem_cgroup *memcg);
-c17fe68325c921 Youngjun Park 2025-11-09  47  void swap_tiers_assign(struct swap_info_struct *swp);
-c17fe68325c921 Youngjun Park 2025-11-09  48  void swap_tiers_release(struct swap_info_struct *swp);
-c17fe68325c921 Youngjun Park 2025-11-09  49  int swap_tiers_get_mask(struct tiers_desc *desc, int nr, struct mem_cgroup *memcg);
-c17fe68325c921 Youngjun Park 2025-11-09  50  void swap_tiers_put_mask(struct mem_cgroup *memcg);
-c17fe68325c921 Youngjun Park 2025-11-09  51  static inline bool swap_tiers_test_off(int tier_idx, int mask)
-c17fe68325c921 Youngjun Park 2025-11-09  52  {
-c17fe68325c921 Youngjun Park 2025-11-09  53  	return TIER_MASK(tier_idx, TIER_OFF_MASK) & mask;
-c17fe68325c921 Youngjun Park 2025-11-09  54  }
-c17fe68325c921 Youngjun Park 2025-11-09  55  int swap_tiers_collect_compare_mask(struct mem_cgroup *memcg);
-c17fe68325c921 Youngjun Park 2025-11-09  56  #else
-c17fe68325c921 Youngjun Park 2025-11-09  57  static inline void swap_tiers_init(void)
-c17fe68325c921 Youngjun Park 2025-11-09  58  {
-c17fe68325c921 Youngjun Park 2025-11-09  59  }
-c17fe68325c921 Youngjun Park 2025-11-09  60  static inline void swap_tiers_assign(struct swap_info_struct *swp)
-c17fe68325c921 Youngjun Park 2025-11-09  61  {
-c17fe68325c921 Youngjun Park 2025-11-09  62  }
-c17fe68325c921 Youngjun Park 2025-11-09  63  static inline void swap_tiers_release(struct swap_info_struct *swp)
-c17fe68325c921 Youngjun Park 2025-11-09  64  {
-c17fe68325c921 Youngjun Park 2025-11-09  65  }
-c17fe68325c921 Youngjun Park 2025-11-09  66  static inline bool swap_tiers_test_off(int tier_off_mask, int mask)
-c17fe68325c921 Youngjun Park 2025-11-09  67  {
-c17fe68325c921 Youngjun Park 2025-11-09  68  	return false;
-c17fe68325c921 Youngjun Park 2025-11-09  69  }
-c17fe68325c921 Youngjun Park 2025-11-09 @70  static inline int swap_tiers_collect_compare_mask(struct mem_cgroup *memcg);
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
