@@ -1,135 +1,221 @@
-Return-Path: <linux-kernel+bounces-892897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AF43C4610C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:53:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1677EC46148
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:56:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F18CC3A342D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:52:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00A733AD7B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:55:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30307306492;
-	Mon, 10 Nov 2025 10:52:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD1B2307AF3;
+	Mon, 10 Nov 2025 10:54:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="YwOOKMqs"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hkLxrBqA"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A94FA30216D
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 10:52:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92A6623B60A;
+	Mon, 10 Nov 2025 10:54:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762771923; cv=none; b=CUz+LsIg5uqRPeaii4wa9MjSRAOKdAH6Pfe+WPVcK6UqZM6otLNVNDDhg0KiSsMjq69CzgzX7krLKeFewGhwDYB6amW0E28jJGUzVhKUtKbjk9EWIYU+yiDGC/0fVeCd27BsEhyg60m70dd1VsK85F8UJtwNNkINE5c0oLIfJNc=
+	t=1762772079; cv=none; b=FESYJVqIJ9QI45AHCRJRLHbW1eN17hzVXwtgiG8XJ2tN+EUIWAIwJvlv3BMrUBQisFB/t6PfRJ599csKYG+Swwug97hT5F3t1RHI8poKIW6+orGutqUwd3fAWHkutUM/p2gipwjJw1ST9s403CIjz+7WRkygJY9NPgxG4GTF1l8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762771923; c=relaxed/simple;
-	bh=y3edu1LJoiiM9LC+PEFZk26GY+1kMRaZynUHxgNfbZA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RM9r/BglSlDGvi9F4klApkDW62zJCM5TEUpvbePO6qCyp3mEEh37uZyL98mNw74cQcjp1fzGChSzbBgG2xpdfe+TUiNhMPO+KIlEKHdd7WCHG3ItxTYLzE/uQSaQkAREgfhY3saojEhS++Tw1YCnwgkwt8eq0r8Tt81Mal2jwEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=YwOOKMqs; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-6419aaced59so920219a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 02:52:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1762771920; x=1763376720; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=hlF8y7focvzFqRSo0xYtMNEXP2QB9fpiWlRAbhS1B/M=;
-        b=YwOOKMqsvRuTx0jTMnkaD06bBMCN8ErckrQFoZi8W63ys1y3WFpcUYPoSanTykbytM
-         3/oaeCmoouTzGPP0qEsOTzU/2/XeHsT50ZU79QayWITvg2FCNI9H5u2zFoRxUKVuT7RC
-         njjrxSxXl1lBeqo7nH/IVIU+XNCV0O9xuKcBr+AXNG5Vn9df3oss0gDBloCoYpIB6DQm
-         rCbaVhmlE+M7/Ce5cmPC8vylz6wyXC74zvIbhKTG+l55Kgrduz2ft/WsY1sMXs1pCThq
-         mLqepJec3odPNvwnaEw/GLg2Dfxl9YVjqr0Mcf1mMAf1rmbvDJtDAHoSRDGDTUmtMTnJ
-         2RSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762771920; x=1763376720;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hlF8y7focvzFqRSo0xYtMNEXP2QB9fpiWlRAbhS1B/M=;
-        b=w+RKhuKzCO9RuZJ9MF1pha1WtvWlqxd65imF3y8dJgDm0F9LguN0SGNiImvbt/4f65
-         iXPMr5dL5xbJyR7e4a69nfczCYXxK+CgKtmGsNFyvRX7b7iAUQh3u5GuWYXV6e4+IlQv
-         O7DzmguCbGHVmonwBrm2K6ReslEaP/ReiO9OqXhKcgoBgOTQY1H2tDLm0CXsppndKkYV
-         eefacWcjH1/snvd/T/ZFDOq8mpiGnVAtT3MlYgEyX9LlWCOptw0Vo2XxTtPK5F6XAuld
-         a2h6V8EOVKkC/4iiW4NhcaYG9nOdgi16Y/6jKLmDh8SWIeFLgMO54XmFPjZ3jitPw7kh
-         05Qg==
-X-Forwarded-Encrypted: i=1; AJvYcCUv0xwBxdyGwBqujA+vuAH5u14/v8icGceC0bSM++OzckiMGnvhi4p6sT0MhIp2XLJAJmFLf8q0FzX4C4I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTGOpfaHQpPZNkE177rjzd8oxKJGiVSyH8oXUwGqCA2ibGKBlo
-	eIWuQfqZWvYIdCvVvyDz1QePGohvR1/QXXPT0n6e62hFCYrqVqX45nmZUh/JbjHMADc=
-X-Gm-Gg: ASbGncuaE4U7ue2dEyd6Cn2asmy08cWQXHDtndetztot2+AVWWa7UqlEOduetfFdC+o
-	f801QDK0uzG5lPMpjnhMbGEvzzEY7L2uimJxjTqaG+TNz8Crjhn/P1CJW6nm8xyt9P2p9sqo/Cn
-	j/K3mUbO64Pg/kIPWlNU2Ykgw4+No6+x607SyCtkhkYLWHCf6h0jppuo011DbekAEtSVHR/JWZh
-	x5s5yXAh4ZMMUVuKusKVmyUrS4xw/ZSwaZknA68uNz+O7nK+zJZMrvNNTLkt/a9i+vgQC3/wfYA
-	XM70LqSPwMvdxxuLekoqA+RhVG5gXaQzDkagyPIgwZ10gAeShhnHjvOV/qucZgtafsOe2e9b778
-	zThU1MjPv40wrIirxt97MbQu7r80XqrA5uEFC1Yi+m55PunAeasQHLfBemTzmbq+DzRaVXGyc3A
-	pBg9oEJpIeJsyvMvw5kEkZN56r2aINtTqHfFJFbPl9ioaH1Ir1gm8MtuC46gorQAKYNCM=
-X-Google-Smtp-Source: AGHT+IEJOeTNgGSs6glS/5JXjFHhVoGWQ87V9gmhirZTX566XAbdRF9c9nY+pzK/lLddmBIEA1OCuQ==
-X-Received: by 2002:a05:6402:2346:b0:641:1cd6:fecd with SMTP id 4fb4d7f45d1cf-6415dc084e5mr5969245a12.8.1762771920024;
-        Mon, 10 Nov 2025 02:52:00 -0800 (PST)
-Received: from localhost (host-79-49-235-115.retail.telecomitalia.it. [79.49.235.115])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6411f814164sm11079924a12.13.2025.11.10.02.51.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Nov 2025 02:51:59 -0800 (PST)
-From: Andrea della Porta <andrea.porta@suse.com>
-To: Bjorn Helgaas <bhelgaas@google.com>,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	mbrugger@suse.com,
-	guillaume.gardet@arm.com,
-	tiwai@suse.com,
-	Lizhi Hou <lizhi.hou@amd.com>,
-	Rob Herring <robh@kernel.org>
-Cc: Andrea della Porta <andrea.porta@suse.com>
-Subject: [PATCH v3] PCI: of: Drop error message on missing of_root node
-Date: Mon, 10 Nov 2025 11:54:15 +0100
-Message-ID: <20251110105415.9584-1-andrea.porta@suse.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1762772079; c=relaxed/simple;
+	bh=xfHWXZ5U+Nf/hxvBKohYTokiVQ1v9bOujNlt/FgRHyA=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=m9GnyRB00hn74o4195nNilW0OCHEzXbG9VIh7OOlcnW7uVqlacd9mEbI37C+Bc5BD/PHCdQEMMJ21vIfJplvL8zx7hDkAUVoA2q5AiyyC9TYcS2yvtP6WGaOYqHHp+sHLM8CTBruCpQvGzTmBg+kiPzwD2J2SLTj63SWRHiWs58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hkLxrBqA; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762772077; x=1794308077;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=xfHWXZ5U+Nf/hxvBKohYTokiVQ1v9bOujNlt/FgRHyA=;
+  b=hkLxrBqA4+VsVFFg0tZZCBIqujjEijo8YJERqLxzxj0+2l9ewrrH8rKC
+   MlE0oHx8V07aozPAfGGmL8SvWTEMZrZa7UQit3go/bbX00y9PbEYvRv13
+   MmuUdKDGHVUQuf8y91/BN2BJv7jphMJRcrKAoAoyKO55mZRAhNLSUjICV
+   cd+jpt+F9jtvgU9oLazACUJdH7BgkNYxTcMXkX22wUeCIxkXZgUXcjf/a
+   199muXRfldvGpnb+gzJFLVR8hEcESmIW/KUEpa1b76+eVlAYj9q+sdnVQ
+   lrAZ4LZ+uBQiQBz8bZW1lHkOPG8LL5YdwEuWFVVJVblMZGPVhGwL41Pse
+   Q==;
+X-CSE-ConnectionGUID: AFE1l21DR0Sci64tqj1bLA==
+X-CSE-MsgGUID: NlmzAmQCR3yjDY/PCA1v9Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11608"; a="52377792"
+X-IronPort-AV: E=Sophos;i="6.19,293,1754982000"; 
+   d="scan'208";a="52377792"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 02:54:37 -0800
+X-CSE-ConnectionGUID: hR0t+bTVSgebUyWMAjs7KA==
+X-CSE-MsgGUID: qO2TakuTTcmIC2Kj3pyLmg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,293,1754982000"; 
+   d="scan'208";a="192903766"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.13])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 02:54:33 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 10 Nov 2025 12:54:29 +0200 (EET)
+To: Armin Wolf <W_Armin@gmx.de>
+cc: viro@zeniv.linux.org.uk, brauner@kernel.org, 
+    Hans de Goede <hansg@kernel.org>, jack@suse.cz, 
+    linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+    platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH 4/4] platform/x86: wmi: Move WMI core code into a separate
+ directory
+In-Reply-To: <8722f933-010f-44c4-9df7-1417207a34b3@gmx.de>
+Message-ID: <92ccfd06-37e1-b465-a072-846d242c47c2@linux.intel.com>
+References: <20251104204540.13931-1-W_Armin@gmx.de> <20251104204540.13931-5-W_Armin@gmx.de> <7d0b6d80-4061-9eb5-5aa3-6a37bac3e2b1@linux.intel.com> <8722f933-010f-44c4-9df7-1417207a34b3@gmx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed; boundary="8323328-2023958081-1762772069=:1060"
 
-When CONFIG_PCI_DYNAMIC_OF_NODES is enabled, an error message
-is generated if no 'of_root' node is defined.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-On DT-based systems, this cannot happen as a root DT node is
-always present.
-On ACPI-based systems that declare an empty root DT node (e.g.
-x86 with CONFIG_OF_EARLY_FLATTREE=y), this also won't happen.
-On platforms where ACPI is mutually exclusive to DT (e.g. ARM)
-the error will be caught (and possibly shown) by drivers that
-rely on the root node.
+--8323328-2023958081-1762772069=:1060
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-Drop the error message altogether.
+On Wed, 5 Nov 2025, Armin Wolf wrote:
 
-Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
----
-Changes in V3:
-- Dropped the error message
-- Changed the commit subject
+> Am 05.11.25 um 10:41 schrieb Ilpo J=C3=A4rvinen:
+>=20
+> > On Tue, 4 Nov 2025, Armin Wolf wrote:
+> >=20
+> > > Move the WMI core code into a separate directory to prepare for
+> > > future additions to the WMI driver.
+> > >=20
+> > > Signed-off-by: Armin Wolf <W_Armin@gmx.de>
+> > > ---
+> > >   Documentation/driver-api/wmi.rst           |  2 +-
+> > >   MAINTAINERS                                |  2 +-
+> > >   drivers/platform/x86/Kconfig               | 30 +------------------
+> > >   drivers/platform/x86/Makefile              |  2 +-
+> > >   drivers/platform/x86/wmi/Kconfig           | 34 +++++++++++++++++++=
++++
+> > >   drivers/platform/x86/wmi/Makefile          |  8 +++++
+> > >   drivers/platform/x86/{wmi.c =3D> wmi/core.c} |  0
+> > >   7 files changed, 46 insertions(+), 32 deletions(-)
+> > >   create mode 100644 drivers/platform/x86/wmi/Kconfig
+> > >   create mode 100644 drivers/platform/x86/wmi/Makefile
+> > >   rename drivers/platform/x86/{wmi.c =3D> wmi/core.c} (100%)
+> > >=20
+> > > diff --git a/Documentation/driver-api/wmi.rst
+> > > b/Documentation/driver-api/wmi.rst
+> > > index 4e8dbdb1fc67..66f0dda153b0 100644
+> > > --- a/Documentation/driver-api/wmi.rst
+> > > +++ b/Documentation/driver-api/wmi.rst
+> > > @@ -16,5 +16,5 @@ which will be bound to compatible WMI devices by th=
+e
+> > > driver core.
+> > >   .. kernel-doc:: include/linux/wmi.h
+> > >      :internal:
+> > >   -.. kernel-doc:: drivers/platform/x86/wmi.c
+> > > +.. kernel-doc:: drivers/platform/x86/wmi/core.c
+> > >      :export:
+> > > diff --git a/MAINTAINERS b/MAINTAINERS
+> > > index 46126ce2f968..abc0ff6769a8 100644
+> > > --- a/MAINTAINERS
+> > > +++ b/MAINTAINERS
+> > > @@ -402,7 +402,7 @@ S:=09Maintained
+> > >   F:=09Documentation/ABI/testing/sysfs-bus-wmi
+> > >   F:=09Documentation/driver-api/wmi.rst
+> > >   F:=09Documentation/wmi/
+> > > -F:=09drivers/platform/x86/wmi.c
+> > > +F:=09drivers/platform/x86/wmi/
+> > >   F:=09include/uapi/linux/wmi.h
+> > >     ACRN HYPERVISOR SERVICE MODULE
+> > > diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kcon=
+fig
+> > > index 46e62feeda3c..ef59425580f3 100644
+> > > --- a/drivers/platform/x86/Kconfig
+> > > +++ b/drivers/platform/x86/Kconfig
+> > > @@ -16,35 +16,7 @@ menuconfig X86_PLATFORM_DEVICES
+> > >     if X86_PLATFORM_DEVICES
+> > >   -config ACPI_WMI
+> > > -=09tristate "WMI"
+> > > -=09depends on ACPI
+> > > -=09help
+> > > -=09  This driver adds support for the ACPI-WMI (Windows Management
+> > > -=09  Instrumentation) mapper device (PNP0C14) found on some systems.
+> > > -
+> > > -=09  ACPI-WMI is a proprietary extension to ACPI to expose parts of =
+the
+> > > -=09  ACPI firmware to userspace - this is done through various vendo=
+r
+> > > -=09  defined methods and data blocks in a PNP0C14 device, which are =
+then
+> > > -=09  made available for userspace to call.
+> > > -
+> > > -=09  The implementation of this in Linux currently only exposes this=
+ to
+> > > -=09  other kernel space drivers.
+> > > -
+> > > -=09  This driver is a required dependency to build the firmware spec=
+ific
+> > > -=09  drivers needed on many machines, including Acer and HP laptops.
+> > > -
+> > > -=09  It is safe to enable this driver even if your DSDT doesn't defi=
+ne
+> > > -=09  any ACPI-WMI devices.
+> > > -
+> > > -config ACPI_WMI_LEGACY_DEVICE_NAMES
+> > > -=09bool "Use legacy WMI device naming scheme"
+> > > -=09depends on ACPI_WMI
+> > > -=09help
+> > > -=09  Say Y here to force the WMI driver core to use the old WMI devi=
+ce
+> > > naming
+> > > -=09  scheme when creating WMI devices. Doing so might be necessary f=
+or
+> > > some
+> > > -=09  userspace applications but will cause the registration of WMI
+> > > devices with
+> > > -=09  the same GUID to fail in some corner cases.
+> > > +source "drivers/platform/x86/wmi/Kconfig"
+> > >     config WMI_BMOF
+> > >   =09tristate "WMI embedded Binary MOF driver"
+> > > diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Mak=
+efile
+> > > index c7db2a88c11a..c9f6e9275af8 100644
+> > > --- a/drivers/platform/x86/Makefile
+> > > +++ b/drivers/platform/x86/Makefile
+> > > @@ -5,7 +5,7 @@
+> > >   #
+> > >     # Windows Management Interface
+> > > -obj-$(CONFIG_ACPI_WMI)=09=09+=3D wmi.o
+> > > +obj-y=09=09=09=09+=3D wmi/
+> > Is there a good reason for the first part of the change?
+> > That is, do you anticipate need for something outside of what this woul=
+d
+> > cover:
+> >=20
+> > obj-$(CONFIG_ACPI_WMI)               +=3D wmi/
+> >=20
+> > Other than that, this series looks fine.
+>=20
+> The final version will look like this:
+>=20
+> wmi-y                   :=3D core.o marshalling.o string.o
+> obj-$(CONFIG_ACPI_WMI)  +=3D wmi.o
+>=20
+> # Unit tests
+> obj-y                   +=3D tests/
+>=20
+> So i think this change is necessary.
 
-V2: https://lore.kernel.org/all/955bc7a9b78678fad4b705c428e8b45aeb0cbf3c.1762367117.git.andrea.porta@suse.com/
----
- drivers/pci/of.c | 1 -
- 1 file changed, 1 deletion(-)
+Fair enough.
 
-diff --git a/drivers/pci/of.c b/drivers/pci/of.c
-index 3579265f1198..71899b385f7c 100644
---- a/drivers/pci/of.c
-+++ b/drivers/pci/of.c
-@@ -775,7 +775,6 @@ void of_pci_make_host_bridge_node(struct pci_host_bridge *bridge)
- 
- 	/* Check if there is a DT root node to attach the created node */
- 	if (!of_root) {
--		pr_err("of_root node is NULL, cannot create PCI host bridge node\n");
- 		return;
- 	}
- 
--- 
-2.35.3
+--=20
+ i.
 
+--8323328-2023958081-1762772069=:1060--
 
