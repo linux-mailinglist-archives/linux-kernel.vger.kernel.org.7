@@ -1,214 +1,100 @@
-Return-Path: <linux-kernel+bounces-894306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10BF8C49B91
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 00:18:40 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8C63C49B94
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 00:20:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C003B3AA92B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 23:18:38 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3ECE934A660
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 23:20:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 163132FF672;
-	Mon, 10 Nov 2025 23:18:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDB802F744B;
+	Mon, 10 Nov 2025 23:20:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="fseYXR81";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="IPt204lt"
-Received: from fhigh-b1-smtp.messagingengine.com (fhigh-b1-smtp.messagingengine.com [202.12.124.152])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Txz1v+Iv"
+Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6119B242D78;
-	Mon, 10 Nov 2025 23:18:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5C141B0413
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 23:20:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762816710; cv=none; b=emqO4P/hXJbOxmfw0AnPv3q66kbakCSGPe+ZXIQ2piTh7ZNY+80rnxLEbasjNb1TuheVi9sM/DU9s/bqLoyDKzxUmwRAZGcFNO1moUuUl633AF8calWE/LkkRl0H1+zMqTyQtHyMW/yNnlHRk+3xE4LlP0eRHHYcBtQ7aApJDyc=
+	t=1762816824; cv=none; b=oaiX3DxZ7KeyC5ePIXfqC0YOFeuWMPSYBLRIdxho9a2ztUB/EVNyfM7F+T+iK+/7wFXNbKFYo/gu0oC80qY2cHbpmXkOI5OaLBq51GA0wsDPCxTW0sauS5HnD3DP11BtJuHR35nJLq4Hpbmct4qc2TJDPzHBYcghhSOQLRLTkTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762816710; c=relaxed/simple;
-	bh=x8wyF9KUZS67p+qkcbiNjLsonDBfnOPM5VU//pUMgXA=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=p4s8Q1TKRqutzLSb2JHAiwL/12aIDXheAsEGwvEJ9uL+k+PS3gW6aLVADVgPTR65GW1oiyiTej87FsR1n8SAU5u51qSfdISI9D4dHdvlq3iHpR6SxiH8Y/iSnGSRWesKErOiCdAz8Q/dYej4t0aBF5DoUR+Py7PwR+ZVhOXw/EU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=fseYXR81; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=IPt204lt; arc=none smtp.client-ip=202.12.124.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
-Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 62BA47A00F7;
-	Mon, 10 Nov 2025 18:18:26 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-12.internal (MEProxy); Mon, 10 Nov 2025 18:18:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to; s=fm3; t=
-	1762816706; x=1762903106; bh=+HGKJK0puQ4xAOM/cfIuqP/yBP/Srkmb9O7
-	8+GprgqI=; b=fseYXR81AQwOUb0dF31tsCxOqOoMBwT7IkTDL3wsa69EN8FgaIQ
-	uVDPIpekK5Bxu4/0Bb4sz8anKxANCsDvqWrR0YckQmv5ilEmPLQwQVWk4NEr21WK
-	Twmq9iR11OnBi9x2+CqlS1c854ILEECLchp3NZEwliJmDKf9oqK8VpXtasVR44Fk
-	ggFdixblgNXO+9cx0kovyN5z5wivYneRUWzKO8hXMG8wiLNOOc1lfIzaKFT3p0Es
-	QPJixPEzW9xEL13OE7ugtvD4fqtn1P3CksAwGIaS1mK4hxGXGT1UzAgFFfvf3CxQ
-	rxm8Ft8zo7riekI2iisLQGRj+KbYP8rQAMA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762816706; x=
-	1762903106; bh=+HGKJK0puQ4xAOM/cfIuqP/yBP/Srkmb9O78+GprgqI=; b=I
-	Pt204ltT5YqSQvDuaSzaivuZxDbKf281mYVakFWu5bYzSadgIcBNK4VYa0X1e/v5
-	Enhcp+U+pxYqVHHp4Y284QnV24GsjP3kKEllBA9KY+/GzQC8wgKyR/W6m3uMzWxa
-	FrysD87iYETYH7CU0HPH2O4XWslLJ4OO1tAHLkATvHEkwOlkdFBi4Rsn/8keKIa8
-	zf+ypln5RHHP1sUsro8ppf4UwIRFGnVXgosAYvm7O5NCk4O+fdJLv6/xZ7IuQcPq
-	OS1Z9zz546Fdcc9H8irBfPEZmKLCgNXf0D4nmuGueooFpFvpzvxPfySHE0GwQJDl
-	E4Mg2312xt23SdtTqARIw==
-X-ME-Sender: <xms:wXISaeHD9iWnB6qEs-jKNmujhGVLeaM0McFpwlkRIzvaAhxpjbkHlg>
-    <xme:wXISaZbsxuHlnequ0FFGE9S-O5kooL3aZJYlKqPF3Zd8wEMEaXkfAwwKeZA_lOvBd
-    DChqig1HegFhJUPwah8gHbpESTRCgUWSz-yWyDF_7ejdxMFKBg>
-X-ME-Received: <xmr:wXISaYDbY3wemOYqoQmjxC6dIsan-yxgLCroySjJ4RMRCL_xSVqfFfjt_GFZ6kzyiMLybIOPqst4TF0FmQ8qH4NvFB9AePy4VXzFx0MccYUg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduleelieduucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurheptgfgggfhvfevufgjfhffkfhrsehtqhertddttdejnecuhfhrohhmpefpvghilheu
-    rhhofihnuceonhgvihhlsgesohifnhhmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnh
-    epvdeuteelkeejkeevteetvedtkeegleduieeftdeftefgtddtleejgfelgfevffeinecu
-    ffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurf
-    grrhgrmhepmhgrihhlfhhrohhmpehnvghilhgssehofihnmhgrihhlrdhnvghtpdhnsggp
-    rhgtphhtthhopeejpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehsthgrsghlvg
-    esvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhnfhhssehv
-    ghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlse
-    hvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptghhuhgtkhdrlhgvvhgvrhes
-    ohhrrggtlhgvrdgtohhmpdhrtghpthhtoheprghkphhmsehlihhnuhigqdhfohhunhgurg
-    htihhonhdrohhrghdprhgtphhtthhopehsphgvvggutghrrggtkhgvrheshhhothhmrghi
-    lhdrtghomhdprhgtphhtthhopegurghvihgurdhlrghighhhthesrggtuhhlrggsrdgtoh
-    hm
-X-ME-Proxy: <xmx:wXISaZlwIpYYRj276ba6x-avQXre3RTC4VTD3ueF8ra7o3hr2ymcyA>
-    <xmx:wXISaRwlbOwSheDt0LvjV4SEPMe4rVEHDqkgptjoEdkoLn2h-hHZlA>
-    <xmx:wXISabQSHMbGVBc2HH08oz-zSSDUCi-V7DepyGP2QNMAYBweuNomAg>
-    <xmx:wXISaR898BBYUoIDK31yYDRFX5hCvVgxT9eCdY2VxvJ-v3xuVsIbCQ>
-    <xmx:wnISaXVwKiJ2UhMhHANmqlw837S0CoKV_JzHWMGreF7aMwWgxJCT-8vq>
-Feedback-ID: iab3e480c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 10 Nov 2025 18:18:23 -0500 (EST)
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1762816824; c=relaxed/simple;
+	bh=pwAJ1XSRI5zPuxCcsq/6z3JI0WvSW7Nvf9d0r8v7JN8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WW5cKHoXLBrEwj0TG1DeudyJ5BHNP0MwsWDVYnWCTCKUMtu+hgue0RxvkU8f0eF1xosdvwSjtbxmcFMQTPwuWwSwtHS3SkP6Lxpg3WqRjpv3ky8ZDJkmtFB4gg2+5vLLWFHkSBx7dKRofEf/6BXOA3BREleP0GK8u39l03QOQTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Txz1v+Iv; arc=none smtp.client-ip=95.215.58.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1762816818;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=hjnGKgt3w9/pB/cswaD8pehI2RAflAw/BUPrIWTcUcI=;
+	b=Txz1v+IvOSQC0AVE5RL+lbiRoJXfy9JWLKyNM2SbMcL2mNzkxa6GfZja0hFiYL5iZEmXAm
+	/jcEY762YjQ2dl6QWZ5hTUTfs186asirIiJWp9poY5RmDvEQ8TpiUG4LfPPzW/X4Ma1UNM
+	65eK+ujABEKNeQ3UwZ5PgPW5c8yW/zE=
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>,
+	Harry Yoo <harry.yoo@oracle.com>,
+	Qi Zheng <qi.zheng@linux.dev>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	linux-mm@kvack.org,
+	cgroups@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Meta kernel team <kernel-team@meta.com>
+Subject: [PATCH 0/4] memcg: cleanup the memcg stats interfaces
+Date: Mon, 10 Nov 2025 15:20:04 -0800
+Message-ID: <20251110232008.1352063-1-shakeel.butt@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: NeilBrown <neilb@ownmail.net>
-To: "Chuck Lever" <chuck.lever@oracle.com>
-Cc: stable@vger.kernel.org, "Andrew Morton" <akpm@linux-foundation.org>,
- "David Laight" <David.Laight@ACULAB.COM>,
- "Linux NFS Mailing List" <linux-nfs@vger.kernel.org>,
- "Linux List Kernel Mailing" <linux-kernel@vger.kernel.org>,
- speedcracker@hotmail.com
-Subject: Re: [PATCH stable 6.1.y] nfsd: use __clamp in nfsd4_get_drc_mem()
-In-reply-to: <17e85980-9af9-4320-88d1-fa0c9a7220b1@oracle.com>
-References: <176272473578.634289.16492611931438112048@noble.neil.brown.name>,
- <17e85980-9af9-4320-88d1-fa0c9a7220b1@oracle.com>
-Date: Tue, 11 Nov 2025 10:18:19 +1100
-Message-id: <176281669984.634289.12369219545843965992@noble.neil.brown.name>
-Reply-To: NeilBrown <neil@brown.name>
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, 10 Nov 2025, Chuck Lever wrote:
-> Hi Neil -
->=20
-> On 11/9/25 4:45 PM, NeilBrown wrote:
-> >=20
-> > From: NeilBrown <neil@brown.name>
-> >=20
-> > A recent change to clamp_t() in 6.1.y caused fs/nfsd/nfs4state.c to fail
-> > to compile with gcc-9.
->=20
-> I have a comment on merge process:
->=20
-> Reported on 6.1.y, but might be present in other LTS releases, since
-> 2030ca560c5f exists in every LTS kernel since v5.4.y.
+The memcg stats are safe against irq (and nmi) context and thus does not
+require disabling irqs. However for some stats which are also maintained
+at node level, it is using irq unsafe interface and thus requiring the
+users to still disables irqs or use interfaces which explicitly disables
+irqs. Let's move memcg code to use irq safe node level stats function
+which is already optimized for architectures with HAVE_CMPXCHG_LOCAL
+(all major ones), so there will not be any performance penalty for its
+usage.
 
-I thought this might be likely but I didn't have enough motivation to check.
+Shakeel Butt (4):
+  memcg: use mod_node_page_state to update stats
+  memcg: remove __mod_lruvec_kmem_state
+  memcg: remove __mod_lruvec_state
+  memcg: remove __lruvec_stat_mod_folio
 
->=20
-> At least, my understanding of the stable rules is that they prefer this
-> kind of patch be applied to all relevant LTS kernels. I strongly prefer
-> that NFSD experts review and test this change /before/ it is merged,
-> since nfsd4_get_drc_mem() is part of the NFSv4.1 session slot
-> implementation, and since in this case we don't get the benefit of
-> /any/ soak time in linux-next or an upstream -rc release.
+ include/linux/memcontrol.h | 28 ++++------------------
+ include/linux/mm_inline.h  |  2 +-
+ include/linux/vmstat.h     | 48 ++------------------------------------
+ mm/filemap.c               | 20 ++++++++--------
+ mm/huge_memory.c           |  4 ++--
+ mm/khugepaged.c            |  8 +++----
+ mm/memcontrol.c            | 20 ++++++++--------
+ mm/migrate.c               | 20 ++++++++--------
+ mm/page-writeback.c        |  2 +-
+ mm/rmap.c                  |  4 ++--
+ mm/shmem.c                 |  6 ++---
+ mm/vmscan.c                |  4 ++--
+ mm/workingset.c            |  2 +-
+ 13 files changed, 53 insertions(+), 115 deletions(-)
 
-The patch is deliberately written to transparent without requiring any
-(export or otherwise) understand of the NFS or even of the code being
-changed.
-It purely removes the BUILD_BUG_ON().
-
->=20
-> So IMHO this patch needs to target v6.12.y, not v6.1.y, and it should be
-> marked
-
-Can I leave the process management to you.
-Though as you say later, the same patch should apply equally to both.
-
->=20
-> Fixes: 2030ca560c5f ("nfsd: degraded slot-count more gracefully as
-> allocation nears exhaustion.")
-
-There is no evidence that patch is broken so it is hard to justify
-saying that we fixed it.  But I honestly don't care.
-
->=20
-> (Since the patched code hasn't changed in many years, I think the final
-> patch ought to apply cleanly to both 6.12.y and 6.1.y).
->=20
-> I need to take the fix into nfsd-6.12.y and run NFSD CI against it, then
-> it can be sent along to stable@, and they will put it back into the
-> older LTS kernels for us.
->=20
->=20
-> > The code was written with the assumption that when "max < min",
-> >    clamp(val, min, max)
-> > would return max.  This assumption is not documented as an API promise
-> > and the change cause a compile failure if it could be statically
-> > determined that "max < min".
-> >=20
-> > The relevant code was no longer present upstream when the clamp() change
-> > landed there, so there is no upstream change to backport.
-> >=20
-> > As there is no clear case that the code is functioning incorrectly, the
-> > patch aims to restore the behaviour to exactly that before the clamp
-> > change, and to match what compilers other than gcc-9 produce.
->=20
-> > clamp_t(type,v,min,max) is replaced with
-> >   __clamp((type)v, (type)min, (type)max)
-> >=20
-> > Some of those type casts are unnecessary but they are included to make
-> > the code obviously correct.
-> > (__clamp() is the same as clamp(), but without the static API usage
-> > test).
-> >=20
-> > Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D220745#c0
-> > Fixes: 1519fbc8832b ("minmax.h: use BUILD_BUG_ON_MSG() for the lo < hi te=
-st in clamp()")
->=20
-> Stable-dep-of: 1519fbc8832b ("minmax.h: use BUILD_BUG_ON_MSG() for the
-> lo < hi test in clamp()")
->=20
-
-I haven't come across Stable-dep-of before.  I can't find it in
-Documentation.  Looking at some examples I guess it makes sense.
-Except that Stable-dep-of normally comes before, and Fixes normally
-comes after the target...
-
-Thanks,
-NeilBrown
-
-
-> might be more appropriate.
->=20
->=20
-> > Signed-off-by: NeilBrown <neil@brown.name>
->=20
-> --=20
-> Chuck Lever
->=20
+-- 
+2.47.3
 
 
