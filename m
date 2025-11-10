@@ -1,132 +1,129 @@
-Return-Path: <linux-kernel+bounces-894144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92584C495A6
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 22:02:55 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42935C4959A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 22:01:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 565F73A8C55
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 20:59:34 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1CF054F2E07
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 20:59:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 530902F617C;
-	Mon, 10 Nov 2025 20:58:38 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 625582F657E;
+	Mon, 10 Nov 2025 20:58:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YX7+DKvC"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0F132F3638
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 20:58:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17FF12F6578
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 20:58:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762808317; cv=none; b=Gq0au8iYjCIRzQWWthSNhwAtMms3tQ2GxpMdInvrd6y5w1ECm71MNQZHE42HBbDGionwfkz8EbW6A+w/kRUlRf6xhANdW37r9cwHaMgRZJf92kXoTlPHPvZS6SxcW8BRWPzW8laFSRyKRM/kh2FT7Hb3pXO6wa2QgLN/gdW0nvk=
+	t=1762808331; cv=none; b=CYET09UGHJROWSRFeHXGGE4dJDn8SLyaFZv3mn1lFkfB4CXYJsJm/k7jYdhl7xCGkck0ADJGMul8hgaVukZoQrElQUoaiptIjMZ2dUhRfyRmFwQRYNi0e/e89hRnnBbfdq+ZkjSm3VNnIWkHT+913jF7QGI6M6EdLbbayrFr8lY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762808317; c=relaxed/simple;
-	bh=851bXe5aQTwdZty53jaIVbICFA09xB27jhrqcmzMOeo=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=PviEH+sBsPouLUW0p/e16PYkcQLBiN1WxSMId90eSuyfldPPKh9liXpbsGPOVPCoz2iUIq1caC8lk1NVr0ioK6fEUcjkZwPubEbItb3aodxZwGq9lKHTMm3ydOZTMsdNH6o79+uNLw55hUtN7w91LdoF3HG4DNitSaeGnQGo8IE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-4337853ffbbso24296595ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 12:58:35 -0800 (PST)
+	s=arc-20240116; t=1762808331; c=relaxed/simple;
+	bh=B0tu5HKnKF3FvVdokFFssqR9C8sJEU7TcOiIpVa5V+I=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=PEAf3utRBodamEKC92+lCQ+7v9ehsIAumtsgeBbWC7co+KV8xrPJ2tsuFdEiWwXloBOXnSo+YN32VVSdVDPU36MCL1+gK/OmLfKJSfc31UDYXX2tPZzO4EQzMhN5/ZwpIkAJLExAKuj6rA3ilS9NEV9cWwSmXppGGQmcGwPxTVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--brianvv.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YX7+DKvC; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--brianvv.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-342701608e2so4368394a91.1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 12:58:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762808329; x=1763413129; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=XTDq9jeaQo0wOalgK/xieMtHrhoMAPHOMHOfOMk3yEo=;
+        b=YX7+DKvCbXIWmylCrbttRLrjwnAjbdrimGJjabgMsjJ0rdJWhaFVZk5WzJd4t0XBWx
+         775DHK/+xtmOUjytxG3zx6NyRYhIMdZI0vrh2MCV2L0C+qLflEJj5ZERCL635FXBhOzY
+         Nsq/nQyburmwg4WdtoRl2mpOc/WqsIG4UW2jP+a8PWFUGMAdZm9gV0NMYIGj+5XLy7I7
+         syEuoAarHFfsLR2QsVhtlqqToDpTW8TpaTsLXdtzj8OBGhCTl3+qwDNGbmINOg4vm7kg
+         kyU/wvKV95w5/h4U5wDF8cgeS/qsENvQtGbnNJbPlzCAhhRfYgTp41dn+SrDAk/pcYfJ
+         XoFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762808315; x=1763413115;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ewq5bkR2w0X36y1ORHARtnHAU9dh8AjYpqdGWpuZkcU=;
-        b=FPreqNnOGzm4aXr/IO9RczURiWp/K0NIzechasE008O90B3txpJvA1XlLvZKlC1hri
-         9rC2bAPHpcSD3gAUgTMopVZzP/K0VaeV7yfNnXEhNpk7zs6YAk+xZqa7DnO8g9DujMaD
-         zc5rL2TZDXEXcQ1hlQI42UK0L1HlJCTexDA+ZCJpWvQ42boYCFYz/FE7J9tiKUFcEqlN
-         /6lNcePVkbyaPPR3OH/oCDPqkshmHyh/JzY3w/qEnlaEWbn026fTRhRBBiujZAG4Zy2n
-         9bJEdQ7dWlezv43DdF6+XMN9Xa12tPl2EzGRY4al+6kz+yyBMG5FEcULr/nsouE4TTkU
-         4KhA==
-X-Gm-Message-State: AOJu0YwkfxjIO1OQjcFqvIZAjJTI0HIC/QirMlLYmWR/ChULhduWeisu
-	Cj2ZOSjOVNM/KHVEf9xlV1JbZLceEVxLpl48VBqHCT5oYn/eZtT7HN8vS7VF03KsyQ0iUhAZs18
-	NqtiEVaqHiqhipzM21P/O94hOMZX2BKD/ECJxSM106eVqkgp2SlrTRqX1XbPKoQ==
-X-Google-Smtp-Source: AGHT+IFs8PmXv1l0MCHu7y8xC2O43VtMVeNlEDUBcALH6HzyoOfwZVS0gNRgK5upRzWjAbyu1RXZ+96miWUetA8+MKFhyqLGl75K
+        d=1e100.net; s=20230601; t=1762808329; x=1763413129;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XTDq9jeaQo0wOalgK/xieMtHrhoMAPHOMHOfOMk3yEo=;
+        b=VOkZAThLMv2Muc46y6H0JoKGXNCmOiSVFDv/Xsga63Yl9T2n8Op6Ndaa0k34YHPEbV
+         AM9u0ptES2N7aZtc7yrEu93vIsJySjq1gMgmO6LzBwRbffVSRVsRDZg9amZOfcD5Xl/M
+         LMllRmgQRgGpuXbveQBtQSQJyJFkN9HkC1ehFr5EC+BJlvTJLRsRaaMHLo8Ak/Nl024/
+         ETl5MM0dbYRGPHjK4BzUtlxvJuIHcFGdkL1/wK63Av7TbUkUqqJXPX+Mq+PVsTkTZe4M
+         R9AWYgObYGW7z2CFn5FdKNTgScYku9/tsvVmDAjx3A7xS+x4SUUzoxySYfbNRVTBjOGN
+         pXvA==
+X-Forwarded-Encrypted: i=1; AJvYcCV0OFNrzGNiCD4PRh0Y7HFNQ0OSYIPa3Mloo9s5kn9F3QjQ1fqp1yqsHG4xj+ns+EKKBvw5d35ql0N5pRM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZssjJffpoPc2CIN8jd1EEj3pQo25S4h/73XEnwT0eRT2jakRe
+	S4e2xk0vcZzpWroQWcl/hDKLYD/DUTrfnFcBjgThvEHgu4cW8X1DC7gKbV2yFWm3s8kLmkt9TMG
+	NhiuLMIr8hQ==
+X-Google-Smtp-Source: AGHT+IHvzBtOuQaT0QbtsDDe5GbIuvBIJRBAx2LgnXxO3WuRHCzu/LTGZ6OKcVN0BcGwSzLApG60io4lmv5I
+X-Received: from pjbsc8.prod.google.com ([2002:a17:90b:5108:b0:343:8627:1010])
+ (user=brianvv job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:5588:b0:340:be44:dd11
+ with SMTP id 98e67ed59e1d1-3436ccfe211mr9734686a91.27.1762808329392; Mon, 10
+ Nov 2025 12:58:49 -0800 (PST)
+Date: Mon, 10 Nov 2025 20:58:37 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a92:c265:0:b0:433:7b4f:f8c3 with SMTP id
- e9e14a558f8ab-4337b502724mr85243475ab.17.1762808314620; Mon, 10 Nov 2025
- 12:58:34 -0800 (PST)
-Date: Mon, 10 Nov 2025 12:58:34 -0800
-In-Reply-To: <691231dc.a70a0220.22f260.0101.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <691251fa.a70a0220.22f260.010a.GAE@google.com>
-Subject: Forwarded: Re: [syzbot] [bpf?] KASAN: stack-out-of-bounds Write in __bpf_get_stack
-From: syzbot <syzbot+d1b7fa1092def3628bd7@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.2.1041.gc1ab5b90ca-goog
+Message-ID: <20251110205837.3140385-1-brianvv@google.com>
+Subject: [iwl-net PATCH] idpf: reduce mbx_task schedule delay to 300us
+From: Brian Vazquez <brianvv@google.com>
+To: Brian Vazquez <brianvv.kernel@gmail.com>, Tony Nguyen <anthony.l.nguyen@intel.com>, 
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	intel-wired-lan@lists.osuosl.org
+Cc: David Decotigny <decot@google.com>, Anjali Singhai <anjali.singhai@intel.com>, 
+	Sridhar Samudrala <sridhar.samudrala@intel.com>, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, emil.s.tantilov@intel.com, 
+	Brian Vazquez <brianvv@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+During the IDPF init phase, the mailbox runs in poll mode until it is
+configured to properly handle interrupts. The previous delay of 300ms is
+excessively long for the mailbox polling mechanism, which causes a slow
+initialization of ~2s:
 
-***
+echo 0000:06:12.4 > /sys/bus/pci/drivers/idpf/bind
 
-Subject: Re: [syzbot] [bpf?] KASAN: stack-out-of-bounds Write in __bpf_get_stack
-Author: listout@listout.xyz
+[   52.444239] idpf 0000:06:12.4: enabling device (0000 -> 0002)
+[   52.485005] idpf 0000:06:12.4: Device HW Reset initiated
+[   54.177181] idpf 0000:06:12.4: PTP init failed, err=-EOPNOTSUPP
+[   54.206177] idpf 0000:06:12.4: Minimum RX descriptor support not provided, using the default
+[   54.206182] idpf 0000:06:12.4: Minimum TX descriptor support not provided, using the default
 
-On 10.11.2025 10:41, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    f8c67d8550ee bpf: Use kmalloc_nolock() in range tree
-> git tree:       bpf-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=121a50b4580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=e46b8a1c645465a9
-> dashboard link: https://syzkaller.appspot.com/bug?extid=d1b7fa1092def3628bd7
-> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12270412580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=128bd084580000
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/d9e95bfbe4ee/disk-f8c67d85.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/0766b6dd0e91/vmlinux-f8c67d85.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/79089f9e9e93/bzImage-f8c67d85.xz
-> 
-> The issue was bisected to:
-> 
-> commit e17d62fedd10ae56e2426858bd0757da544dbc73
-> Author: Arnaud Lecomte <contact@arnaud-lcm.com>
-> Date:   Sat Oct 25 19:28:58 2025 +0000
-> 
->     bpf: Refactor stack map trace depth calculation into helper function
-> 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1632d0b4580000
-> final oops:     https://syzkaller.appspot.com/x/report.txt?x=1532d0b4580000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1132d0b4580000
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+d1b7fa1092def3628bd7@syzkaller.appspotmail.com
-> Fixes: e17d62fedd10 ("bpf: Refactor stack map trace depth calculation into helper function")
-> 
-> ==================================================================
-> BUG: KASAN: stack-out-of-bounds in __bpf_get_stack+0x5a3/0xaa0 kernel/bpf/stackmap.c:493
-> Write of size 168 at addr ffffc900030e73a8 by task syz.1.44/6108
+Changing the delay to 300us avoids the delays during the initial mailbox
+transactions, making the init phase much faster:
 
-#syz test
+[   83.342590] idpf 0000:06:12.4: enabling device (0000 -> 0002)
+[   83.384402] idpf 0000:06:12.4: Device HW Reset initiated
+[   83.518323] idpf 0000:06:12.4: PTP init failed, err=-EOPNOTSUPP
+[   83.547430] idpf 0000:06:12.4: Minimum RX descriptor support not provided, using the default
+[   83.547435] idpf 0000:06:12.4: Minimum TX descriptor support not provided, using the default
 
-diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
-index 2365541c81dd..885130e4ab0d 100644
---- a/kernel/bpf/stackmap.c
-+++ b/kernel/bpf/stackmap.c
-@@ -480,6 +480,7 @@ static long __bpf_get_stack(struct pt_regs *regs, struct task_struct *task,
- 	}
+Signed-off-by: Brian Vazquez <brianvv@google.com>
+---
+ drivers/net/ethernet/intel/idpf/idpf_lib.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/intel/idpf/idpf_lib.c b/drivers/net/ethernet/intel/idpf/idpf_lib.c
+index 52fe45b42095..44fbffab9737 100644
+--- a/drivers/net/ethernet/intel/idpf/idpf_lib.c
++++ b/drivers/net/ethernet/intel/idpf/idpf_lib.c
+@@ -1313,7 +1313,7 @@ void idpf_mbx_task(struct work_struct *work)
+ 		idpf_mb_irq_enable(adapter);
+ 	else
+ 		queue_delayed_work(adapter->mbx_wq, &adapter->mbx_task,
+-				   msecs_to_jiffies(300));
++				   usecs_to_jiffies(300));
  
- 	trace_nr = trace->nr - skip;
-+	trace_nr = min_t(u32, trace_nr, size / elem_size);
- 	copy_len = trace_nr * elem_size;
- 
- 	ips = trace->ip + skip;
-
+ 	idpf_recv_mb_msg(adapter, adapter->hw.arq);
+ }
 -- 
-Regards,
-listout
+2.51.2.1041.gc1ab5b90ca-goog
+
 
