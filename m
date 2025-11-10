@@ -1,173 +1,105 @@
-Return-Path: <linux-kernel+bounces-893343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A17B2C471EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:15:16 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72C9EC471FB
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:16:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4ED43189383A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:15:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7CB6B4EC5E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:16:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAB0C3128D6;
-	Mon, 10 Nov 2025 14:15:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 857E63126BD;
+	Mon, 10 Nov 2025 14:16:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="12U+tPHJ"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZqbrH6t1"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 538C6238C3B;
-	Mon, 10 Nov 2025 14:15:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44D7A1F30BB;
+	Mon, 10 Nov 2025 14:16:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762784112; cv=none; b=N2IiqbLEeyoBVTODYFP1g021W4r6/HLmPx2bs47Lf9F9Q7ZN4f+R1l3uUT1n7ePWtYYWb0K1pxuiyWHwIcop9Bp7sllbP5PaediTv39L2wx+10XJYw/VOjG+zpfYVkoVuLcQm57lwzJkb2wTKyEAu4SHfS3jXl3whr2XD/f1epI=
+	t=1762784174; cv=none; b=bhvLdSRxkA1wmZkI0XxNypeoVCzapK3g0W7oyUMWV4QJUr1urVuZy5/02K/UCeryCeiASyaT6pfjYGFRl5zM4fBzujSRYYi5jdnjQPDRGJ/RPI5Fn+BdBhVBXBD8Uuh587YZMtPNEpAvvmcppqJ6gISqZIoOb3Gt2VyFOtpYTz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762784112; c=relaxed/simple;
-	bh=lCUcxcMpT5U7cRzym3W6q8PWmYJA+8R051GDyQCfm9s=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=jO2ND8siKfi6fzZ4ehHRF9Oia/CYI2d7kLBYMh+lL901zAWd9kQL1lOaX7krObbCFsLXGCMpkSAbRcJIvbyvXt4uUi/gKeLPMqiOqJWX66k57qT/8C0aAEibGqpsESad/Bnufs0p02A6zjXo1VAUDX/zf53OeWv90FUSuswXpxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=12U+tPHJ; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 7613B4E41608;
-	Mon, 10 Nov 2025 14:15:07 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 3CF98606F5;
-	Mon, 10 Nov 2025 14:15:07 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id AE0C7103718E3;
-	Mon, 10 Nov 2025 15:15:04 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1762784106; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=r0RTs0mLiJP0YQJOpjwgxtc67UqnKyOdkCbLOvFlNsA=;
-	b=12U+tPHJOwgSLsSFcsdUd0sMClp8mXzd6YcFS4JdNX3QesCpTtjGA03ZAvPtDPQOgo3sFK
-	3MUKa5P/j8g0WG4cuGamytrO40gDSMlT3at4Hhof7kMgd5LvPTTBh1foHQiTOa0pCh+M7P
-	z0qfUHul3B9v/7LoaxFn1p+iSs8tDqPJU5xAY5qa1DApfp82VAPmLSlLRDS6SRkazF53T4
-	1zCKsRdr7ttupzVzAPJdSX4qqvHqnvpg3YqSNAqG9O+oAkl3BVWInxJwlwoV0KG8Yf4otZ
-	V8Q9LODADlr0VPYpYRkOY18K+zc9KDXUPAKIyoQjgJv15otqp/AS/F9HRLp92A==
-From: Gregory CLEMENT <gregory.clement@bootlin.com>
-To: "Rob Herring (Arm)" <robh@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
- Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	s=arc-20240116; t=1762784174; c=relaxed/simple;
+	bh=8R3t8TYQCB3Hxiair/ZjL7WRux4smJ3M28+EDm4B/g8=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=mMkncBke+r1cgipkQceEBdm5F9aSS2EAo+3/TumU5PaR/TGp6hf5RHOAHmYq+h5hHgKqRuM0hmsiHwimle+cVqXSDUZRBfBxjh2Hgvhsiid1+6bYsdMcLYaUy3sBr8s52HxkoAeSc8qyZWehIAxABByiR6zi1ZAuRYI7ebS6pEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZqbrH6t1; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762784173; x=1794320173;
+  h=from:to:cc:in-reply-to:references:subject:message-id:
+   date:mime-version:content-transfer-encoding;
+  bh=8R3t8TYQCB3Hxiair/ZjL7WRux4smJ3M28+EDm4B/g8=;
+  b=ZqbrH6t1TuUQzuG4CsFyYMVC8J8zBv/rKSAypEkm9I+LPH6rluh69NW/
+   IzpoyUK9CgnUDFFtptUmGRLqtC8vZAQBwTo02qxXmTYWeBHfcw8cuqETq
+   4QcokIhqgUzOqRHVT5YG7uNbo8W6DpQBmE5/+VlgQXiOxgmNYtlU0flBm
+   gRkc/Ake+AMjL6ZPlDonQP29paZDfFMdfDhcIoFf3EZsd0ET3rn3RgP+h
+   Sck3bcOjbVW+VHSyUZtng5VTzmkDfs4D5+jfwufBALsZ4IfOUz3XHUx82
+   G1IsQa3ZW0WxUQO0bEdLKu27Gj4Au2KL5s63bbDdiRi2HginQR9CApYVq
+   g==;
+X-CSE-ConnectionGUID: 9J7cpOEQRSeRbuCGPjlPaQ==
+X-CSE-MsgGUID: MfnDaxbYR5S5g1RWx3IAIA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11609"; a="64921293"
+X-IronPort-AV: E=Sophos;i="6.19,293,1754982000"; 
+   d="scan'208";a="64921293"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 06:16:12 -0800
+X-CSE-ConnectionGUID: vjEvejHWSbOaNt5h5jBX/w==
+X-CSE-MsgGUID: /i2yjnoHTrasTVr014pIeQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,293,1754982000"; 
+   d="scan'208";a="188519151"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.13])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 06:16:10 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: Hans de Goede <hansg@kernel.org>, Armin Wolf <W_Armin@gmx.de>, 
+ Kurt Borja <kuurtb@gmail.com>
+Cc: platform-driver-x86@vger.kernel.org, Dell.Client.Kernel@dell.com, 
  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64/arm: dts: marvell: Rename "nand-rb" pinctrl node
- names
-In-Reply-To: <20251029153927.1065446-1-robh@kernel.org>
-References: <20251029153927.1065446-1-robh@kernel.org>
-Date: Mon, 10 Nov 2025 15:15:04 +0100
-Message-ID: <87seemrn2v.fsf@BLaptop.bootlin.com>
+In-Reply-To: <20251103-aw-gmode-v1-1-eba7b7be0a9c@gmail.com>
+References: <20251103-aw-gmode-v1-1-eba7b7be0a9c@gmail.com>
+Subject: Re: [PATCH] platform/x86: alienware-wmi-wmax: Simplify FW profile
+ to pprof matching
+Message-Id: <176278416431.9227.13656609050630747518.b4-ty@linux.intel.com>
+Date: Mon, 10 Nov 2025 16:16:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
-"Rob Herring (Arm)" <robh@kernel.org> writes:
+On Mon, 03 Nov 2025 21:12:46 -0500, Kurt Borja wrote:
 
-> Update the "nand-rb" pinctrl child node names to use the defined "-pins"
-> suffix fixing DT schema warnings.
->
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-
-
-Applied on mvebu/dt64
-
-Thanks,
-
-Gregory
+> Drop profile matching micro-optimizations to improve readability and
+> long-term maintainability.
+> 
+> Additionally, is_awcc_thermal_profile_id is implicitly ignoring the
+> AWCC_PROFILE_SPECIAL_GMODE ID. State this explicitly with code and a
+> comment.
+> 
+> [...]
 
 
-> ---
->  arch/arm/boot/dts/marvell/armada-38x.dtsi         | 2 +-
->  arch/arm/boot/dts/marvell/armada-xp-98dx3236.dtsi | 2 +-
->  arch/arm64/boot/dts/marvell/armada-70x0.dtsi      | 2 +-
->  arch/arm64/boot/dts/marvell/armada-80x0.dtsi      | 2 +-
->  arch/arm64/boot/dts/marvell/cn9130-db.dtsi        | 2 +-
->  5 files changed, 5 insertions(+), 5 deletions(-)
->
-> diff --git a/arch/arm/boot/dts/marvell/armada-38x.dtsi b/arch/arm/boot/dt=
-s/marvell/armada-38x.dtsi
-> index 1181b13deabc..1d616edda322 100644
-> --- a/arch/arm/boot/dts/marvell/armada-38x.dtsi
-> +++ b/arch/arm/boot/dts/marvell/armada-38x.dtsi
-> @@ -247,7 +247,7 @@ nand_pins: nand-pins {
->  					marvell,function =3D "dev";
->  				};
->=20=20
-> -				nand_rb: nand-rb {
-> +				nand_rb: nand-rb-pins {
->  					marvell,pins =3D "mpp41";
->  					marvell,function =3D "nand";
->  				};
-> diff --git a/arch/arm/boot/dts/marvell/armada-xp-98dx3236.dtsi b/arch/arm=
-/boot/dts/marvell/armada-xp-98dx3236.dtsi
-> index 7a7e2066c498..a9a71326aafc 100644
-> --- a/arch/arm/boot/dts/marvell/armada-xp-98dx3236.dtsi
-> +++ b/arch/arm/boot/dts/marvell/armada-xp-98dx3236.dtsi
-> @@ -322,7 +322,7 @@ nand_pins: nand-pins {
->  		marvell,function =3D "dev";
->  	};
->=20=20
-> -	nand_rb: nand-rb {
-> +	nand_rb: nand-rb-pins {
->  		marvell,pins =3D "mpp19";
->  		marvell,function =3D "nand";
->  	};
-> diff --git a/arch/arm64/boot/dts/marvell/armada-70x0.dtsi b/arch/arm64/bo=
-ot/dts/marvell/armada-70x0.dtsi
-> index 293403a1a333..df939426d258 100644
-> --- a/arch/arm64/boot/dts/marvell/armada-70x0.dtsi
-> +++ b/arch/arm64/boot/dts/marvell/armada-70x0.dtsi
-> @@ -56,7 +56,7 @@ nand_pins: nand-pins {
->  			marvell,function =3D "dev";
->  		};
->=20=20
-> -		nand_rb: nand-rb {
-> +		nand_rb: nand-rb-pins {
->  			marvell,pins =3D "mpp13";
->  			marvell,function =3D "nf";
->  		};
-> diff --git a/arch/arm64/boot/dts/marvell/armada-80x0.dtsi b/arch/arm64/bo=
-ot/dts/marvell/armada-80x0.dtsi
-> index ee67c70bf02e..fb361d657a77 100644
-> --- a/arch/arm64/boot/dts/marvell/armada-80x0.dtsi
-> +++ b/arch/arm64/boot/dts/marvell/armada-80x0.dtsi
-> @@ -89,7 +89,7 @@ nand_pins: nand-pins {
->  			marvell,function =3D "dev";
->  		};
->=20=20
-> -		nand_rb: nand-rb {
-> +		nand_rb: nand-rb-pins {
->  			marvell,pins =3D "mpp13", "mpp12";
->  			marvell,function =3D "nf";
->  		};
-> diff --git a/arch/arm64/boot/dts/marvell/cn9130-db.dtsi b/arch/arm64/boot=
-/dts/marvell/cn9130-db.dtsi
-> index 50e9e0724828..3cc320f569ad 100644
-> --- a/arch/arm64/boot/dts/marvell/cn9130-db.dtsi
-> +++ b/arch/arm64/boot/dts/marvell/cn9130-db.dtsi
-> @@ -379,7 +379,7 @@ nand_pins: nand-pins {
->  				       "mpp27";
->  			marvell,function =3D "dev";
->  		};
-> -		nand_rb: nand-rb {
-> +		nand_rb: nand-rb-pins {
->  			marvell,pins =3D "mpp13";
->  			marvell,function =3D "nf";
->  		};
-> --=20
-> 2.51.0
->
+Thank you for your contribution, it has been applied to my local
+review-ilpo-next branch. Note it will show up in the public
+platform-drivers-x86/review-ilpo-next branch only once I've pushed my
+local branch there, which might take a while.
 
---=20
-Gr=C3=A9gory CLEMENT, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+The list of commits applied:
+[1/1] platform/x86: alienware-wmi-wmax: Simplify FW profile to pprof matching
+      commit: ff49362eca17114bf36240f7531c2060127778d1
+
+--
+ i.
+
 
