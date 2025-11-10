@@ -1,93 +1,109 @@
-Return-Path: <linux-kernel+bounces-893908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8985C489FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 19:44:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AC4AC48A0C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 19:47:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CCB464E124A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 18:44:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 290483AA0CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 18:44:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A7E532AABE;
-	Mon, 10 Nov 2025 18:44:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFAC03218B2;
+	Mon, 10 Nov 2025 18:44:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pm2NaPdw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q1WWIiqc"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93EB9328B67;
-	Mon, 10 Nov 2025 18:44:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 557322550D4;
+	Mon, 10 Nov 2025 18:44:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762800255; cv=none; b=KlbKYNBSBeCdv4zmylmsCBlGzcBNlBVqugf/8ByYy9ZRzblbaiI39UsGNOea35mQ+SFGN/lnvWgTIq+L6hgrGUNxTPw3aQDNFoYqD0VTzSzdIoe4j1HPU/+DDUWE7QUY0NWY5CR4rjOaJ1CYm/NYvWVy/FGueEZ8pUZAGxeXjbg=
+	t=1762800254; cv=none; b=J9bo4hx3BqrdyECHagHT7Nj2TjDy9bDZTCdy65Z7O84M2obk3Z5rIBxMag4RCof8/QAbirOUikzr/dF7D3dqo3azLb1tzJx5MjySHSg5sCRdLscVw/HjR0H9gQpxh6Lmzn3UU1+jjULcgUK2RnsU1Mx4mf8NmXc8eyTMA6uX9xA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762800255; c=relaxed/simple;
-	bh=uDgT3OLYqBNSwhcwVokASYsuRbIZdhKM2PFAjL4kmfg=;
+	s=arc-20240116; t=1762800254; c=relaxed/simple;
+	bh=8+lAHIqieOOtVnVVbRaiVbcQW8h7wJOabZhBh1JIluk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R9Av7cGO7jo/4KyYdWh/prLY8i8HTq4aIkBXPJPEipneBBeedur3byHRGijArqFwGduDOwdVXOZRUygt4oYyuAAulsr4f8RrymQu3PWaFzMbCdE1iegQA5j/JSCJ1pUl3C4mJ2mmcgUaK/YNQos55yTTOGmdApP+f2/6L4Fiz8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pm2NaPdw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A019C113D0;
-	Mon, 10 Nov 2025 18:44:12 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=s+WwXfFbODFHfMbiofTyB6IvVJuXFW3iH3yzQITcRI6BaMefiaP65VWTZ+utRK/coJcX8jZm3hzfm/+IAoX5x098RGfTXy1eGT4PoHu+NskYv0BxN8Ed4K3jK50D6JxDt1+c3C1FNO+U3P7xM1zjknz4aQfX5zyZVhDla0I6Yd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q1WWIiqc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1E8AC116B1;
+	Mon, 10 Nov 2025 18:44:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762800255;
-	bh=uDgT3OLYqBNSwhcwVokASYsuRbIZdhKM2PFAjL4kmfg=;
+	s=k20201202; t=1762800253;
+	bh=8+lAHIqieOOtVnVVbRaiVbcQW8h7wJOabZhBh1JIluk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pm2NaPdw1pQxcle3LBq1dJXMeAMTKMxQbo/+GoyGaNPZBOKVb6/TDfIsKHNpr05R5
-	 wNPlNpJhlPqu5KE2DS6Uo80rTSC7qp0/hMfiBs0sADDUZJBRykNV/KTx8o92qQdOCX
-	 cW1k03hHMEFQd1sFxVchziMlpK1YtdUByq5q1ChpmgWYMTzIVQp46z8UbC0as8zWTf
-	 MC96jrFvdqHy84cZTKRdN5jOARljbnwgmrHBPZmNJ5g43XidoVN9lnBJcHCMretitp
-	 48bxa5dw6EadcnFUoDkymMxz0P91/CTQeN+lFrYP4kx3tfpNhx6dNVTU4sluOjmFhJ
-	 mCNvbrNvRhgwg==
-Date: Mon, 10 Nov 2025 18:44:09 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Huayu Zong <huayu.zong@mediatek.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Project_Global_Chrome_Upstream_Group@mediatek.com
-Subject: Re: [PATCH v3 3/3] dt-bindings: remoteproc: mediatek: Add MT8189 SCP
- binding
-Message-ID: <20251110-wispy-unsliced-4eaa89c6a866@spud>
-References: <20251110101342.24261-1-huayu.zong@mediatek.com>
- <20251110101342.24261-4-huayu.zong@mediatek.com>
+	b=q1WWIiqc9ZSwaS5SwGimqLVGQOUOqtPtX8FJdnSTFmdwzq7FAWLT4qHAUrRVRdsFe
+	 VDayr+2oUXNx5pkOmbIi2QGn4rL0QPar9Es7uSn1w5FcjS4lc73BBwoAa9lacEHFy4
+	 V1r6UQNzB7imRCbSW6bo5zos5xJ5SnZZgYVYVIlLEnGuIlrbRktHrqxths/MYBqT4w
+	 IKMZLKzR3qjeDOZDxmcrb2pvP+SnxB1pA54bUikOZO6E+V+ouB7DpPpKiXQLjRurVm
+	 25si24rKrNEPUXV9GmxITztTHEkKiHadM1XKke6BcB1wUIidF4x8sPS677XOl1I7BX
+	 I/OmYk1Ppy8jA==
+Date: Mon, 10 Nov 2025 08:44:12 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Andrea Righi <andrea.righi@linux.dev>
+Cc: David Vernet <void@manifault.com>, Changwoo Min <changwoo@igalia.com>,
+	Dan Schatzberg <schatzberg.dan@gmail.com>,
+	Emil Tsalapatis <etsal@meta.com>, sched-ext@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 11/13] sched_ext: Add scx_cpu0 example scheduler
+Message-ID: <aRIyfJWJ6fcW5frO@slm.duckdns.org>
+References: <20251109183112.2412147-1-tj@kernel.org>
+ <20251109183112.2412147-12-tj@kernel.org>
+ <aRGkHhAWTWdWELAY@gpd4>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="lfkxYjN0AXZNGzBE"
-Content-Disposition: inline
-In-Reply-To: <20251110101342.24261-4-huayu.zong@mediatek.com>
-
-
---lfkxYjN0AXZNGzBE
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <aRGkHhAWTWdWELAY@gpd4>
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-pw-bot: not-applicable
+On Mon, Nov 10, 2025 at 09:36:46AM +0100, Andrea Righi wrote:
+> > +void BPF_STRUCT_OPS(cpu0_enqueue, struct task_struct *p, u64 enq_flags)
+> > +{
+> > +	if (p->nr_cpus_allowed < nr_cpus) {
+> 
+> We could be even more aggressive with DSQ_CPU0 and check
+> bpf_cpumask_test_cpu(0, p->cpus_ptr), but this is fine as well.
 
---lfkxYjN0AXZNGzBE
-Content-Type: application/pgp-signature; name="signature.asc"
+I did the following instead:
 
------BEGIN PGP SIGNATURE-----
+  void BPF_STRUCT_OPS(cpu0_enqueue, struct task_struct *p, u64 enq_flags)
+  {
+          /*
+           * select_cpu() always picks CPU0. If @p is not on CPU0, it can't run on
+           * CPU 0. Queue on whichever CPU it's currently only.
+           */
+          if (scx_bpf_task_cpu(p) != 0) {
+                  stat_inc(0);	/* count local queueing */
+                  scx_bpf_dsq_insert(p, SCX_DSQ_LOCAL, SCX_SLICE_DFL, 0);
+                  return;
+          }
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaRIyeQAKCRB4tDGHoIJi
-0gZNAPwMSrWLJjJv/TIE354SXgaXXyg/Lhs1khSwgfyy9QS8eAEAxbotzJllfTAJ
-lnDKXD4R7yCtnW6Jx10F2R9VKtJYVAg=
-=pkeZ
------END PGP SIGNATURE-----
+          stat_inc(1);	/* count cpu0 queueing */
+          scx_bpf_dsq_insert(p, DSQ_CPU0, SCX_SLICE_DFL, enq_flags);
+  }
 
---lfkxYjN0AXZNGzBE--
+This should be safe against migration disabled tasks and so on.
+
+> > +		stat_inc(0);	/* count local queueing */
+> > +		scx_bpf_dsq_insert(p, SCX_DSQ_LOCAL, SCX_SLICE_DFL, 0);
+> 
+> And this is why I was suggesting to automatically fallback to the new
+> global default time slice internally. In this case do we want to preserve
+> the old 20ms default or automatically switch to the new one?
+
+Maybe SCX_SLICE_DFL can become runtime loaded const volatile but anyone
+who's using it is just saying "I don't care". As long as it's not something
+that breaks the system left and right, does it matter what exact value it
+is?
+
+Thanks.
+
+-- 
+tejun
 
