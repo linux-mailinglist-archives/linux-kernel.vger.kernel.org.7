@@ -1,87 +1,97 @@
-Return-Path: <linux-kernel+bounces-893411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92379C474DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:45:03 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3B60C47510
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:47:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E4D924ED151
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:44:54 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2E69B4EA994
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:47:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DE6D31329C;
-	Mon, 10 Nov 2025 14:44:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CC603148CD;
+	Mon, 10 Nov 2025 14:47:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="UnIfQ7S/"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="E29/fQu+"
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 590B43128BA
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 14:44:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06FA530F945
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 14:46:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762785865; cv=none; b=pq66HPSXazgFc1PorLQjttz6SYqqNH4DBSRpCFWPRcv6fgz5Ni8aPGK/83N7SXrDKkJ3J9YEPf3Tm5SrNKrkKuhY9j3feWxkzcXc5oCujc3wLYCpp5QV9LuCVuOM0sr9l5b9BruZwquB4VuZR1t+J5jRFfl0EOmJ3Wz0xCW9APE=
+	t=1762786019; cv=none; b=bFUcXGfZVEBsZZY04Wl1XpXZCHj9a2a5985kfUJ876CTc4asf4nDly4Xbrd2juEIE3p2rtIGyuXaspZbk/K6Nj5ypgh1gdJ6258gahskH2Zx9Gs7CdjxVmUTd/ZS9OFuc+hAwWGScWzxWdzewxXnmltfPOBS5WJcUX7bE3BtI0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762785865; c=relaxed/simple;
-	bh=SmwGbUXi5DQW1GACvE/iZjpHBvXn1kXiV5oloO8GZ90=;
+	s=arc-20240116; t=1762786019; c=relaxed/simple;
+	bh=Zgbgz6Xx/nSV21RSqp5s3ioY3dD/63laARY8w4Ccz+Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r0MfURAjPr/caSkPiexbnfqURqRfuopih/F38v4Zce+NeQQNocOgCECJ3Sk11HnwKrbUp1OI/xTWjWN+eHxyAnbV9Emqu2+Fod7rzUY3S9adkL4nrwf4CE3Wqct38YjaiPzlsVcp0fpINNNfUt+HK0jHUNglpTp0JjoHxkVRotY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=UnIfQ7S/; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b6d402422c2so622401466b.2
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 06:44:22 -0800 (PST)
+	 Content-Type:Content-Disposition:In-Reply-To; b=HwF1PL3sko3YqquGkRSrFEajZANE+mxYkRQlmAqsDP6oOXW2dP5WhodUsD4hJkzN3KVseqORTGmAXnR8lqcJ82+olCA/JfJD50Sg4c6/g5TJu1y2+6f3jAe72xZwlhTjnql4InqUe2wc9pHyjLMWxvwyJFpQVfkcHq8PDSLiiBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=E29/fQu+; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4ed6882991aso25158691cf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 06:46:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1762785861; x=1763390661; darn=vger.kernel.org;
+        d=rowland.harvard.edu; s=google; t=1762786017; x=1763390817; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cWkbWo0C2FaV9YbiYoLsjm6xrzwxAQArLPqLCYr9XSE=;
-        b=UnIfQ7S/clT1vHF55yNSPyIB9CgIHrCRa+uf2ZiK6iWZXLKoRlctQPXxNN5sYn+WKC
-         eTrliOYJWvBcJAgj//6PolbItiH6ZJSgrIwW0ZOfZhHsEGTS7pP2wHf1a4VnDLn90MY0
-         7p87J+fZRdSD5+UYA3tdY/2Gc+bbnF/xiHyw799QlDKBabQ9BXFAWQyh8k9y2b25bo8e
-         37qoB7YSv5CFHYTBwbeqmJJHpacbgn2eWm26L7++W2v+opbb/N4iY/5nWGf0NE76Z9Ff
-         fn/9y/IkytkHIx4F6cDcJJ1FnFu1hPehEAdZ6q9yruBrB+IqMXn/s5rsiNh0uzALo1du
-         +I0Q==
+        bh=FZfgovMoQxmHp2PRQokeGmF8rpreis0QhadSzO4SeuQ=;
+        b=E29/fQu+OECf16//0Gw2F96hzOEzofYIE+WA973ykgeZPYGpaRQtyw817e+mnvW+va
+         2u/358IbW0Y0CAeiq+B0fAuPI4OMsatH0/64lwjunbpt++0YtQAAH2zm+VxwBf84kUOG
+         ShoSikFHE0X5ujvmFqOcdW1rOvvuHctm5hEqsxp0OZXLeqj2yNr3vrchgwJFrke1wDJi
+         Hg4t+NUP82YASWCyzzyf6+cVG5qMFh/kOY0zerHYwJyEi2/i3jNtU/tii2r3P5g80WV2
+         74K7zyS3+N6cqgI8VeF3AL84MAQlDGeLCngoxVA04DtdejWGnOcMfeaFRe7E3zSwM1//
+         SJkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762785861; x=1763390661;
+        d=1e100.net; s=20230601; t=1762786017; x=1763390817;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=cWkbWo0C2FaV9YbiYoLsjm6xrzwxAQArLPqLCYr9XSE=;
-        b=OEZuy7A2eHzjyObvfgt/5Qo46gZumY+e6wZ8q9RTNnxMwUGhai3NIK4XXWWJ/kXB8e
-         MxfDUxQ2ZMGB5v76lPgzm82V0ACnwYzunOMTRD9wmfm/2/DnkbYaCX4U6TgKpDc8JS8c
-         3Hxsxn8scQS3nqXbMe7lunbsnZTuVW9lVBAADkcUCFexc7SRVSDbV+ysILaUi+PXUmWd
-         alvIzStcXw5GVQXi1r5Mb57FwQoAcAGtAfuqAdUeGqksivMLoTofRTXWnInFXf5tC/mA
-         O3mX/eTVu+2tXXzTszwcgy/WYOm8ofBDqFHUz69h2UhAX2rHM7+v31Gd65MQAQfRfOZK
-         uqLg==
-X-Gm-Message-State: AOJu0YwjVxT9ttl+dbH3uHItgWQb7J9Gnm+/lBADDjlW6h/gDpjweVzf
-	BaK1eHfVkQQwPuo/LaAlqAZtNQq0sLkKI8YX2LJHzbg6uevGK50qHWzGb2LKYct1wT8=
-X-Gm-Gg: ASbGncv2ticfJ+Yoz0PrFo5u3GbqIYlaQVgI+0vvlXZ7NziRuVYsxN6Z2dlMjxP4eKA
-	jWmmp2rfioUk5ztZ/BK4qh/rKRUS/7Nxm0LHOAXqYZWh0cCfPLbpjpycm7XDtbWADKt23VpUzQT
-	HzwzBjMxDTNxPt8SDL523Qczjb2PoGdSMSrwNQUFMvy8b920htGzLA4Hjv2A7S5VLViLoXGK0Tj
-	Dv7dLkjNmuWXH9oygpnZ+6x5p3OOeUVFPiDaSr9+OXh9pRAausz4P9ZWVxq2cNl51AhWtxqDonw
-	5HcTTLRx4aFtGtllOh6yNxm7F7bvdPHlIOvZFi3A353/esTkE5S8XE17ruomUP14ap3BsR6K/av
-	FDtUCqdka835YSWrG9UIxsrtAc9ZX9l9Li1SeYy8hpQ6WO4dghosfw99kCqkSCtn9uUHj1qRPd8
-	j0yq5my168Ti2b6g==
-X-Google-Smtp-Source: AGHT+IG8GbrJLNCngeSUddvtLroajOs9HoKXq20Qw/co3vDwQoCKgoCUMZrnEIKWIn7J093BEvHeDA==
-X-Received: by 2002:a17:907:847:b0:b72:60d9:32b0 with SMTP id a640c23a62f3a-b72e0285e02mr897471766b.3.1762785860621;
-        Mon, 10 Nov 2025 06:44:20 -0800 (PST)
-Received: from pathway.suse.cz ([176.114.240.130])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bf9bd72bsm1107316966b.49.2025.11.10.06.44.20
+        bh=FZfgovMoQxmHp2PRQokeGmF8rpreis0QhadSzO4SeuQ=;
+        b=FFGJGTPi2LUg/sEjzi1ELtNokhxhmrSE7VCkAY7zKMbgi4G257ATUVcaIHlR4fX97d
+         FZpyqMSOTaFfvszaenwx99Cu+RR1teNmSLYReTCtaV/c8c7cTXG2/Bv0DJDbaxQA8EHt
+         Qi+Q6viVD21xGeGbtIm1acikccrM5VKXPB3ya6PxdliYTBZYZXVmYTttpg23+VXYXTBk
+         Mqqx/8oiv+NF9iLmoICdoKkzNoX0uur7dyY4keiMHaiilvWB5DR6IJQoi4jEwX05ten1
+         UhkGnBmGsIaQcmsysG9DLjDhcu50ZK6IFwy/oEUUvDzsmYCnREFIFho6Y57IuzrFcLbu
+         8yTg==
+X-Forwarded-Encrypted: i=1; AJvYcCWJRLgVk9pMd1f5cQ8Vay+9pYFOFwyZPxV0BSEcWie+OSfZB5b5yWE9JBSRyvQbNJ+DYRk+UqC9y2p2qGw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz497kObNyjluCg3KMx9AKASABNNaWoRyp+AG7Ua87XM0chGxNb
+	DK1Qq1IDtXCnYBKsxFCArju+eTkG0swn3u6qLGnBx7LaBglMZqL/jpbK/CbExoYUUGO2h883xF/
+	DO80Myw==
+X-Gm-Gg: ASbGncsEAr/K3Kjf817R6wCl8n4U2IlzyTCbKLxM0nFmBTrOP9R21s1U3BM4UAXMSBV
+	VWgOeGXdX5U7M4sj8D1hA3vJ2TtL5Lt5vNtIiWKd8/zxoTHZ8RPl0yETYkpfB1M7ah+LILR8Q7q
+	gpey9T8Z2WcG798VcPUSzNFi3u9eNZXo0+nYeJ57nmnEBTofOAj/4GG54GGbfHgD/l5Mh+hzmMI
+	sDcHYSxDCoRg877nklb6cynvqAvKieUnqibRcVS0c7U2x2d6uBtN+Dh3pHXPgMovIAOBZkIf+6z
+	yF6GmoLFD7CyKqpWnHJR1u9ga9WlFSgY/+ZEh55A8XgFh0ufLmtw9NzaqRt/6zZ8IpZoQkVz9IC
+	w8y3D/OTyKO5UltQW7hpIrVyKjSoNXb7s1UBDMTX0Ihhr1d4/0sTJUAFwg4YHyZErufqE77yIDO
+	IyopAHVSvvDMac858c8L0=
+X-Google-Smtp-Source: AGHT+IHrvbbLLIzADaEDwAYPzqYzdSj271EqD3XikN5r8c8oqm2X595zkIdy1ah5lygJoU9kCZZiNg==
+X-Received: by 2002:a05:622a:1cc3:b0:4ed:b134:58e5 with SMTP id d75a77b69052e-4edb1345e86mr63104731cf.12.1762786016296;
+        Mon, 10 Nov 2025 06:46:56 -0800 (PST)
+Received: from rowland.harvard.edu ([140.247.181.15])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4eda56132c0sm48284811cf.7.2025.11.10.06.46.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Nov 2025 06:44:20 -0800 (PST)
-Date: Mon, 10 Nov 2025 15:44:18 +0100
-From: Petr Mladek <pmladek@suse.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v1 1/1] lib/vsprintf: Check pointer before dereferencing
- in time_and_date()
-Message-ID: <aRH6QqRPf7XrYTDg@pathway.suse.cz>
-References: <20251110132118.4113976-1-andriy.shevchenko@linux.intel.com>
+        Mon, 10 Nov 2025 06:46:55 -0800 (PST)
+Date: Mon, 10 Nov 2025 09:46:53 -0500
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Claudiu Beznea <claudiu.beznea@tuxon.dev>, gregkh@linuxfoundation.org,
+	p.zabel@pengutronix.de, yoshihiro.shimoda.uh@renesas.com,
+	prabhakar.mahadev-lad.rj@bp.renesas.com,
+	kuninori.morimoto.gx@renesas.com, geert+renesas@glider.be,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH 2/4] usb: host: ehci-platform: Call reset assert/deassert
+ on suspend/resume
+Message-ID: <74790e58-f1d1-4d7c-9b75-4176af44e1ff@rowland.harvard.edu>
+References: <20251106143625.3050119-1-claudiu.beznea.uj@bp.renesas.com>
+ <20251106143625.3050119-3-claudiu.beznea.uj@bp.renesas.com>
+ <CAMuHMdWDGpqdhCsA0MJqoL1JAiyVR-TA2YqDe+-S9Xf6c5O-gA@mail.gmail.com>
+ <64c74f86-7438-49da-b164-a8a113e47c32@tuxon.dev>
+ <CAMuHMdXG8w9jR9gr4av15VT69XNouqys5z4Rxx-nidnvnbN3dA@mail.gmail.com>
+ <5edec052-5e65-4d00-a182-6675ce579be1@tuxon.dev>
+ <CAMuHMdVqaQ=E43Wrg7GtDD_MGS5ibF9o1DfpDCAq-=F=Exph_Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,21 +100,80 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251110132118.4113976-1-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <CAMuHMdVqaQ=E43Wrg7GtDD_MGS5ibF9o1DfpDCAq-=F=Exph_Q@mail.gmail.com>
 
-On Mon 2025-11-10 14:21:18, Andy Shevchenko wrote:
-> The pointer may be invalid when gets to the printf(). In particular
-> the time_and_date() dereferencing it in some cases without checking.
+On Mon, Nov 10, 2025 at 10:29:22AM +0100, Geert Uytterhoeven wrote:
+> Hi Claudiu,
 > 
-> Move the check from rtc_str() to time_and_date() to cover all cases.
+> On Fri, 7 Nov 2025 at 19:42, Claudiu Beznea <claudiu.beznea@tuxon.dev> wrote:
+> > On 11/7/25 10:01, Geert Uytterhoeven wrote:
+> > > On Thu, 6 Nov 2025 at 19:56, Claudiu Beznea <claudiu.beznea@tuxon.dev> wrote:
+> > >> On 11/6/25 16:52, Geert Uytterhoeven wrote:
+> > >>> On Thu, 6 Nov 2025 at 15:36, Claudiu <claudiu.beznea@tuxon.dev> wrote:
+> > >>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> > >>>>
+> > >>>> The Renesas RZ/G3S SoC supports a power-saving mode in which power to most
+> > >>>> of the SoC components is turned off, including the USB blocks. On the
+> > >>>> resume path, the reset signal must be de-asserted before applying any
+> > >>>> settings to the USB registers. To handle this properly, call
+> > >>>> reset_control_assert() and reset_control_deassert() during suspend and
+> > >>>> resume, respectively.
+> > >>>>
+> > >>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> > >>>
+> > >>>> --- a/drivers/usb/host/ehci-platform.c
+> > >>>> +++ b/drivers/usb/host/ehci-platform.c
+> > >>>> @@ -454,6 +454,17 @@ static int __maybe_unused ehci_platform_suspend(struct device *dev)
+> > >>>>         if (pdata->power_suspend)
+> > >>>>                 pdata->power_suspend(pdev);
+> > >>>>
+> > >>>> +       ret = reset_control_assert(priv->rsts);
+> > >>>> +       if (ret) {
+> > >>>> +               if (pdata->power_on)
+> > >>>> +                       pdata->power_on(pdev);
+> > >>>> +
+> > >>>> +               ehci_resume(hcd, false);
+> > >>>> +
+> > >>>> +               if (priv->quirk_poll)
+> > >>>> +                       quirk_poll_init(priv);
+> > >>>
+> > >>> I have my doubts about the effectiveness of this "reverse error
+> > >>> handling".  If the reset_control_assert() failed, what are the chances
+> > >>> that the device will actually work after trying to bring it up again?
+> > >>>
+> > >>> Same comment for next patch.
+> > >>
+> > >> I wasn't sure if I should do this revert or not. In my mind, if the reset
+> > >> assert fails, the reset signal is still de-asserted.
+> > >
+> > > Possibly.  Most reset implementations either cannot fail, or can
+> > > fail due to a timeout.  What state the device is in in case of the latter is
+> > > hard to guess...
+> >
+> > In theory there are also failures returned by the subsystem code (e.g. if
+> > reset is shared and its reference counts don't have the proper values, if
+> > not shared and ops->assert is missing).
+> >
+> > In case of this particular driver and the ochi-platform one, as the resets
+> > request is done with devm_reset_control_array_get_optional_shared() the
+> > priv->resets is an array and the assert/de-assert is done through
+> > reset_control_array_assert()/reset_control_array_deassert() which, in case
+> > of failures, reverts the assert/de-assert operations. It is true that the
+> > effectiveness of the revert operation is unknown and depends on the HW, but
+> > the subsystem ensures it reverts the previous state in case of failure.
+> >
+> > For the case resets is not an array, it is true, it depends on the reset
+> > driver implementation and hardware.
+> >
+> > Could you please let me know how would you suggest going forward with the
+> > implementation for the patches in this series?
 > 
-> Fixes: 7daac5b2fdf8 ("lib/vsprintf: Print time64_t in human readable format")
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Up to the USB maintainer...
 
-Great catch!
+If you don't have any objections, the patches to ehci-platform.c and 
+ohci-platform.c are okay with me.
 
-Reviewed-by: Petr Mladek <pmladek@suse.com>
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
 
-Best Regards,
-Petr
+Alan Stern
 
