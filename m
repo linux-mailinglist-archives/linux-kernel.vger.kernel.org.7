@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-892313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC0DFC44D56
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 04:33:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29994C44D5F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 04:33:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 61BCC3459F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 03:33:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F14893A7383
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 03:33:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40A34287268;
-	Mon, 10 Nov 2025 03:32:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24FBA2877E6;
+	Mon, 10 Nov 2025 03:32:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FPQTIbZA"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z8dnngHt"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 116962868A9
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 03:32:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBA99287506
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 03:32:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762745568; cv=none; b=lEjzSQGwHgVuQi+Ywq62MuvfK57ir2CpYad8IOMtqB9MTci6UQIs34650ZZVpQ4RgiYfIcgJvG26YE/9l+dI9OzunlwJzS7kylonqHRRoehPt182AgjaL43NaNhiv4B+YL78WzfCxV+46ptn83Vt51O1fozZOx5NPwsOgxYmWCw=
+	t=1762745572; cv=none; b=ONDLBwwnqXt8WjWlcE2TG3NxN7q2agmeTlh0g22T4XGS+EyPwmpwKk8M16tR8Jn9679WlpZg3UHnfW+mOWqTgUjuHWG2nBNy/sbYdGR1g7AkZe241iT5QBiMbOmx0+FtoS8ZCXQmuZP8e11ISiwBy1t3aY/uAUTtWl24aHoE2hg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762745568; c=relaxed/simple;
-	bh=wbPUX9n8s+drIAX87sNapw/D2lFZMgm0X/R+CGmmVxQ=;
+	s=arc-20240116; t=1762745572; c=relaxed/simple;
+	bh=/Sbi2RsDbKFxh18qy4P7m0nH9/yJnCUGEiCikFyDTJk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UxLzAYIMa5+KdwDuC/r9VWG8HPV23x6C+yAocfVfZtcoWpJU6vOeN+WYtu5auWgMEbm/mO67SKRlz8X00B/czgKbKxX/5hYgNv+VuDFI5sObYvGyE6/gDgyLeGdLiGm7fG+eu3P8ZEeYNp9bka6YzBcHOVzE3i2v4vEKvma0eAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FPQTIbZA; arc=none smtp.client-ip=209.85.210.179
+	 MIME-Version; b=pKoQKqE9sJIII8QeDPSL7gdc8KvRkuOkHdme3soeiOJqgqKsh70Zi8tDiOk0Bel814MZ+YL9zisx6yGFez11PBQrXKC0XvW5xRTkZ7iCKcqqK3Ao8V0ODDZIKgGpsf6vYlE3zIyGlLJswC5lbwIRPK7agitOyJOoGaYY8xOQMEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z8dnngHt; arc=none smtp.client-ip=209.85.214.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-7aa9be9f03aso2130084b3a.2
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 19:32:46 -0800 (PST)
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-297eca3d0a3so15513375ad.0
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 19:32:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762745566; x=1763350366; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1762745570; x=1763350370; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=njeTN44gIUPeOIH83iq5dF5dVqD8fgi+Xi9oci3U0Kg=;
-        b=FPQTIbZAU1KO4n4qkSJRdtbpnVcVh4X9XvM+TfIrdyedQg+cXHzXzio/JZSoehhzLl
-         pA/P2XXEYUVburC1LW70vu/7t6XLBQlr75RL45YAmu6oGQGAu5lAgqpTp5b/0uWg7a30
-         MDMxF6wozDPnmFXmMwACXnq2WrSK+bGbRO5OWeXo1Mj7eq0Wlz8T5gj2VuHWDBObsIfC
-         RN3Ap3YvIT3UokXZe9eU0+9DvLKLpoqgHZDbs0KT6H0Q6o+wEpzdrf3EpDrGXWw2MdXv
-         3REACQG68ndVt9HuJRE0jeYSbB5HzfVnpp4FTN4HvFgccOgi8tLVBoi/MpWZAU5BmTlp
-         GraQ==
+        bh=mJ2T78O7RQhMqXnI5opkr+3j7nLw8GADo232iLhnq+M=;
+        b=Z8dnngHt/b5aMUY9WnaF+GYgDuxVtosMTTkzSJ+9CRgjsgwtAjHtJ56ZJDVfM7Pb01
+         X2FPrOqHu+midWrOugGwvT3a2VcHqXSNi+YWkYmiAGgrAUKnDO9UqCrNb3sYViOlYGju
+         KPuj/1p6cSUp+Z8AOxC1DyJXV4UJsj0+Ur+lxtmbV/mjEtMk8iOd+ZBCR1px9als/aao
+         F0RjxJh7oerqXtNS8wGyQXTeRqLPBJsYZmbHahE/n4u8AGK7+uY/GpHz4eilqihvOAdC
+         KNGtYwkonic8LMn45PTiBVhyrVYMbXKxqY7xn4p3FhJNDs8eJ56f1nFq7VipI5sDn10E
+         gK3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762745566; x=1763350366;
+        d=1e100.net; s=20230601; t=1762745570; x=1763350370;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=njeTN44gIUPeOIH83iq5dF5dVqD8fgi+Xi9oci3U0Kg=;
-        b=jr0kGV0oJfVTPSxAi+wlOE4bj4Ka+maIzajRVv2giBaDI1MPn2kdV4eAHXXpbWTDCh
-         5QihmddbADBJ8NefgE3vLZPuaVfkdgGCmEpI30WRxTkenrY2a7MpaOLUW2JhOocPyhTD
-         iLpcE4GKxuR5y8TVrvNtJkm8kEFRA1ZUTtiF8LuGiAt6FPcwFZVMwWyJ+MY2YG8sG02d
-         FarEaWKNg6pg7eGZ3KWRcQumzzfT5BQfoXqWMgCckn4bbH1SDuBwyyzTWvqgjW4mXynr
-         CgEWaYhOL/l+FJ6JDQ39c71VYnXCyhyaePHVd+lGZ4YJVylDr6IK0305I1xKnYikbgvX
-         JtEw==
-X-Forwarded-Encrypted: i=1; AJvYcCUV72zy5UJ8Egnl9vAueO1hsqBTYDRNkUbofmd8ENwHWRud32gTeqWscodxe3VtN62WwBlGCLb9bhrHSjg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZLODlvYx8UfhSMPYePLIVepAN9f1IJ2EGovW0tKne4ffJ2G5w
-	YHNxDtbe1PMCOTkUdM1SrEWeRpGsMgFmEwJM+2ivxIyGHwJ7obJ1yqDUKmoCrUl8psFVew==
-X-Gm-Gg: ASbGncvDbe+r4Owi1Jc8wDegVXTefk4/G5jBJ7lDiBeYIam0utAnlipzlNizn78rIbh
-	4EMwpvLYddJn5F+Iy2W9EOQEl2B0X49j9fEDtkY7urFAzgu37qDkpHYuMbRd66fBPOFhQr5PIH1
-	GnIz6NHQp4Jglh9ZqpgjQ/cy4TfYPG68OeIuyEXWw0yStX/4SvYPV+WyTFFwZpGyd9atcBvWnC2
-	NqBCJs0u72ZuDuV7q6zMU8qS0l2uWxYHsB42v/8fOK0dwOjHoQO6PhgblI28xiJR0SOteBfzCR0
-	tw7BOXtfcBZdPpAwVn3g97wbs6rh03rGl/xxEVcqFzKWd3O4RhfpKlK8jEBeAO5KWCq3PRyWbca
-	uWyMMoQ+3A0g/2kJsYhnApIBpggGZz91hbxlXcymeWk2rx2ArHGnupAZaU9v2zIx/kjXg4Bp2hA
-	==
-X-Google-Smtp-Source: AGHT+IGgWj+riHl/0AxPM6/yf+3pf97HB4xt0VxRxXs/RO4msxXfu/kysFJz978Pl0ItdGF8SGUj7A==
-X-Received: by 2002:a05:6a20:3d82:b0:342:a7cd:9214 with SMTP id adf61e73a8af0-353a20d6c44mr9577178637.23.1762745566383;
-        Sun, 09 Nov 2025 19:32:46 -0800 (PST)
+        bh=mJ2T78O7RQhMqXnI5opkr+3j7nLw8GADo232iLhnq+M=;
+        b=dcZ3p9vbXU7Twebg+iUhsTEy6Q/oozv4hW+jQ/acEnLSGq3Oo2YUNjNkgocitteIJl
+         W7x2K8y96AO+5BGCn/Qxvai/cY2nSCd6solKh0aP/N3H47JmAMQuwYqGlwCXxs9luSKd
+         8OAieJvzhufwR+3wyGPxcRALuu26gBCDAGO2mGU9VqXozOf47gnHaqIzfahl4CYBVkpK
+         whlVmDJMg31toO+ULqAvI3YWpUCtCo6v5gykqcDyY9sZPHSX+IerSBqfgeQwVrPz6r23
+         RrJYHqrvJD/gNIrXmWKWL2WXGy1owISaeLCC3BzKT8ax/57kH50mwt7vcsiFQzXC6Jb9
+         4PrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWlnBDZnOThN8H9L63bCQyT4cZg709mCgU/jblR15BWiIi9H+YtVd4pyuqAXL58gqNle/LVvbZKS91on4A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxuXrtxTxbD9FM39TImRUbFk6jmZZkirOAY3c73z+yO0h+EgJAq
+	Qhei2YqVY0ousIxcTyyRy2VCoPf/Cf/4cxWTFtiVAU+zzH9/vTBj+iQLQHoMxUa9l0rwgg==
+X-Gm-Gg: ASbGncs+FMS8AhQWF22nxcJZJ0wg/VwwVH0guSj7OYh7HWNsdN5Fsq4jl1Lpcxycr9C
+	BYsPHA7YsaTIUEBCEETEgjNJPXBQ2Dbn77ikol4m4PO9UjJBd77WHOHLMbKPfs9cD3877WY5WKB
+	4e4LoMtm3qPV+q4s4ve52a8U02wXAQD9XrSfbSpErnjrIx7YA2SCvlOvweotn5aaW6niTHrLt/f
+	meFtv+MPxPN/GYzFs5094CPl1oDIVvtc4NgBCEeTcMAG++Dhwy0aoMwQq+9adgA1oeIDFf95uPH
+	1Vv8IoMix+elRyfzX/48kE1/tI6HwBfV5qvdRs6O96sUcO4kfxVHfmwu7RTSE+5f4b9vPQ80E51
+	fa41L7QjUfcuhyuIJUvx8hpw4H48vol99TI22I4mUxQQlewK58Lm2Nt+z+rR/WiByaZSQPB52ky
+	O47oYt4CA0
+X-Google-Smtp-Source: AGHT+IH8IURFUXv0dHkJ6ZHGGTBAvnY0vbnOOUIKPpXB78BdN5c4T+GwBYMwLuqJLnGxvgOdporgtA==
+X-Received: by 2002:a17:903:f8c:b0:26c:2e56:ec27 with SMTP id d9443c01a7336-297e5627d67mr89334695ad.19.1762745570152;
+        Sun, 09 Nov 2025 19:32:50 -0800 (PST)
 Received: from wanpengli.. ([124.93.80.37])
-        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-ba900fa571esm10913877a12.26.2025.11.09.19.32.42
+        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-ba900fa571esm10913877a12.26.2025.11.09.19.32.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Nov 2025 19:32:46 -0800 (PST)
+        Sun, 09 Nov 2025 19:32:49 -0800 (PST)
 From: Wanpeng Li <kernellwp@gmail.com>
 To: Peter Zijlstra <peterz@infradead.org>,
 	Ingo Molnar <mingo@redhat.com>,
@@ -85,9 +85,9 @@ Cc: Steven Rostedt <rostedt@goodmis.org>,
 	linux-kernel@vger.kernel.org,
 	kvm@vger.kernel.org,
 	Wanpeng Li <wanpengli@tencent.com>
-Subject: [PATCH 02/10] sched/fair: Add rate-limiting and validation helpers
-Date: Mon, 10 Nov 2025 11:32:23 +0800
-Message-ID: <20251110033232.12538-3-kernellwp@gmail.com>
+Subject: [PATCH 03/10] sched/fair: Add cgroup LCA finder for hierarchical yield
+Date: Mon, 10 Nov 2025 11:32:24 +0800
+Message-ID: <20251110033232.12538-4-kernellwp@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251110033232.12538-1-kernellwp@gmail.com>
 References: <20251110033232.12538-1-kernellwp@gmail.com>
@@ -103,100 +103,93 @@ From: Wanpeng Li <wanpengli@tencent.com>
 
 From: Wanpeng Li <wanpengli@tencent.com>
 
-Implement core safety mechanisms for yield deboost operations.
+Implement yield_deboost_find_lca() to locate the lowest common ancestor
+(LCA) in the cgroup hierarchy for EEVDF-aware yield operations.
 
-Add yield_deboost_rate_limit() for high-frequency gating to prevent
-excessive overhead on compute-intensive workloads. Use 6ms threshold
-with lockless READ_ONCE/WRITE_ONCE to minimize cache line contention
-while providing effective rate limiting.
+The LCA represents the appropriate hierarchy level where vruntime
+adjustments should be applied to ensure fairness is maintained across
+cgroup boundaries. This is critical for virtualization workloads where
+vCPUs may be organized in nested cgroups.
 
-Add yield_deboost_validate_tasks() for comprehensive validation
-ensuring feature is enabled via sysctl, both tasks are valid and
-distinct, both belong to fair_sched_class, entities are on the same
-runqueue, and tasks are runnable.
+For CONFIG_FAIR_GROUP_SCHED, walk up both entity hierarchies by
+aligning depths, then ascend together until a common cfs_rq is found.
+For flat hierarchy, verify both entities share the same cfs_rq.
+Validate that meaningful contention exists (nr_queued > 1) and ensure
+the yielding entity has non-zero slice for safe penalty calculation.
 
-The rate limiter prevents pathological high-frequency cases while
-validation ensures only appropriate task pairs proceed. Both functions
-are static and will be integrated in subsequent patches.
+The function operates under rq->lock protection. This static helper
+will be integrated in subsequent patches.
 
 Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
 ---
- kernel/sched/fair.c | 68 +++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 68 insertions(+)
+ kernel/sched/fair.c | 60 +++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 60 insertions(+)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 5b7fcc86ccff..a7dc21c2dbdb 100644
+index a7dc21c2dbdb..740c002b8f1c 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -8990,6 +8990,74 @@ static void put_prev_task_fair(struct rq *rq, struct task_struct *prev, struct t
- 	}
+@@ -9058,6 +9058,66 @@ static bool __maybe_unused yield_deboost_validate_tasks(struct rq *rq, struct ta
+ 	return true;
  }
  
 +/*
-+ * High-frequency yield gating to reduce overhead on compute-intensive workloads.
-+ * Returns true if the yield should be skipped due to frequency limits.
-+ *
-+ * Optimized: single threshold with READ_ONCE/WRITE_ONCE, refresh timestamp on every call.
++ * Find the lowest common ancestor (LCA) in the cgroup hierarchy for EEVDF.
++ * We walk up both entity hierarchies under rq->lock protection.
++ * Task migration requires task_rq_lock, ensuring parent chains remain stable.
++ * We locate the first common cfs_rq where both entities coexist, representing
++ * the appropriate level for vruntime adjustments and EEVDF field updates
++ * (deadline, vlag) to maintain scheduler consistency.
 + */
-+static bool yield_deboost_rate_limit(struct rq *rq, u64 now_ns)
++static bool __maybe_unused yield_deboost_find_lca(struct sched_entity *se_y, struct sched_entity *se_t,
++				    struct sched_entity **se_y_lca_out,
++				    struct sched_entity **se_t_lca_out,
++				    struct cfs_rq **cfs_rq_common_out)
 +{
-+	u64 last = READ_ONCE(rq->yield_deboost_last_time_ns);
-+	bool limited = false;
++	struct sched_entity *se_y_lca, *se_t_lca;
++	struct cfs_rq *cfs_rq_common;
 +
-+	if (last) {
-+		u64 delta = now_ns - last;
-+		limited = (delta <= 6000ULL * NSEC_PER_USEC);
++#ifdef CONFIG_FAIR_GROUP_SCHED
++	se_t_lca = se_t;
++	se_y_lca = se_y;
++
++	while (se_t_lca && se_y_lca && se_t_lca->depth != se_y_lca->depth) {
++		if (se_t_lca->depth > se_y_lca->depth)
++			se_t_lca = se_t_lca->parent;
++		else
++			se_y_lca = se_y_lca->parent;
 +	}
 +
-+	WRITE_ONCE(rq->yield_deboost_last_time_ns, now_ns);
-+	return limited;
-+}
++	while (se_t_lca && se_y_lca) {
++		if (cfs_rq_of(se_t_lca) == cfs_rq_of(se_y_lca)) {
++			cfs_rq_common = cfs_rq_of(se_t_lca);
++			goto found_lca;
++		}
++		se_t_lca = se_t_lca->parent;
++		se_y_lca = se_y_lca->parent;
++	}
++	return false;
++#else
++	if (cfs_rq_of(se_y) != cfs_rq_of(se_t))
++		return false;
++	cfs_rq_common = cfs_rq_of(se_y);
++	se_y_lca = se_y;
++	se_t_lca = se_t;
++#endif
 +
-+/*
-+ * Validate tasks and basic parameters for yield deboost operation.
-+ * Performs comprehensive safety checks including feature enablement,
-+ * NULL pointer validation, task state verification, and same-rq requirement.
-+ * Returns false with appropriate debug logging if any validation fails,
-+ * ensuring only safe and meaningful yield operations proceed.
-+ */
-+static bool __maybe_unused yield_deboost_validate_tasks(struct rq *rq, struct task_struct *p_target,
-+					  struct task_struct **p_yielding_out,
-+					  struct sched_entity **se_y_out,
-+					  struct sched_entity **se_t_out)
-+{
-+	struct task_struct *p_yielding;
-+	struct sched_entity *se_y, *se_t;
-+	u64 now_ns;
-+
-+	if (!sysctl_sched_vcpu_debooster_enabled)
++found_lca:
++	if (!se_y_lca || !se_t_lca)
 +		return false;
 +
-+	if (!rq || !p_target)
++	if (cfs_rq_common->nr_queued <= 1)
 +		return false;
 +
-+	now_ns = rq->clock;
-+
-+	if (yield_deboost_rate_limit(rq, now_ns))
++	if (!se_y_lca->slice)
 +		return false;
 +
-+	p_yielding = rq->curr;
-+	if (!p_yielding || p_yielding == p_target ||
-+	    p_target->sched_class != &fair_sched_class ||
-+	    p_yielding->sched_class != &fair_sched_class)
-+		return false;
-+
-+	se_y = &p_yielding->se;
-+	se_t = &p_target->se;
-+
-+	if (!se_t || !se_y || !se_t->on_rq || !se_y->on_rq)
-+		return false;
-+
-+	if (task_rq(p_yielding) != rq || task_rq(p_target) != rq)
-+		return false;
-+
-+	*p_yielding_out = p_yielding;
-+	*se_y_out = se_y;
-+	*se_t_out = se_t;
++	*se_y_lca_out = se_y_lca;
++	*se_t_lca_out = se_t_lca;
++	*cfs_rq_common_out = cfs_rq_common;
 +	return true;
 +}
 +
