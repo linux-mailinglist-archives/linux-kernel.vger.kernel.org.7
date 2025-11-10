@@ -1,129 +1,109 @@
-Return-Path: <linux-kernel+bounces-892743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D4BBC45B90
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:49:11 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B241CC45BB9
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:51:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2816318905FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:49:36 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 434114E403C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:49:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AAAA30149E;
-	Mon, 10 Nov 2025 09:48:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 654B4288C20;
+	Mon, 10 Nov 2025 09:49:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="V81ddc2q"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Gi6cSRbJ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 874453002DE
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 09:48:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56D6E2EA485
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 09:49:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762768134; cv=none; b=AcTLaD5LIBnM/WWIq+eoK7729Fk7fOWopcGcd4jGTFb3lJWk5L2qYxmYeEmFBVtyIZVRe1awWnGe/QvEvb4tdQ8NuqApbDyXYU4T+QddX1eu4+aM7qqDa7dMITTTOfVIv8XODUY5aQGmoaxqBTEt3cqBZTN2p74OGJoKbEUyQ30=
+	t=1762768159; cv=none; b=pgh9Lr71lME2+7O6xgV6EZz85o2jciqE+mZYceg6DDHNAbCSMyLMIO1uRRseIE+scQgU8dCecsUbdEOjWCwKwHUF9pubsV5lKy8NdojUe6ySLwRoEHYu44Ol7MRpKZfZKSOdc2nJWvHxhPEPK8IB0b6ntX00hen+++Lik7Scil0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762768134; c=relaxed/simple;
-	bh=bw6QasuA8KeZgfQP2n/F9NjjLOI9T9u407i64LyA4pw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xigh1dAdDdWj8s5fM7ykUATd7hbiVEvclUXU7IBTqZVFP5daJqTknOWmDPWblMHNd9gpD8KbWjrOBChL1/HsIK3YJ84h9/28RQ+eVrM6EQs/iO0sVANqgCFS+HWSvJ1LSrDTTIwOblQfGYjMToEoObs/Ynl3ci4KsZlkOSPpOVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=V81ddc2q; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-64166a57f3bso1936941a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 01:48:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1762768131; x=1763372931; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jhIrfg+ZeGmHHXgRYjIXkWVaO+GMicaDEEBop0R1M78=;
-        b=V81ddc2qxiRyTqCzgFZIZ8VateSKEepBtEeHhkhJRYWMIbeNYZtFKGbBfmQ+kNJ0pI
-         vfNoGO48VVKoZ5p+wto6BQkLMwI2mTUSN8T7kxqunTPoqV/HC0Hx++AKHY0IH8ZVfl4F
-         3awoP5efGFN3YTdaHQqNUWIOJmOWKOSzxOxdc8RTRLl1/77eBYm6ABRef9wt5wLEAsYw
-         jjV1sGafv1NRMsjYslQd7nNppLaKavP+rmQuOzOLXsLkh3kVhWVB+xV1HUEi5DEcqg3O
-         EJ9I1bsTi3H7OXjiVoB/7rEdyRqdI8zCFB3DIuwY18qR4tGbNPvNeaCxxg9he4UZFy56
-         Enfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762768131; x=1763372931;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jhIrfg+ZeGmHHXgRYjIXkWVaO+GMicaDEEBop0R1M78=;
-        b=KG7eI1+jukbv9JFx9boj8bydoQgj74nu/Dc0G2XMuws5TUOj+r1faHukc1raxVYmEB
-         coCjSy8GHuCR7pYIoU/UL44xtbxLrHEUQmEWGT+GvEOP+V90o0yzTBqfcSOn1ZlyyPef
-         julrWFla6iRuvGBwcTwtEaSrT5g5YDZiPMmcLO0fUwzvsCGVwaW4+k9TqdfFojXAr4db
-         XoWlLo6q9n2IHKVHWEbDhbEnlmHw7vm5yoCD9Bm0dizlUGGC2efJMrH/RcrlZQB0fBy1
-         buV3imB7Lcpu/tm0ShEnjhQtPyi+jybX2WbTYFZbQbFAHEIisuKh9Galmi+yih+8lsG/
-         jsDw==
-X-Forwarded-Encrypted: i=1; AJvYcCVkm5Ajy8AjH1HZr5cwlqhVcPREonxAp/xsNnFgqBHWICyswYsRPX9dp3CaNr8phPWHCdDpYH6aMvrPFT8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywm6rY1dyLRmMY8OUzARxPxo5NfVnWz1LUITyqgf6Y1zeeNZbBa
-	iiokZLf4nrxk+3kuyEKS2UJmmR+DhMFHPNObcb8nIKQ9aIPbF+LIarhrb3M66fVvpJ4=
-X-Gm-Gg: ASbGnct0RgIHIY2PkVeJeVxSQnK9W5Z/gXGM8kYf35oo8IsAta0+07BWTh7+fGq9ZDl
-	RVVyRIezpB71QQ3HyezbKpgh7wvQHUR+ni3H5O6unZaPntfS0SF0K5CoKJX9g/0s76KeVmDkhHQ
-	K0UwA3BRFSAll7zDNgn2kLX9OmBXEIS3362lnvJjsZKWrGdcFyt3hzpBsWDGDNS8qVa54d7jazG
-	swJFrc8/4E3cMH+XmiJpUBjt/zgNlXDOSiKIU6Sahw8Ss59w7zzmP1looQ/G7meihz87h19x0QB
-	uE28Zc8dYT+v/p6ylfXab8e7MmHmS7vAZ6/KvGiBIVAB/meQhgYmfqrTp3Myacya0A1Dl1BYoM9
-	qe6E1RpN36AmuhXprpjS8eX61Q3KwtIvGs4HI560nhajiSSUWVcW0vDRCgN7dmTZOHJ8rWn6sk2
-	OHsARwk5V1xtl83XJ561RTplbD
-X-Google-Smtp-Source: AGHT+IFxQkylFq2Crr8V5DsL5/o3I3bsVnjZJeM/h5I99Cls23cajzpMg5CawHlhDUEoe8P5BasDOg==
-X-Received: by 2002:a05:6402:50cf:b0:640:da69:334c with SMTP id 4fb4d7f45d1cf-6415e80fc71mr5848770a12.35.1762768130923;
-        Mon, 10 Nov 2025 01:48:50 -0800 (PST)
-Received: from localhost (109-81-31-109.rct.o2.cz. [109.81.31.109])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6411f813eb6sm10864916a12.14.2025.11.10.01.48.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Nov 2025 01:48:50 -0800 (PST)
-Date: Mon, 10 Nov 2025 10:48:49 +0100
-From: Michal Hocko <mhocko@suse.com>
-To: Roman Gushchin <roman.gushchin@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
-	Alexei Starovoitov <ast@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	JP Kobryn <inwardvessel@gmail.com>, linux-mm@kvack.org,
-	cgroups@vger.kernel.org, bpf@vger.kernel.org,
-	Martin KaFai Lau <martin.lau@kernel.org>,
-	Song Liu <song@kernel.org>,
-	Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-	Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH v2 23/23] bpf: selftests: PSI struct ops test
-Message-ID: <aRG1AX0tQjAJU6lT@tiehlicka>
-References: <20251027232206.473085-1-roman.gushchin@linux.dev>
- <20251027232206.473085-13-roman.gushchin@linux.dev>
+	s=arc-20240116; t=1762768159; c=relaxed/simple;
+	bh=4+Zj2BU1j2wK80risJQd5n1m5a0sXAPbpBY19p5Lr2I=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=tW7uur6IKOXzo/NcXf94c9qA2DLdy7RnaBierHq8UhetHfHREpcIjTbFNymdIIE6ZuEQ1oC4l1rvBKi1JtLgs+9vdpnffnV4OV4Gg1aqnUeoHpSQjcZAGl3a+Mg5jixy/p56iJ6hhnhNWJjZjNacmaBOn8+cEB11S0RIXTuu5d8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Gi6cSRbJ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762768157;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lkfcWxT5UtiKBoOJs1xCAcqAmUWc+tgnOGeH494ceRg=;
+	b=Gi6cSRbJDvLA/ea42cQJhSCYCeYpOYJkhZFRSVNk7UDxOknVoLgyABEYsHQBa3lsdw8Rxy
+	hGyFsgK6Z3WM3rNK/dTBytnvzWmCbXEFxwUOd7tk2dkw9yGAvTINKDmlhy1M175t1DRYJM
+	dNtLyv+TbexBAcYnoExc+BGkebMQCoQ=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-324-18-EGaxYOISd_qSeUwuIaw-1; Mon,
+ 10 Nov 2025 04:49:13 -0500
+X-MC-Unique: 18-EGaxYOISd_qSeUwuIaw-1
+X-Mimecast-MFC-AGG-ID: 18-EGaxYOISd_qSeUwuIaw_1762768151
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8F5D31956095;
+	Mon, 10 Nov 2025 09:49:11 +0000 (UTC)
+Received: from fweimer-oldenburg.csb.redhat.com (unknown [10.44.32.47])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 871D5195419F;
+	Mon, 10 Nov 2025 09:49:07 +0000 (UTC)
+From: Florian Weimer <fweimer@redhat.com>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Matthew Wilcox <willy@infradead.org>,  Hans Holmberg
+ <hans.holmberg@wdc.com>,  linux-xfs@vger.kernel.org,  Carlos Maiolino
+ <cem@kernel.org>,  Dave Chinner <david@fromorbit.com>,  "Darrick J . Wong"
+ <djwong@kernel.org>,  linux-fsdevel@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  libc-alpha@sourceware.org
+Subject: Re: [RFC] xfs: fake fallocate success for always CoW inodes
+In-Reply-To: <20251110093140.GA22674@lst.de> (Christoph Hellwig's message of
+	"Mon, 10 Nov 2025 10:31:40 +0100")
+References: <20251106133530.12927-1-hans.holmberg@wdc.com>
+	<lhuikfngtlv.fsf@oldenburg.str.redhat.com>
+	<20251106135212.GA10477@lst.de>
+	<aQyz1j7nqXPKTYPT@casper.infradead.org>
+	<lhu4ir7gm1r.fsf@oldenburg.str.redhat.com>
+	<20251106170501.GA25601@lst.de> <878qgg4sh1.fsf@mid.deneb.enyo.de>
+	<20251110093140.GA22674@lst.de>
+Date: Mon, 10 Nov 2025 10:49:04 +0100
+Message-ID: <lhubjlaz08f.fsf@oldenburg.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251027232206.473085-13-roman.gushchin@linux.dev>
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Mon 27-10-25 16:22:06, Roman Gushchin wrote:
-> Add a PSI struct ops test.
-> 
-> The test creates a cgroup with two child sub-cgroups, sets up
-> memory.high for one of those and puts there a memory hungry
-> process (initially frozen).
-> 
-> Then it creates 2 PSI triggers from within a init() BPF callback and
-> attaches them to these cgroups.  Then it deletes the first cgroup,
-> creates another one and runs the memory hungry task. From the cgroup
-> creation callback the test is creating another trigger.
-> 
-> The memory hungry task is creating a high memory pressure in one
-> memory cgroup, which triggers a PSI event. The PSI BPF handler
-> declares a memcg oom in the corresponding cgroup. Finally the checks
-> that both handle_cgroup_free() and handle_psi_event() handlers were
-> executed, the correct process was killed and oom counters were
-> updated.
+* Christoph Hellwig:
 
-I might be just dense but what is behind that deleted cgroup
-(deleted_cgroup_id etc) dance?
+>> Maybe add two flags, one for the ftruncate replacement, and one that
+>> instructs the file system that the range will be used with mmap soon?
+>> I expect this could be useful information to the file system.  We
+>> wouldn't use it in posix_fallocate, but applications calling fallocate
+>> directly might.
+>
+> What do you think "to be used with mmap" flag could be useful for
+> in the file system?  For file systems mmap I/O isn't very different
+> from other use cases.
 
--- 
-Michal Hocko
-SUSE Labs
+I'm not a file system developer. 8-)
+
+The original concern was about a large file download tool that didn't
+download in sequence.  It wrote to a memory mapping directly, in
+somewhat random order.  And was observed to cause truly bad
+fragmentation in practice.  Maybe this something for posix_fadvise.
+
+Thanks,
+Florian
+
 
