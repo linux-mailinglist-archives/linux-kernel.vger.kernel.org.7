@@ -1,146 +1,190 @@
-Return-Path: <linux-kernel+bounces-892470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CAAAC4528C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 08:02:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF441C4528F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 08:03:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 804254E87FF
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 07:01:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 587401883459
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 07:04:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C11B02E9EC7;
-	Mon, 10 Nov 2025 07:01:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A35A21A92F;
+	Mon, 10 Nov 2025 07:03:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FiWk9vHN"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OTmO7GHj"
+Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ECAD22256B
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 07:01:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2299713FEE
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 07:03:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762758071; cv=none; b=Bv7+B6jzK19czXXHFXkt8GWra54cP+ZM6Ej/FxqiFWCPayomwDaNRt67YZqyGBZMyR7cxFyJLWiq1uDR63gNv5oCNfqQgMre6C70aPDyVYWRhnayee61ZI6Y9ERV2qagqLD+uCz9HvcANWG2qgvKJWEpfbmy1YvXgO6mravIhX8=
+	t=1762758215; cv=none; b=jdOpFN5q5ZSjXX0WtsBi609AqB5/39zVSlsk+T4IGSfryLXN/Q/OUpNREab+kdn7Ti0eLUWBB3E+dTtTbyBeNAEufLmINed2pDofwyyKJBQzIBp/aL39lRNiXSJYcXf01bhdbdbIVeLPhCG4jn3Xlo3BPAocDwRDzPvRlgESLco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762758071; c=relaxed/simple;
-	bh=I7oLFfHr3W/juqS+e9nd/H5d38cdKmwLQvTZUMrhpg8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WL8/dq7ZGe3kZ4W3azJ3JdPojJDODACtSRKQGpQuUgs0q7sJqRrd/DIYw7rrLozcYCQsbTgDXGPMQ+NPYfYie0vthMS/hwHWzT/MSIucqZKR+gQR4Oe2xsRkuKDcUFpKcRYR3ntm9Eih/BAZtb+UMBvvthyRvPACeX9A+1UNWH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FiWk9vHN; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762758068;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=t1lPCSB8D9sxSG1VrcsMcz7l5zR/N/8q2hHJ32M5StE=;
-	b=FiWk9vHNPv5XAa/BUTiFKpHdvyGMbL6vWa3m6S+Od7p6q2+xdE7MNYbFQTdb/w47Lx5p3y
-	TE4bggW/XNaaU3D36ibJusP/ei3Zs6aK8N2oc1HPCNII5TsF6GVywoH8iIQ94y6SdGLwT6
-	yVIX4GkdDotVThUoCWs6ynN93v7eDhk=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-150-lq2V7W2aMQ65dGxIgvtDeA-1; Mon,
- 10 Nov 2025 02:01:03 -0500
-X-MC-Unique: lq2V7W2aMQ65dGxIgvtDeA-1
-X-Mimecast-MFC-AGG-ID: lq2V7W2aMQ65dGxIgvtDeA_1762758062
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B505518011EF;
-	Mon, 10 Nov 2025 07:01:02 +0000 (UTC)
-Received: from mrout-thinkpadp16vgen1.punetw6.csb (unknown [10.74.65.77])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 1758E30001B9;
-	Mon, 10 Nov 2025 07:00:58 +0000 (UTC)
-From: Malaya Kumar Rout <mrout@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: mrout@redhat.com,
-	lyude@redhat.com,
-	malayarout91@gmail.com,
-	John Stultz <jstultz@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Stephen Boyd <sboyd@kernel.org>
-Subject: [PATCH] timekeeping: Fix resource leak in tk_aux_sysfs_init() error paths
-Date: Mon, 10 Nov 2025 12:30:54 +0530
-Message-ID: <20251110070054.9090-1-mrout@redhat.com>
+	s=arc-20240116; t=1762758215; c=relaxed/simple;
+	bh=JRZa9hfwsWOsaBxdRONGO80g6WxN8n6B8FTon2v5I2E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ey3OcxbplsrqG9mXZ11qr93NEm7fQPtwiPjwfr4AOf9/h+t13acCpFSFVKoFPoVmWVtrLkHUVUMr+1aSdgrcNIHEQx3/8+KwKiiat7kL3wDyvdsF38aiZZacpuXvWM+flUiv+8NM6zc9BaJFeNdn53pD8vc9/GFrmWdgcfsQJRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OTmO7GHj; arc=none smtp.client-ip=209.85.161.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-656ee8052bfso134744eaf.1
+        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 23:03:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1762758213; x=1763363013; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kZH9HBphOAagtoFjePNpMdaPRYh83TbkuAlXlrLr400=;
+        b=OTmO7GHjEUUqTZnBbAGqlrzjHvZpg4qycC232YpYWeVxTkC7RUhoZp06ZcDJ7jFb2s
+         0r8/FDFfO3nD9obH+qzWNmUue3tOM5Bz4r5wB7f+N6zyJx4fr6q1vJuXZLbU/CIRBdV4
+         0jt12H59Pwq1pCM7kqTIWGcxhNJPqWW0/OqodCPFtljjS/kOkyOfARhQ15DlzpzHnN3f
+         rhID/Mr80/AyWRyQuxNwDXOXOf4BgJPvNaaZywN1QHhrNXmll2LLpjjPm/O8IpvOtB1s
+         7tC3fHu9gMMttSuW7mtLFuWzgOEEDAuhhgHaYhDVRZIBXHvxPbQmOp6wsWhZ2ij3FUMb
+         KWZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762758213; x=1763363013;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=kZH9HBphOAagtoFjePNpMdaPRYh83TbkuAlXlrLr400=;
+        b=a8dL8i3SYTtVN2FHaaBiDmUvcOV+BBtTYKeRxNiO7dHh1ZQmvJqig92Saa5t7tsUKc
+         meUuG755IoinjtxVqvCA5vG0iNK0bskuLcFQqUU5L9Oy2ny9p9/Ik/uDShrvakhsyuuy
+         HPI2tsuawRewZwjEQXTDXt8gFeCbOgJ/WPugPqtMQcFQUHqMN4LndgAtyWqne4GW1evS
+         7Lw4v0MmIwwbOxqceVKMXxrXP2YbnYYUiA5DI5vmmxr+2T66ENChmU18kXBA1nkMXmSL
+         MFua2xODbd8434dX3sxITX+UQ0PTmRTV+Kosqn5YEZiQfs/Sceu2vTC93gXNgtK91R30
+         /uKw==
+X-Forwarded-Encrypted: i=1; AJvYcCWBCvYEcMSZMoZOk/Nx4TygMhXvb/mJFwhCEcBlYB3EAHqEcz50jh3TKA6/OOSHRsfGMUdhWggGetco4/w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzah2L//OOS8YMUvy08oNsTcZKhS59nP0akbod4qddqB8mF75dl
+	ByUEbJYaU0UkxInAajnIH43dE9f9s2+LEZZfxco/E1lxEjR8eYRowyE9CAojsH4fZdmx8USAPk7
+	P1UQ4m+7qcmdE7TXzm/zgw4e+utiQK0+75th+Tzy77A==
+X-Gm-Gg: ASbGncuTIZuX7vVtTF2pBi4vhYQIRufCm4luW7hIq3vQoO1Fe4SPz2a0ZEqj2hUIar5
+	CLH/5Xz9SutPWbzLwaFctJFRPKFEdwBDqCHovLFkXzue3Q5//dQnOdMUTIRIW53b9bELnYCj3zk
+	oJZcmQ78iLskCo4A1KEYClHw11I0dyHiU5uY6KQT1UOse/et8ZkumB5a5XJNYBqtNmqPvtiiyHr
+	QoxoyCje4CPDAHd+Gv+Ues/FHIqQsQ0jPjcVzBscDLVDrE0s/2ydroq2EOn6hS3G6Gb8gQ1h+l1
+	X0G7
+X-Google-Smtp-Source: AGHT+IGfcMCh8A+6KX8WwI3t/ZpN/O6TB7L+kmvdmryqmExFqyiRM6QCUcw0qA75XS8PzWEIgZCQDItmCsRNchsPauU=
+X-Received: by 2002:a05:6808:3006:b0:450:9f5:dcbb with SMTP id
+ 5614622812f47-4502a1ba355mr3085976b6e.22.1762758213078; Sun, 09 Nov 2025
+ 23:03:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+References: <20251106102008.1310234-1-yangzhao@kylinos.cn> <CAHUa44FAUyQNBKmzugu-_gv_Jy_AftZqq=RSbKUnK1QQbL8Z9A@mail.gmail.com>
+ <900f69d4-6ef9-fe1e-d664-e248e41da752@kylinos.cn>
+In-Reply-To: <900f69d4-6ef9-fe1e-d664-e248e41da752@kylinos.cn>
+From: Jens Wiklander <jens.wiklander@linaro.org>
+Date: Mon, 10 Nov 2025 08:03:21 +0100
+X-Gm-Features: AWmQ_blYhauiyF-OMkjBxubo-x9ZLpIW-Wp0gXh6FaZH1ZHsThtizotDjFMWNFI
+Message-ID: <CAHUa44EXPtdfPogjRirGB=aZ+ex-bD-iRf7m_=1OVk_KAY03_g@mail.gmail.com>
+Subject: Re: [PATCH] tee: fix illegal pointer dereference in tee_shm_put()
+To: yangzhao <yangzhao@kylinos.cn>
+Cc: op-tee@lists.trustedfirmware.org, linux-kernel@vger.kernel.org, 
+	Sumit Garg <sumit.garg@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The tk_aux_sysfs_init() function returns immediately on error during
-the auxiliary clock initialization loop without cleaning up previously
-allocated kobjects and sysfs groups.
+Hi,
 
-If kobject_create_and_add() or sysfs_create_group() fails during loop
-iteration, the parent kobjects (tko and auxo) and any previously created
-child kobjects are leaked.
+On Fri, Nov 7, 2025 at 7:14=E2=80=AFAM yangzhao <yangzhao@kylinos.cn> wrote=
+:
+>
+> Hi=EF=BC=8C
+>
+> This issue is indeed caused by the mismatch between the TEE version and
+> the kernel version. Currently, this patch is only designed to address
+> the problem of ensuring that the kernel does not panic when the TEE
+> version is incorrect.
+>
+> The virt_addr_valid() is used to check the validity of the pointer
+> address, because during the test, it did occur that the shm->ctx pointer
+> address is the address between the user space and the kernel space. At
+> this point, using IS_ERR_OR_NULL cannot detect the legitimacy of the
+> pointer address.
+>
+> The problem can be viewed at the link:
+> https://github.com/OP-TEE/optee_os/issues/7575
 
-Fix this by adding proper error handling with goto labels to ensure all
-allocated resources are cleaned up on failure. kobject_put() on the
-parent kobjects will handle cleanup of their children.
+OK, let's sort out the secure world side of things in that issue.
 
-Signed-off-by: Malaya Kumar Rout <mrout@redhat.com>
----
- kernel/time/timekeeping.c | 22 +++++++++++++++-------
- 1 file changed, 15 insertions(+), 7 deletions(-)
+Cheers,
+Jens
 
-diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
-index 3a4d3b2e3f74..79019b25f188 100644
---- a/kernel/time/timekeeping.c
-+++ b/kernel/time/timekeeping.c
-@@ -3060,29 +3060,37 @@ static const struct attribute_group aux_clock_enable_attr_group = {
- static int __init tk_aux_sysfs_init(void)
- {
- 	struct kobject *auxo, *tko = kobject_create_and_add("time", kernel_kobj);
-+	int ret;
- 
- 	if (!tko)
- 		return -ENOMEM;
- 
- 	auxo = kobject_create_and_add("aux_clocks", tko);
- 	if (!auxo) {
--		kobject_put(tko);
--		return -ENOMEM;
-+		ret = -ENOMEM;
-+		goto err_put_tko;
- 	}
- 
- 	for (int i = 0; i < MAX_AUX_CLOCKS; i++) {
- 		char id[2] = { [0] = '0' + i, };
- 		struct kobject *clk = kobject_create_and_add(id, auxo);
- 
--		if (!clk)
--			return -ENOMEM;
--
--		int ret = sysfs_create_group(clk, &aux_clock_enable_attr_group);
-+		if (!clk) {
-+			ret = -ENOMEM;
-+			goto err_put_auxo;
-+		}
- 
-+		ret = sysfs_create_group(clk, &aux_clock_enable_attr_group);
- 		if (ret)
--			return ret;
-+			goto err_put_auxo;
- 	}
- 	return 0;
-+
-+err_put_auxo:
-+	kobject_put(auxo);
-+err_put_tko:
-+	kobject_put(tko);
-+	return ret;
- }
- late_initcall(tk_aux_sysfs_init);
- 
--- 
-2.51.0
-
+>
+> Thanks.
+>
+> On 2025/11/6 19:31, Jens Wiklander wrote:
+> > Hi,
+> >
+> > On Thu, Nov 6, 2025 at 11:20=E2=80=AFAM yangzhao <yangzhao@kylinos.cn> =
+wrote:
+> >> In tee_shm_put(), there is not only the NULL pointer dereference,
+> >> but also the illegal pointer dereference.
+> >>
+> >> shutdown() --->
+> >>      __optee_disable_shm_cache -->
+> >>          shm =3D reg_pair_to_ptr(...);
+> >>          tee_shm_free(shm); -->
+> >>              tee_shm_put(shm); //crash: shm->ctx maybe NULL pointer or=
+ illegal pointer
+> >>
+> >> Check whether the pointer is NULL and whether the pointer address is v=
+alid.
+> >>
+> >> This issue occurs when rich world uses the 6.x version of the kernel a=
+nd
+> >> optee secure world uses a lower version (such as version 3.2), and it =
+is
+> >> highly likely to trigger a kernel panic when conducting hibernate test=
+s.
+> > It sounds like the root of the problem is in the TEE rather than in
+> > the kernel. How about fixing the TEE to avoid supplying garbage
+> > pointers?
+> >
+> >> Fixes: e4a718a3a47e ("tee: fix NULL pointer dereference in tee_shm_put=
+")
+> >> Signed-off-by: yangzhao <yangzhao@kylinos.cn>
+> >> ---
+> >>   drivers/tee/tee_shm.c | 9 ++++++++-
+> >>   1 file changed, 8 insertions(+), 1 deletion(-)
+> >>
+> >> diff --git a/drivers/tee/tee_shm.c b/drivers/tee/tee_shm.c
+> >> index 4a47de4bb2e5..de01d16409c1 100644
+> >> --- a/drivers/tee/tee_shm.c
+> >> +++ b/drivers/tee/tee_shm.c
+> >> @@ -722,7 +722,14 @@ void tee_shm_put(struct tee_shm *shm)
+> >>          struct tee_device *teedev;
+> >>          bool do_release =3D false;
+> >>
+> >> -       if (!shm || !shm->ctx || !shm->ctx->teedev)
+> >> +       /* checking pointer */
+> >> +       if (IS_ERR_OR_NULL(shm) || !virt_addr_valid(shm))
+> > The IS_ERR_OR_NULL() check might make sense, but the virt_addr_valid()
+> > does not. virt_addr_valid() might catch a few garbage pointers, but
+> > the real problem is that someone is supplying garbage pointers.
+> >
+> >> +               return;
+> >> +
+> >> +       if (IS_ERR_OR_NULL(shm->ctx) || !virt_addr_valid(shm->ctx))
+> >> +               return;
+> >> +
+> >> +       if (IS_ERR_OR_NULL(shm->ctx->teedev) || !virt_addr_valid(shm->=
+ctx->teedev))
+> >>                  return;
+> > shm->ctx or shm->ctx->teedev should never be an ERR pointer. The
+> > virt_addr_valid() test doesn't make sense.
+> >
+> > Cheers,
+> > Jens
+> >
+> >>          teedev =3D shm->ctx->teedev;
+> >> --
+> >> 2.25.1
+> >>
+>
 
