@@ -1,140 +1,132 @@
-Return-Path: <linux-kernel+bounces-893129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 576F0C46982
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:28:56 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA3B6C4694C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:26:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DF82420AB6
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:25:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 91F344E1F08
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:26:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C03830B52B;
-	Mon, 10 Nov 2025 12:25:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35CCF30AD0C;
+	Mon, 10 Nov 2025 12:26:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="c93jGTUQ"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="DVVZXDAL"
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DB2A18626
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 12:25:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7BCF18626;
+	Mon, 10 Nov 2025 12:26:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762777525; cv=none; b=dA5ZUa+RQMhPMQSz651H8w3ZMZOdPvbR4p/xdrbIp5qmjOB4jm9wgQIdq5ljDxyEhhtmoYa38AV1u8486gZCJQwqpet1LeFHqW5D5RkKqnWkfxQjRahKDH7z/Kg2190NoqJVLYbUU9WyS0bYNTBG/Q/GDudoNor78OHfIPLPhWw=
+	t=1762777596; cv=none; b=ubBcJR9EbF4yDa1MhRkpyAJe38Ri15O9IGprVEss8LMHCo/5Fw+LQOnp/ji5boI5bhH238KZ8fuFG9hazWGfcq5CXIzHi1CggtzQ1LmsTrahJ4ATX6IqMHN5khl9d22ge2K8P8UZ1yq2dYN/IcaNWg0SLSisX4Q/hy0X5XOUQZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762777525; c=relaxed/simple;
-	bh=yKWNhJc0NCCYA8zjMOH3QEEhuWZljyQXcQSfuMODHe0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZgCUcn7ke/Y4DxH1iW1f0WyfFukPj8Y550WmbSUtp1VaNNOcs/kBT8msYTTQcTiwZX/aVLviseoHU/5jNFhFqFFA9jxJ8qfLCIfE/ZBFPKlU9ki+2NuNH5nXsmEyM/aKs0vUdXcLiPlrQ+aKv8l8OCV/PlS7mxc985eOh5sfhXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=c93jGTUQ; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-641977dc00fso1134052a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 04:25:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1762777521; x=1763382321; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=AdI7IxF7cmaOwwPz2uPN9pz51vkfzTah0Iexytj/exg=;
-        b=c93jGTUQLNsvGt5jexqNPPi3uEH9qXGrOuUBu58yE+JTRqflbj53dmr9ifzHGsaOd8
-         rN7t0rvLX+G4Kdb6S+7pxeXpeVNAdWCqhaoE0VXWkv3bk3JwZmcH5OqRl+JV7cuNycEm
-         IagQDSjmfQ6gsZIwx02+xTnrFn3ghxrugM4SVAGZwdjacGjldRhriOkO0nKL18jmjy+r
-         o/Q2k0/DZCWnNATcnzV8P9TijQLst11BKQfzWrSA2I59ewlZxnkZuzuOALhl/KBKvEDN
-         3I7atanfWjz6hcnMq1/BmPFUPEQcTTNB594icUBPtwYf3IbKWdmVS5aTmE10apvNcN06
-         ZlSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762777521; x=1763382321;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AdI7IxF7cmaOwwPz2uPN9pz51vkfzTah0Iexytj/exg=;
-        b=cxeSKiVJnC7WOi0dTUO8sxYztQstpZhn8TkFBr0Qy+Iud/kNItiJo248i4SqFAmfo6
-         1vFrMSUsTqnkVah9J+3Gzn+rTfmL6k5cdJgou7H0enqYm56ziFFCM9BGqMSGAeeU5nf0
-         6UiiHNKCAs3Eckfj+7SHNOJvJRJRPUjSHF/YFqqz4aEGK9zb6BEfssxHEkzKmpRUVAkc
-         5AnWqonq+JvAKCSPBQ2gCHLt7fhUjMNm2h5iTGVzzO64IQl7aszSFAY3B8mWc7ji8qvR
-         5ylJwYa0WoHo2roIqe3bdtWwdqTs9563jrq3sQCBG4uOpFfmm7unS71STOJT5MfquGSr
-         BoYw==
-X-Forwarded-Encrypted: i=1; AJvYcCV/lI/Vb736sdSIaJm/WdD2G3QxcwjsQWPIz7sZCFHpvhSNqsS6TeF4lL6Dqm4KaHAm52llNF/WRRxH3GQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzeeRZGfZr41TWj9TK0qhDeof5uF3i0UGZrSSTwbE0LQ9QGFQRV
-	M9fuC3H4uS+WxAx9hl6XtlGAaf60Qi5Gdmv/0MK3ik/LyUQFJ5THRWGMBN3aPblH9uk=
-X-Gm-Gg: ASbGnctei2mWq6ZmFpit9I3jlgQ+A3+GSrb5i7ZIjo+x5gIm/VBqQy5DXEOoMFYKkHz
-	iGHbdkBLo2YemeBfwmjFiqkInxK9lXh0Rghdl6Fvuoay4347ZYN1DcdKglaHFVCx4aO5r2F5OzW
-	VNYUw+pdJQDMzN32fWwWlWDAUbhsprf2ZkPsAuoJCa4d3Z0u/qJiYzko0CU5tdDhB2M1UlhSRKk
-	M07uvobqGJIOe7JFZIs3vTnOk5GKeXR3hNWo1ncFSWQq3M/gSnFRVXfzca3+S5AsQgcLn/omlex
-	z7j6rTpV4l3Qgi5syctvkFBYtDwKI872gkg27LVW85Do5xwZB3JmmXPUhR5DNFmLCJXmOkcNubo
-	sNhXQz3TgkUgragkOiZNjbY0z5fPyyR6ANdg7at1PqlE0JSL1mZLneBYiMfeiMfKdWOECs4xJ/y
-	uBel4=
-X-Google-Smtp-Source: AGHT+IH45M4martpu1ZV9EapqxF5z1Rmn3ab4L1EkLdaCAIViHu2tcBKPEF2r4oHemmDEAtCuQt94g==
-X-Received: by 2002:a05:6402:27cf:b0:640:825e:ae82 with SMTP id 4fb4d7f45d1cf-6415e80a83bmr5792863a12.29.1762777520696;
-        Mon, 10 Nov 2025 04:25:20 -0800 (PST)
-Received: from pathway.suse.cz ([176.114.240.130])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6411f813bedsm11054476a12.10.2025.11.10.04.25.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Nov 2025 04:25:20 -0800 (PST)
-Date: Mon, 10 Nov 2025 13:25:18 +0100
-From: Petr Mladek <pmladek@suse.com>
-To: John Ogness <john.ogness@linutronix.de>
-Cc: Joanne Koong <joannelkoong@gmail.com>,
-	"amurray @ thegoodpenguin . co . uk" <amurray@thegoodpenguin.co.uk>,
-	brauner@kernel.org, chao@kernel.org, djwong@kernel.org,
-	jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH 0/2] printk_ringbuffer: Fix regression in get_data() and
- clean up data size checks
-Message-ID: <aRHZrgMXUeMMY_gf@pathway.suse.cz>
-References: <20251107194720.1231457-1-pmladek@suse.com>
+	s=arc-20240116; t=1762777596; c=relaxed/simple;
+	bh=L6naHV+R0hdfap4NIv1kJN6rQ8xwUu00wffuXt5IU48=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TdGf9kMwLZ0kvSjhRaVu7zCdeJgJRz20QD9Lbi/Mi9708DEDY1wIs0ovZAYLMbjRuAibhI/S0gH1i25mikQXJyFzCyHZc2i/zjvef4B3sdDqb5761w4hPQIHxtWz8XhCVZ+jDjSeIatQT46vK1yHBc5nC9M9bPj3GaxpO1w2Gh8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=DVVZXDAL; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4d4pmv41h6z9tg2;
+	Mon, 10 Nov 2025 13:26:23 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1762777583;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oxS3S4E3EDuqOd1N7IeIu20lm6MwawNUsDUFEyJ5EOA=;
+	b=DVVZXDALmpZf7p5azYl1KM5JiBGgvL0SI3d3FNeL1QXGezr24cIfGHJrGn6NmiqGfFQ8m7
+	U7hk0FbBGBSGxIM6FaV/rvlOEuSUOPV0PQSwvx/Ujit8hlpzx9hTXJSkkoAbIy2ly7/a8P
+	CxSkvKI7M4agb9AR85nDccyjxLhnYUlgAy+kpvr90+Vm9yEdhMGsy0EH8ARGX0wVjdJnPj
+	WNceECQSDhbxnL+z+jZC8+fD4L6HEXdfjw+FvviypgNwLRScd1BltMMvFH+anJkHpDRg5M
+	W8C+TAvL0LMf4qVGfw5h+bDc9snZzMj0qgF7nJuJUDx5eA53JzXDuyuwIpckFQ==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=none;
+	spf=pass (outgoing_mbo_mout: domain of kernel@pankajraghav.com designates 2001:67c:2050:b231:465::202 as permitted sender) smtp.mailfrom=kernel@pankajraghav.com
+Message-ID: <af30cb7e-a59d-4937-8fc5-1b9c68685939@pankajraghav.com>
+Date: Mon, 10 Nov 2025 13:26:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251107194720.1231457-1-pmladek@suse.com>
+Subject: Re: [PATCH v2 08/24] ext4: support large block size in ext4_readdir()
+To: libaokun@huaweicloud.com, linux-ext4@vger.kernel.org
+Cc: tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz,
+ linux-kernel@vger.kernel.org, mcgrof@kernel.org, ebiggers@kernel.org,
+ willy@infradead.org, yi.zhang@huawei.com, yangerkun@huawei.com,
+ chengzhihao1@huawei.com, libaokun1@huawei.com
+References: <20251107144249.435029-1-libaokun@huaweicloud.com>
+ <20251107144249.435029-9-libaokun@huaweicloud.com>
+Content-Language: en-US
+From: Pankaj Raghav <kernel@pankajraghav.com>
+In-Reply-To: <20251107144249.435029-9-libaokun@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 4d4pmv41h6z9tg2
 
-On Fri 2025-11-07 20:47:18, Petr Mladek wrote:
-> This is outcome of the long discussion about the regression caused
-> by 67e1b0052f6bb82 ("printk_ringbuffer: don't needlessly wrap data blocks around"),
-> see https://lore.kernel.org/all/69096836.a70a0220.88fb8.0006.GAE@google.com/
+On 11/7/25 15:42, libaokun@huaweicloud.com wrote:
+> From: Baokun Li <libaokun1@huawei.com>
 > 
-> The 1st patch fixes the regression as agreed, see
-> https://lore.kernel.org/all/87ecqb3qd0.fsf@jogness.linutronix.de/
+> In ext4_readdir(), page_cache_sync_readahead() is used to readahead mapped
+> physical blocks. With LBS support, this can lead to a negative right shift.
 > 
-> The 2nd patch adds a helper function to unify the checks whether
-> a more space is needed. I did my best to address all the concerns
-> about various proposed variants.
+> To fix this, the page index is now calculated by first converting the
+> physical block number (pblk) to a file position (pos) before converting
+> it to a page index. Also, the correct number of pages to readahead is now
+> passed.
 > 
-> Note that I called the new helper function "need_more_space()" in the end.
-> It avoids all the problems with "before" vs. "lt" vs "le",
-> and "_safe" vs. "_sane" vs. "_bounded".
-> 
-> IMHO, the name "need_more_space()" fits very well in all three
-> locations, surprisingly even in data_realloc(). But it is possible
-> that you disagree. Let me know if you hate it ;-)
-> 
-> 
-> The patchset applies on top of printk/linux.git, branch for-6.19.
-> It should apply on top of linux-next as well.
-> 
-> Petr Mladek (2):
->   printk_ringbuffer: Fix check of valid data size when blk_lpos
->     overflows
->   printk_ringbuffer: Create a helper function to decide whether a more
->     space is needed
-> 
->  kernel/printk/printk_ringbuffer.c | 40 +++++++++++++++++++++++++------
->  1 file changed, 33 insertions(+), 7 deletions(-)
+> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+> Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
+> Reviewed-by: Jan Kara <jack@suse.cz>
+> ---
+Minor general comments below.
 
-JFYI, the patchset has been comitted into printk/linux.git,
-branch for-6.19.
+Reviewed-by: Pankaj Raghav <p.raghav@samsung.com>
 
-Note that I have updated the Subject and a comment in the 2nd patch
-as suggested by John, see
-https://git.kernel.org/pub/scm/linux/kernel/git/printk/linux.git/commit/?h=for-6.19&id=394aa576c0b783ae728d87ed98fe4f1831dfd720
+>  fs/ext4/dir.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/ext4/dir.c b/fs/ext4/dir.c
+> index d4164c507a90..256fe2c1d4c1 100644
+> --- a/fs/ext4/dir.c
+> +++ b/fs/ext4/dir.c
+> @@ -192,13 +192,13 @@ static int ext4_readdir(struct file *file, struct dir_context *ctx)
+>  			continue;
+>  		}
+>  		if (err > 0) {
+> -			pgoff_t index = map.m_pblk >>
+> -					(PAGE_SHIFT - inode->i_blkbits);
+> +			pgoff_t index = map.m_pblk << inode->i_blkbits >>
+> +					PAGE_SHIFT;
 
-Best Regards,
-Petr
+It will be nice to have some common helper for this operation. We do something
+similar in filemap.c as well.
+
+>  			if (!ra_has_index(&file->f_ra, index))
+>  				page_cache_sync_readahead(
+>  					sb->s_bdev->bd_mapping,
+> -					&file->f_ra, file,
+> -					index, 1);
+> +					&file->f_ra, file, index,
+> +					1 << EXT4_SB(sb)->s_min_folio_order);
+Just a personal opinion but it would be nice to have some variable for this instead of doing it
+inline? It could be defined along with index.
+
+unsigned long min_nr_pages = 1UL << EXT4_SB(sb)->s_min_folio_order;
+
+
+>  			file->f_ra.prev_pos = (loff_t)index << PAGE_SHIFT;
+>  			bh = ext4_bread(NULL, inode, map.m_lblk, 0);
+>  			if (IS_ERR(bh)) {
+
 
