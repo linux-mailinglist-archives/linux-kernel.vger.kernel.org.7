@@ -1,218 +1,156 @@
-Return-Path: <linux-kernel+bounces-894079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A80B7C493C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 21:29:15 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DDB1C493E6
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 21:31:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1354E3B083B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 20:29:03 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8A8214EE423
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 20:30:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C02D2EDD64;
-	Mon, 10 Nov 2025 20:28:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F4852EDD7E;
+	Mon, 10 Nov 2025 20:30:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VDR5NR5O"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KbUMGl9Y"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22DE72ECD06;
-	Mon, 10 Nov 2025 20:28:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A606289E13
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 20:30:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762806530; cv=none; b=ub1kiYY4ZnYTgbvXf3vrvERj8H6wKAJFEhRQF3wY1kl/5Z0nsT8iF76BPzh28kEH+hl75zRMnEq64uuIHs1qNQQCY/Etlze9DC5ZeVN5k5d6yuvbytfwTzh91+i64icw4k2mbY/JRJvAlViOjJ8H3sdpX77suXrL42jm8Ng6AFE=
+	t=1762806645; cv=none; b=lRa6ompow7nqbXKaBdMnguTBQFkjR8ZGJm+aXqMgqRaVKjNPSGrwSayO5OvKJq1d+v0NoeZydjAD2p19fZmyXDNNwSXN3RgKjjeo+OrkqhJStiEn7uZrUMTimVKbXfAH816/X7Xx7hOQAyAjqVBti4ClyWMWDx4RbXNVvrBcaoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762806530; c=relaxed/simple;
-	bh=2+oC81xV69bAibilHvu376ufSMAg5fmIkqZozg3DinU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oAXHIT2DqcO73d5W82hEw8U36joel0ehcpbzVEgB9xDRRmazyoo841QIkq1sTq+dMGwL4/DiyVOVomALA/4iYoa/SygrxYTlxwiq48uRGeSvNb/EXot88o/zn97VQ1GmKIPRwGF+mXyvulle47sWADnXPPxKgV76O+5RpFz6olY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VDR5NR5O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DA4BC4CEF5;
-	Mon, 10 Nov 2025 20:28:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762806529;
-	bh=2+oC81xV69bAibilHvu376ufSMAg5fmIkqZozg3DinU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VDR5NR5O4p008RBxKau1oQ/sdWlbk31f0gH7CibVBxI2O26euYYItPd8xW5SsGwIf
-	 BfyOjN/ef0UL06UM/C3cMVem79iIrZmXWSv4wZWSr2v3hzmZyhdVYJRiHc/Nu+yUF8
-	 9iJeGQkgVYsrKA6/OXuRxy7pcx+XJQss+JBluppHjEB+L9jVPGPmZJuPlciZKxqZf+
-	 xzXvLVrHLoFaUWXdO8cGN0TSE8B1fAo4BssyPzeiffuWrvNmUc8/Mgm/FjLgoQgQmp
-	 E2+9VRHkM50gbCUNPShVcuzSzC5GNOuXLH1k7FYvnVqO5UUwveUcH1RL6Qm3MYu/Hn
-	 zaEFUM0yu5v3w==
-Date: Mon, 10 Nov 2025 22:28:44 +0200
-From: Leon Romanovsky <leon@kernel.org>
-To: Alex Williamson <alex@shazbot.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Logan Gunthorpe <logang@deltatee.com>, Jens Axboe <axboe@kernel.dk>,
-	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Ankit Agrawal <ankita@nvidia.com>,
-	Yishai Hadas <yishaih@nvidia.com>,
-	Shameer Kolothum <skolothumtho@nvidia.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Krishnakant Jaju <kjaju@nvidia.com>, Matt Ochs <mochs@nvidia.com>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-block@vger.kernel.org, iommu@lists.linux.dev,
-	linux-mm@kvack.org, linux-doc@vger.kernel.org,
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linaro-mm-sig@lists.linaro.org, kvm@vger.kernel.org,
-	linux-hardening@vger.kernel.org, Alex Mastro <amastro@fb.com>,
-	Nicolin Chen <nicolinc@nvidia.com>
-Subject: Re: [PATCH v7 11/11] vfio/nvgrace: Support get_dmabuf_phys
-Message-ID: <20251110202844.GL15456@unreal>
-References: <20251106-dmabuf-vfio-v7-0-2503bf390699@nvidia.com>
- <20251106-dmabuf-vfio-v7-11-2503bf390699@nvidia.com>
- <20251110130534.4d4b17ad.alex@shazbot.org>
+	s=arc-20240116; t=1762806645; c=relaxed/simple;
+	bh=XPCALEKMTqvrYzdXKp4012lIXgr9shCCsxUVs1Kr7cc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KCbt4oTUfiGYA/MOxjdsQ0ojAFDp1vPIZdbjhwF8+ikq2+LBDH6jFeW9gmD7p7wuMbtozK6bg0I2wg04e5D9OC3v6xXFaRukFNpGfLqwGWVO7GpH7pvM/RncXjZIp3bLLnJpi6GSKJ+6gMjNM7CrvnNiPhDxxS+8+9V8LIfzhI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KbUMGl9Y; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7aca3e4f575so2845241b3a.2
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 12:30:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762806643; x=1763411443; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ro8LfVFs4vPgQTzcnnWdFnGjc8mt7GRah6t2C6MZm1M=;
+        b=KbUMGl9Yo5qAFVgGbUrAm7Oc576vr4RG9tMaeqM3Xx/+fzn0wEOoM1yVPIzVpgkyra
+         j7qPCHV/Jz/ZPoIfowLPZf+fTcLgIhcY8aoqBHDAxgWSUI8RpRTwKppHMYPDulKi/Bv8
+         1bUtNkJ4pMHe6Tu0N0O2tzeGc/naWbN8LNgCGEjXeXRz3f5oHczgwiQ1YQr5cvR7Z6lc
+         CNBVQf+/Curfnts28VUr9g4QBVEE+45elG3hySf8vjiP3mT6f9uuYqMj/PCHwrJkMmlE
+         Va5FvQM7BtT2h5fXI/EuTYAflru3CQeDr+/E9XbeRiDSig85dccHfi08zQfdZGbHUs7S
+         Hy+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762806643; x=1763411443;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ro8LfVFs4vPgQTzcnnWdFnGjc8mt7GRah6t2C6MZm1M=;
+        b=l1Ttc8Oe/VqBIPlPW+THRxbrUh+Yxm9JY3BqHy0M1t1LXqTZn/MLNps7doo22fI7dW
+         bJPk3ftczUe+Ez2vt20iLybpwBH73VQK/N5/MgoX4OPo53Fx47ajSGR2ixhkE7IA0JvK
+         u6fjtg/MGF0TcBL+qbb6PNne9e1aj/riuywOmOJXu1/ihGJUF1enjv15me2gJWzO8yV6
+         RQTLQ554vFAvPcdMIkmtCDwbo9r8XcdVNPu7gmLXpF3E9pqaGF1alXYrMkFMp7x326WX
+         r9w86u4CA8noLF0J81IF42Ot7CItMrCvnC3qLg23sASBLrLltgXOEcHJxdVxqj3xkehH
+         Sziw==
+X-Forwarded-Encrypted: i=1; AJvYcCXxdCtybTpvmRsKquLFs6EIdYdlnGWMwVkaZ0yo9qZdkd2WLBVTYF8AZ1mnmprop+bEv92eMEEgpSRRg7M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7y1bTS62KJi8nGCMrPgxTHt7xn52gRkp14d12BOExNyTTB4lO
+	31Qa9EF12GKxk+DjJUOFQAQGaGsnFpZvP72bAUw4UVLdar4pb1YYn596mBIYy30r
+X-Gm-Gg: ASbGncv/SULbFQXXJN6iIvxFCEibD7ZgK4gCnHPurHyh/6HXjj1RkVHFm2Ef9aKZ1Qc
+	FeDQ0FQs+0F6kEQZzb00CbT5XY+y/wH+6ju8na3IpkFfH03GS7ATHIW0hxmfw6ghy/dRd41NWrQ
+	YDFs5eNzkYckb5sxMhbjmbQze6XSq0hRJRyoAxy9vq/UobsBUI1O4P36wQ0bopPokclOXCNjpe1
+	XrkbnYHLogvsmD7azcycx9byXFq60pKThYFxh1XXO2oH4w+IPPI9XRJ7U3d2KaLMdkwt9i0yght
+	ZuNZOq/44ogigC9izQUzBqHhfMmi2SM4QIGAydFqNaav7owoYozkpeJWNNhrdUbLhlIr6nRGuEe
+	xA+1C6cwDBNe0O572MxnqRAm1YRyyzus3HM6U3lc9T/os4AEtkzhn6kwtwg/ezhjZxiOkV6zJ6p
+	+nXZAx70Snc1fmFhk6
+X-Google-Smtp-Source: AGHT+IGkzYVEYBFXghKEZPwUaZCu1Fha5OHUKNcP3PPtxc6UkSUM+cKWRwlTckCHb6/fSObwrLGs6Q==
+X-Received: by 2002:a05:6a00:b53:b0:7a2:7237:79ff with SMTP id d2e1a72fcca58-7b225acd9admr10942610b3a.7.1762806643188;
+        Mon, 10 Nov 2025 12:30:43 -0800 (PST)
+Received: from crl-3.node2.local ([125.63.65.162])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7b0cc17a688sm12920048b3a.40.2025.11.10.12.30.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Nov 2025 12:30:42 -0800 (PST)
+From: Kriish Sharma <kriish.sharma2006@gmail.com>
+To: "Michael S . Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>
+Cc: virtualization@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Kriish Sharma <kriish.sharma2006@gmail.com>
+Subject: [PATCH] virtio: fix kernel-doc for mapping/free_coherent functions
+Date: Mon, 10 Nov 2025 20:29:20 +0000
+Message-Id: <20251110202920.2250244-1-kriish.sharma2006@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251110130534.4d4b17ad.alex@shazbot.org>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Nov 10, 2025 at 01:05:34PM -0700, Alex Williamson wrote:
-> On Thu,  6 Nov 2025 16:16:56 +0200
-> Leon Romanovsky <leon@kernel.org> wrote:
-> 
-> > From: Jason Gunthorpe <jgg@nvidia.com>
-> > 
-> > Call vfio_pci_core_fill_phys_vec() with the proper physical ranges for the
-> > synthetic BAR 2 and BAR 4 regions. Otherwise use the normal flow based on
-> > the PCI bar.
-> > 
-> > This demonstrates a DMABUF that follows the region info report to only
-> > allow mapping parts of the region that are mmapable. Since the BAR is
-> > power of two sized and the "CXL" region is just page aligned the there can
-> > be a padding region at the end that is not mmaped or passed into the
-> > DMABUF.
-> > 
-> > The "CXL" ranges that are remapped into BAR 2 and BAR 4 areas are not PCI
-> > MMIO, they actually run over the CXL-like coherent interconnect and for
-> > the purposes of DMA behave identically to DRAM. We don't try to model this
-> > distinction between true PCI BAR memory that takes a real PCI path and the
-> > "CXL" memory that takes a different path in the p2p framework for now.
-> > 
-> > Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
-> > Tested-by: Alex Mastro <amastro@fb.com>
-> > Tested-by: Nicolin Chen <nicolinc@nvidia.com>
-> > Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
-> > ---
-> >  drivers/vfio/pci/nvgrace-gpu/main.c | 56 +++++++++++++++++++++++++++++++++++++
-> >  1 file changed, 56 insertions(+)
-> > 
-> > diff --git a/drivers/vfio/pci/nvgrace-gpu/main.c b/drivers/vfio/pci/nvgrace-gpu/main.c
-> > index e346392b72f6..7d7ab2c84018 100644
-> > --- a/drivers/vfio/pci/nvgrace-gpu/main.c
-> > +++ b/drivers/vfio/pci/nvgrace-gpu/main.c
-> > @@ -7,6 +7,7 @@
-> >  #include <linux/vfio_pci_core.h>
-> >  #include <linux/delay.h>
-> >  #include <linux/jiffies.h>
-> > +#include <linux/pci-p2pdma.h>
-> >  
-> >  /*
-> >   * The device memory usable to the workloads running in the VM is cached
-> > @@ -683,6 +684,54 @@ nvgrace_gpu_write(struct vfio_device *core_vdev,
-> >  	return vfio_pci_core_write(core_vdev, buf, count, ppos);
-> >  }
-> >  
-> > +static int nvgrace_get_dmabuf_phys(struct vfio_pci_core_device *core_vdev,
-> > +				   struct p2pdma_provider **provider,
-> > +				   unsigned int region_index,
-> > +				   struct dma_buf_phys_vec *phys_vec,
-> > +				   struct vfio_region_dma_range *dma_ranges,
-> > +				   size_t nr_ranges)
-> > +{
-> > +	struct nvgrace_gpu_pci_core_device *nvdev = container_of(
-> > +		core_vdev, struct nvgrace_gpu_pci_core_device, core_device);
-> > +	struct pci_dev *pdev = core_vdev->pdev;
-> > +
-> > +	if (nvdev->resmem.memlength && region_index == RESMEM_REGION_INDEX) {
-> > +		/*
-> > +		 * The P2P properties of the non-BAR memory is the same as the
-> > +		 * BAR memory, so just use the provider for index 0. Someday
-> > +		 * when CXL gets P2P support we could create CXLish providers
-> > +		 * for the non-BAR memory.
-> > +		 */
-> > +		*provider = pcim_p2pdma_provider(pdev, 0);
-> > +		if (!*provider)
-> > +			return -EINVAL;
-> > +		return vfio_pci_core_fill_phys_vec(phys_vec, dma_ranges,
-> > +						   nr_ranges,
-> > +						   nvdev->resmem.memphys,
-> > +						   nvdev->resmem.memlength);
-> > +	} else if (region_index == USEMEM_REGION_INDEX) {
-> > +		/*
-> > +		 * This is actually cachable memory and isn't treated as P2P in
-> > +		 * the chip. For now we have no way to push cachable memory
-> > +		 * through everything and the Grace HW doesn't care what caching
-> > +		 * attribute is programmed into the SMMU. So use BAR 0.
-> > +		 */
-> > +		*provider = pcim_p2pdma_provider(pdev, 0);
-> > +		if (!*provider)
-> > +			return -EINVAL;
-> > +		return vfio_pci_core_fill_phys_vec(phys_vec, dma_ranges,
-> > +						   nr_ranges,
-> > +						   nvdev->usemem.memphys,
-> > +						   nvdev->usemem.memlength);
-> > +	}
-> > +	return vfio_pci_core_get_dmabuf_phys(core_vdev, provider, region_index,
-> > +					     phys_vec, dma_ranges, nr_ranges);
-> > +}
-> 
-> 
-> Unless my eyes deceive, we could reduce the redundancy a bit:
-> 
-> 	struct mem_region *mem_region = NULL;
-> 
-> 	if (nvdev->resmem.memlength && region_index == RESMEM_REGION_INDEX) {
-> 		/*
-> 		 * The P2P properties of the non-BAR memory is the same as the
-> 		 * BAR memory, so just use the provider for index 0. Someday
-> 		 * when CXL gets P2P support we could create CXLish providers
-> 		 * for the non-BAR memory.
-> 		 */
-> 		mem_region = &nvdev->resmem;
-> 	} else if (region_index == USEMEM_REGION_INDEX) {
-> 		/*
-> 		 * This is actually cachable memory and isn't treated as P2P in
-> 		 * the chip. For now we have no way to push cachable memory
-> 		 * through everything and the Grace HW doesn't care what caching
-> 		 * attribute is programmed into the SMMU. So use BAR 0.
-> 		 */
-> 		mem_region = &nvdev->usemem;
-> 	}
-> 
-> 	if (mem_region) {
-> 		*provider = pcim_p2pdma_provider(pdev, 0);
-> 		if (!*provider)
-> 			return -EINVAL;
-> 		return vfio_pci_core_fill_phys_vec(phys_vec, dma_ranges,
-> 						   nr_ranges,
-> 						   mem_region->memphys,
-> 						   mem_region->memlength);
-> 	}
-> 
-> 	return vfio_pci_core_get_dmabuf_phys(core_vdev, provider, region_index,
-> 					     phys_vec, dma_ranges, nr_ranges);
+Documentation build reported:
 
-Yes, this will work too.
+  WARNING: ./drivers/virtio/virtio_ring.c:3174 function parameter 'vaddr' not described in 'virtqueue_map_free_coherent'
+  WARNING: ./drivers/virtio/virtio_ring.c:3308 expecting prototype for virtqueue_mapping_error(). Prototype was for virtqueue_map_mapping_error() instead
 
-Thanks
+The kernel-doc block for virtqueue_map_free_coherent() omitted the @vaddr parameter, and
+the kernel-doc header for virtqueue_map_mapping_error() used the wrong function name
+(virtqueue_mapping_error) instead of the actual function name.
 
-> 		
-> Thanks,
-> Alex
+This change updates:
+
+  - the function name in the comment to virtqueue_map_mapping_error()
+  - adds the missing @vaddr description in the comment for virtqueue_map_free_coherent()
+
+Fixes: b41cb3bcf67f ("virtio: rename dma helpers")
+Signed-off-by: Kriish Sharma <kriish.sharma2006@gmail.com>
+---
+ drivers/virtio/virtio_ring.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+index 7b6205253b46..ddab68959671 100644
+--- a/drivers/virtio/virtio_ring.c
++++ b/drivers/virtio/virtio_ring.c
+@@ -3166,6 +3166,7 @@ EXPORT_SYMBOL_GPL(virtqueue_map_alloc_coherent);
+  * @vdev: the virtio device we are talking to
+  * @map: metadata for performing mapping
+  * @size: the size of the buffer
++ * @vaddr: the virtual address that needs to be freed
+  * @map_handle: the mapped address that needs to be freed
+  *
+  */
+@@ -3190,7 +3191,7 @@ EXPORT_SYMBOL_GPL(virtqueue_map_free_coherent);
+  * @dir: mapping direction
+  * @attrs: mapping attributes
+  *
+- * Returns mapped address. Caller should check that by virtqueue_mapping_error().
++ * Returns mapped address. Caller should check that by virtqueue_map_mapping_error().
+  */
+ dma_addr_t virtqueue_map_page_attrs(const struct virtqueue *_vq,
+ 				    struct page *page,
+@@ -3249,7 +3250,7 @@ EXPORT_SYMBOL_GPL(virtqueue_unmap_page_attrs);
+  * The caller calls this to do dma mapping in advance. The DMA address can be
+  * passed to this _vq when it is in pre-mapped mode.
+  *
+- * return mapped address. Caller should check that by virtqueue_mapping_error().
++ * return mapped address. Caller should check that by virtqueue_map_mapping_error().
+  */
+ dma_addr_t virtqueue_map_single_attrs(const struct virtqueue *_vq, void *ptr,
+ 				      size_t size,
+@@ -3299,7 +3300,7 @@ void virtqueue_unmap_single_attrs(const struct virtqueue *_vq,
+ EXPORT_SYMBOL_GPL(virtqueue_unmap_single_attrs);
+ 
+ /**
+- * virtqueue_mapping_error - check dma address
++ * virtqueue_map_mapping_error - check dma address
+  * @_vq: the struct virtqueue we're talking about.
+  * @addr: DMA address
+  *
+-- 
+2.34.1
+
 
