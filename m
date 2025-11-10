@@ -1,144 +1,163 @@
-Return-Path: <linux-kernel+bounces-893895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA963C489BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 19:39:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 016C1C4896D
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 19:36:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92D6B3BB2E6
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 18:33:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7316D3A4D86
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 18:32:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0213A32AAC9;
-	Mon, 10 Nov 2025 18:32:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8A4232E73D;
+	Mon, 10 Nov 2025 18:29:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IdYG5yJL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nmdgkZUw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14A1631D72D;
-	Mon, 10 Nov 2025 18:32:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE81632E6A0;
+	Mon, 10 Nov 2025 18:29:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762799531; cv=none; b=eBClc9G7OG5TPlFZ8ZCdq/RZABLwZrKrCTxZz4ucIdZqj/G2Hwx7LutLwfnAU6CURY1ygpWKfyy1fzlXSizXa7QzotOlaeo6lHbdLYHcO81DaCVE4xS0hjq9rcjNinRSxN7xv2xjP2b9SljXJeLoBOM2AB6+IjZ6y6pNGyKEyD0=
+	t=1762799345; cv=none; b=K/lo6881LFE0Ox2mbizaQojDiNv9bUuKSAIPT9m+NRQitBYU0LDBcfz2gi/nwrzYP/3hVZYeUOxe/h15FMdfm69PI5aoBshSj7qfo6WaylcKj1mlIbWwsqMWliy8bFK8WSJQFuqXlEQdT2EzzuKGe0mOXb3/GEmSQSAbxPbsmaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762799531; c=relaxed/simple;
-	bh=BTRplCCHPczrZhMIDCxF5mqdQYsf+JH2XCbk3qFQ6N0=;
+	s=arc-20240116; t=1762799345; c=relaxed/simple;
+	bh=u9Jb89JkKBZeEXePVaq8UqB4TuhULaWnLyCjR38ppvI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DwRDj24BB0fSOATHEwoWoLXZfnL0EF3sionnAH0xGEqpKGqD55eVVYyCIW1qCuuZk5CIZEOC5ggnM8qHa+7rAhouAhaI1MWHnbG9t75qiIZurAz54TEVh3pSSFvzycgJ5oZXM+A6D02PqZVMKWlCEi3NZzk/4TT+Jyf4WcAmeZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IdYG5yJL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 520E5C113D0;
-	Mon, 10 Nov 2025 18:32:09 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=MIPAsVfzqnC6HLkuO3lZ/k6LVTpuJVa+K7kCpvhTnv5jMINV8Iq0dK+CCXugUZxCmWNDAN+ZZzEi/9pDtIJLbu/jTZ9HS8at9BsR4ZecvYZU4FcwzcfCXJp0iqOD62AwnKxgbMr1/DO3svm+04urP/elGmdMxAo96DzUxF+3mLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nmdgkZUw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D63A2C4CEF5;
+	Mon, 10 Nov 2025 18:29:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762799530;
-	bh=BTRplCCHPczrZhMIDCxF5mqdQYsf+JH2XCbk3qFQ6N0=;
+	s=k20201202; t=1762799345;
+	bh=u9Jb89JkKBZeEXePVaq8UqB4TuhULaWnLyCjR38ppvI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IdYG5yJL3Fz3o7Tdm6oYFGRFwqlvLC6LbCgJwDbFWk7OkYbjnfM/BMxOiD4PNSKvw
-	 vnMGjjmgbv088ZqB8U1JoIA+lO5mxPvfFY8UNo5Ixxb6JSOazGOeraJC8VSlGtdGBb
-	 ceLVuXdDC8rsGign0NQs/YGzK5BQQMjCDQVZdg7vKZZvFHnLykn9o3BnUrvTmgmQ5E
-	 szmaiTchR+NAO/SsMdQrZeBGzQCWxGrbZgOiRBtSNGgGrq7zY6FGgiSOxwUkB64q1u
-	 dq1vFgtIjnIEPpqvALYJcDa7uOyKMs4EK8ytUQcMrChxtwHpS9G7biEzA2kcv+toDB
-	 cwQ8f1tdPFXkQ==
-Date: Mon, 10 Nov 2025 19:32:05 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Daniel Gomez <da.gomez@kernel.org>
-Cc: Daniel Gomez <da.gomez@samsung.com>, 
-	Luis Chamberlain <mcgrof@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, 
-	Sami Tolvanen <samitolvanen@google.com>, Petr Pavlu <petr.pavlu@suse.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>, Michal Wilczynski <m.wilczynski@samsung.com>
-Subject: Re: linux-next: manual merge of the pwm tree with the modules tree
-Message-ID: <6ydyoh5yfqk3qwha2lysmqohvh3ffhmv52yph4aqzq46eaa7t2@clpm2eqydmpi>
-References: <20251104104827.1de36ea0@canb.auug.org.au>
- <20251104105415.68bfb090@canb.auug.org.au>
- <f374sh5rsbxvboowft6xpiimxlzw264i32txgiok53on2vxxu7@lpetaklaofzb>
- <ad9c5b79-8a33-4183-a048-48ba516e6aaf@kernel.org>
- <26c7zdxc4nv3wx25xferlggtjipigtd3tc6fk554g4tmqsuvmr@e6cll772nz2r>
- <2b53a2d1-3e86-4558-ba7f-5ce3b1368f0f@kernel.org>
+	b=nmdgkZUwBErlZ4R16rraci9mo0wDpQbaUlJ80M2tD0YhX2zZBk4FM55WGhg6jopmP
+	 8TLIN7zJLQlkoApbwuqW02D6rWpvDo6pZcGSVwrqJ+OTOOZaFw477qCXI6ekqSD1wk
+	 DAtMwRluIYZ2U1Uaz9xCCWzihVzLJH49FMJN77vrbtb4tvcilMbPkfiZng/AERMyb7
+	 5pz8cAXv+gchZkSZRd34XnFwevKx+uRiARAzJbM3yYR4oS7zLY5zizhkSURATxvYST
+	 1e/WDB6iTHrIsA757VXJ91Xey3mb7tPLIdrc9Hpg+xcEzyEevI13Vnwndb0fU+oeI2
+	 8n/sodalpELIA==
+Date: Mon, 10 Nov 2025 12:33:10 -0600
+From: Bjorn Andersson <andersson@kernel.org>
+To: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>
+Cc: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Sebastian Reichel <sre@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>, 
+	Souvik Chakravarty <Souvik.Chakravarty@arm.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Andy Yan <andy.yan@rock-chips.com>, 
+	Mark Rutland <mark.rutland@arm.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Konrad Dybcio <konradybcio@kernel.org>, 
+	cros-qcom-dts-watchers@chromium.org, Vinod Koul <vkoul@kernel.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, Moritz Fischer <moritz.fischer@ettus.com>, 
+	John Stultz <john.stultz@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+	Stephen Boyd <swboyd@chromium.org>, Andre Draszik <andre.draszik@linaro.org>, 
+	Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-arm-msm@vger.kernel.org, Elliot Berman <quic_eberman@quicinc.com>, 
+	Xin Liu <xin.liu@oss.qualcomm.com>, Srinivas Kandagatla <srini@kernel.org>, 
+	Umang Chheda <umang.chheda@oss.qualcomm.com>, Nirmesh Kumar Singh <nirmesh.singh@oss.qualcomm.com>
+Subject: Re: [PATCH v17 03/12] power: reset: reboot-mode: Add support for 64
+ bit magic
+Message-ID: <zejaqakbtufwzlzs7xc7xzxezcylqjkmu4nne2mro4riuhgbkc@hlgu3u2w36bb>
+References: <20251109-arm-psci-system_reset2-vendor-reboots-v17-0-46e085bca4cc@oss.qualcomm.com>
+ <20251109-arm-psci-system_reset2-vendor-reboots-v17-3-46e085bca4cc@oss.qualcomm.com>
+ <20251110134529.uljjqzb3vhda3vya@hu-mojha-hyd.qualcomm.com>
+ <gzj4r4elqewjt2gjzhuamslvobz5fgyvt672brwknoozlsplaq@wsebzmi2l6pc>
+ <681a72ba-d8fb-bfc2-d2bb-d80ac667bc5c@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="7rfnzqrclml6k2z3"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <2b53a2d1-3e86-4558-ba7f-5ce3b1368f0f@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <681a72ba-d8fb-bfc2-d2bb-d80ac667bc5c@oss.qualcomm.com>
+
+On Mon, Nov 10, 2025 at 11:22:40PM +0530, Shivendra Pratap wrote:
+> 
+> 
+> On 11/10/2025 10:00 PM, Bjorn Andersson wrote:
+> > On Mon, Nov 10, 2025 at 07:15:29PM +0530, Mukesh Ojha wrote:
+> >> On Sun, Nov 09, 2025 at 08:07:16PM +0530, Shivendra Pratap wrote:
+> >>> Current reboot-mode supports a single 32-bit argument for any
+> >>> supported mode. Some reboot-mode based drivers may require
+> >>> passing two independent 32-bit arguments during a reboot
+> >>> sequence, for uses-cases, where a mode requires an additional
+> >>> argument. Such drivers may not be able to use the reboot-mode
+> >>> driver. For example, ARM PSCI vendor-specific resets, need two
+> >>> arguments for its operation – reset_type and cookie, to complete
+> >>> the reset operation. If a driver wants to implement this
+> >>> firmware-based reset, it cannot use reboot-mode framework.
+> >>>
+> >>> Introduce 64-bit magic values in reboot-mode driver to
+> >>> accommodate dual 32-bit arguments when specified via device tree.
+> >>> In cases, where no second argument is passed from device tree,
+> >>> keep the upper 32-bit of magic un-changed(0) to maintain backward
+> >>> compatibility.
+> >>>
+> >>> Update the current drivers using reboot-mode for a 64-bit magic
+> >>> value.
+> 
+> [SNIP..]
+> 
+> >>> +	if (magic > U32_MAX)
+> >>> +		return -EINVAL;
+> >>> +
+> >>> +	magic_32 = magic;
+> >>> +
+> >>>  	syscon_rbm = container_of(reboot, struct syscon_reboot_mode, reboot);
+> >>>  
+> >>>  	ret = regmap_update_bits(syscon_rbm->map, syscon_rbm->offset,
+> >>> -				 syscon_rbm->mask, magic);
+> >>> +				 syscon_rbm->mask, magic_32);
+> > 
+> > As above, if we're no longer silently discarding bits, I think we should
+> > compare the magic against syscon_rbm->mask.
+> > 
+> > No need for a local variable, just type cast after checking the validity.
+> 
+> Trying to summarize below why we added these check-
+> 
+> the patch in v11 used typecasting and did not have any of these checks(link below):
+> https://lore.kernel.org/all/20250717-arm-psci-system_reset2-vendor-reboots-v11-2-df3e2b2183c3@oss.qualcomm.com/
+> 
+> As per below upstream review, type cast was removed and bound checks were added all-over patchset:
+> "As a general rule of thumb, code with casts is poor quality code. Try
+> to write the code without casts." - 
+> https://lore.kernel.org/all/8d4a42b6-657f-4c30-8e25-4213d8d53a89@lunn.ch/
+> 
+> We can revert to the typecast way. Please suggest.
+> 
+
+Okay, I'm okay with Andrew's original request, stick to that for the
+nvmem case. Although I don't fancy the name "magic_32", and would prefer
+that you just call it "value" or something.
 
 
---7rfnzqrclml6k2z3
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: linux-next: manual merge of the pwm tree with the modules tree
-MIME-Version: 1.0
+For pon and syscon however, I'm wondering why you have ignored Andrew's
+other request from that same email:
 
-Hello Daniel,
+"""
+You might be able to go further, and validate that magic actually fits
+into the field when you consider the << pon->reason_shift.
+"""
 
-On Mon, Nov 10, 2025 at 04:54:01PM +0100, Daniel Gomez wrote:
-> On 10/11/2025 16.42, Uwe Kleine-K=F6nig wrote:
-> > On Mon, Nov 10, 2025 at 02:59:15PM +0100, Daniel Gomez wrote:
-> >> On 07/11/2025 17.44, Uwe Kleine-K=F6nig wrote:
-> >>> Given that the conflict resolution is non-trivial and we already know
-> >>> what to do, I suggest you merge my commit into the modules tree.
-> >>
-> >> Do you mean creating a separate branch that includes the conflict reso=
-lution, to
-> >> be used as an example when sending the PR?
-> >=20
-> > If I were the module maintainer I'd pull
-> >=20
-> > 	https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git rus=
-t-module-namespace
-> >=20
-> > into my tree and include that into the v6.19-rc1 pull request. That way
-> > the merge conflict doesn't happen at all for Linus.
->=20
->=20
-> That's not my understanding on how to deal with conflicts:
->=20
-> https://docs.kernel.org/maintainer/rebasing-and-merging.html#merging-from=
--sibling-or-upstream-trees
+Writing "if (magic > U32_MAX)" in a snippet of code where magic isn't
+allowed to be more than either 32 or 64 is misleading.
 
-Note the "don't" described in the docs isn't what I suggested to do
-here. The rust-module-namespace is a change that belongs into the
-modules tree and that I build upon in my tree.
+For syscon, it's true that the parameter is an unsigned long, but the
+actual limit better be based on syscon_rbm->mask.
 
-So this is (somewhat) the case "Another reason for doing merges of
-upstream or another subsystem tree is to resolve dependencies". Only the
-merge direction is wrong because the usual expectation is that a change
-to rust/macros/module.rs originates in the modules (or some rust) tree.
-But for the justification and also the resulting commit topology that
-doesn't matter.
+Regards,
+Bjorn
 
-Also "[back merges] will significantly increase your chances of
-encountering bugs from elsewhere in the community and make it hard to
-ensure that the work you are managing is stable and ready for upstream."
-doesn't apply because by merging the suggested tag you only get a single
-commit and not my complete pwm tree.
-
-If you want to convince yourself this is in fact quite usual I suggest
-looking at https://lore.kernel.org/all/?q=3Ds%3APULL+AND+s%3AImmutable.
-
-Best regards
-Uwe
-
---7rfnzqrclml6k2z3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmkSL6IACgkQj4D7WH0S
-/k4FoQgAqzJC4KCpwOTjrF2iXkDPYEi+ohaej7Y7xLMCuKBxGSY38wFFFo/Xov0c
-L8spyKy7vezgh6WTxVzLTgaNUdGVgfIycC0fzYiQ4gWn4BUO7I6FhUTCrzLT4uKw
-pAYrfYe8pb6+NhyixRMx5DCzru8wAWBLEsXjYs+2mUqcTGCtViRnHR3CJkjYlBda
-uill8bZlR2W5xR4gR1TmAbXzjRpf1lVL2ReRcNbk/chgmn6TJH1OwFcw03E+KGIf
-jQxy6AgFyLCjGm8QGhFWPIEMudNJmUaHAVHz7DbCp0MrH8ETBTiC43DA1sQ0LSeL
-xS2HvQXIKbvHn0LvDqJwy5zaJU1QYA==
-=Xd5P
------END PGP SIGNATURE-----
-
---7rfnzqrclml6k2z3--
+> thanks,
+> Shivendra
 
