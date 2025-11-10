@@ -1,157 +1,206 @@
-Return-Path: <linux-kernel+bounces-893241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A010C46E25
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:27:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD348C46FF0
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:45:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C5ED54EB006
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:27:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E3913BF1D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:39:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 529463126BE;
-	Mon, 10 Nov 2025 13:26:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB3EB31282D;
+	Mon, 10 Nov 2025 13:37:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="E5qqUFsl"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="dIYSIzds"
+Received: from m16.mail.126.com (m16.mail.126.com [220.197.31.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 758E03115BD
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 13:26:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE2EC3112B0
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 13:37:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762781218; cv=none; b=F9+rar2tc1CHQX5XvdNPA+MgAkJVW80RQxk6K8diMqiYo1N75FEfhKLr13XaG4/6rPp84AcK9ES3lBA5PudW7vPQfnogvY9+kLxls/B1kehQrxatewwEOuYagsn/bq+mVNSkZf0SvZwsCkurhnv2VAKJ4iXxBv7EasEaP2uNFsw=
+	t=1762781877; cv=none; b=gW89PoML5vCG0ad9A1+28D0VCCVBXZ/vGWb9QHLFveiUBF2R8uPnbrA+ndmGlHv0KBmgBj+mNaiBnw5uQDXKABgyZeKMV65nyk3W8uq6r7cU3z6kT8d8aSOZ2aNMvGRAZSrGQSsmurRqbi0c68nRLlD8FWUqh2nygeKz/H3Gm60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762781218; c=relaxed/simple;
-	bh=7zBlKI19nm4l57l+GSpU34xDjL4DbJLxfBwZWCrg3No=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Wu07nGpzMrPbrVpM0IrD14+vgG2OUfjlpoVu70OYtklo5/bOTDb6dKz9cagI2Ij6DELnnNxjmtKTiXcPoSuBN80jlzmDqkRyt2rNEmrqH4qhsqkEVFCVm8PTqDNTYJoUBEwMsLjKfTHctnVvT9bhniT/OA6mV6tnBXnisnLqGis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=E5qqUFsl; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-640aaa89697so4329388a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 05:26:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1762781215; x=1763386015; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=WhaZSZSH3JxixsGOb3+NSOpxTTK16V/bDeAhAAUpFzE=;
-        b=E5qqUFslVJXWPHhafsxsLihzT2Hp1H7ZL3bmTpHc1vF2FQcxh/aQ06ldMfj/Vuroos
-         6hElXI3/nIMU2tmAI7rb47W4ouuJ2zEDvb8xbb8ffZIju8HaIU51HE4S6tnw71CNQ3Bf
-         SgKBbPLG2cJ7UoeLIsWfFCk78xyOgWyvCGN2fFCZjODv9YM0tjvAzWt8o0pPmpRbmKjq
-         5gvS9Pg1mDvRrHYdnSJIGr093yv9UAsFVNVIGZbrH8Ga2I9QDAIM+z0ttJolmmxcgcpQ
-         aZjjcynCrC/094+Dg13xfDzZR5iiIEW/g6WMD43PJ1HEEajIHDCWJfXyimpxSn2TnjQ4
-         JyOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762781215; x=1763386015;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WhaZSZSH3JxixsGOb3+NSOpxTTK16V/bDeAhAAUpFzE=;
-        b=av0n4A6cbpj1lstM6m+XAN8etVyakLgS0VWVpw4qytOFA1NhhFdSn7wxpG8NjIJjq3
-         nrU0yRdsSB3by7iADgPeYXd8MKFkTq8aW1GykG/keNJgBSpqUwDOArvieovqXdsiHgbH
-         Z3v0/wKWmPqndG8YP9eMjoaBa9VhQlA0u9I3poJif/l0Fay9SQAWbgP2WjFhvAKUkbxg
-         WK99rqXAOKRBsxB8fK8qRDqKke9+npCy5QKRtcmYk1gtbuz686oAU5e/GuLpTGmRLP7O
-         +1Tfab9e1psEfQbn3nUXiYh/sVYsYtgYJyKJ7WcV+B1OarSfCuzpcSb1tGuEPbZAH7an
-         TInQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVQaTJREmzArykzOtiuVHhxzLgDK/pHSJ25tKYdImkfofCbQcbF0myvz7d4yooVmBuTXi8D38QQSUGGYN4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhvoQT4pqag+6kOFJ7vSNuu10NS4CDhKFyP4kjVJxYjWu2DqoT
-	Z2dmER4Zw2KD/RvHNLcnEzEdAcKpOPWWa/dWc6WjtxpZTJ2FT7YorgOgpnz8gEuqd0CfS78s9D5
-	3UbRe
-X-Gm-Gg: ASbGnctWls2EPdy6pvkzAunGozlPN9Jtad1FZo3W0ZECJF1BPReaI5hr5vbMYmj3y98
-	8oq9BjD1lPghzdfIph7KKXQZpjxM8a784vHJFxJLLOaIE5Vge/KJilGxwBVLVGj3xh7ZjvWqMUN
-	4QX0Qqo+bYxgzNHPA2P7QSXlYMunoQi8giD3I+rfK3Z0eTLHghx6XM++x7RHeEkUWMDwYc/lTC+
-	+zMTeRc2YM2YMI/ddAowjSskS/I4zQUqcBubEdPXmKBIyRgcb+rwLdi5G3lnkO3q2emu77+Sy+S
-	JiRFhejaItnHtYrUx8jiymEDG03bnqlynzJM7Wb0nKAoNVDj+ayqIVBlJ2EM0ramYP88c1WX9Cr
-	xhr7r731cjRQNWMnjYctkgaI65eO+gvbhn07N6dT8MP0os8Wyv/r6jlEqLbUo9rotoVwpG/mRDJ
-	jssaC+KPn0wORtSg==
-X-Google-Smtp-Source: AGHT+IEFvin7sLruegH2ZxQ0SW44BHRX6xFr54ZAVGaHqC0y7M8M930cBHeCWlcadsxgJM1CQZ9cXw==
-X-Received: by 2002:a17:907:7b96:b0:b40:fba8:4491 with SMTP id a640c23a62f3a-b72e0310d6fmr928514366b.17.1762781214802;
-        Mon, 10 Nov 2025 05:26:54 -0800 (PST)
-Received: from pathway.suse.cz ([176.114.240.130])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bf97d43bsm1129492566b.45.2025.11.10.05.26.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Nov 2025 05:26:54 -0800 (PST)
-Date: Mon, 10 Nov 2025 14:26:52 +0100
-From: Petr Mladek <pmladek@suse.com>
-To: Aaron Tomlin <atomlin@atomlin.com>
-Cc: Petr Pavlu <petr.pavlu@suse.com>, Steven Rostedt <rostedt@goodmis.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Kees Cook <kees@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Daniel Gomez <da.gomez@kernel.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	linux-modules@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH 6/6] kallsyms: Prevent module removal when printing
- module name and buildid
-Message-ID: <aRHoHMJYAhSoEh1e@pathway.suse.cz>
-References: <20251105142319.1139183-1-pmladek@suse.com>
- <20251105142319.1139183-7-pmladek@suse.com>
- <kubk2a4ydmja45dfnwxkkhpdbov27m6errnenc6eljbgdmidzl@is24eqefukit>
+	s=arc-20240116; t=1762781877; c=relaxed/simple;
+	bh=Agip5VIUckJwYmuzgyCmn5a8P5/d+Pkq0U2EkPbcvFg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kOEVjAjZuB30ilvlpufJbWYurMcaKAuIZry7o+atgCMYCSfIJynsEXUeHgEAk8SmC32r8l8uzZbF4exznOjlAZJ7ydSV3gIf96mWUc+hZWUkzc4dEdoZKo6K0XwRqFqFH30b/rWJZ9Amhzp+/j2d/OvDnbQHWx/XUVPQ+s2s4jA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=dIYSIzds; arc=none smtp.client-ip=220.197.31.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=Mi
+	a422mlEesoTBfhRn/yCjSqZVQ0iuEMVkMXEpjpE+Q=; b=dIYSIzdsw2ZcuMpA4h
+	vABCCHm691nm4Pwq+QeyXDHnL3dXLmxMqqWp1Wk5uMI0WoCb0LaiMnDAqo35+GLr
+	26k8xETGE0+mheoBCbzzLeccEauCAJiBHJRWbcJbJrTVMaXkNSBqqz1PS42dnsRK
+	LDFa3YkeSOvZ6lnAqT6onNDpo=
+Received: from hpz640.. (unknown [])
+	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wD3SMIl6BFpQXf_Ag--.45629S2;
+	Mon, 10 Nov 2025 21:27:02 +0800 (CST)
+From: Xiaole He <hexiaole1994@126.com>
+To: linux-f2fs-devel@lists.sourceforge.net
+Cc: jaegeuk@kernel.org,
+	chao@kernel.org,
+	linux-kernel@vger.kernel.org,
+	Xiaole He <hexiaole1994@126.com>,
+	stable@kernel.org
+Subject: [PATCH v1] f2fs: fix has_curseg_enough_space to check all data segments for dentry blocks
+Date: Mon, 10 Nov 2025 21:26:54 +0800
+Message-ID: <20251110132654.6485-1-hexiaole1994@126.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <kubk2a4ydmja45dfnwxkkhpdbov27m6errnenc6eljbgdmidzl@is24eqefukit>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3SMIl6BFpQXf_Ag--.45629S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxGw4xWFW3Ar4kCrWDXrWfAFb_yoWrtr43pF
+	47CF9xKr4rur1xuasaq3W8AF1S93y8ur4UJr1Iq3sYyr4rWF1Skw1kt345XF1vkrs3Jr1x
+	XFZIyFy5A3WDuFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UUManUUUUU=
+X-CM-SenderInfo: 5kh0xt5rohimizu6ij2wof0z/1tbieh8CBmkR5xMTBwAAs5
 
-On Fri 2025-11-07 19:36:35, Aaron Tomlin wrote:
-> On Wed, Nov 05, 2025 at 03:23:18PM +0100, Petr Mladek wrote:
-> > kallsyms_lookup_buildid() copies the symbol name into the given buffer
-> > so that it can be safely read anytime later. But it just copies pointers
-> > to mod->name and mod->build_id which might get reused after the related
-> > struct module gets removed.
-> > 
-> > The lifetime of struct module is synchronized using RCU. Take the rcu
-> > read lock for the entire __sprint_symbol().
-> > 
-> > Signed-off-by: Petr Mladek <pmladek@suse.com>
-> > ---
-> >  kernel/kallsyms.c | 3 +++
-> >  1 file changed, 3 insertions(+)
-> > 
-> > diff --git a/kernel/kallsyms.c b/kernel/kallsyms.c
-> > index ff7017337535..1fda06b6638c 100644
-> > --- a/kernel/kallsyms.c
-> > +++ b/kernel/kallsyms.c
-> > @@ -468,6 +468,9 @@ static int __sprint_symbol(char *buffer, unsigned long address,
-> >  	unsigned long offset, size;
-> >  	int len;
-> >  
-> > +	/* Prevent module removal until modname and modbuildid are printed */
-> > +	guard(rcu)();
-> > +
-> >  	address += symbol_offset;
-> >  	len = kallsyms_lookup_buildid(address, &size, &offset, &modname, &buildid,
-> >  				       buffer);
-> > -- 
-> > 2.51.1
-> > 
-> > 
-> 
-> Hi Petr,
-> 
-> If I am not mistaken, this is handled safely within the context of
-> module_address_lookup() since f01369239293e ("module: Use RCU in
-> find_kallsyms_symbol()."), no?
+When active_logs == 6, dentry blocks can be allocated to HOT, WARM, or
+COLD segments based on various conditions in __get_segment_type_6():
+- age extent cache (if enabled)
+- FI_HOT_DATA flag (set when dirty_pages <= min_hot_blocks)
+- rw_hint (defaults to WARM via f2fs_rw_hint_to_seg_type)
+- file_is_hot(), FI_NEED_IPU, f2fs_is_cow_file(), etc.
 
-The above mention commit fixed an API which is looking only for
-the symbol name. It seems to be used, for example, in kprobe
-or ftrace code.
+However, has_curseg_enough_space() only checked CURSEG_HOT_DATA segment
+for dentry blocks, which could lead to incorrect space calculation when
+dentry blocks are actually allocated to WARM or COLD segments.
 
-This patch is fixing another API which is used in vsprintf() for
-printing backtraces. It looks for more information: symbol name,
-module name, and buildid. It needs its own RCU read protection.
+Reproducer:
+Note: This reproducer requires adding a tracepoint to observe segment
+type. Add the following tracepoint to include/trace/events/f2fs.h:
 
-Best Regards,
-Petr
+TRACE_EVENT(f2fs_allocate_data_block,
+        TP_PROTO(struct f2fs_sb_info *sbi, struct inode *inode,
+                enum log_type type, block_t blkaddr),
+
+        TP_ARGS(sbi, inode, type, blkaddr),
+
+        TP_STRUCT__entry(
+                __field(dev_t, dev)
+                __field(ino_t, ino)
+                __field(int, type)
+                __field(block_t, blkaddr)
+                __field(int, is_dir)
+        ),
+
+        TP_fast_assign(
+                __entry->dev = sbi->sb->s_dev;
+                __entry->ino = inode ? inode->i_ino : 0;
+                __entry->type = type;
+                __entry->blkaddr = blkaddr;
+                __entry->is_dir = inode ? S_ISDIR(inode->i_mode) : 0;
+        ),
+
+        TP_printk("dev = (%d,%d), ino = %lu, %s, blkaddr = %u, is_dir = %d",
+                show_dev(__entry->dev),
+                (unsigned long)__entry->ino,
+                show_data_type(__entry->type),
+                __entry->blkaddr,
+                __entry->is_dir)
+);
+
+And add the tracepoint call in fs/f2fs/segment.c in
+f2fs_allocate_data_block() function. Find the location after
+locate_dirty_segment() calls and before IS_DATASEG() check:
+
+	locate_dirty_segment(sbi, GET_SEGNO(sbi, old_blkaddr));
+	locate_dirty_segment(sbi, GET_SEGNO(sbi, *new_blkaddr));
+
+	trace_f2fs_allocate_data_block(sbi, folio ? folio->mapping->host : NULL,
+					type, *new_blkaddr);
+
+	if (IS_DATASEG(curseg->seg_type))
+
+1. Mount F2FS with active_logs=6 and age extent cache disabled:
+   # mkfs.f2fs -f /dev/sdb1
+   # mount -t f2fs -o active_logs=6 /dev/sdb1 /mnt/f2fs-test
+
+2. Enable tracing and f2fs_allocate_data_block tracepoint:
+   # echo 1 > /sys/kernel/debug/tracing/events/f2fs/f2fs_allocate_data_block/enable
+   # echo 1 > /sys/kernel/debug/tracing/tracing_on
+   # echo > /sys/kernel/debug/tracing/trace
+
+3. Create a directory and write enough files to trigger dirty_pages >
+   min_hot_blocks (default 16), which will clear FI_HOT_DATA flag:
+   # mkdir /mnt/f2fs-test/testdir
+   # cd /mnt/f2fs-test/testdir
+   # seq 1 8192 | xargs touch
+   # sync
+
+4. Observe dentry block allocation:
+   # cat /sys/kernel/debug/tracing/trace
+
+   The trace output shows dentry blocks (is_dir = 1) allocated to WARM
+   segment because FI_HOT_DATA is cleared when dirty_pages >
+   min_hot_blocks (default 16). However, has_curseg_enough_space() only
+   checked HOT_DATA segment space.
+
+Fix by checking all three data segments (HOT, WARM, COLD) when
+active_logs == 6, similar to how __get_segment_type_6() can return
+any of these segment types for dentry blocks.
+
+Fixes: ef095d19e82f ("f2fs: write small sized IO to hot log")
+Cc: stable@kernel.org
+Signed-off-by: Xiaole He <hexiaole1994@126.com>
+---
+ fs/f2fs/segment.h | 31 +++++++++++++++++++++++++------
+ 1 file changed, 25 insertions(+), 6 deletions(-)
+
+diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+index 1ce2c8abaf48..c13400a53013 100644
+--- a/fs/f2fs/segment.h
++++ b/fs/f2fs/segment.h
+@@ -632,15 +632,34 @@ static inline bool has_curseg_enough_space(struct f2fs_sb_info *sbi,
+ 	}
+ 
+ 	/* check current data section for dentry blocks. */
+-	segno = CURSEG_I(sbi, CURSEG_HOT_DATA)->segno;
++	if (F2FS_OPTION(sbi).active_logs == 6) {
++		/*
++		 * With active_logs == 6, dentry blocks can be allocated to
++		 * HOT, WARM, or COLD segments based on age extent cache,
++		 * FI_HOT_DATA flag, rw_hint, etc. Check all three.
++		 */
++		for (i = CURSEG_HOT_DATA; i <= CURSEG_COLD_DATA; i++) {
++			segno = CURSEG_I(sbi, i)->segno;
++
++			if (unlikely(segno == NULL_SEGNO))
++				return false;
++
++			left_blocks = get_left_section_blocks(sbi, i, segno);
++
++			if (dent_blocks > left_blocks)
++				return false;
++		}
++	} else {
++		segno = CURSEG_I(sbi, CURSEG_HOT_DATA)->segno;
+ 
+-	if (unlikely(segno == NULL_SEGNO))
+-		return false;
++		if (unlikely(segno == NULL_SEGNO))
++			return false;
+ 
+-	left_blocks = get_left_section_blocks(sbi, CURSEG_HOT_DATA, segno);
++		left_blocks = get_left_section_blocks(sbi, CURSEG_HOT_DATA, segno);
+ 
+-	if (dent_blocks > left_blocks)
+-		return false;
++		if (dent_blocks > left_blocks)
++			return false;
++	}
+ 	return true;
+ }
+ 
+-- 
+2.43.0
+
 
