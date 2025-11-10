@@ -1,119 +1,97 @@
-Return-Path: <linux-kernel+bounces-892670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74B32C4594F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:17:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 92926C45958
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:17:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B1BD18909CB
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:17:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AC21188FC12
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:18:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 341732FFDC1;
-	Mon, 10 Nov 2025 09:15:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BC432FF659;
+	Mon, 10 Nov 2025 09:16:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Zxqq0Edo"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FND1wwhq"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 916DD2FF67F;
-	Mon, 10 Nov 2025 09:15:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 044EA28CF6F
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 09:16:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762766148; cv=none; b=SpCOGb6nv8MA9HpFTeI0qPRHyaKnLq55HgsgbcedAz9vaEoXPM/Q0OYX4fMNPWCuM/zeZRkfU+yf0bRZaVWoFSKsdWdq9U7yDJL5tArPxpA+Guyz5OGkB56Gs+mZVLSBaWH/98q2ZBeQ1+k30lXws8umOrh0oB2NlWUK1n/qFF4=
+	t=1762766218; cv=none; b=FfcoLea88SAs1ysrDSmpcRwNBvcVP3ClJtevP0loqN193M7uHjrcL1t02boZz7fCbV/+73OAJFX+A2vd4Y9VZT3f4o2q+Of3mhBfijjVH0tr9rQ4HkANuPW4FpEIrQBrqMEVXHsTD0PoxtRls63EldwPLcpqIXLvj+jdaaSjP2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762766148; c=relaxed/simple;
-	bh=IukqDhOGvnw1Tqz1mG0wAw9NUo+Um5BcYOuqetCh9ls=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GQAqjmbAmDfj5Y2IA3GuHmbz2K8EdAGHX4IpAtz4uP7pWWP0iw3bZpp07aoS45DGKP6b6OL8/tvKN3T1zW6qm7rm7YmJFxiCPxWyBLT93lp4d/Z91CGK2LlKJFmKvzMqE1/8qTx+E4vfaXyAVNs9TS1FXRAeidYTRGvWkk1WY2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Zxqq0Edo; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762766147; x=1794302147;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=IukqDhOGvnw1Tqz1mG0wAw9NUo+Um5BcYOuqetCh9ls=;
-  b=Zxqq0Edo8GzKI8gPzN98CdJEqvAmTkjJOLSG9winPZZsHk268DAneQ2O
-   sOX9Q26JCV5IvQ0xgmLAdGAX57kqPSBNdchvH2rfkVjVIH1MDGcvHUaYn
-   0MX9CPziFx0KyAFbwb56i9YA9nj5qzp8v9qGEhB5zmPWiy0EN1xwF5EwZ
-   dyS5/JfkcDjwAOGUJf4Vy4sf21EtudQwKkrh+dk5zlo+FPlQAGERDSmTN
-   C7bVKlNtwmP6GKRBFMum3omvbbYLEcVAtseqwKySqJP60Scy66NPjh+jH
-   EqOgjfL4CNlC3DxjsnfhFzmc4JIiVGbu3SQBev/qeSkmebFCXht0dSRTo
-   Q==;
-X-CSE-ConnectionGUID: d8+6F621TlqZzkOnUjgg4w==
-X-CSE-MsgGUID: G4qX3XiRReyVbRQiaKsXog==
-X-IronPort-AV: E=McAfee;i="6800,10657,11608"; a="64722853"
-X-IronPort-AV: E=Sophos;i="6.19,293,1754982000"; 
-   d="scan'208";a="64722853"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 01:15:46 -0800
-X-CSE-ConnectionGUID: jcdyeMmbTXWbgfKJdZq2Mg==
-X-CSE-MsgGUID: vWfUZBPlQ4GI+VukwDNtcg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,293,1754982000"; 
-   d="scan'208";a="187932247"
-Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.232.65]) ([10.124.232.65])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 01:15:42 -0800
-Message-ID: <97eb5ae9-6c99-497e-a1b9-80bf365bf2d5@linux.intel.com>
-Date: Mon, 10 Nov 2025 17:15:39 +0800
+	s=arc-20240116; t=1762766218; c=relaxed/simple;
+	bh=tCq206NdGSXhHhkxeyivxiNaMMGS4bP8iHd62J1xHE8=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=uWADuisnBbnp97pDF6SAE1hv3WVcVDUR4mpON3xbuo9sCHxNG30vDOJo792cgUihfSJnaKKEypPPJbJAHwbY6JHrkT+QHa895UJyYuEQfu5ftTvlooSU7T5vOJKdPUsRvEZyPZfdqDzVa7vHU29JWu3b+BRBdwhnJpowP+fZV9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FND1wwhq; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-46e47d14dceso13716025e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 01:16:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762766215; x=1763371015; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8DCz0mrUxydHy6qjTOATBcYgT6UozKbC5ALC3SvZaJg=;
+        b=FND1wwhqnhZoLnIgASlyTbkw/PrUltyKmDwLE9+sMv3/BbYEiJFIdvYt5CxGZUSo0z
+         Cxq1uYnBXDYnPmsXEkjPT/h05LpRyfozG/8IK17tzJG+qhjHgtVj60srIeK9yiRJYqlt
+         sNSB4wi6ntGnr/Pj6wvrQnMVGg0UB6NeF90ICtwE0Qo8W3NCHcRknaPwKMygb2b1SOVp
+         x7r5SyqaWTruibsv2a8NLmyeoLsmnSga3i272FEH59lYhuUHIZ5VA43QZxbocZR/ghGL
+         u4T30tQLw5mDWNX2yCgo7O2UUfkHRo4PNqCX44ntUkOKF83w1jHKbVUhxmGwM1vgl5Yu
+         EhcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762766215; x=1763371015;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8DCz0mrUxydHy6qjTOATBcYgT6UozKbC5ALC3SvZaJg=;
+        b=Hv6XtcIh9WqtMqPFNAbiZK0qmrJgOJB9cGRWKd6GwOi0rpPBkJYEKCKwalZKKiTf42
+         gGVPJof0177QjI9D0a+EnFD9A0IyKYZ/wR3K4zpUz/hy1w/2SDcgmrVhSwlGzzgC966L
+         tEJ8jd9ctCvPOjln08pZH+idgeVY5A8aS9HUzbeeGxGLqwM1zu491fQvc+OJv6J3pgta
+         KlLDE54oyIYI6aWPGeKlpcB4vJUCJgBZVmbOd1YSqbcG8/z8+pRK95PBT0DFdQfKgmHe
+         scFWfff9cbARe+HXND9iyq6wRTLsdxOJ5kW0yaXOup/1bErG6eXM3Feys6xsNisO2ocP
+         EvVQ==
+X-Gm-Message-State: AOJu0YyImcWz8IxdcQv7FGPd1AOSGmegAgC02sqOd+NKkFVgjdT7bs9j
+	6gOZkm+A4esLMq0eTNIQgcR6RFA17pR4q5hZMHn3MgFEXm1K9QeA37kfyqQOlmMzv71NumWrCU5
+	JVSKky4mBpV7KzIqC+w==
+X-Google-Smtp-Source: AGHT+IHJ0Wfc0oAyeXl3CzhYOpmTVuUwWYrw7MhcHKSK7WmFvUCgdXgPO3lw0ZhkywgHCWYQIR+SztdrcuiXOf0=
+X-Received: from wmbjj18.prod.google.com ([2002:a05:600c:6a12:b0:46f:aa50:d716])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:4fc7:b0:46e:506b:20c5 with SMTP id 5b1f17b1804b1-477732834e3mr43391405e9.26.1762766215290;
+ Mon, 10 Nov 2025 01:16:55 -0800 (PST)
+Date: Mon, 10 Nov 2025 09:16:54 +0000
+In-Reply-To: <20251107202603.465932-1-lyude@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Patch v9 10/12] perf/x86/intel: Update dyn_constranit base on
- PEBS event precise level
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo
- <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
- Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Andi Kleen <ak@linux.intel.com>, Eranian Stephane <eranian@google.com>,
- linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
- Dapeng Mi <dapeng1.mi@intel.com>, Zide Chen <zide.chen@intel.com>,
- Falcon Thomas <thomas.falcon@intel.com>, Xudong Hao <xudong.hao@intel.com>
-References: <20251029102136.61364-1-dapeng1.mi@linux.intel.com>
- <20251029102136.61364-11-dapeng1.mi@linux.intel.com>
- <20251106145217.GA4067720@noisy.programming.kicks-ass.net>
- <09210c12-cc61-4af5-bd13-830fd9650f9b@linux.intel.com>
- <20251107130552.GB4067720@noisy.programming.kicks-ass.net>
- <a0416429-23d4-4f4f-af73-bcd87b4e773c@linux.intel.com>
- <20251110090311.GW3245006@noisy.programming.kicks-ass.net>
-Content-Language: en-US
-From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-In-Reply-To: <20251110090311.GW3245006@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20251107202603.465932-1-lyude@redhat.com>
+Message-ID: <aRGthqv1efOU3Ic_@google.com>
+Subject: Re: [PATCH] rust/drm/gem: Fix missing header in `Object` rustdoc
+From: Alice Ryhl <aliceryhl@google.com>
+To: Lyude Paul <lyude@redhat.com>
+Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	rust-for-linux@vger.kernel.org, Danilo Krummrich <dakr@kernel.org>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Daniel Almeida <daniel.almeida@collabora.com>, Shankari Anand <shankari.ak0208@gmail.com>, 
+	Asahi Lina <lina+kernel@asahilina.net>
+Content-Type: text/plain; charset="utf-8"
 
+On Fri, Nov 07, 2025 at 03:25:56PM -0500, Lyude Paul wrote:
+> Invariants should be prefixed with a # to turn it into a header.
+> 
+> There are no functional changes in this patch.
+> 
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
 
-On 11/10/2025 5:03 PM, Peter Zijlstra wrote:
-> On Mon, Nov 10, 2025 at 08:23:55AM +0800, Mi, Dapeng wrote:
->
->>> @@ -5536,6 +5540,14 @@ static void intel_pmu_check_dyn_constr(s
->>>  				continue;
->>>  			mask = hybrid(pmu, acr_cause_mask64) & GENMASK_ULL(INTEL_PMC_MAX_GENERIC - 1, 0);
->>>  			break;
->>> +		case DYN_CONSTR_PEBS:
->>> +			if (x86_pmu.arch_pebs)
->>> +				mask = hybrid(pmu, arch_pebs_cap).counters;
->>> +			break;
->>> +		case DYN_CONSTR_PDIST:
->>> +			if (x86_pmu.arch_pebs)
->>> +				mask = hybrid(pmu, arch_pebs_cap).pdists;
->>> +			break;
->>>  		default:
->>>  			pr_warn("Unsupported dynamic constraint type %d\n", i);
->>>  		}
->> Yes, exactly. Thanks.
-> Excellent. Could you please double check and try the bits I have in
-> queue/perf/core ? I don't think I've got v6 hardware at hand.
-
-Sure. I would post test results tomorrow.
-
-
+Applied to drm-rust-next. Thanks!
 
