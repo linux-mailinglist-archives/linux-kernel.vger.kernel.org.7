@@ -1,190 +1,301 @@
-Return-Path: <linux-kernel+bounces-892471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF441C4528F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 08:03:43 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D719C45292
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 08:03:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 587401883459
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 07:04:08 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E49EC4E836C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 07:03:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A35A21A92F;
-	Mon, 10 Nov 2025 07:03:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B187224B04;
+	Mon, 10 Nov 2025 07:03:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OTmO7GHj"
-Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="PdWF2PW/"
+Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013008.outbound.protection.outlook.com [40.93.201.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2299713FEE
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 07:03:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762758215; cv=none; b=jdOpFN5q5ZSjXX0WtsBi609AqB5/39zVSlsk+T4IGSfryLXN/Q/OUpNREab+kdn7Ti0eLUWBB3E+dTtTbyBeNAEufLmINed2pDofwyyKJBQzIBp/aL39lRNiXSJYcXf01bhdbdbIVeLPhCG4jn3Xlo3BPAocDwRDzPvRlgESLco=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762758215; c=relaxed/simple;
-	bh=JRZa9hfwsWOsaBxdRONGO80g6WxN8n6B8FTon2v5I2E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ey3OcxbplsrqG9mXZ11qr93NEm7fQPtwiPjwfr4AOf9/h+t13acCpFSFVKoFPoVmWVtrLkHUVUMr+1aSdgrcNIHEQx3/8+KwKiiat7kL3wDyvdsF38aiZZacpuXvWM+flUiv+8NM6zc9BaJFeNdn53pD8vc9/GFrmWdgcfsQJRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OTmO7GHj; arc=none smtp.client-ip=209.85.161.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-656ee8052bfso134744eaf.1
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 23:03:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762758213; x=1763363013; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kZH9HBphOAagtoFjePNpMdaPRYh83TbkuAlXlrLr400=;
-        b=OTmO7GHjEUUqTZnBbAGqlrzjHvZpg4qycC232YpYWeVxTkC7RUhoZp06ZcDJ7jFb2s
-         0r8/FDFfO3nD9obH+qzWNmUue3tOM5Bz4r5wB7f+N6zyJx4fr6q1vJuXZLbU/CIRBdV4
-         0jt12H59Pwq1pCM7kqTIWGcxhNJPqWW0/OqodCPFtljjS/kOkyOfARhQ15DlzpzHnN3f
-         rhID/Mr80/AyWRyQuxNwDXOXOf4BgJPvNaaZywN1QHhrNXmll2LLpjjPm/O8IpvOtB1s
-         7tC3fHu9gMMttSuW7mtLFuWzgOEEDAuhhgHaYhDVRZIBXHvxPbQmOp6wsWhZ2ij3FUMb
-         KWZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762758213; x=1763363013;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=kZH9HBphOAagtoFjePNpMdaPRYh83TbkuAlXlrLr400=;
-        b=a8dL8i3SYTtVN2FHaaBiDmUvcOV+BBtTYKeRxNiO7dHh1ZQmvJqig92Saa5t7tsUKc
-         meUuG755IoinjtxVqvCA5vG0iNK0bskuLcFQqUU5L9Oy2ny9p9/Ik/uDShrvakhsyuuy
-         HPI2tsuawRewZwjEQXTDXt8gFeCbOgJ/WPugPqtMQcFQUHqMN4LndgAtyWqne4GW1evS
-         7Lw4v0MmIwwbOxqceVKMXxrXP2YbnYYUiA5DI5vmmxr+2T66ENChmU18kXBA1nkMXmSL
-         MFua2xODbd8434dX3sxITX+UQ0PTmRTV+Kosqn5YEZiQfs/Sceu2vTC93gXNgtK91R30
-         /uKw==
-X-Forwarded-Encrypted: i=1; AJvYcCWBCvYEcMSZMoZOk/Nx4TygMhXvb/mJFwhCEcBlYB3EAHqEcz50jh3TKA6/OOSHRsfGMUdhWggGetco4/w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzah2L//OOS8YMUvy08oNsTcZKhS59nP0akbod4qddqB8mF75dl
-	ByUEbJYaU0UkxInAajnIH43dE9f9s2+LEZZfxco/E1lxEjR8eYRowyE9CAojsH4fZdmx8USAPk7
-	P1UQ4m+7qcmdE7TXzm/zgw4e+utiQK0+75th+Tzy77A==
-X-Gm-Gg: ASbGncuTIZuX7vVtTF2pBi4vhYQIRufCm4luW7hIq3vQoO1Fe4SPz2a0ZEqj2hUIar5
-	CLH/5Xz9SutPWbzLwaFctJFRPKFEdwBDqCHovLFkXzue3Q5//dQnOdMUTIRIW53b9bELnYCj3zk
-	oJZcmQ78iLskCo4A1KEYClHw11I0dyHiU5uY6KQT1UOse/et8ZkumB5a5XJNYBqtNmqPvtiiyHr
-	QoxoyCje4CPDAHd+Gv+Ues/FHIqQsQ0jPjcVzBscDLVDrE0s/2ydroq2EOn6hS3G6Gb8gQ1h+l1
-	X0G7
-X-Google-Smtp-Source: AGHT+IGfcMCh8A+6KX8WwI3t/ZpN/O6TB7L+kmvdmryqmExFqyiRM6QCUcw0qA75XS8PzWEIgZCQDItmCsRNchsPauU=
-X-Received: by 2002:a05:6808:3006:b0:450:9f5:dcbb with SMTP id
- 5614622812f47-4502a1ba355mr3085976b6e.22.1762758213078; Sun, 09 Nov 2025
- 23:03:33 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B74B13FEE
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 07:03:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.8
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762758230; cv=fail; b=DvW/UD9zFX4CReRi0nPZfFB+Ra/UQNpBtOF+4eiGEtZ5vUjDJ9ce/7xcNebrpvun1qZigrRZVnenv+9Od/DOK8lwXNMha2lJXK7StonsDNW1U23SwafBjN6UV8iMIPJR0GmvyDOXf7vEAWYOgScPARG7fHFIge3zFV0wZ7gAx44=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762758230; c=relaxed/simple;
+	bh=EuYVba/EpT4XTA0ozf75L19M0poD+9G9lNaKlBdTLNY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=tRI0aY7BOdP8qi4qyPZ7auVv0VgDJQn3fB9q93gpfybVO3XNFJe4rrHq5kNCCMts6zrgTJ/7atUtCwp9llTBnJ38zW0b7HOFrmuZOxUljwWbI7pZAMBaJCG4uZy2wyxe6fTSdzf6wjvmL+zMq8SJaG5/SNwNNIXYXmfa5upiGBU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=PdWF2PW/; arc=fail smtp.client-ip=40.93.201.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=WVZKmpnyqGUDldsQe4lc6xJ1/yzY3GpGW+cbcrAB2pXe1MTrSDTtfSLqu/B5T2bWXIC57iRyMO/5nTnd6zheg6KcbAnqsSFeD7LMeU9lbWwqkm/ia694k62VZcVnszZm/eNgAidAifeohrLMUNBTrSMLMtLxlKDU4PSjrpzrgHpguYadf/NS4Gep0URohrodObXetWf8ITlAwYK21Wtv7YtlH0W+Mn1B3oO8xHwvIQQdX38coOHUNkrsQfTGDulRAZXpWnDcNt74Z1rNs5zzdp8qI5v+MmXIuBQhE+snWAWq3y+KSKuLY/5dzKBzku5tJskRMt8be9luoi+r3FQP+g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=5mO+BJVB8uKGp0qhvBqlux12uy3iicLz9Zie41Ojn8U=;
+ b=MwxqQ4Jj9oEjupet+wVPg7JZGenZZ1R7lNyICAA1wF2k2Fcsma2thI7zDvJS2HPYRlwbvEGfmL3tmifWV/Cp7aL3SXBGuVlS3+E6u+jlF/igFX8oZluldzzGEpyOBePA42/3gR5/qIL21rYeLuRVSC4IBZQFXT5l6ht/GRB7JLirhvbfY1JGk3r5KCInJ87wwxCWSKkZNRPJ0hJdHQMZy9S9PZG/n8oB7JTK9MYKPPxf4RWfT7kvFVPXvarVT3Q/FGz0Eda2PWhLyCXd2xbmLSgNxKTdsXvVxFnscx8o4y7RggzfEC9FifCdepTjTlnnFEqChcrce+P9XOhGfGFbqw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5mO+BJVB8uKGp0qhvBqlux12uy3iicLz9Zie41Ojn8U=;
+ b=PdWF2PW/zONN5C9B5HGhiDEzkFtLKEPJTJhclzpL7v6431SC0/vuiLfhvHKS4iM/G/z5L+bfoNNOkJdAyKJrfgj4hyEs5yALa/aiIQTzWMx8+dQn7qI7Ax2Io1iiYFPgmVngxgFKfDHxKzudHhcyW80MWs2tascseDrQbE9LuJJg+2ln/NSpkx6KbG5Ipeazlr1j/vG/qmcNOVtNRphGR/BBnICgUMuYMDDqxrATms6vydkZihZriAR2DsXMWiQEtarJoHFx9oNsxBDvSPjFx6/zT6tQSFH3WqXAQ0MDnkEnneQEL85615SpftHEd1f919WBvv2VnyEJnryjVSO3xw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
+ by SA1PR12MB7200.namprd12.prod.outlook.com (2603:10b6:806:2bb::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.12; Mon, 10 Nov
+ 2025 07:03:45 +0000
+Received: from LV8PR12MB9620.namprd12.prod.outlook.com
+ ([fe80::1b59:c8a2:4c00:8a2c]) by LV8PR12MB9620.namprd12.prod.outlook.com
+ ([fe80::1b59:c8a2:4c00:8a2c%3]) with mapi id 15.20.9298.015; Mon, 10 Nov 2025
+ 07:03:45 +0000
+Date: Mon, 10 Nov 2025 08:03:37 +0100
+From: Andrea Righi <arighi@nvidia.com>
+To: Tejun Heo <tj@kernel.org>
+Cc: David Vernet <void@manifault.com>, Changwoo Min <changwoo@igalia.com>,
+	Dan Schatzberg <schatzberg.dan@gmail.com>,
+	Emil Tsalapatis <etsal@meta.com>, sched-ext@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 02/13] sched_ext: Make slice values tunable and use
+ shorter slice in bypass mode
+Message-ID: <aRGOSSN9PiCBCoWy@gpd4>
+References: <20251109183112.2412147-1-tj@kernel.org>
+ <20251109183112.2412147-3-tj@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251109183112.2412147-3-tj@kernel.org>
+X-ClientProxiedBy: MI1P293CA0018.ITAP293.PROD.OUTLOOK.COM
+ (2603:10a6:290:3::12) To LV8PR12MB9620.namprd12.prod.outlook.com
+ (2603:10b6:408:2a1::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251106102008.1310234-1-yangzhao@kylinos.cn> <CAHUa44FAUyQNBKmzugu-_gv_Jy_AftZqq=RSbKUnK1QQbL8Z9A@mail.gmail.com>
- <900f69d4-6ef9-fe1e-d664-e248e41da752@kylinos.cn>
-In-Reply-To: <900f69d4-6ef9-fe1e-d664-e248e41da752@kylinos.cn>
-From: Jens Wiklander <jens.wiklander@linaro.org>
-Date: Mon, 10 Nov 2025 08:03:21 +0100
-X-Gm-Features: AWmQ_blYhauiyF-OMkjBxubo-x9ZLpIW-Wp0gXh6FaZH1ZHsThtizotDjFMWNFI
-Message-ID: <CAHUa44EXPtdfPogjRirGB=aZ+ex-bD-iRf7m_=1OVk_KAY03_g@mail.gmail.com>
-Subject: Re: [PATCH] tee: fix illegal pointer dereference in tee_shm_put()
-To: yangzhao <yangzhao@kylinos.cn>
-Cc: op-tee@lists.trustedfirmware.org, linux-kernel@vger.kernel.org, 
-	Sumit Garg <sumit.garg@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|SA1PR12MB7200:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5a0b434d-9bc3-4cb1-63a1-08de202749e8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Kd0mNuGXUGncvMPjn+pYV1Kv4I5JBJDDfBywVNk16DYzC8LvFS3nDiSTr+Kn?=
+ =?us-ascii?Q?3KmGv32chD/wxXFSswkGMNWAhJLfgizH4vOQO96vievppfxDLbgsCeUkiTgG?=
+ =?us-ascii?Q?TOdEmu3ApEDxudeLM49L+gVHyeAHx/yMWoxcNIvDFqUBtZAj6b5/FAWb4CTE?=
+ =?us-ascii?Q?d95oDO+NTvIMRxnLxZh3Txbmh9WI6coqtncdGnuXnLs/1fbx225+hAjVary6?=
+ =?us-ascii?Q?kMDzCbfw1Xcv+29df61v5ccKBtGfkiKxYqpBPfSauTRA9BQMFIk1sNbswdmI?=
+ =?us-ascii?Q?YQZh/xgP3m02wz1lqHMpQzMhzJvgHydwFvWAVxMdE0tCvBmLpbc+4uF3bpG1?=
+ =?us-ascii?Q?Z89ZFgDI9lbRCSvnjQT6DAypv2UothzTpje77uxmpdfrMdekFzz/w3w5wqT1?=
+ =?us-ascii?Q?FwxsWyQ9LgU+bQ2wvVjUSSZYBESu+dvUZ7ge8zcCDA2gbJ9pGG7iWou5CwIc?=
+ =?us-ascii?Q?r0KW3Kl+iEOutNTTrtM4jDHjtDuMhIl6mPq6CVrpgHSFwZC2qVRw0POudpLb?=
+ =?us-ascii?Q?kpqhHQaZY1fqEmp6XZnJS/By3T9sOr5xDmKm+nbiDhmZYx3DPtwTZSkF6lNl?=
+ =?us-ascii?Q?5s0TQS2vyUCTIrO39nBiLZQ+NueirMVASEP/Rmm6uKt/C6Mqc0SMrNMTYE0f?=
+ =?us-ascii?Q?YBKvLizCZ/IIJOC6iZ3LeyduLP1qQ1wRsGrU/TW96Lbt7X8cf+sTdS/Jx8+e?=
+ =?us-ascii?Q?zii1O3M7r7+Qaq1C4RujubNwMjXsEMd2jAc1qnN1ZglorDDAVQ3oP05oP/2f?=
+ =?us-ascii?Q?v3t2OY+5lm1qd4FsNDjn2yLV8+7WIfW1IYPrrz+7wLlxWd5U8BDquMrCWeVC?=
+ =?us-ascii?Q?Nk/KKqHWnww8AnFqpxPmrpZHzBoh7YQxSMsTDvpZe37b+nmeRihlxMYcEo21?=
+ =?us-ascii?Q?DvEI3cndKH25NnDw6bajQq+VemKNZWeHCHPeCJ76TaWMXZDlkabf/RpNC66p?=
+ =?us-ascii?Q?lUiJC+AVejjK46OQUp6sd0XMLO54E5HdFwQyjgSRNL1rm94wuI225BHGfy0k?=
+ =?us-ascii?Q?RYrQliCcJE5vw+HWBczAK2StMTheQ5fbj+7A4YqgK9dxJWLUW6oKRh3rSgnJ?=
+ =?us-ascii?Q?vZjKAJN8DRRr4oFOQQddBiT9HqpgWlQ2FN4figIrR2DFb9KExYK+x/+d1rEF?=
+ =?us-ascii?Q?7DesSNhdh1o/G4EDVDwSDnOJGG29c3168JQAEOGdsCH6G7pS22iV5UJNgrEQ?=
+ =?us-ascii?Q?yY4SSbLZUiUESo5HqXYAAQAp3KbgOFiDOqkSdGdQKny+6OkAyHwZdonDuZXB?=
+ =?us-ascii?Q?EofLzWgbM+xsIIW1amf+0SeuJXGrtQS8tZiLbuOZwEjIvkdIlOxhbtMkmGdT?=
+ =?us-ascii?Q?VWqUIC83FKbWy4l3spNPG1xeI4voh0ALLTVBkSQF8I5Lf9dd9NOlYWuxut1y?=
+ =?us-ascii?Q?ieNmQMr540j0saUKWwZc9YB9vdIiz7/d29umTyMHJ1cQ7Hzt+nXUsBsmw01+?=
+ =?us-ascii?Q?ULU+/aYe90aQka1EQQeihGayf0pFnvEh?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?b8m5gEjcHjHxym/aIuUKLsvH/P8SUTodXj3uXj3H/GZ5L/ph/TkhZnqU/qJj?=
+ =?us-ascii?Q?wfvROlRFvEDvaxMYFHJTHPnCCjSeIkDsUxAO4HjBBk9QkPQKlykEL+W46yxI?=
+ =?us-ascii?Q?X6+zTqaMATaTuiw8pGllcYcmJWuYQlDZJTX1ZcloofGQOh9zR+T2VrmBcWQc?=
+ =?us-ascii?Q?bTNoZRNcNxDXuoCpqSSkH+HcpV+FfzQGFywHtruE5S1694cqsrNJIS/Z81g9?=
+ =?us-ascii?Q?V4KrOR3qvEX0JGrGgjSsol3daqlRXWpcdmJitfgd/y9BkpVuIuVcMWkeQ4Q1?=
+ =?us-ascii?Q?qPLMHRlSdANitUITsExILbEzUw2XB6y4dIUkqZH5plfXHrmyaZXPLtAIvt+l?=
+ =?us-ascii?Q?JVzmkcAX3MudOCFSOqB45wKh9LLVMQ97Ydaxb3SwESp03Jl4oP3JKwkKvcYB?=
+ =?us-ascii?Q?UZcw1tJu+ks2agefcNhVLAgP+UuhsQiGtm/0WZRX9X5D+G+enRNANO6GDcZg?=
+ =?us-ascii?Q?WOtQRjVj/Yr0uieTEWsHILZf3AQljibA9tuCVs03u1YPwBx3MjYATGF/RebX?=
+ =?us-ascii?Q?pR1AwbzlyxHuJbf6+f69N4HW9iVwBvESO9oeLhKSwBTtwpGrUsXksGbKxDV/?=
+ =?us-ascii?Q?ZuIBAQ+yFXMh2efrdKtAl1k/iLJAmvoY+/63uAXbKEuFCJz8ABNEwFnT2CSZ?=
+ =?us-ascii?Q?ZKINjnt1z+36stTcSvhcaFll7n1seKq0Kjx5oVTkQOmL5gCPwOoHb3DwmruN?=
+ =?us-ascii?Q?nYa9aAx9jo50yrcQqikpVqXBDDI5O3coFS8tfvSOu9v2H1GFcL9y6nsJNX6r?=
+ =?us-ascii?Q?OcedohL+SOma7iX89IxsKetxoGwOTxB8mnebCBNSxXp+4VdIPgWyyxTv6CPC?=
+ =?us-ascii?Q?v6Aokl0/QX9suqWKwiMrPEayPMLEfdqNpiiFIr95tFbn6O0pUWQiY8z4a0U3?=
+ =?us-ascii?Q?Blp5aw6RU4sTE5CCtR4rJXxsxQfygx6m/FMd/Eksy76FUJF7aKZ5bzku32Rm?=
+ =?us-ascii?Q?T6OxUfEoDKT7mWLlzLmQVzxi+JRpgPcfA2QTrVNaqur40QMvvIQVLlOgEBr7?=
+ =?us-ascii?Q?DhujbipFJwo15VP297snTguf0p0fqYHkyHnLCB+RtwEH1saRd1iKbJGGvHm4?=
+ =?us-ascii?Q?ZXpognzrVvarhSXXkxKs/YBhpe8h5M/RLiSOtRTz+fIEMR2QHYLSLnMn9sqj?=
+ =?us-ascii?Q?O7//ju0tzU/FZw3z+I+t/IiMBatyHXo9UKkpH7h+j4N6VpvC0A5PMZQSr0Aj?=
+ =?us-ascii?Q?1maxzIug0c9xiW66NS8OmbPfryz6LnmQH1Boa5VkfKiyrQbKqwEEj7ct76q1?=
+ =?us-ascii?Q?nL1sOXFNr5mgQPSZnSuB93Xdpn8xspU045J2JghIHRXe2cXwPqFyVvPiyAOn?=
+ =?us-ascii?Q?3bdkyj6bm6I1BtdOzewK4AW4lp3nig1EDDxwdydR6qnJBfcLkeVaT5ILsqDY?=
+ =?us-ascii?Q?zp3uNQMksmEzUqxoUPEe5cVJ74aHznLNq5ICKbwYUCbhGWKhqIWOMyvefhCS?=
+ =?us-ascii?Q?Wcde7wueqndcXnNFiSyPNBTeMDSt6CvsugiQKVyuwt69AL++qCp6bsHXtXO0?=
+ =?us-ascii?Q?bQbarvmEmfEK2B4p6nQUGiSUggxMlMZr21odl42Ggo/uH4/AJX2YF6ZDWi79?=
+ =?us-ascii?Q?5TmIHLOC+0Yl+185LC6bUih+kV6wEKac+bTWK2cF?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5a0b434d-9bc3-4cb1-63a1-08de202749e8
+X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Nov 2025 07:03:45.1121
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ijzCWslCj5iJ2AUmPPfyGfYxltiJO+A0RSQiOpGEC5bx7PqIXtH9JCl4MDYZg7Ma3h74cKvdf/bflrc1Ns6hGg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB7200
 
-Hi,
+Hi Tejun,
 
-On Fri, Nov 7, 2025 at 7:14=E2=80=AFAM yangzhao <yangzhao@kylinos.cn> wrote=
-:
->
-> Hi=EF=BC=8C
->
-> This issue is indeed caused by the mismatch between the TEE version and
-> the kernel version. Currently, this patch is only designed to address
-> the problem of ensuring that the kernel does not panic when the TEE
-> version is incorrect.
->
-> The virt_addr_valid() is used to check the validity of the pointer
-> address, because during the test, it did occur that the shm->ctx pointer
-> address is the address between the user space and the kernel space. At
-> this point, using IS_ERR_OR_NULL cannot detect the legitimacy of the
-> pointer address.
->
-> The problem can be viewed at the link:
-> https://github.com/OP-TEE/optee_os/issues/7575
+On Sun, Nov 09, 2025 at 08:31:01AM -1000, Tejun Heo wrote:
+> There have been reported cases of bypass mode not making forward progress fast
+> enough. The 20ms default slice is unnecessarily long for bypass mode where the
+> primary goal is ensuring all tasks can make forward progress.
+> 
+> Introduce SCX_SLICE_BYPASS set to 5ms and make the scheduler automatically
+> switch to it when entering bypass mode. Also make both the default and bypass
+> slice values tunable through module parameters (slice_dfl_us and
+> slice_bypass_us, adjustable between 100us and 100ms) to make it easier to test
+> whether slice durations are a factor in problem cases. Note that the configured
+> values are applied through bypass mode switching and thus are guaranteed to
+> apply only during scheduler [un]load operations.
 
-OK, let's sort out the secure world side of things in that issue.
+IIRC Changwoo suggested to introduce a tunable to change the default time
+slice in the past.
 
-Cheers,
-Jens
+I agree that slice_bypass_us can be a tunable in sysfs, but I think it'd be
+nicer if the default time slice would be a property of sched_ext_ops, is
+there any reason to not do that?
 
->
-> Thanks.
->
-> On 2025/11/6 19:31, Jens Wiklander wrote:
-> > Hi,
-> >
-> > On Thu, Nov 6, 2025 at 11:20=E2=80=AFAM yangzhao <yangzhao@kylinos.cn> =
-wrote:
-> >> In tee_shm_put(), there is not only the NULL pointer dereference,
-> >> but also the illegal pointer dereference.
-> >>
-> >> shutdown() --->
-> >>      __optee_disable_shm_cache -->
-> >>          shm =3D reg_pair_to_ptr(...);
-> >>          tee_shm_free(shm); -->
-> >>              tee_shm_put(shm); //crash: shm->ctx maybe NULL pointer or=
- illegal pointer
-> >>
-> >> Check whether the pointer is NULL and whether the pointer address is v=
-alid.
-> >>
-> >> This issue occurs when rich world uses the 6.x version of the kernel a=
-nd
-> >> optee secure world uses a lower version (such as version 3.2), and it =
-is
-> >> highly likely to trigger a kernel panic when conducting hibernate test=
-s.
-> > It sounds like the root of the problem is in the TEE rather than in
-> > the kernel. How about fixing the TEE to avoid supplying garbage
-> > pointers?
-> >
-> >> Fixes: e4a718a3a47e ("tee: fix NULL pointer dereference in tee_shm_put=
-")
-> >> Signed-off-by: yangzhao <yangzhao@kylinos.cn>
-> >> ---
-> >>   drivers/tee/tee_shm.c | 9 ++++++++-
-> >>   1 file changed, 8 insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/drivers/tee/tee_shm.c b/drivers/tee/tee_shm.c
-> >> index 4a47de4bb2e5..de01d16409c1 100644
-> >> --- a/drivers/tee/tee_shm.c
-> >> +++ b/drivers/tee/tee_shm.c
-> >> @@ -722,7 +722,14 @@ void tee_shm_put(struct tee_shm *shm)
-> >>          struct tee_device *teedev;
-> >>          bool do_release =3D false;
-> >>
-> >> -       if (!shm || !shm->ctx || !shm->ctx->teedev)
-> >> +       /* checking pointer */
-> >> +       if (IS_ERR_OR_NULL(shm) || !virt_addr_valid(shm))
-> > The IS_ERR_OR_NULL() check might make sense, but the virt_addr_valid()
-> > does not. virt_addr_valid() might catch a few garbage pointers, but
-> > the real problem is that someone is supplying garbage pointers.
-> >
-> >> +               return;
-> >> +
-> >> +       if (IS_ERR_OR_NULL(shm->ctx) || !virt_addr_valid(shm->ctx))
-> >> +               return;
-> >> +
-> >> +       if (IS_ERR_OR_NULL(shm->ctx->teedev) || !virt_addr_valid(shm->=
-ctx->teedev))
-> >>                  return;
-> > shm->ctx or shm->ctx->teedev should never be an ERR pointer. The
-> > virt_addr_valid() test doesn't make sense.
-> >
-> > Cheers,
-> > Jens
-> >
-> >>          teedev =3D shm->ctx->teedev;
-> >> --
-> >> 2.25.1
-> >>
->
+Thanks,
+-Andrea
+
+> 
+> Cc: Dan Schatzberg <schatzberg.dan@gmail.com>
+> Cc: Emil Tsalapatis <etsal@meta.com>
+> Signed-off-by: Tejun Heo <tj@kernel.org>
+> ---
+>  include/linux/sched/ext.h | 11 +++++++++++
+>  kernel/sched/ext.c        | 37 ++++++++++++++++++++++++++++++++++---
+>  2 files changed, 45 insertions(+), 3 deletions(-)
+> 
+> diff --git a/include/linux/sched/ext.h b/include/linux/sched/ext.h
+> index eb776b094d36..9f5b0f2be310 100644
+> --- a/include/linux/sched/ext.h
+> +++ b/include/linux/sched/ext.h
+> @@ -17,7 +17,18 @@
+>  enum scx_public_consts {
+>  	SCX_OPS_NAME_LEN	= 128,
+>  
+> +	/*
+> +	 * %SCX_SLICE_DFL is used to refill slices when the BPF scheduler misses
+> +	 * to set the slice for a task that is selected for execution.
+> +	 * %SCX_EV_REFILL_SLICE_DFL counts the number of times the default slice
+> +	 * refill has been triggered.
+> +	 *
+> +	 * %SCX_SLICE_BYPASS is used as the slice for all tasks in the bypass
+> +	 * mode. As mkaing forward progress for all tasks is the main goal of
+> +	 * the bypass mode, a shorter slice is used.
+> +	 */
+>  	SCX_SLICE_DFL		= 20 * 1000000,	/* 20ms */
+> +	SCX_SLICE_BYPASS	=  5 * 1000000, /*  5ms */
+>  	SCX_SLICE_INF		= U64_MAX,	/* infinite, implies nohz */
+>  };
+>  
+> diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+> index cf8d86a2585c..2ce226018dbe 100644
+> --- a/kernel/sched/ext.c
+> +++ b/kernel/sched/ext.c
+> @@ -143,6 +143,35 @@ static struct scx_dump_data scx_dump_data = {
+>  /* /sys/kernel/sched_ext interface */
+>  static struct kset *scx_kset;
+>  
+> +/*
+> + * Parameter that can be adjusted through /sys/module/sched_ext/parameters.
+> + * There usually is no reason to modify these as normal scheduler opertion
+> + * shouldn't be affected by them. The knobs are primarily for debugging.
+> + */
+> +static u64 scx_slice_dfl = SCX_SLICE_DFL;
+> +static unsigned int scx_slice_dfl_us = SCX_SLICE_DFL / NSEC_PER_USEC;
+> +static unsigned int scx_slice_bypass_us = SCX_SLICE_BYPASS / NSEC_PER_USEC;
+> +
+> +static int set_slice_us(const char *val, const struct kernel_param *kp)
+> +{
+> +	return param_set_uint_minmax(val, kp, 100, 100 * USEC_PER_MSEC);
+> +}
+> +
+> +static const struct kernel_param_ops slice_us_param_ops = {
+> +	.set = set_slice_us,
+> +	.get = param_get_uint,
+> +};
+> +
+> +#undef MODULE_PARAM_PREFIX
+> +#define MODULE_PARAM_PREFIX	"sched_ext."
+> +
+> +module_param_cb(slice_dfl_us, &slice_us_param_ops, &scx_slice_dfl_us, 0600);
+> +MODULE_PARM_DESC(slice_dfl_us, "default slice in microseconds, applied on [un]load (100us to 100ms)");
+> +module_param_cb(slice_bypass_us, &slice_us_param_ops, &scx_slice_bypass_us, 0600);
+> +MODULE_PARM_DESC(slice_bypass_us, "bypass slice in microseconds, applied on [un]load (100us to 100ms)");
+> +
+> +#undef MODULE_PARAM_PREFIX
+> +
+>  #define CREATE_TRACE_POINTS
+>  #include <trace/events/sched_ext.h>
+>  
+> @@ -919,7 +948,7 @@ static void dsq_mod_nr(struct scx_dispatch_q *dsq, s32 delta)
+>  
+>  static void refill_task_slice_dfl(struct scx_sched *sch, struct task_struct *p)
+>  {
+> -	p->scx.slice = SCX_SLICE_DFL;
+> +	p->scx.slice = scx_slice_dfl;
+>  	__scx_add_event(sch, SCX_EV_REFILL_SLICE_DFL, 1);
+>  }
+>  
+> @@ -2892,7 +2921,7 @@ void init_scx_entity(struct sched_ext_entity *scx)
+>  	INIT_LIST_HEAD(&scx->runnable_node);
+>  	scx->runnable_at = jiffies;
+>  	scx->ddsp_dsq_id = SCX_DSQ_INVALID;
+> -	scx->slice = SCX_SLICE_DFL;
+> +	scx->slice = scx_slice_dfl;
+>  }
+>  
+>  void scx_pre_fork(struct task_struct *p)
+> @@ -3770,6 +3799,7 @@ static void scx_bypass(bool bypass)
+>  		WARN_ON_ONCE(scx_bypass_depth <= 0);
+>  		if (scx_bypass_depth != 1)
+>  			goto unlock;
+> +		scx_slice_dfl = scx_slice_bypass_us * NSEC_PER_USEC;
+>  		bypass_timestamp = ktime_get_ns();
+>  		if (sch)
+>  			scx_add_event(sch, SCX_EV_BYPASS_ACTIVATE, 1);
+> @@ -3778,6 +3808,7 @@ static void scx_bypass(bool bypass)
+>  		WARN_ON_ONCE(scx_bypass_depth < 0);
+>  		if (scx_bypass_depth != 0)
+>  			goto unlock;
+> +		scx_slice_dfl = scx_slice_dfl_us * NSEC_PER_USEC;
+>  		if (sch)
+>  			scx_add_event(sch, SCX_EV_BYPASS_DURATION,
+>  				      ktime_get_ns() - bypass_timestamp);
+> @@ -4776,7 +4807,7 @@ static int scx_enable(struct sched_ext_ops *ops, struct bpf_link *link)
+>  			queue_flags |= DEQUEUE_CLASS;
+>  
+>  		scoped_guard (sched_change, p, queue_flags) {
+> -			p->scx.slice = SCX_SLICE_DFL;
+> +			p->scx.slice = scx_slice_dfl;
+>  			p->sched_class = new_class;
+>  		}
+>  	}
+> -- 
+> 2.51.1
+> 
 
