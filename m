@@ -1,158 +1,407 @@
-Return-Path: <linux-kernel+bounces-893288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5319C4705C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:51:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61FF7C46FD2
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:44:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7011F3B10A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:44:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F7B5188E405
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:44:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52B3230E0C5;
-	Mon, 10 Nov 2025 13:44:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE9BF30CD8D;
+	Mon, 10 Nov 2025 13:43:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="g2wP67Cz"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="W/5XgENX"
+Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11010016.outbound.protection.outlook.com [52.101.56.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A82121E098;
-	Mon, 10 Nov 2025 13:44:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D012726F297;
+	Mon, 10 Nov 2025 13:43:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.16
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762782252; cv=pass; b=lk2m7t+XCVnE0PllzMD99FoQj7m6byCP00DQzV/bn493ZTVvrm0Ji7wfw8pEyjGSUZ1ulr6TwpZy7jJE2tDS7indPY/Ysm32ezT31BLAAY6B2d9yzBXbmUucj8zqTYm+zURcf7O8ni1dJT12Znf/N59vdISmjx+WToeBPFUjHIk=
+	t=1762782225; cv=fail; b=OAbWE/k/6ch8yW7TK5jukrhyQALEUyT6/CKz63UEe/oNUNfKcv6nmMT9tYh3hwLgmUJTe7uVxe0twxPXrkh6KOGNjMgIAlWdNGSRyO++fk6Rf8zHYzIpdkSZkyzh0mn6Lf12b6TLxji3zqtsKausSVEUVDwoJ4NBX/HFUAtHal4=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762782252; c=relaxed/simple;
-	bh=wK41s9TTPsH+XSrQvGcL1ScrZIeDVdkh9D+PCpggJgk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=srTLTU7FhtgGobXN0hfmagaNUEVffu5ADinAFt/A3y3ibYBMoCSEoRRA0tuA5Gq5pPuomP2O6j07Wkni3uvw34wWf/JHSe/pwRgL+78ql/ZELpDvbO4gDaead6AYSWZt9I/VJfc4t/IeacJQiQfvatEP9faO9J7CJWcuYvESIyY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=g2wP67Cz; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1762782225; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=HSdRTwjaAi6bgsxuRDSbZsLF0DPeI+LOlnd1y9igvc4gNPWWf4KKlKpPdEAOfTaQstq/Elrkm4nlxsua8YS7r7TQxGzcIUoGFmye99W2XQCDmhFlZL65IHe2jlJ6uXaeHnPfVprdqTJExRxDG4IsmXGErXhcno5ygCrqceoO4G4=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1762782225; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=NaQSEtGafus0sgJYl14H1AHyjnLimFCe/otE/1Mn3kw=; 
-	b=gSarWGs90VIKXpnYnCyXBQUZ1/4+5W7W9NV0vwShHeZv7ylmf6NpN8vejvFMXe7Umw9ZBIvlETJNJYjYD642RIKS5sf/TDqS8LPPdl19sj70wSBxCoL0kU0QFGdIfHpCshg5gxXEpjiT5BbV8kp7ycPF9soTskb2PS4EAzXMJ6w=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
-	dmarc=pass header.from=<sebastian.reichel@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1762782225;
-	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
-	bh=NaQSEtGafus0sgJYl14H1AHyjnLimFCe/otE/1Mn3kw=;
-	b=g2wP67Cz3+CvMMmpD6hniCswHIQj5NnpT7xiqlt6FzX71FphZCGERnSiHweKixQ4
-	ws7tgOQ/wENJ3VHs3Ta3tls2Lw5z6dK6AoaEpYV26oedR9I5DvnUyCjreOa6+5cMfJf
-	Gpnsfu5X6FF82r/e8Vf5k0I6Bv8G3+gFJvTYmnXQ=
-Received: by mx.zohomail.com with SMTPS id 1762782223271450.25151316746724;
-	Mon, 10 Nov 2025 05:43:43 -0800 (PST)
-Received: by venus (Postfix, from userid 1000)
-	id D8FC2180735; Mon, 10 Nov 2025 14:43:32 +0100 (CET)
-Date: Mon, 10 Nov 2025 14:43:32 +0100
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org, kernel@collabora.com, 
-	Yifeng Zhao <yifeng.zhao@rock-chips.com>
-Subject: Re: [PATCH v2 1/2] mmc: sdhci-of-dwcmshc: Add command queue support
- for rockchip SOCs
-Message-ID: <hjxwedwtwksog67mz4unm4jita2q5vvp4vkdrtpznc6mllz7q4@7a7nn3c5l7fv>
-References: <20251031-rockchip-emmc-cqe-support-v2-0-958171f5edad@collabora.com>
- <20251031-rockchip-emmc-cqe-support-v2-1-958171f5edad@collabora.com>
- <abb4a253-6f4b-4547-a238-db6f60ee3244@intel.com>
+	s=arc-20240116; t=1762782225; c=relaxed/simple;
+	bh=ac5dQm32GYZ5oaVBZPeUWFQfjvNP7bDZ2bS8Q0s5aeA=;
+	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
+	 In-Reply-To:MIME-Version; b=VqZygsJKehPs8VgR9747A9fAu7sfyUFgQRRcIEbR/dDfTU2bDeGf+SdLd8QdlpYkRULCV8eBTNXgCXIgvk4hVBGcKUsnpxcZ+Gjir3SJSMGw4scROovIV4SX49bZGv0QzRijpzOvfTtdvLQVD7vMytSfkbrXjjTq+x32HgxZ7tI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=W/5XgENX; arc=fail smtp.client-ip=52.101.56.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=KDNF/TUxzZqUzFNur92Rsq1zKQtlhO5J4DVueuB4mxLYU3KFB/aQsw2Jf17vG/h55dnFhRoEN/5ZUF1jBCzCJn4HSyxyXEGWav2+YfgQAtSR8Pnvjxsgc8eWbkksNQc7u/EHNssnffAz/zqPMDbO6Yf5bdIEd9Q40ZtUM4DID22LzEatuR+h7QG7lQg4SZjjLbCNaGz5JKlZzrQRkCOm36Kj6Zz+OGbDqhx5vZNQcXo4dnBGvgw7eq9FDc2v8CScXAlWBULX11Twf7O8laOWe/qK7mCGHd64hiF9OHVZPSGi5sWFNRjBPaf9bpTxvC7ZZIIVGBUlrNDg01Y7BsNCKA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Fa+uDcmeS38N/xQ2jdxuFWwZdeghyJx8d6Gs+8++eCM=;
+ b=eRfjxB7B/uHF1j20Ro4pItG+aKx0UMHtA1cobRIlsIEde3uj4c45WPIyUVl9qZ1858iwAPBiLez3llfUEBEHGW2QXLxmHIjiWMU7VaAXlB0YtI1D44y0IIj0QSGCKTLr+fOJTBG+DjwgPaFHhGlrDKGYRSC2y30UGh1feArCIrN75+ZGKhfnnAazMV1iXsQDOSoIGCeVwz5ycSh3z2suKrf2KkxJQjBSAkaz4aTs7Q52Wlusuf8Acs1uBXBu2wb1nB8bWxOYXz0cQvxAC9DS4fNqHdG25dqrLjoiUWEl3is1g6uuDYQUzr6TNuiZo7WrkiwCN9eGEPzYd0DBFukvXw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Fa+uDcmeS38N/xQ2jdxuFWwZdeghyJx8d6Gs+8++eCM=;
+ b=W/5XgENXLN+kSox9W56kcJhHX8jPUffEhuie+AgPaBSze7qryA1UGJR8l91DhtKUYDYYrzuOpDXYawvqqT6vKivtyPNwpM9ZH7qO3XtvrOr0u5+97e0GAvlc/l45mqU75uGOkosFnTS7BxVRz+efOWSmOerirTQs5QOCKHyelCwB6twcTJc4m6NbSdmpfUbeFcHOu4ZehOHH9qETvp26bBLIEjAC426oTcdMCwL/icWRJEwdSHooiN2BKLkRBaDHSUgmGi2y1XETRd/NkmdbBGkO8zNgpTrXxOKsGLpOaD7RvlRRCH/SYFwZRTXG3uGnhF+VTVUnJ7EILmYVAL5EQg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
+ by CYXPR12MB9340.namprd12.prod.outlook.com (2603:10b6:930:e4::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Mon, 10 Nov
+ 2025 13:43:40 +0000
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989]) by CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989%6]) with mapi id 15.20.9298.015; Mon, 10 Nov 2025
+ 13:43:40 +0000
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 10 Nov 2025 22:43:36 +0900
+Message-Id: <DE5256UCJHXU.27RS8A445Z1XN@nvidia.com>
+Cc: "Alistair Popple" <apopple@nvidia.com>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
+ <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "David Airlie" <airlied@gmail.com>,
+ "Simona Vetter" <simona@ffwll.ch>, "Maarten Lankhorst"
+ <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>, "John Hubbard"
+ <jhubbard@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>,
+ <joel@joelfernandes.org>, <nouveau@lists.freedesktop.org>, "Nouveau"
+ <nouveau-bounces@lists.freedesktop.org>
+Subject: Re: [PATCH v2 07/12] nova-core: Implement the GSP sequencer
+From: "Alexandre Courbot" <acourbot@nvidia.com>
+To: "Joel Fernandes" <joelagnelf@nvidia.com>,
+ <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
+ <dri-devel@lists.freedesktop.org>, <dakr@kernel.org>, <acourbot@nvidia.com>
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: aerc 0.21.0-0-g5549850facc2
+References: <20251102235920.3784592-1-joelagnelf@nvidia.com>
+ <20251102235920.3784592-8-joelagnelf@nvidia.com>
+In-Reply-To: <20251102235920.3784592-8-joelagnelf@nvidia.com>
+X-ClientProxiedBy: TYCPR01CA0208.jpnprd01.prod.outlook.com
+ (2603:1096:405:7a::16) To CH2PR12MB3990.namprd12.prod.outlook.com
+ (2603:10b6:610:28::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ladnhwyx55vra2te"
-Content-Disposition: inline
-In-Reply-To: <abb4a253-6f4b-4547-a238-db6f60ee3244@intel.com>
-X-Zoho-Virus-Status: 1
-X-Zoho-Virus-Status: 1
-X-Zoho-AV-Stamp: zmail-av-1.5.1/262.770.93
-X-ZohoMailClient: External
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|CYXPR12MB9340:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4f7aad33-8ab7-4776-945a-08de205f280b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|7416014|376014|1800799024|10070799003;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?M1RmREN3TDI0cFhpWUZWNHYxOW9URSsrK1UzY0hsaXk1Sm1zUmZIMTlXNHVo?=
+ =?utf-8?B?ZmZiOFR0b1YvVTBnSVlLdUh1dG9qaENNd0xwTERESXhqeWlYNzExMTA0QVkz?=
+ =?utf-8?B?TXppK1M2UktvWTJYUzZ5bW55eG1KSHVnWVVmWU9zZk1qNSs0MWVKOFAyV0VR?=
+ =?utf-8?B?UitIak5CeEcxazZlL0Q1bzdGd3AzT0FsMXNQeU10UlNJVmhHdDJPaENYejhm?=
+ =?utf-8?B?Wm9ZMEtLYWxPRUQ4L1JXMUF3ZTVoeTE4b21wU0hOU1lzd0Rxemp0QklPT1ll?=
+ =?utf-8?B?cjRSVEdCTEEvREE2YWovd2tHejVGTmpPU0VpemRkbHcrRWJxWTJwL1ovOFlr?=
+ =?utf-8?B?MlhEaGRJQ0dnc3dBK3hpbCtUc2ZqUE5jMHNncE9rQklvc0NJZFQ5MzBmajN6?=
+ =?utf-8?B?SmlxYTRIZzlPVG5maUdUcTJsQXBMSkFNTkZmVzBTbEp3VzhLK05VMkxNeldE?=
+ =?utf-8?B?N3Z6dFE3S0I3OTdnVjNtSGhUWkR6cHAzODF6dC9Wb2lJKzYvZXQvUjdqeWl1?=
+ =?utf-8?B?eGJVYmpTaEFCQmN4RVFtYTdndHlxcjFhMHVZblR4c1o0WFZ2ZEdQem9KNW1O?=
+ =?utf-8?B?Rk1VRVo5V2g4cWdQVDdQVFJBMlZza3N0Qm9ud1E5MTBiaWd4bHNpTWQ5dFJL?=
+ =?utf-8?B?TVBOcUg0TlNUdll2OU1DOGNJNEwwUjQ0dGU5SWlHQmxUSGZ3Z1JaTEk2dUJw?=
+ =?utf-8?B?ZlhldEtMdlNOV2E5a2xZWUgxMzlqY1lScjRJNEEwVUhFbUErVzhEUXUyTzFu?=
+ =?utf-8?B?QWxmblpFbzBSUzF0U1NKVnpobVJnZUtpd1NnRUNCWUVyOTBEMDhOeE1HMHdh?=
+ =?utf-8?B?NEJ6WnY0cnNnWWVRZ0p5Vi91Q1FVU3RGSW5janlPSGNXckFScndNOXZyeVZK?=
+ =?utf-8?B?cXMzUytvdTZGYTJjMXNFeWNURjBVODVQbHN0M0RQTDEyVjdCenM3bnBINXZ6?=
+ =?utf-8?B?dlBxZWxkWDVES29EdzRvOE93a0t3eVpHd1FJL3dVQkJoRnNzblNjZmFtTTN4?=
+ =?utf-8?B?eXpoY2FrWlBPY2FWM2VRZE0wTlZwOFk1RDVyQytkZENtN2RMMXQwUUE5N2lW?=
+ =?utf-8?B?Z29Cc1Naa05CMXVVY3RDWDYwNVozdk9Gb2ZGVldUSkZnR2oybU5IeFgxZ3ZV?=
+ =?utf-8?B?M25yUWJWOVZ1d3pZOEF4N0krUkdlaFRyQkl1aHh2SkEwRTh4RStyS3VZb3Y4?=
+ =?utf-8?B?TUZXQ3d0bHNkK1liK21pcFFYWDY5SFI2WXFFeXhEYXIwTzJ5ZlV6UmxSdGFv?=
+ =?utf-8?B?YWwvRkRUUHBRZ2NEazVRV1lMVDdDblZEeEF6Y2psSWZScDZpdlJWUlgyQWtr?=
+ =?utf-8?B?UGlCenFTSEpyS3Q0UlppN3E0Qkd2V3dJeFhnQjBkZVZGN09LcnpsRmM3V3Nt?=
+ =?utf-8?B?MzNrNEF3aktwNm1DR2JyUVdPNktCRmJjTEE4WkNzdUU2M25XZjJtYXBuMW1N?=
+ =?utf-8?B?NjZvUFVySXc4Vk50V0NyRmtkVDdvZExqYm5yQnMvUTVoUEg5OFNnZFUzNGxT?=
+ =?utf-8?B?TWZ6aWlpZVdDZGF0V2ZzSDFqcGN2ZVg2b1ZBRGxTY2Z2VGdGMFZ3aUFTR2o3?=
+ =?utf-8?B?enVnQ2RVYWtTRHhja3FYWlhwV05KOGN5Qk51NmVhV0o3M1h6M2tnRGh5dXlO?=
+ =?utf-8?B?WGc4cHdMbUxNbVJ5SnYxNWdEVFIvVkViVFJaWjBzTW9LeVRwSkpOaTNiUUxC?=
+ =?utf-8?B?QlV5RkNza0FKWnJQYWxmWUVOU2xSb0c5V3J6QkthKzNkWnU3dlR6bzNvaDJn?=
+ =?utf-8?B?S01QbjJXNkVsNXQ3eXlNVWNUeGtTR2dMc01oa2FnM0lYYU00ZmdwNndKZTBI?=
+ =?utf-8?B?TnlFOVFBWTM3SjhHaEplaEgxcFo1UkVMemxWT1hUa04zTEg0a0hMRlFHcDJO?=
+ =?utf-8?B?UDRZd2hrWFB3NnZ5UDFVZnhZWkVmTXZVTTV3TTRmbWVTcHdDTjI5a1ZCY1VJ?=
+ =?utf-8?Q?0ZCjuHiHIXzM4t7ZD6Y+BlfPiqecqq6U?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(10070799003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?MFowWjZFN2pqZTBxZzJOeE9vdW45ZmZ0bG1xUVJGdmdQMU1yZFZNMVhpMTZN?=
+ =?utf-8?B?V24vRmJ1S0VvY3hFazF1L3FuajR6KytNWVZyQTNGNVROUnliRVFzd05ITzJp?=
+ =?utf-8?B?aVNQekowK0t1ZnZldmVxM0NEV2VLYVhlM2UyRzB0cE1mK0VNcFpWazVUcncv?=
+ =?utf-8?B?NWl4NVRSd0liSnhyZHZFQ3V0a2xuUjh2MEhlTWVMQ3hzME1XRGJscGVJY0RJ?=
+ =?utf-8?B?R1ZVTnFrN1lRWVN4bERvUHNQVEF5T3dMRTY5MWVsSTE5clFkNGFSOGJwNDlz?=
+ =?utf-8?B?UW1lTmJzaEgrNktKcHdWc3g1cit6RUo1Q3FIcFZWd2F0aEhZME1PY0dGYlBa?=
+ =?utf-8?B?ZVRJOVJiUEVONXJaVGowMDQwVTVQa1VGS2RpYzZVb2lrcFdJVUphQ3lvOHFz?=
+ =?utf-8?B?VWVlZVdVWURmaVRRUk5QTEw2SGszOE5TZ3VNSE1BRVlHU0p4V1hTZzRBWDR0?=
+ =?utf-8?B?NTV2SjlXQkkwR29jNm1yQUxGMFZPU2huNStvS2hoR1VOdjdjeWRuTEQ1SUJH?=
+ =?utf-8?B?Vzl5TEtSRmhXUVptdllSWEZ1WkFLbmRXMDN6cDB6VjFHVjNpUkJ3NUJ3Sjhr?=
+ =?utf-8?B?SUx2NFlWenhFYkZyS3ZhWGF1OERTNUJMb0FYOVFjUS82cjJ6bzlCbmFxNlBY?=
+ =?utf-8?B?NTNJOENwWkQxN0lhQXFQK2lBc25SbGpZQXBudmZpNTVVWEgwS1YxL0RYcCtT?=
+ =?utf-8?B?UGhjaEEydGZCME80eTJnVnNHRmxBci9udmFLQ29XSTBUcEM0V1NOdHRyaGQr?=
+ =?utf-8?B?WFYxSUgxRGhDbmRKSnRDZlNPVEhseUxWODg3NFZiZm9qWis4SzNJTkZxQmJm?=
+ =?utf-8?B?ZHdjZTlRQWdmbXp2UnNrbXZTc01lNGFwZERPdmxjWmkwZjU2WWx1cVhJZEdZ?=
+ =?utf-8?B?Q0s0ci9HWWZEZGR3TVZpdE0xcTlhYk15OGdVejkwdm01T0p4cmYxaGhqbXpQ?=
+ =?utf-8?B?QkpJRk8wN2pWV3Q1VjB5Qi91djNTWXJpZUZadjdhcUZOSG9mb0dxc1c3Yjhw?=
+ =?utf-8?B?QnYyRU1CSzZpTkNUdEVUNjV1bmdsRGZtMGoxMjltNFZxRnBucEN5dWR2ZzlM?=
+ =?utf-8?B?RkNmcHFIcWV2ckU5MmhIUlF5N0hEQlhJU1RRYzZwOVV0N2hpSzQ5bVJrK1VX?=
+ =?utf-8?B?NldJNzU1eVpBSE5TRCsyUEJROGNzRkhHNUw0M2ZYblVCNWFjTzV0NmZkOUdQ?=
+ =?utf-8?B?MGdBT05vZU1hSVJ5bkozNGtCZ1Q4U0hrT2ROeXZ3b3NpUkpFOHVRL29rb0lF?=
+ =?utf-8?B?TXdzRm5TQjRiU0tTcU04SFdsSEFLWTNSNEF1dHdQK045ZzV1dHhZWHU4NjVV?=
+ =?utf-8?B?VEJidSt6RHhJVkZ1T0pESVN3SHVzcGNvZ08rNVhDNHZBTmpmWXpoa1dnVjJ2?=
+ =?utf-8?B?a0FBVWlFUUlrTnlOWFJXZGFhZXFON0UyN1NwZWtycGVEWHZtSDZOWUpVN2ky?=
+ =?utf-8?B?NG5SSGFTajlzN2g5MTcxSmNnUzBJZTAyaVZaSnZlRFlZS1UzSHhVQXRWQ1Ns?=
+ =?utf-8?B?UEI1NG83blBQWExlMUJEcGZGR3B0Nk1RRE0vVHJTMnd1VWE4bnAxSnpsVm80?=
+ =?utf-8?B?enRiY1pIN1g3NW9TakRrc2kxdTZzNFRYNkE5WURDWk4xK21peENacVpYYW92?=
+ =?utf-8?B?Z1FaWThIaTMrd3dHMVZLQVpRbys1T2xRdEloajRkdEFSVVVYdVVveFF2d1dw?=
+ =?utf-8?B?YXZ5djZ1MVIyOUgyRU1EdURIQmlIeGcrcVlDVDVZUnpFcGw0bHYzVjA5WnA4?=
+ =?utf-8?B?UHB1VGw3azc2NS9yUThRa1RocUI3UmEvVmlqaXlyVEdaNlU3eUZrRE5sOTlS?=
+ =?utf-8?B?K3l5Y3NXaER5Mm1CYVhHMnFoSVBlVlpnNCtGbk04a0NnSDliWG5tb1VzelZy?=
+ =?utf-8?B?L29vcEc0aU1xUFl3UG5kalhDUHRFM3Qwb1ZZdk4ramhFZUVXNkswbzdLWEk2?=
+ =?utf-8?B?ODNOVzRSNzVxYmxUUk0wZjdJODBPY21Jb1poOXRnMW5oTjB4YVA0SVNVdnlj?=
+ =?utf-8?B?S2dqWGhNQUVtK1g1VUtPN1R4K0tuck40NVErTk5DbEMwNkhEc1JUMm9kcjkw?=
+ =?utf-8?B?QkpZTnBtb2N4UDdmbWJLY0VqMGNOL1gzelU0UEpPbVZYOWNYMkEzc0VnTEls?=
+ =?utf-8?B?UFdMMEVONGZHL3RqL2lIcG9vOTRKcHEzSERDQ2VGQ2xPUkVValBNVDVOOUpC?=
+ =?utf-8?Q?fbh9MUSC4wNaxo6kqQXYHRsnz8FIW1MocejhFLk0RziT?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4f7aad33-8ab7-4776-945a-08de205f280b
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Nov 2025 13:43:40.0671
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: cEfiMLzEf01Mp2t7+wscStij80Ru0U3BpdiQcB3l+5mxLuo9YXI1xYAa9R4mGh6AYhnHomVMl+G3ksmPA+pfeg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYXPR12MB9340
 
+Hi Joel,
 
---ladnhwyx55vra2te
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 1/2] mmc: sdhci-of-dwcmshc: Add command queue support
- for rockchip SOCs
-MIME-Version: 1.0
+I guess you will want to rebase the series on top of the GSP boot v9,
+for fixing the conflicts with the imports, squash patch 13 where it
+should belong, and also because it adds a few things that should
+simplify this patch.
 
-Hi,
+As a general comment, the structures and their members could benefit
+from short doccomments (thankfully after this review there should be a
+few less :)).
 
-On Mon, Nov 10, 2025 at 09:58:24AM +0200, Adrian Hunter wrote:
-> On 31/10/2025 17:58, Sebastian Reichel wrote:
-> > This adds CQE support for the Rockchip RK3588 and RK3576 platform. To
-> > be functional, the eMMC device-tree node must have a 'supports-cqe;'
-> > flag property.
-> >=20
-> > As the RK3576 device-tree has been upstreamed with the 'supports-cqe;'
-> > property set by default, the kernel already tried to use CQE, which
-> > results in system hang during suspend. This fixes the issue.
-> >=20
-> > Co-developed-by: Yifeng Zhao <yifeng.zhao@rock-chips.com>
-> > Signed-off-by: Yifeng Zhao <yifeng.zhao@rock-chips.com>
-> > Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
->=20
-> One question below, otherwise:
->=20
-> Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+On Mon Nov 3, 2025 at 8:59 AM JST, Joel Fernandes wrote:
+<snip>
+> diff --git a/drivers/gpu/nova-core/gsp/sequencer.rs b/drivers/gpu/nova-co=
+re/gsp/sequencer.rs
+> new file mode 100644
+> index 000000000000..48c40140876b
+> --- /dev/null
+> +++ b/drivers/gpu/nova-core/gsp/sequencer.rs
+> @@ -0,0 +1,208 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +//! GSP Sequencer implementation for Pre-hopper GSP boot sequence.
+> +
+> +use core::mem::size_of;
+> +use kernel::alloc::flags::GFP_KERNEL;
+> +use kernel::device;
+> +use kernel::prelude::*;
+> +use kernel::time::Delta;
+> +use kernel::transmute::FromBytes;
+> +
+> +use crate::driver::Bar0;
+> +use crate::falcon::{
+> +    gsp::Gsp,
+> +    sec2::Sec2,
+> +    Falcon, //
+> +};
+> +use crate::firmware::gsp::GspFirmware;
+> +use crate::gsp::cmdq::{
+> +    Cmdq,
+> +    MessageFromGsp, //
+> +};
+> +use crate::gsp::fw;
+> +
+> +use kernel::{
+> +    dev_dbg,
+> +    dev_err, //
+> +};
+> +
+> +impl MessageFromGsp for fw::rpc_run_cpu_sequencer_v17_00 {
+> +    const FUNCTION: fw::MsgFunction =3D fw::MsgFunction::GspRunCpuSequen=
+cer;
+> +}
+> +
+> +const CMD_SIZE: usize =3D size_of::<fw::GSP_SEQUENCER_BUFFER_CMD>();
+> +
+> +struct GspSequencerInfo<'a> {
+> +    info: &'a fw::rpc_run_cpu_sequencer_v17_00,
+> +    cmd_data: KVec<u8>,
+> +}
+> +
+> +/// GSP Sequencer Command types with payload data.
+> +/// Commands have an opcode and a opcode-dependent struct.
+> +#[allow(dead_code)]
+> +pub(crate) enum GspSeqCmd {}
+> +
+> +impl GspSeqCmd {
+> +    /// Creates a new GspSeqCmd from a firmware GSP_SEQUENCER_BUFFER_CMD=
+.
+> +    pub(crate) fn from_fw_cmd(_cmd: &fw::GSP_SEQUENCER_BUFFER_CMD) -> Re=
+sult<Self> {
+> +        Err(EINVAL)
+> +    }
+> +
+> +    pub(crate) fn new(data: &[u8], dev: &device::Device<device::Bound>) =
+-> Result<Self> {
+> +        let fw_cmd =3D fw::GSP_SEQUENCER_BUFFER_CMD::from_bytes(data).ok=
+_or(EINVAL)?;
+> +        let cmd =3D Self::from_fw_cmd(fw_cmd)?;
+> +
+> +        if data.len() < cmd.size_bytes() {
+> +            dev_err!(dev, "data is not enough for command.\n");
+> +            return Err(EINVAL);
+> +        }
+> +
+> +        Ok(cmd)
+> +    }
+> +
+> +    /// Get the size of this command in bytes, the command consists of
+> +    /// a 4-byte opcode, and a variable-sized payload.
+> +    pub(crate) fn size_bytes(&self) -> usize {
+> +        0
+> +    }
 
-Thanks,
+Instead of having this (which involves another dedicated match
+statement), how about having the `new` method return the size in bytes
+that are read, that the caller can add to its cursor?
 
-[...]
+> +}
+> +
+> +#[expect(dead_code)]
+> +pub(crate) struct GspSequencer<'a> {
+> +    seq_info: GspSequencerInfo<'a>,
+> +    bar: &'a Bar0,
+> +    sec2_falcon: &'a Falcon<Sec2>,
+> +    gsp_falcon: &'a Falcon<Gsp>,
+> +    libos_dma_handle: u64,
+> +    gsp_fw: &'a GspFirmware,
 
-> > @@ -687,6 +757,9 @@ static void rk35xx_sdhci_reset(struct sdhci_host *h=
-ost, u8 mask)
-> >  	}
-> > =20
-> >  	sdhci_reset(host, mask);
-> > +
-> > +	/* Enable INTERNAL CLOCK */
-> > +	sdhci_writel(host, MISC_INTCLK_EN | extra, DECMSHC_EMMC_MISC_CON);
->=20
-> rk35xx_sdhci_reset() is in sdhci_dwcmshc_rk35xx_ops.
-> sdhci_dwcmshc_rk3576_pdata also uses sdhci_dwcmshc_rk35xx_ops but isn't
-> supporting CQE ops.  Is this change OK for rk3576?
+`gsp_fw` seems to be only needed to obtain the bootloader app version -
+let's store that information directly instead a reference to a whole
+structure we don't need.
 
-How did you come to the conclusion, that rk3576 does not support CQE
-ops? Have you read the cover letter? :)
+> +    dev: &'a device::Device<device::Bound>,
 
-Greetings,
+Since this is only used for logging purposes, we don't need a bound
+device. This can be an `ARef<device::Device>`, which removes a
+reference.
 
--- Sebastian
+> +}
+> +
+> +pub(crate) trait GspSeqCmdRunner {
+> +    fn run(&self, sequencer: &GspSequencer<'_>) -> Result;
+> +}
+> +
+> +impl GspSeqCmdRunner for GspSeqCmd {
+> +    fn run(&self, _seq: &GspSequencer<'_>) -> Result {
+> +        Ok(())
+> +    }
+> +}
+> +
+> +pub(crate) struct GspSeqIter<'a> {
+> +    cmd_data: &'a [u8],
+> +    current_offset: usize, // Tracking the current position.
+> +    total_cmds: u32,
+> +    cmds_processed: u32,
+> +    dev: &'a device::Device<device::Bound>,
+> +}
+> +
+> +impl<'a> Iterator for GspSeqIter<'a> {
+> +    type Item =3D Result<GspSeqCmd>;
+> +
+> +    fn next(&mut self) -> Option<Self::Item> {
+> +        // Stop if we've processed all commands or reached the end of da=
+ta.
+> +        if self.cmds_processed >=3D self.total_cmds || self.current_offs=
+et >=3D self.cmd_data.len() {
+> +            return None;
+> +        }
+> +
+> +        // Check if we have enough data for opcode.
+> +        let opcode_size =3D size_of::<fw::GSP_SEQ_BUF_OPCODE>();
+> +        if self.current_offset + opcode_size > self.cmd_data.len() {
 
---ladnhwyx55vra2te
-Content-Type: application/pgp-signature; name="signature.asc"
+`opcode_size` looks superfluous as it is only used once.
 
------BEGIN PGP SIGNATURE-----
+> +            return Some(Err(EINVAL));
 
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmkR7AAACgkQ2O7X88g7
-+poq/g/6Av018KZfLynGwjZMNoFxVnLTbPCij+47pv7hWC/61IeB3Wo3ZKuWOZaT
-mJgj8ttbiE8caqUP8EusAjZpnLwmYIeoEfewsXr7mlhwzzKR1wR8xtKzkSYvSOPg
-2vjagIjI0QWubTnuyrvBihngKhpXjl9wSgWKBeY3o4PmYB5b9kHuqjBs1hoa8445
-fCu0u4zt+2BsxNQYFjCeGbM06pa4kzD00SyNW+Zl3uGPX64SaaUnGeo1k+GFyVzw
-h6Q7QmJFLY0kkXr5H5fysSQMWxuMgWyBp/hrcVrdYEx8/EaWddQVOXRIJHK7MVgB
-uTi3zilX/3+8Hx8ij+4k2Elp8ywBdoAL92ufUeaZm9va2r+iB1V0kO7YznDU4L3N
-AeDqFOG75McYdgKYD/HATaQ9gjut+13TBCvNmajPyFtu0iPww8Tg55lgvfBNOmxF
-ZTw2L3OAcfFiVpDzOZ2P5kzQ6S54yMHUE8El7OHQCvfRD3kaLXSJYBswahfh4hW6
-1Rq5uosLvZ/59EG6eGkA66xQLEam6Fgq+LmvS7XMagRZdR9EbdFHht5myxXF6lXs
-GWwqjJkHBaXFYdUa2jzF7hitnpJBMFOmwh9DjzbyVNPJKSG3504lOyb1UC+2L70R
-AMnnkw1ljj57dHDPZ+26sJZA3a37eaWbWjfPiTG/zavQCYzjaLw=
-=iosp
------END PGP SIGNATURE-----
+Should probably be `EIO` as the data is not the expected size.
 
---ladnhwyx55vra2te--
+> +        }
+> +
+> +        let offset =3D self.current_offset;
+> +
+> +        // Handle command creation based on available data,
+> +        // zero-pad if necessary (since last command may not be full siz=
+e).
+> +        let mut buffer =3D [0u8; CMD_SIZE];
+> +        let copy_len =3D if offset + CMD_SIZE <=3D self.cmd_data.len() {
+> +            CMD_SIZE
+> +        } else {
+> +            self.cmd_data.len() - offset
+> +        };
+> +        buffer[..copy_len].copy_from_slice(&self.cmd_data[offset..offset=
+ + copy_len]);
+> +        let cmd_result =3D GspSeqCmd::new(&buffer, self.dev);
+> +
+> +        cmd_result.map_or_else(
+> +            |_err| {
+> +                dev_err!(self.dev, "Error parsing command at offset {}",=
+ offset);
+> +                None
+> +            },
+
+This looks a bit redundant: we are processing errors here, but then we
+also have another error handler in the caller (the one that says "Error
+running command..."). I'm pretty sure there is room for simplification
+here.
+
+> +            |cmd| {
+> +                self.current_offset +=3D cmd.size_bytes();
+> +                self.cmds_processed +=3D 1;
+> +                Some(Ok(cmd))
+> +            },
+> +        )
+> +    }
+> +}
+> +
+> +impl<'a, 'b> IntoIterator for &'b GspSequencer<'a> {
+> +    type Item =3D Result<GspSeqCmd>;
+> +    type IntoIter =3D GspSeqIter<'b>;
+> +
+> +    fn into_iter(self) -> Self::IntoIter {
+> +        let cmd_data =3D &self.seq_info.cmd_data[..];
+> +
+> +        GspSeqIter {
+> +            cmd_data,
+> +            current_offset: 0,
+> +            total_cmds: self.seq_info.info.cmdIndex,
+> +            cmds_processed: 0,
+> +            dev: self.dev,
+> +        }
+> +    }
+> +}
+
+You can do without this implementation by just having an `iter` method
+returning the iterator where appropriate (in the current version this
+would be `GspSequencer`, but I suggest moving that to the
+`GspSequencerInfo/GspSequence`).
+
 
