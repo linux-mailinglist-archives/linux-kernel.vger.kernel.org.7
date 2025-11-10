@@ -1,170 +1,170 @@
-Return-Path: <linux-kernel+bounces-892948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19907C462EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:17:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CB83C4629F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:14:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 449291896A84
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:16:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2044D1890738
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:13:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 878C130E83F;
-	Mon, 10 Nov 2025 11:14:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F465306B11;
+	Mon, 10 Nov 2025 11:13:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fZAcRRrm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="c4ieaw+5"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCD0E309EF4;
-	Mon, 10 Nov 2025 11:14:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E279221542;
+	Mon, 10 Nov 2025 11:13:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762773293; cv=none; b=YISm0M9BFlamacFwAsVp4jEk7KfvrONtf3Qf4e9tHKzSR32tZ9WfVERd7h2k+LK3m7+iLxnPhDJ0295va+D/u7dMRePdlUdOoccXcDiL8hhtVV4xe3Dp5ScA+wvdNd8nokdicF9yTuGTGVKbtuQvbgtg8ahjJx9yFlCIvtQZkEM=
+	t=1762773191; cv=none; b=W3ZN5BI5osKkXZOrODtFr0Dn3cOayaOne8Ssx81MHy0rKy3W+KwQDJliRF7+Vdo6yuDF15opr4U4deqnfnBttdo1w9oFTfJSpeiX7OHBb9woSCgPvnS9cpHMjMueakj5NNrcmvCZiNaBOFCGcJ3O2D0zI97ZdF1l3IC3BKLaIxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762773293; c=relaxed/simple;
-	bh=RidSro2FqSuYFKqagjZJtSqsh9yhbofm+SRtOM9H/RE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nqO/hEtR3lefPB0rJC5EV9ijnOrQKI/+zGTSCp8Cr5xrO3PnedulXaE5p7ldoY8YKzHCZkC8p4WpEhU+NFBRFEtmrf4jtfOAT9WzBtqiZQ20p+gSto+RPhHoJ0ZAPdzUpzRAvVEelNCtkG9rxEa4EPUKii+CPWQT7VdXmP8YcwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fZAcRRrm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F627C2BCB8;
-	Mon, 10 Nov 2025 11:14:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762773292;
-	bh=RidSro2FqSuYFKqagjZJtSqsh9yhbofm+SRtOM9H/RE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=fZAcRRrmW5b1kM9fzcTZ4SealeTGtjMaBjHPaw/ZZ9b9dETWfLKw9XczMX4KX6eql
-	 g4cwtw4fZJ9i59UA7l5CV/1vwhoSw/ZWO7g7PfjYxWMbXD7uFfRXfrE2mYeLUCohe2
-	 BKLTn8tMnmN9DEVhPEeLdBZZSwldi1D9s/1Nsbcovb1bvyajOyasw7LIGHUIEKi+QO
-	 14fcUIV5zsy6hBYC3oJvCPGGWgVxFHxZmji3JrVdeMOm1JJFbA7MXXY4idlEkOhN/X
-	 mdgw3xTpYaBYPexU2HYP0yyqzM/BILBQfLA3Hy8DYmUj8Rs6RdNyDI1bxWH50eFuH7
-	 ec0j12v1aUMOQ==
-Received: from johan by xi.lan with local (Exim 4.98.2)
-	(envelope-from <johan@kernel.org>)
-	id 1vIPrI-0000000007s-3F0c;
-	Mon, 10 Nov 2025 12:14:52 +0100
-From: Johan Hovold <johan@kernel.org>
-To: Johan Hovold <johan@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Ryan Mann <rmann@ndigital.com>,
-	Andreas Messer <andi@bastelmap.de>,
-	linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 8/8] USB: serial: ftdi_sio: drop NDI quirk module parameter
-Date: Mon, 10 Nov 2025 12:12:12 +0100
-Message-ID: <20251110111212.32702-9-johan@kernel.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251110111212.32702-1-johan@kernel.org>
-References: <20251110111212.32702-1-johan@kernel.org>
+	s=arc-20240116; t=1762773191; c=relaxed/simple;
+	bh=9RqVLI2u1/PoEpSnHthOb30jaJC7RjCNqQ/ZIHq7IC0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mfyHZM0xvJAxdqor4Qyv/c0g3wnIvNwTybndxs3KmeNHX/fQUQAUMvSjeam+lXYdmilpGU022zUKmCuy1IOFgq35U0hPic8HUQjHHuTfTYmBtiXIC+mK578DZV3nkGpUPCx/6KjlDudJ5TLGfISRD0anBANn7os3Po9WLC730fc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=c4ieaw+5; arc=none smtp.client-ip=212.227.15.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1762773179; x=1763377979; i=w_armin@gmx.de;
+	bh=5QXbf+tdtDVaJS6E+/9MpC/YXVCCK4BaK4+AIi5tAh4=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:
+	 MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=c4ieaw+55KRs8/xVvvyk2RLtzuIJGa5Cw6hmS8LDJ/2M6ZCmnmNDWGb+lehGACDG
+	 R62bwj/bfIBlQQO9l65UU3eGnKf1fab7px6BhOTt0P1Kx4M5v4YtV0SiXGz1NUBzr
+	 hJ+lJOV01M+fsg27toX/v3MGGhkfEdXANM+X4ZvGjjhcTbsGJPnOThIscUGMBPY7Z
+	 dtPsXBs6dLD9HuGMdbA3ECp8wcoE3VNEhsix4dhtJJ8RXjap6IiNv4qZDjRV4kqbc
+	 UDJz9uCJAEN1d7rqlxtbfbhEOfPqYlakKyLDO07SzTosjsSy5gzDZeKUOPOCHku98
+	 Es+NJ2ZODsvm4fRK1w==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from mx-inspiron.dip.tu-dresden.de ([141.76.8.184]) by mail.gmx.net
+ (mrgmx005 [212.227.17.190]) with ESMTPSA (Nemesis) id
+ 1MLiCo-1vZwiI3wQa-00X8qY; Mon, 10 Nov 2025 12:12:59 +0100
+From: Armin Wolf <W_Armin@gmx.de>
+To: hansg@kernel.org,
+	ilpo.jarvinen@linux.intel.com
+Cc: platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	lkml@antheas.dev
+Subject: [PATCH 0/2] platform/x86: msi-wmi-platform: Fix autoloading
+Date: Mon, 10 Nov 2025 12:12:51 +0100
+Message-Id: <20251110111253.16204-1-W_Armin@gmx.de>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:ALm1FCYM7hNueU6MQjAistYXMCJTEXLPuioXTDpZZvkmj/3n09K
+ zt5E2LsIUG1ZI8P/eSGxZYZW+LBgNQkH51ZLvmry6wWL+aQCFx+irliVULGb5J3Yx5piPkx
+ WeyieMBI5tzDg2KaCxTGFYZ3wjaJncLHmRStP35gXB99fadWWn+rAZ5tJJkwOgPIk2OrzKI
+ Gkw5Hr5B/GuNjQV5SB8/Q==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:yAdTi8YI2ZE=;GyHp+gdSvbvWMfgsjZl7mRviXGe
+ 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
+ vOnPcdEW7eb09hYJ9pM3Y2YNBFcqYBzmUwtedq
 
-NDI devices have been using a latency timer of 1 ms since commit
-b760dac290c3 ("USB: ftdi: support NDI devices"), which also added a
-vendor specific module parameter that could be used to override the
-default value for these devices.
+As already noted by Antheas Kapenekakis back in May, the
+msi-wmi-platform driver fails to automatically load on MSI Claw
+devices. Back then i suspected an issue with the device firmware,
+however i just found out that i made a silly mistake when specifying
+the GUID string of the driver, preventing the WMI driver core from
+matching it to its WMI device.
+Additionally i noticed that said GUID was copied from the Windows
+driver samples, meaning that it might be shared across different
+vendors. Because of this we have to prevent this driver from loading
+on non-MSI devices.
 
-Module parameters should generally be avoided as they apply to all
-devices managed by a driver and vendor specific hacks should be kept out
-of mainline.
+Compile-tested only.
 
-Drop the module parameter in favour of the generic sysfs interface for
-setting the latency timer (e.g. using udev rules) while keeping the
-default 1 ms timer for NDI devices.
+Armin Wolf (2):
+  platform/x86: msi-wmi-platform: Only load on MSI devices
+  platform/x86: msi-wmi-platform: Fix typo in WMI GUID
 
-Note that there seems to be no (correct) public references to the module
-parameter and most likely no one is using it.
+ .../wmi/driver-development-guide.rst          |  1 +
+ drivers/platform/x86/Kconfig                  |  1 +
+ drivers/platform/x86/msi-wmi-platform.c       | 43 ++++++++++++++++++-
+ 3 files changed, 43 insertions(+), 2 deletions(-)
 
-Cc: Ryan Mann <rmann@ndigital.com>
-Signed-off-by: Johan Hovold <johan@kernel.org>
----
- drivers/usb/serial/ftdi_sio.c | 41 +++--------------------------------
- 1 file changed, 3 insertions(+), 38 deletions(-)
-
-diff --git a/drivers/usb/serial/ftdi_sio.c b/drivers/usb/serial/ftdi_sio.c
-index 26f1260ff995..fe2f21d85737 100644
---- a/drivers/usb/serial/ftdi_sio.c
-+++ b/drivers/usb/serial/ftdi_sio.c
-@@ -107,7 +107,6 @@ struct ftdi_quirk {
- };
- 
- static int   ftdi_jtag_probe(struct usb_serial *serial);
--static int   ftdi_ndi_probe(struct usb_serial *serial);
- static int   ftdi_stmclite_probe(struct usb_serial *serial);
- static int   ftdi_8u2232c_probe(struct usb_serial *serial);
- static void  ftdi_usb_uirt_setup(struct ftdi_private *priv);
-@@ -118,7 +117,6 @@ static const struct ftdi_quirk ftdi_jtag_quirk = {
- };
- 
- static const struct ftdi_quirk ftdi_ndi_quirk = {
--	.probe	= ftdi_ndi_probe,
- };
- 
- static const struct ftdi_quirk ftdi_usb_uirt_quirk = {
-@@ -2205,7 +2203,9 @@ static int ftdi_port_probe(struct usb_serial_port *port)
- 		goto err_free;
- 
- 	ftdi_set_max_packet_size(port);
--	if (read_latency_timer(port) < 0)
-+	if (quirk == &ftdi_ndi_quirk)
-+		priv->latency = 1;
-+	else if (read_latency_timer(port) < 0)
- 		priv->latency = 16;
- 	write_latency_timer(port);
- 
-@@ -2247,38 +2247,6 @@ static void ftdi_he_tira1_setup(struct ftdi_private *priv)
- 	priv->force_rtscts = 1;
- }
- 
--/*
-- * Module parameter to control latency timer for NDI FTDI-based USB devices.
-- * If this value is not set in /etc/modprobe.d/ its value will be set
-- * to 1ms.
-- */
--static int ndi_latency_timer = 1;
--
--/*
-- * Setup for the NDI FTDI-based USB devices, which requires hardwired
-- * baudrate (19200 gets mapped to 1200000).
-- */
--static int ftdi_ndi_probe(struct usb_serial *serial)
--{
--	struct usb_device *udev = serial->dev;
--	int latency = ndi_latency_timer;
--
--	if (latency == 0)
--		latency = 1;
--	if (latency > 99)
--		latency = 99;
--
--	dev_dbg(&udev->dev, "%s setting NDI device latency to %d\n", __func__, latency);
--	dev_info(&udev->dev, "NDI device with a latency value of %d\n", latency);
--
--	/* FIXME: errors are not returned */
--	usb_control_msg(udev, usb_sndctrlpipe(udev, 0),
--				FTDI_SIO_SET_LATENCY_TIMER_REQUEST,
--				FTDI_SIO_SET_LATENCY_TIMER_REQUEST_TYPE,
--				latency, 0, NULL, 0, WDR_TIMEOUT);
--	return 0;
--}
--
- /*
-  * First port on JTAG adaptors such as Olimex arm-usb-ocd or the FIC/OpenMoko
-  * Neo1973 Debug Board is reserved for JTAG interface and can be accessed from
-@@ -2906,6 +2874,3 @@ module_usb_serial_driver(serial_drivers, id_table_combined);
- MODULE_AUTHOR(DRIVER_AUTHOR);
- MODULE_DESCRIPTION(DRIVER_DESC);
- MODULE_LICENSE("GPL");
--
--module_param(ndi_latency_timer, int, 0644);
--MODULE_PARM_DESC(ndi_latency_timer, "NDI device latency timer override");
--- 
-2.51.0
+=2D-=20
+2.39.5
 
 
