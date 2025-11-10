@@ -1,130 +1,136 @@
-Return-Path: <linux-kernel+bounces-893077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F0CFC467D4
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:11:32 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91B4EC4678F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:09:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8E723BDD36
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:09:45 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3F1B534834E
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:09:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BF0730F554;
-	Mon, 10 Nov 2025 12:09:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 982B930E0EA;
+	Mon, 10 Nov 2025 12:09:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="l3oQ412n"
-Received: from canpmsgout01.his.huawei.com (canpmsgout01.his.huawei.com [113.46.200.216])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4LWOVlt2";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="gOj+opjC"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF96330E0EB;
-	Mon, 10 Nov 2025 12:09:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 524662F690D;
+	Mon, 10 Nov 2025 12:09:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762776553; cv=none; b=F8iMtLrbOMv4I9IYFQrEvUJQw2VShd8xQZBg1Ah8pEUR4rlqLtuLla1dzvnSinZQOh3BhxprLD6ihGIdB7TCpEATmWczDhWTydnfq2yV9uMj4qKimTSp+IvUOrZ5BITytbvmm6YNbR1L+f6iRw/fTqsT4iRsi1SqQ7ZUu1QGk5s=
+	t=1762776550; cv=none; b=PocJ/EaXRP4zVbJMsSjh4Opl1NgQHyznpMxEpqWFqcyGIoMqclojJPZOauBlYK6aisSt6N6WvMgaoFJA7i5oYQrZBTRKOtmCgrFDjdE0he8Q+NFMw+nCiWY7Eq9cFTPwGDzUpLqDUyusvXfhjDx4Venh1h6nrClvNFfXJ9/sIZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762776553; c=relaxed/simple;
-	bh=wAxgJBYGwoDSZb5hfNyKWteHhF4+zFD+4XO9Wrvw84A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=hT/32iRBZ99yTMbqEtdKB9JiI+HpUAQ7SlWvMaKmT6GitcN3RtIYbXvK/w9cPceCDvusdFaROvg8h0EsNmPGNli7GyIp9HjiEgXBrbfwmaoR29Q7uYQkAMOL/ApmufZVvjNS7SLiL7e/fuYsZT7Qol8h0OmIGOJFj4+SxxbfVTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=l3oQ412n; arc=none smtp.client-ip=113.46.200.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=Dpr0clA3/b4+Xp5u9Y8yrX10+2A/jOXibdQOlE+wxHU=;
-	b=l3oQ412nH1fuO9oM0/uvt5tXULfRiSyzZSKhuQa23tPFZhA2othjJDOEtM+cUIw1szvpIadhQ
-	qYDBKiD/Shaqei/MtnbnK/O17H+xEvqOrQp7Im9AgOaotNHjK8l+s0GiSXHvtPQciOsjUrD5W6r
-	nL35AokzoWzfoasQNjij1og=
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by canpmsgout01.his.huawei.com (SkyGuard) with ESMTPS id 4d4pMJ3W6Rz1T4Fv;
-	Mon, 10 Nov 2025 20:07:40 +0800 (CST)
-Received: from dggpemf500013.china.huawei.com (unknown [7.185.36.188])
-	by mail.maildlp.com (Postfix) with ESMTPS id 2DF291402DB;
-	Mon, 10 Nov 2025 20:09:01 +0800 (CST)
-Received: from [127.0.0.1] (10.174.178.254) by dggpemf500013.china.huawei.com
- (7.185.36.188) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 10 Nov
- 2025 20:09:00 +0800
-Message-ID: <1360a439-8c95-41e4-840c-163685751110@huawei.com>
-Date: Mon, 10 Nov 2025 20:08:59 +0800
+	s=arc-20240116; t=1762776550; c=relaxed/simple;
+	bh=lJKQuFJah+EsG+CPkoV2em+UfrxxkEmfjIlSEWygWOc=;
+	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=DHA/ZpNNZlVTuw8/uYd3TzOyIum2r+uWnpXTywYYH55/4clmMJSds9YmgPZLLxJ+4R5Tf6DgugyAtl903HNf4G7GJZm3/4Xryev5aeFUjTdRO9vlxdMAUt/aVThrXp7EkYj6ff0qZHNXyfdj2DSxpqRC8+yyAM4MtASNfu64N1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4LWOVlt2; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=gOj+opjC; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 10 Nov 2025 12:09:00 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1762776541;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=kKZAlCkPZ4+k5uew767/LTIzgtO1fCFu3Y5ZfWvnKWU=;
+	b=4LWOVlt2s39iJtxdFWQvd+zwT+VGzbQybshRRzliY3xfvO7xnhBQlz+KiQQdGaojVlFOYo
+	3AJAYhC1Ctmp7SUYoTJWv+Z7ks+sKtomK5JsGfuht8z+VowHTGb0HO/kD2MPUK/JkO+d6E
+	4lX3kRJzdgKQ1n5CrY5BZI/eQTdOyNG+XlYTZ7E8hU61C579klDHsgcYTBSwfYfrJuO7SU
+	8nCaPj0g2gLMnTCHhX8s/RfdGkdTouNHZgS7gPcIBJbipFmHvR0ccierzEjzAvlx39jN/9
+	fEernGqvYCg+Nh9pTWEFCXaqaxCf2MHj3gzUljXxSMMEpFLqGfY4zCHyJ6V1Ig==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1762776541;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=kKZAlCkPZ4+k5uew767/LTIzgtO1fCFu3Y5ZfWvnKWU=;
+	b=gOj+opjC3BS1E0Yy5uvmueXnVvjiVYp2nm4xcrcFcQkfOYqt1C8Gcz4DU3HwW7t3pSGPzE
+	Bkt/7sp4+RSMjWDA==
+From: "tip-bot2 for Borislav Petkov (AMD)" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: objtool/core] tools/objtool: Copy the __cleanup unused variable
+ fix for older clang
+Cc: Nathan Chancellor <nathan@kernel.org>,
+ "Borislav Petkov (AMD)" <bp@alien8.de>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 22/24] ext4: support verifying data from large folios
- with fs-verity
-Content-Language: en-GB
-To: Jan Kara <jack@suse.cz>, <libaokun@huaweicloud.com>
-CC: <linux-ext4@vger.kernel.org>, <tytso@mit.edu>, <adilger.kernel@dilger.ca>,
-	<linux-kernel@vger.kernel.org>, <kernel@pankajraghav.com>,
-	<mcgrof@kernel.org>, <ebiggers@kernel.org>, <willy@infradead.org>,
-	<yi.zhang@huawei.com>, <yangerkun@huawei.com>, <chengzhihao1@huawei.com>
-References: <20251107144249.435029-1-libaokun@huaweicloud.com>
- <20251107144249.435029-23-libaokun@huaweicloud.com>
- <tyeh5ds2dezr4hrqxs46riwi3ps7ugwhcx46fqmpzarughiokz@q26eyruagm6v>
-From: Baokun Li <libaokun1@huawei.com>
-In-Reply-To: <tyeh5ds2dezr4hrqxs46riwi3ps7ugwhcx46fqmpzarughiokz@q26eyruagm6v>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- dggpemf500013.china.huawei.com (7.185.36.188)
+Message-ID: <176277654045.498.2136004615232510398.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2025-11-10 17:54, Jan Kara wrote:
-> On Fri 07-11-25 22:42:47, libaokun@huaweicloud.com wrote:
->> From: Baokun Li <libaokun1@huawei.com>
->>
->> Eric Biggers already added support for verifying data from large folios
->> several years ago in commit 5d0f0e57ed90 ("fsverity: support verifying
->> data from large folios").
->>
->> With ext4 now supporting large block sizes, the fs-verity tests
->> `kvm-xfstests -c ext4/64k -g verity -x encrypt` pass without issues.
->>
->> Therefore, remove the restriction and allow LBS to be enabled together
->> with fs-verity.
->>
->> Cc: Eric Biggers <ebiggers@kernel.org>
->> Signed-off-by: Baokun Li <libaokun1@huawei.com>
-> Nice!
->
->> @@ -5175,7 +5173,8 @@ void ext4_set_inode_mapping_order(struct inode *inode)
->>  		return;
->>  
->>  	if (test_opt(inode->i_sb, DATA_FLAGS) == EXT4_MOUNT_JOURNAL_DATA ||
->> -	    ext4_test_inode_flag(inode, EXT4_INODE_JOURNAL_DATA))
->> +	    ext4_test_inode_flag(inode, EXT4_INODE_JOURNAL_DATA) ||
->> +	    ext4_has_feature_verity(inode->i_sb))
->>  		max_order = EXT4_SB(inode->i_sb)->s_min_folio_order;
->>  	else
->>  		max_order = EXT4_MAX_PAGECACHE_ORDER(inode);
-> Is there a reason why fsverity needs the folio order to match the block
-> size? I didn't find any by a quick glance. If yes, please state it in
-> the changelog. If no, then I'd just use EXT4_MAX_PAGECACHE_ORDER() because
-> it will give us some performance e.g. for mmapped executables protected by
-> fsverify...
->
-> 								Honza
->
-There is no real limitation that prevents verity from using
-EXT4_MAX_PAGECACHE_ORDER(). The reason I did not enable it by default
-is that none of the filesystems supporting fs-verity had large folios
-support at the time, and thus fs-verity with large folios has not yet
-been tested in practice. For this reason, I only enabled it when LBS
-is turned on.
+The following commit has been merged into the objtool/core branch of tip:
 
-As you pointed out, turning it on gives some performance gains. And
-it also lets fs-verity get more testing. I’ll switch to
-EXT4_MAX_PAGECACHE_ORDER(inode) in the next version.
+Commit-ID:     249092174caa3fe9fb8f7914991a8c0de484bcf8
+Gitweb:        https://git.kernel.org/tip/249092174caa3fe9fb8f7914991a8c0de48=
+4bcf8
+Author:        Borislav Petkov (AMD) <bp@alien8.de>
+AuthorDate:    Sat, 01 Nov 2025 13:37:51 +01:00
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Mon, 10 Nov 2025 12:46:08 +01:00
 
-Thank you for your review!
+tools/objtool: Copy the __cleanup unused variable fix for older clang
 
+Copy from
 
-Cheers,
-Baokun
+  54da6a092431 ("locking: Introduce __cleanup() based infrastructure")
 
+the bits which mark the variable with a cleanup attribute unused so that my
+clang 15 can dispose of it properly instead of warning that it is unused which
+then fails the build due to -Werror.
+
+Suggested-by: Nathan Chancellor <nathan@kernel.org>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+Link: https://lore.kernel.org/r/20251031114919.GBaQSiPxZrziOs3RCW@fat_crate.l=
+ocal
+---
+ tools/objtool/include/objtool/warn.h | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/tools/objtool/include/objtool/warn.h b/tools/objtool/include/obj=
+tool/warn.h
+index e88322d..a1e3927 100644
+--- a/tools/objtool/include/objtool/warn.h
++++ b/tools/objtool/include/objtool/warn.h
+@@ -107,6 +107,15 @@ extern int indent;
+=20
+ static inline void unindent(int *unused) { indent--; }
+=20
++/*
++ * Clang prior to 17 is being silly and considers many __cleanup() variables
++ * as unused (because they are, their sole purpose is to go out of scope).
++ *
++ * https://github.com/llvm/llvm-project/commit/877210faa447f4cc7db87812f8ed8=
+0e398fedd61
++ */
++#undef __cleanup
++#define __cleanup(func) __maybe_unused __attribute__((__cleanup__(func)))
++
+ #define __dbg(format, ...)						\
+ 	fprintf(stderr,							\
+ 		"DEBUG: %s%s" format "\n",				\
+@@ -127,7 +136,7 @@ static inline void unindent(int *unused) { indent--; }
+ })
+=20
+ #define dbg_indent(args...)						\
+-	int __attribute__((cleanup(unindent))) __dummy_##__COUNTER__;	\
++	int __cleanup(unindent) __dummy_##__COUNTER__;			\
+ 	__dbg_indent(args);						\
+ 	indent++
+=20
 
