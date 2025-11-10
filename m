@@ -1,257 +1,150 @@
-Return-Path: <linux-kernel+bounces-892824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EB43C45E92
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:24:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 99500C45FBA
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:39:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 73BE84E11C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:24:20 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F06524E8F14
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:39:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F4E4305977;
-	Mon, 10 Nov 2025 10:23:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA1133093DD;
+	Mon, 10 Nov 2025 10:38:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="PYqRD8XT"
-Received: from CY7PR03CU001.outbound.protection.outlook.com (mail-westcentralusazon11010059.outbound.protection.outlook.com [40.93.198.59])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Zz6bncYV"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13C13288520;
-	Mon, 10 Nov 2025 10:23:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.198.59
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762770229; cv=fail; b=GbH8hrCyYEM3rVlUpi7dqqXw0CF6X68IE3gSgTu0W6PVphp2IzBL2DxuYR6IydoVupKn+WYTNSjw8dx0lrXtMuO0nSFUqnzCa/h4cxoBEviig0SchfjxxlnsFeqXhfEbGJa3cqDyhGztp+UEOFjl2aDfFDsrhRgTVrczn6dM56Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762770229; c=relaxed/simple;
-	bh=KXdIs0evxgDvG0D4l/daWnQrCJ8KcM8fDtEvDzjkk0g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=MojCMF1rfU/9d/TehrvaTqJN6SmPWCeCgYiSg/KrO/rK/+yDE57ApBczi9kHA7SnB0Ua2+GdQ+O1Ax87A5xHe1AIWx86bRsxHIPPOmcyt8xFX1nx4D7e1qY//E1R5ah5lsAQrJ4Egp+2YYU2uPlN5Hg3Az2aIg6GYHjZ7Hbx8ME=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=PYqRD8XT; arc=fail smtp.client-ip=40.93.198.59
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Xo0qEqnUU84vnVukiVX9zhJ8EqanvxClrtOnIs9yi7iiUZd/zsc17LGTZ6hCrXAVwudGyQfcNmPL6HgdoWUnzPMTVEURK1kbAJELuSaO2X8EdKRrJwdKr7WtiGtIEP96JZ/GdEhXtfAMAnA/UQvQ4L4MzW7im5tdA0xrXJkn+QwhXWlj4EE8XOgxJCGsgsDAY5puB7x/+FQ0/UWqL8vAmn676QgEHpwPJfkxGWHMRc5EMEjOpgHHz2WThiYzYHchVV0foxpXWcg7KD2p/25Fq9P/pl7oqF4m6sNq0skmCMRzlrE6M8/EDsjADmkDJFPPJFzBOrcRJrGtY46qwXNm7Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4W15p7EqUW1KYLNj+2vDKch75XkoOa2lrxI3zR1eWb4=;
- b=lZ+jsoR58MIhC8W6TlPyojQepnMe4sJRDugDyaSoQE8jKz1yTkxpP4F8alLVD+nG11MykbCPHdlAIaSbkwNURbyXdRqABrJkybhocYa4blxRlAsGgVis5NZ7qsa8cmCwHQ2QvEWgoD4iZuuvXAmpkSRjnBltH15pzadHrlZNT5c/wTii5QmpEZj7I/Ltgg3qnsr7q3eLK3Pbeh+j3U+hmsVuc55nKkIfzcWahycTV8+sa8Err0Q9JfZceSUouVHWsq2jgrAup1f5wnX+s86e2/iNlKSKYDG8tjrkMYHVClOKbH3/NlwlU8FL01yxbvp2QtTTIi7yBJtw5oM4PpsRXg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 198.47.23.195) smtp.rcpttodomain=cadence.com smtp.mailfrom=ti.com; dmarc=pass
- (p=quarantine sp=none pct=100) action=none header.from=ti.com; dkim=none
- (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4W15p7EqUW1KYLNj+2vDKch75XkoOa2lrxI3zR1eWb4=;
- b=PYqRD8XTPvVWIeHHx9LkkedhT/ndbZZQdI14Xj8c0aYQ9erHDWimbeH+zfPwP3it6Mz8CjqiPPnpbkLGzfp5VxMyNFfcWewfI/x6qsr044BKNxTxXM++hI7ykds+NsYLWsBseTXtG0Xoxe+Xg8jB04jDfE/E6lRmXjMdwKfy0k4=
-Received: from BN1PR14CA0017.namprd14.prod.outlook.com (2603:10b6:408:e3::22)
- by IA1PR10MB7333.namprd10.prod.outlook.com (2603:10b6:208:3fa::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Mon, 10 Nov
- 2025 10:23:42 +0000
-Received: from BN1PEPF00006003.namprd05.prod.outlook.com
- (2603:10b6:408:e3:cafe::b5) by BN1PR14CA0017.outlook.office365.com
- (2603:10b6:408:e3::22) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9298.16 via Frontend Transport; Mon,
- 10 Nov 2025 10:23:41 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.23.195)
- smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
- action=none header.from=ti.com;
-Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
- 198.47.23.195 as permitted sender) receiver=protection.outlook.com;
- client-ip=198.47.23.195; helo=lewvzet201.ext.ti.com; pr=C
-Received: from lewvzet201.ext.ti.com (198.47.23.195) by
- BN1PEPF00006003.mail.protection.outlook.com (10.167.243.235) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9320.13 via Frontend Transport; Mon, 10 Nov 2025 10:23:41 +0000
-Received: from DLEE207.ent.ti.com (157.170.170.95) by lewvzet201.ext.ti.com
- (10.4.14.104) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 10 Nov
- 2025 04:23:38 -0600
-Received: from DLEE202.ent.ti.com (157.170.170.77) by DLEE207.ent.ti.com
- (157.170.170.95) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 10 Nov
- 2025 04:23:38 -0600
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE202.ent.ti.com
- (157.170.170.77) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Mon, 10 Nov 2025 04:23:38 -0600
-Received: from [172.24.235.208] (hkshenoy.dhcp.ti.com [172.24.235.208])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5AAANVjC3251357;
-	Mon, 10 Nov 2025 04:23:32 -0600
-Message-ID: <9599e17c-96d5-448f-96a2-bbcfcc3657a2@ti.com>
-Date: Mon, 10 Nov 2025 15:53:31 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63C083054CC;
+	Mon, 10 Nov 2025 10:38:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762771096; cv=none; b=jotwylh40nL4zBXvzlZhbVwrdB8ZlK3eJKbVTJh7zWkwvN5JamKnKWcti7yGcXBwgDdNiZXRVL0RNljEzm7Aglz3PdTZs7dnwKEJ83rhu0JwG1a9vR6SO5cIP9G7M0GTNnyqCcHvp4LbKdCXjWIWOIbPH3kkl9LtYxvDcTKeOcg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762771096; c=relaxed/simple;
+	bh=V9ZbPC67zEMLsSzZBxILrfmvIIg4P70AT+EpRDl4Ip8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=s/nHF2fQJnLVKKuKrFAAJzIGT61YK63iaee5zQ2dY+ZdrvnHnfQ+k2Q2QYyhf12kc7IsZAykM2LIvKR2tMWmYBvQhnfethBgL9rhxPTuoTJ3bhZLxJqc/tYrtGcGaw9u3tdlZYziT4FMX7c1g15D6Y2WLEz5Vs2LcTI/c56H2i0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Zz6bncYV; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762771094; x=1794307094;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=V9ZbPC67zEMLsSzZBxILrfmvIIg4P70AT+EpRDl4Ip8=;
+  b=Zz6bncYVjt6cGfNjqLP8owF3FPYwM9EndwIgMg31/kBd92nIFAarr3iU
+   FrAkuCrMr2i4WTU8+ZW0x23ojfzfVKQFKwFyXSjfXh7ahQphJ7604Ysik
+   I/NFi+9noNRDONO9HzGDyKAui1kHbolYb6mENjoZvx9q8rSPaGaEqW1Zo
+   KWKm7hR/tQFvjnzLGRg35HRFvRPo0i4528p8mkasxeELghhnvX5TOmDi8
+   NO/wuRh7qUY1puKEzD7lp/BNSXUuSQwFdy2OBQtGIyiOQmQVVmC0SXHCX
+   ZThYYYZvvkqnY1Batzz/fuv7DXcQEDp6wAYa3IOQAmShpyFxcUA6c86Bo
+   A==;
+X-CSE-ConnectionGUID: AaaMDhpcScisPG8eovl/tg==
+X-CSE-MsgGUID: yvLLj5Z+RvuMKhFw936aMQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11608"; a="75428650"
+X-IronPort-AV: E=Sophos;i="6.19,293,1754982000"; 
+   d="scan'208";a="75428650"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 02:38:13 -0800
+X-CSE-ConnectionGUID: HhTB2+reTraqdRK5b28MTQ==
+X-CSE-MsgGUID: lyL+M5TITei5AbXW2Hs0og==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,293,1754982000"; 
+   d="scan'208";a="192750706"
+Received: from black.igk.intel.com ([10.91.253.5])
+  by orviesa003.jf.intel.com with ESMTP; 10 Nov 2025 02:38:08 -0800
+Received: by black.igk.intel.com (Postfix, from userid 1003)
+	id 78F7099; Mon, 10 Nov 2025 11:38:07 +0100 (CET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Vinod Koul <vkoul@kernel.org>,
+	Thomas Andreatta <thomasandreatta2000@gmail.com>,
+	Caleb Sander Mateos <csander@purestorage.com>,
+	dmaengine@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-arm-msm@vger.kernel.org
+Cc: Olivier Dautricourt <olivierdautricourt@gmail.com>,
+	Stefan Roese <sr@denx.de>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+	Daniel Mack <daniel@zonque.org>,
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Lizhi Hou <lizhi.hou@amd.com>,
+	Brian Xu <brian.xu@amd.com>,
+	Raj Kumar Rampelli <raj.kumar.rampelli@amd.com>,
+	Michal Simek <michal.simek@amd.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH v2 04/13] dmaengine: bcm2835-dma: use sg_nents_for_dma() helper
+Date: Mon, 10 Nov 2025 11:23:31 +0100
+Message-ID: <20251110103805.3562136-5-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20251110103805.3562136-1-andriy.shevchenko@linux.intel.com>
+References: <20251110103805.3562136-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: drm/bridge: Update reg-name list for
- cdns,mhdp8546 compatible
-To: Krzysztof Kozlowski <krzk@kernel.org>, <robh@kernel.org>,
-	<Laurent.pinchart@ideasonboard.com>, <airlied@gmail.com>,
-	<andrzej.hajda@intel.com>, <conor+dt@kernel.org>, <devarsht@ti.com>,
-	<devicetree@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-	<jernej.skrabec@gmail.com>, <jonas@kwiboo.se>, <krzk+dt@kernel.org>,
-	<linux-kernel@vger.kernel.org>, <maarten.lankhorst@linux.intel.com>,
-	<mripard@kernel.org>, <neil.armstrong@linaro.org>, <rfoss@kernel.org>,
-	<s-jain1@ti.com>, <simona@ffwll.ch>, <sjakhade@cadence.com>,
-	<tzimmermann@suse.de>, <u-kumar1@ti.com>, <yamonkar@cadence.com>,
-	<pthombar@cadence.com>
-References: <20251107131535.1841393-1-h-shenoy@ti.com>
- <eb86cb58-6520-4a24-9e04-f10e2466fac6@kernel.org>
-Content-Language: en-US
-From: Harikrishna shenoy <h-shenoy@ti.com>
-In-Reply-To: <eb86cb58-6520-4a24-9e04-f10e2466fac6@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN1PEPF00006003:EE_|IA1PR10MB7333:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9f6c8a4e-1daa-4ca7-323a-08de204338b7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|376014|7416014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?b0tjOEwySmFoWE5WMzN1NmZ5ZG9xR0xNTVBmU0w4YkJhazlhNWMxVW9XbjR3?=
- =?utf-8?B?V2ZRTjJncHFhMm5OT2lpQ00xaHhCcDQvVk9pMHhUektWZDNDTVdLOXNHeTJl?=
- =?utf-8?B?WGw0K0FHV2lmZjljMFVsUU1ibExBWGVVYjFoSUdRMW4zYVBIa2UwbkJINlRQ?=
- =?utf-8?B?Q3QwWi8rV3BxenJmbWJybG5SYlZyZGt0VWpXOUNpUjYyU2VvQWFsZWF4b3l6?=
- =?utf-8?B?WlNVYURoM2phWjEzdlVQMi93ODhIcklWZW9XK2hjcTd2VFJSTTdJbWhPY0Nw?=
- =?utf-8?B?OXQ4T2l4UEt6ZS9aZks5L24zWEgxZURYOXFxTlQvTmlmTU5PL0F3VS9GNE5O?=
- =?utf-8?B?TnczUVQ1Z2JKYlFKdUlKR2V0b1BTSlNQMlRpSTZ0Q2VtYlpUVjlvcGhXRnhw?=
- =?utf-8?B?Qm40L3J4QXNZRlAwc2dEaS9EVTNzL2JhN0VocVBQSVhBbmlNUDhmRlJURmN1?=
- =?utf-8?B?WGlLN01MaGdlc3E2czk5bFBPWmt1Mk4wOHp2aFNhcWVmdTdzUDhlcmc4Umpn?=
- =?utf-8?B?VU1LMG53NjRPVEpuS0lWQVNNOTRBYkI4Q1ZPdGJrSVlEZk9xU1NPZ282dGRX?=
- =?utf-8?B?VHZVNnFGUU1raHFOZ3ZiNVJCYmw4bm02aVFTSzBqOFhKT0NsbTF1MXlxRnZX?=
- =?utf-8?B?dXBTQVZ1ZzczR1pIaURxQUhtejg5a2x5T2ErNUR6T1ZhaWpmUTVFSW54eUhU?=
- =?utf-8?B?djd3NDJwdWdwMVNhSUpab0gyekQ0NUtTZE0zcE9kaHZNdm9tNDhaYUx1SzJz?=
- =?utf-8?B?ZTg3VHVlTmV3cUc3K3FwVVUrVnYzOUo1UVRHK1hxQVBQME1tSmdjTEo2Z295?=
- =?utf-8?B?Z3VZa1I0VGoyczFzeHg4eFVNWEttZHFDSHZYM2U5Q1BzY3g1V2JiMHV6WUhn?=
- =?utf-8?B?L011OGV6aGZUWWxqM0doQVNmTkVhd1piTHVlM1JNd3JtM3RIOTRNcXF6YXVO?=
- =?utf-8?B?K0RDYjRENUxFWmJDQkJYNGgzS2NqOW16WXRwUEk3dk1YcklsSUd6RzRjRXE1?=
- =?utf-8?B?R2w0YlFSbi85N3Z0ZjZtazlkSE5xQUVNaXk1aS9peXAxV0tzb2t3UTdBeE5J?=
- =?utf-8?B?WUVuMDMyc2JOZmFBM2Rpa1l5WlpLdnE1a0x2SCtmS0h1QXBQcVJMOGlkZGha?=
- =?utf-8?B?M1ZtQnZrbFBjYnhQRjduOHNyT3B2ZVdla2dNcnljTXhNNW1KamVYVjFaeUI0?=
- =?utf-8?B?amxnajI0aVlCY3lFRFFKRXdNZERiZFpzWEIwR3EyWCtoaTZ1MHRoaitRQnFJ?=
- =?utf-8?B?Z2hSVXBqWGtsckVaK1JFQlJoNWVHWlVUY3hoMVV6b1NNTjdjNmZuNUNNVmFz?=
- =?utf-8?B?L1A1NmpUb040eFB5VVQ5cUJEdFVUQ25jMWRxUkJDUGJPblBKQmJEYXNIbnF2?=
- =?utf-8?B?OW1XZ0dyNjdWNlh3M25UZmFzSDNyU0VBZExwQzM2NlpDcUF1SlhkY3BINHFt?=
- =?utf-8?B?a1dPcTF2QWtzZElXTlRlM0pwaEJDbmtNdmVSREtaQ1M0dlVpeWhwUkxsZUg3?=
- =?utf-8?B?ekVxVlFVVXN0R3hLSUw0a2NyRFpncDJqcGprUG9HWnhDWlJLdWg3endQZ1NW?=
- =?utf-8?B?cUpPWHhUUzZOMHB1MjVHY3d3bm5EVzFyTEdzUWROMGVvQkEvQ2liVTJvNXNu?=
- =?utf-8?B?OE1ZVEFtaDRXdCtMUTVaOXFuTFRWbDB5QVMyNmZFYU1vK2tkSkZLQVJlNzNH?=
- =?utf-8?B?ajB2M003UllBRk01cXV3Y0dueWhoZUYzcnJyRTE1ci9zdlJFaHJkOTNuNTFr?=
- =?utf-8?B?UTUwbTlIMUxTelFkL2tkNW44M3pVZzJIaXk2WExWOGlQemNDaXJyc3JpSWlj?=
- =?utf-8?B?MVpTKzBnQ1FsK1hDMWFQdVZCTWdSNHlObWFFS1JMeXUyaWdFRVRiTHQyTFBP?=
- =?utf-8?B?dEk5MVA2UHpkTkMyRWNyWVloWVRpQ0Vrc09QQloxODRhcmxzc05sV05zcUtU?=
- =?utf-8?B?ekJxMDZFZnBxb3VRZFN0d3pWd1ZmNzNHY3Z2ZVZiUXBrczVkenNLS1E5TXFP?=
- =?utf-8?B?QXRZU2RSL1VuRk9KM0oyVWtnY3VIcTdjdkdhekxJMFU3emcyR0lJNjFwZ0Nr?=
- =?utf-8?B?c1hqd1VQM0tTQ0hDb0E4ZVZ0blRWREhVUTIyRXFTV2phdTFHWU5XVDR2Smov?=
- =?utf-8?Q?CcPN5UYzxu/kTTrjFlB2aGAfq?=
-X-Forefront-Antispam-Report:
-	CIP:198.47.23.195;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:lewvzet201.ext.ti.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(376014)(7416014)(921020);DIR:OUT;SFP:1101;
-X-OriginatorOrg: ti.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Nov 2025 10:23:41.8464
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9f6c8a4e-1daa-4ca7-323a-08de204338b7
-X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.23.195];Helo=[lewvzet201.ext.ti.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN1PEPF00006003.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR10MB7333
+Content-Transfer-Encoding: 8bit
 
+Instead of open coded variant let's use recently introduced helper.
 
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/dma/bcm2835-dma.c | 19 +------------------
+ 1 file changed, 1 insertion(+), 18 deletions(-)
 
-On 07/11/25 18:57, Krzysztof Kozlowski wrote:
-> On 07/11/2025 14:15, Harikrishna Shenoy wrote:
->> Remove j721e-intg register name from reg-name list for cdns,mhdp8546
->> compatible. The j721e-intg registers are specific to TI SoCs, so they
->> are not required for compatibles other than ti,j721e-mhdp8546.
->>
->> Move the register name constraints to the appropriate compatibility
->> sections to ensure the correct register names are used with each
->> compatible value.
->>
->> Fixes: 7169d082e7e6 ("dt-bindings: drm/bridge: MHDP8546 bridge binding changes for HDCP")
->> Signed-off-by: Harikrishna Shenoy <h-shenoy@ti.com>
->> ---
->>
->> Links to some discussions pointing to need for a fixes patch:
->> https://lore.kernel.org/all/20250903220312.GA2903503-robh@kernel.org/
->> https://lore.kernel.org/all/d2367789-6b54-4fc2-bb7c-609c0fe084d3@ti.com/
->>
->>   .../bindings/display/bridge/cdns,mhdp8546.yaml      | 13 +++++++------
->>   1 file changed, 7 insertions(+), 6 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/display/bridge/cdns,mhdp8546.yaml b/Documentation/devicetree/bindings/display/bridge/cdns,mhdp8546.yaml
->> index c2b369456e4e2..2fdb4f7108ed5 100644
->> --- a/Documentation/devicetree/bindings/display/bridge/cdns,mhdp8546.yaml
->> +++ b/Documentation/devicetree/bindings/display/bridge/cdns,mhdp8546.yaml
->> @@ -30,10 +30,6 @@ properties:
->>   
->>     reg-names:
->>       minItems: 1
->> -    items:
->> -      - const: mhdptx
->> -      - const: j721e-intg
->> -      - const: mhdptx-sapb
->>   
->>     clocks:
->>       maxItems: 1
->> @@ -103,7 +99,10 @@ allOf:
->>             maxItems: 3
->>           reg-names:
->>             minItems: 2
->> -          maxItems: 3
->> +          items:
->> +            - const: mhdptx
->> +            - const: j721e-intg
->> +            - const: mhdptx-sapb
->>       else:
->>         properties:
->>           reg:
->> @@ -111,7 +110,9 @@ allOf:
->>             maxItems: 2
->>           reg-names:
->>             minItems: 1
->> -          maxItems: 2
->> +          items:
->> +            - const: mhdptx
->> +            - const: mhdptx-sapb
-> 
-> This does not match regs now. Look which entry is the second - it is
-> always DSS_EDP0_INTG_CFG_VP
-> Optional item should be the last, not the middle. That's why DT
-
-Hi Krzysztof,
-
-Thanks for the review, will update the reg-description for 
-ti,j721e-mhdp8546 j721e-intg is mandatory and for cdns,mhdp8546 
-j721e-intg is
-not needed, will update and separate the reg description list according
-to compatibles as well.
-
-> maintainers ask (and it is even documented) to post complete bindings.
-> Complete means all registers, entire address space.
->
-
-I understand the need to post complete bindings, but this is a fixes 
-patch which tries to address the concerns raised in previous 
-discussions, not sure if it would be appropriate to add other register
-in address space like DSC which have not been updated in binding?
-
-Regards,
-Hari
-
-> Best regards,
-> Krzysztof
+diff --git a/drivers/dma/bcm2835-dma.c b/drivers/dma/bcm2835-dma.c
+index 0117bb2e8591..802b23be2fd8 100644
+--- a/drivers/dma/bcm2835-dma.c
++++ b/drivers/dma/bcm2835-dma.c
+@@ -260,23 +260,6 @@ static void bcm2835_dma_create_cb_set_length(
+ 	control_block->info |= finalextrainfo;
+ }
+ 
+-static inline size_t bcm2835_dma_count_frames_for_sg(
+-	struct bcm2835_chan *c,
+-	struct scatterlist *sgl,
+-	unsigned int sg_len)
+-{
+-	size_t frames = 0;
+-	struct scatterlist *sgent;
+-	unsigned int i;
+-	size_t plength = bcm2835_dma_max_frame_length(c);
+-
+-	for_each_sg(sgl, sgent, sg_len, i)
+-		frames += bcm2835_dma_frames_for_length(
+-			sg_dma_len(sgent), plength);
+-
+-	return frames;
+-}
+-
+ /**
+  * bcm2835_dma_create_cb_chain - create a control block and fills data in
+  *
+@@ -672,7 +655,7 @@ static struct dma_async_tx_descriptor *bcm2835_dma_prep_slave_sg(
+ 	}
+ 
+ 	/* count frames in sg list */
+-	frames = bcm2835_dma_count_frames_for_sg(c, sgl, sg_len);
++	frames = sg_nents_for_dma(sgl, sg_len, bcm2835_dma_max_frame_length(c));
+ 
+ 	/* allocate the CB chain */
+ 	d = bcm2835_dma_create_cb_chain(chan, direction, false,
+-- 
+2.50.1
 
 
