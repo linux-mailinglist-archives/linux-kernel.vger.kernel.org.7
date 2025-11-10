@@ -1,155 +1,96 @@
-Return-Path: <linux-kernel+bounces-892530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88E9CC454A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:01:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E59BC454B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:03:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47C6B3B31F2
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 08:01:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C06CB3B2D5F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 08:03:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 081CE2F6923;
-	Mon, 10 Nov 2025 08:01:41 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 127BF2F691B;
+	Mon, 10 Nov 2025 08:02:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GBMrRrlR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F370379CD;
-	Mon, 10 Nov 2025 08:01:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67A2F261573;
+	Mon, 10 Nov 2025 08:02:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762761700; cv=none; b=bey3A7uiJe4d+5c++6PPZ0BXXvDA9jU9MJ3/hEg5XGZrs95SMK+SawfOYqFj1jU+kdUDXXK9YG6OSPje1RhRWEAL1chzNSdKkvQTb+aePVLh7Rp1ciSFBz3gT35aYNXLyiy83wjGdrNfupz88VKkhK30McQOJdIfAhwxCXPM4Fs=
+	t=1762761774; cv=none; b=oOhS32YufXAOHUbJtRPlTLQsCB3bvcrbz1dnS2zNaE5NW+g4BWDRhjUpF1srD50cPzeAZ9Ua0dt/maOjp3JNS4roZa09KPHx+7QZkA1E5PwTykl+aDMYNk01tmHqo/OPumOK9BTARzyczgmHyIxdU22fgW9gtFdvk6KfBrsjcuc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762761700; c=relaxed/simple;
-	bh=JwjdNc5Od1/yX9H/LlUz8bXR7/nAIi8de1f95CaCqDk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DxA8oYp4Y7dwL58rMxvKLYIfyMuvILFC3On15MU91LNNmZA0VHPExmq1ebet87VFFrNBBjggZFQ+4XeY/oaNLdSNRwMfIVCSjIX0FnjUYtMqpi/pCJc1Cmz29rw1vEtSUlAA1Q5Au4MYyMtwKTTRAXbB3H2PTO2dhh17jSLAy8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [192.168.2.215] (p57bd98ba.dip0.t-ipconnect.de [87.189.152.186])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id E5EF8600D068A;
-	Mon, 10 Nov 2025 09:01:24 +0100 (CET)
-Message-ID: <5dc5f0f7-3dfa-403a-821d-b4fdb800d1e8@molgen.mpg.de>
-Date: Mon, 10 Nov 2025 09:01:23 +0100
+	s=arc-20240116; t=1762761774; c=relaxed/simple;
+	bh=Mjf/udNQvIHvbjf5mPBHq7ehCEM72149U5Hh1Lrz5ro=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UwoIV2JMVFIJNhU03Bl5klDbuhso0W4PN49jk0ZkbUuqxwFGW4jUKvX4xT+V2mHpedeWLpEvSCqmy6w4AH6Bo1JrELzkJFO9d84tBffI0cmpfu7AAIgLTbXW3DoPk7ZIgjW2XM9G2JCUJGEsRDIUDZHNCG4El8B/Ds8P+ZmozeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GBMrRrlR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C099C4CEF5;
+	Mon, 10 Nov 2025 08:02:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762761773;
+	bh=Mjf/udNQvIHvbjf5mPBHq7ehCEM72149U5Hh1Lrz5ro=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GBMrRrlRgxK97/xHqRY3xPElLV3ZBVHtIgd85mJgW+cVB7zEhaGbQL4RL+Vr+r9nG
+	 epRumM9yhggPC7tzZ8295w2DkXrcAH9Z11iLsiHGqFRdQN6xRTukNlaqD090LFCpvw
+	 I8s1vFxvExNnAtg39YD8xz5l8QxDiqILzJXtTGttkY6/aa6ordtM4OF7tsRH597LN/
+	 /Pff4IoKUbiVs1FiDnMPko8lpkm9Iqv3u3Fw5eMzgSenXd3aqssqztltbU0dYREbu4
+	 pGCm+F48PrLWayTWT6msy0vgZcAmFDiiBmRIcehuFEEIWOhfPAk5BALh5fRsMcHqby
+	 /vzLfCrcfQ/ww==
+Date: Mon, 10 Nov 2025 09:02:51 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: michael.opdenacker@rootcommit.com
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>, 
+	Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, Yangyu Chen <cyy@cyyself.name>, 
+	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/4] dt-bindings: riscv: spacemit: Add OrangePi R2S board
+Message-ID: <20251110-impressive-dalmatian-of-luck-4d1441@kuoka>
+References: <20251109222858.3085488-1-michael.opdenacker@rootcommit.com>
+ <20251109222858.3085488-2-michael.opdenacker@rootcommit.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/1] Bluetooth: btusb: add default nvm file
-To: Shuai Zhang <quic_shuaz@quicinc.com>
-Cc: Marcel Holtmann <marcel@holtmann.org>,
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
- linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, quic_chejiang@quicinc.com,
- quic_jiaymao@quicinc.com, quic_chezhou@quicinc.com
-References: <20251110034134.1016537-1-quic_shuaz@quicinc.com>
- <20251110034134.1016537-2-quic_shuaz@quicinc.com>
-Content-Language: en-US
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <20251110034134.1016537-2-quic_shuaz@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251109222858.3085488-2-michael.opdenacker@rootcommit.com>
 
-Dear Shuai,
-
-
-Thank you for the patch.
-
-Am 10.11.25 um 04:41 schrieb Shuai Zhang:
-> If no NVM file matches the board_id, load the default NVM file.
-
-Maybe also add the comment, that the NVM file is always compatible(?) 
-and just might not give the best performance.
-
-Also, please add a comment about passing board_id now. (Is that 
-necessary or just an optimization?)
-
-> Signed-off-by: Shuai Zhang <quic_shuaz@quicinc.com>
-> ---
->   drivers/bluetooth/btusb.c | 26 +++++++++++++++++---------
->   1 file changed, 17 insertions(+), 9 deletions(-)
+On Sun, Nov 09, 2025 at 10:29:57PM +0000, michael.opdenacker@rootcommit.com wrote:
+> From: Michael Opdenacker <michael.opdenacker@rootcommit.com>
 > 
-> diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-> index dcbff7641..020dbb0ab 100644
-> --- a/drivers/bluetooth/btusb.c
-> +++ b/drivers/bluetooth/btusb.c
-> @@ -3482,15 +3482,14 @@ static int btusb_setup_qca_load_rampatch(struct hci_dev *hdev,
->   }
->   
->   static void btusb_generate_qca_nvm_name(char *fwname, size_t max_size,
-> -					const struct qca_version *ver)
-> +					const struct qca_version *ver,
-> +					u16 board_id)
->   {
->   	u32 rom_version = le32_to_cpu(ver->rom_version);
->   	const char *variant, *fw_subdir;
->   	int len;
-> -	u16 board_id;
->   
->   	fw_subdir = qca_get_fw_subdirectory(ver);
-> -	board_id = qca_extract_board_id(ver);
->   
->   	switch (le32_to_cpu(ver->ram_version)) {
->   	case WCN6855_2_0_RAM_VERSION_GF:
-> @@ -3517,14 +3516,14 @@ static void btusb_generate_qca_nvm_name(char *fwname, size_t max_size,
->   
->   static int btusb_setup_qca_load_nvm(struct hci_dev *hdev,
->   				    struct qca_version *ver,
-> -				    const struct qca_device_info *info)
-> +				    const struct qca_device_info *info,
-> +				    u16 board_id)
->   {
->   	const struct firmware *fw;
->   	char fwname[80];
->   	int err;
->   
-> -	btusb_generate_qca_nvm_name(fwname, sizeof(fwname), ver);
-> -
-> +	btusb_generate_qca_nvm_name(fwname, sizeof(fwname), ver, board_id);
->   	err = request_firmware(&fw, fwname, &hdev->dev);
->   	if (err) {
->   		bt_dev_err(hdev, "failed to request NVM file: %s (%d)",
-> @@ -3606,10 +3605,19 @@ static int btusb_setup_qca(struct hci_dev *hdev)
->   	btdata->qca_dump.controller_id = le32_to_cpu(ver.rom_version);
->   
->   	if (!(status & QCA_SYSCFG_UPDATED)) {
-> -		err = btusb_setup_qca_load_nvm(hdev, &ver, info);
-> -		if (err < 0)
-> -			return err;
-> +		u16 board_id = qca_extract_board_id(&ver);
->   
-> +		err = btusb_setup_qca_load_nvm(hdev, &ver, info, board_id);
-> +		if (err < 0) {
-> +			//if the board id is not 0, try to load the defalut nvm file
+> Document the compatible string for the OrangePi R2S board [1], which
+> is marketed as using the Ky X1 SoC but is in fact identical to
+> the SpacemiT K1 SoC [2].
+> 
+> Link: http://www.orangepi.org/html/hardWare/computerAndMicrocontrollers/details/Orange-Pi-R2S.html [1]
+> Link: https://www.spacemit.com/en/key-stone-k1 [2]
+> 
+> Signed-off-by: Michael Opdenacker <michael.opdenacker@rootcommit.com>
+> ---
+>  Documentation/devicetree/bindings/riscv/spacemit.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/riscv/spacemit.yaml b/Documentation/devicetree/bindings/riscv/spacemit.yaml
+> index 52fe39296031..1b2f279d31f9 100644
+> --- a/Documentation/devicetree/bindings/riscv/spacemit.yaml
+> +++ b/Documentation/devicetree/bindings/riscv/spacemit.yaml
+> @@ -24,6 +24,7 @@ properties:
+>                - milkv,jupiter
+>                - spacemit,musepi-pro
+>                - xunlong,orangepi-rv2
+> +              - xunlong,orangepi-r2s
 
-Did `checkpatch.pl` not complain about the missing space, and 
-misspelling of *default*?
+2 < v.
 
-> +			if (err == -ENOENT && board_id != 0) {
-> +				err = btusb_setup_qca_load_nvm(hdev, &ver, info, 0);
-> +				if (err < 0)
-> +					return err;
-> +			} else {
-> +				return err;
-> +			}
-> +		}
->   		/* WCN6855 2.1 and later will reset to apply firmware downloaded here, so
->   		 * wait ~100ms for reset Done then go ahead, otherwise, it maybe
->   		 * cause potential enable failure.
+Best regards,
+Krzysztof
 
-Please try to catch the style errors before submitting patches.
-
-
-Kind regards,
-
-Paul
 
