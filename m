@@ -1,219 +1,89 @@
-Return-Path: <linux-kernel+bounces-892355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A16AC44E9E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 05:33:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8FCAC44EA7
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 05:33:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 127E03AEBCE
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 04:33:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2929A188DC34
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 04:34:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CF8F299950;
-	Mon, 10 Nov 2025 04:32:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A014828CF66;
+	Mon, 10 Nov 2025 04:33:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ll1yWM1S"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="bfRiMdsw"
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEA5D298CC9
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 04:32:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70B2E19ABC6
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 04:33:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762749165; cv=none; b=dw5BO67hTBr9F//n5ypVFQR0QokpalqcNKx/k5e8JlZ22fRbrPkfVNko6qSVEkEsiLmRhETWuAjLY7/+mDEwVyeeFX0E37dE3TE7Q/FfKmoO/wNrcMay+OX//XIIN8TpUKfnmczIExWzIQmCKi82FZ2I/y1x0giym4J7S3Gt0W4=
+	t=1762749227; cv=none; b=T30wnV21TDyPp5W/xrfsKTog0jeILFkmmYE9lbYfBiqJiCDSw7Ddw8zTENd/Q2Au6XA1KqXPXxrViy3CTkIQ0EGvObR54GX/3JI0/IKCCJX9tXPlOOaeJsr38rbNeOIxW+mm80vTP7VFm5XGRGRncKg4eacM48q+Y/PdpOpg8ho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762749165; c=relaxed/simple;
-	bh=ClCGE5Gspafw1+VqC6Gi3FIMrWPU/FfYE0vFEW3/15k=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RpLjft56vRZ4lcA8vFWKhMa55s/BjYLALQZpkWON7nOhek9qpoi+xB8B5BcuNesSU55kNxlgp1bJt9yYeOSeOaooPADWGtP1b6OoSIzur6B70ch4UEOBJP5JvvRTCwi57Ai2Gw8HWG4Q+i9pwj3CgvFUxHSR1qZNqjBrfuaWadM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ll1yWM1S; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A9NMBbL030964;
-	Mon, 10 Nov 2025 04:32:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=Y843UHAo4TTYfhg3g
-	Y3eOgCT9p62bFpqECVsQxpKWAQ=; b=ll1yWM1SY774DrdGf5bitP3pDP9w186+y
-	HDJLiJhbuf7O0jdSyi/i2p7t2bOpNO7KHeCIvWdC/ALpuZKnTE7g4LcZQXkdxrYj
-	sI0W4Rv2LTu4nrespmHEl3DdTR0fl55ryR5To/k4tUFg1Wn998XwXTJan+fPIaVx
-	lZ9gWo3PPc1TUyx3MOTDHuATSp8RsbG2mFR307bBibKYji8yjGl0tLl61yKZTfJW
-	aR3ugIc4Jr9OgsoAIMrO5XWtpxmgpxw1Eadul/H/NKljCK5NThCiffso4FLwO3qH
-	ZGHlnE7kT8Z12orfb3fuu0bVIW7F/GqX2+JXAnp6VVvEP9fyehQ3w==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4aa5chw70p-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Nov 2025 04:32:20 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5AA4U43a026875;
-	Mon, 10 Nov 2025 04:32:20 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4aa5chw70j-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Nov 2025 04:32:20 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5A9NJMCl014841;
-	Mon, 10 Nov 2025 04:32:19 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4aahpjut9x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Nov 2025 04:32:18 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5AA4WF4j61342196
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 10 Nov 2025 04:32:15 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1ABBD20049;
-	Mon, 10 Nov 2025 04:32:15 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4602020040;
-	Mon, 10 Nov 2025 04:32:11 +0000 (GMT)
-Received: from li-4f5ba44c-27d4-11b2-a85c-a08f5b49eada.in.ibm.com (unknown [9.109.204.116])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 10 Nov 2025 04:32:11 +0000 (GMT)
-From: Sourabh Jain <sourabhjain@linux.ibm.com>
-To: linux-kernel@vger.kernel.org
-Cc: Sourabh Jain <sourabhjain@linux.ibm.com>,
-        Aditya Gupta <adityag@linux.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>, Baoquan he <bhe@redhat.com>,
-        Dave Young <dyoung@redhat.com>, Hari Bathini <hbathini@linux.ibm.com>,
-        Jiri Bohac <jbohac@suse.cz>, Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
-        Pingfan Liu <piliu@redhat.com>,
-        "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
-        Shivang Upadhyay <shivangu@linux.ibm.com>,
-        Vivek Goyal <vgoyal@redhat.com>, linuxppc-dev@lists.ozlabs.org,
-        kexec@lists.infradead.org
-Subject: [PATCH v3 5/5] crash: export crashkernel CMA reservation to userspace
-Date: Mon, 10 Nov 2025 10:01:43 +0530
-Message-ID: <20251110043143.484408-6-sourabhjain@linux.ibm.com>
-X-Mailer: git-send-email 2.51.1
-In-Reply-To: <20251110043143.484408-1-sourabhjain@linux.ibm.com>
-References: <20251110043143.484408-1-sourabhjain@linux.ibm.com>
+	s=arc-20240116; t=1762749227; c=relaxed/simple;
+	bh=nTJTaXpzzBsfdj+1/crO1yYXdzbYP2qdrQO0b4BNBpI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LmX1cuGo4VZQ81gAivYFVaJgSXP2GfKDL7+u9Gt6hNrai+L9DL9HpXNzWTOBGWVhfin8ilPM6kHdoCUGG5lT69qIQeULQFLf7lFM3mwNwyIQB3oqw1/c0l1GmH0ZFhz3X5rb/Rrtqg6SHe6QdXVxnJSbyFrXxDqW5s09VUjn+IM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=bfRiMdsw; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from trampoline.thunk.org (pool-173-48-122-154.bstnma.fios.verizon.net [173.48.122.154])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 5AA4WQhx031348
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 9 Nov 2025 23:32:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1762749150; bh=Ji62mRQ7gxde16ghmlwgDkA5BKifVd2MaUowQoZKmt8=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=bfRiMdsw8RflfCtLJ3pcuAnaMzkTW2Df9ohNF6OL2vQRmzzegIq+7wsMhyjVA4nwD
+	 dbfm+C31wNDMboTLUQq3mquJn5plT0keEqfcmRSCrsT1qs9C9O+9g36wID0Q1pPI2L
+	 uPmyaNuuk5JWXMxc3DVJJTqtFUVhFsjg6zM0Zn/qOyBACWAYaZMguVlDAzAJ3QgLn3
+	 VEh/gSb00KWj6F8EfdQUxuxJeQR/bjsfT05JWn30S7y171bVSmmI6MMigFLqbEBKIk
+	 ji9LxqzdSdOo3u6Z9zm56FM1by/K1s2XW605dyBrk5YnWOKOWnVZNYFmys5FyLFbal
+	 7AS2mDV6Vnnwg==
+Received: by trampoline.thunk.org (Postfix, from userid 15806)
+	id BE1392E00D9; Sun, 09 Nov 2025 23:32:26 -0500 (EST)
+Date: Sun, 9 Nov 2025 23:32:26 -0500
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: libaokun@huaweicloud.com
+Cc: linux-ext4@vger.kernel.org, adilger.kernel@dilger.ca, jack@suse.cz,
+        linux-kernel@vger.kernel.org, kernel@pankajraghav.com,
+        mcgrof@kernel.org, ebiggers@kernel.org, willy@infradead.org,
+        yi.zhang@huawei.com, yangerkun@huawei.com, chengzhihao1@huawei.com,
+        libaokun1@huawei.com
+Subject: Re: [PATCH v2 00/24] ext4: enable block size larger than page size
+Message-ID: <20251110043226.GD2988753@mit.edu>
+References: <20251107144249.435029-1-libaokun@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=Ss+dKfO0 c=1 sm=1 tr=0 ts=69116ad4 cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=VnNF1IyMAAAA:8 a=Z4Rwk6OoAAAA:8
- a=20KFwNOVAAAA:8 a=pGLkceISAAAA:8 a=voM4FWlXAAAA:8 a=JfrnYn6hAAAA:8
- a=xHySkhmCpRGYbmLIrh4A:9 a=HkZW87K1Qel5hWWM3VKY:22 a=IC2XNlieTeVoXbcui8wp:22
- a=1CNFftbPRP8L7MoqJWF3:22 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA4MDA5NSBTYWx0ZWRfXxviF4FCwEarM
- yc1LY5Tu8GcyGsCVpQaqoUaZAVbe4a3a0MfS/jZRPM0K4YerWDDjCrxZ4u0MEKp6nA6nkAO5A4J
- 0J4ekljfk6jQ+VrV2IzSp05iLz3TeDqgE1uf3pkuQ3RnxOOPUbizgkJUo60HIy9FqO4pgCXNSRw
- tIJluGlaYzKM/qSOzRobVB8RJr/wPyA/ujXuR2vAJJCZ/f2I9ZV1VXv/dk7raSfM7tMHiY3Jbd4
- TqGPQHr1oSH0uWp25QV5Gi9XFyJghieKKyMQbLXLn3a5iA79D0sNPj9Ut+ywciTf+5l6Sm7ynwe
- fdbBX86+jBjWirf8NHYvHO8QLk6dtl9VQGVbu82ztCSBJ/4jXc/xoHrIAZzrovnfTkj1UfK2bZ5
- BPbpCkDTHwpaZ1SHaWNhIbT+X5yJFw==
-X-Proofpoint-GUID: auHh23VC4ON0syCQXH9zdfVE6uPG1e4W
-X-Proofpoint-ORIG-GUID: YOWHrtq7ZAwkVSY61seUoCGRKrnTKQYS
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-10_01,2025-11-06_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 suspectscore=0 impostorscore=0 bulkscore=0 phishscore=0
- lowpriorityscore=0 adultscore=0 priorityscore=1501 spamscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2511080095
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251107144249.435029-1-libaokun@huaweicloud.com>
 
-Add a sysfs entry /sys/kernel/kexec/crash_cma_ranges to expose all
-CMA crashkernel ranges.
+I've started looking at this patch series and playing with it, and one
+thing which is worth noting is that CONFIG_TRANSPARENT_HUGEPAGE needs
+to be enabled, or else sb_set_blocksize() will fail for block size >
+page size.  This isn't specific to ext4, and maybe I'm missing
+something, but apparently this isn't documented.  I had to go digging
+through the source code to figure out what was needed.
 
-This allows userspace tools configuring kdump to determine how much
-memory is reserved for crashkernel. If CMA is used, tools can warn
-users when attempting to capture user pages with CMA reservation.
+I wonder if we should have some kind of warning in sb_set_blocksize()
+where if there is an attempt to set a blocksize > page size and
+transparent hugepages is not configured, we issue a printk_once()
+giving a hint to the user that the reason that the mount failed was
+because transparent hugepages wasn't enabled at compile time.
 
-The new sysfs hold the CMA ranges in below format:
+It **really** isn't obvious that large block size support and
+transparent hugepages are linked.
 
-cat /sys/kernel/kexec/crash_cma_ranges
-100000000-10c7fffff
-
-Cc: Aditya Gupta <adityag@linux.ibm.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Baoquan he <bhe@redhat.com>
-Cc: Dave Young <dyoung@redhat.com>
-Cc: Hari Bathini <hbathini@linux.ibm.com>
-Cc: Jiri Bohac <jbohac@suse.cz>
-Cc: Madhavan Srinivasan <maddy@linux.ibm.com>
-Cc: Mahesh J Salgaonkar <mahesh@linux.ibm.com>
-Cc: Pingfan Liu <piliu@redhat.com>
-Cc: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-Cc: Shivang Upadhyay <shivangu@linux.ibm.com>
-Cc: Vivek Goyal <vgoyal@redhat.com>
-Cc: linuxppc-dev@lists.ozlabs.org
-Cc: kexec@lists.infradead.org
-Signed-off-by: Sourabh Jain <sourabhjain@linux.ibm.com>
----
-Changelog:
- - Add the missing hunk to export crash_cma_ranges sysfs
-
----
- .../ABI/testing/sysfs-kernel-kexec-kdump        | 10 ++++++++++
- kernel/kexec_core.c                             | 17 +++++++++++++++++
- 2 files changed, 27 insertions(+)
-
-diff --git a/Documentation/ABI/testing/sysfs-kernel-kexec-kdump b/Documentation/ABI/testing/sysfs-kernel-kexec-kdump
-index 00c00f380fea..f59051b5d96d 100644
---- a/Documentation/ABI/testing/sysfs-kernel-kexec-kdump
-+++ b/Documentation/ABI/testing/sysfs-kernel-kexec-kdump
-@@ -49,3 +49,13 @@ Description:	read only
- 		is used by the user space utility kexec to support updating the
- 		in-kernel kdump image during hotplug operations.
- User:		Kexec tools
-+
-+What:		/sys/kernel/kexec/crash_cma_ranges
-+Date:		Nov 2025
-+Contact:	kexec@lists.infradead.org
-+Description:	read only
-+		Provides information about the memory ranges reserved from
-+		the Contiguous Memory Allocator (CMA) area that are allocated
-+		to the crash (kdump) kernel. It lists the start and end physical
-+		addresses of CMA regions assigned for crashkernel use.
-+User:		kdump service
-diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
-index 7476a46de5d6..da6ff72b4669 100644
---- a/kernel/kexec_core.c
-+++ b/kernel/kexec_core.c
-@@ -1271,6 +1271,22 @@ static ssize_t crash_size_store(struct kobject *kobj,
- }
- static struct kobj_attribute crash_size_attr = __ATTR_RW(crash_size);
- 
-+static ssize_t crash_cma_ranges_show(struct kobject *kobj,
-+				     struct kobj_attribute *attr, char *buf)
-+{
-+
-+	ssize_t len = 0;
-+	int i;
-+
-+	for (i = 0; i < crashk_cma_cnt; ++i) {
-+		len += sysfs_emit_at(buf, len, "%08llx-%08llx\n",
-+				     crashk_cma_ranges[i].start,
-+				     crashk_cma_ranges[i].end);
-+	}
-+	return len;
-+}
-+static struct kobj_attribute crash_cma_ranges_attr = __ATTR_RO(crash_cma_ranges);
-+
- #ifdef CONFIG_CRASH_HOTPLUG
- static ssize_t crash_elfcorehdr_size_show(struct kobject *kobj,
- 			       struct kobj_attribute *attr, char *buf)
-@@ -1289,6 +1305,7 @@ static struct attribute *kexec_attrs[] = {
- #ifdef CONFIG_CRASH_DUMP
- 	&crash_loaded_attr.attr,
- 	&crash_size_attr.attr,
-+	&crash_cma_ranges_attr.attr,
- #ifdef CONFIG_CRASH_HOTPLUG
- 	&crash_elfcorehdr_size_attr.attr,
- #endif
--- 
-2.51.1
+					- Ted
 
 
