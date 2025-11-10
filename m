@@ -1,102 +1,77 @@
-Return-Path: <linux-kernel+bounces-894078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DB47C493AA
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 21:28:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A80B7C493C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 21:29:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63A2B3B00F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 20:28:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1354E3B083B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 20:29:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F0BA2ECEA7;
-	Mon, 10 Nov 2025 20:28:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C02D2EDD64;
+	Mon, 10 Nov 2025 20:28:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="0DXESfE9"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VDR5NR5O"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08A2B2EC569
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 20:28:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22DE72ECD06;
+	Mon, 10 Nov 2025 20:28:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762806506; cv=none; b=Ms+nKOK+6DAfl/jPvJfSAh1rxl7ElyilUJPiwyOI2gxNDod2xJ4xSwbX/Ze1ct5JfYfSETtBNUx989dUj3UaVDWB9ieakdNF6TDfhnioIB1S/XU4Eyr23vYN/LM94tcDMzgv7mk0Ra6e9GMlI9eg4hgHAw8o6IOblrPFOcj0VaU=
+	t=1762806530; cv=none; b=ub1kiYY4ZnYTgbvXf3vrvERj8H6wKAJFEhRQF3wY1kl/5Z0nsT8iF76BPzh28kEH+hl75zRMnEq64uuIHs1qNQQCY/Etlze9DC5ZeVN5k5d6yuvbytfwTzh91+i64icw4k2mbY/JRJvAlViOjJ8H3sdpX77suXrL42jm8Ng6AFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762806506; c=relaxed/simple;
-	bh=U2KPE+a4Gjk2w8tXO3gOnH3+aIIjVM+sZqVcF9kbiaQ=;
+	s=arc-20240116; t=1762806530; c=relaxed/simple;
+	bh=2+oC81xV69bAibilHvu376ufSMAg5fmIkqZozg3DinU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GOR0SfC2lAFIqPSIEF8CtK4l4fHxrc4OlxXjIH7qm9odMjC/QbxjrARUL1LNm5So9f6sAtcgBhn4FQaQ+lUkeIc3osJb1ifeeYLlrg8ZWieknm70iMPTRnlt8cgCpNFZqEpji65RtVPrci1frZgggjVG+9+SngdgjuK4x2NDu6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=0DXESfE9; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7aae5f2633dso4113841b3a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 12:28:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1762806504; x=1763411304; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q/v36x1hAUlyKd1IieWoklJ8pc6DivsQnj+M0ePT6nI=;
-        b=0DXESfE9IgF6uIMHPBfVhT9MYO+Z/zPM9nYObFd6wb7gLGzb8ZLekHfT8BI8+vA7yr
-         46cdVNBO0kTI6DdJU+k9wLHyk4DAs/A0p0sxjXuZVUKzWFRE65xSPsLNVit5H/n2Ddhv
-         hoCX0C2cYzbicMfZeFYjvnmox4Qqqdv92C/xmaX+O51kOAQEG6QSHAuFVFUN0EeSntOL
-         JfN6WXtzX0r1BFI1UJu4rFi/8UgfbGM8v5vvUnyj54k2hjuqxysPmvxvpNp7ecCLJVi4
-         wKE6B1+n9ehk7mhdrtPJPJnp9/bNyi+D+oYRiQ1GClslcmi2tBKXH6BLNmeiE650kITd
-         rFQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762806504; x=1763411304;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Q/v36x1hAUlyKd1IieWoklJ8pc6DivsQnj+M0ePT6nI=;
-        b=KI0ZXpsnJFGdbOrJtKCSuzCEaViVS0bvrIDgPHD9fqiAmiZbBVXpHgymjCy+eoJEsd
-         X4ai+YgNIx0OCU2Hg6tQ1zAUAr8C+Cr6k5ydMsAat2z5Nz9oJexSsyIHGiI9mTIDu6mX
-         h53H69s7nPDZBBwX1j/7YawYWa2eKUj++ITxT4QGO4RV3QTkid4uPYi4+IdY7Ch4KGp2
-         OMwZmVmBfRo5bnNdgKtYKxblSlA0TwGNsQw9QMF76IHrM+gX6tr8G1FcgkUbLRoQJ6jL
-         2EnWAkXrnrHoLlfZ+H7WfSGQwrYj2YK9QuG2xunZEF9edYC0CJcSUNPYTPpUn+Mm0k5X
-         CvQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXjnX4DYUkdEmd8+XjdHezQAXyfoDyICWjuoVV1Rlo2QxJ1biV5eDbojTC1qLL2OtfmQZ1kWbAlB9+La3c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyw/7rN1CM+l85bgPen4dTufgkIYdO+OjPGQW6gAdttQaG/0EFb
-	HGLgCINzzqlig6btJEg73mdDy5/KpAQON/j93NraNe2UhXa2RZSqaALv6DnKzfZbJsaiZti1w8L
-	N/IzD
-X-Gm-Gg: ASbGnctx+b98bD9Llrtfj7dRgjukgWOwlmHo8SPhsSiH69optmJpWBopfA3dHG0u+hQ
-	4cDhtfPqZxrfU6yR9o9zSguAv+StlAc/bkiKZOsAa4BM7FdYNC3uPsr/OlzaP2VV61aQUt91Swp
-	TxbUQPx/qSdhYjgoSlIUSc5h2oP2semSt+1XpplOZiNIXf9FqyAotrNTVD8FP57PDP4/YjECU32
-	5fZ/N7qRGtua4XhHp4Ui90qEQ0Q+sJ7qR5MW6YQPrfqGFikFLm+N0ajQyWOoblmp9FVgL45P5um
-	OFJRFpuea/Q4q3JJ9gDN+LAj0JsF/8Cn2fJaiG00+V34KFihvv+NI/V+p3IJupU02Rd0g2Y0SUg
-	A2vqb2Kf2Cgg69PCk+bvdy2cfr/M+MC1quAKIz6QiXgTW1QRNF+Urpd/EaooH3ydR0hvldUXD/A
-	mDESo03j+r6Y0TGO3+DTx38TUq6ybCm2PTAcZTyb0wtx3vtmEvRrF6KQtUvKRodw==
-X-Google-Smtp-Source: AGHT+IH39E62oY2rb1DPACln6LUbVJT652sq3AEwuo4V3SoBL2oWZyT4qZRjdpQUUFk3spj6hUT/4Q==
-X-Received: by 2002:a05:6a20:6a1d:b0:340:fce2:a15c with SMTP id adf61e73a8af0-353a0ba080amr10349273637.9.1762806504055;
-        Mon, 10 Nov 2025 12:28:24 -0800 (PST)
-Received: from dread.disaster.area (pa49-181-58-136.pa.nsw.optusnet.com.au. [49.181.58.136])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7b0c953d0a6sm12689594b3a.12.2025.11.10.12.28.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Nov 2025 12:28:23 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.98.2)
-	(envelope-from <david@fromorbit.com>)
-	id 1vIYUu-000000094pP-2u7e;
-	Tue, 11 Nov 2025 07:28:20 +1100
-Date: Tue, 11 Nov 2025 07:28:20 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Florian Weimer <fweimer@redhat.com>
-Cc: Christoph Hellwig <hch@lst.de>, Matthew Wilcox <willy@infradead.org>,
-	Hans Holmberg <hans.holmberg@wdc.com>, linux-xfs@vger.kernel.org,
-	Carlos Maiolino <cem@kernel.org>,
-	"Darrick J . Wong" <djwong@kernel.org>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	libc-alpha@sourceware.org
-Subject: Re: [RFC] xfs: fake fallocate success for always CoW inodes
-Message-ID: <aRJK5LqJnrT5KAyH@dread.disaster.area>
-References: <20251106133530.12927-1-hans.holmberg@wdc.com>
- <lhuikfngtlv.fsf@oldenburg.str.redhat.com>
- <20251106135212.GA10477@lst.de>
- <aQyz1j7nqXPKTYPT@casper.infradead.org>
- <lhu4ir7gm1r.fsf@oldenburg.str.redhat.com>
- <20251106170501.GA25601@lst.de>
- <878qgg4sh1.fsf@mid.deneb.enyo.de>
- <aRESlvWf9VquNzx3@dread.disaster.area>
- <lhuseem1mpe.fsf@oldenburg.str.redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=oAXHIT2DqcO73d5W82hEw8U36joel0ehcpbzVEgB9xDRRmazyoo841QIkq1sTq+dMGwL4/DiyVOVomALA/4iYoa/SygrxYTlxwiq48uRGeSvNb/EXot88o/zn97VQ1GmKIPRwGF+mXyvulle47sWADnXPPxKgV76O+5RpFz6olY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VDR5NR5O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DA4BC4CEF5;
+	Mon, 10 Nov 2025 20:28:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762806529;
+	bh=2+oC81xV69bAibilHvu376ufSMAg5fmIkqZozg3DinU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VDR5NR5O4p008RBxKau1oQ/sdWlbk31f0gH7CibVBxI2O26euYYItPd8xW5SsGwIf
+	 BfyOjN/ef0UL06UM/C3cMVem79iIrZmXWSv4wZWSr2v3hzmZyhdVYJRiHc/Nu+yUF8
+	 9iJeGQkgVYsrKA6/OXuRxy7pcx+XJQss+JBluppHjEB+L9jVPGPmZJuPlciZKxqZf+
+	 xzXvLVrHLoFaUWXdO8cGN0TSE8B1fAo4BssyPzeiffuWrvNmUc8/Mgm/FjLgoQgQmp
+	 E2+9VRHkM50gbCUNPShVcuzSzC5GNOuXLH1k7FYvnVqO5UUwveUcH1RL6Qm3MYu/Hn
+	 zaEFUM0yu5v3w==
+Date: Mon, 10 Nov 2025 22:28:44 +0200
+From: Leon Romanovsky <leon@kernel.org>
+To: Alex Williamson <alex@shazbot.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	Logan Gunthorpe <logang@deltatee.com>, Jens Axboe <axboe@kernel.dk>,
+	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Ankit Agrawal <ankita@nvidia.com>,
+	Yishai Hadas <yishaih@nvidia.com>,
+	Shameer Kolothum <skolothumtho@nvidia.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Krishnakant Jaju <kjaju@nvidia.com>, Matt Ochs <mochs@nvidia.com>,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-block@vger.kernel.org, iommu@lists.linux.dev,
+	linux-mm@kvack.org, linux-doc@vger.kernel.org,
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linaro-mm-sig@lists.linaro.org, kvm@vger.kernel.org,
+	linux-hardening@vger.kernel.org, Alex Mastro <amastro@fb.com>,
+	Nicolin Chen <nicolinc@nvidia.com>
+Subject: Re: [PATCH v7 11/11] vfio/nvgrace: Support get_dmabuf_phys
+Message-ID: <20251110202844.GL15456@unreal>
+References: <20251106-dmabuf-vfio-v7-0-2503bf390699@nvidia.com>
+ <20251106-dmabuf-vfio-v7-11-2503bf390699@nvidia.com>
+ <20251110130534.4d4b17ad.alex@shazbot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -105,131 +80,139 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <lhuseem1mpe.fsf@oldenburg.str.redhat.com>
+In-Reply-To: <20251110130534.4d4b17ad.alex@shazbot.org>
 
-On Mon, Nov 10, 2025 at 06:27:41AM +0100, Florian Weimer wrote:
-> * Dave Chinner:
+On Mon, Nov 10, 2025 at 01:05:34PM -0700, Alex Williamson wrote:
+> On Thu,  6 Nov 2025 16:16:56 +0200
+> Leon Romanovsky <leon@kernel.org> wrote:
 > 
-> > On Sat, Nov 08, 2025 at 01:30:18PM +0100, Florian Weimer wrote:
-> >> * Christoph Hellwig:
-> >> 
-> >> > On Thu, Nov 06, 2025 at 05:31:28PM +0100, Florian Weimer wrote:
-> >> >> It's been a few years, I think, and maybe we should drop the allocation
-> >> >> logic from posix_fallocate in glibc?  Assuming that it's implemented
-> >> >> everywhere it makes sense?
-> >> >
-> >> > I really think it should go away.  If it turns out we find cases where
-> >> > it was useful we can try to implement a zeroing fallocate in the kernel
-> >> > for the file system where people want it.
-> >
-> > This is what the shiny new FALLOC_FL_WRITE_ZEROS command is supposed
-> > to provide. We don't have widepsread support in filesystems for it
-> > yet, though.
-> >
-> >> > gfs2 for example currently
-> >> > has such an implementation, and we could have somewhat generic library
-> >> > version of it.
-> >
-> > Yup, seems like a iomap iter loop would be pretty trivial to
-> > abstract from that...
-> >
-> >> Sorry, I remember now where this got stuck the last time.
-> >> 
-> >> This program:
-> >> 
-> >> #include <fcntl.h>
-> >> #include <stddef.h>
-> >> #include <stdio.h>
-> >> #include <stdlib.h>
-> >> #include <sys/mman.h>
-> >> 
-> >> int
-> >> main(void)
-> >> {
-> >>   FILE *fp = tmpfile();
-> >>   if (fp == NULL)
-> >>     abort();
-> >>   int fd = fileno(fp);
-> >>   posix_fallocate(fd, 0, 1);
-> >>   char *p = mmap(NULL, 1, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
-> >>   *p = 1;
-> >> }
-> >> 
-> >> should not crash even if the file system does not support fallocate.
-> >
-> > I think that's buggy application code.
-> >
-> > Failing to check the return value of a library call that documents
-> > EOPNOTSUPP as a valid error is a bug. IOWs, the above code *should*
-> > SIGBUS on the mmap access, because it failed to verify that the file
-> > extension operation actually worked.
+> > From: Jason Gunthorpe <jgg@nvidia.com>
+> > 
+> > Call vfio_pci_core_fill_phys_vec() with the proper physical ranges for the
+> > synthetic BAR 2 and BAR 4 regions. Otherwise use the normal flow based on
+> > the PCI bar.
+> > 
+> > This demonstrates a DMABUF that follows the region info report to only
+> > allow mapping parts of the region that are mmapable. Since the BAR is
+> > power of two sized and the "CXL" region is just page aligned the there can
+> > be a padding region at the end that is not mmaped or passed into the
+> > DMABUF.
+> > 
+> > The "CXL" ranges that are remapped into BAR 2 and BAR 4 areas are not PCI
+> > MMIO, they actually run over the CXL-like coherent interconnect and for
+> > the purposes of DMA behave identically to DRAM. We don't try to model this
+> > distinction between true PCI BAR memory that takes a real PCI path and the
+> > "CXL" memory that takes a different path in the p2p framework for now.
+> > 
+> > Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
+> > Tested-by: Alex Mastro <amastro@fb.com>
+> > Tested-by: Nicolin Chen <nicolinc@nvidia.com>
+> > Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
+> > ---
+> >  drivers/vfio/pci/nvgrace-gpu/main.c | 56 +++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 56 insertions(+)
+> > 
+> > diff --git a/drivers/vfio/pci/nvgrace-gpu/main.c b/drivers/vfio/pci/nvgrace-gpu/main.c
+> > index e346392b72f6..7d7ab2c84018 100644
+> > --- a/drivers/vfio/pci/nvgrace-gpu/main.c
+> > +++ b/drivers/vfio/pci/nvgrace-gpu/main.c
+> > @@ -7,6 +7,7 @@
+> >  #include <linux/vfio_pci_core.h>
+> >  #include <linux/delay.h>
+> >  #include <linux/jiffies.h>
+> > +#include <linux/pci-p2pdma.h>
+> >  
+> >  /*
+> >   * The device memory usable to the workloads running in the VM is cached
+> > @@ -683,6 +684,54 @@ nvgrace_gpu_write(struct vfio_device *core_vdev,
+> >  	return vfio_pci_core_write(core_vdev, buf, count, ppos);
+> >  }
+> >  
+> > +static int nvgrace_get_dmabuf_phys(struct vfio_pci_core_device *core_vdev,
+> > +				   struct p2pdma_provider **provider,
+> > +				   unsigned int region_index,
+> > +				   struct dma_buf_phys_vec *phys_vec,
+> > +				   struct vfio_region_dma_range *dma_ranges,
+> > +				   size_t nr_ranges)
+> > +{
+> > +	struct nvgrace_gpu_pci_core_device *nvdev = container_of(
+> > +		core_vdev, struct nvgrace_gpu_pci_core_device, core_device);
+> > +	struct pci_dev *pdev = core_vdev->pdev;
+> > +
+> > +	if (nvdev->resmem.memlength && region_index == RESMEM_REGION_INDEX) {
+> > +		/*
+> > +		 * The P2P properties of the non-BAR memory is the same as the
+> > +		 * BAR memory, so just use the provider for index 0. Someday
+> > +		 * when CXL gets P2P support we could create CXLish providers
+> > +		 * for the non-BAR memory.
+> > +		 */
+> > +		*provider = pcim_p2pdma_provider(pdev, 0);
+> > +		if (!*provider)
+> > +			return -EINVAL;
+> > +		return vfio_pci_core_fill_phys_vec(phys_vec, dma_ranges,
+> > +						   nr_ranges,
+> > +						   nvdev->resmem.memphys,
+> > +						   nvdev->resmem.memlength);
+> > +	} else if (region_index == USEMEM_REGION_INDEX) {
+> > +		/*
+> > +		 * This is actually cachable memory and isn't treated as P2P in
+> > +		 * the chip. For now we have no way to push cachable memory
+> > +		 * through everything and the Grace HW doesn't care what caching
+> > +		 * attribute is programmed into the SMMU. So use BAR 0.
+> > +		 */
+> > +		*provider = pcim_p2pdma_provider(pdev, 0);
+> > +		if (!*provider)
+> > +			return -EINVAL;
+> > +		return vfio_pci_core_fill_phys_vec(phys_vec, dma_ranges,
+> > +						   nr_ranges,
+> > +						   nvdev->usemem.memphys,
+> > +						   nvdev->usemem.memlength);
+> > +	}
+> > +	return vfio_pci_core_get_dmabuf_phys(core_vdev, provider, region_index,
+> > +					     phys_vec, dma_ranges, nr_ranges);
+> > +}
 > 
-> Sorry, I made the example confusing.
 > 
-> How would the application deal with failure due to lack of fallocate
-> support?  It would have to do a pwrite, like posix_fallocate does to
-> today, or maybe ftruncate.  This is way I think removing the fallback
-> from posix_fallocate completely is mostly pointless.
+> Unless my eyes deceive, we could reduce the redundancy a bit:
 > 
-> >> I hope we can agree on that.  I expect avoiding SIGBUS errors because
-> >> of insufficient file size is a common use case for posix_fallocate.
-> >> This use is not really an optimization, it's required to get mmap
-> >> working properly.
-> >> 
-> >> If we can get an fallocate mode that we can use as a fallback to
-> >> increase the file size with a zero flag argument, we can definitely
-> >
-> > The fallocate() API already support that, in two different ways:
-> > FALLOC_FL_ZERO_RANGE and FALLOC_FL_WRITE_ZEROS.
+> 	struct mem_region *mem_region = NULL;
 > 
-> Neither is appropriate for posix_fallocate because they are as
-> destructive as the existing fallback.
-
-You suggested we should consider "implement a zeroing fallocate",
-and I've simply pointed out that it already exists. That is simply:
-
-	fallocate(WRITE_ZEROES, old_eof, new_eof - old_eof)
-
-You didn't say that you wanted something that isn't potentially
-destructive when a buggy allocation allows multiple file extension
-operations to be performed concurrently. 
-
-> > You aren't going to get support for such new commands on existing
-> > kernels, so userspace is still going to have to code the ftruncate()
-> > fallback itself for the desired behaviour to be provided
-> > consistently to applications.
-> >
-> > As such, I don't see any reason for the fallocate() syscall
-> > providing some whacky "ftruncate() in all but name" mode.
+> 	if (nvdev->resmem.memlength && region_index == RESMEM_REGION_INDEX) {
+> 		/*
+> 		 * The P2P properties of the non-BAR memory is the same as the
+> 		 * BAR memory, so just use the provider for index 0. Someday
+> 		 * when CXL gets P2P support we could create CXLish providers
+> 		 * for the non-BAR memory.
+> 		 */
+> 		mem_region = &nvdev->resmem;
+> 	} else if (region_index == USEMEM_REGION_INDEX) {
+> 		/*
+> 		 * This is actually cachable memory and isn't treated as P2P in
+> 		 * the chip. For now we have no way to push cachable memory
+> 		 * through everything and the Grace HW doesn't care what caching
+> 		 * attribute is programmed into the SMMU. So use BAR 0.
+> 		 */
+> 		mem_region = &nvdev->usemem;
+> 	}
 > 
-> Please reconsider.  If we start fixing this, we'll eventually be in a
-> position where the glibc fallback code never runs.
+> 	if (mem_region) {
+> 		*provider = pcim_p2pdma_provider(pdev, 0);
+> 		if (!*provider)
+> 			return -EINVAL;
+> 		return vfio_pci_core_fill_phys_vec(phys_vec, dma_ranges,
+> 						   nr_ranges,
+> 						   mem_region->memphys,
+> 						   mem_region->memlength);
+> 	}
+> 
+> 	return vfio_pci_core_get_dmabuf_phys(core_vdev, provider, region_index,
+> 					     phys_vec, dma_ranges, nr_ranges);
 
-Providing non-destructive, "truncate up only" file extension
-semantics through fallocate() is exactly what
-FALLOC_FL_ALLOCATE_RANGE provides.
+Yes, this will work too.
 
-Oh, wait, we started down this path because the "fake" success patch
-didn't implement the correct ALLOCATE_RANGE semantics. i.e. the
-proposed patch is buggy because it doesn't implement the externally
-visible file size change semantics of a successful operation.
+Thanks
 
-IOWs, there is no need for a new API here - just for filesystems to
-correctly implement the file extension semantics of
-FALLOC_FL_ALLOCATE_RANGE if they are going to return success without
-having performed physical allocation.
-
-IOWs, I have no problems with COW filesystems not doing
-preallocation, but if they are going to return success they still
-need to perform all the non-allocation parts of fallocate()
-operations correctly.
-
-Again, I don't see a need for a new API here to provide
-non-destructive "truncate up only" semantics as we already have
-those semantics built into the ALLOCATE_RANGE operation...
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+> 		
+> Thanks,
+> Alex
 
