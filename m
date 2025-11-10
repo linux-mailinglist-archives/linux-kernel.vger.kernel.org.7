@@ -1,130 +1,110 @@
-Return-Path: <linux-kernel+bounces-892852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53CC5C45F24
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:33:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CDFEC45F36
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:34:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 455F23A5C25
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:33:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41B0118844A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:34:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC8832FFDFA;
-	Mon, 10 Nov 2025 10:33:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02A5F301498;
+	Mon, 10 Nov 2025 10:33:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J4JOMTZp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nlYQiiz3"
+Received: from mail-ed1-f74.google.com (mail-ed1-f74.google.com [209.85.208.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 305EB22A4E1;
-	Mon, 10 Nov 2025 10:33:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 709F524BC07
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 10:33:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762770800; cv=none; b=FIRygB2J1mcbsJGhpWhblr6UMJtY/2r6php7rznEkpoD3TlvstdE2cwvZYIM6e95eYFdCc6gWR3yZndEULz/oovllL4bSiy9dob3F+AVEHPGjhU4KKCj+Tc7W9oMJyjkXoj4Sg1bYefQD7r8xeachbKH6Xn80/O4leHwa2T1wt4=
+	t=1762770821; cv=none; b=aCPAHczn9AT9/DjNmEiCC5V9xQ9TNypYMnOwcihPZ28kvt4V+txw9HaZtrOewwpvWMFMvnI5PCNxO3lia7+jpf+a/WgVHbOxd8YiqXSuPypkIwfnPFGO96ZktbI8aglhW1DbBX8z/HBc9kglECivoL9e4H+shhVGUxbLSZtq/4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762770800; c=relaxed/simple;
-	bh=XGdAZQMoYX6Us3MCpLM/NxmAUfTsARkCljiFE1chCCw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HJdL1LF36HA2S8Vw5umCQPnIBvWZfwwxGhoHuMse4VhUjpyiOhpSJMscmcuGsaKc0s3QseWsFeKyVcydTjVKskcme1xCvT5RFG+jkau6TYC4xtgpMu0C0KKxZ3GARibwCaKND+IRsJJf905yDKXj8+WWgu4+pfUke06nvouxdYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J4JOMTZp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70E38C4CEFB;
-	Mon, 10 Nov 2025 10:33:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762770799;
-	bh=XGdAZQMoYX6Us3MCpLM/NxmAUfTsARkCljiFE1chCCw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=J4JOMTZpT9f7JobhPkEEVtMbrvMHN/QmyRT6CkgFjCdJG5tsJTSz8geO6tHzfz4MZ
-	 GOtCv9QmePCfHi7gUxydKyaNAHExL86jJuMscDVKgAWHZ7EJQr57EVkxmdLu75Y+fa
-	 0e1xo+JMgJNAA5omFi7cogT0zgMR1tsoDvsDgs7KZw1EhYLo4SQ8Go6krZUCmuxhX+
-	 TlUwbp/UOOC/EQHwOjQ9q8LN4U6NTRoMDnhC0LYEYxbZTExqiiDH/Y7wbBEyqMfYlr
-	 r1v9Pp87oj1/1F+lROk+yyvElmJFs/KQ/dMSJPduQqa1ttaRNf6qVKNo4lb44QhkeA
-	 ibjK5TaviSRAQ==
-Date: Mon, 10 Nov 2025 12:33:11 +0200
-From: Mike Rapoport <rppt@kernel.org>
-To: Ankit Khushwaha <ankitkhushwaha.linux@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@kernel.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>, Shuah Khan <shuah@kernel.org>,
-	linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] selftest/mm: fix pointer comparison in mremap_test
-Message-ID: <aRG_Z7p1jwEUsRy5@kernel.org>
-References: <20251108161829.25105-1-ankitkhushwaha.linux@gmail.com>
+	s=arc-20240116; t=1762770821; c=relaxed/simple;
+	bh=GoL3gN4h5eYU7litgF4qiXRimx4qE9CB8i92qSY1F7w=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=s+5svQhQKTaEm1jIFyd/8vFhuPDiZgFf29S3rVUK9t0NpUUVNTepmybixApgXyfJNrYzVeLBI1mhOD/DKhd5EccrbCYAddjGeQ0VnGIQZ40mOSpV4Qp995UNQwlERXIuu5ivhtQJvASUTdYlSxSbEdsdID4rhKT708VwkIXeUII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nlYQiiz3; arc=none smtp.client-ip=209.85.208.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-ed1-f74.google.com with SMTP id 4fb4d7f45d1cf-6407bd092b6so4420563a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 02:33:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762770817; x=1763375617; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=CCzpwObG7lLSpKChT0Fx+ByLzoerKxd9DaM7EmJ24AM=;
+        b=nlYQiiz3BD+lyjdyVnTBmWTZ2IG/XAysTS2skjDE1SjQDsJ+ZkQUFOR74gvf9/CCGo
+         JMoafsnCZBBH6TZlXy9Xpx98yBEnozv7kiIaMZwAZ4BLES2BrXtWrTPRG+92T7R4sb+i
+         y9e+vzAXhhZgOebdiutYHp8mIVqjzdLldc/KFiTrPIMfFVkmdjR/TaT7/Em8OktiDMdW
+         /Ru75aupcw9+lPOT7I6tUuwDeM14GXQ/EskgBiT4j3bWELt4Tw3jAFcGMyuHnTU1E9cx
+         n6eD77h1IF5kWQ2I4W5ze1H8XfsGl6K+pxtyv9vymECVrLJ0B5EK4mWXElhI9TVLkwcf
+         vZ8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762770817; x=1763375617;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CCzpwObG7lLSpKChT0Fx+ByLzoerKxd9DaM7EmJ24AM=;
+        b=KCcYUwVmmCsEestT0o7/avFs7/G/6RbSU5kD7RJGNg6JnOby7qxD+xehRavYWsgLxA
+         yQvyci/IAA24EgRs8yHNXQmrcmxf1ctk018zncmtW33boXvRJEl/1t0eq265M2FNhAph
+         xT0SR2rAmd6SAGTutvjeABS7C82zN/wrSgJ6p4KP9x284loTbcLWDIIJd0jGfFraSD0K
+         rZ7eKXk3KimTOoLcKYtah/xt3ycKcV8sGwtpMeROhr30dPokfvQl09FU82SbFyxgrXSm
+         cG4xYu3fw/3XYbRZCS5iD0M6b3XW9TC8zy+Na/wl0unvv0if+3pfDo+mb7Q3v0kYdS/L
+         W4NA==
+X-Forwarded-Encrypted: i=1; AJvYcCUBr0JfzCsyLcd+2AZWxHd6mk+P/ERdblkuTCWlRazATrGP57WwSBAoB90s6SY/xNHrWEVIwFhIPjdxqLE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTQFsmyOC3sGv3D0b32w4Ihdk0VHL9xPJyuWMZ4zIdu/t8sGMb
+	xM9yDKTbIbKDdr34CJHFRzL2Lv/Z75kdY65vStPl6sqwVpjK2aoUYaCt4KJJWbDVppa8TgJdVyH
+	qbye6nzNYMGVZV1X35A==
+X-Google-Smtp-Source: AGHT+IGrQByfI9wokfMWFe7K1Ttk8ewEB37twW8Y2YwoEzQNcIfJcFh4xKKTJ6P4DH7/NHxDz4jf6iOvc30RilE=
+X-Received: from ede25.prod.google.com ([2002:a05:6402:20d9:b0:641:3d6a:4b38])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6402:27d4:b0:640:9eb3:3673 with SMTP id 4fb4d7f45d1cf-6415dbfbd56mr5809440a12.4.1762770816828;
+ Mon, 10 Nov 2025 02:33:36 -0800 (PST)
+Date: Mon, 10 Nov 2025 10:33:36 +0000
+In-Reply-To: <20251110095025.1475896-4-ojeda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251108161829.25105-1-ankitkhushwaha.linux@gmail.com>
+Mime-Version: 1.0
+References: <20251110095025.1475896-1-ojeda@kernel.org> <20251110095025.1475896-4-ojeda@kernel.org>
+Message-ID: <aRG_gJu_yZeJWPuo@google.com>
+Subject: Re: [PATCH 03/18] rust: kbuild: simplify `--cfg` handling
+From: Alice Ryhl <aliceryhl@google.com>
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	patches@lists.linux.dev
+Content-Type: text/plain; charset="utf-8"
 
-On Sat, Nov 08, 2025 at 09:48:29PM +0530, Ankit Khushwaha wrote:
-> Pointer arthemitic with 'void * addr' and 'ulong dest_alignment'
-> triggers following warning:
+On Mon, Nov 10, 2025 at 10:50:08AM +0100, Miguel Ojeda wrote:
+> We need to handle `cfg`s in both `rustc` and `rust-analyzer`, and in
+> future commits some of those contain double quotes, which complicates
+> things further.
 > 
-> mremap_test.c:1035:31: warning: pointer comparison always evaluates to
-> false [-Wtautological-compare]
->  1035 |                 if (addr + c.dest_alignment < addr) {
->       |                                             ^
+> Thus, instead of removing the `--cfg ` part in the rust-analyzer
+> generation script, have the `*-cfgs` variables contain just the actual
+> `cfg`, and use that to generate the actual flags in `*-flags`.
 > 
-> this warning is raised from clang version 20.1.8 (Fedora 20.1.8-4.fc42).
-> 
-> use 'void *tmp_addr' to do the pointer arthemitic.
-> 
-> Signed-off-by: Ankit Khushwaha <ankitkhushwaha.linux@gmail.com>
-> ---
-> Changelog:
-> v2:
-> - use 'void *tmp_addr' for pointer arthemitic instead of typecasting
-> 'addr' to 'unsigned long long' as suggested by Andrew.
-> 
-> v1: https://lore.kernel.org/linux-kselftest/20251106104917.39890-1-ankitkhushwaha.linux@gmail.com/
-> ---
->  tools/testing/selftests/mm/mremap_test.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/mm/mremap_test.c b/tools/testing/selftests/mm/mremap_test.c
-> index a95c0663a011..308576437228 100644
-> --- a/tools/testing/selftests/mm/mremap_test.c
-> +++ b/tools/testing/selftests/mm/mremap_test.c
-> @@ -994,7 +994,7 @@ static void mremap_move_multi_invalid_vmas(FILE *maps_fp, unsigned long page_siz
->  static long long remap_region(struct config c, unsigned int threshold_mb,
->  			      char *rand_addr)
->  {
-> -	void *addr, *src_addr, *dest_addr, *dest_preamble_addr = NULL;
-> +	void *addr, *tmp_addr, *src_addr, *dest_addr, *dest_preamble_addr = NULL;
->  	unsigned long long t, d;
->  	struct timespec t_start = {0, 0}, t_end = {0, 0};
->  	long long  start_ns, end_ns, align_mask, ret, offset;
-> @@ -1032,7 +1032,8 @@ static long long remap_region(struct config c, unsigned int threshold_mb,
->  	/* Don't destroy existing mappings unless expected to overlap */
->  	while (!is_remap_region_valid(addr, c.region_size) && !c.overlapping) {
->  		/* Check for unsigned overflow */
-> -		if (addr + c.dest_alignment < addr) {
-> +		tmp_addr = addr + c.dest_alignment;
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 
-Nit: tmp_addr can be declared here.
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
-Other than that
+For anyone else reviewing this, here is the relevant part of the
+makefile that calls generate_rust_analyzer:
 
-Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-
-> +		if (tmp_addr < addr) {
->  			ksft_print_msg("Couldn't find a valid region to remap to\n");
->  			ret = -1;
->  			goto clean_up_src;
-> --
-> 2.51.1
-> 
-
--- 
-Sincerely yours,
-Mike.
+rust-analyzer:
+	$(Q)MAKEFLAGS= $(srctree)/scripts/generate_rust_analyzer.py \
+		--cfgs='core=$(core-cfgs)' $(core-edition) \
+		$(realpath $(srctree)) $(realpath $(objtree)) \
+		$(rustc_sysroot) $(RUST_LIB_SRC) $(if $(KBUILD_EXTMOD),$(srcroot)) \
+		> rust-project.json
 
