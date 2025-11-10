@@ -1,187 +1,258 @@
-Return-Path: <linux-kernel+bounces-892768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DD15C45C25
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:55:29 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B762CC45C80
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:00:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16445189191A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:55:54 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E05CE4EDB0A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:55:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 278AA301711;
-	Mon, 10 Nov 2025 09:54:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDB56301021;
+	Mon, 10 Nov 2025 09:55:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="jSAF2P+6";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="iESxL7B0";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="jSAF2P+6";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="iESxL7B0"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="nobaPkXm"
+Received: from CH5PR02CU005.outbound.protection.outlook.com (mail-northcentralusazon11012005.outbound.protection.outlook.com [40.107.200.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B25B730215E
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 09:54:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762768465; cv=none; b=PZnxaCiqgcYsR4Ki0CxYsrGHdBnN0ISCUFcDrWvwPfWYd/9oKzp9bKb7qShPYNnYasBCAS1bvlgAHX8sX8vYCMeHaJXg3+onQSG8PhmI7JRfRGkPiTLUnLg9R0ruKYl/W/CkoXl1YevCCyi22XvmZ1UNbzQOEfFObtFeDRue3B4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762768465; c=relaxed/simple;
-	bh=ZhWR3Wrkp+3Z1huRjqAI+OfnCH5SAft4JZ8yHhoE2E8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z66FUF3v5XATU0eXqBmHPtpcu2ZJjaHg9+cnEs5ZaIrYj0IIDn7t/6jc5cuLGN1Rur20fiT9ZiHFbVv+e/Y6B3b7H+wT44Ei3C4VnjoOTDZ7WkDRBs/VL4KKmLPM7omm505ARX+UKFP9rULO484/mpc7vDLvpDsuoq2s5+78Ycw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=jSAF2P+6; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=iESxL7B0; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=jSAF2P+6; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=iESxL7B0; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id BDFB71F397;
-	Mon, 10 Nov 2025 09:54:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762768461; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UM/+mK+newb7k/lcBeTy8j+deEzzj0M/xyHWaI/PHGk=;
-	b=jSAF2P+6gq5LuyVFUSDCUKE6WXwE4sjQRbPEFdYJQM3aRhfphbjok3gesBk+UqstsbmjSQ
-	p1gmTDTmieeg7KOuhoRg7YROnW7v5SRxTkDb8/5tdwWKU/fEALsPqbd9KaX9r6ekveUKbY
-	5+OGNDfyAvfwhzPZ9Ss39lY0rl2pYsc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762768461;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UM/+mK+newb7k/lcBeTy8j+deEzzj0M/xyHWaI/PHGk=;
-	b=iESxL7B0+NzKuRQj0uR794+ud+LXEIhsyfiR3Dy8G9tgkTcid2KL36Iun3fNkhkFYCsqvz
-	JlIf2GiNrD3cNuDg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=jSAF2P+6;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=iESxL7B0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762768461; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UM/+mK+newb7k/lcBeTy8j+deEzzj0M/xyHWaI/PHGk=;
-	b=jSAF2P+6gq5LuyVFUSDCUKE6WXwE4sjQRbPEFdYJQM3aRhfphbjok3gesBk+UqstsbmjSQ
-	p1gmTDTmieeg7KOuhoRg7YROnW7v5SRxTkDb8/5tdwWKU/fEALsPqbd9KaX9r6ekveUKbY
-	5+OGNDfyAvfwhzPZ9Ss39lY0rl2pYsc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762768461;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UM/+mK+newb7k/lcBeTy8j+deEzzj0M/xyHWaI/PHGk=;
-	b=iESxL7B0+NzKuRQj0uR794+ud+LXEIhsyfiR3Dy8G9tgkTcid2KL36Iun3fNkhkFYCsqvz
-	JlIf2GiNrD3cNuDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B19031431D;
-	Mon, 10 Nov 2025 09:54:21 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ZadVK022EWmcAgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 10 Nov 2025 09:54:21 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 689F4A28B1; Mon, 10 Nov 2025 10:54:21 +0100 (CET)
-Date: Mon, 10 Nov 2025 10:54:21 +0100
-From: Jan Kara <jack@suse.cz>
-To: libaokun@huaweicloud.com
-Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, 
-	jack@suse.cz, linux-kernel@vger.kernel.org, kernel@pankajraghav.com, 
-	mcgrof@kernel.org, ebiggers@kernel.org, willy@infradead.org, yi.zhang@huawei.com, 
-	yangerkun@huawei.com, chengzhihao1@huawei.com, libaokun1@huawei.com
-Subject: Re: [PATCH v2 22/24] ext4: support verifying data from large folios
- with fs-verity
-Message-ID: <tyeh5ds2dezr4hrqxs46riwi3ps7ugwhcx46fqmpzarughiokz@q26eyruagm6v>
-References: <20251107144249.435029-1-libaokun@huaweicloud.com>
- <20251107144249.435029-23-libaokun@huaweicloud.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2977E2FF66A
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 09:55:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.200.5
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762768520; cv=fail; b=nQrJr3mI0szRUDMlc2ZFFWsNuQqg89UTC+V5y+1kyZHHph90K4rnhrE9mEmyWSbGx9PFXPvTX8VFx4ZA3CoeFx7rjo4AF6Y0UF8mJZ5rWbRT3Lq+NODTyIxfnIn0XNe7S42Ux0GHsEUdpeyq5GgBW1HaOTbWxVLlG+XCS+F0DVE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762768520; c=relaxed/simple;
+	bh=TJL8yBazW4xb3whSBgbKmonu+dWGy6at4SyCXR/3KsU=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=RB2advrMJGIZD7HmkRMcLNeLQwHQfz+NyKafMMtHV6pnnZy0y6wy96jq4YQzhdWo1Mf11oma+w8Y0+Gpx6I5IxrCEv3hYpOR+fKVujg+5EKvVQs+i+vEBfSuPeQOPZ9Y0WCsEr5asXeUG3yk77RoVRPTfIherSbRd5u+JNaB9u4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=nobaPkXm; arc=fail smtp.client-ip=40.107.200.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=UGzSr2femmFeo/u0cerkTEUW8F0w8rEcaHwPD8iNRIHDa8ftBa5iuzPlkMAepIj02t35sAagNggzHDBNXlENb3eOTsgOsh93w9bNeAr7WLQJ8DScXMuDidkej6o3WLyF+KTNs/D7ixibiCCmnv6XSbytCWt3U6WMxZf7lqDkO+IbLUCR8w4bs7e+/fpHuMpRL+IBm8KfWZsy8lGZGoy/ZdpDpzXUSSkZUykAvvzE8c+e5rX1EuIJpSl7bc+VtGIb9i4mOoX5BWFGlbWsLijuzxzKlAKeZXUQjePePApqLrHQeL1K8pOoGKzpp8U5BsR6rD2fwbJMfpBTXx6BovxBmg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=cRQOFMAHX0MEQsMJE4SOKY9WMvCjI0weymFQHI/Xk2c=;
+ b=UpLhQnwfkoe/ywX9H0uZdP9BIZl+ri+C/wXZfFbxntygY5e/Ia5dWApWDzrKU5DmU+o34wtDzExccoXKerZ2/XqHrO513I7ho+qNYRj8Vifl1rT2TwFUwWCgdQLVhu3tam2m6rQneDrpo7Q8L4YzvKqdqY4QiEI5U98t9U/Ys/nUceUIdDBxI3ADASyWxk7f8n6+XqInwqdoco67vG9ZmBbIUYQG32mxrIetHlvTvaYopaGr56F8dJufMW7ykhDX2Wnla59veJSOoM+jHf/5MLJgA/IcwkTEH7lz8fYJgSXoAUiXNOL+RW7two0NPrtQ3uVgeHK9TnAzi+YJrRM18w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cRQOFMAHX0MEQsMJE4SOKY9WMvCjI0weymFQHI/Xk2c=;
+ b=nobaPkXmDbj/mpMNeDKJX1e5+OXMa3gdwDAz7WzLAo23OoU3fgig993lqGcws3SBl03s7Uqr1idfLQWM8dyzJd+EcKOVvQkGfvCcggencnEPm2ZIku2a6WW4p7Z2G1ervW03WnjCUDgp6oFnbjLctQqcGlkMd3MfpdgVBNXR4Us=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DS7PR12MB6048.namprd12.prod.outlook.com (2603:10b6:8:9f::5) by
+ IA1PR12MB6330.namprd12.prod.outlook.com (2603:10b6:208:3e4::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Mon, 10 Nov
+ 2025 09:55:14 +0000
+Received: from DS7PR12MB6048.namprd12.prod.outlook.com
+ ([fe80::6318:26e5:357a:74a5]) by DS7PR12MB6048.namprd12.prod.outlook.com
+ ([fe80::6318:26e5:357a:74a5%7]) with mapi id 15.20.9298.015; Mon, 10 Nov 2025
+ 09:55:13 +0000
+Message-ID: <e6b877d7-91c9-4db7-9c4f-bcf4608e17df@amd.com>
+Date: Mon, 10 Nov 2025 15:25:06 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] iommu/amd: Add IOMMU_PROT_IE flag for memory
+ encryption
+To: Wei Wang <wei.w.wang@hotmail.com>, alex@shazbot.org, jgg@nvidia.com,
+ suravee.suthikulpanit@amd.com, thomas.lendacky@amd.com, joro@8bytes.org
+Cc: kevin.tian@intel.com, linux-kernel@vger.kernel.org, iommu@lists.linux.dev
+References: <SI2PR01MB439373CA7A023D8EC4C42040DCC7A@SI2PR01MB4393.apcprd01.prod.exchangelabs.com>
+ <SI2PR01MB439351F0B7E54513710BBD3DDCC7A@SI2PR01MB4393.apcprd01.prod.exchangelabs.com>
+Content-Language: en-US
+From: Vasant Hegde <vasant.hegde@amd.com>
+In-Reply-To: <SI2PR01MB439351F0B7E54513710BBD3DDCC7A@SI2PR01MB4393.apcprd01.prod.exchangelabs.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: PN3PR01CA0031.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:97::20) To DS7PR12MB6048.namprd12.prod.outlook.com
+ (2603:10b6:8:9f::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251107144249.435029-23-libaokun@huaweicloud.com>
-X-Spam-Level: 
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-0.21 / 50.00];
-	SEM_URIBL(3.50)[huaweicloud.com:email];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	BAD_REP_POLICIES(0.10)[];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	URIBL_BLOCKED(0.00)[huawei.com:email,suse.cz:dkim,huaweicloud.com:email,suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_HAS_DN(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	TO_DN_NONE(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	R_DKIM_ALLOW(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	MISSING_XM_UA(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.com:email,huaweicloud.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Spamd-Bar: /
-X-Rspamd-Queue-Id: BDFB71F397
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -0.21
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB6048:EE_|IA1PR12MB6330:EE_
+X-MS-Office365-Filtering-Correlation-Id: bb3a3909-1232-4a58-e8ad-08de203f3e5e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ZkUwMVlBbk9yNGlIZlF5S28xejFFbEpFMDZjTFNvWVJwSlVzdHRsL0w3WnR5?=
+ =?utf-8?B?TmVWUFpkTDBEbUxveE5YRTJJdDc3dWhLOGllSllud3EvMER4cUVib0NINUo3?=
+ =?utf-8?B?a1lnaGhycFUrVGtEOWczdU9iZEE2b1RIRnY2emN5RUVxUGNXbnAvMEJPa212?=
+ =?utf-8?B?a3ZadHUrZGpIY3M5V0dpZ1pScGN1cGZpaVVQYVR3RWhKTXJGZ2FkRENybFEy?=
+ =?utf-8?B?L2g2bUFjanJpanNWaDVMK3Z4Z010a1VYdFVmaWF1YldxU21NZWVDNzNiSGZw?=
+ =?utf-8?B?THlXcllUN0hkT2EzU1l4NmdobUoxZ1RzeHNDZGRERnpGN2dNdnVjRE5zWUVk?=
+ =?utf-8?B?SlY1bVBXN2dxbS9ZUUpneWtSMWpJWDVsa2tocmZMQU9hY2xuWG1hSEdyS3Er?=
+ =?utf-8?B?N2M1MlR1NXl3SXcrUE1oTXFtSk13eUhFVW9weGh3bzdSWU1Rc2Rlb0NjWk9M?=
+ =?utf-8?B?cWcrS3R6ZnpySlVQVExKMkZqZThEQTRHMTF0WEM4bEtQZGxMck8vT3BnTU5Y?=
+ =?utf-8?B?VnBnR1VtNDdZSTAvaXM3VWVqV1hsZlVEMnU1aU01TFpEYytwOVhHNGRoTmlq?=
+ =?utf-8?B?Umx2aU51TitiOEozaHVGOHBhb214UUE4c2NLbGdSRWNEUXlFVit2Sk5HdXN4?=
+ =?utf-8?B?VW1INGRRa0ZNZlN1eDdiZmx1R24zdDRKUWRVOSs0ZUpzQ2ppdUxSd0xNbGZY?=
+ =?utf-8?B?elZXRG9CRThHaUtmU1ViaWJGYzVzcFNuNGI4cktiOUdpcnhvb0N2M3BBemg1?=
+ =?utf-8?B?NlN1cWxmRVVvdlB3Mkl2MzFMQ245dStmQ3J0RDJjM3YzcktjM2N4VUJDRS9S?=
+ =?utf-8?B?SjkwazNqV2ZacmppSHgrZXBVOXpvd21UZW1WYlZ1S2NRa0NJTk1EMjhwZXJW?=
+ =?utf-8?B?Y2pLVXgrODBuelZ6Um1jSUNzeldmTEdZTWgxQ2F5eS9SRURCdUw3b21DbVd4?=
+ =?utf-8?B?ZmlvaDdkV093L25ScW1abTdzM2ZLU3Aya0ZDM3k0YTlVeEQwMzNIck5VSFJT?=
+ =?utf-8?B?Q281SHJZVzMxNFFvSHV1WEpZSDM5Z09wVWZ0eE01MkhaUTAwc1ZXRDBuNUdE?=
+ =?utf-8?B?dGNTWk5JdUhjdWlUMml5Wkx6aVQvanZFUDNaZk5aNGNlS1RXaHdzMkJONWlC?=
+ =?utf-8?B?S0xKVWN5ZWhEUzZGL20vWHZWc2g5QlROdDZIRis0S3V2RTJ1VzhSTjl1bStN?=
+ =?utf-8?B?K1Z4b2M3QVA4Yk40UU1uS0VJUS95eERCbG1UQjdNNlUzQlJzWWJXMlVacVRP?=
+ =?utf-8?B?VlZnWGFwcm9VdUdPL3BIN1hBMlloWTVRQktFSGFyaXptMDhOdjZuK2pEUHkv?=
+ =?utf-8?B?OXNVNDh2YXZhWUIvRlFuNmY4VUhXZ3FzcTFnSFZnSWYyUGdZakpPbVowSzdY?=
+ =?utf-8?B?UTE4OGJ1QU5jN1F1ODBoV05GK2tacFlZbXZHd1JVRnFCQjJaaE9yTzJoN3Ev?=
+ =?utf-8?B?a2ZNS3ZXcHBXK0hwczVOZEtQc3RLZXFuV3VnT0o0VEh3U2J1ZThvY0Q5UVBh?=
+ =?utf-8?B?bjhLWmdKRjBzNWNKQ2R6bmtRSGswbGwxd1E1YnAwWWxibG1CUEJGSTZVNi9U?=
+ =?utf-8?B?cHVNdDJUTVNZb0hRU0hNcFBIaVF6YkVaSEIvQ3FvZVRwdTZRZXBTM1pPYTgy?=
+ =?utf-8?B?SFUvMWRLY3dQeklNaVg3bWhJSTlnZ2RiNjdLaXlKZGFqUjlTaGZRamszVjR3?=
+ =?utf-8?B?UEo4Q2ZwL0FXTm5Hc20ydGxuSjZFRnBPM3lyY0VyT05ZeGdUMkh3QkRLV0Rw?=
+ =?utf-8?B?aW5aY3oxUkhVZ3dacEtUa1I5Z1FGSGdVVmhTRWNUck1LcFYyQzBzSHVaODEz?=
+ =?utf-8?B?TGxjRUE3S0ZLcnRUQ09rRHRlSEluVmQvVHVVcTE2cGVBaXZmWE1iVXA0bzho?=
+ =?utf-8?B?Mm9tY1RWZXZPQkJueDlib3BpZ0RwdTErZVJ6ZFJTVFYyZ281bklmMWFaamNa?=
+ =?utf-8?Q?1R7eN1T2XD+dbmuRjIonIiW6LDK4PBzj?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB6048.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?WVQ4R2hMNEFjRWhuNHNYM3Z3VUhIMUxGTk1tMTFHVEZvNXV3OTM3em5uWVhO?=
+ =?utf-8?B?MHRuR3hJNGE1QlU1bUdFU3VJL25GdkNPZy9EWVZYSWFzWTFMNWlnaDd5TXZX?=
+ =?utf-8?B?SVBYbUphdm5LK1V1RWJ6YlFvSzZJalpJMExSNlZpTUNaa1NiNndMRzJzTGgw?=
+ =?utf-8?B?Z0hacUtkd0VsVTVwNEw2ZDVYZll4alVKZXl4dDNYT0xmRW1iNk5NU2xuL0dY?=
+ =?utf-8?B?QnljTFZGNmplSTUrWkU1ZU9GeTB6U1VNTlZsNWJuQ0hBRDM0M2E5a3NJNmNy?=
+ =?utf-8?B?a1pMQmFlRFJwZ0h0YWRjZUJ2dTJhcmx6d3U5U3hIN1Y1UVhZZk1sTE14M1kz?=
+ =?utf-8?B?NzVaMTF2RnNqc25raFBJRUFpbG5hNDFBR2dDb2pweFVQa2NWQlU1Y3o4MzFz?=
+ =?utf-8?B?UFJFTDBmVEljRzk2cUFVdjdPMWhpdnlvMG9YWk1UK29pS1ZzNmwyeHpxMzQy?=
+ =?utf-8?B?eE1wbDAvWXMyZFhzSno0cUhkak16TUNndkNqU0NpcnZTcW5sOXQvbVBTV2RL?=
+ =?utf-8?B?QzliOEV5MldWNzFqSUpNaCtrQ3VQMXZqdStseDgyQkN0Y0ZNT0tieHN4WmFa?=
+ =?utf-8?B?elc4aGQwa3VBeDRkZ3RramdUQ2lnVlp2VThXT2cwRmhkSUgvbGdoOUR5K01a?=
+ =?utf-8?B?OUR6QzU1M0JYYW9IV3RlRTBjUEp1N2pibE05ckNvL2JPL1hLdDJKTDRvaEJY?=
+ =?utf-8?B?eXhZRjUzbVhkSnZxUjM0cnI1T3VWSWxDbmFhL1hLRXhlbnpTOGoxUWN2UEZK?=
+ =?utf-8?B?aGUxRFZnTzJXZWJNM1FQTEVVNWxwM3dDVXJWRnZsTGFpYk9RazJTT0Q0U3BO?=
+ =?utf-8?B?NDlteUc2MnJRc0djQitkTEZBcU1ta2hERFducElrMldMSmI0cCtoWkhxQWNK?=
+ =?utf-8?B?R2RSVFVLK1U0SElnYmpYMlloMXBPdUFOeng0ckM0MWNUMkRnenhhWmp0MTNT?=
+ =?utf-8?B?NXVZUjRIaXhRTDJEdjViUjdHQVdKMHMwWStGM0ljVjFYZWZHRk12bHEzdWpI?=
+ =?utf-8?B?cDQrUUVaKy9JeE1Gd3pCM0EvdG5xdmpRWXhVN2p6Q2tyYkhJUkd1MXIvY0VM?=
+ =?utf-8?B?S0FTaEpqUXRNeXhMWmZobno3dk9na1hLa3dxZU9Sek4rN0xtWE5vc2YrYXhq?=
+ =?utf-8?B?RzZaeG9iUjhMYXZnT01KekQycmxhU1ltTWpXWmMrcjhsQXRObGpNbDBXck1T?=
+ =?utf-8?B?Z2pEU0t3b0FveTBnc0N6L0NzUTd1SmgxN3RqYjVlS3drUlVvZmhUNkpyTnZ0?=
+ =?utf-8?B?S05IK0VoTURSYzlCN0JyWFNBNnhhd1E2OW9wMkVnbnA0WlJJSlN6VTZ6VGJV?=
+ =?utf-8?B?cGdPK2l5TVIrOHRWYTRud1FHUVd4dkFrSWUwWVY4TlRlVVY4OGtIMWtNbDBI?=
+ =?utf-8?B?YmtiVTdUTlI5MFZucXh6LytYNU1YeklITS9DbHV1NlIyZW53alpLdnlLM0Ux?=
+ =?utf-8?B?eTF6bVh6WUYwZWJRbEgrQUF5T3NvRFRRWlB1RU1NeEZJdCtKRjhSVWxjak5m?=
+ =?utf-8?B?RFhJZFhOU2tYaFNBdzZ3TFcyV2FzK1RRaGVHelQxYUIxeG11dlAxNHVodG1a?=
+ =?utf-8?B?L3o2Zmx5UXRtTzdSS0dpVENEMVo2a054TjhuUTdyTjV5czlrSWlib05QdlZi?=
+ =?utf-8?B?cnJHTmFpbG5kb0YvVmR5U1lWbHgxcThOMTRIeXdFdFFaTzFxZUJldStWdlNC?=
+ =?utf-8?B?RzJHaUpscjhyNHBKNno2aFB2TXNGSGtxSkVadEFvTCtLbnBtaUY0KzY5QzUx?=
+ =?utf-8?B?ZDJLdkFSNUpyK0JMUmZ1T2dJZ29ZcUJrNWJYclBHb3RMNUc3MXMzWFluVkNv?=
+ =?utf-8?B?azNzNWZwSSsyYVpxeFJzTUZpU3oyU0RmS1o2OXhhZCtySkJZRWhaOGx2NmVu?=
+ =?utf-8?B?ekg4Q2VtazQzNlkzOEIvbVp0WWlHcWdwYVhMaHFwY0JsZklFQUpkaXE4NDJs?=
+ =?utf-8?B?YmdvdVVXN1Y5em1hanlUM3A3aWdEUmVHWWRTRm5WU3VmdmVLUklRdUt6Y2Rx?=
+ =?utf-8?B?RlNxSTJOY0QvQTQ3MzVDaEloOGtBWitNOVphU2FWeHlKOElkWXA0a25mVnV0?=
+ =?utf-8?B?K2ZEOGlEdStIZ0h4ZXlkYWJYZTBPNlB4VnBCRFdPU3dLT0xld0p6bk5FaUlu?=
+ =?utf-8?Q?qU3Pu3eXXJI7Oa1XDFdPQNFh2?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bb3a3909-1232-4a58-e8ad-08de203f3e5e
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB6048.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Nov 2025 09:55:13.8378
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: YT9ppbsvEu3jrAwjLIVqw492e68X3JteTyjQLznM6bokt/WTv/gweMRSafWL9gkcRVK6GlOu5ththrxVU13dcA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6330
 
-On Fri 07-11-25 22:42:47, libaokun@huaweicloud.com wrote:
-> From: Baokun Li <libaokun1@huawei.com>
-> 
-> Eric Biggers already added support for verifying data from large folios
-> several years ago in commit 5d0f0e57ed90 ("fsverity: support verifying
-> data from large folios").
-> 
-> With ext4 now supporting large block sizes, the fs-verity tests
-> `kvm-xfstests -c ext4/64k -g verity -x encrypt` pass without issues.
-> 
-> Therefore, remove the restriction and allow LBS to be enabled together
-> with fs-verity.
-> 
-> Cc: Eric Biggers <ebiggers@kernel.org>
-> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+Hi Wei,
 
-Nice!
+On 11/3/2025 7:30 PM, Wei Wang wrote:
+> Introduce the IOMMU_PROT_IE flag to allow callers of iommu_v1_map_pages()
+> to explicitly request memory encryption for specific mappings.
+> 
+> With SME enabled, the C-bit (encryption bit) in IOMMU page table entries
+> is now set only when IOMMU_PROT_IE is specified. This provides
+> fine-grained control over which IOVAs are encrypted through the IOMMU
+> page tables.
+> 
+> Current PCIe devices and switches do not interpret the C-bit, so applying
+> it to MMIO mappings would break PCIe peer‑to‑peer communication. Update
+> the implementation to restrict C-bit usage to non‑MMIO backed IOVAs.
 
-> @@ -5175,7 +5173,8 @@ void ext4_set_inode_mapping_order(struct inode *inode)
->  		return;
+Right. Quote from AMD Programmers Manual Vol2, "any pages corresponding to MMIO
+addresses must be configured with the C-bit clear."
+
+> 
+> Fixes: 2543a786aa25 ("iommu/amd: Allow the AMD IOMMU to work with memory encryption")
+> Suggested-by: Jason Gunthorpe <jgg@nvidia.com>
+> Signed-off-by: Wei Wang <wei.w.wang@hotmail.com>
+> --->  drivers/iommu/amd/amd_iommu_types.h | 3 ++-
+>  drivers/iommu/amd/io_pgtable.c      | 7 +++++--
+
+May be apply same fix for io_pgtable_v2.c as well? (Of course filename changed
+with generic pt series).
+
+-Vasant
+
+>  drivers/iommu/amd/iommu.c           | 2 ++
+>  3 files changed, 9 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/iommu/amd/amd_iommu_types.h b/drivers/iommu/amd/amd_iommu_types.h
+> index a698a2e7ce2a..5b6ce0286a16 100644
+> --- a/drivers/iommu/amd/amd_iommu_types.h
+> +++ b/drivers/iommu/amd/amd_iommu_types.h
+> @@ -442,9 +442,10 @@
+>  #define IOMMU_PTE_PAGE(pte) (iommu_phys_to_virt((pte) & IOMMU_PAGE_MASK))
+>  #define IOMMU_PTE_MODE(pte) (((pte) >> 9) & 0x07)
 >  
->  	if (test_opt(inode->i_sb, DATA_FLAGS) == EXT4_MOUNT_JOURNAL_DATA ||
-> -	    ext4_test_inode_flag(inode, EXT4_INODE_JOURNAL_DATA))
-> +	    ext4_test_inode_flag(inode, EXT4_INODE_JOURNAL_DATA) ||
-> +	    ext4_has_feature_verity(inode->i_sb))
->  		max_order = EXT4_SB(inode->i_sb)->s_min_folio_order;
->  	else
->  		max_order = EXT4_MAX_PAGECACHE_ORDER(inode);
+> -#define IOMMU_PROT_MASK 0x03
+> +#define IOMMU_PROT_MASK (IOMMU_PROT_IR | IOMMU_PROT_IW | IOMMU_PROT_IE)
+>  #define IOMMU_PROT_IR 0x01
+>  #define IOMMU_PROT_IW 0x02
+> +#define IOMMU_PROT_IE 0x04
+>  
+>  #define IOMMU_UNITY_MAP_FLAG_EXCL_RANGE	(1 << 2)
+>  
+> diff --git a/drivers/iommu/amd/io_pgtable.c b/drivers/iommu/amd/io_pgtable.c
+> index 70c2f5b1631b..ae5032dd3b2f 100644
+> --- a/drivers/iommu/amd/io_pgtable.c
+> +++ b/drivers/iommu/amd/io_pgtable.c
+> @@ -367,11 +367,14 @@ static int iommu_v1_map_pages(struct io_pgtable_ops *ops, unsigned long iova,
+>  		if (!iommu_pages_list_empty(&freelist))
+>  			updated = true;
+>  
+> +		if (prot & IOMMU_PROT_IE)
+> +			paddr = __sme_set(paddr);
+> +
+>  		if (count > 1) {
+> -			__pte = PAGE_SIZE_PTE(__sme_set(paddr), pgsize);
+> +			__pte = PAGE_SIZE_PTE(paddr, pgsize);
+>  			__pte |= PM_LEVEL_ENC(7) | IOMMU_PTE_PR | IOMMU_PTE_FC;
+>  		} else
+> -			__pte = __sme_set(paddr) | IOMMU_PTE_PR | IOMMU_PTE_FC;
+> +			__pte = paddr | IOMMU_PTE_PR | IOMMU_PTE_FC;
+>  
+>  		if (prot & IOMMU_PROT_IR)
+>  			__pte |= IOMMU_PTE_IR;
+> diff --git a/drivers/iommu/amd/iommu.c b/drivers/iommu/amd/iommu.c
+> index 2e1865daa1ce..eaf024e9dff0 100644
+> --- a/drivers/iommu/amd/iommu.c
+> +++ b/drivers/iommu/amd/iommu.c
+> @@ -2762,6 +2762,8 @@ static int amd_iommu_map_pages(struct iommu_domain *dom, unsigned long iova,
+>  		prot |= IOMMU_PROT_IR;
+>  	if (iommu_prot & IOMMU_WRITE)
+>  		prot |= IOMMU_PROT_IW;
+> +	if (!(iommu_prot & IOMMU_MMIO))
+> +		prot |= IOMMU_PROT_IE;
+>  
+>  	if (ops->map_pages) {
+>  		ret = ops->map_pages(ops, iova, paddr, pgsize,
 
-Is there a reason why fsverity needs the folio order to match the block
-size? I didn't find any by a quick glance. If yes, please state it in
-the changelog. If no, then I'd just use EXT4_MAX_PAGECACHE_ORDER() because
-it will give us some performance e.g. for mmapped executables protected by
-fsverify...
-
-								Honza
-
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
 
