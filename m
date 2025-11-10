@@ -1,151 +1,153 @@
-Return-Path: <linux-kernel+bounces-893863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A80F4C488AA
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 19:26:02 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29675C48859
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 19:23:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02A2F3AC83D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 18:25:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EE8584EA768
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 18:23:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 872F132AAD3;
-	Mon, 10 Nov 2025 18:24:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1279332A3FE;
+	Mon, 10 Nov 2025 18:23:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kqb52MrL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EixBAtBQ"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4C9332E123;
-	Mon, 10 Nov 2025 18:24:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F05A231CA50
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 18:23:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762799062; cv=none; b=Je+sd7OOaBoGWkT2YpHZg0smRfLL9PaU9BaSphovabHfGQzJ1/gKMs9vn5flpp20ZKG0+8qvYkMz/DxBE/q4Sw0yqK1iaKOl8xcTMin6YZO85B2A8GDlW0fjAyyhfwDfuY7zSyaNnIuo1RY7Ql86Jgs/MdxP6RA392DZxsjinbM=
+	t=1762799028; cv=none; b=ouJWKIAEarub5hn8LeLCBTUCldWqQ1FDUTBNS4G/zI1azRHnQLLcBhe0pJL30iDi7WnKYo2A2rQDykKj+mPcbXfeIZL31caN+igKMNc4XW0Qz0VHbyOSlzJuivtki/x2pRyEVOQ0Funv0JFtjLpkEQ+KbT2RsiaCSRD4hdzlpOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762799062; c=relaxed/simple;
-	bh=g3SLcGsDjlMGBKQSfIm6bhEChbau24P2JJ1zVw2RPNo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=gAKL3tzjl+Pc575wS4kD+ulJqgGXhdnY6XMC8sPM8nDDQUa+Gdlt/ZnE2NpzzfKfcq19Ahgqj898Xx9Li2OM0gwFyUFVa2ayVZ+kcCPxH68FtKguSwT4DL7SGbdT/zgP+dW3TGLnlwp6meWSu/WiR9gefHBmehLJk2T0CQO47C0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kqb52MrL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28480C19423;
-	Mon, 10 Nov 2025 18:24:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762799061;
-	bh=g3SLcGsDjlMGBKQSfIm6bhEChbau24P2JJ1zVw2RPNo=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=kqb52MrLpMVv8hVC8I38cc9DMNTYlG1SxBo9B9ODTbSVeqagIBhW5cOFVXH1Ryg4l
-	 +0klC1hmhhV9CVIePFoJVuuu/HW79gTVhDEppqK93dgzR2VQrZwzuFeBWovfTXgtSQ
-	 VQxyaqUYT1afmXkkZuDDABje40IpiFicbJZPD6fO7pkpqejNGLLwMArrrN7YSXLNfV
-	 IF2Hi+/g/PcsQ4mQUbeZ9765FtaJNOH/C/MXxaz6ljdaW3Kr82zmMxQ2Yg3Ok4t0sK
-	 v3Vwg/kurLxFjjo9nyPwOI1WM8Z7lMD1Uc8Qn5pLLp9W91TBFkHOTI5FIkDVp1DlTN
-	 UZT3sjBX7q9sw==
-From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-Date: Mon, 10 Nov 2025 19:23:44 +0100
-Subject: [PATCH net 5/6] selftests: mptcp: connect: trunc: read all recv
- data
+	s=arc-20240116; t=1762799028; c=relaxed/simple;
+	bh=0B5t6DWhDiwMV6cYZ+zAwswI7QSnPE13XKjJKivILI8=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=SGACNMq0EPTjYBCZPBu92vWYA5nh7vKAmwESPjR42mhZRUM0aFRfLEhH2l1tf49koJVb+nb7inLvUjSgowY27GGIB/T2rFp9o9OXCY9FuQtfjGGMOcKXgEPW1mydEYdQj7XQinaaV7geXW0VOJENUNHadVidkRUoDf4dim9Xc+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EixBAtBQ; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2958c80fcabso91476195ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 10:23:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762799026; x=1763403826; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4/RtuixS6ivHaJzMt+cypZgpKYgDJDNLyz12fZKnsp0=;
+        b=EixBAtBQcHIbxnbECgTVfCMhh0Q8b1aqZW6pSgKUZ+tIoKLnyg1izjOhbDQ7gmFLwN
+         8ujkOCVEiUu70iju58EeQj4kMpDPskMwYgEitGyTZMat5qn3nF+Mv+J3scEroxB5Hgtj
+         2QbY+gUKRGtDGuesOZbRAxcLxN+vSiM6nXQrFrP6Jji5Siz1FrP/xP5nIqJnbOvZwhmI
+         qDyjhPVpWo+P3UP7CF31c2p3hSHTCxgq1uyEJ4cDy6u0L9KQwNuE4Jcyx8S/2Kk/oqYd
+         u8x/0IJQqZH/lkxSjte3dYVIZk1hfKmnW093mJyJjtzC3eYD4HoX7EIYtG9AuV58FdwS
+         UNdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762799026; x=1763403826;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4/RtuixS6ivHaJzMt+cypZgpKYgDJDNLyz12fZKnsp0=;
+        b=EUE7wpn6ttYyxh62EBVyQBdwbknzzGKCAjzyQRbNTkbXHzBFtz94gcRNDLgWzdN2ka
+         BCTkGLFs+QmbvObGw4vozXcD5akxFH9ydpoMmlj0MlUIN+4lpQeUM7LQDGAIKdUh8/bS
+         2IJ8GeqPMJvm/sFNI+Dlx8g5SAvg5W+FGl5HGxz70ce+2UaAg+Cc3DDqPQrFBZCjV/AI
+         kjas6xyVVJrq22OD4kLw17n/AcGgvznGURsBOoAE3sxaz7YiCJxJuGSDbhV2w/qo+LQg
+         mmFwp0IB3dT+yQxWR3s851iMWFnCtR6N7K3XLamLrIdWWVDIBzSb70kPD5vvoowrR0oO
+         33Fg==
+X-Forwarded-Encrypted: i=1; AJvYcCXAr3BJenlskHO5apcTSjAGPPhlZMV+2FyZPIH98ef9HX7ziroa7May42BllK+IXgFfwL7us3XW2tgcC0M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6kVusaPe3NUTYnIV0CEjMVaSfKnlsH8ZFYLlUauasKQXMrNkP
+	0GUrlm24TRTWlgDLfCxmQ7qRZzkuWNeEqEkd/6xqd6INidfxqzfWW2IyL1ehDU8ng/BKoK6nlqU
+	izUKnLA==
+X-Google-Smtp-Source: AGHT+IHLjhF/B9JRNWlfF4xQjImNcP66JBbSmi5nz2WQmt8Y80nCa0FnJnmx6rkg3zEfysgHKy0W5hbcKSg=
+X-Received: from plpn7.prod.google.com ([2002:a17:902:9687:b0:296:18d:ea16])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:1a0c:b0:297:f8dd:4d8e
+ with SMTP id d9443c01a7336-297f8dd5382mr86324925ad.30.1762799026327; Mon, 10
+ Nov 2025 10:23:46 -0800 (PST)
+Date: Mon, 10 Nov 2025 10:23:44 -0800
+In-Reply-To: <690e0be4.a70a0220.22f260.0050.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251110-net-mptcp-sft-join-unstable-v1-5-a4332c714e10@kernel.org>
-References: <20251110-net-mptcp-sft-join-unstable-v1-0-a4332c714e10@kernel.org>
-In-Reply-To: <20251110-net-mptcp-sft-join-unstable-v1-0-a4332c714e10@kernel.org>
-To: Mat Martineau <martineau@kernel.org>, Geliang Tang <geliang@kernel.org>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Simon Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>
-Cc: netdev@vger.kernel.org, mptcp@lists.linux.dev, 
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
- "Matthieu Baerts (NGI0)" <matttbe@kernel.org>, stable@vger.kernel.org
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2803; i=matttbe@kernel.org;
- h=from:subject:message-id; bh=g3SLcGsDjlMGBKQSfIm6bhEChbau24P2JJ1zVw2RPNo=;
- b=owGbwMvMwCVWo/Th0Gd3rumMp9WSGDKFdA9HytzIfXnOue3P4dVaRyNXLp/oOnuy7bwDHBaFj
- k4MiwOudpSyMIhxMciKKbJIt0Xmz3xexVvi5WcBM4eVCWQIAxenAEzkoAcjw/pzqaIrMl+3+abo
- JW9ksZ93oNnxScxrjgOTb/mw82kq5TH80zmqXV/GcbZqt5i9Qsuvu52STNxv2y95JNm6vxPR/2b
- OCwA=
-X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
- fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
+Mime-Version: 1.0
+References: <690e0be4.a70a0220.22f260.0050.GAE@google.com>
+Message-ID: <aRItsJNnsja0Wj2W@google.com>
+Subject: Re: [syzbot] [kvm-x86?] WARNING in kvm_arch_can_dequeue_async_page_present
+From: Sean Christopherson <seanjc@google.com>
+To: syzbot <syzbot+6bea72f0c8acbde47c55@syzkaller.appspotmail.com>
+Cc: bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, 
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, mingo@redhat.com, 
+	pbonzini@redhat.com, syzkaller-bugs@googlegroups.com, tglx@linutronix.de, 
+	x86@kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-MPTCP Join "fastclose server" selftest is sometimes failing because the
-client output file doesn't have the expected size, e.g. 296B instead of
-1024B.
+On Fri, Nov 07, 2025, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    9c0826a5d9aa Add linux-next specific files for 20251107
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=13a67012580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=4f8fcc6438a785e7
+> dashboard link: https://syzkaller.appspot.com/bug?extid=6bea72f0c8acbde47c55
+> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14e110b4580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14ab1114580000
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/6b76dc0ec17f/disk-9c0826a5.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/522b6d2a1d1d/vmlinux-9c0826a5.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/4a58225d70f3/bzImage-9c0826a5.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+6bea72f0c8acbde47c55@syzkaller.appspotmail.com
+> 
+> kvm_intel: L1TF CPU bug present and SMT on, data leak possible. See CVE-2018-3646 and https://www.kernel.org/doc/html/latest/admin-guide/hw-vuln/l1tf.html for details.
+> ------------[ cut here ]------------
+> WARNING: arch/x86/kvm/x86.c:13965 at kvm_arch_can_dequeue_async_page_present+0x1a9/0x2f0 arch/x86/kvm/x86.c:13965, CPU#0: syz.0.17/5998
+> Modules linked in:
+> CPU: 0 UID: 0 PID: 5998 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+> RIP: 0010:kvm_arch_can_dequeue_async_page_present+0x1a9/0x2f0 arch/x86/kvm/x86.c:13965
+> Code: 00 65 48 8b 0d 58 81 72 11 48 3b 4c 24 40 75 21 48 8d 65 d8 5b 41 5c 41 5d 41 5e 41 5f 5d e9 3e af 20 0a cc e8 48 e1 79 00 90 <0f> 0b 90 b0 01 eb c0 e8 4b c1 1d 0a f3 0f 1e fa 4c 8d b3 f8 02 00
+> RSP: 0018:ffffc90003167460 EFLAGS: 00010293
+> RAX: ffffffff8147eee8 RBX: ffff888030280000 RCX: ffff88807fda1e80
+> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000009
+> RBP: ffffc900031674e8 R08: ffff88803028003f R09: 1ffff11006050007
+> R10: dffffc0000000000 R11: ffffed1006050008 R12: 1ffff9200062ce8c
+> R13: dffffc0000000000 R14: 0000000000000000 R15: dffffc0000000000
+> FS:  000055556a8c3500(0000) GS:ffff888125a79000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000000000000000 CR3: 0000000072cc2000 CR4: 00000000003526f0
+> Call Trace:
+>  <TASK>
+>  kvm_check_async_pf_completion+0x102/0x3c0 virt/kvm/async_pf.c:158
+>  vcpu_enter_guest arch/x86/kvm/x86.c:11209 [inline]
+>  vcpu_run+0x26be/0x7760 arch/x86/kvm/x86.c:11650
+>  kvm_arch_vcpu_ioctl_run+0x116c/0x1cb0 arch/x86/kvm/x86.c:11995
+>  kvm_vcpu_ioctl+0x99a/0xed0 virt/kvm/kvm_main.c:4477
+>  vfs_ioctl fs/ioctl.c:51 [inline]
+>  __do_sys_ioctl fs/ioctl.c:597 [inline]
+>  __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:583
+>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>  do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f1588b8f6c9
+> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007ffdfcd816a8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+> RAX: ffffffffffffffda RBX: 00007f1588de5fa0 RCX: 00007f1588b8f6c9
+> RDX: 0000000000000000 RSI: 000000000000ae80 RDI: 0000000000000006
+> RBP: 00007f1588c11f91 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> R13: 00007f1588de5fa0 R14: 00007f1588de5fa0 R15: 0000000000000003
+>  </TASK>
+> 
+> 
+> ---
 
-When looking at a packet trace when this happens, the server sent the
-expected 1024B in two parts -- 100B, then 924B -- then the MP_FASTCLOSE.
-It is then strange to see the client only receiving 296B, which would
-mean it only got a part of the second packet. The problem is then not on
-the networking side, but rather on the data reception side.
+Now that the buggy patch is gone from linux-next...
 
-When mptcp_connect is launched with '-f -1', it means the connection
-might stop before having sent everything, because a reset has been
-received. When this happens, the program was directly stopped. But it is
-also possible there are still some data to read, simply because the
-previous 'read' step was done with a buffer smaller than the pending
-data, see do_rnd_read(). In this case, it is important to read what's
-left in the kernel buffers before stopping without error like before.
-
-SIGPIPE is now ignored, not to quit the app before having read
-everything.
-
-Fixes: 6bf41020b72b ("selftests: mptcp: update and extend fastclose test-cases")
-Cc: stable@vger.kernel.org
-Reviewed-by: Geliang Tang <geliang@kernel.org>
-Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
----
- tools/testing/selftests/net/mptcp/mptcp_connect.c | 18 +++++++++++++-----
- 1 file changed, 13 insertions(+), 5 deletions(-)
-
-diff --git a/tools/testing/selftests/net/mptcp/mptcp_connect.c b/tools/testing/selftests/net/mptcp/mptcp_connect.c
-index b148cadb96d0..fc7e22b503d3 100644
---- a/tools/testing/selftests/net/mptcp/mptcp_connect.c
-+++ b/tools/testing/selftests/net/mptcp/mptcp_connect.c
-@@ -710,8 +710,14 @@ static int copyfd_io_poll(int infd, int peerfd, int outfd,
- 
- 				bw = do_rnd_write(peerfd, winfo->buf + winfo->off, winfo->len);
- 				if (bw < 0) {
--					if (cfg_rcv_trunc)
--						return 0;
-+					/* expected reset, continue to read */
-+					if (cfg_rcv_trunc &&
-+					    (errno == ECONNRESET ||
-+					     errno == EPIPE)) {
-+						fds.events &= ~POLLOUT;
-+						continue;
-+					}
-+
- 					perror("write");
- 					return 111;
- 				}
-@@ -737,8 +743,10 @@ static int copyfd_io_poll(int infd, int peerfd, int outfd,
- 		}
- 
- 		if (fds.revents & (POLLERR | POLLNVAL)) {
--			if (cfg_rcv_trunc)
--				return 0;
-+			if (cfg_rcv_trunc) {
-+				fds.events &= ~(POLLERR | POLLNVAL);
-+				continue;
-+			}
- 			fprintf(stderr, "Unexpected revents: "
- 				"POLLERR/POLLNVAL(%x)\n", fds.revents);
- 			return 5;
-@@ -1433,7 +1441,7 @@ static void parse_opts(int argc, char **argv)
- 			 */
- 			if (cfg_truncate < 0) {
- 				cfg_rcv_trunc = true;
--				signal(SIGPIPE, handle_signal);
-+				signal(SIGPIPE, SIG_IGN);
- 			}
- 			break;
- 		case 'j':
-
--- 
-2.51.0
-
+#syz invalid
 
