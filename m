@@ -1,124 +1,149 @@
-Return-Path: <linux-kernel+bounces-892368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E523DC44F0B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 06:00:37 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEF71C44F0F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 06:00:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5430E3B0973
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 05:00:36 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 429223462D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 05:00:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAE3E2DCC1C;
-	Mon, 10 Nov 2025 05:00:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCC352E613C;
+	Mon, 10 Nov 2025 05:00:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="uEl/PbS0"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jXRf8yzd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF5792DAFB9;
-	Mon, 10 Nov 2025 05:00:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A5D92E542B;
+	Mon, 10 Nov 2025 05:00:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762750832; cv=none; b=CMiNb995P1rI/O/xaKC9eyB7HHzt5r/cnYyDZtnXNe+H++sy5McQRNa227WxIDui6LrvxBelt8b62eRyPxKZe0ZhqYOLwPa1TgUfIa36YPngHE/BAj4xq2SrYrdNJa/xRNtr4G7ivK1JBuwyQ/STC1/wSAr9joGqcPuA6EUDyEQ=
+	t=1762750851; cv=none; b=ZAgDCzWAWzEOitrvPTz2QDFxNLsPErscfQ1z1DSSmmfu65oAnv2p1xTMfQRwVup7nWkcrH4I2XkZr/u86jssI64zGlJrZix6u5mQ+kRWs0H2h2rGzzZ3XoYmlIhR9IOWbH0CTKyLQCW038MkEX4wTiaob+ri8j7E/rxfmQdlNSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762750832; c=relaxed/simple;
-	bh=3WGfTCS9HxV5AsmfaNFxXV7MG/s7A4+FAIrFYvcWux0=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=Vgws4UBIBAERqrVbfY3STNsLRxMWYov2E4Y4o6avQcUFFV+bzInukgFgotWhqvjHVhzratDSt6Faa3t5eHRgPsjk7VgA5Qra0udPvKiipXD9RNlNHb6iDDfqxBBGj3jJvkbTGmM1daSZUIQ2vW1MtIL92cfXMNEqcRktG9y7o0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=fail (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=uEl/PbS0 reason="signature verification failed"; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from ehlo.thunderbird.net (c-76-133-66-138.hsd1.ca.comcast.net [76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 5AA50Jku3337053
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Sun, 9 Nov 2025 21:00:20 -0800
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 5AA50Jku3337053
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025102301; t=1762750820;
-	bh=lNNqKYw6kdGWpkMXG8MHJl3KOvc86BBf+kihsnGzXkI=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=uEl/PbS0VWLvG94RHvgZJMy/NQ/QGbaxL4ssT+bv79p3jd4TJxIt/FCpu7l7ERQjG
-	 3DTSJ2FUpcALRrTeSIRoGVltw9mh7pnj4g3ipw2UhLxBVTyJoJ96UCMpDktoDjxIzU
-	 tvfwqRycbKAmymUA03B5FHsLL1HQF48ReX7fNB/l34jMAk4ccuTtk2SiM4x9cVIEVy
-	 wGSAS3J/OZWIgPilFgn1d5WGIJYbRFWaoWRnNZBtU2wRT4EL6A2SGAsI7eiv392lZc
-	 BpfW9befC2EReGJoSq4g1u3MCXtRGmjbqUmYpUO7abr0YdgJJ+hhwUE9ovZR0HIeI4
-	 k4cXstZNLsfPw==
-Date: Sun, 09 Nov 2025 21:00:18 -0800
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: "Theodore Ts'o" <tytso@mit.edu>
-CC: linux-serial@vger.kernel.org, linux-api@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: RFC: Serial port DTR/RTS - O_NRESETDEV
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20251110033556.GC2988753@mit.edu>
-References: <bb44f856-10a2-40c7-a3f7-be50c8e4b0a9@zytor.com> <20251107173743.GA3131573@mit.edu> <dc42f5d4-a707-4442-bda6-1c1990666f54@zytor.com> <20251110033556.GC2988753@mit.edu>
-Message-ID: <ADB50E23-DC8B-43D0-A345-E10396A3DFD4@zytor.com>
+	s=arc-20240116; t=1762750851; c=relaxed/simple;
+	bh=Zihc7hWYZQ5PyKsrvTu7dvnZV4LROwLSC+EosXzLTkg=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=usDeCNzd7B835WxynCVCTqfIJ1+2t+jktT0vg9oXjGH7ckTAkZiRhdz6XtV7GpvNKC9DO7sREZq0n7H2klYWRCuuPDAx1xfAdHTLuR4CouhF1y3qMb22dbUpalX6dzTTJq6eHo89Wg9oXai/F2Ht5aj22xznsxK3J84CH8EjN00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jXRf8yzd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4986C4CEFB;
+	Mon, 10 Nov 2025 05:00:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762750850;
+	bh=Zihc7hWYZQ5PyKsrvTu7dvnZV4LROwLSC+EosXzLTkg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=jXRf8yzdb7xe0Hx6zRVAuaecivybs7i3kxbZIk1UTs2KoHs91e+ZxJxp9NyiG9Udc
+	 Mpb5AAlUStuKXn3dEff7/a9Mulsyw3bdQbs0K9UC0tDttOhp2CFtc0QIMYc9C3eolf
+	 w/G7P04A8JLSfnB8BR/6+lbkvVQrJfG1xBD2yny9omGXnb7/P0Lv0nm6zl2DdriDLQ
+	 ZG56m4BWXlNwnkVMYaxTS92hYKRhqmwt7aCwnLv5tAJvfkOyTTvUw2RXpR0IOoWYID
+	 mJCmQh4g71ai2SK48A9/l0LEb3zRCF9aCYp5ib26xjJT14hXnbTK7GInDcV0GN4imu
+	 DvujI/SMX9Ssg==
+Date: Mon, 10 Nov 2025 14:00:48 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: kernel test robot <lkp@intel.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, oe-kbuild-all@lists.linux.dev,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH] tracing: Report wrong dynamic event command
+Message-Id: <20251110140048.4b2f93e0d5d93a12b030d550@kernel.org>
+In-Reply-To: <202511092149.N375MBPu-lkp@intel.com>
+References: <176259938768.261465.10714633393722227911.stgit@devnote2>
+	<202511092149.N375MBPu-lkp@intel.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On November 9, 2025 7:35:56 PM PST, Theodore Ts'o <tytso@mit=2Eedu> wrote:
->On Sat, Nov 08, 2025 at 06:25:20PM -0800, H=2E Peter Anvin wrote:
->>=20
->> The standard ESP32 configuration for its serial port is that asserting =
-RTS#
->> even for a moment will cause a device reset, and asserting DTR# during =
-reset
->> forces the device into boot mode=2E So even if you execute TIOCMSET imm=
-ediately
->> after opening the device, you will have glitched the output, and only t=
-he
->> capacitance of the output will save you, in the best case=2E
->
->IMHO, these more esoteric use cases should involve a custom kernel
->driver which replaces the generic serial driver=2E  In practice, these
->things aren't really a tty, but somethiung else weird, and trying to
->do this in userspace seems really awkward=2E
->
->> setserial (TIOCSSERIAL) and termios (TCSETS*) both require file descrip=
-tors,
->> so that is not suitable=2E The 8250 driver, but *not* other serial driv=
-ers,
->> allows the setserial information to be accessed via sysfs; however, thi=
-s
->> functionality is local to the 8250 driver=2E
->
->My suggestion of using setserial to turn on some "not really a tty;
->but some weird networking / cheap debugging hack" flag should work,
->because you would do this at boot up=2E  Note that the 8250
->autoconfiguration code (see drivers/tty/serial/8250/8250_port=2Ec) is
->going to mess with DTR / RTS=2E  This is why I asserted that trying to
->claim that you can preserve "state" across reboots is Just Not
->Possible=2E
->
->If you have some weird setup where DTR or RTS is wierd to the
->"detonate the TNT" line, might I suggest that maybe we shouldn't be
->using the tty / 8250 serial driver, but it should ***really*** be a
->dedicated kernel driver?
->
->					- Ted
+On Sun, 9 Nov 2025 21:27:50 +0800
+kernel test robot <lkp@intel.com> wrote:
 
-That is a completely unrealistic idea=2E And you are hardly the first one =
-to have it=2E Microsoft has been trying to get rid of serial and parallel p=
-orts since the 1990s for reasons like this=2E=20
+> Hi Masami,
+> 
+> kernel test robot noticed the following build errors:
+> 
+> [auto build test ERROR on trace/for-next]
+> [also build test ERROR on next-20251107]
+> [cannot apply to linus/master v6.18-rc4]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> 
+> url:    https://github.com/intel-lab-lkp/linux/commits/Masami-Hiramatsu-Google/tracing-Report-wrong-dynamic-event-command/20251108-185823
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace for-next
+> patch link:    https://lore.kernel.org/r/176259938768.261465.10714633393722227911.stgit%40devnote2
+> patch subject: [PATCH] tracing: Report wrong dynamic event command
+> config: s390-randconfig-002-20251109 (https://download.01.org/0day-ci/archive/20251109/202511092149.N375MBPu-lkp@intel.com/config)
+> compiler: s390-linux-gcc (GCC) 8.5.0
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251109/202511092149.N375MBPu-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202511092149.N375MBPu-lkp@intel.com/
+> 
+> All errors (new ones prefixed by >>):
+> 
+>    s390-linux-ld: kernel/trace/trace_dynevent.o: in function `create_dyn_event':
+> >> kernel/trace/trace_dynevent.c:150: undefined reference to `trace_probe_log_init'
+> >> s390-linux-ld: kernel/trace/trace_dynevent.c:151: undefined reference to `__trace_probe_log_err'
+> >> s390-linux-ld: kernel/trace/trace_dynevent.c:152: undefined reference to `trace_probe_log_clear'
 
-Microsoft even have had to back off the requirement of having =2Eini text =
-file "drivers" for ACM serial ports=20
+Oops, it is because CONFIG_DYNAMIC_EVENTS=y but CONFIG_PROBE_EVENTS=n.
+Hmm, it seems better to make "trace_probe_log.{c,h}" for this purpose.
 
-Yet they probably will still be with us when the 22nd century dawns, exact=
-ly *because* they are ubiquitous, supported by everything, and require no s=
-eparate kernel drivers=2E
+Thank you,
 
-And these days these aren't the "esoteric" use cases at all=2E They are th=
-e norm=2E
+> 
+> Kconfig warnings: (for reference only)
+>    WARNING: unmet direct dependencies detected for I2C_K1
+>    Depends on [n]: I2C [=y] && HAS_IOMEM [=y] && (ARCH_SPACEMIT || COMPILE_TEST [=y]) && OF [=n]
+>    Selected by [y]:
+>    - MFD_SPACEMIT_P1 [=y] && HAS_IOMEM [=y] && (ARCH_SPACEMIT || COMPILE_TEST [=y]) && I2C [=y]
+> 
+> 
+> vim +150 kernel/trace/trace_dynevent.c
+> 
+>    133	
+>    134	static int create_dyn_event(const char *raw_command)
+>    135	{
+>    136		struct dyn_event_operations *ops;
+>    137		int ret = -ENODEV;
+>    138	
+>    139		if (raw_command[0] == '-' || raw_command[0] == '!')
+>    140			return dyn_event_release(raw_command, NULL);
+>    141	
+>    142		mutex_lock(&dyn_event_ops_mutex);
+>    143		list_for_each_entry(ops, &dyn_event_ops_list, list) {
+>    144			ret = ops->create(raw_command);
+>    145			if (!ret || ret != -ECANCELED)
+>    146				break;
+>    147		}
+>    148		if (ret == -ECANCELED) {
+>    149			/* Wrong dynamic event. Leave an error message. */
+>  > 150			trace_probe_log_init("dynevent", 1, &raw_command);
+>  > 151			trace_probe_log_err(0, BAD_DYN_EVENT);
+>  > 152			trace_probe_log_clear();
+>    153			ret = -EINVAL;
+>    154		}
+>    155	
+>    156		mutex_unlock(&dyn_event_ops_mutex);
+>    157	
+>    158		return ret;
+>    159	}
+>    160	
+> 
+> -- 
+> 0-DAY CI Kernel Test Service
+> https://github.com/intel/lkp-tests/wiki
 
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
