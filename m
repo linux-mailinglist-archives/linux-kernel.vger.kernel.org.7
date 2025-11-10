@@ -1,112 +1,135 @@
-Return-Path: <linux-kernel+bounces-892786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CB59C45D31
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:10:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E3C9C45CDA
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:05:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4974D4EE096
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:04:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C72DB3A76BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:04:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 855063016E7;
-	Mon, 10 Nov 2025 10:04:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C09ED30216A;
+	Mon, 10 Nov 2025 10:04:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iAdN9uOK"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Hw7QioVY"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79390302158
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 10:03:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F4E62FE06C
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 10:04:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762769041; cv=none; b=FgMTosz94lK9JmW38jurmrfhfgGnkR+HvOv9hYIGTfrAh8jGBmtBFh4I96xh9hsVz3S5xdvvgkTuw/uPbPQczWmATRCTncsGStLQEMxUmJuCcRxtx4EzflnCleMdDkd3UM4yg+mLdknc19O8cpIGb7CxSOmZezq4403i1rTkzkA=
+	t=1762769086; cv=none; b=pQo+SC+IOsJgjktPHtCvyRDQSKifMVZRNOzoSt+MKLDEOFHAoAeoGPFJ3Sq0nS/YUJolgv/IflDTHG/QRhwfDMfxMfms+LrtBkMoE/217xadnwN/pq0R2Lei+IEFDZUDgrmzuGxf+XMnJPMPmMHhph3lvQ5iisups/Z6ksTeLW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762769041; c=relaxed/simple;
-	bh=xMPm2roPNOiQD1q4be1XihMW21gDvf9YbXLroWX6Tnw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=V54tEuJGacxrJVO2JGSfCawUjaecdC5aWT3yvm60YCU8x4RxP1zQV7W/nDx27n3RmCNzSWPepJrIwgdFEWan9D0+ZFnsu/rvvSMdnKX3GdGiXxhY+1KtVPFjB5S3qwL8xcTxuT4slyUvd/M+tEpd/PDW6Kxf4880invUgHYEpNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iAdN9uOK; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762769038;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qycs3QBWuphW6IaV/2MMmVqLjCAStIYoGfDJBOz4Br0=;
-	b=iAdN9uOKiD6e2AUNt1DOWER6Yx8Ici7KifijqbPvIWKT3gfTrpRB88vTdd0oGeEakrXQdQ
-	rcKL/c1nqwIcpsOnWoVfOrXR0Jb15m7qlXgr064h3uDAE75Ps+GqH9Xg7KiCjyETrWC05Z
-	oxGDnukPlGSfycXrbbZPNiNqCmELEAk=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-345-aFxD10TfOmGWdUeGPQvyBQ-1; Mon,
- 10 Nov 2025 05:03:56 -0500
-X-MC-Unique: aFxD10TfOmGWdUeGPQvyBQ-1
-X-Mimecast-MFC-AGG-ID: aFxD10TfOmGWdUeGPQvyBQ_1762769034
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6EADA195609F;
-	Mon, 10 Nov 2025 10:03:54 +0000 (UTC)
-Received: from fweimer-oldenburg.csb.redhat.com (unknown [10.44.32.47])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3A5391800576;
-	Mon, 10 Nov 2025 10:03:50 +0000 (UTC)
-From: Florian Weimer <fweimer@redhat.com>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Dave Chinner <david@fromorbit.com>,  Matthew Wilcox
- <willy@infradead.org>,  Hans Holmberg <hans.holmberg@wdc.com>,
-  linux-xfs@vger.kernel.org,  Carlos Maiolino <cem@kernel.org>,  "Darrick J
- . Wong" <djwong@kernel.org>,  linux-fsdevel@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  libc-alpha@sourceware.org
-Subject: Re: [RFC] xfs: fake fallocate success for always CoW inodes
-In-Reply-To: <20251110093828.GC22674@lst.de> (Christoph Hellwig's message of
-	"Mon, 10 Nov 2025 10:38:28 +0100")
-References: <20251106133530.12927-1-hans.holmberg@wdc.com>
-	<lhuikfngtlv.fsf@oldenburg.str.redhat.com>
-	<20251106135212.GA10477@lst.de>
-	<aQyz1j7nqXPKTYPT@casper.infradead.org>
-	<lhu4ir7gm1r.fsf@oldenburg.str.redhat.com>
-	<20251106170501.GA25601@lst.de> <878qgg4sh1.fsf@mid.deneb.enyo.de>
-	<aRESlvWf9VquNzx3@dread.disaster.area>
-	<lhuseem1mpe.fsf@oldenburg.str.redhat.com>
-	<20251110093828.GC22674@lst.de>
-Date: Mon, 10 Nov 2025 11:03:48 +0100
-Message-ID: <lhu1pm6yzjv.fsf@oldenburg.str.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1762769086; c=relaxed/simple;
+	bh=9A1yIgpi60ezUlfcop8n8HkEuFp0DdPbpKCQCekaC3Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=gRJUDO3FFmElbxTZr7GzkRa186PTTG11YYY+/dkib8Ucj/KgZ9SswuE9/6V1QG2IRgMmw5Vc0AGrqjC1MFdBrEcl2c+0pmjuEoHAtamZOo4657Me4g5WD2IRccNgOvpfc5uCQdr1Yfhn7vuLX99AREXn1RAMXE+Bwom6rOqWKRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Hw7QioVY; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b5a8184144dso363031266b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 02:04:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1762769082; x=1763373882; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/xUGg73yk0A4XYfOu5VkhuxAU79q1W9UxG6dbard9Jg=;
+        b=Hw7QioVYN2lBOGiMJdeaJSRSyB1UjnBsumgOwiHVbk3M65NoR1spKu2eZQB8ieNITk
+         Th6TbZ6RxBQXMfQbL2tcETyjeVCn4lhzStVlTunmGBbpZ+ESa7SikLwM31AkNbYdJdeT
+         o3HZOwElCgPCl5pJGNF79ie5f7w6nUEvMLBAeFc6mndvjIk/j1fP+S2JM9+I1vR7Mk+7
+         sE9q8E3HxL/TPRFixyeN5ifvIPDVVRmDGHwKRXkxyJMxxi7P7rmhU1W82RlsFNFJmyCZ
+         k7GlKBQR5yT7PIph03ZMzYhtYVvEhPd37tVqwveXkCUm719DhZgGxwSepIxvywRdg75I
+         NVwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762769082; x=1763373882;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=/xUGg73yk0A4XYfOu5VkhuxAU79q1W9UxG6dbard9Jg=;
+        b=siUpDCvGINmzsAJc7VgtuBUOVnDzZ4TIex4JiojvBEdsCi6kN/PXBQgwZZab445Owg
+         5nsmdagSKPd42GfIKA6/mcHudyesjrOmnGqWitJ26kZ2++g5Q7IrHsrUT5q44Dp+54Xg
+         M5wwHx85jUN4ER9mLlySz4LcPP2+KLI6rI1inGdtUe93EDPvDS6l+DzPymWH5BU4HGf4
+         hAqQyONs/DoJ1RKiNLJ7wVE8Pt+nqQFbGF5Ro+ABvbMEu4tlkHgK+fb/xKtx3aDaufoM
+         /LeKH4ma1A2dt3TzmXiJziITme/5J2MLlvL/tqIM962+K8E4Jf2B3cyIrUkaqivOtFfi
+         ikjA==
+X-Forwarded-Encrypted: i=1; AJvYcCUPjynHHiP0Wc5UAG2cGc8GXDBxfrDAlUZgxX26TP7RyI9Gs3czsrl6A6HYYEMFhsNhAbhog2jV2nfAwnY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzm7fnZtyVxbkOxAL31nJ0Zx9ayKNO7TnfXRUYz/k+zQW3DgTRT
+	jQc0/Xllc9NcBnMEM0CZGrFpCdalpFUgJVvzqbULnTK4LBwXMLjc2Fo88vY0hj6iiGXnH1WlmET
+	uzoga2w3dQLMJkML8bNjwsa+vEOmMixrhumNMhUul2g==
+X-Gm-Gg: ASbGncuyXslCC4i/Elg8F5Z+MmuB6GMjkwj7JVoGIGjcLxaXSQS0GMzkF730fV6RAVV
+	kbZx/zU/66Z6tKkPLWCY6L4jRSIepbBQErWIT07W7ZJOfkMn4d04E3UR4gXChN/gelvcpsx3Yy9
+	Zg2Ql3qsrHkiKg6hpvSyjHnpT87lHSMYvdvV9sm6RuB8xTlYd7PjL8q57t0V8K8cFjSviLLaMq3
+	m/XLyaghGejSiSyjJ/TNXrdbkwU/manTfz+TZ6gczW6H9fTCbOTU8jnR8H9t9Cok4ewRYbxHCWV
+	y1acpJ+S1xhEzfQQ1JZ8Eizc3U2r
+X-Google-Smtp-Source: AGHT+IEwM7r0YlDX/mjTSwR5Ckv7klfhaiZyjsr41uDN9it6f6IQHBRsRjeABeqGFA1avuAvJgexH6nFeivZs/hEvnk=
+X-Received: by 2002:a17:907:6ea2:b0:b40:6e13:1a82 with SMTP id
+ a640c23a62f3a-b72e03772d7mr763664766b.26.1762769082460; Mon, 10 Nov 2025
+ 02:04:42 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+References: <20251107112620.146996-1-marco.crivellari@suse.com> <20251108025416.GA73420@workstation.local>
+In-Reply-To: <20251108025416.GA73420@workstation.local>
+From: Marco Crivellari <marco.crivellari@suse.com>
+Date: Mon, 10 Nov 2025 11:04:31 +0100
+X-Gm-Features: AWmQ_bkJYiDD4J4e4UJfOrYK07lzdw4WI64XOn211T8i_sNx0RTbnvhIB4EW2H8
+Message-ID: <CAAofZF7wY9OYNSJyLsWSPczPZvfPHGtRomryTsbONQ--pOy=-g@mail.gmail.com>
+Subject: Re: [PATCH] firewire: core: add WQ_PERCPU to alloc_workqueue users
+To: Marco Crivellari <marco.crivellari@suse.com>, linux-kernel@vger.kernel.org, 
+	linux1394-devel@lists.sourceforge.net, Tejun Heo <tj@kernel.org>, 
+	Lai Jiangshan <jiangshanlai@gmail.com>, Frederic Weisbecker <frederic@kernel.org>, 
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Michal Hocko <mhocko@suse.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-* Christoph Hellwig:
-
-> On Mon, Nov 10, 2025 at 06:27:41AM +0100, Florian Weimer wrote:
->> Sorry, I made the example confusing.
->> 
->> How would the application deal with failure due to lack of fallocate
->> support?  It would have to do a pwrite, like posix_fallocate does to
->> today, or maybe ftruncate.  This is way I think removing the fallback
->> from posix_fallocate completely is mostly pointless.
+On Sat, Nov 8, 2025 at 3:54=E2=80=AFAM Takashi Sakamoto <o-takashi@sakamocc=
+hi.jp> wrote:
+> [...]
+> > diff --git a/drivers/firewire/core-transaction.c b/drivers/firewire/cor=
+e-transaction.c
+> > index c65f491c54d0..c15dbe882cbe 100644
+> > --- a/drivers/firewire/core-transaction.c
+> > +++ b/drivers/firewire/core-transaction.c
+> > @@ -1437,7 +1437,8 @@ static int __init fw_core_init(void)
+> >  {
+> >       int ret;
+> >
+> > -     fw_workqueue =3D alloc_workqueue("firewire", WQ_MEM_RECLAIM, 0);
+> > +     fw_workqueue =3D alloc_workqueue("firewire", WQ_MEM_RECLAIM | WQ_=
+PERCPU,
+> > +                                    0);
+> >       if (!fw_workqueue)
+> >               return -ENOMEM;
 >
-> In general it would ftruncate.  If it thinks it can't work without
-> preallocation at all the application will fail, as again the lack
-> of posix_fallocate means that space can't be preallocated.
+> As far as I know, there is no specific reason to use per-cpu workqueue
+> for this purpose in this subsystem. I believe that using unbound workqueu=
+e
+> would be more beneficial, since the workqueue users just operate chained
+> 1394 OHCI DMA descriptor over system memory for asynchronous
+> communication.
+>
+> Would it be acceptable for you to add WQ_UNBOUND flag to the workqueue?
+> If so, I can prepare a patch for the next merge window.
 
-Hmm.  It's not a 1:1 replacement: someone really needs to understand the
-code and see what the appropriate way to deal with the situation is.  Of
-course the posix_fallocate fallback path (or an application-level
-equivalent) has the potential for data loss, too.  It's just a different
-trade-off.
+Hi Takashi,
 
-Thanks,
-Florian
+Yes looking at the code it makes sense to have this workqueue unbound.
 
+If you want, it is not a problem for me to send a v2 with the change,
+let me know.
+
+Thanks!
+
+--=20
+
+Marco Crivellari
+
+L3 Support Engineer, Technology & Product
 
