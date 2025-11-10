@@ -1,99 +1,112 @@
-Return-Path: <linux-kernel+bounces-894264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74E6CC499AA
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 23:36:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7F4BC499B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 23:37:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B4C61883B34
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 22:35:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B3C53B161F
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 22:35:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F419431283C;
-	Mon, 10 Nov 2025 22:32:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="cn8IQpKt"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FF673396E5;
+	Mon, 10 Nov 2025 22:34:20 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D82E2F0C7C;
-	Mon, 10 Nov 2025 22:32:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0783F2EC09E;
+	Mon, 10 Nov 2025 22:34:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762813963; cv=none; b=ofU6bX2jCXnpSgU+y6xkUQ5ev3F4eyjYCcPU09PULpiQz4KOT5UTMoNQzcVUH5Q1IuXZuYO9sf6T9dEwMqxqDMYA7GCqcqMMgCdvFB323+k9Rh+yFnsX9UG30v+sU2lupNExeujppnkKZHFBLBdmFtwzy94hEy3TCgakZNYwzIc=
+	t=1762814060; cv=none; b=mpAFJxcz6CV8ELijjd/gWULxIp01LAhjwr1QtxyzcFQKHLCOAGN4SH+s1BsWKa2tuZMO5KIdyu7WrGSgKnaESi2GoaKvdW/BpcMWN5hNoPkV2UvEIqhUQdPelq4+eWkwaNoSE55aLt/NH75Or6aAELQz2tSSrJECGokN5DXysgY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762813963; c=relaxed/simple;
-	bh=7Yi2FC0Nz/jUUUk2yoqp2/72e3nxtzvJVmGmoKZ5+aE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EI8GG48v5/x0AxfUMNnf/gIqpg2lm1vcY0eBXcJYzB/Ix3TfBBOmxItBCCYtqmH3Ts8ckiwQmlECgKi+wt2I5wwJJhJoOzfuUgCDL+9i6IbKC+BAk1FXazB1GlieZ/5c+b5kxN/nRyLaSFDk2AVG5oWSCnGjKVEX6l8/S2xntUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=cn8IQpKt; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=sewhWqFd62I4abwE7fEOWsIQy3YSzUkbQKDocaX8Oqc=; b=cn8IQpKtYYgWm4ODn5q3va4ea0
-	zNk8Oc0VIUcjIuBng/JkwYuW0Q3jqjTth2KtgDrBkqDMyr9pPlW6ZHk/FCzD/HLU5ghXN6wigc7jx
-	4W7KaGxdV/wSXdtyVIbDWheW6vGSJjngKZHEphNpccJYi3DUg2S9p1Gi9ZIUtaB1l+jxmMUT9Kz/g
-	1zQkbN5Cg0X1ppW5j2832ZUYcAfwrqmLsXHPGFL6ROOEp6Rr3y48fcf7vn/HjEKPp0FBqi5PKicST
-	lVV/+NvtAI1HtgLbY4RkWZ0lfBPv5BVtyosk6M0BUekFmbZSsuK1ojfkoLh5xjwEtr8m2WYVdzKeM
-	PLDKfJfA==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vIaRE-00000006D4l-0zNW;
-	Mon, 10 Nov 2025 22:32:40 +0000
-Message-ID: <e355cd63-77cd-42ac-b852-c789ee8c8869@infradead.org>
-Date: Mon, 10 Nov 2025 14:32:39 -0800
+	s=arc-20240116; t=1762814060; c=relaxed/simple;
+	bh=I1oNJRz9FYOsxzMiD7ANfztym4nWPczNMuvfhZbE6jo=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=OFx2m9Hs70JCo3Rm+nMotPGchBzzPg8zUKdjwLMU7bUKlfkRIEjrx42tPEJ7u9T4Iy1JF5EpJ8lxeukR1rc4AmFb8IFx2r3C1wdi7DU2Z80VMTFu7Fi1+ra5sqXmYwr+mJaZJj39QfmETtPgOq5cAxoQYItN/nBj7glhJ6TJov8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.98.2)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1vIaSX-000000003xH-1Kee;
+	Mon, 10 Nov 2025 22:34:01 +0000
+Date: Mon, 10 Nov 2025 22:33:56 +0000
+From: Daniel Golle <daniel@makrotopia.org>
+To: Xu Liang <lxu@maxlinear.com>, Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH net-next 1/2] net: phy: mxl-gpy: add support for MXL86211C
+Message-ID: <92e7bdac9a581276219b5c985ab3814d65e0a7b5.1762813829.git.daniel@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Support conditional deps using "depends on X if Y"
-To: Nathan Chancellor <nathan@kernel.org>,
- Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Graham Roff <grahamr@qti.qualcomm.com>, Nicolas Schier <nsc@kernel.org>,
- Jonathan Corbet <corbet@lwn.net>, linux-kbuild@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- Nicolas Pitre <nico@fluxnic.net>
-References: <20251107-kconfig_conditional_deps-v1-1-aff22199ec0b@qti.qualcomm.com>
- <20251109232922.GA2977577@ax162>
- <82317993284703834a7b1d8d5ca05b7c646f2795@intel.com>
- <20251110211549.GB302594@ax162>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20251110211549.GB302594@ax162>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+From: Chad Monroe <chad@monroe.io>
 
+MXL86211C is a smaller and more efficient version of the GPY211C.
+Add the PHY ID and phy_driver instance to the mxl-gpy driver.
 
-On 11/10/25 1:15 PM, Nathan Chancellor wrote:
-> On Mon, Nov 10, 2025 at 10:48:59AM +0200, Jani Nikula wrote:
->> "depends on A || !A" (or A=n) is the most common pattern in Kconfig,
->> which literally means "depends on A if A".
-> 
-> That is totally fair, I did not try to actually search for the idiom. I
-> will say I do not find that either expression in Kconfig easily
-> translates in my head to "this dependency must be built in if the symbol
-> is built in, modular if the symbol is modular, or disabled" but I guess
-> that is just lack of familiarity with these idioms. I just want it to be
-> obvious to folks writing Kconfig when something like this is appropriate
-> to use but I guess with that being the most common usage in the tree, it
-> is fine as is.
+Signed-off-by: Chad Monroe <chad@monroe.io>
+Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+---
+ drivers/net/phy/mxl-gpy.c | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-I haven't tested it but it looks reasonable to me.
-
-> I think my point about tests still stands, at least something very
-> basic.
-
-Ack.
-
+diff --git a/drivers/net/phy/mxl-gpy.c b/drivers/net/phy/mxl-gpy.c
+index 0c8dc16ee7bde..3320a42ef43cf 100644
+--- a/drivers/net/phy/mxl-gpy.c
++++ b/drivers/net/phy/mxl-gpy.c
+@@ -30,6 +30,7 @@
+ #define PHY_ID_GPY241B		0x67C9DE40
+ #define PHY_ID_GPY241BM		0x67C9DE80
+ #define PHY_ID_GPY245B		0x67C9DEC0
++#define PHY_ID_MXL86211C		0xC1335400
+ 
+ #define PHY_CTL1		0x13
+ #define PHY_CTL1_MDICD		BIT(3)
+@@ -1268,6 +1269,29 @@ static struct phy_driver gpy_drivers[] = {
+ 		.get_wol	= gpy_get_wol,
+ 		.set_loopback	= gpy_loopback,
+ 	},
++	{
++		PHY_ID_MATCH_MODEL(PHY_ID_MXL86211C),
++		.name		= "Maxlinear Ethernet MXL86211C",
++		.get_features	= genphy_c45_pma_read_abilities,
++		.config_init	= gpy_config_init,
++		.probe		= gpy_probe,
++		.suspend	= genphy_suspend,
++		.resume		= genphy_resume,
++		.config_aneg	= gpy_config_aneg,
++		.aneg_done	= genphy_c45_aneg_done,
++		.read_status	= gpy_read_status,
++		.config_intr	= gpy_config_intr,
++		.handle_interrupt = gpy_handle_interrupt,
++		.set_wol	= gpy_set_wol,
++		.get_wol	= gpy_get_wol,
++		.set_loopback	= gpy_loopback,
++		.led_brightness_set = gpy_led_brightness_set,
++		.led_hw_is_supported = gpy_led_hw_is_supported,
++		.led_hw_control_get = gpy_led_hw_control_get,
++		.led_hw_control_set = gpy_led_hw_control_set,
++		.led_polarity_set = gpy_led_polarity_set,
++		.link_change_notify = gpy_link_change_notify,
++	},
+ };
+ module_phy_driver(gpy_drivers);
+ 
 -- 
-~Randy
-
+2.51.2
 
