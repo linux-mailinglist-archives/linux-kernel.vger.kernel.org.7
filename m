@@ -1,214 +1,230 @@
-Return-Path: <linux-kernel+bounces-892545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39866C45532
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:14:24 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 758CAC45540
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:15:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCC55188F474
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 08:14:48 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id AFE16346C78
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 08:15:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 811F52F693D;
-	Mon, 10 Nov 2025 08:14:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 298A12F7AC1;
+	Mon, 10 Nov 2025 08:15:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NZnOuVf8"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lD440Zws"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99C9E1DE8B5;
-	Mon, 10 Nov 2025 08:14:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B01F2F693E
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 08:15:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762762456; cv=none; b=VlDa2+ZVjrd9c9MSmfS7bc66E2KuoKCv/gyZ5g7RbuRIOXylkPesmdUPnaJ/prmo/rxv/NZt6o8tieD1M/r5YHBuX+PZwKJ3ybRLjfpOKiw5ifs7eMSZlm3vo7a1+C/aLeknl0rTMjfTrOHY3M3F+xePAUtuG0frmWijJcelPmo=
+	t=1762762507; cv=none; b=qwo1/eckxVbsWmswILcQtttm1JKI52WL11xZEj/m43AvlDjlIMSlsI22gaQejp2pfcJRk8dSLDLCTaBtFxy0NbzwgP5lkszmZUtyofcDB/ASAfhe+r63c41QYWMgtiTUYwz7KCL7qP8ms3bw8vU9jIyw/y7NxjYZXDF0M2PefME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762762456; c=relaxed/simple;
-	bh=Yr6LCvAA9OxlFpD/Zmy6//LNLn2xNE6XhRQnlP5LVXI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OBJJK2PYgzxdGMm/HP6GuXqODxb9NATPJg11RLS5o+lV4aOAvA7pPQmJ0mkVsKG0/NBy4u+Wu9RteYZZeoEuceGJb4hkrGp+wiGM1+7bx0+o3fNYRM11IEQXg2+qziGlp4DxEUi+CKjMM1+WuuuMzXJaNC8R3Xqiq+8CDjYorsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NZnOuVf8; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762762455; x=1794298455;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Yr6LCvAA9OxlFpD/Zmy6//LNLn2xNE6XhRQnlP5LVXI=;
-  b=NZnOuVf8VAjZpQrRbPiGFgOW671FkWRB+O1dlhYn18GI+ZGK9Qh3lc8b
-   h1+iL3EfkLTx1Np4Z3P1nnW5/arNffUm5CLGAIftLZsTN5T4w7xC1Tz/i
-   tiPeqBibdAQwG2x9nR50JwX5VZPaqsecHQ0A/iowfg1GWxD0VlIJ1vSUX
-   iODMZztvp15vmuEWLvTECSTsW37V91NSMXWrcKIBmoOWmYCKVWbavUtSB
-   Urt3DpMyj1XeMEjAUkcJURq/sZWbYLSRezZ5k/pM5Ed8grJtGNRQOmJ8y
-   Z8dcRGhDwqUIB30aBcbaV1vLnOPNQe/SYa7BzQS4HsRjr4XfNDLHC7a29
-   A==;
-X-CSE-ConnectionGUID: Lh52cWzLTFyPYtrSzn+Xfg==
-X-CSE-MsgGUID: 7JFP5zaLSA2lShETxycLGw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11608"; a="64897675"
-X-IronPort-AV: E=Sophos;i="6.19,293,1754982000"; 
-   d="scan'208";a="64897675"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 00:14:14 -0800
-X-CSE-ConnectionGUID: TE/LResuTn2cOoGBFdJYLA==
-X-CSE-MsgGUID: 5DemK79tR3KEGjeOWHNvBA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,293,1754982000"; 
-   d="scan'208";a="212011046"
-Received: from pgcooper-mobl3.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.245.238])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 00:14:13 -0800
-Received: from kekkonen.localdomain (localhost [IPv6:::1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 8E6FA1205FC;
-	Mon, 10 Nov 2025 10:14:12 +0200 (EET)
-Date: Mon, 10 Nov 2025 10:14:12 +0200
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Alex Tran <alex.t.tran@gmail.com>
-Cc: Pavel Machek <pavel@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/2] media: i2c: et8ek8: et8ek8_driver: add support
- for crc configuration via device tree
-Message-ID: <aRGe1NkDHYtDOfnw@kekkonen.localdomain>
-References: <20251108232923.2067131-1-alex.t.tran@gmail.com>
+	s=arc-20240116; t=1762762507; c=relaxed/simple;
+	bh=QA8cAA/NzrSavT8e8+Q7msp+Jrq09DSxAcdCNmENL24=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MvCmshkF4h6+yfbWyaFm6g+t9tnGgBgnn9ho4OOuUOUfuJLJizp6fgulbWLZHfFuJbpCXOYUm08ozKlx02RN6yuDyNl601vOiN9o47m+0bZgieIBc65aTs7g40SYpwqRHjHHnYXK4E+EZTnS7bQhaujLgJusW6FtLrG3VXaSc4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lD440Zws; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-42b3c965ca9so177450f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 00:15:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762762504; x=1763367304; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=SeRemWdOh6BINm57bAExN2qF+KGtIQQ7kG3okdFAQq8=;
+        b=lD440Zws6dIkqPeowWwMazCERaA0Pt91WCQrInTGJNqF60WihVEoVmPI+SzEDuEfz+
+         hYOgS64A0Uqu/AQuhtP2m1NaXYT/HcvR6QS98Xt85aWqPf2mi525EKHZkvYAiTXk2gx6
+         Mqt0S2+ujNHultvxPKvb2Ot4tbYsUYTEnAlNVlt8pV8sKh7VmUYWleiBeMwQ5aXHQO5W
+         5rM3gtjmt0ssAgdICYB2PU5HA2lkfwnoLXff/I0JNRPQ4iKQh7jR9/vUn+FnhLheN55P
+         +2eHstvcdosstYwVUOSGgJTx3sXQsa3LA98wz0wG1HyBLdPfgEDFnl3ey8/Db7aic01w
+         IoPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762762504; x=1763367304;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SeRemWdOh6BINm57bAExN2qF+KGtIQQ7kG3okdFAQq8=;
+        b=vBo14bibI8tnWTsi3PPYWilflNY3iwr66OY2c8OcG+5NhksRaF0thXs0cJoJo3Pcbe
+         KT5oA/yt2DWY3KjkPLN2ng3+wq73ecotaW3GZjNnAxyNGJXSqOt3Pbkg1m7iznPIt6+7
+         609jRC0PQHXCUHRDZhWo5mY1aIgC6BM6g6karWImPOpPo9v3xreeDlvFTVThlbwO7wdB
+         27HUfEJM+L0otx1/3v1Z636k0cOJesC7+Dm6nQNwPqRR6us0eNaIG1f3lhsPuwj7Fc6Q
+         Bx8oxe+bTFi7J9wViMjXhZGGlvGMnqqkMtpnfUGSxos06H6n6ywcCh13G5yavazvpxNM
+         2cmw==
+X-Forwarded-Encrypted: i=1; AJvYcCUVdWpwwf40/89QSMtqS8208SydS4NHzb7oaNRa9mgs94dBuwrJlwQsEOCZd7vlqnIs9DJzzQfT+J3bnmw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkGjZg5HygMdgkrp2iV4XBLjktgblpadUYSK6RNkdEBsXioLUg
+	XmOBPQrsGBAmUmBeYZyTYpDMV6yZeIM/CIMzmAp1gbQYIhvffNgCxwbK
+X-Gm-Gg: ASbGnctDS0MaY9LQLeZH3sdhQZM/jCb/qOGyA9K7UGL5nO1rpAauA0cpqxNvf0nhGC8
+	Y6I6YOPteM9ZWLjnvwHPuE8Orl9XdS64HFTu4u9UAfSm/RKS4OcJjp+WKwrAh+PXVwefPMOZWSd
+	OladNq9I3M58nC6f4+l/RLZst/JsG8/f6pkAX9KphRq8fBQAhyfMe6eg2nokdbSfUJTnr0hZo57
+	lXqoCNQlhoKfNLoogh2CyYnHPpX96/GmT/qMIQKSW1QLQ8mwioDtBwuCUR6PpQjz9+42QB7Yoc1
+	cs/SdXk5m+5aOCVY7mvI80bewS/vWaJb/IQh/UkyGvDxUtcXioLydKa4T/WWzlnd9+MUw/SU1q9
+	ZUMLxsLvDntlvKyPNQLj0dTq2w9UKwknhd1/lbNxDBI4FVT/LirPJvTZtCYTzyfprzVzDn3j948
+	9M6weP+q8rVGtoV4kyR1EfGQ==
+X-Google-Smtp-Source: AGHT+IFPRvflcsKqu7bHRXK/JyFHX+r+ojZOUJvTf4Pg77kTUGLJ4kifZzrUVNK8QvjfDeCXTC/ucQ==
+X-Received: by 2002:a5d:5f86:0:b0:42b:3e20:f1b3 with SMTP id ffacd0b85a97d-42b3e20f52bmr530612f8f.9.1762762503585;
+        Mon, 10 Nov 2025 00:15:03 -0800 (PST)
+Received: from taln60.nuvoton.co.il ([212.199.177.18])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42ac679214asm22324568f8f.38.2025.11.10.00.15.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Nov 2025 00:15:03 -0800 (PST)
+From: Tomer Maimon <tmaimon77@gmail.com>
+To: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	broonie@kernel.org,
+	avifishman70@gmail.com,
+	tali.perry1@gmail.com,
+	joel@jms.id.au,
+	venture@google.com,
+	yuenn@google.com,
+	benjaminfair@google.com,
+	andrew@codeconstruct.com.au
+Cc: openbmc@lists.ozlabs.org,
+	devicetree@vger.kernel.org,
+	linux-spi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Tomer Maimon <tmaimon77@gmail.com>
+Subject: [PATCH v1] dt-bindings: spi: Convert nuvoton,npcm-pspi to DT schema
+Date: Mon, 10 Nov 2025 10:14:57 +0200
+Message-Id: <20251110081457.1008316-1-tmaimon77@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251108232923.2067131-1-alex.t.tran@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Alex,
+Convert the Nuvoton NPCM PSPI binding to DT schema format.
+Remove the clock-name property since it is not used.
 
-Thanks for the patch.
+Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
+---
+ .../bindings/spi/nuvoton,npcm-pspi.txt        | 36 ----------
+ .../bindings/spi/nuvoton,npcm-pspi.yaml       | 65 +++++++++++++++++++
+ 2 files changed, 65 insertions(+), 36 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/spi/nuvoton,npcm-pspi.txt
+ create mode 100644 Documentation/devicetree/bindings/spi/nuvoton,npcm-pspi.yaml
 
-On Sat, Nov 08, 2025 at 03:29:23PM -0800, Alex Tran wrote:
-> Retrieve the configuration for CRC from the device tree instead
-> using the hard coded USE_CRC directive. If there is an issue
-> retrieving the endpoint node or the CRC property then the default
-> of 1 is used and the driver does not fail to maintain backward
-> compatibility.
-
-Is there a need for making this configurable? I have to say I can't recall
-the specifics of CCP2 but presumably the receiver side would need to be
-aligned with this as well, requiring such configuration on both sides.
-
-If you want to pursue this further, please also cc me to the DT binding
-patch.
-
-> 
-> Signed-off-by: Alex Tran <alex.t.tran@gmail.com>
-> ---
->  drivers/media/i2c/et8ek8/et8ek8_driver.c | 49 +++++++++++++++++++-----
->  1 file changed, 39 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/media/i2c/et8ek8/et8ek8_driver.c b/drivers/media/i2c/et8ek8/et8ek8_driver.c
-> index 2cb7b7187..4ef92359c 100644
-> --- a/drivers/media/i2c/et8ek8/et8ek8_driver.c
-> +++ b/drivers/media/i2c/et8ek8/et8ek8_driver.c
-> @@ -29,6 +29,7 @@
->  #include <media/media-entity.h>
->  #include <media/v4l2-ctrls.h>
->  #include <media/v4l2-device.h>
-> +#include <media/v4l2-fwnode.h>
->  #include <media/v4l2-subdev.h>
->  
->  #include "et8ek8_reg.h"
-> @@ -45,6 +46,7 @@ struct et8ek8_sensor {
->  	struct regulator *vana;
->  	struct clk *ext_clk;
->  	u32 xclk_freq;
-> +	u32 use_crc;
->  
->  	u16 version;
->  
-> @@ -130,8 +132,6 @@ static struct et8ek8_gain {
->  
->  #define ET8EK8_I2C_DELAY	3	/* msec delay b/w accesses */
->  
-> -#define USE_CRC			1
-> -
->  /*
->   * Register access helpers
->   *
-> @@ -844,20 +844,16 @@ static int et8ek8_power_on(struct et8ek8_sensor *sensor)
->  	if (rval)
->  		goto out;
->  
-> -#ifdef USE_CRC
->  	rval = et8ek8_i2c_read_reg(client, ET8EK8_REG_8BIT, 0x1263, &val);
->  	if (rval)
->  		goto out;
-> -#if USE_CRC /* TODO get crc setting from DT */
-> -	val |= BIT(4);
-> -#else
-> -	val &= ~BIT(4);
-> -#endif
-> +	if (sensor->use_crc)
-> +		val |= BIT(4);
-> +	else
-> +		val &= ~BIT(4);
->  	rval = et8ek8_i2c_write_reg(client, ET8EK8_REG_8BIT, 0x1263, val);
->  	if (rval)
->  		goto out;
-> -#endif
-> -
->  out:
->  	if (rval)
->  		et8ek8_power_off(sensor);
-> @@ -1396,6 +1392,34 @@ static int __maybe_unused et8ek8_resume(struct device *dev)
->  	return __et8ek8_set_power(sensor, true);
->  }
->  
-> +static int et8ek8_parse_fwnode(struct device *dev, struct et8ek8_sensor *sensor)
-> +{
-> +	struct v4l2_fwnode_endpoint bus_cfg = {
-> +		.bus_type = V4L2_MBUS_CCP2,
-> +	};
-> +	struct fwnode_handle *ep;
-> +	int ret;
-> +
-> +	ep = fwnode_graph_get_endpoint_by_id(dev_fwnode(dev), 0, 0,
-> +					     FWNODE_GRAPH_ENDPOINT_NEXT);
-> +	if (!ep) {
-> +		dev_warn(dev, "could not get endpoint node\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	ret = v4l2_fwnode_endpoint_alloc_parse(ep, &bus_cfg);
-> +	if (ret) {
-> +		dev_warn(dev, "parsing endpoint node failed\n");
-> +		goto done;
-> +	}
-> +
-> +	fwnode_property_read_u32(ep, "crc", &sensor->use_crc);
-> +done:
-> +	v4l2_fwnode_endpoint_free(&bus_cfg);
-> +	fwnode_handle_put(ep);
-> +	return ret;
-> +}
-> +
->  static int et8ek8_probe(struct i2c_client *client)
->  {
->  	struct et8ek8_sensor *sensor;
-> @@ -1406,6 +1430,11 @@ static int et8ek8_probe(struct i2c_client *client)
->  	if (!sensor)
->  		return -ENOMEM;
->  
-> +	sensor->use_crc = 1;
-> +	ret = et8ek8_parse_fwnode(dev, sensor);
-> +	if (ret)
-> +		dev_warn(dev, "parsing endpoint failed\n");
-> +
->  	sensor->reset = devm_gpiod_get(dev, "reset", GPIOD_OUT_LOW);
->  	if (IS_ERR(sensor->reset)) {
->  		dev_dbg(&client->dev, "could not request reset gpio\n");
-
+diff --git a/Documentation/devicetree/bindings/spi/nuvoton,npcm-pspi.txt b/Documentation/devicetree/bindings/spi/nuvoton,npcm-pspi.txt
+deleted file mode 100644
+index a4e72e52af59..000000000000
+--- a/Documentation/devicetree/bindings/spi/nuvoton,npcm-pspi.txt
++++ /dev/null
+@@ -1,36 +0,0 @@
+-Nuvoton NPCM Peripheral Serial Peripheral Interface(PSPI) controller driver
+-
+-Nuvoton NPCM7xx SOC support two PSPI channels.
+-
+-Required properties:
+- - compatible : "nuvoton,npcm750-pspi" for Poleg NPCM7XX.
+-				"nuvoton,npcm845-pspi" for Arbel NPCM8XX.
+- - #address-cells : should be 1. see spi-bus.txt
+- - #size-cells : should be 0. see spi-bus.txt
+- - specifies physical base address and size of the register.
+- - interrupts : contain PSPI interrupt.
+- - clocks : phandle of PSPI reference clock.
+- - clock-names: Should be "clk_apb5".
+- - pinctrl-names : a pinctrl state named "default" must be defined.
+- - pinctrl-0 : phandle referencing pin configuration of the device.
+- - resets : phandle to the reset control for this device.
+- - cs-gpios: Specifies the gpio pins to be used for chipselects.
+-            See: Documentation/devicetree/bindings/spi/spi-bus.txt
+-
+-Optional properties:
+-- clock-frequency : Input clock frequency to the PSPI block in Hz.
+-		    Default is 25000000 Hz.
+-
+-spi0: spi@f0200000 {
+-	compatible = "nuvoton,npcm750-pspi";
+-	reg = <0xf0200000 0x1000>;
+-	pinctrl-names = "default";
+-	pinctrl-0 = <&pspi1_pins>;
+-	#address-cells = <1>;
+-	#size-cells = <0>;
+-	interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
+-	clocks = <&clk NPCM7XX_CLK_APB5>;
+-	clock-names = "clk_apb5";
+-	resets = <&rstc NPCM7XX_RESET_IPSRST2 NPCM7XX_RESET_PSPI1>
+-	cs-gpios = <&gpio6 11 GPIO_ACTIVE_LOW>;
+-};
+diff --git a/Documentation/devicetree/bindings/spi/nuvoton,npcm-pspi.yaml b/Documentation/devicetree/bindings/spi/nuvoton,npcm-pspi.yaml
+new file mode 100644
+index 000000000000..65ad40292408
+--- /dev/null
++++ b/Documentation/devicetree/bindings/spi/nuvoton,npcm-pspi.yaml
+@@ -0,0 +1,65 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/spi/nuvoton,npcm-pspi.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Nuvoton NPCM Peripheral SPI (PSPI) Controller
++
++maintainers:
++  - Tomer Maimon <tmaimon77@gmail.com>
++
++allOf:
++  - $ref: spi-controller.yaml#
++
++description:
++  Nuvoton NPCM Peripheral Serial Peripheral Interface (PSPI) controller.
++  Nuvoton NPCM7xx SOC supports two PSPI channels.
++
++properties:
++  compatible:
++    enum:
++      - nuvoton,npcm750-pspi # Poleg NPCM7XX
++      - nuvoton,npcm845-pspi # Arbel NPCM8XX
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  clocks:
++    maxItems: 1
++    description: PSPI reference clock.
++
++  resets:
++    maxItems: 1
++    description: PSPI module reset.
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - clocks
++  - resets
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/nuvoton,npcm7xx-clock.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    #include <dt-bindings/reset/nuvoton,npcm7xx-reset.h>
++    spi0: spi@f0200000 {
++        compatible = "nuvoton,npcm750-pspi";
++        reg = <0xf0200000 0x1000>;
++        pinctrl-names = "default";
++        pinctrl-0 = <&pspi1_pins>;
++        #address-cells = <1>;
++        #size-cells = <0>;
++        interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
++        clocks = <&clk NPCM7XX_CLK_APB5>;
++        resets = <&rstc NPCM7XX_RESET_IPSRST2 NPCM7XX_RESET_PSPI1>;
++        cs-gpios = <&gpio6 11 0x1>;
++    };
++
 -- 
-Kind regards,
+2.34.1
 
-Sakari Ailus
 
