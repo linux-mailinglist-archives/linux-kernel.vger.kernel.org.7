@@ -1,186 +1,248 @@
-Return-Path: <linux-kernel+bounces-892288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67DB8C44C58
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 03:27:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4CFEC44C64
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 03:30:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7730D4E60E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 02:27:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 186713A6DBB
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 02:30:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 089D318DB35;
-	Mon, 10 Nov 2025 02:27:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F35F11E9905;
+	Mon, 10 Nov 2025 02:30:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aCkv6pDB";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="MwLcOsEh"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="GUxFPHmh"
+Received: from mail-m32117.qiye.163.com (mail-m32117.qiye.163.com [220.197.32.117])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81A27221271
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 02:27:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08FE020ED;
+	Mon, 10 Nov 2025 02:30:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.117
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762741625; cv=none; b=eRmqlHki0gpP55XG0NLhnEp2BEP5TIakc633EUghCfaRI+znVm/lIUjfbhD1lQg4kO5ZQ/U/BRc2BEDwwveyI4BYQiYUDRyRsFjOyR4jEkfjbs3Y9YkY4BSLOYg33jTWQhnEVeoU8G4VLYKEHf90gAC3wlL1B+9v4r3iDik4//M=
+	t=1762741839; cv=none; b=DTUPPMKOjZy11qnjciSP674uU8xQGlKDaYfBsqbCZCmmmTdZoUSqUa53jH1hdsyqIud8IMsRPkQECL+78D0IzuyohjOpcdiP51+B3gYiSrIw3+nsGb8OERlrP4S4EuIBqX+lhvxq7y1n91bvlmunKrMnOMREGIdFlWm5rNvXUHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762741625; c=relaxed/simple;
-	bh=7nmmqVl1N5N20DGFXlx5/q7VZBrB7/oaoEQ3991NUd4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nafv8A0esF8NMGzcUIVu99WX02vF5zTjnWzhMA8tGPz+QyXBNdJ3dSe/KE3v6oBA3DuzaSZ4Ksk764729zF11F/Aw7cCzRsOY2jYRqNWOpgDlU5a+qoYH+yzJl4Ou8ltA4nJxPOiwjHEoXVNOgp5BTZx4j82LzPsV5F1wu0hKN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aCkv6pDB; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=MwLcOsEh; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762741622;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7nmmqVl1N5N20DGFXlx5/q7VZBrB7/oaoEQ3991NUd4=;
-	b=aCkv6pDB7FqAVc4bE1ldyapTcyn3pnc9X9bP+TN8dJN/GkXM8aP5/xOrNvunN6xQqY9Lzf
-	QuPNcc+BJxNjKC37kCtrov+owlEFRPwFUy2EU9v4KpFRsQQtLUWgTxT3MV0VuoE+DBImwU
-	U6O+BIEe8k2AorMRmBqAzf4SCCyjEPk=
-Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
- [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-391-fmKKeYzjN76mHaKLG8fjdA-1; Sun, 09 Nov 2025 21:26:59 -0500
-X-MC-Unique: fmKKeYzjN76mHaKLG8fjdA-1
-X-Mimecast-MFC-AGG-ID: fmKKeYzjN76mHaKLG8fjdA_1762741618
-Received: by mail-lj1-f199.google.com with SMTP id 38308e7fff4ca-37a3f2cf8a2so21362851fa.1
-        for <linux-kernel@vger.kernel.org>; Sun, 09 Nov 2025 18:26:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1762741618; x=1763346418; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7nmmqVl1N5N20DGFXlx5/q7VZBrB7/oaoEQ3991NUd4=;
-        b=MwLcOsEhG19VnlzGej48Ca9hqdS3gIQk/zFVLTrUdDnhaiJWOqGu12PCiDpiEfwj+Q
-         L6agQMPp6JQJQbuJeZElsl4+D+IsK05Aeyx8YHlkCjZZM0djJ1OWfk5uydwBuf2Hndkw
-         5LYGHaBTfvuG5LoWefElsLKq404MJvHmSSWN2eZ5DSUJEQZye6WHdDrPgYfhYl4b8Xk8
-         JZtfVOf1G3yp0JKF1d2Z0C1gOHOTEaMxqh+hFadXqRa406UpRX7wtSjJ8gMU6Neac9gn
-         0Y28o7J4usw3TcELniyP2ODs8gVwdf1CQmAYzs8fdD/TXe/GbfaIBEe1F50c66QgiCMi
-         dPnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762741618; x=1763346418;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=7nmmqVl1N5N20DGFXlx5/q7VZBrB7/oaoEQ3991NUd4=;
-        b=KtCYXvMLmzLCQBNmFQrtHAZs8YGb/GdQRAuSluN+dMW9VNp54LVMucN7s5KGiwkQBq
-         pthMCBwn9Iq3q78+AND4GRIZHmpzv6aJoCF5Uit3528xsntCEdX/PtSa0tipF7vrbt0k
-         Aal6HsacKVGxR1jGv/3VDGzjgYwJwYxFavMyk4CUr5IGc4Ec9FQtohR9E4+vvbSlo4XK
-         Jjm8WpzNFpTCDM8RI0mK5v+x5AGiRMmW1WIb0CqLUtkXlA6PlJiyVqM1jqHpIxaPYD8g
-         DTO8/nxpWRJ00MpkfZYJbQjY5LPf78A4o1ffv/iUYcW+42DHiNVJmzgw+llwvW/91RdI
-         bhRA==
-X-Forwarded-Encrypted: i=1; AJvYcCX7AAniEIw2iwJ0HpixvVT9aM1S7DGgEfim6NoGWZ6jXE7znCw07KSVrcJFilpJWSyOTNIuEelww4RZGoc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3MU1zIjYAThu8BQAoqGsPGG2+OJU8jC0RE2lcvBbSKQo4ZOCt
-	SufgekNlq/94mon1VvA6j1iz+qfU/JusNn7jrhow9FkWkgM0ilDCOZtQwwBAQCB1hEl4pF7fyVx
-	1H66+X/S/tcqNXqNM73mavplbWnKqlctlMpwtI4ybItRnV3bJ6UxZFmut6CpA2YSkpeNqp5HVqb
-	Z0oip6VW2uE4FvgrPQPA41xMKA9N58nHHi1dg+Mapc
-X-Gm-Gg: ASbGncvAEEnFLZLjUoSUfErDw6zFe/04TNmyPSB38pafk5GRhKlbtPNgkvG8gfBKE3m
-	H4Lp78nr/W4s1MbOd6cVyBEb+7Inl3EXE3V0A5WmxSWmLOG+YQpWPyZcRRMQxsHlOQxut6128gL
-	aC/vWaoyCsOj2xXzFv2rdYVUAYPrZnFVO/MSMZbJOjOtgMRoXCagLRiG5n
-X-Received: by 2002:a05:6512:3e22:b0:594:36b3:d1f9 with SMTP id 2adb3069b0e04-5945f1af20bmr1658106e87.25.1762741618366;
-        Sun, 09 Nov 2025 18:26:58 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IG0OQ6POp2DvyduBqF18x2+BBZK5JQ/naempoem6bDJMgcg6osM3jUe/Zm740VX/IypFp1wgr5Bj9sbYSUkkJU=
-X-Received: by 2002:a05:6512:3e22:b0:594:36b3:d1f9 with SMTP id
- 2adb3069b0e04-5945f1af20bmr1658101e87.25.1762741617924; Sun, 09 Nov 2025
- 18:26:57 -0800 (PST)
+	s=arc-20240116; t=1762741839; c=relaxed/simple;
+	bh=semVxE4nupV8mktdww+1XMfEXXQO9FmklDp6OOkMI6A=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=F2kqFruG3coFtk6yPmKVkMi3CNUiZf0m4apzwM3JGu7WHFdVucps9ZfCdgpxElwMBkWunR7HYjtocyAJt2Ml3FinHAvDepwopC4EGP8ImUCStuZrqp4fBC8EjK9ZyO11Y2mrWzelPXgT/Zp0KPuZDQ/Y4mJ45RxsUOG+RuWvm00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=GUxFPHmh; arc=none smtp.client-ip=220.197.32.117
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from [172.16.12.129] (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 28f6e9869;
+	Mon, 10 Nov 2025 10:30:24 +0800 (GMT+08:00)
+Message-ID: <780a4209-f89f-43a9-9364-331d3b77e61e@rock-chips.com>
+Date: Mon, 10 Nov 2025 10:30:20 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251103125757.1405796-1-linan666@huaweicloud.com>
- <20251103125757.1405796-5-linan666@huaweicloud.com> <CALTww29-7U=o=RzS=pfo-zqLYY_O2o+PXw-8PLXqFRf=wdthvQ@mail.gmail.com>
- <a660478f-b146-05ec-a3f4-f86457b096d0@huaweicloud.com> <CALTww29v7kKgDyWqUZnteNqHDEH9_KBRY+HtSMJoquMv0sTwkg@mail.gmail.com>
- <2c1ab8fc-99ac-44fd-892c-2eeedb9581f4@fnnas.com> <CALTww289ZzZP5TmD5qezaYZV0Mnb90abqMqR=OnAzRz3NkmhQQ@mail.gmail.com>
- <5396ce6f-ba67-4f5e-86dc-3c9aebb6dc20@fnnas.com> <CALTww2_MHcXCOjeOPha0+LHNiu8O_9P4jVYP=K5-ea951omfMw@mail.gmail.com>
- <c3124729-4b78-4c45-9b13-b74d59881dba@fnnas.com> <CALTww29X5KizukDHpNcdeHS8oQ-vejwqTYrV5RFnOesZbFhYBQ@mail.gmail.com>
- <8e240c3c-3cf7-4d48-8e13-2146a5d36c2b@fnnas.com>
-In-Reply-To: <8e240c3c-3cf7-4d48-8e13-2146a5d36c2b@fnnas.com>
-From: Xiao Ni <xni@redhat.com>
-Date: Mon, 10 Nov 2025 10:26:45 +0800
-X-Gm-Features: AWmQ_bkEWK74DgGkBNl4ou8Ya5SG1OvgsF_zE3BWVU95djqIT-yojEdHF1L42eM
-Message-ID: <CALTww2_hu3uocnYvJTViL88A30WgVPHs3-ZHgQYK2qgB0S9b7w@mail.gmail.com>
-Subject: Re: [PATCH v9 4/5] md: add check_new_feature module parameter
-To: yukuai@fnnas.com
-Cc: Li Nan <linan666@huaweicloud.com>, corbet@lwn.net, song@kernel.org, hare@suse.de, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-raid@vger.kernel.org, yangerkun@huawei.com, yi.zhang@huawei.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Cc: shawn.lin@rock-chips.com, Damien Le Moal <dlemoal@kernel.org>,
+ Anand Moon <linux.amoon@gmail.com>, linux-pci@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Dragan Simic <dsimic@manjaro.org>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+ Heiko Stuebner <heiko@sntech.de>, mani@kernel.org,
+ Niklas Cassel <cassel@kernel.org>
+Subject: Re: [RESEND] Re: [PATCH] PCI: dw-rockchip: Skip waiting for link up
+To: FUKAUMI Naoki <naoki@radxa.com>
+References: <20250113-rockchip-no-wait-v1-1-25417f37b92f@kernel.org>
+ <1E8E4DB773970CB5+5a52c9e1-01b8-4872-99b7-021099f04031@radxa.com>
+ <6e87b611-13ea-4d89-8dbf-85510dd86fa6@rock-chips.com>
+ <aQ840q5BxNS1eIai@ryzen> <aQ9FWEuW47L8YOxC@ryzen>
+ <55EB0E5F655F3AFC+136b89fd-98d4-42af-a99d-a0bb05cc93f3@radxa.com>
+ <aRCI5kG16_1erMME@ryzen>
+ <F8B2B6FA2884D69A+b7da13f2-0ffb-4308-b1ba-0549bc461be8@radxa.com>
+From: Shawn Lin <shawn.lin@rock-chips.com>
+In-Reply-To: <F8B2B6FA2884D69A+b7da13f2-0ffb-4308-b1ba-0549bc461be8@radxa.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a9a6b99abfe09cckunm39d6557412b970a
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQh9IHVZIGBhMSh0aGkJJHxpWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpKQk
+	xVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=GUxFPHmh5MX8wp7RrOmxB7Fy+w6B+Zbl+TkUp3xCyX6leuKuiZCEFDdiKy0akiHYJJ+ykpT8yYLRVhjtplDwDi210e+zX1I9nI8LBPfoA4nn5T50/H5L3/kwWPOBHjGFG2hrGK534NEh9XfEtJtZdcDhKuiJWgTB2uW9Gc7jEx4=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=ST4GcK2McWrhDhZAl75VtQG+4FHxpdlWOF4ND05GHw4=;
+	h=date:mime-version:subject:message-id:from;
 
-On Fri, Nov 7, 2025 at 1:06=E2=80=AFAM Yu Kuai <yukuai@fnnas.com> wrote:
->
-> Hi,
->
-> =E5=9C=A8 2025/11/6 22:56, Xiao Ni =E5=86=99=E9=81=93:
-> > On Thu, Nov 6, 2025 at 9:31=E2=80=AFPM Yu Kuai <yukuai@fnnas.com> wrote=
-:
-> >> Hi,
-> >>
-> >> =E5=9C=A8 2025/11/6 21:15, Xiao Ni =E5=86=99=E9=81=93:
-> >>> In patch05, the commit says this:
-> >>>
-> >>> Future mdadm should support setting LBS via metadata field during RAI=
-D
-> >>> creation and the new sysfs. Though the kernel allows runtime LBS chan=
-ges,
-> >>> users should avoid modifying it after creating partitions or filesyst=
-ems
-> >>> to prevent compatibility issues.
-> >>>
-> >>> So it only can specify logical block size when creating an array. In
-> >>> the case you mentioned above, in step3, the array will be assembled i=
-n
-> >>> new kernel and the sb->pad3 will not be set, right?
-> >> No, lbs will be set to the value array actually use in metadata, other=
-wise
-> >> data loss problem will not be fixed for the array with different lbs f=
-rom
-> >> underlying disks, this is what we want to fix in the first place.
-> > But the case you mentioned is to assemble an existing array in a new
-> > kernel. The existing array in the old kernel doesn't set lbs. So the
-> > sb->pad3 will be zero when assembling it in the new kernel.
->
-> Looks like you misunderstood the patch, lbs in sb->pad3 will be updated t=
-o the
-> real lbs when array is assembled in the new kernel. Set lbs in metadata i=
-s
-> necessary to avoid data loss.
->
-> And please noted this patch is required to be backported to old kernel to
-> make it possible that array with default lbs can be assembled again in ol=
-d
-> kernel.
+Hi Fukaumi
 
-Thanks for the explanation. The patch looks good to me.
-Reviewed-by: Xiao Ni <xni@redhat.com>
+在 2025/11/10 星期一 7:26, FUKAUMI Naoki 写道:
+> (RESEND: fix mani's email address)
+> 
+> Hi Niklas,
+> 
+> On 11/9/25 21:28, Niklas Cassel wrote:
+>> On Sun, Nov 09, 2025 at 01:42:23PM +0900, FUKAUMI Naoki wrote:
+>>> Hi Niklas,
+>>>
+>>> On 11/8/25 22:27, Niklas Cassel wrote:
+>>> (snip)> (And btw. please test with the latest 6.18-rc, as, from 
+>>> experience,
+>>> the
+>>>> ASPM problems in earlier RCs can result in some weird problems that are
+>>>> not immediately deduced to be caused by the ASPM enablement.)
+>>>
+>>> Here is dmesg from v6.18-rc4:
+>>>   https://gist.github.com/RadxaNaoki/40e1d049bff4f1d2d4773a5ba0ed9dff
+>>
+>> Same problem as before:
+>> [    1.732538] pci_bus 0004:43: busn_res: can not insert [bus 43-41] 
+>> under [bus 42-41] (conflicts with (null) [bus 42-41])
+>> [    1.732645] pci_bus 0004:43: busn_res: [bus 43-41] end is updated 
+>> to 43
+>> [    1.732651] pci_bus 0004:43: busn_res: can not insert [bus 43] 
+>> under [bus 42-41] (conflicts with (null) [bus 42-41])
+>> [    1.732661] pci 0004:42:00.0: devices behind bridge are unusable 
+>> because [bus 43] cannot be assigned for them
+>> [    1.732840] pci_bus 0004:44: busn_res: can not insert [bus 44-41] 
+>> under [bus 42-41] (conflicts with (null) [bus 42-41])
+>> [    1.732947] pci_bus 0004:44: busn_res: [bus 44-41] end is updated 
+>> to 44
+>> [    1.732952] pci_bus 0004:44: busn_res: can not insert [bus 44] 
+>> under [bus 42-41] (conflicts with (null) [bus 42-41])
+>> [    1.732962] pci 0004:42:02.0: devices behind bridge are unusable 
+>> because [bus 44] cannot be assigned for them
+>> [    1.733134] pci_bus 0004:45: busn_res: can not insert [bus 45-41] 
+>> under [bus 42-41] (conflicts with (null) [bus 42-41])
+>> [    1.733246] pci_bus 0004:45: busn_res: [bus 45-41] end is updated 
+>> to 45
+>> [    1.733255] pci_bus 0004:45: busn_res: can not insert [bus 45] 
+>> under [bus 42-41] (conflicts with (null) [bus 42-41])
+>> [    1.733266] pci 0004:42:06.0: devices behind bridge are unusable 
+>> because [bus 45] cannot be assigned for them
+>> [    1.733438] pci_bus 0004:46: busn_res: can not insert [bus 46-41] 
+>> under [bus 42-41] (conflicts with (null) [bus 42-41])
+>> [    1.733544] pci_bus 0004:46: busn_res: [bus 46-41] end is updated 
+>> to 46
+>> [    1.733550] pci_bus 0004:46: busn_res: can not insert [bus 46] 
+>> under [bus 42-41] (conflicts with (null) [bus 42-41])
+>> [    1.733560] pci 0004:42:0e.0: devices behind bridge are unusable 
+>> because [bus 46] cannot be assigned for them
+>> [    1.733571] pci_bus 0004:42: busn_res: [bus 42-41] end is updated 
+>> to 46
+>> [    1.733575] pci_bus 0004:42: busn_res: can not insert [bus 42-46] 
+>> under [bus 41] (conflicts with (null) [bus 41])
+>> [    1.733585] pci 0004:41:00.0: devices behind bridge are unusable 
+>> because [bus 42-46] cannot be assigned for them
+>> [    1.733596] pcieport 0004:40:00.0: bridge has subordinate 41 but 
+>> max busn 46
+>>
+>>
+>> Seems like the ASM2806 switch, for some reason, is not ready.
+>>
+>> One change that Diederik pointed out is that in the "good" case,
+>> the link is always in Gen1 speed.
+>>
+>> Perhaps you could build with CONFIG_PCI_QUIRKS=y and try this patch:
+>>
+>> diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+>> index 214ed060ca1b..ac134d95a97f 100644
+>> --- a/drivers/pci/quirks.c
+>> +++ b/drivers/pci/quirks.c
+>> @@ -96,6 +96,7 @@ int pcie_failed_link_retrain(struct pci_dev *dev)
+>>   {
+>>       static const struct pci_device_id ids[] = {
+>>           { PCI_VDEVICE(ASMEDIA, 0x2824) }, /* ASMedia ASM2824 */
+>> +        { PCI_VDEVICE(ASMEDIA, 0x2806) }, /* ASMedia ASM2806 */
+>>           {}
+>>       };
+>>       u16 lnksta, lnkctl2;
+> 
+> It doesn't help with either probing behind the bridge or the link speed.
+> 
+>> If that does not work, perhaps you could try this patch
+>> (assuming that all Rock 5C:s have a ASM2806 on pcie2x1l2):
+> 
+> ROCK 5C has a PCIe FPC connector and I'm using Dual 2.5G Router HAT.
+>   https://radxa.com/products/rock5/5c#techspec
+>   https://radxa.com/products/accessories/dual-2-5g-router-hat
+> 
+> Regarding the link speed, I initially suspected the FPC connector and/or 
+> cable might be the issue. However, I tried the Dual 2.5G Router HAT with 
+> the ROCK 5A (which uses a different cable), and I got the same result.
+> 
+> BTW, the link speed varies between 2Gb/s and 4Gb/s depending on the 
+> reboot. (with or without quirk)
 
-Regards
-Xiao
->
-> >
-> > And as planned, we will not support --lbs (for example) for the `mdadm
-> > --assemble` command.
-> >
-> > The original problem should be fixed by specifying lbs when creating
-> > an array (https://www.spinics.net/lists/raid/msg80870.html). Maybe we
-> > should avoid updating lbs when adding a new disk=EF=BC=9F
->
-> I don't understand, lbs modification should be forbidden once array is
-> created, it's only allowed to be updated before the array is running the
-> first time.
->
-> >
-> > Regards
-> > Xiao
-> >> Thanks,
-> >> Kuai
-> >>
->
+Could you please help check this patch?
+
+--- a/drivers/pci/controller/dwc/pcie-dw-rockchip.c
++++ b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
+@@ -454,6 +454,8 @@ static irqreturn_t 
+rockchip_pcie_rc_sys_irq_thread(int irq, void *arg)
+         struct dw_pcie *pci = &rockchip->pci;
+         struct dw_pcie_rp *pp = &pci->pp;
+         struct device *dev = pci->dev;
++       struct pci_bus *child, *root_bus = NULL;
++       struct pci_dev *bridge;
+         u32 reg;
+
+         reg = rockchip_pcie_readl_apb(rockchip, 
+PCIE_CLIENT_INTR_STATUS_MISC);
+@@ -462,12 +464,21 @@ static irqreturn_t 
+rockchip_pcie_rc_sys_irq_thread(int irq, void *arg)
+         dev_dbg(dev, "PCIE_CLIENT_INTR_STATUS_MISC: %#x\n", reg);
+         dev_dbg(dev, "LTSSM_STATUS: %#x\n", 
+rockchip_pcie_get_ltssm(rockchip));
+
++       list_for_each_entry(child, &pp->bridge->bus->children, node) {
++               if (child->parent == pp->bridge->bus) {
++                       root_bus = child;
++                       bridge = root_bus->self;
++                       break;
++               }
++        }
++
+         if (reg & PCIE_RDLH_LINK_UP_CHGED) {
+                 if (rockchip_pcie_link_up(pci)) {
+                         msleep(PCIE_RESET_CONFIG_WAIT_MS);
+                         dev_dbg(dev, "Received Link up event. Starting 
+enumeration!\n");
+                         /* Rescan the bus to enumerate endpoint devices */
+                         pci_lock_rescan_remove();
++                       pci_stop_and_remove_bus_device(bridge);
+                         pci_rescan_bus(pp->bridge->bus);
+                         pci_unlock_rescan_remove();
+                 }
+
+
+> 
+> Best regards,
+> 
+> -- 
+> FUKAUMI Naoki
+> Radxa Computer (Shenzhen) Co., Ltd.
+> 
+>> diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-rock-5c.dts b/arch/ 
+>> arm64/boot/dts/rockchip/rk3588s-rock-5c.dts
+>> index dd7317bab613..26f8539d934a 100644
+>> --- a/arch/arm64/boot/dts/rockchip/rk3588s-rock-5c.dts
+>> +++ b/arch/arm64/boot/dts/rockchip/rk3588s-rock-5c.dts
+>> @@ -452,6 +452,7 @@ &pcie2x1l2 {
+>>       pinctrl-0 = <&pcie20x1_2_perstn_m0>;
+>>       reset-gpios = <&gpio3 RK_PD1 GPIO_ACTIVE_HIGH>;
+>>       vpcie3v3-supply = <&pcie2x1l2_3v3>;
+>> +    max-link-speed = <1>;
+>>       status = "okay";
+>>   };
+>>
+>>
+>>
+>> Kind regards,
+>> Niklas
+>>
+> 
+> 
 
 
