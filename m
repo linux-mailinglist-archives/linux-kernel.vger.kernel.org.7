@@ -1,499 +1,341 @@
-Return-Path: <linux-kernel+bounces-893771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C768FC48504
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 18:27:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F116CC484FB
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 18:26:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D22223B7189
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:23:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F4253AED16
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:23:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84D942BEC2C;
-	Mon, 10 Nov 2025 17:23:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEB7A2BDC0C;
+	Mon, 10 Nov 2025 17:23:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="l4MLg4kS";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="htnhrsWU"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DQfdSfc0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6BE92BE7A6
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 17:23:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762795408; cv=fail; b=GEJKamXPD93ANSawhdth1YTdistmpP1qiv9P5xsvIQr5UvRFA6E8sMW0XR0gO1RjfIGdvFH7HdinIMv234OeTaHhgd/cEmaC6ZeOcSw3XheDe6I0o+AQ/gKQtPvFMKJjy3br5MXA994i7oBNu6ea5DCpqZ7BmQsEAeo3XBltElI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762795408; c=relaxed/simple;
-	bh=4NfkD9dmYTsGNOQcjNksV3/t/RxaGCbbxCjR4Lzm3O0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=s4ZzPuA5GJq2CqrkZBeJ3TayeHyTN8m6N2YGMVZR6mz0Q9LTy4W7dU+Dh19osEgGTUJUjhuCeZ1riQL7TC6rKwqHKiLoPRCYgLdNLoyNOlCgghUxRVYaHFvIHLELnQsN9RX1XFpdsKbiGkRFWF6+8BpI+tOt51mMiNq4bB378UY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=l4MLg4kS; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=htnhrsWU; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5AAHKQ57032398;
-	Mon, 10 Nov 2025 17:23:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2025-04-25; bh=MZxT7gE+nU4hJlXvC3qdT6m5HHnar8eu/B72opiAEKQ=; b=
-	l4MLg4kStaJcAYzYw8xbSWChpq8rMzRYfRYwdFSVvKkrRmxteX0zDZW34rU1IzPc
-	eZLc+Cg0gbY9WX6v8lOjLXYUd688iBXwLUDkBXUogoH2DoEOUPKCqGB9ihCyrxO0
-	g/71E9g5rJk8w/ZkaCbN6PIVw0O+ZS/yvVTdk0q9aEVTqIKhpmqIl9PCLF+5bVmj
-	IEaozKJuGvr6eM6vSeWlbWIAoz7E11pyMWi5RvSscr6u1HD3Llgv1DlbYdad+Jon
-	UfkSf4KL/mxZw+qfLpg1yts8vRl9T0s1nFnBdaMqkO+ZjgPH6STeksTVDmyZMjbW
-	XW3yBtoT3bHZQS3dxbHzDA==
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4abks7g3um-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 10 Nov 2025 17:23:13 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5AAFn66c040197;
-	Mon, 10 Nov 2025 17:23:12 GMT
-Received: from ph8pr06cu001.outbound.protection.outlook.com (mail-westus3azon11012070.outbound.protection.outlook.com [40.107.209.70])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4a9va8eg9h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 10 Nov 2025 17:23:12 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Rsw6qcXL9HADEbbqCzRnMlN5qBJpI2fX+uqFLo/mlSkko+nb25Fe1oxYYdTtliyci/dqgsgf2setLfA7fkIw2qt7/aZ4YpJ9kYIUHQzQOskI2Xjkkhhv8qYYGAR4rKuZ1m2NknQmXPVSv1/joCERxlTfzbpk8Wtokfdh64DK/JDgCGzmL54FsFnIcVMopFjVsjBxJGjNous1Tv8ZeTpvUFv58ZHmdipQ8AhQWpHGUCEwJA+iMzShzkhVfAZyeCU8o3N0e6T168hr8zuTtXQYSFok2Ho7hvwzJhBEpm695cmOGjRf3Z0/KvH4PNl5Zuf+hRimawM3FPobiEWCjq/Izg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MZxT7gE+nU4hJlXvC3qdT6m5HHnar8eu/B72opiAEKQ=;
- b=nOKIOHY14AHsLYvtDkf9Qiagtl6E9hS/rsNB9lXqlLdTeOFADtfldcTzh//xZViK+wlT56JmpSE2q4bsE0jKUhFdH2tbAGojZ/q350KewS9BqbWkqUZ6c3WbxA4IRIErfN9fojbf3YrcovtctyYUG6HzvDqZVEyx0iulcszOP69ZXaZHVXwA95hTq0jGsESsAIaJPYvdxjuI4t604orGw+tP2zZFsi+Fcjb7Ivh7aqItgULXi14nKV90b6eBsYrgYTdW1no+mcRggI941He8CUImBYKFiGuCKhY9raAUpu2JqA/VMV3IqPV3o6sy67Fjc2sV7WkpFYaHHBKzgdUliQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MZxT7gE+nU4hJlXvC3qdT6m5HHnar8eu/B72opiAEKQ=;
- b=htnhrsWULv8WgZutUKjxZzHCn8xGPeP+/EU2XO6tsSiWjyBAb2+3s8XE6xWXVMnp9PDOxeSd1PtI5L5uyJ/vJRNZ8I+xCO+LthTWHK4AK56lNBcuXo1qo1F14lSp+ul41ngrkVdN0xdmgaSU9j8VPCPTxBf0C0rOsvRrj++kZ64=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by BLAPR10MB5089.namprd10.prod.outlook.com (2603:10b6:208:330::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.9; Mon, 10 Nov
- 2025 17:23:08 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2%7]) with mapi id 15.20.9298.010; Mon, 10 Nov 2025
- 17:23:08 +0000
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: David Hildenbrand <david@kernel.org>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
-        Jann Horn <jannh@google.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] mm/madvise: allow guard page install/remove under VMA lock
-Date: Mon, 10 Nov 2025 17:22:58 +0000
-Message-ID: <cca1edbd99cd1386ad20556d08ebdb356c45ef91.1762795245.git.lorenzo.stoakes@oracle.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <cover.1762795245.git.lorenzo.stoakes@oracle.com>
-References: <cover.1762795245.git.lorenzo.stoakes@oracle.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: LO4P123CA0597.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:295::14) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B51D229BDAB;
+	Mon, 10 Nov 2025 17:23:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762795394; cv=none; b=L3CkUSBm9PQK1xOxCZn2lr8AabIAma8nK4LfxbZoqKIWPbnVf0H5/1YJv6acSTrf4Rv9NJt7vrY84EgY6UeIqWvDrpPH3bVOZqV2Jvsk8uVrxSvAvd5XiPp2ImjpQQb5rahCQGEn/DrC1Qaby3+19IiBYJUBFh/fus35Vpl/xoY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762795394; c=relaxed/simple;
+	bh=WYTcByahqL1XJ5FT3lBhy0MI/HDkJwgwIwz+0jeqOm0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=phRWYWEYAz4twg3a8bbQSvLEyRqIjEH3vYZIsTd5XKV/sUHup1lxnvPfAht7PaSmDJ4uyzdF0/cNuWfkCP7IoLb0q4tLqBfLcJN96ILFmS+GpxukPzjZ63Q1I6nEMpCtrp+ay/S0sa/0etzOteMxX4IkL7f2qsBFeSJMnpk6bIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DQfdSfc0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F51BC116B1;
+	Mon, 10 Nov 2025 17:23:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762795394;
+	bh=WYTcByahqL1XJ5FT3lBhy0MI/HDkJwgwIwz+0jeqOm0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DQfdSfc0cfZHtzUJ9FIF2TJPMrgiis+AW5bqE72iUAr1kJTRaaPZbUtpwRp9k3Fg7
+	 kaDy+FJn/cM1RWvxz80jjg/KfwXU4WVPC7cyBKmTISUBRh5fMuslJq2kDzqgp3s/1/
+	 ZL0GbW3pDL2bXsP+aocNuYRsgHgV4GNIN4A4zduz9RMakhewq0lXbWn2KGyT3KCHoM
+	 W2vqrLu1S2H0Zz4lIJqrVVANUtH9jRz2N0TIscjfYZk29tRsZM3j9SmEDlpEdxRwEv
+	 ee73ebFLg9QXRkGag3O1kxh/sVnZ5dHp2DUn/ZDsisMa/2lA/xybzW4CeaY3SsB3V9
+	 Uuwb4FSO7OR1g==
+Date: Mon, 10 Nov 2025 18:22:59 +0100
+From: Lorenzo Pieralisi <lpieralisi@kernel.org>
+To: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Souvik Chakravarty <Souvik.Chakravarty@arm.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Mark Rutland <mark.rutland@arm.com>, Arnd Bergmann <arnd@arndb.de>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	cros-qcom-dts-watchers@chromium.org, Vinod Koul <vkoul@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Moritz Fischer <moritz.fischer@ettus.com>,
+	John Stultz <john.stultz@linaro.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
+	Stephen Boyd <swboyd@chromium.org>,
+	Andre Draszik <andre.draszik@linaro.org>,
+	Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-arm-msm@vger.kernel.org,
+	Elliot Berman <quic_eberman@quicinc.com>,
+	Xin Liu <xin.liu@oss.qualcomm.com>,
+	Srinivas Kandagatla <srini@kernel.org>,
+	Umang Chheda <umang.chheda@oss.qualcomm.com>,
+	Nirmesh Kumar Singh <nirmesh.singh@oss.qualcomm.com>
+Subject: Re: [PATCH v17 07/12] firmware: psci: Implement vendor-specific
+ resets as reboot-mode
+Message-ID: <aRIfc9iuC2b9DqI+@lpieralisi>
+References: <20251109-arm-psci-system_reset2-vendor-reboots-v17-0-46e085bca4cc@oss.qualcomm.com>
+ <20251109-arm-psci-system_reset2-vendor-reboots-v17-7-46e085bca4cc@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|BLAPR10MB5089:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4216e467-8a5b-4f7e-393b-08de207dd146
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?opyBgcnin+zAETJK6NVvZ0zoijcjsBxg7vLoj4yDcFBlGFc2D1R1drUojINN?=
- =?us-ascii?Q?WlEoCHWqDHb/IQEi+n+r5ULlD855rNYmHTENxidQ+BmASE6uJ/pN1+oHjScV?=
- =?us-ascii?Q?a0zFquyOO0Kh2dA5AIZsQ5ZMUlQl7lbAQYEMJQ2Gzu1r8r8wxdsndwuAwhf3?=
- =?us-ascii?Q?lcvvd9aH1xOzFVZ1TV9HRPLljI3w5bBGOMcr/scWfkjNGeB6JA1Awi9crn4a?=
- =?us-ascii?Q?HI7a3ci6mJEkfs3ep+vxDZGWUxOhQuc7bNiUO9HP/FLQwUbT/vgjR3BbL77D?=
- =?us-ascii?Q?NkH96vvYZsBdDJ+7shAkXzafl8RDJPBZBuENMOFXoJF2UMd74iv/VVVZRpzH?=
- =?us-ascii?Q?OErKXaRuX47vtUBm2E4DLQVWTK3nr11aLwFBV7UBft/l/sn1MCfQ3h9XaBey?=
- =?us-ascii?Q?GNZW9vC7u5zgXWgcbsGXsSQA1PetEE2YpeU2FVuIGMHOYq+ZDxnJQspy3rGa?=
- =?us-ascii?Q?oxfkCm5L+OF4u2Z3hKR26xegJdvfNgVCtt/2m4RPGu1mnr6wxb6hQICBYNMW?=
- =?us-ascii?Q?IpwOttKWtnBEpseNctcAezuLZlGgcMdqZ4qQ8jyjMFi1GUFLT9Zwn8/08yro?=
- =?us-ascii?Q?0i/RGB6MqwNxkI+AWHBbFJ+iLtLLl4pEkix/TESY2nTPR+xBF/JuqmhyvI/M?=
- =?us-ascii?Q?dtmiMaRaf2MVg00gUoqg6NgZPgXZQgrDqgzA5tLP5t+wOpRrIjfUSULdK5bN?=
- =?us-ascii?Q?46Vv/Qt/Mflj9c7i5PMIkbwTPgEx/nbGNhEErY19YRUfkvWTs8NrqJ2+SFkW?=
- =?us-ascii?Q?fGvLl48HoLZIAvZW3AHXM1fxlnthkTpAXS75k4+6ndI1nNWgKH/jOz/rIM1C?=
- =?us-ascii?Q?KLmLVnOTvhsiyEEqlzxAzbKDU6GHHEiMssXEVP/UEai5iwoG+Iz6i90xk+0s?=
- =?us-ascii?Q?EJT88KbZujAAXScqXr6/miiuBsJVGNWKWL0HkNtVvb5Wqq+3c9lGBqQRbXEX?=
- =?us-ascii?Q?DpIPoJHx4j2zwC3yGeFCHcFQqiDn+y36rn9y5Ykj3QutLlfmesr6Z8aSGecU?=
- =?us-ascii?Q?p3CkGGN6i8mp1XAuadXQHmb5RqQ9AtWbhssP7iyMfZPDbLe8CCE3MCSrVTqn?=
- =?us-ascii?Q?X2A3/Rhz1uKOUZSxCAudJj4iU62pPeFuPdoAVw2NHlnsJjA5YI0sbqqYMfPH?=
- =?us-ascii?Q?bywFXG7Aki2f2uNOucjztFbW5mGUJihsIyPXMfBw/BNeC8gOmvO5ZuiysdC9?=
- =?us-ascii?Q?lLFvk6q7lnlDJBr5cXbAFVYqr06C2GG9C/OdzpsXFtP8Y/lUJdH+V+uL+XX1?=
- =?us-ascii?Q?mk9aAfR5zqdmT6PW1jdCeBBRNs2RXZBlrRWLxCnkae+ROqdwKwMlW56TodPZ?=
- =?us-ascii?Q?YveJieVBkd92M6iiUtwwlribFQNRseVGQmDgOzi01DWsMQmd+4krj6jWRMNW?=
- =?us-ascii?Q?/vyGTw5s87aBWEVU/xMLc7bT2zBkmO/ZeXDFfJ6m9T0CfBkvIdFFHXZnq8qP?=
- =?us-ascii?Q?77CGjxbSgUWS4/zX5Lk1Reggd8/BjPME?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?802ohsG2Cz3GuTxzRNrldfcCp2qwCBue1hbt4cG07WwcGkQVAJRliM89fDAN?=
- =?us-ascii?Q?OiDEVL0vSl/IRRpeaYibv+EnjzeqTmiR7cjF2KY1W/1iG9cROVTXnRhX5qEa?=
- =?us-ascii?Q?8uCehDwYn3Be4BVH5Hmcs7w/m/LYIc8ybQ7TSdY+1+QSLdss8ZyGRefyfz/3?=
- =?us-ascii?Q?yA2YHAZfiyPg+vuE6qtCCUTeymX2YV4x7fxZ0em1hI6t3siZ/CsTkl5DXynv?=
- =?us-ascii?Q?rljgwJw5uxgLKAipjWjrYuRVmf0WKpSfNHZ+XFBqbW8WEwr/uk8LPEqUYzQd?=
- =?us-ascii?Q?X5nFpS1RVDVRg8KPn66XGzv7vRbdjG+LANTaUEgklZj/UUYoQ5uNR7wyVGVR?=
- =?us-ascii?Q?NpVNoEl2P43GO2dPjjf1Ony60PHYOyD8M98BrwYqp7NNRU+oYNWtTich4Nqo?=
- =?us-ascii?Q?1WsBJYYeyT9MRJXr4MKToGrDyxSP65rE2GLz/2R+wOxWjPJCuupOFKt7wu8R?=
- =?us-ascii?Q?t17TFbZl1F0Ej4aO9EcnsKPt82y7A0IvcL8y/7fK5cZCz0LVCr57nqjEhARg?=
- =?us-ascii?Q?st72bvD+CzSSD9UQPXn58Y5GSq+WLqM4ClzJYrOpJLNyRkFoY2N5ZuHVH35E?=
- =?us-ascii?Q?A8YH1B9C4F3OGK8pqbQd5g9O8TVDHGmBUrcxW/T2rY8mVIcfrNt9phim6QJd?=
- =?us-ascii?Q?KwhOkkrnPdwE4dKYt+PlRhSioqo8xAldpIAAAz/uSMOVJd81mH7iSqf2Kj+T?=
- =?us-ascii?Q?MaOE4hybLP39FQGzwxLLf9NL35w+RBAR+ghmcZz7+tCFOGMibXYYAuIYKuXd?=
- =?us-ascii?Q?qAapcu0ZaBP+S9RiVFM4FynLAf1z8luNwjCkts+jpPh4o6PZbDNFfv7I7qMX?=
- =?us-ascii?Q?A38QwGAkKiD/4E/O0Dhfjg22c0rDJ7p0oBsOaa9uCPmxAF/8V8oFfNklGlcL?=
- =?us-ascii?Q?zdMXrr6fgvx7NWxDjlx0diMmVAcgC4LhcAzII4IllRs2lGTga1/w45tQ4+QE?=
- =?us-ascii?Q?hKR4hszyOr63Oe8h1oHdd7/iD6S9a/Uq7dU3WPeSv3FrS0iCELdGk1mifFr4?=
- =?us-ascii?Q?Nwl12PNmHD9HY28axaK82AF2n/Jdq+zRzHmXTKOI3hvwtUYomeNjQN3yRIN2?=
- =?us-ascii?Q?QahpQNHTyfJ4RTXtlv91S3zxPE5hapFbAitSB75rVsRL+VbqgxzSzgBkXxXA?=
- =?us-ascii?Q?fuJhi4Fkp0vBeRt+z2rfkcYidhMmSfmgnrBp/8grMNC82PhveFByGBXk9f3M?=
- =?us-ascii?Q?OBDtTgtozpyHBsoo7Z2K36BhveyxN0DNrGOQ/koH8em8JAhLZmTEViGcDKiu?=
- =?us-ascii?Q?tjf8BSfXUokzzs8QTLumOzvx281hqtdpsGLn/De5pJ1bwnTIN0s+jm/UOaNo?=
- =?us-ascii?Q?eTvAx330z2I+87mLEZ5SMTsd1s1x+YYpzNoIvsDZmjXisPHwwZ3KlGs0xdzZ?=
- =?us-ascii?Q?ykMJkzmjaiHZZkHwkLi8VcncTXPy+/df3eZ8twWnXJu1dxmxlYxRbD/wynIC?=
- =?us-ascii?Q?XzSUNsXh2P82fRK3o+CHGfRxfizuK1TOFogw5o/12dI8KomS7Hzg7jY8G1xN?=
- =?us-ascii?Q?+l8H3LLm3Kc4Eyg7qFtkhTnOFwqSgYTsEICgMhnaERMYGp1ABEveuvF8/P2I?=
- =?us-ascii?Q?eyGgClogyQLBp8JePSecVbQWoBLdZc/LrDJNJgLzjqoNti8CHYJXIoygPTLd?=
- =?us-ascii?Q?4w=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	4Xi5F3t4mfE7Dca88vlSNLik6sJH26aet6aKdROmErE7QhEy7r5wqb+E/LNFesamG4KYb47DhUQFjzUZk6OuypQYei0a1VDJffjZ/udTcXOAo5uonExOLOkd1+lsxt5sqLNkuT+X+afKkPYrV6KFegpkrsWl6npk6D9TAApT5U8qr81zEL7ix476bjUtMS4FrmEmB6Ko5Mw7CWxC0dtzeqiP0MUoTalY2owdrmqK4CfGBXHR9dE+R1O+/6ZwQOZ+nQIer0LWsCZApAHZoN/M+prDr9eeqDimSCkOYPmZUM4uwuyNHS0VK/trFuzZGoewgGml1mGcRh+LkEedTvt0MbSY3m/7LPoyKtHoacX1NXLb0nUnjHVHR5uhMRGhGfpE8ZKwA/vOtgwe3rvUf1pDerMFkOgUpN8mVGGAGG5vthmSffcieCNdf+LtHshQJvXxA8wa6w1wCO+VljzeRqn9jI6Imv4KbEXtPsquoWP0lAZWfUkz3ryHU6puMAtIPXc7PUTje7oUaL/tV4frhS/5kpmJgpHbw8AlRuQuT+uXgXG5qjcZRARMNAbM7jGd0DCz5YrlR5+4Lc1X6N7GTF9wn3m3qVmgWBDWEhy1qcPb/X4=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4216e467-8a5b-4f7e-393b-08de207dd146
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Nov 2025 17:23:08.8754
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 0YfAf6Hwh01AM7SHVhQWesZAWcUQpWdkE834aiPkSoQxdlNNzYP1Z/BphgAJ06TTkOCio0hdJFVlc/yxSQExVcWKjFClHriGKUQpzqEIQr8=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLAPR10MB5089
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-10_06,2025-11-10_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxscore=0 phishscore=0
- mlxlogscore=999 spamscore=0 suspectscore=0 bulkscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2510240000
- definitions=main-2511100147
-X-Proofpoint-GUID: E-zrNWCmjy-N8mGJ7SkcTOMNb1nu7Fkz
-X-Authority-Analysis: v=2.4 cv=L7cQguT8 c=1 sm=1 tr=0 ts=69121f81 b=1 cx=c_pps
- a=WeWmnZmh0fydH62SvGsd2A==:117 a=WeWmnZmh0fydH62SvGsd2A==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=6UeiqGixMTsA:10
- a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22 a=yPCof4ZbAAAA:8
- a=Wu5hNObr_TVTc6B2G3wA:9
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEwMDE0MSBTYWx0ZWRfXzMaGdxqnqf+p
- oFYRA6+VweQ65jgsD0GqSeFniv0mMMk4nffdqvzu9KzdYN6o59p6B1oreJKUHjrSFF9bufP62zs
- uZ2+HsnlSW2tLjymewNyg0yQC018UQS1bDGV2NCyY0F053Jv+9Yu+qcHyM9TGzoc+OlzSSGp0cu
- G3v4EzW6L/mwPMb0KxcfnpOx9HpdgXfc7Efyizv0U1gLZVIXdsYlRQSRFfIU1zsJ+l+AsOsLv5Z
- NGE3SqfL5PEYnGUVDShaGBicGhpGY9vjol1hxB/AS3nYa92uyAovhTq6ienqKYUJYCTDa+2GPvy
- H/actY8B8Nd9AfImta5/JcRDmpoPJIA88+U9GNqG/6O1dM5nGRS3jdHBkWa44xk3IzoDZ7XGtVn
- 7NztOG4aVVxcCGaR1aOcCygYqqWJvg==
-X-Proofpoint-ORIG-GUID: E-zrNWCmjy-N8mGJ7SkcTOMNb1nu7Fkz
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251109-arm-psci-system_reset2-vendor-reboots-v17-7-46e085bca4cc@oss.qualcomm.com>
 
-We only need to keep the page table stable so we can perform this operation
-under the VMA lock. PTE installation is stabilised via the PTE lock.
+On Sun, Nov 09, 2025 at 08:07:20PM +0530, Shivendra Pratap wrote:
+> SoC vendors have different types of resets which are controlled
+> through various hardware registers. For instance, Qualcomm SoC
+> may have a requirement that reboot with “bootloader” command
+> should reboot the device to bootloader flashing mode and reboot
+> with “edl” should reboot the device into Emergency flashing mode.
+> Setting up such reboots on Qualcomm devices can be inconsistent
+> across SoC platforms and may require setting different HW
+> registers, where some of these registers may not be accessible to
+> HLOS. These knobs evolve over product generations and require
+> more drivers. PSCI spec defines, SYSTEM_RESET2, vendor-specific
+> reset which can help align this requirement. Add support for PSCI
+> SYSTEM_RESET2, vendor-specific resets and align the implementation
+> to allow user-space initiated reboots to trigger these resets.
+> 
+> Implement the PSCI vendor-specific resets by registering to the
+> reboot-mode framework.
 
-One caveat is that, if we prepare vma->anon_vma we must hold the mmap read
-lock. We can account for this by adapting the VMA locking logic to
-explicitly check for this case and prevent a VMA lock from being acquired
-should it be the case.
+I think that we should expose to user space _all_ PSCI reset types,
+cold, warm + vendor specific - as a departure from using the reboot_mode
+variable (and possibly deprecate it - or at least stop using it).
 
-This check is safe, as while we might be raced on anon_vma installation,
-this would simply make the check conservative, there's no way for us to see
-an anon_vma and then for it to be cleared, as doing so requires the
-mmap/VMA write lock.
+> As psci init is done at early kernel init, reboot-mode registration cannot
+> be done at the time of psci init.  This is because reboot-mode creates a
+> “reboot-mode” class for exposing sysfs, which can fail at early kernel init.
+> To overcome this, introduce a late_initcall to register PSCI vendor-specific
+> resets as reboot modes. Implement a reboot-mode write function that sets
+> reset_type and cookie values during the reboot notifier callback.  Introduce
+> a firmware-based call for SYSTEM_RESET2 vendor-specific reset in the
+> psci_sys_reset path, using reset_type and cookie if supported by secure
+> firmware. Register a panic notifier and clear vendor_reset valid status
+> during panic.  This is needed for any kernel panic that occurs post
+> reboot_notifiers.
 
-We abstract the VMA lock validity logic to is_vma_lock_sufficient() for
-this purpose, and add prepares_anon_vma() to abstract the anon_vma logic.
+Is it because panic uses reboot_mode to determine the reset to issue ?
 
-In order to do this we need to have a way of installing page tables
-explicitly for an identified VMA, so we export walk_page_range_vma() in an
-unsafe variant - walk_page_range_vma_unsafe() and use this should the VMA
-read lock be taken.
+> By using the above implementation, userspace will be able to issue
+> such resets using the reboot() system call with the "*arg"
+> parameter as a string based command. The commands can be defined
+> in PSCI device tree node under “reboot-mode” and are based on the
+> reboot-mode based commands.
 
-We additionally update the comments in madvise_guard_install() to more
-accurately reflect the cases in which the logic may be reattempted,
-specifically THP huge pages being present.
+IMHO - it would be nice if could add mode-cold (or mode-normal in reboot mode
+speak) and mode-warm by default (if PSCI supports them) so that userspace
+could issue those resets too without having to set the reboot_mode variable.
 
-Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
----
- mm/internal.h |   3 ++
- mm/madvise.c  | 110 ++++++++++++++++++++++++++++++++++++--------------
- mm/pagewalk.c |  17 +++++---
- 3 files changed, 94 insertions(+), 36 deletions(-)
+Reason is, since we are doing this it is worth going the whole nine
+yards and try to decouple the reboot_mode variable from the RESTART2
+syscall argument.
 
-diff --git a/mm/internal.h b/mm/internal.h
-index 479234b39394..3702fe4a4bac 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -1655,6 +1655,9 @@ static inline void accept_page(struct page *page)
- int walk_page_range_mm_unsafe(struct mm_struct *mm, unsigned long start,
- 		unsigned long end, const struct mm_walk_ops *ops,
- 		void *private);
-+int walk_page_range_vma_unsafe(struct vm_area_struct *vma, unsigned long start,
-+		unsigned long end, const struct mm_walk_ops *ops,
-+		void *private);
- int walk_page_range_debug(struct mm_struct *mm, unsigned long start,
- 			  unsigned long end, const struct mm_walk_ops *ops,
- 			  pgd_t *pgd, void *private);
-diff --git a/mm/madvise.c b/mm/madvise.c
-index 7b938ff44be2..8bf885b00ff8 100644
---- a/mm/madvise.c
-+++ b/mm/madvise.c
-@@ -1120,18 +1120,17 @@ static int guard_install_set_pte(unsigned long addr, unsigned long next,
- 	return 0;
- }
- 
--static const struct mm_walk_ops guard_install_walk_ops = {
--	.pud_entry		= guard_install_pud_entry,
--	.pmd_entry		= guard_install_pmd_entry,
--	.pte_entry		= guard_install_pte_entry,
--	.install_pte		= guard_install_set_pte,
--	.walk_lock		= PGWALK_RDLOCK,
--};
--
- static long madvise_guard_install(struct madvise_behavior *madv_behavior)
- {
- 	struct vm_area_struct *vma = madv_behavior->vma;
- 	struct madvise_behavior_range *range = &madv_behavior->range;
-+	struct mm_walk_ops walk_ops = {
-+		.pud_entry	= guard_install_pud_entry,
-+		.pmd_entry	= guard_install_pmd_entry,
-+		.pte_entry	= guard_install_pte_entry,
-+		.install_pte	= guard_install_set_pte,
-+		.walk_lock	= get_walk_lock(madv_behavior->lock_mode),
-+	};
- 	long err;
- 	int i;
- 
-@@ -1148,8 +1147,14 @@ static long madvise_guard_install(struct madvise_behavior *madv_behavior)
- 	/*
- 	 * If anonymous and we are establishing page tables the VMA ought to
- 	 * have an anon_vma associated with it.
-+	 *
-+	 * We will hold an mmap read lock if this is necessary, this is checked
-+	 * as part of the VMA lock logic.
- 	 */
- 	if (vma_is_anonymous(vma)) {
-+		VM_WARN_ON_ONCE(!vma->anon_vma &&
-+				madv_behavior->lock_mode != MADVISE_MMAP_READ_LOCK);
-+
- 		err = anon_vma_prepare(vma);
- 		if (err)
- 			return err;
-@@ -1157,12 +1162,14 @@ static long madvise_guard_install(struct madvise_behavior *madv_behavior)
- 
- 	/*
- 	 * Optimistically try to install the guard marker pages first. If any
--	 * non-guard pages are encountered, give up and zap the range before
--	 * trying again.
-+	 * non-guard pages or THP huge pages are encountered, give up and zap
-+	 * the range before trying again.
- 	 *
- 	 * We try a few times before giving up and releasing back to userland to
--	 * loop around, releasing locks in the process to avoid contention. This
--	 * would only happen if there was a great many racing page faults.
-+	 * loop around, releasing locks in the process to avoid contention.
-+	 *
-+	 * This would only happen due to races with e.g. page faults or
-+	 * khugepaged.
- 	 *
- 	 * In most cases we should simply install the guard markers immediately
- 	 * with no zap or looping.
-@@ -1171,8 +1178,13 @@ static long madvise_guard_install(struct madvise_behavior *madv_behavior)
- 		unsigned long nr_pages = 0;
- 
- 		/* Returns < 0 on error, == 0 if success, > 0 if zap needed. */
--		err = walk_page_range_mm_unsafe(vma->vm_mm, range->start,
--				range->end, &guard_install_walk_ops, &nr_pages);
-+		if (madv_behavior->lock_mode == MADVISE_VMA_READ_LOCK)
-+			err = walk_page_range_vma_unsafe(madv_behavior->vma,
-+					range->start, range->end, &walk_ops,
-+					&nr_pages);
-+		else
-+			err = walk_page_range_mm_unsafe(vma->vm_mm, range->start,
-+					range->end, &walk_ops, &nr_pages);
- 		if (err < 0)
- 			return err;
- 
-@@ -1193,8 +1205,7 @@ static long madvise_guard_install(struct madvise_behavior *madv_behavior)
- 	}
- 
- 	/*
--	 * We were unable to install the guard pages due to being raced by page
--	 * faults. This should not happen ordinarily. We return to userspace and
-+	 * We were unable to install the guard pages, return to userspace and
- 	 * immediately retry, relieving lock contention.
- 	 */
- 	return restart_syscall();
-@@ -1238,17 +1249,16 @@ static int guard_remove_pte_entry(pte_t *pte, unsigned long addr,
- 	return 0;
- }
- 
--static const struct mm_walk_ops guard_remove_walk_ops = {
--	.pud_entry		= guard_remove_pud_entry,
--	.pmd_entry		= guard_remove_pmd_entry,
--	.pte_entry		= guard_remove_pte_entry,
--	.walk_lock		= PGWALK_RDLOCK,
--};
--
- static long madvise_guard_remove(struct madvise_behavior *madv_behavior)
- {
- 	struct vm_area_struct *vma = madv_behavior->vma;
- 	struct madvise_behavior_range *range = &madv_behavior->range;
-+	struct mm_walk_ops wallk_ops = {
-+		.pud_entry = guard_remove_pud_entry,
-+		.pmd_entry = guard_remove_pmd_entry,
-+		.pte_entry = guard_remove_pte_entry,
-+		.walk_lock = get_walk_lock(madv_behavior->lock_mode),
-+	};
- 
- 	/*
- 	 * We're ok with removing guards in mlock()'d ranges, as this is a
-@@ -1258,7 +1268,7 @@ static long madvise_guard_remove(struct madvise_behavior *madv_behavior)
- 		return -EINVAL;
- 
- 	return walk_page_range_vma(vma, range->start, range->end,
--			       &guard_remove_walk_ops, NULL);
-+				   &wallk_ops, NULL);
- }
- 
- #ifdef CONFIG_64BIT
-@@ -1571,6 +1581,47 @@ static bool process_madvise_remote_valid(int behavior)
- 	}
- }
- 
-+/* Does this operation invoke anon_vma_prepare()? */
-+static bool prepares_anon_vma(int behavior)
-+{
-+	switch (behavior) {
-+	case MADV_GUARD_INSTALL:
-+		return true;
-+	default:
-+		return false;
-+	}
-+}
-+
-+/*
-+ * We have acquired a VMA read lock, is the VMA valid to be madvise'd under VMA
-+ * read lock only now we have a VMA to examine?
-+ */
-+static bool is_vma_lock_sufficient(struct vm_area_struct *vma,
-+		struct madvise_behavior *madv_behavior)
-+{
-+	/* Must span only a single VMA.*/
-+	if (madv_behavior->range.end > vma->vm_end)
-+		return false;
-+	/* Remote processes unsupported. */
-+	if (current->mm != vma->vm_mm)
-+		return false;
-+	/* Userfaultfd unsupported. */
-+	if (userfaultfd_armed(vma))
-+		return false;
-+	/*
-+	 * anon_vma_prepare() explicitly requires an mmap lock for
-+	 * serialisation, so we cannot use a VMA lock in this case.
-+	 *
-+	 * Note we might race with anon_vma being set, however this makes this
-+	 * check overly paranoid which is safe.
-+	 */
-+	if (vma_is_anonymous(vma) &&
-+	    prepares_anon_vma(madv_behavior->behavior) && !vma->anon_vma)
-+		return false;
-+
-+	return true;
-+}
-+
- /*
-  * Try to acquire a VMA read lock if possible.
-  *
-@@ -1592,15 +1643,12 @@ static bool try_vma_read_lock(struct madvise_behavior *madv_behavior)
- 	vma = lock_vma_under_rcu(mm, madv_behavior->range.start);
- 	if (!vma)
- 		goto take_mmap_read_lock;
--	/*
--	 * Must span only a single VMA; uffd and remote processes are
--	 * unsupported.
--	 */
--	if (madv_behavior->range.end > vma->vm_end || current->mm != mm ||
--	    userfaultfd_armed(vma)) {
-+
-+	if (!is_vma_lock_sufficient(vma, madv_behavior)) {
- 		vma_end_read(vma);
- 		goto take_mmap_read_lock;
- 	}
-+
- 	madv_behavior->vma = vma;
- 	return true;
- 
-@@ -1713,9 +1761,9 @@ static enum madvise_lock_mode get_lock_mode(struct madvise_behavior *madv_behavi
- 	case MADV_POPULATE_READ:
- 	case MADV_POPULATE_WRITE:
- 	case MADV_COLLAPSE:
-+		return MADVISE_MMAP_READ_LOCK;
- 	case MADV_GUARD_INSTALL:
- 	case MADV_GUARD_REMOVE:
--		return MADVISE_MMAP_READ_LOCK;
- 	case MADV_DONTNEED:
- 	case MADV_DONTNEED_LOCKED:
- 	case MADV_FREE:
-diff --git a/mm/pagewalk.c b/mm/pagewalk.c
-index ab29b16abd2c..9ddb10359fa9 100644
---- a/mm/pagewalk.c
-+++ b/mm/pagewalk.c
-@@ -694,9 +694,8 @@ int walk_page_range_debug(struct mm_struct *mm, unsigned long start,
- 	return walk_pgd_range(start, end, &walk);
- }
- 
--int walk_page_range_vma(struct vm_area_struct *vma, unsigned long start,
--			unsigned long end, const struct mm_walk_ops *ops,
--			void *private)
-+int walk_page_range_vma_unsafe(struct vm_area_struct *vma, unsigned long start,
-+		unsigned long end, const struct mm_walk_ops *ops, void *private)
- {
- 	struct mm_walk walk = {
- 		.ops		= ops,
-@@ -709,14 +708,22 @@ int walk_page_range_vma(struct vm_area_struct *vma, unsigned long start,
- 		return -EINVAL;
- 	if (start < vma->vm_start || end > vma->vm_end)
- 		return -EINVAL;
--	if (!check_ops_safe(ops))
--		return -EINVAL;
- 
- 	process_mm_walk_lock(walk.mm, ops->walk_lock);
- 	process_vma_walk_lock(vma, ops->walk_lock);
- 	return __walk_page_range(start, end, &walk);
- }
- 
-+int walk_page_range_vma(struct vm_area_struct *vma, unsigned long start,
-+			unsigned long end, const struct mm_walk_ops *ops,
-+			void *private)
-+{
-+	if (!check_ops_safe(ops))
-+		return -EINVAL;
-+
-+	return walk_page_range_vma_unsafe(vma, start, end, ops, private);
-+}
-+
- int walk_page_vma(struct vm_area_struct *vma, const struct mm_walk_ops *ops,
- 		void *private)
- {
--- 
-2.51.0
+Reworded: just use the new userspace interface you are adding for
+all PSCI reset types.
 
+Thoughts very much welcome - I understand this is controversial.
+
+> Reviewed-by: Umang Chheda <umang.chheda@oss.qualcomm.com>
+> Reviewed-by: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
+> Reviewed-by: Nirmesh Kumar Singh <nirmesh.singh@oss.qualcomm.com>
+> Signed-off-by: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>
+> ---
+>  drivers/firmware/psci/Kconfig |  2 +
+>  drivers/firmware/psci/psci.c  | 92 ++++++++++++++++++++++++++++++++++++++++++-
+>  2 files changed, 93 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/firmware/psci/Kconfig b/drivers/firmware/psci/Kconfig
+> index 97944168b5e66aea1e38a7eb2d4ced8348fce64b..93ff7b071a0c364a376699733e6bc5654d56a17f 100644
+> --- a/drivers/firmware/psci/Kconfig
+> +++ b/drivers/firmware/psci/Kconfig
+> @@ -1,6 +1,8 @@
+>  # SPDX-License-Identifier: GPL-2.0-only
+>  config ARM_PSCI_FW
+>  	bool
+> +	select POWER_RESET
+> +	select REBOOT_MODE
+>  
+>  config ARM_PSCI_CHECKER
+>  	bool "ARM PSCI checker"
+> diff --git a/drivers/firmware/psci/psci.c b/drivers/firmware/psci/psci.c
+> index 38ca190d4a22d6e7e0f06420e8478a2b0ec2fe6f..ff82e7f4c27d1609a75cedc3a9790affaf839801 100644
+> --- a/drivers/firmware/psci/psci.c
+> +++ b/drivers/firmware/psci/psci.c
+> @@ -8,15 +8,18 @@
+>  
+>  #include <linux/acpi.h>
+>  #include <linux/arm-smccc.h>
+> +#include <linux/bitops.h>
+>  #include <linux/cpuidle.h>
+>  #include <linux/debugfs.h>
+>  #include <linux/errno.h>
+>  #include <linux/linkage.h>
+>  #include <linux/of.h>
+> +#include <linux/panic_notifier.h>
+>  #include <linux/pm.h>
+>  #include <linux/printk.h>
+>  #include <linux/psci.h>
+>  #include <linux/reboot.h>
+> +#include <linux/reboot-mode.h>
+>  #include <linux/slab.h>
+>  #include <linux/suspend.h>
+>  
+> @@ -51,6 +54,24 @@ static int resident_cpu = -1;
+>  struct psci_operations psci_ops;
+>  static enum arm_smccc_conduit psci_conduit = SMCCC_CONDUIT_NONE;
+>  
+> +struct psci_vendor_sysreset2 {
+> +	u32 reset_type;
+> +	u32 cookie;
+> +	bool valid;
+> +};
+> +
+> +static struct psci_vendor_sysreset2 vendor_reset;
+
+I think this should represent all possible PSCI reset types, not vendor only
+and its value is set by the reboot mode framework.
+
+> +
+> +static int psci_panic_event(struct notifier_block *nb, unsigned long v, void *p)
+> +{
+> +	vendor_reset.valid = false;
+
+I don't like this. Basically all you want this for is to make sure that
+we don't override the reboot_mode variable.
+
+One (hack) would consist in checking the reboot_mode variable here and
+set the struct I mentioned above to the value represented in reboot_mode.
+
+Good luck if reboot_mode == REBOOT_GPIO :-)
+
+> +	return NOTIFY_DONE;
+> +}
+> +
+> +static struct notifier_block psci_panic_block = {
+> +	.notifier_call = psci_panic_event
+> +};
+> +
+>  bool psci_tos_resident_on(int cpu)
+>  {
+>  	return cpu == resident_cpu;
+> @@ -309,7 +330,10 @@ static int get_set_conduit_method(const struct device_node *np)
+>  static int psci_sys_reset(struct notifier_block *nb, unsigned long action,
+>  			  void *data)
+>  {
+> -	if ((reboot_mode == REBOOT_WARM || reboot_mode == REBOOT_SOFT) &&
+> +	if (vendor_reset.valid && psci_system_reset2_supported) {
+> +		invoke_psci_fn(PSCI_FN_NATIVE(1_1, SYSTEM_RESET2), vendor_reset.reset_type,
+> +			       vendor_reset.cookie, 0);
+
+See above. Two calls here: one for resets issued using the new userspace
+interface you are adding and legacy below - no vendor vs reboot_mode, this
+is a mess.
+
+> +	} else if ((reboot_mode == REBOOT_WARM || reboot_mode == REBOOT_SOFT) &&
+>  	    psci_system_reset2_supported) {
+>  		/*
+>  		 * reset_type[31] = 0 (architectural)
+> @@ -547,6 +571,72 @@ static const struct platform_suspend_ops psci_suspend_ops = {
+>  	.enter          = psci_system_suspend_enter,
+>  };
+>  
+> +static int psci_set_vendor_sys_reset2(struct reboot_mode_driver *reboot, u64 magic)
+> +{
+> +	u32 magic_32;
+> +
+> +	if (psci_system_reset2_supported) {
+> +		magic_32 = magic & GENMASK(31, 0);
+> +		vendor_reset.reset_type = PSCI_1_1_RESET_TYPE_VENDOR_START | magic_32;
+> +		vendor_reset.cookie = (magic >> 32) & GENMASK(31, 0);
+
+Use FIELD_PREP/GET() please (but as mentioned above the vendor reset type
+bit[31] should be part of the reboot mode magic value, see above).
+
+> +		vendor_reset.valid = true;
+> +	}
+> +
+> +	return NOTIFY_DONE;
+> +}
+> +
+> +static int __init psci_init_vendor_reset(void)
+> +{
+> +	struct reboot_mode_driver *reboot;
+> +	struct device_node *psci_np;
+> +	struct device_node *np;
+> +	int ret;
+> +
+> +	if (!psci_system_reset2_supported)
+> +		return -EINVAL;
+> +
+> +	psci_np = of_find_compatible_node(NULL, NULL, "arm,psci-1.0");
+> +	if (!psci_np)
+> +		return -ENODEV;
+> +
+> +	np = of_find_node_by_name(psci_np, "reboot-mode");
+> +	if (!np) {
+> +		of_node_put(psci_np);
+> +		return -ENODEV;
+> +	}
+> +
+> +	ret = atomic_notifier_chain_register(&panic_notifier_list, &psci_panic_block);
+> +	if (ret)
+> +		goto err_notifier;
+> +
+> +	reboot = kzalloc(sizeof(*reboot), GFP_KERNEL);
+> +	if (!reboot) {
+> +		ret = -ENOMEM;
+> +		goto err_kzalloc;
+> +	}
+> +
+> +	reboot->write = psci_set_vendor_sys_reset2;
+> +	reboot->driver_name = "psci";
+> +
+> +	ret = reboot_mode_register(reboot, of_fwnode_handle(np));
+> +	if (ret)
+> +		goto err_register;
+> +
+> +	of_node_put(psci_np);
+> +	of_node_put(np);
+> +	return 0;
+> +
+> +err_register:
+> +	kfree(reboot);
+> +err_kzalloc:
+> +	atomic_notifier_chain_unregister(&panic_notifier_list, &psci_panic_block);
+> +err_notifier:
+> +	of_node_put(psci_np);
+> +	of_node_put(np);
+> +	return ret;
+> +}
+> +late_initcall(psci_init_vendor_reset)
+
+I don't like adding another initcall here.
+
+I wonder whether this code belongs in a PSCI reboot mode driver, possibly a
+faux device in a way similar to what we did for cpuidle-psci (that after all
+is a consumer of PSCI_CPU_SUSPEND in a similar way as this code is a
+PSCI_SYSTEM_RESET{2} consumer), that communicates with
+drivers/firmware/psci/psci.c with the struct mentioned above.
+
+Thanks,
+Lorenzo
+
+> +
+>  static void __init psci_init_system_reset2(void)
+>  {
+>  	int ret;
+> 
+> -- 
+> 2.34.1
+> 
 
