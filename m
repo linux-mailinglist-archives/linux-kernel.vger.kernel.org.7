@@ -1,155 +1,150 @@
-Return-Path: <linux-kernel+bounces-893802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 814FFC48675
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 18:44:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7491EC4867B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 18:44:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D3C53AE5C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:43:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F5E6188F2BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:44:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11D172DE6F8;
-	Mon, 10 Nov 2025 17:43:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1DBE2DE71C;
+	Mon, 10 Nov 2025 17:44:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ABXtOHJb"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="F7M8HfQV"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBDB12DC797
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 17:43:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 008F62DC797
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 17:44:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762796626; cv=none; b=RGX59B5mVkDAf/mnx36ZerZGOPlW9fW2GfiiCKPvwz+M4kU6J9oVQXuVtjtumyT8fe+T1XZUS2DJQZ19spOusWoybsOMuwleDek8GNKrqBJIUVqgVVqzSdna97GoZST1saujcNFYrRABak+IZ8bNZEsChRAKNveqVDp9X0FBKxA=
+	t=1762796662; cv=none; b=jpFE/5LAiCMwzh/3hpN74u6Urb95txbjLH4j2/oRlozD5ozn/CT6Bf4PZpUPOZcSf7shg6n0ROhJf3il/G5bQyTBvrcprC3Qz4dhtMzNHgTUdSmFcK+iHepKgHIuRMsKig+ITT1eiJiFDixSOzo1ekNihOeC2Wp/Fd4B/TbaGt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762796626; c=relaxed/simple;
-	bh=S4tg3Dr4FAR1CV10xXnkKduKxsDv65SRP68os3+k4kw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kFxLPpXYvfRrN+/G2uRyaHkssqmv5aUKOzK25DuXme/682MVQGJ9glJE1vdUzgYH8yt/5uSejP4d2KSTeheJNCWCUVnTIXg0JtCdbYXgTgimBJHKGPBxviSPoEFxWWAObozshI5UKVGZNlyvhlUGwGUPl+iK3mMdXDVa4n22Mdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ABXtOHJb; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b8c0c0cdd61so2749093a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 09:43:44 -0800 (PST)
+	s=arc-20240116; t=1762796662; c=relaxed/simple;
+	bh=aJkXTAL7hko1vF8GGGqXUOq9IdfVkF6MkoKhNUkblxA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bCb9YCJ+0RMoE0JLgSOuijs1upMvWMstUa0ZVdEsJPNmZzEspAUOGJBlziqiCiyL6gVKPW77tIDGqr7RSWzWmiDdGTc8xhZNzaSroNNJ7xdk7SBe39aNankFOGDcndz+lt4lY5fBN2Mrc7BmvGV7Gdit9viLyJ10THdr6qArQtg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=F7M8HfQV; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b6d402422c2so668584166b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 09:44:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762796624; x=1763401424; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=oBBN9infbPjez6qdJxMptt1hzq/iyvX0xcfU9jpmlSE=;
-        b=ABXtOHJbLr+PXUmEvGomTywTdyDRQpTkFas3NmIaBDWZkYPiDy+bJB6IDy7KAzGen5
-         saYkzIYZX7ZvkQfW0b16beMLxJdpuwlug0qqUQwzaXK7sgAptpoYDEXsIzZ6SLeXmMZu
-         Cos3BrcLCiMfjgafyBKOMPpTtgNXNiKcyKENofdEuwTdauFjSmRFcSBTdc4Hu1z6UDPR
-         6prjvLZe/6m1Z39u8+4gxIIlo6oQN3/rGCaVmQ/lFHCzdqhdXxR03TZcwmeWb4IkCKt9
-         0pqR2kBaBLEMtGdHy39Pa7j9WfbqN1mj9/mVSvlFn+FXa3nM9RpIYVnI7WDcXWSzwNfm
-         Q6Pw==
+        d=linux-foundation.org; s=google; t=1762796659; x=1763401459; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=aCzk/qbLhCwNEv+1dx5n8o3k2LQtS9clijGkZLAmnGM=;
+        b=F7M8HfQVhlv2KKNovJKtL4c8+0OwP0jdMvhmNmHpwdjoiUmwmWK2scDj0IGYItdHAL
+         PwTjNno3sGBg0CHKQ7H9lUl+RUAxC/GeWDZ7pO/h0+REEb5Y88VSoHcRoLmItu2nmcOL
+         EHbTjxI6GwSUgZr+G2N+vxXS+tiEpDiKPps9g=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762796624; x=1763401424;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oBBN9infbPjez6qdJxMptt1hzq/iyvX0xcfU9jpmlSE=;
-        b=iaz8Jdqys6dsw+z0/tMTwb/pRz4Gcr5IHibby7r8GLHMZSGJlfj6P0cz1JCtYOm08K
-         XtgwD1amSYYsEiJe5JGlg2T3r4Y7oUYu7xKAmBFCt8xA9XC2B79nCViGPvx0G6aIJmi9
-         siA8tfBXjkMGUf1ZLUzQobkH7qsaydy9aoWB21ofCuh+4e3tgyK63P/N/FzQegSfBX7Y
-         2PFo2X+z1Q472sGZNE84zmYY0VvW77Q0jBvMbqBQAiJJuV5KnMSHqH0JkbATltdNiDAH
-         LbUDkjJsFaIXxkpz/ZHEhjNOQLahvHDoOCUpo3LH/pMwOpaiiByHBzDbh2xdytrjcO7F
-         x+7A==
-X-Forwarded-Encrypted: i=1; AJvYcCUZDtmCnU4Ti+fe4Fgc2sinbuI9HlISVCiX+v899RTC/g6lNDA3zrjmN+nv91Tt9pGpNoNQVpEt8Qq6uAI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEvMkX/8Kea7/Ti/Qr8mHA9Dby90VyanCh6Ndu414yhFvYc9bk
-	9ccHe5lsabeLrAUM7hqW+nyS8ujPGB0CbM8TrmTiBkTPphMg1spRm866p/3Z+r3pMYg=
-X-Gm-Gg: ASbGnct8EAiPkQxLqOJuNj36POfv1htmnxVyUZVMTF9HP2A3BN+7x6csBC8vPPNOIBQ
-	hGw2Lo+paUo+fhJ9PIUdkruLesaDPMGLKez00tLrkh5Q271VZKm8pL8ci/6SeG0EnktWAg8W4rV
-	wpFOPN9dWlxYCcRzgB7rPffZAJeAMum3VizlqWTmjfUIl4stVbGzKt80bXPaG4Ar8XPS2ni+Vyk
-	Ig6GGn7TlzucvsFchrG3v8TM4U6wxIbZE32Axcou4l81fUK92u3TefEl8IG1f0fk0cP/ZUHihsh
-	ttctBvwZ5NZIDBd/FUvMUfsxMOHQQeXCW0wdQNFWV2lS6fR0RGE5yNms0ug+D8zHt6OoBd3zTPa
-	TsE0MrCYL2HpjYzyUbcDtqO/GEBRzB01oCBbRjCbTBh9szN0bYunC+7pKQGjHsid3u8qDUx5HCd
-	rd+HFEwpN5OQ8y
-X-Google-Smtp-Source: AGHT+IH9KL6qJufmaDst932E6GsFJgG2DPRvV0ZpXeCS06v9BXdY1k3lpKtvHXKr+tDgIwa14Fuucw==
-X-Received: by 2002:a17:902:e545:b0:26a:8171:dafa with SMTP id d9443c01a7336-297e564cef9mr133819655ad.21.1762796624024;
-        Mon, 10 Nov 2025 09:43:44 -0800 (PST)
-Received: from p14s ([2604:3d09:148c:c800:e689:789c:c35:41e7])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29651c747d1sm151325125ad.63.2025.11.10.09.43.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Nov 2025 09:43:43 -0800 (PST)
-Date: Mon, 10 Nov 2025 10:43:41 -0700
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2] remoteproc: mtk_scp: change the snprintf() checking
-Message-ID: <aRIkTV8C9gjSyH-o@p14s>
-References: <aP8agyKj73bLZrTQ@stanley.mountain>
+        d=1e100.net; s=20230601; t=1762796659; x=1763401459;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aCzk/qbLhCwNEv+1dx5n8o3k2LQtS9clijGkZLAmnGM=;
+        b=UGRu4by0zHtTKrvCYZO9gyiQYg6PuROtFJe1efMrf+CecJMgW4Qluc8EY4WJSI5GUx
+         eZPn5CSMEwxWK3HDy1OzmMad8Pt7QKxirLI9/E16Jqwvb3T7Q6T+Vv5tBH9mJrTSRWuy
+         CHnZ8Ka4ppcM2NxyoeTkB9hRbbgHR/PQsKQknr/As1tsR/GsLUDMXrv+XtQcJXxQo/1I
+         A7S4kuTpnTnWHi4Ez8LjTZv95pwa0aJ6+pqHIHNJ78pKNrDjYjQLRzCvEgrSoInEMe0W
+         1rUqCXTxe7I69qlpDITRnXCs8W5KuWL2c46bnRSZzoBNcgHjyV9aWNluouioAaclA0qt
+         lsTA==
+X-Forwarded-Encrypted: i=1; AJvYcCU5rkzTMtMe8p5CUdNolEIlqMgYQmiScRzVAzATzqzUy0fVLd/r31nY+QKZ7wfIS6fG6DgJ6fb2oPiTOCI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWOy19Vvs3NrtDAy+Z2THty0s7y/0pfvAPdxwqg0aiHDR9xeOa
+	KsKSVQDP17/PEYSFgf1UK97lZdfQPB2gUigGL1NIyCr4hcyvAZgklJsdObUV/MS1pQVol7LO9TA
+	vw7Rdna0=
+X-Gm-Gg: ASbGncsEMACXEP/b0OOCQiegtQhFkZt6e4kJqKGM8hcZwziKO//AZp90q5+0dDGeUBl
+	4XDrGiYJfdHAysGy5TvWM+0XIM4XJXRzNNwssCD/iGo4DH5+lA0G90egT2MVfYFjcZd7B87VdG6
+	HBkZEvwnKOhPOBg1/UaOr3zXjdGHkhK7EcuuxIdlGmFz1jNYgNhOPVgQzcfv/yXhGUZJ2VwzLMc
+	ZEmrsPgKNeS02OmpwVFn0v15esAyWHWoxjJ1lPwTFnlIFBYu+jPqUie1dbXwo/KNekUBQvF4qAU
+	ClG2T3A8mjhfNkOtxnZL7Nl+4gUYvoc2KV+mdhvV/rfx8Wv3R/hqWJgbSSm91aKL2CCnNb3AWLC
+	yPekp/o7LUJo97FXHYSIw4pJylq0XK1v6YKiAGfKvtik0sRP8HfYL9ipXKnSCUXTCj9xrPr+imh
+	sQ6FeKCwAAKODj661YOI0HMD4oS8XvcMk3eRtEj6pda8wOT0f7ww9tj4BsFu0N
+X-Google-Smtp-Source: AGHT+IGNocC7ufgllAHxFmtPkKy6D6Y4iSmkTadiVAT0QHIDNjuOMs76fkDz0toztX3NRhF0DM8AaQ==
+X-Received: by 2002:a17:907:d22:b0:b70:30c8:c35 with SMTP id a640c23a62f3a-b72e056004emr874767766b.62.1762796658930;
+        Mon, 10 Nov 2025 09:44:18 -0800 (PST)
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com. [209.85.208.41])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bf312240sm1162097566b.18.2025.11.10.09.44.17
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Nov 2025 09:44:17 -0800 (PST)
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-640a0812658so5012188a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 09:44:17 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVRtpavL8Im3iGfbaNWAJGIRE22pc1zxR2hq+/Jsu/D0vG3rE8/cdfr9D9OrKCOohRvwfdTYH/UM8B2HHY=@vger.kernel.org
+X-Received: by 2002:a17:907:3dab:b0:b71:ea7c:e4ff with SMTP id
+ a640c23a62f3a-b72e028a45cmr778784666b.6.1762796656727; Mon, 10 Nov 2025
+ 09:44:16 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aP8agyKj73bLZrTQ@stanley.mountain>
+References: <20251105231514.3167738-1-dave.hansen@linux.intel.com>
+ <653b4187-ec4f-4f5d-ae76-d37f46070cb4@suse.cz> <20251110-weiht-etablieren-39e7b63ef76d@brauner>
+ <20251110172507.GA21641@pendragon.ideasonboard.com>
+In-Reply-To: <20251110172507.GA21641@pendragon.ideasonboard.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 10 Nov 2025 09:44:00 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgEPve=BO=SOmgEOd4kv76bSbm0jWFzRzcs4Y7EedpgfA@mail.gmail.com>
+X-Gm-Features: AWmQ_bkg_IidkR66xZb4S-deqo35yAvtxVL7xdWRUcGFEchFZ0rJJKEs7XvoLmY
+Message-ID: <CAHk-=wgEPve=BO=SOmgEOd4kv76bSbm0jWFzRzcs4Y7EedpgfA@mail.gmail.com>
+Subject: Re: [PATCH] [v2] Documentation: Provide guidelines for tool-generated content
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Christian Brauner <brauner@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org, 
+	"workflows@vger.kernel.org" <workflows@vger.kernel.org>, 
+	"ksummit@lists.linux.dev" <ksummit@lists.linux.dev>, Steven Rostedt <rostedt@goodmis.org>, 
+	Dan Williams <dan.j.williams@intel.com>, "Theodore Ts'o" <tytso@mit.edu>, 
+	Sasha Levin <sashal@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Kees Cook <kees@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Shuah Khan <shuah@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Oct 27, 2025 at 10:08:51AM +0300, Dan Carpenter wrote:
-> The snprintf() calls here work but they have several minor style issues:
-> 
-> 1) It uses ARRAY_SIZE() which is the number of elements in an array.
->    Since were talking about char that works, but it's more common to
->    use sizeof() which is the number of bytes.
-> 2) The printf format is "%1d".  The "1" ensures we always print at
->    least 1 character but since numbers all have at least 1 digit this
->    can be removed.
-> 3) The kernel implementation of snprintf() cannot return negative error
->    codes.  Also these particular calls to snprintf() can't return zero
->    and the code to handle that zero return is sort of questionable.
-> 4) In the current kernel the only "core_id" we print is "0" but if it
->    was more than 9 then the output would be truncated so GCC complains.
->    Add an "a >= sizeof(scp_fw_file)" check for output which is too long.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
-> v2: The v1 introduced a W=1 warning because of the truncation issue.
->     It's a false positive because GCC assumes that "core_id" can be
->     every possible value of int but actually it can only be zero.  And
->     also generally, in the kernel, truncating is fine and it is fine
->     here too.
-> 
->     But let's use that as an opportunity to do more cleanups.
-> 
->  drivers/remoteproc/mtk_scp.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-> index 10e3f9eb8cd2..db8fd045468d 100644
-> --- a/drivers/remoteproc/mtk_scp.c
-> +++ b/drivers/remoteproc/mtk_scp.c
-> @@ -1127,11 +1127,11 @@ static const char *scp_get_default_fw_path(struct device *dev, int core_id)
->  		return ERR_PTR(-EINVAL);
->  
->  	if (core_id >= 0)
-> -		ret = snprintf(scp_fw_file, ARRAY_SIZE(scp_fw_file), "scp_c%1d", core_id);
-> +		ret = snprintf(scp_fw_file, sizeof(scp_fw_file), "scp_c%d", core_id);
->  	else
-> -		ret = snprintf(scp_fw_file, ARRAY_SIZE(scp_fw_file), "scp");
-> -	if (ret <= 0)
-> -		return ERR_PTR(ret);
-> +		ret = snprintf(scp_fw_file, sizeof(scp_fw_file), "scp");
-> +	if (ret >= sizeof(scp_fw_file))
-> +		return ERR_PTR(-ENAMETOOLONG);
+On Mon, 10 Nov 2025 at 09:25, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
 >
+> Mechanical transformations are often performed with Coccinelle. Given
+> how you mention that tool below, I wouldn't frame it as out of scope
+> here.
 
-Applied.
+Honestly, I think the documented rule should not aim to treat AI as
+anything special at all, and literally just talk about tooling.
 
-Thanks,
-Mathieu
-  
->  	/* Not using strchr here, as strlen of a const gets optimized by compiler */
->  	soc = &compatible[strlen("mediatek,")];
-> -- 
-> 2.51.0
-> 
+Exactly because we've used things like coccinelle (and much simpler
+tools like 'sed', for that matter) for ages.
+
+IOW, this should all be about "tool-assisted patches should be
+described as such, and should explain how the tool was used".
+
+If people send in patches that have been generated by tools, we
+already ask people to just include the script in the commit message.
+
+I mean, we already have commit messages that say things like
+
+    This is a completely mechanical patch (done with a simple "sed -i"
+    statement).
+
+when people do mindless conversions that are so straightforward that
+the actual sed patch isn't even documented (in that case is was
+something like just
+
+   sed -i 's/__ASSEMBLY__/__ASSEMBLER__/'
+
+or whatever), and in other cases people include the actual script
+(random example being commit 96b451d53ae9: "drm/{i915,xe}: convert
+i915 and xe display members into pointers").
+
+I think we should treat any AI generated patches similarly: people
+should mention the tool it was done with, and the script (ok, the
+"scripts" are called "prompts", because AI is so "special") used.
+
+Sure, AI ends up making the result potentially much more subtle, but I
+don't think the *issue* is new, and I don't think it should need to be
+treated as such.
+
+                 Linus
 
