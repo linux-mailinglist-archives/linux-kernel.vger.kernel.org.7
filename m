@@ -1,117 +1,157 @@
-Return-Path: <linux-kernel+bounces-893782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6152FC485D6
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 18:34:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DDA8C485BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 18:33:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1C04E4EF24A
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:31:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E56B93A79FF
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:33:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0966B2797AC;
-	Mon, 10 Nov 2025 17:31:44 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0714B2D1F64;
+	Mon, 10 Nov 2025 17:33:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="drC5W9vK"
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AA372D3A6D;
-	Mon, 10 Nov 2025 17:31:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9DE42D7DE8
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 17:32:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762795903; cv=none; b=uF1JTvYbVSJa4InNag1/S2URxfp773RdB4HUZZQzPzgrsCvc6Ew4qGC2jqze2I44rCoaTMorbbXEdJzg6ZRcTvHtdweesyFSewsENeJlqe5UAinxtZl4MKCdT0kxBDC+eKfh8tmK39X8g1qYS8+EajjMqqXT9IiNY06z6W4QmYQ=
+	t=1762795981; cv=none; b=bbZvM48Y6rYrWPk1nHeXX4L3Sl4nHaVb5h+761oQfdmLYOmOoBbFxCNa7ZCynHW/XwhkX+n2/4z4ICJBAyCewerL0MWlxmTE/tpNh7WHC6Lzt/vRHhDggIOUKR2dnGv7Eew2V6VY3s74swC6AQ3+EWV8h95p1OfeqSEsi4AcqZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762795903; c=relaxed/simple;
-	bh=hjLldDOBYLwmC9Y21K9hHSE9sbYPZmRGkL2qIhSQFcs=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bRpBb2wJtqEJCAxaPC2wtFbHg2NjXUkBecaovvYOJVPcmgVLBC3i0YpvTnnDopXaEDS57RJckrCTbp8/VQh1nwhC/l1u0YeB28z9U9344VU7DE9nlORqS8Kn8fi51Hkhe69kdgEXZTElhCsA2vwhCKp670P98bxrxdUxHPBVJAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4d4xXq462SzHnGcw;
-	Tue, 11 Nov 2025 01:31:23 +0800 (CST)
-Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
-	by mail.maildlp.com (Postfix) with ESMTPS id 1921314033C;
-	Tue, 11 Nov 2025 01:31:39 +0800 (CST)
-Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
- (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.36; Mon, 10 Nov
- 2025 17:31:37 +0000
-Date: Mon, 10 Nov 2025 17:31:36 +0000
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Ben Horgan <ben.horgan@arm.com>
-CC: <james.morse@arm.com>, <amitsinght@marvell.com>,
-	<baisheng.gao@unisoc.com>, <baolin.wang@linux.alibaba.com>,
-	<bobo.shaobowang@huawei.com>, <carl@os.amperecomputing.com>,
-	<catalin.marinas@arm.com>, <dakr@kernel.org>, <dave.martin@arm.com>,
-	<david@redhat.com>, <dfustini@baylibre.com>, <fenghuay@nvidia.com>,
-	<gregkh@linuxfoundation.org>, <gshan@redhat.com>, <guohanjun@huawei.com>,
-	<jeremy.linton@arm.com>, <kobak@nvidia.com>, <lcherian@marvell.com>,
-	<lenb@kernel.org>, <linux-acpi@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<lpieralisi@kernel.org>, <peternewman@google.com>, <quic_jiles@quicinc.com>,
-	<rafael@kernel.org>, <robh@kernel.org>, <rohit.mathew@arm.com>,
-	<scott@os.amperecomputing.com>, <sdonthineni@nvidia.com>,
-	<sudeep.holla@arm.com>, <tan.shaopeng@fujitsu.com>, <will@kernel.org>,
-	<xhao@linux.alibaba.com>, Zeng Heng <zengheng4@huawei.com>
-Subject: Re: [PATCH 27/33] arm_mpam: Track bandwidth counter state for power
- management
-Message-ID: <20251110173136.000074ce@huawei.com>
-In-Reply-To: <20251107123450.664001-28-ben.horgan@arm.com>
-References: <20251107123450.664001-1-ben.horgan@arm.com>
-	<20251107123450.664001-28-ben.horgan@arm.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1762795981; c=relaxed/simple;
+	bh=lavqjS8uyddXCf50slP6/gj/LovmQ9D/FO5ATpZAsEM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bvsMOay80eVUkEpNlKAeBmp1PVU5j0QV1zw5oG4+T3EZ7QPAiZCJ3lRr1rlprGKdYr6phPhbI3OfaRH6YyuS/RjMqlF+TIxksmf+YLe6FmxFd276I+diJKFSCWm2dmpqkmfAkxS8vJfCckUwWzZdPFTGExlR+fN6Io1ZZJBdpEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=drC5W9vK; arc=none smtp.client-ip=209.85.219.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-88249766055so20047616d6.1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 09:32:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762795979; x=1763400779; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=auNNYNeszcnW8UxlPsUXlu6HqCk9VFPDDrt3cDy7QDk=;
+        b=drC5W9vK26wS4dcrGuI42zlNJSLMOtQMFlg8oSLywXMtlPMkkApgFrPue0PXmqUiLV
+         YzCd4G3f72x27RuXRCx8GznVrv16dLie2W3urfbdLr3HTrjpoKLc5jRlurplF0+dNy9C
+         sOb9bZY744MQzLXc50Z9dHt5kq5eNt0s77cCnmLoIWRaML/4seD9LSNvetyTLu/Y7ln+
+         Su111UYA1BUVwPFlUg8A/y7xMlWfw4Mk1LGxzgcjTVUT8RsCKVQFiN3hL99/lzKurYvx
+         l9IXWW230Ku5+eVNAasqEzOAhkLfMCrU81qMAdcafPQyeWTI+ET+4Rrf92/Gm1cqjLIv
+         eTLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762795979; x=1763400779;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=auNNYNeszcnW8UxlPsUXlu6HqCk9VFPDDrt3cDy7QDk=;
+        b=O3NdkzY0yfVbTfUBdGjVwKim2lXGvr88baFsY6HbTdMPT2H5QBgeWll46++jvvBv6W
+         P3ZIofxaCcYE0Tk4F3uJbPPPOoST27q2EYSeYnQyW2/XP7ui/nUZRcuzmaehohA6Rt06
+         UbxyhE7Iue7v+mLvL7H6t0KkoIfHza4q0170HqXiNgg1XJdsAyUEX2meGFHTbLse4p7X
+         jKxDPL5iyr2xHR9z1QXah47CXkTqVxBA3nOQuUMsfO+coCVhc7jpc8YDDeZmaiydz2uu
+         nF2HDviXfmnWBE+vHXt/Mnj4dXqTlQLQ8oGta9VT0/pqMXsZprdjU30f3lKA6zrnwIV6
+         7Yqw==
+X-Forwarded-Encrypted: i=1; AJvYcCWD3IQOCB4o9YYA8nQXfTkTrcjpw59ZhOTWZZRGwCFwZ5lxWBGCySGlyMU2/5w6OMhjhSYDcqeCtZcfgAg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzGAFm29puakQME6YOs/FoAaQQ3Hly+ia2S7NF8wzkqhA7Ison
+	hw9dALHYfF87ncIxbVaTZUN/WUlXv7Zsfna3glaz3OpyLohQRArdMVSx7nLwrUAwjoWAV1ke5pG
+	loW3peVbl3KI+1uRVhsSQZOZIwzm7DErEP9MQVxdN
+X-Gm-Gg: ASbGncvHBH16zYmGiNxq7WcqbM3qQRnuPanBMXnCUQZTWWZI4Q205C6uE6mYMIRV8F9
+	X+hvsWjrar5lODIJvu/dauqypB+RSKkf9U40HgLH5PwaqyPv55cgl23TK3KrUs0yT3U2jMVpSIM
+	/xoSui3z3hJxmNTtd+GTckp8oT2q0R9hx/11bvyTDs2Oir0a4JJKkaY7nPfeqa6MS2C6HeGTqBp
+	BFjauAS7WjScfRX0/MSuBUQCIinNfIjXeb5KMmJBn7U6+dUzgjG5noNqjkRlAsNXsLUs3mT54sq
+	LzgT9DaSvHxv768=
+X-Google-Smtp-Source: AGHT+IHeuRC7ChrdFjjxvcWC3ajdMKHJ+Azj7LDyTH5BCluSFj1o6p4ZSWP6EGrRrokOPiEV3z2rvlDUhI4wexrXKNM=
+X-Received: by 2002:a0c:e00a:0:b0:882:4660:3724 with SMTP id
+ 6a1803df08f44-88246605291mr69808466d6.63.1762795978283; Mon, 10 Nov 2025
+ 09:32:58 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500011.china.huawei.com (7.191.174.215) To
- dubpeml100005.china.huawei.com (7.214.146.113)
+References: <cover.1761763681.git.m.wieczorretman@pm.me> <fbce40a59b0a22a5735cb6e9b95c5a45a34b23cb.1761763681.git.m.wieczorretman@pm.me>
+In-Reply-To: <fbce40a59b0a22a5735cb6e9b95c5a45a34b23cb.1761763681.git.m.wieczorretman@pm.me>
+From: Alexander Potapenko <glider@google.com>
+Date: Mon, 10 Nov 2025 18:32:21 +0100
+X-Gm-Features: AWmQ_bmUvxxbg_c-XB1Dy80QL57feg4coPRIZHNTl9ervff8Rzi8S1pGrWY59Fo
+Message-ID: <CAG_fn=Wj9rB0jHKT3QKjZsPYce1JFcb1e72QBOBP52Ybs3_qgQ@mail.gmail.com>
+Subject: Re: [PATCH v6 01/18] kasan: Unpoison pcpu chunks with base address tag
+To: Maciej Wieczor-Retman <m.wieczorretman@pm.me>
+Cc: xin@zytor.com, peterz@infradead.org, kaleshsingh@google.com, 
+	kbingham@kernel.org, akpm@linux-foundation.org, nathan@kernel.org, 
+	ryabinin.a.a@gmail.com, dave.hansen@linux.intel.com, bp@alien8.de, 
+	morbo@google.com, jeremy.linton@arm.com, smostafa@google.com, kees@kernel.org, 
+	baohua@kernel.org, vbabka@suse.cz, justinstitt@google.com, 
+	wangkefeng.wang@huawei.com, leitao@debian.org, jan.kiszka@siemens.com, 
+	fujita.tomonori@gmail.com, hpa@zytor.com, urezki@gmail.com, ubizjak@gmail.com, 
+	ada.coupriediaz@arm.com, nick.desaulniers+lkml@gmail.com, ojeda@kernel.org, 
+	brgerst@gmail.com, elver@google.com, pankaj.gupta@amd.com, 
+	mark.rutland@arm.com, trintaeoitogc@gmail.com, jpoimboe@kernel.org, 
+	thuth@redhat.com, pasha.tatashin@soleen.com, dvyukov@google.com, 
+	jhubbard@nvidia.com, catalin.marinas@arm.com, yeoreum.yun@arm.com, 
+	mhocko@suse.com, lorenzo.stoakes@oracle.com, samuel.holland@sifive.com, 
+	vincenzo.frascino@arm.com, bigeasy@linutronix.de, surenb@google.com, 
+	ardb@kernel.org, Liam.Howlett@oracle.com, nicolas.schier@linux.dev, 
+	ziy@nvidia.com, kas@kernel.org, tglx@linutronix.de, mingo@redhat.com, 
+	broonie@kernel.org, corbet@lwn.net, andreyknvl@gmail.com, 
+	maciej.wieczor-retman@intel.com, david@redhat.com, maz@kernel.org, 
+	rppt@kernel.org, will@kernel.org, luto@kernel.org, kasan-dev@googlegroups.com, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	x86@kernel.org, linux-kbuild@vger.kernel.org, linux-mm@kvack.org, 
+	llvm@lists.linux.dev, linux-doc@vger.kernel.org, stable@vger.kernel.org, 
+	Baoquan He <bhe@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 7 Nov 2025 12:34:44 +0000
-Ben Horgan <ben.horgan@arm.com> wrote:
+On Wed, Oct 29, 2025 at 8:05=E2=80=AFPM Maciej Wieczor-Retman
+<m.wieczorretman@pm.me> wrote:
+>
+> From: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
+>
+> The problem presented here is related to NUMA systems and tag-based
+> KASAN modes - software and hardware ones. It can be explained in the
+> following points:
+>
+>         1. There can be more than one virtual memory chunk.
+>         2. Chunk's base address has a tag.
+>         3. The base address points at the first chunk and thus inherits
+>            the tag of the first chunk.
+>         4. The subsequent chunks will be accessed with the tag from the
+>            first chunk.
+>         5. Thus, the subsequent chunks need to have their tag set to
+>            match that of the first chunk.
+>
+> Refactor code by moving it into a helper in preparation for the actual
+> fix.
 
-> From: James Morse <james.morse@arm.com>
-> 
-> Bandwidth counters need to run continuously to correctly reflect the
-> bandwidth.
-> 
-> Save the counter state when the hardware is reset due to CPU hotplug.
-> Add struct mbwu_state to track the bandwidth counter. Support for
-> tracking overflow with the same structure will be added in a
-> subsequent commit.
-> 
-> Cc: Zeng Heng <zengheng4@huawei.com>
-> Signed-off-by: James Morse <james.morse@arm.com>
-> Signed-off-by: Ben Horgan <ben.horgan@arm.com>
+The code in the helper function:
 
-One trivial below.
-Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+> +void __kasan_unpoison_vmap_areas(struct vm_struct **vms, int nr_vms)
+> +{
+> +       int area;
+> +
+> +       for (area =3D 0 ; area < nr_vms ; area++) {
+> +               kasan_poison(vms[area]->addr, vms[area]->size,
+> +                            arch_kasan_get_tag(vms[area]->addr), false);
+> +       }
+> +}
 
->  
-> diff --git a/drivers/resctrl/mpam_internal.h b/drivers/resctrl/mpam_internal.h
-> index d8f8e29987e0..1f2b04b7703e 100644
-> --- a/drivers/resctrl/mpam_internal.h
-> +++ b/drivers/resctrl/mpam_internal.h
-> @@ -91,7 +91,10 @@ struct mpam_msc {
->  	 */
->  	struct mutex		part_sel_lock;
->  
-> -	/* cfg_lock protects the msc configuration. */
-> +	/*
-> +	 * cfg_lock protects the msc configuration and guards against mbwu_state
-> +	 * and save and restore racing.
+is different from what was originally called:
 
-Stray "and" that isn't needed on this second line.
+> -       for (area =3D 0; area < nr_vms; area++)
+> -               vms[area]->addr =3D kasan_unpoison_vmalloc(vms[area]->add=
+r,
+> -                               vms[area]->size, KASAN_VMALLOC_PROT_NORMA=
+L);
+> +       kasan_unpoison_vmap_areas(vms, nr_vms);
 
-> +	 */
->  	struct mutex		cfg_lock;
->  
+, so the patch description is a bit misleading.
 
-
+Please also ensure you fix the errors reported by kbuild test robot.
 
