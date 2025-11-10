@@ -1,177 +1,171 @@
-Return-Path: <linux-kernel+bounces-893235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1120C46E1F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:26:46 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4C06C46E04
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:25:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABFD83BBEEB
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:25:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A91D34EB9F3
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:25:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE4ED30506A;
-	Mon, 10 Nov 2025 13:25:10 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CF3523C516;
-	Mon, 10 Nov 2025 13:25:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 367873101D3;
+	Mon, 10 Nov 2025 13:25:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="sAYxNKBY"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 145DF22579E;
+	Mon, 10 Nov 2025 13:25:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762781110; cv=none; b=iL1w0wl5/6T+Iq3jumm8snHUpYbydPCUxgcENSyRJPuQcMjPGWF/BTRGCXv9IMgRgRDirjtLK4Cc8G/CVH6M+gLGMyj2evX7p/maRssyud0QSCeumx5ar1CXqTxqH6EYSvCmGLiAqB3ozwi7FY8+4zFf92i0I8xGmu2ITEtKtNc=
+	t=1762781135; cv=none; b=ZbzpU0ccYEV7+rTLASUy0Z7SukS0cPaM/DjsFAaaxRNsaHwLAkTlJUsP785Ej/v4gkJ63WtBundBySmjBZ7eMsB44pF9JUST5dff0p0tFLCrmOIv/qHDe7VOwUj2cEFUk93ARTuYTcfsfB1xiTrrWqS6GREvwtoM5HV6uPAw704=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762781110; c=relaxed/simple;
-	bh=KgVBkMXWtTRD5CdPecRsv2QlZ+DcPeksW4yC29jCPuc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XvH4TAn3oRpOMrqhr3h/nvYt6kVKYouAbm6Xcmx444/nvH/35wxVnt7R3bvzDMPc3ylwWgsn3iGE+Kwi/fYiG3FoZ7t4yFfpIVMx09tY2QeLUPYOFRk1Y1J2BVNQPyLM8ieJ00yCeqLywJcQfkbON40rBIhEh+aYk5aWTE6Yk98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C5247497;
-	Mon, 10 Nov 2025 05:24:58 -0800 (PST)
-Received: from [10.164.136.34] (Mac.blr.arm.com [10.164.136.34])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E21ED3F63F;
-	Mon, 10 Nov 2025 05:25:00 -0800 (PST)
-Message-ID: <3f5f8a48-fa3b-4985-95e1-dd0ac21b5dcc@arm.com>
-Date: Mon, 10 Nov 2025 18:54:57 +0530
+	s=arc-20240116; t=1762781135; c=relaxed/simple;
+	bh=M281PdKkCCNkCQo5UdxHcyxmHAV+Ri9XLT5PyGHe0Qw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=IcakPeM2/iOv8zuLLnMuaPzg56J5ntUxgdqcDpkZMvGSwe8grfHE858s74sg/ffQx3etsjYYTKr2dzjMiCp1OFj60/mdKzeUxINfYY9jvTx4iNME1gm/QSbwQeTn09HAhjMkCc0Plb5dWhCo9lPQqZYutiBSnKv/Nl1j/KP8lRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=sAYxNKBY; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5AADHNsZ002817;
+	Mon, 10 Nov 2025 13:25:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pp1; bh=69CElqUVy8RLaqayOD8yFbTQwzhV
+	KpzfxD9KPhmLy9s=; b=sAYxNKBYc/yiJ7NM6RkZRMWAir+OvafJ1i8gyUnUDPHy
+	xM4GmxltIpG3UMPhBWUe1gyiZEI9gxNd9XCSWgDpVBKKIJB6fAZqPJta5xfTLTQw
+	+Zy3DsCiVt3m14YIusqkZ0Njd+oZWRzTeAsZUzR04ROGYikYXXYlpLFxzj5cRE53
+	Ed4VQ/8k8ecSbtGGgsnW/f00QtvNrdT67IdMk+ZK/YpRSy7T5D7pg7RHbA31aLE2
+	5mQjytkE3xSTrXWPvuVMs0bsZ5hFv7ygi69kK3Jwi5f5hmcABvz6He9t6wscdOt4
+	TWtV6hwrcxa5FR9OAClF/bH+h2fJ3uB7UN7+wolrPA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a9wc70d5s-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Nov 2025 13:25:28 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5AADHMeU029222;
+	Mon, 10 Nov 2025 13:25:28 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a9wc70d5n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Nov 2025 13:25:27 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5AACnKND014841;
+	Mon, 10 Nov 2025 13:25:26 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4aahpjwq1j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Nov 2025 13:25:26 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5AADPM2M55247146
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 10 Nov 2025 13:25:22 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B84922004D;
+	Mon, 10 Nov 2025 13:25:22 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8D05E20043;
+	Mon, 10 Nov 2025 13:25:22 +0000 (GMT)
+Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 10 Nov 2025 13:25:22 +0000 (GMT)
+From: Gerd Bayer <gbayer@linux.ibm.com>
+Subject: [PATCH 0/2] PCI: AtomicOps: Fix pci_enable_atomic_ops_to_root()
+Date: Mon, 10 Nov 2025 14:25:04 +0100
+Message-Id: <20251110-fix_pciatops-v1-0-edc58a57b62e@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] mm/khugepaged: do synchronous writeback for
- MADV_COLLAPSE
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Shivank Garg <shivankg@amd.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>, Zi Yan <ziy@nvidia.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>, Nico Pache
- <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
- Barry Song <baohua@kernel.org>, Lance Yang <lance.yang@linux.dev>,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Zach O'Keefe <zokeefe@google.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- Branden Moore <Branden.Moore@amd.com>
-References: <20251110113254.77822-1-shivankg@amd.com>
- <f21b37bb-7a2b-412b-be76-e8968b4c375d@lucifer.local>
-Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <f21b37bb-7a2b-412b-be76-e8968b4c375d@lucifer.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALDnEWkC/x2MQQqAIBAAvyJ7TlAjk74SEWZb7UVFIwLx70nHY
+ ZgpkDERZphYgYQPZQq+gewYuMv6EzntjUEJNUgpND/oXaMje4eY+YhGC4PObaKHlsSEzf+7ean
+ 1Aweb5NFeAAAA
+X-Change-ID: 20251106-fix_pciatops-7e8608eccb03
+To: Bjorn Helgaas <bhelgaas@google.com>, Jay Cornwall <Jay.Cornwall@amd.com>,
+        Felix Kuehling <Felix.Kuehling@amd.com>
+Cc: Niklas Schnelle <schnelle@linux.ibm.com>,
+        Alexander Schmidt <alexs@linux.ibm.com>, linux-s390@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Gerd Bayer <gbayer@linux.ibm.com>, Leon Romanovsky <leon@kernel.org>,
+        stable@vger.kernel.org
+X-Mailer: b4 0.14.2
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA4MDAxOCBTYWx0ZWRfX53KRCwDSxl/h
+ lyKRPSsLHBISFZe10KAgQ2aCy4J2IkN9HBI+SMTCNBQl9YSc12cSCZ4H5qT2q1CnB9gdUrNl3FG
+ nTSdLcry+gpQNrwXA7QQOTgBsJLGEEbeAATx1VvzgVf+I9v5X2SMgeUyJl7kASoJm1Xst+t6bHQ
+ IbOptq6FiN92YJjT5wg67LysPIPhf31R5frry2FIzYZqRNtDZG95pkmHtCYFi0DL5vBoE5a4n3B
+ dEwu8QtYiYoRq/G4S2Zp0QGBwnt1odrPt1Kk1zolJmn/2uOScRn3w5EmR284lP5IDFauXzIidir
+ p/BWcDIduAGW4B9WO+8SADjqdTkaGhca8eECl44lyYbUgmKBvLq9JRQvzdt9AmIViDUnVvEA6B6
+ twRnRcsTSv7bXM1YE8qK+btli/0SQg==
+X-Authority-Analysis: v=2.4 cv=GcEaXAXL c=1 sm=1 tr=0 ts=6911e7c8 cx=c_pps
+ a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8 a=ESohFN6d5o8hY1LCVJoA:9 a=QEXdDO2ut3YA:10
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-GUID: SFNmk6CvC9OOEQ0hiYo0zNW1RPJxsJSD
+X-Proofpoint-ORIG-GUID: EX6tyP_6F1B8TGWbDKEP6Rw2em64XCJK
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-10_05,2025-11-10_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 malwarescore=0 bulkscore=0 adultscore=0 impostorscore=0
+ lowpriorityscore=0 clxscore=1015 spamscore=0 priorityscore=1501 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2511080018
 
+Hi Bjorn et al.
 
-On 10/11/25 5:31 pm, Lorenzo Stoakes wrote:
-> On Mon, Nov 10, 2025 at 11:32:53AM +0000, Shivank Garg wrote:
->> When MADV_COLLAPSE is called on file-backed mappings (e.g., executable
->> text sections), the pages may still be dirty from recent writes. The
->> current code triggers an async flush via filemap_flush() and returns
->> SCAN_FAIL, requiring userspace to retry the operation.
->>
->> This is problematic for userspace that wants to collapse text pages into
->> THPs to reduce ITLB pressure. The first madvise() call always fails with
->> EINVAL, and only subsequent calls succeed after writeback completes.
->>
->> For direct MADV_COLLAPSE calls (!cc->is_khugepaged), perform a synchronous
->> writeback using filemap_write_and_wait_range() before scanning the folios.
->> This ensures that folios are clean on the first attempt.
->>
->> Reported-by: Branden Moore <Branden.Moore@amd.com>
->> Closes: https://lore.kernel.org/all/4e26fe5e-7374-467c-a333-9dd48f85d7cc@amd.com
->> Fixes: 34488399fa08 ("mm/madvise: add file and shmem support to MADV_COLLAPSE")
->> Suggested-by: David Hildenbrand <david@redhat.com>
->> Signed-off-by: Shivank Garg <shivankg@amd.com>
->> ---
->> Applies cleanly on:
->> 6.18-rc5
->> mm-stable:e9a6fb0bc
-> Please base on mm-unstable. mm-stable is usually out of date until very close to
-> merge window.
->
->>
->>   mm/khugepaged.c | 17 +++++++++++++++++
->>   1 file changed, 17 insertions(+)
->>
->> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
->> index abe54f0043c7..d08ed6eb9ce1 100644
->> --- a/mm/khugepaged.c
->> +++ b/mm/khugepaged.c
->> @@ -21,6 +21,7 @@
->>   #include <linux/shmem_fs.h>
->>   #include <linux/dax.h>
->>   #include <linux/ksm.h>
->> +#include <linux/backing-dev.h>
->>
->>   #include <asm/tlb.h>
->>   #include <asm/pgalloc.h>
->> @@ -1845,6 +1846,7 @@ static int collapse_file(struct mm_struct *mm, unsigned long addr,
->>   	struct page *dst;
->>   	struct folio *folio, *tmp, *new_folio;
->>   	pgoff_t index = 0, end = start + HPAGE_PMD_NR;
->> +	loff_t range_start, range_end;
->>   	LIST_HEAD(pagelist);
->>   	XA_STATE_ORDER(xas, &mapping->i_pages, start, HPAGE_PMD_ORDER);
->>   	int nr_none = 0, result = SCAN_SUCCEED;
->> @@ -1853,6 +1855,21 @@ static int collapse_file(struct mm_struct *mm, unsigned long addr,
->>   	VM_BUG_ON(!IS_ENABLED(CONFIG_READ_ONLY_THP_FOR_FS) && !is_shmem);
->>   	VM_BUG_ON(start & (HPAGE_PMD_NR - 1));
->>
->> +	/*
->> +	 * For MADV_COLLAPSE on regular files, do a synchronous writeback
->> +	 * to ensure dirty folios are flushed before we attempt collapse.
->> +	 * This is a best-effort approach to avoid failing on the first
->> +	 * attempt when freshly-written executable text is still dirty.
->> +	 */
->> +	if (!is_shmem && cc && !cc->is_khugepaged && mapping_can_writeback(mapping)) {
->> +		range_start = (loff_t)start << PAGE_SHIFT;
->> +		range_end = ((loff_t)end << PAGE_SHIFT) - 1;
->> +		if (filemap_write_and_wait_range(mapping, range_start, range_end)) {
->> +			result = SCAN_FAIL;
->> +			goto out;
->> +		}
->> +	}
-> I feel this is the wrong level of abstraction.
->
-> We explicitly invoke this oth from khugepaged and madvise(..., MADV_COLLAPSE):
->
->
-> khugepaged_scan_mm_slot() / madvise_collapse()
-> -> hpage_collapse_scan_file()
-> -> collapse_file()
->
-> ofc you are addressing this with the !cc->is_khugepaged, but feels like we'd be
-> better off just doing it in madvise_collapse().
+this series addresses a few issues that have come up with the helper
+function that enables Atomic Op Requests to be initiated by PCI
+enpoints:
 
-I suppose the common case is that writeback is not needed, and I don't know what
-is the overhead of filemap_write_and_wait_range() in that case, but your
-suggestion will force that unconditional overhead and skip all the early exits
-possible in hpage_collapse_scan_file()?
+A. Most in-tree users of this helper use it incorrectly [0].
+B. On s390, Atomic Op Requests are enabled, although the helper
+   cannot know whether the root port is really supporting them.
+C. Loop control in the helper function does not guarantee that a root
+   port's capabilities are ever checked against those requested by the
+   caller.
 
-> I wonder also if doing I/O without getting the mmap lock again and revalidating
-> is wise, as the state of things might have changed significantly.
->
-> So maybe need a hugepage_vma_revalidate() as well?
+Address these issue with the following patches:
+Patch 1: Make it harder to mis-use the enablement function,
+Patch 2: Addresses issues B. and C.
 
-The file collapse path (apart from collapse_pte_mapped_thp) is solely concerned
-about doing the collapse in the page cache, for which information about the mm or
-the vma is not needed, that is why no locking is required. The get_file() in
-khugepaged_scan_mm_slot() seems to be serving the same function as maybe_unlock_mmap_for_io().
-So I don't think this is needed?
+I did test that issue B is fixed with these patches. Also, I verified
+that Atomic Ops enablement on a Mellanox/Nvidia ConnectX-6 adapter
+plugged straight into the root port of a x86 system still gets AtomicOp
+Requests enabled. However, I did not test this with any PCIe switches
+between root port and endpoint.
 
->
->
->> +
->>   	result = alloc_charge_folio(&new_folio, mm, cc);
->>   	if (result != SCAN_SUCCEED)
->>   		goto out;
->>
->> base-commit: e9a6fb0bcdd7609be6969112f3fbfcce3b1d4a7c
->> --
->> 2.43.0
->>
-> Thanks, Lorenzo
+Ideally, both patches would be incorporated immediately, so we could
+start correcting the mis-uses in the device drivers. I don't know of any
+complaints when using Atomic Ops on devices where the driver is
+mis-using the helper. Patch 2 however, is fixing an obseved issue.
+
+[0]: https://lore.kernel.org/all/fbe34de16f5c0bf25a16f9819a57fdd81e5bb08c.camel@linux.ibm.com/
+[1]: https://lore.kernel.org/all/20251105-mlxatomics-v1-0-10c71649e08d@linux.ibm.com/
+
+Signed-off-by: Gerd Bayer <gbayer@linux.ibm.com>
+---
+Gerd Bayer (2):
+      PCI: AtomicOps: Define valid root port capabilities
+      PCI: AtomicOps: Fix logic in enable function
+
+ drivers/pci/pci.c             | 43 +++++++++++++++++++++----------------------
+ include/uapi/linux/pci_regs.h |  8 ++++++++
+ 2 files changed, 29 insertions(+), 22 deletions(-)
+---
+base-commit: e9a6fb0bcdd7609be6969112f3fbfcce3b1d4a7c
+change-id: 20251106-fix_pciatops-7e8608eccb03
+
+Best regards,
+-- 
+Gerd Bayer <gbayer@linux.ibm.com>
+
 
