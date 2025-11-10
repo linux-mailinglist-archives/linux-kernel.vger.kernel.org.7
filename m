@@ -1,147 +1,120 @@
-Return-Path: <linux-kernel+bounces-894156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80D6CC495F3
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 22:12:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E28B5C495D8
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 22:11:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A35C43A3E5B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 21:12:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85DF83A2716
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 21:11:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99EF12FD1CA;
-	Mon, 10 Nov 2025 21:11:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE6222F5A3D;
+	Mon, 10 Nov 2025 21:11:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b="BJYhiOwb"
-Received: from mx0a-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z6de3lZi"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6769A2F5A28;
-	Mon, 10 Nov 2025 21:11:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.153.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCE352DECAA
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 21:10:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762809095; cv=none; b=in4ec17bcDM+hxkswQE1nn9tn5DaLvkaS2qHh/y/UfR94bCd/sPSEThE2+2TuKki/v096PKUv/Hkeu3kSAUfcVo/i5sbD0B5FJI2rk8Rfd0K5i4NUn54oX2zsKWWx3oJycdYWiSG3AzV8SrwGkCqlDlkL6BXc40VSj7SYbHa2ME=
+	t=1762809061; cv=none; b=VOzkBybQdzmVa7mXSuab1fvm6P/IBRsxXM9nK43ZcM7fIvwCzbpjlXsqMu/UAN9Swjr3oSt0vXvWexDHPs6BAmgT2DVVIs6e0t+fkyS/HF0Kt0HEmbpkFCSuxSqZF5HMMIhF3zHZWelzvFhVzlKYDbteb89nPsqEZe+/aTXiXFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762809095; c=relaxed/simple;
-	bh=kr7TNcA6znn4hBDQw09hIZoDi92UBEe1+B+3Ft72+sk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=oWiNbw1TeiWy+hn6Qce3OYaZaQMLyES+Qwrsgk8LCcecQJ++/RiDhKCO6b86D9rhKhUSMQcjCDwJiJzVYVvs8Z/HzXrq4lZosYQSMXPUux+CmNT+d8z8bn5h8qs0mbHBPHoMsNY8ZLlGn36Cq3Pyait1IsOXoX5dw6dBNT7sp0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b=BJYhiOwb; arc=none smtp.client-ip=67.231.153.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
-Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
-	by m0089730.ppops.net (8.18.1.11/8.18.1.11) with ESMTP id 5AAL4UPh3887404;
-	Mon, 10 Nov 2025 13:11:28 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=s2048-2025-q2;
-	 bh=Gs0ephI9j2wqu8FIW7DJqlGCeZ/KcGtqWuvPSKl7wyw=; b=BJYhiOwbisGq
-	EcprymVaYGXx88vaJvSuXQBNVtF/75l5Wj8tB6HYqTXmVr88vVYlBcEb9v3LTHpa
-	3fmhO6lYHmUCQ8ltjoIhSUysIqHFjpPV/H9VXEg2EVkjDxiDwQjXQUZNoWjnpNwo
-	PJkiJOF+JPfDJTy0AcubXBRQA7xwBeyAkhVIf3jHwr/ybFd+z4cjxMsB3zYEZ9DD
-	YXfC84TP4cjMPN/H9u3Y9qqmuhN9JGPSZgvOrjgLG3rbEQh1oHFDnvkzvslrm9zV
-	gGR9AACBd0rT9zIjGQKY9MktBYfL2zlzRbayQYO9+VE4wYc+0StKsyVvDnnM8K6Z
-	KRmrGfBpoA==
-Received: from mail.thefacebook.com ([163.114.134.16])
-	by m0089730.ppops.net (PPS) with ESMTPS id 4abqn6r1sm-5
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Mon, 10 Nov 2025 13:11:28 -0800 (PST)
-Received: from devgpu015.cco6.facebook.com (2620:10d:c085:108::4) by
- mail.thefacebook.com (2620:10d:c08b:78::c78f) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.2562.20; Mon, 10 Nov 2025 21:11:26 +0000
-From: Alex Mastro <amastro@fb.com>
-Date: Mon, 10 Nov 2025 13:10:44 -0800
-Subject: [PATCH 4/4] vfio: selftests: update vfio_dma_mapping_test to
- allocate iovas
+	s=arc-20240116; t=1762809061; c=relaxed/simple;
+	bh=5A2x3M04AnvOkfewgoNI3cPsxt1f+pgjuFoeucr4xmU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LShFtIynBKD0/e02NRuOiQdHOJOSIa9Mu2fS2Jz/sacGu+pPq3Jz/zMy1TgSZdmBjnvD3QdbcK8Aci6zMzXHaB8xofU44p2jYBDTcGV8O6V2kBP+H6MySTgOq1UsITbu/W2yFdeNIh7WPN/iZMap2he+26arqy3jvpkSRMuyId8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z6de3lZi; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-477775d3728so18736135e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 13:10:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762809058; x=1763413858; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=s6pHR7F03/pIPTipT8rH7/Q5PrxczVrwgluDM2gAtnY=;
+        b=Z6de3lZiYReXuMupgfzhnV9WTGWgAPWxTS8srC62Cr0D9/m3cBsc8alZtHT7yxHnU9
+         MRIY29lNOyK/Bi3HkKVQV8MC7eP9pkLazzDz5r18lJLseAiPNCWaSp1LopT1Thp//XOW
+         qqAcRMVU322Qmz4aNV8hcotcNMyUEIfWFVtFK5VwM7VKRUMKRXO07oG0XVb3d6jIY4YX
+         fT2aMA2RZryGa/ni4E2QKzOpU3zYOgkx805sL+yyB5uBmtel2vMMgZneRix8lydvWTJX
+         PiAAerCImqQUD+menT8aLbl8OC0MB8oBKjEk1fkwjVq9WwnN7lm48XqsE24/6rYIW4L+
+         672Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762809058; x=1763413858;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=s6pHR7F03/pIPTipT8rH7/Q5PrxczVrwgluDM2gAtnY=;
+        b=SoVPwkXYkz1Mr2i6kMj7I8Rkzh4PLtF16aNlQriRr4XAFjdxxzntbygZcgMrATR1bF
+         FW1LU+765RKVP6DTorw2o8T2c50v3Z8RGM6ldXMZJ0Wy28xqaJE+RJ9dZGYNNZy2LciL
+         MijBQa9CecEGD5dS4UX0SK/kHgcxE9EJyN6urcn8QPKbGyHg9M0uNFfGaAaWplqWc4fw
+         lKvwybAioS8cQu8sllxGU6ex0GUNIlQcBqrGaFfx9CgwS+q54TA47fw+bf/F/k9xaCeO
+         eOihW6yj6QGlXJjFxsAFK5TeiZaOOX2NoJV2n4ZIcxMLRC7d6gaW05lA1ThZIVvIw1lF
+         D56w==
+X-Forwarded-Encrypted: i=1; AJvYcCUXEjTrUyq0aAt0iFvCXUHzTmHlmWLEUaX83YvL6L8SfI0QjbsKivo0rJ/baOAysGZinPqYxdkoG7Ktz6A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHb7s6XEA5KL/EEx+Yra9GAAPq8NoVLr6qnv81wq/QKBJhJWp1
+	phNR8i5Td9PTAAL5gSoS3jP+PuMlp8RK7O6lG9EmJ5cPZKNr60TIaGg7
+X-Gm-Gg: ASbGncstJWsJVlh7+1Iush0G7Ixk/9WEBxbMHG8wW8FWpBs0qcPt/u4XdRdROtVOeEY
+	a2aLK+g+O/NAC0DAK/Qfu/L6CkIWlFDHJLerDQC0jUtnrmqSEwZDU3jK86E3eBxaYg3mnT1HufB
+	9pzbYag5lIm2HMmWk63zMslFMe8lbz/ROl3S4iVupEvVOZtByx8tm0XWujKQM9nS5SyXbQZ7N20
+	7RpVtXPt4WmrC/GFqTUSKPclFhbJtKikf958xrbMgutSdRWHxHil71cTqlVZFY/+xlCRQIuCi3R
+	r4Ha2Px/O7jSdhm+Svu1OHZi4NxLAbZmE8wI+ydETS79e8sj9dC2qAySDvT1hc8lsO+kqUYnh9Q
+	HGRFvJufjBggXY1hd752Nhy5HGb1j4tOr6JDlcfdz/fd0yeLubXnZyY7O5TJFp7N2Lsh0LcVUmP
+	pxnyzq
+X-Google-Smtp-Source: AGHT+IGoIT5w+QUViZBORjTwCO0tphc5Rsw+ZwM/XoSTGH0I5syp92nB5jyHfqFFdSWjwPM/eSjHXw==
+X-Received: by 2002:a05:600c:4c98:b0:477:755b:5587 with SMTP id 5b1f17b1804b1-477755b5694mr45928235e9.8.1762809057974;
+        Mon, 10 Nov 2025 13:10:57 -0800 (PST)
+Received: from osama.. ([156.223.120.220])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47781d68e3bsm1181165e9.7.2025.11.10.13.10.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Nov 2025 13:10:57 -0800 (PST)
+From: Osama Abdelkader <osama.abdelkader@gmail.com>
+To: maz@kernel.org,
+	oupton@kernel.org,
+	joey.gouly@arm.com,
+	suzuki.poulose@arm.com,
+	yuzenghui@huawei.com
+Cc: linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Osama Abdelkader <osama.abdelkader@gmail.com>
+Subject: [PATCH] KVM: arm64: add missing newline to sysreg init log
+Date: Mon, 10 Nov 2025 23:10:51 +0200
+Message-ID: <20251110211051.814728-1-osama.abdelkader@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20251110-iova-ranges-v1-4-4d441cf5bf6d@fb.com>
-References: <20251110-iova-ranges-v1-0-4d441cf5bf6d@fb.com>
-In-Reply-To: <20251110-iova-ranges-v1-0-4d441cf5bf6d@fb.com>
-To: Alex Williamson <alex@shazbot.org>, David Matlack <dmatlack@google.com>,
-        Shuah Khan <shuah@kernel.org>
-CC: <kvm@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Alex Mastro <amastro@fb.com>,
-        Jason Gunthorpe
-	<jgg@ziepe.ca>
-X-Mailer: b4 0.13.0
-X-Proofpoint-GUID: lvdlIAQToOLsUDI4LVfhZfEaKiyuBaFI
-X-Proofpoint-ORIG-GUID: lvdlIAQToOLsUDI4LVfhZfEaKiyuBaFI
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEwMDE3OSBTYWx0ZWRfX3XmhX0h2FzJI
- KwEmpcu9VCHb64N4RZsZW486KzxhXPieNsDukT/A+ZN/pnTJGMVqyO4YnTg1ivP0iW8ZmCCJAw9
- JbVJ4bvTA4TAOrMlxCjEwvmHFGxkeH/e7aCkQqrxzv8D1g42qlCO5K2gq7GPQI223DpWR45A049
- /Y+GJK5OcrmjMB2+aBAPizixpNPOhKkO45EAGgRP99Gq5M4n1dfFvKSlzRypjBxf53wwV9HA825
- nFtmqKfHEII1LAblY/SaxVXIG7E5PqKEJeOZk8KHW0Fi6yZFNTOnp/IEOzaj77gms1FRN8RtbZM
- Tj0koy95wC5S+R66k/glX/vZwws+x/0+QivsagFw61gcXT79uIMYY6BQXu924u8DXHQEltKZeAs
- H4h5nW+Razf6d7qG4sq59L88sD11hQ==
-X-Authority-Analysis: v=2.4 cv=Qdprf8bv c=1 sm=1 tr=0 ts=69125500 cx=c_pps
- a=CB4LiSf2rd0gKozIdrpkBw==:117 a=CB4LiSf2rd0gKozIdrpkBw==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=FOH2dFAWAAAA:8 a=GKGmy9NU5bqHy5LlMbcA:9 a=QEXdDO2ut3YA:10
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-10_07,2025-11-10_02,2025-10-01_01
+Content-Transfer-Encoding: 8bit
 
-vfio_dma_mapping_test currently uses iova=vaddr as part of DMA mapping
-validation. The assumption that these IOVAs are legal has held up on all
-the hardware we've tested so far, but but is not guaranteed. Make the
-test more robust by using iova_allocator to vend IOVAs, which queries
-legally accessible IOVAs from the underlying IOMMUFD or VFIO container.
+missing newline so the  message is merged with follow-on logs
+the change only affects console output formatting, no behavioral impact.
 
-Signed-off-by: Alex Mastro <amastro@fb.com>
+Signed-off-by: Osama Abdelkader <osama.abdelkader@gmail.com>
 ---
- tools/testing/selftests/vfio/vfio_dma_mapping_test.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ arch/arm64/kvm/arm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/vfio/vfio_dma_mapping_test.c b/tools/testing/selftests/vfio/vfio_dma_mapping_test.c
-index 37c2a342df8d..c1a015385b0f 100644
---- a/tools/testing/selftests/vfio/vfio_dma_mapping_test.c
-+++ b/tools/testing/selftests/vfio/vfio_dma_mapping_test.c
-@@ -95,6 +95,7 @@ static int iommu_mapping_get(const char *bdf, u64 iova,
+diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
+index 870953b4a8a7..156cd1a6106e 100644
+--- a/arch/arm64/kvm/arm.c
++++ b/arch/arm64/kvm/arm.c
+@@ -2845,7 +2845,7 @@ static __init int kvm_arm_init(void)
  
- FIXTURE(vfio_dma_mapping_test) {
- 	struct vfio_pci_device *device;
-+	struct iova_allocator iova_allocator;
- };
+ 	err = kvm_sys_reg_table_init();
+ 	if (err) {
+-		kvm_info("Error initializing system register tables");
++		kvm_info("Error initializing system register tables\n");
+ 		return err;
+ 	}
  
- FIXTURE_VARIANT(vfio_dma_mapping_test) {
-@@ -118,11 +119,16 @@ FIXTURE_VARIANT_ADD_ALL_IOMMU_MODES(anonymous_hugetlb_1gb, SZ_1G, MAP_HUGETLB |
- 
- FIXTURE_SETUP(vfio_dma_mapping_test)
- {
-+	int ret;
-+
- 	self->device = vfio_pci_device_init(device_bdf, variant->iommu_mode);
-+	ret = iova_allocator_init(self->device, &self->iova_allocator);
-+	VFIO_ASSERT_EQ(ret, 0);
- }
- 
- FIXTURE_TEARDOWN(vfio_dma_mapping_test)
- {
-+	iova_allocator_deinit(&self->iova_allocator);
- 	vfio_pci_device_cleanup(self->device);
- }
- 
-@@ -144,7 +150,7 @@ TEST_F(vfio_dma_mapping_test, dma_map_unmap)
- 	else
- 		ASSERT_NE(region.vaddr, MAP_FAILED);
- 
--	region.iova = (u64)region.vaddr;
-+	region.iova = iova_allocator_alloc(&self->iova_allocator, size);
- 	region.size = size;
- 
- 	vfio_pci_dma_map(self->device, &region);
-
 -- 
-2.47.3
+2.43.0
 
 
