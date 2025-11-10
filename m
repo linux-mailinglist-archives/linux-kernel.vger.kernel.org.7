@@ -1,132 +1,203 @@
-Return-Path: <linux-kernel+bounces-893414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 773F6C47516
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:47:33 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 767A9C47522
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:47:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE91C1890024
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:47:47 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id EF8FF344AB1
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:47:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAD09314B85;
-	Mon, 10 Nov 2025 14:47:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4233D31355A;
+	Mon, 10 Nov 2025 14:47:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="apWArB6v"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Av7Rfl7F"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68EBA313E3F;
-	Mon, 10 Nov 2025 14:47:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED22123BD1B
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 14:47:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762786023; cv=none; b=ELC47QaddZ/ASYztm1udDTnBtJv9DW+Xn6l0SwvrgpVv+j91QQjA529CoP5J1RkFBjYnbrTC0qlUWvvWsorOVSerwq3bsgws70Z7DT/Jy7r4JxVXh5iwStOQQo4HApt4Xa76xNHsZJ+OreLfRP8hejkw/alub8Ghkqe+PYyrE9k=
+	t=1762786070; cv=none; b=CHa4jRh1y5GdrxJn1Ps85G5wc1wuijRo8QjbrPDUUFfdcrJ//2SQuj0dJFsBDiveoY49e/dumHZc1nwH/DI6eBgcgrNfS5vlXdE+XkO3UIVPXX9tnGv68Zs6JrbMKcC4dG07wbP4rKVjZv5FWP1H4/2eGrBZQcxVB/wtBao/3XU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762786023; c=relaxed/simple;
-	bh=S182r2lsewPICyaylRQbPz+g5CauLqJBFEwdDL6xZfA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=a6QZyD3BeJePRpdm8LqTkr9+8L6/bKRNSCIoR8bL2suDvqNFLqJX8AHBI/8g7CYwF7haJi/ufp9u9E5y6R+N+HGEqdaQT9s6PcZJvaasVjw08bq/nB9IdjgFdVnqtl+tV4k6t3sD6YcPv4/RhQc+le28r16Ks0GGydWPIIIjHPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=apWArB6v; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762786020; x=1794322020;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=S182r2lsewPICyaylRQbPz+g5CauLqJBFEwdDL6xZfA=;
-  b=apWArB6vJGENXNLXF2BeqDA3U6dcSvB53IpRyS206X4KRhtC9/khuBfF
-   MRtSXBhBod2W6vaSB4G11leuVSogjTJyDHSDs2YIyr9hVs4W8yv/w97Wh
-   CfB2O8NUzkwuKvrqQpfFwtmUXaKsh4ybKROTm0d/AuBOBxah2nfl6INy/
-   ryL0STuEf0cgq5fgTbCGpHZGJFjAro4buSsWAvhVLpeSCofX82kzmEEZc
-   A3l7EXk3to0sqX8F+gH85fti7D4k1f5WQIOtRZR7LoF5cHb3AyRUcCAfu
-   jHrpCqmfB9sTJiWQP6JLAIJynnByEtTYMrvRqSMzcvP5c59lQA7+0ztSS
-   A==;
-X-CSE-ConnectionGUID: DBlpLt0ORUeK+NqkTv5EYg==
-X-CSE-MsgGUID: zcz0xLBeRlqmwcVgAhcvNQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11609"; a="75445209"
-X-IronPort-AV: E=Sophos;i="6.19,293,1754982000"; 
-   d="scan'208";a="75445209"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 06:47:00 -0800
-X-CSE-ConnectionGUID: GD0RI4PqTtiCCVKHcfrW1A==
-X-CSE-MsgGUID: pd/YdXoIQby7U7ZEgcSQhg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,293,1754982000"; 
-   d="scan'208";a="192947687"
-Received: from black.igk.intel.com ([10.91.253.5])
-  by fmviesa005.fm.intel.com with ESMTP; 10 Nov 2025 06:46:56 -0800
-Received: by black.igk.intel.com (Postfix, from userid 1003)
-	id 3A05895; Mon, 10 Nov 2025 15:46:56 +0100 (CET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	ceph-devel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev
-Cc: Ilya Dryomov <idryomov@gmail.com>,
-	Xiubo Li <xiubli@redhat.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>
-Subject: [PATCH v1 1/1] libceph: Amend checking to fix `make W=1` build breakage
-Date: Mon, 10 Nov 2025 15:46:53 +0100
-Message-ID: <20251110144653.375367-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1762786070; c=relaxed/simple;
+	bh=dgdLTnC9OagC7TcCvigEKRgst8vGqHZqM0+amuk2YAo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vk7zJaqG2+Ukh8K8/dyqJ/AwQYQbgj686kVy76uP3MCX7Ki9yURBhRlE0vpLWgwuan4GXbCASpZLrozohK1ipw2SWPfbYdLJAKVy2krZh3s4L2Y5za4rOHnst4UqAl/TT0oM/voIzAFZ2tdGDtq9tfVDowh72FRj8wGEidF0378=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Av7Rfl7F; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762786068;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uIeb35oP9Vs/R5h7VhglPZyEdkMXH/upLLEanGBOeTA=;
+	b=Av7Rfl7FzLqMYzwuLuWU+Cns8e2zdqv66+WHDAw4MzeWxtX7efipbRIHv5Qp5derHiCgrV
+	hqR5FX8cIvf5YgeSPu6ezKcbrwViWzxODtO/uzlvYuU7G3M4R3tvVpEaajPSvYVAD1ypgg
+	d18VIj2p7v/ra81YSWdO/PW7d1OyXb8=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-502-b2a0058xO8GOujbU21T91g-1; Mon,
+ 10 Nov 2025 09:47:36 -0500
+X-MC-Unique: b2a0058xO8GOujbU21T91g-1
+X-Mimecast-MFC-AGG-ID: b2a0058xO8GOujbU21T91g_1762786050
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 49CC218002CB;
+	Mon, 10 Nov 2025 14:47:28 +0000 (UTC)
+Received: from fedora (unknown [10.44.33.158])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 787811800451;
+	Mon, 10 Nov 2025 14:47:08 +0000 (UTC)
+Received: by fedora (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Mon, 10 Nov 2025 15:47:27 +0100 (CET)
+Date: Mon, 10 Nov 2025 15:47:06 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: Bernd Edlinger <bernd.edlinger@hotmail.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Dmitry Levin <ldv@strace.io>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Alexey Dobriyan <adobriyan@gmail.com>, Kees Cook <kees@kernel.org>,
+	Andy Lutomirski <luto@amacapital.net>,
+	Will Drewry <wad@chromium.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Michal Hocko <mhocko@suse.com>, Serge Hallyn <serge@hallyn.com>,
+	James Morris <jamorris@linux.microsoft.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Yafang Shao <laoar.shao@gmail.com>, Helge Deller <deller@gmx.de>,
+	"Eric W. Biederman" <ebiederm@xmission.com>,
+	Adrian Reber <areber@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>, Jens Axboe <axboe@kernel.dk>,
+	Alexei Starovoitov <ast@kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
+	linux-security-module@vger.kernel.org,
+	tiozhang <tiozhang@didiglobal.com>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	"Paulo Alcantara (SUSE)" <pc@manguebit.com>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	YueHaibing <yuehaibing@huawei.com>,
+	Paul Moore <paul@paul-moore.com>, Aleksa Sarai <cyphar@cyphar.com>,
+	Stefan Roesch <shr@devkernel.io>, Chao Yu <chao@kernel.org>,
+	xu xin <xu.xin16@zte.com.cn>, Jeff Layton <jlayton@kernel.org>,
+	Jan Kara <jack@suse.cz>, David Hildenbrand <david@redhat.com>,
+	Dave Chinner <dchinner@redhat.com>, Shuah Khan <shuah@kernel.org>,
+	Elena Reshetova <elena.reshetova@intel.com>,
+	David Windsor <dwindsor@gmail.com>,
+	Mateusz Guzik <mjguzik@gmail.com>, Ard Biesheuvel <ardb@kernel.org>,
+	"Joel Fernandes (Google)" <joel@joelfernandes.org>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Hans Liljestrand <ishkamiel@gmail.com>,
+	Penglei Jiang <superman.xpt@gmail.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Adrian Ratiu <adrian.ratiu@collabora.com>,
+	Ingo Molnar <mingo@kernel.org>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
+	Cyrill Gorcunov <gorcunov@gmail.com>,
+	Eric Dumazet <edumazet@google.com>
+Subject: Re: [RFC PATCH 0/3] mt-exec: fix deadlock with ptrace_attach()
+Message-ID: <aRH66lGd-OT4O68C@redhat.com>
+References: <AM8PR10MB470801D01A0CF24BC32C25E7E40E9@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
+ <AM8PR10MB470875B22B4C08BEAEC3F77FE4169@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
+ <AS8P193MB1285DF698D7524EDE22ABFA1E4A1A@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <AS8P193MB12851AC1F862B97FCE9B3F4FE4AAA@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <AS8P193MB1285FF445694F149B70B21D0E46C2@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <AS8P193MB1285937F9831CECAF2A9EEE2E4752@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <GV2PPF74270EBEEEDE0B9742310DE91E9A7E431A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+ <GV2PPF74270EBEE9EF78827D73D3D7212F7E432A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+ <aRDL3HOB21pMVMWC@redhat.com>
+ <GV2PPF74270EBEE83C2CA09B945BC954FA3E4CEA@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <GV2PPF74270EBEE83C2CA09B945BC954FA3E4CEA@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-In a few cases the code compares 32-bit value to a SIZE_MAX derived
-constant which is much higher than that value on 64-bit platforms,
-Clang, in particular, is not happy about this
+Hi Bernd,
 
-net/ceph/osdmap.c:1441:10: error: result of comparison of constant 4611686018427387891 with expression of type 'u32' (aka 'unsigned int') is always false [-Werror,-Wtautological-constant-out-of-range-compare]
- 1441 |         if (len > (SIZE_MAX - sizeof(*pg)) / sizeof(u32))
-      |             ~~~ ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-net/ceph/osdmap.c:1624:10: error: result of comparison of constant 2305843009213693945 with expression of type 'u32' (aka 'unsigned int') is always false [-Werror,-Wtautological-constant-out-of-range-compare]
- 1624 |         if (len > (SIZE_MAX - sizeof(*pg)) / (2 * sizeof(u32)))
-      |             ~~~ ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+On 11/10, Bernd Edlinger wrote:
+>
+> When the debugger wants to attach the de_thread the debug-user access rights are
+> checked against the current user and additionally against the new user credentials.
+> This I did by quickly switching the user credenitals to the next user and back again,
+> under the cred_guard_mutex, which should make that safe.
 
-fs/ceph/snap.c:377:10: error: result of comparison of constant 2305843009213693948 with expression of type 'u32' (aka 'unsigned int') is always false [-Werror,-Wtautological-constant-out-of-range-compare]
-  377 |         if (num > (SIZE_MAX - sizeof(*snapc)) / sizeof(u64))
-      |             ~~~ ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Let me repeat, I can't really comment this part, I don't know if it is
+actually safe. But the very fact your patch changes ->mm and ->cred of
+the execing task in ptrace_attach() makes me worry... At least I think
+you should update or remove this comment in begin_new_exec:
 
-Fix this by casting to size_t. Note, that possible replacement of SIZE_MAX
-by U32_MAX may lead to the behaviour changes on the corner cases.
+	/*
+	 * cred_guard_mutex must be held at least to this point to prevent
+	 * ptrace_attach() from altering our determination of the task's
+	 * credentials; any time after this it may be unlocked.
+	 */
+	security_bprm_committed_creds(bprm);
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- net/ceph/osdmap.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> So at this time I have only one request for you.
+> Could you please try out how the test case in my patch behaves with your fix?
 
-diff --git a/net/ceph/osdmap.c b/net/ceph/osdmap.c
-index 295098873861..8e7cb2fde6f1 100644
---- a/net/ceph/osdmap.c
-+++ b/net/ceph/osdmap.c
-@@ -1438,7 +1438,7 @@ static struct ceph_pg_mapping *__decode_pg_temp(void **p, void *end,
- 	ceph_decode_32_safe(p, end, len, e_inval);
- 	if (len == 0 && incremental)
- 		return NULL;	/* new_pg_temp: [] to remove */
--	if (len > (SIZE_MAX - sizeof(*pg)) / sizeof(u32))
-+	if ((size_t)len > (SIZE_MAX - sizeof(*pg)) / sizeof(u32))
- 		return ERR_PTR(-EINVAL);
- 
- 	ceph_decode_need(p, end, len * sizeof(u32), e_inval);
-@@ -1621,7 +1621,7 @@ static struct ceph_pg_mapping *__decode_pg_upmap_items(void **p, void *end,
- 	u32 len, i;
- 
- 	ceph_decode_32_safe(p, end, len, e_inval);
--	if (len > (SIZE_MAX - sizeof(*pg)) / (2 * sizeof(u32)))
-+	if ((size_t)len > (SIZE_MAX - sizeof(*pg)) / (2 * sizeof(u32)))
- 		return ERR_PTR(-EINVAL);
- 
- 	ceph_decode_need(p, end, 2 * len * sizeof(u32), e_inval);
--- 
-2.50.1
+The new TEST(attach2) added by your patch fails as expected, see 3/3.
+
+   128  static long thread2_tid;
+   129  static void *thread2(void *arg)
+   130  {
+   131          thread2_tid = syscall(__NR_gettid);
+   132          sleep(2);
+   133          execlp("false", "false", NULL);
+   134          return NULL;
+   135  }
+   136
+   137  TEST(attach2)
+   138  {
+   139          int s, k, pid = fork();
+   140
+   141          if (!pid) {
+   142                  pthread_t pt;
+   143
+   144                  pthread_create(&pt, NULL, thread2, NULL);
+   145                  pthread_join(pt, NULL);
+   146                  return;
+   147          }
+   148
+   149          sleep(1);
+   150          k = ptrace(PTRACE_ATTACH, pid, 0L, 0L);
+   151          ASSERT_EQ(k, 0);
+   152          k = waitpid(-1, &s, 0);
+   153          ASSERT_EQ(k, pid);
+   154          ASSERT_EQ(WIFSTOPPED(s), 1);
+   155          ASSERT_EQ(WSTOPSIG(s), SIGSTOP);
+   156          k = ptrace(PTRACE_SETOPTIONS, pid, 0L, PTRACE_O_TRACEEXIT);
+   157          ASSERT_EQ(k, 0);
+   158          thread2_tid = ptrace(PTRACE_PEEKDATA, pid, &thread2_tid, 0L);
+   159          ASSERT_NE(thread2_tid, -1);
+   160          ASSERT_NE(thread2_tid, 0);
+   161          ASSERT_NE(thread2_tid, pid);
+   162          k = waitpid(-1, &s, WNOHANG);
+   163          ASSERT_EQ(k, 0);
+   164          sleep(2);
+   165          /* deadlock may happen here */
+   166          k = ptrace(PTRACE_ATTACH, thread2_tid, 0L, 0L);
+
+PTRACE_ATTACH fails.
+
+thread2() kills the old leader, takes it pid, execlp() succeeds.
+
+Oleg.
 
 
