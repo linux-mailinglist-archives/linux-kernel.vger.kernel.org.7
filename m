@@ -1,152 +1,374 @@
-Return-Path: <linux-kernel+bounces-894301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD2B8C49B63
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 00:12:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CE5F3C49B72
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 00:14:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A866D4EDE9B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 23:12:11 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A7A7F4E83F7
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 23:14:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F634301495;
-	Mon, 10 Nov 2025 23:12:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 844DD302158;
+	Mon, 10 Nov 2025 23:14:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XBHfNOW/"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b="henVmATf"
+Received: from mx0a-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D419525A2CF
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 23:12:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B347C19CD05;
+	Mon, 10 Nov 2025 23:14:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.153.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762816323; cv=none; b=Jse37947tQmFWEgNeKpPTE0nzj7K8Aoi6jR5i2oyyQc2Zy57dyaMHqTo+7qZ5ztW1xNWeO1GlyHYVWPlX97aVUHJDARp+vZ+8uvULhv7VIbRNaFSGon3gP1eHjMaHo/Rsx1YA2gGkf03lEb/PQmQKR87Ztkv0EpZ9Dkol56kOo8=
+	t=1762816472; cv=none; b=nKQ4Y+NlFeM/WzW+Oj2zt/k9YahXPImJqd1yUIBaiwwhu6G8q+8bHY2OApxwH+78mtpXx96+H3MIgwTFM2IhRq2PXirRl9j8Fs4SSKmbQYQ46kWBIZTfsPeZlMB3CF4QRs8t128apXpczq/qzKzGDHK1Z2ASuZkAQKjlc3SWVSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762816323; c=relaxed/simple;
-	bh=NCsEEDLAZ7D0HQmvFIC8vI7abvE/3WSqCFBNjRC9Hw0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UsXlSYUxZyWcsWTx9EMjjNbOFy3bfHOmRLhEqKy03dMR7v04CzteKCPtAxFQglfTB/FHIZe0Q7/y8yg/kKcZyzaTRa69X+ck29wxE7rKYuZ+LtWArlJmTHIejfvQJe7Buq6LFlqO6KVHdR/T7XvODZOKQzulzpoheyrsffBz9ew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XBHfNOW/; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-47112edf9f7so16919275e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 15:12:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762816320; x=1763421120; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8ur+jItSBFJa8rWcgkoqU0zfeF/8teVfafx9jMHzM0o=;
-        b=XBHfNOW/CWnAIqqFsRJJzORDacsqrC8yieCkACo6mdc1LXCSB0WEc1KhWSmB7mEzat
-         QVpGTvB5NQ7n6+5n6rI+tkINqmaM1ftAzCt+r2eeGsm4KweMYDibjIpJgX6pvFXMTUbQ
-         LPUGzAoL9jB8sQsNZweqlFOheWP3UjElelK9RiQI/adH4rDSjM3mn0Jp2i7xukq66z7B
-         gOTi6nGViJ7cXbKs1vm9QgsFcDg9OMu7wIc+2XNKNaC83oOHcIvG4Zq/yxlbueZ5Tlev
-         SsrVXaRAJAVxEfGycUv+LrYrVe21VsLD2ytr+l/hB14YXHtOLnCLb0wK7sVMb6DOufGM
-         CEhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762816320; x=1763421120;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=8ur+jItSBFJa8rWcgkoqU0zfeF/8teVfafx9jMHzM0o=;
-        b=qhj118hX2bacq+rmWztFi2Rj9HRSLIPRai1cXYQWHrSLKABTiwCDku30dkzWgVyNTT
-         j+u/ePS2i8t+rIZvjmF2wvOehBHSs8iKoOu3kcCjpbpz56qtgoulqZp3vXojU7g1dn0w
-         BKAUuWXSzYf2eZgUrk82BtjTYkcJq2zALTgv+J+2UP7IGyCODuaT1e7ClCFXDRaqMt8V
-         hl75+WFNs721DCA6VnimQspFQwAroXde7faaVKyOJBxeLdRGXMPbghInp5sl/QXD3QZI
-         WGUhMeVUM3bWiJJaiOMHhkcQ+1cZkveTP5B1LjuB7R7D29fXY6vtIXORi7Pq7TGH8Egu
-         aHmA==
-X-Forwarded-Encrypted: i=1; AJvYcCUgo1Fd6zKzJB9tilEvce5nzWzZTX2Xh/EvTR7BiJ0Ns1cYql+0l54idAEXEAuq5LVW26TtJchX2hwxxAY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzgs72I7u7kJP4soV+b17Kx4Y0aACveXTIhzeFlEnJ6Oq2cggsP
-	pb4gOcCv7EM95F1UBZdry+1CMEGh9EamTDZGPAnvpgxLzsH6689oOQTa
-X-Gm-Gg: ASbGncvI2aFKPxju9KPVDItwWg31EoEdFtUV9njPXfA2BmlnERmV9HkzlQVeGD2F6Jy
-	ZPnhBZB2+pmPFds4kkQ6QTFHSMnGFjUh+AGi5gN418GpST5GMR1/mn+gq2ToDbr4DL2nHgT7MLE
-	AnkOaOJpCFJJNn2yZJr2ogp8ueK1zM4UhaWIdIU7NgpjMx7/OXfHMlYOQjpAehdhJcuqQTxOpFx
-	Vr8XyTrVsabS5aTW1B4b8m23fD8VrxUY6/o7wEVoUajPrH4TQrowbWPH2xo9gcTZtkLhVliBstw
-	hZVpZ4p02Tk+CqF+MdbDLRW7DoehWvoeaMvVg9ZSsiN5EGbaVLBiGauh/ZkfzY0uwKWAKsiRKnY
-	pDJroSYVXI9BrUav8ltmajPF/afKxjW+1VnGC2EBmjuYmoAuDDuHD9q1HdJp9JbJ9bbDHDUXbmz
-	h+uJcFZuLb0syPDvsk3Isb++WbXTTtjwZT/8qjeAdXDB0JxUw2vsHRAcnRBZFAMZo=
-X-Google-Smtp-Source: AGHT+IFKFQudGUWC8YZ8n+/dp+UJPFiAfw2pO9ZlY7yngKFOQ04Xr0yonHE+avDNO2qvESuJ3bxTEg==
-X-Received: by 2002:a05:600c:4448:b0:46e:206a:78cc with SMTP id 5b1f17b1804b1-47773290517mr90700755e9.28.1762816319864;
-        Mon, 10 Nov 2025 15:11:59 -0800 (PST)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47761c2fe2asm285284515e9.5.2025.11.10.15.11.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Nov 2025 15:11:59 -0800 (PST)
-Date: Mon, 10 Nov 2025 23:11:57 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Masaharu Noguchi <nogunix@gmail.com>
-Cc: Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>,
- Jesper Juhl <jesperjuhl76@gmail.com>, Alexander Aring
- <alex.aring@gmail.com>, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] uapi: fcntl: guard AT_RENAME_* aliases
-Message-ID: <20251110231157.4ab7601b@pumpkin>
-In-Reply-To: <20251110144232.3765169-2-nogunix@gmail.com>
-References: <20251110144232.3765169-1-nogunix@gmail.com>
-	<20251110144232.3765169-2-nogunix@gmail.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	s=arc-20240116; t=1762816472; c=relaxed/simple;
+	bh=165Mb5ty1XJpsDBEBaXkf2BECzXlyuMSdX2sE/DDLdE=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lRE+oPjjvyuRq37GEaGk11bdqqjJ7fH7GCPNLHvmuwXEKRyY3Vg2wZYGDg3jZ/RoaqiInxeR9+18zb7hQkfckHv3GyVdBGSOs53ykW9cstbhSYqnmJe7EfPRmB1XZGBY21KTue8AJReW6T0i9rPsuN453BwR0V1xvfdxPXjViEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b=henVmATf; arc=none smtp.client-ip=67.231.153.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
+Received: from pps.filterd (m0001303.ppops.net [127.0.0.1])
+	by m0001303.ppops.net (8.18.1.11/8.18.1.11) with ESMTP id 5AAICVcB2646304;
+	Mon, 10 Nov 2025 15:14:24 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=s2048-2025-q2; bh=gDwhgn1wmZ9uPYkyxfHK
+	ZrMp2UuUezHuhUJj2gGlTO8=; b=henVmATffPleArOPv658fJRGsZ6pgbpST+uH
+	XKWfy9WbLbl9oE0nx/2hzyirhq3sYiYxdT3IQUXrbF4X3lN926LLuJWbKK7i2Hz9
+	iJym4MGKGdP3dxe6KGIqvPAbBAzR71PG8FOnBVLy6zY0UMBR25opIWs+g/hNfnyR
+	zzC1/Wh4tirbq58bhfc3BolpXjiEpvgdAkvJnFpvp6sbb+ExfBcExvMoCIDA5nLc
+	6Mx0o7ry+6i5jpUdmF3XtG2opqvDydZ9B3jnNw8cjJMyrPrxgtNq0esjaWoC+Fn9
+	YeU52thiwrfdh63SEZ3AtEHSay3taJsNkE8lmTgcT5ETKVxaRQ==
+Received: from maileast.thefacebook.com ([163.114.135.16])
+	by m0001303.ppops.net (PPS) with ESMTPS id 4abn482qx0-2
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Mon, 10 Nov 2025 15:14:24 -0800 (PST)
+Received: from devgpu015.cco6.facebook.com (2620:10d:c0a8:1b::2d) by
+ mail.thefacebook.com (2620:10d:c0a9:6f::237c) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.2562.20; Mon, 10 Nov 2025 23:14:23 +0000
+Date: Mon, 10 Nov 2025 15:14:21 -0800
+From: Alex Mastro <amastro@fb.com>
+To: David Matlack <dmatlack@google.com>
+CC: Alex Williamson <alex@shazbot.org>, Shuah Khan <shuah@kernel.org>,
+        <kvm@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>
+Subject: Re: [PATCH 3/4] vfio: selftests: add iova allocator
+Message-ID: <aRJxzUte5AUxebIC@devgpu015.cco6.facebook.com>
+References: <20251110-iova-ranges-v1-0-4d441cf5bf6d@fb.com>
+ <20251110-iova-ranges-v1-3-4d441cf5bf6d@fb.com>
+ <aRJtDHJZ6yAW2xIj@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <aRJtDHJZ6yAW2xIj@google.com>
+X-Proofpoint-ORIG-GUID: Yz3rW8VvHDYN1VSX6o4c3GzbptwX1JTm
+X-Proofpoint-GUID: Yz3rW8VvHDYN1VSX6o4c3GzbptwX1JTm
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEwMDE5OCBTYWx0ZWRfX6E2JVXKG07BT
+ bqqRCtWrjoooB6jwyuPi5UrWjLB9u37veAa2K+k5yK0p6gsFoHaa6nlf2cuhTkZ1Iz7MUWGeSdg
+ Xok/mhyuy9DeYONOgC/wPvbY2sIFlKmqnuaAfG1X1tJupy43EJALOqx/DeLVRWIdBJk63/uJrZN
+ JeiVyhkWizsc5klOm0kgaYWsZ7FHFQ0j597sESj/eNUx8tfVu/ZcipyyODpE+V4+pT2sw0Cj4tD
+ zNIyNBOH1sL2icq1XhV/2FpZ505dNphg2uNqs56AUWLPyb5PUt2OxyzfuFK+lO0MsUziFeFdPBX
+ guBT8FR4Cwv9IY/BHPImkr1/SlUnxEYssLCNghn+0LTGw9BHNu0iE+rL4l1UCvfgMb7najzopot
+ 5T6+zC6MDfw8UjjiHzX1Tv2qo6RmzQ==
+X-Authority-Analysis: v=2.4 cv=KJpXzVFo c=1 sm=1 tr=0 ts=691271d0 cx=c_pps
+ a=MfjaFnPeirRr97d5FC5oHw==:117 a=MfjaFnPeirRr97d5FC5oHw==:17
+ a=kj9zAlcOel0A:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=VwQbUJbxAAAA:8 a=r1p2_3pzAAAA:8 a=FOH2dFAWAAAA:8 a=4vnkc7nXmUV--_FIKqwA:9
+ a=CjuIK1q_8ugA:10 a=r_pkcD-q9-ctt7trBg_g:22 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-10_07,2025-11-10_02,2025-10-01_01
 
-On Mon, 10 Nov 2025 23:42:31 +0900
-Masaharu Noguchi <nogunix@gmail.com> wrote:
-
-> Including <linux/fcntl.h> after libc headers such as stdio.h may leave
-> the renameat2() flag macros defined to libc's values.  That leaks the
-> wrong numbers into user space even though the kernel header tries to
-> provide its own aliases.
+On Mon, Nov 10, 2025 at 10:54:04PM +0000, David Matlack wrote:
+> On 2025-11-10 01:10 PM, Alex Mastro wrote:
+> > Add struct iova_allocator, which gives tests a convenient way to generate
+> > legally-accessible IOVAs to map.
+> > 
+> > This is based on Alex Williamson's patch series for adding an IOVA
+> > allocator [1].
+> > 
+> > [1] https://lore.kernel.org/all/20251108212954.26477-1-alex@shazbot.org/
+> > 
+> > Signed-off-by: Alex Mastro <amastro@fb.com>
+> > ---
+> >  .../testing/selftests/vfio/lib/include/vfio_util.h | 14 +++++
+> >  tools/testing/selftests/vfio/lib/vfio_pci_device.c | 65 +++++++++++++++++++++-
+> >  2 files changed, 78 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/tools/testing/selftests/vfio/lib/include/vfio_util.h b/tools/testing/selftests/vfio/lib/include/vfio_util.h
+> > index fb5efec52316..bb1e7d39dfb9 100644
+> > --- a/tools/testing/selftests/vfio/lib/include/vfio_util.h
+> > +++ b/tools/testing/selftests/vfio/lib/include/vfio_util.h
+> > @@ -13,6 +13,8 @@
+> >  
+> >  #include "../../../kselftest.h"
+> >  
+> > +#define ALIGN(x, a)	(((x) + (a - 1)) & (~((a) - 1)))
 > 
-> Check whether AT_RENAME_* is already defined and whether the value
-> matches what the uapi header expects.  If not, drop the old definition
-> and replace it with the kernel one so the exported flags stay stable
-> regardless of include order.
+> Please name this ALIGN_UP() so that it is clear it aligns x up and not
+> down.
+
+Ack.
+
+> > +
+> >  #define VFIO_LOG_AND_EXIT(...) do {		\
+> >  	fprintf(stderr, "  " __VA_ARGS__);	\
+> >  	fprintf(stderr, "\n");			\
+> > @@ -188,6 +190,13 @@ struct vfio_pci_device {
+> >  	struct vfio_pci_driver driver;
+> >  };
+> >  
+> > +struct iova_allocator {
+> > +	struct iommu_iova_range *ranges;
+> > +	size_t nranges;
+> > +	size_t range_idx;
+> > +	iova_t iova_next;
+> > +};
+> > +
+> >  /*
+> >   * Return the BDF string of the device that the test should use.
+> >   *
+> > @@ -212,6 +221,11 @@ void vfio_pci_device_reset(struct vfio_pci_device *device);
+> >  struct iommu_iova_range *vfio_pci_iova_ranges(struct vfio_pci_device *device,
+> >  					      size_t *nranges);
+> >  
+> > +int iova_allocator_init(struct vfio_pci_device *device,
+> > +			    struct iova_allocator *allocator);
+> > +void iova_allocator_deinit(struct iova_allocator *allocator);
+> > +iova_t iova_allocator_alloc(struct iova_allocator *allocator, size_t size);
+> > +
+> >  int __vfio_pci_dma_map(struct vfio_pci_device *device,
+> >  		       struct vfio_dma_region *region);
+> >  int __vfio_pci_dma_unmap(struct vfio_pci_device *device,
+> > diff --git a/tools/testing/selftests/vfio/lib/vfio_pci_device.c b/tools/testing/selftests/vfio/lib/vfio_pci_device.c
+> > index 6bedbe65f0a1..a634feb1d378 100644
+> > --- a/tools/testing/selftests/vfio/lib/vfio_pci_device.c
+> > +++ b/tools/testing/selftests/vfio/lib/vfio_pci_device.c
+> > @@ -12,11 +12,12 @@
+> >  #include <sys/mman.h>
+> >  
+> >  #include <uapi/linux/types.h>
+> > +#include <linux/iommufd.h>
+> >  #include <linux/limits.h>
+> >  #include <linux/mman.h>
+> > +#include <linux/overflow.h>
+> >  #include <linux/types.h>
+> >  #include <linux/vfio.h>
+> > -#include <linux/iommufd.h>
+> >  
+> >  #include "../../../kselftest.h"
+> >  #include <vfio_util.h>
+> > @@ -190,6 +191,68 @@ struct iommu_iova_range *vfio_pci_iova_ranges(struct vfio_pci_device *device,
+> >  	return ranges;
+> >  }
+> >  
+> > +int iova_allocator_init(struct vfio_pci_device *device,
+> > +			struct iova_allocator *allocator)
+> > +{
+> > +	struct iommu_iova_range *ranges;
+> > +	size_t nranges;
+> > +
+> > +	memset(allocator, 0, sizeof(*allocator));
+> > +
+> > +	ranges = vfio_pci_iova_ranges(device, &nranges);
+> > +	if (!ranges)
+> > +		return -ENOENT;
+> > +
+> > +	*allocator = (struct iova_allocator){
+> > +		.ranges = ranges,
+> > +		.nranges = nranges,
+> > +		.range_idx = 0,
+> > +		.iova_next = 0,
+> > +	};
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +void iova_allocator_deinit(struct iova_allocator *allocator)
+> > +{
+> > +	free(allocator->ranges);
+> > +}
 > 
-> Signed-off-by: Masaharu Noguchi <nogunix@gmail.com>
-> ---
->  include/uapi/linux/fcntl.h | 15 ++++++++++++++-
->  1 file changed, 14 insertions(+), 1 deletion(-)
+> I think it would be good to be consistent about how the library hands
+> out and initializes objects. e.g. For devices we have:
 > 
-> diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
-> index 3741ea1b73d8..8b667550e44a 100644
-> --- a/include/uapi/linux/fcntl.h
-> +++ b/include/uapi/linux/fcntl.h
-> @@ -156,10 +156,23 @@
->   * as possible, so we can use them for generic bits in the future if necessary.
->   */
->  
-> -/* Flags for renameat2(2) (must match legacy RENAME_* flags). */
-> +/* Flags for renameat2(2) (must match legacy RENAME_* flags).
-> + * stdio.h may define these differently, so check explicitly.
-> + */
-> +#if !defined(AT_RENAME_NOREPLACE) || AT_RENAME_NOREPLACE != 0x0001
-> +#undef AT_RENAME_NOREPLACE
+>   device = vfio_pci_device_init(...);
+>   vfio_pci_device_cleanup(device);
+> 
+> So for allocator it would be:
+> 
+>   allocator = iova_allocator_init();
+>   iova_allocator_cleanup(allocator);
+> 
+> It's a small thing, but this way users of the library can always work
+> with pointers allocated by the library, there is a consistent meaning of
+> *_init() functions, and one doesn't have to distinguish between
+> *_deinit() and *_cleanup().
+> 
+> Forcing dynamic memory allocation is less efficient, but I think
+> simplicity and consistency matters more when it comes to tests.
 
-I deliberately left out the #undef so you'd get a compile-time error
-if the values of the definitions differ.
+SGTM -- will change it to be like how you suggested for consistency.
 
-	David
+> 
+> > +
+> > +iova_t iova_allocator_alloc(struct iova_allocator *allocator, size_t size)
+> > +{
+> > +	int idx = allocator->range_idx;
+> > +	struct iommu_iova_range *range = &allocator->ranges[idx];
+> > +
+> > +	VFIO_ASSERT_LT(idx, allocator->nranges, "IOVA allocator out of space\n");
+> > +	VFIO_ASSERT_GT(size, 0, "Invalid size arg, zero\n");
+> > +	VFIO_ASSERT_EQ(size & (size - 1), 0, "Invalid size arg, non-power-of-2\n");
+> 
+> ALIGN() is what requires size to be a power of 2, so the assert should
+> probably go inside that macro.
 
->  #define AT_RENAME_NOREPLACE	0x0001
-> +#endif
+SGTM
+
+> 
+> > +
+> > +	for (;;) {
+> > +		iova_t iova, last;
+> > +
+> > +		iova = ALIGN(allocator->iova_next, size);
+> > +
+> > +		if (iova < allocator->iova_next || iova > range->last ||
+> > +		    check_add_overflow(iova, size - 1, &last) ||
+> > +		    last > range->last) {
+> > +			allocator->range_idx = ++idx;
+> > +			VFIO_ASSERT_LT(idx, allocator->nranges,
+> > +				       "Out of ranges for allocation\n");
+> > +			allocator->iova_next = (++range)->start;
+> > +			continue;
+> > +		}
+> > +
+> > +		if (check_add_overflow(last, (iova_t)1, &allocator->iova_next) ||
+> > +		    allocator->iova_next > range->last) {
+> > +			allocator->range_idx = ++idx;
+> > +			if (idx < allocator->nranges)
+> > +				allocator->iova_next = (++range)->start;
+> > +		}
+> > +
+> > +		return iova;
+> > +	}
+> 
+> I found this loop a bit hard to read. The if statements have 3-4
+> statements, and idx and range are managed deep in the loop. What about
+> something like this? It also avoids the need to check for overflow
+> (unless I missed something :).
+
+I'll take a closer look at your suggestions. Agree that it's terse. I
+shamelessly lifted this verbatim from AlexW's patch, and it seemed ok from my
+first pass squinting.
+
+> 
+> diff --git a/tools/testing/selftests/vfio/lib/include/vfio_util.h b/tools/testing/selftests/vfio/lib/include/vfio_util.h
+> index bb1e7d39dfb9..63fce0ffe287 100644
+> --- a/tools/testing/selftests/vfio/lib/include/vfio_util.h
+> +++ b/tools/testing/selftests/vfio/lib/include/vfio_util.h
+> @@ -193,8 +193,10 @@ struct vfio_pci_device {
+>  struct iova_allocator {
+>  	struct iommu_iova_range *ranges;
+>  	size_t nranges;
 > +
-> +#if !defined(AT_RENAME_EXCHANGE) || AT_RENAME_EXCHANGE != 0x0002
-> +#undef AT_RENAME_EXCHANGE
->  #define AT_RENAME_EXCHANGE	0x0002
-> +#endif
+> +	/* The next range, and offset within it, from which to allocate. */
+>  	size_t range_idx;
+> -	iova_t iova_next;
+> +	iova_t range_offset;
+>  };
+> 
+>  /*
+> diff --git a/tools/testing/selftests/vfio/lib/vfio_pci_device.c b/tools/testing/selftests/vfio/lib/vfio_pci_device.c
+> index a634feb1d378..5b85005c4544 100644
+> --- a/tools/testing/selftests/vfio/lib/vfio_pci_device.c
+> +++ b/tools/testing/selftests/vfio/lib/vfio_pci_device.c
+> @@ -207,7 +207,7 @@ int iova_allocator_init(struct vfio_pci_device *device,
+>  		.ranges = ranges,
+>  		.nranges = nranges,
+>  		.range_idx = 0,
+> -		.iova_next = 0,
+> +		.range_offset = 0,
+>  	};
+> 
+>  	return 0;
+> @@ -220,37 +220,41 @@ void iova_allocator_deinit(struct iova_allocator *allocator)
+> 
+>  iova_t iova_allocator_alloc(struct iova_allocator *allocator, size_t size)
+>  {
+> -	int idx = allocator->range_idx;
+> -	struct iommu_iova_range *range = &allocator->ranges[idx];
+> +	int idx;
+> 
+> -	VFIO_ASSERT_LT(idx, allocator->nranges, "IOVA allocator out of space\n");
+>  	VFIO_ASSERT_GT(size, 0, "Invalid size arg, zero\n");
+>  	VFIO_ASSERT_EQ(size & (size - 1), 0, "Invalid size arg, non-power-of-2\n");
+> 
+> -	for (;;) {
+> +	for (idx = allocator->range_idx; idx < allocator->nranges; idx++) {
+> +		struct iommu_iova_range *range = &allocator->ranges[idx];
+>  		iova_t iova, last;
+> 
+> -		iova = ALIGN(allocator->iova_next, size);
+> +		if (idx == allocator->range_idx)
+> +			iova = ALIGN(range->start + allocator->range_offset, size);
+> +		else
+> +			iova = ALIGN(range->start, size);
+> 
+> -		if (iova < allocator->iova_next || iova > range->last ||
+> -		    check_add_overflow(iova, size - 1, &last) ||
+> -		    last > range->last) {
+> -			allocator->range_idx = ++idx;
+> -			VFIO_ASSERT_LT(idx, allocator->nranges,
+> -				       "Out of ranges for allocation\n");
+> -			allocator->iova_next = (++range)->start;
+> +		if (range->last - iova + 1 < size)
+>  			continue;
+> -		}
+> 
+> -		if (check_add_overflow(last, (iova_t)1, &allocator->iova_next) ||
+> -		    allocator->iova_next > range->last) {
+> -			allocator->range_idx = ++idx;
+> -			if (idx < allocator->nranges)
+> -				allocator->iova_next = (++range)->start;
+> +		/*
+> +		 * Found a range to hold the allocation. Update the allocator
+> +		 * for the next allocation.
+> +		 */
+> +		last = iova + (size - 1);
 > +
-> +#if !defined(AT_RENAME_WHITEOUT) || AT_RENAME_WHITEOUT != 0x0004
-> +#undef AT_RENAME_WHITEOUT
->  #define AT_RENAME_WHITEOUT	0x0004
-> +#endif
->  
->  /* Flag for faccessat(2). */
->  #define AT_EACCESS		0x200	/* Test access permitted for
-
+> +		if (last < range->last) {
+> +			allocator->range_idx = idx;
+> +			allocator->range_offset = last - range->start + 1;
+> +		} else {
+> +			allocator->range_idx = idx + 1;
+> +			allocator->range_offset = 0;
+>  		}
+> 
+>  		return iova;
+>  	}
+> +
+> +	VFIO_FAIL("Failed to iova range of size 0x%lx\n", size);
+>  }
+> 
+>  iova_t __to_iova(struct vfio_pci_device *device, void *vaddr)
+> 
+> > +}
+> > +
+> >  iova_t __to_iova(struct vfio_pci_device *device, void *vaddr)
+> >  {
+> >  	struct vfio_dma_region *region;
+> > 
+> > -- 
+> > 2.47.3
+> > 
 
