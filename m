@@ -1,201 +1,156 @@
-Return-Path: <linux-kernel+bounces-892716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0001DC45AB7
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:37:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0772C45AB1
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:37:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B834A4EA319
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:35:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C77A1885CE6
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:37:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DBCA2FDC29;
-	Mon, 10 Nov 2025 09:35:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 716BD2FFFA4;
+	Mon, 10 Nov 2025 09:36:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="kVT5Sil1";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="pXhsAYPO";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="kVT5Sil1";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="pXhsAYPO"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=realsil.com.cn header.i=@realsil.com.cn header.b="XRGZH1Yn"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E977E21CC64
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 09:35:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56B5426ED53;
+	Mon, 10 Nov 2025 09:36:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762767333; cv=none; b=LOao/CTMh1XdUuktxE0RgbH7b2AF40m/6My33RWq9bQfZN/pAUDJPZVqlTaGsFmG8FwKZ8apAOkNDI/DI+l15mSXdlca96aRO1qTfjNP+m6ObRpxtxhL4GaEEiFX+rg4F/qpb08IgokNcZIrC4aKzFVEWSrIRiisJZGdtpbh7Yk=
+	t=1762767406; cv=none; b=sKy/8Tm4JoARLdOqM8pv9eahBS47g9DnT1xYVPp+/PTLpBw/+R7TXdq+HsQrTwsI3UztgtKfOWT6udQPH5grGjR9Rk2htiILvR7JBIH74juw+5ejlERZerptMVnf6NWeDlsm39T1DAMxd4qtGzFvrVrgAgLdrI6pbotPMWXQ9aI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762767333; c=relaxed/simple;
-	bh=9kwqj9aj6lLjgNBYFTWlG1fvjyOWeyhv8PSXBDndqAo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OakYz5lr8HL7VudhP6s5beruh9GdZ8pL3H2GFVdGkdesBkmAox6Td2hA10Nr62KYFr4AAOlQgy4CG3Gw+x2jqHXT3rkpsgRbzLf77Y4DjI/uJAlxD4sqqYRyXJTj2N4tTMvTVbJ3hvQT7/cX4ZOBpSuhnRPWkmYx4GVycsQ4pMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=kVT5Sil1; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=pXhsAYPO; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=kVT5Sil1; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=pXhsAYPO; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 11507336BE;
-	Mon, 10 Nov 2025 09:35:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762767330; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ex35juG8y5PzLS1xEpnvhVvNW0k8CsFYy4jnd5xXWdU=;
-	b=kVT5Sil13igWCO5mC4nalmbXMmRlwiORqG7pfc/MTRhc68vtwxCUAleQeVTjL5nVkcOB89
-	ybB1J7NCdJSTUfFqyRlcxynm6djYoBLoht9v5AyA1q/F7cwCbEB8fCNupaqcz949lYM0qd
-	iOHokN/8thg6LP+5wBHtgYc42iVUoJs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762767330;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ex35juG8y5PzLS1xEpnvhVvNW0k8CsFYy4jnd5xXWdU=;
-	b=pXhsAYPOX9AJuE4CxrGAawfDIGcPE/XIVAgewrXDwAKoGUTKDxcmx/jkeIs3NkPeG3Zkxk
-	0GyMFL3U07VzsrAg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=kVT5Sil1;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=pXhsAYPO
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762767330; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ex35juG8y5PzLS1xEpnvhVvNW0k8CsFYy4jnd5xXWdU=;
-	b=kVT5Sil13igWCO5mC4nalmbXMmRlwiORqG7pfc/MTRhc68vtwxCUAleQeVTjL5nVkcOB89
-	ybB1J7NCdJSTUfFqyRlcxynm6djYoBLoht9v5AyA1q/F7cwCbEB8fCNupaqcz949lYM0qd
-	iOHokN/8thg6LP+5wBHtgYc42iVUoJs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762767330;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ex35juG8y5PzLS1xEpnvhVvNW0k8CsFYy4jnd5xXWdU=;
-	b=pXhsAYPOX9AJuE4CxrGAawfDIGcPE/XIVAgewrXDwAKoGUTKDxcmx/jkeIs3NkPeG3Zkxk
-	0GyMFL3U07VzsrAg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 02FBF13BF6;
-	Mon, 10 Nov 2025 09:35:30 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id +L2wAOKxEWlxbwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 10 Nov 2025 09:35:30 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 9DCB2A28B1; Mon, 10 Nov 2025 10:35:29 +0100 (CET)
-Date: Mon, 10 Nov 2025 10:35:29 +0100
-From: Jan Kara <jack@suse.cz>
-To: libaokun@huaweicloud.com
-Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, 
-	jack@suse.cz, linux-kernel@vger.kernel.org, kernel@pankajraghav.com, 
-	mcgrof@kernel.org, ebiggers@kernel.org, willy@infradead.org, yi.zhang@huawei.com, 
-	yangerkun@huawei.com, chengzhihao1@huawei.com, libaokun1@huawei.com
-Subject: Re: [PATCH v2 04/24] ext4: make ext4_punch_hole() support large
- block size
-Message-ID: <v2gmd526vjvrjgc44abhw3jw6pyqqq4ypoo6y24umttkmlbnwf@y6ma2vz4iafb>
-References: <20251107144249.435029-1-libaokun@huaweicloud.com>
- <20251107144249.435029-5-libaokun@huaweicloud.com>
+	s=arc-20240116; t=1762767406; c=relaxed/simple;
+	bh=BaEAqne1oPk1IwVfVD6PLtv16Wry2BGLYGcF46tapWA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=odIK+sFPppw0MouZjTj2SeydT2cnBnmosykUj/5mJ4noL8mNTDfnxz5okptJjP/e6FTxIG99enzPRdUjd0YeYVX6lINOZAXAJjK/7O4mkLVRO+DeXY6kle6GS3u4QgW9DsyPXDUjXoiZI0xrrGKZ3/bJA0l7/o2G2gDulhQ3Ug4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realsil.com.cn; spf=pass smtp.mailfrom=realsil.com.cn; dkim=pass (2048-bit key) header.d=realsil.com.cn header.i=@realsil.com.cn header.b=XRGZH1Yn; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realsil.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realsil.com.cn
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 5AA9a8evD1473797, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realsil.com.cn;
+	s=dkim; t=1762767368;
+	bh=aPi8sKA2n3696iIpShQ9fqyAnp/gkcf50cVksh7YaE0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:
+	 Content-Transfer-Encoding:Content-Type;
+	b=XRGZH1YnVr+ixn1RKOVy9tM8pNpsgfvPUYjvMIhhWI65hq/m1ZVCnpUiZUvzAxdO4
+	 XcgratuhhDghGVQmeqURWhagw7SJFj8hY3vpzwjtbLGyWpZWipckbjz/lWpw1Dt+yA
+	 zyHND9HwnFGYmUI984ldLwnqZnzwNSAEKyMxYUzrvdTs2K8UhZr0BjZhBsVq9oar6z
+	 ttT02LqMFWKpG9K0NEiNBNlZBXD3+cz8XTFMc7ByqYyxXOAZLG4baHT2J0wEGXlDXi
+	 1YYXpY6eSyQDN3GJ1yN4uGuDWeZGTMeUdy76tDeZv6wVriPxYRjSM6vhvYktVizhPZ
+	 Rb66eZjQzasXA==
+Received: from RS-EX-MBS4.realsil.com.cn ([172.29.17.104])
+	by rtits2.realtek.com.tw (8.15.2/3.21/5.94) with ESMTPS id 5AA9a8evD1473797
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 10 Nov 2025 17:36:08 +0800
+Received: from RS-EX-MBS2.realsil.com.cn (172.29.17.102) by
+ RS-EX-MBS4.realsil.com.cn (172.29.17.104) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Mon, 10 Nov 2025 17:36:08 +0800
+Received: from 172.29.37.152 (172.29.37.152) by RS-EX-MBS2.realsil.com.cn
+ (172.29.17.102) with Microsoft SMTP Server id 15.2.1544.36 via Frontend
+ Transport; Mon, 10 Nov 2025 17:36:08 +0800
+From: javen <javen_xu@realsil.com.cn>
+To: <hkallweit1@gmail.com>, <nic_swsd@realtek.com>, <andrew+netdev@lunn.ch>,
+        <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+        <pabeni@redhat.com>, <horms@kernel.org>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        javen
+	<javen_xu@realsil.com.cn>
+Subject: [PATCH] r8169: add support for RTL8125K
+Date: Mon, 10 Nov 2025 17:35:58 +0800
+Message-ID: <20251110093558.3180-1-javen_xu@realsil.com.cn>
+X-Mailer: git-send-email 2.50.1.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251107144249.435029-5-libaokun@huaweicloud.com>
-X-Spam-Level: 
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-0.21 / 50.00];
-	SEM_URIBL(3.50)[huaweicloud.com:email];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	BAD_REP_POLICIES(0.10)[];
-	MX_GOOD(-0.01)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	R_DKIM_ALLOW(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	URIBL_BLOCKED(0.00)[suse.com:email,suse.cz:dkim,suse.cz:email,huawei.com:email];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	ARC_NA(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	TO_DN_NONE(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:email]
-X-Spamd-Bar: /
-X-Rspamd-Queue-Id: 11507336BE
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -0.21
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Fri 07-11-25 22:42:29, libaokun@huaweicloud.com wrote:
-> From: Baokun Li <libaokun1@huawei.com>
-> 
-> When preparing for bs > ps support, clean up unnecessary PAGE_SIZE
-> references in ext4_punch_hole().
-> 
-> Previously, when a hole extended beyond i_size, we aligned the hole end
-> upwards to PAGE_SIZE to handle partial folio invalidation. Now that
-> truncate_inode_pages_range() already handles partial folio invalidation
-> correctly, this alignment is no longer required.
-> 
-> However, to save pointless tail block zeroing, we still keep rounding up
-> to the block size here.
-> 
-> In addition, as Honza pointed out, when the hole end equals i_size, it
-> should also be rounded up to the block size. This patch fixes that as well.
-> 
-> Suggested-by: Jan Kara <jack@suse.cz>
-> Signed-off-by: Baokun Li <libaokun1@huawei.com>
-> Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
+This adds support for chip RTL8125K. Its XID is 0x68a. It is basically
+based on the one with XID 0x688, but with different firmware file.
 
-Looks good. Feel free to add:
+Signed-off-by: javen <javen_xu@realsil.com.cn>
+---
+ drivers/net/ethernet/realtek/r8169.h            | 1 +
+ drivers/net/ethernet/realtek/r8169_main.c       | 5 +++++
+ drivers/net/ethernet/realtek/r8169_phy_config.c | 1 +
+ 3 files changed, 7 insertions(+)
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
->  fs/ext4/inode.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index f7ca48729738..6fec3aa2268a 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -4406,10 +4406,10 @@ int ext4_punch_hole(struct file *file, loff_t offset, loff_t length)
->  
->  	/*
->  	 * If the hole extends beyond i_size, set the hole to end after
-> -	 * the page that contains i_size.
-> +	 * the block that contains i_size to save pointless tail block zeroing.
->  	 */
-> -	if (end > inode->i_size)
-> -		end = round_up(inode->i_size, PAGE_SIZE);
-> +	if (end >= inode->i_size)
-> +		end = round_up(inode->i_size, sb->s_blocksize);
->  	if (end > max_end)
->  		end = max_end;
->  	length = end - offset;
-> -- 
-> 2.46.1
-> 
+diff --git a/drivers/net/ethernet/realtek/r8169.h b/drivers/net/ethernet/realtek/r8169.h
+index 2c1a0c21af8d..050ba3f4f874 100644
+--- a/drivers/net/ethernet/realtek/r8169.h
++++ b/drivers/net/ethernet/realtek/r8169.h
+@@ -68,6 +68,7 @@ enum mac_version {
+ 	RTL_GIGA_MAC_VER_61,
+ 	RTL_GIGA_MAC_VER_63,
+ 	RTL_GIGA_MAC_VER_64,
++	RTL_GIGA_MAC_VER_65,
+ 	RTL_GIGA_MAC_VER_66,
+ 	RTL_GIGA_MAC_VER_70,
+ 	RTL_GIGA_MAC_VER_80,
+diff --git a/drivers/net/ethernet/realtek/r8169_main.c b/drivers/net/ethernet/realtek/r8169_main.c
+index d18734fe12e4..2adffbc691b3 100644
+--- a/drivers/net/ethernet/realtek/r8169_main.c
++++ b/drivers/net/ethernet/realtek/r8169_main.c
+@@ -57,6 +57,7 @@
+ #define FIRMWARE_8125B_2	"rtl_nic/rtl8125b-2.fw"
+ #define FIRMWARE_8125D_1	"rtl_nic/rtl8125d-1.fw"
+ #define FIRMWARE_8125D_2	"rtl_nic/rtl8125d-2.fw"
++#define FIRMWARE_8125K_1	"rtl_nic/rtl8125k-1.fw"
+ #define FIRMWARE_8125BP_2	"rtl_nic/rtl8125bp-2.fw"
+ #define FIRMWARE_8126A_2	"rtl_nic/rtl8126a-2.fw"
+ #define FIRMWARE_8126A_3	"rtl_nic/rtl8126a-3.fw"
+@@ -110,6 +111,7 @@ static const struct rtl_chip_info {
+ 	{ 0x7cf, 0x681,	RTL_GIGA_MAC_VER_66, "RTL8125BP", FIRMWARE_8125BP_2 },
+ 
+ 	/* 8125D family. */
++	{ 0x7cf, 0x68a, RTL_GIGA_MAC_VER_65, "RTL8125K", FIRMWARE_8125K_1 },
+ 	{ 0x7cf, 0x689,	RTL_GIGA_MAC_VER_64, "RTL8125D", FIRMWARE_8125D_2 },
+ 	{ 0x7cf, 0x688,	RTL_GIGA_MAC_VER_64, "RTL8125D", FIRMWARE_8125D_1 },
+ 
+@@ -770,6 +772,7 @@ MODULE_FIRMWARE(FIRMWARE_8125A_3);
+ MODULE_FIRMWARE(FIRMWARE_8125B_2);
+ MODULE_FIRMWARE(FIRMWARE_8125D_1);
+ MODULE_FIRMWARE(FIRMWARE_8125D_2);
++MODULE_FIRMWARE(FIRMWARE_8125K_1);
+ MODULE_FIRMWARE(FIRMWARE_8125BP_2);
+ MODULE_FIRMWARE(FIRMWARE_8126A_2);
+ MODULE_FIRMWARE(FIRMWARE_8126A_3);
+@@ -3844,6 +3847,7 @@ static void rtl_hw_config(struct rtl8169_private *tp)
+ 		[RTL_GIGA_MAC_VER_61] = rtl_hw_start_8125a_2,
+ 		[RTL_GIGA_MAC_VER_63] = rtl_hw_start_8125b,
+ 		[RTL_GIGA_MAC_VER_64] = rtl_hw_start_8125d,
++		[RTL_GIGA_MAC_VER_65] = rtl_hw_start_8125d,
+ 		[RTL_GIGA_MAC_VER_66] = rtl_hw_start_8125d,
+ 		[RTL_GIGA_MAC_VER_70] = rtl_hw_start_8126a,
+ 		[RTL_GIGA_MAC_VER_80] = rtl_hw_start_8127a,
+@@ -3863,6 +3867,7 @@ static void rtl_hw_start_8125(struct rtl8169_private *tp)
+ 	switch (tp->mac_version) {
+ 	case RTL_GIGA_MAC_VER_61:
+ 	case RTL_GIGA_MAC_VER_64:
++	case RTL_GIGA_MAC_VER_65:
+ 	case RTL_GIGA_MAC_VER_66:
+ 	case RTL_GIGA_MAC_VER_80:
+ 		for (i = 0xa00; i < 0xb00; i += 4)
+diff --git a/drivers/net/ethernet/realtek/r8169_phy_config.c b/drivers/net/ethernet/realtek/r8169_phy_config.c
+index 032d9d2cfa2a..dff1daafc8a7 100644
+--- a/drivers/net/ethernet/realtek/r8169_phy_config.c
++++ b/drivers/net/ethernet/realtek/r8169_phy_config.c
+@@ -1344,6 +1344,7 @@ void r8169_hw_phy_config(struct rtl8169_private *tp, struct phy_device *phydev,
+ 		[RTL_GIGA_MAC_VER_61] = rtl8125a_2_hw_phy_config,
+ 		[RTL_GIGA_MAC_VER_63] = rtl8125b_hw_phy_config,
+ 		[RTL_GIGA_MAC_VER_64] = rtl8125d_hw_phy_config,
++		[RTL_GIGA_MAC_VER_65] = rtl8125d_hw_phy_config,
+ 		[RTL_GIGA_MAC_VER_66] = rtl8125bp_hw_phy_config,
+ 		[RTL_GIGA_MAC_VER_70] = rtl8126a_hw_phy_config,
+ 		[RTL_GIGA_MAC_VER_80] = rtl8127a_1_hw_phy_config,
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.43.0
+
 
