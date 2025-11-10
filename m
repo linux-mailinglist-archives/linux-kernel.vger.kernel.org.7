@@ -1,132 +1,169 @@
-Return-Path: <linux-kernel+bounces-893135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 306AEC46988
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:30:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CBE4C469BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 13:32:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E286F4EABA3
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:29:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9E053B89A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 12:31:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B88CE30BB95;
-	Mon, 10 Nov 2025 12:29:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CEB830E82E;
+	Mon, 10 Nov 2025 12:30:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vojs3Ny7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="X3OhgrvC";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="O57r6J++"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D9F42FE585;
-	Mon, 10 Nov 2025 12:29:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D89CA309F00
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 12:30:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762777786; cv=none; b=bd60k5uwBmRF3qNf2q2tuH5jPb0iVo9TEABDPaerQQCMsBD4dzXMTZv+NKXVmh0j+ZYPnqUBqF/SjSOYXqzhhSHQ4G6YsducrGC8EBoOnY6vE/dKTyrExI18/xbJp0P3lLnwJBGC94miImfazq/Bag7BeRBUWH4c0b4H2rkzn/Y=
+	t=1762777855; cv=none; b=TuBzjDqgfZhov6aUjGzAiDDxuaEIoPl55TgicAhhVnEJ2lIUzPfBLiIcl8g5zPkoeU/2WDpi0F1ppnRel9YPSCYpc72dHyaSu+44wA2WsceJBEApBa/XkdG7wb1ePGzJyjiT3gKH/h2pS7ZxLvpKw3d7o+DPm/A8ZbChB/rTa3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762777786; c=relaxed/simple;
-	bh=CHqHQvKuqRvxJRHlw0G9YM2cvk8+dDccmko+WcI99KA=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=ppM1OBJDbmTsEuOtQEURYcw4fAq0lVQiQO5SEDk7Dxke2h7/2GQn3GQwh1tJGBEcBOxOQ+3QTmc7h6wSCW+FmgquG8B3ISHLhvtp2VYAaLvcq3lEhuL8/tHaH+3z49mII3MiATS+fht15br6iemUwsU6CAZ1PnwZRCFvn/CwIZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vojs3Ny7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 384CFC16AAE;
-	Mon, 10 Nov 2025 12:29:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762777785;
-	bh=CHqHQvKuqRvxJRHlw0G9YM2cvk8+dDccmko+WcI99KA=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=Vojs3Ny7+r1bvs7xTzB+Em17tnHg4ejqwiAsKUBRNYBKq2ESJ8HM7869IXkyne2Ic
-	 kQYYlyBmu1zFWRa+XAKfg+syhhn8K7Ke/Aot2v11KTSHp0E+iUNBkh4cD9IDovyqLm
-	 I3qy+942BJ+DIqcDZ5xo75PyknQcArDRNJRFGjwoGZrHJkkyzGqNWYn6yS5v1Sfu+F
-	 T3edgQ6vZ1QXPQogA+ippFN1frbOwGnby77b3KjRDBEAT/mjKLLSmsiCAn4JPUwmez
-	 yfrUUnoHWOXIgAiE4QYBaHHoDbQ7usE/VbAQ4+F+cBaKnNnNbymnEDKXE29apneaw/
-	 xxSWFOH6NdReg==
-Date: Mon, 10 Nov 2025 06:29:43 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1762777855; c=relaxed/simple;
+	bh=W8R70bvJHJO7FmVx6tTMUO4eH6oa0bt18eDgp+HCOB8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=myPNES1nB7uwk2dQs53SiQVx69NNIVGjA9gqmXEwgxNJbyU9MfEm0MKz3PDNTCq+VVOMINSUEGTP7WOEP2EbUMpiPYNMc/iMqeD9wADJDIQ6tzPrXq4pLNo25ZzCT1AlrEEHYs+Tyn4wD3BSU4XNYuM8fy/o7n7ryjxg0QH67SY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=X3OhgrvC; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=O57r6J++; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762777852;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cZzwD8CAgHHIN7QER1FgOYrseElyIf9KwDMPjRpoiRw=;
+	b=X3OhgrvCwka9WRXqvRSr4kEqBPZIjKVIFu9C4O5g/IPB35YnGtmdLzYSmmvureXEoxz+O1
+	gfdjcm+m4QaANq/tUWK3to//PlZ1IRazTSTSwBY2aEc9Vv8qQZOyzJRXZm5Kx0siTybNF6
+	phYw8NUQHxKT4hzEC/vrHorIOmp1PBE=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-687-donkMl0dOUyv9YAEQoNQNA-1; Mon, 10 Nov 2025 07:30:51 -0500
+X-MC-Unique: donkMl0dOUyv9YAEQoNQNA-1
+X-Mimecast-MFC-AGG-ID: donkMl0dOUyv9YAEQoNQNA_1762777850
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-b72a95dc6d9so298992466b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 04:30:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1762777850; x=1763382650; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cZzwD8CAgHHIN7QER1FgOYrseElyIf9KwDMPjRpoiRw=;
+        b=O57r6J++2ilbpBCTDPRXoh03nGZq8zxrSKrxsQBHvfc1CB02HuKXjAI+UybAo/YeGm
+         ZB6xtC0gJFWmC1BNvlrB2NROypiSiSAAJ2elG1uhCig9ZNVYqkFczGj+uX2mLIzaRLFA
+         5VQw1fWBjqTE9gOGpsDl+ELJSP/gA4DC/emo7WQUju3nUi9eirXTwyHEvS6NlCvcf3+n
+         tXqt8OVC+d3hNO/8svfzU8BoCUCbMeHCIHmEsiJbvBMUTOmo8PVwVDQUP7uUAW1yEHEC
+         SE/xtQsHlrwzUJRceDYiBqukzrCT4BpXs0SIm7CVZXUj+4gh6EvH98EpR+ghuOmh3wHU
+         vLUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762777850; x=1763382650;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=cZzwD8CAgHHIN7QER1FgOYrseElyIf9KwDMPjRpoiRw=;
+        b=b0V5m9xgSoxoT0xZXBGzfK//Fml+MXi1kPx5WeoPyCgXlSMhHO62OmEBhe0YxXNblZ
+         7hd1Y12+GdNcPVtZXSUAN00K4W0YTzuWm61LpVkRDj/KTXT/x6DhqWw0SUBF60YpVQJs
+         mf6YpBcSzhTh6HE6UD7XWElZrfZ4IASxvrkA/A+xRF33N/n9kOYdsXD6QwK0R8JWeHc6
+         z9fmyw8+PmCfXxD3RoOGSxfUhB+n32bL2kLZSoE0c2mCkH+iTcibu1kxChtoxMRk85ax
+         g8DU5QibSgWChyamFdww9Z2xEvJA2vjvw82OCAfQXc3BFbmormCLKOFWk3UPwWwXs8gU
+         IaKg==
+X-Forwarded-Encrypted: i=1; AJvYcCX2+/UDF8KvcepRh4EeeKMqgI7NpYe0fBMla4AsbfDgS+GuXRta6BCCVedyHjmM3r2bM2m5ttkr3Gm2FVc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxw0hmfccfhLwkiFtgJiPA1iNOBQTrgjKLSK/CkIGpFZnTRqX6E
+	oM4aZzhmdj0OjkqvIiNzDhLYIwBVb2gYUpNfghmhYEt0YaQZR2pRKrQjFZTmdEnUiZUO7JGpJCc
+	jEibpiJ1KqldFBJBFwKnCC47qMzs3eXKp4KBYpsgr7oRc8Hq6nFAx3EYpCK23/B1Xih5F+BkpAZ
+	3JBzxAoiq8MEvzqdicfrp9x6bNsWadnMFtCZJAByuR
+X-Gm-Gg: ASbGncuzGoOqFIkUZPs3QWaIcbcLyjmTw8JtS0HCh3p/x/nGPKC/HNphl8hf4K9VPQi
+	4y5Fu+dZQ1YGfIwwfIVKIgf21PP7OUC2378ZGZ3qSx4IAW8BqXLKa5oEXWuJ7OjH+Al9yKVSZ2c
+	G1x4qHT9zakp8e2dPkdtQUXISm4j0eRiDEOkzlm9q5uC5Q6bt8i//iwlSNdNJ9gNfDD/WwYdUCb
+	nb68gRt+lik0Xf9
+X-Received: by 2002:a17:907:6ea2:b0:b71:df18:9fd6 with SMTP id a640c23a62f3a-b72e04e2f9fmr796238466b.50.1762777850314;
+        Mon, 10 Nov 2025 04:30:50 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFW79YXbAPd7W8RNSghkp1pkzH62zBSAQuhhn9/CPDDGq4jrM89brzjtSfduo2ZuurNAnWCmxoqBt5xe4Hhbow=
+X-Received: by 2002:a17:907:6ea2:b0:b71:df18:9fd6 with SMTP id
+ a640c23a62f3a-b72e04e2f9fmr796233966b.50.1762777849827; Mon, 10 Nov 2025
+ 04:30:49 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Andrew Jeffery <andrew@codeconstruct.com.au>, netdev@vger.kernel.org, 
- Andrew Lunn <andrew+netdev@lunn.ch>, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- taoren@meta.com, Po-Yu Chuang <ratbert@faraday-tech.com>, 
- Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, 
- Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, 
- "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-aspeed@lists.ozlabs.org
-To: Jacky Chou <jacky_chou@aspeedtech.com>
-In-Reply-To: <20251110-rgmii_delay_2600-v4-1-5cad32c766f7@aspeedtech.com>
-References: <20251110-rgmii_delay_2600-v4-0-5cad32c766f7@aspeedtech.com>
- <20251110-rgmii_delay_2600-v4-1-5cad32c766f7@aspeedtech.com>
-Message-Id: <176277778351.3693581.6347765163045847296.robh@kernel.org>
-Subject: Re: [PATCH net-next v4 1/4] dt-bindings: net: ftgmac100: Add delay
- properties for AST2600
+References: <b44ec08fbb011bc73ad2760676e0bbfda2ca9585.1762434837.git.rrobaina@redhat.com>
+ <a396108e2b9f19f0c453a44c8e7be873@paul-moore.com>
+In-Reply-To: <a396108e2b9f19f0c453a44c8e7be873@paul-moore.com>
+From: Ricardo Robaina <rrobaina@redhat.com>
+Date: Mon, 10 Nov 2025 09:30:38 -0300
+X-Gm-Features: AWmQ_bkxQQWcfjx8r_dF3delGcKOWNjcP730Sx0eYw6APmUwazLTOE5cgyXbh34
+Message-ID: <CAABTaaCgFUUNAcrPM5FdskoACcp833kfpM7xv0JNZ0+ZxG+v_g@mail.gmail.com>
+Subject: Re: [PATCH v5 2/2] audit: include source and destination ports to NETFILTER_PKT
+To: Paul Moore <paul@paul-moore.com>
+Cc: audit@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	netfilter-devel@vger.kernel.org, coreteam@netfilter.org, eparis@redhat.com, 
+	fw@strlen.de, pablo@netfilter.org, kadlec@netfilter.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Nov 7, 2025 at 7:46=E2=80=AFPM Paul Moore <paul@paul-moore.com> wro=
+te:
+>
+> On Nov  6, 2025 Ricardo Robaina <rrobaina@redhat.com> wrote:
+> >
+> > NETFILTER_PKT records show both source and destination
+> > addresses, in addition to the associated networking protocol.
+> > However, it lacks the ports information, which is often
+> > valuable for troubleshooting.
+> >
+> > This patch adds both source and destination port numbers,
+> > 'sport' and 'dport' respectively, to TCP, UDP, UDP-Lite and
+> > SCTP-related NETFILTER_PKT records.
+> >
+> >  $ TESTS=3D"netfilter_pkt" make -e test &> /dev/null
+> >  $ ausearch -i -ts recent |grep NETFILTER_PKT
+> >  type=3DNETFILTER_PKT ... proto=3Dicmp
+> >  type=3DNETFILTER_PKT ... proto=3Dipv6-icmp
+> >  type=3DNETFILTER_PKT ... proto=3Dudp sport=3D46333 dport=3D42424
+> >  type=3DNETFILTER_PKT ... proto=3Dudp sport=3D35953 dport=3D42424
+> >  type=3DNETFILTER_PKT ... proto=3Dtcp sport=3D50314 dport=3D42424
+> >  type=3DNETFILTER_PKT ... proto=3Dtcp sport=3D57346 dport=3D42424
+> >
+> > Link: https://github.com/linux-audit/audit-kernel/issues/162
+> >
+> > Signed-off-by: Ricardo Robaina <rrobaina@redhat.com>
+> > Acked-by: Florian Westphal <fw@strlen.de>
+> > ---
+> >  kernel/audit.c | 83 +++++++++++++++++++++++++++++++++++++++++++++++---
+> >  1 file changed, 79 insertions(+), 4 deletions(-)
+>
+> This looks fine to me, although it may change a bit based on the
+> discussion around patch 1/2.  However, two things I wanted to comment
+> on in this patch:
+>
+> - Please try to stick to an 80 char line width for audit code.  There are
+> obvious exceptions like printf-esque strings, etc. but the
+> skb_header_pointer() calls in this patch could be easily split into
+> multiple lines, each under 80 chars.
+>
 
-On Mon, 10 Nov 2025 19:09:25 +0800, Jacky Chou wrote:
-> The AST2600 contains two dies, each with its own MAC, and these MACs
-> require different delay configurations.
-> Previously, these delay values were configured during the bootloader
-> stage rather than in the driver. This change introduces the use of the
-> standard properties defined in ethernet-controller.yaml to configure
-> the delay values directly in the driver.
-> 
-> Add the new property, "aspeed,rgmii-delay-ps", to specify per step of
-> RGMII delay in different MACs. And for Aspeed platform, the total steps
-> of RGMII delay configuraion is 32 steps, so the total delay is
-> "apseed,rgmii-delay-ps' * 32.
-> Default delay values are declared so that tx-internal-delay-ps and
-> rx-internal-delay-ps become optional. If these properties are not present,
-> the driver will use the default values instead.
-> Add conditional schema constraints for Aspeed AST2600 MAC controllers:
-> - For MAC0/1, aspeed,rgmii-delay-ps property is 45 ps
-> - For MAC2/3, aspeed,rgmii-delay-ps property is 250 ps
-> - Both require the "aspeed,scu" and "aspeed,rgmii-delay-ps" properties.
-> Other compatible values remain unrestricted.
-> 
-> Signed-off-by: Jacky Chou <jacky_chou@aspeedtech.com>
-> ---
->  .../devicetree/bindings/net/faraday,ftgmac100.yaml | 35 ++++++++++++++++++++++
->  1 file changed, 35 insertions(+)
-> 
+Thanks for the feedback! I'll make sure to follow this guideline from now o=
+n.
 
-My bot found errors running 'make dt_binding_check' on your patch:
+> - This isn't a general comment, but in this particular case it would be
+> nice to move the protocol header variables into their associated switch
+> case (see what I did in patch 1/2).
+>
 
-yamllint warnings/errors:
+Nice, thanks for the tip! I wasn't sure which style to use, so I
+decided to use the classic one. However, I do prefer having the
+protocol header variables within their associated switch case, too.
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/faraday,ftgmac100.yaml: properties:aspeed,rgmii-delay-ps: 'anyOf' conditional failed, one must be fixed:
-	'maxItems' is a required property
-		hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
-	'type' is not one of ['maxItems', 'description', 'deprecated']
-		hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
-	Additional properties are not allowed ('type' was unexpected)
-		hint: Arrays must be described with a combination of minItems/maxItems/items
-	'type' is not one of ['description', 'deprecated', 'const', 'enum', 'minimum', 'maximum', 'multipleOf', 'default', '$ref', 'oneOf']
-	hint: cell array properties must define how many entries and what the entries are when there is more than one entry.
-	from schema $id: http://devicetree.org/meta-schemas/cell.yaml
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/faraday,ftgmac100.yaml: properties:aspeed,rgmii-delay-ps:type: 'integer' is not one of ['boolean', 'object']
-	from schema $id: http://devicetree.org/meta-schemas/core.yaml
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20251110-rgmii_delay_2600-v4-1-5cad32c766f7@aspeedtech.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+> --
+> paul-moore.com
+>
 
 
