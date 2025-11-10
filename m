@@ -1,200 +1,371 @@
-Return-Path: <linux-kernel+bounces-893333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65107C47197
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:06:52 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DF16C471A3
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:07:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E41F3B5E46
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:06:23 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 64E2D3497E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:07:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4638E3126C5;
-	Mon, 10 Nov 2025 14:06:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04CBB3126C5;
+	Mon, 10 Nov 2025 14:07:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="gr/BdksQ";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="G2wfs4g0"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="wdHhURlI"
+Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11010060.outbound.protection.outlook.com [52.101.193.60])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20F933126B7
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 14:06:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762783577; cv=none; b=CXMxxZoS4qSHF6GU2rn9uHZyiXuDVgEIsxszw+4UoL3WfRb5ZRHah7xtOJWTskAdsugIb/w6HGzJ/dzHSZRNKjAEgPMDKUvqk88X2msDJ/h1MoAwmGC5gpPdomklJmz6dhnz5dIwbvxlkAQeXJILwWHm8lDmWwrns8LZQoKtuNo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762783577; c=relaxed/simple;
-	bh=L/CmvJYCyYfrJvD22vpA92Xdgu8gpWQ82QXdZUA9Vz4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cd8zdZr4VOwkv/ef6GOgZWCvYfGwWoHL+ex3TImtzAWdxkDhjXDzaN7EeQgaBRAT36/L2Q7LQ9D9e7zHdZOAh9XpmE6gHjPdhKw0hwp8PT/zPmG8ezcWhNzSCExlJ3Fk7Z4BQSwtJS0zsePi5zIZj8bxK8K2inv7xEY8MfwML/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=gr/BdksQ; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=G2wfs4g0; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AABZpWl3271842
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 14:06:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	PUXRgMzr0O6XUgHM9OyGr8SqbOOjNjkdqNOeZDXnadI=; b=gr/BdksQK+r5Br+N
-	S4urR3GLlEvoohCwwxlyiz1AVcTHVzu20BTfThsupKInBX1hT+Vri03YGUz5z+BH
-	X9k+wlHlRSPZFtLb7VvzcKQDXbEuSy7QsySywxs06qVdui7PYfmtbE8Khq90afVg
-	fwgfSRIYCrrG/jI1DyYlfVbE2zNcxrDoT6A4A49O0aXGt5RYbguaHKKuvKDadKB7
-	DpWRd9IGQgS4AnwvPbF4vI4+K7uCrWCj6NFdrRgfpAR/uU6GnR5gzdJZTNomvs9L
-	wwrZq8JxP1W2NNpGocNfbQFhBulX8DFEmyfBzKwYDopDkqfLB7qTXfOtkacs0L4Q
-	Wkx9HQ==
-Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com [209.85.215.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4abfafrcyx-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 14:06:14 +0000 (GMT)
-Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-bb1875e1416so1269718a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 06:06:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1762783574; x=1763388374; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PUXRgMzr0O6XUgHM9OyGr8SqbOOjNjkdqNOeZDXnadI=;
-        b=G2wfs4g0QnmH+BgKnZlEjVrT7JIW1UDCXs3ZjFz5okHuY+G0vYw7IhsJ8mf5RHQdYM
-         kYDE1rp6tPi5IirrqN9UfllIOKSURW03uaSCPG/aIsLRnLgIxy/8zCnH+HCXqSCEHFrt
-         moO0ADHPYh5FyyGXeb8Q+ZFwA0onjVsrZAR0EPI7bDrNZefE5JJg3xW0kE37ZNEDJdw1
-         mR2IYLjcpQgM25Pk/fYobRriPTnvT4qYZQ0bdePlLBYB3P3gdPQFwzCqAy05bofzydgT
-         0aXQ3Crx82/YYlJe1CenvVxOSTyy7GYrmru3Uu5izNfwePAWGyoskibfgIqVV+OQK9kp
-         7Lpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762783574; x=1763388374;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=PUXRgMzr0O6XUgHM9OyGr8SqbOOjNjkdqNOeZDXnadI=;
-        b=xBc28HV9BWJy/IxPbolMemJF1RXkbXBjyUlfQtpVM1U8G013FahScNhQHO5w1Kdmgz
-         JDjW+Fb/tAzt88U0c50RM6YjrqjcKqtmm2V653AMrmS41d6slUos5KcR2KPu2oCkYMVQ
-         F+n1wPkXXctAut+z0aLzWjH5QLCCTlm8cazUjxrZBrcmFo/rxcAJmAzAt/zxegPWps4V
-         3vt8KVjuH0K1oWGo3hH5Q2/dBr1s1knLvyyFXH1xNgwl6kTwqq0oDs/WX3/uwiZiFZ2a
-         oNIrRn4q73/0ELhgurMqhPhysHBXkUEwKZV4oeEnXDZ1gGDsaaNZX/lc6iCLigVLy2Z/
-         VxDA==
-X-Forwarded-Encrypted: i=1; AJvYcCUoovS0egBudtrEQa7x5II8PZG4tBzpa6q/186wCkGGOux1SQX5oewKjCVwEqlaUS8Ovdm/ryQhmrtkflk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQiCEb6gxcoK89O6j8tIm8fOuNjCOA1esdclj5pkmO+Or0xkNq
-	vXSh7LvJHhKSeULBRLCjXrNK5CkuFbu3v7DrdQANqekm2pyY8C6ysVJVquBc5AKgQs7PqQTpRD/
-	b5D1G//MT4kpRQ9L27Zp6yZoDs/WgJIXkD/zfubv8FQfp4+8TBDOHQDWKa2/saouGIHkRCdxxYw
-	CGF+wfy9kF1DLJwxrzagVXtvg9TERG0V5ppouyqdMYTQ==
-X-Gm-Gg: ASbGncutdzKk617TUtJ7KHOf9oNA8YEanxo2FLIH1EulMTk4X2DlMZx5z/zLo4iOvt8
-	BtCMaxK6vW2lHEwzre/NSz/5t2fA/u2FgNehJtqHiwaE20LuZIfQAjoM+tMldyUgPIFyVjpcdIy
-	6d/5NwVYADCOILChBhDx2cE9A0GmF6N5FNVgJ32HjEN/Qa/Rl7M7orauFV4N0Xo5ngTR/vFdGiw
-	+l2dsU9X2RBGHy5
-X-Received: by 2002:a17:90a:e7ca:b0:340:f05a:3ebd with SMTP id 98e67ed59e1d1-3436ccfe431mr8790505a91.28.1762783573508;
-        Mon, 10 Nov 2025 06:06:13 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEcZK/I+Oqj7cXYIYbymAdZsmrBRsLxABQMipK9Bn1Ts4Upxyiuw930Gmr6hZFgRBDHnDCcsb3fu4H6bnas7ys=
-X-Received: by 2002:a17:90a:e7ca:b0:340:f05a:3ebd with SMTP id
- 98e67ed59e1d1-3436ccfe431mr8790452a91.28.1762783573001; Mon, 10 Nov 2025
- 06:06:13 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09FD622256B;
+	Mon, 10 Nov 2025 14:07:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.60
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762783658; cv=fail; b=CZa14R0hj8f+HSmh/gxCFLpzm9vgNqT02N8JZKMOZa1Y5VmciBIRuRTjUxITFHVP8VmtvMMoUjFhsBQm9WluMQeya9WasFIl85kVbIrMwPWvs6FYtsi5cFQe0niF6Zhp243/ZLKkpP1wAaK5K7OL0upOcjQPI5cECOuysr+ZoU0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762783658; c=relaxed/simple;
+	bh=HHKkh+gRVCLahjDLjtOjnxBqVMRfD/HVnfkZlEIT6WI=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=NcCg/2cXXDIZlV9X6EEauHUpGEuA/7WM2lvL9m7SzIDFp6GpNQx/dz3mVxE8g0OQw+VOWjTE7/y5peXPK8NKWTXYcY6yxrwiw0hDdwUVoH7/plMzy6fdyCUV8Q5c7u8zS6rtv42cFjS3EpHMVYS5N97UzwvQU914soSTCfAsep4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=wdHhURlI; arc=fail smtp.client-ip=52.101.193.60
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=H8TYX4H9NZDsTb/ZY/pMZNnE1RGS6yNe9w5fUiN9gid05Ftkmw5JsPh3fQk5ucUiRDEdVZAP9e6bmBZcMl8fObMqr+oGuT3LLVAiQrRIwwc34477H14UDWGjdpv4hVVvf+Hk64VlOoB2hfb4dB0rGmjaJOvMlABg7v4iU1oeKFyS6SrrpciLZT2wnh06F2bzOUz24nex1ir7qjMs0tcHcYONEEYXOiMbLUsgQb+M4GD88Wa7c3SdQSdTBxREG6SpyY8bKqR44MejOMRRcRb658a5tgvu8M7Tx6K7IXVQMZmYjHli8tIr+epvfDynCei1pwM3mP6nFffNVOec6aPEgQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/ba9mIJEbdNiJ7qNuUI4ONcvd5pqBELygQtSH7COPXY=;
+ b=ebzo7AtNamth5wimwl1pq7ZChFl2maR5I/Hxhheukqv+9KK5gSoR2T0krnTUaWKzTdAo+poKDgCWZeMHpGGlhy6cFfvPPK0KM7pn2OBLzzEyqUiHRjppC4sh0YX6zzI8/4HVoLTG1B//GZ+a9mtkAikiV7MAc4N0oTdeeQQy+4/L4AQUMKR6b/gpNHgaXGGOy2qTd8+4MEEJPwPaOP2iQ5n+GEFkXX3wH4+kyGoSEurBw/n64sma71YyYbQsxBnY02tUCd1cSGt3ThQlevg1rGdAoUH5vkfgke33WLYPWkjq3MMpC41jlqEGKfsqMu0fIHaZCecIA7boFGQEhYNByA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/ba9mIJEbdNiJ7qNuUI4ONcvd5pqBELygQtSH7COPXY=;
+ b=wdHhURlI1ucD+0/DavysqKxpRx0yhIdDXP+5GfzV+YygmU8D+JTtddpvv2fPdErgXZ0IQzSy6wVo44gqy/8GYWAmYMMuH6mkwDe9B69aaUdaWAb2a5grN2mkg4qdgowpPVDRKGUpcK7NRbJP2RIeXmoPVikFYnL8PVDUj05AEcg=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
+ by BY5PR12MB4131.namprd12.prod.outlook.com (2603:10b6:a03:212::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Mon, 10 Nov
+ 2025 14:07:33 +0000
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5%4]) with mapi id 15.20.9298.015; Mon, 10 Nov 2025
+ 14:07:33 +0000
+Message-ID: <2c72eb6e-7792-4212-b06f-5300bc9a42f9@amd.com>
+Date: Mon, 10 Nov 2025 15:07:28 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/sched: Fix UB in spsc_queue
+To: phasta@kernel.org, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Alex Deucher <alexander.deucher@amd.com>,
+ Andrey Grodzovsky <Andrey.Grodzovsky@amd.com>, dakr@kernel.org,
+ Matthew Brost <matthew.brost@intel.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20251110081903.11539-2-phasta@kernel.org>
+ <ee63ca7d-77d2-44d8-973b-7276f8c4d4a5@amd.com>
+ <ee9fe54f3764bc0ee4ebafe5c10ad4afe748ef19.camel@mailbox.org>
+Content-Language: en-US
+From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+In-Reply-To: <ee9fe54f3764bc0ee4ebafe5c10ad4afe748ef19.camel@mailbox.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: BN0PR08CA0015.namprd08.prod.outlook.com
+ (2603:10b6:408:142::31) To PH7PR12MB5685.namprd12.prod.outlook.com
+ (2603:10b6:510:13c::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250925-v3_glymur_introduction-v1-0-24b601bbecc0@oss.qualcomm.com>
- <20250925-v3_glymur_introduction-v1-18-24b601bbecc0@oss.qualcomm.com>
- <09b2ee28-ee2b-46a8-b273-110fb0b4d8a7@oss.qualcomm.com> <064d2a33-22e7-446e-9831-a390510698cc@oss.qualcomm.com>
- <20251103102651.ywxi7lqljsmjg7an@hu-kamalw-hyd.qualcomm.com>
-In-Reply-To: <20251103102651.ywxi7lqljsmjg7an@hu-kamalw-hyd.qualcomm.com>
-From: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
-Date: Mon, 10 Nov 2025 19:36:01 +0530
-X-Gm-Features: AWmQ_bnH5-5jNfhWCOUYTXVu7I9tmNhczMz2vx19inA6uDgAVRKJo8Gomv4g6H4
-Message-ID: <CADhhZXaD=ut7MCQD_uEvY1ew7o=rqUUtviaXwQSkE-nmvCxMhg@mail.gmail.com>
-Subject: Re: [PATCH 18/24] arm64: dts: qcom: glymur: Add PMIC glink node
-To: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
-Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Proofpoint-ORIG-GUID: vU1wTs3iTVMYNI1P0tq5Aq31VJjuXZ6r
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEwMDEyMiBTYWx0ZWRfX3K3ZcASNzTLO
- mQ7VfK0Dm4VkY/fNOcpGDYSmpA0i2/CCNv43CwNw1mdlc/Qmf+UQXe01HP3obXiTHLq3LR7iOha
- MUtkckUm2OHRDzYQ8CjlmBdCDQjh5cEEUtNeEHcUgiFDUUeuH+hCdLZyaFn2NEJixZvR4F5R3u/
- EBVfoea0Rjnuj3wJH+ZOUBR0bP1uNNxXdckyBuFyBDg91o8UTbbSydiabAxmXlyht7qThTiJ0M/
- L5Co2ldlrzoD873voHo+/qQ5QonbrKJAQ9n4BL7i9TmpbCbclNJn8zXqlH8g+/MYbZd5qFJ1xJh
- 4A/bKPFPe1TzUM9K48aZzKulQRvRLETilQ+P5Pk4io8ZwRie5q0ZKxXaMVr5MAxe0Zx0K5Z1Vze
- B1PmuP4cb4ArkGLfFjRumsaOyK5KVQ==
-X-Authority-Analysis: v=2.4 cv=UZJciaSN c=1 sm=1 tr=0 ts=6911f156 cx=c_pps
- a=Qgeoaf8Lrialg5Z894R3/Q==:117 a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10
- a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
- a=_wFouAXmutvAtFiYnf4A:9 a=QEXdDO2ut3YA:10 a=x9snwWr2DeNwDh03kgHS:22
-X-Proofpoint-GUID: vU1wTs3iTVMYNI1P0tq5Aq31VJjuXZ6r
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-10_05,2025-11-10_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 clxscore=1015 suspectscore=0 malwarescore=0
- impostorscore=0 adultscore=0 priorityscore=1501 spamscore=0 phishscore=0
- bulkscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
- definitions=main-2511100122
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|BY5PR12MB4131:EE_
+X-MS-Office365-Filtering-Correlation-Id: a57a32b1-8177-4760-e4a3-08de20627e42
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Z1lLUjQ0ZkZmcUxCMml0UjFSdHdLdnZJZGxzRjl4ZWdSL2xNbEh5eTFjb3Ra?=
+ =?utf-8?B?ZE1zdmNzaE44cUZwMTY1VFVzMUIvUXVQdzEwVW5COUk2cGQrZW9uNUdsd1JW?=
+ =?utf-8?B?dkM4U1p2RTRRWGIxSTZKQlgzUkwvYytmd2NnZ21aZWpPSVhWWVk1NittRnNP?=
+ =?utf-8?B?MEdsc240Wm43c0lKcXgyWmc4blRTT2o4aG5hT0NRZUtQSUpRaktmdklHMHRi?=
+ =?utf-8?B?bmkvMjY5T2Q0bUhOV09FUnBSZlZUeWVNcWtwWG0zQW8rNCtkb3lBV0d2ekFF?=
+ =?utf-8?B?VU9Ndzd2ak9kSDJEcmxsYzVqVzBZTzd1L2piM2dyTUZWL3h2dmZURHhNU1NG?=
+ =?utf-8?B?MmhkN2Z6bUV6eldhbE5qdGpjNUl2dlZCdG9WR0g1SDd6d0ZBRGlHODRWaTVw?=
+ =?utf-8?B?YkI2TEplaU5ZUzM1VkxBNmlVajVFMWQwVisvYlRhUTN5S01VYmFKcUtzcWtq?=
+ =?utf-8?B?WjlXMjMvcE5rZVNXdnNtUjdjKzVxR0ZvZGt0K1lsTWpBUG4rQk9HQWszUTdO?=
+ =?utf-8?B?ZUZ5WG54KzZDOXlIQVUvZXZrVytlSHVTdTVYYk41ZlBGaGY3cG1LMkpPY0d5?=
+ =?utf-8?B?VElEMjBITzlMb2E1d0tMUEYvR2M4LzltSUZiSlUxcldHUkUzazd6dGVFOWt5?=
+ =?utf-8?B?TVZQcHpSc1Y3Q0JRTjJoL3A3N3JqV2ZhUWRVV2hsREtYZmRoMlg4S0M0dS9P?=
+ =?utf-8?B?UW00bVNqaXp1aHhJMkROQWplWEJCeW9CU0tDcXkvUjJ6bXpBdm53VjhnOVZR?=
+ =?utf-8?B?UWl6WFJ2VnFYL0h2aHNSZDNCVTZ2OVpzamxZVytvNlRjNFBoWmI1N2xtTzY1?=
+ =?utf-8?B?a1Fza05xV0t5b29LaUZHUXBaaGNyL2NxSDU1dDRRRFVuRHVFcm1ieVBabXpF?=
+ =?utf-8?B?WTRsaUlwTDc5ZkRrcW1GZDVJTlFEOUNGYWRLejE5MnFSaUpxQ1U3NzBqRks1?=
+ =?utf-8?B?Q296OUdMTlBqZjBXZEtXNzJHcU9LV2Z0MDdvaHQ2VTNuM0FMK0hrYTdvclR0?=
+ =?utf-8?B?bWl0RzRHWEJzcFRoZDduWm83eHdkVU02UkRpNEI0OVhkclpxV1FQbGVIL1ZI?=
+ =?utf-8?B?U1ZmOUZtWVNCYXVieG12YlVPRHNSRDMwWVBKckprdnNmM2xCbE1NYzRMM0Y5?=
+ =?utf-8?B?aTlqelpUZHFiOTc5cnpYU25PUW5JeVF0U01OMmk4c2hJYmdRVDk2bWtiaW1W?=
+ =?utf-8?B?bmpVUG9aeW9YMVhwWXMxMGdnaUFYUWxQY1ljS21JV2RRd2pCKytaSStFUjFx?=
+ =?utf-8?B?MGpTTkJtSDNZNkQvUHJWbnVtVU00NzZwN0R1Tms5alZQbFAyK0lWWC9WK2Fl?=
+ =?utf-8?B?Y1FWRnhBYTlRekVvbkdPUXFNMXFTUDBKNkNLNG9QZUYyY295SUovZ1F3NExa?=
+ =?utf-8?B?ZEZweFNSckRhQmhuL1lQdWhsN1JnSUJMd1VsVmVTcElYVzExUDlEYnBmTlN4?=
+ =?utf-8?B?ZW91ZkJyZ1NSLzBBQ0h5RmZZTmg2bHU0Y05FTy9vdk9Rd3RzelZpM043SkJW?=
+ =?utf-8?B?OGd3ZDVPVkl6Zlp6V3JWdmMxd05jTko2WGpUSjNST05WVmdqZjYrOHd4b0Vq?=
+ =?utf-8?B?MDVMTHhuckxMdmNGaTRNYUM5SGx6K21PdUk4QlFYckdQcGdtWmlhZEkySm1o?=
+ =?utf-8?B?K2U3NnY2S0hPUFB4VkR3NzdZTkNMRDN5N0hGM1lRQ0tFZmxOM3c4L0ZOeVFl?=
+ =?utf-8?B?cXovVjFtbFppTFJKbExCTnhTaWxSc2t0WGtwbml0WEgxQkUwZXFibnJEMXJ0?=
+ =?utf-8?B?UmtLdkZYVnhZcVFZcXFoVlpXTk1jRjlNcjNTNWNKNVNFdDV0RzdlTUhqSFlO?=
+ =?utf-8?B?bkYrTllLWjQ4UEd6RURCOURyUHRjWWxZNGtkMVR1T2hmVVFSL3VNMk1KSGk4?=
+ =?utf-8?B?MVI4Z0EvY2N2ZmpzVEVZRDFaa3FiUElKb01kK2YrcThLUHc9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?bE83MlFiYW4ydk9uck9FUnFBMFp1UThJWWY5U2dsSUVWRTVVL0RZUFdFQThZ?=
+ =?utf-8?B?d3JWWURjd0k1QWk4aStqWEF1Ykh2OXFSTys4TjFMZUhibHYvcDB3UWNxNlgr?=
+ =?utf-8?B?RVROL2pJeHhRN0VFNGpNY1ZIS2dGNXdIVXpQUENIdHdmSE8xSlRBRkxsWVl3?=
+ =?utf-8?B?VzlTZXFjTmx1V3pDOUhNT0Jybk8vVGlIbHdyQ2NnSnYxZGRFakZ5N3o3VVVY?=
+ =?utf-8?B?Ynh6YkFoRzVhZmhpLzdad3U1ak1YNzFiSyt2OWdhVjVKMURHNGtVTXVBdVdj?=
+ =?utf-8?B?REcrK2RzRytRWGhsdDgydFo1MDJkbE5rNlNVbzEwdEFEZVNDVHFKblZuYnlB?=
+ =?utf-8?B?cDluWUFTbGhkL1I2UTZMTjR1TUhNaE5uM3h5Y3FKdEs0N0NsbGFmaloxbDAw?=
+ =?utf-8?B?MlRCVEJZNkZ6c2YwMFBSam1BVWZnUkRPZGNJOHFTWTVQSVZFeE4xVU91aEty?=
+ =?utf-8?B?cmx1ZGYyY0hPNitqaElxeXo0Y0Ntb1h4UGswaTJFYzFldUxkWFYzdkErcjRk?=
+ =?utf-8?B?Zkgwb25SSGxGbU5Zd2xoWWs4SjF2NmgyK0IwTmZXTDhLUG9DcG1STHpUZUhG?=
+ =?utf-8?B?c0cyeDJ3YmU1SWU2ZTBBWkxqS1ErVmF6bmtSNklHcCtkajBDSmJDOFB4dS9x?=
+ =?utf-8?B?bGQ5VGp1S0k4UE5RQ2E0MlhIeFJqVktJQ0VyMkZDWnl6ektEZHhscWhCZDdQ?=
+ =?utf-8?B?REJDNHJBRk4rcVNtb1p1K1FzSFBLQmZKSzg2a09DbUlMeDZxcXhvUXJnQU9i?=
+ =?utf-8?B?T3F5RmczTWxzVFNPa1pKQmkrdXozaDdwQlp6U3RZUVlnalpxOVhBT1lOdWRH?=
+ =?utf-8?B?UkNPK0lFUitqRVkrQ29IaUNOSnFDYVp3OWdUcjNQZFBlcU96TjZmR3pWWFJB?=
+ =?utf-8?B?eWV4dFVDZG9OVEw4UkQraC83RFM2bWdnSWl3Q05PaFhneExRWGtBay9RZ2pI?=
+ =?utf-8?B?RWc1WG1GN2VYQnkyaTQ1QUkvVlo0Y24rell3VnNIOFJSUWpmT3lsRGVQalFY?=
+ =?utf-8?B?WjE0UEZ4M3U2VlB5UUdEc0lsVkxSR2wwK2lIUnh5MTI0cm9laVFIeENBbmU4?=
+ =?utf-8?B?ZUhyZkU3d3RQYnpEMjVDNklQUkVYUzJHKzhCdlp3T1lXSVNHeFZHZ1c0bVNP?=
+ =?utf-8?B?SHR0QmwwdFJreUNOZzd0emVoOVAxRkNRZTVLYTk3SDBHMFIvWjFKNHhndnRH?=
+ =?utf-8?B?aGNSRmNyQTVYdUNIQ3FjeTFvLytDNTFFc1JZbFZXOW5vc0FYNTBkMzBxWkQy?=
+ =?utf-8?B?WnFKRHJ4RlROOXd4Mkp1MnBZRjVRTkUvd2dudHkwZTJxTWo5WUFtRDQvbVkz?=
+ =?utf-8?B?ZXcwZEZlQVVETWNZVGNzNFFocEwrZzNtbktQaWdlbkR4VGlJN2FVSXNPUWJE?=
+ =?utf-8?B?YjZndDRka3F6dlRTMGcwaGN2ODY1UUNTbG8zc04xc2lCRnVpRDBtTzZZek5o?=
+ =?utf-8?B?SWQzSzRJa3F1clk0Yk1KTzZjVHR0cEduWHFjQWhWb3pBZTFORTBHdnNZQjJS?=
+ =?utf-8?B?ai9GWm9YM0UrUmVqS0JHSzNRUmhlYUV0eExnU2t2eTJjZWZMUmVzdDQzOVg5?=
+ =?utf-8?B?Uk42R3FhMURFTE93UmhGM2daTmxNZk5EMk1DVDRwYmZvTG1NM2tTWEhiVEE1?=
+ =?utf-8?B?dTFqb2dkT1A1UUhwemJlaFNlVitrUDN4OVM1S01KWUE0NFUyNWhJWjU3MEZI?=
+ =?utf-8?B?UzBaYjIzRDVoZ2xTUHlhYlNya1o3SkdDVGhodU1HUk1NREQ1YjNiVlJ4MDlG?=
+ =?utf-8?B?N1JuYVBGeHY1NjNTOHJ1RExRU1UrbldwZ1RpS2MrT0tNNWVud1RNS0lZdlV4?=
+ =?utf-8?B?NHpnU2E0czVLb0lJS1RWMDlmeEJBVm9HMjBWcXVqQ0NOOFVjR0VhOThrUVRY?=
+ =?utf-8?B?emxXaHFuc3VWdVl1V3d4dCtUMytGRnlRN1pGTllPTjliL3UxMjFYQ0tSaTZa?=
+ =?utf-8?B?Z0xOYnp4YzNCNWorWk85bUh0Zm53bzlXN0VSdjJxOWN3Zlg3WmRaSGNFOHMw?=
+ =?utf-8?B?YktiNjZwTkZJZS85a0xKaGs1S3hpSzV3SUswcHgxVFF1TG53eGJEQ0pwNHJJ?=
+ =?utf-8?B?TWw3ckNkcTd2aTh5YWVhYlJkSHhEQnRmNmZob3NGczlIMmU1T2ZVS3hFUXRD?=
+ =?utf-8?Q?1hLeC879YCvhcaO5eI9Dj6Bhk?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a57a32b1-8177-4760-e4a3-08de20627e42
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Nov 2025 14:07:33.2828
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: drTCEARqNW4ibD43YzTUV4xqGmlfImzQbtpKGH6v8+KmRZ5P+WTs0/KmulXF21hK
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4131
 
-Hi Konrad,
+On 11/10/25 13:27, Philipp Stanner wrote:
+> Please don't top-post :(
+> FDFY:
+> 
+> 
+>> On 11/10/25 09:19, Philipp Stanner wrote:
+>>> The spsc_queue is an unlocked, highly asynchronous piece of
+>>> infrastructure. Its inline function spsc_queue_peek() obtains the head
+>>> entry of the queue.
+>>>
+>>> This access is performed without READ_ONCE() and is, therefore,
+>>> undefined behavior. In order to prevent the compiler from ever
+>>> reordering that access, or even optimizing it away, a READ_ONCE() is
+>>> strictly necessary. This is easily proven by the fact that
+>>> spsc_queue_pop() uses this very pattern to access the head.
+>>>
+>>> Add READ_ONCE() to spsc_queue_peek().
+>>>
+>>> Cc: stable@vger.kernel.org # v4.16+
+>>> Fixes: 27105db6c63a ("drm/amdgpu: Add SPSC queue to scheduler.")
+>>> Signed-off-by: Philipp Stanner <phasta@kernel.org>
+>>> ---
+>>> I think this makes it less broken, but I'm not even sure if it's enough
+>>> or more memory barriers or an rcu_dereference() would be correct. The
+>>> spsc_queue is, of course, not documented and the existing barrier
+>>> comments are either false or not telling.
+>>>
+>>> If someone has an idea, shoot us the info. Otherwise I think this is the
+>>> right thing to do for now.
+>>>
+>>> P.
+>>> ---
+>>>  include/drm/spsc_queue.h | 2 +-
+>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/include/drm/spsc_queue.h b/include/drm/spsc_queue.h
+>>> index ee9df8cc67b7..39bada748ffc 100644
+>>> --- a/include/drm/spsc_queue.h
+>>> +++ b/include/drm/spsc_queue.h
+>>> @@ -54,7 +54,7 @@ static inline void spsc_queue_init(struct spsc_queue *queue)
+>>>  
+>>>  static inline struct spsc_node *spsc_queue_peek(struct spsc_queue *queue)
+>>>  {
+>>> - return queue->head;
+>>> + return READ_ONCE(queue->head);
+>>>  }
+> 
+> On Mon, 2025-11-10 at 12:24 +0100, Christian König wrote:
+>> As far as I can see that is not correct or rather not complete.
+> 
+> It cannot be incorrect by definition, because it simply ensures that
+> the load will actually take place there.
+> 
+> Incomplete it can be.
+> 
+>>
+>> The peek function should only be used to opportunistically look at the top of the queue. It would only be problematic if it returns a non NULL value once and then a NULL value later.
+>>
+>> The whole idea of the SPSC is that it is barrier-free and the signaling of new entries to the consumer side is providing the barrier.
+>>
+>> So basically on the provider side you have
+>> spsc_push(entry)
+>> wake_up(consumer)
+>>
+>> And on the consumer side you have:
+>>
+>> woken_up_by_provider() {
+>>  entry = spsc_peek();
+>>  ...
+>>  spsc_pop();
+>> }
+> 
+> Well no, the scheduler can pick up the next job whenever it feels like
+> it. Restarting it for example will have it peek into your queue,
+> regardless of wake events.
+> 
+> In any case this is a highly fragile design. See below, too.
+> 
+> 
+>>
+>> The problem we are facing here is that the spsc only provides the guarantee that you see the entry pointer, but not the content of entry itself.
+>>
+>> So use cases like:
+>>
+>> woken_up_by_provider() {
+>>  while (entry = spsc_peek()) {
+>>  ...
+>>  spsc_pop();
+>>  }
+>> }
+>>
+>> Are illegal since you don't have the correct memory barriers any more.
+> 
+> I can't follow. Are you saying that spsc_queue_peek() is correct
+> because you know for sure that when it's used no one else might be
+> changing that pointer?
 
-On Mon, Nov 3, 2025 at 3:56=E2=80=AFPM Kamal Wadhwa
-<kamal.wadhwa@oss.qualcomm.com> wrote:
->
-> On Wed, Oct 08, 2025 at 05:25:39PM +0530, Pankaj Patil wrote:
-> > On 9/25/2025 4:02 PM, Konrad Dybcio wrote:
-> > > On 9/25/25 8:32 AM, Pankaj Patil wrote:
-> > >> From: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
-> > >>
-> > >> Add the pmic glink node with connectors.
-> > >>
-> > >> Signed-off-by: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
-> > >> Signed-off-by: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
-> > >> ---
-> > >>  arch/arm64/boot/dts/qcom/glymur-crd.dts | 28 ++++++++++++++++++++++=
-++++++
-> > >>  1 file changed, 28 insertions(+)
-> > >>
-> > >> diff --git a/arch/arm64/boot/dts/qcom/glymur-crd.dts b/arch/arm64/bo=
-ot/dts/qcom/glymur-crd.dts
-> > >> index b04c0ed28468620673237fffb4013adacc7ef7ba..3f94bdf8b3ccfdff1820=
-05d67b8b3f84f956a430 100644
-> > >> --- a/arch/arm64/boot/dts/qcom/glymur-crd.dts
-> > >> +++ b/arch/arm64/boot/dts/qcom/glymur-crd.dts
-> > >> @@ -79,6 +79,34 @@ key-volume-up {
-> > >>                    wakeup-source;
-> > >>            };
-> > >>    };
-> > >> +
-> > >> +  pmic-glink {
-> > >> +          compatible =3D "qcom,sm8550-pmic-glink",
-> > > You *must* include a glymur compatible
-> > >
-> > >> +                       "qcom,pmic-glink";
-> > > Are you sure this is still compatible with 8550 after this
-> > > series landed?
-> > >
-> > > https://lore.kernel.org/linux-arm-msm/20250917-qcom_battmgr_update-v5=
--0-270ade9ffe13@oss.qualcomm.com/
->
-> Sorry for late reply, earlier when we were sending this series our unders=
-tanding
-> was that we only need to support for usb shell, and anyway the device was=
- on the
-> debug board so this feature(battery/charging) was not tested.
->
-> However, after testing i found that the power supplies are getting regist=
-ered
-> properly however the data is not coming as expected. we are working to fi=
-x this
-> internally from the firmware guys.
+Correct, yes. That's the whole idea. I mean SPSC stands for single producer single consumer.
 
-As you had asked,  i was able to check with this patch (and firmware fixes)
-https://lore.kernel.org/linux-arm-msm/20250917-qcom_battmgr_update-v5-0-270=
-ade9ffe13@oss.qualcomm.com/
+> 
+> Even if that were true this design is highly fragile.
+> 
+>>
+>> Took me an eternity to understand that as well, so bear with me that I didn't previously explained that.
+> 
+> s/explain/document :)
+> 
+> As discussed few weeks ago with Sima and Tvrtko, what we really need to
+> move to in all of DRM is this development pattern:
+> 
+>    1. For parallel code, at first by default use a boring, horribly
+>       slow (sarcasm) spinlock. BTW I'm not even convinced that a
+>       spinlock is slower than lockless tricks. Paul's book states that
+>       a CAS atomic instruction takes about 60 cycles, and taking a lock
+>       takes 100.
 
-The qcom_battmngr driver is working fine with this patch included as well.
-(though i faced some conflicts which i had to manually fix when
-pulling this patch on latest linux-next tag)
+The problem isn't the burned CPU cycles, but rather the cache lines moved between CPUs.
+
+Keep in mind that you can rather do a fused multiple add for a full 4x4 matrix before you take a single cache line miss.
+
+>    2. If you want to do parallelism without locks, you need to justify
+>       it really well. "rmb() so list_empty() works without a lock"
+>       doesn't qualify, but real use case speedups.
+>    3. If you write lockless infrastructure, you need to document it
+>       really well. In particular you need to state:
+>          1. How it works
+>          2. What the rules are
+> 
+> See llist.h as an example. It clearly states when you need a lock and
+> when you don't.
+
+The llist.h is actually pretty similar to the SPSC. I'm wondering why they don't have the same issues? E.g. is xchg() providing the memory barriers?
+
+
+> Or RCU. No one could use it without such good
+> documentation.
+> 
+> I have no idea whether spsc_queue is correctly implemented (I doubt
+> it), and if even a highly experienced dev like you takes "an eternity"
+> (quote) to understand it, one is really tempted to dream of spinlock_t,
+> which has very clear semantics and is easily understood even by
+> beginners.
+> 
+>>
+>> Question is what should we do?
+> 
+> Easy!
+> 
+> Mid-term, we should replace spsc_queue with a boring, locked, super-
+> slow linked list ^_^
+
+That's what the scheduler started with and the reason why that linked list was replaced with first a KFIFO and than the SPSC was because of lacking performance.
+
+We could go back to the KFIFO design again, but a (double?) linked list is clearly going to show the same performance problems which originally triggered moving away from it.
+
+> 
+> The spsc_queue was designed and – perhaps – perf-measured when RR was
+> the only scheduling policy.
+> 
+> Since the FIFO rework, where FIFO became the default policy, we now
+> access our super efficient super fast lockless queue most of the time
+> with the spinlock being taken immediately afterwards anyways. So we
+> almost have a locked lockless queue now.
+> 
+> https://elixir.bootlin.com/linux/v6.18-rc4/source/drivers/gpu/drm/scheduler/sched_entity.c#L502
+
+That is not that relevant.
+
+> Only push_job() often (?) still runs locklessly, but I'm not at all
+> convinced that this is worth it. Not even performance-wise.
+
+That is what is relevant. And yes the difference was totally measurable, that's why this was originally implemented.
+
+> 
+> If you look at spsc_queue_push() you see that it
+>    1. disables preemption,
+>    2. uses atomic instructions and
+>    3. has a ton of memory barries
+> 
+> – in other words, this is almost literally a manual re-implementation
+> of a spinlock, just without mutual exclusion…
+
+The problem is really to separate the push from the pop side so that as few cache lines as possible are transferred from one CPU to another. 
+
+Regards,
+Christian.
+
+> 
+> 
+> And even if something like spsc_queue would make sense and be actually
+> worth it, then it should be provided to the entire kernel as common
+> infrastructure, like llist.h, not hidden somewhere in DRM.
+> 
+> P.
+
 
