@@ -1,236 +1,219 @@
-Return-Path: <linux-kernel+bounces-893543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71201C47BD5
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:01:11 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2A06C47BE7
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 17:01:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B420C4F9A7F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:47:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 417FE4FA516
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:48:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0008927E054;
-	Mon, 10 Nov 2025 15:46:20 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAEA726461F;
+	Mon, 10 Nov 2025 15:46:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b="MSA8YVGF"
+Received: from mail.cybernetics.com (mail.cybernetics.com [72.215.153.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6816C27280A;
-	Mon, 10 Nov 2025 15:46:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DB4E228CA9
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 15:46:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.215.153.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762789580; cv=none; b=FYkTnjHCi7tjRv3Hgcopz/zCdo8CssFxDtGReFLWl8SFaGNw1Wz19dFW4Sn0H9mkleX7XRIbulvRcKWaHGd1xbIoOX+mbs0fqxPSjx9EhK/YjIh9Tk2M5lD8sy8WhlfLXqVkoqPuJuavb4n23oFNFLR08KES16CJWAMb/sD4F0Y=
+	t=1762789615; cv=none; b=mydYZZLxvUicV3R3lEjB0rgAAhAab9fDxKRM4ZuPj5DIrBqoFyjAEfKkGzmmylgGrvfFbU1CHWw6SZp194Firh+MhvNePg2Awdsg4f8Z0jQM5kjthFWBLfLWUGYkAWVmZRR/YgecH6i2L7/c9kVdhbmllPu7fjeKPtGFQVFFGYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762789580; c=relaxed/simple;
-	bh=Ix+fpGild5wXPfzrdTQ/xkbSzeVtjVbWMccZtxOOlhU=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=r33N6htgL0x0q7U3i02Y9tcU/qKxXKhRpOnrsMreFUilcirDceaY1DRSLcAg0bG1khqRl5GM84cnH1IZasdOA+2MxhOKmoLd3B4zZgly9yc3CJi76srGBqapSLvnAp7YplnLbVReHX4OMpLwfwo5VvQW1BRscYSsZwgJLWS6cos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4d4vC96lp4zHnGck;
-	Mon, 10 Nov 2025 23:45:57 +0800 (CST)
-Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
-	by mail.maildlp.com (Postfix) with ESMTPS id 5082514038F;
-	Mon, 10 Nov 2025 23:46:13 +0800 (CST)
-Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
- (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.36; Mon, 10 Nov
- 2025 15:46:11 +0000
-Date: Mon, 10 Nov 2025 15:46:10 +0000
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Ben Horgan <ben.horgan@arm.com>
-CC: <james.morse@arm.com>, <amitsinght@marvell.com>,
-	<baisheng.gao@unisoc.com>, <baolin.wang@linux.alibaba.com>,
-	<bobo.shaobowang@huawei.com>, <carl@os.amperecomputing.com>,
-	<catalin.marinas@arm.com>, <dakr@kernel.org>, <dave.martin@arm.com>,
-	<david@redhat.com>, <dfustini@baylibre.com>, <fenghuay@nvidia.com>,
-	<gregkh@linuxfoundation.org>, <gshan@redhat.com>, <guohanjun@huawei.com>,
-	<jeremy.linton@arm.com>, <kobak@nvidia.com>, <lcherian@marvell.com>,
-	<lenb@kernel.org>, <linux-acpi@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<lpieralisi@kernel.org>, <peternewman@google.com>, <quic_jiles@quicinc.com>,
-	<rafael@kernel.org>, <robh@kernel.org>, <rohit.mathew@arm.com>,
-	<scott@os.amperecomputing.com>, <sdonthineni@nvidia.com>,
-	<sudeep.holla@arm.com>, <tan.shaopeng@fujitsu.com>, <will@kernel.org>,
-	<xhao@linux.alibaba.com>
-Subject: Re: [PATCH 03/33] ACPI / PPTT: Add acpi_pptt_cache_v1_full to use
- pptt cache as one structure
-Message-ID: <20251110154610.00002247@huawei.com>
-In-Reply-To: <20251107123450.664001-4-ben.horgan@arm.com>
-References: <20251107123450.664001-1-ben.horgan@arm.com>
-	<20251107123450.664001-4-ben.horgan@arm.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1762789615; c=relaxed/simple;
+	bh=mN1i46vyX0iSsl9atR/Knr5i1iQbMqclvG3xYyw5+Ys=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=fIUD1pSBBGogkFoH7Rwu0FIGBEUffXW3RyNWks6S/9oxF3lRpUsJe+jrowfi7+bUp5ew5X4vA+4sBHIO7rkysKdlPWCTkjqvaCdwaph77yss9+Yk+xDjEPexuc8lZsgDlYciUV9bZ9nC6OIRTSBwyX1rC3vzOk/djPww7QoqGVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com; spf=pass smtp.mailfrom=cybernetics.com; dkim=fail (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b=MSA8YVGF reason="signature verification failed"; arc=none smtp.client-ip=72.215.153.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cybernetics.com
+Received: from cybernetics.com ([10.10.4.126]) by mail.cybernetics.com with ESMTP id IORz3udkoayMVWSV; Mon, 10 Nov 2025 10:46:45 -0500 (EST)
+X-Barracuda-Envelope-From: tonyb@cybernetics.com
+X-Barracuda-RBL-Trusted-Forwarder: 10.10.4.126
+X-ASG-Whitelist: Client
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cybernetics.com; s=mail;
+	bh=t+N2BwW3BELCNTng+9yN+H0LpfMSIo+bvbJajYt2USY=;
+	h=Content-Transfer-Encoding:Content-Type:Subject:From:Cc:To:Content-Language:
+	MIME-Version:Date:Message-ID; b=MSA8YVGFLeGLkTDPTfeEvrCyfURgL7ro848ZdEHCLPtan
+	vcA8l0vUUe5P48ce/ZtsBcXjdOU2N1nlcp6FLOTxidZjhfWhqhw18IMRQn2pjJES6bX0H8OVdl7sv
+	LNz6ksAuY78dP/Z9hENMNexlYLsDhiuR3Iqw1iISNZaAPuIlo=
+Received: from [10.157.2.224] (HELO [192.168.200.1])
+  by cybernetics.com (CommuniGate SPEC SMTP 8.0.5)
+  with ESMTPS id 14272375; Mon, 10 Nov 2025 10:46:45 -0500
+Message-ID: <aaea0ab0-da8b-4153-9369-60db7507ff7a@cybernetics.com>
+X-Barracuda-RBL-Trusted-Forwarder: 10.157.2.224
+Date: Mon, 10 Nov 2025 10:46:45 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100010.china.huawei.com (7.191.174.197) To
- dubpeml100005.china.huawei.com (7.214.146.113)
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Nilesh Javali <njavali@marvell.com>,
+ GR-QLogic-Storage-Upstream@marvell.com,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi <linux-scsi@vger.kernel.org>, target-devel@vger.kernel.org,
+ scst-devel@lists.sourceforge.net,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Dmitry Bogdanov <d.bogdanov@yadro.com>,
+ Xose Vazquez Perez <xose.vazquez@gmail.com>
+From: Tony Battersby <tonyb@cybernetics.com>
+Subject: [PATCH v3 00/16] qla2xxx target mode improvements
+Content-Type: text/plain; charset=UTF-8
+X-ASG-Orig-Subj: [PATCH v3 00/16] qla2xxx target mode improvements
+X-Barracuda-Connect: UNKNOWN[10.10.4.126]
+X-Barracuda-Start-Time: 1762789605
+X-Barracuda-URL: https://10.10.4.122:443/cgi-mod/mark.cgi
+X-Barracuda-BRTS-Status: 1
+X-Virus-Scanned: by bsmtpd at cybernetics.com
+X-Barracuda-Scan-Msg-Size: 5667
+Content-Transfer-Encoding: quoted-printable
+X-ASG-Debug-ID: 1762789605-1cf439139110cb60001-xx1T2L
 
-On Fri, 7 Nov 2025 12:34:20 +0000
-Ben Horgan <ben.horgan@arm.com> wrote:
+v2 -> v3
+- Omit SCST patches as requested to work better with b4 and patchwork.=C2=
+=A0
+They can still be found at the v2 link below.
+- Fix "scsi: qla2xxx: fix TMR failure handling" to check for mcmd =3D=3D =
+NULL.
 
-> In actbl2.h, struct acpi_pptt_cache describes the fields in the original
-> cache type structure. In PPTT table version 3 a new field was added at the
-> end, cache_id. This is described in struct acpi_pptt_cache_v1. Introduce
-> the new, acpi_pptt_cache_v1_full to contain both these structures. Update
-> the existing code to use this new struct. This simplifies the code, removes
-> a non-standard use of ACPI_ADD_PTR and allows using the length in the
-> header to check if the cache_id is valid.
-> 
-> Signed-off-by: Ben Horgan <ben.horgan@arm.com>
+v2:
+https://lore.kernel.org/linux-scsi/e95ee7d0-3580-4124-b854-7f73ca3a3a84@c=
+ybernetics.com/
 
-Whilst I wish the ACPICA stuff did structures like this, I'm not sure
-if the ACPI maintainers will feel it is appropriate to work around it
-with generic sounding structures like this one.
+v1 -> v2
+- Add new patch "scsi: qla2xxx: clear cmds after chip reset" suggested
+by Dmitry Bogdanov.
+- Rename "scsi: qla2xxx: fix oops during cmd abort" to "scsi: qla2xxx:
+fix races with aborting commands" and make SCST reset the ISP on a HW
+timeout instead of unmapping DMA that might still be in use.
+- Fix "scsi: qla2xxx: fix TMR failure handling" to free mcmds properly
+for LIO.
+- In "scsi: qla2xxx: add back SRR support", detect more buggy HBA fw
+versions based on the fw release notes.
+- Shorten code comment in "scsi: qla2xxx: improve safety of cmd lookup
+by handle" and improve patch description.
+- Rebase other patches as needed.
 
-I'd also say that we should only cast it to your _full structure
-if we know we have rev 3 of PPTT.  Otherwise we should continue manipulating
-it as a struct acpi_pptt_cache
+v1:
+https://lore.kernel.org/r/f8977250-638c-4d7d-ac0c-65f742b8d535@cybernetic=
+s.com/
 
-> ---
-> Changes since v3:
-> New patch
-> ---
->  drivers/acpi/pptt.c | 104 ++++++++++++++++++++++++--------------------
->  1 file changed, 58 insertions(+), 46 deletions(-)
-> 
-> diff --git a/drivers/acpi/pptt.c b/drivers/acpi/pptt.c
-> index 1027ca3566b1..1ed2099c0d1a 100644
-> --- a/drivers/acpi/pptt.c
-> +++ b/drivers/acpi/pptt.c
-> @@ -21,6 +21,11 @@
->  #include <linux/cacheinfo.h>
->  #include <acpi/processor.h>
->  
-> +struct acpi_pptt_cache_v1_full {
-> +	struct acpi_pptt_cache		f;
-> +	struct acpi_pptt_cache_v1	extra;
-> +} __packed;
+This patch series improves the qla2xxx FC driver in target mode.=C2=A0 I
+developed these patches using the out-of-tree SCST target-mode subsystem
+(https://scst.sourceforge.net/), although most of the improvements will
+also apply to the other target-mode subsystems such as the in-tree LIO.=C2=
+=A0
+Unfortunately qla2xxx+LIO does not pass all of my tests, but my patches
+do not make it any worse (results below).=C2=A0 These patches have been
+well-tested at my employer with qla2xxx+SCST in both initiator mode and
+target mode and with a variety of FC HBAs and initiators.=C2=A0 Since SCS=
+T is
+out-of-tree, some of the patches have parts that apply in-tree and other
+parts that apply out-of-tree to SCST.=C2=A0 The SCST patches can be found=
+ in
+the v2 posting linked above.
 
-> +#define ACPI_PPTT_CACHE_V1_LEN sizeof(struct acpi_pptt_cache_v1_full)
-> +
-> +/*
-> + * From PPTT table version 3, a new field cache_id was added at the end of
-> + * the cache type structure.  We now use struct acpi_pptt_cache_v1_full,
-> + * containing the cache_id, everywhere but must check validity before accessing
-> + * the cache_id.
-> + */
-> +static bool acpi_pptt_cache_id_is_valid(struct acpi_pptt_cache_v1_full *cache)
-> +{
-> +	return (cache->f.header.length >= ACPI_PPTT_CACHE_V1_LEN &&
+All patches apply to linux 6.17 and SCST 3.10 master branch.
 
-Although I later say I don't think you should pass a v1_full structure in here (as
-we don't know it is at least that large until after this check) if you do keep this
-why not use sizeof(*cache) and get rid of the V1_LEN definition as providing no obvious
-value here?
+Summary of patches:
+- bugfixes
+- cleanups
+- improve handling of aborts and task management requests
+- improve log message
+- add back SLER / SRR support (removed in 2017)
 
-> +		cache->f.flags & ACPI_PPTT_CACHE_ID_VALID);
->  }
+Some of these patches improve handling of aborts and task management
+requests.=C2=A0 This is some of the testing that I did:
 
-> @@ -355,7 +374,6 @@ static struct acpi_pptt_cache *acpi_find_cache_node(struct acpi_table_header *ta
->   * @this_leaf: Kernel cache info structure being updated
->   * @found_cache: The PPTT node describing this cache instance
->   * @cpu_node: A unique reference to describe this cache instance
-> - * @revision: The revision of the PPTT table
->   *
->   * The ACPI spec implies that the fields in the cache structures are used to
->   * extend and correct the information probed from the hardware. Lets only
-> @@ -364,23 +382,20 @@ static struct acpi_pptt_cache *acpi_find_cache_node(struct acpi_table_header *ta
->   * Return: nothing. Side effect of updating the global cacheinfo
->   */
->  static void update_cache_properties(struct cacheinfo *this_leaf,
-> -				    struct acpi_pptt_cache *found_cache,
-> -				    struct acpi_pptt_processor *cpu_node,
-> -				    u8 revision)
-> +				    struct acpi_pptt_cache_v1_full *found_cache,
-> +				    struct acpi_pptt_processor *cpu_node)
->  {
-> -	struct acpi_pptt_cache_v1* found_cache_v1;
-> -
->  	this_leaf->fw_token = cpu_node;
-> -	if (found_cache->flags & ACPI_PPTT_SIZE_PROPERTY_VALID)
-> -		this_leaf->size = found_cache->size;
-> -	if (found_cache->flags & ACPI_PPTT_LINE_SIZE_VALID)
-> -		this_leaf->coherency_line_size = found_cache->line_size;
-> -	if (found_cache->flags & ACPI_PPTT_NUMBER_OF_SETS_VALID)
-> -		this_leaf->number_of_sets = found_cache->number_of_sets;
-> -	if (found_cache->flags & ACPI_PPTT_ASSOCIATIVITY_VALID)
-> -		this_leaf->ways_of_associativity = found_cache->associativity;
-> -	if (found_cache->flags & ACPI_PPTT_WRITE_POLICY_VALID) {
-> -		switch (found_cache->attributes & ACPI_PPTT_MASK_WRITE_POLICY) {
-> +	if (found_cache->f.flags & ACPI_PPTT_SIZE_PROPERTY_VALID)
-> +		this_leaf->size = found_cache->f.size;
-> +	if (found_cache->f.flags & ACPI_PPTT_LINE_SIZE_VALID)
-> +		this_leaf->coherency_line_size = found_cache->f.line_size;
-> +	if (found_cache->f.flags & ACPI_PPTT_NUMBER_OF_SETS_VALID)
-> +		this_leaf->number_of_sets = found_cache->f.number_of_sets;
-> +	if (found_cache->f.flags & ACPI_PPTT_ASSOCIATIVITY_VALID)
-> +		this_leaf->ways_of_associativity = found_cache->f.associativity;
-> +	if (found_cache->f.flags & ACPI_PPTT_WRITE_POLICY_VALID) {
-> +		switch (found_cache->f.attributes & ACPI_PPTT_MASK_WRITE_POLICY) {
->  		case ACPI_PPTT_CACHE_POLICY_WT:
->  			this_leaf->attributes = CACHE_WRITE_THROUGH;
->  			break;
-> @@ -389,8 +404,8 @@ static void update_cache_properties(struct cacheinfo *this_leaf,
->  			break;
->  		}
->  	}
-> -	if (found_cache->flags & ACPI_PPTT_ALLOCATION_TYPE_VALID) {
-> -		switch (found_cache->attributes & ACPI_PPTT_MASK_ALLOCATION_TYPE) {
-> +	if (found_cache->f.flags & ACPI_PPTT_ALLOCATION_TYPE_VALID) {
-> +		switch (found_cache->f.attributes & ACPI_PPTT_MASK_ALLOCATION_TYPE) {
->  		case ACPI_PPTT_CACHE_READ_ALLOCATE:
->  			this_leaf->attributes |= CACHE_READ_ALLOCATE;
->  			break;
-> @@ -415,13 +430,11 @@ static void update_cache_properties(struct cacheinfo *this_leaf,
->  	 * specified in PPTT.
->  	 */
->  	if (this_leaf->type == CACHE_TYPE_NOCACHE &&
-> -	    found_cache->flags & ACPI_PPTT_CACHE_TYPE_VALID)
-> +	    found_cache->f.flags & ACPI_PPTT_CACHE_TYPE_VALID)
->  		this_leaf->type = CACHE_TYPE_UNIFIED;
->  
-> -	if (revision >= 3 && (found_cache->flags & ACPI_PPTT_CACHE_ID_VALID)) {
-> -		found_cache_v1 = ACPI_ADD_PTR(struct acpi_pptt_cache_v1,
-> -	                                      found_cache, sizeof(struct acpi_pptt_cache));
-> -		this_leaf->id = found_cache_v1->cache_id;
-> +	if (acpi_pptt_cache_id_is_valid(found_cache)) {
+Test 1: Use /dev/sg to queue random disk I/O with short timeouts; make
+sure cmds are aborted successfully.
+Test 2: Queue lots of disk I/O, then use "sg_reset -N -d /dev/sg" on
+initiator to reset logical unit.
+Test 3: Queue lots of disk I/O, then use "sg_reset -N -t /dev/sg" on
+initiator to reset target.
+Test 4: Queue lots of disk I/O, then use "sg_reset -N -b /dev/sg" on
+initiator to reset bus.
+Test 5: Queue lots of disk I/O, then use "sg_reset -N -H /dev/sg" on
+initiator to reset host.
+Test 6: Use fiber channel attenuator to trigger SRR during
+write/read/compare test; check data integrity.
 
-Only here do we know that found_cache is the _full type. 
+With my patches, SCST passes all of these tests.
 
-> +		this_leaf->id = found_cache->extra.cache_id;
->  		this_leaf->attributes |= CACHE_ID;
->  	}
->  }
-> @@ -429,7 +442,7 @@ static void update_cache_properties(struct cacheinfo *this_leaf,
->  static void cache_setup_acpi_cpu(struct acpi_table_header *table,
->  				 unsigned int cpu)
->  {
-> -	struct acpi_pptt_cache *found_cache;
-> +	struct acpi_pptt_cache_v1_full *found_cache;
+Results with in-tree LIO target-mode subsystem:
 
-This isn't necessarily valid. Until deep in update_cache_properties() we don't care about the ID
-so this structure may be smaller than this implies.
+Test 1: Seems to abort the same cmd multiple times (both
+qlt_24xx_retry_term_exchange() and __qlt_send_term_exchange()).=C2=A0 But
+cmds get aborted, so give it a pass?
 
->  	struct cpu_cacheinfo *this_cpu_ci = get_cpu_cacheinfo(cpu);
->  	u32 acpi_cpu_id = get_acpi_id_for_cpu(cpu);
->  	struct cacheinfo *this_leaf;
-> @@ -445,8 +458,7 @@ static void cache_setup_acpi_cpu(struct acpi_table_header *table,
->  		pr_debug("found = %p %p\n", found_cache, cpu_node);
->  		if (found_cache)
->  			update_cache_properties(this_leaf, found_cache,
-> -						ACPI_TO_POINTER(ACPI_PTR_DIFF(cpu_node, table)),
-> -						table->revision);
-> +						ACPI_TO_POINTER(ACPI_PTR_DIFF(cpu_node, table)));
->  
->  		index++;
->  	}
+Test 2: Seems to work; cmds are aborted.
+
+Test 3: Target reset doesn't seem to abort cmds, instead, a few seconds
+later:
+qla2xxx [0000:04:00.0]-f058:9: qla_target(0): tag 1314312, op 2a: CTIO
+with TIMEOUT status 0xb received (state 1, port 51:40:2e:c0:18:1d:9f:cc,
+LUN 0)
+
+Tests 4 and 5: The initiator is unable to log back in to the target; the
+following messages are repeated over and over on the target:
+qla2xxx [0000:04:00.0]-e01c:9: Sending TERM ELS CTIO (ha=3D00000000f88113=
+90)
+qla2xxx [0000:04:00.0]-f097:9: Linking sess 000000008df5aba8 [0] wwn
+51:40:2e:c0:18:1d:9f:cc with PLOGI ACK to wwn 51:40:2e:c0:18:1d:9f:cc
+s_id 00:00:01, ref=3D2 pla 00000000835a9271 link 0
+
+Test 6: passes with my patches; SRR not supported previously.
+
+So qla2xxx+LIO seems a bit flaky when handling exceptions, but my
+patches do not make it any worse.=C2=A0 Perhaps someone who is more famil=
+iar
+with LIO can look at the difference between LIO and SCST and figure out
+how to improve it.
+
+Tony Battersby
+https://www.cybernetics.com/
+
+Tony Battersby (16):
+  Revert "scsi: qla2xxx: Perform lockless command completion in abort
+    path"
+  scsi: qla2xxx: fix initiator mode with qlini_mode=3Dexclusive
+  scsi: qla2xxx: fix lost interrupts with qlini_mode=3Ddisabled
+  scsi: qla2xxx: use reinit_completion on mbx_intr_comp
+  scsi: qla2xxx: remove code for unsupported hardware
+  scsi: qla2xxx: improve debug output for term exchange
+  scsi: qla2xxx: fix term exchange when cmd_sent_to_fw =3D=3D 1
+  scsi: qla2xxx: clear cmds after chip reset
+  scsi: qla2xxx: fix races with aborting commands
+  scsi: qla2xxx: improve checks in qlt_xmit_response / qlt_rdy_to_xfer
+  scsi: qla2xxx: fix TMR failure handling
+  scsi: qla2xxx: fix invalid memory access with big CDBs
+  scsi: qla2xxx: add cmd->rsp_sent
+  scsi: qla2xxx: improve cmd logging
+  scsi: qla2xxx: add back SRR support
+  scsi: qla2xxx: improve safety of cmd lookup by handle
+
+ drivers/scsi/qla2xxx/qla_dbg.c     |    3 +-
+ drivers/scsi/qla2xxx/qla_def.h     |    1 -
+ drivers/scsi/qla2xxx/qla_gbl.h     |    2 +-
+ drivers/scsi/qla2xxx/qla_init.c    |    1 +
+ drivers/scsi/qla2xxx/qla_isr.c     |   32 +-
+ drivers/scsi/qla2xxx/qla_mbx.c     |    2 +
+ drivers/scsi/qla2xxx/qla_mid.c     |    4 +-
+ drivers/scsi/qla2xxx/qla_os.c      |   35 +-
+ drivers/scsi/qla2xxx/qla_target.c  | 1775 +++++++++++++++++++++++-----
+ drivers/scsi/qla2xxx/qla_target.h  |  112 +-
+ drivers/scsi/qla2xxx/tcm_qla2xxx.c |   17 +
+ 11 files changed, 1646 insertions(+), 338 deletions(-)
+
+
+base-commit: e5f0a698b34ed76002dc5cff3804a61c80233a7a
+--=20
+2.43.0
 
 
