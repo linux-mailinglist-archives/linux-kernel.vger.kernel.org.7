@@ -1,274 +1,94 @@
-Return-Path: <linux-kernel+bounces-893396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7A21C4741E
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:39:28 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 855E5C47418
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:39:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B52E3A14B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:38:56 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A0CE54ECAFC
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:39:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1B7C31280B;
-	Mon, 10 Nov 2025 14:38:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2EDE3128C8;
+	Mon, 10 Nov 2025 14:39:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jscf0fTR"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mQhzOK8s"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 406461B6CE9;
-	Mon, 10 Nov 2025 14:38:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B3701B6CE9;
+	Mon, 10 Nov 2025 14:39:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762785532; cv=none; b=sMDpx6TkbtmQfe3+v7zCd2+CmS4O417UCwmwv47ZY57n5DjIKeVBL5ZSD4US/lG3OLvpbvvO7Nl78ln/IN0x2St4sC6jcShcILTaRnJb9FjBxnByze5sE5qYVcC+C6iqN5glI8oqLhIF2SkB7A538adUDqqbpul70JSu8Tn4JGo=
+	t=1762785549; cv=none; b=bBdighcRGE4h5mFpnasZ8tZlOs9z7LErn22iJ1yp5C3MftNwkAUjHdYnc5ouSbNRIfF30yyk5HNsDORHy07Ti7ADR2eXL5gZszkJM0WzF/VUSDrrd8SFMaRwsbna8mmcUd8kqgqPDrIi6xTYT/aYl4y9hwCvexbdZqDT+A3q74Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762785532; c=relaxed/simple;
-	bh=UsKjxAL2LPy2yNLKEDn3n35MVidv0ryfzg45RZ9Rgas=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qen55vHV9wBMvUpxAvb2YfyMD7KF3kOhuALS3JVBQ7/w7aAxhOZfceJVAUOSWMBKJl+QkCkjXqQAA15Y2ZxfC/QTk7S47X7cwbU4qY0ysbEUv4R/HLhjXBlSSNWhn9NQrJb728EdnMQN+Pw8efddoKPJYOo3m1R0hbxWHSePEIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=jscf0fTR; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=YvXHkeUUsN5uNR8rQTP501eTfQfHtLbVepXDnEN8LK0=; b=jscf0fTREh9hRe4xppgI9DN8pc
-	ITSXzSq6rC/cNY1eKz84xIeDD7O3zQEHV1F8uGdac2NCBTeGD2yBJ7N3yEvrBIWNOCAmyskV8QkiY
-	T01G/CNwOy+mEQP5fJk+M3mv+BZExJ81TJVFahoARJ6k5gHk5t2O+A3c34o7V0yVfXW48Odp6sxN6
-	Gxbhzg7FmycwJnPL0YhCD97Wj3RQ7xBo1cvjEN36VpIDTTi4MaAO5HDer510dai/WSPLHVttLRNAz
-	hGpV5gzQjP8hHDAfRy1K37pqUP01ORg0OSwSWYTXHq2K7lEPS4zj0VcHMsjF/cABziNWqxAqWLcMn
-	31eMuDaA==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vIT2R-0000000HPym-3FUy;
-	Mon, 10 Nov 2025 14:38:35 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id C3F1630029E; Mon, 10 Nov 2025 15:38:34 +0100 (CET)
-Date: Mon, 10 Nov 2025 15:38:34 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Naman Jain <namjain@linux.microsoft.com>
-Cc: "K . Y . Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H . Peter Anvin" <hpa@zytor.com>, linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org, x86@kernel.org,
-	Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Michael Kelley <mhklinux@outlook.com>,
-	Mukesh Rathor <mrathor@linux.microsoft.com>,
-	Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
-	Nuno Das Neves <nunodasneves@linux.microsoft.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	Saurabh Sengar <ssengar@linux.microsoft.com>,
-	ALOK TIWARI <alok.a.tiwari@oracle.com>
-Subject: Re: [PATCH v11 2/2] Drivers: hv: Introduce mshv_vtl driver
-Message-ID: <20251110143834.GA3245006@noisy.programming.kicks-ass.net>
-References: <20251110050835.1603847-1-namjain@linux.microsoft.com>
- <20251110050835.1603847-3-namjain@linux.microsoft.com>
+	s=arc-20240116; t=1762785549; c=relaxed/simple;
+	bh=UfZIIURxKG02GFYs3TglXy1N8g+Xmh2JJT+tt4nBTVs=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=qoZMNIS/UhhnlTlXIqQ8SDHsWnTn7JLwKjtkaSZtAJfNpwQtGoM1qa0EGCr2/yAqVHqrMtf/CUY6bqTR5YMM/81wj1DwGQ/vNx7MFvwvGr6kv4Zma+nCjkNdKKgJjf9Jj4GhO/KFW5B5sPQWMoWrJ47PrTQ39Bl3mXso4QMpaXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mQhzOK8s; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0A28C4CEF5;
+	Mon, 10 Nov 2025 14:39:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762785547;
+	bh=UfZIIURxKG02GFYs3TglXy1N8g+Xmh2JJT+tt4nBTVs=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=mQhzOK8s/s49v5TaSnR5d5ICY8q9ff+8mRzFyNvkAlhRdiDH3F6AhQtQexwshSaKi
+	 ReveQogDQr7jLYtb388kxmjmGA+OlYUKecb/hNFXMF0lByKsKBf7bUo0Qw0ZE3mtLo
+	 yesMpZIv/zK8xC17OxIG3C6Oz7xT8GPHz6TkYTZMXVaTVjaRxBZxLShfp8uPsA47+s
+	 21LnIwZ/VY0/aOCk1scjaQ6wYMC1jXsEZYCelzurBdu7+T7D5ZTHyBwXu2V6SWQjpD
+	 JtASMzUDzdxzdIF73xvM9RbMfNvP0K8IsjXWGuKwGkt4HAAVYCLKUdGIzdRt3iGWUu
+	 xSqpJk0iMHqSg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251110050835.1603847-3-namjain@linux.microsoft.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 10 Nov 2025 15:39:01 +0100
+Message-Id: <DE53BMEA2TXG.115SFKG1ZHPB@kernel.org>
+Cc: "Rae Moar" <raemoar63@gmail.com>, <linux-kselftest@vger.kernel.org>,
+ <kunit-dev@googlegroups.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary
+ Guo" <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
+ "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <patches@lists.linux.dev>
+Subject: Re: [PATCH 1/2] rust: allow `unreachable_pub` for doctests
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Miguel Ojeda" <ojeda@kernel.org>, "Greg Kroah-Hartman"
+ <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ "Danilo Krummrich" <dakr@kernel.org>, "Brendan Higgins"
+ <brendan.higgins@linux.dev>, "David Gow" <davidgow@google.com>, "Alex
+ Gaynor" <alex.gaynor@gmail.com>
+X-Mailer: aerc 0.21.0
+References: <20251110113528.1658238-1-ojeda@kernel.org>
+In-Reply-To: <20251110113528.1658238-1-ojeda@kernel.org>
 
-On Mon, Nov 10, 2025 at 05:08:35AM +0000, Naman Jain wrote:
-> Provide an interface for Virtual Machine Monitor like OpenVMM and its
-> use as OpenHCL paravisor to control VTL0 (Virtual trust Level).
-> Expose devices and support IOCTLs for features like VTL creation,
-> VTL0 memory management, context switch, making hypercalls,
-> mapping VTL0 address space to VTL2 userspace, getting new VMBus
-> messages and channel events in VTL2 etc.
+On Mon Nov 10, 2025 at 12:35 PM CET, Miguel Ojeda wrote:
+> Examples (i.e. doctests) may want to show public items such as structs,
+> thus the `unreachable_pub` warning is not very helpful.
+>
+> Thus allow it for all doctests.
+>
+> In addition, remove it from the existing `expect`s we have in a couple
+> doctests.
+>
+> Suggested-by: Alice Ryhl <aliceryhl@google.com>
+> Link: https://lore.kernel.org/rust-for-linux/aRG9VjsaCjsvAwUn@google.com/
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 
-> diff --git a/arch/x86/hyperv/hv_vtl.c b/arch/x86/hyperv/hv_vtl.c
-> index 042e8712d8de..dba27e1bcc10 100644
-> --- a/arch/x86/hyperv/hv_vtl.c
-> +++ b/arch/x86/hyperv/hv_vtl.c
-> @@ -249,3 +253,42 @@ int __init hv_vtl_early_init(void)
->  
->  	return 0;
->  }
-> +
-> +DEFINE_STATIC_CALL_NULL(__mshv_vtl_return_hypercall, void (*)(void));
-> +
-> +noinstr void mshv_vtl_return_hypercall(void)
-> +{
-> +	asm volatile ("call " STATIC_CALL_TRAMP_STR(__mshv_vtl_return_hypercall));
-> +}
-> +
-> +/*
-> + * ASM_CALL_CONSTRAINT is intentionally not used in above asm block before making a call to
-> + * __mshv_vtl_return_hypercall, to avoid rbp clobbering before actual VTL return happens.
-> + * This however leads to objtool complain about "call without frame pointer save/setup".
-> + * To ignore that warning, and inform objtool about this non-standard function,
-> + * STACK_FRAME_NON_STANDARD_FP is used.
-> + */
-> +STACK_FRAME_NON_STANDARD_FP(mshv_vtl_return_hypercall);
+Acked-by: Benno Lossin <lossin@kernel.org>
 
-> --- /dev/null
-> +++ b/arch/x86/hyperv/mshv_vtl_asm.S
-> @@ -0,0 +1,98 @@
-> +/* SPDX-License-Identifier: GPL-2.0
-> + *
-> + * Assembly level code for mshv_vtl VTL transition
-> + *
-> + * Copyright (c) 2025, Microsoft Corporation.
-> + *
-> + * Author:
-> + *   Naman Jain <namjain@microsoft.com>
-> + */
-> +
-> +#include <linux/linkage.h>
-> +#include <asm/asm.h>
-> +#include <asm/asm-offsets.h>
-> +#include <asm/frame.h>
-> +#include "mshv-asm-offsets.h"
-> +
-> +	.text
-> +	.section .noinstr.text, "ax"
-> +/*
-> + * void __mshv_vtl_return_call(struct mshv_vtl_cpu_context *vtl0)
+Cheers,
+Benno
 
-Can we please get a few words on the magical context here? Like no NMIs
-and #DB traps and the like. Because if any of them were possible this
-code would be horribly broken.
-
-> + */
-> +SYM_FUNC_START(__mshv_vtl_return_call)
-> +	/* Push callee save registers */
-> +	pushq %rbp
-> +	mov %rsp, %rbp
-> +	pushq %r12
-> +	pushq %r13
-> +	pushq %r14
-> +	pushq %r15
-> +	pushq %rbx
-> +
-> +	/* register switch to VTL0 clobbers all registers except rax/rcx */
-> +	mov %_ASM_ARG1, %rax
-> +
-> +	/* grab rbx/rbp/rsi/rdi/r8-r15 */
-> +	mov MSHV_VTL_CPU_CONTEXT_rbx(%rax), %rbx
-> +	mov MSHV_VTL_CPU_CONTEXT_rbp(%rax), %rbp
-> +	mov MSHV_VTL_CPU_CONTEXT_rsi(%rax), %rsi
-> +	mov MSHV_VTL_CPU_CONTEXT_rdi(%rax), %rdi
-> +	mov MSHV_VTL_CPU_CONTEXT_r8(%rax), %r8
-> +	mov MSHV_VTL_CPU_CONTEXT_r9(%rax), %r9
-> +	mov MSHV_VTL_CPU_CONTEXT_r10(%rax), %r10
-> +	mov MSHV_VTL_CPU_CONTEXT_r11(%rax), %r11
-> +	mov MSHV_VTL_CPU_CONTEXT_r12(%rax), %r12
-> +	mov MSHV_VTL_CPU_CONTEXT_r13(%rax), %r13
-> +	mov MSHV_VTL_CPU_CONTEXT_r14(%rax), %r14
-> +	mov MSHV_VTL_CPU_CONTEXT_r15(%rax), %r15
-> +
-> +	mov MSHV_VTL_CPU_CONTEXT_cr2(%rax), %rdx
-> +	mov %rdx, %cr2
-> +	mov MSHV_VTL_CPU_CONTEXT_rdx(%rax), %rdx
-> +
-> +	/* stash host registers on stack */
-> +	pushq %rax
-> +	pushq %rcx
-> +
-> +	xor %ecx, %ecx
-> +
-> +	/* make a hypercall to switch VTL */
-> +	call mshv_vtl_return_hypercall
-
-Yuck!
-
-This seems to build for me.
-
----
---- a/arch/x86/hyperv/hv_vtl.c
-+++ b/arch/x86/hyperv/hv_vtl.c
-@@ -256,20 +256,6 @@ int __init hv_vtl_early_init(void)
- 
- DEFINE_STATIC_CALL_NULL(__mshv_vtl_return_hypercall, void (*)(void));
- 
--noinstr void mshv_vtl_return_hypercall(void)
--{
--	asm volatile ("call " STATIC_CALL_TRAMP_STR(__mshv_vtl_return_hypercall));
--}
--
--/*
-- * ASM_CALL_CONSTRAINT is intentionally not used in above asm block before making a call to
-- * __mshv_vtl_return_hypercall, to avoid rbp clobbering before actual VTL return happens.
-- * This however leads to objtool complain about "call without frame pointer save/setup".
-- * To ignore that warning, and inform objtool about this non-standard function,
-- * STACK_FRAME_NON_STANDARD_FP is used.
-- */
--STACK_FRAME_NON_STANDARD_FP(mshv_vtl_return_hypercall);
--
- void mshv_vtl_return_call_init(u64 vtl_return_offset)
- {
- 	static_call_update(__mshv_vtl_return_hypercall,
---- a/arch/x86/hyperv/mshv_vtl_asm.S
-+++ b/arch/x86/hyperv/mshv_vtl_asm.S
-@@ -9,6 +9,7 @@
-  */
- 
- #include <linux/linkage.h>
-+#include <linux/static_call_types.h>
- #include <asm/asm.h>
- #include <asm/asm-offsets.h>
- #include <asm/frame.h>
-@@ -57,7 +58,7 @@ SYM_FUNC_START(__mshv_vtl_return_call)
- 	xor %ecx, %ecx
- 
- 	/* make a hypercall to switch VTL */
--	call mshv_vtl_return_hypercall
-+	call STATIC_CALL_TRAMP_STR(__mshv_vtl_return_hypercall)
- 
- 	/* stash guest registers on stack, restore saved host copies */
- 	pushq %rax
---- a/include/linux/compiler_types.h
-+++ b/include/linux/compiler_types.h
-@@ -11,6 +11,10 @@
- #define __has_builtin(x) (0)
- #endif
- 
-+/* Indirect macros required for expanded argument pasting, eg. __LINE__. */
-+#define ___PASTE(a,b) a##b
-+#define __PASTE(a,b) ___PASTE(a,b)
-+
- #ifndef __ASSEMBLY__
- 
- /*
-@@ -79,10 +83,6 @@ static inline void __chk_io_ptr(const vo
- # define __builtin_warning(x, y...) (1)
- #endif /* __CHECKER__ */
- 
--/* Indirect macros required for expanded argument pasting, eg. __LINE__. */
--#define ___PASTE(a,b) a##b
--#define __PASTE(a,b) ___PASTE(a,b)
--
- #ifdef __KERNEL__
- 
- /* Attributes */
---- a/include/linux/static_call_types.h
-+++ b/include/linux/static_call_types.h
-@@ -25,6 +25,8 @@
- #define STATIC_CALL_SITE_INIT 2UL	/* init section */
- #define STATIC_CALL_SITE_FLAGS 3UL
- 
-+#ifndef __ASSEMBLY__
-+
- /*
-  * The static call site table needs to be created by external tooling (objtool
-  * or a compiler plugin).
-@@ -100,4 +102,6 @@ struct static_call_key {
- 
- #endif /* CONFIG_HAVE_STATIC_CALL */
- 
-+#endif /* __ASSEMBLY__ */
-+
- #endif /* _STATIC_CALL_TYPES_H */
+> ---
+>  rust/kernel/init.rs         | 2 +-
+>  rust/kernel/types.rs        | 2 +-
+>  scripts/rustdoc_test_gen.rs | 1 +
+>  3 files changed, 3 insertions(+), 2 deletions(-)
 
