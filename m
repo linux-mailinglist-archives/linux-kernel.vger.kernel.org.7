@@ -1,44 +1,46 @@
-Return-Path: <linux-kernel+bounces-894320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C3D6C49BDF
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 00:27:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 53A05C49BDC
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 00:27:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id AD6E1345946
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 23:27:17 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id CFF4334A872
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 23:27:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDD6B30498E;
-	Mon, 10 Nov 2025 23:27:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E9E22FFF94;
+	Mon, 10 Nov 2025 23:27:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="sE4rMjGL"
-Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="PUifzqSs"
+Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87F8F3019BA
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 23:27:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71D452F691F
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 23:27:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762817227; cv=none; b=DACTeGSrN42vFcJSx11obMcUF+1dmAGx1dM7O1VFzhzZFzTU8APZEnM9ttZE4TMBlNINMNDBBdcWw5CZlp3DJ7ruK7l+zjda0ZQhVuqaTGDUOF6gH1rJIuw1Il7hB5KbcJe/yusI1CMFD3leuWnf2zx1bDj7kTZuK10764gkvs8=
+	t=1762817226; cv=none; b=ORyQts9oJ26tm41yCnMszprgKYcFqOgOYPv1Ch8Fd5rcNh9g6PUI5OxRrjOhfnvaf82aUBbyNTotkmHQgXuSvBNK3tYBSMwJJDA4CiLbk2cUU6NtNDlg5s4Yxi4aa1dRoK1lEjYRYPGtAzBHZO4kudZBiN1ImWSBltXNtsGPUpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762817227; c=relaxed/simple;
-	bh=/9UG0LzYBSu5uJGvcQElIGzsedcqBP/QxZPWBQzj3No=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rCY+F3dN508oMvrDBIYJAF+IVWpaiM7/XKx7W3DAm52xUA+36KRvbKfPtQmppnYcfGOWj7uEfBATzaWMoZQj3tqQu0hqBa3s9xpcNlx3RbLJYcmqAX000iauIU+q/+X9cB62nXvp2YHHTYncUxnOgx2mH9NzdbpvMMV7nPxXmvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=sE4rMjGL; arc=none smtp.client-ip=91.218.175.186
+	s=arc-20240116; t=1762817226; c=relaxed/simple;
+	bh=ogJdXeINqQWlpc3T1UEK6sCoWh8eJk5cHClB8hzYApw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=s8w3PVQAj9ar19tfNlymxhbfVoAjNSX5LVt175YtkPhdNedcPT/X3mqZO2N/2axw6QLagrr0cDE2rgAr31h7nfUXv26V+DnYpr8tpX5TlsDz2g8+rKIlxJPkN5b5UjixiSUzmz/u9aX5dzHSGqwJTLDZlEzphv4SSKehhmjwj0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=PUifzqSs; arc=none smtp.client-ip=91.218.175.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1762817220;
+	t=1762817222;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=dmoWcwjZhu5uEPgclztVaT4/J/i5TtOnZ6ghcyqjVsQ=;
-	b=sE4rMjGLyJeozhD7Y3Prf1Jlo++YUFg+nNWgIVVTy2yyH7xZhUWYtARf45dWgB2YAjQD3g
-	Dl+ml1rf/2xTYRVlo0e2HD4u3o3PcZnQTgbvcrLTlVcgN9KZhaG8sN4VAoh3wlcdiyDOBq
-	RsUK2NIHUkYVP0iVzef77+SkGp3edU0=
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UZWKobXDfLkd7eERlrIkQnCB9bLEgjEGKzWLVchtxf0=;
+	b=PUifzqSsCvaC+q98arBe8udyvqY/HJ7NptyD9RL/9QuYJ4VChad7VyBR61qB2+AfGt1RuP
+	C0Z8H1iD+qohsuFjf2Wr76e1xkFvwv3/TdAhnsUyTPP4AxJIpfkqLDTBE6MGCrm2qI6uOD
+	BE2NkUimswhxkXh02YSsGW5W1Ou0boc=
 From: Yosry Ahmed <yosry.ahmed@linux.dev>
 To: Sean Christopherson <seanjc@google.com>
 Cc: Paolo Bonzini <pbonzini@redhat.com>,
@@ -46,9 +48,11 @@ Cc: Paolo Bonzini <pbonzini@redhat.com>,
 	kvm@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Yosry Ahmed <yosry.ahmed@linux.dev>
-Subject: [PATCH v3 00/14] Improvements for (nested) SVM testing
-Date: Mon, 10 Nov 2025 23:26:28 +0000
-Message-ID: <20251110232642.633672-1-yosry.ahmed@linux.dev>
+Subject: [PATCH v3 01/14] scripts: Always return '2' when skipping tests
+Date: Mon, 10 Nov 2025 23:26:29 +0000
+Message-ID: <20251110232642.633672-2-yosry.ahmed@linux.dev>
+In-Reply-To: <20251110232642.633672-1-yosry.ahmed@linux.dev>
+References: <20251110232642.633672-1-yosry.ahmed@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,62 +62,34 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-This is a combined v2/v3 of the patch series in [1] and [2], with a
-couple of extra changes.
+runtime.bash always returns 2 (or 77 in one case) when a test is
+skipped. But two cases are missed and return 0. Fix them.
 
-The series mostly includes fixups and cleanups, and more importantly new
-tests for selective CR0  write intercepts and LBRV, which cover bugs
-recently fixed by [3] and [4].
+Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
+---
+ scripts/runtime.bash | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Patches 1-2 are unrelated fixups outside of SVM that I just included
-here instead of submitting separately out of pure laziness.
-
-Patches 3-8 are cleanups and refactoring.
-
-Patch 9 deflakes svm_tsc_scale_test in a not-so-sophisticated way.
-
-Patches 10-11 generalize the existing selective CR0 intercept tests and
-extend them with new test cases.
-
-Patches 12-13 cleanup the existing LBRV tests and extend them with new
-test cases.
-
-Patch 14 is a rename to some of VMCB fields to match recent renames in
-KVM [5]. This is the last patch is in the series also due to laziness.
-
-I realize that the patch ordering is a mess, and I can rebase and
-reorder if it actually matters to anyone.
-
-[1]https://lore.kernel.org/kvm/20251028221213.1937120-1-yosry.ahmed@linux.dev/
-[2]https://lore.kernel.org/kvm/20251104193016.3408754-1-yosry.ahmed@linux.dev/
-[3]https://lore.kernel.org/kvm/20251024192918.3191141-1-yosry.ahmed@linux.dev/
-[4]https://lore.kernel.org/kvm/20251108004524.1600006-1-yosry.ahmed@linux.dev/
-[5]https://lore.kernel.org/kvm/20251110222922.613224-1-yosry.ahmed@linux.dev/
-
-Yosry Ahmed (14):
-  scripts: Always return '2' when skipping tests
-  x86/vmx: Skip vmx_pf_exception_test_fep early if FEP is not available
-  x86/svm: Cleanup selective cr0 write intercept test
-  x86/svm: Move CR0 selective write intercept test near CR3 intercept
-  x86/svm: Add FEP helpers for SVM tests
-  x86/svm: Report unsupported SVM tests
-  x86/svm: Move report_svm_guest() to the top of svm_tests.c
-  x86/svm: Print SVM test names before running tests
-  x86/svm: Deflake svm_tsc_scale_test
-  x86/svm: Generalize and improve selective CR0 write intercept test
-  x86/svm: Add more selective CR0 write and LMSW test cases
-  x86/svm: Cleanup LBRV tests
-  x86/svm: Add more LBRV test cases
-  x86/svm: Rename VMCB fields to match KVM
-
- lib/x86/desc.h       |   8 +
- scripts/runtime.bash |   4 +-
- x86/svm.c            |  12 +-
- x86/svm.h            |   7 +-
- x86/svm_tests.c      | 402 +++++++++++++++++++++++++++++--------------
- x86/vmx_tests.c      |   5 +-
- 6 files changed, 303 insertions(+), 135 deletions(-)
-
+diff --git a/scripts/runtime.bash b/scripts/runtime.bash
+index 6805e97f90c8f..0cbe2695948b8 100644
+--- a/scripts/runtime.bash
++++ b/scripts/runtime.bash
+@@ -103,13 +103,13 @@ function run()
+ 
+     if [ -z "$GEN_SE_HEADER" ] && find_word "pv-host" "$groups"; then
+         print_result "SKIP" $testname "" "no gen-se-header available for pv-host test"
+-        return
++        return 2
+     fi
+ 
+     if [ -z "$only_group" ] && find_word nodefault "$groups" &&
+             skip_nodefault; then
+         print_result "SKIP" $testname "" "test marked as manual run only"
+-        return;
++        return 2
+     fi
+ 
+     if [ -n "$arch" ] && [ "$arch" != "$ARCH" ]; then
 -- 
 2.51.2.1041.gc1ab5b90ca-goog
 
