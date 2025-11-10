@@ -1,96 +1,112 @@
-Return-Path: <linux-kernel+bounces-893431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D111C47606
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:57:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 33C85C475D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:54:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A804F4ED30B
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:57:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 05B224E2651
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 14:54:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B5C7314B6C;
-	Mon, 10 Nov 2025 14:57:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 752BB314A9E;
+	Mon, 10 Nov 2025 14:54:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="z2APgdQ6"
-Received: from mail-ej1-f73.google.com (mail-ej1-f73.google.com [209.85.218.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="POmX0mC5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39EB93054F0
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 14:57:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70262310647;
+	Mon, 10 Nov 2025 14:54:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762786642; cv=none; b=KaBOSrgMe6AGLeSpicaV4O5FQqqhXGhuVijMUnDEMUcFXlyQEecna9I7BrPxhNDXdtyuaFPgjegwYwzr2c4eD9aHtjFVsSYln5xsWWEilhYQtTrpTsrdElYleYAmUWNXi4d/77YXYgh3C6F1TzUK0dmW5NqdSon5d/LH0kirfS0=
+	t=1762786468; cv=none; b=f0A/FPAEscPG/vkYX9TFR6H6R8xOXr813iY21gQbAW0+4RKSrxWfFI6SRknSrlADsLewxropL7my0UWKMMuN+8aWABNCGV3Y5hTD6fRkNw+t++jE4sgQXzFC44kQhFDAU66RGXQjP08/kRRV+L7wHl6s9EASj93Q5tQh4O23KEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762786642; c=relaxed/simple;
-	bh=XrYjurcXwMFuI1n6vQ4mS/+j3z0zFW9n2Q2HRAorD/k=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=iOEYbUmr99y6zXODRxOq1oUWkv0wAI4e/LE6ZBIS1eVGSNDLyM8Ir3oE8Up7E/g32bfSKTGJG9CN3ZY8FLN2yciuvXyJyawkuOD4bgPHwkWAUHrsDobn1SxWYHBNVwkhUBwEfGeHj++2u3fHgJVOWUahR4Zmc/3eaOJNGncQyas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=z2APgdQ6; arc=none smtp.client-ip=209.85.218.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-ej1-f73.google.com with SMTP id a640c23a62f3a-b70caafad59so335463266b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 06:57:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762786639; x=1763391439; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XrYjurcXwMFuI1n6vQ4mS/+j3z0zFW9n2Q2HRAorD/k=;
-        b=z2APgdQ68ppohMezTmMnZUfXJwArZ+yKG2bGNYUSiLZUZi9tdGyAt8NDkBH3P/eXwE
-         LSceGSJUCNJHwSQlVLYkNWD+AQSmJoGCl5ksxV/2Fd64cm3YDojMcOirkQLf087pRVaQ
-         WfmdSbxqgGycjfK4OOlWtjVIpALEF5q9Po+mMSLqT/WGCy8xkhb9T41e50ssu3Ru8Uci
-         BgOv9WtcD8YYVx/F7KjtpacxOnm5g/bb9z3CPOzPlq3wBGa7iU+KXrO0j04GfZRSyNLI
-         6cXRItaSLfwQqE8FZOtSIm4b3cCxkEiiYvnWc3gCWj9BLkenWXT8/FVQqoHtmAzZTz+1
-         R2wA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762786639; x=1763391439;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XrYjurcXwMFuI1n6vQ4mS/+j3z0zFW9n2Q2HRAorD/k=;
-        b=bj5RAFLfU3ry1hMU/Z7ArlnWdn1YqyM7QI5yNzW3r9bxDXUbLYoZ7sP0/4PlgXYx55
-         ypM0q+xh7HuoPGiDb68D4qjdKdZKzm72M0VZndSItwehiuEoBEaF9V+YdpRERWz3Jmpj
-         f42aaYeOhwoOP2jKb2RG/AE0AFgWESTAIiAFpF2L/YndW9RpXYx6dxoK7rY2flxypdPT
-         xbjW6mk/Ix0UPzkcLSV4s/0Rby0a29UBPp7GvJjhaSHmoRBabvPdKqjik1+w2EUp1k8s
-         czh4WL1j40/ft+KBBRjP83dYi74pkXIidpK9z8QBpk4mxspnjWgtMoqMycFoK7Yjalb2
-         jeRg==
-X-Forwarded-Encrypted: i=1; AJvYcCXpk+EhQZtLd6oYonzEX73xrrN9UZV3EvcbRcowyJQJYVIkFNnSfEG3Qep108w7dDwxuJi17vfL5PBsOZE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyenACR9oJnMAEshAVx8ZhxMZl17F7A1ORN4iiiQPjT4pt2+E46
-	HiE/n3nnAHtMPRLENycgldvkQcIlMn4C7+lSATxWpoADPi4kma/Vn1tiQ/SEs0udOaYR7hOlf/3
-	o+lZmhAkG1oWmE0CsOA==
-X-Google-Smtp-Source: AGHT+IGOnlG8lE2H2BKECccs5w83Ie0qMvDDSxYqNCeNyk/4OUCiSM9N6qmdcMFCMYYfeMybQOzcZG1uqwa4NcY=
-X-Received: from ejcvb9.prod.google.com ([2002:a17:907:d049:b0:b72:b433:246a])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:907:1c85:b0:b3b:4e6:46e6 with SMTP id a640c23a62f3a-b72e02ca1d9mr839517866b.1.1762786639240;
- Mon, 10 Nov 2025 06:57:19 -0800 (PST)
-Date: Mon, 10 Nov 2025 14:57:18 +0000
-In-Reply-To: <20251110131913.1789896-1-ojeda@kernel.org>
+	s=arc-20240116; t=1762786468; c=relaxed/simple;
+	bh=mEjP87HZG7Mebgtk8XrHMqGp+mfebsTawJI6PaWKOrs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XhiUkFh0p2OdzboDUf1jAeH98NWjs1xKzWe9wIfPMAFo6QCB2FwIzx5fsOBnX04sOTPcQzKLfv/5ipubbPV8YiRwSmWbJVFIddjWjj42rtnKpA9sIHbaTMGkfdR5lae82AguEzM0Rdh2GTTtxYH8K4n6nEjMpvZfnn4KqFFGiwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=POmX0mC5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFB47C16AAE;
+	Mon, 10 Nov 2025 14:54:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762786468;
+	bh=mEjP87HZG7Mebgtk8XrHMqGp+mfebsTawJI6PaWKOrs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=POmX0mC5DyipsOptxWeb7toyp70bThIxLtmC93Mrhythx9+veMhRlhFCD/5K8MQRY
+	 KFw/7f4xWPlveqoNhWFmAp7r/gE2sdeqcI4YzlCzYTU2mRiPKO7k1Ang/itACssrqJ
+	 0VBq1zbFDJX7QzSnNIJ5PFvrqzwfOedgJBkpwunmyDPSoe691OSMqTrmgIkvy3R5se
+	 3YcLndelm0HkD6murQHD/r84VebHHgsXutIrvpiNTpLEm0b/C0rp/Rqu/+W6j936rG
+	 sX7RNOaGrtL/K5tKFVtAj6lhMC+Hdhuyvj0mkOesroZud8KXyNL8JG6JdMCp9jRpYN
+	 +iiAtEFOsGrhg==
+Date: Mon, 10 Nov 2025 08:58:33 -0600
+From: Bjorn Andersson <andersson@kernel.org>
+To: Sarthak Garg <sarthak.garg@oss.qualcomm.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, 
+	Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, quic_nguyenb@quicinc.com, 
+	quic_rampraka@quicinc.com, quic_pragalla@quicinc.com, quic_sayalil@quicinc.com, 
+	quic_nitirawa@quicinc.com, quic_bhaskarv@quicinc.com, kernel@oss.qualcomm.com
+Subject: Re: [PATCH V3 1/4] dt-bindings: mmc: sdhci-msm: Add sm8750 compatible
+Message-ID: <77qbioe5jfu3pwlmsg5wve3twslurvldkw7xuo6dif5hrnu77s@rv7hgegh2ygx>
+References: <20251026111746.3195861-1-sarthak.garg@oss.qualcomm.com>
+ <20251026111746.3195861-2-sarthak.garg@oss.qualcomm.com>
+ <0c791304-928e-4075-87c0-bd37ebd8e351@kernel.org>
+ <522f353b-7965-467c-9951-9829e58dc681@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251110131913.1789896-1-ojeda@kernel.org>
-Message-ID: <aRH9Tjf0tszyQhKX@google.com>
-Subject: Re: [PATCH v2] gendwarfksyms: Skip files with no exports
-From: Alice Ryhl <aliceryhl@google.com>
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Sami Tolvanen <samitolvanen@google.com>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	linux-modules@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev, stable@vger.kernel.org, 
-	Haiyue Wang <haiyuewa@163.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <522f353b-7965-467c-9951-9829e58dc681@oss.qualcomm.com>
 
-On Mon, Nov 10, 2025 at 02:19:13PM +0100, Miguel Ojeda wrote:
-> Cc: stable@vger.kernel.org # Needed in 6.12.y and later (Rust is pinned in older LTSs).
+On Mon, Nov 10, 2025 at 12:17:51PM +0530, Sarthak Garg wrote:
+> 
+> On 10/27/2025 8:00 PM, Krzysztof Kozlowski wrote:
+> > On 26/10/2025 12:17, Sarthak Garg wrote:
+> > > Document the compatible string for the SDHCI controller on the
+> > > sm8750 platform.
+> > > 
+> > > Signed-off-by: Sarthak Garg <sarthak.garg@oss.qualcomm.com>
+> > > Acked-by: Rob Herring (Arm) <robh@kernel.org>
+> > > ---
+> > 
+> > 
+> > Why are you sending third time the same, even though this was applied
+> > long time ago at v1? Please do not send unnecessary patches, this just
+> > clutters people's mailboxes.
+> > 
+> > Best regards,
+> > Krzysztof
+> 
+> 
+> I had assumed that we need to repost the entire patch series regardless of
+> whether some patches were already ACKed or applied. I’ll make sure to avoid
+> resending already accepted patches in future submissions to keep the mailbox
+> clean.
+> 
 
-Is gendwarfksyms actually present in 6.12 upstream? I know we have it in
-Android's 6.12 branch, but I thought we backported for Android only.
+In the end maintainers are going to merge your patches onto the tip of
+their branch(es).
 
-Alice
+So, if you didn't rebase your changes past the merge of this binding,
+did you validate that the other changes in the series still applies? Do
+they still compile? Do they still work as intended?
+
+Regards,
+Bjorn
+
+> 
+> Regards,
+> 
+> Sarthak
+> 
+> 
 
