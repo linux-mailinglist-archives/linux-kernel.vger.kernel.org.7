@@ -1,133 +1,120 @@
-Return-Path: <linux-kernel+bounces-892874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DB09C4603C
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:43:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39C09C45EBC
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:27:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 157163B86BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:41:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 845A01891C84
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:27:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6D87310645;
-	Mon, 10 Nov 2025 10:38:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12F883054DF;
+	Mon, 10 Nov 2025 10:24:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PRuOqkeJ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WIaQYpF2"
+Received: from mail-ej1-f74.google.com (mail-ej1-f74.google.com [209.85.218.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5566130CD8E;
-	Mon, 10 Nov 2025 10:38:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A0ED305E3A
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 10:24:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762771103; cv=none; b=OgtKSCdAUfa8CO6zf2nnMYuHWKB1nY/56IUcy9cGJcd6FyQL7SZZG/9ye+7Hq7SFT6NQKyUb2LfDloYCY77i/LPZ4HGzvGiyTSX1RNtQITL+2naMj7mBSrUp9noPjjbatttKdzh7lrkcDD2L85Dz4oC181ZVT8oMkzCxW3bZ36o=
+	t=1762770268; cv=none; b=icS81dMQ4ua4QkItgRUK4moowQav1jedUAO+vTft9kgydQvU5SGOkowaJGy1jHW7KVe7rVub79SKV5HdmBe51e97SeiyygYrBQoCTZxkMDyOUCwruwHXy4yRjRVuWjm6/QEaWWhgHhrzTE+8T0J3iGa4SYamM33uQTFV0tR2O2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762771103; c=relaxed/simple;
-	bh=OwNTWbPKJ24ffgAUyc6H9GN1ggjkmnfUcXfxAtMuqrQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JSpCI5pl6bJrp/5eTwdgGpH4YPS4IISDO+fXCxTptmtOlf/F5MySCUKXfryByibLtaZ92XMYiKyPKKnqb8NqtxSGNAwlbY8EcI0eE0WKwwJJes2oP1YECwHXqvLnJggGzPcZz9B0104JYFOjSUVjDCYl5qswq6YfU1TnNMX7x+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PRuOqkeJ; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762771101; x=1794307101;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=OwNTWbPKJ24ffgAUyc6H9GN1ggjkmnfUcXfxAtMuqrQ=;
-  b=PRuOqkeJCnzu7qoC947kuqUW9owXbACxD4Lj/+CnQiWJu+kYncRt4sX3
-   ZXI9zGXjdj67go9rDE39LPyXsuhFtkKUg/LlvCXzWHYHQe3z/x0aTmFtd
-   tRvqWNvVLK1N4aTXWlYGo/pLx2M/IE+MFrmgMuUQWv3UsidrtIt274Siz
-   O6JZWFLHFNu9rgoudrovoheKvDRph+no8ojTw6wiRBknZYkm+WGanP9Yh
-   Fq3gJF9wuKqBPOmyM5nHulfrvS8mQJ3RQDO4Z4jU28ai31OXBPesun6KF
-   sBSZXludLt7QiUnq7p7y1r69Ryp5eSi0qsVmNmseVZntwd16br/pCLf30
-   A==;
-X-CSE-ConnectionGUID: IJDHwz1MSS29obbuagUhXg==
-X-CSE-MsgGUID: 3K35ZdWhTTKtA7WyHQJ8og==
-X-IronPort-AV: E=McAfee;i="6800,10657,11608"; a="52376884"
-X-IronPort-AV: E=Sophos;i="6.19,293,1754982000"; 
-   d="scan'208";a="52376884"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 02:38:19 -0800
-X-CSE-ConnectionGUID: 6E3zoBtVSpW1NjrvUZ8dwA==
-X-CSE-MsgGUID: zGNu059tSv69g9qQPFKq0g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,293,1754982000"; 
-   d="scan'208";a="188891267"
-Received: from black.igk.intel.com ([10.91.253.5])
-  by fmviesa008.fm.intel.com with ESMTP; 10 Nov 2025 02:38:14 -0800
-Received: by black.igk.intel.com (Postfix, from userid 1003)
-	id A5264A2; Mon, 10 Nov 2025 11:38:07 +0100 (CET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Vinod Koul <vkoul@kernel.org>,
-	Thomas Andreatta <thomasandreatta2000@gmail.com>,
-	Caleb Sander Mateos <csander@purestorage.com>,
-	dmaengine@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-arm-msm@vger.kernel.org
-Cc: Olivier Dautricourt <olivierdautricourt@gmail.com>,
-	Stefan Roese <sr@denx.de>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-	Daniel Mack <daniel@zonque.org>,
-	Haojian Zhuang <haojian.zhuang@gmail.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Lizhi Hou <lizhi.hou@amd.com>,
-	Brian Xu <brian.xu@amd.com>,
-	Raj Kumar Rampelli <raj.kumar.rampelli@amd.com>,
-	Michal Simek <michal.simek@amd.com>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH v2 13/13] dmaengine: xilinx: xdma: use sg_nents_for_dma() helper
-Date: Mon, 10 Nov 2025 11:23:40 +0100
-Message-ID: <20251110103805.3562136-14-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20251110103805.3562136-1-andriy.shevchenko@linux.intel.com>
-References: <20251110103805.3562136-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1762770268; c=relaxed/simple;
+	bh=aE0cpumrRJ1UXIBWA3mSkc4AapKLk4WpELDVIiqYqrI=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=U79iIPjqivrEVSjDujQGUwM7JMNvruk/zu18acAfhA7Cmpr7lQc5i5Nh+y1YuuLM1LYgFFFOnQAvM3GJabDHpsg6H1FyBkoUKXoTsMoG57N0Y3PhM0ON5cYtKkrGIm6tRqfmyU5jTaJmn7yHBppo80J32fxmne08ffQpECfWoiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WIaQYpF2; arc=none smtp.client-ip=209.85.218.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-ej1-f74.google.com with SMTP id a640c23a62f3a-b70be4f20deso255182766b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 02:24:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762770263; x=1763375063; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=nNv22iO458s//Cdaagcdl8KtQQ9ntxwjUMQVBshAGaQ=;
+        b=WIaQYpF2dJNWtsu1TA3IOGY0VHBfiS881WUK21fcyqYc48yF2Wz9NmOpe9MEgepAK4
+         cbS1bXKaucri7bpfwffweucNmTdUB17uwgffv/KCukmslQuq9dlqSSrMO957WB6LPhsQ
+         FvZxqEfJS5jaellc9jpoet5LRpk4diF2nxg4dKa73KSigs990xKJ3LTP5JsbtxtYLFsJ
+         jxzpcdXxnXvdevxmtGMTvG9ykc0mUSZubndUgxvS/8I8IvTPYfHINL+zwJnPupw2bs0W
+         liXwmy+sUPizVlqnMoaDwxwlJx0hsamLNGvAHAV8g7hR3le6GkyD2NNQzlXEYZWAjXa2
+         V/uQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762770263; x=1763375063;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nNv22iO458s//Cdaagcdl8KtQQ9ntxwjUMQVBshAGaQ=;
+        b=fEHa2VEsA+go9tc7oxueBBYcK2j2MQUBg6wn6Ad35n/uQV9upJWTdMm3Q/YlDk8GX9
+         UDf96TLaRjoSXZXsBXTxBUy4rYUvTdsd8YxDeDB1sHQSNogIYlBa/rUmU2GxgEtD0GN/
+         +pQNuK545joGaZGff97x56lvTT529agJ3JVssY9fj/SyMdVHeUYva7xNipfA0KqCTzJl
+         fAvJK3hWqLYPOBTqX4PVzueuFCKcKuDkufLuS93de5cAwy4EkKrjSFlfvBoWhwIl2RzT
+         oNt3Q6PMtWOq++mqcqowtZp9MmQmIcf7gKqAGCAgA8mS2ONPyWywbxNPlbd5XDJdrAaj
+         VHQA==
+X-Forwarded-Encrypted: i=1; AJvYcCVAqbtUriLLoHuUgPFVplYpMEA5xHlW1+6gqpe6e6FJkVSrAtL0Gcp464ya9iYtq5cwbR5fAG5YTBF7mPo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwQT4SlKqFoJ9t8pjbb31fWXRlQMH6qKxqrRT1L3LhmBUHIWdb
+	8r5KpWnvg33LGUph+uzY9SRDtyuMIhvandn7Xl5bf3/2fpnQnsWia1AoIH+j2GLKVtnonJoIwLM
+	abN3Itr046tiba+SMcA==
+X-Google-Smtp-Source: AGHT+IHF1mfHQnJtzIm6KGV9avfylPLNTU2wZn2/rVrhlMwC4+Dos2C8BVWng0M+4Mg0oVxmMCdjIYjJS7RxIbY=
+X-Received: from ejcvi8.prod.google.com ([2002:a17:907:d408:b0:b72:41e4:754b])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:907:7f26:b0:b40:da21:bf38 with SMTP id a640c23a62f3a-b72e041276dmr757987266b.36.1762770262892;
+ Mon, 10 Nov 2025 02:24:22 -0800 (PST)
+Date: Mon, 10 Nov 2025 10:24:22 +0000
+In-Reply-To: <20251110095025.1475896-2-ojeda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20251110095025.1475896-1-ojeda@kernel.org> <20251110095025.1475896-2-ojeda@kernel.org>
+Message-ID: <aRG9VjsaCjsvAwUn@google.com>
+Subject: Re: [PATCH 01/18] rust: condvar: avoid `pub` in example
+From: Alice Ryhl <aliceryhl@google.com>
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	patches@lists.linux.dev
+Content-Type: text/plain; charset="utf-8"
 
-Instead of open coded variant let's use recently introduced helper.
+On Mon, Nov 10, 2025 at 10:50:06AM +0100, Miguel Ojeda wrote:
+> The future move of pin-init to `syn` uncovers the following unreachable
+> public item in an example:
+> 
+>     error: unreachable `pub` item
+>          --> rust/doctests_kernel_generated.rs:14683:1
+>           |
+>     14683 | pub struct Example {
+>           | ---^^^^^^^^^^^^^^^
+>           | |
+>           | help: consider restricting its visibility: `pub(crate)`
+>           |
+>           = help: or consider exporting it for use by other crates
+>           = note: `-D unreachable-pub` implied by `-D warnings`
+>           = help: to override `-D warnings` add `#[allow(unreachable_pub)]`
+> 
+> There is no real downside of keeping the example as-is until the
+> `syn`-based pin-init is introduced, so there is no need to treat it as
+> a fix nor to backport it. However, we still need to change it before
+> introducing the new pin-init.
+> 
+> Thus do so.
+> 
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/dma/xilinx/xdma.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+The unreachable_pub warning normally does not trigger for documentation
+tests since using `pub` in documentation tests is not wrong. So this
+sounds like a bug in our doc-test setup.
 
-diff --git a/drivers/dma/xilinx/xdma.c b/drivers/dma/xilinx/xdma.c
-index 5ecf8223c112..118199a04902 100644
---- a/drivers/dma/xilinx/xdma.c
-+++ b/drivers/dma/xilinx/xdma.c
-@@ -605,13 +605,11 @@ xdma_prep_device_sg(struct dma_chan *chan, struct scatterlist *sgl,
- 	struct xdma_chan *xdma_chan = to_xdma_chan(chan);
- 	struct dma_async_tx_descriptor *tx_desc;
- 	struct xdma_desc *sw_desc;
--	u32 desc_num = 0, i;
- 	u64 addr, dev_addr, *src, *dst;
-+	u32 desc_num, i;
- 	struct scatterlist *sg;
- 
--	for_each_sg(sgl, sg, sg_len, i)
--		desc_num += DIV_ROUND_UP(sg_dma_len(sg), XDMA_DESC_BLEN_MAX);
--
-+	desc_num = sg_nents_for_dma(sgl, sg_len, XDMA_DESC_BLEN_MAX);
- 	sw_desc = xdma_alloc_desc(xdma_chan, desc_num, false);
- 	if (!sw_desc)
- 		return NULL;
--- 
-2.50.1
+Regardless, I don't mind changing it here for now.
 
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
