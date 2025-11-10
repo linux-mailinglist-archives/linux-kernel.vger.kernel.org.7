@@ -1,246 +1,183 @@
-Return-Path: <linux-kernel+bounces-893482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65050C47831
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:25:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3FD1C47932
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:36:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB3BA1886232
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:21:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C222422A27
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:20:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2040E23F26A;
-	Mon, 10 Nov 2025 15:20:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A58523F26A;
+	Mon, 10 Nov 2025 15:20:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="aEij+ROR"
-Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="bx2F7F1E"
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012050.outbound.protection.outlook.com [52.101.66.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DC781DDA24
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 15:20:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762788019; cv=none; b=EERlGNM312qutLDcGQOijHuCtYuvRWn0pjqkjinKFOYCncCbl+dmYVINDxcJ0/kZuYQPZ1gci0IN7Vexnm/RnWPGrGumE3AT+k+P9hXwkCeAGw73hM9c+UcFGaESzXzGNiTSZN8AzBt+v8vLdfMBgzD9UIgf5FIW1oyH1GvQYGo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762788019; c=relaxed/simple;
-	bh=sO2EwoD/iYNjfdcI7NveTHw7NYQaesuq9uoAsC4fvXY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=kVpTWK6qsGKqBh4UuMY0TcTnrb0W6iorF7UTYg0oQqBZh7u1MqwVeyDrbRw/Oi/xaT2ONaoY9/YJbdiQ6u0fd+HvzUqEHI6kTet8X+EUZM7Evn8iu1ruvdxDxLsi1sdjvX59Wn6cNMpyKHI8PMUAS5uwkbsnAe2tv5O34gL1Zpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=aEij+ROR; arc=none smtp.client-ip=209.85.166.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
-Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-4332381ba9bso34437665ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 07:20:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1762788016; x=1763392816; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=wHqCJdsR7z6UGezYu2PLRy2EX3z1OohmVvws0HQYrFQ=;
-        b=aEij+RORaRMFW8ONPGQ9MWQ2SIC99rnZNqHsx0buzMifST7WGMnZpAxk9MePnIjJAm
-         z0Rk4mmyamAHdCvYKqA8ylg2mfS4aKsJ/rwSfqXDuQ0L1cPLsKVA43GTTTfSCR6xpqbR
-         t1HLDL6Y2SkQGWyktQeaC0YOwa84kAizkyOKAsNGvicI9iaH4urPRZrVo8+FsCIDfTiO
-         1P38R0DXg/HLhF6roXQbQxV/FuNuIaUEBlPrxshNCjcNbih4K1hSnyAwHuEolAMFRcqY
-         rF+bFBf/XV4kL+gxrJKUuUgG59wW59TccqLxz0SO+BqLpBxD2G1LCVgI68AwKcn1YdUB
-         bFyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762788016; x=1763392816;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wHqCJdsR7z6UGezYu2PLRy2EX3z1OohmVvws0HQYrFQ=;
-        b=pkXIzrcLCL/6U/TY2qlFCjA2XqaPkUAzE4dIZdqmeIx7DjndNaDWIjUXh7Q9TZHNzL
-         wfkSxED0VyHOMILVtMw6K0r0EhE1laT3KCS5r+UeYCnO/PIUEN7xToOgcLqZ438PyZB7
-         EVxQYN5SzPWCq0I2qIOzo4w8VR0DQ7XAIXTzJ5TLIRt8Ip8eO/gGVyNmLKd7hOFm9xVa
-         aRymjjRz1Gnncw1WuC7eu+ldxT9Oh48W4RSTttm+JglRDcqOdbM0NpWx2Jffek5a0VRB
-         YLz4leIJCFrvSjrRrSIL8lVRkH6USwhP6g3l+X3xCXkp1ZJdvEbTMwoO1hD/aa6kbNs6
-         9Rqw==
-X-Forwarded-Encrypted: i=1; AJvYcCV3Ohn9ojrVzCxnURC0Hdqa1lICmH9l8Lu4oPQGKrf0z9vyDTkisp/Y21OD4ik9gGubbv4gp1lQ1fqIfFg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxi3ANuC1CcFk94ucfo0mDCa4okKt60pVcdCVK3trmUw6V3saJM
-	XP7QQ0piNau95SNqzanI/NveaAn163oBOblVjBvuM5cnkHgrzQlpTkMeOwumN/943UU=
-X-Gm-Gg: ASbGncsRXUlPqRYgld/v9mKh6/hfVuFErLPaGy52IswIvDFtTKzlJLieTDw37eytEjf
-	1fc6EYhDKwQhBrL+9q5UEUwihkxplVN+66c0AJLJWPQ9YWvRr3tmUPFffjvCrAGWP11tZ8Bgi/f
-	nzfbl5hNPTx0iIp3OyhGOAro8rdFGHFXB1KsJY9GN/MqWqd9uWig9ESEh1Y3uCuxfsKCrL1PkQf
-	OnRJKgdKQhce8H284XG2iK0mF1c8hALAX9F4FrbjxKsO7E8CkETVfrXOsL5EAgno0VCIeOzCdrw
-	9wzZDZ3j4E2qmJR6xJUKcjkNoy77CPSbw3NO9XDp1vGAvHEmuRqqPL9nGzTbKnDEOg9tqFE5NxF
-	tWncLMDNEzI/3mO6j62O35nY4vR7v/+ByESb8TiiNJZQP7WPXUbNTkorzOGDmHX55rsYUBDKbjG
-	hp2UCr2CEd2c+bEyOKXe6vVZVfbFkDFRO26+DSQ3c=
-X-Google-Smtp-Source: AGHT+IEbu7UkRnaq1HAZF7KJE8mC7YX4IT4qsm04tHRZF/RRVkDmdBo8SVYWqOjog8FiLYEn3hk8pw==
-X-Received: by 2002:a05:6e02:1aa2:b0:433:3034:e88 with SMTP id e9e14a558f8ab-43367e48c8bmr107760915ab.21.1762788016218;
-        Mon, 10 Nov 2025 07:20:16 -0800 (PST)
-Received: from [172.22.22.28] (c-75-72-117-212.hsd1.mn.comcast.net. [75.72.117.212])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-4334f4f5b90sm56357735ab.33.2025.11.10.07.20.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Nov 2025 07:20:15 -0800 (PST)
-Message-ID: <66ab3a48-5d5a-47c7-b8eb-b477fd987314@riscstar.com>
-Date: Mon, 10 Nov 2025 09:20:13 -0600
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EEAA1A7AE3;
+	Mon, 10 Nov 2025 15:20:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.50
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762788051; cv=fail; b=XkwvAc3wf8UZ+G+mFhNSVv/af6LJ3u7REMS/6uQST+CHkU6jti66ojoNLvHu/EipjYpSDv911nJrJb39OwPue2UUr943xzbMZ970cvikCtSmTuKZ2wULrse+0neOgElKZcIVNVxYH7iPUd9SIfe7yxRjTMSOFO54v83+kJl40R4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762788051; c=relaxed/simple;
+	bh=OuBG5a10cyH6U5g/1E5URY8FiTsBrrUx/j1HDqfNl+4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=rIIHE994MzxCJv6EjbWcZJfDlip2rFWSJswgucKWYYhrIUpFeGqlFgbWv8ZwfXP6t6i+gBDvFGtUifpHtY9qLkoCI689Twh/lPMqPach3m7Yz6aDfntc64wZj9JvD1rgWpJM5c1vIXrW5OJIZf1dxNHhC0A2Bmnq69436PkZuyk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=bx2F7F1E; arc=fail smtp.client-ip=52.101.66.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=yZO1z7vTONVgnqThhN4yKGCho+w0ou+hU51Alpdz3T4XpvXy/UNxcj6AG6isQKACBwJXvLUEa3sGxFezx9pQ1jDU0KreaOPPTwNW3V7lVK9g1kfLjiovE/sJFmtUChkn9dcE2Hed3SHmdfawh3tPC4e6wfjZ8MpxvoAtKVBGeUfF2TT3wT1Uao6UM1qufm1Lw3/AP8ioOYk8CxjFmyGthILcUqGYqoONzeiYWL3s61VPjzM9XCY8Z+MPEyFrIO18ggYpWav/TetV+5myFQxSZ8MTbj2BLCYnOOaWH/HX/rC8IHiZfC3Uvie7Fc6JE9qCjrIgwHOM0kHMcgc1qmGQMA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=gktokGfPSdCx8RXBySqdYXI/qYTIT7QbDMCrz63DdLI=;
+ b=bRFGQ1IKkuLBH76+O50Utf3tMxwT/0aPD3algJiIcYNhYK9Ey/FwCuBuaZ89rbf+utbQeNy/QYlPbdhcG0xILqCIAqgA7ekh+ksTMmIKJ5X8l9zmtBfp1+zMB4g6c5Y9ReQz6Y29qVqjjmL+yX6QxO7nGr3S2A82LGd0uN+Q71X8LjlCbTujNRZDEf8mpgXvyflzyZjnWjFyfrDoouXdKCuTErW7D5ZkatF2HwtULLDEyRZREpX7pLb8agiqQO8rINY0nkRqvEFoZtNEmuBnyr2RICJy1uI+1IU0elUl5tTewU4DzvkvsS/5tPnbTqb8SdI+el3+NgGEY3s9qmUd5g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gktokGfPSdCx8RXBySqdYXI/qYTIT7QbDMCrz63DdLI=;
+ b=bx2F7F1EzItpUJ4yEw2LqL9PGs/TtG6J+iZPLkQ5ZBQjCmq0KUlccYS3RcnTGP+5rFuJdoz3f20W09pmys0hInaXMCj2eP/ygqZbAAtps4boZNuibJPn+qMi5odpJFldOjMrqMFsqDYa6kJJO7n/TZXENmtDngmU4DHum2X++K3HW16V+mXXnxMPEQhNS8v9n2Ie3EmVo4/MxNCqEOPRyAbtVjQCaq8lAJ9tFl5QTvbEQelUWw3Nk9GA4IBplL2aOeB3fAbkXpyDXzmue/zznSK4Xig19CWMtYe9RPi09I6KnAcdpBlYIRrVqrgVNTU7HWeL+QhPGPd8wtUyGD1H6w==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from DB9PR04MB9626.eurprd04.prod.outlook.com (2603:10a6:10:309::18)
+ by AS1PR04MB9502.eurprd04.prod.outlook.com (2603:10a6:20b:4d0::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Mon, 10 Nov
+ 2025 15:20:45 +0000
+Received: from DB9PR04MB9626.eurprd04.prod.outlook.com
+ ([fe80::55ef:fa41:b021:b5dd]) by DB9PR04MB9626.eurprd04.prod.outlook.com
+ ([fe80::55ef:fa41:b021:b5dd%4]) with mapi id 15.20.9298.015; Mon, 10 Nov 2025
+ 15:20:45 +0000
+Date: Mon, 10 Nov 2025 10:20:35 -0500
+From: Frank Li <Frank.li@nxp.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Steve Longerbeam <slongerbeam@gmail.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, imx@lists.linux.dev,
+	linux-media@vger.kernel.org, linux-staging@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/6] media: staging: media: imx6-mipi-csi2: use
+ devm_clk_bulk_get_all() to fetch clocks
+Message-ID: <aRICw0DnuqxaiAVS@lizhi-Precision-Tower-5810>
+References: <20251107-stage-csi2-cleanup-v1-0-5d42535243ac@nxp.com>
+ <20251107-stage-csi2-cleanup-v1-3-5d42535243ac@nxp.com>
+ <0af422ff5881ec875ad7eea272e229ce3426956a.camel@pengutronix.de>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0af422ff5881ec875ad7eea272e229ce3426956a.camel@pengutronix.de>
+X-ClientProxiedBy: PH2PEPF00003848.namprd17.prod.outlook.com
+ (2603:10b6:518:1::65) To DB9PR04MB9626.eurprd04.prod.outlook.com
+ (2603:10a6:10:309::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 0/7] Introduce SpacemiT K1 PCIe phy and host controller
-To: dlan@gentoo.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, vkoul@kernel.org, kishon@kernel.org,
- bhelgaas@google.com, lpieralisi@kernel.org, kwilczynski@kernel.org,
- mani@kernel.org, ziyao@disroot.org, johannes@erdfelt.com,
- mayank.rana@oss.qualcomm.com, qiang.yu@oss.qualcomm.com,
- shradha.t@samsung.com, inochiama@gmail.com, pjw@kernel.org,
- palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
- p.zabel@pengutronix.de, christian.bruel@foss.st.com,
- thippeswamy.havalige@amd.com, krishna.chundru@oss.qualcomm.com,
- guodong@riscstar.com, devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
- linux-phy@lists.infradead.org, spacemit@lists.linux.dev,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20251107191557.1827677-1-elder@riscstar.com>
- <aQ8kqIljwGZfkF8M@aurel32.net>
-Content-Language: en-US
-From: Alex Elder <elder@riscstar.com>
-In-Reply-To: <aQ8kqIljwGZfkF8M@aurel32.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB9PR04MB9626:EE_|AS1PR04MB9502:EE_
+X-MS-Office365-Filtering-Correlation-Id: 40dada01-6c51-482b-cd2c-08de206cb800
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|7416014|376014|366016|1800799024|19092799006|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?MmZR9Q3eROQj/SgVy8ASWz8NGQBIPWgZU2IbXzn5wpB7osMTwz76RfDHvmYY?=
+ =?us-ascii?Q?SrjDt1dX9GiUf6a9eE7smUBiJfa4SASi/VmnE2tR66NgSPijWQbO6u1yFaHR?=
+ =?us-ascii?Q?ySdvmjp5Bhm1EkDXm+TfAS/JenLT+0aWLzV9FW6XzQf3C0Fmg1h4OVaIo36o?=
+ =?us-ascii?Q?38fxOBBvL2/BN//qQ/i3Abah6+UMuXXdLtXaTUOb70HmBv1MJZ4cvqaa5Wrt?=
+ =?us-ascii?Q?zZ4K468v9/WcvoyE2HCO6wIDSs0xDDOa79GZOQrgM8Rw3Uh2BDxA5sd4z5yB?=
+ =?us-ascii?Q?TtBmteKZlBLrvuamfqBC3yDPJwVpJxNLODOWBHb6UBkwplL3wZAqW1bCf631?=
+ =?us-ascii?Q?e2ORqryABwyJx5L3GY2faQv9PQUtdpajgwvwtlEEwON/jUyguX6PDNh31xRp?=
+ =?us-ascii?Q?lrFxKAm9uWajB4vAsmyX91OzqxXmGoZWVb45ib3ZGYuKaZ8TG5Rd3pm+Mfv2?=
+ =?us-ascii?Q?P8ifYEUGvc/ktYeO83RlM1HmT8J7FRB+b6hVxOAlywHCM+nDVkRmfifl5jTx?=
+ =?us-ascii?Q?Q/qjHT05qgHRmo2p53madttt9Irbv9oy4vIxwPtpEf8MWKHtxOYOCxFpWdRF?=
+ =?us-ascii?Q?/QMbiqQkXggJ5d9MQN7u+9/GUvFpS39VeAfRTJCa2CSQTAuHq3J6ZSvoOWoc?=
+ =?us-ascii?Q?r/1Nw9h8U53GtmJ8/FsI4NAPWkuRR+bn6zgBKPLdlPc58cDN4gVl5OtLRrjA?=
+ =?us-ascii?Q?FcaYbtmMdZA/9x1HkdwjLmmzsgU+UeUKkA0v4wSNX7UNc7AkFXW799KsngPu?=
+ =?us-ascii?Q?4042oU+jnE4LdOvwE3/JGmj4+TP8zhB8ZMVyghTQ/g5FqJB06De7v7UhpCG8?=
+ =?us-ascii?Q?XnQyfH1C9unUc/4htgu5sGtTh6QrrkY6FC2z5czIaOKewo1aBGh4/RfIyB46?=
+ =?us-ascii?Q?jdWu/pgNQ1EEhqGdEb9MqPpHf9HINeG7e7kzqfGG8Qfqg9ooAS+Gv1qh+Yie?=
+ =?us-ascii?Q?LT1+YZUOSaoHKLwYPCdhIEfMQIkRyNlI2ma0tCCX9pv/lushJePv5N/HjtxS?=
+ =?us-ascii?Q?XnXV8XEseyPgsWoPp9j75hzyqqmg7/M3t6WT+E/OSHpvwBBPHxiaR6WuhmxD?=
+ =?us-ascii?Q?Y1qSw5gP9fXvO4J7BoahwLulK3Sqi9UFuuY8ZUZJeTDllvS/FGaiAwnYEDCO?=
+ =?us-ascii?Q?XBnanrvd0v/eusFlsRCx0ZRkPx7CasizdZykHOD0y8OJ8pLdtg6HPij5ecUn?=
+ =?us-ascii?Q?U1BTx6PB91HPM3AJWcS3vU2DZLz33a8qLsd5areCoosQnO5mjHrffe2UHkzz?=
+ =?us-ascii?Q?zdN9G9TacqDEcK5MLoEENYKCSaGpR2zKeVbibhRrQTC32uJp1ioE/XpLxjNm?=
+ =?us-ascii?Q?gaq2zFxYi629lU5fULS2svFC6BidCobT7vm8wgPN23VH+krMmW4Ke2XhtnTK?=
+ =?us-ascii?Q?tF3naDSJQ0VhK/kqXylBzkPQ0I+oS849Shm/9y/niW8MTc5R1b8VNEEYJFdn?=
+ =?us-ascii?Q?AmVsFRRH2OhxVEIJhfJ0C73L3P3bvwdkQzFp9F+G35YGLcy0ktEJCY7wDZ+l?=
+ =?us-ascii?Q?iMQqLLTvNjKcUuKfB0i0ai/tXSVR7pjPI5Pg?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB9626.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(7416014)(376014)(366016)(1800799024)(19092799006)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?RLz/PTsIYYQifBsKePNGXgLuQT1DhPAy84IMsW4SRscrYZtn8ZT4nRjEUugD?=
+ =?us-ascii?Q?OJt6+VAC5N9O6+F3NUCB4WXZ4wQE9mTgd+Ei39l8coI8G3kVOiMbeZvRyHuj?=
+ =?us-ascii?Q?++eqej1Z2B7qd0HSdsn8iO9Y38KPXy+D3HgWvfqFLMUb7igcDk66p68xcf0E?=
+ =?us-ascii?Q?CYQ0Crp19DasxMIVtsb0WTk/daU6nXwjJM/OV0ITBL6elWsvpXO7w8bOFP33?=
+ =?us-ascii?Q?Bd+hqgER9Fudj8QDWEXepLc9OhIIqAQ/nd/ykIADmiHXGoD5h9zt6qdfiha4?=
+ =?us-ascii?Q?FZg6ZlcLDxES2L8z/JfGdnijYzf5U4UH/wHI6FkcIYd+43uheg5oTXEmaAN5?=
+ =?us-ascii?Q?nAzNmM5GETK+LfEKxlpllyn9tvQXujejxpDPoyFmtDI1GMAi7if49dh1Ya8Z?=
+ =?us-ascii?Q?t3Ao2hi11mIuAP5bWSxVpfMZ6V5H756WawEcN5VORCt34pbt6TpESkDEIWfb?=
+ =?us-ascii?Q?fQrbPx/4fqKjywl3bJZgObvFS+WuV/m83PXG5+z+wPu8LxDrkGmOz6CfJCvA?=
+ =?us-ascii?Q?6fTjR5n3o/D1+b0ClYhEmbyC7LPCp40+P6EkrVorGTY0fGFqCCH0DfzyXASh?=
+ =?us-ascii?Q?iLKKW0vfq9WeaqITKKwMmlY2ianHpsx/U7/3GHmF2DndZng73FK1f6BCR8B8?=
+ =?us-ascii?Q?RK8dVN1XQfuzjF0OW2Kw3OynRwPPnu08jJ1st+xmiR6Z/U081tzDJKZR2FpJ?=
+ =?us-ascii?Q?sQJH5PNTXcg898GjylfR5IzoIUwK11hwPhw/PtFow78De6id9WVlhH5zhQ8C?=
+ =?us-ascii?Q?Yn82B3KpEiihFId/yGg0nV0IZCzr1sDmuhJ8nZdIvNzYiqLXn2p59Qi9YsnE?=
+ =?us-ascii?Q?1KG9w6Y2l8qeVO7eudjX1JN/be1xUr7Qhj08IpZWTBbOBc9vlrkaA7Z5ip87?=
+ =?us-ascii?Q?45jBSYvCtA3yajihYEvKZzTSAlXDfH0x9Ss842Y02w35Ax8SEehdMxBlvAjj?=
+ =?us-ascii?Q?Gs0FdF+7b4JS1+OdQcZnmb6E/tyEyA+HfFBQ7Ryd6KQSXBXoE0T8snA+eVcU?=
+ =?us-ascii?Q?6BEg4So8qwXoCBmHzYLftdy9Ns6nMQTctTdXk3c9koeowsNACFzKLydKokrE?=
+ =?us-ascii?Q?QeA+QZ8Z2wkZloHQew/w0IyNU9+YMa3bX/FwcbooPsvoJHmw6MiDs1g9swwo?=
+ =?us-ascii?Q?a1hm6hCe6jqWyxAtyH8cC49L9n5K83u7ILWqvZS7ZSbLQXpAcim7OeGjzMwH?=
+ =?us-ascii?Q?sps9nzCopsAmC7E8hSIrOD2PqDeaL4lw6nd8IssMhJC3WdwEYhtqLPB/CCer?=
+ =?us-ascii?Q?UCwaenv0vvbeZjzfRgv+54Z86nYT0M0FA+doGx5vcw3rMUny9s+wTkO9mfi9?=
+ =?us-ascii?Q?YmCTME0TtZcGyG05GUqmuehZZdOvhoospr71g6oBOrOaoSDSNC86pwIFD46Q?=
+ =?us-ascii?Q?9PHpYlNbFtxbZSa0IX8kJBFu/ZiGkwtxAhxLtfr4QRc/XoW0reu9ozhjqKp6?=
+ =?us-ascii?Q?aM0nzglfEkapFqlHE6PzbQaF75/PO26Kes8nDUtplMnahpnIFTk6HBY3uvfS?=
+ =?us-ascii?Q?3CRBdVx1gowmiJfkV+bEvCTG/XLnig0JwtHx8RBZwfuXdpZABMDsYgmH5NAG?=
+ =?us-ascii?Q?ipPzcJMT34rqpMii+fNVMVrNzdTNxNxhq255ABrd?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 40dada01-6c51-482b-cd2c-08de206cb800
+X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB9626.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Nov 2025 15:20:45.1919
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: nMJZTlAfIgyBIXRRxZtFnLZ8hoEbMwjlBj14n+L9ExGUs4bsi3ePxjRx86PB4QNt3E74mN9rrFaz6l0b9KmpuA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS1PR04MB9502
 
-On 11/8/25 5:08 AM, Aurelien Jarno wrote:
-> Hi Alex,
-> 
-> Thanks for this new version.
-> 
-> On 2025-11-07 13:15, Alex Elder wrote:
->> This series introduces a PHY driver and a PCIe driver to support PCIe
->> on the SpacemiT K1 SoC.  The PCIe implementation is derived from a
->> Synopsys DesignWare PCIe IP.  The PHY driver supports one combination
->> PCIe/USB PHY as well as two PCIe-only PHYs.  The combo PHY port uses
->> one PCIe lane, and the other two ports each have two lanes.  All PCIe
->> ports operate at 5 GT/second.
->>
->> The PCIe PHYs must be configured using a value that can only be
->> determined using the combo PHY, operating in PCIe mode.  To allow
->> that PHY to be used for USB, the needed calibration step is performed
->> by the PHY driver automatically at probe time.  Once this step is done,
->> the PHY can be used for either PCIe or USB.
->>
->> This initial version of the driver supports 32 MSIs, and does not
->> support PCI INTx interrupts.  The hardware does not support MSI-X.
->>
->> Version 5 of this series incorporates suggestions made during the
->> review of version 4.  Specific highlights are detailed below.
->>
->> Note:
->> Aurelien Jarno and Johannes Erdfelt have reported seeing ASPM errors
->> accessing NVMe drives when using earlier versions of this series.
->> The Kconfig files they used were very different from the RISC-V
->> default configuration.
->>
->> Aurelien has since reported the errors do not occur when using
->> defconfig.  Johannes has not reported back about this.
-> 
-> Unfortunately, while it is true with v4, this is not the case with v5
-> anymore :(
+On Mon, Nov 10, 2025 at 09:22:30AM +0100, Philipp Zabel wrote:
+> On Fr, 2025-11-07 at 15:44 -0500, Frank Li wrote:
+> > Use devm_clk_bulk_get_all_enabled() helper to simplify clock handling.
+> >
+> > Defer all clock prepare and enable to csi2_start(), which previous only
+> > enable pix clock here.
+> >
+> > Do that safely because there are not register access before csi2_start().
+>
+> What about log_status()?
 
-That's too bad, but thank you for reporting it.
+Good capture, It should add clk_get/put in log_status().  Plan to change to
+use runtime pm to manage clock later.
 
-> Fundamentally in the generic designware driver, post_init (which is used
-> to disable L1 support on the controller side) is called after starting
-> the link. The comparison of the capabilities is done in
-> pcie_aspm_cap_init when the link is up, which happens a tiny bit after
-> starting it.
-> 
-> In practice with v4, the link is started, ASPM L1 is disabled and the
-> link becomes up. With v5, the move of the code getting and enabling the
-> regulator changed the timing, and ASPM L1 is now disabled on the
-> controller 2-3 ms after the link is up, which is too late.
-
-Yes in v4, we relied on the root port driver to enable the
-regulator, but (on my system anyway) that happened too late,
-*after* the PCIe controller driver held PERST# asserted for
-100 msec.  PERST# is not supposed to be de-asserted until
-power is known to be stable.  So v5 went back to having
-the controller get the regulator in k1_pcie_probe().
-
-I am supposed to receive the WD Blue SN570 on Wednesday, and
-when I get that I'll have a chance to try to reproduce at
-least one of these problems, and can ensure there are no
-timing-related issues like this.
-
-Thank you for your continued testing and feedback about this.
-
-					-Alex
-
-> I have added a call to pci_info to display the moment where ASPM is
-> disabled. This is without the regulator change:
-> 
-> [    0.386730] spacemit-k1-pcie ca400000.pcie: host bridge /soc/pcie-bus/pcie@ca400000 ranges:
-> [    0.386970] spacemit-k1-pcie ca800000.pcie: host bridge /soc/pcie-bus/pcie@ca800000 ranges:
-> [    0.387017] spacemit-k1-pcie ca800000.pcie:       IO 0x00b7002000..0x00b7101fff -> 0x0000000000
-> [    0.387047] spacemit-k1-pcie ca800000.pcie:      MEM 0x00a0000000..0x00afffffff -> 0x00a0000000
-> [    0.387062] spacemit-k1-pcie ca800000.pcie:      MEM 0x00b0000000..0x00b6ffffff -> 0x00b0000000
-> [    0.400109] spacemit-k1-pcie ca400000.pcie:       IO 0x009f002000..0x009f101fff -> 0x0000000000
-> [    0.490101] spacemit-k1-pcie ca800000.pcie: iATU: unroll T, 8 ob, 8 ib, align 4K, limit 4G
-> [    0.494195] spacemit-k1-pcie ca400000.pcie:      MEM 0x0090000000..0x009effffff -> 0x0090000000
-> [    0.850344] spacemit-k1-pcie ca400000.pcie: iATU: unroll T, 8 ob, 8 ib, align 4K, limit 4G
-> [    0.950133] spacemit-k1-pcie ca400000.pcie: PCIe Gen.1 x2 link up
-> [    1.129988] spacemit-k1-pcie ca400000.pcie: PCI host bridge to bus 0000:00
-> [    1.335482] pci_bus 0000:00: root bus resource [bus 00-ff]
-> [    1.340946] pci_bus 0000:00: root bus resource [io  0x100000-0x1fffff] (bus address [0x0000-0xfffff])
-> [    1.350181] pci_bus 0000:00: root bus resource [mem 0x90000000-0x9effffff]
-> [    1.358734] pci_bus 0000:00: resource 4 [io  0x100000-0x1fffff]
-> [    1.362033] pci_bus 0000:00: resource 5 [mem 0x90000000-0x9effffff]
-> [    1.368289] spacemit-k1-pcie ca400000.pcie: pcie_aspm_override_default_link_state
-> [    1.375967] pci 0000:00:00.0: [1e5d:3003] type 01 class 0x060400 PCIe Root Port
-> [    1.383043] pci 0000:00:00.0: BAR 0 [mem 0x00000000-0x000fffff]
-> [    1.388927] pci 0000:00:00.0: BAR 1 [mem 0x00000000-0x000fffff]
-> [    1.394826] pci 0000:00:00.0: PCI bridge to [bus 01-ff]
-> [    1.400061] pci 0000:00:00.0:   bridge window [io  0x100000-0x100fff]
-> [    1.406460] pci 0000:00:00.0:   bridge window [mem 0x00000000-0x000fffff]
-> [    1.413245] pci 0000:00:00.0:   bridge window [mem 0x00000000-0x000fffff 64bit pref]
-> [    1.421012] pci 0000:00:00.0: supports D1
-> [    1.424948] pci 0000:00:00.0: PME# supported from D0 D1 D3hot D3cold
-> [    1.432718] pci 0000:01:00.0: [1987:5015] type 00 class 0x010802 PCIe Endpoint
-> [    1.438698] pci 0000:01:00.0: BAR 0 [mem 0x00000000-0x00003fff 64bit]
-> [    1.445426] pci 0000:01:00.0: 4.000 Gb/s available PCIe bandwidth, limited by 2.5 GT/s PCIe x2 link at 0000:00:00.0 (capable of 31.504 Gb/s with 8.0 GT/s PCIe x4 link)
-> [    1.464897] pci_bus 0000:01: busn_res: [bus 01-ff] end is updated to 01
-> 
-> And this is with the regulator change:
-> 
-> [    0.410796] spacemit-k1-pcie ca400000.pcie: host bridge /soc/pcie-bus/pcie@ca400000 ranges:
-> [    0.410836] spacemit-k1-pcie ca800000.pcie: host bridge /soc/pcie-bus/pcie@ca800000 ranges:
-> [    0.410889] spacemit-k1-pcie ca800000.pcie:       IO 0x00b7002000..0x00b7101fff -> 0x0000000000
-> [    0.410917] spacemit-k1-pcie ca800000.pcie:      MEM 0x00a0000000..0x00afffffff -> 0x00a0000000
-> [    0.410932] spacemit-k1-pcie ca800000.pcie:      MEM 0x00b0000000..0x00b6ffffff -> 0x00b0000000
-> [    0.424651] spacemit-k1-pcie ca400000.pcie:       IO 0x009f002000..0x009f101fff -> 0x0000000000
-> [    0.436446] spacemit-k1-pcie ca400000.pcie:      MEM 0x0090000000..0x009effffff -> 0x0090000000
-> [    0.513897] spacemit-k1-pcie ca800000.pcie: iATU: unroll T, 8 ob, 8 ib, align 4K, limit 4G
-> [    0.559595] spacemit-k1-pcie ca400000.pcie: iATU: unroll T, 8 ob, 8 ib, align 4K, limit 4G
-> [    0.839412] spacemit-k1-pcie ca400000.pcie: PCIe Gen.1 x2 link up
-> [    0.847078] spacemit-k1-pcie ca400000.pcie: PCI host bridge to bus 0000:00
-> [    0.857600] pci_bus 0000:00: root bus resource [bus 00-ff]
-> [    0.868702] pci_bus 0000:00: root bus resource [io  0x100000-0x1fffff] (bus address [0x0000-0xfffff])
-> [    1.146409] pci_bus 0000:00: root bus resource [mem 0x90000000-0x9effffff]
-> [    1.373742] pci 0000:00:00.0: [1e5d:3003] type 01 class 0x060400 PCIe Root Port
-> [    1.380963] pci 0000:00:00.0: BAR 0 [mem 0x00000000-0x000fffff]
-> [    1.386883] pci 0000:00:00.0: BAR 1 [mem 0x00000000-0x000fffff]
-> [    1.392808] pci 0000:00:00.0: PCI bridge to [bus 01-ff]
-> [    1.395394] pci 0000:00:00.0:   bridge window [io  0x100000-0x100fff]
-> [    1.401811] pci 0000:00:00.0:   bridge window [mem 0x00000000-0x000fffff]
-> [    1.408583] pci 0000:00:00.0:   bridge window [mem 0x00000000-0x000fffff 64bit pref]
-> [    1.416354] pci 0000:00:00.0: supports D1
-> [    1.420294] pci 0000:00:00.0: PME# supported from D0 D1 D3hot D3cold
-> [    1.428220] pci 0000:01:00.0: [1987:5015] type 00 class 0x010802 PCIe Endpoint
-> [    1.434034] pci 0000:01:00.0: BAR 0 [mem 0x00000000-0x00003fff 64bit]
-> [    1.440772] pci 0000:01:00.0: 4.000 Gb/s available PCIe bandwidth, limited by 2.5 GT/s PCIe x2 link at 0000:00:00.0 (capable of 31.504 Gb/s with 8.0 GT/s PCIe x4 link)
-> [    1.463390] pci 0000:01:00.0: pcie_aspm_override_default_link_state
-> [    1.467000] pci 0000:01:00.0: ASPM: default states L1
-> [    1.472093] pci_bus 0000:01: busn_res: [bus 01-ff] end is updated to 01
-> 
-> Note how the line pcie_aspm_override_default_link_state arrives too
-> late.
-> 
-> Regards
-> Aurelien
-> 
-
+Frank
+>
+> regards
+> Philipp
 
