@@ -1,211 +1,239 @@
-Return-Path: <linux-kernel+bounces-893468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-893469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E7F3C4787F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:28:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE8AFC477E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 16:22:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FFF03BE07F
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:16:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FAA0188B200
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 15:18:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79C8031B11E;
-	Mon, 10 Nov 2025 15:15:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF94F25BEE8;
+	Mon, 10 Nov 2025 15:16:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="t9Of1YLS"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="VMgdiH52"
+Received: from PH0PR06CU001.outbound.protection.outlook.com (mail-westus3azon11011039.outbound.protection.outlook.com [40.107.208.39])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2A4731329C
-	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 15:15:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762787708; cv=none; b=VTiekyiDx8cf94lfac4zYzxjam8D5kfrnX+9ZtQXwvG/3SNVL68NvP3n2pJ4KSv+a2/LaldV/1chERGFWmLT4l2fAUCeS4oeonLm79FUj91fjowMZFO2JdEIS26AIBx5W/2smNIYMYfBNfIBKF3LlpmUsTOuwoEWQ3kCdfxj4w8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762787708; c=relaxed/simple;
-	bh=lhjELXmZSS3q6E2+rnaT59zCj87rpxz5eWYDWSZrjfo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hWKXqDJA+vX9oXFMNMKdDyZyG/0hGC2jims7xC5N9yFLGnI1uj5FCtSqsgHodwTXwZty/mapFLDU0DPRKvvy90OOQIJYxYq4mSPoIBZ/yWpjUrxjEcKBnw1/VfLs+vbRKqlsshUCOwOKar43ViH2xu4m+PDTYAlzd7jcjDv6Dw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=t9Of1YLS; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b729f239b39so674439066b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 07:15:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762787704; x=1763392504; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=tO2FkW94sB9AYPaQQFnYI79pge/7kyoIm3imhrG5Wd8=;
-        b=t9Of1YLS6U+pcaO1lkopLQkFhBLmH9l0uWwSzAO37O9OwEKWoVAk0T7b7V/5ceAfc0
-         eV/F6BPLuR/PVPNOpLDaCsvSmSNvFDEwdIRCEdtNacm6lr30BZNB73YmFn8JSMdb2iAx
-         2ICuvW4Kiimf2fQQTNXMd/lXOlkL80kv0DcdEvg6P6Ih56OQtFbeLkjgc7u3DZqERBV0
-         QiChfp3ux1mpfdu6dpRnDoHhqPhK5cquQWB/jZLnyVdGH8Hi7eM0pOK4bW+sOkn/ZU3I
-         jqQo8oBX7b/SHOHuh40Sr43KAOnh/qSUZ2pjUXwnf9E21wLy/64qoCSt9+xusxqYwRFA
-         dJWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762787704; x=1763392504;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tO2FkW94sB9AYPaQQFnYI79pge/7kyoIm3imhrG5Wd8=;
-        b=v3pR+a891n1LMJa7EvBsNCpHf3reuChXBdPiTFg9vzi95XuBAVnV4kDRWSm06Y0PW7
-         dTbiB4R79WEUxffBTSrTD0tSpWY2S+UaTWqdjfmoKo06xvnVm3qoh/QCQcMfnJzsFH33
-         CH+XHws9nD5UhAg4Ne/TXJmlcr460b6J7zO0xpxBZZdeKac5XnmqVjJ5wnzWDvkWierP
-         YJxXHCZ0yMUP/stYcDjw7yfe5F37cKMnZ6A9uaBRg9PypY9R4dCsrGiZSsGB8/3yOIZM
-         LnvnVGd1VBt9W8ZnPSFIhg7C4vIPCYAG+jcq1N4LMucRLyg87GmtpBkSOgyP8h6wgaxI
-         vzeg==
-X-Forwarded-Encrypted: i=1; AJvYcCUb8CJenb+vHCmfk07E1+HHdMGUeBPcAL5qo4ofUFstc/0Nzi9bkmVIBbO87RboUz0jwlEc4OFvLMQzgBc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwifPAzQjOSRoqGxZuaTlhjr7lGrRsG3kUPSPe2DCp0nW123rWt
-	3Y9Ru7VmvMmbYBNF7Fi9Sf6BZTL7rzO9a0uqzjxHA5YNhOPUTCjGfZs0BqLGQz+4Vqj9+1y67L0
-	43Ef7QgmgBf+KXZ1VNeHqdqn+dtvduB6zIEZpZMeOtg==
-X-Gm-Gg: ASbGnct9XHco2OACigAgwpsWUh0Oldcw5veblw9rKcKpB0JFyj4OSRKkh0/opBY/iYD
-	/y1mySg3aDH4GAuglZSZJhlGLC2od9qnE0NP7uMD83aingWKB7qRElzHonKC39nMQ0NFLCbtqu2
-	p1WLNGnKBWOU25UOBDHSwqYNwEyqq+PW5qP8J/yI+ADw83Mhf+q8gw7erExbWu8YVi5bUHL3z0m
-	dLOQsyZ86Qw2fyUE3ljfBnfDQlcxVQ7jb5sXb2RWN8tkZo3SCB+wbF1D0WHXoqwFltPCqLpVahf
-	QLCtumwhiOvbDY8O3U3Y+mTdVU5INCpuskjK1g==
-X-Google-Smtp-Source: AGHT+IF0JiR17k2tNdQIY29GGeZp6tuwfTPaU+/ksYYCINL8GaZCSCzoJNug8wrqVngyVxyRmshkBrZF3f3+WWM6Cjg=
-X-Received: by 2002:a17:907:9408:b0:afa:1d2c:bbd1 with SMTP id
- a640c23a62f3a-b72dff5f6b2mr1002486166b.30.1762787704214; Mon, 10 Nov 2025
- 07:15:04 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 285171A7AE3;
+	Mon, 10 Nov 2025 15:16:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.208.39
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762787768; cv=fail; b=N0iPrd5PglUDJcq50pwPQbdt1DC1Cu0AGfzbGs0lw7QTAJJX+/S6Z0FNvfh1w+Oz4U24vpUuKjAmaW2YYT+4Ifyvtkz4wYKfgTfdW7VES7B3B9NikNmCAhI2H/o0l8iIghtqbCmwpgkGsjH3BF2x0vkFaSpXFtpnSPNgyXa5pno=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762787768; c=relaxed/simple;
+	bh=f8kFYjpvlUvLQLoT1cknfCSqr2M5HBNCO+X3MyTPTtQ=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=S9yPUf7xmKdCdnpsXEEcDFA8CkPdvn9OKfTq02Nnt5iwIbRDlb1nOsxkzZ/FX0Aa30V4bsH7Pn2sKhvLgZc7VgmJmILLqDyxVObIJBAylAlxCbAKf2S2XZkNmJT6SUJ5rfvQlfJThplYzHguUd6nxKfnrJhNqJpwwyQQj/DKytA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=VMgdiH52; arc=fail smtp.client-ip=40.107.208.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=q7J3CTU34pVV7BVSMJ+u0i7ecxRqNKtgnl3e8PeFEx+4/ghsbv+dkhQ8kxAzDmopAxZ70Vh9ITqo0LBJl9Nnh0I2pQZK05Omkcj5t1LanNxjzCu4elYVf3/DX0V9kPk9ekZBOdj0N7r2J7ICQCz/ka6vApAr3AAAxQ70eYSMtfKJi8dCYnA9DtxdcsOxjZPIGAFN4QfssMLn2q3dr2Wv6p3t0mJJG/WF3Nkz95hZMc6AA2zMFeLnhyY4yX9mQu5t/9Ua0BFjN7xvRW30jbZOtcyXbj9YGK+6ZsBSO/xBAkxbl43UyNEL9sT/VXVttVFskgOT0fem3ms6Nj5G/zK2Ig==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=NPLZPshGzrygYzi1wsGw6oafY6o7Mi6OfAL+4P6eG7c=;
+ b=gIE8R5Dgo8wECP9S80M5NDUz1Uh3NGbEhrszH/6gWuIOpXwvYa5QvZH6F54XSL2FmNWEp3+IGUPOXGAGRs8oZ2wI1cdZ7LbFiw8T5kZ3mWnnLDseBl302FbQhLIsNZMKCnszjJ8LT0tTDztjmyGf7jxG/V3U8XMBAY+weY7rrttG62oOZbCpcAfe6iWRAYBFxLTpDj41hcjZtqOFOWYDlMe1ObZsViOmlmjBc6wbLaszKOh0rX518pekcpv1aWY9k5VTEemXNXxxVEZWS24lZ0oAaL8DW8BzBS/ZQ68dLwMF3xCQlMJmIM0beO7g+AYdczw+k9GQV6++LgCZoDypqw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NPLZPshGzrygYzi1wsGw6oafY6o7Mi6OfAL+4P6eG7c=;
+ b=VMgdiH52u7F2qsUube2+e6NTO/sD9oxQtQ3mA5Q2udkc6MTo7bLF/H5vBe4U65F5HBa5BXzmsC3U10SWAdpbu+zxl315TDm6RHRAk4ptU/7lh3bfJj/uw+MqxpFSrMonLuH/XtAH86vfva8kk9qrXz9baPckREaSNLpYX6yRjMOfEFwZ+RB9vuUaC+mPSBzo0ZHBfsx0KWtYGDEvGyR8ZddstWxTDNM0qu69tRjCietdtl9tf/NYeazS9sMP1Ro8YnhKqlm5KKkNoXgGiDja3Hqaei2lSzBFU1FOEv9LLr4AMjyekGlEpErUatvOEEvjhg6I/5Z1Z8h6+Vf667oImA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
+ by IA1PR12MB9531.namprd12.prod.outlook.com (2603:10b6:208:596::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Mon, 10 Nov
+ 2025 15:16:03 +0000
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91%2]) with mapi id 15.20.9298.015; Mon, 10 Nov 2025
+ 15:16:03 +0000
+Message-ID: <ac85d8be-3cbd-4a51-a627-3a1a9926d801@nvidia.com>
+Date: Mon, 10 Nov 2025 10:16:00 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 08/12] nova-core: sequencer: Add register opcodes
+To: Timur Tabi <ttabi@nvidia.com>, John Hubbard <jhubbard@nvidia.com>
+Cc: "dakr@kernel.org" <dakr@kernel.org>, "lossin@kernel.org"
+ <lossin@kernel.org>, "ojeda@kernel.org" <ojeda@kernel.org>,
+ "boqun.feng@gmail.com" <boqun.feng@gmail.com>,
+ "a.hindborg@kernel.org" <a.hindborg@kernel.org>,
+ "simona@ffwll.ch" <simona@ffwll.ch>, "tmgross@umich.edu"
+ <tmgross@umich.edu>, "alex.gaynor@gmail.com" <alex.gaynor@gmail.com>,
+ "mripard@kernel.org" <mripard@kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>,
+ "rust-for-linux@vger.kernel.org" <rust-for-linux@vger.kernel.org>,
+ "gary@garyguo.net" <gary@garyguo.net>,
+ "bjorn3_gh@protonmail.com" <bjorn3_gh@protonmail.com>,
+ "tzimmermann@suse.de" <tzimmermann@suse.de>,
+ "airlied@gmail.com" <airlied@gmail.com>,
+ "aliceryhl@google.com" <aliceryhl@google.com>,
+ Alexandre Courbot <acourbot@nvidia.com>,
+ "joel@joelfernandes.org" <joel@joelfernandes.org>,
+ Alistair Popple <apopple@nvidia.com>
+References: <20251102235920.3784592-1-joelagnelf@nvidia.com>
+ <20251102235920.3784592-9-joelagnelf@nvidia.com>
+ <d6c9c7f2-098e-4b55-b754-4287b698fc1c@nvidia.com>
+ <0FF9536C-8740-42C3-8EF1-5C8CD5520E49@nvidia.com>
+ <93c758298250d2be9262256a698c243343b64ebc.camel@nvidia.com>
+ <3c625930-348a-4c96-a63a-6a3e98e59734@nvidia.com>
+ <acc56fbb56c3f40119e5a6abf9f13093d7f4c7e7.camel@nvidia.com>
+Content-Language: en-US
+From: Joel Fernandes <joelagnelf@nvidia.com>
+In-Reply-To: <acc56fbb56c3f40119e5a6abf9f13093d7f4c7e7.camel@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: MN2PR07CA0026.namprd07.prod.outlook.com
+ (2603:10b6:208:1a0::36) To SN7PR12MB8059.namprd12.prod.outlook.com
+ (2603:10b6:806:32b::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251109-arm-psci-system_reset2-vendor-reboots-v17-0-46e085bca4cc@oss.qualcomm.com>
- <20251109-arm-psci-system_reset2-vendor-reboots-v17-5-46e085bca4cc@oss.qualcomm.com>
-In-Reply-To: <20251109-arm-psci-system_reset2-vendor-reboots-v17-5-46e085bca4cc@oss.qualcomm.com>
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Date: Mon, 10 Nov 2025 16:14:53 +0100
-X-Gm-Features: AWmQ_bnHJgzy3SDXUbMU9BaI_OynoJofd0BXy7gUevgAAiWJJ2om5cI31VC5pf4
-Message-ID: <CACMJSesMK37D7Qy+rVq7w6bUt6bYGXykUid6bUKXvh7M9mntZA@mail.gmail.com>
-Subject: Re: [PATCH v17 05/12] power: reset: reboot-mode: Expose sysfs for
- registered reboot_modes
-To: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Sudeep Holla <sudeep.holla@arm.com>, Souvik Chakravarty <Souvik.Chakravarty@arm.com>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Andy Yan <andy.yan@rock-chips.com>, Mark Rutland <mark.rutland@arm.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Konrad Dybcio <konradybcio@kernel.org>, cros-qcom-dts-watchers@chromium.org, 
-	Vinod Koul <vkoul@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Moritz Fischer <moritz.fischer@ettus.com>, John Stultz <john.stultz@linaro.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
-	Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>, Stephen Boyd <swboyd@chromium.org>, 
-	Andre Draszik <andre.draszik@linaro.org>, 
-	Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
-	Elliot Berman <quic_eberman@quicinc.com>, Xin Liu <xin.liu@oss.qualcomm.com>, 
-	Srinivas Kandagatla <srini@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|IA1PR12MB9531:EE_
+X-MS-Office365-Filtering-Correlation-Id: ce83c1e3-760b-4bfc-002c-08de206c1042
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Q0dPdHU3UURIeUVyUDlkQWRsOUZGbWFDY3orMW9lOUJqV3N6ZXFRQlJKdHd6?=
+ =?utf-8?B?TjBlci9xZDgrcFFneERZM2lhSVFVNGFISmxLOEMwOTMzTzIwYWNwK1BDaTZl?=
+ =?utf-8?B?NmgrSDdVTDFZdDRDemRlMDcyK0ttcHRkM3JuNnJHeUhwWDlmUWUxNGlITTJm?=
+ =?utf-8?B?d0JjTWlXRnB1aWdLVEdiQWhRZzFxY0kwcWdMYzFrbDZRbmpFQkphN3NVSjRH?=
+ =?utf-8?B?V084MEFJcjVKYW55VjNNQkloLzg0SmE1N3VvalgrR0R4b2YrQm9pdmxoNmpu?=
+ =?utf-8?B?T3FYa3IrM3l1UzAxVzhWendDdVUzcUxMTnZ5azVxeHI4NWs0RmNBZ0t2UHpn?=
+ =?utf-8?B?TVd2Q2JMYVpPY0djQ0JtdzdnbDFmNExTL1FXblpoTVgxSDRUcDRSMFVybTJ4?=
+ =?utf-8?B?NCtnSFRMaW9aemZlTGZEMkhxbnNWSzdyeUg1SDBsUzVVcCtjcDRjbkJSWmNs?=
+ =?utf-8?B?WU5hbDM1SnZ5NlJjNms0RlkrUyt1OFRZZUJKUU1FYU1IZC9ZSGpzZDBxNXNZ?=
+ =?utf-8?B?K1Z2U05QRXRkMWdiNFQ5ejVIQVNGT2VEdEtjdlFpRHJQNVpldmNNelFPZXRv?=
+ =?utf-8?B?S2RMeFpEVWp3eHhEL2EvRVZCNmZYQ1FKcFFqTWtOcStSdXpzaWc3dXNuazdw?=
+ =?utf-8?B?MDVlMWw3azB6Q2NCV0xxMGkrNUtLUGRNakQvbEtjU25vbEhrYThpY1UrRGox?=
+ =?utf-8?B?UXlwWEJTOEIzdThBTnEwOXpnVDVVTFNqczBBWk5mRTRVQ29XOTlUcTJBdjho?=
+ =?utf-8?B?cGI3aXRRcWtrbEhWb1VOK3B5d1NmbEJ2aXlsckFqY3NTb2ZLTDE1NldVSUpi?=
+ =?utf-8?B?SmtDYXJmS0d1SU5wMC9hQmNCMjdDMHUzNDdYMitNTmxvVnJIdzRoVWNZZWZ5?=
+ =?utf-8?B?K2NSL2s3K0N6ck8wUktIK0NEa3Z6ZzN6SGhFVzEvNjNxRGhNV1pHYnhDMENs?=
+ =?utf-8?B?TExjSmllQXdEYVlURjRucjc3ZGZVZFVpWUZKWlh1TUE5eThoU0JpamxheVhW?=
+ =?utf-8?B?MUlscE1pQW9yZVZsdnJTUG9xZ1RXMU8xUUk4SW9pUUQ5YVBGZVAxMHJTRjM3?=
+ =?utf-8?B?MjJBd2hYOHZoVW1jS1FNZzNwWkRoUU90NjVJanh2dS9HVTl2bWgrd3hJMEs1?=
+ =?utf-8?B?aTlzc3k1bkFEMWU5dUN2TENMQlNYSHVhRENyczI2NDhKdkk4TDZVMjBIVWM5?=
+ =?utf-8?B?T3VlNWExU1hsd1h0K1RmemJjQmhPSHRDeEhsZ2JlZ2VJSC9XQ1hCWXRJcFcv?=
+ =?utf-8?B?NSt1M2pFOSt1NDJoa0JPZVV4ektieE9PL0xCWmc5ZzlCQmdET242QmVNc3NO?=
+ =?utf-8?B?VlJqTGlmMGdidTRCVjBHY0tyZ1pjelJ4MUpEOGRPbERoRWZHbVovV25rRTFK?=
+ =?utf-8?B?M1FsTUNFOUdINlF3VHd2NSs1RGZoM0FleUF4QUVjdVIyZkVRa2RWVStDeStj?=
+ =?utf-8?B?YWY1dE0vL3BYM0pLcjNQcml0S05pbHVNT2NOeEYwdUgwdmc0MnBYU2tQYVhN?=
+ =?utf-8?B?bG1MbkRLdWY0a1BwNG1la1dtS1FMblByMGdxMzFZbEVFQXVRSXdPeUIvUFYv?=
+ =?utf-8?B?UVdPSjhBenA5c1ZtNlVDMlUyMDI5Nk94T21iK2pETi8xZFVkWm81OVFRb2Y5?=
+ =?utf-8?B?MThBK3pjQUhmRWs3TEd0N3NwVDhNNGpzSHc3RHpkb1EwR2hKR3Jsd2cxaGJt?=
+ =?utf-8?B?bk1ZbTcxU2xTakxVM3drTXkvekE1eGxocWVjc1hBVXV2MWl0cEtwUEJFNGVl?=
+ =?utf-8?B?eUg0VGx2MFJNQWFLeUdPR1c0ejgvMEpZNU1kRVMva2ZQU3hOd2ppdGtGL2x4?=
+ =?utf-8?B?aGxCZ1hzT2NGUVlOeGhkeGUweHhzRGxoT3NyZmFzcENvSXRxN216cW1vSWNs?=
+ =?utf-8?B?VXF6TWdDcTlUVTNzU2RlNDYvekJReUE2K0Vwa05wb3ZoaS81aDRWOU04M1BH?=
+ =?utf-8?Q?wZ8ywLo50NsWG0xVr0DQNC4RIS8fdabc?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Yk5hekt6NTFiWm1WVjhzNWZpVUxXYWVPK1ZZanllYU9KR1Z1dWw0S1AzR2Yv?=
+ =?utf-8?B?N250dG5xUWx0dHMyMUxoVC9ocnBvL2x4UlV3RVBQdmNuK0lHSXZkVENmZkM2?=
+ =?utf-8?B?dEVQMHE2QkJuYlVpYzJ4bkxCbVVtRVhnK1JQeEhhZmtOMkFMamVtR1dscHBG?=
+ =?utf-8?B?S1NKdEl3SzFzeWs1VFZNOWY5ZTd5TmV6VExPbXNyeHJyWW52KzNCSHJ5Wm41?=
+ =?utf-8?B?VnVLWTYyQUFDeTIxbEk4T25ycDdhT1BqK0N4QTN6R25DcDJDYmxPVTBUNmVh?=
+ =?utf-8?B?ckZCTEtKd2hKS1BhSlRaYytncCs5S0YrWlhXWlNTNzByWmV3SllseVp2SjZh?=
+ =?utf-8?B?SVBBVFpRTWI0b0pSai9rYS9FbHNTZXRNMk9RUXYzR2xBWEVFK2NkaDhocHNN?=
+ =?utf-8?B?enFIelMyeTN3eVdMMzdDaTBDa290Z0taSG9JZnNOYWtRVlJ2VHBtYTFQMndF?=
+ =?utf-8?B?ejFFQVVHQTY1UHo4OFlsTmZreUJWQkEwVW45MkhlMjZDdFlyeXd1bCtBQ0xV?=
+ =?utf-8?B?ZzlYYjJSeWhGVnBiY05aTGloODRyZkZrNkZUaGFKZ2FaVnYrblFvMVZMMzRr?=
+ =?utf-8?B?RWZ4aDRVTitQQ2ZDNDByeVcyaHRPZk4zdjNXUlZ5dE5STFIzWCtubzhBaCtB?=
+ =?utf-8?B?bFIwSTNJMHMrVGRYZTJSb2xPbWkxZG5wRnlROTNTUzVrWjNMaUJnT1lpZnpi?=
+ =?utf-8?B?ZFZNSWluWXJNRzRHNjRHZnFZV08wYi9ORWo1cFc3S0EzMld6ckRYL3VmQnpX?=
+ =?utf-8?B?a25aQnVBR1k1THZSTWxnWUlQaXR2NVFYbDAzZjRIRElFbGpwRVB5b3FGNWpH?=
+ =?utf-8?B?T2ZnR0kvb284U1poamNQNGtGREZVc1hVL0pDMnl2OXpoMyt1ejUvWFdVN01Z?=
+ =?utf-8?B?RU5yalBGTnFCSjZEY0JlTVRtNGRqdnNmbU9VR3dZN2FjMGVsVEt6UnBpUUty?=
+ =?utf-8?B?U0kxb0JLbjBBNjlEN3JHSEJXUjVIVmUrb1RReDNuanRKWllMT2NsSkRXY0NZ?=
+ =?utf-8?B?QXZjclN4czlqQ2hHWGlaMzNQVDVUYThZL1AvR3pHMmRiVGVTdlI4VHJvWkVG?=
+ =?utf-8?B?TSt5R2lucVFYYXp0RFpjN0JsVC93YWVrTnJKTURTdGpKZEcvTUp4cGZQdFZF?=
+ =?utf-8?B?M093Y0xWTXVrWmZSZU9iNy8reGZjQ1U0MmJMQndNbDBKb21uT1VPUkZSOERl?=
+ =?utf-8?B?bHVydEpTVzVnVWxWYm40REdGQ1B2akdJV0g2Z2pYbGIyaGFQZDVNK2dkSGhx?=
+ =?utf-8?B?SFJHek00TXdqT3g5TjNRTjFCdms4YitVL0Foc2FkUlNnay9nNWYxM0YvejFq?=
+ =?utf-8?B?cVJKSmxRTy9sdUxxdURTSzJ2NUsrQTF3QVpJQTQ1amg5MHBWRitsRWdGL293?=
+ =?utf-8?B?eUduZlNjVVM2cXVZNnJGU1gyUk01OFpQY2VLdU9pT3BXVWt5aE9DRWxNUWRE?=
+ =?utf-8?B?QlkxZFZZMnJ1YXNpQ3BkMWM1ZnZRNXczN2N3SEp0V3ljZ3lvb09sbjlWTFJQ?=
+ =?utf-8?B?OXZhNU53OHc5dm1XNFBhcW9GWkhhTVNjV1NoL3lRUVliVXEzZGNtbXFkUEo1?=
+ =?utf-8?B?NTRJREhFY2o2RzVEQ1RDSkl4WVhES001WjExdXBWb0lMUGlmd0hJRXhOZ1lk?=
+ =?utf-8?B?NzhTRGltRUR0RXR0K1QxT255eXFxNkF0RVAyUWFrREN2RzVGSWkrT1VIWm1Y?=
+ =?utf-8?B?aDdYQXQ0UVhOZllNL2cxRXN6NE9FWHF1eGhsQTdmbFFacTdLQm5QaE8zMzV4?=
+ =?utf-8?B?YmhUMXdWMDZSLzN3RlcxTmNwZUZzMEpYVjhwY1BEckZQSStUQkgwcmlFSFRK?=
+ =?utf-8?B?S3ZjQ2p2RlY5Q25SWFhrZU5lOWtXUGtOTWNsbmhBL3NCKzVDTTRnUW5Qelly?=
+ =?utf-8?B?bGs5RDhtV25EUjl5L253S1ZPcjBpbWRGWWlGSmoxZG5xa09YbWFlWXI3YVRR?=
+ =?utf-8?B?VjZmZlJ2WEZTUTNVWjZ1QUtVazV5U3BaVWg3ZnVHUE1KVXhzTmsyWGZLS2ox?=
+ =?utf-8?B?bGRyKzV3Y2RjRFI3ZTVlSGNNK3puRFpXM0lGaVVjajNhdCtmYVZKQ0k4czNN?=
+ =?utf-8?B?aGhRclljd3pSNEVkbUdja0xxY1NuaS8vcERHbWpjWTRXWWN5U1dVejk2bm0w?=
+ =?utf-8?Q?YjJaRXyhY71A+EviO/zdF9QzE?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ce83c1e3-760b-4bfc-002c-08de206c1042
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Nov 2025 15:16:03.6843
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: lFN7ifR+y7hbqi6DBH5TbTe81KcCN4Ja6G305KZsValk5wRO3MBOoObBolP/sAwKHZbig2JH4BRun3qVUETgug==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB9531
 
-On Sun, 9 Nov 2025 at 15:38, Shivendra Pratap
-<shivendra.pratap@oss.qualcomm.com> wrote:
->
-> Currently, there is no standardized mechanism for userspace to
-> discover which reboot-modes are supported on a given platform.
-> This limitation forces tools and scripts to rely on hardcoded
-> assumptions about the supported reboot-modes.
->
-> Create a class 'reboot-mode' and a device under it to expose a
-> sysfs interface to show the available reboot mode arguments to
-> userspace. Use the driver_name field of the struct
-> reboot_mode_driver to create the device. For device-based
-> drivers, configure the device driver name as driver_name.
->
-> This results in the creation of:
->   /sys/class/reboot-mode/<driver>/reboot_modes
->
-> This read-only sysfs file will exposes the list of supported
-> reboot modes arguments provided by the driver, enabling userspace
-> to query the list of arguments.
->
-> Signed-off-by: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>
-> ---
->  drivers/power/reset/reboot-mode.c | 62 ++++++++++++++++++++++++++++++++++++++-
->  include/linux/reboot-mode.h       |  2 ++
->  2 files changed, 63 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/power/reset/reboot-mode.c b/drivers/power/reset/reboot-mode.c
-> index 873ac45cd7659b214b7c21958f580ca381e0a63d..582aa7f8ed7fa485c5a67877558c9b15d3600ef4 100644
-> --- a/drivers/power/reset/reboot-mode.c
-> +++ b/drivers/power/reset/reboot-mode.c
-> @@ -6,6 +6,7 @@
->  #define pr_fmt(fmt)    "reboot-mode: " fmt
->
->  #include <linux/device.h>
-> +#include <linux/err.h>
->  #include <linux/init.h>
->  #include <linux/kernel.h>
->  #include <linux/list.h>
-> @@ -23,6 +24,8 @@ struct mode_info {
->         struct list_head list;
->  };
->
-> +static struct class *rb_class;
-> +
+On 11/5/2025 6:19 PM, Timur Tabi wrote:
+> On Wed, 2025-11-05 at 13:55 -0800, John Hubbard wrote:
+>>> #define nvdev_trace(d,f,a...) nvdev_printk((d), TRACE,   info, f, ##a)
+>>> #define nvdev_spam(d,f,a...)  nvdev_printk((d),  SPAM,    dbg, f, ##a)
+>>
+>> ...and those are unusable, unfortunately. I've tried.
+> 
+> This works great for me:
+> 
+> modprobe nouveau dyndbg="+p" modeset=1 debug="gsp=spam" config=NvGspRm=1
+> 
+> I get all sequencer messages when I boot with these options.
+> 
+>> ftrace/bpftrace, maybe those are the real way to "trace"...or something
+>> other than this.
+> 
+> You could say the same thing about most dev_dbg() statements.
+> 
+> I agree that dev_dbg for sequencer commands is excessive, and that implementing new debug levels
+> just to get sequencer prints is also excessive.  But Nouveau implement nvkm_trace for a reason.  And
+> we all know that because of ? in Rust, NovaCore does a terrible job at telling us where an error
+> actually occurred.  So there is a lot of room for improvement.
 
-I know C is a spartan language but the rb_ prefix makes me think of
-the red-black tree. Please call it reboot_mode_class.
+IMO, the best way to do this is the tracing subsystem. It is the lowest overhead
+runtime kernel logging system that I know off, lockless, independent of the
+serial console etc, next to no runtime overhead when off, etc.
 
->  static u64 get_reboot_mode_magic(struct reboot_mode_driver *reboot, const char *cmd)
->  {
->         const char *normal = "normal";
-> @@ -65,6 +68,51 @@ static int reboot_mode_notify(struct notifier_block *this,
->         return NOTIFY_DONE;
->  }
->
-> +static ssize_t reboot_modes_show(struct device *dev, struct device_attribute *attr, char *buf)
-> +{
-> +       struct reboot_mode_driver *reboot;
-> +       struct mode_info *info;
-> +       ssize_t size = 0;
-> +
-> +       reboot = (struct reboot_mode_driver *)dev_get_drvdata(dev);
+I recommend we use the tracing subsystem for "trace" and even "spam" level
+logging levels for Nova. The brave souls can always ask the tracing subsystem to
+also spam to kernel logs if they so wish.
 
-No need for the cast.
+++ Tracing Czar Steven Rostedt as well. Steve, Nova is a new modern Nvidia GPU
+driver.
 
-> +       if (!reboot)
-> +               return -ENODATA;
-> +
-> +       list_for_each_entry(info, &reboot->head, list)
-> +               size += sysfs_emit_at(buf, size, "%s ", info->mode);
-> +
-> +       if (size) {
-> +               size += sysfs_emit_at(buf, size - 1, "\n");
-> +               return size;
-> +       }
+I guess we have to decide how to do this - what kind of tracepoints do we need
+for Nova. One use case that just came up is RPC message buffer dumps for
+debugging communication with the firmware.
 
-This is a weird logic inversion. Just do:
+thanks,
 
-if (!size)
-    return -ENODATA;
+ - Joel
 
-return size + sysfs_emit_at(buf, size - 1, "\n");
-
-> +
-> +       return -ENODATA;
-> +}
-> +static DEVICE_ATTR_RO(reboot_modes);
-> +
-> +static int create_reboot_mode_device(struct reboot_mode_driver *reboot)
-> +{
-> +       int ret = 0;
-> +
-> +       if (!rb_class) {
-> +               rb_class = class_create("reboot-mode");
-> +               if (IS_ERR(rb_class))
-> +                       return PTR_ERR(rb_class);
-> +       }
-
-Why the lazy initialization here? Is there any reason you can't
-statically define the class? Don't you need synchronization here if
-multiple drivers try to do this?
-
-Bart
 
