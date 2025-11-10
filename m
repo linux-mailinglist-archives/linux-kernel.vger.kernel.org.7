@@ -1,220 +1,122 @@
-Return-Path: <linux-kernel+bounces-892514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69CF0C4541D
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 08:51:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AD5A7C4543B
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 08:55:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAF3A3B1B64
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 07:51:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A067A3B2E0C
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 07:55:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDCB12EB5B4;
-	Mon, 10 Nov 2025 07:51:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="saykSZDd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 259302EB856;
+	Mon, 10 Nov 2025 07:55:07 +0000 (UTC)
+Received: from bg2.exmail.qq.com (bg2.exmail.qq.com [114.132.63.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23574218AB0;
-	Mon, 10 Nov 2025 07:51:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C917279787;
+	Mon, 10 Nov 2025 07:55:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.132.63.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762761094; cv=none; b=DDFDbQw98RUxW7UXaJRwgefvInqqqQxzUQGFUWv9BHNc01QCV/Phwb3XDvwBGEWhKujIUXcQYYdcvCdvoDmF6DNS++0F0U0u+76lqKloXIZ1tb8vCuA6cDIP8IXcX5QeRDPlQ6f+ajZrXfNgASHCR+74NW+RMZgG5d+LMWGGucY=
+	t=1762761306; cv=none; b=aXsNveHBIf7sW4uRODkkaJpI+ScbvkAiEfXvFFmHcrxI90or2kcsoTgrV/Li0qeCkb3EC4KhtiCO0ijVQo/SkYHnTonxP4CTU0ckMAEeYpRYV4riaDlU+bz+wAg0BMdk4PfYUfQZiB2GuZDOCQZVDA4XoeTRM9pjoCQZaJH8D9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762761094; c=relaxed/simple;
-	bh=bApvZHKXsJmb8jKSRYJlnAZDkVWRrU6RYJOz67z8jh4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V6z7jyNHu6QWHbTpPNY74lFW98NR3eKnjs3iT514J2u2M90Di/5UN7vVe9OOfdM784F7UI3nQiy6KlKRaamcafj0E/vdbazcrpMcDDTpBhU77OJRxoPGN6p2UhXR0Wwwj9pqpyr16oZNn4LxEzrtga3tEN6VDdfTwBqqUovceCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=saykSZDd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18F6AC19422;
-	Mon, 10 Nov 2025 07:51:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762761093;
-	bh=bApvZHKXsJmb8jKSRYJlnAZDkVWRrU6RYJOz67z8jh4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=saykSZDddicJyqUayksM7BoUv/MK95zjeR+7tr7lepP5DNlF+8M7k76jyVEGNuuIF
-	 PH+4nK87M6C9hxH0MZsZml5b6PAf0bkfVXchXFWsYbkKU3o4shP/2dvCQM815j+KQ7
-	 4cHzbWYiT2iNjNkvi1tfSS9VXtFk2Noc9euXitXDf/SmcidC6JyOSwHwXjI4qxxQyz
-	 gvYJvNYgPbIigPqH7hsHDNpBDe9B/ypU5QZmBhrRnU3Lk90DGcXXlNSHmEaCv7WrDb
-	 TP3KusXOBuLV40OUaofnGIys5cnu0v9QugmEnJoXNw5PLJyESMoNUV6Qs+sV1gkVS/
-	 AaD0zOawyRd1A==
-Date: Mon, 10 Nov 2025 08:51:31 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Akhil P Oommen <akhilpo@oss.qualcomm.com>
-Cc: Rob Clark <robin.clark@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Dmitry Baryshkov <lumag@kernel.org>, 
-	Abhinav Kumar <abhinav.kumar@linux.dev>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Jessica Zhang <jesszhan0024@gmail.com>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	Jie Zhang <jie.zhang@oss.qualcomm.com>
-Subject: Re: [PATCH v2 3/6] dt-bindings: display/msm/rgmu: Document A612 RGMU
-Message-ID: <20251110-persimmon-wombat-of-holiness-6b3f9c@kuoka>
-References: <20251107-qcs615-spin-2-v2-0-a2d7c4fbf6e6@oss.qualcomm.com>
- <20251107-qcs615-spin-2-v2-3-a2d7c4fbf6e6@oss.qualcomm.com>
+	s=arc-20240116; t=1762761306; c=relaxed/simple;
+	bh=LwvXpTSVojyx1MC96z6doTIVU2BtzwaHAIfGb93IdHY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=E/WLl3x8jH2cVyN5dz1vaQsS7HVm4RwMyRfy2FHPSv4MhoHZ1Lu74n9ysaKeCpwRCQC89bdzZBdwE2IzfwkPyVxUgYHzzI/5Czo/QaqfbFapoVUTWbn+JR+a8s3T/XT0ymUKy0srRaKD2mg1SxNmDSykchiAnOSAu73ad4ncJ9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com; spf=pass smtp.mailfrom=radxa.com; arc=none smtp.client-ip=114.132.63.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=radxa.com
+X-QQ-mid: zesmtpip4t1762761171t85c608ae
+X-QQ-Originating-IP: 4/pj04GV+NUG9bPpfO1T31SnMqTdV393yM24KkNEq88=
+Received: from [IPV6:240f:10b:7440:1:64e0:6ba: ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Mon, 10 Nov 2025 15:52:47 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 3134091033668820903
+Message-ID: <0C31787C387488ED+fd39bfe6-0844-4a87-bf48-675dd6d6a2df@radxa.com>
+Date: Mon, 10 Nov 2025 16:52:46 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251107-qcs615-spin-2-v2-3-a2d7c4fbf6e6@oss.qualcomm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND] Re: [PATCH] PCI: dw-rockchip: Skip waiting for link up
+To: Shawn Lin <shawn.lin@rock-chips.com>, Niklas Cassel <cassel@kernel.org>
+Cc: Damien Le Moal <dlemoal@kernel.org>, Anand Moon <linux.amoon@gmail.com>,
+ linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Dragan Simic <dsimic@manjaro.org>, Lorenzo Pieralisi
+ <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?=
+ <kw@linux.com>, Rob Herring <robh@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>, Heiko Stuebner <heiko@sntech.de>,
+ mani@kernel.org
+References: <20250113-rockchip-no-wait-v1-1-25417f37b92f@kernel.org>
+ <1E8E4DB773970CB5+5a52c9e1-01b8-4872-99b7-021099f04031@radxa.com>
+ <6e87b611-13ea-4d89-8dbf-85510dd86fa6@rock-chips.com>
+ <aQ840q5BxNS1eIai@ryzen> <aQ9FWEuW47L8YOxC@ryzen>
+ <55EB0E5F655F3AFC+136b89fd-98d4-42af-a99d-a0bb05cc93f3@radxa.com>
+ <aRCI5kG16_1erMME@ryzen>
+ <F8B2B6FA2884D69A+b7da13f2-0ffb-4308-b1ba-0549bc461be8@radxa.com>
+ <780a4209-f89f-43a9-9364-331d3b77e61e@rock-chips.com>
+ <4487DA40249CC821+19232169-a096-4737-bc6a-5cec9592d65f@radxa.com>
+ <363d6b4d-c999-43d4-866e-880ef7d0dec3@rock-chips.com>
+Content-Language: en-US
+From: FUKAUMI Naoki <naoki@radxa.com>
+In-Reply-To: <363d6b4d-c999-43d4-866e-880ef7d0dec3@rock-chips.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpip:radxa.com:qybglogicsvrsz:qybglogicsvrsz4b-0
+X-QQ-XMAILINFO: Nnd5cAEgLcFhaoh1TEl1DJYJf6tH1GPtz0M1lW/Y83FG0Y7A81bY4kY8
+	UCyUIkphKW8g8LkRoe/5mvRRljOzdgBBZ0my6EdhTyhj2HNKazxJbrfXkpVQUjxFsds4zSa
+	eJ77nEliz5VgZlxrVbKF/d22uPEIpi8zFk7I0uoyEfUUuj1m4O9RW4eH3jIsDOW//A+o9jo
+	xlW0aF/lW4NRF1dWGf3ithBsdEuKY//7KYaXpcZzvsOWfaC7t/IrIEg71XHzla45JgZKlwK
+	WDngZoN5bAxkjOMDcyQXPRnHeVsXqof5UQQXfY+Xz/4p+p9kfzYcxUsn1o4WLxIEdEczTzY
+	SWLz3Zuc7WZKFjLQO8+lwQud3txm1pmQjqe/nbKSJzvOseoUljE2VMRQvtpBxBsz4pb06LA
+	56EjbeQce5jc2+3Ilc+ILFTzqdPnBIGHlcvgpzaphoAZRaHvLRke4+VGGalXZ5k1rSTNJop
+	EodhbJKYkETdx5tAQorF9knNXTStsWebZu+TEVakk5zzA3Dz4HouE2W8LNlmFux64M4lg43
+	s/TFswj+XyXimmnF8/QmQSR4hHC4t+cW01Ze9Z+mOSjrLdB3coiS1BlYZSM7cyTcm77EOwo
+	kyQRtm2DDMvOrv6oZffVhSYXwlbjCc7PEAOFyeKygVsfmk9TcpzCXkOGT84w8qL4GmeJNq0
+	sXEgf+50URUkFU5HiXYsSq6RB2ncbimjpZVpYVcjzTXPrQr+SzYy2NZn4TbJZ41VuCjJdkD
+	39GaHVNMsWVM8BxFk48IUtbXsG9OpmWnsw4a0QEyt9Jd6FylFGSHsQvpWO+DdUmeKG8v3vc
+	Gr9i7eGeSKc5QdKavHcc8O2zlUKmxjEabs6QuVg6GY4qm9778vxdcnhinoHs1z2WuNxBseB
+	m1FrnSA9UdGOBwD2NRGh9Tg3HzV7PynlYjmEmNVMeTJbfH7vhMyLJuQ3ogJ1l7fP3L/r/ri
+	9CW3RRconjGKPWjalY6Nbck+RmOGmhwN0QUySDw8rAdEb2WlG84oRYzeJBAZufOlECp50+k
+	tqZr60jZ0S2R9+0fSX
+X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
+X-QQ-SPAM: true
+X-QQ-RECHKSPAM: 3
 
-On Fri, Nov 07, 2025 at 02:20:08AM +0530, Akhil P Oommen wrote:
-> From: Jie Zhang <jie.zhang@oss.qualcomm.com>
+Hi Shawn,
+
+On 11/10/25 16:12, Shawn Lin wrote:
+(snip)> Thanks for testing. I just got a ASM2806 switch as yours and 
+verified it
+> on vanilla v6.18-rc5. After 30 times of cold boot, two NVMes behind
+> ASM2806 work as expected. Nothing special happened when I checked
+> with PA as well. You could help check the log and lspci dump there[1].
 > 
-> RGMU a.k.a Reduced Graphics Management Unit is a small state machine
-> with the sole purpose of providing IFPC (Inter Frame Power Collapse)
-> support. Compared to GMU, it doesn't manage GPU clock, voltage
-> scaling, bw voting or any other functionalities. All it does is detect
-> an idle GPU and toggle the GDSC switch. As it doesn't access DDR space,
-> it doesn't require iommu.
-> 
-> So far, only Adreno 612 GPU has an RGMU core. Document RGMU in the GMU's
-> schema.
-> 
-> Signed-off-by: Jie Zhang <jie.zhang@oss.qualcomm.com>
-> Signed-off-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
-> ---
->  .../devicetree/bindings/display/msm/rgmu.yaml      | 131 +++++++++++++++++++++
->  MAINTAINERS                                        |   1 +
->  2 files changed, 132 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/display/msm/rgmu.yaml b/Documentation/devicetree/bindings/display/msm/rgmu.yaml
-> new file mode 100644
-> index 000000000000..7621556477d0
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/msm/rgmu.yaml
+> [1]https://pastebin.com/sAF1fT0g
 
-Filename matching compatible, so qcom,adreno-rgmu.yaml
+Thanks for the info!
 
+I tried ASM2806 on Radxa ROCK 5B (RK3588).
+  https://gist.github.com/RadxaNaoki/640e47d377add9fe38301de164d4058e
 
-> @@ -0,0 +1,131 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +# Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
-> +%YAML 1.2
-> +---
-> +
-> +$id: http://devicetree.org/schemas/display/msm/rgmu.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: RGMU attached to certain Adreno GPUs
-> +
-> +maintainers:
-> +  - Rob Clark <robin.clark@oss.qualcomm.com>
-> +
-> +description: |
+It doesn't work on PCIe 2.0 (M.2 E Key), but it does work on PCIe 3.0 
+(M.2 M Key).
 
-Do not need '|' unless you need to preserve formatting.
-
-> +  RGMU (Reduced Graphics Management Unit) IP is present in some GPUs that
-> +  belong to Adreno A6xx family. It is a small state machine that helps to
-> +  toggle the GX GDSC (connected to CX rail) to implement IFPC feature and save
-> +  power.
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - const: qcom,adreno-rgmu-612.0
-> +      - const: qcom,adreno-rgmu
-> +
-> +  reg:
-> +    items:
-> +      - description: Core RGMU registers
-> +
-> +  reg-names:
-> +    items:
-> +      - const: gmu
-
-Drop reg-names, useless for one entry with same name as the block name.
-
-> +
-> +  clocks:
-> +    items:
-> +      - description: GMU clock
-> +      - description: GPU CX clock
-> +      - description: GPU AXI clock
-> +      - description: GPU MEMNOC clock
-> +      - description: GPU SMMU vote clock
-> +
-> +  clock-names:
-> +    items:
-> +      - const: gmu
-> +      - const: cxo
-> +      - const: axi
-> +      - const: memnoc
-> +      - const: smmu_vote
-> +
-> +  power-domains:
-> +    items:
-> +      - description: CX GDSC power domain
-> +      - description: GX GDSC power domain
-> +
-> +  power-domain-names:
-> +    items:
-> +      - const: cx
-> +      - const: gx
-> +
-> +  interrupts:
-> +    items:
-> +      - description: GMU OOB interrupt
-> +      - description: GMU interrupt
-> +
-> +  interrupt-names:
-> +    items:
-> +      - const: oob
-> +      - const: gmu
-> +
-> +  operating-points-v2: true
-> +  opp-table:
-> +    type: object
-> +
-> +required:
-
-compatible
-
-> +  - reg
-> +  - reg-names
-> +  - clocks
-> +  - clock-names
-> +  - power-domains
-> +  - power-domain-names
-> +  - interrupts
-> +  - interrupt-names
-
-Keep the same order as in properties.
-
-> +  - operating-points-v2
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/qcom,qcs615-gpucc.h>
-> +    #include <dt-bindings/clock/qcom,qcs615-gcc.h>
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/power/qcom,rpmhpd.h>
-> +
-> +    rgmu: rgmu@506a000 {
-
-Drop label.
-
-Node names should be generic. See also an explanation and list of
-examples (not exhaustive) in DT specification:
-https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
-If you cannot find a name matching your device, please check in kernel
-sources for similar cases or you can grow the spec (via pull request to
-DT spec repo).
+Could you try PCIe 2.0 slot on your board?
 
 Best regards,
-Krzysztof
+
+--
+FUKAUMI Naoki
+Radxa Computer (Shenzhen) Co., Ltd.
 
 
