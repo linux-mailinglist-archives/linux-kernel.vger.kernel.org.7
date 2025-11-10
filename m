@@ -1,156 +1,142 @@
-Return-Path: <linux-kernel+bounces-892718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0772C45AB1
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:37:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF20BC45AAB
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:36:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C77A1885CE6
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:37:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 804CE188226A
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 09:37:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 716BD2FFFA4;
-	Mon, 10 Nov 2025 09:36:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2529628980A;
+	Mon, 10 Nov 2025 09:36:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realsil.com.cn header.i=@realsil.com.cn header.b="XRGZH1Yn"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TAxMBHEs"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56B5426ED53;
-	Mon, 10 Nov 2025 09:36:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FDA52FFDF2
+	for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 09:36:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762767406; cv=none; b=sKy/8Tm4JoARLdOqM8pv9eahBS47g9DnT1xYVPp+/PTLpBw/+R7TXdq+HsQrTwsI3UztgtKfOWT6udQPH5grGjR9Rk2htiILvR7JBIH74juw+5ejlERZerptMVnf6NWeDlsm39T1DAMxd4qtGzFvrVrgAgLdrI6pbotPMWXQ9aI=
+	t=1762767393; cv=none; b=a/eTKcAp8E3qaRtKWG9gCLJhFyGDN2yEPXCyn4k8yeZgOiJrhp3GhKhtPPiqgOZMzpG5aQKuhqxXoavOg6GoaGeNhgIBlx85b9Jv3n330n/DAcvRx+bWmrcoKn2VwbT3RZOCbi777Cp1hm1/boHdk+PN7oUxyfWL4sQfnWwdQg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762767406; c=relaxed/simple;
-	bh=BaEAqne1oPk1IwVfVD6PLtv16Wry2BGLYGcF46tapWA=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=odIK+sFPppw0MouZjTj2SeydT2cnBnmosykUj/5mJ4noL8mNTDfnxz5okptJjP/e6FTxIG99enzPRdUjd0YeYVX6lINOZAXAJjK/7O4mkLVRO+DeXY6kle6GS3u4QgW9DsyPXDUjXoiZI0xrrGKZ3/bJA0l7/o2G2gDulhQ3Ug4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realsil.com.cn; spf=pass smtp.mailfrom=realsil.com.cn; dkim=pass (2048-bit key) header.d=realsil.com.cn header.i=@realsil.com.cn header.b=XRGZH1Yn; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realsil.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realsil.com.cn
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 5AA9a8evD1473797, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realsil.com.cn;
-	s=dkim; t=1762767368;
-	bh=aPi8sKA2n3696iIpShQ9fqyAnp/gkcf50cVksh7YaE0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:
-	 Content-Transfer-Encoding:Content-Type;
-	b=XRGZH1YnVr+ixn1RKOVy9tM8pNpsgfvPUYjvMIhhWI65hq/m1ZVCnpUiZUvzAxdO4
-	 XcgratuhhDghGVQmeqURWhagw7SJFj8hY3vpzwjtbLGyWpZWipckbjz/lWpw1Dt+yA
-	 zyHND9HwnFGYmUI984ldLwnqZnzwNSAEKyMxYUzrvdTs2K8UhZr0BjZhBsVq9oar6z
-	 ttT02LqMFWKpG9K0NEiNBNlZBXD3+cz8XTFMc7ByqYyxXOAZLG4baHT2J0wEGXlDXi
-	 1YYXpY6eSyQDN3GJ1yN4uGuDWeZGTMeUdy76tDeZv6wVriPxYRjSM6vhvYktVizhPZ
-	 Rb66eZjQzasXA==
-Received: from RS-EX-MBS4.realsil.com.cn ([172.29.17.104])
-	by rtits2.realtek.com.tw (8.15.2/3.21/5.94) with ESMTPS id 5AA9a8evD1473797
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 10 Nov 2025 17:36:08 +0800
-Received: from RS-EX-MBS2.realsil.com.cn (172.29.17.102) by
- RS-EX-MBS4.realsil.com.cn (172.29.17.104) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Mon, 10 Nov 2025 17:36:08 +0800
-Received: from 172.29.37.152 (172.29.37.152) by RS-EX-MBS2.realsil.com.cn
- (172.29.17.102) with Microsoft SMTP Server id 15.2.1544.36 via Frontend
- Transport; Mon, 10 Nov 2025 17:36:08 +0800
-From: javen <javen_xu@realsil.com.cn>
-To: <hkallweit1@gmail.com>, <nic_swsd@realtek.com>, <andrew+netdev@lunn.ch>,
-        <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-        <pabeni@redhat.com>, <horms@kernel.org>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        javen
-	<javen_xu@realsil.com.cn>
-Subject: [PATCH] r8169: add support for RTL8125K
-Date: Mon, 10 Nov 2025 17:35:58 +0800
-Message-ID: <20251110093558.3180-1-javen_xu@realsil.com.cn>
-X-Mailer: git-send-email 2.50.1.windows.1
+	s=arc-20240116; t=1762767393; c=relaxed/simple;
+	bh=aEtCKt3fEUhliG7OG87NC5rVJbhrYdGmWYzuJegLKXE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O5CNkbszzRghl2KgCexgCG+krAaaOGNoKjPzJM5Qj2UUEs5sfIK+oyXpsPEgwtTic/fsfmg3emScDACNHMaqF6QuDyz4X/U4LJy3FYWdB2AX4YgLIOTpunpf4JzAHb7NQSKSwxGlP38uS1n37M+on/nTIVIfVEMGryj56VbCqSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TAxMBHEs; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-79af647cef2so2288082b3a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 01:36:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762767389; x=1763372189; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Fnwk2Rq2943TMve0rH97n9BrZ8ODlnbQT+KR5R8OAPM=;
+        b=TAxMBHEsAkR/hmy7u5S9s8VlHCcQa68ddZE9uWbBMl6kAHy29VuoNllmcFChyCBI//
+         JzXwpcIgT/Bh9wLHOzhKlEE39/YzMvR7dATpznBWcjd+9udmhVjh3k61Gv3YRosSMvrr
+         yNTDn4FPJwjBuQ/bAnc0mNlFUrUe3DD+3DvWtw6C1Tmh1UkennW6bUoSijMKeMIOlK8d
+         KIdjjQoqoyJ/H/o29mjrD3GXjn7rkbvfB392SIfAmpBXmT6S8sIjzAYKcQeLeeIsOwLm
+         G8nTS3mRDRd5KA+KT3S6EJEO6f+y8leyXAGMsa7a5GTuvZbHKmB/lI9NBw3ip8MQ2/gI
+         dq9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762767389; x=1763372189;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Fnwk2Rq2943TMve0rH97n9BrZ8ODlnbQT+KR5R8OAPM=;
+        b=xVlNsDPmgIfnWk1u2T/GNq4sLPxsvVaLglnkLEFEklumJFRS9Qg4e++tBegZmJXBDy
+         4a4MnkzFlBGqGB2rLYYC3naoqGc5H9SD0e1KMRR5pwxHRVlJG2bjZd26qDHC51b9GcBF
+         MioewZ5FgoeABCFtForggXFuHs/xTFME55KXDhAKKegbdtEGzoJNSBHAJ51Dn/TXaP6/
+         8vBjZYz/Qzksh/2fBsxIx0ZO76QcPcYWlPlaPHWaIyyD7mNeWuIGDZF/hb7Nwc1pg237
+         Kppk2mwfzynXtLThRTFh8JxEN5B2LMBAzgZeEbOsVRc0W0gbEczSYCfT0pVIGwnWME8/
+         m89g==
+X-Forwarded-Encrypted: i=1; AJvYcCVhI8GVaBoOfhjmc8A8LOEem+V4qN3JMUgOtRGdeNphNmbXVZcDmlWdZ8yGCNzvwVBtXqDNN8KqxfMO8qA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPkof21UFavpsmOeiRttMh+WQLLqfn59boOWVzzOF6Nlq4kVsJ
+	TvaaMa/m/1e2azLKSpLMRI6Ql7BNfA6V6ZXCvunfzt9jtC4p0vO34IbK
+X-Gm-Gg: ASbGnct5L/GZZYDsElIXn9mooqqfEJwYYUdE49ebmNQPl/50BwRV6l8IGxvOluw3x7Q
+	KxBM3lsTVWM2r9so5F8/luKhoTUhovg/gbYvSK6iiC0LRUA+ArMlZ7z2YePqWDkavo796201hZt
+	gdv7GMFbeE9aoaaudt/58QYvZHjSBlPFTSM+n57TsiT44+jWczCf5wEOvQUTQTRKBFRV9o7Agoj
+	R+IdPCGH88ay22GbjtNBalr7OYvaOogl6ChwOUQHsb6R3wa6nz2B6f9Q8Mh6P2Dh2/lptqX8Nf0
+	wjaqF61mX+7/HeeXENeYs36ITPJN0lSM0vJ0BWpAZgtWflrASpuK/oupqvC1OweaY+AdZW3GGO/
+	AUFZTCwpX7t4i/nCm3EwS+FAt8eqn4DYVX4E/cOEpgKoOKxdReHrGSiQMe9PYMDwptj4yjqpX18
+	y53KDjYJf8W78=
+X-Google-Smtp-Source: AGHT+IGCZ9KPYSYPJcdbC+nRldkLNiCFqKVeuzEly19j3aSotFNmFobmMMDw8xD2hgmu6x5xhMa25g==
+X-Received: by 2002:a05:6a00:4f96:b0:781:2290:e7e7 with SMTP id d2e1a72fcca58-7b226b931b0mr10100881b3a.18.1762767389184;
+        Mon, 10 Nov 2025 01:36:29 -0800 (PST)
+Received: from archie.me ([210.87.74.117])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7b0ccc59de7sm11040572b3a.65.2025.11.10.01.36.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Nov 2025 01:36:28 -0800 (PST)
+Received: by archie.me (Postfix, from userid 1000)
+	id 83DA04093848; Mon, 10 Nov 2025 16:36:25 +0700 (WIB)
+Date: Mon, 10 Nov 2025 16:36:25 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Masaharu Noguchi <nogunix@gmail.com>, jaegeuk@kernel.org,
+	chao@kernel.org
+Cc: corbet@lwn.net, linux-f2fs-devel@lists.sourceforge.net,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	akiyks@gmail.com
+Subject: Re: [PATCH v2] Documentation: f2fs: wrap tables in literal code
+ blocks
+Message-ID: <aRGyGTIyUfQGo1kH@archie.me>
+References: <20251109095416.2428351-1-nogunix@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="cBsjTY+9mfPUQSPu"
+Content-Disposition: inline
+In-Reply-To: <20251109095416.2428351-1-nogunix@gmail.com>
 
-This adds support for chip RTL8125K. Its XID is 0x68a. It is basically
-based on the one with XID 0x688, but with different firmware file.
 
-Signed-off-by: javen <javen_xu@realsil.com.cn>
----
- drivers/net/ethernet/realtek/r8169.h            | 1 +
- drivers/net/ethernet/realtek/r8169_main.c       | 5 +++++
- drivers/net/ethernet/realtek/r8169_phy_config.c | 1 +
- 3 files changed, 7 insertions(+)
+--cBsjTY+9mfPUQSPu
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/net/ethernet/realtek/r8169.h b/drivers/net/ethernet/realtek/r8169.h
-index 2c1a0c21af8d..050ba3f4f874 100644
---- a/drivers/net/ethernet/realtek/r8169.h
-+++ b/drivers/net/ethernet/realtek/r8169.h
-@@ -68,6 +68,7 @@ enum mac_version {
- 	RTL_GIGA_MAC_VER_61,
- 	RTL_GIGA_MAC_VER_63,
- 	RTL_GIGA_MAC_VER_64,
-+	RTL_GIGA_MAC_VER_65,
- 	RTL_GIGA_MAC_VER_66,
- 	RTL_GIGA_MAC_VER_70,
- 	RTL_GIGA_MAC_VER_80,
-diff --git a/drivers/net/ethernet/realtek/r8169_main.c b/drivers/net/ethernet/realtek/r8169_main.c
-index d18734fe12e4..2adffbc691b3 100644
---- a/drivers/net/ethernet/realtek/r8169_main.c
-+++ b/drivers/net/ethernet/realtek/r8169_main.c
-@@ -57,6 +57,7 @@
- #define FIRMWARE_8125B_2	"rtl_nic/rtl8125b-2.fw"
- #define FIRMWARE_8125D_1	"rtl_nic/rtl8125d-1.fw"
- #define FIRMWARE_8125D_2	"rtl_nic/rtl8125d-2.fw"
-+#define FIRMWARE_8125K_1	"rtl_nic/rtl8125k-1.fw"
- #define FIRMWARE_8125BP_2	"rtl_nic/rtl8125bp-2.fw"
- #define FIRMWARE_8126A_2	"rtl_nic/rtl8126a-2.fw"
- #define FIRMWARE_8126A_3	"rtl_nic/rtl8126a-3.fw"
-@@ -110,6 +111,7 @@ static const struct rtl_chip_info {
- 	{ 0x7cf, 0x681,	RTL_GIGA_MAC_VER_66, "RTL8125BP", FIRMWARE_8125BP_2 },
- 
- 	/* 8125D family. */
-+	{ 0x7cf, 0x68a, RTL_GIGA_MAC_VER_65, "RTL8125K", FIRMWARE_8125K_1 },
- 	{ 0x7cf, 0x689,	RTL_GIGA_MAC_VER_64, "RTL8125D", FIRMWARE_8125D_2 },
- 	{ 0x7cf, 0x688,	RTL_GIGA_MAC_VER_64, "RTL8125D", FIRMWARE_8125D_1 },
- 
-@@ -770,6 +772,7 @@ MODULE_FIRMWARE(FIRMWARE_8125A_3);
- MODULE_FIRMWARE(FIRMWARE_8125B_2);
- MODULE_FIRMWARE(FIRMWARE_8125D_1);
- MODULE_FIRMWARE(FIRMWARE_8125D_2);
-+MODULE_FIRMWARE(FIRMWARE_8125K_1);
- MODULE_FIRMWARE(FIRMWARE_8125BP_2);
- MODULE_FIRMWARE(FIRMWARE_8126A_2);
- MODULE_FIRMWARE(FIRMWARE_8126A_3);
-@@ -3844,6 +3847,7 @@ static void rtl_hw_config(struct rtl8169_private *tp)
- 		[RTL_GIGA_MAC_VER_61] = rtl_hw_start_8125a_2,
- 		[RTL_GIGA_MAC_VER_63] = rtl_hw_start_8125b,
- 		[RTL_GIGA_MAC_VER_64] = rtl_hw_start_8125d,
-+		[RTL_GIGA_MAC_VER_65] = rtl_hw_start_8125d,
- 		[RTL_GIGA_MAC_VER_66] = rtl_hw_start_8125d,
- 		[RTL_GIGA_MAC_VER_70] = rtl_hw_start_8126a,
- 		[RTL_GIGA_MAC_VER_80] = rtl_hw_start_8127a,
-@@ -3863,6 +3867,7 @@ static void rtl_hw_start_8125(struct rtl8169_private *tp)
- 	switch (tp->mac_version) {
- 	case RTL_GIGA_MAC_VER_61:
- 	case RTL_GIGA_MAC_VER_64:
-+	case RTL_GIGA_MAC_VER_65:
- 	case RTL_GIGA_MAC_VER_66:
- 	case RTL_GIGA_MAC_VER_80:
- 		for (i = 0xa00; i < 0xb00; i += 4)
-diff --git a/drivers/net/ethernet/realtek/r8169_phy_config.c b/drivers/net/ethernet/realtek/r8169_phy_config.c
-index 032d9d2cfa2a..dff1daafc8a7 100644
---- a/drivers/net/ethernet/realtek/r8169_phy_config.c
-+++ b/drivers/net/ethernet/realtek/r8169_phy_config.c
-@@ -1344,6 +1344,7 @@ void r8169_hw_phy_config(struct rtl8169_private *tp, struct phy_device *phydev,
- 		[RTL_GIGA_MAC_VER_61] = rtl8125a_2_hw_phy_config,
- 		[RTL_GIGA_MAC_VER_63] = rtl8125b_hw_phy_config,
- 		[RTL_GIGA_MAC_VER_64] = rtl8125d_hw_phy_config,
-+		[RTL_GIGA_MAC_VER_65] = rtl8125d_hw_phy_config,
- 		[RTL_GIGA_MAC_VER_66] = rtl8125bp_hw_phy_config,
- 		[RTL_GIGA_MAC_VER_70] = rtl8126a_hw_phy_config,
- 		[RTL_GIGA_MAC_VER_80] = rtl8127a_1_hw_phy_config,
--- 
-2.43.0
+On Sun, Nov 09, 2025 at 06:54:16PM +0900, Masaharu Noguchi wrote:
+> Sphinx LaTeX builder fails with the following error when it tries to
+> turn the ASCII tables in f2fs.rst into nested longtables:
+>=20
+>   Markup is unsupported in LaTeX:
+>   filesystems/f2fs:: longtable does not support nesting a table.
+>=20
+> Wrap the tables in literal code blocks so that Sphinx renders them as
+> verbatim text instead. This prevents the LaTeX builder from attempting
+> unsupported table nesting and fixes the pdfdocs build.
+>=20
+> Akira Yokosawa pointed out that the in-development Sphinx 8.3 latex
+> builder already handles these nested tables. I still want to fix the
+> current documentation because Sphinx 8.3 is not released yet, and the
+> LaTeX build on the stable 8.2.x series (which also requires
+> "docutils<0.22" for now) remains broken without this change.
 
+Acked-by: Bagas Sanjaya <bagasdotme@gmail.com>
+
+When Sphinx >=3D8.3 becomes ubiquitous, we can revisit this and revert
+it to restore nested tables.
+
+--=20
+An old man doll... just what I always wanted! - Clara
+
+--cBsjTY+9mfPUQSPu
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaRGyFQAKCRD2uYlJVVFO
+o700AP0UdeB71I3fmnbrd0SE/LHIiB8IUuvQGw5oxeYWRpNPEgEA9VmAas5jDwnA
+PoQ3dc093VqqeniYdAlyivLhxQr2Zg4=
+=gAAT
+-----END PGP SIGNATURE-----
+
+--cBsjTY+9mfPUQSPu--
 
