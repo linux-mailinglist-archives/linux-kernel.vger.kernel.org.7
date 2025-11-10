@@ -1,222 +1,107 @@
-Return-Path: <linux-kernel+bounces-892878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-892879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39F7FC46070
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:45:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A263AC46076
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 11:46:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DD561892CF4
-	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:44:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0DC53A4702
+	for <lists+linux-kernel@lfdr.de>; Mon, 10 Nov 2025 10:45:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04AF1306B18;
-	Mon, 10 Nov 2025 10:43:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54D39288C22;
+	Mon, 10 Nov 2025 10:45:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iWCPWabM"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tC88qsCi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BD0A306B21;
-	Mon, 10 Nov 2025 10:43:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A65E8305066;
+	Mon, 10 Nov 2025 10:45:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762771413; cv=none; b=kGsGgfr8VCM75oNECxbWLMc0167WjoRT7kBCaOkwwH1X/KvPkJi5O+5UgAc5/MuhwH2wRJWRfKtkOh3GD/I0gj2jUy/1cGyuCVV6OEqWUQlgRVlAT8w5nBY6a4O8ZColrjV2f8A7eQMLSAi1nBOte/rSlkFEOBIvMvhfDLFDbrg=
+	t=1762771502; cv=none; b=m6AIOhh2xUOol0HkFLXVKJMJIoAK5ct6n48IZJ3VL+pgQH8GVSeKVbjGMbwLICqUESG9DVzUsCKHBMcAB0OywbgetNncfye9VdOCYmTP3X0hgwQDj6szJ6SZne7GIX9533/ATDXAeLI94INYUaMY6WtnVH82gIybcLxKu4DAKV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762771413; c=relaxed/simple;
-	bh=CWZ+v9Aa714nliB9kR2HOKc62+ldN8K4Qh1U+sPy/rA=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=bvhaWJAIjY0++M4VBGdXXerKou/3ISY/bt1XBp8Oy1+FsC1LIyl2YucwybUYlP6q9wPnyTvjwyzYpmNC1VOxDRPXOZcaveYkDE9Cf+sy9oQ3zas7+Y05Bf4IL5r9fFlDnqnsHxTnwCUbWa5iXPH6xOIUhtAky3ouxBv0A+sMDQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iWCPWabM; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762771411; x=1794307411;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version:content-id;
-  bh=CWZ+v9Aa714nliB9kR2HOKc62+ldN8K4Qh1U+sPy/rA=;
-  b=iWCPWabM8aDRPNA5Y+qjnFGI/Gh/hILnBAFjp6t7qrHNkqfXSuStwi37
-   TAcjzjCVowMvFGhjVbaQBMUOWAHEpgs71XsFN/VIOqzcBaPLG/tkxTgM6
-   7P4sdZwV+9Mi/jzD3BsLkmb1hcBUL4uxsd60F3D7YdzpZv3PnYcudh23a
-   DpW0hYvN+4iEzLFCA4BzPl21G6CKSXLS1OcPlot2PXlDu+pqhSV4U4dpm
-   KrYYy2LCbwlaJm/JQ+3D20rgmfVXLN7OQhrTvOACjb5cO+DNktMXxujhA
-   ywwrFFOIYrTm7qYpCPMZhIlHjZe0C1efiNo1HfyGE2z4SjVe5jTRp/Laj
-   g==;
-X-CSE-ConnectionGUID: JlikWe9eTGyubRgLoaO0uw==
-X-CSE-MsgGUID: SPmDdfH1RfWy4wacumbntA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11608"; a="75112029"
-X-IronPort-AV: E=Sophos;i="6.19,293,1754982000"; 
-   d="scan'208";a="75112029"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 02:43:31 -0800
-X-CSE-ConnectionGUID: np1TOxVHTvqrE1kqp8Evpw==
-X-CSE-MsgGUID: ANeosOeWS1uhMRMfkkSaSw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,293,1754982000"; 
-   d="scan'208";a="189082230"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.13])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 02:43:27 -0800
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Mon, 10 Nov 2025 12:43:22 +0200 (EET)
-To: Stephen Rothwell <sfr@canb.auug.org.au>, 
-    Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-cc: Jiri Slaby <jirislaby@kernel.org>, Alex Davis <alex47794@gmail.com>, 
-    Borislav Petkov <bp@alien8.de>, 
-    Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-    Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-    John Ogness <john.ogness@linutronix.de>, 
-    linux-serial <linux-serial@vger.kernel.org>
-Subject: Re: [Regression] depmod fails on kernel 6.17.1 rc1
-In-Reply-To: <20251109173413.10c9aa0a@canb.auug.org.au>
-Message-ID: <b1c99727-0d09-3a61-d82e-31e29801f837@linux.intel.com>
-References: <CADiockCvM6v+d+UoFZpJSMoLAdpy99_h-hJdzUsdfaWGn3W7-g@mail.gmail.com> <20251106160235.GBaQzGm8W2Gt_VMy-s@fat_crate.local> <aQzJveMYT6O3EHeK@smile.fi.intel.com> <20251106162436.GFaQzLxBW-_50ndwtr@fat_crate.local> <3fe70726-80d6-a84a-4101-446fd8b49209@linux.intel.com>
- <ddfbc4bf-658f-3eda-5b4f-f111ecd932f5@linux.intel.com> <82e2ce7f-bd08-4b53-b232-3dd8cb1a0726@kernel.org> <20251109105203.622ebe9e@pine.rothwell.emu.id.au> <2025110956-swaddling-chapter-5932@gregkh> <20251109173413.10c9aa0a@canb.auug.org.au>
+	s=arc-20240116; t=1762771502; c=relaxed/simple;
+	bh=D4tyGM1CQgI1ziG0RQbhNZECmbMmY5A11qAo6a2a2e4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ItGQ5GHyjkGQt44pgPkFc3sp3qT82QGBfDVFM10Z9nOgXEO26o4c+MvONlyVO5FODim3/jQIznOFzSFQwFOd7FVhIHxJONtd23fu0b+FgPLYR/GuL5osnKSPJTv33cP4hwDXpNAehomzjGSmq/vczI7nc9fQ3O0cfIZitsGkXiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tC88qsCi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 291B8C4CEF5;
+	Mon, 10 Nov 2025 10:44:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762771502;
+	bh=D4tyGM1CQgI1ziG0RQbhNZECmbMmY5A11qAo6a2a2e4=;
+	h=Date:From:To:Cc:Subject:From;
+	b=tC88qsCi9k6L11GefVVW93h2kX10rCM4CGhI/FrZelUkSG+DGSi5jA07TGBQsILya
+	 E//UR9X52n4YzJrPtXggzh259gXb+zfHkquUgkQgwDmvdUem2AJFBhcnOujHTKdmQ1
+	 KZScj0QcQ/Jh4Ru34+n4Amw/rDjWqSTi1XGoeXJMl4hulRv/i0GoJGjQOVA0cuo7D9
+	 CiegkGp2nycTepeZww+v7I37a+UQgQhv2AeXjE6gsywxJSzLQLggjHmxj28JUAee++
+	 RYP3OwlRmX/PROMxPhVIK6OKyFCTNukVRmpQCUUMYCt1eJ6nt+osHf7TaaCtK1EJBk
+	 grAKquaynQtNg==
+Date: Mon, 10 Nov 2025 19:44:56 +0900
+From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+To: Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH][next] crypto: drbg - Avoid -Wflex-array-member-not-at-end
+ warning
+Message-ID: <aRHCKMGDbWkXIY8f@kspp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; BOUNDARY="8323328-185351875-1762770758=:1060"
-Content-ID: <a498616d-2f88-7b39-c3dc-11f10df3890e@linux.intel.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+-Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+getting ready to enable it, globally.
 
---8323328-185351875-1762770758=:1060
-Content-Type: text/plain; CHARSET=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Content-ID: <ecc0b2e1-8407-bbb2-0409-02d056ac81fb@linux.intel.com>
+Use the new TRAILING_OVERLAP() helper to fix the following warning:
 
-On Sun, 9 Nov 2025, Stephen Rothwell wrote:
-> On Sun, 9 Nov 2025 09:49:29 +0900 Greg Kroah-Hartman <gregkh@linuxfoundat=
-ion.org> wrote:
-> > On Sun, Nov 09, 2025 at 10:52:03AM +1100, Stephen Rothwell wrote:
-> > > On Fri, 7 Nov 2025 07:20:26 +0100 Jiri Slaby <jirislaby@kernel.org> w=
-rote: =20
-> > > >
-> > > > On 06. 11. 25, 19:00, Ilpo J=E4rvinen wrote: =20
-> > > > > This seems to resolve the build issue for me:
-> > > > >=20
-> > > > > --
-> > > > > From: =3D?UTF-8?q?Ilpo=3D20J=3DC3=3DA4rvinen?=3D <ilpo.jarvinen@l=
-inux.intel.com>
-> > > > > Subject: [PATCH 1/1] serial: 8250: Fix 8250_rsa symbol loop
-> > > > >=20
-> > > > > make allmodconfig build fails due to dependency loop:
-> > > > >=20
-> > > > >    depmod: ERROR: Cycle detected: 8250 -> 8250_base -> 8250
-> > > > >    depmod: ERROR: Found 2 modules in dependency cycles!
-> > > > >=20
-> > > > > Break dependency loop by moving 8250_rsa.o into 8250_base and by
-> > > > > passing univ8250_port_base_ops to univ8250_rsa_support() that can=
- make
-> > > > > a local copy of it.
-> > > > >=20
-> > > > > Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> > > > > Reported-by: Alex Davis <alex47794@gmail.com>
-> > > > > Fixes: b20d6576cdb3 ("serial: 8250: export RSA functions")
-> > > > > Signed-off-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>   =
-=20
-> > > >=20
-> > > > LGTM, thanks for the fix.
-> > > >=20
-> > > > Reviewed-by: Jiri Slaby <jirislaby@kernel.org>
-> > > >=20
-> > > > If the reporters could give it a shot and mark this by Tested-by, i=
-t would be great... =20
-> > >=20
-> > > I have not seen this for quite some time ... I assumed it had been
-> > > fixed. =20
-> >=20
-> > I too thought this was fixed a while ago, what changed to cause this to
-> > happen now?  Anyone have a .config to reproduce this, 'allmodconfig' on
-> > x86 works for me.
->=20
-> Actually, I think the current report is for v6.17.1-rc1, so maybe
-> something got missed in a stable backport? My original report was for
-> next-20250728 (July 28).  The only response I got was on October 1,
-> but I am pretty sure it was fixed well before then.
->=20
-> Also, you probably only get the error when you do a "make
-> modules_install" after the allmodconfig build (at least that is where I
-> got it).
+crypto/drbg.c:1445:27: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
 
-Hi all,
+This helper creates a union between a flexible-array member (FAM) and a
+set of MEMBERS that would otherwise follow it.
 
-I don't want to waste my time building allmodconfig but this is with=20
-allnoconfig + a few key CONFIGs set and without my patch:
+This overlays the trailing MEMBER char ctx[]; onto the FAM struct
+shash_desc::__ctx,[] while keeping the FAM and the start of MEMBER
+aligned.
 
-$ git log -n1
-commit e9a6fb0bcdd7609be6969112f3fbfcce3b1d4a7c (grafted, HEAD -> master,=
-=20
-tag: v6.18-rc5, origin/master, origin/HEAD)
-Author: Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sun Nov 9 15:10:19 2025 -0800
+The static_assert() ensures this alignment remains, and it's
+intentionally placed inmediately after the corresponding structures --no
+blank line in between.
 
-    Linux 6.18-rc5
-$ make allnoconfig
-  LEX     scripts/kconfig/lexer.lex.c
-  YACC    scripts/kconfig/parser.tab.[ch]
-  HOSTCC  scripts/kconfig/lexer.lex.o
-  HOSTCC  scripts/kconfig/menu.o
-  HOSTCC  scripts/kconfig/parser.tab.o
-  HOSTCC  scripts/kconfig/preprocess.o
-  HOSTCC  scripts/kconfig/symbol.o
-  HOSTCC  scripts/kconfig/util.o
-  HOSTLD  scripts/kconfig/conf
-#
-# configuration written to .config
-#
-$ echo -e "CONFIG_MODULES=3Dy\nCONFIG_SERIAL_8250=3Dm\nCONFIG_SERIAL_8250_E=
-XTENDED=3Dy\nCONFIG_SERIAL_8250_RSA=3Dy" >> .config=20
-$ make olddefconfig
-=2Econfig:1528:warning: override: reassigning to symbol MODULES
-=2Econfig:1529:warning: override: reassigning to symbol SERIAL_8250
-=2Econfig:1530:warning: override: reassigning to symbol SERIAL_8250_EXTENDE=
-D
-#
-# configuration written to .config
-#
-$ make -j4 > /dev/null && sudo make modules_install
-  INSTALL /lib/modules/6.18.0-rc5/modules.order
-  INSTALL /lib/modules/6.18.0-rc5/modules.builtin
-  INSTALL /lib/modules/6.18.0-rc5/modules.builtin.modinfo
-  SYMLINK /lib/modules/6.18.0-rc5/build
-  INSTALL /lib/modules/6.18.0-rc5/kernel/drivers/tty/serial/8250/8250.ko
-  INSTALL /lib/modules/6.18.0-rc5/kernel/drivers/tty/serial/8250/8250_base.=
-ko
-  INSTALL /lib/modules/6.18.0-rc5/kernel/drivers/tty/serial/serial_base.ko
-  DEPMOD  /lib/modules/6.18.0-rc5
-depmod: ERROR: Cycle detected: 8250 -> 8250_base -> 8250
-depmod: ERROR: Found 2 modules in dependency cycles!
-make[2]: *** [scripts/Makefile.modinst:132: depmod] Error 1
-make[1]: *** [/home/user/linux/Makefile:1916: modules_install] Error 2
-make: *** [Makefile:248: __sub-make] Error 2
+Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+---
+ crypto/drbg.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-=2E..so no, it does not look fixed.
+diff --git a/crypto/drbg.c b/crypto/drbg.c
+index 511a27c91813..e9f9775c237f 100644
+--- a/crypto/drbg.c
++++ b/crypto/drbg.c
+@@ -1442,9 +1442,12 @@ static void drbg_kcapi_set_entropy(struct crypto_rng *tfm,
+ 
+ #if defined(CONFIG_CRYPTO_DRBG_HASH) || defined(CONFIG_CRYPTO_DRBG_HMAC)
+ struct sdesc {
+-	struct shash_desc shash;
+-	char ctx[];
++	/* Must be last as it ends in a flexible-array member. */
++	TRAILING_OVERLAP(struct shash_desc, shash, __ctx,
++		char ctx[];
++	);
+ };
++static_assert(offsetof(struct sdesc, shash.__ctx) == offsetof(struct sdesc, ctx));
+ 
+ static int drbg_init_hash_kernel(struct drbg_state *drbg)
+ {
+-- 
+2.43.0
 
-With the patch:
-
-$ git am 0001-serial-8250-Fix-8250_rsa-symbol-loop.patch=20
-Applying: serial: 8250: Fix 8250_rsa symbol loop
-user@disp1097:~/linux$ make -j4 > /dev/null && sudo make modules_install
-  SYMLINK /lib/modules/6.18.0-rc5+/build
-  INSTALL /lib/modules/6.18.0-rc5+/modules.order
-  INSTALL /lib/modules/6.18.0-rc5+/modules.builtin
-  INSTALL /lib/modules/6.18.0-rc5+/modules.builtin.modinfo
-  INSTALL /lib/modules/6.18.0-rc5+/kernel/drivers/tty/serial/8250/8250.ko
-  INSTALL /lib/modules/6.18.0-rc5+/kernel/drivers/tty/serial/8250/8250_base=
-=2Eko
-  INSTALL /lib/modules/6.18.0-rc5+/kernel/drivers/tty/serial/serial_base.ko
-  DEPMOD  /lib/modules/6.18.0-rc5+
-$=20
-
-I'll just make the official submission with the #else block's prototype=20
-fixed (thanks to lkp).
-
---=20
- i.
---8323328-185351875-1762770758=:1060--
 
