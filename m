@@ -1,240 +1,168 @@
-Return-Path: <linux-kernel+bounces-895519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1DF1C4E25E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:39:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A459BC4E255
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:38:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 974A74E44DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:38:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B80A1886584
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:39:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5215333ADBF;
-	Tue, 11 Nov 2025 13:38:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E21CD33BBB4;
+	Tue, 11 Nov 2025 13:38:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="hjwXGHiK"
-Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jruR+34z"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B12D33ADB0
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 13:38:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 831B733AD93
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 13:38:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762868327; cv=none; b=Z1JhpZGQZEkHJQYTQKBYQEiOIwZii3vS+MTh/A7KC1BzxyalLxljqa0kaLLqzCRY5TTsdL4uh7YlE5DeObZBtNSQfrIMsN1tLk8kfFkWaUwT9Z2i9mYJJTO+ZCWzx7VNW3wu+BJR2idsrDl/Qww5I2awdODLnmabsXacrsOmnfo=
+	t=1762868310; cv=none; b=IhrPvveC4USSvRZlXAIIFP5bCjCaMUPL1Pi9ZzFIARsRo1rWOIK7C3RoEszWHqdLJ4qJnUGXthccRBqhOJXkE2E3dVtXLEvpcaxutoHX6iuYoieSL+lrjaC9+qT73+sbZn9C/1VsR4ya0K/wdEx//orO8FmbxeWAbXPSL3F+O24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762868327; c=relaxed/simple;
-	bh=iIZRyhiMeoQJSf99tXZ/MiRIgRzb2sZdm1bsflFrg2E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZBv/T2TNvPUXuPbgZ9vL+UMF7LciEo0lnaC+LcReYCByf65wkXLh5jSxansElO5wheXL0HfSn8QHDaDSL4uCcj6aXfWcvPeZEoQobqq7bjDPtTMpFcTZqOA8QRVp0Avpyk6MM6UcfRnU2v0gF8gqVyIkADSl/28hc6z8Xdcvfjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=hjwXGHiK; arc=none smtp.client-ip=95.215.58.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <04c35045-ef5b-4e92-9da9-6710ce8fdabf@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1762868313;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xhtWbkyt0Xj2/DzqGHM6gZcLCBc5eD8a8CJobqwdPk0=;
-	b=hjwXGHiKIRp4PAzmeog/+jlqZo0QMEWEcHnUyXjLkUhx0Olj20BqdsuAC/O3CwFfxwgJCc
-	Hs5sld9OhKSN8X6TRZTdDTFiM4V7uOTisLVXvLCVZwKqWO7skS52z0my5dyYvdDuhEG8hQ
-	5M/FF+hhN4SoXsSSj7jsSnLQLM2o+bQ=
-Date: Tue, 11 Nov 2025 21:38:12 +0800
+	s=arc-20240116; t=1762868310; c=relaxed/simple;
+	bh=9+8RKp3wpw269ST0pV/o23oBCV2SjRSEAo7Ju4JeE2I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VINIuZl9lrtlvlP8sy6K3RVDArm69hIGq+DmkviMxBbwT1RNHNondAsL6B6EqsINYQXi6BojggCKVU6cunC/Edg2LKkWDxFRx48nyaUaj5rBVdG81WmdfcS6VCDZslv0uw90ulEXn09W9hLvTLJ5ePI+Tq6DRK3GuDltxc2PVlM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jruR+34z; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-42b427cda88so715166f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 05:38:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762868307; x=1763473107; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Qnh/EfFcC0OapeosDB3gm6ZI4b7oDHUMEpCiBaNixDQ=;
+        b=jruR+34zAhhIRiwsoPh0IoK5V8sjOZ/5nWn1O8D38gdkstcgT2XWsgr3JBSSA+1sbb
+         DMCspnhxoKNUoCfYDikjBbfjAk5VfCI34/MfJhRU/6ZUcGqZG+ByD4QvjhAAAHO1WRfX
+         NxGZXe+C26/xkAcbJHnM8D4+WoOnrOk3HCQBiMlMvZHANM36A0r2l4kj9lTEPwUdwaj1
+         Xs6eT+dGhVfsq/MiD+UKjv8dUYE+o4SB6fA9HGoubUfgWJmn7hF7F4ZY1t42AR9NUSuB
+         u5n2GyrnHGXi60Tg4BAqZMcJvYZGnqyMiNqXUBEl0VvLU78Ecd+mShS5NWhHRWxgqRxl
+         wUxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762868307; x=1763473107;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=Qnh/EfFcC0OapeosDB3gm6ZI4b7oDHUMEpCiBaNixDQ=;
+        b=Xi7bmpTCnJLD6kQoe7eiF7vrDL8bM9sRtqY1PC10Uhdmd6hWaiKQ45jR2j/B1w3icw
+         4OtgFVa3eJgXWStoKNudp5Xs/C5MBaMpLYanZiihp9JnW0+lTNycJvPsIvQzqQvHLAID
+         YLDE3BCgg1EnKxwMvHjCEonz3Y84SuTL29LK315whZQqp51+MKEj55NkDbhn8C/x6vmD
+         uEzRlygDRc00vQtSQIqP9aynRSt/qUTgXCITUPe0OiJQAKY4F+2Wv1kGk3AJTpF3h3RL
+         JUl6QJ2oXuUN6d/IkvkjuXUn0xz41cjjYL3qdqsrS+u0acsdN+vDofN/iZ9uZMSB47V4
+         9JjA==
+X-Forwarded-Encrypted: i=1; AJvYcCVZ4DmwOACPC/RLodozl1x+um7XKouXVf0ega8pLeoZuIdt5pdK606KqVLkPBw/6ZuizjTtpzsK+S0frVM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOIdICaKkxtJKd6F9YaZxImfHBEXD1pZyO27N2YbBUufQ5FJy4
+	Uvk+wvyaq48fEGXRm/pJFo47YJu8a7+Atp8G4Vu0Uro4FXZXvwyP/i69PuD9aiGXwxrWqMoWO/O
+	3AEoPeeDVE3Bjh2Lwegz+YH814SztzII=
+X-Gm-Gg: ASbGncsEoOCXdLHLeu4WwOqeC3X2Lf/kjS0gGnOfCsj9xh3xAl8+J71qNVC6slTDdwt
+	v0v91oY2VJVBcp/iPDyfjtbOWuHgCSZNCLB4JvAt6GGe+UTdGSjRo7gDpNZkADSg63lr+PiCJ0S
+	NJ5xLCOOoxDHFklEipQnvZtQo+I2rCtf9r1mL68RKrZttXjLw5q/w00iw0wV6NBts+x3RN4MH2N
+	Y/P9Nz6MRQsf2ZAzJ2pE0zmzDxaVBmFO6OxEHEiq+hd4EEf9cdhye4k8WMUFA==
+X-Google-Smtp-Source: AGHT+IFao47crFBXAEMryJc61/yylJAwMReb80upl39uZLXSP2IfrU0IRhz0HzfumpWstK5uhCcoN0mp9RwuTfUSerw=
+X-Received: by 2002:a05:6000:22c5:b0:42b:3806:2bb4 with SMTP id
+ ffacd0b85a97d-42b38062ee3mr8603188f8f.27.1762868306762; Tue, 11 Nov 2025
+ 05:38:26 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH bpf-next v6 2/2] selftests/bpf: Add test to verify freeing
- the special fields when update [lru_,]percpu_hash maps
-To: Yonghong Song <yonghong.song@linux.dev>, bpf@vger.kernel.org
-Cc: ast@kernel.org, andrii@kernel.org, daniel@iogearbox.net,
- martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
- john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me,
- haoluo@google.com, jolsa@kernel.org, memxor@gmail.com, ameryhung@gmail.com,
- linux-kernel@vger.kernel.org, kernel-patches-bot@fb.com
-References: <20251105151407.12723-1-leon.hwang@linux.dev>
- <20251105151407.12723-3-leon.hwang@linux.dev>
- <9f662e2c-7370-4f99-bdec-bc123495e1c5@linux.dev>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Leon Hwang <leon.hwang@linux.dev>
-In-Reply-To: <9f662e2c-7370-4f99-bdec-bc123495e1c5@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+References: <20251103145629.21588-1-clamor95@gmail.com> <20251103145629.21588-3-clamor95@gmail.com>
+ <aRMw_Qre1FY94soi@kekkonen.localdomain> <CAPVz0n1MokJq6d4s0cS3UdevRt2n-HaicPpwiBu=3HVSKfnzfg@mail.gmail.com>
+ <aRM4x7SbdbxMYLCi@kekkonen.localdomain>
+In-Reply-To: <aRM4x7SbdbxMYLCi@kekkonen.localdomain>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Tue, 11 Nov 2025 15:38:15 +0200
+X-Gm-Features: AWmQ_bkmPJ4B9hg_v9slwZgU6JF6B0t9UvmnXNpUX7KozbO5YA-3mLRwPCTqEus
+Message-ID: <CAPVz0n0zEmWrocqeFKHVdgegtwLKWZZ2xS5EYnT-rZtoTKxctA@mail.gmail.com>
+Subject: Re: [PATCH v4 2/2] media: i2c: add Sony IMX111 CMOS camera sensor driver
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Hans Verkuil <hverkuil@xs4all.nl>, Hans de Goede <hansg@kernel.org>, 
+	=?UTF-8?Q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>, 
+	Sylvain Petinot <sylvain.petinot@foss.st.com>, 
+	Benjamin Mugnier <benjamin.mugnier@foss.st.com>, Dongcheng Yan <dongcheng.yan@intel.com>, 
+	Heimir Thor Sverrisson <heimir.sverrisson@gmail.com>, Tarang Raval <tarang.raval@siliconsignals.io>, 
+	linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-
-On 2025/11/7 10:00, Yonghong Song wrote:
+=D0=B2=D1=82, 11 =D0=BB=D0=B8=D1=81=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 15:2=
+3 Sakari Ailus <sakari.ailus@linux.intel.com> =D0=BF=D0=B8=D1=88=D0=B5:
 >
+> On Tue, Nov 11, 2025 at 02:53:52PM +0200, Svyatoslav Ryhel wrote:
+> > =D0=B2=D1=82, 11 =D0=BB=D0=B8=D1=81=D1=82. 2025=E2=80=AF=D1=80. =D0=BE =
+14:50 Sakari Ailus <sakari.ailus@linux.intel.com> =D0=BF=D0=B8=D1=88=D0=B5:
+> > > I can make the two changes before applying, too, if that's ok.
+> >
+> > If you don't mind adjusting commit on your own before applying I have
+> > no objections. Thank you very much!
 >
-> On 11/5/25 7:14 AM, Leon Hwang wrote:
->> Add test to verify that updating [lru_,]percpu_hash maps decrements
->> refcount when BPF_KPTR_REF objects are involved.
->>
->> The tests perform the following steps:
->>
->> 1. Call update_elem() to insert an initial value.
->> 2. Use bpf_refcount_acquire() to increment the refcount.
->> 3. Store the node pointer in the map value.
->> 4. Add the node to a linked list.
->> 5. Probe-read the refcount and verify it is *2*.
->> 6. Call update_elem() again to trigger refcount decrement.
->> 7. Probe-read the refcount and verify it is *1*.
->>
->> Signed-off-by: Leon Hwang <leon.hwang@linux.dev>
+> The diff is:
 >
-> LGTM with a few nits below.
+> diff --git a/drivers/media/i2c/imx111.c b/drivers/media/i2c/imx111.c
+> index c269e9fdcb0b..8eb919788ef7 100644
+> --- a/drivers/media/i2c/imx111.c
+> +++ b/drivers/media/i2c/imx111.c
+> @@ -1136,13 +1136,6 @@ static int imx111_set_format(struct v4l2_subdev *s=
+d,
 >
-> Acked-by: Yonghong Song <yonghong.song@linux.dev>
+>         fmt =3D v4l2_subdev_state_get_format(state, format->pad);
 >
-
-Hi Yonghong,
-
-Thanks for your review and ack.
-
->> ---
->>   .../bpf/prog_tests/refcounted_kptr.c          | 57 ++++++++++++++++++
->>   .../selftests/bpf/progs/refcounted_kptr.c     | 60 +++++++++++++++++++
->>   2 files changed, 117 insertions(+)
->>
->> diff --git a/tools/testing/selftests/bpf/prog_tests/refcounted_kptr.c
->> b/tools/testing/selftests/bpf/prog_tests/refcounted_kptr.c
->> index d6bd5e16e6372..086f679fa3f61 100644
->> --- a/tools/testing/selftests/bpf/prog_tests/refcounted_kptr.c
->> +++ b/tools/testing/selftests/bpf/prog_tests/refcounted_kptr.c
->> @@ -44,3 +44,60 @@ void test_refcounted_kptr_wrong_owner(void)
->>       ASSERT_OK(opts.retval, "rbtree_wrong_owner_remove_fail_a2 retval");
->>       refcounted_kptr__destroy(skel);
->>   }
->> +
->> +void test_percpu_hash_refcounted_kptr_refcount_leak(void)
->> +{
->> +    struct refcounted_kptr *skel;
->> +    int cpu_nr, fd, err, key = 0;
->> +    struct bpf_map *map;
->> +    size_t values_sz;
->> +    u64 *values;
->> +    LIBBPF_OPTS(bpf_test_run_opts, opts,
->> +            .data_in = &pkt_v4,
->> +            .data_size_in = sizeof(pkt_v4),
->> +            .repeat = 1,
->> +    );
->> +
->> +    cpu_nr = libbpf_num_possible_cpus();
->> +    if (!ASSERT_GT(cpu_nr, 0, "libbpf_num_possible_cpus"))
->> +        return;
->> +
->> +    values = calloc(cpu_nr, sizeof(u64));
->> +    if (!ASSERT_OK_PTR(values, "calloc values"))
->> +        return;
->> +
->> +    skel = refcounted_kptr__open_and_load();
->> +    if (!ASSERT_OK_PTR(skel, "refcounted_kptr__open_and_load")) {
->> +        free(values);
->> +        return;
->> +    }
->> +
->> +    values_sz = cpu_nr * sizeof(u64);
->> +    memset(values, 0, values_sz);
->> +
->> +    map = skel->maps.percpu_hash;
->> +    err = bpf_map__update_elem(map, &key, sizeof(key), values,
->> values_sz, 0);
->> +    if (!ASSERT_OK(err, "bpf_map__update_elem"))
->> +        goto out;
->> +
->> +    fd = bpf_program__fd(skel->progs.percpu_hash_refcount_leak);
->> +    err = bpf_prog_test_run_opts(fd, &opts);
->> +    if (!ASSERT_OK(err, "bpf_prog_test_run_opts"))
->> +        goto out;
->> +    if (!ASSERT_EQ(opts.retval, 2, "opts.retval"))
->> +        goto out;
->> +
->> +    err = bpf_map__update_elem(map, &key, sizeof(key), values,
->> values_sz, 0);
->> +    if (!ASSERT_OK(err, "bpf_map__update_elem"))
->> +        goto out;
->> +
->> +    fd = bpf_program__fd(skel->progs.check_percpu_hash_refcount);
->> +    err = bpf_prog_test_run_opts(fd, &opts);
->> +    ASSERT_OK(err, "bpf_prog_test_run_opts");
->> +    ASSERT_EQ(opts.retval, 1, "opts.retval");
->> +
->> +out:
->> +    refcounted_kptr__destroy(skel);
->> +    free(values);
->> +}
->> +
+> -       fmt->code =3D imx111_get_format_code(sensor, mbus_fmt->code, fals=
+e);
+> -       fmt->width =3D mode->width;
+> -       fmt->height =3D mode->height;
+> -       fmt->colorspace =3D V4L2_COLORSPACE_RAW;
+> -
+> -       *mbus_fmt =3D *fmt;
+> -
+>         if (format->which =3D=3D V4L2_SUBDEV_FORMAT_ACTIVE) {
+>                 int ret;
 >
-> Empty line here.
+> @@ -1183,6 +1176,13 @@ static int imx111_set_format(struct v4l2_subdev *s=
+d,
+>                         return ret;
+>         }
 >
->> diff --git a/tools/testing/selftests/bpf/progs/refcounted_kptr.c b/
->> tools/testing/selftests/bpf/progs/refcounted_kptr.c
->> index 893a4fdb4b6e9..1aca85d86aebc 100644
->> --- a/tools/testing/selftests/bpf/progs/refcounted_kptr.c
->> +++ b/tools/testing/selftests/bpf/progs/refcounted_kptr.c
->> @@ -568,4 +568,64 @@ int
->> BPF_PROG(rbtree_sleepable_rcu_no_explicit_rcu_lock,
->>       return 0;
->>   }
->>   +private(kptr_ref) u64 ref;
->> +
->> +static int probe_read_refcount(void)
->> +{
->> +    u32 refcount;
->> +
->> +    bpf_probe_read_kernel(&refcount, sizeof(refcount), (void *) ref);
->> +    return refcount;
->> +}
->> +
->> +static int __insert_in_list(struct bpf_list_head *head, struct
->> bpf_spin_lock *lock,
->> +                struct node_data __kptr **node)
->> +{
->> +    struct node_data *node_new, *node_ref, *node_old;
->> +
->> +    node_new = bpf_obj_new(typeof(*node_new));
->> +    if (!node_new)
->> +        return -1;
->> +
->> +    node_ref = bpf_refcount_acquire(node_new);
->> +    node_old = bpf_kptr_xchg(node, node_new);
+> +       fmt->code =3D imx111_get_format_code(sensor, mbus_fmt->code, fals=
+e);
+> +       fmt->width =3D mode->width;
+> +       fmt->height =3D mode->height;
+> +       fmt->colorspace =3D V4L2_COLORSPACE_RAW;
+> +
+> +       *mbus_fmt =3D *fmt;
+> +
+>         return 0;
+>  }
 >
-> Change the above to node_old = bpf_kptr_xchg(node, node_node_ref); might
-> be better for reasoning although node_ref/node_new are the same.
+> @@ -1542,9 +1542,9 @@ static int imx111_probe(struct i2c_client *client)
+>                 goto error_pm;
+>         }
+>
+> -       pm_runtime_idle(dev);
+>         pm_runtime_set_autosuspend_delay(dev, 1000);
+>         pm_runtime_use_autosuspend(dev);
+> +       pm_runtime_idle(dev);
+>
+>         return 0;
+>
+> Hopefully that works!
 >
 
-Nope — node_ref and node_new are different for the verifier.
+Yes, it seems to work as expected on my device. Thank you.
 
-When trying node_old = bpf_kptr_xchg(node, node_ref), the verifier reported:
-
-[verifier log snipped for brevity...]
-; bpf_obj_drop(node_ref); @ refcounted_kptr.c:594
-26: (bf) r1 = r6                      ; R1=scalar(id=7) R6=scalar(id=7)
-refs=3
-27: (b7) r2 = 0                       ; R2=0 refs=3
-28: (85) call bpf_obj_drop_impl#54490
-R1 must be referenced or trusted
-processed 27 insns (limit 1000000) max_states_per_insn 0 total_states 2
-peak_states 2 mark_read 0
-
-So the verifier rejected it because R6 became scalar(id=7) from
-ptr_node_data(ref_obj_id=4).
-
----
-
-Hi Alexei, could you please drop the extra empty line when applying this
-patch?
-
-Then I don't need to send another revision.
-
-Thanks,
-Leon
-
-[...]
+> --
+> Regards,
+>
+> Sakari Ailus
 
