@@ -1,111 +1,165 @@
-Return-Path: <linux-kernel+bounces-895849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id B24E6C4F1AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:46:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C816C4F1A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:46:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4158334CACF
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:46:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4ECF53AD5BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:43:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFA283730EF;
-	Tue, 11 Nov 2025 16:46:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CBBE3730CA;
+	Tue, 11 Nov 2025 16:43:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="leINhPUn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cA6NfSRa"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F87F3730C2;
-	Tue, 11 Nov 2025 16:46:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74BA22D8DDA;
+	Tue, 11 Nov 2025 16:43:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762879597; cv=none; b=mtYG+k9QqbU7wkptDqwY2IoRNfpTxdDfdvwZMwIJxwq0ncOx4G/rA5Chx7a2OGx7JumX7SxTu+W2EE9xcKW1LU+Uoxhr22/5D4zD+ZG31iBrE3veQq5gEdsKaovitgx+dVNd5Z6DRyEIl16SnT9I6pYn0F9TjT0yt4OkE0v5Pa8=
+	t=1762879389; cv=none; b=VN9+jDi8ukq87tI66D2RvbzFFT6nhMGxwBJFZuDif84pTxqYpBgF1/a3LjUL05YvWuaqrjWE4hQoUuV9Xz0g+OunEG1wDc516DegdLOV4K4CvdfFJZWLADx51VW1AFJdwbgnEhN4jXNmBTXJmt7xSdYrs+dXIwztYAV8UZGAeCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762879597; c=relaxed/simple;
-	bh=jeDtFvGUXIuVgUDPgyVS9vBhjXcXU//Cn4BpthaOkM0=;
+	s=arc-20240116; t=1762879389; c=relaxed/simple;
+	bh=ymIv2XmLKmBikeDaavFp5j6Vf01oLyyEEmybdOlwNE4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XJ9mzrGvGm9MhSffnlNF9aa2NflA4mRU5s63vawva//IDSu4AyQiir7MEazbHGxlW0JPB+rppKF6wWngmAG8G1Uxcd7IKsvLW1RNVLPKLKQehnAZ+C9ijoPERWSfmXCBkDV2T2fMPuyKgewWggV81nPeVu6igJkyL5Dtuo/R9R4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=leINhPUn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1597CC4CEFB;
-	Tue, 11 Nov 2025 16:46:33 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=VW3cK4I0CH9bA5o9nnB2QECJGajRBlEd6H75YDHa7BMBjqD5Etln+JEd/afPT6UGCwwEOfKrzYEW/XpwltLsd1iDrvul2mbxV1q7yWb9RVG0U+dAc/6YhARr2ePpEzotWi2HhtIesT2Y0cyrC9kiH7fSOFjuJTA5U30M+b/yNqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cA6NfSRa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E0F7C4CEF5;
+	Tue, 11 Nov 2025 16:43:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762879596;
-	bh=jeDtFvGUXIuVgUDPgyVS9vBhjXcXU//Cn4BpthaOkM0=;
+	s=k20201202; t=1762879388;
+	bh=ymIv2XmLKmBikeDaavFp5j6Vf01oLyyEEmybdOlwNE4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=leINhPUnfTtmVDkHrVZuiuhH38TSZeyEd+IyIWhXZV5UYD4/CMbUIw+80GBULpBci
-	 OdzhLsUuct8gS9MljKSePHzRtP+uWmuVVcmoTFmeU2wTbb68i/huv5Zi4xYkv2Bjei
-	 WoqnrW20p5qK89MuNndzjPVctflnmm1pEqp2JZ5+kvjCnrUD3nWWq5v0ylMN4Y5eci
-	 EwhHhIyRxpqjLBtT9DayUNOGF+1aOfVJobfW+UFDVJGFJEClkfBPj9scudgvc/RRR2
-	 f1Rr4Sbz2BLL7NhetWqTQiO9lVb4yzuH+2VHcyRAFKtSBIqe+7JFPNX3DhyqF7eSes
-	 DXRdIwDAA1e8Q==
-Date: Tue, 11 Nov 2025 16:46:31 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: claudiu.beznea@tuxon.dev, Conor Dooley <conor.dooley@microchip.com>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	pierre-henry.moussay@microchip.com,
-	valentina.fernandezalanis@microchip.com,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 1/5] reset: mpfs: add non-auxiliary bus probing
-Message-ID: <20251111-apron-dispersal-6bd72d4a41a1@spud>
-References: <20251110-zookeeper-femur-68a0ae346397@spud>
- <20251110-evict-gratified-bb816e2799a2@spud>
- <2fabead977bee651800790f6b0d6323ffdc372c5.camel@pengutronix.de>
+	b=cA6NfSRa0UklYUuKU+oSfTLjJU9hDSw6ryaU9+Y6RC3gTnxUm50500ZZqf1rH1s2g
+	 K7IyeEKKbt83fCABf/5KT6MNkexLR3blFqcHy3trLKdWKYqLJD8MdXgjEyeYsw2Fna
+	 h+R9nOI8yJTSdwHbykW87+TUDqJn2BsUnwkVW/KnLNzo0nYpZytz60VK5IsNTK5zT9
+	 E/nP3UolhRZ98396VogMEpEUDFqJ2UmW//QDgeR4r1/XRgKYps3577NSyTh6ngylOh
+	 q38DDRUJYLU4o7QmRkNHZ7c6cDSmWzS1oCS4+Wv+ZvbHiR/gW+gJgvvAmFx79TBqjv
+	 dNIxQp2WHVuIQ==
+Date: Tue, 11 Nov 2025 10:47:21 -0600
+From: Bjorn Andersson <andersson@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Amit Singh <quic_amitsi@quicinc.com>, konradybcio@kernel.org, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	quic_riteshk@quicinc.com, quic_rajeevny@quicinc.com, quic_vproddut@quicinc.com
+Subject: Re: [PATCH] arm64: dts: qcom: qcs6490-rb3gen2: Use 'edp_hot'
+ function for hpd gpio
+Message-ID: <jqfmzls6eeydxozzyewkfutqpdzfavlx6mci6pl6f2ts7cjjeg@b32k3pf362zb>
+References: <20251031085739.440153-1-quic_amitsi@quicinc.com>
+ <nzg7auudxocxnpnjsc2emot7sgh5azvucl72jqzgqsp4jhzint@hykb2xyx66uh>
+ <c6ef0324-c932-4c80-8252-97dd3ee255d3@quicinc.com>
+ <rqufdgme5cmtbvharugka2zc6c4g4am4j6enrkanc6uaxdbr77@dlptsjv7u7lr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ONeNsy8hStpVyMW+"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <2fabead977bee651800790f6b0d6323ffdc372c5.camel@pengutronix.de>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <rqufdgme5cmtbvharugka2zc6c4g4am4j6enrkanc6uaxdbr77@dlptsjv7u7lr>
+
+On Tue, Nov 11, 2025 at 05:14:54PM +0200, Dmitry Baryshkov wrote:
+> On Thu, Nov 06, 2025 at 03:01:07PM +0530, Amit Singh wrote:
+> > 
+> > 
+> > On 11/2/2025 12:29 AM, Bjorn Andersson wrote:
+> > > On Fri, Oct 31, 2025 at 02:27:39PM +0530, Amit Singh wrote:
+> > >> Currently, hpd gpio is configured as a general-purpose gpio, which does
+> > >> not support interrupt generation. This change removes the generic
+> > >> hpd-gpios property and assigns the edp_hot function to the pin,
+> > >> enabling proper irq support.
+> > >>
+> > > 
+> > > No, it replaces the use of display-connector for hotplug detect with the
+> > > DP-controller's internal HPD logic.
+> > > 
+> > > There might be good reasons to do so, but you need to describe them.
+> > > 
+> > > I'm guessing that there are still some issues in the DP driver's logic
+> > > for handling of external HPD? This should be addressed by fixing that
+> > > logic in the DP driver, to ensure that this (display-connector +
+> > > hpd-gpios) works, and then you should send this patch again explaining
+> > > why the internal HPD hardware does a better job.
+> > > 
+> > > Regards,
+> > > Bjorn
+> > 
+> > Thanks for the feedback and clarification.
+> > 
+> > We observed a specific use case where using the GPIO-based external HPD
+> > handling via display-connector leads to a functional issue.
+> 
+> You are describing driver behaviour. It is known that this part of the
+> DP driver is broken. There is nothing wrong with using HPD pin as a GPIO
+> in the DP connector.
+> 
+
+I agree.
+
+> > When the DisplayPort cable is already connected and the display is active,
+> > and we perform a system reboot, the display does not come up automatically
+> > after boot with the current configuration (using hpd-gpios).
+> > This happens because we do not receive a connect event post boot —
+> > the GPIO-based HPD path does not generate an interrupt in this scenario,
+> > as the line remains high and no edge event is triggered.
+> > 
+> > However, when we configure the pin with the edp_hot function and use the
+> > internal HPD logic of the DP controller, the controller correctly detects
+> > the HPD state after reboot. The internal HPD block generates the necessary
+> > interrupt, and the display comes up automatically without requiring a
+> > replug event.
+> > 
+> > This behavior aligns with other Qualcomm reference platforms where,
+> > if the controller’s internal HPD is available, it is preferred over
+> > the external GPIO path. Using the internal HPD provides more reliable
+> > detection and keeps the configuration consistent across platforms.
+> > So, this change ensures:
+> > 1. The display recovers correctly after reboot when the cable
+> > remains connected.
+> > 2. We leverage the controller’s native HPD interrupt capability for
+> > better reliability.
+> > 3. We maintain consistency with other DP-enabled Qualcomm boards that
+> > use internal HPD.
+> 
+> I think, this DT might have been purposedly written in order to show how
+> the HPD signals can be coming from the GPIO pin through the external
+> bridge. As such I'm really reluctant to ack this change.
+> 
+
+That is correct, I explicitly wanted to describe the connector and the
+HPD signal therein, and at the time of merging this worked (I was even
+under the impression that we do get the right HPD state at boot and
+bring up the display, but it's been a while so I'm not 100% certain that
+I tested that scenario).
+
+I'm fine with dropping the hpd-gpios for reasons such that the HPD
+hardware does a better job at HPD handling - but that's not what we have
+here. So I share your reluctance.
 
 
---ONeNsy8hStpVyMW+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+PS. Using the internal HPD for detection implies that we need to keep
+the DP block powered and (partially) clocked, so we should at some point
+figure out how to dynamically switch between GPIO and HPD...
 
-On Mon, Nov 10, 2025 at 12:34:16PM +0100, Philipp Zabel wrote:
-> On Mo, 2025-11-10 at 11:23 +0000, Conor Dooley wrote:
->=20
-> With the superfluous cleanup include fixed.
->=20
-> Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
->=20
-> and
->=20
-> Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
->=20
-> to be merged with the reset of the series.
+Regards,
+Bjorn
 
-Cool, I have dropped the include and pushed the patch to the
-clk-microchip branch:
-https://git.kernel.org/at91/c/4a75fcd2000e1af452343aac6e34387f8e794f37
-
-I opted to leave the include of regmap.h in mpfs.h unchanged.
-
-Cheers,
-Conor.
-
---ONeNsy8hStpVyMW+
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaRNoZAAKCRB4tDGHoIJi
-0u/OAP4opIygXiE1msTAsenTF2y3vFMINksWzjFlo4txUmVtAwEApW/hg6Lu/LrI
-Q6y1spEYrjz9xkO8cWWj/Le7Z07Cuw8=
-=G7cd
------END PGP SIGNATURE-----
-
---ONeNsy8hStpVyMW+--
+> > 4. edp_hot follows the Source device behavior upon HPD pulse
+> > Detection [VESA DP standard v1.4 section 5.1.4].
+> > 
+> > I’ll add these details to the commit message in the next revision.
+> > 
+> > Thanks,
+> > Amit
+> 
+> -- 
+> With best wishes
+> Dmitry
 
