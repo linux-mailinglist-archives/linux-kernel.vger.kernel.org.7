@@ -1,101 +1,130 @@
-Return-Path: <linux-kernel+bounces-894578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 318A0C4B581
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 04:38:15 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97E2DC4B58D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 04:38:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 048B14E8DF2
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 03:38:12 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C3E0A4E9849
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 03:38:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D82223491D6;
-	Tue, 11 Nov 2025 03:38:04 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 275F234AB00;
+	Tue, 11 Nov 2025 03:38:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="dn0Wswuu"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 687A52F25F6;
-	Tue, 11 Nov 2025 03:38:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E29B52F25F6;
+	Tue, 11 Nov 2025 03:38:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762832284; cv=none; b=uwWlACYzQkOqWW6X8e3DKSxVmTKNxKIV4CMhhouqvXN6uxB4cJPy3ZkrlB+cuC4JYfRsKuQj5gDq4H5YkhegAEpXFxUBY8WW12CXzcNxIs/5VgMBMUPWdipAdGEkoWHuMzEEN4vgH6nVVm+Pz/tJLBP+9x7aRy2ru2TIgMUN6SA=
+	t=1762832293; cv=none; b=U0H5XXkTUfVVcOgCcTmrAc8zcUdeioit1a4Oq2e7wNc/aXYNytISSVs7H2IvLrrQ3jPzW6vrME5bLe5MdqJLp+xTfPD9TyUG6MjWZ5196oHUmXZNy+l2UyKQIcqeUOm+aijuTpDAEeMuTLnjA+z/GinkB9fyNghDUWs5D3ZXAKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762832284; c=relaxed/simple;
-	bh=Ybba2l0k7Erkb/ozPV+BkPg79xuQygZLKzfbzlr6uWA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=m2C+X2ySNYVKq3XLL5pHUkJKDDWhWwfEbCPUgah+98jOMRL9f1PjCbsEmt2Bjhl7r/RdhDZdNMAN7TVUvi1S170TcLAQoCuU7MbIy3CYnAbfyeXO3TrAhydHRmvPqmsML6SkucY1aP0RyY2Yk7KD7ifUQ1X1sAKHkinF9Cqp9RI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4d5C055dDZzYQtkc;
-	Tue, 11 Nov 2025 11:37:25 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id DEDCE1A1CA1;
-	Tue, 11 Nov 2025 11:37:51 +0800 (CST)
-Received: from [10.67.111.176] (unknown [10.67.111.176])
-	by APP4 (Coremail) with SMTP id gCh0CgCXvluOrxJpkSNWAQ--.50946S2;
-	Tue, 11 Nov 2025 11:37:51 +0800 (CST)
-Message-ID: <f0418b48-e529-4ae9-a267-f0ab9edf1c7b@huaweicloud.com>
-Date: Tue, 11 Nov 2025 11:37:50 +0800
+	s=arc-20240116; t=1762832293; c=relaxed/simple;
+	bh=JnjR3ccdOgFUFdsqe6dQDe53y5GKhqvyQm58YKJGcBE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TvUvIFYYgc1zBH5/JCQpC2idfbj41rcIvQyqQb4NZq7PEAt9WWno4wFzaCcSf70OwxMrZInmTtW55m0WGf38lz7JcewUd7gFAqfAQDsxZk/2rSE3OysUp3y+WezO0Fe8XiYbwBJxp3i7mnUJ3Veq+x2/QUMnAkQb0qcliUd7O3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=dn0Wswuu; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=0r//aGWrlmi6Dku4SGylGdOm8j4QEiQNTC0qV/wOxJc=; b=dn0WswuuraMNIHUtJcky8SsfHD
+	lYIF25aVVaICooOnwK6+1PhUjbAamJyARyDAbXGu23yIu3Ji7VCSMdoZoeArPgiHPP2RbbwUC4nnH
+	QFDYH0MFaWvFlkZznzTej00KZ9EL9ucvBHfCt8FyHwRAH9hk+DJELfuWxhdzwBv2b7W8=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1vIfCf-00DaPh-BJ; Tue, 11 Nov 2025 04:37:57 +0100
+Date: Tue, 11 Nov 2025 04:37:57 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: davem@davemloft.net, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	thomas.petazzoni@bootlin.com, Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Russell King <linux@armlinux.org.uk>,
+	linux-arm-kernel@lists.infradead.org,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	=?iso-8859-1?Q?K=F6ry?= Maincent <kory.maincent@bootlin.com>,
+	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
+	Oleksij Rempel <o.rempel@pengutronix.de>,
+	=?iso-8859-1?Q?Nicol=F2?= Veronese <nicveronese@gmail.com>,
+	Simon Horman <horms@kernel.org>, mwojtas@chromium.org,
+	Antoine Tenart <atenart@kernel.org>, devicetree@vger.kernel.org,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Romain Gantois <romain.gantois@bootlin.com>,
+	Daniel Golle <daniel@makrotopia.org>,
+	Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+Subject: Re: [PATCH net-next v15 02/15] net: ethtool: Introduce
+ ETHTOOL_LINK_MEDIUM_* values
+Message-ID: <71c1c7a9-db8b-4efe-94fe-0f7f9ef00840@lunn.ch>
+References: <20251106094742.2104099-1-maxime.chevallier@bootlin.com>
+ <20251106094742.2104099-3-maxime.chevallier@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next 1/3] cpuset: simplify node setting on error
-To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
-Cc: longman@redhat.com, tj@kernel.org, hannes@cmpxchg.org,
- cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, lujialin4@huawei.com,
- chenridong@huawei.com
-References: <20251110015228.897736-1-chenridong@huaweicloud.com>
- <20251110015228.897736-2-chenridong@huaweicloud.com>
- <o3daj3fasq66buthgl3rherobjqwkemjge5xlrgfzfyvcjxyme@anbppjgrj77h>
-Content-Language: en-US
-From: Chen Ridong <chenridong@huaweicloud.com>
-In-Reply-To: <o3daj3fasq66buthgl3rherobjqwkemjge5xlrgfzfyvcjxyme@anbppjgrj77h>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCXvluOrxJpkSNWAQ--.50946S2
-X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYb7kC6x804xWl14x267AKxVW8JVW5JwAF
-	c2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII
-	0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xv
-	wVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4
-	x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG
-	64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r
-	1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCF04k20xvY0x0EwIxGrwCF
-	54CYxVCY1x0262kKe7AKxVWUAVWUtwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
-	0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFyl
-	IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxV
-	AFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j
-	6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UWE_
-	_UUUUU=
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251106094742.2104099-3-maxime.chevallier@bootlin.com>
 
-
-
-On 2025/11/10 22:27, Michal Koutný wrote:
-> On Mon, Nov 10, 2025 at 01:52:26AM +0000, Chen Ridong <chenridong@huaweicloud.com> wrote:
->> From: Chen Ridong <chenridong@huawei.com>
->>
->> There is no need to jump to the 'done' label upon failure, as no cleanup
->> is required. Return the error code directly instead.
->>
->> Signed-off-by: Chen Ridong <chenridong@huawei.com>
->> ---
->>  kernel/cgroup/cpuset.c | 21 +++++++++------------
->>  1 file changed, 9 insertions(+), 12 deletions(-)
+On Thu, Nov 06, 2025 at 10:47:27AM +0100, Maxime Chevallier wrote:
+> In an effort to have a better representation of Ethernet ports,
+> introduce enumeration values representing the various ethernet Mediums.
 > 
-> Reviewed-by: Michal Koutný <mkoutny@suse.com>
+> This is part of the 802.3 naming convention, for example :
+> 
+> 1000 Base T 4
+>  |    |   | |
+>  |    |   | \_ pairs (4)
+>  |    |   \___ Medium (T == Twisted Copper Pairs)
+>  |    \_______ Baseband transmission
+>  \____________ Speed
+> 
+>  Other example :
+> 
+> 10000 Base K X 4
+>            | | \_ lanes (4)
+>            | \___ encoding (BaseX is 8b/10b while BaseR is 66b/64b)
+>            \_____ Medium (K is backplane ethernet)
+> 
+> In the case of representing a physical port, only the medium and number
+> of pairs should be relevant. One exception would be 1000BaseX, which is
+> currently also used as a medium in what appears to be any of
+> 1000BaseSX, 1000BaseCX and 1000BaseLX. This was reflected in the mediums
+> associated with the 1000BaseX linkmode.
+> 
+> These mediums are set in the net/ethtool/common.c lookup table that
+> maintains a list of all linkmodes with their number of lanes, medium,
+> encoding, speed and duplex.
+> 
+> One notable exception to this is 100M BaseT Ethernet. 100BaseTX is a
+> 2-lanes protocol but it will also work on 4-lanes cables, so the lookup
+> table contains 2 sets of lane numbers, indicating the min number of lanes
+> for a protocol to work and the "nominal" number of lanes as well.
+> 
+> Another set of exceptions are linkmodes such 100000baseLR4_ER4, where
+> the same link mode seems to represent 100GBaseLR4 and 100GBaseER4. The
+> macro __DEFINE_LINK_MODE_PARAMS_MEDIUMS is here used to populate the
+> .mediums bitfield with all appropriate mediums.
+> 
+> Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
 
-Thanks.
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
--- 
-Best regards,
-Ridong
-
+    Andrew
 
