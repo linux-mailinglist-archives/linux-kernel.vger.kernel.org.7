@@ -1,202 +1,308 @@
-Return-Path: <linux-kernel+bounces-895189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6C49C4D365
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:55:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFBA7C4D2C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:50:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43CBE3AF44F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:48:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2F32189F97A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:49:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E61A350A1B;
-	Tue, 11 Nov 2025 10:48:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6012350A3E;
+	Tue, 11 Nov 2025 10:48:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="knwCUupI";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="w05KIqed";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="knwCUupI";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="w05KIqed"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YWOzvPIp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57164350A07
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 10:48:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A689D350D47;
+	Tue, 11 Nov 2025 10:48:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762858092; cv=none; b=pk5zUbD4ebrkBtdhq1/ygSlA3iJV5NdtkfgtFPUwCCTqpniiINfEWZWNwP2oHOuVwx8C/dAdnWYE0KlrJ6r21F4zumO9wCbiN2iRd3+Px+LB13k+dT5oHZZDC4+Jn8Pr2KGXa3RjyOXrkUKRTjF75hAP2+N68UC/uAFN16aiVQU=
+	t=1762858112; cv=none; b=DsWL2MBKc66TOrLTWuLMvYMNjO8UFnsX1b3PssLiObCTskg5ViH8ZnHvOml15P+aNkxdY95xFbjtJwhRUVwVRBIde30dDA9V/MKtEiD3X19/tNMauMcMVOJ0EZLDGLaIADAadJ/bCQ7TAK/8OssUEP37nCbdhji1qkDfWE41InI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762858092; c=relaxed/simple;
-	bh=rgQ7F2thuGDbBuXypMUAa8Acq8VtWBZYD7mKAcNFois=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fn4MBCij1IIATqn1seljdDR6dnHxSp9b/gqISV01+wB8E3dNAE1Xtc5WbbZptUtqukzPmT9MQ/gDW7VlTA7wrBRsJsS2l1OUB4KNLoAM2mr4qDvKPIlJ7NEdxMt4ifTwrB1Np+YA9sTHK5xilaNVnipxzYnQ9U45BxKIiR78+L0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=knwCUupI; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=w05KIqed; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=knwCUupI; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=w05KIqed; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 7148C21E4B;
-	Tue, 11 Nov 2025 10:48:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762858088; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=H4iMLUEIFp+KFnCBMrOHfoCV2tmUed7YGGquhX1HYzE=;
-	b=knwCUupIdDxL+kXwq5eH6u8/SWHWDOdg72AoaBHLq8FllViMvp9KCbtFMp0mglQr3V7dnj
-	39R6eQGkz9soUG1Ivoqc0XBYGO31n0uCXyoeqekV/fyx4czgBP/skMFDTCLB+Og1aeOKCC
-	81S6KO3lywIj6HUDo2mTbtDsFSRjVYM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762858088;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=H4iMLUEIFp+KFnCBMrOHfoCV2tmUed7YGGquhX1HYzE=;
-	b=w05KIqedIeW2ibbg67OTG8PygRxA4MK6nk2TZ4uU5WZGCe1JGnO+kGkt8oTLDFDkEsxodC
-	75OBHS0M3F0aqPDg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762858088; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=H4iMLUEIFp+KFnCBMrOHfoCV2tmUed7YGGquhX1HYzE=;
-	b=knwCUupIdDxL+kXwq5eH6u8/SWHWDOdg72AoaBHLq8FllViMvp9KCbtFMp0mglQr3V7dnj
-	39R6eQGkz9soUG1Ivoqc0XBYGO31n0uCXyoeqekV/fyx4czgBP/skMFDTCLB+Og1aeOKCC
-	81S6KO3lywIj6HUDo2mTbtDsFSRjVYM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762858088;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=H4iMLUEIFp+KFnCBMrOHfoCV2tmUed7YGGquhX1HYzE=;
-	b=w05KIqedIeW2ibbg67OTG8PygRxA4MK6nk2TZ4uU5WZGCe1JGnO+kGkt8oTLDFDkEsxodC
-	75OBHS0M3F0aqPDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 60D71148FB;
-	Tue, 11 Nov 2025 10:48:08 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id xPGdF2gUE2nYPwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 11 Nov 2025 10:48:08 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 1F726A28C8; Tue, 11 Nov 2025 11:48:08 +0100 (CET)
-Date: Tue, 11 Nov 2025 11:48:08 +0100
-From: Jan Kara <jack@suse.cz>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Chuck Lever <chuck.lever@oracle.com>, Alexander Aring <alex.aring@gmail.com>, 
-	Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
-	Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.org>, 
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>, Shyam Prasad N <sprasad@microsoft.com>, 
-	Tom Talpey <tom@talpey.com>, Bharath SM <bharathsm@microsoft.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, David Howells <dhowells@redhat.com>, 
-	Tyler Hicks <code@tyhicks.com>, NeilBrown <neil@brown.name>, 
-	Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
-	Amir Goldstein <amir73il@gmail.com>, Namjae Jeon <linkinjeon@kernel.org>, 
-	Steve French <smfrench@gmail.com>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Carlos Maiolino <cem@kernel.org>, Kuniyuki Iwashima <kuniyu@google.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org, 
-	linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, netfs@lists.linux.dev, 
-	ecryptfs@vger.kernel.org, linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org, 
-	netdev@vger.kernel.org
-Subject: Re: [PATCH v5 17/17] vfs: expose delegation support to userland
-Message-ID: <tcpo34clqby633deon2qnccih24xor2mz6jm4fzh2zj7o24sjc@s5c25qgpgmv2>
-References: <20251105-dir-deleg-ro-v5-0-7ebc168a88ac@kernel.org>
- <20251105-dir-deleg-ro-v5-17-7ebc168a88ac@kernel.org>
+	s=arc-20240116; t=1762858112; c=relaxed/simple;
+	bh=9zZ23vt9sZdhE1zPEplVoCY2Fk6S00sT6kxcoy/iW0k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=j54qNcynjxjCttACIb3QBr132+zetO6sewsjvYwlzEHKuGdqAwTjHIfObIbSMh/MYQhruF/U+/9fvrVrUhkFf9xjWlN+jB/wvvQaPIXH8KlEi04uEEFtzq6n2tome9mK8s16KCDvagHM5d3BmDBnJtUZloZGktjnYeZ2TWSp8L4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YWOzvPIp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A735AC116D0;
+	Tue, 11 Nov 2025 10:48:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762858112;
+	bh=9zZ23vt9sZdhE1zPEplVoCY2Fk6S00sT6kxcoy/iW0k=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=YWOzvPIpEXvj+Sq+tkuCqQ7wY8gF9t59GQorEA3Q0qbeqRdhKZ9QgJRXeFTfBdU4v
+	 30ao4sUM/qVsiPKwerKMsIXivQdWEuJQf0R96k+q9wBcc4c6zBsPzP5InCPozjkqDS
+	 L271g83K6CyKibXu0O46ATnj2NlXdYU+6fyDabdkIYRfrE98O8pTkEBFMUdRQ5sQev
+	 TtmTD5f+XpNi5cv7jUz/ioq1FjTSmob2ArIGhLa+9h7cMIFS+WEouHckcb/0XMvOj4
+	 aooILpos9YgvD7CYWTIKqWe2g676LJv8M22HR2b7jc/FIYI0gdt7Pzbtt7SiDzHE2t
+	 qeGZrYYR8bkFA==
+Message-ID: <c388696d-ecf6-4241-8c74-32cd32e12ea2@kernel.org>
+Date: Tue, 11 Nov 2025 11:48:27 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251105-dir-deleg-ro-v5-17-7ebc168a88ac@kernel.org>
-X-Spamd-Result: default: False [-2.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[44];
-	TAGGED_RCPT(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	R_RATELIMIT(0.00)[to_ip_from(RL63fqwwx8ot6gmekemcs76f9d)];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[szeredi.hu,zeniv.linux.org.uk,kernel.org,suse.cz,oracle.com,gmail.com,samba.org,manguebit.org,microsoft.com,talpey.com,linuxfoundation.org,redhat.com,tyhicks.com,brown.name,chromium.org,google.com,davemloft.net,vger.kernel.org,lists.samba.org,lists.linux.dev];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Score: -2.30
-X-Spam-Level: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/2] dt-bindings: arm: qcom: Add waveshare MIPI-DSI
+ panels support
+To: Sudarshan Shetty <tessolveupstream@gmail.com>, andersson@kernel.org,
+ konradybcio@kernel.org
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20251111104245.3420041-1-tessolveupstream@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20251111104245.3420041-1-tessolveupstream@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed 05-11-25 11:54:03, Jeff Layton wrote:
-> Now that support for recallable directory delegations is available,
-> expose this functionality to userland with new F_SETDELEG and F_GETDELEG
-> commands for fcntl().
+On 11/11/2025 11:42, Sudarshan Shetty wrote:
+> Device tree bindings for Waveshare MIPI-DSI panels
+> of various sizes (5.0, 5.5, 7.0, 8.0, and 10.1).
+
+Please wrap commit message according to Linux coding style / submission
+process (neither too early nor over the limit):
+https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/submitting-patches.rst#L597
+
+> These panels require proper power sequencing via an external
+> regulator and a backlight node for brightness control.
 > 
-> Note that this also allows userland to request a FL_DELEG type lease on
-> files too. Userland applications that do will get signalled when there
-> are metadata changes in addition to just data changes (which is a
-> limitation of FL_LEASE leases).
+> Signed-off-by: Sudarshan Shetty <tessolveupstream@gmail.com>
+> ---
+>  .../display/panel/waveshare,dsi-panel.yaml    | 84 +++++++++++++++++++
+>  ...waveshare,touchscreen-panel-regulator.yaml | 72 ++++++++++++++++
+
+Do not mix up patches from different subsystems into one patchset.
+
+>  2 files changed, 156 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/panel/waveshare,dsi-panel.yaml
+>  create mode 100644 Documentation/devicetree/bindings/regulator/waveshare,touchscreen-panel-regulator.yaml
 > 
-> These commands accept a new "struct delegation" argument that contains a
-> flags field for future expansion.
-> 
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+Please use subject prefixes matching the subsystem. You can get them for
+example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
+your patch is touching. For bindings, the preferred subjects are
+explained here:
+https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
 
-For new apis CCing linux-api is a good practice ;)
 
-...
-
-> diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
-> index 3741ea1b73d8500061567b6590ccf5fb4c6770f0..8123fe70e03cfb1ba9ce1b5e20d61b62e462a7ea 100644
-> --- a/include/uapi/linux/fcntl.h
-> +++ b/include/uapi/linux/fcntl.h
-> @@ -79,6 +79,16 @@
->   */
->  #define RWF_WRITE_LIFE_NOT_SET	RWH_WRITE_LIFE_NOT_SET
->  
-> +/* Set/Get delegations */
-> +#define F_GETDELEG		(F_LINUX_SPECIFIC_BASE + 15)
-> +#define F_SETDELEG		(F_LINUX_SPECIFIC_BASE + 16)
+> diff --git a/Documentation/devicetree/bindings/display/panel/waveshare,dsi-panel.yaml b/Documentation/devicetree/bindings/display/panel/waveshare,dsi-panel.yaml
+> new file mode 100644
+> index 000000000000..a42ce065124f
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/panel/waveshare,dsi-panel.yaml
+> @@ -0,0 +1,84 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/display/panel/waveshare,dsi-panel.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +/* Argument structure for F_GETDELEG and F_SETDELEG */
-> +struct delegation {
-> +	unsigned int	d_flags;	/* Must be 0 */
-> +	short		d_type;		/* F_RDLCK, F_WRLCK, F_UNLCK */
-> +};
+> +title: Waveshare 10.1" DSI Touch Display Panel
 > +
+> +maintainers:
+> +  - Sudarshan Shetty <tessolveupstream@gmail.com>
+> +
+> +allOf:
+> +  - $ref: panel-common.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - waveshare,12.3-dsi-touch-a,4lane
+> +      - waveshare,10.1-dsi-touch-a
+> +      - waveshare,10.1-dsi-touch-a-4lane
+> +      - waveshare,10.1-dsi-touch-b
+> +      - waveshare,10.1-dsi-touch-b,4lane
+> +      - waveshare,9.0-dsi-touch-b
+> +      - waveshare,9.0-dsi-touch-b,4lane
+> +      - waveshare,8.8-dsi-touch-a
+> +      - waveshare,8.0-dsi-touch-a
+> +      - waveshare,8.0-dsi-touch-a-4lane
+> +      - waveshare,7.0-dsi-touch-a
+> +      - waveshare,7.0-dsi-touch-b
+> +      - waveshare,5.5-dsi-touch-a
+> +      - waveshare,5.0-dsi-touch-a
+> +      - waveshare,4.0-dsi-touch-c
+> +      - waveshare,3.4-dsi-touch-c
 
-I think it would make sense for d_type to be unsigned since it's more or
-less enum. Also struct delegation is going to have a hole in it at the end
-which is always a concern with uAPI structures (passing around
-uninitialized stuff). I think it would be good to put an explicit padding
-there and enforce it is zeroed out.
+None of these come with any reasonable model names? How so?
 
-								Honza
+> +
+> +  reg:
+> +    description: DSI virtual channel
+> +    maxItems: 1
+> +
+> +  vdd-supply:
+> +    description: Power supply regulator for the panel
+> +
+> +  reset-gpios:
+> +    maxItems: 1
+> +    description: GPIO to control panel reset
+> +
+> +  enable-gpios:
+> +    maxItems: 1
+> +    description: GPIO to control panel power enable
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - vdd-supply
+> +  - reset-gpios
+> +  - enable-gpios
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/gpio/gpio.h>
+> +
+> +    dsi@ae94000 {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        panel@1 {
+> +            compatible = "waveshare,10.1-dsi-touch-a";
+> +            reg = <1>;
+> +            vdd-supply = <&vreg_l11a>;
+> +            reset-gpios = <&display_mcu 1 GPIO_ACTIVE_HIGH>;
+> +            enable-gpios = <&display_mcu 2 GPIO_ACTIVE_HIGH>;
+> +
+> +            port {
+> +                panel_in: endpoint {
+> +                    remote-endpoint = <&mdss_dsi0_out>;
+> +                };
+> +            };
+> +        };
+> +    };
+> +
+> +    mdss_dsi0_out: endpoint {
+> +        remote-endpoint = <&panel_in>;
+> +    };
 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Drop node, not relevant here.
+
+> diff --git a/Documentation/devicetree/bindings/regulator/waveshare,touchscreen-panel-regulator.yaml b/Documentation/devicetree/bindings/regulator/waveshare,touchscreen-panel-regulator.yaml
+> new file mode 100644
+> index 000000000000..be81be5d2d74
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/regulator/waveshare,touchscreen-panel-regulator.yaml
+> @@ -0,0 +1,72 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/regulator/waveshare,touchscreen-panel-regulator.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Waveshare Touchscreen Panel Regulator
+> +
+> +maintainers:
+> +  - Sudarshan Shetty <tessolveupstream@gmail.com>
+> +
+> +description: |
+
+Do not need '|' unless you need to preserve formatting.
+
+> +  Regulator driver for Waveshare touchscreen display units.
+
+Driver as Linux driver?
+
+> +  This regulator enables and disables panel power and provides
+> +  backlight control over I2C.
+> +
+> +properties:
+> +  compatible:
+> +    const: waveshare,touchscreen-panel-regulator
+
+That's way too generic. Description doesn't tell me much more what is
+this hardware.
+
+How is so that a device with specific programming model over I2C has no
+name, no model, absolutely nothing which would identify that programming
+model?
+
+> +
+> +  reg:
+> +    maxItems: 1
+> +    description: I2C address of the regulator device
+
+Drop description, redundant.
+
+> +
+> +  vin-supply:
+> +    description: Input supply regulator for the panel
+> +
+> +  enable-gpios:
+> +    maxItems: 1
+> +    description: GPIO to enable/disable regulator
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - vin-supply
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    /dts-v1/;
+> +    /plugin/;
+> +
+> +    / {
+
+Drop all this. Look at existing bindings first, how this is written.
+There is no single file like that. Please do not come up with your own
+style.
+
+Best regards,
+Krzysztof
 
