@@ -1,139 +1,117 @@
-Return-Path: <linux-kernel+bounces-895564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 726CBC4E4A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 15:06:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CF909C4E4B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 15:07:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 957313B4E10
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:01:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8AA93AAD1F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:02:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88DFA32D7CC;
-	Tue, 11 Nov 2025 14:01:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41E7A307499;
+	Tue, 11 Nov 2025 14:01:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="HEMLuLA0"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="LgO0m2jH"
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA32F30FC17
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 14:01:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 612B3303C96
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 14:01:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762869677; cv=none; b=jEQdgCRrVCDiLF1Ug+yLQyrOh6rPmF3tZvvEorMrQJXryYc1C4osl3RjLZJ0vVl/vhjXY59l6iXpIH3oTvmrzlBeIthLGk0H/obT6iE2Wb9Qc55AoCYG+iOxdm09eIRuUAqw5SvgU5xrvFnjnHZEW1v8tk+rzy8+pIjE1lNlRpM=
+	t=1762869709; cv=none; b=Ajh2haL+uN12LDxDj5aYY9SPskvqVKaqT3gekPYW7p7ezNtEfIVT8X4MHe2N/yXAWv3lM2H4edA3yYDa4XSI0tOEO+b/mHDM2zpM3VklVsx72Mc1dZ9Maztxx4wx+Zu8RSWq02qjHgcbZtqgzuJWHzr75vXY9xZaU+4pGVzn3rQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762869677; c=relaxed/simple;
-	bh=MmPuidlZt07s4AArPnUosAo0InWy7W9DsbE+xadi5Q0=;
+	s=arc-20240116; t=1762869709; c=relaxed/simple;
+	bh=KMzpcEkWVzPwJOALZcd5Z38NN7WAXyzUhqVifBdo8RM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pwZsuqGf23+awUd8G1r+c7OaEiDgIYP34L6SqrM9AvjtjDUROwJAvDD6uPwmYu6oY436fpXINYXeuEaigExppm9pIFIqlagsfZ3nkfTp6dDQwnfvAs/B50/iMfktnJqACA75S0Q7aGepxQsKzQGAs8zUx1iIP6kWHARFeeDy5Io=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=HEMLuLA0; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-42b38693c4dso1350760f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 06:01:15 -0800 (PST)
+	 Content-Type:Content-Disposition:In-Reply-To; b=OYetbCUh9ppgVj6FLPcvMgfG7FD3j13WuwXErHIWUKWOVKTW19FbZdkfSQGyowaxUNsae95W1jB3jDDo9tiX/VElHdjx4GxhwHJNkqb7o+FbceQZigCK/Zg9HI6ckeJ4V6704KGmHqa60NusXanqb+49vEOnLXkfRm+Vgjztbn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=LgO0m2jH; arc=none smtp.client-ip=209.85.219.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-8824888ce97so30479716d6.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 06:01:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1762869674; x=1763474474; darn=vger.kernel.org;
+        d=gourry.net; s=google; t=1762869705; x=1763474505; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VpiqZtSLPb9pkXftVPi7ug5otBL3UKnspA9VU1n6xWk=;
-        b=HEMLuLA0nHP/hWkHbvJzyn9vWh5gbU94nFfKrMs3NVFh2FK9dCpzh9fj5DLeGfEHoj
-         1dtCLNPsydxIYOaEfA6Zr7JqWUD60+i/7SEThxOxKulejWE908NaqBJ8cIfApj+DypJh
-         v23zODuudIg+6aDSXuqowMVfPrFThmRLGrBRvhtijzTtNBaZ/ZWxQMLhrSkIqqZtGaTp
-         mZx2Wkdv0LpdbOvvQ6leS2pWnjqqRo6nYUjjxjWN5Bd8OkG4/j6RthdI/gBOhBuqc2bW
-         W3FgYssV6UC1vGJAR4henIGQA790MZWI/16yhciVt4d6BShNqdAe/BLOM8NW14qrqG0E
-         n1rQ==
+        bh=iVIlbaArLD+xEsJRTgweLsSstkPgQPx6U1v6mUAh+wQ=;
+        b=LgO0m2jH5gRmBfTq3ouXolP/anXHVuWs5qK0vAC5ByrETiRazeFQx0BB0v8+9Sse4w
+         aHlc6NgrMc6sHiQnUyaXXmwcDER0vXvKB1nqzEYKRGs94Wa2kfBF3d1CWQkNeS84vZOV
+         3WxcPHeMNIpky5rJUJT09Z/cmFt+eXf7nQXfgy0LWpEBY7AGa//V4nyBjWS1DP56eB9W
+         4CxGm4UKpAacET54Ik8oRIe0d0Pl0JKjQoBhj9/1s4B988AIYQr7y5IOUkk8+Dcv+SYJ
+         cF2x+/KVE9j0718s6xZ/rIg5Ku6VNnPlIt+WL9ZQsWGmcxz7907TaDStYi69ZWd2uZI+
+         MQeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762869674; x=1763474474;
+        d=1e100.net; s=20230601; t=1762869705; x=1763474505;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=VpiqZtSLPb9pkXftVPi7ug5otBL3UKnspA9VU1n6xWk=;
-        b=nMjYPgQ6wRZ0l9iorzLiwnu6qc8mLzBlho16xlKE6P89h9HTykxNLKwJYO/pNfMXJz
-         cEheqGjp7PiKXwN1Mc+Y8aCdwSG5/7n3i2TWt+hr+EmqcveD7VH2ZgdU31SsE0uYPTpU
-         8IkdT8WOaspCqBOxGYyHeP3trwB0SCWFliMcoLQJuxg3T+monXBdPTuGjObM61bMzF1r
-         hZnA3TVEgoBUns57vnJvyz5cbwD7kaGJLW79D0MCS87E9Evbxg0fUv0FjPlXuwCcn4xI
-         I1zQQL5d+bn8moS2JZQnevZvWpFxrlrC11triPV5Th7cUW1G2eJ1mjK4yjCdktoAVZTe
-         ExOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWKoR0hOPbQ7TaU5WGvHuyr9I5EnKjGMRbzqSFEOfIKdQyE2MoGzMLP84t4LcymEs1iZJns0312gtA+RHY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzesVwTLYU5a943IQ+K1QjhzYALVhD4Fp+r+URr30XYPH945Fb6
-	Bs5m6ee3TonBxXWZPX5GTlYQPUQo7+ClDWKUgN337ZPZSOVyScchY0mNAeVhV6NNIFw=
-X-Gm-Gg: ASbGncuP7fSnL3XdFqAvA8ClyEqsXdb74gHDiw6os23klimfdOIdqEFkZEJ3VcPk7PJ
-	nxmld5lpEH+ST4RI42xVnNQ6kbgl4hvYOXQb0IdIbPxACJTWoJmGCVqEy7G1GAnSLHikwAxxTn3
-	KRJPGFq4vZN55RnKr23pCGB59f5flDh2VAzZl15FZdDgggxB5vGbOgQw6STs2DzQYsEPccASre8
-	WnKfejtFY5L3RdtIDiPN37NuWXxbvWNPCgJuGrVdGSCsVaZvG4MNTPQ3sX4Q3HH34uTL28cXzL8
-	hmJYy4i28lCNcaetaPY0NiuwKYpSDBx/74I0RElYCUWdNz1/qCKThAeXi5RDXVEsY8oqdEo8fYi
-	dwHSEEmRcWqFvZ3LIH+mZ0a15HsGE+IMAmrO8nBATgATYZnh6VKWh4B5lAX0/eqH53MAw14t9YP
-	7gGH4OIH+j70IM+KiQrz9wHRMlPENQ/3E=
-X-Google-Smtp-Source: AGHT+IEtS9kXeRt+yPfdXbLZRQn0tq8TDEceP/3cBHD9mJp5+UHkC3XzPNI/FE4yTh1BLvPK7nSCGw==
-X-Received: by 2002:adf:9ccd:0:b0:42b:32c3:3947 with SMTP id ffacd0b85a97d-42b32c340ecmr8237525f8f.62.1762869674223;
-        Tue, 11 Nov 2025 06:01:14 -0800 (PST)
-Received: from blackdock.suse.cz (nat2.prg.suse.com. [195.250.132.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42ac675caecsm28286957f8f.30.2025.11.11.06.01.13
+        bh=iVIlbaArLD+xEsJRTgweLsSstkPgQPx6U1v6mUAh+wQ=;
+        b=C3M1YquqfmJXgnjg4r68ML+SBvOzwazCbsJWCXthc+6X3Kdh80lqA1egZrFWyHPowJ
+         IieuqOFwpDSqe/AGBR0CiyvoBSDpLImb25wXFa5mFfgydDk6mB8o7pzM3pL9jSaLR6Iy
+         FB3PL0PP9c0Bds2DFBIV+OqB+ctJFdJVg1pWfQewjCx1jJmTqnmGyMdprgkQSDO1OftC
+         diC15i06R19JaKVx/9nCrdLo750IWpzdZO4Mg2AC+FnofHpE2lH+GUj4vuHmdBBJ4N0L
+         sHVKyG1P+Gmfk2VuHhhQP75u5IYUr2CIYE1rjmryOIbmVQ1W8HaX+MvLcuqXfKYSl8ur
+         RTmw==
+X-Forwarded-Encrypted: i=1; AJvYcCUWmztecMbBNb4tHCNGQXTplZPFxiga3oOLe6j1GqvQvYfI0HaEvqtNDKoUU6EYFur1o3YQRd2vf++Wzsw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyi3IgP1gqkOmAw16tjKThPhdn2d1rI4lab0r20fGvsIJeSZy90
+	41yDGESwoygp3djUnZKd4HQgB2ZUgJM6ix59PLwU3X6KLBxH7gwegf2RLHUeEqPSvF4=
+X-Gm-Gg: ASbGncuMc2/RHqzti8r2rVMEfEWcXdf41Zb1vxxh1VBD8twpfD6DRGTkHgZsR4Y3OTt
+	DRnD7IPcjYy7tVdR6Jvv0JA8cBqYeTwyLIKyWiDddfmAM0uhYtGGD5U3WD1GwcS9dxYfHctYX9T
+	lq1JUW5NMy4ZL8ehR+cFt9nihBBvlEKaFtc0dDzsSbRskYyX9Wi1icUOBFT/xOTU70N+3mCLTLH
+	mxuK7JCKuZwfSV439XciF/071PFmPACjV4DuP83LI6s/iIbMaDMNyNiMgeaUjXi2GtcUgK0ot0F
+	CHdWwgp7ybjvdh3/uanHTEROzpy9aBlu6umiIp+Rgj3sSkvqvYI0jDGT9ALDopYeFLKBUix1nAJ
+	mpwSe3y5N0m66jR87ANU2T9+X8RIjIduRRHb5xZt0pb0wM9whMaSBNrSeaO4mEuxPPvzjbxEeBF
+	U3jvPKzggNqwdM0UbjU4Nm3omb9gnrtxAeMm++v8guHnAKGUB/AiUMwCXpEW/hiYpW9KygUQ==
+X-Google-Smtp-Source: AGHT+IFWbPEXPWLzIkOWVIuQ03hw2eJ8p8ZC0z6FbQbFz3rRhv7LpdqZn+aAf49WvkXXdHfZGzUa0Q==
+X-Received: by 2002:a05:6214:cc4:b0:880:480c:6051 with SMTP id 6a1803df08f44-882385eeba3mr152689066d6.5.1762869704944;
+        Tue, 11 Nov 2025 06:01:44 -0800 (PST)
+Received: from gourry-fedora-PF4VCD3F (pool-96-255-20-138.washdc.ftas.verizon.net. [96.255.20.138])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-88263830feesm11249586d6.36.2025.11.11.06.01.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Nov 2025 06:01:13 -0800 (PST)
-Date: Tue, 11 Nov 2025 15:01:12 +0100
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Chen Ridong <chenridong@huaweicloud.com>
-Cc: longman@redhat.com, tj@kernel.org, hannes@cmpxchg.org, 
-	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, lujialin4@huawei.com, 
-	chenridong@huawei.com
-Subject: Re: [PATCH next] cpuset: Treat tasks in attaching process as
- populated
-Message-ID: <dpo6yfx7tb6b3vgayxnqgxwighrl7ds6teaatii5us2a6dqmnw@ioipae3evzo4>
-References: <20251111132632.950430-1-chenridong@huaweicloud.com>
+        Tue, 11 Nov 2025 06:01:43 -0800 (PST)
+Date: Tue, 11 Nov 2025 09:01:42 -0500
+From: Gregory Price <gourry@gourry.net>
+To: Robert Richter <rrichter@amd.com>
+Cc: Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Davidlohr Bueso <dave@stgolabs.net>, linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
+	Terry Bowman <terry.bowman@amd.com>,
+	Joshua Hahn <joshua.hahnjy@gmail.com>
+Subject: Re: [PATCH v4 00/14] cxl: ACPI PRM Address Translation Support and
+ AMD Zen5 enablement
+Message-ID: <aRNBxlZhxWlaNL2P@gourry-fedora-PF4VCD3F>
+References: <20251103184804.509762-1-rrichter@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="4rgfcjtzn66yxrpg"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251111132632.950430-1-chenridong@huaweicloud.com>
+In-Reply-To: <20251103184804.509762-1-rrichter@amd.com>
 
+On Mon, Nov 03, 2025 at 07:47:41PM +0100, Robert Richter wrote:
+> This patch set adds support for address translation using ACPI PRM and
+> enables this for AMD Zen5 platforms. This is another new appoach in
+> response to earlier attempts to implement CXL address translation:
+> 
+>  * v1: [1] and the comments on it, esp. Dan's [2],
+>  * v2: [3] and comments on [4], esp. Dave's [5]
+>  * v3: [6] and comments on it, esp. Dave's [7]
+> 
 
---4rgfcjtzn66yxrpg
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Subject: Re: [PATCH next] cpuset: Treat tasks in attaching process as
- populated
-MIME-Version: 1.0
+Have been testing this on my Zen5 systems backported to v6.16 with
+Terry's updated PCIe set as well and everything looks stable.
 
-Hi Ridong.
-
-On Tue, Nov 11, 2025 at 01:26:32PM +0000, Chen Ridong <chenridong@huaweicloud.com> wrote:
-...
-> +static inline bool cs_is_populated(struct cpuset *cs)
-> +{
-> +	/* Tasks in the process of attaching should be considered as populated */
-> +	return cgroup_is_populated(cs->css.cgroup) ||
-> +		cs->attach_in_progress;
-> +}
-
-s/process/cpuset/ in the subject
-and
-s/Tasks/Cpusets/ in the comment above
-
-Also, should there be some lockdep_assert_held() in this helper (for
-documentation purposes but also for correctly synchronized validity of
-the returned value.)
-
-Thanks,
-Michal
-
---4rgfcjtzn66yxrpg
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJEEABYKADkWIQRCE24Fn/AcRjnLivR+PQLnlNv4CAUCaRNBphsUgAAAAAAEAA5t
-YW51MiwyLjUrMS4xMSwyLDIACgkQfj0C55Tb+AjEngD+Pbj8lKpXg7czhZJuriUA
-P2ytUsPi0gTjlYIwQ3ecaYYBANqMamr1EB4EFwZobwKE7XxaO9Y87ABBUNVrLRk1
-xOsJ
-=S2KI
------END PGP SIGNATURE-----
-
---4rgfcjtzn66yxrpg--
+Tested-by: Gregory Price <gourry@gourry.net>
 
