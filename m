@@ -1,325 +1,144 @@
-Return-Path: <linux-kernel+bounces-895965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A55AC4F614
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 19:12:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C9DDC4F61D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 19:13:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A65B3A59C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 18:12:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7609B3B3F00
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 18:12:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A1983A1CFD;
-	Tue, 11 Nov 2025 18:11:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51F4436B05F;
+	Tue, 11 Nov 2025 18:12:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ODIcz9QC";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="iZQaTt7h"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aT6DjYow"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 338B02F261C
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 18:11:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE5A73AA198
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 18:12:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762884716; cv=none; b=qHYXTNRiyA7qhopJdgdu79PcSjGyiTyCukftUMOH+HPPVKsuryfov9Od7RqqWc0jtlcZQEAmMR9a539gvy943dtOiC/CA3xOxzHkuJMO3XIUklFv9XrZFqhl5tzZKQUxo/lKVUmN9LpPdZci6IkFcaWJcRXNT1qw9b8dwFp5DAQ=
+	t=1762884744; cv=none; b=iamxVElUHexa5QxJATXvNNJGgI+HiXDOoDMAo3fnvms7MOUuRH12UYnMm4vqdCmHDSgVrhJ94DMZWmbiCc54IvIpEq4vEBtdro+REWA3noNGQvK4m1pZfoQtknW5voYStIOlpZYtx8qdm00pLyg5DBIq/fGCdRnByI+xjqkdfdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762884716; c=relaxed/simple;
-	bh=0CN8aCPRSUd02g74zKDkW0H+gl7LB0GARCp62YCq0Qg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BgBQy/5i3XRXRizlb1Bg/8pm1Cjb4uBUMX8plyiDi2zMDUJ8k9HYYb+bbeyEU43mQRwraWduyErIvZbsIK8u9s+bT2csQoO5tjj/vgyCFb3RP9bee4tdRjWT1KY8PADrQYEZIzpRIb9bkz+ehz0jaab2sHkU3cWJ81R+BbGg3o4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ODIcz9QC; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=iZQaTt7h; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762884713;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=VyEVcxglwaCXXs+jyaytGrNn4eMjO/GxB3dXawBvms0=;
-	b=ODIcz9QCFmcLU8Jd8qihJqCfqFzEkicXojfSGe69LnUHIXyCjyr/icAZJ1b+m1aT0/JwLG
-	A4KzQEEfnGQK0pey1Ocq7EX4Bj93yw8JxwJmlej3GQQs47OQoKTNswnsTTIi2+iLRFiG92
-	I9ZwSGKqb029JZpbwe1smU43XQWOoDs=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-542-4T-9ukJqNoOFDJ-vESqzhg-1; Tue, 11 Nov 2025 13:11:52 -0500
-X-MC-Unique: 4T-9ukJqNoOFDJ-vESqzhg-1
-X-Mimecast-MFC-AGG-ID: 4T-9ukJqNoOFDJ-vESqzhg_1762884711
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-42b3d7c1377so1392497f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 10:11:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1762884711; x=1763489511; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=VyEVcxglwaCXXs+jyaytGrNn4eMjO/GxB3dXawBvms0=;
-        b=iZQaTt7hTWZyg23IxFRIZU1ghKMB3hjND2W4c4EFWZNHQ0hFQesV6A0Ij0yPxwBTcp
-         XgpUtd+4QDANhdDF46qPOrBOHtba8HTpTn6OMXSVpkp3r0qbfPAVHOgreDB8ijwFbnlX
-         kQQ0AlS/FVhmgyZGP0RuqjS7Yx8SuOBGEVBpbUhhUUrhR3CzS/T+r61G00eJ+/W90Ge/
-         2S1tAvH92nQ4SH8nOdqQSyEW6WEvTH9q65a0yIr7W7EJhhgHQ9bO8Lr2FKJUp6b4wv0w
-         /WsKTnnmoSOAD2iAIy6IIrmSAEFSUWqRHfeQe/Fy59iXWYaDU3N/ShZGTAjk4Aim86FN
-         aBjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762884711; x=1763489511;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VyEVcxglwaCXXs+jyaytGrNn4eMjO/GxB3dXawBvms0=;
-        b=asEqldXDkSI+nwn1Ns9qdD/IDTkz+rNevRkvveUOLOrFSnoOxjP4y8HzHqh4Lack6q
-         18jzX/0sOB8y3uGQdPie7fW/HsaIRLbCxerimu9BycHW0PYsNGoEvm4tuuWRuQZcWnOF
-         iHsRpRDzLC4zRLeMgK/TuuO2ogegC+DCopeVpY5yfWZyDj2xvZ/fwSknKuYAjfk8kYjw
-         P1MedbRIz3MPYCQINCKbWkscH2iyDkFClgTHdVz92PN2KG6Rn57+6SgvWktXD2R4xvU6
-         Kdy563sYPOARQr6LsLJEqzrI0xJS8SW2Wn/Ip4PEzWt+MjwdMF66r3T8AXf3/5EnEnai
-         /n/A==
-X-Forwarded-Encrypted: i=1; AJvYcCXSLLDZtdeJ4LUPAepFQ6lKvDgeemp7BfAoT8Z9w0jAr3nd8N/hv8wf0RHt1uSdOa51TnvSgF7c2Nkt/38=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9KjhgbUGZvVPfPzihQdi5YrqRRO/LPjj5H+2t3VpOneBe+25w
-	0ooeS5PasWUelRi4rz49SWJbSb3NKddz59uQ6PINHqbDg9o8MSnj2hW32buNYmLtDKtYjZMo8NG
-	pYiNrIc3/wmqT+/baEtZ8MQgYQKqOU2bE4IXdQTs7mmfHbeeD8xNqHIP4xT4IeILAKw==
-X-Gm-Gg: ASbGnctLZkkljWIj0cCr0GF35GMo2QGra7i3m4qBGXuy3FXEE1w/ZiJoXlW0qRB0iQP
-	3zta1KiUbOxDN6fMJUUYbqcHqSTQtiXeclAHpu7HagI1pqA02vLa+o25Hpfu5GNX/bvYU19iLHV
-	kUAu8+mCx2uAb37BHzyPyEGw44O/dF70GOsmpkQs4V9ZHl9icBt7oBzvlP0JXsSAyQVHoGEf+zx
-	sq/paIq5Pah4jPMilGfddL+zvHBq1/ozxILRhhphXWIZpN98udRE9l4m3Llr/+d7mqudG8hU1oV
-	iu6vp1gXzs7n1KDljjRZiqDA8mheQyZegrMcZ9kInjFmvZo92BXNLVbpZQcFLAPFyhOr5vW8eCw
-	Re2BMN32N0G+XyH3MFXSc3kwuEa80UcCbEpUmikr982T2kJOzUoEXH0VDQrMJIvJ7SCpzDRiNO0
-	hWAd93YQ==
-X-Received: by 2002:a05:6000:657:b0:42b:394a:9b1 with SMTP id ffacd0b85a97d-42b4bdb2a8amr77463f8f.37.1762884710594;
-        Tue, 11 Nov 2025 10:11:50 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGHlLWXKzjkDYJCcvUKBM9NipPqJyE3f107uFZbqslvgYkn1WQZdgE0yG7thg8iRJRVCmu8Jg==
-X-Received: by 2002:a05:6000:657:b0:42b:394a:9b1 with SMTP id ffacd0b85a97d-42b4bdb2a8amr77449f8f.37.1762884710169;
-        Tue, 11 Nov 2025 10:11:50 -0800 (PST)
-Received: from [192.168.10.81] ([176.206.111.214])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-42ac675caecsm29390759f8f.30.2025.11.11.10.11.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Nov 2025 10:11:49 -0800 (PST)
-Message-ID: <33eacd6f-5598-49cb-bb11-ca3a47bfb111@redhat.com>
-Date: Tue, 11 Nov 2025 19:11:48 +0100
+	s=arc-20240116; t=1762884744; c=relaxed/simple;
+	bh=lTCxJMn/6bDXyg/fLKODxCwr/JhfLR/k283NoJJLJD0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IhkBTw1I+F7UgR3tlTQndF81RNjhkZgDSBNo0Bk8omVrZSUfUE5wYAFQDaj9KH6qQUKKaxcifQPBG3ibWgUBLJIFD2MYk7pzfms2DG31mLnbAPGBORiB0VfBiN8NcVabQUlXrFwvBLenuqU+h4YQtydNhRj46H4CozFqs27kCMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aT6DjYow; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80FE9C16AAE
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 18:12:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762884744;
+	bh=lTCxJMn/6bDXyg/fLKODxCwr/JhfLR/k283NoJJLJD0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=aT6DjYowzlt/3FDTwefxq3qKx1T4ab+22W4TZFO8JTd03EuFfZujBPATJTXHikTgE
+	 kl32GytZBCjsEW7IrPOJzP4Hf6NHfCCHClwiZD06TbGPc+zwHSlFdttVWhiXUviWBN
+	 Ci+xA9fAd3eDKb2qKGhzIzUzHBE4w/yWSBNPiVohl1nmF11PZx3S7Nvb+vb7H1CYn8
+	 VMrLjzdAvmu/iJYkZ5Zck9Xwv00U8MVYZLrRBr22MsNHd5lRImj9mQAVMegAGXxkuO
+	 VCpjdNzJS2wkkKQ50+Bzs+n00XQbhh04UETuGqOSLLn/N+9lFkImsjQl44aFY/E0L+
+	 05tacGa3f7sfQ==
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-59457f79859so4892346e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 10:12:24 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWOmSWYGkcrS50nUTnuxxUVvSIByWGrYVD0w2Ztb7pQfeMhnq9gGjcuvSImUIOMyQ87c1GjLA8SV65oRcc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5LGoYk1x/LpQIAsWMW5WcgoziH9PFbLm+XXjcv/fJE27sf5ph
+	A0rVrgt0NTjMlI0kp+JiK58CDdo1tDme6o3BkjW48BQTFSA3J/kuZIXb4hlzvkJlh8YBs/lchGY
+	FMBPJTJ0hh4NJLuAKSibrceDLH9QDUiY=
+X-Google-Smtp-Source: AGHT+IFaLZGslf6Y4e2Gfx83he2249ML5F9vDcpqNRQfr8qUng2lvu/+jwgXrRKaAYQyZeBN0XHoqqFRlqSblUMAP/o=
+X-Received: by 2002:a05:6512:12c8:b0:594:27c6:a18 with SMTP id
+ 2adb3069b0e04-59576df2b85mr79110e87.4.1762884742898; Tue, 11 Nov 2025
+ 10:12:22 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v1 02/20] KVM: x86: Refactor GPR accessors to
- differentiate register access types
-To: "Chang S. Bae" <chang.seok.bae@intel.com>, kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: seanjc@google.com, chao.gao@intel.com, zhao1.liu@intel.com
-References: <20251110180131.28264-1-chang.seok.bae@intel.com>
- <20251110180131.28264-3-chang.seok.bae@intel.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=pbonzini@redhat.com; keydata=
- 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
-In-Reply-To: <20251110180131.28264-3-chang.seok.bae@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20251010-efi_fw_bug-v3-1-78259db0f39a@debian.org>
+In-Reply-To: <20251010-efi_fw_bug-v3-1-78259db0f39a@debian.org>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Tue, 11 Nov 2025 19:12:11 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXFAf1_MAtyvWHP+eGUa4EvbXUiaLUdHsUw6=Cph3Rr4oA@mail.gmail.com>
+X-Gm-Features: AWmQ_bnsrlgAdqA9X701eZqDvHOhfoIS1fhJdslir8NfdVWFk3tPRx4vdeFtwu0
+Message-ID: <CAMj1kXFAf1_MAtyvWHP+eGUa4EvbXUiaLUdHsUw6=Cph3Rr4oA@mail.gmail.com>
+Subject: Re: [PATCH v3] efi/memattr: Convert efi_memattr_init() return type to void
+To: Breno Leitao <leitao@debian.org>
+Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 11/10/25 19:01, Chang S. Bae wrote:
-> Refactor the GPR accessors to introduce internal helpers to distinguish
-> between legacy and extended registers.
-> 
-> x86 CPUs introduce additional GPRs, but those registers will initially
-> remain unused in the kernel and will not be saved in KVM register cache
-> on every VM exit. Guest states are expected to remain live in hardware
-> registers.
-> 
-> This abstraction layer centralizes the selection of access methods,
-> providing a unified interface. For now, the EGPR accessors are
-> placeholders to be implemented later.
-> 
-> Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
+On Fri, 10 Oct 2025 at 12:44, Breno Leitao <leitao@debian.org> wrote:
+>
+> The efi_memattr_init() function's return values (0 and -ENOMEM) are never
+> checked by callers. Convert the function to return void since the return
+> status is unused.
+>
+> Signed-off-by: Breno Leitao <leitao@debian.org>
+> Acked-by: Ard Biesheuvel <ardb@kernel.org>
 > ---
->   arch/x86/include/asm/kvm_host.h      | 18 ++++++++++++
->   arch/x86/include/asm/kvm_vcpu_regs.h | 16 ++++++++++
->   arch/x86/kvm/fpu.h                   |  6 ++++
->   arch/x86/kvm/x86.h                   | 44 ++++++++++++++++++++++++++--
->   4 files changed, 82 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-> index 48598d017d6f..940f83c121cf 100644
-> --- a/arch/x86/include/asm/kvm_host.h
-> +++ b/arch/x86/include/asm/kvm_host.h
-> @@ -212,6 +212,24 @@ enum {
->   	VCPU_SREG_GS,
->   	VCPU_SREG_TR,
->   	VCPU_SREG_LDTR,
-> +#ifdef CONFIG_X86_64
-> +	VCPU_XREG_R16 = __VCPU_XREG_R16,
-> +	VCPU_XREG_R17 = __VCPU_XREG_R17,
-> +	VCPU_XREG_R18 = __VCPU_XREG_R18,
-> +	VCPU_XREG_R19 = __VCPU_XREG_R19,
-> +	VCPU_XREG_R20 = __VCPU_XREG_R20,
-> +	VCPU_XREG_R21 = __VCPU_XREG_R21,
-> +	VCPU_XREG_R22 = __VCPU_XREG_R22,
-> +	VCPU_XREG_R23 = __VCPU_XREG_R23,
-> +	VCPU_XREG_R24 = __VCPU_XREG_R24,
-> +	VCPU_XREG_R25 = __VCPU_XREG_R25,
-> +	VCPU_XREG_R26 = __VCPU_XREG_R26,
-> +	VCPU_XREG_R27 = __VCPU_XREG_R27,
-> +	VCPU_XREG_R28 = __VCPU_XREG_R28,
-> +	VCPU_XREG_R29 = __VCPU_XREG_R29,
-> +	VCPU_XREG_R30 = __VCPU_XREG_R30,
-> +	VCPU_XREG_R31 = __VCPU_XREG_R31,
-> +#endif
->   };
->   
->   enum exit_fastpath_completion {
-> diff --git a/arch/x86/include/asm/kvm_vcpu_regs.h b/arch/x86/include/asm/kvm_vcpu_regs.h
-> index 1af2cb59233b..dd0cc171f405 100644
-> --- a/arch/x86/include/asm/kvm_vcpu_regs.h
-> +++ b/arch/x86/include/asm/kvm_vcpu_regs.h
-> @@ -20,6 +20,22 @@
->   #define __VCPU_REGS_R13 13
->   #define __VCPU_REGS_R14 14
->   #define __VCPU_REGS_R15 15
-> +#define __VCPU_XREG_R16 16
-> +#define __VCPU_XREG_R17 17
-> +#define __VCPU_XREG_R18 18
-> +#define __VCPU_XREG_R19 19
-> +#define __VCPU_XREG_R20 20
-> +#define __VCPU_XREG_R21 21
-> +#define __VCPU_XREG_R22 22
-> +#define __VCPU_XREG_R23 23
-> +#define __VCPU_XREG_R24 24
-> +#define __VCPU_XREG_R25 25
-> +#define __VCPU_XREG_R26 26
-> +#define __VCPU_XREG_R27 27
-> +#define __VCPU_XREG_R28 28
-> +#define __VCPU_XREG_R29 29
-> +#define __VCPU_XREG_R30 30
-> +#define __VCPU_XREG_R31 31
->   #endif
->   
->   #endif /* _ASM_X86_KVM_VCPU_REGS_H */
-> diff --git a/arch/x86/kvm/fpu.h b/arch/x86/kvm/fpu.h
-> index 3ba12888bf66..159239b3a651 100644
-> --- a/arch/x86/kvm/fpu.h
-> +++ b/arch/x86/kvm/fpu.h
-> @@ -4,6 +4,7 @@
->   #define __KVM_FPU_H_
->   
->   #include <asm/fpu/api.h>
-> +#include <asm/kvm_vcpu_regs.h>
->   
->   typedef u32		__attribute__((vector_size(16))) sse128_t;
->   #define __sse128_u	union { sse128_t vec; u64 as_u64[2]; u32 as_u32[4]; }
-> @@ -137,4 +138,9 @@ static inline void kvm_write_mmx_reg(int reg, const u64 *data)
->   	kvm_fpu_put();
->   }
->   
-> +#ifdef CONFIG_X86_64
-> +static inline unsigned long kvm_read_egpr(int reg) { return 0; }
-> +static inline void kvm_write_egpr(int reg, unsigned long data) { }
-> +#endif
-> +
->   #endif
-> diff --git a/arch/x86/kvm/x86.h b/arch/x86/kvm/x86.h
-> index 4edadd64d3d5..74ae8f12b5a1 100644
-> --- a/arch/x86/kvm/x86.h
-> +++ b/arch/x86/kvm/x86.h
-> @@ -400,9 +400,49 @@ static inline bool vcpu_match_mmio_gpa(struct kvm_vcpu *vcpu, gpa_t gpa)
->   	return false;
->   }
->   
-> +#ifdef CONFIG_X86_64
-> +static inline unsigned long _kvm_gpr_read(struct kvm_vcpu *vcpu, int reg)
-> +{
-> +	switch (reg) {
-> +	case VCPU_REGS_RAX ... VCPU_REGS_R15:
-> +		return kvm_register_read_raw(vcpu, reg);
-> +	case VCPU_XREG_R16 ... VCPU_XREG_R31:
-> +		return kvm_read_egpr(reg);
-> +	default:
-> +		WARN_ON_ONCE(1);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static inline void _kvm_gpr_write(struct kvm_vcpu *vcpu, int reg, unsigned long val)
-> +{
-> +	switch (reg) {
-> +	case VCPU_REGS_RAX ... VCPU_REGS_R15:
-> +		kvm_register_write_raw(vcpu, reg, val);
-> +		break;
-> +	case VCPU_XREG_R16 ... VCPU_XREG_R31:
-> +		kvm_write_egpr(reg, val);
-> +		break;
-> +	default:
-> +		WARN_ON_ONCE(1);
-> +	}
-> +}
-> +#else
-> +static inline unsigned long _kvm_gpr_read(struct kvm_vcpu *vcpu, int reg)
-> +{
-> +	return kvm_register_read_raw(vcpu, reg);
-> +}
+> Changes in v3:
+> - EDITME: describe what is new in this series revision.
+> - EDITME: use bulletpoints and terse descriptions.
+> - Link to v2: https://lore.kernel.org/r/20251010-efi_fw_bug-v2-1-61b2915dce76@debian.org
+>
+> Changes in v2:
+> - drop the other patches from the previous patchset
+> - Link to v1: https://lore.kernel.org/r/20250106-efi_fw_bug-v1-0-01a8eb40bfeb@debian.org
+> ---
+>  drivers/firmware/efi/memattr.c | 7 +++----
+>  include/linux/efi.h            | 2 +-
+>  2 files changed, 4 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/firmware/efi/memattr.c b/drivers/firmware/efi/memattr.c
+> index c38b1a335590d..e727cc5909cb6 100644
+> --- a/drivers/firmware/efi/memattr.c
+> +++ b/drivers/firmware/efi/memattr.c
+> @@ -19,19 +19,19 @@ unsigned long __ro_after_init efi_mem_attr_table = EFI_INVALID_TABLE_ADDR;
+>   * Reserve the memory associated with the Memory Attributes configuration
+>   * table, if it exists.
+>   */
+> -int __init efi_memattr_init(void)
+> +void __init efi_memattr_init(void)
+>  {
+>         efi_memory_attributes_table_t *tbl;
+>         unsigned long size;
+>
+>         if (efi_mem_attr_table == EFI_INVALID_TABLE_ADDR)
+> -               return 0;
+> +               return;
+>
+>         tbl = early_memremap(efi_mem_attr_table, sizeof(*tbl));
+>         if (!tbl) {
+>                 pr_err("Failed to map EFI Memory Attributes table @ 0x%lx\n",
+>                        efi_mem_attr_table);
+> -               return -ENOMEM;
+> +               return;
+>         }
+>
+>         if (tbl->version > 2) {
+> @@ -61,7 +61,6 @@ int __init efi_memattr_init(void)
+>
+>  unmap:
+>         early_memunmap(tbl, sizeof(*tbl));
+> -       return 0;
+>  }
+>
+>  /*
+> diff --git a/include/linux/efi.h b/include/linux/efi.h
+> index a98cc39e7aaa8..0b9eb3d2ff977 100644
+> --- a/include/linux/efi.h
+> +++ b/include/linux/efi.h
+> @@ -772,7 +772,7 @@ extern unsigned long efi_mem_attr_table;
+>   */
+>  typedef int (*efi_memattr_perm_setter)(struct mm_struct *, efi_memory_desc_t *, bool);
+>
+> -extern int efi_memattr_init(void);
+> +extern void efi_memattr_init(void);
+>  extern int efi_memattr_apply_permissions(struct mm_struct *mm,
+>                                          efi_memattr_perm_setter fn);
+>
 
-Please leave these as kvm_gpr_{read,write}_raw.  It's easier to review 
-than the leading underscore.  (It's not hard to undo if you use "git 
-format-patch --stdout", do a mass replace on the resulting patch file, 
-and then reapply the patch with "git am").
-
-Paolo
-
-> +static inline void _kvm_gpr_write(struct kvm_vcpu *vcpu, int reg, unsigned long val)
-> +{
-> +	kvm_register_write_raw(vcpu, reg, val);
-> +}
-> +#endif
-> +
->   static inline unsigned long kvm_gpr_read(struct kvm_vcpu *vcpu, int reg)
->   {
-> -	unsigned long val = kvm_register_read_raw(vcpu, reg);
-> +	unsigned long val = _kvm_gpr_read(vcpu, reg);
->   
->   	return is_64_bit_mode(vcpu) ? val : (u32)val;
->   }
-> @@ -411,7 +451,7 @@ static inline void kvm_gpr_write(struct kvm_vcpu *vcpu, int reg, unsigned long v
->   {
->   	if (!is_64_bit_mode(vcpu))
->   		val = (u32)val;
-> -	return kvm_register_write_raw(vcpu, reg, val);
-> +	_kvm_gpr_write(vcpu, reg, val);
->   }
->   
->   static inline bool kvm_check_has_quirk(struct kvm *kvm, u64 quirk)
-
+I've queued this up now in efi/next - thanks for your patience.
 
