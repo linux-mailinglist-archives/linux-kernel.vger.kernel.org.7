@@ -1,179 +1,356 @@
-Return-Path: <linux-kernel+bounces-896220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B12F9C4FE72
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 22:44:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58A3AC4FE8D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 22:46:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22E9D3A8842
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 21:43:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12BC43BB14D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 21:44:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 913F6352F8B;
-	Tue, 11 Nov 2025 21:42:52 +0000 (UTC)
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A5AA3546E9;
+	Tue, 11 Nov 2025 21:43:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="OtK0GA7d"
+Received: from relay13.grserver.gr (relay13.grserver.gr [178.156.171.147])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 102D533D6CF
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 21:42:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3358033D6D6
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 21:43:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.156.171.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762897372; cv=none; b=uJ1E4jeAlKTXc7uIP6+SJvP/wKjQ59JafFAO7ILQDT4PJ84qezJJkO6bRLc0elxWueJOEevydONXQ+/UOTnJtGJ0DMXkzAcQrq4Cc4rkEi3L0B7dt//zCr7nknQxn5909hjpcduFI0gwBwZIKs7HrhJhZDzzi4oPdbR8jJEFKpI=
+	t=1762897427; cv=none; b=RSLA6G2IyQhOT3M1FjqYlvnPlL7ABIk+YehHpSKpnvz9lmGDUjoRklLTiwus0fRmGKafsf/eoZpXluZ2zjLBM0HdXg50c0dSJ3diA3OW0U0Doo3wF/FTkJndBfQV8nUBgmVF692dqSyhNtKlz27JG68TP1ecZ1bkaOvFjBKfhRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762897372; c=relaxed/simple;
-	bh=Zit10IcjEQgZrlYn+H0pI2muI6sNj2U/B2zs6yrH+H8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=t5QG4/WYcWbjHP5Cj9RgDrhUXOGL20RCDFKpJRcy3RukTY7Up4vAYu99qx+gQ+Bgp4rWhmH9mPDJ2Ajg9rK3vVsYchEKptn8mMC7mC49OIEsOgojpotB3pNPvhF3RFwgIGck1FaisuKh2GyFPL6FftH/8prJJpRY3gf27UQ7ErQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=vasilevsky.ca; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=vasilevsky.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-8b28f983333so22409185a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 13:42:47 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762897366; x=1763502166;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=37+7hBkhzuE7kcjBfybqxVC8HAYgIXzyLEuWgJ3dqEM=;
-        b=khOEptkTncqWEQrwpLb0bM46Y9J4xKpqOwyEHqIVJz0B53/XAdweLGaNkr6DZ9FiJr
-         wr5nIb/Fodkmf3F0FhyoFjaMoglGwYVwuTVUv4DqxGR1zdiK+5IRmzZOEzpnhhRBtL/+
-         wopZM27ke42ZI8A70YlU+ut+/eZoNN7TZYEDBWClNhlAh4fgXMkR2u+CuJjI+F2cAe0A
-         4cqqfKYy59Uti23jNpQE1DyKYbcrW3TJUIfXG7FVf6NQjiomy/UKGSRl4MWMJM3VSNOt
-         R7nGwrS+3CKWBRlqAG89dk3FO15YMRc3Z58a3Ze5R/t5TvIc6LVB6/GEe/0pldTKllwB
-         uXig==
-X-Forwarded-Encrypted: i=1; AJvYcCWyvIFgctoyCBtOFLReU4gF7HcXGqcGiZe1AKrebDpuvR18kFBrrw0fcok9sQ0jxCxQvv/XXC5OklL/9pQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCK96MAZDg3Z/ocioIJwttd64gBOWkCyEhPupCtv4ST/bejySG
-	8ivjI8NYAUjGFue8DfL7p2GK+I9bTK69hmGPVkt8Cmib7qJmfRO4jJ8k
-X-Gm-Gg: ASbGncsGzM/kTk/WILgBCs2LCHgDMEnnh/GLCsxvRXVCFRcj1aGm1px8fdH9egGPeM0
-	1+DIBsDwAwDzSX2HTzLTz4WQMfge8jayGmPpVevKWzUNgZd8w8S0QdMaN9IKIawLvRj2euLFcrH
-	K52leRsta3Iqenj3cP/w8lpWndfal893R8YnxULHW58B66U0c71lZ7FONKBu7/SmRN3lVVtDjG1
-	3noBt7KEgcNtv66FhaGblXRQKOqp7Gp3pAt2B+Li9GPB0JC28UrvsfmJg8kTHXFP7GA8KKxDV4q
-	7swrgMadUorkcRlmsrveWfyT61KyxgWDdjxQUdac1EFgFz5aVRKyllki44DhtCgF/X4tWTzkFOU
-	scNEHsg6+7ajPHdWmL1WIitC0VrfsR0bsA9cOG5K0gGyPB5jW0NbzcWsehT5BXwqwRYjZKxG7Uu
-	DytBa/u+7So9/tn111Uw1ug3H+iT1vNtmLefQS2L5rls0jwQ+7290P2ghZViCM70Y=
-X-Google-Smtp-Source: AGHT+IG3pd8H8cinV9KY2sxGF9Lqdw5K5u9F1WzBYcrYijYiG5sk7Zas84UeYzEmg+TDrSyPXJndow==
-X-Received: by 2002:a05:620a:40c1:b0:8b1:ac18:acc9 with SMTP id af79cd13be357-8b29b77ad4bmr110215985a.32.1762897366312;
-        Tue, 11 Nov 2025 13:42:46 -0800 (PST)
-Received: from [192.168.2.45] (bras-base-mtrlpq3141w-grc-10-65-95-13-196.dsl.bell.ca. [65.95.13.196])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b29a9e6e6asm59918585a.35.2025.11.11.13.42.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Nov 2025 13:42:45 -0800 (PST)
-From: Dave Vasilevsky <dave@vasilevsky.ca>
-Date: Tue, 11 Nov 2025 16:42:41 -0500
-Subject: [PATCH v2] powerpc, mm: Fix mprotect on book3s 32-bit
+	s=arc-20240116; t=1762897427; c=relaxed/simple;
+	bh=O/SuGiAzHSSRRKVxWeuyO8lLFqaT1aW144KUCX0TpTE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aQiR7FgxkU/KTPiZgA7DkCaPxOIgvtbrBDHjmHMFOdxSlRmVFCAxiAePLDCs5eIjpGKJzp+n6r3RJdeg6TLtEtax5MiRnpxGyFiJPW2mQ3gt3rWkbPYzpW4I6aHeSKnf6ooMsekKRurmZXKuZlJLHA+++bg0V11aGl5TicqHdzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=OtK0GA7d; arc=none smtp.client-ip=178.156.171.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
+Received: from relay13 (localhost [127.0.0.1])
+	by relay13.grserver.gr (Proxmox) with ESMTP id CF32D5E4D8
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 23:43:36 +0200 (EET)
+Received: from linux3247.grserver.gr (linux3247.grserver.gr [213.158.90.240])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by relay13.grserver.gr (Proxmox) with ESMTPS id 223F35E07A
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 23:43:35 +0200 (EET)
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	by linux3247.grserver.gr (Postfix) with ESMTPSA id 2C88F201C52
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 23:43:34 +0200 (EET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
+	s=default; t=1762897414;
+	bh=58N4AkF/62rPzXyucAbag0c8oNPiWsFpePIz6U6wsgI=;
+	h=Received:From:Subject:To;
+	b=OtK0GA7dP9aR9tqMClguUex3B7McacL7fFJeELlYmN+tWVhvuv1QZT8A+SwScBbPV
+	 vcY2pvBc7kV99hkarshNB1016nzBn648bzq48Vtj1eV5E2XOBVH+VtU2kOAxlEDbW4
+	 UxTaVe2PIc97oYajabnqb6/JIDrgZCMqBYhImVh4X5ymZhkRqiVeb4tI4d0RJF/PF8
+	 Tp24yHmpLAjRfsuDNFReWzW97fie1H8S8QFtdGqYexu/bEY1BcCTk43CP1qn4Wofw/
+	 ib7BPXJdoQ8PkLv+PVBrGuDupIyo2oYSTyT7RuG290Xs0Ic0Ot9cii+CqgMVhPkRRp
+	 bewLcQCl9vUcg==
+Authentication-Results: linux3247.grserver.gr;
+        spf=pass (sender IP is 209.85.208.169) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f169.google.com
+Received-SPF: pass (linux3247.grserver.gr: connection is authenticated)
+Received: by mail-lj1-f169.google.com with SMTP id
+ 38308e7fff4ca-3737d0920e6so1777981fa.1
+        for <linux-kernel@vger.kernel.org>;
+ Tue, 11 Nov 2025 13:43:34 -0800 (PST)
+X-Forwarded-Encrypted: i=1;
+ AJvYcCW9mPznFWs5ckcf/PcAA+EjpMH5am0g5hFK+MbjMgo+j1n9ovM1ZWQ46+RqNiU1ZXWXC4SKOKp0kla7sjw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTrtMAlabML6PJ3PFZcuw54XURCgSwQiWeaRE3AuI8/H/bS9fF
+	XVCgC8a8OXUKRbxy9ZIPtcGHT5L9hMtNqUTUT6vBrKkotg0lWR2CYdWYqvqN0ty7ybldf30Isgm
+	cCNSeh5hFxXv8dDQAb/1GUl37RjNjuqQ=
+X-Google-Smtp-Source: 
+ AGHT+IGjfVwzo/NpSCS45EieYVk2quw1vfmQyvqD3hNZwEOU/CQRP2qOp3AJ0hd3wDCrSVybTShJ9ZiZS//r21Qvqc0=
+X-Received: by 2002:a2e:3a08:0:b0:37a:323c:3641 with SMTP id
+ 38308e7fff4ca-37b8c2e1713mr1783491fa.1.1762897413619; Tue, 11 Nov 2025
+ 13:43:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251111-vasi-mprotect-g3-v2-1-881c94afbc42@vasilevsky.ca>
-X-B4-Tracking: v=1; b=H4sIANCtE2kC/32NQQ6DIBBFr2Jm3WkAJdKueo/GBcFBJ23VACE1x
- rsXPUCX7+f/9zeIFJgi3KsNAmWOPE8F1KUCN9ppIOS+MCihtBSqxWwj42cJcyKXcKjRG69Va/p
- GNgLKbAnk+Xsqn13hkWOaw3o+ZHmkf2RZosTaaWlaYbS/2cdReVOOr/XqLHT7vv8A7zcQxrQAA
- AA=
-X-Change-ID: 20251027-vasi-mprotect-g3-f8f5278d4140
-To: Madhavan Srinivasan <maddy@linux.ibm.com>, 
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
- Christophe Leroy <christophe.leroy@csgroup.eu>, 
- Nadav Amit <nadav.amit@gmail.com>, 
- "Peter Zijlstra (Intel)" <peterz@infradead.org>, 
- Andrew Morton <akpm@linux-foundation.org>, 
- Ritesh Harjani <ritesh.list@gmail.com>
-Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
- stable@vger.kernel.org, linux-mm@kvack.org, 
- Dave Vasilevsky <dave@vasilevsky.ca>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1762897365; l=3254;
- i=dave@vasilevsky.ca; s=20251027; h=from:subject:message-id;
- bh=Zit10IcjEQgZrlYn+H0pI2muI6sNj2U/B2zs6yrH+H8=;
- b=dn4omO7A8DZD+V7wNR4W4X80lGIpHjLAHsjIoZ421FOXmVeJST9kiGMlzTgaFTHCkeKQGUtcc
- o99hIiot/c+D1dhxLbSDf+lTXlQ2Eq/JmuM7PJ3WbD/2uIodH6yvTEe
-X-Developer-Key: i=dave@vasilevsky.ca; a=ed25519;
- pk=Jsd1btZeqqg6x6y73Dx0YrleQb3A3pCBnUeE0qmoKq4=
+References: <20251110180846.1490726-1-lkml@antheas.dev>
+ <20251110180846.1490726-5-lkml@antheas.dev>
+ <888ff0d3-c613-b5a7-3b84-37ff3036e0a4@linux.intel.com>
+In-Reply-To: <888ff0d3-c613-b5a7-3b84-37ff3036e0a4@linux.intel.com>
+From: Antheas Kapenekakis <lkml@antheas.dev>
+Date: Tue, 11 Nov 2025 22:43:22 +0100
+X-Gmail-Original-Message-ID: 
+ <CAGwozwE7rSw43tKoStmcmwR3mup5bS0Btk0R3hr0XTwSus4A-w@mail.gmail.com>
+X-Gm-Features: AWmQ_bn4UUWv7X6aph3NasS4pQ4HaEu1rsbZ0ni5h-plq3WZBhJwb6QSU0Encm8
+Message-ID: 
+ <CAGwozwE7rSw43tKoStmcmwR3mup5bS0Btk0R3hr0XTwSus4A-w@mail.gmail.com>
+Subject: Re: [PATCH v4 4/6] platform/x86: ayaneo-ec: Add controller power and
+ modules attributes
+To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+	linux-hwmon@vger.kernel.org, Hans de Goede <hansg@kernel.org>,
+	Derek John Clark <derekjohn.clark@gmail.com>,
+	=?UTF-8?Q?Joaqu=C3=ADn_Ignacio_Aramend=C3=ADa?= <samsagax@gmail.com>,
+	Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
+ Armin Wolf <W_Armin@gmx.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-PPP-Message-ID: 
+ <176289741434.2183670.14458628331899579687@linux3247.grserver.gr>
+X-PPP-Vhost: antheas.dev
+X-Virus-Scanned: clamav-milter 1.4.3 at linux3247.grserver.gr
+X-Virus-Status: Clean
 
-On 32-bit book3s with hash-MMUs, tlb_flush() was a no-op. This was
-unnoticed because all uses until recently were for unmaps, and thus
-handled by __tlb_remove_tlb_entry().
+On Tue, 11 Nov 2025 at 14:41, Ilpo J=C3=A4rvinen
+<ilpo.jarvinen@linux.intel.com> wrote:
+>
+> On Mon, 10 Nov 2025, Antheas Kapenekakis wrote:
+>
+> > The Ayaneo 3 features hot-swappable controller modules. The ejection
+> > and management is done through HID. However, after ejecting the modules=
+,
+> > the controller needs to be power cycled via the EC to re-initialize.
+> >
+> > For this, the EC provides a variable that holds whether the left or
+> > right modules are connected, and a power control register to turn
+> > the controller on or off. After ejecting the modules, the controller
+> > should be turned off. Then, after both modules are reinserted,
+> > the controller may be powered on again to re-initialize.
+> >
+> > This patch introduces two new sysfs attributes:
+> >  - `controller_modules`: a read-only attribute that indicates whether
+> >    the left and right modules are connected (none, left, right, both).
+> >  - `controller_power`: a read-write attribute that allows the user
+> >    to turn the controller on or off (with '1'/'0').
+> >
+> > Therefore, after ejection is complete, userspace can power off the
+> > controller, then wait until both modules have been reinserted
+> > (`controller_modules` will return 'both') to turn on the controller.
+> >
+> > Reviewed-by: Armin Wolf <W_Armin@gmx.de>
+> > Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
+> > ---
+> >  .../ABI/testing/sysfs-platform-ayaneo-ec      |  19 ++++
+> >  MAINTAINERS                                   |   1 +
+> >  drivers/platform/x86/ayaneo-ec.c              | 106 ++++++++++++++++++
+> >  3 files changed, 126 insertions(+)
+> >  create mode 100644 Documentation/ABI/testing/sysfs-platform-ayaneo-ec
+> >
+> > diff --git a/Documentation/ABI/testing/sysfs-platform-ayaneo-ec b/Docum=
+entation/ABI/testing/sysfs-platform-ayaneo-ec
+> > new file mode 100644
+> > index 000000000000..4cffbf5fc7ca
+> > --- /dev/null
+> > +++ b/Documentation/ABI/testing/sysfs-platform-ayaneo-ec
+> > @@ -0,0 +1,19 @@
+> > +What:                /sys/devices/platform/ayaneo-ec/controller_power
+> > +Date:                Nov 2025
+> > +KernelVersion:       6.19
+> > +Contact:     "Antheas Kapenekakis" <lkml@antheas.dev>
+> > +Description:
+> > +             Current controller power state. Allows turning on and off
+> > +             the controller power (e.g. for power savings). Write 1 to
+> > +             turn on, 0 to turn off. File is readable and writable.
+> > +
+> > +What:                /sys/devices/platform/ayaneo-ec/controller_module=
+s
+> > +Date:                Nov 2025
+> > +KernelVersion:       6.19
+> > +Contact:     "Antheas Kapenekakis"  <lkml@antheas.dev>
+> > +Description:
+> > +             Shows which controller modules are currently connected to
+> > +             the device. Possible values are "left", "right" and "both=
+".
+> > +             File is read-only. The Windows software for this device
+> > +             will only set controller power to 1 if both module sides
+> > +             are connected (i.e. this file returns "both").
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index c5bf7207c45f..f8ab009b6224 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -4196,6 +4196,7 @@ AYANEO PLATFORM EC DRIVER
+> >  M:   Antheas Kapenekakis <lkml@antheas.dev>
+> >  L:   platform-driver-x86@vger.kernel.org
+> >  S:   Maintained
+> > +F:   Documentation/ABI/testing/sysfs-platform-ayaneo
+> >  F:   drivers/platform/x86/ayaneo-ec.c
+> >
+> >  AZ6007 DVB DRIVER
+> > diff --git a/drivers/platform/x86/ayaneo-ec.c b/drivers/platform/x86/ay=
+aneo-ec.c
+> > index 697bb053a7d6..0652c044ad76 100644
+> > --- a/drivers/platform/x86/ayaneo-ec.c
+> > +++ b/drivers/platform/x86/ayaneo-ec.c
+> > @@ -8,6 +8,7 @@
+> >   */
+> >
+> >  #include <linux/acpi.h>
+> > +#include <linux/bits.h>
+> >  #include <linux/dmi.h>
+> >  #include <linux/err.h>
+> >  #include <linux/hwmon.h>
+> > @@ -16,6 +17,7 @@
+> >  #include <linux/module.h>
+> >  #include <linux/platform_device.h>
+> >  #include <linux/power_supply.h>
+> > +#include <linux/sysfs.h>
+> >  #include <acpi/battery.h>
+> >
+> >  #define AYANEO_PWM_ENABLE_REG         0x4A
+> > @@ -32,9 +34,17 @@
+> >  #define AYANEO_CHARGE_VAL_AUTO               0xaa
+> >  #define AYANEO_CHARGE_VAL_INHIBIT    0x55
+> >
+> > +#define AYANEO_POWER_REG     0x2d
+> > +#define AYANEO_POWER_OFF     0xfe
+> > +#define AYANEO_POWER_ON              0xff
+> > +#define AYANEO_MODULE_REG    0x2f
+> > +#define AYANEO_MODULE_LEFT   BIT(0)
+> > +#define AYANEO_MODULE_RIGHT  BIT(1)
+> > +
+> >  struct ayaneo_ec_quirk {
+> >       bool has_fan_control;
+> >       bool has_charge_control;
+> > +     bool has_magic_modules;
+> >  };
+> >
+> >  struct ayaneo_ec_platform_data {
+> > @@ -46,6 +56,7 @@ struct ayaneo_ec_platform_data {
+> >  static const struct ayaneo_ec_quirk quirk_ayaneo3 =3D {
+> >       .has_fan_control =3D true,
+> >       .has_charge_control =3D true,
+> > +     .has_magic_modules =3D true,
+> >  };
+> >
+> >  static const struct dmi_system_id dmi_table[] =3D {
+> > @@ -266,6 +277,100 @@ static int ayaneo_remove_battery(struct power_sup=
+ply *battery,
+> >       return 0;
+> >  }
+> >
+> > +static ssize_t controller_power_store(struct device *dev,
+> > +                                   struct device_attribute *attr,
+> > +                                   const char *buf,
+> > +                                   size_t count)
+> > +{
+> > +     bool value;
+> > +     int ret;
+> > +
+> > +     ret =3D kstrtobool(buf, &value);
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     ret =3D ec_write(AYANEO_POWER_REG, value ? AYANEO_POWER_ON : AYAN=
+EO_POWER_OFF);
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     return count;
+> > +}
+> > +
+> > +static ssize_t controller_power_show(struct device *dev,
+> > +                                  struct device_attribute *attr,
+> > +                                  char *buf)
+> > +{
+> > +     int ret;
+> > +     u8 val;
+> > +
+> > +     ret =3D ec_read(AYANEO_POWER_REG, &val);
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     return sysfs_emit(buf, "%d\n", val =3D=3D AYANEO_POWER_ON);
+> > +}
+> > +
+> > +static DEVICE_ATTR_RW(controller_power);
+> > +
+> > +static ssize_t controller_modules_show(struct device *dev,
+> > +                                    struct device_attribute *attr, cha=
+r *buf)
+> > +{
+> > +     char *out;
+> > +     int ret;
+> > +     u8 val;
+> > +
+> > +     ret =3D ec_read(AYANEO_MODULE_REG, &val);
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     switch (~val & (AYANEO_MODULE_LEFT | AYANEO_MODULE_RIGHT)) {
+>
+> This too is constructing mask still here which is ugly.
 
-After commit 4a18419f71cd ("mm/mprotect: use mmu_gather") in kernel 5.19,
-tlb_gather_mmu() started being used for mprotect as well. This caused
-mprotect to simply not work on these machines:
+I can bring back the bools :-)
 
-  int *ptr = mmap(NULL, 4096, PROT_READ|PROT_WRITE,
-                  MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
-  *ptr = 1; // force HPTE to be created
-  mprotect(ptr, 4096, PROT_READ);
-  *ptr = 2; // should segfault, but succeeds
+I agree but that's what I came up with to remove them
 
-Fixed by making tlb_flush() actually flush TLB pages. This finally
-agrees with the behaviour of boot3s64's tlb_flush().
-
-Fixes: 4a18419f71cd ("mm/mprotect: use mmu_gather")
-Signed-off-by: Dave Vasilevsky <dave@vasilevsky.ca>
-Cc: stable@vger.kernel.org
----
-Changes in v2:
-- Flush entire TLB if full mm is requested.
-- Link to v1: https://lore.kernel.org/r/20251027-vasi-mprotect-g3-v1-1-3c5187085f9a@vasilevsky.ca
----
- arch/powerpc/include/asm/book3s/32/tlbflush.h | 8 ++++++--
- arch/powerpc/mm/book3s32/tlb.c                | 9 +++++++++
- 2 files changed, 15 insertions(+), 2 deletions(-)
-
-diff --git a/arch/powerpc/include/asm/book3s/32/tlbflush.h b/arch/powerpc/include/asm/book3s/32/tlbflush.h
-index e43534da5207aa3b0cb3c07b78e29b833c141f3f..b8c587ad2ea954f179246a57d6e86e45e91dcfdc 100644
---- a/arch/powerpc/include/asm/book3s/32/tlbflush.h
-+++ b/arch/powerpc/include/asm/book3s/32/tlbflush.h
-@@ -11,6 +11,7 @@
- void hash__flush_tlb_mm(struct mm_struct *mm);
- void hash__flush_tlb_page(struct vm_area_struct *vma, unsigned long vmaddr);
- void hash__flush_range(struct mm_struct *mm, unsigned long start, unsigned long end);
-+void hash__flush_gather(struct mmu_gather *tlb);
- 
- #ifdef CONFIG_SMP
- void _tlbie(unsigned long address);
-@@ -28,9 +29,12 @@ void _tlbia(void);
-  */
- static inline void tlb_flush(struct mmu_gather *tlb)
- {
--	/* 603 needs to flush the whole TLB here since it doesn't use a hash table. */
--	if (!mmu_has_feature(MMU_FTR_HPTE_TABLE))
-+	if (mmu_has_feature(MMU_FTR_HPTE_TABLE)) {
-+		hash__flush_gather(tlb);
-+	} else {
-+		/* 603 needs to flush the whole TLB here since it doesn't use a hash table. */
- 		_tlbia();
-+	}
- }
- 
- static inline void flush_range(struct mm_struct *mm, unsigned long start, unsigned long end)
-diff --git a/arch/powerpc/mm/book3s32/tlb.c b/arch/powerpc/mm/book3s32/tlb.c
-index 9ad6b56bfec96e989b96f027d075ad5812500854..e54a7b0112322e5818d80facd2e3c7722e6dd520 100644
---- a/arch/powerpc/mm/book3s32/tlb.c
-+++ b/arch/powerpc/mm/book3s32/tlb.c
-@@ -105,3 +105,12 @@ void hash__flush_tlb_page(struct vm_area_struct *vma, unsigned long vmaddr)
- 		flush_hash_pages(mm->context.id, vmaddr, pmd_val(*pmd), 1);
- }
- EXPORT_SYMBOL(hash__flush_tlb_page);
-+
-+void hash__flush_gather(struct mmu_gather *tlb)
-+{
-+	if (tlb->fullmm || tlb->need_flush_all)
-+		hash__flush_tlb_mm(tlb->mm);
-+	else
-+		hash__flush_range(tlb->mm, tlb->start, tlb->end);
-+}
-+EXPORT_SYMBOL(hash__flush_gather);
-
----
-base-commit: 24172e0d79900908cf5ebf366600616d29c9b417
-change-id: 20251027-vasi-mprotect-g3-f8f5278d4140
-
-Best regards,
--- 
-Dave Vasilevsky <dave@vasilevsky.ca>
+> > +     case AYANEO_MODULE_LEFT | AYANEO_MODULE_RIGHT:
+> > +             out =3D "both";
+> > +             break;
+> > +     case AYANEO_MODULE_LEFT:
+> > +             out =3D "left";
+> > +             break;
+> > +     case AYANEO_MODULE_RIGHT:
+> > +             out =3D "right";
+> > +             break;
+> > +     default:
+> > +             out =3D "none";
+> > +             break;
+> > +     }
+> > +
+> > +     return sysfs_emit(buf, "%s\n", out);
+> > +}
+> > +
+> > +static DEVICE_ATTR_RO(controller_modules);
+> > +
+> > +static struct attribute *aya_mm_attrs[] =3D {
+> > +     &dev_attr_controller_power.attr,
+> > +     &dev_attr_controller_modules.attr,
+> > +     NULL
+> > +};
+> > +
+> > +static umode_t aya_mm_is_visible(struct kobject *kobj,
+> > +                              struct attribute *attr, int n)
+> > +{
+> > +     struct device *dev =3D kobj_to_dev(kobj);
+> > +     struct platform_device *pdev =3D to_platform_device(dev);
+> > +     struct ayaneo_ec_platform_data *data =3D platform_get_drvdata(pde=
+v);
+> > +
+> > +     if (data->quirks->has_magic_modules)
+> > +             return attr->mode;
+> > +     return 0;
+> > +}
+> > +
+> > +static const struct attribute_group aya_mm_attribute_group =3D {
+> > +     .is_visible =3D aya_mm_is_visible,
+> > +     .attrs =3D aya_mm_attrs,
+> > +};
+> > +
+> > +static const struct attribute_group *ayaneo_ec_groups[] =3D {
+> > +     &aya_mm_attribute_group,
+> > +     NULL
+> > +};
+> > +
+> >  static int ayaneo_ec_probe(struct platform_device *pdev)
+> >  {
+> >       const struct dmi_system_id *dmi_entry;
+> > @@ -307,6 +412,7 @@ static int ayaneo_ec_probe(struct platform_device *=
+pdev)
+> >  static struct platform_driver ayaneo_platform_driver =3D {
+> >       .driver =3D {
+> >               .name =3D "ayaneo-ec",
+> > +             .dev_groups =3D ayaneo_ec_groups,
+> >       },
+> >       .probe =3D ayaneo_ec_probe,
+> >  };
+> >
+>
+> --
+>  i.
+>
+>
 
 
