@@ -1,226 +1,119 @@
-Return-Path: <linux-kernel+bounces-895378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F729C4D9BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:14:26 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EDCBC4DA3A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:21:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F47E1898EDC
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:14:50 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 576644FC732
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:15:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 373A7357A5F;
-	Tue, 11 Nov 2025 12:14:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71CEE3559D8;
+	Tue, 11 Nov 2025 12:14:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="IIYDpcXV"
-Received: from omta038.useast.a.cloudfilter.net (omta038.useast.a.cloudfilter.net [44.202.169.37])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="k1XGru6Z"
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60A4735772B
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 12:14:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3E203587DA
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 12:14:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762863259; cv=none; b=mGYntgC1jJLIBjY9YVSCuBmRJe3e4vtWXLc88LU4xXBIjPtnCVHvfE+ISSY74U3aD+OXDuAf7zHGpHxsQt9die41ctlm+KJyWojZTYlVxA5DHeVpqwFGP9ZQl3TbTtLKsZs+dLDWgl/rPD3hsrbOwVhTim/nqGGT7jQpwcYWSKE=
+	t=1762863288; cv=none; b=stQtOSu7KOJaU590gHPvahzCP5Emh3ehk+OR1BEDWwV6DgQ3AcKiRAm1raXvVmucU05HgdQu4PKYK200a15oeTa07if3UBHPEZjd6ywgoGznOnU5IvOCFZPfW8bk1j6dxHa+9zlIBiDzd4o0S089WIWrT+h93KthONCvrmBObk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762863259; c=relaxed/simple;
-	bh=7PE1Ra6Wd21DmBff64tqh3yjwSx+bptn3SGutDd7UGg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SiEfu29HHHAhVSUdIytymY9IUR83IbNpmlkUn6DfqB10UYy+kCoikP4aCKGTf1zSbX9HLERXBsvp9yUsFsC6LICeq+MGh9YaUIRM/DfCOHXJhEN32n0uBGrpDhyplhZk3rZpUGPuzUs9uT59EcfpmRgcCPRjarzM6xT8ctCNh0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=IIYDpcXV; arc=none smtp.client-ip=44.202.169.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
-Received: from eig-obgw-6004b.ext.cloudfilter.net ([10.0.30.210])
-	by cmsmtp with ESMTPS
-	id Iec0vWALuSkcfInGKv6VSR; Tue, 11 Nov 2025 12:14:16 +0000
-Received: from gator4166.hostgator.com ([108.167.133.22])
-	by cmsmtp with ESMTPS
-	id InGJvil3NEQP9InGJvDa7E; Tue, 11 Nov 2025 12:14:15 +0000
-X-Authority-Analysis: v=2.4 cv=MpNS63ae c=1 sm=1 tr=0 ts=69132897
- a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=F0GicbU7tRTSLTLZ85HXVw==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=7T7KSl7uo7wA:10 a=VwQbUJbxAAAA:8
- a=oBrga82o3JoBcljm_xYA:9 a=QEXdDO2ut3YA:10 a=xYX6OU9JNrHFPr8prv8u:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=YHkNqbWnHwvdQg3BLnlc11EHlTVWBrg1MAlKIBmYEBw=; b=IIYDpcXV7hQM8CE6fsCi1jQkDs
-	zQgAvdaPn+V/l/ERdNXhMCVR7pD4QQR2a0L4afe6/QfHXjjlVAFd6rDK+6DVFykG7cfYVAoeKLMft
-	b0afW8alX4NRdXcsH9FnAxnbncQood2+s3rCiX7q2F5tp6RIrMPeSQcuw3p5tKOhqK6NRgnKqTGxm
-	BlC/+hiiKobes9wJx0d6mWvBeOOXACVV0dDLG3YyounnrH8wHPwz5XRLbkxJC7900Gc6buqym2ogT
-	MNR1G+nqmNV2sr86N2fWDfRg2wMDCVOwsjSYXxegSe6p4daNeGGip7cdCkDSxNDTTctzrpyMK0Gq8
-	cSsmprsQ==;
-Received: from m106072098064.v4.enabler.ne.jp ([106.72.98.64]:45116 helo=[10.221.86.44])
-	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.98.1)
-	(envelope-from <gustavo@embeddedor.com>)
-	id 1vInGI-00000002Z9Q-2mWK;
-	Tue, 11 Nov 2025 06:14:14 -0600
-Message-ID: <a9e5156b-2279-4ddd-992c-ca8ca7ab218a@embeddedor.com>
-Date: Tue, 11 Nov 2025 21:14:05 +0900
+	s=arc-20240116; t=1762863288; c=relaxed/simple;
+	bh=Cm8DAlkq7cNB7eXK9B6TWRGj+2lGvxbjXLY72bWBOVo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Cl4gLOh2h+fjprqh5JL02ooxDd9pynObhWk1NVCgr5rN7/NtgXV6Mn8lAETdpdzfvJ6SrNcMP0opheMonsC7I9P5pbOklNoWJ1NWnhihe+3xKw4LC+Fw8ssFegFZXCN4bFMlSrJ0nhYgpWfKWfc/BtsUOIq2VFyag36sr/4wqMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=k1XGru6Z; arc=none smtp.client-ip=209.85.128.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-78665368a5cso38933257b3.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 04:14:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1762863285; x=1763468085; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qfV4LvtG02pkcZqmjoIHQyje6DoWRqzhd0WA5bSXwjM=;
+        b=k1XGru6Zb+68rKFkN+KDaFu9/e0bdsQkd0JiJFW1ra9VxV6KbmLGJK3ohRK82IEpiP
+         z1jbWu0smIW9hcgRORquFXHpeRteIgZc+tPZqGG2SYBiMDYbXpbKlr8x5JWM/Yiwf09p
+         aTresM6PDHBE6E5GldMSyJjAIK6/onJ0ZtWWWcWIyH3KiBbcEhQjTXUIb57C/BQNAYTI
+         v2nbphel5etTasaYb4vzQFrSC0R4oezrndpfDvsJJkRI0M041S1d+9eBJYL/1mT22POI
+         Wgec/rvojtsUOANrrnZf5aZ8CoBjJIQz8uwzp3K0EQmdI5hre76aUsGMdAYzauBePjUm
+         j19w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762863285; x=1763468085;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=qfV4LvtG02pkcZqmjoIHQyje6DoWRqzhd0WA5bSXwjM=;
+        b=HEwkCg8uxQdngfhsp2sfIr9uH1S4lDNTaqJzR9Lej3NN9/eiQeQ9WXnET2gXFuSVIc
+         bPseWBDmhmQUBEU1RlYnX/pzdI2eltf7UYOBYmfTJH1SwhRwvf2WXMfGoKtQR9Fi4qYF
+         ZGZSb7iKrLz30bo5MNVS55ilL+bIQB6fS1rf3tz2Vo+Bb6a7l5IuJa142PiWgFeEcImO
+         BjOPy710E+k5cBf8eKTueiqMqM3PAL90sG+Fgr0DG0YP0o+srqOUXbvluftpP0aNGNUY
+         Q8qhFx/wPCriuqrc0hMu8BjwvIIad4LANlW4sBmORfFEgnarbaBnCuK47d5Pp9y5DvMo
+         56Lg==
+X-Gm-Message-State: AOJu0YxIgIxL6Sq3+DW72NPx7MpEXpIQ52NsWF9r0z6UcjXgTGwBJ2IA
+	K7t7Cr67vD6ryeoJOjMZXtw57mzk+W+nzaMLVcFuT3aeiaHcZX1DcLIgClsZSCYABrqgwU1Wr4g
+	aVh6mg38kr+eICS2mdDNSXmpAJe2QRIKQvAbGLqSgLw==
+X-Gm-Gg: ASbGnctUc1IpQ+OwEl33HR1XJY+opYjg8EPDJQdMvhUGg216L2R7EVyzzxtf0wNpCVv
+	koyXT0u0gH6Mv+5WHsNe4Fc2dF0TdK0t4UWRH30nbD2zUo00YkKTIPoUqbiFcAqZ8Ge2+8ZNDrF
+	50qzwnQiHW7II3BJxGz+PC/GpITcNI3xKmlfevUn/fQdWBLBgiv8ADa5By/QE9JGdB/9uwQ577x
+	i+7TvOyciJkluCzcngIy7IEUgcWa3IX0t/LqcL6eBy0PLqUYqEBOIBzl87U6XSy3AB4iXM=
+X-Google-Smtp-Source: AGHT+IGzBCxItR5F/c1tm+Myz9Jj9DUiAidCyH8elbUYYK5ed+2hTXSOvUuPWDsQh1/9f6VcI8TQwGH/v+rs7F/04hY=
+X-Received: by 2002:a05:690c:4d09:b0:786:4fd5:e5df with SMTP id
+ 00721157ae682-787d541af70mr109409167b3.39.1762863284723; Tue, 11 Nov 2025
+ 04:14:44 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] RDMA/rxe: Avoid -Wflex-array-member-not-at-end
- warnings
-To: Leon Romanovsky <leon@kernel.org>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Zhu Yanjun <zyjzyj2000@gmail.com>, Jason Gunthorpe <jgg@ziepe.ca>,
- linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org
-References: <aRKu5lNV04Sq82IG@kspp> <20251111115621.GO15456@unreal>
-Content-Language: en-US
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-In-Reply-To: <20251111115621.GO15456@unreal>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 106.72.98.64
-X-Source-L: No
-X-Exim-ID: 1vInGI-00000002Z9Q-2mWK
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: m106072098064.v4.enabler.ne.jp ([10.221.86.44]) [106.72.98.64]:45116
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 2
-X-Org: HG=hgshared;ORG=hostgator;
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfKIxa9f703PSiV+TIuYvSGUFdHBNABfkPjtyiL13jDYr806yFn6EcivUFUQcJ2DE/tQ7jybNXLXP1FyKKL5BcKoRXBnQYxMokqN24m0HZAPlI3KKhID/
- KMeny4+r0YSP8F8pRVRpPwLL8mC8dCyp8fh3ICJwXPNj7t7Vsoi/jlGsBsaqiMdot/TJAgf7vDMQE6f+dQ5mvgMY7cGbG7UFbdRM66Z1m2YM6V4nzhytnrKr
+References: <20251111060009.1959425-1-rdunlap@infradead.org>
+In-Reply-To: <20251111060009.1959425-1-rdunlap@infradead.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 11 Nov 2025 13:14:27 +0100
+X-Gm-Features: AWmQ_bmQmQW8jMVRgz5D2rAorGCeiuZeYk9-nDFNHjG3RHER32SRPEoKMrN-RAk
+Message-ID: <CACRpkdZFmdicvsr+yhmXLHTJSSrVdoZuVwdRm_3_pC3QibicwQ@mail.gmail.com>
+Subject: Re: [PATCH] power: supply: ab8500_chargalg: improve kernel-doc
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: linux-kernel@vger.kernel.org, Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Nov 11, 2025 at 7:00=E2=80=AFAM Randy Dunlap <rdunlap@infradead.org=
+> wrote:
 
+> Correct "bad line" warnings and add descriptions for missing entries
+> to avoid these warnings:
+>
+> ab8500_chargalg.c:173: warning: bad line:  is set
+> ab8500_chargalg.c:179: warning: bad line:  increased
+> ab8500_chargalg.c:247: warning: Function parameter or struct member
+>  't_hyst_norm' not described in 'ab8500_chargalg'
+> ab8500_chargalg.c:247: warning: Function parameter or struct member
+>  't_hyst_lowhigh' not described in 'ab8500_chargalg'
+> ab8500_chargalg.c:247: warning: Function parameter or struct member
+>  'ccm' not described in 'ab8500_chargalg'
+> ab8500_chargalg.c:247: warning: Function parameter or struct member
+>  'ac_chg' not described in 'ab8500_chargalg'
+> ab8500_chargalg.c:247: warning: Function parameter or struct member
+>  'usb_chg' not described in 'ab8500_chargalg'
+> ab8500_chargalg.c:308: warning: Function parameter or struct member
+>  'state' not described in 'ab8500_chargalg_state_to'
+> ab8500_chargalg.c:773: warning: Function parameter or struct member
+>  'di' not described in 'ab8500_chargalg_chg_curr_maxim'
+>
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
 
-On 11/11/25 20:56, Leon Romanovsky wrote:
-> On Tue, Nov 11, 2025 at 12:35:02PM +0900, Gustavo A. R. Silva wrote:
->> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
->> getting ready to enable it, globally.
->>
->> Use the new TRAILING_OVERLAP() helper to fix the following warning:
->>
->> 21 drivers/infiniband/sw/rxe/rxe_verbs.h:271:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
->>
->> This helper creates a union between a flexible-array member (FAM) and a
->> set of MEMBERS that would otherwise follow it.
->>
->> This overlays the trailing MEMBER struct ib_sge sge[RXE_MAX_SGE]; onto
->> the FAM struct rxe_recv_wqe::dma.sge, while keeping the FAM and the
->> start of MEMBER aligned.
->>
->> The static_assert() ensures this alignment remains, and it's
->> intentionally placed inmediately after the related structure --no
->> blank line in between.
->>
->> Lastly, move the conflicting declaration struct rxe_resp_info resp;
->> to the end of the corresponding structure.
->>
->> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
->> ---
->>   drivers/infiniband/sw/rxe/rxe_verbs.h | 18 +++++++++++-------
->>   1 file changed, 11 insertions(+), 7 deletions(-)
->>
->> diff --git a/drivers/infiniband/sw/rxe/rxe_verbs.h b/drivers/infiniband/sw/rxe/rxe_verbs.h
->> index fd48075810dd..6498d61e8956 100644
->> --- a/drivers/infiniband/sw/rxe/rxe_verbs.h
->> +++ b/drivers/infiniband/sw/rxe/rxe_verbs.h
->> @@ -219,12 +219,6 @@ struct rxe_resp_info {
->>   	u32			rkey;
->>   	u32			length;
->>   
->> -	/* SRQ only */
->> -	struct {
->> -		struct rxe_recv_wqe	wqe;
->> -		struct ib_sge		sge[RXE_MAX_SGE];
->> -	} srq_wqe;
->> -
->>   	/* Responder resources. It's a circular list where the oldest
->>   	 * resource is dropped first.
->>   	 */
->> @@ -232,7 +226,15 @@ struct rxe_resp_info {
->>   	unsigned int		res_head;
->>   	unsigned int		res_tail;
->>   	struct resp_res		*res;
->> +
->> +	/* SRQ only */
->> +	/* Must be last as it ends in a flexible-array member. */
->> +	TRAILING_OVERLAP(struct rxe_recv_wqe, wqe, dma.sge,
->> +		struct ib_sge		sge[RXE_MAX_SGE];
->> +	) srq_wqe;
-> 
-> Will this change be enough?
-> 
-> diff --git a/drivers/infiniband/sw/rxe/rxe_verbs.h b/drivers/infiniband/sw/rxe/rxe_verbs.h
-> index fd48075810dd..9ab11421a585 100644
-> --- a/drivers/infiniband/sw/rxe/rxe_verbs.h
-> +++ b/drivers/infiniband/sw/rxe/rxe_verbs.h
-> @@ -219,12 +219,6 @@ struct rxe_resp_info {
->          u32                     rkey;
->          u32                     length;
->   
-> -       /* SRQ only */
-> -       struct {
-> -               struct rxe_recv_wqe     wqe;
-> -               struct ib_sge           sge[RXE_MAX_SGE];
-> -       } srq_wqe;
-> -
->          /* Responder resources. It's a circular list where the oldest
->           * resource is dropped first.
->           */
-> @@ -232,6 +226,12 @@ struct rxe_resp_info {
->          unsigned int            res_head;
->          unsigned int            res_tail;
->          struct resp_res         *res;
-> +
-> +       /* SRQ only */
-> +       struct {
-> +               struct ib_sge           sge[RXE_MAX_SGE];
-> +               struct rxe_recv_wqe     wqe;
-> +       } srq_wqe;
->   };
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-The question is if this is really what you want?
+Thanks for fixing this Randy!
 
-sge[RXE_MAX_SGE] is of the following type:
-
-struct ib_sge {
-         u64     addr;
-         u32     length;
-         u32     lkey;
-};
-
-and struct rxe_recv_wqe::dma.sge[] is of type:
-
-struct rxe_sge {
-         __aligned_u64 addr;
-         __u32   length;
-         __u32   lkey;
-};
-
-Both types are basically the same, and the original code looks
-pretty much like what people do when they want to pre-allocate
-a number of elements (of the same element type as the flex array)
-for a flexible-array member.
-
-Based on the above, the change you suggest seems a bit suspicious,
-and I'm not sure that's actually what you want?
-
-Thanks
--Gustavo
-
-
-
-
-
+Yours,
+Linus Walleij
 
