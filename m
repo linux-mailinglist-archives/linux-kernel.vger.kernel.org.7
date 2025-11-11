@@ -1,178 +1,198 @@
-Return-Path: <linux-kernel+bounces-894722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97DF7C4BB03
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 07:38:54 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19A62C4BB12
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 07:39:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7A8A54E2C63
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 06:38:53 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 03E604E79DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 06:39:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 441472D9EE2;
-	Tue, 11 Nov 2025 06:38:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D143C2DAFB9;
+	Tue, 11 Nov 2025 06:39:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jaGwOJsU"
-Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
+	dkim=pass (2048-bit key) header.d=pegatron-corp-partner-google-com.20230601.gappssmtp.com header.i=@pegatron-corp-partner-google-com.20230601.gappssmtp.com header.b="KUE6pxN/"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 208D92D879F
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 06:38:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 512062DAFB0
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 06:39:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762843124; cv=none; b=UBS64+ogCvUwvnVrmHtpMb2TT6HkUnOALV8LKF454yfEVk7s3wogcV8GlSzJtMOACGWqm2Q0EDAsKWfDNcE4PJMrk7P2CydTgJoSe/3WQtbHvFcBAMZTtSR6YJ9KC/UDxWEEAeEpocinwpDa6SjtUrCk99AKhSFR6+1XmVDHhhc=
+	t=1762843151; cv=none; b=N6A2kN0d9eNfsU1ZxSGNnFGCW/1Qr3AqN+bN+Xk1I3DrFqwpMcn/plcvtZEhLaozDDey6myP2S2R4KeUigwvefBsQmyjslhcF0xMNCJ8Cz0gO4uOru18MhxefypubXrg0WcLgydRjr0nJ0a2VlbMKGdImJYir0Tzyj9IrEXHdgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762843124; c=relaxed/simple;
-	bh=Xl+bV7FTMz6YY5XMNc5QfCxFXt9tSNW93X8te6PCvC0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QTOP/PJSAoTM+aFX8OY21BzQXNK7M3xU/HZQjJBzQqbvCdNiF79boBytYw7hQNkcrTtuzFKCa39RMlHtk4r0tXTH/aHn/dcics5jtGu9nyF4fqfotHEcN7jqIEFsEAN/6AQy0l0cSe2YEUhXNQMZgVDnp9g8n1mLK/as+yVFvBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jaGwOJsU; arc=none smtp.client-ip=209.85.166.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-93e7d3648a8so154328439f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 22:38:42 -0800 (PST)
+	s=arc-20240116; t=1762843151; c=relaxed/simple;
+	bh=76ABllftNutziPZMfTsAUOfZ4NSqPsrwSGo7hCu81bQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=W4R+nE1WLMw4WjFXsJGaPVzdgxD1logEeHix6tT62YCFyhYiVo77I4Qgtlqh/N3O0strusHINaShGe3umdtifzfMsT/Vhy/YnKZyiyzI2EYT5LTJrM6I0Mu+kfnnNeJ8CXVZGge/J39GwGRZsCL27rDlGXwe1YxUVj5TuvKrLhI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=pegatron.corp-partner.google.com; spf=pass smtp.mailfrom=pegatron.corp-partner.google.com; dkim=pass (2048-bit key) header.d=pegatron-corp-partner-google-com.20230601.gappssmtp.com header.i=@pegatron-corp-partner-google-com.20230601.gappssmtp.com header.b=KUE6pxN/; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=pegatron.corp-partner.google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pegatron.corp-partner.google.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-34372216275so3140077a91.2
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 22:39:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762843122; x=1763447922; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=euqY12f4XAJaMQMQzg4Wpf+lFNr4mTaEKvgVSPURHhY=;
-        b=jaGwOJsUZMZr1jiRrsNHmVqy35q7rOI6W5pkzttJjG+ee6JzphMOKTWsnG3z/6JdI1
-         s+PlJv4caLqJcShxCZ02E61LBBmFQoKbEjjtmJR7IAsS4K5y9+0Mol3It5UwOfx5SV50
-         QOsdgv67VmyhaaMBJmbPZ/8CI2eP2ZrxN8V/pmtaf7lRd8zydw2PziEHTDsWn+vpETQm
-         rV8r6IfbufZZi/QxvbJvsWr/MKxNc54AIqKnOT7WyOyHD6YPjRspW09euP1sEzqXtGGE
-         Yjo5nvpzEAm6kpLoouxSBZpjDHgaRdNtfqzc2PQ6DDF0mE4pb11InpD+ceyukQUnnHly
-         6eSw==
+        d=pegatron-corp-partner-google-com.20230601.gappssmtp.com; s=20230601; t=1762843148; x=1763447948; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0TxzvcO8Ijul3ALJ59ZtrQlKnZ0E0zof1tiecvpAdh0=;
+        b=KUE6pxN/2usja5SEEKiQl6lYp4Fpb96ubwL9vmzDOsrK+mMCLhpvEdaB4q4NLcYIVn
+         lPZ+2K56pZ5uF/Djrg2BNaeolH4g9ZIjUZHJN2/SGoAv35yt8hnaVjMkCIR+zWk2mqtx
+         ZATxB/jeijnrQtCimMBkqPKhi5AFad6Q7kSdl+54BgmI/QtOAe/1d0TcL18bE2W96bRv
+         gm4wDUdmHLNiDYXKNkyUJBHUwder/JQuwQMq15FKi0UZDHfS8IjUFHTBgs7daEV6j/wM
+         X1WLjgIOKpt5qYnZjJ4GIVFxBBKbXPGayz0HYfV9N/php1w0YB47lkhhsnkJjFv2veSM
+         lTtA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762843122; x=1763447922;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=euqY12f4XAJaMQMQzg4Wpf+lFNr4mTaEKvgVSPURHhY=;
-        b=TAJGScLoZqA+hqjq6CudxhAPSi4ofINQdUJzrFtpSaXLmVTY1hOsENRc8jCvyps7dp
-         LjHF58uBpbs9KgbkZSBP7GoKKTlHKCmwmE0TpjtjY6Qhd97mHPAqVBRJann1VwLe2KEI
-         C0aE7EGVGmS3XXkILm+IU2/6oLUQN0CXOG2vzhY/pWnUcv94912vmbapwv7mMuDALFdP
-         WhmWbZKKiCCqwe2uNq0MCXG26Wp+t4zkpvWyK3JJhsO7ZPnbWfpZ6hc3p//wZkb/vaaV
-         xVHi95lnO5imiQyrgiAqqZAdZxXqg0B3mguWKLPp0aYBj/BRzG7OuvyWy2Tb5vFlFop+
-         eKSA==
-X-Gm-Message-State: AOJu0YwhdU8/+B6xMutwxilFCecsrURYer8cRM2D7AhEG11gMztKSCBF
-	xVlEg04RismIUuB7Syf3prGDP0xCtRvGvqDfTQv+tqi5P7lzR3Xy6MpLXiq44rnBNMnqIpYOY3E
-	RDkVPuiPx8q0gz9LnyDfOjuL6kwEmgcs=
-X-Gm-Gg: ASbGncueLTQK9HFX5Q9t2KhtyYV4hqWEbQQejpxMmYVyQ5/iE80s/w2G9Ff3c/26oNi
-	btwWDbwYBy7EqgJecvlGSAyXmePpWJiF3k8tlM6/mzaGksR/7f/aVXu8naatH5CI8cGRafuntQo
-	vtkbRzDqGRsLPB8TcUM8YILlt715MKMzvEEPoFg+nbZ9+tkBoa+6dMoOldKMBjR3A8LMDM5bK94
-	Denr/exEbcGDdAGR40AMl/I7tAGuunJMYzLH+7QFaQ2OHwco0GTMAeaNzL6GA==
-X-Google-Smtp-Source: AGHT+IFeRoakPRE8zi8k/oOfrR5pGfeZ4LbIVSqGrdkQqduDKfojeT6f0hQHugs1QFF1bO+YSrrqClPiCfH+kAuQvdc=
-X-Received: by 2002:a05:6e02:216d:b0:431:d864:366a with SMTP id
- e9e14a558f8ab-43367dda177mr162444325ab.2.1762843122159; Mon, 10 Nov 2025
- 22:38:42 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762843148; x=1763447948;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0TxzvcO8Ijul3ALJ59ZtrQlKnZ0E0zof1tiecvpAdh0=;
+        b=T8StYLunJbQGv/1FLHzV/MUzn87ICSOReLqIsNbq85D/O8xwoMV3oSkOCa0zO2kn8K
+         OQPXXIiADrwJbSkcMH8ZsDPzdhsHSdcuiahbgydrUhfuTA+UgAN19bGDa3axdFfZo+2o
+         E0JWhhL1dMvFms6U6bi8WpR63613KfMFRrPvy503NQlSL4Op4PKecZcym4eiKSgwDjG5
+         QLJ1hBgAYgPw11XtmaYciokEbKru9TJqGvB+8CB+MTISw+MahrFxAJquej5vPGLfOWe2
+         Ac18kTUfjBbpm8LV9K6QKqjJqasCCDXxoQuXGExUtZoZGmC0kVX+s8O9Pegk1u6SmIfN
+         FmkQ==
+X-Gm-Message-State: AOJu0YyubcygrNEJVt+YLT6evCOPWL+cJ1CnLXgjnIijUOqcuXLxz5ys
+	fh3MivAoRVJf+JCqICkslwjaE9kBlHjLwMZpYK4oMMwp/Sv8si86XNGk4Jmz8uXI2Q==
+X-Gm-Gg: ASbGnctMs9SsrYZ0CCeLV0OAp4PWXtfoqgXNERszLi8dl8/lRiMrhxTd67uHKyMHXmb
+	ElLmomq1vlIrNKAECvUcW3Zc80XUcbLpPDXy52pymuoH44yUQehaYD12w+czW/zntuf7PVq3Rtv
+	aeGp/Ej89TeELk00EP613u6lmwQ4BS8xPNeoqzKHYwrLZkym2DPlDPDZ9oVxXPTaJgOKzJgs+z4
+	nD5LY1nw7z63kqJyWPrjGMPrwHHm5o6zdxzW4l1SOkmtRrRzsFqdoXCOdXKSqsF0c4cCwqn6in9
+	/dGl9S2vzEJkMy+CLI6Of4pf+d5LpiVm1o5SlgdO4fZtg2s5ktYIklqdmsgXAwuclnSObsffdLR
+	Jf82hKPCUc3dFILAVvaM0ecH/Rb0cSg1Nnj5unvwfqaFUbx8tBrPj9PDEgGfdKkSlOw6Bt9AgEX
+	qe3Bm+QbIdzOU+7qP5ww2RzyaOdMeaEDrgeCRhxR3ehBS6CXlQkH9w997GE52zDYa9AS42xZeLi
+	uD90eBpIrkWlokU9TDOb9H3GUKIHbcjZUbtfM7nHaJNHa+qOnDc283w4DmIQna4K5lbGBg=
+X-Google-Smtp-Source: AGHT+IG5KqPahXbbmibL5vikOZZx0fOqdq9+WZQW+1be30DeSfCc7ofE7W/ExoFor7vmsaV/es1lpA==
+X-Received: by 2002:a17:90b:4a4d:b0:340:dd2c:a3d9 with SMTP id 98e67ed59e1d1-3436cb29cafmr17037940a91.12.1762843148630;
+        Mon, 10 Nov 2025 22:39:08 -0800 (PST)
+Received: from sw-TUF-Gaming-FX505GU-FX505GU.. (2001-b400-e2ac-65d6-f177-1588-49fc-6b55.emome-ip6.hinet.net. [2001:b400:e2ac:65d6:f177:1588:49fc:6b55])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-ba8f9ed1e73sm15237243a12.12.2025.11.10.22.39.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Nov 2025 22:39:08 -0800 (PST)
+From: daniel_peng@pegatron.corp-partner.google.com
+X-Google-Original-From: Daniel_Peng@pegatron.corp-partner.google.com
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-input@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Daniel Peng <Daniel_Peng@pegatron.corp-partner.google.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	devicetree@vger.kernel.org
+Subject: [PATCH 1/2] dt-bindings: input: i2c-hid: Introduce FocalTech FT8112
+Date: Tue, 11 Nov 2025 14:38:59 +0800
+Message-Id: <20251111143853.1.I76ee34ac45e1469dbeb11de0d1e47d794af7dc88@changeid>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251015094117.535157-1-rk0006818@gmail.com> <CAKY2RybBidcyMtUY8mwyT=F2e5f=HT9HR6JXmgz+UyU6_S3kUQ@mail.gmail.com>
- <26032cb1-53c6-46a1-b3eb-e1876142bf1c@kernel.org>
-In-Reply-To: <26032cb1-53c6-46a1-b3eb-e1876142bf1c@kernel.org>
-From: Rahul Kumar <rk0006818@gmail.com>
-Date: Tue, 11 Nov 2025 12:08:31 +0530
-X-Gm-Features: AWmQ_bkXO6wyq1jlR5vqIwoGltTDZvA3BFaS9rpCJPD8ZK7lPKgSIKGBD1uL6n4
-Message-ID: <CAKY2Ryb60yKh1ooFoF4VSTwSdR2srBVMTvFAy7PwVmxE__+SDg@mail.gmail.com>
-Subject: Re: [PATCH] firmware: stratix10-rsu: replace scnprintf() with
- sysfs_emit() in *_show() functions
-To: Dinh Nguyen <dinguyen@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev, 
-	skhan@linuxfoundation.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Nov 4, 2025 at 10:15=E2=80=AFAM Dinh Nguyen <dinguyen@kernel.org> w=
-rote:
->
->
->
-> On 11/2/25 23:55, Rahul Kumar wrote:
-> > On Wed, Oct 15, 2025 at 3:11=E2=80=AFPM Rahul Kumar <rk0006818@gmail.co=
-m> wrote:
-> >>
-> >> Replace scnprintf() with sysfs_emit() in sysfs *_show() functions
-> >> in stratix10-rsu.c to follow the kernel's guidelines from
-> >> Documentation/filesystems/sysfs.rst.
-> >>
-> >> This improves consistency, safety, and makes the code easier to
-> >> maintain and update in the future.
-> >>
-> >> Signed-off-by: Rahul Kumar <rk0006818@gmail.com>
-> >> ---
-> >>   drivers/firmware/stratix10-rsu.c | 7 +++----
-> >>   1 file changed, 3 insertions(+), 4 deletions(-)
-> >>
-> >> diff --git a/drivers/firmware/stratix10-rsu.c b/drivers/firmware/strat=
-ix10-rsu.c
-> >> index 1ea39a0a76c7..53c896ceca9a 100644
-> >> --- a/drivers/firmware/stratix10-rsu.c
-> >> +++ b/drivers/firmware/stratix10-rsu.c
-> >> @@ -454,8 +454,7 @@ static ssize_t max_retry_show(struct device *dev,
-> >>          if (!priv)
-> >>                  return -ENODEV;
-> >>
-> >> -       return scnprintf(buf, sizeof(priv->max_retry),
-> >> -                        "0x%08x\n", priv->max_retry);
-> >> +       return sysfs_emit(buf, "0x%08x\n", priv->max_retry);
-> >>   }
-> >>
-> >>   static ssize_t dcmf0_show(struct device *dev,
-> >> @@ -632,7 +631,7 @@ static ssize_t spt0_address_show(struct device *de=
-v,
-> >>          if (priv->spt0_address =3D=3D INVALID_SPT_ADDRESS)
-> >>                  return -EIO;
-> >>
-> >> -       return scnprintf(buf, PAGE_SIZE, "0x%08lx\n", priv->spt0_addre=
-ss);
-> >> +       return sysfs_emit(buf, "0x%08lx\n", priv->spt0_address);
-> >>   }
-> >>
-> >>   static ssize_t spt1_address_show(struct device *dev,
-> >> @@ -646,7 +645,7 @@ static ssize_t spt1_address_show(struct device *de=
-v,
-> >>          if (priv->spt1_address =3D=3D INVALID_SPT_ADDRESS)
-> >>                  return -EIO;
-> >>
-> >> -       return scnprintf(buf, PAGE_SIZE, "0x%08lx\n", priv->spt1_addre=
-ss);
-> >> +       return sysfs_emit(buf, "0x%08lx\n", priv->spt1_address);
-> >>   }
-> >>
-> >>   static DEVICE_ATTR_RO(current_image);
-> >> --
-> >> 2.43.0
-> >>
-> >
-> > Hi Dinguyen,
-> >
-> > Just following up to see if you=E2=80=99ve had a chance to review this =
-patch,
-> > or if there=E2=80=99s anything more needed from my side.
-> >
-> > Link to v1:
-> > https://lore.kernel.org/all/20251015094117.535157-1-rk0006818@gmail.com=
-/
-> >
-> > Thanks,
-> > Rahul
->
-> Sorry about that. I've applied it.
->
-> Thanks,
-> Dinh
->
+From: Daniel Peng <Daniel_Peng@pegatron.corp-partner.google.com>
 
-Hi Dinh,
+The FocalTech FT8112 touch screen chip same as Ilitek ili2901 controller
+has a reset gpio. The difference is that they have different
+post_gpio_reset_on_delay_ms.
+FocalTech FT8112 also uses 3.3V power supply.
 
-Could you please share the commit ID where this patch was applied?
+Signed-off-by: Daniel Peng <Daniel_Peng@pegatron.corp-partner.google.com>
+---
 
-Thanks,
-Rahul
+ .../bindings/input/focaltech,ft8112.yaml      | 66 +++++++++++++++++++
+ MAINTAINERS                                   |  1 +
+ 2 files changed, 67 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/input/focaltech,ft8112.yaml
+
+diff --git a/Documentation/devicetree/bindings/input/focaltech,ft8112.yaml b/Documentation/devicetree/bindings/input/focaltech,ft8112.yaml
+new file mode 100644
+index 000000000000..114288787c98
+--- /dev/null
++++ b/Documentation/devicetree/bindings/input/focaltech,ft8112.yaml
+@@ -0,0 +1,66 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/input/focaltech,ft8112.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: FocalTech FT8112 touchscreen controller
++
++maintainers:
++  - Dmitry Torokhov <dmitry.torokhov@gmail.com>
++
++description:
++  Supports the FocalTech FT8112 touchscreen controller.
++  This touchscreen controller uses the i2c-hid protocol with a reset GPIO.
++
++allOf:
++  - $ref: /schemas/input/touchscreen/touchscreen.yaml#
++
++properties:
++  compatible:
++    enum:
++      - focaltech,ft8112
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  panel: true
++
++  reset-gpios:
++    maxItems: 1
++
++  vcc33-supply: true
++
++  vccio-supply: true
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - vcc33-supply
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/gpio/gpio.h>
++    #include <dt-bindings/interrupt-controller/irq.h>
++
++    i2c {
++      #address-cells = <1>;
++      #size-cells = <0>;
++
++      touchscreen@38 {
++        compatible = "focaltech,ft8112";
++        reg = <0x38>;
++
++        interrupt-parent = <&pio>;
++        interrupts = <15 IRQ_TYPE_LEVEL_LOW>;
++
++        reset-gpios = <&pio 126 GPIO_ACTIVE_LOW>;
++        vcc33-supply = <&pp3300_tchscr_x>;
++      };
++    };
+diff --git a/MAINTAINERS b/MAINTAINERS
+index ddecf1ef3bed..69f54515fe98 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -12326,6 +12326,7 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git
+ F:	Documentation/devicetree/bindings/input/
+ F:	Documentation/devicetree/bindings/serio/
+ F:	Documentation/input/
++F:	drivers/hid/
+ F:	drivers/input/
+ F:	include/dt-bindings/input/
+ F:	include/linux/gameport.h
+-- 
+2.34.1
+
 
