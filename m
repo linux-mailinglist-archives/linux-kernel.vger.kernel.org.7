@@ -1,160 +1,243 @@
-Return-Path: <linux-kernel+bounces-895794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52873C4EEE1
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:06:11 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 094EFC4EE7E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:01:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2106C3AEA30
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:04:59 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 00A6B34C644
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:01:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82C5436A003;
-	Tue, 11 Nov 2025 16:04:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 041A835A145;
+	Tue, 11 Nov 2025 16:01:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VbCJMYhd";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="6pHBM9+S"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qV3GyQs8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6018F2E719C;
-	Tue, 11 Nov 2025 16:04:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C1A02206B1;
+	Tue, 11 Nov 2025 16:01:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762877093; cv=none; b=ctQKo1giGNJD5WctbQMKu1FqFMvmiqDuPf8RQ6vLhdKxzniRp4S9chfDygSkuvQ710ZWNt7pqIdP89VLxLxysCUjZ4aJOTjbYqh4UFGCV811oAjqfA68zMrOVmvYOzobFgkF6gMOMLaSsRdm3GZCZ2rcY5805uquNl/st5USoss=
+	t=1762876863; cv=none; b=k6nOrrsRF0MwSes658vmTJOszbe2EJ7ScRiHFnxsLvGcqvcp3cS0OpIz/XS9p38ROIC+wuYFX7rcjVmHWBqBsDunFhWDrYkNCwyPodWJcgtEeS1AA8/jdnEKWMoCRBdrazb2ZlLYvo4O5Sgts8LCLdlaOnIckUErlVBNervjvS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762877093; c=relaxed/simple;
-	bh=Kh+CbdpJzlLjFO2RQf5VgnmnC0RJatj+pA/eOLJdFhk=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=rM4fhTzB41U/YxyHep9HI+Ydqp6bD1Xlj0nEU1IJzisO322kYrneuuZAUaswkWL1H9DkYA4YhYPAdIdf4zsrRKPtblMVVrSduahecMvTQbJiboIXxnbbI3GO3/8NKdx4IN07m9DteTn710nEZa9wnFz0urQGSpz33z6AWZR3O7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VbCJMYhd; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=6pHBM9+S; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 11 Nov 2025 16:04:49 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1762877090;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sxsF2MAMuL/4sSmDliSZQfPcjhD4gnZBfS2ezJFc0uI=;
-	b=VbCJMYhd9kJWlLU+VDm05Zxy24zLAA3+n35T5ag7fIv5JYWj8IpkengFlj1x7nj4JQ6wjq
-	igKWbu0J2uEl9tBVG9doht57YlcAt9Jndu2p1AVGjF6+fRTU1E09EuoGr+u0nLLkDOquof
-	Iwz/w0oO3gG0R0b2rH84SbUp4eS4b1WcBrX9xdJTZvNfvzkLEcuq3eD21Gc77HE7dPZv4W
-	BH1D4s3LpzH0ebUmZuam2G8QGw0kp8557atGYG2Plj/STPu5oblH47m/2ifLtOkLagnug1
-	qYpb4dqRTUJv4KTHA9bhCvtty+AkM7XVa3AmYPXt8w6shiXsAabxENK2XavlKQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1762877090;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sxsF2MAMuL/4sSmDliSZQfPcjhD4gnZBfS2ezJFc0uI=;
-	b=6pHBM9+SSK9fHzHWOSJNuysgAtckg9sUCU0qyPTlIMv98S7S+rAiBZhQGcsTZgkp/qSA78
-	k0sIJHu5yf+p99Aw==
-From: "tip-bot2 for Borislav Petkov (AMD)" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/sev] x86/coco/sev: Convert has_cpuflag() to use
- cpu_feature_enabled()
-Cc: "Borislav Petkov (AMD)" <bp@alien8.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20251031122122.GKaQSpwhLvkinKKbjG@fat_crate.local>
-References: <20251031122122.GKaQSpwhLvkinKKbjG@fat_crate.local>
+	s=arc-20240116; t=1762876863; c=relaxed/simple;
+	bh=x2LU0thFSSuPq/OjMolvm49WhjmuHNP9Ts4P8vdNtEM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aVAEpcVtFl/A3BXaUgrMkCgoCRCDWMGxFBCAaF7kk0+qMQhQsruQXwQzCfNvD3FR+UF0U6nrtqzPjoL0vOdcVC8u09tlVVrathK2/mVLwLKZ7pGhSbMu3QS5re7IIurY0O9ewpJPQR7fVeIcZ4nLbnUHKlPd3ozG+FjVqHzjNj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qV3GyQs8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20581C4CEF5;
+	Tue, 11 Nov 2025 16:01:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762876863;
+	bh=x2LU0thFSSuPq/OjMolvm49WhjmuHNP9Ts4P8vdNtEM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qV3GyQs81nb3kEPzLD+BOl5YmH4WVTLWWA0DCOIxJvb1U/r0mF8UyHXPxN61I+j9x
+	 ZNnp5biuZeXOY1pvKimSzKTfTvGOFu6aQDyJCWrQliD1kz0z9FGtN2SsZJsQMJyWbO
+	 f7Cjvz8h3WsmCuQogGbrsttvw6UdQL3N73rCBZil3gxmp+c1mTIzPz0F+83dIYYa8y
+	 dwFf2FPMW7t+Dy8X2FK+NmaEFzNm6ryn3InCnvKPYfIEuZSGisyvBebUrgwqcOaGPN
+	 SBMIEuB7NUpFhd595AYbyET+cg2eY2TU4X5VKowr1geMeN4Ghe4tD7uIf/SFsCn2hc
+	 wSAbL424Xbl+w==
+Date: Tue, 11 Nov 2025 10:05:14 -0600
+From: Bjorn Andersson <andersson@kernel.org>
+To: "Aiqun(Maria) Yu" <aiqun.yu@oss.qualcomm.com>
+Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+	Jingyi Wang <jingyi.wang@oss.qualcomm.com>, Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com
+Subject: Re: [PATCH] dt-bindings: mfd: qcom,tcsr: Add compatible for Kaanapali
+Message-ID: <br3fmilhh7fihv4atnf4olvy4w66z4p7sh4ypicuc3766ky6tb@pppfdynfhfz7>
+References: <20250924-knp-mfd-v1-1-6c8a98760e95@oss.qualcomm.com>
+ <b623c7f6-f28f-49ba-b6f6-25084117a6b3@oss.qualcomm.com>
+ <l4mb5pi7kz7uuq6o3eueoxl2ngt2sdd6dv3kyudw6i54co5v5h@w6ya2nuas322>
+ <ad00835e-bc20-4f97-aba6-e1b4f5e97191@oss.qualcomm.com>
+ <f2q7a7r7quq6pplcn3kklwrhdc6hxa5zvc7osygshtyurwyvi4@t5iyragt7irh>
+ <b5ecf5e7-4dc4-41ac-9b56-7c52afacb950@oss.qualcomm.com>
+ <01de9616-825b-4fbb-83cf-e0bf91e8cf39@oss.qualcomm.com>
+ <81174278-c3c4-4dc6-856e-b58aa2cb6fea@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <176287708918.498.7568806227528588666.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <81174278-c3c4-4dc6-856e-b58aa2cb6fea@oss.qualcomm.com>
 
-The following commit has been merged into the x86/sev branch of tip:
+On Tue, Nov 11, 2025 at 08:27:17PM +0800, Aiqun(Maria) Yu wrote:
+> On 11/7/2025 12:24 AM, Konrad Dybcio wrote:
+> > On 11/6/25 11:16 AM, Aiqun(Maria) Yu wrote:
+> >> On 11/6/2025 5:06 AM, Bjorn Andersson wrote:
+> >>> On Tue, Nov 04, 2025 at 01:35:01PM +0800, Jingyi Wang wrote:
+> >>>>
+> >>>>
+> >>>> On 11/4/2025 12:02 PM, Bjorn Andersson wrote:
+> >>>>> On Tue, Nov 04, 2025 at 11:34:25AM +0800, Aiqun(Maria) Yu wrote:
+> >>>>>> On 9/25/2025 7:23 AM, Jingyi Wang wrote:
+> >>>>>>> Document the qcom,tcsr-kaanapali compatible, tcsr will provide various
+> >>>>>>> control and status functions for their peripherals.
+> >>>>>>>
+> >>>>>>> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+> >>>>>>> ---
+> >>>>>>>  Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml | 1 +
+> >>>>>>>  1 file changed, 1 insertion(+)
+> >>>>>>>
+> >>>>>>> diff --git a/Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml b/Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml
+> >>>>>>> index 14ae3f00ef7e..ae55b0a70766 100644
+> >>>>>>> --- a/Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml
+> >>>>>>> +++ b/Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml
+> >>>>>>> @@ -48,6 +48,7 @@ properties:
+> >>>>>>>            - qcom,tcsr-ipq8064
+> >>>>>>>            - qcom,tcsr-ipq8074
+> >>>>>>>            - qcom,tcsr-ipq9574
+> >>>>>>> +          - qcom,tcsr-kaanapali
+> >>>>>>
+> >>>>>> It looks good to me. Glymur didn't have this functionality verified yet.
+> >>>>>
+> >>>>> You spelled Reviewed-by: Aiqun Yu <..> wrong.
+> >>>>>
+> >>>>>> Remind for review.
+> >>>>>
+> >>>>> No need for that, reviewers will review when they have time.
+> >>>>>
+> >>>>>>
+> >>>>
+> >>>> Hi Bjorn,
+> >>>>
+> >>>>>
+> >>>>> But that said, most modern additions to this binding follow the common
+> >>>>> format of qcom,<soc>-<block>.
+> >>>>>
+> >>>>> So I would prefer this to be qcom,kaanapali-tcsr.
+> >>>>>
+> >>>>> Regards,
+> >>>>> Bjorn
+> >>>>>
+> >>>>
+> >>>> qcom,tcsr-kaanapali is used to distinguish with binding for GCC:
+> >>>> https://lore.kernel.org/all/20251030-gcc_kaanapali-v2-v2-2-a774a587af6f@oss.qualcomm.com/
+> >>>>
+> >>>
+> >>> So, qcom,kaanapali-tcsr is the clock controller region of TCSR and
+> >>> qcom,tcsr-kaanapali is the non-clock controller region of TCSR?
+> >>>
+> >>> Sorry for not understanding that earlier, but this doesn't work for me.
+> >>>
+> >>> It's a bit of a lie that TCSR_MUTEX is a separate node in devicetree,
+> >>> but it's always an nice chunk of 256K in the beginning (or end in some
+> >>> cases?) of TCSR. But for the rest, there should be a single tcsr node in
+> >>> DeviceTree and that one node should be a syscon and a clock controller.
+> >>
+> >> I've been dive deeply on this tcsr block. And actually the tcsr clock
+> >> controller part is a very small trunk size(0x1c) of the tcsr block. And
+> >> this block have contain other multiple purposed sys registers. So maybe
+> >> we can have a more discussion on how to have device tree node describe
+> >> this situation? It is not straight forward that to have a non-tcsrcc
+> >> related area being described in tcsrcc.
+> >>
+> >> What about option 1 (tcsr_mutex + tcsr_dload_syscon + tcsrcc):>> tcsr_mutex: hwlock@1f40000 {
+> >> 	compatible = "qcom,tcsr-mutex";
+> >> 	reg = <0x0 0x01f40000 0x0 0x20000>;
+> >> 	#hwlock-cells = <1>;
+> >> };
+> >>
+> >> tcsr_dload: syscon@1fc0000 {
+> >> 	compatible = "qcom,tcsr-kaanapali", "syscon";
+> >> 	reg = <0x0 0x1fc0000 0x0 0x30000>;
+> >> };
+> >>
+> >> tcsrcc: clock-controller@1fd5044 {
+> >> 	compatible = "qcom,kaanapali-tcsr", "syscon";
+> 
+> Remove "syscon" here. Not need for tcsrcc fallback to "syscon".
+> 
+> >> 	reg = <0x0 0x01fd5044 0x0 0x1c>;
+> >> ...
+> >> };
+> >>
+> >> What about option 2 (tcsr whole block + tcsr_mutex  + tcsrcc):
+> >>
+> >> tcsr: syscon@1f40000 {
+> >> 	compatible = "qcom,tcsr-kaanapali", "syscon";
+> >> 	reg = <0x0 0x1f40000 0x0 0xC0000>; //align with the whole hardware
+> >> block design.
+> >> };
+> >>
+> >> tcsr_mutex: hwlock@1f40000 {
+> >> 	compatible = "qcom,tcsr-mutex";
+> >> 	reg = <0x0 0x01f40000 0x0 0x20000>;
+> >> 	#hwlock-cells = <1>;
+> >> };
+> >>
+> >> tcsrcc: clock-controller@1fd5044 {
+> >> 	compatible = "qcom,kaanapali-tcsr", "syscon";
+> 
+> Same here, don't need to have "syscon" here.
+> 
+> >> 	reg = <0x0 0x01fd5044 0x0 0x1c>;
+> >> ...
+> >> };
+> > 
+> > Is there anything wrong with what we have done for x1e80100?
+> > ______________________
+> > |             |       |
+> > | TCSR_MUTEX  | mutex |
+> > |_____________|_______|
+> > |	      |       |
+> > | RANDOM_REGS |       |
+> > |_____________|       |
+> > |	      |       |
+> > | TCSR_CLKS   | tcsr  |
+> > |_____________|       |
+> > |	      |       |
+> > | RANDOM_REGS |       |
+> > |_____________|_______|
+> > 
+> 
+> Second you! We can firstly have a option selected for kaanapali, and
+> then other platform can be followed or fixed afterwards.
+> 
+> Here suggest to have option 2 which is remove "syscon" from tcsr clocks,
+> and only add the whole "syscon" to "tcsr" whole block.
+> 
 
-Commit-ID:     b2c1dd6c6f70a5a519532227358c82d4cfda5b36
-Gitweb:        https://git.kernel.org/tip/b2c1dd6c6f70a5a519532227358c82d4cfd=
-a5b36
-Author:        Borislav Petkov (AMD) <bp@alien8.de>
-AuthorDate:    Thu, 30 Oct 2025 17:59:11 +01:00
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Tue, 11 Nov 2025 16:42:31 +01:00
+I think you misunderstood Konrad, or perhaps I misunderstand you.
 
-x86/coco/sev: Convert has_cpuflag() to use cpu_feature_enabled()
+This is what we have for Hamoa:
 
-Drop one redundant definition, while at it.
+tcsr_mutex: hwlock@1f40000 {
+        compatible = "qcom,tcsr-mutex";
+        reg = <0 0x01f40000 0 0x20000>;
+        #hwlock-cells = <1>;
+};
 
-There should be no functional changes.
+tcsr: clock-controller@1fc0000 {
+        compatible = "qcom,x1e80100-tcsr", "syscon";
+        reg = <0 0x01fc0000 0 0x30000>;
+        clocks = <&rpmhcc RPMH_CXO_CLK>;
+        #clock-cells = <1>;
+        #reset-cells = <1>;
+};
 
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Link: https://patch.msgid.link/20251031122122.GKaQSpwhLvkinKKbjG@fat_crate.lo=
-cal
----
- arch/x86/boot/startup/sev-shared.c | 2 +-
- arch/x86/coco/sev/vc-handle.c      | 1 -
- arch/x86/coco/sev/vc-shared.c      | 2 +-
- arch/x86/lib/kaslr.c               | 2 +-
- 4 files changed, 3 insertions(+), 4 deletions(-)
+This is exactly what I suggested above and Konrad is asking you why
+this doesn't work for Kaanapali. The addresses are even the same, what
+is the problem?
 
-diff --git a/arch/x86/boot/startup/sev-shared.c b/arch/x86/boot/startup/sev-s=
-hared.c
-index 4e22ffd..a0fa8bb 100644
---- a/arch/x86/boot/startup/sev-shared.c
-+++ b/arch/x86/boot/startup/sev-shared.c
-@@ -12,7 +12,7 @@
- #include <asm/setup_data.h>
-=20
- #ifndef __BOOT_COMPRESSED
--#define has_cpuflag(f)			boot_cpu_has(f)
-+#define has_cpuflag(f)			cpu_feature_enabled(f)
- #else
- #undef WARN
- #define WARN(condition, format...) (!!(condition))
-diff --git a/arch/x86/coco/sev/vc-handle.c b/arch/x86/coco/sev/vc-handle.c
-index 7fc136a..f08c750 100644
---- a/arch/x86/coco/sev/vc-handle.c
-+++ b/arch/x86/coco/sev/vc-handle.c
-@@ -352,7 +352,6 @@ fault:
-=20
- #define sev_printk(fmt, ...)		printk(fmt, ##__VA_ARGS__)
- #define error(v)
--#define has_cpuflag(f)			boot_cpu_has(f)
-=20
- #include "vc-shared.c"
-=20
-diff --git a/arch/x86/coco/sev/vc-shared.c b/arch/x86/coco/sev/vc-shared.c
-index e2ac95d..58b2f98 100644
---- a/arch/x86/coco/sev/vc-shared.c
-+++ b/arch/x86/coco/sev/vc-shared.c
-@@ -1,7 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0
-=20
- #ifndef __BOOT_COMPRESSED
--#define has_cpuflag(f)                  boot_cpu_has(f)
-+#define has_cpuflag(f)                  cpu_feature_enabled(f)
- #endif
-=20
- static enum es_result vc_check_opcode_bytes(struct es_em_ctxt *ctxt,
-diff --git a/arch/x86/lib/kaslr.c b/arch/x86/lib/kaslr.c
-index b589392..8c7cd11 100644
---- a/arch/x86/lib/kaslr.c
-+++ b/arch/x86/lib/kaslr.c
-@@ -22,7 +22,7 @@
- #include <asm/setup.h>
-=20
- #define debug_putstr(v) early_printk("%s", v)
--#define has_cpuflag(f) boot_cpu_has(f)
-+#define has_cpuflag(f) cpu_feature_enabled(f)
- #define get_boot_seed() kaslr_offset()
- #endif
-=20
+Regards,
+Bjorn
+
+> > 
+> > 8750 was different because someone decided to stick the "TCSR clocks"
+> > into the TLMM address space, but it was a one-off
+> > 
+> > Konrad
+> 
+> 
+> -- 
+> Thx and BRs,
+> Aiqun(Maria) Yu
 
