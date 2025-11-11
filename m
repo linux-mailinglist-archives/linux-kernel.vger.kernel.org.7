@@ -1,142 +1,183 @@
-Return-Path: <linux-kernel+bounces-895916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 658A8C4F41D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 18:35:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 449A3C4F443
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 18:37:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18E6E189AEE8
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:36:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0538D18827DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:37:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7D5B3A1CE8;
-	Tue, 11 Nov 2025 17:35:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2BAB3A1CFC;
+	Tue, 11 Nov 2025 17:36:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b="jhB/8hoI"
-Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QJl0QKNY"
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2E483AA1BB;
-	Tue, 11 Nov 2025 17:35:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.153.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C39F3A1CEB
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 17:36:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762882542; cv=none; b=SU/vpBEi/NaI/CIyCHdsjdv8O5ZaMs1IhA6WHc/IyY3Be239byhWPqkTd+NCHx1FcTVzRZY/fVsWpGL0OpKUgmAUbbfsGeA06jb3p7sGGBzNbg0W6s080xQDn01cPO/zAkp1DgiCcuucJDpMu4L11tWCNDP/CL43XEFf2VfYDnc=
+	t=1762882594; cv=none; b=EZLIfj7Nrlh8eB/wOdEXIKxhpBd74if77BSZV4vUcQ1CFRlutWN6aRQEd7WvTWm+lTL3ehjQgRky9lmMGoa+8pKimEoyNTWvWaAZfW+wgK7ixDxknw6WAA/GjPq+qeQmIu9Iin6D6KWJe93ghSRffEvg3wifhkTUwAjm6Q1hsbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762882542; c=relaxed/simple;
-	bh=bZYITAb//HGZ/PK53HRhVxiYBDhYkagJ10l0AcE+do4=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DxEGgivqtZzDPQH0mBDNBu6PmqPbdgNeRB6lLsIHJcnIPkHcq/E1q05ThW6MTb2v/Cc6BlTPKO7pmRHChmhMKrVRL1llWFlOX4KeMU8+fcekjq2m20iTrZC1ImLRjAsIeR9tqclVEQYd1+ODaIkoGueexXXy9Tlk6lHlRd3t170=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b=jhB/8hoI; arc=none smtp.client-ip=67.231.153.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
-Received: from pps.filterd (m0148460.ppops.net [127.0.0.1])
-	by mx0a-00082601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5ABGKcVR2600415;
-	Tue, 11 Nov 2025 09:35:35 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=s2048-2025-q2; bh=1VmrT0oK0iGhp/K108c6
-	n2yMdw8L2qW+yW/LKJlR7r8=; b=jhB/8hoIiwGkHDHZuosISLCqsZPcsW7go/1Z
-	14WbFu84GWH0PDiEAWGTL3q2M8mmZH9UeKcaCNE5JnWnaspHa8NMZbjy3SJN1/ud
-	yNzqPPfWyToCpVYzfYDes4z7f3Pt2k31rTfZxKG0LnTKYCfncNWGEtiQrbRRzxXZ
-	WKG+AUUoy47jBNd/nDi8Tu1auI+sYn+VbUNFEW6j6fTZMHX5tqmJGkrzfada850A
-	XtvAEza9sF16F3akULp3A3XCSI2gYfHu4A2k4L0bksQbuWdFqjICCm3vIMtr4t3Z
-	9aH7xhZtuxYV3akNDPiVH9trvj+GS7Dzd03+sA3odTYWqZGsOw==
-Received: from maileast.thefacebook.com ([163.114.135.16])
-	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 4ac8k50qr6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Tue, 11 Nov 2025 09:35:34 -0800 (PST)
-Received: from devgpu015.cco6.facebook.com (2620:10d:c0a8:1b::2d) by
- mail.thefacebook.com (2620:10d:c0a9:6f::237c) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.2562.20; Tue, 11 Nov 2025 17:35:33 +0000
-Date: Tue, 11 Nov 2025 09:35:31 -0800
-From: Alex Mastro <amastro@fb.com>
-To: Alex Williamson <alex@shazbot.org>
-CC: David Matlack <dmatlack@google.com>, Shuah Khan <shuah@kernel.org>,
-        Jason
- Gunthorpe <jgg@ziepe.ca>, <kvm@vger.kernel.org>,
-        <linux-kselftest@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/4] vfio: selftests: add iova range query helpers
-Message-ID: <aRNz4ynek6siv0FZ@devgpu015.cco6.facebook.com>
-References: <20251111-iova-ranges-v2-0-0fa267ff9b78@fb.com>
- <20251111-iova-ranges-v2-1-0fa267ff9b78@fb.com>
- <20251111100948.513f013b.alex@shazbot.org>
+	s=arc-20240116; t=1762882594; c=relaxed/simple;
+	bh=vOc9u0ifJOE22kl9LSphb/7K/XG0vRAottAKc6D5Sw0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=l/IbsM2pxFKC2d1l/anenMZNsOqBBxccSpwc5xBbBIbty3m0lO982Y977p2IiMpQdDA7yMHKqnQlCJoxXfjWv2LzgOSSVBD1seKW9HmiA77aiGSbi6u5RMtxDPEiZ3YQj8LOGftA8//kTD4T7D967JkTnKRZSBNXZNkWllSddm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QJl0QKNY; arc=none smtp.client-ip=209.85.128.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-7866aca9ff4so46992757b3.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 09:36:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1762882591; x=1763487391; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=XA6PWrvmc2qJTM9ZYge5OX+9jDQ6u156WMpzW0/z6Is=;
+        b=QJl0QKNYGTTW9UrDvvcfK39Uo5UG/t5PnGOO5n7Xw1XKeSMdx9zr471drsF4yVltcx
+         uBfGSMVf0Y0E5hrm/LilBw6ZypLZgo4pAKNFfkxfOSPhCuQXL7vEeAVSaL+ch853fulX
+         1gysxl7FbElP39+gapU+LAUOOlvkVliAIY/JyHbxn2Cvg7pUEAoDfvTdK6obGPZTByrj
+         TLhkVLZ1jSTFnRBltRz4shAZWEvI0kXfcdrY5TrNsO6L4gvicliQOEbxwEHjTizuG9g0
+         s5d+akTX0A8kkEtfM544v3XT5itVHSFOrgjX/Zv/WOJzcuEQKN3RR76wR1vRGZhoGzrP
+         cN6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762882591; x=1763487391;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XA6PWrvmc2qJTM9ZYge5OX+9jDQ6u156WMpzW0/z6Is=;
+        b=CECWf6+G2FjM8FwJG2KsFem9hr9g/dJim+qfkp9Q8EAqlNdLFEXslJIyDruV5L5KPJ
+         JgJMYtksi9OIJ3zKdcBTDF7eWw+g42VAV6Iy95aeza9HoZFzhYicSiNM9bHAdaOGcS15
+         vXI2GxiPS8r7/kT0pOjHTMcAUKUFsfPBSPrQaYe/FAEFwSANKzfwOkKga61qYa/MYOjx
+         C90iKgj32embiWMeZrnpNhF20YdvYrUQA9RxJRjtHP8cI33/Nxc+GKcCyJVDrHjGbgAJ
+         DSZC/cQH+Db4bte5q/bNVAurxq8sfqP115zUma9K1atxI9GhzXq3cWr8Hr8REfG46+qr
+         VxKw==
+X-Forwarded-Encrypted: i=1; AJvYcCVUF8g2PhJV4ScfIOnFAJ2Hj3cNwgdGnrLidTalhzXBNlCGbFWVCvckx5KmmBrKgur0H+Ent1lbAGXMAyE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzvb5xijtZt+AOOD9LebIsf6P81HBJQtM6W9wegSxQLEC1hTpqB
+	yweggW9FXz4Q5xRCYyEPfPmkTkKrsY8SSNMoU0/MEFZYiKnJ9szBV0b+YTTh7D60vnMxWyo3gH0
+	dbVm5hWLucQ4r1j75MQ9V1lWPyHOnju/J4bmhhBEDu1i6AifdW919
+X-Gm-Gg: ASbGncv8+Wr3ySQEpiLdkl+KUNEajXpYiotpCcoSBCd4gII31iSDkYIOnFvGzKEDwSw
+	LBsnMwwGcbPwON8ZwU++afYhXvxv1RuQBR4XIWjhA1tCA/5BCX0zEfxQagdZPHha2Fb5XN+cQn7
+	EvaQlp9NGAS3MlqV3FH46MFnuAEe9Cifn0lalTPlWNu6fZrKkwHuuOH4QKNcXhvW7vFDQCRqVlg
+	qjBfQUsR1p72Px4PNyyHD6/CS3f3/kgraoZje2h94XIER5rHnu9S6G5NATQHw==
+X-Google-Smtp-Source: AGHT+IFNVaNbyyI9YUCZqsi828AI+F+MYdjRQ++XqTpUuZbXJWY5WboMaw0TgPaFbEee0tq1969Cmn0SJICLTOWw/II=
+X-Received: by 2002:a05:690c:63c5:b0:785:cecb:4b1e with SMTP id
+ 00721157ae682-787d53a55c0mr103518557b3.25.1762882591012; Tue, 11 Nov 2025
+ 09:36:31 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20251111100948.513f013b.alex@shazbot.org>
-X-Proofpoint-ORIG-GUID: QMCfOnNg60SOxZedip_bSss0IoH7Lnn2
-X-Authority-Analysis: v=2.4 cv=X95f6WTe c=1 sm=1 tr=0 ts=691373e6 cx=c_pps
- a=MfjaFnPeirRr97d5FC5oHw==:117 a=MfjaFnPeirRr97d5FC5oHw==:17
- a=kj9zAlcOel0A:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=FOH2dFAWAAAA:8 a=gAnhvMwacpa_2wFJLncA:9 a=CjuIK1q_8ugA:10
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTExMDE0MyBTYWx0ZWRfXyIOIECX72vEv
- 4WvyxnSGk875oGuNWM2RzDuzoksf5qXBCiwV3ZwiwvnCThAFlOA2/z1mHhoH0a5ped6iH/SBNCW
- nW7ki7nPSzDNUSBzyA0pv4rkzzZ28V0jiORU2XZCchqg8xITasOybsBT3SmouJerWviQR3AJ3y8
- mI+NdFr6EUf5iyykldGJ5sIoTKWl/KTl1TuMzU79Ad7VxzP4LFJVWnNiQNZInTKKBd+ACq9pLoj
- HJPb94XHckCWh+DmQGfwYy1+FdbyW6zGhq2lbJJMqJ2UH9V9pNlOf68I5uJJ27XNTNVF9uRao76
- lfRCrQO8cUB+Z+NaBAbFyyOxR0/aNgA7BL9aokpJ9wbZomGfoxZ8w0PK1wjT5NitXGfn8FtMEtu
- iKlhvVS6SnoCUL68/vNViqGyH0mC3g==
-X-Proofpoint-GUID: QMCfOnNg60SOxZedip_bSss0IoH7Lnn2
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-11_03,2025-11-11_02,2025-10-01_01
+References: <20251019115133.300-1-hehuan1@eswincomputing.com>
+In-Reply-To: <20251019115133.300-1-hehuan1@eswincomputing.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Tue, 11 Nov 2025 18:35:55 +0100
+X-Gm-Features: AWmQ_bnmC-WTBpmAclXDFzsTT0R9r0mpppDTN3wHQ_0AFNXKLKQGislbIpF3PPo
+Message-ID: <CAPDyKFpoLNeNgKjLcYEu1W40rOOp9mgrbM0gpYmZp-NO4ckzFA@mail.gmail.com>
+Subject: Re: [PATCH v5 0/2] Add support for Eswin EIC7700 SD/eMMC controller
+To: hehuan1@eswincomputing.com
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	jszhang@kernel.org, adrian.hunter@intel.com, p.zabel@pengutronix.de, 
+	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, ningyu@eswincomputing.com, 
+	linmin@eswincomputing.com, pinkesh.vaghela@einfochips.com, 
+	xuxiang@eswincomputing.com, luyulin@eswincomputing.com, 
+	dongxuyang@eswincomputing.com, zhangsenchuan@eswincomputing.com, 
+	weishangjuan@eswincomputing.com, lizhi2@eswincomputing.com, 
+	caohang@eswincomputing.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Nov 11, 2025 at 10:09:48AM -0700, Alex Williamson wrote:
-> On Tue, 11 Nov 2025 06:52:02 -0800
-> Alex Mastro <amastro@fb.com> wrote:
-> > diff --git a/tools/testing/selftests/vfio/lib/vfio_pci_device.c b/tools/testing/selftests/vfio/lib/vfio_pci_device.c
-> > index a381fd253aa7..7a523e3f2dce 100644
-> > --- a/tools/testing/selftests/vfio/lib/vfio_pci_device.c
-> > +++ b/tools/testing/selftests/vfio/lib/vfio_pci_device.c
-> > @@ -29,6 +29,173 @@
-> >  	VFIO_ASSERT_EQ(__ret, 0, "ioctl(%s, %s, %s) returned %d\n", #_fd, #_op, #_arg, __ret); \
-> >  } while (0)
-> >  
-> > +static struct vfio_info_cap_header *next_cap_hdr(void *buf, size_t bufsz,
-> > +						 size_t *cap_offset)
-> > +{
-> > +	struct vfio_info_cap_header *hdr;
-> > +
-> > +	if (!*cap_offset)
-> > +		return NULL;
-> > +
-> > +	VFIO_ASSERT_LT(*cap_offset, bufsz);
-> > +	VFIO_ASSERT_GE(bufsz - *cap_offset, sizeof(*hdr));
-> > +
-> > +	hdr = (struct vfio_info_cap_header *)((u8 *)buf + *cap_offset);
-> > +
-> > +	if (hdr->next)
-> > +		VFIO_ASSERT_GT(hdr->next, *cap_offset);
-> 
-> This might be implementation, but I don't think it's a requirement.
-> The vfio capability chains are based on PCI capabilities, which have no
-> ordering requirement.  Thanks,
+On Sun, 19 Oct 2025 at 13:51, <hehuan1@eswincomputing.com> wrote:
+>
+> From: Huan He <hehuan1@eswincomputing.com>
+>
+> Updates:
+>
+>   Changes in v5:
+>   - Update snps,dwcmshc-sdhci.yaml
+>     - Update description for eswin,hsp-sp-csr
+>     - Fix eswin,hsp-sp-csr property structure to use nested items format
+>     - Remove unnecessary '|' symbol from description field
+>     - Wrap description lines to 80-chars
+>   - Update sdhci-of-dwcmshc.c
+>     - Remove inappropriate Reported-by and Closes tags, as the fixes are part
+>       of this patch
+>     - Fix error code return in eic7700_init() when syscon_node_to_regmap()
+>       fails (return PTR_ERR(hsp_regmap))
+>     - Remove unnecessary clock disable/enable operations when changing clock
+>       rates
+>     - Remove unnecessary parentheses around ~PHY_CNFG_RSTN_DEASSERT in
+>       sdhci_eic7700_config_phy()
+>     - Update misleading comments: change "SDIO specific" to "SD specific" in
+>       tuning logic
+>     - Fix multi-line comment format
+>   - Link to v4: https://lore.kernel.org/all/20251011111039.533-1-hehuan1@eswincomputing.com/
+>
+>   Changes in v4:
+>   - Update sdhci-of-dwcmshc.c
+>     - Address the compile error from kernel test robot
+>       - Remove duplicate implementation of dwcmshc_enable_card_clk()
+>       - Add missing dwcmshc_disable_card_clk() function implementation
+>   - Link to v3: https://lore.kernel.org/all/20251010093807.1579-1-hehuan1@eswincomputing.com/
+>
+>   Changes in v3:
+>   - Update snps,dwcmshc-sdhci.yaml
+>     - Delete clock-output-names, '#clock-cells' and eswin,syscrg-csr
+>     - Update description for eswin,hsp-sp-csr
+>     - Update drive-impedance-ohm
+>     - Update the item of reset-names
+>   - Update sdhci-of-dwcmshc.c
+>     - Add descriptions for PHY registers
+>     - Simplify clock management(remove custom clock provider, use
+>       standard clk API)
+>     - Replace magic numbers with GENMASK() or FIELD_PREP() macros
+>     - Add comments explaining HSP stability assertion writes
+>     - Adjust line wrapping to fit within 100-column
+>     - Delete forward declarations by moving function definitions
+>     - Rename variable is_sdio to is_sd
+>     - Replace unclear macros with meaningful alternatives
+>   - Link to v2: https://lore.kernel.org/all/20250912093451.125-1-hehuan1@eswincomputing.com/
+>
+>   Changes in v2:
+>   - Delete the previous separate driver and yaml binding file
+>   - Update snps,dwcmshc-sdhci.yaml to add support for Eswin EIC7700
+>     - Add the new compautible string: "eswin,eic7700-dwcmshc"
+>     - Add new properties: clock-output-names, '#clock-cells',
+>       drive-impedance-ohm, eswin,hsp-sp-csr and eswin,syscrg-csr
+>     - Add customized reset-names for EIC7700 platform
+>   - Update sdhci-of-dwcmshc.c to add support for Eswin EIC7700
+>     - Add a new struct eic7700_priv to hold Eswin-specific data,
+>       including clock phases, register mappings, and drive
+>       impedance configuration
+>     - Implement EIC7700-specific sdhci_ops
+>       - set_clock: support core clock configuration with phase delay
+>       - reset: add PHY reset and configuration
+>       - set_uhs_signaling: support HS400 DLL lock
+>       - platform_execute_tuning: implement delay line tuning and phase
+>         code adjustment
+>     - Add initialization routine (eic7700_init)
+>     - Integrate the new platform data and ops into the driver's match table
+>   - Link to v1: https://lore.kernel.org/all/20250516091259.774-1-dongxuyang@eswincomputing.com/
+>
+> Huan He (2):
+>   dt-bindings: mmc: sdhci-of-dwcmshc: Add Eswin EIC7700
+>   mmc: sdhci-of-dwcmshc: Add support for Eswin EIC7700
+>
+>  .../bindings/mmc/snps,dwcmshc-sdhci.yaml      |  57 +-
+>  drivers/mmc/host/sdhci-of-dwcmshc.c           | 502 +++++++++++++++++-
+>  2 files changed, 542 insertions(+), 17 deletions(-)
+>
+> --
+> 2.25.1
+>
 
-My main interest was to enforce that the chain doesn't contain a cycle, and
-checking for monotonically increasing cap offset was the simplest way I could
-think of to guarantee such.
+The v5 series applied for next, thanks!
 
-If there isn't such a check, and kernel vends a malformed cycle-containing
-chain, chain traversal would infinite loop.
-
-Given the location of this test code coupled to the kernel tree, do you think
-such assumptions about implementation still reach too far? If yes, I can either
-remove this check, or try to make cycle detection more relaxed about offsets
-potentially going backwards.
-
-> Alex
-> 
-> > +
-> > +	*cap_offset = hdr->next;
-> > +
-> > +	return hdr;
-> > +}
+Kind regards
+Uffe
 
