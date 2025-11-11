@@ -1,117 +1,101 @@
-Return-Path: <linux-kernel+bounces-895374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41584C4D9AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:13:19 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A4F6C4DA04
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:18:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 629891898D7A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:13:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DFFDC4F3156
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:13:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39FB4357A57;
-	Tue, 11 Nov 2025 12:13:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46451357711;
+	Tue, 11 Nov 2025 12:13:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aXccaW8t"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="JmVDgK4U"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62CD034FF74;
-	Tue, 11 Nov 2025 12:13:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1309C351FAC;
+	Tue, 11 Nov 2025 12:13:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762863191; cv=none; b=uUfsa6FvJnkrU4Snif6vacvc5lGz4HLPnc2AmSjcGlJtyTa6ARa8BkvejzUs72pa7UpA7b2szX+86i+4K2q9+lEW1i7UNEC7FPFOZHI0vJUHNTWnc4ufQQ66Uhh3sGsHhBGN1x1hvEiPW9wbBzy1Dv7em0WRVj/KhrTVb/i7gsU=
+	t=1762863223; cv=none; b=HzRRbVEKAKEwNvZff6NmzIyrcOn4ei025GuC96a8bxAJhZwG+KiRQ0A4yx/2rWP6bAXdqSLtoynhyu1EqxwoBwDff/2Nt4LlWIsdeSuKnDg8H3QRjROnquYMkdna4evz2s1i3jsQfQSEtGVxl9KZeuUaxV0hyhJIkDp8L6PDMYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762863191; c=relaxed/simple;
-	bh=tGF7vUOkTWYNU40VJoQwsrqiEL5d22L+o/k1hoqbYn4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PY4WQkNdbI6VtDBT2Ju0E2ehtZAbXOaRKE/x/b+e2tXlGd1WF2yTErhHI+VTmlXZPmLsyRyHCqQOf7KHwJaz1Vawv8CBQlev9Eklh7MbZWY8/UR93vTzbgSXMU3T8R1VZ6XiLWuJwmhI9dBEYGqNopsBog4LWHwzuAoZ266o9eM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aXccaW8t; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762863189; x=1794399189;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=tGF7vUOkTWYNU40VJoQwsrqiEL5d22L+o/k1hoqbYn4=;
-  b=aXccaW8tOVJfsQblyYfq+iy9bMMv3t7AhKLLeXgqRPmKOTjepR+0AeQo
-   wKCiTbxfq8gGvdCedd5mUVSsGnq+z/ypEO8g/s2ZB/iZViZNAbhRPmjWe
-   Xh197OKB/QhnAYPwI3UzYMSNOFAP2OwAvr/5wB9mY1VgmuKSO4MDoZ3rH
-   6H11LuykHsNr+GpQD7G+C2qYgSYOf6wcFyxrrglAGCX/76E7TtqHE7A43
-   H/8FpTWAHefwzxolq5ot5OyeOcoionHz7Gunk1BkN8WkG9dlWKvvmBBmf
-   1ymxObBzpqe3nQWORLGg7lssIYoLrMIciQ1+t6V4a+qeidczUcD8QDWzF
-   Q==;
-X-CSE-ConnectionGUID: PkmqALrWQuyMXRBcRtS6Hw==
-X-CSE-MsgGUID: UyGFitdNQNOXpMDVSqgfqQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11609"; a="68783791"
-X-IronPort-AV: E=Sophos;i="6.19,296,1754982000"; 
-   d="scan'208";a="68783791"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 04:13:08 -0800
-X-CSE-ConnectionGUID: fUPflf0RSh6C28tl8Fgskg==
-X-CSE-MsgGUID: 5QFVSmn2S2a+I4ccr39yXA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,296,1754982000"; 
-   d="scan'208";a="188913613"
-Received: from cpetruta-mobl1.ger.corp.intel.com (HELO [10.245.244.118]) ([10.245.244.118])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 04:13:07 -0800
-Message-ID: <a5119a19-8660-4f0c-bedd-0a9a0301ef85@linux.intel.com>
-Date: Tue, 11 Nov 2025 14:13:05 +0200
+	s=arc-20240116; t=1762863223; c=relaxed/simple;
+	bh=coxUQViBR1RqRY+TnZ78OftXlHg4KH/M8tbofuBt2zE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jEWvLZ5SnD1Gzuiw5Mizox2Tvnl975MsR/QEgFQZW2VifDaY32qD8TvRK7bESKwMRhhIzFpNJczq4nVWs0wy41NCKwlGOa5AzfQtbi0MAh1pfNguzy9T3oSURXRY+N37smbwpP3y1NUFPcbF8CD98P8foPeyyVQchzqblew8J9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=JmVDgK4U; arc=none smtp.client-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=9N
+	Ah2B4J4geH0u3icDbPabpPyQvP6uL+iQxTBKXZpv4=; b=JmVDgK4UAGTtA+iaXZ
+	dqSxtWPmbOIiL00Dl15LPthzogT8KuZcjK8BPzt9EckP56W9ZQ+YOjqhGGsRef4D
+	nc6JN5jFItE3JfUG7yNOPeyVqD3B/jlyPDdT23uLPohC83jeFArjIejnso8PFtZt
+	GD9HVxlQCsUWyyUi8eab9CdrA=
+Received: from liubaolin-VMware-Virtual-Platform.localdomain (unknown [])
+	by gzga-smtp-mtada-g1-3 (Coremail) with SMTP id _____wD3v5FmKBNpEkgaDQ--.3180S2;
+	Tue, 11 Nov 2025 20:13:27 +0800 (CST)
+From: Baolin Liu <liubaolin12138@163.com>
+To: code@tyhicks.com
+Cc: ecryptfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Baolin Liu <liubaolin@kylinos.cn>
+Subject: [PATCH v1] ecryptfs: simplify list initialization in ecryptfs_parse_packet_set()
+Date: Tue, 11 Nov 2025 20:13:25 +0800
+Message-Id: <20251111121325.28975-1-liubaolin12138@163.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] usb: xhci: Assume that endpoints halt as specified
-To: Michal Pecio <michal.pecio@gmail.com>,
- Mathias Nyman <mathias.nyman@intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251107111317.69be45a5.michal.pecio@gmail.com>
-Content-Language: en-US
-From: Mathias Nyman <mathias.nyman@linux.intel.com>
-In-Reply-To: <20251107111317.69be45a5.michal.pecio@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3v5FmKBNpEkgaDQ--.3180S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWrtryrCry5CryDJr48KFWDXFb_yoW8JF45pw
+	sxCrs3tw1rtrs8KFWUCF4kGay5X3yUZrWfJayftw4ayan3tryYyr4akFWUu3WUCFW5Jw1U
+	Kr4ktw18KF92krJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07Ua38OUUUUU=
+X-CM-SenderInfo: xolxutxrol0iasrtmqqrwthudrp/xtbCwghDDmkTKGh4VwAA3S
 
-On 11/7/25 12:13, Michal Pecio wrote:
-> xHCI 4.8.3 recommends that software should simply assume endpoints to
-> halt after certain events, without looking at the Endpoint Context for
-> confirmation, because HCs may be slow to update that.
-> 
-> While no cases of such "slowness" appear to be known, different problem
-> exists on AMD Promontory chipsets: they may halt and generate a transfer
-> event, but fail to ever update the Endpoint Context at all, at least not
-> until some command is queued and fails with Context State Error. This is
-> easily triggered by disconnecting D- of a full speed serial device.
-> 
-> Possibly similar bug in non-AMD hardware has been reported to linux-usb.
-> 
-> In such case, failed TD is given back without erasing from the ring and
-> endpoint isn't reset. If some URB is unlinked later, Stop Endpoint fails
-> and its handler resets the endpoint. On next submission it will restart
-> on the stale TD. Outcome is UAF on success, or another halt on error and
-> then Dequeue doesn't move and URBs are stuck. Unlinking and resubmitting
-> the URBs causes unlimited ring expansion if the situation repeats.
-> 
-> This can be solved by ignoring Endpoint Context State and trusting that
-> endpoints halt when required, except one known case in ancient hardware.
-> The check for "Already resolving halted ep" becomes redundant, because
-> for these completion codes we now jump to xhci_handle_halted_endpoint()
-> which deals with pending EP_HALTED internally.
-> 
-> Link: https://lore.kernel.org/linux-usb/20250311234139.0e73e138@foxbook/
-> Link: https://lore.kernel.org/linux-usb/20250918055527.4157212-1-zhangjinpeng@kylinos.cn/
-> Signed-off-by: Michal Pecio <michal.pecio@gmail.com>
+From: Baolin Liu <liubaolin@kylinos.cn>
 
-Makes sense, I guess we can only trust hardware to update the state in
-the endpoint context on specific command completions, not transfer events.
+In ecryptfs_parse_packet_set(),use LIST_HEAD() to declare and
+initialize the 'auth_tok_list' list in one step instead of
+using INIT_LIST_HEAD() separately.
 
-Added to queue, thanks
-Mathias
+No functional change.
+
+Signed-off-by: Baolin Liu <liubaolin@kylinos.cn>
+---
+ fs/ecryptfs/keystore.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/fs/ecryptfs/keystore.c b/fs/ecryptfs/keystore.c
+index 7f9f68c00ef6..ea00ba20a459 100644
+--- a/fs/ecryptfs/keystore.c
++++ b/fs/ecryptfs/keystore.c
+@@ -1759,7 +1759,7 @@ int ecryptfs_parse_packet_set(struct ecryptfs_crypt_stat *crypt_stat,
+ 	size_t i = 0;
+ 	size_t found_auth_tok;
+ 	size_t next_packet_is_auth_tok_packet;
+-	struct list_head auth_tok_list;
++	LIST_HEAD(auth_tok_list);
+ 	struct ecryptfs_auth_tok *matching_auth_tok;
+ 	struct ecryptfs_auth_tok *candidate_auth_tok;
+ 	char *candidate_auth_tok_sig;
+@@ -1772,7 +1772,6 @@ int ecryptfs_parse_packet_set(struct ecryptfs_crypt_stat *crypt_stat,
+ 	struct key *auth_tok_key = NULL;
+ 	int rc = 0;
+ 
+-	INIT_LIST_HEAD(&auth_tok_list);
+ 	/* Parse the header to find as many packets as we can; these will be
+ 	 * added the our &auth_tok_list */
+ 	next_packet_is_auth_tok_packet = 1;
+-- 
+2.39.2
 
 
