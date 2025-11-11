@@ -1,188 +1,182 @@
-Return-Path: <linux-kernel+bounces-895321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F1D1C4D832
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:52:09 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7059C4D75A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:44:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A9FEA4FC59F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:44:33 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 65BE734FA20
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:44:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D020A359703;
-	Tue, 11 Nov 2025 11:40:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3480235971D;
+	Tue, 11 Nov 2025 11:40:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Esh1xndh"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ZMPEDtNS"
+Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazon11013040.outbound.protection.outlook.com [40.107.201.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63FAE359701
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 11:40:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762861244; cv=none; b=hmXK15Wk+EXxSTmF4rZIiF/dkpvM11uiNJiqqdw9RUldY7uzhIvbL7dSqafyHvJ791vL2/OBNYv3iFyeQNshTm4WD8r5YFaHZJ+E4rSz1yZL6klCYD6ZNw06w5FtiG82JQdE6CfejZzwlotMySMtkUgmzHOcmTikKwaajjdmBn4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762861244; c=relaxed/simple;
-	bh=3s82MD6md8lIZ4jP7QmLgx9ib2Ee6ZW1Vem42sRQwTs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lsxs6OYLfnhCRmwuGELcdaq3c2L7L5Ya4sKBv5URtfJfa1JH+PcR4VHzFKbaUUNVd+UNRDpEEnpUrNN/fJUuh2Vyg9kwZTLcPr4h7tfjJUmR/3LiWLQ3SgjUsrAAG55wfH8oPhbIzxPEukE66GvgTVjFsItMatyzCy1xQx4it6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Esh1xndh; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762861241;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=COiLb7RNZ04NFBfQ8iT/p1YoCtMA6keD7KkqHWMXjZI=;
-	b=Esh1xndh9kukS/V/2COBHIMUIa5Iajsp7ijHlqSL0BfNsQtjYp1ANtILj+hHvo6ZMJ0XpF
-	z6CA7D2DwU4EsAM+m66mIx76a/u3JP82HsG2rIa/g9DtfonNVAk9v7pk7xhZ8OcrFC9yrq
-	If4+pGW/8DNSLNgMnjkE7fo65Qy8kGI=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-29-oqAjKWKEM1eU3fRI3TXULg-1; Tue,
- 11 Nov 2025 06:40:37 -0500
-X-MC-Unique: oqAjKWKEM1eU3fRI3TXULg-1
-X-Mimecast-MFC-AGG-ID: oqAjKWKEM1eU3fRI3TXULg_1762861236
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3997D180048E;
-	Tue, 11 Nov 2025 11:40:35 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.8])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A44341800378;
-	Tue, 11 Nov 2025 11:40:32 +0000 (UTC)
-Date: Tue, 11 Nov 2025 19:40:29 +0800
-From: Pingfan Liu <piliu@redhat.com>
-To: Juri Lelli <juri.lelli@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Waiman Long <longman@redhat.com>,
-	Chen Ridong <chenridong@huaweicloud.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Pierre Gondois <pierre.gondois@arm.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>
-Subject: Re: [PATCHv5] sched/deadline: Walk up cpuset hierarchy to decide
- root domain when hot-unplug
-Message-ID: <aRMgrQRqpwvBSPC6@fedora>
-References: <20251110014706.8118-1-piliu@redhat.com>
- <aRHJHxfEI-tnotRe@jlelli-thinkpadt14gen4.remote.csb>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25890359717;
+	Tue, 11 Nov 2025 11:40:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.201.40
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762861249; cv=fail; b=l5phl/7pw7Cupu0fmU5tHHvPr/4jZteUPmeHEhiu4HaXHOlx06F8EqGRlKYLDhlLw/JdhhHSCNoDrLym1iVfA7/MHDuL2LByQPdQeQIVvEiVlAq2Dzxgd/G7esY23nPw+SkwJIpeHq0pE1BFSwzszeRXXWKfFyi9BPBlUDpRjyY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762861249; c=relaxed/simple;
+	bh=zqLwgTvXeaIcCuM9B7X+JivNJ6HQx75m/37tks+7h8Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=M6J3UJxZBacQc4fLXtCSgoox+rTbnH3M+TnZs2LyfoEw9uyJrojVgWbTTFvemy5z80LjB72QaRLWbfupSOdukx//N9Hwuz9z+rj2ingcdBldN33Ffhii9OTQ/HdBZRkKkGYl6kdfkUTOw4cbuwo3QUX3fQylWdNeS07Q39Qgd5E=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ZMPEDtNS; arc=fail smtp.client-ip=40.107.201.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=WbFu0xIFHiG02Aecv9Rq9CnyaD4WWJQ8VZQulsxhinNLDLwUOa4aUQh8JUm0vduEfJ5iw2zzgRm9o8fPFmLlYBGVxQfHA8Ske5LmcElo+6488oBu0A2NXMgdTg0ihDWu33FcpaWG7GTnlZSlfZoDoEc19WBy6GayOmDWhs0dR9njpqSS6JlNO1Mn03yfiuOBPXsp4dW9AK8m4CL3IpUZt6gqDGOdHRaDgVg2hNqf7tK2G3UJDUwWiTemFHisRqaTDJw0oYTlWmBUcjAZjEL7D1abW+j30Z7Yf5DkQxhgvcitfW1Otryd6W6bR6Oqadmxg0YSe45Wipuq9Q+n6OG5pQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Spq65BHieh4ngcqvdk7ongRsyNTBMBj+9KnpUI8Urzw=;
+ b=AuWANphrsXucMiwR9MZ0XmikZgbuiV0NvOS4M0ombRtGj/b/UhWH6WIcIL7tS9KMv9Ql+WVPp1cvmS2RIXZOVmeHPeU+rVbcq5b7zqWDr6IM1+Cg30EUUv+mRNQBxWMrP2zaTT0K/H6c/MXxLaTgM24ZswztiSsI1Ao5yWBFw8kqcUldnvFLmxIuSLi45uxd7YqECzOlehg9TIifA7EQp6B+L0kbVkvqAPLJliIUGnN+hDbEfrwbWhSHeD8ga9hyScWoBMZpnnKevAm7nwBzzzSBqgk0M5LMPL8RfDb/pi25DDUwhA+NU7h0qAPo1Ub4vxcnR2W+tQEHNqVxDqrBHw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 198.47.21.194) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=ti.com;
+ dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Spq65BHieh4ngcqvdk7ongRsyNTBMBj+9KnpUI8Urzw=;
+ b=ZMPEDtNS0RAtyGf95c5POWpg3F730gVqNpoazcwCtu+xkZZBcZQleJDpb+C/Ng1wbWzoGjgao2CQ/RltE3RZuguxMKznKzLBRCZeejp9Vo7QaPrK76Wzkc9WqZSJGKekfMAMxj0maCBCaxgHaF0fVAIVVLNnY26bknePM3nY+yo=
+Received: from BY3PR03CA0013.namprd03.prod.outlook.com (2603:10b6:a03:39a::18)
+ by IA0PR10MB7304.namprd10.prod.outlook.com (2603:10b6:208:40e::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Tue, 11 Nov
+ 2025 11:40:44 +0000
+Received: from SJ1PEPF00001CE6.namprd03.prod.outlook.com
+ (2603:10b6:a03:39a:cafe::36) by BY3PR03CA0013.outlook.office365.com
+ (2603:10b6:a03:39a::18) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9298.16 via Frontend Transport; Tue,
+ 11 Nov 2025 11:40:43 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.21.194)
+ smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
+ action=none header.from=ti.com;
+Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
+ 198.47.21.194 as permitted sender) receiver=protection.outlook.com;
+ client-ip=198.47.21.194; helo=flwvzet200.ext.ti.com; pr=C
+Received: from flwvzet200.ext.ti.com (198.47.21.194) by
+ SJ1PEPF00001CE6.mail.protection.outlook.com (10.167.242.22) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9320.13 via Frontend Transport; Tue, 11 Nov 2025 11:40:41 +0000
+Received: from DFLE215.ent.ti.com (10.64.6.73) by flwvzet200.ext.ti.com
+ (10.248.192.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 11 Nov
+ 2025 05:40:40 -0600
+Received: from DFLE205.ent.ti.com (10.64.6.63) by DFLE215.ent.ti.com
+ (10.64.6.73) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 11 Nov
+ 2025 05:40:40 -0600
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE205.ent.ti.com
+ (10.64.6.63) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Tue, 11 Nov 2025 05:40:40 -0600
+Received: from [10.24.69.191] (pratham-workstation-pc.dhcp.ti.com [10.24.69.191])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5ABBebUc880679;
+	Tue, 11 Nov 2025 05:40:38 -0600
+Message-ID: <4bf8cac1-ea21-480f-bc1e-bc1790a66a6e@ti.com>
+Date: Tue, 11 Nov 2025 17:10:37 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aRHJHxfEI-tnotRe@jlelli-thinkpadt14gen4.remote.csb>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 1/4] crypto: ti - Add support for AES-XTS in DTHEv2
+ driver
+To: Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller"
+	<davem@davemloft.net>
+CC: Manorit Chawdhry <m-chawdhry@ti.com>, Kamlesh Gurudasani <kamlesh@ti.com>,
+	Shiva Tripathi <s-tripathi1@ti.com>, Kavitha Malarvizhi
+	<k-malarvizhi@ti.com>, Vishal Mahaveer <vishalm@ti.com>,
+	<linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20251111112137.976121-1-t-pratham@ti.com>
+ <20251111112137.976121-2-t-pratham@ti.com>
+Content-Language: en-US
+From: T Pratham <t-pratham@ti.com>
+In-Reply-To: <20251111112137.976121-2-t-pratham@ti.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF00001CE6:EE_|IA0PR10MB7304:EE_
+X-MS-Office365-Filtering-Correlation-Id: f6c69294-bdd1-4511-3e61-08de211724d6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|376014|36860700013|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?MndrRlNjWW1ZaSs2TnZseTNsM1hBQWtrVkxUc3pVZHc3WE5CWEZJTDgwMVF4?=
+ =?utf-8?B?SGp4MFAxWnZmV3lRSkwzMVhxaFlZUFhrTm5jYjQybHdoRW9Pc3BKVURKU3ZW?=
+ =?utf-8?B?ODBHdHVseHFUd1hBd3NHVzdESXY1Z2VnSGxQOUZqL2dtZFU0V0ZXMVhhNmdj?=
+ =?utf-8?B?Q1NhN2dpT2ptODBrVnVNTlJSK1lwcHdmN2VLRTFpd2wyWnRUeGxBc0RKMnNW?=
+ =?utf-8?B?cUtRL00zcURYekdCbmhaRU5vTEw0QllONjVIc1UzWkMvNWJHZ3M0OTBHeWNv?=
+ =?utf-8?B?UzMwTVlnbzJObmx4REMzek9LNFoxTkhaUWZSVjNGNjJEdkgzUFBCdStvN2M1?=
+ =?utf-8?B?UlF1M0hCUmRKM01ST3cyTTcrQ3dNbzhRYngrUHdQS25HZ0JQOU5tMCtZTnRs?=
+ =?utf-8?B?enJxQ2ttMzBDcFpTUXJSMDdJWVpKbnU3UWN5YXJtOXRuMGhJRHRya1JubmNx?=
+ =?utf-8?B?TnRtMEVoVUdSNHFtWUlMMUZIdi9Hem94alMxZHFKZ3hRUkF6bXpkWEwyZDZx?=
+ =?utf-8?B?KzJSa3R3TVZrcXFwTTdsajB4SXlOc2hqcjNiZmRtVHVrYVAzR3RLRjZBbGY0?=
+ =?utf-8?B?LzM4T3ZNNktDaXBabDlrQVl4dTZNYS9qR1JTdy9Gc0ErTVIzYnBjVXUwVmkr?=
+ =?utf-8?B?SXJWTFNUTVNvanlzS3FLSjk0UnlhYU5MbTJoZDljbGhxYnEyc3FNcmF1akNH?=
+ =?utf-8?B?UkZES1hPVTJiVUI3bDltVXZocGxDcStyd2E5VE80SGdrWlFPY1VkUTBib3Nk?=
+ =?utf-8?B?L3kvQkg5N2dGVHdjc2VIejdOUHhOU1Nad1Q2enkyMFNuUHErSDExVGh3MkRu?=
+ =?utf-8?B?YmsxOUVaZmJ6d1MxM0l3cUx0V0F6T3V5ZmNRZE5xVnZyaytROEhDVmVjaHFB?=
+ =?utf-8?B?VSs1RlQyUmlSOFJHcytPM3JpRW9CWmVzaDhYRUg5cXZRVDA2MTI2OVlVQXA1?=
+ =?utf-8?B?U0tNdVlZMXF4eEhHWCtMVENyZHFQTzFhZnhrR3YyaTVxd05FTFdBeG15YVlM?=
+ =?utf-8?B?ZTBmUjR0ZEF6bmZ4YXZ0QUVIU0dwR0FTVHU4QldtcjFFekFhM0Z2L0pBZWVh?=
+ =?utf-8?B?WEE5bGVSWmltbVg5b3B0eG5GczJBTWdTdS9USHY3Q1o3Q0dMUTIrL21OSngv?=
+ =?utf-8?B?RHZQWC9OQ2dha1liMVQ0WHFEUTZYb25YMWFCbFR2RnI0Z0t1Y0RtZDNhYXFq?=
+ =?utf-8?B?MndaYWpVdVE1QTNRV2RYZ3N3RlhlZmVQMVU1aXZONUVCdmxMR0pNUmZZMFBk?=
+ =?utf-8?B?aHdYbDgrekNvZyt2UER1RFF3ZXdPV0QzcWFkRnA2TmFOeFdYbDFDTmhLUzNr?=
+ =?utf-8?B?elNORnh6dHlYbTJ3VmRDd3Y3NVhiOHpTNG43Sy9FWHFjaG9uZ0VEOGVsSnZk?=
+ =?utf-8?B?WUlVOUlYZGVtMUxNbWtaNHBEci9ETUxTVDlmbU1tU1NDazZpME45UEE3b25F?=
+ =?utf-8?B?N2EyUVZWeUxkc1dTWEVVclVNSDZGakZkY2dNbjZFeVRLY0NjeVJCRFFsTk9M?=
+ =?utf-8?B?ckRJWjE5akIva1pSTGFBdlZ3OGZLa0lRWWhhajM4aTYxaGNEdFlMOXlYa01O?=
+ =?utf-8?B?bmFyMXVmMitwZFpmNkxTeFo2a2hHUHVNdm5RalhGcGhPVzJaV1J5YmkxZk5O?=
+ =?utf-8?B?S2kyRDBCaUhvblljWDNka1lickNXaWhIdHJDelVwV3RWZDY5aEhEcjluVjh6?=
+ =?utf-8?B?cEhqdDl4b1NwVHFlWU9aTTBXaE1aK1Y0R1lvUk1lRkJYdzBvMDlaaXU0a0Zi?=
+ =?utf-8?B?STJpTlBPV0FJTGx5Y0gzeWNoRHFqcVZTeVgwUGdiMnQvL1U2dC9jdHROdksx?=
+ =?utf-8?B?eVREbGQxZjZJYTByNkNDckNXcVpFMlRLUTdvS2c0WFc0eHF1VDlQQnJ5NFZq?=
+ =?utf-8?B?RVd0dkw4Y1Q4S25jVi9qL09MVHNVaWc0TGJUSWN0bjViRGhIMDNaZ2hLdjhM?=
+ =?utf-8?B?WWNoNmlTTkcrcjRyQnQxWFBlTWRrT1ZObjl2cThMVkYxQW1VRlZvR3o2aXl0?=
+ =?utf-8?B?ZnlWWXljWWMrT1dEWmpOemdqb252LzUwZ2k2amFLVjlzTi9pQkd0ZHYzMVIx?=
+ =?utf-8?B?R3llZkV5ZUF3SFkxVmMycVdmd1JQWkRISUFtNS9xK0NZQlpDOUpyNHdkaGI1?=
+ =?utf-8?Q?xIxQ=3D?=
+X-Forefront-Antispam-Report:
+	CIP:198.47.21.194;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:flwvzet200.ext.ti.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(82310400026)(376014)(36860700013)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: ti.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Nov 2025 11:40:41.8511
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: f6c69294-bdd1-4511-3e61-08de211724d6
+X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.21.194];Helo=[flwvzet200.ext.ti.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF00001CE6.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR10MB7304
 
-Hi Juri,
+On 11/11/25 16:38, T Pratham wrote:
+> Add support for XTS mode of operation for AES algorithm in the AES
+> Engine of the DTHEv2 hardware cryptographic engine.
+> 
+> Signed-off-by: T Pratham <t-pratham@ti.com>
 
-Thanks for your review. Please see the comments below.
+Hi Herbert,
 
-On Mon, Nov 10, 2025 at 12:14:39PM +0100, Juri Lelli wrote:
-> Hi,
-> 
-> Looks like this has two issues.
-> 
-> On 10/11/25 09:47, Pingfan Liu wrote:
-> 
-> ...
-> 
-> > +/*
-> > + * This function always returns a non-empty bitmap in @cpus. This is because
-> > + * if a root domain has reserved bandwidth for DL tasks, the DL bandwidth
-> > + * check will prevent CPU hotplug from deactivating all CPUs in that domain.
-> > + */
-> > +static void dl_get_task_effective_cpus(struct task_struct *p, struct cpumask *cpus)
-> > +{
-> > +	const struct cpumask *hk_msk;
-> > +
-> > +	hk_msk = housekeeping_cpumask(HK_TYPE_DOMAIN);
-> > +	if (housekeeping_enabled(HK_TYPE_DOMAIN)) {
-> > +		if (!cpumask_intersects(p->cpus_ptr, hk_msk)) {
-> > +			/*
-> > +			 * CPUs isolated by isolcpu="domain" always belong to
-> > +			 * def_root_domain.
-> > +			 */
-> > +			cpumask_andnot(cpus, cpu_active_mask, hk_msk);
-> > +			return;
-> > +		}
-> > +	}
-> > +
-> > +	/*
-> > +	 * If a root domain holds a DL task, it must have active CPUs. So
-> > +	 * active CPUs can always be found by walking up the task's cpuset
-> > +	 * hierarchy up to the partition root.
-> > +	 */
-> > +	cpuset_cpus_allowed(p, cpus);
-> 
-> Grabs callbak_lock spin_lock (sleepable on RT) under pi_lock
-> raw_spin_lock.
-> 
+I noticed after pulling your tree that this patch was already merged.
+You can safely ignore this patch in this series as no changes were made
+to this.
 
-Yes, it should be fixed. I'll discuss it in my reply to Waiman's email later.
-
-> > +}
-> > +
-> > +/* The caller should hold cpuset_mutex */
-> >  void dl_add_task_root_domain(struct task_struct *p)
-> >  {
-> >  	struct rq_flags rf;
-> >  	struct rq *rq;
-> >  	struct dl_bw *dl_b;
-> > +	unsigned int cpu;
-> > +	struct cpumask msk;
-> 
-> Potentially huge mask allocated on the stack.
-> 
-
-Since there's no way to handle memory allocation failures, could it be
-done by using alloc_cpumask_var() in init_sched_dl_class() to reserve
-the memory for this purpose?
-
-Best Regards,
-
-Pingfan
-> >  	raw_spin_lock_irqsave(&p->pi_lock, rf.flags);
-> >  	if (!dl_task(p) || dl_entity_is_special(&p->dl)) {
-> > @@ -2891,16 +2923,22 @@ void dl_add_task_root_domain(struct task_struct *p)
-> >  		return;
-> >  	}
-> >  
-> > -	rq = __task_rq_lock(p, &rf);
-> > -
-> > +	/*
-> > +	 * Get an active rq, whose rq->rd traces the correct root
-> > +	 * domain.
-> > +	 * And the caller should hold cpuset_mutex, which gurantees
-> > +	 * the cpu remaining in the cpuset until rq->rd is fetched.
-> > +	 */
-> > +	dl_get_task_effective_cpus(p, &msk);
-> > +	cpu = cpumask_first_and(cpu_active_mask, &msk);
-> > +	BUG_ON(cpu >= nr_cpu_ids);
-> > +	rq = cpu_rq(cpu);
-> >  	dl_b = &rq->rd->dl_bw;
-> > -	raw_spin_lock(&dl_b->lock);
-> >  
-> > +	raw_spin_lock(&dl_b->lock);
-> >  	__dl_add(dl_b, p->dl.dl_bw, cpumask_weight(rq->rd->span));
-> > -
-> >  	raw_spin_unlock(&dl_b->lock);
-> > -
-> > -	task_rq_unlock(rq, p, &rf);
-> > +	raw_spin_unlock_irqrestore(&p->pi_lock, rf.flags);
-> 
-> Thanks,
-> Juri
-> 
-
+-- 
+Regards
+T Pratham <t-pratham@ti.com>
 
