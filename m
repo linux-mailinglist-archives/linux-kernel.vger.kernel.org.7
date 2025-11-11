@@ -1,85 +1,95 @@
-Return-Path: <linux-kernel+bounces-895047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEF52C4CCC4
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:57:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C1D49C4CCC1
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:57:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EC6E42209C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:48:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EE26424A5D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:48:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 222372F39D6;
-	Tue, 11 Nov 2025 09:47:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 682302F60CA;
+	Tue, 11 Nov 2025 09:47:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="ckeyb71l"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZtVRGfxm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E85A2EB872;
-	Tue, 11 Nov 2025 09:47:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBCA72F1FF5;
+	Tue, 11 Nov 2025 09:47:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762854464; cv=none; b=i9/5Qa37yNClkjM8cZC/YsR9wXfDkiggRKVqEhxldsFinAciJp9+NZIaEO38VtqS/5mnhGWxWxxFIFJVnDxN0+wwddkGcnOOMiMXYzD0tKZD1SLmGng8C5g2NhpHLa+MTfwvlb0kiQujexlGVOq02ib3eOAUXQc15NgVE++BNF0=
+	t=1762854439; cv=none; b=fpSaeyayTVEVBruSQ9psde1abma+1Z/OusdLe6rhWYpaTQXy5/YT5h9bSZPuM5UcZzbpZisY4A3CoXXiZZaanwpmnFCqDiOOTpMTiBPKVTllh1x+vnsEZuegxnFHC4svTuN1hdxSFVjaDL+hHD+22XEBgHlvBcinjJKJ1XxAb6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762854464; c=relaxed/simple;
-	bh=ohd9pdrMVmles/05qOjVwCvl5qGyPbg0cYR2z6zquEs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Bvx+I3tB5NEWv7+EZY91P+ayT7wtOlhziDUP52MULS11U8EbsJQ+11uQ/gWMzqvGqzX8kC/hdoV5F9i+uL/X2YtOw/gBiHUJOYgrt0LsSWTnElQ0Mebs0n+S6E6WA/2BV8Ly23Y258sPrTs1R7TY7yUYDG0pBpgfLpYGCiizLwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=ckeyb71l; arc=none smtp.client-ip=220.197.32.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=XXkLRI0g65UAMkaqYzjM8MbTk3dgR2IEiJk+nolN7Bg=;
-	b=ckeyb71lGo1/OFEuPgVLJStCZXixLHM+k/OiY2qCmam22s5Ibto5T8vJmY9+uA
-	mqwDfDtUWt4jPNk9QznDPQI1kFNRPYu2aqFQ7cywpCMeqKgm77825GZhDvxu8xFl
-	ExtOiDMCJ7yt0zS/XHOrHDl7cC7lqoop7Y0uGiHIe4y2Q=
-Received: from dragon (unknown [])
-	by gzsmtp3 (Coremail) with SMTP id M88vCgDnLZcKBhNpcL_DAQ--.5228S3;
-	Tue, 11 Nov 2025 17:46:52 +0800 (CST)
-Date: Tue, 11 Nov 2025 17:46:49 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Maarten Zanders <maarten@zanders.be>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Lothar =?iso-8859-1?Q?Wa=DFmann?= <LW@karo-electronics.de>,
-	stable@vger.kernel.org, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ARM: dts: nxp: imx6ul: correct SAI3 interrupt line
-Message-ID: <aRMGCbDMDkasXMlU@dragon>
-References: <20251024142106.608225-1-maarten@zanders.be>
+	s=arc-20240116; t=1762854439; c=relaxed/simple;
+	bh=WWAIdiG5iy2SUq8TzM5SeSLosiElj8klfLietx78N50=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rF9BbmAmNN42aRiZLWIyBzMfs92BEXfmBvKVdMemR+jHBjc2y0uiogNbOJPVeEj+RNRbT6BQUoAXn8SO2+JHFB46WRjO8acxB0qgvKzFFZN4lBjjolsoqsWY5xVPHT31WE4iBNQBOXLh2cUg58xM1dnXakpgWzkjgCjr9mnofA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZtVRGfxm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC106C116B1;
+	Tue, 11 Nov 2025 09:47:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762854439;
+	bh=WWAIdiG5iy2SUq8TzM5SeSLosiElj8klfLietx78N50=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=ZtVRGfxmOp+Om5zScyNa/ouk098yfBqc01hS6q48xsDQY83+3HhupskpeFLKh1beJ
+	 N80caFkH5JDQ5MQ0iouZS03KsAy97aZBkrChs2VpRusDg6qXkmwTQe4Y9rDaw6hOX3
+	 /1ulBIJZ2gc8YZwNDmDPHvgqlOnuAxXAnSKTvf2Qryd6ClKNNqHHRzJI0YBcWQaCQh
+	 twZPIosJCz5ryZwbnMMK41sakh44f6j6Xo9bPAXJhJzBWt0X9674Zk/rqKcieIeb48
+	 f/eXtpagUgiGPTAKOwa8yDZ5GF+dhQp/QTin7W+XuALsRS4VS1+g08t6UWN5bXwmte
+	 t6f9ZF5DVd+sw==
+From: Christian Brauner <brauner@kernel.org>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	viro@zeniv.linux.org.uk
+Subject: Re: [PATCH v2] fs: avoid calls to legitimize_links() if possible
+Date: Tue, 11 Nov 2025 10:47:08 +0100
+Message-ID: <20251111-entkriminalisierung-chatbot-feeb7455fc74@brauner>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20251110100503.1434167-1-mjguzik@gmail.com>
+References: <20251110100503.1434167-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251024142106.608225-1-maarten@zanders.be>
-X-CM-TRANSID:M88vCgDnLZcKBhNpcL_DAQ--.5228S3
-X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUYJPEUUUUU
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiNgyjCWkTBgwY6gAA3S
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1175; i=brauner@kernel.org; h=from:subject:message-id; bh=WWAIdiG5iy2SUq8TzM5SeSLosiElj8klfLietx78N50=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQKsynFNU7hWy9X3fV85fTt0zOM3XKi59/bMHkvk8Ekw Ruvap5ldJSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEwkNZKR4VfpjmNVB99Om5PN LNG17fO/qf03MpXWJe91mspTFcLVJsnw39Hj6M2vSsW6U2o5MhyvBpuyKjUkiIjUhbEUbl1yfNd OFgA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 24, 2025 at 04:21:06PM +0200, Maarten Zanders wrote:
-> The i.MX6UL reference manual lists two possible interrupt lines for
-> SAI3 (56 and 57, offset +32). The current device tree entry uses
-> the first one (24), which prevents IRQs from being handled properly.
+On Mon, 10 Nov 2025 11:05:03 +0100, Mateusz Guzik wrote:
+> The routine is always called towards the end of lookup.
 > 
-> Use the second interrupt line (25), which does allow interrupts
-> to work as expected.
+> According to bpftrace on my boxen and boxen of people I asked, the depth
+> count is almost always 0, thus the call can be avoided in the common case.
 > 
-> Fixes: 36e2edf6ac07 ("ARM: dts: imx6ul: add sai support")
-> Signed-off-by: Maarten Zanders <maarten@zanders.be>
-> Cc: stable@vger.kernel.org
+> one-liner:
+> bpftrace -e 'kprobe:legitimize_links { @[((struct nameidata *)arg0)->depth] = count(); }'
+> 
+> [...]
 
-Applied, thanks!
+Applied to the vfs-6.19.misc branch of the vfs/vfs.git tree.
+Patches in the vfs-6.19.misc branch should appear in linux-next soon.
 
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.19.misc
+
+[1/1] fs: avoid calls to legitimize_links() if possible
+      https://git.kernel.org/vfs/vfs/c/ab328bc1eb61
 
