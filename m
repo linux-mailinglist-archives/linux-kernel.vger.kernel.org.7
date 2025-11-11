@@ -1,158 +1,86 @@
-Return-Path: <linux-kernel+bounces-896242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD8D8C4FF26
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 23:07:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DCB1C4FF38
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 23:12:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79B1D3A953D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 22:07:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7ABCE3A757A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 22:12:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F0252D2390;
-	Tue, 11 Nov 2025 22:07:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB534326947;
+	Tue, 11 Nov 2025 22:12:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ywMeHg8x"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hYkfuYLu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65A5223D7DC
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 22:07:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50D9926B760;
+	Tue, 11 Nov 2025 22:12:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762898847; cv=none; b=FT6hzrTT0J3Pccek4+jyJyrCqQq2jDm6Y+gw0I8ajFTyLVYnSQ5Mzm/17bwOhKcwtE2cFfUGKuB11BmcGwbGe2oLo5JLyN5+2so5zOYeVShLwB2DPkL9/nmNTLe95aDJSKU0RnO70gayJdSwvGuNG8VIsspwNuJFHE9ggTpkv+s=
+	t=1762899157; cv=none; b=QlTM7x8FdLnG+kzSdDCo2odqKqnZpKavoRcg3d22w2t7CEWOctUZkmI/GACU8QpL9CZaZHat4DaLi6ON9Fr2yhVH+GVjEtM3BUsXX4Ji75xJWUWo8ZQENeBp6NsLhGQ3qKvH42LsaOFqwr/jaDPkjfbpnkcmwYpCMBhj2P6d/as=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762898847; c=relaxed/simple;
-	bh=mA77ezxgvjZHAoyuf95fl06d018ucEAB+VRi8nNbuB4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PH4+rZHq69KRKGn6CazcBf4lPgcqYrhgiNA/PJXmKeLQeqI+pq+JaxOOP6cs6vnMfrRs0fsPenDprxs1gstlrfNWZ5ImuSvwlGOu5/2OHKTmGyk9HgsvMcUkDQcq9EdkKcV1DDzbCWIe6/YA4qxpwBpBwfeG/ggtPXAu8fMeJb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ywMeHg8x; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2980343d9d1so23895ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 14:07:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762898846; x=1763503646; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1R7jKTaSGqnTZ3LxKwc79SSPGy+UT9Qy0Tn1e0OdMfM=;
-        b=ywMeHg8xaqewUi7kbLmjvWDp8UOQtR5IDBWcgSmyy8URO7V8V8xo6gIonK5aeaxy2P
-         b6DG9UlNAs5cNciCREU3Dr3qZ1LznhSlNWdzTDiomZkR7HlYMBAguuf50q19GfaVOPsn
-         EJH08H40BJjNRig4cfXLPEI4ry3DQBG7WfAZTovgbZf4/KQ0rq2q+O2cwlG9l/n5mmPG
-         6XEblTnBZRPXC0ZOKeItVWQKMRDbnMztcZ9qcY3/HfJdDzHxkUi5Z/4WAhJJj5SgvbFl
-         wmtlCF8/PJoninoc7Jpl0EwnoGAdNvHKJJPbC3SHbkLP+SkX7YbTYnYXz13YdV/IYnai
-         pllA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762898846; x=1763503646;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=1R7jKTaSGqnTZ3LxKwc79SSPGy+UT9Qy0Tn1e0OdMfM=;
-        b=U6jMy/dZ7mNI+evfxOV68ELqvEnLWALtLiHMdhqGyzAeLaTeeyKX3J2Bm2Ya/gLkbv
-         h2XKEMT7cffc0UZmw/GHkF2W4k3gHgQa8/JmP5Gu+S4VzGUagHD/j3IsH8jsIJzzrF9g
-         XRsZv4hxB8HcdvQ54WlkKOO6rJ9ihYdBO24gGEPLkJrcj31C0fynR9VCZvQGn6v2hfie
-         A+yaQuBVixL3lxX51I2xplfjWo24DTNoIbVZZf/oXRvoirFi/GG36YsRoW8LdfDRq7h0
-         PocuLruzV5C23nQOuW0AZYC7L9KZ/U+H7shkzrY+GkiYYOQkHLtasCTdOHwbfTHNNadr
-         F3Tw==
-X-Forwarded-Encrypted: i=1; AJvYcCWal4AOW1Oo+Aie4Ogj/gPvT1l9kWvxATJYDl3sN/mf/L4n9lpEWfzKmRxgCgy9BoevycpbXS9GvNhrSeY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+6Itc8L/jLotE1gHxwYd2tfpiGQUAfzRTILmG4oUy3MMfECEp
-	shshcnFLv+ALskwy+RwK5VONNF1OkI9BVugBaDpxa328prMEKh30zdvq5E/pD0iD2eqCpzRGp02
-	4eDgKVoWRaD9eLYFvWKVnykQpJIXr7N6S0MSjO/yx
-X-Gm-Gg: ASbGncsF5Wa/6JT204dLrDtftmP4IvOa8CEf1Zy+4eBdWX6K0vZy9kxaTzdOnPFL3wO
-	IxapjaPs5KPlwlSh22LMiReJyhdL5yGQdHYg6RSMLg/Vq/3bjvOphBVya5oomtVfyuW8lvRIX9A
-	ip8E+bd2tEHy6ze8cZO3aOdV5puJiavh6sZwQelg7GfvuJ/FWiwaNCq9Y0kt4PSku08p+TexYn2
-	+ZuMdVu3EsqQCOcT9QquzTnR/XYncPQvVMhxrxZjMtScBFDlEEmNMIVNi5xIBanARMWDGtfeOIe
-	/J4nE4G0wbadHUBLuc9ndEpUEA==
-X-Google-Smtp-Source: AGHT+IHzO+IaAQ9GVB7SA1mDEjIw9oRS4p66h60UA0TUNbImTXcGAF8bOvtBdB/4pwKG2pyyy+FbEdqJZXYz8yUATmE=
-X-Received: by 2002:a17:902:da81:b0:292:b6a0:80df with SMTP id
- d9443c01a7336-2984f828d21mr1387495ad.10.1762898845522; Tue, 11 Nov 2025
- 14:07:25 -0800 (PST)
+	s=arc-20240116; t=1762899157; c=relaxed/simple;
+	bh=ZLklqjVCrUJKrQ4kf2OljEEwH8s38vtS5NOBd0PBQxM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QDZe0YJqeY50JewoN+wVuP7NoK43XLirtFvQMtlwgx0LEFPQTfJRaxTSGfxmKcuqXwKF5cHTPr3069yXK8EOztF9bWMnoa1K/I0SXCJ72ngQHIz/1fxhuGBAvuyBncOX3LiAo/0VP9wgNxuhakLRPfK3FrWJZsnXJDcqeYlgy7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hYkfuYLu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF4C5C116B1;
+	Tue, 11 Nov 2025 22:12:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762899156;
+	bh=ZLklqjVCrUJKrQ4kf2OljEEwH8s38vtS5NOBd0PBQxM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=hYkfuYLulwwmJgEzBcsYi5xTmBMA2FhUH1uarux4mnCBeY9td5mC/PqNkbdCgHXkA
+	 PIq6U+sxUsTvdRir7LoRxwUi+CKTflvMaBcDSxTWY+T2xw9gqJspXwoMlg0Ct5fwb4
+	 VeOy0qoeCGwBbiLE8g/IDyUi5pI/4H6bZGnauUncEQdf1HyoFrr2jGmaldrJb0Nzjg
+	 a5omaLT/0LXOvmiEwvj8D/8hDS6fNsj2gzZJGK4uVKLhb/3ROsgisqeBmS9iyUAiSh
+	 2RnozvwCRIMR5zHmwhZssp3eg4W2MqCv52fNnMZR9jAtr39D0V497yBHWsF6joMcC5
+	 jWwA2uGoQIt/w==
+Date: Tue, 11 Nov 2025 23:12:32 +0100
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/3] Convert get_feat to Python
+Message-ID: <20251111231232.3955f1fb@foz.lan>
+In-Reply-To: <87a50swl6d.fsf@trenco.lwn.net>
+References: <cover.1762877066.git.mchehab+huawei@kernel.org>
+	<87a50swl6d.fsf@trenco.lwn.net>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251107173150.135037-1-thomas.falcon@intel.com>
-In-Reply-To: <20251107173150.135037-1-thomas.falcon@intel.com>
-From: Ian Rogers <irogers@google.com>
-Date: Tue, 11 Nov 2025 14:07:14 -0800
-X-Gm-Features: AWmQ_bmy0ww8g9aHraErOTrWRxeZ7i1gJoZw_-FbTEmIWdfwQT5lH2BYK10CxHw
-Message-ID: <CAP-5=fW0OD1tDnvmFQZ79=JjAri9FS2mT0myDG-C=oMZBGXOSQ@mail.gmail.com>
-Subject: Re: [PATCH] perf: write bpf_prog (infos|btfs)_cnt to data file
-To: Thomas Falcon <thomas.falcon@intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Nov 7, 2025 at 9:32=E2=80=AFAM Thomas Falcon <thomas.falcon@intel.c=
-om> wrote:
->
-> With commit f0d0f978f3f58 ("perf header: Don't write empty BPF/BTF
-> info"), the write_bpf_( prog_info() | btf() ) functions exit
-> without writing anything if env->bpf_prog.(infos| btfs)_cnt is zero.
->
-> process_bpf_( prog_info() | btf() ), however, still expect a "count"
-> value to exist in the data file. If btf information is empty, for
-> example, process_bpf_btf will read garbage or some other data as the
-> number of btf nodes in the data file. As a result, the data file will
-> not be processed correctly.
->
-> Instead, write the count to the data file and exit if it is zero.
->
-> Fixes: f0d0f978f3f58 ("perf header: Don't write empty BPF/BTF info")
-> Signed-off-by: Thomas Falcon <thomas.falcon@intel.com>
+Em Tue, 11 Nov 2025 10:09:30 -0700
+Jonathan Corbet <corbet@lwn.net> escreveu:
 
-Reviewed-by: Ian Rogers <irogers@google.com>
+> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
+> 
+> > Hi Jon,
+> >
+> > That's the final series to complete the migration of documentation
+> > build: it converts get_feat from Perl to Python.
+> >
+> > With that, no Sphinx in-kernel extensions use fork anymore to call
+> > ancillary scripts: everything is now importing Python methods
+> > directly from the libraries.  
+> 
+> This, of course, conflicts with my library move ...  Maybe we review
+> that and I go first this time? :)
 
-Thanks!
-Ian
+Sure, go ahead with the library move, while this is reviewed. 
 
-> ---
->  tools/perf/util/header.c | 10 ++--------
->  1 file changed, 2 insertions(+), 8 deletions(-)
->
-> diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
-> index db2ad19fa50d..54968881481c 100644
-> --- a/tools/perf/util/header.c
-> +++ b/tools/perf/util/header.c
-> @@ -1022,12 +1022,9 @@ static int write_bpf_prog_info(struct feat_fd *ff,
->
->         down_read(&env->bpf_progs.lock);
->
-> -       if (env->bpf_progs.infos_cnt =3D=3D 0)
-> -               goto out;
-> -
->         ret =3D do_write(ff, &env->bpf_progs.infos_cnt,
->                        sizeof(env->bpf_progs.infos_cnt));
-> -       if (ret < 0)
-> +       if (ret < 0 || env->bpf_progs.infos_cnt =3D=3D 0)
->                 goto out;
->
->         root =3D &env->bpf_progs.infos;
-> @@ -1067,13 +1064,10 @@ static int write_bpf_btf(struct feat_fd *ff,
->
->         down_read(&env->bpf_progs.lock);
->
-> -       if (env->bpf_progs.btfs_cnt =3D=3D 0)
-> -               goto out;
-> -
->         ret =3D do_write(ff, &env->bpf_progs.btfs_cnt,
->                        sizeof(env->bpf_progs.btfs_cnt));
->
-> -       if (ret < 0)
-> +       if (ret < 0 || env->bpf_progs.btfs_cnt =3D=3D 0)
->                 goto out;
->
->         root =3D &env->bpf_progs.btfs;
-> --
-> 2.47.3
->
+This one is trivial enough to be rebased on the top of it.
+
+Thanks,
+Mauro
 
