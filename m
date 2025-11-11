@@ -1,212 +1,156 @@
-Return-Path: <linux-kernel+bounces-894708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A4C4C4BA8E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 07:22:45 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14596C4B9E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 07:12:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BF77834EAFB
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 06:22:44 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BCDCF34E650
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 06:12:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 634E42D1F4E;
-	Tue, 11 Nov 2025 06:21:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A72E42BD5AD;
+	Tue, 11 Nov 2025 06:12:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="DIVrFzWA"
-Received: from m16.mail.126.com (m16.mail.126.com [220.197.31.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b="jPejZi9O"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CA092D193F
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 06:21:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65A3F2BD5BF
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 06:12:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762842090; cv=none; b=Uyoiz6A3Eg+4kx2sWUS7lxYy9u7CSfCB4Ggiz3m9Vgicvjrl26HTh0PLVV/R901P04tbfYcGlmqFuNv4aVswjyEBhnGvbMH1Tp17mgGhkgrb9B5tp+oaJvfKpzepbxbvWT7ZHygDADMNJUGrm1dcmSKvx2e3UVFipBOd3wiLzqA=
+	t=1762841546; cv=none; b=suy0+pjg/Pun5wtB0/mr372cwH1QeADylOs4g53QDGbJV0iV38eeTeg9QuqMio6ZtioQHt0ZMcy0IkOYY570U1aW7EOVrx1qbDBqKdQVAJGRxAH4XtAYJM2iJborGFVaSOa6V54EAdrJMCkkH/NKUbUCNKaZ8Wolrlx/xS8D12k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762842090; c=relaxed/simple;
-	bh=KC7nOZAlIg2S+t5k+Iegh6RsFAGS8zFqkBIlUlW2mxg=;
+	s=arc-20240116; t=1762841546; c=relaxed/simple;
+	bh=FWwWHfVGkeFFK0gt3TeAwp+q+y/27u6YbRdVkJwdPgA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DKYLPWIDCuH5szwug/cT6WFXRfM5E76a97TBhL5NbIshCcIcC/pzxoTFWhsiVIjwi+UzSJ8fjl5ZGPCw+qzF2XsJA0Kwv6jTQLiBT4QnG0GZHp+Lz1AqlEZCnfwtHui2EJwgm7t6nw9DVsP23rN/j+lxyrFHqyghTyrRUdc5FiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=DIVrFzWA; arc=none smtp.client-ip=220.197.31.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=SQ
-	NThmc7X74qfNRIdMXWU8JaAm5dM9fXnQhj2wzlK1Y=; b=DIVrFzWA4nnWn24ZRo
-	XE9IO6g1j6WAITBYeFqd5axL2WLAa/D8lPGwmyrzt6pr/X6YXSF6ekI9gd1BbW8S
-	7bm9GpsUw/0YKWjTNmTODepdBD5vSftg1SIjNDaHs74tF6WPID4yUSL2U641Sl8K
-	IGUiVDA7sjMkg0F8g1MMJGLqk=
-Received: from hpz640.. (unknown [])
-	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wD3DsRu0xJpNZcpAw--.15039S2;
-	Tue, 11 Nov 2025 14:10:55 +0800 (CST)
-From: Xiaole He <hexiaole1994@126.com>
-To: linux-f2fs-devel@lists.sourceforge.net
-Cc: jaegeuk@kernel.org,
-	chao@kernel.org,
+	 MIME-Version:Content-Type; b=u1+w8V7GVjoQTEvC0uJphBlU7HJJoDK7UQDojV6X1WTWBVQacOVLAQR0ZzKwG4MaaMA2EQ8MgWNAydX/ywaNDUxoR8FIcaZVM5j0tLdCXVlgGP9zm88RMmC6SmPLSa1fi/vN8iMG52INMonKI87CelEvquieJaA4Ksy9j4rMWV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com; spf=pass smtp.mailfrom=shopee.com; dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b=jPejZi9O; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shopee.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7afd7789ccdso3590143b3a.2
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 22:12:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shopee.com; s=shopee.com; t=1762841543; x=1763446343; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FWwWHfVGkeFFK0gt3TeAwp+q+y/27u6YbRdVkJwdPgA=;
+        b=jPejZi9OQ2F5tjT6Hh7i9Bww7Zd+0DWwHf5d3FUNRtsLrzhg/vDpVCwgYp5s2euxkR
+         i8gwDZdAFrLhUxa9UfnRGvgIAFRCZI12EoRwwYnKSJmUAfHNZZ0KqHNCltaSEXaXqa+k
+         iVjBnmLnnOY6ky8OibfIyuTIjrtFHA72WeIP7k0mZamBOU48/itNAsFaEmQTsJL7V0MH
+         m8AmOZKIFypPT1agMwzgApKyBLihxgNnNKggaD+HwwRHlOW1CCOhWhQD5CFuyVSDma8P
+         6FlkIfLOJnWRWZS7QQa+dElGO+WKkD7kvc5ps8Y7qsls8sCF66Ai4hZDm32oDoNtARg2
+         FXlA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762841543; x=1763446343;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=FWwWHfVGkeFFK0gt3TeAwp+q+y/27u6YbRdVkJwdPgA=;
+        b=EzUmj62wc2Si6zN7VP2ncy/Ep7oKD+dVlH6xCQly7fjr2kY1ymQJN66PrVmNGqxZo4
+         hBsmp2zGlOBcT4BP7Ti4PVhCA0MTaOt4oDQ/e1joqHE7wq2JLqt4hJVLGnVyU/9wuQ/1
+         MEgPm2I056dAAg5cHiIYGbOu3QvCD9uTRNUK0munEvkF6lnzCf1Kx4ZlqJNL0jC4Szmy
+         Xtx9EyPtjkuuo9x4+FhFvd7LdIG7xk8GUh0AIaHexerpfdvDDU/hJi9R9GSgMkQpH9Gi
+         UCqlHo99ewlb7/5mNPhf0n3P9iOdOq32unktOyl6g8DLRZv1lOVXgDtI1jrtS925EVpo
+         EDQg==
+X-Forwarded-Encrypted: i=1; AJvYcCXNTwN2llgRTg7NAoeDzQZSnXXdpTWE6wWF8rgZdN4iqEYaOZRhno92tJiTra7BYBFbx+ozIb30hdAmVcg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyvx9I65eWFwxX5IgnaGjP7CvBGzmqPwGQbu+OyUhsbSczaOWI1
+	qVjAppxe4LKZX6mSTuH8XqNnt93m4Ah6GcGn57R90YFHr/IidByBQZrPK6lCRr2PXe8=
+X-Gm-Gg: ASbGncu8RETIGqW2xPUrMpXQC+vVaJKjfNaIJ8RFp/Jp21NqjH7N3OiCTx05FxJ582m
+	GxgME4Yt11eYMUBCCH5RpvIUYr71s3wPHCSXkyU8qMBzFpUAl3oJ58VSNqNoIILbOyrhzCMWdjN
+	Xyu2ueQBcAySpShKyX1pEghjHlgvW6r/KHIZbpg5/oV6H/rKfNsQ18kjslyW0BAIb7QGJ15qoZ8
+	dz1Cdqv8czs9myvAO8WnXdq8YrOpaOD+PHOmWsMoKXd8mAwL8Cp7jvlpPiJjtX/JA1yeilaP3N6
+	9GKqX1cb/bUW8iVtfazR1mxZU53nBw8xsVYAI81E82rtpdgdYpR/P7kzS/pcLklQFdeub86XHKa
+	rj5xpX+JdyYTEP/twjMi792+Xl1fxlpc2mMULOIlFCUkf3C5gmySdXDXVc0/6RQL9/kDnFZCwwL
+	H6Nl1F+E96E6izUFiIMKakirxk
+X-Google-Smtp-Source: AGHT+IFvxypcxwiOfBwdgzPuM+j/Y1RLEUCRj28ISBfw3r7KvT4isOe0gB52rHuhHDaQS6UnBqQMLw==
+X-Received: by 2002:a05:6a00:2d8b:b0:7aa:a2a8:9808 with SMTP id d2e1a72fcca58-7b22668efe6mr11556484b3a.20.1762841542634;
+        Mon, 10 Nov 2025 22:12:22 -0800 (PST)
+Received: from .shopee.com ([122.11.166.8])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7b0ca1e7b19sm13755722b3a.32.2025.11.10.22.12.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Nov 2025 22:12:22 -0800 (PST)
+From: Leon Huang Fu <leon.huangfu@shopee.com>
+To: mhocko@suse.com
+Cc: akpm@linux-foundation.org,
+	cgroups@vger.kernel.org,
+	corbet@lwn.net,
+	hannes@cmpxchg.org,
+	jack@suse.cz,
+	joel.granados@kernel.org,
+	kyle.meyer@hpe.com,
+	lance.yang@linux.dev,
+	laoar.shao@gmail.com,
+	leon.huangfu@shopee.com,
+	linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Xiaole He <hexiaole1994@126.com>,
-	stable@kernel.org
-Subject: [PATCH v2] f2fs: fix has_curseg_enough_space to check all data segments for dentry blocks
-Date: Tue, 11 Nov 2025 14:10:51 +0800
-Message-ID: <20251111061051.337547-1-hexiaole1994@126.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251111060557.337514-1-hexiaole1994@126.com>
-References: <20251111060557.337514-1-hexiaole1994@126.com>
+	linux-mm@kvack.org,
+	mclapinski@google.com,
+	mkoutny@suse.com,
+	muchun.song@linux.dev,
+	roman.gushchin@linux.dev,
+	shakeel.butt@linux.dev,
+	tj@kernel.org
+Subject: Re: [PATCH mm-new v3] mm/memcontrol: Add memory.stat_refresh for on-demand stats flushing
+Date: Tue, 11 Nov 2025 14:12:13 +0800
+Message-ID: <20251111061214.70785-1-leon.huangfu@shopee.com>
+X-Mailer: git-send-email 2.51.2
+In-Reply-To: <aRHMWewcW41Vdzed@tiehlicka>
+References: <aRHMWewcW41Vdzed@tiehlicka>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3DsRu0xJpNZcpAw--.15039S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW3Ar15KFy5CFy7urWkurWxJFb_yoW7GF1xpF
-	47CFy3Krs5ur18Was2q3WUG3WS93yUur4UJr1jgw1vyrWfWF1Ikwn7ta45XF1vkrs3XFn7
-	ZasIkry5A3WDuFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zR6Vb9UUUUU=
-X-CM-SenderInfo: 5kh0xt5rohimizu6ij2wof0z/1tbiegIDBmkS0LpJvQAAsY
 
-When active_logs == 6, dentry blocks can be allocated to HOT, WARM, or
-COLD segments based on various conditions in __get_segment_type_6():
-- age extent cache (if enabled)
-- FI_HOT_DATA flag (set when dirty_pages <= min_hot_blocks)
-- rw_hint (defaults to WARM via f2fs_rw_hint_to_seg_type)
-- file_is_hot(), FI_NEED_IPU, f2fs_is_cow_file(), etc.
+On Mon, Nov 10, 2025 at 7:28 PM Michal Hocko <mhocko@suse.com> wrote:
+>
+> On Mon 10-11-25 18:19:48, Leon Huang Fu wrote:
+> > Memory cgroup statistics are updated asynchronously with periodic
+> > flushing to reduce overhead. The current implementation uses a flush
+> > threshold calculated as MEMCG_CHARGE_BATCH * num_online_cpus() for
+> > determining when to aggregate per-CPU memory cgroup statistics. On
+> > systems with high core counts, this threshold can become very large
+> > (e.g., 64 * 256 = 16,384 on a 256-core system), leading to stale
+> > statistics when userspace reads memory.stat files.
+> >
+> > This is particularly problematic for monitoring and management tools
+> > that rely on reasonably fresh statistics, as they may observe data
+> > that is thousands of updates out of date.
+> >
+> > Introduce a new write-only file, memory.stat_refresh, that allows
+> > userspace to explicitly trigger an immediate flush of memory statistics.
+> > Writing any value to this file forces a synchronous flush via
+> > __mem_cgroup_flush_stats(memcg, true) for the cgroup and all its
+> > descendants, ensuring that subsequent reads of memory.stat and
+> > memory.numa_stat reflect current data.
+> >
+> > This approach follows the pattern established by /proc/sys/vm/stat_refresh
+> > and memory.peak, where the written value is ignored, keeping the
+> > interface simple and consistent with existing kernel APIs.
+> >
+> > Usage example:
+> >   echo 1 > /sys/fs/cgroup/mygroup/memory.stat_refresh
+> >   cat /sys/fs/cgroup/mygroup/memory.stat
+> >
+> > The feature is available in both cgroup v1 and v2 for consistency.
+> >
+> > Signed-off-by: Leon Huang Fu <leon.huangfu@shopee.com>
+>
+> Acked-by: Michal Hocko <mhocko@suse.com>
+> Thanks!
+>
 
-However, has_curseg_enough_space() only checked CURSEG_HOT_DATA segment
-for dentry blocks, which could lead to incorrect space calculation when
-dentry blocks are actually allocated to WARM or COLD segments.
+Thank you for your review.
 
-Reproducer:
-Note: This reproducer requires adding a tracepoint to observe segment
-type. Add the following tracepoint to include/trace/events/f2fs.h:
+Thanks,
+Leon
 
-TRACE_EVENT(f2fs_allocate_data_block,
-        TP_PROTO(struct f2fs_sb_info *sbi, struct inode *inode,
-                enum log_type type, block_t blkaddr),
-
-        TP_ARGS(sbi, inode, type, blkaddr),
-
-        TP_STRUCT__entry(
-                __field(dev_t, dev)
-                __field(ino_t, ino)
-                __field(int, type)
-                __field(block_t, blkaddr)
-                __field(int, is_dir)
-        ),
-
-        TP_fast_assign(
-                __entry->dev = sbi->sb->s_dev;
-                __entry->ino = inode ? inode->i_ino : 0;
-                __entry->type = type;
-                __entry->blkaddr = blkaddr;
-                __entry->is_dir = inode ? S_ISDIR(inode->i_mode) : 0;
-        ),
-
-        TP_printk("dev = (%d,%d), ino = %lu, %s, blkaddr = %u, is_dir = %d",
-                show_dev(__entry->dev),
-                (unsigned long)__entry->ino,
-                show_data_type(__entry->type),
-                __entry->blkaddr,
-                __entry->is_dir)
-);
-
-And add the tracepoint call in fs/f2fs/segment.c in
-f2fs_allocate_data_block() function. Find the location after
-locate_dirty_segment() calls and before IS_DATASEG() check:
-
-        locate_dirty_segment(sbi, GET_SEGNO(sbi, old_blkaddr));
-        locate_dirty_segment(sbi, GET_SEGNO(sbi, *new_blkaddr));
-
-        trace_f2fs_allocate_data_block(sbi, folio ? folio->mapping->host : NULL,
-                                        type, *new_blkaddr);
-
-        if (IS_DATASEG(curseg->seg_type))
-
-1. Mount F2FS with active_logs=6 and age extent cache disabled:
-   # mkfs.f2fs -f /dev/sdb1
-   # mount -t f2fs -o active_logs=6 /dev/sdb1 /mnt/f2fs-test
-
-2. Enable tracing and f2fs_allocate_data_block tracepoint:
-   # echo 1 > /sys/kernel/debug/tracing/events/f2fs/f2fs_allocate_data_block/enable
-   # echo 1 > /sys/kernel/debug/tracing/tracing_on
-   # echo > /sys/kernel/debug/tracing/trace
-
-3. Create a directory and write enough files to trigger dirty_pages >
-   min_hot_blocks (default 16), which will clear FI_HOT_DATA flag:
-   # mkdir /mnt/f2fs-test/testdir
-   # cd /mnt/f2fs-test/testdir
-   # seq 1 8192 | xargs touch
-   # sync
-
-4. Observe dentry block allocation:
-   # cat /sys/kernel/debug/tracing/trace
-
-   The trace output shows dentry blocks (is_dir = 1) allocated to WARM
-   segment because FI_HOT_DATA is cleared when dirty_pages >
-   min_hot_blocks (default 16). However, has_curseg_enough_space() only
-   checked HOT_DATA segment space.
-
-Fix by merging the dentry block check into the main data/node block
-check loop and checking data_blocks + dent_blocks for data segments,
-since both regular data blocks and dentry blocks can be written to the
-same segment. When active_logs == 6, dentry blocks can be allocated to
-any of the three data segments (HOT, WARM, COLD), so all three segments
-need to account for dentry blocks. When active_logs != 6, dentry blocks
-are always allocated to HOT_DATA segment only, so only HOT_DATA segment
-needs to account for dentry blocks, while WARM and COLD segments only
-check data_blocks.
-
-Fixes: ef095d19e82f ("f2fs: write small sized IO to hot log")
-Cc: stable@kernel.org
-Signed-off-by: Xiaole He <hexiaole1994@126.com>
----
-Changes in v2 (per Yongpeng's feedback):
-- Merged dentry block check into the main loop to avoid duplication
-- Check data_blocks + dent_blocks for data segments (both can write to same segment)
----
- fs/f2fs/segment.h | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
-
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index 1ce2c8abaf48..acda720a54eb 100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -626,21 +626,21 @@ static inline bool has_curseg_enough_space(struct f2fs_sb_info *sbi,
- 
- 		left_blocks = get_left_section_blocks(sbi, i, segno);
- 
--		blocks = i <= CURSEG_COLD_DATA ? data_blocks : node_blocks;
-+		if (i <= CURSEG_COLD_DATA) {
-+			blocks = data_blocks;
-+			/*
-+			 * With active_logs == 6, dentry blocks can be allocated to
-+			 * any data segment. With active_logs != 6, dentry blocks
-+			 * are always allocated to HOT_DATA segment.
-+			 */
-+			if ((F2FS_OPTION(sbi).active_logs == 6) || (i == CURSEG_HOT_DATA))
-+				blocks += dent_blocks;
-+		} else {
-+			blocks = node_blocks;
-+		}
- 		if (blocks > left_blocks)
- 			return false;
- 	}
--
--	/* check current data section for dentry blocks. */
--	segno = CURSEG_I(sbi, CURSEG_HOT_DATA)->segno;
--
--	if (unlikely(segno == NULL_SEGNO))
--		return false;
--
--	left_blocks = get_left_section_blocks(sbi, CURSEG_HOT_DATA, segno);
--
--	if (dent_blocks > left_blocks)
--		return false;
- 	return true;
- }
- 
--- 
-2.43.0
-
+[...]
 
