@@ -1,304 +1,233 @@
-Return-Path: <linux-kernel+bounces-895875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 272C3C4F27F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 18:00:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13E66C4F294
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 18:01:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF4D2189D915
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:00:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84B8A1885B3C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:01:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C6D734250D;
-	Tue, 11 Nov 2025 16:59:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07049266EE9;
+	Tue, 11 Nov 2025 17:01:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="elplknBI";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="XlYiNgXk"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="p82Ek23U";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="YXZ5vFMm"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B524359FBC
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 16:59:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC195258CD7
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 17:01:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762880372; cv=none; b=bNPIfZuAMPMcXq2MkTCKojbwAflXwr/dqtVJ6j6aBuXqIJuhYOAaZ9YtUIH1sGFTlvV2hr2O+vCUM4xB5olFNONB1ukialCMAfbijtfwhgTwTS4mjenmqWn6o2xJkLZ+OyMpOVwiG7nE8CBfRXDqU2EdlqFJ57hbBDVgE3RuMd8=
+	t=1762880483; cv=none; b=g2mc/5+nz+Yiwn+2Z4TfysCF84nXGxTsdlViJaHYSAwOoveWdLH4KhUSAdMLM6zWrZOQt2vJ4hBPA0Hlakbniux2QZTnqOKQ5M+D0SOup3mJpPbxA/jixZogrBf+PjebwJ7nDa02agFcMfRP7S6P8xpHMUBM0lB1fMCj9Hykgbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762880372; c=relaxed/simple;
-	bh=Qo7Exj/APE0HnRn2oxlqExyR6R1HSPpbWInRXXGeD64=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CMDHlBX3geiqrjpVm57UZrcUq77Yxqi9KTPfeePQ0wg9u9bdHr811QQiLuSysmlZ0D7Y4NDnASrYFsFbZWaLjqUwoEBSWFGUvib7pWXeDpj6/sloAv+tWEnXslOlOuT8PkXg4ryprEgyeGDyT2lpm14LIJZrFL8GTP0RhVMCIJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=elplknBI; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=XlYiNgXk; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762880369;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=0yjyFEdJw3Z/9UU9NvRSds9W8+PuhWjUlM+UriXTdoU=;
-	b=elplknBI+iRbCpwOiOuxXTRx1UEVGuNxvlwaIy45MHEjTcztrJBhMDXH4G5ySBcxkiuzfH
-	I+SFNgotuhD9Z6Ut/RkCLEGGBJnTJb4GvK5oeYpOZXpH7r7veYIhxoXHeRW/x5vGAs64iM
-	xPEFg+YhtrmNf56FzCa3y+myMGDrOiI=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-189-NsLbdnMtP1y3HAGHXup2RQ-1; Tue, 11 Nov 2025 11:59:27 -0500
-X-MC-Unique: NsLbdnMtP1y3HAGHXup2RQ-1
-X-Mimecast-MFC-AGG-ID: NsLbdnMtP1y3HAGHXup2RQ_1762880367
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-42b4961ec4eso208560f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 08:59:27 -0800 (PST)
+	s=arc-20240116; t=1762880483; c=relaxed/simple;
+	bh=u2PBf+ScEvsZXo6Nvlx3EH1X8QQScTycOFmTK282ut4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HoNR0bVs6PoVz2RNGSPAArUgKqydc5aQIxkkFEYONbu5+QkpwedDJ8dP4aKYE4GJE+/Q0DjLoGLxrETGNhhpR8O4cLT3fkm8BGJk+E1T/3i9TPlu5kRqJfliyKASYW0y9K6666/n7srQaXO4mEuH8XIVyyl4fH1jwq5niP/5+80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=p82Ek23U; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=YXZ5vFMm; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5ABBGYMb1937345
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 17:01:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=Ys8OzpHvw+YFE6Z0Rh9xp23o
+	VtdDuiKWW3cIiRZWe/A=; b=p82Ek23UgaDsT2quw+612l8olAAMG4J9hXMKvu0D
+	c2dhGympd9NMvPfdo5aksmh0XbCkooFFHroKr/kUrNpz094UjFoXYNNnWelH3v0g
+	LNIf41jaMIJ9GEEbzFTsWWMRjdfTsR4K/gay+s2mmVCsj4/GXwy5DuyzQRBLTX3a
+	S8Sh2+v46YNT8JcyXQcEqYwCn+O+y9RHd7TCZuwWnK9fNwdBRasa4PSCdkNkNAUP
+	/zzughle3qzaEwV+55BpzKjuRUtoGnbgPK8W234ZjNRuX9GCsQrHsq8/NAijm0w5
+	K542kQyRlgWZLY1JOZoCTdFM+XUsqgHAWyewUGlVLQfoiA==
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4abwtja6yf-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 17:01:20 +0000 (GMT)
+Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-295952a4dd6so15441765ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 09:01:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1762880366; x=1763485166; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=0yjyFEdJw3Z/9UU9NvRSds9W8+PuhWjUlM+UriXTdoU=;
-        b=XlYiNgXkQ1I7q75ptMReg/SuNx2up8fMU2BRh3gywfIExtOZ1rKLE7Urh2yravjOud
-         3d4BBN6g1EoQmIaxoxuRLLcwGWJRNV7DIAJH/0CpgCUZQZ4y0n2lYn656oSMQJtMX8R7
-         fZVdwQPxzCLorAueiXQnMEzkZ8FlrIjwVqbIDYWNNGWYa825IismzCiwYYaDZPzW+rJX
-         Vy8lfLQC2YRll9aleyB7iwox5g3XD+L/E6Ror8h/sH4e0kNaLuO5qVRBRwR2rnM9VUwa
-         tDbqbUqLTYrYi6p+1/GYF++n1PjzqL70getfgNYI1+hKJMwuOtRq66ss2f+/XtU/GtX5
-         BBJQ==
+        d=oss.qualcomm.com; s=google; t=1762880479; x=1763485279; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ys8OzpHvw+YFE6Z0Rh9xp23oVtdDuiKWW3cIiRZWe/A=;
+        b=YXZ5vFMmUi9n4I7/kjRkj4gkNrsIhsbN6umJ6reIuje2ULvrqvDUUkGgHyaeDhIXjz
+         0mqqJ8BFOldIm7Ypw6WJv3w7uR/qDkF4g2kiYD2nesJtRIclXIJiwprtdVf9iefy6Bwz
+         kch8SfiHpaEd0Ag8JUuK1bHmBho3H03IBOrj/KREZlmbUVTv0LD87ERulfrB3d6RA88M
+         DNyQ9NIZlcQoZF9M6us/kEXqyg7//vt0ovkjZhnSyyXfSKqpjxBZLBLKuqUytOsykU16
+         piiu5vZhhgHwwiF20NSYbfRZDMiZax5kYblylViFEXs7mkFjP3i37xuXfSZ3BzTSz+nN
+         CASA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762880366; x=1763485166;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0yjyFEdJw3Z/9UU9NvRSds9W8+PuhWjUlM+UriXTdoU=;
-        b=kU5MlQO8LlbDpe+o5GVLEaJQCfGqdfKZJa6W0qYuX/iOPEt1EJW5T8SEJx1BOUzZ0P
-         9hcGls3H2B3r/I4HPvvTKkhOvdRJ46MIIBw7IjRlEQJUJRiJ/zmHaGsfMp/WLVlwCQ3t
-         HvGP1QVv1tmY+CIbsHUTQoWha+Yqlf2An9fQwWhpXZf8oDVyCC1wlg2lH//+NEPNAqZk
-         2f3DBjOw1WOQF/RvjSJTBpLjMff/7ycEmOTvmyR7/IpW6jHo/ZnDhDhc1ps/1liYx165
-         qnHlOp5+ZI3E26Aw7JxLg6XWQ7CZNUDVQ0+f6VF9f321HgQ6c/UKZ7h2E1zOpkFx7hGH
-         cpmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWzoCggVVn+uJixSAgIE0TCTGmqxoO4gW89i2gMw5z8V0qvqfVALoEccMjcN9Ct6MABrPz/lB0CgDPVB/k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx951AQXWH9+oIVO91OF1SWF/nlsiuJD6awg4jT39vroz/+kKdr
-	YoUgByPRfqZdnE44uYVvpAljfKcsEvclZvVe7xd29TFSk2agC2CnsCUmq+tQU4c88rIRFxmFsZc
-	cUi6fKn5WblYHXQTyxvNxQLHTwfncA6emis9IPfYy9gZu54K9V9MOTS/9JD/IM3htvw==
-X-Gm-Gg: ASbGncvLBPNXhS57Uk6lO5jfdcNY8v7tb91uhtL54azBDIf0xGEP+1/+QOCO+PgWnJT
-	FYu/Z5j/ywPVhcxe/5z4UWaTiBj7dniYlgxtkU0vUEtGQqwGLtIc6VrOpaQXLOOH5uCu89pFSTq
-	2dHSmlHTdqyRh1h5GjUktelDvJv5wkUiwnzMN7jbUSo2ch7bGWm5hOB6gLKoG2TyvYrdh8xzSvC
-	2tAeawpT9Jv7BqNVRsrwRcOBUeBS/pqPYdLhSjjxWrV/NamT2Y0xfVNOG1P+zLu+JO0fAARsjev
-	dmnmBfh7zglZ8I1oKB/XZEpsTfcwLgim20xy8NxxBuMKaB7H3GJeqleJnUv5qur4VNhfAP6hIJ3
-	fnCgleFzpXI5kTfqIIxefDkCbiYZdtrzl6AFX80sDQy82H+2HFm1xhJkWTemmmVtbmOOVEBmcmZ
-	09kXQC4A==
-X-Received: by 2002:a5d:64e9:0:b0:42b:3b8a:308c with SMTP id ffacd0b85a97d-42b3b8a330dmr6778694f8f.42.1762880366609;
-        Tue, 11 Nov 2025 08:59:26 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEBW6xdCq116y/1XekpG/swzz3TUrPhCCJUWZkLqBlcg3nEm6rS3ZuSaKjCs2735S7BCkgu+g==
-X-Received: by 2002:a5d:64e9:0:b0:42b:3b8a:308c with SMTP id ffacd0b85a97d-42b3b8a330dmr6778671f8f.42.1762880366165;
-        Tue, 11 Nov 2025 08:59:26 -0800 (PST)
-Received: from [192.168.10.81] ([176.206.111.214])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-42ac679607esm28646672f8f.43.2025.11.11.08.59.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Nov 2025 08:59:23 -0800 (PST)
-Message-ID: <ab3f4937-38f5-4354-8850-bf773c159bbe@redhat.com>
-Date: Tue, 11 Nov 2025 17:59:21 +0100
+        d=1e100.net; s=20230601; t=1762880479; x=1763485279;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ys8OzpHvw+YFE6Z0Rh9xp23oVtdDuiKWW3cIiRZWe/A=;
+        b=v4NpAnx93XDWW7Y7JxN7xN1Kv/3IKDXGCx568YmSUPRjDVZlp4iJZj55erhkOkppWX
+         UbbQlM0cqNeSzHVNLiwuaJJuHv1yrCh7TkPf+Yl0TUUBNVG0ntIu5mm8Hx31zTzdU5du
+         DCYeimx1dnmHED1XqdEvSuzw/1MPJyvIWh8BxuUAme1cJQWWBGj9tjfUTl2Jm1Gsegnz
+         PCSQhEDkms6DpzVNfgCFx8Q93gLIP2HeD5W3kN68zYkOMJWWXDXaQkItd1q6T/KACcn0
+         uf46cvN7oPqhJKZX0N1w1/hERG7lRBq0U8CpbACathUOKhlzi27qrXwFKwh4TKyNBiW0
+         GBWg==
+X-Forwarded-Encrypted: i=1; AJvYcCXkjy5jn53tqHGdqe1PWMwgdgd/TsVMJb8cmA+oEHi1/Ky/BBaxx3cftf3DDyvtFq7ua5II8CRCeNKvHik=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxb/BX2h5Gb9GThDNRPDlT1wxN9AZoFbmlBmYmcSMmpwm9QkJGy
+	li23gIjh2XydAFSrotvY+eMsgrREDCf90wSFl0LS6jieyJTod/fAssUq5MhIZG9NQ/+tk425Ez0
+	W/HI+yRPWsw5wvNsXxdpMw3EKGiCs6UShFmm628hBfGxfXbbf9iuoi5JquCdcm/TiQkA=
+X-Gm-Gg: ASbGncvYEbgbSj4nD7rkBUGTBn7xB7LooOY9rvxV1KEAlV98jnJ99EGK9CjxgAk08SD
+	6oJ2xOIIhraJTSbCvDg0dc8NceDtwu+kIiwJpFwMemDR+nNv/OEydfAUtnts6MT7YI+/iAQB/uV
+	D8pByXeGjRTB2y+Lt+t9EbUo2CrjXVXPsYrQtnA1KlwlgvIAmKBiNp003vLvjQHKYI0j+QX2Tzh
+	tYp5h0TJHtzRqVtCHGiBpR+E6tkYYy8/+SmLyA5QTLvEYSTZQCZVMDVOvNEJnC6z9BgjUIx/7l1
+	XYdVghEbdTgSCL76ME1OABa52UQjRENVatdQuDnzxFH+N6GQ84U071jYxSr9IH6qd81kvrEEgWH
+	dCua6GtysvSH+8Zf83+oXZaQy/4CxBRmd
+X-Received: by 2002:a17:902:f785:b0:297:dd99:ff13 with SMTP id d9443c01a7336-29840842ef6mr57045265ad.17.1762880479114;
+        Tue, 11 Nov 2025 09:01:19 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFeS7Nfn0Fkkhq93axawBwW1Zllh161FgmCKufOMOr8fIgtNOiUp1YWsMAVxcanb8fNr9z3/A==
+X-Received: by 2002:a17:902:f785:b0:297:dd99:ff13 with SMTP id d9443c01a7336-29840842ef6mr57044415ad.17.1762880478419;
+        Tue, 11 Nov 2025 09:01:18 -0800 (PST)
+Received: from hu-pkondeti-hyd.qualcomm.com ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2984dcd0eb9sm2244495ad.96.2025.11.11.09.01.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Nov 2025 09:01:18 -0800 (PST)
+Date: Tue, 11 Nov 2025 22:31:10 +0530
+From: Pavan Kondeti <pavan.kondeti@oss.qualcomm.com>
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: Pavan Kondeti <pavan.kondeti@oss.qualcomm.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        hrishabh.rajput@oss.qualcomm.com,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH v5 1/2] firmware: qcom: scm: Register gunyah watchdog
+ device
+Message-ID: <b7ed3445-d004-4c15-b8f8-b2f92a621471@quicinc.com>
+References: <20251107-gunyah_watchdog-v5-0-4c6e3fb6eb17@oss.qualcomm.com>
+ <20251107-gunyah_watchdog-v5-1-4c6e3fb6eb17@oss.qualcomm.com>
+ <hbxtbaoavlsw7pbmg3cfkbyx4nacjfiikckhqgpvlggbh6hu5b@jyporqecfzni>
+ <263d1390-eff5-4846-b2c2-31f96fc3248e@quicinc.com>
+ <3794bb0e-5e2c-4d5e-8d81-d302fa36677c@quicinc.com>
+ <rt777beinysf5nuy57frn7okwglsl77xqikmvobao32bznhnkf@mzg243ddzlpl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v1 17/20] KVM: x86: Prepare APX state setting in XCR0
-To: "Chang S. Bae" <chang.seok.bae@intel.com>, kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: seanjc@google.com, chao.gao@intel.com, zhao1.liu@intel.com
-References: <20251110180131.28264-1-chang.seok.bae@intel.com>
- <20251110180131.28264-18-chang.seok.bae@intel.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=pbonzini@redhat.com; keydata=
- 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
-In-Reply-To: <20251110180131.28264-18-chang.seok.bae@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <rt777beinysf5nuy57frn7okwglsl77xqikmvobao32bznhnkf@mzg243ddzlpl>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTExMDEzOCBTYWx0ZWRfX0yVUf3KfJ0GU
+ NZYzF0H45if6j/URufGESYMDhNIcvmU1pjGyPwexa+d3Ffu4o3SFlHbo1CBaAtLfN/rKLdDZvKE
+ 2m2uGb0HYsinn68LKmF4VJcsCjJH5s2fCjcYTUu+KsoWnGIlXlJcjLo9KHeAu4k8rpOPYSfEDej
+ W8KQqCSvw84Qe2CsvwFh2nZi1ZRXSzOUi2roAYTHz7l4Tv6QxxXdsvMaYWSAw8E2llijTKM69mG
+ yR2/n8y4P3wXOx6rdBUebZ6dBC98xyj/epZzOCXZvb9tVMDd5nqFCkexPx7mY1k2pdeEJMc5ws7
+ etgrBVHYzXvyOWqIggfdT8miluf1ypJRHAITbVNeoVyJ9lvlwZE2PBN+RqmWkQF1LqNSuotgOTj
+ UZF9sUMoNgf/0C+U01JkGohjVOmqbQ==
+X-Proofpoint-GUID: nNEViKi_3OW4xLvQFRdpziZiTQYddwZ3
+X-Proofpoint-ORIG-GUID: nNEViKi_3OW4xLvQFRdpziZiTQYddwZ3
+X-Authority-Analysis: v=2.4 cv=UI3Q3Sfy c=1 sm=1 tr=0 ts=69136be0 cx=c_pps
+ a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=kj9zAlcOel0A:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=uhQQHbFWYvhsl2siKBsA:9 a=CjuIK1q_8ugA:10
+ a=GvdueXVYPmCkWapjIL-Q:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-11_03,2025-11-11_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 lowpriorityscore=0 spamscore=0 phishscore=0 impostorscore=0
+ adultscore=0 priorityscore=1501 malwarescore=0 clxscore=1015 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511110138
 
-On 11/10/25 19:01, Chang S. Bae wrote:
-> Prepare the APX state enabling in XCR0 by implementing the previous
-> placeholders and ensuring its readiness.
+On Tue, Nov 11, 2025 at 10:38:27AM -0600, Bjorn Andersson wrote:
+> On Tue, Nov 11, 2025 at 10:51:43AM +0530, Pavan Kondeti wrote:
+> > On Mon, Nov 10, 2025 at 09:43:53AM +0530, Pavan Kondeti wrote:
+> > > On Sat, Nov 08, 2025 at 07:26:46PM +0200, Dmitry Baryshkov wrote:
+> > > > > +static void qcom_scm_gunyah_wdt_free(void *data)
+> > > > > +{
+> > > > > +	struct platform_device *gunyah_wdt_dev = data;
+> > > > > +
+> > > > > +	platform_device_unregister(gunyah_wdt_dev);
+> > > > > +}
+> > > > > +
+> > > > > +static void qcom_scm_gunyah_wdt_init(struct qcom_scm *scm)
+> > > > > +{
+> > > > > +	struct platform_device *gunyah_wdt_dev;
+> > > > > +	struct device_node *np;
+> > > > > +	bool of_wdt_available;
+> > > > > +	int i;
+> > > > > +	uuid_t gunyah_uuid = UUID_INIT(0xc1d58fcd, 0xa453, 0x5fdb, 0x92, 0x65,
+> > > > 
+> > > > static const?
+> > > > 
+> > > > > +				       0xce, 0x36, 0x67, 0x3d, 0x5f, 0x14);
+> > > > > +	static const char * const of_wdt_compatible[] = {
+> > > > > +		"qcom,kpss-wdt",
+> > > > > +		"arm,sbsa-gwdt",
+> > > > > +	};
+> > > > > +
+> > > > > +	/* Bail out if we are not running under Gunyah */
+> > > > > +	if (!arm_smccc_hypervisor_has_uuid(&gunyah_uuid))
+> > > > > +		return;
+> > > > 
+> > > > This rquires 'select HAVE_ARM_SMCCC_DISCOVERY'
+> > > > 
+> > > 
+> > > Probably `depends on HAVE_ARM_SMCCC_DISCOVERY` is correct here.
+> > > 
+> > 
+> > Dmitry / Bjorn,
+> > 
+> > We are debating on this internally on how to resolve this dependency
+> > 
+> > - QCOM_SCM depends on HAVE_ARM_SMCCC_DISCOVERY which means restricting
+> >   QCOM_SCM compilation than what it is today.
 > 
-> APX introduces EGPRs, tracked as XSTATE component 19. Like other
-> XSAVE-managed states, EGPR availability is controlled through XCR0, and
-> the registers are accessible only in 64-bit mode.
-> 
-> At this point, only VMX supports EGPRs. SVM will require corresponding
-> extensions to handle EGPR indices.
-> 
-> The addition to the supported XCR0 mask should accompany guest CPUID
-> exposure, which will be done separately.
+> What does that imply? What is the actual impact? (Do I need to go read
+> the dependency tree myself?)
 
-You should also adjust set_xcr to reject setting BNDREGS and APX 
-together (QEMU should also reject MPX and APX together in CPUID, but KVM 
-doesn't care enough about invalid CPUID configuration).
-
-Paolo
+Actually, I misunderstood how QCOM_SCM driver is enabled. It is being
+selected by other drivers which needs functionality provided by QCOM_SCM
+driver. So adding HAVE_ARM_SMCCC_DISCOVERY dependency does not make much
+sense. Sorry, I should have done my homework properly. I was carried
+away with `select` vs `depends on` approach. 
 
 > 
-> Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
-> ---
-> RFC note
-> Not all callers may need to validate the XCR0 bit -- maybe a capability
-> bit. However, every exit associated with EGPRs should already have that
-> control bit set in the first place. Checking it explicitly does not
-> charge additional cost, so I have this for consistency.
-> ---
->   arch/x86/kvm/emulate.c        |  9 +++++++--
->   arch/x86/kvm/kvm_cache_regs.h |  1 +
->   arch/x86/kvm/kvm_emulate.h    |  1 +
->   arch/x86/kvm/svm/svm.c        |  7 ++++++-
->   arch/x86/kvm/vmx/vmx.h        |  9 ++++++++-
->   arch/x86/kvm/x86.c            | 11 +++++++++++
->   6 files changed, 34 insertions(+), 4 deletions(-)
+> > 
+> > - Adding #ifdefry around arm_smccc_hypervisor_has_uuid usage in qcom scm driver 
+> > 
+> > - Adding stub for `arm_smccc_hypervisor_has_uuid()` which is not done
+> >   for any of the functions defined in drivers/firmware/smccc/smccc.c
+> > 
+> > We are trending towards the first option above. Please let us know if
+> > you think otherwise.
 > 
-> diff --git a/arch/x86/kvm/emulate.c b/arch/x86/kvm/emulate.c
-> index f9381a4055d6..ba3020e6f469 100644
-> --- a/arch/x86/kvm/emulate.c
-> +++ b/arch/x86/kvm/emulate.c
-> @@ -4787,9 +4787,14 @@ static int decode_operand(struct x86_emulate_ctxt *ctxt, struct operand *op,
->   	return rc;
->   }
->   
-> -static inline bool emul_egpr_enabled(struct x86_emulate_ctxt *ctxt __maybe_unused)
-> +/* EGPR availability is controlled by the APX feature bit in XCR0. */
-> +static inline bool emul_egpr_enabled(struct x86_emulate_ctxt *ctxt)
->   {
-> -	return false;
-> +	u64 xcr0;
-> +
-> +	ctxt->ops->get_xcr(ctxt, XCR_XFEATURE_ENABLED_MASK, &xcr0);
-> +
-> +	return xcr0 & XFEATURE_MASK_APX;
->   }
->   
->   int x86_decode_insn(struct x86_emulate_ctxt *ctxt, void *insn, int insn_len, int emulation_type)
-> diff --git a/arch/x86/kvm/kvm_cache_regs.h b/arch/x86/kvm/kvm_cache_regs.h
-> index 8ddb01191d6f..acdb3751317c 100644
-> --- a/arch/x86/kvm/kvm_cache_regs.h
-> +++ b/arch/x86/kvm/kvm_cache_regs.h
-> @@ -3,6 +3,7 @@
->   #define ASM_KVM_CACHE_REGS_H
->   
->   #include <linux/kvm_host.h>
-> +#include <asm/fpu/xcr.h>
->   
->   #define KVM_POSSIBLE_CR0_GUEST_BITS	(X86_CR0_TS | X86_CR0_WP)
->   #define KVM_POSSIBLE_CR4_GUEST_BITS				  \
-> diff --git a/arch/x86/kvm/kvm_emulate.h b/arch/x86/kvm/kvm_emulate.h
-> index cc16211d61f6..673a82532c78 100644
-> --- a/arch/x86/kvm/kvm_emulate.h
-> +++ b/arch/x86/kvm/kvm_emulate.h
-> @@ -237,6 +237,7 @@ struct x86_emulate_ops {
->   	bool (*is_smm)(struct x86_emulate_ctxt *ctxt);
->   	int (*leave_smm)(struct x86_emulate_ctxt *ctxt);
->   	void (*triple_fault)(struct x86_emulate_ctxt *ctxt);
-> +	int (*get_xcr)(struct x86_emulate_ctxt *ctxt, u32 index, u64 *xcr);
->   	int (*set_xcr)(struct x86_emulate_ctxt *ctxt, u32 index, u64 xcr);
->   
->   	gva_t (*get_untagged_addr)(struct x86_emulate_ctxt *ctxt, gva_t addr,
-> diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-> index 3aa2c37754ef..e6a082686000 100644
-> --- a/arch/x86/kvm/svm/svm.c
-> +++ b/arch/x86/kvm/svm/svm.c
-> @@ -5288,8 +5288,13 @@ static __init int svm_hardware_setup(void)
->   	}
->   	kvm_enable_efer_bits(EFER_NX);
->   
-> +	/*
-> +	 * APX introduces EGPRs, which require additional VMCB support.
-> +	 * Disable APX until the necessary extensions are handled.
-> +	 */
->   	kvm_caps.supported_xcr0 &= ~(XFEATURE_MASK_BNDREGS |
-> -				     XFEATURE_MASK_BNDCSR);
-> +				     XFEATURE_MASK_BNDCSR  |
-> +				     XFEATURE_MASK_APX);
->   
->   	if (boot_cpu_has(X86_FEATURE_FXSR_OPT))
->   		kvm_enable_efer_bits(EFER_FFXSR);
-> diff --git a/arch/x86/kvm/vmx/vmx.h b/arch/x86/kvm/vmx/vmx.h
-> index 6cf1eb739caf..784aa0504dce 100644
-> --- a/arch/x86/kvm/vmx/vmx.h
-> +++ b/arch/x86/kvm/vmx/vmx.h
-> @@ -372,7 +372,14 @@ struct vmx_insn_info {
->   	union insn_info info;
->   };
->   
-> -static inline bool vmx_egpr_enabled(struct kvm_vcpu *vcpu __maybe_unused) { return false; }
-> +/*
-> + * EGPR availability is controlled by the APX xfeature bit in XCR0 and is
-> + * only accessible in 64-bit mode.
-> + */
-> +static inline bool vmx_egpr_enabled(struct kvm_vcpu *vcpu)
-> +{
-> +	return vcpu->arch.xcr0 & XFEATURE_MASK_APX && is_64_bit_mode(vcpu);
-> +}
->   
->   static inline struct vmx_insn_info vmx_get_insn_info(struct kvm_vcpu *vcpu)
->   {
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index 4c8c2fc3bda6..e087db0f4153 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -8843,6 +8843,16 @@ static void emulator_triple_fault(struct x86_emulate_ctxt *ctxt)
->   	kvm_make_request(KVM_REQ_TRIPLE_FAULT, emul_to_vcpu(ctxt));
->   }
->   
-> +static int emulator_get_xcr(struct x86_emulate_ctxt *ctxt, u32 index, u64 *xcr)
-> +{
-> +	/* Only support XCR_XFEATURE_ENABLED_MASK now  */
-> +	if (index != XCR_XFEATURE_ENABLED_MASK)
-> +		return 1;
-> +
-> +	*xcr = emul_to_vcpu(ctxt)->arch.xcr0;
-> +	return 0;
-> +}
-> +
->   static int emulator_set_xcr(struct x86_emulate_ctxt *ctxt, u32 index, u64 xcr)
->   {
->   	return __kvm_set_xcr(emul_to_vcpu(ctxt), index, xcr);
-> @@ -8915,6 +8925,7 @@ static const struct x86_emulate_ops emulate_ops = {
->   	.is_smm              = emulator_is_smm,
->   	.leave_smm           = emulator_leave_smm,
->   	.triple_fault        = emulator_triple_fault,
-> +	.get_xcr             = emulator_get_xcr,
->   	.set_xcr             = emulator_set_xcr,
->   	.get_untagged_addr   = emulator_get_untagged_addr,
->   	.is_canonical_addr   = emulator_is_canonical_addr,
+> What is this trend driven by? Is it coin toss or is there a reason? My
+> gut feeling is trending towards one of the latter two options...
 
+Thanks, we are going with #ifdefry around the new code that is added by
+this patch.
+
+> 
+> But you're effectively asking us to go research these three options,
+> determine the pros/cons and then tell you what we think, at which point I
+> presume you will tell us what you think about each option.
+> 
+> It would be better if you made a suggestion and told us why you think
+> this is the best choice - then we can either agree with your reasoning,
+> or choose to ask more questions or do some research.
+> 
+
+Understood. I will keep this in mind while presenting choices from now
+onwards.
+
+Thanks,
+Pavan
 
