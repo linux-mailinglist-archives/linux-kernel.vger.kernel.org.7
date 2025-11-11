@@ -1,165 +1,128 @@
-Return-Path: <linux-kernel+bounces-895605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB2ECC4E793
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 15:29:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDDA3C4E79C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 15:30:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8952B3A3F95
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:23:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A51C3A5BDA
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:23:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D105B2F5339;
-	Tue, 11 Nov 2025 14:23:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09B9E2C2357;
+	Tue, 11 Nov 2025 14:23:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="i8ayxMi3"
-Received: from ixit.cz (ip-94-112-25-9.bb.vodafone.cz [94.112.25.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KO5eNHGH"
+Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5353C3AA188;
-	Tue, 11 Nov 2025 14:23:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.112.25.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6D10A55
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 14:23:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762870992; cv=none; b=KJA01hVvX6OEJ4nq7D/Qb4W2mjIHOYNkQAAmD/A7TY0tzAk6uXKSatL92QWbICHMeCXpA0LmrA8zvxqFtg+nmw+48hjwXuAxY3TIdoDO5H/4uxSzZIpDV22lltOoMnIESJ1tm1p9ZfRzf9lH7dqHbT0nEeADhW908mA/2AnUMlA=
+	t=1762871026; cv=none; b=BaZVjJuY4GrS9zEwhBhQQKCUfDoHr6OgLKxQjbv3p6KBG1zzb2gu1bZz6oRNCY5deBhDS217qACgYk8/9vazi/3FQzRlYaJ9rLFEAOz14ujzzOXwtKrpwaCSrD79S8viGbup5X7XU4eoHR2yKyk+9TSRF5EftdULUzXHLLl6BPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762870992; c=relaxed/simple;
-	bh=JXf8KnlTQnnhWOmDcUTb33mz6JrZoKL/Nq7iglCzVL0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aJz2NO+GrzJ7BW8Maf6Ij8vxgaRfoUZPmBeFGBF4cIZ0bE2bB3iLKT6hdiAdcskQTgOI06LflReWRMxd2ii8i5NlHzMY6f08TF6ltvV/brF2d3WOxrcOQUT7pw5OdChx7BolAkFQZKH3ig8WH8mutzPdPOFCYzhX3yfxAWeE0rU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=i8ayxMi3; arc=none smtp.client-ip=94.112.25.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
-Received: from [10.0.0.200] (unknown [10.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ixit.cz (Postfix) with ESMTPSA id 6E2605340EF2;
-	Tue, 11 Nov 2025 15:23:05 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
-	t=1762870985;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Fdk0kWYHlnURAj9xQ3vEcSRUSriPwv1YtYVjEkVAE8c=;
-	b=i8ayxMi3ozUSGACtQIvkKQ0trLl18d0PTcM1AX1Ta2WLy6LUDsaRwN9eekEZuaW4YQIs66
-	1XkdTLitNYaZN+2k1C4fIzbMHwWx+V5qsrEyG+nCimi5RuqvnJ7sCnhUgFYlRwWKsxRSNv
-	uu4CgiCPkwp0BgB00328FoZj9G5eh0c=
-Message-ID: <5c6a1434-1f43-4434-b6ed-0c5b98ee8d2b@ixit.cz>
-Date: Tue, 11 Nov 2025 15:23:05 +0100
+	s=arc-20240116; t=1762871026; c=relaxed/simple;
+	bh=oj2s8bO5lxhx+kKxRe74EFxM/F/qWhzbrg0KtIezBuY=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=RZE0XeZ4o6vFkGGbHIOjAtyvMdlmyqXJ/DFWzYE8xIJTkFVfJFLR3gtnhYZStljoLz18C8xze1/d2I4enNcdUwTUe/7wbtGmn9HDg6sPJf/6Hbr49e9/RjT1aI6Aa2k2hrYZc120kX7+kgYXhdaJV56KjBWK5WfOgIqlfHAJRRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KO5eNHGH; arc=none smtp.client-ip=209.85.221.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-42b3c965ce5so1463191f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 06:23:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762871023; x=1763475823; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=iTBpJ0w2os/1RvBWHXpd8TL34XRCPeFtbIxSDsdtlBQ=;
+        b=KO5eNHGHPChbMoZMluxxxOTIUURGRU5v3cU+HpR0zaTRDcSwedi3JKdeniMG7AvsIz
+         mwQI2yP3jdd+9lCh+P1JRSGm24uusOFeNauIm7/oNluqZSdBze6TvbltVlyHyYV8rrfg
+         qtDLcUPYFZaP/SPCJabxy+gE4fkfugr3vmjg+Ioo1tEVAQE6r3O2xtnAMh59FeFMKS0I
+         5hJeg+Or6IvvFGbgvjwnC2JWpj1A/ALmkfnTQgvrw2+c9/K5dk3fXdl7hflgkOA1lS2N
+         I+a33YPW+6uM/WXceZzM1F3GBhErijo4goA9aJjdqndYRlM0lJ7qC/Ba0k21fNvRpJBL
+         vAUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762871023; x=1763475823;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=iTBpJ0w2os/1RvBWHXpd8TL34XRCPeFtbIxSDsdtlBQ=;
+        b=eXess9PYwwn+/ZbDWYrnm+nrRPIjGDldTRsg16/mYPu3Va4BIGIThcLWeTuLftkSHW
+         M3OXhNgFZZqwEDTPiSrhlzd89DENnb50En90hSdaJa1pXZHL2utbNXQ28kyOiTUQHyUy
+         FQYAVyQPBKK0dElVUdVLmhQAvoRfp0pBCsfQ4ejSl7ZMPQCMzw5qFG7kf9wUzU9XDWDc
+         hjuvaCSiYgkZVd9a/9IczW+2EahARvrBYArvIeGL8xU6X7Ani72znlqCZ4R/04ebNp+G
+         7OaHhN/uFJ01eyjEcdPu4B47q9Lw5XNP7bm71J+uLibKqJJ2p3OJF2R3vsA3xOlnNhuO
+         9VUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUFfISGZ48bsN5iJVVI8TfGhBivOLxHmc1XEkRoHsIBL1p4AG4RlBRmxfJOYBkbl6O6vTdqJ26u0/iB4jk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzcRmDiTTe72Mx02oFmdiF3IjzCdfyIa8/GFHrKn9lDnWJmwEu7
+	YjdRX2oqj8GDs821TFFDsSYaYbUv/tTdF2wJYjPF3KsLvt5sKdvCEV1PF+XT0e5vg3/9GStGVPZ
+	8HF83jrz8PZt+D5zNIA==
+X-Google-Smtp-Source: AGHT+IFYs3kJb3BKRTegYAhCqWpXq9+rU3WS99Yao39uyZ1Y+HHPv27mS5SqNN8IIJFq2GgDoV2/NTcxXq+gdLU=
+X-Received: from wma12.prod.google.com ([2002:a05:600c:890c:b0:477:54f2:85b7])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:310d:b0:477:55be:f615 with SMTP id 5b1f17b1804b1-47773224f5dmr106326985e9.5.1762871023136;
+ Tue, 11 Nov 2025 06:23:43 -0800 (PST)
+Date: Tue, 11 Nov 2025 14:23:31 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] arm64: dts: qcom: xiaomi-beryllium: Add firmware-name
- qualifier to WiFi node
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Jeff Johnson <jjohnson@kernel.org>, Bjorn Andersson
- <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Joel Selvaraj <foss@joelselvaraj.com>,
- linux-wireless@vger.kernel.org, ath10k@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, phone-devel@vger.kernel.org
-References: <20251111-xiaomi-beryllium-firmware-v1-0-836b9c51ad86@ixit.cz>
- <20251111-xiaomi-beryllium-firmware-v1-2-836b9c51ad86@ixit.cz>
- <wxvtfyfdso3ngqvnhvryeo2w6udoolfp46smv2r3qny2cl7n4o@iawxfnj7qtrw>
-Content-Language: en-US
-From: David Heidelberg <david@ixit.cz>
-Autocrypt: addr=david@ixit.cz; keydata=
- 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
-In-Reply-To: <wxvtfyfdso3ngqvnhvryeo2w6udoolfp46smv2r3qny2cl7n4o@iawxfnj7qtrw>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIAONGE2kC/x2MQQqAMAwEvyI5G7DFIvoV8aA11YBWSaUI4t8Nz
+ m1gdh9IJEwJuuIBocyJj6hiygL8OsaFkGd1sJV1RsGJ40yCgW/cOF0otB+ZsDbetr5xIfgWdHw KafIf98P7fiGHDFZoAAAA
+X-Change-Id: 20251111-binder-fix-list-remove-41c29c75ffc9
+X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
+X-Developer-Signature: v=1; a=openpgp-sha256; l=664; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=oj2s8bO5lxhx+kKxRe74EFxM/F/qWhzbrg0KtIezBuY=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBpE0bpi/WI7dIpOwFKvWdRwVEcAo9vBbRNsfaxI
+ Q0PzoEYrkqJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaRNG6QAKCRAEWL7uWMY5
+ Ro3tD/44ZBOKxIr8I0ZmiJSpYwK/aReOFe101HeEva6QBMbGahZnUPutQnKc71AE7fTzvqQxyDP
+ PHBtRnuilDjPCe5zxQxyn69IoJuP50x6Ty366iWizgfp1KL8tkNB17zIRfF00MVZyiW8Pvz8VqA
+ qwQm9/YvR8daSorxtQjJOpUKbQFejmOg5oo3B++95hj1rRu5vFTUFVnfKxW0J0uEg5dImsoz7a0
+ 8l06vtacn1he0voaZ2sYlY3uJCeJyzP8JQ/nALRvzEjwZz9+d9khuifWH4nNLCdvHJayRmF61Hj
+ dX4IUYgPLhL6Dr9eCll1CxAJIh5CN6aF/VQXD9X6DOUWMstq4pGJse+cwLk50vyq4At1PBZLAOM
+ NnicKTyttD2HZNs0abHzoXvdiAAWCSNXW26mUldwMxGSoYFUAP5qW+kUB8avc5LfZ6SmYjx/fo7
+ VvpI7Dj6zfvCK0EBrONW7chcgj6OXZccO7EvI2GkbfmqjRaaARAu06pk89c6YyXKuHzvs3pYVv5
+ qioNRCHAT2K+t7gSCmn+rkqT002dzVJbf20rP7SMlGIbDTRKGS3NhPHoJLLq5wNpIfL/UJ/xIKG
+ XE0lMJQIabn37UbqSylpn2+3kGq05KOmdJkhqPfhI8PXdPb1Fv3JtRjzG8bCfrdXZrFfmPM6qJ3 y+bGgzRTLiNDRpQ==
+X-Mailer: b4 0.14.2
+Message-ID: <20251111-binder-fix-list-remove-v1-0-8ed14a0da63d@google.com>
+Subject: [PATCH 0/3] rust_binder: fix unsoundness due to combining
+ List::remove with mem:take
+From: Alice Ryhl <aliceryhl@google.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Carlos Llamas <cmllamas@google.com>, 
+	Miguel Ojeda <ojeda@kernel.org>
+Cc: "=?utf-8?q?Arve_Hj=C3=B8nnev=C3=A5g?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, 
+	Martijn Coenen <maco@android.com>, Joel Fernandes <joelagnelf@nvidia.com>, 
+	Christian Brauner <brauner@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-On 11/11/2025 13:46, Dmitry Baryshkov wrote:
-> On Tue, Nov 11, 2025 at 01:34:23PM +0100, David Heidelberg via B4 Relay wrote:
->> From: David Heidelberg <david@ixit.cz>
->>
->> Add firmware-name property to the WiFi device tree node to specify
->> board-specific lookup directory.
->>
->> Signed-off-by: David Heidelberg <david@ixit.cz>
->> ---
->>   arch/arm64/boot/dts/qcom/sdm845-xiaomi-beryllium-common.dtsi | 2 ++
->>   1 file changed, 2 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/sdm845-xiaomi-beryllium-common.dtsi b/arch/arm64/boot/dts/qcom/sdm845-xiaomi-beryllium-common.dtsi
->> index 785006a15e979..9b0b0446f4ad3 100644
->> --- a/arch/arm64/boot/dts/qcom/sdm845-xiaomi-beryllium-common.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/sdm845-xiaomi-beryllium-common.dtsi
->> @@ -631,6 +631,8 @@ &wcd9340 {
->>   &wifi {
->>   	status = "okay";
->>   
->> +	firmware-name "sdm845/Xiaomi/beryllium";
-> 
-> This wasn't build-tested
+See the first patch for details on the bug.
 
-Sorry, I wanted to send it more like RFC to get initial feedback, I got 
-user with Foco F1 who is willing to test the changes, so I should have 
-new version with T-b until EOD.
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+---
+Alice Ryhl (3):
+      rust_binder: fix race condition on death_list
+      rust_binder: avoid mem::take on delivered_deaths
+      rust: list: add warning to List::remove docs about mem::take
 
-David
+ drivers/android/binder/node.rs    | 6 +++---
+ drivers/android/binder/process.rs | 8 ++++++--
+ rust/kernel/list.rs               | 3 +++
+ 3 files changed, 12 insertions(+), 5 deletions(-)
+---
+base-commit: 211ddde0823f1442e4ad052a2f30f050145ccada
+change-id: 20251111-binder-fix-list-remove-41c29c75ffc9
 
-> 
->> +
->>   	vdd-0.8-cx-mx-supply = <&vreg_l5a_0p8>;
->>   	vdd-1.8-xo-supply = <&vreg_l7a_1p8>;
->>   	vdd-1.3-rfa-supply = <&vreg_l17a_1p3>;
->>
->> -- 
->> 2.51.0
->>
->>
-> 
-
+Best regards,
 -- 
-David Heidelberg
+Alice Ryhl <aliceryhl@google.com>
 
 
