@@ -1,151 +1,239 @@
-Return-Path: <linux-kernel+bounces-894598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81EA8C4B657
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 05:04:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90632C4B67E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 05:06:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFB611894328
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 04:04:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F141E3B8936
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 04:04:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D96E348880;
-	Tue, 11 Nov 2025 04:03:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 441872E1722;
+	Tue, 11 Nov 2025 04:04:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Hoswz3Y/"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A31820ED;
-	Tue, 11 Nov 2025 04:03:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aJEKLo3b"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AACF926B2DA
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 04:04:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762833823; cv=none; b=iZ2TY29vocj39kxZ0jiX2T30BynuLF9DzKvP5DAKnGsTrDssJRCV9c1OgaVDKIcyzND59hrs/HxA2OHkzRB3Ee+ps6S4g+Ju2wC3lOThOT1Hev3kJ/Y7lb+JZnvED7PHPl34jkHsMkND0yDXIO/4k/cByCbPl+wGDDFrr4iYNyU=
+	t=1762833868; cv=none; b=iHF3ZhicNmVJ4tWElKtwO/VoW0j/CtLgj4Yqb3/yFg1SofTQESbizWAErGlSzq9AWBcV8hvoRQdxQGAOF+OYgYA4XHyuB96xIZYQz/3B5YzlNZAIFzIDZoZOMNQyyagrU0iSnzVgd8TbuHuBYjQQR5o/V6aIKAKsEfg6b8Nr6XU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762833823; c=relaxed/simple;
-	bh=BqbibIjmIBvoptyL9956H5Lx4AaV2x5z8jLGWNeHdaA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ERx0Nw0q8omkoFHbb8ISnE9rb26zok5y/71m5BRb1HxNPcji5FT4oqFC1rSr+Ef/elHu6AHXUKy26EEw3QlFtT4bB7THnPrU7xuH/eoFEoJCzkqV3nGn+KJKCEQRdOE1+COE9ydpB9cX4Oh4j+wA00F4E/QZtHv2+n2RaqFZaTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Hoswz3Y/; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1173)
-	id F3B50212AE23; Mon, 10 Nov 2025 20:03:41 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com F3B50212AE23
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1762833822;
-	bh=4inJCO+mmtz4c98ESvhku4VxP3CaeaFoBhLGjd6rC44=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Hoswz3Y/566Cw1bmvGOMeg70i3HGrhqAruCMrcy7NqOYYcC8ZpcGWBmM6IBc0TLj9
-	 a4szfWyXewqs73SOLjFdSZ5/7pAIXrRQKsLjRLHiDUJzxOdJX2dnxfEV3RavmPTuNY
-	 JE8b5y8WHidiwxJeVwy8fL6hvn5JsOeWXwPIcR7c=
-Date: Mon, 10 Nov 2025 20:03:41 -0800
-From: Erni Sri Satya Vennela <ernis@linux.microsoft.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
-	decui@microsoft.com, andrew+netdev@lunn.ch, davem@davemloft.net,
-	edumazet@google.com, pabeni@redhat.com, longli@microsoft.com,
-	kotaranov@microsoft.com, horms@kernel.org,
-	shradhagupta@linux.microsoft.com, ssengar@linux.microsoft.com,
-	dipayanroy@linux.microsoft.com, shirazsaleem@microsoft.com,
-	rosenp@gmail.com, linux-hyperv@vger.kernel.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-rdma@vger.kernel.org
-Subject: Re: [PATCH net-next v2 2/2] net: mana: Add standard counter
- rx_missed_errors
-Message-ID: <20251111040341.GA3750@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <1761734272-32055-1-git-send-email-ernis@linux.microsoft.com>
- <1761734272-32055-3-git-send-email-ernis@linux.microsoft.com>
- <20251031161723.057e4770@kernel.org>
+	s=arc-20240116; t=1762833868; c=relaxed/simple;
+	bh=1mBjO8UR0M4ItBaJw5PUKuF0DR1PX8C67gBkX+zy+rs=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=bT+c/mlm0JlRCtii/rV78Ii1VbsN0DOeAxwFbrEYqK3OZ4V1SavVkpNX8XgnJjhkTrv3gdP00qNNaKguMF0UeEmL8DziwibXZ31/O4e5anTNq6DNdPpKeJlzA1wv6CGdV+r07+flxwVGfpyCzQBOGBHQIequJSPNtJjs1fxTc18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aJEKLo3b; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2982dec5ccbso32100775ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 20:04:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762833866; x=1763438666; darn=vger.kernel.org;
+        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=1PSFgP9VQsSqfbamt9NalTKm2hbaezrc1+diiPEJGbg=;
+        b=aJEKLo3blPksvhbejht2gA7G+pP8Oe2mjaWtQNRF/VH/cCp2xl3TMV3rww6x7pTLoC
+         5Ryqc6XdvF7/UaxvBeFRfmjnhXuV/BNwWDiuUTIL+4NmdcCj0xpWtAJfOeNAai9ePNwI
+         pXjfFLKcbtin0my/m7q0hzIlqd3/oZm9Xt1mrtO6QtLNtD1mjiC1f34dVXrVje3VZPR7
+         vvt8JyAXlwASS3ewEaP/L6J1sFocbyihrOJWoed/er4NUzguf/6RH86HBZfh7YexCn9h
+         xNd/numZTcj3Gxz13pSy3wFP9bRfVTMYlSVRE5got6oTRpdvf8fCeOY8sPGYR0dRtYjV
+         0G3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762833866; x=1763438666;
+        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1PSFgP9VQsSqfbamt9NalTKm2hbaezrc1+diiPEJGbg=;
+        b=BrKUtkW3ioQr8KU7gAev5YlA0SJwFty8d7Hn6Z+vKWM7j4BzGHe/8hQwGMd5uw5mHu
+         KqPrfDA83UDrdobKhyw+9fkyEPC9KaFFXIPHEt+EmfjBrSAhnN/dsT+sfWngRdgRjJ99
+         +mEwSTnRYbP3dU+DzR6dhc+qUpaOSWCYgz8mtrQ/3qC4xujlbyD9kxTYHpxz2eGrCD+s
+         O4cEnnQa5ik1IFpAdN9BjM+//Oo/QfyhXP3nlcZlAjRE6t4sXeynCQ9JuIn+fhQUkT+5
+         BgwQR5TZODfyDUVJ9No8Pf4cp8nMmpCJjX3gjGlM49JgTmLF6zzZ4xipM5OEEXddeJpZ
+         p+jw==
+X-Forwarded-Encrypted: i=1; AJvYcCXo4UO2rrdpz6W4xbVAv34hzhh9cepghzEOn+x0MQRWbUE721ar6jlRsfvdIH19ndlI9IEIfB3C+cSQToU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxY8r+Hbi/1LlVkeIEBp5l5yZyHvFVwvklP4r8X5HPNFZkL5Vqk
+	oS1S3aZsKHIRYUa7S5uUHItCcJNTJBSIXa9VMTw5LnmFQ9aVxuSOygjyQJRyv3eBByq5oD5/nlm
+	PtkK52h6QIA==
+X-Google-Smtp-Source: AGHT+IEAc6mZMUVxGYOLUE41zxOZxEn3pFmCRs08mmZRN2ivMJ/qXjwH5wtaQwCxWgfOdOzCulNph2du/HdU
+X-Received: from dybmy9.prod.google.com ([2002:a05:7300:d489:b0:2a2:3f59:eef5])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:ebcb:b0:295:ac6f:c899
+ with SMTP id d9443c01a7336-297e56ddbdcmr153595945ad.47.1762833865465; Mon, 10
+ Nov 2025 20:04:25 -0800 (PST)
+Date: Mon, 10 Nov 2025 20:03:59 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251031161723.057e4770@kernel.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.2.1041.gc1ab5b90ca-goog
+Message-ID: <20251111040417.270945-1-irogers@google.com>
+Subject: [PATCH v3 00/18] Switch the default perf stat metrics to json
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	James Clark <james.clark@linaro.org>, Xu Yang <xu.yang_2@nxp.com>, 
+	Chun-Tse Shao <ctshao@google.com>, Thomas Richter <tmricht@linux.ibm.com>, 
+	Sumanth Korikkar <sumanthk@linux.ibm.com>, Collin Funk <collin.funk1@gmail.com>, 
+	Thomas Falcon <thomas.falcon@intel.com>, Howard Chu <howardchu95@gmail.com>, 
+	Dapeng Mi <dapeng1.mi@linux.intel.com>, Levi Yun <yeoreum.yun@arm.com>, 
+	Yang Li <yang.lee@linux.alibaba.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, Andi Kleen <ak@linux.intel.com>, 
+	Weilin Wang <weilin.wang@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Oct 31, 2025 at 04:17:23PM -0700, Jakub Kicinski wrote:
-> On Wed, 29 Oct 2025 03:37:52 -0700 Erni Sri Satya Vennela wrote:
-> > diff --git a/drivers/net/ethernet/microsoft/mana/mana_en.c b/drivers/net/ethernet/microsoft/mana/mana_en.c
-> > index 009e869ef296..48df44889f05 100644
-> > --- a/drivers/net/ethernet/microsoft/mana/mana_en.c
-> > +++ b/drivers/net/ethernet/microsoft/mana/mana_en.c
-> > @@ -494,6 +494,11 @@ static void mana_get_stats64(struct net_device *ndev,
-> >  
-> >  	netdev_stats_to_stats64(st, &ndev->stats);
-> >  
-> > +	if (apc->ac->hwc_timeout_occurred)
-> > +		netdev_warn_once(ndev, "HWC timeout occurred\n");
-> 
-> I don't think there's much value in this print.
+Prior to this series stat-shadow would produce hard coded metrics if
+certain events appeared in the evlist. This series produces equivalent
+json metrics and cleans up the consequences in tests and display
+output. A before and after of the default display output on a
+tigerlake is:
 
-This print is added because, if the user tries to run 
-"ip -s link interface" for multiple times, he should be warned about 
-the time out. I will add more info into the print to let the user
-know that it is from this action.
-> 
-> > +#define MANA_GF_STATS_PERIOD (2 * HZ)
-> > +
-> > +static void mana_gf_stats_work_handler(struct work_struct *work)
-> > +{
-> > +	struct mana_context *ac =
-> > +		container_of(to_delayed_work(work), struct mana_context, gf_stats_work);
-> > +	int err;
-> > +
-> > +	err = mana_query_gf_stats(ac);
-> > +	if (err == -ETIMEDOUT) {
-> > +		/* HWC timeout detected - reset stats and stop rescheduling */
-> > +		ac->hwc_timeout_occurred = true;
-> > +		memset(&ac->hc_stats, 0, sizeof(ac->hc_stats));
-> 
-> Not sure I've seen another device using this approach but I can't
-> really tell what's the best strategy. The device is unusable if it
-> can't provide stats..
+Before:
+```
+$ perf stat -a sleep 1
 
-In the case where the HWC becomes unresponsive,
-there will be a brief interval needed for the driver to recover. 
-During this period, if users request ethtool stats, they would 
-receive outdated information. To address this, we proactively 
-reset the stats to zero, ensuring users do not see stale data.
+ Performance counter stats for 'system wide':
 
-> 
-> > +		return;
-> > +	}
-> > +	queue_delayed_work(ac->gf_stats_wq, &ac->gf_stats_work, MANA_GF_STATS_PERIOD);
-> > +}
-> > +
-> >  int mana_probe(struct gdma_dev *gd, bool resuming)
-> >  {
-> >  	struct gdma_context *gc = gd->gdma_context;
-> > @@ -3478,6 +3503,15 @@ int mana_probe(struct gdma_dev *gd, bool resuming)
-> >  	}
-> >  
-> >  	err = add_adev(gd, "eth");
-> > +	ac->gf_stats_wq = create_singlethread_workqueue("mana_gf_stats");
-> 
-> Why are you creating a workqueue? You can use system queues.
-Thankyou for the suggestion. I will integrate it in the next version.
-> 
-> > +	queue_delayed_work(ac->gf_stats_wq, &ac->gf_stats_work, MANA_GF_STATS_PERIOD);
-> 
-> ls wrap long lines at 80 chars.
-I will make this change for the next verison.
-> 
-> > diff --git a/drivers/net/ethernet/microsoft/mana/mana_ethtool.c b/drivers/net/ethernet/microsoft/mana/mana_ethtool.c
-> > index 3dfd96146424..99e811208683 100644
-> > --- a/drivers/net/ethernet/microsoft/mana/mana_ethtool.c
-> > +++ b/drivers/net/ethernet/microsoft/mana/mana_ethtool.c
-> > @@ -213,8 +213,6 @@ static void mana_get_ethtool_stats(struct net_device *ndev,
-> >  
-> >  	if (!apc->port_is_up)
-> >  		return;
-> > -	/* we call mana function to update stats from GDMA */
-> > -	mana_query_gf_stats(apc->ac);
-> 
-> Why delete this? We can get fresh stats for the user in this context.
-We want to prevent some user that run ethtool too frequently, like
-thousands of times / sec, to overwhelm the HW channel. 
+    16,041,816,418      cpu-clock                        #   15.995 CPUs utilized             
+             5,749      context-switches                 #  358.376 /sec                      
+               121      cpu-migrations                   #    7.543 /sec                      
+             1,806      page-faults                      #  112.581 /sec                      
+       825,965,204      instructions                     #    0.70  insn per cycle            
+     1,180,799,101      cycles                           #    0.074 GHz                       
+       168,945,109      branches                         #   10.532 M/sec                     
+         4,629,567      branch-misses                    #    2.74% of all branches           
+ #     30.2 %  tma_backend_bound      
+                                                  #      7.8 %  tma_bad_speculation    
+                                                  #     47.1 %  tma_frontend_bound     
+ #     14.9 %  tma_retiring           
+```
+
+After:
+```
+$ perf stat -a sleep 1
+
+ Performance counter stats for 'system wide':
+
+             2,890      context-switches                 #    179.9 cs/sec  cs_per_second     
+    16,061,923,339      cpu-clock                        #     16.0 CPUs  CPUs_utilized       
+                43      cpu-migrations                   #      2.7 migrations/sec  migrations_per_second
+             5,645      page-faults                      #    351.5 faults/sec  page_faults_per_second
+         5,708,413      branch-misses                    #      1.4 %  branch_miss_rate         (88.83%)
+       429,978,120      branches                         #     26.8 K/sec  branch_frequency     (88.85%)
+     1,626,915,897      cpu-cycles                       #      0.1 GHz  cycles_frequency       (88.84%)
+     2,556,805,534      instructions                     #      1.5 instructions  insn_per_cycle  (88.86%)
+                        TopdownL1                 #     20.1 %  tma_backend_bound      
+                                                  #     40.5 %  tma_bad_speculation      (88.90%)
+                                                  #     17.2 %  tma_frontend_bound       (78.05%)
+                                                  #     22.2 %  tma_retiring             (88.89%)
+
+       1.002994394 seconds time elapsed
+```
+
+Having the metrics in json brings greater uniformity, allows events to
+be shared by metrics, and it also allows descriptions like:
+```
+$ perf list cs_per_second
+...
+  cs_per_second
+       [Context switches per CPU second]
+```
+
+A thorn in the side of doing this work was that the hard coded metrics
+were used by perf script with '-F metric'. This functionality didn't
+work for me (I was testing `perf record -e instructions,cycles`
+with/without leader sampling and then `perf script -F metric` but saw
+nothing but empty lines) but anyway I decided to fix it to the best of
+my ability in this series. So the script side counters were removed
+and the regular ones associated with the evsel used. The json metrics
+were all searched looking for ones that have a subset of events
+matching those in the perf script session, and all metrics are
+printed. This is kind of weird as the counters are being set by the
+period of samples, but I carried the behavior forward. I suspect there
+needs to be follow up work to make this better, but what is in the
+series is superior to what is currently in the tree. Follow up work
+could include finding metrics for the machine in the perf.data rather
+than using the host, allowing multiple metrics even if the metric ids
+of the events differ, fixing pre-existing `perf stat record/report`
+issues, etc.
+
+There is a lot of stat tests that, for example, assume '-e
+instructions,cycles' will produce an IPC metric. These things needed
+tidying as now the metric must be explicitly asked for and when doing
+this ones using software events were preferred to increase
+compatibility. As the test updates were numerous they are distinct to
+the patches updating the functionality causing periods in the series
+where not all tests are passing. If this is undesirable the test fixes
+can be squashed into the functionality updates, but this will be kind
+of messy, especially as at some points in the series both the old
+metrics and the new metrics will be displayed.
+
+v3: Rebase resolving merge conflicts in
+    tools/perf/pmu-events/empty-pmu-events.c by just regenerating it
+    (Dapeng Mi).
+
+v2: Drop merged patches, add json to document target_cpu/core_wide and
+    example to "Add care to picking the evsel for displaying a metric"
+    commit message (Namhyung).
+    https://lore.kernel.org/lkml/20251106231508.448793-1-irogers@google.com/
+
+v1: https://lore.kernel.org/lkml/20251024175857.808401-1-irogers@google.com/
+
+Ian Rogers (18):
+  perf metricgroup: Add care to picking the evsel for displaying a
+    metric
+  perf expr: Add #target_cpu literal
+  perf jevents: Add set of common metrics based on default ones
+  perf jevents: Add metric DefaultShowEvents
+  perf stat: Add detail -d,-dd,-ddd metrics
+  perf script: Change metric format to use json metrics
+  perf stat: Remove hard coded shadow metrics
+  perf stat: Fix default metricgroup display on hybrid
+  perf stat: Sort default events/metrics
+  perf stat: Remove "unit" workarounds for metric-only
+  perf test stat+json: Improve metric-only testing
+  perf test stat: Ignore failures in Default[234] metricgroups
+  perf test stat: Update std_output testing metric expectations
+  perf test metrics: Update all metrics for possibly failing default
+    metrics
+  perf test stat: Update shadow test to use metrics
+  perf test stat: Update test expectations and events
+  perf test stat csv: Update test expectations and events
+  perf tool_pmu: Make core_wide and target_cpu json events
+
+ tools/perf/builtin-script.c                   | 238 ++++++++++-
+ tools/perf/builtin-stat.c                     | 154 ++-----
+ .../arch/common/common/metrics.json           | 151 +++++++
+ .../pmu-events/arch/common/common/tool.json   |  12 +
+ tools/perf/pmu-events/empty-pmu-events.c      | 229 ++++++----
+ tools/perf/pmu-events/jevents.py              |  28 +-
+ tools/perf/pmu-events/pmu-events.h            |   2 +
+ .../tests/shell/lib/perf_json_output_lint.py  |   4 +-
+ tools/perf/tests/shell/lib/stat_output.sh     |   2 +-
+ tools/perf/tests/shell/stat+csv_output.sh     |   2 +-
+ tools/perf/tests/shell/stat+json_output.sh    |   2 +-
+ tools/perf/tests/shell/stat+shadow_stat.sh    |   4 +-
+ tools/perf/tests/shell/stat+std_output.sh     |   4 +-
+ tools/perf/tests/shell/stat.sh                |   6 +-
+ .../perf/tests/shell/stat_all_metricgroups.sh |   3 +
+ tools/perf/tests/shell/stat_all_metrics.sh    |   7 +-
+ tools/perf/util/evsel.h                       |   1 +
+ tools/perf/util/expr.c                        |   8 +-
+ tools/perf/util/metricgroup.c                 |  92 +++-
+ tools/perf/util/stat-display.c                |  55 +--
+ tools/perf/util/stat-shadow.c                 | 404 +-----------------
+ tools/perf/util/stat.h                        |   2 +-
+ tools/perf/util/tool_pmu.c                    |  24 +-
+ tools/perf/util/tool_pmu.h                    |   9 +-
+ 24 files changed, 756 insertions(+), 687 deletions(-)
+ create mode 100644 tools/perf/pmu-events/arch/common/common/metrics.json
+
+-- 
+2.51.2.1041.gc1ab5b90ca-goog
+
 
