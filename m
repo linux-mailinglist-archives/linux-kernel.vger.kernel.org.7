@@ -1,185 +1,102 @@
-Return-Path: <linux-kernel+bounces-895438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35F10C4DDE3
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:51:17 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFEDCC4DDA2
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:49:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A7343B5984
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:46:42 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1639F34D84F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:49:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57E3539E90E;
-	Tue, 11 Nov 2025 12:31:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0406F3A5E9C;
+	Tue, 11 Nov 2025 12:33:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=brixandersen.dk header.i=@brixandersen.dk header.b="Gsl68v2U";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="JhkKIiK4"
-Received: from fhigh-b1-smtp.messagingengine.com (fhigh-b1-smtp.messagingengine.com [202.12.124.152])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="M81qm0j8"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C72BD39E904;
-	Tue, 11 Nov 2025 12:31:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C7363A5E69;
+	Tue, 11 Nov 2025 12:33:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762864284; cv=none; b=pngNE7NPv78bUPx2XwRFdzIfUmONZoudob9hgDjJKRUEOENuHDCl6jyDkeEQzZDaWS3tGk2D1THhWOzOTTp2JMghUQLlMTXNTH0mtINYljhKcBE4LLPizFi5UwVMg6TmCY9GFe0ZLqqEVDFTN8+lEp38knUeWEIH3Z7htl8LaBE=
+	t=1762864400; cv=none; b=f4W11eNd69msvA/ONwc9bNl6KSe3eppBkeJStp10NVu9TlI2Gdl/KQVTBiY1SraEimOn0KPzwxy6X9kWtyVvJyd32hCtw8cVeyUolblJkI1ezIpn3p0NT76qHnBi3NeolVQQNllh9rbIQ91CSigFwGcz5olI6pSUf0OPmGG0v2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762864284; c=relaxed/simple;
-	bh=TmJRb1KT87eh5kVIbHv4RzXHvWB2Z1EOf5JFuIxHdNg=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=fRcT3EQ851MqrIak/ICzae0vDMOaSep2xMdWjVQAr+/Tj0V/bl2otesX9JZkhRLVve4l5mNTQFwiOP5dTojIy6ZqJ3JKxPymfychgZLu2XFcT8XyypN+gwRsN2bVdKTZGKjzpjfGOWdKF2zzomPzs6sZzpp3/3QcNUHbtEECY8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=brixandersen.dk; spf=pass smtp.mailfrom=brixandersen.dk; dkim=pass (2048-bit key) header.d=brixandersen.dk header.i=@brixandersen.dk header.b=Gsl68v2U; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=JhkKIiK4; arc=none smtp.client-ip=202.12.124.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=brixandersen.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=brixandersen.dk
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 7E9697A00AA;
-	Tue, 11 Nov 2025 07:31:20 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-01.internal (MEProxy); Tue, 11 Nov 2025 07:31:20 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=brixandersen.dk;
-	 h=cc:cc:content-transfer-encoding:content-type:content-type
-	:date:date:from:from:in-reply-to:in-reply-to:message-id
-	:mime-version:references:reply-to:subject:subject:to:to; s=fm2;
-	 t=1762864280; x=1762950680; bh=cMVsMMso39Iyr5Nm1ahF4xCRfNObqn0u
-	gVq5DxetITw=; b=Gsl68v2ULqSQezyBS/egyZrb8bFowrLPxsn6bBuY9TfRpW9Y
-	EGRGLSA/Fq+qfxDBZ+TBiafdFNbQg0JQQeJO6P+z4AC/QTrUhzgE8TBTusqPGMQI
-	RsGR3I0S/X4aSZoqQij7am6Sj8S7pI6LnYNItEKsmCioixphFVpA6FjGregAvL46
-	viIjTtaKhLNya7fYG4ri1/vknPGvB/5zkPazVDVEnQewIVWNdufz+yIxM/ihU3yU
-	iWNMQpIK3+mV8f4CrsHb9+ljIGrRU52NuLaaW1OkmcciZJacYD7/XLTDTlZFn66t
-	j5dfpq4S1l18gDm1EB2m9L8xHa6s606btFBR1g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762864280; x=
-	1762950680; bh=cMVsMMso39Iyr5Nm1ahF4xCRfNObqn0ugVq5DxetITw=; b=J
-	hkKIiK49lyRhGrteTxL2/AYF3zxmijapVzdQfJt/XpNYmQJdi+3UVX+Dp9X7Tl71
-	w/VwkDzB+bluLOeFXNRRwcz83IL9vvC/LmMo5fTtlIV97T2AA0fN8zo1/KFfwrTT
-	KrTIGvQAFiiFcGjPM1zaL4G/QjFobeZa30093FcxsLcR78njbcFf4PsfHFlUoOic
-	dopSE4g8ewzXlcuwA1ARkqZB6Cvnim+GBNRV9KUCdrGVNIZV/J0t4cs+ejQQzWhH
-	H2rYll4njP8XYK1dqfiylM0xHGyHdULazRrfDL+BUhhy6dc9czdWpS78ULoj0Y20
-	j9DMZopZrtu0gkK2UV/9Q==
-X-ME-Sender: <xms:lywTaTBbLBNal4SFtc407ozd-zJ3cYIOAMLxqCUSLPWhhjGmUNFQAg>
-    <xme:lywTaaNhv0L1DEDc_z3NxjJBv1c63TZkrUwuhMNieIo-4xSJXR1nfSBlMpacLHvrR
-    5NuzyBwc5gaj1sAuK7HTPTuxR74HJ0a3647AmJWWvTGaukOeYYK8-s>
-X-ME-Received: <xmr:lywTaczYLQFYfc_02gV3ik9RIym336pn2ZALcH-o58Ynig1jJZ4v0YSwq2wCWmhBexc>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvtdduvddtucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurheptggguffhjgffvefgkfhfvffosehtqhhmtdhhtddvnecuhfhrohhmpefjvghnrhhi
-    khcuuehrihigucetnhguvghrshgvnhcuoehhvghnrhhikhessghrihigrghnuggvrhhsvg
-    hnrdgukheqnecuggftrfgrthhtvghrnhepleetfeevffejlefgueejhfetieelfeelfffg
-    ueevvedtheethfdvuefhfeekhfegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomhephhgvnhhrihhksegsrhhigigrnhguvghrshgvnhdrughkpdhn
-    sggprhgtphhtthhopeejpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehmkhhlse
-    hpvghnghhuthhrohhnihigrdguvgdprhgtphhtthhopehmrghilhhhohhlsehkvghrnhgv
-    lhdrohhrghdprhgtphhtthhopehmrgigsehstghhnhgvihguvghrshhofhhtrdhnvghtpd
-    hrtghpthhtohepfihgsehgrhgrnhguvghgghgvrhdrtghomhdprhgtphhtthhopehkvghr
-    nhgvlhesphgvnhhguhhtrhhonhhigidruggvpdhrtghpthhtoheplhhinhhugidqtggrnh
-    esvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgv
-    lhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:lywTaaX2qccP0p8nBk4LIdH9Ajim4FzPJ2m5SOB3HtJk5unGQgoyng>
-    <xmx:lywTaeOd7KCW3vEBawkqsx24rjrA59SWPhbq0U3yWryHSXdUgsM1cQ>
-    <xmx:lywTacAmRhBrfHn1PxSanGz01mHOhxd3LEJv9jCNeJvoM7UmPgGH6Q>
-    <xmx:lywTabe9O8FOd72UymDMTuuRdpBV_3cBk5lgz6HIa8sOl46WUFerIA>
-    <xmx:mCwTad41i03KJmCt_KLbXChpWmBXg1_DWkF3DNV1fWzLT_bwTANtWenH>
-Feedback-ID: i203040d0:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 11 Nov 2025 07:31:18 -0500 (EST)
-Content-Type: text/plain;
-	charset=us-ascii
+	s=arc-20240116; t=1762864400; c=relaxed/simple;
+	bh=tUcevEml60aCxu0vcWYyki56SIwcdZnTa6MQslWRHLk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ap61QmzLeFQnMe47NrC/9d/YOEDYqQ9KEY3fxJBinMcwo8YCtV04P0xEXkgmkl3a5cCtPsNE3iZ59+yCZ1dnmghhk/erhn8U1MyGcXRM8PtlfZrnCHaOAxyZ/yYceF2Ohex/f6NFPvZ0rKlHvjdegJBcACsmHUYc38l/tFcAjWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=M81qm0j8; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=Al8MnEVsZ+ylXBq1N4ofH08Ykvoq5VV8Ot/D8r7iKaM=; b=M81qm0j8/9TwbBIkmlnsL2lCaW
+	d6emkWPoeNCmU/+eMPYmiZKdlHtzNzFM6kRnbB09EzR1zeJ8Z5VCkieiPZ2B6p/DDuaKmU/dv8eVr
+	yclseV17+yjWlKtAOohKHt7uKvA1pQ6bdoqlHBr3/san1LaxiuBpFIAFx5hSHABeRC6zl6YrPj1jP
+	bPohxiAZKOU2/Xd/Ee4dyIKsTFTWTgYSm7P/oBvtMBV7AcwXwyoPgxhMFrEwG46JCEeXu43BVb3Nm
+	qiLAXuLFFd55pJZZeEShjG0fSwCNF1Vh41Xr29e60PZUlsPwDeJlTS8h2YxYTwzRGrrv/P/OeRZjI
+	O1rpM57A==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:50174)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1vInYU-000000002aj-1tj1;
+	Tue, 11 Nov 2025 12:33:02 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1vInYO-000000002wW-1jkQ;
+	Tue, 11 Nov 2025 12:32:56 +0000
+Date: Tue, 11 Nov 2025 12:32:56 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Yao Zi <ziyao@disroot.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Frank <Frank.Sae@motor-comm.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	Choong Yong Liang <yong.liang.choong@linux.intel.com>,
+	Chen-Yu Tsai <wens@csie.org>, Jisheng Zhang <jszhang@kernel.org>,
+	Furong Xu <0x1207@gmail.com>, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, Mingcong Bai <jeffbai@aosc.io>,
+	Runhua He <hua@aosc.io>, Xi Ruoyao <xry111@xry111.site>
+Subject: Re: [PATCH net-next v2 2/3] net: stmmac: Add glue driver for
+ Motorcomm YT6801 ethernet controller
+Message-ID: <aRMs-B2KndX-JNks@shell.armlinux.org.uk>
+References: <20251111105252.53487-1-ziyao@disroot.org>
+ <20251111105252.53487-3-ziyao@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3864.100.1.1.5\))
-Subject: Re: [PATCH can 3/3] can: gs_usb: gs_usb_receive_bulk_callback():
- check actual_length before accessing data
-From: Henrik Brix Andersen <henrik@brixandersen.dk>
-In-Reply-To: <20251108-gs_usb-fix-usb-callbacks-v1-3-8a2534a7ea05@pengutronix.de>
-Date: Tue, 11 Nov 2025 13:31:06 +0100
-Cc: Vincent Mailhol <mailhol@kernel.org>,
- Maximilian Schneider <max@schneidersoft.net>,
- Wolfgang Grandegger <wg@grandegger.com>,
- kernel@pengutronix.de,
- linux-can@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <A5BD68A4-076C-4ADD-B2A8-5D8A128D0473@brixandersen.dk>
-References: <20251108-gs_usb-fix-usb-callbacks-v1-0-8a2534a7ea05@pengutronix.de>
- <20251108-gs_usb-fix-usb-callbacks-v1-3-8a2534a7ea05@pengutronix.de>
-To: Marc Kleine-Budde <mkl@pengutronix.de>
-X-Mailer: Apple Mail (2.3864.100.1.1.5)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251111105252.53487-3-ziyao@disroot.org>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Hi,
+On Tue, Nov 11, 2025 at 10:52:51AM +0000, Yao Zi wrote:
+> +	plat->bus_id		= pci_dev_id(pdev);
+> +	plat->phy_addr		= -1;
+> +	plat->phy_interface	= PHY_INTERFACE_MODE_GMII;
+> +	plat->clk_csr		= STMMAC_CSR_20_35M;
 
-> On 8 Nov 2025, at 10.01, Marc Kleine-Budde <mkl@pengutronix.de> wrote:
->=20
-> The URB received in gs_usb_receive_bulk_callback() contains a struct
-> gs_host_frame. The length of the data after the header depends on the
-> gs_host_frame hf::flags and the active device features (e.g. time
-> stamping).
->=20
-> Introduce a new function gs_usb_get_minimum_length() and check that we =
-have
-> at least received the required amount of data before accessing it. =
-Only
-> copy the data to that skb that has actually been received.
->=20
-> Fixes: d08e973a77d1 ("can: gs_usb: Added support for the GS_USB CAN =
-devices")
-> Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
-> ---
-> drivers/net/can/usb/gs_usb.c | 65 =
-++++++++++++++++++++++++++++++++++++++++----
-> 1 file changed, 60 insertions(+), 5 deletions(-)
->=20
-> diff --git a/drivers/net/can/usb/gs_usb.c =
-b/drivers/net/can/usb/gs_usb.c
-> index 51f8d694104d..8524d423b029 100644
-> --- a/drivers/net/can/usb/gs_usb.c
-> +++ b/drivers/net/can/usb/gs_usb.c
-> @@ -261,6 +261,11 @@ struct canfd_quirk {
-> u8 quirk;
-> } __packed;
->=20
-> +/* struct gs_host_frame::echo_id =3D=3D GS_HOST_FRAME_ECHO_ID_RX =
-indicates
-> + * a regular RX'ed CAN frame
-> + */
-> +#define GS_HOST_FRAME_ECHO_ID_RX 0xffffffff
-> +
-> struct gs_host_frame {
-> struct_group(header,
-> u32 echo_id;
-> @@ -570,6 +575,43 @@ gs_usb_get_echo_skb(struct gs_can *dev, struct =
-sk_buff *skb,
-> return len;
-> }
->=20
-> +static unsigned int
-> +gs_usb_get_minimum_length(const struct gs_can *dev, const struct =
-gs_host_frame *hf,
-> +  unsigned int *data_length_p)
-> +{
-> + unsigned int minimum_length, data_length;
-> +
-> + /* TX echo only uses the header */
-> + if (hf->echo_id !=3D GS_HOST_FRAME_ECHO_ID_RX) {
-> + *data_length_p =3D 0;
-> + return sizeof(hf->header);
-> + }
+Could you include a comment indicating what the stmmac clock rate
+actually is (the rate which is used to derive this divider) ? As
+this is PCI, I'm guessing it's 33MHz, which fits with your divider
+value.
 
-Is this correct? The embedded timestamp is also used in the =
-gs_usb_get_echo_skb() function.
+Thanks.
 
-Regards,
-Brix
---=20
-Henrik Brix Andersen
-
-
-
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
