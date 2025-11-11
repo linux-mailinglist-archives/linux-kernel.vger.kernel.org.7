@@ -1,118 +1,104 @@
-Return-Path: <linux-kernel+bounces-895502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89C30C4E1CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:30:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 679E7C4E1CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:30:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44E7C1898306
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:30:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1E6B189842E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:30:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 211E0342508;
-	Tue, 11 Nov 2025 13:30:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AD0733ADA6;
+	Tue, 11 Nov 2025 13:30:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sladewatkins.com header.i=@sladewatkins.com header.b="sXqvJ2hd"
-Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bMT6vELf";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="+/6v5WvR"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB4C134027B
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 13:30:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CC1F261B8A;
+	Tue, 11 Nov 2025 13:30:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762867819; cv=none; b=WKxGD0wD3Vwsgv+5pMK8/qD2iCwIIECZkzOnWrle+4ZT1gMkt8CH5E4bb5xYvYc9k6qfhWn5prPBwN3cGr2FuB7EuyJXTZAmWLaMW446Y1USWoKxDg1uVfJw6Jg7jFBUyAkxrtXMQPFUSoLOPTSQIw2Qbh7Mck4Yk4VfgZyU7OI=
+	t=1762867829; cv=none; b=iy0bB7cAA94vDWW8nedu+7V4IKXx7fx1tTT7qFU6ZkjcuV88V7sWgmY42Wgh+D6MPcv8+AyLHGxtSVrSy2WxiupIeIM0Ku7q7Wc9xdL3sq+ebtz/yiqgRdXq7x8FaokD78zn/UFWZMsGvYZFONgL+CXffeKLTmine9ntWj/L/zU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762867819; c=relaxed/simple;
-	bh=qDZL6MdNd/KZflfycs2sNvxaMjuSrNaIyMnm/7WrZ8c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=O8cOo+GWgunwVp3s0d3yrO463A+QYJJ6O1zzywMhZJFjT84UM4ScrdtdBmeV3bB8rLqTo607Kz/+W5FNM8WPI03JV9d+cKb2c6E0Qs0VkCY5YBPMUBDRiZLGECjeatiJ0yMVN5eWFQCvP6mC666ZiTRb0XPhgxZNSvgtj9hI81o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=sladewatkins.com; spf=pass smtp.mailfrom=sladewatkins.com; dkim=pass (2048-bit key) header.d=sladewatkins.com header.i=@sladewatkins.com header.b=sXqvJ2hd; arc=none smtp.client-ip=209.85.166.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=sladewatkins.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sladewatkins.com
-Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-43380a6fe8cso20417705ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 05:30:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sladewatkins.com; s=google; t=1762867817; x=1763472617; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4YO/KwJ4FC8gmOpZBF6DOQfsCk0MQT6p2iYft282HbI=;
-        b=sXqvJ2hdrrY4jGEbqz4H7pAMGZpIG8Q1EOPl1L+3s2EBVzVVx+5Vw/Unoz28OT6VSn
-         RhpPcdLepdmDQBSBbFAfC2plpIJJ+rcO6wgY52EsLblSGwxwRiyFH6gfnprzx1wrLHDq
-         az0RslmwxYFc/e+oHS91IJjpAto7nlPBpIBhekhLsbvfqWfDXqAJhkb2Ggmnzr9iCE8k
-         aSX/9TtLdUHM8H0bwzMtmJvDi0/gIUU+IqH4Vg2Sfr4Y6vLZtQtRIPsxclZwESH0oIbG
-         gWWflJS0ToRjiVUb43HRuFEeeKZ/1hM8oh63w+JR/a5Tpsz3dG23GItK9VsX6gjZDkGi
-         mYag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762867817; x=1763472617;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4YO/KwJ4FC8gmOpZBF6DOQfsCk0MQT6p2iYft282HbI=;
-        b=TIBPWL1F/QgyXbXt5+yc5hiMT/biK39iYuNSavS1diTdMiX0nXGwVvhYZ842f1ZX0N
-         Q1F7FqQi+06tEri5yQEdwOxHbgIPqAVDFN5nA7fT/tqTGk9GALyY2r4IqEVPS2OnLkJQ
-         WROIila7D1RSnciIEezhhRWwXM+9viTaLcAKou1J6oXbbI2ogXum5kS8FB1X+PP7Rw8A
-         dweoMGVet/BlgEYy4/TOzxkaquAzvhqEQpuFxDiWynCaiWWd9pGgFFbGfghHZvetzthI
-         UUEdtotKAMgllDR4mhZ7c5xEkCXUfauTDe+aKXB6KfsWJnotpJH+Oc/vuxphCFRkbea0
-         /PrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWJs9lcR474X1NgJLjZZS+VpnL12FcM617s8rgXAjOYI2JPAyBEWC4/5NXlTKcyMj0ADEqGesB0ScfAv20=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzilht2BGdaoShYvhTkk4jBMWHrwLzU0jcnuLB43SbSUvf1mYWx
-	jchQ2rWDf4YfkZI7o5n3bBbtN8RGS+gwpwpZE9OHcpuJbh0SwyfhbPuAo+A3gNvzSbo=
-X-Gm-Gg: ASbGncsMB+c29isFcxM9EBXznurDm1PPsVneWABAQudEjRTQexh0Lz5L2/nJnxD3Hli
-	aMwtljEyjnj7ShSu17pxSZoSaUQlioYgWOHh2aJ8LNv+Oy/ya7pCaYtYThkRt68lcneWlPlzQ8a
-	ZWQdYmq9qushlFXGDeLcFDDyZ0UyNO94VyqT0SbUYCHZSXo+NKhuQnQdVzLnKycnrgqqAu0nk5q
-	u5xbtL75eVLFcV/pWlxu/dvqrizheJW91n0AeBma+bJ7Ditpoy/vkem2Wf2qzwIdxSw/kB7DvUQ
-	LVvDQA1e/1yY+8YXhxaQBZkINUotnJi5xzxDAyWiHN4ft3ybnv6XGacOzUIgKy3xAiIil4mFNKc
-	qDwv22f6NhRbkH9Z390vUESat980GTVJpqsLxAKW0uIRh43aBNpqvg22FmkuNGzP+8rxVZC74TD
-	h/VYO90FBKLNRcSuu8nhOmvo5QpA==
-X-Google-Smtp-Source: AGHT+IGW7t5Sia4TYMC2RP3zk+pxpMo/Yir0L3mxaMYdOdYqoFxgBtNrF98A/H3TNDJQ3xWRjsTrXA==
-X-Received: by 2002:a05:6e02:12e7:b0:434:720d:1c2a with SMTP id e9e14a558f8ab-434720d1e3cmr5300985ab.20.1762867816968;
-        Tue, 11 Nov 2025 05:30:16 -0800 (PST)
-Received: from [192.168.5.95] ([174.97.1.113])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5b746923a66sm6246780173.35.2025.11.11.05.30.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Nov 2025 05:30:16 -0800 (PST)
-Message-ID: <f6bd6612-b0ea-46ee-8807-bce12c040b5f@sladewatkins.com>
-Date: Tue, 11 Nov 2025 08:30:15 -0500
+	s=arc-20240116; t=1762867829; c=relaxed/simple;
+	bh=bF2Itc4QySqrWk46WOXPnAM1dW3/5wrclk+0WNC3B/0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ew3N3htnvTIbOrrN0YHougIhDNdxFvw2qqeWxOCj/RQE4dCq62QHjbG9TgFsiG5QTJ3gVfuYF0SZauWpAkzqFrGXpzsyfWJJ7QdTLVieJ0zpx29i4HslhuoiVehfiNrkw21m3Yluu5ro5jfXlUAWXF7JfV80oG96y76Uq0ECmaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bMT6vELf; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=+/6v5WvR; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 11 Nov 2025 14:30:23 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1762867825;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Dicw9R/FuDXh/9SkmjZZ3oQxoKblN46We9FAQNIidZk=;
+	b=bMT6vELfr/Pb8aQ0ZUdGxWNQl+1SYlFrEKkfbpGS7JKqPxCfyA6Q9hk1Ig+uXYn+sDiX9F
+	sInG5bhYXIygf/pJUSJN5iz45JZfbJGywVqDaT92HiCJ6G2vkP6TD7UweRmTVFUDR+Wadf
+	y8YmfoLS//M+oB7vbbmvIDKteY/XnJwv2EdUIPvaXQ+AaSvft8ARDSUWb9DKBSWsnI3SVT
+	nvXMJ4aG20ir7A5COQrnurbdsAiahPq7E7zxvj20OJSYXCVBwgyzOcKi5S7AvTzvegBLm4
+	xHUok+XKmvGVI+chgAqvxW1xl5ROkIDdbixBIbzcNIroAUbjnT/yoQF4KV3q/w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1762867825;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Dicw9R/FuDXh/9SkmjZZ3oQxoKblN46We9FAQNIidZk=;
+	b=+/6v5WvR6R/gnZ7adCL6VahikeRbs0DOD5KjSNS9UiwXRajwedqQW7c/ie10gzPmqOfqic
+	v268xtOZ41Rg0VDA==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Liangyan <liangyan.peng@bytedance.com>
+Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+	namhyung@kernel.org, mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	irogers@google.com, adrian.hunter@intel.com, james.clark@linaro.org,
+	zengxianjun@bytedance.com, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] perf/core: Fix pending work re-queued in
+ __perf_event_overflow
+Message-ID: <20251111133023.YqDNgQak@linutronix.de>
+References: <20251109103253.57081-1-liangyan.peng@bytedance.com>
+ <20251109164122.80138-1-liangyan.peng@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.12 000/562] 6.12.58-rc2 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, rwarsow@gmx.de,
- conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, achill@achill.org
-References: <20251111012348.571643096@linuxfoundation.org>
-Content-Language: en-US
-From: Slade Watkins <sr@sladewatkins.com>
-In-Reply-To: <20251111012348.571643096@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20251109164122.80138-1-liangyan.peng@bytedance.com>
 
+On 2025-11-10 00:41:22 [+0800], Liangyan wrote:
+> We got warning below during perf test.
+=E2=80=A6
+>=20
+> A race condition occurs between task context and IRQ context when
+> handling sigtrap tracepoint event overflows:
+>=20
+> 1. In task context, an event is overflowed and its pending work is
+>    queued to task->task_works
+> 2. Before pending_work is set, the same event overflows in IRQ context
+> 3. Both contexts queue the same perf pending work to task->task_works
+>=20
+> This double queuing causes:
+> - task_work_run() enters infinite loop calling perf_pending_task()
+> - Potential warnings and use-after-free when event is freed in
+> perf_pending_task()
+>=20
+> Fix the race by disabling interrupts during queuing of perf pending work.
 
-On 11/10/2025 8:24 PM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.12.58 release.
-> There are 562 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu, 13 Nov 2025 01:22:51 +0000.
-> Anything received after that time might be too late.
+Makes sense. Lets it does not overflow in NMI, too.
+Either way I suggest to trim the commit message and remove the
+backtrace as it probably does not add any value.
 
-6.12.58-rc2 built and run on x86_64 test system with no errors or 
-regressions:
-
-Tested-by: Slade Watkins <sr@sladewatkins.com>
-
-Thanks,
-Slade
+Sebastian
 
