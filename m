@@ -1,316 +1,1768 @@
-Return-Path: <linux-kernel+bounces-895241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5C33C4D495
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:05:50 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14E13C4D973
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:08:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 069D1344627
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:05:50 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 82E074F8ACC
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:01:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF38F350D4C;
-	Tue, 11 Nov 2025 11:05:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C04B358D1D;
+	Tue, 11 Nov 2025 12:01:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OTeuCG5K"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="J/ScaZv4"
+Received: from mail-m19731119.qiye.163.com (mail-m19731119.qiye.163.com [220.197.31.119])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D865633F396;
-	Tue, 11 Nov 2025 11:05:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.13
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762859135; cv=fail; b=gurvgRXTJbsP2K1hV9exyD/SzsaoyXUtbKzC5/pZsmrrDucus2Yd5eJAf5VjosIW6gLH8rz3hR7kxzr8hRebgi7bKY1RTYVImg8lmkJon0j61TMtiOMb0VsYQsICuDCW0ERe6q/RNSBLiC+LCs6ffnhOm7fvfsA7xz7GsB+lEUo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762859135; c=relaxed/simple;
-	bh=JRWYl/Ypfu96OUEoLjAToV8mz0xIeOhNdPTQ9tP+MhE=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=nUpbw6HlHhUutm/sLbDA6xh3pODDrbyx1ke1SS7f/7oVi2HvCbKswxJ4ajmMkgGcfr5oM+DOsWGc/UnAP/uATDANxEk56aB043kwQJKEL1RBB761YAMdD75CIQjakQe6G8At4K4IK0CEM0Z89s9OAFo04z+L33hV/Tn6AuvtQL0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OTeuCG5K; arc=fail smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762859134; x=1794395134;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=JRWYl/Ypfu96OUEoLjAToV8mz0xIeOhNdPTQ9tP+MhE=;
-  b=OTeuCG5KVrTyErGbGVQmldfSiKKRsrDBsFUXkEMEao4n/PXlEwVWfhBl
-   kN7ZIwXt56OasRDZ5elbxDdc7ia7yB45pbR86XdZ9xAlEKoRDtxm1o3kC
-   9d+LtsqYwNMU6PV42X0NnzLDw04SvER1mva+3xmIEwdN3ZNuYO9RpO2Un
-   ZL0EnM2HEMAfRsqgICphxWyyxgaBlAgt5O8b6s1wo8Sn8kH/3SYLeylB0
-   4A7fRhqZsHnQ0ROhZy6MzvgqxDtc5Yn8EPQNobUGBmyzLAF3b6RgKlNk3
-   aw4rQ0nHyQv00rx25ilGa4fqLmiQHdQwtex8BZE4ZJB3e/AbjiIk8j0jY
-   Q==;
-X-CSE-ConnectionGUID: 9dfh+5MxSly9IMhQ+8j9yQ==
-X-CSE-MsgGUID: TZb4bSwBTLebMQ951lR90w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11609"; a="67523382"
-X-IronPort-AV: E=Sophos;i="6.19,296,1754982000"; 
-   d="scan'208";a="67523382"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 03:05:33 -0800
-X-CSE-ConnectionGUID: 29SbAu69S+Kw2Agx6faefA==
-X-CSE-MsgGUID: is4UlTI5ScyDuyvTHnBmbg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,296,1754982000"; 
-   d="scan'208";a="188256399"
-Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
-  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 03:05:32 -0800
-Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
- fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Tue, 11 Nov 2025 03:05:32 -0800
-Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
- FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Tue, 11 Nov 2025 03:05:31 -0800
-Received: from MW6PR02CU001.outbound.protection.outlook.com (52.101.48.6) by
- edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Tue, 11 Nov 2025 03:05:31 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=STOFXFb9wuPCiugvo16snOQ1EEeDuiN/vBq0GgVdBKGr78w9/YZ6GkthTPFGXy0fFNG0c8BgLTL8Z3n+46Vy3L7r9NNZoQ1IdSwbRi9IX6CK3bSq2AlP/Cg6KdfjkoY4C4FGFCipz6Yx+qnJmIWrlVW5OrtNkuqUENrDQ1WxJVVc55nBN3zZiLsPkQ+QIySR0RyAdFqZ8tfXIvwhEk47Gu55dEE4TQHpd/krZd1C/sVbbTWrV8JCVRVZ28jqrpujBdyw+kWrkhcALReDrWpUeEcZYTbxdhwkq0Uni5xXLgW+FhvWvMEf4ZONvS6DENzG2pnpFQz1wEVWucKWXO983g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JRWYl/Ypfu96OUEoLjAToV8mz0xIeOhNdPTQ9tP+MhE=;
- b=dn8EK7GjesysXYpXPtHUa7bzMAfnOo8aRF+BPbcbwtaixnXN7Bpn2+0W9NlCQoDtiwpYsXLcHzK/Tf9wmBWcuwOpXy083vuypuP8Hy9XX4zxKIQlOjo7tcmBz4cH4qQgc+HNfN/5Rs86/F08u3Gj/dvMWZ7nw4Vx9TV0I9eVyeinO5UHrXsxcQaB99BSjcFRZxWgI2M4SI+abAr3o7VFqnx0AZ0oQ1FWGiKw/2s8hDE3qXhmiBuI+SZrgzBwP0aDsGY2b3XRFYQqlnMmBGqplur2IRRvQXMQwqZBQgpO1Nq+DI7lWnVvRUWJxjmAZzLhlYBCdkIvtxeaa/aYLMxDYw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from BL1PR11MB5525.namprd11.prod.outlook.com (2603:10b6:208:31f::10)
- by DM4PR11MB6501.namprd11.prod.outlook.com (2603:10b6:8:88::6) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9298.16; Tue, 11 Nov 2025 11:05:29 +0000
-Received: from BL1PR11MB5525.namprd11.prod.outlook.com
- ([fe80::1a2f:c489:24a5:da66]) by BL1PR11MB5525.namprd11.prod.outlook.com
- ([fe80::1a2f:c489:24a5:da66%6]) with mapi id 15.20.9320.013; Tue, 11 Nov 2025
- 11:05:28 +0000
-From: "Huang, Kai" <kai.huang@intel.com>
-To: "pbonzini@redhat.com" <pbonzini@redhat.com>, "seanjc@google.com"
-	<seanjc@google.com>, "Zhao, Yan Y" <yan.y.zhao@intel.com>
-CC: "quic_eberman@quicinc.com" <quic_eberman@quicinc.com>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "Li, Xiaoyao"
-	<xiaoyao.li@intel.com>, "Du, Fan" <fan.du@intel.com>, "Hansen, Dave"
-	<dave.hansen@intel.com>, "david@redhat.com" <david@redhat.com>,
-	"thomas.lendacky@amd.com" <thomas.lendacky@amd.com>, "vbabka@suse.cz"
-	<vbabka@suse.cz>, "tabba@google.com" <tabba@google.com>, "kas@kernel.org"
-	<kas@kernel.org>, "michael.roth@amd.com" <michael.roth@amd.com>, "Weiny, Ira"
-	<ira.weiny@intel.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "binbin.wu@linux.intel.com"
-	<binbin.wu@linux.intel.com>, "ackerleytng@google.com"
-	<ackerleytng@google.com>, "Yamahata, Isaku" <isaku.yamahata@intel.com>,
-	"Peng, Chao P" <chao.p.peng@intel.com>, "zhiquan1.li@intel.com"
-	<zhiquan1.li@intel.com>, "Annapurve, Vishal" <vannapurve@google.com>,
-	"Edgecombe, Rick P" <rick.p.edgecombe@intel.com>, "Miao, Jun"
-	<jun.miao@intel.com>, "x86@kernel.org" <x86@kernel.org>, "pgonda@google.com"
-	<pgonda@google.com>
-Subject: Re: [RFC PATCH v2 14/23] KVM: TDX: Split and inhibit huge mappings if
- a VMExit carries level info
-Thread-Topic: [RFC PATCH v2 14/23] KVM: TDX: Split and inhibit huge mappings
- if a VMExit carries level info
-Thread-Index: AQHcB4ATc43XQ6PqxUuwXAgCtykiwLTt5ymA
-Date: Tue, 11 Nov 2025 11:05:28 +0000
-Message-ID: <5e1461b8e2ece1647b0d26f0c3b89e98d232bfd0.camel@intel.com>
-References: <20250807093950.4395-1-yan.y.zhao@intel.com>
-	 <20250807094423.4644-1-yan.y.zhao@intel.com>
-In-Reply-To: <20250807094423.4644-1-yan.y.zhao@intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Evolution 3.56.2 (3.56.2-2.fc42) 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BL1PR11MB5525:EE_|DM4PR11MB6501:EE_
-x-ms-office365-filtering-correlation-id: 635b0b1e-8e1e-4a0b-d887-08de21123900
-x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016|38070700021;
-x-microsoft-antispam-message-info: =?utf-8?B?cE5hR1FyamRGeUdmU1kzNFl2VmtiQmtmV2VnMFVpbkZ1WGVEYnRsRnY2ZVVI?=
- =?utf-8?B?OWN6bmV3TGQ0ZTdQZjAwRloyUXlya05pSnVVSkFGYnRpOExFN1JIWm1Ybm5v?=
- =?utf-8?B?Z1RLNmg5ZUtUVmhVM2dhR1VwclRFak1WbmlDdDVpYVVEdWlMWm5QVVd1MDUz?=
- =?utf-8?B?OUh4Y1pjbFRxQktIVHVBMmdJMXNtTHlDL0RlQk5oTXE1S0w1VWc3ZjduUWZj?=
- =?utf-8?B?bkxLMjNnSHVwWHVlSDVidkx5M0VRNWY1Zk9KQTNCcnFrNUNhNCsyS0cycWk1?=
- =?utf-8?B?QldLQjFIRjR6VE9jNDYvK0R1Sk4xSldvejZYWi9vSzJBbGVoY3NsbXlMOFNx?=
- =?utf-8?B?WWRYMjRueHVDOHNzNExSSlRkbnBwbDlDMkxvKzJ0M2Z2YTVqK1dML2huYVVo?=
- =?utf-8?B?MWFNU3FRRXVUU0ZiNVJTbWJmNnFEMk1yNkZNdHF0MUJTSXhvcnJvSnJxZWwz?=
- =?utf-8?B?QjlGTHpRV1dya05wR2srcHZyZVlmaUNPekdJdFFoU0xLU1EwUC9EZTBHQkx6?=
- =?utf-8?B?ZnliM2pKQXhiWEc1VjlpU2xOTlduWWd4R3gxWkpyNzR0MHdtUzEwN2k0MGsy?=
- =?utf-8?B?eWNBYWY3QkxYOTNqRzV4cmg2R1JITk04U2xHRnZHSmpuRUJxVXVPNEk1TnhL?=
- =?utf-8?B?RWlPbnU4Tm5nOE9uNUtZU3Z6RGhIbS8zN1o0NFQ3b2NlLzl1cFI3Y2VKdElW?=
- =?utf-8?B?M1ZnMHZqSmdKZDdBSnZrYStFRGFhdDdubDZjYlp6cmx0amR3R0xZWEtqUWVu?=
- =?utf-8?B?dGdqeExhRGxCT2ZBcDJSV1RvRklDbnRBMFNpejk3RDN4WGk2TDQzdGwvWCtB?=
- =?utf-8?B?YTY1cEFCRlZSYlRLd3BPaTJtTnZTQTZJL25QcndiOG05Vzh6VnkyWTVOZzZE?=
- =?utf-8?B?MFI4dU9pd0c2V09WTnNWMFV5TE85dWxYVXd3N2FYeStvc0w5ajBNTTF5ajFm?=
- =?utf-8?B?VUhYaFNrR1ZuL0JSaCtRSHNiUGhJVkdHV0RKWGh4L2hYdE9qOGlqeHgyblYx?=
- =?utf-8?B?bkxhbE9Vb2ZuNy9UK1dmK042cTF2ZklkcU1zUzcrUkVYQ0VwL3V6aXZyUmdy?=
- =?utf-8?B?NjRXOWMxM1EvZlQyMzZySk1JOGlKRDh4RTVtdjkvZ1g2UEFRSkcvQmdkcmQy?=
- =?utf-8?B?eVNqNWExSno4aUIvUVFaeHU2VFYyTWxhTVFpbFZaNE5TSGJCZ3h3cE53QU5r?=
- =?utf-8?B?aTI2NTlIK1hlK203ZEtYRnVlS2JaZ1lkVFdGenB3d3V0Y0t3cGo1eUlCQlhx?=
- =?utf-8?B?dXpZYjRmOXdYOHBtUkJUNHJrUVgrdmYxbmhrbDVPc0grZjdFbnJJZkJSTEhB?=
- =?utf-8?B?WFN1V1Vza1YrbENhZ1d1blpwak1NdjFITjBkWmkyYUtiQUFmYzdSZkpJWjRZ?=
- =?utf-8?B?SXBqc3VZcXVzaVhCdmRLSngwWWNBaFhMZDV0YlZQWElIazNTSGZjc2NCOGhs?=
- =?utf-8?B?UFh5TjltY3FIeFhHa1I4ODQrbmQ2c2lNdHd4bjhiWEh0bkdaOUNWTnBpSXlr?=
- =?utf-8?B?OEMzWWhuOThIK2xNalZvTFQ0eHVQUXl1NDRFNGhUbmQ1NlUydU5DVzgyNE5y?=
- =?utf-8?B?ODljWFp3S0xsQnZrS0hIclRSRFNRNFVDL1NJMkNZK2t3VTg3TEhQdmxZQjBD?=
- =?utf-8?B?aTlscC90ZHJRNXhKcVB4RmZxTERLK1ZCMHZMK0dRSVI2SUtxZHBGN091a1dy?=
- =?utf-8?B?eXgwaTA0ZHMvTUpaMEhDSmVwR1Zsb3dnblJCTXVDZ2tXbjJSOFpYWVFSTDU4?=
- =?utf-8?B?UU1CdHZxNmRsU0gzWHd5djd6cS9vdnNqUFZhMm5SM1h4WXZrem00b1J3b2xE?=
- =?utf-8?B?MEp1WXBBQlVmNzJMNitXQWNnem9NUjBhV1NQeVhPSEtMR01mSVhuRUxZdjF6?=
- =?utf-8?B?RlJxcFVtTThMRndNM3N3eDhBZlpFaGNtVFl2bFNmZlZpWm0zZnd2ZGJXRVgv?=
- =?utf-8?B?c3E5dkpaVE00N3VDTzhxMDM5MHBGLzVHd0xRenJ0aGFrcVFzdTljcWczbysr?=
- =?utf-8?B?c0FpazJmR1BuUlh2TFRrRjhjRnBDcTYrUndXMzROWDg2MldwQzVuRWdhamxW?=
- =?utf-8?Q?GXQolX?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR11MB5525.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?UE9oNHk0cE5qaGJ0TEZGeGE5bE5BR3prOUVDa1FNbVBOVWptMmNlSGNPd256?=
- =?utf-8?B?Q2FGTWVjWUF0N2dKdWlsVmdIMlB0cTFxU1lKbkVUajFseXlORlF1bEtYeG1X?=
- =?utf-8?B?bE5NakZYZUdIeXpISGFuMk9hRU9xNTNQcUJQa0NMbFhhdXdjckdKMC9rTWVt?=
- =?utf-8?B?NEtBRkVhWmxkbkV3dWdOY3hhY3Jna05ray96RWVEQ29wUWltazVJMXJ3b0Nu?=
- =?utf-8?B?WGxMcWRlcmJRVjR1TWNkWHk4eHZnNVJNNmpzTnBWNGVZMHBWWGpTSjQ1eEFL?=
- =?utf-8?B?cWVSZFZBeGZtQ0s1UG8rR3dhTFlGcWlYalJCR0w1eVNsM1FxRTN0QU9oK0dK?=
- =?utf-8?B?bDJSYnNTRVhJZCt5WG52c2VMc1ZqekQybElHamdaQUJrQVNFZWhIcHNIRVcz?=
- =?utf-8?B?OWRTbDNINzdJb0wzc2pqSDIwdFhaYWhpTU9tYmhNNm4zZU5NSURtdGx3WVpo?=
- =?utf-8?B?aW8vQkI2MkZ3alhCaWRYVTNLYkVEcGp5UnkxdUErejJGMDFlT3BwSHJyVjBE?=
- =?utf-8?B?cElnSHVIblhyU2pWY0V3d00vUXFtUVhFeFVxQXdRb0NBZmJJNmQwdTlvZzF0?=
- =?utf-8?B?NkVSQjhQeDJHbC90QWdpL0ZiVUdzazdLV3BSaTFqUks5Q0dCVEZ2YWRRcEI4?=
- =?utf-8?B?eVZGRjhqSEN2R1ZZRHNXRUNWVUNTeEdqM3JlN1V5enBmcHlFVWdOWXRaeEgz?=
- =?utf-8?B?OWdQTEc4alpuUlpXckk3TElreEMzSE02alROa1hEd2JIeDlqSnluZ3pPUXpX?=
- =?utf-8?B?VDdlNTRBQ3RqRmFrOTRoT21JNlhzcDFzckdMcWxpbVA2ck9UcUNJUWlPcDdO?=
- =?utf-8?B?Q29xUzFxVWRkSlRvVVJtUjhRTTR2WEZ1Ym1QeW9aQk4xM1dObzFGM0lRRGRr?=
- =?utf-8?B?SFRBaVRJU3h2RGFoMlM4eDcvMktGVkxiRHBaa1dvTnBTQWJnQ3dMcHpQdWNz?=
- =?utf-8?B?YUgwcnVEdEliUXhRQmJaQURCQ0hoSUZlZFh1ck1yYWNCcXdSZ21EUkYzd2Iz?=
- =?utf-8?B?UkhIUXFqdXkzMzkxRWdSazlyTm1ibHh0MFB1OWZXaU52MlNLdG8zNDlVYUJS?=
- =?utf-8?B?SlRHTnNhcDJwNEZ0VVA4MjNVR3E2U1ozTWUrUFVEc1htRkp0YzJjNlZCTWVK?=
- =?utf-8?B?cUVTMDRheWQ5d3JmNXNkbnJ2Z0ZacVNDZUVhVWIrOVRZb25rdkxnWXFremhS?=
- =?utf-8?B?RkFRa2JjTHgwYmkrdmFRSTdNQjdCUERVUVc0SlA1T2dRSEZYWVJKU3VNK1hG?=
- =?utf-8?B?MkRrV3pqdnRxZkhjR0krOXZCNzd6QituQ0dySEpoM2VkU1htUW1EZHQrdHZF?=
- =?utf-8?B?cytRamkxUVBNSTJxdUxNMWpzaXNXOGxjSWZ0aWduQVhYbkIrSWNFMUUyb05N?=
- =?utf-8?B?U3h4ZTlKaFZCdURZVzRqS250ZG5LQUYvdWxNRFhaQndpUGFLS0tGUmdrdUl6?=
- =?utf-8?B?Y2t3M1MrZjdqVzFremsxU3RvdU5TalZUM2JmL1BnWmtsN0R0WTRLSWtLOER5?=
- =?utf-8?B?VHBmeHpjTkhTVFIzcmR3R0pnbDVFK2NiUDFJaGhuQWFIUUErOVZtdlZ2ajcr?=
- =?utf-8?B?azV3YWtnSGVuSExtdHpZV2FZakhmSEdjNGlNQ1NzcU9sVkJCQStkNmF2Znpt?=
- =?utf-8?B?ODlhVlhJb2RudUI1ek1scmVseSs0YU9MSWc1Z3dMbkhFQU8veWlCQXZKT0pT?=
- =?utf-8?B?Yk1CK05GcG5qNkx1U0N5WE1wdkJXT21QZUVOTUR4TEZzYWdiN1lsRjFWVE9H?=
- =?utf-8?B?amJrTHhGNkpYemdyNUoyNjhrUW5neGVCUkJmYTJmdkpncDRaSHMzQ0FrbFpN?=
- =?utf-8?B?SjdmNU0rakc0QU96eUdxYnNDaWtDQjJCREwwc3VwcHFtU1FoMnkyUmgzYWtO?=
- =?utf-8?B?QlgzVUVwbFc3NFA0YnVncS84SUhmYkxFZmJrZURRbVlBb0FjSHZ6RHpkS3lP?=
- =?utf-8?B?ODd5dmNkMStQdHZORDZBK1R6WFdvcUxpaGZsOVBub0VNd2ZkYkZicXBKOGMz?=
- =?utf-8?B?Q2ZtZTBOV0syUk83aU1XeGxLMjQydng4a3oyREFZam5GZGtQeWcwbFdGOS85?=
- =?utf-8?B?NFhxNjVzbXlrc1FCSEUxTFNud2ZCaFU2bWJCejFpalR1Zk9GdmlEZGdnbkwx?=
- =?utf-8?Q?KHHz6HXph1GR2Lnik8QAC6fBY?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <FD1FC9EC9823AB4988D28BA92019DDF9@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 337CC223DD6;
+	Tue, 11 Nov 2025 12:00:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.119
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762862467; cv=none; b=jxsshUDemZqiZ8Ws/mczqbDYE04yXP92ksFdVwKxubilGa2OA8lO8BlGRcy6fQPN+lckR5VJCt0gyLMkqI+kfo+w/eh1OIh3MuX8o3eMhCs6VcWlrB8ReQlXLuOe85lIWxAlxkhWhq54ELCnTVEyx22lpbw9DpUBr6A0xQkQF6w=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762862467; c=relaxed/simple;
+	bh=oF8PMWMnfLO9jIRlGH60JsjAjJMrabndyEVCl5GWVOA=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=s8cVOHq9rg0NldWM2qPx3TaTPk430ZGpvPxagP/ujiLmBgSSzrWdzAEMHehETiNTHLynHHq9Oa56ZHpqyDVWXeWhqfjsExKQP3OMN0bVIs0dP3ScmlW4rPD4XAavCHnGeva5cMKojDg3wGV/xO7iTPv+lMD9u/qS5YaxWavKyOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=J/ScaZv4; arc=none smtp.client-ip=220.197.31.119
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from rockchip.. (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 291f57bb4;
+	Tue, 11 Nov 2025 10:57:44 +0800 (GMT+08:00)
+From: Elaine Zhang <zhangqing@rock-chips.com>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	zhangqing@rock-chips.com,
+	heiko@sntech.de,
+	robh@kernel.org,
+	p.zabel@pengutronix.de,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	finley.xiao@rock-chips.com,
+	sugar.zhang@rock-chips.com
+Subject: [PATCH v7 3/5] clk: rockchip: Add clock controller for the RV1126B
+Date: Tue, 11 Nov 2025 10:57:36 +0800
+Message-Id: <20251111025738.869847-4-zhangqing@rock-chips.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20251111025738.869847-1-zhangqing@rock-chips.com>
+References: <20251111025738.869847-1-zhangqing@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BL1PR11MB5525.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 635b0b1e-8e1e-4a0b-d887-08de21123900
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Nov 2025 11:05:28.2363
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: UxhyA+KcBXevjow0TR9v8Y2CUhI6JkcErzzTi/eIDeF+nRAaRkuYsEilK/iLuQzTWmWdld6TagsNubIirp8FDA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB6501
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a9a70d90e5103a3kunmb98a0103a1356
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGhoeHVYeGUwaQ01IHU9CHklWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=J/ScaZv4Gv33NrzmNv4RAOYphO2L/kp72Bs2MmSKfB5IbaOQ70ej1QejKn23JLg2cqJdrAT7YnuCojU+414yj9MIwecfY8TSoAvLz6U00ArjNX7vDVW+T0EoA3HgKhyBesDsS4BVEAqG00vLtjh+bM2/doZxT6/K0azn6xNXGGY=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=5TvZWWOHHu1rJOpZWOk5D5cTddSItPvqe6GjAcHL3EU=;
+	h=date:mime-version:subject:message-id:from;
 
-T24gVGh1LCAyMDI1LTA4LTA3IGF0IDE3OjQ0ICswODAwLCBZYW4gWmhhbyB3cm90ZToNCj4gVERY
-IHJlcXVpcmVzIGd1ZXN0cyB0byBhY2NlcHQgUy1FUFQgbWFwcGluZ3MgY3JlYXRlZCBieSB0aGUg
-aG9zdCBLVk0uIER1ZQ0KPiB0byB0aGUgY3VycmVudCBpbXBsZW1lbnRhdGlvbiBvZiB0aGUgVERY
-IG1vZHVsZSwgaWYgYSBndWVzdCBhY2NlcHRzIGEgR0ZODQo+IGF0IGEgbG93ZXIgbGV2ZWwgYWZ0
-ZXIgS1ZNIG1hcHMgaXQgYXQgYSBoaWdoZXIgbGV2ZWwsIHRoZSBURFggbW9kdWxlIHdpbGwNCj4g
-ZW11bGF0ZSBhbiBFUFQgdmlvbGF0aW9uIFZNRXhpdCB0byBLVk0gaW5zdGVhZCBvZiByZXR1cm5p
-bmcgYSBzaXplIG1pc21hdGNoDQo+IGVycm9yIHRvIHRoZSBndWVzdC4gSWYgS1ZNIGZhaWxzIHRv
-IHBlcmZvcm0gcGFnZSBzcGxpdHRpbmcgaW4gdGhlIFZNRXhpdA0KPiBoYW5kbGVyLCB0aGUgZ3Vl
-c3QncyBhY2NlcHQgb3BlcmF0aW9uIHdpbGwgYmUgdHJpZ2dlcmVkIGFnYWluIHVwb24NCj4gcmUt
-ZW50ZXJpbmcgdGhlIGd1ZXN0LCBjYXVzaW5nIGEgcmVwZWF0ZWQgRVBUIHZpb2xhdGlvbiBWTUV4
-aXQuDQo+IA0KPiBUaGUgVERYIG1vZHVsZSB0aHVzIGVuYWJsZXMgdGhlIEVQVCB2aW9sYXRpb24g
-Vk1FeGl0IHRvIGNhcnJ5IHRoZSBndWVzdCdzDQo+IGFjY2VwdCBsZXZlbCB3aGVuIHRoZSBWTUV4
-aXQgaXMgY2F1c2VkIGJ5IHRoZSBndWVzdCdzIGFjY2VwdCBvcGVyYXRpb24uDQo+IA0KPiBUaGVy
-ZWZvcmUsIGluIFREWCdzIEVQVCB2aW9sYXRpb24gaGFuZGxlcg0KPiAoMSkgU2V0IHRoZSBndWVz
-dCBpbmhpYml0IGJpdCBpbiB0aGUgbHBhZ2UgaW5mbyB0byBwcmV2ZW50IEtWTSBNTVUgY29yZQ0K
-PiAgICAgZnJvbSBtYXBwaW5nIGF0IGEgaGlnaGVyIGEgbGV2ZWwgdGhhbiB0aGUgZ3Vlc3QncyBh
-Y2NlcHQgbGV2ZWwuDQo+IA0KPiAoMikgU3BsaXQgYW55IGV4aXN0aW5nIGh1Z2UgbWFwcGluZyBh
-dCB0aGUgZmF1bHQgR0ZOIHRvIGF2b2lkIHVuc3VwcG9ydGVkDQo+ICAgICBzcGxpdHRpbmcgdW5k
-ZXIgdGhlIHNoYXJlZCBtbXVfbG9jayBieSBURFguDQo+IA0KPiBVc2Ugd3JpdGUgbW11X2xvY2sg
-dG8gcHJldGVjdCAoMSkgYW5kICgyKSBmb3Igbm93LiBJZiBmdXR1cmUgS1ZNIFREWCBjYW4NCj4g
-cGVyZm9ybSB0aGUgYWN0dWFsIHNwbGl0dGluZyB1bmRlciBzaGFyZWQgbW11X2xvY2sgd2l0aCBl
-bmhhbmNlZCBURFgNCj4gbW9kdWxlcywgKDEpIGlzIHBvc3NpYmxlIHRvIGJlIGNhbGxlZCB1bmRl
-ciBzaGFyZWQgbW11X2xvY2ssIGFuZCAoMikgd291bGQNCj4gYmVjb21lIHVubmVjZXNzYXJ5Lg0K
-PiANCj4gQXMgYW4gb3B0aW1pemF0aW9uLCB0aGlzIHBhdGNoIGNhbGxzIGh1Z2VwYWdlX3Rlc3Rf
-Z3Vlc3RfaW5oaWJpdCgpIHdpdGhvdXQNCj4gaG9sZGluZyB0aGUgbW11X2xvY2sgdG8gcmVkdWNl
-IHRoZSBmcmVxdWVuY3kgb2YgYWNxdWlyaW5nIHRoZSB3cml0ZQ0KPiBtbXVfbG9jay4gVGhlIHdy
-aXRlIG1tdV9sb2NrIGlzIHRodXMgb25seSBhY3F1aXJlZCBpZiB0aGUgZ3Vlc3QgaW5oaWJpdCBi
-aXQNCj4gaXMgbm90IGFscmVhZHkgc2V0LiBUaGlzIGlzIHNhZmUgYmVjYXVzZSB0aGUgZ3Vlc3Qg
-aW5oaWJpdCBiaXQgaXMgc2V0IGluIGENCj4gb25lLXdheSBtYW5uZXIgd2hpbGUgdGhlIHNwbGl0
-dGluZyB1bmRlciB0aGUgd3JpdGUgbW11X2xvY2sgaXMgcGVyZm9ybWVkDQo+IGJlZm9yZSBzZXR0
-aW5nIHRoZSBndWVzdCBpbmhpYml0IGJpdC4NCj4gDQo+IExpbms6IGh0dHBzOi8vbG9yZS5rZXJu
-ZWwub3JnL2FsbC9hNmZmZTIzZmI5N2U2NDEwOWY1MTJmYTQzZTlmNjQwNTIzNmVkNDBhLmNhbWVs
-QGludGVsLmNvbQ0KPiBTdWdnZXN0ZWQtYnk6IFJpY2sgRWRnZWNvbWJlIDxyaWNrLnAuZWRnZWNv
-bWJlQGludGVsLmNvbT4NCj4gU3VnZ2VzdGVkLWJ5OiBTZWFuIENocmlzdG9waGVyc29uIDxzZWFu
-amNAZ29vZ2xlLmNvbT4NCj4gU2lnbmVkLW9mZi1ieTogWWFuIFpoYW8gPHlhbi55LnpoYW9AaW50
-ZWwuY29tPg0KPiAtLS0NCj4gUkZDIHYyDQo+IC0gQ2hhbmdlIHRkeF9nZXRfYWNjZXB0X2xldmVs
-KCkgdG8gdGR4X2NoZWNrX2FjY2VwdF9sZXZlbCgpLg0KPiAtIEludm9rZSBrdm1fc3BsaXRfY3Jv
-c3NfYm91bmRhcnlfbGVhZnMoKSBhbmQgaHVnZXBhZ2Vfc2V0X2d1ZXN0X2luaGliaXQoKQ0KPiAg
-IHRvIGNoYW5nZSBLVk0gbWFwcGluZyBsZXZlbCBpbiBhIGdsb2JhbCB3YXkgYWNjb3JkaW5nIHRv
-IGd1ZXN0IGFjY2VwdA0KPiAgIGxldmVsLiAoUmljaywgU2VhbikuDQo+IA0KPiBSRkMgdjE6DQo+
-IC0gSW50cm9kdWNlIHRkeF9nZXRfYWNjZXB0X2xldmVsKCkgdG8gZ2V0IGd1ZXN0IGFjY2VwdCBs
-ZXZlbC4NCj4gLSBVc2UgdGR4LT52aW9sYXRpb25fcmVxdWVzdF9sZXZlbCBhbmQgdGR4LT52aW9s
-YXRpb25fZ2ZuKiB0byBwYXNzIGd1ZXN0DQo+ICAgYWNjZXB0IGxldmVsIHRvIHRkeF9nbWVtX3By
-aXZhdGVfbWF4X21hcHBpbmdfbGV2ZWwoKSB0byBkZXRlbWluZSBLVk0NCj4gICBtYXBwaW5nIGxl
-dmVsLg0KPiAtLS0NCj4gIGFyY2gveDg2L2t2bS92bXgvdGR4LmMgICAgICB8IDUwICsrKysrKysr
-KysrKysrKysrKysrKysrKysrKysrKysrKysrKysNCj4gIGFyY2gveDg2L2t2bS92bXgvdGR4X2Fy
-Y2guaCB8ICAzICsrKw0KPiAgMiBmaWxlcyBjaGFuZ2VkLCA1MyBpbnNlcnRpb25zKCspDQo+IA0K
-PiBkaWZmIC0tZ2l0IGEvYXJjaC94ODYva3ZtL3ZteC90ZHguYyBiL2FyY2gveDg2L2t2bS92bXgv
-dGR4LmMNCj4gaW5kZXggMDM1ZDgxMjc1YmU0Li43MTExNTA1OGU1ZTYgMTAwNjQ0DQo+IC0tLSBh
-L2FyY2gveDg2L2t2bS92bXgvdGR4LmMNCj4gKysrIGIvYXJjaC94ODYva3ZtL3ZteC90ZHguYw0K
-PiBAQCAtMjAxOSw2ICsyMDE5LDUzIEBAIHN0YXRpYyBpbmxpbmUgYm9vbCB0ZHhfaXNfc2VwdF92
-aW9sYXRpb25fdW5leHBlY3RlZF9wZW5kaW5nKHN0cnVjdCBrdm1fdmNwdSAqdmNwDQo+ICAJcmV0
-dXJuICEoZXEgJiBFUFRfVklPTEFUSU9OX1BST1RfTUFTSykgJiYgIShlcSAmIEVQVF9WSU9MQVRJ
-T05fRVhFQ19GT1JfUklORzNfTElOKTsNCj4gIH0NCj4gIA0KPiArc3RhdGljIGlubGluZSBpbnQg
-dGR4X2NoZWNrX2FjY2VwdF9sZXZlbChzdHJ1Y3Qga3ZtX3ZjcHUgKnZjcHUsIGdmbl90IGdmbikN
-Cj4gK3sNCj4gKwlzdHJ1Y3Qga3ZtX21lbW9yeV9zbG90ICpzbG90ID0gZ2ZuX3RvX21lbXNsb3Qo
-dmNwdS0+a3ZtLCBnZm4pOw0KPiArCXN0cnVjdCB2Y3B1X3RkeCAqdGR4ID0gdG9fdGR4KHZjcHUp
-Ow0KPiArCXN0cnVjdCBrdm0gKmt2bSA9IHZjcHUtPmt2bTsNCj4gKwl1NjQgZWVxX3R5cGUsIGVl
-cV9pbmZvOw0KPiArCWludCBsZXZlbCA9IC0xOw0KPiArDQo+ICsJaWYgKCFzbG90KQ0KPiArCQly
-ZXR1cm4gMDsNCj4gKw0KPiArCWVlcV90eXBlID0gdGR4LT5leHRfZXhpdF9xdWFsaWZpY2F0aW9u
-ICYgVERYX0VYVF9FWElUX1FVQUxfVFlQRV9NQVNLOw0KPiArCWlmIChlZXFfdHlwZSAhPSBURFhf
-RVhUX0VYSVRfUVVBTF9UWVBFX0FDQ0VQVCkNCj4gKwkJcmV0dXJuIDA7DQo+ICsNCj4gKwllZXFf
-aW5mbyA9ICh0ZHgtPmV4dF9leGl0X3F1YWxpZmljYXRpb24gJiBURFhfRVhUX0VYSVRfUVVBTF9J
-TkZPX01BU0spID4+DQo+ICsJCSAgIFREWF9FWFRfRVhJVF9RVUFMX0lORk9fU0hJRlQ7DQo+ICsN
-Cj4gKwlsZXZlbCA9IChlZXFfaW5mbyAmIEdFTk1BU0soMiwgMCkpICsgMTsNCj4gKw0KPiArCWlm
-IChsZXZlbCA9PSBQR19MRVZFTF80SyB8fCBsZXZlbCA9PSBQR19MRVZFTF8yTSkgew0KPiArCQlp
-ZiAoIWh1Z2VwYWdlX3Rlc3RfZ3Vlc3RfaW5oaWJpdChzbG90LCBnZm4sIGxldmVsICsgMSkpIHsN
-Cj4gKwkJCWdmbl90IGJhc2VfZ2ZuID0gZ2ZuX3JvdW5kX2Zvcl9sZXZlbChnZm4sIGxldmVsKTsN
-Cj4gKwkJCXN0cnVjdCBrdm1fZ2ZuX3JhbmdlIGdmbl9yYW5nZSA9IHsNCj4gKwkJCQkuc3RhcnQg
-PSBiYXNlX2dmbiwNCj4gKwkJCQkuZW5kID0gYmFzZV9nZm4gKyBLVk1fUEFHRVNfUEVSX0hQQUdF
-KGxldmVsKSwNCj4gKwkJCQkuc2xvdCA9IHNsb3QsDQo+ICsJCQkJLm1heV9ibG9jayA9IHRydWUs
-DQo+ICsJCQkJLmF0dHJfZmlsdGVyID0gS1ZNX0ZJTFRFUl9QUklWQVRFLA0KPiArCQkJfTsNCj4g
-Kw0KPiArCQkJc2NvcGVkX2d1YXJkKHdyaXRlX2xvY2ssICZrdm0tPm1tdV9sb2NrKSB7DQo+ICsJ
-CQkJaW50IHJldDsNCj4gKw0KPiArCQkJCXJldCA9IGt2bV9zcGxpdF9jcm9zc19ib3VuZGFyeV9s
-ZWFmcyhrdm0sICZnZm5fcmFuZ2UsIGZhbHNlKTsNCj4gKwkJCQlpZiAocmV0KQ0KPiArCQkJCQly
-ZXR1cm4gcmV0Ow0KPiArDQo+ICsJCQkJaHVnZXBhZ2Vfc2V0X2d1ZXN0X2luaGliaXQoc2xvdCwg
-Z2ZuLCBsZXZlbCArIDEpOw0KPiArCQkJCWlmIChsZXZlbCA9PSBQR19MRVZFTF80SykNCj4gKwkJ
-CQkJaHVnZXBhZ2Vfc2V0X2d1ZXN0X2luaGliaXQoc2xvdCwgZ2ZuLCBsZXZlbCArIDIpOw0KPiAr
-CQkJfQ0KPiArCQl9DQo+ICsJfQ0KDQpBbHNvLCBjb3VsZCB5b3UgYWxzbyBjbGFyaWZ5IHdoYXQn
-cyB0aGUgY3VycmVudCBiZWhhdmlvdXIgd2hlbiB0aGUgZXhpdA0KZG9lc24ndCBoYXZlIGFueSBs
-ZXZlbCBpbmZvcm1hdGlvbj8NCg0KV2lsbCAnbGV2ZWwgPT0gUEdfTEVWRUxfNEsnIGluIHRoaXMg
-Y2FzZT8gIE9yIHdpbGwgdGhpcyBmdW5jdGlvbiByZXR1cm4NCmVhcmx5IHJpZ2h0IGFmdGVyIGNo
-ZWNrIHRoZSBlZXFfdHlwZT8NCg0KSXQncyBub3QgbWVudGlvbmVkIGFueXdoZXJlIGluIHRoZSBj
-aGFuZ2Vsb2cuICBUaGUgY292ZXIgbGV0dGVyIHZhZ3VlbHkNCnNheXM6DQoNCiAgVGhpcyBtZWNo
-YW5pc20gYWxsb3dzIHN1cHBvcnQgb2YgaHVnZSBwYWdlcyBmb3Igbm9uLUxpbnV4IFREcyBhbmQN
-CiAgYWxzbyByZW1vdmVzIHRoZSA0S0IgcmVzdHJpY3Rpb24gb24gcHJlLWZhdWx0IG1hcHBpbmdz
-IGZvciBMaW51eA0KICBURHMgaW4gUkZDIHYxLg0KDQpCdXQgaXQncyBub3QgY2xlYXIgdG8gbWUg
-aG93IHRoaXMgaXMgc29sdmVkLg0K
+Add the clock and reset tree definitions for the new
+rv1126b SoC.
+
+Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+---
+ drivers/clk/rockchip/Kconfig       |    7 +
+ drivers/clk/rockchip/Makefile      |    1 +
+ drivers/clk/rockchip/clk-rv1126b.c | 1103 ++++++++++++++++++++++++++++
+ drivers/clk/rockchip/clk.h         |   68 ++
+ drivers/clk/rockchip/rst-rv1126b.c |  444 +++++++++++
+ 5 files changed, 1623 insertions(+)
+ create mode 100644 drivers/clk/rockchip/clk-rv1126b.c
+ create mode 100644 drivers/clk/rockchip/rst-rv1126b.c
+
+diff --git a/drivers/clk/rockchip/Kconfig b/drivers/clk/rockchip/Kconfig
+index febb7944f34b..e1ea0a098ca9 100644
+--- a/drivers/clk/rockchip/Kconfig
++++ b/drivers/clk/rockchip/Kconfig
+@@ -30,6 +30,13 @@ config CLK_RV1126
+ 	help
+ 	  Build the driver for RV1126 Clock Driver.
+ 
++config CLK_RV1126B
++	bool "Rockchip RV1126B clock controller support"
++	depends on ARM64 || COMPILE_TEST
++	default y
++	help
++	  Build the driver for RV1126B Clock Driver.
++
+ config CLK_RK3036
+ 	bool "Rockchip RK3036 clock controller support"
+ 	depends on ARM || COMPILE_TEST
+diff --git a/drivers/clk/rockchip/Makefile b/drivers/clk/rockchip/Makefile
+index c281a9738d9f..82b4b29ad036 100644
+--- a/drivers/clk/rockchip/Makefile
++++ b/drivers/clk/rockchip/Makefile
+@@ -20,6 +20,7 @@ clk-rockchip-$(CONFIG_RESET_CONTROLLER) += softrst.o
+ obj-$(CONFIG_CLK_PX30)          += clk-px30.o
+ obj-$(CONFIG_CLK_RV110X)        += clk-rv1108.o
+ obj-$(CONFIG_CLK_RV1126)        += clk-rv1126.o
++obj-$(CONFIG_CLK_RV1126B)	+= clk-rv1126b.o rst-rv1126b.o
+ obj-$(CONFIG_CLK_RK3036)        += clk-rk3036.o
+ obj-$(CONFIG_CLK_RK312X)        += clk-rk3128.o
+ obj-$(CONFIG_CLK_RK3188)        += clk-rk3188.o
+diff --git a/drivers/clk/rockchip/clk-rv1126b.c b/drivers/clk/rockchip/clk-rv1126b.c
+new file mode 100644
+index 000000000000..2e7ea28649fc
+--- /dev/null
++++ b/drivers/clk/rockchip/clk-rv1126b.c
+@@ -0,0 +1,1103 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2024 Rockchip Electronics Co., Ltd.
++ * Author: Elaine Zhang <zhangqing@rock-chips.com>
++ */
++
++#include <linux/clk.h>
++#include <linux/clk-provider.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/of_device.h>
++#include <linux/platform_device.h>
++#include <linux/regmap.h>
++#include <linux/syscore_ops.h>
++#include <dt-bindings/clock/rockchip,rv1126b-cru.h>
++#include "clk.h"
++
++#define RV1126B_FRAC_MAX_PRATE		1200000000
++
++#define PVTPLL_SRC_SEL_PVTPLL		(BIT(0) | BIT(16))
++
++enum rv1126b_plls {
++	gpll, cpll, aupll, dpll
++};
++
++static struct rockchip_pll_rate_table rv1126b_pll_rates[] = {
++	/* _mhz, _refdiv, _fbdiv, _postdiv1, _postdiv2, _dsmpd, _frac */
++	RK3036_PLL_RATE(1200000000, 1, 100, 2, 1, 1, 0),
++	RK3036_PLL_RATE(1188000000, 1, 99, 2, 1, 1, 0),
++	RK3036_PLL_RATE(1179648000, 1, 49, 1, 1, 0, 2550137),
++	RK3036_PLL_RATE(1000000000, 3, 250, 2, 1, 1, 0),
++	RK3036_PLL_RATE(993484800, 1, 41, 1, 1, 0, 6630355),
++	RK3036_PLL_RATE(983040000, 1, 40, 1, 1, 0, 16106127),
++	RK3036_PLL_RATE(903168000, 1, 75, 2, 1, 0, 4429185),
++	{ /* sentinel */ },
++};
++
++#define RV1126B_DIV_ACLK_CORE_MASK	0x1f
++#define RV1126B_DIV_ACLK_CORE_SHIFT	0
++#define RV1126B_DIV_PCLK_CORE_MASK	0x1f
++#define RV1126B_DIV_PCLK_CORE_SHIFT	8
++#define RV1126B_CORE_SEL_MASK		0x1
++#define RV1126B_CORE_SEL_SHIFT		1
++
++#define RV1126B_CLKSEL0(_aclk_core)						\
++{										\
++	.reg = RV1126B_CORECLKSEL_CON(2),					\
++	.val = HIWORD_UPDATE(_aclk_core - 1, RV1126B_DIV_ACLK_CORE_MASK,	\
++			     RV1126B_DIV_ACLK_CORE_SHIFT),			\
++}
++
++#define RV1126B_CLKSEL1(_pclk_dbg)						\
++{										\
++	.reg = RV1126B_CORECLKSEL_CON(2),					\
++	.val = HIWORD_UPDATE(_pclk_dbg - 1, RV1126B_DIV_PCLK_CORE_MASK,		\
++			     RV1126B_DIV_PCLK_CORE_SHIFT),			\
++}
++
++#define RV1126B_CPUCLK_RATE(_prate, _aclk_core, _pclk_dbg)			\
++{										\
++	.prate = _prate,							\
++	.divs = {								\
++		RV1126B_CLKSEL0(_aclk_core),					\
++		RV1126B_CLKSEL1(_pclk_dbg),					\
++	},									\
++}
++
++static struct rockchip_cpuclk_rate_table rv1126b_cpuclk_rates[] __initdata = {
++	RV1126B_CPUCLK_RATE(1608000000, 4, 10),
++	RV1126B_CPUCLK_RATE(1512000000, 4, 10),
++	RV1126B_CPUCLK_RATE(1416000000, 4, 10),
++	RV1126B_CPUCLK_RATE(1296000000, 3, 10),
++	RV1126B_CPUCLK_RATE(1200000000, 3, 10),
++	RV1126B_CPUCLK_RATE(1188000000, 3, 8),
++	RV1126B_CPUCLK_RATE(1104000000, 2, 8),
++	RV1126B_CPUCLK_RATE(1008000000, 2, 8),
++	RV1126B_CPUCLK_RATE(816000000, 2, 6),
++	RV1126B_CPUCLK_RATE(600000000, 2, 4),
++	RV1126B_CPUCLK_RATE(594000000, 2, 4),
++	RV1126B_CPUCLK_RATE(408000000, 1, 3),
++	RV1126B_CPUCLK_RATE(396000000, 1, 3),
++};
++
++PNAME(mux_pll_p)			= { "xin24m" };
++PNAME(mux_gpll_cpll_p)			= { "gpll", "cpll" };
++PNAME(mux_gpll_aupll_p)			= { "gpll", "aupll" };
++PNAME(mux_gpll_aupll_cpll_p)		= { "gpll", "aupll", "cpll" };
++PNAME(mux_gpll_cpll_24m_p)		= { "gpll", "cpll", "xin24m" };
++PNAME(mux_cpll_24m_p)			= { "cpll", "xin24m" };
++PNAME(mux_24m_gpll_aupll_cpll_p)	= { "xin24m", "gpll", "aupll", "cpll" };
++PNAME(mux_24m_gpll_cpll_p)		= { "xin24m", "gpll", "cpll" };
++PNAME(mux_24m_gpll_aupll_p)		= { "xin24m", "gpll", "aupll" };
++PNAME(mux_sclk_uart_src_p)		= { "xin24m", "clk_cm_frac0", "clk_cm_frac1", "clk_cm_frac2",
++					    "clk_uart_frac0", "clk_uart_frac1" };
++PNAME(mclk_sai0_src_p)			= { "xin24m", "clk_cm_frac0", "clk_cm_frac1", "clk_cm_frac2",
++					    "clk_audio_frac0", "clk_audio_frac1", "clk_audio_int0", "clk_audio_int1", "mclk_sai0_from_io" };
++PNAME(mclk_sai1_src_p)			= { "xin24m", "clk_cm_frac0", "clk_cm_frac1", "clk_cm_frac2", "clk_audio_frac0",
++					    "clk_audio_frac1", "clk_audio_int0", "clk_audio_int1", "mclk_sai1_from_io" };
++PNAME(mclk_sai2_src_p)			= { "xin24m", "clk_cm_frac0", "clk_cm_frac1", "clk_cm_frac2", "clk_audio_frac0",
++					    "clk_audio_frac1", "clk_audio_int0", "clk_audio_int1", "mclk_sai2_from_io" };
++PNAME(mux_sai_src_p)			= { "xin24m", "clk_cm_frac0", "clk_cm_frac1", "clk_cm_frac2", "clk_audio_frac0",
++					    "clk_audio_frac1", "clk_audio_int0", "clk_audio_int1", "mclk_sai0_from_io",
++					    "mclk_sai1_from_io", "mclk_sai2_from_io"};
++PNAME(mux_100m_24m_p)			= { "clk_cpll_div10", "xin24m" };
++PNAME(mux_200m_24m_p)			= { "clk_gpll_div6", "xin24m" };
++PNAME(mux_500m_400m_200m_p)		= { "clk_cpll_div2", "clk_gpll_div3", "clk_gpll_div6" };
++PNAME(mux_300m_200m_p)			= { "clk_gpll_div4", "clk_gpll_div6" };
++PNAME(mux_500m_400m_300m_p)		= { "clk_cpll_div2", "clk_gpll_div3", "clk_gpll_div4" };
++PNAME(mux_333m_200m_p)			= { "clk_cpll_div3", "clk_gpll_div6" };
++PNAME(mux_600m_400m_200m_p)		= { "clk_gpll_div2", "clk_gpll_div3", "clk_gpll_div6" };
++PNAME(mux_400m_300m_200m_p)		= { "clk_gpll_div3", "clk_gpll_div4", "clk_gpll_div6" };
++PNAME(mux_200m_100m_p)			= { "clk_gpll_div6", "clk_cpll_div10" };
++PNAME(mux_200m_100m_50m_24m_p)		= { "clk_gpll_div6", "clk_cpll_div10", "clk_cpll_div20", "xin24m" };
++PNAME(mux_600m_24m_p)			= { "clk_gpll_div2", "xin24m" };
++PNAME(mux_armclk_p)			= { "clk_core_pll", "clk_core_pvtpll" };
++PNAME(aclk_npu_root_p)			= { "clk_npu_pll", "clk_npu_pvtpll" };
++PNAME(clk_saradc0_p)			= { "clk_saradc0_src", "clk_saradc0_rcosc_io" };
++PNAME(clk_core_vepu_p)			= { "clk_vepu_pll", "clk_vepu_pvtpll" };
++PNAME(clk_core_fec_p)			= { "clk_core_fec_src", "clk_vcp_pvtpll" };
++PNAME(clk_core_aisp_p)			= { "clk_aisp_pll", "clk_vcp_pvtpll" };
++PNAME(clk_core_isp_root_p)		= { "clk_isp_pll", "clk_isp_pvtpll" };
++PNAME(clk_gmac_ptp_ref_p)		= { "clk_gmac_ptp_ref_src", "clk_gmac_ptp_from_io" };
++PNAME(clk_saradc1_p)			= { "clk_saradc1_src", "clk_saradc1_rcosc_io" };
++PNAME(clk_saradc2_p)			= { "clk_saradc2_src", "clk_saradc2_rcosc_io" };
++PNAME(clk_rcosc_src_p)			= { "xin24m", "clk_rcosc", "clk_rcosc_div2", "clk_rcosc_div3", "clk_rcosc_div4" };
++PNAME(busclk_pmu_mux_p)			= { "clk_cpll_div10", "clk_rcosc_src" };
++PNAME(clk_xin_rc_div_p)			= { "xin24m", "clk_rcosc_src" };
++PNAME(clk_32k_p)			= { "clk_xin_rc_div", "clk_32k_rtc", "clk_32k_io" };
++PNAME(mux_24m_32k_p)			= { "xin24m", "clk_32k" };
++PNAME(mux_24m_rcosc_buspmu_p)		= { "xin24m", "clk_rcosc_src", "busclk_pmu_src" };
++PNAME(mux_24m_rcosc_buspmu_32k_p)	= { "xin24m", "clk_rcosc_src", "busclk_pmu_src", "clk_32k" };
++PNAME(sclk_uart0_p)			= { "sclk_uart0_src", "xin24m", "clk_rcosc_src" };
++PNAME(clk_osc_rcosc_ctrl_p)		= { "clk_rcosc_src", "clk_testout_out" };
++PNAME(lrck_src_asrc_p)			= { "mclk_asrc0", "mclk_asrc1", "mclk_asrc2", "mclk_asrc3",
++					    "fs_inter_from_sai0", "fs_inter_from_sai1", "fs_inter_from_sai2", "clkout_pdm"};
++PNAME(clk_ref_pipephy_p)		= { "clk_ref_pipephy_cpll_src", "xin24m" };
++PNAME(clk_timer0_parents_p)		= { "clk_timer_root", "mclk_sai0_from_io", "sclk_sai0_from_io" };
++PNAME(clk_timer1_parents_p)		= { "clk_timer_root", "mclk_sai1_from_io", "sclk_sai1_from_io" };
++PNAME(clk_timer2_parents_p)		= { "clk_timer_root", "mclk_sai2_from_io", "sclk_sai2_from_io" };
++PNAME(clk_timer3_parents_p)		= { "clk_timer_root", "mclk_asrc0", "mclk_asrc1" };
++PNAME(clk_timer4_parents_p)		= { "clk_timer_root", "mclk_asrc2", "mclk_asrc3" };
++PNAME(clk_macphy_p)			= { "xin24m", "clk_cpll_div20" };
++PNAME(clk_cpll_div10_p)			= { "gpll", "clk_aisp_pll_src" };
++
++static struct rockchip_pll_clock rv1126b_pll_clks[] __initdata = {
++	[gpll] = PLL(pll_rk3328, PLL_GPLL, "gpll", mux_pll_p,
++		     CLK_IS_CRITICAL, RV1126B_PLL_CON(8),
++		     RV1126B_MODE_CON, 2, 10, 0, rv1126b_pll_rates),
++	[aupll] = PLL(pll_rk3328, PLL_AUPLL, "aupll", mux_pll_p,
++		     CLK_IS_CRITICAL, RV1126B_PLL_CON(0),
++		     RV1126B_MODE_CON, 0, 10, 0, rv1126b_pll_rates),
++	[cpll] = PLL(pll_rk3328, PLL_CPLL, "cpll", mux_pll_p,
++		     CLK_IS_CRITICAL, RV1126B_PERIPLL_CON(0),
++		     RV1126B_MODE_CON, 4, 10, 0, rv1126b_pll_rates),
++	[dpll] = PLL(pll_rk3328, 0, "dpll", mux_pll_p,
++		     CLK_IS_CRITICAL, RV1126B_SUBDDRPLL_CON(0),
++		     RV1126B_MODE_CON, 2, 10, 0, rv1126b_pll_rates),
++};
++
++#define MFLAGS CLK_MUX_HIWORD_MASK
++#define DFLAGS CLK_DIVIDER_HIWORD_MASK
++#define GFLAGS (CLK_GATE_HIWORD_MASK | CLK_GATE_SET_TO_DISABLE)
++
++static struct rockchip_clk_branch rv1126b_rcdiv_pmu_fracmux __initdata =
++	MUX(CLK_32K, "clk_32k", clk_32k_p, CLK_SET_RATE_PARENT | CLK_SET_RATE_NO_REPARENT,
++			RV1126B_PMUCLKSEL_CON(2), 1, 2, MFLAGS);
++
++static struct rockchip_clk_branch rv1126b_clk_branches[] __initdata = {
++
++	FACTOR(0, "clk_rcosc_div2", "clk_rcosc", 0, 1, 2),
++	FACTOR(0, "clk_rcosc_div3", "clk_rcosc", 0, 1, 3),
++	FACTOR(0, "clk_rcosc_div4", "clk_rcosc", 0, 1, 4),
++
++	/*       Clock Definition       */
++	COMPOSITE_NODIV(CLK_AISP_PLL_SRC, "clk_aisp_pll_src", mux_gpll_aupll_cpll_p, 0,
++			RV1126B_CLKSEL_CON(62), 4, 2, MFLAGS,
++			RV1126B_CLKGATE_CON(5), 4, GFLAGS),
++	DIV(CLK_AISP_PLL, "clk_aisp_pll", "clk_aisp_pll_src", 0,
++			RV1126B_CLKSEL_CON(62), 0, 3, DFLAGS),
++
++	COMPOSITE(CLK_CPLL_DIV10, "clk_cpll_div10", clk_cpll_div10_p, 0,
++			RV1126B_CLKSEL_CON(1), 15, 1, MFLAGS, 5, 5, DFLAGS,
++			RV1126B_CLKGATE_CON(0), 1, GFLAGS),
++	COMPOSITE_NOMUX(CLK_CPLL_DIV20, "clk_cpll_div20", "cpll", 0,
++			RV1126B_CLKSEL_CON(1), 0, 5, DFLAGS,
++			RV1126B_CLKGATE_CON(0), 0, GFLAGS),
++	COMPOSITE_NOMUX(CLK_CPLL_DIV8, "clk_cpll_div8", "cpll", 0,
++			RV1126B_CLKSEL_CON(1), 10, 5, DFLAGS,
++			RV1126B_CLKGATE_CON(0), 2, GFLAGS),
++	COMPOSITE_NOMUX(CLK_GPLL_DIV8, "clk_gpll_div8", "gpll", 0,
++			RV1126B_CLKSEL_CON(2), 0, 5, DFLAGS,
++			RV1126B_CLKGATE_CON(0), 3, GFLAGS),
++	COMPOSITE_NOMUX(CLK_GPLL_DIV6, "clk_gpll_div6", "gpll", 0,
++			RV1126B_CLKSEL_CON(2), 5, 5, DFLAGS,
++			RV1126B_CLKGATE_CON(0), 4, GFLAGS),
++	COMPOSITE_NOMUX(CLK_GPLL_DIV4, "clk_gpll_div4", "gpll", 0,
++			RV1126B_CLKSEL_CON(2), 10, 5, DFLAGS,
++			RV1126B_CLKGATE_CON(0), 5, GFLAGS),
++	COMPOSITE_NOMUX(CLK_CPLL_DIV3, "clk_cpll_div3", "cpll", 0,
++			RV1126B_CLKSEL_CON(3), 0, 5, DFLAGS,
++			RV1126B_CLKGATE_CON(0), 6, GFLAGS),
++	COMPOSITE_NOMUX(CLK_GPLL_DIV3, "clk_gpll_div3", "gpll", 0,
++			RV1126B_CLKSEL_CON(3), 5, 5, DFLAGS,
++			RV1126B_CLKGATE_CON(0), 7, GFLAGS),
++	COMPOSITE_NOMUX(CLK_CPLL_DIV2, "clk_cpll_div2", "cpll", 0,
++			RV1126B_CLKSEL_CON(3), 10, 5, DFLAGS,
++			RV1126B_CLKGATE_CON(0), 8, GFLAGS),
++	COMPOSITE_NOMUX(CLK_GPLL_DIV2, "clk_gpll_div2", "gpll", 0,
++			RV1126B_CLKSEL_CON(4), 0, 5, DFLAGS,
++			RV1126B_CLKGATE_CON(0), 9, GFLAGS),
++	MUX(CLK_CM_FRAC0_SRC, "clk_cm_frac0_src", mux_24m_gpll_aupll_cpll_p, 0,
++			RV1126B_CLKSEL_CON(10), 0, 2, MFLAGS),
++	COMPOSITE_FRAC(CLK_CM_FRAC0, "clk_cm_frac0", "clk_cm_frac0_src", 0,
++			RV1126B_CLKSEL_CON(25), 0,
++			RV1126B_CLKGATE_CON(1), 0, GFLAGS),
++	MUX(CLK_CM_FRAC1_SRC, "clk_cm_frac1_src", mux_24m_gpll_aupll_cpll_p, 0,
++			RV1126B_CLKSEL_CON(10), 2, 2, MFLAGS),
++	COMPOSITE_FRAC(CLK_CM_FRAC1, "clk_cm_frac1", "clk_cm_frac1_src", 0,
++			RV1126B_CLKSEL_CON(26), 0,
++			RV1126B_CLKGATE_CON(1), 1, GFLAGS),
++	MUX(CLK_CM_FRAC2_SRC, "clk_cm_frac2_src", mux_24m_gpll_aupll_cpll_p, 0,
++			RV1126B_CLKSEL_CON(10), 4, 2, MFLAGS),
++	COMPOSITE_FRAC(CLK_CM_FRAC2, "clk_cm_frac2", "clk_cm_frac2_src", 0,
++			RV1126B_CLKSEL_CON(27), 0,
++			RV1126B_CLKGATE_CON(1), 2, GFLAGS),
++	MUX(CLK_UART_FRAC0_SRC, "clk_uart_frac0_src", mux_24m_gpll_cpll_p, 0,
++			RV1126B_CLKSEL_CON(10), 6, 2, MFLAGS),
++	COMPOSITE_FRAC(CLK_UART_FRAC0, "clk_uart_frac0", "clk_uart_frac0_src", 0,
++			RV1126B_CLKSEL_CON(28), 0,
++			RV1126B_CLKGATE_CON(1), 3, GFLAGS),
++	MUX(CLK_UART_FRAC1_SRC, "clk_uart_frac1_src", mux_24m_gpll_cpll_p, 0,
++			RV1126B_CLKSEL_CON(10), 8, 2, MFLAGS),
++	COMPOSITE_FRAC(CLK_UART_FRAC1, "clk_uart_frac1", "clk_uart_frac1_src", 0,
++			RV1126B_CLKSEL_CON(29), 0,
++			RV1126B_CLKGATE_CON(1), 4, GFLAGS),
++	MUX(CLK_AUDIO_FRAC0_SRC, "clk_audio_frac0_src", mux_24m_gpll_aupll_p, 0,
++			RV1126B_CLKSEL_CON(10), 10, 2, MFLAGS),
++	COMPOSITE_FRAC(CLK_AUDIO_FRAC0, "clk_audio_frac0", "clk_audio_frac0_src", 0,
++			RV1126B_CLKSEL_CON(30), 0,
++			RV1126B_CLKGATE_CON(1), 5, GFLAGS),
++	MUX(CLK_AUDIO_FRAC1_SRC, "clk_audio_frac1_src", mux_24m_gpll_aupll_p, 0,
++			RV1126B_CLKSEL_CON(10), 12, 2, MFLAGS),
++	COMPOSITE_FRAC(CLK_AUDIO_FRAC1, "clk_audio_frac1", "clk_audio_frac1_src", 0,
++			RV1126B_CLKSEL_CON(31), 0,
++			RV1126B_CLKGATE_CON(1), 6, GFLAGS),
++	COMPOSITE(CLK_AUDIO_INT0, "clk_audio_int0", mux_24m_gpll_aupll_p, 0,
++			RV1126B_CLKSEL_CON(11), 6, 2, MFLAGS, 0, 5, DFLAGS,
++			RV1126B_CLKGATE_CON(1), 7, GFLAGS),
++	COMPOSITE(CLK_AUDIO_INT1, "clk_audio_int1", mux_24m_gpll_aupll_p, 0,
++			RV1126B_CLKSEL_CON(11), 14, 2, MFLAGS, 8, 5, DFLAGS,
++			RV1126B_CLKGATE_CON(1), 8, GFLAGS),
++	COMPOSITE(SCLK_UART0_SRC, "sclk_uart0_src", mux_sclk_uart_src_p, 0,
++			RV1126B_CLKSEL_CON(12), 5, 3, MFLAGS, 0, 5, DFLAGS,
++			RV1126B_CLKGATE_CON(1), 9, GFLAGS),
++	COMPOSITE(SCLK_UART1, "sclk_uart1", mux_sclk_uart_src_p, 0,
++			RV1126B_CLKSEL_CON(12), 13, 3, MFLAGS, 8, 5, DFLAGS,
++			RV1126B_CLKGATE_CON(1), 10, GFLAGS),
++	COMPOSITE(SCLK_UART2, "sclk_uart2", mux_sclk_uart_src_p, 0,
++			RV1126B_CLKSEL_CON(13), 5, 3, MFLAGS, 0, 5, DFLAGS,
++			RV1126B_CLKGATE_CON(1), 11, GFLAGS),
++	COMPOSITE(SCLK_UART3, "sclk_uart3", mux_sclk_uart_src_p, 0,
++			RV1126B_CLKSEL_CON(13), 13, 3, MFLAGS, 8, 5, DFLAGS,
++			RV1126B_CLKGATE_CON(1), 12, GFLAGS),
++	COMPOSITE(SCLK_UART4, "sclk_uart4", mux_sclk_uart_src_p, 0,
++			RV1126B_CLKSEL_CON(14), 5, 3, MFLAGS, 0, 5, DFLAGS,
++			RV1126B_CLKGATE_CON(1), 13, GFLAGS),
++	COMPOSITE(SCLK_UART5, "sclk_uart5", mux_sclk_uart_src_p, 0,
++			RV1126B_CLKSEL_CON(14), 13, 3, MFLAGS, 8, 5, DFLAGS,
++			RV1126B_CLKGATE_CON(1), 14, GFLAGS),
++	COMPOSITE(SCLK_UART6, "sclk_uart6", mux_sclk_uart_src_p, 0,
++			RV1126B_CLKSEL_CON(15), 5, 3, MFLAGS, 0, 5, DFLAGS,
++			RV1126B_CLKGATE_CON(2), 0, GFLAGS),
++	COMPOSITE(SCLK_UART7, "sclk_uart7", mux_sclk_uart_src_p, 0,
++			RV1126B_CLKSEL_CON(15), 13, 3, MFLAGS, 8, 5, DFLAGS,
++			RV1126B_CLKGATE_CON(2), 1, GFLAGS),
++	COMPOSITE(MCLK_SAI0, "mclk_sai0", mclk_sai0_src_p, 0,
++			RV1126B_CLKSEL_CON(16), 8, 4, MFLAGS, 0, 8, DFLAGS,
++			RV1126B_CLKGATE_CON(2), 2, GFLAGS),
++	COMPOSITE(MCLK_SAI1, "mclk_sai1", mclk_sai1_src_p, 0,
++			RV1126B_CLKSEL_CON(17), 8, 4, MFLAGS, 0, 8, DFLAGS,
++			RV1126B_CLKGATE_CON(2), 3, GFLAGS),
++	COMPOSITE(MCLK_SAI2, "mclk_sai2", mclk_sai2_src_p, 0,
++			RV1126B_CLKSEL_CON(18), 8, 4, MFLAGS, 0, 8, DFLAGS,
++			RV1126B_CLKGATE_CON(2), 4, GFLAGS),
++	COMPOSITE(MCLK_PDM, "mclk_pdm", mux_sai_src_p, 0,
++			RV1126B_CLKSEL_CON(19), 6, 4, MFLAGS, 0, 5, DFLAGS,
++			RV1126B_CLKGATE_CON(2), 5, GFLAGS),
++	COMPOSITE_NOGATE(0, "clkout_pdm_src", mux_sai_src_p, 0,
++			RV1126B_CLKSEL_CON(20), 8, 4, MFLAGS, 0, 8, DFLAGS),
++	GATE(CLKOUT_PDM, "clkout_pdm", "clkout_pdm_src", 0,
++			RV1126B_CLKGATE_CON(2), 6, GFLAGS),
++	COMPOSITE_NODIV(MCLK_ASRC0, "mclk_asrc0", mux_sai_src_p, 0,
++			RV1126B_CLKSEL_CON(16), 12, 4, MFLAGS,
++			RV1126B_CLKGATE_CON(2), 7, GFLAGS),
++	COMPOSITE_NODIV(MCLK_ASRC1, "mclk_asrc1", mux_sai_src_p, 0,
++			RV1126B_CLKSEL_CON(17), 12, 4, MFLAGS,
++			RV1126B_CLKGATE_CON(2), 8, GFLAGS),
++	COMPOSITE_NODIV(MCLK_ASRC2, "mclk_asrc2", mux_sai_src_p, 0,
++			RV1126B_CLKSEL_CON(18), 12, 4, MFLAGS,
++			RV1126B_CLKGATE_CON(2), 9, GFLAGS),
++	COMPOSITE_NODIV(MCLK_ASRC3, "mclk_asrc3", mux_sai_src_p, 0,
++			RV1126B_CLKSEL_CON(19), 12, 4, MFLAGS,
++			RV1126B_CLKGATE_CON(2), 10, GFLAGS),
++	COMPOSITE(CLK_ASRC0, "clk_asrc0", mux_gpll_aupll_p, 0,
++			RV1126B_CLKSEL_CON(21), 6, 1, MFLAGS, 0, 5, DFLAGS,
++			RV1126B_CLKGATE_CON(2), 11, GFLAGS),
++	COMPOSITE(CLK_ASRC1, "clk_asrc1", mux_gpll_aupll_p, 0,
++			RV1126B_CLKSEL_CON(21), 14, 1, MFLAGS, 8, 5, DFLAGS,
++			RV1126B_CLKGATE_CON(2), 12, GFLAGS),
++	COMPOSITE_NOMUX(CLK_CORE_PLL, "clk_core_pll", "gpll", CLK_IS_CRITICAL,
++			RV1126B_CLKSEL_CON(60), 0, 3, DFLAGS,
++			RV1126B_CLKGATE_CON(5), 0, GFLAGS),
++	COMPOSITE_NOMUX(CLK_NPU_PLL, "clk_npu_pll", "gpll", CLK_IS_CRITICAL,
++			RV1126B_CLKSEL_CON(60), 6, 3, DFLAGS,
++			RV1126B_CLKGATE_CON(5), 1, GFLAGS),
++	COMPOSITE(CLK_VEPU_PLL, "clk_vepu_pll", mux_gpll_aupll_cpll_p, 0,
++			RV1126B_CLKSEL_CON(61), 4, 2, MFLAGS, 0, 3, DFLAGS,
++			RV1126B_CLKGATE_CON(5), 2, GFLAGS),
++	COMPOSITE(CLK_ISP_PLL, "clk_isp_pll", mux_gpll_aupll_cpll_p, 0,
++			RV1126B_CLKSEL_CON(61), 10, 2, MFLAGS, 6, 4, DFLAGS,
++			RV1126B_CLKGATE_CON(5), 3, GFLAGS),
++	COMPOSITE(CLK_SARADC0_SRC, "clk_saradc0_src", mux_200m_24m_p, 0,
++			RV1126B_CLKSEL_CON(63), 12, 1, MFLAGS, 0, 3, DFLAGS,
++			RV1126B_CLKGATE_CON(5), 6, GFLAGS),
++	COMPOSITE(CLK_SARADC1_SRC, "clk_saradc1_src", mux_200m_24m_p, 0,
++			RV1126B_CLKSEL_CON(63), 13, 1, MFLAGS, 4, 3, DFLAGS,
++			RV1126B_CLKGATE_CON(5), 7, GFLAGS),
++	COMPOSITE(CLK_SARADC2_SRC, "clk_saradc2_src", mux_200m_24m_p, 0,
++			RV1126B_CLKSEL_CON(63), 14, 1, MFLAGS, 8, 3, DFLAGS,
++			RV1126B_CLKGATE_CON(5), 8, GFLAGS),
++	GATE(HCLK_RKNN, "hclk_rknn", "clk_gpll_div8", CLK_IS_CRITICAL,
++			RV1126B_CLKGATE_CON(5), 10, GFLAGS),
++	GATE(PCLK_NPU_ROOT, "pclk_npu_root", "clk_cpll_div10", CLK_IS_CRITICAL,
++			RV1126B_CLKGATE_CON(5), 11, GFLAGS),
++	COMPOSITE_NODIV(ACLK_VEPU_ROOT, "aclk_vepu_root", mux_500m_400m_200m_p, CLK_IS_CRITICAL,
++			RV1126B_CLKSEL_CON(40), 0, 2, MFLAGS,
++			RV1126B_CLKGATE_CON(5), 12, GFLAGS),
++	GATE(HCLK_VEPU_ROOT, "hclk_vepu_root", "clk_gpll_div8", CLK_IS_CRITICAL,
++			RV1126B_CLKGATE_CON(5), 13, GFLAGS),
++	GATE(PCLK_VEPU_ROOT, "pclk_vepu_root", "clk_cpll_div10", 0,
++			RV1126B_CLKGATE_CON(5), 14, GFLAGS),
++	COMPOSITE(CLK_CORE_RGA_SRC, "clk_core_rga_src", mux_gpll_cpll_p, 0,
++			RV1126B_CLKSEL_CON(40), 5, 1, MFLAGS, 2, 3, DFLAGS,
++			RV1126B_CLKGATE_CON(6), 0, GFLAGS),
++	COMPOSITE_NODIV(ACLK_GMAC_ROOT, "aclk_gmac_root", mux_300m_200m_p, 0,
++			RV1126B_CLKSEL_CON(40), 6, 1, MFLAGS,
++			RV1126B_CLKGATE_CON(6), 1, GFLAGS),
++	COMPOSITE_NODIV(ACLK_VI_ROOT, "aclk_vi_root", mux_500m_400m_300m_p, CLK_IS_CRITICAL,
++			RV1126B_CLKSEL_CON(40), 7, 2, MFLAGS,
++			RV1126B_CLKGATE_CON(6), 2, GFLAGS),
++	GATE(HCLK_VI_ROOT, "hclk_vi_root", "clk_gpll_div8", CLK_IS_CRITICAL,
++			RV1126B_CLKGATE_CON(6), 3, GFLAGS),
++	GATE(PCLK_VI_ROOT, "pclk_vi_root", "clk_cpll_div10", CLK_IS_CRITICAL,
++			RV1126B_CLKGATE_CON(6), 4, GFLAGS),
++	COMPOSITE_NODIV(DCLK_VICAP_ROOT, "dclk_vicap_root", mux_333m_200m_p, 0,
++			RV1126B_CLKSEL_CON(42), 5, 1, MFLAGS,
++			RV1126B_CLKGATE_CON(6), 5, GFLAGS),
++	COMPOSITE(CLK_SYS_DSMC_ROOT, "clk_sys_dsmc_root", mux_24m_gpll_cpll_p, 0,
++			RV1126B_CLKSEL_CON(40), 14, 2, MFLAGS, 9, 5, DFLAGS,
++			RV1126B_CLKGATE_CON(6), 6, GFLAGS),
++	COMPOSITE(ACLK_VDO_ROOT, "aclk_vdo_root", mux_gpll_cpll_p, CLK_IS_CRITICAL,
++			RV1126B_CLKSEL_CON(42), 4, 1, MFLAGS, 0, 4, DFLAGS,
++			RV1126B_CLKGATE_CON(6), 7, GFLAGS),
++	COMPOSITE(ACLK_RKVDEC_ROOT, "aclk_rkvdec_root", mux_gpll_cpll_p, 0,
++			RV1126B_CLKSEL_CON(42), 10, 1, MFLAGS, 6, 4, DFLAGS,
++			RV1126B_CLKGATE_CON(6), 8, GFLAGS),
++	GATE(HCLK_VDO_ROOT, "hclk_vdo_root", "clk_gpll_div8", CLK_IS_CRITICAL,
++			RV1126B_CLKGATE_CON(6), 9, GFLAGS),
++	GATE(PCLK_VDO_ROOT, "pclk_vdo_root", "clk_cpll_div10", CLK_IS_CRITICAL,
++			RV1126B_CLKGATE_CON(6), 10, GFLAGS),
++	COMPOSITE(DCLK_VOP, "dclk_vop", mux_gpll_cpll_p, 0,
++			RV1126B_CLKSEL_CON(43), 8, 1, MFLAGS, 0, 8, DFLAGS,
++			RV1126B_CLKGATE_CON(6), 12, GFLAGS),
++	COMPOSITE(DCLK_OOC_SRC, "dclk_ooc_src", mux_gpll_cpll_p, 0,
++			RV1126B_CLKSEL_CON(62), 7, 1, MFLAGS, 8, 8, DFLAGS,
++			RV1126B_CLKGATE_CON(6), 13, GFLAGS),
++	GATE(DCLK_DECOM_SRC, "dclk_decom_src", "clk_gpll_div3", 0,
++			RV1126B_CLKGATE_CON(6), 14, GFLAGS),
++	GATE(PCLK_DDR_ROOT, "pclk_ddr_root", "clk_cpll_div10", 0,
++			RV1126B_CLKGATE_CON(7), 0, GFLAGS),
++	COMPOSITE(ACLK_SYSMEM, "aclk_sysmem", mux_gpll_cpll_p, CLK_IS_CRITICAL,
++			RV1126B_CLKSEL_CON(44), 3, 1, MFLAGS, 0, 3, DFLAGS,
++			RV1126B_CLKGATE_CON(7), 1, GFLAGS),
++	COMPOSITE_NODIV(ACLK_TOP_ROOT, "aclk_top_root", mux_600m_400m_200m_p, CLK_IS_CRITICAL,
++			RV1126B_CLKSEL_CON(44), 6, 2, MFLAGS,
++			RV1126B_CLKGATE_CON(7), 3, GFLAGS),
++	COMPOSITE_NODIV(ACLK_BUS_ROOT, "aclk_bus_root", mux_400m_300m_200m_p, CLK_IS_CRITICAL,
++			RV1126B_CLKSEL_CON(44), 8, 2, MFLAGS,
++			RV1126B_CLKGATE_CON(7), 4, GFLAGS),
++	COMPOSITE_NODIV(HCLK_BUS_ROOT, "hclk_bus_root", mux_200m_100m_p, CLK_IS_CRITICAL,
++			RV1126B_CLKSEL_CON(44), 10, 1, MFLAGS,
++			RV1126B_CLKGATE_CON(7), 5, GFLAGS),
++	GATE(PCLK_BUS_ROOT, "pclk_bus_root", "clk_cpll_div10", CLK_IS_CRITICAL,
++			RV1126B_CLKGATE_CON(7), 6, GFLAGS),
++	COMPOSITE(CCLK_SDMMC0, "cclk_sdmmc0", mux_gpll_cpll_24m_p, 0,
++			RV1126B_CLKSEL_CON(45), 8, 2, MFLAGS, 0, 8, DFLAGS,
++			RV1126B_CLKGATE_CON(7), 7, GFLAGS),
++	COMPOSITE(CCLK_SDMMC1, "cclk_sdmmc1", mux_gpll_cpll_24m_p, 0,
++			RV1126B_CLKSEL_CON(46), 8, 2, MFLAGS, 0, 8, DFLAGS,
++			RV1126B_CLKGATE_CON(7), 8, GFLAGS),
++	COMPOSITE(CCLK_EMMC, "cclk_emmc", mux_gpll_cpll_24m_p, 0,
++			RV1126B_CLKSEL_CON(47), 8, 2, MFLAGS, 0, 8, DFLAGS,
++			RV1126B_CLKGATE_CON(7), 9, GFLAGS),
++	COMPOSITE(SCLK_2X_FSPI0, "sclk_2x_fspi0", mux_gpll_cpll_24m_p, 0,
++			RV1126B_CLKSEL_CON(48), 8, 2, MFLAGS, 0, 8, DFLAGS,
++			RV1126B_CLKGATE_CON(7), 10, GFLAGS),
++	COMPOSITE(CLK_GMAC_PTP_REF_SRC, "clk_gmac_ptp_ref_src", mux_cpll_24m_p, 0,
++			RV1126B_CLKSEL_CON(45), 10, 1, MFLAGS, 11, 5, DFLAGS,
++			RV1126B_CLKGATE_CON(7), 11, GFLAGS),
++	GATE(CLK_GMAC_125M, "clk_gmac_125m", "clk_cpll_div8", 0,
++			RV1126B_CLKGATE_CON(7), 12, GFLAGS),
++	COMPOSITE_NODIV(CLK_TIMER_ROOT, "clk_timer_root", mux_100m_24m_p, 0,
++			RV1126B_CLKSEL_CON(46), 11, 1, MFLAGS,
++			RV1126B_CLKGATE_CON(7), 13, GFLAGS),
++	COMPOSITE_NODIV(TCLK_WDT_NS_SRC, "tclk_wdt_ns_src", mux_100m_24m_p, 0,
++			RV1126B_CLKSEL_CON(46), 12, 1, MFLAGS,
++			RV1126B_CLKGATE_CON(8), 0, GFLAGS),
++	COMPOSITE_NODIV(TCLK_WDT_S_SRC, "tclk_wdt_s_src", mux_100m_24m_p, 0,
++			RV1126B_CLKSEL_CON(46), 13, 1, MFLAGS,
++			RV1126B_CLKGATE_CON(8), 1, GFLAGS),
++	COMPOSITE_NODIV(TCLK_WDT_HPMCU, "tclk_wdt_hpmcu", mux_100m_24m_p, 0,
++			RV1126B_CLKSEL_CON(46), 14, 1, MFLAGS,
++			RV1126B_CLKGATE_CON(8), 2, GFLAGS),
++	COMPOSITE(CLK_CAN0, "clk_can0", mux_gpll_cpll_24m_p, 0,
++			RV1126B_CLKSEL_CON(49), 6, 2, MFLAGS, 0, 5, DFLAGS,
++			RV1126B_CLKGATE_CON(8), 4, GFLAGS),
++	COMPOSITE(CLK_CAN1, "clk_can1", mux_gpll_cpll_24m_p, 0,
++			RV1126B_CLKSEL_CON(49), 14, 2, MFLAGS, 8, 5, DFLAGS,
++			RV1126B_CLKGATE_CON(8), 5, GFLAGS),
++	COMPOSITE_NODIV(PCLK_PERI_ROOT, "pclk_peri_root", mux_100m_24m_p, CLK_IS_CRITICAL,
++			RV1126B_CLKSEL_CON(47), 12, 1, MFLAGS,
++			RV1126B_CLKGATE_CON(8), 6, GFLAGS),
++	COMPOSITE_NODIV(ACLK_PERI_ROOT, "aclk_peri_root", mux_200m_24m_p, CLK_IS_CRITICAL,
++			RV1126B_CLKSEL_CON(47), 13, 1, MFLAGS,
++			RV1126B_CLKGATE_CON(8), 7, GFLAGS),
++	COMPOSITE_NODIV(CLK_I2C_BUS_SRC, "clk_i2c_bus_src", mux_200m_24m_p, 0,
++			RV1126B_CLKSEL_CON(50), 1, 1, MFLAGS,
++			RV1126B_CLKGATE_CON(8), 9, GFLAGS),
++	COMPOSITE_NODIV(CLK_SPI0, "clk_spi0", mux_200m_100m_50m_24m_p, 0,
++			RV1126B_CLKSEL_CON(50), 2, 2, MFLAGS,
++			RV1126B_CLKGATE_CON(8), 10, GFLAGS),
++	COMPOSITE_NODIV(CLK_SPI1, "clk_spi1", mux_200m_100m_50m_24m_p, 0,
++			RV1126B_CLKSEL_CON(50), 4, 2, MFLAGS,
++			RV1126B_CLKGATE_CON(8), 11, GFLAGS),
++	GATE(BUSCLK_PMU_SRC, "busclk_pmu_src", "clk_cpll_div10", CLK_IS_CRITICAL,
++			RV1126B_CLKGATE_CON(8), 12, GFLAGS),
++	COMPOSITE_NODIV(CLK_PWM0, "clk_pwm0", mux_100m_24m_p, 0,
++			RV1126B_CLKSEL_CON(50), 8, 1, MFLAGS,
++			RV1126B_CLKGATE_CON(9), 0, GFLAGS),
++	COMPOSITE_NODIV(CLK_PWM2, "clk_pwm2", mux_100m_24m_p, 0,
++			RV1126B_CLKSEL_CON(50), 10, 1, MFLAGS,
++			RV1126B_CLKGATE_CON(9), 2, GFLAGS),
++	COMPOSITE_NODIV(CLK_PWM3, "clk_pwm3", mux_100m_24m_p, 0,
++			RV1126B_CLKSEL_CON(50), 11, 1, MFLAGS,
++			RV1126B_CLKGATE_CON(9), 3, GFLAGS),
++	COMPOSITE_NODIV(CLK_PKA_RKCE_SRC, "clk_pka_rkce_src", mux_300m_200m_p, CLK_IS_CRITICAL,
++			RV1126B_CLKSEL_CON(50), 12, 1, MFLAGS,
++			RV1126B_CLKGATE_CON(9), 4, GFLAGS),
++	COMPOSITE_NODIV(ACLK_RKCE_SRC, "aclk_rkce_src", mux_200m_24m_p, CLK_IS_CRITICAL,
++			RV1126B_CLKSEL_CON(50), 13, 1, MFLAGS,
++			RV1126B_CLKGATE_CON(9), 5, GFLAGS),
++	COMPOSITE_NODIV(ACLK_VCP_ROOT, "aclk_vcp_root", mux_500m_400m_200m_p, CLK_IS_CRITICAL,
++			RV1126B_CLKSEL_CON(48), 12, 2, MFLAGS,
++			RV1126B_CLKGATE_CON(9), 6, GFLAGS),
++	GATE(HCLK_VCP_ROOT, "hclk_vcp_root", "clk_gpll_div8", CLK_IS_CRITICAL,
++			RV1126B_CLKGATE_CON(9), 7, GFLAGS),
++	GATE(PCLK_VCP_ROOT, "pclk_vcp_root", "clk_cpll_div10", CLK_IS_CRITICAL,
++			RV1126B_CLKGATE_CON(9), 8, GFLAGS),
++	COMPOSITE(CLK_CORE_FEC_SRC, "clk_core_fec_src", mux_gpll_cpll_p, 0,
++			RV1126B_CLKSEL_CON(51), 3, 1, MFLAGS, 0, 3, DFLAGS,
++			RV1126B_CLKGATE_CON(9), 9, GFLAGS),
++	GATE(CLK_50M_GMAC_IOBUF_VI, "clk_50m_gmac_iobuf_vi", "clk_cpll_div20", 0,
++			RV1126B_CLKGATE_CON(9), 11, GFLAGS),
++	GATE(PCLK_TOP_ROOT, "pclk_top_root", "clk_cpll_div10", CLK_IS_CRITICAL,
++			RV1126B_CLKGATE_CON(15), 0, GFLAGS),
++	COMPOSITE(CLK_MIPI0_OUT2IO, "clk_mipi0_out2io", mux_600m_24m_p, 0,
++			RV1126B_CLKSEL_CON(67), 11, 1, MFLAGS, 0, 5, DFLAGS,
++			RV1126B_CLKGATE_CON(15), 3, GFLAGS),
++	COMPOSITE(CLK_MIPI1_OUT2IO, "clk_mipi1_out2io", mux_600m_24m_p, 0,
++			RV1126B_CLKSEL_CON(67), 12, 1, MFLAGS, 6, 5, DFLAGS,
++			RV1126B_CLKGATE_CON(15), 4, GFLAGS),
++	COMPOSITE(CLK_MIPI2_OUT2IO, "clk_mipi2_out2io", mux_600m_24m_p, 0,
++			RV1126B_CLKSEL_CON(68), 11, 1, MFLAGS, 0, 5, DFLAGS,
++			RV1126B_CLKGATE_CON(15), 5, GFLAGS),
++	COMPOSITE(CLK_MIPI3_OUT2IO, "clk_mipi3_out2io", mux_600m_24m_p, 0,
++			RV1126B_CLKSEL_CON(68), 12, 1, MFLAGS, 6, 5, DFLAGS,
++			RV1126B_CLKGATE_CON(15), 6, GFLAGS),
++	COMPOSITE(CLK_CIF_OUT2IO, "clk_cif_out2io", mux_600m_24m_p, 0,
++			RV1126B_CLKSEL_CON(69), 5, 1, MFLAGS, 0, 5, DFLAGS,
++			RV1126B_CLKGATE_CON(15), 7, GFLAGS),
++	COMPOSITE(CLK_MAC_OUT2IO, "clk_mac_out2io", mux_gpll_cpll_24m_p, 0,
++			RV1126B_CLKSEL_CON(69), 6, 2, MFLAGS, 8, 7, DFLAGS,
++			RV1126B_CLKGATE_CON(15), 8, GFLAGS),
++	COMPOSITE_NOMUX(MCLK_SAI0_OUT2IO, "mclk_sai0_out2io", "mclk_sai0", CLK_SET_RATE_PARENT,
++			RV1126B_CLKSEL_CON(70), 0, 4, DFLAGS,
++			RV1126B_CLKGATE_CON(15), 9, GFLAGS),
++	COMPOSITE_NOMUX(MCLK_SAI1_OUT2IO, "mclk_sai1_out2io", "mclk_sai1", CLK_SET_RATE_PARENT,
++			RV1126B_CLKSEL_CON(70), 5, 4, DFLAGS,
++			RV1126B_CLKGATE_CON(15), 10, GFLAGS),
++	COMPOSITE_NOMUX(MCLK_SAI2_OUT2IO, "mclk_sai2_out2io", "mclk_sai2", CLK_SET_RATE_PARENT,
++			RV1126B_CLKSEL_CON(70), 10, 4, DFLAGS,
++			RV1126B_CLKGATE_CON(15), 11, GFLAGS),
++
++	/* pd _npu */
++	MUX(ACLK_RKNN, "aclk_rknn", aclk_npu_root_p, CLK_SET_RATE_PARENT,
++			RV1126B_NPUCLKSEL_CON(0), 1, 1, MFLAGS),
++
++	/* pd_vepu */
++	GATE(PCLK_GPIO3, "pclk_gpio3", "pclk_vepu_root", 0,
++			RV1126B_VEPUCLKGATE_CON(0), 7, GFLAGS),
++	GATE(DBCLK_GPIO3, "dbclk_gpio3", "xin24m", 0,
++			RV1126B_VEPUCLKGATE_CON(0), 8, GFLAGS),
++	GATE(PCLK_IOC_VCCIO3, "pclk_ioc_vccio3", "pclk_vepu_root", CLK_IS_CRITICAL,
++			RV1126B_VEPUCLKGATE_CON(0), 9, GFLAGS),
++	GATE(PCLK_SARADC0, "pclk_saradc0", "pclk_vepu_root", 0,
++			RV1126B_VEPUCLKGATE_CON(0), 10, GFLAGS),
++	MUX(CLK_SARADC0, "clk_saradc0", clk_saradc0_p, CLK_SET_RATE_PARENT,
++			RV1126B_VEPUCLKSEL_CON(0), 2, 1, MFLAGS),
++	GATE(HCLK_SDMMC1, "hclk_sdmmc1", "hclk_vepu_root", 0,
++			RV1126B_VEPUCLKGATE_CON(0), 12, GFLAGS),
++	GATE(HCLK_VEPU, "hclk_vepu", "hclk_vepu_root", 0,
++			RV1126B_VEPUCLKGATE_CON(1), 1, GFLAGS),
++	GATE(ACLK_VEPU, "aclk_vepu", "aclk_vepu_root", 0,
++			RV1126B_VEPUCLKGATE_CON(1), 2, GFLAGS),
++	COMPOSITE_NODIV(CLK_CORE_VEPU, "clk_core_vepu", clk_core_vepu_p, CLK_SET_RATE_PARENT,
++			RV1126B_VEPUCLKSEL_CON(0), 1, 1, MFLAGS,
++			RV1126B_VEPUCLKGATE_CON(1), 3, GFLAGS),
++
++	/* pd_vcp */
++	GATE(HCLK_FEC, "hclk_fec", "hclk_vcp_root", 0,
++			RV1126B_VCPCLKGATE_CON(1), 0, GFLAGS),
++	GATE(ACLK_FEC, "aclk_fec", "aclk_vcp_root", 0,
++			RV1126B_VCPCLKGATE_CON(1), 1, GFLAGS),
++	COMPOSITE_NODIV(CLK_CORE_FEC, "clk_core_fec", clk_core_fec_p, CLK_SET_RATE_PARENT,
++			RV1126B_VCPCLKSEL_CON(0), 13, 1, MFLAGS,
++			RV1126B_VCPCLKGATE_CON(1), 2, GFLAGS),
++	GATE(HCLK_AVSP, "hclk_avsp", "hclk_vcp_root", 0,
++			RV1126B_VCPCLKGATE_CON(1), 3, GFLAGS),
++	GATE(ACLK_AVSP, "aclk_avsp", "aclk_vcp_root", 0,
++			RV1126B_VCPCLKGATE_CON(1), 4, GFLAGS),
++	GATE(HCLK_AISP, "hclk_aisp", "hclk_vcp_root", 0,
++			RV1126B_VCPCLKGATE_CON(0), 11, GFLAGS),
++	GATE(ACLK_AISP, "aclk_aisp", "aclk_vcp_root", 0,
++			RV1126B_VCPCLKGATE_CON(0), 12, GFLAGS),
++	COMPOSITE_NODIV(CLK_CORE_AISP, "clk_core_aisp", clk_core_aisp_p, CLK_SET_RATE_PARENT,
++			RV1126B_VCPCLKSEL_CON(0), 15, 1, MFLAGS,
++			RV1126B_VCPCLKGATE_CON(0), 13, GFLAGS),
++
++	/* pd_vi */
++	MUX(CLK_CORE_ISP_ROOT, "clk_core_isp_root", clk_core_isp_root_p, CLK_SET_RATE_PARENT,
++			RV1126B_VICLKSEL_CON(0), 1, 1, MFLAGS),
++	GATE(PCLK_DSMC, "pclk_dsmc", "pclk_vi_root", 0,
++			RV1126B_VICLKGATE_CON(0), 8, GFLAGS),
++	GATE(ACLK_DSMC, "aclk_dsmc", "hclk_vi_root", 0,
++			RV1126B_VICLKGATE_CON(0), 9, GFLAGS),
++	GATE(HCLK_CAN0, "hclk_can0", "hclk_vi_root", 0,
++			RV1126B_VICLKGATE_CON(0), 10, GFLAGS),
++	GATE(HCLK_CAN1, "hclk_can1", "hclk_vi_root", 0,
++			RV1126B_VICLKGATE_CON(0), 11, GFLAGS),
++	GATE(PCLK_GPIO2, "pclk_gpio2", "pclk_vi_root", 0,
++			RV1126B_VICLKGATE_CON(1), 0, GFLAGS),
++	GATE(DBCLK_GPIO2, "dbclk_gpio2", "xin24m", 0,
++			RV1126B_VICLKGATE_CON(1), 1, GFLAGS),
++	GATE(PCLK_GPIO4, "pclk_gpio4", "pclk_vi_root", 0,
++			RV1126B_VICLKGATE_CON(1), 2, GFLAGS),
++	GATE(DBCLK_GPIO4, "dbclk_gpio4", "xin24m", 0,
++			RV1126B_VICLKGATE_CON(1), 3, GFLAGS),
++	GATE(PCLK_GPIO5, "pclk_gpio5", "pclk_vi_root", 0,
++			RV1126B_VICLKGATE_CON(1), 4, GFLAGS),
++	GATE(DBCLK_GPIO5, "dbclk_gpio5", "xin24m", 0,
++			RV1126B_VICLKGATE_CON(1), 5, GFLAGS),
++	GATE(PCLK_GPIO6, "pclk_gpio6", "pclk_vi_root", 0,
++			RV1126B_VICLKGATE_CON(1), 6, GFLAGS),
++	GATE(DBCLK_GPIO6, "dbclk_gpio6", "xin24m", 0,
++			RV1126B_VICLKGATE_CON(1), 7, GFLAGS),
++	GATE(PCLK_GPIO7, "pclk_gpio7", "pclk_vi_root", 0,
++			RV1126B_VICLKGATE_CON(1), 8, GFLAGS),
++	GATE(DBCLK_GPIO7, "dbclk_gpio7", "xin24m", 0,
++			RV1126B_VICLKGATE_CON(1), 9, GFLAGS),
++	GATE(PCLK_IOC_VCCIO2, "pclk_ioc_vccio2", "pclk_vi_root", CLK_IS_CRITICAL,
++			RV1126B_VICLKGATE_CON(1), 10, GFLAGS),
++	GATE(PCLK_IOC_VCCIO4, "pclk_ioc_vccio4", "pclk_vi_root", CLK_IS_CRITICAL,
++			RV1126B_VICLKGATE_CON(1), 11, GFLAGS),
++	GATE(PCLK_IOC_VCCIO5, "pclk_ioc_vccio5", "pclk_vi_root", CLK_IS_CRITICAL,
++			RV1126B_VICLKGATE_CON(1), 12, GFLAGS),
++	GATE(PCLK_IOC_VCCIO6, "pclk_ioc_vccio6", "pclk_vi_root", CLK_IS_CRITICAL,
++			RV1126B_VICLKGATE_CON(1), 13, GFLAGS),
++	GATE(PCLK_IOC_VCCIO7, "pclk_ioc_vccio7", "pclk_vi_root", CLK_IS_CRITICAL,
++			RV1126B_VICLKGATE_CON(1), 14, GFLAGS),
++	GATE(HCLK_ISP, "hclk_isp", "hclk_vi_root", 0,
++			RV1126B_VICLKGATE_CON(2), 0, GFLAGS),
++	GATE(ACLK_ISP, "aclk_isp", "aclk_vi_root", 0,
++			RV1126B_VICLKGATE_CON(2), 1, GFLAGS),
++	GATE(CLK_CORE_ISP, "clk_core_isp", "clk_core_isp_root", 0,
++			RV1126B_VICLKGATE_CON(2), 2, GFLAGS),
++	GATE(HCLK_VICAP, "hclk_vicap", "hclk_vi_root", 0,
++			RV1126B_VICLKGATE_CON(2), 3, GFLAGS),
++	GATE(ACLK_VICAP, "aclk_vicap", "aclk_vi_root", 0,
++			RV1126B_VICLKGATE_CON(2), 4, GFLAGS),
++	GATE(DCLK_VICAP, "dclk_vicap", "dclk_vicap_root", 0,
++			RV1126B_VICLKGATE_CON(2), 5, GFLAGS),
++	GATE(ISP0CLK_VICAP, "isp0clk_vicap", "clk_core_isp_root", 0,
++			RV1126B_VICLKGATE_CON(2), 6, GFLAGS),
++	GATE(HCLK_VPSS, "hclk_vpss", "hclk_vi_root", 0,
++			RV1126B_VICLKGATE_CON(2), 7, GFLAGS),
++	GATE(ACLK_VPSS, "aclk_vpss", "aclk_vi_root", 0,
++			RV1126B_VICLKGATE_CON(2), 8, GFLAGS),
++	GATE(CLK_CORE_VPSS, "clk_core_vpss", "clk_core_isp_root", 0,
++			RV1126B_VICLKGATE_CON(2), 9, GFLAGS),
++	GATE(HCLK_VPSL, "hclk_vpsl", "hclk_vi_root", 0,
++			RV1126B_VICLKGATE_CON(2), 10, GFLAGS),
++	GATE(ACLK_VPSL, "aclk_vpsl", "aclk_vi_root", 0,
++			RV1126B_VICLKGATE_CON(2), 11, GFLAGS),
++	GATE(CLK_CORE_VPSL, "clk_core_vpsl", "clk_core_isp_root", 0,
++			RV1126B_VICLKGATE_CON(2), 12, GFLAGS),
++	GATE(PCLK_CSI2HOST0, "pclk_csi2host0", "pclk_vi_root", 0,
++			RV1126B_VICLKGATE_CON(3), 0, GFLAGS),
++	GATE(DCLK_CSI2HOST0, "dclk_csi2host0", "dclk_vicap_root", 0,
++			RV1126B_VICLKGATE_CON(3), 1, GFLAGS),
++	GATE(PCLK_CSI2HOST1, "pclk_csi2host1", "pclk_vi_root", 0,
++			RV1126B_VICLKGATE_CON(3), 2, GFLAGS),
++	GATE(DCLK_CSI2HOST1, "dclk_csi2host1", "dclk_vicap_root", 0,
++			RV1126B_VICLKGATE_CON(3), 3, GFLAGS),
++	GATE(PCLK_CSI2HOST2, "pclk_csi2host2", "pclk_vi_root", 0,
++			RV1126B_VICLKGATE_CON(3), 4, GFLAGS),
++	GATE(DCLK_CSI2HOST2, "dclk_csi2host2", "dclk_vicap_root", 0,
++			RV1126B_VICLKGATE_CON(3), 5, GFLAGS),
++	GATE(PCLK_CSI2HOST3, "pclk_csi2host3", "pclk_vi_root", 0,
++			RV1126B_VICLKGATE_CON(3), 6, GFLAGS),
++	GATE(DCLK_CSI2HOST3, "dclk_csi2host3", "dclk_vicap_root", 0,
++			RV1126B_VICLKGATE_CON(3), 7, GFLAGS),
++	GATE(HCLK_SDMMC0, "hclk_sdmmc0", "hclk_vi_root", 0,
++			RV1126B_VICLKGATE_CON(3), 8, GFLAGS),
++	GATE(ACLK_GMAC, "aclk_gmac", "aclk_gmac_root", 0,
++			RV1126B_VICLKGATE_CON(3), 9, GFLAGS),
++	GATE(PCLK_GMAC, "pclk_gmac", "pclk_vi_root", 0,
++			RV1126B_VICLKGATE_CON(3), 10, GFLAGS),
++	MUX(CLK_GMAC_PTP_REF, "clk_gmac_ptp_ref", clk_gmac_ptp_ref_p, CLK_SET_RATE_PARENT,
++			RV1126B_VICLKSEL_CON(0), 14, 1, MFLAGS),
++	GATE(PCLK_CSIPHY0, "pclk_csiphy0", "pclk_vi_root", 0,
++			RV1126B_VICLKGATE_CON(3), 11, GFLAGS),
++	GATE(PCLK_CSIPHY1, "pclk_csiphy1", "pclk_vi_root", 0,
++			RV1126B_VICLKGATE_CON(3), 12, GFLAGS),
++	GATE(PCLK_MACPHY, "pclk_macphy", "pclk_vi_root", 0,
++			RV1126B_VICLKGATE_CON(3), 13, GFLAGS),
++	GATE(PCLK_SARADC1, "pclk_saradc1", "pclk_vi_root", 0,
++			RV1126B_VICLKGATE_CON(4), 0, GFLAGS),
++	MUX(CLK_SARADC1, "clk_saradc1", clk_saradc1_p, CLK_SET_RATE_PARENT,
++			RV1126B_VICLKSEL_CON(0), 2, 1, MFLAGS),
++	GATE(PCLK_SARADC2, "pclk_saradc2", "pclk_vi_root", 0,
++			RV1126B_VICLKGATE_CON(4), 2, GFLAGS),
++	MUX(CLK_SARADC2, "clk_saradc2", clk_saradc2_p, CLK_SET_RATE_PARENT,
++			RV1126B_VICLKSEL_CON(0), 3, 1, MFLAGS),
++	COMPOSITE_NODIV(CLK_MACPHY, "clk_macphy", clk_macphy_p, 0,
++			RV1126B_VICLKSEL_CON(1), 1, 1, MFLAGS,
++			RV1126B_VICLKGATE_CON(0), 12, GFLAGS),
++
++	/* pd_vdo */
++	GATE(ACLK_RKVDEC, "aclk_rkvdec", "aclk_rkvdec_root", 0,
++			RV1126B_VDOCLKGATE_CON(0), 7, GFLAGS),
++	GATE(HCLK_RKVDEC, "hclk_rkvdec", "hclk_vdo_root", 0,
++			RV1126B_VDOCLKGATE_CON(0), 8, GFLAGS),
++	GATE(CLK_HEVC_CA_RKVDEC, "clk_hevc_ca_rkvdec", "aclk_rkvdec_root", 0,
++			RV1126B_VDOCLKGATE_CON(0), 9, GFLAGS),
++	GATE(ACLK_VOP, "aclk_vop", "aclk_vdo_root", 0,
++			RV1126B_VDOCLKGATE_CON(0), 10, GFLAGS),
++	GATE(HCLK_VOP, "hclk_vop", "hclk_vdo_root", 0,
++			RV1126B_VDOCLKGATE_CON(0), 11, GFLAGS),
++	GATE(ACLK_OOC, "aclk_ooc", "aclk_vdo_root", 0,
++			RV1126B_VDOCLKGATE_CON(0), 13, GFLAGS),
++	GATE(HCLK_OOC, "hclk_ooc", "hclk_vdo_root", 0,
++			RV1126B_VDOCLKGATE_CON(0), 14, GFLAGS),
++	GATE(HCLK_RKJPEG, "hclk_rkjpeg", "hclk_vdo_root", 0,
++			RV1126B_VDOCLKGATE_CON(1), 3, GFLAGS),
++	GATE(ACLK_RKJPEG, "aclk_rkjpeg", "aclk_vdo_root", 0,
++			RV1126B_VDOCLKGATE_CON(1), 4, GFLAGS),
++	GATE(ACLK_RKMMU_DECOM, "aclk_rkmmu_decom", "aclk_vdo_root", 0,
++			RV1126B_VDOCLKGATE_CON(1), 5, GFLAGS),
++	GATE(HCLK_RKMMU_DECOM, "hclk_rkmmu_decom", "hclk_vdo_root", 0,
++			RV1126B_VDOCLKGATE_CON(1), 6, GFLAGS),
++	GATE(DCLK_DECOM, "dclk_decom", "dclk_decom_src", 0,
++			RV1126B_VDOCLKGATE_CON(1), 8, GFLAGS),
++	GATE(ACLK_DECOM, "aclk_decom", "aclk_vdo_root", 0,
++			RV1126B_VDOCLKGATE_CON(1), 9, GFLAGS),
++	GATE(PCLK_DECOM, "pclk_decom", "pclk_vdo_root", 0,
++			RV1126B_VDOCLKGATE_CON(1), 10, GFLAGS),
++	GATE(PCLK_MIPI_DSI, "pclk_mipi_dsi", "pclk_vdo_root", 0,
++			RV1126B_VDOCLKGATE_CON(1), 12, GFLAGS),
++	GATE(PCLK_DSIPHY, "pclk_dsiphy", "pclk_vdo_root", 0,
++			RV1126B_VDOCLKGATE_CON(1), 13, GFLAGS),
++
++	/* pd_ddr */
++	GATE(PCLK_DDRC, "pclk_ddrc", "pclk_ddr_root", CLK_IS_CRITICAL,
++			RV1126B_DDRCLKGATE_CON(0), 2, GFLAGS),
++	GATE(PCLK_DDRMON, "pclk_ddrmon", "pclk_ddr_root", CLK_IS_CRITICAL,
++			RV1126B_DDRCLKGATE_CON(0), 3, GFLAGS),
++	GATE(CLK_TIMER_DDRMON, "clk_timer_ddrmon", "xin24m", 0,
++			RV1126B_DDRCLKGATE_CON(0), 4, GFLAGS),
++	GATE(PCLK_DFICTRL, "pclk_dfictrl", "pclk_ddr_root", CLK_IS_CRITICAL,
++			RV1126B_DDRCLKGATE_CON(0), 5, GFLAGS),
++	GATE(PCLK_DDRPHY, "pclk_ddrphy", "pclk_ddr_root", CLK_IS_CRITICAL,
++			RV1126B_DDRCLKGATE_CON(0), 8, GFLAGS),
++	GATE(PCLK_DMA2DDR, "pclk_dma2ddr", "pclk_ddr_root", CLK_IS_CRITICAL,
++			RV1126B_DDRCLKGATE_CON(0), 9, GFLAGS),
++
++	/* pd_pmu*/
++	COMPOSITE_NODIV(CLK_RCOSC_SRC, "clk_rcosc_src", clk_rcosc_src_p, 0,
++			RV1126B_PMUCLKSEL_CON(1), 0, 3, MFLAGS,
++			RV1126B_PMUCLKGATE_CON(0), 0, GFLAGS),
++	COMPOSITE_NOGATE(BUSCLK_PMU_MUX, "busclk_pmu_mux", busclk_pmu_mux_p, 0,
++			RV1126B_PMUCLKSEL_CON(1), 3, 1, MFLAGS, 4, 2, DFLAGS),
++	GATE(BUSCLK_PMU_ROOT, "busclk_pmu_root", "busclk_pmu_mux", 0,
++			RV1126B_PMUCLKGATE_CON(0), 1, GFLAGS),
++	GATE(BUSCLK_PMU1_ROOT, "busclk_pmu1_root", "busclk_pmu_mux", CLK_IS_CRITICAL,
++			RV1126B_PMUCLKGATE_CON(3), 11, GFLAGS),
++	GATE(PCLK_PMU, "pclk_pmu", "busclk_pmu_root", CLK_IS_CRITICAL,
++			RV1126B_PMUCLKGATE_CON(0), 6, GFLAGS),
++	MUX(0, "xin_rc_src", clk_xin_rc_div_p, 0,
++			RV1126B_PMUCLKSEL_CON(2), 0, 1, MFLAGS),
++	COMPOSITE_FRACMUX_NOGATE(CLK_XIN_RC_DIV, "clk_xin_rc_div", "xin_rc_src", CLK_SET_RATE_PARENT,
++			RV1126B_PMUCLKSEL_CON(8), 0,
++			&rv1126b_rcdiv_pmu_fracmux),
++	GATE(PCLK_PMU_GPIO0, "pclk_pmu_gpio0", "busclk_pmu_root", 0,
++			RV1126B_PMUCLKGATE_CON(0), 7, GFLAGS),
++	COMPOSITE_NODIV(DBCLK_PMU_GPIO0, "dbclk_pmu_gpio0", mux_24m_32k_p, 0,
++			RV1126B_PMUCLKSEL_CON(2), 4, 1, MFLAGS,
++			RV1126B_PMUCLKGATE_CON(0), 8, GFLAGS),
++	GATE(PCLK_PMU_HP_TIMER, "pclk_pmu_hp_timer", "busclk_pmu_root", CLK_IS_CRITICAL,
++			RV1126B_PMUCLKGATE_CON(0), 10, GFLAGS),
++	COMPOSITE(CLK_PMU_HP_TIMER, "clk_pmu_hp_timer", mux_cpll_24m_p, CLK_IS_CRITICAL,
++			RV1126B_PMUCLKSEL_CON(1), 13, 1, MFLAGS, 8, 5, DFLAGS,
++			RV1126B_PMUCLKGATE_CON(0), 11, GFLAGS),
++	GATE(CLK_PMU_32K_HP_TIMER, "clk_pmu_32k_hp_timer", "clk_32k", CLK_IS_CRITICAL,
++			RV1126B_PMUCLKGATE_CON(0), 13, GFLAGS),
++	GATE(PCLK_PWM1, "pclk_pwm1", "busclk_pmu_root", 0,
++			RV1126B_PMUCLKGATE_CON(1), 0, GFLAGS),
++	COMPOSITE(CLK_PWM1, "clk_pwm1", mux_24m_rcosc_buspmu_p, 0,
++			RV1126B_PMUCLKSEL_CON(2), 8, 2, MFLAGS, 6, 2, DFLAGS,
++			RV1126B_PMUCLKGATE_CON(1), 1, GFLAGS),
++	GATE(CLK_OSC_PWM1, "clk_osc_pwm1", "xin24m", 0,
++			RV1126B_PMUCLKGATE_CON(1), 2, GFLAGS),
++	GATE(CLK_RC_PWM1, "clk_rc_pwm1", "clk_32k", 0,
++			RV1126B_PMUCLKGATE_CON(1), 3, GFLAGS),
++	GATE(PCLK_I2C2, "pclk_i2c2", "busclk_pmu_root", 0,
++			RV1126B_PMUCLKGATE_CON(1), 6, GFLAGS),
++	COMPOSITE(CLK_I2C2, "clk_i2c2", mux_24m_rcosc_buspmu_p, 0,
++			RV1126B_PMUCLKSEL_CON(2), 14, 2, MFLAGS, 12, 2, DFLAGS,
++			RV1126B_PMUCLKGATE_CON(1), 7, GFLAGS),
++	GATE(PCLK_UART0, "pclk_uart0", "busclk_pmu_root", 0,
++			RV1126B_PMUCLKGATE_CON(1), 8, GFLAGS),
++	COMPOSITE_NODIV(SCLK_UART0, "sclk_uart0", sclk_uart0_p, CLK_SET_RATE_PARENT,
++			RV1126B_PMUCLKSEL_CON(3), 0, 2, MFLAGS,
++			RV1126B_PMUCLKGATE_CON(1), 11, GFLAGS),
++	GATE(PCLK_RCOSC_CTRL, "pclk_rcosc_ctrl", "busclk_pmu_root", CLK_IS_CRITICAL,
++			RV1126B_PMUCLKGATE_CON(2), 0, GFLAGS),
++	COMPOSITE_NODIV(CLK_OSC_RCOSC_CTRL, "clk_osc_rcosc_ctrl", clk_osc_rcosc_ctrl_p, CLK_IS_CRITICAL,
++			RV1126B_PMUCLKSEL_CON(3), 2, 1, MFLAGS,
++			RV1126B_PMUCLKGATE_CON(2), 1, GFLAGS),
++	GATE(CLK_REF_RCOSC_CTRL, "clk_ref_rcosc_ctrl", "xin24m", CLK_IS_CRITICAL,
++			RV1126B_PMUCLKGATE_CON(2), 2, GFLAGS),
++	GATE(PCLK_IOC_PMUIO0, "pclk_ioc_pmuio0", "busclk_pmu_root", CLK_IS_CRITICAL,
++			RV1126B_PMUCLKGATE_CON(2), 3, GFLAGS),
++	GATE(CLK_REFOUT, "clk_refout", "xin24m", 0,
++			RV1126B_PMUCLKGATE_CON(2), 6, GFLAGS),
++	GATE(CLK_PREROLL, "clk_preroll", "busclk_pmu_root", 0,
++			RV1126B_PMUCLKGATE_CON(2), 7, GFLAGS),
++	GATE(CLK_PREROLL_32K, "clk_preroll_32k", "clk_32k", 0,
++			RV1126B_PMUCLKGATE_CON(2), 8, GFLAGS),
++	GATE(HCLK_PMU_SRAM, "hclk_pmu_sram", "busclk_pmu_root", CLK_IS_CRITICAL,
++			RV1126B_PMUCLKGATE_CON(2), 9, GFLAGS),
++	GATE(PCLK_WDT_LPMCU, "pclk_wdt_lpmcu", "busclk_pmu_root", 0,
++			RV1126B_PMUCLKGATE_CON(3), 0, GFLAGS),
++	COMPOSITE_NODIV(TCLK_WDT_LPMCU, "tclk_wdt_lpmcu", mux_24m_rcosc_buspmu_32k_p, 0,
++			RV1126B_PMUCLKSEL_CON(3), 6, 2, MFLAGS,
++			RV1126B_PMUCLKGATE_CON(3), 1, GFLAGS),
++	GATE(CLK_LPMCU, "clk_lpmcu", "busclk_pmu_root", 0,
++			RV1126B_PMUCLKGATE_CON(3), 2, GFLAGS),
++	GATE(CLK_LPMCU_RTC, "clk_lpmcu_rtc", "xin24m", 0,
++			RV1126B_PMUCLKGATE_CON(3), 3, GFLAGS),
++	GATE(PCLK_LPMCU_MAILBOX, "pclk_lpmcu_mailbox", "busclk_pmu_root", 0,
++			RV1126B_PMUCLKGATE_CON(3), 4, GFLAGS),
++
++	/* pd_pmu1 */
++	GATE(PCLK_SPI2AHB, "pclk_spi2ahb", "busclk_pmu_root", 0,
++			RV1126B_PMU1CLKGATE_CON(0), 0, GFLAGS),
++	GATE(HCLK_SPI2AHB, "hclk_spi2ahb", "busclk_pmu_root", 0,
++			RV1126B_PMU1CLKGATE_CON(0), 1, GFLAGS),
++	GATE(HCLK_FSPI1, "hclk_fspi1", "busclk_pmu_root", 0,
++			RV1126B_PMU1CLKGATE_CON(0), 2, GFLAGS),
++	GATE(HCLK_XIP_FSPI1, "hclk_xip_fspi1", "busclk_pmu_root", 0,
++			RV1126B_PMU1CLKGATE_CON(0), 3, GFLAGS),
++	COMPOSITE(SCLK_1X_FSPI1, "sclk_1x_fspi1", mux_24m_rcosc_buspmu_p, 0,
++			RV1126B_PMU1CLKSEL_CON(0), 0, 2, MFLAGS, 2, 3, DFLAGS,
++			RV1126B_PMU1CLKGATE_CON(0), 4, GFLAGS),
++	GATE(PCLK_IOC_PMUIO1, "pclk_ioc_pmuio1", "busclk_pmu_root", CLK_IS_CRITICAL,
++			RV1126B_PMU1CLKGATE_CON(0), 5, GFLAGS),
++	GATE(PCLK_AUDIO_ADC_PMU, "pclk_audio_adc_pmu", "busclk_pmu_root", 0,
++			RV1126B_PMU1CLKGATE_CON(0), 8, GFLAGS),
++
++	COMPOSITE(MCLK_LPSAI, "mclk_lpsai", mux_24m_rcosc_buspmu_p, 0,
++			RV1126B_PMU1CLKSEL_CON(0), 6, 2, MFLAGS, 8, 5, DFLAGS,
++			RV1126B_PMU1CLKGATE_CON(1), 3, GFLAGS),
++	GATE(MCLK_AUDIO_ADC_PMU, "mclk_audio_adc_pmu", "mclk_lpsai", CLK_IS_CRITICAL,
++			RV1126B_PMU1CLKGATE_CON(0), 9, GFLAGS),
++	FACTOR(MCLK_AUDIO_ADC_DIV4_PMU, "mclk_audio_adc_div4_pmu", "mclk_audio_adc_pmu", 0, 1, 4),
++
++	/* pd_bus */
++	GATE(ACLK_GIC400, "aclk_gic400", "hclk_bus_root", CLK_IS_CRITICAL,
++			RV1126B_BUSCLKGATE_CON(0), 8, GFLAGS),
++	GATE(PCLK_WDT_NS, "pclk_wdt_ns", "pclk_bus_root", 0,
++			RV1126B_BUSCLKGATE_CON(0), 10, GFLAGS),
++	GATE(TCLK_WDT_NS, "tclk_wdt_ns", "tclk_wdt_ns_src", 0,
++			RV1126B_BUSCLKGATE_CON(0), 11, GFLAGS),
++	GATE(PCLK_WDT_HPMCU, "pclk_wdt_hpmcu", "pclk_bus_root", 0,
++			RV1126B_BUSCLKGATE_CON(1), 0, GFLAGS),
++	GATE(HCLK_CACHE, "hclk_cache", "aclk_bus_root", 0,
++			RV1126B_BUSCLKGATE_CON(1), 2, GFLAGS),
++	GATE(PCLK_HPMCU_MAILBOX, "pclk_hpmcu_mailbox", "pclk_bus_root", 0,
++			RV1126B_BUSCLKGATE_CON(1), 3, GFLAGS),
++	GATE(PCLK_HPMCU_INTMUX, "pclk_hpmcu_intmux", "pclk_bus_root", 0,
++			RV1126B_BUSCLKGATE_CON(1), 4, GFLAGS),
++	GATE(CLK_HPMCU, "clk_hpmcu", "aclk_bus_root", 0,
++			RV1126B_BUSCLKGATE_CON(1), 5, GFLAGS),
++	GATE(CLK_HPMCU_RTC, "clk_hpmcu_rtc", "xin24m", 0,
++			RV1126B_BUSCLKGATE_CON(1), 10, GFLAGS),
++	GATE(PCLK_RKDMA, "pclk_rkdma", "pclk_bus_root", 0,
++			RV1126B_BUSCLKGATE_CON(1), 11, GFLAGS),
++	GATE(ACLK_RKDMA, "aclk_rkdma", "aclk_bus_root", 0,
++			RV1126B_BUSCLKGATE_CON(1), 12, GFLAGS),
++	GATE(PCLK_DCF, "pclk_dcf", "pclk_bus_root", 0,
++			RV1126B_BUSCLKGATE_CON(2), 0, GFLAGS),
++	GATE(ACLK_DCF, "aclk_dcf", "aclk_bus_root", 0,
++			RV1126B_BUSCLKGATE_CON(2), 1, GFLAGS),
++	GATE(HCLK_RGA, "hclk_rga", "hclk_bus_root", 0,
++			RV1126B_BUSCLKGATE_CON(2), 2, GFLAGS),
++	GATE(ACLK_RGA, "aclk_rga", "aclk_bus_root", 0,
++			RV1126B_BUSCLKGATE_CON(2), 3, GFLAGS),
++	GATE(CLK_CORE_RGA, "clk_core_rga", "clk_core_rga_src", 0,
++			RV1126B_BUSCLKGATE_CON(2), 4, GFLAGS),
++	GATE(PCLK_TIMER, "pclk_timer", "pclk_bus_root", 0,
++			RV1126B_BUSCLKGATE_CON(2), 5, GFLAGS),
++	COMPOSITE_NODIV(CLK_TIMER0, "clk_timer0", clk_timer0_parents_p, 0,
++			RV1126B_BUSCLKSEL_CON(2), 0, 2, MFLAGS,
++			RV1126B_BUSCLKGATE_CON(2), 6, GFLAGS),
++	COMPOSITE_NODIV(CLK_TIMER1, "clk_timer1", clk_timer1_parents_p, 0,
++			RV1126B_BUSCLKSEL_CON(2), 2, 2, MFLAGS,
++			RV1126B_BUSCLKGATE_CON(2), 7, GFLAGS),
++	COMPOSITE_NODIV(CLK_TIMER2, "clk_timer2", clk_timer2_parents_p, 0,
++			RV1126B_BUSCLKSEL_CON(2), 4, 2, MFLAGS,
++			RV1126B_BUSCLKGATE_CON(2), 8, GFLAGS),
++	COMPOSITE_NODIV(CLK_TIMER3, "clk_timer3", clk_timer3_parents_p, 0,
++			RV1126B_BUSCLKSEL_CON(2), 6, 2, MFLAGS,
++			RV1126B_BUSCLKGATE_CON(2), 9, GFLAGS),
++	COMPOSITE_NODIV(CLK_TIMER4, "clk_timer4", clk_timer4_parents_p, 0,
++			RV1126B_BUSCLKSEL_CON(2), 8, 2, MFLAGS,
++			RV1126B_BUSCLKGATE_CON(2), 10, GFLAGS),
++	GATE(HCLK_RKRNG_S_NS, "hclk_rkrng_s_ns", "hclk_bus_root", 0,
++			RV1126B_BUSCLKGATE_CON(2), 14, GFLAGS),
++	GATE(HCLK_RKRNG_NS, "hclk_rkrng_ns", "hclk_rkrng_s_ns", 0,
++			RV1126B_BUSCLKGATE_CON(2), 15, GFLAGS),
++	GATE(CLK_TIMER5, "clk_timer5", "clk_timer_root", CLK_IS_CRITICAL,
++			RV1126B_BUSCLKGATE_CON(2), 11, GFLAGS),
++	GATE(PCLK_I2C0, "pclk_i2c0", "pclk_bus_root", 0,
++			RV1126B_BUSCLKGATE_CON(3), 0, GFLAGS),
++	GATE(CLK_I2C0, "clk_i2c0", "clk_i2c_bus_src", 0,
++			RV1126B_BUSCLKGATE_CON(3), 1, GFLAGS),
++	GATE(PCLK_I2C1, "pclk_i2c1", "pclk_bus_root", 0,
++			RV1126B_BUSCLKGATE_CON(3), 2, GFLAGS),
++	GATE(CLK_I2C1, "clk_i2c1", "clk_i2c_bus_src", 0,
++			RV1126B_BUSCLKGATE_CON(3), 3, GFLAGS),
++	GATE(PCLK_I2C3, "pclk_i2c3", "pclk_bus_root", 0,
++			RV1126B_BUSCLKGATE_CON(3), 4, GFLAGS),
++	GATE(CLK_I2C3, "clk_i2c3", "clk_i2c_bus_src", 0,
++			RV1126B_BUSCLKGATE_CON(3), 5, GFLAGS),
++	GATE(PCLK_I2C4, "pclk_i2c4", "pclk_bus_root", 0,
++			RV1126B_BUSCLKGATE_CON(3), 6, GFLAGS),
++	GATE(CLK_I2C4, "clk_i2c4", "clk_i2c_bus_src", 0,
++			RV1126B_BUSCLKGATE_CON(3), 7, GFLAGS),
++	GATE(PCLK_I2C5, "pclk_i2c5", "pclk_bus_root", 0,
++			RV1126B_BUSCLKGATE_CON(3), 8, GFLAGS),
++	GATE(CLK_I2C5, "clk_i2c5", "clk_i2c_bus_src", 0,
++			RV1126B_BUSCLKGATE_CON(3), 9, GFLAGS),
++	GATE(PCLK_SPI0, "pclk_spi0", "pclk_bus_root", 0,
++			RV1126B_BUSCLKGATE_CON(3), 10, GFLAGS),
++	GATE(PCLK_SPI1, "pclk_spi1", "pclk_bus_root", 0,
++			RV1126B_BUSCLKGATE_CON(3), 12, GFLAGS),
++	GATE(PCLK_PWM0, "pclk_pwm0", "pclk_bus_root", 0,
++			RV1126B_BUSCLKGATE_CON(4), 0, GFLAGS),
++	GATE(CLK_OSC_PWM0, "clk_osc_pwm0", "xin24m", 0,
++			RV1126B_BUSCLKGATE_CON(4), 1, GFLAGS),
++	GATE(CLK_RC_PWM0, "clk_rc_pwm0", "xin24m", 0,
++			RV1126B_BUSCLKGATE_CON(4), 2, GFLAGS),
++	GATE(PCLK_PWM2, "pclk_pwm2", "pclk_bus_root", 0,
++			RV1126B_BUSCLKGATE_CON(4), 3, GFLAGS),
++	GATE(CLK_OSC_PWM2, "clk_osc_pwm2", "xin24m", 0,
++			RV1126B_BUSCLKGATE_CON(4), 4, GFLAGS),
++	GATE(CLK_RC_PWM2, "clk_rc_pwm2", "xin24m", 0,
++			RV1126B_BUSCLKGATE_CON(4), 5, GFLAGS),
++	GATE(PCLK_PWM3, "pclk_pwm3", "pclk_bus_root", 0,
++			RV1126B_BUSCLKGATE_CON(4), 6, GFLAGS),
++	GATE(CLK_OSC_PWM3, "clk_osc_pwm3", "xin24m", 0,
++			RV1126B_BUSCLKGATE_CON(4), 7, GFLAGS),
++	GATE(CLK_RC_PWM3, "clk_rc_pwm3", "xin24m", 0,
++			RV1126B_BUSCLKGATE_CON(4), 8, GFLAGS),
++	GATE(PCLK_UART1, "pclk_uart1", "pclk_bus_root", 0,
++			RV1126B_BUSCLKGATE_CON(4), 9, GFLAGS),
++	GATE(PCLK_UART2, "pclk_uart2", "pclk_bus_root", 0,
++			RV1126B_BUSCLKGATE_CON(4), 10, GFLAGS),
++	GATE(PCLK_UART3, "pclk_uart3", "pclk_bus_root", 0,
++			RV1126B_BUSCLKGATE_CON(4), 11, GFLAGS),
++	GATE(PCLK_UART4, "pclk_uart4", "pclk_bus_root", 0,
++			RV1126B_BUSCLKGATE_CON(4), 12, GFLAGS),
++	GATE(PCLK_UART5, "pclk_uart5", "pclk_bus_root", 0,
++			RV1126B_BUSCLKGATE_CON(4), 13, GFLAGS),
++	GATE(PCLK_UART6, "pclk_uart6", "pclk_bus_root", 0,
++			RV1126B_BUSCLKGATE_CON(4), 14, GFLAGS),
++	GATE(PCLK_UART7, "pclk_uart7", "pclk_bus_root", 0,
++			RV1126B_BUSCLKGATE_CON(4), 15, GFLAGS),
++	GATE(PCLK_TSADC, "pclk_tsadc", "pclk_bus_root", CLK_IS_CRITICAL,
++			RV1126B_BUSCLKGATE_CON(5), 0, GFLAGS),
++	GATE(CLK_TSADC, "clk_tsadc", "xin24m", CLK_IS_CRITICAL,
++			RV1126B_BUSCLKGATE_CON(5), 1, GFLAGS),
++	GATE(HCLK_SAI0, "hclk_sai0", "hclk_bus_root", 0,
++			RV1126B_BUSCLKGATE_CON(5), 2, GFLAGS),
++	GATE(HCLK_SAI1, "hclk_sai1", "hclk_bus_root", 0,
++			RV1126B_BUSCLKGATE_CON(5), 4, GFLAGS),
++	GATE(HCLK_SAI2, "hclk_sai2", "hclk_bus_root", 0,
++			RV1126B_BUSCLKGATE_CON(5), 6, GFLAGS),
++	GATE(HCLK_RKDSM, "hclk_rkdsm", "hclk_bus_root", 0,
++			RV1126B_BUSCLKGATE_CON(5), 8, GFLAGS),
++	GATE(MCLK_RKDSM, "mclk_rkdsm", "mclk_sai2", 0,
++			RV1126B_BUSCLKGATE_CON(5), 9, GFLAGS),
++	GATE(HCLK_PDM, "hclk_pdm", "hclk_bus_root", 0,
++			RV1126B_BUSCLKGATE_CON(5), 10, GFLAGS),
++	GATE(HCLK_ASRC0, "hclk_asrc0", "hclk_bus_root", 0,
++			RV1126B_BUSCLKGATE_CON(5), 11, GFLAGS),
++	GATE(HCLK_ASRC1, "hclk_asrc1", "hclk_bus_root", 0,
++			RV1126B_BUSCLKGATE_CON(5), 12, GFLAGS),
++	GATE(PCLK_AUDIO_ADC_BUS, "pclk_audio_adc_bus", "pclk_bus_root", 0,
++			RV1126B_BUSCLKGATE_CON(5), 13, GFLAGS),
++	GATE(MCLK_AUDIO_ADC_BUS, "mclk_audio_adc_bus", "mclk_sai2", 0,
++			RV1126B_BUSCLKGATE_CON(5), 14, GFLAGS),
++	FACTOR(MCLK_AUDIO_ADC_DIV4_BUS, "mclk_audio_adc_div4_bus", "mclk_audio_adc_bus", 0, 1, 4),
++	GATE(PCLK_RKCE, "pclk_rkce", "pclk_bus_root", CLK_IS_CRITICAL,
++			RV1126B_BUSCLKGATE_CON(6), 0, GFLAGS),
++	GATE(HCLK_NS_RKCE, "hclk_ns_rkce", "hclk_bus_root", 0,
++			RV1126B_BUSCLKGATE_CON(6), 1, GFLAGS),
++	GATE(PCLK_OTPC_NS, "pclk_otpc_ns", "pclk_bus_root", 0,
++			RV1126B_BUSCLKGATE_CON(6), 2, GFLAGS),
++	GATE(CLK_SBPI_OTPC_NS, "clk_sbpi_otpc_ns", "xin24m", 0,
++			RV1126B_BUSCLKGATE_CON(6), 3, GFLAGS),
++	COMPOSITE_NOMUX(CLK_USER_OTPC_NS, "clk_user_otpc_ns", "xin24m", 0,
++			RV1126B_BUSCLKSEL_CON(2), 12, 3, DFLAGS,
++			RV1126B_BUSCLKGATE_CON(6), 4, GFLAGS),
++	GATE(PCLK_OTP_MASK, "pclk_otp_mask", "pclk_bus_root", 0,
++			RV1126B_BUSCLKGATE_CON(6), 6, GFLAGS),
++	GATE(CLK_TSADC_PHYCTRL, "clk_tsadc_phyctrl", "xin24m", CLK_IS_CRITICAL,
++			RV1126B_BUSCLKGATE_CON(6), 8, GFLAGS),
++	MUX(LRCK_SRC_ASRC0, "lrck_src_asrc0", lrck_src_asrc_p, 0,
++			RV1126B_BUSCLKSEL_CON(3), 0, 3, MFLAGS),
++	MUX(LRCK_DST_ASRC0, "lrck_dst_asrc0", lrck_src_asrc_p, 0,
++			RV1126B_BUSCLKSEL_CON(3), 4, 3, MFLAGS),
++	MUX(LRCK_SRC_ASRC1, "lrck_src_asrc1", lrck_src_asrc_p, 0,
++			RV1126B_BUSCLKSEL_CON(3), 8, 3, MFLAGS),
++	MUX(LRCK_DST_ASRC1, "lrck_dst_asrc1", lrck_src_asrc_p, 0,
++			RV1126B_BUSCLKSEL_CON(3), 12, 3, MFLAGS),
++	GATE(ACLK_NSRKCE, "aclk_nsrkce", "aclk_rkce_src", 0,
++			RV1126B_BUSCLKGATE_CON(2), 12, GFLAGS),
++	GATE(CLK_PKA_NSRKCE, "clk_pka_nsrkce", "clk_pka_rkce_src", 0,
++			RV1126B_BUSCLKGATE_CON(2), 13, GFLAGS),
++
++	/* pd_peri */
++	DIV(PCLK_RTC_ROOT, "pclk_rtc_root", "pclk_peri_root", 0,
++			RV1126B_PERICLKSEL_CON(0), 0, 2, DFLAGS),
++	GATE(PCLK_GPIO1, "pclk_gpio1", "pclk_peri_root", 0,
++			RV1126B_PERICLKGATE_CON(0), 5, GFLAGS),
++	GATE(DBCLK_GPIO1, "dbclk_gpio1", "xin24m", 0,
++			RV1126B_PERICLKGATE_CON(0), 6, GFLAGS),
++	GATE(PCLK_IOC_VCCIO1, "pclk_ioc_vccio1", "pclk_peri_root", CLK_IS_CRITICAL,
++			RV1126B_PERICLKGATE_CON(0), 7, GFLAGS),
++	GATE(ACLK_USB3OTG, "aclk_usb3otg", "aclk_peri_root", 0,
++			RV1126B_PERICLKGATE_CON(0), 8, GFLAGS),
++	GATE(CLK_REF_USB3OTG, "clk_ref_usb3otg", "xin24m", 0,
++			RV1126B_PERICLKGATE_CON(0), 9, GFLAGS),
++	GATE(CLK_SUSPEND_USB3OTG, "clk_suspend_usb3otg", "xin24m", 0,
++			RV1126B_PERICLKGATE_CON(0), 10, GFLAGS),
++	GATE(HCLK_USB2HOST, "hclk_usb2host", "aclk_peri_root", 0,
++			RV1126B_PERICLKGATE_CON(0), 11, GFLAGS),
++	GATE(HCLK_ARB_USB2HOST, "hclk_arb_usb2host", "aclk_peri_root", 0,
++			RV1126B_PERICLKGATE_CON(0), 12, GFLAGS),
++	GATE(PCLK_RTC_TEST, "pclk_rtc_test", "pclk_rtc_root", 0,
++			RV1126B_PERICLKGATE_CON(0), 13, GFLAGS),
++	GATE(HCLK_EMMC, "hclk_emmc", "aclk_peri_root", 0,
++			RV1126B_PERICLKGATE_CON(1), 0, GFLAGS),
++	GATE(HCLK_FSPI0, "hclk_fspi0", "aclk_peri_root", 0,
++			RV1126B_PERICLKGATE_CON(1), 1, GFLAGS),
++	GATE(HCLK_XIP_FSPI0, "hclk_xip_fspi0", "aclk_peri_root", 0,
++			RV1126B_PERICLKGATE_CON(1), 2, GFLAGS),
++	GATE(PCLK_PIPEPHY, "pclk_pipephy", "pclk_peri_root", 0,
++			RV1126B_PERICLKGATE_CON(1), 8, GFLAGS),
++	GATE(PCLK_USB2PHY, "pclk_usb2phy", "pclk_peri_root", 0,
++			RV1126B_PERICLKGATE_CON(1), 10, GFLAGS),
++	COMPOSITE_NOMUX(CLK_REF_PIPEPHY_CPLL_SRC, "clk_ref_pipephy_cpll_src", "cpll", 0,
++			RV1126B_PERICLKSEL_CON(1), 0, 6, DFLAGS,
++			RV1126B_PERICLKGATE_CON(1), 14, GFLAGS),
++	MUX(CLK_REF_PIPEPHY, "clk_ref_pipephy", clk_ref_pipephy_p, 0,
++			RV1126B_PERICLKSEL_CON(1), 12, 1, MFLAGS),
++};
++
++static struct rockchip_clk_branch rv1126b_armclk __initdata =
++	MUX(ARMCLK, "armclk", mux_armclk_p, CLK_IS_CRITICAL | CLK_SET_RATE_PARENT,
++			RV1126B_CORECLKSEL_CON(0), 1, 1, MFLAGS);
++
++static void __init rv1126b_clk_init(struct device_node *np)
++{
++	struct rockchip_clk_provider *ctx;
++	void __iomem *reg_base;
++	unsigned long clk_nr_clks;
++
++	clk_nr_clks = rockchip_clk_find_max_clk_id(rv1126b_clk_branches,
++						   ARRAY_SIZE(rv1126b_clk_branches)) + 1;
++
++	reg_base = of_iomap(np, 0);
++	if (!reg_base) {
++		pr_err("%s: could not map cru region\n", __func__);
++		return;
++	}
++
++	ctx = rockchip_clk_init(np, reg_base, clk_nr_clks);
++	if (IS_ERR(ctx)) {
++		pr_err("%s: rockchip clk init failed\n", __func__);
++		iounmap(reg_base);
++		return;
++	}
++
++	rockchip_clk_register_plls(ctx, rv1126b_pll_clks,
++				   ARRAY_SIZE(rv1126b_pll_clks),
++				   0);
++
++	rockchip_clk_register_branches(ctx, rv1126b_clk_branches,
++				       ARRAY_SIZE(rv1126b_clk_branches));
++
++	rockchip_clk_register_armclk_multi_pll(ctx, &rv1126b_armclk,
++					       rv1126b_cpuclk_rates,
++					       ARRAY_SIZE(rv1126b_cpuclk_rates));
++
++	rv1126b_rst_init(np, reg_base);
++
++	rockchip_register_restart_notifier(ctx, RV1126B_GLB_SRST_FST, NULL);
++
++	rockchip_clk_of_add_provider(np, ctx);
++
++	/* pvtpll src init */
++	writel_relaxed(PVTPLL_SRC_SEL_PVTPLL, reg_base + RV1126B_CORECLKSEL_CON(0));
++	writel_relaxed(PVTPLL_SRC_SEL_PVTPLL, reg_base + RV1126B_NPUCLKSEL_CON(0));
++	writel_relaxed(PVTPLL_SRC_SEL_PVTPLL, reg_base + RV1126B_VICLKSEL_CON(0));
++	writel_relaxed(PVTPLL_SRC_SEL_PVTPLL, reg_base + RV1126B_VEPUCLKSEL_CON(0));
++	writel_relaxed(PVTPLL_SRC_SEL_PVTPLL, reg_base + RV1126B_VCPCLKSEL_CON(0));
++}
++
++CLK_OF_DECLARE(rv1126b_cru, "rockchip,rv1126b-cru", rv1126b_clk_init);
++
++struct clk_rv1126b_inits {
++	void (*inits)(struct device_node *np);
++};
++
++static const struct clk_rv1126b_inits clk_rv1126b_init = {
++	.inits = rv1126b_clk_init,
++};
++
++static const struct of_device_id clk_rv1126b_match_table[] = {
++	{
++		.compatible = "rockchip,rv1126b-cru",
++		.data = &clk_rv1126b_init,
++	},
++	{ }
++};
++
++static int clk_rv1126b_probe(struct platform_device *pdev)
++{
++	const struct clk_rv1126b_inits *init_data;
++	struct device *dev = &pdev->dev;
++
++	init_data = device_get_match_data(dev);
++	if (!init_data)
++		return -EINVAL;
++
++	if (init_data->inits)
++		init_data->inits(dev->of_node);
++
++	return 0;
++}
++
++static struct platform_driver clk_rv1126b_driver = {
++	.probe		= clk_rv1126b_probe,
++	.driver		= {
++		.name	= "clk-rv1126b",
++		.of_match_table = clk_rv1126b_match_table,
++		.suppress_bind_attrs = true,
++	},
++};
++builtin_platform_driver_probe(clk_rv1126b_driver, clk_rv1126b_probe);
+diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
+index 23653a942403..87f09320b942 100644
+--- a/drivers/clk/rockchip/clk.h
++++ b/drivers/clk/rockchip/clk.h
+@@ -99,6 +99,73 @@ struct clk;
+ #define RV1126_EMMC_CON0		0x450
+ #define RV1126_EMMC_CON1		0x454
+ 
++#define RV1126B_TOPCRU_BASE		0x0
++#define RV1126B_BUSCRU_BASE		0x10000
++#define RV1126B_PERICRU_BASE		0x20000
++#define RV1126B_CORECRU_BASE		0x30000
++#define RV1126B_PMUCRU_BASE		0x40000
++#define RV1126B_PMU1CRU_BASE		0x50000
++#define RV1126B_DDRCRU_BASE		0x60000
++#define RV1126B_SUBDDRCRU_BASE		0x68000
++#define RV1126B_VICRU_BASE		0x70000
++#define RV1126B_VEPUCRU_BASE		0x80000
++#define RV1126B_NPUCRU_BASE		0x90000
++#define RV1126B_VDOCRU_BASE		0xA0000
++#define RV1126B_VCPCRU_BASE		0xB0000
++
++#define RV1126B_PLL_CON(x)		((x) * 0x4 + RV1126B_TOPCRU_BASE)
++#define RV1126B_MODE_CON		(0x280 + RV1126B_TOPCRU_BASE)
++#define RV1126B_CLKSEL_CON(x)		((x) * 0x4 + 0x300 + RV1126B_TOPCRU_BASE)
++#define RV1126B_CLKGATE_CON(x)		((x) * 0x4 + 0x800 + RV1126B_TOPCRU_BASE)
++#define RV1126B_SOFTRST_CON(x)		((x) * 0x4 + 0xa00 + RV1126B_TOPCRU_BASE)
++#define RV1126B_GLB_SRST_FST		(0xc08 + RV1126B_TOPCRU_BASE)
++#define RV1126B_GLB_SRST_SND		(0xc0c + RV1126B_TOPCRU_BASE)
++#define RV1126B_CLK_CM_FRAC0_DIV_H	(0xcc0 + RV1126B_TOPCRU_BASE)
++#define RV1126B_CLK_CM_FRAC1_DIV_H	(0xcc4 + RV1126B_TOPCRU_BASE)
++#define RV1126B_CLK_CM_FRAC2_DIV_H	(0xcc8 + RV1126B_TOPCRU_BASE)
++#define RV1126B_CLK_UART_FRAC0_DIV_H	(0xccc + RV1126B_TOPCRU_BASE)
++#define RV1126B_CLK_UART_FRAC1_DIV_H	(0xcd0 + RV1126B_TOPCRU_BASE)
++#define RV1126B_CLK_AUDIO_FRAC0_DIV_H	(0xcd4 + RV1126B_TOPCRU_BASE)
++#define RV1126B_CLK_AUDIO_FRAC1_DIV_H	(0xcd8 + RV1126B_TOPCRU_BASE)
++#define RV1126B_BUSCLKSEL_CON(x)	((x) * 0x4 + 0x300 + RV1126B_BUSCRU_BASE)
++#define RV1126B_BUSCLKGATE_CON(x)	((x) * 0x4 + 0x800 + RV1126B_BUSCRU_BASE)
++#define RV1126B_BUSSOFTRST_CON(x)	((x) * 0x4 + 0xa00 + RV1126B_BUSCRU_BASE)
++#define RV1126B_PERIPLL_CON(x)		((x) * 0x4 + RV1126B_PERICRU_BASE)
++#define RV1126B_PERICLKSEL_CON(x)	((x) * 0x4 + 0x300 + RV1126B_PERICRU_BASE)
++#define RV1126B_PERICLKGATE_CON(x)	((x) * 0x4 + 0x800 + RV1126B_PERICRU_BASE)
++#define RV1126B_PERISOFTRST_CON(x)	((x) * 0x4 + 0xa00 + RV1126B_PERICRU_BASE)
++#define RV1126B_CORECLKSEL_CON(x)	((x) * 0x4 + 0x300 + RV1126B_CORECRU_BASE)
++#define RV1126B_CORECLKGATE_CON(x)	((x) * 0x4 + 0x800 + RV1126B_CORECRU_BASE)
++#define RV1126B_CORESOFTRST_CON(x)	((x) * 0x4 + 0xa00 + RV1126B_CORECRU_BASE)
++#define RV1126B_PMUCLKSEL_CON(x)	((x) * 0x4 + 0x300 + RV1126B_PMUCRU_BASE)
++#define RV1126B_PMUCLKGATE_CON(x)	((x) * 0x4 + 0x800 + RV1126B_PMUCRU_BASE)
++#define RV1126B_PMUSOFTRST_CON(x)	((x) * 0x4 + 0xa00 + RV1126B_PMUCRU_BASE)
++#define RV1126B_PMU1CLKSEL_CON(x)	((x) * 0x4 + 0x300 + RV1126B_PMU1CRU_BASE)
++#define RV1126B_PMU1CLKGATE_CON(x)	((x) * 0x4 + 0x800 + RV1126B_PMU1CRU_BASE)
++#define RV1126B_PMU1SOFTRST_CON(x)	((x) * 0x4 + 0xa00 + RV1126B_PMU1CRU_BASE)
++#define RV1126B_DDRCLKSEL_CON(x)	((x) * 0x4 + 0x300 + RV1126B_DDRCRU_BASE)
++#define RV1126B_DDRCLKGATE_CON(x)	((x) * 0x4 + 0x800 + RV1126B_DDRCRU_BASE)
++#define RV1126B_DDRSOFTRST_CON(x)	((x) * 0x4 + 0xa00 + RV1126B_DDRCRU_BASE)
++#define RV1126B_SUBDDRPLL_CON(x)	((x) * 0x4 + RV1126B_SUBDDRCRU_BASE)
++#define RV1126B_SUBDDRCLKSEL_CON(x)	((x) * 0x4 + 0x300 + RV1126B_SUBDDRCRU_BASE)
++#define RV1126B_SUBDDRCLKGATE_CON(x)	((x) * 0x4 + 0x800 + RV1126B_SUBDDRCRU_BASE)
++#define RV1126B_SUBDDRSOFTRST_CON(x)	((x) * 0x4 + 0xa00 + RV1126B_SUBDDRCRU_BASE)
++#define RV1126B_VICLKSEL_CON(x)		((x) * 0x4 + 0x300 + RV1126B_VICRU_BASE)
++#define RV1126B_VICLKGATE_CON(x)	((x) * 0x4 + 0x800 + RV1126B_VICRU_BASE)
++#define RV1126B_VISOFTRST_CON(x)	((x) * 0x4 + 0xa00 + RV1126B_VICRU_BASE)
++#define RV1126B_VEPUCLKSEL_CON(x)	((x) * 0x4 + 0x300 + RV1126B_VEPUCRU_BASE)
++#define RV1126B_VEPUCLKGATE_CON(x)	((x) * 0x4 + 0x800 + RV1126B_VEPUCRU_BASE)
++#define RV1126B_VEPUSOFTRST_CON(x)	((x) * 0x4 + 0xa00 + RV1126B_VEPUCRU_BASE)
++#define RV1126B_NPUCLKSEL_CON(x)	((x) * 0x4 + 0x300 + RV1126B_NPUCRU_BASE)
++#define RV1126B_NPUCLKGATE_CON(x)	((x) * 0x4 + 0x800 + RV1126B_NPUCRU_BASE)
++#define RV1126B_NPUSOFTRST_CON(x)	((x) * 0x4 + 0xa00 + RV1126B_NPUCRU_BASE)
++#define RV1126B_VDOCLKSEL_CON(x)	((x) * 0x4 + 0x300 + RV1126B_VDOCRU_BASE)
++#define RV1126B_VDOCLKGATE_CON(x)	((x) * 0x4 + 0x800 + RV1126B_VDOCRU_BASE)
++#define RV1126B_VDOSOFTRST_CON(x)	((x) * 0x4 + 0xa00 + RV1126B_VDOCRU_BASE)
++#define RV1126B_VCPCLKSEL_CON(x)	((x) * 0x4 + 0x300 + RV1126B_VCPCRU_BASE)
++#define RV1126B_VCPCLKGATE_CON(x)	((x) * 0x4 + 0x800 + RV1126B_VCPCRU_BASE)
++#define RV1126B_VCPSOFTRST_CON(x)	((x) * 0x4 + 0xa00 + RV1126B_VCPCRU_BASE)
++
+ #define RK2928_PLL_CON(x)		((x) * 0x4)
+ #define RK2928_MODE_CON		0x40
+ #define RK2928_CLKSEL_CON(x)	((x) * 0x4 + 0x44)
+@@ -1261,6 +1328,7 @@ static inline void rockchip_register_softrst(struct device_node *np,
+ 	return rockchip_register_softrst_lut(np, NULL, num_regs, base, flags);
+ }
+ 
++void rv1126b_rst_init(struct device_node *np, void __iomem *reg_base);
+ void rk3528_rst_init(struct device_node *np, void __iomem *reg_base);
+ void rk3562_rst_init(struct device_node *np, void __iomem *reg_base);
+ void rk3576_rst_init(struct device_node *np, void __iomem *reg_base);
+diff --git a/drivers/clk/rockchip/rst-rv1126b.c b/drivers/clk/rockchip/rst-rv1126b.c
+new file mode 100644
+index 000000000000..a6c6d35c59a8
+--- /dev/null
++++ b/drivers/clk/rockchip/rst-rv1126b.c
+@@ -0,0 +1,444 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ * Copyright (c) 2025 Rockchip Electronics Co., Ltd.
++ * Author: Elaine Zhang <zhangqing@rock-chips.com>
++ */
++
++#include <linux/module.h>
++#include <linux/of.h>
++#include <dt-bindings/reset/rockchip,rv1126b-cru.h>
++#include "clk.h"
++
++/* 0x20000000 + 0x0A00 */
++#define TOPCRU_RESET_OFFSET(id, reg, bit) [id] = (0x0 * 4 + reg * 16 + bit)
++/* 0x20010000 + 0x0A00 */
++#define BUSCRU_RESET_OFFSET(id, reg, bit) [id] = (0x10000 * 4 + reg * 16 + bit)
++/* 0x20020000 + 0x0A00 */
++#define PERICRU_RESET_OFFSET(id, reg, bit) [id] = (0x20000 * 4 + reg * 16 + bit)
++/* 0x20030000 + 0x0A00 */
++#define CORECRU_RESET_OFFSET(id, reg, bit) [id] = (0x30000 * 4 + reg * 16 + bit)
++/* 0x20040000 + 0x0A00 */
++#define PMUCRU_RESET_OFFSET(id, reg, bit) [id] = (0x40000 * 4 + reg * 16 + bit)
++/* 0x20050000 + 0x0A00 */
++#define PMU1CRU_RESET_OFFSET(id, reg, bit) [id] = (0x50000 * 4 + reg * 16 + bit)
++/* 0x20060000 + 0x0A00 */
++#define DDRCRU_RESET_OFFSET(id, reg, bit) [id] = (0x60000 * 4 + reg * 16 + bit)
++/* 0x20068000 + 0x0A00 */
++#define SUBDDRCRU_RESET_OFFSET(id, reg, bit) [id] = (0x68000 * 4 + reg * 16 + bit)
++/* 0x20070000 + 0x0A00 */
++#define VICRU_RESET_OFFSET(id, reg, bit) [id] = (0x70000 * 4 + reg * 16 + bit)
++/* 0x20080000 + 0x0A00 */
++#define VEPUCRU_RESET_OFFSET(id, reg, bit) [id] = (0x80000 * 4 + reg * 16 + bit)
++/* 0x20090000 + 0x0A00 */
++#define NPUCRU_RESET_OFFSET(id, reg, bit) [id] = (0x90000 * 4 + reg * 16 + bit)
++/* 0x200A0000 + 0x0A00 */
++#define VDOCRU_RESET_OFFSET(id, reg, bit) [id] = (0xA0000 * 4 + reg * 16 + bit)
++/* 0x200B0000 + 0x0A00 */
++#define VCPCRU_RESET_OFFSET(id, reg, bit) [id] = (0xB0000 * 4 + reg * 16 + bit)
++
++/* =================mapping table for reset ID to register offset================== */
++static const int rv1126b_register_offset[] = {
++	/* TOPCRU-->SOFTRST_CON00 */
++
++	/* TOPCRU-->SOFTRST_CON15 */
++	TOPCRU_RESET_OFFSET(SRST_P_CRU, 15, 1),
++	TOPCRU_RESET_OFFSET(SRST_P_CRU_BIU, 15, 2),
++
++	/* BUSCRU-->SOFTRST_CON00 */
++	BUSCRU_RESET_OFFSET(SRST_A_TOP_BIU, 0, 0),
++	BUSCRU_RESET_OFFSET(SRST_A_RKCE_BIU, 0, 1),
++	BUSCRU_RESET_OFFSET(SRST_A_BUS_BIU, 0, 2),
++	BUSCRU_RESET_OFFSET(SRST_H_BUS_BIU, 0, 3),
++	BUSCRU_RESET_OFFSET(SRST_P_BUS_BIU, 0, 4),
++	BUSCRU_RESET_OFFSET(SRST_P_CRU_BUS, 0, 5),
++	BUSCRU_RESET_OFFSET(SRST_P_SYS_GRF, 0, 6),
++	BUSCRU_RESET_OFFSET(SRST_H_BOOTROM, 0, 7),
++	BUSCRU_RESET_OFFSET(SRST_A_GIC400, 0, 8),
++	BUSCRU_RESET_OFFSET(SRST_A_SPINLOCK, 0, 9),
++	BUSCRU_RESET_OFFSET(SRST_P_WDT_NS, 0, 10),
++	BUSCRU_RESET_OFFSET(SRST_T_WDT_NS, 0, 11),
++
++	/* BUSCRU-->SOFTRST_CON01 */
++	BUSCRU_RESET_OFFSET(SRST_P_WDT_HPMCU, 1, 0),
++	BUSCRU_RESET_OFFSET(SRST_T_WDT_HPMCU, 1, 1),
++	BUSCRU_RESET_OFFSET(SRST_H_CACHE, 1, 2),
++	BUSCRU_RESET_OFFSET(SRST_P_HPMCU_MAILBOX, 1, 3),
++	BUSCRU_RESET_OFFSET(SRST_P_HPMCU_INTMUX, 1, 4),
++	BUSCRU_RESET_OFFSET(SRST_HPMCU_FULL_CLUSTER, 1, 5),
++	BUSCRU_RESET_OFFSET(SRST_HPMCU_PWUP, 1, 6),
++	BUSCRU_RESET_OFFSET(SRST_HPMCU_ONLY_CORE, 1, 7),
++	BUSCRU_RESET_OFFSET(SRST_T_HPMCU_JTAG, 1, 8),
++	BUSCRU_RESET_OFFSET(SRST_P_RKDMA, 1, 11),
++	BUSCRU_RESET_OFFSET(SRST_A_RKDMA, 1, 12),
++
++	/* BUSCRU-->SOFTRST_CON02 */
++	BUSCRU_RESET_OFFSET(SRST_P_DCF, 2, 0),
++	BUSCRU_RESET_OFFSET(SRST_A_DCF, 2, 1),
++	BUSCRU_RESET_OFFSET(SRST_H_RGA, 2, 2),
++	BUSCRU_RESET_OFFSET(SRST_A_RGA, 2, 3),
++	BUSCRU_RESET_OFFSET(SRST_CORE_RGA, 2, 4),
++	BUSCRU_RESET_OFFSET(SRST_P_TIMER, 2, 5),
++	BUSCRU_RESET_OFFSET(SRST_TIMER0, 2, 6),
++	BUSCRU_RESET_OFFSET(SRST_TIMER1, 2, 7),
++	BUSCRU_RESET_OFFSET(SRST_TIMER2, 2, 8),
++	BUSCRU_RESET_OFFSET(SRST_TIMER3, 2, 9),
++	BUSCRU_RESET_OFFSET(SRST_TIMER4, 2, 10),
++	BUSCRU_RESET_OFFSET(SRST_TIMER5, 2, 11),
++	BUSCRU_RESET_OFFSET(SRST_A_RKCE, 2, 12),
++	BUSCRU_RESET_OFFSET(SRST_PKA_RKCE, 2, 13),
++	BUSCRU_RESET_OFFSET(SRST_H_RKRNG_S, 2, 14),
++	BUSCRU_RESET_OFFSET(SRST_H_RKRNG_NS, 2, 15),
++
++	/* BUSCRU-->SOFTRST_CON03 */
++	BUSCRU_RESET_OFFSET(SRST_P_I2C0, 3, 0),
++	BUSCRU_RESET_OFFSET(SRST_I2C0, 3, 1),
++	BUSCRU_RESET_OFFSET(SRST_P_I2C1, 3, 2),
++	BUSCRU_RESET_OFFSET(SRST_I2C1, 3, 3),
++	BUSCRU_RESET_OFFSET(SRST_P_I2C3, 3, 4),
++	BUSCRU_RESET_OFFSET(SRST_I2C3, 3, 5),
++	BUSCRU_RESET_OFFSET(SRST_P_I2C4, 3, 6),
++	BUSCRU_RESET_OFFSET(SRST_I2C4, 3, 7),
++	BUSCRU_RESET_OFFSET(SRST_P_I2C5, 3, 8),
++	BUSCRU_RESET_OFFSET(SRST_I2C5, 3, 9),
++	BUSCRU_RESET_OFFSET(SRST_P_SPI0, 3, 10),
++	BUSCRU_RESET_OFFSET(SRST_SPI0, 3, 11),
++	BUSCRU_RESET_OFFSET(SRST_P_SPI1, 3, 12),
++	BUSCRU_RESET_OFFSET(SRST_SPI1, 3, 13),
++
++	/* BUSCRU-->SOFTRST_CON04 */
++	BUSCRU_RESET_OFFSET(SRST_P_PWM0, 4, 0),
++	BUSCRU_RESET_OFFSET(SRST_PWM0, 4, 1),
++	BUSCRU_RESET_OFFSET(SRST_P_PWM2, 4, 4),
++	BUSCRU_RESET_OFFSET(SRST_PWM2, 4, 5),
++	BUSCRU_RESET_OFFSET(SRST_P_PWM3, 4, 8),
++	BUSCRU_RESET_OFFSET(SRST_PWM3, 4, 9),
++
++	/* BUSCRU-->SOFTRST_CON05 */
++	BUSCRU_RESET_OFFSET(SRST_P_UART1, 5, 0),
++	BUSCRU_RESET_OFFSET(SRST_S_UART1, 5, 1),
++	BUSCRU_RESET_OFFSET(SRST_P_UART2, 5, 2),
++	BUSCRU_RESET_OFFSET(SRST_S_UART2, 5, 3),
++	BUSCRU_RESET_OFFSET(SRST_P_UART3, 5, 4),
++	BUSCRU_RESET_OFFSET(SRST_S_UART3, 5, 5),
++	BUSCRU_RESET_OFFSET(SRST_P_UART4, 5, 6),
++	BUSCRU_RESET_OFFSET(SRST_S_UART4, 5, 7),
++	BUSCRU_RESET_OFFSET(SRST_P_UART5, 5, 8),
++	BUSCRU_RESET_OFFSET(SRST_S_UART5, 5, 9),
++	BUSCRU_RESET_OFFSET(SRST_P_UART6, 5, 10),
++	BUSCRU_RESET_OFFSET(SRST_S_UART6, 5, 11),
++	BUSCRU_RESET_OFFSET(SRST_P_UART7, 5, 12),
++	BUSCRU_RESET_OFFSET(SRST_S_UART7, 5, 13),
++
++	/* BUSCRU-->SOFTRST_CON06 */
++	BUSCRU_RESET_OFFSET(SRST_P_TSADC, 6, 0),
++	BUSCRU_RESET_OFFSET(SRST_TSADC, 6, 1),
++	BUSCRU_RESET_OFFSET(SRST_H_SAI0, 6, 2),
++	BUSCRU_RESET_OFFSET(SRST_M_SAI0, 6, 3),
++	BUSCRU_RESET_OFFSET(SRST_H_SAI1, 6, 4),
++	BUSCRU_RESET_OFFSET(SRST_M_SAI1, 6, 5),
++	BUSCRU_RESET_OFFSET(SRST_H_SAI2, 6, 6),
++	BUSCRU_RESET_OFFSET(SRST_M_SAI2, 6, 7),
++	BUSCRU_RESET_OFFSET(SRST_H_RKDSM, 6, 8),
++	BUSCRU_RESET_OFFSET(SRST_M_RKDSM, 6, 9),
++	BUSCRU_RESET_OFFSET(SRST_H_PDM, 6, 10),
++	BUSCRU_RESET_OFFSET(SRST_M_PDM, 6, 11),
++	BUSCRU_RESET_OFFSET(SRST_PDM, 6, 12),
++
++	/* BUSCRU-->SOFTRST_CON07 */
++	BUSCRU_RESET_OFFSET(SRST_H_ASRC0, 7, 0),
++	BUSCRU_RESET_OFFSET(SRST_ASRC0, 7, 1),
++	BUSCRU_RESET_OFFSET(SRST_H_ASRC1, 7, 2),
++	BUSCRU_RESET_OFFSET(SRST_ASRC1, 7, 3),
++	BUSCRU_RESET_OFFSET(SRST_P_AUDIO_ADC_BUS, 7, 4),
++	BUSCRU_RESET_OFFSET(SRST_M_AUDIO_ADC_BUS, 7, 5),
++	BUSCRU_RESET_OFFSET(SRST_P_RKCE, 7, 6),
++	BUSCRU_RESET_OFFSET(SRST_H_NS_RKCE, 7, 7),
++	BUSCRU_RESET_OFFSET(SRST_P_OTPC_NS, 7, 8),
++	BUSCRU_RESET_OFFSET(SRST_SBPI_OTPC_NS, 7, 9),
++	BUSCRU_RESET_OFFSET(SRST_USER_OTPC_NS, 7, 10),
++	BUSCRU_RESET_OFFSET(SRST_OTPC_ARB, 7, 11),
++	BUSCRU_RESET_OFFSET(SRST_P_OTP_MASK, 7, 12),
++
++	/* PERICRU-->SOFTRST_CON00 */
++	PERICRU_RESET_OFFSET(SRST_A_PERI_BIU, 0, 0),
++	PERICRU_RESET_OFFSET(SRST_P_PERI_BIU, 0, 1),
++	PERICRU_RESET_OFFSET(SRST_P_RTC_BIU, 0, 2),
++	PERICRU_RESET_OFFSET(SRST_P_CRU_PERI, 0, 3),
++	PERICRU_RESET_OFFSET(SRST_P_PERI_GRF, 0, 4),
++	PERICRU_RESET_OFFSET(SRST_P_GPIO1, 0, 5),
++	PERICRU_RESET_OFFSET(SRST_DB_GPIO1, 0, 6),
++	PERICRU_RESET_OFFSET(SRST_P_IOC_VCCIO1, 0, 7),
++	PERICRU_RESET_OFFSET(SRST_A_USB3OTG, 0, 8),
++	PERICRU_RESET_OFFSET(SRST_H_USB2HOST, 0, 11),
++	PERICRU_RESET_OFFSET(SRST_H_ARB_USB2HOST, 0, 12),
++	PERICRU_RESET_OFFSET(SRST_P_RTC_TEST, 0, 13),
++
++	/* PERICRU-->SOFTRST_CON01 */
++	PERICRU_RESET_OFFSET(SRST_H_EMMC, 1, 0),
++	PERICRU_RESET_OFFSET(SRST_H_FSPI0, 1, 1),
++	PERICRU_RESET_OFFSET(SRST_H_XIP_FSPI0, 1, 2),
++	PERICRU_RESET_OFFSET(SRST_S_2X_FSPI0, 1, 3),
++	PERICRU_RESET_OFFSET(SRST_UTMI_USB2HOST, 1, 5),
++	PERICRU_RESET_OFFSET(SRST_REF_PIPEPHY, 1, 7),
++	PERICRU_RESET_OFFSET(SRST_P_PIPEPHY, 1, 8),
++	PERICRU_RESET_OFFSET(SRST_P_PIPEPHY_GRF, 1, 9),
++	PERICRU_RESET_OFFSET(SRST_P_USB2PHY, 1, 10),
++	PERICRU_RESET_OFFSET(SRST_POR_USB2PHY, 1, 11),
++	PERICRU_RESET_OFFSET(SRST_OTG_USB2PHY, 1, 12),
++	PERICRU_RESET_OFFSET(SRST_HOST_USB2PHY, 1, 13),
++
++	/* CORECRU-->SOFTRST_CON00 */
++	CORECRU_RESET_OFFSET(SRST_REF_PVTPLL_CORE, 0, 0),
++	CORECRU_RESET_OFFSET(SRST_NCOREPORESET0, 0, 1),
++	CORECRU_RESET_OFFSET(SRST_NCORESET0, 0, 2),
++	CORECRU_RESET_OFFSET(SRST_NCOREPORESET1, 0, 3),
++	CORECRU_RESET_OFFSET(SRST_NCORESET1, 0, 4),
++	CORECRU_RESET_OFFSET(SRST_NCOREPORESET2, 0, 5),
++	CORECRU_RESET_OFFSET(SRST_NCORESET2, 0, 6),
++	CORECRU_RESET_OFFSET(SRST_NCOREPORESET3, 0, 7),
++	CORECRU_RESET_OFFSET(SRST_NCORESET3, 0, 8),
++	CORECRU_RESET_OFFSET(SRST_NDBGRESET, 0, 9),
++	CORECRU_RESET_OFFSET(SRST_NL2RESET, 0, 10),
++
++	/* CORECRU-->SOFTRST_CON01 */
++	CORECRU_RESET_OFFSET(SRST_A_CORE_BIU, 1, 0),
++	CORECRU_RESET_OFFSET(SRST_P_CORE_BIU, 1, 1),
++	CORECRU_RESET_OFFSET(SRST_H_CORE_BIU, 1, 2),
++	CORECRU_RESET_OFFSET(SRST_P_DBG, 1, 3),
++	CORECRU_RESET_OFFSET(SRST_POT_DBG, 1, 4),
++	CORECRU_RESET_OFFSET(SRST_NT_DBG, 1, 5),
++	CORECRU_RESET_OFFSET(SRST_P_CORE_PVTPLL, 1, 6),
++	CORECRU_RESET_OFFSET(SRST_P_CRU_CORE, 1, 7),
++	CORECRU_RESET_OFFSET(SRST_P_CORE_GRF, 1, 8),
++	CORECRU_RESET_OFFSET(SRST_P_DFT2APB, 1, 10),
++
++	/* PMUCRU-->SOFTRST_CON00 */
++	PMUCRU_RESET_OFFSET(SRST_H_PMU_BIU, 0, 0),
++	PMUCRU_RESET_OFFSET(SRST_P_PMU_GPIO0, 0, 7),
++	PMUCRU_RESET_OFFSET(SRST_DB_PMU_GPIO0, 0, 8),
++	PMUCRU_RESET_OFFSET(SRST_P_PMU_HP_TIMER, 0, 10),
++	PMUCRU_RESET_OFFSET(SRST_PMU_HP_TIMER, 0, 11),
++	PMUCRU_RESET_OFFSET(SRST_PMU_32K_HP_TIMER, 0, 12),
++
++	/* PMUCRU-->SOFTRST_CON01 */
++	PMUCRU_RESET_OFFSET(SRST_P_PWM1, 1, 0),
++	PMUCRU_RESET_OFFSET(SRST_PWM1, 1, 1),
++	PMUCRU_RESET_OFFSET(SRST_P_I2C2, 1, 2),
++	PMUCRU_RESET_OFFSET(SRST_I2C2, 1, 3),
++	PMUCRU_RESET_OFFSET(SRST_P_UART0, 1, 4),
++	PMUCRU_RESET_OFFSET(SRST_S_UART0, 1, 5),
++
++	/* PMUCRU-->SOFTRST_CON02 */
++	PMUCRU_RESET_OFFSET(SRST_P_RCOSC_CTRL, 2, 0),
++	PMUCRU_RESET_OFFSET(SRST_REF_RCOSC_CTRL, 2, 2),
++	PMUCRU_RESET_OFFSET(SRST_P_IOC_PMUIO0, 2, 3),
++	PMUCRU_RESET_OFFSET(SRST_P_CRU_PMU, 2, 4),
++	PMUCRU_RESET_OFFSET(SRST_P_PMU_GRF, 2, 5),
++	PMUCRU_RESET_OFFSET(SRST_PREROLL, 2, 7),
++	PMUCRU_RESET_OFFSET(SRST_PREROLL_32K, 2, 8),
++	PMUCRU_RESET_OFFSET(SRST_H_PMU_SRAM, 2, 9),
++
++	/* PMUCRU-->SOFTRST_CON03 */
++	PMUCRU_RESET_OFFSET(SRST_P_WDT_LPMCU, 3, 0),
++	PMUCRU_RESET_OFFSET(SRST_T_WDT_LPMCU, 3, 1),
++	PMUCRU_RESET_OFFSET(SRST_LPMCU_FULL_CLUSTER, 3, 2),
++	PMUCRU_RESET_OFFSET(SRST_LPMCU_PWUP, 3, 3),
++	PMUCRU_RESET_OFFSET(SRST_LPMCU_ONLY_CORE, 3, 4),
++	PMUCRU_RESET_OFFSET(SRST_T_LPMCU_JTAG, 3, 5),
++	PMUCRU_RESET_OFFSET(SRST_P_LPMCU_MAILBOX, 3, 6),
++
++	/* PMU1CRU-->SOFTRST_CON00 */
++	PMU1CRU_RESET_OFFSET(SRST_P_SPI2AHB, 0, 0),
++	PMU1CRU_RESET_OFFSET(SRST_H_SPI2AHB, 0, 1),
++	PMU1CRU_RESET_OFFSET(SRST_H_FSPI1, 0, 2),
++	PMU1CRU_RESET_OFFSET(SRST_H_XIP_FSPI1, 0, 3),
++	PMU1CRU_RESET_OFFSET(SRST_S_1X_FSPI1, 0, 4),
++	PMU1CRU_RESET_OFFSET(SRST_P_IOC_PMUIO1, 0, 5),
++	PMU1CRU_RESET_OFFSET(SRST_P_CRU_PMU1, 0, 6),
++	PMU1CRU_RESET_OFFSET(SRST_P_AUDIO_ADC_PMU, 0, 7),
++	PMU1CRU_RESET_OFFSET(SRST_M_AUDIO_ADC_PMU, 0, 8),
++	PMU1CRU_RESET_OFFSET(SRST_H_PMU1_BIU, 0, 9),
++
++	/* PMU1CRU-->SOFTRST_CON01 */
++	PMU1CRU_RESET_OFFSET(SRST_P_LPDMA, 1, 0),
++	PMU1CRU_RESET_OFFSET(SRST_A_LPDMA, 1, 1),
++	PMU1CRU_RESET_OFFSET(SRST_H_LPSAI, 1, 2),
++	PMU1CRU_RESET_OFFSET(SRST_M_LPSAI, 1, 3),
++	PMU1CRU_RESET_OFFSET(SRST_P_AOA_TDD, 1, 4),
++	PMU1CRU_RESET_OFFSET(SRST_P_AOA_FE, 1, 5),
++	PMU1CRU_RESET_OFFSET(SRST_P_AOA_AAD, 1, 6),
++	PMU1CRU_RESET_OFFSET(SRST_P_AOA_APB, 1, 7),
++	PMU1CRU_RESET_OFFSET(SRST_P_AOA_SRAM, 1, 8),
++
++	/* DDRCRU-->SOFTRST_CON00 */
++	DDRCRU_RESET_OFFSET(SRST_P_DDR_BIU, 0, 1),
++	DDRCRU_RESET_OFFSET(SRST_P_DDRC, 0, 2),
++	DDRCRU_RESET_OFFSET(SRST_P_DDRMON, 0, 3),
++	DDRCRU_RESET_OFFSET(SRST_TIMER_DDRMON, 0, 4),
++	DDRCRU_RESET_OFFSET(SRST_P_DFICTRL, 0, 5),
++	DDRCRU_RESET_OFFSET(SRST_P_DDR_GRF, 0, 6),
++	DDRCRU_RESET_OFFSET(SRST_P_CRU_DDR, 0, 7),
++	DDRCRU_RESET_OFFSET(SRST_P_DDRPHY, 0, 8),
++	DDRCRU_RESET_OFFSET(SRST_P_DMA2DDR, 0, 9),
++
++	/* SUBDDRCRU-->SOFTRST_CON00 */
++	SUBDDRCRU_RESET_OFFSET(SRST_A_SYSMEM_BIU, 0, 0),
++	SUBDDRCRU_RESET_OFFSET(SRST_A_SYSMEM, 0, 1),
++	SUBDDRCRU_RESET_OFFSET(SRST_A_DDR_BIU, 0, 2),
++	SUBDDRCRU_RESET_OFFSET(SRST_A_DDRSCH0_CPU, 0, 3),
++	SUBDDRCRU_RESET_OFFSET(SRST_A_DDRSCH1_NPU, 0, 4),
++	SUBDDRCRU_RESET_OFFSET(SRST_A_DDRSCH2_POE, 0, 5),
++	SUBDDRCRU_RESET_OFFSET(SRST_A_DDRSCH3_VI, 0, 6),
++	SUBDDRCRU_RESET_OFFSET(SRST_CORE_DDRC, 0, 7),
++	SUBDDRCRU_RESET_OFFSET(SRST_DDRMON, 0, 8),
++	SUBDDRCRU_RESET_OFFSET(SRST_DFICTRL, 0, 9),
++	SUBDDRCRU_RESET_OFFSET(SRST_RS, 0, 11),
++	SUBDDRCRU_RESET_OFFSET(SRST_A_DMA2DDR, 0, 12),
++	SUBDDRCRU_RESET_OFFSET(SRST_DDRPHY, 0, 13),
++
++	/* VICRU-->SOFTRST_CON00 */
++	VICRU_RESET_OFFSET(SRST_REF_PVTPLL_ISP, 0, 0),
++	VICRU_RESET_OFFSET(SRST_A_GMAC_BIU, 0, 1),
++	VICRU_RESET_OFFSET(SRST_A_VI_BIU, 0, 2),
++	VICRU_RESET_OFFSET(SRST_H_VI_BIU, 0, 3),
++	VICRU_RESET_OFFSET(SRST_P_VI_BIU, 0, 4),
++	VICRU_RESET_OFFSET(SRST_P_CRU_VI, 0, 5),
++	VICRU_RESET_OFFSET(SRST_P_VI_GRF, 0, 6),
++	VICRU_RESET_OFFSET(SRST_P_VI_PVTPLL, 0, 7),
++	VICRU_RESET_OFFSET(SRST_P_DSMC, 0, 8),
++	VICRU_RESET_OFFSET(SRST_A_DSMC, 0, 9),
++	VICRU_RESET_OFFSET(SRST_H_CAN0, 0, 10),
++	VICRU_RESET_OFFSET(SRST_CAN0, 0, 11),
++	VICRU_RESET_OFFSET(SRST_H_CAN1, 0, 12),
++	VICRU_RESET_OFFSET(SRST_CAN1, 0, 13),
++
++	/* VICRU-->SOFTRST_CON01 */
++	VICRU_RESET_OFFSET(SRST_P_GPIO2, 1, 0),
++	VICRU_RESET_OFFSET(SRST_DB_GPIO2, 1, 1),
++	VICRU_RESET_OFFSET(SRST_P_GPIO4, 1, 2),
++	VICRU_RESET_OFFSET(SRST_DB_GPIO4, 1, 3),
++	VICRU_RESET_OFFSET(SRST_P_GPIO5, 1, 4),
++	VICRU_RESET_OFFSET(SRST_DB_GPIO5, 1, 5),
++	VICRU_RESET_OFFSET(SRST_P_GPIO6, 1, 6),
++	VICRU_RESET_OFFSET(SRST_DB_GPIO6, 1, 7),
++	VICRU_RESET_OFFSET(SRST_P_GPIO7, 1, 8),
++	VICRU_RESET_OFFSET(SRST_DB_GPIO7, 1, 9),
++	VICRU_RESET_OFFSET(SRST_P_IOC_VCCIO2, 1, 10),
++	VICRU_RESET_OFFSET(SRST_P_IOC_VCCIO4, 1, 11),
++	VICRU_RESET_OFFSET(SRST_P_IOC_VCCIO5, 1, 12),
++	VICRU_RESET_OFFSET(SRST_P_IOC_VCCIO6, 1, 13),
++	VICRU_RESET_OFFSET(SRST_P_IOC_VCCIO7, 1, 14),
++
++	/* VICRU-->SOFTRST_CON02 */
++	VICRU_RESET_OFFSET(SRST_CORE_ISP, 2, 0),
++	VICRU_RESET_OFFSET(SRST_H_VICAP, 2, 1),
++	VICRU_RESET_OFFSET(SRST_A_VICAP, 2, 2),
++	VICRU_RESET_OFFSET(SRST_D_VICAP, 2, 3),
++	VICRU_RESET_OFFSET(SRST_ISP0_VICAP, 2, 4),
++	VICRU_RESET_OFFSET(SRST_CORE_VPSS, 2, 5),
++	VICRU_RESET_OFFSET(SRST_CORE_VPSL, 2, 6),
++	VICRU_RESET_OFFSET(SRST_P_CSI2HOST0, 2, 7),
++	VICRU_RESET_OFFSET(SRST_P_CSI2HOST1, 2, 8),
++	VICRU_RESET_OFFSET(SRST_P_CSI2HOST2, 2, 9),
++	VICRU_RESET_OFFSET(SRST_P_CSI2HOST3, 2, 10),
++	VICRU_RESET_OFFSET(SRST_H_SDMMC0, 2, 11),
++	VICRU_RESET_OFFSET(SRST_A_GMAC, 2, 12),
++	VICRU_RESET_OFFSET(SRST_P_CSIPHY0, 2, 13),
++	VICRU_RESET_OFFSET(SRST_P_CSIPHY1, 2, 14),
++
++	/* VICRU-->SOFTRST_CON03 */
++	VICRU_RESET_OFFSET(SRST_P_MACPHY, 3, 0),
++	VICRU_RESET_OFFSET(SRST_MACPHY, 3, 1),
++	VICRU_RESET_OFFSET(SRST_P_SARADC1, 3, 2),
++	VICRU_RESET_OFFSET(SRST_SARADC1, 3, 3),
++	VICRU_RESET_OFFSET(SRST_P_SARADC2, 3, 5),
++	VICRU_RESET_OFFSET(SRST_SARADC2, 3, 6),
++
++	/* VEPUCRU-->SOFTRST_CON00 */
++	VEPUCRU_RESET_OFFSET(SRST_REF_PVTPLL_VEPU, 0, 0),
++	VEPUCRU_RESET_OFFSET(SRST_A_VEPU_BIU, 0, 1),
++	VEPUCRU_RESET_OFFSET(SRST_H_VEPU_BIU, 0, 2),
++	VEPUCRU_RESET_OFFSET(SRST_P_VEPU_BIU, 0, 3),
++	VEPUCRU_RESET_OFFSET(SRST_P_CRU_VEPU, 0, 4),
++	VEPUCRU_RESET_OFFSET(SRST_P_VEPU_GRF, 0, 5),
++	VEPUCRU_RESET_OFFSET(SRST_P_GPIO3, 0, 7),
++	VEPUCRU_RESET_OFFSET(SRST_DB_GPIO3, 0, 8),
++	VEPUCRU_RESET_OFFSET(SRST_P_IOC_VCCIO3, 0, 9),
++	VEPUCRU_RESET_OFFSET(SRST_P_SARADC0, 0, 10),
++	VEPUCRU_RESET_OFFSET(SRST_SARADC0, 0, 11),
++	VEPUCRU_RESET_OFFSET(SRST_H_SDMMC1, 0, 13),
++
++	/* VEPUCRU-->SOFTRST_CON01 */
++	VEPUCRU_RESET_OFFSET(SRST_P_VEPU_PVTPLL, 1, 0),
++	VEPUCRU_RESET_OFFSET(SRST_H_VEPU, 1, 1),
++	VEPUCRU_RESET_OFFSET(SRST_A_VEPU, 1, 2),
++	VEPUCRU_RESET_OFFSET(SRST_CORE_VEPU, 1, 3),
++
++	/* NPUCRU-->SOFTRST_CON00 */
++	NPUCRU_RESET_OFFSET(SRST_REF_PVTPLL_NPU, 0, 0),
++	NPUCRU_RESET_OFFSET(SRST_A_NPU_BIU, 0, 2),
++	NPUCRU_RESET_OFFSET(SRST_H_NPU_BIU, 0, 3),
++	NPUCRU_RESET_OFFSET(SRST_P_NPU_BIU, 0, 4),
++	NPUCRU_RESET_OFFSET(SRST_P_CRU_NPU, 0, 5),
++	NPUCRU_RESET_OFFSET(SRST_P_NPU_GRF, 0, 6),
++	NPUCRU_RESET_OFFSET(SRST_P_NPU_PVTPLL, 0, 8),
++	NPUCRU_RESET_OFFSET(SRST_H_RKNN, 0, 9),
++	NPUCRU_RESET_OFFSET(SRST_A_RKNN, 0, 10),
++
++	/* VDOCRU-->SOFTRST_CON00 */
++	VDOCRU_RESET_OFFSET(SRST_A_RKVDEC_BIU, 0, 0),
++	VDOCRU_RESET_OFFSET(SRST_A_VDO_BIU, 0, 1),
++	VDOCRU_RESET_OFFSET(SRST_H_VDO_BIU, 0, 3),
++	VDOCRU_RESET_OFFSET(SRST_P_VDO_BIU, 0, 4),
++	VDOCRU_RESET_OFFSET(SRST_P_CRU_VDO, 0, 5),
++	VDOCRU_RESET_OFFSET(SRST_P_VDO_GRF, 0, 6),
++	VDOCRU_RESET_OFFSET(SRST_A_RKVDEC, 0, 7),
++	VDOCRU_RESET_OFFSET(SRST_H_RKVDEC, 0, 8),
++	VDOCRU_RESET_OFFSET(SRST_HEVC_CA_RKVDEC, 0, 9),
++	VDOCRU_RESET_OFFSET(SRST_A_VOP, 0, 10),
++	VDOCRU_RESET_OFFSET(SRST_H_VOP, 0, 11),
++	VDOCRU_RESET_OFFSET(SRST_D_VOP, 0, 12),
++	VDOCRU_RESET_OFFSET(SRST_A_OOC, 0, 13),
++	VDOCRU_RESET_OFFSET(SRST_H_OOC, 0, 14),
++	VDOCRU_RESET_OFFSET(SRST_D_OOC, 0, 15),
++
++	/* VDOCRU-->SOFTRST_CON01 */
++	VDOCRU_RESET_OFFSET(SRST_H_RKJPEG, 1, 3),
++	VDOCRU_RESET_OFFSET(SRST_A_RKJPEG, 1, 4),
++	VDOCRU_RESET_OFFSET(SRST_A_RKMMU_DECOM, 1, 5),
++	VDOCRU_RESET_OFFSET(SRST_H_RKMMU_DECOM, 1, 6),
++	VDOCRU_RESET_OFFSET(SRST_D_DECOM, 1, 8),
++	VDOCRU_RESET_OFFSET(SRST_A_DECOM, 1, 9),
++	VDOCRU_RESET_OFFSET(SRST_P_DECOM, 1, 10),
++	VDOCRU_RESET_OFFSET(SRST_P_MIPI_DSI, 1, 12),
++	VDOCRU_RESET_OFFSET(SRST_P_DSIPHY, 1, 13),
++
++	/* VCPCRU-->SOFTRST_CON00 */
++	VCPCRU_RESET_OFFSET(SRST_REF_PVTPLL_VCP, 0, 0),
++	VCPCRU_RESET_OFFSET(SRST_A_VCP_BIU, 0, 1),
++	VCPCRU_RESET_OFFSET(SRST_H_VCP_BIU, 0, 2),
++	VCPCRU_RESET_OFFSET(SRST_P_VCP_BIU, 0, 3),
++	VCPCRU_RESET_OFFSET(SRST_P_CRU_VCP, 0, 4),
++	VCPCRU_RESET_OFFSET(SRST_P_VCP_GRF, 0, 5),
++	VCPCRU_RESET_OFFSET(SRST_P_VCP_PVTPLL, 0, 7),
++	VCPCRU_RESET_OFFSET(SRST_A_AISP_BIU, 0, 8),
++	VCPCRU_RESET_OFFSET(SRST_H_AISP_BIU, 0, 9),
++	VCPCRU_RESET_OFFSET(SRST_CORE_AISP, 0, 13),
++
++	/* VCPCRU-->SOFTRST_CON01 */
++	VCPCRU_RESET_OFFSET(SRST_H_FEC, 1, 0),
++	VCPCRU_RESET_OFFSET(SRST_A_FEC, 1, 1),
++	VCPCRU_RESET_OFFSET(SRST_CORE_FEC, 1, 2),
++	VCPCRU_RESET_OFFSET(SRST_H_AVSP, 1, 3),
++	VCPCRU_RESET_OFFSET(SRST_A_AVSP, 1, 4),
++};
++
++void rv1126b_rst_init(struct device_node *np, void __iomem *reg_base)
++{
++	rockchip_register_softrst_lut(np,
++				      rv1126b_register_offset,
++				      ARRAY_SIZE(rv1126b_register_offset),
++				      reg_base + RV1126B_SOFTRST_CON(0),
++				      ROCKCHIP_SOFTRST_HIWORD_MASK);
++}
++
+-- 
+2.34.1
+
 
