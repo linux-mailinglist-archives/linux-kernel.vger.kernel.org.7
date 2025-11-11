@@ -1,171 +1,104 @@
-Return-Path: <linux-kernel+bounces-895997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19E8DC4F765
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 19:37:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BFF1C4F77A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 19:39:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 04DC64EFE53
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 18:37:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10ECF3BDC15
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 18:38:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B6E1284894;
-	Tue, 11 Nov 2025 18:37:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEBB3285C99;
+	Tue, 11 Nov 2025 18:38:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Td5CWsFi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Lklcwhcz"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95EF627EFEF;
-	Tue, 11 Nov 2025 18:37:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7174D2857C1
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 18:38:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762886248; cv=none; b=RkKNzgEGeXalz5CEtA0JHZ5zOyjly9YhRJGtxV9amza2YVDLFaLxlyoFbqOia5z993I+FIrbqkUUEWrkTnQkK6b4jgRX/YazyxedE59u4KtziHCFZgDZMvDSYlwX1v8vJyGvBDQK43WINUgQuLJf7UlcArgBqXKf8gJIL2nlk0w=
+	t=1762886327; cv=none; b=QDEzm+NRjXT4gNb6cxEPpOouacgnjJZlcQ3z4XVAsNXFHFMsQHEls79wt3QFz78MGhRn82cA8itPFn+KjvetsQEDxDU4AkDJfme0gza4RF6KBG/2ovMcb2+43LJWt2TlYpiC2q2rVlhDmbgeH5cS4ux/7dsmBv500u/etzF03fI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762886248; c=relaxed/simple;
-	bh=pgKLi07v3nAzgSWrbOhew+tkCftrGPnHwK+HWRmbZgY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lh672mAzq7P+NJmhBqbZL5/67OqpJTdhNeFQI/HrS2U6Hz2SJaTJlfy79szAhO7ZF4qedB0j8cVjbppojjjaGlc8LVe3sZXUUNUTBU7G6J/wA+cPpLobCLvb30kNHlAWdFwvfhERNRj8i4w3r97h+LNxAVWnaWhJPtHpTqmJoms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Td5CWsFi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A888C4CEF7;
-	Tue, 11 Nov 2025 18:37:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762886248;
-	bh=pgKLi07v3nAzgSWrbOhew+tkCftrGPnHwK+HWRmbZgY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Td5CWsFiCm4X1/AxMKmU39/vysxniGwqTFaV8jeP7qaIc3yIbF1rA/+YLuR6zMsf4
-	 TzZ7i3+8tluttQnfUp9v5hCiYFbUfU0MNj8NSDs8ANlJhbW4W1wJY+07jc+k52guAO
-	 tLNgouUqw99pq5Mv7o8Cs1G9BygfFX9HZXCykZdE6GK5yDbPMeX47V8ivCfBIFxsv3
-	 TL7BN7hwsQdaMGPH/4pVTNj9tPrV2p01diVJ3OygK6ut4ZJ7jQbmbEEeAoCcHctlDm
-	 aKX5cwajRuJEWXEH1AEUPJkIuxSttxv7QI5sfExLHhSH7t+d0CCfpkDGNvv+ag2N+K
-	 ObPnOLSezIrcQ==
-Date: Tue, 11 Nov 2025 18:37:19 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Michal Wilczynski <m.wilczynski@samsung.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Emil Renner Berthing <kernel@esmil.dk>,
-	Hal Feng <hal.feng@starfivetech.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Xingyu Wu <xingyu.wu@starfivetech.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>, Lee Jones <lee@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Icenowy Zheng <uwu@icenowy.me>,
-	Maud Spierings <maudspierings@gocontroll.com>,
-	Andy Yan <andyshrk@163.com>, Heiko Stuebner <heiko@sntech.de>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-phy@lists.infradead.org,
-	dri-devel@lists.freedesktop.org, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH RFC 00/13] drm: starfive: jh7110: Enable display subsystem
-Message-ID: <20251111-matriarch-diocese-b314e7bdaf81@spud>
-References: <CGME20251108010451eucas1p1c7bf340dbd2b1b7cbfb53d6debce7a2e@eucas1p1.samsung.com>
- <20251108-jh7110-clean-send-v1-0-06bf43bb76b1@samsung.com>
- <20251110-clang-baking-b8b27730356e@spud>
- <00e897dc-9966-439b-a74a-7604a1870027@samsung.com>
- <20251111-footing-eclair-332f5f0769f2@spud>
+	s=arc-20240116; t=1762886327; c=relaxed/simple;
+	bh=m6sTk8T64878pdyCXjz95N9hZFFiTrac4lxnmwKPPls=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=X3U0P2NNFZe12OupFEBBr2ZOD74VEtncR4VwL7fe6A997PWFp4feU2x9VHGsA9JHPlcWBoRdjRUgthbysYU4p5WsWUnx3uQhAOYsZRsl7mzoIBT0PYDec3PwZc/NFSoy59aD5ASUk7KPehsPgf8KJykOOHD3rjgCGj2ZDE4VEUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Lklcwhcz; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762886324;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Q9enfXg+0ycV2tTaXeBLF9cpw7nkyL9VYMhWpucnN4M=;
+	b=LklcwhczCIZRrX9d8eZK2Hd0uOcXNz8TUmzmjBKrn82mMgeaIK2JwM6jgZgVxvTsdHZBFI
+	t8kl4VM2H7WU2k/EqnLpBjLq2Btw3RDfk8XURWkbyzUgx2OJtV+aXo1vKnRiz1tIVw8FLV
+	0WMTvNyNHabx9A+bJE8yuuZZ2L1Uywc=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-595-I4RIVNJmPAOiKKq4B-z5CQ-1; Tue,
+ 11 Nov 2025 13:38:41 -0500
+X-MC-Unique: I4RIVNJmPAOiKKq4B-z5CQ-1
+X-Mimecast-MFC-AGG-ID: I4RIVNJmPAOiKKq4B-z5CQ_1762886319
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A41CF1955DD9;
+	Tue, 11 Nov 2025 18:38:38 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.87])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 8CD4F1800361;
+	Tue, 11 Nov 2025 18:38:33 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <1ce413b202ca7c008e077a6f1cfa88f94a3a7cbd.camel@redhat.com>
+References: <1ce413b202ca7c008e077a6f1cfa88f94a3a7cbd.camel@redhat.com> <IA4PR84MB4011FE5ABA934DEF08F1A263ABC3A@IA4PR84MB4011.NAMPRD84.PROD.OUTLOOK.COM> <501216.1749826470@warthog.procyon.org.uk> <CALrw=nGkM9V12y7dB8y84UHKnroregUwiLBrtn5Xyf3k4pREsg@mail.gmail.com> <de070353cc7ef2cd6ad68f899f3244917030c39b.camel@redhat.com> <3081793dc1d846dccef07984520fc544f709ca84.camel@HansenPartnership.com> <7ad6d5f61d6cd602241966476252599800c6a304.camel@redhat.com> <69775877d04b8ee9f072adfd2c595187997e59fb.camel@HansenPartnership.com> <3d650cc9ff07462e5c55cc3d9c0da72a3f2c5df2.camel@redhat.com> <534145.1762588015@warthog.procyon.org.uk> <IA4PR84MB4011485C0EFFFF9F2820A1BFABC1A@IA4PR84MB4011.NAMPRD84.PROD.OUTLOOK.COM>
+To: Simo Sorce <simo@redhat.com>
+Cc: dhowells@redhat.com, "Elliott, Robert (Servers)" <elliott@hpe.com>,
+    James Bottomley <James.Bottomley@HansenPartnership.com>,
+    Ignat Korchagin <ignat@cloudflare.com>,
+    Herbert Xu <herbert@gondor.apana.org.au>,
+    Stephan Mueller <smueller@chronox.de>,
+    "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+    Paul Moore <paul@paul-moore.com>, Lukas Wunner <lukas@wunner.de>,
+    Clemens Lang <cllang@redhat.com>,
+    David Bohannon <dbohanno@redhat.com>,
+    Roberto Sassu <roberto.sassu@huawei.com>,
+    "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+    "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+    "linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>,
+    "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: Module signing and post-quantum crypto public key algorithms
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="oEuULB+ZwvMAwWb+"
-Content-Disposition: inline
-In-Reply-To: <20251111-footing-eclair-332f5f0769f2@spud>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <990171.1762886312.1@warthog.procyon.org.uk>
+Date: Tue, 11 Nov 2025 18:38:32 +0000
+Message-ID: <990172.1762886312@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
+Simo Sorce <simo@redhat.com> wrote:
 
---oEuULB+ZwvMAwWb+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> If a defect in a signing algorithm is found you can simply distribute a
+> new kernel with modules resigned with a different algorithm.
 
-On Tue, Nov 11, 2025 at 06:14:48PM +0000, Conor Dooley wrote:
-> On Tue, Nov 11, 2025 at 04:33:28PM +0100, Michal Wilczynski wrote:
-> >=20
-> >=20
-> > On 11/10/25 20:35, Conor Dooley wrote:
-> > > On Sat, Nov 08, 2025 at 02:04:34AM +0100, Michal Wilczynski wrote:
-> > >> This series enables the display subsystem on the StarFive JH7110 SoC.
-> > >> This hardware has a complex set of dependencies that this series aim=
-s to
-> > >> solve.
-> > >>
-> > >> I believe this is a PHY tuning issue that can be fixed in the new
-> > >> phy-jh7110-inno-hdmi.c driver without changing the overall architect=
-ure.
-> > >> I plan to continue debugging these modes and will submit follow up f=
-ixes
-> > >> as needed.
-> > >>
-> > >> The core architectural plumbing is sound and ready for review.
-> > >>
-> > >> Notes:
-> > >> - The JH7110 does not have a centralized MAINTAINERS entry like the
-> > >>   TH1520, and driver maintainership seems fragmented. I have therefo=
-re
-> > >>   added a MAINTAINERS entry for the display subsystem and am willing=
- to
-> > >>   help with its maintenance.
-> > >=20
-> > > Yeah, bunch of different folks wrote the drivers, so lots of entries.
-> > > Pretty much all as you've done here, authors are responsible for the
-> > > individual components and Emil is the platform maintainer but
-> > > responsible for most drivers.
-> > >=20
-> > > Do you need any feedback dt wise on the RFC, or is it too likely that
-> > > we'll both waste our breath if the DRM folks don't approve of your
-> > > approach for the rest of this series?
-> >=20
-> > Hi Conor,
-> >=20
-> > Thank you for your response.
-> >=20
-> > That's a fair point about the risk of the DRM approach being rejected.
-> > While I can't be certain, I'm hopeful that part is relatively
-> > straightforward, as it primarily integrates other recently reviewed
-> > (though not yet merged) components like the inno-hdmi bridge and dc8200
-> > drivers.
-> >=20
-> > To be honest, I was more concerned that the DT part of the series would
-> > be more problematic. Given that, I would find it very helpful to get
-> > your feedback on the DT aspects now, if you have the time.
->=20
-> Right. You'll definitely want some actual DRM people to weigh in though
-> before making changes, I am really not familiar enough with this type of
-> hardware to know if the breakdown is correct.
+Probably more "have to" than "can".  The cert providing the composite key for
+both would have to be invalidated to stop it from being used - and invalidated
+by having it added to the UEFI dbx table.
 
-It looks generally sane to me chief, but as I said I am not really
-familiar enough with this sort of hardware to have a real take on it.
-Sorry, you'll need to get your affirmation about how you've laid stuff
-out elsewhere :/
+David
 
---oEuULB+ZwvMAwWb+
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaROCXwAKCRB4tDGHoIJi
-0lHNAP0VY2m9JP4EgIKWtYcUv/PdugQ015SJrRdoXUnsVhh14gEA7/E/wvGod2Wf
-uGM6z13gp3dI+KrJhyqfO1LThr8IXwE=
-=h9/B
------END PGP SIGNATURE-----
-
---oEuULB+ZwvMAwWb+--
 
