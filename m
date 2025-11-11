@@ -1,79 +1,85 @@
-Return-Path: <linux-kernel+bounces-895652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CBC0C4EAB8
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:05:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 52242C4EAE5
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:08:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AF973BDF65
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:43:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BCC942106E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:45:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 940063431EA;
-	Tue, 11 Nov 2025 14:41:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C5AF303C8D;
+	Tue, 11 Nov 2025 14:44:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RLPwo99M"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OfLER98K"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 821663009F8;
-	Tue, 11 Nov 2025 14:41:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C41DF25C818
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 14:44:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762872070; cv=none; b=NyAO5VbPRY/+QJHnWHJkcp/DZ8nEsc45nCwcD9Ga5vyzw811+lLKLCWnbssBkdd3/RgAci8R3e/SdXQA6446RfVYKlHG1RK1++MUm7Sx49NSXIlhBEcGQEDncDJRm/u/zWN0kLfCDYva5dzXutiztn/zHZ+ZXo7VkU4aHRtUtwc=
+	t=1762872272; cv=none; b=UejBsV8aHmyDZd9tiyBiRg65KvlhUEo/Uk0xVhsJDDYCTdG9eZ6A4d6n1dhRlhnBpYQYLodZEAjngTEfvUE6cYaA1jWmMmZO+vCb25G/EovrTFgj0uvCsgLgxlLrXVlzQBNJ+IVzaZ29GicP4X6FFgTIPeb8mrDHn4iuNEWRH8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762872070; c=relaxed/simple;
-	bh=iAH0LTL+4qRzuduo577LGKOMsbGbDY9vXHc/u0ctUVk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OIDO6rLXLL5PxvyNE3/DxXLkwC55mAiaf7kpQOFOl/v69nESUwqCO1AcyoLh4jwkj183WVhVk24szHJuYOa/s2GUoRhj4uXrb3Fvwydz5s7K/NCgOJRAje1RERICPjaPRSc8nzkTqRIt0Ls+Ur7eflsF1wsbR/gNEPkAFjnc+WQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RLPwo99M; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762872069; x=1794408069;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=iAH0LTL+4qRzuduo577LGKOMsbGbDY9vXHc/u0ctUVk=;
-  b=RLPwo99M9kjDOZ1rajhdNOQZYNXPA6tOuDY3CKj4FABAUvOys11/qo1g
-   PSIdH4o/GSkohkpv6yLwDVw27FAdVJ39lZyq2I2uwYHR6zBOQm2YwiI9s
-   ThLiRkMwUFHI+E4YJn+mxeSUzsk/TjMjCgWvJYIGzWaZQwNWqFmQCDuN/
-   6NmjAt276GI5TpYCf2gH7AzQDWbXi6Rek1lq2zQN7/bTmEP929xepWzlR
-   +VT9wnt/aEf8uqot4ZdU2YflRKpVtBYFvlc7/H8vzjaNYHHFt0tNu4vXp
-   DbZRIOwFF9Q+w39WaaJfZfdeZwUipe9qmlh8nNKAk9KaGW6fGmq+8jv60
-   Q==;
-X-CSE-ConnectionGUID: 0HSB53ecSm2Ofx84ONnjpg==
-X-CSE-MsgGUID: BoSdqC5jT4+/uZ/Hsq5SvQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11610"; a="68793478"
-X-IronPort-AV: E=Sophos;i="6.19,296,1754982000"; 
-   d="scan'208";a="68793478"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 06:41:08 -0800
-X-CSE-ConnectionGUID: LB+Qego2RbSri0Rhg7q2HA==
-X-CSE-MsgGUID: VODNQr1MTsKmoDbvJp0wRw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,296,1754982000"; 
-   d="scan'208";a="189407292"
-Received: from black.igk.intel.com ([10.91.253.5])
-  by fmviesa009.fm.intel.com with ESMTP; 11 Nov 2025 06:41:06 -0800
-Received: by black.igk.intel.com (Postfix, from userid 1003)
-	id 255AB98; Tue, 11 Nov 2025 15:41:05 +0100 (CET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Philipp Stanner <phasta@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-doc@vger.kernel.org,
+	s=arc-20240116; t=1762872272; c=relaxed/simple;
+	bh=7qZkm47msQiGC9wUZgC0Pw7Arnt/Pg1GJgT2faSx30g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=axOdzV0VIKduNn7/CfJ73DiABbrt49vQ8VAGv+Bd5kxulygspsNIQZ5RCKXdMiRoZBm+EYu7r2/ZLIt4og3yLlRNEInCNCFerIyaV7KP5ewlsaDxmxqMUTeJD0V4jLHyF0+nypFIYc7ah3yFkEGxqNbnHAnnKYaKm4D8SRnCP8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OfLER98K; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-640b4a52950so6319609a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 06:44:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762872269; x=1763477069; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=bSOY/KYVq1l+ZTGny5QvJvbkB22lOvmxEJPXtWJ9/7s=;
+        b=OfLER98Kku72VjtxBG2TiuqdF1tQgd4fcIv6dzrSNA8rR0m8JiKIQI6YuP5SrFpd4u
+         wWD6iOixcUT30VbY688npB/sox+G8QsYY62H0xrFOBUU2ZIdPXRwtJQOP9XELcu7tayX
+         KOK/fGcG8eQKPMBDrvUZRPjWK8DRZ2SL0siaOUXKEIb6y6WK6KGEokMkKbrZ1PbjagNM
+         SowoVkB6XVuupO12Kl2E4AvE58mU1qQuDeuSytx0x5iU5dLBjwLgXBMfRGqaLYRzEQir
+         YIoYzuqaDYFZk/lx6lKp1b6sQqrJjZbxz6Ck47RJzYRFnbXwrsjuh4lYsWWoR/5SagAN
+         n8lA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762872269; x=1763477069;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bSOY/KYVq1l+ZTGny5QvJvbkB22lOvmxEJPXtWJ9/7s=;
+        b=haRNNxlRmo5Vazf1QLlkWTeJ1526sYkicokq0noNiThDVOvWdwtJIyHZX9uV76YClK
+         aIVL9e2wp72tMv3Ve+/GlJ18c5+xVaBofgN64rX1Dtkc6RzR+ECOoUFhf/xFq3J6Ttyv
+         tp3r/oZKxinP13AKxjsEGTsZljQejucGo0BxwEXapvv4fJvCpEIAeQrFhsG2djy0rYLO
+         gy+CdVvTIguCy6KS6xLXYVMD0aHknBM7Eoj04eGpjgqourCD3/r06w30u3FNJwTCjzeQ
+         LdaDu9YQRnGTqQFK3HlNOCEWm+RUV+9X6Mz6Vv/r+OmtvNGL8j5kkDubQ9XAY5off6gC
+         /Rmw==
+X-Forwarded-Encrypted: i=1; AJvYcCVkcLZSKkwS8rLEObWKMDy4uNw7IIRER1srVddZ+7uKul3d8nQ+DZ6vGrdu8vl/cHlu0c91l7CpnA7RJ2I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9Qir48eIukqOhfEr2fBgQvv8E8XZWN5bbeNMGcpV2mUhCW+Xx
+	1d/U/AYOY1O0StiKOsStlf7tYy5YFWUz/F8xblvyLAE5370koeegaax0
+X-Gm-Gg: ASbGncsISF9m727SN4CdZ92592UHHTCYno5rc60H+JnI2EdsSZhwAWzN2XHU5oV9y1L
+	I72m3ngzDrSZ8ofnHQEdX9BUeGrJC76pfmurjOW8QtJu1eiYs5XTQPa3r9uM1kRmWUtOVqj8Etc
+	zslp0+BAQM34YHtX0Ezr2gcF4hfpsZRI/HdziM02eyxqigwDJuCdFqw+MbeAY0xNDtLQH8eX5MY
+	ren4jz2betTzCdN28/o05d6p3Pt+LXNMIGMtyKdhlY/92fjLoV9qHai/Wv5Gtqf0yCL/g1b6sVP
+	U9hplPRIsVbZbVWXSajPfANv8JeHmmXgDlh/bpcNrnIFLcOft5pLjp2iixV2jpNVPiC81EqJHfr
+	FInx+ZMmzhzcV582ve2MBB8wnh5QB9WIjJV+3oTUDD3/O1bXS09IU5BFIgoC/f/qmKbWQ4ZaGaw
+	l0Z5kyEA8lXV4Pcp36sJXFNZTzPje7oS66/KQSs1najagfBJgOljSoCr0Agw==
+X-Google-Smtp-Source: AGHT+IFLzfSIruVyhPseL6KcmAwxsMRRRVGHRvcttnUr4aeu2qzhk3FXByCABO44SZU6s6Hjteu1zA==
+X-Received: by 2002:a17:907:96a6:b0:b4e:d6e3:1670 with SMTP id a640c23a62f3a-b72e028c900mr970809766b.11.1762872268878;
+        Tue, 11 Nov 2025 06:44:28 -0800 (PST)
+Received: from fedora.tux.internal (85.191.71.118.dynamic.dhcp.aura-net.dk. [85.191.71.118])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bf97ea95sm1377118366b.44.2025.11.11.06.44.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Nov 2025 06:44:28 -0800 (PST)
+From: Bruno Thomsen <bruno.thomsen@gmail.com>
+To: linux-hwmon@vger.kernel.org
+Cc: Guenter Roeck <linux@roeck-us.net>,
+	Bruno Thomsen <bruno.thomsen@gmail.com>,
 	linux-kernel@vger.kernel.org
-Cc: Jonathan Corbet <corbet@lwn.net>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>
-Subject: [PATCH v1 2/2] devres: Move devm_alloc_percpu() and related to devres.h
-Date: Tue, 11 Nov 2025 15:39:58 +0100
-Message-ID: <20251111144104.910241-3-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20251111144104.910241-1-andriy.shevchenko@linux.intel.com>
-References: <20251111144104.910241-1-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH 1/2] hwmon: tmp421: check error when loading label from dt
+Date: Tue, 11 Nov 2025 15:44:05 +0100
+Message-ID: <20251111144406.7489-1-bruno.thomsen@gmail.com>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,71 +88,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Move devm_alloc_percpu() and related to devres.h where it belongs,
+Add error checking when loading temperature channel label defined
+in device tree. Handling of error from of_property_read_string()
+is inspired by lm90 driver and therefor contain same error string.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Bruno Thomsen <bruno.thomsen@gmail.com>
 ---
- include/linux/device.h        | 18 ------------------
- include/linux/device/devres.h | 16 ++++++++++++++++
- 2 files changed, 16 insertions(+), 18 deletions(-)
+ drivers/hwmon/tmp421.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/device.h b/include/linux/device.h
-index 0c6377f6631c..0be95294b6e6 100644
---- a/include/linux/device.h
-+++ b/include/linux/device.h
-@@ -281,24 +281,6 @@ int __must_check device_create_bin_file(struct device *dev,
- void device_remove_bin_file(struct device *dev,
- 			    const struct bin_attribute *attr);
+diff --git a/drivers/hwmon/tmp421.c b/drivers/hwmon/tmp421.c
+index 9537727aad9a..1eded169e843 100644
+--- a/drivers/hwmon/tmp421.c
++++ b/drivers/hwmon/tmp421.c
+@@ -381,7 +381,11 @@ static int tmp421_probe_child_from_dt(struct i2c_client *client,
+ 		return -EINVAL;
+ 	}
  
--/**
-- * devm_alloc_percpu - Resource-managed alloc_percpu
-- * @dev: Device to allocate per-cpu memory for
-- * @type: Type to allocate per-cpu memory for
-- *
-- * Managed alloc_percpu. Per-cpu memory allocated with this function is
-- * automatically freed on driver detach.
-- *
-- * RETURNS:
-- * Pointer to allocated memory on success, NULL on failure.
-- */
--#define devm_alloc_percpu(dev, type)      \
--	((typeof(type) __percpu *)__devm_alloc_percpu((dev), sizeof(type), \
--						      __alignof__(type)))
--
--void __percpu *__devm_alloc_percpu(struct device *dev, size_t size,
--				   size_t align);
--
- struct device_dma_parameters {
- 	/*
- 	 * a low level driver may set these to teach IOMMU code about
-diff --git a/include/linux/device/devres.h b/include/linux/device/devres.h
-index 8c5f57e0d613..a2186893b574 100644
---- a/include/linux/device/devres.h
-+++ b/include/linux/device/devres.h
-@@ -96,6 +96,22 @@ devm_kvasprintf(struct device *dev, gfp_t gfp, const char *fmt, va_list ap);
- char * __printf(3, 4) __malloc
- devm_kasprintf(struct device *dev, gfp_t gfp, const char *fmt, ...);
+-	of_property_read_string(child, "label", &data->channel[i].label);
++	err = of_property_read_string(child, "label", &data->channel[i].label);
++	if (err == -ENODATA || err == -EILSEQ) {
++		dev_err(dev, "invalid label property in %pOFn\n", child);
++		return err;
++	}
+ 	if (data->channel[i].label)
+ 		data->temp_config[i] |= HWMON_T_LABEL;
  
-+/**
-+ * devm_alloc_percpu - Resource-managed alloc_percpu
-+ * @dev: Device to allocate per-cpu memory for
-+ * @type: Type to allocate per-cpu memory for
-+ *
-+ * Managed alloc_percpu. Per-cpu memory allocated with this function is
-+ * automatically freed on driver detach.
-+ *
-+ * RETURNS:
-+ * Pointer to allocated memory on success, NULL on failure.
-+ */
-+#define devm_alloc_percpu(dev, type)      \
-+	((typeof(type) __percpu *)__devm_alloc_percpu((dev), sizeof(type), __alignof__(type)))
-+
-+void __percpu *__devm_alloc_percpu(struct device *dev, size_t size, size_t align);
-+
- unsigned long devm_get_free_pages(struct device *dev, gfp_t gfp_mask, unsigned int order);
- void devm_free_pages(struct device *dev, unsigned long addr);
- 
+
+base-commit: 284922f4c563aa3a8558a00f2a05722133237fe8
 -- 
-2.50.1
+2.51.1
 
 
