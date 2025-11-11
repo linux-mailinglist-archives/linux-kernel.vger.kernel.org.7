@@ -1,156 +1,139 @@
-Return-Path: <linux-kernel+bounces-894503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA3F8C4B2EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 03:16:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26711C4B303
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 03:18:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9FF0B4E10A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 02:16:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B774118906F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 02:18:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68C64346A1A;
-	Tue, 11 Nov 2025 02:15:58 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CC56157480
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 02:15:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07324347BA3;
+	Tue, 11 Nov 2025 02:17:58 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A39B03446C5;
+	Tue, 11 Nov 2025 02:17:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762827358; cv=none; b=jgSpg7woY8A7Vd89oNijhkVn6tlT0TxRJDT0+3yejfLsxisOVAewcpQQKa/X64S+EckxXOhA3SFawC+u3vR/549+fia+c2YYLjOnuOwTxNhs8ZFYMqSM/PSgveCu2fNa7XZufCptDCrDoxDNPp0OTkGAklX/m9fYMHAqyYAGJD8=
+	t=1762827477; cv=none; b=D9ScVo+1Cms2iGcS1KxLVVbKNS7DJOLFHgvS1kN1ycCDYHOP/e9RadtELfXvBuvj9zijAGOx6IdjAUfVr3rKgW+wLldDRynHZYXvQwCibswg/dWtMJJGXqmPFPJdrmeH+N9S4gVebIuvBZ123AI/MZHpDECwxyLGvi6S8ippKBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762827358; c=relaxed/simple;
-	bh=RkxtuZOdpozMzVOV3VH4K2+zA3GaMGI7DeLYv83NpkQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cYVHVCOi8OWmthRLy6NQuwf62WGvX+g/15OULLnyMnCiv0n/yVZzOYpROW+FfkX4ZpT7581XLligndHo8dYB27fp/Ac1wrET4jrqcNLwKb4UKyeO6DMbMkaXSNW9mCjyGd/m5gQVUz3DcepeSRxzP7LJ5O21ikgyOZt8QtYWCzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from DESKTOP-L0HPE2S (unknown [124.16.141.245])
-	by APP-05 (Coremail) with SMTP id zQCowABHTW5OnBJpAlZOAA--.22027S2;
-	Tue, 11 Nov 2025 10:15:43 +0800 (CST)
-From: Haotian Zhang <vulab@iscas.ac.cn>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Kuan-Wei Chiu <visitorckw@gmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	Haotian Zhang <vulab@iscas.ac.cn>
-Subject: [PATCH v2] debug: Fix a mixed use of NULL and error pointers
-Date: Tue, 11 Nov 2025 10:15:21 +0800
-Message-ID: <20251111021521.1906-1-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.50.1.windows.1
-In-Reply-To: <20251110075746.1680-1-vulab@iscas.ac.cn>
-References: <20251110075746.1680-1-vulab@iscas.ac.cn>
+	s=arc-20240116; t=1762827477; c=relaxed/simple;
+	bh=bYsZjtJawtkd8QLTuI04PFok1Qb8IgGzTJfuLXKRcDU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QWDqb9yRMcvMmzx8HKJNLCgil5gMp1emQgpqWgHfBak+Kkux8umIx700O8vladKTRsxE91oNWEYX6O/2b3h0NEzAPySbsxAljy7+GMzHsrtSY/F1zgscAlhNPz+zjZD8IuD7Lz02pmo3H1aodCYS9XIUKP8Y2jw95lREm08TpoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-c45ff70000001609-71-69129ccbaebc
+Date: Tue, 11 Nov 2025 11:17:41 +0900
+From: Byungchul Park <byungchul@sk.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: linux-mm@kvack.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel_team@skhynix.com,
+	harry.yoo@oracle.com, ast@kernel.org, daniel@iogearbox.net,
+	davem@davemloft.net, hawk@kernel.org, john.fastabend@gmail.com,
+	sdf@fomichev.me, saeedm@nvidia.com, leon@kernel.org,
+	tariqt@nvidia.com, mbloch@nvidia.com, andrew+netdev@lunn.ch,
+	edumazet@google.com, pabeni@redhat.com, akpm@linux-foundation.org,
+	david@redhat.com, lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org,
+	surenb@google.com, mhocko@suse.com, horms@kernel.org,
+	jackmanb@google.com, hannes@cmpxchg.org, ziy@nvidia.com,
+	ilias.apalodimas@linaro.org, willy@infradead.org,
+	brauner@kernel.org, kas@kernel.org, yuzhao@google.com,
+	usamaarif642@gmail.com, baolin.wang@linux.alibaba.com,
+	almasrymina@google.com, toke@redhat.com, asml.silence@gmail.com,
+	bpf@vger.kernel.org, linux-rdma@vger.kernel.org,
+	sfr@canb.auug.org.au, dw@davidwei.uk, ap420073@gmail.com,
+	dtatulea@nvidia.com
+Subject: Re: [RFC mm v5 1/2] page_pool: check nmdesc->pp to see its usage as
+ page pool for net_iov not page-backed
+Message-ID: <20251111021741.GB51630@system.software.com>
+References: <20251106173320.2f8e683a@kernel.org>
+ <20251107015902.GA3021@system.software.com>
+ <20251106180810.6b06f71a@kernel.org>
+ <20251107044708.GA54407@system.software.com>
+ <20251107174129.62a3f39c@kernel.org>
+ <20251108022458.GA65163@system.software.com>
+ <20251107183712.36228f2a@kernel.org>
+ <20251110010926.GA70011@system.software.com>
+ <20251111014052.GA51630@system.software.com>
+ <20251110175650.78902c74@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowABHTW5OnBJpAlZOAA--.22027S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxXr18Wry5WFWUZrWDXFWfGrg_yoW5AF1xpw
-	1SgasFy3yrtr1fXr4kAa1kCw13Gas3urnrCF9Y93sFyrZ8ZF43KF1rtryq9F1DurWxZFyU
-	AryjkF93ur4UAaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvm14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-	6r4UJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r
-	xl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
-	6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr
-	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkF7I0En4kS14v2
-	6r126r1DMxkIecxEwVAFwVW8JwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJV
-	W8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF
-	1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6x
-	IIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvE
-	x4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnU
-	UI43ZEXa7VUjAwIDUUUUU==
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiBg0DA2kSgPV18QAAsB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251110175650.78902c74@kernel.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SXUxTZxjH95739JxDY5PXivqu7EI7jQmJ+JGaPCRmEm88F86Y6GKiF3qU
+	EzlaqraAsGWxSLOJWlSUCLUzdR+KgKJF+ahgFBAVgxAUPW6s1aowHRSkFflS1rIYvfvn+f+f
+	3/O/eASsb9UYBMWSIVstktnIaVlt/7RfF95z65XF718ZwF1ZwUH5SDace1qrgdGKXgbcZdUI
+	IqN/8TDZ0IIg3Hybg3+bhhD8dmYYg7vdwcLbyjEMdb5eBK+LL3DwsiXIQ7n3Wwic7WGh/uca
+	DMEjdzhwOsYxNIyGeNhfWxoFV9l56Kgu0MCJsT8w1Nif8vDA5+bAXzGpgZ5GJwt3XedZGCxq
+	xhAoSIEWzywYvteHoLmyhoHhw79w0FXiY+BqQxcPxzs9HDx3BBB0NgVZKJo4wMGp3AIE4yNR
+	ZOhoRAOnbvn5lCQxV1U5salvAItXzj9hxEfFx1hRvd7KiHWuv3nR480Uq0oTxYNqJxa9Zfmc
+	6B0q5MXuR/WceKd4nBXrniWLdbVhRnTmhbi1Mzdql6fKZiVLti76Zos2zec5xu8+qc1uc/xg
+	R2P8QRQnUGKik++D7Ed98kGEi2mWzKf54dM4pjmygKrq6JSOJ/Ooo6okmtcKmAzytFj1a2LG
+	DJJBBwfs0ZAg6AhQe0Aby+hJNaa/P+mbWtaR6fRuyYupY5gkUvXDKyaWxySBnvsgxMZxZAkt
+	zA1OdZhJvqY3qm8zMQ4leXH0z4cvmP+LfklvlqrsUURcn2Fdn2Fdn7AehMuQXrFkpUuK2ZSU
+	lmNRspO27Ur3ouiHnf1xYlMtGupY14iIgIzTdOo/0xW9Rsqy5aQ3IipgY7xuYitR9LpUKed7
+	2bprszXTLNsaUYLAGmfrlg7vTdWT7VKGvFOWd8vWjy4jxBnsaH9h/QrTMs2NpIsJY93zTKS/
+	3nitYUD6aXHAMBnfHX5+IC3SdV+2ODe0P043HCrvf7PpZoi5orwLrTNfCqsj9lZpx57Vc/K2
+	PzalXNv63ZEVMy5/1Z45d5V/QXbyF7bImlUP12du2cy0JYcPSb0nmjp6Vq4vUtr8Vanh/Ouv
+	W52+fUbWliYtScRWm/Qf6eEt3l0DAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SbUiTaxjHuZ/7eXO0uJvLngoi1jl4kNSCoit6YRSd7hMV5/SlwzlBTn3I
+	ka7azDSJZi0yT3o0i3StWlRmuhKmzRcywi3NpBcU5enNlb2oJTZziVN7cULUtx/X9f/9uT5c
+	Ita4uDmi0ZQum02GVB2vYlWbVxyOvefQGBcVP1gBjioXD5WjmXDlRR0HIVcvA44KD4Jg6KkA
+	XxubEQz7Wnh47/2I4OKFEQyOhzYWPlWNYahv6EXwruQaD2+aewSodG8Cf9lbFm4ercXQ8/9d
+	HvJt4xgaQ4MCHKornyyutgrgPdvKwSNPAQcnxy5jqLW+EKCjwcFDt+srB2+b8llotV9lIXDK
+	h8FfoIdmZxSMtA0g8FXVMjBy/CwPnaUNDNxo7BSguN3JwyubH0G7t4eFUxO5PJzJKUAwPjpZ
+	OVgY5ODMnW5BH09zFIWn3oEPmNZcfczQrpIiliq37jG03v5coE73XlpdHkPzlHZM3RXHeOr+
+	eEKgz7pu8vRuyThL618up/V1wwzNPzzI/xn1j2plspxqzJDN8asTVCkNziJh92lV5n1bthWN
+	CXkoQpTIEul0R5APM0t+lY4Nn8Nh5km0pCihKdaSXyRbdSmbh1QiJgFBKlG6ufAikqRLgQ/W
+	yZAoqglIVr8qnNEQD5YuPR6YktVkhtRa+poNMyYxkvKlnwnnMZkrXfkihscRZLF0Iqdn6oaZ
+	ZIF029PCFCK1/Sfb/pNt/2E7Ea5AWqMpI81gTF0aZ9mZkmUyZsYl7Upzo8kfKjswUVSHgh3r
+	mxARkW6aWumbYdRwhgxLVloTkkSs06onEolRo042ZO2Xzbu2m/emypYmNFdkdbPUG7bKCRqy
+	w5Au75Tl3bL5+5YRI+ZYUey69Y7/MqJ+S6Lbsmfrn5VOd81v4/ZfH++NWxZ5Z2joZP+nls9b
+	RufFayv8f5H3Pl1fdeXB7AjTnn/XxBaeS/o9cXVie/SryH0b9nkclsDaRUs3Thvq7YrUdp4P
+	BIs1n1f6juhzvZbcZfq/3/Wte7KwrKhM1fbHteTQqpqhuGHzqukHdawlxbA4Bpsthm+MZrNg
+	PwMAAA==
+X-CFilter-Loop: Reflected
 
-The lookup_object_or_alloc() function currently returns either error
-pointers (ERR_PTR(-ENOENT)) or NULL on allocation failure. Mixing error
-pointers and NULL is confusing and makes the code harder to maintain.
-Change lookup_object_or_alloc() to consistently return error pointers
-for all error cases by returning ERR_PTR(-ENOMEM) instead of NULL when
-allocation fails.
+On Mon, Nov 10, 2025 at 05:56:50PM -0800, Jakub Kicinski wrote:
+> On Tue, 11 Nov 2025 10:40:52 +0900 Byungchul Park wrote:
+> > > > I understand the end goal. I don't understand why patch 1 is a step
+> > > > in that direction, and you seem incapable of explaining it. So please
+> > > > either follow my suggestion on how to proceed with patch 2 without
+> > >
+> > > struct page and struct netmem_desc should keep difference information.
+> > > Even though they are sharing some fields at the moment, it should
+> > > eventually be decoupled, which I'm working on now.
+> >
+> > I'm removing the shared space between struct page and struct net_iov so
+> > as to make struct page look its own way to be shrinked and let struct
+> > net_iov be independent.
+> >
+> > Introduing a new shared space for page type is non-sense.  Still not
+> > clear to you?
+> 
+> I've spent enough time reasoning with out and suggesting alternatives.
 
-Update all three call sites (__debug_object_init, debug_object_activate,
-and debug_object_assert_init) to use IS_ERR() for error checking and
-handle -ENOMEM by calling debug_objects_oom().
+I'm not trying to be arguing but trying my best to understand you and
+want to adopt your opinion.  However, it's not about objection but I
+really don't understand what you meant.  Can anyone explain what he
+meant who understood?
 
-Fixes: 63a759694eed ("debugobject: Prevent init race with static objects")
-Suggested-by: Kuan-Wei Chiu <visitorckw@gmail.com>
-Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
----
-Changes in v2:
-  -Make error handling consistent across all call sites as suggested
-   by Kuan-Wei Chiu
----
- lib/debugobjects.c | 23 +++++++++++++----------
- 1 file changed, 13 insertions(+), 10 deletions(-)
+	Byungchul
 
-diff --git a/lib/debugobjects.c b/lib/debugobjects.c
-index 7f50c4480a4e..d2d1979e2d12 100644
---- a/lib/debugobjects.c
-+++ b/lib/debugobjects.c
-@@ -691,7 +691,7 @@ static struct debug_obj *lookup_object_or_alloc(void *addr, struct debug_bucket
- 
- 	/* Out of memory. Do the cleanup outside of the locked region */
- 	debug_objects_enabled = false;
--	return NULL;
-+	return ERR_PTR(-ENOMEM);
- }
- 
- static void debug_objects_fill_pool(void)
-@@ -741,9 +741,10 @@ __debug_object_init(void *addr, const struct debug_obj_descr *descr, int onstack
- 	raw_spin_lock_irqsave(&db->lock, flags);
- 
- 	obj = lookup_object_or_alloc(addr, db, descr, onstack, false);
--	if (unlikely(!obj)) {
-+	if (IS_ERR(obj)) {
- 		raw_spin_unlock_irqrestore(&db->lock, flags);
--		debug_objects_oom();
-+		if (PTR_ERR(obj) == -ENOMEM)
-+			debug_objects_oom();
- 		return;
- 	}
- 
-@@ -818,11 +819,13 @@ int debug_object_activate(void *addr, const struct debug_obj_descr *descr)
- 	raw_spin_lock_irqsave(&db->lock, flags);
- 
- 	obj = lookup_object_or_alloc(addr, db, descr, false, true);
--	if (unlikely(!obj)) {
--		raw_spin_unlock_irqrestore(&db->lock, flags);
--		debug_objects_oom();
--		return 0;
--	} else if (likely(!IS_ERR(obj))) {
-+	if (IS_ERR(obj)) {
-+		if (PTR_ERR(obj) == -ENOMEM) {
-+			raw_spin_unlock_irqrestore(&db->lock, flags);
-+			debug_objects_oom();
-+			return 0;
-+		}
-+	} else {
- 		switch (obj->state) {
- 		case ODEBUG_STATE_ACTIVE:
- 		case ODEBUG_STATE_DESTROYED:
-@@ -1007,11 +1010,11 @@ void debug_object_assert_init(void *addr, const struct debug_obj_descr *descr)
- 	raw_spin_lock_irqsave(&db->lock, flags);
- 	obj = lookup_object_or_alloc(addr, db, descr, false, true);
- 	raw_spin_unlock_irqrestore(&db->lock, flags);
--	if (likely(!IS_ERR_OR_NULL(obj)))
-+	if (!IS_ERR(obj))
- 		return;
- 
- 	/* If NULL the allocation has hit OOM */
--	if (!obj) {
-+	if (PTR_ERR(obj) == -ENOMEM) {
- 		debug_objects_oom();
- 		return;
- 	}
--- 
-2.50.1.windows.1
-
+> If you respin this please carry:
+> 
+> Nacked-by: Jakub Kicinski <kuba@kernel.org>
+> 
+> Until I say otherwise.
 
