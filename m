@@ -1,153 +1,234 @@
-Return-Path: <linux-kernel+bounces-894895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8B77C4C669
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:30:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D4F3C4C65D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:29:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 23CF44F9CF1
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 08:21:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 208EC420158
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 08:22:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81DE22BE634;
-	Tue, 11 Nov 2025 08:21:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A92E2E62D9;
+	Tue, 11 Nov 2025 08:22:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pXATFdM+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="1l6Vgn9W";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QT/2PNIh";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="AbCJLGaq";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="RyY/sz17"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4CF6242D9B;
-	Tue, 11 Nov 2025 08:21:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA3DF27B34C
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 08:22:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762849299; cv=none; b=JBZ9lIbb4YFC/H2Fvs6NMovkW6ezj/k/l4t2/nhItqwd3jY7jLTWnknhlyLC7vvQaGBF71tVWMuypANM30O6wtx8wEvDjkXQ2qjQKieeQ6o1/wv717I5jrOdCCs2AYDxDOXeLdOOdvEGasbQRcz+9CLxB89VB/LZ8A5C7y7ylWE=
+	t=1762849325; cv=none; b=FLiCrOeE3rj/0Q3GdJx35atJoa51Dm3sVBKOPmCjLo3KhIo0/ommJJk3HOpjJVEli10N2GNIT3XBlR2DYSNp3QpbA8TtGTlQ9g6zZ4Ym5auvXzzlb8ntlauYvkbyehvwlhP2V/u2vf98qRBlGX6G+RmKrGewq9Py/gq6a9lGSeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762849299; c=relaxed/simple;
-	bh=aCQuOGkikv5hgnyKGP6Fi4W/5XgIRye2xMslVLrvjM8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=M+F9ssvgJs40hfekUjGaRbJFrjenZEqMDrvIdV6z75MHvEDo0fvtIcu9zx6Ba3L3+AroPm5aWsZTML5CIDZWGSMPlx9vH4DqJeTMr8JLYsAs2m418u1xn0EsYdqrEiwvlLdv5ERwzDUJVkJZqbOUa6oCzH2rcf11nwJ+aTVXPYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pXATFdM+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2044C116B1;
-	Tue, 11 Nov 2025 08:21:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762849299;
-	bh=aCQuOGkikv5hgnyKGP6Fi4W/5XgIRye2xMslVLrvjM8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=pXATFdM+erPv1xuWtoe27q4KL3TqUmiudcpDiVNSHQ6ElQGoBEhXsQEqxveIItB9/
-	 daYeGRSyNpyNGX1UvCXP/lQXz8Qvn/cIoFM+UIEApv1wKeMw+NM6269jgcHGunnrpL
-	 4dQifDcVDJrisGPUGNYYzSEpkw2OFUkwzMYfkGuRZO7eQwMMUMA0Ju14kScfnWnKop
-	 14jiUQdLADfC8aYjXNWkiGzR8KC6+Gt5RLd0Tg2uzxZuOfcnNC/UHcbDDcWftd3Upm
-	 LocEsdPAyO0E88JrTKV6nrFhyzIfa8kMhEzU8QeorALKlBddPA41jjyebtXnDcmO39
-	 8ygnKZx2qte4A==
-Message-ID: <28eea826-09e4-4b0c-8845-50d4cf9bac7e@kernel.org>
-Date: Tue, 11 Nov 2025 09:21:35 +0100
+	s=arc-20240116; t=1762849325; c=relaxed/simple;
+	bh=SvnP/2kFGpZb/rH94jpz0sj8LOr5nXGQyvKYmHrDiuI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h2VXTQXPDiAZABor6Qwwpm/vN/j6wselaEojd/G1tzRd/792KsDilJcfhzGaJYU4js2VjXbICboZJFG1A85r0mdvQynHSjs/ebdeD05Mp1togy+u/3qh+ZYDU1w1Nge7q/ajdYd/QJ/nT5lA2FTks6fh6To5vbXNYaehOLrYHus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=1l6Vgn9W; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QT/2PNIh; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=AbCJLGaq; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=RyY/sz17; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 6505D21C07;
+	Tue, 11 Nov 2025 08:21:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762849316; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Zk9wMRFfHEVY2Jm5yWIcHNEmM7zAyv2N5Xyuix1WNEk=;
+	b=1l6Vgn9WuDnIVY8fN9JTLLXcOXhPNZ/txVKCNeCQXz8lNQKxcGgZ5RHOGCmUpcUZfeAhvZ
+	tZUQHm9PbO7gZT8wHfANKKKrny7A3QfnBuafAv1jwlWPgi1eHjg0ciMSSfZrbpKLoP3MMj
+	LcJ24RwY8khNL+BaWAOGniEwf+VczVA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762849316;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Zk9wMRFfHEVY2Jm5yWIcHNEmM7zAyv2N5Xyuix1WNEk=;
+	b=QT/2PNIhRcN83djfbdXY8eHQHhwe44W/Lqt/qVnmsyKbCXLgun5Vsr/UY421bk2LZtOG2c
+	kJq3bX9mePNA0nDQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=AbCJLGaq;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="RyY/sz17"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762849315; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Zk9wMRFfHEVY2Jm5yWIcHNEmM7zAyv2N5Xyuix1WNEk=;
+	b=AbCJLGaqGks2fAJ4QfvuAr0stExAKigxzPX2Ylv4jUv7YiIF90Iw9d4PD3nDIjLWIZZefI
+	kbupPB2rjlIl26ubgX54cXy9GiI7x0k4GOeLPh+/7CpDAhLV75o+NOoJ/7vj20cRFKbGEs
+	Eaak5fF0bOZHq4BV+GfLSsmStPHxkqc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762849315;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Zk9wMRFfHEVY2Jm5yWIcHNEmM7zAyv2N5Xyuix1WNEk=;
+	b=RyY/sz17uwrCn38hEV5+pNuvOhb4TThKBMyAwE4aXpFkTz2aFp6umpRVwugJMcTGEIOaMF
+	Imb6MAhiZ2E9ZxCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 59B8314869;
+	Tue, 11 Nov 2025 08:21:55 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id tpTeFSPyEmnHKwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 11 Nov 2025 08:21:55 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id E6D2AA28C8; Tue, 11 Nov 2025 09:21:50 +0100 (CET)
+Date: Tue, 11 Nov 2025 09:21:50 +0100
+From: Jan Kara <jack@suse.cz>
+To: Andrei Vagin <avagin@google.com>
+Cc: Christian Brauner <brauner@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH] fs/namespace: correctly handle errors returned by
+ grab_requested_mnt_ns
+Message-ID: <qfo4k2dkvfw3nhttuw63xhhlar2ixupi37uk6uskctt3672ntf@3mtjgep63msk>
+References: <20251111062815.2546189-1-avagin@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: HID: i2c-hid: elan: Introduce FocalTech
- FT8112
-To: =?UTF-8?B?RGFuaWVsIFBlbmco5b2t5Y2a54WcX1BlZ2F0cm9uKQ==?=
- <Daniel_Peng@pegatroncorp.com>,
- "treapking@chromium.org" <treapking@chromium.org>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
- "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- =?UTF-8?B?QXNoZXIgSHVhbmco6buD6YCy5Y2XX1BlZ2F0cm9uKQ==?=
- <Asher_Huang@pegatroncorp.com>,
- "daniel_peng@pegatron.corp-partner.google.com"
- <daniel_peng@pegatron.corp-partner.google.com>
-References: <20251111093426.1.I76ee34ac45e1469dbeb11de0d1e47d794af7dc88@changeid>
- <CAEXTbpc9=Gt7QrFrtV60+EvKdmBGsVpJxg7yYaa6HfuGGB3OqQ@mail.gmail.com>
- <SEZPR06MB67427DD182968980F4C93C08E7CFA@SEZPR06MB6742.apcprd06.prod.outlook.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <SEZPR06MB67427DD182968980F4C93C08E7CFA@SEZPR06MB6742.apcprd06.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251111062815.2546189-1-avagin@google.com>
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 6505D21C07
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Score: -4.01
 
-On 11/11/2025 08:50, Daniel Peng(彭博煜_Pegatron) wrote:
-> Hi Pin-yen,
+On Tue 11-11-25 06:28:15, Andrei Vagin wrote:
+> grab_requested_mnt_ns was changed to return error codes on failure, but
+> its callers were not updated to check for error pointers, still checking
+> only for a NULL return value.
 > 
-> I had re-submitted the 2 CLs to upstream. Please refer the attachments.
-
-No, you duplicated them.
-
-Please version your patches correctly.
-
-
-
+> This commit updates the callers to use IS_ERR() or IS_ERR_OR_NULL() and
+> PTR_ERR() to correctly check for and propagate errors.
 > 
->> +maintainers:
->> +  - Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> Fixes: 7b9d14af8777 ("fs: allow mount namespace fd")
+> Cc: Christian Brauner <brauner@kernel.org>
+> Signed-off-by: Andrei Vagin <avagin@google.com>
+
+Looks good. Feel free to add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
+> ---
+>  fs/namespace.c | 23 ++++++++++++++---------
+>  1 file changed, 14 insertions(+), 9 deletions(-)
 > 
-> List yourself as the maintainer of this binding file instead of the subsystem maintainer.
-> [Daniel] What your mean is maintainers in this file should be Me right?(as below)
-
-I don't understand what is the quote here and what is your response.
-
-This is unreadable.
-
-Please use STANDARD EMAIL format, not some odd Outlook style. We don't
-accept here Outlook or other crappy webclients.
-
+> diff --git a/fs/namespace.c b/fs/namespace.c
+> index d82910f33dc4..9124465dca55 100644
+> --- a/fs/namespace.c
+> +++ b/fs/namespace.c
+> @@ -144,8 +144,10 @@ static inline struct mnt_namespace *node_to_mnt_ns(const struct rb_node *node)
+>  
+>  static void mnt_ns_release(struct mnt_namespace *ns)
+>  {
+> +	if (IS_ERR_OR_NULL(ns))
+> +		return;
+>  	/* keep alive for {list,stat}mount() */
+> -	if (ns && refcount_dec_and_test(&ns->passive)) {
+> +	if (refcount_dec_and_test(&ns->passive)) {
+>  		fsnotify_mntns_delete(ns);
+>  		put_user_ns(ns->user_ns);
+>  		kfree(ns);
+> @@ -5756,8 +5758,10 @@ static struct mnt_namespace *grab_requested_mnt_ns(const struct mnt_id_req *kreq
+>  	if (kreq->mnt_ns_id && kreq->spare)
+>  		return ERR_PTR(-EINVAL);
+>  
+> -	if (kreq->mnt_ns_id)
+> -		return lookup_mnt_ns(kreq->mnt_ns_id);
+> +	if (kreq->mnt_ns_id) {
+> +		mnt_ns = lookup_mnt_ns(kreq->mnt_ns_id);
+> +		return mnt_ns ? : ERR_PTR(-ENOENT);
+> +	}
+>  
+>  	if (kreq->spare) {
+>  		struct ns_common *ns;
+> @@ -5801,8 +5805,8 @@ SYSCALL_DEFINE4(statmount, const struct mnt_id_req __user *, req,
+>  		return ret;
+>  
+>  	ns = grab_requested_mnt_ns(&kreq);
+> -	if (!ns)
+> -		return -ENOENT;
+> +	if (IS_ERR(ns))
+> +		return PTR_ERR(ns);
+>  
+>  	if (kreq.mnt_ns_id && (ns != current->nsproxy->mnt_ns) &&
+>  	    !ns_capable_noaudit(ns->user_ns, CAP_SYS_ADMIN))
+> @@ -5912,8 +5916,8 @@ static void __free_klistmount_free(const struct klistmount *kls)
+>  static inline int prepare_klistmount(struct klistmount *kls, struct mnt_id_req *kreq,
+>  				     size_t nr_mnt_ids)
+>  {
+> -
+>  	u64 last_mnt_id = kreq->param;
+> +	struct mnt_namespace *ns;
+>  
+>  	/* The first valid unique mount id is MNT_UNIQUE_ID_OFFSET + 1. */
+>  	if (last_mnt_id != 0 && last_mnt_id <= MNT_UNIQUE_ID_OFFSET)
+> @@ -5927,9 +5931,10 @@ static inline int prepare_klistmount(struct klistmount *kls, struct mnt_id_req *
+>  	if (!kls->kmnt_ids)
+>  		return -ENOMEM;
+>  
+> -	kls->ns = grab_requested_mnt_ns(kreq);
+> -	if (!kls->ns)
+> -		return -ENOENT;
+> +	ns = grab_requested_mnt_ns(kreq);
+> +	if (IS_ERR(ns))
+> +		return PTR_ERR(ns);
+> +	kls->ns = ns;
+>  
+>  	kls->mnt_parent_id = kreq->mnt_id;
+>  	return 0;
+> -- 
+> 2.51.2.1041.gc1ab5b90ca-goog
 > 
-> 
-> This e-mail and its attachment may contain information that is confidential or privileged, and are solely for the use of the individual to whom this e-mail is addressed. If you are not the intended recipient or have received it accidentally, please immediately notify the sender by reply e-mail and destroy all copies of this email and its attachment. Please be advised that any unauthorized use, disclosure, distribution or copying of this email or its attachment is strictly prohibited.
-
-Don't ever send such confidential disclaimers. This means we should be
-ignoring your messages. Are you sure you want that?
-
-
-Best regards,
-Krzysztof
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
