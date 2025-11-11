@@ -1,38 +1,38 @@
-Return-Path: <linux-kernel+bounces-895000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A80DC4CACF
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:32:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77925C4CA9F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:30:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F9693BAEF8
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:30:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4406A18843B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:31:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF8262F28E9;
-	Tue, 11 Nov 2025 09:30:18 +0000 (UTC)
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 422542EB876;
-	Tue, 11 Nov 2025 09:30:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69E1D2ED168;
+	Tue, 11 Nov 2025 09:30:25 +0000 (UTC)
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06A87252917;
+	Tue, 11 Nov 2025 09:30:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762853418; cv=none; b=IeaFDizTL1R/5Kx6uQSH2lOEWFcsZtIXE1v89WJse3vWbMCkHHefQ3MayJ4xoQrIdxMkqVojn9NpExNZQtM4Kp5FzdgAc79k71LRjs0zWt8UdLHBFaV38/lR4O62FTZZkMh3HcFtYqXs22llBN5JRUgmbTiloLxUWADLPZU67PM=
+	t=1762853425; cv=none; b=rLOKWwZs4ynHRz2qy65T+xfZVnnAtpM2s29Z5FXC0cWNCchdJAedsTJPXCD+YoXIhkdOG7tRmcQJeFrETdtQtSAY5i7lk0w8GMApuOMd3e4RdT82rdk0IbEO/BfiHRXSbWKMq6pcJjreSvJdI4ppxtUnwEDVD7TK+sX3Hqo6PTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762853418; c=relaxed/simple;
-	bh=o5m4goPJ2eSup86Bocx31zZgJ6XWkIFR648iljlE8IQ=;
+	s=arc-20240116; t=1762853425; c=relaxed/simple;
+	bh=ljNeeK4x5yrn+fNAvzJq2N4EwG7ZcAo8tqKyuEDSI0E=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cVg3jxgYZ+/bstqQPGyH53EX5Zv24s6416gXV31eoxPiPbAy/UO3lZMGb4SOejifgnYMRwTuUB9Dl7tVUP4PA4SZE1ctiZ357uKmBL7XYpYQ2Qi3IZuoTrRpL54slaa3PY5syi8r/nw25cNB35s68hkJe3xAxQWPLZquE+irTqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.172
+	 MIME-Version; b=kPSSCL+DRbFPQ9Y+R+dueFSl+NroI7aGdU4WQVqQI1m/wJPlEaZ+8HbPIop6IpJ0x2cg9lv1PXH4ZDdrLdu6vsC7T7kMQri7gshqojCm1OW+eUVm3bHgpvT4FwuMMZcq/4+DgprtfJchzQMmXnfTnS9fGptSITu62yowarPcb3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
-X-CSE-ConnectionGUID: 94xcbtfmSputrr59VV2WVg==
-X-CSE-MsgGUID: aLGN8iKTRYK9uWYWeZ+Hfw==
+X-CSE-ConnectionGUID: OETbkBCET62IWAHyJDXNTQ==
+X-CSE-MsgGUID: 1hBZippCQvOjSV9Th6mHnw==
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 11 Nov 2025 18:30:10 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 11 Nov 2025 18:30:15 +0900
 Received: from vm01.adwin.renesas.com (unknown [10.226.93.46])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 85CBC4173001;
-	Tue, 11 Nov 2025 18:30:06 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 87F104173001;
+	Tue, 11 Nov 2025 18:30:11 +0900 (JST)
 From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 To: andrew+netdev@lunn.ch,
 	davem@davemloft.net,
@@ -48,9 +48,9 @@ Cc: netdev@vger.kernel.org,
 	linux-stm32@st-md-mailman.stormreply.com,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next 1/2] net: stmmac: Fix VLAN 0 deletion in vlan_del_hw_rx_fltr()
-Date: Tue, 11 Nov 2025 09:29:59 +0000
-Message-ID: <20251111093000.58094-2-ovidiu.panait.rb@renesas.com>
+Subject: [PATCH net-next 2/2] net: stmmac: Disable EEE RX clock stop when VLAN is enabled
+Date: Tue, 11 Nov 2025 09:30:00 +0000
+Message-ID: <20251111093000.58094-3-ovidiu.panait.rb@renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251111093000.58094-1-ovidiu.panait.rb@renesas.com>
 References: <20251111093000.58094-1-ovidiu.panait.rb@renesas.com>
@@ -62,50 +62,57 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-When the "rx-vlan-filter" feature is enabled on a network device, the 8021q
-module automatically adds a VLAN 0 hardware filter when the device is
-brought administratively up.
+On the Renesas RZ/V2H EVK platform, where the stmmac MAC is connected to a
+Microchip KSZ9131RNXI PHY, creating or deleting VLAN interfaces may fail
+with timeouts:
 
-For stmmac, this causes vlan_add_hw_rx_fltr() to create a new entry for
-VID 0 in the mac_device_info->vlan_filter array, in the following format:
+    # ip link add link end1 name end1.5 type vlan id 5
+    15c40000.ethernet end1: Timeout accessing MAC_VLAN_Tag_Filter
+    RTNETLINK answers: Device or resource busy
 
-    VLAN_TAG_DATA_ETV | VLAN_TAG_DATA_VEN | vid
+Disabling EEE at runtime avoids the problem:
 
-Here, VLAN_TAG_DATA_VEN indicates that the hardware filter is enabled for
-that VID.
+    # ethtool --set-eee end1 eee off
+    # ip link add link end1 name end1.5 type vlan id 5
+    # ip link del end1.5
 
-However, on the delete path, vlan_del_hw_rx_fltr() searches the vlan_filter
-array by VID only, without verifying whether a VLAN entry is enabled. As a
-result, when the 8021q module attempts to remove VLAN 0, the function may
-mistakenly match a zero-initialized slot rather than the actual VLAN 0
-entry, causing incorrect deletions and leaving stale entries in the
-hardware table.
+The stmmac hardware requires the receive clock to be running when writing
+certain registers, such as those used for MAC address configuration or
+VLAN filtering. However, by default the driver enables Energy Efficient
+Ethernet (EEE) and allows the PHY to stop the receive clock when the link
+is idle. As a result, the RX clock might be stopped when attempting to
+access these registers, leading to timeouts and other issues.
 
-Fix this by verifying that the VLAN entry's enable bit (VLAN_TAG_DATA_VEN)
-is set before matching and deleting by VID. This ensures only active VLAN
-entries are removed and avoids leaving stale entries in the VLAN filter
-table, particularly for VLAN ID 0.
+Commit dd557266cf5fb ("net: stmmac: block PHY RXC clock-stop")
+addressed this issue for most register accesses by wrapping them in
+phylink_rx_clk_stop_block()/phylink_rx_clk_stop_unblock() calls.
+However, VLAN add/delete operations may be invoked with bottom halves
+disabled, where sleeping is not allowed, so using these helpers is not
+possible.
 
-Fixes: ed64639bc1e08 ("net: stmmac: Add support for VLAN Rx filtering")
+Therefore, to fix this, disable the RX clock stop feature in the phylink
+configuration if VLAN features are set. This ensures the RX clock remains
+active and register accesses succeed during VLAN operations.
+
 Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 ---
- drivers/net/ethernet/stmicro/stmmac/stmmac_vlan.c | 3 ++-
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_vlan.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_vlan.c
-index 0b6f6228ae35..fd97879a8740 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_vlan.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_vlan.c
-@@ -122,7 +122,8 @@ static int vlan_del_hw_rx_fltr(struct net_device *dev,
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+index ba4eeba14baa..0d3fb4fa5e12 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -1245,7 +1245,8 @@ static int stmmac_phylink_setup(struct stmmac_priv *priv)
+ 	/* Stmmac always requires an RX clock for hardware initialization */
+ 	config->mac_requires_rxc = true;
  
- 	/* Extended Rx VLAN Filter Enable */
- 	for (i = 0; i < hw->num_vlan; i++) {
--		if ((hw->vlan_filter[i] & VLAN_TAG_DATA_VID) == vid) {
-+		if ((hw->vlan_filter[i] & VLAN_TAG_DATA_VEN) &&
-+		    ((hw->vlan_filter[i] & VLAN_TAG_DATA_VID) == vid)) {
- 			ret = vlan_write_filter(dev, hw, i, 0);
+-	if (!(priv->plat->flags & STMMAC_FLAG_RX_CLK_RUNS_IN_LPI))
++	if (!(priv->plat->flags & STMMAC_FLAG_RX_CLK_RUNS_IN_LPI) &&
++	    !(priv->dev->features & NETIF_F_VLAN_FEATURES))
+ 		config->eee_rx_clk_stop_enable = true;
  
- 			if (!ret)
+ 	/* Set the default transmit clock stop bit based on the platform glue */
 -- 
 2.51.0
 
