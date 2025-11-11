@@ -1,133 +1,132 @@
-Return-Path: <linux-kernel+bounces-894965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57591C4C931
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:14:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 865B5C4C967
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:16:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B512A18819E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:11:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FF901886213
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:12:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E8AF27AC4C;
-	Tue, 11 Nov 2025 09:10:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3CC32E7F05;
+	Tue, 11 Nov 2025 09:11:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q5R83xJF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SKVSTcn1"
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54F5429CEB;
-	Tue, 11 Nov 2025 09:10:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48FF02D130B
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 09:11:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762852255; cv=none; b=erphC+GimzwyOsxV6ot2Xkj/zFPeZIRm2YDm0MFcGnGlCrgjrkNZ8cNlX+WxexaJ11aoF2rVDe+uNBJTiZ++V9Wi1AAHHlYDm9sU0NeHrG9XfvJsRjijk4EXlD2ZHbWoZgHvyF8K3+oCoMd83elJRsCnkbJMWf2RubNW2N9tLWk=
+	t=1762852314; cv=none; b=hj8T6ggERfcwh3bGo/z3e3NrHrAeyvp2Q+iXUekLqQ+KHMKOWyELtExzTXGfssrRje614Tf8UOvtl3RBHsYa6F4uUIjtbg9/KUvTvf1oODIqPQtmUYi9wvaH3LeWs6z+kcEnaPlddNtHXsI1nGrIZxsEquGSVW2zr/bsQ2dSKiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762852255; c=relaxed/simple;
-	bh=uE1iBHTi+kbvzpwefMb0Rl2uRa4cmEwlf+e3LuCw8G4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aoCVyBSZfe9jKv1Jzk/jjqhMNVVK3RzOiP8upAfPkaAe/a5ngGigtaj14J2ingCsMI+cCMtnupG2/T8NY4dVs7ks41PIBSVPCJLC7OfQXy7pUqE0U5Gr2vL0ciUjdkMl9wlpgNmu8wXXlQGZWTsGY3asBNRWNcXI8SMpFYDyfxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q5R83xJF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC5F5C4CEFB;
-	Tue, 11 Nov 2025 09:10:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762852254;
-	bh=uE1iBHTi+kbvzpwefMb0Rl2uRa4cmEwlf+e3LuCw8G4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=q5R83xJFmaAJim0DkdfjZ4VFYkOHacTnRXG8LpiylRTLcIAOpzpDBhiOZ9pe26S+F
-	 nvHkpria4YUdSpUGJPZUSb/AZx39lDJ37SAROA86W/bpDIDybo6loIz11LTooorXBN
-	 8Wd2k56xWi+sgTL3GbQMvnq0ZHNLXtzH0zFuI8PL0dk5KlXpMDuF78Aiako1KrynSH
-	 c81iOJ/dCuXQn3UlzGueQYDp7+YRszpreI+yNEo+9SKhLfnBNFu841RFu2+VfUCKmz
-	 5wZzmJL6gBCDXi2r2S1V1iogFieWdcokzkLz9I+wdtDH/3RxQsEdS3/DtPCG3Gz+7o
-	 0/pc3HSK8JsUw==
-Message-ID: <f0636e96-7c27-47bf-97e0-0497eb268d8d@kernel.org>
-Date: Tue, 11 Nov 2025 10:10:50 +0100
+	s=arc-20240116; t=1762852314; c=relaxed/simple;
+	bh=wMAn9oTbF3Zv6YZXMFgD9SCNTI8yFt+ADFGBD5EQzqY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=h6945gMCNeBPMvjf5S6QwhIBMjiFcElOyU9vn5mkhgzkcPmLQUi2SWXGivLZvcHinUZzLcdCGZWIdA+1EeLzRgCG3N2tCKfyxoHVPgbnWvg+4ble7pYGA3t9iQ/UOHrKpOru5MIQpNmM2TjqKnN9RKdXUzW3ypGEEbqMELqbPDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SKVSTcn1; arc=none smtp.client-ip=209.85.219.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-882475d8851so25972006d6.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 01:11:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762852311; x=1763457111; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wMAn9oTbF3Zv6YZXMFgD9SCNTI8yFt+ADFGBD5EQzqY=;
+        b=SKVSTcn1nqhQszrNr1vdsVjq8dSl9VoDABDmD7if+9Te7wJ6J6rDS7S50aJ5F69y5E
+         k4E9UZLYEurZWvTFPpJtJmpQVO3sKLOFk33oROWR9PjaRKPOsNd9aIYs2Y4bP40twuFV
+         y1wrJMuvjyGBhkWCw3NnHtMMBsAFT6HV5rwS0nU4gPbq3bG2iZG/R2yPw1hk3j+U4wY4
+         bsViKBtjl6JHn12zl48f6GCXe8krAM52fMG1bqA0czRerGWV5m+KbPcl9pnvA5BYIhhw
+         DYQCwvEA9PdZfsUncWAr0Lmvzq5AS371Eb5x39GczPqGUwPamAPNdAGl6KWLGNK/6P4W
+         kvFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762852311; x=1763457111;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=wMAn9oTbF3Zv6YZXMFgD9SCNTI8yFt+ADFGBD5EQzqY=;
+        b=KC4ndJR8Y1SM5z/JlU2W/mxQtz1NAR2OMGJTGYTQ0NO1NEnf+d+8XYBMF3oCxSILox
+         eznCbcol/NGpYLOElRKtQ29y+tcqhYuA7gqBSD+8h0R8HH7fqG1uJv7JAE2ks2zlK2Lp
+         zYGvFS09QSO/3m6YTpDi/LE0V//e4zQpLwCP5STyhd+WSzL87fl5I8IHDwlXzqzNF87V
+         7QbDRfg262Be8BhxULaNRtR0SyGHlg2pJgiKqRhIL1KQ6qkCxIsRiRh9LB067zNBcIdj
+         XTc5u4S1y9GENyqGvqkqbB4bkfIOAuwlFAiBa7YP2IiAm977odHqh7XghCfz/dZNMZCO
+         W+uw==
+X-Forwarded-Encrypted: i=1; AJvYcCVT02AH3fQL9r7guq6rgo3daTSNikxc84ouBBeA+HtX+ryrERoM6MnjUs3vah5mnFl7Hw52SJrGLIN4RM8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6UZ2s0fOCnbfWAalLjwwRSPsymKEX6pPCMfxkSrK1QT8oC4Hh
+	nNupeXT2Q2kwzNGYP/jy14m1whOZKs1+uZP7l9wV5teQke5PUxowXicXnXPvzyrOwhL6QMFikJa
+	1ynXl67RnakA/6ewWaOt8JcNThDi32hTfEOD6Atht
+X-Gm-Gg: ASbGncvvlMhWrBG+tyy9mkKzmj3MeGb3hJao2JoUu2SfmAqCqh0yi650abebBYLUoU3
+	kNJbHUpTqAeejXBfBbQ/J2lAQp7jgbHed6XFSx/tq+OiK/2A93EaGXCPJEwkf4kfQzMBbGvaBKP
+	XCOtWtHnmmaYkk/GPY8OS9YD0GQQcYWQF4ugg8hoBHJW1v48upi0Hhhx2HblMs/lLmWkLQiZaGS
+	yXRoFDU8Np8gjFow9Xk+5M5JfVVSlNl4eeIMRZ3f+n6f93VXl7oULcV+mWzgCZC+KC+je5Uaox6
+	k5eg1bQpZUWLd8W8wyB1QkNu+5uaDjRV3WlL
+X-Google-Smtp-Source: AGHT+IH+IyV5M3UDNVO30prt5PPyyx1n6sQAkg8H+r/cXESUVZ9Sxny0Upk5iwgOz2Gyh93ucwAfPrYSF2wYVT/cQJo=
+X-Received: by 2002:ac8:7f84:0:b0:4d3:1b4f:dda1 with SMTP id
+ d75a77b69052e-4eda4ff2f1fmr126391511cf.61.1762852310737; Tue, 11 Nov 2025
+ 01:11:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: HID: i2c-hid: elan: Introduce FocalTech
- FT8112
-To: =?UTF-8?B?RGFuaWVsIFBlbmco5b2t5Y2a54WcX1BlZ2F0cm9uKQ==?=
- <Daniel_Peng@pegatroncorp.com>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
- "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "daniel_peng@pegatron.corp-partner.google.com"
- <daniel_peng@pegatron.corp-partner.google.com>
-References: <20251111093426.1.I76ee34ac45e1469dbeb11de0d1e47d794af7dc88@changeid>
- <CAEXTbpc9=Gt7QrFrtV60+EvKdmBGsVpJxg7yYaa6HfuGGB3OqQ@mail.gmail.com>
- <SEZPR06MB67427DD182968980F4C93C08E7CFA@SEZPR06MB6742.apcprd06.prod.outlook.com>
- <28eea826-09e4-4b0c-8845-50d4cf9bac7e@kernel.org>
- <SEZPR06MB67428F386E3E56D0710AC7EBE7CFA@SEZPR06MB6742.apcprd06.prod.outlook.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
- QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
- +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
- ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
- 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
- hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
- tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
- 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
- naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
- hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
- whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
- qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
- RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
- Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
- H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
- dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
- AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
- jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
- zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
- XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <SEZPR06MB67428F386E3E56D0710AC7EBE7CFA@SEZPR06MB6742.apcprd06.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <cover.1761763681.git.m.wieczorretman@pm.me> <f533bb094a566242ec196afbde222796c6d6c084.1761763681.git.m.wieczorretman@pm.me>
+In-Reply-To: <f533bb094a566242ec196afbde222796c6d6c084.1761763681.git.m.wieczorretman@pm.me>
+From: Alexander Potapenko <glider@google.com>
+Date: Tue, 11 Nov 2025 10:11:14 +0100
+X-Gm-Features: AWmQ_bnrR-pK5Rc9D-XEScjrYr9MOeawukkWZRpWJ1yHRGagV2Ym8rHVDa4nqXc
+Message-ID: <CAG_fn=X-FB6vVtDC8WhQzF7cNePS5AtmC4W1-YfTce+5jOc+wA@mail.gmail.com>
+Subject: Re: [PATCH v6 11/18] x86/kasan: KASAN raw shadow memory PTE init
+To: Maciej Wieczor-Retman <m.wieczorretman@pm.me>
+Cc: xin@zytor.com, peterz@infradead.org, kaleshsingh@google.com, 
+	kbingham@kernel.org, akpm@linux-foundation.org, nathan@kernel.org, 
+	ryabinin.a.a@gmail.com, dave.hansen@linux.intel.com, bp@alien8.de, 
+	morbo@google.com, jeremy.linton@arm.com, smostafa@google.com, kees@kernel.org, 
+	baohua@kernel.org, vbabka@suse.cz, justinstitt@google.com, 
+	wangkefeng.wang@huawei.com, leitao@debian.org, jan.kiszka@siemens.com, 
+	fujita.tomonori@gmail.com, hpa@zytor.com, urezki@gmail.com, ubizjak@gmail.com, 
+	ada.coupriediaz@arm.com, nick.desaulniers+lkml@gmail.com, ojeda@kernel.org, 
+	brgerst@gmail.com, elver@google.com, pankaj.gupta@amd.com, 
+	mark.rutland@arm.com, trintaeoitogc@gmail.com, jpoimboe@kernel.org, 
+	thuth@redhat.com, pasha.tatashin@soleen.com, dvyukov@google.com, 
+	jhubbard@nvidia.com, catalin.marinas@arm.com, yeoreum.yun@arm.com, 
+	mhocko@suse.com, lorenzo.stoakes@oracle.com, samuel.holland@sifive.com, 
+	vincenzo.frascino@arm.com, bigeasy@linutronix.de, surenb@google.com, 
+	ardb@kernel.org, Liam.Howlett@oracle.com, nicolas.schier@linux.dev, 
+	ziy@nvidia.com, kas@kernel.org, tglx@linutronix.de, mingo@redhat.com, 
+	broonie@kernel.org, corbet@lwn.net, andreyknvl@gmail.com, 
+	maciej.wieczor-retman@intel.com, david@redhat.com, maz@kernel.org, 
+	rppt@kernel.org, will@kernel.org, luto@kernel.org, kasan-dev@googlegroups.com, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	x86@kernel.org, linux-kbuild@vger.kernel.org, linux-mm@kvack.org, 
+	llvm@lists.linux.dev, linux-doc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/11/2025 09:35, Daniel Peng(彭博煜_Pegatron) wrote:
-> Remove added members.
-> 
-> Sorry to send duplicated them. This is my first time to process the upstream.
-> Could you help to confirm how to version my patches correctly?
-
-And kernel docs don't explain that? There are multiple guidelines in
-internet, multiple talks describing it, so I don't think that me
-repeating the same again is needed.
-
-Please version your patches correctly, e.g. use b4 or git format-patch
--vX, and add changelog in cover letter or under '---' of individual
-patches describing changes from previous version.
-
-Best regards,
-Krzysztof
+On Wed, Oct 29, 2025 at 9:07=E2=80=AFPM Maciej Wieczor-Retman
+<m.wieczorretman@pm.me> wrote:
+>
+> From: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
+>
+> In KASAN's generic mode the default value in shadow memory is zero.
+> During initialization of shadow memory pages they are allocated and
+> zeroed.
+>
+> In KASAN's tag-based mode the default tag for the arm64 architecture is
+> 0xFE which corresponds to any memory that should not be accessed. On x86
+> (where tags are 4-bit wide instead of 8-bit wide) that tag is 0xE so
+> during the initializations all the bytes in shadow memory pages should
+> be filled with it.
+>
+> Use memblock_alloc_try_nid_raw() instead of memblock_alloc_try_nid() to
+> avoid zeroing out the memory so it can be set with the KASAN invalid
+> tag.
+>
+> Signed-off-by: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
+Reviewed-by: Alexander Potapenko <glider@google.com>
 
