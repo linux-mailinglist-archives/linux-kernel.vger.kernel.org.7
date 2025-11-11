@@ -1,154 +1,129 @@
-Return-Path: <linux-kernel+bounces-895553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 443D1C4E43F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:59:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FCFAC4E89B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 15:42:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 597793B3047
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:55:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 740A53AC75A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:35:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AD513596E8;
-	Tue, 11 Nov 2025 13:55:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="XfskZZSY"
-Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DF9BDF76;
+	Tue, 11 Nov 2025 14:35:30 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C70727CCE2;
-	Tue, 11 Nov 2025 13:55:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6E9C2DC767
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 14:35:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762869326; cv=none; b=qZvEV4X3SY6/m+P15SfUH1AG8l/eTQWBvuM/c8bVGxGEZ7bA1sqQhEUeYYWEHZH2ITjwimOTjznfLfZU3R2Q6jbu6wTmnCRX43/DGlhtc0hJi1hTSJ1ZBNafaf2mtX9Sck5dCb/tpD/3MJzLl0PPnqZRc1UpCVYtr8feqxND1Cc=
+	t=1762871729; cv=none; b=RCPOEUh4jIf+OPVTnCcwdWbxxMCm5s+d0Zrvi7P3rd+TGjBwFoutkt4jTdMJakneIRabYUMtQylIPEvPpQA6zzobjuccjPwU/g0F5JQCmTeVdCNzLSeWbs42yYM+1mGi7y4YHmg9MuOqDPzbl/DmuoWN+WMZMn4aEFE1Ivqkdgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762869326; c=relaxed/simple;
-	bh=VrBYrXb2gomVRqKKGoZblHBhw98ua0Jd5cvQ+mlX0ZA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lOX68LuO6EXDjwgSSi4i2la5TbiULEC5scfUIy23aWIa4Vnp2Z4B529JMwvqndFZ5Qc3UfgGxlqlMJcB63HEJ6ubmelSCa4rVqDf7/0LiFpBA1ZmlTQJwV7HxWubK2LiNTQ/ht1ry+ap+WHLyfZ4gdn03MedR3y5griDgKmW4xg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=XfskZZSY; arc=none smtp.client-ip=115.124.30.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1762869320; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=JYpEUEDdcRzYzdeW+638BcwXZNQIfYVkyqsW+6NhS0E=;
-	b=XfskZZSYrEF2smAxw+37I99lj036YExbHHegCrW3GsWdLRMYtj/ZoXjzo2JuyM1gfiPrL8F90LnHiShKSNzMd35yclrFyWSzIMRpTxXnN0L3e2W0xdI2CTVtBOu/DlV2GFwJO3XBQcjYrYHMWHwQtW2mpoqiPJUa6/JzqX8e6pE=
-Received: from localhost.localdomain(mailfrom:fangyu.yu@linux.alibaba.com fp:SMTPD_---0WsBpap1_1762869317 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 11 Nov 2025 21:55:19 +0800
-From: fangyu.yu@linux.alibaba.com
-To: anup@brainfault.org,
-	atish.patra@linux.dev,
-	pjw@kernel.org,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	alex@ghiti.fr
-Cc: guoren@kernel.org,
-	kvm@vger.kernel.org,
-	kvm-riscv@lists.infradead.org,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Fangyu Yu <fangyu.yu@linux.alibaba.com>
-Subject: [PATCH v2] RISC-V: KVM: Fix guest page fault within HLV* instructions
-Date: Tue, 11 Nov 2025 21:55:06 +0800
-Message-Id: <20251111135506.8526-1-fangyu.yu@linux.alibaba.com>
-X-Mailer: git-send-email 2.39.3 (Apple Git-146)
+	s=arc-20240116; t=1762871729; c=relaxed/simple;
+	bh=JTrl+5c+KM67zyb4vk0jknU9NS1WkTcTeyTZ47rmEeg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hjezTy2N8Z1dE9J/ulnTcn8YAxiqS0C7V9nJYgw4EPxhXVJfCtDO/bITUKK9UZbx076UAAgLsQx1sCPYa0fk5TZWQnh7o8q5WwG68k22EL2xwdIdrMsOvIMQhlpoxyb8ELgCC8xZ+wUn3YF2lWxdeCZvii/DZ8b9zS2wwnX82bM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1vIpSn-0004Hl-V1; Tue, 11 Nov 2025 15:35:17 +0100
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1vIpSn-008DbB-0j;
+	Tue, 11 Nov 2025 15:35:17 +0100
+Received: from pengutronix.de (p54b152ce.dip0.t-ipconnect.de [84.177.82.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id BEA5349D0A4;
+	Tue, 11 Nov 2025 13:55:26 +0000 (UTC)
+Date: Tue, 11 Nov 2025 14:55:26 +0100
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Henrik Brix Andersen <henrik@brixandersen.dk>
+Cc: Vincent Mailhol <mailhol@kernel.org>, 
+	Maximilian Schneider <max@schneidersoft.net>, Wolfgang Grandegger <wg@grandegger.com>, kernel@pengutronix.de, 
+	linux-can@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH can 3/3] can: gs_usb: gs_usb_receive_bulk_callback():
+ check actual_length before accessing data
+Message-ID: <20251111-abiding-observant-beetle-e3575f-mkl@pengutronix.de>
+References: <20251108-gs_usb-fix-usb-callbacks-v1-0-8a2534a7ea05@pengutronix.de>
+ <20251108-gs_usb-fix-usb-callbacks-v1-3-8a2534a7ea05@pengutronix.de>
+ <A5BD68A4-076C-4ADD-B2A8-5D8A128D0473@brixandersen.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="2ki34qkgihig4krx"
+Content-Disposition: inline
+In-Reply-To: <A5BD68A4-076C-4ADD-B2A8-5D8A128D0473@brixandersen.dk>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-From: Fangyu Yu <fangyu.yu@linux.alibaba.com>
 
-When executing HLV* instructions at the HS mode, a guest page fault
-may occur when a g-stage page table migration between triggering the
-virtual instruction exception and executing the HLV* instruction.
+--2ki34qkgihig4krx
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH can 3/3] can: gs_usb: gs_usb_receive_bulk_callback():
+ check actual_length before accessing data
+MIME-Version: 1.0
 
-This may be a corner case, and one simpler way to handle this is to
-re-execute the instruction where the virtual  instruction exception
-occurred, and the guest page fault will be automatically handled.
+On 11.11.2025 13:31:06, Henrik Brix Andersen wrote:
+> > +static unsigned int
+> > +gs_usb_get_minimum_length(const struct gs_can *dev, const struct gs_ho=
+st_frame *hf,
+> > +  unsigned int *data_length_p)
+> > +{
+> > + unsigned int minimum_length, data_length;
+> > +
+> > + /* TX echo only uses the header */
+> > + if (hf->echo_id !=3D GS_HOST_FRAME_ECHO_ID_RX) {
+> > + *data_length_p =3D 0;
+> > + return sizeof(hf->header);
+> > + }
+>
+> Is this correct? The embedded timestamp is also used in the
+> gs_usb_get_echo_skb() function.
 
-Fixes: b91f0e4cb8a3 ("RISC-V: KVM: Factor-out instruction emulation into separate sources")
-Signed-off-by: Fangyu Yu <fangyu.yu@linux.alibaba.com>
+Right, will update.
 
----
-Changes in v2:
-- Remove unnecessary modifications and add comments(suggested by Anup)
-- Update Fixes tag
-- Link to v1: https://lore.kernel.org/linux-riscv/20250912134332.22053-1-fangyu.yu@linux.alibaba.com/
----
- arch/riscv/kvm/vcpu_insn.c | 39 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 39 insertions(+)
+regards,
+Marc
 
-diff --git a/arch/riscv/kvm/vcpu_insn.c b/arch/riscv/kvm/vcpu_insn.c
-index de1f96ea6225..a8d796ef2822 100644
---- a/arch/riscv/kvm/vcpu_insn.c
-+++ b/arch/riscv/kvm/vcpu_insn.c
-@@ -323,6 +323,19 @@ int kvm_riscv_vcpu_virtual_insn(struct kvm_vcpu *vcpu, struct kvm_run *run,
- 							  ct->sepc,
- 							  &utrap);
- 			if (utrap.scause) {
-+				/**
-+				 * If a g-stage page fault occurs, the direct approach
-+				 * is to let the g-stage page fault handler handle it
-+				 * naturally, however, calling the g-stage page fault
-+				 * handler here seems rather strange.
-+				 * Considering this is an corner case, we can directly
-+				 * return to the guest and re-execute the same PC, this
-+				 * will trigger a g-stage page fault again and then the
-+				 * regular g-stage page fault handler will populate
-+				 * g-stage page table.
-+				 */
-+				if (utrap.scause == EXC_LOAD_GUEST_PAGE_FAULT)
-+					return 1;
- 				utrap.sepc = ct->sepc;
- 				kvm_riscv_vcpu_trap_redirect(vcpu, &utrap);
- 				return 1;
-@@ -378,6 +391,19 @@ int kvm_riscv_vcpu_mmio_load(struct kvm_vcpu *vcpu, struct kvm_run *run,
- 		insn = kvm_riscv_vcpu_unpriv_read(vcpu, true, ct->sepc,
- 						  &utrap);
- 		if (utrap.scause) {
-+			/**
-+			 * If a g-stage page fault occurs, the direct approach
-+			 * is to let the g-stage page fault handler handle it
-+			 * naturally, however, calling the g-stage page fault
-+			 * handler here seems rather strange.
-+			 * Considering this is an corner case, we can directly
-+			 * return to the guest and re-execute the same PC, this
-+			 * will trigger a g-stage page fault again and then the
-+			 * regular g-stage page fault handler will populate
-+			 * g-stage page table.
-+			 */
-+			if (utrap.scause == EXC_LOAD_GUEST_PAGE_FAULT)
-+				return 1;
- 			/* Redirect trap if we failed to read instruction */
- 			utrap.sepc = ct->sepc;
- 			kvm_riscv_vcpu_trap_redirect(vcpu, &utrap);
-@@ -504,6 +530,19 @@ int kvm_riscv_vcpu_mmio_store(struct kvm_vcpu *vcpu, struct kvm_run *run,
- 		insn = kvm_riscv_vcpu_unpriv_read(vcpu, true, ct->sepc,
- 						  &utrap);
- 		if (utrap.scause) {
-+			/**
-+			 * If a g-stage page fault occurs, the direct approach
-+			 * is to let the g-stage page fault handler handle it
-+			 * naturally, however, calling the g-stage page fault
-+			 * handler here seems rather strange.
-+			 * Considering this is an corner case, we can directly
-+			 * return to the guest and re-execute the same PC, this
-+			 * will trigger a g-stage page fault again and then the
-+			 * regular g-stage page fault handler will populate
-+			 * g-stage page table.
-+			 */
-+			if (utrap.scause == EXC_LOAD_GUEST_PAGE_FAULT)
-+				return 1;
- 			/* Redirect trap if we failed to read instruction */
- 			utrap.sepc = ct->sepc;
- 			kvm_riscv_vcpu_trap_redirect(vcpu, &utrap);
--- 
-2.50.1
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
 
+--2ki34qkgihig4krx
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmkTQEsACgkQDHRl3/mQ
+kZxukgf/Q/SYj2Mgk2ee0Hmn5W0aTr8iFN8NbbxbedBErXlMKpihPJBmL+Ypwzjk
+/87YZZymYsYWOZmOpkZgFmqM7Pyhwhpqv837STWQ34Y0eyGn7zeV+vOfAxKh7g/O
+ksI6NT64jV/fPZAhP2YXVZazoRNYV1KGYaMEk6CTKkmOrYjyjMyXhlrrmKQyQFHF
+REBChJ4yHOk2HlKQkk6ITdXzReXWGTl5it7GQInVjN0rnNf8PlaOGwTFe2r9/Axy
+VYK0PgX5tLx3fz5UNL1aTjWEnKEeiAm4aCVQGx51ycQ5mrGiPPK+hKjYGlLcuw2j
+DjkZsK7yVJXjHUXimJQMZgjLFl4Beg==
+=sKdY
+-----END PGP SIGNATURE-----
+
+--2ki34qkgihig4krx--
 
