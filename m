@@ -1,283 +1,157 @@
-Return-Path: <linux-kernel+bounces-895327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CE90C4D7F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:50:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1873C4D7EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:50:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA4AC1887CCC
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:46:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5131F3B1A73
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:46:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DF6C357A44;
-	Tue, 11 Nov 2025 11:44:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2665305E10;
+	Tue, 11 Nov 2025 11:46:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Lm5HOzGd";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="iRi46if7"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gfUMWiw9"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53CBA35773E
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 11:44:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70AFA2E6CBB
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 11:46:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762861490; cv=none; b=d11cOa4dhmXacb8EcZ23fGD1Ujw9LbsKHdHCQldFlEkJnsEbMCHq1QpQfe47xecyD4Vujd39elCaSO18fpYKVHPn+XcIKLwMQ/8j8Qtz5ge9J0kHnVEKD9FoVWZcgypNaKHOFN/czEjiu84+Q9m2K37oj1NZFjx8z4U0hWqpmV0=
+	t=1762861572; cv=none; b=W5CNad2ky6GmDf9byRdCkNWr3G3wZ70ZSGgG0GNzbM7ahrOt8EEagvn1dCaVXrTuaf4z/HRJvnJ6/+ftB4B2iRQYHn3K5PPnmsE3D983P3ST6/FGidlLCZAdUq5ji5Kltaq5EUVe74quYUBKgWErA2aY507kiOZsJ8KFIi4kHQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762861490; c=relaxed/simple;
-	bh=2jdR9UZN8vrYGOyw9mgAGC34N9X/4WjexBYalBj+GOk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jQmcglno6Mj4zZOMS0UIJ1p/rQvDNpa038HEBUJtenqVnwhwqYYsfHZ+c95PJmNe6GKh/DzKJGDRA8yLE7H+HiAXJuxCGzOZdsDcHvYI3JbFwIkUTU/ktUrBozSN7l9p2Qfv0ytMTKsLghX4AS4ecGfcH5ER3JV7am4toFBZuzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Lm5HOzGd; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=iRi46if7; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5ABBGYJt2231965
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 11:44:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	3FiluKets0muxwM6OjhgoIhZXgLD1JIGYw3ipakbsjE=; b=Lm5HOzGdnbTyTCPV
-	iFCxv12StfNk2DsH92eRpah86wMg3rd5K1npkB8BUGb95nJ3XmR5JfYSgF3TqUNi
-	Rkb7fR6KSL9NYqbZqYYHA/BUMuZtf+IsxelzHCNCVHM/HyK8B1umreJSlRrA7fEW
-	pRjxA7hh5VAwkxL2xRN08kClpGWx3sfjuvzDNQZDiDN2NwHxhLNN+gH1mq0hs1tD
-	BmghwZT4tHACBBaJxHbotom8DTSl8VSnHGn6rxPnOj9+iRidnsZQx3WQD8e1Ru3P
-	oizENnv8BEWGcQQeE72jgkhl5KmpZYhdxr3AimhRJkIZgN2eww2JP6+C49I0u2Uq
-	FbkJLA==
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4abkwsatxf-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 11:44:47 +0000 (GMT)
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-29846b05267so276395ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 03:44:47 -0800 (PST)
+	s=arc-20240116; t=1762861572; c=relaxed/simple;
+	bh=QLE37qHb16MxJwLfO98cvkKdsqbnXD+8Goev9NBW4lc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=dh+Y7emZ/fbtvOq1DUxTsb9FEsWKyjQtrznmJsYCC3crk78mUE9Sz9q62MHKQdrop6TUe5gs0iIRss79riWnMbsiTpC3OqKltJ2zV0L5XXueJ925gcPXIt1dXQ6iI7aT9kHfHKztRd9MNyIdr08pa3HHPZajZoonXsS/1QYwE9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gfUMWiw9; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-b728a43e410so872083866b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 03:46:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1762861486; x=1763466286; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3FiluKets0muxwM6OjhgoIhZXgLD1JIGYw3ipakbsjE=;
-        b=iRi46if7w8nOQD0/NiFGJxNQrB2s2dVvhiU0DEbvHsyLFUReSiHT2VxsEg12FIGTSe
-         Dcz8/xjtorRWFqfTb9AcBEyb2QVVuQ/peipvT+RL9ixkU3tw6Q8p3Ua4hvJnb+OKTU5R
-         mzmKKmrzQAV1Y1OBjUYfmcbLWaGBv4C9cwNdoKCaqHShC9UZQad7AIR8MlIHwdhZycRk
-         7CHMOaHhDrnQjRMNSXBn7FE7LvSHbzRwIjO1mKW8W1YDLQyERhnCMUrUdP0NuuFTkWiD
-         n+KgKRoOWxFIKf+SWbDTA2wQpLN3W+bMDt9Xo07m+trU4xqvevOxF128X80Qm4nVHm7v
-         lNgQ==
+        d=gmail.com; s=20230601; t=1762861569; x=1763466369; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=g5PjBGS/A4kqi2mZ597aONLcrFQt1TO2e84Jges2BFw=;
+        b=gfUMWiw9sXpsa23MBB5TzMERB5ximkohS3RutksRwiZ3qwCif9fpUZWga1TCBbUiu3
+         DPDOyesofNx1UUXwBNcM5gTCacYvfkOMYBjbkmngGwKa9FQZ/0szGvpQ867q0n1lydYF
+         ApfVETCwOKieriElVgDY95cUrwXEc0jYyOsjjC5l87l8R6c7p6opXKGpfROvCSvFcVWC
+         Sla84tPR8B0nAJgcmgsd85R9g41VMSkfixuV+Yt48LXnkiElSL+/qhp9E9ubIPE/ubs8
+         2KRri7m1FAlW0t7KhKAnOVZxr3cMA0EZx/QHsgDhXsf0+B6MUoTeI5BpbAKIh/VO2vrW
+         bfyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762861486; x=1763466286;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3FiluKets0muxwM6OjhgoIhZXgLD1JIGYw3ipakbsjE=;
-        b=TNAkn27VaMEWn8mqxOxXvJfdDLx8gE/8AWIRCgjI1kqCcM4XE+xte24J29GQk1HDg5
-         WHItnaQ/XbImN+CpuTbhQIE9EeoEj0T1mN9rNnQUnDY/CBXnNJtfkgb21el/9/TzuvPq
-         y2R4HNDeGeVP3f5CJqgGsbV5KKmZi5i/5OtTExxXYdYpi60E3WBhxH4F/vwHihaNO3Kg
-         8fm/v/tC+rosrU8DrwUD+Rv1aHtMXKaTnDfQfjh1u9BCebFths6GmAte84QIN9v8e1Mi
-         afYtzxirsJXb9+Aht5pDRhCGO6bSr9MEVCLWmeU4/8CZwKLkEntoXb8O4wS3fm2IX1gb
-         v1cA==
-X-Forwarded-Encrypted: i=1; AJvYcCX1pI3zKd2PvvNqh3jNHqgGkdZ2fj1sG5LrugwcN7nX+gxft9rf6ivk13uLXtHxO+X/H6Alcq8hGHRKiIY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAwavpJA0m2j6Cp+lpreJRzbm6/Bs0yM+nD/xgZspMAFtKVySU
-	tiwm73ZzESRp7T+pRTmEGSfnxy0yROSL3ieXXEbZMMqZBEMhuuqVHR70A/+zLXoT1dXZX0H5ghT
-	/ebzS+B1NAV/1/3Ae150kBVznYQ4r5gQBZ4i9nkw3wOoHs5rbbv4q0mQnyHZu/C+ejNQ=
-X-Gm-Gg: ASbGncsVWYrsrpy9iB5TYEZaAX+UK/8SeWQB7jg5oMiF0IBT0Xyq4FDUf9uLEE0UPJp
-	E3LNeIGMom4Iuvii1wGO/0EcXfULeRVv1ei3a8biZ8zpGaREHN3geA8MKl9A4+OxFov9OGOaWBb
-	GwVLVnZq0p0nuLMKqDFDiu68pUteF93trmdiklo0wdgh9+Ty3640xFRe0pij9GDgGHd1zm0ZnhD
-	YDT3oPC3S5NAMey1jXN4QTHPkJDlXHpD+6WrWsEdmD1f8xrwpQ2uFnobGBA8MHmRvNfmYaQTtam
-	PviaDd5+fTUuKyWqjrbUoo9AkjT/wjTz+eYWzBWnvcYiiA/lY5DnK22GTBkXMcUmVDLNo3zdB/y
-	x752kGVzOa6VWvUYyl8TbK1uCkCqAGkcsb0PC4rJFIs8Br0dpA+X01wFDYoiCgi8t+g==
-X-Received: by 2002:a17:902:e5cf:b0:297:f88a:c15d with SMTP id d9443c01a7336-29841097556mr20085025ad.10.1762861486127;
-        Tue, 11 Nov 2025 03:44:46 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFSpcUVI0Oxi4dBF1jiNdiLhSc8OBazrJzvb/OcOGmMaHiDiWNsCym4f/nDxoriQsjRvlF/MA==
-X-Received: by 2002:a17:902:e5cf:b0:297:f88a:c15d with SMTP id d9443c01a7336-29841097556mr20084915ad.10.1762861485497;
-        Tue, 11 Nov 2025 03:44:45 -0800 (PST)
-Received: from [10.133.33.249] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29651c7409esm177939655ad.64.2025.11.11.03.44.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Nov 2025 03:44:45 -0800 (PST)
-Message-ID: <507b121b-98c0-4632-8a61-e9d7a6a13a3e@oss.qualcomm.com>
-Date: Tue, 11 Nov 2025 19:44:36 +0800
+        d=1e100.net; s=20230601; t=1762861569; x=1763466369;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=g5PjBGS/A4kqi2mZ597aONLcrFQt1TO2e84Jges2BFw=;
+        b=oPuIW+M2GQvMpHJTSbaNlLyyBo3RgXNVAagvCSGz/UvDSua+QNiQXwVwdO63aRNURk
+         Nii5gJqydoCxEM7FjOZimZC5RuqAj5ip/zUO556ZFJ0ql+cP7YcYQq8cm11+7eWZ2xCT
+         8SJAWp/r18mxpGKvfZ9KcL18fq3WnjN+TCYjIbcC1AiUEiwOMtdNvMOElSNO6vuVg1k/
+         EFt1iy+trG5UtZWYEoabISMiVC2JRNWVlqkRaDj70qJPtRWyupUJmQeAkLQf3F3nXykH
+         YKUjJFpIxgDvPXPrCBk5ev6nU18LkOZIK3XHgmg+u2zWsOH44/dIIHq2gp6xNWtJBeaY
+         fWkw==
+X-Forwarded-Encrypted: i=1; AJvYcCUpyw9bPuc4SiTT2nxkIY+S4F4NeYxQ4gnCnUsg54qbbwIsWukap2lo50+Bzyg+hvfynqdxfbxFvFc2l9I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxal2x3vFem0e5UlTALOXYeq7fpfPSSFyfN+zd1Kk07KWFon070
+	3n5yLk1e7Aw5F6FQETnBExTCzLV16gSi6z6sstR1pLtNX7rnDRH8seXo
+X-Gm-Gg: ASbGncuRTXqxPMkA2IaSJWah+mFvaktKPuJBFPYNXZA0rSrCo7sDfxX7U09nUhW9hQi
+	AuLV4kCQPzJAA4+fE/FcqrJ9a6lvcHg9xwTH/x+wfuHNl3ep/uhsb5zk688gedXIO46lKvAB7a9
+	6d6BFf6NwaGUVuP+LeSjZ2By4HQ8jPuY17b6Wu9bB31VeCn4uFl6m8hl1kbjFZOtQBvvgzKgfAq
+	E0tig0xv/5tuQF8BtXNFCyZQ1RHJNhmGF/Fj+g67651bPXe+2SJ8Y7qUa5qOKOdDTzRWWBrhoub
+	Q6xJyWFGzEIwv+zdoUD6NsZ62TK3PCweip8LTa8ZtsCbBbul4SqzycdD1SHgbcQxSBfBGIbyFzK
+	OUhMwliJDobG4Ui4eCppZxYUdLMP38qPSFCuLcLJp2MMiuTM4bjsTc58eiPwv5R8FvKgXpC6WeX
+	Tu/w6FJnM5TPz5v0ctoA==
+X-Google-Smtp-Source: AGHT+IHMw+7YllRho8le91BKAe8wJ90etB++mcoL/7134mHZqS0c5es9GOuXcOqsBUjYOB7fZBdmbA==
+X-Received: by 2002:a17:906:600b:b0:b73:278a:a4a4 with SMTP id a640c23a62f3a-b73278aaf46mr100831366b.16.1762861568456;
+        Tue, 11 Nov 2025 03:46:08 -0800 (PST)
+Received: from NB-6746.corp.yadro.com ([188.243.183.84])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72fcde0779sm682374466b.40.2025.11.11.03.46.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Nov 2025 03:46:08 -0800 (PST)
+From: Artem Shimko <a.shimko.dev@gmail.com>
+To: p.zabel@pengutronix.de
+Cc: a.shimko.dev@gmail.com,
+	andi.shyti@kernel.org,
+	andriy.shevchenko@linux.intel.com,
+	jsd@semihalf.com,
+	linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	mika.westerberg@linux.intel.com
+Subject: [PATCH v2 1/3] i2c: designware-platdrv: simplify reset control with devm variant
+Date: Tue, 11 Nov 2025 14:45:57 +0300
+Message-ID: <20251111114559.3188740-1-a.shimko.dev@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <e3c2096459bdd0c1d48c00a837cc7f8c18044631.camel@pengutronix.de>
+References: <e3c2096459bdd0c1d48c00a837cc7f8c18044631.camel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/6] clk: qcom: rpmh: Add support for Kaanapali rpmh
- clocks
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Taniya Das <taniya.das@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>, jingyi.wang@oss.qualcomm.com,
-        Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
-        Imran Shaik <imran.shaik@oss.qualcomm.com>,
-        Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251030-gcc_kaanapali-v2-v2-0-a774a587af6f@oss.qualcomm.com>
- <20251030-gcc_kaanapali-v2-v2-4-a774a587af6f@oss.qualcomm.com>
- <swma6lyjfmyhl5ookdzvpjn5qresgsze5wptg45jfgj7ub6a4t@bdgfstw6gzoq>
-Content-Language: en-US
-From: "Aiqun(Maria) Yu" <aiqun.yu@oss.qualcomm.com>
-In-Reply-To: <swma6lyjfmyhl5ookdzvpjn5qresgsze5wptg45jfgj7ub6a4t@bdgfstw6gzoq>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTExMDA5MiBTYWx0ZWRfX0w+mXHY9ahIK
- BSZa3uYJntEpk2wihTfwcsGoi4kZQ/7BCwO8bjodC56V/bMYHfaSkfmzz7QwkCFFonhI0YFcZJ+
- yqyA4pZsPcqiZBOlqW2tNLHQe8clX/pO/QQx5jEml6eWEZ/JoGEtY8sIXLhipDZruZ0VThz9QcH
- 9Tjk0AzIfUC+9MVQVilouMjHIuOAma3FOM3OT6Qc7s0TCe3qftm3t9BptC/i5eXF6W7EsIew2JO
- SgoirT2K3sJRR7Zlg0DZDhp4cr+Plt48mwubZnd04XFUBsDSRrwB4JPCO9ZRXsmhTk6bIDIsO7h
- cF7KxpU+4vXJABJeW1Dc/QaRx+H1TTE13FWSgs5dsKJeT5U7Xa5p1t9Og6dyuRymxFB+WdD+/8o
- HsD2R8ar0OfMpJTc0zxLb1e7PoNrgQ==
-X-Authority-Analysis: v=2.4 cv=Vosuwu2n c=1 sm=1 tr=0 ts=691321af cx=c_pps
- a=JL+w9abYAAE89/QcEU+0QA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=lvgvr5Ydm3pkVxXdM2UA:9
- a=QEXdDO2ut3YA:10 a=324X-CrmTo6CU4MGRt3R:22
-X-Proofpoint-GUID: FKuPKW7N8XAu4VcSMabSaRq3Ndato8IC
-X-Proofpoint-ORIG-GUID: FKuPKW7N8XAu4VcSMabSaRq3Ndato8IC
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-11_02,2025-11-11_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 adultscore=0 clxscore=1015 priorityscore=1501
- suspectscore=0 spamscore=0 impostorscore=0 malwarescore=0 phishscore=0
- bulkscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
- definitions=main-2511110092
+Content-Transfer-Encoding: 8bit
 
-On 11/11/2025 6:46 PM, Dmitry Baryshkov wrote:
-> On Thu, Oct 30, 2025 at 04:39:07PM +0530, Taniya Das wrote:
->> Add the RPMH clocks present in Kaanapali SoC.
->>
->> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
->> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
->> ---
->>  drivers/clk/qcom/clk-rpmh.c | 42 ++++++++++++++++++++++++++++++++++++++++++
->>  1 file changed, 42 insertions(+)
->>
->> diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
->> index 1a98b3a0c528c24b600326e6b951b2edb6dcadd7..fd0fe312a7f2830a27e6effc0c0bd905d9d5ebed 100644
->> --- a/drivers/clk/qcom/clk-rpmh.c
->> +++ b/drivers/clk/qcom/clk-rpmh.c
->> @@ -395,6 +395,19 @@ DEFINE_CLK_RPMH_VRM(clk4, _a, "C4A_E0", 1);
->>  DEFINE_CLK_RPMH_VRM(clk5, _a, "C5A_E0", 1);
->>  DEFINE_CLK_RPMH_VRM(clk8, _a, "C8A_E0", 1);
->>  
->> +DEFINE_CLK_RPMH_VRM(ln_bb_clk1, _a2_e0, "C6A_E0", 2);
->> +DEFINE_CLK_RPMH_VRM(ln_bb_clk2, _a2_e0, "C7A_E0", 2);
->> +DEFINE_CLK_RPMH_VRM(ln_bb_clk3, _a2_e0, "C8A_E0", 2);
+The current implementation uses separate calls to acquire and deassert
+reset control, requiring manual error handling for the deassertion
+operation. This can be simplified using the dedicated devm function that
+combines both operations.
 
+Replace devm_reset_control_get_optional_exclusive() with
+devm_reset_control_get_optional_exclusive_deasserted(), which handles both
+reset acquisition and deassertion in a single call. This eliminates
+the need for explicit deassertion and its associated error checking while
+maintaining the same functional behavior through automatic resource
+management.
 
-Shall this suffix necessary to have e0?
+Suggested-by: Philipp Zabel <p.zabel@pengutronix.de>
+Signed-off-by: Artem Shimko <a.shimko.dev@gmail.com>
+---
+Hi Philip,
 
->> +
->> +DEFINE_CLK_RPMH_VRM(rf_clk1, _a_e0, "C1A_E0", 1);
->> +DEFINE_CLK_RPMH_VRM(rf_clk2, _a_e0, "C2A_E0", 1);
-> 
-> What is the difference between these clocks and clk[3458] defined few
-> lines above? Why are they named differently? If the other name is
-> incorrect, please fix it.
+That works, thank you.
 
-Good shot. Only now I can understand the previous comments.
-IMO for kaanapali Taniya was addressed to have the right rf_clkN naming
-here.
+I also added two more separate commits to improve the driver.
 
-I think the point is glymur is not using "rf_clkN" for rf_clk, sm8750 is
-not using "ln_bb_clkN" instead it is using clkN:
+--
+Regards,
+Artem
 
-static struct clk_hw *sm8750_rpmh_clocks[] = {
-	[RPMH_CXO_CLK]		= &clk_rpmh_bi_tcxo_div2.hw,
-	[RPMH_CXO_CLK_A]	= &clk_rpmh_bi_tcxo_div2_ao.hw,
-	[RPMH_LN_BB_CLK1]	= &clk_rpmh_clk6_a2.hw,
-	[RPMH_LN_BB_CLK1_A]	= &clk_rpmh_clk6_a2_ao.hw,
-	[RPMH_LN_BB_CLK3]	= &clk_rpmh_clk8_a2.hw,
-	[RPMH_LN_BB_CLK3_A]	= &clk_rpmh_clk8_a2_ao.hw,
-	[RPMH_RF_CLK1]		= &clk_rpmh_rf_clk1_a.hw,
-	[RPMH_RF_CLK1_A]	= &clk_rpmh_rf_clk1_a_ao.hw,
-	[RPMH_RF_CLK2]		= &clk_rpmh_rf_clk2_a.hw,
-	[RPMH_RF_CLK2_A]	= &clk_rpmh_rf_clk2_a_ao.hw,
-	[RPMH_RF_CLK3]		= &clk_rpmh_rf_clk3_a2.hw,
-	[RPMH_RF_CLK3_A]	= &clk_rpmh_rf_clk3_a2_ao.hw,
-	[RPMH_IPA_CLK]		= &clk_rpmh_ipa.hw,
-};
-static struct clk_hw *glymur_rpmh_clocks[] = {
-	[RPMH_CXO_CLK]		= &clk_rpmh_bi_tcxo_div2.hw,
-	[RPMH_CXO_CLK_A]	= &clk_rpmh_bi_tcxo_div2_ao.hw,
-	[RPMH_RF_CLK3]		= &clk_rpmh_clk3_a.hw,
-	[RPMH_RF_CLK3_A]	= &clk_rpmh_clk3_a_ao.hw,
-	[RPMH_RF_CLK4]		= &clk_rpmh_clk4_a.hw,
-	[RPMH_RF_CLK4_A]	= &clk_rpmh_clk4_a_ao.hw,
-	[RPMH_RF_CLK5]		= &clk_rpmh_clk5_a.hw,
-	[RPMH_RF_CLK5_A]	= &clk_rpmh_clk5_a_ao.hw,
-};
+ChangeLog:
+  v2: Simplify reset control using devm_reset_control_get_optional_exclusive_deasserted()
+    * Replace separate reset acquisition and deassertion with combined function
+    * Remove explicit reset_control_deassert() call and error handling
+    * Maintain same functionality with cleaner code
+    * Add devm_add_action_or_reset() to fully automate reset management
+    * Remove all manual reset_control_assert() calls from probe and remove
+    * Streamline error handling by removing goto exit_probe and using direct cleanup
 
-> 
->> +
->> +DEFINE_CLK_RPMH_VRM(rf_clk3, _a2_e0, "C3A_E0", 2);
->> +DEFINE_CLK_RPMH_VRM(rf_clk4, _a2_e0, "C4A_E0", 2);
->> +DEFINE_CLK_RPMH_VRM(rf_clk5, _a2_e0, "C5A_E0", 2);
->> +
->> +DEFINE_CLK_RPMH_VRM(div_clk1, _a4_e0, "C11A_E0", 4);
->> +
->>  DEFINE_CLK_RPMH_BCM(ce, "CE0");
->>  DEFINE_CLK_RPMH_BCM(hwkm, "HK0");
->>  DEFINE_CLK_RPMH_BCM(ipa, "IP0");
->> @@ -901,6 +914,34 @@ static const struct clk_rpmh_desc clk_rpmh_glymur = {
->>  	.num_clks = ARRAY_SIZE(glymur_rpmh_clocks),
->>  };
->>  
->> +static struct clk_hw *kaanapali_rpmh_clocks[] = {
->> +	[RPMH_CXO_CLK]		= &clk_rpmh_bi_tcxo_div2.hw,
->> +	[RPMH_CXO_CLK_A]	= &clk_rpmh_bi_tcxo_div2_ao.hw,
->> +	[RPMH_DIV_CLK1]		= &clk_rpmh_div_clk1_a4_e0.hw,
->> +	[RPMH_LN_BB_CLK1]	= &clk_rpmh_ln_bb_clk1_a2_e0.hw,
->> +	[RPMH_LN_BB_CLK1_A]	= &clk_rpmh_ln_bb_clk1_a2_e0_ao.hw,
->> +	[RPMH_LN_BB_CLK2]	= &clk_rpmh_ln_bb_clk2_a2_e0.hw,
->> +	[RPMH_LN_BB_CLK2_A]	= &clk_rpmh_ln_bb_clk2_a2_e0_ao.hw,
->> +	[RPMH_LN_BB_CLK3]	= &clk_rpmh_ln_bb_clk3_a2_e0.hw,
->> +	[RPMH_LN_BB_CLK3_A]	= &clk_rpmh_ln_bb_clk3_a2_e0_ao.hw,
->> +	[RPMH_RF_CLK1]		= &clk_rpmh_rf_clk1_a_e0.hw,
->> +	[RPMH_RF_CLK1_A]	= &clk_rpmh_rf_clk1_a_e0_ao.hw,
->> +	[RPMH_RF_CLK2]		= &clk_rpmh_rf_clk2_a_e0.hw,
->> +	[RPMH_RF_CLK2_A]	= &clk_rpmh_rf_clk2_a_e0_ao.hw,
->> +	[RPMH_RF_CLK3]		= &clk_rpmh_rf_clk3_a2_e0.hw,
->> +	[RPMH_RF_CLK3_A]	= &clk_rpmh_rf_clk3_a2_e0_ao.hw,
->> +	[RPMH_RF_CLK4]		= &clk_rpmh_rf_clk4_a2_e0.hw,
->> +	[RPMH_RF_CLK4]		= &clk_rpmh_rf_clk4_a2_e0_ao.hw,
->> +	[RPMH_RF_CLK5_A]	= &clk_rpmh_rf_clk5_a2_e0.hw,
->> +	[RPMH_RF_CLK5_A]	= &clk_rpmh_rf_clk5_a2_e0_ao.hw,
->> +	[RPMH_IPA_CLK]		= &clk_rpmh_ipa.hw,
->> +};
->> +
->> +static const struct clk_rpmh_desc clk_rpmh_kaanapali = {
->> +	.clks = kaanapali_rpmh_clocks,
->> +	.num_clks = ARRAY_SIZE(kaanapali_rpmh_clocks),
->> +};
->> +
->>  static struct clk_hw *of_clk_rpmh_hw_get(struct of_phandle_args *clkspec,
->>  					 void *data)
->>  {
->> @@ -991,6 +1032,7 @@ static int clk_rpmh_probe(struct platform_device *pdev)
->>  
->>  static const struct of_device_id clk_rpmh_match_table[] = {
->>  	{ .compatible = "qcom,glymur-rpmh-clk", .data = &clk_rpmh_glymur},
->> +	{ .compatible = "qcom,kaanapali-rpmh-clk", .data = &clk_rpmh_kaanapali},
->>  	{ .compatible = "qcom,milos-rpmh-clk", .data = &clk_rpmh_milos},
->>  	{ .compatible = "qcom,qcs615-rpmh-clk", .data = &clk_rpmh_qcs615},
->>  	{ .compatible = "qcom,qdu1000-rpmh-clk", .data = &clk_rpmh_qdu1000},
->>
->> -- 
->> 2.34.1
->>
-> 
+ drivers/i2c/busses/i2c-designware-platdrv.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
+diff --git a/drivers/i2c/busses/i2c-designware-platdrv.c b/drivers/i2c/busses/i2c-designware-platdrv.c
+index 34d881572351..c77029e520dc 100644
+--- a/drivers/i2c/busses/i2c-designware-platdrv.c
++++ b/drivers/i2c/busses/i2c-designware-platdrv.c
+@@ -236,11 +236,9 @@ static int dw_i2c_plat_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
+ 
+-	dev->rst = devm_reset_control_get_optional_exclusive(device, NULL);
++	dev->rst = devm_reset_control_get_optional_exclusive_deasserted(device, NULL);
+ 	if (IS_ERR(dev->rst))
+-		return dev_err_probe(device, PTR_ERR(dev->rst), "failed to acquire reset\n");
+-
+-	reset_control_deassert(dev->rst);
++		return PTR_ERR(dev->rst);
+ 
+ 	ret = i2c_dw_fw_parse_and_configure(dev);
+ 	if (ret)
 -- 
-Thx and BRs,
-Aiqun(Maria) Yu
+2.43.0
+
 
