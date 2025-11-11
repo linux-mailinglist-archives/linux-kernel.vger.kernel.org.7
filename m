@@ -1,123 +1,212 @@
-Return-Path: <linux-kernel+bounces-894693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CAC0C4B9D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 07:09:48 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A4C4C4BA8E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 07:22:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DD7E3B78DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 06:09:47 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BF77834EAFB
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 06:22:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9749129B8E1;
-	Tue, 11 Nov 2025 06:09:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 634E42D1F4E;
+	Tue, 11 Nov 2025 06:21:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ejartwGv"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="DIVrFzWA"
+Received: from m16.mail.126.com (m16.mail.126.com [220.197.31.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD73429B228;
-	Tue, 11 Nov 2025 06:09:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CA092D193F
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 06:21:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762841382; cv=none; b=McnLJK446C+tiYfgYc4ZwGSb5BIQVZEgOxjN6aUVmsZeyskutTBqrEyh1Ij/2p+2TNUiiTUwvYX1IwnNPJPZFxKmYN3afKroRYLwbr3VJGu/y4Hv4FAnWirbH7AHjtLhSQ29jAXb/Tm+a4L5S3SMZlso+D0d1B6+l6AzAqaHzR4=
+	t=1762842090; cv=none; b=Uyoiz6A3Eg+4kx2sWUS7lxYy9u7CSfCB4Ggiz3m9Vgicvjrl26HTh0PLVV/R901P04tbfYcGlmqFuNv4aVswjyEBhnGvbMH1Tp17mgGhkgrb9B5tp+oaJvfKpzepbxbvWT7ZHygDADMNJUGrm1dcmSKvx2e3UVFipBOd3wiLzqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762841382; c=relaxed/simple;
-	bh=6dCXLdIWv9npf8f4qkkUpDcXpgo5z2Dxges617f+44E=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=s2GAhjUz2JZBr83Ded3ATafCaqBq+ifMYKRLw3PL6R1ugMAd+glgXwAwq5plEw1sN9hqhuS1E3bD8UgU6q3snid+nBAYbbMukbbmyV+gVMAqxJBrg2B3DrGPY02m2BowiFDDPiIGdlO3ujr9PoT2iKoEmzteb/XMbNDfbbuC7gg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ejartwGv; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=s0l9+LEBSDq0l4KQpP+9O2GQV5N1q9E/VoCc/+IvMDw=; b=ejartwGv7+a7fLvTqzBodWWM4c
-	zNmWXZQrXs8I2WEDKkgogGg4+Vh6lwRTyjDD5Nh2IifYgMWnK3PByuH3o+rEv5a3f1nw5LOhTUUXL
-	6czt6nZC5IZRyDVVZD2J5HXBilblh4xsnOjciNvJGnGDYMsMZIx2tcRicVlslYM8SW4RvnLOJ4AnF
-	dgzq1r2/n4q0n0pqpVqOemrpZCmvkoHYUPH6qaOzfGUKY4tZ9c6zcGsUIhyEDB8T93q+EBiyXgMUu
-	bzsS59W8qcpE8WqLH/5dlGaNRlsDFAs3lGrWYjx6hzqJVQlTqOctPictkLh4ZE61CqdrJHqE5hven
-	T6W5uwXA==;
-Received: from [50.53.43.113] (helo=bombadil.infradead.org)
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vIhZT-00000006b0i-0k0e;
-	Tue, 11 Nov 2025 06:09:39 +0000
-From: Randy Dunlap <rdunlap@infradead.org>
-To: linux-kernel@vger.kernel.org
-Cc: Randy Dunlap <rdunlap@infradead.org>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	Hans de Goede <hansg@kernel.org>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	platform-driver-x86@vger.kernel.org
-Subject: [PATCH] platform/x86: intel-uncore-freq: fix all header kernel-doc warnings
-Date: Mon, 10 Nov 2025 22:09:34 -0800
-Message-ID: <20251111060938.1998542-1-rdunlap@infradead.org>
-X-Mailer: git-send-email 2.51.1
+	s=arc-20240116; t=1762842090; c=relaxed/simple;
+	bh=KC7nOZAlIg2S+t5k+Iegh6RsFAGS8zFqkBIlUlW2mxg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=DKYLPWIDCuH5szwug/cT6WFXRfM5E76a97TBhL5NbIshCcIcC/pzxoTFWhsiVIjwi+UzSJ8fjl5ZGPCw+qzF2XsJA0Kwv6jTQLiBT4QnG0GZHp+Lz1AqlEZCnfwtHui2EJwgm7t6nw9DVsP23rN/j+lxyrFHqyghTyrRUdc5FiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=DIVrFzWA; arc=none smtp.client-ip=220.197.31.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=SQ
+	NThmc7X74qfNRIdMXWU8JaAm5dM9fXnQhj2wzlK1Y=; b=DIVrFzWA4nnWn24ZRo
+	XE9IO6g1j6WAITBYeFqd5axL2WLAa/D8lPGwmyrzt6pr/X6YXSF6ekI9gd1BbW8S
+	7bm9GpsUw/0YKWjTNmTODepdBD5vSftg1SIjNDaHs74tF6WPID4yUSL2U641Sl8K
+	IGUiVDA7sjMkg0F8g1MMJGLqk=
+Received: from hpz640.. (unknown [])
+	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wD3DsRu0xJpNZcpAw--.15039S2;
+	Tue, 11 Nov 2025 14:10:55 +0800 (CST)
+From: Xiaole He <hexiaole1994@126.com>
+To: linux-f2fs-devel@lists.sourceforge.net
+Cc: jaegeuk@kernel.org,
+	chao@kernel.org,
+	linux-kernel@vger.kernel.org,
+	Xiaole He <hexiaole1994@126.com>,
+	stable@kernel.org
+Subject: [PATCH v2] f2fs: fix has_curseg_enough_space to check all data segments for dentry blocks
+Date: Tue, 11 Nov 2025 14:10:51 +0800
+Message-ID: <20251111061051.337547-1-hexiaole1994@126.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20251111060557.337514-1-hexiaole1994@126.com>
+References: <20251111060557.337514-1-hexiaole1994@126.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3DsRu0xJpNZcpAw--.15039S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW3Ar15KFy5CFy7urWkurWxJFb_yoW7GF1xpF
+	47CFy3Krs5ur18Was2q3WUG3WS93yUur4UJr1jgw1vyrWfWF1Ikwn7ta45XF1vkrs3XFn7
+	ZasIkry5A3WDuFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zR6Vb9UUUUU=
+X-CM-SenderInfo: 5kh0xt5rohimizu6ij2wof0z/1tbiegIDBmkS0LpJvQAAsY
 
-In file uncore-frequency/uncore-frequency-common.h,
-correct all kernel-doc warnings by adding missing leading " *" to some
-lines, adding a missing kernel-doc entry, and fixing a name typo.
+When active_logs == 6, dentry blocks can be allocated to HOT, WARM, or
+COLD segments based on various conditions in __get_segment_type_6():
+- age extent cache (if enabled)
+- FI_HOT_DATA flag (set when dirty_pages <= min_hot_blocks)
+- rw_hint (defaults to WARM via f2fs_rw_hint_to_seg_type)
+- file_is_hot(), FI_NEED_IPU, f2fs_is_cow_file(), etc.
 
-Warning: uncore-frequency-common.h:50 bad line:
-   Storage for kobject attribute elc_low_threshold_percent
-Warning: uncore-frequency-common.h:52 bad line:
-   Storage for kobject attribute elc_high_threshold_percent
-Warning: uncore-frequency-common.h:54 bad line:
-   Storage for kobject attribute elc_high_threshold_enable
-Warning: uncore-frequency-common.h:92 struct member
- 'min_freq_khz_kobj_attr' not described in 'uncore_data'
-Warning: uncore-frequency-common.h:92 struct member
- 'die_id_kobj_attr' not described in 'uncore_data'
+However, has_curseg_enough_space() only checked CURSEG_HOT_DATA segment
+for dentry blocks, which could lead to incorrect space calculation when
+dentry blocks are actually allocated to WARM or COLD segments.
 
-Fixes: 24b6616355f7 ("platform/x86/intel-uncore-freq: Add efficiency latency control to sysfs interface")
-Fixes: 416de0246f35 ("platform/x86: intel-uncore-freq: Fix types in sysfs callbacks")
-Fixes: 247b43fcd872 ("platform/x86/intel-uncore-freq: Add attributes to show die_id")
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Reproducer:
+Note: This reproducer requires adding a tracepoint to observe segment
+type. Add the following tracepoint to include/trace/events/f2fs.h:
+
+TRACE_EVENT(f2fs_allocate_data_block,
+        TP_PROTO(struct f2fs_sb_info *sbi, struct inode *inode,
+                enum log_type type, block_t blkaddr),
+
+        TP_ARGS(sbi, inode, type, blkaddr),
+
+        TP_STRUCT__entry(
+                __field(dev_t, dev)
+                __field(ino_t, ino)
+                __field(int, type)
+                __field(block_t, blkaddr)
+                __field(int, is_dir)
+        ),
+
+        TP_fast_assign(
+                __entry->dev = sbi->sb->s_dev;
+                __entry->ino = inode ? inode->i_ino : 0;
+                __entry->type = type;
+                __entry->blkaddr = blkaddr;
+                __entry->is_dir = inode ? S_ISDIR(inode->i_mode) : 0;
+        ),
+
+        TP_printk("dev = (%d,%d), ino = %lu, %s, blkaddr = %u, is_dir = %d",
+                show_dev(__entry->dev),
+                (unsigned long)__entry->ino,
+                show_data_type(__entry->type),
+                __entry->blkaddr,
+                __entry->is_dir)
+);
+
+And add the tracepoint call in fs/f2fs/segment.c in
+f2fs_allocate_data_block() function. Find the location after
+locate_dirty_segment() calls and before IS_DATASEG() check:
+
+        locate_dirty_segment(sbi, GET_SEGNO(sbi, old_blkaddr));
+        locate_dirty_segment(sbi, GET_SEGNO(sbi, *new_blkaddr));
+
+        trace_f2fs_allocate_data_block(sbi, folio ? folio->mapping->host : NULL,
+                                        type, *new_blkaddr);
+
+        if (IS_DATASEG(curseg->seg_type))
+
+1. Mount F2FS with active_logs=6 and age extent cache disabled:
+   # mkfs.f2fs -f /dev/sdb1
+   # mount -t f2fs -o active_logs=6 /dev/sdb1 /mnt/f2fs-test
+
+2. Enable tracing and f2fs_allocate_data_block tracepoint:
+   # echo 1 > /sys/kernel/debug/tracing/events/f2fs/f2fs_allocate_data_block/enable
+   # echo 1 > /sys/kernel/debug/tracing/tracing_on
+   # echo > /sys/kernel/debug/tracing/trace
+
+3. Create a directory and write enough files to trigger dirty_pages >
+   min_hot_blocks (default 16), which will clear FI_HOT_DATA flag:
+   # mkdir /mnt/f2fs-test/testdir
+   # cd /mnt/f2fs-test/testdir
+   # seq 1 8192 | xargs touch
+   # sync
+
+4. Observe dentry block allocation:
+   # cat /sys/kernel/debug/tracing/trace
+
+   The trace output shows dentry blocks (is_dir = 1) allocated to WARM
+   segment because FI_HOT_DATA is cleared when dirty_pages >
+   min_hot_blocks (default 16). However, has_curseg_enough_space() only
+   checked HOT_DATA segment space.
+
+Fix by merging the dentry block check into the main data/node block
+check loop and checking data_blocks + dent_blocks for data segments,
+since both regular data blocks and dentry blocks can be written to the
+same segment. When active_logs == 6, dentry blocks can be allocated to
+any of the three data segments (HOT, WARM, COLD), so all three segments
+need to account for dentry blocks. When active_logs != 6, dentry blocks
+are always allocated to HOT_DATA segment only, so only HOT_DATA segment
+needs to account for dentry blocks, while WARM and COLD segments only
+check data_blocks.
+
+Fixes: ef095d19e82f ("f2fs: write small sized IO to hot log")
+Cc: stable@kernel.org
+Signed-off-by: Xiaole He <hexiaole1994@126.com>
 ---
-Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Cc: Hans de Goede <hansg@kernel.org>
-Cc: "Ilpo Järvinen" <ilpo.jarvinen@linux.intel.com>
-Cc: platform-driver-x86@vger.kernel.org
+Changes in v2 (per Yongpeng's feedback):
+- Merged dentry block check into the main loop to avoid duplication
+- Check data_blocks + dent_blocks for data segments (both can write to same segment)
 ---
- drivers/platform/x86/intel/uncore-frequency/uncore-frequency-common.h |    9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ fs/f2fs/segment.h | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
---- linux-next-20251107.orig/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-common.h
-+++ linux-next-20251107/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-common.h
-@@ -40,7 +40,7 @@
-  * @agent_type_mask:	Bit mask of all hardware agents for this domain
-  * @uncore_attr_group:	Attribute group storage
-  * @max_freq_khz_kobj_attr: Storage for kobject attribute max_freq_khz
-- * @mix_freq_khz_kobj_attr: Storage for kobject attribute min_freq_khz
-+ * @min_freq_khz_kobj_attr: Storage for kobject attribute min_freq_khz
-  * @initial_max_freq_khz_kobj_attr: Storage for kobject attribute initial_max_freq_khz
-  * @initial_min_freq_khz_kobj_attr: Storage for kobject attribute initial_min_freq_khz
-  * @current_freq_khz_kobj_attr: Storage for kobject attribute current_freq_khz
-@@ -48,13 +48,14 @@
-  * @fabric_cluster_id_kobj_attr: Storage for kobject attribute fabric_cluster_id
-  * @package_id_kobj_attr: Storage for kobject attribute package_id
-  * @elc_low_threshold_percent_kobj_attr:
--		Storage for kobject attribute elc_low_threshold_percent
-+ *		Storage for kobject attribute elc_low_threshold_percent
-  * @elc_high_threshold_percent_kobj_attr:
--		Storage for kobject attribute elc_high_threshold_percent
-+ *		Storage for kobject attribute elc_high_threshold_percent
-  * @elc_high_threshold_enable_kobj_attr:
--		Storage for kobject attribute elc_high_threshold_enable
-+ *		Storage for kobject attribute elc_high_threshold_enable
-  * @elc_floor_freq_khz_kobj_attr: Storage for kobject attribute elc_floor_freq_khz
-  * @agent_types_kobj_attr: Storage for kobject attribute agent_type
-+ * @die_id_kobj_attr:	Attribute storage for die_id information
-  * @uncore_attrs:	Attribute storage for group creation
-  *
-  * This structure is used to encapsulate all data related to uncore sysfs
+diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+index 1ce2c8abaf48..acda720a54eb 100644
+--- a/fs/f2fs/segment.h
++++ b/fs/f2fs/segment.h
+@@ -626,21 +626,21 @@ static inline bool has_curseg_enough_space(struct f2fs_sb_info *sbi,
+ 
+ 		left_blocks = get_left_section_blocks(sbi, i, segno);
+ 
+-		blocks = i <= CURSEG_COLD_DATA ? data_blocks : node_blocks;
++		if (i <= CURSEG_COLD_DATA) {
++			blocks = data_blocks;
++			/*
++			 * With active_logs == 6, dentry blocks can be allocated to
++			 * any data segment. With active_logs != 6, dentry blocks
++			 * are always allocated to HOT_DATA segment.
++			 */
++			if ((F2FS_OPTION(sbi).active_logs == 6) || (i == CURSEG_HOT_DATA))
++				blocks += dent_blocks;
++		} else {
++			blocks = node_blocks;
++		}
+ 		if (blocks > left_blocks)
+ 			return false;
+ 	}
+-
+-	/* check current data section for dentry blocks. */
+-	segno = CURSEG_I(sbi, CURSEG_HOT_DATA)->segno;
+-
+-	if (unlikely(segno == NULL_SEGNO))
+-		return false;
+-
+-	left_blocks = get_left_section_blocks(sbi, CURSEG_HOT_DATA, segno);
+-
+-	if (dent_blocks > left_blocks)
+-		return false;
+ 	return true;
+ }
+ 
+-- 
+2.43.0
+
 
