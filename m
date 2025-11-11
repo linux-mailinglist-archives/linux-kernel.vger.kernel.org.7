@@ -1,87 +1,87 @@
-Return-Path: <linux-kernel+bounces-895035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BB04C4CC55
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:50:52 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EAECC4CC5B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:51:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6788C422E1D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:46:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4991C4FA674
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:46:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15FF02F5316;
-	Tue, 11 Nov 2025 09:45:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56E5926B75C;
+	Tue, 11 Nov 2025 09:45:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SjNEm+jE"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nKx7WDh5"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D5882F1FD5
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 09:45:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E52292F39A4
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 09:45:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762854337; cv=none; b=pJ19MxPkO/h8sSkEwN/BP5lyLpSdhKEEs8x2aGK/vOZS+/vXYlpiYBHOShyH0a3UpzcaDTb2kvBoTrIyXpZOoVUrnXz664yi4SCR19A6Hw5dR5owwn8ljG/nlFkzfrE/STiBXezM4xtmeP1/GVsWhk5r5YgEREC9DHBoR8zCMj4=
+	t=1762854338; cv=none; b=RJEqJr4UI8pz/ENsSJwjYF7k+acsyrHew6l6jJeW+0o728q0JHWBzdHn5Hq78CfdmZO8Y+94qKnMIpjN4/G9MfwsFqNxI45dWX9JnBrQ1kKeqXkzK1D8DvJqf3jjfIJqJFY/BJGk30DJQrhSIB+UpoStojKsWgYUVtpio3MvA04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762854337; c=relaxed/simple;
-	bh=8lQxcKvouaei16FqYGY0RR8AerBRZPOQndfjxzjaGZw=;
+	s=arc-20240116; t=1762854338; c=relaxed/simple;
+	bh=lf7WAmXXlNMNByc6t4LTsXWtP5fFo0VO8PLMA4FvwHQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Sp5XyLXXHwE+3C/pH0OiSVB/R5/0khTcPZJE82ddIyXTcpDz88RnboCcv7L4jEyvl05CnVqBf5GTXn2OJva0w/D4Ogqv8Np/MWrz8I8JldAgALvZJf4ZVcBU8XPVI6V4AAZQyMcraFSxWuNyHg9JJROARAwlwWVHtIDd8846qsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SjNEm+jE; arc=none smtp.client-ip=209.85.221.54
+	 MIME-Version; b=aLSA4ENB3rPh5+glS5mzPCy34qdQZBu5YqlREUrNYlEXJr3pgQmdocv/ICbyDR4P3V6j+L0bYHmxh3a21dxuQqRdHVcrVR71fmyZGOmDF8uwGu2h+qw5v5+hX0Z2wtSZvexuiQIDDPlKJIzTvMgg2EEu8ZiSTseb6ORyCxFWX80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nKx7WDh5; arc=none smtp.client-ip=209.85.128.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-42b3c965cc4so270761f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 01:45:35 -0800 (PST)
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-475ca9237c2so21700615e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 01:45:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762854334; x=1763459134; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1762854335; x=1763459135; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=1iqFxV3svYobU0TK9f8Y5DAj+U7MQujkDDouJLinQ98=;
-        b=SjNEm+jE7K8CIJg1O120bI7g57/2jeVA09YDYZY3qWy7jCxqI5sQn3AzkF+uxbCOo7
-         RuP6ZFTjl1SO6ST7RT13fK5EZKkqafYWCkV9dkVB4Zjz3H5uMQw6YVN6i0r/m8BC/zfJ
-         9HRWklYOtN2U7FhueKsXAxhlJrix+ayy8OWxvSvdC+XM5D7RdVJba27oztPgavuny+8f
-         c2+NLx50w0Fa1slY2UpcyAT3+gmva+0rflSXRWfieZjKktyjEdvm27unECg4+6Hs4Y+Y
-         gKF6by5TJiaPsfdh0sfQTmvm5WUymhWJJ+YmHkaPFwXnATxnJ8jLyv0TprzaJd1g3gSw
-         rnNg==
+        bh=cyTFCidwYxLdrRo0mrPJg5BpG+UQKkEfi+EP0wnzqpI=;
+        b=nKx7WDh5pE4FMdp/SGss34+W1+VCRBLoX5YTJ9WOm9z91xHfRUxyt/LybjE/3WSn1N
+         optoHTIP9OZag08ZoMFH0s0ou1SVOV77VzJJpLd/2ZrbNukKmoBZ+iE02RKFWEIE351v
+         n1XGOKwjjmLsTn8i/uEEs/fXKXv5mw+ulQtNxwSI9vf40ciBPJMAK04FYowHD9FWmeF8
+         O1jhvH1awKezLTaUNzVriesglftq4CE9eZxzcCxVJ9yti9QOt1/+a08wLktZZbcWLb/Y
+         NPI7BMDDM0vIJLcsbKA121d5RqnKS2MkJQpTcqB1D1Gk99gT4E/hcFyWIeCwVmsHWulS
+         jA6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762854334; x=1763459134;
+        d=1e100.net; s=20230601; t=1762854335; x=1763459135;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=1iqFxV3svYobU0TK9f8Y5DAj+U7MQujkDDouJLinQ98=;
-        b=sDn6s2H5fjNQItzM7qvK5Xv4oqu4xsGbio1huqx5pLmheD5oeILCwAYFBKMLHQIOCl
-         /pfLJcfnL5BfkcpZ8o6CqAmC6GRWoRboe/0gd8j+8VIhZwJD2i/NJ73IRCCpShd3tGS0
-         uQ/bp9tyQr1uztCuK230JwZi+daSSGqVlsrXQlbxmXCRNIqOZ0MmTcXF1FpzzxzjA/yO
-         CONXT+drmVG4tdU5Nnj+EYXJX83nWpGeRPOOOv63FklY0W128OhD9qbQjFY43TS7hzWg
-         IQ9tO05c7RR7YFJjFmhMzsOiAxieSYr4kkD8ilSfD0nDICjmrDs0aFPrGkEt6KRojUln
-         cE4g==
-X-Forwarded-Encrypted: i=1; AJvYcCWvVUVHC6GvvfAtdyDMR0JG6mj9CyNDJBQS9lrNPklGgAwCkG30c5+LrStzbmheutMZa9V3gKA0aozWtQY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzfztOStTnLpELYLnUYnCzhp4rgJ0d8Qc5cfZwWkTKBs7d5OHA9
-	HTQtF6bEk3yJSU9hFQx5ZUt6fzcNwrMuUgOVGvOe/swpbmRG4NXNT+cR
-X-Gm-Gg: ASbGncseVvMpva27OgE32BoCfKi1eK9NVKvnI5MKuWdQiJ2exTjO/NMH2+cd3+KknEB
-	HcqnftmyAanTP15KedbxccKT9qJ4HCyoEh22Q5OXBZjlblfheT+i20/nAh8LCtw31v57qn8tsTw
-	nHOvxVo3spJrtLmoSdlsr7N2uTU983MnJmbx6t09x6/x4afX1ZKWDE3TYXYpcNzJVAM/52Kszpz
-	A0fKZwLRA7Ym3HfzGhNcZp4HU+mFTFsmfahFBYoGexVwUr1L22/FVZZGIH3zkQCUs2xtkpFTM0z
-	BbJVgL81vl+xvrjjZWDHPFUQw5RjWD1AKSzwaLcUugTzP0SpRYqo0QbmMB7C/QC7vA4McoSRPAR
-	jKebU10lUWjBpSFqSHOVykvF81Mm2G7F2j1ELAw41KyAvniyJ48HgnWu6oro9dfAZHFlnNzZ+39
-	CZOpNIhOMqOthxe8lIjKjVrU1dcnE=
-X-Google-Smtp-Source: AGHT+IGA/f0ZCKraAUBHqwQvDL4XINgS9hrAFsyHo2vjiQs9gnIry2mTkBGRV4IxBbXGTbM5/YiQpQ==
-X-Received: by 2002:a05:6000:2284:b0:42b:2db2:159f with SMTP id ffacd0b85a97d-42b432b1f8cmr2257381f8f.12.1762854333756;
-        Tue, 11 Nov 2025 01:45:33 -0800 (PST)
+        bh=cyTFCidwYxLdrRo0mrPJg5BpG+UQKkEfi+EP0wnzqpI=;
+        b=j/JEUs9AyapqeCbZRRw+R3lrK94qltn5AL/vZd04Q9V5LMCZ2djB/+h2JXL8AnH1k4
+         Eqz2gA1lm2D9aKjidBGOAfdcY3otxAe46QZkN7x+fzv190RLuheszKLVgyil6yJTWKAI
+         ESjmKr/5cs+ZL7hkI1EkBhVu6gQTfd/beOTjT6bb+Y1vWjANHQZilLBat7tpM1PwDULA
+         D/0PepWrD/gWYfKWgfvecBdKX4CBBl5ucoo5M5NG50goBgHJw1aRuHVJCPUCHTsZqm6J
+         cfjpfAct0iCs9jgQ2cR7f+gMJGpzgQPdfaOpnFW7QoTEjDjWE2ey6sIsGa44lbDGByDj
+         WLpA==
+X-Forwarded-Encrypted: i=1; AJvYcCXjA86uDMAIQQ43uZjnDDPwabohlT/CROl04xdWU2X7XKQm1EIY5lLirc8+M5kAQXeoXqyoVK1vzywFTl0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5lRO0aFJ6P/k5usxTGWybjNRCD6JrmBNU6DrbdaucsAMh+CzZ
+	HCzD9X4ckWCNUt/yzKms3rkjsPz/QavK1IE32bt2wIBaBg9TjhMf06x1+z5SqA==
+X-Gm-Gg: ASbGncu2AnegVblcdIIgKAzNbdJy8Kdy2d8WzQHlg4cU09ciBrlWNkWJLuTMl4dTrl0
+	XTAbZSFMBmhoXfBug8TFnTykkaMU9WlJvI+OCigpygb8ebUvPQNa94VPe8NuaKj39sQg7B6cCM6
+	qaH+WI4BJIglsPmJHU341aPr+T1J6U3ua/Rb9F8WMYHZSSTQ31R46litIRCYOyDfViV86sy7IV9
+	A9ovvRE8fgks+rcQwYUXdJoBlhn6mpltUAMQ954dDkz7A5QwGKv+kw2SR+3VT5qCIaJnsUIoMGX
+	MQyY1MXUtgM/Wtn//7//tIidOfbw3SF25jLPCZ74ceKyAiJdmvGxVSJ3bqV6+BTxuncsE011LYg
+	K1YYamxkWyiIZvvqMHhEWX6MLPrjGQHRnsGtD2B+IX2iCkeRRQXTfS3Q81ni+CdiATtWHzyNltG
+	cbFGM1NE+kLoZJuuBA2/XmgsWY9Ec=
+X-Google-Smtp-Source: AGHT+IE+ZuARGiz3jx6grGJFiduhQHFRxZsDGWAZ3QmBErVlqeABMe7Zfmohvg0NcUOhdBFLbPcwEw==
+X-Received: by 2002:a05:600c:4f8f:b0:477:cb6:805e with SMTP id 5b1f17b1804b1-4777323f091mr102982615e9.18.1762854335069;
+        Tue, 11 Nov 2025 01:45:35 -0800 (PST)
 Received: from egonzo (82-64-73-52.subs.proxad.net. [82.64.73.52])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4775cd45466sm359537865e9.0.2025.11.11.01.45.33
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4775cd45466sm359537865e9.0.2025.11.11.01.45.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Nov 2025 01:45:33 -0800 (PST)
+        Tue, 11 Nov 2025 01:45:34 -0800 (PST)
 From: Dave Penkler <dpenkler@gmail.com>
 To: gregkh@linuxfoundation.org,
 	linux-staging@lists.linux.dev,
 	linux-kernel@vger.kernel.org
 Cc: johan@kernel.org,
 	Dave Penkler <dpenkler@gmail.com>
-Subject: [PATCH V2 04/10] staging: gpib: Update TODO file
-Date: Tue, 11 Nov 2025 10:45:06 +0100
-Message-ID: <20251111094512.6411-5-dpenkler@gmail.com>
+Subject: [PATCH V2 05/10] staging: gpib: Change gpib Kconfig option title
+Date: Tue, 11 Nov 2025 10:45:07 +0100
+Message-ID: <20251111094512.6411-6-dpenkler@gmail.com>
 X-Mailer: git-send-email 2.51.2
 In-Reply-To: <20251111094512.6411-1-dpenkler@gmail.com>
 References: <20251111094512.6411-1-dpenkler@gmail.com>
@@ -93,39 +93,26 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The comments have now been fixed so remove the item about
-comments from the TODO file.
+Remove the word "Linux" from the gpib Kconfig option title as
+it adds no information - it is redundant.
 
 Signed-off-by: Dave Penkler <dpenkler@gmail.com>
 ---
- drivers/staging/gpib/TODO | 14 --------------
- 1 file changed, 14 deletions(-)
+ drivers/staging/gpib/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/gpib/TODO b/drivers/staging/gpib/TODO
-index ab41a7f9ca5b..ac07dd90b4ef 100644
---- a/drivers/staging/gpib/TODO
-+++ b/drivers/staging/gpib/TODO
-@@ -4,20 +4,6 @@ TODO:
-     CHECK:ALLOC_SIZEOF_STRUCT: Prefer kmalloc(sizeof(*board->private_data)...) over kmalloc(sizeof(struct xxx_priv)...)
-     ./gpio/gpib_bitbang.c:50: ERROR:COMPLEX_MACRO: Macros with complex values should be enclosed in parenthese
-   This warning will be addressed later:  WARNING:UNDOCUMENTED_DT_STRING: DT compatible string
--- tidy-up comments:
--  - there are some "//comments" and "// comments" scattered around
--  - sometimes they are misaligned
--  - sometimes "// comments" are interleaved with "/* comments */"
--  - multiline comments should start with initial almost-blank line:
--    /*
--     * Good
--     * multiline
--     * comment
--     */
--    /* Bad
--     * multiline
--     * comment
--     */
- - resolve XXX notes where possible
- - fix FIXME notes
- - clean-up commented-out code
+diff --git a/drivers/staging/gpib/Kconfig b/drivers/staging/gpib/Kconfig
+index aa01538d5beb..2f42aa2d55fd 100644
+--- a/drivers/staging/gpib/Kconfig
++++ b/drivers/staging/gpib/Kconfig
+@@ -1,6 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0
+ menuconfig GPIB
+-	tristate "Linux GPIB drivers"
++	tristate "GPIB drivers"
+ 	help
+ 	  Enable support for GPIB cards and dongles for Linux.  GPIB
+ 	  is the General Purpose Interface Bus which conforms to the
 -- 
 2.51.2
 
