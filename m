@@ -1,99 +1,113 @@
-Return-Path: <linux-kernel+bounces-895489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A90C4C4E161
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:20:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7820C4E044
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:06:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 842DC189620F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:20:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DDE43A60FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:03:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78561324701;
-	Tue, 11 Nov 2025 13:20:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CD183246FF;
+	Tue, 11 Nov 2025 13:03:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l43RlZgC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nx4cjvlP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C88EF331A75;
-	Tue, 11 Nov 2025 13:20:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C0413246EE
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 13:03:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762867212; cv=none; b=IiRn0QLusbPYHJE0aakBofIIsgB1asMvSVHQK4mw9OcCzvQuoM4I8t6K4nDE73WyhbdgylfkFgH6Llx3L5SsikCOp1qI7++PANKvlFrCxlGqXXgSTMi2GZOkgfyIEYZU3IH2cj5J/s5HnipX1XTpWjlb7yZQv/KSCfRIrn8594A=
+	t=1762866225; cv=none; b=NFY4GnHpi4Gl+fXZlOBF49CLDPovf9RC1yDRq3NxTvDAx8JhIXsEz081+UovKLzP3ezFZyIdLLmPCTjeTSDq7VbQF68q1Vw1HqCU2C7BftRN24AaIaCMWUUqDu3mOkpc5/Z947YQvYhSWpwKj0Q9re/NU26ezh/SKhKmDIRzKmo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762867212; c=relaxed/simple;
-	bh=9mm6g+osJm1/EWGqawmYdfu46laP/lzTSdOtwjYCnTk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CEmwEG//23v2GYfYKF8BZpZ+ZIvaLc9zvgWrPYwCn0k+DhpJF0kP5YCYOt26Nr062O1cjuMFG9//pF2gCThLqL19TOeSTRRpp7osaECLf7b1fjPjLxJVaLEttDflEOLEhOPfVoFWpnIO+AzivMnmPjPDugVXlv3j54DlkbgS5sk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l43RlZgC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED0ADC4CEFB;
-	Tue, 11 Nov 2025 13:20:11 +0000 (UTC)
+	s=arc-20240116; t=1762866225; c=relaxed/simple;
+	bh=MnQGngUYZB/AuquYMcvngj/vv0fvRZTP9N1ik/AuqZ8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ZNJYrUvVsozK0ecxrroS6xQ7ubyx283AzxFjw1dB0wzutBfDwovhyanhvBiw63ZCPtZBxlnOkuuAvFhmy9djcIF120t7WbIJVpT0WFPSA+SVY4wK6ynAUvXqw+mT3FkYu4P3jFZjoSqwe7mJqWMIhQBs/LC0tF+gXZjor6VZb40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nx4cjvlP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95D0BC19422;
+	Tue, 11 Nov 2025 13:03:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762867212;
-	bh=9mm6g+osJm1/EWGqawmYdfu46laP/lzTSdOtwjYCnTk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=l43RlZgCYNkLBeSiru6TxlcyrDsgcT9ZklHl0NU7twHyUVS5OmaJmO2aOVg/3y45h
-	 3njS3UnXWYkkc62+BkDA/NoDDoZfpZqfHMLg1poawfgzdWEgT6r+Wvbf4L0OI85ZHc
-	 T0opZPUtj82FqE1ygKIbfTM1e6YJVS+LjBrjDyfFjezu3zGBGyW8BkxVvXRb4eIy2W
-	 TGB5jJdbIBJVF+isMCrPl4LKu+FjRel5IVrHKdqlLqB2zts4mcm97F6fSS4MSrauwR
-	 4uKL15tBtwcGbpqrjW3bB4qNSkSCS7c+ITwBXRjuhDUWiojTuBIBSU79zv5MH5EiAe
-	 jPW6SupAwy2pA==
-Date: Tue, 11 Nov 2025 14:03:10 +0100
-From: Nicolas Schier <nsc@kernel.org>
-To: Abel Vesa <abel.vesa@linaro.org>
-Cc: Nathan Chancellor <nathan@kernel.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] kbuild: install-extmod-build: Properly fix CC
- expansion when ccache is used
-Message-ID: <aRM0DmrBq-neaNYw@derry.ads.avm.de>
-References: <20251111-kbuild-install-extmod-build-fix-cc-expand-third-try-v2-1-15ba1b37e71a@linaro.org>
+	s=k20201202; t=1762866224;
+	bh=MnQGngUYZB/AuquYMcvngj/vv0fvRZTP9N1ik/AuqZ8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=nx4cjvlP88r0deet2wJMyBpLgRhoG5z585/MuON0PuaxnYs55RYvZ1IzQY6H9JByx
+	 8bGGRsHDFEvVTPi1GFJlU1oIwYPn4M5SdsrRJX9Ooy1u69MchU64Wfpv/JPxpTWG9G
+	 Jd1uIKXHmujcrw3CK2LUloly/bMW6Kp56MhenOxEz5AqeC4WvXoDBmB62K7MIbcOr2
+	 h3C1DHdEyZHl7Lgag9Xlyn8nJ0JAgy5Jqng9hzmKIWQeVkRyD6exr1QQxCHV71J19m
+	 hTyHcpPVc0vcXqTTz+mZd4mabIbcZX23RiHeq+5QDwdiewLoAsuK7FiLsyaYQ/tQg+
+	 EL34ZgyDgZJCw==
+From: Pratyush Yadav <pratyush@kernel.org>
+To: Mike Rapoport <rppt@kernel.org>
+Cc: Pasha Tatashin <pasha.tatashin@soleen.com>,  akpm@linux-foundation.org,
+  graf@amazon.com,  pratyush@kernel.org,  linux-kernel@vger.kernel.org,
+  kexec@lists.infradead.org,  linux-mm@kvack.org
+Subject: Re: [PATCH] liveupdate: kho: Enable KHO by default
+In-Reply-To: <aRIwSEF8Y0I6q8Cy@kernel.org> (Mike Rapoport's message of "Mon,
+	10 Nov 2025 20:34:48 +0200")
+References: <20251110180715.602807-1-pasha.tatashin@soleen.com>
+	<aRIwSEF8Y0I6q8Cy@kernel.org>
+Date: Tue, 11 Nov 2025 14:03:42 +0100
+Message-ID: <mafs0cy5oafgx.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251111-kbuild-install-extmod-build-fix-cc-expand-third-try-v2-1-15ba1b37e71a@linaro.org>
+Content-Type: text/plain
 
-On Tue, Nov 11, 2025 at 08:43:51AM +0200, Abel Vesa wrote:
-> Currently, when cross-compiling and ccache is used, the expanding of CC
-> turns out to be without any quotes, leading to the following error:
-> 
-> make[4]: *** No rule to make target 'aarch64-linux-gnu-gcc'.  Stop.
-> make[3]: *** [Makefile:2164: run-command] Error 2
-> 
-> And it makes sense, because after expansion it ends up like this:
-> 
-> make run-command KBUILD_RUN_COMMAND=+$(MAKE) \
-> HOSTCC=ccache aarch64-linux-gnu-gcc VPATH= srcroot=. $(build)= ...
-> 
-> So add another set of double quotes to surround whatever CC expands to
-> to make sure the aarch64-linux-gnu-gcc isn't expanded to something that
-> looks like an entirely separate target.
-> 
-> Fixes: 140332b6ed72 ("kbuild: fix linux-headers package build when $(CC) cannot link userspace")
-> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> ---
-> Changes in v2:
-> - Moved the new double quotes inside of single ones, to be able
->   to drop the escape, like Nathan suggested.
-> - Re-worded the commit message according to the above change.
-> - Link to v1: https://lore.kernel.org/r/20251110-kbuild-install-extmod-build-fix-cc-expand-third-try-v1-1-5c0ddb1c67a8@linaro.org
-> ---
->  scripts/package/install-extmod-build | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
+On Mon, Nov 10 2025, Mike Rapoport wrote:
 
-Just as a note: the fix is only required for build rpm packages.  For
-the Debian package call of install-extmod-build
-CC="${DEB_HOST_GNU_TYPE}-gcc" is used, no matter what was given to make
-deb-pkg.
+> On Mon, Nov 10, 2025 at 01:07:15PM -0500, Pasha Tatashin wrote:
+>>
+>> Subject: [PATCH] liveupdate: kho: Enable KHO by default
+>
+> No need to put a directory (liveupdate) prefix here. "kho: " is enough.
 
-Reviewed-by: Nicolas Schier <nsc@kernel.org>
++1
+
+>
+> With that fixed
+>
+> Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+
+Reviewed-by: Pratyush Yadav <pratyush@kernel.org>
+
+>
+>> Upcoming LUO requires KHO for its operations, the requirement to place
+>> both KHO=on and liveupdate=on becomes redundant. Set KHO to be enabled
+>> by default.
+>> 
+>> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+>> ---
+>>  kernel/liveupdate/kexec_handover.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>> 
+>> diff --git a/kernel/liveupdate/kexec_handover.c b/kernel/liveupdate/kexec_handover.c
+>> index b54ca665e005..568cd9fe9aca 100644
+>> --- a/kernel/liveupdate/kexec_handover.c
+>> +++ b/kernel/liveupdate/kexec_handover.c
+>> @@ -51,7 +51,7 @@ union kho_page_info {
+>>  
+>>  static_assert(sizeof(union kho_page_info) == sizeof(((struct page *)0)->private));
+>>  
+>> -static bool kho_enable __ro_after_init;
+>> +static bool kho_enable __ro_after_init = true;
+>>  
+>>  bool kho_is_enabled(void)
+>>  {
+>> 
+>> base-commit: ab40c92c74c6b0c611c89516794502b3a3173966
+>> -- 
+>> 2.51.2.1041.gc1ab5b90ca-goog
+>> 
+
+-- 
+Regards,
+Pratyush Yadav
 
