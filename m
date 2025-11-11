@@ -1,130 +1,198 @@
-Return-Path: <linux-kernel+bounces-896259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 345D6C4FFC9
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 23:38:20 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44C1DC4FFCC
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 23:38:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0F54F4E5CE0
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 22:38:19 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BE96134D368
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 22:38:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E1002D6E5B;
-	Tue, 11 Nov 2025 22:38:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 965002BFC73;
+	Tue, 11 Nov 2025 22:38:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IuhkkJHJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="MoI7HoCT";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="MtoCyJI5"
+Received: from fout-a8-smtp.messagingengine.com (fout-a8-smtp.messagingengine.com [103.168.172.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0BE928850D;
-	Tue, 11 Nov 2025 22:38:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26B1525D527
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 22:38:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762900692; cv=none; b=MLb2WoPQ4Be3r3/gAGaeMOP8DMYu1hoU1J8xLQh6BowA03Tymcj3e1+yAzuAVNtQCOskBQSyEGgvhLnjNxvokHEYwIaWrD04/yxep1Z1rl8/0jdSvwA9hEMm1ozpYz4/8RjQpS8ykxkMoU99sXkFHw+drGUoPrvZ5mwMCblqDKQ=
+	t=1762900722; cv=none; b=nD8hGTmUALq4oXCzKBe5y7rRy+qCDt1z0p6yV+KfE7+WN+/3kV07ICtIVIGQni+rckcBic2VCiz1CN2SBS4QqjUEXRErh4nLzjJhy//rWc6/ijkfC9Ix2LSeaPKc6xQhIKyIgsqz/F0nk+/HIcaZNd2TfU645qY29fGiZN5x1yQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762900692; c=relaxed/simple;
-	bh=LRVuRv9PQKkgI1+rlOG0vUkR9MJG4fNjqko8aLJaMbY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l/j90poL/Rz/NDa0kGO6gQdrtLdGbhYF2FomAv6lQxVknHzzvg1ucJmuZAftUfZ71Z/Ewpl+oyDcr66UA54zpWS+rUrwF8j9brkxQ7OR8JnZWrmE8nbnxKuxCQN8p8/R6/s0ZSAxRYygKiEdzEc6Q4Q4vNadv6a8vXADaUhdBnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IuhkkJHJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1FCBC4CEF7;
-	Tue, 11 Nov 2025 22:38:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762900692;
-	bh=LRVuRv9PQKkgI1+rlOG0vUkR9MJG4fNjqko8aLJaMbY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IuhkkJHJ6hyNwezKyP0tcqEBjCWpbcxgnFFyXTl4SE+IOelOaUMNAMoPluIoIaWbm
-	 v7RZVjhIE4fzP9WtkKetVnZziHt4NWGKlIcd8umsQu7lSPAJ0wrFuqOhXWEDpDYIkA
-	 sJvqTgp/pzF+z0T6vmkpbXI08/RhYz55uT2Q1e8swKhpCuf5ER2E/z4mAlVjEe/6p1
-	 bc0Q8epBCp5lQ7QgEEmF6jmvvwdDZeE+79WrLu8rFzTPG43hIp6yrpnGKpZyfY2EaB
-	 MSJLGEyEB92CnOmIaBI6Kmp5CFsGXtrziuZzSsUJF7R8oheUlmvMSdBeUUaB6LKq4a
-	 F1qeYu3WJz5qQ==
-Date: Tue, 11 Nov 2025 14:38:07 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Thomas Falcon <thomas.falcon@intel.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] perf: write bpf_prog (infos|btfs)_cnt to data file
-Message-ID: <aRO6z1Q76852Ig6n@google.com>
-References: <20251107173150.135037-1-thomas.falcon@intel.com>
+	s=arc-20240116; t=1762900722; c=relaxed/simple;
+	bh=YYCfSsE259vSkdsYGJYf8k7hP/aHFxs4DXAxcpUfxYg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LtmkHgCUVsdcUmJnckhm+kfYVQCm+mHuIjMBJq+oJQhfSgNcMOCFfmpuWk/njdRLkbN1ai7k9vUqfSC5C5GbjYMRLK6siyg115eihEPAg4sXsWx7eldy5+BlB4piCAf4x1yPzSAhWooJmRnMKgoUV4dZb2pw13kiT/m0nluMLpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=MoI7HoCT; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=MtoCyJI5; arc=none smtp.client-ip=103.168.172.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfout.phl.internal (Postfix) with ESMTP id 2D514EC0196;
+	Tue, 11 Nov 2025 17:38:38 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-05.internal (MEProxy); Tue, 11 Nov 2025 17:38:38 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
+	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
+	:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to; s=fm3; t=1762900718; x=1762987118; bh=kxyRhG8c4D
+	QThr/aSewpp16TI6ayZhIqP+Sg2TBU4pk=; b=MoI7HoCTyNmtmsoGfgshL+et6l
+	98l4F6dlQC7YWu/qWoM0vL2KKO6vk3dPo/b+oel7AKDBDRrNTcqW8OszpIRU90EU
+	bUqtYcqBDIhEXbnJTJbTM7V/c1gXegXrkWwl5kUKX/zCt8v/2aI6GR8mPpgT6rck
+	uq9BReFf6UIdk9LFfQP5yH/rG49FTL7rd5VSB2D7QlZZpWjyVoGqs/xgM4/i3+l4
+	6JG+5LN2t5cvUf1w04NvpaMc2MOTdNr7Rv8b6iAimE+zK5dggU8R2JgZ5dTLbW4x
+	DFh5QX3Qiz8XVR4XKRF1eZemCTAKFskZvgdN12GsrzEfmrSCwT6HKZQKiJ1w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1762900718; x=1762987118; bh=kxyRhG8c4DQThr/aSewpp16TI6ayZhIqP+S
+	g2TBU4pk=; b=MtoCyJI5G3ZQzcD0fPvKDcy0hgvjOJ5CGEer40iLoEdMp2NoidD
+	PZsLHuUqHsnNCBI/6YsGRY/CRm4IOjnFxa/I8glRgdjQS2WQTomYJJny8Rb0rBOS
+	Go9YJ3kK/afKGp1pTxcQvxnSC6pQE15YkCKU6wpBe8xhiHk3RZ07DzIIJTJW9dtu
+	ro94Szd69oU+EaQJZKJAEW/H83oIIPJ0Wl7og0obuT1lV/qx9SDPqJRNOvrLgXMY
+	cuK476khkynl/OctZIalqvS4y8DEGKIYF6qoH2ZMJGpbkOHTFsINT2zIdG4rFs7t
+	/kI8ywZDXnDXDwbYlURNK29jlEXeg13ekBw==
+X-ME-Sender: <xms:7boTaRcvYts56s8SdHel3I4hBfyw6UqVrM7Gri9oVzZTBAlQtfK91w>
+    <xme:7boTadL_KiKrw9I7Yrk7geifiv3GJOeijdm6f11_nCF1rif5CT-C-VDEypToFCikl
+    8k0DDFRuzE85IMbX1ks-LmakGEY-0uPOWkPDBz2JUNWCKx6fy0nULc>
+X-ME-Received: <xmr:7boTaSEWhAnzgbqrgOGyq0yJyUzJoUglnEUf03oenUCpRMY9x5Gg1poiazbe2TgZPSLLFPQ4WNrYLvynzlecY552wACr2x8OLlmONTSw3vj5MQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvtddvgeduucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkffoggfgsedtkeertdertd
+    dtnecuhfhrohhmpefvrghkrghshhhiucfurghkrghmohhtohcuoehoqdhtrghkrghshhhi
+    sehsrghkrghmohgttghhihdrjhhpqeenucggtffrrghtthgvrhhnpeffvdeuleffveekud
+    fhteejudffgefhtedtgfeutdfgvdfgueefudehveehveekkeenucevlhhushhtvghrufhi
+    iigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehoqdhtrghkrghshhhisehsrghkrg
+    hmohgttghhihdrjhhppdhnsggprhgtphhtthhopedvpdhmohguvgepshhmthhpohhuthdp
+    rhgtphhtthhopehlihhnuhigudefleegqdguvghvvghlsehlihhsthhsrdhsohhurhgtvg
+    hfohhrghgvrdhnvghtpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdr
+    khgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:7boTaXr9Ilskyo6FCxB-KgauiTCImU6Tbb4rlZFca9_kvnpGUakvZg>
+    <xmx:7boTabQ7rpEKZTSRej4vJHxJ-e0626joCTiU0-TW9cdyOQ3OeJ86fQ>
+    <xmx:7boTaUMblWQD6od3CyAoVZ17DK9f-0HQDOWRSTcpnu-4AqIqGm7APQ>
+    <xmx:7boTaePVPDoQhkZEGg2aNq1scxRsUeQLU6vtWGBXZkhjjjjcynuZaw>
+    <xmx:7roTaazfQoMoIx6VQloXenXQ6D_BQbHLjaS15hVKZBy_XNRTJu9yVAHT>
+Feedback-ID: ie8e14432:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 11 Nov 2025 17:38:37 -0500 (EST)
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+To: linux1394-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH] firewire: core: abort pending transactions at card removal
+Date: Wed, 12 Nov 2025 07:38:34 +0900
+Message-ID: <20251111223834.311287-1-o-takashi@sakamocchi.jp>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251107173150.135037-1-thomas.falcon@intel.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Nov 07, 2025 at 11:31:50AM -0600, Thomas Falcon wrote:
-> With commit f0d0f978f3f58 ("perf header: Don't write empty BPF/BTF
-> info"), the write_bpf_( prog_info() | btf() ) functions exit
-> without writing anything if env->bpf_prog.(infos| btfs)_cnt is zero.
-> 
-> process_bpf_( prog_info() | btf() ), however, still expect a "count"
-> value to exist in the data file. If btf information is empty, for
-> example, process_bpf_btf will read garbage or some other data as the
-> number of btf nodes in the data file. As a result, the data file will
-> not be processed correctly.
-> 
-> Instead, write the count to the data file and exit if it is zero.
+IEEE 1394 defines the split, concatenated, and unified transaction.
+To support the split transaction, core function uses linked list to
+maintain the transactions waiting for acknowledge packet. After clearing
+sources of hardware interrupts, the acknowledge packet is no longer
+handled, therefore it is required to abort the pending transactions.
 
-Oh, I'm afraid it'd create a compatibility problem.  But I think this is
-a right behavior and it's should be fine if it goes to the stable soon.
+This commit executes callback with RCODE_CANCELLED for the pending
+transactions at card removal.
 
-Arnaldo, can you please take this into perf-tools tree for v6.18?
+Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+---
+ drivers/firewire/core-card.c        |  1 +
+ drivers/firewire/core-transaction.c | 28 ++++++++++++++++++++++++++++
+ drivers/firewire/core.h             |  2 ++
+ drivers/firewire/ohci.c             |  5 -----
+ 4 files changed, 31 insertions(+), 5 deletions(-)
 
-Thanks,
-Namhyung
+diff --git a/drivers/firewire/core-card.c b/drivers/firewire/core-card.c
+index 65bd9db996c0..9869ea3fd9fc 100644
+--- a/drivers/firewire/core-card.c
++++ b/drivers/firewire/core-card.c
+@@ -790,6 +790,7 @@ void fw_core_remove_card(struct fw_card *card)
+ 	drain_workqueue(card->isoc_wq);
+ 	drain_workqueue(card->async_wq);
+ 	card->driver->disable(card);
++	fw_cancel_pending_transactions(card);
+ 
+ 	scoped_guard(spinlock_irqsave, &card->lock)
+ 		fw_destroy_nodes(card);
+diff --git a/drivers/firewire/core-transaction.c b/drivers/firewire/core-transaction.c
+index e80791d6d46b..fe96429ba395 100644
+--- a/drivers/firewire/core-transaction.c
++++ b/drivers/firewire/core-transaction.c
+@@ -51,6 +51,34 @@ static void remove_transaction_entry(struct fw_card *card, struct fw_transaction
+ 	card->transactions.tlabel_mask &= ~(1ULL << entry->tlabel);
+ }
+ 
++// Must be called without holding card->transactions.lock.
++void fw_cancel_pending_transactions(struct fw_card *card)
++{
++	struct fw_transaction *t, *tmp;
++	LIST_HEAD(pending_list);
++
++	// NOTE: This can be without irqsave when we can guarantee that __fw_send_request() for
++	// local destination never runs in any type of IRQ context.
++	scoped_guard(spinlock_irqsave, &card->transactions.lock) {
++		list_for_each_entry_safe(t, tmp, &card->transactions.list, link) {
++			if (try_cancel_split_timeout(t))
++				list_move(&t->link, &pending_list);
++		}
++	}
++
++	list_for_each_entry_safe(t, tmp, &pending_list, link) {
++		list_del(&t->link);
++
++		if (!t->with_tstamp) {
++			t->callback.without_tstamp(card, RCODE_CANCELLED, NULL, 0,
++						   t->callback_data);
++		} else {
++			t->callback.with_tstamp(card, RCODE_CANCELLED, t->packet.timestamp, 0,
++						NULL, 0, t->callback_data);
++		}
++	}
++}
++
+ // card->transactions.lock must be acquired in advance.
+ #define find_and_pop_transaction_entry(card, condition)			\
+ ({									\
+diff --git a/drivers/firewire/core.h b/drivers/firewire/core.h
+index 903812b6bb3f..41fb39d9a4e6 100644
+--- a/drivers/firewire/core.h
++++ b/drivers/firewire/core.h
+@@ -287,6 +287,8 @@ void fw_fill_response(struct fw_packet *response, u32 *request_header,
+ void fw_request_get(struct fw_request *request);
+ void fw_request_put(struct fw_request *request);
+ 
++void fw_cancel_pending_transactions(struct fw_card *card);
++
+ // Convert the value of IEEE 1394 CYCLE_TIME register to the format of timeStamp field in
+ // descriptors of 1394 OHCI.
+ static inline u32 cycle_time_to_ohci_tstamp(u32 tstamp)
+diff --git a/drivers/firewire/ohci.c b/drivers/firewire/ohci.c
+index 0625d11dbd74..e3e78dc42530 100644
+--- a/drivers/firewire/ohci.c
++++ b/drivers/firewire/ohci.c
+@@ -3719,11 +3719,6 @@ static void pci_remove(struct pci_dev *dev)
+ 
+ 	fw_core_remove_card(&ohci->card);
+ 
+-	/*
+-	 * FIXME: Fail all pending packets here, now that the upper
+-	 * layers can't queue any more.
+-	 */
+-
+ 	software_reset(ohci);
+ 
+ 	irq = pci_irq_vector(dev, 0);
+-- 
+2.51.0
 
-> 
-> Fixes: f0d0f978f3f58 ("perf header: Don't write empty BPF/BTF info")
-> Signed-off-by: Thomas Falcon <thomas.falcon@intel.com>
-> ---
->  tools/perf/util/header.c | 10 ++--------
->  1 file changed, 2 insertions(+), 8 deletions(-)
-> 
-> diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
-> index db2ad19fa50d..54968881481c 100644
-> --- a/tools/perf/util/header.c
-> +++ b/tools/perf/util/header.c
-> @@ -1022,12 +1022,9 @@ static int write_bpf_prog_info(struct feat_fd *ff,
->  
->  	down_read(&env->bpf_progs.lock);
->  
-> -	if (env->bpf_progs.infos_cnt == 0)
-> -		goto out;
-> -
->  	ret = do_write(ff, &env->bpf_progs.infos_cnt,
->  		       sizeof(env->bpf_progs.infos_cnt));
-> -	if (ret < 0)
-> +	if (ret < 0 || env->bpf_progs.infos_cnt == 0)
->  		goto out;
->  
->  	root = &env->bpf_progs.infos;
-> @@ -1067,13 +1064,10 @@ static int write_bpf_btf(struct feat_fd *ff,
->  
->  	down_read(&env->bpf_progs.lock);
->  
-> -	if (env->bpf_progs.btfs_cnt == 0)
-> -		goto out;
-> -
->  	ret = do_write(ff, &env->bpf_progs.btfs_cnt,
->  		       sizeof(env->bpf_progs.btfs_cnt));
->  
-> -	if (ret < 0)
-> +	if (ret < 0 || env->bpf_progs.btfs_cnt == 0)
->  		goto out;
->  
->  	root = &env->bpf_progs.btfs;
-> -- 
-> 2.47.3
-> 
 
