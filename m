@@ -1,181 +1,118 @@
-Return-Path: <linux-kernel+bounces-894457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFBC2C4AB35
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 02:37:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D664C4AF8F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 02:51:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F171B4F6BF6
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 01:32:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72E1E3BCA22
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 01:43:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33216347BD4;
-	Tue, 11 Nov 2025 01:25:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB4F62FD7D0;
+	Tue, 11 Nov 2025 01:38:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=minyard-net.20230601.gappssmtp.com header.i=@minyard-net.20230601.gappssmtp.com header.b="AhAlgsxo"
-Received: from mail-oi1-f193.google.com (mail-oi1-f193.google.com [209.85.167.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Y8HyvojN"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F705347BC4
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 01:25:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5AC82F656B;
+	Tue, 11 Nov 2025 01:38:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762824318; cv=none; b=YaoSv0mzoBvU88i33ZWx42zzd90z1vBLzO5A3TjRU+ZdUwn/MUbxUNYDUW/+YehTWbYnXwgUruhFWEwrvAb/S+2Pq5wkO88CXJ1zc/QqwIQnFLcw35mWlDY64YCVy8pNuqeIW4MsX4fNIL/8lDftbbVxpXfOWueTT2OtjqegbGA=
+	t=1762825097; cv=none; b=RB/d4RIQjscJXszFbzcK/2r2qJIiLWPpW8LIZk/Iv9K3/WS34ahWk0GNAhJwHMi6ff6oYD2X3yFepm47ePnTF5oDIWi/wKAJZ2veYRyGFOcS+nyARQV7Ncx5etVOUKaENYSWxaV+PZndxnrddUM35Vvjcbl+U2YLsN4dh1Ui/zE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762824318; c=relaxed/simple;
-	bh=VG7yr5KtTWb6ZDQWVOimL1t5IglsNmLB3eZ+0cKlMec=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jq1byqeo1EyNQmfsOnfRc0iudtG6uQeOxRyRg34UPAy5GpCoClwgxcou7QjkBCwn8i+HwtBUjkcIfgauhDUDzKQbm6y3j/5V0dIydFTo+1B1k9sqYyVOCTCtgZzC2DcBCAp+oS0bflVoQzSuMlJH//KGKohSsO/mBE+EOD2Xn8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=minyard.net; spf=none smtp.mailfrom=minyard.net; dkim=pass (2048-bit key) header.d=minyard-net.20230601.gappssmtp.com header.i=@minyard-net.20230601.gappssmtp.com header.b=AhAlgsxo; arc=none smtp.client-ip=209.85.167.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=minyard.net
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=minyard.net
-Received: by mail-oi1-f193.google.com with SMTP id 5614622812f47-44f9815f385so677345b6e.3
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 17:25:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=minyard-net.20230601.gappssmtp.com; s=20230601; t=1762824316; x=1763429116; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=su1UwbZ4Pt+1NiFLASvdJqDu/6MFhpiYOP6WJzJr3rs=;
-        b=AhAlgsxoCCzGlp4XNFihxJ+PrLMWNxhT57XNbvUKhytbZ9N1L6dHdDQNvX1b5NUAwz
-         nNgDYBzBbk/JXudt++cH7gUR+7dlQSNilx9IezCjbRzwL2CUWwHj54cnZUYznB3BaPpZ
-         k0eK+9zSqojhCtnwKj2SCvF1gY9ZdElB0kyxfR5lsueL3z04SxNgjbPGjEFwMSHmnTt5
-         onbI0CQN5Wp/payRFye+nY5Hv9SQtiBhiqeUE+2AGrQNEpKEqaGSdo8z1ZNmTh3I2oWv
-         08DsW434IMwrVhdj5pp093CH93HZQmKAGit0G0TKgMSs4Zuq+cpAJl+k4+VERYs2PqKz
-         49Vw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762824316; x=1763429116;
-        h=in-reply-to:content-disposition:mime-version:references:reply-to
-         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=su1UwbZ4Pt+1NiFLASvdJqDu/6MFhpiYOP6WJzJr3rs=;
-        b=ZC2qd+jU43IgNOc6w9XslhFS2gisMO25cYSFWo1kOXXY6avhDmK+7xuFpYktFu/A0B
-         /1uagFy8GhYo4fCPhh+ZUbs31Dn2VeD/EPnV/hMWVQ2p6/ZJX2/OpcQm5xTe1+4t9vsQ
-         +FwJlpbeSWurJn0YVw/71TcnDGYOTJRhKZhGjEXBFou11uCTFKMdZ51B49eM6SV/0e3h
-         QWWaa6t1pa4sGV7iywibMoUCCSUI3Msw8MmZWsfH/JfpaCHX5zS4UWugmarE/gaG51Lx
-         D8K4FUrAoPud47OVT+DrUPEOX45HHlefT/wCjkSCeB0JXdEjQz1a+qylrN/pNT4FXMUT
-         4m/w==
-X-Gm-Message-State: AOJu0YySfO3+NP7K4WJefJ2nVzoAEJKOD+B/R5VCvglCjXgKQI3+OL4m
-	fZRet/AcTbHccD2ryTZgmzcljODFBiloVfB2tc+27RI9p/3xiFqcQzu8trFfJSZUKlU=
-X-Gm-Gg: ASbGncth8te9JS78/DxiCSonig4RdXjGlgs8LUxLjXEf62Lh9EYEG+LOLdbq7k8n9fT
-	KkmrUHrDWcnLbTeiErInHSv8o9vsWmjt25YaJ3kkBFRBtMRs/YQHiwGu6dDcOVAgAwgIRdXxumb
-	2aR6vCtoIZ29fBX99K6j05moHUU1he876BfE69oLrvu1wPrksgfVVRwzSmNdUdu+NlOZfIicn3Z
-	J7HEO4aqi+4Ja2TdUYmScJe48pm/3bkI6Gpp5Ts8kx8eZeWqaG25PtUKJ+Fi15BeRSCggrXsxAv
-	rrgl0vHIqOMKB78P1ePv58gV8x+XCpg6cjTg4DMU/EtsadhsDMjV+1iWx29y+rivwFxKOqKRkaP
-	ltCQUm/0KHbmOGU1lgd42DtxRvD6UOL7ioO0dy0ldcQDPy3vkIiryWKpIlLDDjZQM3vmHgqHUD7
-	D5ZPhsVyHHDKWVgw==
-X-Google-Smtp-Source: AGHT+IE/jcIXzBpJuV8eEIsm7iQuqvWqvxk9u55a2Tz3m20gqxvO+0WNmYzTYKtJLoO18byZ0z0hSw==
-X-Received: by 2002:a05:6808:4497:b0:450:10b:a533 with SMTP id 5614622812f47-4502a36c9edmr4842796b6e.61.1762824316148;
-        Mon, 10 Nov 2025 17:25:16 -0800 (PST)
-Received: from mail.minyard.net ([2001:470:b8f6:1b:b4e9:19a3:cdaf:7174])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-45002752ca9sm6359729b6e.14.2025.11.10.17.25.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Nov 2025 17:25:15 -0800 (PST)
-Date: Mon, 10 Nov 2025 19:25:10 -0600
-From: Corey Minyard <corey@minyard.net>
-To: Bagas Sanjaya <bagasdotme@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Documentation <linux-doc@vger.kernel.org>,
-	openipmi-developer@lists.sourceforge.net,
-	Jonathan Corbet <corbet@lwn.net>,
-	Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: Re: [PATCH] Documentation: ipmb: Indent boot time loading steps
-Message-ID: <aRKQdoTzacYn4skG@mail.minyard.net>
-Reply-To: corey@minyard.net
-References: <20251105125449.45643-1-bagasdotme@gmail.com>
+	s=arc-20240116; t=1762825097; c=relaxed/simple;
+	bh=Enplq6FoC/aSX02Ph3h9IHJ410hCGHU+sJFbXCZOcXo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SC+JgZjrpkk2n8WkVy4GmJIgLcinmWcPDLomLZLPQkD6hR7Cts9SxiNFnNTUHsQG7G4HaE9dsLROAC+KRUxmUFCkwlQ/mqJe7gISGS4bPgX+6K1CUXiA3lrPr2MfmPexGHI2SeRmRwk/ldy+edAX43EQ3UlEZNKIQisWg7kHIBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Y8HyvojN; arc=none smtp.client-ip=117.135.210.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=aN
+	BX9NEEMgRbUzZGrmxI1h1qShk0I+ZbWYOrtv746pU=; b=Y8HyvojN3l2zcvA92I
+	eoLe2Ar669/ACFcE6UrssWyKLdvMM5qJTDQnMQauTD4qvr3zV44JDYeRD/Wmu+eg
+	CPdClW+IDPT42Af8tgOvWctIKeSprduIJ5Z0XxxjEXC2fv/fOahPRb1qq1S6QpJO
+	A2PU7hjvP7sLdEqSrvcDq9pV8=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g1-1 (Coremail) with SMTP id _____wA38ZsLkRJp47bnCQ--.61S2;
+	Tue, 11 Nov 2025 09:27:42 +0800 (CST)
+From: ccc194101@163.com
+To: stern@rowland.harvard.edu,
+	benjamin.tissoires@redhat.com
+Cc: gregkh@linuxfoundation.org,
+	linux-usb@vger.kernel.org,
+	usb-storage@lists.one-eyed-alien.net,
+	linux-kernel@vger.kernel.org,
+	Chen Changcheng <chenchangcheng@kylinos.cn>
+Subject: [PATCH v2] usb: usb-storage: No additional quirks need to be added to the ECD819-SU3 optical drive.
+Date: Tue, 11 Nov 2025 09:27:37 +0800
+Message-Id: <20251111012737.13662-1-ccc194101@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251105125449.45643-1-bagasdotme@gmail.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wA38ZsLkRJp47bnCQ--.61S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7Zw1UurW8Xr4fZF47GF48Zwb_yoW8Kw15pr
+	WUJ3yDCrZ5GF1Sgwn7tFWUuFyft3WDAF48CayUGw45Xrn0y3WktryDAa48J3srCw43ZF12
+	gayqyry8KFy8GaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j2eHDUUUUU=
+X-CM-SenderInfo: 5fffimiurqiqqrwthudrp/xtbC0A5GJWkSkQ5eLAAA3r
 
-On Wed, Nov 05, 2025 at 07:54:49PM +0700, Bagas Sanjaya wrote:
-> Steps for loading IPMB driver at boot time, written as enumerated
-> sublist, is indented instead on the same level as its parent list.
-> Indent them as appropriate.
+From: Chen Changcheng <chenchangcheng@kylinos.cn>
 
-I'd like to get the review of the original author, now on the CC list.
+The optical drive of ECD819-SU3 has the same vid and pid as INIC-3069,
+as follows:
+T:  Bus=02 Lev=02 Prnt=02 Port=01 Cnt=01 Dev#=  3 Spd=5000 MxCh= 0
+D:  Ver= 3.00 Cls=00(>ifc ) Sub=00 Prot=00 MxPS= 9 #Cfgs=  1
+P:  Vendor=13fd ProdID=3940 Rev= 3.10
+S:  Manufacturer=HL-DT-ST
+S:  Product= DVD+-RW GT80N
+S:  SerialNumber=423349524E4E38303338323439202020
+C:* #Ifs= 1 Cfg#= 1 Atr=80 MxPwr=144mA
+I:* If#= 0 Alt= 0 #EPs= 2 Cls=08(stor.) Sub=02 Prot=50 Driver=usb-storage
+E:  Ad=83(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
+E:  Ad=0a(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
 
--corey
+This will result in the optical drive device also adding
+the quirks of US_FL_NO_ATA_1X. When performing an erase operation,
+it will fail, and the reason for the failure is as follows:
+[  388.967742] sr 5:0:0:0: [sr0] tag#0 Send: scmd 0x00000000d20c33a7
+[  388.967742] sr 5:0:0:0: [sr0] tag#0 CDB: ATA command pass through(12)/Blank a1 11 00 00 00 00 00 00 00 00 00 00
+[  388.967773] sr 5:0:0:0: [sr0] tag#0 Done: SUCCESS Result: hostbyte=DID_TARGET_FAILURE driverbyte=DRIVER_OK cmd_age=0s
+[  388.967773] sr 5:0:0:0: [sr0] tag#0 CDB: ATA command pass through(12)/Blank a1 11 00 00 00 00 00 00 00 00 00 00
+[  388.967803] sr 5:0:0:0: [sr0] tag#0 Sense Key : Illegal Request [current]
+[  388.967803] sr 5:0:0:0: [sr0] tag#0 Add. Sense: Invalid field in cdb
+[  388.967803] sr 5:0:0:0: [sr0] tag#0 scsi host busy 1 failed 0
+[  388.967803] sr 5:0:0:0: Notifying upper driver of completion (result 8100002)
+[  388.967834] sr 5:0:0:0: [sr0] tag#0 0 sectors total, 0 bytes done.
 
-> 
-> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
-> ---
->  Documentation/driver-api/ipmb.rst | 48 +++++++++++++++----------------
->  1 file changed, 24 insertions(+), 24 deletions(-)
-> 
-> diff --git a/Documentation/driver-api/ipmb.rst b/Documentation/driver-api/ipmb.rst
-> index 209c49e051163f..dd99d034272b7e 100644
-> --- a/Documentation/driver-api/ipmb.rst
-> +++ b/Documentation/driver-api/ipmb.rst
-> @@ -48,35 +48,35 @@ CONFIG_IPMB_DEVICE_INTERFACE=y
->  
->  1) If you want the driver to be loaded at boot time:
->  
-> -a) Add this entry to your ACPI table, under the appropriate SMBus::
-> +   a) Add this entry to your ACPI table, under the appropriate SMBus::
->  
-> -     Device (SMB0) // Example SMBus host controller
-> -     {
-> -     Name (_HID, "<Vendor-Specific HID>") // Vendor-Specific HID
-> -     Name (_UID, 0) // Unique ID of particular host controller
-> -     :
-> -     :
-> -       Device (IPMB)
-> -       {
-> -         Name (_HID, "IPMB0001") // IPMB device interface
-> -         Name (_UID, 0) // Unique device identifier
-> -       }
-> -     }
-> +        Device (SMB0) // Example SMBus host controller
-> +        {
-> +        Name (_HID, "<Vendor-Specific HID>") // Vendor-Specific HID
-> +        Name (_UID, 0) // Unique ID of particular host controller
-> +        :
-> +        :
-> +          Device (IPMB)
-> +          {
-> +            Name (_HID, "IPMB0001") // IPMB device interface
-> +            Name (_UID, 0) // Unique device identifier
-> +          }
-> +        }
->  
-> -b) Example for device tree::
-> +   b) Example for device tree::
->  
-> -     &i2c2 {
-> -            status = "okay";
-> +        &i2c2 {
-> +               status = "okay";
->  
-> -            ipmb@10 {
-> -                    compatible = "ipmb-dev";
-> -                    reg = <0x10>;
-> -                    i2c-protocol;
-> -            };
-> -     };
-> +               ipmb@10 {
-> +                       compatible = "ipmb-dev";
-> +                       reg = <0x10>;
-> +                       i2c-protocol;
-> +               };
-> +        };
->  
-> -If xmit of data to be done using raw i2c block vs smbus
-> -then "i2c-protocol" needs to be defined as above.
-> +   If xmit of data to be done using raw i2c block vs smbus
-> +   then "i2c-protocol" needs to be defined as above.
->  
->  2) Manually from Linux::
->  
-> 
-> base-commit: 27600b51fbc8b9a4eba18c8d88d7edb146605f3f
-> -- 
-> An old man doll... just what I always wanted! - Clara
-> 
+Signed-off-by: Chen Changcheng <chenchangcheng@kylinos.cn>
+---
+ drivers/usb/storage/unusual_uas.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/usb/storage/unusual_uas.h b/drivers/usb/storage/unusual_uas.h
+index 1477e31d7763..352e9d7324a4 100644
+--- a/drivers/usb/storage/unusual_uas.h
++++ b/drivers/usb/storage/unusual_uas.h
+@@ -98,7 +98,7 @@ UNUSUAL_DEV(0x125f, 0xa94a, 0x0160, 0x0160,
+ 		US_FL_NO_ATA_1X),
+ 
+ /* Reported-by: Benjamin Tissoires <benjamin.tissoires@redhat.com> */
+-UNUSUAL_DEV(0x13fd, 0x3940, 0x0000, 0x9999,
++UNUSUAL_DEV(0x13fd, 0x3940, 0x0209, 0x0209,
+ 		"Initio Corporation",
+ 		"INIC-3069",
+ 		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
+
+base-commit: e9a6fb0bcdd7609be6969112f3fbfcce3b1d4a7c
+-- 
+2.25.1
+
 
