@@ -1,176 +1,131 @@
-Return-Path: <linux-kernel+bounces-895046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5092AC4CC97
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:55:23 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3D18C4CBD1
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:44:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43FBD424F0E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:48:28 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DAA434E8726
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:39:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 913AE2F2617;
-	Tue, 11 Nov 2025 09:47:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9EA42ED168;
+	Tue, 11 Nov 2025 09:39:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="dxduQ7ps"
-Received: from smtp.smtpout.orange.fr (smtp-13.smtpout.orange.fr [80.12.242.13])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CfTiTPu9"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3FDF2F1FC7
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 09:47:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC1222E6CA4
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 09:39:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762854444; cv=none; b=BXC7gQxH8VPe3f7VsfyuXVnLAsFqSeVCBSkMB8MmrK0ZYjobhmJDFw2/dqtNVUXwV/hqOgyeSFdgelxVcAM1XP81/prZiu4vNMLsAQo2JuJqwm/+pzPUmzVVqhFILPl9TN9mcIg5gftkiYjvqHhPA+8948W3Hnud5oBHKH/ME04=
+	t=1762853993; cv=none; b=uJaa7oZVxRBsAjvmGPAt+ZaglnugSbm8bqdwFw3CP+2TOwya+DhK6R5b52vOwanSf1ly0eRW5f25uRSFKjaZpwWSkYcqIi+BhZJ/ESO3gteohCfmsAS2Tiu19H6RQrkmn4y9SWkGRamlkoSHfd/TwE517rrymvfO1C+rhjNaDek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762854444; c=relaxed/simple;
-	bh=UAxszELuEnpSmtdc2G6CcBbKlzk0ns7ac3g+hNCk1FQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pQonswuJ4Y23xB/hxbwbRgbDoDte14CvrJ01fp3Rw8qNiEEk1gX3O9ZeKceZUVoU4TOLbpYksoiu2gzhS4k95LYCMsG+RRbZwLJDOy7M8VwyIrZ4cns+c8N6TBfGnk25jNYrAE3/1TxPqzLwKxkyL1x1D1ApF0hcclYP4sM/Z6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=dxduQ7ps; arc=none smtp.client-ip=80.12.242.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
- ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
-	by smtp.orange.fr with ESMTPA
-	id IkpUvNVrnw5gXIkpUvZHmg; Tue, 11 Nov 2025 10:38:27 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1762853907;
-	bh=CD71TS+f0jBrjomTVL8fc9Sskt5DCQsvmFsPOOKDSDg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=dxduQ7psZTs8B8HCU2xIs+rtlY6iD6SukMsvtmTHlMVDyQrMLIvSw56EJhOjwG2uO
-	 v7glFRMXtZBfaUDaQaILHII+5k5/XsLX9r+U0hzXDtnlCsNe69977nVdxUpFMe0/VW
-	 6Y3VXxAx5XMaJLEN5ihiMS2Ej6iJfC8qVRlKjKKAXQ3OlBFL7CV3h8jja63Q/++lkP
-	 5FLfV4EuQfaexqlYVtYsqHhttBv3uGAenfhQlU0b57c4bYU8C+Djd+ut2O3J72U9Dq
-	 8JcclhNkiQCRR2ZGV4bOF1VEmPYHQSTYba7egq1VTigRKer+xeis55R8mnDJuvAu5k
-	 Yc7j8M2NsMKpA==
-X-ME-Helo: [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 11 Nov 2025 10:38:27 +0100
-X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
-Message-ID: <91aad9d6-f408-4716-a45f-7ad3199ee36f@wanadoo.fr>
-Date: Tue, 11 Nov 2025 10:38:23 +0100
+	s=arc-20240116; t=1762853993; c=relaxed/simple;
+	bh=0qHk353sMNXNO0DfdJ24OLoqMz+VA+2bTVAiXM7RnOM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=filji4bUA57TPLTXTpRgxskaLbNqP3lw9sUJHl9dQlpFntXb3PLf7FzQyjD5e/RFAD0w/HcAb9Sdtg37l2PkXcWhXHqmp5Y3RQRgIP4bSNuRNw5CQeBnpZ5tZd5VBQGBqUwwIcc/eFxw6e/KVr0JcPTQ6hiEjhc3/oPCAne5TIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CfTiTPu9; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-3437af8444cso2262690a91.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 01:39:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762853991; x=1763458791; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=x27CBOBuvs19lllL/4Ne+a54Yz+5/uzP3YpUzWY+JnY=;
+        b=CfTiTPu9uAzZIje6WtImbQO8ZfKqsg9T7dcF+E59e42zKjW861RFYZUQzZj0+ciUaR
+         DLzB9ssxsP5qzGnkqP45MAYLdCNf17TqlYtqDZ3fCjCWgihnJqsDQZDcfRSQ6+rIpJcE
+         BXNyyoYBNyJ0GhiNM5eXjjX/a0xrY0ucZj3yFsJb8EOWFYODEQJoexbVMzqRXgU0NDTT
+         rL3U4RRH71crF5rl2y3Ut8G3KOsjc3jEjX/yNmFbQ+0QJ5qApluaM4PiA9o9Ioq0oiRX
+         pdcmAAU51jTJJyFZw2Ji5Rc08/AvR1L90fAsAmMcGBi/XEeg4cjDJRbT8nhn8iQvAiOC
+         bo5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762853991; x=1763458791;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=x27CBOBuvs19lllL/4Ne+a54Yz+5/uzP3YpUzWY+JnY=;
+        b=EeLbHnrCA1LnWru9c+SNnCxTpQG0ObC1rJhfsyEEKg6u8YXXlW02k0i8boEzcouSG0
+         QV1z/JJrstXi7N9iVGAtV5flPZaHSS8wF4o81cPL/4FRX35slWcXmrJhcbjp+vtk1yGc
+         mBZ+0DIdmJ8cKVoLK71wLdSY2Qp21Nzv5Qm8iJC4MKuGQzn3rrRR28GzkjEqypVqzhei
+         vEClGBr4V9THlJ4B0OL71O1XBYoq9do/HA+wluaXlaj91t+joMdNpLFkcin9vA5tKGiz
+         CwSPFhGc+2/iI+uOtrQ7X1Bsw8jBm1sE9vqUAuDumzRGtOxABBMH3Luo+vztGZDkaFNZ
+         icuw==
+X-Forwarded-Encrypted: i=1; AJvYcCVGm6qXhFSJx7DBNh47eNiVMcZtYL8LSmbvsiKejdDFTID63qzAtI5rANqDKxf9hc8SNQ3BZr8AZqWRgPo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxycTvbdItBEtpV7mD4GjGnu8WPm1EXQZXELSL7w3DFwkCElaP6
+	m11n1kWjl9IQs73OnpIPi/zM0FqC2E8W2OK2539P8SMjhU5rb809g6890h3Getf3kK6nfoRd7bj
+	DabWX3R/oH33rWU0+69dI9mH7DmbxLOppqqr9KoeV
+X-Gm-Gg: ASbGnctTdALCBc3+DoRcsirP3OBvBhSUwg5zp3e9DXiL3bceLwBSMO9Co3oTMSoI5GT
+	6wt6MjrWpGY7xKn7zR6lqdB+n3Mn8XBbUKcrd7Jgz4AGOyTZ1OfvXnpRII7uwmQ6vcjRs0JcYmO
+	27ZHkcaQsqsidD+rQFwVoQHvD7Evhylqk/E+rx1u0AxBntzqmxI2qh5VnTmP1Xf9KhLiGyCNI6i
+	MSJq9tW1ZDIaoIfRC7myhcrsmmtBlVD5M0vE9tw2C1l6lQpmTcsUISbJwngsMqhIKwFCziBj0u3
+	P263M4q3EUzQpRJ0vm44POqQb1D4owpgqYrh
+X-Google-Smtp-Source: AGHT+IHbYtcp4TEm3YWuggGsZDtmzQmO+Esj4ot5UyBq5O3ykfRy1t7VIIRByVPx+YeUvhQm6/mmmHJjCQ5y0jFctOY=
+X-Received: by 2002:a17:90b:2f8b:b0:340:ad5e:c9 with SMTP id
+ 98e67ed59e1d1-3436cb9f0a4mr17438597a91.16.1762853990547; Tue, 11 Nov 2025
+ 01:39:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V1 2/5] accel/amd_vpci: Add new driver for AMD Versal PCI
- accelerator
-To: David Zhang <yidong.zhang@amd.com>, ogabbay@kernel.org,
- quic_jhugo@quicinc.com, maciej.falkowski@linux.intel.com,
- dri-devel@lists.freedesktop.org
-Cc: linux-kernel@vger.kernel.org, sonal.santan@amd.com,
- mario.limonciello@amd.com, lizhi.hou@amd.com,
- DMG Karthik <Karthik.DMG@amd.com>, Nishad Saraf <nishads@amd.com>
-References: <20251111011550.439157-1-yidong.zhang@amd.com>
- <20251111011550.439157-3-yidong.zhang@amd.com>
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Content-Language: en-US, fr-FR
-In-Reply-To: <20251111011550.439157-3-yidong.zhang@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <cover.1761763681.git.m.wieczorretman@pm.me> <ab71a0af700c8b83b51a7174fb6fd297e9b5f1ee.1761763681.git.m.wieczorretman@pm.me>
+In-Reply-To: <ab71a0af700c8b83b51a7174fb6fd297e9b5f1ee.1761763681.git.m.wieczorretman@pm.me>
+From: Alexander Potapenko <glider@google.com>
+Date: Tue, 11 Nov 2025 10:39:12 +0100
+X-Gm-Features: AWmQ_bn-DpseVZlfA_JkC1KeMe_i9gWzENoYdJOcpoJ15BxyTxVZhbSiKbweC94
+Message-ID: <CAG_fn=XyQ5Mc_ZvsibN4K0r70xfDAkhPqUJgtojVRcgTt-q0WQ@mail.gmail.com>
+Subject: Re: [PATCH v6 03/18] kasan: sw_tags: Use arithmetic shift for shadow computation
+To: Maciej Wieczor-Retman <m.wieczorretman@pm.me>
+Cc: xin@zytor.com, peterz@infradead.org, kaleshsingh@google.com, 
+	kbingham@kernel.org, akpm@linux-foundation.org, nathan@kernel.org, 
+	ryabinin.a.a@gmail.com, dave.hansen@linux.intel.com, bp@alien8.de, 
+	morbo@google.com, jeremy.linton@arm.com, smostafa@google.com, kees@kernel.org, 
+	baohua@kernel.org, vbabka@suse.cz, justinstitt@google.com, 
+	wangkefeng.wang@huawei.com, leitao@debian.org, jan.kiszka@siemens.com, 
+	fujita.tomonori@gmail.com, hpa@zytor.com, urezki@gmail.com, ubizjak@gmail.com, 
+	ada.coupriediaz@arm.com, nick.desaulniers+lkml@gmail.com, ojeda@kernel.org, 
+	brgerst@gmail.com, elver@google.com, pankaj.gupta@amd.com, 
+	mark.rutland@arm.com, trintaeoitogc@gmail.com, jpoimboe@kernel.org, 
+	thuth@redhat.com, pasha.tatashin@soleen.com, dvyukov@google.com, 
+	jhubbard@nvidia.com, catalin.marinas@arm.com, yeoreum.yun@arm.com, 
+	mhocko@suse.com, lorenzo.stoakes@oracle.com, samuel.holland@sifive.com, 
+	vincenzo.frascino@arm.com, bigeasy@linutronix.de, surenb@google.com, 
+	ardb@kernel.org, Liam.Howlett@oracle.com, nicolas.schier@linux.dev, 
+	ziy@nvidia.com, kas@kernel.org, tglx@linutronix.de, mingo@redhat.com, 
+	broonie@kernel.org, corbet@lwn.net, andreyknvl@gmail.com, 
+	maciej.wieczor-retman@intel.com, david@redhat.com, maz@kernel.org, 
+	rppt@kernel.org, will@kernel.org, luto@kernel.org, kasan-dev@googlegroups.com, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	x86@kernel.org, linux-kbuild@vger.kernel.org, linux-mm@kvack.org, 
+	llvm@lists.linux.dev, linux-doc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Le 11/11/2025 à 02:15, David Zhang a écrit :
-> This patch introduces a new PCI driver for AMD Versal-based accelerator
-> cards.
-> 
-> The driver provides basic module and PCI device initialization, based on
-> BAR resources used to establish a hardware queue-based ring buffer between
-> the PCIe host and the Versal Management Runtime (VMR) service running on
-> the embedded SoC. This interface enables firmware management and board
-> health monitoring.
-> 
-> Key features:
->     - PCI probe and BAR resource initialization.
->     - Integration with configfs for firmware management
->     - Compatibility check using firmware-reported UUIDs
-> 
-> The base firmware image is expected under /lib/firmware/xilinx/<fw_name>
-> and can be programmed to the device through the configfs interface.
-> Firmware transfer is handled via a remote queue service (added in a later
-> patch).
-> 
-> Co-developed-by: DMG Karthik <Karthik.DMG@amd.com>
-> Signed-off-by: DMG Karthik <Karthik.DMG@amd.com>
-> Co-developed-by: Nishad Saraf <nishads@amd.com>
-> Signed-off-by: Nishad Saraf <nishads@amd.com>
-> Signed-off-by: David Zhang <yidong.zhang@amd.com>
-> ---
+> diff --git a/include/linux/kasan.h b/include/linux/kasan.h
+> index b00849ea8ffd..952ade776e51 100644
+> --- a/include/linux/kasan.h
+> +++ b/include/linux/kasan.h
+> @@ -61,8 +61,14 @@ int kasan_populate_early_shadow(const void *shadow_start,
+>  #ifndef kasan_mem_to_shadow
+>  static inline void *kasan_mem_to_shadow(const void *addr)
+>  {
+> -       return (void *)((unsigned long)addr >> KASAN_SHADOW_SCALE_SHIFT)
+> -               + KASAN_SHADOW_OFFSET;
+> +       void *scaled;
+> +
+> +       if (IS_ENABLED(CONFIG_KASAN_GENERIC))
+> +               scaled = (void *)((unsigned long)addr >> KASAN_SHADOW_SCALE_SHIFT);
+> +       else
+> +               scaled = (void *)((long)addr >> KASAN_SHADOW_SCALE_SHIFT);
+> +
+> +       return KASAN_SHADOW_OFFSET + scaled;
+>  }
+>  #endif
 
-...
-
-> +static int versal_pci_device_setup(struct versal_pci_device *vdev)
-> +{
-> +	int ret;
-> +
-> +	ret = versal_pci_fw_init(vdev);
-> +	if (ret) {
-> +		vdev_err(vdev, "Failed to init fw, err %d", ret);
-> +		goto comm_chan_fini;
-> +	}
-> +
-> +	ret = versal_pci_cfs_init(vdev);
-> +	if (ret) {
-
-Do we need to call versal_pci_fw_fini()?
-(here or in the error handling path to be future proof)
-
-> +		vdev_err(vdev, "Failed to init configfs subsys, err %d", ret);
-> +		goto comm_chan_fini;
-> +	}
-> +
-> +	return 0;
-> +
-> +comm_chan_fini:
-> +
-> +	return ret;
-> +}
-
-...
-
-> diff --git a/drivers/accel/amd_vpci/versal-pci.h b/drivers/accel/amd_vpci/versal-pci.h
-> new file mode 100644
-> index 000000000000..ca309aee87ad
-> --- /dev/null
-> +++ b/drivers/accel/amd_vpci/versal-pci.h
-> @@ -0,0 +1,62 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Driver for Versal PCIe device
-> + *
-> + * Copyright (C) 2025 Advanced Micro Devices, Inc. All rights reserved.
-> + */
-> +
-> +#ifndef __VERSAL_PCI_H
-> +#define __VERSAL_PCI_H
-> +
-> +#include <linux/configfs.h>
-> +#include <linux/firmware.h>
-> +
-> +#define MGMT_BAR		0
-> +
-> +#define vdev_info(vdev, fmt, args...)					\
-> +	dev_info(&(vdev)->pdev->dev, "%s: "fmt, __func__, ##args)
-
-\n could be added after fmt, as it is not included in the messages 
-themselves, when used.
-
-Same for the other macro below.
-
-> +
-> +#define vdev_warn(vdev, fmt, args...)					\
-> +	dev_warn(&(vdev)->pdev->dev, "%s: "fmt, __func__, ##args)
-> +
-> +#define vdev_err(vdev, fmt, args...)					\
-> +	dev_err(&(vdev)->pdev->dev, "%s: "fmt, __func__, ##args)
-> +
-> +#define vdev_dbg(vdev, fmt, args...)					\
-> +	dev_dbg(&(vdev)->pdev->dev, fmt, ##args)
-
-...
-
-CJ
+As Marco pointed out, this part is reverted in Patch 17. Any reason to do that?
 
