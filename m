@@ -1,93 +1,228 @@
-Return-Path: <linux-kernel+bounces-894805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F059C4C216
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 08:36:35 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0E79C4C1E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 08:33:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DAE33BCF57
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 07:36:33 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4258F34E989
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 07:33:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9582332E75E;
-	Tue, 11 Nov 2025 07:36:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37123314B8B;
+	Tue, 11 Nov 2025 07:33:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="kuZ/33BO"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZSR3Fvtj"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9853A29DB6A;
-	Tue, 11 Nov 2025 07:36:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5A20284884
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 07:33:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762846586; cv=none; b=DcyZSgZOpaMNun7Ha34inEV24++dHAtk3wrhyPnRwT7OiTV4AeHAvSp2V7mVYxd/DnTUnjJGXi1QYIXu4zc8c7KHaSaeutrYFN2lnYyiO5OeSITfWS5LpBFgnkb55cIaJv/R1Ykm+tKtorUC5JPMaexJo9CX6VRFPtwGz/b47Pw=
+	t=1762846406; cv=none; b=Nh+NpTK8Ycj4yaDTjNYAumXgIctZUQtsL5QXgmdxPIWn7HHbsJYZS5UE98YBxDyHEeFjDROmutVT/iZHs3oc55tE7YOSWoKJrgobouXXehSi9WxRl8HHsB7qiBpzxAK+BQSflfs5XWriRFwi/tRH4reTMxUH+v9QDRwVxeHE1sg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762846586; c=relaxed/simple;
-	bh=mIuHHzikhcqxzo0qmM5Y2Ye5IRQ2X29fODs7frPKlNE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nab/3JZ5BLaAa8o/yCfL9gKjuXGbk9CL3oygy1AmG+zOI4LuyBslGMOFLm2L9OmD4VdOqftKEwptCmHb+1a2e5lErG2o3i6Y21ZE0mhPcDt3EIys1M1upJh0GHx21pZarXbflekswblph4Qb1uciFbjtnIlwMlDjBbrebwLxnJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=kuZ/33BO; arc=none smtp.client-ip=220.197.32.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=DXSbtNa/8HGcN26NDfFmNPbrsVA0ceNG7FgLoJ6Ziys=;
-	b=kuZ/33BO1A5NZNYEaLRHjhouKPLdrH7xX6pZHYgBgZKhpT/Q5SoGP8/CZTh+SM
-	R81shMTV6w0+O/8jxL4woap2+7cqN9vGzsuIal3uN0f9yT8voCbd+dX7O+mHUhZs
-	eUon3+QD+qriOHSny9y3lZ2pD8SGBR6HLIFbjaAp3h1VM=
-Received: from dragon (unknown [])
-	by gzsmtp3 (Coremail) with SMTP id M88vCgAHhmfi5BJp+fTBAQ--.5059S3;
-	Tue, 11 Nov 2025 15:25:24 +0800 (CST)
-Date: Tue, 11 Nov 2025 15:25:22 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Shenwei Wang <shenwei.wang@nxp.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	devicetree@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH 0/8] arm64: dts: imx8dxl related fix and minor update
-Message-ID: <aRLk4uAnXFyMAzEf@dragon>
-References: <20251022-dxl_dts-v1-0-8159dfdef8c5@nxp.com>
+	s=arc-20240116; t=1762846406; c=relaxed/simple;
+	bh=uZalZPFf4jKIPWqXzV7tu+QzbWPg0yTTEsdMmEW6Ybo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cDH0xS+ivacDyYeaf1KU6Pnwsydl9c4IV8WLjWdQX4r64KhqQG4I2m02TrUidVwh8gYQ8qygg/cOjbHMx6y2ByYZwKAldCcrn/n1LtWtAD6Oyx5hLn4EcKoeGlB+2MXxOkcv8++sydOQUjPMXIJxp8ee+IQo6ruZd7oauwIVcsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZSR3Fvtj; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-64166a57f3bso3516406a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 23:33:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762846403; x=1763451203; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=EW/edEVU0KV0TxqzuoUgBBiWmv1nZ1ujjQOOdZz8lu4=;
+        b=ZSR3FvtjaMsc2rJ/BOm5GenpSu165JBSirzTUos8ktjq1CW0umWuhqYr5XbLFxCbV7
+         2/Wk0IPwJyyvNoz/Fd7xezolkhEs9dqfkc3teWEJlbFddD4vgvobA+VWUoYhbLL1YDr1
+         pEnAcvAjf3zVFkWWjIw0YZEgos3gN3wZfggY2ycLmQ2TETRqO6RTMQX22h/rXkRNbj1R
+         UfPkq0G6a7PU59WMLWkV4ZEOFb6x8P6Rc/Z0n8P+AEf6CdxQypVFe/oQujOhGG+93p9n
+         2DWIh+9C6O01YmiweHWyGckgVEO9fq7Xh7Aw3sPs3FdBtkjvosCoMKWkgQtk+pl2hAxe
+         pDRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762846403; x=1763451203;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EW/edEVU0KV0TxqzuoUgBBiWmv1nZ1ujjQOOdZz8lu4=;
+        b=Kj/PKJ6QKOKUw5N/H+SwvZJjrYm1J1jKZYV9xm74RT5xOO0QiZGeCGBd+bO9jep7Eu
+         6w2lrMlQbxJSbPbzPyKvTYYHRpqWghbyUfHlnituwWX5HuBA2D1YauLwnTotuCCHRbZV
+         mtbeZo6dSmuM/E3v4UFKnSGVKmJVDlqlcr+4CtitcbvQS74iKF3DsjoSfdEVYezAaoVX
+         u2o94EUmAYBrG9cUzwBmiuA7Cq+oD6t2BggGN2vcvPJ1Ekbjunsc14BOmyUwagzFAymL
+         2DO7RKDVk72ZKYwReiQ+22IknrJFoDSIsgpupbDRwo1k0wfWRF/96R1LPhKsYI5Bgkrx
+         gn5g==
+X-Forwarded-Encrypted: i=1; AJvYcCVsMOXW6SBdT7D54wIRcHbMIgNdknfhYY/TDPMtUbRcg8nRou5uBMQ9uoBkIOS/c+NuqMb8MMVyHODpmaI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPoJAIfzcfw+aZZnu+jowCUFjsQVzjdGacabZHvAve1KY8SmrI
+	Wr+QKFT48hjQ6rOiv4zaEjIbTssuxVcPedIbwItbwS4dfnOQxoU3I60M
+X-Gm-Gg: ASbGncuLDwnSbM/qo/Ki569T0aL7iWsdiYtYK2Gz9oOehmS+q5FJp0xWJiEneXXDyp1
+	otIpa2HZNpQ0q313qTawt9CUOS6sZMcLnxkC8N8CKjJEQ5wrZUratDnyWFSeYFKX6p1jy2FwwYi
+	8h7J5Mcp9y7It6ciKGeUg0u2yxxqc74dU3Yp0cO7UXA49HQWicvf6ABcOnngR6GdHsk3L9arjAy
+	Hfd2Jjg09C5MD0wkIdPTQLwKwdHWnSdjr7Q9DYpXVsYZSYzad3u4Nb+bvMQHdNhRFLkds6fJekN
+	LE3OPKveBHv0ICT0nElsYFypjO7vlAtIwlN3Qr3iSzY90z2k8li0H6ai8F1lrE2qQZccCNT0lAx
+	2zRKyrFn5zJWfHdz8uMkVp4UHrpjV8pPX3vTQQcN0muvUb5+3lcmyGUF+Iu0EK4rtLMqVAN40wq
+	rEdW6/oeBo/+uaLbkwDINgGnoYcldNEfsqY4wXrQ==
+X-Google-Smtp-Source: AGHT+IH5UdRGX9vHEpYaWlX4gzbeYljFwAVzWxu+8ZPZ6DiGRR+OVPwGcszNxy/8+pt2DPBl/RIPvg==
+X-Received: by 2002:a05:6402:21c2:b0:640:b044:d9bd with SMTP id 4fb4d7f45d1cf-6415e7fd427mr8009190a12.29.1762846402832;
+        Mon, 10 Nov 2025 23:33:22 -0800 (PST)
+Received: from tempest2.wbe.local (xt27d7.stansat.pl. [83.243.39.215])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6416001a4a8sm8122499a12.15.2025.11.10.23.33.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Nov 2025 23:33:22 -0800 (PST)
+From: Pawel Dembicki <paweldembicki@gmail.com>
+To: linux-wireless@vger.kernel.org
+Cc: Pawel Dembicki <paweldembicki@gmail.com>,
+	Antony Kolitsos <zeusomighty@hotmail.com>,
+	Johannes Berg <johannes.berg@intel.com>,
+	Thomas Fourier <fourier.thomas@gmail.com>,
+	Roopni Devanathan <quic_rdevanat@quicinc.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] wifi: mwl8k: inject DSSS Parameter Set element into beacons if missing
+Date: Tue, 11 Nov 2025 08:31:16 +0100
+Message-ID: <20251111073134.2774120-2-paweldembicki@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251022-dxl_dts-v1-0-8159dfdef8c5@nxp.com>
-X-CM-TRANSID:M88vCgAHhmfi5BJp+fTBAQ--.5059S3
-X-Coremail-Antispam: 1Uf129KBjvdXoW7Jw1rJF45trWfAF15XFWrXwb_yoWxKFg_u3
-	90gF1ku3yUtr4fJw42van5u34UKw48Ar1DWryFg397X343XF15ua4vv395W3yxXFW3Zr1D
-	CFyUJw1xXa15WjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUbzVbPUUUUU==
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiOQVRtmkS5OUapgAA3d
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 22, 2025 at 12:50:20PM -0400, Frank Li wrote:
-> imx8dxl dts some fixes and minor update.
-> 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
-> Frank Li (7):
->       arm64: dts: imx8dxl: Correct pcie-ep interrupt number
->       arm64: dts: imx8dxl-ss-conn: swap interrupts number of eqos
->       arm64: dts: imx8dxl-evk: add bt information for lpuart1
->       arm64: dts: imx8dxl-evk: add state_100mhz and state_200mhz for usdhc
->       arm64: dts: imx8-ss-conn: add fsl,tuning-step for usdhc1 and usdhc2
->       arm64: dts: imx8-ss-conn: add missed clock enet_2x_txclk for fec[1,2]
->       arm64: dts: imx8dxl-ss-conn: delete usb3_lpcg node
-> 
-> Shenwei Wang (1):
->       arm64: dts: imx8: add default clock rate for usdhc
+Some Marvell AP firmware used with mwl8k misbehaves when beacon frames
+do not contain a WLAN_EID_DS_PARAMS element with the current channel.
+It was reported on OpenWrt Github issues [0].
 
-Applied all, thanks!
+When hostapd/mac80211 omits DSSS Parameter Set from the beacon (which is
+valid on some bands), the firmware stops transmitting sane frames and RX
+status starts reporting bogus channel information. This makes AP mode
+unusable.
+
+Newer Marvell drivers (mwlwifi [1]) hard-code DSSS Parameter Set into
+AP beacons for all chips, which suggests this is a firmware requirement
+rather than a mwl8k-specific quirk.
+
+Mirror that behaviour in mwl8k: when setting the beacon, check if
+WLAN_EID_DS_PARAMS is present, and if not, extend the beacon and inject
+a DSSS Parameter Set element, using the current channel from
+hw->conf.chandef.chan.
+
+Tested on Linksys EA4500 (88W8366).
+
+[0] https://github.com/openwrt/openwrt/issues/19088
+[1] https://github.com/kaloz/mwlwifi/blob/db97edf20fadea2617805006f5230665fadc6a8c/hif/fwcmd.c#L675
+
+Tested-by: Antony Kolitsos <zeusomighty@hotmail.com>
+Signed-off-by: Pawel Dembicki <paweldembicki@gmail.com>
+
+---
+V2:
+  - added "wifi:" prefix to commit title
+  - renamed "DS Params" -> "DSSS Parameter Set"
+  - Insert WLAN_EID_DS_PARAMS after WLAN_EID_SSID, WLAN_EID_SUPP_RATES
+    and WLAN_EID_EXT_SUPP_RATES
+---
+ drivers/net/wireless/marvell/mwl8k.c | 71 ++++++++++++++++++++++++++--
+ 1 file changed, 66 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/net/wireless/marvell/mwl8k.c b/drivers/net/wireless/marvell/mwl8k.c
+index 891e125ad30b..914a566d700a 100644
+--- a/drivers/net/wireless/marvell/mwl8k.c
++++ b/drivers/net/wireless/marvell/mwl8k.c
+@@ -2966,6 +2966,52 @@ mwl8k_cmd_rf_antenna(struct ieee80211_hw *hw, int antenna, int mask)
+ /*
+  * CMD_SET_BEACON.
+  */
++
++static bool mwl8k_beacon_has_ds_params(const u8 *buf, int len)
++{
++	const struct ieee80211_mgmt *mgmt = (const void *)buf;
++	int ies_len;
++
++	if (len <= offsetof(struct ieee80211_mgmt, u.beacon.variable))
++		return false;
++
++	ies_len = len - offsetof(struct ieee80211_mgmt, u.beacon.variable);
++
++	return cfg80211_find_ie(WLAN_EID_DS_PARAMS, mgmt->u.beacon.variable,
++				ies_len) != NULL;
++}
++
++static void mwl8k_beacon_copy_inject_ds_params(struct ieee80211_hw *hw,
++					       u8 *buf_dst, const u8 *buf_src,
++					       int src_len)
++{
++	const struct ieee80211_mgmt *mgmt = (const void *)buf_src;
++	static const u8 before_ds_params[] = {
++			WLAN_EID_SSID,
++			WLAN_EID_SUPP_RATES,
++			WLAN_EID_EXT_SUPP_RATES,
++	};
++	const u8 *ies;
++	int hdr_len, left, offs, pos;
++
++	ies = mgmt->u.beacon.variable;
++	hdr_len = offsetof(struct ieee80211_mgmt, u.beacon.variable);
++
++	offs = ieee80211_ie_split(ies, src_len - hdr_len, before_ds_params,
++				  ARRAY_SIZE(before_ds_params), 0);
++
++	pos = hdr_len + offs;
++	left = src_len - pos;
++
++	memcpy(buf_dst, buf_src, pos);
++
++	/* Inject a DSSS Parameter Set after SSID + (Ext) Supp Rates */
++	buf_dst[pos + 0] = WLAN_EID_DS_PARAMS;
++	buf_dst[pos + 1] = 1;
++	buf_dst[pos + 2] = hw->conf.chandef.chan->hw_value;
++
++	memcpy(buf_dst + pos + 3, buf_src + pos, left);
++}
+ struct mwl8k_cmd_set_beacon {
+ 	struct mwl8k_cmd_pkt_hdr header;
+ 	__le16 beacon_len;
+@@ -2975,17 +3021,32 @@ struct mwl8k_cmd_set_beacon {
+ static int mwl8k_cmd_set_beacon(struct ieee80211_hw *hw,
+ 				struct ieee80211_vif *vif, u8 *beacon, int len)
+ {
++	bool ds_params_present = mwl8k_beacon_has_ds_params(beacon, len);
+ 	struct mwl8k_cmd_set_beacon *cmd;
+-	int rc;
++	int rc, final_len = len;
+ 
+-	cmd = kzalloc(sizeof(*cmd) + len, GFP_KERNEL);
++	if (!ds_params_present)
++		/*
++		 * mwl8k firmware requires a DS Params IE with the current
++		 * channel in AP beacons. If mac80211/hostapd does not
++		 * include it, inject one here. IE ID + length + channel
++		 * number = 3 bytes.
++		 */
++		final_len += 3;
++
++	cmd = kzalloc(sizeof(*cmd) + final_len, GFP_KERNEL);
+ 	if (cmd == NULL)
+ 		return -ENOMEM;
+ 
+ 	cmd->header.code = cpu_to_le16(MWL8K_CMD_SET_BEACON);
+-	cmd->header.length = cpu_to_le16(sizeof(*cmd) + len);
+-	cmd->beacon_len = cpu_to_le16(len);
+-	memcpy(cmd->beacon, beacon, len);
++	cmd->header.length = cpu_to_le16(sizeof(*cmd) + final_len);
++	cmd->beacon_len = cpu_to_le16(final_len);
++
++	if (ds_params_present)
++		memcpy(cmd->beacon, beacon, len);
++	else
++		mwl8k_beacon_copy_inject_ds_params(hw, cmd->beacon, beacon,
++						   len);
+ 
+ 	rc = mwl8k_post_pervif_cmd(hw, vif, &cmd->header);
+ 	kfree(cmd);
+-- 
+2.34.1
 
 
