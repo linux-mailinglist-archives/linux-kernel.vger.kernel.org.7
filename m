@@ -1,182 +1,133 @@
-Return-Path: <linux-kernel+bounces-895730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id A09E6C4EC79
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:27:44 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE647C4ECA6
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:33:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4C88834C5C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 15:27:44 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 56B1C4ED278
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 15:29:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B038365A01;
-	Tue, 11 Nov 2025 15:27:39 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0016.hostedemail.com [216.40.44.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 391E4364EB9;
+	Tue, 11 Nov 2025 15:29:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bYAD6/Ee"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 513203659E7;
-	Tue, 11 Nov 2025 15:27:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7536D344024
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 15:29:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762874858; cv=none; b=ehdKl1RxSBh4PnuhdhqzdFp9By1ZpuQ+Rw+iY3rs3VS70Qi4hquZov5BQq+mhEhcpy14W10zI0tq+t0FDfapqSRo9FG3L26G7362DV7ttuUrpT86jfxyq/xfEGJ7GHAytNrS9y63bOBfGS1vAsGh/Zs2Aptqf29C6454p9nHFt0=
+	t=1762874949; cv=none; b=mfp6GOYp55/9tvBz8ZF6QE49agfMY8AOyBIrMIOP7stF7UkbpzeTsDsNP+IkpVwdFtzDB/4+wjw3xlaSB0H/Z0BZKewmWYroa6a/c22fMPVtaAZUigKuswmG5T4XoGGblWeqktq27poHWV478oLuFOOYrLOyCd4a1c1LOYarulo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762874858; c=relaxed/simple;
-	bh=RdP21Ou/LCWPijV4U0AV3BnsRA50hwedJ/BvkxuLexY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=beYbvsBnkrryu4fpHachl5oMKtWOZekD1j4SbYU5o636ESVxTQQYp6K4Ahs6QnqVk9sIUk8jyp46AnhPxgmlyxccZOe6Aby72/A2JmOUTcSSyEd0FfNJeLa9spOUwFVHl50RMxKfulYzN/71Bm9H3ecN1azlUUadg2XjW7Ow4jQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf06.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay04.hostedemail.com (Postfix) with ESMTP id 94B7A1A0624;
-	Tue, 11 Nov 2025 15:27:34 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf06.hostedemail.com (Postfix) with ESMTPA id 7CC5C20016;
-	Tue, 11 Nov 2025 15:27:32 +0000 (UTC)
-Date: Tue, 11 Nov 2025 10:27:39 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Yongliang Gao <leonylgao@gmail.com>, mhiramat@kernel.org,
- mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, Yongliang Gao <leonylgao@tencent.com>,
- Huang Cun <cunhuang@tencent.com>
-Subject: Re: [PATCH] trace/pid_list: optimize pid_list->lock contention
-Message-ID: <20251111102739.2a0a64cf@gandalf.local.home>
-In-Reply-To: <20251111081314.j8CFfAD6@linutronix.de>
-References: <20251015114952.4014352-1-leonylgao@gmail.com>
-	<20251110183854.48b33b50@gandalf.local.home>
-	<20251111081314.j8CFfAD6@linutronix.de>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1762874949; c=relaxed/simple;
+	bh=sHV4YCriJE6MHGsGQWPgrOX/gNbP+xPxtR6RU0E9fDY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=usLL2hzB/vcSwgHLG0n5l56syK/Fc6uKSU1v2ANFFpQkMGitkjfyQvKfr4DWMdK2YQA1zhbCULAYu15vC1laQD0FxqR9UiYwqYmO+of6zAyyMIsPY65KOHWitAAhjqaJzsubyLqgYwvU4lKV648v7p+UIDTl94XuTY2c3itxuyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bYAD6/Ee; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762874948; x=1794410948;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=sHV4YCriJE6MHGsGQWPgrOX/gNbP+xPxtR6RU0E9fDY=;
+  b=bYAD6/EeX0xb1TQJjUoPgN0GTKDjEUin9fBfgFK2MREjybaMaAsMv3+J
+   Quhs4W73bN20C2MoVwwv2TqlvRUFoWsB4IBiddYndFwoWjkR0Pt7X46gd
+   Vd6fTdERyGF3gMqhCnULYjmmlMSG9BToYswGI4bF5J3W1KtN63LrTERvv
+   ywwdCmO67iDir+uwrYlc+xSUV1xLGIBh6R6MLL/XNkhdwCwNbhPXM/7Qi
+   YlMPeYGxNvhD0Y5/D1i2hbCGD/1CBudP16KV9PDM6dIazbg3MV1AayNIN
+   RgCan6hBmxq7IU4NSY9+kIvAMlIT092FJXvc2QMZwaWn2e4Vmtj1XTE6K
+   A==;
+X-CSE-ConnectionGUID: Nhc1reT5TxWze0tMZkK8mw==
+X-CSE-MsgGUID: r7G727cOTc22+F4V5f+Ntw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="64854870"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="64854870"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 07:29:07 -0800
+X-CSE-ConnectionGUID: f7ybnT3wTeaeyy5BxAvp3A==
+X-CSE-MsgGUID: tQ2osJ4ERGCYOccNK9PqSQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,296,1754982000"; 
+   d="scan'208";a="212383820"
+Received: from lucas-s2600cw.jf.intel.com ([10.54.55.69])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 07:29:07 -0800
+From: Lucas De Marchi <lucas.demarchi@intel.com>
+To: intel-xe@lists.freedesktop.org,
+	linux-mtd@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: Lucas De Marchi <lucas.demarchi@intel.com>,
+	Alexander Usyskin <alexander.usyskin@intel.com>,
+	Jani Partanen <jiipee@sotapeli.fi>
+Subject: [PATCH] mtd: intel-dg: Fix accessing regions before setting nregions
+Date: Tue, 11 Nov 2025 07:28:25 -0800
+Message-ID: <20251111-mtd-nregions-v1-1-61db61e78c63@intel.com>
+X-Mailer: git-send-email 2.51.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: 93iykqfd8ceuhfporiimdq1ydp7a4psr
-X-Rspamd-Server: rspamout03
-X-Rspamd-Queue-Id: 7CC5C20016
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX188dX1bD/SwmX7HXHXilJtoAHX/YYaiNn0=
-X-HE-Tag: 1762874852-941565
-X-HE-Meta: U2FsdGVkX19EYztomkJkw56ktu5OzmaON7MEz6NgDVd+CimUpGbdQfmPZ9BkhmKBxzgKiIDhODgZY/hamCRbivoZw2pC8PyG7hTYP3UIJmst6EVVlAsO/s9ja9jURwrPhCCl9Wb+XRhXxg1QTMI9XqVq1mBQms5q0uPkyGZeexGjj9IjLdpuOovAiMSgKoYvGiz5j6h6xZGVdjjL4zxgecD96d/CfAAccqgLQz3vpP25S2cfnJ2WeBxmSwt+fquRa/ayosK6r3fQF3TOGcOn/S6ro2hKXR76UR3RUkjjMXik89PjtsqfUhUpEoOInCAt
+Content-Type: text/plain; charset="utf-8"
+X-Change-ID: 20251110-mtd-nregions-e9c66d5fcfae
+X-Mailer: b4 0.15-dev-50d74
+Content-Transfer-Encoding: 8bit
 
-On Tue, 11 Nov 2025 09:13:14 +0100
-Sebastian Andrzej Siewior <bigeasy@linutronix.de> wrote:
+The regions array is counted by nregions, but it's set only after
+accessing it:
 
-> Nope, no read-write lock that can be used in atomic sections. Well,
-> there is RCU.
+	[] UBSAN: array-index-out-of-bounds in drivers/mtd/devices/mtd_intel_dg.c:750:15
+	[] index 0 is out of range for type '<unknown> [*]'
 
-Well, it can't simply be replaced by RCU as the write side is also a
-critical path. It happens when new tasks are spawned.
+Fix it by also fixing an undesired behavior: the loop silently ignores
+ENOMEM and continues setting the other entries.
 
-Now we could possibly do some RCU like magic, and remove the lock in the
-read, but it would need some care with the writes.
+Cc: Alexander Usyskin <alexander.usyskin@intel.com>
+Reported-by: Jani Partanen <jiipee@sotapeli.fi>
+Closes: https://lore.kernel.org/all/caca6c67-4f1d-49f1-948f-e63b6b937b29@sotapeli.fi
+Fixes: ceb5ab3cb646 ("mtd: add driver for intel graphics non-volatile memory device")
+Signed-off-by: Lucas De Marchi <lucas.demarchi@intel.com>
+---
+ drivers/mtd/devices/mtd_intel_dg.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-Something like this (untested):
-
-bool trace_pid_list_is_set(struct trace_pid_list *pid_list, unsigned int pid)
-{
-	union upper_chunk *upper_chunk;
-	union lower_chunk *lower_chunk;
-	unsigned long flags;
-	unsigned int upper1;
-	unsigned int upper2;
-	unsigned int lower;
-	bool ret = false;
-
-	if (!pid_list)
-		return false;
-
-	if (pid_split(pid, &upper1, &upper2, &lower) < 0)
-		return false;
-
-	upper_chunk = READ_ONCE(pid_list->upper[upper1]);
-	if (upper_chunk) {
-		lower_chunk = READ_ONCE(upper_chunk->data[upper2]);
-		if (lower_chunk)
-			ret = test_bit(lower, lower_chunk->data);
-	}
-
-	return ret;
-}
-
-Now when all the bits of a chunk is cleared, it goes to a free-list. And
-when a new chunk is needed, it acquires it from that free-list. We need to
-make sure that the chunk acquired in the read hasn't gone through the
-free-list.
-
-Now we could have an atomic counter in the pid_list and make this more of a
-seqcount? That is, have the counter updated when a chunk goes to the free
-list and also when it is taken from the free list. We could then make this:
-
- again:
-	counter = atomic_read(&pid_list->counter);
-	smp_rmb();
-	upper_chunk = READ_ONCE(pid_list->upper[upper1]);
-	if (upper_chunk) {
-		lower_chunk = READ_ONCE(upper_chunk->data[upper2]);
-		if (lower_chunk) {
-			ret = test_bit(lower, lower_chunk->data);
-			smp_rmb();
-			if (unlikely(counter != atomic_read(&pid_list->counter))) {
-				ret = false;
-				goto again;
-			}
-		}
-	}
+diff --git a/drivers/mtd/devices/mtd_intel_dg.c b/drivers/mtd/devices/mtd_intel_dg.c
+index b438ee5aacc34..114e69135b8d9 100644
+--- a/drivers/mtd/devices/mtd_intel_dg.c
++++ b/drivers/mtd/devices/mtd_intel_dg.c
+@@ -738,6 +738,7 @@ static int intel_dg_mtd_probe(struct auxiliary_device *aux_dev,
+ 
+ 	kref_init(&nvm->refcnt);
+ 	mutex_init(&nvm->lock);
++	nvm->nregions = nregions;
+ 
+ 	for (n = 0, i = 0; i < INTEL_DG_NVM_REGIONS; i++) {
+ 		if (!invm->regions[i].name)
+@@ -745,13 +746,15 @@ static int intel_dg_mtd_probe(struct auxiliary_device *aux_dev,
+ 
+ 		char *name = kasprintf(GFP_KERNEL, "%s.%s",
+ 				       dev_name(&aux_dev->dev), invm->regions[i].name);
+-		if (!name)
+-			continue;
++		if (!name) {
++			ret = -ENOMEM;
++			goto err;
++		}
++
+ 		nvm->regions[n].name = name;
+ 		nvm->regions[n].id = i;
+ 		n++;
+ 	}
+-	nvm->nregions = n; /* in case where kasprintf fail */
+ 
+ 	nvm->base = devm_ioremap_resource(device, &invm->bar);
+ 	if (IS_ERR(nvm->base)) {
 
 
-And in the set we need:
 
-	upper_chunk = pid_list->upper[upper1];
-	if (!upper_chunk) {
-		upper_chunk = get_upper_chunk(pid_list);
-		if (!upper_chunk) {
-			ret = -ENOMEM;
-			goto out;
-		}
-		atomic_inc(&pid_list->counter);
-		smp_wmb();
-		WRITE_ONCE(pid_list->upper[upper1], upper_chunk);
-	}
-	lower_chunk = upper_chunk->data[upper2];
-	if (!lower_chunk) {
-		lower_chunk = get_lower_chunk(pid_list);
-		if (!lower_chunk) {
-			ret = -ENOMEM;
-			goto out;
-		}
-		atomic_inc(&pid_list->counter);
-		smp_wmb();
-		WRITE_ONCE(upper_chunk->data[upper2], lower_chunk);
-	}
-
-and in the clear:
-
-	if (find_first_bit(lower_chunk->data, LOWER_MAX) >= LOWER_MAX) {
-		put_lower_chunk(pid_list, lower_chunk);
-		WRITE_ONCE(upper_chunk->data[upper2], NULL);
-		smp_wmb();
-		atomic_inc(&pid_list->counter);
-		if (upper_empty(upper_chunk)) {
-			put_upper_chunk(pid_list, upper_chunk);
-			WRITE_ONCE(pid_list->upper[upper1], NULL);
-			smp_wmb();
-			atomic_inc(&pid_list->counter);
-		}
-	}
-
-That is, the counter gets updated after setting the chunk to NULL and
-before assigning it a new value. And reading it, the counter is read before
-looking at any of the chunks, and tested after getting the result. If the
-value is the same, then the chunks are for the correct PID and haven't
-swapped in a free/alloc swap where it's looking at a chunk for a different
-PID.
-
-This would allow for the read to not take any locks.
-
--- Steve
 
