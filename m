@@ -1,164 +1,70 @@
-Return-Path: <linux-kernel+bounces-894935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5E95C4C7D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:56:12 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 575F7C4C7F2
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:57:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7467E3AE7AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 08:56:11 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6D1644E7568
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 08:57:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 978723002A0;
-	Tue, 11 Nov 2025 08:55:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ymWd3Lnk";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PDy55JQ8"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 276812ED846;
+	Tue, 11 Nov 2025 08:57:09 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59799257846;
-	Tue, 11 Nov 2025 08:55:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F13642EA756;
+	Tue, 11 Nov 2025 08:57:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762851353; cv=none; b=bcaF5GNUzlhLPFA84DxGS0Mn2tZQW+6DLbtB8SsKKvB1kfWsg5qghrf6qhVuhKZ4z4jzbmS4rU0rxWOWmv910Wd27HjgRdslgAJma8G47ODHBhzb9OZwlMisqGE4zeSBQ49rUAFxSSQrLvNNOzNAcoyxHWaiKpV4lMTk7bekmjo=
+	t=1762851428; cv=none; b=abvG4DnqkMWVHCWEM3I62nwcqUD98KB1Sg78fy2olQXNhsaHgJZt/EEvoAOB8mGRd7KjS+A6ecydGaRWXbh/6dco0RxfYcbjQ9qHY/WhrteqnRNL70eyceKT5FNv3Wcrl1vbMRrqfOIjEcO12rmt671BzFasfl0zNIwGSj48acM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762851353; c=relaxed/simple;
-	bh=DCCdV1feBxJd8JPs8bCmq9jkjv7iq1tmUdts5DlDJ2A=;
+	s=arc-20240116; t=1762851428; c=relaxed/simple;
+	bh=ll5q7qBfeXaD5xqmOUO/RhZY6bK7xWm8m1Vf+JOtrKU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Yy4xW1xbhni/Eb/hfF0KPVP2yyAm4xHvPysXNzqFMrVlutCDwT3Y0E+Ds/5C6Tz3w/waVHHIAhuDeJHj5R538fcxJzHKNNGtwt6iJ6l/ojXLmpsWsfl8xTeWiuesHznnGQvTdWje7TeVzSjmbNfN945txCFIXcDFLoKSRJuBcKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ymWd3Lnk; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PDy55JQ8; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 11 Nov 2025 09:55:50 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1762851350;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RKTM993Ma21ZOkCemY+4BJTuWewmn2tKdsb5lj2abpk=;
-	b=ymWd3LnkEfwtX1k261UdYE5R5/7IpCIN6oMUmih0narZm6Bp8Tw+ikKxAJ98mC+Ki8kPMJ
-	dBJpjhxGTVeH7mhIVwraawl+x4rKUcLrgjqLQQNzsEMcCgMEHvECAIV2HVQCLFCkTVlVl8
-	O+nqZiC7VSJQgOJQPi13SRfHbDZLHZEY3z1VK0oryukZg4fmRz3ltZctohv5sJoBejwjBp
-	LiENYCvrtOf0BCLFlrBMSBeAaFEbp7NDLImGC6soMNidgoVLHUkoF1FvWUavi7dVQADk5V
-	c9bVZlXcLAPlv0tkMAeLyrfguAvzyipXRg9zcPQHmJYXL0Pd+CRKopm3fmhPVQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1762851350;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RKTM993Ma21ZOkCemY+4BJTuWewmn2tKdsb5lj2abpk=;
-	b=PDy55JQ8GnIS/Y2nfebPHMOFIXaZwBf3oeKj/acsXinCUUcGzezaxkS3vc3c9VSFc5YRUL
-	LWQUVLlkyb70aeBw==
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-To: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc: Andy Lutomirski <luto@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Vincenzo Frascino <vincenzo.frascino@arm.com>, 
-	Arnd Bergmann <arnd@arndb.de>, "David S. Miller" <davem@davemloft.net>, 
-	Andreas Larsson <andreas@gaisler.com>, Nick Alcock <nick.alcock@oracle.com>, 
-	John Stultz <jstultz@google.com>, Stephen Boyd <sboyd@kernel.org>, 
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Shuah Khan <shuah@kernel.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Theodore Ts'o <tytso@mit.edu>, 
-	Russell King <linux@armlinux.org.uk>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
-	Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, Huacai Chen <chenhuacai@kernel.org>, 
-	WANG Xuerui <kernel@xen0n.name>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
-	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Sven Schnelle <svens@linux.ibm.com>, Shannon Nelson <sln@onemain.com>, linux-kernel@vger.kernel.org, 
-	sparclinux@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev, 
-	linux-mips@vger.kernel.org, linux-s390@vger.kernel.org
-Subject: Re: [PATCH v5 19/34] random: vDSO: only access vDSO datapage after
- random_init()
-Message-ID: <20251110124547-66c465dc-5214-46bf-937f-c8fa381b86f3@linutronix.de>
-References: <20251106-vdso-sparc64-generic-2-v5-0-97ff2b6542f7@linutronix.de>
- <20251106-vdso-sparc64-generic-2-v5-19-97ff2b6542f7@linutronix.de>
- <aQ6EvdukQytvqK-u@zx2c4.com>
- <20251110094555-353883a9-1950-4cc6-a774-bb0ef5db11c5@linutronix.de>
- <aRHAU7bVAIyaOrpA@zx2c4.com>
- <20251110114550-a3f2afa8-4f86-4048-be5b-2dc4f4ef340d@linutronix.de>
- <aRHPIXATFJAEv-CF@zx2c4.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=O7wIC8enO0FizD9dFBcJNZfGj0qjyOxUSTZBi0/yBGMEPyso3hiiFkIMfBhrVcLxKW5hxx2/E9iSPh5gYRXDg2Ud6YHHe880m+dSnCZ1TKjLg9IJCrakxceHRTjabJz7NELnHvGmEe6p1dkPA3/i/UiB95ZBbMAn2n3+ql8GClk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 077C4227A87; Tue, 11 Nov 2025 09:57:00 +0100 (CET)
+Date: Tue, 11 Nov 2025 09:56:59 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Dave Chinner <david@fromorbit.com>
+Cc: Florian Weimer <fweimer@redhat.com>, Christoph Hellwig <hch@lst.de>,
+	Matthew Wilcox <willy@infradead.org>,
+	Hans Holmberg <hans.holmberg@wdc.com>, linux-xfs@vger.kernel.org,
+	Carlos Maiolino <cem@kernel.org>,
+	"Darrick J . Wong" <djwong@kernel.org>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	libc-alpha@sourceware.org
+Subject: Re: [RFC] xfs: fake fallocate success for always CoW inodes
+Message-ID: <20251111085659.GA11723@lst.de>
+References: <20251106133530.12927-1-hans.holmberg@wdc.com> <lhuikfngtlv.fsf@oldenburg.str.redhat.com> <20251106135212.GA10477@lst.de> <aQyz1j7nqXPKTYPT@casper.infradead.org> <lhu4ir7gm1r.fsf@oldenburg.str.redhat.com> <20251106170501.GA25601@lst.de> <878qgg4sh1.fsf@mid.deneb.enyo.de> <aRESlvWf9VquNzx3@dread.disaster.area> <lhuseem1mpe.fsf@oldenburg.str.redhat.com> <aRJK5LqJnrT5KAyH@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aRHPIXATFJAEv-CF@zx2c4.com>
+In-Reply-To: <aRJK5LqJnrT5KAyH@dread.disaster.area>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Mon, Nov 10, 2025 at 12:40:17PM +0100, Jason A. Donenfeld wrote:
-> On Mon, Nov 10, 2025 at 12:24:13PM +0100, Thomas Weißschuh wrote:
-> > > > > For example, one clean way of
-> > > > > doing that would be to make vdso_k_rng_data always valid by having it
-> > > > > initially point to __initdata memory, and then when it's time to
-> > > > > initialize the real datapage, memcpy() the __initdata memory to the new
-> > > > > specially allocated memory. Then we don't need the complex state
-> > > > > tracking that this commit and the prior one introduce.
-> > > > 
-> > > > Wouldn't that require synchronization between the update path and the memcpy()
-> > > > path? Also if the pointer is going to change at some point we'll probably need
-> > > > to use READ_ONCE()/WRITE_ONCE(). In general I would be happy about a cleaner
-> > > > solution for this but didn't find a great one.
-> > > 
-> > > This is still before userspace has started, and interrupts are disabled,
-> > > so I don't think so?
-> > 
-> > Interrupts being disabled is a good point. But we are still leaking
-> > implementation details from the random code into the vdso datastore.
+On Tue, Nov 11, 2025 at 07:28:20AM +1100, Dave Chinner wrote:
+> IOWs, I have no problems with COW filesystems not doing
+> preallocation, but if they are going to return success they still
+> need to perform all the non-allocation parts of fallocate()
+> operations correctly.
 > 
-> It wouldn't. You do this generically with memcpy().
+> Again, I don't see a need for a new API here to provide
+> non-destructive "truncate up only" semantics as we already have
+> those semantics built into the ALLOCATE_RANGE operation...
 
-With "implementation details" I meant the fact that it is fine to swap out the
-datapage behind its back. And the fact that the memcpy() can not introduce any
-races.
-
-> > > Also, you only care about being after
-> > > mm_core_init(), right? So move your thing before sched_init() and then
-> > > you'll really have nothing to worry about.
-> > 
-> > The callchains random_init_early() -> crng_reseed()/_credit_init_bits() could
-> > still touch the datapage before it is allocated.
-> > Adding conditionals to prevent those is essentially what my patch does.
-> 
-> I think I wasn't very clear in my proposal, because this isn't an issue
-> in it.
-
-I interpreted your previous mail as two different proposals:
-1) do the memcpy() thing
-2) move the page allocation after mm_core_init()
-
-Now it makes more sense.
-
-> Global scope:
-> 
-> static struct vdso_rng_data placeholder_vdso_k_rng_data __initdata;
-> struct vdso_rng_data *vdso_k_rng_data = &placeholder_vdso_k_rng_data;
-> 
-> Then,
-> 
-> void __init vdso_setup_data_pages(void)
-> {
->     ...
->     vdso_k_rng_data = blabla();
->     ...
->     memcpy(vdso_k_rng_data, &placeholder_vdso_k_rng_data, sizeof(*vdso_k_rng_data);
->     ...
-> }
-> 
-> If vdso_setup_data_pages() is called early enough in init, this is safe
-> to do, and then you don't need to muck up the random code with awful
-> state machine ordering stuff.
-
-Yes it is safe, but this safety is not obvious in my opinion.
-However I'll use your proposal for the next revision.
-
-
-Thomas
+The problem it loses the ability of an intelligent application using
+the low-level Linux API to probe what is there.  That might not be a
+major issue, but it is an issue at least.
 
