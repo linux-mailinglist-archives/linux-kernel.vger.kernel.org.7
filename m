@@ -1,88 +1,102 @@
-Return-Path: <linux-kernel+bounces-895366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AB70C4D946
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:06:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B2AFC4D995
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:09:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D928188EF87
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:06:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAA093A46E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:06:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35E753570A0;
-	Tue, 11 Nov 2025 12:05:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1820B3570BF;
+	Tue, 11 Nov 2025 12:06:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BBkaD78x"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="UzjruNHd"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DDEA248F78;
-	Tue, 11 Nov 2025 12:05:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FD5E248F78;
+	Tue, 11 Nov 2025 12:06:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762862756; cv=none; b=NvxG4qd+Ux+5jr/LSi4jCsXWDb9gTaKytBpwnV6PIC4C+bYyBEJMXmYQAl6nXWdgYiKaCZxu1OwUnVRHMHKTj1H4wQB9wilHH9qAOcPR+aH5JAW+gEtFmbr6tf5MJLLUIWmKTXzCRheCiDX16qMVZ7WvJQ54D70gqpZM2jrfT0c=
+	t=1762862793; cv=none; b=VJN6UPV5mR1jUXUNXUnq0sR9HVrajlFFgBZtnBMTWkVrojcGSWvrh2brVnFjMvaONXdyo3Y00ig1tbbozTmcMzcQJHGpxrsaNKSWfN8RpzTjspYeJg9+eyUWA1lz///qTwiEZiBFZ6meziqOzigKUYrc02dZqE8wd4OzKhwMJhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762862756; c=relaxed/simple;
-	bh=VRGcAN2yTGan9iucsJQd7KhaDHf/oFMbWEQdpOAsvMM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Yvj916gIWEyNMP3CVKHluzE4R2ZcNY824zTGePt7uf2Yp9Qgq56LE/rorqqOdLBlfL9unhI+YU1paiGEmkvUgEARC+Rs5IFIYyA6QMwDQ2Nv6kQ0fK5/Vhn0E3UfEdbj2tsSZOY1kP4XNYYcO5HPE1ifOtOhY+YNDyH9/Wt+jVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BBkaD78x; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89DDCC4CEFB;
-	Tue, 11 Nov 2025 12:05:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762862756;
-	bh=VRGcAN2yTGan9iucsJQd7KhaDHf/oFMbWEQdpOAsvMM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=BBkaD78xZB2M2FqoTBASK5HU+V+uR/G8wS0lTNNTGtaskHHJgzou32mKxXgRetCOF
-	 VsN/AyORBEug0eaBi1ov27cyevAnzJyyqtnR6JGPOLaVC76ugBSeG6ybg5RBnjrZ5r
-	 UaDKBtuYNACP8hhvxXWejn9C+BnUfQr+FdCOZsPJj2zO5tx+Z3YQJ8vTJ35jbSLneo
-	 vx5NcuUaUr0mLttM1AC/lXfU0y8ALB8/bKxUD9Gg7ZTCWNV6eonkrbL6oHREz0Dyta
-	 51FKsW43zWntQu1mZC3onEZsCNyRYdmEawF9wWaNYR6jzYtry9XR8e9f1FdVw8jF0R
-	 HzZkMsdJ17uIw==
-From: Christian Brauner <brauner@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	viro@zeniv.linux.org.uk,
-	jack@suse.cz,
+	s=arc-20240116; t=1762862793; c=relaxed/simple;
+	bh=y5U6iiMnaPZJ8bF6Me0DwCTiPvraiv/VbILyI2x9Gtg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mt4UGSN3pUnGFeF2A1NyasP2SlLKSPlopN2lXHCaDtqqD/oFuXesnikirqjRG8MOJdaBmUCs/ClxsRY8TXPX1+9xSuecoW0YuvNkmKuq409weBE3wQ/5QFm9nl/xjiS0VijDD+3ivkOWRvWUXUyhk/SEeJE1PRUcv5BPeNLgiS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=UzjruNHd; arc=none smtp.client-ip=117.135.210.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=fX
+	nUx8qkbwT+iYJFbuTl+5Ao2eAk+Du1NF38Cn2Twak=; b=UzjruNHdUBvSe9A00b
+	OiXmOU/XlPnVKVWvWpYy3LOt4vgLuSDvRWrwLsE2I2Rca6WWRACCavy4ofFINsdc
+	XaGzoD3qDGbH/xYGDe+f1mMmlr9RiObAYw8fYsZeckXSX9Vn4GEpE01c50i16DVl
+	OUTCdLdAeqXb/Xl6wmXDhSB5Y=
+Received: from liubaolin-VMware-Virtual-Platform.localdomain (unknown [])
+	by gzsmtp2 (Coremail) with SMTP id PSgvCgAX1tyrJhNpMhXBDg--.36042S2;
+	Tue, 11 Nov 2025 20:06:04 +0800 (CST)
+From: Baolin Liu <liubaolin12138@163.com>
+To: clm@fb.com,
+	dsterba@suse.com
+Cc: linux-btrfs@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fs: hide dentry_cache behind runtime const machinery
-Date: Tue, 11 Nov 2025 13:05:51 +0100
-Message-ID: <20251111-lobpreisen-nebel-8c71952ada8b@brauner>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251105153622.758836-1-mjguzik@gmail.com>
-References: <20251105153622.758836-1-mjguzik@gmail.com>
+	Baolin Liu <liubaolin@kylinos.cn>
+Subject: [PATCH v1] btrfs: simplify list initialization in btrfs_compr_pool_scan()
+Date: Tue, 11 Nov 2025 20:05:58 +0800
+Message-Id: <20251111120558.28240-1-liubaolin12138@163.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=843; i=brauner@kernel.org; h=from:subject:message-id; bh=VRGcAN2yTGan9iucsJQd7KhaDHf/oFMbWEQdpOAsvMM=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQKq83/84DNQEZnwuW8OKYpk399OSjpa9QmGeHFfrD9h ESydMSljlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgInotjEy7DCwO/w91Du3f+as bIugQtFkJo1NWmneC08qyGTJvtI5ysjQ2vp6yZzVGzzfL2FIfz7nD+OSQ07TeDZYVjws4GyN/z2 RDwA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:PSgvCgAX1tyrJhNpMhXBDg--.36042S2
+X-Coremail-Antispam: 1Uf129KBjvdXoW7Gw4DZr4UWFyrKr48CF4kZwb_yoWDtFX_AF
+	y8W3y8CrsxGw4rCF1xCrZ7WF4UW34agr40q3WkGF10yry5GF4rJF1DC3y2vry2gr1rK34r
+	KwnYy347GF9rujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUbQ6ptUUUUU==
+X-CM-SenderInfo: xolxutxrol0iasrtmqqrwthudrp/xtbCwQzTnmkTJqy2FQAA3T
 
-On Wed, 05 Nov 2025 16:36:22 +0100, Mateusz Guzik wrote:
-> 
+From: Baolin Liu <liubaolin@kylinos.cn>
 
+In btrfs_compr_pool_scan(),use LIST_HEAD() to declare and initialize
+the 'remove' list_head in one step instead of using INIT_LIST_HEAD()
+separately.
 
-Applied to the vfs-6.19.misc branch of the vfs/vfs.git tree.
-Patches in the vfs-6.19.misc branch should appear in linux-next soon.
+No functional change.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+Signed-off-by: Baolin Liu <liubaolin@kylinos.cn>
+---
+ fs/btrfs/compression.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+diff --git a/fs/btrfs/compression.c b/fs/btrfs/compression.c
+index bacad18357b3..0da57a3ebe22 100644
+--- a/fs/btrfs/compression.c
++++ b/fs/btrfs/compression.c
+@@ -194,15 +194,13 @@ static unsigned long btrfs_compr_pool_count(struct shrinker *sh, struct shrink_c
+ 
+ static unsigned long btrfs_compr_pool_scan(struct shrinker *sh, struct shrink_control *sc)
+ {
+-	struct list_head remove;
++	LIST_HEAD(remove);
+ 	struct list_head *tmp, *next;
+ 	int freed;
+ 
+ 	if (compr_pool.count == 0)
+ 		return SHRINK_STOP;
+ 
+-	INIT_LIST_HEAD(&remove);
+-
+ 	/* For now, just simply drain the whole list. */
+ 	spin_lock(&compr_pool.lock);
+ 	list_splice_init(&compr_pool.list, &remove);
+-- 
+2.39.2
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.19.misc
-
-[1/1] fs: hide dentry_cache behind runtime const machinery
-      https://git.kernel.org/vfs/vfs/c/15e78f24ccf0
 
