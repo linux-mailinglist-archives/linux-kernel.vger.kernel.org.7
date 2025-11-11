@@ -1,117 +1,237 @@
-Return-Path: <linux-kernel+bounces-895109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D2D3C4CE77
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:10:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 402CCC4CFF2
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:24:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A159A188321E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:09:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C241A4221A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:09:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A2D332B992;
-	Tue, 11 Nov 2025 10:08:22 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E54032ABE8;
-	Tue, 11 Nov 2025 10:08:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B086333508E;
+	Tue, 11 Nov 2025 10:08:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Kps+fY7F"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FFE62F28EC;
+	Tue, 11 Nov 2025 10:08:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762855702; cv=none; b=cAyecuKgaoQGf2IABOJYPL0m4KTS2izh9CK8dM92ATijbDqpHoxAiQSYmWOomN+tpjwk+c4YCqqrRT3yp7BuZTp6HFEZBKqky/BlzGz3Xta3FyWhMbQqRsr5zOJsRBbk9eFug+7HKYkBYP6SzxnAU0+GkvowVkl5eEXuTpjvRgw=
+	t=1762855716; cv=none; b=pEJRGSppgg2P3aGpFtFKPggHMA9B2YyLDKM+zktsP77772ofmBmQVXhj4QhwtYZ80ULU5ahVyAzECqLixW4Jv6I3E3a7iJNzy5HWwd1aWyOZUjIbwKtVNuNb9zcsBiJEhlS/Al62uWCDbTf3ZgWW1EmVJtIHalu1PrVH0AFSMhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762855702; c=relaxed/simple;
-	bh=+hZAX4E93rwYqitjctKzhXey0qzZcU00BP9jTF7BLWY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OpGJYBlZz9A2BRUi21wiCUDBtIemnUaIYGLduVhvgkNYqpXziArdJ0xRQAalixc+h7XPMlBaKS+81OeYhuPTIwMwAGho6X1QbHriqVIzIUovCNfwg/nZ+IW6fhEP02nta+06An/Jz3NNJx64K2/6rGdXGyDpZHZQtsfN5l+UUYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ACCFF2F;
-	Tue, 11 Nov 2025 02:08:11 -0800 (PST)
-Received: from [10.57.88.30] (unknown [10.57.88.30])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D9E443F63F;
-	Tue, 11 Nov 2025 02:08:13 -0800 (PST)
-Message-ID: <e2497863-8cbf-42b2-8f83-2c7b46fd1f47@arm.com>
-Date: Tue, 11 Nov 2025 10:08:12 +0000
+	s=arc-20240116; t=1762855716; c=relaxed/simple;
+	bh=7X+tQBa5o9+OpQ/P39mjVqCMoYP6HWTOSrThfQsEhbc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=gPno/XMFoV3gBlpBCuC2DHBg1JFR13zLakSfC9NtjApnXW3xjHaBHoOwBNfsPR52u/46SC1rMB4DrfQDwejMT+9BlihuETSjDj1L+lQDMyWr+6tRAUywZaeICl3K48AZolGFMfkigIJwPT60QYrSKUmFPfamYLfQuWNW/6xvbxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Kps+fY7F; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AB4Z4Dt4166506;
+	Tue, 11 Nov 2025 10:08:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=O8SwmBoVNsDi/IqYhcJbBd
+	vR4qNInoazAMTqO9e8Hw8=; b=Kps+fY7FS+U4Wkt7kwX9uW+fKc0CNvJcjJ2LRF
+	RI8kQmwhizbdfTC4GExmGzLIfHxHUwi05eAkAOhfsx25J/QBXBHzSkzp4phV9Huu
+	TXiPHWmWUl0NU2J2/H3KjTTI8XOUO8VYfVuqM1vHLn/TwVrfDHOkXCT7NYItFrMq
+	jL5WnfIWzkOoggHiaUHRsJ1VfQipFXtfnWJnHKDm75zsrYjOIqGd10ToTyXoR2Gm
+	Kn97Aem5zd9oPyf6klV7MytTt2NyreSzNQ+2/o6V37iJNukGgJDGbR9uNnTWkoXH
+	67ZgkPnWlmUKSTllE81GJBk6pfViEfzWI/opH/725/BKqi2A==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4abm4a2jef-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Nov 2025 10:08:24 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5ABA8NC2025538
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Nov 2025 10:08:23 GMT
+Received: from hu-sushruts-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.24; Tue, 11 Nov 2025 02:08:20 -0800
+From: Sushrut Shree Trivedi <quic_sushruts@quicinc.com>
+Date: Tue, 11 Nov 2025 15:38:16 +0530
+Subject: [PATCH] arm64: dts: qcom: monaco-evk: Enable PCIe0 and PCIe1 on
+ monaco-evk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 02/12] x86/xen: simplify flush_lazy_mmu()
-Content-Language: en-GB
-To: Kevin Brodsky <kevin.brodsky@arm.com>, linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org, Alexander Gordeev <agordeev@linux.ibm.com>,
- Andreas Larsson <andreas@gaisler.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
- <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- David Hildenbrand <david@redhat.com>, "David S. Miller"
- <davem@davemloft.net>, David Woodhouse <dwmw2@infradead.org>,
- "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
- Jann Horn <jannh@google.com>, Juergen Gross <jgross@suse.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
- Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
- Peter Zijlstra <peterz@infradead.org>, Suren Baghdasaryan
- <surenb@google.com>, Thomas Gleixner <tglx@linutronix.de>,
- Vlastimil Babka <vbabka@suse.cz>, Will Deacon <will@kernel.org>,
- Yeoreum Yun <yeoreum.yun@arm.com>, linux-arm-kernel@lists.infradead.org,
- linuxppc-dev@lists.ozlabs.org, sparclinux@vger.kernel.org,
- xen-devel@lists.xenproject.org, x86@kernel.org
-References: <20251029100909.3381140-1-kevin.brodsky@arm.com>
- <20251029100909.3381140-3-kevin.brodsky@arm.com>
- <b165098a-8164-4664-aaaf-1e8c4391d797@arm.com>
- <b21fb5b9-2e7f-4cbc-ae62-015b1317a9bd@arm.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <b21fb5b9-2e7f-4cbc-ae62-015b1317a9bd@arm.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-ID: <20251111-monaco-evk-pci-v1-1-8013d0d6a7ca@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAA8LE2kC/x3MQQqAIBBA0avErBtQSciuEi1kmmqINBQiEO+et
+ HyL/wtkTsIZpq5A4keyxNCg+w7o8GFnlLUZjDJWa63wisFTRH5OvElwtOQG64idN9CiO/Em7z+
+ cl1o/CIqmh2AAAAA=
+X-Change-ID: 20251110-monaco-evk-pci-85c9459ce9a2
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <ziyue.zhang@oss.qualcomm.com>,
+        <krishna.chundru@oss.qualcomm.com>,
+        Sushrut Shree Trivedi
+	<quic_sushruts@quicinc.com>
+X-Mailer: b4 0.14.3
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: mDSVSKiWjznHGqSUvJ5M4rCXApifn358
+X-Authority-Analysis: v=2.4 cv=G6kR0tk5 c=1 sm=1 tr=0 ts=69130b18 cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=COk6AnOGAAAA:8
+ a=4TjeMMSwllEyUDyrvMMA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-ORIG-GUID: mDSVSKiWjznHGqSUvJ5M4rCXApifn358
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTExMDA3OSBTYWx0ZWRfXyGYEvzmtf2YZ
+ hYVVrE21qoNxpC8A+Oue4Q/7v2Wl0AdJ+skaRGqNpTlIgeaPQIyAqL8cZzT/Vl3OieT5L4P9Kkr
+ bAjIaDk45d8MuPlCc1L2jvTqY2+6SPf5B9xI1TTLv+FqLBzliLxeAbqQF7cUvAqC7jXtePpURvp
+ W+Qh8yHa6t0PomFDnR0bxvlazN7v10R4hH6IxecdTCZZqYuxqOdwhvZVzYXz+wMsKhKThWF0DR0
+ ApuxhGbxGBmcGc577X23wRb+Fo8tDK2x0UvjKk2dx/tp98GO3ddZrbpBJ23cHbEvRFnHDKGeY9k
+ AJEkhr3dMEGjOV0U25faa4aeq7Z6iprlHVxfXg+FRFugbTvxcWuyq/nxHv9Ee+a2vooGgxQvHN0
+ bOLPghNCzyUxPh/XSx2HLGTxSMmlRA==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-11_01,2025-11-11_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 phishscore=0 spamscore=0 bulkscore=0 suspectscore=0
+ lowpriorityscore=0 clxscore=1011 malwarescore=0 impostorscore=0 adultscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511110079
 
-On 10/11/2025 10:36, Kevin Brodsky wrote:
-> On 07/11/2025 12:31, Ryan Roberts wrote:
->> On 29/10/2025 10:08, Kevin Brodsky wrote:
->>> arch_flush_lazy_mmu_mode() is called when outstanding batched
->>> pgtable operations must be completed immediately. There should
->>> however be no need to leave and re-enter lazy MMU completely. The
->>> only part of that sequence that we really need is xen_mc_flush();
->>> call it directly.
->>>
->>> Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
->> This looks functionally equivalent to me, so:
->>
->> Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
->>
->> But I don't think this tidy up is strictly necessary for your series to work?
->> (perhaps I'll change my mind on that as I go through it).
-> 
-> I initially thought it might be, but in the end I think you're right -
-> it should still work fine without this patch.
-> 
-> Still, I'd rather avoid unnecessary calls to arch_enter() and
-> arch_leave() as it makes it harder to reason about what is called where.
-> Namely, keeping them here means that a nested call to
-> lazy_mmu_mode_disable() would cause arch_leave() then arch_enter() to be
-> called - rather unexpected.
-> 
-> The only calls to arch_enter() and arch_leave() that are left after this
-> series are the ones in <linux/pgtable.h> and the Xen context-switching
-> logic (the one case where calling arch hooks directly is justified, see
-> discussion on v3 [1]).
+Enables PCIe0 and PCIe1 controller and phy-nodes.
 
-OK yeah, sounds reasonable.
+PCIe0 is routed to an m.2 E key connector on the mainboard for wifi
+attaches while PCIe1 routes to a standard PCIe x4 expansion slot.
 
-> 
-> - Kevin
-> 
-> [1]
-> https://lore.kernel.org/all/390e41ae-4b66-40c1-935f-7a1794ba0b71@arm.com/
+Signed-off-by: Sushrut Shree Trivedi <quic_sushruts@quicinc.com>
+---
+This patch depends on the series:
+https://lore.kernel.org/all/20251024095609.48096-1-ziyue.zhang@oss.qualcomm.com/
+---
+ arch/arm64/boot/dts/qcom/monaco-evk.dts | 84 +++++++++++++++++++++++++++++++++
+ 1 file changed, 84 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/qcom/monaco-evk.dts b/arch/arm64/boot/dts/qcom/monaco-evk.dts
+index e72cf6725a52..70739f71dd5c 100644
+--- a/arch/arm64/boot/dts/qcom/monaco-evk.dts
++++ b/arch/arm64/boot/dts/qcom/monaco-evk.dts
+@@ -408,6 +408,44 @@ &qupv3_id_1 {
+ 	status = "okay";
+ };
+ 
++&pcie0 {
++	pinctrl-0 = <&pcie0_default_state>;
++	pinctrl-names = "default";
++
++	status = "okay";
++};
++
++&pcieport0 {
++	reset-gpios = <&tlmm 2 GPIO_ACTIVE_LOW>;
++	wake-gpios = <&tlmm 0 GPIO_ACTIVE_HIGH>;
++};
++
++&pcie0_phy {
++	vdda-phy-supply = <&vreg_l6a>;
++	vdda-pll-supply = <&vreg_l5a>;
++
++	status = "okay";
++};
++
++&pcie1 {
++	pinctrl-0 = <&pcie1_default_state>;
++	pinctrl-names = "default";
++
++	status = "okay";
++};
++
++&pcieport1 {
++	reset-gpios = <&tlmm 23 GPIO_ACTIVE_LOW>;
++	wake-gpios = <&tlmm 21 GPIO_ACTIVE_HIGH>;
++};
++
++&pcie1_phy {
++	vdda-phy-supply = <&vreg_l6a>;
++	vdda-pll-supply = <&vreg_l5a>;
++
++	status = "okay";
++};
++
+ &remoteproc_adsp {
+ 	firmware-name = "qcom/qcs8300/adsp.mbn";
+ 
+@@ -449,6 +487,52 @@ ethernet0_mdio: ethernet0-mdio-pins {
+ 		};
+ 	};
+ 
++	pcie0_default_state: pcie0-default-state {
++		wake-pins {
++			pins = "gpio0";
++			function = "gpio";
++			drive-strength = <2>;
++			bias-pull-up;
++		};
++
++		clkreq-pins {
++			pins = "gpio1";
++			function = "pcie0_clkreq";
++			drive-strength = <2>;
++			bias-pull-up;
++		};
++
++		perst-pins {
++			pins = "gpio2";
++			function = "gpio";
++			drive-strength = <2>;
++			bias-pull-down;
++		};
++	};
++
++	pcie1_default_state: pcie1-default-state {
++		wake-pins {
++			pins = "gpio21";
++			function = "gpio";
++			drive-strength = <2>;
++			bias-pull-up;
++		};
++
++		clkreq-pins {
++			pins = "gpio22";
++			function = "pcie1_clkreq";
++			drive-strength = <2>;
++			bias-pull-up;
++		};
++
++		perst-pins {
++			pins = "gpio23";
++			function = "gpio";
++			drive-strength = <2>;
++			bias-pull-down;
++		};
++	};
++
+ 	qup_i2c1_default: qup-i2c1-state {
+ 		pins = "gpio19", "gpio20";
+ 		function = "qup0_se1";
+
+---
+base-commit: b89214826b1ab0e527303464d6c90e53d290c4f1
+change-id: 20251110-monaco-evk-pci-85c9459ce9a2
+
+Best regards,
+-- 
+Sushrut Shree Trivedi <quic_sushruts@quicinc.com>
 
 
