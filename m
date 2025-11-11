@@ -1,87 +1,87 @@
-Return-Path: <linux-kernel+bounces-895036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EAECC4CC5B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:51:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B79AC4CBFB
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:46:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4991C4FA674
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:46:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02612188C775
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:46:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56E5926B75C;
-	Tue, 11 Nov 2025 09:45:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 309DA2F60DA;
+	Tue, 11 Nov 2025 09:45:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nKx7WDh5"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="azMNHuBg"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E52292F39A4
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 09:45:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEDA32F49F5
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 09:45:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762854338; cv=none; b=RJEqJr4UI8pz/ENsSJwjYF7k+acsyrHew6l6jJeW+0o728q0JHWBzdHn5Hq78CfdmZO8Y+94qKnMIpjN4/G9MfwsFqNxI45dWX9JnBrQ1kKeqXkzK1D8DvJqf3jjfIJqJFY/BJGk30DJQrhSIB+UpoStojKsWgYUVtpio3MvA04=
+	t=1762854339; cv=none; b=QXDb076HWEDF//lqYXynGFMfUW6GfMVQfJ2xaLnTNSqwBW2oYJ98/x42CczfIi/nrZ5oJqG0F04ce09oJSECrT5Url9eJi0dahXwL0/PtWklogRtjPhPFMkmQSQf9OJTWh220/zCZQkO7EFMAPSuvFguFIxn5PaesuWCt6/mZeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762854338; c=relaxed/simple;
-	bh=lf7WAmXXlNMNByc6t4LTsXWtP5fFo0VO8PLMA4FvwHQ=;
+	s=arc-20240116; t=1762854339; c=relaxed/simple;
+	bh=+XnCO9qejTe4ztQ5le1uNUFmPXCcBG6FCCQyy4ErpsY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aLSA4ENB3rPh5+glS5mzPCy34qdQZBu5YqlREUrNYlEXJr3pgQmdocv/ICbyDR4P3V6j+L0bYHmxh3a21dxuQqRdHVcrVR71fmyZGOmDF8uwGu2h+qw5v5+hX0Z2wtSZvexuiQIDDPlKJIzTvMgg2EEu8ZiSTseb6ORyCxFWX80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nKx7WDh5; arc=none smtp.client-ip=209.85.128.43
+	 MIME-Version; b=iJcToeVPch2hh/gCGm3g+h7VTJGgT/xp5WXR9imH0O3GrT848vtd4vfAtbeaCPk0m8DRwSI9gOhldavDH632KvnYr3Q/L9uNn2llMgxZVMjOGR6iafcQuqCabaEtzaLMxkpPeC7ruW9PlYWl9ykXbDhygmvxpPqhTgqdAUh27fc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=azMNHuBg; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-475ca9237c2so21700615e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 01:45:36 -0800 (PST)
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-471191ac79dso41149075e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 01:45:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762854335; x=1763459135; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1762854336; x=1763459136; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=cyTFCidwYxLdrRo0mrPJg5BpG+UQKkEfi+EP0wnzqpI=;
-        b=nKx7WDh5pE4FMdp/SGss34+W1+VCRBLoX5YTJ9WOm9z91xHfRUxyt/LybjE/3WSn1N
-         optoHTIP9OZag08ZoMFH0s0ou1SVOV77VzJJpLd/2ZrbNukKmoBZ+iE02RKFWEIE351v
-         n1XGOKwjjmLsTn8i/uEEs/fXKXv5mw+ulQtNxwSI9vf40ciBPJMAK04FYowHD9FWmeF8
-         O1jhvH1awKezLTaUNzVriesglftq4CE9eZxzcCxVJ9yti9QOt1/+a08wLktZZbcWLb/Y
-         NPI7BMDDM0vIJLcsbKA121d5RqnKS2MkJQpTcqB1D1Gk99gT4E/hcFyWIeCwVmsHWulS
-         jA6A==
+        bh=CCSGnpbgz0bliYKvoZoaZD9Q232D8JPebeahtnpVkpQ=;
+        b=azMNHuBgIgo/ExxWmbx9xOKSPikXWhSx88qlmnnUFxywc0uj0Wp8Mc+m9wpAEmiJ8W
+         27dxHhH73vwi1NpKVR7yz6wSP+Rx2aNLKiL1ldDhvwgqm3MTlgkA8CcpavjsYOnWzyOc
+         FPd10bx0kD+ap/j4uoBgMy70LQl2CIVkTkKddEXRXk4Ijjrgk58zgD4sl1OrN+bx0uqz
+         VLRhisAmiowruGzqksIOsYAl0o7YwrC7E2GknqbEXdW2R7MbtsyoMsRWvLMCaaxuoSWN
+         hCvtwLMP/FyBS4TNNrMnO3q4oo0XcW6WB4eVm8chATWUeVBWYzgq/Kb4sffE9TF8ceSe
+         7ILg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762854335; x=1763459135;
+        d=1e100.net; s=20230601; t=1762854336; x=1763459136;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=cyTFCidwYxLdrRo0mrPJg5BpG+UQKkEfi+EP0wnzqpI=;
-        b=j/JEUs9AyapqeCbZRRw+R3lrK94qltn5AL/vZd04Q9V5LMCZ2djB/+h2JXL8AnH1k4
-         Eqz2gA1lm2D9aKjidBGOAfdcY3otxAe46QZkN7x+fzv190RLuheszKLVgyil6yJTWKAI
-         ESjmKr/5cs+ZL7hkI1EkBhVu6gQTfd/beOTjT6bb+Y1vWjANHQZilLBat7tpM1PwDULA
-         D/0PepWrD/gWYfKWgfvecBdKX4CBBl5ucoo5M5NG50goBgHJw1aRuHVJCPUCHTsZqm6J
-         cfjpfAct0iCs9jgQ2cR7f+gMJGpzgQPdfaOpnFW7QoTEjDjWE2ey6sIsGa44lbDGByDj
-         WLpA==
-X-Forwarded-Encrypted: i=1; AJvYcCXjA86uDMAIQQ43uZjnDDPwabohlT/CROl04xdWU2X7XKQm1EIY5lLirc8+M5kAQXeoXqyoVK1vzywFTl0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5lRO0aFJ6P/k5usxTGWybjNRCD6JrmBNU6DrbdaucsAMh+CzZ
-	HCzD9X4ckWCNUt/yzKms3rkjsPz/QavK1IE32bt2wIBaBg9TjhMf06x1+z5SqA==
-X-Gm-Gg: ASbGncu2AnegVblcdIIgKAzNbdJy8Kdy2d8WzQHlg4cU09ciBrlWNkWJLuTMl4dTrl0
-	XTAbZSFMBmhoXfBug8TFnTykkaMU9WlJvI+OCigpygb8ebUvPQNa94VPe8NuaKj39sQg7B6cCM6
-	qaH+WI4BJIglsPmJHU341aPr+T1J6U3ua/Rb9F8WMYHZSSTQ31R46litIRCYOyDfViV86sy7IV9
-	A9ovvRE8fgks+rcQwYUXdJoBlhn6mpltUAMQ954dDkz7A5QwGKv+kw2SR+3VT5qCIaJnsUIoMGX
-	MQyY1MXUtgM/Wtn//7//tIidOfbw3SF25jLPCZ74ceKyAiJdmvGxVSJ3bqV6+BTxuncsE011LYg
-	K1YYamxkWyiIZvvqMHhEWX6MLPrjGQHRnsGtD2B+IX2iCkeRRQXTfS3Q81ni+CdiATtWHzyNltG
-	cbFGM1NE+kLoZJuuBA2/XmgsWY9Ec=
-X-Google-Smtp-Source: AGHT+IE+ZuARGiz3jx6grGJFiduhQHFRxZsDGWAZ3QmBErVlqeABMe7Zfmohvg0NcUOhdBFLbPcwEw==
-X-Received: by 2002:a05:600c:4f8f:b0:477:cb6:805e with SMTP id 5b1f17b1804b1-4777323f091mr102982615e9.18.1762854335069;
+        bh=CCSGnpbgz0bliYKvoZoaZD9Q232D8JPebeahtnpVkpQ=;
+        b=C2lST9WjlMdRbpc7sbf4YhCswBfvuDHNcl9I05GqgvnjplJHyHV6cecUtllkLd1s1K
+         hUKXfryRSQnnQGAAQK9KxEC+tv1ROKD5y4IiVrpXDjyxVcAViDIadIq5a9j/S2X576S6
+         NYqM9/2jP0Icvx46enWELZv/R/z3s51D6dOnuGTT+pJlSS7+JgD+Omi5gEcE1BC/ZUVT
+         3Afoh/kxUBYULbwgGsftDPh0GyLvrc1UW2hUY2+YD6Bzo/tv01ViwGSPws3ryVWDHrow
+         piWIZq5Cr5iB+me147Qt7JZT+fkr+6jTo4BSDp8HYc0ZjhcQqnk2m/GbJUOzdBW4qOf2
+         rA0g==
+X-Forwarded-Encrypted: i=1; AJvYcCUced6NeL7pcCPE/fmO4+KB4kS71TH0jd/ZJ3/MaXIz8FNLJ2DhGt8IHlRUhCsgupLgna5v1uwjJOMQl70=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyz576C/FGkcaaRudz8cln0H0B2lftTqFJJRBuNvdPDVTMlO3sk
+	peYCLuujp9IIOwXcBAaMMi0mX3Je+LEmGTULPWMc4LwsMqfSfyLp6nVD
+X-Gm-Gg: ASbGnctXw3M0V+LKxULqh7c8Z8Yc9qirxaa9eB+MP5cn8qaOnHxb+dpuZRAWs5+p8zE
+	amwQNWfZ+PqIx3r6dRphmW4E6RHP5skql3qqy1ADk96Yqutml4Lywd/4wvB9BHx+kk4g9UC2g4p
+	RGwD8V4Z5B2dKv7zYLiIiphgaAB4UReyZxsIKKHyGbT+hckRNocsmNZa+k83HHKpN2/MaqU5tF4
+	mHSZPNxFxu4hkylOJwx8a8MRHqwRtWkx6DZZXxolMidsd2cTpA7DgwqbVNqUkfFJogTE8dpZcZB
+	/QSZ/+mnsRrNg1GIChFudj+XtH9bTQV46Bjlcz1OHXMW5YdsbDlNJXQcAmJ77NN4mQgriwXDplX
+	86sOm8BOz030WrF0SOfOODf/ANdXgPFQPVy12SeVxQTSXfRL7zxjemOAzl0lOzr+8kdo1W35VRi
+	Q2Fk17OJQQM0vjxRKUGk+PfyKI4iQ=
+X-Google-Smtp-Source: AGHT+IFMwBYwj8RzHSh4woU0eevledo4c8hN1mPiW76L581g+wR11bGflC1/9eoKimvmIw7JWJyzbA==
+X-Received: by 2002:a05:600c:1d1c:b0:471:115e:624b with SMTP id 5b1f17b1804b1-4777323ec6dmr96147085e9.17.1762854335978;
         Tue, 11 Nov 2025 01:45:35 -0800 (PST)
 Received: from egonzo (82-64-73-52.subs.proxad.net. [82.64.73.52])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4775cd45466sm359537865e9.0.2025.11.11.01.45.34
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4775cd45466sm359537865e9.0.2025.11.11.01.45.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Nov 2025 01:45:34 -0800 (PST)
+        Tue, 11 Nov 2025 01:45:35 -0800 (PST)
 From: Dave Penkler <dpenkler@gmail.com>
 To: gregkh@linuxfoundation.org,
 	linux-staging@lists.linux.dev,
 	linux-kernel@vger.kernel.org
 Cc: johan@kernel.org,
 	Dave Penkler <dpenkler@gmail.com>
-Subject: [PATCH V2 05/10] staging: gpib: Change gpib Kconfig option title
-Date: Tue, 11 Nov 2025 10:45:07 +0100
-Message-ID: <20251111094512.6411-6-dpenkler@gmail.com>
+Subject: [PATCH V2 06/10] staging: gpib: Fix SPDX license for gpib headers
+Date: Tue, 11 Nov 2025 10:45:08 +0100
+Message-ID: <20251111094512.6411-7-dpenkler@gmail.com>
 X-Mailer: git-send-email 2.51.2
 In-Reply-To: <20251111094512.6411-1-dpenkler@gmail.com>
 References: <20251111094512.6411-1-dpenkler@gmail.com>
@@ -93,26 +93,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Remove the word "Linux" from the gpib Kconfig option title as
-it adds no information - it is redundant.
+As part destaging the gpib drivers we need to add the
+WITH Linux-syscall-note to the SPDX license in the gpib
+common includes as these will be part of the kernel headers.
 
 Signed-off-by: Dave Penkler <dpenkler@gmail.com>
 ---
- drivers/staging/gpib/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/gpib/uapi/gpib.h       | 2 +-
+ drivers/staging/gpib/uapi/gpib_ioctl.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/gpib/Kconfig b/drivers/staging/gpib/Kconfig
-index aa01538d5beb..2f42aa2d55fd 100644
---- a/drivers/staging/gpib/Kconfig
-+++ b/drivers/staging/gpib/Kconfig
-@@ -1,6 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0
- menuconfig GPIB
--	tristate "Linux GPIB drivers"
-+	tristate "GPIB drivers"
- 	help
- 	  Enable support for GPIB cards and dongles for Linux.  GPIB
- 	  is the General Purpose Interface Bus which conforms to the
+diff --git a/drivers/staging/gpib/uapi/gpib.h b/drivers/staging/gpib/uapi/gpib.h
+index ddf82a4d989f..2a7f5eeb9777 100644
+--- a/drivers/staging/gpib/uapi/gpib.h
++++ b/drivers/staging/gpib/uapi/gpib.h
+@@ -1,4 +1,4 @@
+-/* SPDX-License-Identifier: GPL-2.0 */
++/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+ 
+ /***************************************************************************
+  *    copyright		   : (C) 2002 by Frank Mori Hess
+diff --git a/drivers/staging/gpib/uapi/gpib_ioctl.h b/drivers/staging/gpib/uapi/gpib_ioctl.h
+index 55bf5e55507a..50bb6e251e45 100644
+--- a/drivers/staging/gpib/uapi/gpib_ioctl.h
++++ b/drivers/staging/gpib/uapi/gpib_ioctl.h
+@@ -1,4 +1,4 @@
+-/* SPDX-License-Identifier: GPL-2.0 */
++/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+ 
+ /***************************************************************************
+  *    copyright            : (C) 2002 by Frank Mori Hess
 -- 
 2.51.2
 
