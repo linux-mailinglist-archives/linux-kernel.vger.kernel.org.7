@@ -1,79 +1,61 @@
-Return-Path: <linux-kernel+bounces-894981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BFE1C4C9E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:22:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2B33C4C8CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:09:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DA6D188B426
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:18:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50A00188021B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:07:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98A012EF662;
-	Tue, 11 Nov 2025 09:18:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48AAD2EA47C;
+	Tue, 11 Nov 2025 09:04:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dU2GmLLN"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="DGZg1hpw"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1161127CB35;
-	Tue, 11 Nov 2025 09:18:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F8E9238C3A;
+	Tue, 11 Nov 2025 09:04:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762852707; cv=none; b=soExPlsp/V3diKgv8vbHtMhZvD9Y7NnTCwyv8o6i5+z3zQvn3SUh5pGFQJxkpTDAWOkavDrHT++OErKn9gJkNdOXKx2T9IZprXsQHCuFcxuXy8VgyCAjD3FKM2FQ99XdboUiyGFkXONaEaOhyM+dGtBqwaF1dc61Rgwh/iqpyL4=
+	t=1762851860; cv=none; b=gXUWvpTbLhutipQ2ntZS9kLUk2+zNu7a8wN3ll6HLDb9x19BYu9eFrBgqCAE1x95hdHQQRoYFev2b2Fj++sCVvXaoGWS3zx0Gmsma+XNjFBQnzdndWw1r+/S+2/NxW4MS6gT/vvo7T9FZ2EGiNuOkxWb4mYmlWtpBar/JWM9sX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762852707; c=relaxed/simple;
-	bh=DtC6/Dh6DnzzueO+csTSLKdwgV4e4PHq9ax7gNVMgMo=;
+	s=arc-20240116; t=1762851860; c=relaxed/simple;
+	bh=VPLZAA4LoKT22J4c1RkRpNHV87GAwiwNtPeNSsX/uTA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jVE/kesG0KH5iwScF9GSrQDCtzmFBMtToOkBHEmEaExIKE/E9nE2hq82OrJNXwRE61z7hjm0HhN+fMJUWB6Il6SYR/pQLEo0KV4+aVuPu7rpVvfKj+WEDMIJQ0Wa1YCsvW/i4hfM9yTKcMNp5K3cNS8N6aV3a9KogW7BF7DPRh4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dU2GmLLN; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762852706; x=1794388706;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=DtC6/Dh6DnzzueO+csTSLKdwgV4e4PHq9ax7gNVMgMo=;
-  b=dU2GmLLNfXi7yjoQNNiYWhwWdzmey+VW8c4L4JU5mRuCiIqoBzRLpNf6
-   XMNYmL1bzsYHryIZek/+OgcDQq9z0dshmfbaKMKNleLGKL/LzOMWWz2ZF
-   jpAdn19DULCqV9Ep0QtccsOigeGI99v5EF32fDCEitg8BCccZXgyG9lGF
-   cWMUd4QLxj0p9WpLZQG2j3IZmUTxoQB7WndL6ePHFKi/2UxY6ODvNfbp2
-   m1K8Twz4JmCysOOVTTk76ELOWNwRtx535U5wTSUvGmpuQHPqvpqiRoSWd
-   kokCWGLuzum0L4fo+wyA/G4X1RNHIyTPw5mkCwIa24tPlhImQkQM5MVeG
-   A==;
-X-CSE-ConnectionGUID: eSB7xDJtTOq7L28cnoTi9Q==
-X-CSE-MsgGUID: uzsIgaFVTqCj0YfIhkvfeg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11609"; a="64796652"
-X-IronPort-AV: E=Sophos;i="6.19,296,1754982000"; 
-   d="scan'208";a="64796652"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 01:18:25 -0800
-X-CSE-ConnectionGUID: ZUqQRFoQQPy3vk3VG2Z+HQ==
-X-CSE-MsgGUID: qmajfKkcR8CZG0b3UbX9Ag==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,296,1754982000"; 
-   d="scan'208";a="189171362"
-Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
-  by fmviesa008.fm.intel.com with ESMTP; 11 Nov 2025 01:18:21 -0800
-Date: Tue, 11 Nov 2025 17:03:56 +0800
-From: Xu Yilun <yilun.xu@linux.intel.com>
-To: Khairul Anuar Romli <khairul.anuar.romli@altera.com>
-Cc: Moritz Fischer <mdf@kernel.org>, Xu Yilun <yilun.xu@intel.com>,
-	Tom Rix <trix@redhat.com>, Dinh Nguyen <dinguyen@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Mahesh Rao <mahesh.rao@altera.com>,
-	Ho Yin <adrian.ho.yin.ng@altera.com>,
-	Niravkumar L Rabara <nirav.rabara@altera.com>,
-	linux-fpga@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/3] dt-bindings: fpga: stratix10: add support for Agilex5
-Message-ID: <aRL7/Hjb1Z/OrC91@yilunxu-OptiPlex-7050>
-References: <cover.1762835252.git.khairul.anuar.romli@altera.com>
- <0e3986dd9a2c4e46466a7430b2573d170d2a718a.1762835252.git.khairul.anuar.romli@altera.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=eLyGTuyVCuTSxUgHTC45Glr90G7X61Lr58q4COtm8srAdXTZTRbZjFgFPdf2G28Ln97Lh+U82e05NPkjgLhacFKeXDnuCe/mxXWrehiue+TYyOkK5APskv0HhmaR9Kp68Zt4e7vduSdX5FotgPY/ZoxO0GBX5oLd418MfGcX3ZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=DGZg1hpw; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=ZwrtQ6+FGJJ1cCIQ14Mdkpcu+BTeaX0CsYugdDU7yYE=; b=DGZg1hpwOQOwZRy7GqzXvT1Ppp
+	s0j9UGTDrdTVjnjCFY/BOcvLF2ts+ZSem30sHYzAfyS5kqnOSj6DFOCbYrJXrxwoYJ6Tx/2ZehLU/
+	Cmy6PdSNRT5ttSh3fzajYQDBXEp0ByDm35Vf28QgBbGZy4vIqQOX0LUMUvPxio8TH0k9hjzdodQfx
+	PdeS+5y0F1iNwnD9B1V+HIfwYFn6g59gvCeIoVUVEeRp7difEsQwU0pb0pWgvFMXRSy/hylsMrsiO
+	JDiBiictOkS41x3MEjBBBdj0+fxVl0p2HJLGiuZKCZ+nw+E0UO1nbVr0W+BoDNy7g3vSbJxFguTmD
+	IQozz1/Q==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vIkIS-0000000ETgU-22QC;
+	Tue, 11 Nov 2025 09:04:16 +0000
+Date: Tue, 11 Nov 2025 09:04:16 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Ian Kent <raven@themaw.net>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	autofs mailing list <autofs@vger.kernel.org>,
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] autofs: dont trigger mount if it cant succeed
+Message-ID: <20251111090416.GR2441659@ZenIV>
+References: <20251111060439.19593-1-raven@themaw.net>
+ <20251111060439.19593-3-raven@themaw.net>
+ <20251111065951.GQ2441659@ZenIV>
+ <d8040d10-3e2a-44d9-9df2-f275dc050fcd@themaw.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,44 +64,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0e3986dd9a2c4e46466a7430b2573d170d2a718a.1762835252.git.khairul.anuar.romli@altera.com>
+In-Reply-To: <d8040d10-3e2a-44d9-9df2-f275dc050fcd@themaw.net>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Tue, Nov 11, 2025 at 03:48:31PM +0800, Khairul Anuar Romli wrote:
-> The Agilex 5 SoC FPGA manager introduces updated hardware features and
-> register maps that require explicit binding support to enable correct
-> initialization and control through the FPGA manager subsystem.
-> 
-> It allows FPGA manager drivers detect and configure Agilex 5 FPGA managers
-> properly. This changes also keep device tree bindings up to date with
-> hardware platforms changes.
-> 
-> Signed-off-by: Khairul Anuar Romli <khairul.anuar.romli@altera.com>
-> ---
->  .../devicetree/bindings/fpga/intel,stratix10-soc-fpga-mgr.yaml   | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/fpga/intel,stratix10-soc-fpga-mgr.yaml b/Documentation/devicetree/bindings/fpga/intel,stratix10-soc-fpga-mgr.yaml
-> index 6e536d6b28a9..b531522cca07 100644
-> --- a/Documentation/devicetree/bindings/fpga/intel,stratix10-soc-fpga-mgr.yaml
-> +++ b/Documentation/devicetree/bindings/fpga/intel,stratix10-soc-fpga-mgr.yaml
-> @@ -23,6 +23,7 @@ properties:
->      enum:
->        - intel,stratix10-soc-fpga-mgr
->        - intel,agilex-soc-fpga-mgr
-> +      - intel,agilex5-soc-fpga-mgr
+On Tue, Nov 11, 2025 at 04:25:29PM +0800, Ian Kent wrote:
 
-I'm not quite familar about dt rules, but since these are all software
-defined strings, do we really have to write down every version even if
-they behave exactly the same? Seems a waste of time.
-
-Thanks,
-Yilun
-
->  
->  required:
->    - compatible
-> -- 
-> 2.43.7
+> > Huh?  What's to guarantee that superblock won't outlive the namespace?
+> 
+> Not 30 minutes after I posted these I was thinking about the case the daemon
+> 
+> (that mounted this) going away, very loosely similar I think. Setting the
+> 
+> mounting process's namespace when it mounts it is straight forward but what
+> 
+> can I do if the process crashes ...
 > 
 > 
+> I did think that if the namespace is saved away by the process that mounts
+> 
+> it that the mount namespace would be valid at least until it umounts it but
+> 
+> yes there are a few things that can go wrong ...
+
+Umm...
+
+1) super_block != mount; unshare(CLONE_NEWNS) by anyone in the namespace of
+that mount *will* create a clone of that mount, with exact same ->mnt_sb
+and yes, in a separate namespace.
+
+2) mount does not pin a namespace.  chdir into it, umount -l and there you go...
+
+3) mount(2) can bloody well create more than one struct mount, all with the
+same ->mnt_sb.
+
+So I'd say there's more than a few things that can go wrong here.
+
+Said that, this "we need a daemon in that namespace" has been a source of
+assorted headaches for decades now; could we do anything about that?
+After all, a thread can switch from one namespace to another these
+days (setns(2))...
 
