@@ -1,116 +1,107 @@
-Return-Path: <linux-kernel+bounces-894540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8299FC4B448
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 04:00:39 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94015C4B44E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 04:01:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 76E324EAAB2
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 03:00:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 47B774E995E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 03:01:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4831123D28B;
-	Tue, 11 Nov 2025 03:00:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6FC531355C;
+	Tue, 11 Nov 2025 03:01:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="noQmNNpG"
-Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iVUwICY5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2318533E7
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 03:00:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E06032AD0D;
+	Tue, 11 Nov 2025 03:01:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762830034; cv=none; b=ajg+81xk1oQ/Ny0iT9iAbPJB+gu/YRVT8vdbvQsDVJRTeWiaN4BOZsTerRFMPc4BTQ3q4nPWQx8fzi+O9v0jfqHExfCK5IusS3lvDZBVf6KV8DGmkAIHmEFpHjLSosUV8cH4sgmbzsXOtom9kdiXZM+6TBCxJtYKXsA11zEnWgY=
+	t=1762830085; cv=none; b=VrhfRh4s5577m7Y70DsB718VXqxVokxZ0+PsspSc0CbaZLBUH+DFoLh3iSy8ffX1fVnag8Ett3/MbAWl9G83fA2a2wXcXurOPGUyQJ7zMmHEXgwPqtkaOLAT+bex3SbwlaB7lg/n4ZkVa4BZqehJ4sZIb/VNTrFbKXa2ymfjbJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762830034; c=relaxed/simple;
-	bh=WaZ1quIzwngQ3WO6HkRzjGQCMLWlWIqFdIjof6f0ajI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K1xPsEQvpWA0H9Tp2pUQFndVL2+VUbF6CqHio7yK7SgXw9Xdk594NETgOwcqdaaQsfAjpGbd1qLihJnSjWCwY/8AZtUNcPByy8diB+7A/N3uLmg5ZhDE9Qn3HsWqOs1+gj9vHA7PVomFaHw6t4FVjsrXYGWtic26IJcamSsMVjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=noQmNNpG; arc=none smtp.client-ip=91.218.175.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 10 Nov 2025 19:00:25 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1762830030;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5ul2ZY2G57orZgmpduBInIrETuK3NAIisOONEv3fwlE=;
-	b=noQmNNpGXqeh55EPq5nX35rk2qS9h7N8CFJCxC2xW5/EEMWN4cxmYtu8eeQTlF2OVaBq4J
-	aEiHGJ0In+usILEcVeIIEtQdJSVH5joV422aeigrCaAVnKZco27cq/idJjdw5XR9IOoC6+
-	piVfwn4nRzlTsjOEEtTJ92jiQJQcTUM=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Qi Zheng <qi.zheng@linux.dev>
-Cc: Harry Yoo <harry.yoo@oracle.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Muchun Song <muchun.song@linux.dev>, Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org, 
-	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Meta kernel team <kernel-team@meta.com>
-Subject: Re: [PATCH 0/4] memcg: cleanup the memcg stats interfaces
-Message-ID: <hgf4uciz7rp2mpxalcuingafs5ktmsgvom2pefjv3yogel5dh3@7kkwtrnqotnc>
-References: <20251110232008.1352063-1-shakeel.butt@linux.dev>
- <aRKKfdN3B68wxFvN@hyeyoo>
- <24969292-7543-456f-8b80-09c4521507e2@linux.dev>
- <gsew67sciieqxbcczp5mzx4lj6pvvclfrxn6or3pzjqmj7eeic@7bxuwqgnqaum>
- <99429fb8-dcec-43e7-a23b-bee54b8ed6e6@linux.dev>
+	s=arc-20240116; t=1762830085; c=relaxed/simple;
+	bh=ffT4XRgc3gSzu/oLyQRC6VgHEbyS3+VNOYHJPEHQBhU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=DxHgn1m2mQ0JgbTAzszSWhg/0od/YDzpJqpqI6inKcYCJX7lPP6Tq0dMXm1QO5ryQuuHgB2VLxk4hhrdWlTP0apViV57zHW7XtWw5L7jEWN6WUMxRrFpYbZ/7hiMC5eFHfiQQvAjbYCNvVIz0isXG9168CvUJn3sEB3kCtwEThw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iVUwICY5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7713C113D0;
+	Tue, 11 Nov 2025 03:01:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762830084;
+	bh=ffT4XRgc3gSzu/oLyQRC6VgHEbyS3+VNOYHJPEHQBhU=;
+	h=Date:From:To:Cc:Subject:From;
+	b=iVUwICY50goymhKgmwYiHDyBVgytrpH8KVrWFHdL0Kd0zFdvm5i4wQfHVv5jlhzzC
+	 GgGpDaZXB0TEtnCtbc3cmVruYKOe182KYFh1/W5401K29VMB/Eso6gjJPDSxw7iP6Q
+	 yDoG0Fr+kDfP3oLLh03DTqHNF4yRLzzahP1hgJvOC0AukCFfck10DjfHUuPt513UCn
+	 sJBLby32K7041Lu92hL8i4Dl/ZN9SZ9rDgEVUF7NuSs2C7tfbrTpaFywNkRyto0cKv
+	 jJsfpneTspz5Sn3isDXvif+y1dzlXeNriIwJzgIWoVuMqWzwjDoRfceOXZEFnEaDEN
+	 5ivzKhHV5O7jQ==
+Date: Tue, 11 Nov 2025 12:01:19 +0900
+From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+To: Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>,
+	Joseph Qi <joseph.qi@linux.alibaba.com>
+Cc: ocfs2-devel@lists.linux.dev, linux-kernel@vger.kernel.org,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH][next] ocfs2: Avoid -Wflex-array-member-not-at-end warning
+Message-ID: <aRKm_7aN7Smc3J5L@kspp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <99429fb8-dcec-43e7-a23b-bee54b8ed6e6@linux.dev>
-X-Migadu-Flow: FLOW_OUT
 
-On Tue, Nov 11, 2025 at 10:48:18AM +0800, Qi Zheng wrote:
-> Hi Shakeel,
-> 
-> On 11/11/25 10:39 AM, Shakeel Butt wrote:
-> > On Tue, Nov 11, 2025 at 10:23:15AM +0800, Qi Zheng wrote:
-> > > Hi,
-> > > 
-> > [...]
-> > > > 
-> > > > Are you or Qi planning a follow-up that converts spin_lock_irq() to
-> > > > spin_lock() in places where they disabled IRQs was just to update vmstat?
-> > > 
-> > > Perhaps this change could be implemented together in [PATCH 1/4]?
-> > > 
-> > > Of course, it's also reasonable to make it a separate patch. If we
-> > > choose this method, I’m fine with either me or Shakeel doing it.
-> > > 
-> > 
-> > Let's do it separately as I wanted to keep the memcg related changes
-> > self-contained.
-> 
-> OK.
-> 
-> > 
-> > Qi, can you please take a stab at that?
-> 
-> Sure, I will do it.
-> 
-> > 
-> > > > 
-> > > > Qi's zombie memcg series will depends on that work I guess..
-> > > 
-> > > Yes, and there are other places that also need to be converted, such as
-> > > __folio_migrate_mapping().
-> > 
-> > I see __mod_zone_page_state() usage in __folio_migrate_mapping() and
-> > using the same reasoning we can convert it to use mod_zone_page_state().
-> > Where else do you need to do these conversions (other than
-> > __folio_migrate_mapping)?
-> 
-> I mean converting these places to use spin_lock() instead of
-> spin_lock_irq().
+-Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+getting ready to enable it, globally.
 
-For only stats, right?
+Use the new TRAILING_OVERLAP() helper to fix the following warning:
+
+fs/ocfs2/xattr.c:52:41: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+
+This helper creates a union between a flexible-array member (FAM) and a
+set of MEMBERS that would otherwise follow it.
+
+This overlays the trailing MEMBER struct ocfs2_extent_rec er; onto the
+FAM struct ocfs2_xattr_value_root::xr_list.l_recs[], while keeping the
+FAM and the start of MEMBER aligned.
+
+The static_assert() ensures this alignment remains, and it's
+intentionally placed inmediately after the related structure --no
+blank line in between.
+
+Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+---
+ fs/ocfs2/xattr.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/fs/ocfs2/xattr.c b/fs/ocfs2/xattr.c
+index d70a20d29e3e..09069defd7e1 100644
+--- a/fs/ocfs2/xattr.c
++++ b/fs/ocfs2/xattr.c
+@@ -49,9 +49,13 @@
+ #include "ocfs2_trace.h"
+ 
+ struct ocfs2_xattr_def_value_root {
+-	struct ocfs2_xattr_value_root	xv;
+-	struct ocfs2_extent_rec		er;
++	/* Must be last as it ends in a flexible-array member. */
++	TRAILING_OVERLAP(struct ocfs2_xattr_value_root, xv, xr_list.l_recs,
++		struct ocfs2_extent_rec		er;
++	);
+ };
++static_assert(offsetof(struct ocfs2_xattr_def_value_root, xv.xr_list.l_recs) ==
++	      offsetof(struct ocfs2_xattr_def_value_root, er));
+ 
+ struct ocfs2_xattr_bucket {
+ 	/* The inode these xattrs are associated with */
+-- 
+2.43.0
+
 
