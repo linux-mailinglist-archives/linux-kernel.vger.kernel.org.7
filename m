@@ -1,184 +1,96 @@
-Return-Path: <linux-kernel+bounces-895536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 632DAC4E3D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:50:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70977C4E3E2
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:51:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 710A54E5EE9
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:50:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CC043A82FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:51:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3DCE34B1AF;
-	Tue, 11 Nov 2025 13:50:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E96E232470B;
+	Tue, 11 Nov 2025 13:51:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hEP0BQP5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5869D1EB5CE;
-	Tue, 11 Nov 2025 13:50:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50F59358D09;
+	Tue, 11 Nov 2025 13:51:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762869000; cv=none; b=QBeNeLiSYez+828ssQ6qJmxxzDPcJYVuobQ0ofpTX0u4QIlVIljj68cqP6dmdJEfBtzAjavC6oDbYep5Z5Gg70TQRE5MpLWDlWvFJizDboBCXE5JVcMm8qJxH1EDkjAhMUf+pGbmCwB+DbPnR7/BN6ohvXA1SmTGp9jKWu2rm8s=
+	t=1762869103; cv=none; b=kTuIZp62CA7kxhx3DUORfCpHbOEGLVtTfXGEUlUGqktnyKDQX3FT63l10bMPcOnHKzniqPZNoDN2cfixYZ0QpJfPIoCKVK0wmuYUGL4nggENVYYXflVXHoz0NSGZEhtXZ93sElj2pZqBqOVZAO2ctmjwqKYeU8O5DP1EyyCWVeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762869000; c=relaxed/simple;
-	bh=5GpXHLHRJGsJHTeSfUYGezyAdRVn5kGG5dFfNDfJhi0=;
+	s=arc-20240116; t=1762869103; c=relaxed/simple;
+	bh=2Wa5ybgjBxcos3zr/zVTCOr/wVgOToM9GjZLKqEfI7Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X6kBv9a8cI576StBM4GFjqg9HsOH5ne0JEchAHDyTRrFJ0XQo0eEaiNfSnIWYsf9+iCmMjPcwyJYiyGpQD1S8NJLzOHTTCKy5qKZmUmyU4fjgLoXl9zqRCiCLfJwIa7zQt1ScYb+P4EiADB4aVFA1qvuwYJzojJ/8IE9LAf442E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99694C16AAE;
-	Tue, 11 Nov 2025 13:49:55 +0000 (UTC)
-Date: Tue, 11 Nov 2025 19:19:45 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Manivannan Sadhasivam <mani@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	Stephan Gerhold <stephan.gerhold@linaro.org>, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] dt-bindings: connector: Add PCIe M.2 Mechanical
- Key M connector
-Message-ID: <n3efko3q7i64qmipgxz5yjeqvgmw26b4dvwofe6qnx7xqsjtx5@bbbpxmfioxrj>
-References: <20251108-pci-m2-v2-0-e8bc4d7bf42d@oss.qualcomm.com>
- <20251108-pci-m2-v2-1-e8bc4d7bf42d@oss.qualcomm.com>
- <gmwg46c3za5z2ev34mms44gpq3sq7sb4jaozbdn5cejwbejbpo@wwr2j7dkjov4>
- <qrgaulegz2tb7yzklyl7rpkgbf6ysx44bxtyn6n3tcyq4an4e5@bzngutkvfno3>
- <5kedk7c6kc2e5j4kqeyik6i7ju54sdn6etjhpwl2vt4nq6c6ug@2yld4hpvbuzg>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ceVUnOMyrDl1aDY3w6AGslEh/Vw2qeh0jNeUoK/BCCv7lKivw7ufHbihyGYdiN9PvZ9rhwY0Skr1TQ78mq9uG0D9ty5HD/pXHZVUpG9Xm3rahxfDFuSMCuMw1EWzHPl3jzwK4W0/HXSxWsUG2O6T+fdlxJljvzEcZZwX7DcG1/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hEP0BQP5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F08AC19422;
+	Tue, 11 Nov 2025 13:51:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762869102;
+	bh=2Wa5ybgjBxcos3zr/zVTCOr/wVgOToM9GjZLKqEfI7Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hEP0BQP5GJUJDrpqwdku1eeE3K/y2bFXV9+GvykElP/Nn5fEByANtu8sbUtyQCV3P
+	 C8ZCZfU7eyv6C7v+R8G2RNRYt6uGMOyO8UKbAzE3KV4BQpB1CqWJs9jOJOcT92Qsr0
+	 BcjRUvcIxB5+YGosgZwIxEfLmIESmCBCkfs53X5mJYayszEdFPKaA+NH5r7eQ/6viK
+	 +clYpCz3+4MGf6tqjVnaLvy19mN3GrqQ1IGf3C+ujlBEg23Ux1M+wzEj+PlT+amplI
+	 LHc94iSbN2C/vJkitPpCvPbq5bLx/JkKlKZTPS4KS4zfJO6ZM2Cc/KfOV+d0QT1ytd
+	 TgPZkOMRMUjDA==
+Date: Tue, 11 Nov 2025 13:51:39 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Richard Fitzgerald <rf@opensource.cirrus.com>
+Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+	patches@opensource.cirrus.com
+Subject: Re: [PATCH 2/2] ASoC: cs35l56: Allow restoring factory calibration
+ through ALSA control
+Message-ID: <aRM_a09S-_avzLUR@finisterre.sirena.org.uk>
+References: <20251111130850.513969-1-rf@opensource.cirrus.com>
+ <20251111130850.513969-3-rf@opensource.cirrus.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Q38Ee9YLTqErviPk"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5kedk7c6kc2e5j4kqeyik6i7ju54sdn6etjhpwl2vt4nq6c6ug@2yld4hpvbuzg>
+In-Reply-To: <20251111130850.513969-3-rf@opensource.cirrus.com>
+X-Cookie: You dialed 5483.
 
-On Sun, Nov 09, 2025 at 10:13:59PM +0200, Dmitry Baryshkov wrote:
-> On Sun, Nov 09, 2025 at 09:48:02PM +0530, Manivannan Sadhasivam wrote:
-> > On Sat, Nov 08, 2025 at 08:10:54PM +0200, Dmitry Baryshkov wrote:
-> > > On Sat, Nov 08, 2025 at 08:53:19AM +0530, Manivannan Sadhasivam wrote:
-> > > > Add the devicetree binding for PCIe M.2 Mechanical Key M connector defined
-> > > > in the PCI Express M.2 Specification, r4.0, sec 5.3. This connector
-> > > > provides interfaces like PCIe and SATA to attach the Solid State Drives
-> > > > (SSDs) to the host machine along with additional interfaces like USB, and
-> > > > SMB for debugging and supplementary features. At any point of time, the
-> > > > connector can only support either PCIe or SATA as the primary host
-> > > > interface.
-> > > > 
-> > > > The connector provides a primary power supply of 3.3v, along with an
-> > > > optional 1.8v VIO supply for the Adapter I/O buffer circuitry operating at
-> > > > 1.8v sideband signaling.
-> > > > 
-> > > > The connector also supplies optional signals in the form of GPIOs for fine
-> > > > grained power management.
-> > > > 
-> > > > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-> > > > ---
-> > > >  .../bindings/connector/pcie-m2-m-connector.yaml    | 122 +++++++++++++++++++++
-> > > >  1 file changed, 122 insertions(+)
-> > > > 
-> > > > diff --git a/Documentation/devicetree/bindings/connector/pcie-m2-m-connector.yaml b/Documentation/devicetree/bindings/connector/pcie-m2-m-connector.yaml
-> > > > new file mode 100644
-> > > > index 0000000000000000000000000000000000000000..be0a3b43e8fd2a2a3b76cad4808ddde79dceaa21
-> > > > --- /dev/null
-> > > > +++ b/Documentation/devicetree/bindings/connector/pcie-m2-m-connector.yaml
-> > > > @@ -0,0 +1,122 @@
-> > > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > > > +%YAML 1.2
-> > > > +---
-> > > > +$id: http://devicetree.org/schemas/connector/pcie-m2-m-connector.yaml#
-> > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > > +
-> > > > +title: PCIe M.2 Mechanical Key M Connector
-> > > > +
-> > > > +maintainers:
-> > > > +  - Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-> > > > +
-> > > > +description:
-> > > > +  A PCIe M.2 M connector node represents a physical PCIe M.2 Mechanical Key M
-> > > > +  connector. The Mechanical Key M connectors are used to connect SSDs to the
-> > > > +  host system over PCIe/SATA interfaces. These connectors also offer optional
-> > > > +  interfaces like USB, SMB.
-> > > > +
-> > > > +properties:
-> > > > +  compatible:
-> > > > +    const: pcie-m2-m-connector
-> > > 
-> > > Is a generic compatible enough here? Compare this to the USB connectors,
-> > > which, in case of an independent USB-B connector controlled/ing GPIOs,
-> > > gets additional gpio-usb-b-connector?
-> > > 
-> > 
-> > I can't comment on it as I've not seen such usecases as of now. But I do think
-> > that this generic compatible should satisfy most of the design requirements. If
-> > necessity arises, a custom compatible could be introduced with this generic one
-> > as a fallback.
-> 
-> Ack
-> 
-> > 
-> > > > +
-> > > > +  vpcie3v3-supply:
-> > > > +    description: A phandle to the regulator for 3.3v supply.
-> > > > +
-> > > > +  vio1v8-supply:
-> > > > +    description: A phandle to the regulator for VIO 1.8v supply.
-> > > > +
-> > > > +  ports:
-> > > > +    $ref: /schemas/graph.yaml#/properties/ports
-> > > > +    description: OF graph bindings modeling the interfaces exposed on the
-> > > > +      connector. Since a single connector can have multiple interfaces, every
-> > > > +      interface has an assigned OF graph port number as described below.
-> > > > +
-> > > > +    properties:
-> > > > +      port@0:
-> > > > +        $ref: /schemas/graph.yaml#/properties/port
-> > > > +        description: PCIe/SATA interface
-> > > 
-> > > Should it be defined as having two endpoints: one for PCIe, one for
-> > > SATA?
-> > > 
-> > 
-> > I'm not sure. From the dtschema of the connector node:
-> > 
-> > "If a single port is connected to more than one remote device, an 'endpoint'
-> > child node must be provided for each link"
-> > 
-> > Here, a single port is atmost connected to only one endpoint and that endpoint
-> > could PCIe/SATA. So IMO, defining two endpoint nodes doesn't fit here.
-> 
-> I think this needs to be better defined. E.g. there should be either one
-> endpoint going to the shared SATA / PCIe MUX, which should then be
-> controlled somehow, in a platform-specific way (how?) or there should be
-> two endpoints defined, e.g. @0 for SATA and @1 for PCIe (should we
-> prevent powering up M.2 if PEDET points out the unsupported function?).
-> (Note: these questions might be the definitive point for the bare
-> m2-m-connector vs gpio-m2-m-connector: the former one defines just the
-> M.2 signals, letting e.g. UEFI or PCIe controller to react to them, the
-> latter one defines how to control MUXes, the behaviour wrt PEDET, etc.,
-> performing all those actions in OS driver).
-> 
 
-In the case of an external GPIO controlled MUX for PCIe/SATA interface, I would
-assume that the MUX will be controlled by the PEDET itself. PEDET will be driven
-low by the card if it uses SATA, pulled high (NC) if it uses PCIe. Then that
-signal will help the MUX to route the proper interface to the connector.
+--Q38Ee9YLTqErviPk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Even in that case, there should be a single endpoint coming from the MUX to the
-connector.
+On Tue, Nov 11, 2025 at 01:08:50PM +0000, Richard Fitzgerald wrote:
 
-> Likewise, for USB you specify just the port, but is it just USB 2.0 or
-> USB 3.0 port? In the latter case we should have two endpoints defined,
-> one for DP/DM and another one for SS singnals.
-> 
+> +config SND_SOC_CS35L56_CAL_SET_CTRL
+> +	bool "CS35L56 ALSA control to restore factory calibration"
+> +	default N
+> +	select SND_SOC_CS35L56_CAL_SYSFS_COMMON
 
-The M.2 spec limits the USB interface to 2.0 for Key M. I missed mentioning it.
+Not a big deal (don't bother with a new version) but N is the default
+default.
 
-- Mani
+--Q38Ee9YLTqErviPk
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
-மணிவண்ணன் சதாசிவம்
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmkTP2oACgkQJNaLcl1U
+h9Dmywf/fN7++Vnf6jqswzeJml4zq15PMy2qkue3LJweuPUnGOO5ZJIzzopgTTTu
+fIa3oIM7s1vV5W8qNEdm9dvKjl5WK5Iya9C4Vn3dO8dO3ywDpoXozt4tgxv98WKK
+1Pp6NX0ZKDgH2UsGtXT6KW2ORGVu05Dh5Tu6MhKaRlIiFJiOfgtBLAFiSZLlX/7H
+ME5gwt29kOSYy2kpTwkGFrpciNXYSusdrjYhxOhMKvPx3aoTfwh0J79ct5k+FRUI
+EP/5nVX6/2ZXpXyKPLgNxBFpOA38BpBn4gt4RwUPo5q2IleqK0nkjxgBmKed9vfK
+2yoykSGoXPLCHj8AnRLKMXbJpEq3mg==
+=DBW7
+-----END PGP SIGNATURE-----
+
+--Q38Ee9YLTqErviPk--
 
