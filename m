@@ -1,287 +1,130 @@
-Return-Path: <linux-kernel+bounces-895662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 942C1C4E991
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 15:52:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC10CC4E97F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 15:52:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 05B6C4FC5D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:46:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E40E1895E77
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:47:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B0542F3C10;
-	Tue, 11 Nov 2025 14:45:49 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01D6B2F549C;
+	Tue, 11 Nov 2025 14:46:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4OG8LA68";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pyfFHjlF"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C1A83AA188;
-	Tue, 11 Nov 2025 14:45:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB9202D8764;
+	Tue, 11 Nov 2025 14:46:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762872348; cv=none; b=Eo3YA/fUbHh3cwi0Yv3Rtu0DbzaTYjpbduDlfAL+YgxPRkX7pdbUB3NQiiBMIJD/gcyxxp0k9dwWxNNswt1vibuTYV5cvdzz0SHTOIljIqeY1lJu2O0iv04mspeuIcaZhL2yceKhNKbVUHf851fl/rYNvIrLW+i6KcjTE05tYjc=
+	t=1762872415; cv=none; b=b2bmBQnlFyrh632Lyhv6EDqLUJ7G06QTp7DGNnNVGxE+X9TdaXfe+z1nV+xA6G0nZ8Rigx1edfKlpLLLwOGYFK6bRQ9q3i96uDSuGhmVDwtCnN0rgCoMqo8CNDZfU7ODlkQ6RqMiY/XNsLwBet9QgtISnFTOsb4iP3R6uQ1tSLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762872348; c=relaxed/simple;
-	bh=Z5W88HrarkMX745HnTROo49UWd1LjK73Ftfgbdyq9Do=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VQw08bTEj3rVTm0WeJzkBxgkyfIC/S2A8UAYT8ewK2cF4azhcWiEe5M2oysFW+kMR11+946xSn2UIyCqg3bWmJ2j7Ny5FCkzp9+7kDNc9VZHOeTO1uPBd8zkqWnz245Yw4sNaRFfh6gKkiC8jAWMQALBYlTumMjzN7MrEmHHZYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4d5Tpc2XLLzJ46Yd;
-	Tue, 11 Nov 2025 22:45:12 +0800 (CST)
-Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
-	by mail.maildlp.com (Postfix) with ESMTPS id 5CB4F1400D9;
-	Tue, 11 Nov 2025 22:45:43 +0800 (CST)
-Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
- (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.36; Tue, 11 Nov
- 2025 14:45:42 +0000
-Date: Tue, 11 Nov 2025 14:45:41 +0000
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Robert Richter <rrichter@amd.com>
-CC: Alison Schofield <alison.schofield@intel.com>, Vishal Verma
-	<vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan Williams
-	<dan.j.williams@intel.com>, Dave Jiang <dave.jiang@intel.com>, "Davidlohr
- Bueso" <dave@stgolabs.net>, <linux-cxl@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Gregory Price <gourry@gourry.net>, "Fabio M.
- De Francesco" <fabio.m.de.francesco@linux.intel.com>, Terry Bowman
-	<terry.bowman@amd.com>, Joshua Hahn <joshua.hahnjy@gmail.com>,
-	<alejandro.lucero-palau@amd.com>
-Subject: Re: [PATCH v4 01/14] cxl/region: Store root decoder in struct
- cxl_region
-Message-ID: <20251111144541.0000714d@huawei.com>
-In-Reply-To: <20251103184804.509762-2-rrichter@amd.com>
-References: <20251103184804.509762-1-rrichter@amd.com>
-	<20251103184804.509762-2-rrichter@amd.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1762872415; c=relaxed/simple;
+	bh=O4E/iAZKRmvEPxGaSV4Bn0dPxV2PQ+bmBY7iNdtoIF0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P6KlhkEKYVtOqvZg6R2+hU6BwvKeAtD74KHPJiQkZ/KKjWZQufl+9NQ0KjqSbQdMxLK369lkbDrcjXeCwDrR7KQMKBQ2MLDBP44rO0XuEEuMdMKjvdu28Nc5sX8quRII8PgWTD+Vt90XcLxEfjkQR3fBUf7vcCpEX4VXfTUuRqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4OG8LA68; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pyfFHjlF; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 11 Nov 2025 15:46:51 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1762872412;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ink/2zFhF4AgFZbPd5svCQScsNMJvH6J0jtfx8HNJGE=;
+	b=4OG8LA68GOK50k/Nqc9N+5L+YJpjceWl49FmNwliI10is+R37NShi38KXIRkejh1zt9c/y
+	P85X4ewAS67oWB+ie6wXmx2VsuPseilesjJV8p4CMNr56nHDK+4OBWQvL0DE7Awg/DeQfx
+	GxmMLLXKCAa1ELpYFZaWUmddXKFg7gZahq/Qly5fStADUKEjju0MjXk5R0mDxnkj0f4aQG
+	zuDRuW8ZmIS0NdbjYZhnn+zEDJfcD7jBHzOas2A1BYGTNH83XALWnvsxi2P9IxA88DZjoo
+	EiCd6oRBoTwlDxiFoVSYGEdsLCffsUNnfe1662HlGGSbRbhd49zKXFQg9OFAnA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1762872412;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ink/2zFhF4AgFZbPd5svCQScsNMJvH6J0jtfx8HNJGE=;
+	b=pyfFHjlF9adiqmQ/63LSqMO4Sd1oACx66oKOehD32GvlrZedV/QZ/svPdLOGRMWGn8i27h
+	yrmp4qa9NDJ7lfAQ==
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Andy Lutomirski <luto@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Vincenzo Frascino <vincenzo.frascino@arm.com>, 
+	shuah <shuah@kernel.org>, linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH 04/10] selftests: vDSO: vdso_test_abi: Provide
+ compatibility with 32-bit musl
+Message-ID: <20251111153707-0926c681-0b2a-4cc0-9074-acbe8a6371c2@linutronix.de>
+References: <20251111-vdso-test-types-v1-0-03b31f88c659@linutronix.de>
+ <20251111-vdso-test-types-v1-4-03b31f88c659@linutronix.de>
+ <29dd9e11-9ae8-415a-acb3-b96af56550b0@app.fastmail.com>
+ <20251111144805-ab2781fe-5424-492b-9cb3-55ebaaedc199@linutronix.de>
+ <a78a17eb-1df2-471b-9c28-64619c71dc54@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500012.china.huawei.com (7.191.174.4) To
- dubpeml100005.china.huawei.com (7.214.146.113)
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <a78a17eb-1df2-471b-9c28-64619c71dc54@app.fastmail.com>
 
-On Mon, 3 Nov 2025 19:47:42 +0100
-Robert Richter <rrichter@amd.com> wrote:
-
-> A region is always bound to a root decoder. The region's associated
-> root decoder is often needed. Add it to struct cxl_region.
+On Tue, Nov 11, 2025 at 03:19:00PM +0100, Arnd Bergmann wrote:
+> On Tue, Nov 11, 2025, at 14:55, Thomas Weißschuh wrote:
+> > On Tue, Nov 11, 2025 at 01:59:02PM +0100, Arnd Bergmann wrote:
+> >> On Tue, Nov 11, 2025, at 11:49, Thomas Weißschuh wrote:
+> >> > 
+> >> > +#ifdef SYS_clock_getres
+> >> >  	ret = syscall(SYS_clock_getres, clk_id, &sys_ts);
+> >> > +#else
+> >> > +	ret = syscall(SYS_clock_getres_time32, clk_id, &sys_ts);
+> >> > +#endif
+> >> > 
+> >> 
+> >> I think this #ifdef check is not reliable enough and may hide
+> >> bugs. As with the other syscalls, the best way to call these
+> >> is to either use __NR_clock_getres_time64 on __kernel_timespec, or
+> >> to use __NR_clock_getres on __kernel_old_timespec.
+> >
+> > Could you give an example for such a bug?
 > 
-> This simplifies the code by removing dynamic lookups and the root
-> decoder argument from the function argument list where possible.
+> If CONFIG_COMPAT_32BIT_TIME is disabled, 32-bit targets
+> only provide clock_getres_time64, so using SYS_clock_getres
+> may -ENOSYS.
+
+Ok. That I am aware of. I expected something more subtle.
+
+> Since SYS_clock_getres itself is provided by the libc implementation,
+> I wouldn't trust that this actually means the same as __NR_clock_getres,
+> and it might be set to __NR_clock_getres_time64.
+
+Should that case not work anyways, as libc would also need to convert the
+parameters transparently? But I'll switch it over to __NR instead.
+
+> >> If we are trying to validate the interface here, we should probably
+> >> call both if available. If we just want to know the result and
+> >> trust that both work correctly, I'd always use __NR_clock_getres_time64
+> >> on 32-bit systems and __NR_clock_getres on 64-bit systems.
+> >
+> > As these are vDSO and not timer selftests I think we trust the syscalls.
+> > But how do we detect a native 64-bit time system? The preprocessor builtins
+> > won't work as a 32-bit pointer system may use 64-bit time syscalls. I am not
+> > aware of the UAPI #define, beyond the absence of __NR_clock_getres_time64.
 > 
-> Patch is a prerequisite to implement address translation which uses
-> struct cxl_region to store all relevant region and interleaving
-> parameters. It changes the argument list of __construct_region() in
-> preparation of adding a context argument. Additionally the arg list of
-> cxl_region_attach_position() is simplified and the use of
-> to_cxl_root_decoder() removed, which always reconstructs and checks
-> the pointer. The pointer never changes and is frequently used. Code
-> becomes more readable as this amphazises the binding between both
-> objects.
-> 
-> Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-> Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
-> Reviewed-by: Gregory Price <gourry@gourry.net>
-> Signed-off-by: Robert Richter <rrichter@amd.com>
+> I would just check __BITS_PER_LONG=32 and require a linux-5.6+ kernel
+> at runtime to ensure the 64-bit calls are available.
 
-Just a note to say this will (maybe just context) clash with Alejandro's rework
-around construct_region_begin()
+That doesn't work for x32. It uses __BITS_PER_LONG but does not have
+__NR_clock_getres_time64.
 
-https://lore.kernel.org/all/20251110153657.2706192-19-alejandro.lucero-palau@amd.com/
 
-Probably easy to resolve, but worth both of you being aware if you hadn't noticed
-already!
-
-Jonathan
-
-> ---
->  drivers/cxl/core/region.c | 37 +++++++++++++++++++------------------
->  drivers/cxl/cxl.h         |  2 ++
->  2 files changed, 21 insertions(+), 18 deletions(-)
-> 
-> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
-> index b06fee1978ba..45b1386a18d7 100644
-> --- a/drivers/cxl/core/region.c
-> +++ b/drivers/cxl/core/region.c
-> @@ -495,9 +495,9 @@ static ssize_t interleave_ways_store(struct device *dev,
->  				     struct device_attribute *attr,
->  				     const char *buf, size_t len)
->  {
-> -	struct cxl_root_decoder *cxlrd = to_cxl_root_decoder(dev->parent);
-> -	struct cxl_decoder *cxld = &cxlrd->cxlsd.cxld;
->  	struct cxl_region *cxlr = to_cxl_region(dev);
-> +	struct cxl_root_decoder *cxlrd = cxlr->cxlrd;
-> +	struct cxl_decoder *cxld = &cxlrd->cxlsd.cxld;
->  	struct cxl_region_params *p = &cxlr->params;
->  	unsigned int val, save;
->  	int rc;
-> @@ -558,9 +558,9 @@ static ssize_t interleave_granularity_store(struct device *dev,
->  					    struct device_attribute *attr,
->  					    const char *buf, size_t len)
->  {
-> -	struct cxl_root_decoder *cxlrd = to_cxl_root_decoder(dev->parent);
-> -	struct cxl_decoder *cxld = &cxlrd->cxlsd.cxld;
->  	struct cxl_region *cxlr = to_cxl_region(dev);
-> +	struct cxl_root_decoder *cxlrd = cxlr->cxlrd;
-> +	struct cxl_decoder *cxld = &cxlrd->cxlsd.cxld;
->  	struct cxl_region_params *p = &cxlr->params;
->  	int rc, val;
->  	u16 ig;
-> @@ -634,7 +634,7 @@ static DEVICE_ATTR_RO(mode);
->  
->  static int alloc_hpa(struct cxl_region *cxlr, resource_size_t size)
->  {
-> -	struct cxl_root_decoder *cxlrd = to_cxl_root_decoder(cxlr->dev.parent);
-> +	struct cxl_root_decoder *cxlrd = cxlr->cxlrd;
->  	struct cxl_region_params *p = &cxlr->params;
->  	struct resource *res;
->  	u64 remainder = 0;
-> @@ -1327,7 +1327,7 @@ static int cxl_port_setup_targets(struct cxl_port *port,
->  				  struct cxl_region *cxlr,
->  				  struct cxl_endpoint_decoder *cxled)
->  {
-> -	struct cxl_root_decoder *cxlrd = to_cxl_root_decoder(cxlr->dev.parent);
-> +	struct cxl_root_decoder *cxlrd = cxlr->cxlrd;
->  	int parent_iw, parent_ig, ig, iw, rc, inc = 0, pos = cxled->pos;
->  	struct cxl_port *parent_port = to_cxl_port(port->dev.parent);
->  	struct cxl_region_ref *cxl_rr = cxl_rr_load(port, cxlr);
-> @@ -1686,10 +1686,10 @@ static int cxl_region_validate_position(struct cxl_region *cxlr,
->  }
->  
->  static int cxl_region_attach_position(struct cxl_region *cxlr,
-> -				      struct cxl_root_decoder *cxlrd,
->  				      struct cxl_endpoint_decoder *cxled,
->  				      const struct cxl_dport *dport, int pos)
->  {
-> +	struct cxl_root_decoder *cxlrd = cxlr->cxlrd;
->  	struct cxl_memdev *cxlmd = cxled_to_memdev(cxled);
->  	struct cxl_switch_decoder *cxlsd = &cxlrd->cxlsd;
->  	struct cxl_decoder *cxld = &cxlsd->cxld;
-> @@ -1926,7 +1926,7 @@ static int cxl_region_sort_targets(struct cxl_region *cxlr)
->  static int cxl_region_attach(struct cxl_region *cxlr,
->  			     struct cxl_endpoint_decoder *cxled, int pos)
->  {
-> -	struct cxl_root_decoder *cxlrd = to_cxl_root_decoder(cxlr->dev.parent);
-> +	struct cxl_root_decoder *cxlrd = cxlr->cxlrd;
->  	struct cxl_memdev *cxlmd = cxled_to_memdev(cxled);
->  	struct cxl_dev_state *cxlds = cxlmd->cxlds;
->  	struct cxl_region_params *p = &cxlr->params;
-> @@ -2031,8 +2031,7 @@ static int cxl_region_attach(struct cxl_region *cxlr,
->  			ep_port = cxled_to_port(cxled);
->  			dport = cxl_find_dport_by_dev(root_port,
->  						      ep_port->host_bridge);
-> -			rc = cxl_region_attach_position(cxlr, cxlrd, cxled,
-> -							dport, i);
-> +			rc = cxl_region_attach_position(cxlr, cxled, dport, i);
->  			if (rc)
->  				return rc;
->  		}
-> @@ -2055,7 +2054,7 @@ static int cxl_region_attach(struct cxl_region *cxlr,
->  	if (rc)
->  		return rc;
->  
-> -	rc = cxl_region_attach_position(cxlr, cxlrd, cxled, dport, pos);
-> +	rc = cxl_region_attach_position(cxlr, cxled, dport, pos);
->  	if (rc)
->  		return rc;
->  
-> @@ -2351,8 +2350,8 @@ static const struct attribute_group *region_groups[] = {
->  
->  static void cxl_region_release(struct device *dev)
->  {
-> -	struct cxl_root_decoder *cxlrd = to_cxl_root_decoder(dev->parent);
->  	struct cxl_region *cxlr = to_cxl_region(dev);
-> +	struct cxl_root_decoder *cxlrd = cxlr->cxlrd;
->  	int id = atomic_read(&cxlrd->region_id);
->  
->  	/*
-> @@ -2435,10 +2434,12 @@ static struct cxl_region *cxl_region_alloc(struct cxl_root_decoder *cxlrd, int i
->  	 * region id allocations
->  	 */
->  	get_device(dev->parent);
-> +	cxlr->cxlrd = cxlrd;
-> +	cxlr->id = id;
-> +
->  	device_set_pm_not_required(dev);
->  	dev->bus = &cxl_bus_type;
->  	dev->type = &cxl_region_type;
-> -	cxlr->id = id;
->  
->  	return cxlr;
->  }
-> @@ -2937,7 +2938,7 @@ static bool has_spa_to_hpa(struct cxl_root_decoder *cxlrd)
->  u64 cxl_dpa_to_hpa(struct cxl_region *cxlr, const struct cxl_memdev *cxlmd,
->  		   u64 dpa)
->  {
-> -	struct cxl_root_decoder *cxlrd = to_cxl_root_decoder(cxlr->dev.parent);
-> +	struct cxl_root_decoder *cxlrd = cxlr->cxlrd;
->  	u64 dpa_offset, hpa_offset, bits_upper, mask_upper, hpa;
->  	struct cxl_region_params *p = &cxlr->params;
->  	struct cxl_endpoint_decoder *cxled = NULL;
-> @@ -3013,7 +3014,7 @@ static int region_offset_to_dpa_result(struct cxl_region *cxlr, u64 offset,
->  				       struct dpa_result *result)
->  {
->  	struct cxl_region_params *p = &cxlr->params;
-> -	struct cxl_root_decoder *cxlrd = to_cxl_root_decoder(cxlr->dev.parent);
-> +	struct cxl_root_decoder *cxlrd = cxlr->cxlrd;
->  	struct cxl_endpoint_decoder *cxled;
->  	u64 hpa, hpa_offset, dpa_offset;
->  	u64 bits_upper, bits_lower;
-> @@ -3404,7 +3405,7 @@ static int match_region_by_range(struct device *dev, const void *data)
->  static int cxl_extended_linear_cache_resize(struct cxl_region *cxlr,
->  					    struct resource *res)
->  {
-> -	struct cxl_root_decoder *cxlrd = to_cxl_root_decoder(cxlr->dev.parent);
-> +	struct cxl_root_decoder *cxlrd = cxlr->cxlrd;
->  	struct cxl_region_params *p = &cxlr->params;
->  	resource_size_t size = resource_size(res);
->  	resource_size_t cache_size, start;
-> @@ -3440,9 +3441,9 @@ static int cxl_extended_linear_cache_resize(struct cxl_region *cxlr,
->  }
->  
->  static int __construct_region(struct cxl_region *cxlr,
-> -			      struct cxl_root_decoder *cxlrd,
->  			      struct cxl_endpoint_decoder *cxled)
->  {
-> +	struct cxl_root_decoder *cxlrd = cxlr->cxlrd;
->  	struct cxl_memdev *cxlmd = cxled_to_memdev(cxled);
->  	struct range *hpa = &cxled->cxld.hpa_range;
->  	struct cxl_region_params *p;
-> @@ -3534,7 +3535,7 @@ static struct cxl_region *construct_region(struct cxl_root_decoder *cxlrd,
->  		return cxlr;
->  	}
->  
-> -	rc = __construct_region(cxlr, cxlrd, cxled);
-> +	rc = __construct_region(cxlr, cxled);
->  	if (rc) {
->  		devm_release_action(port->uport_dev, unregister_region, cxlr);
->  		return ERR_PTR(rc);
-> diff --git a/drivers/cxl/cxl.h b/drivers/cxl/cxl.h
-> index 231ddccf8977..19b8b62a1322 100644
-> --- a/drivers/cxl/cxl.h
-> +++ b/drivers/cxl/cxl.h
-> @@ -521,6 +521,7 @@ enum cxl_partition_mode {
->   * struct cxl_region - CXL region
->   * @dev: This region's device
->   * @id: This region's id. Id is globally unique across all regions
-> + * @cxlrd: Region's root decoder
->   * @mode: Operational mode of the mapped capacity
->   * @type: Endpoint decoder target type
->   * @cxl_nvb: nvdimm bridge for coordinating @cxlr_pmem setup / shutdown
-> @@ -534,6 +535,7 @@ enum cxl_partition_mode {
->  struct cxl_region {
->  	struct device dev;
->  	int id;
-> +	struct cxl_root_decoder *cxlrd;
->  	enum cxl_partition_mode mode;
->  	enum cxl_decoder_type type;
->  	struct cxl_nvdimm_bridge *cxl_nvb;
-
+Thomas
 
