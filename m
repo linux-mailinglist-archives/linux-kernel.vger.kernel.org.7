@@ -1,244 +1,244 @@
-Return-Path: <linux-kernel+bounces-895389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEB79C4DA25
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:20:28 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 280EBC4DD25
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:46:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C76A1898249
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:20:53 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BA1A64F0CF9
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:39:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D7D33587D8;
-	Tue, 11 Nov 2025 12:20:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05162359FAB;
+	Tue, 11 Nov 2025 12:27:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Z47pVn3U"
-Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11010032.outbound.protection.outlook.com [52.101.61.32])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CiaPuSs8"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4937B239E70;
-	Tue, 11 Nov 2025 12:20:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762863617; cv=fail; b=lajEtabknyviOXabSuznO6SS/krtZ7nOLu6R2LfGYQshcRdRUAw8hVG+JFib+G3Y1VZ+xq8FidpRRPlmuh7ABNyq6/ltwf6vUeveHNMbsKOtrSJ8EACeFwxzmCEZGbHI4qxzrWq7TGCZDL5AlwEnS8EwZKbWz/ptATcCzCuCtRY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762863617; c=relaxed/simple;
-	bh=vqFy24DGHh76az2g0OA4GM23HfmPyssy/vUL4FdZTx0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=badBT9ZwQzFRaUnGrZjC8GPFpsfQeRKmUjJR/WpGR08EiMPxfwRNc7JKuR4oK/VawJ90Wo/GIuDfpx2LDEOSK944jxa7KZd5xYdI5XQtbwyioTjvmU5yhF7Kl05PVcgNK+Xk+kHaOcTbtY/tPLnclkPjvBvT7JvOdlSJLlhgYb4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Z47pVn3U; arc=fail smtp.client-ip=52.101.61.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hZVQFJnzP1l729wAOzshU7zpCjtZJGZkhkq+KnnZfb4/4EW2VjPWxDfTtLBzg0h6INrvqFNI8DZkxPP6fsbNzJB3SlzbwCXUnhzBYCXkMqWXhVwvcFoE1wCowJuHMLs46yIaFn91qs2mWgqHVOtN6tVGBJIEMygPbN/zUt3kJKnBA4Vnd7QhqmtzmbjWruCHDIay/JRwVaYoycDMdOQ+aCOIqiSHaBD5/401X7PWm2zxzSs9HfyDMTe+4+lUiPl9MPLJIibqojx26JG7Nae2U7E9o7hY4tBUtl/WaZlWuDf88bMzluyKyBWiG320D4qzd4Cgmb+IQJjyIV14lKvj9A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=UBQJ+FbK73gZ0zl/76iBqW0ZuRV7szRXoDY3HvMoV7k=;
- b=oS4U7j4ZCvnRhuYe/go9mewjJ0dkWgGP70pCq+UB+OYt3ixMI41DdZmOSEfkI6N3f1L3+GNg6aCmQOK0jM4GR0wumEW6smpaLjCtMsccj9eeEqt9KTLayT27zxtWkipBVRIQZkTK5FHV36zaXLuX+0fTmPY1FfkrBiOlCmWhhM9jq0gP0c+LL15PudJ7kO7E9pt+pzqbkRw6LahxEDI7I3Kat10lG9AA0zY4SB123WCU0YnAbCsHArIzzRxGHfrkPu2x4M8+z1LF1/upe32GRi1vbLmfdHA9tRZUkgJrcIGtrNZcQTZdc/fg92RtPeuuFrD8bVltEOkr6b15d/jg0g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 198.47.21.195) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=ti.com;
- dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UBQJ+FbK73gZ0zl/76iBqW0ZuRV7szRXoDY3HvMoV7k=;
- b=Z47pVn3UIAZZAP2Diz1tw8HTsMQ7j64LOgE5jEMM2mGS3u/6Klt74636PGF6J7umoyk49ungbPKPPbJzw7h/EZoc3dNyY0dQCv8zkAEz4nMT9+FEE8w92GEeGQrO9fbHl8JvXNzk75CWd0bOLbw8p8S+WhFLgs48VDj2kh+7svQ=
-Received: from BN0PR04CA0177.namprd04.prod.outlook.com (2603:10b6:408:eb::32)
- by MN0PR10MB5981.namprd10.prod.outlook.com (2603:10b6:208:3cb::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Tue, 11 Nov
- 2025 12:20:12 +0000
-Received: from BN2PEPF0000449F.namprd02.prod.outlook.com
- (2603:10b6:408:eb:cafe::e) by BN0PR04CA0177.outlook.office365.com
- (2603:10b6:408:eb::32) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9298.16 via Frontend Transport; Tue,
- 11 Nov 2025 12:20:05 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.21.195)
- smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
- action=none header.from=ti.com;
-Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
- 198.47.21.195 as permitted sender) receiver=protection.outlook.com;
- client-ip=198.47.21.195; helo=flwvzet201.ext.ti.com; pr=C
-Received: from flwvzet201.ext.ti.com (198.47.21.195) by
- BN2PEPF0000449F.mail.protection.outlook.com (10.167.243.150) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9320.13 via Frontend Transport; Tue, 11 Nov 2025 12:20:11 +0000
-Received: from DFLE201.ent.ti.com (10.64.6.59) by flwvzet201.ext.ti.com
- (10.248.192.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 11 Nov
- 2025 06:20:06 -0600
-Received: from DFLE214.ent.ti.com (10.64.6.72) by DFLE201.ent.ti.com
- (10.64.6.59) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 11 Nov
- 2025 06:20:06 -0600
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE214.ent.ti.com
- (10.64.6.72) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Tue, 11 Nov 2025 06:20:06 -0600
-Received: from [172.24.233.149] (ws.dhcp.ti.com [172.24.233.149])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5ABCJxEh924501;
-	Tue, 11 Nov 2025 06:20:00 -0600
-Message-ID: <3a297a74-768a-46c6-b204-e390a8fb09d1@ti.com>
-Date: Tue, 11 Nov 2025 17:49:59 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBA9F358D24;
+	Tue, 11 Nov 2025 12:27:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762864070; cv=none; b=aleVMDpgytsjt8MqLk2f8fqtp+DBhgHFFwvN2BscYk3e8Vx6dx5dCOA4OG+qARriRlJYqMOkMcWBM9WkwDr/eRHfYjLwPOGAevbqPqJ4Wl9pnhdiAZPivKCdXTUQZptdhcuVzmwdl23KPzeC44Z1irxwSau32Xo2tnLFPscWsQs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762864070; c=relaxed/simple;
+	bh=3ufDyGpQ90Lh9cbA3wPj1PEHCfZCVgCTqOeDqCrieZA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ThEcNzEawm2bc1BIcKqjbQ0beWjHH6BxQwSYc4StlOoDLEU94dzDNQZxAE9Kfiqc6euhJOeAYVb3anKKH7xrS+l+rUtUbZC9dAE7R0KMU2H88dZZBEZfyi4+EtGwjFWlHbtP0EGDS9jcCjoO7u/6w+xNYaJJ+4lHZh+X9TkMZQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CiaPuSs8; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762864068; x=1794400068;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=3ufDyGpQ90Lh9cbA3wPj1PEHCfZCVgCTqOeDqCrieZA=;
+  b=CiaPuSs85DbUF+MqMk79YjU5wcRacaqxlT4inj3W9Ip7HM3FS1B3PLJk
+   82zUqEZWi/P7nbaTZlRFKKl0QH1H+aL7JC9b7cLXx7Vr6SKACP63paQMs
+   /XFlH5usaw/iAhx0hgjGZg8jHgWmLbkD9KtBEJvLI6xN7cw5JgOb0s2UT
+   cfC4jLXFFeGj61NrpqD3Ac/BSPpY0KNuzPaXd67IjSuFH2/gL776STrZs
+   k/QfsHoo1zG/LsEyODK0IKqVLzPLpcr2ECSnd+DxjNGOUvWJmyTBnFwsx
+   mHZ42Cp6JtUySjyASZtOlJJwTe+FYxfLjDU1R4Zkgns2hGE+4CG2Xt7sP
+   Q==;
+X-CSE-ConnectionGUID: g+JycRCmSmqgXVgQCKVOgQ==
+X-CSE-MsgGUID: Ou9x0f+RRMWitGNb5xXASg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11609"; a="82552875"
+X-IronPort-AV: E=Sophos;i="6.19,296,1754982000"; 
+   d="scan'208";a="82552875"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 04:27:46 -0800
+X-CSE-ConnectionGUID: ZOKULRMJT7KTHajVhJ7ajg==
+X-CSE-MsgGUID: kkEFDbWaR6a5b9oyBE8QYQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,296,1754982000"; 
+   d="scan'208";a="212343281"
+Received: from black.igk.intel.com ([10.91.253.5])
+  by fmviesa002.fm.intel.com with ESMTP; 11 Nov 2025 04:27:39 -0800
+Received: by black.igk.intel.com (Postfix, from userid 1003)
+	id CC71996; Tue, 11 Nov 2025 13:27:37 +0100 (CET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Corey Minyard <corey@minyard.net>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	"Dr. David Alan Gilbert" <linux@treblig.org>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Rob Clark <robin.clark@oss.qualcomm.com>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Vitaly Lifshits <vitaly.lifshits@intel.com>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Niklas Cassel <cassel@kernel.org>,
+	Calvin Owens <calvin@wbinvd.org>,
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+	Sagi Maimon <maimon.sagi@gmail.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Karan Tilak Kumar <kartilak@cisco.com>,
+	Hans Verkuil <hverkuil+cisco@kernel.org>,
+	Casey Schaufler <casey@schaufler-ca.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Petr Mladek <pmladek@suse.com>,
+	Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
+	Max Kellermann <max.kellermann@ionos.com>,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	openipmi-developer@lists.sourceforge.net,
+	linux-media@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linaro-mm-sig@lists.linaro.org,
+	amd-gfx@lists.freedesktop.org,
+	linux-arm-msm@vger.kernel.org,
+	freedreno@lists.freedesktop.org,
+	intel-xe@lists.freedesktop.org,
+	linux-mmc@vger.kernel.org,
+	netdev@vger.kernel.org,
+	intel-wired-lan@lists.osuosl.org,
+	linux-pci@vger.kernel.org,
+	linux-s390@vger.kernel.org,
+	linux-scsi@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	ceph-devel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Gustavo Padovan <gustavo@padovan.org>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	Abhinav Kumar <abhinav.kumar@linux.dev>,
+	Jessica Zhang <jesszhan0024@gmail.com>,
+	Sean Paul <sean@poorly.run>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Lucas De Marchi <lucas.demarchi@intel.com>,
+	=?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Rodolfo Giometti <giometti@enneenne.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Jonathan Lemon <jonathan.lemon@gmail.com>,
+	Stefan Haberland <sth@linux.ibm.com>,
+	Jan Hoeppner <hoeppner@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Satish Kharat <satishkh@cisco.com>,
+	Sesidhar Baddela <sebaddel@cisco.com>,
+	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Xiubo Li <xiubli@redhat.com>,
+	Ilya Dryomov <idryomov@gmail.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH v2 00/21] treewide: Introduce %ptS for struct timespec64 and convert users
+Date: Tue, 11 Nov 2025 13:20:00 +0100
+Message-ID: <20251111122735.880607-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 11/16] media: ti: j721e-csi2rx: add multistream support
-To: Jai Luthra <jai.luthra@ideasonboard.com>, Tomi Valkeinen
-	<tomi.valkeinen@ideasonboard.com>, <jai.luthra@linux.dev>,
-	<laurent.pinchart@ideasonboard.com>, <mripard@kernel.org>
-CC: <y-abhilashchandra@ti.com>, <devarsht@ti.com>, <s-jain1@ti.com>,
-	<vigneshr@ti.com>, <mchehab@kernel.org>, <robh@kernel.org>,
-	<krzk+dt@kernel.org>, <p.zabel@pengutronix.de>, <conor+dt@kernel.org>,
-	<sakari.ailus@linux.intel.com>, <hverkuil-cisco@xs4all.nl>,
-	<changhuang.liang@starfivetech.com>, <jack.zhu@starfivetech.com>,
-	<sjoerd@collabora.com>, <hverkuil+cisco@kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-media@vger.kernel.org>,
-	<devicetree@vger.kernel.org>
-References: <20250911102832.1583440-1-r-donadkar@ti.com>
- <20250911102832.1583440-12-r-donadkar@ti.com>
- <4534a09b-7eef-4e61-835a-c70d07df3416@ideasonboard.com>
- <175983794202.36451.17500767517117494893@freya>
-Content-Language: en-US
-From: Rishikesh Donadkar <r-donadkar@ti.com>
-In-Reply-To: <175983794202.36451.17500767517117494893@freya>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN2PEPF0000449F:EE_|MN0PR10MB5981:EE_
-X-MS-Office365-Filtering-Correlation-Id: c7f4830f-78f9-41fe-f6a4-08de211ca955
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|376014|1800799024|36860700013|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?WFRpTzU5cUtnWVFOaVgwcFBoaWs5ZzRIa2E5TzVROUtXT0JQeEFIU0wwM2gr?=
- =?utf-8?B?TGJxUWU1ckJHYUg1YnpXR1BSeFA3MWVTRzRhaURaM1YyYWFXbWVHckptWUFC?=
- =?utf-8?B?WHBvNDVmMzNDYUltdTBzNmtSZFFQMU5xaTdOZkp3bWxmZ2wvM1ZJNUkxby9z?=
- =?utf-8?B?Um5rclgzbDZJZDBFdTlmdmdjVzZGSEVlck5lanY3UFV0SDJzNXllMUE1MjR3?=
- =?utf-8?B?UmE3SFNtd0o3d1pSNFpwTFE3eE5zWDMxMUJFVXQyU1ZUZXFNcjMzOU5aUllX?=
- =?utf-8?B?Y1p1S01ENzZmNGdTM3RKMGFlcGRRbUtHdHYyZlVxMXBnby9NS0txYm5ORnNa?=
- =?utf-8?B?MVE4eTd6VVF1M1F2aEprZSs4WEVxRmVUNTVpYW1NL1BRT09zZTQ3N1M5anRP?=
- =?utf-8?B?STFWK1BHL1RUSVAxSGhpclNCTWswMlNvZHlEQ1l2V1dhV2dmYkpjeGduMDVW?=
- =?utf-8?B?WldadnQyRGxFN3pyTW9aSEFVRXM0dEhmbHhGVXk4SlAvQzQvME52MDhXQkEy?=
- =?utf-8?B?R20zWjh3T1hkYjh3UVpwb3dWSis2YksyZkdTb3I0NngrcXB1aUR4eEQyaXF4?=
- =?utf-8?B?djhiSnQvSTZJV3p4U0RtRi8vRllBNXNZRis4QUhxL2c4bnhicU5ZVmx2MDhr?=
- =?utf-8?B?T1AvQXlMd3RSSldQUTM5amVnYWlncTdvZ3JPQ2ZlM001aDRnN1FQUzJiczdG?=
- =?utf-8?B?THJuR3ZUVUVkNjVxcXNEbHh6UlFucHFXSjA5MEFQWlVDSXgwMnE4V0ZIUnJv?=
- =?utf-8?B?NEh6YmYvdE5Td2tSaVpJVXhpd1preGRvU1ZRMHJxVERwUjBtVGxmS1ZmMFg0?=
- =?utf-8?B?VlJtUmFlOVJMS1RjTHoyOGZack9rT1M2TWJ0L1BsQy9vbGZjMU93MUhVbWRr?=
- =?utf-8?B?eUFMdXJUWDVrMW9WRkNhd3kycXZ6UUFKVzZWUDgyQ0F4aGtXTjFBZm5oUDFr?=
- =?utf-8?B?ZjRGRk9teHRBVFNKSG5TK25ad0hjTVFraUcyZ1RGeWJvK0xlVUNFUTh5NU9p?=
- =?utf-8?B?Z25CZFQxSlFhM3FucFIybjBVVU9EajJkVm5OVnhtcWcwcTJsa0Q1S242ZXB1?=
- =?utf-8?B?Vk1Gb283RkRvcDNkaFk0YjF0UnJsaTJvTG92VnVFaGFDWTRnV3E2K2xqbnZG?=
- =?utf-8?B?ZDhQTGtna2JUMFc3Y2hONmcxNnAxOVl3MTBpZGY4YVBLR1FmREZtVVpZYWZ6?=
- =?utf-8?B?amJmTnE2M0hwejhmSC9ydk9GQ0k3MEZnODZpT1krYVBncHptMDM3KzZnUC9q?=
- =?utf-8?B?YVJkRHVKVHRyMHIyRVMxR2RsNnN2b1VUSitVdU8wQ1U1MnRnekhRRXhtVzJ5?=
- =?utf-8?B?NktRejJoSXhkNDhXTVVWMVl6eUtLVU1ZY3Voa2xuV01vckNEZlFmeGdRV3Bz?=
- =?utf-8?B?RW1XMEEwY0FrTUNaanpvaUlOeE4rYXJla21RSG9LN21NSFRNdS9IbHFqUUVM?=
- =?utf-8?B?dGZzbUYyRXVTem1YaTl0NDYzL3ZJWEpsbkFEK0xSTnB4M1V5YndZVjhZM2M3?=
- =?utf-8?B?amI0cm1MaVA3MXJLV3hnOVZQSmNXY1lrUkp5MXpNL1Y4NEZxWWpCaVBmRGh6?=
- =?utf-8?B?aEFJT0FxM1VyS3BVNXN3dEZvaXJ2NTRwQk9HYTZjYkVySHNEclM1QlBjYlBB?=
- =?utf-8?B?UDBvUlFqQm5pZC83enBWOHhQeFFxdnVjSTJ5eFZPOHB2aCsxcDN1L0hIR3dR?=
- =?utf-8?B?ZWpFMXFzK1JPeFVJTTUxdEQvM0l5NXpJdllIclFMbWlkZlZXSGU1eDJMSG83?=
- =?utf-8?B?K0RiM1QraXpNaDJoWVU4bnJGWnY4NDRQNjhCbWZ5TW9BOG1RMDUzVVFyKzBQ?=
- =?utf-8?B?VWdxak40RDBielh6TDBnYS8yOEIvcW5tVHUrTkZrWGNhbmt0UENOdk9yM3Uv?=
- =?utf-8?B?U285WmlkbU0vOEtnNXExL3dLV1dSY3FrbDFZays4NCt1OGpxbFJWbUpadTBQ?=
- =?utf-8?B?Z3Y5UmNPSklKeTZJSDF3MFhwZ2dhT2V6ZXFBVFNvL0ttdW8vSjFiaHI0SEZn?=
- =?utf-8?B?V2tjTXd4MWU3ak1pcVE1UjZxTjVIYUQzMU9CWGZCa256NGZoRG9oRmt1WGVJ?=
- =?utf-8?Q?FOTGZG?=
-X-Forefront-Antispam-Report:
-	CIP:198.47.21.195;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:flwvzet201.ext.ti.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(82310400026)(376014)(1800799024)(36860700013)(7416014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: ti.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Nov 2025 12:20:11.6195
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c7f4830f-78f9-41fe-f6a4-08de211ca955
-X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.21.195];Helo=[flwvzet201.ext.ti.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN2PEPF0000449F.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR10MB5981
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+Here is the third part of the unification time printing in the kernel.
+This time for struct timespec64. The first patch brings a support
+into printf() implementation (test cases and documentation update
+included) followed by the treewide conversion of the current users.
 
-On 07/10/25 17:22, Jai Luthra wrote:
-> Hi Tomi,
->
-> Quoting Tomi Valkeinen (2025-09-25 17:47:38)
->> Hi,
->>
->> On 11/09/2025 13:28, Rishikesh Donadkar wrote:
->>> From: Jai Luthra <j-luthra@ti.com>
->>>
->>> Each CSI2 stream can be multiplexed into 4 independent streams, each
->>> identified by its virtual channel number. To capture this multiplexed
->> The split can also be done with the datatype. I don't see it supported
->> in the driver, but afaics the HW supports it. Was there a reason not to
->> support DT filtering? I would think it would be very simple addition.
->>
-> I believe DT filtering should work as-is with the current driver, given we
-> program the SHIM DMACNTX register with the correct datatype depending upon
-> the v4l2 format of the video node.
->
-> So if there is multi-stream source with two different datatypes, it should
-> be possible to route it to different video devices and it "just" works. But
-> I agree that it would be good if it can be tested once, and this commit
-> message can mention that both VC and DT based filtering is supported.
->
-> Rishikesh, would you be able to use an IMX219 to test capturing embedded
-> data and frame data?
+The idea is to have one or a few biggest users included, the rest
+can be taken next release cycle on the subsystem basis, but I won't
+object if the respective maintainers already give their tags. Depending
+on the tags received it may go via dedicated subsystem or via PRINTK
+tree. Petr, what do you think?
 
+Note, not everything was compile-tested. Kunit test has been passed, though.
 
-Yes, DT filtering works. I tried hard coding 0x12 (CSI DT for embedded 
-data) in the DATTYP_CFG field of the DMACNTX_J register and captured 
-frames from IMX219 using yavta and viewed that using xxd. I can see 
-first few lines are that of embedded data, I can see the tags as 
-mentioned in the 'CSI-2 Embedded Data Line' section of the IMX219 
-datasheet[1]. I will mention this in the commit message as well.
+Changelog v2:
+- dropped wrong patches (Hans, Takashi)
+- fixed most of the checkpatch warnings (fdo CI, media CI)
+- collected tags
 
+v1: <20251110184727.666591-1-andriy.shevchenko@linux.intel.com>
 
-[1] : https://www.opensourceinstruments.com/Electronics/Data/IMX219PQ.pdf
+Andy Shevchenko (21):
+  lib/vsprintf: Add specifier for printing struct timespec64
+  ceph: Switch to use %ptSp
+  libceph: Switch to use %ptSp
+  dma-buf: Switch to use %ptSp
+  drm/amdgpu: Switch to use %ptSp
+  drm/msm: Switch to use %ptSp
+  drm/vblank: Switch to use %ptSp
+  drm/xe: Switch to use %ptSp
+  e1000e: Switch to use %ptSp
+  igb: Switch to use %ptSp
+  ipmi: Switch to use %ptSp
+  media: av7110: Switch to use %ptSp
+  mmc: mmc_test: Switch to use %ptSp
+  net: dsa: sja1105: Switch to use %ptSp
+  PCI: epf-test: Switch to use %ptSp
+  pps: Switch to use %ptSp
+  ptp: ocp: Switch to use %ptSp
+  s390/dasd: Switch to use %ptSp
+  scsi: fnic: Switch to use %ptS
+  scsi: snic: Switch to use %ptSp
+  tracing: Switch to use %ptSp
 
+ Documentation/core-api/printk-formats.rst     | 11 ++++-
+ drivers/char/ipmi/ipmi_si_intf.c              |  3 +-
+ drivers/char/ipmi/ipmi_ssif.c                 |  6 +--
+ drivers/dma-buf/sync_debug.c                  |  2 +-
+ .../gpu/drm/amd/amdgpu/amdgpu_dev_coredump.c  |  3 +-
+ drivers/gpu/drm/drm_vblank.c                  |  6 +--
+ .../gpu/drm/msm/disp/msm_disp_snapshot_util.c |  3 +-
+ drivers/gpu/drm/msm/msm_gpu.c                 |  3 +-
+ drivers/gpu/drm/xe/xe_devcoredump.c           |  4 +-
+ drivers/mmc/core/mmc_test.c                   | 20 +++-----
+ drivers/net/dsa/sja1105/sja1105_tas.c         |  8 ++-
+ drivers/net/ethernet/intel/e1000e/ptp.c       |  7 +--
+ drivers/net/ethernet/intel/igb/igb_ptp.c      |  7 +--
+ drivers/pci/endpoint/functions/pci-epf-test.c |  5 +-
+ drivers/pps/generators/pps_gen_parport.c      |  3 +-
+ drivers/pps/kapi.c                            |  3 +-
+ drivers/ptp/ptp_ocp.c                         | 13 ++---
+ drivers/s390/block/dasd.c                     |  3 +-
+ drivers/scsi/fnic/fnic_trace.c                | 46 ++++++++---------
+ drivers/scsi/snic/snic_debugfs.c              | 10 ++--
+ drivers/scsi/snic/snic_trc.c                  |  5 +-
+ drivers/staging/media/av7110/av7110.c         |  2 +-
+ fs/ceph/dir.c                                 |  5 +-
+ fs/ceph/inode.c                               | 49 ++++++-------------
+ fs/ceph/xattr.c                               |  6 +--
+ kernel/trace/trace_output.c                   |  6 +--
+ lib/tests/printf_kunit.c                      |  4 ++
+ lib/vsprintf.c                                | 25 ++++++++++
+ net/ceph/messenger_v2.c                       |  6 +--
+ 29 files changed, 126 insertions(+), 148 deletions(-)
 
-Thanks,
+-- 
+2.50.1
 
-Rishikesh
-
->
->>   Tomi
->>
-> Thanks,
->      Jai
->
->>> stream, the application needs to tell the driver how it wants to route
->>> the data. It needs to specify which context should process which stream.
->>> This is done via the new routing APIs.
->>>
->>> Add ioctls to accept routing information from the application and save
->>> that in the driver. This can be used when starting streaming on a
->>> context to determine which route and consequently which virtual channel
->>> it should process.
->>>
->>> Support the new enable_stream()/disable_stream() APIs in the subdev
->>> instead of s_stream() hook.
->>>
->>> De-assert the pixel interface reset on first start_streaming() and assert
->>> it on the last stop_streaming().
->>>
->>> Reviewed-by: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
->>> Co-developed-by: Pratyush Yadav <p.yadav@ti.com>
->>> Signed-off-by: Pratyush Yadav <p.yadav@ti.com>
->>> Signed-off-by: Jai Luthra <j-luthra@ti.com>
->>> Co-developed-by: Rishikesh Donadkar <r-donadkar@ti.com>
->>> Signed-off-by: Rishikesh Donadkar <r-donadkar@ti.com>
-> [snip]
 
