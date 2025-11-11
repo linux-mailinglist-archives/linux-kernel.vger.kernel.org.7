@@ -1,76 +1,78 @@
-Return-Path: <linux-kernel+bounces-895350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73C07C4D8E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:01:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 10E0EC4D8E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:01:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1DF2A34EF74
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:01:09 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9FF9B34FA1A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:01:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C24E43563FA;
-	Tue, 11 Nov 2025 12:01:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A98223587CB;
+	Tue, 11 Nov 2025 12:01:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ji6zdWZq"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T2e8JYC7"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D3243009F8
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 12:01:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F717357A5C
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 12:01:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762862464; cv=none; b=r8jhHGLWvQnIVocTYK+DpsvwcUMJq4Hg6+Rn8wvQFbyXV8WzQTcilzKa85+y4ZIRXA9eBdbGPn4tT6Xypw11lsJ0KTy7JQ2bjJqwNB+fHuKLRQeV1nkfDJNmbEq2NEUlqTle3QHX4KSrNpEiEsEMzKXMrEeBapDqViQip6JF88E=
+	t=1762862467; cv=none; b=D47vNiKYuj3Zu7Z+rdmBmyglqilBTOquGJxUi3Zq3TctkfVKR0nfbi96eLJzwl+TfP83/1lcFvgc3MtEHSEUwUyGn2bhhJ92pGTjZ42m4Avkh+iStwTzNmIeIrv5AfM3g3cgshhHU2UxmxD9shN87vEQRlwvNsu5g72EIfN9nbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762862464; c=relaxed/simple;
-	bh=3kjI3dq6p7W7F9ddD6xztg6oeYg1W5dCRwLSxcSjN3M=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qMeS8odC21afGD+QlJ7Lf6or+ZSX9CLuBwl3nlT/bDfMwIkUZ4IzunbBKE0Zu1oTEKy6iR5I9oQ5hyV5spXYhYnLxfikVpAU2XDLjE5NhIgKPJkgJLW3uhjKkAlTg3kY+y6fiQrmAAUQhTNSPmzcLUQXVsYG8sGoteR6e6IdK1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ji6zdWZq; arc=none smtp.client-ip=209.85.208.54
+	s=arc-20240116; t=1762862467; c=relaxed/simple;
+	bh=d9dI3YFU+1DVibPHbzDPHydAzSLcAbh0IUfpmeR/ngA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=RXi5iDQPra57mfRzrrKsaukln+vL9HhnLIktHZv1EAtspLSZ3XDYJc4xOwwNXbJ19MuRiZpkwr5yP3Vljz93Iyh6IhqKpyN3RpELtrRppjigc0jwjRd04lsZnKofbsa7btCvXePEHjeXhk05ME5lSi6M79IIwk01NrvvtoxtznQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T2e8JYC7; arc=none smtp.client-ip=209.85.218.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-640b0639dabso7028884a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 04:01:02 -0800 (PST)
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b713c7096f9so596322866b.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 04:01:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762862461; x=1763467261; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=c9M3cMyzoNu29tzKfw+UGIVH7zn3E+bc2pWo8lrVlBg=;
-        b=Ji6zdWZq5YyxZw+1VdsFmGJO1lkhL39oaALFjYqdbCrFprLWWfOCUhQLoON+51usn7
-         6C3Vu4OjJIJ+s3OXTqzjbe4Np8MtohHUEvUgCVosCm07apowYpY1R/ktMeFB5jxQx1/K
-         PxfT86D8oagoW0EJuuwAYYY3tQZtVd9aJFx7bAaid2Oua1Nr+jEgpVFfcXBbzLwDb3Fx
-         HLDLZsExUJmxkmiHpGrAbRq9khBYAxJBdWwIe8G9Q51BVmeztxfNlBH/RVgzTHxtS2Ub
-         Qx/Aq2sXHVfIZmtFy0P6UKQy+UzOGlb1PUQvbFz9fHqe16TNLdCPQa65Bqk2xewYlVaT
-         KmYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762862461; x=1763467261;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1762862464; x=1763467264; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=c9M3cMyzoNu29tzKfw+UGIVH7zn3E+bc2pWo8lrVlBg=;
-        b=AUJOHyVZBZ6MERvZAdertyg7EhltrL9+c3/PrR6z7NuGfcllCz01txxffMhdf/X07e
-         DSXuZzRrJAczZ1rdUUisHNELE1jih4m9ZsesZiYz7pI245sshib6erTHJEhE849PY06h
-         UzOm8Ml1NY/nO+GtHLxr0y6B1L9H6VthJ1cPdmxJ/NOK2qCtCu87oI3A6jM/C6KLPsZD
-         gg4ggunto0bhDkUsx0ZyWoY8n5LS/OeIrBd+h++UNzkxMy2NSSesTUfL3zP6ZOkwhAJp
-         BatEE5CMbGVqhBt3heklBsjbZMp0WJEBglpcsp6gl7QfmUjrSfZztNwv4Il8fUdmTiWU
-         sbjg==
-X-Forwarded-Encrypted: i=1; AJvYcCUpFrP7CWhuWWhqVDn6uA4c0Rn8jOj5UWnknUPSJb1WcH0JyPrS/zB83WoCYoykkKoQWpvup8PZI6fo8vg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNacBV0+IjcAR6wjENfP709vN7idLXNZ/YaI7B7IdYkhcYu5wf
-	f59BL7O8yqApqt4ELiBx/r/qor5gmvqFP2BXzjKBfyBh4Sp8x1KzKJnq
-X-Gm-Gg: ASbGncvCbv1lK72MUvvPuBf8h9nzloLgpmCyJkLJv9ScHrlmR8AB5uWlJBVkbXMWJyB
-	gpFKeILWy6ymZUrAxVeNOQ/LJM4TbONJyUKRWFD09jy5iFr8fa+eAo0hIIwRXoSwxkONLgj3VYE
-	b/sQW1SvpXITjH2T7ZToY7zzqaYbch1y+Rc+RvmAaAbysBzN/NaKHeCV2h9lH9Tnb2IzB2tHdy2
-	N73Yd7bPelK9kUDVBmyrAR6I/MgQlsCOCZVKoifr6YLlXOU9heGsAsG1wGR+SGh2KHO4E/k6sBy
-	CGIj4OBPB3VVmf7l0wyUIasrQzaUDZOswXAd4FnJSetshQ2Zd2dMX7/CssQ3pTwVJdyJM4oYRsv
-	/2F1wdoeZ0IMVXsEpOmqTU6JV6057jhLRYSNbux1vM2TTBgf5Bk3XXH+K7v2M9gD2TO202Aba23
-	f3vHCgmEe4WGRhliu6ER775xzD18cNm7reWT82f7tRq8VHKZE=
-X-Google-Smtp-Source: AGHT+IEv1psFTLLIn3fLR6zBNaC1O4/uKT3iU2N03Fto9nCIf6JIXdox9iEwBJ11RCWUIzocGYmgaQ==
-X-Received: by 2002:a17:907:7212:b0:b72:95ff:3996 with SMTP id a640c23a62f3a-b72e02d25e1mr1281562866b.10.1762862460597;
-        Tue, 11 Nov 2025 04:01:00 -0800 (PST)
+        bh=j2nMRTEYBnX0JEevXqRH9dgEagWBl68PRNtodA0SJ4g=;
+        b=T2e8JYC7Ol9RB0R3S4cbyJhUCzjetRN/lohLYW3C01kWPVrLw236q4B2hk0iJHgTZT
+         FDlHCJfknj3z/S/pS8gGQmNcUzEtsKb4/kZJktw0tYB+cK+pob8uvW7ApwqCPdn9rxgE
+         4fRKacojOoaLbpqx4oGH/vOO7oqemL7S/L81uPDmrQF32EVCHjnam/0N4qP8Z0AzdrlL
+         PXRtcwLKRUmU09or1bzwQUZXx6/mr7ELMAxNBcWsZ9k37B3/YxsJH63TK9ECJTNM1wWd
+         S2y3MhIErzSMrKFg84Cu5H7flgHEjWd4D4k0Hjxb4kFdUCAXEMOJCiZL+oYFC5WRKbDZ
+         JWnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762862464; x=1763467264;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=j2nMRTEYBnX0JEevXqRH9dgEagWBl68PRNtodA0SJ4g=;
+        b=NlWP0K82xow6SHWL4F3ID/B2RtQpXMp1Y4fY5XTVHZBv2PzMYDvmsDYFUcLze9CcMt
+         mrvS6miG3GzOS9OeQUPL+z3qYwrCGFPPu8+9ct4YLCSQwKOvTcPqtpoW7kkU+LRS/AUK
+         XFAJU2lma5Go4ldfuC213uFFx9+Nyq8w9b50eHxKav39JcQYDE8vrFB0O+RgieezCuJd
+         Phj2zOCgeM/gTu1B2Uk8IhtIyRSJBDVcQZe4fL0qvcYXSAAUAA2OZ9moYgk+Ya8nJ959
+         meA2ylJ5s9QN5DO1UQDQ/6bhfM30ZJYPhwcOFeG84NJTa2UqRL5TLfOTK38udkVDnWa0
+         DGXg==
+X-Forwarded-Encrypted: i=1; AJvYcCWYRGRhgqQebtwy9Jt6H7hru2VfcbgRfyUq6bE6XqSGnlnGmz9zBneIGe2SaIsbcQdmBf9sTrtVyJGvu1k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZA7aVf3ccZbHqUMeERBTluVycWgOUaiCR1qZ8ogkQviWr5JFt
+	dKp0o8LRUp+GYH7xNH3hN9EWEC5OyK5+dSwtaWxEapfoePvX2EL22+bw
+X-Gm-Gg: ASbGncuyZvUVWbUm1QAgfWUrk8C/oBcgxdvK+B5C8Kc/rqKL3CRsGudzV4QJLN64tsZ
+	+2GDWnoein8VZHZESbZqR2fhGEQxpm7tNqJ3omTx6NWY3F9U76Tik4SlyFQAaPkKzCKfSXHoq76
+	ri5yURMG+PCokR0M4SbJkxewwjGV/ux7kP43jflQCoC0hCHdE8bqT6cKjAbkk76+EaV/mMJ8i4n
+	E2Gkc8OtpFVSYDGkh+V0zS2ONU2GKTG/c4EcaPRAF8YCfMv3h/c2JW4rwFByUfuKstEI7cZ14nL
+	4xsU7MJo9l+D8B3SmeklWXMe96IF8ekMpyX6izugwHiaU5YAiR4n/40Cl/PZsxGHF/9j+gYQ8Gl
+	HolLg8IrNOCge5PtZgjGddEHmOGJn/YFYHUUTwLZ8vf29NLMwpHCO6puEv6SPdh7MAardd6lvuP
+	tStpTTQNqvbb3/9Tpd0m+W5CrnRA==
+X-Google-Smtp-Source: AGHT+IEMFjppQxmpKPUPuwI5Eh8CB/xzwrQb4iSasl8juRp6TAOQ7ALPukt/vhacoC4tWko/18/7Eg==
+X-Received: by 2002:a17:906:ee8e:b0:b71:1164:6a7e with SMTP id a640c23a62f3a-b72e003924bmr1291166766b.0.1762862463417;
+        Tue, 11 Nov 2025 04:01:03 -0800 (PST)
 Received: from SMW024614.wbi.nxp.com ([128.77.115.157])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bf407a01sm1340707466b.22.2025.11.11.04.00.59
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bf407a01sm1340707466b.22.2025.11.11.04.01.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Nov 2025 04:01:00 -0800 (PST)
+        Tue, 11 Nov 2025 04:01:03 -0800 (PST)
 From: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -83,10 +85,12 @@ Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
 	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 0/3] Switch to using AIPSTZ5 on i.MX8MP
-Date: Tue, 11 Nov 2025 04:00:19 -0800
-Message-ID: <20251111120022.696-1-laurentiumihalcea111@gmail.com>
+Subject: [PATCH v3 1/3] arm64: defconfig: enable i.MX AIPSTZ driver
+Date: Tue, 11 Nov 2025 04:00:20 -0800
+Message-ID: <20251111120022.696-2-laurentiumihalcea111@gmail.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20251111120022.696-1-laurentiumihalcea111@gmail.com>
+References: <20251111120022.696-1-laurentiumihalcea111@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,40 +101,26 @@ Content-Transfer-Encoding: 8bit
 
 From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
 
-This series is a combination of the previously dropped patches from [1]
-and the config-related patch from [2]. This enables the usage of AIPSTZ5
-on i.MX8MP-based platforms.
+Enable the i.MX AIPSTZ driver, which is used for i.MX8MP-based boards such
+as NXP's IMX8MP-EVK.
 
-[1]: https://lore.kernel.org/lkml/20250610160152.1113930-1-laurentiumihalcea111@gmail.com/
-[2]: https://lore.kernel.org/lkml/20250707234628.164151-1-laurentiumihalcea111@gmail.com/
-
+Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
 ---
-Changes in v3:
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-* enable CONFIG_IMX_AIPSTZ as module instead of built-in.
-* link to v2: https://lore.kernel.org/lkml/20251104150612.1874-1-laurentiumihalcea111@gmail.com/
-
-Changes in v2:
-
-* squash patch 3 into patch 4.
-* rewrite commit message of patch 1 to state that this driver is used
-  for the IMX8MP-EVK board.
-* rewrite commit message of patch 2 to (hopefully) better describe
-  why we need this change.
-* link to v1: https://lore.kernel.org/lkml/20250821105634.1893-1-laurentiumihalcea111@gmail.com/
----
-
-Laurentiu Mihalcea (3):
-  arm64: defconfig: enable i.MX AIPSTZ driver
-  arm64: dts: imx8mp: convert 'aips5' to 'aipstz5'
-  arm64: dts: imx8mp: make 'dsp' node depend on 'aips5'
-
- arch/arm64/boot/dts/freescale/imx8mp-aipstz.h | 33 +++++++++++++++++++
- arch/arm64/boot/dts/freescale/imx8mp.dtsi     | 16 ++++++---
- arch/arm64/configs/defconfig                  |  1 +
- 3 files changed, 46 insertions(+), 4 deletions(-)
- create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-aipstz.h
-
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 8d6a1bb1e03e..2db7d000aca7 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -271,6 +271,7 @@ CONFIG_GOOGLE_FIRMWARE=y
+ CONFIG_GOOGLE_CBMEM=m
+ CONFIG_GOOGLE_COREBOOT_TABLE=m
+ CONFIG_EFI_CAPSULE_LOADER=y
++CONFIG_IMX_AIPSTZ=m
+ CONFIG_IMX_SCU=y
+ CONFIG_QCOM_TZMEM_MODE_SHMBRIDGE=y
+ CONFIG_QCOM_QSEECOM=y
 -- 
 2.43.0
 
