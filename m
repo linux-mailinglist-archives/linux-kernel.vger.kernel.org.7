@@ -1,123 +1,221 @@
-Return-Path: <linux-kernel+bounces-895681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56E7EC4EA8B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:02:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D987C4EA9D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:03:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E6C5F4F4378
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:55:15 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C97C34F683C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:55:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71705309EE3;
-	Tue, 11 Nov 2025 14:55:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DD0A3246F1;
+	Tue, 11 Nov 2025 14:55:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="zw4y/LOE"
-Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LiwSP0s0"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15AB027814A
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 14:55:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40AB22C028A
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 14:55:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762872908; cv=none; b=FWumwBca7EXGNdndQgar6QiNVrrcZrT248lhGDHRdy0i+vRa/zTYgypOe4BF5LnB7dqExEHMg0u8Hgyeak7Wt1ebGPdcFdZSNtsWpUtNTXFf3mJ4AwTYJqrUZ5v8h6/qSF/vvyRvRq9/1nbRVW+ITomwegLfRpXByP9PbOVGMEI=
+	t=1762872945; cv=none; b=bbOdFCFIJMSfboTBLadyOkEpY0ZVzydeTUrWYaXt9ZfFvCQEQTsu23SYK3eOROBUMEkYS8L8xhkuLIOKDevqCw46gOKSWbCE3n4rwsjDqDbzTPfVuyeL88YF/iTLaxeKYJEQzV6+iudXMAMv+qu78d6OzmF3Soio6fjoOwMEd4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762872908; c=relaxed/simple;
-	bh=Pc086ujvScE2BI9hiMALfAHgXYz5Z656q27m00hb3To=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=sqCuGC/tiwiXdehdZI6gytSNjDAR6ztBPvDYtDW2W+AzfgsDAPRQZXkPJfUY8d9BfiRTrjI0nZFI+3fl7R9eeorOsQfz3JWCCtZjn923sP7z0SdazaeHO7e3ZMSC3kKsL0Y2DjUV5mrZPiyNBkEejaHq8mDZLjf6KErcvNZm5kU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=zw4y/LOE; arc=none smtp.client-ip=209.85.166.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-93e7d3648a8so167495039f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 06:55:04 -0800 (PST)
+	s=arc-20240116; t=1762872945; c=relaxed/simple;
+	bh=poiBwz5mAEg50OMJ/f1mGkL7ppAET8+TVF8zgnle07Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=J1C7fwdT6/wQdKotCnaYxdXf85Ndjrm4audqdUgMwWE/EGxfH341LxyTp9TXFoI6uH9MGPlzWj/BIbpSZaGI4mYsDldWjdq0FObUzIdWvzgrSbfsej2XXUh1qdHb/7ve+kXNwdbLcigjtyTP1Q3RqJIjg2d4c4T3nRzS/gPmV78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LiwSP0s0; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5943d1d6471so4298658e87.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 06:55:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1762872904; x=1763477704; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1762872942; x=1763477742; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Vd60/KfMSWtIeVZjWzA7tGiHeUAva3B/1z//rOpfIQw=;
-        b=zw4y/LOE287jm6K6HVPtVkEOlEeIcCJRNRUEjwlkMdRAnc/su6+SQ/zIOK4hndN5B2
-         fb+4DGpQH7D+V3yq5dhHsZ78w5xQ38SLm/3rJ+hwfAf3pxZnuc9NmmqfFp4x/WA4G7BJ
-         Vqt9Xaa0zCkxGK+UpwHMc32hhvZteXjl6r4b7gT2mPFtY2UilHHk3gP8o17oi05ay+nF
-         sqkYR+ASvcqAn7CVJI+adySa7hHCS+S50TM+2dlno/ErCtFK+HCki0a0JpPzKpq9oG8G
-         oIew/J9HAx823uccYExYzF/JIuJV5A1PGDlkJONBmGzkmzkBXyaajvm/MC9CaxdenNxe
-         PyJg==
+        bh=5+2iTAdNXPyvzz+6ao8nXIdlLksRACyGhcHi8QO3xHY=;
+        b=LiwSP0s012NLOVJ6Sc935al6PMrPiN4nCgoeDjjGxiEV0zPQ0oLYJOH3Tg4sabJ7Xq
+         LNkxxwAecouyUbDgBn88mJSPcYCZ04rcTV0ppRokwys72urln2a2YwreEXfB1J/ga7Pm
+         eyTB9CeNOi/+1J563RLy3khLdfXdsMrzRHTzoFDzxvTOgK06enHD4xsXutBW8uvXLoSW
+         DQS2PhNvGbBj/C3Vb32i6mS8Zy5jOdDNFVBhdeS4yqJni5xR5lIRkrbX+Lda9AFRV3hA
+         9Xr728rt+OB53k8yP7yLRNuGMuCiqFYa8bbuIsGJNl3XM2YMNPQ6rTfWWWhFu8A9ZQvP
+         9KnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762872904; x=1763477704;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-gg:x-gm-message-state:from
+        d=1e100.net; s=20230601; t=1762872942; x=1763477742;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=Vd60/KfMSWtIeVZjWzA7tGiHeUAva3B/1z//rOpfIQw=;
-        b=M4dGLcoYX1Y8OOpFFPflAJGPtx51Cbkkhl4HUwQWEKLAnsCJAqqZGiQsqlG8yBTQtD
-         j2jb+hAa6dzTO9EnoXEyVeXgI7mB41QiRmuQVAuLIQlCL11amui1VpKKNBylJLwB35a1
-         X1s0FCUcJqGf1qdK65IQPEGAAWcQsoQfCjsd6dBVGPXL4wuLZg8L3wFUlsn3nGZoAlVS
-         +0YGydM62S8goWpoLvPIt2LlYXr7yo7bKQJtOZRBxlfKAQpYvcKK4KaXwXGeF43z5ww+
-         taozQu7y1TXYKPQ20NTM+J7ukiQkQmzUfPo4dcO3szECC7gqu5mszs/iKlkHjcvn2wfk
-         QT0A==
-X-Forwarded-Encrypted: i=1; AJvYcCUPy9qR8S8pKihTy6yjUjTcGKShBJ4cdj+tGN+cM0nyNuQr0AjyIussMYXN6N6g1fgMgMmrpgcaml9xLWE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWbgVUIEYlLA86dqaKcG1szhhQoj5i6NyUCzXqqJDtXE12KDfv
-	qJOv3zX1SJZK29DkIMIGj+265XR/kPVk239mp+MTBqsy9SPrl7GlBitcbthfl+URDvY=
-X-Gm-Gg: ASbGncuQeIZfUmPsRSEmgOt4Yz9atc+jp5muUPcwlmV1sxIoCVL/tgmoiXhAGz9vqb9
-	7lboKut6bJtNCY1OlGZaOXTmxSONdKv/6JRwZ4HEuLUHWQgNNQbc+5KwgLBjKw0YpeK8vqNEc+A
-	gx6ytVBRbVSxc60lHzHhi+rK0XyHHAp/Le5Q2QkJmfgrl7MLdkY07edMphD6lm0ash6HwjVSQBW
-	RfrPkkHBxgs15FW0TqVpNOFOCnpOup9XMaaKf2DCLwY8sROM8VkoTVPxydCPoIKeR++dJTXgU3l
-	6l1TVZtzOkCBHw1S0aKX32ZmeIAajBmNTI1qv7rNYE7clx2LhGLxH1cIHr5+SYBENzFsg4wr7Gy
-	0a6BQUCOz67z3ErjeUPFKqohOp1oJgHJiSmWGOMtFfyFL3Tazdg3Q+fXdzodNQITt6y+toXtfFd
-	GXtV8=
-X-Google-Smtp-Source: AGHT+IFMYYVFn/FWFoI4cBgTrfFiY+nGqvc8CTHosZF05Ixu1TUPMtPgPExq2cQbx0wbLmmkWOTIQQ==
-X-Received: by 2002:a05:6e02:17ca:b0:433:5a9d:dac6 with SMTP id e9e14a558f8ab-43367e7166fmr180713905ab.27.1762872904081;
-        Tue, 11 Nov 2025 06:55:04 -0800 (PST)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-43380302872sm26311045ab.32.2025.11.11.06.55.02
+        bh=5+2iTAdNXPyvzz+6ao8nXIdlLksRACyGhcHi8QO3xHY=;
+        b=hnoK8BZATReWGgMiwdT7M0nsvozJjUdjky3rw0VoVS3swM475H6u6YtIITaQHrU8eV
+         hetBu0ohjB+g7hmYRL/Ur8uq8eaLvnJA7mQa3ajsj+kWarFp5V2jfSWQOFjLnWXMwbdc
+         SCOHSw3PknYHjVJ55YrqH9Zv3HKsKTbZ5IuR9uCf+GVD+OCmqKyJWIK29cZwQdnKzqXo
+         qVLW/F1KxSqgEtbP3kdOQIptvHKPaDSfzeTuzmYriH1vSPT0DEr7zDRBuzrLOxLV/EXU
+         d9HZkbSEVIyPp/rEtmHSqZw4jY3hSXgU7uiQRB8wdOqgW0OWwSFhhh06ObcDhZvdHdOE
+         RwfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXI66G9iNfptp1q9+D7vRwXywklrtl0DAF/jNkRfLiD1z0cFzP/uYa1/SIobH/4j2NLCqMxoDvi95NtlmE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPFtaT9cJFjR7sTMuzDIZ+u8muaAiNFS4Pfbjokl6jbG8W6yMP
+	7WyPr3JwTGNJQp6821fzmuh1UcTrpHOMo3KvL3FGWVBr2Rm+oK7o7AKOqJC2WXT93xU=
+X-Gm-Gg: ASbGncuSU5390sCmPa3KXW5AsA4GBqNye3nS90Jc1qC7xva8lWKuFEguT5rUvmiiBld
+	Ztw+IlOxZkWV0Uis5qvj/V5W1lv6kwWW+nQC2fqGfYt4+1Jcuo8Jp9Vc7VPdVCk8+5Uc3cnTjrY
+	Amsxi2RLL3+07KkVhXom7I8pQz5Xrrb+9+qI7JACU5armLWEXjfCmDJhMs91uTpeR4r/GHbm4zh
+	bWTx2PW2BMdaVbQnp31FopQrGPtoysmzW8SJHHPtQsiL4e9N3BcxsQuhabwegNDizmcaljuGuXf
+	T8IR+VSacLr1tFJKIK7Z1p5+zS7lO0BssvXDpitQbIvFLwHjcLiv4C4XXC24hu4tEo1TASb1ZGv
+	TgLTCZxYVkLIHbm/npI/6S1KXBDD9WeMmZt7JYl51wv9gCuFWUSpqK2QL596CI8gWPVOoEon86p
+	cuK8ulaE9ruNF3xxuPYWPtJq8Ptzol
+X-Google-Smtp-Source: AGHT+IFD6IXaxNvIC1u7RqWRp2Nrx86AijzV4Ae4+U9y+/bNW2XoNjpyIk+eMC+4lF0z28KBdYXa/Q==
+X-Received: by 2002:a05:6512:e9c:b0:594:2d53:545 with SMTP id 2adb3069b0e04-5945f1db920mr3654712e87.46.1762872942045;
+        Tue, 11 Nov 2025 06:55:42 -0800 (PST)
+Received: from NB-6746.corp.yadro.com ([188.243.183.84])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5944ff427d0sm4780145e87.68.2025.11.11.06.55.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Nov 2025 06:55:03 -0800 (PST)
-From: Jens Axboe <axboe@kernel.dk>
-To: josef@toxicpanda.com, Zheng Qixing <zhengqixing@huaweicloud.com>
-Cc: linux-block@vger.kernel.org, nbd@other.debian.org, 
- linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com, 
- houtao1@huawei.com, zhengqixing@huawei.com
-In-Reply-To: <20251110124920.1333561-1-zhengqixing@huaweicloud.com>
-References: <20251110124920.1333561-1-zhengqixing@huaweicloud.com>
-Subject: Re: [PATCH] nbd: defer config unlock in nbd_genl_connect
-Message-Id: <176287290263.173215.8003110522218932458.b4-ty@kernel.dk>
-Date: Tue, 11 Nov 2025 07:55:02 -0700
+        Tue, 11 Nov 2025 06:55:41 -0800 (PST)
+From: Artem Shimko <a.shimko.dev@gmail.com>
+To: p.zabel@pengutronix.de
+Cc: a.shimko.dev@gmail.com,
+	andi.shyti@kernel.org,
+	andriy.shevchenko@linux.intel.com,
+	jsd@semihalf.com,
+	linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	mika.westerberg@linux.intel.com
+Subject: [PATCH v4] i2c: designware-platdrv: simplify reset control and error handling
+Date: Tue, 11 Nov 2025 17:55:36 +0300
+Message-ID: <20251111145536.3232456-1-a.shimko.dev@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <743a73399327e0f11825b1b50b4a0fc90948625d.camel@pengutronix.de>
+References: <743a73399327e0f11825b1b50b4a0fc90948625d.camel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3
+Content-Transfer-Encoding: 8bit
 
+The current implementation uses separate calls to acquire and deassert
+reset control, requiring manual error handling for the deassertion
+operation. This can be simplified using the dedicated devm function that
+combines both operations.
 
-On Mon, 10 Nov 2025 20:49:20 +0800, Zheng Qixing wrote:
-> There is one use-after-free warning when running NBD_CMD_CONNECT and
-> NBD_CLEAR_SOCK:
-> 
-> nbd_genl_connect
->   nbd_alloc_and_init_config // config_refs=1
->   nbd_start_device // config_refs=2
->   set NBD_RT_HAS_CONFIG_REF			open nbd // config_refs=3
->   recv_work done // config_refs=2
-> 						NBD_CLEAR_SOCK // config_refs=1
-> 						close nbd // config_refs=0
->   refcount_inc -> uaf
-> 
-> [...]
+Replace devm_reset_control_get_optional_exclusive() with
+devm_reset_control_get_optional_exclusive_deasserted(), which handles both
+reset acquisition and deassertion in a single call as well as
+reset_control_put() which is called automatically on driver detach. This
+eliminates the need for explicit deassertion and its associated error
+checking while maintaining the same functional behavior through automatic
+resource management.
 
-Applied, thanks!
+As part of this cleanup, streamline the error handling by removing goto
+exit_reset and goto exit_probe labels, using direct returns with
+dev_err_probe() for cleaner and more linear code flow.
 
-[1/1] nbd: defer config unlock in nbd_genl_connect
-      commit: 1649714b930f9ea6233ce0810ba885999da3b5d4
+Suggested-by: Philipp Zabel <p.zabel@pengutronix.de>
+Signed-off-by: Artem Shimko <a.shimko.dev@gmail.com>
+---
 
-Best regards,
+Oh sorry Philipp, now I got it
+
+If you have a time, could you please have a look at this version?
+
+Thank you!
+
+--
+Regards,
+Artem
+
+ drivers/i2c/busses/i2c-designware-platdrv.c | 43 +++++++--------------
+ 1 file changed, 14 insertions(+), 29 deletions(-)
+
+diff --git a/drivers/i2c/busses/i2c-designware-platdrv.c b/drivers/i2c/busses/i2c-designware-platdrv.c
+index 34d881572351..147eda5f5268 100644
+--- a/drivers/i2c/busses/i2c-designware-platdrv.c
++++ b/drivers/i2c/busses/i2c-designware-platdrv.c
+@@ -236,40 +236,32 @@ static int dw_i2c_plat_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
+ 
+-	dev->rst = devm_reset_control_get_optional_exclusive(device, NULL);
++	dev->rst = devm_reset_control_get_optional_exclusive_deasserted(device, NULL);
+ 	if (IS_ERR(dev->rst))
+-		return dev_err_probe(device, PTR_ERR(dev->rst), "failed to acquire reset\n");
+-
+-	reset_control_deassert(dev->rst);
++		return PTR_ERR(dev->rst);
+ 
+ 	ret = i2c_dw_fw_parse_and_configure(dev);
+ 	if (ret)
+-		goto exit_reset;
++		return ret;
+ 
+ 	ret = i2c_dw_probe_lock_support(dev);
+-	if (ret) {
+-		ret = dev_err_probe(device, ret, "failed to probe lock support\n");
+-		goto exit_reset;
+-	}
++	if (ret)
++		return dev_err_probe(device, ret, "failed to probe lock support\n");
+ 
+ 	i2c_dw_configure(dev);
+ 
+ 	/* Optional interface clock */
+ 	dev->pclk = devm_clk_get_optional(device, "pclk");
+-	if (IS_ERR(dev->pclk)) {
+-		ret = dev_err_probe(device, PTR_ERR(dev->pclk), "failed to acquire pclk\n");
+-		goto exit_reset;
+-	}
++	if (IS_ERR(dev->pclk))
++		return dev_err_probe(device, PTR_ERR(dev->pclk), "failed to acquire pclk\n");
+ 
+ 	dev->clk = devm_clk_get_optional(device, NULL);
+-	if (IS_ERR(dev->clk)) {
+-		ret = dev_err_probe(device, PTR_ERR(dev->clk), "failed to acquire clock\n");
+-		goto exit_reset;
+-	}
++	if (IS_ERR(dev->clk))
++		return dev_err_probe(device, PTR_ERR(dev->clk), "failed to acquire clock\n");
+ 
+ 	ret = i2c_dw_prepare_clk(dev, true);
+ 	if (ret)
+-		goto exit_reset;
++		return ret;
+ 
+ 	if (dev->clk) {
+ 		struct i2c_timings *t = &dev->timings;
+@@ -309,16 +301,11 @@ static int dw_i2c_plat_probe(struct platform_device *pdev)
+ 	pm_runtime_enable(device);
+ 
+ 	ret = i2c_dw_probe(dev);
+-	if (ret)
+-		goto exit_probe;
+-
+-	return ret;
++	if (ret) {
++		dw_i2c_plat_pm_cleanup(dev);
++		i2c_dw_prepare_clk(dev, false);
++	}
+ 
+-exit_probe:
+-	dw_i2c_plat_pm_cleanup(dev);
+-	i2c_dw_prepare_clk(dev, false);
+-exit_reset:
+-	reset_control_assert(dev->rst);
+ 	return ret;
+ }
+ 
+@@ -340,8 +327,6 @@ static void dw_i2c_plat_remove(struct platform_device *pdev)
+ 	i2c_dw_prepare_clk(dev, false);
+ 
+ 	i2c_dw_remove_lock_support(dev);
+-
+-	reset_control_assert(dev->rst);
+ }
+ 
+ static const struct of_device_id dw_i2c_of_match[] = {
 -- 
-Jens Axboe
-
-
+2.43.0
 
 
