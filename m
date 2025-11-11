@@ -1,161 +1,290 @@
-Return-Path: <linux-kernel+bounces-894718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CDB0C4BADC
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 07:28:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57143C4BAD9
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 07:28:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7A15A3422FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 06:28:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04AC7189278F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 06:29:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B6452D77EA;
-	Tue, 11 Nov 2025 06:28:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D17902D73A6;
+	Tue, 11 Nov 2025 06:28:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ptR8aU5K"
-Received: from mail-io1-f74.google.com (mail-io1-f74.google.com [209.85.166.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="dJwQKWHR"
+Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11010028.outbound.protection.outlook.com [52.101.85.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 660312D5C6C
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 06:28:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.74
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762842513; cv=none; b=bFVNNPHx5/lA/dhmcpLM6gTj0s+FwrVLz13WqZZZ1hJBtf95tRwqBikZ10uYuuf4G4ySrlNj3yQLvYfR0a3lx4zLOKLK8P82YvV7g8gj6NLPD2Uq1rKOs1hC+SfQd0rqOqxuS9uLn9p+OVD6MVgruU5pf3s9qKtq7KvC1YVsqO4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762842513; c=relaxed/simple;
-	bh=fhMrgQz20uh4PXK2nkAxqWB+AOOUbEsG24S6VIqSBO4=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=o2WF23IseZN7sCBiiWbbFiYCWiVrAFiAw4N9UKSZ4xMTWtvpO65xa/RRzE71we8ZuohjpRdb8xwenJKeXEqlVlmnePnD234TX/yDoNvkAxsF24I2d7BmPJKrdiJrzlafs5RbHw7dtBTH3wGizuqDuqqiDYbVKXV3BE3LXLQQ9CM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--avagin.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ptR8aU5K; arc=none smtp.client-ip=209.85.166.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--avagin.bounces.google.com
-Received: by mail-io1-f74.google.com with SMTP id ca18e2360f4ac-93e7f4f7bb1so347764239f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 22:28:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762842511; x=1763447311; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=fmSc84hT8MIqkBb125h6Fg0cbHYTnrDRYFuzpYBDlHI=;
-        b=ptR8aU5KUGZz38dTRCLRct2KyAGM0JkihTN0FeqBlwdncW4sfsQAWcE47nm2IR60ZP
-         5aBNqCBtyaBpv4KuEHwlGmcrSB2ZYhLzkCUHk6bmeNBKlGpiyB/qr0Jj4IGgatSAE12b
-         5HSfe0p7C5SXFDszFFVMqQVWhCdrJ6YKcNcnveTSFkutIm2cTjBVCd6QOqlzyFM4VHMq
-         yonCmKoDWifr15qvZfcF6pwZ6CPB3bP5RSSV2ZHaoSWf4a1ARE+YTrswPR6kl9CbLCAI
-         Bs3hTdBWe+NHDUSyEbY85+qDakPzVieWo9ab6o/AknMkDTVr/KSOiKSKyGhxbuLHRyEY
-         AnmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762842511; x=1763447311;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fmSc84hT8MIqkBb125h6Fg0cbHYTnrDRYFuzpYBDlHI=;
-        b=ADAUd87LH1NicICTWvlWqnBG/EDWhTJ9exz0kc3dr0+A9wFTRdBeOQX0CHbFPyetFO
-         CpswxwzDmbzZlYcRbixF45otovf4pPFN/XSCD1VHd/Nwro3azZTnbVekvJkTDJxZf6Mp
-         Vjk2g6QQhkjKy4rzsWnqXvRnt0t4XsraIoKNpVwwmti15n8mflbY20Id43j8+lOr6p4o
-         yOhswC72igk0Q6KkMd9fB8j887VqYKD7PbsCfS8uGINhq1TGMaw35IFGe+1FpoL+Pf9G
-         N9bSI7dnR22ofUxFkIxyP7jV8HGLVVwbF1NiUURjKyz2r156wr2e5PnalozVpD0E4MCz
-         ZyWA==
-X-Gm-Message-State: AOJu0YxG5hPa9LpwQtxKcU7hANpug4mRQOuyKWlrZnXQF8Kz+9I7VXMk
-	g7nVzLxACmpe9ncyqWDbHYiwqSn/GLXvEJ0ZaQazb6c2eLOQaEECj3C4d0Nq9eI0caT2CzwUtDr
-	v+rzUaA==
-X-Google-Smtp-Source: AGHT+IGMml7ghUQoIAeKf967cifI7mzHN8+YTLattppaozkKG2IB6bitZuNO9bVIQ9HY5Gdiy9X8KAFw++Q=
-X-Received: from ioge25.prod.google.com ([2002:a6b:f119:0:b0:948:a267:a8a4])
- (user=avagin job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6602:27cb:b0:948:73c9:c5a0
- with SMTP id ca18e2360f4ac-94895fe55dbmr1315740439f.12.1762842511579; Mon, 10
- Nov 2025 22:28:31 -0800 (PST)
-Date: Tue, 11 Nov 2025 06:28:15 +0000
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BD492D0C7A;
+	Tue, 11 Nov 2025 06:28:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.28
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762842511; cv=fail; b=JKfoaXFMWZhMswyACgtLnE0peFkXkmOy4f3bDUOa6M95kWtsNl7Y1JfiA9uJGePQDk0g+sfaXrzp4OiPTz+SnK/rNFGBW4mMHW3Vi3FQSWeahdSOAuS6L68rVyKZ1vaFdXWoIUAx7zNcect68qRAvp2xqcwptu5MCw3FUpjjVQ0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762842511; c=relaxed/simple;
+	bh=vvjkNG/cIS1+9yN5fPFmlIWIPeb7AMAsbNBlrUmswxM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Jiq1eX0FKpDEuQ9y+blfcVAb14YpDLihYQ1qki8HdZhR1vEYBY6UwA2YJ97y5JGZzbr2UnMI+BbO1GqQYzo91G5ueNeSDKMPAvd0kKrlhHiuRclCyWjpQ0OBY+uG37PGKf7VJig0dKbAKqv8sZJS9/KCc+7JGILW+4vGzeihla8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=dJwQKWHR; arc=fail smtp.client-ip=52.101.85.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=PNSxBvrYRlN+sWJgCUWpQ5twrY0RHqV/CebtCDAjgZ3FyTujKizP9IdS6JEH/QaA+Jr0ZCjG50CyVl74jM+uxh+kCCEHuwVrbatOGgQLwXuxp5+N3LzjsG/4S5VpxJErubAUnhcVisksaO7AVKRk8gegDl1sYDNilizCzn6DkBE8He7mMwgQNEu1kmAXbfV2sTz7vAnYAavPlU7c30iFnHMpIy+gDgZN2z3Tqevk0brxn3emM3JG2TjvTeRhVRHM4uK50bWrh0tKoAf06jnsO/sjh63Z3PU5B11qnSIMxwTtuDKvkWC4dC1j1JQ4pxlrcuUuU60WMWIqucIKXG4rPg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=26CZP3n03XL1oyHKQ6x1nClQkVh4Koje3/Kbb+rSW8c=;
+ b=pZcfhVWE6byE7ko2cD+DE9XSRcIBZDtGAx3ZdcQ/lNIr1UrWMWW0M7b9o87s2/uaAJex8KGTT06GA2vTXWIJYKpM0ldJDsXjKzV7QD+hlS3XYyDo4A41nV92RuKIUPL8aqBd+g1goMiXH3p4Xidg+bhJjz+d0nM/RnOpRwtPEWwFMY4YfuCigyl80Lpx7+gXhJEwBlcMcu75b6VIfe+FZx8jSYCA11yFt8URaUJ4NXXLLP6PsXYpvZNdk7dhHYyEqqME1Gx0NnZ1SY+GvfmHjbJbRzURyPP31MmV284Axzzo5oNu3+L/Neys9NjL6nKSgBOlStm1HGQBfSiM7tz2hA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=gmail.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=26CZP3n03XL1oyHKQ6x1nClQkVh4Koje3/Kbb+rSW8c=;
+ b=dJwQKWHReV9m82zeuQAMXZ6f8OptN1epO2X+xHmhFH0vropINt35EoOW507DH8pNKXYjk6UoGbet9AAlgClA0h2gyryZUM1MbjdBZ23X7ENVJsA03Lglt5BwBWPxxEJfW5n2GUMKPaB0CTitZWTzAsMr+GQrZxGp06GsUMDTu/A=
+Received: from DM6PR04CA0019.namprd04.prod.outlook.com (2603:10b6:5:334::24)
+ by MW3PR12MB4425.namprd12.prod.outlook.com (2603:10b6:303:5e::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.13; Tue, 11 Nov
+ 2025 06:28:26 +0000
+Received: from DS2PEPF0000343C.namprd02.prod.outlook.com
+ (2603:10b6:5:334:cafe::3c) by DM6PR04CA0019.outlook.office365.com
+ (2603:10b6:5:334::24) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9320.15 via Frontend Transport; Tue,
+ 11 Nov 2025 06:28:26 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
+Received: from satlexmb08.amd.com (165.204.84.17) by
+ DS2PEPF0000343C.mail.protection.outlook.com (10.167.18.39) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9320.13 via Frontend Transport; Tue, 11 Nov 2025 06:28:26 +0000
+Received: from satlexmb10.amd.com (10.181.42.219) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Mon, 10 Nov
+ 2025 22:28:25 -0800
+Received: from satlexmb08.amd.com (10.181.42.217) by satlexmb10.amd.com
+ (10.181.42.219) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Mon, 10 Nov
+ 2025 22:28:25 -0800
+Received: from [10.136.37.117] (10.180.168.240) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
+ Transport; Mon, 10 Nov 2025 22:28:22 -0800
+Message-ID: <7bc4b0b7-42ea-42fc-ae96-3084f44bdc81@amd.com>
+Date: Tue, 11 Nov 2025 11:58:21 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.51.2.1041.gc1ab5b90ca-goog
-Message-ID: <20251111062815.2546189-1-avagin@google.com>
-Subject: [PATCH] fs/namespace: correctly handle errors returned by grab_requested_mnt_ns
-From: Andrei Vagin <avagin@google.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Andrei Vagin <avagin@google.com>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 00/10] sched/kvm: Semantics-aware vCPU scheduling for
+ oversubscribed KVM
+To: Wanpeng Li <kernellwp@gmail.com>, Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, "Paolo
+ Bonzini" <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>
+CC: Steven Rostedt <rostedt@goodmis.org>, Vincent Guittot
+	<vincent.guittot@linaro.org>, Juri Lelli <juri.lelli@redhat.com>,
+	<linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>, Wanpeng Li
+	<wanpengli@tencent.com>
+References: <20251110033232.12538-1-kernellwp@gmail.com>
+Content-Language: en-US
+From: K Prateek Nayak <kprateek.nayak@amd.com>
+In-Reply-To: <20251110033232.12538-1-kernellwp@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS2PEPF0000343C:EE_|MW3PR12MB4425:EE_
+X-MS-Office365-Filtering-Correlation-Id: 32a8036e-a836-447c-83ea-08de20eb8572
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|30052699003|1800799024|376014|7416014|82310400026|36860700013|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?aVZvTUpiWkM0eVBlQzJmUnRIVHd0ZE9tMGkxaEp6WDVpTHF2UkUyUVU1clND?=
+ =?utf-8?B?ek9RdG5xejI0aytoWEYrTWtaeXhFaUJrRHlqUitEZkcxWFltWEdCY2dEcGxs?=
+ =?utf-8?B?c1RGSXpha3h6RUI5UEZkQWFsU3JhS2ZPRVBoSkpTTXhUNFhPaHRkUFNhZmVp?=
+ =?utf-8?B?WEkzRURvV1RUY0wwWmhnMzFKVHJHeENQUHVGSkF0a25hWENnUWpkNnZpTDNX?=
+ =?utf-8?B?SFZmcXZKY2V1UEE2MXdTMTVJQStqLzNKMWxucXBmY1d2THN3bHdOVy9kOHV5?=
+ =?utf-8?B?eWJ1Q3BrdEMwbHZER3RNYlBJTUIvUnpSbzRNc3dUTFp3Qi9WUnlIeFptQ3pR?=
+ =?utf-8?B?UlIzdTlnSXo4WGRiaHowRlU1NGRPZTV4N0RmOHZBZkt6MEJEeGliMTZtMisz?=
+ =?utf-8?B?NXFCVmN0eGJmTkZGWm9GWlVXeTNnT0FSY1o3UE11SUdnMFpjdy82UWtzSVFj?=
+ =?utf-8?B?QWpITXg2KzR2RS80SWszVE9MWkZnSHJ5L1JlcFg4RldEbjgxN242eEhQWUF3?=
+ =?utf-8?B?R1Bic05nQ2dPQ3daY3RxSVBjRVNPZWkyMTIzblBrWk5EbkkxRnc5T0Z3VmJp?=
+ =?utf-8?B?S2ZzTWZIYXcwYmdDQmoxZmtMN3lQZ05DRFFPZzRKT2p5bEJ2VUZBd0ZmYlpL?=
+ =?utf-8?B?bk1aeWFWNzV5Znl4d3Zra1FsWm9GV256dFdOaURCVHZwdC9uQzdkZDZpNXBU?=
+ =?utf-8?B?VzlhYVpGRE5JMWJuV3duK3pEM3JETzRobFpVbGJ1QXl6bU9VQmdic1BVTnZy?=
+ =?utf-8?B?OHlsaEo4NU9lQWlRRUQ2Q1IreHFNQktVUjc2NW9vaVZLTi8reDlPMGxoRWsx?=
+ =?utf-8?B?TklnQzRDUmRSY0NlWGlBN3RQL0xSVDMxWDBySmJDdUZ0b1NOYzljS2Zva0cz?=
+ =?utf-8?B?WlRxc042ZndKUnNiUkdkUmdkREJ0cTBzNkllWThqMTh4UHVxNHFwNFJudWRR?=
+ =?utf-8?B?UXZTU1JDYm43V21UbGlITG1hVVA1dmFWc2dZWStyME56NGVIWlF5QSszTEpQ?=
+ =?utf-8?B?cTRSYVRGeUJnRktNajZPSFpsbUR6N0l0WTdwSktiUHRRS3FVaHN1STFETGI2?=
+ =?utf-8?B?WnR1VmNjSDZ6LzdLeS9FODVkTGJiTkk3Yk9RWjZySVNDV3NFZklaSGs0TlZv?=
+ =?utf-8?B?VTNhSUUySnhTVVUyRDZDTERYUHpGL1JYaUI5dnRyODEvd2RzS1BZMHFWQ1p0?=
+ =?utf-8?B?VERXYmxzUENXaXRFREhrRG03Vk5jdUJlQWFmejN1eU10WkhZVzFZZDhtOGsw?=
+ =?utf-8?B?OEZBSS9FL1JtOTQ3MkkzNmVDQVFKaEtNajN2TkdXemNReURYaVg3dG14VmRB?=
+ =?utf-8?B?a250TnorT2NWV2RpbU5FOW13WHNaUmptOW1VYnA5RmxCYkkyUjROMDBWem4v?=
+ =?utf-8?B?NjJ5aWp2ZFRNTUY4di9BMnVVNk9JSFp1MTRRZWtBcS9CUHVIRzQ0MFk1blph?=
+ =?utf-8?B?dWppdGY2Zmo0MnNGU0FPcUlwaWRHTUNjRXBPM3pJWG9ZQWdwTjhmTkN1VGNH?=
+ =?utf-8?B?MjBLKzlnN2tsTVpSUGRacGFjK0pRdFp2d0xzRTlnaksxQ05CLysyYWg4L0NW?=
+ =?utf-8?B?YzIrSTA4OWlyRHkvMjY4UzFaN3ErelVYZi9aVkZHekhKdzBoL2VtNUZReDJP?=
+ =?utf-8?B?K1F0d1RDK2xlanQrVGxMOXlMWm80a0FUcVBVYnRETzVORWdINEg5QUs1dHNC?=
+ =?utf-8?B?eis1TVUwakRudnFsQ04xYmREVkhWdjdyOGRLenlhNWE2T1Rwd3FUbGM5eGdD?=
+ =?utf-8?B?NG9xMzhlWkIwWjZVZWYyNzR5aHZscDFXYmZJdDBtU25DVVFZbnJSdHR1Qm4r?=
+ =?utf-8?B?ZGpxRkRCVHVCZHVDeGRJUTYvWlpsa3Z5NlZZRCtmRGVqMkRvTk04VTYzdExQ?=
+ =?utf-8?B?amRDT3NmN2ZWOVNKRFhOd2ZDODFvK216djE5Qm9Jazdzc0IybUowMk5pdjFO?=
+ =?utf-8?B?QmVQNDBqTWhrUGpubTVVczh5LzJlaGJlaUhPNTNXKzFTQkxCRklUdTIvZk1r?=
+ =?utf-8?B?aEhBZ09vTjk4S2pEdWVBYk9FWS82NlVhTGdCZW10NjVNOXhCWXBubjZWd1NR?=
+ =?utf-8?Q?Sq1k/N?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(30052699003)(1800799024)(376014)(7416014)(82310400026)(36860700013)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Nov 2025 06:28:26.0685
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 32a8036e-a836-447c-83ea-08de20eb8572
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS2PEPF0000343C.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR12MB4425
 
-grab_requested_mnt_ns was changed to return error codes on failure, but
-its callers were not updated to check for error pointers, still checking
-only for a NULL return value.
+Hello Wanpeng,
 
-This commit updates the callers to use IS_ERR() or IS_ERR_OR_NULL() and
-PTR_ERR() to correctly check for and propagate errors.
+I haven't looked at the entire series and the penalty calculation math
+but I've a few questions looking at the cover-letter.
 
-Fixes: 7b9d14af8777 ("fs: allow mount namespace fd")
-Cc: Christian Brauner <brauner@kernel.org>
-Signed-off-by: Andrei Vagin <avagin@google.com>
+On 11/10/2025 9:02 AM, Wanpeng Li wrote:
+> From: Wanpeng Li <wanpengli@tencent.com>
+> 
+> This series addresses long-standing yield_to() inefficiencies in
+> virtualized environments through two complementary mechanisms: a vCPU
+> debooster in the scheduler and IPI-aware directed yield in KVM.
+> 
+> Problem Statement
+> -----------------
+> 
+> In overcommitted virtualization scenarios, vCPUs frequently spin on locks
+> held by other vCPUs that are not currently running. The kernel's
+> paravirtual spinlock support detects these situations and calls yield_to()
+> to boost the lock holder, allowing it to run and release the lock.
+> 
+> However, the current implementation has two critical limitations:
+> 
+> 1. Scheduler-side limitation:
+> 
+>    yield_to_task_fair() relies solely on set_next_buddy() to provide
+>    preference to the target vCPU. This buddy mechanism only offers
+>    immediate, transient preference. Once the buddy hint expires (typically
+>    after one scheduling decision), the yielding vCPU may preempt the target
+>    again, especially in nested cgroup hierarchies where vruntime domains
+>    differ.
+
+So what you are saying is there are configurations out there where vCPUs
+of same guest are put in different cgroups? Why? Does the use case
+warrant enabling the cpu controller for the subtree? Are you running
+with the "NEXT_BUDDY" sched feat enabled?
+
+If they are in the same cgroup, the recent optimizations/fixes to
+yield_task_fair() in queue:sched/core should help remedy some of the
+problems you might be seeing.
+
+For multiple cgroups, perhaps you can extend yield_task_fair() to do:
+
+( Only build and boot tested on top of
+    git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git sched/core
+  at commit f82a0f91493f "sched/deadline: Minor cleanup in
+  select_task_rq_dl()" )
+
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index b4617d631549..87560f5a18b3 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -8962,10 +8962,28 @@ static void yield_task_fair(struct rq *rq)
+ 	 * which yields immediately again; without the condition the vruntime
+ 	 * ends up quickly running away.
+ 	 */
+-	if (entity_eligible(cfs_rq, se)) {
++	do {
++		cfs_rq = cfs_rq_of(se);
++
++		/*
++		 * Another entity will be selected at next pick.
++		 * Single entity on cfs_rq can never be ineligible.
++		 */
++		if (!entity_eligible(cfs_rq, se))
++			break;
++
+ 		se->vruntime = se->deadline;
+ 		se->deadline += calc_delta_fair(se->slice, se);
+-	}
++
++		/*
++		 * If we have more than one runnable task queued below
++		 * this cfs_rq, the next pick will likely go for a
++		 * different entity now that we have advanced the
++		 * vruntime and the deadline of the running entity.
++		 */
++		if (cfs_rq->h_nr_runnable > 1)
++			break;
++	} while ((se = parent_entity(se)));
+ }
+ 
+ static bool yield_to_task_fair(struct rq *rq, struct task_struct *p)
 ---
- fs/namespace.c | 23 ++++++++++++++---------
- 1 file changed, 14 insertions(+), 9 deletions(-)
 
-diff --git a/fs/namespace.c b/fs/namespace.c
-index d82910f33dc4..9124465dca55 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -144,8 +144,10 @@ static inline struct mnt_namespace *node_to_mnt_ns(const struct rb_node *node)
- 
- static void mnt_ns_release(struct mnt_namespace *ns)
- {
-+	if (IS_ERR_OR_NULL(ns))
-+		return;
- 	/* keep alive for {list,stat}mount() */
--	if (ns && refcount_dec_and_test(&ns->passive)) {
-+	if (refcount_dec_and_test(&ns->passive)) {
- 		fsnotify_mntns_delete(ns);
- 		put_user_ns(ns->user_ns);
- 		kfree(ns);
-@@ -5756,8 +5758,10 @@ static struct mnt_namespace *grab_requested_mnt_ns(const struct mnt_id_req *kreq
- 	if (kreq->mnt_ns_id && kreq->spare)
- 		return ERR_PTR(-EINVAL);
- 
--	if (kreq->mnt_ns_id)
--		return lookup_mnt_ns(kreq->mnt_ns_id);
-+	if (kreq->mnt_ns_id) {
-+		mnt_ns = lookup_mnt_ns(kreq->mnt_ns_id);
-+		return mnt_ns ? : ERR_PTR(-ENOENT);
-+	}
- 
- 	if (kreq->spare) {
- 		struct ns_common *ns;
-@@ -5801,8 +5805,8 @@ SYSCALL_DEFINE4(statmount, const struct mnt_id_req __user *, req,
- 		return ret;
- 
- 	ns = grab_requested_mnt_ns(&kreq);
--	if (!ns)
--		return -ENOENT;
-+	if (IS_ERR(ns))
-+		return PTR_ERR(ns);
- 
- 	if (kreq.mnt_ns_id && (ns != current->nsproxy->mnt_ns) &&
- 	    !ns_capable_noaudit(ns->user_ns, CAP_SYS_ADMIN))
-@@ -5912,8 +5916,8 @@ static void __free_klistmount_free(const struct klistmount *kls)
- static inline int prepare_klistmount(struct klistmount *kls, struct mnt_id_req *kreq,
- 				     size_t nr_mnt_ids)
- {
--
- 	u64 last_mnt_id = kreq->param;
-+	struct mnt_namespace *ns;
- 
- 	/* The first valid unique mount id is MNT_UNIQUE_ID_OFFSET + 1. */
- 	if (last_mnt_id != 0 && last_mnt_id <= MNT_UNIQUE_ID_OFFSET)
-@@ -5927,9 +5931,10 @@ static inline int prepare_klistmount(struct klistmount *kls, struct mnt_id_req *
- 	if (!kls->kmnt_ids)
- 		return -ENOMEM;
- 
--	kls->ns = grab_requested_mnt_ns(kreq);
--	if (!kls->ns)
--		return -ENOENT;
-+	ns = grab_requested_mnt_ns(kreq);
-+	if (IS_ERR(ns))
-+		return PTR_ERR(ns);
-+	kls->ns = ns;
- 
- 	kls->mnt_parent_id = kreq->mnt_id;
- 	return 0;
+With that, I'm pretty sure there is a good chance we'll not select the
+hierarchy that did a yield_to() unless there is a large discrepancy in
+their weights and just advancing se->vruntime to se->deadline once isn't
+enough to make it ineligible and you'll have to do it multiple time (at
+which point that cgroup hierarchy needs to be studied).
+
+As for the problem that NEXT_BUDDY hint is used only once, you can
+perhaps reintroduce LAST_BUDDY which sets does a set_next_buddy() for
+the "prev" task during schedule?
+
+> 
+>    This creates a ping-pong effect: the lock holder runs briefly, gets
+>    preempted before completing critical sections, and the yielding vCPU
+>    spins again, triggering another futile yield_to() cycle. The overhead
+>    accumulates rapidly in workloads with high lock contention.
+> 
+> 2. KVM-side limitation:
+> 
+>    kvm_vcpu_on_spin() attempts to identify which vCPU to yield to through
+>    directed yield candidate selection. However, it lacks awareness of IPI
+>    communication patterns. When a vCPU sends an IPI and spins waiting for
+>    a response (common in inter-processor synchronization), the current
+>    heuristics often fail to identify the IPI receiver as the yield target.
+
+Can't that be solved on the KVM end? Also shouldn't Patch 6 be on top
+with a "Fixes:" tag.
+
+> 
+>    Instead, the code may boost an unrelated vCPU based on coarse-grained
+>    preemption state, missing opportunities to accelerate actual IPI
+>    response handling. This is particularly problematic when the IPI receiver
+>    is runnable but not scheduled, as lock-holder-detection logic doesn't
+>    capture the IPI dependency relationship.
+
+Are you saying the yield_to() is called with an incorrect target vCPU?
+
+> 
+> Combined, these issues cause excessive lock hold times, cache thrashing,
+> and degraded throughput in overcommitted environments, particularly
+> affecting workloads with fine-grained synchronization patterns.
+> 
 -- 
-2.51.2.1041.gc1ab5b90ca-goog
+Thanks and Regards,
+Prateek
 
 
