@@ -1,100 +1,90 @@
-Return-Path: <linux-kernel+bounces-896286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0D71C5007D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 23:59:08 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63508C50088
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 00:03:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 542D44E6D85
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 22:58:38 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BA3EE3441CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 23:03:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A63522F3600;
-	Tue, 11 Nov 2025 22:58:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C3082F12C4;
+	Tue, 11 Nov 2025 23:03:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="bDsdDQlq";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="GM1J/oSo"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="SkvmLeKC"
+Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012025.outbound.protection.outlook.com [52.101.43.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74E9E24113D;
-	Tue, 11 Nov 2025 22:58:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D713535CBC8;
+	Tue, 11 Nov 2025 23:03:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.25
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762901911; cv=fail; b=J/X0+4k5H9rebmLLSeCmKBtqYwYXCV2djuFOCQBJVQat0BUQ6MxB6BDqB+C7+RwgDXHqA5gcM3BvqomJ2F3gD9rWWcBSPPzsoC2R001TD4NoNmDhXbaXfcQljo0kZA4nU3/6eiXZtZL3pJRSQSLMyhzXeU/W1oyoUZwj3QHdhC0=
+	t=1762902186; cv=fail; b=k1aX1V7ulByrAwI/+RQKuyE3+rb17n2cOjT75nShdgIb6n1K30A779S7aEvbmcdTW1kGb/9UQnUdLo7P8Il/4DJfSipVpfD7BTY6sax0k7pcKmarY60svW+SH4oVZXUlLJGJ9ttMA3GJwQLDNXX+v8cGyyEcR16aNYR7PI18Wfg=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762901911; c=relaxed/simple;
-	bh=6+1/H6QueOu6/wHKBx6aOlpRCn40bv3iAI70ipemJGg=;
+	s=arc-20240116; t=1762902186; c=relaxed/simple;
+	bh=uv6W9ySOWWOJuxXaKuNRz5u5k8Gx4joxo2/hYIdT8s0=;
 	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=s2Nj7wFat0HjCTQTB1tlQrYrnvEH3H/MVQ0b8/zi3agT7pHyUXfGWGv/3ylEmeS10eMLs9/G9H1kxK/CRLvMLTxieBjhZPg9yySxNA0BKXMflIHuxTEkDwGxUJE0hglWl46MJp24I+cvzgApqnfdfG36l7rqsZVq4h9GmOvHc9s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=bDsdDQlq; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=GM1J/oSo; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5ABMaMqp029555;
-	Tue, 11 Nov 2025 22:58:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2025-04-25; bh=WJUt0gnUWTcshIsxUQS3FJaPlTXvFkYR4L69uW/fusw=; b=
-	bDsdDQlqbynxCQeI1Vs/yYVU7r4wet9Fp82Qrm0O18n1cWV/Eu0eVm/KiAtYsO2S
-	NduqtFx09bCdsVuurWzV0mCetdmRyeuC7oxJdSzFXTAGGuI3aj9qTP/c4HF9fNNW
-	MxpJ2EVo+CrmykAkbH3lAaUy9us7ZMruXqpfYpVT09PlAkJwTLKmyQfAXj+4QOuN
-	NSYvbkuTN85coGJhluBEp+JC7PcvjzmGnEQSEy9W4WCoZCfKA5Rpqb24Iy9mgmgr
-	qMf87X2J97aWIPF1BHxgtxa7/qjBSIbiKA4kexibfe2WlmWIkrj+aHpL9625J6iM
-	ohlimrRcj05vQx51hK4IOA==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4acdwwr1rx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 11 Nov 2025 22:58:24 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5ABKbT8M012682;
-	Tue, 11 Nov 2025 22:58:24 GMT
-Received: from ph8pr06cu001.outbound.protection.outlook.com (mail-westus3azon11012006.outbound.protection.outlook.com [40.107.209.6])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4a9vadgw3a-2
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 11 Nov 2025 22:58:23 +0000
+	 Content-Type:MIME-Version; b=EVNvCzTXmed7UPYTpLXT2oSLpwat7ok40EDrilEzF0XJmRmHFIaScGnSVgNjCanPxPnR7fngpFDrVbAbZ4oghsrf6ufRHaizJunvfaHGv+H7t1urGpaybcgP4KvBfGaljID3rKfXcaj/+d7wnoZmNX3vDF9uDv/6qaKKFpBHRwQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=SkvmLeKC; arc=fail smtp.client-ip=52.101.43.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=dRLbac/AYW6JkjCOqUXFcn6Ln+eu18KJY36Ivshpj1UgDVYoKrPCb7+Il8jkOTvLMOsvoxNLAA6RB0q77Bl9zm5cj17B7hV4OE8q1SMp8VzhIBkNvfkYKLp66LO/v44huu3K4Y7ZV6fqxTfw6CO8aC+uCBoJu7NrzX/B6Qpht3AfaW6QvOeabRQEgplo4SunV71ISdBTpnXsqR9i1Ud5dHyZapq1A/qtDmHdlsrO4SsRtq0tpoXJNUSk6KmtpMRs09da3xX0NmeQwU3WnvA2GeapoVPCiMLCUuootceQA0fGVpq+ENsF3p9BKva+/ACxspwPXJKwQf2O10JPdwnNOQ==
+ b=RfL74D/jbq+q0JuLQ5aBTDG1j8kHTyV7YgyK0sMYMO/8ab0UsIV2qK1juPYxyB36/2Jx5F/tKg42rkRAkw82PjVbhqFol45Hrqkoe6TYx5JiP1ZNQYLdQqXbMGwU4eG20vlGeEltxDnC9vKJLTi0MQ6XfpVCExZIFu/ksjQL7IQtvrGOegKmIYbErRoe0Ja7/Nib5IDKqQZ6pdlarwItY32dNkm4OiXQVY0xIjuIcTUhelrL2MhrfOzUGtWqOA/WYIuhEqkySi0FWMT9p+5weafvJcE08WnxecW58jf9pCvLoRh/OQN2swGOFrbsBFyQmxHdzl+ANjzNDHS6/X2gfg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WJUt0gnUWTcshIsxUQS3FJaPlTXvFkYR4L69uW/fusw=;
- b=rAnJhto6Nf5qxdH6TlAom8OrTVaDKp0UsosonBaf52pApZmNQS/a3BV9LCP9UopNlcrgi7/HRRWUA17AMzE1mRA+ge2ZD3ka5IymCKZdpJE16EC+Pyyhi6+cWnFNp7dm7OgVTUryFKpCDe2uAAi9b2qJ/6ksxgnptiN5Umy4bklWuiYVQtLP5D/Pmye74v+DrnXPgzSQhHF2Gv05cHrflX1GELTMZQbB0212wHYftHzQhZ9+mkiSgrs5Bl/I6fLsjUbiRPQWkdfEa9YsEJO+EudkeZ1C5En3vBpR9XujTKAXruCcynEqUW6XiAh2vrCYIwb84NU6ggMhfPWr5F0XHQ==
+ bh=o4RNJVTg58Lg3vF0bGgVh1ecHX5/n85/cXyA6INkqGQ=;
+ b=V/7+gqh9UBCAHZ4PU92tOw9iN0yGnnlfSNM86yejataZb8Qoiz70XOPKHaiHniARDPnQpWc7nPzfw8WXwSBH2VX2EX8rNRBif3MpA0U/gwMMwRF0gbZRfAFVOhYRssF3WKNBB/UuZIJic77teuFtIvz5Wx6ahNvrgC7c6tSvJVK7SKI2z3G3wnk14m3fLYbZBCRczhOKTviOHtSH+8Eg8QGi/zE36fyQbC0ePEW55i68xxd3+wGBgeBemlEudzg+dN2mdStKV66+Tukdeh+GdZ8Thn39dyCWlwoDlHM75qJHoZYXjhcF2y9/7UzU2rJncQz5U6CaYAxAw8QyQppMUw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WJUt0gnUWTcshIsxUQS3FJaPlTXvFkYR4L69uW/fusw=;
- b=GM1J/oSoGXOJB7GZwbBDStKj1YyOP13RN43q4gsnFAMaZOLu5EklSYC3P8YVypoYp72W3egOZpMgbn/yGm+8SM/8z6iYz/tlZ9xzjWqGKLys5Ii6IsYlD5TXxVD+jIAmyPHhmCZt4xkY+4w5UsnTnVFAz81ZyX4Y5F2vpYtK8KE=
-Received: from BN0PR10MB5128.namprd10.prod.outlook.com (2603:10b6:408:117::24)
- by SN7PR10MB7073.namprd10.prod.outlook.com (2603:10b6:806:34e::22) with
+ bh=o4RNJVTg58Lg3vF0bGgVh1ecHX5/n85/cXyA6INkqGQ=;
+ b=SkvmLeKCqKvUQjq/zauK1tWDIZ5ATOJPexggqZrKst1MZODByKMb21slxLqRcuFfkKbsvm0nCPfzltsucRtT+0TpTgKzUQpAeN1fEPhkZD+pC8LqLIU8L3J9aW7SQ80JNxrKf6kvQuXyUfde6TMeLdR14hKfScW/dlWwTLrJJWItTiwFNGWPWpO8Qd9qyF4bRs4Yv3/DDXd0FXmptLuWEBtZWqdTFZ8iaZ+BC2LrYeUzmV/nb4wdcpKhJqvehSMmTTa3RHMYrii0rMTT+aauWCk/ZuTQff5y/0/GXoUwfOfz6nLsYpUh1TaEc5CJIVB97/3QMrS8abarST287fN8sg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
+ by CH3PR12MB9099.namprd12.prod.outlook.com (2603:10b6:610:1a5::16) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Tue, 11 Nov
- 2025 22:57:54 +0000
-Received: from BN0PR10MB5128.namprd10.prod.outlook.com
- ([fe80::743a:3154:40da:cf90]) by BN0PR10MB5128.namprd10.prod.outlook.com
- ([fe80::743a:3154:40da:cf90%4]) with mapi id 15.20.9298.010; Tue, 11 Nov 2025
- 22:57:54 +0000
-Message-ID: <d770535b-5884-4f29-9023-3150be4f9980@oracle.com>
-Date: Tue, 11 Nov 2025 17:57:52 -0500
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.15; Tue, 11 Nov
+ 2025 23:03:00 +0000
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91%2]) with mapi id 15.20.9298.015; Tue, 11 Nov 2025
+ 23:02:59 +0000
+Message-ID: <0181a17f-5773-4cf0-9473-7d4ee9122105@nvidia.com>
+Date: Tue, 11 Nov 2025 18:02:57 -0500
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] xdrgen: Handle typedef void types
-To: Khushal Chitturi <kc9282016@gmail.com>, jlayton@kernel.org
-Cc: neil@brown.name, okorniev@redhat.com, Dai.Ngo@oracle.com, tom@talpey.com,
-        linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251111205738.4574-1-kc9282016@gmail.com>
+Subject: Re: [PATCH v2 07/12] nova-core: Implement the GSP sequencer
+To: Alexandre Courbot <acourbot@nvidia.com>, linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ dakr@kernel.org
+Cc: Alistair Popple <apopple@nvidia.com>, Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, bjorn3_gh@protonmail.com,
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ John Hubbard <jhubbard@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
+ joel@joelfernandes.org, nouveau@lists.freedesktop.org,
+ Nouveau <nouveau-bounces@lists.freedesktop.org>
+References: <20251102235920.3784592-1-joelagnelf@nvidia.com>
+ <20251102235920.3784592-8-joelagnelf@nvidia.com>
+ <DE5256UCJHXU.27RS8A445Z1XN@nvidia.com>
 Content-Language: en-US
-From: Chuck Lever <chuck.lever@oracle.com>
-In-Reply-To: <20251111205738.4574-1-kc9282016@gmail.com>
+From: Joel Fernandes <joelagnelf@nvidia.com>
+In-Reply-To: <DE5256UCJHXU.27RS8A445Z1XN@nvidia.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: CH0P220CA0018.NAMP220.PROD.OUTLOOK.COM
- (2603:10b6:610:ef::30) To BN0PR10MB5128.namprd10.prod.outlook.com
- (2603:10b6:408:117::24)
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BL1PR13CA0231.namprd13.prod.outlook.com
+ (2603:10b6:208:2bf::26) To SN7PR12MB8059.namprd12.prod.outlook.com
+ (2603:10b6:806:32b::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -102,319 +92,156 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN0PR10MB5128:EE_|SN7PR10MB7073:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4958578c-4897-4a6e-0b88-08de2175bf65
-X-LD-Processed: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b,ExtAddr
+X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|CH3PR12MB9099:EE_
+X-MS-Office365-Filtering-Correlation-Id: ca0896db-824d-4171-24b0-08de2176757c
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7053199007;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016|7416014;
 X-Microsoft-Antispam-Message-Info:
- =?utf-8?B?STJ5dWFreGlDd0Z0aGdOREVWUlNKbEl4d1p3azRma0FDbXVkVVJiWE9FQzZE?=
- =?utf-8?B?Y2lSUDRxVXV5TWtKVXBlQXRSWjJ4a3N2MHZCby96U3FaaTdoWnBDcnJNeEcw?=
- =?utf-8?B?dUtFY3E3d0xTcncvcnZIcSsrdmg5NDlZK2lBeVhEdllDYmltdk54Y1pWZ0E3?=
- =?utf-8?B?VklMbTJqSDh2UUpWaWFPYmY4ZXZMRloyQS93cUFUL002WGxCMHZtSzFFSnZJ?=
- =?utf-8?B?UWxHVEZSNjErWGlpTDZ2SStHOGxha0dqUjg2aS81WUc1VjAvVEV2dEh1SG1i?=
- =?utf-8?B?dndkQklMOERrd1YrWjdFYUpyZEN3QzU1OHQza2doRlpSbjJaeGlwZTNTVlMr?=
- =?utf-8?B?MHdiZ2xzZ2dBd0tiQ1psZUt1YTV2S0NxZEswU1VvNm9wUjVJNndVcHhOc2hV?=
- =?utf-8?B?cURCNGVqZmJKLzVzVkk3Sjl1djdPdWpieGJwSWtDV0RrZkhGRVpsS2V1QUJy?=
- =?utf-8?B?K1k5Z01XbTdQZ00yZXNoRVAwdWZMU1NrVTVqcjQ3a3c5M2lEL2J3NlJjc3RE?=
- =?utf-8?B?WXlSa3czMkQ0QUhSVDU5TThLUFZFb2tUdUd2aWVmU0VIYlBWYy9UQ2Y2RlBv?=
- =?utf-8?B?WjdCM2E5WUlocHZnZnRhWTl2TSt2WHZyMHBhZHlUWlpPRUg5VWtxTzJjaGVZ?=
- =?utf-8?B?ZnQ5UURWenl5eGpCREhxVlVHZitqeWRITFNFREh5bklaTE96NSs5b09xSGtE?=
- =?utf-8?B?aVg2RVhuQ1Y3ejloZVQ4YUFnb1lNMmVKNnR5N1FINnpWTVBuNy9zWlVyL04z?=
- =?utf-8?B?K1o3OXlFdUVhL1U5anFxOTdWelcvMGlEQUdmcHhMeHRzRmQ3SWs4d1J5c1Zr?=
- =?utf-8?B?VE00WXdzc1ZNNGhqN1JFVjlaM0pKTC94aWxuOGFsbmVhL0ZyenJjakh6OXRQ?=
- =?utf-8?B?MThxRTZNTG5lNmtoNDVCUjAyT3RlQlJ6bmo1Nk1JQ0cveU5rL3dCQzEwb1cv?=
- =?utf-8?B?Q2VsZzVMUDN2MElUaG9LclMvZEZRQ1BTUWVEcFJTdHVPL1BLdTMrd3lqS29m?=
- =?utf-8?B?MFAzaVJ4WGd0OHJNZ2o1bWY5enNhYzdZOGpOUGY5c3o3QnZzWHc2MmdWeFBP?=
- =?utf-8?B?dEgxS1lueVBQYkV2dC94Mi9WY0ppUmN2aEsxNlZuT3JhMjhpQXJQbmN5b0Ns?=
- =?utf-8?B?OHRYNEdNNmtvMEV6cDJrQ01VdWgyb1RnZE44aGVXNTNuT0NuL0tqemU1bDRL?=
- =?utf-8?B?cGtWZzNNbUpFZ3JhMkZEUUxwc2hSOHVuRXRvdmY5a3FtM1F1L294UW5GRkJX?=
- =?utf-8?B?cStzM1NmcXZtYVVPTlBOdkR4WnJnZVBiQklya3FDL0JETERKSnBYd0MzbzY1?=
- =?utf-8?B?UW1FNjM0ZWRVOEkrdmNldytSZElMZ20vVHRDc3BmeDFOajNDUHduQk9zamQ0?=
- =?utf-8?B?RDhpWUR2RG0vcEJQZmEvMTBpWkVhM0poWCtWZG9XWUtWUlVsZEZzOHhvQTNN?=
- =?utf-8?B?bnkzcHlpZG5JSEVDdUZDRTBCUFNaM0RtcFM3UGxiSjFaZmhXODRhdFBZYmg3?=
- =?utf-8?B?OXYreDQxUGNyQzg2Rnh5RFhENmZndTI4bzVpTzlIN3c5ZWFuSi9uOW9MTFV4?=
- =?utf-8?B?VVFZSWVDOGxiRTdSWU9WVFpidHFwa1BxQ1lCTHR3cnZyTkdwN2FGeEF4a0pr?=
- =?utf-8?B?eHNacWJkMmhvRnNQbE9CQmI3eU5lMElPRy8xN09BUWRBOTBIeXlsSm04WVlm?=
- =?utf-8?B?Vy92QXRYYzE4MVdrMGZFM01zVGZKQ081WGczUTkxRDJzQ0x0S1hrM1J3RFg4?=
- =?utf-8?B?a1BkOVh6cmViVnVjYk8xMnpNYjZDT1NHbFJvTTBHZFZSSzBqMDNMSytsUitZ?=
- =?utf-8?B?ZThaWkxrdnUvZWV5T1NhUCs1WDhuNWx0UjdQYkw3dnZKVHpoWGtiNlpWVDZT?=
- =?utf-8?B?OThnYk1vcFZhVDZwcVBzT2Jtc3pGMDBwV3dOejVRdlFpL2tudXVyNHFoRmZs?=
- =?utf-8?Q?R4M5M1+fuBAGu23hvYEzDo0CaZtcYpJJ?=
+	=?utf-8?B?OEtycU1RYkZnNzEyaG5PRmtwUGZQUi8yVmV1a3YxSW5RMm5zQUtLVmp1T1dv?=
+ =?utf-8?B?dnZPa202TVE2VmNwLzhHeW9Hc2tXcjRQQ0NydEtUb3Q3Q2ZKS3o3dXFTL1M3?=
+ =?utf-8?B?WVN2aUxyZk5SUVhheFNRcUtVS0VLRnFvMndkZ0cvZDNTekhick9tay9LRE5w?=
+ =?utf-8?B?S2M3ZWVya3RCeUhQMVRDUW8vTURRM3daOFI4Zk9RamQybzB4WTh2dmk4enZl?=
+ =?utf-8?B?RTdWV29kSEJqdjRvcHVFeFVjbGYzaHp5Z25GVVF0d2lwY3h3SVpad2EvUzRD?=
+ =?utf-8?B?RWtrN1VzYnVTTU1tVDh3Y0hxWmJKeFRNaTl4S0VnT01uVmltU29tZHZhejAy?=
+ =?utf-8?B?d3lrTFdEWjI2amxnc1AvTFltbzZKNEN0U3pCWFJIb2JXS1JORlBpck9abTFk?=
+ =?utf-8?B?RFpRWlJoYTlGaXZxWit3alRmb25SaEpPbDErM0M5T0RHcVNFMFdtVml0ejhH?=
+ =?utf-8?B?QWl5cXk4R2U1NnBGeXhNYXQ3YWo5Slg5b2NMdFFISENPbkMrL0pzcURyOHFl?=
+ =?utf-8?B?YVl1ZHdOa0xnZkJ5OHp0WHBGSi9JR1VZZ04wcWUrRCsyOXNJTEpab0RORk5F?=
+ =?utf-8?B?NGt3MEwvUTVFVUYrSUdIRjBBRVNIbzNYc3EyU1dXWDRYY2JtTkV0UVl1NTll?=
+ =?utf-8?B?MUVGblpkVFBwSTdsV1o1Unl6eHNCMGpRcVc3V2d4N29GL2pjbFJGTS9IQ24x?=
+ =?utf-8?B?dEkxZzgzRkFkOHBjWUhEQ1UrTzA4dmdtckR0b0ExOVlMNzJ3aCtxR28zd0Vj?=
+ =?utf-8?B?N1h2dUJGYWpKeWNDSUlkaTJjc1ZSNUtGcmZ3L3ZscDNFTGc2V0RvTmNadjQ5?=
+ =?utf-8?B?TnR0dnIybTd3eTRnUUlYNjJuUnNidVZucmM4Lzh4MnRYdDBINGZXd1FMSmhM?=
+ =?utf-8?B?WnViQ1dKR25OUGhHcFdzV2d5dWNabzZ2dWlRdERiZVQ0QWJxczNzTjFuM3M3?=
+ =?utf-8?B?Z2FsZlJyZ3FrNTNZcnlGTEFveXZZU1Zsb0IwV0hYQ3hyOGNLRWNPeStIS28z?=
+ =?utf-8?B?R1pxR2FEZ2lISk1heGpqdXBUU1YxNGo4bGRXT2ZkWEF6R2w5Z3JDSWROQUdT?=
+ =?utf-8?B?ZlRnSEU1bnRZcklHVkJ6cFNZdFdRa0M1bTMrNmlZS0N6R2w4cHBKTlpXZmcw?=
+ =?utf-8?B?RVJncnc4VEFvN0daeE9DaGxnQldvSlFVN0ZTckd3QmZ0dTRHN1A5a3hPT3Zv?=
+ =?utf-8?B?ZzFiSGhLd1UyOGhyVkk4TjVtUkMyb1lxakdlNjMwdmJXclduNCt0ODJGWWtk?=
+ =?utf-8?B?NnY3bVNLT0s1Z3VIL1Fra3NYd2lsQWV2SDREVmtWK0lYVE5wVmQ5S0o2M3pX?=
+ =?utf-8?B?R0h0b1FuRTdXdGhhazZXYTRESW5Cbm5qQXhOaWFweFB5VUdNQ09HdEprcHUz?=
+ =?utf-8?B?MTlpckhUSWlndWlkOVNja2NQeWpzcHBSYkpLUGQrTzZNMWhXdWFZczVDU0NF?=
+ =?utf-8?B?dU9YUERmU3F2MmR2TzhLNlhoUnJlcExUSmNaSkdRd25aZEp2bTIrbUFSSlNr?=
+ =?utf-8?B?bVNUV1ppMVQzY3l2TXB2M0JYWHV3ZUdPcHVEKzRRMG8reHlyYUtHdFc4Sy9a?=
+ =?utf-8?B?L0hrUkpaVTU0dXJJMExDZTFzZ3FUSkRUWmRsSHUvMGViRlZUR3FiTUxXTlpl?=
+ =?utf-8?B?dzZVVG1zMjdkN2JDdUJPdzkzZHFjMUppaGRWSGVjQ0xBaHlGMCtuRzZscGhU?=
+ =?utf-8?B?eks1MTFKQnJiRGR0czlxT0Z3NFBwNDM2RXhYejNUMGdVWW4wLzBpRjNyaVp4?=
+ =?utf-8?B?L3h6NEh2eG1TRGlTRTFEY0l5cVJ0d0hNTDM3UDJQcGdOaE5FeGJSTDVMMm96?=
+ =?utf-8?B?R3ljYXlRcTVad0tza0hIU1BVdmNRRTJwUnhDa1ZNM09ZY0VpRCtCdjVob3NQ?=
+ =?utf-8?B?eU1oVkg3TnVNcnNjWXBxQUdBSGpEdjdtWUlsZSttWGdZUGwxZ3ZyWnlaRlVL?=
+ =?utf-8?Q?aIj7TpHLg3iCdTsOvsQxP2P9hvSGdm45?=
 X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN0PR10MB5128.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7053199007);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7416014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
- =?utf-8?B?SmllR0luRFFZOHRCU2Z0T2VWL2tLc3pSTjlQaXowTFZSWktCNlVBd1AwbUdE?=
- =?utf-8?B?VkdQQzBpbkNSV0VQbUhNa3BtL2RUUk1wdlBxT3RiUzlnaTFucWUvcGd5enB4?=
- =?utf-8?B?b1pMSFRaeEw4aUdnbkRZTkZIYTBIS0p4aG5lZEQrSklBMFRBWHoxZUl2RVdC?=
- =?utf-8?B?S1FVaTYxVXQvK3RsMk5XeHcvSTVIaExMN3lnWS9hSURzMnpnMmpXMTJjZEZ0?=
- =?utf-8?B?UzBzbXIxWGs1Q0VFWjN3SjhpcldycW5vUUQzeHJzeS80RUV1U05Hb3BwRHM1?=
- =?utf-8?B?ZS9laWNyQllrb1ltVGF6cHFRZ09yUzRsZnIwVXFvWjIwZGJzWk5TZUpsZHRh?=
- =?utf-8?B?T3RDZUlveUllV3Y3TzlvdWl1ZGtSKy95TFBFRmx5QUdBblhxZEJMWmRLMDNW?=
- =?utf-8?B?cVJ4aU83dW5icFpIbVhENjArRGppeHRBVDBCWjVwVmVmSTNTaWNmRHBLNzlW?=
- =?utf-8?B?VU1YenJQcTZValByTGF0aGUyM2hNeHE4Z3dNdGRWRjFVdGg2cUhsVVBGT0h5?=
- =?utf-8?B?MGZiMFBNVkFKVGxISk81eXE3cFBKUEtkbnU0MnFSTkRPajJaRlNoME1DcmdK?=
- =?utf-8?B?VTI2M1BoQTVHZkRseWplRDExdU92RlVaVGdFSDlrbkRIcVFGbFVrUlJkdGhX?=
- =?utf-8?B?dEFOTXZiTWVhV052Mmg4U2lNdVh6bGNBdXJWWnA5MTVIMyt2citXSVh3V0Nm?=
- =?utf-8?B?cnJFN2lZWGhaQ0VSYkMyWVZnaXN5dVN6MnZmRjZxUGwzUVZUL2dXQUpNd0xK?=
- =?utf-8?B?UzJxVHVyRDRIWktlaHhCdDNwaDVBdEhVWnBWdmxYdDMyRGpIRTJPWHpocHFq?=
- =?utf-8?B?bjEzcEhOYkNJTEFmSHJwcUo0VUJmNk8rSCtLdElaMzRobkxVcmZpMitLZmFt?=
- =?utf-8?B?QVIvMXdJM2Y1Y0lVTEdiUE5GSW5HaytlUDZ2RnRpMm90U0tYYkUyMVpGb2lj?=
- =?utf-8?B?Mndqd2oxODFlVlhFd01lZWhFd2xtRVRYbVhlSmRueTd3b1p6VS9yd2VCUFNy?=
- =?utf-8?B?NUx4eko3M2JLUElmVTFiSkpiWmxzcWh4UkJJOVlhOG5LelJEQzJESTN6cXRo?=
- =?utf-8?B?cXFzWDNtaHUvU0pKeHgyMUVscHQ3SGsrS2pnUTE2czNjQVZ6eGtJOXg5bktt?=
- =?utf-8?B?YitMT3l0clpCQTdZMERnTjYrZXZTWFBuR0dGYlQ0bzZGbHBMQ09ibDlHbmJW?=
- =?utf-8?B?c1l3bjEya2ZpcHRhNk8yVXR1UGQ5ZmxLRU5qTWJkem9CYjVMTEhaTm9adGMz?=
- =?utf-8?B?b2FTQVlNamgzcDF6UjZ3dytrZk5ZeDUraWZhRXd2UnYwck45Y2R6SDd2MnhK?=
- =?utf-8?B?amxaelhNa1Y3MWNQTzAxMldVVjNHRWN3VFVZM2ZMOVlUUVFqM0lITFpFSVpn?=
- =?utf-8?B?bTA1QmYybnA0MnoyV2xRS1hmRGRhc3llSkFFRmp1clJ2cGtqWXJrdDl1b2FS?=
- =?utf-8?B?aENPZndCWDJJU0t1Wk5JMGM3d3BmRmtUeXRqVmc4ZUsxTk1GWUFHUTVnSWc4?=
- =?utf-8?B?d0xNOGN2dGttUDM4TkQ5d2RVODFtR09tYXc0WWFJZlZ6QjlIRVZUc0ZQRDhn?=
- =?utf-8?B?T01vUkplcHd5MG9rQXJNVWRPdXo5cWhXR2VkZGU4dDh0REdaUEorNVh0Tmw5?=
- =?utf-8?B?OExNUE1Sb3VOOFFSaG9lcWlNd0t1RzFlaUhkb01Qdm9TRmdqY21SMGV6V1hp?=
- =?utf-8?B?ODZZUVFPV0R6MEdEejczZkhQUkt5ZSttUHRpQjZBNVdNV0R5eDR4NlB1T3hv?=
- =?utf-8?B?OVRJUzhxOG5tdXdDdisxdGZzTnBXWUllNy9BZlRiMVY2R2Q2UklWQ0hnQzBV?=
- =?utf-8?B?QW1INHpiT3ZvVHQ1RkxhaTV4WTdmUU1kYmwwQ2FhekxQTWpPV0RHd01hbk1K?=
- =?utf-8?B?TTdub0paemNhK2lrN2tQTG9aSklZK0hiRXQ1d0UrYzE3QmhFa3lMZW42aXIy?=
- =?utf-8?B?Z3BhNmJmYzB0RjVaTCt5WDNERWd6NlIvWHYxaXVKdlZJckZaVVl0SmtibHJM?=
- =?utf-8?B?TnFuZUkxRldkbkY4d1FJdmlFVUFpM2FaRDAxTWFEMG5RU3l4NGJnWlFTN21x?=
- =?utf-8?B?ZFFoWG5kdlJDcWp6RTVZRk9oVEphZVhrUks4SVNZMmM1NEpRZUZ0NHZjL0lQ?=
- =?utf-8?Q?Xuldx1TXWKUJ7I/XzX+jqJx+U?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	94gGSHsob2KoQaTNTuIIuxXkNk7i7gj8z5pNjXv9YYEbcIidk4SCzoATIKfiXds6HYy0W4B0gl5x5E/xGECe7efYMTSuu0ANScIlsTdAF9ZYOdctfMqfmw+7ZlDRmifnuF6t/rrxFGL5xXzwsC9lYNcoA2fK1ePsEwUDHAMX7pRUo6puZAt++Q2RVVHzeFQ41RsI9JcCsR4pS0imeGmoqK6Esaqt3a2abHu4g3nUgavuQ2eo8c3g4Y0nnjICdRFwyTGXIpbUoAZR9WF2L7p7oIeqEF7nT6FIzu4z2qpDzcKY4PzJjh8edWygFLO8Ed4GuIHUJ21HSE5ilpYPwZCE+/lfZIOU4NEqj6nx25M7pFksFQrsEgXM408zy/zv/Ez0B50JMejQSRBT1GSJhp7x+Rz+k2ZFuHksM9y0yhm8hktjdDLPHJLzRylm1QHYZmcnQIbSdfzmGmAZaZfWXoBq8H+YEVApoUSvh8+qkNYJdRUsGCZ2+DN1NEjx6+PNKkbB0KkoR6kjXKSih6xaROAqHZJYWmTymeNkpgobOtsWcGxeEHMowSVBiu/+mdFNPbXosi2KUVnkvVF/dyjbPJ6KMix6cqfJ6ScRmPCkKNkSgAI=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4958578c-4897-4a6e-0b88-08de2175bf65
-X-MS-Exchange-CrossTenant-AuthSource: BN0PR10MB5128.namprd10.prod.outlook.com
+	=?utf-8?B?TmhWVkpvZ2FpQk0rbVVLa2l6T2dJSEVJYXp3VmZnRk0rNXlXQ01YZlNkMUNY?=
+ =?utf-8?B?RUZYSlNHT0FCME5ZaFpNQ0oyWklyTitDUXNSaGw1UmtiRDhuOFpOVHE5aVY5?=
+ =?utf-8?B?Ulhtc3lZeWNoUzNxQTJNWE50NkJmK0VkNE50cGpWa1krVmtKalpmK1NuaWR0?=
+ =?utf-8?B?UVY2NEdseWpxTUwxdlRBcEkrUkgwNmFEVHV0Y1VYa1lsTUloWFNOSUxIVXdE?=
+ =?utf-8?B?NElhbmRHZ0h1QTJtVmZMQllFaFNnL2JwR2wrOCtGRUxiakEwZ3dmV3JRc3Uy?=
+ =?utf-8?B?SklqM0VHd0RDT3BZYWFzSWZxbVArWTRGUVFpbVJnUHhNZkNwUGhQZXpUcmZa?=
+ =?utf-8?B?dGtFdGJreFpNTXZCZnkzQ1lwWlYwNDdQTDJWSjdHYkdFWWtnT0wySkV5WG5F?=
+ =?utf-8?B?b3RrR3ZmdjNhazNDK2p1cEg2cGZoR3RVTFczZXpRc1pPYXhTWlJJVEczRm1k?=
+ =?utf-8?B?QllSSmgrT2VKRzM2Tm5lYlpNZFNZb3JpTldxRkdRRFhuSndvb2dUS0M4Z1BB?=
+ =?utf-8?B?SlY5T054TUREdHFsN2xWWUJjNXZzdGlVOHZkc1dEZ0RtT2tLRkVLYzF6ZW4x?=
+ =?utf-8?B?TnQrYmxGaWN5WTkwcis5THNudDNjM0JoRS81cEFXamdET0VrVDZWZmJEUWFt?=
+ =?utf-8?B?VnBEZU9mVTJGcHV4L2duOW9HR1UrRWdIN21jMGU3NjdzVlorVGRucTVtQ3d5?=
+ =?utf-8?B?ZVoxQ1VOWk54RTEzdjFoejFHM3JFYkt5WGUwOHdObVpNRmVYWTVxWjFtRHZk?=
+ =?utf-8?B?Szd4M1l4ZUJxOWcyb3dDOThWR3VTeFBySnBZaVJUUFZaWCtKa04vcnNBelJ3?=
+ =?utf-8?B?RGkySERGb1U5MnNsZFNYMzA2SHpCRjZ5Y1IxVllibWUyYUd0SGRxS2s4OEI4?=
+ =?utf-8?B?ZWRZbGFsa2V6QXBobGdOb2NoNFIvU1NUN0lEdDFGTVFPRngzYm1tUnBZTjho?=
+ =?utf-8?B?R0x3RS9ib0hxTmpRYSsyaEI5dVdmYTZTeFFUbDFYTDUyRlVSeHB6N2hKQ0dG?=
+ =?utf-8?B?VmMwOVRmb2FXNEcwYXowNW93Z0ZpZmdRUnhUaW9vK3pEUGtZMkl1ajlFaDZo?=
+ =?utf-8?B?MzUrTGJtYmRWQ2dpZEhzanBKcHRrNjl2VlVBNm93QXJ5YVAvQ1kyMjl0RmhF?=
+ =?utf-8?B?VExXWnZDaHlMRXJreGlNeFkxL2FKWWtaQXBWL1dERDcvTkFlanZIY0dhTXBj?=
+ =?utf-8?B?a0ZZMk4xVmQwMXRsak5QcFQ1b3JPRUthL1FaTnYwWi9qUlZhSE5GTzVGenpM?=
+ =?utf-8?B?bTFlUnBqUXFGWDdtVlNYRFdsdlhaSkZ5YVlHcmtBZnU4TFh1TW0wUDhZT25R?=
+ =?utf-8?B?Qko3eGRMazJBTWgzYzlDSzNuYkVEZ3JXR0k2OThWQ2N0WFRpOVhvckt2aDJl?=
+ =?utf-8?B?YVRvcXB2WnkrSEFCY3kzZUNXcEFTKzFqRzArb09Ed0VRcUFpeGZ6aGMrdVBP?=
+ =?utf-8?B?elZROXk4SzA2ZEdpWXNyaXpMc3F2TDIrTXE2YXozUUdFVDJhSGxOL3g5VzhZ?=
+ =?utf-8?B?ZnJiaDFyRGlCdzRhUS9ubEMrY2dkMzNCV3ZlbFByQ05HdUxVNHRVZmF1cHh1?=
+ =?utf-8?B?dXFHVXJlRDgxaTZqZnVTWVk0RDRXMEJ4bzlMc2srS1M0b0pxK2owblljeXhJ?=
+ =?utf-8?B?bDlIejJzTFo3cmRJZGNEdy9mRi9pSkhLWmZmMk96SmtaNnlRejhKLzkxWE5Z?=
+ =?utf-8?B?SVBOTXR0a0dGRFZORzNxelJpbVVUQWVWQlFIS05lZXo2S0JoRjZJcG1LWXRn?=
+ =?utf-8?B?MWFiMHA1YzA5cjJhcEI1VG9JSldQVllYNGNXUTJlNjJ6ZkcrcnlNTmUzeTBR?=
+ =?utf-8?B?aGJSMDIvUDlheXBjTEVaUERZdjN5SVFMc3FJQ3RMeWQwb1o3V2d1akEzemZS?=
+ =?utf-8?B?eGxoMkJoSkw2RzBBMmRNTHJ3VStnUHM2em1lSnkwOTNObjV0UWhzMnJQOUJS?=
+ =?utf-8?B?dUlhYkt6Z2s5cEsxelF3c0JaQm9TYVpnbSswUzhpS0gxYzc1MnF1MUwzaWJR?=
+ =?utf-8?B?ZmlWSElNUFl6a2NDK1lPUDJQYURQUXZPYTRzdmpRL1ZwOFN1dDU0eDVYdXhj?=
+ =?utf-8?B?L1B6WGFnUWxBVWdKN0wrLzlvU3ZlRkRkWmc2amJaajNIUGk2VVN3TDBqVVNi?=
+ =?utf-8?Q?n6KaDgCY8QAzVoQQpuTK1jFy+?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ca0896db-824d-4171-24b0-08de2176757c
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Nov 2025 22:57:54.0699
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Nov 2025 23:02:59.6194
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: LQfAvTFDg/hqwpbJQbGwEXqf4kE+7zHd8jlnFW4bjCh/6Y7kDBJiSKrroc3fUvvqnzCG4pBj8UwrscISBkJXpg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR10MB7073
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-11_05,2025-11-11_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 mlxscore=0 spamscore=0
- phishscore=0 suspectscore=0 adultscore=0 bulkscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2510240000
- definitions=main-2511110188
-X-Authority-Analysis: v=2.4 cv=Jq38bc4C c=1 sm=1 tr=0 ts=6913bf90 b=1 cx=c_pps
- a=zPCbziy225d3KhSqZt3L1A==:117 a=zPCbziy225d3KhSqZt3L1A==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=6UeiqGixMTsA:10 a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=pGLkceISAAAA:8 a=aL6jq2tTQg7Tl71RQSIA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- cc=ntf awl=host:12099
-X-Proofpoint-ORIG-GUID: nyKeoi0GlzziYI67-7-qp0Nei7tKNC4E
-X-Proofpoint-GUID: nyKeoi0GlzziYI67-7-qp0Nei7tKNC4E
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTExMDE4MyBTYWx0ZWRfX89B7quAILp3I
- 69t930CvfWmuTZY8eXM0SrNRb4Ljsp5NrI/lW8+LBSBUwAzQe3RJVzm/Eh+JpNTkgUkZDZG5BSP
- IbDI6dxn4W5rZTZZ4GD7pBk3e8F+C/GXk+PyZELXCCuumkIDLs0JJ5OuNJMLfT4omhNX/+v4rIu
- QFeojDUL9bFT7z22Q8agIo7NgA442YMiSJYyclT8GYTTBR0cSLDf61rBHaCXUXybCIv6XI1pcoW
- t0cpIgVPJdtLKwX8PpiAZXXSEaWpCMHX0v8p2WcOIW25svKTYJJhtgMg2hFz5qF22mqHp7nocko
- KG5X36mW9e3LxFK0nV0JnlSgZJJuQEE6IcOuovGjhA2wxAoxhL4Oh/D5+VGDTo8jo0NWn+2irPl
- KfgZa2wazkB+R5Op5kG4PCkk0MoL0neoUJUycvnJitCgYcJ5AiQ=
+X-MS-Exchange-CrossTenant-UserPrincipalName: blnJfgPriGq/RIG5FpEOzH5mFYGwB1Li8d4it4tEl25Qytj5Y8B1vg/k+W7mC+VuP3wgn2B6nolMyrGVqojV7A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9099
 
-Hi Khushal -
-
-On 11/11/25 3:57 PM, Khushal Chitturi wrote:
-> This patch Handle typedef void in XDR Generator. Previously, such
-> declarations triggered a NotImplementedError in typedef.py.
-
-Your patch adds a feature, but the patch description doesn't explain
-why this change is needed. See below for an explanation of why
-"void [identifier];" is not implemented.
-
-
-> This change adds handling for _XdrVoid AST nodes within the
-> typedef generator. When an XDR includes a typedef void,
-> the generator now recognizes _XdrVoid nodes and emits the
-> respective C typedefs and associated functions. New Jinja2
-> templates were introduced for encoder, decoder, declaration,
-> definition, and maxsize generation. The XDR grammar was
-> updated so that void typedefs can be parsed properly
+On 11/10/2025 8:43 AM, Alexandre Courbot wrote:
+[..]
 > 
-> Tested by running xdrgen on tests/test.x containing a typedef void
-> declaration. The tool now runs and produces the encoder, decoder,
-> and typedef outputs across source, definitions, and declarations.
+>> +            |cmd| {
+>> +                self.current_offset += cmd.size_bytes();
+>> +                self.cmds_processed += 1;
+>> +                Some(Ok(cmd))
+>> +            },
+>> +        )
+>> +    }
+>> +}
+>> +
+>> +impl<'a, 'b> IntoIterator for &'b GspSequencer<'a> {
+>> +    type Item = Result<GspSeqCmd>;
+>> +    type IntoIter = GspSeqIter<'b>;
+>> +
+>> +    fn into_iter(self) -> Self::IntoIter {
+>> +        let cmd_data = &self.seq_info.cmd_data[..];
+>> +
+>> +        GspSeqIter {
+>> +            cmd_data,
+>> +            current_offset: 0,
+>> +            total_cmds: self.seq_info.info.cmdIndex,
+>> +            cmds_processed: 0,
+>> +            dev: self.dev,
+>> +        }
+>> +    }
+>> +}
 > 
-> Signed-off-by: Khushal Chitturi <kc9282016@gmail.com>
-> ---
->  tools/net/sunrpc/xdrgen/generators/typedef.py        | 12 ++++++++----
->  tools/net/sunrpc/xdrgen/grammars/xdr.lark            |  2 +-
->  .../xdrgen/templates/C/typedef/declaration/void.j2   |  2 ++
->  .../xdrgen/templates/C/typedef/decoder/void.j2       |  6 ++++++
->  .../xdrgen/templates/C/typedef/definition/void.j2    |  2 ++
->  .../xdrgen/templates/C/typedef/encoder/void.j2       |  6 ++++++
->  .../xdrgen/templates/C/typedef/maxsize/void.j2       |  2 ++
->  7 files changed, 27 insertions(+), 5 deletions(-)
->  create mode 100644 tools/net/sunrpc/xdrgen/templates/C/typedef/declaration/void.j2
->  create mode 100644 tools/net/sunrpc/xdrgen/templates/C/typedef/decoder/void.j2
->  create mode 100644 tools/net/sunrpc/xdrgen/templates/C/typedef/definition/void.j2
->  create mode 100644 tools/net/sunrpc/xdrgen/templates/C/typedef/encoder/void.j2
->  create mode 100644 tools/net/sunrpc/xdrgen/templates/C/typedef/maxsize/void.j2
+> You can do without this implementation by just having an `iter` method
+> returning the iterator where appropriate (in the current version this
+> would be `GspSequencer`, but I suggest moving that to the
+> `GspSequencerInfo/GspSequence`).
 > 
-> diff --git a/tools/net/sunrpc/xdrgen/generators/typedef.py b/tools/net/sunrpc/xdrgen/generators/typedef.py
-> index fab72e9d6915..f49ae26c4830 100644
-> --- a/tools/net/sunrpc/xdrgen/generators/typedef.py
-> +++ b/tools/net/sunrpc/xdrgen/generators/typedef.py
-> @@ -58,7 +58,8 @@ def emit_typedef_declaration(environment: Environment, node: _XdrDeclaration) ->
->      elif isinstance(node, _XdrOptionalData):
->          raise NotImplementedError("<optional_data> typedef not yet implemented")
->      elif isinstance(node, _XdrVoid):
-> -        raise NotImplementedError("<void> typedef not yet implemented")
-> +        template = get_jinja2_template(environment, "declaration", node.template)
-> +        print(template.render(name=node.name))
->      else:
->          raise NotImplementedError("typedef: type not recognized")
->  
-> @@ -104,7 +105,8 @@ def emit_type_definition(environment: Environment, node: _XdrDeclaration) -> Non
->      elif isinstance(node, _XdrOptionalData):
->          raise NotImplementedError("<optional_data> typedef not yet implemented")
->      elif isinstance(node, _XdrVoid):
-> -        raise NotImplementedError("<void> typedef not yet implemented")
-> +        template = get_jinja2_template(environment, "definition", node.template)
-> +        print(template.render(name=node.name))
->      else:
->          raise NotImplementedError("typedef: type not recognized")
->  
-> @@ -165,7 +167,8 @@ def emit_typedef_decoder(environment: Environment, node: _XdrDeclaration) -> Non
->      elif isinstance(node, _XdrOptionalData):
->          raise NotImplementedError("<optional_data> typedef not yet implemented")
->      elif isinstance(node, _XdrVoid):
-> -        raise NotImplementedError("<void> typedef not yet implemented")
-> +        template = get_jinja2_template(environment, "decoder", node.template)
-> +        print(template.render(name=node.name))
->      else:
->          raise NotImplementedError("typedef: type not recognized")
->  
-> @@ -225,7 +228,8 @@ def emit_typedef_encoder(environment: Environment, node: _XdrDeclaration) -> Non
->      elif isinstance(node, _XdrOptionalData):
->          raise NotImplementedError("<optional_data> typedef not yet implemented")
->      elif isinstance(node, _XdrVoid):
-> -        raise NotImplementedError("<void> typedef not yet implemented")
-> +        template = get_jinja2_template(environment, "encoder", node.template)
-> +        print(template.render(name=node.name))
->      else:
->          raise NotImplementedError("typedef: type not recognized")
->  
 
-Looking at the _XdrVoid class definition (line 285-289 of xdr_ast.py):
+If I do that, it becomes ugly on the caller side.
 
-  @dataclass
-  class _XdrVoid(_XdrDeclaration):
-      """A void declaration"""
-      name: str = "void"  # Default value, never overridden
-      template: str = "void"
+Caller side becomes:
+for cmd_result in sequencer.seq_info.iter(&sequencer.dev) {
+ ..
+}
 
-The name field is never properly initialized with the (new) parsed
-identifier. To implement this correctly, the void() transformer should
-extract the identifier from children when present:
+instead of the current:
+for cmd_result in sequencer {
+ ..
+}
 
-  def void(self, children):
-      if children:
-          name = children[0].symbol
-          return _XdrVoid(name=name)
-      return _XdrVoid()
+Does it work for you if I remove IntoIterator and just have GspSequencer::iter()
+return the iterator?
 
+Then the caller becomes:
 
-> diff --git a/tools/net/sunrpc/xdrgen/grammars/xdr.lark b/tools/net/sunrpc/xdrgen/grammars/xdr.lark
-> index 7c2c1b8c86d1..d8c5f7130d83 100644
-> --- a/tools/net/sunrpc/xdrgen/grammars/xdr.lark
-> +++ b/tools/net/sunrpc/xdrgen/grammars/xdr.lark
-> @@ -8,7 +8,7 @@ declaration             : "opaque" identifier "[" value "]"            -> fixed_
->                          | type_specifier identifier "<" [ value ] ">"  -> variable_length_array
->                          | type_specifier "*" identifier                -> optional_data
->                          | type_specifier identifier                    -> basic
-> -                        | "void"                                       -> void
-> +                        | "void" [identifier] -> void
+for cmd_result in sequencer.iter() {
+ ..
+}
 
-RFC 4506 defines void as a 0-byte quantity with declaration syntax
-"void;" (no identifier), and void may only appear as union arms or in
-program argument/result definitions.
+Although I think IntoIterator makes a lot of sense here too, and there are other
+usages of it in rust kernel code. But the sequencer.iter() would work for me.
 
-The change void [identifier] violates this. RFC 4506 has errata (ID
-6382) noting the grammar was too permissive, allowing void in incorrect
-places—this change reintroduces that problem, allowing invalid
-constructs like void foo; in struct bodies and typedefs.
+Thanks.
 
-Unless there's a strong reason to support "void [identifier];" I'm
-going to have to reject the proposed feature. However, you might replace
-the NotImplemented exception with something that better reflects that
-the error is in the RPC language specification being parsed, not in the
-xdrgen implementation.
-
-
->  value                   : decimal_constant
->                          | hexadecimal_constant
-> diff --git a/tools/net/sunrpc/xdrgen/templates/C/typedef/declaration/void.j2 b/tools/net/sunrpc/xdrgen/templates/C/typedef/declaration/void.j2
-> new file mode 100644
-> index 000000000000..22c5226ee526
-> --- /dev/null
-> +++ b/tools/net/sunrpc/xdrgen/templates/C/typedef/declaration/void.j2
-> @@ -0,0 +1,2 @@
-> +{# SPDX-License-Identifier: GPL-2.0 #}
-> +typedef void {{ name }};
-> diff --git a/tools/net/sunrpc/xdrgen/templates/C/typedef/decoder/void.j2 b/tools/net/sunrpc/xdrgen/templates/C/typedef/decoder/void.j2
-> new file mode 100644
-> index 000000000000..ed9e2455b36f
-> --- /dev/null
-> +++ b/tools/net/sunrpc/xdrgen/templates/C/typedef/decoder/void.j2
-> @@ -0,0 +1,6 @@
-> +{# SPDX-License-Identifier: GPL-2.0 #}
-> +static inline bool
-> +xdrgen_decode_{{ name }}(struct xdr_stream *xdr, void *ptr)
-> +{
-> +    return true;
-
-These templates are used to generate C code in the kernel style.
-Indentation for generated code should use tabs, not spaces.
-
-
-> +}
-> diff --git a/tools/net/sunrpc/xdrgen/templates/C/typedef/definition/void.j2 b/tools/net/sunrpc/xdrgen/templates/C/typedef/definition/void.j2
-> new file mode 100644
-> index 000000000000..22c5226ee526
-> --- /dev/null
-> +++ b/tools/net/sunrpc/xdrgen/templates/C/typedef/definition/void.j2
-> @@ -0,0 +1,2 @@
-> +{# SPDX-License-Identifier: GPL-2.0 #}
-> +typedef void {{ name }};
-> diff --git a/tools/net/sunrpc/xdrgen/templates/C/typedef/encoder/void.j2 b/tools/net/sunrpc/xdrgen/templates/C/typedef/encoder/void.j2
-> new file mode 100644
-> index 000000000000..47d48af81546
-> --- /dev/null
-> +++ b/tools/net/sunrpc/xdrgen/templates/C/typedef/encoder/void.j2
-> @@ -0,0 +1,6 @@
-> +{# SPDX-License-Identifier: GPL-2.0 #}
-> +static inline bool
-> +xdrgen_encode_{{ name }}(struct xdr_stream *xdr, const void *ptr)
-> +{
-> +    return true;
-
-Ditto.
-
-
-> +}
-> diff --git a/tools/net/sunrpc/xdrgen/templates/C/typedef/maxsize/void.j2 b/tools/net/sunrpc/xdrgen/templates/C/typedef/maxsize/void.j2
-> new file mode 100644
-> index 000000000000..129374200ad0
-> --- /dev/null
-> +++ b/tools/net/sunrpc/xdrgen/templates/C/typedef/maxsize/void.j2
-> @@ -0,0 +1,2 @@
-> +{# SPDX-License-Identifier: GPL-2.0 #}
-> +#define {{ macro }} 0
-
-The convention for these size macros is to wrap their expanded value
-with parentheses to prevent them from being unintentionally combined
-with other tokens after expansion.
-
-
--- 
-Chuck Lever
 
