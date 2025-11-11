@@ -1,99 +1,142 @@
-Return-Path: <linux-kernel+bounces-895915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 465C1C4F413
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 18:35:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 658A8C4F41D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 18:35:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E994F34D155
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:35:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18E6E189AEE8
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:36:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D61B1328244;
-	Tue, 11 Nov 2025 17:34:55 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33C193AA1BB
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 17:34:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7D5B3A1CE8;
+	Tue, 11 Nov 2025 17:35:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b="jhB/8hoI"
+Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2E483AA1BB;
+	Tue, 11 Nov 2025 17:35:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.153.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762882495; cv=none; b=iRYu8nBlb2APjmKBlcDVeC5AjGTrSMD+6N1YdU9Gbu5sIrxEhMqdeA8Yq7luaPs3BxX+V7ITEKgNty9uqFiqK/Yknoyrwabic18RzucsfNo4u2SkK9ZGpQWWHfu5hfN3DzD2VWhJxt4+sic68VRJrujrZqd9ir7aFcnosqHAWgA=
+	t=1762882542; cv=none; b=SU/vpBEi/NaI/CIyCHdsjdv8O5ZaMs1IhA6WHc/IyY3Be239byhWPqkTd+NCHx1FcTVzRZY/fVsWpGL0OpKUgmAUbbfsGeA06jb3p7sGGBzNbg0W6s080xQDn01cPO/zAkp1DgiCcuucJDpMu4L11tWCNDP/CL43XEFf2VfYDnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762882495; c=relaxed/simple;
-	bh=lRtd39TzVsOLDLM6mhyvwF9cxQ9l1wDoC0v6x7Tl4VM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TqcQiQJknNx4/y6iyGhjbwzcjP1TUqcf3ZNfGTMIZJCHZkOKOyUZ8AR+qKBhS49C+tfhAdJJnZBja8MgOrLAkR5bSNvYdJalYoOZ/rx0sE1u6fE7ftHBq921uOM+DKccGRAhHgXK7KxfKvKl3Bd7mrUK//zleEfjtPxhUTPfQ1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EBB0C497;
-	Tue, 11 Nov 2025 09:34:45 -0800 (PST)
-Received: from e133380.arm.com (e133380.arm.com [10.1.197.68])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9ADBD3F5A1;
-	Tue, 11 Nov 2025 09:34:51 -0800 (PST)
-Date: Tue, 11 Nov 2025 17:34:48 +0000
-From: Dave Martin <Dave.Martin@arm.com>
-To: "Luck, Tony" <tony.luck@intel.com>
-Cc: Fenghua Yu <fenghuay@nvidia.com>,
-	Reinette Chatre <reinette.chatre@intel.com>,
-	Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>,
-	Peter Newman <peternewman@google.com>,
-	James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>,
-	Drew Fustini <dfustini@baylibre.com>, Chen Yu <yu.c.chen@intel.com>,
-	x86@kernel.org, linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev
-Subject: Re: [PATCH v13 12/32] x86,fs/resctrl: Support binary fixed point
- event counters
-Message-ID: <aRNzuMtoBT90CEAs@e133380.arm.com>
-References: <20251029162118.40604-1-tony.luck@intel.com>
- <20251029162118.40604-13-tony.luck@intel.com>
- <aQtiSmZ14b+U/J4U@e133380.arm.com>
- <aRIYZOm6ZtpQFr4m@agluck-desk3>
+	s=arc-20240116; t=1762882542; c=relaxed/simple;
+	bh=bZYITAb//HGZ/PK53HRhVxiYBDhYkagJ10l0AcE+do4=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DxEGgivqtZzDPQH0mBDNBu6PmqPbdgNeRB6lLsIHJcnIPkHcq/E1q05ThW6MTb2v/Cc6BlTPKO7pmRHChmhMKrVRL1llWFlOX4KeMU8+fcekjq2m20iTrZC1ImLRjAsIeR9tqclVEQYd1+ODaIkoGueexXXy9Tlk6lHlRd3t170=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b=jhB/8hoI; arc=none smtp.client-ip=67.231.153.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
+Received: from pps.filterd (m0148460.ppops.net [127.0.0.1])
+	by mx0a-00082601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5ABGKcVR2600415;
+	Tue, 11 Nov 2025 09:35:35 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=s2048-2025-q2; bh=1VmrT0oK0iGhp/K108c6
+	n2yMdw8L2qW+yW/LKJlR7r8=; b=jhB/8hoIiwGkHDHZuosISLCqsZPcsW7go/1Z
+	14WbFu84GWH0PDiEAWGTL3q2M8mmZH9UeKcaCNE5JnWnaspHa8NMZbjy3SJN1/ud
+	yNzqPPfWyToCpVYzfYDes4z7f3Pt2k31rTfZxKG0LnTKYCfncNWGEtiQrbRRzxXZ
+	WKG+AUUoy47jBNd/nDi8Tu1auI+sYn+VbUNFEW6j6fTZMHX5tqmJGkrzfada850A
+	XtvAEza9sF16F3akULp3A3XCSI2gYfHu4A2k4L0bksQbuWdFqjICCm3vIMtr4t3Z
+	9aH7xhZtuxYV3akNDPiVH9trvj+GS7Dzd03+sA3odTYWqZGsOw==
+Received: from maileast.thefacebook.com ([163.114.135.16])
+	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 4ac8k50qr6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Tue, 11 Nov 2025 09:35:34 -0800 (PST)
+Received: from devgpu015.cco6.facebook.com (2620:10d:c0a8:1b::2d) by
+ mail.thefacebook.com (2620:10d:c0a9:6f::237c) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.2562.20; Tue, 11 Nov 2025 17:35:33 +0000
+Date: Tue, 11 Nov 2025 09:35:31 -0800
+From: Alex Mastro <amastro@fb.com>
+To: Alex Williamson <alex@shazbot.org>
+CC: David Matlack <dmatlack@google.com>, Shuah Khan <shuah@kernel.org>,
+        Jason
+ Gunthorpe <jgg@ziepe.ca>, <kvm@vger.kernel.org>,
+        <linux-kselftest@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/4] vfio: selftests: add iova range query helpers
+Message-ID: <aRNz4ynek6siv0FZ@devgpu015.cco6.facebook.com>
+References: <20251111-iova-ranges-v2-0-0fa267ff9b78@fb.com>
+ <20251111-iova-ranges-v2-1-0fa267ff9b78@fb.com>
+ <20251111100948.513f013b.alex@shazbot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <aRIYZOm6ZtpQFr4m@agluck-desk3>
+In-Reply-To: <20251111100948.513f013b.alex@shazbot.org>
+X-Proofpoint-ORIG-GUID: QMCfOnNg60SOxZedip_bSss0IoH7Lnn2
+X-Authority-Analysis: v=2.4 cv=X95f6WTe c=1 sm=1 tr=0 ts=691373e6 cx=c_pps
+ a=MfjaFnPeirRr97d5FC5oHw==:117 a=MfjaFnPeirRr97d5FC5oHw==:17
+ a=kj9zAlcOel0A:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=FOH2dFAWAAAA:8 a=gAnhvMwacpa_2wFJLncA:9 a=CjuIK1q_8ugA:10
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTExMDE0MyBTYWx0ZWRfXyIOIECX72vEv
+ 4WvyxnSGk875oGuNWM2RzDuzoksf5qXBCiwV3ZwiwvnCThAFlOA2/z1mHhoH0a5ped6iH/SBNCW
+ nW7ki7nPSzDNUSBzyA0pv4rkzzZ28V0jiORU2XZCchqg8xITasOybsBT3SmouJerWviQR3AJ3y8
+ mI+NdFr6EUf5iyykldGJ5sIoTKWl/KTl1TuMzU79Ad7VxzP4LFJVWnNiQNZInTKKBd+ACq9pLoj
+ HJPb94XHckCWh+DmQGfwYy1+FdbyW6zGhq2lbJJMqJ2UH9V9pNlOf68I5uJJ27XNTNVF9uRao76
+ lfRCrQO8cUB+Z+NaBAbFyyOxR0/aNgA7BL9aokpJ9wbZomGfoxZ8w0PK1wjT5NitXGfn8FtMEtu
+ iKlhvVS6SnoCUL68/vNViqGyH0mC3g==
+X-Proofpoint-GUID: QMCfOnNg60SOxZedip_bSss0IoH7Lnn2
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-11_03,2025-11-11_02,2025-10-01_01
 
-Hi Tony,
-
-On Mon, Nov 10, 2025 at 08:52:52AM -0800, Luck, Tony wrote:
-> On Wed, Nov 05, 2025 at 02:42:18PM +0000, Dave Martin wrote:
-> > > +static void print_event_value(struct seq_file *m, unsigned int binary_bits, u64 val)
-> > > +{
-> > > +	unsigned long long frac;
-> > > +	char buf[10];
-> > 
-> > In place of the magic number 10, how about
-> > decplaces[MAX_BINARY_BITS] + 1 ?
-> > 
-> > (I think the compiler should accept that as an initialiser if the array
-> > is const.)
+On Tue, Nov 11, 2025 at 10:09:48AM -0700, Alex Williamson wrote:
+> On Tue, 11 Nov 2025 06:52:02 -0800
+> Alex Mastro <amastro@fb.com> wrote:
+> > diff --git a/tools/testing/selftests/vfio/lib/vfio_pci_device.c b/tools/testing/selftests/vfio/lib/vfio_pci_device.c
+> > index a381fd253aa7..7a523e3f2dce 100644
+> > --- a/tools/testing/selftests/vfio/lib/vfio_pci_device.c
+> > +++ b/tools/testing/selftests/vfio/lib/vfio_pci_device.c
+> > @@ -29,6 +29,173 @@
+> >  	VFIO_ASSERT_EQ(__ret, 0, "ioctl(%s, %s, %s) returned %d\n", #_fd, #_op, #_arg, __ret); \
+> >  } while (0)
+> >  
+> > +static struct vfio_info_cap_header *next_cap_hdr(void *buf, size_t bufsz,
+> > +						 size_t *cap_offset)
+> > +{
+> > +	struct vfio_info_cap_header *hdr;
+> > +
+> > +	if (!*cap_offset)
+> > +		return NULL;
+> > +
+> > +	VFIO_ASSERT_LT(*cap_offset, bufsz);
+> > +	VFIO_ASSERT_GE(bufsz - *cap_offset, sizeof(*hdr));
+> > +
+> > +	hdr = (struct vfio_info_cap_header *)((u8 *)buf + *cap_offset);
+> > +
+> > +	if (hdr->next)
+> > +		VFIO_ASSERT_GT(hdr->next, *cap_offset);
 > 
-> The compiler (gcc 15.2.1) accepts without any warnings. But generates
-> different code.
+> This might be implementation, but I don't think it's a requirement.
+> The vfio capability chains are based on PCI capabilities, which have no
+> ordering requirement.  Thanks,
+
+My main interest was to enforce that the chain doesn't contain a cycle, and
+checking for monotonically increasing cap offset was the simplest way I could
+think of to guarantee such.
+
+If there isn't such a check, and kernel vends a malformed cycle-containing
+chain, chain traversal would infinite loop.
+
+Given the location of this test code coupled to the kernel tree, do you think
+such assumptions about implementation still reach too far? If yes, I can either
+remove this check, or try to make cycle detection more relaxed about offsets
+potentially going backwards.
+
+> Alex
 > 
-> sparse complains:
-> fs/resctrl/ctrlmondata.c:640:45: warning: Variable length array is used.
-
-Hmmm.  Shame.
-
-(Of course, this is only a warning.  sparse may not know how to
-determine that the resulting buffer is limited to a sane size, but
-looking at the code makes it pretty obvious.  Perhaps best avoided,
-though.)
-
-> I may change the hard coded constant to 21 (guaranteed to be big enough
-> for a "long long" plus terminating NUL byte.)
-
-I guess.  We may be able to sidestep this, though (see my other reply
-about getting rid of buf[] altogether.)
-
-Cheers
----Dave
+> > +
+> > +	*cap_offset = hdr->next;
+> > +
+> > +	return hdr;
+> > +}
 
