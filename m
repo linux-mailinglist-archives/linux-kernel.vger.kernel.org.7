@@ -1,358 +1,135 @@
-Return-Path: <linux-kernel+bounces-895234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0556C4D4C9
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:08:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DA76C4D4F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:08:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACA3318C44AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:01:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F344A424075
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:02:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BDEE3587D7;
-	Tue, 11 Nov 2025 10:57:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B62334F475;
+	Tue, 11 Nov 2025 10:58:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="MvCFFVYW";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="P3QkYLWD";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="AZ504nQQ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="33GaccVM"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2AC6355040
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 10:57:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="XJSnNMiZ"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A3CC1E7C23;
+	Tue, 11 Nov 2025 10:58:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762858636; cv=none; b=XFi3M28VFsexEki1xCQ14a66AntwLOjHT4ADpf9e5wSw2sUgOTFKivm+NtLLfNGsU37L2h1l5JOD7OkIlYrfuqeBnI0C3lQ1g5nDyX5nxSa2CU9sYO9ZfDwrKpG0YUpLlAFnsnv/jkOto6PVgBezW4F4F//9MD9NAbRTYBdKodo=
+	t=1762858718; cv=none; b=PKbzHVwU8G409psA1C6GJs/06wdDiyDtcLEytTcHGVCGBvnV7N/IKGiBqpeuk9prso6E7PELKkuqUKWFwyCw0W3dpj9aF2mPWIaENgYMbw1W/LWMvdC8j4EwlI3SPJz7SX4gGcMEnxiTsZYOY+nw+dtMP5XtNGGDLoFG42aaTkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762858636; c=relaxed/simple;
-	bh=0qIKVWddtsPV5G/8hROLCcnDFjecC5eN+g5hMbRRlOw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pQlTYVAPJ+cfCd36smfOk2+2sxBhb7NY9pSbxoNXEE3JV1PMmG/C2UCcuXzIT+X94b+KGOHcmsKy9glnelKjN7Q3kxF3dpinNbFM3/Vd2jF3zLBOEFpFmzfVsFsiv8vF3+PCPkF4LP1vdz38k0++89wYWIkqVcFbP2SGhQU6yF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=MvCFFVYW; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=P3QkYLWD; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=AZ504nQQ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=33GaccVM; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id DCD701F6E6;
-	Tue, 11 Nov 2025 10:57:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762858631; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Tro3eQIQ3vyegRPUo7YaUGYg3RQMDIXBqzFb8qZf8+g=;
-	b=MvCFFVYWL5JqlsT/4QlFyaMQSfKKnBXdNafiZLkP6b4bDJO3s7Vrjp/EY45p+ON7HJkvpT
-	LdC1gJ3IquF49avQWhiqvR4JUnpy+3etN7fs+6xsdiGPrC2uYQSlexFZxQHUV4LIzhaxUB
-	mnAX0YE5SJBgjjCwkCZQNQdhsGIM0Ms=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762858631;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Tro3eQIQ3vyegRPUo7YaUGYg3RQMDIXBqzFb8qZf8+g=;
-	b=P3QkYLWDDehOJBhUl5o4hYHBQthdkh6UovCAOmKZrTJ2YKlzS4EUJpj3TfJp6hG+M2wwqZ
-	rifSI0SkbBM1J9BQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762858629; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Tro3eQIQ3vyegRPUo7YaUGYg3RQMDIXBqzFb8qZf8+g=;
-	b=AZ504nQQ/qxjD7wBdRDwoPJZk2UIlqEBuK7dzo2R4HW0ZWZ91xo0ujXogFopSyCucSFt1N
-	KE1jhJ7m7aEhPa3FflYyccMsS0xt3HZuxN5zQ+Se3l8GrB7RUsxwyZI3qqDiPquF0b2RZe
-	DRY6QjoRn7onOsXLD1a17Wp1q62Jqaw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762858629;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Tro3eQIQ3vyegRPUo7YaUGYg3RQMDIXBqzFb8qZf8+g=;
-	b=33GaccVMUKt+yQ5hHqE1wM3DyUhmohaF+FnnT0u2N/oQsU98WvkobEmrkUwEHsmiJkEPmm
-	1UkSw875MKOLqeCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BE43F14904;
-	Tue, 11 Nov 2025 10:57:09 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id NwZlLoUWE2muSAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 11 Nov 2025 10:57:09 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 72622A28C8; Tue, 11 Nov 2025 11:57:01 +0100 (CET)
-Date: Tue, 11 Nov 2025 11:57:01 +0100
-From: Jan Kara <jack@suse.cz>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Chuck Lever <chuck.lever@oracle.com>, Alexander Aring <alex.aring@gmail.com>, 
-	Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
-	Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.org>, 
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>, Shyam Prasad N <sprasad@microsoft.com>, 
-	Tom Talpey <tom@talpey.com>, Bharath SM <bharathsm@microsoft.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, David Howells <dhowells@redhat.com>, 
-	Tyler Hicks <code@tyhicks.com>, NeilBrown <neil@brown.name>, 
-	Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
-	Amir Goldstein <amir73il@gmail.com>, Namjae Jeon <linkinjeon@kernel.org>, 
-	Steve French <smfrench@gmail.com>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Carlos Maiolino <cem@kernel.org>, Kuniyuki Iwashima <kuniyu@google.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org, 
-	linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, netfs@lists.linux.dev, 
-	ecryptfs@vger.kernel.org, linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org, 
-	netdev@vger.kernel.org
-Subject: Re: [PATCH v5 02/17] filelock: rework the __break_lease API to use
- flags
-Message-ID: <n3nwojvti3upo6a75ndqci476aoo2ceoo3mz2zvuc35pxkcf4d@tqoqua3jjr64>
-References: <20251105-dir-deleg-ro-v5-0-7ebc168a88ac@kernel.org>
- <20251105-dir-deleg-ro-v5-2-7ebc168a88ac@kernel.org>
+	s=arc-20240116; t=1762858718; c=relaxed/simple;
+	bh=uUnRDveYYUG8h2W7Ve9OXGR6zDjNcTnt5B3GUcmiOJc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sXL8ryr8X/FLT3qRRkm0fvG897ir1ejbMYv5gP1syF5HkaMl20GCuCmiZVub3qQuiJLX334+JEMkhVuHDQFSm9WLgst6Q5F+Q829BDGjUy12Vd/YMuKPcg8ozr0BBErnmVQ6gJtiy5Zy2pn9QEXxhB6c60r9mWLfy+E09x6X0gM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=XJSnNMiZ; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.95.76.239] (unknown [167.220.238.207])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 788ED212AE4A;
+	Tue, 11 Nov 2025 02:58:31 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 788ED212AE4A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1762858716;
+	bh=lxMOwW9SB8M+Lbun3eP5l2Z0meMTWQqIetqoa4G9uOs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=XJSnNMiZNyStUOYaPsWDVDJ/3GJclEU3t482knUUsLgn16qDMojI1471W0DQRX+R/
+	 c2o1ZgS2IZeFb2ruHiNuWYtJWmJJAmpuB4+A56wDWsUwMeb4Bw2XWgwahoJgexa5Yy
+	 CYTP19E+FW8vc6mmwDAtspKKkaUor5gP8LA284hY=
+Message-ID: <5788c77f-fbb7-43e9-bfcb-7c0b103ca301@linux.microsoft.com>
+Date: Tue, 11 Nov 2025 16:28:27 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251105-dir-deleg-ro-v5-2-7ebc168a88ac@kernel.org>
-X-Spamd-Result: default: False [-2.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	RCPT_COUNT_TWELVE(0.00)[44];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[szeredi.hu,zeniv.linux.org.uk,kernel.org,suse.cz,oracle.com,gmail.com,samba.org,manguebit.org,microsoft.com,talpey.com,linuxfoundation.org,redhat.com,tyhicks.com,brown.name,chromium.org,google.com,davemloft.net,vger.kernel.org,lists.samba.org,lists.linux.dev];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	R_RATELIMIT(0.00)[to_ip_from(RL63fqwwx8ot6gmekemcs76f9d)];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.com:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -2.30
-X-Spam-Level: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v11 2/2] Drivers: hv: Introduce mshv_vtl driver
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Paolo Bonzini <pbonzini@redhat.com>,
+ Sean Christopherson <seanjc@google.com>,
+ "K . Y . Srinivasan" <kys@microsoft.com>,
+ Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
+ Dexuan Cui <decui@microsoft.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, "H . Peter Anvin"
+ <hpa@zytor.com>, linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+ x86@kernel.org, Michael Kelley <mhklinux@outlook.com>,
+ Mukesh Rathor <mrathor@linux.microsoft.com>,
+ Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
+ Nuno Das Neves <nunodasneves@linux.microsoft.com>,
+ Christoph Hellwig <hch@infradead.org>,
+ Saurabh Sengar <ssengar@linux.microsoft.com>,
+ ALOK TIWARI <alok.a.tiwari@oracle.com>
+References: <20251110050835.1603847-1-namjain@linux.microsoft.com>
+ <20251110050835.1603847-3-namjain@linux.microsoft.com>
+ <20251110143834.GA3245006@noisy.programming.kicks-ass.net>
+ <f32292e6-b152-4d6d-b678-fc46b8e3d1ac@linux.microsoft.com>
+ <20251111081352.GD278048@noisy.programming.kicks-ass.net>
+Content-Language: en-US
+From: Naman Jain <namjain@linux.microsoft.com>
+In-Reply-To: <20251111081352.GD278048@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed 05-11-25 11:53:48, Jeff Layton wrote:
-> Currently __break_lease takes both a type and an openmode. With the
-> addition of directory leases, that makes less sense. Declare a set of
-> LEASE_BREAK_* flags that can be used to control how lease breaks work
-> instead of requiring a type and an openmode.
+
+
+On 11/11/2025 1:43 PM, Peter Zijlstra wrote:
+> On Tue, Nov 11, 2025 at 12:25:54PM +0530, Naman Jain wrote:
 > 
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-
-Looks good. Feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
+>> This would have been the cleanest approach. We discussed this before and
+>> unfortunately it didn't work. Please find the link to this discussion:
+>>
+>> https://lore.kernel.org/all/9f8007a3-f810-4b60-8942-e721cd6a32c4@linux.microsoft.com/
+>>
+>> To summarize above discussion, I see below compilation error with this from
+>> objtool. You may have CONFIG_X86_KERNEL_IBT enabled in your workspace, which
+>> would have masked this.
+> 
+> IBT isn't the problem, the thing is running objtool on vmlinux.o vs the
+> individual translation units. vmlinux.o will have that symbol, while
+> your .S file doesn't.
+> 
+>>    AS      arch/x86/hyperv/mshv_vtl_asm.o
+>> arch/x86/hyperv/mshv_vtl_asm.o: error: objtool: static_call: can't find
+>> static_call_key symbol: __SCK____mshv_vtl_return_hypercall
+> 
+> Right, and I said you had to do that ADDRESSABLE thing. So I added a
+> DECLARE_STATIC_CALL() and a static_call() in hv.c, compiled it so .s and
+> stole the bits.
+> 
+> And then you get something like the below. See symbol 5, that's the
+> entry we need.
+> 
+> # readelf -sW defconfig-build/arch/x86/hyperv/mshv_vtl_asm.o
+> 
+> Symbol table '.symtab' contains 8 entries:
+>     Num:    Value          Size Type    Bind   Vis      Ndx Name
+>       0: 0000000000000000     0 NOTYPE  LOCAL  DEFAULT  UND
+>       1: 0000000000000000     8 OBJECT  LOCAL  DEFAULT    6 __UNIQUE_ID_addressable___SCK____mshv_vtl_return_hypercall_662.0
+>       2: 0000000000000000     0 SECTION LOCAL  DEFAULT    4 .noinstr.text
+>       3: 0000000000000000     0 NOTYPE  GLOBAL DEFAULT  UND __SCT____mshv_vtl_return_hypercall
+>       4: 0000000000000000     0 NOTYPE  GLOBAL DEFAULT  UND __x86_return_thunk
+>       5: 0000000000000000     0 NOTYPE  GLOBAL DEFAULT  UND __SCK____mshv_vtl_return_hypercall
+>       6: 0000000000000010   179 FUNC    GLOBAL DEFAULT    4 __mshv_vtl_return_call
+>       7: 0000000000000000    16 FUNC    GLOBAL DEFAULT    4 __pfx___mshv_vtl_return_call
+> 
+> 
 > ---
->  fs/locks.c               | 29 +++++++++++++++++----------
->  include/linux/filelock.h | 52 +++++++++++++++++++++++++++++++++++-------------
->  2 files changed, 56 insertions(+), 25 deletions(-)
-> 
-> diff --git a/fs/locks.c b/fs/locks.c
-> index b33c327c21dcd49341fbeac47caeb72cdf7455db..3cdd84a0fbedc9bd1b47725a9cf963342aafbce9 100644
-> --- a/fs/locks.c
-> +++ b/fs/locks.c
-> @@ -1529,24 +1529,31 @@ any_leases_conflict(struct inode *inode, struct file_lease *breaker)
->  /**
->   *	__break_lease	-	revoke all outstanding leases on file
->   *	@inode: the inode of the file to return
-> - *	@mode: O_RDONLY: break only write leases; O_WRONLY or O_RDWR:
-> - *	    break all leases
-> - *	@type: FL_LEASE: break leases and delegations; FL_DELEG: break
-> - *	    only delegations
-> + *	@flags: LEASE_BREAK_* flags
->   *
->   *	break_lease (inlined for speed) has checked there already is at least
->   *	some kind of lock (maybe a lease) on this file.  Leases are broken on
-> - *	a call to open() or truncate().  This function can sleep unless you
-> - *	specified %O_NONBLOCK to your open().
-> + *	a call to open() or truncate().  This function can block waiting for the
-> + *	lease break unless you specify LEASE_BREAK_NONBLOCK.
->   */
-> -int __break_lease(struct inode *inode, unsigned int mode, unsigned int type)
-> +int __break_lease(struct inode *inode, unsigned int flags)
->  {
-> -	int error = 0;
-> -	struct file_lock_context *ctx;
->  	struct file_lease *new_fl, *fl, *tmp;
-> +	struct file_lock_context *ctx;
->  	unsigned long break_time;
-> -	int want_write = (mode & O_ACCMODE) != O_RDONLY;
-> +	unsigned int type;
->  	LIST_HEAD(dispose);
-> +	bool want_write = !(flags & LEASE_BREAK_OPEN_RDONLY);
-> +	int error = 0;
-> +
-> +	if (flags & LEASE_BREAK_LEASE)
-> +		type = FL_LEASE;
-> +	else if (flags & LEASE_BREAK_DELEG)
-> +		type = FL_DELEG;
-> +	else if (flags & LEASE_BREAK_LAYOUT)
-> +		type = FL_LAYOUT;
-> +	else
-> +		return -EINVAL;
->  
->  	new_fl = lease_alloc(NULL, type, want_write ? F_WRLCK : F_RDLCK);
->  	if (IS_ERR(new_fl))
-> @@ -1595,7 +1602,7 @@ int __break_lease(struct inode *inode, unsigned int mode, unsigned int type)
->  	if (list_empty(&ctx->flc_lease))
->  		goto out;
->  
-> -	if (mode & O_NONBLOCK) {
-> +	if (flags & LEASE_BREAK_NONBLOCK) {
->  		trace_break_lease_noblock(inode, new_fl);
->  		error = -EWOULDBLOCK;
->  		goto out;
-> diff --git a/include/linux/filelock.h b/include/linux/filelock.h
-> index c2ce8ba05d068b451ecf8f513b7e532819a29944..47da6aa28d8dc9122618d02c6608deda0f3c4d3e 100644
-> --- a/include/linux/filelock.h
-> +++ b/include/linux/filelock.h
-> @@ -212,7 +212,14 @@ int locks_lock_inode_wait(struct inode *inode, struct file_lock *fl);
->  void locks_init_lease(struct file_lease *);
->  void locks_free_lease(struct file_lease *fl);
->  struct file_lease *locks_alloc_lease(void);
-> -int __break_lease(struct inode *inode, unsigned int flags, unsigned int type);
-> +
-> +#define LEASE_BREAK_LEASE		BIT(0)	// break leases and delegations
-> +#define LEASE_BREAK_DELEG		BIT(1)	// break delegations only
-> +#define LEASE_BREAK_LAYOUT		BIT(2)	// break layouts only
-> +#define LEASE_BREAK_NONBLOCK		BIT(3)	// non-blocking break
-> +#define LEASE_BREAK_OPEN_RDONLY		BIT(4)	// readonly open event
-> +
-> +int __break_lease(struct inode *inode, unsigned int flags);
->  void lease_get_mtime(struct inode *, struct timespec64 *time);
->  int generic_setlease(struct file *, int, struct file_lease **, void **priv);
->  int kernel_setlease(struct file *, int, struct file_lease **, void **);
-> @@ -367,7 +374,7 @@ static inline int locks_lock_inode_wait(struct inode *inode, struct file_lock *f
->  	return -ENOLCK;
->  }
->  
-> -static inline int __break_lease(struct inode *inode, unsigned int mode, unsigned int type)
-> +static inline int __break_lease(struct inode *inode, unsigned int flags)
->  {
->  	return 0;
->  }
-> @@ -428,6 +435,17 @@ static inline int locks_lock_file_wait(struct file *filp, struct file_lock *fl)
->  }
->  
->  #ifdef CONFIG_FILE_LOCKING
-> +static inline unsigned int openmode_to_lease_flags(unsigned int mode)
-> +{
-> +	unsigned int flags = 0;
-> +
-> +	if ((mode & O_ACCMODE) == O_RDONLY)
-> +		flags |= LEASE_BREAK_OPEN_RDONLY;
-> +	if (mode & O_NONBLOCK)
-> +		flags |= LEASE_BREAK_NONBLOCK;
-> +	return flags;
-> +}
-> +
->  static inline int break_lease(struct inode *inode, unsigned int mode)
->  {
->  	struct file_lock_context *flctx;
-> @@ -443,11 +461,11 @@ static inline int break_lease(struct inode *inode, unsigned int mode)
->  		return 0;
->  	smp_mb();
->  	if (!list_empty_careful(&flctx->flc_lease))
-> -		return __break_lease(inode, mode, FL_LEASE);
-> +		return __break_lease(inode, LEASE_BREAK_LEASE | openmode_to_lease_flags(mode));
->  	return 0;
->  }
->  
-> -static inline int break_deleg(struct inode *inode, unsigned int mode)
-> +static inline int break_deleg(struct inode *inode, unsigned int flags)
->  {
->  	struct file_lock_context *flctx;
->  
-> @@ -461,8 +479,10 @@ static inline int break_deleg(struct inode *inode, unsigned int mode)
->  	if (!flctx)
->  		return 0;
->  	smp_mb();
-> -	if (!list_empty_careful(&flctx->flc_lease))
-> -		return __break_lease(inode, mode, FL_DELEG);
-> +	if (!list_empty_careful(&flctx->flc_lease)) {
-> +		flags |= LEASE_BREAK_DELEG;
-> +		return __break_lease(inode, flags);
-> +	}
->  	return 0;
->  }
->  
-> @@ -470,7 +490,7 @@ static inline int try_break_deleg(struct inode *inode, struct inode **delegated_
->  {
->  	int ret;
->  
-> -	ret = break_deleg(inode, O_WRONLY|O_NONBLOCK);
-> +	ret = break_deleg(inode, LEASE_BREAK_NONBLOCK);
->  	if (ret == -EWOULDBLOCK && delegated_inode) {
->  		*delegated_inode = inode;
->  		ihold(inode);
-> @@ -482,7 +502,7 @@ static inline int break_deleg_wait(struct inode **delegated_inode)
->  {
->  	int ret;
->  
-> -	ret = break_deleg(*delegated_inode, O_WRONLY);
-> +	ret = break_deleg(*delegated_inode, 0);
->  	iput(*delegated_inode);
->  	*delegated_inode = NULL;
->  	return ret;
-> @@ -491,20 +511,24 @@ static inline int break_deleg_wait(struct inode **delegated_inode)
->  static inline int break_layout(struct inode *inode, bool wait)
->  {
->  	smp_mb();
-> -	if (inode->i_flctx && !list_empty_careful(&inode->i_flctx->flc_lease))
-> -		return __break_lease(inode,
-> -				wait ? O_WRONLY : O_WRONLY | O_NONBLOCK,
-> -				FL_LAYOUT);
-> +	if (inode->i_flctx && !list_empty_careful(&inode->i_flctx->flc_lease)) {
-> +		unsigned int flags = LEASE_BREAK_LAYOUT;
-> +
-> +		if (!wait)
-> +			flags |= LEASE_BREAK_NONBLOCK;
-> +
-> +		return __break_lease(inode, flags);
-> +	}
->  	return 0;
->  }
->  
->  #else /* !CONFIG_FILE_LOCKING */
-> -static inline int break_lease(struct inode *inode, unsigned int mode)
-> +static inline int break_lease(struct inode *inode, bool wait)
->  {
->  	return 0;
->  }
->  
-> -static inline int break_deleg(struct inode *inode, unsigned int mode)
-> +static inline int break_deleg(struct inode *inode, unsigned int flags)
->  {
->  	return 0;
->  }
-> 
-> -- 
-> 2.51.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+
+
+Thanks a lot for sharing the changes. I tested this and it works fine. I 
+can create a separate patch for the include/linux/* changes and add it 
+as the first patch in the next version of my patch series.
+
+Please let me know if this is fine and if I can add your Signed-off-by 
+in that patch.
+
+Regards,
+Naman
+
 
