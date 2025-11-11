@@ -1,142 +1,120 @@
-Return-Path: <linux-kernel+bounces-895528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBE4BC4E36D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:44:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EEE2BC4E37F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:44:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E6D144E4EFE
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:43:23 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 545CE4E8E91
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:44:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB2E6334C27;
-	Tue, 11 Nov 2025 13:43:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDD0B34251D;
+	Tue, 11 Nov 2025 13:44:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fnnas-com.20200927.dkim.feishu.cn header.i=@fnnas-com.20200927.dkim.feishu.cn header.b="xWpSYUW+"
-Received: from sg-1-14.ptr.blmpb.com (sg-1-14.ptr.blmpb.com [118.26.132.14])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dWqsE+ti"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFEC233ADBF
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 13:43:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=118.26.132.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EABA32E62D9
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 13:44:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762868597; cv=none; b=r4wyieL5CVo7/wZlaVdbjJbqBUIoc8nxlcmoJhfIOGMhKVYSuE6Y/nuLjWBEoCQBvAaJe6X6C/OFF1+E7+6xj95ayuNDu1u9B1SsIJZ9PgzQkgmT6V8vf4NjNu+y9hm7iD8PJPXOwvHTwNLDbAqqQiQr9N29QuMW52YL9C5T1tA=
+	t=1762868648; cv=none; b=q3aG8Jm+jB12JWkrfyDpBXt61doarjaG9/0gOAA1XJJXfSXyzB5V7x9zjqWYfBTqc3OKWrsNla/FH0/foVogExN5+zi7icwht/m5TYN+yl8fWtNesucSA1a8fHJmZ6v0rqFZJnTiculvoJj+l0n51Xsay2GwvuulORCHb9xcvFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762868597; c=relaxed/simple;
-	bh=0H+Gerke8ppaRRjtigYGXTcaKIwDUqySBp2HGWMLq8o=;
-	h=In-Reply-To:To:Subject:Cc:Message-Id:From:Date:Mime-Version:
-	 Content-Disposition:References:Content-Type; b=T902EjWRpE5VyTfxiD+k621r1ShXXrSmN2aCOSND5YecTPUtQ9vEkE78AbzozBA765DqlAVfZFN864wLSf+9Ha1dhjDSCxyLF40jOzLRSAkJjmG4BUZyT5LUXhDakmarbg3fJl6dyflgYu7X5AaHoRIOhwGuFWu14JiILnYJX6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fnnas.com; spf=none smtp.mailfrom=fnnas.com; dkim=pass (2048-bit key) header.d=fnnas-com.20200927.dkim.feishu.cn header.i=@fnnas-com.20200927.dkim.feishu.cn header.b=xWpSYUW+; arc=none smtp.client-ip=118.26.132.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fnnas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=fnnas.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- s=s1; d=fnnas-com.20200927.dkim.feishu.cn; t=1762868589;
-  h=from:subject:mime-version:from:date:message-id:subject:to:cc:
- reply-to:content-type:mime-version:in-reply-to:message-id;
- bh=2b0zj8nz9IcPCTEaSOwNKpCL+oqq9pnCWEKq4tv2bec=;
- b=xWpSYUW+pfKj4cO3OiSy+Zqb1p1zeYS/RcMOADsFIwftnDA6Bh7pTfEWMHHRCbh2MIobSp
- HIObglcX8SxdRCvk/Gxfsf8FC9afz42SP7FgCJPSmv1/yrWgFcxmySo5iHevP5BrywLltQ
- jMp3jSPNlxI78wkPdf1S2pULt5v+4FvVVFgasfMpkWV3t77+DFun1CO4GCDujTGsBHLHve
- +R11eIs/taS7KMCPRebecODXEY6YjJ69+rRC+g5YjvJsx2AelbGq+pgh2lr7/lewqfWzCM
- BobTFGDq5tSFKaXwfOdSHPa4tyOGlX/uUxXkAIH+rkVyiGX7TYh/bKtEX+3akw==
-In-Reply-To: <a956504a-55af-4c2c-95a0-15663435624a@embeddedor.com>
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: Re: [PATCH][next] bcache: Avoid -Wflex-array-member-not-at-end warning
-Received: from studio.coly ([120.245.64.178]) by smtp.feishu.cn with ESMTPS; Tue, 11 Nov 2025 21:43:06 +0800
-Content-Transfer-Encoding: 7bit
-Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
-	"Andrew Morton" <akpm@linux-foundation.org>, 
-	<linux-bcache@vger.kernel.org>, <linux-kernel@vger.kernel.org>, 
-	<linux-hardening@vger.kernel.org>
-Message-Id: <7zweggwc6mkksyhxzbdsphachjj5pzlaebli6xitryfl4yiqdj@eziyaibeuhza>
-X-Lms-Return-Path: <lba+269133d6b+56f6ac+vger.kernel.org+colyli@fnnas.com>
-From: "Coly Li" <colyli@fnnas.com>
-Date: Tue, 11 Nov 2025 21:43:05 +0800
+	s=arc-20240116; t=1762868648; c=relaxed/simple;
+	bh=Y45pu3szvM1LM61DHm/QMHbYr9VNOYlQ5x6hLEidAYc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=r1C2x/Tu7Pua7Jjr+AVUhHmHNRwvAgJ1A6J3nyw70E7hinNXC1452evEy3AOnDQ6GUG6POvTTBvyy1k3g849gG32gtDDeqAqcka9OfRzgviidOlERrjtp9IQX+MPZm/ZJGdW3Y38ViU/SIYoj79BAcJxLbkzA8dND8DERlLCUVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dWqsE+ti; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-341988c720aso3527910a91.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 05:44:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762868646; x=1763473446; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cfBwH3pvPFzi+4ug5es45AykFcVvN2fmPoAZ0zn4NHc=;
+        b=dWqsE+tiKqm5o096GqoxvBOTa6oLsL94tiG/6UizkeKH9fFbLkYWacsxZ7lo8s+UJ7
+         wRen5JZOhJuPJ/dGni1EC2V64H0w5MAoxk4P4uBlUgiOqOpGZNrIk9AoK8WYKLJtnCpD
+         nhHMoMGnsz3BHL7sGW3dCXWK0B3RIq4HbeGGv+3vrdcy+dYdoEcjrT0sNsL1BhNbmRnc
+         TYpUu4KifM61wX1bboPRee5/y4jXzddMNnXFcdqV/aptPHvLrB5lK+S31FuseGXz8guk
+         n9cUKbYA2V4tzr5NDk0kh7OnPyZ0I0Or4b1MxcxFpzQ/xW+4YO/C7U9F65PXjhOuDTy9
+         wvlA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762868646; x=1763473446;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cfBwH3pvPFzi+4ug5es45AykFcVvN2fmPoAZ0zn4NHc=;
+        b=n0KFrTzJ1FGjzrJXXPtxJQvFOy6TZ3LOaKAf5psKf8Ob9TyLW4lK0ODoLjW6NPIORE
+         bIKt5vIU1ZK0aVUOJMb+3yH7Z+jUflS+DXXcBf7tcr+6YoH/C4YgLYa/CuQAy0jskdER
+         jGsIKnXEKIca6LdDkx8suOZB+eorCm2P4VA/ieLlqd2lY1yhiqMIGqxslUN7KC8ggN+z
+         DmkzbwNZ7LAnlsV0DlvpnjhZrHHOQqHWmBNzMoCjFPWxs4JD+MsNh3Un0UdVOVEfRw18
+         LFDagxMdmjvPNg8z898YOpY6iShdJ4MLpK2rVsfUxiNDtdWPYeh+dWjteCp+aAIqT8Ql
+         IhjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX3VpBI31zH3+vH3N3qGtt2TEUx2YzZqsSbDb6yuyEbuK8N429nYjS9uDhAUdtknVLPCJf9mmg48+xXsJU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx++9E3j8DK0bPnQLM1ngrr2vcqhZrMQJQww3kFBeDs8pqBS8NK
+	DHmkjLKE9j8ioP//CPTYLOzJz0f3VSeiHnNC8cUUKbZDgkHBpDhlWFfD
+X-Gm-Gg: ASbGncuwBFRIixXkky0XiyzCWXKPVTRVnn7w0KTHrfFIQg0tmCyNTDa9QiNhb5neOqY
+	Wn38DKH6JLjlc1tENfYPRQfCXRhN3QrRbqsPJhn7pIFe5GnSUOdmcck4ZXOtcddnQY31xUcGvLV
+	tqQzzeuwbROA2jDG9AAx2/P7hdgAbdQpIxXR4E5uNotQY84xmhtAVnaS+m4Blhe6WvAn2y1o9nd
+	JyQCFRIDu9L14+mpJZyPW4QKFekZ5i6YyOaGlFIbtS2lqyxOo6++NSTh0crl3VWZfv4xrNH155q
+	JGtJL4H04aDMjQIJ3hcsg8GCWmSI2aFFczrbu6trqXpBmtVHY09I89MenrnvLqLFa6FSAUzY5mw
+	X2euAS4sSHx/o/r5n/qlq/GEFfRmH40b+npoLh/sRHXmm/K+5ROPm7ybaPxbBttEbGI6v6/4ije
+	LO6iQ5uCbVSVNXAHp5gubOdLzKe87blGcDt/bN4hoD9NP5bB46
+X-Google-Smtp-Source: AGHT+IG5CX9IF+l5v2AZ8QaoKkuwIwFpaZ4ilXq5bNALaqBbutW7Q6S6AYvpVVhd99d5MyMbMhdjcw==
+X-Received: by 2002:a17:90b:2fcd:b0:340:c4dc:4b8b with SMTP id 98e67ed59e1d1-3436cb284a8mr14778918a91.10.1762868646199;
+        Tue, 11 Nov 2025 05:44:06 -0800 (PST)
+Received: from localhost.localdomain (36-231-142-150.dynamic-ip.hinet.net. [36.231.142.150])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-343614818f5sm12684855a91.15.2025.11.11.05.44.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Nov 2025 05:44:05 -0800 (PST)
+From: Nick Huang <sef1548@gmail.com>
+To: nbd@nbd.name,
+	lorenzo@kernel.org,
+	ryder.lee@mediatek.com
+Cc: shayne.chen@mediatek.com,
+	sean.wang@mediatek.com,
+	linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	Nick Huang <sef1548@gmail.com>
+Subject: [PATCH] mt76: connac: remove unused reserved field in gtk rekey TLV struct
+Date: Tue, 11 Nov 2025 21:44:00 +0800
+Message-ID: <20251111134400.5258-1-sef1548@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Disposition: inline
-References: <aRHFchrO3BmVMH5c@kspp> <7g2dkwi2nzxe2luykodsknobzr5bkl23d5mbahkyo7adhg55oy@6uisoc7jzgy6> <a956504a-55af-4c2c-95a0-15663435624a@embeddedor.com>
-X-Original-From: Coly Li <colyli@fnnas.com>
-Content-Type: text/plain; charset=UTF-8
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Tue, Nov 11, 2025 at 10:28:57PM +0800, Gustavo A. R. Silva wrote:
-> 
-> 
-> On 11/11/25 22:17, Coly Li wrote:
-> > On Mon, Nov 10, 2025 at 07:58:58PM +0800, Gustavo A. R. Silva wrote:
-> > > -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
-> > > getting ready to enable it, globally.
-> > > 
-> > > Use the new TRAILING_OVERLAP() helper to fix the following warning:
-> > > 
-> > > drivers/md/bcache/bset.h:330:27: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> > > 
-> > > This helper creates a union between a flexible-array member (FAM) and a
-> > > set of MEMBERS that would otherwise follow it.
-> > > 
-> > > This overlays the trailing MEMBER struct btree_iter_set stack_data[MAX_BSETS];
-> > > onto the FAM struct btree_iter::data[], while keeping the FAM and the start
-> > > of MEMBER aligned.
-> > > 
-> > > The static_assert() ensures this alignment remains, and it's
-> > > intentionally placed inmediately after the corresponding structures --no
-> > > blank line in between.
-> > > 
-> > > Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
-> > > ---
-> > >   drivers/md/bcache/bset.h | 8 ++++++--
-> > >   1 file changed, 6 insertions(+), 2 deletions(-)
-> > > 
-> > > diff --git a/drivers/md/bcache/bset.h b/drivers/md/bcache/bset.h
-> > > index 011f6062c4c0..6ee2c6a506a2 100644
-> > > --- a/drivers/md/bcache/bset.h
-> > > +++ b/drivers/md/bcache/bset.h
-> > > @@ -327,9 +327,13 @@ struct btree_iter {
-> > >   /* Fixed-size btree_iter that can be allocated on the stack */
-> > >   struct btree_iter_stack {
-> > > -	struct btree_iter iter;
-> > > -	struct btree_iter_set stack_data[MAX_BSETS];
-> > > +	/* Must be last as it ends in a flexible-array member. */
-> > > +	TRAILING_OVERLAP(struct btree_iter, iter, data,
-> > > +		struct btree_iter_set stack_data[MAX_BSETS];
-> > > +	);
-> > >   };
-> > > +static_assert(offsetof(struct btree_iter_stack, iter.data) ==
-> > > +	      offsetof(struct btree_iter_stack, stack_data));
-> > > 
-> > 
-> > I have to say this is ugly. Not the patch, but the gcc 14 warning option
-> > of such coding style. Look at TRAILING_OVERLAP() usage here, this is not
-> > C, this is something to fix a gcc bug which cannot handle FAM properly.
-> 
-> This is not a GCC bug.
-> 
-> > 
-> > Gustavo, this complain is not to you, just I feel a bit sad how GCC makes
-> > the code comes to such an ugly way, and it makes things much complicated.
-> > For anyone doesn't have deep understanding of TRAILING_OVERLAP(), I
-> > highly suspect whether he or she can understand what happens here.
-> > 
-> > Andrew and Gustavo, is this a mandatary to fix FAM in such way? If yes
-> > I take the patch and keep my own opinion. If not, I'd like to see gcc
-> > fixes its bug, for the this code I don't see the author does things
-> > wrong.
-> 
-> This is a false positive that needs to be addressed in some way in order to
-> enable -Wflex-array-member-not-at-end in mainline.
-> 
-> Here you can take a look at the patches I (and others) have submitted to
-> modify similar code over the last year:
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/log/?qt=grep&q=-Wflex-array-member-not-at-end
-> 
+The 'reserverd' field in struct mt76_connac_gtk_rekey_tlv was unused
+and misspelled. Removing it cleans up the structure definition and
+improves code readability.
 
-I see. I take this patch, with the above complain...
+Signed-off-by: Nick Huang <sef1548@gmail.com>
+---
+ drivers/net/wireless/mediatek/mt76/mt76_connac_mcu.h | 1 -
+ 1 file changed, 1 deletion(-)
 
-Coly Li
+diff --git a/drivers/net/wireless/mediatek/mt76/mt76_connac_mcu.h b/drivers/net/wireless/mediatek/mt76/mt76_connac_mcu.h
+index 27daf4195..28cf46a5f 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt76_connac_mcu.h
++++ b/drivers/net/wireless/mediatek/mt76/mt76_connac_mcu.h
+@@ -1681,7 +1681,6 @@ struct mt76_connac_gtk_rekey_tlv {
+ 	__le32 group_cipher;
+ 	__le32 key_mgmt; /* NONE-PSK-IEEE802.1X */
+ 	__le32 mgmt_group_cipher;
+-	u8 reserverd[4];
+ } __packed;
+ 
+ #define MT76_CONNAC_WOW_MASK_MAX_LEN			16
+-- 
+2.48.1
+
 
