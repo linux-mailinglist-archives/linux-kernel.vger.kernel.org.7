@@ -1,125 +1,164 @@
-Return-Path: <linux-kernel+bounces-895894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4224FC4F354
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 18:13:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B966C4F36F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 18:14:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9864B4E8AF6
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:12:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD8E63BDA12
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:13:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5ECF393DC2;
-	Tue, 11 Nov 2025 17:12:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 171C5393DD6;
+	Tue, 11 Nov 2025 17:13:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="L3lvQu2N"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="apSJy0Yx"
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8877A32826C
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 17:12:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD328258CD7
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 17:13:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762881171; cv=none; b=F+3hGAw3QZL4TpfSo/8/+Ck4rFWg5gfud31K4GrfkibsOsW5EW4mgMbsEw/CC84Hfp2Ub4x9TK+FzZEej3Nyos9P93+527VpEt0sCH+CVsk2UywbW4LYVz/b0hUR1x8Kz1ZJAfDRWNWwCynqEDuHNqzydTdpwstNnGAidO49fFY=
+	t=1762881211; cv=none; b=S3FctIPPySdmse0L85kbKhKUfIFFPTvGYFuCfzW4OVKx+fSF+HcSTyBiQpQMNBInkKYFq2lEKI9HXz1w22PoIGDcvxCn+DZN8lVAScCKyg5FIyhNYLn/Tmk9SCUnjA5gUMzM7WLAUxu3YS2aPTeAh4ma6JSuSYwNS1sKIdWfRv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762881171; c=relaxed/simple;
-	bh=NhtdUKojR8AS0bdaC+QuH+e6fwl3THaYmzRDwTgiWLI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=h1V63XdDCtCTqlW/sv10NxVSY9IdIWEzh7f/R34XfmIen5j+7SdKOj70HmyRSx/04RpQ8MQ8Xpkz03/fFVhezLJYkr9ljLHYLLD3oywUhjDpflucl3EJYgZw9jqvSOkKG+QyanpDbygI1vaPxOlGdSR4p89mOPZUv1NjsGnwnOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=L3lvQu2N; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-47728f914a4so25995935e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 09:12:49 -0800 (PST)
+	s=arc-20240116; t=1762881211; c=relaxed/simple;
+	bh=XWfTO4/IXYtSv4EgyQT3r4JllI6XqufjvF1l29xB2vY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=j+fob7Qs4l5bKiUgxrtgIOPoBeR81dbYM+MLmuYEFBxABUCkZwQodq2dVSy7mKjuMiZzmp1euMSJtdYdH1uGlr6gDETVXJVFAw2XMnSLDkYATMow37KxqJ4VRuXijfwlcA2L/vHPVhBUHxyht0Sya6Jf5DGc8gq7oimKXfKdzzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=apSJy0Yx; arc=none smtp.client-ip=209.85.128.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-78802ac22abso14522237b3.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 09:13:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1762881168; x=1763485968; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wqZC9RRTjweuAlm02YPfwCHcdnGqj2UDL6R/JHOFHK0=;
-        b=L3lvQu2NHnEGBOQ21ulbxeu+gq4pqK86XDQu+lO5eVWv/Wf6G1i7elDlEEVeRygCQZ
-         iOAL+uU2ep+lDGzhENaFoxCWcAb+O3CMoYllKiUPNVqmA8mhFBGtrELF7eVHXzKvnHJP
-         QnQWk+mQigl9RgJepFIZQMxJK90SNrjCfVXBssQFnqDXF3eWjCKNirzgzJPI2ZrNz1bi
-         2JTQFBYYh+L9iDGygW3Sb9meag5ZYC1vXalLoWg3z0BW8CV+VBqw0jggoakyxUa4aDeV
-         De7dE9DYTNMJijydmHCOG5CfgQeMVa7eFtekBEvEpYYshq0UYU1A74VTtSwgdX6Cm1Ju
-         EuSA==
+        d=linaro.org; s=google; t=1762881208; x=1763486008; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2QmKCicVCPHIj3mdKL3div0nARhe2VGZEzDrkecA8Xk=;
+        b=apSJy0YxvtCZXQJ8pRiAClvyJv2T8b3lMDkN6i8A369nLPQGR8i55fDJuD2Ul7XmPp
+         yKPME9CrcrrhG9jrrz0HNIsIPueleT89lFRzElf1StkWcRiz3N3W6O67QRyXoxmHivK1
+         3rFqtQnN2aqEw1JMtNP9CQRIy5hz0ax7pdlkmQ6+TCZJARcPFgw7UFXMZFnV4+AZFUD3
+         g0jizlkGMQNbcgCAXbwloT5wqbS8eAkhAxS7csb7UdImTg3JrzVg5tgtWnTw6FNHzBnR
+         nHd4eVQE0DFv9W9RYycUd/0B3zMYX5OQGKYSV/uPHzc4RwDwiXh4ERUnFoE07rsg7/Hg
+         uRjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762881168; x=1763485968;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wqZC9RRTjweuAlm02YPfwCHcdnGqj2UDL6R/JHOFHK0=;
-        b=HaSX4K7FVEf9zMrj/eDKJOQeP0Bx01HfvNtlTT7LmHcGlU1XQGcRT1sEqWu+AehITY
-         znwZ8O8oPGXOXYTbt+geuqDPs8g88QEWcGYtdC+aTUWagm6Ak5WNLMliT4W0Rm5h+YkK
-         Z1xfV40tEgpH+EYKQFRkE1D+CgohwDmzVLfsIpGiCmWGIUbB8TfiOrI5uJYykaAXu0en
-         Z8T5nw2Ii9Uc0ap2QBbAQg9HhYRUwgGwQ6LX2n+YvbeSzaN7W5wSEFH6yCYGze/u4Qre
-         ZebwR3uVnqGd9iezpLn1gmGQSURdCg2cGkURjNZuxG+ZlUyauL1V8qYo8rlJsG7y0aks
-         a6HQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUNAUo+1sOK0RSni3Uq0mv19q4Z+buXh44IkjUWBRLUmI6ExwjbRzc5M5CTukPQYSnkhwM4Yz4YYX3aQOk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwuwC6SBRP79rbFuCFyCGJs/bhOpspxPaKgqd+PijvKTJ5Z/Rn0
-	1Gt5J/tmRKuDjrDZUemc4OOss2u5sHfCuDRtZEdeFQPoN1dJby7tWBg=
-X-Gm-Gg: ASbGncsVyvnPcD/wetQ9pPsFNbrdvv9oDghqUk+I+somC2yaojw3Bb8MBiGQmCHyyze
-	3TM+AiPKDWg58HuzMlAcuErWSuY+TAm2iRS36rCTu/COs+99zCOh8hQW6ARCMgPIbV6hg2Su9o3
-	EBGalvaNoLnK1VwhlUG18GTjt+2uuWZcqGj1ZBM/1zaCq0/9tJ7AJiK58ejSd7SXISS5i4GM/6P
-	rqndM6e3NsofxmpNRwQuhOQVWvC7jZ2Ynu9B80xowq4EnqTzW07y/Hiu/aAZVpmWSycCNdwYyyY
-	QSf02MsTr/K2aSr3grEmoHC9ZkYMKBdbaXVBXahfQ6F5uhNay4279aLDBMqvPnNa2RJlxI8hcz1
-	DNRsSViTMsEGnQyiEpMjZ+E+WNR9I0oW6zNltcAPLZasxLBnK5LW7gJnOWqp8sCeoay0NeoXkp6
-	iSZ8doPNZY4/cRmeT/tiB26Ax8HmcvhegdzfPyp///HYG74Ibne15TvZLX1cRSEqM=
-X-Google-Smtp-Source: AGHT+IGJMVlZIgx3+f1AZy+dlKlifd63oezYeoPNJGyyFGVGoS5RoptzE35LCIuQes2+JmdBcEqtGw==
-X-Received: by 2002:a05:600c:4594:b0:477:7b16:5f88 with SMTP id 5b1f17b1804b1-477870623f5mr1540535e9.6.1762881167658;
-        Tue, 11 Nov 2025 09:12:47 -0800 (PST)
-Received: from [192.168.1.3] (p5b2b46e7.dip0.t-ipconnect.de. [91.43.70.231])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-477815eeb55sm25584185e9.0.2025.11.11.09.12.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Nov 2025 09:12:47 -0800 (PST)
-Message-ID: <9db2ecf0-ee3e-4c10-bb4b-1cf02c9ab8e2@googlemail.com>
-Date: Tue, 11 Nov 2025 18:12:46 +0100
+        d=1e100.net; s=20230601; t=1762881208; x=1763486008;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=2QmKCicVCPHIj3mdKL3div0nARhe2VGZEzDrkecA8Xk=;
+        b=owCfcFw6jK5FVpmWUhFFAgc3EVN8Rem40tWrqQ/HQr8KVc6E2er944nPxie+ZN4RBV
+         NEbwes+X8/7BhWQ39gIjRB2OsYyqbW75/BJCjJ3qOEkTl/usL5B2Z5mmjqoh3/MlVgEO
+         HGDRK2Cb0FZy5CpdTjRvzTAihF53//MyWq0/ElLfq8TxGY7ZHUqPpdBWOhap8tpbRGgA
+         f4281Z8TreXB+8ElR7pVUXMXca3bqUZpaMKpq8iqovr2L+fY+870XITB3bbZKqEJ9YEG
+         4YFPi6YfdbV8kzWvDfGQSVX3naKK1ehrFI5YGll/CDm0P8RiQSIu+e2hteTFERpdMwuQ
+         Z37w==
+X-Gm-Message-State: AOJu0Yyub16E2H7aJgU0yXVxQfhlpCzV/hGA1lFYHArTP3tsi8D2altg
+	5Mxf8acXgnqlNjy4i1eVh3g5eY6t1+hztp2S/icjK3TuJAZBgs9v3af5IQDQE9gv4AfS4vYk30L
+	Bzn3ZjFDRcVzpD2YGXGoAOiT6QicASw7430Kv4OwiiQ==
+X-Gm-Gg: ASbGncsRXFY2eY+lKT1FMQjfr1k0g0+ASYY3ia1vGFcBkjsg7DgzH4F0ZFJiVrj/XBX
+	CjFdFgKARbFtVR8RSmCuLq4Ky/t2FGjHJ8irhR+aJNtwxeCRMkPwuU5vpmjMqsHyop5nV3b6fBh
+	yxwnBAIv0LnJS/faEH7t7qqVaK5SX0GKVStT1M+BOqkRfF4CebdgnmpTmshYp1QxpzplJXCEVPY
+	+0w9+1uG1KmZAU8z5pJxauftcqTWRMr/NBmTf8Ma2k9hSs9/uYnqn3w7fA2t1eJgAQsbDPL
+X-Google-Smtp-Source: AGHT+IHsBdT3PZHzLqRZFfNwozig+Xj22E+YyhYW2OHI0PA6fmjqwweePG9pSYLroeVpxbau2y0IZ/+9yhkJkYzwk7w=
+X-Received: by 2002:a05:690c:4c13:b0:786:5ebb:483f with SMTP id
+ 00721157ae682-787d5473c6cmr123803657b3.65.1762881208594; Tue, 11 Nov 2025
+ 09:13:28 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH 6.17 000/849] 6.17.8-rc1 review
-Content-Language: de-DE
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, rwarsow@gmx.de,
- conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
- achill@achill.org, sr@sladewatkins.com
-References: <20251111004536.460310036@linuxfoundation.org>
-From: Peter Schneider <pschneider1968@googlemail.com>
-In-Reply-To: <20251111004536.460310036@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20251107141654.226947-1-marco.crivellari@suse.com>
+In-Reply-To: <20251107141654.226947-1-marco.crivellari@suse.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Tue, 11 Nov 2025 18:12:51 +0100
+X-Gm-Features: AWmQ_bm9jflRRYlPnBrOqM5u5sgpAgSohcTdgzu--tAO09VnwRFmrIOBZngqZcg
+Message-ID: <CAPDyKFq46qON9W5akWh7CV5fiGSLHV=K9F_Uj6u_g1g08DPV=g@mail.gmail.com>
+Subject: Re: [PATCH] mmc: core: add WQ_PERCPU to alloc_workqueue users
+To: Marco Crivellari <marco.crivellari@suse.com>, Adrian Hunter <adrian.hunter@intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, 
+	Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, 
+	Frederic Weisbecker <frederic@kernel.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
+	Michal Hocko <mhocko@suse.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Am 11.11.2025 um 01:32 schrieb Greg Kroah-Hartman:
-> This is the start of the stable review cycle for the 6.17.8 release.
-> There are 849 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
++ Adrian
 
-Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg oddities or regressions found.
+On Fri, 7 Nov 2025 at 15:17, Marco Crivellari <marco.crivellari@suse.com> w=
+rote:
+>
+> Currently if a user enqueues a work item using schedule_delayed_work() th=
+e
+> used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
+> WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
+> schedule_work() that is using system_wq and queue_work(), that makes use
+> again of WORK_CPU_UNBOUND.
+> This lack of consistency cannot be addressed without refactoring the API.
+>
+> alloc_workqueue() treats all queues as per-CPU by default, while unbound
+> workqueues must opt-in via WQ_UNBOUND.
+>
+> This default is suboptimal: most workloads benefit from unbound queues,
+> allowing the scheduler to place worker threads where they=E2=80=99re need=
+ed and
+> reducing noise when CPUs are isolated.
+>
+> This continues the effort to refactor workqueue APIs, which began with
+> the introduction of new workqueues and a new alloc_workqueue flag in:
+>
+> commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
+> commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
+>
+> This change adds a new WQ_PERCPU flag to explicitly request
+> alloc_workqueue() to be per-cpu when WQ_UNBOUND has not been specified.
+>
+> With the introduction of the WQ_PERCPU flag (equivalent to !WQ_UNBOUND),
+> any alloc_workqueue() caller that doesn=E2=80=99t explicitly specify WQ_U=
+NBOUND
+> must now use WQ_PERCPU.
+>
+> Once migration is complete, WQ_UNBOUND can be removed and unbound will
+> become the implicit default.
+>
+> Suggested-by: Tejun Heo <tj@kernel.org>
+> Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
+> ---
+>  drivers/mmc/core/block.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/mmc/core/block.c b/drivers/mmc/core/block.c
+> index c0ffe0817fd4..6a651ddccf28 100644
+> --- a/drivers/mmc/core/block.c
+> +++ b/drivers/mmc/core/block.c
+> @@ -3275,7 +3275,8 @@ static int mmc_blk_probe(struct mmc_card *card)
+>         mmc_fixup_device(card, mmc_blk_fixups);
+>
+>         card->complete_wq =3D alloc_workqueue("mmc_complete",
+> -                                       WQ_MEM_RECLAIM | WQ_HIGHPRI, 0);
+> +                                       WQ_MEM_RECLAIM | WQ_HIGHPRI | WQ_=
+PERCPU,
+> +                                       0);
 
-Tested-by: Peter Schneider <pschneider1968@googlemail.com>
+I guess we prefer to keep the existing behaviour to avoid breaking
+anything, before continuing with the refactoring. Although I think it
+should be fine to use WQ_UNBOUND here.
+
+Looping in Adrian to get his opinion around this.
 
 
-Beste Grüße,
-Peter Schneider
+>         if (!card->complete_wq) {
+>                 pr_err("Failed to create mmc completion workqueue");
+>                 return -ENOMEM;
+> --
+> 2.51.1
+>
 
--- 
-Climb the mountain not to plant your flag, but to embrace the challenge,
-enjoy the air and behold the view. Climb it so you can see the world,
-not so the world can see you.                    -- David McCullough Jr.
-
-OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
-Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
+Kind regards
+Uffe
 
