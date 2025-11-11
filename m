@@ -1,130 +1,247 @@
-Return-Path: <linux-kernel+bounces-895042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B478C4CC76
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:54:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EBB5C4CC8E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:54:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C27E24F8225
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:47:30 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 462E84F8733
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:47:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07F3F2F361F;
-	Tue, 11 Nov 2025 09:46:06 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C699A2F49FC;
+	Tue, 11 Nov 2025 09:46:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="DhTVPyUX"
+Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013008.outbound.protection.outlook.com [40.93.201.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E75972F1FDE
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 09:46:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762854365; cv=none; b=ET0tP+T5oAUucewb6zlk5J49PTM8Ud4K03BSVERYYbrPBNRflLM5Ebzo3OzNUeaxeKRN9cpQ5rmgeI19XzJaR9+LRLWbxX6z09PqHzu/ITtiTsw6Rwj/rNEpWR+ykfPIQJ8tSUQ2fRyUgKynjKm+JHXrSInzyxPZROaihfKMZbE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762854365; c=relaxed/simple;
-	bh=MGqkyJPAh4zW65+tZYFbDdGQAx3QF87Y101n3ZZIGWc=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=AmoAl4MaHqjEkmkvE0XYl2fnNTwzojtzZ62pJtBNIcqcj49sjekPkmKA0HJPpBUJUD2U0DIromHASj1qooZ1Ahuol27/mD+UGMmzo3qsGJ+anqce+vp7Hjw3pyeHm/O8snWObUMmqbASrQYNqXZEd9E+lDI9oKYf8H+xELerzUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-4337e3aca0cso28930445ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 01:46:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762854363; x=1763459163;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pxx43rg5vTwPZ2wNbygdxPupwm5jqNPgGIjEmJm74aE=;
-        b=uY30USxxiY7XXo4QlJXrgS78qcgOb0t20bC3bB7GVpe2oSp3BPbtTUwsbKWLPoHjba
-         TFmc03lcI/IXW35OaNaZqaUzYJ0ufOgUMRw2wJY5EkbyVOy+C9qhGUp3eJngNzeLonvR
-         kBp87eye3By5LHyiGlCCmIpouYk/w/yiPuF7wXbiMRJNArExA7RUODPjDKiSEDkXH+2J
-         DBDEEwz2NY9ET/aJXESZyZNmL/GMjpfbI53h21Wyxv9uCoY+LL3pYjpLgIT1Vztl6BMk
-         5USIMTSkG+cJVH3e9QOffeDqG7/TkUZJglGEixyVJ92jJrB1JEb1Qg+p3FD38xAC2Hfu
-         Gq8w==
-X-Forwarded-Encrypted: i=1; AJvYcCWi1rf10yOmy0/zUrx+pH4DlVlUhqlX4ZoarEMmHg+1KdvH9lQsuS/zDho+3W00zX8+oJPT6NSRDKgxjCw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0lLbBXKQbigys1tdY1w4ykmbMqtP9jKkmGW1yoDG+90eyGe44
-	AqfQTlnsdaU0V8FS7Yy8haH0SQkMU2Luq9XrIE9Xl8dQikMOfxLfAiGuSuOpdrJrmIQIIeTCykv
-	cwkLQFKEP51GHXNCi7GiE/uwexgcsXHbi0P81iHDeIIjoM3lOX62b1OjeJ90=
-X-Google-Smtp-Source: AGHT+IFqLPDPKBiPRu3uu7IeP812DZQb4h/dmZnbCd8SnvgWxvVU1yv/z8fN5lQPvlaeArHHV0ZoY+wPaoICTLGVJWFDgk3ltdWI
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 873DA21C9E5;
+	Tue, 11 Nov 2025 09:46:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.8
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762854400; cv=fail; b=dJR8FMJCQgk4JG+MTMIp4/+W0kWz9tqHM0en+PXeIaOmEKZZEtrWFm4IL5T7BHI4Cq/+n6SSgZlS8qT3qpz7TGPjWka4fpBGvp0tTSH0McxXnml1EOTEAKusEZexo3/hI1u6keDYVILbsifm4aLetG20UE6EZ4ZG7tGSneFsvGg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762854400; c=relaxed/simple;
+	bh=ys5SCvJW1ZVbW8ny+rFbVgqxWYeWOdLBa3UD87BCdwg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=pJtN8+7OWDNbHddqVw9F9dMlHoPbh+fxRFmFlhQ19hpLtnoQ8Z9e8+sjLUR+OXoCHEu5LcSHorKaBZr8c9KO23Y6sYWeBQGm31dvamEZrw+NDjH97Q7RpZrn2UuCBk5VUTjl+4hRfq8a8jcXSIyarM+WYfq4wAYCK5DHIv6EgwQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=DhTVPyUX; arc=fail smtp.client-ip=40.93.201.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=XOTZwkHVAP5OVHExcqaHcMaAG+zCrBz05Zcf2V1p+jg0G5/TWJ/xPzmAPZHVD+Bn3oLQ0hHWMR+trIGjdMASdNQjoQ+CBIPaiQ/p3GzWShUkQQy2t3ttYfKe7FDGehBtwl1lGIoQF+Hb2AMxxBPW7ASDML8ZWoP994ybDDMQ+lb+LtTTpp9F5l2bmjrgUureWyia0M3sFiI8erINFjRsHt3WGjyPFeQRgAohzuvcEP1mfECp/Wj71uSJlNENmyhB96gDKcLD42YdByloRSwc5QFEqrRw55QSidLeihLM84RhR2Ftx3G4v75RwDXbliy+55nDRGJtID0GonjR30Kpsw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=QXez4h61wsgwlcPmWXSRgrtHt/eIxpgTlgFDly5oIOI=;
+ b=Lt5COOS85iN/lzlEjTGLB4fDBL/FsTTtPlzLUnB5adNoLsedoJaqW7fwU9xARJBT8vzTLz+40t9WAcpFfSLEHKL6K5GVgQ9bfEhI4AIslTmwbyrQCCP6SQOozrQfjQTWr+ziK0xMt5p/yww0Q+GSwAM6NkYQ9HxExwhun7A8vz5vU2xI9z5qdMXXdoTuQ87ES43N8VUeh8qnROC8AhWeDRy7gExlpWl34wEXgUQt7nDenBWr1PjTF9AJLLMweOSQDUqDYRmn8GQBaosoodoSzlRK6I5qNCVEtQJdgB3wO9ZS3ErOuTQbJIeSlw2wA79t1N/x8A7DvVRdlH1xzWoCqQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 198.47.23.195) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=ti.com;
+ dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QXez4h61wsgwlcPmWXSRgrtHt/eIxpgTlgFDly5oIOI=;
+ b=DhTVPyUXi7sbbm53JgJFt6ZgSzQp5UEJkKYxNH7Qj2/J3EBMPdUftlHzIW9g/Pg7iGIdg0dXRNs0NmQZkAamXYC5HALFVXCdmg++GVtqP/v0w0ZG7Qgamvho3Bls97c42ZvOycGWFLs7w4CSURtvxFzs5dytAA1rxNSsOr5q8b0=
+Received: from SA9PR13CA0103.namprd13.prod.outlook.com (2603:10b6:806:24::18)
+ by IA1PR10MB7487.namprd10.prod.outlook.com (2603:10b6:208:450::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Tue, 11 Nov
+ 2025 09:46:36 +0000
+Received: from SN1PEPF000252A4.namprd05.prod.outlook.com
+ (2603:10b6:806:24:cafe::c3) by SA9PR13CA0103.outlook.office365.com
+ (2603:10b6:806:24::18) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9320.15 via Frontend Transport; Tue,
+ 11 Nov 2025 09:46:27 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.23.195)
+ smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
+ action=none header.from=ti.com;
+Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
+ 198.47.23.195 as permitted sender) receiver=protection.outlook.com;
+ client-ip=198.47.23.195; helo=lewvzet201.ext.ti.com; pr=C
+Received: from lewvzet201.ext.ti.com (198.47.23.195) by
+ SN1PEPF000252A4.mail.protection.outlook.com (10.167.242.11) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9320.13 via Frontend Transport; Tue, 11 Nov 2025 09:46:35 +0000
+Received: from DLEE200.ent.ti.com (157.170.170.75) by lewvzet201.ext.ti.com
+ (10.4.14.104) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 11 Nov
+ 2025 03:46:32 -0600
+Received: from DLEE203.ent.ti.com (157.170.170.78) by DLEE200.ent.ti.com
+ (157.170.170.75) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 11 Nov
+ 2025 03:46:32 -0600
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE203.ent.ti.com
+ (157.170.170.78) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Tue, 11 Nov 2025 03:46:32 -0600
+Received: from [172.24.233.149] (ws.dhcp.ti.com [172.24.233.149])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5AB9kQdl714888;
+	Tue, 11 Nov 2025 03:46:27 -0600
+Message-ID: <7b4351bb-92ca-4cb7-b0d6-cc69feda7baa@ti.com>
+Date: Tue, 11 Nov 2025 15:16:26 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:349d:b0:433:4ac7:13bb with SMTP id
- e9e14a558f8ab-43367dd8a03mr188557675ab.11.1762854363073; Tue, 11 Nov 2025
- 01:46:03 -0800 (PST)
-Date: Tue, 11 Nov 2025 01:46:03 -0800
-In-Reply-To: <20251111-lausbub-wieweit-76ec521875b2@brauner>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <691305db.a70a0220.22f260.0130.GAE@google.com>
-Subject: Re: [syzbot] [fs?] WARNING in nsproxy_ns_active_put
-From: syzbot <syzbot+0b2e79f91ff6579bfa5b@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, bpf@vger.kernel.org, brauner@kernel.org, 
-	bsegall@google.com, david@redhat.com, dietmar.eggemann@arm.com, jack@suse.cz, 
-	jsavitz@redhat.com, juri.lelli@redhat.com, kartikey406@gmail.com, 
-	kees@kernel.org, liam.howlett@oracle.com, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-security-module@vger.kernel.org, lorenzo.stoakes@oracle.com, 
-	mgorman@suse.de, mhocko@suse.com, mingo@redhat.com, mjguzik@gmail.com, 
-	oleg@redhat.com, paul@paul-moore.com, peterz@infradead.org, 
-	rostedt@goodmis.org, rppt@kernel.org, sergeh@kernel.org, surenb@google.com, 
-	syzkaller-bugs@googlegroups.com, vbabka@suse.cz, vincent.guittot@linaro.org, 
-	viro@zeniv.linux.org.uk, vschneid@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 10/16] media: cadence: csi2rx: add multistream support
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, <jai.luthra@linux.dev>,
+	<laurent.pinchart@ideasonboard.com>, <mripard@kernel.org>
+CC: <y-abhilashchandra@ti.com>, <devarsht@ti.com>, <s-jain1@ti.com>,
+	<vigneshr@ti.com>, <mchehab@kernel.org>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <p.zabel@pengutronix.de>, <conor+dt@kernel.org>,
+	<sakari.ailus@linux.intel.com>, <hverkuil-cisco@xs4all.nl>,
+	<jai.luthra@ideasonboard.com>, <changhuang.liang@starfivetech.com>,
+	<jack.zhu@starfivetech.com>, <sjoerd@collabora.com>,
+	<hverkuil+cisco@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>
+References: <20250911102832.1583440-1-r-donadkar@ti.com>
+ <20250911102832.1583440-11-r-donadkar@ti.com>
+ <364c3b35-81a0-4e93-ad3b-a0fff3a29365@ideasonboard.com>
+Content-Language: en-US
+From: Rishikesh Donadkar <r-donadkar@ti.com>
+In-Reply-To: <364c3b35-81a0-4e93-ad3b-a0fff3a29365@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN1PEPF000252A4:EE_|IA1PR10MB7487:EE_
+X-MS-Office365-Filtering-Correlation-Id: 67c6e41e-2efd-4bf8-d617-08de21073447
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|1800799024|7416014|376014|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?SlV5MkRQbEhuL3I0STByRlFVZ092Zkl0bmRTQkI4ekJsdS9BbUlkY2NDNnZK?=
+ =?utf-8?B?Qi9PSkNHZVBOUmM1Wm13cnArVm5wd2liTi8wQjl3V04vMEtHSElXMm4xMTU4?=
+ =?utf-8?B?Z3ZHRHJOVVN1Z2xZeTkrcFNJSnRSNzFOVi9CYXk5eG9oZHhVR0ZScjcvSFVW?=
+ =?utf-8?B?UC9LUmgvK1BzRTdMVGRnSUV5QTYrdVNMVjJNUXcxZko3Yk9sVWRIa1ZIQllO?=
+ =?utf-8?B?K04zRlZBcEQwcHg5S2dtUTJGV2duVWNpMXpyMlhtTG5xcG1aemdmV0N1NUl6?=
+ =?utf-8?B?Mk5nVjJSNVVKV0czcTI3c0MrZm0yNmdqejA1U0dkVFhRS0lkZkQyd25PTVJh?=
+ =?utf-8?B?WDZrbzM4ZjhjRHUwbGJyT0xmdE1rbllvQjhSbEJWWTE4bzVmcmFKMWk2alRN?=
+ =?utf-8?B?Sy9iaHpveEZjZDFGK2gwR2R3NllFY0dITzJudGJ2dDFpa0xhd0ZTdmtlSmZQ?=
+ =?utf-8?B?RXJxeVE2SW85Njg4R0hYSkhyOGFtZ3YzMlRqQUVhbHhXcWlQdmkyS2JQRE85?=
+ =?utf-8?B?UnFZOGNJK2ltNXp6L0I1VGI2bDZPUGtLQitsUlRnYXExNDVxTnBCVWI4Z1hr?=
+ =?utf-8?B?QmkrcDBjajBOMXBTRFdiNHE4d2Z4Q0RUb1ZhTEZTODJxNXNZWkcrb2xQYk9C?=
+ =?utf-8?B?Ni9HcS9VaDQxVFBBYSs2bXY5Q2NlTVhTekY5NzNrbVZYTGZRZlNDV0VtWDdZ?=
+ =?utf-8?B?RkgrdjBxbFQvK3gwS3ppajhxRm1udS9NNzM5ZGhaSVJUd1NSdHBLU08rdDVQ?=
+ =?utf-8?B?T1lXcHBHak9lVHlOVEg0ZHRDMXh4WVZwdkNVb1Q1YVBxYVNRZTNjb0oxSml2?=
+ =?utf-8?B?bDVTUVZ4MFFrQXE5eGdxZFF2NFdwL1VXWk5ZTFdZUW91VHc4V0JNRUxtQ1Rh?=
+ =?utf-8?B?UHFpOTBiaFJqRFNwaEl6OXA5RWJubjRrYUhlRlVteWc2YU1aMXlEcUJiUlhm?=
+ =?utf-8?B?R214V0xGOXhpRjBhbHM0bUczZjZPbTlBY0NBa3Zqbm9LbEp3d3pSa0RFSXp2?=
+ =?utf-8?B?YmlQbExFaGo2dXNYMkhvZFlrZG8rQy9QcVhhQ0VBWlpnRURWTDFFSitnUW5r?=
+ =?utf-8?B?Z3lzK3dEZ2ZSOWMvTXgzQnU3d0ZzWlpicjVhaDdwU203cDl5czFZY2lOK0tS?=
+ =?utf-8?B?YkNFTW9lSEN3ZCs1ZzdjSkJKYk9uTGVIWm9MQ0xTNFVGdmMyZGUvNy80UThz?=
+ =?utf-8?B?dlJLMitkeVV5MHJ6cHF1d3lSa29LdlVmc3E0NURhOW5FU2F1Z1RPeE1hRWF3?=
+ =?utf-8?B?WVo5eVpheGtBNUZ1MEFldjZWS1BtYnZVa05XOXNZR0RRVVE1cElmaUpGL2NP?=
+ =?utf-8?B?bFJlYkt3UVlSZkRXMXRYdnhMbFRYWm1HakRjempnaXdsNTlLRXRxdlJWem1x?=
+ =?utf-8?B?UnE0RVJEQUUyR1N3M3VnckI3VGdaZEtVNmJ6YkVBVlF5Nm1KOTdHckk5aXNF?=
+ =?utf-8?B?cGNIcFp4aGlVVWhTT3UyNE9DbkNHZ0RHS3V2dWZUeXh1ZUdIV3haNHpVVE1u?=
+ =?utf-8?B?bCtBamIvZFBrY2l3YzlLUEZLKzlqTXZsalVuU01XdVNCRDJUWXNYYzV1MXhz?=
+ =?utf-8?B?UlRlOTlwOUFWb1MwNTJDeldSRFFNWlVtRXBCWnR4KzNidnUzU3lzaFlic3Z4?=
+ =?utf-8?B?dGIxOStLL0g3ZVRGQ1BnNkwwam9IaFpTSzR5THlPOUxKOENzSlVrSVFRcUhL?=
+ =?utf-8?B?WGRSMEFxQmpGNXNHb3p1K2hTcmw2cFZSVVhPYnRzNDBnbW1WbE1YNGlwRnNz?=
+ =?utf-8?B?bkNPKytyNFA5MDMrUVMwSHhjcXQ3YndiWEF6dFU0RGhta05vQXBTSVJGZjMr?=
+ =?utf-8?B?dktrMkthNitkNDM1NWY3VE14NzlLY3FlaXhFbVpSZ2YxLzVVWmpZNWdOS2Nm?=
+ =?utf-8?B?cE1JR3hhOGs0WlNSZTBlYjluYTFrVGhzQTl5WTIzUzJlR0o2ODZvWTk4Ny9k?=
+ =?utf-8?B?MktLVFlYSWhJMUN6Yk1XUFRGNW9rTDRBc0VrenRJS1RDZkgwT3BVcnhBZGxY?=
+ =?utf-8?B?ZUc4RXFjeG9kZTlmT0NyZ0NMMm1kVXdKSkx4OFlVSmxTMksvcG4yS0FyVEYx?=
+ =?utf-8?B?S0RRam5OU2xLcFc3OG1zQ3lpd25nUVMrVERmQnozdHNFMDhJZlhkTGR0WDRx?=
+ =?utf-8?Q?5Tb8=3D?=
+X-Forefront-Antispam-Report:
+	CIP:198.47.23.195;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:lewvzet201.ext.ti.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(7416014)(376014)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: ti.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Nov 2025 09:46:35.8343
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 67c6e41e-2efd-4bf8-d617-08de21073447
+X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.23.195];Helo=[lewvzet201.ext.ti.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SN1PEPF000252A4.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR10MB7487
 
-Hello,
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-WARNING in __ns_ref_active_put
+On 25/09/25 18:14, Tomi Valkeinen wrote:
+> Hi,
+>
+> On 11/09/2025 13:28, Rishikesh Donadkar wrote:
+>> From: Jai Luthra <j-luthra@ti.com>
+>>
+>> Cadence CSI-2 bridge IP supports capturing multiple virtual "streams"
+>> of data over the same physical interface using MIPI Virtual Channels.
+>>
+>> While the hardware IP supports usecases where streams coming in the sink
+>> pad can be broadcasted to multiple source pads, the driver will need
+>> significant re-architecture to make that possible. The two users of this
+>> IP in mainline linux are TI Shim and StarFive JH7110 CAMSS, and both
+>> have only integrated the first source pad i.e stream0 of this IP. So for
+>> now keep it simple and only allow 1-to-1 mapping of streams from sink to
+>> source, without any broadcasting.
+>>
+>> The enable_streams() API in v4l2 supports passing a bitmask to enable
+>> each pad/stream combination individually on any media subdev. Use this
+>> API instead of  s_stream() API.
+>>
+>> Implement the enable_stream and disable_stream hooks in place of the
+>> stream-unaware s_stream hook.
+>>
+>> Implement a fallback s_stream hook that internally calls enable_stream
+>> on each source pad, for consumer drivers that don't use multi-stream
+>> APIs to still work. The helper function v4l2_subdev_s_stream_helper()
+>> form the v4l2 framework is not used here as it is meant only for the
+>> subedvs that have a single source pad and this hardware IP supports
+>> having multiple source pads.
+> <snip>
+>
+>> +static int csi2rx_enable_streams(struct v4l2_subdev *subdev,
+>> +				 struct v4l2_subdev_state *state, u32 pad,
+>> +				 u64 streams_mask)
+>> +{
+>> +	struct csi2rx_priv *csi2rx = v4l2_subdev_to_csi2rx(subdev);
+>> +	u64 sink_streams;
+>> +	int ret;
+>> +
+>> +	sink_streams = v4l2_subdev_state_xlate_streams(state, pad,
+>> +						       CSI2RX_PAD_SINK,
+>> +						       &streams_mask);
+>> +
+>> +	guard(mutex)(&csi2rx->lock);
+> This looks a bit odd too. With enable/disable_streams, the state is
+> already locked. What is the mutex protecting?
+>
+> j721e-csi2rx also has mutexes, and it's very unclear what they protect.
+> This should be described in the code.
+>
+> I think in csi2rx the whole mutex can be just dropped.
+>
+> j721e-csi2rx is a bit more complex, but there also I would consider if
+> and when the state lock protects the relevant parts already, and when
+> another lock is needed, what is the sequence to lock/unlock (e.g. always
+> csi->mutex first, then csi->subdev state lock), and make sure the code
+> follows that.
 
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 6489 at kernel/nscommon.c:171 __ns_ref_active_put+0x3d7/0x450 kernel/nscommon.c:171
-Modules linked in:
-CPU: 0 UID: 0 PID: 6489 Comm: syz.0.18 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-RIP: 0010:__ns_ref_active_put+0x3d7/0x450 kernel/nscommon.c:171
-Code: 4d 8b 3e e9 1b fd ff ff e8 b6 61 32 00 90 0f 0b 90 e9 29 fd ff ff e8 a8 61 32 00 90 0f 0b 90 e9 59 fd ff ff e8 9a 61 32 00 90 <0f> 0b 90 e9 72 ff ff ff e8 8c 61 32 00 90 0f 0b 90 e9 64 ff ff ff
-RSP: 0018:ffffc90003457d50 EFLAGS: 00010293
-RAX: ffffffff818e5b86 RBX: 00000000ffffffff RCX: ffff88802cc69e40
-RDX: 0000000000000000 RSI: 00000000ffffffff RDI: 0000000000000000
-RBP: ffffc90003457e00 R08: ffff8880320be42b R09: 1ffff11006417c85
-R10: dffffc0000000000 R11: ffffed1006417c86 R12: dffffc0000000000
-R13: 1ffff11006417c84 R14: ffff8880320be420 R15: ffff8880320be428
-FS:  00007fe11c3746c0(0000) GS:ffff888125cf3000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b2d863fff CR3: 000000007798c000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- nsproxy_ns_active_put+0x4a/0x200 fs/nsfs.c:701
- free_nsproxy+0x21/0x140 kernel/nsproxy.c:190
- put_nsset kernel/nsproxy.c:341 [inline]
- __do_sys_setns kernel/nsproxy.c:594 [inline]
- __se_sys_setns+0x1459/0x1c60 kernel/nsproxy.c:559
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fe11b590ef7
-Code: 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 b8 34 01 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fe11c373fd8 EFLAGS: 00000246 ORIG_RAX: 0000000000000134
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007fe11b590ef7
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00000000000000c9
-RBP: 00007fe11b611f91 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007fe11b7e6038 R14: 00007fe11b7e5fa0 R15: 00007ffcd9b83d18
- </TASK>
+
+Thanks for pointing out, Since enable/disable_streams() are protected by 
+the v4l2-core by taking the state lock, all the mutex protection inside 
+these functions in the j721e-csi2rx driver can also be removed.
+
+I will make sure that this order (csi->mutex followed by the 
+state->lock) is followed through out this driver.
 
 
-Tested on:
+Regards,
 
-commit:         18b5c400 Merge patch series "ns: header cleanups and i..
-git tree:       https://github.com/brauner/linux.git namespace-6.19
-console output: https://syzkaller.appspot.com/x/log.txt?x=12c08658580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=59952e73920025e4
-dashboard link: https://syzkaller.appspot.com/bug?extid=0b2e79f91ff6579bfa5b
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+Rishikesh
 
-Note: no patches were applied.
+>
+>   Tomi
+>
 
