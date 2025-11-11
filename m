@@ -1,296 +1,117 @@
-Return-Path: <linux-kernel+bounces-895167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 354FFC4D25D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:47:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85314C4D1C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:40:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DECB14FB3A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:39:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFC82189DE72
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:40:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C90534F465;
-	Tue, 11 Nov 2025 10:39:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7DA534EF1C;
+	Tue, 11 Nov 2025 10:39:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="IUsEyqJB";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="gt/3GH7D"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rX39NeN2"
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 856CB34EF18
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 10:38:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA0042EC55A
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 10:39:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762857540; cv=none; b=MFm+OYxyU6sFEISSgg3rtZRsUJzL1Mh7MQCgb10jWgIjdGfgSaivFlwOCcYM1A0vOrgUpbUVEfqYwdMqMHYz+hNQTP7gH4t1uRTv6al8ZppqblCkVQy9RbnMr3/ZtPq7HxYG5G5xSkYwXzx/7iBXJrrHt/aHwDisA1QI+3CpVZk=
+	t=1762857591; cv=none; b=bdSv02hVeGiOVVkFBGoVbdZIsTDMUB4ShT1JuCySELamu2UeRgvPOlFabX7LTDCy57mUL8Iwx6MZkE99hjB/aFrBGBaOgDb2qRpg9M1zeyZB1ThUNgQmZMo/WgJT4+BAvv8Ex8NbTBbacsqXKgiSfOrqYxyC8tk6lgUESvn8iDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762857540; c=relaxed/simple;
-	bh=A+acC3J962ujp7zmdIRESvKcu/fiPA9e1teWF7HgyAQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FScr/H5w8jXTMzSOi5FhTt7ZB3WWRr4e9tycHXfk9jM9uE26yp5LnYuzvt28qd9bOAxsjYNTFtB8VjjjgB83UN6nfy0gO5qML9N6DNdpnSYKPVfsTWbeYugheY96OAt3wF/z7q2y3VVkJJJpPvkpU326KyY67pWVp0JyDKV+rP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=IUsEyqJB; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=gt/3GH7D; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AB8v98B2118717
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 10:38:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=F0+rza3fzimpXJGQPolccb5l
-	BPiW/LZvLZ5Q3IvvlME=; b=IUsEyqJBiWb3apyJhcCNHd38hPZH9q7qA8sIwrd0
-	PSF9CYc7cFr3IjoRt7E2FWPsX4AT8H1TdidiTk3axYAuvXPB/mS4T8RkiyYc632H
-	cd9VjYrn8EFngiToGqRSiabI0HsjlGdata6YRC+OfHzp0iTh84Gy798pzTz/6NVY
-	+5ivDD8nTli+JSwvnZ58XRT8VZoHthoe+5JHPBKLLvbaSIvy/jd5f6cOHJz5G+Xd
-	mupEY4qDiJLDxd6rWUDmQxJmdZrrpcpVa4Mt0ZJQeWNCCJRZrMhwhSzCR59yM3lZ
-	cAszG0eOD1zUkTWTMhMqHdIRD4cOTCy9dKZx6T5oR6yQog==
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ac2350a4x-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 10:38:56 +0000 (GMT)
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4ed782d4c7dso94650951cf.2
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 02:38:56 -0800 (PST)
+	s=arc-20240116; t=1762857591; c=relaxed/simple;
+	bh=uQN8C80XsI1DNcTbyZlxKBoQDlYbpinBS57HXqp89to=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nsMB9V90KHkDp8ie8Ljl63AUBI36KF3SlSAKMrVY3LFvGmhMipiKl8fjW1OYfAEiA74FdcrSPLpnNKl9q2vQpaf5snm1iaGCO2oFxy/so0+nfHyztPtRjU1UL6osAShA0AZbO8OipLeZeL/Tzv1ZNrHeLlVQ9/vsvqiz6ndbyTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rX39NeN2; arc=none smtp.client-ip=209.85.128.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-786d1658793so36159167b3.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 02:39:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1762857536; x=1763462336; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=F0+rza3fzimpXJGQPolccb5lBPiW/LZvLZ5Q3IvvlME=;
-        b=gt/3GH7DFyv2rLyCFIlAaro4ZipkjieDq5CjJiZEt8FRNTrNxnc7QB3f9uMdkXvP7O
-         jxc6CWWCBKcvjxHbPPezc5koFWErRs3U8+3Qk3eMbvskO4QjhvfRFJVgjlm/fANOsiSH
-         h3fBYtGuT/e7iPaWu5p8u2aoZyNAe/79tz5+CUxUTy8ZSPmExjWTg3vGv5S0wPOvxrMj
-         xaBkwGRUb9wuIsVATsMdgUaTQWkC50IrS+faT0zkeISETkSnD3HdGfXW+zW1vqLg+6uN
-         J4TXF3ESv1Dt//58H2A2N9jRUfUuZLHZ6NtlmGexWqxCghHx7lqsZh7wbGabw3XYmAUq
-         IeFA==
+        d=linaro.org; s=google; t=1762857588; x=1763462388; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uQN8C80XsI1DNcTbyZlxKBoQDlYbpinBS57HXqp89to=;
+        b=rX39NeN2PL/TgYFEBoIA2sPMSLu4q60y1Sa+C9R/8ZPxW6qJe0Dzx95viWXQz7cGgr
+         PH0grH2HrymuRTq8svDjQdovq93ZJ4mLlaKgcSTll7KfAhiiROr2GfO1+b7/MxlRgnT/
+         5YYNdrwHyqf9vhIur4rcrsQGCfCUZtDfSce/YCJs1a00tA3kOprneBPS8RHUzjtOc9JR
+         cbyc3eGbrRXkS8Pm716k0+wpv7u5F7YYgh0Wt+QbcWACSlaIIGEVZEEkS3sG8fQ8I96V
+         awB/NynSphoHhND6wLUZqoKVhqOJexO9Wq0NCuwitk89qlEDHzJLxIpdBsDcwTaHYejd
+         Y+4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762857536; x=1763462336;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=F0+rza3fzimpXJGQPolccb5lBPiW/LZvLZ5Q3IvvlME=;
-        b=UVpDbUHarwfMTzLdIOOCYHHU1EbNO3Q2xnXcy8b/96Th4VoyQF2pvIR5OwxFGBHyVf
-         CLY0DBDd9fWuP0/JxLwB/uAD31LR/PaCFuv30ZwQ8wMHivN8wkFjC0zpHcA+dFPPL9Zy
-         /+amcaivC7FO4cQpm9elK3ZhEWtclwxTmxAGvLP/9zfdVu/T/I+BcfPgKqe5biv3cvsG
-         yYLE480Rb4DoCbHw4x54tjCrRD2Sg3vFn27sz0TcHJVBgU0uEXSa8Yc5MaQL1to41cMp
-         y7/qzgIfN2thVGudWUtOQevmSMAYpmBpckknLHkhL4XrG03OkcBzcjVr3bpkd+9/9eua
-         c89g==
-X-Forwarded-Encrypted: i=1; AJvYcCVdTRv07DCgqLMiddhqYK4Zproc2rKV9i3OQALMsJ6s1FLLH+SkJuagdz5lp1ZLOY1l1LvG7Ze7de99ggU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYXrBN19IdRhswidjo8p1lWlKNexvzPKkOCp5FPsJKHOfmMxuJ
-	DTe3+jf8jRakUzXDQQk2AI/LaZXyT2WK3eE4MflVofjvQzBH/Y6N0UJCTbJOx1DkIKlzUwS+RtK
-	hepAjwT4o/o3B63NBl5AcB1jIJ9P1PyjqnVT7YgIJwxbPX37FIQjtkIY/Oa0hdxtflrg=
-X-Gm-Gg: ASbGnctVV3TgSlWrTOfzC8sZTM/bcL1mX3zK4jko0/iqsIJ+2kN4geH7jypqQXdzeWO
-	Vmj16E5zZolz5NG3v4V5+idWSfGmhlfHVSj89NfSl5hGGRgWLWPVU7fjKLcE4P9uHh0KQ2LBD+m
-	Av+iXZArX6rL5oQvveWGmPysDmEt69RfatKi/j/f5pLYp2N6xoVRny2KuSOfzUm+ESZoMrAnhMr
-	k5g29X88k3QNPbr2VvLJ5M03zutON5r6ATM7X9RNNUID0yRITzzsasCymsAUGChYzsfSKCFjUiF
-	NOp2dEz4nP05u8Ee7B3HNPGIyBYCoc4668He7Wvgamfd3wejsHUAXcyMU/BgcnjH0ByyNZOp+SF
-	7Bw5eJMxlmlBLd/zFhfoMV/AkEJcWp1mRe/Tn+rToJBOofQUpj1jne9kdV5hzh5vKFBPXn/F0Qp
-	VCjM3Hbw4Mkjxz
-X-Received: by 2002:ac8:5993:0:b0:4ed:7c9f:f2ef with SMTP id d75a77b69052e-4eda50259e3mr134139861cf.73.1762857535684;
-        Tue, 11 Nov 2025 02:38:55 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IF92xBApQrRVXtA9xV5EKzBgmcrn6Mw/FV9vZg9iCa0pvrqRSHArrA0GbGMmcTUfzEYQ0ESvQ==
-X-Received: by 2002:ac8:5993:0:b0:4ed:7c9f:f2ef with SMTP id d75a77b69052e-4eda50259e3mr134139661cf.73.1762857535171;
-        Tue, 11 Nov 2025 02:38:55 -0800 (PST)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5944a59e54asm4787836e87.105.2025.11.11.02.38.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Nov 2025 02:38:54 -0800 (PST)
-Date: Tue, 11 Nov 2025 12:38:52 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Vikash Garodia <vikash.garodia@oss.qualcomm.com>
-Cc: Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Bryan O'Donoghue <bod@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Vishnu Reddy <busanna.reddy@oss.qualcomm.com>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Vishnu Reddy <quic_bvisredd@quicinc.com>
-Subject: Re: [PATCH v3 0/6] media: iris: prepare support for video codecs on
- Qcom vpu4 platform
-Message-ID: <3vbq76dpjnadfrnufojq4zqiv7p5p555rhxfx6yoncc354p3lk@ohcs3ldhuoao>
-References: <20251107-knp_video-v3-0-50c86cbb0eb8@oss.qualcomm.com>
+        d=1e100.net; s=20230601; t=1762857588; x=1763462388;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=uQN8C80XsI1DNcTbyZlxKBoQDlYbpinBS57HXqp89to=;
+        b=rDMeKLTULhk/ob8FgHx+c76B/+IaV1ZTFntFsUecW/DrXts/n8Cfrj44LEbaocOF7k
+         YLF7SkVeRFLEOlTMBq53TGHcOPwuXYjjh94hqksOqArnnelYjYbykMb+WGb6CDj2URvR
+         EMQyjJPo/yDl6tQRx7f5S957gascb0GYou491CAvtGY3Nb5LDrqy5bop5MgvpIqGOFus
+         SpUYV/QFJedBgPZDDNEg/MUJAc5rsM0bKXMap/wT1fXmvicXeTlj+/RpS66VyMGRxXwD
+         q2XLTa9FQzEt3UCUR408v6kfbSD0CeGYaLEitKbpB8J/qa/YohpBd2Gi1JZIv0yfZwpk
+         4zDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV0N55ovA84sw7ahwFwgOJ+METQL4WlaVJpfVDl5E8weNPdCvYDtqk+Ij6dXCtgdvnFmBbHu7EhQep1UKw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUcVxRsUb4H+STxuVfWFT1/ctbO1vJ6sFdu2DDEAG/l+/+0jN5
+	T4aOAPdNRW3OpzIH9I5UmEwdL7zcIU+MD9l+thq7BYwZr3JkFLcQdxeONdik5Jm2a/o653ik0Ot
+	6S6uK1aftk3GQjbEGUTnh7cnRtOsm5xur1QFVw5egWg==
+X-Gm-Gg: ASbGnct6fYPwETVUlprLowHXOyG+m7mO8CODIJzJAgxacteMNlgP8XyRYWoyolZQ4z8
+	aKDzmpxAWEHJGn/S8fj5FW3I1El02LgV+Rz3u7ee7AdWLf0rHqbRnd60a/nd4MLtDcAqFFAHVr+
+	Qg6uZE1c/CfWmOaIrecgOY+u65TUMKmxUl6J+9ahY1sGViU9Lc650NYwfL4ovZfmsWDNsYqOoZZ
+	jhNPHyJCC+4L4cqcAUebrxV3Mx0pPgXSsmgqCYDXmVZ9aZvkQVuhP3XRiO7knGolVqvOfb2roX6
+	h4M+Fg==
+X-Google-Smtp-Source: AGHT+IGdKr3biW2aMZhYy7DvL1RF+7Uz2kpvCtGXfJ2OgvOVwI6zfxqRAu2DSnJi2xHuqa0EQrFVKg9nUpOsh5XjgKI=
+X-Received: by 2002:a05:690c:55c2:10b0:787:deea:1ba8 with SMTP id
+ 00721157ae682-787deea2334mr150764527b3.50.1762857587612; Tue, 11 Nov 2025
+ 02:39:47 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251107-knp_video-v3-0-50c86cbb0eb8@oss.qualcomm.com>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTExMDA4MyBTYWx0ZWRfX/jPIWI3jwMcX
- cH5fVro/Hb2WD63EGsrL8Z1LSzIbNZ+4bm0sA8IGE+jdHC8fwYELX2z/ubk93iWg0yYR6obFZ2u
- O1LhBkkQfxkUPx0RtxBhXEUyW0Dpd8COXzXt2k4/clZjqOeMg5I6JVMbzKPLmMZE1N59jHdecN1
- EQsi7rNLRektS+7HyaKDi3Gqp1I4dI/4eA8P9a27CxC7fZ65wnWtizyTwRyw5y69o8LgoIsi/Vw
- s0s+jyMWc3gdt3UaH/4IM23mHGLQHae2GSsCfzzirNWvDN7Qh8gITw9OTpoZpmwhghnVUasTVVF
- SgKUD2OOgOQimVgpbCCuVxUwz/CUDlkIVpCGTVoDuFKTesMgaeeov/QWUr8LOcGpM397YERWKZv
- ++sPGC/ffh/deErqz0EH3Dpt2OUW9Q==
-X-Proofpoint-ORIG-GUID: 5HCtJPNKIT7vZsdIeUY5Mi2eKSZjgQhI
-X-Proofpoint-GUID: 5HCtJPNKIT7vZsdIeUY5Mi2eKSZjgQhI
-X-Authority-Analysis: v=2.4 cv=O8I0fR9W c=1 sm=1 tr=0 ts=69131240 cx=c_pps
- a=WeENfcodrlLV9YRTxbY/uA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=FnzHA13sX9O2i_5sQrcA:9 a=CjuIK1q_8ugA:10
- a=kacYvNCVWA4VmyqE58fU:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-11_01,2025-11-11_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 clxscore=1015 bulkscore=0 priorityscore=1501
- lowpriorityscore=0 malwarescore=0 spamscore=0 adultscore=0 phishscore=0
- impostorscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
- definitions=main-2511110083
+References: <20251029-gpio-shared-v3-0-71c568acf47c@linaro.org> <20251029-gpio-shared-v3-2-71c568acf47c@linaro.org>
+In-Reply-To: <20251029-gpio-shared-v3-2-71c568acf47c@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 11 Nov 2025 11:39:30 +0100
+X-Gm-Features: AWmQ_bk198TBC3PdqVd9Oowwqb_fFWVruyMz7Lubn4P_lvSkb0elFliKm8IlGq8
+Message-ID: <CACRpkdYRzuumaCv=a5UL_G8StQj10kBiRfkfrpWCk05zVfGYsA@mail.gmail.com>
+Subject: Re: [PATCH v3 02/10] gpiolib: define GPIOD_FLAG_SHARED
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Kees Cook <kees@kernel.org>, Mika Westerberg <westeri@kernel.org>, 
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Saravana Kannan <saravanak@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Andy Shevchenko <andy@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Srinivas Kandagatla <srini@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	Alexey Klimov <alexey.klimov@linaro.org>, linux-hardening@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-sound@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 07, 2025 at 03:19:35PM +0530, Vikash Garodia wrote:
-> Upcoming Qualcomm kaanapali platform have a newer generation of video 
-> IP, iris4 or vpu4. The hardware have evolved mostly w.r.t higher number 
-> of power domains as well as multiple clock sources. It has support for 
-> new codec(apv), when compared to prior generation.
-> 
-> From previous version of this series, the kaanapali binding patch(#1/8) 
-> and the compatible patch(#8/8) have been dropped. The discussion for 
-> this is captured here [1].
-> The series introducs buffer calculation and power sequence for vpu4. It 
-> prepares for vpu4 when kaanapali is enabled after the binding discussion 
-> is concluded.
-> 
-> 
-> gstreamer test:
-> Decoders validated with below commands, codec specific:
+On Wed, Oct 29, 2025 at 12:21=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl=
+> wrote:
 
-Why not just run the fluster testsuite?
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>
+> Define a new GPIO descriptor flag for marking pins that are shared by
+> multiple consumer. This flag will be used in several places so we need
+> to do it in advance and separately from other changes.
+>
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-> gst-launch-1.0 multifilesrc location=<input_file.h264> stop-index=0 ! 
-> parsebin ! v4l2h264dec ! video/x-raw ! videoconvert dither=none ! 
-> video/x-raw,format=I420 ! filesink location=<output_file.yuv>
-> 
-> gst-launch-1.0 multifilesrc location=<input_file.hevc> stop-index=0 ! 
-> parsebin ! v4l2h265dec ! video/x-raw ! videoconvert dither=none ! 
-> video/x-raw,format=I420 ! filesink location=<output_file.yuv>
-> 
-> gst-launch-1.0 filesrc location=<input_file.webm> stop-index=0 ! 
-> parsebin ! vp9dec ! video/x-raw ! videoconvert dither=none ! 
-> video/x-raw,format=I420 ! filesink location=<output_file.yuv>
-> 
-> Encoders validated with below commands:
-> gst-launch-1.0 -v filesrc location=<input_file.yuv> ! rawvideoparse 
-> format=nv12 width=<width> height=<height> framerate=30/1 ! v4l2h264enc 
-> capture-io-mode=4 output-io-mode=4 ! filesink sync=true 
-> location=<output_file.h264>
-> 
-> gst-launch-1.0 -v filesrc location=<input_file.yuv> ! rawvideoparse 
-> format=nv12 width=<width> height=<height> framerate=30/1 ! v4l2h265enc 
-> capture-io-mode=4 output-io-mode=4 ! filesink sync=true 
-> location=<output_file.hevc>
-> 
-> ffmpeg test:
-> Decoders validated with below commands:
-> ffmpeg -vcodec h264_v4l2m2m -i <input_file.h264> -pix_fmt nv12 -vsync 0 
-> output_file.yuv -y
-> ffmpeg -vcodec hevc_v4l2m2m -i <input_file.hevc> -pix_fmt nv12 -vsync 0 
-> output_file.yuv -y
-> ffmpeg -vcodec vp9_v4l2m2m -i <input_file.webm> -pix_fmt nv12 -vsync 0 
-> output_file.yuv -y
-> 
-> v4l2-ctl test
-> Decoders validated with below commands:
-> v4l2-ctl --verbose --set-fmt-video-out=pixelformat=H264 
-> --set-fmt-video=pixelformat=NV12 --stream-mmap --stream-out-mmap 
-> --stream-from=<input_file.h264> --stream-to=<output_file.yuv>
-> 
-> v4l2-ctl --verbose --set-fmt-video-out=pixelformat=HEVC 
-> --set-fmt-video=pixelformat=NV12 --stream-mmap --stream-out-mmap 
-> --stream-from=input_file.bit --stream-to=<output_file.yuv>
-> 
-> v4l2-ctl --verbose --set-fmt-video-out=pixelformat=VP90 
-> --set-fmt-video=pixelformat=NV12 --stream-mmap --stream-out-mmap 
-> --stream-from-hdr=input_file.hdr  --stream-mmap 
-> --stream-to=<output_file.yuv>
-> 
-> Encoders validated with below commands:
-> v4l2-ctl --verbose 
-> --set-fmt-video-out=width=<width>,height=<height>,pixelformat=NV12 
-> --set-selection-output 
-> target=crop,top=0,left=0,width=<width>,height=<height> 
-> --set-fmt-video=pixelformat=H264 --stream-mmap --stream-out-mmap 
-> --stream-from=<input_file.yuv> --stream-to=<output_file.h264> -d 
-> /dev/video1
-> v4l2-ctl --verbose 
-> --set-fmt-video-out=width=<width>,height=<height>,pixelformat=NV12 
-> --set-selection-output 
-> target=crop,top=0,left=0,width=<width>,height=<height> 
-> --set-fmt-video=pixelformat=HEVC --stream-mmap --stream-out-mmap 
-> --stream-from=<input_file.yuv> --stream-to=<output_file.hevc> -d 
-> /dev/video1
-> 
-> Note: there is a crash observed while performing below sequence
-> rmmod qcom-iris
-> modprobe qcom-iris
-> The crash is not seen if ".skip_retention_level = true" is added to 
-> mmcx and mmcx_ao power domains in rpmhpd.c. This is under debug with 
-> rpmh module owner to conclude if it to be fixed differently.
-> 
-> Signed-off-by: Vikash Garodia <vikash.garodia@oss.qualcomm.com>
-> ---
-> Changes in v3:
-> - Drop the binding and compat patch.
-> - Address comments related to variable handlings (Bryan)
-> - Pick the updates from Dmitry related to sort register #defines and 
->   connecting register and their corresponding bits operation (Dmitry)
-> - Link to v2: https://lore.kernel.org/r/20251017-knp_video-v2-0-f568ce1a4be3@oss.qualcomm.com
-> 
-> Changes in v2:
-> - Dropped dependencies from binding (Dmitry).
-> - Dropped optional items from binding (Dmitry, Krzysztof, Konrad).
-> - Updated binding in sorted order and proper alignment (Krzysztof).
-> - Fixed order of newly introduced kaanapali struct (Dmitry, Bryan)
-> - Improved readability of buffer size calculation (Bryan)
-> - Optimized fuse register read (Konrad).
-> - Fixed order of vpu register defines (Dmitry).
-> - Addressed few other log and commit related comments (Bryan)
-> - Link to v1: https://lore.kernel.org/r/20250925-knp_video-v1-0-e323c0b3c0cd@oss.qualcomm.com
-> 
-> ---
-> Vikash Garodia (6):
->       media: iris: Add support for multiple clock sources
->       media: iris: Add support for multiple TZ content protection(CP) configs
->       media: iris: Introduce buffer size calculations for vpu4
->       media: iris: Move vpu register defines to common header file
->       media: iris: Move vpu35 specific api to common to use for vpu4
->       media: iris: Introduce vpu ops for vpu4 with necessary hooks
-> 
->  drivers/media/platform/qcom/iris/Makefile          |   1 +
->  drivers/media/platform/qcom/iris/iris_firmware.c   |  23 +-
->  .../platform/qcom/iris/iris_platform_common.h      |  11 +-
->  .../media/platform/qcom/iris/iris_platform_gen2.c  |  33 +-
->  .../platform/qcom/iris/iris_platform_sm8250.c      |  21 +-
->  drivers/media/platform/qcom/iris/iris_power.c      |   2 +-
->  drivers/media/platform/qcom/iris/iris_probe.c      |  20 +-
->  drivers/media/platform/qcom/iris/iris_resources.c  |  16 +-
->  drivers/media/platform/qcom/iris/iris_resources.h  |   1 +
->  drivers/media/platform/qcom/iris/iris_vpu3x.c      | 199 +-----------
->  drivers/media/platform/qcom/iris/iris_vpu4x.c      | 358 +++++++++++++++++++++
->  drivers/media/platform/qcom/iris/iris_vpu_buffer.c | 342 ++++++++++++++++++++
->  drivers/media/platform/qcom/iris/iris_vpu_buffer.h |  24 ++
->  drivers/media/platform/qcom/iris/iris_vpu_common.c | 188 ++++++++---
->  drivers/media/platform/qcom/iris/iris_vpu_common.h |   5 +
->  .../platform/qcom/iris/iris_vpu_register_defines.h |  61 ++++
->  16 files changed, 1026 insertions(+), 279 deletions(-)
-> ---
-> base-commit: f215d17ddbe8502804ae65d8f855100daf347061
-> change-id: 20250924-knp_video-aaf4c40be747
-> 
-> Best regards,
-> -- 
-> Vikash Garodia <vikash.garodia@oss.qualcomm.com>
-> 
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
--- 
-With best wishes
-Dmitry
+Yours,
+Linus Walleij
 
