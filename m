@@ -1,148 +1,149 @@
-Return-Path: <linux-kernel+bounces-894808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2EF1C4C22B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 08:38:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C270C4C22E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 08:39:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2ACD64EAF8D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 07:38:36 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3AC024F2582
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 07:38:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C63DE32C95D;
-	Tue, 11 Nov 2025 07:38:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82C2732BF4B;
+	Tue, 11 Nov 2025 07:38:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="CttToAai"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QWPfgmYq"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84BA731BC80;
-	Tue, 11 Nov 2025 07:38:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 741DA29DB6A
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 07:38:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762846710; cv=none; b=KeCsVvcZIZRmZUlnPrQ1YvFgUhMAH+NvzF34CwVXpqR5IGn6tHOYLnPKAgxuiD8yq8TCJL08A1dvyI1hAY4KftCFFehyYk7gBo1aGqLwYN8voG7+7fRknusn1xo1Jouy1cbevloHneLTZmxLqTrVQV3XWTI6ArFEDN8A1MekZ84=
+	t=1762846720; cv=none; b=oyG0eWNBOqdQBJ7trvmX8r0LV6IgwY8BoYtaAKpXRTsN4NnEykZYEOGreF5rf8TQcV+SMTh85VVAW+5mnUe3CFfLogMIb8M4KnALeQO62PWReCcpGwLx9ycUPbvKolK4m4MD7HuDvbaMv6/h8N7n8ugklJQI8dFSUX62pecS0Dg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762846710; c=relaxed/simple;
-	bh=VKTPDuSDo0PtjYw5zIV5J3qmh6jlvOMhRaVGjBC5vPo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=k/B9CdFqg7tEoF45dC3sR33MTbIyIq4/npDCdw0Giuj8bNzfbrVBda5D8n6QKpfTTE0LJH9+/GNxfkEh3fQ3TVIh7sIhg95TKHHh/GdmSjn0ZpmaJheOBDmfJj7eBZ+VHodTZYPTiTlqKcvMKJwe6fNXwrFtcV+eqfokX1WOPrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=CttToAai; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=cPwUdaWPpIPK5nkTowJRXHUPIqrByqhdlgfyB0JObBc=;
-	t=1762846708; x=1764056308; b=CttToAaiAuGjBLGVvhUyE/f6ldG+UYHylFLNHFpqdZ+ZNWP
-	Gc8sffNaCo0IaZVQP1YK939ayyWY+V06Us6quNb/lExFjdHwooFh+OEcqI0cEpv3vdwA2nbAL+wcx
-	GEzGQj65DC+Kij2up1R3SbjbOPL17hosLSmaVy03dp1XNnZVc30/YTA3JwDjWSU8tfaNvNm/YwuRb
-	s9zT5sKZ8ehrS31JS7nvQAC/2pmc4GLIe16u9q2ZiR65vGJ4sZOVQP9GNqCGQsZu1zTCo9401BXxQ
-	qAH+5M6Z9fFUGGEm+pJRIWhIL3QwPDaA5GH+4lXGvnIRc41riY3kx4si8pyHL6RA==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98.2)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1vIixG-0000000EzUb-3xIg;
-	Tue, 11 Nov 2025 08:38:19 +0100
-Message-ID: <01be9a3b952fbcfe26d4a4d487a51d26ba07b13f.camel@sipsolutions.net>
-Subject: Re: [PATCH v2] wifi: mwl8k: inject DSSS Parameter Set element into
- beacons if missing
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Pawel Dembicki <paweldembicki@gmail.com>, linux-wireless@vger.kernel.org
-Cc: Antony Kolitsos <zeusomighty@hotmail.com>, Thomas Fourier	
- <fourier.thomas@gmail.com>, Roopni Devanathan <quic_rdevanat@quicinc.com>, 
-	linux-kernel@vger.kernel.org
-Date: Tue, 11 Nov 2025 08:38:18 +0100
-In-Reply-To: <20251111073134.2774120-2-paweldembicki@gmail.com>
-References: <20251111073134.2774120-2-paweldembicki@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1762846720; c=relaxed/simple;
+	bh=HvfH3RKp5senMnbC4tfcVxY2crG3xn8LwjbA/IOPgyc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=o8gpWLTk8PMu4GJ4mp/5wRlVitR41WkFvoEHEOZPxHhHx6ia7eLla2hMjULrskttURIZJBX8vdCqBuiCGtuVW3rpyMVkEQbTmcPOp81dH8952RRqzAQWtw8JqRyPFb+L1Ep56s5uNjTosHdv598HQ39krJgYAb6L8SOy+BcGIRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QWPfgmYq; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2964d616df7so50251825ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 23:38:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762846719; x=1763451519; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=C9ndsoTPDxhr1ZIZLS05/CvMhHBG4GAQRgkdZOfuzvA=;
+        b=QWPfgmYqYWeChdpjI+TGv3LQcrjkc+X7iKsWK7ooFsxGmCMCS+H2Uavo6Wn7iwyzBh
+         Yfiojyn5vbDVBfSby7jaRuD1GdkDeNW9naZFmbeY9gYqvCgmVeMyrE9xVdp/14cUSCiP
+         ci6FLcD+8sOjHAcEEhZmMebkbs4BF3jQLFQpOcmLQTbMaq7pxENxNRC/28nGeIWmPS5I
+         ytSmLMmb9O/X8A07Pbh39ex1sGFqre40b9EuwmRzKRx7z98ojNf5AVcYf+stltT9HUaC
+         diPX1Pdt7c4vR0s4hkMAxfMBIBNu32C/pPGHq6BK/VInZfpG6ItfhNFm08nobB//AXtp
+         fLAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762846719; x=1763451519;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=C9ndsoTPDxhr1ZIZLS05/CvMhHBG4GAQRgkdZOfuzvA=;
+        b=kDv9ewWHiQTS4Uc3WMvhN07bAkj7FqB7LhstZ897PO6AUs4pfg5oyMbgPStADD2wi8
+         QzTQ5V4hM+Gc8FQLPkHqKFfIXXzHoN08SsrA626uGjJqJmpafL/UtBgOUiJ5oL8bccfD
+         1lt3H0FhBUJpxG++zVUZXcy3Sn+3LKy3hftARnbuiP5sGxHslIYzSspCwOs6kO4/aceK
+         FVO3QZCeAjqLwTGl7ksaWm10pHc8F3my7Lq0O+q6O3r5J6jMal7alYz8BYCh+4D6Vlha
+         kxf5f+Nn+GUcd+OpiF8/fvoFTSyHPaovqLqI4fWvd85lZTJk/UDX5HPi02/GWE0Uwrt3
+         2pyg==
+X-Forwarded-Encrypted: i=1; AJvYcCXGpCEaXXsPZYdVnXugOdPnqNAXUB9lPZRSuNYZp1jpSRQ+TTjZrRYQ8jHUqbInz2NhpLCivWXsgwZw+Gg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzH/6gJ6WMkh/G5mBB11EzWQsXEfQXamLXdjd/31KG8yHEjStD3
+	Dnnz67X4pF2q0G/++mbF1vLD1EueigDxpLH5L57BOlQ3MZADXFdRqrrYq8vqkA==
+X-Gm-Gg: ASbGncsuiH8wvz4W49XCAa8aqUphv8It4deZtKDTgoCYj2gqpfO7QI/hHHrADsFR3rz
+	mPVjbtjigXbmNOg1/DrYIna5cU6CxTiTHqp8et25VnbCxucyTZhS55OA2vpCPiF7/evsvYemuIv
+	rqPy+hn6oxKEfL0JsIbFZsgk2sQu3l+PyZmc8ZqMC6y+MqsJGPtXgSSaZnK1RsS9k/BjHuXaXja
+	/+QaMU/XmKZdqgw4NFtkNc48Ug/kfh+TnVmbYbkhmTE7AVhSAzLWh+dG2CIjEelvvgQwsmnN+rK
+	3LHuHInRjytbBwj88i+KlY9pbwrFFE9zzboLiEcK7N5jmdBeUy4vrumXXzqFYEyByJq1w8E6Rz2
+	HSzAdbSR7uC7FzasrTE72pLx2FbRK8UcREoFUDpucaKPXcIUVGORjJ9xhLBI2YL5P5NsyOLvKGv
+	4Q82N4JY/OmN4E9j9MEQxiMxY=
+X-Google-Smtp-Source: AGHT+IHHGeaf2R5g2Vtakbv4+m13R1FK4/U22rAUMop0DbrxDVDpJHVAj4e9itb8L1DMyZ3Jt8m84A==
+X-Received: by 2002:a17:903:2311:b0:295:9e4e:4092 with SMTP id d9443c01a7336-297e571bcfdmr147154685ad.56.1762846718641;
+        Mon, 10 Nov 2025 23:38:38 -0800 (PST)
+Received: from deepanshu-kernel-hacker.. ([2405:201:682f:389d:a4ed:fc5:c0b5:fbfb])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29651c94abasm173051835ad.82.2025.11.10.23.38.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Nov 2025 23:38:38 -0800 (PST)
+From: Deepanshu Kartikey <kartikey406@gmail.com>
+To: mark@fasheh.com,
+	jlbec@evilplan.org,
+	joseph.qi@linux.alibaba.com
+Cc: ocfs2-devel@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Deepanshu Kartikey <kartikey406@gmail.com>,
+	syzbot+ab0ad25088673470d2d9@syzkaller.appspotmail.com
+Subject: [PATCH] ocfs2: validate xattr entry count in ocfs2_xattr_list_entries
+Date: Tue, 11 Nov 2025 13:08:31 +0530
+Message-ID: <20251111073831.2027072-1-kartikey406@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+Content-Transfer-Encoding: 8bit
 
->=20
-> ---
-> V2:
->   - added "wifi:" prefix to commit title
->   - renamed "DS Params" -> "DSSS Parameter Set"
->   - Insert WLAN_EID_DS_PARAMS after WLAN_EID_SSID, WLAN_EID_SUPP_RATES
->     and WLAN_EID_EXT_SUPP_RATES
+Add validation of xattr entry count before accessing entries to prevent
+out-of-bounds array access and use-after-free bugs. A corrupted
+filesystem with an invalid xh_count value can cause the loop to access
+memory beyond the allocated block, potentially reaching freed memory
+pages.
 
-FWIW, per spec it should be between them:
+The validation calculates the maximum number of entries that can fit in
+the available space and rejects counts that exceed this limit. This
+prevents the subsequent loop from accessing invalid memory addresses.
 
-- SSID
-- Supported Rates
-- DSSS Parameter Set
-- TIM
-- Country
-- ...
-- Extended Supported Rates
+Without this check, the code directly uses xh_count from disk in array
+indexing operations like &header->xh_entries[i], which can point outside
+the block when xh_count is corrupted, triggering KASAN use-after-free
+detection.
 
-so actually Extended Supported Rates is also in the _tail_ part of the
-cfg80211 API.
+Reported-by: syzbot+ab0ad25088673470d2d9@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=ab0ad25088673470d2d9
+Tested-by: syzbot+ab0ad25088673470d2d9@syzkaller.appspotmail.com
+Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
+---
+ fs/ocfs2/xattr.c | 17 ++++++++++++++++-
+ 1 file changed, 16 insertions(+), 1 deletion(-)
 
+diff --git a/fs/ocfs2/xattr.c b/fs/ocfs2/xattr.c
+index d70a20d29e3e..2caf63c6206e 100644
+--- a/fs/ocfs2/xattr.c
++++ b/fs/ocfs2/xattr.c
+@@ -928,8 +928,23 @@ static int ocfs2_xattr_list_entries(struct inode *inode,
+ 	size_t result = 0;
+ 	int i, type, ret;
+ 	const char *name;
++	u16 count;
++	size_t max_entries;
++	struct super_block *sb = inode->i_sb;
++
++	count = le16_to_cpu(header->xh_count);
++	max_entries = (sb->s_blocksize - sizeof(struct ocfs2_xattr_header)) /
++		       sizeof(struct ocfs2_xattr_entry);
+ 
+-	for (i = 0 ; i < le16_to_cpu(header->xh_count); i++) {
++	if (count > max_entries) {
++		ocfs2_error(sb,
++			    "xattr entry count %u exceeds maximum %zu in inode %llu\n",
++			    count, max_entries,
++			    (unsigned long long)OCFS2_I(inode)->ip_blkno);
++		return -EUCLEAN;
++	}
++
++	for (i = 0; i < count; i++) {
+ 		struct ocfs2_xattr_entry *entry = &header->xh_entries[i];
+ 		type = ocfs2_xattr_get_type(entry);
+ 		name = (const char *)header +
+-- 
+2.43.0
 
-> ---
->  drivers/net/wireless/marvell/mwl8k.c | 71 ++++++++++++++++++++++++++--
->  1 file changed, 66 insertions(+), 5 deletions(-)
->=20
-> diff --git a/drivers/net/wireless/marvell/mwl8k.c b/drivers/net/wireless/=
-marvell/mwl8k.c
-> index 891e125ad30b..914a566d700a 100644
-> --- a/drivers/net/wireless/marvell/mwl8k.c
-> +++ b/drivers/net/wireless/marvell/mwl8k.c
-> @@ -2966,6 +2966,52 @@ mwl8k_cmd_rf_antenna(struct ieee80211_hw *hw, int =
-antenna, int mask)
->  /*
->   * CMD_SET_BEACON.
->   */
-> +
-> +static bool mwl8k_beacon_has_ds_params(const u8 *buf, int len)
-> +{
-> +	const struct ieee80211_mgmt *mgmt =3D (const void *)buf;
-> +	int ies_len;
-> +
-> +	if (len <=3D offsetof(struct ieee80211_mgmt, u.beacon.variable))
-> +		return false;
-> +
-> +	ies_len =3D len - offsetof(struct ieee80211_mgmt, u.beacon.variable);
-> +
-> +	return cfg80211_find_ie(WLAN_EID_DS_PARAMS, mgmt->u.beacon.variable,
-> +				ies_len) !=3D NULL;
-> +}
-> +
-> +static void mwl8k_beacon_copy_inject_ds_params(struct ieee80211_hw *hw,
-> +					       u8 *buf_dst, const u8 *buf_src,
-> +					       int src_len)
-> +{
-> +	const struct ieee80211_mgmt *mgmt =3D (const void *)buf_src;
-> +	static const u8 before_ds_params[] =3D {
-> +			WLAN_EID_SSID,
-> +			WLAN_EID_SUPP_RATES,
-> +			WLAN_EID_EXT_SUPP_RATES,
-> +	};
-
-nit: seems on tab would be nicer?
-
-> -	cmd =3D kzalloc(sizeof(*cmd) + len, GFP_KERNEL);
-> +	if (!ds_params_present)
-> +		/*
-> +		 * mwl8k firmware requires a DS Params IE with the current
-> +		 * channel in AP beacons. If mac80211/hostapd does not
-> +		 * include it, inject one here. IE ID + length + channel
-> +		 * number =3D 3 bytes.
-> +		 */
-> +		final_len +=3D 3;
-> +
-
-another nit: I'd probably add braces
-
-johannes
 
