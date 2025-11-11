@@ -1,270 +1,580 @@
-Return-Path: <linux-kernel+bounces-895398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B69CC4DB81
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:28:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 75346C4DB8A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:29:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F076E4F966A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:23:19 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C03964FC768
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:23:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 460AF2EBB87;
-	Tue, 11 Nov 2025 12:23:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 525A9223DD6;
+	Tue, 11 Nov 2025 12:23:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="FOgq18Vl"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kdhIPBVK"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8EB71E1A05;
-	Tue, 11 Nov 2025 12:23:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 047452737E7;
+	Tue, 11 Nov 2025 12:23:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762863793; cv=none; b=QAYqtgQKn3jSzzsjEHXC3oxNmjCLMui4+wZGFoayXNRCmXJQJqui4Tx1vlouM5/kuqIuqCsm7O+4oV4RYBZEI4D74N/0lMbJIB080ySxFZbj6uq96ZtY6VCn5s2Ze3t3bdSPSboFsbOFqSedclFnQVA1gVLx1/NpZa8IDkfCH7g=
+	t=1762863824; cv=none; b=fqH/I0ve6qsHS8DjvW7OQCHqO823UAxANAXlY6Ne/l3J7asWpJ+wPThN/5Rp0az0SFNE/fWwtnlVDP9GNO9Y1Y52y1Ht9Kdka/52AHT6mlCsfE08Bw8bu929x7KoJdF/W0950NEbXf7IsQHKGn7U0eTsaPzLKBW3GyYmAb6hkVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762863793; c=relaxed/simple;
-	bh=ab9Tx7OdaNNwimnpgR7WLe8oFQGeeCXeqmmfh0669Zk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DAgZyxDV9XbAcm3mWqqKRRFG7zxcI+SuW+fV3CxhCFWrMMZy+NqPTMX7RgePng4g1hmyzZwAs8Zq+gbGwDe6ciH7rqt/Qrs8E4TN0AK7HRcvHNqq1dYwBwcxxsdjnjsZDnLAqeYgsbj9QLiQnFz8s1IreO24WizMX0v3lJUCJOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=FOgq18Vl; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id D4F1C741;
-	Tue, 11 Nov 2025 13:21:09 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1762863670;
-	bh=ab9Tx7OdaNNwimnpgR7WLe8oFQGeeCXeqmmfh0669Zk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=FOgq18VlmJ5UwZTFBgtQwXt8wPw9ptq2e7EOI/4SOcCpVyQrZ/36udHil0mW7Yr/G
-	 6CKrFxllwvrm6wGSN1kdtWNJp8j1KZp71x5wIRKDxc9LBytE7YErycu8nnIopx12jg
-	 fCuE6aDlpBXeQpo1Sma2nV4SFlehSTkR0YAwE/J4=
-Message-ID: <c5ab80df-0d60-4984-ad21-7dd1182b990f@ideasonboard.com>
-Date: Tue, 11 Nov 2025 14:23:05 +0200
+	s=arc-20240116; t=1762863824; c=relaxed/simple;
+	bh=6EpV0VAnroljRKERj3Z2h5E1lc7vc1uC0tnqJCxs/Es=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OSJaU99osQaQW64QFsWq3pTXd9hZcg4rz16HOVheRKEnkfRzq3HwWzNLfLtrxsmWcrJ7fELITZPdxuEbE9QZcXzUptj5FbuiB6scbW3Oyfd3zsppoYRK/8ToqLTBAAmx5DkFVhhW/F52V2+wif6jF55KGn6WGb93qkWKkx4QvVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kdhIPBVK; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762863821; x=1794399821;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=6EpV0VAnroljRKERj3Z2h5E1lc7vc1uC0tnqJCxs/Es=;
+  b=kdhIPBVKmSMGCcrkPaG0iQP2qkmyrSRK+6GV4DbaLn0CxOz8eJnMLSd3
+   Mydg30SMAr36ZkmuvCKi/0XbTqjiTObnScWotgILD6aqg/hkg60TYZCGB
+   AXZQaDyHMEyMjkw3qmFAR/n3AiHJ2hRqOxUwuudT9oT5G+MIfHh3oNi3r
+   u+JV8H6QxYVkXBzD6Rb1ALFzSdBAdL/aGX6QEgUtC2H8iaZwoq1zBPg0X
+   zo2Ts0YuhbLlgMX/i/cRIRIfdIzaeG1nyp0ktOA+jHrPttQA7QVU/7XlO
+   /ox+LfTcldgSK7/69oxjvfPAyZi4DE/bsv/lAsIg6w5wfdJA6lsBFilh8
+   w==;
+X-CSE-ConnectionGUID: HXzZvTqAQQ2KswWG9jB98g==
+X-CSE-MsgGUID: LiItNI5cRk6oVNEnhJGoIg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11609"; a="64957760"
+X-IronPort-AV: E=Sophos;i="6.19,296,1754982000"; 
+   d="scan'208";a="64957760"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 04:23:40 -0800
+X-CSE-ConnectionGUID: weIIScanQSar5TscP8ewSg==
+X-CSE-MsgGUID: +CZy5Gu6SiGJHJRCy6UfXQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,296,1754982000"; 
+   d="scan'208";a="188716718"
+Received: from egrumbac-mobl6.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.96])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 04:23:34 -0800
+Received: from kekkonen.localdomain (localhost [IPv6:::1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 06B8711F983;
+	Tue, 11 Nov 2025 14:23:32 +0200 (EET)
+Date: Tue, 11 Nov 2025 14:23:31 +0200
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Matthias Fend <matthias.fend@emfend.at>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Hans Verkuil <hverkuil@kernel.org>,
+	Hans de Goede <hansg@kernel.org>,
+	Ricardo Ribalda <ribalda@chromium.org>,
+	=?iso-8859-1?Q?Andr=E9?= Apitzsch <git@apitzsch.eu>,
+	Tarang Raval <tarang.raval@siliconsignals.io>,
+	Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
+	Sylvain Petinot <sylvain.petinot@foss.st.com>,
+	Dongcheng Yan <dongcheng.yan@intel.com>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	Jingjing Xiong <jingjing.xiong@intel.com>,
+	Heimir Thor Sverrisson <heimir.sverrisson@gmail.com>,
+	Mehdi Djait <mehdi.djait@linux.intel.com>,
+	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>,
+	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Hao Yao <hao.yao@intel.com>,
+	bsp-development.geo@leica-geosystems.com
+Subject: Re: [PATCH v5 2/2] media: i2c: add Himax HM1246 image sensor driver
+Message-ID: <aRMqw_yGMatKS5mY@kekkonen.localdomain>
+References: <20251104-hm1246-v5-0-97c8f25b5419@emfend.at>
+ <20251104-hm1246-v5-2-97c8f25b5419@emfend.at>
+ <aQn_lguAdP-ZwCzK@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Revert "media: vsp1: Add underrun debug print"
-To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- Duy Nguyen <duy.nguyen.rh@renesas.com>
-References: <20250910-rcar-vsp-underrun-revert-v1-1-2fa8d3b1b879@ideasonboard.com>
- <176286282930.2141792.17722042639840544380@ping.linuxembedded.co.uk>
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Content-Language: en-US
-Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
- 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
-In-Reply-To: <176286282930.2141792.17722042639840544380@ping.linuxembedded.co.uk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aQn_lguAdP-ZwCzK@smile.fi.intel.com>
 
-Hi,
+Hi Andy, Matthias,
 
-On 11/11/2025 14:07, Kieran Bingham wrote:
-> Quoting Tomi Valkeinen (2025-09-10 08:26:43)
->> This reverts commit 1dc30075fb0fe02b74b1ea7fd1c1c734a89f1448.
->>
->> There have been reports of lots of underruns happening on earlier
->> generation SoCs (M3, E3) with display use cases, e.g.:
->>
->> vsp1 fea28000.vsp: Underrun occurred at WPF0 (total underruns 1)
->>
->> but the display still working fine, and reverting the above commit,
->> which added underrun prints, makes the prints go away (obviously).
->>
->> I made some tests on a remote M3, with no display connected, and I can
->> confirm that there seem to be a single underrun report quite often when
->> enabling a display, and an underrun flood when using interlace display
->> modes.
->>
->> E3 does not have interlace display support as far as I can see, so the
->> interlace issue does not concern it.
->>
->> Debugging display issues remotely without a display is quite
->> challenging, and I did not find any issues in the code, nor could I find
->> a way to stop the underruns by twiddling with the related registers.
->>
->> My pure guess is that the single underruns occurring when starting the
->> display hint at either a startup sequence issue, or some kind of initial
->> fifo loading issue. The interlace underruns hint at a bigger
->> misconfiguration, but as the display works fine, the issue might be just
->> an underrun at the start of the frame and the HW quickly catching up, or
->> at the end of the frame, where one block in the pipeline expects more
->> data but the previous block has already stopped (so maybe a misconfig
->> between using interlaced height vs progressive height?).
->>
->> But at the moment I have no solution to this, and as the displays work
->> fine, I think it makes sense to just revert the print.
+On Tue, Nov 04, 2025 at 03:28:54PM +0200, Andy Shevchenko wrote:
+> On Tue, Nov 04, 2025 at 11:31:34AM +0100, Matthias Fend wrote:
+> > Add a V4L2 sub-device driver for Himax HM1246 image sensor.
+> > 
+> > The Himax HM1246-AWD is a 1/3.7-Inch CMOS image sensor SoC with an active
+> > array size of 1296 x 976. It is programmable through an I2C interface and
+> > connected via parallel bus.
+> > 
+> > The sensor has an internal ISP with a complete image processing pipeline
+> > including control loops. However, this driver uses the sensor in raw mode
+> > and the entire ISP is bypassed.
 > 
-> Is there any value in instead 'ignoring' any underruns if say the frame
-> count is < 5 to ignore startup underruns, and keep it as an active print
-> if something causes underruns later once the pipeline is established?
+> ...
 > 
-> But maybe that doesn't change much - and if there's no current perceived
-> issue
-A single underrun at enable time could/should probably be ignored, as it
-might be just issue with the initial fifo filling or such (even then
-it's a bit annoying, but I've seen some HW docs (not on this platform)
-telling to ignore such underruns).
+> > +#include <linux/clk.h>
+> > +#include <linux/delay.h>
+> > +#include <linux/gpio.h>
+> > +#include <linux/i2c.h>
+> > +#include <linux/module.h>
+> > +#include <linux/pm_runtime.h>
+> > +#include <linux/units.h>
+> 
+> This block is semi-random.
+> First of all, no new code must use gpio.h, use the proper one.
+> Second, many are missing, e.g., bits.h, regmap.h, types.h.
+> Please, follow IWYU principle (Include What You Use).
+> 
+> ...
+> 
+> > +static inline struct hm1246 *to_hm1246(struct v4l2_subdev *sd)
+> > +{
+> > +	return container_of_const(sd, struct hm1246, sd);
+> 
+> It's unclear and confusing that _const() variant is used here.
+> Either const qualifier is missed somewhere, or _const is redundant.
+> 
+> > +}
+> 
+> ...
+> 
+> > +	/*
+> > +	 * XSHUTDOWN to crystal clock oscillation:  tcrystal typ.  650us
+> > +	 * Sample bootstrap pin:                    tsample  max. 2000us
+> > +	 * Built in self test:                      tbist    max. 3000us
+> > +	 */
+> > +	fsleep(6000);
+> 
+> Also possible to write as 6 * USEC_PER_MSEC
+> 
+> ...
+> 
+> > +	format = v4l2_subdev_state_get_format(state, 0);
+> > +	mode = v4l2_find_nearest_size(hm1246_modes, ARRAY_SIZE(hm1246_modes),
+> > +				      width, height, format->width,
+> > +				      format->height);
+> > +
+> > +	switch (sel->target) {
+> > +	case V4L2_SEL_TGT_CROP:
+> > +		sel->r = *v4l2_subdev_state_get_crop(state, 0);
+> > +		return 0;
+> > +
+> > +	case V4L2_SEL_TGT_NATIVE_SIZE:
+> > +		sel->r.top = 0;
+> > +		sel->r.left = 0;
+> > +		sel->r.width = HM1246_NATIVE_WIDTH;
+> > +		sel->r.height = HM1246_NATIVE_HEIGHT;
+> > +		return 0;
+> > +
+> > +	case V4L2_SEL_TGT_CROP_DEFAULT:
+> > +	case V4L2_SEL_TGT_CROP_BOUNDS:
+> > +		sel->r.top = mode->top;
+> > +		sel->r.left = mode->left;
+> > +		sel->r.width = mode->width;
+> > +		sel->r.height = mode->height;
+> > +		return 0;
+> > +
+> > +	default:
+> > +		return -EINVAL;
+> > +	}
+> 
+> > +	return 0;
+> 
+> Do we need this line?
+> 
+> ...
+> 
+> > +static int hm1246_calc_pll(struct hm1246 *hm1246, u32 xclk, u32 link_freq,
+> > +			   u32 clocks_per_pixel, u8 *pll1, u8 *pll2, u8 *pll3)
+> > +{
+> > +	const u8 pclk_div_table[] = { 4, 5, 6, 7, 8, 12, 14, 16 };
+> > +	const u8 sysclk_div_table[] = { 1, 2, 3, 4 };
+> > +	const u8 post_div_table[] = { 1, 2, 4, 8 };
+> > +	const int sysclk_pclk_ratio = 3; /* Recommended value */
+> > +	u32 pclk, vco_out, best_vco_diff;
+> > +	int pclk_div_index, sysclk_div_index, post_div_index;
+> > +	u8 pre_div = 0, multiplier_h = 0, multiplier_l = 0;
+> > +
+> > +	if (link_freq < HM1246_PCLK_MIN || link_freq > HM1246_PCLK_MAX)
+> > +		return -EINVAL;
+> > +
+> > +	/*
+> > +	 * In raw mode (1 pixel per clock) the pixel clock is internally
+> > +	 * divided by two.
+> > +	 */
+> > +	pclk = 2 * link_freq / clocks_per_pixel;
+> > +
+> > +	/* Find suitable PCLK and SYSCLK dividers. */
+> > +	for (pclk_div_index = 0; pclk_div_index < ARRAY_SIZE(pclk_div_table);
+> > +	     pclk_div_index++) {
+> > +		for (sysclk_div_index = 0;
+> > +		     sysclk_div_index < ARRAY_SIZE(sysclk_div_table);
+> > +		     sysclk_div_index++) {
+> > +			if (sysclk_div_table[sysclk_div_index] *
+> > +				    sysclk_pclk_ratio ==
+> > +			    pclk_div_table[pclk_div_index])
+> 
+> > +				goto sysclk_pclk_ratio_found;
+> 
+> > +		}
+> > +	}
+> 
+> And instead of this goto mess, factor out to a helper.
 
-But that wouldn't help with the underrun flood for interlace. I think
-there's a clear issue for ilace here, but I have no idea where exactly.
-And, the display works fine, so the display controller can recover
-instantly.
+I think the above looks fine as-is: it's easier to understand what it does
+when it's all in a single location. This isn't overly complicated, which
+would be another reason to do that.
 
-> Anyway, I don't object to this revert. It's low impact and it's only
-> undoing 'your' work so no one else will complain :D
+> 
+> > +	return -EINVAL;
 
-Yep... I hate disabling error reporting, but I think it's the best
-option here, at least until someone with the board can debug it
-properly. In any case, if there are "real" underruns, the error is also
-visible on the display, you don't need the console print to show it.
+I'd do:
 
-> Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+	if (sysclk_div_index == ARRAY_SIZE(sysclk_div_table))
+		return -EINVAL;
 
-Thanks!
+instead of using a goto.
 
- Tomi
+> 
+> > +sysclk_pclk_ratio_found:
+> > +
+> > +	/* Determine an appropriate post divider. */
+> > +	for (post_div_index = 0; post_div_index < ARRAY_SIZE(post_div_table);
+> > +	     post_div_index++) {
+> > +		vco_out = pclk * pclk_div_table[pclk_div_index] *
+> > +			  post_div_table[post_div_index];
+> > +
+> > +		if (vco_out >= HM1246_PLL_VCO_MIN &&
+> > +		    vco_out <= HM1246_PLL_VCO_MAX)
+> > +			break;
+> > +	}
+> > +	if (post_div_index >= ARRAY_SIZE(post_div_table))
+> > +		return -EINVAL;
+> > +
+> > +	/* Find best pre-divider and multiplier values. */
+> > +	best_vco_diff = U32_MAX;
+> > +	for (u32 div = DIV_ROUND_UP(xclk, HM1246_PLL_INCLK_MAX);
+> > +	     div <= xclk / HM1246_PLL_INCLK_MIN; div++) {
+> > +		u32 multi, multi_h, multi_l, vco, diff;
+> > +
+> > +		multi = DIV_ROUND_CLOSEST_ULL((u64)vco_out * div, xclk);
+> > +		if (multi < HM1246_PLL_MULTI_MIN ||
+> > +		    multi > HM1246_PLL_MULTI_MAX)
+> > +			continue;
+> > +
+> > +		multi_h = multi / (HM1246_PLL_MULTI_H_MIN *
+> > +				   HM1246_PLL_MULTI_L_MAX) +
+> > +			  2;
+> > +		multi_l = multi / multi_h;
+> > +		vco = div_u64((u64)xclk * multi_h * multi_l, div);
+> > +
+> > +		diff = abs_diff(vco_out, vco);
+> > +
+> > +		if (diff < best_vco_diff) {
+> > +			best_vco_diff = diff;
+> > +			pre_div = div;
+> > +			multiplier_h = multi_h;
+> > +			multiplier_l = multi_l;
+> > +		}
+> > +
+> > +		if (!diff)
+> > +			break;
+> > +	}
+> > +
+> > +	if (best_vco_diff == U32_MAX)
+> > +		return -EINVAL;
+> > +
+> > +	*pll1 = HM1246_PLL1CFG_MULTIPLIER(multiplier_l - 1);
+> > +	*pll2 = HM1246_PLL2CFG_PRE_DIV(pre_div - 1) |
+> > +		HM1246_PLL2CFG_MULTIPLIER(multiplier_h - 2);
+> > +	*pll3 = HM1246_PLL3CFG_POST_DIV(post_div_index) |
+> > +		HM1246_PLL3CFG_SYSCLK_DIV(sysclk_div_index) |
+> > +		HM1246_PLL3CFG_PCLK_DIV(pclk_div_index);
+> > +
+> > +	return 0;
+> > +}
+> 
+> ...
+> 
+> > +static int hm1246_cci_write_pll(struct hm1246 *hm1246, u8 pll1, u8 pll2,
+> > +				u8 pll3)
+> > +{
+> > +	const struct cci_reg_sequence pll_regs[] = {
+> 
+> static ?
+> 
+> > +		{ HM1246_PLL1CFG_REG, pll1 },
+> > +		{ HM1246_PLL2CFG_REG, pll2 },
+> > +		{ HM1246_PLL3CFG_REG, pll3 },
+> > +		{ HM1246_SBC_CTRL_REG, HM1246_SBC_CTRL_PLL_EN },
+> > +	};
+> 
+> I would even move it outside the function. Note, static const maybe located in
+> ro memory while w/o static it's just a guarantee that compiler doesn't change
+> the values. Hence there is no guarantee it will be in ro memory.
+> 
+> > +	return cci_multi_reg_write(hm1246->regmap, pll_regs,
+> > +				   ARRAY_SIZE(pll_regs), NULL);
+> > +}
+> > +
+> > +static int hm1246_pll_check_locked(struct hm1246 *hm1246)
+> > +{
+> > +	u64 boot_ref2;
+> > +	int ret;
+> > +
+> > +	ret = cci_read(hm1246->regmap, HM1246_SBC_BOOT_REF2_REG, &boot_ref2,
+> > +		       NULL);
+> 
+> Despite being longer 80 I still would put it on one line. It will increase readability.
 
->>
->> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
->> ---
->>  drivers/media/platform/renesas/vsp1/vsp1_drm.c  |  3 ---
->>  drivers/media/platform/renesas/vsp1/vsp1_drv.c  | 11 +----------
->>  drivers/media/platform/renesas/vsp1/vsp1_pipe.h |  2 --
->>  drivers/media/platform/renesas/vsp1/vsp1_regs.h |  2 --
->>  4 files changed, 1 insertion(+), 17 deletions(-)
->>
->> diff --git a/drivers/media/platform/renesas/vsp1/vsp1_drm.c b/drivers/media/platform/renesas/vsp1/vsp1_drm.c
->> index 15d266439564..b8f211db16fc 100644
->> --- a/drivers/media/platform/renesas/vsp1/vsp1_drm.c
->> +++ b/drivers/media/platform/renesas/vsp1/vsp1_drm.c
->> @@ -721,9 +721,6 @@ int vsp1_du_setup_lif(struct device *dev, unsigned int pipe_index,
->>                 return 0;
->>         }
->>  
->> -       /* Reset the underrun counter */
->> -       pipe->underrun_count = 0;
->> -
->>         drm_pipe->width = cfg->width;
->>         drm_pipe->height = cfg->height;
->>         pipe->interlaced = cfg->interlaced;
->> diff --git a/drivers/media/platform/renesas/vsp1/vsp1_drv.c b/drivers/media/platform/renesas/vsp1/vsp1_drv.c
->> index b8d06e88c475..68e92d3c5915 100644
->> --- a/drivers/media/platform/renesas/vsp1/vsp1_drv.c
->> +++ b/drivers/media/platform/renesas/vsp1/vsp1_drv.c
->> @@ -47,8 +47,7 @@
->>  
->>  static irqreturn_t vsp1_irq_handler(int irq, void *data)
->>  {
->> -       u32 mask = VI6_WPF_IRQ_STA_DFE | VI6_WPF_IRQ_STA_FRE |
->> -                  VI6_WPF_IRQ_STA_UND;
->> +       u32 mask = VI6_WPF_IRQ_STA_DFE | VI6_WPF_IRQ_STA_FRE;
->>         struct vsp1_device *vsp1 = data;
->>         irqreturn_t ret = IRQ_NONE;
->>         unsigned int i;
->> @@ -63,14 +62,6 @@ static irqreturn_t vsp1_irq_handler(int irq, void *data)
->>                 status = vsp1_read(vsp1, VI6_WPF_IRQ_STA(i));
->>                 vsp1_write(vsp1, VI6_WPF_IRQ_STA(i), ~status & mask);
->>  
->> -               if ((status & VI6_WPF_IRQ_STA_UND) && wpf->entity.pipe) {
->> -                       wpf->entity.pipe->underrun_count++;
->> -
->> -                       dev_warn_ratelimited(vsp1->dev,
->> -                               "Underrun occurred at WPF%u (total underruns %u)\n",
->> -                               i, wpf->entity.pipe->underrun_count);
->> -               }
->> -
->>                 if (status & VI6_WPF_IRQ_STA_DFE) {
->>                         vsp1_pipeline_frame_end(wpf->entity.pipe);
->>                         ret = IRQ_HANDLED;
->> diff --git a/drivers/media/platform/renesas/vsp1/vsp1_pipe.h b/drivers/media/platform/renesas/vsp1/vsp1_pipe.h
->> index 7f623b8cbe5c..9cc2f1646b00 100644
->> --- a/drivers/media/platform/renesas/vsp1/vsp1_pipe.h
->> +++ b/drivers/media/platform/renesas/vsp1/vsp1_pipe.h
->> @@ -137,8 +137,6 @@ struct vsp1_pipeline {
->>  
->>         unsigned int partitions;
->>         struct vsp1_partition *part_table;
->> -
->> -       u32 underrun_count;
->>  };
->>  
->>  void vsp1_pipeline_reset(struct vsp1_pipeline *pipe);
->> diff --git a/drivers/media/platform/renesas/vsp1/vsp1_regs.h b/drivers/media/platform/renesas/vsp1/vsp1_regs.h
->> index 10cfbcd1b6e0..188d26289714 100644
->> --- a/drivers/media/platform/renesas/vsp1/vsp1_regs.h
->> +++ b/drivers/media/platform/renesas/vsp1/vsp1_regs.h
->> @@ -32,12 +32,10 @@
->>  #define VI6_STATUS_SYS_ACT(n)          BIT((n) + 8)
->>  
->>  #define VI6_WPF_IRQ_ENB(n)             (0x0048 + (n) * 12)
->> -#define VI6_WPF_IRQ_ENB_UNDE           BIT(16)
->>  #define VI6_WPF_IRQ_ENB_DFEE           BIT(1)
->>  #define VI6_WPF_IRQ_ENB_FREE           BIT(0)
->>  
->>  #define VI6_WPF_IRQ_STA(n)             (0x004c + (n) * 12)
->> -#define VI6_WPF_IRQ_STA_UND            BIT(16)
->>  #define VI6_WPF_IRQ_STA_DFE            BIT(1)
->>  #define VI6_WPF_IRQ_STA_FRE            BIT(0)
->>  
->>
->> ---
->> base-commit: 76eeb9b8de9880ca38696b2fb56ac45ac0a25c6c
->> change-id: 20250908-rcar-vsp-underrun-revert-f3e64612c62d
->>
->> Best regards,
->> -- 
->> Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
->>
+I prefer it as-is.
 
+> 
+> 	ret = cci_read(hm1246->regmap, HM1246_SBC_BOOT_REF2_REG, &boot_ref2, NULL);
+> 
+> Another option is to define local regmap:
+> 
+> 	struct regmap *map = hm1246->regmap;
+> 	...
+> 	ret = cci_read(map, HM1246_SBC_BOOT_REF2_REG, &boot_ref2, NULL);
+> 
+> which will be most readable and satisfy 80 limit.
+> 
+> 
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	return (boot_ref2 & HM1246_SBC_BOOT_REF2_PLL_LOCK) ? 0 : -EIO;
+> 
+> Think about similar improvements elsewhere in this driver.
+> 
+> > +}
+> 
+> ...
+> 
+> > +	/* PLL lock time: tpll typ. 100us */
+> 
+> It's not a variable name, use proper English.
+> 
+> > +	fsleep(200);
+> 
+> ...
+> 
+> > +static int hm1246_cci_write_test_pattern(struct hm1246 *hm1246, u8 mode, u16 r,
+> > +					 u16 g, u16 b)
+> 
+> Use logical split.
+> 
+> static int hm1246_cci_write_test_pattern(struct hm1246 *hm1246, u8 mode,
+> 					 u16 r, u16 g, u16 b)
+> 
+> This applies to other similar places in the code.
+> 
+> ...
+> 
+> > +static int hm1246_test_pattern(struct hm1246 *hm1246, u32 index)
+> > +{
+> > +	const u16 RGBMIN = 0x0, RGBMAX = 0x3ff;
+> 
+> 0 is enough (no need 0x).
+> 
+> 
+> So, the MAX is 10-bit, Can we use rather (BIT(10) - 1) to show this?
+
+The above value likely comes from a sensor datasheet; I think 0x3ff is fine
+as-is. If this was a bitmask with a row of bits set, I'd use GENMASK(), but
+not BIT(10) - 1.
+
+> 
+> > +	const struct tp {
+> > +		int pattern;
+> > +		u16 r, g, b;
+> > +	} tps[] = {
+> > +		/* 0 - Disabled */
+> 
+> Instead of indices in the comment, make the code robust
+> 
+> > +		{ .pattern = 0, .r = RGBMIN, .g = RGBMIN, .b = RGBMIN },
+> 
+> 		[0] = { .pattern = 0, .r = RGBMIN, .g = RGBMIN, .b = RGBMIN },
+> 
+> It even fit 80 characters.
+> 
+> > +		/* 1 - Checkboard pattern */
+> > +		{ .pattern = 0, .r = RGBMIN, .g = RGBMIN, .b = RGBMIN },
+> > +		/* 2 - Ramp */
+> > +		{ .pattern = 1, .r = RGBMIN, .g = RGBMIN, .b = RGBMIN },
+> > +		/* 3 - Moving ones */
+> > +		{ .pattern = 2, .r = RGBMIN, .g = RGBMIN, .b = RGBMIN },
+> > +		/* 4 - Blending color bars */
+> > +		{ .pattern = 3, .r = RGBMIN, .g = RGBMIN, .b = RGBMIN },
+> > +		/* 5 - Color bars */
+> > +		{ .pattern = 4, .r = RGBMIN, .g = RGBMIN, .b = RGBMIN },
+> > +		/* 6 - Solid white */
+> > +		{ .pattern = 15, .r = RGBMAX, .g = RGBMAX, .b = RGBMAX },
+> > +		/* 7 - Solid black */
+> > +		{ .pattern = 15, .r = RGBMIN, .g = RGBMIN, .b = RGBMIN },
+> > +		/* 8 - Solid red */
+> > +		{ .pattern = 15, .r = RGBMAX, .g = RGBMIN, .b = RGBMIN },
+> > +		/* 9 - Solid green */
+> > +		{ .pattern = 15, .r = RGBMIN, .g = RGBMAX, .b = RGBMIN },
+> > +		/* 10- Solid blue */
+> > +		{ .pattern = 15, .r = RGBMIN, .g = RGBMIN, .b = RGBMAX },
+> > +	};
+> > +	u8 mode;
+> > +
+> > +	if (index >= ARRAY_SIZE(tps))
+> > +		return -EINVAL;
+> > +
+> > +	mode = HM1246_TEST_PATTERN_MODE_MODE(tps[index].pattern);
+> > +	if (index)
+> > +		mode |= HM1246_TEST_PATTERN_MODE_ENABLE;
+> > +
+> > +	return hm1246_cci_write_test_pattern(hm1246, mode, tps[index].r,
+> > +					     tps[index].g, tps[index].b);
+> > +}
+> 
+> ...
+> 
+> > +static int hm1246_set_ctrl(struct v4l2_ctrl *ctrl)
+> > +{
+> > +	struct hm1246 *hm1246 = container_of_const(ctrl->handler, struct hm1246,
+> > +						   ctrls);
+> 
+> Why _const()?
+> Why not split it between lines like:
+> 
+> 	struct hm1246 *hm1246 =
+> 		container_of_const(ctrl->handler, struct hm1246, ctrls);
+> 
+> > +	struct v4l2_subdev_state *state;
+> > +	const struct v4l2_mbus_framefmt *format;
+> > +	u32 val;
+> > +	bool needs_cmu_update = true;
+> > +	int ret = 0;
+> > +
+> > +	state = v4l2_subdev_get_locked_active_state(&hm1246->sd);
+> > +	format = v4l2_subdev_state_get_format(state, 0);
+> > +
+> > +	if (ctrl->id == V4L2_CID_VBLANK) {
+> > +		s64 exposure_max;
+> > +
+> > +		exposure_max =
+> > +			format->height + ctrl->val - HM1246_COARSE_INTG_MARGIN;
+> > +		ret = __v4l2_ctrl_modify_range(hm1246->exposure_ctrl,
+> > +					       hm1246->exposure_ctrl->minimum,
+> > +					       exposure_max,
+> > +					       hm1246->exposure_ctrl->step,
+> > +					       exposure_max);
+> > +
+> > +		if (ret) {
+> > +			dev_err(hm1246->dev, "exposure ctrl range update failed\n");
+> > +			return ret;
+> > +		}
+> > +	}
+> 
+> > +	if (!pm_runtime_get_if_active(hm1246->dev))
+> > +		return 0;
+> 
+> Use ACQUIRE() and return directly where it makes sense.
+
+That's interesting.
+
+> 
+> > +	switch (ctrl->id) {
+> > +	case V4L2_CID_EXPOSURE:
+> > +		cci_write(hm1246->regmap, HM1246_COARSE_INTG_REG, ctrl->val,
+> > +			  &ret);
+> > +		break;
+> > +
+> > +	case V4L2_CID_ANALOGUE_GAIN:
+> > +		cci_write(hm1246->regmap, HM1246_ANALOG_GLOBAL_GAIN_REG,
+> > +			  ctrl->val, &ret);
+> > +		break;
+> > +
+> > +	case V4L2_CID_VBLANK:
+> > +		val = format->height + ctrl->val;
+> > +		cci_write(hm1246->regmap, HM1246_FRAME_LENGTH_LINES_REG, val,
+> > +			  &ret);
+> > +		break;
+> > +
+> > +	case V4L2_CID_HFLIP:
+> > +	case V4L2_CID_VFLIP:
+> > +		val = 0;
+> > +		if (hm1246->hflip_ctrl->val)
+> > +			val |= HM1246_IMAGE_ORIENTATION_HFLIP;
+> > +		if (hm1246->vflip_ctrl->val)
+> > +			val |= HM1246_IMAGE_ORIENTATION_VFLIP;
+> > +
+> > +		cci_write(hm1246->regmap, HM1246_IMAGE_ORIENTATION_REG, val,
+> > +			  &ret);
+> > +		break;
+> > +
+> > +	case V4L2_CID_TEST_PATTERN:
+> > +		ret = hm1246_test_pattern(hm1246, ctrl->val);
+> > +		needs_cmu_update = false;
+> 
+> Like here, and you won't need needs_cmu_update anymore.
+> 
+> > +		break;
+> > +
+> > +	default:
+> > +		ret = -EINVAL;
+> > +		needs_cmu_update = false;
+> > +		break;
+> > +	}
+> > +
+> > +	if (needs_cmu_update)
+> > +		cci_write(hm1246->regmap, HM1246_CMU_UPDATE_REG, 0, &ret);
+> > +
+> > +	pm_runtime_put(hm1246->dev);
+> > +
+> > +	return ret;
+> > +}
+> 
+> ...
+> 
+> > +static int hm1246_identify_module(struct hm1246 *hm1246)
+> 
+> This is a singleton function, right?
+> 
+> Check what once.h (or even once_lite.h) provides for you for such a case,
+> and drop unneeded "identified" variable.
+
+Once for every device, so I don't think this applies.
+
+> 
+> > +{
+> > +	u64 model_id;
+> > +	int ret;
+> > +
+> > +	if (hm1246->identified)
+> > +		return 0;
+> > +
+> > +	ret = cci_read(hm1246->regmap, HM1246_MODEL_ID_REG, &model_id, NULL);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	if (model_id != HM1246_MODEL_ID) {
+> > +		dev_err(hm1246->dev, "model id mismatch: 0x%llx!=0x%x\n",
+> > +			model_id, HM1246_MODEL_ID);
+> > +		return -ENXIO;
+> > +	}
+> > +
+> > +	hm1246->identified = true;
+> > +
+> > +	return 0;
+> > +}
+
+-- 
+Kind regards,
+
+Sakari Ailus
 
