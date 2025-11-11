@@ -1,172 +1,200 @@
-Return-Path: <linux-kernel+bounces-895448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7875DC4DDC1
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:50:03 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80938C4DE6C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:54:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 764D03AF6F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:45:35 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B3D6E4F2E2B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:45:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D83CD328241;
-	Tue, 11 Nov 2025 12:40:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA18E324709;
+	Tue, 11 Nov 2025 12:41:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="hYPM6PqL";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="jtGIjSqv"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="PsYvOGtK"
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B20103246E8
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 12:40:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C60D13AA18C
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 12:41:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762864858; cv=none; b=Xr4gHbDLjlFQCl8mKrLv9aGVQDUrqTdeBZVPNXLnexQBunQecXZewKGgXgspHtqUaBtQY/tfh4HnWAUUn+Wuoy6jQ35LFdsQJI0RX0wrrld5hE274lE9Zdz0YAoMvZON+Nou2Ke8zcb4MfPn6TGxHSXlVPfDuMqptlDREW4dzZU=
+	t=1762864889; cv=none; b=cNK7K/JedSP/g/2Ig+fkhH+0oOYNTCEx+KfSGzldS7qG+uPblUz+wx7nbwbcp/MbJcrkUELKHxw1P6fCZpHXtgajWw1at2vaMzlVG2dZvNFw0B5B0a9OIjdUMGfc6PdXkLe+eJ+RY1voLatu+4K9NdfhGhFQnDcgevA7edNdnLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762864858; c=relaxed/simple;
-	bh=LQ+oitKANKLBtDaXHdc94NsTiFvhP0RyR81S0lGkgIE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A+tZiV7vcsVFtL7CZ7iE95InEK3+rKB7hgydztuRzjAe5OvleoPTZBRE7l8TNuszrL/+ELQ4DGjzNAhc2QlEKAwcJWHKE+PuYw/Pmq0Ocl0rg51GX+E6Jaig8P4fKQm0njjfs7sxRHx0aiu0rqWQzHEsxqsPdsRKot8jzP0YiYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=hYPM6PqL; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=jtGIjSqv; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5ABBGYTc1937368
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 12:40:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=thY8JpY4WG0U4x5IdP6IL3ws
-	rK/h8ku1aY3ImVMowUw=; b=hYPM6PqLNY/Ll9CBjHos/+7JIxsqLpMnNb1qrjSK
-	EsekTfN1H66I0O/8tCNhjOMyw9tWyZ+mLumesAcUxJKLJSJy0ri8BUQPnEoZufa6
-	Vgy5YHa/OnI4n4O5Xe9+CWv6AW2eYFIXMd03W/S1LwJ7ZnHE9E/T2v1z5IFvuBXM
-	27BaeF480zK6fQYld4YFrjuKnK3jhgRNy3OVaf1+fJv+peEDGAGfgBf3Swu8AZW2
-	6UcyDWOCcLyakoEYVJWbywpAjqtxMkuk0NDN71TT2y24fhoO0Vv4CJEPjjmz1hPh
-	8M9S5Z4bmw4Y9rpdu9N8rvn5eEO5SQdIzED3C+bdgS+nEQ==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4abwtj9dfj-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 12:40:55 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4edaf614c7aso54308541cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 04:40:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1762864855; x=1763469655; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=thY8JpY4WG0U4x5IdP6IL3wsrK/h8ku1aY3ImVMowUw=;
-        b=jtGIjSqv4zlVsYNp5UVDNBJl1i/tN1g7PhGBK425+pTjOgYEwQ8OATrS1PKgIDpruv
-         YE9yyokN2cWcSiXfchrgmB+qudLAG69iL9haabUVibHZjDePhjW9wt2YFqkMSEZU4DMX
-         JPf0eACaMnB+gmfFnBfv8Ep0Ma+a8B0UN6vzG8VbLy+o+2ESblyPKMyPBXFnDG7YFtkI
-         g314eu5wl/OAlirl8AZFMCHwE0phbYAUWKOqCCMdDRdK3YIJcMSEmmv1PRI+mzpw03nw
-         7rQfq4wPZeB4cjgHMW3YIkrGVivktxO7eb2hD8vKSfGOQj+HIXrbAeeUZDqbCwar1bm9
-         k+Jg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762864855; x=1763469655;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=thY8JpY4WG0U4x5IdP6IL3wsrK/h8ku1aY3ImVMowUw=;
-        b=qCPY3XDeQCevADUJgH1iBbND7xHSXWtScOP4w3oPOlucZTwj72NT+6Ypeh/UE56KZB
-         54y/ToJw0JknrL4cvTImjoBJL59MjGBpNHqC3DCBPQzqvxZilvQlk0cEQjEgAQNZ4R2p
-         q3rYnx5zHFPBJQ1IP+GAgrXnT3zFxQXJyc0livU4Rztb7DM02s1TizX6i1mN/En/0Oqz
-         PhVnpocV2DATNxDfzvqDlNCG5K1a7OHUfGrevq8Ml4uxtzi0FvqYA87niQylNr0X6GgS
-         knbyL+yHZBjhf2s4zGZXb+2Uj3JQ+/SkTX/manpgHBIYorEZZhnjM+u/V/kWTf0m+rYo
-         z+tw==
-X-Forwarded-Encrypted: i=1; AJvYcCUKI+8YJo8BSmkbdJzydBqOpcYtd4O7gHcm+2pf0j759y6vp2QaXQEwzKnxVNe8HXwCpAsqCgIYJKQDf2M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtBz9uwuPNhUqYHcOzdGTDs9ndq6V6aXI+WqWqzp+43mPwi5Xw
-	NdChVGEhcOkLiE82R22qsJ/jVTtaahEOpZ/FSv2y6Fo66HHgX2tlUx2wPfF2xrGv0jvxPITewRx
-	ueAiGSDgvZW7sI7ZV0Gn62zpf5rddSOqY5TlVclyTuxu5acmavLq6RSTq2Ynf8yFYzy4=
-X-Gm-Gg: ASbGncvKjoYp5GDrsboiuaZKGpKQVROaocT/3ddyexEEayq3KWeJDIE2+E2J4vJLxZI
-	7QD5s+ySPRaLQ5oqBgcAaKwfjBSEDO+b3bHdsoDE83wgsVVvG72kFGdcWIZG+3w/jfYkX7ikbzi
-	dDELtYA3iKKgq/wyl4hAVyLtO25bpxnnfKxU+Yw+1szUYUOtx5noy2HQ/bXYrnMSayB4IRtGHUw
-	I49yoWpA5lKUV8UZYnnXTepgiq+wPbue08RiK2STCrEvSCcsKdS5zJl6SGBpJAHfv1kW0BXSXx+
-	o3QqDceozOpELovUa8GiTKyaXp9XBvBEbNyarty/9piLPv4PPuBUn3pKsJt6ashJhrAQAKQHyHm
-	eViSHL5TPcvkVgtZk7Al7fZcMGH8jvDIf1vlm3ZpVeQ+vezgVSjPioGur6D0VV3FDsndPkXhbmB
-	cwzCCQ6/HDHLM6
-X-Received: by 2002:ac8:7f8a:0:b0:4ed:3d24:9581 with SMTP id d75a77b69052e-4eda50187edmr150666581cf.83.1762864854763;
-        Tue, 11 Nov 2025 04:40:54 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IH4xqPrtA5f2hoQPM4eKGkOSTFok8KYmyA6XTLWJcrYJQwoqiMBmQu5PmYefTtm3ql0EcPybQ==
-X-Received: by 2002:ac8:7f8a:0:b0:4ed:3d24:9581 with SMTP id d75a77b69052e-4eda50187edmr150666241cf.83.1762864854262;
-        Tue, 11 Nov 2025 04:40:54 -0800 (PST)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5944a03459bsm4897371e87.48.2025.11.11.04.40.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Nov 2025 04:40:53 -0800 (PST)
-Date: Tue, 11 Nov 2025 14:40:51 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Shuai Zhang <quic_shuaz@quicinc.com>
-Cc: marcel@holtmann.org, luiz.dentz@gmail.com, linux-bluetooth@vger.kernel.org,
-        stable@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, quic_chejiang@quicinc.com
-Subject: Re: [PATCH v2 2/2] Bluetooth: hci_qca: Convert timeout from jiffies
- to ms
-Message-ID: <3xsuxm3jy3lvpjaahyrp4qsjcqyrxbchglaszx7ccyu4eq4mmi@557ienshr2ki>
-References: <20251106140103.1406081-1-quic_shuaz@quicinc.com>
- <20251106140103.1406081-3-quic_shuaz@quicinc.com>
+	s=arc-20240116; t=1762864889; c=relaxed/simple;
+	bh=9xfPxgCLwxDWC5uci7Tam0tmDzUGxKMfBCJoi5gKe1Y=;
+	h=Content-Type:Message-ID:Date:MIME-Version:Subject:From:To:Cc:
+	 References:In-Reply-To; b=LCj3j0ZGdr358CdGKLH2v7je3jDDofml2CEFHbKYg2XmN0lZoR1DGnedl7yj/XLd5kmOI4toiNEx2BDhQ8gmGRCNqy5JhTYPlwZhQaGAtdqn9tlWUwfmEoyI23K8mRCzqbG/xpKOcAuRGhnBY2LKsWfpMdZzYaVehXOPh3iKi0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=PsYvOGtK; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4d5R3k5z7Rz9tmC;
+	Tue, 11 Nov 2025 13:41:22 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1762864882;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YaqLqGN9uEL7J+fQAaVt6gXOp13qBprJ55CUYxPRXWY=;
+	b=PsYvOGtKywmYqU2YST64pri4JLscxq2SxIRuEHRw7c3GIlX+MY3LK2Ay1BP1SIblCZPU1f
+	hWJHOVxY1E6mVCiBALDoHwg+5e+jJNFNmO+Os0Ai2o7Qg/4R7eMH+7YK6CtXVDp+r78vJL
+	9hEdYtyBUkdanu6aK/HfWgd+fgp0ITe8XQ/xqVIvrMBx0Ir0usjqc1khtrlTJYj+01SMD+
+	cDaC1113noCWYfVEk7KmyqIBlEHx6TxMTABmPLwLTK08L28Pt9GJWufHporvXfRtFTmHs0
+	yPYVRC2MZIjHNmttVmZ7vRFeWrJF1SyL6clRZy8uhErXaf0sQMQCz7RUxhUVDw==
+Content-Type: multipart/mixed; boundary="------------c8xoJb3xBtNTMKbm6r52N0KM"
+Message-ID: <5145f071-c8bd-4b9d-94b1-2afe651cf25a@mailbox.org>
+Date: Tue, 11 Nov 2025 13:41:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251106140103.1406081-3-quic_shuaz@quicinc.com>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTExMDEwMCBTYWx0ZWRfXwaPCHCXgILvE
- U9flwU4NTHD227VCBZ2lPNpCCev1G3os2JZfUd7/1nN6pr79E7nt4XGtIIzBUvnzRQ1zNi21zEZ
- rARix56/D11IKQ4aUjOYGTb5ZF2PIfI+tDgOIIKt+8taKl+en7uVHRXFN6qg4RWY5jiDCyfuY5w
- AsjKsYNzVW9YaqMa5+AGM1kvxn7hBi0q/HArIUMpsE4tFQ7msdWvMzT6gv6cPnZoBRI3YeZHQu9
- w0pRSvYa9SXIVKU/LUDmLCrCj/4W7nnd7OwafDcHnlwBwuxIpaKmZn9kD1I9UvAWL0kOutQ8HqH
- 52FTN7pF3InaiMKl9cda3qL8rx06/PlxKAt8+TCc1i6jEnKc0QNqaoEIazKHbHsvxI/ch4kPbnZ
- PH9w169aAPpP8171CXvpAvdl1Lp4NA==
-X-Proofpoint-GUID: 9RIL8TJsY2kme-sKH62YkwcojkW4PKkY
-X-Proofpoint-ORIG-GUID: 9RIL8TJsY2kme-sKH62YkwcojkW4PKkY
-X-Authority-Analysis: v=2.4 cv=UI3Q3Sfy c=1 sm=1 tr=0 ts=69132ed7 cx=c_pps
- a=JbAStetqSzwMeJznSMzCyw==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=w88ekMslnmeFjZ9C8RQA:9 a=CjuIK1q_8ugA:10
- a=uxP6HrT_eTzRwkO_Te1X:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-11_02,2025-11-11_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 lowpriorityscore=0 spamscore=0 phishscore=0 impostorscore=0
- adultscore=0 priorityscore=1501 malwarescore=0 clxscore=1015 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511110100
+Subject: Re: BUG: spinlock bad magic on CPU#1, irq/39-firewire/245 (v6.18-rc4,
+ ppc64)
+From: Erhard Furtner <erhard_f@mailbox.org>
+To: linux-kernel@vger.kernel.org
+Cc: Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+ linux1394-devel@lists.sourceforge.net
+References: <992eaf94-6fbb-4611-9a29-2db2e2148965@mailbox.org>
+Content-Language: en-US, de-DE
+In-Reply-To: <992eaf94-6fbb-4611-9a29-2db2e2148965@mailbox.org>
+X-MBO-RS-ID: c205490f944b71ac2e7
+X-MBO-RS-META: o94pfpre3ca4mjfaqwjri7ry1ojuarf1
 
-On Thu, Nov 06, 2025 at 10:01:03PM +0800, Shuai Zhang wrote:
-> Since the timer uses jiffies as its unit rather than ms, the timeout value
-> must be converted from ms to jiffies when configuring the timer. Otherwise,
-> the intended 8s timeout is incorrectly set to approximately 33s.
-> 
-> Cc: stable@vger.kernel.org
+This is a multi-part message in MIME format.
+--------------c8xoJb3xBtNTMKbm6r52N0KM
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Missing Fixes tag
+On 11/9/25 15:17, Erhard Furtner wrote:
+> [...]
+> firewire_ohci 0001:03:0e.0: added OHCI v1.0 device as card 0, 8 IR + 8 
+> IT contexts, quirks 0x0
+> BUG: spinlock bad magic on CPU#1, irq/39-firewire/245
+>   lock: 0xc00000001f672618, .magic: 00000000, .owner: irq/39- 
+> firewire/245, .owner_cpu: 1
+> CPU: 1 UID: 0 PID: 245 Comm: irq/39-firewire Tainted: G N  6.18.0-rc4- 
+> PMacG5 #1 PREEMPTLAZY
+> Tainted: [N]=TEST
+> Hardware name: PowerMac11,2 PPC970MP 0x440101 PowerMac
+> Call Trace:
+> [c000000005dafb20] [c000000000bc054c] __dump_stack+0x30/0x54 (unreliable)
+> [c000000005dafb50] [c000000000bc04e4] dump_stack_lvl+0x98/0xd0
+> [c000000005dafb90] [c0000000000f22a8] spin_dump+0x88/0xb4
+> [c000000005dafc10] [c0000000000f1d4c] do_raw_spin_unlock+0xdc/0x164
+> [c000000005dafc50] [c000000000bf65d0] _raw_spin_unlock+0x18/0x68
+> [c000000005dafc70] [c0003d0013ce1d5c] 
+> fw_core_handle_bus_reset+0xa98/0xb64 [firewire_core]
+> [c000000005dafdc0] [c0003d0013d19aec] 
+> handle_selfid_complete_event+0x610/0x764 [firewire_ohci]
+> [c000000005dafe80] [c000000000106050] irq_thread_fn+0x40/0x9c
+> [c000000005dafec0] [c000000000105ecc] irq_thread+0x1c0/0x298
+> [c000000005daff60] [c0000000000b5e54] kthread+0x250/0x280
+> [c000000005daffe0] [c00000000000bd30] start_kernel_thread+0x14/0x18
+I bisected the issue. First bad commit is:
 
-> Signed-off-by: Shuai Zhang <quic_shuaz@quicinc.com>
-> ---
->  drivers/bluetooth/hci_qca.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
-> index fa6be1992..c14b2fa9d 100644
-> --- a/drivers/bluetooth/hci_qca.c
-> +++ b/drivers/bluetooth/hci_qca.c
-> @@ -1602,7 +1602,7 @@ static void qca_wait_for_dump_collection(struct hci_dev *hdev)
->  	struct qca_data *qca = hu->priv;
->  
->  	wait_on_bit_timeout(&qca->flags, QCA_MEMDUMP_COLLECTION,
-> -			    TASK_UNINTERRUPTIBLE, MEMDUMP_TIMEOUT_MS);
-> +			    TASK_UNINTERRUPTIBLE, msecs_to_jiffies(MEMDUMP_TIMEOUT_MS));
->  
->  	clear_bit(QCA_MEMDUMP_COLLECTION, &qca->flags);
->  }
-> -- 
-> 2.34.1
-> 
+  # git bisect good
+7d138cb269dbd2fa9b0da89a9c10503d1cf269d5 is the first bad commit
+commit 7d138cb269dbd2fa9b0da89a9c10503d1cf269d5
+Author: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Date:   Tue Sep 16 08:47:44 2025 +0900
 
--- 
-With best wishes
-Dmitry
+     firewire: core: use spin lock specific to topology map
+
+     At present, the operation for read transaction to topology map 
+register is
+     not protected by any kind of lock primitives. This causes a potential
+     problem to result in the mixed content of topology map.
+
+     This commit adds and uses spin lock specific to topology map.
+
+     Link: 
+https://lore.kernel.org/r/20250915234747.915922-4-o-takashi@sakamocchi.jp
+     Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+
+  drivers/firewire/core-topology.c    | 22 ++++++++++++++--------
+  drivers/firewire/core-transaction.c |  6 +++++-
+  include/linux/firewire.h            |  6 +++++-
+  3 files changed, 24 insertions(+), 10 deletions(-)
+
+
+Bisect.log attached.
+
+Regards,
+Erhard F.
+--------------c8xoJb3xBtNTMKbm6r52N0KM
+Content-Type: text/x-log; charset=UTF-8; name="bisect.log"
+Content-Disposition: attachment; filename="bisect.log"
+Content-Transfer-Encoding: base64
+
+Z2l0IGJpc2VjdCBzdGFydAojIFN0YXR1czogd2FydGUgYXVmIGd1dGVuIHVuZCBzY2hsZWNo
+dGVuIENvbW1pdAojIGdvb2Q6IFtlNWYwYTY5OGIzNGVkNzYwMDJkYzVjZmYzODA0YTYxYzgw
+MjMzYTdhXSBMaW51eCA2LjE3CmdpdCBiaXNlY3QgZ29vZCBlNWYwYTY5OGIzNGVkNzYwMDJk
+YzVjZmYzODA0YTYxYzgwMjMzYTdhCiMgU3RhdHVzOiB3YXJ0ZSBhdWYgc2NobGVjaHRlbiBD
+b21taXQsIDEgZ3V0ZXIgQ29tbWl0IGJla2FubnQKIyBiYWQ6IFtlOWE2ZmIwYmNkZDc2MDli
+ZTY5NjkxMTJmM2ZiZmNjZTNiMWQ0YTdjXSBMaW51eCA2LjE4LXJjNQpnaXQgYmlzZWN0IGJh
+ZCBlOWE2ZmIwYmNkZDc2MDliZTY5NjkxMTJmM2ZiZmNjZTNiMWQ0YTdjCiMgYmFkOiBbZjc5
+ZTc3MjI1OGRmMzExYzJjYjIxNTk0Y2EwOTk2MzE4ZTcyMGQyOF0gTWVyZ2UgdGFnICdtZWRp
+YS92Ni4xOC0xJyBvZiBnaXQ6Ly9naXQua2VybmVsLm9yZy9wdWIvc2NtL2xpbnV4L2tlcm5l
+bC9naXQvbWNoZWhhYi9saW51eC1tZWRpYQpnaXQgYmlzZWN0IGJhZCBmNzllNzcyMjU4ZGYz
+MTFjMmNiMjE1OTRjYTA5OTYzMThlNzIwZDI4CiMgYmFkOiBbMGYwNDhjODc4ZWUzMmE0MjU5
+ZGJmMjhlMGFkOGZkMGI3MWVlMDA4NV0gTWVyZ2UgdGFnICdzb2MtZHQtNi4xOCcgb2YgZ2l0
+Oi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L3NvYy9zb2MKZ2l0
+IGJpc2VjdCBiYWQgMGYwNDhjODc4ZWUzMmE0MjU5ZGJmMjhlMGFkOGZkMGI3MWVlMDA4NQoj
+IGdvb2Q6IFtjMDUwZGFmNjlmM2VkZjcyZTI3NGVhYTMyMWY2NjNiMTc3OWM0MzkxXSBNZXJn
+ZSB0YWcgJ3B3bS9mb3ItNi4xOC1yYzEnIG9mIGdpdDovL2dpdC5rZXJuZWwub3JnL3B1Yi9z
+Y20vbGludXgva2VybmVsL2dpdC91a2xlaW5lay9saW51eApnaXQgYmlzZWN0IGdvb2QgYzA1
+MGRhZjY5ZjNlZGY3MmUyNzRlYWEzMjFmNjYzYjE3NzljNDM5MQojIGJhZDogWzk3OTJkNjYw
+YTRlOTFkMzFhNmIxYWYxMDVhZTNmMWMyOTEwN2U5NGJdIE1lcmdlIHRhZyAnZGV2aWNldHJl
+ZS1mb3ItNi4xOCcgb2YgZ2l0Oi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJu
+ZWwvZ2l0L3JvYmgvbGludXgKZ2l0IGJpc2VjdCBiYWQgOTc5MmQ2NjBhNGU5MWQzMWE2YjFh
+ZjEwNWFlM2YxYzI5MTA3ZTk0YgojIGJhZDogW2YwN2MzNjk1YmY2NTIyMGE2OWE4NDg0Nzhi
+ZDkwOTliZGVhYWZhNzhdIE1lcmdlIHRhZyAnZmlyZXdpcmUtdXBkYXRlcy02LjE4JyBvZiBn
+aXQ6Ly9naXQua2VybmVsLm9yZy9wdWIvc2NtL2xpbnV4L2tlcm5lbC9naXQvaWVlZTEzOTQv
+bGludXgxMzk0CmdpdCBiaXNlY3QgYmFkIGYwN2MzNjk1YmY2NTIyMGE2OWE4NDg0NzhiZDkw
+OTliZGVhYWZhNzgKIyBnb29kOiBbZWExYzZjNTkyNTIyMjA4ZGYxZGNhYzllOGYxZGViN2Nj
+NTZhNTFiN10gTWVyZ2UgdGFnICdzcGktdjYuMTgnIG9mIGdpdDovL2dpdC5rZXJuZWwub3Jn
+L3B1Yi9zY20vbGludXgva2VybmVsL2dpdC9icm9vbmllL3NwaQpnaXQgYmlzZWN0IGdvb2Qg
+ZWExYzZjNTkyNTIyMjA4ZGYxZGNhYzllOGYxZGViN2NjNTZhNTFiNwojIGdvb2Q6IFsyZDI3
+NDUzNjI0NWI1OGE0Mzc1M2EyM2Q4NGRmYWRjOWRmMWRmNDg5XSBNZXJnZSB0YWcgJ21tYy12
+Ni4xOCcgb2YgZ2l0Oi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0
+L3VsZmgvbW1jCmdpdCBiaXNlY3QgZ29vZCAyZDI3NDUzNjI0NWI1OGE0Mzc1M2EyM2Q4NGRm
+YWRjOWRmMWRmNDg5CiMgZ29vZDogW2I0OTE4MDAzY2Y1NGY5OTAwNGMxMzZjMjZmOTZiNmRm
+N2FiNDlmYWNdIE1lcmdlIHRhZyAnbWZkLW5leHQtNi4xOCcgb2YgZ2l0Oi8vZ2l0Lmtlcm5l
+bC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L2xlZS9tZmQKZ2l0IGJpc2VjdCBnb29k
+IGI0OTE4MDAzY2Y1NGY5OTAwNGMxMzZjMjZmOTZiNmRmN2FiNDlmYWMKIyBiYWQ6IFtlMzFi
+OTkwY2FmZDQ5YThjNTZlYWM1NTA5NGMxYTc4M2Y1ODI2YjQ3XSBmaXJld2lyZTogY29yZTog
+Y29kZSByZWZhY3RvcmluZyBmb3IgdGhlIGNhc2Ugb2YgZ2VuZXJhdGlvbiBtaXNtYXRjaApn
+aXQgYmlzZWN0IGJhZCBlMzFiOTkwY2FmZDQ5YThjNTZlYWM1NTA5NGMxYTc4M2Y1ODI2YjQ3
+CiMgZ29vZDogW2E0YmFjNTVkOTlkMzc5NzYyMDllMmZjMmMzMmJkM2RmYzg2YjA0NDddIGZp
+cmV3aXJlOiBjb3JlOiBjb2RlIHJlZmFjdG9yaW5nIHdoZXRoZXIgcm9vdCBub2RlIGlzIGN5
+Y2xlIG1hc3RlciBjYXBhYmxlCmdpdCBiaXNlY3QgZ29vZCBhNGJhYzU1ZDk5ZDM3OTc2MjA5
+ZTJmYzJjMzJiZDNkZmM4NmIwNDQ3CiMgYmFkOiBbNDIwYmQ3MDY4Y2JmYWVhMGE4NTc0NzJk
+ZDYzMWRjNDgzMTFlMmE4Zl0gZmlyZXdpcmU6IGNvcmU6IHVzZSBzcGluIGxvY2sgc3BlY2lm
+aWMgdG8gdHJhbnNhY3Rpb24KZ2l0IGJpc2VjdCBiYWQgNDIwYmQ3MDY4Y2JmYWVhMGE4NTc0
+NzJkZDYzMWRjNDgzMTFlMmE4ZgojIGdvb2Q6IFszNzliODcwYzI4YzZhNjE1YTEwMWRmNzk4
+NmViYTcwZmVhOTllZmY3XSBmaXJld2lyZTogY29yZTogdXNlIGhlbHBlciBtYWNyb3MgaW5z
+dGVhZCBvZiBkaXJlY3QgYWNjZXNzIHRvIEhaCmdpdCBiaXNlY3QgZ29vZCAzNzliODcwYzI4
+YzZhNjE1YTEwMWRmNzk4NmViYTcwZmVhOTllZmY3CiMgZ29vZDogWzgwYzViMDIzYTdkNmFl
+NDFiZDc5YWFkZWNlNGNiMWZjNjJlOTVhMDhdIGZpcmV3aXJlOiBjb3JlOiB1c2Ugc2NvcGVk
+X2d1YXJkKCkgdG8gbWFuYWdlIGNyaXRpY2FsIHNlY3Rpb24gdG8gdXBkYXRlIHRvcG9sb2d5
+CmdpdCBiaXNlY3QgZ29vZCA4MGM1YjAyM2E3ZDZhZTQxYmQ3OWFhZGVjZTRjYjFmYzYyZTk1
+YTA4CiMgYmFkOiBbN2QxMzhjYjI2OWRiZDJmYTliMGRhODlhOWMxMDUwM2QxY2YyNjlkNV0g
+ZmlyZXdpcmU6IGNvcmU6IHVzZSBzcGluIGxvY2sgc3BlY2lmaWMgdG8gdG9wb2xvZ3kgbWFw
+CmdpdCBiaXNlY3QgYmFkIDdkMTM4Y2IyNjlkYmQyZmE5YjBkYTg5YTljMTA1MDNkMWNmMjY5
+ZDUKIyBnb29kOiBbMDdjNDQ2ZTM1Yjg5YmM4Nzc0NzkyZjgwMzZlNTk1Y2ZmZGY1YjE2Ml0g
+ZmlyZXdpcmU6IGNvcmU6IG1haW50YWluIHBoeSBwYWNrZXQgcmVjZWl2ZXJzIGxvY2FsbHkg
+aW4gY2RldiBsYXllcgpnaXQgYmlzZWN0IGdvb2QgMDdjNDQ2ZTM1Yjg5YmM4Nzc0NzkyZjgw
+MzZlNTk1Y2ZmZGY1YjE2MgojIGZpcnN0IGJhZCBjb21taXQ6IFs3ZDEzOGNiMjY5ZGJkMmZh
+OWIwZGE4OWE5YzEwNTAzZDFjZjI2OWQ1XSBmaXJld2lyZTogY29yZTogdXNlIHNwaW4gbG9j
+ayBzcGVjaWZpYyB0byB0b3BvbG9neSBtYXAK
+
+--------------c8xoJb3xBtNTMKbm6r52N0KM--
 
