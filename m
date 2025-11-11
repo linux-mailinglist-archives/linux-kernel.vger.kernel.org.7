@@ -1,283 +1,203 @@
-Return-Path: <linux-kernel+bounces-895061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E68CCC4CD8D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:02:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EEDFC4CD96
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:03:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AEAC3B1A7C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:53:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F09E423DFC
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:53:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 766FF2FD7B9;
-	Tue, 11 Nov 2025 09:53:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FFE72FE067;
+	Tue, 11 Nov 2025 09:53:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HulecNlH"
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cvyuqpQt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B644F2FD7B2
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 09:53:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AA6A2F693E;
+	Tue, 11 Nov 2025 09:53:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762854794; cv=none; b=D72XvwGWwZKekBYehrtNlT7I1Cp9AAwIC8Qgf0fnFsO2vssSz6TnkT3LbaIr7E0xNJwK/DGfC0VhTAfySZUJgPdSfSMNJKhE4e1/NZAk3MPOL7vh2oAQTApW4OIsfweADlNLtJPvCaUwe+EdcTRWX6+gKJiBZyU6gb81NF+QKgo=
+	t=1762854785; cv=none; b=hzw2xmTIxa5fflCyzOJWy+jUpSPsCJv1fbZP4abdjVSZQ4Rb3HiAcqmmOnqbmsir8m9LiCW07oqngWxsKSeqrFaf1mKdu22IjWMhCZ131VgbpjlC5pw78TzaKhOU3fambxd6GVqn4BmpV/hy6FqnCOjR+ixcLRnbqlTsOp2Tgcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762854794; c=relaxed/simple;
-	bh=KC/FtaD7GZlypAuVRR7zqPHHKnWewGdbZEtDc8ssmpo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Yh7hciA/Jam9BM6V+5EqXV9Rlu1kMhQkuLkE0Bo5v6Vpdh0M3S+NwCki5gI+y5qo1tbuYPfFVjj509BmqWTDxLlvSzI3oAXn3sXDKEbqxn3IQgTGuIj7OratekiJ33BAXOGXm8mohATrAZbp8bYoAkAQFkXQJsDLY35fVoLUKR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HulecNlH; arc=none smtp.client-ip=209.85.128.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-71d71bcab6fso35007677b3.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 01:53:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762854792; x=1763459592; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PyXx/XqXF1D8laPygGvxhQVfuy/TOB8qpygNndyh+h8=;
-        b=HulecNlHkU34xlyKnD2xbr4UzcDv2WbQJw83MDAqjWRZKHvNDKlCVhvYTfeglKfCXH
-         kqsiMmA6Ih+J8phn+SlJMVDGjrkNsykbeltx3RYmBQhKALX7otrNEJQ3jGWpiyMVVKXK
-         APH2hXr15LBr2pq+c0lCPPo1yxUcSGV6jJT6PgEU9YXGGE6LxqxbsEqVeV6dj0ujEkjC
-         VEdoIixB4pqKUJWfzEKC/yJi9J+clh9rry+79sSPEM+RqyQhq0xkkdHJLxM4nzBFHTd2
-         fiMPPhKR/XMZkLYABmQywg9LoLYSyhohJy3+KQ5CO9vAqnBix5A3KhGckPob9BDt9ZYk
-         bS0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762854792; x=1763459592;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=PyXx/XqXF1D8laPygGvxhQVfuy/TOB8qpygNndyh+h8=;
-        b=iT3/M+s1l3CwqlLWEKGK/G/ZqhCaJeY7KnZgAcXpnZe8VCD3qV+zOWepgxaVt9aaZt
-         jF6x7To7czniEXhIUY03fszlC2pYLjAY53WC52VC/R9ooYZwfR1Cz5OqE/ZKmwaVYpxp
-         pG06tT5DYYpoePDh+hOLXcS/d7GXmks2yRGP9ekVFjbYSAUXh9zk1Xk7utZiiltfSqT9
-         Psi9QBjjJ8e4ZL4EN5euRUX6rz+uhyGn1HoMbfbo3w7BFasK/j4qLxAv1UAdsoG+hK+6
-         MTRGokTIuvCEttuiLELt5RuCkkggtzhUH9f8SpRjZcUFwHjm0nW8cy20LFfJWoFt4GWu
-         u42Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWtPo3hHpACl1ITiNni6FlifdN8qVc3GmpeSGb8+cXYX2jQx+767OVKfLIRf+plmifhCOAl/Ob+Q9IkBYM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyN2/fmHFLTvUHNzBwlZjlLlQ7sI9DXIzYja7SKZbZ+ldBZgZkG
-	Qn2WdPtPQpfkZVLgkVmtYfk3c5+pZJCAJVwDMAuWIew5b+W421wv3PyFqIogXJEbptvj60e6C87
-	t+XtCrRko+nNKXJnug0g+d7Q/mY3qAow=
-X-Gm-Gg: ASbGncsVStZCrSgKbAA510QEcacFJU5MiajH7h79VuVJ7TrbFotFHJI75y01tQHDZf4
-	bxvJR4YNPi+9hvIn3k05/0y5gP4Cgfq2UbMi8xIIg+BJeI93VwYl2JVuoK2CFYYzX5uFkFGCKqK
-	dOByJTjY4wc6EWqVIDhZpdTzkkHFp6WBhPuUfCOLm77EofIm62MIr+JF1eh5SIiyCP8N2w2k8Et
-	F0ldBaqJtiFaUG7dsG6ociPgMx6G/OZFYkYrvQdx1GlTCan4o/U4lfpHsA=
-X-Google-Smtp-Source: AGHT+IF9cL8R75S5fEHKMWwHyOCM8yxLp2zyYPXr/dVSYHl4uTdJ+SmI0MDP5Zccup4b3rFR5/FSamFpoN56cAOne0Q=
-X-Received: by 2002:a05:690e:4319:b0:63f:c10e:6422 with SMTP id
- 956f58d0204a3-640d4521e01mr8042406d50.8.1762854791585; Tue, 11 Nov 2025
- 01:53:11 -0800 (PST)
+	s=arc-20240116; t=1762854785; c=relaxed/simple;
+	bh=iDhbZOal2wnEXBNqtnf0/uj4kQN5h/UJan7jrM1zSwo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oWqyCd1ukiwZ/Y9yVNcO5TMe0nCnL9DjwdeT5mB44I+fSWJhpPrKoM/++kjjmdlPS6sAHOaf1VXHZgoxXDeu9YFmu9FCP465tjQjw49evYl7NOXzBWiZkDl73MaMyan+OfAjZWbL2FT+z8c2E8sb0u/PAXbNQpb7JAkfXyeqVn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cvyuqpQt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6957AC4CEFB;
+	Tue, 11 Nov 2025 09:53:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762854784;
+	bh=iDhbZOal2wnEXBNqtnf0/uj4kQN5h/UJan7jrM1zSwo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cvyuqpQtk0Q6hYQ6gNSeFX8b9Es2msAbN8+gQ0SFGS0il5537frS9ZBNWiJHoWhMo
+	 /juDrre53fD9dTCmBTGtcYvSzvKRIm99a8p2VAPszdWXqvkl5TnKQwoPoKNpt3EWTh
+	 /LmT97aljg7pGdrpVEb9qkGCbbHMdJGTmadUknN3ZCxt1a/Zb5TP8aAh17YKpJ0mQI
+	 XEwcfP2+y/eXt+yWGeugUUAaSizGdaknSm4e+sXB18HNskbOMNygLmjK22XzaM/VVC
+	 ZvOhvZOmFvE8mkD2w5qTq+xrEBUw3xIXs3IWLU+4k3ycBvgnFZnhx3dqELNGQIt0Wx
+	 W95UyabgI+svg==
+Date: Tue, 11 Nov 2025 01:53:01 -0800
+From: Oliver Upton <oupton@kernel.org>
+To: Jiaqi Yan <jiaqiyan@google.com>
+Cc: Jose Marinho <jose.marinho@arm.com>, maz@kernel.org,
+	oliver.upton@linux.dev, duenwen@google.com, rananta@google.com,
+	jthoughton@google.com, vsethi@nvidia.com, jgg@nvidia.com,
+	joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com,
+	catalin.marinas@arm.com, will@kernel.org, pbonzini@redhat.com,
+	corbet@lwn.net, shuah@kernel.org, kvm@vger.kernel.org,
+	kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v4 1/3] KVM: arm64: VM exit to userspace to handle SEA
+Message-ID: <aRMHfS1-K4E4UCbc@kernel.org>
+References: <20251013185903.1372553-1-jiaqiyan@google.com>
+ <20251013185903.1372553-2-jiaqiyan@google.com>
+ <7a61bcf9-a57d-a8e9-a9b8-4eacef80acd3@arm.com>
+ <CACw3F51_0A8CuCgzcvoA3Db=Wxo8mm5XZw5in+nTKrst+NCcqw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251110214443.342103-1-jonas.gorski@gmail.com> <20251110230124.7pzmkhrkxvtgzh5k@skbuf>
-In-Reply-To: <20251110230124.7pzmkhrkxvtgzh5k@skbuf>
-From: Jonas Gorski <jonas.gorski@gmail.com>
-Date: Tue, 11 Nov 2025 10:53:00 +0100
-X-Gm-Features: AWmQ_bmVu_tf7Qwi2USmUQ1KPdAesVol6XAFAeMYSR2SRaeAWkqula63Sj7g6Dk
-Message-ID: <CAOiHx==ymTyVbs7UmNH28UgxcfnMQBtt6qA=ZnKvEF3QLe_z8w@mail.gmail.com>
-Subject: Re: [PATCH RFC net-next 0/3] net: dsa: deny unsupported 8021q uppers
- on bridge ports
-To: Vladimir Oltean <olteanv@gmail.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Simon Horman <horms@kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, 
-	Vladimir Oltean <vladimir.oltean@nxp.com>, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACw3F51_0A8CuCgzcvoA3Db=Wxo8mm5XZw5in+nTKrst+NCcqw@mail.gmail.com>
 
-Hi Vladimir,
+Hi Jiaqi,
 
-On Tue, Nov 11, 2025 at 12:01=E2=80=AFAM Vladimir Oltean <olteanv@gmail.com=
-> wrote:
->
-> Hi Jonas,
->
-> On Mon, Nov 10, 2025 at 10:44:40PM +0100, Jonas Gorski wrote:
-> > Documentation/networking/switchdev.rst is quite strict on how VLAN
-> > uppers on bridged ports should work:
+On Mon, Nov 03, 2025 at 12:45:50PM -0800, Jiaqi Yan wrote:
+> On Mon, Nov 3, 2025 at 10:17 AM Jose Marinho <jose.marinho@arm.com> wrote:
 > >
-> > - with VLAN filtering turned off, the bridge will process all ingress t=
-raffic
-> >   for the port, except for the traffic tagged with a VLAN ID destined f=
-or a
-> >   VLAN upper. (...)
+> > Thank you for these patches.
+> 
+> Thanks for your comments, Jose!
+> 
 > >
-> > - with VLAN filtering turned on, these VLAN devices can be created as l=
-ong as
-> >   the bridge does not have an existing VLAN entry with the same VID on =
-any
-> >   bridge port. (...)
-> >
-> > Presumably with VLAN filtering on, the bridge should also not process
-> > (i.e. forward) traffic destined for a VLAN upper.
-> >
-> > But currently, there is no way to tell dsa drivers that a VLAN on a
-> > bridged port is for a VLAN upper and should not be processed by the
-> > bridge.
->
-> You say this as if it mattered. We can add a distinguishing mechanism
-> (for example we can pass a struct dsa_db to .port_vlan_add(), set to
-> DSA_DB_PORT for VLAN RX filtering and DSA_DB_BRIDGE for bridge VLANs),
-> but the premise was that drivers don't need to care, because HW won't do
-> anything useful with that information.
+> > On 10/13/2025 7:59 PM, Jiaqi Yan wrote:
+> > > When APEI fails to handle a stage-2 synchronous external abort (SEA),
+> > > today KVM injects an asynchronous SError to the VCPU then resumes it,
+> > > which usually results in unpleasant guest kernel panic.
+> > >
+> > > One major situation of guest SEA is when vCPU consumes recoverable
+> > > uncorrected memory error (UER). Although SError and guest kernel panic
+> > > effectively stops the propagation of corrupted memory, guest may
+> > > re-use the corrupted memory if auto-rebooted; in worse case, guest
+> > > boot may run into poisoned memory. So there is room to recover from
+> > > an UER in a more graceful manner.
+> > >
+> > > Alternatively KVM can redirect the synchronous SEA event to VMM to
+> > > - Reduce blast radius if possible. VMM can inject a SEA to VCPU via
+> > >    KVM's existing KVM_SET_VCPU_EVENTS API. If the memory poison
+> > >    consumption or fault is not from guest kernel, blast radius can be
+> > >    limited to the triggering thread in guest userspace, so VM can
+> > >    keep running.
+> > > - Allow VMM to protect from future memory poison consumption by
+> > >    unmapping the page from stage-2, or to interrupt guest of the
+> > >    poisoned page so guest kernel can unmap it from stage-1 page table.
+> > > - Allow VMM to track SEA events that VM customers care about, to restart
+> > >    VM when certain number of distinct poison events have happened,
+> > >    to provide observability to customers in log management UI.
+> > >
+> > > Introduce an userspace-visible feature to enable VMM handle SEA:
+> > > - KVM_CAP_ARM_SEA_TO_USER. As the alternative fallback behavior
+> > >    when host APEI fails to claim a SEA, userspace can opt in this new
+> > >    capability to let KVM exit to userspace during SEA if it is not
+> > >    owned by host.
+> > > - KVM_EXIT_ARM_SEA. A new exit reason is introduced for this.
+> > >    KVM fills kvm_run.arm_sea with as much as possible information about
+> > >    the SEA, enabling VMM to emulate SEA to guest by itself.
+> > >    - Sanitized ESR_EL2. The general rule is to keep only the bits
+> > >      useful for userspace and relevant to guest memory.
+> > >    - Flags indicating if faulting guest physical address is valid.
+> > >    - Faulting guest physical and virtual addresses if valid.
+> > >
+> > > Signed-off-by: Jiaqi Yan <jiaqiyan@google.com>
+> > > Co-developed-by: Oliver Upton <oliver.upton@linux.dev>
+> > > Signed-off-by: Oliver Upton <oliver.upton@linux.dev>
+> > > ---
+> > >   arch/arm64/include/asm/kvm_host.h |  2 +
+> > >   arch/arm64/kvm/arm.c              |  5 +++
+> > >   arch/arm64/kvm/mmu.c              | 68 ++++++++++++++++++++++++++++++-
+> > >   include/uapi/linux/kvm.h          | 10 +++++
+> > >   4 files changed, 84 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
+> > > index b763293281c88..e2c65b14e60c4 100644
+> > > --- a/arch/arm64/include/asm/kvm_host.h
+> > > +++ b/arch/arm64/include/asm/kvm_host.h
+> > > @@ -350,6 +350,8 @@ struct kvm_arch {
+> > >   #define KVM_ARCH_FLAG_GUEST_HAS_SVE                 9
+> > >       /* MIDR_EL1, REVIDR_EL1, and AIDR_EL1 are writable from userspace */
+> > >   #define KVM_ARCH_FLAG_WRITABLE_IMP_ID_REGS          10
+> > > +     /* Unhandled SEAs are taken to userspace */
+> > > +#define KVM_ARCH_FLAG_EXIT_SEA                               11
+> > >       unsigned long flags;
+> > >
+> > >       /* VM-wide vCPU feature set */
+> > > diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
+> > > index f21d1b7f20f8e..888600df79c40 100644
+> > > --- a/arch/arm64/kvm/arm.c
+> > > +++ b/arch/arm64/kvm/arm.c
+> > > @@ -132,6 +132,10 @@ int kvm_vm_ioctl_enable_cap(struct kvm *kvm,
+> > >               }
+> > >               mutex_unlock(&kvm->lock);
+> > >               break;
+> > > +     case KVM_CAP_ARM_SEA_TO_USER:
+> > > +             r = 0;
+> > > +             set_bit(KVM_ARCH_FLAG_EXIT_SEA, &kvm->arch.flags);
+> > > +             break;
+> > >       default:
+> > >               break;
+> > >       }
+> > > @@ -327,6 +331,7 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
+> > >       case KVM_CAP_IRQFD_RESAMPLE:
+> > >       case KVM_CAP_COUNTER_OFFSET:
+> > >       case KVM_CAP_ARM_WRITABLE_IMP_ID_REGS:
+> > > +     case KVM_CAP_ARM_SEA_TO_USER:
+> > >               r = 1;
+> > >               break;
+> > >       case KVM_CAP_SET_GUEST_DEBUG2:
+> > > diff --git a/arch/arm64/kvm/mmu.c b/arch/arm64/kvm/mmu.c
+> > > index 7cc964af8d305..09210b6ab3907 100644
+> > > --- a/arch/arm64/kvm/mmu.c
+> > > +++ b/arch/arm64/kvm/mmu.c
+> > > @@ -1899,8 +1899,48 @@ static void handle_access_fault(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa)
+> > >       read_unlock(&vcpu->kvm->mmu_lock);
+> > >   }
+> > >
+> > > +/*
+> > > + * Returns true if the SEA should be handled locally within KVM if the abort
+> > > + * is caused by a kernel memory allocation (e.g. stage-2 table memory).
+> > > + */
+> > > +static bool host_owns_sea(struct kvm_vcpu *vcpu, u64 esr)
+> > > +{
+> > > +     /*
+> > > +      * Without FEAT_RAS HCR_EL2.TEA is RES0, meaning any external abort
+> > > +      * taken from a guest EL to EL2 is due to a host-imposed access (e.g.
+> > > +      * stage-2 PTW).
+> > > +      */
+> > > +     if (!cpus_have_final_cap(ARM64_HAS_RAS_EXTN))
+> > > +             return true;
+> > > +
+> > > +     /* KVM owns the VNCR when the vCPU isn't in a nested context. */
+> > > +     if (is_hyp_ctxt(vcpu) && (esr & ESR_ELx_VNCR))
+> > Is this check valid only for a "Data Abort"?
+> 
+> Yes, the VNCR bit is specific to a Data Abort (provided we can only
+> reach host_owns_sea if kvm_vcpu_abt_issea).
+> I don't think we need to explicitly exclude the check here for
+> Instruction Abort.
 
-It matters in the case of VLAN uppers on bridged ports. It does not
-matter for VLAN uppers on standalone ports.
+You can take an external abort on an instruction fetch, in which case
+bit 13 of the ISS (VNCR bit for data abort) is RES0. So this does need
+to check for a data abort.
 
-> > Both adding a VLAN to a bridge port and adding a VLAN upper to a bridge=
-d
-> > port will call dsa_switch_ops::port_vlan_add(), with no way for the
-> > driver to know which is which. But even so, most devices likely would
-> > not support configuring forwarding per VLAN.
->
-> Yes, this is why the status quo is that DSA tries to ensure that VLAN
-> uppers do not cause ports to forward packets between each other.
-> You are not really changing the status quo in any way, just fixing some
-> bugs where that didn't happen effectively. Perhaps you could make that a
-> bit more clear.
-
-Right, I'm trying to prevent situations where the forwarding will
-happen despite not being supposed to happen.
-
-> > So in order to prevent the configuration of configurations with
-> > unintended forwarding between ports:
-> >
-> > * deny configuring more than one VLAN upper on bridged ports per VLAN o=
-n
-> >   VLAN filtering bridges
-> > * deny configuring any VLAN uppers on bridged ports on VLAN non
-> >   filtering bridges
-> > * And consequently, disallow disabling filtering as long as there are
-> >   any VLAN uppers configured on bridged ports
->
-> First bullet makes some sense, bullets 2 and 3 not so much.
->
-> The first bullet makes just "some" sense because I don't understand why
-> limit to just bridged ports. We should extend to all NETIF_F_HW_VLAN_CTAG=
-_FILTER
-> ports as per the dsa_user_manage_vlan_filtering() definitions.
-
-Standalone ports are isolated from each other, so the configured VLAN
-uppers do not matter for forwarding. They will (should) never forward
-traffic to other ports, regardless of any VLAN (filtering)
-configuration on the bridge, so there is no issue here (pending
-correct programming of the switch). Usually isolation trumps any VLAN
-memberships.
-
-This is purely about unintended/forbidden forwarding between bridged ports.
-
-> Bullets 2 and 3 don't make sense because it isn't explained how VLAN
-> non-filtering bridge ports could gain the NETIF_F_HW_VLAN_CTAG_FILTER
-> feature required for them to see RX filtering VLANs programmed to
-> hardware in the first place.
-
-Let me try with an example:
-
-let's say we have swp1 - swp4, standalone.
-
-allowed forward destinations for all are the cpu port, no filtering.
-
-now we create a bridge between swp2 and swp3.
-
-now swp2 may also forward to swp3, and swp3 to swp2.
-
-swp1 and swp4 may still only forward to cpu (and this doesn't change
-here. We can ignore them).
-
-Bullet point 1:
-
-If vlan_filtering is enabled, swp2 and swp3 will only forward configured VL=
-ANs.
-
-swp2 and swp3 will have NETIF_F_HW_VLAN_CTAG_FILTER (as VLAN filtering
-is enabled on these ports).
-
-If we enable VID 10 on both ports, the driver will be called with
-port_vlan_add(.. vid =3D 10), and they forward VLAN 10 between each
-other.
-If we instead create uppers for VID 10 for both ports, the driver will
-be called with port_vlan_add(... vid =3D 10) (as
-NETIF_F_HW_VLAN_CTAG_FILTER is is set), and they forward VLAN 10
-between each other (oops).
-
-Bullet point 2:
-
-If vlan_filtering is disabled, swp2 and swp3 forward any VID between each o=
-ther.
-
-swp2 and swp3 won't have NETIF_F_HW_VLAN_CTAG_FILTER (as vlan
-filtering is disabled on these ports).
-
-If we now create an upper for VID 10 on swp2, then VLAN 10 should not
-be forwarded to swp3 anymore (as VLAN 10 is now "consumed" by the host
-on this port).
-
-But since there is no port_vlan_add() call due to filtering disabled
-(NETIF_F_HW_VLAN_CTAG_FILTER not set), the dsa driver does not know
-that the forwarding should be inhibited between these ports, and VLAN
-10 is still forwarded from swp2 to swp3 (oops).
-
-Bullet point 3:
-And since having uppers on a bridged ports on a non-filtering bridge
-does not inhibit forwarding at all, we cannot allow disabling
-filtering as long as VLAN uppers on bridged ports exist.
-
-Does this now make it clearer what situations I am talking about?
-
-The easy way is to disallow these configurations, which is what I try
-to attempt (explicitly allowed by switchdev.rst).
-
-One other more expensive options are making bridge ports with VLAN
-uppers (or more than one upper for a VLAN) standalone and disable
-forwarding, and only do forwarding in software.
-
-Or add the above mentioned DSA_DB_PORT for vlan uppers on (bridged)
-ports, regardless of filtering being enabled, and then let the dsa
-driver handle forwarding per VLAN. This may or may not be possible,
-depending on the hardware. One workaround I can think of is to enable
-a VLAN membership violation trap and then remove the port from the
-VLAN. But this also has the potential to pull a lot of traffic to the
-cpu. And requires drivers to be adapted to handle it. And would
-require filtering, which may get complicated for the non-filtering
-bridge case.
-
-> > An alternative solution suggested by switchdev.rst would be to treat
-> > these ports as standalone, and do the filtering/forwarding in software.
-> >
-> > But likely DSA supported switches are used on low power devices, where
-> > the performance impact from this would be large.
-> >
-> > While going through the code, I also found one corner case where it was
-> > possible to add bridge VLANs shared with VLAN uppers, while adding
-> > VLAN uppers shared with bridge VLANs was properly denied. This is the
-> > first patch as this seems to be like the least controversial.
-> >
-> > Sent as a RFC for now due to the potential impact, though a preliminary
-> > test didn't should any failures with bridge_vlan_{un,}aware.sh and
-> > local_termination.sh selftests on BCM63268.
-> >
-> > A potential selftest for bridge_vlan_{un,}aware.sh I could think of
-> >
-> > - bridge p3, p4
-> > - add VLAN uppers on p1 - p4 with a unique VLAN
-> >   if refused, treat as allowed failure
-> > - check if p4 sees traffic from p1
-> >
-> > If p1 and p4 are isolated (so implicitly p2 and p3), its fine, and if
-> > the configuration is rejected is also fine, but forwarding is not.
->
-> Sounds like something which would be fit for
-> tools/testing/selftests/net/forwarding/no_forwarding.sh.
-
-Oh, wasn't aware of this one, yeah, that seems appropriate. Thanks!
-Will try to come up with a test.
-
-Best Regards,
-Jonas
+Thanks,
+Oliver
 
