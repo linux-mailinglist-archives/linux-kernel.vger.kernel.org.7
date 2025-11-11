@@ -1,101 +1,101 @@
-Return-Path: <linux-kernel+bounces-896232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 197A1C4FEDE
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 22:55:26 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73204C4FEE4
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 22:55:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C51C04E2204
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 21:55:24 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8690D4E40D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 21:55:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C77C233D6E5;
-	Tue, 11 Nov 2025 21:55:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EC13352F9D;
+	Tue, 11 Nov 2025 21:55:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fW2ivY1o";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="lqUZjOML"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VJY2PtFK";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="DEZPpJa5"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5307B2F12DA
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 21:55:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 285B232C95D
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 21:55:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762898114; cv=none; b=nzJWU7zEPKL2yr9SURGLYI9g4q/KZvVeGje47PScMvC2394KHXDh3wJM8jokIdKAMdqrcf/MVeCV+NRM4I4/hq5LJEdwCogAo/fwCooHHWL7a0HQl4Po29YGCnxvD+JC4PABI8NmgS/DQW03mLTNwivKNiXmLl0MIsWGCVSO6J4=
+	t=1762898116; cv=none; b=Se1E3BUQD9LsirPos/ECY1iHAJOBPgBXhqUgpo7bnp4Mbp4Vru7EUL2JrcQG9YasD46KMZ9PRNEGlKv2UFoVTUye0VYMOy9PBqM36G3m4nOb1ADnksHQewvUfLxLVmD0AmAChdEO0N4GPTBVl47p1mC1wwAH5I2Mq/eVofeI07g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762898114; c=relaxed/simple;
-	bh=r3R6gOHgJpsH0Ckzs+8Ovo1IxuCFFu4tCtcoUxTJujA=;
+	s=arc-20240116; t=1762898116; c=relaxed/simple;
+	bh=BqPFFvqH7BoSFpBWYudwxW6uWlGnhLlJiqWls6goZJE=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Bd8MzgyKdAAapgMWTYNTWHnqGUd0vHCWpQbhVWVae3Rbuc657pR/CBl2JRHhYcHX6MsI6t8BoJrlo+Jf45LUzSL4qauzuEvreuun7VkDJu1J7aMzZ1e68lpbhIUtRKfex0RrJM59chXs3nF6Yh8CjnuFgHGuyMuFK9S3CmoEJ4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fW2ivY1o; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=lqUZjOML; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:To:Cc; b=pnSr2EKH5qdihnQffqMxSTdd76AKUD8G3rzGDhVHGIYoJ/jrA0wTsew0T8KDQb7K/5/am7otmMlxYBtvS0wcPkYkFjTZIYnErbPleZvMBWW7E6BlYXNmz+YlDTpVFHwDLf3HJqYXR0ZlpoITFhSAFiuXsB6ZUP+ULqzvBqu6IRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VJY2PtFK; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=DEZPpJa5; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762898112;
+	s=mimecast20190719; t=1762898114;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=FySy0LCStPtORY6VK+463tcchOxR2p6Krr0cw/eyN50=;
-	b=fW2ivY1o7ECWkZEaC38GMKhM1Hh408JaKcLfjiIrc0ifPnMvKXbPzzHFc8Xq09ODKa4cKT
-	yuopOOzJKi7YYZwQcb1G2TmP4+NJtSaVw58zp8pBcB6OH0IAa/URgfHQuzIu3WCD5Er//T
-	kwVP+nbEVRNVBvn5lvcYFEpanZhRd/E=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=ewK5P1QfPFXuq8AEptM/4r+//JlhduxVqODFxsi+6HQ=;
+	b=VJY2PtFKv4NbJhk4QcxSz+Rj55aUM6lCvr2UBE3+2tEE4ea0bFLQR+KcjFGg10+KzdWGnx
+	N+y2xBQixXTHOk8mbjSu2jc2qZrMLfYqgCEq4iyyRtDOmzuf5RSCYGiH7jPTeeJqnB0/to
+	prvZyv0hU6ivrdPF04RAidzNgNFslRQ=
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
+ [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-619-zdi_Tx9UP6-cQJVRmU0fiw-1; Tue, 11 Nov 2025 16:55:11 -0500
-X-MC-Unique: zdi_Tx9UP6-cQJVRmU0fiw-1
-X-Mimecast-MFC-AGG-ID: zdi_Tx9UP6-cQJVRmU0fiw_1762898111
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-8b17194d321so28549785a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 13:55:11 -0800 (PST)
+ us-mta-639-tB4wTAnPNbi4pyLya2QURA-1; Tue, 11 Nov 2025 16:55:13 -0500
+X-MC-Unique: tB4wTAnPNbi4pyLya2QURA-1
+X-Mimecast-MFC-AGG-ID: tB4wTAnPNbi4pyLya2QURA_1762898113
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-8b2657cfcdaso27590485a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 13:55:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1762898111; x=1763502911; darn=vger.kernel.org;
+        d=redhat.com; s=google; t=1762898113; x=1763502913; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=FySy0LCStPtORY6VK+463tcchOxR2p6Krr0cw/eyN50=;
-        b=lqUZjOMLTrBjuYuHvg3x/2myWGYPSWGTBESNCnYcYzmSmVZ/SJ0vdYOAI5hKUtiUKP
-         2n3wnEpHhHtf4geprmrkRgt5aHrtyi2rwXb7xh4bxXspvP4iJDVSjKKJuobjkzkipmvY
-         sekEaOEGpwD2duGOSN1XgzUZ+X7UVayAhius8YdmpAk/lI1AOBj8JnxgTTrP72KgSljd
-         +inr0sHLeCXSREpYEU6s+7eKZazbjvVFJSQytJtMMPlNF/td5tu0p+vdB93hutj/wblM
-         XLN/PAWGLKRFxX6kP+B+KMbxR2t4asCgwh9ebSO0A/QT3UDA3+FmPdijVsxV4HyCm84/
-         YJEg==
+        bh=ewK5P1QfPFXuq8AEptM/4r+//JlhduxVqODFxsi+6HQ=;
+        b=DEZPpJa5hN8CzmmFBLRmSv341Xq/3biOK0SVMeGaUww/qJovl2T13IFgttoUQ2fs0r
+         pY4KxTjf7iCyU7btefwkChLTxEAs83lLzpp1AldwNJsjZrzuV665Bl1IXhwmyDap4QUl
+         52HRXZMaMlSFuozQDdDF1szqBn3QiohdhQlqzeVpJMT0RAVUVU1VFQRNrjI3Pm22BwNA
+         RQ0+AFmgn8cZI3wt/HqXrAsoBteUhmsSg58QGZHQiYAi8m2w3kY3EjPLadEd3RTus92x
+         2OB59bTgPNZYCZFcA1V9yuam3tYcKabt1cl4jLnyR4cKMQt33wzcW0Z2nusjHl6Wucpw
+         IOzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762898111; x=1763502911;
+        d=1e100.net; s=20230601; t=1762898113; x=1763502913;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=FySy0LCStPtORY6VK+463tcchOxR2p6Krr0cw/eyN50=;
-        b=YPv2gRfghYqBqjFoIsc9UW/g4sxn3c65nQK7NKUtevii4UPJRO++i5QqS4VzD2K1XG
-         /YMDXFBxJKLL697GF1UDvqT0GjgygbtEpyrvlZ3KPubH8JU/NEfcnx1h5B57JXx9bScR
-         fNE4XgFTeOAjNLcT0KEMALHFe9N+aDqoUE+LCcwc/jdlEd2iyszIUp4pNchcDUilZbrI
-         4B9WW6rNTdaRpQ7i63nRUZWTlKMFIbFYx9MlsBIFlqrfIZTnDk3uRwLUJZAA5oKE+yB7
-         6Y4lUtwHVmmJWvdjtza7MUMGaYDJH6kjyO3AJceFHjFRXn7Tazo0buvEGXuiQqrmJh1w
-         Z3+w==
-X-Forwarded-Encrypted: i=1; AJvYcCUU/YDT8CfpJXFLCGm4wKqiA5B4qVY+O3JG28nvwPQjJRqRoSPk58G9qPV4tSQm/CQM5PIA/yp9iKBeB9U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSl2gk13R8WfmmaRp6sojONjOG2p5drBTYLtHG80Rfj/pA0ZUQ
-	nDsSy+saWNi4jOZSHnFhT0Bvk0M6KcS50tshmDzXCHzKeEcQepeJJ9gPGhJT3tS95PS2qbcC68p
-	BLzJBzVdIOXkQVXbmyoGENx2VcqLsC4884EigYoCMENYysXvqFgAliRfnkDcuzMiHJA==
-X-Gm-Gg: ASbGncsXy2xwpj3/ddmrNQ6nvC/SLbESYUfBJXgjZL9orxamd8DXipjKhSlmlILZtY3
-	f4Nejpxd/0vSn5ruviIoyoUBZ4WftyM0uJkHQ4O785la+xS259ktMb7w8tY4Z6zJHHOUxS6DqBE
-	lrrVrTtoCDSz71Q4hj1b3Lvxk0trQEfMx/9e4KYVs4iRbIWeIaSWhR4zL+inusIFDDqdk89bakW
-	hrMxB5W+c0mpIO/OI8xL0cX8De9QS2Y3FbLrcakebjK9qIQME2wJ8XW3rmgJamHaT9L4NqZ1D52
-	sU4GbstxpZ1pBQqPaqkhtXnqF5yfAuduu1H5Se0yooPZoGLCUENwTeTcinbBUZbSUSVtESKPAoQ
-	7iYoa/WzKuywrPQeq7J087Dsnf4cfrW4=
-X-Received: by 2002:a05:620a:170c:b0:8b2:271e:a560 with SMTP id af79cd13be357-8b29b815efbmr102325885a.72.1762898110769;
-        Tue, 11 Nov 2025 13:55:10 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFVx5pK69Ag3154vIr3OiRkF4L8ppHUN7DwLvrxWK4PbbHtrMDcLkZR/pYDsWLScGfqh5YaAg==
-X-Received: by 2002:a05:620a:170c:b0:8b2:271e:a560 with SMTP id af79cd13be357-8b29b815efbmr102324085a.72.1762898110299;
-        Tue, 11 Nov 2025 13:55:10 -0800 (PST)
+        bh=ewK5P1QfPFXuq8AEptM/4r+//JlhduxVqODFxsi+6HQ=;
+        b=EPewMd9CDGMRzzZEGzvHHGET6mP4VH2h1DZFIB8190xB3wyOpmlT0xBIPvSRjPnKRC
+         QozRiI1uYxqm8zrwcSKGvcOY8/imA2imA1lf+CBgy9gRsnGX8sh80BeUFv9o0ZzE0WnH
+         w5jG+pWvyNi5wMPPf40DFEkSqzA5dprWPsbD+IafYMLoSB7PYG3+g7n9jt8EGiGOg6Xg
+         jeD9BogWydiChqzTQfpwPCCQDSWMa3OFijpceFurLrM/4Tf/9fmt9nCEKIL0/q+qMcPa
+         pbE+hmlVIdXP/dlTtdDXRNnFE+pE0XPcGHcWJ4r2oq0ATS1/gsHNkHNrv0gp11yrJ6BB
+         sa6g==
+X-Forwarded-Encrypted: i=1; AJvYcCVacRALYFixiQt5Du4AQkNDddQ+cOfZgnYFz8zfFd/Bk/vKSOuirvDvQqXlv2scmFNjWccS7awWXC3uNxc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWm9CEykzuzypV1LseFtX68xIaE52+M5LnFZ6o4fVe15uDynJP
+	6hyUnize0YHBYDpo7mf5gQ8tBjvvSF1EdxsX6oFzbOH/ba3Omc3dEgY7K74A6IBwwBqpQbC5JJj
+	MXOog02WnHXTl9NgP5UeoI11R9KgxcmOPNmrdI93uUeq6NVcx8bbLCDnKlqTaExSIRA==
+X-Gm-Gg: ASbGncuDpErtaUi05BkCgwEbzvoocDh2xD8CPVUcpENZb3o2ueSb1ZAGi32/Esv2q7E
+	n/+xKJQ0ZDA8BLO0DnumEYEkDHmXfytSXiy12KnqTkMM456iiwnAL29jHriiShQWWBxgESp5Xcp
+	DXbzJb6nBWu2x2dr8h+uUHvz+b/bcP8jr78isce4Ap3xkX5OJiHCJAHE3Ym5Co/3PDxcD+Gsbdk
+	PAmKD/gyg9gtWYF9drcOZq3uPV277i+23/aVNJK+49h6xlXqjgGaps5vd2DW8Q55nrstIILNtfA
+	ruAUJ50P1TPFiRU47taYaMliFVumSS3GjjrEdOpkFyIsNe36qyyRSnXZN1dcGAR7/83b1wsRqKX
+	QVPoBjAEqqxdwmV9tKolhPbKpNynEzbM=
+X-Received: by 2002:a05:620a:444d:b0:85d:aabb:47d4 with SMTP id af79cd13be357-8b29b7676c2mr114413985a.6.1762898112732;
+        Tue, 11 Nov 2025 13:55:12 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHpYrk8J3pc0or2M4yWds8EC3twQQrc0f0pmbdA1sma8+sKJvQpmqvKN6KSF3KtIt1M0Qh7JA==
+X-Received: by 2002:a05:620a:444d:b0:85d:aabb:47d4 with SMTP id af79cd13be357-8b29b7676c2mr114411185a.6.1762898112359;
+        Tue, 11 Nov 2025 13:55:12 -0800 (PST)
 Received: from jkangas-thinkpadp1gen3.rmtuswa.csb ([2601:1c2:4403:8750:d964:d6a9:f204:ed2b])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b29aa032fcsm61335085a.49.2025.11.11.13.55.08
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b29aa032fcsm61335085a.49.2025.11.11.13.55.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Nov 2025 13:55:10 -0800 (PST)
+        Tue, 11 Nov 2025 13:55:12 -0800 (PST)
 From: Jared Kangas <jkangas@redhat.com>
-Date: Tue, 11 Nov 2025 13:54:11 -0800
-Subject: [PATCH 1/2] pinctrl: s32cc: fix uninitialized memory in
- s32_pinctrl_desc
+Date: Tue, 11 Nov 2025 13:54:12 -0800
+Subject: [PATCH 2/2] pinctrl: s32cc: initialize gpio_pin_config::list after
+ kmalloc()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -104,7 +104,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251111-pinctrl-s32cc-alloc-init-v1-1-071b3485b776@redhat.com>
+Message-Id: <20251111-pinctrl-s32cc-alloc-init-v1-2-071b3485b776@redhat.com>
 References: <20251111-pinctrl-s32cc-alloc-init-v1-0-071b3485b776@redhat.com>
 In-Reply-To: <20251111-pinctrl-s32cc-alloc-init-v1-0-071b3485b776@redhat.com>
 To: Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, 
@@ -118,80 +118,38 @@ To: Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>,
 Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
  linux-kernel@vger.kernel.org, Jared Kangas <jkangas@redhat.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1762898106; l=3179;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1762898106; l=1042;
  i=jkangas@redhat.com; s=20251111; h=from:subject:message-id;
- bh=r3R6gOHgJpsH0Ckzs+8Ovo1IxuCFFu4tCtcoUxTJujA=;
- b=/a2DmQFQikGB8tMbS1LUwfOT0vMnQIkNOhWStWMNd+63yndO7bdcP3v8AKVc3H81zPQRXNv07
- e1klwEJpmB3DVdhiEREEVNIyvIhIsr774lihmh7uHYh8ICoCmIKxvsw
+ bh=BqPFFvqH7BoSFpBWYudwxW6uWlGnhLlJiqWls6goZJE=;
+ b=Y4qJgOTUpZTA4incmVAXt2PUgh+wZtq/enkv3qwzmo0HKnIZRrIfXvDthp5qizHo6vEg6W89O
+ JNcPu+NpNIrBP4dO8SBmGnIkId+Z03EgqR12YXVw1lviBIZBg5Oe3c8
 X-Developer-Key: i=jkangas@redhat.com; a=ed25519;
  pk=eFM2Mqcfarb4qox390655bUATO0fG9gwgaw7kGmOEZQ=
 
-s32_pinctrl_desc is allocated with devm_kmalloc(), but not all of its
-fields are initialized. Notably, num_custom_params is used in
-pinconf_generic_parse_dt_config(), resulting in intermittent allocation
-errors, such as the following splat when probing i2c-imx:
+s32_pmx_gpio_request_enable() does not initialize the newly-allocated
+gpio_pin_config::list before adding it to s32_pinctrl::gpio_configs.
+This could result in a linked list corruption.
 
-        WARNING: CPU: 0 PID: 176 at mm/page_alloc.c:4795 __alloc_pages_noprof+0x290/0x300
-        [...]
-        Hardware name: NXP S32G3 Reference Design Board 3 (S32G-VNP-RDB3) (DT)
-        [...]
-        Call trace:
-         __alloc_pages_noprof+0x290/0x300 (P)
-         ___kmalloc_large_node+0x84/0x168
-         __kmalloc_large_node_noprof+0x34/0x120
-         __kmalloc_noprof+0x2ac/0x378
-         pinconf_generic_parse_dt_config+0x68/0x1a0
-         s32_dt_node_to_map+0x104/0x248
-         dt_to_map_one_config+0x154/0x1d8
-         pinctrl_dt_to_map+0x12c/0x280
-         create_pinctrl+0x6c/0x270
-         pinctrl_get+0xc0/0x170
-         devm_pinctrl_get+0x50/0xa0
-         pinctrl_bind_pins+0x60/0x2a0
-         really_probe+0x60/0x3a0
-        [...]
-         __platform_driver_register+0x2c/0x40
-         i2c_adap_imx_init+0x28/0xff8 [i2c_imx]
-        [...]
-
-This results in later parse failures that can cause issues in dependent
-drivers:
-
-        s32g-siul2-pinctrl 4009c240.pinctrl: /soc@0/pinctrl@4009c240/i2c0-pins/i2c0-grp0: could not parse node property
-        s32g-siul2-pinctrl 4009c240.pinctrl: /soc@0/pinctrl@4009c240/i2c0-pins/i2c0-grp0: could not parse node property
-        [...]
-        pca953x 0-0022: failed writing register: -6
-        i2c i2c-0: IMX I2C adapter registered
-        s32g-siul2-pinctrl 4009c240.pinctrl: /soc@0/pinctrl@4009c240/i2c2-pins/i2c2-grp0: could not parse node property
-        s32g-siul2-pinctrl 4009c240.pinctrl: /soc@0/pinctrl@4009c240/i2c2-pins/i2c2-grp0: could not parse node property
-        i2c i2c-1: IMX I2C adapter registered
-        s32g-siul2-pinctrl 4009c240.pinctrl: /soc@0/pinctrl@4009c240/i2c4-pins/i2c4-grp0: could not parse node property
-        s32g-siul2-pinctrl 4009c240.pinctrl: /soc@0/pinctrl@4009c240/i2c4-pins/i2c4-grp0: could not parse node property
-        i2c i2c-2: IMX I2C adapter registered
-
-Fix this by initializing s32_pinctrl_desc with devm_kzalloc() instead of
-devm_kmalloc() in s32_pinctrl_probe(), which sets the previously
-uninitialized fields to zero.
+Initialize the new list_head with INIT_LIST_HEAD() to fix this.
 
 Fixes: fd84aaa8173d ("pinctrl: add NXP S32 SoC family support")
 Signed-off-by: Jared Kangas <jkangas@redhat.com>
 ---
- drivers/pinctrl/nxp/pinctrl-s32cc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pinctrl/nxp/pinctrl-s32cc.c | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/drivers/pinctrl/nxp/pinctrl-s32cc.c b/drivers/pinctrl/nxp/pinctrl-s32cc.c
-index 501eb296c76050aa05386c51ef6ae0f97d4c76c3..51ecb8d0fb7e8a203e10cbe965dfec308eaa5f30 100644
+index 51ecb8d0fb7e8a203e10cbe965dfec308eaa5f30..35511f83d05603f5374e2d09be4b0843c7d7dc53 100644
 --- a/drivers/pinctrl/nxp/pinctrl-s32cc.c
 +++ b/drivers/pinctrl/nxp/pinctrl-s32cc.c
-@@ -951,7 +951,7 @@ int s32_pinctrl_probe(struct platform_device *pdev,
- 	spin_lock_init(&ipctl->gpio_configs_lock);
+@@ -392,6 +392,7 @@ static int s32_pmx_gpio_request_enable(struct pinctrl_dev *pctldev,
  
- 	s32_pinctrl_desc =
--		devm_kmalloc(&pdev->dev, sizeof(*s32_pinctrl_desc), GFP_KERNEL);
-+		devm_kzalloc(&pdev->dev, sizeof(*s32_pinctrl_desc), GFP_KERNEL);
- 	if (!s32_pinctrl_desc)
- 		return -ENOMEM;
+ 	gpio_pin->pin_id = offset;
+ 	gpio_pin->config = config;
++	INIT_LIST_HEAD(&gpio_pin->list);
  
+ 	spin_lock_irqsave(&ipctl->gpio_configs_lock, flags);
+ 	list_add(&gpio_pin->list, &ipctl->gpio_configs);
 
 -- 
 2.51.1
