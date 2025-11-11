@@ -1,133 +1,99 @@
-Return-Path: <linux-kernel+bounces-896181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id D55EDC4FD1E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 22:14:30 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03765C4FD18
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 22:14:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1BA8734BB64
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 21:14:30 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A473034BD70
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 21:14:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BDFD32692D;
-	Tue, 11 Nov 2025 21:14:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DBFE2E62A6;
+	Tue, 11 Nov 2025 21:14:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W3fh+gYs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QCMQr7hP";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NWBf5/sd"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C11B918A6B0;
-	Tue, 11 Nov 2025 21:14:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24CD635CBDC;
+	Tue, 11 Nov 2025 21:14:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762895654; cv=none; b=d/mHSBFoI5LE0p4LESZs48PMIwvXslsNVZLvmpxSMTo7iDaSXsXcBQlYnjaucfbfvwEum9AkVr6hiJZTAlpQGrJ3c4ttAR5iIud71dOLVrI4RMj6kzdfaXJjJOeey1rsY30bNZpnSM4hAFp6wop7LR9CPU8D+mBOqyezfNsfWN0=
+	t=1762895649; cv=none; b=PxTjoOIbiX1DzS8d8c5QVxYRLEyrpjt88Oc2Pj8jYf9+uxoC4bddnHTb4yeeWupC1iKVaHbtXo1iUACxIWFVeH4K9PiuQyyixJlDf9ibLIGE9qrfTXHoDtuDPvWTTBYkKbmdOK86V2rumcAzupgFr5zDT6ODkdYKFsNCi3KZYiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762895654; c=relaxed/simple;
-	bh=fqT2OYcgB8LhPe88EW+aSGHD9PETQ4o5wspTZSm3Xzk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=t9iNHpnuo0NHBOg+SWTr11iOfY+DDRUEYZ8lhiP3gwq/SIf7+WXU9N8pmgF+8x1Joun8PxUGOjShqYTRo+SoAuT1NoofOftiajzyO71M7MnH4QF7ryUSMkQ9PyaDsr4xth6sD0+TAWsqLPceoWjZk7eOypCdThPSYs+ZF+eQED8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W3fh+gYs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FC29C4CEFB;
-	Tue, 11 Nov 2025 21:14:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762895654;
-	bh=fqT2OYcgB8LhPe88EW+aSGHD9PETQ4o5wspTZSm3Xzk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=W3fh+gYs+pHLAln+6/KfsOIb2v+3Zy5vfwUqAoZ8wu+yKEelZqHVqYi9cQL0KJp69
-	 7qcR7iqizuJVmylz0xsWAaPBXV3PFWchxazcZka9EMFkq0i5t8IvNoIf8uSEjMwU/f
-	 pMFKaKSqmObDsvDKy3bg0VHiNu9IABL87h1n79gc6LTrXDA76f0aWvGGFTSZnRu5RO
-	 zCzHyJcJjJXn8mrTrjZX25N/FLEaV4zLUuu3R3aCrMKmM3XuJFBaQza71bIaJBguwd
-	 aKJIIf0p75vfCeu9jtWSw1g2GK4Dq40d+IdVxmh+YHVXWymkYhN2pYeDDEalG0l48A
-	 KkFv5MriwKBIg==
-From: Miguel Ojeda <ojeda@kernel.org>
-To: zhengyejian@huaweicloud.com
-Cc: ardb@kernel.org,
-	arnd@arndb.de,
-	boqun.feng@gmail.com,
-	gary@garyguo.net,
-	gregkh@linuxfoundation.org,
-	jannh@google.com,
-	kees@kernel.org,
-	linux-kernel@vger.kernel.org,
-	masahiroy@kernel.org,
-	mcgrof@kernel.org,
-	ndesaulniers@google.com,
-	song@kernel.org,
-	wedsonaf@google.com,
-	willy@infradead.org,
-	yeweihua4@huawei.com,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v2] kallsyms: Fix wrong "big" kernel symbol type read from procfs
-Date: Tue, 11 Nov 2025 22:13:56 +0100
-Message-ID: <20251111211356.18882-1-ojeda@kernel.org>
-In-Reply-To: <20241011143853.3022643-1-zhengyejian@huaweicloud.com>
-References: <20241011143853.3022643-1-zhengyejian@huaweicloud.com>
+	s=arc-20240116; t=1762895649; c=relaxed/simple;
+	bh=FkkC1Vko+WvOxUwHMvXg7IztDR/h0HWvV2LknFPdch4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=jA0OthLA/jeGJi8tfXIoDhg3m8/cczy4QZyLvufeu9fnP/N6riUnP1mnlSznQ4+QWXBjA/5uj9iRZBK4y01vul8iUCBjKA3zVoBcz/ls0jdewUSOxl0SlM4RLNvMlBbYIrgYngQ1a3Tyaf7TmBlRpmLzGPvfhI8SlOt+ehxuilk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QCMQr7hP; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NWBf5/sd; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1762895643;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FkkC1Vko+WvOxUwHMvXg7IztDR/h0HWvV2LknFPdch4=;
+	b=QCMQr7hPcgn6dCNJX98bU9IBPqeWfG3Ql1Mu6n4Y9LoOsmj13Etz6iojOHwYcweudjPD6n
+	SK/kCBfBz6KHrLyBW4voUWmuCls3bRLR2gEq423UrMYkvZdtVNxv7SvFOCAP3KCL+ZhPSo
+	Dh/VMTFWyHwCEmcQ3Z8Du+I1btcxjEpqUhRVsa7eN99ptH/HLbsRNisS0yihVrXlq0rGP8
+	hRsZYRDGXfgiJHTuKco1FN4OkNy+IONOBB7xByVDeUTKgENRw/W1pfx/4LJrIVjnP3S1Qz
+	mO56wI/bcpbDvixGbOZtVIv1bUZhfKw7uJGMp7CkplGZ5sr9XomnpaqRXhYcJA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1762895643;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FkkC1Vko+WvOxUwHMvXg7IztDR/h0HWvV2LknFPdch4=;
+	b=NWBf5/sdMIqLgR3LBr+nNke9DKJfpj5OuIHKoW7Yv0z8dk6zF4g7KO2sAVROMns0UW7FTe
+	1xvl6jVq0thmABAw==
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Rob Herring
+ <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, "Rafael J.
+ Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+ <angelogioacchino.delregno@collabora.com>, Yangtao Li
+ <tiny.windzz@gmail.com>, Chen-Yu Tsai <wens@kernel.org>, Jernej Skrabec
+ <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, Lorenzo
+ Pieralisi <lpieralisi@kernel.org>, Daniel Lezcano
+ <daniel.lezcano@linaro.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Nicolas Ferre
+ <nicolas.ferre@microchip.com>, Alexandre Belloni
+ <alexandre.belloni@bootlin.com>, Claudiu Beznea
+ <claudiu.beznea@tuxon.dev>, Maximilian Luz <luzmaximilian@gmail.com>, Hans
+ de Goede <hansg@kernel.org>, Ilpo =?utf-8?Q?J=C3=A4rvinen?=
+ <ilpo.jarvinen@linux.intel.com>, Daniel Lezcano
+ <daniel.lezcano@kernel.org>, Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, linux-sunxi@lists.linux.dev,
+ linux-arm-msm@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+ linux-tegra@vger.kernel.org, Krzysztof Kozlowski
+ <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH 08/13] irqchip/atmel-aic: Simplify with
+ of_machine_get_match_data()
+In-Reply-To: <20251106-b4-of-match-matchine-data-v1-8-d780ea1780c2@linaro.org>
+References: <20251106-b4-of-match-matchine-data-v1-0-d780ea1780c2@linaro.org>
+ <20251106-b4-of-match-matchine-data-v1-8-d780ea1780c2@linaro.org>
+Date: Tue, 11 Nov 2025 22:14:02 +0100
+Message-ID: <87cy5oxof9.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Fri, 11 Oct 2024 22:38:53 +0800 Zheng Yejian <zhengyejian@huaweicloud.com> wrote:
+On Thu, Nov 06 2025 at 20:07, Krzysztof Kozlowski wrote:
+> Replace open-coded getting root OF node, matching against it and getting
+> the match data with new of_machine_get_match_data() helper.
 >
-> Currently when the length of a symbol is longer than 0x7f characters,
-> its type shown in /proc/kallsyms can be incorrect.
->
-> I found this issue when reading the code, but it can be reproduced by
-> following steps:
->
-> 1. Define a function which symbol length is 130 characters:
->
-> #define X13(x) x##x##x##x##x##x##x##x##x##x##x##x##x
-> static noinline void X13(x123456789)(void)
-> {
-> printk("hello world\n");
-> }
->
-> 2. The type in vmlinux is 't':
->
-> $ nm vmlinux | grep x123456
-> ffffffff816290f0 t x123456789x123456789x123456789x12[...]
->
-> 3. Then boot the kernel, the type shown in /proc/kallsyms becomes 'g'
-> instead of the expected 't':
->
-> # cat /proc/kallsyms | grep x123456
-> ffffffff816290f0 g x123456789x123456789x123456789x12[...]
->
-> The root cause is that, after commit 73bbb94466fd ("kallsyms: support
-> "big" kernel symbols"), ULEB128 was used to encode symbol name length.
-> That is, for "big" kernel symbols of which name length is longer than
-> 0x7f characters, the length info is encoded into 2 bytes.
->
-> kallsyms_get_symbol_type() expects to read the first char of the
-> symbol name which indicates the symbol type. However, due to the
-> "big" symbol case not being handled, the symbol type read from
-> /proc/kallsyms may be wrong, so handle it properly.
->
-> Cc: stable@vger.kernel.org
-> Fixes: 73bbb94466fd ("kallsyms: support "big" kernel symbols")
-> Signed-off-by: Zheng Yejian <zhengyejian@huaweicloud.com>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Gary made me aware of this thread (thanks!) -- we are coming from:
-
-    https://lore.kernel.org/all/aQjua6zkEHYNVN3X@x1/
-
-For which I sent this patch without knowing about this one:
-
-    https://lore.kernel.org/rust-for-linux/20251107050414.511648-1-ojeda@kernel.org/
-
-This has been seen now by Arnaldo (Cc'ing) in a real system, so I think
-we should take this one since it was first, with:
-
-Cc: stable@vger.kernel.org
-
-Thanks!
-
-Cheers,
-Miguel
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
 
