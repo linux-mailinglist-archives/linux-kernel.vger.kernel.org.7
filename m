@@ -1,135 +1,214 @@
-Return-Path: <linux-kernel+bounces-895105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0660C4CF74
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:17:35 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 566AFC4CE39
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:08:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B19D4425F70
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:08:10 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C97A534FA11
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:08:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B64A6335543;
-	Tue, 11 Nov 2025 10:06:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F8DA33858E;
+	Tue, 11 Nov 2025 10:06:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q/VhfSkz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aGUA9Lae"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 101242F0C46;
-	Tue, 11 Nov 2025 10:06:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2340D337B9E;
+	Tue, 11 Nov 2025 10:06:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762855567; cv=none; b=mhprLjJyPFovJoDbf6iPKajSlNXsEhvtQszgmTs6akHP8zQ2hRxbj1EJcItCnponu0a+hZjy+rcTR5mO9MJ2aaAuS0IOy989rwEpz5S1hlOPZyqp0GqXsR1Wnl+iFQDi1wTV3tNqAc1DRPgrFvNMrTY8XK7WhTfRP4fqmgjo3Yk=
+	t=1762855592; cv=none; b=TS8DXVLcEjjOeDcoYDZEEYm/CBp7OIhV7kYyQE31MU43u3o/eQOwrNZUtH4loL3I7DjRsEV3MkM8QxTmptjNOh3+4G3o2e+bnb5i4NVyqGO6KqLOJ1aKu+Utjq3OFt6QiynX0pijqW7UjD5XTzvheeda10mDA9TGX90c/gafUCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762855567; c=relaxed/simple;
-	bh=8SNn1sc/qjsHJtmeS956ja5op53dmBnHINxulZL0Y6I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=o1TfSIcelxDQolcqSjawC94X3omezTtFDWpXFzFbbAVtX9SjmSSzPkWL5s4udKL4OJ4wGqeZ5GCc6ElFCB4Q4vq9st3zmlChKMoDpWzmjR+7bWDESKDzeuPDy6ndgM0X0EimvHdTHPwRCBzdgT6Na3FgW5yTwAGOOw7HT3Aq6J0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q/VhfSkz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D182C4CEF7;
-	Tue, 11 Nov 2025 10:06:04 +0000 (UTC)
+	s=arc-20240116; t=1762855592; c=relaxed/simple;
+	bh=OY34vNpbkB90bvmZi6ZLRQPxWPTqZjrwENr3EL+QS+Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KQCMwrG5JfVgIXiiUXsSM6ZfFB1iQK9EJGwICR0xae1/0IOFcvAkrHZ3tgXJQ+0+0JaBeO71LZNSA/WjDtB/mWtdmsenDaPb0zQ/sglIFryE9DW2hbs1RVW+F7JAnJ0oNtv+TZ9H7taGR6KBw6eChPQS3toXvQrUeI9J0lvXcJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aGUA9Lae; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 815D1C2BC86;
+	Tue, 11 Nov 2025 10:06:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762855566;
-	bh=8SNn1sc/qjsHJtmeS956ja5op53dmBnHINxulZL0Y6I=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Q/VhfSkzPUGSOFnaRJQkhbDR7PhLyR/NeMcDTqx+OhMmieqBAgDEyFd0JhKVaxUxq
-	 /FuRujczW8EyA9qfWYF1XIXDOKIsQfFhfk1JIHuj5d61zho+RFf0qrW0qfEr9wvnN5
-	 mLigNaCGmCl91gmuqbyPpqfOr0nWLZOBtiBCxjNPfN0sHHzhVyk2FLgrhqnnrU9rGb
-	 6VBYo5XSIe4K0wJ12ILMm1QHLusdvrNvJA9ZCus/oSEgF8V1CPbUGXpsvYccMjnog4
-	 LTb94FHanqS6I1BqQ3NSDxkZgaCuPGyugGdyjUGxXae8bVGorqGfaNai5hbJcyZuDG
-	 yOFlA+IJeBOlA==
-Message-ID: <58b0d712-48a4-4490-a63f-404716844557@kernel.org>
-Date: Tue, 11 Nov 2025 11:06:02 +0100
+	s=k20201202; t=1762855591;
+	bh=OY34vNpbkB90bvmZi6ZLRQPxWPTqZjrwENr3EL+QS+Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aGUA9Lae/nM+WYOO639bnUndKZjaReRZ17N2gmglCvDAnKfjMPd8+IRq7ikMcr5gM
+	 cEynxUxC+R5cArbYc9A6XStEecWwkukBlnDqgEGmgC1oCwVziI8Z62ERZyK0Z/5VAd
+	 9V7OaLmnqKoWNw7DFPe5n9hMtsNJ0sPn2SIPY1JXeLUMRHFpOoaBPLNkHhyMJjLRVi
+	 FGgwC54GTnKx/qIe+kf6nVOyYYoyoxTaIcOMInGjEl16cZrzGDbRT4NGPhkYCwxI6a
+	 ZvZAhvORakzUT9kSp4ldyZoPETZf0pM3g2c6thyMvfCOsDIC/tWnulN1Hdc+lgZhnB
+	 B20E6eip4LfcA==
+Date: Tue, 11 Nov 2025 15:36:15 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Val Packett <val@packett.cool>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+	manivannan.sadhasivam@oss.qualcomm.com, Rob Clark <robin.clark@oss.qualcomm.com>, 
+	Vignesh Raman <vignesh.raman@collabora.com>, Valentine Burley <valentine.burley@collabora.com>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	"David E. Box" <david.e.box@linux.intel.com>, Kai-Heng Feng <kai.heng.feng@canonical.com>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Heiner Kallweit <hkallweit1@gmail.com>, 
+	Chia-Lin Kao <acelan.kao@canonical.com>, Bjorn Helgaas <helgaas@kernel.org>
+Subject: Re: [PATCH v2 0/2] PCI/ASPM: Enable ASPM and Clock PM by default on
+ devicetree platforms
+Message-ID: <twn5ryedkpv76ph3i7xbovktz3abqszthl6cxhtv6uczbv4ap7@4wrmlczxzjll>
+References: <20250922-pci-dt-aspm-v2-0-2a65cf84e326@oss.qualcomm.com>
+ <4cp5pzmlkkht2ni7us6p3edidnk25l45xrp6w3fxguqcvhq2id@wjqqrdpkypkf>
+ <36f05566-8c7a-485b-96e7-9792ab355374@packett.cool>
+ <qy4cnuj2dfpfsorpke6vg3skjyj2hgts5hhrrn5c5rzlt6l6uv@b4npmattvfcm>
+ <c27b5514-1691-448a-9823-8b35955b0fc6@packett.cool>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] dt-bindings: phy: lan966x: Add optional
- microchip,sx-tx/rx-inverted
-To: Horatiu Vultur <horatiu.vultur@microchip.com>,
- Conor Dooley <conor@kernel.org>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, linux-phy@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251110110536.2596490-1-horatiu.vultur@microchip.com>
- <20251110110536.2596490-3-horatiu.vultur@microchip.com>
- <20251110-unwound-award-a11d69b9da4f@spud>
- <20251111095831.lp4kvdfcahtwgrqc@DEN-DL-M31836.microchip.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251111095831.lp4kvdfcahtwgrqc@DEN-DL-M31836.microchip.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <c27b5514-1691-448a-9823-8b35955b0fc6@packett.cool>
 
-On 11/11/2025 10:58, Horatiu Vultur wrote:
-> The 11/10/2025 18:43, Conor Dooley wrote:
+On Tue, Nov 11, 2025 at 04:40:01AM -0300, Val Packett wrote:
 > 
-> Hi Conor,
+> On 11/11/25 4:19 AM, Manivannan Sadhasivam wrote:
+> > On Tue, Nov 11, 2025 at 03:51:03AM -0300, Val Packett wrote:
+> > > On 11/8/25 1:18 PM, Dmitry Baryshkov wrote:
+> > > > On Mon, Sep 22, 2025 at 09:46:43PM +0530, Manivannan Sadhasivam via B4 Relay wrote:
+> > > > > Hi,
+> > > > > 
+> > > > > This series is one of the 'let's bite the bullet' kind, where we have decided to
+> > > > > enable all ASPM and Clock PM states by default on devicetree platforms [1]. The
+> > > > > reason why devicetree platforms were chosen because, it will be of minimal
+> > > > > impact compared to the ACPI platforms. So seemed ideal to test the waters.
+> > > > > 
+> > > > > This series is tested on Lenovo Thinkpad T14s based on Snapdragon X1 SoC. All
+> > > > > supported ASPM states are getting enabled for both the NVMe and WLAN devices by
+> > > > > default.
+> > > > > [..]
+> > > > The series breaks the DRM CI on DB820C board (apq8096, PCIe network
+> > > > card, NFS root). The board resets randomly after some time ([1]).
+> > > Is that reset.. due to the watchdog resetting a hard-frozen system?
+> > > 
+> > > Me and a bunch of other people in the #aarch64-laptops irc/matrix room have
+> > > been experiencing these random hard freezes with ASPM enabled for the NVMe
+> > > SSD, on Hamoa (and Purwa too I think) devices.
+> > > 
+> > Interesting! ASPM is tested and found to be working on Hamoa and other Qcom
+> > chipsets also, except Makena based chipsets that doesn't support L0s due to
+> > incorrect PHY settings. APQ8096 might be an exception since it is a really old
+> > target and I'm digging up internally regarding the ASPM support.
+> > 
+> > > Totally unpredictable, could be after 4 minutes or 4 days of uptime.
+> > > Panic-indicator LED not blinking, no reaction to magic SysRq, display image
+> > > frozen, just a complete hang until the watchdog does the reset.
+> > > 
+> > I have KIOXIA SSD on my T14s. I do see some random hang, but I thought those
+> > predate the ASPM enablement as I saw them earlier as well. But even before this
+> > series, we had ASPM enabled for SSDs on Qcom targets (or devices that gets
+> > enumerated during initial bus scan), so it might be that the SSD doesn't support
+> > ASPM well enough.
 > 
->> On Mon, Nov 10, 2025 at 12:05:36PM +0100, Horatiu Vultur wrote:
->>> This allows to invert the N and P signals of the RX and TX Serdes
->>> signals. This option allows the board designer to trace their signals
->>> easier on the boards.
->>
->> Why can't this just be done in software, debugfs or something like that?
->> Maybe it's just your description is poor, but sounds like the intention
->> here is to just switch things around for debug purposes.
+> I certainly remember that ASPM *was* enabled by default when I first got
+> this laptop, via the custom way that predates this series.
 > 
-> I don't think it should be done through debugfs. As this describes the
-> board layout and I don't think someone will want to change it at
-> runtime to see how things behave. So maybe the description is poor.
+> Actually that custom enablement code getting removed was how I discovered it
+> was ASPM related!
+> 
+> I pulled linux-next once and suddenly the system became stable!.. and then I
+> noticed +2W of battery drain..
+> 
 
-You said it is purely for hardware designer to trace signals, so sorry,
-but that's not DTs purpose.
+Because, we only enable L0s and L1 by default and not L1ss.
 
-Best regards,
-Krzysztof
+> > But I'm clueless on why it results in a hang. What I know on ARM platforms is
+> > that we get SError aborts and other crazy bus/NOC issues if the device doesn't
+> > respond to the PCIe read request. So the hang could be due to one of those
+> > issues.
+> 
+> Could the kernel be making requests before the device fully resumed from a
+> sleep state?
+> 
+
+Kernel has no visibility on the PCIe link ASPM states as it happens autonomously
+in hardware once enabled. So once kernel issues a PCIe read TLP, the link is
+supposed to transition L0 and the device should respond. But if the link doesn't
+come up for any reason, it will result in a completion timeout and weird things
+happen on the host.
+
+> > > I have confirmed with a modified (to accept args) enable-aspm.sh script[1]
+> > > that disabling ASPM *only* for the SSD, while keeping it *on* for the WiFi
+> > > adapter, is enough to keep the system stable (got to about a month of uptime
+> > > in that state).
+> > > 
+> > So this confirms that the controller supports it, and the device (SSD) might be
+> > of fault here.
+> > 
+> > > If you have reproduced the same issue on an entirely different SoC, it's
+> > > probably a general driver issue.
+> > > 
+> > > Please, please help us debug this using your internal secret debug equipment
+> > > :)
+> > > 
+> > Starting from v6.18-rc3, we only enable L0s and L1 by default on all devicetree
+> > platforms. Are you seeing the hangs post -rc3 also? If so, could you please
+> > share the SSD model by doing 'lspci -nn'?
+> 
+> Yes, still seeing them on 6.18.0-rc4-next-20251107. At least with
+> pcie_aspm=force (have been using that recently, so likely all my testing
+> "post -rc3" was with force on.. but others have been testing without it)
+> 
+
+pcie_aspm=force will forcefully enable all the ASPM states. So it will result in
+the same crash if L1ss is not supported properly by the endpoint.
+
+> I'm currently using the stock drive: Sandisk Corp PC SN740 NVMe SSD
+> (DRAM-less) [15b7:5015] (rev 01)
+> 
+
+I'm suspecting the L1ss issue with this SSD since you said above that
+next/master works fine until you pass 'pcie_aspm=force'. Could you try the below
+diff with that cmdline option?
+
+diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+index 44e780718953..ba48f8184b68 100644
+--- a/drivers/pci/quirks.c
++++ b/drivers/pci/quirks.c
+@@ -2525,6 +2525,16 @@ static void quirk_disable_aspm_l0s_l1(struct pci_dev *dev)
+  */
+ DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_ASMEDIA, 0x1080, quirk_disable_aspm_l0s_l1);
+ 
++static void quirk_disable_aspm_l1ss(struct pci_dev *dev)
++{
++       pci_info(dev, "Disabling ASPM L1ss\n");
++       pci_disable_link_state(dev, PCIE_LINK_STATE_L1_1 |
++                               PCIE_LINK_STATE_L1_2 |
++                               PCIE_LINK_STATE_L1_1_PCIPM |
++                               PCIE_LINK_STATE_L1_2_PCIPM);
++}
++DECLARE_PCI_FIXUP_FINAL(0x15b7, 0x5015, quirk_disable_aspm_l1ss);
++
+ /*
+  * Remove ASPM L0s and L1 support from cached copy of Link Capabilities so
+  * aspm.c won't try to enable them.
+
+> Though for a couple months I've used a 3rd party one, an SK Hynix BC901
+> [1c5c:1d59]
+> 
+> And other users have different other models and still have the same issue.
+> 
+> // Every time something PCIe related is posted to the mailing lists I've
+> been wondering if it could solve this :D
+> "Program correct T_POWER_ON value for L1.2 exit timing" didn't help. Testing
+> "Remove DPC Extended Capability" now..
+>
+
+You could've reported this issue to linux-pci list.
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
