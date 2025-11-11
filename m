@@ -1,210 +1,258 @@
-Return-Path: <linux-kernel+bounces-895071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C447CC4CDD5
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:05:03 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34A2BC4CD99
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:03:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46B1D4A0517
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:55:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 530F54E7DA5
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:56:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EC9F2FDC41;
-	Tue, 11 Nov 2025 09:55:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 936AD2FE050;
+	Tue, 11 Nov 2025 09:55:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="E09n6Evr";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="rhHNp8rn";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="E09n6Evr";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="rhHNp8rn"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="NKa8NKkh"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75A792FB0AE
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 09:55:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB0092FE066
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 09:55:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762854908; cv=none; b=Htwl/frj/0/xo7/SwWeoXMbcJVRfukt5uwprgiAp+oRuVojX9CqDTunlskKfTi/qn1Il4i+c45fWaOi0Pp6z3HGJneNQeDtq8fWKOBQyhhOWJf3V65AW6SEEhMFT8qSSr58ngtwBzzWMN15hWVr6fYf4+yWK1uHbuwwag4z4NDs=
+	t=1762854929; cv=none; b=ozuZ86oitTTXlq38HtK0wVuReBCxRXTa93WvPp8/sodCYz9/4DuZaoDMK5QaSk9DvOHdVmeoIAqpS8oPI89vHF9u8vZe7X6MIIikxjoe4v6PXgf4/NNOaSNwqorVYfePJKAZE6O0fSl0ZR96HlnFl/4ALNQTY/uAXrtoCnQKhgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762854908; c=relaxed/simple;
-	bh=2e8u3U8A3l0ZBsKNn5fTNoYP/utgwSrXh5T/6i70r5E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QA0/9rV7I+X31nTPSRg2vV9UpNugnsa5W19MEMCgRtt/YtrnLu//ljbgZZ4lXjcVGkfGDsLuADqYwY4TC7IaUWOsr6f47RDYuiZnwXUzwOWVo58QCpkccCYfLb5tcba2760/bm53uIcP5WBNQ8GTQ8PynB19s72Lp9mRRLGqkQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=E09n6Evr; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=rhHNp8rn; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=E09n6Evr; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=rhHNp8rn; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 9B07F1F78B;
-	Tue, 11 Nov 2025 09:54:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762854898; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=MaNl3KVXDMb4yVsW79umxB3okzTjoLpsTH9fuEvuObI=;
-	b=E09n6EvrRECYQ74NuyMvO0OrLOP2ePwW+yg6IHMP+jX5ArQukh3cD/rjuBGFXY63npAiZv
-	G5DhvO2yOKiSHCocoTMjrGl8ALoLUvgjw8ye+E+14Tq94tOa8+KYZfA5BWjW5tC0pgsrsk
-	RfK36xXh7UP8tZnpNN17NEc6uLBXQFE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762854898;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=MaNl3KVXDMb4yVsW79umxB3okzTjoLpsTH9fuEvuObI=;
-	b=rhHNp8rnyr8L9iaGwd/FjyGBSDZK6E26aKNoCtyKQEe8YDg/hPhVEQBsbSuqf5plYNNAHa
-	zMXog1G3h/miPPDQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762854898; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=MaNl3KVXDMb4yVsW79umxB3okzTjoLpsTH9fuEvuObI=;
-	b=E09n6EvrRECYQ74NuyMvO0OrLOP2ePwW+yg6IHMP+jX5ArQukh3cD/rjuBGFXY63npAiZv
-	G5DhvO2yOKiSHCocoTMjrGl8ALoLUvgjw8ye+E+14Tq94tOa8+KYZfA5BWjW5tC0pgsrsk
-	RfK36xXh7UP8tZnpNN17NEc6uLBXQFE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762854898;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=MaNl3KVXDMb4yVsW79umxB3okzTjoLpsTH9fuEvuObI=;
-	b=rhHNp8rnyr8L9iaGwd/FjyGBSDZK6E26aKNoCtyKQEe8YDg/hPhVEQBsbSuqf5plYNNAHa
-	zMXog1G3h/miPPDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 740DF148C6;
-	Tue, 11 Nov 2025 09:54:58 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 01KAG/IHE2mYCQAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Tue, 11 Nov 2025 09:54:58 +0000
-Message-ID: <75656c78-7e42-4a32-87c0-373416adb4a8@suse.cz>
-Date: Tue, 11 Nov 2025 10:54:58 +0100
+	s=arc-20240116; t=1762854929; c=relaxed/simple;
+	bh=ikmwxJCg1ZLSESW1vFDYmoPNouGfZa1iKRO+80wj/dI=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=bmHGwhMoZyntA4zaLEMhOQRXVwF1rI7mMfCuCXm3xzOCXUDpMsIZV7MT4VyuhNdi8LmuGLt+52SYAVUU9oBJkqBjKPIGfisjS+1RGyc4O7wtaAKcrr0jxlUB0yMbUul9mpkre8ocB+jhr73rj5xDznL4P9rwwVqDbK67qJBDsZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=NKa8NKkh; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b72b495aa81so473197766b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 01:55:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fairphone.com; s=fair; t=1762854926; x=1763459726; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=M2ATN+bGUhg0lzB7rPv/DY/EzdDRNtMpVBUFmN1EQDQ=;
+        b=NKa8NKkhV/aQr8RU2FU4ajOF1C1LYrn0mVMhMBWfMla72BJUwKGX/kmRC+YHRKU/v4
+         tUtmpnwhslkoiU8XivnpgDLO3Hmxj/QM6fINzPqH3RLvOJi4pjGVdwL0pnEUgNKEmwl/
+         7tbzu6MqQmLkaNdQHteRAlk6ID49fCZifrGchvtmw4BTIbjWcZ0dbkgggpmg7Sq/IiBN
+         ObR8ZLXHm9w/XPJ2pXQZr8tSWztIPTkZcUtSezYR04NWG5yHBW9vfDTbMtHyLeWvANh7
+         AWaa1QUBTgFWhm1GXgc7t+GkLfW1vPLSkBYzxgGEE4EQwwYPib9rsMzRYr4hcDFpVu9l
+         hPAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762854926; x=1763459726;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=M2ATN+bGUhg0lzB7rPv/DY/EzdDRNtMpVBUFmN1EQDQ=;
+        b=PBiLoBVfvyd+R80X32XfAe772iLPyz5vqhfDJtijuuiuFGArB6VgMDVAhIKxMShgIi
+         uzZq2YVomANdiguN8Y90DBiQ/OflQlhmLkjqLedpRn/wM2Rfhh0zjtOakXLGWn7b8y28
+         2nbEvRAHaIxt0XnkY9yxZ/0piQXAxtLf4UT4lkg+aDKQSkNmmOZrPSeROc70EjYfA8C/
+         9ARxFg/5XJnhasGnYf96s/GSfHOSRqXX3mHquMv2xYtLtU6Sn5FVilDczmJ6g9n+OSM6
+         WCu6G6rAi+jccppFwLSq+m6n7bQ00j1lDw+DvTxtnwXnD+spkha7jBFC/wF5+XiFB2nO
+         QniQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWaqooFfV+Z6NRCaa8xEvTu3dGZX7vnAmjSeJQpqT+BHs0BOOtMot48B7wlvzWNlVBWz7KV+ye+i0MV87Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxhs5u0UELxgSx+ZCAE6hOUgK8bSPqvRNjhlIQBxDif6rI91POP
+	ku9nxKMuVQztMRHxGUGmdb/ahrmszXaHNaFpayh9YvIYh/RCMOV7a+ubctGfA1ZsD0U=
+X-Gm-Gg: ASbGnctLbVSL7AifbH5CRGamszIWrBxf1GwiJA80unjLSdvRWl77Foso6Vl+Ofe2Q7i
+	RH7NlSabJYCheRDMvD6FaOx5wbeyoI2yXXevkLa3iPPplaGt21C9/T++my/D288pzcComkY/a7e
+	nW8KEcm6GTVovcUxUCsNOAwjZVS/6ujUd8A8oNzI7ggIeLSTQgPEKLbWUlDrAVHZIC0Cd1bvDH7
+	9bCEZZjyOQTyttfQa2jwpq2su6JkERe18sApGuMS3V+iDTYKDOk2pJccjyi7Aw5UJ6slUdYg14y
+	h+MYoPLjpR6pqMs4RkUGRy6TmxAkD6HI8eFr3f+RwmFvHTL5O4zVqbmv2ZmTVYoVfQBN4om5nPV
+	AAIQGKh2e6EJK+SNdKesn9fAN47bMVBHnBFOl9j2IBw3vXPF4oEkSxhnz7Wurd2Xa95vEaYHz3c
+	/NWcuYv7uLgto9S7BuWtFIiWCGcUEgAPerLMlpIEp5T+/0mQ==
+X-Google-Smtp-Source: AGHT+IFd7IWB5Eka+rG7ifQ3BCS7qWlZKrkijP0KIzSAfFqPdX40qriRD00IqCgbFvUrI4yU9T8osA==
+X-Received: by 2002:a17:907:a0c8:b0:b3f:9b9c:d49e with SMTP id a640c23a62f3a-b72e053f2b5mr1175658066b.57.1762854925879;
+        Tue, 11 Nov 2025 01:55:25 -0800 (PST)
+Received: from localhost (144-178-202-139.static.ef-service.nl. [144.178.202.139])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bfa24d14sm1302472966b.74.2025.11.11.01.55.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Nov 2025 01:55:25 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/4] memcg: cleanup the memcg stats interfaces
-Content-Language: en-US
-To: Shakeel Butt <shakeel.butt@linux.dev>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Muchun Song <muchun.song@linux.dev>, Harry Yoo <harry.yoo@oracle.com>,
- Qi Zheng <qi.zheng@linux.dev>, linux-mm@kvack.org, cgroups@vger.kernel.org,
- linux-kernel@vger.kernel.org, Meta kernel team <kernel-team@meta.com>
-References: <20251110232008.1352063-1-shakeel.butt@linux.dev>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <20251110232008.1352063-1-shakeel.butt@linux.dev>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:mid,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
+Date: Tue, 11 Nov 2025 10:55:25 +0100
+Message-Id: <DE5RX0J5U1NY.UA143VCNT9IE@fairphone.com>
+Cc: "Konrad Dybcio" <konradybcio@kernel.org>, "Rob Herring"
+ <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
+ Dooley" <conor+dt@kernel.org>, "Casey Connolly"
+ <casey.connolly@linaro.org>, "Alexander Martinz"
+ <amartinz@shiftphones.com>, <~postmarketos/upstreaming@lists.sr.ht>,
+ <phone-devel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Konrad
+ Dybcio" <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH v2 3/6] arm64: dts: qcom: qcm6490-shift-otter: Add
+ missing reserved-memory
+From: "Luca Weiss" <luca.weiss@fairphone.com>
+To: "Bjorn Andersson" <andersson@kernel.org>, "Luca Weiss"
+ <luca.weiss@fairphone.com>
+X-Mailer: aerc 0.21.0-0-g5549850facc2
+References: <20251009-otter-further-bringup-v2-0-5bb2f4a02cea@fairphone.com>
+ <20251009-otter-further-bringup-v2-3-5bb2f4a02cea@fairphone.com>
+ <3ryhntdf52cukvcbfad5prlggqsee54nsf7us6hdd5h5f73pog@yrgo6o6j22gw>
+In-Reply-To: <3ryhntdf52cukvcbfad5prlggqsee54nsf7us6hdd5h5f73pog@yrgo6o6j22gw>
 
-On 11/11/25 00:20, Shakeel Butt wrote:
-> The memcg stats are safe against irq (and nmi) context and thus does not
-> require disabling irqs. However for some stats which are also maintained
-> at node level, it is using irq unsafe interface and thus requiring the
-> users to still disables irqs or use interfaces which explicitly disables
-> irqs. Let's move memcg code to use irq safe node level stats function
-> which is already optimized for architectures with HAVE_CMPXCHG_LOCAL
-> (all major ones), so there will not be any performance penalty for its
-> usage.
-> 
-> Shakeel Butt (4):
->   memcg: use mod_node_page_state to update stats
->   memcg: remove __mod_lruvec_kmem_state
->   memcg: remove __mod_lruvec_state
->   memcg: remove __lruvec_stat_mod_folio
+On Mon Oct 27, 2025 at 5:45 PM CET, Bjorn Andersson wrote:
+> On Thu, Oct 09, 2025 at 11:06:33AM +0200, Luca Weiss wrote:
+>> From: Alexander Martinz <amartinz@shiftphones.com>
+>>=20
+>> It seems we also need to reserve a region of 81 MiB called "removed_mem"
+>> otherwise we can easily hit memory errors with higher RAM usage.
+>>=20
+>
+> If you make sure CONFIG_MEMTEST is enabled, you can boot with memtest=3D1
+> on the command line to catch such issues, without relying on "higher RAM
+> usage" (or randomness).
 
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
+Good idea, ran it now and no issue seen.
 
-> 
->  include/linux/memcontrol.h | 28 ++++------------------
->  include/linux/mm_inline.h  |  2 +-
->  include/linux/vmstat.h     | 48 ++------------------------------------
->  mm/filemap.c               | 20 ++++++++--------
->  mm/huge_memory.c           |  4 ++--
->  mm/khugepaged.c            |  8 +++----
->  mm/memcontrol.c            | 20 ++++++++--------
->  mm/migrate.c               | 20 ++++++++--------
->  mm/page-writeback.c        |  2 +-
->  mm/rmap.c                  |  4 ++--
->  mm/shmem.c                 |  6 ++---
->  mm/vmscan.c                |  4 ++--
->  mm/workingset.c            |  2 +-
->  13 files changed, 53 insertions(+), 115 deletions(-)
-> 
+[    0.000000] Machine model: SHIFT SHIFTphone 8
+     <...>
+[    0.000000] early_memtest: # of tests: 1
+[    0.000000]   0x0000000080880000 - 0x0000000080884000 pattern 0000000000=
+000000
+[    0.000000]   0x0000000080894000 - 0x00000000808ff000 pattern 0000000000=
+000000
+[    0.000000]   0x0000000081800000 - 0x0000000086700000 pattern 0000000000=
+000000
+[    0.000000]   0x000000008ad00000 - 0x000000008b200000 pattern 0000000000=
+000000
+[    0.000000]   0x000000008b710000 - 0x000000008b71a000 pattern 0000000000=
+000000
+[    0.000000]   0x000000008b71c000 - 0x000000008b800000 pattern 0000000000=
+000000
+[    0.000000]   0x000000009c700000 - 0x00000000a0080000 pattern 0000000000=
+000000
+[    0.000000]   0x00000000a18b0000 - 0x00000000af41e000 pattern 0000000000=
+000000
+[    0.000000]   0x00000000af43fe53 - 0x00000000af61f000 pattern 0000000000=
+000000
+[    0.000000]   0x00000000affff000 - 0x00000000b7100000 pattern 0000000000=
+000000
+[    0.000000]   0x00000000c5100000 - 0x00000000e1000000 pattern 0000000000=
+000000
+[    0.000000]   0x00000000e3300000 - 0x00000000f8500000 pattern 0000000000=
+000000
+[    0.000000]   0x00000000f8b00000 - 0x000000037e857c78 pattern 0000000000=
+000000
+[    0.000000]   0x000000037e857ca7 - 0x000000037e857ca8 pattern 0000000000=
+000000
+[    0.000000]   0x000000037e857cd7 - 0x000000037e857cd8 pattern 0000000000=
+000000
+[    0.000000]   0x000000037e857d04 - 0x000000037e857d08 pattern 0000000000=
+000000
+[    0.000000]   0x000000037e857d34 - 0x000000037e857d38 pattern 0000000000=
+000000
+[    0.000000]   0x000000037e857d64 - 0x000000037e857d68 pattern 0000000000=
+000000
+[    0.000000]   0x000000037e857d94 - 0x000000037e857d98 pattern 0000000000=
+000000
+[    0.000000]   0x000000037e857dc4 - 0x000000037e857dc8 pattern 0000000000=
+000000
+[    0.000000]   0x000000037e857df4 - 0x000000037e857df8 pattern 0000000000=
+000000
+[    0.000000]   0x000000037e857e24 - 0x000000037e857e28 pattern 0000000000=
+000000
+[    0.000000]   0x000000037e857e54 - 0x000000037e857e58 pattern 0000000000=
+000000
+[    0.000000]   0x000000037e857e84 - 0x000000037e857e88 pattern 0000000000=
+000000
+[    0.000000]   0x000000037e857eb4 - 0x000000037e857eb8 pattern 0000000000=
+000000
+[    0.000000]   0x000000037e857ee4 - 0x000000037e857ee8 pattern 0000000000=
+000000
+[    0.000000]   0x000000037e857f14 - 0x000000037e857f18 pattern 0000000000=
+000000
+[    0.000000]   0x000000037e857f44 - 0x000000037e857f48 pattern 0000000000=
+000000
+[    0.000000]   0x000000037e857f74 - 0x000000037e857f78 pattern 0000000000=
+000000
+[    0.000000]   0x000000037e857fa4 - 0x000000037e857fa8 pattern 0000000000=
+000000
+[    0.000000]   0x000000037e857fd4 - 0x000000037e857fd8 pattern 0000000000=
+000000
+[    0.000000]   0x000000037e858004 - 0x000000037e858008 pattern 0000000000=
+000000
+[    0.000000]   0x000000037e858034 - 0x000000037e858038 pattern 0000000000=
+000000
+[    0.000000]   0x000000037e858064 - 0x000000037e858068 pattern 0000000000=
+000000
+[    0.000000]   0x000000037e858094 - 0x000000037e858098 pattern 0000000000=
+000000
+[    0.000000]   0x000000037e8580c4 - 0x000000037e8580c8 pattern 0000000000=
+000000
+[    0.000000]   0x000000037e8580f4 - 0x000000037e8580f8 pattern 0000000000=
+000000
+[    0.000000]   0x000000037e858124 - 0x000000037e858128 pattern 0000000000=
+000000
+[    0.000000]   0x000000037e858154 - 0x000000037e858158 pattern 0000000000=
+000000
+[    0.000000]   0x000000037e858184 - 0x000000037e858188 pattern 0000000000=
+000000
+[    0.000000]   0x000000037e8581b4 - 0x000000037e8581b8 pattern 0000000000=
+000000
+[    0.000000]   0x000000037e8581e4 - 0x000000037e8581e8 pattern 0000000000=
+000000
+[    0.000000]   0x000000037e858214 - 0x000000037e858218 pattern 0000000000=
+000000
+[    0.000000]   0x000000037e858244 - 0x000000037e858248 pattern 0000000000=
+000000
+[    0.000000]   0x000000037e858274 - 0x000000037e858278 pattern 0000000000=
+000000
+[    0.000000]   0x000000037e8582a4 - 0x000000037e8582a8 pattern 0000000000=
+000000
+[    0.000000]   0x000000037e8582d4 - 0x000000037e8582d8 pattern 0000000000=
+000000
+[    0.000000]   0x000000037e858304 - 0x000000037e858308 pattern 0000000000=
+000000
+[    0.000000]   0x000000037e858334 - 0x000000037e858338 pattern 0000000000=
+000000
+
+Regards
+Luca
+
+>
+> Regards,
+> Bjorn
+>
+>> Fixes: 249666e34c24 ("arm64: dts: qcom: add QCM6490 SHIFTphone 8")
+>> Signed-off-by: Alexander Martinz <amartinz@shiftphones.com>
+>> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+>> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+>> ---
+>>  arch/arm64/boot/dts/qcom/qcm6490-shift-otter.dts | 5 +++++
+>>  1 file changed, 5 insertions(+)
+>>=20
+>> diff --git a/arch/arm64/boot/dts/qcom/qcm6490-shift-otter.dts b/arch/arm=
+64/boot/dts/qcom/qcm6490-shift-otter.dts
+>> index 0d331bda4a82..31650c29b1ca 100644
+>> --- a/arch/arm64/boot/dts/qcom/qcm6490-shift-otter.dts
+>> +++ b/arch/arm64/boot/dts/qcom/qcm6490-shift-otter.dts
+>> @@ -118,6 +118,11 @@ cdsp_mem: cdsp@88f00000 {
+>>  			no-map;
+>>  		};
+>> =20
+>> +		removed_mem: removed@c0000000 {
+>> +			reg =3D <0x0 0xc0000000 0x0 0x5100000>;
+>> +			no-map;
+>> +		};
+>> +
+>>  		rmtfs_mem: rmtfs@f8500000 {
+>>  			compatible =3D "qcom,rmtfs-mem";
+>>  			reg =3D <0x0 0xf8500000 0x0 0x600000>;
+>>=20
+>> --=20
+>> 2.51.0
+>>=20
 
 
