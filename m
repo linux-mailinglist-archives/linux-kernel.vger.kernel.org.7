@@ -1,153 +1,127 @@
-Return-Path: <linux-kernel+bounces-895146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50977C4D101
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:34:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29B16C4D182
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:37:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F1E224FB3D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:26:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70B764250AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:27:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FBFC34B661;
-	Tue, 11 Nov 2025 10:26:53 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56D97345739
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 10:26:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 723F534C81F;
+	Tue, 11 Nov 2025 10:27:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UnXOCB3n"
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41E9A34B683
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 10:27:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762856813; cv=none; b=u1T/eClUVpEtffVtTgMzNKAzJUJXjzrBJtk2X8G+SoM8ZJwWT+JJZfONEv+JAk7jyvKLutk6qutdFmLiWLVWXFh9+Jv1sXDDT3q0eD2Q6CWXgc+ZYh9nvDcm/WL6c4Kf+d4mVWzKt3LupDPkzSUYrZ5uIQHVdsAgLXOFCrpkbxc=
+	t=1762856857; cv=none; b=eTndGhlWvg9V/4rc8VGyQ/cO5L7d24kNrZtVEAXt2PYXxR92B7UzLYXXina2Z0TIgeggtfzhyLucY7FgOCG3HnRW6twXB/HWFmnQ1gd+IJWRoMCebcxbGvXVnldhiY7XNto0atZVj9oC3tPhkIfdTF/MrGm72Q40m3wwTlLzKSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762856813; c=relaxed/simple;
-	bh=/13w2hyNCFTnziVCwbXPGFi+ppyAwXtUj5VOsdz2ojg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uUX3V/8NV9WVJSUELnud8EfnXiwM/bMQbxENlbVwc4dO3UVcHt+Eavx5lBXWakD5FV0sRFqCejA36VaPJAoxWie7eDMXQWVj9U3RajQReCfKS0MHhqVbYK197iNFx97txJvEAUpWqZJ0VNYuGlQxNnFLeDjq11cRvy3kkJVpEhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ECDF02F;
-	Tue, 11 Nov 2025 02:26:42 -0800 (PST)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 923D63F63F;
-	Tue, 11 Nov 2025 02:26:49 -0800 (PST)
-Date: Tue, 11 Nov 2025 10:26:44 +0000
-From: Mark Rutland <mark.rutland@arm.com>
-To: Khaja Hussain Shaik Khaji <khaja.khaji@oss.qualcomm.com>
-Cc: linux-arm-kernel@lists.infradead.org, kprobes@vger.kernel.org,
-	linux-kernel@vger.kernel.org, will@kernel.org,
-	catalin.marinas@arm.com, masami.hiramatsu@linaro.org
-Subject: Re: [PATCH] arm64: insn: Route BTI to simulate_nop to avoid XOL/SS
- at function entry
-Message-ID: <aRMPZB6W04_l7iSB@J2N7QTR9R3>
-References: <20251106104955.2089268-1-khaja.khaji@oss.qualcomm.com>
+	s=arc-20240116; t=1762856857; c=relaxed/simple;
+	bh=VZRK3bOsG28vtltYuXm2i797l0KnAcCOqsty2XViQ3k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZMPEs1+tXkXm+ZZ1rW/+dXzu4ribQ/Jd3TkctuEmARW8tJjRzgg67nooRYTF5g1KkqgTYx3aupYm+stQU9fZHNm16cQ4J+hw8it7GK3oZmBFowTf9Ll7snuKuRwNearlaNeup8qSo6V9KCnbZHwHqcqSlCE79QsEEOkGjf1Z/iY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UnXOCB3n; arc=none smtp.client-ip=209.85.128.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-71d71bcac45so37107057b3.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 02:27:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1762856855; x=1763461655; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=k7khBtzXIp0xZap226+h9tuV9rGquBxGHwh18nz6WYA=;
+        b=UnXOCB3nbrh5o6rQpnpZZdB7puAKAMqJbwVuncHooLP8MBfkQqVrEPwlWt8oo+/E80
+         VAzZ5GpSxZDl9P3C/Y0OUtrSX+kPrcUsfH2lZlGnq9J2wbiz/aUo7JYuCYHaezCvSBIj
+         fTdxxbgMQcwklpNLlNoGlybHiI7x/q6gXMX/N9Qxwa8/b2CW4+Y8ZHLHPP5ZZtJfuSB8
+         FOCXloufjsLfeoMZY4nYyZ11edNfmCc6azyW4acykw6NP+75daUIWx7FkpiLFU8CPB6y
+         CCwjdw5JGGvRzi9nLDVDjIx2mdp29+GKBcJKvn4d8/SM58fjUw63p/hqE3ZSsqcRVzIo
+         mPpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762856855; x=1763461655;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=k7khBtzXIp0xZap226+h9tuV9rGquBxGHwh18nz6WYA=;
+        b=IPU6NzrXmktl24Kbf18AlRu5IhBLgx4usFk4eznPoMe1FFaU9LRgNQr2VkwiwQlx3K
+         WiOBVNfflMA2pz967R/51wOCos+/AAzJXudwk3eCEGjEnc8SwzOauRSEdBn5Xf6633Wb
+         skQeu1bNMGujZxXK/1uMmqUTHKMryGBmXR4FfFV2YcyjdjnJaMjK6e4aVZjqLHqByw7w
+         SBVdvt8uh1O3ftBdBArRG5Z2vCg0HLXskEpOtpwKLD3nTDtCcav96ECnbOFcGtxkBRnA
+         wBy7WmRGIKtPC4cuMoMLrfEDIZFHKzd3UNqSv0muVCPOmizGLeb26cAFH4KTO9E2rL7E
+         FxGA==
+X-Forwarded-Encrypted: i=1; AJvYcCXqODvhwU2ICtdFAusXuN5yUOywFVrWb6JA4BHNPQgk73gshFLgZ8MZLYvnHEs5dESctdv6ip5OtOgZmUw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfhPA46VUXdsnW8TW9LjgmhGq86E57J31XpGdaMf0ef993NR1b
+	0f+kQmAcodOZLrDGbqCP9XDwvrKZJ5FSVX01ZKifC2afv9IxdAB+f3sfp3Jdz4BNPMOtHDcL9e+
+	PVLfiDGWMtxZYZ6Z1/T0P6O9+lPQYQW76ec74T9MmWA==
+X-Gm-Gg: ASbGncsIon+fX+esjgj168z2cNCx+QCIaduIOFHfnaz9XCRoIUdIMY2nXVM1bCrqE4R
+	X1OWjuUYyCCtcgzhzTPhydLemhcK46LrZGcAw3n4bGDdSOtUyUylZVzTnIy4kvBdFib40GuLj4R
+	2UFxizAiJWHUEeI6x6/vWraC1VyHuygI1LcJbfWteWdfoHQ+OIaBUhZPpAnkdpMqmB9v0fGpHz5
+	93jMsfNnJX7mWkqILrJjQ0AeOrfyP1Z0eoX7VqO93Dm1rmRF6qRsluG2wHxPbDOnAyrGIizipWj
+	+4VLSQ==
+X-Google-Smtp-Source: AGHT+IEk2H2YEsL0xkuLYpOfGFRgLDQ2g6ngSvt7pmfpCRqNXC2Ha8alMkiTsvLp5xWvt7eGkkSPVDpfAeg1vJdOmAA=
+X-Received: by 2002:a05:690c:6ac9:b0:786:59d3:49e0 with SMTP id
+ 00721157ae682-787d53af614mr120208927b3.25.1762856855161; Tue, 11 Nov 2025
+ 02:27:35 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251106104955.2089268-1-khaja.khaji@oss.qualcomm.com>
+References: <20251108174055.3665-1-antoniu.miclaus@analog.com> <20251108174055.3665-2-antoniu.miclaus@analog.com>
+In-Reply-To: <20251108174055.3665-2-antoniu.miclaus@analog.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 11 Nov 2025 11:27:17 +0100
+X-Gm-Features: AWmQ_blJ-ik6xUXE2LXYUaqjihmL45TeO1-cQ_uCDnErJH-waDrg2-SaMoDOhR4
+Message-ID: <CACRpkdZLK722xOMFxYhYyO9LudnKVgmeHNYBha0e-BoBo8sr1w@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: gpio: adg1712: add adg1712 support
+To: Antoniu Miclaus <antoniu.miclaus@analog.com>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 06, 2025 at 04:19:55PM +0530, Khaja Hussain Shaik Khaji wrote:
-> On arm64 with branch protection, functions typically begin with a BTI
-> (Branch Target Identification) landing pad. Today the decoder treats BTI
-> as requiring out-of-line single-step (XOL), allocating a slot and placing
-> an SS-BRK. Under SMP this leaves a small window before DAIF is masked
-> where an asynchronous exception or nested probe can interleave and clear
-> current_kprobe, resulting in an SS-BRK panic.
+On Sat, Nov 8, 2025 at 6:43=E2=80=AFPM Antoniu Miclaus
+<antoniu.miclaus@analog.com> wrote:
 
-If you can take an exception here, and current_kprobe gets cleared, then
-XOL stepping is broken in general, but just for BTI.
+> Add devicetree bindings for adg1712 SPST quad switch.
+>
+> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
 
-> Handle BTI like NOP in the decoder and simulate it (advance PC by one
-> instruction). This avoids XOL/SS-BRK at these sites and removes the
-> single-step window, while preserving correctness for kprobes since BTI’s
-> branch-target enforcement has no program-visible effect in this EL1
-> exception context.
+My comment on v1 stands.
 
-One of the reasons for doing this out-of-line is that we should be able
-to mark the XOL slot as a guarded page, and get the correct BTI
-behaviour. It looks like we don't currently do that, which is a bug.
+This is a switch controlled by a GPIO:
 
-Just skipping the BTI isn't right; that throws away the BTI target
-check.
+-----/ -----
+      |
+    gpio
 
-> In practice BTI is most commonly observed at function entry, so the main
-> effect of this change is to eliminate entry-site single-stepping. Other
-> instructions and non-entry sites are unaffected.
-> 
-> Signed-off-by: Khaja Hussain Shaik Khaji <khaja.khaji@oss.qualcomm.com>
-> ---
->  arch/arm64/include/asm/insn.h            | 5 -----
->  arch/arm64/kernel/probes/decode-insn.c   | 9 ++++++---
->  arch/arm64/kernel/probes/simulate-insn.c | 1 +
->  3 files changed, 7 insertions(+), 8 deletions(-)
-> 
-> diff --git a/arch/arm64/include/asm/insn.h b/arch/arm64/include/asm/insn.h
-> index 18c7811774d3..7e80cc1f0c3d 100644
-> --- a/arch/arm64/include/asm/insn.h
-> +++ b/arch/arm64/include/asm/insn.h
-> @@ -452,11 +452,6 @@ static __always_inline bool aarch64_insn_is_steppable_hint(u32 insn)
->  	case AARCH64_INSN_HINT_PACIASP:
->  	case AARCH64_INSN_HINT_PACIBZ:
->  	case AARCH64_INSN_HINT_PACIBSP:
-> -	case AARCH64_INSN_HINT_BTI:
-> -	case AARCH64_INSN_HINT_BTIC:
-> -	case AARCH64_INSN_HINT_BTIJ:
-> -	case AARCH64_INSN_HINT_BTIJC:
-> -	case AARCH64_INSN_HINT_NOP:
->  		return true;
->  	default:
->  		return false;
-> diff --git a/arch/arm64/kernel/probes/decode-insn.c b/arch/arm64/kernel/probes/decode-insn.c
-> index 6438bf62e753..7ce2cf5e21d3 100644
-> --- a/arch/arm64/kernel/probes/decode-insn.c
-> +++ b/arch/arm64/kernel/probes/decode-insn.c
-> @@ -79,10 +79,13 @@ enum probe_insn __kprobes
->  arm_probe_decode_insn(u32 insn, struct arch_probe_insn *api)
->  {
->  	/*
-> -	 * While 'nop' instruction can execute in the out-of-line slot,
-> -	 * simulating them in breakpoint handling offers better performance.
-> +	 * NOP and BTI (Branch Target Identification) have no program‑visible side
-> +	 * effects for kprobes purposes. Simulate them to avoid XOL/SS‑BRK and the
-> +	 * small single‑step window. BTI’s branch‑target enforcement semantics are
-> +	 * irrelevant in this EL1 kprobe context, so advancing PC by one insn is
-> +	 * sufficient here.
->  	 */
-> -	if (aarch64_insn_is_nop(insn)) {
-> +	if (aarch64_insn_is_nop(insn) || aarch64_insn_is_bti(insn)) {
->  		api->handler = simulate_nop;
->  		return INSN_GOOD_NO_SLOT;
->  	}
+The resulting binding is not about GPIO, it is about a switch.
 
-I'm not necessarily opposed to emulating the BTI, but:
+There are similar things that have unique bindings already,
+for example:
+Documentation/devicetree/bindings/power/reset/gpio-poweroff.yaml
 
-(a) The BTI should not be emulated as a NOP. I am not keen on simulating
-    the BTI exception in software, and would strongly prefer that's
-    handled by HW (e.g. in the XOL slot).
+I think this needs a new binding folder in
+dt-bindings/switch/* and cannot be hidden away
+as "some kind of GPIO".
 
-(b) As above, it sounds like this is bodging around a more general
-    problem. We must solve that more general problem.
+Maybe it will be modeled as some GPIO in Linux, I don't
+know yet, but other operating systems use these bindings
+too, and they will be confused by this "GPIO" which is
+actually a switch.
 
-> diff --git a/arch/arm64/kernel/probes/simulate-insn.c b/arch/arm64/kernel/probes/simulate-insn.c
-> index 4c6d2d712fbd..b83312cb70ba 100644
-> --- a/arch/arm64/kernel/probes/simulate-insn.c
-> +++ b/arch/arm64/kernel/probes/simulate-insn.c
-> @@ -200,5 +200,6 @@ simulate_ldrsw_literal(u32 opcode, long addr, struct pt_regs *regs)
->  void __kprobes
->  simulate_nop(u32 opcode, long addr, struct pt_regs *regs)
->  {
-> +	/* Also used as BTI simulator: both just advance PC by one insn. */
->  	arm64_skip_faulting_instruction(regs, AARCH64_INSN_SIZE);
->  }
+I don't like the idea of GPIO being used as a dumping
+ground for hardware that isn't properly modeled.
 
-This comment should go.
-
-Mark.
+Yours,
+Linus Walleij
 
