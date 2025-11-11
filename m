@@ -1,95 +1,167 @@
-Return-Path: <linux-kernel+bounces-894626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5F91C4B720
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 05:16:32 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 636C1C4B730
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 05:17:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F2E93A4B1E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 04:11:50 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 38F6A4EE270
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 04:17:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7926B34A775;
-	Tue, 11 Nov 2025 04:11:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F294279358;
+	Tue, 11 Nov 2025 04:17:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="JZPytzXF"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YoDqYKmz"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FD9C33987;
-	Tue, 11 Nov 2025 04:11:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C6611A3BD7
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 04:17:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762834303; cv=none; b=OkjCflzG/5O1z0DbIenlPhDk+YTSHw0m/zzBNm7MT2lG7o45MHUpYAtxJfXfc42uKRN42agz+qVe4K076rKr4gAGK0aQSvENGyrMMEeFXrsWQDoWb0FuEIkZ5KC1CYMjnENn/NE6IJArdmelbd8aakdOf/w3u3dbVKrbMOZZkXQ=
+	t=1762834651; cv=none; b=uX8e7n54x76hlVvnnJBt/8CoPFJYtpscpLrSSr6T38imLTToe+bw1DB5jusafS7K36e0hf+4hxxrfr7yzhYa+x5MBDjC6zGer4BLVGFSDsdodsfkMJs4PcW+SdRFoH6s8CK2tjlEp0oM34P1eftf/bZBeTl1QqgAKZnmxxh5LPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762834303; c=relaxed/simple;
-	bh=CobPXz5uURwOv386V1OmSFqu0LXr8SDsWHn+XUgopdY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Bj7IGl8KKh4KhIPXvaGicMfTF+5NEIA3q7Ull3W4QomUtwnkjz/8lKSvp2DsgQKrY3xlWEeNnb3CuJK8axiCzNBWv2ZUnsmxsGWMmLwcmLJudBc3S2wJauQx4eKK1+PM9F45aC7G8VJVmyjfLQ2XFLB8H0AboDw3i6AQH/0FsD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=JZPytzXF; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=/Fo1e2aPtAR+InvmfqQJdNsNmWu5GCVuPvozKsi/Gns=; b=JZPytzXFYtcpQGrQwbgkIwH0m0
-	VKA3+fKZLAGVdrCi0UpOlZGbPUcrHmEjK9okLNhU2kBqDNBsNoCMsT5bDrzBhZaCr3dZOpIufWU+D
-	Y47RDT/7/U11rttqiY/n+Bg/AQAQ+vIGCULi/35Z2FZJDMlG99z2kQMOAcbjV4qpwdpM=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1vIfj8-00DafP-0v; Tue, 11 Nov 2025 05:11:30 +0100
-Date: Tue, 11 Nov 2025 05:11:30 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: davem@davemloft.net, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	thomas.petazzoni@bootlin.com, Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Russell King <linux@armlinux.org.uk>,
-	linux-arm-kernel@lists.infradead.org,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	=?iso-8859-1?Q?K=F6ry?= Maincent <kory.maincent@bootlin.com>,
-	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
-	Oleksij Rempel <o.rempel@pengutronix.de>,
-	=?iso-8859-1?Q?Nicol=F2?= Veronese <nicveronese@gmail.com>,
-	Simon Horman <horms@kernel.org>, mwojtas@chromium.org,
-	Antoine Tenart <atenart@kernel.org>, devicetree@vger.kernel.org,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Romain Gantois <romain.gantois@bootlin.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	Dimitri Fedrau <dimitri.fedrau@liebherr.com>
-Subject: Re: [PATCH net-next v15 15/15] Documentation: networking: Document
- the phy_port infrastructure
-Message-ID: <8faf0011-c272-4b30-a657-7bdbd2ad18e9@lunn.ch>
-References: <20251106094742.2104099-1-maxime.chevallier@bootlin.com>
- <20251106094742.2104099-16-maxime.chevallier@bootlin.com>
+	s=arc-20240116; t=1762834651; c=relaxed/simple;
+	bh=+HDPvzmDF4pSMrTj/Ew9l4F35FfJ+clQaJCnh0ZMShI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rwj/RNt+5v/QtN1oBH46ObQ1U2MLY+58oAze0Anefp4sq6DBUnx0OIoDopxocot9GTjl34xr2Rxt0EgpSfHZGYm7V6CKqmhZ9Rji3eJ3QfpM2lC7c/Ozmbfb24YEE5hj+Nz3tNeZvJfdiGbCHmKTbVmhSeBMfkaY5tbMp2BVLO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YoDqYKmz; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-640c1fda178so6328026a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 20:17:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762834648; x=1763439448; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+HDPvzmDF4pSMrTj/Ew9l4F35FfJ+clQaJCnh0ZMShI=;
+        b=YoDqYKmzGF8bM3YVyapZFCLzJs1aUatVlNiCsfStikT9VR5zqCIWINU7fA1htC3nUS
+         UI0gD1qeMAwmT+/quaeiRZxZAFbn+GZ0coRelao3yeEkeX9dBfQn2NF8WQgLS4UkKDoZ
+         rZ2/dMJewqkngOgMe9ISCM+2Rfryjru1YUdEs32TfBaCtwuEKd5xFzDASQF78BUDFy2I
+         kqHbRhiIJMuKML7/uQq8JdUzsltXQYRj5GOs9wbahxgxuz++xl++yaSr/MOUlNXfbAQE
+         U0s4xHhgiYanK2WqhIRiAXfqqhYIP0JbJaL5H9Vdy+KZa9wkimUFx4q+HFnqgRm2paww
+         D8pg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762834648; x=1763439448;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=+HDPvzmDF4pSMrTj/Ew9l4F35FfJ+clQaJCnh0ZMShI=;
+        b=mfp1uNPwbIxkDf9wK30d2/MUg1pqF+SfHa3UC6hgF5Y2b3aAZGITpUuXDQahCUCK+F
+         xEzMeEJgmBOL13OGdFXK+YN1dybahNyc1SKuXNyFNCryBAlBNHDMH4Va395Jxgz804Ci
+         oMlRIL2ojBiuIC4VfGa7viSyOngpNWkXuLg6RiyGCyzpMSMN8MXonziv2sUjv7TUdA8k
+         fISggqUQPGwbzLuPE+2fZHNz2OKTO6tTHDgCoU3AyiHrF9yEZnPrb64+kb9r0ZvYnIVT
+         9Y0Xihoo+dpD9IGw2laLGbhHxDZc8ADiUBA3hdHnAF3gbxuihwvAT/aQrN53Esn05q0A
+         DYDw==
+X-Forwarded-Encrypted: i=1; AJvYcCUpA5tTsjpLm290VGmo8r6I2ObxaF14RUCF3ZzVjS+8CbOaH+Rid4+dSFqkys3YVWfiqWb+vpLZwikcEO4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRqh4/LrCK7sxc7+5s49YCgsNgftPjbiAbcNU4vTwDwj/lVz3L
+	YCZf7TJPbSZmf/68fXH2wdp+v2HTQufKLRpZs3oPJr2dxf6vq98ng9P8pe2fph1REePU+NVV2Kg
+	0SobZPDbNu65z+wp5Xium0O3xszhBMDI=
+X-Gm-Gg: ASbGncszPzpO/rteNOU6BLQRg7wnx77WdzYGpp1rnCqVx5j2cl5Dckf3ZEIFZediEwU
+	ShwFKgKDhIz9AQuTEO1So9GW5jjJtto7f3AeSNFz8j9aBL+lHZRBEkizcMDLIMNSEdgKg4ILdJQ
+	oq5tAG34Iaja5rbfKx+O281XgNC71OFo1O4JdB96MwLulpG4fwu5GQwjEzohXDLpWh/PWPm1EXG
+	C7yxdxposbMTGwZoVF2b/UiLxxeVScrWrXO0JvuXw334vNax+c0+4nMgMLcBEe6zpik0qMbci26
+	1PDcVat6lruBB7kqMOZm7rHaqQTrGdf4mUbz+Q==
+X-Google-Smtp-Source: AGHT+IFxtJ5LUfVYMfACvoc6qLigR2M037K7mxtxeAfO+UoGi5MaKsWG6FcjLFJ3BqqcytYnHVwzOPfWzu221I34nu0=
+X-Received: by 2002:a05:6402:510e:b0:63b:f22d:9254 with SMTP id
+ 4fb4d7f45d1cf-6415e6edc1cmr8920410a12.23.1762834647589; Mon, 10 Nov 2025
+ 20:17:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251106094742.2104099-16-maxime.chevallier@bootlin.com>
+References: <cover.1762621567.git.lorenzo.stoakes@oracle.com>
+ <CACePvbVq3kFtrue2smXRSZ86+EuNVf6q+awQnU-n7=Q4x7U9Lw@mail.gmail.com>
+ <5b60f6e8-7eab-4518-808a-b34331662da5@lucifer.local> <CACePvbUvQu+So7OoUbJTMLODz8YDAOgWaM8A-RXFj2U_Qc-dng@mail.gmail.com>
+ <3c0e9dd0-70ac-4588-813b-ffb24d40f067@lucifer.local> <c9e3ad0e-02ef-077c-c12c-f72057eb7817@google.com>
+In-Reply-To: <c9e3ad0e-02ef-077c-c12c-f72057eb7817@google.com>
+From: Kairui Song <ryncsn@gmail.com>
+Date: Tue, 11 Nov 2025 12:16:51 +0800
+X-Gm-Features: AWmQ_bmvt7re6_XRmXvUlAJCOhI6cJA0pVFvbyH2-3YOeH3XrYzunQCqAT7qyRY
+Message-ID: <CAMgjq7BT8+Vs+7=G5PUS5wsxAhWVzDTGLX5g3mXMpTJ8PFSbxA@mail.gmail.com>
+Subject: Re: [PATCH v2 00/16] mm: remove is_swap_[pte, pmd]() + non-swap
+ entries, introduce leaf entries
+To: Hugh Dickins <hughd@google.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Chris Li <chrisl@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank <frankja@linux.ibm.com>, 
+	Claudio Imbrenda <imbrenda@linux.ibm.com>, David Hildenbrand <david@redhat.com>, 
+	Alexander Gordeev <agordeev@linux.ibm.com>, Gerald Schaefer <gerald.schaefer@linux.ibm.com>, 
+	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+	Sven Schnelle <svens@linux.ibm.com>, Peter Xu <peterx@redhat.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Arnd Bergmann <arnd@arndb.de>, Zi Yan <ziy@nvidia.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>, 
+	Lance Yang <lance.yang@linux.dev>, Muchun Song <muchun.song@linux.dev>, 
+	Oscar Salvador <osalvador@suse.de>, Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, 
+	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
+	Matthew Brost <matthew.brost@intel.com>, Joshua Hahn <joshua.hahnjy@gmail.com>, 
+	Rakie Kim <rakie.kim@sk.com>, Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>, 
+	Ying Huang <ying.huang@linux.alibaba.com>, Alistair Popple <apopple@nvidia.com>, 
+	Axel Rasmussen <axelrasmussen@google.com>, Yuanchu Xie <yuanchu@google.com>, 
+	Wei Xu <weixugc@google.com>, Kemeng Shi <shikemeng@huaweicloud.com>, 
+	Nhat Pham <nphamcs@gmail.com>, Baoquan He <bhe@redhat.com>, SeongJae Park <sj@kernel.org>, 
+	Matthew Wilcox <willy@infradead.org>, Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>, 
+	Xu Xin <xu.xin16@zte.com.cn>, Chengming Zhou <chengming.zhou@linux.dev>, 
+	Jann Horn <jannh@google.com>, Miaohe Lin <linmiaohe@huawei.com>, 
+	Naoya Horiguchi <nao.horiguchi@gmail.com>, Pedro Falcato <pfalcato@suse.de>, 
+	Pasha Tatashin <pasha.tatashin@soleen.com>, Rik van Riel <riel@surriel.com>, 
+	Harry Yoo <harry.yoo@oracle.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	linux-s390@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-arch@vger.kernel.org, damon@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> +This model however starts showing its limitations when we consider devices that
-> +have more than one media interface. In such a case, only information about the
-> +actively used interface is reported, and it's not possible to know what the
-> +other interfaces can do. In fact, we have very few information about whether or
+On Tue, Nov 11, 2025 at 8:09=E2=80=AFAM Hugh Dickins <hughd@google.com> wro=
+te:
+> On Mon, 10 Nov 2025, Lorenzo Stoakes wrote:
+> > On Mon, Nov 10, 2025 at 03:04:48AM -0800, Chris Li wrote:
+> > >
+> > > That is actually the reason to give the swap table change more
+> > > priority. Just saying.
+> >
+> > I'm sorry but this is not a reasonable request. I am being as empatheti=
+c and
+> > kind as I can be here, but this series is proceeding without arbitrary =
+delay.
+> >
+> > I will do everything I can to accommodate any concerns or issues you ma=
+y have
+> > here _within reason_ :)
+>
+> But Lorenzo, have you even tested your series properly yet, with
+> swapping and folio migration and huge pages and tmpfs under load?
+> Please do.
+>
+> I haven't had time to bisect yet, maybe there's nothing more needed
+> than a one-liner fix somewhere; but from my experience it is not yet
+> ready for inclusion in mm and next - it stops testing other folks' work.
+>
+> I haven't tried today's v3, but from the cover letter of differences,
+> it didn't look like much of importance is fixed since v2: which
+> (after a profusion of "Bad swap offet entry 3ffffffffffff" messages,
 
-'very little information' would be the more normal English phrase.
+I also noticed the 0x3fff... issue in V2:
+https://lore.kernel.org/all/CAMgjq7AP383YfU3L5ZxJ9U3x-vRPnEkEUtmnPdXD29HiNC=
+8OrA@mail.gmail.com/
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+The issue is caused by removing the pte_none check, that could result
+in issues like this, so that check has to stay I think, at least for
+the swap part.
 
-    Andrew
+It seems V3 has fixed it, I can have a try later.
+
+I also hope we can keep the swap entry part untouched, Overloading
+swap entry for things like migration looks odd indeed, but setting and
+getting a PTE as swap entry seems clean and easy to understand.
+Existing usage of swap entries is quite logically consistent and
+stable, we might need to do some cleanup for swap but having a
+standalone type and define is very helpful.
 
