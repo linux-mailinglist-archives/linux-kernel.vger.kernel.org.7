@@ -1,152 +1,163 @@
-Return-Path: <linux-kernel+bounces-895957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 380EFC4F5D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 19:02:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78B49C4F5D4
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 19:02:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC618189D20A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 18:02:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 380CB3A6BF8
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 18:02:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E8812F60DB;
-	Tue, 11 Nov 2025 18:01:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1599361DA3;
+	Tue, 11 Nov 2025 18:01:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="FP4DPIrS"
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zSggIIrt"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91FA627587D;
-	Tue, 11 Nov 2025 18:01:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92A20270ED2
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 18:01:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762884096; cv=none; b=QkUpYhjCG0y+uGoNczCg9gaxvpd9t3ksNE1jmsteo2ZAp/9VT9jchj4typ7nk9F9yqVX/GIQz663U0okH9L+45Wdec2MRJhH0Qe2IEq//G2xbnvZUDWQYjC7jm9aTuVkYZt7vl92sJudTvBaIdfHinvDVZpdaEYOf0kLg9JAUF0=
+	t=1762884114; cv=none; b=Qfn0adTJChoT7Unly1teQGepOvZaSjdgRf4Zu/FLvqK+hEvUthayUcJO3CpPyUrGytKYqX4J7n1bYKlXGLz8tX19A96zF7AqcODDFxiXD2tRek989u4WBeOuxwe7r6ONdVcgI/KUZdJp1eIfElWMcAzVUZXHNVb3PK+zQ48WDmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762884096; c=relaxed/simple;
-	bh=uFWA3teT7TosQucoMFTr49PCOAPfaa0i4DqQX56vHt4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DDfZZkZ2BD3eLsIWlqLnw6w2/1qHGdgdat4darSgsvIBha5OQTfAXD6jFfLVbu3eOLDq84Hi+KdXjGymiXXd7FE51aKnSZv/cWECmApvNpAWex+2yAInqDlNFf2PfgwASp8O+lT0B+2SZXxOFwW+IjUnH/NC1shz18eqZkuK8kU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=FP4DPIrS; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4d5Z924mmVz9ss7;
-	Tue, 11 Nov 2025 19:01:26 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1762884086;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jWsd4vZTjWLUJaUc98A7GiceajcfWMWAR9nAKjmOjpA=;
-	b=FP4DPIrSJvn+BI0/A1buudkDLRu2pDBGk+r/fpvwVDwYuugwBaIxXP5ETBjInp4t4yG1cm
-	eFNfUH+RHufIpQ8jMQSC2X3mRzuClHwuKZoPQsGPYMB3+1v4b41OyB/325TfJiEzp+vrZn
-	y7agp279myUCtu804rmL1mW3bgvDuMMscwLnQbWdRccHP3NWrJXwaL5u5BZ8nDYd5EHBG8
-	+TcE/mAtaxKz15PGJRZjr6GlVkDobufnuGnY4yw4ICujJgjvvhmQeisGd5No+Cdzs+75mw
-	vwDu/GvYK2IPc7r03tQ5fGPBCW8nRFr7oczXHZWjbuw+RQ8zPYTPnFngaREYpA==
-Message-ID: <880280be-1cd0-41b6-bc89-9168f374a9b9@pankajraghav.com>
-Date: Tue, 11 Nov 2025 19:01:20 +0100
+	s=arc-20240116; t=1762884114; c=relaxed/simple;
+	bh=POx07xgO19fjd2of5y/PICQ1dU681FfqtcMrZwKBY5o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=orrZ37QuPYvj79xVmOiLzJPnNfhND5L+PohSdLgLS8gSu4g12gpm+CWZnxC8/Oc85+G2M6/fGWtJCtzwCmxE0+l/JLKDGp93698OJYoMv4RwPirItSKLUMaK/+o+snsnq47H5C+a3K5b5gArYNX0gdYvOtJs9b8aWDAsegxaoMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zSggIIrt; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2959197b68eso3575ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 10:01:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762884112; x=1763488912; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rj3oD85/fF4h5DTo6ut15zDZ0vkRj7B3cZojmVYXkZo=;
+        b=zSggIIrtaiRWKpB4J+DY3xSg6E+RQFzHDXA7P76UjaNnEpC1fO+3xayXZzq4Dv3Tbc
+         Y9GfIehx/N3ZIbDsIvlIfLG7b+fp6tIkoFaYoqXhtz2+R3yFg+yB+JYlzcKZI4Yw/TKZ
+         ko41ichxXncrAJUfpOAtega99Yy6pah384EUQe3+EpxO79MR+zPzzHodqw3utMgCerSe
+         PuOmusgThYWXs7Xlsh1m7kiALNBqLem4Zsh4b93VF9emeUObAob3T57WLIQ65d1dZaFb
+         wr84pB6TWPzXv1wfZf5r4Z+aAEGIBazmHYZVfkkNGC2l1laCjkZxBayawHqSh0ZQUMi+
+         1AXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762884112; x=1763488912;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=rj3oD85/fF4h5DTo6ut15zDZ0vkRj7B3cZojmVYXkZo=;
+        b=T21AQzsdBqLzawC/I3x+zVIV5yfYvHUzrsE3HzYwFnu9PxDhWm08vQhqmi0mTwxpGV
+         HbbUGHf0VJwipB38GHmpBL3m+SrlQC5AYBFy5n3Sy+PtSeIE30x9P9T5cP2QfaGmhIuE
+         OcMqFHFtvdyIL9dWn4W5+9nA3ob6gzHV22F+0GT2KEZD1OdrVbNu/oO2cz3L9JlI+ZfU
+         1GNTMs8X/OsRTHYcvuIpy4K3vfe7MQopDm0KruKE52G+RZqb2HPxXq32vZzW6YXNSfmo
+         7JHNPRKF/6Nr0A7MuRh8cAgzAHcQOe1BuewMIMtopZJfpZ29qDIwOiuC7lda4gPzJowT
+         YBUg==
+X-Forwarded-Encrypted: i=1; AJvYcCWXY0klPuhuNZK9EN1n3Ff5f+7RyeMs8Mn3NkNb7aaakgpeIxsALaa9MnnisaEiwTdvVGGLKsYWPv9yszE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyo++4fNEkykR5SR4Jh2a3kAA9cD1MXrbTRll0pwI6BZdiK9lXG
+	YdcuTG1OF4p0F6OYQ3ZfrjpOqA0uuSlazIOY7PqLuSVyVHSjdACxtJGykF0f3usDkrrm3CbCsBs
+	XIvVWKMxKqqUSM2YheuyTQ/GIG071lgzJOHFdxTKj
+X-Gm-Gg: ASbGnct385fVlUWS9WP1tRFRSXD5/CAZXZ7GJsbgbP69BP0R1epxCU5cXWA1OXjYBZN
+	ZswbdCUKF/Ojnyoli/+8B1xRTDWiMOJlTuIu/U41T8wsgf+jGB0MZakU4ZV+dK5A5v7FMVYZlhQ
+	NZXh/yf4TeHMR0gmhGT9Qt11l4NzwhyHVg9PSprqhxYn5e37KTFfEbIF63U50Z5MjT88TmCi87/
+	Q/CpyItDSo2xxY72a7IqQxmZJhZLtZTu3oMiA2Tn7xSfTCqhBPrKkI6np7IrNdzsHPveHqsSADn
+	R9xWZirXANP60VuBmfUFoB5e35AnG2M99hx4
+X-Google-Smtp-Source: AGHT+IEaYfD4+h5i0LnDfGy3StP6alCdbAGrRzBT449Gnul1EibX1V26xrhMdWylATmgLhu5TZsvpqxt9mZxeWG4ecw=
+X-Received: by 2002:a17:903:1a6f:b0:298:4819:f4d9 with SMTP id
+ d9443c01a7336-2984819f64amr1468145ad.8.1762884111278; Tue, 11 Nov 2025
+ 10:01:51 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v3 24/24] ext4: enable block size larger than page size
-To: libaokun@huaweicloud.com, linux-ext4@vger.kernel.org
-Cc: tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz,
- linux-kernel@vger.kernel.org, mcgrof@kernel.org, ebiggers@kernel.org,
- willy@infradead.org, yi.zhang@huawei.com, yangerkun@huawei.com,
- chengzhihao1@huawei.com, libaokun1@huawei.com
-References: <20251111142634.3301616-1-libaokun@huaweicloud.com>
- <20251111142634.3301616-25-libaokun@huaweicloud.com>
-Content-Language: en-US
-From: Pankaj Raghav <kernel@pankajraghav.com>
-In-Reply-To: <20251111142634.3301616-25-libaokun@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20251110013152.3099080-1-irogers@google.com> <aRLV50z1L9A3YRFF@google.com>
+In-Reply-To: <aRLV50z1L9A3YRFF@google.com>
+From: Ian Rogers <irogers@google.com>
+Date: Tue, 11 Nov 2025 10:01:40 -0800
+X-Gm-Features: AWmQ_bksGFltkNtn8RNtUeEYKdYbTBJDmTCEeYnwmeaDQvhSPtYZgO3gbyAEAPI
+Message-ID: <CAP-5=fW4XSL_tAD9-BzG9ceUJSr005bWi3Q1-kiJ_xyiHJZggg@mail.gmail.com>
+Subject: Re: [PATCH v1 0/5] Remove NO_AUXTRACE build option
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
+	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>, 
+	James Clark <james.clark@linaro.org>, Mike Leach <mike.leach@linaro.org>, 
+	Leo Yan <leo.yan@linux.dev>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
+	Yicong Yang <yangyicong@hisilicon.com>, Jonathan Cameron <jonathan.cameron@huawei.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Darren Hart <dvhart@infradead.org>, 
+	Davidlohr Bueso <dave@stgolabs.net>, =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>, 
+	Tomas Glozar <tglozar@redhat.com>, Quentin Monnet <qmo@kernel.org>, Yuzhuo Jing <yuzhuo@google.com>, 
+	Blake Jones <blakejones@google.com>, Charlie Jenkins <charlie@rivosinc.com>, 
+	Yeoreum Yun <yeoreum.yun@arm.com>, Athira Rajeev <atrajeev@linux.ibm.com>, 
+	Ravi Bangoria <ravi.bangoria@amd.com>, Collin Funk <collin.funk1@gmail.com>, 
+	Dapeng Mi <dapeng1.mi@linux.intel.com>, Thomas Richter <tmricht@linux.ibm.com>, 
+	Dmitry Vyukov <dvyukov@google.com>, Andi Kleen <ak@linux.intel.com>, 
+	Howard Chu <howardchu95@gmail.com>, Zecheng Li <zecheng@google.com>, tanze <tanze@kylinos.cn>, 
+	Gabriele Monaco <gmonaco@redhat.com>, GuoHan Zhao <zhaoguohan@kylinos.cn>, 
+	Markus Elfring <Markus.Elfring@web.de>, Colin Ian King <colin.i.king@gmail.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, "Dr. David Alan Gilbert" <linux@treblig.org>, 
+	Jean-Philippe Romain <jean-philippe.romain@foss.st.com>, Yang Li <yang.lee@linux.alibaba.com>, 
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Nov 10, 2025 at 10:21=E2=80=AFPM Namhyung Kim <namhyung@kernel.org>=
+ wrote:
+>
+> Hi Ian,
+>
+> On Sun, Nov 09, 2025 at 05:31:47PM -0800, Ian Rogers wrote:
+> > Switch the __get_cpuid feature for intel-pt to use the provided cpuid
+> > function in perf, this removes the need for NO_AUXTRACE when the
+> > feature detection fails. Remove the now unnecessary feature
+> > detection. Remove NO_AUXTRACE as it just builds a more broken version
+>
+> Can you please elaborate what the broken part is?
 
-On 11/11/25 15:26, libaokun@huaweicloud.com wrote:
-> From: Baokun Li <libaokun1@huawei.com>
-> 
-> Since block device (See commit 3c20917120ce ("block/bdev: enable large
-> folio support for large logical block sizes")) and page cache (See commit
-> ab95d23bab220ef8 ("filemap: allocate mapping_min_order folios in the page
-> cache")) has the ability to have a minimum order when allocating folio,
-> and ext4 has supported large folio in commit 7ac67301e82f ("ext4: enable
-> large folio for regular file"), now add support for block_size > PAGE_SIZE
-> in ext4.
-> 
-> set_blocksize() -> bdev_validate_blocksize() already validates the block
-> size, so ext4_load_super() does not need to perform additional checks.
-> Here we only need to add the FS_LBS bit to fs_flags.
-> 
-> In addition, block sizes larger than the page size are currently supported
-> only when CONFIG_TRANSPARENT_HUGEPAGE is enabled. To make this explicit,
-> a blocksize_gt_pagesize entry has been added under /sys/fs/ext4/feature/,
-> indicating whether bs > ps is supported. This allows mke2fs to check the
-> interface and determine whether a warning should be issued when formatting
-> a filesystem with block size larger than the page size.
-> 
+Sure. I'll summarize what alters in patch 4. NO_AUXTRACE is
+controlling 3 main things:
+ * set up of aux options for PMUs (code in the arch directory)
+   * ARM: coresight and SPE
+   * Intel: BTS and PT
+   * PowerPC: VPA DTL
+   * S390: cpumsf
+ * support for decoding aux events (common code that can be
+cross-compiled assuming other library dependencies are available)
+   * ARM: coresight
+   * HiSi: PTT decoder
+   * Intel: BTS and PT
+   * PowerPC: VPA DTL
+   * S390: cpumsf
+ * Tool support for aux buffers (common shared builtin code):
+  * perf record: aux options for events, snapshot, aux-sample
+  * perf inject: aux events will fail the entire perf inject command
 
-If you are planning to send another revision, then it would be nice to include
-the corresponding patch to mke2fs as well? I don't know how ext4 process works but
-just a suggestion.
-> Suggested-by: Theodore Ts'o <tytso@mit.edu>
-> Signed-off-by: Baokun Li <libaokun1@huawei.com>
-> Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
-> Reviewed-by: Jan Kara <jack@suse.cz>
-> ---
+So somebody with a NO_AUXTRACE build would generally experience a very
+sad perf command. Having the option made sense when there were feature
+tests that could fail, but possibly that should have just controlled
+not compiling intel-pt. Having the option is extra burden on
+developers/maintainers, as shown in my comment:
 
-Looks good,
-Reviewed-by: Pankaj Raghav <p.raghav@samsung.com>
+> This was prompted by needing to make a v2 patch set of:
+> https://lore.kernel.org/lkml/20251107170712.2302714-1-irogers@google.com/
+> due to a broken NO_AUXTRACE configuration.
 
->  fs/ext4/super.c | 3 ++-
->  fs/ext4/sysfs.c | 6 ++++++
->  2 files changed, 8 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-> index f1aeba47b0e3..29bc8f5eb527 100644
-> --- a/fs/ext4/super.c
-> +++ b/fs/ext4/super.c
-> @@ -7451,7 +7451,8 @@ static struct file_system_type ext4_fs_type = {
->  	.init_fs_context	= ext4_init_fs_context,
->  	.parameters		= ext4_param_specs,
->  	.kill_sb		= ext4_kill_sb,
-> -	.fs_flags		= FS_REQUIRES_DEV | FS_ALLOW_IDMAP | FS_MGTIME,
-> +	.fs_flags		= FS_REQUIRES_DEV | FS_ALLOW_IDMAP | FS_MGTIME |
-> +				  FS_LBS,
->  };
->  MODULE_ALIAS_FS("ext4");
->  
-> diff --git a/fs/ext4/sysfs.c b/fs/ext4/sysfs.c
-> index 987bd00f916a..0018e09b867e 100644
-> --- a/fs/ext4/sysfs.c
-> +++ b/fs/ext4/sysfs.c
-> @@ -332,6 +332,9 @@ EXT4_ATTR_FEATURE(fast_commit);
->  #if IS_ENABLED(CONFIG_UNICODE) && defined(CONFIG_FS_ENCRYPTION)
->  EXT4_ATTR_FEATURE(encrypted_casefold);
->  #endif
-> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> +EXT4_ATTR_FEATURE(blocksize_gt_pagesize);
-> +#endif
->  
->  static struct attribute *ext4_feat_attrs[] = {
->  	ATTR_LIST(lazy_itable_init),
-> @@ -351,6 +354,9 @@ static struct attribute *ext4_feat_attrs[] = {
->  	ATTR_LIST(fast_commit),
->  #if IS_ENABLED(CONFIG_UNICODE) && defined(CONFIG_FS_ENCRYPTION)
->  	ATTR_LIST(encrypted_casefold),
-> +#endif
-> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> +	ATTR_LIST(blocksize_gt_pagesize),
->  #endif
->  	NULL,
->  };
+Somebody may have been using NO_AUXTRACE as a proxy for not having
+some library, but I don't see that in the code. If this is the case we
+should add the appropriate feature test, ..
+Not having NO_AUXTRACE may have been a bug work around for someone, in
+which case we should work to fix the bug. Again, I don't know of this
+case and don't see it in the code.
 
+Thanks,
+Ian
+
+> Thanks,
+> Namhyung
 
