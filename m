@@ -1,180 +1,317 @@
-Return-Path: <linux-kernel+bounces-896290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE267C500AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 00:18:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FC08C500B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 00:20:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7B67D4E1BD6
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 23:18:03 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 51AFC4E2421
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 23:20:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B4812F290A;
-	Tue, 11 Nov 2025 23:17:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6E572F0C46;
+	Tue, 11 Nov 2025 23:20:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DHAtLRy2"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9450327280A
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 23:17:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="C02hQdhp"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3428418A6B0;
+	Tue, 11 Nov 2025 23:20:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762903075; cv=none; b=rBnC8edV+CInztkbe6IsDWiR0mFs7UcKftTWG73JQjko5ol2lNhFI+8dK7kGAEPSVOkZ3HlfF38G5K+9AO4O5IH9KRfVvrhvN1xNIu3br7ZqEuvCO+/3t5cF7VU7ueKHDjP5b/yF0wwkgnO9ZhOgYHxxVROndczZgIF8fRglO+s=
+	t=1762903212; cv=none; b=tDNvgG1NzCU+CU0p5IsFSDUqELL5NbVG4MH+ks9aWh9HF/XmdKJvpeJlyfC+3VsKVjiY09xBgdqg+PUkfannFK/EJs9JUqcO0u8IH7jFc9Jk6VFQDK1aVxJaicaAydy7lQ7VIYHMLyIsoNRWnxAwzLxD4FEVkFXVoRjlOQPgcsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762903075; c=relaxed/simple;
-	bh=piyjk0UICuFLylh+Sm1fnefVrHatXFXMF4SInyqrXeM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Hdc14RBKMQv77m7YcFIp0x+whd8lHq8X8vGzKjmdcun4hq1jIlxmgdLkrQS7Ed3RK6Z22DVtFzW3+twJCEVXawORvJcGKh7fHUSsYQcqIFPs2SnypluKhjoolx0q+cZoDB0rATgM9WysdJDlBcVDRwcOgX4i8SpPnsXYhjkpBXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DHAtLRy2; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5942e61f001so223088e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 15:17:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762903072; x=1763507872; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XxXzAibViSwAAylldqlTc3TG7DUM2kT/SoBJQ9gVkp8=;
-        b=DHAtLRy2efxfkL5EDn8JoBILhV9Z3d5BY+fyahqwi24rTOLBwyoECxfpsNvUXMhcXa
-         0EEyWwdMD4jCsWttrb2Mz/DgA3MmH6jDPkDSLUNtTGoFg/ThllpkQGepG6qWkB8M/7kQ
-         QBDq8tKCxNoYuVh9PY3aRfeIEOFXB7PlB23VdgDd3PlwDRpZiogvmNJHbBGRF1eW9Of4
-         4ZJ2afMZ2EnySSW2ZBbivIieZs9jyhhHkpMCiDWVRiYmhkWvZq+uBzV2l9PTgr/ajgZW
-         p8OovpE7dg0u9v/et/aOcv/c5p8Bz8wY7qNBkRozXn/aeAtynbLXp/pTy8kYz39yFnhQ
-         U9Mg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762903072; x=1763507872;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=XxXzAibViSwAAylldqlTc3TG7DUM2kT/SoBJQ9gVkp8=;
-        b=n1LR9RN1XaHFc5l9qh0UtCvFqLlX9d4GTH1DSbU9hvfQwRzGKv2gA651GiYEBReu3H
-         r1J3VRb8due3rF05lCq57966f8C3Pe35LEHhfMQznQatlCN7DRpT1KXefhnZ5wvRcJG9
-         o9PxltJMz6ZUD5D80tjGMwC6kiR27vNd2B6cudHA0urklvkY1gLCQg3/XVIXhRlXtVAY
-         H60TWzOEGJdPr4z9ds2G1vEaFiGcbGLh3fSxJjVk4nPRDLFCnyLGuNQInVCHq/QlyHeX
-         50KWJ8ajlay1Pm6OnEBX/l6nbCxlcsC30WmnpjxULFl0vRV3dMXSsDtLQztqbcyHSWU9
-         2cCw==
-X-Forwarded-Encrypted: i=1; AJvYcCX24CBA8WsvtsbZPMvVeZa6pbhYnURPmxu+5qmSdSZcnx+mJYvLrb2WRROZNXF5XPaiXoQuoGGUvd94x8g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPTkU0Wbj07NAEpVc33eLZQLeZM34indJIEGXQIicbWU5aBVzz
-	+ZroO/xB2MiadPsuLYPiixotmAwvmFblKP2gvLmhTAE17p7s59MYSbDp1aHSdmlm5Z7XNdaDrV+
-	68HMQwIa1O7RyjAkn6z1UW3DaxNrnvmJuOFM2
-X-Gm-Gg: ASbGncuUfQxkWzHYJ7gjEnKMQSRw6Hc8sOlxoQZISaln0YhVpvPP6ibZ9TE6hc3HL2y
-	JG4pkqkNCH1c0zOKA2PYnItiTeOg5VowfUWnzyJWvpjwai3eSpoB+mBTfE7NHVjdbYR2sEe4Uns
-	CicZue9xSefKt9dEs3qTZZJExWj2mxDMtAL3dcgDQAMSJtq+CseyJdJZq+uDDS3wTnBdiFcyN+f
-	lVYYra8oPi52BLBTo9nbrHDnwMXDOxZlS9kQ9b+vukshcD1F+wF82R4zgYFuyb0wpGFBRc=
-X-Google-Smtp-Source: AGHT+IECOFMI8OdowjaSX2iDsqoM90iLrXne/fWxcejwflrbsKpPRHv9RqN3KIY7SrMPz9KQt1HDoSYoHFJRU6eT+YM=
-X-Received: by 2002:a05:6512:39cb:b0:594:49ed:3ced with SMTP id
- 2adb3069b0e04-59576e40572mr245993e87.54.1762903071425; Tue, 11 Nov 2025
- 15:17:51 -0800 (PST)
+	s=arc-20240116; t=1762903212; c=relaxed/simple;
+	bh=TGebJoAqjfY36UY2kNsWyWYzzJ4kHuBeBui4jAdLN2o=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=gfncpeM6Rzub7NmbjQHYh0/TLPIOy6P6yZS2tM3qfviDDuTHZAdFxJNym6aCysFAp7uK0Agh/heXUZ/oXcX2+psMgkzSK2rQ9S5JZMJhBGUh/K93n+B2Z2gDspmxr1YgEXl1e3ovhemf4PG8ycSK7wGDIGiwzfXg6GpKAWCiEI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=C02hQdhp; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1032)
+	id AAEB62013346; Tue, 11 Nov 2025 15:20:10 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com AAEB62013346
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1762903210;
+	bh=Wb5WAhAjXFkC3fqwbPujFXDrJaGRdqZ8Yt7XHrNN35g=;
+	h=From:To:Cc:Subject:Date:From;
+	b=C02hQdhpTN92EYpDUW+81sG+AyWULV11qTPK71i0mdQp0sOhI+D3cq/RJwYuNyAZv
+	 m/Ze8iNkyiRBlf3rjzNllspbpwXTK1diTCtRyfggptQDywkoZbzDUehJOtFVZTqWuF
+	 hV9coWJ41My90TPeJ+76I3WQR1i6pmWwjjVfTHTY=
+From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+To: linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	wei.liu@kernel.org,
+	mhklinux@outlook.com
+Cc: kys@microsoft.com,
+	haiyangz@microsoft.com,
+	decui@microsoft.com,
+	longli@microsoft.com,
+	skinsburskii@linux.microsoft.com,
+	prapal@linux.microsoft.com,
+	mrathor@linux.microsoft.com,
+	muislam@microsoft.com,
+	anrayabh@linux.microsoft.com,
+	Jinank Jain <jinankjain@microsoft.com>,
+	Nuno Das Neves <nunodasneves@linux.microsoft.com>
+Subject: [PATCH v4] mshv: Extend create partition ioctl to support cpu features
+Date: Tue, 11 Nov 2025 15:19:54 -0800
+Message-Id: <1762903194-25195-1-git-send-email-nunodasneves@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20251027-tegra186-icc-p2-v4-0-e4e4f57e2103@gmail.com>
- <20251027-tegra186-icc-p2-v4-3-e4e4f57e2103@gmail.com> <82c8dda8-6fcb-48f9-bdaa-f3d1431e41ae@nvidia.com>
- <CALHNRZ8nCojreFCMXfbBBhWAMtmWN-04XtuW8fEsVD9bw+-AzA@mail.gmail.com>
- <CALHNRZ-CO5i9jeLkEG2cmHxcW1bcLhxcBSxjmL2euHfQy8yr-w@mail.gmail.com>
- <e6ce190e-6df7-4c36-abca-f09df3cc80e7@nvidia.com> <99ca4992-5736-417d-854e-379542549bee@kernel.org>
- <7f3dad08-cff5-40c2-8e7f-f6441a3d6b91@nvidia.com> <d5d23eb5-f43c-4e4b-9926-3fba6ffd3acf@nvidia.com>
- <CALHNRZ8vFJyfFXbxFehWA9TGkdrEUy9Wsm-DxEOT=tVbYTcU5Q@mail.gmail.com> <249bbe7e-e2da-4493-bdd5-8f4b17aff8fe@nvidia.com>
-In-Reply-To: <249bbe7e-e2da-4493-bdd5-8f4b17aff8fe@nvidia.com>
-From: Aaron Kling <webgeek1234@gmail.com>
-Date: Tue, 11 Nov 2025 17:17:40 -0600
-X-Gm-Features: AWmQ_bkYm4fjvjDrlS3yKb85hc0z8ySFttCNXBmRTjm0WjIIiGVUIlHpFMqe8b0
-Message-ID: <CALHNRZ8uPaKqSpFWkmYZn==Xw=rxh95Xm0_6LPN1HDj20zofqw@mail.gmail.com>
-Subject: Re: [PATCH v4 3/5] memory: tegra186-emc: Support non-bpmp icc scaling
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 11, 2025 at 3:29=E2=80=AFPM Jon Hunter <jonathanh@nvidia.com> w=
-rote:
->
->
-> On 11/11/2025 17:04, Aaron Kling wrote:
->
-> ...
->
-> > My setup uses the boot stack from L4T r32.7.6, though cboot is source
-> > built and has had changes over time to support newer Android versions.
-> > There shouldn't be anything there that would affect emc clock, though.
-> >
-> > I'm seeing the emc clock stay at the boot value, namely 1600MHz. Per
-> > both debugfs clk/emc/clk_rate and bpmp/debug/clk/emc/rate. I don't
-> > even see 250MHz as an option. Debugfs emc/available_rates lists 204MHz
-> > as the closest entry.
-> >
-> > I'm trying to think what could cause a drop in the selected clock
-> > rate. This patch should only dynamically change the rate if the opp
-> > tables exist, enabling the cpufreq based scaling via icc. But those
-> > tables don't exist on linux-next right now. My test ramdisk does
-> > nothing except set up sysfs/procfs/etc just enough to run a busybox
-> > shell for debugging. Do the Nvidia regression testing boot scripts do
-> > anything to sysfs or debugfs that would affect emc?
->
-> So this is definitely coming from ICC. On boot I see a request for
-> 250MHz coming from the PCIe driver ...
->
-> [   13.861227] tegra186_emc_icc_set_bw-356: rate 250000000
-> [   13.861350] CPU: 1 UID: 0 PID: 68 Comm: kworker/u32:1 Not tainted 6.18=
-.0-rc4-next-20251110-00001-gfc12493c80fb-dirty #9 PREEMPT
-> [   13.861362] Hardware name: NVIDIA Jetson AGX Xavier Developer Kit (DT)
-> [   13.861370] Workqueue: events_unbound deferred_probe_work_func
-> [   13.861388] Call trace:
-> [   13.861393]  show_stack+0x18/0x24 (C)
-> [   13.861407]  dump_stack_lvl+0x74/0x8c
-> [   13.861419]  dump_stack+0x18/0x24
-> [   13.861426]  tegra186_emc_icc_set_bw+0xc8/0x14c
-> [   13.861438]  apply_constraints+0x70/0xb0
-> [   13.861451]  icc_set_bw+0x88/0x128
-> [   13.861461]  tegra_pcie_icc_set+0x7c/0x10c [pcie_tegra194]
-> [   13.861499]  tegra_pcie_dw_start_link+0x178/0x2b0 [pcie_tegra194]
-> [   13.861510]  dw_pcie_host_init+0x664/0x6e0
-> [   13.861523]  tegra_pcie_dw_probe+0x6d4/0xbfc [pcie_tegra194]
-> [   13.861534]  platform_probe+0x5c/0x98
-> [   13.861547]  really_probe+0xbc/0x2a8
-> [   13.861555]  __driver_probe_device+0x78/0x12c
-> [   13.861563]  driver_probe_device+0x3c/0x15c
-> [   13.861572]  __device_attach_driver+0xb8/0x134
-> [   13.861580]  bus_for_each_drv+0x84/0xe0
-> [   13.861588]  __device_attach+0x9c/0x188
-> [   13.861596]  device_initial_probe+0x14/0x20
-> [   13.861610]  bus_probe_device+0xac/0xb0
-> [   13.861619]  deferred_probe_work_func+0x88/0xc0
-> [   13.861627]  process_one_work+0x148/0x28c
-> [   13.861640]  worker_thread+0x2d0/0x3d8
-> [   13.861648]  kthread+0x128/0x200
-> [   13.861659]  ret_from_fork+0x10/0x20
->
-> The actual rate that is set is 408MHz if I read the rate after
-> it is set ...
->
-> [   13.912099] tegra186_emc_icc_set_bw-362: rate 408000000
->
-> This is a simple boot test and so nothing we are doing via
-> debugfs/sysfs to influence this.
+From: Muminul Islam <muislam@microsoft.com>
 
-Alright, I think I've got the picture of what's going on now. The
-standard arm64 defconfig enables the t194 pcie driver as a module. And
-my simple busybox ramdisk that I use for mainline regression testing
-isn't loading any modules. If I set the pcie driver to built-in, I
-replicate the issue. And I don't see the issue on my normal use case,
-because I have the dt changes as well.
+The existing mshv create partition ioctl does not provide a way to
+specify which cpu features are enabled in the guest. Instead, it
+attempts to enable all features and those that are not supported are
+silently disabled by the hypervisor.
 
-So it appears that the pcie driver submits icc bandwidth. And without
-cpufreq submitting bandwidth as well, the emc driver gets a very low
-number and thus sets a very low emc freq. The question becomes... what
-to do about it? If the related dt changes were submitted to
-linux-next, everything should fall into place. And I'm not sure where
-this falls on the severity scale since it doesn't full out break boot
-or prevent operation.
+This was done to reduce unnecessary complexity and is sufficient for
+many cases. However, new scenarios require fine-grained control over
+these features.
 
-Aaron
+Define a new mshv_create_partition_v2 structure which supports
+passing the disabled processor and xsave feature bits through to the
+create partition hypercall directly.
+
+Introduce a new flag MSHV_PT_BIT_CPU_AND_XSAVE_FEATURES which enables
+the new structure. If unset, the original mshv_create_partition struct
+is used, with the old behavior of enabling all features.
+
+Co-developed-by: Jinank Jain <jinankjain@microsoft.com>
+Signed-off-by: Jinank Jain <jinankjain@microsoft.com>
+Signed-off-by: Muminul Islam <muislam@microsoft.com>
+Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+---
+Changes in v4:
+- Change BIT() to BIT_ULL() [Michael Kelley]
+- Enforce pt_num_cpu_fbanks == MSHV_NUM_CPU_FEATURES_BANKS and expect
+  that number to never change. In future, additional processor banks
+  will be settable as 'early' partition properties. Remove redundant
+  code that set default values for unspecified banks [Michael Kelley]
+- Set xsave features to 0 on arm64 [Michael Kelley]
+- Add clarifying comments in a few places
+
+Changes in v3:
+- Remove the new cpu features definitions in hvhdk.h, and retain the
+  old behavior of enabling all features for the old struct. For the v2
+  struct, still disable unspecified feature banks, since that makes it
+  robust to future extensions.
+- Amend comments and commit message to reflect the above
+- Fix unused variable on arm64 [kernel test robot]
+
+Changes in v2:
+- Fix exposure of CONFIG_X86_64 to uapi [kernel test robot]
+- Fix compilation issue on arm64 [kernel test robot]
+---
+ drivers/hv/mshv_root_main.c | 113 +++++++++++++++++++++++++++++-------
+ include/uapi/linux/mshv.h   |  34 +++++++++++
+ 2 files changed, 126 insertions(+), 21 deletions(-)
+
+diff --git a/drivers/hv/mshv_root_main.c b/drivers/hv/mshv_root_main.c
+index d542a0143bb8..9f9438289b60 100644
+--- a/drivers/hv/mshv_root_main.c
++++ b/drivers/hv/mshv_root_main.c
+@@ -1900,43 +1900,114 @@ add_partition(struct mshv_partition *partition)
+ 	return 0;
+ }
+ 
+-static long
+-mshv_ioctl_create_partition(void __user *user_arg, struct device *module_dev)
++static_assert(MSHV_NUM_CPU_FEATURES_BANKS ==
++	      HV_PARTITION_PROCESSOR_FEATURES_BANKS);
++
++static long mshv_ioctl_process_pt_flags(void __user *user_arg, u64 *pt_flags,
++					struct hv_partition_creation_properties *cr_props,
++					union hv_partition_isolation_properties *isol_props)
+ {
+-	struct mshv_create_partition args;
+-	u64 creation_flags;
+-	struct hv_partition_creation_properties creation_properties = {};
+-	union hv_partition_isolation_properties isolation_properties = {};
+-	struct mshv_partition *partition;
+-	struct file *file;
+-	int fd;
+-	long ret;
++	int i;
++	struct mshv_create_partition_v2 args;
++	union hv_partition_processor_features *disabled_procs;
++	union hv_partition_processor_xsave_features *disabled_xsave;
+ 
+-	if (copy_from_user(&args, user_arg, sizeof(args)))
++	/* First, copy v1 struct in case user is on previous versions */
++	if (copy_from_user(&args, user_arg,
++			   sizeof(struct mshv_create_partition)))
+ 		return -EFAULT;
+ 
+ 	if ((args.pt_flags & ~MSHV_PT_FLAGS_MASK) ||
+ 	    args.pt_isolation >= MSHV_PT_ISOLATION_COUNT)
+ 		return -EINVAL;
+ 
++	disabled_procs = &cr_props->disabled_processor_features;
++	disabled_xsave = &cr_props->disabled_processor_xsave_features;
++
++	/* Check if user provided newer struct with feature fields */
++	if (args.pt_flags & BIT_ULL(MSHV_PT_BIT_CPU_AND_XSAVE_FEATURES)) {
++		if (copy_from_user(&args, user_arg, sizeof(args)))
++			return -EFAULT;
++
++		if (args.pt_num_cpu_fbanks != MSHV_NUM_CPU_FEATURES_BANKS ||
++		    mshv_field_nonzero(args, pt_rsvd) ||
++		    mshv_field_nonzero(args, pt_rsvd1))
++			return -EINVAL;
++
++		/*
++		 * Note this assumes MSHV_NUM_CPU_FEATURES_BANKS will never
++		 * change and equals HV_PARTITION_PROCESSOR_FEATURES_BANKS
++		 * (i.e. 2).
++		 *
++		 * Further banks (index >= 2) will be modifiable as 'early'
++		 * properties via the set partition property hypercall.
++		 */
++		for (i = 0; i < HV_PARTITION_PROCESSOR_FEATURES_BANKS; i++)
++			disabled_procs->as_uint64[i] = args.pt_cpu_fbanks[i];
++
++#if IS_ENABLED(CONFIG_X86_64)
++		disabled_xsave->as_uint64 = args.pt_disabled_xsave;
++#else
++		/*
++		 * In practice this field is ignored on arm64, but safer to
++		 * zero it in case it is ever used.
++		 */
++		disabled_xsave->as_uint64 = 0;
++
++		if (mshv_field_nonzero(args, pt_rsvd2))
++			return -EINVAL;
++#endif
++	} else {
++		/*
++		 * v1 behavior: try to enable everything. The hypervisor will
++		 * disable features that are not supported. The banks can be
++		 * queried via the get partition property hypercall.
++		 */
++		for (i = 0; i < HV_PARTITION_PROCESSOR_FEATURES_BANKS; i++)
++			disabled_procs->as_uint64[i] = 0;
++
++		disabled_xsave->as_uint64 = 0;
++	}
++
+ 	/* Only support EXO partitions */
+-	creation_flags = HV_PARTITION_CREATION_FLAG_EXO_PARTITION |
+-			 HV_PARTITION_CREATION_FLAG_INTERCEPT_MESSAGE_PAGE_ENABLED;
++	*pt_flags = HV_PARTITION_CREATION_FLAG_EXO_PARTITION |
++		    HV_PARTITION_CREATION_FLAG_INTERCEPT_MESSAGE_PAGE_ENABLED;
++
++	if (args.pt_flags & BIT_ULL(MSHV_PT_BIT_LAPIC))
++		*pt_flags |= HV_PARTITION_CREATION_FLAG_LAPIC_ENABLED;
++	if (args.pt_flags & BIT_ULL(MSHV_PT_BIT_X2APIC))
++		*pt_flags |= HV_PARTITION_CREATION_FLAG_X2APIC_CAPABLE;
++	if (args.pt_flags & BIT_ULL(MSHV_PT_BIT_GPA_SUPER_PAGES))
++		*pt_flags |= HV_PARTITION_CREATION_FLAG_GPA_SUPER_PAGES_ENABLED;
+ 
+-	if (args.pt_flags & BIT(MSHV_PT_BIT_LAPIC))
+-		creation_flags |= HV_PARTITION_CREATION_FLAG_LAPIC_ENABLED;
+-	if (args.pt_flags & BIT(MSHV_PT_BIT_X2APIC))
+-		creation_flags |= HV_PARTITION_CREATION_FLAG_X2APIC_CAPABLE;
+-	if (args.pt_flags & BIT(MSHV_PT_BIT_GPA_SUPER_PAGES))
+-		creation_flags |= HV_PARTITION_CREATION_FLAG_GPA_SUPER_PAGES_ENABLED;
++	isol_props->as_uint64 = 0;
+ 
+ 	switch (args.pt_isolation) {
+ 	case MSHV_PT_ISOLATION_NONE:
+-		isolation_properties.isolation_type =
+-			HV_PARTITION_ISOLATION_TYPE_NONE;
++		isol_props->isolation_type = HV_PARTITION_ISOLATION_TYPE_NONE;
+ 		break;
+ 	}
+ 
++	return 0;
++}
++
++static long
++mshv_ioctl_create_partition(void __user *user_arg, struct device *module_dev)
++{
++	u64 creation_flags;
++	struct hv_partition_creation_properties creation_properties;
++	union hv_partition_isolation_properties isolation_properties;
++	struct mshv_partition *partition;
++	struct file *file;
++	int fd;
++	long ret;
++
++	ret = mshv_ioctl_process_pt_flags(user_arg, &creation_flags,
++					  &creation_properties,
++					  &isolation_properties);
++	if (ret)
++		return ret;
++
+ 	partition = kzalloc(sizeof(*partition), GFP_KERNEL);
+ 	if (!partition)
+ 		return -ENOMEM;
+diff --git a/include/uapi/linux/mshv.h b/include/uapi/linux/mshv.h
+index 876bfe4e4227..cf904f3aa201 100644
+--- a/include/uapi/linux/mshv.h
++++ b/include/uapi/linux/mshv.h
+@@ -26,6 +26,7 @@ enum {
+ 	MSHV_PT_BIT_LAPIC,
+ 	MSHV_PT_BIT_X2APIC,
+ 	MSHV_PT_BIT_GPA_SUPER_PAGES,
++	MSHV_PT_BIT_CPU_AND_XSAVE_FEATURES,
+ 	MSHV_PT_BIT_COUNT,
+ };
+ 
+@@ -41,6 +42,8 @@ enum {
+  * @pt_flags: Bitmask of 1 << MSHV_PT_BIT_*
+  * @pt_isolation: MSHV_PT_ISOLATION_*
+  *
++ * This is the initial/v1 version for backward compatibility.
++ *
+  * Returns a file descriptor to act as a handle to a guest partition.
+  * At this point the partition is not yet initialized in the hypervisor.
+  * Some operations must be done with the partition in this state, e.g. setting
+@@ -52,6 +55,37 @@ struct mshv_create_partition {
+ 	__u64 pt_isolation;
+ };
+ 
++#define MSHV_NUM_CPU_FEATURES_BANKS 2
++
++/**
++ * struct mshv_create_partition_v2
++ *
++ * This is extended version of the above initial MSHV_CREATE_PARTITION
++ * ioctl and allows for following additional parameters:
++ *
++ * @pt_num_cpu_fbanks: Must be set to MSHV_NUM_CPU_FEATURES_BANKS.
++ * @pt_cpu_fbanks: Disabled processor feature banks array.
++ * @pt_disabled_xsave: Disabled xsave feature bits.
++ *
++ * pt_cpu_fbanks and pt_disabled_xsave are passed through as-is to the create
++ * partition hypercall.
++ *
++ * Returns : same as above original mshv_create_partition
++ */
++struct mshv_create_partition_v2 {
++	__u64 pt_flags;
++	__u64 pt_isolation;
++	__u16 pt_num_cpu_fbanks;
++	__u8  pt_rsvd[6];		/* MBZ */
++	__u64 pt_cpu_fbanks[MSHV_NUM_CPU_FEATURES_BANKS];
++	__u64 pt_rsvd1[2];		/* MBZ */
++#if defined(__x86_64__)
++	__u64 pt_disabled_xsave;
++#else
++	__u64 pt_rsvd2;			/* MBZ */
++#endif
++} __packed;
++
+ /* /dev/mshv */
+ #define MSHV_CREATE_PARTITION	_IOW(MSHV_IOCTL, 0x00, struct mshv_create_partition)
+ 
+-- 
+2.34.1
+
 
