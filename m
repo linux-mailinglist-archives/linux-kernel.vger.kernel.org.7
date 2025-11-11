@@ -1,147 +1,203 @@
-Return-Path: <linux-kernel+bounces-895450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7ED8C4DF26
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:59:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27E57C4DF0B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:58:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9992C18C4D3B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:52:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB3FB3B8532
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:52:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DD3E331206;
-	Tue, 11 Nov 2025 12:42:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08F9433ADBB;
+	Tue, 11 Nov 2025 12:43:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="JibmJuZ2";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="FZstT35i"
-Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="l1dLlr/F";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="IBxUAlGM"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2966732827F;
-	Tue, 11 Nov 2025 12:42:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A45E333121D
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 12:43:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762864940; cv=none; b=EdaAJVtYhw48VnLDBOTn55ciFrAYXyJMJvASUcRj/tFo1NbxVKv4pgMbigD9AIcV+jLkL3SvzsgJhC85kt7QJpfO6Ndh/gl0d0ZOok31rktMVB8fV4qVXobgejBt2EJTF8Cd2nKbiR5jsE7rrYJHUsfdxFo0d6heNtXuJnbJ1Ok=
+	t=1762865035; cv=none; b=AYwo4LtXsH8fP/qtWz7II0VRY4CX9r6Sr+efgS8aMJh9urdeElZ4dvmvnxfbT7B94QNSSaPxjeANzmb2ytNquYxy1Tt8aGG/vhHPrkZ/WclRiI5NDPhFKyLhVnMLuudH711wGdcES7RYAzycCokKBm1PT15V9ELIGryLmiQ3kIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762864940; c=relaxed/simple;
-	bh=cz32zYSwqb1PQwJobwLomOiySUR6tQ6fOUsgjeY7AEs=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=b/uYsooa4Z+qHMTvWJtBAeZ+M2FHSgtywa8IIdrNGWHB7rVbUflL88aQFf9mLp/cAc8z8wkbyAZHNtwkSI8wN8Aavuiuij5V429MgMao3bmphiJzH+vdEOeSu5nNozjCCMjZgpiw21cZzpTsQJIGsrCqmJ3mPeB33maeAWTpess=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=JibmJuZ2; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=FZstT35i; arc=none smtp.client-ip=103.168.172.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailfout.phl.internal (Postfix) with ESMTP id 187E0EC00B6;
-	Tue, 11 Nov 2025 07:42:16 -0500 (EST)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-04.internal (MEProxy); Tue, 11 Nov 2025 07:42:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1762864936;
-	 x=1762951336; bh=t83Ou404aXmm0kHf+liFHD5vp+Jq6h/HE7hxSSqNQM4=; b=
-	JibmJuZ2LTm29ue9/WbzZMU5N5DLUcOSp78hofujU2xZ9Q127kN/OssfV5W45hW5
-	hUiRrvEgNwWojWZYXxDd/KIdyxIO7TiNwVSEvUvgmaE/nyERHJ2JrW1KlD+6pjTb
-	YSX83awqmbQYOUgu/IJ4OvjnMIVMGDpNHM8lhC2TXBlr+X6rDRRcnVaLAsxOpKY3
-	CWoRuQf8EhR0IwWsrk8FgNRYRLkrV7wIXRdy9YHjH3pFwnHmn+ai5Xi6LE6Vb4nx
-	QUqKg9xD9QF6utPPq7O9PFxESS1qwh3t5TLp0AnCxZh5fWXbL5WiTCniCi7hcky9
-	FZ4lKcaDxGjNhCDyk7lfPA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762864936; x=
-	1762951336; bh=t83Ou404aXmm0kHf+liFHD5vp+Jq6h/HE7hxSSqNQM4=; b=F
-	ZstT35iVuamPgchGRgIr5TJsWorDc3G8IzQ1SROewxjhZSMdUNqCPghFuUR/4Yct
-	vYsbO0t8bFlt8DASsHD8DEeMw36BafMYomAz0XU4A+dfHJjJMownqCVD0APPdVoF
-	LBmNrzvj5GYjXkijg4C/SWhYr9DnlLcAjR5BFvnyUHrNVLgDzb7+3hu6y3Vh4bpS
-	75BljSDCZ1lUVedUUKum9m5NlvU9lFAJNQCWB6d9Y7WOichVJHoTOwJLeShkT9tH
-	HDGPVH2lrg408dmbgHDZaTy8yFlhcdm6zXmvMicAIFhSBzDA8IpyMQ5c7iobktqI
-	jZggN2Okw7ZKLl3CreFlw==
-X-ME-Sender: <xms:Jy8TaSHR04fw7GoBuiiKVAJlm329x6mvjJnux8fuJiFDY0nQdhEA7w>
-    <xme:Jy8TaeKEDmcW5ZwkjZxbtzohL6pCVOFaMqUo7XeJTZFPLIGzPYo52EDfYfGMYNIpQ
-    723BwXa9v9l8AjNROJa3h7C2W-WCK-wbcJI5bPclCggpXRF2ZcjosI>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvtdduvddvucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhgu
-    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
-    hrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefggfevudegudevledvkefhvdei
-    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnh
-    gusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepledpmhhouggvpehsmhhtphhouhht
-    pdhrtghpthhtohepthhorhhvrghlughssehlihhnuhigqdhfohhunhgurghtihhonhdroh
-    hrghdprhgtphhtthhopegrghhorhguvggvvheslhhinhhugidrihgsmhdrtghomhdprhgt
-    phhtthhopegsohhrnhhtrhgrvghgvghrsehlihhnuhigrdhisghmrdgtohhmpdhrtghpth
-    htohepghhorheslhhinhhugidrihgsmhdrtghomhdprhgtphhtthhopehhtggrsehlihhn
-    uhigrdhisghmrdgtohhmpdhrtghpthhtohepkhhrvggssggvlheslhhinhhugidrihgsmh
-    drtghomhdprhgtphhtthhopehsvhgvnhhssehlihhnuhigrdhisghmrdgtohhmpdhrtghp
-    thhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtg
-    hpthhtoheplhhinhhugidqshefledtsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:Jy8TaRrauODixvUAE3Ct5jhL1XXDw_YqnvtPngkQ7Ma7MfHq4OcCiQ>
-    <xmx:Jy8TafgLhVVxsW0bQhkIrfb39EpUpoMQIsrDD8uZe1ak91enCuz1TQ>
-    <xmx:Jy8TabMD0tqXl3aNfykVhqttGQYgLNh4boNxw7Z0vjANTGp324Gycw>
-    <xmx:Jy8TaRzQ8zrivufqAnGn9mYJ0c8vPygkGPX4ksK3KwVkidHdAr8SYA>
-    <xmx:KC8TaYaTy9TUotw93g9-X4RsvKDW9-YQDItWtSnRWl0G9nsQMqK8lSlp>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 84B25700065; Tue, 11 Nov 2025 07:42:15 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1762865035; c=relaxed/simple;
+	bh=Kj9udI5+8LrV+ir4kfGot1dJx+xvrAlxiebPOyOAxpg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KfoXK6Alo6GisNO1nyn9sTaImRGg2sAhQmH5DvICqyqLyzjp6IVEJYCuVkuyDeNJOnnFHIdvwaZCHWm1b974ChCTHugRDADW4W/+fdbz3To9O4MSXEmvwCGTAUxl4g4cVcBI0TwHzs8GqMXjDbdT8ANP57PdZUaA+cqjAu/Uoek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=l1dLlr/F; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=IBxUAlGM; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5ABBGJlb2054500
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 12:43:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	I27iL0xTukeBgsDvY2yAuEtDraoFnlxjI9IfkTZL9QE=; b=l1dLlr/F/G6JIrNd
+	bT+d9arVh9SkBLjOAhujMu3H3USOSt8PgAfSKbJPohZRlhsZFHCSL0Ilb8XGRHVI
+	eeXuGhbTggF07ZQ/P/PU2DBLPIGzMxwehq7e+3ul3eW2DvAytizxPAE2MaNptWNh
+	suWGUs0z+ytVD4iqDSSr1HrAMSfRq4TrON/E9Vsj+jdgKfB+E2+WLjTbesUddGrv
+	VrRShKq1WSw5e9N1raUQRNRUoxnyC50VmBKwt82H060StNZWVwboKMBJiOv8ceH8
+	v7VCIwJcr6RWCK/JULr8f8q+4X54qxe3W1OOoS2WIP9pSm93VE54kWOYkq0KAL5J
+	U3y8Aw==
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com [209.85.216.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ac11x0tr6-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 12:43:52 +0000 (GMT)
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-3438744f11bso3344049a91.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 04:43:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1762865032; x=1763469832; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=I27iL0xTukeBgsDvY2yAuEtDraoFnlxjI9IfkTZL9QE=;
+        b=IBxUAlGMHEHLy+5c0vcvt6KqjiT2FZ8mpdCakpnf5vtDMVkXElRez1QcojplAbFzT9
+         MmPOQPLxFKMi6w/nmWJ842uqQj787shZrCspMcLHrTXyhTfaTR6iipSphnUX95TGi4Q9
+         BI4tmExvDJvb0/rcfgGi8idcsppvkXm2c0YdsFHMZqX/FpNEX0nTex1rvzhgIpZXziei
+         XNrQ0hNkik2m+OvoLH+GfzDJ3gDoHfG/JsAF6wBPND9bXBZ9xZiCDaaG8lJ504Fqimue
+         ptPJ6MuuOBkpMEw6MgJhY96gfiJH7lCKGMP05zsdiONYI9+wza5Ut6Z3t/Qx+7OQzobh
+         buTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762865032; x=1763469832;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=I27iL0xTukeBgsDvY2yAuEtDraoFnlxjI9IfkTZL9QE=;
+        b=MrjSlHgdBMHAyG7iGoYYRyMzQ/rwcm3uyQVU0WRdnvzsNhWHYHQOu+D6yg0BgVnIOZ
+         4C3q7b0Hy6tNyNG/Hr8DdEea9Gi4UWqRFZJ6u763HjlaUKSIef2AoWSJsMPQNSQ1gCTj
+         3X2bcI4zgdtfZcPL8XYiCW/gEBNaCMDjpL/WhQvVE3q7IvR++VjIIho9YvSoBDiyXFog
+         YddMlVB+RE2Cwyw1FcufgzD2CBpBSzoEFpfylrU6r93ScLv073ngaPASKXY6IkQI9emH
+         Hw6k2en8KhkdWukCEAv7MouvxxjDGYpe190dqy/9uycP9CEwpEr5XePycPOS41/PMlf9
+         x5ug==
+X-Forwarded-Encrypted: i=1; AJvYcCX85FyMYH78Z1R3OT0qL8VKkxv6b+idkPtyfZ4ud54uvCVt1N7hW7mU4c9hbXRx1nDliUFgK1FiJksuScg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLMPaZMH0H8zUD8dyS0u31JPAsR68hELG49dCCacbN9rLLqGIW
+	sEEXCqNWMCLSU0PMqjrMB8L97NW8/+xLwPkEZTEVMqpazNn5oCFmgjg2VTBkrI8o6MRozdGVoir
+	0DXdMVbIcaVjqBuPIHomsGECnc33N7MERk8APCIJx8a5pplr+fEikDYc/yF0S0gp1hg0=
+X-Gm-Gg: ASbGncvRg8pg8/q0qIyLJxhGj+6mgfdS3M1QLv9TeBXRqlE9kBcJ5jkK4ZOsZY5OYBb
+	hgKF+vwlsGqvqIhnecEzXsfQ7DOS8p0/rf/bYEY+qegwr5xXonsDrsR1LCi+OUZ1Q93D80Wsp5l
+	FnGhTnqEKVQ7dwQsgLR6Oa2vFDF693pHHsVSZfLE3kcfIdGCgEf4NqZ1Bp7dIM0ZVVRJru3gC4l
+	gS2bjXRNXWSM//7e6NL6PnPZyNEipx9/96FxTTeIeDNjreQrJVU4QsQP0ywB5DSTrnEVDTpwLTc
+	bON8WfMSf5McvdrKGSmL1H93GcCi7PzZyN+svdWv73QxnVUXjbdPs21s1vLQSViQpvxFdhlJK8l
+	ANCqV+G60cPNfaOy9GRHxsCf9r7OHXa7arw==
+X-Received: by 2002:a17:90b:3506:b0:33b:a906:e40 with SMTP id 98e67ed59e1d1-3436cb735e0mr14270810a91.2.1762865031671;
+        Tue, 11 Nov 2025 04:43:51 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGNsRrK1r+sGPayL7tZtRhHjpLvw+oRyJ5XgJB73fyN46t2ckrkv9C6hFrZnt1U5fCf/suKyA==
+X-Received: by 2002:a17:90b:3506:b0:33b:a906:e40 with SMTP id 98e67ed59e1d1-3436cb735e0mr14270754a91.2.1762865031138;
+        Tue, 11 Nov 2025 04:43:51 -0800 (PST)
+Received: from [192.168.0.171] ([49.205.253.130])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-341a68bf37bsm21198626a91.7.2025.11.11.04.43.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Nov 2025 04:43:50 -0800 (PST)
+Message-ID: <2d56fc4b-6e3c-4f83-aab1-c48db3b8bb2d@oss.qualcomm.com>
+Date: Tue, 11 Nov 2025 18:13:44 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: AMQSEuwlfej7
-Date: Tue, 11 Nov 2025 13:41:23 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Heiko Carstens" <hca@linux.ibm.com>,
- "Alexander Gordeev" <agordeev@linux.ibm.com>,
- "Vasily Gorbik" <gor@linux.ibm.com>,
- "Christian Borntraeger" <borntraeger@linux.ibm.com>,
- "Sven Schnelle" <svens@linux.ibm.com>,
- "Andreas Krebbel" <krebbel@linux.ibm.com>,
- "Linus Torvalds" <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
-Message-Id: <34f6144b-600e-42f3-88f5-3e712a328986@app.fastmail.com>
-In-Reply-To: <20251110185440.2667511-1-hca@linux.ibm.com>
-References: <20251110185440.2667511-1-hca@linux.ibm.com>
-Subject: Re: [RFC PATCH 0/8] s390: Remove compat support
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/6] media: iris: prepare support for video codecs on
+ Qcom vpu4 platform
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Bryan O'Donoghue <bod@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Vishnu Reddy <busanna.reddy@oss.qualcomm.com>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Vishnu Reddy <quic_bvisredd@quicinc.com>
+References: <20251107-knp_video-v3-0-50c86cbb0eb8@oss.qualcomm.com>
+ <3vbq76dpjnadfrnufojq4zqiv7p5p555rhxfx6yoncc354p3lk@ohcs3ldhuoao>
+Content-Language: en-US
+From: Vikash Garodia <vikash.garodia@oss.qualcomm.com>
+In-Reply-To: <3vbq76dpjnadfrnufojq4zqiv7p5p555rhxfx6yoncc354p3lk@ohcs3ldhuoao>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTExMDEwMSBTYWx0ZWRfX+NnxbY6BmqY8
+ elqmj6aADS0ENJQwLBLToghCXErGZrLT+Vi2MparWfhvDvhRnLtx/f+VCv58BBFWMdphG7zn2SJ
+ ijIui8+Qq0POph6CcXv4Cyl4S1WLhYA7kuVHBQpBwu75wk0jO+3k6GsemX6RJyPjHqxHfZoMoc+
+ JLGnsKicrBeb8/nKkdmWiaSjR1zScqq6GMUDxk06omw9bRugwh3Z3nIbmBtg6ExWupftZtJSmM3
+ Grd1otaV876D/+aAZzdV1KH//vq6vYlo0C7xvPeYeB3LXXbB8pftLlip0WCjE0awzxcTK9pt5d0
+ X6HjwEEwRiR8lASefWtt8WtTTqUltQXCyC24Z8IpYWt+PtbjXTgXh69Ak/5sjYUjvnWVys1xi9m
+ WUAaVnALpfGC5nKrD5LojsDj0DIItw==
+X-Proofpoint-ORIG-GUID: mh5g_F9b58ZmxmS78H0jPm6YBSWbs0D-
+X-Authority-Analysis: v=2.4 cv=L94QguT8 c=1 sm=1 tr=0 ts=69132f88 cx=c_pps
+ a=vVfyC5vLCtgYJKYeQD43oA==:117 a=qKS+5dAnvCMTy05vH4hvkg==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=2OoCl90f4T1uiMieyDQA:9 a=QEXdDO2ut3YA:10
+ a=rl5im9kqc5Lf4LNbBjHf:22
+X-Proofpoint-GUID: mh5g_F9b58ZmxmS78H0jPm6YBSWbs0D-
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-11_02,2025-11-11_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 bulkscore=0 adultscore=0 phishscore=0 suspectscore=0
+ clxscore=1015 priorityscore=1501 malwarescore=0 spamscore=0 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511110101
 
-On Mon, Nov 10, 2025, at 19:54, Heiko Carstens wrote:
-> Remove s390 compat support to allow for code simplification and especially
-> reduced test effort. To the best of our knowledge there aren't any 31 bit
-> binaries out in the world anymore that would matter for newer kernels or
-> newer distributions.
->
-> Distributions do not provide compat packages since quite some time or even
-> have CONFIG_COMPAT disabled.
->
-> Instead of adding deprecation warnings to config option, or adding kernel
-> messages, just remove the code. Deprecation warnings haven't proven to be
-> useful. If it turns out there is still a reason to keep the compat support
-> this series can be reverted at any time in the future.
->
-> Arnd, we talked about this two weeks ago. I would appreciate if you could
-> have a look at this series, especially the last patch of this series.
->
-> Patches 1-3 are just some random cleanups / preparations.
-> Patches 4-6 remove compat support.
-> Patches 7-8 switch s390 to generic system call table generation
 
-Loooks good to me overall,
+On 11/11/2025 4:08 PM, Dmitry Baryshkov wrote:
+> On Fri, Nov 07, 2025 at 03:19:35PM +0530, Vikash Garodia wrote:
+>> Upcoming Qualcomm kaanapali platform have a newer generation of video
+>> IP, iris4 or vpu4. The hardware have evolved mostly w.r.t higher number
+>> of power domains as well as multiple clock sources. It has support for
+>> new codec(apv), when compared to prior generation.
+>>
+>>  From previous version of this series, the kaanapali binding patch(#1/8)
+>> and the compatible patch(#8/8) have been dropped. The discussion for
+>> this is captured here [1].
+>> The series introducs buffer calculation and power sequence for vpu4. It
+>> prepares for vpu4 when kaanapali is enabled after the binding discussion
+>> is concluded.
+>>
+>>
+>> gstreamer test:
+>> Decoders validated with below commands, codec specific:
+> Why not just run the fluster testsuite?
+> 
 
-Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+yeah, fluster can also be executed. Individual codec commands were 
+explicitly called out incase someone wants to run standalone gst pipeline.
 
-I agree it's rather unlikely that anyone is still using 31-bit
-binaries, it was only really from 2000 to 2002 that commercial
-distros were missing s390x support. Debian moved to 64-bit-only
-much later than the others, but had both fewer user and fewer
-third-party applications that might require old binaries.
+>> gst-launch-1.0 multifilesrc location=<input_file.h264> stop-index=0 !
+>> parsebin ! v4l2h264dec ! video/x-raw ! videoconvert dither=none !
+>> video/x-raw,format=I420 ! filesink location=<output_file.yuv>
+>>
+>> gst-launch-1.0 multifilesrc location=<input_file.hevc> stop-index=0 !
+>> parsebin ! v4l2h265dec ! video/x-raw ! videoconvert dither=none !
+>> video/x-raw,format=I420 ! filesink location=<output_file.yuv>
+>>
+>> gst-launch-1.0 filesrc location=<input_file.webm> stop-index=0 !
+>> parsebin ! vp9dec ! video/x-raw ! videoconvert dither=none !
+>> video/x-raw,format=I420 ! filesink location=<output_file.yuv>
+>>
+>> Encoders validated with below commands:
+>> gst-launch-1.0 -v filesrc location=<input_file.yuv> ! rawvideoparse
+>> format=nv12 width=<width> height=<height> framerate=30/1 ! v4l2h264enc
+>> capture-io-mode=4 output-io-mode=4 ! filesink sync=true
+>> location=<output_file.h264>
+>>
+>> gst-launch-1.0 -v filesrc location=<input_file.yuv> ! rawvideoparse
+>> format=nv12 width=<width> height=<height> framerate=30/1 ! v4l2h265enc
+>> capture-io-mode=4 output-io-mode=4 ! filesink sync=true
+>> location=<output_file.hevc>
 
-      Arnd
+Regards,
+Vikash
 
