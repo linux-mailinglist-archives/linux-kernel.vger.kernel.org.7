@@ -1,230 +1,289 @@
-Return-Path: <linux-kernel+bounces-896281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A62BC50059
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 23:54:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59394C50062
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 23:55:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A4BD3B4D35
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 22:53:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 551BC3B4F3E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 22:53:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C65C02BD5BB;
-	Tue, 11 Nov 2025 22:51:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="mJV3ll97"
-Received: from CY7PR03CU001.outbound.protection.outlook.com (mail-westcentralusazon11010047.outbound.protection.outlook.com [40.93.198.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D58526B75C;
-	Tue, 11 Nov 2025 22:51:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.198.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762901500; cv=fail; b=MEzhV+obz6RzSd0v48JFvYHeODK9Qxhww6JoVzyBFbfKE1Q0GDmLWyMxaWOvS8Ednu/pPuWf5kQNfu9OXOL3KGpOed2pwMkOkuO7Qqp5072x9K3hFGOab3WpLOB4i1Y6JwevqBL3k3nrImKX//mX5KrVDRCt6FDpXw8tO+EEpbc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762901500; c=relaxed/simple;
-	bh=PwO2b3OC9+ukPNL86CKsdw9mJr6GfUoHz6v11/V3sl8=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Wdgl21KSTwcbwOQA7QhUE/3RiSaojg0/0mGMTsZF/orwT8qvi0JljXJX32ZaEmmWgmF4lqMc38imvBbH7w93/HctZ4RveJ3osRITk0x5aYpBnvly9REbyasoY3E1RqHU72ZvxYtz1UhAmWFeqUUxh647L/YwgG1k6G8caTkX0Qk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=mJV3ll97; arc=fail smtp.client-ip=40.93.198.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=WKTZqk469JwyhJCREgwKDw1PHHpN8AA2FzndouhZXEc6X/vqC6XJ4I9hY2gQKNPryuWkTfweAWdfFjbIwbRrj1fU9zgnm72nSfKaMWAlEvrhN2UEK1MkQS4VOAJLzEToNJW8pmfOTMzhZMOBGYnipFrheIIF22R9H3Q7ePYnkRE70qMlm4MSbjtEHCQiCx5tlEkZUnr+uRrGbcxiFPusv3jxE+Qo2RYh2y82boUZ2Vi9M0u/9AJ0343CCP46NiIFnjvThVBreOW8dPkNNj9i1DUtWQ2hbMSt/qx50Gl8uFX5iq1LTxBoAaA/Vo2OTNIMmO1TJ5/dxPg264OKwlbzow==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vGQB13IgG18V2rlpf/QEc+uDxL+TczNIemQ1t/7twig=;
- b=t6vGyWRClaoHUT9Zbw0OmKYGE+UohPxBmd4kS3Uo5kcmufQJEyDKjQ8bWmB6+mwKygokNqZWFAYCVT3w3sgMBzXhQvVk1rx3XaYnO2S17w66OcsEjBNMY942inZGWczMARK44uWkDgioyZmulbxlpg5tBxHC8El7+yOx0LsVuA+IsM+rDOmth3iQauC+58PlsJKKI+hVyJAHDIp6FKEV2n9jqKWjXdvx94CBL8kq8pQxVI9ju55SRUNZ2Mz+LDqnoON6j/Dj2fNK7f82KPKl9AkgB7EMs1UghbKGqD2Nhosq8LWDblWy2Mw047yfsMEbr/aVwjSIxTf/2qgWei3fzw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vGQB13IgG18V2rlpf/QEc+uDxL+TczNIemQ1t/7twig=;
- b=mJV3ll97K7NX+TXL4YY2nEWA+nPajxhiPbiebYbmdL85mPjQF8WSl4IbJ3KrdFJsZbwa1c6z20g+L0OGoDkzzLH2j8n5sBv7bD8Nu/6z+lLf07lbVWfaCJNxA/fe3Jeizm9hvHB9Cf3ZGxmhnWWuek3GZlTlMacVRPDZomtNX/arJJjxCyVlwlyIEemLAjpeIi3TuAfPLeuxLga4FUx3TmVK8VZxgVtt88zuhEez/mRZNcbKVZD10w2PzxaTyHSYGu39ipAh2e2zHs6h8iLjhAeBtxgWfXmZbMf6oyEaVkRIEroGWZr6E9PEQDlqHiJNHh/OFPq6jIEhVv/+OLsUHQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
- by LV8PR12MB9153.namprd12.prod.outlook.com (2603:10b6:408:185::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Tue, 11 Nov
- 2025 22:51:35 +0000
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91%2]) with mapi id 15.20.9298.015; Tue, 11 Nov 2025
- 22:51:35 +0000
-Message-ID: <1ae47b0b-b77d-4a99-b137-f1c9055226dd@nvidia.com>
-Date: Tue, 11 Nov 2025 17:51:32 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 07/12] nova-core: Implement the GSP sequencer
-To: Alexandre Courbot <acourbot@nvidia.com>, linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org, dri-devel@lists.freedesktop.org,
- dakr@kernel.org
-Cc: Alistair Popple <apopple@nvidia.com>, Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>, bjorn3_gh@protonmail.com,
- Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- John Hubbard <jhubbard@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
- joel@joelfernandes.org, nouveau@lists.freedesktop.org,
- Nouveau <nouveau-bounces@lists.freedesktop.org>
-References: <20251102235920.3784592-1-joelagnelf@nvidia.com>
- <20251102235920.3784592-8-joelagnelf@nvidia.com>
- <DE5256UCJHXU.27RS8A445Z1XN@nvidia.com>
-Content-Language: en-US
-From: Joel Fernandes <joelagnelf@nvidia.com>
-In-Reply-To: <DE5256UCJHXU.27RS8A445Z1XN@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MN0P223CA0025.NAMP223.PROD.OUTLOOK.COM
- (2603:10b6:208:52b::20) To SN7PR12MB8059.namprd12.prod.outlook.com
- (2603:10b6:806:32b::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF9D92EAB71;
+	Tue, 11 Nov 2025 22:53:30 +0000 (UTC)
+Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27A022BD5BB;
+	Tue, 11 Nov 2025 22:53:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762901610; cv=none; b=B2TAYMVMVSUuHG5RlhhH0idfMqZhE9nG04YkxUH7wnuVx1muV5KlfFb1f60Y+HJTouqcF3PNygP6/AWNYV7y8tspVs76BRodaqLyG5nRaiLRbTn+izwNYjt9aJATWLRRkYvSwUHYPjwc9ZeSnjYkbGwDexNEckB6cti4yR2ykFc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762901610; c=relaxed/simple;
+	bh=XYuqOEfha+PxXmzn+clpAC7s3OffKnVuZbAqtfFdrU8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TXOs8ClCLCshkItnCuaJKbJDZm6WbxbqLiMh2bbfJlHMi6TOATcenRaMsOxTmcFP0GP5kqX3jPtUfezLbpnmkyfen9Yj2VXb8uwwIm5H/tgGFomDW3dHMmAvKCpoOw2IjKDftVt4E7JpZuHkXedlD9UCh3M2yt/Jexa5QqI0SCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
+Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
+	id 1vIxEi-0005rn-00; Tue, 11 Nov 2025 23:53:16 +0100
+Received: by alpha.franken.de (Postfix, from userid 1000)
+	id 7D739C0256; Tue, 11 Nov 2025 23:53:00 +0100 (CET)
+Date: Tue, 11 Nov 2025 23:53:00 +0100
+From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To: "Maciej W. Rozycki" <macro@orcam.me.uk>
+Cc: Nick Bowler <nbowler@draconx.ca>, Jiaxun Yang <jiaxun.yang@flygoat.com>,
+	linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MIPS: mm: Prevent a TLB shutdown on initial
+ uniquification
+Message-ID: <aRO-TDaljXzgZfps@alpha.franken.de>
+References: <alpine.DEB.2.21.2511110547430.25436@angie.orcam.me.uk>
+ <aRMrmjJcLJYR8QO-@alpha.franken.de>
+ <alpine.DEB.2.21.2511111340330.25436@angie.orcam.me.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|LV8PR12MB9153:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1c7c9de4-f388-46ae-fcc0-08de2174ddc3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?d2hEKzBIZUJQZlBpQlFHUElNdFRtb0ZZK0luK2dCcFJ6YUVCQ2hBSTl0b25X?=
- =?utf-8?B?UEl0VTlVMmZoL3JmMExORDVoeHhjcjVuM0oyQVhMb0lOd0tDMko0bGRsVEJR?=
- =?utf-8?B?ZkdhWVdTc3cwamJOemduTzZTK2QxN1VzRE42elpUWDJSYnIzY2NjWHZyblB5?=
- =?utf-8?B?a1MwWVFMV1ZZUEsvT0k5QlFXNHdMbFdpUVBudzdzQ2xUQmFkR3NuWGg5S0h1?=
- =?utf-8?B?YURya3A3KzRiaTAxbjBUUkxHR0c5MUE2TFVpZE5xWkkxOU53Z2xma0g1OW5C?=
- =?utf-8?B?MWlUMjRwUFF1TVBDbEpsdGVObHl4Wng0SW5POFJtWWYvSVVxcFF5cis0RzJK?=
- =?utf-8?B?QTdic3dLSUdUTVpUQVh4RFFiNUVuK0tMTzJuSDYydnNJeHF5RlROTitrUGZo?=
- =?utf-8?B?UzJaZ3l1QUphVVFtZ3oydE5BYjB5ZDc5N0hHNzlKdk05WW5WN3luSmp3QnEw?=
- =?utf-8?B?d2hncXg0NXBtblc2Y0xaUFNINktNTHY2UktpVVR5ZkhWMmsyWGtMSndaR1d6?=
- =?utf-8?B?RTk1c004SmUrb1BUWjk5d2cvVHZEUUtZeDJiMVNESHU2VStTYTl5K1FGRmJJ?=
- =?utf-8?B?cDdlcUNvcTJ3dXJ1V0tSMjAxS3EvNHduM3JNYVJOS2pZaDFtWldvaHg2Z3Vs?=
- =?utf-8?B?OXF5VW9oelAyRUkrQXNSZ3Yyc0YrWDROQlVSN3l4TGgvbEpnOEdHMnVSUUV0?=
- =?utf-8?B?Nno1c09jMkN2d1NFTlJxaW5tUjlGanBlNFdMb0pWWXFEYmxYdXVKcjNwemdz?=
- =?utf-8?B?QnhNc2MxR01WWlIyekIyQUNWLzM3L3Rmc0ZpN2FaZkxjWlJPdGplQVNIdS9z?=
- =?utf-8?B?bkpGa2xsTUVNa0xlb0c4eWtCMFlOWVlrZkhZZjgxOTEvT1d4eDFlMFpDMFpS?=
- =?utf-8?B?VzRidEw1allSeDFpeEhzUkNFVytKa2EvUVB0Q2YzK09hNTNMMDJmU3VqNkR0?=
- =?utf-8?B?UWlpUlgzYU94bWc1UmFXdEYxaDdOYXk4NkhDbExZekhKTDNHSk9Kc2tERWtX?=
- =?utf-8?B?RDdPMnUrY0ZPSUJxQmdKZTZkMmxGWjJWN28zQ2pDNkg0WmlQNTFMVVZuMG41?=
- =?utf-8?B?aEpzN2pRUUJpdHRUTTNJT0cvZkFwc0p3enVidllBb3QvUGRQQk9laEJxWU4y?=
- =?utf-8?B?ek5TWTNPVHVScHJGUVljaWowVFZXcnJ2aTFudG94Q3B2NnFNelM0UWVqZTgx?=
- =?utf-8?B?QTNWRWxSdjFIZTNCQ1MrTkk0aG56MXl4cGsvVEFPS1ZEL2FSWE9jRGZqVmwy?=
- =?utf-8?B?WitQVGwxZklIVkJwNEcvamI3N0EwenU5YVNteGsxMXR0V3BmU3ZiSWdGZHA4?=
- =?utf-8?B?YnFMTzhqdzQ5aFJGMDlWdk5TL2Z6NVdBYTBCZWtYUmVKQkVWS2lTeXEwS2FR?=
- =?utf-8?B?MkFnblN0bnk3ZXk3MWU1UmNjLzRNamtTYUVDTzdremxoZUFVMUtQUHcwZ2gw?=
- =?utf-8?B?aitQcThXTmZOTm5tNFRtM3Y0TnFDYWRwN0xIVEtkUmpMSXhNUnBEZkNJZmxF?=
- =?utf-8?B?V2VEejlIL3VIbzdrbk5ESVNNOTJPKzJ5MFZaUDVzVG91SStTQ3ZuZlBlRTVv?=
- =?utf-8?B?d0RyS1lnYUZlOW4vWXlPNUlsb0U4SkJ0RXplSnJNbVFsb2IrRHhLeThJalkz?=
- =?utf-8?B?WEI1UWxWbm5qWkFSeFVqRlJMM1g1MUhpTlYzNzZJNUgxbC8zcFJGZXFMYlYx?=
- =?utf-8?B?c0ZvMzJwaVMyZ1B5a0E5emNWNWVCR0RjVE5kaWg3bXM2Vm80ZzZMU1Nnb0Vo?=
- =?utf-8?B?ZEJkM2t1Nm9maDBCeGh1b2lma3lNb1B6MzgyOGZWVk5tT1lwbmRIZEVPTmtz?=
- =?utf-8?B?ZXFrTXBtVlppcUdNOGhOZmQ3eFMwcCs1cHlRYkFCd3ZiOC81TUU0NDgwSGxY?=
- =?utf-8?B?VkR2UWdkOGdqMURKbS9RZnBMbTFFMlYzK1JSNXMrVENaY3hmVVNrMEQ4OW5k?=
- =?utf-8?Q?4mNlLOX2LXz69ofh7sYvQ0HCOkxoPDFv?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dVdNY2RlUmJlakNva1lxTXppYjQ4UmZxamt6QWNFNmE1YWpSeE9adjNmSzNH?=
- =?utf-8?B?UEZpOVg3WXkwZXVvRFpBazNzMkhjUVh0alAzK1VPU3VBdmRnYTZOVWZIUVpS?=
- =?utf-8?B?dEpjZmhFYWRwK0RlWWF1cVhZOEFFcEZKcGtJR3VFUXNyRWdDSEZJTUJxYnEr?=
- =?utf-8?B?ZlNJdGtUSndaZ0sxUHcrd2UreWV3OE5XSk9RQWRqMmQ3V3hBL2EzenAzdXRi?=
- =?utf-8?B?QUhoYmNEWk9QemtLT2NXemRqZDZXeDIzWGdWNFNKeGZ2MHJTaDNMK3VjZ0R6?=
- =?utf-8?B?YVVHU1V4aWlkTzE2YUVKMGdMN25GVjNpNEg1VGY2MjhybGN5QUt0bWZSUHNU?=
- =?utf-8?B?QzFkVTZDcXVIamFqY3h0MUpNT2w1VHoxdzhNdng2MUo5RStrMEU2dmNjcW1B?=
- =?utf-8?B?OTZ0TmFrbHVnMDFTeC80NzJZTHhsZE5DK05OaU8vd0hiN3IweXpsTjRMb0pi?=
- =?utf-8?B?U0g0QXZ4WFdvcHFPdS9UcldYRlhvZ0lSYUxXZTBycno2aEJhOTdhM3BvNkpJ?=
- =?utf-8?B?a2pTK3gvODNNK1B6NDg2WDltc2s1Qk9kZ1pKVTQzNWV2RWY4VFNZd1JGbWFk?=
- =?utf-8?B?d1JVTFluZ3YwWUpac1hjcTRzZnF5dHlOZTNZT0FIb2p5bEVDU2pNOU5EcWY1?=
- =?utf-8?B?RjYrYXc2NmpmUnB2dUw0UnNweW1wQXh3QWZ4dVo2NTVYZXEvaUhHemlYcWlt?=
- =?utf-8?B?MkhlaXJEV0RpNmdyRlluL3RNekxydWFuZEVla0E4UzA4aGJXbDR5aU8vMTJV?=
- =?utf-8?B?Ly8za2tIaU9Mek5EQlRYR3hKbnNhWENnY2I0K1dwOFp1MGI1dHNGNmxHdFVy?=
- =?utf-8?B?dHROWXFGcDlsa0tjUFY1eFp6WXZKOEsvcFBpQnpwUXFaUzE5dGRBVkVVNlBl?=
- =?utf-8?B?Y2NIVnBDU1ZZSTJhUFMrTTFKeDRsMllBZklnbGIrQWlVRGNOZnVTbjlydEc1?=
- =?utf-8?B?c2xwa01RNlIwakJNTW13bGpkTHBwRVZKU0N1c0UrWHQwdHo1cVFrYm9Lcm1X?=
- =?utf-8?B?S1EzeWZVTjFPOVlmbGNBSGQyWm9JTGdDSk9vWGxRb2ZmVGhBSnNBWlorYkkx?=
- =?utf-8?B?MUpwbzdBZSt0TnBjWFdhUG80NzNzbkF4d0VhSkJrcGJkL3FUR2g1ZWpiMWtL?=
- =?utf-8?B?RHkvdE91VHEvamQvZW5FWHVFTytvVXlmTDAxaC9hUlhCdTFBbFZSSWRZNlo2?=
- =?utf-8?B?eGJOUlRhSDhqUzNsU2ZtYUczOTNCbHArd2M2QUVNZ2dQZ2djMTdQWnR6ZURJ?=
- =?utf-8?B?QldkbHRwUTFFS2ZQVlJ1YXAydGVCSjZVL2RsWmN5dVRIdmJJRi9pcThaZ3Vz?=
- =?utf-8?B?eEliUFlEWEpvZ3RKU0JnN2dHTTBJNjJNZmRsMjVjVVpHaG1NeThVajNrT1BC?=
- =?utf-8?B?V2Y0UG5Vd0QyZ2JMM1NONkhnY1dhZUU4V3dRcENTNHd3SFJPSHcrc1lGd1pJ?=
- =?utf-8?B?NjB5YnlvWGw3TStMUURNZG43TmRwZ3NudHpQUFdVYlVVOUtWdk5Cc0FlRjVJ?=
- =?utf-8?B?cHVWano0L2NzdzIzUE1sc2pPWUNsWm5jZVpHakN0Yis5Q29JQ0l4YldZU1NU?=
- =?utf-8?B?UDlGTFVqaWxFbmpDcDNZOG1MWWJGb1dOdXFkaG1ESyt1bEZPYmM1TjIwN3Ri?=
- =?utf-8?B?NllnUU9RU3k1WmluN0o4dUtrM1hZSGp6dGdPckNwWFhaNWVETnhtenVrRTAy?=
- =?utf-8?B?UWE3QjY5MU9WVzRmY2IxWW5DcFM1RTU3WVBmcUhIZm83UDZ6SkV4VFdXbEZU?=
- =?utf-8?B?UDJHcklPU1VjTmkrS1loTUVudy83YTJuNXEwTWtERXluL1NkYWFPSzh0NEpP?=
- =?utf-8?B?SytySGhJUUpmS0lmOHBXV2c4ODYrY05qWXJKc21VMUNtWVNTQXVNbFo4bU8v?=
- =?utf-8?B?dXRTc3JzNXo3NFhEN1hiTTBFODV4TXg0aHdBeks0WER2b2I2NVdCdDU3dW5Z?=
- =?utf-8?B?dTdGVjU1Y0J1WHdWUHFzUllZeFg2Z1VJLzBGcCs4eDhtcUlOdXFlS3BINklw?=
- =?utf-8?B?V1RpcDh6UkEvQ2h1VTdDdlRvbG85YXIzckl3dDVzTEx1Zlg5c0hXSkk1eWhR?=
- =?utf-8?B?TzFvOGRoVjBlWXlEMVUxL2dZS1RJMDZ2aWNSZ2hIcTE1bm5vM1ExODBqdGtO?=
- =?utf-8?Q?mYGbgvrLhGoFmvRAhccyYFIm8?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1c7c9de4-f388-46ae-fcc0-08de2174ddc3
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Nov 2025 22:51:35.6049
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: YYC+bronALXdJJZMwsicvJll/7WvlL7BLkds8MI/vbKp/Z9DdtwYT3gynKJ+pVHVKV0DnWRHkhKjuPwDQN83Cg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9153
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.2511111340330.25436@angie.orcam.me.uk>
+
+On Tue, Nov 11, 2025 at 03:41:50PM +0000, Maciej W. Rozycki wrote:
+> On Tue, 11 Nov 2025, Thomas Bogendoerfer wrote:
+> 
+> > >  Can you please give it a try with your systems?
+> > 
+> > it's booting on my R4400 SGI Indy, but I see a lot of segmentation
+> > faults during system start. If I comment out r4k_tlb_uniquify() every-
+> > thing boots fine, which is kind of strange as there is a local_flush_tlb_all(),
+> > which should leave the TLB in the same stage.... No idea why, yet.
+> 
+>  Can you try the diagnostic patch below, which is what I used to verify 
+> this change, and report the entries produced?  Otherwise I wonder whether 
+> I haven't missed a barrier somewhere.
+
+output below, I don't see anything obvious. I dumped the TLB after the
+local_flush_tlb_all() and everything looks as before.
+
+> 
+> > > +
+> > > +	for (i = start, cnt = 0; i < tlbsize; i++, cnt++) {
+> > 
+> > shouldn't we read all TLB entries here ? 
+> 
+>  Strictly speaking it won't change anything as we call `write_c0_wired(0)' 
+> in `r4k_tlb_configure' before getting here and wired entries make no sense 
+> for KSEG0, so whatever would otherwise be there should not clash with our 
+> unique entries.
+
+I see
+
+>  NB I wonder how this is supposed to work with mapped kernels, I thought 
+> the setup made with MAPPED_KERNEL_SETUP_TLB was meant to be permanent 
+> through the life of the system, hmm...
+
+I looked at it once some time ago and already forgot details :-(
+
+Thomas.
 
 
+[00/00]: 80000000/80000000
+[01/01]: 80000000/80000000
+[02/02]: 80000000/80000000
+[03/03]: 80000000/80000000
+[04/04]: 80000000/80000000
+[05/05]: 80000000/80000000
+[06/06]: 80000000/80000000
+[07/07]: 80000000/80000000
+[08/08]: 80000000/80000000
+[09/09]: 80000000/80000000
+[0a/0a]: 80000000/80000000
+[0b/0b]: 80000000/80000000
+[0c/0c]: 80000000/80000000
+[0d/0d]: 80000000/80000000
+[0e/0e]: 80000000/80000000
+[0f/0f]: 80000000/80000000
+[10/10]: 80000000/80000000
+[11/11]: 80000000/80000000
+[12/12]: 80000000/80000000
+[13/13]: 80000000/80000000
+[14/14]: 80000000/80000000
+[15/15]: 80000000/80000000
+[16/16]: 80000000/80000000
+[17/17]: 80000000/80000000
+[18/18]: 80000000/80000000
+[19/19]: 80000000/80000000
+[1a/1a]: 80000000/80000000
+[1b/1b]: 80000000/80000000
+[1c/1c]: 80000000/80000000
+[1d/1d]: 80000000/80000000
+[1e/1e]: 80000000/80000000
+[1f/1f]: 80000000/80000000
+[20/20]: 80000000/80000000
+[21/21]: 80000000/80000000
+[22/22]: 80000000/80000000
+[23/23]: 80000000/80000000
+[24/24]: 80000000/80000000
+[25/25]: 80000000/80000000
+[26/26]: 80000000/80000000
+[27/27]: 80000000/80000000
+[28/28]: 80000000/80000000
+[29/29]: 80000000/80000000
+[2a/2a]: 80000000/80000000
+[2b/2b]: 80000000/80000000
+[2c/2c]: 80000000/80000000
+[2d/2d]: 80000000/80000000
+[2e/2e]: 80000000/80000000
+[2f/2f]: 80000000/80000000
+[00]: 80000000
+[01]: 80000000
+[02]: 80000000
+[03]: 80000000
+[04]: 80000000
+[05]: 80000000
+[06]: 80000000
+[07]: 80000000
+[08]: 80000000
+[09]: 80000000
+[0a]: 80000000
+[0b]: 80000000
+[0c]: 80000000
+[0d]: 80000000
+[0e]: 80000000
+[0f]: 80000000
+[10]: 80000000
+[11]: 80000000
+[12]: 80000000
+[13]: 80000000
+[14]: 80000000
+[15]: 80000000
+[16]: 80000000
+[17]: 80000000
+[18]: 80000000
+[19]: 80000000
+[1a]: 80000000
+[1b]: 80000000
+[1c]: 80000000
+[1d]: 80000000
+[1e]: 80000000
+[1f]: 80000000
+[20]: 80000000
+[21]: 80000000
+[22]: 80000000
+[23]: 80000000
+[24]: 80000000
+[25]: 80000000
+[26]: 80000000
+[27]: 80000000
+[28]: 80000000
+[29]: 80000000
+[2a]: 80000000
+[2b]: 80000000
+[2c]: 80000000
+[2d]: 80000000
+[2e]: 80000000
+[2f]: 80000000
+[00/00/30]: 80060000/80000000
+[00/01/30]: 80060000/80000000
+[00/02/30]: 80060000/80000000
+[00/03/30]: 80060000/80000000
+[00/04/30]: 80060000/80000000
+[00/05/30]: 80060000/80000000
+[00/06/30]: 80060000/80000000
+[00/07/30]: 80060000/80000000
+[00/08/30]: 80060000/80000000
+[00/09/30]: 80060000/80000000
+[00/0a/30]: 80060000/80000000
+[00/0b/30]: 80060000/80000000
+[00/0c/30]: 80060000/80000000
+[00/0d/30]: 80060000/80000000
+[00/0e/30]: 80060000/80000000
+[00/0f/30]: 80060000/80000000
+[00/10/30]: 80060000/80000000
+[00/11/30]: 80060000/80000000
+[00/12/30]: 80060000/80000000
+[00/13/30]: 80060000/80000000
+[00/14/30]: 80060000/80000000
+[00/15/30]: 80060000/80000000
+[00/16/30]: 80060000/80000000
+[00/17/30]: 80060000/80000000
+[00/18/30]: 80060000/80000000
+[00/19/30]: 80060000/80000000
+[00/1a/30]: 80060000/80000000
+[00/1b/30]: 80060000/80000000
+[00/1c/30]: 80060000/80000000
+[00/1d/30]: 80060000/80000000
+[00/1e/30]: 80060000/80000000
+[00/1f/30]: 80060000/80000000
+[00/20/30]: 80060000/80000000
+[00/21/30]: 80060000/80000000
+[00/22/30]: 80060000/80000000
+[00/23/30]: 80060000/80000000
+[00/24/30]: 80060000/80000000
+[00/25/30]: 80060000/80000000
+[00/26/30]: 80060000/80000000
+[00/27/30]: 80060000/80000000
+[00/28/30]: 80060000/80000000
+[00/29/30]: 80060000/80000000
+[00/2a/30]: 80060000/80000000
+[00/2b/30]: 80060000/80000000
+[00/2c/30]: 80060000/80000000
+[00/2d/30]: 80060000/80000000
+[00/2e/30]: 80060000/80000000
+[00/2f/30]: 80060000/80000000
+[00/30/30]: 80060000/00010000
+[01/30/31]: 80062000/00010000
+[02/30/32]: 80064000/00010000
+[03/30/33]: 80066000/00010000
+[04/30/34]: 80068000/00010000
+[05/30/35]: 8006a000/00010000
+[06/30/36]: 8006c000/00010000
+[07/30/37]: 8006e000/00010000
+[08/30/38]: 80070000/00010000
+[09/30/39]: 80072000/00010000
+[0a/30/3a]: 80074000/00010000
+[0b/30/3b]: 80076000/00010000
+[0c/30/3c]: 80078000/00010000
+[0d/30/3d]: 8007a000/00010000
+[0e/30/3e]: 8007c000/00010000
+[0f/30/3f]: 8007e000/00010000
+[10/30/40]: 80080000/00010000
+[11/30/41]: 80082000/00010000
+[12/30/42]: 80084000/00010000
+[13/30/43]: 80086000/00010000
+[14/30/44]: 80088000/00010000
+[15/30/45]: 8008a000/00010000
+[16/30/46]: 8008c000/00010000
+[17/30/47]: 8008e000/00010000
+[18/30/48]: 80090000/00010000
+[19/30/49]: 80092000/00010000
+[1a/30/4a]: 80094000/00010000
+[1b/30/4b]: 80096000/00010000
+[1c/30/4c]: 80098000/00010000
+[1d/30/4d]: 8009a000/00010000
+[1e/30/4e]: 8009c000/00010000
+[1f/30/4f]: 8009e000/00010000
+[20/30/50]: 800a0000/00010000
+[21/30/51]: 800a2000/00010000
+[22/30/52]: 800a4000/00010000
+[23/30/53]: 800a6000/00010000
+[24/30/54]: 800a8000/00010000
+[25/30/55]: 800aa000/00010000
+[26/30/56]: 800ac000/00010000
+[27/30/57]: 800ae000/00010000
+[28/30/58]: 800b0000/00010000
+[29/30/59]: 800b2000/00010000
+[2a/30/5a]: 800b4000/00010000
+[2b/30/5b]: 800b6000/00010000
+[2c/30/5c]: 800b8000/00010000
+[2d/30/5d]: 800ba000/00010000
+[2e/30/5e]: 800bc000/00010000
+[2f/30/5f]: 800be000/00010000
 
-On 11/10/2025 8:43 AM, Alexandre Courbot wrote:
->> +impl<'a> Iterator for GspSeqIter<'a> {
->> +    type Item = Result<GspSeqCmd>;
->> +
->> +    fn next(&mut self) -> Option<Self::Item> {
->> +        // Stop if we've processed all commands or reached the end of data.
->> +        if self.cmds_processed >= self.total_cmds || self.current_offset >= self.cmd_data.len() {
->> +            return None;
->> +        }
->> +
->> +        // Check if we have enough data for opcode.
->> +        let opcode_size = size_of::<fw::GSP_SEQ_BUF_OPCODE>();
->> +        if self.current_offset + opcode_size > self.cmd_data.len() {
-[..]>> +        let offset = self.current_offset;
->> +
->> +        // Handle command creation based on available data,
->> +        // zero-pad if necessary (since last command may not be full size).
->> +        let mut buffer = [0u8; CMD_SIZE];
->> +        let copy_len = if offset + CMD_SIZE <= self.cmd_data.len() {
->> +            CMD_SIZE
->> +        } else {
->> +            self.cmd_data.len() - offset
->> +        };
->> +        buffer[..copy_len].copy_from_slice(&self.cmd_data[offset..offset + copy_len]);
->> +        let cmd_result = GspSeqCmd::new(&buffer, self.dev);
->> +
->> +        cmd_result.map_or_else(
->> +            |_err| {
->> +                dev_err!(self.dev, "Error parsing command at offset {}", offset);
->> +                None
->> +            },
->> This looks a bit redundant: we are processing errors here, but then we
-> also have another error handler in the caller (the one that says "Error
-> running command..."). I'm pretty sure there is room for simplification
-> here.
-
-No, "Error running command" is because of .run() failure. We won't even get
-there if .next() fails. AFAICS, there is no other diagnostic other than this if
-command parsing fails.
-
-Thanks.
-
+-- 
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
 
