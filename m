@@ -1,248 +1,140 @@
-Return-Path: <linux-kernel+bounces-896040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0444CC4F895
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 20:06:12 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77464C4F89B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 20:09:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6D1D3AC7D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 19:06:09 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3552D4EC0A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 19:09:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E01A62E093B;
-	Tue, 11 Nov 2025 19:06:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62C932E6CAF;
+	Tue, 11 Nov 2025 19:08:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uQmPy6iv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mNTMDZ08"
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14E732DFF19;
-	Tue, 11 Nov 2025 19:06:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20F262E613C
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 19:08:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762887966; cv=none; b=b0OYe7PcUJr5hL6g08XKJ6TrzZpvkheEqc2GbUWKCLd4b3j3gOnz5oFyYWMGw7mCuewo4QmLl+13gBMnorp5V2u1KQiVMGHQG1f5d0BPVVyp0XGOh3Daqzvw0gR3ju/MOoIDzkbfAzbovFNhpSfEqvT+tRmHvnZd6o2QE2M+y4M=
+	t=1762888137; cv=none; b=AJqunTXlJj+s4vpTPVCTCq6RBgEB0tV92XtwXvX7StmYYlvjssQmHJh3U1whacA482QUJs075J0O61zhSKuv0SC6NHRutWfhl4f3Wg2xBDmKsPSor1AQUcXgKizNgNVEABX1EvXo/3oNasTfTas1/0wAsf0sekYStoQnDCAhIyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762887966; c=relaxed/simple;
-	bh=oBcvoe1K/pAjjXgr4FYj4FyfuI6xcew4glpSdBgD9+0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VeLWWQgM/O0CkgFb/jBZbsauHqbfHL9MMEXlUekf1X6n3d7rhB1sW0dPQkPyMyVnCI5fQoWq1BCioK86RRy3YcvvL3QVzqZkWO1GYDkFH5Jty+SJ0J2tSaemFPqO2OmnvunB4vnIBDjC5IYnRufO29dwn+HADxKfmalU4ruSCpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uQmPy6iv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50604C19422;
-	Tue, 11 Nov 2025 19:06:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762887964;
-	bh=oBcvoe1K/pAjjXgr4FYj4FyfuI6xcew4glpSdBgD9+0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uQmPy6ivi4828rHSuDY3HqIyYl30Lj5FpvhgDzF3AokL9a89lt1bV4Slp4Rfc7PsJ
-	 5OCom5rIqXcFBESrwguXnA8FOXauEtLnOcz/nfPOu0UxrVaG4j5ap1ECDCsHdT9oMi
-	 ZHdx6jCY0uhbQ+IEhxeVcrYrixlEb1Vk9+P8em6WjGRXR5uMee27IAE7S9s1c11Y3O
-	 /xjawTOf0gFJuqZl0JMY5shg6LnHXAmjHBXzIImRM3c7p++3uXTAAbmhcQlySpl2mb
-	 NiEwe8KbotyBc8ySw9Y5PkZ4Wv/vJR+uEfi5j8hNyYKXnfDRWLxCKOv9D3seq9pc/w
-	 QCYO4u1GFr+cQ==
-Date: Tue, 11 Nov 2025 11:05:59 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	James Clark <james.clark@linaro.org>, Xu Yang <xu.yang_2@nxp.com>,
-	Chun-Tse Shao <ctshao@google.com>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Sumanth Korikkar <sumanthk@linux.ibm.com>,
-	Collin Funk <collin.funk1@gmail.com>,
-	Thomas Falcon <thomas.falcon@intel.com>,
-	Howard Chu <howardchu95@gmail.com>, Levi Yun <yeoreum.yun@arm.com>,
-	Yang Li <yang.lee@linux.alibaba.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, Andi Kleen <ak@linux.intel.com>,
-	Weilin Wang <weilin.wang@intel.com>
-Subject: Re: [PATCH v3 01/18] perf metricgroup: Add care to picking the evsel
- for displaying a metric
-Message-ID: <aROJF9GjJUv-w5Wg@google.com>
-References: <20251111040417.270945-1-irogers@google.com>
- <20251111040417.270945-2-irogers@google.com>
- <e0d29714-df04-48f9-8168-770bf05a0f7f@linux.intel.com>
- <CAP-5=fWWxbRS4D1GsPvSgr32cfCGaT68qV0Q6-FLQ90R-bhH3w@mail.gmail.com>
+	s=arc-20240116; t=1762888137; c=relaxed/simple;
+	bh=h7FlF4BMV+arYOfntRMdetQaRIEqw8kUtvoay/VGTo0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=I94rL0MQ/Yd4+4wkb+pbKPKhewCT1ggqcQg7ecVAFONicA79+WPMFphoI04RHMpgMnmvHaeJoMuRALFAmJvjcYRI4UOW4c9Wxq/DAePAp/nC4VQ6pF4atD+7OjT/1hLALiqxgS04CrRJRqn4Z/Kh7yKQejVe4JJRm6b/HO5vSXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mNTMDZ08; arc=none smtp.client-ip=209.85.160.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4edb8d6e98aso45921cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 11:08:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762888134; x=1763492934; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sLdgTRrax9wnf8NiL9wgiY/MnfL0mFsQ3EVzxvRaLGk=;
+        b=mNTMDZ087+fYvAGsNI8/abn4BfltilXn7gzwPhzZKVmTZWLapGjaqwaK8jEzkxjyLC
+         ufhylHUyBDyCqhySDhMD5e0IRYFodOkJ+xz1vQLTaE7O5GR/ADCmyTZMisEyMEIuNz9V
+         K7bkQy9/91jv44HPlIfDjw3PD3NLc0h6YaY8lIIF3g76NfGgDvAmW3q7ViKsQ/ZlRq25
+         ECNjZJIoWAJ5MnX3Ilb02IjEnztAHV0DDdWCKosonaf5EkkpDP3eeNxkbWVjQvOKeRYW
+         BQ3VdRhSVNBLr+K5OfIgubWsIAZmiSt7m57cwa6zlHOv75XK/+rxM9AO7ieAPjVEyidi
+         0u4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762888134; x=1763492934;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=sLdgTRrax9wnf8NiL9wgiY/MnfL0mFsQ3EVzxvRaLGk=;
+        b=dg5YPV4wzwIf8Bs+JCNHJvoo++a7EZBGHKPW+yk7Qy4byTYFj0DDvTRG78l12LoF+s
+         Up5Ge7aE1299a0YEJVGIpdhETAoCMbtH8qlXnh63W00bv3lEQ40EDs9y+cQKiREkhNpX
+         uuwcHueQJPdfMsvP/SJr63U2FYl/weup8mJIdu3WYamoxCTmeBPrFQvlv5hj9JZM95zb
+         hbxjryzIPmaKfeEbDNEvYmvFx+uGO8cEdebaFW8+pFBfOOvCWdmNymI669aoDYp754VZ
+         wxSP8hu5ftOkeHH7yRsU3GoST3VbzqZn8Hy+QxUDcY2PcZ7GVynfAAIPnXcn+QcA4+XH
+         K/Gg==
+X-Forwarded-Encrypted: i=1; AJvYcCWYzJCFC4evrOT8eRiWDFW472PvDwjOiuK5GcKOUV+OjMlZuGdrRgTVRW2XA5/kqRB4nY6mMUOumMn43Q8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzwMsNV2iMRZt4wJvvc+A4fnwdCqrTyYAjsz1ylcMS/4DkZNY3
+	E21b1rxj1uYKBqKYDA/BU9mo3F0y8tTB3Uc7oVHF/h4Bkj5EatJOca3a75M8t5Hn1GCIgVBsQbA
+	OfptXXxv3g+TBOO84sXjSwlHbIovV/xmTRRIoEJ02
+X-Gm-Gg: ASbGncu81KKt4VKo0Bp5WmEcMZmDv/+KMax2JRiD8SjifAr/dTYU9EFMnDXQ1YXuuZV
+	CtY3wZEj3rbps/wFhmU6tBM1mac2idWkzBZBpjxzybCDQTqCt2gcyqLfXSLY4TLDg1wyn3zyvtR
+	zO3pw2yOSBH+SKy/FjHruXJilnY7q16QePQestIhWfojurAx41YnDlkm6qOslvo5PIrJosoXBKW
+	vB8zIy7yOLzQXFOfKE087BT+Kk0Wdt1x20JI4zwyYMUwlVBNtjaJLCYOmnqf31esmshrx0c6od4
+	3MKvDdA=
+X-Google-Smtp-Source: AGHT+IH1E1q/5syC1l2Q3IJIXeGgWH1c7T0XgV5GcldBD5DzHdN0zW5DpxbQjpBSXk/kp0HgKpCoWEmNURf73Xoky+o=
+X-Received: by 2002:a05:622a:309:b0:4b7:9a9e:833f with SMTP id
+ d75a77b69052e-4eddc16031cmr517761cf.7.1762888133529; Tue, 11 Nov 2025
+ 11:08:53 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fWWxbRS4D1GsPvSgr32cfCGaT68qV0Q6-FLQ90R-bhH3w@mail.gmail.com>
+References: <20251107160645.929564468@infradead.org>
+In-Reply-To: <20251107160645.929564468@infradead.org>
+From: Josh Don <joshdon@google.com>
+Date: Tue, 11 Nov 2025 11:08:41 -0800
+X-Gm-Features: AWmQ_bnYg_t3UYnFFfkArMajn4W_Z0J9_xfSXIedWfeXU8w2FRe0Aeb9nxTpmaM
+Message-ID: <CABk29NvD4EPx_HN4DXwZLf=iyDSysgpcUyQw=3YwYiT0eKNXUA@mail.gmail.com>
+Subject: Re: [PATCH 0/4] sched: The newidle balance regression
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Chris Mason <clm@meta.com>, Joseph Salisbury <joseph.salisbury@oracle.com>, 
+	Adam Li <adamli@os.amperecomputing.com>, 
+	Hazem Mohamed Abuelfotoh <abuehaze@amazon.com>, mingo@redhat.com, juri.lelli@redhat.com, 
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
+	bsegall@google.com, mgorman@suse.de, vschneid@redhat.com, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 11, 2025 at 09:20:30AM -0800, Ian Rogers wrote:
-> On Tue, Nov 11, 2025 at 12:15 AM Mi, Dapeng <dapeng1.mi@linux.intel.com> wrote:
-> >
-> >
-> > On 11/11/2025 12:04 PM, Ian Rogers wrote:
-> > > Rather than using the first evsel in the matched events, try to find
-> > > the least shared non-tool evsel. The aim is to pick the first evsel
-> > > that typifies the metric within the list of metrics.
-> > >
-> > > This addresses an issue where Default metric group metrics may lose
-> > > their counter value due to how the stat displaying hides counters for
-> > > default event/metric output.
-> > >
-> > > For a metricgroup like TopdownL1 on an Intel Alderlake the change is,
-> > > before there are 4 events with metrics:
-> > > ```
-> > > $ perf stat -M topdownL1 -a sleep 1
-> > >
-> > >  Performance counter stats for 'system wide':
-> > >
-> > >      7,782,334,296      cpu_core/TOPDOWN.SLOTS/          #     10.4 %  tma_bad_speculation
-> > >                                                   #     19.7 %  tma_frontend_bound
-> > >      2,668,927,977      cpu_core/topdown-retiring/       #     35.7 %  tma_backend_bound
-> > >                                                   #     34.1 %  tma_retiring
-> > >        803,623,987      cpu_core/topdown-bad-spec/
-> > >        167,514,386      cpu_core/topdown-heavy-ops/
-> > >      1,555,265,776      cpu_core/topdown-fe-bound/
-> > >      2,792,733,013      cpu_core/topdown-be-bound/
-> > >        279,769,310      cpu_atom/TOPDOWN_RETIRING.ALL/   #     12.2 %  tma_retiring
-> > >                                                   #     15.1 %  tma_bad_speculation
-> > >        457,917,232      cpu_atom/CPU_CLK_UNHALTED.CORE/  #     38.4 %  tma_backend_bound
-> > >                                                   #     34.2 %  tma_frontend_bound
-> > >        783,519,226      cpu_atom/TOPDOWN_FE_BOUND.ALL/
-> > >         10,790,192      cpu_core/INT_MISC.UOP_DROPPING/
-> > >        879,845,633      cpu_atom/TOPDOWN_BE_BOUND.ALL/
-> > > ```
-> > >
-> > > After there are 6 events with metrics:
-> > > ```
-> > > $ perf stat -M topdownL1 -a sleep 1
-> > >
-> > >  Performance counter stats for 'system wide':
-> > >
-> > >      2,377,551,258      cpu_core/TOPDOWN.SLOTS/          #      7.9 %  tma_bad_speculation
-> > >                                                   #     36.4 %  tma_frontend_bound
-> > >        480,791,142      cpu_core/topdown-retiring/       #     35.5 %  tma_backend_bound
-> > >        186,323,991      cpu_core/topdown-bad-spec/
-> > >         65,070,590      cpu_core/topdown-heavy-ops/      #     20.1 %  tma_retiring
-> > >        871,733,444      cpu_core/topdown-fe-bound/
-> > >        848,286,598      cpu_core/topdown-be-bound/
-> > >        260,936,456      cpu_atom/TOPDOWN_RETIRING.ALL/   #     12.4 %  tma_retiring
-> > >                                                   #     17.6 %  tma_bad_speculation
-> > >        419,576,513      cpu_atom/CPU_CLK_UNHALTED.CORE/
-> > >        797,132,597      cpu_atom/TOPDOWN_FE_BOUND.ALL/   #     38.0 %  tma_frontend_bound
-> > >          3,055,447      cpu_core/INT_MISC.UOP_DROPPING/
-> > >        671,014,164      cpu_atom/TOPDOWN_BE_BOUND.ALL/   #     32.0 %  tma_backend_bound
-> > > ```
-> >
-> > It looks the output of cpu_core and cpu_atom events are mixed together,
-> > like the "cpu_core/INT_MISC.UOP_DROPPING/". Could we resort the events and
-> > separate the cpu_core and cpu_atom events output? It would make the output
-> > more read-friendly. Thanks.
-> 
-> So the metrics are tagged as to not group the events:
-> https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/pmu-events/arch/x86/alderlake/adl-metrics.json?h=perf-tools-next#n117
-> Running with each metric causes the output to be:
-> ```
-> $ perf stat -M tma_bad_speculation,tma_backend_bound,tma_frontend_bound,tma_retiring
-> -a sleep 1
-> 
->  Performance counter stats for 'system wide':
-> 
->      1,615,145,897      cpu_core/TOPDOWN.SLOTS/          #      8.1 %
-> tma_bad_speculation
->                                                   #     42.5 %
-> tma_frontend_bound       (49.89%)
->        243,037,087      cpu_core/topdown-retiring/       #     34.5 %
-> tma_backend_bound        (49.89%)
->        129,341,306      cpu_core/topdown-bad-spec/
->                          (49.89%)
->          2,679,894      cpu_core/INT_MISC.UOP_DROPPING/
->                          (49.89%)
->        696,940,348      cpu_core/topdown-fe-bound/
->                          (49.89%)
->        563,319,011      cpu_core/topdown-be-bound/
->                          (49.89%)
->      1,795,034,847      cpu_core/slots/
->                          (50.11%)
->        262,140,961      cpu_core/topdown-retiring/
->                          (50.11%)
->         44,589,349      cpu_core/topdown-heavy-ops/      #     14.4 %
-> tma_retiring             (50.11%)
->        160,987,341      cpu_core/topdown-bad-spec/
->                          (50.11%)
->        778,250,364      cpu_core/topdown-fe-bound/
->                          (50.11%)
->        622,499,674      cpu_core/topdown-be-bound/
->                          (50.11%)
->         90,849,750      cpu_atom/TOPDOWN_RETIRING.ALL/   #      8.1 %
-> tma_retiring
->                                                   #     17.2 %
-> tma_bad_speculation
->        223,878,243      cpu_atom/CPU_CLK_UNHALTED.CORE/
->        423,068,733      cpu_atom/TOPDOWN_FE_BOUND.ALL/   #     37.8 %
-> tma_frontend_bound
->        413,413,499      cpu_atom/TOPDOWN_BE_BOUND.ALL/   #     36.9 %
-> tma_backend_bound
-> ```
-> so you can see that it is the effect of not grouping the events that
-> leads to the cpu_core and cpu_atom split.
-> 
-> The code that does sorting/fixing/adding of events, primarily to fix
-> topdown, is parse_events__sort_events_and_fix_groups:
-> https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/util/parse-events.c?h=perf-tools-next#n2030
-> but I've tried to make that code respect the incoming evsel list order
-> because if a user specifies an order then they generally expect it to
-> be respected (unless invalid or because of topdown events). For
-> --metric-only the event order doesn't really matter.
-> 
-> Anyway, I think trying to fix this is out of scope for this patch
-> series, although I agree with you about the readability. The behavior
-> here matches old behavior such as:
-> ```
-> $ perf --version
-> perf version 6.16.12
-> $ perf stat -M TopdownL1 -a sleep 1
-> 
->  Performance counter stats for 'system wide':
-> 
->     11,086,754,658      cpu_core/TOPDOWN.SLOTS/          #     27.1 %
-> tma_backend_bound
->                                                   #      7.5 %
-> tma_bad_speculation
->                                                   #     36.5 %
-> tma_frontend_bound
->                                                   #     28.9 %
-> tma_retiring
->      3,219,475,010      cpu_core/topdown-retiring/
->        820,655,931      cpu_core/topdown-bad-spec/
->        418,883,912      cpu_core/topdown-heavy-ops/
->      4,082,884,459      cpu_core/topdown-fe-bound/
->      3,012,532,414      cpu_core/topdown-be-bound/
->      1,030,171,196      cpu_atom/TOPDOWN_RETIRING.ALL/   #     17.4 %
-> tma_retiring
->                                                   #     16.5 %
-> tma_bad_speculation
->      1,185,093,601      cpu_atom/CPU_CLK_UNHALTED.CORE/  #     29.8 %
-> tma_backend_bound
->                                                   #     36.4 %
-> tma_frontend_bound
->      2,154,914,153      cpu_atom/TOPDOWN_FE_BOUND.ALL/
->         14,988,684      cpu_core/INT_MISC.UOP_DROPPING/
->      1,763,486,868      cpu_atom/TOPDOWN_BE_BOUND.ALL/
-> 
->        1.004103365 seconds time elapsed
-> ```
-> ie the cpu_core and cpu_atom mixing of events isn't a regression
-> introduced here. There isn't a simple fix for the ordering, as we
-> don't want to mess up the non-metric cases. I'm happy if you think
-> things can be otherwise to make a change.
+Hey Peter,
 
-Agreed and it should be handled in a separate patch (series).  Let's fix
-problems one at a time.
+On Fri, Nov 7, 2025 at 8:18=E2=80=AFAM Peter Zijlstra <peterz@infradead.org=
+> wrote:
+>
+> Hi!
+>
+> So most of you ran into Chris' commit 155213a2aed4 ("sched/fair: Bump
+> sd->max_newidle_lb_cost when newidle balance fails") [*]
+>
+> And I posted a patch with a few alternative options. And while I've heard=
+ back
+> from a number of you, indicating that NI_TARGET (the effective revert) wo=
+rks
+> for you. Not many tested TARGET+RANDOM (thanks Adam!).
+>
+> In my limited schbench testing that combination isn't horrible, and per A=
+dam
+> that combination also doesn't suck for him. Chris, could you please see w=
+hat
+> this does for your machines with your actual workload?
+>
+> Anyway, here are a few patches that basically do the revert and introduce=
+ the
+> proportional newidle balance -- the NI_TARGET+NI_RANDOM equivalent.
+>
+> Also at:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git sched/ne=
+widle
+>
+> Please all, give it a whirl. Hopefully I didn't wreck it, its Friday afte=
+r all :-)
+>
+> [*] https://lkml.kernel.org/r/006c9df2-b691-47f1-82e6-e233c3f91faf@oracle=
+.com
 
-Thanks,
-Namhyung
+Initial signal from our originally failing tests shows that this new
+series appears to fix the regression :)
 
+I'll run some additional tests to get more coverage (unfortunately
+these take quite a while to run).
+
+Best,
+Josh
 
