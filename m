@@ -1,143 +1,313 @@
-Return-Path: <linux-kernel+bounces-895774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75904C4EE24
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:57:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 330FAC4EE42
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:58:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A38D53BF5C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 15:50:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31BA53A242C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 15:52:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D657B36B066;
-	Tue, 11 Nov 2025 15:50:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DBAD34253B;
+	Tue, 11 Nov 2025 15:52:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l4rKv81/"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GQ9+bsUe"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDFCC36B064
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 15:50:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5507E36654E;
+	Tue, 11 Nov 2025 15:52:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762876220; cv=none; b=iE+VmLTZX36jgp+uSs1U/uPCvVgdWFaWmR0FAfaJUijepeelaYdWNl3jaA9VxOw8VyUXAxrvqhFH6yAlBZD6FLuWHfI2q07AsvcLzpiUApqaXnXn/trxTHdMYLwhMrYH79TggjreumX2vze3KkrW7mqgaCvJFo8jpCxP3RJ3h7k=
+	t=1762876347; cv=none; b=s+4DnXCx3OU9nU0hZjyNIZkmOuXPROzHLK8Quy/qrN5gMzx/7Y6U9MlsIMSxfITcueClnSn+66Uv3jCud8K/giD+pAVDCz0puzLZ3gvS+QHuSTs/ZF97dNmIOtoeQIong8WopUjEnPI5qei3prY3kyhnbGFUT3GXIsYPtzm7PaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762876220; c=relaxed/simple;
-	bh=DHlxEl4Cm3VRdwsbOA/YSIyQycDreMiqXswBc5rWTMo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=IpvdXhOAY5BiVf39tf82bg8A9E0dMsRqqRGtcg+MBtFRiq4s9R918eLE+kbwNClscj7hwNsd2x1/2Y6yo7BSdnHmeRUC5Jhk0iYT0A+gt2eCh/AdLsmCqWoRJQnG+x8Ftisr/p+S+JwD3B7rLg8KCTs3kimGaMdkOxkoxKIRmgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l4rKv81/; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-297ec50477aso7290145ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 07:50:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762876218; x=1763481018; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=kwxwWH0h/k86KA6Lqbt4Xcny5Xif9KRZerM8f0+lE/Q=;
-        b=l4rKv81/JX0GM6mncWXjrWkmY8XtAtwOHkFkeVsXXDSvDNhdrnHd26iM+8gOcPt5gC
-         GPohYZFO16Qc9oUdZsSKtNpFktwtlrc+qHY/BdCsnrVDiB3BIJgLc/q4gknKfvRMT45f
-         XQQAMN0Ahz6MPTKYqxJ9nzAQ2+019pdjfv0POpV7AX8ESgKgOs7mf3Vk3opaGDE8SvPu
-         R/wGNTpq7+JOTqNXG/Dj2XclZxALV6XwWCztoy/hYTk/e3L6b9yaOVyRSVOrDQqWiw97
-         T1paQva5C5UDXfCM7Krvk2h35zF9KRij/x9DuLMSGFPnrrtmzcj+nKoG/nB2XSiaGxhi
-         p9HQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762876218; x=1763481018;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kwxwWH0h/k86KA6Lqbt4Xcny5Xif9KRZerM8f0+lE/Q=;
-        b=k8VjyBkAkzEINhyJo/G0a52CDctlUNJz89g0Oxxwh5WjNReY/6pLrEXeskCEP7f98V
-         hRJ5YO2BBz0ffsz0qOH9EOGtOfYorRYu8JPmC3we36TlurSblI11Va7s0HT0pa098x5t
-         qUfLTx7pPU7NZx3DypdiONcFnfClhoaS8oxhdfezPBR65ncX8ea1RLw60q7ZDOSYivvs
-         uunfiNyHnZqKGJTG/AfWA2n8z23pBn15wgdyBCJZ61jFTc0GLxyidm1HzhOIgXgmpvNF
-         qJY5MuR1wbF5pSQvlmZ6FPepOOgctZLwgTcCbV/zIJ/Pgd2ZBQKOnjKcxGK6G4IBthzM
-         xOVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWP29E7/IrGLjSsyO+FZXCKXouFT6l1JYRcY7ooA7ciSiwnF4QvRwt7YAbKiCfdmS9UlzMvPLXwNLIs3YM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVs5TvF5/Y8OHznhmkeeQfuBLnm/M7vc0eLW4tm9IkTONw9joo
-	AlpEhJyX6pwjBq8doSx3hFminU5TG4leptG7oYVfjZ/8spKYp0xsiRuH
-X-Gm-Gg: ASbGncsc0W1ioDFfvpa7Cfc0z7zek1y0qb7zBALLSx42LVSb5eY69U25o/4zFdQ3WH1
-	1NGGL2/Mak1nMRqf9iv037Xb7tFl/rA++pKCBLBsXW5Tg3OisgceBuCNODJ/iWO4wypcGvAo2qT
-	o0cXCiRY6KNBMm98NevqgdUvVwqqwfkbQUGrlfXqUq1nW6HaznAKDYYhlk6Th+RU3JjwxkkDnQR
-	tTLfWuUu0nkStAHXhFZiEXyKWrz/5eNuI5s7KwS/FdMeLZwb83OUuLvZr2VIdgg8NptJsKOTZiU
-	oBEZ1i8DZjv/GzUvO6YbERGHIGGVw5iCr8B0dJbH1qQY8+4qxzstTNKd2oOE8YD1JFxFBVkIrby
-	DcdFerGsRkG8cD0cNNs+5Q+QzRkTxV1CLtxxvZtWqm44yAhGWabal70thq33FO4iNyZAzrcfJ1+
-	g6ew==
-X-Google-Smtp-Source: AGHT+IFUeZ86WNREaY3JnN9DeD2rSCTPmqw3Crt4HqqKMYEinhAe5X1WLVaqt8s1Jagy5zo/mu0g8Q==
-X-Received: by 2002:a17:902:fc4f:b0:295:55f:8ebb with SMTP id d9443c01a7336-298408213e4mr48838695ad.21.1762876217391;
-        Tue, 11 Nov 2025 07:50:17 -0800 (PST)
-Received: from localhost ([111.55.24.13])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2984dbdb09fsm1087615ad.17.2025.11.11.07.50.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Nov 2025 07:50:17 -0800 (PST)
-From: Encrow Thorne <jyc0019@gmail.com>
-Date: Tue, 11 Nov 2025 23:50:09 +0800
-Subject: [PATCH v2] clk: spacemit: fix comment typo
+	s=arc-20240116; t=1762876347; c=relaxed/simple;
+	bh=U8yfNqSN49Gaztelb9TgSAQVh0yLGw/hvy5W6Raqhno=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=YcHd4EqsOQ29Zk5b5LrbaOjZxhWY+52Buc1aYAUc1MJiCyWu+5qzZMw86pFGCQ5EFXfEKMysslIsJPJDx9b3zCUGLkxZ5X0642gc8KKwFJHLJTD7ho8Pk+CD9EbPEYW+F74Kq60iAFu4nnigVC20NtGGrPUhJa5gpW0RjOIx1og=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GQ9+bsUe; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762876345; x=1794412345;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=U8yfNqSN49Gaztelb9TgSAQVh0yLGw/hvy5W6Raqhno=;
+  b=GQ9+bsUexwOJlZQcKKAvk8bp+5XXlcq71TWvrUqSjyDUrWILAXJq+vDl
+   88pyvTSrrR47eNY73ZKFNjD3gLtVgM6gYuf+qmugqNkzAzaOj4702lz1K
+   qM5e3TuFTwQgbkzg23JUDPLHwrYwyc2y+RxkFJdd6mH5fTXOZQs97EO5s
+   8BjTshHuUk2bxHsQsDtrXCcK+6923y2KKax2vJBiTsz/zG9ZfNUwI8Ycu
+   5AexqJlfXawg1BceabnmifyoufvGo+oEmPKXKKAv4+optNq4vqVg5OGBn
+   Mb4OYSn100KixU4DasKY/gak7Ewy5VablsUXFWOac74zK66Sr5KyFNIx4
+   Q==;
+X-CSE-ConnectionGUID: gZUTDopFS/mHCxZRQncvDw==
+X-CSE-MsgGUID: R8Psr6b6TnyfgHEHLpkJFg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11610"; a="67542108"
+X-IronPort-AV: E=Sophos;i="6.19,296,1754982000"; 
+   d="scan'208";a="67542108"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 07:52:24 -0800
+X-CSE-ConnectionGUID: myQ64WRUR82e0u21QPoYyA==
+X-CSE-MsgGUID: DsYajqoRSU2B3P+rvtPpIA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,296,1754982000"; 
+   d="scan'208";a="188959316"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.132])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 07:52:17 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Tue, 11 Nov 2025 17:52:13 +0200 (EET)
+To: =?ISO-8859-15?Q?Christian_K=F6nig?= <christian.koenig@amd.com>
+cc: =?ISO-8859-15?Q?Alex_Benn=E9e?= <alex.bennee@linaro.org>, 
+    Simon Richter <Simon.Richter@hogyros.de>, 
+    Lucas De Marchi <lucas.demarchi@intel.com>, 
+    Alex Deucher <alexander.deucher@amd.com>, amd-gfx@lists.freedesktop.org, 
+    Bjorn Helgaas <bhelgaas@google.com>, David Airlie <airlied@gmail.com>, 
+    dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, 
+    intel-xe@lists.freedesktop.org, Jani Nikula <jani.nikula@linux.intel.com>, 
+    Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, 
+    linux-pci@vger.kernel.org, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+    Simona Vetter <simona@ffwll.ch>, Tvrtko Ursulin <tursulin@ursulin.net>, 
+    =?ISO-8859-15?Q?Thomas_Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>, 
+    =?ISO-8859-2?Q?Micha=B3_Winiarski?= <michal.winiarski@intel.com>, 
+    LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 8/9] drm/amdgpu: Remove driver side BAR release before
+ resize
+In-Reply-To: <eb776004-c798-453d-bfbf-a40810308253@amd.com>
+Message-ID: <5be404d2-3227-afb9-f8c9-226326263eee@linux.intel.com>
+References: <20251028173551.22578-1-ilpo.jarvinen@linux.intel.com> <20251028173551.22578-9-ilpo.jarvinen@linux.intel.com> <c90f155f-44fe-4144-af68-309531392d22@amd.com> <aaaf27cf-5de0-c4ef-0758-59849878a99f@linux.intel.com> <fd7fdf61-cb08-4dfc-ba7a-a8a5b7eb9fda@amd.com>
+ <10b095b5-f433-3bfc-c1c9-5da7db560696@linux.intel.com> <eb776004-c798-453d-bfbf-a40810308253@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251111-b4-fix-ccu-mix-typo-v2-1-d64b97b48d1f@gmail.com>
-X-B4-Tracking: v=1; b=H4sIADBbE2kC/22NQQqDMBBFryKz7pQkatGuvEdxoeOoA9VIYkNFv
- HtTobuuhvf5/80Onp2wh3uyg+MgXuwcwVwSoLGZB0bpIoNRJtfKFNhm2MsbiV44xbtui0WVFqT
- LnlNFGcTl4jh2TuujjjyKX63bzidBf9Ofr/zrCxo1UtN1bZoXim9ZNUyNPK9kJ6iP4/gAIVCcB
- rYAAAA=
-X-Change-ID: 20251028-b4-fix-ccu-mix-typo-038c19fe30c4
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Yixun Lan <dlan@gentoo.org>
-Cc: linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org, 
- spacemit@lists.linux.dev, linux-kernel@vger.kernel.org, 
- Troy Mitchell <troy.mitchell@linux.spacemit.com>, 
- Encrow Thorne <jyc0019@gmail.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1762876212; l=1164;
- i=jyc0019@gmail.com; s=20251009; h=from:subject:message-id;
- bh=DHlxEl4Cm3VRdwsbOA/YSIyQycDreMiqXswBc5rWTMo=;
- b=y7lORg16U5lsvcS9/DoSo7mwT5fo22eEVpj3gCoSuWbYgbLul4lhSwzA8UAzZmSxgvPPJorn1
- KMkTZ/dZIi5AGLNsXQ9FoACulckMazmMA6jsBicgtNXnh6nT7N+o4BK
-X-Developer-Key: i=jyc0019@gmail.com; a=ed25519;
- pk=nnjLv04DUE0FXih6IcJUOjWFTEoo4xYQOu7m5RRHvZ4=
+Content-Type: multipart/mixed; boundary="8323328-1291627756-1762876333=:1002"
 
-Fix incorrect comment to match the filename.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Reviewd-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Signed-off-by: Encrow Thorne <jyc0019@gmail.com>
----
-Hi Stephen,
+--8323328-1291627756-1762876333=:1002
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-Could you please take a look at this patch for inclusion?
+On Tue, 11 Nov 2025, Christian K=C3=B6nig wrote:
 
-Thanks!
----
-Changes in v2:
-- Simplify commit message.
-- Link to v1: https://lore.kernel.org/r/20251029-b4-fix-ccu-mix-typo-v1-1-caddb3580e64@gmail.com
----
- drivers/clk/spacemit/ccu_mix.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> On 11/11/25 13:56, Ilpo J=C3=A4rvinen wrote:
+> > On Tue, 11 Nov 2025, Christian K=C3=B6nig wrote:
+> >=20
+> >> On 11/11/25 12:08, Ilpo J=C3=A4rvinen wrote:
+> >>> On Tue, 11 Nov 2025, Christian K=C3=B6nig wrote:
+> >>>
+> >>>> Sorry for the late reply I'm really busy at the moment.
+> >>>>
+> >>>> On 10/28/25 18:35, Ilpo J=C3=A4rvinen wrote:
+> >>>>> PCI core handles releasing device's resources and their rollback in
+> >>>>> case of failure of a BAR resizing operation. Releasing resource pri=
+or
+> >>>>> to calling pci_resize_resource() prevents PCI core from restoring t=
+he
+> >>>>> BARs as they were.
+> >>>>
+> >>>> I've intentionally didn't do it this way because at least on AMD HW =
+we=20
+> >>>> could only release the VRAM and doorbell BAR (both 64bit), but not t=
+he=20
+> >>>> register BAR (32bit only).
+> >>>>
+> >>>> This patch set looks like the right thing in general, but which BARs=
+ are=20
+> >>>> now released by pci_resize_resource()?
+> >>>>
+> >>>> If we avoid releasing the 32bit BAR as well then that should work,=
+=20
+> >>>> otherwise we will probably cause problems.
+> >>>
+> >>> After these changes, pci_resize_resource() releases BARs that share t=
+he=20
+> >>> bridge window with the BAR to be resized. So the answer depends on th=
+e=20
+> >>> upstream bridge.
+> >>>
+> >>> However, amdgpu_device_resize_fb_bar() also checks that root bus has =
+a
+> >>> resource with a 64-bit address. That won't tell what the nearest brid=
+ge=20
+> >>> has though. Maybe that check should be converted to check the resourc=
+es of=20
+> >>> the nearest bus instead? It would make it impossible to have the=20
+> >>> 32-bit resource share the bridge window with the 64-bit resources so =
+the=20
+> >>> resize would be safe.
+> >>
+> >> Mhm, I don't think that will work.
+> >>
+> >>
+> >> I've added the check for the root bus to avoid a couple of issues duri=
+ng=20
+> >> resize, but checking the nearest bridge would block a whole bunch of u=
+se=20
+> >> cases and isn't even 100% save.
+> >>
+> >> See one use case of this is that all the BARs of the device start in t=
+he=20
+> >> same 32bit bridge window (or a mixture of 64bit and 32bit window).
+> >=20
+> > "32bit bridge window" is ambiguous. There are non-prefetchable and=20
+> > prefetchable bridge windows, out of which the latter can be 64-bit as=
+=20
+> > well. Which one you're talking about?
+>=20
+> The non-prefetchable 32bit window.
+>=20
+> > If a 64-bit prefetchable window exists, pbus_size_mem() nor=20
+> > __pci_assign_resource() would not have produced such a configuration wh=
+ere=20
+> > they're put into the same bridge window, even before the commit=20
+> > ae88d0b9c57f ("PCI: Use pbus_select_window_for_type() during mem window=
+=20
+> > sizing") (I think). Now pbus_size_mem() certainly doesn't.
+>=20
+> I need to double check, but if I'm not completely mistaken that is assign=
+ed by the BIOS.
+>=20
+> Here is an example of a "good" configuration where both VRAM (BAR0) and d=
+oorbell (BAR2) is in the prefetchable window and MMIO in the non-prefetchab=
+le:
+>=20
+> Device:
+> =09Region 0: Memory at 80000000 (64-bit, prefetchable) [size=3D256M]
+> =09Region 2: Memory at 90000000 (64-bit, prefetchable) [size=3D2M]
+> =09Region 4: I/O ports at 3000 [size=3D256]
+> =09Region 5: Memory at 9f300000 (32-bit, non-prefetchable) [size=3D1M]
+>=20
+> Bridge:
+> =09Memory behind bridge: 9f300000-9f4fffff [size=3D2M] [32-bit]
+> =09Prefetchable memory behind bridge: 80000000-901fffff [size=3D258M] [32=
+-bit]
+>=20
+> And here is an example of another system where things are mixed up:
+>=20
+> Device:
+> =09Region 0: Memory at 2c00000000 (64-bit, prefetchable) [size=3D256M]
+> =09Region 2: Memory at 94000000 (64-bit, prefetchable) [size=3D2M]
+> =09Region 4: I/O ports at 1000 [size=3D256]
+> =09Region 5: Memory at 94600000 (32-bit, non-prefetchable) [size=3D512K]
+>=20
+> Bridge:
+> =09Memory behind bridge: 94000000-946fffff [size=3D7M] [32-bit]
+> =09Prefetchable memory behind bridge: 2c00000000-2c107fffff [size=3D264M]=
+ [32-bit]
+>=20
+> In that example the doorbell ended up in the non-prefetchable window for=
+=20
+> some reason. And that config comes in all possible variations.
 
-diff --git a/drivers/clk/spacemit/ccu_mix.h b/drivers/clk/spacemit/ccu_mix.h
-index 54d40cd39b27..c406508e3504 100644
---- a/drivers/clk/spacemit/ccu_mix.h
-+++ b/drivers/clk/spacemit/ccu_mix.h
-@@ -220,4 +220,4 @@ extern const struct clk_ops spacemit_ccu_div_gate_ops;
- extern const struct clk_ops spacemit_ccu_mux_gate_ops;
- extern const struct clk_ops spacemit_ccu_mux_div_ops;
- extern const struct clk_ops spacemit_ccu_mux_div_gate_ops;
--#endif /* _CCU_DIV_H_ */
-+#endif /* _CCU_MIX_H_ */
+The really odd thing is that there seems to be even room in that=20
+prefetchable window for a 2MB BAR.
 
----
-base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
-change-id: 20251028-b4-fix-ccu-mix-typo-038c19fe30c4
+(Unless it's ppc which I heard is placing small BARs in a weird way.)
 
-Best regards,
--- 
-Encrow Thorne <jyc0019@gmail.com>
+> On AMD GPUs both BAR0 and BAR2 are resizeable.
+>
+> So far we have only implemented resizing of BAR0, but essentially we=20
+> want to have both for some use cases.=20
 
+Okay. My plan is anyway to change the resource fitting logic so it will=20
+leave enough space to fit as large resources as possible at where the=20
+resizable BARs is at (once I get that far). Then BAR resize itself can be
+mostly done in-place without need to release the bridge windows at all.
+
+> >> What we have is that BAR 0 and 2 are 64bit BARs which can (after some=
+=20
+> >> preparation) move around freely. But IIRC BAR 4 are the legacy I/O por=
+ts=20
+> >> and BAR 5 is the 32bit MMIO registers (don't nail me on that, could be=
+=20
+> >> just the other way around).
+> >>
+> >> Especially that 32bit MMIO BAR *can't* move! Not only because it is=20
+> >> 32bit, but also because the amdgpu driver as well as the HW itself=20
+> >> through the VGA emulation, as well as the EFI/VESA/VBIOS code might=20
+> >> reference its absolute address.
+> >=20
+> > So if the 64-bit check is replaced with this:
+> >=20
+> > +       /* Check if the parent bridge has a 64-bit (pref) memory resour=
+ce */
+> > +       res =3D pci_resource_n(adev->pdev, 0)->parent;
+> > +       /* Trying to resize is pointless without a window above 4GB */
+> > +       if (!(res->flags & IORESOURCE_MEM_64))
+> > =09=09return 0;
+> >=20
+> > ...I don't think it's possible for 32-bit resource to share that window=
+=20
+> > under _any_ circumstance.
+>=20
+> Well see the example above.
+
+For the record, BAR0 would pass that 64-bit check above and could be=20
+resized safely too.
+
+But I hear your point that this kind of mixed config seems possible for=20
+some reason.
+
+> I have SSH access to a system where exactly that is the configuration.
+>
+> > If you say that ->parent somehow points to a non-IORESOURCE_MEM_64 wind=
+ow=20
+> > at this point, you're implying allocation for the 64-bit prefetchable=
+=20
+> > window was tried and failed, and __pci_assign_resource() then used one =
+of=20
+> > its fallbacks.
+>=20
+> No, as I said that comes from the BIOS.
+
+Normally we don't abide the BIOS allocations for normal BARs, only=20
+bridge windows are claimed using pci_claim_resource(). Only if=20
+preserve_config is set for the host bridge, also dev resources are=20
+claimed as they were discovered.
+
+The normal BARs are normally added into the resource tree using=20
+pci_assign_resource() which will not end up using the resource address of=
+=20
+the resource itself in determining where to place the=20
+resource (AFAICT from the code in __pci_assign_resource() ->
+pci_bus_alloc_resource() -> pci_bus_alloc_from_region() ->=20
+allocate_resource() -> __find_resource_space()).
+
+> > Are you saying that "some preparation" includes making room for that=20
+> > 64-bit prefetchable window that failed to assign earlier as I cannot se=
+e=20
+> > how else it would ever get assigned so that the 64-bit BARs could be mo=
+ved=20
+> > there?
+>=20
+> No, at least from the amdgpu driver side we don't touch the resource=20
+> allocation at all.=20
+>=20
+> In this case preparation means disabling the VGA emulation, cause=20
+> otherwise trying to resize the BAR can just cause a spontaneous system=20
+> reboot for some reason.=20
+>
+> >> Could we give pci_resize_resource() a mask of BARs which are save to=
+=20
+> >> release?
+> >=20
+> > It is possible.
+>=20
+> Then let us solve this issue by this somehow.
+
+I've added exclude_bars parameters to pci_resize_resource() and made
+amdgpu to pass 1 << 5 to it, will send v2 in a day or two with that. If=20
+you've better idea than using a literal like that, please let me know.
+
+--=20
+ i.
+
+--8323328-1291627756-1762876333=:1002--
 
