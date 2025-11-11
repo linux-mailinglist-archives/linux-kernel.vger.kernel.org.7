@@ -1,192 +1,208 @@
-Return-Path: <linux-kernel+bounces-895187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99B06C4D287
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:48:40 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E836C4D275
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:48:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96BF1189A649
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:48:10 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1AE6C34EB65
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:48:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2728D34FF7E;
-	Tue, 11 Nov 2025 10:47:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F1F0350A17;
+	Tue, 11 Nov 2025 10:48:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="CVAZb83u";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="BoRxYtPN"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="InNTWs9p"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A28134FF4C
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 10:47:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C5A234B1AF
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 10:47:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762858055; cv=none; b=fGEmlUCI1/BeiaImPGnav+uMx4yaXUMSPkEQrXxK5QIGOXh9xqxIn0eiVhD5aGTxq+FNqsyNVcwfcLqhuwTSuPBlKiHpsxxntOnacffOQ54h3wibbFHjiXK0col5eE0zsPqW8ZlRv9MNLqcwS1jZCwpuT/aBtfeipt2w3nV784w=
+	t=1762858079; cv=none; b=JXIb2jOQ/jQQUd5z7JjTj1z44bdupIK+SxxKfN++Plmgjp9ijz451ietWlT5sBVIdRxkAQuhCUm7DHnhMgW4vwt/rNPTpOBpBHGTO6uLkZJdxol6cuG/mOI8Lj/7jMN9zDPwXZmJOEDZYAQA6nAgh7WioDUcn622TxcRM9epgRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762858055; c=relaxed/simple;
-	bh=0fsV9uI1O/cKA8cAsRlcNpQnlJMqVYlThEFX+/lW8l8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M6APD4ZUfm/6MHqClT1YStgQ+mOZeNFeyxMlNNKi0dqchOyv3btoXINhi79X3Bf5tSF2TSrh5cPx97eUWkibYN9f0P90/QEnz9facjDvrZLL847WMbJeeLCaqG9LI9mR8jFnpNzjdB6YfTkHfHz1TCRkJEeVuFhN+qFZWh9Amts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=CVAZb83u; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=BoRxYtPN; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AB45W7B1009052
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 10:47:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=ZKoolRTpXFZGn0TM3pvNjb5r
-	co+zakFBmbIW06wI+5I=; b=CVAZb83uTPYRJPOyqYQc9PH+81HrF64fe9dzCv5P
-	sIige9U3UWG0Khm8TRBBQGAbBq8xshtY/ZzCQDS1e9ZZrMuGhytAJO7/Q/Sfcd8Y
-	i2ujOHrsnCNMxJiCY0y41J0MOmsK/EHxGaL4+QXw7lR2RapsDNCMZpmLT4yorEvL
-	3Ts2LeMS6dRg8L+Uxs/5xQ/IzomiZCvQ+t/4AtXGmPqHGYFX6wndGOx2toQExwKF
-	gDlbqrqzUNbcnyMG3TGxZk76TLBf5WXg1qc11eEcu79gyYWHSV6g6hEsW/ReS24C
-	bghmPpMs8RqrQgJeS0Y3dYiyX+Dy/o+mz3Tiwbh7c4ZWnw==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4abwtj94mn-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 10:47:32 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4edd678b2a3so1258271cf.2
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 02:47:32 -0800 (PST)
+	s=arc-20240116; t=1762858079; c=relaxed/simple;
+	bh=WfUCYKomq065xhjullLuTILgOb0RdHyS2EMF53wqVws=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XbkHDGMdMaF2q544J/2fg886aBs6g4buHGN5QpRScCE+zan+AphTUXctY70GgOUREOqT2CBz1oZ+P5/+CQygTQiDmw8FKRrhV9VYFwEs07pDJndm3J6CP/aB2e39Pg3lV/deBkL+Txsc8g8KhiivLJFKpCNDzZXEMDmYK2t2Jk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=InNTWs9p; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7afc154e411so2427875b3a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 02:47:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1762858051; x=1763462851; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZKoolRTpXFZGn0TM3pvNjb5rco+zakFBmbIW06wI+5I=;
-        b=BoRxYtPNpRMBVONpQhneOhXSEkln5ZGZk7+IbNKGDhA5bozFDW96gDvuisIe+jd2+z
-         Kz2Ru2y+UTNWjUFnSH47r2e186QHmUZ0pL7HzjV0ZuHZCDQrIBx+r90sNlVvTaQV6GOo
-         Xc/GvwKHaB5qRwPk4mKy1JtacbspGJ/Yuysc2yZDtuWpNWHUfB1k8FG+4x1Jk/uu3iNh
-         EcXBV/uEUOnQTj6CTQJm+LWbCQqMt2dV7/JbJGav5ZsPVb/blzHM6fE6LjiDfG7V5lia
-         XzrBo643SBRNCz/tK8n2jTPW1Rn7SirqNCrZLxEDlWYo2vnIl0KmFBEEM9gH1O32fsTi
-         3fAw==
+        d=gmail.com; s=20230601; t=1762858077; x=1763462877; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KGM7v17X5fBjnUVPBs36cQEsoFHwlXkRLxBvLVWWErg=;
+        b=InNTWs9pHe/+aVO8dwNa+HcMialSUjjTYWzOPDgL3TCnagT87j2UVwGBGYpFzcFqP1
+         CD+7gHWpC0HRT3CYdW2gDRMj+dN8qEYxEsqLtm4oXzFUlKnVAGHdRIvsSnGLupuHqgQD
+         bmQeo1dNsVmDG2DpF61pAEtqSCKSAgyn5LCn1GQvjiKaXNRVhbmANeENrwc0/cQC7/g3
+         fKFgJ0kakyW+Ewwz+G4B1QIACdraTBqwNYtJpm/KzfVvDb5fWBT3r0qIzIStm64Tn2xI
+         WaYbQcU9xJxLlDog6ROOcLPhLZCb5iTJgTELGyzeZ/geWX9zYoQBX1UPnq0RiWhbsHei
+         pGWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762858051; x=1763462851;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZKoolRTpXFZGn0TM3pvNjb5rco+zakFBmbIW06wI+5I=;
-        b=u8xUA0wY/xkzrMkxZwrZqVH2630SqhlIQFBKVVwOwkXScjo+NBN/4kpURMuksEWii4
-         tRlGR4l1Pdqc4Zmx0uflyMX84mdg6bEUetfBnjwj6onyYXMREqs4m0WEFiUY26v9RMIb
-         D+XXpq/gkH5tQVNgLz55CLp8CkIcmBY0xbTxvdJKGp5WepSimE2oWS0KomAb1bgUQ0rb
-         A4X5MxhCQLyylhsyocdgQJUBzF++vkKzL0RBLPJERkYQz6/p60Ov1wtr5J4QKbxn+KIo
-         XN6+ObZnsnko75BV/WqhvHpkffjZHc/qSROtFzDHBWKL2ldZFULWAmU9IEO8AfOOlZQf
-         wNyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVAWzjj1/FJXxnsOP/OHJ/mqENNtp8IEHecFqiaEkufy+MSEF+D5Hc9P7LGT6VH/zycrewWKizzZxyp2KA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQkCBXJ8sIhxusrovj1dBinOP8uKGLOvxm3onbfm1RKGJ4Mk2B
-	7q7u8j3jaP39zxma6xmFIYBwKqPjd9/kxglREAif0a1V3ADARUjsU/GtMDW363dnQ6YRm1Y6VHV
-	LKlkq6PYkL8NnvWNkcAg7ClOi7QUemUwZVQx+2B7T9t772RHDt85uaNURqheRasZlDWE=
-X-Gm-Gg: ASbGnctIRgWM0hC0aoojDUqpp+NLwHECpVRR6zs0SkJn+ySY2AJW4Q7pxwZkx7YQUuu
-	kn31oNFvvFcRJic8myFlQ8QNwtjddbl1lA31NhRD6ZdJBi2M5HK1CPNS+54kbbIZK3G4knw15PA
-	vvRJ5a4A1rrwWS5px7BcV8LBypjQ54dmPiMM6mjc7XvRLPo/qE6h0oFjUTOimU420HhV3eO4zYK
-	sHXaTG6UC8vqriB+nyMF9Xo3iEgj/Rukal5M3DdPN9gIK+ErjizFIkV7Q+NdceVbnLZCFFpkOIL
-	aQLHW8P2iw5t8LOCAnU2jG6e0ekP1kPAKYNLu3FOnwmf9c7FgEs6nRin2uoDlDwjduDRRrRn7Ko
-	1i74ugHhpRGl07GfVNYm14vMQ9W1s3ENbkUvTdNJ68392eORMO4WegFSQNuf3kaRbUFZ6CsqZ12
-	7FmOklYLVR0RzC
-X-Received: by 2002:a05:622a:180e:b0:4ed:b83f:7896 with SMTP id d75a77b69052e-4edb83f7ef4mr91668671cf.49.1762858051398;
-        Tue, 11 Nov 2025 02:47:31 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHFCDtYxB/LW3BIrbMOEAj1jjHz3Vws4ZmtYsIjAkOgW0wgxINYmTrO7RAEFffB8gVmP/4YAw==
-X-Received: by 2002:a05:622a:180e:b0:4ed:b83f:7896 with SMTP id d75a77b69052e-4edb83f7ef4mr91668371cf.49.1762858050950;
-        Tue, 11 Nov 2025 02:47:30 -0800 (PST)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-37a5f0dd771sm41797901fa.29.2025.11.11.02.47.29
+        d=1e100.net; s=20230601; t=1762858077; x=1763462877;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KGM7v17X5fBjnUVPBs36cQEsoFHwlXkRLxBvLVWWErg=;
+        b=m/HAalJd3NtlxyIMuTB4/76m3o7p3MJs2EcJTGD+XXlAkziaN9PjRnKylkyBdg0XIw
+         +PXcfTtg1YreXRViCg5o+YhbgajkfzmPGxPw0tVS9EN+b19LBGIsMTXaJD1nnRK8qcjk
+         9p3k4kPlZWwfZSsvFBFnSlaqopet/jLL8yJTZ3uBD1QtpYv3M5rKla5tolkEThOz1DtN
+         0yyZU9wyEddfDywamwwFV0c58JO4kN1+tmDjx3kf3cxaeQQuycbW+z4gwSEbGmlm7UVl
+         hSCRFJwoAHPEHoLprjDEz8tuGeHK7BREixRE5Bn0a7ZHknfb+GMtZAxrrkeoSQ5OcJnX
+         hScQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXN0rZ5ovxeVJbJJWKf397iuH42xXbloA8/AtBbhWgIMNUfOOztX0mzQG/L+wC6JtxJAJxMMk9HXvBpSP8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKCCkOFxXgYNjt7rcxk/RYcgO4xXPB9Ak8Q7dZH1ymKkKepsBD
+	wSCbWA/uSzqZV0dreR7uGm4f1t6QNArygGDa9ZfSH3cVdlZjCTRvWuHQ
+X-Gm-Gg: ASbGncvYvGSlCCBdfweDz/jBF2/cJcwxAKLIYBjfC9zAV+dGdmo9wxe5GVqnJL2a7dN
+	oTncqmIWxozT6EhIobw8D3Whom3T60i2Z5uDD4HxDwvMOsRg12T4d8qsUPVJ5s0qxWR8P3OumtA
+	JRSDQ1jt4+O4Udy22Qm5739FD+K4TZJpU/yUu0M4MHlDKex+urv7Iu+fmENqQGDTysCFwF2Q0wA
+	hOB3wsiBBI/ZBZnqU5HcD4QgGDJGIhtzBw4TGlUeot8ZEt3hp/f4IXE9ZyHOMGUVBJqlnCfv8Xe
+	erDfOe4JOdJKT3Bh6bNKPQRIPz+L9A6GmAqzK4CQUn+Zkdhhd+Zi7dRRAsh4jnn5JIy36+jU6f0
+	QAdJvTPyuFKc5tp8aww/ypcHPewO4hNCTUM2QW4iBS5rpWu8SVjM3g9X2N9tjGqLMUVT40OmIEw
+	==
+X-Google-Smtp-Source: AGHT+IEGEeJH5qOCRfzOE45L5zCqZ3JL5eKpNLRtF+FdalHg2ufAcdmgy4UMZm2EL294xytUUaIh9g==
+X-Received: by 2002:a05:6a00:ccc:b0:77f:4c3e:c19d with SMTP id d2e1a72fcca58-7b225c8d22bmr14790664b3a.12.1762858077096;
+        Tue, 11 Nov 2025 02:47:57 -0800 (PST)
+Received: from gmail.com ([2a09:bac1:19c0:20::4:2ee])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7b0ccd4edc3sm14912911b3a.66.2025.11.11.02.47.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Nov 2025 02:47:30 -0800 (PST)
-Date: Tue, 11 Nov 2025 12:47:28 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Taniya Das <taniya.das@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, jingyi.wang@oss.qualcomm.com,
-        aiqun.yu@oss.qualcomm.com, Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
-        Imran Shaik <imran.shaik@oss.qualcomm.com>,
-        Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 5/6] clk: qcom: Add TCSR clock driver for Kaanapali
-Message-ID: <zom2b3x26phaxsmabvvzcuutaig2cdmsj4ggnssmuwwc6mhksw@22jwrk2d3tor>
-References: <20251030-gcc_kaanapali-v2-v2-0-a774a587af6f@oss.qualcomm.com>
- <20251030-gcc_kaanapali-v2-v2-5-a774a587af6f@oss.qualcomm.com>
+        Tue, 11 Nov 2025 02:47:56 -0800 (PST)
+From: Qingfang Deng <dqfext@gmail.com>
+To: Namjae Jeon <linkinjeon@kernel.org>,
+	Steve French <smfrench@gmail.com>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Tom Talpey <tom@talpey.com>,
+	Hyunchul Lee <hyc.lee@gmail.com>,
+	Ronnie Sahlberg <lsahlber@redhat.com>,
+	linux-cifs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: netdev@vger.kernel.org,
+	Stefan Metzmacher <metze@samba.org>
+Subject: [PATCH v2] ksmbd: server: avoid busy polling in accept loop
+Date: Tue, 11 Nov 2025 18:47:49 +0800
+Message-ID: <20251111104750.25739-1-dqfext@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251030-gcc_kaanapali-v2-v2-5-a774a587af6f@oss.qualcomm.com>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTExMDA4NSBTYWx0ZWRfX+pgqIJvRNjgH
- pgIF0QvSBqyo9p3YdaM7KX7sePF71tV5hK1E9GLeG3RhXrqCbgBF2zZ5hb20V4AptHs9453T34E
- ozbxLxMJwxsz+15lYboLpyDyGj3mbtbEUHERsKjIoDDXYx70a+cfCkRfnQ1otPDKH3Q9vZ7Npk6
- l1lnymFDjad8NRLYSiORnaY3pIBLWogi4rTd6SivQcGi9oNctRbMY0tE2mSYou9aqEUFC5EqZEU
- IwLHwd/R4aF2S5628imIkRBBrlTepjImGa56szUy5WWWhU4983M00zF8eAuJ8D/M6EndOCbGoF6
- gGPSVvlElzMC+NuubN/jrzAs7harwhctMrM69uBtw5lyE/GhIYVFF91DUg7aVXeEhLFLk0cc+BH
- Y1ApChrWFpuArwm8S0qPDhBRSKm9rg==
-X-Proofpoint-GUID: 7OfWHIZd12QpkqkMKxr8aAdx7ItFHy4-
-X-Proofpoint-ORIG-GUID: 7OfWHIZd12QpkqkMKxr8aAdx7ItFHy4-
-X-Authority-Analysis: v=2.4 cv=UI3Q3Sfy c=1 sm=1 tr=0 ts=69131444 cx=c_pps
- a=JbAStetqSzwMeJznSMzCyw==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=EUspDBNiAAAA:8 a=G3bzr5uV0MXi1sWuJYwA:9 a=CjuIK1q_8ugA:10
- a=uxP6HrT_eTzRwkO_Te1X:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-11_01,2025-11-11_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 lowpriorityscore=0 spamscore=0 phishscore=0 impostorscore=0
- adultscore=0 priorityscore=1501 malwarescore=0 clxscore=1015 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511110085
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 30, 2025 at 04:39:08PM +0530, Taniya Das wrote:
-> Add the TCSR clock controller that provides the refclks on Kaanapali
-> platform for PCIe, USB and UFS subsystems.
-> 
-> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
-> ---
->  drivers/clk/qcom/Kconfig            |   8 ++
->  drivers/clk/qcom/Makefile           |   1 +
->  drivers/clk/qcom/tcsrcc-kaanapali.c | 141 ++++++++++++++++++++++++++++++++++++
->  3 files changed, 150 insertions(+)
-> 
-> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-> index 4a78099e706c2cee5162d837cad3723db75039d0..8ec1803af76cb87da59ca3ef28127c06f3e26d2b 100644
-> --- a/drivers/clk/qcom/Kconfig
-> +++ b/drivers/clk/qcom/Kconfig
-> @@ -46,6 +46,14 @@ config CLK_GLYMUR_TCSRCC
->  	  Support for the TCSR clock controller on GLYMUR devices.
->  	  Say Y if you want to use peripheral devices such as USB/PCIe/EDP.
->  
-> +config CLK_KAANAPALI_TCSRCC
-> +	tristate "KAANAPALI TCSR Clock Controller"
+The ksmbd listener thread was using busy waiting on a listening socket by
+calling kernel_accept() with SOCK_NONBLOCK and retrying every 100ms on
+-EAGAIN. Since this thread is dedicated to accepting new connections,
+there is no need for non-blocking mode.
 
-Kaanapali?
+Switch to a blocking accept() call instead, allowing the thread to sleep
+until a new connection arrives. This avoids unnecessary wakeups and CPU
+usage. During teardown, call shutdown() on the listening socket so that
+accept() returns -EINVAL and the thread exits cleanly.
 
-> +	depends on ARM64 || COMPILE_TEST
-> +	select QCOM_GDSC
-> +	help
-> +	  Support for the TCSR clock controller on Kaanapali devices.
-> +	  Say Y if you want to use peripheral devices such as PCIe, USB, UFS.
-> +
+The socket release mutex is redundant because kthread_stop() blocks until
+the listener thread returns, guaranteeing safe teardown ordering.
 
-[...]
+Also remove sk_rcvtimeo and sk_sndtimeo assignments, which only caused
+accept() to return -EAGAIN prematurely.
 
-> +
-> +MODULE_DESCRIPTION("QTI TCSR_CC KAANAPALI Driver");
+Fixes: 0626e6641f6b ("cifsd: add server handler for central processing and tranport layers")
+Signed-off-by: Qingfang Deng <dqfext@gmail.com>
+---
+v1 -> v2: https://lore.kernel.org/linux-cifs/20251030064736.24061-1-dqfext@gmail.com
+ Do not remove TCP_NODELAY, as accepted sockets inherits from it.
+ Fix accept() blocking forever on older kernel versions.
+ Remove a redundant mutex
 
-Kaanapali
+ fs/smb/server/transport_tcp.c | 28 ++++++----------------------
+ 1 file changed, 6 insertions(+), 22 deletions(-)
 
-> +MODULE_LICENSE("GPL");
-> 
-> -- 
-> 2.34.1
-> 
-
+diff --git a/fs/smb/server/transport_tcp.c b/fs/smb/server/transport_tcp.c
+index 6e03e93321b8..79319815b2fc 100644
+--- a/fs/smb/server/transport_tcp.c
++++ b/fs/smb/server/transport_tcp.c
+@@ -22,7 +22,6 @@ struct interface {
+ 	struct socket		*ksmbd_socket;
+ 	struct list_head	entry;
+ 	char			*name;
+-	struct mutex		sock_release_lock;
+ 	int			state;
+ };
+ 
+@@ -236,20 +235,14 @@ static int ksmbd_kthread_fn(void *p)
+ 	unsigned int max_ip_conns;
+ 
+ 	while (!kthread_should_stop()) {
+-		mutex_lock(&iface->sock_release_lock);
+ 		if (!iface->ksmbd_socket) {
+-			mutex_unlock(&iface->sock_release_lock);
+ 			break;
+ 		}
+-		ret = kernel_accept(iface->ksmbd_socket, &client_sk,
+-				    SOCK_NONBLOCK);
+-		mutex_unlock(&iface->sock_release_lock);
+-		if (ret) {
+-			if (ret == -EAGAIN)
+-				/* check for new connections every 100 msecs */
+-				schedule_timeout_interruptible(HZ / 10);
++		ret = kernel_accept(iface->ksmbd_socket, &client_sk, 0);
++		if (ret == -EINVAL)
++			break;
++		if (ret)
+ 			continue;
+-		}
+ 
+ 		if (!server_conf.max_ip_connections)
+ 			goto skip_max_ip_conns_limit;
+@@ -458,10 +451,6 @@ static void tcp_destroy_socket(struct socket *ksmbd_socket)
+ 	if (!ksmbd_socket)
+ 		return;
+ 
+-	/* set zero to timeout */
+-	ksmbd_tcp_rcv_timeout(ksmbd_socket, 0);
+-	ksmbd_tcp_snd_timeout(ksmbd_socket, 0);
+-
+ 	ret = kernel_sock_shutdown(ksmbd_socket, SHUT_RDWR);
+ 	if (ret)
+ 		pr_err("Failed to shutdown socket: %d\n", ret);
+@@ -532,9 +521,6 @@ static int create_socket(struct interface *iface)
+ 		goto out_error;
+ 	}
+ 
+-	ksmbd_socket->sk->sk_rcvtimeo = KSMBD_TCP_RECV_TIMEOUT;
+-	ksmbd_socket->sk->sk_sndtimeo = KSMBD_TCP_SEND_TIMEOUT;
+-
+ 	ret = kernel_listen(ksmbd_socket, KSMBD_SOCKET_BACKLOG);
+ 	if (ret) {
+ 		pr_err("Port listen() error: %d\n", ret);
+@@ -604,12 +590,11 @@ static int ksmbd_netdev_event(struct notifier_block *nb, unsigned long event,
+ 		if (iface && iface->state == IFACE_STATE_CONFIGURED) {
+ 			ksmbd_debug(CONN, "netdev-down event: netdev(%s) is going down\n",
+ 					iface->name);
++			kernel_sock_shutdown(iface->ksmbd_socket, SHUT_RDWR);
+ 			tcp_stop_kthread(iface->ksmbd_kthread);
+ 			iface->ksmbd_kthread = NULL;
+-			mutex_lock(&iface->sock_release_lock);
+-			tcp_destroy_socket(iface->ksmbd_socket);
++			sock_release(iface->ksmbd_socket);
+ 			iface->ksmbd_socket = NULL;
+-			mutex_unlock(&iface->sock_release_lock);
+ 
+ 			iface->state = IFACE_STATE_DOWN;
+ 			break;
+@@ -672,7 +657,6 @@ static struct interface *alloc_iface(char *ifname)
+ 	iface->name = ifname;
+ 	iface->state = IFACE_STATE_DOWN;
+ 	list_add(&iface->entry, &iface_list);
+-	mutex_init(&iface->sock_release_lock);
+ 	return iface;
+ }
+ 
 -- 
-With best wishes
-Dmitry
+2.43.0
+
 
