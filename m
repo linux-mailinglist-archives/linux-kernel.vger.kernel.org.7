@@ -1,55 +1,56 @@
-Return-Path: <linux-kernel+bounces-895571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92822C4E4D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 15:09:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D2C6C4E4E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 15:11:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D533634CD77
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:09:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7DA5188E763
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:10:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A40F31076A;
-	Tue, 11 Nov 2025 14:09:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C835307ACF;
+	Tue, 11 Nov 2025 14:09:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="V4MENSUm"
-Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aI9bp722"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FB6B30EF87
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 14:09:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA9D23128AA;
+	Tue, 11 Nov 2025 14:09:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762870157; cv=none; b=soAxcFNgAdKkqd7SNIwCbn9+kfwJEgmaEZ4KhbSWiaboxaAJ0gCZmja1nr5SfOztRTWU9DPq0e00YM8YJujwbWpjkwXOo0JaS6jdQM4Ez1wIGXuTSE8uOirr73NKtBQpNDNSKWOnY/+4+Dihkt8ngh1froy7uqARLoU3PpJkWoY=
+	t=1762870172; cv=none; b=Cmx3+v+mrrmkmw+lGwlHXo7P6CLusKEEwESL05rj3L3oFfDJ9UB//c/ZP7pKnt7VN18R5bmvHk1lUQmlKaQgf+j55WaUazrYz29S12DxGpoTiRFPI2FSQnkFcYmxYkdiAcic2t8aKWOPsibRMyp7BL3UTQOpqQLtDMO+glP6D7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762870157; c=relaxed/simple;
-	bh=Nwdrbwu9R6Ra9hLkS3f4v3Kvermla15iatxPAyjp2Jg=;
+	s=arc-20240116; t=1762870172; c=relaxed/simple;
+	bh=9XZLn3hwcBgcwon0Do7gSmY8VNlXuhNqzv0X7kReqCU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GtzLwmmpfAhsu9W5Q9qhRWQgX3xHk+0PxP4HMZWpfPrX0HXRp6IQlRVR7Vz6EvdNJNO7wwvNjLITVmkJvivj6ihNMufnXy4Msq/Tc2waPJc2aKXn+zOsUMg9VHJ+xtka1g+cIBeS4TAQKYdKeZNtQ5Ny7m8sef7jtwBWTNkOxTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=V4MENSUm; arc=none smtp.client-ip=115.124.30.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1762870149; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-	bh=3fEIfMGG/me+YTdgYV6rgKBoM5/zmURUXuXqu6nFbg0=;
-	b=V4MENSUmX0oDkt9tf4NA31EeBxT49jAtTzcZxa+25eb7lSRmPadScexKLbkXiU2zyWhMZC4Udsxq4s0I6i3Mg9EpTynDsDv1RY1Wpvrflh69T8uwZsL34ORuLX6iSoaSC59zfk/zDqgLNWdd+DLLR/wTtIQDk9cKsWxWZbdLzJk=
-Received: from localhost(mailfrom:feng.tang@linux.alibaba.com fp:SMTPD_---0WsC-u-V_1762870149 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 11 Nov 2025 22:09:09 +0800
-Date: Tue, 11 Nov 2025 22:09:08 +0800
-From: Feng Tang <feng.tang@linux.alibaba.com>
-To: Petr Mladek <pmladek@suse.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Lance Yang <ioworker0@gmail.com>, paulmck@kernel.org,
-	Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] watchdog: add lockup_sys_info sysctl to dump sys
- info on system lockup
-Message-ID: <aRNDhCZR4uRL5IzJ@U-2FWC9VHC-2323.local>
-References: <20251106023032.25875-1-feng.tang@linux.alibaba.com>
- <20251106023032.25875-4-feng.tang@linux.alibaba.com>
- <aRM5bXr4erUqpl_e@pathway>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Mg2Sd55ZwzGoDjr50TnO4HZAdJYX86hkrPIH1+b4hfUwllkiFALBA1WNxTAIf4tbqmkPUPCrodLOvlrnCmxg2Qae93vvu310m+MjLdY+O8/1TOrfYTQBFDOvcmBmwiwhwklqJ81b80ESC3WUtlcmSRsNFTuwf7YqDiXWW+o2aMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aI9bp722; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21FB0C19425;
+	Tue, 11 Nov 2025 14:09:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762870172;
+	bh=9XZLn3hwcBgcwon0Do7gSmY8VNlXuhNqzv0X7kReqCU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aI9bp722FUSmUJr6eRfL2udVl2sgClyb0uGJH7X9OkkvEC63NbLuQrCp2bZIIxIgp
+	 HHY1L+UcFDKGMIHcaEdJR9GBIlQ3nkKto24GfmVmbaGF9dta80rsZcDesI5TEr32/e
+	 bI+JKTf5CPOzywaJuV5mtYGh1mMS4Ukq4JxAjrr+HGcUw2UNlL4fLfPbEysi1S7t5w
+	 9TS3i5V8atu9+e9UYnV/mdFCIKnmQQoIWK7vqZxD6nlF2GqzrE1sQUZzmMAKf7TNJD
+	 EAZ5dhobTzWb1i/4X7neVkJgbFyOz8CTAoC/SO416Qz113HMTc+Mai0exGaY09LynE
+	 BnrrHmxnnq/5A==
+Date: Tue, 11 Nov 2025 19:39:19 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Siddharth Vadapalli <s-vadapalli@ti.com>
+Cc: kernel test robot <lkp@intel.com>, 
+	Chen Wang <unicorn_wang@outlook.com>, oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: drivers/pci/controller/cadence/pci-j721e.c:648:undefined
+ reference to `cdns_pcie_host_disable'
+Message-ID: <znkojajaxfudm3xn43ed4my5fcwyszv4gxajnizonqu3pf5t6g@bph3av5mzmg7>
+References: <202511111705.MZ7ls8Hm-lkp@intel.com>
+ <h4yvzfhpd7exv2o2oxed7ocobn5zpwmtvzoxffj4rqsiq2dqfr@sobzxhwa5c23>
+ <cc48c040dac2edc27b453bc482d62309cea25c06.camel@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,99 +59,96 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <aRM5bXr4erUqpl_e@pathway>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <cc48c040dac2edc27b453bc482d62309cea25c06.camel@ti.com>
 
-On Tue, Nov 11, 2025 at 02:26:05PM +0100, Petr Mladek wrote:
-> On Thu 2025-11-06 10:30:32, Feng Tang wrote:
-> > When soft/hard lockup happens, developers may need different kinds of
-> > system information (call-stacks, memory info, locks, etc.) to help debugging.
+On Tue, Nov 11, 2025 at 05:09:25PM +0530, Siddharth Vadapalli wrote:
+> On Tue, 2025-11-11 at 16:24 +0530, Manivannan Sadhasivam wrote:
+> 
+> Hello Mani,
+> 
+> > + Siddharth
+> 
+> Thank you for notifying me of this.
+> 
 > > 
-> > Add 'lockup_sys_info' sysctl knob to take human readable string like
-> > "tasks,mem,timers,locks,ftrace,...", and when system lockup happens, all
-> > requested information will be dumped. (refer kernel/sys_info.c for more
-> > details).
+> > On Tue, Nov 11, 2025 at 05:28:54PM +0800, kernel test robot wrote:
+> > > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+> > > head:   4427259cc7f7571a157fbc9b5011e1ef6fe0a4a8
+> > > commit: 1c72774df028429836eec3394212f2921bb830fc PCI: sg2042: Add Sophgo SG2042 PCIe driver
+> > > date:   8 weeks ago
+> > > config: loongarch-randconfig-r113-20251110 (https://download.01.org/0day-ci/archive/20251111/202511111705.MZ7ls8Hm-lkp@intel.com/config)
+> > > compiler: loongarch64-linux-gcc (GCC) 15.1.0
+> > > reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251111/202511111705.MZ7ls8Hm-lkp@intel.com/reproduce)
+> > > 
+> > > If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> > > the same patch/commit), kindly add following tags
+> > > > Reported-by: kernel test robot <lkp@intel.com>
+> > > > Closes: https://lore.kernel.org/oe-kbuild-all/202511111705.MZ7ls8Hm-lkp@intel.com/
+> > > 
+> > > All errors (new ones prefixed by >>):
+> > > 
+> > >    loongarch64-linux-ld: drivers/pci/controller/cadence/pci-j721e.o: in function `j721e_pcie_remove':
+> > > > > drivers/pci/controller/cadence/pci-j721e.c:648:(.text+0x83c): undefined reference to `cdns_pcie_host_disable'
+> > > 
 > > 
-> > --- a/kernel/watchdog.c
-> > +++ b/kernel/watchdog.c
-> > @@ -53,6 +54,13 @@ static int __read_mostly watchdog_hardlockup_available;
-> >  struct cpumask watchdog_cpumask __read_mostly;
-> >  unsigned long *watchdog_cpumask_bits = cpumask_bits(&watchdog_cpumask);
-> >  
-> > +/*
-> > + * A bitmask to control what kinds of system info to be printed when
-> > + * system lockup is detected, it could be task, memory, lock etc. Refer
-> > + * include/linux/sys_info.h for detailed bit definition.
-> > + */
-> > +static unsigned long lockup_si_mask;
-> > +
-> >  #ifdef CONFIG_HARDLOCKUP_DETECTOR
-> >  
-> >  # ifdef CONFIG_SMP
-> > @@ -240,6 +248,7 @@ void watchdog_hardlockup_check(unsigned int cpu, struct pt_regs *regs)
-> >  				clear_bit_unlock(0, &hard_lockup_nmi_warn);
-> >  		}
+> > From .config:
+> > 
+> > CONFIG_PCIE_CADENCE=y
+> > CONFIG_PCIE_CADENCE_HOST=m
+> > CONFIG_PCIE_CADENCE_EP=y
+> > CONFIG_PCIE_CADENCE_PLAT=y
+> > # CONFIG_PCIE_CADENCE_PLAT_HOST is not set
+> > CONFIG_PCIE_CADENCE_PLAT_EP=y
+> > CONFIG_PCIE_SG2042_HOST=m
+> > CONFIG_PCI_J721E=y
+> > # CONFIG_PCI_J721E_HOST is not set
+> > CONFIG_PCI_J721E_EP=y
+> > 
+> > PCI_J721E selects PCIE_CADENCE_HOST only if PCI_J721E_HOST is selected,
+> > otherwise, it will not select it. This will take care of the dependency between
+> > PCI_J721E and PCIE_CADENCE_{HOST/EP}.
+> > 
+> > But if PCIE_CADENCE_HOST is selected as a module by other drivers like,
+> > CONFIG_PCIE_SG2042_HOST=m, then if PCI_J721E is selected as a built-in using
+> > CONFIG_PCI_J721E_EP=y, it results in this build error as the built-in driver
+> > becomes dependent on a symbol from a loadable module.
 > 
-> The code right above printed backtaces from all CPUs when
-> sysctl_hardlockup_all_cpu_backtrace.
-> 
-> > +		sys_info(lockup_si_mask);
-> 
-> And sys_info() could print it again when SYS_INFO_ALL_BT
-> bit is set. The hard lockup detector should use the same
-> trick as the softlockup detector in watchdog_timer_fn().
+> While I don't deny the build error associated with the above config, it is
+> an invalid config in the sense that the Glue drivers for two different
+> devices are being enabled. This seems to be a generic issue wherein
+> multiple drivers tend to depend on a library/common driver. How is it
+> handled in such cases?
 
-Yes, I missed that. Thanks for the catching!
+AFAIK, the common library should be built-in to avoid issues like this.
 
-> >  		if (hardlockup_panic)
-> >  			nmi_panic(regs, "Hard LOCKUP");
-> >  
-> > @@ -746,9 +755,11 @@ static enum hrtimer_restart watchdog_timer_fn(struct hrtimer *hrtimer)
-> >  	unsigned long touch_ts, period_ts, now;
-> >  	struct pt_regs *regs = get_irq_regs();
-> >  	int duration;
-> > -	int softlockup_all_cpu_backtrace = sysctl_softlockup_all_cpu_backtrace;
-> > +	int softlockup_all_cpu_backtrace;
-> >  	unsigned long flags;
-> >  
-> > +	softlockup_all_cpu_backtrace = (lockup_si_mask & SYS_INFO_ALL_BT) ?
-> > +					1 : sysctl_softlockup_all_cpu_backtrace;
-> >  	if (!watchdog_enabled)
-> >  		return HRTIMER_NORESTART;
-> >  
-> > @@ -846,6 +857,7 @@ static enum hrtimer_restart watchdog_timer_fn(struct hrtimer *hrtimer)
-> >  		}
-> >  
-> >  		add_taint(TAINT_SOFTLOCKUP, LOCKDEP_STILL_OK);
-> > +		sys_info(lockup_si_mask & ~SYS_INFO_ALL_BT);
-> >  		if (softlockup_panic)
-> >  			panic("softlockup: hung tasks");
-> >  	}
-> > @@ -1178,6 +1190,13 @@ static const struct ctl_table watchdog_sysctls[] = {
-> >  		.mode		= 0644,
-> >  		.proc_handler	= proc_watchdog_cpumask,
-> >  	},
-> > +	{
-> > +		.procname	= "lockup_sys_info",
-> > +		.data		= &lockup_si_mask,
-> > +		.maxlen         = sizeof(lockup_si_mask),
-> > +		.mode		= 0644,
-> > +		.proc_handler	= sysctl_sys_info_handler,
-> > +	},
+> Is there a notion of reordering configs to ensure that such build errors
+> are avoided?
 > 
-> There already exists:
+> If PCI_J721E_EP was selected as 'y' before 'PCI_SG2042_HOST' being selected
+> as 'm', it would have resulted in 'PCIE_CADENCE_EP' being selected as 'y'
+> and this won't cause a build error even with 'PCI_SG2042_HOST' selected as
+> 'm'.
 > 
-> 	+ hardlockup_all_cpu_backtrace
-> 	+ hardlockup_panic
-> 	+ softlockup_all_cpu_backtrace
-> 	+ softlockup_panic
+> > 
+> > I guess, we should force PCIE_CADENCE_{HOST/EP} to be 'bool' as it is getting
+> > selected by multiple drivers.
 > 
-> IMHO, it would make sense to introduce separate:
+> This will defeat the purpose of the series that enabled loadable module
+> support for the pci-j721e.c driver and the pcie-cadence-host/ep.c drivers.
 > 
-> 	+ hardlockup_sys_info
-> 	+ softlockup_sys_info
 
-Make sense to me, will do.
+Your 'pci-j721e.c' can still be a loadable module, only the common library will
+be built-in, which is not that bad.
 
-Thanks,
-Feng
+> Is there a way to address the issue by updating Kconfig? Specifically, is
+> there a way to re-order the 'select' scheme to fix the build error?
+> 
+
+Not that I'm aware of atm.
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
