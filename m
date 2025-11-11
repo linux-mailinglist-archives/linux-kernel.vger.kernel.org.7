@@ -1,157 +1,214 @@
-Return-Path: <linux-kernel+bounces-894787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95AF7C4C19C
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 712BEC4C19B
 	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 08:24:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23FE6189C4AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 07:18:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 206D03BF1C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 07:18:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D28E329C66;
-	Tue, 11 Nov 2025 07:18:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C0F4313E15;
+	Tue, 11 Nov 2025 07:18:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WS4zEskl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JS4l+i7O"
+Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AAB72459C9;
-	Tue, 11 Nov 2025 07:17:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE01322069A
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 07:18:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762845481; cv=none; b=MOibc688Urun4SWlynkh4r1il5rMiFxygJ/k/48CDU/eXNYAKfz90ILjuVFN5nJfVGIW0i5A7FPhH+nlaZWz6V6/zPy4BtylxQAXOiZoSDbFxmR1MTKB2UeNllaQVpPpBl3iToSrhJXsgc/Begotia+0PC4HFm0WzyZCRKjxfr0=
+	t=1762845510; cv=none; b=MwbWIQLkonh1a+64R2KRDFysd3GMkaHsBAhFPIS5St/AYAjq7v3raYVRy46vpN7OpZF5TDp8L1MmSF7yh/oO6TsPbANrOtqIDt89ENtmL+rTh8/tnw1aFSQX56oQsr3FJvlBvY1Qf/9+bgM7Y49+Twqc1pbzdRsCBIzpfK8Jix0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762845481; c=relaxed/simple;
-	bh=nFjY/NLOGH3SLyK9YM2DaehQQgiJfQ5DDVKyBdysy0o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uCbLW1f/MNvbaZeg51vuOvc8TDKIN7lyHOF4x5JDCvteovhfjwM6FKaj+8UjAT0pR9RTdOfMYh9JBJj/BOjXAjXV3MZBMBNLWoHAr8SJUyBH5TlSIxWNr0prr0w7KJloZF/QkJfvG/0zrN45eodymcIx4UFStvIy4FhsS1CG58o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WS4zEskl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FB9BC16AAE;
-	Tue, 11 Nov 2025 07:17:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762845479;
-	bh=nFjY/NLOGH3SLyK9YM2DaehQQgiJfQ5DDVKyBdysy0o=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=WS4zEskl4bUf8swlIe3uH4R/1Suhu4fYqB0rboWe+cYaPUxRkyM3a9SUC7gXqTt/y
-	 LcNw4SA3wblG5mR8HRNZTAELbBV98NNEn/Q3K1rHkeWwMKwZSOOsWAgk3+bhdLh2Cy
-	 wCU//SRdM1R3WJAvsfjTeGYWV1JHLyuKvlWGV9S3oLtQXXGp0wNrKUCHKAYjF3P+rY
-	 H4Qw4t2eiaawqBe+d0/v+j1KfvzGYLHGVPjstkJmXh7FG3cidtsVINCZDEK0zE/md9
-	 cG/tA0VFNfrF6mBNPTIULjH4fae2FhXR4NjOZnF7znhYahcetesXepXrFAUGi0LSEP
-	 KRoU0vWF+ff9g==
-Message-ID: <d6ba62ec-25b2-4c51-8915-8e69d76b610e@kernel.org>
-Date: Tue, 11 Nov 2025 08:17:52 +0100
+	s=arc-20240116; t=1762845510; c=relaxed/simple;
+	bh=QjeAK/V1hSOIidYt60eVOijnzpDc5EzkM8SbDMhoEUI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MrzIIwNXNR77+W0A+4nqByuyrgLwZiabBq8MfbsJ4+2aUGzuji3w9Jd6jLMVdYm3Lglys5X2laD0EUpiJmlCRSm4vDyzMLel1wHoC8arXCIsj44J73xQu7IVlM1M+LOZ3Wqa9h3CmMa8mC8vXNiFE93UOR5KCam29npr0UXkEXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=JS4l+i7O; arc=none smtp.client-ip=209.85.210.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-7c6d13986f8so358500a34.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 23:18:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1762845508; x=1763450308; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4DNECm8WO7Z3HdUuOFhmBYrNsRLb25kfzzIgggmDWEs=;
+        b=JS4l+i7ObUbzkg89Yy1J16HnfJmHKWc/oCzaL8bNbup1eDcCo0K5n5Q7jyct/uFEkR
+         E0evnHR7N5eryey1pQ89ErzPcuKEb1HYxJhQDENSve9JiNw8cjyDft/fqDafkRD3e9M2
+         gBfIXzrA3aB3AWep1q93PNn0aH8ns2VToI0Cc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762845508; x=1763450308;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=4DNECm8WO7Z3HdUuOFhmBYrNsRLb25kfzzIgggmDWEs=;
+        b=S/fKC3AFaXnqhkn3UsRH2oXYd6AlioG0gjYsjaSMIu/QFBq4t8padcrmrNBUC7WZrN
+         OKjP6IsEe5krpfeRWwJUHqEeim4UZk+rRzSZCOPS59IlUXth4bS6ROAYO6P58+krrSv6
+         +rFBkO63ynZPlCIDo2/h3lurXjeeuTYY9cfm+vB8ysKYnILWPn3iEC0N90Di8rlOWGMQ
+         aaAaXnAh4547WI0IATXIWy0syO04q0G4bsY6c2aEQW5R1awbknYPclANkYg595KFv9OU
+         eEG1kj89q5qwCdiXPfiAk2dJCQsA23ErO6JnvvOZQIhYK9t8p7grOV0BIcIVyenDqcX6
+         lOcA==
+X-Forwarded-Encrypted: i=1; AJvYcCWItfT86uAgktX4d3cSy2zI6Ovj5nevlw2OY79tjDjaMeCo+/DhMcL22m3LwJRlt0s58MsyPduUWVUdKdI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhyKwQaAPrNLWY8ai+0vpP7T0yE8T1qHIPAnybirve7GuHUIsr
+	ycLU/9Vp2aKmGKkTvbI+PY3JYyvBVtPfdGYYl70gmbWsgQv5niQ4w7jitYTJANvEb1Sqi7PS6D9
+	eHshWOkFu911B4sVt25g7Bsnp238fEKT6uU0koE8p
+X-Gm-Gg: ASbGncsouL62wNqU440gIYl1ZPXxrWyFslhWUL15CpBPg16QxK+V+KktVY9fFJARarj
+	HVfg91paSzMFSwNx27u3PB3KcMy3wBv68uQk8UvdBAGN4Po79ZoOU6RyELvF1Mzt0HB6C+7mrqJ
+	+fI5zeFByvxWfdF2py3izzpt5eIv1aN3YRB5TAWWbFXT5a6HNByUs6TPCIuRntCcEi3/cVqsFno
+	nclZ5oIR1VWTPyDqHxN4GHFlhLzqDtePqr5DYqr0UsUVWudLNRONxDwWfpZxZPOHX+CzpLxcmfK
+	ClLatySFDGEQqRxBQM5LXp94JJZDuUDuwEXO
+X-Google-Smtp-Source: AGHT+IGFmBeQ1KeQGhBdXMMah9cAVTlZPF7zYgIoM3d6h6tPzR4X9P4PbQV8tIudZI29zZhOnq3tZM6yeAns4b6eY+k=
+X-Received: by 2002:a9d:7f84:0:b0:785:6792:4b3 with SMTP id
+ 46e09a7af769-7c720bfa5b2mr875905a34.10.1762845508048; Mon, 10 Nov 2025
+ 23:18:28 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [EXTERNAL] Re: [PATCH v1 2/2] ASoC: dt-bindings: ti,tas2781: Add
- TAS2568/5806M/5806MD/5830 support
-To: "Xu, Baojun" <baojun.xu@ti.com>
-Cc: "broonie@kernel.org" <broonie@kernel.org>, "tiwai@suse.de"
- <tiwai@suse.de>,
- "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
- "13916275206@139.com" <13916275206@139.com>,
- "Ding, Shenghao" <shenghao-ding@ti.com>,
- "linux-sound@vger.kernel.org" <linux-sound@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
- "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
- <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "Yi, Ken" <k-yi@ti.com>, "Lo, Henry" <henry.lo@ti.com>,
- "Chen, Robin" <robinchen@ti.com>, "Wang, Will" <will-wang@ti.com>,
- "jim.shil@goertek.com" <jim.shil@goertek.com>,
- "toastcheng@google.com" <toastcheng@google.com>,
- "chinkaiting@google.com" <chinkaiting@google.com>
-References: <20251108110759.2409-1-baojun.xu@ti.com>
- <20251108110759.2409-2-baojun.xu@ti.com>
- <20251109-heavenly-observant-quetzal-b1bead@kuoka>
- <ecc69a98a23d406ea1eada62144415fc@ti.com>
- <035d6c35-c27a-4f5c-8603-ea5857d78e63@kernel.org>
- <460cd1da65bd42be890e69f26402670b@ti.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <460cd1da65bd42be890e69f26402670b@ti.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20251111093426.1.I76ee34ac45e1469dbeb11de0d1e47d794af7dc88@changeid>
+In-Reply-To: <20251111093426.1.I76ee34ac45e1469dbeb11de0d1e47d794af7dc88@changeid>
+From: Pin-yen Lin <treapking@chromium.org>
+Date: Tue, 11 Nov 2025 15:18:16 +0800
+X-Gm-Features: AWmQ_bkDI05jvVfre0pjIY8zr4xu_0hzg8oICEOEmixXEUt8EEYFfI9I8Iu9sd8
+Message-ID: <CAEXTbpc9=Gt7QrFrtV60+EvKdmBGsVpJxg7yYaa6HfuGGB3OqQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: HID: i2c-hid: elan: Introduce FocalTech FT8112
+To: daniel_peng@pegatron.corp-partner.google.com
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org, 
+	LKML <linux-kernel@vger.kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/11/2025 08:12, Xu, Baojun wrote:
-> 
->> ________________________________________
->> From: Krzysztof Kozlowski <krzk@kernel.org>
->> Sent: 10 November 2025 15:11
->> To: Xu, Baojun
->> Cc: broonie@kernel.org; tiwai@suse.de; andriy.shevchenko@linux.intel.com; 13916275206@139.com; Ding, Shenghao; linux-sound@vger.kernel.org; linux-kernel@vger.kernel.org; lgirdwood@gmail.com; robh@kernel.org; krzk+dt@kernel.org; conor+dt@kernel.org; devicetree@vger.kernel.org; Yi, Ken; Lo, Henry; Chen, Robin; Wang, Will; jim.shil@goertek.com; toastcheng@google.com; chinkaiting@google.com
->> Subject: Re: [EXTERNAL] Re: [PATCH v1 2/2] ASoC: dt-bindings: ti,tas2781: Add TAS2568/5806M/5806MD/5830 support
->>
->>>
->>> Hi Krzysztof,
->>>
->>> Thanks for your review.
->> Do you mean I need to add a text file,
->> for example "ti,tas2781.txt", include the required properties,
->> and the example of the devicetree node?
->>>
->>
->> Did you read the actual resources I pointed you? I don't know how to
->> express it clearer.
->>
-> Hi Krzysztof,
-> 
-> Thanks for your review.
-> Do you mean I need to add an rst file in Documentation\sound\codecs?
+Hi Daniel,
 
-Where anything like that is explained in the docs I linked? Do you
-understand what patch I commented on and what documented I linked?
+On Tue, Nov 11, 2025 at 9:34=E2=80=AFAM
+<daniel_peng@pegatron.corp-partner.google.com> wrote:
+>
+> From: Daniel Peng <Daniel_Peng@pegatron.corp-partner.google.com>
+>
+> The FocalTech FT8112 touch screen chip same as Ilitek ili2901 controller
+> has a reset gpio. The difference is that they have different
+> post_gpio_reset_on_delay_ms.
+> FocalTech FT8112 also uses 3.3V power supply.
+>
+> Signed-off-by: Daniel Peng <Daniel_Peng@pegatron.corp-partner.google.com>
+> ---
+>
+>  .../bindings/input/focaltech,ft8112.yaml      | 66 +++++++++++++++++++
+>  MAINTAINERS                                   |  1 +
+>  2 files changed, 67 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/input/focaltech,ft8=
+112.yaml
+>
+> diff --git a/Documentation/devicetree/bindings/input/focaltech,ft8112.yam=
+l b/Documentation/devicetree/bindings/input/focaltech,ft8112.yaml
+> new file mode 100644
+> index 000000000000..391825b24fcb
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/input/focaltech,ft8112.yaml
+> @@ -0,0 +1,66 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/input/focaltech,ft8112.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: FocalTech FT8112 touchscreen controller
+> +
+> +maintainers:
+> +  - Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-Best regards,
-Krzysztof
+List yourself as the maintainer of this binding file instead of the
+subsystem maintainer.
+> +
+> +description:
+> +  Supports the FocalTech FT8112 touchscreen controller.
+> +  This touchscreen controller uses the i2c-hid protocol with a reset GPI=
+O.
+> +
+> +allOf:
+> +  - $ref: /schemas/input/touchscreen/touchscreen.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - focaltech,ft8112
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  panel: true
+> +
+> +  reset-gpios:
+> +    maxItems: 1
+> +
+> +  vcc33-supply: true
+> +
+> +  vccio-supply: true
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - vcc33-supply
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/gpio/gpio.h>
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +
+> +    i2c {
+> +      #address-cells =3D <1>;
+> +      #size-cells =3D <0>;
+> +
+> +      touchscreen@38 {
+> +        compatible =3D "focaltech,ft8112";
+> +        reg =3D <0x38>;
+> +
+> +        interrupt-parent =3D <&pio>;
+> +        interrupts =3D <15 IRQ_TYPE_LEVEL_LOW>>;
+
+You have an extra '>' here. This should be caught by `make
+dt_binding_check`. Please check [1] and [2], and make sure the patches
+are tested before you send them out.
+
+[1]: https://www.kernel.org/doc/Documentation/devicetree/writing-schema.md
+[2]: https://www.linaro.org/blog/tips-and-tricks-for-validating-devicetree-=
+sources-with-the-devicetree-schema/
+> +
+> +        reset-gpios =3D <&pio 126 GPIO_ACTIVE_LOW>;
+> +        vcc33-supply =3D <&pp3300_tchscr_x>;
+> +      };
+> +    };
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index ddecf1ef3bed..69f54515fe98 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -12326,6 +12326,7 @@ T:      git git://git.kernel.org/pub/scm/linux/ke=
+rnel/git/dtor/input.git
+>  F:     Documentation/devicetree/bindings/input/
+>  F:     Documentation/devicetree/bindings/serio/
+>  F:     Documentation/input/
+> +F:     drivers/hid/
+
+Why did you add this?
+
+>  F:     drivers/input/
+>  F:     include/dt-bindings/input/
+>  F:     include/linux/gameport.h
+
+Regards,
+Pin-yen
 
