@@ -1,55 +1,94 @@
-Return-Path: <linux-kernel+bounces-895344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5370FC4D8BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:58:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C67A0C4D8CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:59:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3148B1887028
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:57:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 698851889EF2
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:57:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 186B9223DD6;
-	Tue, 11 Nov 2025 11:56:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFF81350A0E;
+	Tue, 11 Nov 2025 11:56:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dcjC579v"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Giy6O0F9"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69CFC2DC77F;
-	Tue, 11 Nov 2025 11:56:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DB672E6116
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 11:56:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762862186; cv=none; b=a0IitiOLQ+kWNkn8mwy3Dj53xWbCjTecJ5hZDx52HZ1FuU70G617DUIxluy9z3l2Khd5QN4mv3mH9W0G9rk/YhUH/L0Bx9nM/XondWOkFDxyWP5yNcK8Fi7JFRuAZNp7+GQtAdbTHrGCkXdoCU1C78Y5kTy/lRm4vmdUGTz9ENo=
+	t=1762862194; cv=none; b=tXo4iH7fHmzYIENtO4KcTa4RIf1B9RArb3ZWr23E8gKaN0eKhO0J7tQ3WxCQ+31OQ8EY6XJABjqOZCYx037PuphZH//Ffq7fqfM8GzNKTebrF5UJ8bYxwDQwCpx8VDVSl+yjnXgt6bhfoJBXQ61x+SIYycUVrEg7y89AMbW/iEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762862186; c=relaxed/simple;
-	bh=IKB9vWsshzXmfFlZ6Q4oeB5bCq2C+SPZf5IHi6DItvc=;
+	s=arc-20240116; t=1762862194; c=relaxed/simple;
+	bh=7cpCvyszEn5HOezxZLBqqcsmZ2uT7ZtZtkiuIpkUXg4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=spFWzWlm5Wtu2lLfWclT3OwcFQQiECcIeUNwkPIGVAWdS5NjLjV22YjqxeCdf70QX0esIUYAvQzMtokv09vpV7tpbl4KWHZf18zdgpaQVwWnDBFbb4Tmx6rA3AlXKDtm5vNQUQwUwm+SVKX++WDktKXb/7/tMENPKiZzoMZU/rI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dcjC579v; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8834DC19421;
-	Tue, 11 Nov 2025 11:56:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762862186;
-	bh=IKB9vWsshzXmfFlZ6Q4oeB5bCq2C+SPZf5IHi6DItvc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dcjC579vfGHO89qGmm51Xn6eLKcxj2OwTQu+k1C7wBw56kRuXOGF/uCxmhjsMiaqL
-	 TjcGwd04EDKVIQ7heVY92rzMKriQ5U943jTYrwvGZkoOBPfEtQZAKA4vEGYngD2hQQ
-	 pIsuqaAHWjq2xOLN6xce9256Yotlh3Jg0IS+f0cCixgghd5+hNqyVrUM1NvW8feZIw
-	 qzrcLzKjT9juF8RoV887FJZJu1AtYldrX4Ya4SVN6BP8a3f1hSWUTEPkWcHUadQh5X
-	 aYysnU4XTGbJjWQSi/0tm0IvfbEhDr1/M0suiTV/BAeejbYfYx1AH8yK1jvTZLXAP0
-	 GKyo76sFf0Mqg==
-Date: Tue, 11 Nov 2025 13:56:21 +0200
-From: Leon Romanovsky <leon@kernel.org>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Zhu Yanjun <zyjzyj2000@gmail.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH][next] RDMA/rxe: Avoid -Wflex-array-member-not-at-end
- warnings
-Message-ID: <20251111115621.GO15456@unreal>
-References: <aRKu5lNV04Sq82IG@kspp>
+	 Content-Type:Content-Disposition:In-Reply-To; b=CCywbt+0pkvIbMvDE7BBwb+Evsw+jxVZvnN2a7N34d8eE6g2cyJJGkwDpnX8BZgiLRJpFElDjzuQSs4pejGAFjJfEw0EaytKCPhW7R9oL/5reJE1tSstt9kz+hAC5aoaQ9LFtX65Gcrt/E6uVcNc8sUYclRMvitE8FrdbR3tbQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Giy6O0F9; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-42b2dd19681so622038f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 03:56:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762862191; x=1763466991; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=CJgHQCcCAAMF/dux7/grV0vztHoMiGEbVl3yeix1xGI=;
+        b=Giy6O0F98hm+bOKubD841CwYNu7joAPoUqyh55X85IVsqkQvraqRcWzFr24lNHUgyO
+         wvnfQXZOvtwURhzwQopBbB0D8NqI0DZlMiHVaerEuZBWABDvaEHf/z6o35jEwblBVUCQ
+         +7PTDy8qOBbTFgFX/C4VCcfiU6QV58uyiIAPXNI4G//yT8FRYnGhMSHQSEjDAgGUOW7x
+         5HtqCVENpciSPf3UETxkf9PfTniWDpsrQ5TPlPbQlOvtCwcbNRsI5v7oaCX+gjys97kO
+         sHDUBl0v1+ulaAoTxkpajUAL++4aLvoiPs8crcpuNyVG+ccC0YEnfUEiQrJOi+n9ti23
+         UfkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762862191; x=1763466991;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CJgHQCcCAAMF/dux7/grV0vztHoMiGEbVl3yeix1xGI=;
+        b=DQbZDOyvLJIweUrJCK1JVZAYgSRY56zmkNvyi+NRfjO/Z8OkeXB30afsXeKllnzqNJ
+         Rkry1AHedlTxhZdxH6l8p3J3lk0fHzn0uImNL6jmHGckJTpE18SfxnREr1gyrrtm2cvu
+         jVRm5Ai/qizigOdsiQ4+I4/Pg+EKMMx3lF3zreCLgkJyApNfU7WGUEFZBQNdEYELrIhi
+         3BKDkbwTSHhLQS47HupzXs4XS11hB+0EMzakV43ajWlxzp81QUkFKaHklIuQJNABjb+z
+         MMJrbKsrhhBww8bBrBRq/KgsMIw/vaKOn2t3vxcUdwnYPsdOsffouT4H/JGIKNxmyiq6
+         tNbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXSCcJAXddSuGsCkh1kESm+CFFkfMbnVa9cHcfqX1/ixyVU3dMq5UJ+sYA2KZUh8uyLqY2P8mt04oNf9qM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1Qtv1KFjMEkxsrWgYQTiyHPEYZalgbya3VEztFFOoGVijoZK1
+	Wue5KO0RcYV0Uy+0pRAa843rkzYf/MtRYZhoA5t34ltqkBPSTF7UiCIm
+X-Gm-Gg: ASbGncsly5ass7nkwnzGFNRYs7JgiiyiQDmCNlzBXGzbBdDBBzx8WkzrShlRAAlDjLm
+	8qAt68IGI0YSSAwh86mHRmnia5GRYefryWTd+2F+pIvIrSCkjjWTkVWwECF2KDTZACIAarlqJ6G
+	qOgkQLqJh+8UuU3AoMHvDFnP3l4K2oAMZOeiQnoeikmxrEAzYnIxmk4btRm/l93Tn5+ktWeGWIP
+	GpHQnwMJLBHr8AhjKpWPCLz8V9FVhbMu8aBg6/2wLQUr/ZwYihrf4HCFzlyGrV8h/f2ji1jSLq2
+	bNF9t55DbonM6DxGguW/xOY8zb7rEijVmRwYYseq5un7ICSWQJav8waKgEHoXTduWv+xw6LFsKD
+	jLAIuXOlYaym/LXAwcUJ0ArdUA+67kb+2yQQVVMCT3StuYP8qTc6q7SF+824WcnUBv5bbHbzGfu
+	aGEys=
+X-Google-Smtp-Source: AGHT+IEvZuLBPX6umhXQeZ0Rv/NcKeiOMHYrfxaoqE4DsQaZb5ViZ0h12lREx2bg/R/5zR++qTxTlQ==
+X-Received: by 2002:a05:600c:4711:b0:475:d7b8:8505 with SMTP id 5b1f17b1804b1-4777329f181mr60253945e9.7.1762862190504;
+        Tue, 11 Nov 2025 03:56:30 -0800 (PST)
+Received: from skbuf ([2a02:2f04:d104:5e00:40fe:dea4:2692:5340])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4775cdc33c8sm364910025e9.2.2025.11.11.03.56.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Nov 2025 03:56:29 -0800 (PST)
+Date: Tue, 11 Nov 2025 13:56:27 +0200
+From: Vladimir Oltean <olteanv@gmail.com>
+To: Jonas Gorski <jonas.gorski@gmail.com>
+Cc: Vladimir Oltean <vladimir.oltean@nxp.com>, Andrew Lunn <andrew@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC net-next 3/3] net: dsa: deny 8021q uppers on vlan
+ unaware bridged ports
+Message-ID: <20251111115627.orks445s5o2adkbu@skbuf>
+References: <20251110214443.342103-1-jonas.gorski@gmail.com>
+ <20251110214443.342103-4-jonas.gorski@gmail.com>
+ <20251110222501.bghtbydtokuofwlr@skbuf>
+ <CAOiHx=k8q7Zyr5CEJ_emKYLRV9SOXPjrrXYkUKs6=MbF_Autxw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,94 +97,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aRKu5lNV04Sq82IG@kspp>
+In-Reply-To: <CAOiHx=k8q7Zyr5CEJ_emKYLRV9SOXPjrrXYkUKs6=MbF_Autxw@mail.gmail.com>
 
-On Tue, Nov 11, 2025 at 12:35:02PM +0900, Gustavo A. R. Silva wrote:
-> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
-> getting ready to enable it, globally.
+On Tue, Nov 11, 2025 at 11:06:48AM +0100, Jonas Gorski wrote:
+> But I noticed while testing that apparently b53 in filtering=0 mode
+> does not forward any tagged traffic (and I think I know why ...).
 > 
-> Use the new TRAILING_OVERLAP() helper to fix the following warning:
-> 
-> 21 drivers/infiniband/sw/rxe/rxe_verbs.h:271:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> 
-> This helper creates a union between a flexible-array member (FAM) and a
-> set of MEMBERS that would otherwise follow it.
-> 
-> This overlays the trailing MEMBER struct ib_sge sge[RXE_MAX_SGE]; onto
-> the FAM struct rxe_recv_wqe::dma.sge, while keeping the FAM and the
-> start of MEMBER aligned.
-> 
-> The static_assert() ensures this alignment remains, and it's
-> intentionally placed inmediately after the related structure --no
-> blank line in between.
-> 
-> Lastly, move the conflicting declaration struct rxe_resp_info resp;
-> to the end of the corresponding structure.
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
-> ---
->  drivers/infiniband/sw/rxe/rxe_verbs.h | 18 +++++++++++-------
->  1 file changed, 11 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/infiniband/sw/rxe/rxe_verbs.h b/drivers/infiniband/sw/rxe/rxe_verbs.h
-> index fd48075810dd..6498d61e8956 100644
-> --- a/drivers/infiniband/sw/rxe/rxe_verbs.h
-> +++ b/drivers/infiniband/sw/rxe/rxe_verbs.h
-> @@ -219,12 +219,6 @@ struct rxe_resp_info {
->  	u32			rkey;
->  	u32			length;
->  
-> -	/* SRQ only */
-> -	struct {
-> -		struct rxe_recv_wqe	wqe;
-> -		struct ib_sge		sge[RXE_MAX_SGE];
-> -	} srq_wqe;
-> -
->  	/* Responder resources. It's a circular list where the oldest
->  	 * resource is dropped first.
->  	 */
-> @@ -232,7 +226,15 @@ struct rxe_resp_info {
->  	unsigned int		res_head;
->  	unsigned int		res_tail;
->  	struct resp_res		*res;
-> +
-> +	/* SRQ only */
-> +	/* Must be last as it ends in a flexible-array member. */
-> +	TRAILING_OVERLAP(struct rxe_recv_wqe, wqe, dma.sge,
-> +		struct ib_sge		sge[RXE_MAX_SGE];
-> +	) srq_wqe;
+> Is there a way to ask for a replay of the fdb (static) entries? To fix
+> this for older switches, we need to disable 802.1q mode, but this also
+> switches the ARL from IVL to SVL, which changes the hashing, and would
+> break any existing entries. So we need to flush the ARL before
+> toggling 802.1q mode, and then reprogram any static entries.
 
-Will this change be enough?
-
-diff --git a/drivers/infiniband/sw/rxe/rxe_verbs.h b/drivers/infiniband/sw/rxe/rxe_verbs.h
-index fd48075810dd..9ab11421a585 100644
---- a/drivers/infiniband/sw/rxe/rxe_verbs.h
-+++ b/drivers/infiniband/sw/rxe/rxe_verbs.h
-@@ -219,12 +219,6 @@ struct rxe_resp_info {
-        u32                     rkey;
-        u32                     length;
- 
--       /* SRQ only */
--       struct {
--               struct rxe_recv_wqe     wqe;
--               struct ib_sge           sge[RXE_MAX_SGE];
--       } srq_wqe;
--
-        /* Responder resources. It's a circular list where the oldest
-         * resource is dropped first.
-         */
-@@ -232,6 +226,12 @@ struct rxe_resp_info {
-        unsigned int            res_head;
-        unsigned int            res_tail;
-        struct resp_res         *res;
-+
-+       /* SRQ only */
-+       struct {
-+               struct ib_sge           sge[RXE_MAX_SGE];
-+               struct rxe_recv_wqe     wqe;
-+       } srq_wqe;
- };
- 
- struct rxe_qp {
-~
+I'm not clear on what happens. "Broken" FDB entries in the incorrect
+bridge vlan_filtering mode sounds like normal behaviour (FDB entries
+with VID=0 while vlan_filtering=1, or FDB entries with VID!=0 while
+vlan_filtering=0). They should just sit idle in the ARL until the VLAN
+filtering mode makes them active.
 
