@@ -1,185 +1,156 @@
-Return-Path: <linux-kernel+bounces-895687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 193DCC4EB5F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:13:51 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75E37C4EACD
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:07:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68EAC3BF0F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:57:20 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 81CB84FA0EE
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:57:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91FA632ED2C;
-	Tue, 11 Nov 2025 14:57:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CBDE3112C1;
+	Tue, 11 Nov 2025 14:57:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a6jrN+0X"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hvgC//gc"
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBDE92FD7B1
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 14:57:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F9D228FFF6
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 14:57:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762873023; cv=none; b=ZDDMmo9i2ZlMrUo6Q4f0xVG5TAMFw7o1oCCjyDw0ZOJM4aJknMQfN9uQKPl3BJdj8RrYk93s/OCY2AuZ7BoWY35t7vQ8R+e8FjxC6vKLa0Q+39P6Tlyi9QRSD13v71YdvcvP5RPK8iWvXy1/ePLAAe7tpa52nw+UPgSqSW+8H0U=
+	t=1762873071; cv=none; b=HsAtipmzIL3xqdR6vaEyJL6YeWXzZ2a24vFq0JiXrgaTcK5vE1AQhd5BGUgUBqoV/Iu+M8o6sKbPf4vDu1X4OevzezefLEmMs3xqODJ/lxteACOg9rD/ikBOwlpzJlM4ao12ASKGI9LSHfuXYZvX3YtJlR6UJ1j5x12MH1DLCDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762873023; c=relaxed/simple;
-	bh=vKLyZ1/WPsSmzpJ2BPEEFpoo3aKBulZYZQJo6Fa1tqA=;
+	s=arc-20240116; t=1762873071; c=relaxed/simple;
+	bh=zIAJYvFlnqjwTCcDLrwYuCJuNplcR5iWuYDi6bUO91g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dFMpN3RY6t4Mqf/RLeDckQcSz7/t5RQtnpQEBYKUqv71mtuNBwwEOI2QoBtx4F6hd60M+46r2JozKvnlHqS7aNfcsW93i80OF/8JC9MQlMMT/K4LImQ3vS0ZMMWwTcS8/Al49aWncDIlZ8TudE5ZRFNaTjyuKJOX/IJUp9SyRDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a6jrN+0X; arc=none smtp.client-ip=209.85.128.51
+	 Content-Type:Content-Disposition:In-Reply-To; b=hbkmsEOxkdthFpzQNK1ILajf/xq0FTfLmA6Yu/OHfpJIvGEBKqaZL5rnnJNEwx8WN0tL4ZUFA1pqOgL4dPGrqVzE5ZXldRHgI6pliC7/XHgWZd2xIg7P0tQevTKBzhcDWDfEbq/YJ5xzJ4Ja/EqoVFZ73aoOv7URY/A7synzVxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hvgC//gc; arc=none smtp.client-ip=209.85.219.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-477782a42a8so1727855e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 06:57:01 -0800 (PST)
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-87c13813464so55064286d6.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 06:57:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762873020; x=1763477820; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=UHlTUvZj92x7RcHxGH3QRIo+y7WwDlRAXV6qXNutD24=;
-        b=a6jrN+0Xrqa63kjVB9WHV1tvYA3S7fX9p3P5H+I7x+l7QEdFzTOuUQWmMl5iv0UD4G
-         SzjV9dVPQrqoqqBZVdC2h0HRpmDINA/ETP5rnJzvqo3a0e9qo046ERMqRtFZZGKdzaZs
-         HaHUWWwunmkMDvSNT2pVlQMOuF6g8F+plZ5on4DodhHUo8C06Vy/VSKxFu2Z/pc0muMe
-         Vfc8YKYXQqYqnXyODA6zN3IL7NR7IpKjYjQ2s5JloNLL0UJN4H1REb27D6RKFTQeM1aS
-         mDGuqAMl7/bgCjEgolYYuRh+yxdIipHSGiOiAbFimG7FXuKl3R+E7JjiPpieyMuXMEiX
-         ja8w==
+        d=gmail.com; s=20230601; t=1762873069; x=1763477869; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=EnKzJRxUMQswCpgDbIGddFJBw4T/v1HmQefMzOICXxw=;
+        b=hvgC//gcMYgfwyKIKyazLU2Ju7iQ3gyiwwnv/HhMkFq4X4FfJ+VCIm3Rcof/3JNxB/
+         vWIl0ZR2ApsAeP4q+nDJJT60tOSq/4+YyM3Yp3pkKz5CL3IDRh4Q78P8a7RwV4fc7yXX
+         Az/FFS22539TqdhWuJT3ks9CrtIukE2XcGO4mvqjixm2Cjw7XOfTjE0p84P6+IsVhVGc
+         A1/dbW6vU/sjBcptyCF4v4GwzIODDLObD6Wk0/TtNyyj2izScbQHlJCCFz4Tyog/xqJd
+         TXyOalm2Xnok3PstbwsF0P39KQ8MyTeRAeciFlyPerPpYxOl4Ps1MlTBqx5u11J9E7Ed
+         5Axw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762873020; x=1763477820;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UHlTUvZj92x7RcHxGH3QRIo+y7WwDlRAXV6qXNutD24=;
-        b=R40Gx5r1PIRw9T+5WrZ1MrrilR7njlm59lHjjLWHoGbp5KFb6LLn6Rko3qm6dWob0d
-         eIhElwZYARZk6RMNeyotcSrMPqGo1RKnuKcAJuQXwIU6go2VzFhUxXlOpHeDFrnfRel/
-         85Bc6Cf/syqrfRa5nx7VQb7UCRo0HY+PBaaRPd82YwDQWGUi6OYPcC5B7pYSo62ySogM
-         3F6dqNS2J5AhHvB7GY83/MUKRq5E0EZuo1zE4MYedHKaLcoEh/ORzGqb2PPTuweNjyvT
-         Jt32t/6kapZplr8VjJQlY68HRQY+gFHteQnl7maOWJ6ztPaKLakEs8/ZYFFmlEWOaH4y
-         fKUg==
-X-Forwarded-Encrypted: i=1; AJvYcCW4ZGcD2I15gTh5zpMBD6XIYDQoTIY3E2Ta3PGyzfOYGtDQruwiGLeqW24xf4MqR11ZAdOrds9i6eHnY04=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTi7I2CrVEaI8dFU3U8XyFof5tzpxg/TdZyaUL0RoHaKQY0co5
-	Ofx+iPajU0AWiBDQarz3lqjVnDxWJUdofIkG0YKWgvSA0Fu9KoUDXYy4
-X-Gm-Gg: ASbGnct1BErUBGHYtTaLbzENSumDNR9xXD+XrH/jfpA21EFZcMjHoGDAOfqThnfweFa
-	/+Q6X3KsIK7nYhu1crUAFhepsizPPJ5B/0rQcqThcdHd824svH1EptexZ9ctWOeseOc5OA9JtcQ
-	j3tTRxpm+GP4qneFnZvQNdXxQGkb5aypbkGWyT+i0zeUvYrFl5mjP1WH6D4XogHCoTtzHfziocb
-	MPBeini0mle0oITLgUzIAXwO4FFz0AJUgU90xcF5YsDNTMEETKNKjtTc7iGHwVM5SdYI+VMuQf6
-	X8Uu4Kog95fbnovBT3fRW4HtrbRX9Q6X+Tc8CA15OCKpyzvRUyXw70ajpfvJYPFe1OYXY3Ur7iv
-	9YmxWUz0T/FDRH167GRPTFOxUAR6ds4HY3JAG/h4D3qs+g+o+aEZpDljKWZAjERmKGKccQifrK5
-	fHHCk=
-X-Google-Smtp-Source: AGHT+IHsw/1UR7CCCNbfBvlessezxYC2Txq569BxsyavfnqoxbTIchMBkQqP/NHUkOUYRkwBcT2zPw==
-X-Received: by 2002:a05:600c:4ecf:b0:477:7a95:b96b with SMTP id 5b1f17b1804b1-4777a95bbe9mr41805785e9.1.1762873019837;
-        Tue, 11 Nov 2025 06:56:59 -0800 (PST)
-Received: from skbuf ([2a02:2f04:d104:5e00:40fe:dea4:2692:5340])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b30f1cc4esm19171541f8f.36.2025.11.11.06.56.58
+        d=1e100.net; s=20230601; t=1762873069; x=1763477869;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EnKzJRxUMQswCpgDbIGddFJBw4T/v1HmQefMzOICXxw=;
+        b=rD7hw66Jc04GYwR/1gR7YJ9L4QOg8Ng99T9cLY2BXuo+mUNaEQHMEJMTz4PGylHwom
+         keGoi+2RmkU+EnbvFFwdznYn5N5VeASSZKEW/BbZD+hQLPSoDnn0lJgZo3Ks9X9Z3c+Z
+         oo5nj4icH3SXBJPXK0zXVVnmhliBqEN3QDMnltWEk77594lZ+S4F4hEiKeZyGKcA3p86
+         9aoDzSLDlvGoY0IL2lnKtSiIqGepnhvszpJvszR5TBqwfM+si1yK3dhGzxq3JpYhHJvV
+         zXZkxp+ibJD0fPjXCpuWoNFtOoAkVXIX/3Fba2Y3WSDXcj5trl8xKFKvbEaQBPJW2mdK
+         QubA==
+X-Forwarded-Encrypted: i=1; AJvYcCX9qYkvsSOCZZi20r+vU+gv7vL4lLpvLQjp/SymMLIJbh5mdsWm1GsXhzgP7W0kxhVIFVVssbVXVkFn/CI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0ZTDqMz5suaTTuq3tFPuQhBbqAH0fVJTiEQdSL4IUuGpI9HHb
+	eOoRYEi/QCdYw1VFUsYgc+3fSYTzghftGhOfHmnUmxAXOkblQNgUGqzuSlL7gw==
+X-Gm-Gg: ASbGnct4Z2aw+C7v7re29koZrhd7zwT0r6RnRnHuJSdLVcuzEUUqc0mOeyAQx4n2Lab
+	O30ocmtMlCokUudb4IjiPHsFDGjF0OjSW8RgjMdmmlXe/UyvmdzQVlhLZsyL804tFg3nKdmiEOE
+	jSYq9seLBcQelLATcEOZCBTLJt2571m0bH4qv9T/A6cp+pvswrm2/qoUl6UpzEODuGmxs2gAhYB
+	EM8CZajce0mWNA/Ygp9PJiAgJUl+oLdvalM65o444+DH3lnM/pyyq1h3pqMzBM2IxrQKqZeClpo
+	I0nVE2++RFpRx1zNrv2dWROMHiiMIvcJpTb0mG/aPoK7KtJ5N+G4nrGSGRXw8o7LHl45ihGmPqy
+	7luyY8wrkAwkRqKDYc3Gr9zxHVMnOpbIGwvwgyCv/3/Ywy11yS467hKCT6OiMCh6bmD2rLDQ8v2
+	iAiiZe0hevePd8ZfVGzRMXimHo
+X-Google-Smtp-Source: AGHT+IElMIyji7uPUvw6aoJovAxjkcTZAsKXd19Q2rmtiC7uMfNHOttDD/l5SXanUGpE43v9DnBlxw==
+X-Received: by 2002:ad4:5be7:0:b0:880:545b:ab7b with SMTP id 6a1803df08f44-882385cffefmr194862386d6.4.1762873068873;
+        Tue, 11 Nov 2025 06:57:48 -0800 (PST)
+Received: from dschatzberg-fedora-PF3DHTBV ([2620:10d:c091:500::7:708f])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-88238b742f0sm72171676d6.43.2025.11.11.06.57.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Nov 2025 06:56:59 -0800 (PST)
-Date: Tue, 11 Nov 2025 16:56:56 +0200
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Jonas Gorski <jonas.gorski@gmail.com>
-Cc: Vladimir Oltean <vladimir.oltean@nxp.com>, Andrew Lunn <andrew@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org,
+        Tue, 11 Nov 2025 06:57:48 -0800 (PST)
+Date: Tue, 11 Nov 2025 09:57:46 -0500
+From: Dan Schatzberg <schatzberg.dan@gmail.com>
+To: Tejun Heo <tj@kernel.org>
+Cc: David Vernet <void@manifault.com>,
+	Andrea Righi <andrea.righi@linux.dev>,
+	Changwoo Min <changwoo@igalia.com>,
+	Emil Tsalapatis <etsal@meta.com>, sched-ext@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC net-next 3/3] net: dsa: deny 8021q uppers on vlan
- unaware bridged ports
-Message-ID: <20251111145656.3lmaul35cfswan5k@skbuf>
-References: <20251110222501.bghtbydtokuofwlr@skbuf>
- <CAOiHx=k8q7Zyr5CEJ_emKYLRV9SOXPjrrXYkUKs6=MbF_Autxw@mail.gmail.com>
- <20251111115627.orks445s5o2adkbu@skbuf>
- <20251110214443.342103-1-jonas.gorski@gmail.com>
- <20251110214443.342103-4-jonas.gorski@gmail.com>
- <20251110222501.bghtbydtokuofwlr@skbuf>
- <CAOiHx=k8q7Zyr5CEJ_emKYLRV9SOXPjrrXYkUKs6=MbF_Autxw@mail.gmail.com>
- <20251111115627.orks445s5o2adkbu@skbuf>
- <CAOiHx=naX6RbV0qBFZP3QhpKCnZ2KWdq8L23rUh4D7xwmGARbw@mail.gmail.com>
- <CAOiHx=naX6RbV0qBFZP3QhpKCnZ2KWdq8L23rUh4D7xwmGARbw@mail.gmail.com>
+Subject: Re: [PATCH 02/13] sched_ext: Make slice values tunable and use
+ shorter slice in bypass mode
+Message-ID: <aRNO6j5B4RDugKfJ@dschatzberg-fedora-PF3DHTBV>
+References: <20251109183112.2412147-1-tj@kernel.org>
+ <20251109183112.2412147-3-tj@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOiHx=naX6RbV0qBFZP3QhpKCnZ2KWdq8L23rUh4D7xwmGARbw@mail.gmail.com>
- <CAOiHx=naX6RbV0qBFZP3QhpKCnZ2KWdq8L23rUh4D7xwmGARbw@mail.gmail.com>
+In-Reply-To: <20251109183112.2412147-3-tj@kernel.org>
 
-On Tue, Nov 11, 2025 at 03:09:08PM +0100, Jonas Gorski wrote:
-> On Tue, Nov 11, 2025 at 12:56 PM Vladimir Oltean <olteanv@gmail.com> wrote:
-> >
-> > On Tue, Nov 11, 2025 at 11:06:48AM +0100, Jonas Gorski wrote:
-> > > But I noticed while testing that apparently b53 in filtering=0 mode
-> > > does not forward any tagged traffic (and I think I know why ...).
-> > >
-> > > Is there a way to ask for a replay of the fdb (static) entries? To fix
-> > > this for older switches, we need to disable 802.1q mode, but this also
-> > > switches the ARL from IVL to SVL, which changes the hashing, and would
-> > > break any existing entries. So we need to flush the ARL before
-> > > toggling 802.1q mode, and then reprogram any static entries.
-> >
-> > I'm not clear on what happens. "Broken" FDB entries in the incorrect
-> > bridge vlan_filtering mode sounds like normal behaviour (FDB entries
-> > with VID=0 while vlan_filtering=1, or FDB entries with VID!=0 while
-> > vlan_filtering=0). They should just sit idle in the ARL until the VLAN
-> > filtering mode makes them active.
-> 
-> When in SVL mode (vlan disabled), the ARL switches from mac+vid to
-> just mac for hashing ARL entries. And I don't know if mac+vid=0 yields
-> the same hash as only mac. It would it the switch uses vid=0 when not
-> vlan aware, but if it skips the vid then it wouldn't.
-> 
-> And we automatically install static entries for the MAC addresses of
-> ports (and maybe other non-dsa bridged devices), so we may need to
-> have these twice in the ARL table (once for non-filtering, once for
-> filtering).
-> 
-> If the hash is not the same, this can happen:
-> 
-> vlan_enabled=1, ARL hashing uses mac+vid
-> add static entry mac=abc,vid=0 for port 1 => hash(mac, vid) -> entry 123
-> vlan_enabled => 0, ARL hashing uses only mac
-> packet received on port 2 for mac=abc => hash(mac) => entry 456 => no
-> entry found => flood (which may not include port 1).
-> 
-> when trying to delete the static entry => lookup for mac=abc,vid=0 =>
-> hash(mac) => entry 456 => no such entry.
-> 
-> Then maybe we ignore the error, but the moment we enable vlan again,
-> the hashing changes back to mac+vid, so the "deleted" static entry
-> becomes active again (despite the linux fdb not knowing about it
-> anymore).
-> 
-> And even if the hash is the same, it would mean we cannot interact
-> with any preexisting entries for vid!=1 that were added with vlan
-> filtering = 1. So we cannot delete them when e.g. removing a port from
-> the bridge, or deleting the bridge.
-> 
-> So the safest would be to remove all static entries before changing
-> vlan filtering, and then re-adding them afterwards.
-> 
-> Best regards,
-> Jonas
+On Sun, Nov 09, 2025 at 08:31:01AM -1000, Tejun Heo wrote:
+> @@ -919,7 +948,7 @@ static void dsq_mod_nr(struct scx_dispatch_q *dsq, s32 delta)
+>  
+>  static void refill_task_slice_dfl(struct scx_sched *sch, struct task_struct *p)
+>  {
+> -	p->scx.slice = SCX_SLICE_DFL;
+> +	p->scx.slice = scx_slice_dfl;
 
-If you just want to debug whether this is the case or not, then as I
-understand, for the moment you only care about static FDB entries on the
-CPU port, not on user ports added with 'bridge fdb add ... master static".
-If so, these FDB entries are available in the cpu_dp->fdbs list. For
-user ports we don't bother keeping track.
+Do you need to use READ_ONCE here given that this can be modified concurrently?
 
-Regarding switchdev FDB replay, it's possible but has very high
-complexity. The base call would be to switchdev_bridge_port_replay(),
-then you'd need to set up two parallel notifier blocks through which
-you're informed of the existing objects (not the usual dsa_user_switchdev_notifier
-and dsa_user_switchdev_blocking_notifier), whose internal processing is
-partly similar (the event filtering and replication) and partly different:
-instead of calling dsa_schedule_work() to program the FDB entries to
-hardware, you just add them to a list that is kept in a context
-structure, which is passed to the caller once the replay is over and the
-list is complete.
+>  	__scx_add_event(sch, SCX_EV_REFILL_SLICE_DFL, 1);
+>  }
+>  
+> @@ -2892,7 +2921,7 @@ void init_scx_entity(struct sched_ext_entity *scx)
+>  	INIT_LIST_HEAD(&scx->runnable_node);
+>  	scx->runnable_at = jiffies;
+>  	scx->ddsp_dsq_id = SCX_DSQ_INVALID;
+> -	scx->slice = SCX_SLICE_DFL;
+> +	scx->slice = scx_slice_dfl;
+>  }
+>  
+>  void scx_pre_fork(struct task_struct *p)
+> @@ -3770,6 +3799,7 @@ static void scx_bypass(bool bypass)
+>  		WARN_ON_ONCE(scx_bypass_depth <= 0);
+>  		if (scx_bypass_depth != 1)
+>  			goto unlock;
+> +		scx_slice_dfl = scx_slice_bypass_us * NSEC_PER_USEC;
 
-For the moment, dp->fdbs should be sufficient to prove/disprove a point.
+Similarly WRITE_ONCE here
+
+>  		bypass_timestamp = ktime_get_ns();
+>  		if (sch)
+>  			scx_add_event(sch, SCX_EV_BYPASS_ACTIVATE, 1);
+> @@ -3778,6 +3808,7 @@ static void scx_bypass(bool bypass)
+>  		WARN_ON_ONCE(scx_bypass_depth < 0);
+>  		if (scx_bypass_depth != 0)
+>  			goto unlock;
+> +		scx_slice_dfl = scx_slice_dfl_us * NSEC_PER_USEC;
+
+And here
+
+>  		if (sch)
+>  			scx_add_event(sch, SCX_EV_BYPASS_DURATION,
+>  				      ktime_get_ns() - bypass_timestamp);
+> @@ -4776,7 +4807,7 @@ static int scx_enable(struct sched_ext_ops *ops, struct bpf_link *link)
+>  			queue_flags |= DEQUEUE_CLASS;
+>  
+>  		scoped_guard (sched_change, p, queue_flags) {
+> -			p->scx.slice = SCX_SLICE_DFL;
+> +			p->scx.slice = scx_slice_dfl;
+
+And here
+>  			p->sched_class = new_class;
+>  		}
+>  	}
+> -- 
+> 2.51.1
+> 
 
