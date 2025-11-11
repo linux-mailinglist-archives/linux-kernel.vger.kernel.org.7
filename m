@@ -1,81 +1,39 @@
-Return-Path: <linux-kernel+bounces-894649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 172D7C4B806
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 06:10:51 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 980F7C4B812
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 06:13:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CA2F44E51D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 05:10:49 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 160BB34D688
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 05:13:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DC4C2F656B;
-	Tue, 11 Nov 2025 05:10:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="PxWbzZWE"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D83A26FA6C
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 05:10:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C55E3280033;
+	Tue, 11 Nov 2025 05:12:52 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAC3F192B75;
+	Tue, 11 Nov 2025 05:12:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762837841; cv=none; b=NrT/q9Efx6qTA3hzrgXL9qfhUiqmr1Vl5k522lFAEO0PSyd43rGJre3YpaUbn8ki0/UzaZdLdSSoLrny9AXgyAStT/UT9Z2Fg65+E+nWMAqbvhxEzkJDeJlHlA0AxCCXk8qn7euMY3edwOtpH8SOId2Dd8vN6wgP6FEge0wbFPk=
+	t=1762837972; cv=none; b=toCpc8sSKw0ySE3Qcj+R/4s3JnU9ZCvoQApfvUPFkamL8RSv/WQlxcz/j19fY/9yrX655LE5zBsWUJDqyx3g5q47RbMjK7VuzZ9rf8SQWZu7pgzKsM0USUN+IE/v4+hLdJhhpWIiLJhwF44BNCpdvMDB6LAZCgUZxE6BCLCB+6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762837841; c=relaxed/simple;
-	bh=iXBZFDsdFYSfflJGNwwfU6+s/3y3XUOyzg7stV+i0lg=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
-	 In-Reply-To:Content-Type; b=Mis8Kjpo9w4YyzVMJZLrl5dPxAu0gBqeEwczmwjVcdn43aJfTcsylq3dbEIa+WAtZIjFJfnFZinLY4rpfyhR4e4VH7cOT+5xd5/JAlB8EhI+leH54AJc3izXJjIx+FQYd5IyusINzL6UsETloWsqt1gKpqhPZFSh0EbIPFEE2Co=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=PxWbzZWE; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5AAJVgtT028610;
-	Tue, 11 Nov 2025 05:09:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=Hh5fcS
-	H1bhJqQ1Drob8uAIwTEAHUBu2QKrEyQUSXZpU=; b=PxWbzZWETiho7/kkQTtk+9
-	p8FniINdpeMl2ZMoQ3k3nmH3N54Z1nt/s+33BZ7jadO+bIHZD1EkFbaacdQSneex
-	mkfxq49omOgVSV+hGxMYVAebpgTKXR3PuEM4ZJVbERDoT8TH9LQlY64QgOQaymum
-	HgaWMFmXIVgYTOAuJx3XelQ5BU/38pKm7GS87X64o6hmPsebmBZXYr4Q61B3aAyp
-	biuO2yRplXAEK8w4nmfvwZ7ODHC5Mtxnwu4D9Ky8aL7jXYyrWmoKfiF/lp7mW0dP
-	cLmGdgHMaU6hIqrVABFKA6c7aET0blmoXXosYXSkGKcCGKMs4hyTnSKO0istF0fQ
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4aa3m81k3q-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Nov 2025 05:09:47 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5AB55HUL001944;
-	Tue, 11 Nov 2025 05:09:47 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4aa3m81k3g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Nov 2025 05:09:47 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5AB0Ou9h028888;
-	Tue, 11 Nov 2025 05:09:46 GMT
-Received: from smtprelay03.wdc07v.mail.ibm.com ([172.16.1.70])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 4aag6s9a5s-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Nov 2025 05:09:46 +0000
-Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
-	by smtprelay03.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5AB59Vjs63963574
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 11 Nov 2025 05:09:31 GMT
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A8ACB58050;
-	Tue, 11 Nov 2025 05:09:44 +0000 (GMT)
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id BFE4858054;
-	Tue, 11 Nov 2025 05:09:33 +0000 (GMT)
-Received: from [9.61.248.35] (unknown [9.61.248.35])
-	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 11 Nov 2025 05:09:33 +0000 (GMT)
-Message-ID: <a0af8e59-6828-4e12-b0a2-bc426df97b0e@linux.ibm.com>
-Date: Tue, 11 Nov 2025 10:39:31 +0530
+	s=arc-20240116; t=1762837972; c=relaxed/simple;
+	bh=ybHQewpBqmXq74HdFXym7It1mNLyXlXzMhLBKfsR7/Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uO9fZAuT6zQM6qAE9jpMTdE9oysnPXUyB6DzJDUw80uP2mpZ5TRm//7Zow2AKGc7bkRGj0ru61fvR8flmg9GsrDGd/0ePfqatgjeJWkKkJ4rphC/oyLQHC/eSU1GR2mVB4wjjvjqwuXkfeCZhik+3oByFBr6CpB+gKqcX/t5Wfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2668B2B;
+	Mon, 10 Nov 2025 21:12:40 -0800 (PST)
+Received: from [10.164.136.36] (unknown [10.164.136.36])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DBE473F66E;
+	Mon, 10 Nov 2025 21:12:44 -0800 (PST)
+Message-ID: <19def538-3fb6-48a1-ae8b-a82139b8bbb9@arm.com>
+Date: Tue, 11 Nov 2025 10:42:41 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,301 +41,284 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/8] Generic IRQ entry/exit support for powerpc
-From: Samir M <samir@linux.ibm.com>
-To: Mukesh Kumar Chaurasiya <mkchauras@linux.ibm.com>, maddy@linux.ibm.com,
-        mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu,
-        oleg@redhat.com, kees@kernel.org, luto@amacapital.net,
-        wad@chromium.org, mchauras@linux.ibm.com, thuth@redhat.com,
-        sshegde@linux.ibm.com, akpm@linux-foundation.org, macro@orcam.me.uk,
-        ldv@strace.io, deller@gmx.de, charlie@rivosinc.com,
-        bigeasy@linutronix.de, segher@kernel.crashing.org,
-        thomas.weissschuh@linutronix.de, menglong8.dong@gmail.com,
-        ankur.a.arora@oracle.com, peterz@infradead.org, namcao@linutronix.de,
-        tglx@linutronix.de, kan.liang@linux.intel.com, mingo@kernel.org,
-        atrajeev@linux.vnet.ibm.com, mark.barnett@arm.com,
-        coltonlewis@google.com, rppt@kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org
-References: <20251102115358.1744304-1-mkchauras@linux.ibm.com>
- <f7fe2fb8-4538-42a7-985a-a68eb8da7395@linux.ibm.com>
+Subject: Re: [PATCH] arm64/pageattr: Propagate return value from
+ __change_memory_common
+To: Yang Shi <yang@os.amperecomputing.com>, Will Deacon <will@kernel.org>
+Cc: catalin.marinas@arm.com, ryan.roberts@arm.com, rppt@kernel.org,
+ shijie@os.amperecomputing.com, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20251103061306.82034-1-dev.jain@arm.com>
+ <aQjHQt2rYL6av4qw@willie-the-truck>
+ <f594696b-ba33-4c04-9cf5-e88767221ae0@os.amperecomputing.com>
+ <f8b899cf-d377-4dc7-a57c-82826ea5e1ea@arm.com>
+ <aQn4EwKar66UZ7rz@willie-the-truck>
+ <586b8d19-a5d2-4248-869b-98f39b792acb@arm.com>
+ <17eed751-e1c5-4ea5-af1d-e96da16d5e26@arm.com>
+ <c1701ce9-c8b7-4ac8-8dd4-930af3dad7d2@os.amperecomputing.com>
+ <938fc839-b27a-484f-a49c-6dc05b3e9983@arm.com>
+ <94c91f8f-cd8f-4f51-961f-eb2904420ee4@os.amperecomputing.com>
+ <47f0fe70-5359-4b98-8a23-c09ab20bd6d9@arm.com>
+ <ca628d43-502a-42f1-be57-bcb37103ddf8@os.amperecomputing.com>
 Content-Language: en-US
-In-Reply-To: <f7fe2fb8-4538-42a7-985a-a68eb8da7395@linux.ibm.com>
+From: Dev Jain <dev.jain@arm.com>
+In-Reply-To: <ca628d43-502a-42f1-be57-bcb37103ddf8@os.amperecomputing.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=MtZfKmae c=1 sm=1 tr=0 ts=6912c51b cx=c_pps
- a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8 a=9F--yUDwXs0pceWwWsEA:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10 a=HhbK4dLum7pmb74im6QT:22 a=nl4s5V0KI7Kw-pW0DWrs:22
- a=Z5ABNNGmrOfJ6cZ5bIyy:22 a=bWyr8ysk75zN3GCy5bjg:22
-X-Proofpoint-GUID: ecjGfxY74jOqPBcYf3dTEtvFc6JfbH6N
-X-Proofpoint-ORIG-GUID: gaJyIpeO6O5wHBwv9DiMWiDFX_sfwBxw
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA4MDA3OSBTYWx0ZWRfX3NCZTGlkF4/Q
- 1STi7mbooMMGYGO1yJQJTbtS16AVZumpxyJM4N7Jiyx70th2ezJ7fgktH+qY7jNPg3MOABD3DjR
- EgDEJbYqUVVN+LGbDBcyQZ0khGeoZHWF9QQQpb98visF9M9eO+n+RE08RDN/TWCBfOHBUjlzrz2
- zBaeyBhk9hzs6g9z5PkBpsmFSdjMfMcnFIrXHFf9L5Wzg+GDImBl4iClmBkOUx8lim4/d/IbSaO
- y7SJyjM4idPEUHXKvP2cAi8DfXE4kgtBT0pdxDrJO8RPXFbaSvKE5tWYInB+AaGVSF85WJa3G9v
- tb4Pfpvhq9LgIfAlP4pdk3henTcQLuG5pkQAGeyTxVH01cb0Rn0iKSnBhv7dvWNFR28LSrBfjQm
- 12pREMR/N0dH8+ORymsmIFxaB02UnQ==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-11_01,2025-11-10_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 adultscore=0 priorityscore=1501 bulkscore=0 impostorscore=0
- suspectscore=0 lowpriorityscore=0 clxscore=1015 phishscore=0 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2511080079
 
 
-On 11/11/25 10:09 am, Samir M wrote:
-> On 02/11/25 5:23 pm, Mukesh Kumar Chaurasiya wrote:
->> Adding support for the generic irq entry/exit handling for PowerPC. The
->> goal is to bring PowerPC in line with other architectures that already
->> use the common irq entry infrastructure, reducing duplicated code and
->> making it easier to share future changes in entry/exit paths.
+On 11/11/25 10:38 am, Yang Shi wrote:
+>
+>
+> On 11/10/25 8:55 PM, Dev Jain wrote:
 >>
->> This is slightly tested of ppc64le and ppc32.
+>> On 11/11/25 10:14 am, Yang Shi wrote:
+>>>
+>>>
+>>> On 11/10/25 8:37 PM, Dev Jain wrote:
+>>>>
+>>>> On 11/11/25 9:47 am, Yang Shi wrote:
+>>>>>
+>>>>>
+>>>>> On 11/10/25 7:39 PM, Dev Jain wrote:
+>>>>>>
+>>>>>> On 05/11/25 9:27 am, Dev Jain wrote:
+>>>>>>>
+>>>>>>> On 04/11/25 6:26 pm, Will Deacon wrote:
+>>>>>>>> On Tue, Nov 04, 2025 at 09:06:12AM +0530, Dev Jain wrote:
+>>>>>>>>> On 04/11/25 12:15 am, Yang Shi wrote:
+>>>>>>>>>> On 11/3/25 7:16 AM, Will Deacon wrote:
+>>>>>>>>>>> On Mon, Nov 03, 2025 at 11:43:06AM +0530, Dev Jain wrote:
+>>>>>>>>>>>> Post a166563e7ec3 ("arm64: mm: support large block mapping 
+>>>>>>>>>>>> when
+>>>>>>>>>>>> rodata=full"),
+>>>>>>>>>>>> __change_memory_common has a real chance of failing due to 
+>>>>>>>>>>>> split
+>>>>>>>>>>>> failure.
+>>>>>>>>>>>> Before that commit, this line was introduced in c55191e96caa,
+>>>>>>>>>>>> still having
+>>>>>>>>>>>> a chance of failing if it needs to allocate pagetable 
+>>>>>>>>>>>> memory in
+>>>>>>>>>>>> apply_to_page_range, although that has never been observed 
+>>>>>>>>>>>> to be true.
+>>>>>>>>>>>> In general, we should always propagate the return value to 
+>>>>>>>>>>>> the caller.
+>>>>>>>>>>>>
+>>>>>>>>>>>> Cc: stable@vger.kernel.org
+>>>>>>>>>>>> Fixes: c55191e96caa ("arm64: mm: apply r/o permissions of VM
+>>>>>>>>>>>> areas to its linear alias as well")
+>>>>>>>>>>>> Signed-off-by: Dev Jain <dev.jain@arm.com>
+>>>>>>>>>>>> ---
+>>>>>>>>>>>> Based on Linux 6.18-rc4.
+>>>>>>>>>>>>
+>>>>>>>>>>>>    arch/arm64/mm/pageattr.c | 5 ++++-
+>>>>>>>>>>>>    1 file changed, 4 insertions(+), 1 deletion(-)
+>>>>>>>>>>>>
+>>>>>>>>>>>> diff --git a/arch/arm64/mm/pageattr.c 
+>>>>>>>>>>>> b/arch/arm64/mm/pageattr.c
+>>>>>>>>>>>> index 5135f2d66958..b4ea86cd3a71 100644
+>>>>>>>>>>>> --- a/arch/arm64/mm/pageattr.c
+>>>>>>>>>>>> +++ b/arch/arm64/mm/pageattr.c
+>>>>>>>>>>>> @@ -148,6 +148,7 @@ static int change_memory_common(unsigned
+>>>>>>>>>>>> long addr, int numpages,
+>>>>>>>>>>>>        unsigned long size = PAGE_SIZE * numpages;
+>>>>>>>>>>>>        unsigned long end = start + size;
+>>>>>>>>>>>>        struct vm_struct *area;
+>>>>>>>>>>>> +    int ret;
+>>>>>>>>>>>>        int i;
+>>>>>>>>>>>>          if (!PAGE_ALIGNED(addr)) {
+>>>>>>>>>>>> @@ -185,8 +186,10 @@ static int change_memory_common(unsigned
+>>>>>>>>>>>> long addr, int numpages,
+>>>>>>>>>>>>        if (rodata_full && (pgprot_val(set_mask) == 
+>>>>>>>>>>>> PTE_RDONLY ||
+>>>>>>>>>>>>                    pgprot_val(clear_mask) == PTE_RDONLY)) {
+>>>>>>>>>>>>            for (i = 0; i < area->nr_pages; i++) {
+>>>>>>>>>>>> - __change_memory_common((u64)page_address(area->pages[i]),
+>>>>>>>>>>>> +            ret =
+>>>>>>>>>>>> __change_memory_common((u64)page_address(area->pages[i]),
+>>>>>>>>>>>>                               PAGE_SIZE, set_mask, 
+>>>>>>>>>>>> clear_mask);
+>>>>>>>>>>>> +            if (ret)
+>>>>>>>>>>>> +                return ret;
+>>>>>>>>>>> Hmm, this means we can return failure half-way through the 
+>>>>>>>>>>> operation. Is
+>>>>>>>>>>> that something callers are expecting to handle? If so, how 
+>>>>>>>>>>> can they tell
+>>>>>>>>>>> how far we got?
+>>>>>>>>>> IIUC the callers don't have to know whether it is half-way or 
+>>>>>>>>>> not
+>>>>>>>>>> because the callers will change the permission back (e.g. to 
+>>>>>>>>>> RW) for the
+>>>>>>>>>> whole range when freeing memory.
+>>>>>>>>> Yes, it is the caller's responsibility to set 
+>>>>>>>>> VM_FLUSH_RESET_PERMS flag.
+>>>>>>>>> Upon vfree(), it will change the direct map permissions back 
+>>>>>>>>> to RW.
+>>>>>>>> Ok, but vfree() ends up using update_range_prot() to do that 
+>>>>>>>> and if we
+>>>>>>>> need to worry about that failing (as per your commit message), 
+>>>>>>>> then
+>>>>>>>> we're in trouble because the calls to set_area_direct_map() are 
+>>>>>>>> unchecked.
+>>>>>>>>
+>>>>>>>> In other words, this patch is either not necessary or it is 
+>>>>>>>> incomplete.
+>>>>>>>
+>>>>>>> Here is the relevant email, in the discussion between Ryan and 
+>>>>>>> Yang:
+>>>>>>>
+>>>>>>> https://lore.kernel.org/all/fe52a1d8-5211-4962-afc8-c3f9caf64119@os.amperecomputing.com/ 
+>>>>>>>
+>>>>>>>
+>>>>>>> We had concluded that all callers of set_memory_ro() or 
+>>>>>>> set_memory_rox() (which require the
+>>>>>>> linear map perm change back to default, upon vfree() ) will call 
+>>>>>>> it for the entire region (vm_struct).
+>>>>>>> So, when we do the set_direct_map_invalid_noflush, it is 
+>>>>>>> guaranteed that the region has already
+>>>>>>> been split. So this call cannot fail.
+>>>>>>>
+>>>>>>> https://lore.kernel.org/all/f8898c87-8f49-4ef2-86ae-b60bcf67658c@os.amperecomputing.com/ 
+>>>>>>>
+>>>>>>>
+>>>>>>> This email notes that there is some code doing set_memory_rw() 
+>>>>>>> and unnecessarily setting the VM_FLUSH_RESET_PERMS
+>>>>>>> flag, but in that case we don't care about the 
+>>>>>>> set_direct_map_invalid_noflush call failing because the protections
+>>>>>>> are already RW.
+>>>>>>>
+>>>>>>> Although we had also observed that all of this is fragile and 
+>>>>>>> depends on the caller doing the
+>>>>>>> correct thing. The real solution should be somehow getting rid 
+>>>>>>> of the BBM style invalidation.
+>>>>>>> Ryan had proposed some methods in that email thread.
+>>>>>>>
+>>>>>>> One solution which I had thought of, is that, observe that we 
+>>>>>>> are doing an overkill by
+>>>>>>> setting the linear map to invalid and then default, for the 
+>>>>>>> *entire* region. What we
+>>>>>>> can do is iterate over the linear map alias of the vm_struct 
+>>>>>>> *area and only change permission
+>>>>>>> back to RW for the pages which are *not* RW. And, those relevant 
+>>>>>>> mappings are guaranteed to
+>>>>>>> be split because they were changed from RW to not RW.
+>>>>>>
+>>>>>> @Yang and Ryan,
+>>>>>>
+>>>>>> I saw Yang's patch here:
+>>>>>> https://lore.kernel.org/all/20251023204428.477531-1-yang@os.amperecomputing.com/ 
+>>>>>>
+>>>>>> and realized that currently we are splitting away the linear map 
+>>>>>> alias of the *entire* region.
+>>>>>>
+>>>>>> Shouldn't this then imply that set_direct_map_invalid_noflush 
+>>>>>> will never fail, since even
+>>>>>>
+>>>>>> a set_memory_rox() call on a single page will split the linear 
+>>>>>> map for the entire region,
+>>>>>>
+>>>>>> and thus there is no fragility here which we were discussing 
+>>>>>> about? I may be forgetting
+>>>>>>
+>>>>>> something, this linear map stuff is confusing enough already.
+>>>>>
+>>>>> It still may fail due to page table allocation failure when doing 
+>>>>> split. But it is still fine. We may run into 3 cases:
+>>>>>
+>>>>> 1. set_memory_rox succeed to split the whole range, then 
+>>>>> set_direct_map_invalid_noflush() will succeed too
+>>>>> 2. set_memory_rox fails to split, for example, just change partial 
+>>>>> range permission due to page table allocation failure, then 
+>>>>> set_direct_map_invalid_noflush() may
+>>>>>    a. successfully change the permission back to default till 
+>>>>> where set_memory_rox fails at since that range has been 
+>>>>> successfully split. It is ok since the remaining range is actually 
+>>>>> not changed to ro by set_memory_rox at all
+>>>>>    b. successfully change the permission back to default for the 
+>>>>> whole range (for example, memory pressure is mitigated when 
+>>>>> set_direct_map_invalid_noflush() is called). It is definitely fine 
+>>>>> as well
+>>>>
+>>>> Correct, what I mean to imply here is that, your patch will break 
+>>>> this? If set_memory_* is applied on x till y, your patch changes 
+>>>> the linear map alias
+>>>>
+>>>> only from x till y - set_direct_map_invalid_noflush instead 
+>>>> operates on 0 till size - 1, where 0 <=x <=y <= size - 1. So, it 
+>>>> may encounter a -ENOMEM
+>>>>
+>>>> on [0, x) range while invalidating, and that is *not* okay because 
+>>>> we must reset back [0, x) to default?
+>>>
+>>> I see your point now. But I think the callers need to guarantee they 
+>>> call set_memory_rox and set_direct_map_invalid_noflush on the same 
+>>> range, right? Currently kernel just calls them on the whole area.
 >>
->> The performance benchmarks from perf bench basic syscall are below:
+>> Nope. The fact that the kernel changes protections, and undoes the 
+>> changed protections, on the *entire* alias of the vm_struct region, 
+>> protects us from the fragility we were talking about earlier.
+>
+> This is what I meant "kernel just calls them on the whole area".
+>
 >>
->> | Metric     | W/O Generic Framework | With Generic Framework | Change |
->> | ---------- | --------------------- | ---------------------- | ------ |
->> | Total time | 0.939 [sec]           | 0.938 [sec]            | ~0%    |
->> | usecs/op   | 0.093900              | 0.093882               | ~0%    |
->> | ops/sec    | 1,06,49,615           | 1,06,51,725            | ~0%    |
+>> Suppose you have a range from 0 till size - 1, and you call 
+>> set_memory_* on a random point (page) p. The argument we discussed 
+>> above is independent of p, which lets us drop our
 >>
->> Thats very close to performance earlier with arch specific handling.
+>> previous erroneous conclusion that all of this works because no 
+>> caller does a partial set_memory_*.
+>
+> Sorry I don't follow you. What "erroneous conclusion" do you mean? You 
+> can call set_memory_* on a random point, but 
+> set_direct_map_invalid_noflush() should be called on the random point 
+> too. The current code of set_area_direct_map() doesn't consider this 
+> case because there is no such call. Is this what you meant?
+
+
+I was referring to the discussion in the linear map work - I think we 
+had concluded that we don't need to worry about the BBM style 
+invalidation failing, *because* no one does a partial set_memory_*.
+
+What I am saying - we don't care whether caller does a partial or a full 
+set_memory_*, we are still safe, because the linear map alias change on 
+both sides (set_memory_* -> __change_memory_common, and vm_reset_perms 
+-> set_area_direct_map() )
+
+operate on the entire region.
+
+
+>
 >>
->> Tests done:
->>   - Build and boot on ppc64le pseries.
->>   - Build and boot on ppc64le powernv8 powernv9 powernv10.
->>   - Build and boot on ppc32.
->>   - Performance benchmark done with perf syscall basic on pseries.
 >>
->> Changelog:
+>> I would like to send a patch clearly documenting this behaviour, 
+>> assuming no one else finds a hole in this reasoning.
+>
+> Proper comment to explain the subtle behavior is definitely welcome.
+>
+> Thanks,
+> Yang
+>
 >>
->> RFC -> PATCH
->>   - Fix for ppc32 spitting out kuap lock warnings.
->>   - ppc64le powernv8 crash fix.
->>   - Review comments incorporated from previous RFC.
->> RFC 
->> https://lore.kernel.org/all/20250908210235.137300-2-mchauras@linux.ibm.com/
 >>
->> Mukesh Kumar Chaurasiya (8):
->>    powerpc: rename arch_irq_disabled_regs
->>    powerpc: Prepare to build with generic entry/exit framework
->>    powerpc: introduce arch_enter_from_user_mode
->>    powerpc: Introduce syscall exit arch functions
->>    powerpc: add exit_flags field in pt_regs
->>    powerpc: Prepare for IRQ entry exit
->>    powerpc: Enable IRQ generic entry/exit path.
->>    powerpc: Enable Generic Entry/Exit for syscalls.
->>
->>   arch/powerpc/Kconfig                    |   2 +
->>   arch/powerpc/include/asm/entry-common.h | 539 ++++++++++++++++++++++++
->>   arch/powerpc/include/asm/hw_irq.h       |   4 +-
->>   arch/powerpc/include/asm/interrupt.h    | 401 +++---------------
->>   arch/powerpc/include/asm/ptrace.h       |   3 +
->>   arch/powerpc/include/asm/stacktrace.h   |   6 +
->>   arch/powerpc/include/asm/syscall.h      |   5 +
->>   arch/powerpc/include/asm/thread_info.h  |   1 +
->>   arch/powerpc/include/uapi/asm/ptrace.h  |  14 +-
->>   arch/powerpc/kernel/asm-offsets.c       |   1 +
->>   arch/powerpc/kernel/interrupt.c         | 258 +++---------
->>   arch/powerpc/kernel/ptrace/ptrace.c     | 142 +------
->>   arch/powerpc/kernel/signal.c            |   8 +
->>   arch/powerpc/kernel/syscall.c           | 119 +-----
->>   arch/powerpc/kernel/traps.c             |   2 +-
->>   arch/powerpc/kernel/watchdog.c          |   2 +-
->>   arch/powerpc/perf/core-book3s.c         |   2 +-
->>   17 files changed, 693 insertions(+), 816 deletions(-)
->>   create mode 100644 arch/powerpc/include/asm/entry-common.h
->>
-> Hi,
+>>>
+>>> Thanks,
+>>> Yang
+>>>
+>>>>
+>>>>
+>>>>>
+>>>>> Hopefully I don't miss anything.
+>>>>>
+>>>>> Thanks,
+>>>>> Yang
+>>>>>
+>>>>>
+>>>>>>
+>>>>>>
+>>>>>>>
+>>>>>>>>
+>>>>>>>> Will
+>>>>>>>
+>>>>>
+>>>
 >
-> I have reviewed and tested the generic IRQ entry/exist patch series. 
-> Below are my observations:
->
->  Test Coverage 
-> • Successfully ran LTP (specially syscall) and entire LTP test suite, 
-> without observing any regressions or issues related to the 
-> implementation.
->
->  System Configuration 
-> • CPUs: 160 
-> • Kernel: v6.18.0-rc1+ 
-> • Processor mode: Shared (uncapped)
->
->  Performance Evaluation 
-> • Conducted benchmarking using perf bench syscall basic -l and 
-> hackbench. 
-> • No functional regressions observed, and results were consistent with 
-> expectations.
->
->     •    Results for perf bench syscall**Loops = 100,000**
-> **Loops = 100,000**
-> | Metric       | W/O Generic Framework      | With Generic Framework  
->   | Improvement |
-> |----------|-----------------------:|-----------------------:|------------:| 
->
-> | usecs/op   |              0.125328              | 0.128839         
-> |     ~-2.80% |
-> | ops/sec     |             7,979,645              |  7,762,047       
->     |     ~-2.73% |
->
-> **Loops = 1,000,000**
-> | Metric        | W/O Generic Framework         | With Generic 
-> Framework             | Improvement |
-> |----------|-----------------------:|-----------------------:|------------:| 
->
-> | usecs/op   |              0.125015              | 0.127885         
-> |     ~-2.30% |
-> | ops/sec     |             7,999,051              |  7,819,546       
->     |     ~-2.24% |
->
-> **Loops = 10,000,000**
-> | Metric        | W/O Generic Framework    | With Generic Framework   
->  | Improvement |
-> |----------|-----------------------:|-----------------------:|------------:| 
->
-> | usecs/op   |              0.124613              | 0.127426         
-> |     ~-2.26% |
-> | ops/sec     |             8,024,827              |  7,847,735       
->     |     ~-2.21% |
->
-> **Overall (aggregated across all runs)**
-> | Metric         | W/O Generic Framework   | With Generic Framework   
->  | Improvement |
-> | ---------- | 
-> ---------------------:|-----------------------:|------------:|
-> | Total time    |           1.384 [sec]            |  1.415 [sec]      
->          |     ~-2.27% |
-> | usecs/op     |              0.124656            | 0.127480         
-> |     ~-2.27% |
-> | ops/sec       |             8,022,098            |  7,844,423       
->     |     ~-2.21% |
->
-> A 2% performance degradation was observed with the perf bench syscall.
->
->     •    Results for hackbench
->
-> | Metric        | W/O Generic Framework    | With Generic Framework   
-> | Improvement |
-> |----------|---------------------- 
-> :|-----------------------:|------------:|
-> | Min Time   | 142.055 (sec).                   | 141.699 (sec)       
->        | 0.25%
-> | Max Time  | 143.791 (sec).                   | 143.206 (sec)         
->    | 0.41%
-> | Avg Time   | 142.925 (sec)                    | 142.472 (sec)       
->        | 0.32%
->
-> So overall 0.3 % improvement is observed across 10 runs.
->
-> Please add below tag for the patch set.
->  Tested-by: Samir M <samir@linux.ibm.com>
-> Thank You !!
->
->
-> Regards,
-> Samir.
->
-Hi,
-
-Apologies for the earlier email. The benchmark results table was not 
-properly formatted in that version, so I am re-sending the results below 
-for clarity.
-
-I have reviewed and tested the generic IRQ entry/exist patch series. 
-Below are my observations:
-
- Test Coverage
-• Successfully ran LTP (specially syscall) and entire LTP test suite, 
-without observing any regressions or issues related to the implementation.
-
- System Configuration
-• CPUs: 160
-• Kernel: v6.18.0-rc1+
-• Processor mode: Shared (uncapped)
-
- Performance Evaluation
-• Conducted benchmarking using perf bench syscall basic -l and hackbench.
-• No functional regressions observed, and results were consistent with 
-expectations.
-
-     •    Results for perf bench syscall
-
-Loops = 100,000
-+-----------+------------------------+------------------------+------------+
-| Metric      | W/O Generic Framework     | With Generic Framework    | 
-Improvement |
-+-----------+------------------------+------------------------+------------+
-| usecs/op  |           0.125328                 |  0.128839            
-        | ~-2.80%     |
-| ops/sec    |            7,979,645               |  7,762,047          
-         | ~-2.73%     |
-+-----------+------------------------+------------------------+------------+
-
-Loops = 1,000,000
-+-----------+------------------------+------------------------+------------+
-| Metric      | W/O Generic Framework  | With Generic Framework | 
-Improvement |
-+-----------+------------------------+------------------------+------------+
-| usecs/op  |          0.125015               |        0.127885         
-         | ~-2.30%     |
-| ops/sec    |          7,999,051              |        7,819,546       
-            | ~-2.24%     |
-+-----------+------------------------+------------------------+------------+
-
-Loops = 10,000,000
-+-----------+------------------------+------------------------+------------+
-| Metric      | W/O Generic Framework  | With Generic Framework  | 
-Improvement |
-+-----------+------------------------+------------------------+------------+
-| usecs/op  |         0.124613                |        0.127426         
-         | ~-2.26%     |
-| ops/sec    |         8,024,827               |        7,847,735       
-            | ~-2.21%     |
-+-----------+------------------------+------------------------+------------+
-
-Overall (aggregated across all runs)
-+-------------+------------------------+------------------------+----------+
-| Metric         | W/O Generic Framework  | With Generic Framework | 
-Improvement |
-+-------------+------------------------+------------------------+----------+
-| Total time   |        1.384 [sec]               |         1.415 [sec]  
-               | ~-2.27%     |
-| usecs/op     |        0.124656                 | 0.127480              
-      | ~-2.27%     |
-| ops/sec       |        8,022,098                | 7,844,423            
-       | ~-2.21%     |
-+-------------+------------------------+------------------------+----------+
-A 2% performance degradation was observed with the perf bench syscall.
-
-     •    Results for hackbench
-
-+-----------+---------------------------+---------------------------+------+
-| Metric        | W/O Generic Framework     | With Generic Framework    
-| Improvement |
-+-----------+---------------------------+---------------------------+------+
-| Min Time  |    142.055 (sec)                     |       141.699 
-(sec)             |  +0.25%      |
-| Max Time  |   143.791 (sec)                     |       143.206 (sec)  
-             |  +0.41%      |
-| Avg Time  |   142.925 (sec)                      |      142.472 (sec)  
-             |  +0.32%      |
-+-----------+---------------------------+---------------------------+------+
-
-So overall 0.3 % improvement is observed across 10 runs.
-
-Please add below tag for the patch set. 
-
-Tested-by: Samir M <samir@linux.ibm.com>
-Thank You !!
-
-
-Regards,
-Samir.
-
 
