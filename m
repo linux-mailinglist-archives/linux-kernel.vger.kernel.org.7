@@ -1,177 +1,193 @@
-Return-Path: <linux-kernel+bounces-896141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CA17C4FBE5
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 21:53:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44B1DC4FA7C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 20:58:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8FA394E21AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 20:53:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E24DA1887837
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 19:58:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06A0C361DD6;
-	Tue, 11 Nov 2025 20:52:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 767CF3A79A0;
+	Tue, 11 Nov 2025 19:58:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="h9ZMZVW9"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hKSJ+k8f"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF9B62E62A6
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 20:52:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15C5B2C0276
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 19:58:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762894378; cv=none; b=npBwM9DmX4QNlFakDzrBqMDHrifWaeOno2thnmu+2XzV7KF0OBuRWH5CexeHAskxdS9uotnEGVXxNhYryS8LEDwbR/G3kcAuGc8QLYySZ0nsf8ovNe0lDW8C8RxfSDwhGgcoqe4bvIfc0bkxsWTg3ly1io5Ald0X7eJkp0LGL0M=
+	t=1762891086; cv=none; b=AIJpXRGAcAYFmOpJVgpsCi7zMSGssfj9ty3MkwGKyau0IMgFu3Udn1p+/RCLU4ljNf3mxovYOQrdYCpWt+UvLnijrD13E9HSxPYYs4XUQ6qNaeusI4hxOEc1PPLSbCkToRcETvbBFay3NxufsYqz43JPZKlyqCcNfA2bs8Ml0TQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762894378; c=relaxed/simple;
-	bh=20fW040rhb53y55JF09naa+/dKCrt2hlbFDcMOkDPi0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HxaIxOpBsrAHgimY9LgQOI0WFbeWkNs67JddtKW9/DIUFf2boKPAgi/fPjB8IKyIhPMvxSpP+7Jmon11Mg2fwlC9Y9OxnA9ho8/SkWkaV8TQf5+3QR/k73x/k16ic5bTGfeDrOBAbgd25/opIXpxELbSO2Bh/9K4HgFD8zEny8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=h9ZMZVW9; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2959197b68eso5015ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 12:52:56 -0800 (PST)
+	s=arc-20240116; t=1762891086; c=relaxed/simple;
+	bh=62sKlTrI0pxAC8MsCjHaTOLDapsx/YJT2jYwGk/YKdM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ofiN8OAUb63uBO3eTvSL1HfL9e8MClEvJBOf0oAppQZryMa8c/CN4dca/HUnIIsUMK7g7+lQ6M+J0pgT6aM2jBg5cfgIdL/qgxTjUbNVqBIrTNAoch3fp/qNZkXK8yqONyxEfyDlq83ieiVLvHDGj0CZakWORAtOLs6b72AK5mE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hKSJ+k8f; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-42b2cff817aso11026f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 11:58:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762894376; x=1763499176; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lB20FEz15VtCdLa08O1lBT4Wo59H+loRPzGbfYEV9zE=;
-        b=h9ZMZVW9+kbzRIzRPp1EFrfz1QXoykzoS5GSxlT6a4X79wS99rBS5p5j8Ea5hynnHF
-         d9aFG0nXe1iidsjU7c/P5SIwSc44e0iN+6fbBSt3oCjVBmMaMwrTiGGxfzGM6QjXT+Y2
-         sZ9+T3vMJ+dSEVLg42mFwebAW53IyP/lrnUm8up00Q/4K5R5DG8xFlk5SUY4jcRUQuO6
-         TvkrcuvtIn/sRB6PkmvNEjseE8CeHVsXtLOhbwAaA+GCyUuhdPOOdQ0jE80w/CIuhNfC
-         B1w9TIIsG/WTuVhUDK+lpe/I5mZvdSHiOYzr4rembrfa1CfVxLuVs8cO8RQYROFLQoiO
-         9hoQ==
+        d=gmail.com; s=20230601; t=1762891083; x=1763495883; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=GgqlcdicdOlvJS4d4lOKT+0mM+91PtUwo1QhcetW41s=;
+        b=hKSJ+k8fZGT096+ddl8ISH5rFKI3ErCDbIvcpLCKdO7UPypquJE4vL0daq2cRzzvju
+         BLJaTwVRjWzKOA7yfw6aVilpBJfcUTwLL+M8cpvdpAFO9tl2mxn2VwLrDglGyO68OVNS
+         4S43WF9B95pGQxA/JVquRvH7QWKGAPwtmhVI9IS207Veeh776ptyiZHDIBWQgkamTccN
+         A8nTVex14gCRwgSXmmBZnfDwVGMbxnwVBCOXx+5JQjYK0fHXarx+ypghdZd4fl93OmMj
+         9WBoC9+eaykoMZPkPvnOfHeGkYL3ZyzZonhkScHk9UZNpbdq9jpetjiWLbVVxKEi8v4s
+         YfLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762894376; x=1763499176;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=lB20FEz15VtCdLa08O1lBT4Wo59H+loRPzGbfYEV9zE=;
-        b=sUTv/S/vxwP7C7azDyumbLSpBRg3sHOvPyiy6Fn/DNRnh3S2i81spWeyp+9G1st9iA
-         jCBqGIRNvdwC6+LVUiwYcc1yxHXuUXOmOisiMoeDKPqzcIOp2A6mhTpoYpWAkwQs/W2y
-         UhAT3AbhLauuRBbAE/9IifJbjKjkINNS5y9e3XNs9cj3gr9m92RLmfcv0bAmTWEtxzH7
-         xioGO/jHApnu9o2ccRyAgfPxU5LgiP4b2c84BiFxh+aTgw7O6I1MHyd2dwF0iDN3X4dl
-         B7ANW0nQ1xcmEYr7yQH0+x81KTZA0/ySim/7ZoaffBcU5izJjqFxlkGPGH5QVA1XF0D5
-         faGw==
-X-Forwarded-Encrypted: i=1; AJvYcCVRupuxsiE68Q9slq9AStjlpGxsuJThJ/9nlPtVHB6lE0nkkVor3a+kKWBCD64B31MWXxx1h3AyjKxJKlo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrQ0FpMjkTtYsiaWYM7ASmOCzuik0mZyAjl/n51UFIJzkrsNYn
-	nlqo+yzca349S9Vb/4KxWPaB6qeYk2mvpBSJGiCNzMe2k+loFHDqWz81R6G8LrnS7oT7tgv3Z2J
-	T9BQeavOmdbGNN1XkALTgz/uhKFdA5mU9rhfNQiJX
-X-Gm-Gg: ASbGncvPjWNtnEJGpqIikoXzkDGQSxUDUUvZ+BPtnkCaE35B0y4DS2yAPsWK9Xa+gJ5
-	iNXsvZUhl02r00D1jrVJoXtM1ZgweHWGiF+Mif7po+4f4K7zUnQj9jL8bGfBzwcFMPiZeRZZwk/
-	N7WoMDZPcCRrbJiuJErf06ZiQeo/Kc3xtWjJErFgMlHAo4sscy5gNxsGDh4wNoO0d5gTGz8aDgQ
-	zJS2Ow6OlLZprkFTfKG1iUP8QhNmF3orNBjCCerhraD1ykLcnqQAleQJ1FWLuWbY4W6ggKYG2+h
-	U7gPpL6GCr4aHJhNgLBDJ5P3QPNW4fmYl86G
-X-Google-Smtp-Source: AGHT+IGILWK3Sees47bVwnkZffzKZ3iRj1UHlgzsog5iRfACCsge4YpukstXKacIcop6wyt7zQWQtjZn/9WH5sg+Wl8=
-X-Received: by 2002:a17:902:dace:b0:294:f745:fe7b with SMTP id
- d9443c01a7336-2984f836f94mr862465ad.6.1762894375985; Tue, 11 Nov 2025
- 12:52:55 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762891083; x=1763495883;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GgqlcdicdOlvJS4d4lOKT+0mM+91PtUwo1QhcetW41s=;
+        b=PXp8PCHmJAZ78KycyzWS6tLLBtcufh+UHl36e2QkMR6YwLrOCxbKOBzRfOUK2U3851
+         Pwa/H+9toicZ5yh3V3TxSH/aC1gH9nZThGi9YaS0KQHRVEUaR7yPBVKxnF0k+J5rc0de
+         BdX+kL7JMvUT6We5ySxb84/4PZvx0WjJYfzMeL2e7eDbG5JsLuF1lT7OtrP2oQmI/Lws
+         R4/ael0CU8p3KSm9iM5GBVqRK60QcNksE1q1rrb4q0F9vy9O2G6mjyY5/sAZ5G71Fo1s
+         lcQDQ2vkeQbxwWRKW3ftBhGeAWg/7Mw/yE0O8oFR1tsy+qcZtmXFIxgigB/Zl3H0fu1u
+         Y3EA==
+X-Forwarded-Encrypted: i=1; AJvYcCWyQGP5DJWidxr1Df6icXtkI0paQStS1VCrM4i4stliX5nq6A3Rt4zW90CLqxZLw4SaBJdEmuPTv2cJWY0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIvCeAlx3E+nUN66lVuRKGU3K/9pOcC9JHjlU1wgX/qlJFWacw
+	fTv/3m/Ru2WkQEJouQZBH6kKUffYKa6vDtH2jt+zLMHMe9QHftjC6Nv/
+X-Gm-Gg: ASbGnctL5nE6GxiXlpB24/aEC5HRnWToTjkLBv0vw/JgKt+J2ZGSkVunKdSh4sZ0QKR
+	rXj06wc+9aQQCEH7DT3lmOwWmXgEbshYi0t1lP+0R+FUN2rg4umK8sKOtaMglEsKpFLYzh9f0rQ
+	1tOleRix2LWN5YGU0VRgN4DuBe0Ytdrv8rf5yo+gs6EanQz7ZP1ILnV4zG1ZDQBT9GIcu9zeOML
+	FZ56f85r1tdYPBs8ewQR7zVs5odaZV9oihH/wJIqk2WjIdNMWi4yt7vASYWCR6VMw0Y89IAWo4Y
+	zy3YNItw8eqVmKBedibuSJUa/ia9KsQOydXVxWEt+M3RqtAZ8421XseLjbq0TP1F4npgcCVpCs2
+	mHyYewWpfEa4wFbaKRAqnE1ll3hcadlBIa7EcHJSc56M1pw8nmBI0hWxhGSyNlVf57QSNfFlOel
+	8P1aXd0jtUH7F1fjrxcYsfr+OnOgk=
+X-Google-Smtp-Source: AGHT+IE21rOv3E/xf61ATIbFY5zukw0tfOg7SCkZGn4ZrAkN7p8psKMVSUEEhKXeXEJZn8Yww8oxyA==
+X-Received: by 2002:a05:600c:4f54:b0:477:5b01:7d49 with SMTP id 5b1f17b1804b1-477870c9a70mr2783175e9.4.1762891083060;
+        Tue, 11 Nov 2025 11:58:03 -0800 (PST)
+Received: from bhk ([196.239.144.128])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4775ce211d8sm405969865e9.11.2025.11.11.11.58.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Nov 2025 11:58:02 -0800 (PST)
+From: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+To: akpm@linux-foundation.org,
+	peterx@redhat.com,
+	david@redhat.com,
+	lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com,
+	vbabka@suse.cz,
+	rppt@kernel.org,
+	surenb@google.com,
+	mhocko@suse.com,
+	shuah@kernel.org
+Cc: linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	david.hunter.linux@gmail.com,
+	khalid@kernel.org,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+Subject: [PATCH] selftests/mm/uffd: remove static address usage in shmem_allocate_area()
+Date: Tue, 11 Nov 2025 21:54:27 +0100
+Message-ID: <20251111205739.420009-1-mehdi.benhadjkhelifa@gmail.com>
+X-Mailer: git-send-email 2.51.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251111040417.270945-1-irogers@google.com> <20251111040417.270945-7-irogers@google.com>
- <aRLeyoCQVG46KKEv@google.com>
-In-Reply-To: <aRLeyoCQVG46KKEv@google.com>
-From: Ian Rogers <irogers@google.com>
-Date: Tue, 11 Nov 2025 12:52:45 -0800
-X-Gm-Features: AWmQ_blA26dOnpW1ob14QsjySoD5F96dB3XzLqSOWaLQfqP9XTUOou5f3uryFBk
-Message-ID: <CAP-5=fX8yMXKVbV8_TKaP0_jP3YC9AawgOtUsM+++JC9R0-VAQ@mail.gmail.com>
-Subject: Re: [PATCH v3 06/18] perf script: Change metric format to use json metrics
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
-	James Clark <james.clark@linaro.org>, Xu Yang <xu.yang_2@nxp.com>, 
-	Chun-Tse Shao <ctshao@google.com>, Thomas Richter <tmricht@linux.ibm.com>, 
-	Sumanth Korikkar <sumanthk@linux.ibm.com>, Collin Funk <collin.funk1@gmail.com>, 
-	Thomas Falcon <thomas.falcon@intel.com>, Howard Chu <howardchu95@gmail.com>, 
-	Dapeng Mi <dapeng1.mi@linux.intel.com>, Levi Yun <yeoreum.yun@arm.com>, 
-	Yang Li <yang.lee@linux.alibaba.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, Andi Kleen <ak@linux.intel.com>, 
-	Weilin Wang <weilin.wang@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Nov 10, 2025 at 10:59=E2=80=AFPM Namhyung Kim <namhyung@kernel.org>=
- wrote:
->
-> On Mon, Nov 10, 2025 at 08:04:05PM -0800, Ian Rogers wrote:
-> > The metric format option isn't properly supported. This change
-> > improves that by making the sample events update the counts of an
-> > evsel, where the shadow metric code expects to read the values.  To
-> > support printing metrics, metrics need to be found. This is done on
-> > the first attempt to print a metric. Every metric is parsed and then
-> > the evsels in the metric's evlist compared to those in perf script
-> > using the perf_event_attr type and config. If the metric matches then
-> > it is added for printing. As an event in the perf script's evlist may
-> > have >1 metric id, or different leader for aggregation, the first
-> > metric matched will be displayed in those cases.
-> >
-> > An example use is:
-> > ```
-> > $ perf record -a -e '{instructions,cpu-cycles}:S' -a -- sleep 1
-> > $ perf script -F period,metric
-> > ...
-> >      867817
-> >          metric:    0.30  insn per cycle
-> >      125394
-> >          metric:    0.04  insn per cycle
-> >      313516
-> >          metric:    0.11  insn per cycle
-> >          metric:    1.00  insn per cycle
-> > ```
-> >
-> > Signed-off-by: Ian Rogers <irogers@google.com>
-> > ---
-> [SNIP]
-> > @@ -2150,23 +2296,72 @@ static void perf_sample__fprint_metric(struct p=
-erf_script *script,
-> >                        },
-> >               .force_header =3D false,
-> >       };
-> > -     struct evsel *ev2;
-> > -     u64 val;
-> > +     struct perf_counts_values *count, *old_count;
-> > +     int cpu_map_idx, thread_map_idx, aggr_idx;
-> > +     struct evsel *pos;
-> > +
-> > +     if (!init_metrics) {
-> > +             /* One time initialization of stat_config and metric data=
-. */
-> > +             struct script_find_metrics_args args =3D {
-> > +                     .evlist =3D evsel->evlist,
-> > +                     /* TODO: Determine system-wide based on evlist.. =
-*/
-> > +                     .system_wide =3D true,
->
-> Probably you can check if the thread_map has an entry for -1.
+The current shmem_allocate_area() implementation uses a hardcoded virtual
+base address(BASE_PMD_ADDR) as a hint for mmap() when creating shmem-backed
+test areas. This approach is fragile and may fail on systems with ASLR or
+different virtual memory layouts, where the chosen address is unavailable.
 
-Thanks, done. In testing this I found that the CPU map index lookup
-can fail and so I added the same thread map index workaround of just
-aggregating into the first count.
+Replace the static base address with a dynamically reserved address range
+obtained via mmap(NULL, ..., PROT_NONE). The memfd-backed areas and their
+alias are then mapped into that reserved region using MAP_FIXED, preserving
+the original layout and aliasing semantics while avoiding collisions with
+unrelated mappings.
 
-> > +             };
-> > +             if (!stat_config.output)
-> > +                     stat_config.output =3D stdout;
-> > +
-> > +             if (!stat_config.aggr_map) {
-> > +                     /* TODO: currently only global aggregation is sup=
-ported. */
-> > +                     assert(stat_config.aggr_mode =3D=3D AGGR_GLOBAL);
->
-> IIUC there's no option or config to set different aggregation mode for
-> perf script.
+This change improves robustness and portability of the test suite without
+altering its behavior or coverage.
 
-Right. I don't think this patch needs to do everything given the prior
-behavior wasn't working. We can add an aggregation mode. It probably
-makes more sense to work on this in the context of perf stat report.
+Signed-off-by: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+---
+Testing:
+A diff between running the mm selftests on 6.18-rc5 from before and after
+the change show no regression on x86_64 architecture with 32GB DDR5 RAM.
+ tools/testing/selftests/mm/uffd-common.c | 25 +++++++++++++++---------
+ 1 file changed, 16 insertions(+), 9 deletions(-)
 
-Thanks,
-Ian
+diff --git a/tools/testing/selftests/mm/uffd-common.c b/tools/testing/selftests/mm/uffd-common.c
+index 994fe8c03923..492b21c960bb 100644
+--- a/tools/testing/selftests/mm/uffd-common.c
++++ b/tools/testing/selftests/mm/uffd-common.c
+@@ -6,11 +6,11 @@
+  */
+ 
+ #include "uffd-common.h"
++#include "asm-generic/mman-common.h"
+ 
+ uffd_test_ops_t *uffd_test_ops;
+ uffd_test_case_ops_t *uffd_test_case_ops;
+ 
+-#define BASE_PMD_ADDR ((void *)(1UL << 30))
+ 
+ /* pthread_mutex_t starts at page offset 0 */
+ pthread_mutex_t *area_mutex(char *area, unsigned long nr, uffd_global_test_opts_t *gopts)
+@@ -142,30 +142,37 @@ static int shmem_allocate_area(uffd_global_test_opts_t *gopts, void **alloc_area
+ 	unsigned long offset = is_src ? 0 : bytes;
+ 	char *p = NULL, *p_alias = NULL;
+ 	int mem_fd = uffd_mem_fd_create(bytes * 2, false);
++	size_t region_size = bytes * 2 + hpage_size;
+ 
+-	/* TODO: clean this up.  Use a static addr is ugly */
+-	p = BASE_PMD_ADDR;
+-	if (!is_src)
+-		/* src map + alias + interleaved hpages */
+-		p += 2 * (bytes + hpage_size);
++	void *reserve = mmap(NULL, region_size, PROT_NONE, MAP_PRIVATE | MAP_ANONYMOUS,
++			-1, 0);
++	if (reserve == MAP_FAILED) {
++		close(mem_fd);
++		return -errno;
++	}
++
++	p = (char *)reserve;
+ 	p_alias = p;
+ 	p_alias += bytes;
+ 	p_alias += hpage_size;  /* Prevent src/dst VMA merge */
+ 
+-	*alloc_area = mmap(p, bytes, PROT_READ | PROT_WRITE, MAP_SHARED,
++	*alloc_area = mmap(p, bytes, PROT_READ | PROT_WRITE, MAP_FIXED | MAP_SHARED,
+ 			   mem_fd, offset);
+ 	if (*alloc_area == MAP_FAILED) {
++		munmap(reserve, region_size);
+ 		*alloc_area = NULL;
++		close(mem_fd);
+ 		return -errno;
+ 	}
+ 	if (*alloc_area != p)
+ 		err("mmap of memfd failed at %p", p);
+ 
+-	area_alias = mmap(p_alias, bytes, PROT_READ | PROT_WRITE, MAP_SHARED,
++	area_alias = mmap(p_alias, bytes, PROT_READ | PROT_WRITE, MAP_FIXED | MAP_SHARED,
+ 			  mem_fd, offset);
+ 	if (area_alias == MAP_FAILED) {
+-		munmap(*alloc_area, bytes);
++		munmap(reserve, region_size);
+ 		*alloc_area = NULL;
++		close(mem_fd);
+ 		return -errno;
+ 	}
+ 	if (area_alias != p_alias)
+-- 
+2.51.2
+
 
