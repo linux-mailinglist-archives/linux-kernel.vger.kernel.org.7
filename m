@@ -1,207 +1,241 @@
-Return-Path: <linux-kernel+bounces-894451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23480C4A887
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 02:30:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFDD7C4AB7A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 02:38:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B84174F48A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 01:28:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3439B3BB1BD
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 01:28:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 130FB27E040;
-	Tue, 11 Nov 2025 01:19:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hotmail.com header.i=@hotmail.com header.b="LDQxts9f"
-Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazolkn19013077.outbound.protection.outlook.com [52.103.43.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E981933EB0B;
+	Tue, 11 Nov 2025 01:20:05 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B36C21D5BC
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 01:18:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.43.77
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762823942; cv=fail; b=aLtJ0fB/Ry5EWlwqe8vspcTy0EU3WEAtlQrz5bssLmjtQS1xnllp3rn3z+a58qbm+8jQ51+uVjnuB6aDZzDXaRHh0VqcusbdQPVptTFSfhUt4/RTVClLtiZIiKVNW/V/93vJdr7YAr43kuiJMcamJlDUrvig5+aNszFPd0ABvjw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762823942; c=relaxed/simple;
-	bh=h4umLNwE2izMkz8LqlP7lgmhqxs9jVTwWWMocyH2YTI=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=l9dcI9aaGi3MsU+AV10APg31Uil+RTTYuLNpiRqKLHGgYwa29A+zfZjAGWsSJ3bjhiPbAMwEs4yD01a5Aba7F6rkeCGz338YtgOMVqBKCI452IZWPjrXXeyagl8BoTDX+wA4UYZ/ylC34UbKPX8cFcil2cBP1L7T6sY9AC2mkEo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.com; spf=pass smtp.mailfrom=hotmail.com; dkim=pass (2048-bit key) header.d=hotmail.com header.i=@hotmail.com header.b=LDQxts9f; arc=fail smtp.client-ip=52.103.43.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hotmail.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QviAjEk/Eax93w05l9BQ1JiBbyiVCFWVAZQ5p/IdzL+cN/oB8gpso4KWgmlOsJS5RsIoOHLzRnQXfISn8fdLCwKEQIrNAq4GFAliMv9XmVD2TCkNeU0FSZvpSqrd29xl6JVvPfgQkySpB3XQzaCeZXNnsvaewz2H08cEk6RfR6StxuImAqYdgbHxk8XIRUrzGf1OG0uSBPyH7uyjjR0sApE3hgWSbKLH/ieQc4TYzdbTaTSWMvsX6ChvyDdP2fpEllMP1KiEv/8tZn+qIflIG2Dv9FnYbrqqGCTpuA5zI+ftwVzuoA6bMHEHT7v/rxkCAyHhT5iooIpHkBUIe/Vdtw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=h4umLNwE2izMkz8LqlP7lgmhqxs9jVTwWWMocyH2YTI=;
- b=ymwuv8pFleGCt1keUl8kjpVQV5kqa6JNF5fL/uCXGTh2CTlaBLPxHtlrusSCw+ie5DzDqMTYx+uxMC9srARcTBxdzX/swWNZRUSnmB3fEXcjdMZdHUckQGtRpo0P+dTjEVcL5ZysJSqfBzbO7cm+wS60aMNxOlLhpalcZQJhR1RfIJZm0GyWmk5BHdGBky6astyzypAL8cjDm/BTgQGN7cSai3AdJsiCptkwrvzpKUKWyq8UJGtyYwxz2RNS5Oig3WIPH8LdlTBapH8kRty43BhLomCBaV7Gp+iinQDWe39zLwvZrQtQSE35XE6XLIfbQivGwrx+PI8Le6HL41utsg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hotmail.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=h4umLNwE2izMkz8LqlP7lgmhqxs9jVTwWWMocyH2YTI=;
- b=LDQxts9fW1IImkJAdDHHnFBCIUhobhpBUA4c7hODXOcPuTxsLblBkgRgIIls7HvIs1EaDIfbkyER87UyEe1aixeLG3A0b9qALCGAM4kHesbOcEr0MAtewmsskMNU94Xq8ZtdplA3kCA03IYf6kQFBc4YdUDFCjtnS10M+dX4b7nOEyup6kWTU4wdxblngVMZdgB+HaQfvIHxCvtU5fAuurt4G6VCjVAyekSZZGImGCnfUNxdLYd1ZonTB0tV8Xere5t0tGlZTdNCXXLbcuFErf4tsEdmpCO6iUs5WQYIkVuNEtNsGnJ1kFppSQVTShBlz5suBaYaVMZZNG63Tgjm1A==
-Received: from SEZPR01MB4399.apcprd01.prod.exchangelabs.com
- (2603:1096:101:4f::13) by TY1PPF4E964F9E4.apcprd01.prod.exchangelabs.com
- (2603:1096:408::323) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Tue, 11 Nov
- 2025 01:18:56 +0000
-Received: from SEZPR01MB4399.apcprd01.prod.exchangelabs.com
- ([fe80::5145:bf70:5ca0:ee19]) by SEZPR01MB4399.apcprd01.prod.exchangelabs.com
- ([fe80::5145:bf70:5ca0:ee19%6]) with mapi id 15.20.9298.015; Tue, 11 Nov 2025
- 01:18:55 +0000
-From: Wei Wang <wei.w.wang@hotmail.com>
-To: Vasant Hegde <vasant.hegde@amd.com>, "alex@shazbot.org"
-	<alex@shazbot.org>, "jgg@nvidia.com" <jgg@nvidia.com>,
-	"suravee.suthikulpanit@amd.com" <suravee.suthikulpanit@amd.com>,
-	"thomas.lendacky@amd.com" <thomas.lendacky@amd.com>, "joro@8bytes.org"
-	<joro@8bytes.org>
-CC: "kevin.tian@intel.com" <kevin.tian@intel.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>
-Subject: RE: [PATCH v2 1/2] iommu/amd: Add IOMMU_PROT_IE flag for memory
- encryption
-Thread-Topic: [PATCH v2 1/2] iommu/amd: Add IOMMU_PROT_IE flag for memory
- encryption
-Thread-Index: AQHcTMpGA/9lTKVYuEa2QjS5vGXcw7TrtpoAgAD3lmA=
-Date: Tue, 11 Nov 2025 01:18:55 +0000
-Message-ID:
- <SEZPR01MB4399DEBB3B5DA122E075899DDCCFA@SEZPR01MB4399.apcprd01.prod.exchangelabs.com>
-References:
- <SI2PR01MB439373CA7A023D8EC4C42040DCC7A@SI2PR01MB4393.apcprd01.prod.exchangelabs.com>
- <SI2PR01MB439351F0B7E54513710BBD3DDCC7A@SI2PR01MB4393.apcprd01.prod.exchangelabs.com>
- <e6b877d7-91c9-4db7-9c4f-bcf4608e17df@amd.com>
-In-Reply-To: <e6b877d7-91c9-4db7-9c4f-bcf4608e17df@amd.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SEZPR01MB4399:EE_|TY1PPF4E964F9E4:EE_
-x-ms-office365-filtering-correlation-id: aadd2bfc-ad65-4abe-6086-08de20c04891
-x-ms-exchange-slblob-mailprops:
- laRBL560oLT/z5vudnqSE/O7qQNjjjS4fkWbseK2xave77reU5BfiM4ULtGCYX4W+troajtO+hBWGmKzf/tEzSNunKWlFsPgC3dMbq0VepIMxOHUhcW3JTAnK8Da4FOH/OyNsL+w0P40LfR21k/O4aQLmuPFojYXBngGGyMncd97lco4bY/MjLRjDIWzCiAvFRKvuOOa/l7YV4zrD/M95vR9Z5+NIM1YxTgsxO9jX/EwxyMtcD6RxXtGqYJA+8/XUPLL5l6YMUY7/KlUIeOpldfaG9I9Wfh+H/inpMPJKZpHV2viZLydLFh2gV8O2QLayGhKJw8QB4DTEwOO0kAxPtWUfuNjk8eIF565878cqF1H5pfR5FDKGdGwnLrmn/8Kn5fdR+s4z4khkPIwdFmKh1r7rcTUWEfL/wrDB4WKFQxBGVbQ/jpeaUOIi3B8UPrCsG4Rmr2rI1oED4gVfFrSAMFzsPfAhstQd9ecO6qQWedY3QiMk/lkGpICxsVVvL1dlk2pP1DBA+/8L6jlgbjqQ6m/RbcPdw1tBzSEq6AGuKbHfbMwDkNWM6Oc09vyjQOWxwHaKymENQ9bqacGxS77xI5QOLOAst8UOvwouSguWRjmDJrn/asB66HWpLHUv2OtQehjgGl9/OhwVjQs0aZW16mPNjQxafORcHQfd3WEZ1g5DXQqf3jhuwb7ZTAsYKwV+/PmKfqDF79s+Eq4NlfC+EacAlqCxGW2kdlML/kDtH/0hmjnTx8nNuoCFpgP3RtqqVtnTVMLSDmQu5/OoFFrfzii8BbvTJN9
-x-microsoft-antispam:
- BCL:0;ARA:14566002|31061999003|19110799012|15080799012|51005399006|8060799015|8062599012|13091999003|10112599003|461199028|40105399003|440099028|3412199025|102099032;
-x-microsoft-antispam-message-info:
- =?utf-8?B?bWhOMWxYQ3JMNlYwQVdaWXV5cWREYXlUcFdjdGVSdmErdE5RYi9qcnMyY2do?=
- =?utf-8?B?cElCMk84SnBpNFArZzRIbTNrRitIU0dsc2dRS3ltMFlqZkcycUJxa2t5SzdP?=
- =?utf-8?B?ajZLNFZXS2tXWUNzYTRGWlJoTit5VlQwSWFsdzlRSFRGKytxZTJmV2dRUnFj?=
- =?utf-8?B?cG1MaEpqZ0EwYWhjcnFrZHZwWmFZbldWbFRQNHp4M0Ezc1J6UmhXZk9Xdmh3?=
- =?utf-8?B?NkVhQnhUZUY1SmFWUDFiNG9WVHN2ZlJJU2lKNFhBV2FPc3dVMnYwb3ExVklP?=
- =?utf-8?B?U2ljd1pTclBnMFRweXIzWFM1WFQzL1dUYXdHZVROL3R1c05CMVZPSmlsWS9k?=
- =?utf-8?B?RGs3eC9qdit0T2M0S2dyOFhMMGRHR1dQMUpkY2JuZFV3aktnQ0FITzdCTjFt?=
- =?utf-8?B?TTVpdUJkb2VGWFRob1JvNnpxR0ZqQVA3ZW1IWkY4dGxlQ2JNd0tOU1pGaXRi?=
- =?utf-8?B?NFBXYXdZelJrcUlWR2kvcWxFd21PalRHbktsUVoxb2tQYkxHSTY3eW1XZ0lt?=
- =?utf-8?B?WU1yb003eHAzbUd2S25OY0VpbFF6SVMwdEF1d1ZDdGhqNTA4RzdtRDhNTmxG?=
- =?utf-8?B?d3V4RFp6Z2tyM2RPRk1EM2NsTkZQUFI3UTkyQUNSRVdLUjdoV2k1ZVJoRS9L?=
- =?utf-8?B?a3B5VEJUYkkzMC9oNzdQM0RvQm8rM2tycXE2R1BXMy9ZaDJKdGFpTUg3d2di?=
- =?utf-8?B?VE5rbXZ2V2tac09kNk5udVZJS2d3NTNjYkpPdGRSTGZDZGxlaW5DZGRMTHU1?=
- =?utf-8?B?Ty9rUXc5Qk1QeUI3aFV6UEcwZFpsNTlHTzJTbU5sUndGTTloWWZ1SGlKTkJ2?=
- =?utf-8?B?Ni9tcTRHUy9kTEpYekRTdFhUd0EzS2RaajM1b1NmZk9OQTNrOWZsL3BMa1h0?=
- =?utf-8?B?ZVlBRElZRlRsQjd0MDFKamlvT1RQSHNiUldCcnhvSk50N3IrSU5ic2lzNTdO?=
- =?utf-8?B?Q0hRZnVhNVVRM3pqcjBXVE1lbHlmZTJ6bUpFWTVyUS9yV3g0RHNuMG53Ukxs?=
- =?utf-8?B?YnlBZ3BwNUwwODE5RTZwNkY0dTEvVWczSVpDNnRqc2dGWnQ0NGxzMThVR1VQ?=
- =?utf-8?B?MTRqSnh2SnRURWtsNEV2aHAwWFBGM0x3Ny8yZDVvTXJqWFdLUmgrbittOWFG?=
- =?utf-8?B?OVphaHFtRnZuc2MyUWlLMVAySUlUbGFGWEJFLytlelI0OXNydFQ0OXNKcVM1?=
- =?utf-8?B?WEYxVVNVV2crWU5MSis1Y085MTdYMm93TlFmRGxvOVVBUUVyWGpDd2F4L0lC?=
- =?utf-8?B?Vml5ZzluU2tBZFlHYmducjJ2RzlpSjEwcTNvdDBWTGJoVVhxb2dyS2ZCZnB5?=
- =?utf-8?B?WTFLSFc1NGxVWXRTL1d6SmlvdnlwWnNEak02bk5ZUnBCSjUxUEJFb3BsRlcx?=
- =?utf-8?B?RXo5aDdIdnM4K2EyVXR5RjVWZ0M1Uk43S3puQXJVN0hNdW1VT2lPMzI4WjFN?=
- =?utf-8?B?SC9NdUxrK2NpUW45dG5pN0JqZjlnK3NIQ0JMMVlJYWk5NWhDQjRkcWJWcDVr?=
- =?utf-8?B?UmNUdmFrVUM4MmZGT1FEaGRzNlBzVkxMRUlLcFZmMFNYa3Qzb0dDQnNQVGp1?=
- =?utf-8?B?K1lDNnlodGNGQjFBcklWbkcxUENWR2hUSUh1RXJTc2dyMEM4OTJ6K2FwSmtq?=
- =?utf-8?Q?vxGmxWlAVPBmdRBaw1RvdIZ+GxU6BYOl22FrL4ecglAg=3D?=
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?UXNXTWVBcEdhTktoYlNUWjIyNkJGQnJ0dDZxS256VEVvNERMKy96ZFdvQWhH?=
- =?utf-8?B?Sk5VVUpMbVVMS1RoYnNBZnpRS0Y4V0R1dmhuRldxRUZobGMra2VWNk1yK1Jp?=
- =?utf-8?B?TGlxMmFCUXVOL0VqdVVxaXNpemZaZkUvajFNZm41YVMrNGllMWZPbW96dStm?=
- =?utf-8?B?dnRSakp4OHhqc0VmblMxVjVHci9FRTJ0eUsyK1hDeGtKbm9JejB1a3MzOHBH?=
- =?utf-8?B?NVV6dEs4NlVocmNlL3U0Z25TRzNad3NtUjVjY1ZneG92b3hrandEOTQrSkZP?=
- =?utf-8?B?RGhDOUM4bXlFeE9qaHBPbEpNTUQ1NmkyOU01S2RZRS9TS0pEQ2pMRTJ4Mk1v?=
- =?utf-8?B?ZWtzdkYvc3BEYUs2aklZMDI4RHkxanFMa1NzNUd3cTEraXEvdk8rUHZRSW5Y?=
- =?utf-8?B?LzVZME1yS3hzWkVVN0QvcVY2ZDZnaTZHMHgwbDkyVExqenFjTjNsRTVnQlBC?=
- =?utf-8?B?aDVQejByUlBsUmVRZTlKRU1LNUxZWkQra3lYTUtPQVZHTHB3K282OWV4cXFn?=
- =?utf-8?B?VjIwL3J3b1FsZEZ5c2pHTE9TaS9IK2IxdmswL3hYQ1NwUzk0b2IxWFRlZnJ1?=
- =?utf-8?B?WVRNMVBHMjZuYjlRUk43a1ArZmRiLzJNQytvcDRiOUZTZmRIQy9ZN2FFWERk?=
- =?utf-8?B?Q015WjVVaG8vS1lkZVp5STdsdHFmUmoyVUJDalQ4OGR6WWt1WXFTSlIzSU1o?=
- =?utf-8?B?UUsvZ2NDeXVWRExsL1k5WEtIN1YzakhHa2tBWW1iMHl4NExHUEx0aFR1bDFT?=
- =?utf-8?B?MWtiWkVHSTBNTFc3ZDZDL2dJS3JUczRjajFEdWxTejVad21mR0pVNWRFZjEr?=
- =?utf-8?B?SERtYjJUSU84QVVzTExQNzFSZnZTQmdNSG1IOFVmdHUwSEFPN3NpZXVQcjNr?=
- =?utf-8?B?VTVLdVI2akVYU0FKQXk2MDg1WmN2dlRYMGdHTU5PelUwNUZSQTRZWGg3S0JS?=
- =?utf-8?B?NHA5bjY1Umh0RUhtVXdRN2U5c3RlRDNJQ2JETlhSQ2J0cXQ3WTNSNWxBMUJz?=
- =?utf-8?B?U1FUMUxFWDgycGxJSmFxNjVNdGUwMzRBVVVFRHBPNWFUVWozVFhRY3dtVUVR?=
- =?utf-8?B?cHk5NDBSYjhCLzJneVpkWFV6YWQyMjM4cTF5dndpSFFDU2R1QWUwcjA5aVFU?=
- =?utf-8?B?K2wzTTczSmJqM012Ym9hd2dpYmJiUStNd3I4SjZjOWNjMEFHbHV3Z2c1dDhS?=
- =?utf-8?B?T1hESzkzT0h2WVpmYnBVMDRKdXVXdGRBak9jUFVhSFFCTExvbGRNQktaMVpr?=
- =?utf-8?B?SUJQMjczcmRrSEdGN0E0WEt6UHREc2RHdlNIcWFhMnNmR1J4eExyempPVlYz?=
- =?utf-8?B?dnYxSThIL3V6dTJyUmtCd1VUcXhIVGJpYkVOU1ZMbXlmY25rT1BCUFNCeDM2?=
- =?utf-8?B?M1dONEE0a2N0OHQwaXJTcTN6YjR0NXg4anVPRldIc20rWDVKaUF1bG1kRlBK?=
- =?utf-8?B?SUVucWVhM0FjQlBtTXBZSStkZXFnYzVHMkhZWW85YXpXUTJpVDVoYjVNU0ty?=
- =?utf-8?B?VkFjdVRZY3JSNXJCUnRIRXZ6azdZMGlKYnFobXJxajMxSkZZS3VEaWtMYlht?=
- =?utf-8?B?b3FiZmNXUWpoRDREY3doMUJ0QzFJbHQ2TjNuZnl1NkJUSVMrSjNva0pZOUlM?=
- =?utf-8?Q?hjiJOT00o5/9MjwOwSRXxeF4dsmmwr4xa4eb4yXHkJ6A=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9213028688E
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 01:20:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762824005; cv=none; b=R1jtKRQi1XiMV96qyK8K6dQWgNEY/5aqAEhNuhRZJlhCz6S/zXKirO1v4aUGPC8DstXSZisNozK5UWWAV8XReSEmbkMNv7lwAU2vrmxlmfTPBTeqmGj5NXquxsXbFHrceHo3qihVyjdsUpeDmeBOBDNN6uNbTRASI6tRzjaVQoo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762824005; c=relaxed/simple;
+	bh=/gPwd1PolENXEYou2u3Zc6lvE8KTqroGtk/YHcv6ILo=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=HVGBkR6lHntBcmycdjm7jJOzjJgMIrGmGEWTfMxLcX00lk55RVYbPRMDVGy5VP5wJ8ArXAmKYKg1QMGVfxNKM9tO/RwG2XrEY8mIYlQSnajU8lzEQ3EniYhidsfDC3KoCC+jc+HSrHGZ9hshP1z8z7Uz+80dJuxofv1Xzx+VH3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-433270dad0dso4559205ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 17:20:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762824003; x=1763428803;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4H82Gg/MOrkCZYSMzlqBfKTN+0FDGpo5+e6GJZMrfSA=;
+        b=c2i5akPnTPUz5jXdJp8rBnCxdTashYzdlrO+n3VlPkW7ui/wPhauWC6vTqI/EUjfaD
+         OyTJ3a1kMo/7G9qXtQFG/74gXZ0WzBIVeZagkBghJE4oM/G4mEmP6rlSxeJV6j01C5Nc
+         p6fWvd7oqPdBIr4IwEFKGUb14dOFs28+BWh7zNFQUN4abQ7hamYevgaLMjcgKnryFSZh
+         +ftzRqG057l15/UvhkPDYAQnWHYevbhvbPxIh2TOKtbZwMaMCcZRKq8mZPxg9/yguB7g
+         /rma62oCD8JkY1Rt0T3ORWBC0DUS7EwDAfurTPIStv5MvsQT0t/gmxZASvcYf4mBukyv
+         sDHA==
+X-Forwarded-Encrypted: i=1; AJvYcCWESKWpe6q9QfS5RAKmK31YzUXacHEQeG+WnXARIK++Fw8JxAcnOsf+DGsKYHT1JnkIQwKvhEWmrWCmgho=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUs74x9IsThdbJ/89u9Uj5iol3b48deW58sBNStykPngbOcarE
+	BxexC30U/JPllPsnhZN84pzVv6PJbUq6WViZM50fx0wCZvAE+j35OpPEB+P54XErx0Dbyoztdzc
+	/K7S/+sCjSnS+nVOSJvC5AABoq9yodaY5arkCxc6uliNesYYP2Pd6EAOehbA=
+X-Google-Smtp-Source: AGHT+IEm43BPynBsjKZioDT5tHQMOC6Nt9VRh+PSBJJP1Y6NUuCXyud5fw6DXQb2XmibQviKbgrslBWTugxjwmrch66Br8cKaZv6
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: sct-15-20-9052-0-msonline-outlook-827b9.templateTenant
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SEZPR01MB4399.apcprd01.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: aadd2bfc-ad65-4abe-6086-08de20c04891
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Nov 2025 01:18:55.6398
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PPF4E964F9E4
+X-Received: by 2002:a05:6e02:1:b0:433:7c9a:e8b6 with SMTP id
+ e9e14a558f8ab-4338becc429mr25466785ab.9.1762824002789; Mon, 10 Nov 2025
+ 17:20:02 -0800 (PST)
+Date: Mon, 10 Nov 2025 17:20:02 -0800
+In-Reply-To: <tencent_56925ADDFB5DC999044FF38DF625928D8507@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <69128f42.a70a0220.22f260.0119.GAE@google.com>
+Subject: Re: [syzbot] [ntfs3?] memory leak in ni_add_subrecord
+From: syzbot <syzbot+3932ccb896e06f7414c9@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-T24gTW9uZGF5LCBOb3ZlbWJlciAxMCwgMjAyNSA1OjU1IFBNLCBWYXNhbnQgSGVnZGUgd3JvdGU6
-DQo+IFRvOiBXZWkgV2FuZyA8d2VpLncud2FuZ0Bob3RtYWlsLmNvbT47IGFsZXhAc2hhemJvdC5v
-cmc7DQo+IGpnZ0BudmlkaWEuY29tOyBzdXJhdmVlLnN1dGhpa3VscGFuaXRAYW1kLmNvbTsNCj4g
-dGhvbWFzLmxlbmRhY2t5QGFtZC5jb207IGpvcm9AOGJ5dGVzLm9yZw0KPiBDYzoga2V2aW4udGlh
-bkBpbnRlbC5jb207IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7DQo+IGlvbW11QGxpc3Rz
-LmxpbnV4LmRldg0KPiBTdWJqZWN0OiBSZTogW1BBVENIIHYyIDEvMl0gaW9tbXUvYW1kOiBBZGQg
-SU9NTVVfUFJPVF9JRSBmbGFnIGZvcg0KPiBtZW1vcnkgZW5jcnlwdGlvbg0KPiANCj4gSGkgV2Vp
-LA0KPiANCj4gT24gMTEvMy8yMDI1IDc6MzAgUE0sIFdlaSBXYW5nIHdyb3RlOg0KPiA+IEludHJv
-ZHVjZSB0aGUgSU9NTVVfUFJPVF9JRSBmbGFnIHRvIGFsbG93IGNhbGxlcnMgb2YNCj4gPiBpb21t
-dV92MV9tYXBfcGFnZXMoKSB0byBleHBsaWNpdGx5IHJlcXVlc3QgbWVtb3J5IGVuY3J5cHRpb24g
-Zm9yDQo+IHNwZWNpZmljIG1hcHBpbmdzLg0KPiA+DQo+ID4gV2l0aCBTTUUgZW5hYmxlZCwgdGhl
-IEMtYml0IChlbmNyeXB0aW9uIGJpdCkgaW4gSU9NTVUgcGFnZSB0YWJsZQ0KPiA+IGVudHJpZXMg
-aXMgbm93IHNldCBvbmx5IHdoZW4gSU9NTVVfUFJPVF9JRSBpcyBzcGVjaWZpZWQuIFRoaXMgcHJv
-dmlkZXMNCj4gPiBmaW5lLWdyYWluZWQgY29udHJvbCBvdmVyIHdoaWNoIElPVkFzIGFyZSBlbmNy
-eXB0ZWQgdGhyb3VnaCB0aGUgSU9NTVUNCj4gPiBwYWdlIHRhYmxlcy4NCj4gPg0KPiA+IEN1cnJl
-bnQgUENJZSBkZXZpY2VzIGFuZCBzd2l0Y2hlcyBkbyBub3QgaW50ZXJwcmV0IHRoZSBDLWJpdCwg
-c28NCj4gPiBhcHBseWluZyBpdCB0byBNTUlPIG1hcHBpbmdzIHdvdWxkIGJyZWFrIFBDSWUgcGVl
-cuKAkXRv4oCRcGVlcg0KPiA+IGNvbW11bmljYXRpb24uIFVwZGF0ZSB0aGUgaW1wbGVtZW50YXRp
-b24gdG8gcmVzdHJpY3QgQy1iaXQgdXNhZ2UgdG8NCj4gbm9u4oCRTU1JTyBiYWNrZWQgSU9WQXMu
-DQo+IA0KPiBSaWdodC4gUXVvdGUgZnJvbSBBTUQgUHJvZ3JhbW1lcnMgTWFudWFsIFZvbDIsICJh
-bnkgcGFnZXMNCj4gY29ycmVzcG9uZGluZyB0byBNTUlPIGFkZHJlc3NlcyBtdXN0IGJlIGNvbmZp
-Z3VyZWQgd2l0aCB0aGUgQy1iaXQgY2xlYXIuIg0KPiANCg0KWWVzLCB0aGFua3MuDQoNCj4gPg0K
-PiA+IEZpeGVzOiAyNTQzYTc4NmFhMjUgKCJpb21tdS9hbWQ6IEFsbG93IHRoZSBBTUQgSU9NTVUg
-dG8gd29yayB3aXRoDQo+ID4gbWVtb3J5IGVuY3J5cHRpb24iKQ0KPiA+IFN1Z2dlc3RlZC1ieTog
-SmFzb24gR3VudGhvcnBlIDxqZ2dAbnZpZGlhLmNvbT4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBXZWkg
-V2FuZyA8d2VpLncud2FuZ0Bob3RtYWlsLmNvbT4NCj4gPiAtLS0+ICBkcml2ZXJzL2lvbW11L2Ft
-ZC9hbWRfaW9tbXVfdHlwZXMuaCB8IDMgKystDQo+ID4gIGRyaXZlcnMvaW9tbXUvYW1kL2lvX3Bn
-dGFibGUuYyAgICAgIHwgNyArKysrKy0tDQo+IA0KPiBNYXkgYmUgYXBwbHkgc2FtZSBmaXggZm9y
-IGlvX3BndGFibGVfdjIuYyBhcyB3ZWxsPyAoT2YgY291cnNlIGZpbGVuYW1lDQo+IGNoYW5nZWQg
-d2l0aCBnZW5lcmljIHB0IHNlcmllcykuDQoNClllcy4gSSB3YXMgdW5jZXJ0YWluIGFib3V0IHRo
-ZSAxc3Qgc3RhZ2UgbWFwcGluZyBhcyBpdCBoYXMgYSB1c2FnZSBmb3INCkdWQS0+R1BBIG1hcHBp
-bmdzLCBhbmQgZm9yIHRoZSB0cnVzdGVkIE1NSU8gY2FzZSwgd2UgZG8gbmVlZCB0aGUNCkMtYml0
-IGFkZGVkIHRvIEdQQS4gQnV0IHNpbmNlIHZJT01NVSBpc27igJl0IHN1cHBvcnRlZCBmb3IgU05Q
-IGd1ZXN0cywNCmFuZCB0aGUgdHJ1c3RlZCBNTUlPIGlzbid0IHJlYWR5IHlldCwgSSB0aGluayBp
-dCBzaG91bGQgYmUgc2FmZSB0byBwcm9jZWVkDQp3aXRoIHRoaXMgbm93LiBUaGUgYWJvdmUgY29u
-c2lkZXJhdGlvbiBjYW4gYmUgcmUtdmlzaXRlZCB3aGVuIHRoZSB0cnVzdGVkDQpNTUlPIGdldHMg
-bGFuZGVkLg0KDQpJJ2xsIGFkZCBpdCBpbiB0aGUgbmV4dCB2ZXJzaW9uIGFuZCBzZWUgaWYgb3Ro
-ZXJzIG1pZ2h0IGhhdmUgYSBkaWZmZXJlbnQNCnBlcnNwZWN0aXZlIG9uIHRoaXMuDQo=
+Hello,
+
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+memory leak in ni_add_subrecord
+
+BUG: memory leak
+unreferenced object 0xffff888126a90e00 (size 128):
+  comm "syz.0.17", pid 6726, jiffies 4294946753
+  hex dump (first 32 bytes):
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+    00 00 00 00 00 00 00 00 00 b8 51 13 81 88 ff ff  ..........Q.....
+  backtrace (crc 5c7e5ed8):
+    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
+    slab_post_alloc_hook mm/slub.c:4979 [inline]
+    slab_alloc_node mm/slub.c:5284 [inline]
+    __kmalloc_cache_noprof+0x3a6/0x5b0 mm/slub.c:5762
+    kmalloc_noprof include/linux/slab.h:957 [inline]
+    kzalloc_noprof include/linux/slab.h:1094 [inline]
+    ni_add_subrecord+0x31/0x180 fs/ntfs3/frecord.c:317
+    ntfs_look_free_mft+0xf0/0x790 fs/ntfs3/fsntfs.c:715
+    ni_ins_attr_ext+0x40c/0x690 fs/ntfs3/frecord.c:988
+    ni_insert_attr+0x1d1/0x480 fs/ntfs3/frecord.c:1091
+    ni_insert_resident+0x85/0x140 fs/ntfs3/frecord.c:1475
+    ni_add_name+0x15b/0x2e0 fs/ntfs3/frecord.c:2987
+    ni_rename+0x4c/0x100 fs/ntfs3/frecord.c:3026
+    ntfs_rename+0x46c/0x5d0 fs/ntfs3/namei.c:332
+    vfs_rename+0x94b/0x1340 fs/namei.c:5216
+    do_renameat2+0x5f5/0x870 fs/namei.c:5364
+    __do_sys_rename fs/namei.c:5411 [inline]
+    __se_sys_rename fs/namei.c:5409 [inline]
+    __x64_sys_rename+0x42/0x50 fs/namei.c:5409
+    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+    do_syscall_64+0xa4/0xfa0 arch/x86/entry/syscall_64.c:94
+    entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+BUG: memory leak
+unreferenced object 0xffff888108b8c400 (size 1024):
+  comm "syz.0.17", pid 6726, jiffies 4294946753
+  hex dump (first 32 bytes):
+    46 49 4c 45 2a 00 03 00 00 00 00 00 00 00 00 00  FILE*...........
+    03 00 00 00 30 00 01 00 88 02 00 00 00 04 00 00  ....0...........
+  backtrace (crc 7197c55e):
+    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
+    slab_post_alloc_hook mm/slub.c:4979 [inline]
+    slab_alloc_node mm/slub.c:5284 [inline]
+    __do_kmalloc_node mm/slub.c:5645 [inline]
+    __kmalloc_noprof+0x3e3/0x6b0 mm/slub.c:5658
+    kmalloc_noprof include/linux/slab.h:961 [inline]
+    mi_init+0x2b/0x50 fs/ntfs3/record.c:105
+    mi_format_new+0x40/0x220 fs/ntfs3/record.c:422
+    ni_add_subrecord+0x6b/0x180 fs/ntfs3/frecord.c:321
+    ntfs_look_free_mft+0xf0/0x790 fs/ntfs3/fsntfs.c:715
+    ni_ins_attr_ext+0x40c/0x690 fs/ntfs3/frecord.c:988
+    ni_insert_attr+0x1d1/0x480 fs/ntfs3/frecord.c:1091
+    ni_insert_resident+0x85/0x140 fs/ntfs3/frecord.c:1475
+    ni_add_name+0x15b/0x2e0 fs/ntfs3/frecord.c:2987
+    ni_rename+0x4c/0x100 fs/ntfs3/frecord.c:3026
+    ntfs_rename+0x46c/0x5d0 fs/ntfs3/namei.c:332
+    vfs_rename+0x94b/0x1340 fs/namei.c:5216
+    do_renameat2+0x5f5/0x870 fs/namei.c:5364
+    __do_sys_rename fs/namei.c:5411 [inline]
+    __se_sys_rename fs/namei.c:5409 [inline]
+    __x64_sys_rename+0x42/0x50 fs/namei.c:5409
+    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+    do_syscall_64+0xa4/0xfa0 arch/x86/entry/syscall_64.c:94
+    entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+BUG: memory leak
+unreferenced object 0xffff88812586cb00 (size 128):
+  comm "syz.0.18", pid 6736, jiffies 4294946763
+  hex dump (first 32 bytes):
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+    00 00 00 00 00 00 00 00 00 e8 f5 0e 81 88 ff ff  ................
+  backtrace (crc db17ea11):
+    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
+    slab_post_alloc_hook mm/slub.c:4979 [inline]
+    slab_alloc_node mm/slub.c:5284 [inline]
+    __kmalloc_cache_noprof+0x3a6/0x5b0 mm/slub.c:5762
+    kmalloc_noprof include/linux/slab.h:957 [inline]
+    kzalloc_noprof include/linux/slab.h:1094 [inline]
+    ni_add_subrecord+0x31/0x180 fs/ntfs3/frecord.c:317
+    ntfs_look_free_mft+0xf0/0x790 fs/ntfs3/fsntfs.c:715
+    ni_ins_attr_ext+0x40c/0x690 fs/ntfs3/frecord.c:988
+    ni_insert_attr+0x1d1/0x480 fs/ntfs3/frecord.c:1091
+    ni_insert_resident+0x85/0x140 fs/ntfs3/frecord.c:1475
+    ni_add_name+0x15b/0x2e0 fs/ntfs3/frecord.c:2987
+    ni_rename+0x4c/0x100 fs/ntfs3/frecord.c:3026
+    ntfs_rename+0x46c/0x5d0 fs/ntfs3/namei.c:332
+    vfs_rename+0x94b/0x1340 fs/namei.c:5216
+    do_renameat2+0x5f5/0x870 fs/namei.c:5364
+    __do_sys_rename fs/namei.c:5411 [inline]
+    __se_sys_rename fs/namei.c:5409 [inline]
+    __x64_sys_rename+0x42/0x50 fs/namei.c:5409
+    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+    do_syscall_64+0xa4/0xfa0 arch/x86/entry/syscall_64.c:94
+    entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+BUG: memory leak
+unreferenced object 0xffff8881275a6000 (size 1024):
+  comm "syz.0.18", pid 6736, jiffies 4294946763
+  hex dump (first 32 bytes):
+    46 49 4c 45 2a 00 03 00 00 00 00 00 00 00 00 00  FILE*...........
+    03 00 00 00 30 00 01 00 88 02 00 00 00 04 00 00  ....0...........
+  backtrace (crc 7197c55e):
+    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
+    slab_post_alloc_hook mm/slub.c:4979 [inline]
+    slab_alloc_node mm/slub.c:5284 [inline]
+    __do_kmalloc_node mm/slub.c:5645 [inline]
+    __kmalloc_noprof+0x3e3/0x6b0 mm/slub.c:5658
+    kmalloc_noprof include/linux/slab.h:961 [inline]
+    mi_init+0x2b/0x50 fs/ntfs3/record.c:105
+    mi_format_new+0x40/0x220 fs/ntfs3/record.c:422
+    ni_add_subrecord+0x6b/0x180 fs/ntfs3/frecord.c:321
+    ntfs_look_free_mft+0xf0/0x790 fs/ntfs3/fsntfs.c:715
+    ni_ins_attr_ext+0x40c/0x690 fs/ntfs3/frecord.c:988
+    ni_insert_attr+0x1d1/0x480 fs/ntfs3/frecord.c:1091
+    ni_insert_resident+0x85/0x140 fs/ntfs3/frecord.c:1475
+    ni_add_name+0x15b/0x2e0 fs/ntfs3/frecord.c:2987
+    ni_rename+0x4c/0x100 fs/ntfs3/frecord.c:3026
+    ntfs_rename+0x46c/0x5d0 fs/ntfs3/namei.c:332
+    vfs_rename+0x94b/0x1340 fs/namei.c:5216
+    do_renameat2+0x5f5/0x870 fs/namei.c:5364
+    __do_sys_rename fs/namei.c:5411 [inline]
+    __se_sys_rename fs/namei.c:5409 [inline]
+    __x64_sys_rename+0x42/0x50 fs/namei.c:5409
+    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+    do_syscall_64+0xa4/0xfa0 arch/x86/entry/syscall_64.c:94
+    entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+BUG: memory leak
+unreferenced object 0xffff888125f77780 (size 128):
+  comm "syz.0.19", pid 6746, jiffies 4294946771
+  hex dump (first 32 bytes):
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+    00 00 00 00 00 00 00 00 00 c8 51 13 81 88 ff ff  ..........Q.....
+  backtrace (crc af0a413f):
+    kmemleak_alloc_recursive include/linux/kmemleak.h:44 [inline]
+    slab_post_alloc_hook mm/slub.c:4979 [inline]
+    slab_alloc_node mm/slub.c:5284 [inline]
+    __kmalloc_cache_noprof+0x3a6/0x5b0 mm/slub.c:5762
+    kmalloc_noprof include/linux/slab.h:957 [inline]
+    kzalloc_noprof include/linux/slab.h:1094 [inline]
+    ni_add_subrecord+0x31/0x180 fs/ntfs3/frecord.c:317
+    ntfs_look_free_mft+0xf0/0x790 fs/ntfs3/fsntfs.c:715
+    ni_ins_attr_ext+0x40c/0x690 fs/ntfs3/frecord.c:988
+    ni_insert_attr+0x1d1/0x480 fs/ntfs3/frecord.c:1091
+    ni_insert_resident+0x85/0x140 fs/ntfs3/frecord.c:1475
+    ni_add_name+0x15b/0x2e0 fs/ntfs3/frecord.c:2987
+    ni_rename+0x4c/0x100 fs/ntfs3/frecord.c:3026
+    ntfs_rename+0x46c/0x5d0 fs/ntfs3/namei.c:332
+    vfs_rename+0x94b/0x1340 fs/namei.c:5216
+    do_renameat2+0x5f5/0x870 fs/namei.c:5364
+    __do_sys_rename fs/namei.c:5411 [inline]
+    __se_sys_rename fs/namei.c:5409 [inline]
+    __x64_sys_rename+0x42/0x50 fs/namei.c:5409
+    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+    do_syscall_64+0xa4/0xfa0 arch/x86/entry/syscall_64.c:94
+    entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+connection error: failed to recv *flatrpc.ExecutorMessageRawT: EOF
+
+
+Tested on:
+
+commit:         4427259c Merge tag 'riscv-for-linus-6.18-rc6' of git:/..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1771960a580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=cb128cd5cb439809
+dashboard link: https://syzkaller.appspot.com/bug?extid=3932ccb896e06f7414c9
+compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=167e960a580000
+
 
