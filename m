@@ -1,123 +1,126 @@
-Return-Path: <linux-kernel+bounces-894523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A15FFC4B3BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 03:41:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30110C4B3C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 03:42:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F8923B32FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 02:41:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 580D6188288A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 02:42:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EA4734888D;
-	Tue, 11 Nov 2025 02:41:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hfjB0TpC"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66FF634888A;
+	Tue, 11 Nov 2025 02:42:25 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 312D8348460
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 02:41:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EC76330328;
+	Tue, 11 Nov 2025 02:42:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762828881; cv=none; b=qCWfk+6ka585ovREma7HEiGPvQ2KhM83AC8z7U9LJ+RIQxyaAgjkXp3KVBG9oKombqulVIYjynpIZmnf97OeLcVFK3NLI7RnfD6IjhC1D5kZkRcs0cncNmI7kNQFnuSGiYx0TMJ0f8b4Qqk2xJD+1Q/XFr4f44UBSHjEh6GWt+4=
+	t=1762828945; cv=none; b=s8b5yogVBtNvMHr+HSeOmWEdhjv1wioa04fkl4JwZfbC6+Ase8raMkJPF1DdhPyYEyg1vZnBtPp4wncC0qiihHYq1/HQPm1x2f3Bok4lwwxRPb3W8Tl3/yGJcM4hVbiI0h0OQNZv6tOV6YMj9F/6yJjizNyr+uzred/IX5jFMp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762828881; c=relaxed/simple;
-	bh=j8POPbpxSpPL02DZDm+FAXFDTPUlIreAK08ihYfV5Ow=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MstJhlrkFy0I4BO54lRMY59M/8WrNrsTd6ZvEjC1C6P6b9qUOrHbIiokwzMjr3L4uuYhve9hhHirFdYDslmfUQCQ2jWciLIyuxf7e1UwjaqBn0k0QSxXVI4nnW/TcADIGCOqgtZr4bpG7T/YmU+GDNhF71uy3ZzyIa32fjvkquk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hfjB0TpC; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-42b31c610fcso1788519f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 18:41:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762828878; x=1763433678; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=j8POPbpxSpPL02DZDm+FAXFDTPUlIreAK08ihYfV5Ow=;
-        b=hfjB0TpCEo3kYg32fFZRXiDrqBOPHYThtITRucPce04EEJWoONjsFKUNUzBq95diT7
-         CfKhJtMwnQUpPZXpTtfyZc/32etUp2hn7fQve40uCOcuWqIZXHGFXzLKqrlT6qxZVvCL
-         IL7hGx5ndeRMW6F9XkNPTsFoO3mvfuZaNdAYAR9e3ecb1mvaj/Mdst5I52cRHOpOq2uD
-         JdCKWXCYtRcS3nukn0tP3kIvhEwONNpo0EJ8V2+d5Dpl0YBaCajptpp+pZiTZ8eFFg1t
-         8puP+SUzVlM8Y6hzRVtnwMGnuusohkOSkR/Vt5lQLg7KlM4hD2HVazQ3jBiq24BYuOM5
-         nXpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762828878; x=1763433678;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=j8POPbpxSpPL02DZDm+FAXFDTPUlIreAK08ihYfV5Ow=;
-        b=nsQxOIUczqfOuKkJHKzzfECnJzFwFHi16RBuTa0QYhPkuheqmEzrAEjCvVIka+tPus
-         Z1jOp7UHovg9CHeY0vjQ8fg0MI0IAE+isGXNQBbea1uAfTiYECdsevEtiBFDN2K5gNqd
-         Ku3ezIqT2qkTHQNFZpnQ6+/k5kktfoy3AF+qwv7gwMuXcjPct2X5P0cKVNqHiqAV/Ma1
-         y4tAcJdZWAxO3JmszhZZQx7kHb9IKzvDoXbO+QIXlamXxgY4/XMgtrrRVp/6P8qnDaTN
-         c91A4c47LswBTUqFmcpAR8TNTa36ISsvBnGs8LI3LLiTkW00GbZflWerEDa2phXwW+PX
-         uO2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVD87PvzYcRLDrQIwL0787AscqnCjJ3u+midWdBE+56/I4kgZYm/M9oO0e6ov+Wu6agxKp0Xr+g+xFDjI0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0evAKQxrlZkdSkdt9XQ5JL9P5dEbgmAxFvaHxaMb7sXAhb3p6
-	/E8/BLJRyk+adUkfH/eo6MtHSx1bNYiXl0FCG19Yc+D19qN9cJyuE+K87CG1R+FVD12IhQaPsSd
-	187xB6OsvVm2IA9F5qPY1GjCo4RWk9oM=
-X-Gm-Gg: ASbGncsu0jzXbtZzEZyYETw05+BLznF1tj06GFIS7zsiN8fgvsUMuU6T1waMhMq5bXs
-	nqUBmNfUHA+Myn83Fu6ZbOfi6qCnemsMU87o75R/IDaifoOOlwC4L8qttGST4an/4OTUQIHu7eT
-	IZl5vQQ8JXj8AmlTO58om5UaEY0jLLmHVV/34uen9b8+fSz6doXCsBN8+YzkIMd9yuThDCMD51s
-	kYCa/2pxkswE+RwnkeDxnrqxTRp9R8Az85oux9LhVmqDVmdyqZzx+oK5x8qhKWxTKJeV39PAetB
-	4/K0ZHfhcyPFPh5QAg==
-X-Google-Smtp-Source: AGHT+IH25QaUjzLpQ0O3CRwITusfe6pCAMVCPN6AMnU+eDbCy0CGb6riE7azc0Q1GIAoescCF4JMVu/lrJ4ie5xkUk4=
-X-Received: by 2002:adf:9d83:0:b0:42b:3083:55a2 with SMTP id
- ffacd0b85a97d-42b308356e2mr6235388f8f.63.1762828878146; Mon, 10 Nov 2025
- 18:41:18 -0800 (PST)
+	s=arc-20240116; t=1762828945; c=relaxed/simple;
+	bh=FEJlVZE4VYuYRy/TOHtqLsuPVa39R0INDIqRum5FX7w=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=a9mhPEiIL5+9PdmvPWnnBY7YJfJFnaM5bdA0fQhBLGmrMKLFwLzTWNJ+des/L73/rp7Ygp7pVn7P4QRIcyR+dJw8z7EG2Hf3S9nXr7VcPvho1CJKR+HgMY7LRNzS3q93ncvR9EflTi9W6lSC71g8TmWfUMvShgaY1dNkuuByNB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost.localdomain (unknown [202.112.113.212])
+	by APP-03 (Coremail) with SMTP id rQCowAAXqdt9ohJpGV5PAA--.16295S2;
+	Tue, 11 Nov 2025 10:42:13 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: alexander.shishkin@linux.intel.com,
+	gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org,
+	akpm@linux-foundation.org,
+	Ma Ke <make24@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH] intel_th: Fix error handling in intel_th_output_open
+Date: Tue, 11 Nov 2025 10:42:04 +0800
+Message-Id: <20251111024204.12299-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.17.1
+X-CM-TRANSID:rQCowAAXqdt9ohJpGV5PAA--.16295S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Kr4fWw47tFy3ZrWkCw4xCrg_yoW8Cr4DpF
+	WYqa98CFy5Gws29w4jqF45ZFyFkF1Iy3yFgFy8J3sYgFn5XrWYqrWrtFy5ZFy5XrWrJa4a
+	qr1akrW8GFWUZFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9j14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxV
+	W0oVCq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40E
+	FcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr
+	0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8v
+	x2IErcIFxwCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
+	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
+	67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
+	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1x
+	MIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvf
+	C2KfnxnUUI43ZEXa7VUjJ3vUUUUUU==
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20251104104913.689439-1-dongml2@chinatelecom.cn>
- <13884259.uLZWGnKmhe@7950hx> <CAADnVQKQ2Pqhb9wNjRuEP5AoGc6-MfLhQLD++gQPf3VB_rV+fQ@mail.gmail.com>
- <5025905.GXAFRqVoOG@7950hx>
-In-Reply-To: <5025905.GXAFRqVoOG@7950hx>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Mon, 10 Nov 2025 18:41:07 -0800
-X-Gm-Features: AWmQ_blf7ZxJz9aQNYoTKPbgJ8K03XqCzzaO2O8UCyW_1T8GZg-hL2D_ArTOHB4
-Message-ID: <CAADnVQKxV7cvwvCMD29sqs8yt0-xQ2XVb-e6bxkTFZ2EzS4DMw@mail.gmail.com>
-Subject: Re: [PATCH bpf-next] bpf,x86: do RSB balance for trampoline
-To: Menglong Dong <menglong.dong@linux.dev>
-Cc: sjenning@redhat.com, Peter Zijlstra <peterz@infradead.org>, 
-	Menglong Dong <menglong8.dong@gmail.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Eduard <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, "David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, X86 ML <x86@kernel.org>, 
-	"H. Peter Anvin" <hpa@zytor.com>, jiang.biao@linux.dev, bpf <bpf@vger.kernel.org>, 
-	Network Development <netdev@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 10, 2025 at 5:28=E2=80=AFPM Menglong Dong <menglong.dong@linux.=
-dev> wrote:
->
->
-> Some kind. According to my testing, the performance of bpf
-> trampoline is much better than ftrace trampoline, so if we
-> can implement it with bpf trampoline, the performance can be
-> improved. Of course, the bpf trampoline need to offer a API
-> to the livepatch for this propose.
+intel_th_output_open() calls bus_find_device_by_devt() which
+internally increments the device reference count via get_device(), but
+this reference is not properly released in several error paths. When
+device driver is unavailable, file operations cannot be obtained, or
+the driver's open method fails, the function returns without calling
+put_device(), leading to a permanent device reference count leak. This
+prevents the device from being properly released and could cause
+resource exhaustion over time.
 
-Sure, then improve ftrace trampoline by doing the same tricks
-as bpf trampoline.
+Found by code review.
 
-> Any way, let me finish the work in this patch first. After that,
-> I can send a RFC of the proposal.
+Cc: stable@vger.kernel.org
+Fixes: 39f4034693b7 ("intel_th: Add driver infrastructure for Intel(R) Trace Hub devices")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+---
+ drivers/hwtracing/intel_th/core.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-Don't. livepathcing is not a job of bpf trampoline.
-Song recently fixed interaction between livepatch and
-fexit. We will not be adding another dimension
-of complexity here where bpf trampoline is used for
-livepatching and for bpf progs.
+diff --git a/drivers/hwtracing/intel_th/core.c b/drivers/hwtracing/intel_th/core.c
+index 47d9e6c3bac0..ecc4b4ff5cf6 100644
+--- a/drivers/hwtracing/intel_th/core.c
++++ b/drivers/hwtracing/intel_th/core.c
+@@ -811,12 +811,12 @@ static int intel_th_output_open(struct inode *inode, struct file *file)
+ 
+ 	dev = bus_find_device_by_devt(&intel_th_bus, inode->i_rdev);
+ 	if (!dev || !dev->driver)
+-		return -ENODEV;
++		goto out_no_device;
+ 
+ 	thdrv = to_intel_th_driver(dev->driver);
+ 	fops = fops_get(thdrv->fops);
+ 	if (!fops)
+-		return -ENODEV;
++		goto out_put_device;
+ 
+ 	replace_fops(file, fops);
+ 
+@@ -824,10 +824,16 @@ static int intel_th_output_open(struct inode *inode, struct file *file)
+ 
+ 	if (file->f_op->open) {
+ 		err = file->f_op->open(inode, file);
+-		return err;
++		if (err)
++			goto out_put_device;
+ 	}
+ 
+ 	return 0;
++
++out_put_device:
++	put_device(dev);
++out_no_device:
++	return err;
+ }
+ 
+ static const struct file_operations intel_th_output_fops = {
+-- 
+2.17.1
+
 
