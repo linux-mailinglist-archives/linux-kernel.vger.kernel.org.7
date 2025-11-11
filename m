@@ -1,135 +1,160 @@
-Return-Path: <linux-kernel+bounces-895793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F3E5C4EEC3
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:04:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52873C4EEE1
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:06:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D20EC4E65E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:04:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2106C3AEA30
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:04:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D569369995;
-	Tue, 11 Nov 2025 16:04:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82C5436A003;
+	Tue, 11 Nov 2025 16:04:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XOFdNtAR"
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VbCJMYhd";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="6pHBM9+S"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC6FB7082A
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 16:04:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6018F2E719C;
+	Tue, 11 Nov 2025 16:04:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762877042; cv=none; b=M/Irw/OzvVVxu95qScLxBXhmRM458Ki9oUeDONx3JyPP8iz3Ur8hxBqtbk72h7bmPxQb/wkG7vgYdIg6I/O2sx4I/kNKXADv6ahbZuI11c+LxC7b7tKKTPnBA9Hf1HqikNSlUJ9b+spSWt4dfSz/qhr2nzd3BsEI/fwShDpUyDE=
+	t=1762877093; cv=none; b=ctQKo1giGNJD5WctbQMKu1FqFMvmiqDuPf8RQ6vLhdKxzniRp4S9chfDygSkuvQ710ZWNt7pqIdP89VLxLxysCUjZ4aJOTjbYqh4UFGCV811oAjqfA68zMrOVmvYOzobFgkF6gMOMLaSsRdm3GZCZ2rcY5805uquNl/st5USoss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762877042; c=relaxed/simple;
-	bh=IqSj1pjWkOxz8XdpRQAu1uWC/z8Cx/Uyiq/kF6bkn2Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WFdI1dvdt4fpm7h1laTXE4grPQDAsRfSSpYP0WTGwuft1w9wI8XguV+VBVIX0zm7bWFCGkmnS8RyZuSJ/EAnewFALyfuj2YfDRzAhYHa4YSeR/Gcd6o7bHJbRlI7ja2VWd/MY/nRjQGB91LyRFIKDGFhy8Yp32B7E0jiZD2KQJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XOFdNtAR; arc=none smtp.client-ip=209.85.219.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-8804ca2a730so63132916d6.2
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 08:04:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762877040; x=1763481840; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=p22dqnTP+WT7LTzsUQpMYPFrvPg4fKs8whrEeV7I6/k=;
-        b=XOFdNtARQuUZYTaSY1j+/x+r8jPV0QmDjFvPOBeGDp3gwW17Ve9lla8i6FcQPY9Fhf
-         HKFl6qxPd/PH1X/fSTDS96FIxnQQnQ0yF6+DI4hpMskFCKkFywsZRe9J6CBaR78nitxA
-         NnUDgU+nqwq9OAPLWAj5cx/QKl3X9CcxXE7w3M8uFiIyx8HM7gtz+gfJGdS1lyai6Gqj
-         JtCiROn8lo+9wSLn5riA2ey86kDFgI9AfC+PmOGeA/rb1SWuhEFGltLtDiEi11+4PMug
-         JQkwIrYw8l6AoJB4aP7/TCA8OMuxT0M5/9J0DbaTbOgEy3CbKlkv3X2/HySVqT/dXjKB
-         D+hg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762877040; x=1763481840;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=p22dqnTP+WT7LTzsUQpMYPFrvPg4fKs8whrEeV7I6/k=;
-        b=mko4eQCWx1tVSYOk40EFcjr5awUa7MRMdUnMh7aHGZvIB0k6k2nIecC1BnhrByCx4W
-         am4e60+qaGNZylh9pmGaOBqNO1BkbV+RBZ3VLZM07V4hwZgY2wUBa08ZOTeUJYIvOCS0
-         Sql1uDJkOxoGDYMtBQDXsCedU3wk3OQ+gVZGhKIKP0NZ9M8GNIu1J+IwdOjlzAr4yW2q
-         KuAAeUIEGpd/O7IQunYY46R+GjwOtLRfeU7eFgOUKyt33+fFeRYvSP38hxeJXx1eSVH2
-         CbjTNRuHOWda5h3eFBaojW+0jkz2Kp5kkbKt8Hvbc/OonaBCFcxAFAK/mM/i1S+rxCFU
-         tk3w==
-X-Forwarded-Encrypted: i=1; AJvYcCUfmKfWqzve+G974vFSAr/PKqZjMHDVgr26K+AjGgafRHZgKx1pPjyaI9jVZmxhy9goaJOHSW6Q0U/GXfU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOXVt3Wrve41THapCAb56pWOTgeqag5TdrolFhXRS4ThhYVQIP
-	dO9OIDLEnEFuRbS4Jp2j5x9/okEvbfzpAxJonvu+/BPXsmYoO1aB1+lkw6mpptk8W0WNvXGhSKa
-	pmonkE57QRWotcgeF1rRnrDBewRXJW9U=
-X-Gm-Gg: ASbGncv07WocD8PHRryHY7qjJ8fEV31aDDaP34H8B1JKmE/xRDxNVow/i6pAs9L1Ve2
-	iVGNv8VtJNTqvspACSioX1pLuoueCZeL/LEgbSZiuHk8BSq/UVsi/pMgWICGLdE+zTfpS5PYyP0
-	BicyLcFCIoj3Lblz4nypThzrUyqUqjnnTdk4BLftiUrKG+gLfGJGQNvBdHgj/RfCv+T9EAPLaNH
-	UuWCjye83HkhyzycnL3qTTHlnOH7fILfZ45yXvKgm3rNJvBQZqmsjr0NpWNU4m0yFolTxSG5JHu
-	4dCnjc/OyQI/XxXlE6OHl+M7WfSN62V7psauTAg/8fkQk9DG6HtzfiJaClYmEndueYXjqqqkoko
-	bKAKxFNL5UArJJbBBXZzDh3eh9rVawNVl5zcyZmgZwkw2zbLSPRfNMunvWjooO8uELZbIzI7/Ox
-	V5sWIe0tRkHaKNMSC+DYI=
-X-Google-Smtp-Source: AGHT+IGbI2y8BO4zXLUCfMUPsmSUaVvSwPP3A7OqUwFX0uRSKtOhi6kkDFDcw0Vnhb7AgoDQJVNEyWKQqIxY52glLdk=
-X-Received: by 2002:a05:6214:3010:b0:87f:fb2e:9991 with SMTP id
- 6a1803df08f44-882385cfb7dmr212493586d6.6.1762877039610; Tue, 11 Nov 2025
- 08:03:59 -0800 (PST)
+	s=arc-20240116; t=1762877093; c=relaxed/simple;
+	bh=Kh+CbdpJzlLjFO2RQf5VgnmnC0RJatj+pA/eOLJdFhk=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=rM4fhTzB41U/YxyHep9HI+Ydqp6bD1Xlj0nEU1IJzisO322kYrneuuZAUaswkWL1H9DkYA4YhYPAdIdf4zsrRKPtblMVVrSduahecMvTQbJiboIXxnbbI3GO3/8NKdx4IN07m9DteTn710nEZa9wnFz0urQGSpz33z6AWZR3O7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VbCJMYhd; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=6pHBM9+S; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 11 Nov 2025 16:04:49 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1762877090;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sxsF2MAMuL/4sSmDliSZQfPcjhD4gnZBfS2ezJFc0uI=;
+	b=VbCJMYhd9kJWlLU+VDm05Zxy24zLAA3+n35T5ag7fIv5JYWj8IpkengFlj1x7nj4JQ6wjq
+	igKWbu0J2uEl9tBVG9doht57YlcAt9Jndu2p1AVGjF6+fRTU1E09EuoGr+u0nLLkDOquof
+	Iwz/w0oO3gG0R0b2rH84SbUp4eS4b1WcBrX9xdJTZvNfvzkLEcuq3eD21Gc77HE7dPZv4W
+	BH1D4s3LpzH0ebUmZuam2G8QGw0kp8557atGYG2Plj/STPu5oblH47m/2ifLtOkLagnug1
+	qYpb4dqRTUJv4KTHA9bhCvtty+AkM7XVa3AmYPXt8w6shiXsAabxENK2XavlKQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1762877090;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sxsF2MAMuL/4sSmDliSZQfPcjhD4gnZBfS2ezJFc0uI=;
+	b=6pHBM9+SSK9fHzHWOSJNuysgAtckg9sUCU0qyPTlIMv98S7S+rAiBZhQGcsTZgkp/qSA78
+	k0sIJHu5yf+p99Aw==
+From: "tip-bot2 for Borislav Petkov (AMD)" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/sev] x86/coco/sev: Convert has_cpuflag() to use
+ cpu_feature_enabled()
+Cc: "Borislav Petkov (AMD)" <bp@alien8.de>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20251031122122.GKaQSpwhLvkinKKbjG@fat_crate.local>
+References: <20251031122122.GKaQSpwhLvkinKKbjG@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251111070539.1558765-1-sunyiqixm@gmail.com>
-In-Reply-To: <20251111070539.1558765-1-sunyiqixm@gmail.com>
-From: Steve French <smfrench@gmail.com>
-Date: Tue, 11 Nov 2025 10:03:47 -0600
-X-Gm-Features: AWmQ_bnWa6CPOjA90RODWVbZ9Ca-j58oVz0SxlTOoe6a2Jum9heLBu_4Q52omkc
-Message-ID: <CAH2r5msGsFW0GBrZpt1odmn8yXMbORMCHWTnD2xGOhG6GpWoLA@mail.gmail.com>
-Subject: Re: [PATCH] smb: fix invalid username check in smb3_fs_context_parse_param()
-To: Yiqi Sun <sunyiqixm@gmail.com>
-Cc: sfrench@samba.org, pc@manguebit.org, ronniesahlberg@gmail.com, 
-	sprasad@microsoft.com, tom@talpey.com, bharathsm@microsoft.com, 
-	linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <176287708918.498.7568806227528588666.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 
-tentatively applied to for-next pending review and testing
+The following commit has been merged into the x86/sev branch of tip:
 
-On Tue, Nov 11, 2025 at 1:19=E2=80=AFAM Yiqi Sun <sunyiqixm@gmail.com> wrot=
-e:
->
-> Since the maximum return value of strnlen(..., CIFS_MAX_USERNAME_LEN)
-> is CIFS_MAX_USERNAME_LEN, length check in smb3_fs_context_parse_param()
-> is always FALSE and invalid.
->
-> Fix the comparison in if statement.
->
-> Signed-off-by: Yiqi Sun <sunyiqixm@gmail.com>
-> ---
->  fs/smb/client/fs_context.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/smb/client/fs_context.c b/fs/smb/client/fs_context.c
-> index 59ccc2229ab3..d2cf1f60416a 100644
-> --- a/fs/smb/client/fs_context.c
-> +++ b/fs/smb/client/fs_context.c
-> @@ -1470,7 +1470,7 @@ static int smb3_fs_context_parse_param(struct fs_co=
-ntext *fc,
->                         break;
->                 }
->
-> -               if (strnlen(param->string, CIFS_MAX_USERNAME_LEN) >
-> +               if (strnlen(param->string, CIFS_MAX_USERNAME_LEN) =3D=3D
->                     CIFS_MAX_USERNAME_LEN) {
->                         pr_warn("username too long\n");
->                         goto cifs_parse_mount_err;
-> --
-> 2.34.1
->
->
+Commit-ID:     b2c1dd6c6f70a5a519532227358c82d4cfda5b36
+Gitweb:        https://git.kernel.org/tip/b2c1dd6c6f70a5a519532227358c82d4cfd=
+a5b36
+Author:        Borislav Petkov (AMD) <bp@alien8.de>
+AuthorDate:    Thu, 30 Oct 2025 17:59:11 +01:00
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Tue, 11 Nov 2025 16:42:31 +01:00
 
+x86/coco/sev: Convert has_cpuflag() to use cpu_feature_enabled()
 
---=20
-Thanks,
+Drop one redundant definition, while at it.
 
-Steve
+There should be no functional changes.
+
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Link: https://patch.msgid.link/20251031122122.GKaQSpwhLvkinKKbjG@fat_crate.lo=
+cal
+---
+ arch/x86/boot/startup/sev-shared.c | 2 +-
+ arch/x86/coco/sev/vc-handle.c      | 1 -
+ arch/x86/coco/sev/vc-shared.c      | 2 +-
+ arch/x86/lib/kaslr.c               | 2 +-
+ 4 files changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/arch/x86/boot/startup/sev-shared.c b/arch/x86/boot/startup/sev-s=
+hared.c
+index 4e22ffd..a0fa8bb 100644
+--- a/arch/x86/boot/startup/sev-shared.c
++++ b/arch/x86/boot/startup/sev-shared.c
+@@ -12,7 +12,7 @@
+ #include <asm/setup_data.h>
+=20
+ #ifndef __BOOT_COMPRESSED
+-#define has_cpuflag(f)			boot_cpu_has(f)
++#define has_cpuflag(f)			cpu_feature_enabled(f)
+ #else
+ #undef WARN
+ #define WARN(condition, format...) (!!(condition))
+diff --git a/arch/x86/coco/sev/vc-handle.c b/arch/x86/coco/sev/vc-handle.c
+index 7fc136a..f08c750 100644
+--- a/arch/x86/coco/sev/vc-handle.c
++++ b/arch/x86/coco/sev/vc-handle.c
+@@ -352,7 +352,6 @@ fault:
+=20
+ #define sev_printk(fmt, ...)		printk(fmt, ##__VA_ARGS__)
+ #define error(v)
+-#define has_cpuflag(f)			boot_cpu_has(f)
+=20
+ #include "vc-shared.c"
+=20
+diff --git a/arch/x86/coco/sev/vc-shared.c b/arch/x86/coco/sev/vc-shared.c
+index e2ac95d..58b2f98 100644
+--- a/arch/x86/coco/sev/vc-shared.c
++++ b/arch/x86/coco/sev/vc-shared.c
+@@ -1,7 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0
+=20
+ #ifndef __BOOT_COMPRESSED
+-#define has_cpuflag(f)                  boot_cpu_has(f)
++#define has_cpuflag(f)                  cpu_feature_enabled(f)
+ #endif
+=20
+ static enum es_result vc_check_opcode_bytes(struct es_em_ctxt *ctxt,
+diff --git a/arch/x86/lib/kaslr.c b/arch/x86/lib/kaslr.c
+index b589392..8c7cd11 100644
+--- a/arch/x86/lib/kaslr.c
++++ b/arch/x86/lib/kaslr.c
+@@ -22,7 +22,7 @@
+ #include <asm/setup.h>
+=20
+ #define debug_putstr(v) early_printk("%s", v)
+-#define has_cpuflag(f) boot_cpu_has(f)
++#define has_cpuflag(f) cpu_feature_enabled(f)
+ #define get_boot_seed() kaslr_offset()
+ #endif
+=20
 
