@@ -1,167 +1,140 @@
-Return-Path: <linux-kernel+bounces-894865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 187F4C4C45B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:11:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F0C7C4C468
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:11:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B38418C0EB9
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 08:09:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0A5E18C2532
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 08:09:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21DF62F3C27;
-	Tue, 11 Nov 2025 08:08:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D2FB2FF673;
+	Tue, 11 Nov 2025 08:08:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BUNd4V3c"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="eO60w1ga"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFDF02D6E53
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 08:08:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE3E12EA156
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 08:08:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762848514; cv=none; b=Y0QW36MMPVJF3RO7fSJRpoCGH+t0wpF8Ygzr2T3QhCxd36odIEegWgJtnQwz79HveK7Oh/h0gOECVTAEk0HOIgURFXvGR4PdX8O+v9ENMGipu+iIExc85xqV/DxeG6ejoPPn3/5Vrvk1JAgQyhUY2Zyzm+7B0wwRL44w/7vvTow=
+	t=1762848526; cv=none; b=gXIcVGCCcRWy5Ss7v7V1mQcQU5FyN1O0JZGMFXNYjoAkLS+aR6kME9evS7jGckmCAZqQKL/9rKXFGgwtcWy7o+sQ/cBIQUG1n3SpcNUzq9YC2DuC09HspS94yP/0dZKIIplhb5/nZjx4WLqnzxQYzGWPiqrcJUPCVrWhNyVLuwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762848514; c=relaxed/simple;
-	bh=PIaFroRLjWBOMZ66uCeu/mB1uYpb2ubaFCpMUlAN9sw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=DPBRWOXUvRSFPKo963KK+U9p2GKCnzBXbFF2iPX7qUKQi4g1qChNPg8KMNUxxQSUYt+PLiG2urTaDRlLtuLiVuBda0wZtinZVQK9enu3V7ey3rinQNMyF038NoC8A22d8QimfXD5PFmLK8DxtvUyLzW3L1ra+UacoCtkHTWa9iI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BUNd4V3c; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-3434700be69so5256836a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 00:08:32 -0800 (PST)
+	s=arc-20240116; t=1762848526; c=relaxed/simple;
+	bh=e5xzHBdFbmW0XwOUR4XN/Edk4I4Zj1jSK1DHU7z74us=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SaClU7oCsBG9QxEUawj8UUbtYKI6ILzPYPCVraQHKMR9qv7L5CyBdI26NlCvh+thwPR62XWzAAetTjhVNAbEm9k5XlqfdaS3zrKWburthGaIQsZZCg5vJt8wawf3I3GRzSKalFnAL/67YSN80wyimFghdJMynG6PFpIJvfDw6qc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=eO60w1ga; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-29844c68068so1778645ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 00:08:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762848512; x=1763453312; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=aB4UxUzEcD78h6eg+41U7cdpSOHj7Z5HOikKQP5IqeU=;
-        b=BUNd4V3cdvTgfhsv3HxNncaTt6gfdW0m9ctM1gYe6IR+8ABw3DyHDcaNaNt5PwgpFG
-         LbqeuWLsN2hvtDM65ROT0ILBJX0MTYZNJGmidTsqN4bNa1KOhgpu7SzFENnVbklw8c+3
-         kyY+WIsc9XfNNstuGX/DGOTHRjQv9IO7rZtkCRRDjgL0kMqCBqWjn10HpOvWxQXpueFD
-         s0/MdrT1DlvsJxE7kMw8/GZoEBAIqHhhl652XyiYU3QFoOFiEmv5orJeT50YJ76FCHFa
-         /cr2orRwcnBJxm+0UvzX9xjTrT/e/hRAQMBnvPs9+jy29ni0xnbWbzHo+TPDFZDByuzV
-         TApw==
+        d=chromium.org; s=google; t=1762848523; x=1763453323; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0w05K6KxFo07worIjxTlWcgaX/lcLwwSdDEeFRVch6g=;
+        b=eO60w1gaJ+K2zEQpiYSYxl5NHTKgGX7UDr1tcE1JEpXD52hn8nwKQkjhpXrZ5j7e+f
+         EeeN22XwN655jqnfUIUex//h7wnGg3jPNNOzAT8WFgBXNQX1UplqYHhNlN1tkwVCXn5V
+         gBWl5GtK+/aiaKXOsn6a9KSSHl+ehjnmtpRCQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762848512; x=1763453312;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aB4UxUzEcD78h6eg+41U7cdpSOHj7Z5HOikKQP5IqeU=;
-        b=rAgHYlquapeGUJREO+yqyOazn6hJ0toIC8vvs9dRYisx2AnsJ7iX09hdUTdq6O0QXU
-         L/7Ls+6RSOz2HO5KU5xY8B1nar+9whvKsL30aYA1XGG+GUjDbiRxPt04bJzud7KgZCPg
-         3T3+3e7rm1an7mE7pfqhls/6aTA8vZeT4tTE3bzhPFjgdUya9wHenpgJ4AEurrQf6aC7
-         ExxSkyEm+avA4hj53zsVoV/v3Cuu3ANiYqAIbKrTGYZb36z6s/GGReL/GHVNqcm/i8oD
-         aAwryL9SPR3v8cwRJMXZEwdvszuH2ZXGGMpHBGjUuPZEaBe/PhRfu1ig0TP517PdQ03y
-         MYGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXoTIk5SywYURzPqsQ9jMkwVHKn3MDMAuUYVF6gqY3uR79H8NzqIu/nIwZqX87e9ha85WNDA99oUD/gh70=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHA9dzbPk36bAwoTsiWPHQcF/gbE42RhTZGPrTdyZysTHBHjAm
-	bnff3RWaeLHFFtEIuAojur02iU8fnNNIv/4vLpkAf9WAhDUXTmCmTEhj
-X-Gm-Gg: ASbGncsRKhiv5D2BGfg3MDK6finkqi5V9XiVDDMJsGF7vxKVGetMNe4Yz00tEZZG55u
-	E3238H0VWOIyrQWMxchei8YIiKyZ1DfUpX3US2Vebzjalag6T47+dss4hfd3djbjd9wYEIcF7Uq
-	5V4ZUPuiFFx5L3RNuJiZDAZPcKc8QkoabnQZ65Y5dl3SxKqjbgGUPaQZbbWFqxKfTZBhcT1qitK
-	oUne9l+wTCXklHnQBAsmsuL5dThnG2B9V8ueW26B/4/RESXDWbcVdMlIOJFbJvuSNg86ZNstqqs
-	b/RTGaHQXudhI2lND5cD/TvpmEQ7wFClyd6V5v2b+Od0ioOX2fO0s9GxQ/AnBUjNZ6XzLgVZRUN
-	9gQxjgxThSEK7VL3pmYTTzYuH0PVxjLkmUJlk9WYY4GDzVHYRgYXqA7GLiqHdyB5ZZ02viUsafq
-	M=
-X-Google-Smtp-Source: AGHT+IFqoxnvILjVBDFIMDXe3yIwEryL6vb0p3gl9RFMnSeI7Ihc/WjBvL8XPERIO0QYQnvMP3Ihgw==
-X-Received: by 2002:a17:90b:2fc5:b0:340:e517:4e05 with SMTP id 98e67ed59e1d1-3436cb3e5a6mr17682851a91.12.1762848512017;
-        Tue, 11 Nov 2025 00:08:32 -0800 (PST)
-Received: from aheev.home ([2401:4900:8fcc:9f81:b4f9:45ad:465b:1f4a])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3434c30b96dsm13379283a91.5.2025.11.11.00.08.28
+        d=1e100.net; s=20230601; t=1762848523; x=1763453323;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0w05K6KxFo07worIjxTlWcgaX/lcLwwSdDEeFRVch6g=;
+        b=S/Xquu4Y7HTdWIRPqI+/NOcGGfDB/oQXdcmUFDAE1Ud6mxcDJg+UIeQsZaTSes94pC
+         BNCSxc78SM3yc3N6KUEBlGCuee7aC7fU7NsxBNUxYHhpK9C6GlyzgVVVvEi/2/h+e0aI
+         CJNc9DBbe7pnCzTOPgB+WiCUaOoElT56uEG6+NBnUmA9Wm7mRdPPzvV3svvicafGDit7
+         ugs1pTJ+A/mqU1zkQ8nV2gtK9rZAnUnhzD184ozY0YbziDn52m8ZQSM4YT/uBe+TURn0
+         ZpPnh0r1mQ7Gq/qcc4C5otZ+h7OzOMyRLsXE6JcgyyM0wo/X1e1wZOOPGEwA/ImcUoVV
+         Gxcg==
+X-Forwarded-Encrypted: i=1; AJvYcCWVqPQjJDgSC0y4/xP3HVasNuxFFgZgakrnImjmphfZ3cikVO1zaFRlvwdep8G5wEuYIWMpnvtfNYEqSIU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXQanso4A6v83YcK9aOEpTnKRV7/8B9oYS4/Nl2WP+CNKoNUXr
+	kJdri6hfzk13XzPPyFDTqL8H7mEfbitaaKCQbsj2gA4pRZgjTNjKByTIi1dapISkfQ==
+X-Gm-Gg: ASbGncuBaxyD0YtN3eiHccdzbRfMxl+d8TObRrTHGb4dKn+OBcsGwwOVskQadiOPb1V
+	Qn+5JS8eLKim37cCjMWWghHTynlwuNQFTyIVelRU9vKwWYNU1YAhCXeCsMmklbmkpjqLdJ6/JOF
+	Z8zoWLCLPlA2sjel9MI84b3a1QO+Ec136vettwdD9jxnOOyQy9LQ5sJzPyHdP0k+aDzEKyu/SCD
+	QjAVbnJ2gysrARfyZhBpSSuj4LvySuBTTQzcXWHObBmXp05mgkq8CBNgOTeQGAgIk1ey3P0uZih
+	GDHTpw0JZafqdJ9lYnoRJzESJ6R2+/d17v8FflVaPxlXheXSIS19rRI4gxyNMx9sVXc5dya384i
+	P19odSzIURgAZ59L//irq56ogKcHvRXsw1pFzgNek40YZjZdkCuD/jL1RQ8m1fCX1W9Cty36Ea9
+	OpIobA
+X-Google-Smtp-Source: AGHT+IHC6xuDhDXvZKC9hTiDPjxDoSsReKjYtkLbxL1ziXkP+RR6tEjoFAFy33iKv0lQXU9dzXWwTw==
+X-Received: by 2002:a17:903:2c06:b0:295:62d:503c with SMTP id d9443c01a7336-297e5627aecmr142808835ad.16.1762848523256;
+        Tue, 11 Nov 2025 00:08:43 -0800 (PST)
+Received: from google.com ([2401:fa00:8f:203:4557:54b2:676a:c304])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29651ca4262sm173807695ad.86.2025.11.11.00.08.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Nov 2025 00:08:31 -0800 (PST)
-From: Ally Heev <allyheev@gmail.com>
-Date: Tue, 11 Nov 2025 13:38:18 +0530
-Subject: [PATCH iwlwifi-next v3] wifi: iwlwifi: fix uninitialized pointers
- with free attribute
+        Tue, 11 Nov 2025 00:08:42 -0800 (PST)
+Date: Tue, 11 Nov 2025 17:08:25 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Corey Minyard <corey@minyard.net>, 
+	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, "Dr. David Alan Gilbert" <linux@treblig.org>, 
+	Alex Deucher <alexander.deucher@amd.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, Rob Clark <robin.clark@oss.qualcomm.com>, 
+	Matthew Brost <matthew.brost@intel.com>, Hans Verkuil <hverkuil@kernel.org>, 
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Ulf Hansson <ulf.hansson@linaro.org>, 
+	Vitaly Lifshits <vitaly.lifshits@intel.com>, Manivannan Sadhasivam <mani@kernel.org>, 
+	Niklas Cassel <cassel@kernel.org>, Calvin Owens <calvin@wbinvd.org>, 
+	Sagi Maimon <maimon.sagi@gmail.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, 
+	Karan Tilak Kumar <kartilak@cisco.com>, Casey Schaufler <casey@schaufler-ca.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Petr Mladek <pmladek@suse.com>, 
+	Max Kellermann <max.kellermann@ionos.com>, Takashi Iwai <tiwai@suse.de>, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, openipmi-developer@lists.sourceforge.net, 
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
+	amd-gfx@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org, 
+	intel-xe@lists.freedesktop.org, linux-mmc@vger.kernel.org, netdev@vger.kernel.org, 
+	intel-wired-lan@lists.osuosl.org, linux-pci@vger.kernel.org, linux-s390@vger.kernel.org, 
+	linux-scsi@vger.kernel.org, linux-staging@lists.linux.dev, ceph-devel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, linux-sound@vger.kernel.org, 
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Sumit Semwal <sumit.semwal@linaro.org>, 
+	Gustavo Padovan <gustavo@padovan.org>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Dmitry Baryshkov <lumag@kernel.org>, 
+	Abhinav Kumar <abhinav.kumar@linux.dev>, Jessica Zhang <jesszhan0024@gmail.com>, 
+	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Lucas De Marchi <lucas.demarchi@intel.com>, 
+	Thomas =?utf-8?Q?Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Vladimir Oltean <olteanv@gmail.com>, 
+	Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Tony Nguyen <anthony.l.nguyen@intel.com>, 
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Rodolfo Giometti <giometti@enneenne.com>, Jonathan Lemon <jonathan.lemon@gmail.com>, 
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>, Richard Cochran <richardcochran@gmail.com>, 
+	Stefan Haberland <sth@linux.ibm.com>, Jan Hoeppner <hoeppner@linux.ibm.com>, 
+	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Sven Schnelle <svens@linux.ibm.com>, Satish Kharat <satishkh@cisco.com>, 
+	Sesidhar Baddela <sebaddel@cisco.com>, "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Subject: Re: [PATCH v1 12/23] ipmi: Switch to use %ptSp
+Message-ID: <pvjnjwm25ogu7khrpg5ttxylwnxazwxxb4jpvxhw7ysvqzkkpa@ucekjrrppaqm>
+References: <20251110184727.666591-1-andriy.shevchenko@linux.intel.com>
+ <20251110184727.666591-13-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251111-aheev-uninitialized-free-attr-wireless-v3-1-26e889d0e7ee@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAPHuEmkC/5WOyw7CIBREf8Ww9pqCxVZX/odxgXSwN6nUAFIf6
- b9bu3Kpy8lMzpmXiAiMKHaLlwjIHLn3U1gvF8K2xp9B3ExZqEJpKQtNpgUy3Tx7Tmw6fqIhFwA
- yKQUaOKBDjHRqUG1Kd0ItrZhg1wDH91l0EDx0Azsmj3sSx6ltOaY+POYXWc6bf4VZkqSNrXVhS
- rPVyuzPF8PdyvaXWZHVN7b6Gas+2Kp0dg1tqxrf2HEc3+g+nKtBAQAA
-X-Change-ID: 20251105-aheev-uninitialized-free-attr-wireless-bde764fbe81c
-To: Miri Korenblit <miriam.rachel.korenblit@intel.com>
-Cc: Johannes Berg <johannes@sipsolutions.net>, 
- linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Dan Carpenter <dan.carpenter@linaro.org>, Ally Heev <allyheev@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2686; i=allyheev@gmail.com;
- h=from:subject:message-id; bh=PIaFroRLjWBOMZ66uCeu/mB1uYpb2ubaFCpMUlAN9sw=;
- b=owGbwMvMwCU2zXbRFfvr1TKMp9WSGDKF3v2udlk179Ps8Dfdl3S+GHKzv/u9JmtbzamgDj2RC
- 7st1mq6dJSyMIhxMciKKbIwikr56W2SmhB3OOkbzBxWJpAhDFycAjCRJYqMDHMOWYveMbt3YpXD
- gty3d8WZO5ZsczA4qLRiycr/r1uENkYxMrx6qsSU8WtBbPeD1yXWwt8kJ9a23b4ZnjuR+8YaRbs
- 0Nj4A
-X-Developer-Key: i=allyheev@gmail.com; a=openpgp;
- fpr=01151A4E2EB21A905EC362F6963DA2D43FD77B1C
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251110184727.666591-13-andriy.shevchenko@linux.intel.com>
 
-Uninitialized pointers with `__free` attribute can cause undefined
-behavior as the memory assigned randomly to the pointer is freed
-automatically when the pointer goes out of scope.
+On (25/11/10 19:40), Andy Shevchenko wrote:
+[..]
+> +	dev_dbg(smi_info->io.dev, "**%s: %ptSp\n", msg, &t);
 
-It is better to initialize and assign pointers with `__free` attribute
-in one statement to ensure proper scope-based cleanup
-
-Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-Closes: https://lore.kernel.org/all/aPiG_F5EBQUjZqsl@stanley.mountain/
-Signed-off-by: Ally Heev <allyheev@gmail.com>
----
-Changes in v3:
-- fixed commit message to include iwlwifi
-- reverted unused variable removal. To be done in a different patch
-- Link to v2: https://lore.kernel.org/r/20251107-aheev-uninitialized-free-attr-wireless-v2-1-674fc3e5c78e@gmail.com
-
-Changes in v2:
-- fixed style issues
-- ignore v1 of this patch
-- Link to v1: https://lore.kernel.org/r/20251105-aheev-uninitialized-free-attr-wireless-v1-1-6c850a4a952a@gmail.com
----
- drivers/net/wireless/intel/iwlwifi/fw/uefi.c | 2 +-
- drivers/net/wireless/intel/iwlwifi/mld/d3.c  | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/wireless/intel/iwlwifi/fw/uefi.c b/drivers/net/wireless/intel/iwlwifi/fw/uefi.c
-index 4ae4d215e633e0d51194d818d479349e7c502201..c31a1187f53a79aeb0837f06250410eec4e7ea6d 100644
---- a/drivers/net/wireless/intel/iwlwifi/fw/uefi.c
-+++ b/drivers/net/wireless/intel/iwlwifi/fw/uefi.c
-@@ -818,8 +818,8 @@ int iwl_uefi_get_dsbr(struct iwl_fw_runtime *fwrt, u32 *value)
- 
- int iwl_uefi_get_phy_filters(struct iwl_fw_runtime *fwrt)
- {
--	struct uefi_cnv_wpfc_data *data __free(kfree);
- 	struct iwl_phy_specific_cfg *filters = &fwrt->phy_filters;
-+	struct uefi_cnv_wpfc_data *data __free(kfree) = NULL;
- 
- 	data = iwl_uefi_get_verified_variable(fwrt->trans, IWL_UEFI_WPFC_NAME,
- 					      "WPFC", sizeof(*data), NULL);
-diff --git a/drivers/net/wireless/intel/iwlwifi/mld/d3.c b/drivers/net/wireless/intel/iwlwifi/mld/d3.c
-index 1d4282a21f09e0f90a52dc02c8287ecc0e0fafe1..5e986cbfbd2d263c8c300cf304f00419d6b1e6f2 100644
---- a/drivers/net/wireless/intel/iwlwifi/mld/d3.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mld/d3.c
-@@ -1785,7 +1785,7 @@ iwl_mld_send_proto_offload(struct iwl_mld *mld,
- 			   struct ieee80211_vif *vif,
- 			   u8 ap_sta_id)
- {
--	struct iwl_proto_offload_cmd_v4 *cmd __free(kfree);
-+	struct iwl_proto_offload_cmd_v4 *cmd __free(kfree) = NULL;
- 	struct iwl_host_cmd hcmd = {
- 		.id = PROT_OFFLOAD_CONFIG_CMD,
- 		.dataflags[0] = IWL_HCMD_DFL_NOCOPY,
-
----
-base-commit: c9cfc122f03711a5124b4aafab3211cf4d35a2ac
-change-id: 20251105-aheev-uninitialized-free-attr-wireless-bde764fbe81c
-
-Best regards,
--- 
-Ally Heev <allyheev@gmail.com>
+Strictly speaking, this is not exactly equivalent to %lld.%9.9ld
+or %lld.%6.6ld but I don't know if that's of any importance.
 
 
