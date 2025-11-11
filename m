@@ -1,106 +1,127 @@
-Return-Path: <linux-kernel+bounces-894955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2B33C4C8CB
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:09:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D6D8C4C8CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:10:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50A00188021B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:07:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F04CF3A39E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:07:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48AAD2EA47C;
-	Tue, 11 Nov 2025 09:04:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F5D02EBDF4;
+	Tue, 11 Nov 2025 09:05:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="DGZg1hpw"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pxwuj8N+"
+Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F8E9238C3A;
-	Tue, 11 Nov 2025 09:04:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0194E32AABF
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 09:05:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762851860; cv=none; b=gXUWvpTbLhutipQ2ntZS9kLUk2+zNu7a8wN3ll6HLDb9x19BYu9eFrBgqCAE1x95hdHQQRoYFev2b2Fj++sCVvXaoGWS3zx0Gmsma+XNjFBQnzdndWw1r+/S+2/NxW4MS6gT/vvo7T9FZ2EGiNuOkxWb4mYmlWtpBar/JWM9sX0=
+	t=1762851914; cv=none; b=ZXnx2cXd8YCda2pPn1x6DKQbn+tYncfzcKlzb5VZEFGZ/ww6ZCOo/n+LU35XYlqd7hqwKjwrh0BN96KEV5vU1bzv/OpA5FMO3KOsunpaLL7LEhvalMEaTgFMI/mHnVGH/41PtpGWudjhODO9xnGiexZZJFPjuVK95deSi3MXhjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762851860; c=relaxed/simple;
-	bh=VPLZAA4LoKT22J4c1RkRpNHV87GAwiwNtPeNSsX/uTA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eLyGTuyVCuTSxUgHTC45Glr90G7X61Lr58q4COtm8srAdXTZTRbZjFgFPdf2G28Ln97Lh+U82e05NPkjgLhacFKeXDnuCe/mxXWrehiue+TYyOkK5APskv0HhmaR9Kp68Zt4e7vduSdX5FotgPY/ZoxO0GBX5oLd418MfGcX3ZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=DGZg1hpw; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=ZwrtQ6+FGJJ1cCIQ14Mdkpcu+BTeaX0CsYugdDU7yYE=; b=DGZg1hpwOQOwZRy7GqzXvT1Ppp
-	s0j9UGTDrdTVjnjCFY/BOcvLF2ts+ZSem30sHYzAfyS5kqnOSj6DFOCbYrJXrxwoYJ6Tx/2ZehLU/
-	Cmy6PdSNRT5ttSh3fzajYQDBXEp0ByDm35Vf28QgBbGZy4vIqQOX0LUMUvPxio8TH0k9hjzdodQfx
-	PdeS+5y0F1iNwnD9B1V+HIfwYFn6g59gvCeIoVUVEeRp7difEsQwU0pb0pWgvFMXRSy/hylsMrsiO
-	JDiBiictOkS41x3MEjBBBdj0+fxVl0p2HJLGiuZKCZ+nw+E0UO1nbVr0W+BoDNy7g3vSbJxFguTmD
-	IQozz1/Q==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vIkIS-0000000ETgU-22QC;
-	Tue, 11 Nov 2025 09:04:16 +0000
-Date: Tue, 11 Nov 2025 09:04:16 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Ian Kent <raven@themaw.net>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	autofs mailing list <autofs@vger.kernel.org>,
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] autofs: dont trigger mount if it cant succeed
-Message-ID: <20251111090416.GR2441659@ZenIV>
-References: <20251111060439.19593-1-raven@themaw.net>
- <20251111060439.19593-3-raven@themaw.net>
- <20251111065951.GQ2441659@ZenIV>
- <d8040d10-3e2a-44d9-9df2-f275dc050fcd@themaw.net>
+	s=arc-20240116; t=1762851914; c=relaxed/simple;
+	bh=RciqffmsGUnB8tK3sBcxSnH1zQElvWzvEdnZAAXNZdg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IVszaPzDzKaHmaEvEqUaUJkM8X5JVnrQcPExbiSi5aOB7ElBZGcMzLao4wfTY2zX/wjr4FZZTcdw12Dm6cbZMdiAoFmG2T3iQEusoy5dsPUYwgypDZu5TS2q+vd4FVqyFQd6ct4Q27kmNG0R2usLBo6XUpOVq7dJkChcWM9JiD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pxwuj8N+; arc=none smtp.client-ip=209.85.219.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-880499b2bc7so37185216d6.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 01:05:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762851912; x=1763456712; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RciqffmsGUnB8tK3sBcxSnH1zQElvWzvEdnZAAXNZdg=;
+        b=pxwuj8N+6FMlJEpLxnknfBqbkKMIJjMQ5kcIRjfDYwC1MTl6v+eubvvxRKaUKaT/Lj
+         6uIKiqu54GqazWaIxxRmbQTldf3cgIxIdN4H4NQxo/xYhL9rzHhjUfWWBBvaM6xhWrSG
+         Vp4Zb7VrvVp8ML6alYf54k7KStXtaEGQVoYnXcQ3wJmMbGTqqtOZdslOVol/X8JtP5Eg
+         8GnK0A3ee1M1AWZg84Dfh6bjPiESV+sw1Jcd1ec/qTO8Mt18Hgh0wA904TwJhuFMEU17
+         /P2QGG5zAXT0RVhn7Cv7BVSzrhmEVE85BTJxMhzbAbGF79P3wkklqDSVuh8ui8SKLT+f
+         ZaAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762851912; x=1763456712;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=RciqffmsGUnB8tK3sBcxSnH1zQElvWzvEdnZAAXNZdg=;
+        b=Fx5XuSc1EfKzOX+VnTQIM3TjAV+M9txS2g4/4OhMNqShpyq+lKK097zivK8J9Z6K+I
+         teING2MxU5uilBCniXOzWh3HYGAo0L22JlPRhTs1tIqcT/wyWKQhQMMZjh6lNGPH6oK0
+         JnPlMnqQwhWECPg/9eumd8PixaqrgwIpbRpMVCzCbQptkT1tOtsVXA+LsAyGYY5Jm2lr
+         TzmsVJPRj4UQYNye0dW4idSJVGkNxGCxHbhFeEFjy8q8eaOaFLHM4+aX8sV5QfQrcp91
+         c8hXsCJqybkTDJqmqJiZ3lJG2NRGb01VPongZoz1LFBalpcAL/l42BziFzUAdgsTb/Ft
+         5gow==
+X-Forwarded-Encrypted: i=1; AJvYcCWyXr5xjiKDasCaY4/LT+p1O0xLImf8n+RW2VasO7PyVo8aN2S5JAKmDIoLCjALZa44yHv8kVWbbzJXRV0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzb5A9NHmtpczERrCRf6RLMJir4kQAtgwvSTzibDFnsepzgxt0C
+	L48s7B5FnGE0yO57SN0bZ/p2fBr+ilJNoUPn+MOd74dXG5Y2GKVtfg+Y3gDWon/NDGEpTuMtixy
+	TXGsgnjOoyoqnrj6M6CvA0aud/MVTPQSVwhf51088
+X-Gm-Gg: ASbGncvD2Pr1ossY7y1pNfeypnSVAIiRvCKz4xSWTe8T1LG5SbvyUZbRldX6O9QHey0
+	9LHSlmPEk5JVaRoAxpCAIglGUnGh8jI615wG0/ViqKx3+SIegnxQiZeo6h9QpF4+WozDgHvxgmd
+	4gwptUSWO5mSFbGNUuDYYhwnRgUhbCIiQVsOA2MqhkIPv5Ie2tnw486Hc4BAv4R2TmNjAmoq32/
+	WlWqQeywpT9lrOoJ0KHJmMMsXeyYBJJaO9ddiATo30b2PFZjBGZp6DnW3PpW5+hFp1nUGdsWFNM
+	9W/Qky+g4cHK9EoBEMDOgDsJTQ==
+X-Google-Smtp-Source: AGHT+IG5h9zoN8ZgQbNHnylwE6ej/e45pEoTj6YsGsJFK5D5YZvplepfzX5RbzM9p15i6Nqb6Snmeh5EikEQA067P+g=
+X-Received: by 2002:a05:6214:d4c:b0:880:56f6:92ae with SMTP id
+ 6a1803df08f44-882386d7384mr151892296d6.57.1762851911409; Tue, 11 Nov 2025
+ 01:05:11 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d8040d10-3e2a-44d9-9df2-f275dc050fcd@themaw.net>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+References: <cover.1761763681.git.m.wieczorretman@pm.me> <96559d5a8e897f97879259bad3117db617e21377.1761763681.git.m.wieczorretman@pm.me>
+In-Reply-To: <96559d5a8e897f97879259bad3117db617e21377.1761763681.git.m.wieczorretman@pm.me>
+From: Alexander Potapenko <glider@google.com>
+Date: Tue, 11 Nov 2025 10:04:34 +0100
+X-Gm-Features: AWmQ_bnTIARw6amUs-gvSQivLCgG0XY32k4ioUAxykbqmf67HMroMwsIF2IdVwY
+Message-ID: <CAG_fn=X5Dr_Dc1pcnAW19zgo7tW8mUSkpDj-v5eaG-awy4S53Q@mail.gmail.com>
+Subject: Re: [PATCH v6 13/18] x86/mm: LAM initialization
+To: Maciej Wieczor-Retman <m.wieczorretman@pm.me>
+Cc: xin@zytor.com, peterz@infradead.org, kaleshsingh@google.com, 
+	kbingham@kernel.org, akpm@linux-foundation.org, nathan@kernel.org, 
+	ryabinin.a.a@gmail.com, dave.hansen@linux.intel.com, bp@alien8.de, 
+	morbo@google.com, jeremy.linton@arm.com, smostafa@google.com, kees@kernel.org, 
+	baohua@kernel.org, vbabka@suse.cz, justinstitt@google.com, 
+	wangkefeng.wang@huawei.com, leitao@debian.org, jan.kiszka@siemens.com, 
+	fujita.tomonori@gmail.com, hpa@zytor.com, urezki@gmail.com, ubizjak@gmail.com, 
+	ada.coupriediaz@arm.com, nick.desaulniers+lkml@gmail.com, ojeda@kernel.org, 
+	brgerst@gmail.com, elver@google.com, pankaj.gupta@amd.com, 
+	mark.rutland@arm.com, trintaeoitogc@gmail.com, jpoimboe@kernel.org, 
+	thuth@redhat.com, pasha.tatashin@soleen.com, dvyukov@google.com, 
+	jhubbard@nvidia.com, catalin.marinas@arm.com, yeoreum.yun@arm.com, 
+	mhocko@suse.com, lorenzo.stoakes@oracle.com, samuel.holland@sifive.com, 
+	vincenzo.frascino@arm.com, bigeasy@linutronix.de, surenb@google.com, 
+	ardb@kernel.org, Liam.Howlett@oracle.com, nicolas.schier@linux.dev, 
+	ziy@nvidia.com, kas@kernel.org, tglx@linutronix.de, mingo@redhat.com, 
+	broonie@kernel.org, corbet@lwn.net, andreyknvl@gmail.com, 
+	maciej.wieczor-retman@intel.com, david@redhat.com, maz@kernel.org, 
+	rppt@kernel.org, will@kernel.org, luto@kernel.org, kasan-dev@googlegroups.com, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	x86@kernel.org, linux-kbuild@vger.kernel.org, linux-mm@kvack.org, 
+	llvm@lists.linux.dev, linux-doc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 11, 2025 at 04:25:29PM +0800, Ian Kent wrote:
-
-> > Huh?  What's to guarantee that superblock won't outlive the namespace?
-> 
-> Not 30 minutes after I posted these I was thinking about the case the daemon
-> 
-> (that mounted this) going away, very loosely similar I think. Setting the
-> 
-> mounting process's namespace when it mounts it is straight forward but what
-> 
-> can I do if the process crashes ...
-> 
-> 
-> I did think that if the namespace is saved away by the process that mounts
-> 
-> it that the mount namespace would be valid at least until it umounts it but
-> 
-> yes there are a few things that can go wrong ...
-
-Umm...
-
-1) super_block != mount; unshare(CLONE_NEWNS) by anyone in the namespace of
-that mount *will* create a clone of that mount, with exact same ->mnt_sb
-and yes, in a separate namespace.
-
-2) mount does not pin a namespace.  chdir into it, umount -l and there you go...
-
-3) mount(2) can bloody well create more than one struct mount, all with the
-same ->mnt_sb.
-
-So I'd say there's more than a few things that can go wrong here.
-
-Said that, this "we need a daemon in that namespace" has been a source of
-assorted headaches for decades now; could we do anything about that?
-After all, a thread can switch from one namespace to another these
-days (setns(2))...
+On Wed, Oct 29, 2025 at 9:08=E2=80=AFPM Maciej Wieczor-Retman
+<m.wieczorretman@pm.me> wrote:
+>
+> From: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
+>
+> To make use of KASAN's tag based mode on x86, Linear Address Masking
+> (LAM) needs to be enabled. To do that the 28th bit in CR4 has to be set.
+>
+> Set the bit in early memory initialization.
+>
+> When launching secondary CPUs the LAM bit gets lost. To avoid this add
+> it in a mask in head_64.S. The bitmask permits some bits of CR4 to pass
+> from the primary CPU to the secondary CPUs without being cleared.
+>
+> Signed-off-by: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
+Acked-by: Alexander Potapenko <glider@google.com>
 
