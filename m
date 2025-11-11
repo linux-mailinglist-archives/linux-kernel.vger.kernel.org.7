@@ -1,228 +1,180 @@
-Return-Path: <linux-kernel+bounces-896289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BBD9C500A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 00:13:56 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE267C500AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 00:18:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7E013AE145
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 23:13:54 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7B67D4E1BD6
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 23:18:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79EC32F3618;
-	Tue, 11 Nov 2025 23:13:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B4812F290A;
+	Tue, 11 Nov 2025 23:17:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HiVs9RrG"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DHAtLRy2"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F32129CEB
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 23:13:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9450327280A
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 23:17:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762902829; cv=none; b=Q1TF+RvWmTsY/jofks3Z1KWSMLB7dqk3+0Jt6VdStKveKEav/NkACDpQna+TLTd+YxJUVzpmPqHg+yIv9PmCMWYNIMvzxxD4S+MCY0DopKiEZ+tUKnUXNQVMN2NMCKEwKCcVe5jEbp9HGEvzEg59gc+VYW5V9ne0wi3Pe4oi18A=
+	t=1762903075; cv=none; b=rBnC8edV+CInztkbe6IsDWiR0mFs7UcKftTWG73JQjko5ol2lNhFI+8dK7kGAEPSVOkZ3HlfF38G5K+9AO4O5IH9KRfVvrhvN1xNIu3br7ZqEuvCO+/3t5cF7VU7ueKHDjP5b/yF0wwkgnO9ZhOgYHxxVROndczZgIF8fRglO+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762902829; c=relaxed/simple;
-	bh=D3nHvnswNl2mFX7uH9XG2igYiV0KobD/gncY0h/faRE=;
+	s=arc-20240116; t=1762903075; c=relaxed/simple;
+	bh=piyjk0UICuFLylh+Sm1fnefVrHatXFXMF4SInyqrXeM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NBgsCSfRXhTEsxeI9oETe4XgmPIwz1hKoH0E+ygaCva6vYdEZeuSW68ypYOjMrCHdmza/UkeIUXvLk/1mq6UMWls7h5kGItDqGF7A5F0qZ4phWIdwoPzkyszTAFPTkBch02FyeCgBVP84akRoDDPLdRXhUjpWOTXzA+wbZPG+bI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HiVs9RrG; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2959197b68eso31625ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 15:13:47 -0800 (PST)
+	 To:Cc:Content-Type; b=Hdc14RBKMQv77m7YcFIp0x+whd8lHq8X8vGzKjmdcun4hq1jIlxmgdLkrQS7Ed3RK6Z22DVtFzW3+twJCEVXawORvJcGKh7fHUSsYQcqIFPs2SnypluKhjoolx0q+cZoDB0rATgM9WysdJDlBcVDRwcOgX4i8SpPnsXYhjkpBXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DHAtLRy2; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5942e61f001so223088e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 15:17:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762902826; x=1763507626; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1762903072; x=1763507872; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Jyb7jTrSOVpf+8hcCRY+v5Ij2OnodQ2bmBqE93tS0Wg=;
-        b=HiVs9RrGB1pW4D3sq7EfUj5aU0Y0llrIa4QNNASGrIVqnloEvE2hGL4zaD4olMDtJR
-         hxXLcSjdZ35OZA+UifxhagxbBByvxi1XMpi8zcic7n2lmu+6wikjLT3Xwefxbjhizeu7
-         NR6+NDaR5pTOqBNvc4jdSSq50c2eJS6N+lUIv0u5wgTi/XgiAMq481oJenoIMF2UC0b5
-         ki6W2RWz1Y2WEMPDn75PfhkP/L6bHxqei88o3WJlyNFiGJMhLpQwfRlOP5SnElUqwwzz
-         uwLPyWTRjV2kENYpeG91HzbgP3Lgx6zSOuSU7roSgJ23L2U76x/Z3FV9bv5jS/QKtDMr
-         jRuw==
+        bh=XxXzAibViSwAAylldqlTc3TG7DUM2kT/SoBJQ9gVkp8=;
+        b=DHAtLRy2efxfkL5EDn8JoBILhV9Z3d5BY+fyahqwi24rTOLBwyoECxfpsNvUXMhcXa
+         0EEyWwdMD4jCsWttrb2Mz/DgA3MmH6jDPkDSLUNtTGoFg/ThllpkQGepG6qWkB8M/7kQ
+         QBDq8tKCxNoYuVh9PY3aRfeIEOFXB7PlB23VdgDd3PlwDRpZiogvmNJHbBGRF1eW9Of4
+         4ZJ2afMZ2EnySSW2ZBbivIieZs9jyhhHkpMCiDWVRiYmhkWvZq+uBzV2l9PTgr/ajgZW
+         p8OovpE7dg0u9v/et/aOcv/c5p8Bz8wY7qNBkRozXn/aeAtynbLXp/pTy8kYz39yFnhQ
+         U9Mg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762902826; x=1763507626;
+        d=1e100.net; s=20230601; t=1762903072; x=1763507872;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=Jyb7jTrSOVpf+8hcCRY+v5Ij2OnodQ2bmBqE93tS0Wg=;
-        b=kBZZajMKUySFIrkWZ7fq2mh7YpoM1K0EEweti+flAx1ceYnyt+zwq4Dorv4g1Rhl/Q
-         KoKe7bPNI0rpVxKUTZ9RPFllTbCrad4FWOgN+ZgVB/3J/1/QRRaWUlipY1RgPp3jmPOu
-         kDvseSzoz0xly59ZF9i1ELBSCCZpsBYVHLoMGC3rw31pjHTYOKtkQzPBxVP1BkKT7acj
-         yThQD00bTiRY/WejNyEHigf1sAZPLun2a0jeXbvAdVZEXprfox/SRUoQFGx3VU+3oqGU
-         vwAfo06ATfjqDGcx3Da0oza4GbeDgr6FSjWwC+kS4naF3h9FSBMjz2owvLrPzy3WZwoy
-         gnEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVHEVvSoxPrnYEDJWN/UMoNCg05fxiXrAMaEDjZfIGDoJ4INfAzzQ+2L/0uAz+Z9omQ7TILvdUQ7lsD9uc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7OhJKtrvdglRXq87nvYAP/Jkk5bohcsNjltibBqiCgFLBUlwj
-	eRRI8LggXeHb32ol4ok4XU1WxG3rrajggBlrMiYgs0odZhjzMG0RPtwhCxFLwvEOQmcXG+LKZiv
-	9STlJR0P19Vup3RVrVZZhcysWQCai28O5qSAGgeAB
-X-Gm-Gg: ASbGncuHXlPtwbKW5VdsAb1lAR5eOo5XDBv5pucWrV1WibyoXt+h5mynHVXpJZ6D4AK
-	HFSvD5IHLlVB36cICCEFimSJXMp9ARhbnr1+tCjNMEHe6t4S8VhHJwzTUNlJGWFEZ1npU8EEbCH
-	c+DA6iKT2dXx7et1uFcEek99T/SmEd6oRV5G3zDIJC/SIPwzNmh2iij6e2H1w2jo3fP1San0Xyd
-	T8l+Flq+KjvzHdcVTSbi9xYSmrrN1sJ3M/BH/eOUFmLVVGsB2LkC/0XJyXB7+iqcsw3zBUNGvlM
-	StHF49msWnKNumcAImSQEWX4bv/w2AwzH1Yk
-X-Google-Smtp-Source: AGHT+IH88LhmPgv1ToEnVMYi84K94UoNk7mqTEjkK/eUCEP6+b0gVDlRLaN+U+Y2KjR26XuFA1ccDiNukUPk1sz/FAA=
-X-Received: by 2002:a17:902:f68a:b0:298:4819:f4d9 with SMTP id
- d9443c01a7336-2984f837146mr1733205ad.8.1762902826247; Tue, 11 Nov 2025
- 15:13:46 -0800 (PST)
+        bh=XxXzAibViSwAAylldqlTc3TG7DUM2kT/SoBJQ9gVkp8=;
+        b=n1LR9RN1XaHFc5l9qh0UtCvFqLlX9d4GTH1DSbU9hvfQwRzGKv2gA651GiYEBReu3H
+         r1J3VRb8due3rF05lCq57966f8C3Pe35LEHhfMQznQatlCN7DRpT1KXefhnZ5wvRcJG9
+         o9PxltJMz6ZUD5D80tjGMwC6kiR27vNd2B6cudHA0urklvkY1gLCQg3/XVIXhRlXtVAY
+         H60TWzOEGJdPr4z9ds2G1vEaFiGcbGLh3fSxJjVk4nPRDLFCnyLGuNQInVCHq/QlyHeX
+         50KWJ8ajlay1Pm6OnEBX/l6nbCxlcsC30WmnpjxULFl0vRV3dMXSsDtLQztqbcyHSWU9
+         2cCw==
+X-Forwarded-Encrypted: i=1; AJvYcCX24CBA8WsvtsbZPMvVeZa6pbhYnURPmxu+5qmSdSZcnx+mJYvLrb2WRROZNXF5XPaiXoQuoGGUvd94x8g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPTkU0Wbj07NAEpVc33eLZQLeZM34indJIEGXQIicbWU5aBVzz
+	+ZroO/xB2MiadPsuLYPiixotmAwvmFblKP2gvLmhTAE17p7s59MYSbDp1aHSdmlm5Z7XNdaDrV+
+	68HMQwIa1O7RyjAkn6z1UW3DaxNrnvmJuOFM2
+X-Gm-Gg: ASbGncuUfQxkWzHYJ7gjEnKMQSRw6Hc8sOlxoQZISaln0YhVpvPP6ibZ9TE6hc3HL2y
+	JG4pkqkNCH1c0zOKA2PYnItiTeOg5VowfUWnzyJWvpjwai3eSpoB+mBTfE7NHVjdbYR2sEe4Uns
+	CicZue9xSefKt9dEs3qTZZJExWj2mxDMtAL3dcgDQAMSJtq+CseyJdJZq+uDDS3wTnBdiFcyN+f
+	lVYYra8oPi52BLBTo9nbrHDnwMXDOxZlS9kQ9b+vukshcD1F+wF82R4zgYFuyb0wpGFBRc=
+X-Google-Smtp-Source: AGHT+IECOFMI8OdowjaSX2iDsqoM90iLrXne/fWxcejwflrbsKpPRHv9RqN3KIY7SrMPz9KQt1HDoSYoHFJRU6eT+YM=
+X-Received: by 2002:a05:6512:39cb:b0:594:49ed:3ced with SMTP id
+ 2adb3069b0e04-59576e40572mr245993e87.54.1762903071425; Tue, 11 Nov 2025
+ 15:17:51 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251111212206.631711-1-irogers@google.com> <aRO7vPpfuH7vzRg-@google.com>
-In-Reply-To: <aRO7vPpfuH7vzRg-@google.com>
-From: Ian Rogers <irogers@google.com>
-Date: Tue, 11 Nov 2025 15:13:35 -0800
-X-Gm-Features: AWmQ_bmqpyb6rV1PN134KWPSwr6yA5C8pcc50K9xXDgDf2h2TGx0zTwhem7yti0
-Message-ID: <CAP-5=fWQqsAHZvyxu6db5Qyfx0n-2pNeYDP7u_WtpxKr2TLHxA@mail.gmail.com>
-Subject: Re: [PATCH v4 00/18]
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
-	James Clark <james.clark@linaro.org>, Xu Yang <xu.yang_2@nxp.com>, 
-	Chun-Tse Shao <ctshao@google.com>, Thomas Richter <tmricht@linux.ibm.com>, 
-	Sumanth Korikkar <sumanthk@linux.ibm.com>, Collin Funk <collin.funk1@gmail.com>, 
-	Thomas Falcon <thomas.falcon@intel.com>, Howard Chu <howardchu95@gmail.com>, 
-	Dapeng Mi <dapeng1.mi@linux.intel.com>, Levi Yun <yeoreum.yun@arm.com>, 
-	Yang Li <yang.lee@linux.alibaba.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, Andi Kleen <ak@linux.intel.com>, 
-	Weilin Wang <weilin.wang@intel.com>
+References: <20251027-tegra186-icc-p2-v4-0-e4e4f57e2103@gmail.com>
+ <20251027-tegra186-icc-p2-v4-3-e4e4f57e2103@gmail.com> <82c8dda8-6fcb-48f9-bdaa-f3d1431e41ae@nvidia.com>
+ <CALHNRZ8nCojreFCMXfbBBhWAMtmWN-04XtuW8fEsVD9bw+-AzA@mail.gmail.com>
+ <CALHNRZ-CO5i9jeLkEG2cmHxcW1bcLhxcBSxjmL2euHfQy8yr-w@mail.gmail.com>
+ <e6ce190e-6df7-4c36-abca-f09df3cc80e7@nvidia.com> <99ca4992-5736-417d-854e-379542549bee@kernel.org>
+ <7f3dad08-cff5-40c2-8e7f-f6441a3d6b91@nvidia.com> <d5d23eb5-f43c-4e4b-9926-3fba6ffd3acf@nvidia.com>
+ <CALHNRZ8vFJyfFXbxFehWA9TGkdrEUy9Wsm-DxEOT=tVbYTcU5Q@mail.gmail.com> <249bbe7e-e2da-4493-bdd5-8f4b17aff8fe@nvidia.com>
+In-Reply-To: <249bbe7e-e2da-4493-bdd5-8f4b17aff8fe@nvidia.com>
+From: Aaron Kling <webgeek1234@gmail.com>
+Date: Tue, 11 Nov 2025 17:17:40 -0600
+X-Gm-Features: AWmQ_bkYm4fjvjDrlS3yKb85hc0z8ySFttCNXBmRTjm0WjIIiGVUIlHpFMqe8b0
+Message-ID: <CALHNRZ8uPaKqSpFWkmYZn==Xw=rxh95Xm0_6LPN1HDj20zofqw@mail.gmail.com>
+Subject: Re: [PATCH v4 3/5] memory: tegra186-emc: Support non-bpmp icc scaling
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thierry Reding <thierry.reding@gmail.com>, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 11, 2025 at 2:42=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
-wrote:
+On Tue, Nov 11, 2025 at 3:29=E2=80=AFPM Jon Hunter <jonathanh@nvidia.com> w=
+rote:
 >
-> On Tue, Nov 11, 2025 at 01:21:48PM -0800, Ian Rogers wrote:
-> > Prior to this series stat-shadow would produce hard coded metrics if
-> > certain events appeared in the evlist. This series produces equivalent
-> > json metrics and cleans up the consequences in tests and display
-> > output. A before and after of the default display output on a
-> > tigerlake is:
-> >
-> > Before:
-> > ```
-> > $ perf stat -a sleep 1
-> >
-> >  Performance counter stats for 'system wide':
-> >
-> >     16,041,816,418      cpu-clock                        #   15.995 CPU=
-s utilized
-> >              5,749      context-switches                 #  358.376 /se=
-c
-> >                121      cpu-migrations                   #    7.543 /se=
-c
-> >              1,806      page-faults                      #  112.581 /se=
-c
-> >        825,965,204      instructions                     #    0.70  ins=
-n per cycle
-> >      1,180,799,101      cycles                           #    0.074 GHz
-> >        168,945,109      branches                         #   10.532 M/s=
-ec
-> >          4,629,567      branch-misses                    #    2.74% of =
-all branches
-> >  #     30.2 %  tma_backend_bound
-> >                                                   #      7.8 %  tma_bad=
-_speculation
-> >                                                   #     47.1 %  tma_fro=
-ntend_bound
-> >  #     14.9 %  tma_retiring
-> > ```
-> >
-> > After:
-> > ```
-> > $ perf stat -a sleep 1
-> >
-> >  Performance counter stats for 'system wide':
-> >
-> >              2,890      context-switches                 #    179.9 cs/=
-sec  cs_per_second
-> >     16,061,923,339      cpu-clock                        #     16.0 CPU=
-s  CPUs_utilized
-> >                 43      cpu-migrations                   #      2.7 mig=
-rations/sec  migrations_per_second
-> >              5,645      page-faults                      #    351.5 fau=
-lts/sec  page_faults_per_second
-> >          5,708,413      branch-misses                    #      1.4 %  =
-branch_miss_rate         (88.83%)
-> >        429,978,120      branches                         #     26.8 M/s=
-ec  branch_frequency     (88.85%)
-> >      1,626,915,897      cpu-cycles                       #      0.1 GHz=
-  cycles_frequency       (88.84%)
-> >      2,556,805,534      instructions                     #      1.5 ins=
-tructions  insn_per_cycle  (88.86%)
-> >                         TopdownL1                 #     20.1 %  tma_bac=
-kend_bound
-> >                                                   #     40.5 %  tma_bad=
-_speculation      (88.90%)
-> >                                                   #     17.2 %  tma_fro=
-ntend_bound       (78.05%)
-> >                                                   #     22.2 %  tma_ret=
-iring             (88.89%)
-> >
-> >        1.002994394 seconds time elapsed
-> > ```
-> >
-> > Having the metrics in json brings greater uniformity, allows events to
-> > be shared by metrics, and it also allows descriptions like:
-> > ```
-> > $ perf list cs_per_second
-> > ...
-> >   cs_per_second
-> >        [Context switches per CPU second]
-> > ```
-> >
-> > A thorn in the side of doing this work was that the hard coded metrics
-> > were used by perf script with '-F metric'. This functionality didn't
-> > work for me (I was testing `perf record -e instructions,cycles`
-> > with/without leader sampling and then `perf script -F metric` but saw
-> > nothing but empty lines) but anyway I decided to fix it to the best of
-> > my ability in this series. So the script side counters were removed
-> > and the regular ones associated with the evsel used. The json metrics
-> > were all searched looking for ones that have a subset of events
-> > matching those in the perf script session, and all metrics are
-> > printed. This is kind of weird as the counters are being set by the
-> > period of samples, but I carried the behavior forward. I suspect there
-> > needs to be follow up work to make this better, but what is in the
-> > series is superior to what is currently in the tree. Follow up work
-> > could include finding metrics for the machine in the perf.data rather
-> > than using the host, allowing multiple metrics even if the metric ids
-> > of the events differ, fixing pre-existing `perf stat record/report`
-> > issues, etc.
-> >
-> > There is a lot of stat tests that, for example, assume '-e
-> > instructions,cycles' will produce an IPC metric. These things needed
-> > tidying as now the metric must be explicitly asked for and when doing
-> > this ones using software events were preferred to increase
-> > compatibility. As the test updates were numerous they are distinct to
-> > the patches updating the functionality causing periods in the series
-> > where not all tests are passing. If this is undesirable the test fixes
-> > can be squashed into the functionality updates, but this will be kind
-> > of messy, especially as at some points in the series both the old
-> > metrics and the new metrics will be displayed.
-> >
-> > v4: K/sec to M/sec on branch frequency (Namhyung), perf script -F
-> >     metric to-done a system-wide calculation (Namhyung) and don't
-> >     crash because of the CPU map index couldn't be found. Regenerate
-> >     commit messages but the cpu-clock was always yielding 0 on my
-> >     machine leading to a lot of nan metric values.
 >
-> This is strange.  The cpu-clock should not be 0 as long as you ran it.
-> Do you think it's related to the scale unit change?  I tested v3 and
-> didn't see the problem.
+> On 11/11/2025 17:04, Aaron Kling wrote:
+>
+> ...
+>
+> > My setup uses the boot stack from L4T r32.7.6, though cboot is source
+> > built and has had changes over time to support newer Android versions.
+> > There shouldn't be anything there that would affect emc clock, though.
+> >
+> > I'm seeing the emc clock stay at the boot value, namely 1600MHz. Per
+> > both debugfs clk/emc/clk_rate and bpmp/debug/clk/emc/rate. I don't
+> > even see 250MHz as an option. Debugfs emc/available_rates lists 204MHz
+> > as the closest entry.
+> >
+> > I'm trying to think what could cause a drop in the selected clock
+> > rate. This patch should only dynamically change the rate if the opp
+> > tables exist, enabling the cpufreq based scaling via icc. But those
+> > tables don't exist on linux-next right now. My test ramdisk does
+> > nothing except set up sysfs/procfs/etc just enough to run a busybox
+> > shell for debugging. Do the Nvidia regression testing boot scripts do
+> > anything to sysfs or debugfs that would affect emc?
+>
+> So this is definitely coming from ICC. On boot I see a request for
+> 250MHz coming from the PCIe driver ...
+>
+> [   13.861227] tegra186_emc_icc_set_bw-356: rate 250000000
+> [   13.861350] CPU: 1 UID: 0 PID: 68 Comm: kworker/u32:1 Not tainted 6.18=
+.0-rc4-next-20251110-00001-gfc12493c80fb-dirty #9 PREEMPT
+> [   13.861362] Hardware name: NVIDIA Jetson AGX Xavier Developer Kit (DT)
+> [   13.861370] Workqueue: events_unbound deferred_probe_work_func
+> [   13.861388] Call trace:
+> [   13.861393]  show_stack+0x18/0x24 (C)
+> [   13.861407]  dump_stack_lvl+0x74/0x8c
+> [   13.861419]  dump_stack+0x18/0x24
+> [   13.861426]  tegra186_emc_icc_set_bw+0xc8/0x14c
+> [   13.861438]  apply_constraints+0x70/0xb0
+> [   13.861451]  icc_set_bw+0x88/0x128
+> [   13.861461]  tegra_pcie_icc_set+0x7c/0x10c [pcie_tegra194]
+> [   13.861499]  tegra_pcie_dw_start_link+0x178/0x2b0 [pcie_tegra194]
+> [   13.861510]  dw_pcie_host_init+0x664/0x6e0
+> [   13.861523]  tegra_pcie_dw_probe+0x6d4/0xbfc [pcie_tegra194]
+> [   13.861534]  platform_probe+0x5c/0x98
+> [   13.861547]  really_probe+0xbc/0x2a8
+> [   13.861555]  __driver_probe_device+0x78/0x12c
+> [   13.861563]  driver_probe_device+0x3c/0x15c
+> [   13.861572]  __device_attach_driver+0xb8/0x134
+> [   13.861580]  bus_for_each_drv+0x84/0xe0
+> [   13.861588]  __device_attach+0x9c/0x188
+> [   13.861596]  device_initial_probe+0x14/0x20
+> [   13.861610]  bus_probe_device+0xac/0xb0
+> [   13.861619]  deferred_probe_work_func+0x88/0xc0
+> [   13.861627]  process_one_work+0x148/0x28c
+> [   13.861640]  worker_thread+0x2d0/0x3d8
+> [   13.861648]  kthread+0x128/0x200
+> [   13.861659]  ret_from_fork+0x10/0x20
+>
+> The actual rate that is set is 408MHz if I read the rate after
+> it is set ...
+>
+> [   13.912099] tegra186_emc_icc_set_bw-362: rate 408000000
+>
+> This is a simple boot test and so nothing we are doing via
+> debugfs/sysfs to influence this.
 
-It looked like a kernel issue. The raw counts were 0 before being
-scaled. All metrics always work on unscaled values. It is only the
-commit messages and the formatting is more important than the numeric
-values - which were correct for a cpu-clock of 0.
+Alright, I think I've got the picture of what's going on now. The
+standard arm64 defconfig enables the t194 pcie driver as a module. And
+my simple busybox ramdisk that I use for mainline regression testing
+isn't loading any modules. If I set the pcie driver to built-in, I
+replicate the issue. And I don't see the issue on my normal use case,
+because I have the dt changes as well.
 
-Thanks,
-Ian
+So it appears that the pcie driver submits icc bandwidth. And without
+cpufreq submitting bandwidth as well, the emc driver gets a very low
+number and thus sets a very low emc freq. The question becomes... what
+to do about it? If the related dt changes were submitted to
+linux-next, everything should fall into place. And I'm not sure where
+this falls on the severity scale since it doesn't full out break boot
+or prevent operation.
+
+Aaron
 
