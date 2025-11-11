@@ -1,137 +1,126 @@
-Return-Path: <linux-kernel+bounces-896098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40499C4FA43
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 20:47:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B9B7C4FA4F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 20:48:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 39F7E4EC65F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 19:47:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7641A18997DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 19:48:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D0D636B049;
-	Tue, 11 Nov 2025 19:47:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E559A34D911;
+	Tue, 11 Nov 2025 19:48:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sladewatkins.com header.i=@sladewatkins.com header.b="ZVAnmryA"
-Received: from mail-il1-f196.google.com (mail-il1-f196.google.com [209.85.166.196])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="M+HGwQjc"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D97063559EE
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 19:47:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6757932C312
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 19:48:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762890433; cv=none; b=AsahytnG62TocDZheXSxtKInRqjXUyc7NqvTOstn9IcNsrrTXNX6M0DGd2uFKBmKd4y9iqU/IXmuJhmQNzmYgILFZxLLBqIQER8u8xPJ7JAA/Divo8EDRVgON2KgNEaHnitqWxicD3XtBrEjYZ/iicYd6iZDnVCG1ZsYQJrKEbQ=
+	t=1762890490; cv=none; b=kVsskEiE/l6GtnA3q0aQjVDDJl0sFV+wgA01aoqM/yX2EtI4niHLAiTK8QVNJqUuAjWXebM3askAg2b1TkJ4FJSIUSyIIeq5a2RTV0/hlmLw7ntR7urbwapTvPjYDE9obwkyL1u1CEJAdREo+h9NVdEuHJ4uhR6CU9jlRwZTOl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762890433; c=relaxed/simple;
-	bh=ZrW+cL6/6u+Ohf+JzfSVkT6ZAGlURKmwD1lBTmPGJbo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aJP/EfspYqIQnNXrCFAkfShauYoNydt/MofuMocxPQg8aLAo7JkQOVj4HR8QrI01EbiFogR4DJ2iNMKIVb7HRC0yzEZMpDVBvFWH/fj5Ro6rr+e29MfPFgiDu+WrqMD9wJUU4NDHkngIdeUCnKzbaJU5D4JctmtFRqRga8wXLgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=sladewatkins.com; spf=pass smtp.mailfrom=sladewatkins.com; dkim=pass (2048-bit key) header.d=sladewatkins.com header.i=@sladewatkins.com header.b=ZVAnmryA; arc=none smtp.client-ip=209.85.166.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=sladewatkins.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sladewatkins.com
-Received: by mail-il1-f196.google.com with SMTP id e9e14a558f8ab-433100c59dcso261705ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 11:47:11 -0800 (PST)
+	s=arc-20240116; t=1762890490; c=relaxed/simple;
+	bh=7NdM9un//Qfx73SdLhAZgOos/RHP5qnSPQzhB6KpO0Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fCjzmVZ5JUeu7k9AIsf2ikbN11LYOSEL+zlAcnzBF8E5Kux4sKNMyvIlmth9Axn3B5IJJZuvHpnIYwyuGBEPprbwXR+AoGKJhfD3AGu5wMWU8J55do9/TInqNDUzL+I9xwy0IRC9f3pCVfgndc2DXtm6DLUOmTiF6pNGoAT5JXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=M+HGwQjc; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b72b495aa81so19093066b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 11:48:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sladewatkins.com; s=google; t=1762890431; x=1763495231; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZvmJ8eLa//4NsRGRjplCnKOxzOcbE/faHx1blTowx+I=;
-        b=ZVAnmryA8lNKlA8piHWG8uDrFckx9DeiFss3vLKMZ/OSY7zND0NdeCa+tounEqB2Nl
-         E7G39J1nY8HnKmUEZGJfi4XvIuhbVDQJ4HVjz1ac8T/VwQeJ2aQg6h1+eR8a1MJeyjLd
-         PLH16pIVZUodd3NX7pXzHs0tueAzKCoCocKsE1Tlpj3JrBnAzrkvZYJV2Col48cTDq5H
-         YZ+P2bndrkdf2EMlLa253ETE6Zv9l/gDCV5pfwGaMhgM90yTPYLtNfagbLWCoPhVahD+
-         2A/ZxVApqxZXjnYu+tuQCJmm9+p5U4uDhbee/wFLvqZn0hkkl40mLIgjX+xi/o8DH/mb
-         +aKA==
+        d=suse.com; s=google; t=1762890486; x=1763495286; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=lKDhxqPky+srato1DuJ5M1fuwPAvG3rezlKsBwQc3xk=;
+        b=M+HGwQjcYfUdbj3df22FBRRQUUcEwQVqmaxOs75Z2J8aVsx9lVFnRP+SGNh0qzig4q
+         JHTMx0kiC7KoUFCJ92wZzPidu1KZ7RkvZGF8HuCADjIRyuAPkObgQz1FU2+wvZw/D0+d
+         frjbwY/Aj1XUs8r2V2hB1XXBGNPwFBcQhUlEcZQ/lp5FVT3hvIeZ/rF0u5l038uKM4VK
+         sfuh2BcvOaA1HHSihxT9Ggf7614QBX+CPM6fWS6w9rCcaksnIpCS3sko0m75mJNnWoKl
+         5057wFox0GHKQlu+BXvNjMYIMA0IjA/vrHJqePUfdKUbIvo35/1A5b0fNkA8D2j7zrDi
+         1O5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762890431; x=1763495231;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZvmJ8eLa//4NsRGRjplCnKOxzOcbE/faHx1blTowx+I=;
-        b=VLlOI6PKweomNOIS8TUa8yqjpnhuvdl/OkCX3ycL1VscPF3n2xyu7PprC7qHSuQIYM
-         TiAWWr4efDhOzkwyLVgJrDZBgcQUCS32SY1qf9TWWBUVsymLQN8QsDJORBS4DmOL+GWg
-         J1cQPg9BJpyae8fJug5qSJI9Gay9fts4ea1YbKcnyE8l109beExyVaId6KU6T8A90n/f
-         N4LM2h3LBn6yPe40/2bI0yaI1e/zI/kYqd1hX2urDnL7ZEKf6/PDYisn7F6w/k4MQPv6
-         r7Mhhdy/L6udWfyMQvFI0s86dlfqR2EIzAojS8p33EdUoDVyqsXUsGCFhY0QzDP9rFt0
-         L9NA==
-X-Forwarded-Encrypted: i=1; AJvYcCUEdf9eM5rCQDm/Rkc6UzU+knM5q4yk552k9EAzm6P30p+xs0i0SsHrQKXGQBzTZ7kmkqyScsNd12Cr2eA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGhFiFPqio//3B11EVGs1Is5NCkf6ox2InZvjZtDpYhzI/ePDD
-	bWiL2eBJ8PfijaOuNKk6IM1gahjay3pBESKDQIq17dBSiWO32UXBNaK//Sa4Tnn5R5c=
-X-Gm-Gg: ASbGncvy7z25FXKVwAnjPl7EEadqxZBgUUNxAebGI0DEibJKGAbG15oazafnyCU4KhF
-	Yyxqf8+MdQIAlat0utJx6mx5R+jeixUTEBHzeqjsUP1/7MRepubRfZ1RALYjHkX26P2eoB5r6KO
-	IPs8DtkC7ZJiZcEmVaBMctFSyUhgtipllR/CGemQ+0e9avs/MRLGAkeMZwoTHjR4wBI7oXNn1o4
-	uPbQs0KBt7X/anozzVy029OXBVjXkM6mhSfiD2hoXHrCaUDHS4Dzg/bgxvOOyFH3tNelZXM128+
-	TiwiX8HUQdkfDHQEk2KRB/ScO+pWS5fqi63Zuw+sp0ehz0mgd7gwttj2/ukVmn5gKfQYqD80IOJ
-	+qsKSxROiTEv+9Kkd1qcx2JfMOjEhp7iZL7cF8IDtRmzFGjwU6HvnjRhhW/1f8HyfBZq3PG+N/a
-	A2XRY0+mXzg5A3fjI=
-X-Google-Smtp-Source: AGHT+IEFzUXrbqx24P+kXe5zMwKwFMHqOAgKW6mk9ecTAQgOVV1SJVteL9W3Xh6SnyVk+zsjwHpNnQ==
-X-Received: by 2002:a05:6e02:304a:b0:433:551d:5f2c with SMTP id e9e14a558f8ab-43473db30f7mr5000705ab.29.1762890431000;
-        Tue, 11 Nov 2025 11:47:11 -0800 (PST)
-Received: from [192.168.5.95] ([174.97.1.113])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-4347338d54esm2244295ab.22.2025.11.11.11.47.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Nov 2025 11:47:09 -0800 (PST)
-Message-ID: <07d63659-72b1-43d0-9139-2a0b6d73edd4@sladewatkins.com>
-Date: Tue, 11 Nov 2025 14:47:06 -0500
+        d=1e100.net; s=20230601; t=1762890486; x=1763495286;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lKDhxqPky+srato1DuJ5M1fuwPAvG3rezlKsBwQc3xk=;
+        b=jAY7e20sXntZhI5JCmtGvqhUxxrFtSBdEeDfy5F8iJ8Vt6//D9WG0Hn5xJ4su2Hp/O
+         qUIYnM18JJee67fbuap0hgUfIRNNKjt3yQhRbEe0zvCmasngTWvFzrVsRO52VUjK/JH+
+         16rQrQnR8KLkBxAwtkcss8PvKPu1cN8mctS7/lWpSWCcDKFDQrh45CKDKICBE/h7Cj5b
+         IEj9CHgIs9Wq7msC6TJVZw66o2Kta6WKEAxuhUgQNSHIXI+I9EqAQaLZoUs8Raxzt7B/
+         YiJQNm/HnDqz5Yo8RJhMrn6/S42AeuGNQO2DrYILxygbGKaMf8yWHvpcHh36cCqLby62
+         Oc5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWk9Bp3GlN9mYrH9dxeUGDRC5XHiGi01/mx6H48s81eG2v+ehy9bSkwR8+z/wDUIk/rMlNaO4GO0T8YHJ0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLA9+ZgtqQNi7G9yLLrmlBJT5TCuUMcgoOGQ4s003uS5g1BDHZ
+	rhWZ73+cfNc14GYbnvAxb8bm8noBnLoofDPAUFSfxMV8KjxeS1gl0mxgak3FKcZCTQw=
+X-Gm-Gg: ASbGncsbzs82U5Ope6lsPVR7RCkNIZW7wG+bk2ErfuxHVMT0f7V3Ns55ncAjQUZXFt1
+	A/Z+0KyRc/8wWT4nLeAZXyU8MypVAwyE6PmE0bIre7tBzopd78+o3YsaX75BKl8RcwcFEQ6N1SD
+	TBaZb6VEst3HPWNX5WY9MWnAa27zTiOazzNT7POV+aMTwJEg5c0WOsoDPBQuG7JrfN2nmOHTfwA
+	MW6OQTtYb9Ah5wm0o02kZHf6OvLu8NuzRHvuRSgFVApCUuXeBa2Pu6MwVTytDZeG0kzp3z+uuHG
+	Qeeov3mg8wuLoYLsS9kcFrb690/W63KP7LFm+WgjSZje7N7F7cBuLzfn2JcvvltyAp9/uBOrPdk
+	TAnENMLNLU9yqr3frCLgxJKnLTJvCbZWYjrBFeiYQPxJk2FkspmBopnKCVCcZbdQY/ejfYDtth6
+	K2I9CQezgXtgIN4xd3w3Cfu4Cq
+X-Google-Smtp-Source: AGHT+IEelejsUR71Jpq8Ao/NajBuvRLoWEBkOC/8vGvaNmUC/dfrqtprfl//rF6trpCO0nJn8h4ofA==
+X-Received: by 2002:a17:907:9812:b0:b73:21db:53a0 with SMTP id a640c23a62f3a-b7331960eb5mr32990666b.8.1762890485668;
+        Tue, 11 Nov 2025 11:48:05 -0800 (PST)
+Received: from localhost (109-81-31-109.rct.o2.cz. [109.81.31.109])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bf9bdf15sm1411961966b.62.2025.11.11.11.48.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Nov 2025 11:48:05 -0800 (PST)
+Date: Tue, 11 Nov 2025 20:47:59 +0100
+From: Michal Hocko <mhocko@suse.com>
+To: Waiman Long <llong@redhat.com>
+Cc: Leon Huang Fu <leon.huangfu@shopee.com>, linux-mm@kvack.org,
+	tj@kernel.org, mkoutny@suse.com, hannes@cmpxchg.org,
+	roman.gushchin@linux.dev, shakeel.butt@linux.dev,
+	muchun.song@linux.dev, akpm@linux-foundation.org,
+	joel.granados@kernel.org, jack@suse.cz, laoar.shao@gmail.com,
+	mclapinski@google.com, kyle.meyer@hpe.com, corbet@lwn.net,
+	lance.yang@linux.dev, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
+Subject: Re: [PATCH mm-new v3] mm/memcontrol: Add memory.stat_refresh for
+ on-demand stats flushing
+Message-ID: <aROS7yxDU6qFAWzp@tiehlicka>
+References: <20251110101948.19277-1-leon.huangfu@shopee.com>
+ <9a9a2ede-af6e-413a-97a0-800993072b22@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.12 000/565] 6.12.58-rc1 review
-To: Shuah Khan <skhan@linuxfoundation.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, rwarsow@gmx.de,
- conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, achill@achill.org
-References: <20251111004526.816196597@linuxfoundation.org>
- <641427c7-0069-4bee-8e6a-53347654a926@linuxfoundation.org>
-Content-Language: en-US
-From: Slade Watkins <sr@sladewatkins.com>
-In-Reply-To: <641427c7-0069-4bee-8e6a-53347654a926@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9a9a2ede-af6e-413a-97a0-800993072b22@redhat.com>
 
-On 11/11/2025 1:00 PM, Shuah Khan wrote:
-> I am seeing a build failure on my system - the following
-> commit could be the reason.
+On Tue 11-11-25 14:10:28, Waiman Long wrote:
+[...]
+> > +static void memcg_flush_stats(struct mem_cgroup *memcg, bool force)
+> > +{
+> > +	if (mem_cgroup_disabled())
+> > +		return;
+> > +
+> > +	memcg = memcg ?: root_mem_cgroup;
+> > +	__mem_cgroup_flush_stats(memcg, force);
+> > +}
 > 
->>
->> Heiner Kallweit <hkallweit1@gmail.com>
->>      net: phy: fix phy_disable_eee
->>
+> Shouldn't we impose a limit in term of how frequently this
+> memcg_flush_stats() function can be called like at most a few times per
 
-Hey Shuah,
+This effectivelly invalidates the primary purpose of the interface to
+provide a method to get as-fresh-as-possible value AFAICS. 
 
-Just to save you some time, this patch was already dropped from 
-6.12.58-rc2! :)
+> second to prevent abuse from user space as stat flushing is expensive? We
+> should prevent some kind of user space DoS attack by using this new API if
+> we decide to implement it.
 
-rc2: 
-https://lore.kernel.org/stable/20251111012348.571643096@linuxfoundation.org/
-
-> drivers/net/phy/phy_device.c: In function ‘phy_disable_eee’:
-> drivers/net/phy/phy_device.c:3061:29: error: passing argument 1 of 
-> ‘linkmode_fill’ makes pointer from integer without a cast [-Wint- 
-> conversion]
->   3061 |         linkmode_fill(phydev->eee_broken_modes);
->        |                       ~~~~~~^~~~~~~~~~~~~~~~~~
->        |                             |
->        |                             u32 {aka unsigned int}
-> 
-> I will go build it without this and update you.
-> 
-> thanks,
-> -- Shuah
-> 
-
-Best,
-Slade
+What exactly would be an attack vector?
+-- 
+Michal Hocko
+SUSE Labs
 
