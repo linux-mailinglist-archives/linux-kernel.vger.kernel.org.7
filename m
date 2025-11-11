@@ -1,253 +1,145 @@
-Return-Path: <linux-kernel+bounces-896091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0BA4C4FA07
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 20:40:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 050ABC4FA0A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 20:41:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 78F5A4E3D82
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 19:40:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA96A189CFAA
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 19:41:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48E8D329E57;
-	Tue, 11 Nov 2025 19:40:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38973329E44;
+	Tue, 11 Nov 2025 19:41:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=colorremedies.com header.i=@colorremedies.com header.b="NozAeXAI";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Wb8q+Cbs"
-Received: from fout-a6-smtp.messagingengine.com (fout-a6-smtp.messagingengine.com [103.168.172.149])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uc+/2dtc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64412329C61;
-	Tue, 11 Nov 2025 19:40:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89476329E42;
+	Tue, 11 Nov 2025 19:41:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762890037; cv=none; b=bc9eU9sltOmSspoKFoptsWXlsvY1aouw1rZFzG8AbVIDFu1nBuKiXQGA4mCxw9E3BdsQ4cFnarntbnWsykgMvI9HNpdSbijRzlYrsbXLQpYdtRh+nGZSa1rBO9D8kScFTqfsCMTmwWX1vBZ6vG0jFRRICE8+mnj0mJcYkIL7u70=
+	t=1762890067; cv=none; b=Fp4/p55j+Fx2JaX/iCVupXzRFEpjTXQF2tRQIiyHwOUkUiaOs3Q9HHwgrdKoAxEj+nsOLM3xemIQNsu5PilRLDfu+mi7bAJ5LiGlR3WbYQ7QN9yvT3vbmKpWf5TbOy8T3MXdMS7HbaqKGoTGdeRimS92J543z0O5zolbiVMiGW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762890037; c=relaxed/simple;
-	bh=cghmO4+jxOcPXoW03Dz5sjvslzYXuj59UWXnRTGiqjc=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=oI5z2Qu4PE8sylwFiCRYl5tOMvXNIzQi5cwoh7v7DwsKy6zKl75ufSHR4rF9FlY7K0bLnuJSIdKX7Y8vrlKmb5OEuGYCYh1rHPWCIo8nk4EVi8GAd3HqF4ejUpRZ1Acq4tFWf+B3PLddr8uhMruQNjVloPXTXxiqVLy23SY2uXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=colorremedies.com; spf=pass smtp.mailfrom=colorremedies.com; dkim=pass (2048-bit key) header.d=colorremedies.com header.i=@colorremedies.com header.b=NozAeXAI; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Wb8q+Cbs; arc=none smtp.client-ip=103.168.172.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=colorremedies.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=colorremedies.com
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
-	by mailfout.phl.internal (Postfix) with ESMTP id 3E76DEC0088;
-	Tue, 11 Nov 2025 14:40:33 -0500 (EST)
-Received: from phl-imap-01 ([10.202.2.91])
-  by phl-compute-01.internal (MEProxy); Tue, 11 Nov 2025 14:40:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	colorremedies.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1762890033; x=1762976433; bh=oTBGjM1hxB
-	PC3XrJPcevXldfIqkBQfy+2sLa6f5882c=; b=NozAeXAIo8siVLLRomX3zC1UtK
-	meQ5HrpHqY0pXUc5JDn63vpG/RKOorvDsYt8HKbNz59Z3zELVXgFM+3ssS/8Kfmj
-	f+5rMkRt1hC4E5XhiuPBEJ6zbQUXqv4WKlk9BYEpteTrnKY8jWYmdB0kcaYowIDq
-	UMNr38f47xxe0Xu3OH69xgE9uP5tnPB29XZ2RyXs0hQb+Nfvy22PglllZvIMeTMo
-	0hpkwusyllRSmumw1BbE6+2iC2vWjgViXfg3GC9PFMvIhDecjbAXS3mUdc9IdGc9
-	Y4NJE0bHvh40YdVSjTH0Yh00LnH/l1NbPoR+xLIm7EOxF2bNRxxKZmIeaj6A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762890033; x=
-	1762976433; bh=oTBGjM1hxBPC3XrJPcevXldfIqkBQfy+2sLa6f5882c=; b=W
-	b8q+CbscEnsKTDzds+hwn4Z+pBu9X3LPFch4BupA9PMoiH5q3XG/IJwSmKT807Wz
-	tOZWlLi8VsIdqwElJKZNPxnlM1wQg2Ig9wHNioM+lNgPEk++jUN3Rk+awCuOIfFL
-	mJYJjKmW+SmNOE26i+74ZptAYVO6RJ7FQjCcit+E/OnZg3jzR8qA20n4P5HoHsr+
-	kJ4M3B9hwANQ6SiAoskYhBp4JAKSmJa2msjOgqYZnxJN8Yj8BLqn9Tuu9AZBY9Bb
-	nnIKvev0d9onBwgGkbyoe4s2NmrYAt1Nu+0SksAwh0WJJHtKFw2WpqWKF0fnfBjw
-	oYBIv+ESOwLibl/Nljg+Q==
-X-ME-Sender: <xms:MJETaci4nxk0G0xqNyZ7z2e_XCc88AASMWqSEC9vXZMigXAyGVEVSQ>
-    <xme:MJETaf0w9AyqbJGrx8kAyfzbyga5bQcniw-EUMiqli4TRTgFs6lskOqia9AzajdIH
-    p53L3zgPfwG0lDS6n1jhwNYbFuJIl1SULdXSS58siSclFS8Yc8AN3P4>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvtddvtdehucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedfvehhrhhi
-    shcuofhurhhphhihfdcuoehlihhsthhssegtohhlohhrrhgvmhgvughivghsrdgtohhmqe
-    enucggtffrrghtthgvrhhnpefhuedvkeetudehgfethfevtdefiefgffehvefhveeuffef
-    vddtgeeiffelffelgfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrih
-    hlfhhrohhmpehlihhsthhssegtohhlohhrrhgvmhgvughivghsrdgtohhmpdhnsggprhgt
-    phhtthhopeehpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehlihhnuhigqdhnvh
-    hmvgeslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehjphhishii
-    tgiisehluhgtihguphhigigvlhhsrdgtohhmpdhrtghpthhtoheptghhrghithgrnhihrg
-    hksehnvhhiughirgdrtghomhdprhgtphhtthhopehlihhnuhigqdgsthhrfhhssehvghgv
-    rhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvgh
-    gvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:MJETaaVxqXcecYmh1fpCKHXH8H8LYx4KVoI3kMigizMuRfpZKAmgsA>
-    <xmx:MJETaaTizAA3420Zy7PpuNudM3ZQlhjmyOVhvTTelFHdx8bkHk5V-A>
-    <xmx:MJETaYMyz9pkHUyz-SWUYFscElsTR6-YWqcBvLl3arTV9aAerfhOLw>
-    <xmx:MJETaYSjS2DuChgarXILsOm31aE5HF1h_iklnPpg4XUTa1OF1iXIXw>
-    <xmx:MZETabZodhesaWmZpx_m4V4-o_oGERCx41OhKD54ISrKj30VblcO-ZzU>
-Feedback-ID: i06494636:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id B5DD818C004E; Tue, 11 Nov 2025 14:40:32 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1762890067; c=relaxed/simple;
+	bh=NzhKpMSaS0aeqcyiziATUPF8wn0JUM1MQ4SBCpM8dQI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kJy3bLc6iLEpkRzMcMHldogf762M2QZNv74GR0ZsIWav2Mg6vAD86HbkZffeMokS5Psp4h3BwLvkzkBEtftOccOUPIgpz7F9rkP4WJ/ZVYlZxgIpdPJLBND8XYxLHE++Vyif92QMZZalctYk5tIndv0d0zW03tdPM0iT+6XMXJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uc+/2dtc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B68BAC4CEF5;
+	Tue, 11 Nov 2025 19:41:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762890062;
+	bh=NzhKpMSaS0aeqcyiziATUPF8wn0JUM1MQ4SBCpM8dQI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uc+/2dtcdzGAJiR8ApFaiz2BVXf7HWRly7NIZT92+qxB2uhdmjUksCOT6bCFGqVWK
+	 GwLorK1SgCyR2vcsJ12El+XzfL2NpYwbJDst0G6pI6lr6/F/NvdUWt/3F6zUIKw/N2
+	 FwfhGg8bsZfMNX+gaZivvo0WKsAUHmnl8GmSNCWvHX1/6BkmlxqLz8HUxE5hu15sjO
+	 tao2IpgqnTqv5qotrjNId1PpEBTbUSUNhDkWJn2iWj6YCzrtr8J7ygIEpklyNLTwS2
+	 em4gSu9ZKvV5k9ZU/MCxmWhHx014p6lCo+jJUV6iqVjlh2KIQE5ZpBSvqo5hcsIj6P
+	 iUHe3g9XCcNyg==
+Date: Tue, 11 Nov 2025 11:40:59 -0800
+From: Namhyung Kim <namhyung@kernel.org>
+To: "Chen, Zide" <zide.chen@intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	James Clark <james.clark@linaro.org>, Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH] perf tools: Fix missing feature check for inherit +
+ SAMPLE_READ
+Message-ID: <aRORSxu22OSf-v0X@google.com>
+References: <20251111075944.2328021-1-namhyung@kernel.org>
+ <ac137eff-674c-4fa4-b870-80878af032a0@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: ABlTi-3C1DAF
-Date: Tue, 11 Nov 2025 14:40:12 -0500
-From: "Chris Murphy" <lists@colorremedies.com>
-To: "Justin Piszcz" <jpiszcz@lucidpixels.com>,
- "Chaitanya Kulkarni" <chaitanyak@nvidia.com>
-Cc: "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
- linux-kernel <linux-kernel@vger.kernel.org>,
- "Btrfs BTRFS" <linux-btrfs@vger.kernel.org>
-Message-Id: <a383946c-60b4-49f2-a3d0-dda1a5b41117@app.fastmail.com>
-In-Reply-To: 
- <CAO9zADydZ=WrHbeREhWfetAupvzewM_A9Sz0RV8tY0h9CctoFA@mail.gmail.com>
-References: 
- <CAO9zADwMjaMp=TmgkBDHVFxdj5FVHtjTn_6qvFaTcAjpbaDSWg@mail.gmail.com>
- <e5a2b8b2-d4e5-42ce-9324-5748c5e078d4@app.fastmail.com>
- <1e4dd261-0836-4eea-b7fd-8dec9a7453d9@nvidia.com>
- <CAO9zADydZ=WrHbeREhWfetAupvzewM_A9Sz0RV8tY0h9CctoFA@mail.gmail.com>
-Subject: Re: BTRFS error (device nvme1n1p2): bdev /dev/nvme0n1p2 errs: wr 37868055...
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ac137eff-674c-4fa4-b870-80878af032a0@intel.com>
+
+On Tue, Nov 11, 2025 at 11:13:20AM -0800, Chen, Zide wrote:
+> 
+> 
+> On 11/10/2025 11:59 PM, Namhyung Kim wrote:
+> > It should also have PERF_SAMPLE_TID to enable inherit and PERF_SAMPLE_READ
+> > on recent kernels.  Not having _TID makes the feature check wrongly detect
+> > the inherit and _READ support.
+> > 
+> > It was reported that the following command failed due to the error in
+> > the missing feature check on Intel SPR machines.
+> > 
+> >   $ perf record -e '{cpu/mem-loads-aux/S,cpu/mem-loads,ldlat=3/PS}' -- ls
+> >   Error:
+> >   Failure to open event 'cpu/mem-loads,ldlat=3/PS' on PMU 'cpu' which will be removed.
+> >   Invalid event (cpu/mem-loads,ldlat=3/PS) in per-thread mode, enable system wide with '-a'.
+> > 
+> > Fixes: 3b193a57baf15c468 ("perf tools: Detect missing kernel features properly")
+> > Reported-by: "Chen, Zide" <zide.chen@intel.com>
+> > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> > ---
+> >  tools/perf/util/evsel.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+> > index 67a898cda86ab559..989c56d4a23f74f4 100644
+> > --- a/tools/perf/util/evsel.c
+> > +++ b/tools/perf/util/evsel.c
+> > @@ -2474,7 +2474,7 @@ static bool evsel__detect_missing_features(struct evsel *evsel, struct perf_cpu
+> >  	/* Please add new feature detection here. */
+> >  
+> >  	attr.inherit = true;
+> > -	attr.sample_type = PERF_SAMPLE_READ;
+> > +	attr.sample_type = PERF_SAMPLE_READ | PERF_SAMPLE_TID;
+> 
+> 
+> Seems this could have some unintended side effects. For example,
+> consider a :ppp event with PERF_SAMPLE_READ and inherit attributes
+> running on a system where the maximum precise_ip is 2:
+> 
+> - It fails to open the event on the first attempt;
+> - It goes through the inherit_sample_read detection and fails again
+> after removing inherit;
+
+This is not what we want.  The kernel supports inherit + SAMPLE_READ
+so it should not remove the inherit bit.
 
 
+> - Finally, it succeeds after falling back to precision 2 — but the
+> inherit attribute has been unexpectedly removed.
 
-On Tue, Nov 11, 2025, at 1:25 PM, Justin Piszcz wrote:
+So it'll fallback to precision 2 without removing inherit.
 
-> Absolutely correct!!  Luckily, I do have remote syslog enabled and
-> captured the errors that were not logged to persistent storage, do the
-> errors below point to an NVME firmware issue?
->
-> "2025-11-10 01:42:51","notice","user","","machine1","[4043499.402974]
-> BTRFS info (device nvme1n1p2): scrub: started on devid 2"
-> "2025-11-10 01:42:51","notice","user","","machine1","[4043499.403000]
-> BTRFS info (device nvme1n1p2): scrub: started on devid 1"
-> "2025-11-10 01:44:22","notice","user","","machine1","[4043590.683686]
-> nvme nvme0: I/O tag 2 (a002) opcode 0x2 (I/O Cmd) QID 2 timeout,
-> aborting req_op:READ(0) size:131072"
-> "2025-11-10 01:44:22","notice","user","","machine1","[4043590.684742]
-> nvme nvme0: I/O tag 3 (c003) opcode 0x2 (I/O Cmd) QID 2 timeout,
-> aborting req_op:READ(0) size:131072"
-> "2025-11-10 01:44:22","notice","user","","machine1","[4043590.685778]
-> nvme nvme0: I/O tag 4 (1004) opcode 0x2 (I/O Cmd) QID 2 timeout,
-> aborting req_op:READ(0) size:131072"
-> "2025-11-10 01:44:22","notice","user","","machine1","[4043590.686802]
-> nvme nvme0: I/O tag 5 (c005) opcode 0x2 (I/O Cmd) QID 2 timeout,
-> aborting req_op:READ(0) size:131072"
-> "2025-11-10 01:44:22","notice","user","","machine1","[4043590.712274]
-> nvme nvme0: I/O tag 6 (0006) opcode 0x2 (I/O Cmd) QID 2 timeout,
-> aborting req_op:READ(0) size:131072"
-> "2025-11-10 01:44:22","notice","user","","machine1","[4043590.712483]
-> nvme nvme0: I/O tag 7 (4007) opcode 0x2 (I/O Cmd) QID 2 timeout,
-> aborting req_op:READ(0) size:131072"
-> "2025-11-10 01:44:22","notice","user","","machine1","[4043590.712698]
-> nvme nvme0: I/O tag 8 (3008) opcode 0x2 (I/O Cmd) QID 2 timeout,
-> aborting req_op:READ(0) size:131072"
-> "2025-11-10 01:44:22","notice","user","","machine1","[4043590.712906]
-> nvme nvme0: I/O tag 9 (5009) opcode 0x2 (I/O Cmd) QID 2 timeout,
-> aborting req_op:READ(0) size:131072"
-> "2025-11-10 01:44:53","notice","user","","machine1","[4043621.419061]
-> nvme nvme0: I/O tag 2 (a002) opcode 0x2 (I/O Cmd) QID 2 timeout, reset
-> controller"
+> 
+> I may have missed something, but I don’t quite understand why commit
+> 3b193a57baf15 ("perf tools: Detect missing kernel features properly")
+> performs the check on a dummy evsel instead of the original one. In this
+> way, it might incorrectly fall back an attribute that doesn’t actually help.
 
-All of those read requests were dropped by the nvme controller and then the kernel nvme driver reset the conroller which appears to not work...
+Because different platforms have different limitations on hardware
+events.  You cannot simply use current event for kernel feature check
+since it can result in wrong decisions due to the limitation.  So we
+picked the software event to avoid the hardware characteristics and to
+focus on kernel features.
 
-> "2025-11-10 01:46:14","notice","user","","machine1","[4043702.821452]
-> nvme nvme0: Device not ready; aborting reset, CSTS=0x1"
-> "2025-11-10 01:46:14","notice","user","","machine1","[4043702.850059]
-> nvme nvme0: Abort status: 0x371"
-> "2025-11-10 01:46:14","notice","user","","machine1","[4043702.850351]
-> nvme nvme0: Abort status: 0x371"
-> "2025-11-10 01:46:14","notice","user","","machine1","[4043702.850630]
-> nvme nvme0: Abort status: 0x371"
-> "2025-11-10 01:46:14","notice","user","","machine1","[4043702.850903]
-> nvme nvme0: Abort status: 0x371"
-> "2025-11-10 01:46:14","notice","user","","machine1","[4043702.851173]
-> nvme nvme0: Abort status: 0x371"
-> "2025-11-10 01:46:14","notice","user","","machine1","[4043702.851440]
-> nvme nvme0: Abort status: 0x371"
-> "2025-11-10 01:46:14","notice","user","","machine1","[4043702.851705]
-> nvme nvme0: Abort status: 0x371"
-> "2025-11-10 01:46:14","notice","user","","machine1","[4043702.851971]
-> nvme nvme0: Abort status: 0x371"
-> "2025-11-10 01:46:34","notice","user","","machine1","[4043722.877036]
-> nvme nvme0: Device not ready; aborting reset, CSTS=0x1"
-> "2025-11-10 01:46:35","notice","user","","machine1","[4043722.941289]
-> pcieport 0000:00:1b.4: AER: Multiple Uncorrectable (Non-Fatal) error
-> message received from 0000:06:00.0"
-> "2025-11-10 01:46:35","notice","user","","machine1","[4043722.942254]
-> nvme nvme0: Disabling device after reset failure: -19"
+> 
+> This means evsel__detect_missing_features() could theoretically roll
+> back a feature that might not actually work. Given that it cannot
+> restore the original evsel state after a failed attempt, side effects
+> may occur.
 
-And now it's going to drop writes too because the device is disabled.
+The purpose is to turn off the non-supported features only and try with
+other settings like precise_ip and exclude_kernels and so on.
 
-> "2025-11-10 01:46:35","notice","user","","machine1","[4043722.969046]
-> I/O error, dev nvme0n1, sector 86788096 op 0x1:(WRITE) flags 0x100000
-> phys_seg 1 prio class 2"
-> "2025-11-10 01:46:35","notice","user","","machine1","[4043722.969083]
-> I/O error, dev nvme0n1, sector 464581888 op 0x0:(READ) flags 0x4000
-> phys_seg 3 prio class 3"
-> "2025-11-10 01:46:35","notice","user","","machine1","[4043722.969128]
-> I/O error, dev nvme0n1, sector 45027984 op 0x1:(WRITE) flags 0x4000800
-> phys_seg 1 prio class 2"
-> "2025-11-10 01:46:35","notice","user","","machine1","[4043722.969127]
-> I/O error, dev nvme0n1, sector 117882144 op 0x1:(WRITE) flags 0x1800
-> phys_seg 8 prio class 2"
-> "2025-11-10 01:46:35","notice","user","","machine1","[4043722.969146]
-> BTRFS error (device nvme1n1p2): bdev /dev/nvme0n1p2 errs: wr 2, rd 0,
-> flush 0, corrupt 0, gen 0"
-> "2025-11-10 01:46:35","notice","user","","machine1","[4043722.969146]
-> BTRFS error (device nvme1n1p2): bdev /dev/nvme0n1p2 errs: wr 2, rd 0,
-> flush 0, corrupt 0, gen 0"
-> "2025-11-10 01:46:35","notice","user","","machine1","[4043722.969163]
-> BTRFS error (device nvme1n1p2): bdev /dev/nvme0n1p2 errs: wr 4, rd 0,
-> flush 0, corrupt 0, gen 0"
-> "2025-11-10 01:46:35","notice","user","","machine1","[4043722.969160]
-> BTRFS error (device nvme1n1p2): bdev /dev/nvme0n1p2 errs: wr 3, rd 0,
-> flush 0, corrupt 0, gen 0"
-> "2025-11-10 01:46:35","notice","user","","machine1","[4043722.969167]
-> BTRFS error (device nvme1n1p2): bdev /dev/nvme0n1p2 errs: wr 5, rd 0,
-> flush 0, corrupt 0, gen 0"
-> "2025-11-10 01:46:35","notice","user","","machine1","[4043722.969167]
-> BTRFS error (device nvme1n1p2): bdev /dev/nvme0n1p2 errs: wr 6, rd 0,
-> flush 0, corrupt 0, gen 0"
-> "2025-11-10 01:46:35","notice","user","","machine1","[4043722.969179]
-> BTRFS error (device nvme1n1p2): bdev /dev/nvme0n1p2 errs: wr 7, rd 0,
-> flush 0, corrupt 0, gen 0"
-> "2025-11-10 01:46:35","notice","user","","machine1","[4043722.969179]
-> BTRFS error (device nvme1n1p2): bdev /dev/nvme0n1p2 errs: wr 8, rd 0,
-> flush 0, corrupt 0, gen 0"
-> "2025-11-10 01:46:35","notice","user","","machine1","[4043722.969184]
-> BTRFS error (device nvme1n1p2): bdev /dev/nvme0n1p2 errs: wr 9, rd 0,
-> flush 0, corrupt 0, gen 0"
-> "2025-11-10 01:46:35","notice","user","","machine1","[4043722.969187]
-> BTRFS error (device nvme1n1p2): bdev /dev/nvme0n1p2 errs: wr 10, rd 0,
-> flush 0, corrupt 0, gen 0"
-> "2025-11-10 01:46:35","notice","user","","machine1","[4043722.972280]
-> BTRFS warning (device nvme1n1p2): lost super block write due to IO
-> error on /dev/nvme0n1p2 (-5)"
-> "2025-11-10 01:46:35","notice","user","","machine1","[4043722.972938]
-> BTRFS error (device nvme1n1p2): fixed up error at logical 782844493824
-> on dev /dev/nvme0n1p2 physical 237354287104"
-> "2025-11-10 01:46:35","notice","user","","machine1","[4043722.972957]
-> BTRFS error (device nvme1n1p2): fixed up error at logical 782844821504
-> on dev /dev/nvme0n1p2 physical 237354614784"
-> "2025-11-10 01:46:35","notice","user","","machine1","[4043722.972960]
-> BTRFS error (device nvme1n1p2): fixed up error at logical 782844821504
-> on dev /dev/nvme0n1p2 physical 237354614784"
+Thanks,
+Namhyung
 
-
-
-
-> Got it, I was running 4B2QJXD7 firmware on both drives when this issue
-> occurred.  Recently, Samsung released a new NVME F/W update 7B2QJXD7,
-> which they note "address(es) an intermittent non-recognition and blue
-> screen issue."  I've flashed the drives to 7B2QJXD7 and will see if
-> this issue recurs.
-
-That's probably the proper fix. The only other thing I can think of is there's a quirk for this drive that the kernel doesn't yet have, and therefore see if kernel 6.18-rc5 behaves better. 
-
--- 
-Chris Murphy
 
