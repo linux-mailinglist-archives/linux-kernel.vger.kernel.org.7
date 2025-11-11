@@ -1,127 +1,210 @@
-Return-Path: <linux-kernel+bounces-895148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29B16C4D182
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:37:54 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1952BC4D109
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:34:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70B764250AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:27:50 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 38DBC4F88E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:27:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 723F534C81F;
-	Tue, 11 Nov 2025 10:27:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E380A34BA40;
+	Tue, 11 Nov 2025 10:27:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UnXOCB3n"
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="sjb5S7mK"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41E9A34B683
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 10:27:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 522E9345739;
+	Tue, 11 Nov 2025 10:27:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762856857; cv=none; b=eTndGhlWvg9V/4rc8VGyQ/cO5L7d24kNrZtVEAXt2PYXxR92B7UzLYXXina2Z0TIgeggtfzhyLucY7FgOCG3HnRW6twXB/HWFmnQ1gd+IJWRoMCebcxbGvXVnldhiY7XNto0atZVj9oC3tPhkIfdTF/MrGm72Q40m3wwTlLzKSA=
+	t=1762856856; cv=none; b=N/ZA/Y1vnpbxFCCS42rVLGBPkGZIpOGCo6sxAckPjDw++ADxmVK7FKUopQMwHUAJ1fwP2qe9ePNyw87CBFGI79xqMM9EXcsWKqaSF/SJW8wHwInxgPQ/93l1k63TRi3+Ga64QBFS0bILrt0ubRF+x/jKjk6y5+8F08GXPepLkTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762856857; c=relaxed/simple;
-	bh=VZRK3bOsG28vtltYuXm2i797l0KnAcCOqsty2XViQ3k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZMPEs1+tXkXm+ZZ1rW/+dXzu4ribQ/Jd3TkctuEmARW8tJjRzgg67nooRYTF5g1KkqgTYx3aupYm+stQU9fZHNm16cQ4J+hw8it7GK3oZmBFowTf9Ll7snuKuRwNearlaNeup8qSo6V9KCnbZHwHqcqSlCE79QsEEOkGjf1Z/iY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UnXOCB3n; arc=none smtp.client-ip=209.85.128.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-71d71bcac45so37107057b3.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 02:27:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762856855; x=1763461655; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=k7khBtzXIp0xZap226+h9tuV9rGquBxGHwh18nz6WYA=;
-        b=UnXOCB3nbrh5o6rQpnpZZdB7puAKAMqJbwVuncHooLP8MBfkQqVrEPwlWt8oo+/E80
-         VAzZ5GpSxZDl9P3C/Y0OUtrSX+kPrcUsfH2lZlGnq9J2wbiz/aUo7JYuCYHaezCvSBIj
-         fTdxxbgMQcwklpNLlNoGlybHiI7x/q6gXMX/N9Qxwa8/b2CW4+Y8ZHLHPP5ZZtJfuSB8
-         FOCXloufjsLfeoMZY4nYyZ11edNfmCc6azyW4acykw6NP+75daUIWx7FkpiLFU8CPB6y
-         CCwjdw5JGGvRzi9nLDVDjIx2mdp29+GKBcJKvn4d8/SM58fjUw63p/hqE3ZSsqcRVzIo
-         mPpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762856855; x=1763461655;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=k7khBtzXIp0xZap226+h9tuV9rGquBxGHwh18nz6WYA=;
-        b=IPU6NzrXmktl24Kbf18AlRu5IhBLgx4usFk4eznPoMe1FFaU9LRgNQr2VkwiwQlx3K
-         WiOBVNfflMA2pz967R/51wOCos+/AAzJXudwk3eCEGjEnc8SwzOauRSEdBn5Xf6633Wb
-         skQeu1bNMGujZxXK/1uMmqUTHKMryGBmXR4FfFV2YcyjdjnJaMjK6e4aVZjqLHqByw7w
-         SBVdvt8uh1O3ftBdBArRG5Z2vCg0HLXskEpOtpwKLD3nTDtCcav96ECnbOFcGtxkBRnA
-         wBy7WmRGIKtPC4cuMoMLrfEDIZFHKzd3UNqSv0muVCPOmizGLeb26cAFH4KTO9E2rL7E
-         FxGA==
-X-Forwarded-Encrypted: i=1; AJvYcCXqODvhwU2ICtdFAusXuN5yUOywFVrWb6JA4BHNPQgk73gshFLgZ8MZLYvnHEs5dESctdv6ip5OtOgZmUw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzfhPA46VUXdsnW8TW9LjgmhGq86E57J31XpGdaMf0ef993NR1b
-	0f+kQmAcodOZLrDGbqCP9XDwvrKZJ5FSVX01ZKifC2afv9IxdAB+f3sfp3Jdz4BNPMOtHDcL9e+
-	PVLfiDGWMtxZYZ6Z1/T0P6O9+lPQYQW76ec74T9MmWA==
-X-Gm-Gg: ASbGncsIon+fX+esjgj168z2cNCx+QCIaduIOFHfnaz9XCRoIUdIMY2nXVM1bCrqE4R
-	X1OWjuUYyCCtcgzhzTPhydLemhcK46LrZGcAw3n4bGDdSOtUyUylZVzTnIy4kvBdFib40GuLj4R
-	2UFxizAiJWHUEeI6x6/vWraC1VyHuygI1LcJbfWteWdfoHQ+OIaBUhZPpAnkdpMqmB9v0fGpHz5
-	93jMsfNnJX7mWkqILrJjQ0AeOrfyP1Z0eoX7VqO93Dm1rmRF6qRsluG2wHxPbDOnAyrGIizipWj
-	+4VLSQ==
-X-Google-Smtp-Source: AGHT+IEk2H2YEsL0xkuLYpOfGFRgLDQ2g6ngSvt7pmfpCRqNXC2Ha8alMkiTsvLp5xWvt7eGkkSPVDpfAeg1vJdOmAA=
-X-Received: by 2002:a05:690c:6ac9:b0:786:59d3:49e0 with SMTP id
- 00721157ae682-787d53af614mr120208927b3.25.1762856855161; Tue, 11 Nov 2025
- 02:27:35 -0800 (PST)
+	s=arc-20240116; t=1762856856; c=relaxed/simple;
+	bh=JirDSvUgdW0BcnI08nHDbc8VOnVTAsZAJyon3YU6egM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hew4T6xTmiqBvQhXSw2rT2ZxdOrldklQlukqDo85KcsIr3fLpri+EnTRBDQmPuRfRCo1yBBKoDcmffQUbsqc6pjxSi78gHanXjdkSKDDbWgWWPlxNpeXDg9bDO6qWOw3LQZWHwrMxGn0XG29V7QpGBZ6pnyaBw5UuLE4W5lLiWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=sjb5S7mK; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=iCozD/S14h9YyVEvZtzrw1OeE8+mwrBwtubAIDfZfYw=; b=sjb5S7mK2brT+EtiKy3b3jYsHd
+	lNYMJRyT9YAluzwMc8XiVCT6lDbgLRAv3jkpzWQaIvSJiMVlTu0KB7Qeb3Zp7tud9XR4oQJS5GTtM
+	wxeAFYkz/k6xVOXGOnLOFp9YHVm0W6z8GlyCJCZZ0wJOYVI7CnH4Pv0pgFsU4MylNjQJoXiWiA6Fm
+	P+slWCcWrcvHBNtm3WSymnLMQIyuEJ2LWAiciGDcRLeuqppHzpm5GiYI/g2u4LGqNQC2HfcFNFeCC
+	75V0Liz50oP+KjQ1uk1/50UGtZ/pFqw6GrHY0kVXbojzKRFWy6yONwogjg7nInxJrfnb8JC+dZ5/6
+	MghJ6MCA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vIlaq-00000003ivF-1kLK;
+	Tue, 11 Nov 2025 10:27:20 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 455A4300328; Tue, 11 Nov 2025 11:27:19 +0100 (CET)
+Date: Tue, 11 Nov 2025 11:27:19 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Maciej Wieczor-Retman <m.wieczorretman@pm.me>
+Cc: xin@zytor.com, kaleshsingh@google.com, kbingham@kernel.org,
+	akpm@linux-foundation.org, nathan@kernel.org,
+	ryabinin.a.a@gmail.com, dave.hansen@linux.intel.com, bp@alien8.de,
+	morbo@google.com, jeremy.linton@arm.com, smostafa@google.com,
+	kees@kernel.org, baohua@kernel.org, vbabka@suse.cz,
+	justinstitt@google.com, wangkefeng.wang@huawei.com,
+	leitao@debian.org, jan.kiszka@siemens.com,
+	fujita.tomonori@gmail.com, hpa@zytor.com, urezki@gmail.com,
+	ubizjak@gmail.com, ada.coupriediaz@arm.com,
+	nick.desaulniers+lkml@gmail.com, ojeda@kernel.org,
+	brgerst@gmail.com, elver@google.com, pankaj.gupta@amd.com,
+	glider@google.com, mark.rutland@arm.com, trintaeoitogc@gmail.com,
+	jpoimboe@kernel.org, thuth@redhat.com, pasha.tatashin@soleen.com,
+	dvyukov@google.com, jhubbard@nvidia.com, catalin.marinas@arm.com,
+	yeoreum.yun@arm.com, mhocko@suse.com, lorenzo.stoakes@oracle.com,
+	samuel.holland@sifive.com, vincenzo.frascino@arm.com,
+	bigeasy@linutronix.de, surenb@google.com, ardb@kernel.org,
+	Liam.Howlett@oracle.com, nicolas.schier@linux.dev, ziy@nvidia.com,
+	kas@kernel.org, tglx@linutronix.de, mingo@redhat.com,
+	broonie@kernel.org, corbet@lwn.net, andreyknvl@gmail.com,
+	maciej.wieczor-retman@intel.com, david@redhat.com, maz@kernel.org,
+	rppt@kernel.org, will@kernel.org, luto@kernel.org,
+	kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, x86@kernel.org,
+	linux-kbuild@vger.kernel.org, linux-mm@kvack.org,
+	llvm@lists.linux.dev, linux-doc@vger.kernel.org
+Subject: Re: [PATCH v6 15/18] x86/kasan: Handle UD1 for inline KASAN reports
+Message-ID: <20251111102719.GH278048@noisy.programming.kicks-ass.net>
+References: <cover.1761763681.git.m.wieczorretman@pm.me>
+ <8b0daaf83752528418bf2dd8d08906c37fa31f69.1761763681.git.m.wieczorretman@pm.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251108174055.3665-1-antoniu.miclaus@analog.com> <20251108174055.3665-2-antoniu.miclaus@analog.com>
-In-Reply-To: <20251108174055.3665-2-antoniu.miclaus@analog.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 11 Nov 2025 11:27:17 +0100
-X-Gm-Features: AWmQ_blJ-ik6xUXE2LXYUaqjihmL45TeO1-cQ_uCDnErJH-waDrg2-SaMoDOhR4
-Message-ID: <CACRpkdZLK722xOMFxYhYyO9LudnKVgmeHNYBha0e-BoBo8sr1w@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] dt-bindings: gpio: adg1712: add adg1712 support
-To: Antoniu Miclaus <antoniu.miclaus@analog.com>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8b0daaf83752528418bf2dd8d08906c37fa31f69.1761763681.git.m.wieczorretman@pm.me>
 
-On Sat, Nov 8, 2025 at 6:43=E2=80=AFPM Antoniu Miclaus
-<antoniu.miclaus@analog.com> wrote:
+On Wed, Oct 29, 2025 at 08:09:51PM +0000, Maciej Wieczor-Retman wrote:
+> From: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
+> 
+> Inline KASAN on x86 should do tag mismatch reports by passing the
+> metadata through the UD1 instruction and the faulty address through RDI,
+> a scheme that's already used by UBSan and is easy to extend.
+> 
+> The current LLVM way of passing KASAN software tag mode metadata is done
+> using the INT3 instruction. However that should be changed because it
+> doesn't align to how the kernel already handles UD1 for similar use
+> cases. Since inline software tag-based KASAN doesn't work on x86 due to
+> missing compiler support it can be fixed and the INT3 can be changed to
+> UD1 at the same time.
+> 
+> Add a kasan component to the #UD decoding and handling functions.
+> 
+> Make part of that hook - which decides whether to die or recover from a
+> tag mismatch - arch independent to avoid duplicating a long comment on
+> both x86 and arm64 architectures.
+> 
 
-> Add devicetree bindings for adg1712 SPST quad switch.
->
-> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+> diff --git a/arch/x86/include/asm/kasan.h b/arch/x86/include/asm/kasan.h
+> index 396071832d02..375651d9b114 100644
+> --- a/arch/x86/include/asm/kasan.h
+> +++ b/arch/x86/include/asm/kasan.h
+> @@ -6,6 +6,24 @@
+>  #include <linux/kasan-tags.h>
+>  #include <linux/types.h>
+>  #define KASAN_SHADOW_OFFSET _AC(CONFIG_KASAN_SHADOW_OFFSET, UL)
+> +
+> +/*
+> + * LLVM ABI for reporting tag mismatches in inline KASAN mode.
+> + * On x86 the UD1 instruction is used to carry metadata in the ECX register
+> + * to the KASAN report. ECX is used to differentiate KASAN from UBSan when
+> + * decoding the UD1 instruction.
+> + *
+> + * SIZE refers to how many bytes the faulty memory access
+> + * requested.
+> + * WRITE bit, when set, indicates the access was a write, otherwise
+> + * it was a read.
+> + * RECOVER bit, when set, should allow the kernel to carry on after
+> + * a tag mismatch. Otherwise die() is called.
+> + */
+> +#define KASAN_ECX_RECOVER	0x20
+> +#define KASAN_ECX_WRITE		0x10
+> +#define KASAN_ECX_SIZE_MASK	0x0f
+> +#define KASAN_ECX_SIZE(ecx)	(1 << ((ecx) & KASAN_ECX_SIZE_MASK))
+>  #define KASAN_SHADOW_SCALE_SHIFT 3
 
-My comment on v1 stands.
+> diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
+> index 6b22611e69cc..40fefd306c76 100644
+> --- a/arch/x86/kernel/traps.c
+> +++ b/arch/x86/kernel/traps.c
+> @@ -179,6 +179,9 @@ __always_inline int decode_bug(unsigned long addr, s32 *imm, int *len)
+>  	if (X86_MODRM_REG(v) == 0)	/* EAX */
+>  		return BUG_UD1_UBSAN;
+>  
+> +	if (X86_MODRM_REG(v) == 1)	/* ECX */
+> +		return BUG_UD1_KASAN;
+> +
+>  	return BUG_UD1;
+>  }
+>  
+> @@ -357,6 +360,11 @@ static noinstr bool handle_bug(struct pt_regs *regs)
+>  		}
+>  		break;
+>  
+> +	case BUG_UD1_KASAN:
+> +		kasan_inline_handler(regs);
+> +		handled = true;
+> +		break;
+> +
+>  	default:
+>  		break;
+>  	}
 
-This is a switch controlled by a GPIO:
+> +void kasan_inline_handler(struct pt_regs *regs)
+> +{
+> +	int metadata = regs->cx;
+> +	u64 addr = regs->di;
+> +	u64 pc = regs->ip;
+> +	bool recover = metadata & KASAN_ECX_RECOVER;
+> +	bool write = metadata & KASAN_ECX_WRITE;
+> +	size_t size = KASAN_ECX_SIZE(metadata);
+> +
+> +	if (user_mode(regs))
+> +		return;
+> +
+> +	if (!kasan_report((void *)addr, size, write, pc))
+> +		return;
+> +
+> +	kasan_die_unless_recover(recover, "Oops - KASAN", regs, metadata, die);
+> +}
 
------/ -----
-      |
-    gpio
+I'm confused. Going by the ARM64 code, the meta-data is constant per
+site -- it is encoded in the break immediate.
 
-The resulting binding is not about GPIO, it is about a switch.
+And I suggested you do the same on x86 by using the single byte
+displacement instruction encoding.
 
-There are similar things that have unique bindings already,
-for example:
-Documentation/devicetree/bindings/power/reset/gpio-poweroff.yaml
+	ud1	0xFF(%ecx), %ecx
 
-I think this needs a new binding folder in
-dt-bindings/switch/* and cannot be hidden away
-as "some kind of GPIO".
+Also, we don't have to use a fixed register for the address, you can do:
 
-Maybe it will be modeled as some GPIO in Linux, I don't
-know yet, but other operating systems use these bindings
-too, and they will be confused by this "GPIO" which is
-actually a switch.
+	ud1	0xFF(%ecx), %reg
 
-I don't like the idea of GPIO being used as a dumping
-ground for hardware that isn't properly modeled.
+and have %reg tell us what register the address is in.
 
-Yours,
-Linus Walleij
+Then you can recover the meta-data from the displacement immediate and
+the address from whatever register is denoted.
+
+This avoids the 'callsite' from having to clobber cx and move the address
+into di.
+
+What you have here will work, and I don't suppose we care about code
+density with KASAN much, but it could've been so much better :/
+
+
 
