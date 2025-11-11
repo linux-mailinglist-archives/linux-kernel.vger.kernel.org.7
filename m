@@ -1,78 +1,100 @@
-Return-Path: <linux-kernel+bounces-896043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB0FBC4F8AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 20:10:50 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 437DFC4F8C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 20:12:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A022189D082
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 19:11:15 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E1DEB34D205
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 19:12:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 704192E6CC6;
-	Tue, 11 Nov 2025 19:10:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B4332EB5B4;
+	Tue, 11 Nov 2025 19:12:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cL/0H+7d"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DlfzoAKW"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCE4F2E5427
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 19:10:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 139882E6CB8;
+	Tue, 11 Nov 2025 19:12:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762888246; cv=none; b=Epog4kZA0/pJuoh9M3YasOUVOPTj3zAlZ9qOUIekDrvJ33rr/S7OZ24xyIT/d9mZOTZ0xfKM51vlKvdJp+gfL2gBhQvwDSU9ngG5Ni0cIrznddT5aiWWgtp5I/UEpFWw5vhZfmjtA2LPRwPWKdzpwZR7CQ0mKBiLj9z0vhxaydQ=
+	t=1762888340; cv=none; b=L9M3d7DdRc3UCtAqxmlTqdRmOsGbb2afX0bfedcJsMVbahUMwIv5isO05GrkSlQtwn7aF27zTWr2gSQIKhiV3IjlxCnW8Nm5ZptHcViNOU+WyLcm/L38s+jlNWzxVViSD0K7FyE7AVp1WDnUMcxavOHWNAboEs/uCMLPkvYuTM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762888246; c=relaxed/simple;
-	bh=z30sYZuweToMSRbZmmjtT/wBIWBGjpziU0vz9SNB8tQ=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=mO5svLH3WDd5GRvOpDNHOtcU/0OoaeWjItv2iU62f/i5bNYTD1UrbZhZjQFLkwip4OhoJP6Wb/GDSl5lhz0sXx8MGsM/MVHgkDDmsOto2h904b9DQSyrgQ9jh+Mhaxsq2Th9rWcUIyjnjRsYTlRjAWOlr8sYhmtz5B6DDim4+tw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cL/0H+7d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71497C113D0;
-	Tue, 11 Nov 2025 19:10:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762888246;
-	bh=z30sYZuweToMSRbZmmjtT/wBIWBGjpziU0vz9SNB8tQ=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=cL/0H+7d+gmHkzQbb+2Z6u/gROBjBU1g0hebfv79C0zz0RuLsC9YX8zKJDc83Rtv3
-	 mSqb5fscTv86vbXFQOc03c7tSobXXyO4qORvcFutmRHDEbPl7efD2WxGikxTOYg8F7
-	 +f306dTsDg7at3J8/EXCqXeh5gHSOb+BRV9cFgG0SwvckKKro4QC8F73c1o6azTZB9
-	 UyEEgjX2JHcrJfNqWRL0lxXxYBo7IUUncq83skTmw6iwZP3u1cHIO3qC5mV1DacjyB
-	 qVD5Cvsyv9XV8vumnc4GE1Hwa0Eix50QdATv7Sh6I/MOOuV5oVl/+SKkKJLF6sLDI/
-	 tfbtx0GfuzrtA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id B1B78380CFEF;
-	Tue, 11 Nov 2025 19:10:17 +0000 (UTC)
-Subject: Re: [GIT PULL] arm64 fixes for -rc6
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <aRN7fm_q2B5UzQTK@willie-the-truck>
-References: <aRN7fm_q2B5UzQTK@willie-the-truck>
-X-PR-Tracked-List-Id: <linux-arm-kernel.lists.infradead.org>
-X-PR-Tracked-Message-Id: <aRN7fm_q2B5UzQTK@willie-the-truck>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git tags/arm64-fixes
-X-PR-Tracked-Commit-Id: 8e8ae788964aa2573b4335026db4068540fa6a86
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 24172e0d79900908cf5ebf366600616d29c9b417
-Message-Id: <176288821699.3548512.978499096605838935.pr-tracker-bot@kernel.org>
-Date: Tue, 11 Nov 2025 19:10:16 +0000
-To: Will Deacon <will@kernel.org>
-Cc: torvalds@linux-foundation.org, catalin.marinas@arm.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-team@android.com
+	s=arc-20240116; t=1762888340; c=relaxed/simple;
+	bh=rUn95kg0Rjcm+pnxOLKCXLw6yrQhq1X86z5Q2wNpk6c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=V2jn6zExQcz6CCdfKYB9TGV8+MfbBIqifrFebNGdgIhpumKlQ67g0EWPk/607lyREQvDyOg7v7BsaxJd/BLHISMMydOBdeZSuLPLbWE61iAAeqZXDO6wAkTobzog+5/v9Pp1rtu8tc1yciIyvgXqs2BerzNS1HtgkYMXSPXJIbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DlfzoAKW; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762888338; x=1794424338;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=rUn95kg0Rjcm+pnxOLKCXLw6yrQhq1X86z5Q2wNpk6c=;
+  b=DlfzoAKWF58tCypNFJNZr2YNdoV+l9n8AFohLo2tQ/lQp/NwmWAYyHBK
+   YOra9PoHqFgs5okiHcp2FznzrxWRzwHGlvdCLP4akbkrejaWhAL0F0BCu
+   tma82VMFDVj4/mc7Und0yL4dit7CJ2YFc8AI7E1NjN1U96DNJMaAzejWs
+   aeYQJlcMeeHaLPNNyqlw+VdxWDosMmhMmx2EQi+r7RcnrcFpq8tENAOhq
+   H0oztuZzXoKCH/ixutfS/vEoC7M529giagtZxHVU7a8NqOuaxRfoeJ1op
+   IK5DPiPYhWt1LlR2uLaLRYuTdlLHSbvsWvR/n+hJTBnAPmEJfdnADGIuY
+   A==;
+X-CSE-ConnectionGUID: RGOOguckTFCBxRt+TPlxOA==
+X-CSE-MsgGUID: eymxeRZPQPSpwdFYJMED0w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11610"; a="90425952"
+X-IronPort-AV: E=Sophos;i="6.19,297,1754982000"; 
+   d="scan'208";a="90425952"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 11:12:17 -0800
+X-CSE-ConnectionGUID: k6VO+V3ORmSOB7cpOy1Dbw==
+X-CSE-MsgGUID: 17VPtxuFT4CGNhVzf5VG4w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,297,1754982000"; 
+   d="scan'208";a="188334538"
+Received: from black.igk.intel.com ([10.91.253.5])
+  by orviesa010.jf.intel.com with ESMTP; 11 Nov 2025 11:12:16 -0800
+Received: by black.igk.intel.com (Postfix, from userid 1003)
+	id 0198695; Tue, 11 Nov 2025 20:12:14 +0100 (CET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH v1 0/5] pinctrl: intel: Convert the rest to use INTEL_GPP()
+Date: Tue, 11 Nov 2025 20:10:24 +0100
+Message-ID: <20251111191214.1378051-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-The pull request you sent on Tue, 11 Nov 2025 18:07:58 +0000:
+A few drivers use the more customised versions of INTEL_GPP().
+Convert them to use INTEL_GPP() directly.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git tags/arm64-fixes
+Andy Shevchenko (5):
+  pinctrl: cedarfork: Switch to INTEL_GPP() macro
+  pinctrl: denverton: Switch to INTEL_GPP() macro
+  pinctrl: emmitsburg: Switch to INTEL_GPP() macro
+  pinctrl: cherryview: Switch to INTEL_GPP() macro
+  pinctrl: elkhartlake: Switch to INTEL_GPP() macro
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/24172e0d79900908cf5ebf366600616d29c9b417
-
-Thank you!
+ drivers/pinctrl/intel/pinctrl-cedarfork.c   | 37 +++++++----------
+ drivers/pinctrl/intel/pinctrl-cherryview.c  | 46 +++++++++------------
+ drivers/pinctrl/intel/pinctrl-denverton.c   | 21 ++++------
+ drivers/pinctrl/intel/pinctrl-elkhartlake.c | 43 ++++++++-----------
+ drivers/pinctrl/intel/pinctrl-emmitsburg.c  | 33 ++++++---------
+ 5 files changed, 73 insertions(+), 107 deletions(-)
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.50.1
+
 
