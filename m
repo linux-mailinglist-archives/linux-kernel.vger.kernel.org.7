@@ -1,288 +1,349 @@
-Return-Path: <linux-kernel+bounces-894674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68E50C4B928
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 06:51:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 44B03C4B91F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 06:50:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21FE73B72C9
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 05:51:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0ADF33B725F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 05:50:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17600279DAF;
-	Tue, 11 Nov 2025 05:51:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A6F0278161;
+	Tue, 11 Nov 2025 05:50:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="gJAMKUAP"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="a25IZSIg"
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55F8825A2BB;
-	Tue, 11 Nov 2025 05:51:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C80D425A2BB;
+	Tue, 11 Nov 2025 05:50:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762840276; cv=none; b=LeCIEqGsd//Z2ldifiuVNfTMeAz75ncBraSxs/QA5he6zwmXcraX99S2knTaAFvF03qZSZDYlLbz+GNfUBuj7jzAeSkE6T86NGm5NH4+aJE8lMECOWX0gve4hRqj/ed+YDAhn8tQISV2KnNm/YGC3zJhYNMHbnXuHHnJx/1gnKw=
+	t=1762840210; cv=none; b=vAFhP6iPs8jDxc+jjexlLSIMvX3MU9WzpHXKG5XruUXnK1GC36aX12HrBG5sjn8i9HfTsbm0Xa6CGYFyg8tnindLV8OPpw5gKrSvmviKMRuADUTcwuCihzrY1jcBdPasgEsKEHy1aMAbCF8lnJHaApXXSAZ8QzJD7HJm4uKrUwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762840276; c=relaxed/simple;
-	bh=/SLqfswm1aBdyVMt43HObYBoVG/w5wutjuTmSL5va/Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=rXyAqCKYT2EZQQM/h1IlwiK5iv5e3a074Rtv0Uk4gETDZBAkF6hMc0sMJRI6Fq6kLYLR6QfGFBfWuoH+Xi2YtJi9qxTNAI1R88cfycReSEqqV9EZ4gydOAyDltYkUYK4xxT5IkoHbCVH/G1/TiP6H0e9yuH8wP4fAzlvWZg+uSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=gJAMKUAP; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AB46BMV4167218;
-	Tue, 11 Nov 2025 05:51:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Q/zBP6T7BvWjd8aqlVDbZzBTQ4nfBaqYzBBH1DcIAKo=; b=gJAMKUAPEEDN2cJ2
-	IqwnnBafP9aylzBIeHvOCqFkL9AmPYfosrJqekFiBywoiOTgHtxY7Bn21ZnNVUbP
-	IWINvRtLCARSmnr/co330PgpHkAw3XEaoX10CUUIFWgAkFm/MBK5W3uArCIFg44x
-	ucZ7su5y9lw/IMK7NAJcd7FoFgK7NDYKWrWTmlNlkSY/M/n1NUSLP85XfGvOtrDI
-	Q0Nal7jh4zsBPVaqUaJXUeGwI17fq994FNh3YBCvLPb3yWOSsyii+1PDdirR5fd7
-	VjUoza0tSUyFQKrf2S96X3MmBjSXrIEhndsKr1LPzWUHDgO84TkCZc1Cb1F0msZm
-	IdHKUQ==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4abm4a1sw5-1
+	s=arc-20240116; t=1762840210; c=relaxed/simple;
+	bh=FqP3xWIkEbVz1BQX6sqvitRdRIe9hcRFt3vF1OQQCeY=;
+	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=mWZx/bSA4G7c46+c7MEdFvqchwVagdV1Lb9K41difb/IL3VBlctIvKrwd9JZ4xJVjLRbifWQRQuWo1CXWFV2hQTYwwy37aDR7N4Lzn4SSrtvyPCqcsHSet5khY3O73pZztpb/A3FbRA87iOY9GAlOf3jZ1YkMwAwDa8jEfqiXoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=a25IZSIg; arc=none smtp.client-ip=67.231.156.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+	by mx0b-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AACf9gR2488054;
+	Mon, 10 Nov 2025 21:49:59 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-type:date:from:message-id:mime-version:subject:to; s=
+	pfpt0220; bh=7Crlj5rTmxhTEnDI8pS48dokYU7S6de8qIKUYDJytsM=; b=a25
+	IZSIgoUOpCMPaOppWI5kLWhlsyn84DcgcP4i69qz/U+MeSqAGYiWMyFfzd4QJOS3
+	EAsMAojdmlW5Uy4SDtp1asXtVddMQyMZSbb1x57jANMdSIuoXLjqsVhP77h7JCaT
+	63Vwcq4z9KcuiXVD8Vhl5T0miCQucyGX2LpiPg5ABAC8vYZwSCz46CIaQSbmZBSb
+	s9zXPF4EZAOUHeRIMrGVECTjr4iIDbr9CgGrJSPo4fMglADG1UQMI825ksfuURvN
+	xsLEq5TTSirFqmQK5PHaF51CKQ3ikziWotx4pI6hikeb3R0rn4U7pegyRPgeLJ4z
+	PP0O73j+po0niHwTS7w==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4abg8na28a-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Nov 2025 05:51:08 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5AB5p747001273
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Nov 2025 05:51:07 GMT
-Received: from [10.151.36.184] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Mon, 10 Nov
- 2025 21:50:04 -0800
-Message-ID: <392ba04d-66c5-96c3-628d-8c9edf49333b@quicinc.com>
-Date: Tue, 11 Nov 2025 11:19:51 +0530
+	Mon, 10 Nov 2025 21:49:59 -0800 (PST)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Mon, 10 Nov 2025 21:49:58 -0800
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
+ Transport; Mon, 10 Nov 2025 21:49:58 -0800
+Received: from marvell-OptiPlex-Tower-Plus-7020 (unknown [10.28.38.120])
+	by maili.marvell.com (Postfix) with SMTP id 7B52C3F704E;
+	Mon, 10 Nov 2025 21:49:56 -0800 (PST)
+Date: Tue, 11 Nov 2025 11:19:55 +0530
+From: Shashank Gupta <shashankg@marvell.com>
+To: Bjorn Helgaas <bhelgaas@google.com>, <linux-pci@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: Shashank Gupta <shashankg@marvell.com>,
+        Bharat Bhushan
+	<bbhushan2@marvell.com>,
+        Sunil Kovvuri Goutham <sgoutham@marvell.com>
+Subject: RE: [RFC PATCH] PCI: fix concurrent pci_bus_add_device() execution
+ during SR-IOV VF creation
+Message-ID: <aRLOg6+e3A+CByPB@marvell-OptiPlex-Tower-Plus-7020>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v3] mmc: sdhci-msm: Enable ICE support for non-cmdq eMMC
- devices
-To: Adrian Hunter <adrian.hunter@intel.com>, <ulf.hansson@linaro.org>,
-        <linux-mmc@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Eric Biggers <ebiggers@kernel.org>
-CC: <quic_varada@quicinc.com>
-References: <20251104063943.3424529-1-quic_mdalam@quicinc.com>
- <ae37c98b-927e-44e4-b83c-71753d61e2cc@intel.com>
-Content-Language: en-US
-From: Md Sadre Alam <quic_mdalam@quicinc.com>
-In-Reply-To: <ae37c98b-927e-44e4-b83c-71753d61e2cc@intel.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: EQT8Iv1VyiPAk4vbWTE-t7LO_WtpKUSj
-X-Authority-Analysis: v=2.4 cv=G6kR0tk5 c=1 sm=1 tr=0 ts=6912cecc cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=COk6AnOGAAAA:8 a=QyXUC8HyAAAA:8
- a=8BPlPp1vl7OZ_UTcvjIA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
- a=cPQSjfK2_nFv0Q5t_7PE:22 a=HhbK4dLum7pmb74im6QT:22 a=pHzHmUro8NiASowvMSCR:22
- a=Ew2E2A-JSTLzCXPT_086:22
-X-Proofpoint-ORIG-GUID: EQT8Iv1VyiPAk4vbWTE-t7LO_WtpKUSj
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTExMDA0MyBTYWx0ZWRfX7a5FbUEglhEp
- ShyDEpce/Bv1nYnRcjN5XKn5UIqE5ovhQYHva7qbGEtWan068k/BZtJm/r05J1Bs19R1yyZL5k6
- h0Tgo/oOHj8DpSwhmuj9A8LQwROffSvmmykkEsXi09p6BWCF5/BZ7zt9fmz+5xDE5ju5NJ8Wlju
- 7Atggy10d6MhKv5k5JGGWf4zoPEedr6Rrva6G87dt0rpOS+hJBPnX4td1fNRppAakgf7n1Alnbm
- Km8n43dAajgr/KF48Ww8GS1ZwQ356IYdcSsSuhS/sEqqpumPbfRWHju7cVJHY5iJpcnOeASYJSH
- kjUdaw75LAJR0rZaFDnSu/Ay3USv09IXbyFqIbotZbbfRUhBIquzpkLgJhjr8uT05rZIn0tfMgD
- UGhYtH+9B++eVkD1VffOuI1CLmPm0A==
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTExMDA0MyBTYWx0ZWRfX9NAk4ABy8tPC
+ cwdmXtutoHG5MFX+csv+5c6U/6A2KmY4ntWpp0XwNlrq4kkeR0A59U6qUpbHU/gV3LbVkH/L3rf
+ V3O6EOJwfxW2F9FCXwO2r09+LyIm/fTkOV4iV9SlCuhK0IEQrw0Z5U5wZbXVis45JP3jkHTeGqu
+ EBUsTbOgPgueYx9Ch8oNrkgcFa5nd2AcxrIGu3BvUc7ASbEwvAPB2gjk5hcCWrMa0hhsNsd+8Js
+ 0iDihwsyP5tnvAFhwCWBzhsriIqDdNkYXZlJe1lSFYQ+8CwkXYFa8ntVmI4KjdOxGUJ+fo8hQSn
+ yIA2+4VKIYrVvmlOZvklc5CgfTD9PS+F9N6T40RbG/mxRIFflQZMBiR3MQBmDD0mMoMMufeClRI
+ 5jsXw9Cq7qdhmBib9/deMT2zvUVEIg==
+X-Authority-Analysis: v=2.4 cv=eKEeTXp1 c=1 sm=1 tr=0 ts=6912ce87 cx=c_pps
+ a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
+ a=kj9zAlcOel0A:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=M5GUcnROAAAA:8 a=UqCG9HQmAAAA:8 a=1XWaLZrsAAAA:8 a=VwQbUJbxAAAA:8
+ a=fkQ1JoPIeKV-9lTz00IA:9 a=CjuIK1q_8ugA:10 a=OBjm3rFKGHvpk9ecZwUJ:22
+ a=HhbK4dLum7pmb74im6QT:22
+X-Proofpoint-GUID: -De2gruysh2lQPTraFE7NgFUiIoZZRdu
+X-Proofpoint-ORIG-GUID: -De2gruysh2lQPTraFE7NgFUiIoZZRdu
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
  definitions=2025-11-11_01,2025-11-10_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 phishscore=0 spamscore=0 bulkscore=0 suspectscore=0
- lowpriorityscore=0 clxscore=1015 malwarescore=0 impostorscore=0 adultscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511110043
 
+<bbhushan2@marvell.com>, Sunil Kovvuri Goutham <sgoutham@marvell.com> 
+Bcc: 
+Subject: Re: [RFC PATCH] PCI: fix concurrent pci_bus_add_device() execution
+ during SR-IOV VF creation
+Reply-To: 
+In-Reply-To: <SN7PR18MB53145C30677F872D61EE49AEE3FCA@SN7PR18MB5314.namprd18.prod.outlook.com>
+
+> > -----Original Message-----
+> > From: Shashank Gupta <shashankg@marvell.com>
+> > Sent: Thursday, September 11, 2025 4:41 PM
+> > To: Bjorn Helgaas <bhelgaas@google.com>; linux-pci@vger.kernel.org; linux-
+> > kernel@vger.kernel.org
+> > Cc: Shashank Gupta <shashankg@marvell.com>; Bharat Bhushan
+> > <bbhushan2@marvell.com>; Sunil Kovvuri Goutham
+> > <sgoutham@marvell.com>
+> > Subject: [RFC PATCH] PCI: fix concurrent pci_bus_add_device() execution
+> > during SR-IOV VF creation
+> > 
+> > When enabling SR-IOV VFs via sriov_numvfs, a race can occur between VF
+> > creation (`pci_iov_add_virtfn()`) and a parallel PCI bus rescan.
+> > This may cause duplicate sysfs resource files to be created for the same VF.
+> > `pci_device_add()` links the VF into the bus list before calling
+> > `pci_bus_add_device()`. During this window, a parallel pci rescan may iterate
+> > over the same VF and call `pci_bus_add_device()` before the PCI_DEV_ADDED
+> > flag is set by sriov_numvfs, leading to duplicate sysfs entries.
+> > 
+> > sysfs: cannot create duplicate filename
+> > '/devices/platform/0.soc/878020000000.pci/pci0002:00/0002:00:02.0/000
+> > 2:03:00.3/resource2'
+> > CPU: 10 PID: 1787 Comm: tee Tainted: G        W
+> > 6.1.67-00053-g785627de1dee #150
+> > Hardware name: Marvell CN106XX board (DT) Call trace:
+> >  dump_backtrace.part.0+0xe0/0xf0
+> >  show_stack+0x18/0x30
+> >  dump_stack_lvl+0x68/0x84
+> >  dump_stack+0x18/0x34
+> >  sysfs_warn_dup+0x64/0x80
+> >  sysfs_add_bin_file_mode_ns+0xd4/0x100
+> >  sysfs_create_bin_file+0x74/0xa4
+> >  pci_create_attr+0xf0/0x190
+> >  pci_create_resource_files+0x48/0xc0
+> >  pci_create_sysfs_dev_files+0x1c/0x30
+> >  pci_bus_add_device+0x30/0xc0
+> >  pci_bus_add_devices+0x38/0x84
+> >  pci_bus_add_devices+0x64/0x84
+> >  pci_rescan_bus+0x30/0x44
+> >  rescan_store+0x7c/0xa0
+> >  bus_attr_store+0x28/0x3c
+> >  sysfs_kf_write+0x44/0x54
+> >  kernfs_fop_write_iter+0x118/0x1b0
+> >  vfs_write+0x20c/0x294
+> >  ksys_write+0x6c/0x100
+> >  __arm64_sys_write+0x1c/0x30
+> > 
+> > To prevent this, introduce a new in-progress private flag
+> > (PCI_DEV_ADD_INPROG) in struct pci_dev and use it as an atomic guard
+> > around pci_bus_add_device(). This ensures only one thread can progress with
+> > device addition at a time.
+> > 
+> > The flag is cleared once the device has been added or the attempt has finished,
+> > avoiding duplicate sysfs entries.
+> 
+> Please provide feedback to this RFC patch. 
+> 
+> Thanks
+> -Bharat
+>
 Hi,
 
-On 11/10/2025 2:16 PM, Adrian Hunter wrote:
-> On 04/11/2025 08:39, Md Sadre Alam wrote:
->> Enable Inline Crypto Engine (ICE) support for eMMC devices that operate
->> without Command Queue Engine (CQE).This allows hardware-accelerated
->> encryption and decryption for standard (non-CMDQ) requests.
->>
->> This patch:
->> - Adds ICE register definitions for non-CMDQ crypto configuration
->> - Implements a per-request crypto setup via sdhci_msm_ice_cfg()
->> - Hooks into the request path via mmc_host_ops.request
->> - Initializes ICE hardware during CQE setup for compatible platforms
->>
->> With this, non-CMDQ eMMC devices can benefit from inline encryption,
->> improving performance for encrypted I/O while maintaining compatibility
->> with existing CQE crypto support.
->>
->> Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
->> Acked-by: Adrian Hunter <adrian.hunter@intel.com>
->> ---
->>
->> Change in [v3]
->>
->> * Refactored logic to use separate code paths for crypto_ctx != NULL and
->>    crypto_ctx == NULL to improve readability.
->>
->> * Renamed bypass to crypto_enable to align with bitfield semantics.
->>
->> * Removed slot variable
->>
->> * Added ICE initialization sequence for non-CMDQ eMMC devices before
->>    __sdhci_add_host()
->>
->> Change in [v2]
->>
->> * Moved NONCQ_CRYPTO_PARM and NONCQ_CRYPTO_DUN register definitions into
->>    sdhci-msm.c
->>
->> * Introduced use of GENMASK() and FIELD_PREP() macros for cleaner and more
->>    maintainable bitfield handling in ICE configuration.
->>
->> * Removed redundant if (!mrq || !cq_host) check from sdhci_msm_ice_cfg()
->>    as both are guaranteed to be valid in the current call path.
->>
->> * Added assignment of host->mmc_host_ops.request = sdhci_msm_request; to
->>    integrate ICE configuration into the standard request path for non-CMDQ
->>    eMMC devices.
->>
->> * Removed sdhci_crypto_cfg() from sdhci.c and its invocation in sdhci_request()
->>
->> Change in [v1]
->>
->> * Added initial support for Inline Crypto Engine (ICE) on non-CMDQ eMMC
->>    devices.
->>
->>   drivers/mmc/host/sdhci-msm.c | 71 ++++++++++++++++++++++++++++++++++++
->>   1 file changed, 71 insertions(+)
->>
->> diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
->> index 4e5edbf2fc9b..6ce205238720 100644
->> --- a/drivers/mmc/host/sdhci-msm.c
->> +++ b/drivers/mmc/host/sdhci-msm.c
->> @@ -157,6 +157,18 @@
->>   #define CQHCI_VENDOR_CFG1	0xA00
->>   #define CQHCI_VENDOR_DIS_RST_ON_CQ_EN	(0x3 << 13)
->>   
->> +/* non command queue crypto enable register*/
->> +#define NONCQ_CRYPTO_PARM		0x70
->> +#define NONCQ_CRYPTO_DUN		0x74
->> +
->> +#define DISABLE_CRYPTO			BIT(15)
->> +#define CRYPTO_GENERAL_ENABLE		BIT(1)
->> +#define HC_VENDOR_SPECIFIC_FUNC4	0x260
->> +#define ICE_HCI_SUPPORT			BIT(28)
->> +
->> +#define ICE_HCI_PARAM_CCI	GENMASK(7, 0)
->> +#define ICE_HCI_PARAM_CE	GENMASK(8, 8)
->> +
->>   struct sdhci_msm_offset {
->>   	u32 core_hc_mode;
->>   	u32 core_mci_data_cnt;
->> @@ -1885,6 +1897,48 @@ static void sdhci_msm_set_clock(struct sdhci_host *host, unsigned int clock)
->>   
->>   #ifdef CONFIG_MMC_CRYPTO
->>   
->> +static int sdhci_msm_ice_cfg(struct sdhci_host *host, struct mmc_request *mrq)
->> +{
->> +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
->> +	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
->> +	struct mmc_host *mmc = msm_host->mmc;
->> +	struct cqhci_host *cq_host = mmc->cqe_private;
->> +	unsigned int crypto_params = 0;
->> +	int key_index;
->> +	bool crypto_enable;
->> +	u64 dun = 0;
->> +
->> +	if (mrq->crypto_ctx) {
->> +		crypto_enable = true;
->> +		dun = mrq->crypto_ctx->bc_dun[0];
->> +		key_index = mrq->crypto_key_slot;
->> +		crypto_params = FIELD_PREP(ICE_HCI_PARAM_CE, crypto_enable) |
->> +				FIELD_PREP(ICE_HCI_PARAM_CCI, key_index);
->> +
->> +		cqhci_writel(cq_host, crypto_params, NONCQ_CRYPTO_PARM);
->> +		cqhci_writel(cq_host, lower_32_bits(dun), NONCQ_CRYPTO_DUN);
->> +	} else {
->> +		crypto_enable = false;
->> +		key_index = 0;
->> +		cqhci_writel(cq_host, crypto_params, NONCQ_CRYPTO_PARM);
->> +	}
->> +
->> +	/* Ensure crypto configuration is written before proceeding */
->> +	wmb();
->> +
->> +	return 0;
->> +}
->> +
->> +static void sdhci_msm_request(struct mmc_host *mmc, struct mmc_request *mrq)
->> +{
->> +	struct sdhci_host *host = mmc_priv(mmc);
->> +
->> +	if (mmc->caps2 & MMC_CAP2_CRYPTO)
->> +		sdhci_msm_ice_cfg(host, mrq);
->> +
->> +	sdhci_request(mmc, mrq);
->> +}
->> +
->>   static const struct blk_crypto_ll_ops sdhci_msm_crypto_ops; /* forward decl */
->>   
->>   static int sdhci_msm_ice_init(struct sdhci_msm_host *msm_host,
->> @@ -2131,6 +2185,8 @@ static int sdhci_msm_cqe_add_host(struct sdhci_host *host,
->>   	struct cqhci_host *cq_host;
->>   	bool dma64;
->>   	u32 cqcfg;
->> +	u32 config;
->> +	u32 ice_cap;
->>   	int ret;
->>   
->>   	/*
->> @@ -2181,6 +2237,18 @@ static int sdhci_msm_cqe_add_host(struct sdhci_host *host,
->>   	if (host->flags & SDHCI_USE_64_BIT_DMA)
->>   		host->desc_sz = 12;
->>   
->> +	/* Initialize ICE for non-CMDQ eMMC devices */
->> +	config = sdhci_readl(host, HC_VENDOR_SPECIFIC_FUNC4);
->> +	config &= ~DISABLE_CRYPTO;
->> +	sdhci_writel(host, config, HC_VENDOR_SPECIFIC_FUNC4);
->> +	ice_cap = cqhci_readl(cq_host, CQHCI_CAP);
->> +	if (ice_cap & ICE_HCI_SUPPORT) {
->> +		config = cqhci_readl(cq_host, CQHCI_CFG);
->> +		config |= CRYPTO_GENERAL_ENABLE;
->> +		cqhci_writel(cq_host, config, CQHCI_CFG);
->> +	}
->> +	sdhci_msm_ice_enable(msm_host);
+Please take a look to this RFC patch,
+
+Thanks
+-Shashank
+> > 
+> > Signed-off-by: Shashank Gupta <shashankg@marvell.com>
+> > ---
+> > 
+> > Issue trace:
+> > ------------
+> > 
+> > CPU2 (sriov_numvfs)                          CPU4 (pci rescan)
+> > ------------------------------------------  --------------------------
+> > pci_iov_add_virtfn()
+> >   pci_device_add(virtfn)   # VF linked to bus
+> >                                           pci_bus_add_devices()
+> >                                             iterates over VF
+> > 						PCI_DEV_ADDED not set yet
+> > 
+> > 
+> >   pci_bus_add_device()
+> > 	create sysfs file
+> >         pci_dev_assign_added() set PCI_DEV_ADDED
+> > 						pci_bus_add_device()
+> > 						 duplicate sysfs file
+> > 
+> > 
+> > 
+> > Issue Log :
+> > -----------
+> > 
+> > [CPU 2] = sriov_numfs creating 9 vfs
+> > [CPU 4] = Pci rescan
+> > 
+> > [   93.486440] [CPU : 2]`==>pci_iov_add_virtfn: bus = PCI Bus 0002:20 slot = 0
+> > func= 4 	# sriov_numvfs vf is getting created for vf 4
+> > [   93.494002] [CPU : 4]`->pci_bus_add_devices: child-bus =
+> > 				    # Pci rescan
+> > [   93.494003] [CPU : 4]`->pci_bus_add_devices: bus = PCI Bus 0002:20
+> > 
+> > [   93.500178] pci 0002:20:00.4: [177d:a0f3] type 00 class 0x108000
+> > [   93.507825] [CPU : 4]`->pci_bus_add_devices iterated dev : slot =  0 func = 0
+> > # pci rescan iterating on created vfs
+> > [   93.513288] [CPU : 2]`->pci_device_add : bus = PCI Bus 0002:20 slot = 0,
+> > func= 4     # sriov_numvfs: vf 4 added in the cus list
+> > [   93.519388] [CPU : 4]`->pci_bus_add_devices iterated dev : slot =  0 func = 1
+> > 	    # pci rescan : vf iterated 1
+> > [   93.525438] [CPU : 2]`->pci_bus_add_device: slot = 0 func= 4	                        #
+> > sriov_numvfs: enter in adding vf 4 in sys/proc fs
+> > [   93.532515] [CPU : 4]`->pci_bus_add_devices iterated dev : slot =  0 func = 2
+> > 	    # pci rescan : vf iterated 2
+> > [   93.539904] [CPU : 2]`->pci_bus_add_device create sysfs
+> > pci_create_sysfs_dev_files: slot = 0 func= 4 # sriov: vf 4 sysfs file created
+> > [   93.547032] [CPU : 4]`->pci_bus_add_devices iterated dev : slot =  0 func = 3
+> > # pci rescan : vf iterated 3
+> > [   93.552714] rvu_cptvf 0002:20:00.4: Adding to iommu group 85
+> > [   93.559812] [CPU : 4]`->pci_bus_add_devices iterated dev : slot =  0 func = 4
+> > 	    # pci rescan : vf iterated 4
+> > [   93.569002] rvu_cptvf 0002:20:00.4: enabling device (0000 -> 0002)
+> > [   93.576069] [CPU : 4]`->pci_bus_add_devices PCI_DEV_ADDED not set : slot
+> > =  0 func = 4 # pci rescan : vf 4 PCI_DEV_ADDED flag not set by sriov_numvfs
+> > [   93.576070] [CPU : 4]`->pci_bus_add_device: slot = 0 func= 4
+> > 					  # pci rescan : enter for adding vf 4 in
+> > sys/proc fs
+> > [   93.576072] [CPU : 4]`->pci_bus_add_device create sysfs
+> > pci_create_sysfs_dev_files: slot = 0 func= 4 # pci rescan : going to create sysfs
+> > file
+> > [   93.576078] sysfs: cannot create duplicate filename
+> > '/devices/platform/0.soc/878020000000.pci/pci0002:00/0002:00:1f.0/000
+> > 2:20:00.4/resource2' # duplication detected
+> > [   93.608709] [CPU : 2]`->pci_dev_assign_added set PCI_DEV_ADDED : slot =
+> > 0, func= 4        # sriov_numvfs : PCI_DEV_ADDED is set
+> > [   93.617714] CPU: 4 PID: 811 Comm: tee Not tainted 6.1.67-00054-
+> > g3acfa4185b96-dirty #159
+> > [   93.630399] [CPU : 2]<==pci_iov_add_virtfn: bus = PCI Bus 0002:20 slot = 0
+> > func= 4
+> > 
+> > 
+> > Fix trace (with patch):
+> > -----------------------
+> > 
+> > CPU2 (sriov_numvfs)                   CPU4 (pci rescan)
+> > ----------------------------------   --------------------------
+> > pci_iov_add_virtfn()
+> >   pci_device_add(virtfn)   # VF linked to bus
+> > 	pci_bus_add_device() enter
+> > 		set PCI_DEV_ADD_INPROG
+> >                                      pci_bus_add_device() enter
+> >                                      PCI_DEV_ADD_INPROG already set
+> >                                      return
+> > 	pci_dev_assign_added()
+> > 	pci_dev_clear_inprog()
+> > 
+> > Fix log:
+> > -------
+> > 
+> > [CPU 2] = sriov_numfs creating 9 vfs
+> > [CPU 4] = Pci rescan
+> > 
+> > [  178.296167] pci 0002:20:00.5: [177d:a0f3] type 00 class 0x108000 [
+> > 178.302680] pci 0002:00:1b.0: PCI bridge to [bus 1c]
+> > [  178.307746] [CPU : 2]`->pci_bus_add_device Enter : slot = 0, func= 5   #
+> > sriov_numvfs: adding vf5 in sys/proc
+> > [  178.313636] pci 0002:00:1c.0: PCI bridge to [bus 1d] [  178.318592] [CPU
+> > : 2]`->pci_bus_add_device set PCI_DEV_ADD_INPROG : slot = 0, func= 5  #
+> > sriov_numvfs: vf 5 PCI_DEV_ADD_INPROG flag set [  178.324939] pci
+> > 0002:00:1d.0: PCI bridge to [bus 1e] [  178.329895] [CPU : 2]`-
+> > >pci_bus_add_device PCI_DEV_ADDED is not set: slot = 0, func= 5 #
+> > sriov_numvfs: vf 5 check if PCI_DEV_ADDED flag is set before proceed to
+> > create sysfs file [  178.337719] pci 0002:00:1e.0: PCI bridge to [bus 1f] [
+> > 178.342704] rvu_cptvf 0002:20:00.5: Adding to iommu group 86
+> > [  178.350586] [CPU : 4]`->pci_bus_add_device Enter : slot = 0, func= 5     # pci
+> > rescan : since PCI_DEV_ADDED flag is not set it enter the pci_bus_add_device
+> > for vf 5
+> > [  178.355597] rvu_cptvf 0002:20:00.5: enabling device (0000 -> 0002) [
+> > 178.361193] [CPU : 4]`->pci_bus_add_device PCI_DEV_ADD_INPROG is
+> > already set : slot = 0, func= 5  # pci rescan : check PCI_DEV_ADD_INPROG flag,
+> > it is already set
+> > [  178.373726] [CPU : 4] <- pci_bus_add_device return : slot = 0, func= 5
+> > 	# pri rescan : return
+> > [  178.382852] pci_bus 0003:01: busn_res: [bus 01] end is updated to 01
+> > [  178.395474] [CPU : 2]`->pci_dev_assign_added set PCI_DEV_ADDED : slot =
+> > 0, func= 5    # sriov_numvfs: set PCI_DEV_ADDED for vf5
+> > [  178.395721] [CPU : 2]`->pci_dev_clear_inprog unset
+> > PCI_DEV_ADD_INPROG : slot = 0, func= 5 # sriov_numvfs : clear
+> > PCI_DEV_ADD_INPROG for vf5 [  178.403289] [CPU : 2] <-
+> > pci_bus_add_device return : slot = 0, func= 5  drivers/pci/bus.c |  8 ++++++++
+> > drivers/pci/pci.h | 11 +++++++++++
+> >  2 files changed, 19 insertions(+)
+> > 
+> > diff --git a/drivers/pci/bus.c b/drivers/pci/bus.c index
+> > feafa378bf8e..cafce1c4ec3d 100644
+> > --- a/drivers/pci/bus.c
+> > +++ b/drivers/pci/bus.c
+> > @@ -331,6 +331,13 @@ void pci_bus_add_device(struct pci_dev *dev)  {
+> >  	int retval;
+> > 
+> > +	if (pci_dev_add_inprog_check_and_set(dev))
+> > +		return;
+> > +
+> > +	if (pci_dev_is_added(dev)) {
+> > +		pci_dev_clear_inprog(dev);
+> > +		return;
+> > +	}
+> >  	/*
+> >  	 * Can not put in pci_device_add yet because resources
+> >  	 * are not assigned yet for some devices.
+> > @@ -347,6 +354,7 @@ void pci_bus_add_device(struct pci_dev *dev)
+> >  		pci_warn(dev, "device attach failed (%d)\n", retval);
+> > 
+> >  	pci_dev_assign_added(dev, true);
+> > +	pci_dev_clear_inprog(dev);
+> >  }
+> >  EXPORT_SYMBOL_GPL(pci_bus_add_device);
+> > 
+> > diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h index
+> > ffccb03933e2..a2d01db8e837 100644
+> > --- a/drivers/pci/pci.h
+> > +++ b/drivers/pci/pci.h
+> > @@ -366,17 +366,28 @@ static inline bool pci_dev_is_disconnected(const
+> > struct pci_dev *dev)  #define PCI_DEV_ADDED 0  #define
+> > PCI_DPC_RECOVERED 1  #define PCI_DPC_RECOVERING 2
+> > +#define PCI_DEV_ADD_INPROG 3
+> > 
+> >  static inline void pci_dev_assign_added(struct pci_dev *dev, bool added)  {
+> >  	assign_bit(PCI_DEV_ADDED, &dev->priv_flags, added);  }
+> > 
+> > +static inline void pci_dev_clear_inprog(struct pci_dev *dev) {
+> > +	clear_bit(PCI_DEV_ADD_INPROG, &dev->priv_flags); }
+> > +
+> >  static inline bool pci_dev_is_added(const struct pci_dev *dev)  {
+> >  	return test_bit(PCI_DEV_ADDED, &dev->priv_flags);  }
+> > 
+> > +static inline bool pci_dev_add_inprog_check_and_set(struct pci_dev
+> > +*dev) {
+> > +	return test_and_set_bit(PCI_DEV_ADD_INPROG, &dev->priv_flags); }
+> > +
+> >  #ifdef CONFIG_PCIEAER
+> >  #include <linux/aer.h>
+> > 
+> > --
+> > 2.34.1
 > 
-> Perhaps this could all be done lazily in sdhci_msm_ice_cfg() ?
-> e.g.
-> 
-> 	if (mrq->crypto_ctx) {
-> 		if (!msm_host->ice_init_done) {
-> 			sdhci_msm_non_cqe_ice_init(host, ...);
-> 			msm_host->ice_init_done = true;
-> 		}
-> 		...
->
-Thanks for the suggestion! Lazily initializing ICE in 
-sdhci_msm_ice_cfg() based on mrq->crypto_ctx does seem like
-a clean and efficient approach. It would avoid unnecessary
-setup when crypto isn't involved and keep the init path tightly
-scoped.
-
-Let me check and add in next revision.
-
-Thanks,
-Alam.
-
-
 
