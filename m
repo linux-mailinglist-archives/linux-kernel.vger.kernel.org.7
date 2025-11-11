@@ -1,70 +1,89 @@
-Return-Path: <linux-kernel+bounces-894400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C01BCC4A3CC
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 02:08:30 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95BE2C4A409
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 02:09:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 700B94F7C72
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 01:03:19 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A41684F8704
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 01:04:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D091265CA8;
-	Tue, 11 Nov 2025 01:03:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93FB025A341;
+	Tue, 11 Nov 2025 01:04:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BEO6YDwC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="mu4Mu/km"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F27E261573;
-	Tue, 11 Nov 2025 01:03:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EBFF246768;
+	Tue, 11 Nov 2025 01:04:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762822989; cv=none; b=H4Pw/UZ7ijD/GIYUT0lbYa8H7bbsNxLv9aeoQo2cZes/pzF+3FdhONLUADl4tUEA0cvhJ0hrlDN/JOIvzR1d1qJfQrhpN3CrnLTG7v3zFwGeGzhDdBrl7U9pRk2F+3IorN6t72SF8lGtWpF9oYJf7gLUY4W8P7D3LwZrDEkDhG4=
+	t=1762823043; cv=none; b=htFhWEJZfDh9MCnDYvXj4GuHO77wAalN24jthtCUxzxVeBmoElE/xiWxII9BR6jIizDb0fznZyyU+7ktxkbl2ISjaGjMK7GN6m5nFl4+m7aqMg9/Nmb//uRlBkQIATouk/AcYUXCLUDGPcH4CbcTB1eLCKYUIa09sYp/s+SWBvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762822989; c=relaxed/simple;
-	bh=cKFBVOjE2TEHcfLrrrA/EssHwJW0Jxy9jfUxHSkNHWY=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=sM/W1xOOTWhkfMMTN0BoIy1LsAy5i3+iW+Y5ACi3Z3vdGxUR2Ol+RzeWhFg+D0DPaAwbSMkt4qaDgRpS5qZOTeATQi+y7FJaLbhUy9U3UBQQvGWspoW9U6rRopU6EOYXJJYZPHEx7h/ygEddYYmItckj5yj+iqhQAHpi/YG0vCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BEO6YDwC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CB07C113D0;
-	Tue, 11 Nov 2025 01:03:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762822989;
-	bh=cKFBVOjE2TEHcfLrrrA/EssHwJW0Jxy9jfUxHSkNHWY=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=BEO6YDwCL97Lq3hH324+aXN242l9nqQN9PpxhlBXN+Lj09QkjIDPAOHP9JczkK4n6
-	 C62TsALTLQtmCvi5eWbNrP2e96gpKbOwZEipIr7slNfZC6nLdYCBTN+8zZnQyh18hB
-	 oPy9tU4ElZi6uParvyLnrfsiIEX+kYjb3WmNf4NnJrMcrjJU5qbTNf9dmUoeKzaNTG
-	 h6mLRFBHb0qXNmM4DLZ+TfHASEUkc0/d8gf8FtvezHynukUnate5x8Knld5ka6K85O
-	 vp94X8U22BkskFWwn5u+9wqJ7r9QzkHksWEutPvOREwNVYhtt4c8+l9dbP1zQVLz8T
-	 kykKmKA8xHITw==
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1762823043; c=relaxed/simple;
+	bh=zxFxDfCO/gBSNJc/mQ8zLk1LNviKOC4iAX+yygvGpbQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f2yuCA7f0q5PLmFfWW97GxBYDN3cjUYphIjc7IGax/wBNC56yEg2FIRxc6JMkDAuZapy8igbK0zIq6C3gqMuyKdKBP41dDtyJIwCa2+0TCl0d2NepQCmSppkisnENBI94fXYOdyjO++urxO5p1QyJKarDnMKhPmisxGglao32SQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=mu4Mu/km; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=DlWJxmWku9DDHewc8Fqu1R47P+5D2ez4FYUnTE83BCM=; b=mu4Mu/km0CsKrksq0EGmB5hm/9
+	eciyVrbFM1Pxr5EqrnnNLSQuHfQJWg1EYy1HpfkuCM7KifhgXIQFUA5x7wIQMS1wTKbOdHjT28PQN
+	+TwxglW+N5QLmEd6lrSyzH+puSLrEqwMrfgA8XdUtwK3PSCjZZvTjiqB2KI/bBxaeLUc=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1vIcnY-00DZcK-R7; Tue, 11 Nov 2025 02:03:52 +0100
+Date: Tue, 11 Nov 2025 02:03:52 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Romain Gantois <romain.gantois@bootlin.com>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v2 2/3] net: phy: dp83869: ensure
+ FORCE_LINK_GOOD is cleared
+Message-ID: <bcf5a9d5-408b-4dd2-9fa3-47861c038183@lunn.ch>
+References: <20251110-sfp-1000basex-v2-0-dd5e8c1f5652@bootlin.com>
+ <20251110-sfp-1000basex-v2-2-dd5e8c1f5652@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20251106170607.445196-2-krzysztof.kozlowski@linaro.org>
-References: <20251106170607.445196-2-krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH] clk: sprd: sc9860: Simplify with of_device_get_match_data()
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Baolin Wang <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Orson Zhai <orsonzhai@gmail.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Mon, 10 Nov 2025 17:03:07 -0800
-Message-ID: <176282298712.11952.3198486969488880182@lazor>
-User-Agent: alot/0.11
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251110-sfp-1000basex-v2-2-dd5e8c1f5652@bootlin.com>
 
-Quoting Krzysztof Kozlowski (2025-11-06 09:06:08)
-> Driver's probe function matches against driver's of_device_id table,
-> where each entry has non-NULL match data, so of_match_node() can be
-> simplified with of_device_get_match_data().
->=20
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
+On Mon, Nov 10, 2025 at 10:24:54AM +0100, Romain Gantois wrote:
+> The FORCE_LINK_GOOD bit in the PHY_CONTROL register forces the reported
+> link status to 1 if the selected speed is 1Gbps.
+> 
+> According to the DP83869 PHY datasheet, this bit should default to 0 after
+> a hardware reset. However, the opposite has been observed on some DP83869
+> components.
+> 
+> As a consequence, a valid link will be reported in 1000Base-X operational
+> modes, even if the autonegotiation process failed.
+> 
+> Make sure that the FORCE_LINK_GOOD bit is cleared during initial
+> configuration.
+> 
+> Signed-off-by: Romain Gantois <romain.gantois@bootlin.com>
 
-Applied to clk-next
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+
+    Andrew
 
