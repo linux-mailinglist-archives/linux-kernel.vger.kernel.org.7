@@ -1,128 +1,140 @@
-Return-Path: <linux-kernel+bounces-896166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23E4CC4FC7F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 22:03:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 153C0C4FC85
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 22:04:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D09453B6EA8
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 21:03:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C73423B8DAB
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 21:04:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D054335CBD5;
-	Tue, 11 Nov 2025 21:00:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 201962E091D;
+	Tue, 11 Nov 2025 21:01:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="awfdXOPJ"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="dDmdMGQ5"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79B0635CBBD
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 21:00:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 078A72797AC
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 21:01:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762894828; cv=none; b=qF9FP2cWMy0cMEXjhsl/Jt4sqHJK5H15uAbhFROYUOQgrbNFKc/5GPbs+dlZc2kZDvsCV/ogQuHrqzxGVJJcePFAQi8F57t1Mo8vQIN1/rJfHFaXfEHHwPQuEyTgg+27zzBr4VWObyJwv7sd5sfgeHXaXXZGZIeRINVA1kCU/Dk=
+	t=1762894903; cv=none; b=FYVmO/g/eLDAvpcnVqUalGrDbXTGWnI0T3DTF3cJvRbzeqc3NmhOUE8wsU7ckU8EW6QGYeoSV44EeeXhGzWYtVK5bSKyWLqk3asascCJFu2PN13T1oAG8pW1kiu6X9f5TtYCmqOL+Z1+gRYtqroEpKj1wVz5kyHax+ApbtE/pls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762894828; c=relaxed/simple;
-	bh=Fp+8AG6pBI0jJ/x1v+sgWdRn9Lp3GBtp4uOEuA09BJA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rC9l7+hIriu4M3u/XswL8Mk4kc0bs1VDZl60PnQFpZYPaCao5Yna6yrSwwSUjw630bGY45NqiDjxCxSVM6X02yBR4Su85ajMFTgIO7kFA70lZSVk3EZ9P12ttRrjEMGK5lf76MwwDTCXyzc/2Gpa0A6HIQ7aGSs6dsEkWHf0xeA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=awfdXOPJ; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-641677916b5so183192a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 13:00:26 -0800 (PST)
+	s=arc-20240116; t=1762894903; c=relaxed/simple;
+	bh=00mv0TjCUbXDRMs+VKrHJYkUdKXkKT462q4ka73JY3U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=th92BYn9zTLK6Q6wAMhSVFJ+8zCFg0hmvPj6kHWzG+TmpgeaP84MNsbMHsW2mDr4cbx19V3IpcWgi/NEX58MvDGOBU7AaaKoj9UVEFbMPRmjStfB9uIvNcvqiEYf8Kmj70Fnc29tjEI89+iTTpT8V+F1L5CDn8Ak9K0ssv9DVqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=dDmdMGQ5; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-6417313bddaso156380a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 13:01:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1762894825; x=1763499625; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Fp+8AG6pBI0jJ/x1v+sgWdRn9Lp3GBtp4uOEuA09BJA=;
-        b=awfdXOPJLudXiU59sgZ/KAWFiTttCUDew6wPsWzJGbRX6aI0opyW6TbrEpeX0mDJaw
-         kkxnZQzUoGuDtUafQowngoRnJrdoKOA0YBGoh0eJIwQ/RO4X5UUE9Df52tXka0swmX++
-         9568gdp8kD6chvjgXunC4os2/bvF5/+CEZ473tvnDj+tmfglnytzw6EdOwodHQjOvUrM
-         DhzqY6PScZRCVw4L4lDBTfzQZyuTnVOpOgC9Qm4Pii8HstZnVxSKBr30UP9X/DkUZoP7
-         252iZD6C+OlZCWDzcI3uEMrS4f2sRa1bir0CLZJ1wGpJ/fEJc8jsuzCZ8BFgVklN3U4K
-         4vQw==
+        d=suse.com; s=google; t=1762894899; x=1763499699; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=AOtZbxVqz3T0EH1q1J5hisXUupKcXN5oOYovjWYI2BY=;
+        b=dDmdMGQ54eC8AihcZoP1DwUwOZ84UMouBumbPJmV7NyCMUXstvKJNRbpr/2i/Y8lAP
+         RWc3Y6kUcJd7s41Il2BObfyPZBL7H9XOFTI5xHZhIM1am1rQ3ybdkwUpizbWuW+r4irl
+         P06SHJbecjOuAqv2kzWfeK/dtBosGE5qa8DabdYshiD0Yjz6md3dVbL4LP/LTFK8VJ1S
+         FhyaoQfZ813cmSsgU+jG5V6hhr33/xOdbcCujRuhfhtOdqRa8W6F+H52EygoTObM09gb
+         Su0ABP06YmSP/zcJPGny4F00RnNy+vnvDR8J+mnciacD0gv5KjkbjJiF5R42GQ3pCF25
+         pD7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762894825; x=1763499625;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Fp+8AG6pBI0jJ/x1v+sgWdRn9Lp3GBtp4uOEuA09BJA=;
-        b=wNPWd+0Rsd4RLiocuhn8PLnMQzPrxuoDVP+MEHNgq/EGvDb++hzk5fPzGiVnHMAPpE
-         AJ7xBaP4O94bNpLmkFlATyoTOBjOqTGbCyCRZ0HNH/N/TsFUWiz5sk4Fvs/bG4oe4gfK
-         2iF1j7AQz7T0lTOIr9xFumY+7Et6aVNz9Hn7EN0D0YvA8x68LOXljHAkelQnj4GZgCx1
-         pz3s3wGxF2Y5hgNUHUFw3Ib+kMQiRcouyRFd4dXWRCrmLRlRqEQesowb5YByL/YqnQOP
-         2npDftDOpsvX6CLMIew6VK9i4ELA25sAvsL/0CrIw27r8UmVAY+slTy1bfBxuP4lfCcO
-         JSCg==
-X-Forwarded-Encrypted: i=1; AJvYcCV89Tdmt6gxSSjNuzu6qRWtP71PxZGxmGPF64vaeqpxzDDfIMFMk5LTCvIfp9RXS2d7SSlz/oDij36MhJA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxeAuoot2t/VQlSKyHpVzmiivzALOV0cpvFJHzkVXz3a0fx7sve
-	klVWxhg2ZXyNxNnjOzBYW7Cf1xc6IWwhxaSdE6XB33Vit9vAIoP47a6xuQpOdSW/IttiTz53PA4
-	8dGphCmRSbZdHkuM4LX/0V2AwreZekz+tHbj5d9JEAw==
-X-Gm-Gg: ASbGncvWM+A3lxwT3I+k0Pr4vd4XcMSNVmZfRgyq/mBAmbIy5Zny128n2wJSP5gRCe/
-	pdag7iboCBzNH3vNBhpfuIHUhzsOpQwmyIKiE1ckT3fDBMaMw8Zq95Wjqia7yMUCMfqW9vaKaFO
-	081VUXaLMTRkSfGCpKjk2cZQ6Q0JY/rn0sOfOe+VsvCbiLqBA27WY18TEBjRGwZOBTAnLlgPYLQ
-	tj8QW3xmZ0camAd01H9MguhT8PDBA4Df6VPXpzl3dZN8tG2AGYrKmR0pXbq/RTvyam6
-X-Google-Smtp-Source: AGHT+IH+e0YsGvHk4dFv4/hkj2NgB2ttZSxI+gZm+9yj2ImFkWPrLek2DaIdjfDu/vAiHUMqP9wuFNVI+e9wnD3MABk=
-X-Received: by 2002:a05:6402:51c7:b0:640:ceef:7e4d with SMTP id
- 4fb4d7f45d1cf-6431a55d74emr573319a12.32.1762894824747; Tue, 11 Nov 2025
- 13:00:24 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762894899; x=1763499699;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AOtZbxVqz3T0EH1q1J5hisXUupKcXN5oOYovjWYI2BY=;
+        b=LOB9rM+tz8a8HicwUBkDLnDY8GcpMOMN0IJowElohPYTx6KKbHHpE2MKDjbqLljoa5
+         z+uUAQRHTv4zUa+T0sx05wa7qoAFTHkOG5WLQCskozcyUr5spWYs+bwNEIM8e3c80/u+
+         lTsGNWcu8zE+NDdbtkZVDdizh3bsBE081i8MffM5/1xfuU01Z2CeXQDUY9m/iKQ8wPnM
+         YwqAhY9pUOtv/sJSL5hSJw3zbh+nxYdnejkyl/O7btudI+DrdzTY9x8xJBhcscdsgqbz
+         5tt0VD/jq4Pa3tCEmqqzEKQVg3DCANPicY7ZwGTvw63Vki8gCuVsPVrPDAhsvlcGc411
+         qFGw==
+X-Forwarded-Encrypted: i=1; AJvYcCUMoSq7F5tpMxMa56G3x5Be0KawOcb4QeEl2o3V6ULSpBIncQl0hu+Ydwq47MdGIK458wiLmujr7IU3RKM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFOfHK0L3JU7TVia33NPPXMoUP4DLRvq1axmwV947+3pU7ENF7
+	7CmZQDY4mqsX1D3ySTMavDdY39ZLZcle5stRkRfKg9WcdK3SCaKbvmWXnDkLALhC7Cc=
+X-Gm-Gg: ASbGncswHAcdLwb8WAseaf/24fbS1M2li3nAAsoXm9yn393qlazS/N6kMBbHKU2W6qW
+	mcSfi1zWUGC7jg8bIsTHWfXL7Q9MpoL+CJ7TTqk1H2vbYVvCLDcYpM9iR65GdyqNZpEQYyNIO9f
+	1b1skdLSXpNZ/Ll1jGK8oUi+o382DJD39nwzyoNv9ZJUki7zxo9roPpNQNE/Q+lnHQP7ixah5LJ
+	67LHlzJKBRdU7l4d7LFA/OjbpG+jDPqIIe2AK0L19RQljsNKY1p7wi5Ew3h5FQbrTOwE4YRL/4g
+	ZAIsxUleBWYtQDzndGOO27XcZ+njGj95j5oGz4zb8DZhRaI0shxkhMu1R4JXBCR5XeAKE0RoVuu
+	ci6exsecjSDibZwxg6IfFd/84JhtLiuXuXMbzceVNA2pDEXg6yv21Ey/2ntqySOBlduVSaxiyKI
+	0ZxZjgF9UJ+pWNuDba/58KOhLP
+X-Google-Smtp-Source: AGHT+IFHxQR5RsZZYuu15UkFc5wCGawdUUh/83F65t7RT/bR8gwY77ILDOKtOxH1D+cIwgNbNyoHRA==
+X-Received: by 2002:a05:6402:42cf:b0:640:9d8f:3c73 with SMTP id 4fb4d7f45d1cf-6431a577ae9mr518057a12.32.1762894899315;
+        Tue, 11 Nov 2025 13:01:39 -0800 (PST)
+Received: from localhost (109-81-31-109.rct.o2.cz. [109.81.31.109])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6411f86e12fsm14093400a12.34.2025.11.11.13.01.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Nov 2025 13:01:38 -0800 (PST)
+Date: Tue, 11 Nov 2025 22:01:37 +0100
+From: Michal Hocko <mhocko@suse.com>
+To: Waiman Long <llong@redhat.com>
+Cc: Leon Huang Fu <leon.huangfu@shopee.com>, linux-mm@kvack.org,
+	tj@kernel.org, mkoutny@suse.com, hannes@cmpxchg.org,
+	roman.gushchin@linux.dev, shakeel.butt@linux.dev,
+	muchun.song@linux.dev, akpm@linux-foundation.org,
+	joel.granados@kernel.org, jack@suse.cz, laoar.shao@gmail.com,
+	mclapinski@google.com, kyle.meyer@hpe.com, corbet@lwn.net,
+	lance.yang@linux.dev, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
+Subject: Re: [PATCH mm-new v3] mm/memcontrol: Add memory.stat_refresh for
+ on-demand stats flushing
+Message-ID: <aROkMU-OFAmYPBgo@tiehlicka>
+References: <20251110101948.19277-1-leon.huangfu@shopee.com>
+ <9a9a2ede-af6e-413a-97a0-800993072b22@redhat.com>
+ <aROS7yxDU6qFAWzp@tiehlicka>
+ <061cdd9e-a70b-4d45-909a-6d50f4da8ef3@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251107210526.257742-1-pasha.tatashin@soleen.com>
- <20251107210526.257742-6-pasha.tatashin@soleen.com> <aRHe3syRvOrCYC9u@kernel.org>
- <CA+CK2bA=cQkibx4dSxJQTVxVxqkAsZPfFoPJip6rx8DqX62aEA@mail.gmail.com> <aROaJUjyyZqJ19Wo@kernel.org>
-In-Reply-To: <aROaJUjyyZqJ19Wo@kernel.org>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Tue, 11 Nov 2025 15:59:47 -0500
-X-Gm-Features: AWmQ_bnYdSMroRMjjVnLSAE6-uLxVnY6rxuibiqAyIlNle_pZdH3zG6_TS_O-10
-Message-ID: <CA+CK2bAwfChKVNtHxVi3NWbE=LCLFacB_tD=ZamM-2UTNHOnzg@mail.gmail.com>
-Subject: Re: [PATCH v5 05/22] liveupdate: kho: when live update add KHO image
- during kexec load
-To: Mike Rapoport <rppt@kernel.org>
-Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com, 
-	dmatlack@google.com, rientjes@google.com, corbet@lwn.net, 
-	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, 
-	ojeda@kernel.org, aliceryhl@google.com, masahiroy@kernel.org, 
-	akpm@linux-foundation.org, tj@kernel.org, yoann.congal@smile.fr, 
-	mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com, 
-	axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com, 
-	vincent.guittot@linaro.org, hannes@cmpxchg.org, dan.j.williams@intel.com, 
-	david@redhat.com, joel.granados@kernel.org, rostedt@goodmis.org, 
-	anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn, 
-	linux@weissschuh.net, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-mm@kvack.org, gregkh@linuxfoundation.org, tglx@linutronix.de, 
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, 
-	hpa@zytor.com, rafael@kernel.org, dakr@kernel.org, 
-	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com, 
-	myungjoo.ham@samsung.com, yesanishhere@gmail.com, Jonathan.Cameron@huawei.com, 
-	quic_zijuhu@quicinc.com, aleksander.lobakin@intel.com, ira.weiny@intel.com, 
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
-	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net, 
-	brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	saeedm@nvidia.com, ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com, 
-	leonro@nvidia.com, witu@nvidia.com, hughd@google.com, skhawaja@google.com, 
-	chrisl@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <061cdd9e-a70b-4d45-909a-6d50f4da8ef3@redhat.com>
 
-> I believe that when my concerns about "[PATCH v5 02/22] liveupdate:
-> luo_core: integrate with KHO" [1] are resolved this patch won't be needed.
->
-> [1] https://lore.kernel.org/all/aROZi043lxtegqWE@kernel.org/
+On Tue 11-11-25 15:44:07, Waiman Long wrote:
+> 
+> On 11/11/25 2:47 PM, Michal Hocko wrote:
+> > On Tue 11-11-25 14:10:28, Waiman Long wrote:
+> > [...]
+> > > > +static void memcg_flush_stats(struct mem_cgroup *memcg, bool force)
+> > > > +{
+> > > > +	if (mem_cgroup_disabled())
+> > > > +		return;
+> > > > +
+> > > > +	memcg = memcg ?: root_mem_cgroup;
+> > > > +	__mem_cgroup_flush_stats(memcg, force);
+> > > > +}
+> > > Shouldn't we impose a limit in term of how frequently this
+> > > memcg_flush_stats() function can be called like at most a few times per
+> > This effectivelly invalidates the primary purpose of the interface to
+> > provide a method to get as-fresh-as-possible value AFAICS.
+> > 
+> > > second to prevent abuse from user space as stat flushing is expensive? We
+> > > should prevent some kind of user space DoS attack by using this new API if
+> > > we decide to implement it.
+> > What exactly would be an attack vector?
+> 
+> just repeatedly write a string to the new cgroup file. It will then call
+> css_rstat_flush() repeatedly. It is not a real DoS attack, but it can still
+> consume a lot of cpu time and slow down other tasks.
 
-Thank you, I replied to your comments in that patch. However, until
-KHO becomes statless this change is needed. We *must* have KHO image
-as part of kexec load if liveupdate=1.
+How does that differ from writing a limit that would cause a constant
+memory reclaim from a worklad that you craft and cause a constant CPU
+activity and even worse lock contention?
 
->
-> > Pasha
->
-> --
-> Sincerely yours,
-> Mike.
+I guess the answer is that you do not let untrusted entities to create
+cgroup hierarchies and allow to modify or generally have a write access
+to control files. Or am I missing something?
+-- 
+Michal Hocko
+SUSE Labs
 
