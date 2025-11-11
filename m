@@ -1,254 +1,129 @@
-Return-Path: <linux-kernel+bounces-896302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FB44C500FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 00:32:37 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA77CC50111
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 00:33:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B89B44E484C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 23:32:34 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6590E4E38DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 23:33:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 635842F49FC;
-	Tue, 11 Nov 2025 23:32:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 485432F39AD;
+	Tue, 11 Nov 2025 23:33:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zyBh4dcx"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eBF6kHV6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 702791F2B88
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 23:32:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A4F235CBC6;
+	Tue, 11 Nov 2025 23:33:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762903947; cv=none; b=NTU8IA4fRpLjLq65FVekVtyOXXGRW0LUzYqTLqN0z3kpr4mbN6FN82e1h+zW7Qq516JLHUp8N13gpMgmItPXmTZvL7KSCX4CIfwHoPeaClspzvVx9rtc4F2/Sj+UFzj+XqD8jnqrsljtTBAxiA39WzRRrtdJZc9lpsMmFgpeVGI=
+	t=1762903996; cv=none; b=R2OlhO37f//GTOH5LR+ivzkHfbCNJx+/5qCZsHk2MM2g4obMPLME5N9r2SmGqYz+ELJ7BJFXmzk72Zw9QuQvIvGuajhr+oyP8ywdWQISUqlkWbS/RdNlb+mryaFWur7bPAT6m2ONTWLHE3iw08oLL5FOCqCXpqhVPzQL2DyoTYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762903947; c=relaxed/simple;
-	bh=JjX9POR99X3WO8seBV4smfP/yFiulAv2T8J9krlcaG0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UKJhDSpp+QX+dKTSC0Pf2lmO1l8Fz9Bgo618RQxuUP0mxt2eHmLwMOIzDHuIGMyQN+AO+EWHHCTDuWOmKM65dk4s32Qf9ALLEHPIqVLiNmwDz2WbsKV2BrUvr5DPL7u2KJJbJxjpKAHws8mm+TKZbFuoyCfaBlEZtcJrHO2TUeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zyBh4dcx; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-477782ec307so14575e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 15:32:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762903943; x=1763508743; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DfSphR+3zkc3ca5t+ekeHVOKX60kamodZsUsUQPEe+8=;
-        b=zyBh4dcxJ01scHduHnb8os9MhBZywHRHbf4VA6Pg9sKToqdNyitgbleQLG4PkrVjOB
-         r1KmjPuWIVTWeBBsXT2zBhHbC9Y2WG976ZJ5nHDCwioo3g79rUkOD8StGQBmOgrwLILK
-         YZuCw3Z9p98rWWzSLzyNcupYWx6jNRhnPvSNRze+rYkL1z8ugatxxUwKVjVMqnRRUbP7
-         GprOSJ2nZzXI6UGilJwevqyXo7tPvWCxAkol9cQAZuUkpd0l5sH0raAoCblIaMIlmcgl
-         FBROGqAGgmSrY9AHGapHoIYt5ebE7Rda4J8NDsHQss8RbzFCud4sAg5hD6sH9TMg2wFf
-         iwFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762903943; x=1763508743;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=DfSphR+3zkc3ca5t+ekeHVOKX60kamodZsUsUQPEe+8=;
-        b=JmH9xYbnexqj0a+R/zG9xmTd6wbKPVbw7MRpB9svRSz2/LH2pRACr70hEuXth+GfEY
-         /aKtpZUa3dkhuoWqmFlfvtSJ38KHncwCMnzsTop7YcbrUojVYbMEH2270TDaqs5CLNX/
-         acykqkH46oTk729FwE4SO+9c3Ui1TE8SN8towQbAXSRfOqdWTnAcI+V+PvYOpKIb7FQN
-         KI0vJO9vTiav9DJGkBON+FDDoAAtYz4IsX4LfQc44mZVjWGh7W8wqjmTDdCczqpNFmy9
-         DloTTYWGTGoBEwaxOBMBLlBY2v6R+za3umZTLASnzCm0ldvg+U6zmDuUnHjSRcKalb0c
-         XZ7g==
-X-Forwarded-Encrypted: i=1; AJvYcCUxeUs1Kfm3Owj8yxevDsGysjhp8QsdyxrsViY1zRIt+HbnA1qyRnXMIsOkDi+pGNV57YI1LgtSbTUOnBg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxA/qlXotgo7zkNyGabyuH0ItWMwfgeyZv1E4dnpiBFt3pXgHhT
-	ng6Lf9hOmtdQVudkzJcgiKJPL/IfO7M821gYXvlIhgohaestPnIrzoqFr1S8KZTKUGbD4Iaic0L
-	z1SS28HKOTuZ3wydVVilD7cLhzGvVF1dedSsF9pL8
-X-Gm-Gg: ASbGncscZLW/jHIVI+Ab5AD2q3yG4rQwD1lP9dvhXM4a5OTcZAsDiFKSGG2ChX1m5nt
-	aPa0eWhU7VoT2eNOCGbzt7sR+Id7g/u7K1j0dgcael16oe+JYGVxMJI8iL/l0WcZKUp8G1VfoGG
-	yhbYDydX39EYySrS7adzcf+unH+1gWCuqBo1UvJqUf+ki3wk85JXiWxtnNGd4xp6AuJzT37XaIc
-	ZD92r8jUmW3buxSUyqVYNUPx4bAbunhx0vJqGHEge7SRbHZtgeITQrRBh9Jr5aT3TL7y5LqYR7a
-	jvd9aRrKxIdHYOHTJBXkPgv1VA==
-X-Google-Smtp-Source: AGHT+IEFVyoAcKs88ZinjKACl2in26RA2Ulg4hwVbiPwjRL/ixynji4/f1TVt67UUXxDpe/cHBTPN/6zNnOi8MU74rE=
-X-Received: by 2002:a05:600c:4f50:b0:477:73f4:26b with SMTP id
- 5b1f17b1804b1-47787e10f86mr299925e9.3.1762903942551; Tue, 11 Nov 2025
- 15:32:22 -0800 (PST)
+	s=arc-20240116; t=1762903996; c=relaxed/simple;
+	bh=kyGXbFppsuatrJ4z10Sk9MGs8htgMnO1+sVT0p1rUEg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=NJFT4kaq5SGzKOp5eUx/Mer7Fmxbg/fr8zTcHRt0Lx19P4QTyUZnYYfzGVnnCusTkk66okbg3jIvUmd1v1cmxlS5zsB4S4+CptOz3OcDagk0AWnGpj5j44RgPwgv/h23zMkqI9DFM0ZOV4fmsYGH3vbJIuCToF4InfUVwxgaFnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eBF6kHV6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8819C4CEF5;
+	Tue, 11 Nov 2025 23:33:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762903995;
+	bh=kyGXbFppsuatrJ4z10Sk9MGs8htgMnO1+sVT0p1rUEg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=eBF6kHV6z6UtYQKKNTOYpwJibPQqiJTQefbU0dIsV/41HRRLQ0OYnBm33qf7NbZcM
+	 Zbh46gUKu+DHwwHwUnlZDBLCxqnsbuV33WO8wbnwJ2nY7O+svkB8mOVusHJ6gLymYD
+	 tsMahpaAZu4Dxi8Wdg+r5nJ4VmMd2vIN4z8WymyZuGyxKzqivxeT+MdTP35wX2CYrY
+	 9J0wqqVPEp7rRoQrsOhi4oe0TcIdryivsSz2QB7TAf5p74fQA0G/eUYbM3EO+4AoSQ
+	 WHApAkv1JGrtVKb8Cgm/bxq19P0FzGWRwOtqdZ6klwNyzRsJMuSbnBQSsIg5JZJe44
+	 PJ7q7IkQ9YrOg==
+Date: Tue, 11 Nov 2025 17:33:13 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Val Packett <val@packett.cool>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	manivannan.sadhasivam@oss.qualcomm.com,
+	Rob Clark <robin.clark@oss.qualcomm.com>,
+	Vignesh Raman <vignesh.raman@collabora.com>,
+	Valentine Burley <valentine.burley@collabora.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	"David E. Box" <david.e.box@linux.intel.com>,
+	Kai-Heng Feng <kai.heng.feng@canonical.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Chia-Lin Kao <acelan.kao@canonical.com>
+Subject: Re: [PATCH v2 0/2] PCI/ASPM: Enable ASPM and Clock PM by default on
+ devicetree platforms
+Message-ID: <20251111233313.GA2211570@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251013185903.1372553-1-jiaqiyan@google.com> <20251013185903.1372553-2-jiaqiyan@google.com>
- <7a61bcf9-a57d-a8e9-a9b8-4eacef80acd3@arm.com> <CACw3F51_0A8CuCgzcvoA3Db=Wxo8mm5XZw5in+nTKrst+NCcqw@mail.gmail.com>
- <aRMHfS1-K4E4UCbc@kernel.org>
-In-Reply-To: <aRMHfS1-K4E4UCbc@kernel.org>
-From: Jiaqi Yan <jiaqiyan@google.com>
-Date: Tue, 11 Nov 2025 15:32:10 -0800
-X-Gm-Features: AWmQ_bnzli5IDq508gd9gl_I2k2ye51PrgqB8PlLzeSpUSiMz9YXG-gXISoy5Ow
-Message-ID: <CACw3F51x4sxwSm0ZGeO-Mk3Q3b7iwY-9cnxCveXkc6MF5RGnyA@mail.gmail.com>
-Subject: Re: [PATCH v4 1/3] KVM: arm64: VM exit to userspace to handle SEA
-To: Oliver Upton <oupton@kernel.org>, Jose Marinho <jose.marinho@arm.com>
-Cc: maz@kernel.org, oliver.upton@linux.dev, duenwen@google.com, 
-	rananta@google.com, jthoughton@google.com, vsethi@nvidia.com, jgg@nvidia.com, 
-	joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, 
-	catalin.marinas@arm.com, will@kernel.org, pbonzini@redhat.com, corbet@lwn.net, 
-	shuah@kernel.org, kvm@vger.kernel.org, kvmarm@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <36f05566-8c7a-485b-96e7-9792ab355374@packett.cool>
 
-On Tue, Nov 11, 2025 at 1:53=E2=80=AFAM Oliver Upton <oupton@kernel.org> wr=
-ote:
+On Tue, Nov 11, 2025 at 03:51:03AM -0300, Val Packett wrote:
+> On 11/8/25 1:18 PM, Dmitry Baryshkov wrote:
+> > On Mon, Sep 22, 2025 at 09:46:43PM +0530, Manivannan Sadhasivam via B4 Relay wrote:
+> > > Hi,
+> > > 
+> > > This series is one of the 'let's bite the bullet' kind, where we have decided to
+> > > enable all ASPM and Clock PM states by default on devicetree platforms [1]. The
+> > > reason why devicetree platforms were chosen because, it will be of minimal
+> > > impact compared to the ACPI platforms. So seemed ideal to test the waters.
+> > > 
+> > > This series is tested on Lenovo Thinkpad T14s based on Snapdragon X1 SoC. All
+> > > supported ASPM states are getting enabled for both the NVMe and WLAN devices by
+> > > default.
+> > > [..]
+> > The series breaks the DRM CI on DB820C board (apq8096, PCIe network
+> > card, NFS root). The board resets randomly after some time ([1]).
 >
-> Hi Jiaqi,
->
-> On Mon, Nov 03, 2025 at 12:45:50PM -0800, Jiaqi Yan wrote:
-> > On Mon, Nov 3, 2025 at 10:17=E2=80=AFAM Jose Marinho <jose.marinho@arm.=
-com> wrote:
-> > >
-> > > Thank you for these patches.
-> >
-> > Thanks for your comments, Jose!
-> >
-> > >
-> > > On 10/13/2025 7:59 PM, Jiaqi Yan wrote:
-> > > > When APEI fails to handle a stage-2 synchronous external abort (SEA=
-),
-> > > > today KVM injects an asynchronous SError to the VCPU then resumes i=
-t,
-> > > > which usually results in unpleasant guest kernel panic.
-> > > >
-> > > > One major situation of guest SEA is when vCPU consumes recoverable
-> > > > uncorrected memory error (UER). Although SError and guest kernel pa=
-nic
-> > > > effectively stops the propagation of corrupted memory, guest may
-> > > > re-use the corrupted memory if auto-rebooted; in worse case, guest
-> > > > boot may run into poisoned memory. So there is room to recover from
-> > > > an UER in a more graceful manner.
-> > > >
-> > > > Alternatively KVM can redirect the synchronous SEA event to VMM to
-> > > > - Reduce blast radius if possible. VMM can inject a SEA to VCPU via
-> > > >    KVM's existing KVM_SET_VCPU_EVENTS API. If the memory poison
-> > > >    consumption or fault is not from guest kernel, blast radius can =
-be
-> > > >    limited to the triggering thread in guest userspace, so VM can
-> > > >    keep running.
-> > > > - Allow VMM to protect from future memory poison consumption by
-> > > >    unmapping the page from stage-2, or to interrupt guest of the
-> > > >    poisoned page so guest kernel can unmap it from stage-1 page tab=
-le.
-> > > > - Allow VMM to track SEA events that VM customers care about, to re=
-start
-> > > >    VM when certain number of distinct poison events have happened,
-> > > >    to provide observability to customers in log management UI.
-> > > >
-> > > > Introduce an userspace-visible feature to enable VMM handle SEA:
-> > > > - KVM_CAP_ARM_SEA_TO_USER. As the alternative fallback behavior
-> > > >    when host APEI fails to claim a SEA, userspace can opt in this n=
-ew
-> > > >    capability to let KVM exit to userspace during SEA if it is not
-> > > >    owned by host.
-> > > > - KVM_EXIT_ARM_SEA. A new exit reason is introduced for this.
-> > > >    KVM fills kvm_run.arm_sea with as much as possible information a=
-bout
-> > > >    the SEA, enabling VMM to emulate SEA to guest by itself.
-> > > >    - Sanitized ESR_EL2. The general rule is to keep only the bits
-> > > >      useful for userspace and relevant to guest memory.
-> > > >    - Flags indicating if faulting guest physical address is valid.
-> > > >    - Faulting guest physical and virtual addresses if valid.
-> > > >
-> > > > Signed-off-by: Jiaqi Yan <jiaqiyan@google.com>
-> > > > Co-developed-by: Oliver Upton <oliver.upton@linux.dev>
-> > > > Signed-off-by: Oliver Upton <oliver.upton@linux.dev>
-> > > > ---
-> > > >   arch/arm64/include/asm/kvm_host.h |  2 +
-> > > >   arch/arm64/kvm/arm.c              |  5 +++
-> > > >   arch/arm64/kvm/mmu.c              | 68 ++++++++++++++++++++++++++=
-++++-
-> > > >   include/uapi/linux/kvm.h          | 10 +++++
-> > > >   4 files changed, 84 insertions(+), 1 deletion(-)
-> > > >
-> > > > diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include=
-/asm/kvm_host.h
-> > > > index b763293281c88..e2c65b14e60c4 100644
-> > > > --- a/arch/arm64/include/asm/kvm_host.h
-> > > > +++ b/arch/arm64/include/asm/kvm_host.h
-> > > > @@ -350,6 +350,8 @@ struct kvm_arch {
-> > > >   #define KVM_ARCH_FLAG_GUEST_HAS_SVE                 9
-> > > >       /* MIDR_EL1, REVIDR_EL1, and AIDR_EL1 are writable from users=
-pace */
-> > > >   #define KVM_ARCH_FLAG_WRITABLE_IMP_ID_REGS          10
-> > > > +     /* Unhandled SEAs are taken to userspace */
-> > > > +#define KVM_ARCH_FLAG_EXIT_SEA                               11
-> > > >       unsigned long flags;
-> > > >
-> > > >       /* VM-wide vCPU feature set */
-> > > > diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
-> > > > index f21d1b7f20f8e..888600df79c40 100644
-> > > > --- a/arch/arm64/kvm/arm.c
-> > > > +++ b/arch/arm64/kvm/arm.c
-> > > > @@ -132,6 +132,10 @@ int kvm_vm_ioctl_enable_cap(struct kvm *kvm,
-> > > >               }
-> > > >               mutex_unlock(&kvm->lock);
-> > > >               break;
-> > > > +     case KVM_CAP_ARM_SEA_TO_USER:
-> > > > +             r =3D 0;
-> > > > +             set_bit(KVM_ARCH_FLAG_EXIT_SEA, &kvm->arch.flags);
-> > > > +             break;
-> > > >       default:
-> > > >               break;
-> > > >       }
-> > > > @@ -327,6 +331,7 @@ int kvm_vm_ioctl_check_extension(struct kvm *kv=
-m, long ext)
-> > > >       case KVM_CAP_IRQFD_RESAMPLE:
-> > > >       case KVM_CAP_COUNTER_OFFSET:
-> > > >       case KVM_CAP_ARM_WRITABLE_IMP_ID_REGS:
-> > > > +     case KVM_CAP_ARM_SEA_TO_USER:
-> > > >               r =3D 1;
-> > > >               break;
-> > > >       case KVM_CAP_SET_GUEST_DEBUG2:
-> > > > diff --git a/arch/arm64/kvm/mmu.c b/arch/arm64/kvm/mmu.c
-> > > > index 7cc964af8d305..09210b6ab3907 100644
-> > > > --- a/arch/arm64/kvm/mmu.c
-> > > > +++ b/arch/arm64/kvm/mmu.c
-> > > > @@ -1899,8 +1899,48 @@ static void handle_access_fault(struct kvm_v=
-cpu *vcpu, phys_addr_t fault_ipa)
-> > > >       read_unlock(&vcpu->kvm->mmu_lock);
-> > > >   }
-> > > >
-> > > > +/*
-> > > > + * Returns true if the SEA should be handled locally within KVM if=
- the abort
-> > > > + * is caused by a kernel memory allocation (e.g. stage-2 table mem=
-ory).
-> > > > + */
-> > > > +static bool host_owns_sea(struct kvm_vcpu *vcpu, u64 esr)
-> > > > +{
-> > > > +     /*
-> > > > +      * Without FEAT_RAS HCR_EL2.TEA is RES0, meaning any external=
- abort
-> > > > +      * taken from a guest EL to EL2 is due to a host-imposed acce=
-ss (e.g.
-> > > > +      * stage-2 PTW).
-> > > > +      */
-> > > > +     if (!cpus_have_final_cap(ARM64_HAS_RAS_EXTN))
-> > > > +             return true;
-> > > > +
-> > > > +     /* KVM owns the VNCR when the vCPU isn't in a nested context.=
- */
-> > > > +     if (is_hyp_ctxt(vcpu) && (esr & ESR_ELx_VNCR))
-> > > Is this check valid only for a "Data Abort"?
-> >
-> > Yes, the VNCR bit is specific to a Data Abort (provided we can only
-> > reach host_owns_sea if kvm_vcpu_abt_issea).
-> > I don't think we need to explicitly exclude the check here for
-> > Instruction Abort.
->
-> You can take an external abort on an instruction fetch, in which case
-> bit 13 of the ISS (VNCR bit for data abort) is RES0. So this does need
-> to check for a data abort.
+> Is that reset.. due to the watchdog resetting a hard-frozen system?
+> 
+> Me and a bunch of other people in the #aarch64-laptops irc/matrix room have
+> been experiencing these random hard freezes with ASPM enabled for the NVMe
+> SSD, on Hamoa (and Purwa too I think) devices.
 
-Agreed and thanks for correcting me, Oliver! I will fix this in v5.
+I don't know what controllers are in Hamoa and Purwa or what the IDs
+of the root ports and endpoints are.  Can you collect the Vendor and
+Device IDs (from dmesg log or "lspci -n")?  If we figure out that some
+are broken, we might be able to add quirks to avoid any broken ASPM
+states.
 
->
-> Thanks,
-> Oliver
+> I have confirmed with a modified (to accept args) enable-aspm.sh script[1]
+> that disabling ASPM *only* for the SSD, while keeping it *on* for the WiFi
+> adapter, is enough to keep the system stable (got to about a month of uptime
+> in that state).
+> 
+> If you have reproduced the same issue on an entirely different SoC, it's
+> probably a general driver issue.
+> 
+> Please, please help us debug this using your internal secret debug equipment
+> :)
+> 
+> 
+> [1]: https://gist.github.com/valpackett/8a6207b44364de6b32652f4041fe680f
+
+Can you use "echo 1 > /sys/bus/pci/devices/.../link/l0s_aspm" and
+similar (see Documentation/ABI/testing/sysfs-bus-pci) to do this
+tuning instead of poking with setpci?  If so, it might be easier.
+There are ordering requirements that aspm.c tries to observe via the
+sysfs interface.
+
+enable-aspm.sh might observe them also (I didn't look that carefully),
+but if aspm.c gets them wrong, they're wrong for everybody, so we'd
+like to know about that.
+
+Bjorn
 
