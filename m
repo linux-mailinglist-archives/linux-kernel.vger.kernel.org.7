@@ -1,75 +1,99 @@
-Return-Path: <linux-kernel+bounces-895022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89A66C4CB8F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:40:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31059C4CB83
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:40:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EDA01885A03
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:40:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A146618848E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:40:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A22D02EBBAF;
-	Tue, 11 Nov 2025 09:40:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 108DC2F2619;
+	Tue, 11 Nov 2025 09:40:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="C0Sfp0tY"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GCiWpRgX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 513342EDD63
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 09:40:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42C1C2EBBAF;
+	Tue, 11 Nov 2025 09:40:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762854017; cv=none; b=huRq2LN/U2QCWar21MpWSGin7NlkJohbVDp37RZ+MpVvWo2OkQBeJP8qxiCMwl9+6fE30YA4BT4xw04PwjMOKGdHYSGx5bvCxnfjajJC0yqb1Kil34dDmd0+Lkpgq6NDEmDFITstvDd0rPnUZcESW17hN72zdYj2wSBn3h0GwfY=
+	t=1762854007; cv=none; b=ClXclZJlL3U58zMq9pjk/hLLH/RK4luaKCjc0ou1bBMjFqnpfyClSkqoF/6iK/y7/5lg5bFoh9gyGaTJMN8v1dVSbBLgBKWi4T0W1k1+dXldZQShrXoqFwbAkWcRmGKJiPhm8NZMHi+rWsvDmyLwLK04cC94L40OgUeor90K6Kc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762854017; c=relaxed/simple;
-	bh=0XlN1hfbslC30BvQG9RAGDVDbjrdUmeNj1psqbSZSiU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=GFWPRIlIjXrD2BN9duaAIv5OWKh6lFzkWEJz82wrOCpdfhT8HTFbnwl3t1gd0G8VIMGT16JBaZ1IGxos6atcznVRd4GH9x6/jckXCMDtSwiJS9nPODsZkRjbM09aT2989y87ZYRoCQyi0JCvRFTxUF0+rJ3lKMRBTrCIbJ8oHOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=C0Sfp0tY; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762854015; x=1794390015;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=0XlN1hfbslC30BvQG9RAGDVDbjrdUmeNj1psqbSZSiU=;
-  b=C0Sfp0tYC0c9C9Z1cp9C2GMcvUEnYEqiowuoOEHirxwDYVNaOFpfQbJS
-   dvzPqKAVWZ8uW9viXzPJ4agMLc2q/oOuhUS9zf1V//FZNyY/iaktqvmIX
-   liIunVei+2DwUHwVLbQMmKcC5MDd7ENfsCne6HYycKfj5P46fusQUhHzi
-   Kc6Hn+xIikN7jWw97rvQm/XIWa+Um1kX6v3B8iT38wjIJg77ggybJrL+J
-   FHl4ZAC+JjXx+QyYF0WfAmSb1XNLJ6K6v99zXre14nUrYr/nRa2yxaZPP
-   NWp9pNf3r4jhJI464FOj7+EmkC82egz756bTKUosRaToy4oeWGQYgzoHb
-   g==;
-X-CSE-ConnectionGUID: a/+p7v1BTzig6p/dUDlxdA==
-X-CSE-MsgGUID: dkSPDy3VRUSdkbfquowzOg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11609"; a="64797906"
-X-IronPort-AV: E=Sophos;i="6.19,296,1754982000"; 
-   d="scan'208";a="64797906"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 01:40:15 -0800
-X-CSE-ConnectionGUID: l7fVole9Tp6F6YYmGSCLvQ==
-X-CSE-MsgGUID: lsa9c3JGRzGlo0FO/iGpAA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,296,1754982000"; 
-   d="scan'208";a="189176176"
-Received: from lkp-server01.sh.intel.com (HELO 7b01c990427b) ([10.239.97.150])
-  by fmviesa008.fm.intel.com with ESMTP; 11 Nov 2025 01:40:13 -0800
-Received: from kbuild by 7b01c990427b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vIkrD-00031D-1o;
-	Tue, 11 Nov 2025 09:40:11 +0000
-Date: Tue, 11 Nov 2025 17:39:37 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev,
-	"Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: [gustavoars:testing/wfamnae-next20251110 10/18]
- drivers/scsi/aic94xx/aic94xx_sas.h:323:35: error: field 'ssp_cmd' has
- incomplete type
-Message-ID: <202511111702.50G2mceU-lkp@intel.com>
+	s=arc-20240116; t=1762854007; c=relaxed/simple;
+	bh=tV63J7taBdyVxD5Onk+zak6F3ctliG+Q3nAMch/i9HU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nkFvqRV57OF45zjTXDxHbx+nFo9SocMMRzR2HowxegepkjeNKqitE4TtaK6O5qi4HfKmNI29/p+5OTuexinHO6FrY1AAnRVQVZAz0VWvmE9JCD0XGbPhCXC+tSkb1inaKtcjJFvu5oQDlyi/k68FdZVXVcqiz7aQrvuFtgXihw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GCiWpRgX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55E4CC4CEF7;
+	Tue, 11 Nov 2025 09:39:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762854006;
+	bh=tV63J7taBdyVxD5Onk+zak6F3ctliG+Q3nAMch/i9HU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GCiWpRgXryUr0YiOuRCqFKMHFElrFfOJGLeX13fDzQhzdLeEMfA68uzI2EJFfxVhm
+	 0MUDm4yk8dcgPkbCGQ9mByaYozbzGtDDR+dxx7BYEgVrFiJ8SZ2pdALZBfQboS0gvo
+	 mHVFJX+o1gZPTNTphPXA9WbgGYWk9nlExIF62mZ73WXnbIrDTiR4NqRFsQaQL8Dvkw
+	 S1IFcQzK7HMyEOdAdOb32M0+zECDPIh+yvtjXasK0QRuj70XQpLdc9540fG5C8LyLy
+	 GOdJphkYB7U4gWmOkayWv8GOEYQl0T5F0efMNLKo7WjK4EvGrJauQ6RDtyW294LDmB
+	 ZpUDNt59CcokQ==
+Date: Tue, 11 Nov 2025 11:39:43 +0200
+From: Mike Rapoport <rppt@kernel.org>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Janosch Frank <frankja@linux.ibm.com>,
+	Claudio Imbrenda <imbrenda@linux.ibm.com>,
+	David Hildenbrand <david@redhat.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>, Peter Xu <peterx@redhat.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Arnd Bergmann <arnd@arndb.de>, Zi Yan <ziy@nvidia.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+	Lance Yang <lance.yang@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>,
+	Oscar Salvador <osalvador@suse.de>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
+	Byungchul Park <byungchul@sk.com>,
+	Gregory Price <gourry@gourry.net>,
+	Ying Huang <ying.huang@linux.alibaba.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	Axel Rasmussen <axelrasmussen@google.com>,
+	Yuanchu Xie <yuanchu@google.com>, Wei Xu <weixugc@google.com>,
+	Kemeng Shi <shikemeng@huaweicloud.com>,
+	Kairui Song <kasong@tencent.com>, Nhat Pham <nphamcs@gmail.com>,
+	Baoquan He <bhe@redhat.com>, Chris Li <chrisl@kernel.org>,
+	SeongJae Park <sj@kernel.org>, Matthew Wilcox <willy@infradead.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
+	Xu Xin <xu.xin16@zte.com.cn>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	Jann Horn <jannh@google.com>, Miaohe Lin <linmiaohe@huawei.com>,
+	Naoya Horiguchi <nao.horiguchi@gmail.com>,
+	Pedro Falcato <pfalcato@suse.de>,
+	Pasha Tatashin <pasha.tatashin@soleen.com>,
+	Rik van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>,
+	Hugh Dickins <hughd@google.com>, linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org, linux-s390@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-arch@vger.kernel.org, damon@lists.linux.dev
+Subject: Re: [PATCH v3 01/16] mm: correctly handle UFFD PTE markers
+Message-ID: <aRMEX5YP7ubGOmqo@kernel.org>
+References: <cover.1762812360.git.lorenzo.stoakes@oracle.com>
+ <c38625fd9a1c1f1cf64ae8a248858e45b3dcdf11.1762812360.git.lorenzo.stoakes@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,55 +102,59 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <c38625fd9a1c1f1cf64ae8a248858e45b3dcdf11.1762812360.git.lorenzo.stoakes@oracle.com>
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git testing/wfamnae-next20251110
-head:   be928bdef109364ada67e15d004067a1770a36f0
-commit: fc09359f7ea98c65bfc288e3e37dda0af71652f7 [10/18] scsi: libsas/aci94xx: Avoid multiple -Wflex-array-member-not-at-end warnings
-config: sparc-allmodconfig (https://download.01.org/0day-ci/archive/20251111/202511111702.50G2mceU-lkp@intel.com/config)
-compiler: sparc64-linux-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251111/202511111702.50G2mceU-lkp@intel.com/reproduce)
+On Mon, Nov 10, 2025 at 10:21:19PM +0000, Lorenzo Stoakes wrote:
+> PTE markers were previously only concerned with UFFD-specific logic - that
+> is, PTE entries with the UFFD WP marker set or those marked via
+> UFFDIO_POISON.
+> 
+> However since the introduction of guard markers in commit
+>  7c53dfbdb024 ("mm: add PTE_MARKER_GUARD PTE marker"), this has no longer
+>  been the case.
+> 
+> Issues have been avoided as guard regions are not permitted in conjunction
+> with UFFD, but it still leaves very confusing logic in place, most notably
+> the misleading and poorly named pte_none_mostly() and
+> huge_pte_none_mostly().
+> 
+> This predicate returns true for PTE entries that ought to be treated as
+> none, but only in certain circumstances, and on the assumption we are
+> dealing with H/W poison markers or UFFD WP markers.
+> 
+> This patch removes these functions and makes each invocation of these
+> functions instead explicitly check what it needs to check.
+> 
+> As part of this effort it introduces is_uffd_pte_marker() to explicitly
+> determine if a marker in fact is used as part of UFFD or not.
+> 
+> In the HMM logic we note that the only time we would need to check for a
+> fault is in the case of a UFFD WP marker, otherwise we simply encounter a
+> fault error (VM_FAULT_HWPOISON for H/W poisoned marker, VM_FAULT_SIGSEGV
+> for a guard marker), so only check for the UFFD WP case.
+> 
+> While we're here we also refactor code to make it easier to understand.
+> 
+> Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202511111702.50G2mceU-lkp@intel.com/
+Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
 
-All errors (new ones prefixed by >>):
+with a small nit below
 
-   In file included from drivers/scsi/aic94xx/aic94xx_hwi.h:19,
-                    from drivers/scsi/aic94xx/aic94xx_reg.h:13,
-                    from drivers/scsi/aic94xx/aic94xx_init.c:21:
->> drivers/scsi/aic94xx/aic94xx_sas.h:323:35: error: field 'ssp_cmd' has incomplete type
-     323 |         struct ssp_command_iu_hdr ssp_cmd;
-         |                                   ^~~~~~~
+> ---
+>  
+> -	ret = false;
+> +	/*
+> +	 * A race could arise which would result in a softleaf entry such a
 
+                                                                    ^ such as 
 
-vim +/ssp_cmd +323 drivers/scsi/aic94xx/aic94xx_sas.h
-
-   316	
-   317	/* This is both ssp_task and long_ssp_task
-   318	 */
-   319	struct initiate_ssp_task {
-   320		u8     proto_conn_rate;	  /* proto:6,4, conn_rate:3,0 */
-   321		__le32 total_xfer_len;
-   322		struct ssp_frame_hdr  ssp_frame;
- > 323		struct ssp_command_iu_hdr ssp_cmd;
-   324		__le16 sister_scb;	  /* 0xFFFF */
-   325		__le16 conn_handle;	  /* index to DDB for the intended target */
-   326		u8     data_dir;	  /* :1,0 */
-   327	#define DATA_DIR_NONE   0x00
-   328	#define DATA_DIR_IN     0x01
-   329	#define DATA_DIR_OUT    0x02
-   330	#define DATA_DIR_BYRECIPIENT 0x03
-   331	
-   332		u8     _r_a;
-   333		u8     retry_count;
-   334		u8     _r_b[5];
-   335		struct sg_el sg_element[3]; /* 2 real and 1 link */
-   336	} __attribute__ ((packed));
-   337	
+> +	 * migration entry unexpectedly being present in the PMD, so explicitly
+> +	 * check for this and bail out if so.
+> +	 */
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Sincerely yours,
+Mike.
 
