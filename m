@@ -1,192 +1,266 @@
-Return-Path: <linux-kernel+bounces-896247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FDDAC4FF78
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 23:21:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 115FEC4FF81
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 23:24:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1516F4E7A9B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 22:21:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3070D3AC6EC
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 22:24:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A8672ED17B;
-	Tue, 11 Nov 2025 22:21:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7817A2F1FDE;
+	Tue, 11 Nov 2025 22:24:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Z0W0FVR4"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="WC1+SKz7"
+Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010068.outbound.protection.outlook.com [52.101.69.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB9742C11C4;
-	Tue, 11 Nov 2025 22:21:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762899674; cv=none; b=R4JdkywqfPm7X3JZPvsKH0SZ6R+Hf5PnaSk0syPdZAzs541D+Zuc7lYEkvnqIsqpt8pDHXYBSrWcoUNk7rHfBnMnxJnHP/12glQpsO3QwPem3oMu31vAr5lz3Jv8ZteQDPsqQfPDk64LzDwK+axdTWFhwQxPso6rZE0N0XFkJn8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762899674; c=relaxed/simple;
-	bh=EupUZ0Y97IkAYfyj1mCfWDcBjmbbyIF9p1kivmfAjN4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ejH/k7lE7O1XE3qPZsJNXbbYYrS/KN803s05vgoglU6NApbvKJr9YgTENZESs9qxwxguiR3+zPBrZFucHvX7qYnfwBfi4eAVB3gCXOLt8tTKDaju8hPeog9JIhmx6bf2ug/CoBiTfH9oimYuM7dVYEAVq5fddlhtjOis9FdS2SQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=qti.qualcomm.com; spf=pass smtp.mailfrom=qti.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Z0W0FVR4; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=qti.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qti.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5ABLlVZA3502223;
-	Tue, 11 Nov 2025 22:21:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=PZe1+0R61+e
-	l68af10hP/F4jsBL57RyNvY7hU56XRXA=; b=Z0W0FVR4E2tuoknwaEwU4PferiQ
-	CvMRsjcoHO8b34Nwo1Zc9x7+wtxNZDnmmRql+NaycDc69yCv6FtYdD+bMlMMDHDm
-	96sORZAAL7E6w3/PBjJ9qDROOx7r6AjNTtI9RSek0FsHzTdY66Qb3uYYPYOT8WCO
-	UUg3wlMBf4EtAxepRhx6mfpcs5nNYXFOu/ywavRCgJEUXevS/WC5iMp9Jtenbdlp
-	RO9xc69EqrXrMAOD4BH/yeMP/bksCU8+tuPKxcowAz3kljeOVMr7vdf5jNx0MEkY
-	OcA7JREBKXorvr82dAmIuWGfdi6h0rEIkhvCg5HT0uY4oJfdm2j1AVsQZ6g==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4acdcc022r-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Nov 2025 22:21:05 +0000 (GMT)
-Received: from pps.filterd (NALASPPMTA03.qualcomm.com [127.0.0.1])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 5ABML4lB030393;
-	Tue, 11 Nov 2025 22:21:04 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by NALASPPMTA03.qualcomm.com (PPS) with ESMTP id 4ac0nkfyvt-1;
-	Tue, 11 Nov 2025 22:21:04 +0000
-Received: from NALASPPMTA03.qualcomm.com (NALASPPMTA03.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 5ABML4EO030387;
-	Tue, 11 Nov 2025 22:21:04 GMT
-Received: from hu-grahamr-lv.qualcomm.com (hu-grahamr-lv.qualcomm.com [10.81.26.100])
-	by NALASPPMTA03.qualcomm.com (PPS) with ESMTP id 5ABML3o8030383;
-	Tue, 11 Nov 2025 22:21:04 +0000
-From: Graham Roff <grahamr@qti.qualcomm.com>
-To: jani.nikula@linux.intel.com
-Cc: corbet@lwn.net, grahamr@qti.qualcomm.com, linux-doc@vger.kernel.org,
-        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-        nathan@kernel.org, nico@fluxnic.net, nsc@kernel.org
-Subject: Re: [PATCH] Support conditional deps using "depends on X if Y"
-Date: Tue, 11 Nov 2025 14:21:03 -0800
-Message-Id: <20251111222103.3322795-1-grahamr@qti.qualcomm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <e5ef3c59bc100cb44adae6ef624da83af8bce299@intel.com>
-References: <e5ef3c59bc100cb44adae6ef624da83af8bce299@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62E8A35CBA1;
+	Tue, 11 Nov 2025 22:24:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.68
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762899880; cv=fail; b=qSa2q8RmatBHwfMOACwjOe0LxGbo7WZUXt5JMOb+C5ozYvELx58egpvARfXnnk1+CYPFJNn3q2g/K3DgdGdO0yCtuAYKqZwY+EjnNqpRMDNeIWydz2TR5BsSkf3fchRtN6wE6Dz4Jyvlrm3a22ckUEc0VCT09E5jY4mgUtu3BKc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762899880; c=relaxed/simple;
+	bh=tr+etrTLIL2K3Bj51g7Zhc2pTQhMrHKEjjz3CLy28xk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=ogIMxCuhe4r6SyyHsp9+Cax/2V/MyuArwliYwidzL/RTlurEd8GEbJqBQ0YCqTx31o0yn+t7VixMTAK2zwDji5URl2hQFOzYQiMXCeSAtsHhU1SL+iiPLciGowEbwnwkU4c17U7e/CSxs3lZM4tImu5vQeNs1JX2RnMTqO4cDNE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=WC1+SKz7; arc=fail smtp.client-ip=52.101.69.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=VhYGpPaKsxw3FuZODNFkM4IOs2xp9yUyuLH6PnDkcVEfBOhZuC5A9AoLP8CI14TqQGvvALusG0ybjfg1hstaIln0r/PecY3jsi1Oy07bhWITB16u7F3nXvpWwyUgW99SvltX6WcIy/TtXNC00YY1Xj9IsP64OKeYm10MJ8IBEZCtfPd9XdUtzpBo9COfoeHkCI6O6rDemTO0E1x4oKXLy7WXRtfRSO6Nb3ejIHa4G+BWAbv6/9gyhNfgurNJA9uaBgEZetJ1vcFhtBHGeHYpv3Vwg4hRswqX2N7c78JD1HWk/nQuOwjF3eWZvGJwLMZmN7LtSaTIjKZrdHZR4ydFBA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hP34Hk/WrpCLUQgT4Ca6BbHDoMBZJ0taafDFseRVhhk=;
+ b=UqaxSfV9qchoEE02vbo+NR28WSlHmtL58OGy5sWFSbwOaVmveBwdG2JNgstGT7DlGvLyJITeOW8SAWzYhkjt4x9zs4Vv4pQ6a+OyMzKC8iB+annCQgV/rXKuqCqis0VWMIJyPYSTNIuHGdx2rwdHQ5FootXdgROj6YbSYxXKDPHBPhfKrc6Kz8N991sey9UJWgbqgReszXgZulS8y0noVyTXBVoSXiW4q8Ece17bMr2QFmheLakau7wNY+4KB6tsOlMsVEQuPaynB0JVFNOsAFowWnNFKZwiFLDMDZBMBT1n6bGZNyCOBdBYnSvhDt4sdoJr1vIujBd2Wq2iBuWu0w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hP34Hk/WrpCLUQgT4Ca6BbHDoMBZJ0taafDFseRVhhk=;
+ b=WC1+SKz7PmHh5TNmzaK6IiA1fjVWFcss1WTVH5uRoo1vxTCr7U0riqNe2AVDlguSZejBwxXigF/eCWpU3+DlJcL88/HgiNcXJ67jeaZMB6rVFTyns6EZUALsEXBCRWHyBW8eGHqq8UxzxxlKjhGT0pX3CW3FdFLiDKySaI3jDxWDnStrQ5QiDmW2o0OJVAcWxGoxWY1RbL0g2o8gwhvNluYki8xGNjr8vtbwc984O164qrUy698Votkr9bEFXZEDOrtDPpOB49SfnQ6pkyw142mQj8zCYblQkImF7Tl2GDEIYd1N0ufJ/67qZjl2U1CXn0bRbm6RP1pB3amGtllnSg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from DB9PR04MB9626.eurprd04.prod.outlook.com (2603:10a6:10:309::18)
+ by AM8PR04MB8036.eurprd04.prod.outlook.com (2603:10a6:20b:242::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.16; Tue, 11 Nov
+ 2025 22:24:35 +0000
+Received: from DB9PR04MB9626.eurprd04.prod.outlook.com
+ ([fe80::55ef:fa41:b021:b5dd]) by DB9PR04MB9626.eurprd04.prod.outlook.com
+ ([fe80::55ef:fa41:b021:b5dd%4]) with mapi id 15.20.9298.015; Tue, 11 Nov 2025
+ 22:24:35 +0000
+Date: Tue, 11 Nov 2025 17:24:28 -0500
+From: Frank Li <Frank.li@nxp.com>
+To: Wei Fang <wei.fang@nxp.com>
+Cc: shenwei.wang@nxp.com, xiaoning.wang@nxp.com, andrew+netdev@lunn.ch,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, eric@nelint.com, imx@lists.linux.dev,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 2/5] net: fec: simplify the conditional
+ preprocessor directives
+Message-ID: <aRO3nMEu/D/kw/ja@lizhi-Precision-Tower-5810>
+References: <20251111100057.2660101-1-wei.fang@nxp.com>
+ <20251111100057.2660101-3-wei.fang@nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251111100057.2660101-3-wei.fang@nxp.com>
+X-ClientProxiedBy: PH8P220CA0020.NAMP220.PROD.OUTLOOK.COM
+ (2603:10b6:510:345::12) To DB9PR04MB9626.eurprd04.prod.outlook.com
+ (2603:10a6:10:309::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: wN65WCwl6FsPj7fXFwPZDHMFi8SZpJ4n
-X-Proofpoint-ORIG-GUID: wN65WCwl6FsPj7fXFwPZDHMFi8SZpJ4n
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTExMDE4MiBTYWx0ZWRfX9F5dJdC+CtdL
- fnpseWA7FDgZCwo4kkg1v6pWoIFbNHAw8xx0GGftzgI1JLzwqmpGW3jCi5flwW2eIX0wpn7NY9J
- C/ERRGs7B2Sz9RVxMHcKVi7SlYrRgjG9EIHcHnT6MQ04aWeg3RpLOQObvRknwFMwtEjBCdP2NUS
- WdA/VYdR164SzlXf1x5AprE7/zO6xwIt4AiVi444z3hBEkg7Yjl2Jbea3vQymj64fSLThsBbFKF
- JpeRmyiuvBTAQwelCJ8BDYuffleK9bU7NlnOkEgc+MiJTZZIKISDolcCQ433Ov2NSZqCEyuzxE8
- oBZsLNxz8EyK/FfOhwrMjdsJUKgmYnJgZ+T34zyA/FZbfizCQwnZihD3rfU/T5oXH07FAUedT33
- RSb2eeShFogABvViCog1XRXN8QAu5A==
-X-Authority-Analysis: v=2.4 cv=L/0QguT8 c=1 sm=1 tr=0 ts=6913b6d1 cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=7ZdoGrH5h-tKuaFDneoA:9
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-11_04,2025-11-11_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 malwarescore=0 bulkscore=0 lowpriorityscore=0
- clxscore=1015 adultscore=0 suspectscore=0 spamscore=0 impostorscore=0
- phishscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
- definitions=main-2511110182
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB9PR04MB9626:EE_|AM8PR04MB8036:EE_
+X-MS-Office365-Filtering-Correlation-Id: 19b35de5-5d32-4284-d626-08de2171183c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|376014|1800799024|366016|19092799006|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?DBGmjixxG50Xuer4SnQWfjPi4X2jRvYlpWer5exTfLdm879WK9+YOnTV16BA?=
+ =?us-ascii?Q?V/WJ0VbO2pehmKUEq0PZ7lGSGAq1fMqZB82FIGipqdkh4ah0qhTjzCIF1j99?=
+ =?us-ascii?Q?UhF5ivWYN0KziGmpiPnoD5clRUfNEmTU7uHnvmLb2l9s7gB0W+/rJPiRZu9r?=
+ =?us-ascii?Q?JHpGUJmYAMTPASmXA35yAFMkp7QSsUw9jCcwFPuD3jsrltxFW/YpsMaUOEeA?=
+ =?us-ascii?Q?65E32C7r3hlu/lEpHrBhPgOtoPvgtvG4Ji0YhI/d0QFH/XHw4gzC/EVtmZg1?=
+ =?us-ascii?Q?e23Zo/cvHHoO58gUim+Lgv3Z3VV99J5M6bOqOunEFo5wZEOitg1r7KqrO2KX?=
+ =?us-ascii?Q?PkQeWr3sHYtPW2cr9SvvvUSuGElqpbN3KLniwbr9LmlCSRURMBj0Gq61t3Fm?=
+ =?us-ascii?Q?wX5uaM+tTxeSk2Lfa66VAzdYbLJVdIK1u66yAGjPvZkAmxpQMs+aZ4IQ+IFk?=
+ =?us-ascii?Q?Oiy70+rqiRJVrz8VBUBjJxLNWTzX7DQpbqry2JE9/6dd1A6iPximOoNOnXQA?=
+ =?us-ascii?Q?DFpcAHUkT1hPC4AYsa+SQp7VxWJSiPYdxGnl19Zv1tAkbz6y+Ini7LpCQvwr?=
+ =?us-ascii?Q?r9dR3itfaCEhTt7sJtsFCGcxJbKdh7EseN72dGpLYhgcBmYTCwNt+2NjpsR8?=
+ =?us-ascii?Q?PHJenMZYvlwgeaQ492XHTbZ29sc679opjilNAcRRi7ec2QCvh05faGlgbkEn?=
+ =?us-ascii?Q?02Bs3fczmkdvTwWAUjpwFHdfIGmm3DZaKD51pClsc2w3Svp4F/NLXp6upOOy?=
+ =?us-ascii?Q?dhY2hWIgjmRWom8A8Eek8PAbh1I2tkuMTk0ur6xkVT5cCz8hS9kOecslUh2l?=
+ =?us-ascii?Q?YNkZ9NzpXOr+J7dzreMz7xZ8Ktusor8uPIxo9QzmSJ2sjBSgmiZONQvi9hxg?=
+ =?us-ascii?Q?MRf/iSxTmIrdk+yawEbyfvun01E9qacNg6ivZS7cU49BeKe61j/5R3jYtZBk?=
+ =?us-ascii?Q?DgoBVWUmx1r7N7k3lElMQ6E5h0KEOkjeqjfev4184e5ecdeAHTKlwUsLNJFI?=
+ =?us-ascii?Q?clmOFJNWRNI0CFj+14nC+LNBCZgu12mstNRB1NeqeJyXTjr5plawIC8CFCBP?=
+ =?us-ascii?Q?D8vq1OPUAZhXZf19jA9DAkBDZzADEkXVF6eo5jA215T8d7yNk2DNV+A8shd6?=
+ =?us-ascii?Q?/9mBxOOeGALFYNdUFzJCBVtqlKWGmuis7IdSer7L1ZnxNh0z25j5RVGxiAbD?=
+ =?us-ascii?Q?LEWYJEqin66OXobcKlxXSdKU2ryAm5VCdYpnIoEkNgOh2N+E47tXwI4owNo3?=
+ =?us-ascii?Q?AHzwxrVzuzDDKabkXSUdQNIFOe4+U8kuNzl9KSU1lxM4KCDCvPc8RGwnOhjE?=
+ =?us-ascii?Q?xBFzSjBcEzhVW89tMm5wyzJF4lWswIKrNKKM+8xVYNbPV5yu7xz42IxLwTXf?=
+ =?us-ascii?Q?0TMRyI67rYGJGCYUtMmU9n8KPCk3WDeDKl0d78wKuOx1MouSIRhCsbupEx2F?=
+ =?us-ascii?Q?BK3Rhr3evoaVXkWkWLhg9jmZpvaVPs3+olctUsPstahcXGFO4y9jI3yelanr?=
+ =?us-ascii?Q?sbrSBZjF3SadRywKY1q2jmD5SRbe+1vuoCLV?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB9626.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(1800799024)(366016)(19092799006)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?zEN1gt9VO8D3C96+QOWq6O89PHO71z0Pn32GXsyE/xmNsxMYTuU0gC8kUz4/?=
+ =?us-ascii?Q?SHY00TZ2IyKb2VU/1Q0ivCvXtZTCDzXKtZD7OvaiwtkJtdW789OGpplxcUKe?=
+ =?us-ascii?Q?XxTQr/RK3eF7sDdNakH5cMBpsxI9Ax3vQdQ6OaUDHcaGF8ATXTHbwzGGYfkC?=
+ =?us-ascii?Q?iqbBhsmxu/TFYB/hAdOk0HwrR+sNeUGy4QMuu9mnnoyTpMrGAIjsjaUYVo9z?=
+ =?us-ascii?Q?Ko4650ntIptEBHUNmdn8QpY66uwsIiy9RpYAOvqAobQZCTFjyXsiwgoeGrbv?=
+ =?us-ascii?Q?IAhRp4Gc1ve9bJ9KUETIuO2L8qUtS93Fy64nQwUEgWWlI1S3HsTuzeG6ENkI?=
+ =?us-ascii?Q?FEPrPOXfqU+1WXeSp2LW/o2BZimnalZcoD8mJGxB4++ke/j8EtubvvG/azfZ?=
+ =?us-ascii?Q?T+QLjWIa98usljHIwm2Mdc7uEFCzqvtQ6YIRk2N3bZWcJ+5xoAsac/C/jea/?=
+ =?us-ascii?Q?8naWPV7+z+bAV0Kqtn/s3KHK7Eih3rPMOmwWNKOY7PCqwkR3xjnTzgT7jjsm?=
+ =?us-ascii?Q?KgNSafXuf4mw7MsJi+Kb1b0Cj/wix4p8WP5CEFccfXcA2MzXBwsRKw/Cy2oe?=
+ =?us-ascii?Q?IadgnNehfKbTKB3vdv+VrEm4AGs8PVGxAu/2FAODUIQPIpDq29Bx8cnNSyJt?=
+ =?us-ascii?Q?F659jWz8Y9yzDaKfABFetukIa1xxqLGzvz9h0y8Hq3OSPsWiVTam5WZ7fibo?=
+ =?us-ascii?Q?Kbly16ZX6yOb3PFSnkDxKCYoGezxqyfdLHQvIL91geJ8iFZ7Jyd+mTiIJDYV?=
+ =?us-ascii?Q?XlnyVcIw8JmxXlycI4YQ6dPGdSJgB7Zk1vz6nb5jvpTz9r0UB/xjMKU+t8ye?=
+ =?us-ascii?Q?vKPJZdHo/g8gWcMwFg2TYgXtQW0psxw2hQEx048O0xhj31ygzwrbKy0gh8vV?=
+ =?us-ascii?Q?MwFz/gEa0mFOJGj1y+FUTipbVTHLFj1pYWZdCpYm7iIJ2mshexcE0qD04Pls?=
+ =?us-ascii?Q?Or9K/EJL1fx7Lh//6L3VdyuvHrKW1eB9PS31aJrhPlN531OzQgKFnkML4kzQ?=
+ =?us-ascii?Q?NdnkizItLnl5In2myPV30ifEey10ZAOqTxRK769Z8p0/KqFVtQYN9HadX+ut?=
+ =?us-ascii?Q?xRdwV5J8BfksiFjfWf9LelK2xy90IwSIlZ/PGVcyOnOEYwU8bODjZKyA4u8g?=
+ =?us-ascii?Q?OD5VydD1dfmT6NRXKVAN/kJmIhmT5m+ydTTd5C3Qdnqon1mzMOzuzp6oeZ6v?=
+ =?us-ascii?Q?ilJZysWxZDC7/Tm6aqbvsEsg1PQp0vEcR2KUwturAvEKduhIa1YrvHXZT3GO?=
+ =?us-ascii?Q?DDPkrwjNIoAzFw0VHMQg5cSQsLpua0Z1/LxykWU8ZI6yTeE7wpJpXQ/YyxMh?=
+ =?us-ascii?Q?Jsav80gIUoQ1f6pByl2h/oEniQWdq9x0TUG/e6svaJQeF1j7a0x37eIWKtaJ?=
+ =?us-ascii?Q?B0Z83B8oV08QKI7UdCmZd6IbzufKibf/OYSmZZKe/YEe4GN1wkkGwh7Epdh8?=
+ =?us-ascii?Q?vlT55oqwa33T2zrrJf7pZe8GHyp4NDCcjETouN7rCm2VjdEYzp1DuSnvLEm5?=
+ =?us-ascii?Q?DW/+tncKFv+P7zN7cXNXIIzsqDwPi6HAM7mcNRYlo1F7I+2ejJ2ZTnicI/C0?=
+ =?us-ascii?Q?w9VTsDUXdEvskgv0HXd2R19yOrXHHlhPxikI2SJu?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 19b35de5-5d32-4284-d626-08de2171183c
+X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB9626.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Nov 2025 22:24:35.6910
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: CkQUx4e9b7YRla46GFBJoqogoCHMObgU/zjH1f391d2cu4FY+KazfGo2ggP6khX+wlQxu4xyMnyDCKqM1C5Hcg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM8PR04MB8036
 
-Jani,
+On Tue, Nov 11, 2025 at 06:00:54PM +0800, Wei Fang wrote:
+> From the Kconfig file, we can see CONFIG_FEC depends on the following
+> platform-related options.
+>
+> ColdFire: M523x, M527x, M5272, M528x, M520x and M532x
+> S32: ARCH_S32 (ARM64)
+> i.MX: SOC_IMX28 and ARCH_MXC (ARM and ARM64)
+>
+> Based on the code of fec driver, only some macro definitions on the
+> M5272 platform are different from those on other platforms. Therefore,
+> we can simplify the following complex preprocessor directives to
+> "if !defined(CONFIG_M5272)".
+>
+> "#if defined(CONFIG_M523x) || defined(CONFIG_M527x) || \
+>      defined(CONFIG_M528x) || defined(CONFIG_M520x) || \
+>      defined(CONFIG_M532x) || defined(CONFIG_ARM) || \
+>      defined(CONFIG_ARM64)"
+>
+> Signed-off-by: Wei Fang <wei.fang@nxp.com>
+> ---
+>  drivers/net/ethernet/freescale/fec.h      |  4 +---
+>  drivers/net/ethernet/freescale/fec_main.c | 27 ++++++-----------------
+>  2 files changed, 8 insertions(+), 23 deletions(-)
+>
+> diff --git a/drivers/net/ethernet/freescale/fec.h b/drivers/net/ethernet/freescale/fec.h
+> index 41e0d85d15da..8e438f6e7ec4 100644
+> --- a/drivers/net/ethernet/freescale/fec.h
+> +++ b/drivers/net/ethernet/freescale/fec.h
+> @@ -24,9 +24,7 @@
+>  #include <linux/timecounter.h>
+>  #include <net/xdp.h>
+>
+> -#if defined(CONFIG_M523x) || defined(CONFIG_M527x) || defined(CONFIG_M528x) || \
+> -    defined(CONFIG_M520x) || defined(CONFIG_M532x) || defined(CONFIG_ARM) || \
+> -    defined(CONFIG_ARM64) || defined(CONFIG_COMPILE_TEST)
+> +#if !defined(CONFIG_M5272) || defined(CONFIG_COMPILE_TEST)
+>  /*
+>   *	Just figures, Motorola would have to change the offsets for
+>   *	registers in the same peripheral device on different models
+> diff --git a/drivers/net/ethernet/freescale/fec_main.c b/drivers/net/ethernet/freescale/fec_main.c
+> index e0e84f2979c8..9d0e5abe5f66 100644
+> --- a/drivers/net/ethernet/freescale/fec_main.c
+> +++ b/drivers/net/ethernet/freescale/fec_main.c
+> @@ -253,9 +253,7 @@ MODULE_PARM_DESC(macaddr, "FEC Ethernet MAC address");
+>   * size bits. Other FEC hardware does not, so we need to take that into
+>   * account when setting it.
+>   */
+> -#if defined(CONFIG_M523x) || defined(CONFIG_M527x) || defined(CONFIG_M528x) || \
+> -    defined(CONFIG_M520x) || defined(CONFIG_M532x) || defined(CONFIG_ARM) || \
+> -    defined(CONFIG_ARM64)
+> +#ifndef CONFIG_M5272
+>  #define	OPT_ARCH_HAS_MAX_FL	1
+>  #else
+>  #define	OPT_ARCH_HAS_MAX_FL	0
+> @@ -2704,9 +2702,7 @@ static int fec_enet_get_regs_len(struct net_device *ndev)
+>  }
+>
+>  /* List of registers that can be safety be read to dump them with ethtool */
+> -#if defined(CONFIG_M523x) || defined(CONFIG_M527x) || defined(CONFIG_M528x) || \
+> -	defined(CONFIG_M520x) || defined(CONFIG_M532x) || defined(CONFIG_ARM) || \
+> -	defined(CONFIG_ARM64) || defined(CONFIG_COMPILE_TEST)
+> +#if !defined(CONFIG_M5272) || defined(CONFIG_COMPILE_TEST)
+>  static __u32 fec_enet_register_version = 2;
+>  static u32 fec_enet_register_offset[] = {
+>  	FEC_IEVENT, FEC_IMASK, FEC_R_DES_ACTIVE_0, FEC_X_DES_ACTIVE_0,
+> @@ -2780,29 +2776,20 @@ static u32 fec_enet_register_offset[] = {
+>  static void fec_enet_get_regs(struct net_device *ndev,
+>  			      struct ethtool_regs *regs, void *regbuf)
+>  {
+> +	u32 reg_cnt = ARRAY_SIZE(fec_enet_register_offset);
+>  	struct fec_enet_private *fep = netdev_priv(ndev);
+>  	u32 __iomem *theregs = (u32 __iomem *)fep->hwp;
+> +	u32 *reg_list = fec_enet_register_offset;
+>  	struct device *dev = &fep->pdev->dev;
+>  	u32 *buf = (u32 *)regbuf;
+>  	u32 i, off;
+>  	int ret;
+> -#if defined(CONFIG_M523x) || defined(CONFIG_M527x) || defined(CONFIG_M528x) || \
+> -	defined(CONFIG_M520x) || defined(CONFIG_M532x) || defined(CONFIG_ARM) || \
+> -	defined(CONFIG_ARM64) || defined(CONFIG_COMPILE_TEST)
+> -	u32 *reg_list;
+> -	u32 reg_cnt;
+> -
+> -	if (!of_machine_is_compatible("fsl,imx6ul")) {
+> -		reg_list = fec_enet_register_offset;
+> -		reg_cnt = ARRAY_SIZE(fec_enet_register_offset);
+> -	} else {
+> +
+> +#if !defined(CONFIG_M5272) || defined(CONFIG_COMPILE_TEST)
+> +	if (of_machine_is_compatible("fsl,imx6ul")) {
 
-> Right. I guess it takes a while to get used to the idiom A || !A. But
-> then is it counter-productive to add an alternative that is apparently
-> not much more helpful? And then we have two ways to express the same
-> thing.
+There are stub of_machine_is_compatible(), so needn't #ifdef here.
 
-I think that expressing an optional dependency using "depends on
-A if A" is easier to read and understand than "depends on A || !A". And
-it is certainly easier to follow "depends on A if B" rather than
-"depends on A || !B" - even realizing those are equivalent takes a
-class in boolean logic ;)
-
-Also, most other Kconfig attributes support the trailing "if <expr>"
-so this makes the language more consistent.
-
-> So the follow-up questions:
-> 
-> - Can we come up with a more obvious alternative to the specific case of
->   "A || !A"?
-
-Meaning an entirely different syntax rather than "A if A"? Something
-like "optional_depends on A" (just a made-up example to make the 
-question clear)? That seems to be adding unnecessary syntax when the
-conditional dependency covers both cases ("A if B" and "A if A"). If
-there are any suggestions for a clearer way to express the purely
-optional dependency case then that is worth looking at - but honestly
-the entire concept seems a bit weird (even if widely used). It may 
-just naturally be hard to express the concept in a simple manner.
-
-> - Can we have examples of conversions from "A || !B" to "A if B" in
->   kernel Kconfigs? As in, don't add features without users.
-
-(In the Zephyr pull-request I listed a number of examples from that 
-project as well.)
-You are correct that most commonly conditional dependencies are used
-for *optional* dependencies, but there are a lot of other conditional
-ones as well. Note when grepping for examples look for both "!A || B"
-and "!B || A" - both forms are present in many places. A few examples:
-
-arch/arm64/Kconfig:
-  depends on ARM64_64K_PAGES || !ARM64_VA_BITS_52 -->
-  depends on ARM64_64K_PAGES if ARM64_VA_BITS_52
-arch/mips/Kconfig:
-  depends on SYS_SUPPORTS_HOTPLUG_CPU || !SMP -->
-  depends on SYS_SUPPORTS_HOTPLUG_CPU if SMP
-arch/riscv/Kconfig:
-  depends on CC_HAS_MIN_FUNCTION_ALIGNMENT || !RISCV_ISA_C -->
-  depends on CC_HAS_MIN_FUNCTION_ALIGNMENT if RISCV_ISA_C
-arch/x86/Kconfig:
-  depends on X86_64 || !SPARSEMEM -->
-  depends on X86_64 if SPARSEMEM
-drivers/acpi/Kconfig:
-  depends on ACPI_WMI || !X86 -->
-  depends on ACPI_WMI if X86
-drivers/bluetooth/Kconfig:
-  depends on USB || !BT_HCIBTUSB_MTK
-  depends on USB if BT_HCIBTUSB_MTK
-mm/Kconfig:
-  depends on !ARM || CPU_CACHE_VIPT -->
-  depends on CPU_CACHE_VIPT if ARM
-kernel/Kconfig.locks:
-  depends on !PREEMPTION || ARCH_INLINE_READ_UNLOCK -->
-  depends on ARCH_INLINE_READ_UNLOCK if PREEMPTION
-
-Are you suggesting an update to the commit text to call out the 
-optional dependency use-case explicitly?
-
-> My point is, there are like 10x more "A || !A" than there are "A || !B".
-> Feels weird to advertize and document the thing for the latter, when the
-> former is the more prevalent case.
-> 
-> $ git grep -E "depends on .*\b([A-Z0-9_]+) \|\| (\!\1\b|\1=n)"
-> 
-> I'm not at all opposed to the change per se.
-
-The Kconfig documentation will cover both cases (in next patch). The
-"A || !A" case is covered already in a special "Optional dependencies"
-section which I will update to use "A if A" as a preferred syntax. I 
-still suggest having the definition section for "depends on" using the 
-easier to understand example of "depends on A if B".
-
-Thanks, 
-
-Graham 
-
+Frank
+>  		reg_list = fec_enet_register_offset_6ul;
+>  		reg_cnt = ARRAY_SIZE(fec_enet_register_offset_6ul);
+>  	}
+> -#else
+> -	/* coldfire */
+> -	static u32 *reg_list = fec_enet_register_offset;
+> -	static const u32 reg_cnt = ARRAY_SIZE(fec_enet_register_offset);
+>  #endif
+>  	ret = pm_runtime_resume_and_get(dev);
+>  	if (ret < 0)
+> --
+> 2.34.1
+>
 
