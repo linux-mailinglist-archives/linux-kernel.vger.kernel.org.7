@@ -1,200 +1,280 @@
-Return-Path: <linux-kernel+bounces-895172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEB83C4D26C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:47:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E1C4C4D21B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:44:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 012903AD6A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:42:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81A9C189F2E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:43:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA30734FF66;
-	Tue, 11 Nov 2025 10:42:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D193D34F468;
+	Tue, 11 Nov 2025 10:42:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GRA2sHHO"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HLVPssYf"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A7BD34F24D;
-	Tue, 11 Nov 2025 10:42:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 788F434F461
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 10:42:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762857745; cv=none; b=BTLZLiSKdSRZ0zi5NOba+BVArVo3daFTmEB/rfh3T7YF6b2bBPURUg2TyX3ws6pDh+EtPvusKauRFDxVPb7a+H9PkbDy/5UXGboxzxIp3q8FsgGUTthvaJgL3bFPKLv3U5WY5ADhp4ydn6d+lvjXEEfaKHiaIg2uxE5LP0wBoBQ=
+	t=1762857775; cv=none; b=B5mCyxYQp+nCD0v9obvr7NTeESf3KNoyUUq5YqTDgDzuXFXp/kSDUBju75LsOzmQ4bMXmcCdULCSkgEYPq41O9yHrGJmKa+LZ92gkOjmU1sCVtwpNmW63TIqMTbyUDWarSHzz2vQ5mNvqVvgp+p8hquLLQzxJx5WIDqhYJmVJnA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762857745; c=relaxed/simple;
-	bh=EvBQ+nafnKKdJuiEBqoaBt041KfoiKj53G5fHkyybXs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p/LGH8fOkRmjUtxuk2v0zGMpIfgbv2s1p7cK5ro3QCiCVFi9SIYrwZBzBL3+ZLQwHq2Abr1vlk7ebCWAZPEJdlOGfeSi0O/sVd9X/sR1VcwCeAmLVAwPi8P3ehtz1NcKwXLUDTGv15mmhnA9dHlo2jqwTywJUwi1Y6d4II9Fo9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GRA2sHHO; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762857744; x=1794393744;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=EvBQ+nafnKKdJuiEBqoaBt041KfoiKj53G5fHkyybXs=;
-  b=GRA2sHHOTqocavXMsjP04KpBD/D67ZJIm84YxITXVXdIuYKbwLTOD8PX
-   zhgake1BdaMfqBb/yoIJRwBe3Kvx5s5wjZstI0OV6HvIErnAJbQYCLSej
-   TfwKKvl7wgGpYWFI7zkHLAqA+sJJjLTtaiABUUc4YeRjEa1payzmt5D3d
-   06Gda5eyCsfNkZDfMgvmHehJHBTYCZtsuJ3Dk7bDGgboZF6WP6/pi53H5
-   /S8G7TZBcdxYhyBr0g/2Sl0WcJct8XMLgnFRmWNqB2k9fshBPMQ/dqRJV
-   t/m1mEzGVP2sU46RVmzxAmvrjsT2PZMgoXT0GpqCyL14Fvvq/nJauBeOd
-   A==;
-X-CSE-ConnectionGUID: Nh7+Fk0aR6KcXk9iXhoNsw==
-X-CSE-MsgGUID: 6wPvfnXpQhm0Ktp2JAXVlg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11609"; a="90388553"
-X-IronPort-AV: E=Sophos;i="6.19,296,1754982000"; 
-   d="scan'208";a="90388553"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 02:42:23 -0800
-X-CSE-ConnectionGUID: bic6vsxET96kWEWmZy4Shw==
-X-CSE-MsgGUID: RrZPJKBeTIucI3ym3xcs/A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,296,1754982000"; 
-   d="scan'208";a="189195161"
-Received: from lkp-server01.sh.intel.com (HELO 7b01c990427b) ([10.239.97.150])
-  by fmviesa008.fm.intel.com with ESMTP; 11 Nov 2025 02:42:20 -0800
-Received: from kbuild by 7b01c990427b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vIlpJ-00033P-36;
-	Tue, 11 Nov 2025 10:42:17 +0000
-Date: Tue, 11 Nov 2025 18:42:15 +0800
-From: kernel test robot <lkp@intel.com>
-To: Ivan Vecera <ivecera@redhat.com>, netdev@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Petr Oros <poros@redhat.com>,
-	Prathosh Satish <Prathosh.Satish@microchip.com>,
-	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
-	Jiri Pirko <jiri@resnulli.us>, Michal Schmidt <mschmidt@redhat.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 5/6] dpll: zl3073x: Cache all output properties
- in zl3073x_out
-Message-ID: <202511111809.FLxbtr0Z-lkp@intel.com>
-References: <20251110175818.1571610-6-ivecera@redhat.com>
+	s=arc-20240116; t=1762857775; c=relaxed/simple;
+	bh=07HBWmrT/H7zno+mG0Fc4iUEDkZr7DmZa2LvkHNFOQU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hSJ0kv+xuvDot+TlXSkI5tYk8metC7zcaN31chOxtgD7MO5Ertsaxe2zsMMFdJ9+q3dNV/ZeHh3W1WJdtGHksaEyg9FdCfmarUshHpiAIevYE9cG7YzNda0VspFgJ6skf4MoBPyYPX/rO4kNAc1f5Mr51ELWItgkkfJ5PGbWnjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HLVPssYf; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-297f35be2ffso34285825ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 02:42:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762857773; x=1763462573; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fYUsDbsuuzTOSOtHBw8aAUbI3zAG5zqYtHfT8rBYa7k=;
+        b=HLVPssYftnHHNoapg3S2CqXrYMBkcu5mTq50K2WuFegHFT782sdFkBgXDclUscFsEB
+         FVm8iLMyj4O+navQXXvrXBFtUJ23yXKkPZxc+9aPFXYIv5yoJcBAMj5H+v+Iyrk2y0hL
+         /qSUdKroU9dP3tFuq4Mxm95FgMp/RF1VaqgRDSITHREpA1c/K5ptW6ZDKFhdgxpV11n4
+         OXCc/sgrI071IkdjBTplSWL5z+VuSLUmnuuxBEGieNWrVHT0cSijpUERXHBlEC8/CTJ/
+         XgTEj8OujyGezYSCfYM41EktMdo7PzOi4Nf7PekP3c++X7Ms5dziSdqyKEMS7SVqhSrN
+         ITPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762857773; x=1763462573;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fYUsDbsuuzTOSOtHBw8aAUbI3zAG5zqYtHfT8rBYa7k=;
+        b=Nzd23okMxr6euz4wOuJQ1ootejmIF0h0ZGTyx1MNUwRn9CJKDHOJ50Oe8JYC871veu
+         7bEvTTnmCj3GXclKL3bz+iJB+bd4ZoL0hozz43sPCGMK5jdDql0yPU0+VEpjIpGSLrcf
+         4lsseN4IS5fpj/+dFAjTBYLM/VB4xxUfMGEPOmS0NJnzIwdIu58zy1RjzPdOWFmdDKN4
+         O1+RRTAxxQhDTmlaNGkfGBy/snb7cQ5Po+LImBDGeZ8lm8BU/uE/1HWtctlUQLqgy7q/
+         BtyVZve2qBP8b5R8wqcKCs8qd15L3JEePS6ydxEJmxRgWcXJPfPSVHCgVfYVLqQIn4FA
+         Fh1w==
+X-Forwarded-Encrypted: i=1; AJvYcCUE+aIHJ3r+wg5IU0NkPAWaX47OxaxN2jOcQysgD0sWurDwyVYl7DNC/Z371o0VGJLK03fMcZJ6ys/SGFA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzaKmq6+QqIYgclC0UZnMNnrFkm03OuEGzoyZ5rqnNCPegzbQT
+	Gyb7jvzC7qIFkKra2EjCXacaKbfBVkl5Lj1whhQjLm8ATm1Do7sdWPzE
+X-Gm-Gg: ASbGncvIpjW0lrxi+/fHSxfy6zRX/Eb3PTapU4NkDkKMgHIGa1Cd8Q2m5BMOcub1A8f
+	kVCXDmR/DqdbkSymSy7gA/fORvDHXvWKapvOoGSWIPC46va5v94OVHDMOn2oylEt2L457gApcX5
+	NNcbBKwfAh/DROKSA8LOAtxgf44LIpbfXBA7oZ93wTKCoj8e8l0w0jZXvkR8bJIkZoCcVemhojd
+	C4PlPq3JImJDSH0PACcKCfUeOboxEM7a/iMl6MuzpFlDbf5goEyV4shJUoHsYCLYhqUYqqRwVZk
+	bQFGFYFmWHx8hSiqwM0ofn81XWJPsCbCmhQ8weJfnrH0ZuPRYd493Rjhy9D/l/O+Ld5kyPz4SAn
+	YZg1A3/auYlQMsAHPzPZ/CQZlhVC6ODONkR1cSA2AsIrN9+L6FQLzyqpWGm3lt2hxbT6fAoxGSm
+	bfnUUFyPoV0hTRZeHlcm8bFBsYFg==
+X-Google-Smtp-Source: AGHT+IHKKW8uq/mixyYVwcE/GpKbjkb15Z3bYzo5IdPyn+w9o2ptPT8ipRXj2MXgq6Fk0DjaNvvO6g==
+X-Received: by 2002:a17:902:e78f:b0:28d:18d3:46ca with SMTP id d9443c01a7336-297e56df08emr157512625ad.49.1762857772692;
+        Tue, 11 Nov 2025 02:42:52 -0800 (PST)
+Received: from test-HP-Desktop-Pro-G3.. ([103.218.174.23])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29846334db5sm9875235ad.32.2025.11.11.02.42.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Nov 2025 02:42:52 -0800 (PST)
+From: Sudarshan Shetty <tessolveupstream@gmail.com>
+To: andersson@kernel.org,
+	konradybcio@kernel.org
+Cc: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Sudarshan Shetty <tessolveupstream@gmail.com>
+Subject: [PATCH v1 1/2] dt-bindings: arm: qcom: Add waveshare MIPI-DSI panels support
+Date: Tue, 11 Nov 2025 16:12:44 +0530
+Message-Id: <20251111104245.3420041-1-tessolveupstream@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251110175818.1571610-6-ivecera@redhat.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Ivan,
+Device tree bindings for Waveshare MIPI-DSI panels
+of various sizes (5.0, 5.5, 7.0, 8.0, and 10.1).
+These panels require proper power sequencing via an external
+regulator and a backlight node for brightness control.
 
-kernel test robot noticed the following build warnings:
+Signed-off-by: Sudarshan Shetty <tessolveupstream@gmail.com>
+---
+ .../display/panel/waveshare,dsi-panel.yaml    | 84 +++++++++++++++++++
+ ...waveshare,touchscreen-panel-regulator.yaml | 72 ++++++++++++++++
+ 2 files changed, 156 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/panel/waveshare,dsi-panel.yaml
+ create mode 100644 Documentation/devicetree/bindings/regulator/waveshare,touchscreen-panel-regulator.yaml
 
-[auto build test WARNING on net-next/main]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Ivan-Vecera/dpll-zl3073x-Store-raw-register-values-instead-of-parsed-state/20251111-020236
-base:   net-next/main
-patch link:    https://lore.kernel.org/r/20251110175818.1571610-6-ivecera%40redhat.com
-patch subject: [PATCH net-next 5/6] dpll: zl3073x: Cache all output properties in zl3073x_out
-config: sparc64-allmodconfig (https://download.01.org/0day-ci/archive/20251111/202511111809.FLxbtr0Z-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 996639d6ebb86ff15a8c99b67f1c2e2117636ae7)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251111/202511111809.FLxbtr0Z-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202511111809.FLxbtr0Z-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/dpll/zl3073x/dpll.c:1488:43: warning: variable 'name' is uninitialized when used here [-Wuninitialized]
-    1488 |                                 "%s%u is driven by different DPLL\n", name,
-         |                                                                       ^~~~
-   drivers/dpll/zl3073x/dpll.c:1467:18: note: initialize the variable 'name' to silence this warning
-    1467 |         const char *name;
-         |                         ^
-         |                          = NULL
-   drivers/dpll/zl3073x/dpll.c:1651:28: warning: variable 'ref' set but not used [-Wunused-but-set-variable]
-    1651 |         const struct zl3073x_ref *ref;
-         |                                   ^
-   2 warnings generated.
-
-
-vim +/name +1488 drivers/dpll/zl3073x/dpll.c
-
-75a71ecc24125f9 Ivan Vecera 2025-07-04  1446  
-75a71ecc24125f9 Ivan Vecera 2025-07-04  1447  /**
-75a71ecc24125f9 Ivan Vecera 2025-07-04  1448   * zl3073x_dpll_pin_is_registrable - check if the pin is registrable
-75a71ecc24125f9 Ivan Vecera 2025-07-04  1449   * @zldpll: pointer to zl3073x_dpll structure
-75a71ecc24125f9 Ivan Vecera 2025-07-04  1450   * @dir: pin direction
-75a71ecc24125f9 Ivan Vecera 2025-07-04  1451   * @index: pin index
-75a71ecc24125f9 Ivan Vecera 2025-07-04  1452   *
-75a71ecc24125f9 Ivan Vecera 2025-07-04  1453   * Checks if the given pin can be registered to given DPLL. For both
-75a71ecc24125f9 Ivan Vecera 2025-07-04  1454   * directions the pin can be registered if it is enabled. In case of
-75a71ecc24125f9 Ivan Vecera 2025-07-04  1455   * differential signal type only P-pin is reported as registrable.
-75a71ecc24125f9 Ivan Vecera 2025-07-04  1456   * And additionally for the output pin, the pin can be registered only
-75a71ecc24125f9 Ivan Vecera 2025-07-04  1457   * if it is connected to synthesizer that is driven by given DPLL.
-75a71ecc24125f9 Ivan Vecera 2025-07-04  1458   *
-75a71ecc24125f9 Ivan Vecera 2025-07-04  1459   * Return: true if the pin is registrable, false if not
-75a71ecc24125f9 Ivan Vecera 2025-07-04  1460   */
-75a71ecc24125f9 Ivan Vecera 2025-07-04  1461  static bool
-75a71ecc24125f9 Ivan Vecera 2025-07-04  1462  zl3073x_dpll_pin_is_registrable(struct zl3073x_dpll *zldpll,
-75a71ecc24125f9 Ivan Vecera 2025-07-04  1463  				enum dpll_pin_direction dir, u8 index)
-75a71ecc24125f9 Ivan Vecera 2025-07-04  1464  {
-75a71ecc24125f9 Ivan Vecera 2025-07-04  1465  	struct zl3073x_dev *zldev = zldpll->dev;
-75a71ecc24125f9 Ivan Vecera 2025-07-04  1466  	bool is_diff, is_enabled;
-75a71ecc24125f9 Ivan Vecera 2025-07-04  1467  	const char *name;
-75a71ecc24125f9 Ivan Vecera 2025-07-04  1468  
-75a71ecc24125f9 Ivan Vecera 2025-07-04  1469  	if (dir == DPLL_PIN_DIRECTION_INPUT) {
-b35db42141ccf2a Ivan Vecera 2025-11-10  1470  		u8 ref_id = zl3073x_input_pin_ref_get(index);
-b35db42141ccf2a Ivan Vecera 2025-11-10  1471  		const struct zl3073x_ref *ref;
-75a71ecc24125f9 Ivan Vecera 2025-07-04  1472  
-75a71ecc24125f9 Ivan Vecera 2025-07-04  1473  		/* Skip the pin if the DPLL is running in NCO mode */
-75a71ecc24125f9 Ivan Vecera 2025-07-04  1474  		if (zldpll->refsel_mode == ZL_DPLL_MODE_REFSEL_MODE_NCO)
-75a71ecc24125f9 Ivan Vecera 2025-07-04  1475  			return false;
-75a71ecc24125f9 Ivan Vecera 2025-07-04  1476  
-b35db42141ccf2a Ivan Vecera 2025-11-10  1477  		name = "REF";
-b35db42141ccf2a Ivan Vecera 2025-11-10  1478  		ref = zl3073x_ref_state_get(zldev, ref_id);
-b35db42141ccf2a Ivan Vecera 2025-11-10  1479  		is_diff = zl3073x_ref_is_diff(ref);
-b35db42141ccf2a Ivan Vecera 2025-11-10  1480  		is_enabled = zl3073x_ref_is_enabled(ref);
-75a71ecc24125f9 Ivan Vecera 2025-07-04  1481  	} else {
-75a71ecc24125f9 Ivan Vecera 2025-07-04  1482  		/* Output P&N pair shares single HW output */
-75a71ecc24125f9 Ivan Vecera 2025-07-04  1483  		u8 out = zl3073x_output_pin_out_get(index);
-75a71ecc24125f9 Ivan Vecera 2025-07-04  1484  
-75a71ecc24125f9 Ivan Vecera 2025-07-04  1485  		/* Skip the pin if it is connected to different DPLL channel */
-65b8e8e3bf41fda Ivan Vecera 2025-11-10  1486  		if (zl3073x_dev_out_dpll_get(zldev, out) != zldpll->id) {
-75a71ecc24125f9 Ivan Vecera 2025-07-04  1487  			dev_dbg(zldev->dev,
-75a71ecc24125f9 Ivan Vecera 2025-07-04 @1488  				"%s%u is driven by different DPLL\n", name,
-75a71ecc24125f9 Ivan Vecera 2025-07-04  1489  				out);
-75a71ecc24125f9 Ivan Vecera 2025-07-04  1490  
-75a71ecc24125f9 Ivan Vecera 2025-07-04  1491  			return false;
-75a71ecc24125f9 Ivan Vecera 2025-07-04  1492  		}
-75a71ecc24125f9 Ivan Vecera 2025-07-04  1493  
-11e61915b41b996 Ivan Vecera 2025-11-10  1494  		name = "OUT";
-65b8e8e3bf41fda Ivan Vecera 2025-11-10  1495  		is_diff = zl3073x_dev_out_is_diff(zldev, out);
-65b8e8e3bf41fda Ivan Vecera 2025-11-10  1496  		is_enabled = zl3073x_dev_output_pin_is_enabled(zldev, index);
-75a71ecc24125f9 Ivan Vecera 2025-07-04  1497  	}
-75a71ecc24125f9 Ivan Vecera 2025-07-04  1498  
-75a71ecc24125f9 Ivan Vecera 2025-07-04  1499  	/* Skip N-pin if the corresponding input/output is differential */
-75a71ecc24125f9 Ivan Vecera 2025-07-04  1500  	if (is_diff && zl3073x_is_n_pin(index)) {
-75a71ecc24125f9 Ivan Vecera 2025-07-04  1501  		dev_dbg(zldev->dev, "%s%u is differential, skipping N-pin\n",
-75a71ecc24125f9 Ivan Vecera 2025-07-04  1502  			name, index / 2);
-75a71ecc24125f9 Ivan Vecera 2025-07-04  1503  
-75a71ecc24125f9 Ivan Vecera 2025-07-04  1504  		return false;
-75a71ecc24125f9 Ivan Vecera 2025-07-04  1505  	}
-75a71ecc24125f9 Ivan Vecera 2025-07-04  1506  
-75a71ecc24125f9 Ivan Vecera 2025-07-04  1507  	/* Skip the pin if it is disabled */
-75a71ecc24125f9 Ivan Vecera 2025-07-04  1508  	if (!is_enabled) {
-75a71ecc24125f9 Ivan Vecera 2025-07-04  1509  		dev_dbg(zldev->dev, "%s%u%c is disabled\n", name, index / 2,
-75a71ecc24125f9 Ivan Vecera 2025-07-04  1510  			zl3073x_is_p_pin(index) ? 'P' : 'N');
-75a71ecc24125f9 Ivan Vecera 2025-07-04  1511  
-75a71ecc24125f9 Ivan Vecera 2025-07-04  1512  		return false;
-75a71ecc24125f9 Ivan Vecera 2025-07-04  1513  	}
-75a71ecc24125f9 Ivan Vecera 2025-07-04  1514  
-75a71ecc24125f9 Ivan Vecera 2025-07-04  1515  	return true;
-75a71ecc24125f9 Ivan Vecera 2025-07-04  1516  }
-75a71ecc24125f9 Ivan Vecera 2025-07-04  1517  
-
+diff --git a/Documentation/devicetree/bindings/display/panel/waveshare,dsi-panel.yaml b/Documentation/devicetree/bindings/display/panel/waveshare,dsi-panel.yaml
+new file mode 100644
+index 000000000000..a42ce065124f
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/panel/waveshare,dsi-panel.yaml
+@@ -0,0 +1,84 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/display/panel/waveshare,dsi-panel.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Waveshare 10.1" DSI Touch Display Panel
++
++maintainers:
++  - Sudarshan Shetty <tessolveupstream@gmail.com>
++
++allOf:
++  - $ref: panel-common.yaml#
++
++properties:
++  compatible:
++    enum:
++      - waveshare,12.3-dsi-touch-a,4lane
++      - waveshare,10.1-dsi-touch-a
++      - waveshare,10.1-dsi-touch-a-4lane
++      - waveshare,10.1-dsi-touch-b
++      - waveshare,10.1-dsi-touch-b,4lane
++      - waveshare,9.0-dsi-touch-b
++      - waveshare,9.0-dsi-touch-b,4lane
++      - waveshare,8.8-dsi-touch-a
++      - waveshare,8.0-dsi-touch-a
++      - waveshare,8.0-dsi-touch-a-4lane
++      - waveshare,7.0-dsi-touch-a
++      - waveshare,7.0-dsi-touch-b
++      - waveshare,5.5-dsi-touch-a
++      - waveshare,5.0-dsi-touch-a
++      - waveshare,4.0-dsi-touch-c
++      - waveshare,3.4-dsi-touch-c
++
++  reg:
++    description: DSI virtual channel
++    maxItems: 1
++
++  vdd-supply:
++    description: Power supply regulator for the panel
++
++  reset-gpios:
++    maxItems: 1
++    description: GPIO to control panel reset
++
++  enable-gpios:
++    maxItems: 1
++    description: GPIO to control panel power enable
++
++required:
++  - compatible
++  - reg
++  - vdd-supply
++  - reset-gpios
++  - enable-gpios
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/gpio/gpio.h>
++
++    dsi@ae94000 {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        panel@1 {
++            compatible = "waveshare,10.1-dsi-touch-a";
++            reg = <1>;
++            vdd-supply = <&vreg_l11a>;
++            reset-gpios = <&display_mcu 1 GPIO_ACTIVE_HIGH>;
++            enable-gpios = <&display_mcu 2 GPIO_ACTIVE_HIGH>;
++
++            port {
++                panel_in: endpoint {
++                    remote-endpoint = <&mdss_dsi0_out>;
++                };
++            };
++        };
++    };
++
++    mdss_dsi0_out: endpoint {
++        remote-endpoint = <&panel_in>;
++    };
+diff --git a/Documentation/devicetree/bindings/regulator/waveshare,touchscreen-panel-regulator.yaml b/Documentation/devicetree/bindings/regulator/waveshare,touchscreen-panel-regulator.yaml
+new file mode 100644
+index 000000000000..be81be5d2d74
+--- /dev/null
++++ b/Documentation/devicetree/bindings/regulator/waveshare,touchscreen-panel-regulator.yaml
+@@ -0,0 +1,72 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/regulator/waveshare,touchscreen-panel-regulator.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Waveshare Touchscreen Panel Regulator
++
++maintainers:
++  - Sudarshan Shetty <tessolveupstream@gmail.com>
++
++description: |
++  Regulator driver for Waveshare touchscreen display units.
++  This regulator enables and disables panel power and provides
++  backlight control over I2C.
++
++properties:
++  compatible:
++    const: waveshare,touchscreen-panel-regulator
++
++  reg:
++    maxItems: 1
++    description: I2C address of the regulator device
++
++  vin-supply:
++    description: Input supply regulator for the panel
++
++  enable-gpios:
++    maxItems: 1
++    description: GPIO to enable/disable regulator
++
++required:
++  - compatible
++  - reg
++  - vin-supply
++
++additionalProperties: false
++
++examples:
++  - |
++    /dts-v1/;
++    /plugin/;
++
++    / {
++        #address-cells = <1>;
++        #size-cells = <1>;
++
++        gpio: gpio-controller {
++            compatible = "test,gpio";
++            #gpio-cells = <2>;
++        };
++
++        vdd_3v3: regulator {
++            compatible = "regulator-fixed";
++            regulator-name = "vdd_3v3";
++            regulator-min-microvolt = <3300000>;
++            regulator-max-microvolt = <3300000>;
++        };
++
++        i2c@980000 {
++            #address-cells = <1>;
++            #size-cells = <0>;
++            compatible = "test,i2c";
++
++            panel-regulator@3c {
++                compatible = "waveshare,touchscreen-panel-regulator";
++                reg = <0x3c>;
++                vin-supply = <&vdd_3v3>;
++                enable-gpios = <&gpio 2 0>; /* active high */
++            };
++        };
++    };
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.34.1
+
 
