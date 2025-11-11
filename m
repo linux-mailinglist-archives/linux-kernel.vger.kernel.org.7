@@ -1,81 +1,166 @@
-Return-Path: <linux-kernel+bounces-896024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF8D4C4F825
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 19:52:52 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id B57BDC4F831
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 19:54:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C006188E3FC
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 18:52:35 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 590BD4E78CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 18:54:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14E7329D27E;
-	Tue, 11 Nov 2025 18:52:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 449662C028F;
+	Tue, 11 Nov 2025 18:54:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hJaY3/c4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="A7V9kNN7"
+Received: from PH0PR06CU001.outbound.protection.outlook.com (mail-westus3azon11011011.outbound.protection.outlook.com [40.107.208.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 689AB3AA19B;
-	Tue, 11 Nov 2025 18:52:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762887122; cv=none; b=VtJFgxERkUY8fXmYKiFV/g/cqoTVlU+Ip2m3Opa0YeQDuPTnZOvAkBXk3h+PdkXV+4QRD42MVv73KDBAKVBKr0sZScmBMvPy9wvVstETFVflehksF1XosrabAH5vR/A9CVpwuTLgaoMEdhqHw9N63oyRCroyvk629CDGF8UohJ4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762887122; c=relaxed/simple;
-	bh=wKqIegUi0DiJka0SaYsAR82k/GO5oanlw/ZrqT+rYI4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eRaEEZ6x8DL4YFhO/aFSbo6J4lErvPaKMJtsAoEeFK2d6bX/f3ZyGdp8UI+oKpujdUwwrln5M1ZrJXjgTrApI7uqU+yqi3YQB9r+50sAM3R8lYq5mnIXiYKjB1IYvcXcWV9a7N5Ro0Evyz78wEZ0iVodakjanUCgqQBbJjPWKQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hJaY3/c4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFDF5C2BC86;
-	Tue, 11 Nov 2025 18:52:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762887121;
-	bh=wKqIegUi0DiJka0SaYsAR82k/GO5oanlw/ZrqT+rYI4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hJaY3/c4Hz0IicNy9MoLgjQ72hFd73LWM4TMqP63GTIdB5LtGou1hjNDUDGl+e7zD
-	 AT6j1WygoT+efMp5+V2fSzW03Cm+yUOQUbt42/hpdA2H4tZckgvVxWisb1xdKNSWal
-	 f/bPa+DZO92VdcbG49H/eXwNxeehNe6TnMde639i1q9Un8Jq0i+x5usTEbtkDlYX/S
-	 Pb1PB14S2v+U/XSQt8C6/C+niFgrViOBm/icjKuwBROUgkWHgCALRlB6UybWi9e4GJ
-	 fXObnVEmiXEAFwUpr/hOzM6bwlPNmfXhiDxOGdi/z40pF6S6E/XfkVvN4u02zuI/yo
-	 mkVtoSvrX+DQA==
-Date: Tue, 11 Nov 2025 08:52:00 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Leon Huang Fu <leon.huangfu@shopee.com>
-Cc: mkoutny@suse.com, akpm@linux-foundation.org, cgroups@vger.kernel.org,
-	corbet@lwn.net, hannes@cmpxchg.org, jack@suse.cz,
-	joel.granados@kernel.org, kyle.meyer@hpe.com, lance.yang@linux.dev,
-	laoar.shao@gmail.com, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	mclapinski@google.com, mhocko@kernel.org, muchun.song@linux.dev,
-	roman.gushchin@linux.dev, shakeel.butt@linux.dev
-Subject: Re: [PATCH mm-new v3] mm/memcontrol: Add memory.stat_refresh for
- on-demand stats flushing
-Message-ID: <aROF0BXEJtCM7c12@slm.duckdns.org>
-References: <ewcsz3553cd6ooslgzwbubnbaxwmpd23d2k7pw5s4ckfvbb7sp@dffffjvohz5b>
- <20251111061343.71045-1-leon.huangfu@shopee.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F4CD2848AD;
+	Tue, 11 Nov 2025 18:54:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.208.11
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762887251; cv=fail; b=HniZSey//3gmA3y5nULckBJKDljEJBRZuY06Me7MnC99U4hzSDTyfOmfaGKwThTgPY5obmpkkKLNL26FsZHTZFWkIZELJA7r9pRKCAhTTmxFsC1pzDrwB4WE2pGY8p4Uqlr5ZFVkU71qEd+RexLHeZRMmQJgAEi4wwvcoVX7Kgo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762887251; c=relaxed/simple;
+	bh=pOOwNRCqfKmFRuyosPppnX96YAIUFxfnsB4H21S/pHo=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S6qc7XOx6niusxJIYsJYvhrsLv+MrgwcdFZHe/u9uvm9rYhScybM8YZscPsxqeDcFK1OdkybIZEgpgmxf1j+AY57WDVJsD6ItpF+XjCLEYsLanC9agOOHUS/YQGfu2t/Rgu4lSLupHOwpCwxllZvh88MJocpOxqfH9gQkYVDyMY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=A7V9kNN7; arc=fail smtp.client-ip=40.107.208.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=bYWqjoOXRlrCvgIkdEZZvI4AL0RplXmDKe5SWVJNALMItCG0cVN8RG4bC9Pb9YoCrKEt4nOLkOPlRCcB4uvf5Mzn56VYj1fVgvOPv6WazQFArgkDF9BJ4WxXRHJtJDy47N8RIEIZ6Y37YQDJig1zsNxNKetiP0i/cweQsx85fs7FlAtGU2bxw8jjPJqHzlRGcLi6DrWNiKHt6umKGTH9MRQ6msrzx7dvnuiJsGsHYDCKlYxZvF7DKX18FUzI3KkFJm2KGGtCsqbm+h6EWglszTJAhfArtFpf3O95fyT0joUMFUsg3z3MsA8I6pL+Kr9E05FznAQ+LmYeUhtzqti8XA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fBwGRr5WrcPHbi9gEPY164jiLMQGJozZD1IPSrcLy0A=;
+ b=czgmebCKmiejPPK/Jw6sBZ/1QsTcm/6mbvLCSCvzFToopY+4qbeOApd0giZtMf88iAN8GaziTCLmUgHzAa6eiSsH0APosyLtXVrWf3u8LL6F2KRxXBtdUn5r2g8I60WNQqqbS8kapyHo1UtZnxx1tgpRHGaDmrSG+R6ap8tsN8yH7E3OMxTivXLvqR9S3tkaX9lO8AbfeyNnmG2tM5qxoaq5yvS90gmVW01/bnxAgCNauxiaqA8Ta/p9rVxbmAVx4eTKNBfw+ghw87Oa2jBQYSY3b/b1WERZxlQt/loQYNMEU5ViqCDewOdQ94r5fv+ha3OJ+NG1J8SKO+oOBeOrmA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fBwGRr5WrcPHbi9gEPY164jiLMQGJozZD1IPSrcLy0A=;
+ b=A7V9kNN76YVIm8TVytt0pxNJHlIMAUvKsXWscQxSCQ0kvYRV/u7ZcfoIOhKmShWIwwQn9D8x2zAiIk1fI8D2btf34BSVQ0kvdXGI2dByszKV5As4yWzoXLQMCO7P71IAf03m8a2qRyigQ0Oc4s545yTSeAyI3itiU64EvrELstXBGiF6ywYlBDPW+/uAm1uJEGsBAN8qFOm/rmvvhWs4p1wLWb0uSbyUXGbYtc2xide8Yk+QFhBvFyWeajmG80CV+4u0mU4+OkKjJwVIQ2ZA+ti71k3hyffx5rP+sK2ftxJ/rEhqCiMZjvvU5gxsNMsbnY8rxyA+xg19ixElcefWLQ==
+Received: from BN9PR03CA0594.namprd03.prod.outlook.com (2603:10b6:408:10d::29)
+ by DS7PR12MB5790.namprd12.prod.outlook.com (2603:10b6:8:75::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Tue, 11 Nov
+ 2025 18:54:06 +0000
+Received: from BN2PEPF000055DF.namprd21.prod.outlook.com
+ (2603:10b6:408:10d:cafe::1e) by BN9PR03CA0594.outlook.office365.com
+ (2603:10b6:408:10d::29) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9298.16 via Frontend Transport; Tue,
+ 11 Nov 2025 18:54:10 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ BN2PEPF000055DF.mail.protection.outlook.com (10.167.245.9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9343.0 via Frontend Transport; Tue, 11 Nov 2025 18:54:06 +0000
+Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 11 Nov
+ 2025 10:54:00 -0800
+Received: from drhqmail201.nvidia.com (10.126.190.180) by
+ drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.20; Tue, 11 Nov 2025 10:54:00 -0800
+Received: from Asurada-Nvidia (10.127.8.11) by mail.nvidia.com
+ (10.126.190.180) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Tue, 11 Nov 2025 10:53:59 -0800
+Date: Tue, 11 Nov 2025 10:53:58 -0800
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+CC: Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>, "Joerg
+ Roedel" <joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin Murphy
+	<robin.murphy@arm.com>, Lu Baolu <baolu.lu@linux.intel.com>,
+	<iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<linux-hardening@vger.kernel.org>
+Subject: Re: [PATCH] iommufd/driver: Fix counter initialization for
+ counted_by annotation
+Message-ID: <aROGRiysoG5ufXeI@Asurada-Nvidia>
+References: <aRL7ZFFqM5bRTd2D@kspp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20251111061343.71045-1-leon.huangfu@shopee.com>
+In-Reply-To: <aRL7ZFFqM5bRTd2D@kspp>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN2PEPF000055DF:EE_|DS7PR12MB5790:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1a90ac4c-1e84-43b7-b6f5-08de2153b0b8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|7416014|376014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?SmDdHWU158h8/NGlPNDHQrlXZZfWO8rn2YdmCTOR17ZKtpD2m/7DFldKHaDN?=
+ =?us-ascii?Q?UAxrS+6LmcQWTHuIslTWVC0pY2UQ9oYuVUiew75GVdwTFsfjhqfE8wcpKUQI?=
+ =?us-ascii?Q?zpSwCLZH4gLGoVFCxFSPmx05YQE7DMLab5KTgKKFnF1Ptr1XKp2aZyK7ohrO?=
+ =?us-ascii?Q?fIXEapN5pArcsAMq9dzyF34/7FvbwTdc3QORqDadderZ3a24AEvHiYdemDl8?=
+ =?us-ascii?Q?pisyg0T+GmxVnSS6gbysCOy1dRpG9xBfqLGGjdnfZGN8HYE7BxjgUHQweKNe?=
+ =?us-ascii?Q?bBF8m1ff/+bunVe9a349L03EME3WJYQ8ZTc19y13hgRjBHHhU/hE2qnZgFYP?=
+ =?us-ascii?Q?gu54evDvIwm7Udpnh3kNB14iKs4QN5z7bdh3IwfVmVNcu0U0UFUC50CiL7dY?=
+ =?us-ascii?Q?BdnLWk7Tpf9AfSitKjn8CPQim9X5NYWvhoS9kZ+gXuluw8RhrhkGJkYWAP6d?=
+ =?us-ascii?Q?yoLAK6DG8qRmdr36ys760z90O9TBZWPLIsKku9HcVEii1j8MJG2WqwCufgUc?=
+ =?us-ascii?Q?779anYrIdBIzPxJHSGSECWuV56kXOFyDdSAXpyziHsD7jUnFSftlpbkWVLdW?=
+ =?us-ascii?Q?s9Wux445Ul+z3GkTUrz3D3d62wHkwLvqcboBovBugTPfXxvekjb9RerqMLoR?=
+ =?us-ascii?Q?WcOigg7KxUg7m5BGhjMAk7fQdLf3lopTa5lHRUq4tFOMtSEHSkD7zlo8l2kI?=
+ =?us-ascii?Q?Sfmypsgw6CTzPjKdmpusS4M2etjid/KZNO6TtebVcOiykDr0Rk+S5jN0CreK?=
+ =?us-ascii?Q?svcTV5XEGWiUkDxy0p3SI195l79D/N/Wng50wCgEQTUJDkOma6qBCmuEQj2k?=
+ =?us-ascii?Q?DL4PTwn9NivFWnEWBYHoHm6nZ4lGKZF+svmRV18oB9x7CIC+SZYFLso8jffJ?=
+ =?us-ascii?Q?JmRyS4wJMNBdiILfZwLEVc5BcZ5ZAkyCTLLHTtEdX12M/8qJQ2Ns2jsE50B2?=
+ =?us-ascii?Q?4eTtYxqZ+4FAfpWNYLDi3BYY0Ap9WrzAsqnW9qPvHh9RtXZuTphHS9HSGnav?=
+ =?us-ascii?Q?Qt8o5ZXiuOyaVPzjrvrDlzm4gw4lKg1iHo4ehkL/AnO0SvQyj1JEsJe8kADy?=
+ =?us-ascii?Q?bcxPGHFlBAxZjeBeRVWaw2SGnisODhqcprnyqOV5H+GOjrHt9r82CpdJxZML?=
+ =?us-ascii?Q?oZ9y58ki6Ej6YIyGx/JEeMrngTuusP2Nn6eZMZeVbSJNf+YlqaAjGlqG9+Tb?=
+ =?us-ascii?Q?WIh9heZeMlTfCg+VeJHcETtptUBcUpbiQC9HDlurt6gUFC+wB0jIpxGcddUs?=
+ =?us-ascii?Q?/KJvPpRhtWc6NM5wbH9a4eL8M61DdSFpWHtifk0c8OGtjJgiuKb1ozK1C7Et?=
+ =?us-ascii?Q?7cOG6n0xhrWzgNkDmTqMsm9T7foq0y1Adu9riYIZsnACqbUAfKQ0OVCYV7po?=
+ =?us-ascii?Q?cPOzyt19NN9tlW768gh37bs+lt0blrJvIbg4y7h0NWvK7rUHmZUCCVfSh4Fr?=
+ =?us-ascii?Q?VIDECSHjKsDnxvF+GAwWr11UdMyY8fcUyXT085QQNKT27ZHylqM8JbbPPzyS?=
+ =?us-ascii?Q?HlglhGb+5WZoquSil9sxmZEo5lFkV33qmcqsphEG/Fzrp5IooLJE5UPFQqRe?=
+ =?us-ascii?Q?NTC3qJ/gd2HvxHHL3eQ=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(7416014)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Nov 2025 18:54:06.2369
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1a90ac4c-1e84-43b7-b6f5-08de2153b0b8
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN2PEPF000055DF.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB5790
 
-On Tue, Nov 11, 2025 at 02:13:42PM +0800, Leon Huang Fu wrote:
-> We are going to run kernels on 224/256 cores machines, and the flush threshold
-> is 16384 on a 256-core machine. That means we will have stale statistics often,
-> and we will need a way to improve the stats accuracy.
-
-The thing is that these machines are already common and going to be more and
-more common. These are cases that aren't all that special, so I really hope
-this could be solved in a more generic manner.
-
-Thanks.
-
--- 
-tejun
+On Tue, Nov 11, 2025 at 06:01:24PM +0900, Gustavo A. R. Silva wrote:
+> One of the requirements for counted_by annotations is that the counter
+> member must be initialized before the first reference to the
+> flexible-array member.
+> 
+> Move the vevent->data_len = data_len; initialization to before the
+> first access to flexible array vevent->event_data.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: e8e1ef9b77a7 ("iommufd/viommu: Add iommufd_viommu_report_event helper")
+> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+ 
+Reviewed-by: Nicolin Chen <nicolinc@nvidia.com>
 
