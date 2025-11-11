@@ -1,101 +1,132 @@
-Return-Path: <linux-kernel+bounces-895493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E48FCC4E18E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:24:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E095C4E194
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:24:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33E8D3AD3E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:23:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7BFA3AD066
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:24:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01F5133AD8E;
-	Tue, 11 Nov 2025 13:23:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 345BD33AD85;
+	Tue, 11 Nov 2025 13:24:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="L4x6/pZ3"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="LF62p4jW"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81A66331A75;
-	Tue, 11 Nov 2025 13:23:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2568A3AA195;
+	Tue, 11 Nov 2025 13:24:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762867427; cv=none; b=qRPRwlHVedo3GOIUQO465luaV2slpzbNLnJAZviLEhGn8+TQWSPabEVU3ivi4Fam+lSIA6saVvl3hxhklFovXybLl/kWvJj6J4wTDxwK+UOxbHVhcnnpf+FPdkxTNLTR0Yqnoq2Bj/yrx/Si3lbrfs95QrXOKm44+I58iOflK/4=
+	t=1762867489; cv=none; b=JHBIzCFtYnP6cb07M8ULe9WDhPuUbhLwmy1voneP4+/aclC51hMPh+ln/0kU1vI+fM/rZKq0+GjpEypOHjvazkzw/4lLnxw94SZYVE7oUx8iR9KRjNCtARdVk4LZAduPCr7vJWG/KOPCtRRTdJ2zUZBbOwxrjB4XxqBBiDTMm1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762867427; c=relaxed/simple;
-	bh=7ev7hD2A8uKF1uNS8Br/14vX/hw22t4AgYbwoWxGJqs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fgsePmFqrIdcX0b+oJOLR5oLdrOqus4XtgS3Ci95JveIo3Ux/LoL2OXWoFsXyMjmaxDY5d9SepDTZ4Wp3cdDilEFRxEac0Aurq6hAiUqnlgxVgb/2hU/cZslEt66B/qZHAlMXsIIExDECQgMewnYhr6lD0mHw0sEUstiAPdh5l4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=L4x6/pZ3; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=5qxymBp9GB4UQdBJjwPk5UAkWsjQwEJnJTooqTUl26w=; b=L4x6/pZ3eb2S0PoM/dj6KXHWU4
-	d6gtIVKgSqAYOzmaJUrjJ53OYNV2Mz3eyWFWQtoIektBE/edaIEIklyCucGt0qWEwaQPLlE+BGa/i
-	GoVUff3FycoOFTpKWLGaf9m3Wp5nIBVn4M3R8Cdbu0ieUR0Fy40lPK01nsM8l0eyKouY=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1vIoLK-00DdGi-BE; Tue, 11 Nov 2025 14:23:30 +0100
-Date: Tue, 11 Nov 2025 14:23:30 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Horatiu Vultur <horatiu.vultur@microchip.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	Vadim Fedorenko <vadim.fedorenko@linux.dev>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH net-next v3 2/3] net: phy: mscc: Consolidate probe
- functions into a common helper
-Message-ID: <537d14f5-b01f-4472-a69a-a8298bde5c68@lunn.ch>
-References: <20251111091047.831005-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20251111091047.831005-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	s=arc-20240116; t=1762867489; c=relaxed/simple;
+	bh=+g1uK21001nOzYIJ7ry6HKSrTlukMfqwQbtcT3JfBv4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fuxOGuHpZIjLkEMoxkUJKXZ1tIui5qcVie5zPOhslnzC/ytz/DykOyRLAmGWoWwh3f6yHSGeDa8CYzC0hpmOios3mFLuZFs21SUZSSM/T14vEa9zmrMj0794NRz6piiQgfGAlGn+9GNmNAG8xkHoUnnzJ2fNGYXN32wva3RiWe8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=LF62p4jW; arc=none smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5ABDAYXF009868;
+	Tue, 11 Nov 2025 13:24:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=corp-2025-04-25; bh=5LKeLHsesFfV72BE
+	nO+/XhOB8h3NN0zZCEKrYrjE1vo=; b=LF62p4jWONTZhqMkK3Zjl9waOu2IPW7k
+	azq0jqZIBkk0J1F+c7Q/LKZicNkOuEQ4g6oORbrQKHP6MzEE50saBzR4oFV804mx
+	Yoe0v5OYM/6Mu9dbsaoiF2hFLg2XH7SkWdiTNruNmuQlUJHywzZzxygn34Klqlf/
+	SAoNqRHZtScd7heIcL9TDeRFD5/TNgQbU2D+wuHPTh45A5b5ZvvSqVcQGWCNdt9m
+	BAw9NCiB4lqLl0Ksd2edSJkbb60GS1gFKzpilVXT84P4Pvow0AS3zhsQL4z1SHQI
+	5mYjc13YAObxbEEmmnRGfYSU/OMeeKqA0i/lRIs9Q6FZizTWR8ldUA==
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4ac5st00q5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 11 Nov 2025 13:24:07 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5ABD9pqo007604;
+	Tue, 11 Nov 2025 13:24:07 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4a9vaa1636-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 11 Nov 2025 13:24:05 +0000
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 5ABDO5RL015951;
+	Tue, 11 Nov 2025 13:24:05 GMT
+Received: from lab61.no.oracle.com (lab61.no.oracle.com [10.172.144.82])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 4a9vaa162f-1;
+	Tue, 11 Nov 2025 13:24:04 +0000
+From: =?UTF-8?q?H=C3=A5kon=20Bugge?= <haakon.bugge@oracle.com>
+To: Bjorn Helgaas <bhelgaas@google.com>, Sinan Kaya <okaya@codeaurora.org>
+Cc: =?UTF-8?q?H=C3=A5kon=20Bugge?= <haakon.bugge@oracle.com>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] PCI: Do not attempt to set ExtTag for VFs
+Date: Tue, 11 Nov 2025 14:24:00 +0100
+Message-ID: <20251111132401.1827922-1-haakon.bugge@oracle.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251111091047.831005-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-11_02,2025-11-11_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 malwarescore=0 spamscore=0
+ mlxscore=0 bulkscore=0 suspectscore=0 mlxlogscore=999 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2510240000
+ definitions=main-2511110107
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTExMDEwNSBTYWx0ZWRfX973FRm71HbbN
+ gwAUqa/nlpwFJhvNajUOLxftGLEaYNF4OwvN+jmWQqGmvhYIoeDUXRmypW2eLiY93bqrXkcLaKv
+ 0oFAeN54GmezrVo8eoElvGR5Httd7hVeYPJeDcu63exHXVKUP7q7k+3nSepmMGcIoG5hC68y4Hr
+ 6nD65rndWCRgXD32poMOfR85q1VleD86Xs4zkxOxAgRW7ghBp8dsSgjkZ4mwlJjlbsLYJdf+hkj
+ Dgku8pa9yEyALpWXpARkBxLHIe7JdH+6/saoTCFA782nqnA70pU/Dwtpl2R3hwz+ocIHMTnIwzM
+ oWM5Nh2h+j+0y0933q6qOzulaX0/NjXCyucTq2dtiAKoJfHFHY8lslW5V5g/l57WH5M6MJI8ZAC
+ xb+KYCjSD97R1+35jCBqInFOyQsR4g==
+X-Authority-Analysis: v=2.4 cv=V+pwEOni c=1 sm=1 tr=0 ts=691338f7 cx=c_pps
+ a=XiAAW1AwiKB2Y8Wsi+sD2Q==:117 a=XiAAW1AwiKB2Y8Wsi+sD2Q==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=M51BFTxLslgA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=yPCof4ZbAAAA:8 a=mxn1B8OEhiiVPjgrDlIA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: arz4ei6-gQN8Livd0iVQ6HxWi54ZOtY-
+X-Proofpoint-ORIG-GUID: arz4ei6-gQN8Livd0iVQ6HxWi54ZOtY-
 
-On Tue, Nov 11, 2025 at 09:10:46AM +0000, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> 
-> Unify the probe implementations of the VSC85xx PHY family into a single
-> vsc85xx_probe_common() helper. The existing probe functions for the
-> vsc85xx, vsc8514, vsc8574, and vsc8584 variants contained almost
-> identical initialization logic, differing only in configuration
-> parameters such as the number of LEDs, supported LED modes, hardware
-> statistics, and PTP support.
-> 
-> Introduce a vsc85xx_probe_config structure to describe the per-variant
-> parameters, and move all common setup code into the shared helper. Each
-> variant's probe function now defines a constant configuration instance
-> and calls vsc85xx_probe_common().
-> 
-> Also mark the default LED mode array parameter as const to match its
-> usage.
-> 
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+The bit for enabling extended tags is Reserved and Preserved (RsvdP)
+for VFs. Hence, bail out early from pci_configure_extended_tags() if
+the device is a VF.
 
-That additional flag to diff made it a lot easier to read. Thanks. I
-will have to remember that for the future.
+Otherwise, we may see incorrect log messages such as:
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+	   kernel: pci 0000:af:00.2: enabling Extended Tags
 
-    Andrew
+(af:00.2 is a VF)
+
+Fixes: 60db3a4d8cc9 ("PCI: Enable PCIe Extended Tags if supported")
+Signed-off-by: Håkon Bugge <haakon.bugge@oracle.com>
+---
+ drivers/pci/probe.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+index 0ce98e18b5a87..014017e15bcc8 100644
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@ -2244,7 +2244,8 @@ int pci_configure_extended_tags(struct pci_dev *dev, void *ign)
+ 	u16 ctl;
+ 	int ret;
+ 
+-	if (!pci_is_pcie(dev))
++	/* PCI_EXP_DEVCTL_EXT_TAG is RsvdP in VFs */
++	if (!pci_is_pcie(dev) || dev->is_virtfn)
+ 		return 0;
+ 
+ 	ret = pcie_capability_read_dword(dev, PCI_EXP_DEVCAP, &cap);
+-- 
+2.43.5
+
 
