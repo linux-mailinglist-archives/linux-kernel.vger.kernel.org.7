@@ -1,78 +1,60 @@
-Return-Path: <linux-kernel+bounces-894544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AEB7C4B466
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 04:04:28 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38BF5C4B6F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 05:14:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDAC63AF335
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 03:04:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B59FC4F2355
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 04:13:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABB083128C9;
-	Tue, 11 Nov 2025 03:04:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F70D346E40;
+	Tue, 11 Nov 2025 04:13:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TlujGCjH"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="XWo2Cd0I"
+Received: from mail-m49211.qiye.163.com (mail-m49211.qiye.163.com [45.254.49.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4DA118DB01
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 03:04:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5596426E6E5;
+	Tue, 11 Nov 2025 04:13:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762830262; cv=none; b=fXXeZ8i35+kKZfNm6wgXSxH2S1+s6ssKJr1ChC43lSR0PHMAhX1WgSW+JuU5nS10qiYekWVOWZGzIRu4fTiLoowEYt3JfYlyV4yIoxs8M1etQa1n41LPoFpFq7910enmJikDTMmt6buo+H6bVYb0Wwe3NjEGlu3f9R1rN3BogRY=
+	t=1762834410; cv=none; b=m1g3jNAyv2Gn1g2E284dPwPgSsbCcQ9q3RqoF84o0CCJkdtl9kzUCDwYwBYskl0jk/FVxZmBeu5RG33e02ZyzNGkbczgvL5ldghDu+qaWw1ZTLug5uume8JcFUzqQSaRkIfsmDDXDzHOmC6AhNC6a2QptVJwiPJJBj8wszKS+Og=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762830262; c=relaxed/simple;
-	bh=U14qEmo2Bd9oj+urSYeVZMeAZrk53gq/DoeDSco2grA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tY6CL66azyDgwnLp/6/YMpLGmBxl0D4vpkB2tSAC/HGhXRGhFdXF1ouEFPeZHgcanFcm7q+1pqTP29+XKVqx+Fbs+UTm7Gi1XmgPFTakALTho57uhEiLaiNWjOvt5O3qE62e2v/4W8S+xtlkGgdmt/y/gN/L4JNvAm5bKNsLWRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TlujGCjH; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762830261; x=1794366261;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=U14qEmo2Bd9oj+urSYeVZMeAZrk53gq/DoeDSco2grA=;
-  b=TlujGCjHlOz+2GKgoyR8ny9S/UjUyPRqISPSIha+hLHA+ZR+nLloyGup
-   XFQRNsYSws32G4g9zW8Vu1BiZp1XcsYWusepq6Vlwrs6R56YMflPzU+5V
-   ETEQehcWO+3M+A7OvnyANkw+DORgn8FjQ5zD0fsObYhp/kP8vSkynzUQR
-   qDdnbprvk4D8n3UEBBSy+fzKNKXii5KJ7CgMWgeqjgubLto+ZCH6LiZWS
-   WI3sUGheOpF3IB9CywJuNaUuHLI+jsN4Ucgxg22TagqLyQM+GdJpC7RC8
-   IOI29et6Nf9xY8w15PDdPGE1unEnRd9NhN1kCOlr8pR8FBQBpVQR/yqmR
-   g==;
-X-CSE-ConnectionGUID: iCHFnTaQR6eRyYCHMt2Cug==
-X-CSE-MsgGUID: a/O6XiBHTVyVd7wVJBXs4w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11609"; a="90358549"
-X-IronPort-AV: E=Sophos;i="6.19,295,1754982000"; 
-   d="scan'208";a="90358549"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 19:04:20 -0800
-X-CSE-ConnectionGUID: dYGErXrHQMy2oUs2IjcdZA==
-X-CSE-MsgGUID: 2N3tqJKnS6+ccOwshoA7Hw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,295,1754982000"; 
-   d="scan'208";a="193844403"
-Received: from linux-pnp-server-27.sh.intel.com ([10.239.147.41])
-  by fmviesa004.fm.intel.com with ESMTP; 10 Nov 2025 19:04:18 -0800
-From: Tianyou Li <tianyou.li@intel.com>
-To: David Hildenbrand <david@redhat.com>,
-	Oscar Salvador <osalvador@suse.de>
-Cc: linux-mm@kvack.org,
-	Yong Hu <yong.hu@intel.com>,
-	Nanhai Zou <nanhai.zou@intel.com>,
-	Yuan Liu <yuan1.liu@intel.com>,
-	Tim Chen <tim.c.chen@linux.intel.com>,
-	Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
-	Yu C Chen <yu.c.chen@intel.com>,
-	Pan Deng <pan.deng@intel.com>,
-	Tianyou Li <tianyou.li@intel.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] mm/memory hotplug/unplug: Optimize zone->contiguous update when move pfn range
-Date: Tue, 11 Nov 2025 11:58:45 +0800
-Message-ID: <20251111035845.2556593-1-tianyou.li@intel.com>
-X-Mailer: git-send-email 2.47.1
+	s=arc-20240116; t=1762834410; c=relaxed/simple;
+	bh=EhdkYAZpvq92qEuzwBPeEULq8Eb6F4v8ckyLbH1yC70=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Xkmb3WNYGKliXGYr2/uZwN7lFY/zN2geVL8hFC/TQawxMHgHE7XM8mHrnJv8ahiosS22LfQnOk4Gp2T19cewzA9Bh4Uyx2wPI+cvagBr9y0miBnly2mAnrlPX98IdFBsZjQsfWdtSvBeMoCtSTa/GJsZNwDIV5Iw0ijz9hXB/wc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=XWo2Cd0I; arc=none smtp.client-ip=45.254.49.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from rockchip.. (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 291f57b9d;
+	Tue, 11 Nov 2025 10:57:41 +0800 (GMT+08:00)
+From: Elaine Zhang <zhangqing@rock-chips.com>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	zhangqing@rock-chips.com,
+	heiko@sntech.de,
+	robh@kernel.org,
+	p.zabel@pengutronix.de,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	finley.xiao@rock-chips.com,
+	sugar.zhang@rock-chips.com
+Subject: [PATCH v7 1/5] clk: rockchip: Implement rockchip_clk_register_armclk_multi_pll()
+Date: Tue, 11 Nov 2025 10:57:34 +0800
+Message-Id: <20251111025738.869847-2-zhangqing@rock-chips.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20251111025738.869847-1-zhangqing@rock-chips.com>
+References: <20251111025738.869847-1-zhangqing@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,216 +62,293 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a9a70d9013b03a3kunmb98a0103a12e4
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGh5NSVZNQxlOS0ofGkoYThhWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=XWo2Cd0IQHsRPYftIRZSO/bFGWvCBAPMr0/o2T5rWqbLc5NnueIqy3TYzSxz0HvisUB6Srtke0J+09JwszQO/upTSe0ZzxvGLzGobbT2CDJA0wwMeppgwBdCCeNcfGICluQZ4ifZa6Hp/Q1c+2UnmC2fOOjxX1PKJMjanTIxZuE=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=Vt1xPRkUMcE8svXTy4dUISsmpUifWdbpaIRSmoEuGbY=;
+	h=date:mime-version:subject:message-id:from;
 
-When invoke move_pfn_range_to_zone, it will update the zone->contiguous by
-checking the new zone's pfn range from the beginning to the end, regardless
-the previous state of the old zone. When the zone's pfn range is large, the
-cost of traversing the pfn range to update the zone->contiguous could be
-significant.
+The current path will have an independent PLL(LPLL\BPLL)
+exclusively for the CPU to use.
+As follows:
 
-Add fast paths to quickly detect cases where zone is definitely not
-contiguous without scanning the new zone. The cases are: when the new range
-did not overlap with previous range, the contiguous should be false; if the
-new range adjacent with the previous range, just need to check the new
-range; if the new added pages could not fill the hole of previous zone, the
-contiguous should be false.
+            |-\
+    --lpll--|  \
+            |mux|--[gate]--[div]--clk_core--
+    --gpll--|  /
+            |-/
 
-The following test cases of memory hotplug for a VM [1], tested in the
-environment [2], show that this optimization can significantly reduce the
-memory hotplug time [3].
+The new chip does not have a dedicated PLL for the cpu;
+it is distributed nearby from the common PLL.
+If there are special frequency requirements that require the
+use of pvtpll, explanations will be submitted later.
 
-+----------------+------+---------------+--------------+----------------+
-|                | Size | Time (before) | Time (after) | Time Reduction |
-|                +------+---------------+--------------+----------------+
-| Memory Hotplug | 256G |      10s      |      3s      |       70%      |
-|                +------+---------------+--------------+----------------+
-|                | 512G |      33s      |      8s      |       76%      |
-+----------------+------+---------------+--------------+----------------+
+The clock path of new soc CPU simplified as follows:
 
-[1] Qemu commands to hotplug 512G memory for a VM:
-    object_add memory-backend-ram,id=hotmem0,size=512G,share=on
-    device_add virtio-mem-pci,id=vmem1,memdev=hotmem0,bus=port1
-    qom-set vmem1 requested-size 512G
+    --gpll--|--\
+            |   \
+            |    \
+            |     \
+   --v0pll--| mux |--[gate]--[div]--clk_core--
+            |     /
+            |    /
+   --v1pll--|   /
+            |--/
 
-[2] Hardware     : Intel Icelake server
-    Guest Kernel : v6.18-rc2
-    Qemu         : v9.0.0
-
-    Launch VM    :
-    qemu-system-x86_64 -accel kvm -cpu host \
-    -drive file=./Centos10_cloud.qcow2,format=qcow2,if=virtio \
-    -drive file=./seed.img,format=raw,if=virtio \
-    -smp 3,cores=3,threads=1,sockets=1,maxcpus=3 \
-    -m 2G,slots=10,maxmem=2052472M \
-    -device pcie-root-port,id=port1,bus=pcie.0,slot=1,multifunction=on \
-    -device pcie-root-port,id=port2,bus=pcie.0,slot=2 \
-    -nographic -machine q35 \
-    -nic user,hostfwd=tcp::3000-:22
-
-    Guest kernel auto-onlines newly added memory blocks:
-    echo online > /sys/devices/system/memory/auto_online_blocks
-
-[3] The time from typing the QEMU commands in [1] to when the output of
-    'grep MemTotal /proc/meminfo' on Guest reflects that all hotplugged
-    memory is recognized.
-
-Reported-by: Nanhai Zou <nanhai.zou@intel.com>
-Tested-by: Yuan Liu <yuan1.liu@intel.com>
-Reviewed-by: Tim Chen <tim.c.chen@linux.intel.com>
-Reviewed-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
-Reviewed-by: Yu C Chen <yu.c.chen@intel.com>
-Reviewed-by: Pan Deng <pan.deng@intel.com>
-Reviewed-by: Nanhai Zou <nanhai.zou@intel.com>
-Signed-off-by: Tianyou Li <tianyou.li@intel.com>
+Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
 ---
- mm/internal.h       |  3 +++
- mm/memory_hotplug.c | 48 ++++++++++++++++++++++++++++++++++++++++++++-
- mm/mm_init.c        | 31 ++++++++++++++++++++++-------
- 3 files changed, 74 insertions(+), 8 deletions(-)
+ drivers/clk/rockchip/clk-cpu.c | 165 +++++++++++++++++++++++++++++++++
+ drivers/clk/rockchip/clk.c     |  24 +++++
+ drivers/clk/rockchip/clk.h     |  15 +++
+ 3 files changed, 204 insertions(+)
 
-diff --git a/mm/internal.h b/mm/internal.h
-index 1561fc2ff5b8..734caae6873c 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -734,6 +734,9 @@ void set_zone_contiguous(struct zone *zone);
- bool pfn_range_intersects_zones(int nid, unsigned long start_pfn,
- 			   unsigned long nr_pages);
- 
-+bool check_zone_contiguous(struct zone *zone, unsigned long start_pfn,
-+			   unsigned long nr_pages);
-+
- static inline void clear_zone_contiguous(struct zone *zone)
- {
- 	zone->contiguous = false;
-diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index 0be83039c3b5..96c003271b8e 100644
---- a/mm/memory_hotplug.c
-+++ b/mm/memory_hotplug.c
-@@ -723,6 +723,47 @@ static void __meminit resize_pgdat_range(struct pglist_data *pgdat, unsigned lon
- 
+diff --git a/drivers/clk/rockchip/clk-cpu.c b/drivers/clk/rockchip/clk-cpu.c
+index dcc9dcb597ae..6e91a3041a03 100644
+--- a/drivers/clk/rockchip/clk-cpu.c
++++ b/drivers/clk/rockchip/clk-cpu.c
+@@ -396,3 +396,168 @@ struct clk *rockchip_clk_register_cpuclk(const char *name,
+ 	kfree(cpuclk);
+ 	return ERR_PTR(ret);
  }
- 
-+static void __meminit update_zone_contiguous(struct zone *zone,
-+			bool old_contiguous, unsigned long old_start_pfn,
-+			unsigned long old_nr_pages, unsigned long old_absent_pages,
-+			unsigned long new_start_pfn, unsigned long new_nr_pages)
++
++static int rockchip_cpuclk_multi_pll_pre_rate_change(struct rockchip_cpuclk *cpuclk,
++						     struct clk_notifier_data *ndata)
 +{
-+	unsigned long old_end_pfn = old_start_pfn + old_nr_pages;
-+	unsigned long new_end_pfn = new_start_pfn + new_nr_pages;
-+	unsigned long new_filled_pages = 0;
++	unsigned long new_rate = roundup(ndata->new_rate, 1000);
++	const struct rockchip_cpuclk_rate_table *rate;
++	unsigned long flags;
 +
-+	/*
-+	 * If the moved pfn range does not intersect with the old zone span,
-+	 * the contiguous property is surely false.
-+	 */
-+	if (new_end_pfn < old_start_pfn || new_start_pfn > old_end_pfn)
-+		return;
++	rate = rockchip_get_cpuclk_settings(cpuclk, new_rate);
++	if (!rate) {
++		pr_err("%s: Invalid rate : %lu for cpuclk\n",
++		       __func__, new_rate);
++		return -EINVAL;
++	}
 +
-+	/*
-+	 * If the moved pfn range is adjacent to the old zone span,
-+	 * check the range to the left or to the right
-+	 */
-+	if (new_end_pfn == old_start_pfn || new_start_pfn == old_end_pfn) {
-+		zone->contiguous = old_contiguous &&
-+			check_zone_contiguous(zone, new_start_pfn, new_nr_pages);
++	if (new_rate > ndata->old_rate) {
++		spin_lock_irqsave(cpuclk->lock, flags);
++		rockchip_cpuclk_set_dividers(cpuclk, rate);
++		spin_unlock_irqrestore(cpuclk->lock, flags);
++	}
++
++	return 0;
++}
++
++static int rockchip_cpuclk_multi_pll_post_rate_change(struct rockchip_cpuclk *cpuclk,
++						      struct clk_notifier_data *ndata)
++{
++	unsigned long new_rate = roundup(ndata->new_rate, 1000);
++	const struct rockchip_cpuclk_rate_table *rate;
++	unsigned long flags;
++
++	rate = rockchip_get_cpuclk_settings(cpuclk, new_rate);
++	if (!rate) {
++		pr_err("%s: Invalid rate : %lu for cpuclk\n",
++		       __func__, new_rate);
++		return -EINVAL;
++	}
++
++	if (new_rate < ndata->old_rate) {
++		spin_lock_irqsave(cpuclk->lock, flags);
++		rockchip_cpuclk_set_dividers(cpuclk, rate);
++		spin_unlock_irqrestore(cpuclk->lock, flags);
++	}
++
++	return 0;
++}
++
++static int rockchip_cpuclk_multi_pll_notifier_cb(struct notifier_block *nb,
++						 unsigned long event, void *data)
++{
++	struct clk_notifier_data *ndata = data;
++	struct rockchip_cpuclk *cpuclk = to_rockchip_cpuclk_nb(nb);
++	int ret = 0;
++
++	pr_debug("%s: event %lu, old_rate %lu, new_rate: %lu\n",
++		 __func__, event, ndata->old_rate, ndata->new_rate);
++	if (event == PRE_RATE_CHANGE)
++		ret = rockchip_cpuclk_multi_pll_pre_rate_change(cpuclk, ndata);
++	else if (event == POST_RATE_CHANGE)
++		ret = rockchip_cpuclk_multi_pll_post_rate_change(cpuclk, ndata);
++
++	return notifier_from_errno(ret);
++}
++
++struct clk *rockchip_clk_register_cpuclk_multi_pll(const char *name,
++						   const char *const *parent_names,
++						   u8 num_parents, void __iomem *base,
++						   int muxdiv_offset, u8 mux_shift,
++						   u8 mux_width, u8 mux_flags,
++						   int div_offset, u8 div_shift,
++						   u8 div_width, u8 div_flags,
++						   unsigned long flags, spinlock_t *lock,
++						   const struct rockchip_cpuclk_rate_table *rates,
++						   int nrates)
++{
++	struct rockchip_cpuclk *cpuclk;
++	struct clk_hw *hw;
++	struct clk_mux *mux = NULL;
++	struct clk_divider *div = NULL;
++	const struct clk_ops *mux_ops = NULL, *div_ops = NULL;
++	int ret;
++
++	if (num_parents > 1) {
++		mux = kzalloc(sizeof(*mux), GFP_KERNEL);
++		if (!mux)
++			return ERR_PTR(-ENOMEM);
++
++		mux->reg = base + muxdiv_offset;
++		mux->shift = mux_shift;
++		mux->mask = BIT(mux_width) - 1;
++		mux->flags = mux_flags;
++		mux->lock = lock;
++		mux_ops = (mux_flags & CLK_MUX_READ_ONLY) ? &clk_mux_ro_ops
++							: &clk_mux_ops;
++	}
++
++	if (div_width > 0) {
++		div = kzalloc(sizeof(*div), GFP_KERNEL);
++		if (!div) {
++			ret = -ENOMEM;
++			goto free_mux;
++		}
++
++		div->flags = div_flags;
++		if (div_offset)
++			div->reg = base + div_offset;
++		else
++			div->reg = base + muxdiv_offset;
++		div->shift = div_shift;
++		div->width = div_width;
++		div->lock = lock;
++		div_ops = (div_flags & CLK_DIVIDER_READ_ONLY)
++						? &clk_divider_ro_ops
++						: &clk_divider_ops;
++	}
++
++	hw = clk_hw_register_composite(NULL, name, parent_names, num_parents,
++				       mux ? &mux->hw : NULL, mux_ops,
++				       div ? &div->hw : NULL, div_ops,
++				       NULL, NULL, flags);
++	if (IS_ERR(hw)) {
++		ret = PTR_ERR(hw);
++		goto free_div;
++	}
++
++	cpuclk = kzalloc(sizeof(*cpuclk), GFP_KERNEL);
++	if (!cpuclk) {
++		ret = -ENOMEM;
++		goto unregister_clk;
++	}
++
++	cpuclk->reg_base = base;
++	cpuclk->lock = lock;
++	cpuclk->clk_nb.notifier_call = rockchip_cpuclk_multi_pll_notifier_cb;
++	ret = clk_notifier_register(hw->clk, &cpuclk->clk_nb);
++	if (ret) {
++		pr_err("%s: failed to register clock notifier for %s\n",
++		       __func__, name);
++		goto free_cpuclk;
++	}
++
++	if (nrates > 0) {
++		cpuclk->rate_count = nrates;
++		cpuclk->rate_table = kmemdup(rates,
++					     sizeof(*rates) * nrates,
++					     GFP_KERNEL);
++		if (!cpuclk->rate_table) {
++			ret = -ENOMEM;
++			goto free_cpuclk;
++		}
++	}
++
++	return hw->clk;
++
++free_cpuclk:
++	kfree(cpuclk);
++unregister_clk:
++	clk_hw_unregister_composite(hw);
++free_div:
++	kfree(div);
++free_mux:
++	kfree(mux);
++
++	return ERR_PTR(ret);
++}
+diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
+index 19caf26c991b..2601df3b1066 100644
+--- a/drivers/clk/rockchip/clk.c
++++ b/drivers/clk/rockchip/clk.c
+@@ -722,6 +722,30 @@ void rockchip_clk_register_armclk(struct rockchip_clk_provider *ctx,
+ }
+ EXPORT_SYMBOL_GPL(rockchip_clk_register_armclk);
+ 
++void rockchip_clk_register_armclk_multi_pll(struct rockchip_clk_provider *ctx,
++					    struct rockchip_clk_branch *list,
++					    const struct rockchip_cpuclk_rate_table *rates,
++					    int nrates)
++{
++	struct clk *clk;
++
++	clk = rockchip_clk_register_cpuclk_multi_pll(list->name, list->parent_names,
++						     list->num_parents, ctx->reg_base,
++						     list->muxdiv_offset, list->mux_shift,
++						     list->mux_width, list->mux_flags,
++						     list->div_offset, list->div_shift,
++						     list->div_width, list->div_flags,
++						     list->flags, &ctx->lock, rates, nrates);
++	if (IS_ERR(clk)) {
++		pr_err("%s: failed to register clock %s: %ld\n",
++		       __func__, list->name, PTR_ERR(clk));
 +		return;
 +	}
 +
-+	/*
-+	 * If old zone's hole larger than the new filled pages, the contiguous
-+	 * property is surely false.
-+	 */
-+	new_filled_pages = new_end_pfn - old_start_pfn;
-+	if (new_start_pfn > old_start_pfn)
-+		new_filled_pages -= new_start_pfn - old_start_pfn;
-+	if (new_end_pfn > old_end_pfn)
-+		new_filled_pages -= new_end_pfn - old_end_pfn;
-+	if (new_filled_pages < old_absent_pages)
-+		return;
-+
-+	set_zone_contiguous(zone);
++	rockchip_clk_set_lookup(ctx, clk, list->id);
 +}
++EXPORT_SYMBOL_GPL(rockchip_clk_register_armclk_multi_pll);
 +
- #ifdef CONFIG_ZONE_DEVICE
- static void section_taint_zone_device(unsigned long pfn)
+ void rockchip_clk_protect_critical(const char *const clocks[],
+ 				   int nclocks)
  {
-@@ -752,6 +793,10 @@ void move_pfn_range_to_zone(struct zone *zone, unsigned long start_pfn,
- {
- 	struct pglist_data *pgdat = zone->zone_pgdat;
- 	int nid = pgdat->node_id;
-+	bool old_contiguous = zone->contiguous;
-+	unsigned long old_start_pfn = zone->zone_start_pfn;
-+	unsigned long old_nr_pages = zone->spanned_pages;
-+	unsigned long old_absent_pages = zone->spanned_pages - zone->present_pages;
+diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
+index 7c5e74c7a2e2..23653a942403 100644
+--- a/drivers/clk/rockchip/clk.h
++++ b/drivers/clk/rockchip/clk.h
+@@ -622,6 +622,17 @@ struct clk *rockchip_clk_register_cpuclk(const char *name,
+ 			const struct rockchip_cpuclk_rate_table *rates,
+ 			int nrates, void __iomem *reg_base, spinlock_t *lock);
  
- 	clear_zone_contiguous(zone);
- 
-@@ -783,7 +828,8 @@ void move_pfn_range_to_zone(struct zone *zone, unsigned long start_pfn,
- 			 MEMINIT_HOTPLUG, altmap, migratetype,
- 			 isolate_pageblock);
- 
--	set_zone_contiguous(zone);
-+	update_zone_contiguous(zone, old_contiguous, old_start_pfn, old_nr_pages,
-+				old_absent_pages, start_pfn, nr_pages);
- }
- 
- struct auto_movable_stats {
-diff --git a/mm/mm_init.c b/mm/mm_init.c
-index 3db2dea7db4c..7e5049f060eb 100644
---- a/mm/mm_init.c
-+++ b/mm/mm_init.c
-@@ -2263,26 +2263,43 @@ void __init init_cma_pageblock(struct page *page)
- }
- #endif
- 
--void set_zone_contiguous(struct zone *zone)
-+/*
-+ * Check if all pageblocks in the given PFN range belong to the given zone.
-+ * The given range is expected to be within the zone's pfn range, otherwise
-+ * false is returned.
-+ */
-+bool check_zone_contiguous(struct zone *zone, unsigned long start_pfn,
-+			    unsigned long nr_pages)
- {
--	unsigned long block_start_pfn = zone->zone_start_pfn;
-+	unsigned long end_pfn = start_pfn + nr_pages;
-+	unsigned long block_start_pfn = start_pfn;
- 	unsigned long block_end_pfn;
- 
-+	if (start_pfn < zone->zone_start_pfn || end_pfn > zone_end_pfn(zone))
-+		return false;
++struct clk *rockchip_clk_register_cpuclk_multi_pll(const char *name,
++						   const char *const *parent_names,
++						   u8 num_parents, void __iomem *base,
++						   int muxdiv_offset, u8 mux_shift,
++						   u8 mux_width, u8 mux_flags,
++						   int div_offset, u8 div_shift,
++						   u8 div_width, u8 div_flags,
++						   unsigned long flags, spinlock_t *lock,
++						   const struct rockchip_cpuclk_rate_table *rates,
++						   int nrates);
 +
- 	block_end_pfn = pageblock_end_pfn(block_start_pfn);
--	for (; block_start_pfn < zone_end_pfn(zone);
-+	for (; block_start_pfn < end_pfn;
- 			block_start_pfn = block_end_pfn,
- 			 block_end_pfn += pageblock_nr_pages) {
- 
--		block_end_pfn = min(block_end_pfn, zone_end_pfn(zone));
-+		block_end_pfn = min(block_end_pfn, end_pfn);
- 
- 		if (!__pageblock_pfn_to_page(block_start_pfn,
- 					     block_end_pfn, zone))
--			return;
-+			return false;
- 		cond_resched();
- 	}
- 
--	/* We confirm that there is no hole */
--	zone->contiguous = true;
-+	return true;
-+}
-+
-+void set_zone_contiguous(struct zone *zone)
-+{
-+	unsigned long start_pfn = zone->zone_start_pfn;
-+	unsigned long nr_pages = zone->spanned_pages;
-+
-+	zone->contiguous = check_zone_contiguous(zone, start_pfn, nr_pages);
- }
- 
- /*
+ struct clk *rockchip_clk_register_mmc(const char *name,
+ 				const char *const *parent_names, u8 num_parents,
+ 				void __iomem *reg,
+@@ -1208,6 +1219,10 @@ void rockchip_clk_register_armclk(struct rockchip_clk_provider *ctx,
+ 			const struct rockchip_cpuclk_reg_data *reg_data,
+ 			const struct rockchip_cpuclk_rate_table *rates,
+ 			int nrates);
++void rockchip_clk_register_armclk_multi_pll(struct rockchip_clk_provider *ctx,
++					    struct rockchip_clk_branch *list,
++					    const struct rockchip_cpuclk_rate_table *rates,
++					    int nrates);
+ void rockchip_clk_protect_critical(const char *const clocks[], int nclocks);
+ void rockchip_register_restart_notifier(struct rockchip_clk_provider *ctx,
+ 					unsigned int reg, void (*cb)(void));
 -- 
-2.47.1
+2.34.1
 
 
