@@ -1,131 +1,136 @@
-Return-Path: <linux-kernel+bounces-896311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44EF7C50159
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 00:44:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 582DCC5016B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 00:46:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F3D4189BDB4
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 23:44:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 175873AD80D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 23:46:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 469DE2F3C32;
-	Tue, 11 Nov 2025 23:44:05 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53BB82F5A0C;
+	Tue, 11 Nov 2025 23:45:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MLLWp0iG"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5240E2BCF6C
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 23:44:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FB2C35CBC5
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 23:45:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762904644; cv=none; b=W68zUBm/uRYtSfA1wCfS1s1pR1rChjRvkNf7ljaV1lqu5bXcmbepSqZZqhuqC7FuC6m+jMPHYVDZaG1sbJnDDBdlZ++0haaMT4YlOb/9gt7ipZkMWdJehjHDnPlX9mNJ9+dFcPz2oMWfxHk+IPHd9S0PrNSKO/y1WRc0mlKrP/s=
+	t=1762904736; cv=none; b=DOqCEUaZIKyfhpc+XXeVmAQ4WqSr2j9mN4JWI/6ilmD/pwf8kHUfs2da7K633eJGsR0K0/aR4klhnLwlVXpkhD5AK3x3zsfVzWKhBB8fzUX0RPvTOo4nuMJcKpd+PC92XxvG6XGh1KdmU61zeVmVsuIB6tAAzpgmjbh4P+P9wbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762904644; c=relaxed/simple;
-	bh=CwEesEC/12X3OvDD5SaQkyfqiFr9S54g0smR3XV0R20=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=EKmukC4s/yVJji/OxOcKssVx0WNYkehcznMSEiVktmf9LT68nXU0cu3SDCNgQpnXNUE+jaAnu+Zb9RGFvRUcAcC/eD+VYoURinGaDfVH0+OKzLJc7dBcnarLGpT6sJKVpLzNdp6/F2rgPAV8mlNkqeN6S7rlMbmcTT4NkPzymlw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-433770ba913so3699765ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 15:44:03 -0800 (PST)
+	s=arc-20240116; t=1762904736; c=relaxed/simple;
+	bh=zJPX07ZyfktlqjUe3JPYIASY53h4B2FvjzqypAfLIfc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=c26McEcIlyv40WuKc2F1lAp2/oiVeW8WeRZWIBJVdGbbFZ6BZD1OHDU9tm/3YMyB0NSyq6p6iCB2GLnTM+97W2ftVitQZzJPdvCh1B3kaATo8M4S0VkhWOynHQb175riAaLQkt17zDKjiWm6/tIyF4W65KZRgDIeVZoe4eADipM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MLLWp0iG; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-7aab061e7cbso292957b3a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 15:45:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762904734; x=1763509534; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yHl8WC+Yx5kDN/c9d1A4NEdS4ms45YXejq9GQUU7yOM=;
+        b=MLLWp0iGC+AhNQJGQxiwAtKcLNwCz2oFynJTeqBD9aYfkUaM8ei9sseYoHRwVkVhru
+         htAJgF0yxfxbOqyQP6YXNakKuwzhcQLoOUZyGZts05Z4a36I8oG1UkBtYDn8pTTKsRky
+         Jt9art/hRaYwSvjeY5pCGaoO1BXICQPpbvHtjoyx2HL1Q/1kUjTJHnm1glRQZ9QkiJma
+         VJNiSmK/4aXEjCwub7YExeGYaw5uiXx1aJxPj3n2Empk4tY6rkU/J4U6UdcP0KO2WN3H
+         Q2HPSmJLbOFxa3KVMab6Dc0ucc7nhWsmkRD72mXNHZhfOyAMpXR4gRqFDCyX/DLk1whk
+         TU7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762904642; x=1763509442;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8kf9agNZFz/CvU62Ok8ffTm8G36mUe1l4lS+uQquTus=;
-        b=gW5WObQ9Grmg1WiHYeVk9oIpkQZPTqks4hNVQDJ76lkVRYsbjgmlk/3ATnq5qzjwtV
-         aWUz+rHLFNq9n/ODcpfF9iMzmZTWUZ8lT5aBQpvjKwnPex5fddrc17jjUo+n4aHlPSLv
-         vn5TG9E1pxGN4QkkGFaRdFTcnCgbKfCTc6HV20PAnpmsnNTDgXqcWGYZaqgnA3HcHPuZ
-         +3sjUk55L+A3KsGemj5GlD8phaD+1eKgy3ogdvcPyQq563ugPt/HVgwEJTPybeu3y2vz
-         rY9aixXi3Bu585f1Pnj2QuMYFO4ZKWiPajsRBsEuJevMVkqVUT04ADH2OL16KBWGA5yB
-         uJMg==
-X-Forwarded-Encrypted: i=1; AJvYcCXrESrNC1e7iZa3S0tHl2Mk4SqKy/XXJfYObFvYOxpqDSmKMJIsCzveCGmNhxVDZQCNVB4yUAv3HODJ5Uc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyH2/NSoZryYcd3ttHXgkEkg9/4xoXqWhLuZajU+xWfUmzrxpPX
-	DSF58SDdkaEdOVHvlE8Wxuo7SDWh3BtmC3UFg67/JLn9fDtKSRB4J5/hA++O46XEw99iSTBpd+0
-	OFd/uoovytfABTx/iYmdB8TAGlYe52gPnVKxVmg/xEvYZ8VAsW99WvuhyJoM=
-X-Google-Smtp-Source: AGHT+IGCqQNjL6d62SCIJF6kuJjEKm6niox1ofrOgRPZ67707RrEOTD14Pv8RgwMJjausvyhgTrnbAljHDtCiKsZXS8GhBCLvPFQ
+        d=1e100.net; s=20230601; t=1762904734; x=1763509534;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yHl8WC+Yx5kDN/c9d1A4NEdS4ms45YXejq9GQUU7yOM=;
+        b=pXNAzRtX8nMr72XdUKiXkphSK2YCW7G79T3YfUs1QCUesn1LEqvVQNiJrRt5aglg9O
+         K5IzBssq13RBgrHQdjuWJRyv1qDZHX5YBrju8Cho6NRkN3Oy4opgxpP50r13ndf3XVVo
+         CGYtsyOpc3o00kRF+hvEfC9hWPdQKJ4KE7d/2XG7YOKTXkwRSSpW1oZoB8Xx8XbqJzK0
+         GuB5N7RcGX+NmGDsrgAU5t9xHjm19SDiE6AM1ztwxYcRatsROKpaB8bno8QaYVHBLF8b
+         yuCjhhqyDwzdTb9xGmugKLNZ5xdBCo8yJpx57CwHByY0Ir0qKDrVXObI0rOHFe1FtvxD
+         bDiA==
+X-Gm-Message-State: AOJu0Ywzywv87yu90zc/aw4kehvLXN3LDeG8KAdE0hQfjXAhd49Tr1YM
+	Lt4SUo0IhcGgRydhfmZ8z3LMpol+53sQmrkSWD58HKcqP16hs//gTkpS
+X-Gm-Gg: ASbGncs6us0n5EUWYmtbeCzXSQ+BeMTQQw/DExHNs2jioVLXL7S80X2j67V89N7OTzd
+	w0v9QmzqVmzZyjs/BTiFHHfzdboNt2B3Wab3xe74iIzEhR6zS7xcJfYgeQ+WjfwH8G/Vs64MMD7
+	yqNVdbxfOWFUSPS2N0hlMryyQI60Fc+EnFCFKoU//4ZHuvOAS2n0v+fXR+RDLrTRKatfQ20892l
+	k9oLeptty7Pd7G6usKcwZA1o9RIZwm+zSb7iiPRonFNeNDV0CLuT7fD19ShHhRjoxjyUUJr9KfM
+	P4cfYCe7UHjsFTYaA6ztkuU07N6nQAxITA5eiw27WC+nSAuM4WDwnJfIrj9OQD0rHPAMTwKfGal
+	EX1FQoNfF3Df5qu1bsuqFIWxbSVImh45TisOKUrR9esNvBvw/SmZvpyxjgdLI1fOD0VSn9Cvacn
+	0a1vibOYI7bsNXTtKJPaE4VMx1otAe8w6hoC9Lr1qd5bHKAWg1dmMxxOkoDSbyiQqAXCBS4IkpD
+	C3TW0o0Bw==
+X-Google-Smtp-Source: AGHT+IG1kqKUqOrjRrapu7xdbjn5g0ilcKHbFQIZ+IaVNxqvrqQimzUwNTVK+gdDH2VrNT0zNKduXg==
+X-Received: by 2002:a05:6a21:339c:b0:341:d537:f8bf with SMTP id adf61e73a8af0-3590b40c13cmr1157218637.38.1762904734481;
+        Tue, 11 Nov 2025 15:45:34 -0800 (PST)
+Received: from toolbx.alistair23.me (2403-580b-97e8-0-82ce-f179-8a79-69f4.ip6.aussiebb.net. [2403:580b:97e8:0:82ce:f179:8a79:69f4])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-bbf06e85bb4sm784308a12.0.2025.11.11.15.45.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Nov 2025 15:45:33 -0800 (PST)
+From: alistair23@gmail.com
+X-Google-Original-From: alistair.francis@wdc.com
+To: kbusch@kernel.org,
+	axboe@kernel.dk,
+	hch@lst.de,
+	sagi@grimberg.me,
+	hare@suse.de,
+	kch@nvidia.com,
+	linux-nvme@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org,
+	alistair23@gmail.com,
+	Alistair Francis <alistair.francis@wdc.com>
+Subject: [PATCH v2 0/4] Support PSK reauthentication (REPLACETLSPSK)
+Date: Wed, 12 Nov 2025 09:45:14 +1000
+Message-ID: <20251111234519.3467440-1-alistair.francis@wdc.com>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3e8f:b0:433:7a2f:a414 with SMTP id
- e9e14a558f8ab-43473dcf6bemr12526915ab.25.1762904642497; Tue, 11 Nov 2025
- 15:44:02 -0800 (PST)
-Date: Tue, 11 Nov 2025 15:44:02 -0800
-In-Reply-To: <20251111232728.9139-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6913ca42.a70a0220.22f260.014e.GAE@google.com>
-Subject: Re: [syzbot] [trace?] WARNING in tracing_buffers_mmap_close (2)
-From: syzbot <syzbot+a72c325b042aae6403c7@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+From: Alistair Francis <alistair.francis@wdc.com>
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-WARNING in tracing_buffers_mmap_close
+Allow userspace on the host to trigger a reauth (REPLACETLSPSK) from
+sysfs. This will replace the PSK for the admin queue when using
+a secure concat connection.
 
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 6465 at kernel/trace/trace.c:8780 tracing_buffers_mmap_close kernel/trace/trace.c:8780 [inline]
-WARNING: CPU: 0 PID: 6465 at kernel/trace/trace.c:8780 tracing_buffers_mmap_close+0xdd/0x130 kernel/trace/trace.c:8775
-Modules linked in:
-CPU: 0 UID: 0 PID: 6465 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/25/2025
-RIP: 0010:tracing_buffers_mmap_close kernel/trace/trace.c:8780 [inline]
-RIP: 0010:tracing_buffers_mmap_close+0xdd/0x130 kernel/trace/trace.c:8775
-Code: 75 46 48 8b 7b 08 e8 92 94 ff ff 31 ff 89 c3 89 c6 e8 e7 4a fb ff 85 db 75 0a 48 83 c4 08 5b e9 99 4f fb ff e8 94 4f fb ff 90 <0f> 0b 90 48 83 c4 08 5b e9 86 4f fb ff e8 51 f9 62 00 eb 87 e8 7a
-RSP: 0018:ffffc900033a7980 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: 00000000ffffffed RCX: ffffffff81c108d9
-RDX: ffff88802f3b0000 RSI: ffffffff81c108ec RDI: 0000000000000005
-RBP: ffffffff81c10810 R08: 0000000000000005 R09: 0000000000000000
-R10: 00000000ffffffed R11: 0000000000000000 R12: ffff888046203408
-R13: dffffc0000000000 R14: ffffc900033a7a08 R15: 0000000000000000
-FS:  0000000000000000(0000) GS:ffff888124a0d000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f36505f5f98 CR3: 000000000e182000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- vma_close mm/internal.h:190 [inline]
- remove_vma+0x88/0x160 mm/vma.c:464
- exit_mmap+0x50a/0xb90 mm/mmap.c:1305
- __mmput+0x12a/0x410 kernel/fork.c:1133
- mmput+0x62/0x70 kernel/fork.c:1156
- exit_mm kernel/exit.c:582 [inline]
- do_exit+0x7c7/0x2bf0 kernel/exit.c:954
- do_group_exit+0xd3/0x2a0 kernel/exit.c:1107
- get_signal+0x2671/0x26d0 kernel/signal.c:3034
- arch_do_signal_or_restart+0x8f/0x790 arch/x86/kernel/signal.c:337
- exit_to_user_mode_loop+0x85/0x130 kernel/entry/common.c:40
- exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
- syscall_exit_to_user_mode_work include/linux/entry-common.h:175 [inline]
- syscall_exit_to_user_mode include/linux/entry-common.h:210 [inline]
- do_syscall_64+0x426/0xfa0 arch/x86/entry/syscall_64.c:100
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f3650f8f6c9
-Code: Unable to access opcode bytes at 0x7f3650f8f69f.
-RSP: 002b:00007f36505f60e8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
-RAX: fffffffffffffe00 RBX: 00007f36511e5fa8 RCX: 00007f3650f8f6c9
-RDX: 0000000000000000 RSI: 0000000000000080 RDI: 00007f36511e5fa8
-RBP: 00007f36511e5fa0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f36511e6038 R14: 00007ffdf110f910 R15: 00007ffdf110f9f8
- </TASK>
+This can be done by writing anything to the `tls_configured_key` sysfs file,
+for example something like this
 
+```shell
+echo 1 > /sys/devices/virtual/nvme-fabrics/ctl/nvme0/tls_configured_key
+```
 
-Tested on:
+`tls_configured_key` will only appear for concat connections as that is
+all that is supported.
 
-commit:         24172e0d Merge tag 'arm64-fixes' of git://git.kernel.o..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13370212580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=19d831c6d0386a9c
-dashboard link: https://syzkaller.appspot.com/bug?extid=a72c325b042aae6403c7
-compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=135b560a580000
+Reading `tls_configured_key` will return the current configured key, which
+changes after each REPLACETLSPSK operation.
+
+This series also include some fixes for the NVMe target code to ensure
+this works against a Linux NVMe target.
+
+Alistair Francis (4):
+  nvmet-tcp: Don't error if TLS is enabed on a reset
+  nvmet-tcp: Don't free SQ on authentication success
+  nvme: Expose the tls_configured sysfs for secure concat connections
+  nvme: Allow reauth from sysfs
+
+ drivers/nvme/host/sysfs.c              | 25 +++++++++++++++++++++++--
+ drivers/nvme/target/auth.c             |  4 ++--
+ drivers/nvme/target/core.c             |  2 +-
+ drivers/nvme/target/fabrics-cmd-auth.c | 12 ++++++------
+ drivers/nvme/target/nvmet.h            |  4 ++--
+ 5 files changed, 35 insertions(+), 14 deletions(-)
+
+-- 
+2.51.1
 
 
