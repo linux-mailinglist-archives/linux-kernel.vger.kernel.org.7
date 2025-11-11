@@ -1,128 +1,148 @@
-Return-Path: <linux-kernel+bounces-895756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55187C4ED2E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:42:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FC37C4ED67
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:45:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB1B4188B0B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 15:42:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95D7E3A3264
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 15:42:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 127E2369965;
-	Tue, 11 Nov 2025 15:41:55 +0000 (UTC)
-Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1770A34FF7C;
-	Tue, 11 Nov 2025 15:41:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 471B035A142;
+	Tue, 11 Nov 2025 15:42:28 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B92372D9ECB;
+	Tue, 11 Nov 2025 15:42:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762875714; cv=none; b=fiOM+Xvr+p4M9B3FeP7Eyp0UkglViG+rpy/yW1rrpO52QKr8kqa0eFZSw6eIb3Fzex8885fBG8R0DAndOyvpwxKtBsFxmgosjydmqI5XQXV4Sc7SoiiD9OSuNKFr39AV0rCkRgLqPSEBJOazr/SWK4g8XIrP/5QdCYuj+P0CxxA=
+	t=1762875747; cv=none; b=k60UxSfY+Y1BlVRq9Sj12hmwlymKUUlMHyF1EPX93oXStj+xEH1T3tEA/7uLrI9Su7UgtEw0/AYsT/yUsmItzJZ2TkKBQAvvyvr79WQrxfvw0qFpLmYgGKhfZZ6WfCf9StgeUxHVmPi1qC3FQN59MVkI8XKgyhMc36GochIRjnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762875714; c=relaxed/simple;
-	bh=4CFipZG9xNGjKhu7PtE3fDf5/dXjNWLSVeKWkYCwnfI=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=qNvd57zxZP8Czl6/d6DRdUZuAhailXQsq/1qPzi/MB7e/+GX4AN2CGUE1EltRf5hk4Vpn7OBRiwPKwVBLnCM5YOD46lzHnbZ7sAg/M3+ZXsOvKdKLZFMQ6QwiYKwAZlmZV3UMs+S4m5W1xFiQvZJwqzJqR4s58mtK6CUnnJAy/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
-Received: by angie.orcam.me.uk (Postfix, from userid 500)
-	id 4B02492009E; Tue, 11 Nov 2025 16:41:50 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by angie.orcam.me.uk (Postfix) with ESMTP id 43F6792009D;
-	Tue, 11 Nov 2025 15:41:50 +0000 (GMT)
-Date: Tue, 11 Nov 2025 15:41:50 +0000 (GMT)
-From: "Maciej W. Rozycki" <macro@orcam.me.uk>
-To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-cc: Nick Bowler <nbowler@draconx.ca>, Jiaxun Yang <jiaxun.yang@flygoat.com>, 
-    linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MIPS: mm: Prevent a TLB shutdown on initial
- uniquification
-In-Reply-To: <aRMrmjJcLJYR8QO-@alpha.franken.de>
-Message-ID: <alpine.DEB.2.21.2511111340330.25436@angie.orcam.me.uk>
-References: <alpine.DEB.2.21.2511110547430.25436@angie.orcam.me.uk> <aRMrmjJcLJYR8QO-@alpha.franken.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+	s=arc-20240116; t=1762875747; c=relaxed/simple;
+	bh=muKpuY3byqNcRWxxaSgz9NQv7RUetjOa8lPW7ELfWGU=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BIa0MLfvY8+cnRFf8zBCzqR9GodaV0N4GoRycaVAU/ZRdXA2BxqWjnpD6d+NZToWTyIVaPYcTbkZ98BDaWV7O6Hf5oXflewRYB8IgbXP+BEV6vJubffhX4Hi0jLW+Hat3mKe6mRHjgiHgX0iR5DkMvGcFhxIbBGdw3y+yQmP2TI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4d5W4F1G38zHnGgv;
+	Tue, 11 Nov 2025 23:42:05 +0800 (CST)
+Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
+	by mail.maildlp.com (Postfix) with ESMTPS id 7E6F31400D9;
+	Tue, 11 Nov 2025 23:42:22 +0800 (CST)
+Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
+ (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.36; Tue, 11 Nov
+ 2025 15:42:21 +0000
+Date: Tue, 11 Nov 2025 15:42:20 +0000
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
+CC: <linux-cxl@vger.kernel.org>, "Rafael J . Wysocki" <rafael@kernel.org>,
+	"Len Brown" <lenb@kernel.org>, Tony Luck <tony.luck@intel.com>, Borislav
+ Petkov <bp@alien8.de>, Hanjun Guo <guohanjun@huawei.com>, Mauro Carvalho
+ Chehab <mchehab@kernel.org>, Shuai Xue <xueshuai@linux.alibaba.com>,
+	"Davidlohr Bueso" <dave@stgolabs.net>, Dave Jiang <dave.jiang@intel.com>,
+	"Alison Schofield" <alison.schofield@intel.com>, Vishal Verma
+	<vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan Williams
+	<dan.j.williams@intel.com>, Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
+	Oliver O'Halloran <oohall@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>,
+	<linux-kernel@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
+	<linuxppc-dev@lists.ozlabs.org>, <linux-pci@vger.kernel.org>
+Subject: Re: [PATCH 3/6 v7] acpi/ghes: Make GHES select ACPI_APEI_PCIEAER
+Message-ID: <20251111154220.00004767@huawei.com>
+In-Reply-To: <20251104182446.863422-4-fabio.m.de.francesco@linux.intel.com>
+References: <20251104182446.863422-1-fabio.m.de.francesco@linux.intel.com>
+	<20251104182446.863422-4-fabio.m.de.francesco@linux.intel.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500012.china.huawei.com (7.191.174.4) To
+ dubpeml100005.china.huawei.com (7.214.146.113)
 
-On Tue, 11 Nov 2025, Thomas Bogendoerfer wrote:
+On Tue,  4 Nov 2025 19:22:34 +0100
+"Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com> wrote:
 
-> >  Can you please give it a try with your systems?
+> GHES handles the PCI Express Error Section and also the Compute Express
+> Link (CXL) Protocol Error Section. Two of its functions depend on the
+> APEI PCIe AER logging/recovering support (ACPI_APEI_PCIEAER).
 > 
-> it's booting on my R4400 SGI Indy, but I see a lot of segmentation
-> faults during system start. If I comment out r4k_tlb_uniquify() every-
-> thing boots fine, which is kind of strange as there is a local_flush_tlb_all(),
-> which should leave the TLB in the same stage.... No idea why, yet.
+> Make GHES select ACPI_APEI_PCIEAER and remove the conditional
+> compilation from the body of two static functions that handle the CPER
+> Error Sections mentioned above.
 
- Can you try the diagnostic patch below, which is what I used to verify 
-this change, and report the entries produced?  Otherwise I wonder whether 
-I haven't missed a barrier somewhere.
+Hi Fabio,
 
-> > +
-> > +	for (i = start, cnt = 0; i < tlbsize; i++, cnt++) {
+I'm not seeing a justification here for the change and there may be
+APEI platforms without PCI support.  So is this just to simplify things or
+is there a functional reason that it is necessary?
+
+Jonathan
+
 > 
-> shouldn't we read all TLB entries here ? 
+> Signed-off-by: Fabio M. De Francesco <fabio.m.de.francesco@linux.intel.com>
+> ---
+>  drivers/acpi/apei/Kconfig | 2 ++
+>  drivers/acpi/apei/ghes.c  | 4 ----
+>  2 files changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/acpi/apei/Kconfig b/drivers/acpi/apei/Kconfig
+> index 070c07d68dfb..cdf3cfa233b9 100644
+> --- a/drivers/acpi/apei/Kconfig
+> +++ b/drivers/acpi/apei/Kconfig
+> @@ -23,6 +23,8 @@ config ACPI_APEI_GHES
+>  	select ACPI_HED
+>  	select IRQ_WORK
+>  	select GENERIC_ALLOCATOR
+> +	select PCIEAER
+> +	select ACPI_APEI_PCIEAER
+>  	select ARM_SDE_INTERFACE if ARM64
+>  	help
+>  	  Generic Hardware Error Source provides a way to report
+> diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
+> index 97ee19f2cae0..d6fe5f020e96 100644
+> --- a/drivers/acpi/apei/ghes.c
+> +++ b/drivers/acpi/apei/ghes.c
+> @@ -613,7 +613,6 @@ static bool ghes_handle_arm_hw_error(struct acpi_hest_generic_data *gdata,
+>   */
+>  static void ghes_handle_aer(struct acpi_hest_generic_data *gdata)
+>  {
+> -#ifdef CONFIG_ACPI_APEI_PCIEAER
+>  	struct cper_sec_pcie *pcie_err = acpi_hest_get_payload(gdata);
+>  
+>  	if (pcie_err->validation_bits & CPER_PCIE_VALID_DEVICE_ID &&
+> @@ -646,7 +645,6 @@ static void ghes_handle_aer(struct acpi_hest_generic_data *gdata)
+>  				  (struct aer_capability_regs *)
+>  				  aer_info);
+>  	}
+> -#endif
+>  }
+>  
+>  static BLOCKING_NOTIFIER_HEAD(vendor_record_notify_list);
+> @@ -711,7 +709,6 @@ struct work_struct *cxl_cper_prot_err_work;
+>  static void cxl_cper_post_prot_err(struct cxl_cper_sec_prot_err *prot_err,
+>  				   int severity)
+>  {
+> -#ifdef CONFIG_ACPI_APEI_PCIEAER
+>  	struct cxl_cper_prot_err_work_data wd;
+>  	u8 *dvsec_start, *cap_start;
+>  
+> @@ -767,7 +764,6 @@ static void cxl_cper_post_prot_err(struct cxl_cper_sec_prot_err *prot_err,
+>  	}
+>  
+>  	schedule_work(cxl_cper_prot_err_work);
+> -#endif
+>  }
+>  
+>  int cxl_cper_register_prot_err_work(struct work_struct *work)
 
- Strictly speaking it won't change anything as we call `write_c0_wired(0)' 
-in `r4k_tlb_configure' before getting here and wired entries make no sense 
-for KSEG0, so whatever would otherwise be there should not clash with our 
-unique entries.  But I guess it won't hurt.  OTOH `ent' ought to be set up 
-from `tlbsize' rather than `cnt' should the Wired register setting ever 
-change.  I'll have a look, but I we need to know why the current version 
-causes troubles with your system first.
-
- NB I wonder how this is supposed to work with mapped kernels, I thought 
-the setup made with MAPPED_KERNEL_SETUP_TLB was meant to be permanent 
-through the life of the system, hmm...
-
-  Maciej
----
- arch/mips/mm/tlb-r4k.c |   10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
-
-linux-mips-tlb-r4k-uniquify-fix-debug.diff
-Index: linux-macro/arch/mips/mm/tlb-r4k.c
-===================================================================
---- linux-macro.orig/arch/mips/mm/tlb-r4k.c
-+++ linux-macro/arch/mips/mm/tlb-r4k.c
-@@ -535,19 +535,23 @@ static void r4k_tlb_uniquify(void)
- 	htw_stop();
- 
- 	for (i = start, cnt = 0; i < tlbsize; i++, cnt++) {
--		unsigned long vpn;
-+		unsigned long entryhi, vpn;
- 
- 		write_c0_index(i);
- 		mtc0_tlbr_hazard();
- 		tlb_read();
- 		tlb_read_hazard();
--		vpn = read_c0_entryhi();
-+		entryhi = vpn = read_c0_entryhi();
- 		vpn &= vpn_mask & PAGE_MASK;
- 		tlb_vpns[cnt] = vpn;
-+		printk("[%02x/%02x]: %08lx/%08lx\n", i, cnt, entryhi, vpn);
- 	}
- 
- 	sort(tlb_vpns, cnt, sizeof(tlb_vpns[0]), r4k_vpn_cmp, NULL);
- 
-+	for (idx = 0; idx < cnt; idx++)
-+		printk("[%02x]: %08lx\n", idx, tlb_vpns[idx]);
-+
- 	write_c0_entrylo0(0);
- 	write_c0_entrylo1(0);
- 
-@@ -560,6 +564,8 @@ static void r4k_tlb_uniquify(void)
- 			entryhi = UNIQUE_ENTRYHI(ent);
- 			vpn = entryhi & vpn_mask & PAGE_MASK;
- 
-+			printk("[%02x/%02x/%02x]: %08lx/%08lx\n", i, idx, ent,
-+			       vpn, tlb_vpns[idx]);
- 			if (idx >= cnt || vpn < tlb_vpns[idx]) {
- 				write_c0_entryhi(entryhi);
- 				write_c0_index(i);
 
