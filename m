@@ -1,90 +1,128 @@
-Return-Path: <linux-kernel+bounces-894454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A595C4ABAA
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 02:39:03 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6178DC4AA3C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 02:35:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1EB7189460D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 01:30:36 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DA1094F94C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 01:30:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 972D6258EF6;
-	Tue, 11 Nov 2025 01:21:47 +0000 (UTC)
-Received: from zg8tmja5ljk3lje4mi4ymjia.icoremail.net (zg8tmja5ljk3lje4mi4ymjia.icoremail.net [209.97.182.222])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48EF92D979C;
-	Tue, 11 Nov 2025 01:21:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.97.182.222
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A9903451CE;
+	Tue, 11 Nov 2025 01:22:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RmR9+LX+"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85FE62DC328
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 01:22:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762824107; cv=none; b=tnn9p4r/jIjtNTzH9NqDvhmOg0mGf/1vz377tgLZ3hF9PoG+OFUp2DRbnBNlkI9lOwuuIQvyDZlq/yx7Y3fMDbVc083DSiaCZdxyIu8qG8UecTNxCIM0vsY5IT/Hye8gZ6FE6BVyIUrfdt8J1BnyaDHnCDEMQ3x6KJd29Yt38w0=
+	t=1762824163; cv=none; b=YY4EimN0euPXa0pUY9qdgf/NMUA7QKJlk+4OQ0m9VMhOiEjjtrR8NbMR2yag3H3QYUIVsfyzcqpv9xl6e6b7i3LB9QYZDbubaT7nRj6KKcczF7tD6Wwc1a1KSEWndGMy5aTNMPMCKB9Og4PwOFRZnmYeoOieQtBAlR3OjmkO1Tw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762824107; c=relaxed/simple;
-	bh=gCjRIKc6GlJ4lkRY0m4vHpiJLg54xIt10H+z+ZH0plc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=l4qwS7wazLWkcdgeUu7DMPb5ly1zSTSX4UkXzWkPjrB/6JAhvEkkkVCFCEYXu6p0AIuCL5XXYJocQupjjNiOsJc/RW5s7abIorwBzbidytAyK/algLFug2TEb5WCrxcyMAnb1oL3BLjjKwSkrqF8o4n7jrTOPvzRex/igwKVgvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=209.97.182.222
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
-Received: from dongxuyang$eswincomputing.com ( [10.12.96.41] ) by
- ajax-webmail-app2 (Coremail) ; Tue, 11 Nov 2025 09:21:32 +0800 (GMT+08:00)
-Date: Tue, 11 Nov 2025 09:21:32 +0800 (GMT+08:00)
-X-CM-HeaderCharset: UTF-8
-From: "Xuyang Dong" <dongxuyang@eswincomputing.com>
-To: "Troy Mitchell" <troy.mitchell@linux.dev>, mturquette@baylibre.com,
-	sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, bmasney@redhat.com, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: ningyu@eswincomputing.com, linmin@eswincomputing.com,
-	huangyifeng@eswincomputing.com, pinkesh.vaghela@einfochips.com
-Subject: Re: Re: [PATCH v7 2/2] clock: eswin: Add eic7700 clock driver
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2024.2-cmXT6 build
- 20241203(6b039d88) Copyright (c) 2002-2025 www.mailtech.cn
- mispb-72143050-eaf5-4703-89e0-86624513b4ce-eswincomputing.com
-In-Reply-To: <aQ2jbf2k3rwOZDuB@kernel.org>
-References: <20251023071658.455-1-dongxuyang@eswincomputing.com>
- <20251023071814.568-1-dongxuyang@eswincomputing.com>
- <aQ2jbf2k3rwOZDuB@kernel.org>
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1762824163; c=relaxed/simple;
+	bh=EwY1mUUQSmUNg/bnQGwuIvfCAxj9fZHnOjpw5NoP0mw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kRv0iLZK4UqV86jBG/YEs5R1SLQU/7XXpPQm+Cx6nN3wg+pxcJmQBK3ixPtJntBIUx6SD1wdaPwsXAkoh4vPaYbBs8dXhpoRbrBQI7h2rOS3d37IwL0scy+NZw8yyeinAWkFPQOvFwyY0Bb0ELH4qdI4Jk343IBs8oUG4omB5pY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RmR9+LX+; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762824160;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=no9fwGymXdAQv8M8IFgXqJIUpl2VhuFy6hctsstQJhY=;
+	b=RmR9+LX+Tw9KOlCeGnbSQYHibsXZA+dTA0tNUPc3tm7zUF3hvNWs2op92O92wU6IMsvE0V
+	YyX4M2jt/stc+VU1/owLdPOaUI5K35t9DLf2Nssg7aXt/SMfvHzJdoNUNW7jmQJbhvxMc6
+	k/iBdOLhujQeQHCo5My0dskhAHJAeJg=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-379-rFCgNHIaPj24v2xp5QjEyQ-1; Mon,
+ 10 Nov 2025 20:22:38 -0500
+X-MC-Unique: rFCgNHIaPj24v2xp5QjEyQ-1
+X-Mimecast-MFC-AGG-ID: rFCgNHIaPj24v2xp5QjEyQ_1762824157
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4961819560A3;
+	Tue, 11 Nov 2025 01:22:37 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.124])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 96A65180057B;
+	Tue, 11 Nov 2025 01:22:32 +0000 (UTC)
+Date: Tue, 11 Nov 2025 09:22:27 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Caleb Sander Mateos <csander@purestorage.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Damien Le Moal <dlemoal@kernel.org>,
+	Christoph Hellwig <hch@lst.de>, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Keith Busch <kbusch@kernel.org>
+Subject: Re: [PATCH 1/2] loop: use blk_rq_nr_phys_segments() instead of
+ iterating bvecs
+Message-ID: <aRKP03sNaFcp0Sjn@fedora>
+References: <20251108230101.4187106-1-csander@purestorage.com>
+ <20251108230101.4187106-2-csander@purestorage.com>
+ <aRCG3OUThPCys92r@fedora>
+ <CADUfDZocSmRC2uSiY=1gayxQ5TGAcCnKQRSg+4SeficpQ3Bfhw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <74be57c4.45.19a7080fca1.Coremail.dongxuyang@eswincomputing.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:TQJkCgBnq66cjxJpoHd6AA--.1284W
-X-CM-SenderInfo: pgrqw5xx1d0w46hv4xpqfrz1xxwl0woofrz/1tbiAgEDAmkSE9sH7
-	gABsZ
-X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
-	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
-	daVFxhVjvjDU=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CADUfDZocSmRC2uSiY=1gayxQ5TGAcCnKQRSg+4SeficpQ3Bfhw@mail.gmail.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-PiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2Nsay9lc3dpbi9LY29uZmlnIGIvZHJpdmVycy9jbGsv
-ZXN3aW4vS2NvbmZpZwo+ID4gbmV3IGZpbGUgbW9kZSAxMDA2NDQKPiA+IGluZGV4IDAwMDAwMDAw
-MDAwMC4uOWJjOTAwOGQzMTU2Cj4gPiAtLS0gL2Rldi9udWxsCj4gPiArKysgYi9kcml2ZXJzL2Ns
-ay9lc3dpbi9LY29uZmlnCj4gPiBAQCAtMCwwICsxLDE1IEBACj4gPiArIyBTUERYLUxpY2Vuc2Ut
-SWRlbnRpZmllcjogR1BMLTIuMAo+ID4gKwo+ID4gK2NvbmZpZyBDT01NT05fQ0xLX0VTV0lOCj4g
-PiArCWJvb2wKPiA+ICsKPiA+ICtjb25maWcgQ09NTU9OX0NMS19FSUM3NzAwCj4gPiArCWJvb2wg
-IkVJQzc3MDAgQ2xvY2sgRHJpdmVyIgo+IFdlIGNhbid0IGJ1aWxkIHRoaXMgZHJpdmVyIGFzIG1v
-ZHVsZT8KPiBJZiBubywgc2VlIGhlcmU6IGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2FsbC9aJTJG
-bE43cXJJU3BiSzZNUVlAZ29rby13LnRhaWxjZTZjNDkudHMubmV0LwogCk9LCgo+ID4gKwlkZXBl
-bmRzIG9uIEFSQ0hfRVNXSU4gfHwgQ09NUElMRV9URVNUCj4gPiArCXNlbGVjdCBDT01NT05fQ0xL
-X0VTV0lOCj4gPiArCWRlZmF1bHQgQVJDSF9FU1dJTgo+ID4gKwloZWxwCj4gPiArCSAgVGhpcyBk
-cml2ZXIgcHJvdmlkZXMgc3VwcG9ydCBmb3IgY2xvY2sgY29udHJvbGxlciBvbiBFU1dJTiBFSUM3
-NzAwCj4gPiArCSAgU29DLiBUaGUgY2xvY2sgY29udHJvbGxlciBjYW4gZ2VuZXJhdGVzIGFuZCBz
-dXBwbGllcyBjbG9jayB0byB2YXJpb3VzCj4gPiArCSAgcGVyaXBoZXJhbHMgd2l0aGluIHRoZSBT
-b0MuCj4gPiArCSAgU2F5IHllcyBoZXJlIHRvIHN1cHBvcnQgdGhlIGNsb2NrIGNvbnRyb2xsZXIg
-b24gdGhlIEVJQzc3MDAgU29DLgo+IFsuLi5dCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9jbGsv
-ZXN3aW4vY2xrLWVpYzc3MDAuYyBiL2RyaXZlcnMvY2xrL2Vzd2luL2Nsay1laWM3NzAwLmMKPiBD
-YW4geW91IGdpdmUgdXMgYSBjbG9jay10cmVlIGltZyBvciBwZGY/Cj4gCj4gICAgICAgICAgICAg
-ICAgICAgICAgICAgLSBUcm95CgpIaSBUcm95LAoKVGhlIGxpbmsgWzFdIHByb3ZpZGVzIHRoZSBv
-ZmZpY2lhbCBkb2N1bWVudGF0aW9uIGZvciB0aGUgRUlDNzcwMC7CoApTZWN0aW9uIDMuMiBjb3Zl
-cnMgdGhlIGNsb2NrIHN1YnN5c3RlbSwgd2hlcmUgeW91IGNhbiBmaW5kIGRldGFpbGVkwqAKaW5m
-b3JtYXRpb24gYWJvdXQgdGhlIGNsb2NrLXRyZWUuCgpbMV0gaHR0cHM6Ly93d3cuc2lmaXZlLmNv
-bS9kb2N1bWVudC1maWxlL2VpYzc3MDB4LWRhdGFzaGVldAoKUmVnYXJkcywKWHV5YW5nIERvbmcK
+On Mon, Nov 10, 2025 at 08:47:46AM -0800, Caleb Sander Mateos wrote:
+> On Sun, Nov 9, 2025 at 4:20 AM Ming Lei <ming.lei@redhat.com> wrote:
+> >
+> > On Sat, Nov 08, 2025 at 04:01:00PM -0700, Caleb Sander Mateos wrote:
+> > > The number of bvecs can be obtained directly from struct request's
+> > > nr_phys_segments field via blk_rq_nr_phys_segments(), so use that
+> > > instead of iterating over the bvecs an extra time.
+> > >
+> > > Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
+> > > ---
+> > >  drivers/block/loop.c | 5 +----
+> > >  1 file changed, 1 insertion(+), 4 deletions(-)
+> > >
+> > > diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+> > > index 13ce229d450c..8096478fad45 100644
+> > > --- a/drivers/block/loop.c
+> > > +++ b/drivers/block/loop.c
+> > > @@ -346,16 +346,13 @@ static int lo_rw_aio(struct loop_device *lo, struct loop_cmd *cmd,
+> > >       struct request *rq = blk_mq_rq_from_pdu(cmd);
+> > >       struct bio *bio = rq->bio;
+> > >       struct file *file = lo->lo_backing_file;
+> > >       struct bio_vec tmp;
+> > >       unsigned int offset;
+> > > -     int nr_bvec = 0;
+> > > +     unsigned short nr_bvec = blk_rq_nr_phys_segments(rq);
+> > >       int ret;
+> > >
+> > > -     rq_for_each_bvec(tmp, rq, rq_iter)
+> > > -             nr_bvec++;
+> > > -
+> >
+> > The two may not be same, since one bvec can be splitted into multiple segments.
+> 
+> Hmm, io_buffer_register_bvec() already assumes
+> blk_rq_nr_phys_segments() returns the number of bvecs iterated by
+> rq_for_each_bvec(). I asked about this on the patch adding it, but
+> Keith assures me they match:
+> https://lore.kernel.org/io-uring/Z7TmrB4_aBnZdFbo@kbusch-mbp/.
+
+blk_rq_nr_phys_segments() >= nr_bvec, would you like to cook a fix?
+
+Thanks, 
+Ming
 
 
