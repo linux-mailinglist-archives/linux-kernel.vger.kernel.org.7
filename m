@@ -1,117 +1,122 @@
-Return-Path: <linux-kernel+bounces-895345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C67A0C4D8CB
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:59:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D384C4D913
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:02:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 698851889EF2
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:57:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05B3D3AA846
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:00:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFF81350A0E;
-	Tue, 11 Nov 2025 11:56:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75749357A54;
+	Tue, 11 Nov 2025 11:59:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Giy6O0F9"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FPC0Dqnz"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DB672E6116
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 11:56:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 672483557E4
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 11:59:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762862194; cv=none; b=tXo4iH7fHmzYIENtO4KcTa4RIf1B9RArb3ZWr23E8gKaN0eKhO0J7tQ3WxCQ+31OQ8EY6XJABjqOZCYx037PuphZH//Ffq7fqfM8GzNKTebrF5UJ8bYxwDQwCpx8VDVSl+yjnXgt6bhfoJBXQ61x+SIYycUVrEg7y89AMbW/iEI=
+	t=1762862372; cv=none; b=WG0Nm7eW2/HFTvWgpDTzuvZFgo4X/Lfk1rvf7y6X1Fvct91UW97kqS517vN5QVw2RWS7hp+x2SQ9N7NWfAmoZPURDztTjgOqpSihfS+I6IEyUN/vv+cT2QEZYhjAtP9sHo293jOUYNDCrdaWoQppzw/M2n5T5e+FXAOJE7VVAI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762862194; c=relaxed/simple;
-	bh=7cpCvyszEn5HOezxZLBqqcsmZ2uT7ZtZtkiuIpkUXg4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CCywbt+0pkvIbMvDE7BBwb+Evsw+jxVZvnN2a7N34d8eE6g2cyJJGkwDpnX8BZgiLRJpFElDjzuQSs4pejGAFjJfEw0EaytKCPhW7R9oL/5reJE1tSstt9kz+hAC5aoaQ9LFtX65Gcrt/E6uVcNc8sUYclRMvitE8FrdbR3tbQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Giy6O0F9; arc=none smtp.client-ip=209.85.221.46
+	s=arc-20240116; t=1762862372; c=relaxed/simple;
+	bh=FdTXxCQ7Q6AxN4RORySKndm6mVXLyDWwpJ+4AHMhLY8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rxTbGBN1tQBW58KfCXf+IoKZDnY28badu5hKtseLjUhX2tT0APBsPgjp17ScRxe2MgeGf5sQvfpVrIEpKoYSLIPlDgfKHkCCPXewIsNmO3d54mwpPM5W7hx5wLO+Byx99Wslf2Wbgv5gCURwD5gptNfongS2U4SsWdV0+PMR+f0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FPC0Dqnz; arc=none smtp.client-ip=209.85.214.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-42b2dd19681so622038f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 03:56:32 -0800 (PST)
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-29844c68068so3563205ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 03:59:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762862191; x=1763466991; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CJgHQCcCAAMF/dux7/grV0vztHoMiGEbVl3yeix1xGI=;
-        b=Giy6O0F98hm+bOKubD841CwYNu7joAPoUqyh55X85IVsqkQvraqRcWzFr24lNHUgyO
-         wvnfQXZOvtwURhzwQopBbB0D8NqI0DZlMiHVaerEuZBWABDvaEHf/z6o35jEwblBVUCQ
-         +7PTDy8qOBbTFgFX/C4VCcfiU6QV58uyiIAPXNI4G//yT8FRYnGhMSHQSEjDAgGUOW7x
-         5HtqCVENpciSPf3UETxkf9PfTniWDpsrQ5TPlPbQlOvtCwcbNRsI5v7oaCX+gjys97kO
-         sHDUBl0v1+ulaAoTxkpajUAL++4aLvoiPs8crcpuNyVG+ccC0YEnfUEiQrJOi+n9ti23
-         UfkQ==
+        d=gmail.com; s=20230601; t=1762862371; x=1763467171; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tTXQT8S4mtxd9pnn7XmlBWIFpySMyf1Ua7+YxQyn080=;
+        b=FPC0Dqnzj4HlGNWiv8Jxly3ohEIHV4Xy58EnOhTIFZpk9RbinMSwmHX0/yQM5sg/H2
+         grHYlQUG071UWUHA1eSBywKvueilgH1gGzm5MRscMRgVnkPIJC3o8SFWIBqF4SAHj6Uv
+         GWK3TJGq2SvEUX6Jq4obhibOPZ/fc4vf/sIYZh4wZLtAZzppFPrMxhWl2N11CcmSZkQd
+         TO7aGCLjHP8vLsOMgv2QSEB6gAdXu/QOyfnysNf6Jzaypk0MOKQfsa7pTuTLsXNHdWQV
+         Ru2v56w/b8O/l+BThKG1H96yIbWZCs8F0YGk34S05BFWb8315Z5IimgDzJbfg7tHV84m
+         HHFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762862191; x=1763466991;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CJgHQCcCAAMF/dux7/grV0vztHoMiGEbVl3yeix1xGI=;
-        b=DQbZDOyvLJIweUrJCK1JVZAYgSRY56zmkNvyi+NRfjO/Z8OkeXB30afsXeKllnzqNJ
-         Rkry1AHedlTxhZdxH6l8p3J3lk0fHzn0uImNL6jmHGckJTpE18SfxnREr1gyrrtm2cvu
-         jVRm5Ai/qizigOdsiQ4+I4/Pg+EKMMx3lF3zreCLgkJyApNfU7WGUEFZBQNdEYELrIhi
-         3BKDkbwTSHhLQS47HupzXs4XS11hB+0EMzakV43ajWlxzp81QUkFKaHklIuQJNABjb+z
-         MMJrbKsrhhBww8bBrBRq/KgsMIw/vaKOn2t3vxcUdwnYPsdOsffouT4H/JGIKNxmyiq6
-         tNbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXSCcJAXddSuGsCkh1kESm+CFFkfMbnVa9cHcfqX1/ixyVU3dMq5UJ+sYA2KZUh8uyLqY2P8mt04oNf9qM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1Qtv1KFjMEkxsrWgYQTiyHPEYZalgbya3VEztFFOoGVijoZK1
-	Wue5KO0RcYV0Uy+0pRAa843rkzYf/MtRYZhoA5t34ltqkBPSTF7UiCIm
-X-Gm-Gg: ASbGncsly5ass7nkwnzGFNRYs7JgiiyiQDmCNlzBXGzbBdDBBzx8WkzrShlRAAlDjLm
-	8qAt68IGI0YSSAwh86mHRmnia5GRYefryWTd+2F+pIvIrSCkjjWTkVWwECF2KDTZACIAarlqJ6G
-	qOgkQLqJh+8UuU3AoMHvDFnP3l4K2oAMZOeiQnoeikmxrEAzYnIxmk4btRm/l93Tn5+ktWeGWIP
-	GpHQnwMJLBHr8AhjKpWPCLz8V9FVhbMu8aBg6/2wLQUr/ZwYihrf4HCFzlyGrV8h/f2ji1jSLq2
-	bNF9t55DbonM6DxGguW/xOY8zb7rEijVmRwYYseq5un7ICSWQJav8waKgEHoXTduWv+xw6LFsKD
-	jLAIuXOlYaym/LXAwcUJ0ArdUA+67kb+2yQQVVMCT3StuYP8qTc6q7SF+824WcnUBv5bbHbzGfu
-	aGEys=
-X-Google-Smtp-Source: AGHT+IEvZuLBPX6umhXQeZ0Rv/NcKeiOMHYrfxaoqE4DsQaZb5ViZ0h12lREx2bg/R/5zR++qTxTlQ==
-X-Received: by 2002:a05:600c:4711:b0:475:d7b8:8505 with SMTP id 5b1f17b1804b1-4777329f181mr60253945e9.7.1762862190504;
-        Tue, 11 Nov 2025 03:56:30 -0800 (PST)
-Received: from skbuf ([2a02:2f04:d104:5e00:40fe:dea4:2692:5340])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4775cdc33c8sm364910025e9.2.2025.11.11.03.56.28
+        d=1e100.net; s=20230601; t=1762862371; x=1763467171;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tTXQT8S4mtxd9pnn7XmlBWIFpySMyf1Ua7+YxQyn080=;
+        b=abMxV1tOUyC2v6ALRxRps19C0dWLkLU882ZT60N7tqA0VjyH1q+loNCHlurg/8tFuq
+         vLTM5o4I7g1//crk/+Z5j5qnNUrjT0J0S7Fii0hbOu0X5xwxR3FgQbaDPPcEIFFwztTw
+         jtvWZetic5bg7F1R7f2JwqVq/hO6MK6zKZQB6kKGWxgZocIVZCAbe9KImM0/9LSNp3eg
+         6fRWmz01MzqUW5PMk0+AtaBY6NzVNGH1j/X5oBizTg8jOKS1PMN0NcwfrW5y8/emuf0I
+         6o3wJEd2iNZddb9RlCGABZmN7F81xTDd76hqGwCEYfk5cEVUnamVD0jHnaM502/rCbK6
+         yXfw==
+X-Forwarded-Encrypted: i=1; AJvYcCXIKB9Df9oHbS3sioVMmWX23bBCCgYc8jYZmtLuJEU5tQGsdXyFfjReQDFBlnXHPrj2METgLdPKqkDD5WU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxzKtQN77vaoI9VDBGMfJSneQqGNtXVJb51DF2GwnDpI4T1PJk
+	2T7PbG/QciFbUisMTCh4dl9qqzjiFvawG8kInOJuQH5aQaXOS9I29e4u
+X-Gm-Gg: ASbGnctJNMhzuvkvhWFiIg+dQZki5RmviIouhw0uA9Q4rpkZp2B2HvM+bvQk92NBfMb
+	v6DSZM1dEliYa0SV+O/rl6FpdwVZeeffDArevuwk2FQ3c/jTbyI6DkXcQFYvNmbcvGll/Pn+Bsd
+	TXOM+MqEYaHaUTheVVktnRYSlEaKoz403UpoLJCugTIxCbMLz66X1i9nlWd7S1dn4td99m2OeqL
+	Mag/AeDh3xuylNyMEyHuByISsqMdP8X+wZFB3EUJZgbBll4YiF7YetuUVkzu2Yk99FGrRU2K+zj
+	X7eZlOwDeEUGYIW1eEr0Q0mtnXx9JIRO/mSDjtB5AjKnehrI0hvJoJwNV4W67LnrFYR7cQ5dcq2
+	WowuJrjouVGapjWTqAxmx6d2msvucyZqOMfb16Hhpn+EAW9xVpdStIaTOgxZA4D4H2U0gnTN0f3
+	pHpmhH+niB4I98aHhQxrarWiUzyhE=
+X-Google-Smtp-Source: AGHT+IHEnPWDBHcMURIQBALd4LkxZ9HPi+VzFRx2yEKPAWBgCNMBIOVhcPerQghaB4Tqgzhe3hSDow==
+X-Received: by 2002:a17:902:da84:b0:295:73f:90d0 with SMTP id d9443c01a7336-297e56e1cb2mr158685185ad.50.1762862370657;
+        Tue, 11 Nov 2025 03:59:30 -0800 (PST)
+Received: from crl-3.node2.local ([125.63.65.162])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-343bfef789esm1349609a91.1.2025.11.11.03.59.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Nov 2025 03:56:29 -0800 (PST)
-Date: Tue, 11 Nov 2025 13:56:27 +0200
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Jonas Gorski <jonas.gorski@gmail.com>
-Cc: Vladimir Oltean <vladimir.oltean@nxp.com>, Andrew Lunn <andrew@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC net-next 3/3] net: dsa: deny 8021q uppers on vlan
- unaware bridged ports
-Message-ID: <20251111115627.orks445s5o2adkbu@skbuf>
-References: <20251110214443.342103-1-jonas.gorski@gmail.com>
- <20251110214443.342103-4-jonas.gorski@gmail.com>
- <20251110222501.bghtbydtokuofwlr@skbuf>
- <CAOiHx=k8q7Zyr5CEJ_emKYLRV9SOXPjrrXYkUKs6=MbF_Autxw@mail.gmail.com>
+        Tue, 11 Nov 2025 03:59:30 -0800 (PST)
+From: Kriish Sharma <kriish.sharma2006@gmail.com>
+To: axboe@kernel.dk
+Cc: linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Kriish Sharma <kriish.sharma2006@gmail.com>
+Subject: [PATCH] blk-mq-dma: fix kernel-doc function name for integrity DMA  iterator
+Date: Tue, 11 Nov 2025 11:58:10 +0000
+Message-Id: <20251111115810.2320857-1-kriish.sharma2006@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOiHx=k8q7Zyr5CEJ_emKYLRV9SOXPjrrXYkUKs6=MbF_Autxw@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Nov 11, 2025 at 11:06:48AM +0100, Jonas Gorski wrote:
-> But I noticed while testing that apparently b53 in filtering=0 mode
-> does not forward any tagged traffic (and I think I know why ...).
-> 
-> Is there a way to ask for a replay of the fdb (static) entries? To fix
-> this for older switches, we need to disable 802.1q mode, but this also
-> switches the ARL from IVL to SVL, which changes the hashing, and would
-> break any existing entries. So we need to flush the ARL before
-> toggling 802.1q mode, and then reprogram any static entries.
+Documentation build reported:
 
-I'm not clear on what happens. "Broken" FDB entries in the incorrect
-bridge vlan_filtering mode sounds like normal behaviour (FDB entries
-with VID=0 while vlan_filtering=1, or FDB entries with VID!=0 while
-vlan_filtering=0). They should just sit idle in the ARL until the VLAN
-filtering mode makes them active.
+  Warning: block/blk-mq-dma.c:373 expecting prototype for blk_rq_integrity_dma_map_iter_start(). Prototype was for blk_rq_integrity_dma_map_iter_next() instead
+
+The kernel-doc comment above `blk_rq_integrity_dma_map_iter_next()` used
+the wrong function name (`blk_rq_integrity_dma_map_iter_start`) in its
+header. This patch corrects the function name in the kernel-doc block to
+match the actual implementation, ensuring clean documentation builds.
+
+Fixes: fec9b16dc555 ("blk-mq-dma: add scatter-less integrity data DMA mapping")
+Signed-off-by: Kriish Sharma <kriish.sharma2006@gmail.com>
+---
+ block/blk-mq-dma.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/block/blk-mq-dma.c b/block/blk-mq-dma.c
+index a7ef25843280..b4f456472961 100644
+--- a/block/blk-mq-dma.c
++++ b/block/blk-mq-dma.c
+@@ -351,7 +351,7 @@ bool blk_rq_integrity_dma_map_iter_start(struct request *req,
+ EXPORT_SYMBOL_GPL(blk_rq_integrity_dma_map_iter_start);
+ 
+ /**
+- * blk_rq_integrity_dma_map_iter_start - map the next integrity DMA segment for
++ * blk_rq_integrity_dma_map_iter_next - map the next integrity DMA segment for
+  * 					 a request
+  * @req:	request to map
+  * @dma_dev:	device to map to
+-- 
+2.34.1
+
 
