@@ -1,295 +1,210 @@
-Return-Path: <linux-kernel+bounces-895828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D95A4C4F0A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:31:17 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 737F8C4F0C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:35:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E6533AF17F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:31:15 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C1F274ECB82
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:31:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A80F273D77;
-	Tue, 11 Nov 2025 16:31:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64EAB274B4D;
+	Tue, 11 Nov 2025 16:31:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="HJqm5J0U";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="SwQTtceA"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="bpM/0HuS"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 124D626A0C7
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 16:31:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B80636C5A5
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 16:31:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762878668; cv=none; b=KoEvzj0mXrBqlvhc9ceDKl85TV6ia8alS8hEmWVbI+tr8BYMkQ2nBN9rDqU8yE2GLzrXQVAozbEfqowVc7aBddoJuUFXrot0Uf1EBT/rc4pkOzsHhT4Y1bn5ekXs7Qw3qJtrZkGSVmvfJ63b3Y7VZyhUmL/TomjIjDg23t3l2RE=
+	t=1762878712; cv=none; b=hmrm0l1UXIzX91Ft7PeFmLkP7JJ4c4a1rtQ2JkLFwlgZXdV744jZuub3sibcbJ4u+QaQbDgPHb/vhqPgkP30V8iQ6WoLqDkd7g23KifjKRViiEJc7jBFyLCUR8qnGXiUuxXQ71ajecrqqsD65lMRfW/MwKUQKLV+TqtpYfNJ7OY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762878668; c=relaxed/simple;
-	bh=OJVRQOjbGEHZBlcMjkrNzy8hq9YQqSg/EQiWaoSvWZg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hLI/7ITtZ3WYlYJeYTaaU5E9ECXMgXBNIXfQ47VItzqaZ/sLJ852e9Nq7L1rn82tpvG8F5PUMd8T5FTxph/EYQIanlPUfFAaJgspIdCkvGif1wSX5GK7VjJJCcg/V/3EB4UwXF8QbxmF8LOavgWlPpjIfNrKE0nJXZ7CHhrljAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=HJqm5J0U; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=SwQTtceA; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5ABBH4WE2302379
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 16:31:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	bybkeY6YUl5SRT8XBgV3JMBrtdGGNVKGQ7cbU/fM7qs=; b=HJqm5J0UEi5a5w6c
-	2h2wjqqxl9Bb6xdP7WBZHOENjyQg6NAS8ZraEiQfplfJPowcHFtqCp0Wre2NBBoT
-	cqV0GSGULoLkhibkRsrET6yst7N2pYt7ak4tT8qeaBYN1tJRPMKJvO3rswprUSNk
-	oJW+ldLEo26WFG+tl+7dDHNkChqJMWVreWbj8PYjXnUZjNrYJuFFy6LBHSka8qF2
-	GdSzT/ZHRE7aGSCZYdCTS2lXRBcC4wrLY4vjsosnF6IxBCBTCzT5lvplt2IDM78/
-	qQU8t14bNB3+S19tMUWIaTKJ9D4O5mUcikbxYrpAgaLRk8zATxQHRjXKIIk2Myn/
-	lPQsSQ==
-Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com [209.85.215.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4abjxqkxc3-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 16:31:05 +0000 (GMT)
-Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-b630753cc38so9706502a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 08:31:05 -0800 (PST)
+	s=arc-20240116; t=1762878712; c=relaxed/simple;
+	bh=/7JhdeqHU+pWuZo7BJYr/RwCCv41S/jJab+74+3hwpA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h1exomNJaHMLPaNehqjXSE/UOUs0vFvY1R/vB3rYmpV7EnZwht14hxRYlgtPSeOKGU+R2ElgMhMQPSJYBtf0eq5MLquizJuPUYwY2FGgvn17V+e9y1mi07II/QptbNPbT1T7xxoVLrZ9PjR6g2zWtWf7/BibQfR3y09ipZxrTfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=bpM/0HuS; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-63b9da57cecso6929395a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 08:31:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1762878665; x=1763483465; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=bybkeY6YUl5SRT8XBgV3JMBrtdGGNVKGQ7cbU/fM7qs=;
-        b=SwQTtceA68YbH4Ptn5o3yFDPaKptnahdVEdosDKaxRPHNlZxCh+dYa5gedbYwCpDXq
-         t38KfxhkHabqxQiul5dIJpv0qxQTYM0x1dHNVuy9AjXLZDNED/bPeE3JB1hgTDmC4cTZ
-         xyK1hmSInSHx+qdRUJCku6tHSaNo5lv48XjVA09p4qfFe6c4PbEoW6jaEvqpklDfPCLc
-         CFMcz9aRHWtObXKbBhw1i8WYzo62MV4Io9M4REl2/GcOV0TVlk/nIt8ZSazs7aMKg9VP
-         pzCupoKWsxbYxcwmSdjXQQgctqZso+wrIgK4cGIcA6eVMh25pNuLKmU3oZgAo18oH98F
-         5scQ==
+        d=suse.com; s=google; t=1762878709; x=1763483509; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=PJEhmkdX/tZ6LlQiQX/bCOF/D5Lhd4PVnpUuCIOrAzo=;
+        b=bpM/0HuSOo+MutJFeGQXYeeqH6ySa1JHquNYE35DJOb5b/oorzJdQDskdaHH/CJweE
+         plltLQ2siyhCqffJ2X0A7BhdqhKJXMcqI5seSkos/Fdxt3uBeLmQRISRnvJM5VYXxOHM
+         rSkAq6Wrv06FUBYV+k/Zjut9+jDe+6J4jz/0fP9nTgmSteQ4Qd0E3R5IU/Hd4w7OXeNI
+         gSTK6uenuOJn8oWAXs2Rv51D0tJiLDn415SBzMCk3l8FpuqerI2nj9rPfV0tTlZzb3Z8
+         HYPpK80uo0jM2am3I1GEbiSfDEWjndlj5v0KuH6mZzUnSZAbuAdykkitjcyDcAfFgQfO
+         IP+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762878665; x=1763483465;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bybkeY6YUl5SRT8XBgV3JMBrtdGGNVKGQ7cbU/fM7qs=;
-        b=VsiTyF68oV07B8y5XZLKhstC4VJapUItpYcahOyYYkVf9VevjsV3+NL98ACPPPMH64
-         uuEhqNDwicB958qRjQGQhFMGdhWfyGO1TIBziTKuo+kGaH7DZGttq03spy1POjTqtetG
-         KCmqsXiiHP0ZtVUF129pWgNv1WumcN+zGI4C7gSc40h5gNB9x/12COtz9+p5ehKbsWIy
-         /HVl3obC3YTCvj7+zsZ98Tn661LgSzszxVUrGex7c/UJQWjw/X2zNEoYwes74vRpN1JH
-         BfJ4Lx8sdw5a82kYRPO7HVWReYK78XgKTFFKaOA1Y62sPCjsIKapVy9Vu6oynjLW1JXL
-         egvw==
-X-Forwarded-Encrypted: i=1; AJvYcCXCgDYXkX0y0oaaCPgQ3PCq36j5FiFQSEhNVgHYrbrGixGfw26fhbb6MZm89LpiEAqsoW6j7qy6r0f/9fs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1ZR0LslAVIpxk6iVtYfmBSxsS1aEOZX8c6w/y4DiM6RQTIuVh
-	cbJzWD242mzKFBUAfdYh25717av6w2fY7sZK3KA40uMgUq0gkcmXCtkSlJz78V41apy1mEXcV65
-	zN6qaUtZcW5xcg5q44gLvCy2EjB3ruZCwixN9MZOpvMJIHoa4nTNlsKWneScOZ0w8I9k=
-X-Gm-Gg: ASbGncutwEElD7PYkVagPVtAy0jW4812KaY3URtgMf8/oC5VK8fPFAvnfRtfxvPuQJe
-	77lU4llHXneKBQ13XLcLBW7DUe1DCJW9TTcKFUZt+WgGpgw7ZO5Q8DkuyiHpUYX7bV6fi0OwMzp
-	xPwH0avmHlJmqQJLSfBA9AFA5V6rpEtafeQPFUR2pb4CGfjymNTr1NHrvyRbnMkQ9OCR/2ZTjf+
-	cMDL+Yeg5etuGp4eCEdUq13BqkatpOSiPjqRmvT/4jx2W0YGcRLafBMzRao1CEZ/TN1rOxtr7j2
-	3KTVHnjzRq4jLZd+4hw11OLpLd+gZedqMuuAvhL3sPj7N5V1umpHzzqvakKkrRnT0d0yUijO4Of
-	w9ez6OQAfNDjrctnnwRftCGqVIllap/xh
-X-Received: by 2002:a17:90b:3a91:b0:33e:2d0f:479b with SMTP id 98e67ed59e1d1-3436cb7bcfcmr16607169a91.6.1762878664796;
-        Tue, 11 Nov 2025 08:31:04 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEK0C7zoIdCCrbSGtOR2lA7hiOGv0VrSOdA1mvOcJK1ts7OjzqJ7ukZDrIrLaxwld0WkX5Shw==
-X-Received: by 2002:a17:90b:3a91:b0:33e:2d0f:479b with SMTP id 98e67ed59e1d1-3436cb7bcfcmr16607120a91.6.1762878664213;
-        Tue, 11 Nov 2025 08:31:04 -0800 (PST)
-Received: from [10.216.22.22] ([202.46.23.19])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-343685301f8sm11854378a91.5.2025.11.11.08.30.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Nov 2025 08:31:03 -0800 (PST)
-Message-ID: <bdbe4328-aead-f59e-2ee8-7fe12fc83506@oss.qualcomm.com>
-Date: Tue, 11 Nov 2025 22:00:51 +0530
+        d=1e100.net; s=20230601; t=1762878709; x=1763483509;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PJEhmkdX/tZ6LlQiQX/bCOF/D5Lhd4PVnpUuCIOrAzo=;
+        b=OPKy2yay8VznhZMUKBlzfJ4l69Sf23PSa2cjYzckCOHtX10aNhcN3crHc/8P2ESXrh
+         GscUifQ5YXpm6BCLZBFxfOMmfVhuXIitf51K/oAM0Yovb9xXz/hlNvMFJ4CATI2ErHfA
+         QWta55QJ/Ma+wsj/wcR2oD8d0qKMDfKXI28Vy9MNxa9Ij8zgVjNP8Frr5C/lVdS797UV
+         NOZ1mwhlitdbAJXSh/z73R7lI9KW/RGhfJCIupJUisl0RDN5ElQKRKUfaVJfbsn+ePIC
+         hFCboD9naOre2P0sEzecSuu91aiNDH0LVZ7FINEwsZWAo8C901l8bW651D9ZeqqkpDq3
+         iAXA==
+X-Forwarded-Encrypted: i=1; AJvYcCWnJ6gBpVqpyJwmGtKtMKdz8A+IFe1AMTyGzOwo/cnUFzZBhOnlSIXM6rgPovUpjqaXzd/4DCA5Nd0T+aw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YycP+N9eYgrZOJv9AXtTYWbGnEBsuLTtMZu5yvu1HUNIDxJqPVw
+	RBeQTWfBSHQKjMcmKuKH+rYguECwXSchCMKId89FKzFAvQ8sFVRmFc3LKiosbZ36eqw=
+X-Gm-Gg: ASbGncuk691Yqbk82+eJRqBP1Zab+XgH06EhpEJezH1lnS/DzcOpIYy0nMT8uEBJwWG
+	P0mrmkvtRTUmTHvgyinMl+qvjb/ajPGCd39HyrcGrz6XH0WtZNkWZgdPZMPn2PAys+O61yP/DWb
+	BTu42ssnJMmGdcs6N/8+cPiw927i+Whd0Ui/IlH8pKSMMkEv79Pdxkg5KGaaHjrayOp9pJxmWAv
+	9Vh3I0FdB56FLFoIptcLijCfTUhtiZKOF0YfIhOVNCxjWElbY+OPqEH7BPwYRiZIGArfI0+2GNI
+	PvzxEwafXnxTZogK0UYfL0jw5fhIDuxJCpPL2QLu+5jwnNa03ymyqWsKrx47tgC7oCAURD8yjmi
+	h1fGlauXuPuiYKaoyxrBQSgr1C56lZyzysgaJG4T+b12jRwfdE7ivnqGjzCvGB60hwJsX6OwIsG
+	3C5WqBix5MxHMS32/RWLDMf/s/D3U3
+X-Google-Smtp-Source: AGHT+IHeMXFBK2R94y0xAavt77FqJhtG78dDnrH6Srnh9imuOjXwMgWyuYOPJ4SCpRj8L5bEITGGSg==
+X-Received: by 2002:a17:907:960a:b0:b6d:519f:2389 with SMTP id a640c23a62f3a-b72e04ad8b5mr1360986366b.52.1762878708718;
+        Tue, 11 Nov 2025 08:31:48 -0800 (PST)
+Received: from pathway (nat2.prg.suse.com. [195.250.132.146])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bf312e51sm1366249866b.17.2025.11.11.08.31.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Nov 2025 08:31:48 -0800 (PST)
+Date: Tue, 11 Nov 2025 17:31:46 +0100
+From: Petr Mladek <pmladek@suse.com>
+To: John Ogness <john.ogness@linutronix.de>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Sherry Sun <sherry.sun@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
+	Jon Hunter <jonathanh@nvidia.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Derek Barbosa <debarbos@redhat.com>, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH printk v1 1/1] printk: Avoid scheduling irq_work on
+ suspend
+Message-ID: <aRNk8vLuvfOOlAjV@pathway>
+References: <20251111144328.887159-1-john.ogness@linutronix.de>
+ <20251111144328.887159-2-john.ogness@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.1
-Subject: Re: [PATCH v17 03/12] power: reset: reboot-mode: Add support for 64
- bit magic
-Content-Language: en-US
-To: Bjorn Andersson <andersson@kernel.org>
-Cc: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Souvik Chakravarty <Souvik.Chakravarty@arm.com>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Andy Yan <andy.yan@rock-chips.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Konrad Dybcio <konradybcio@kernel.org>,
-        cros-qcom-dts-watchers@chromium.org, Vinod Koul <vkoul@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Florian Fainelli <florian.fainelli@broadcom.com>,
-        Moritz Fischer <moritz.fischer@ettus.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Andre Draszik
- <andre.draszik@linaro.org>,
-        Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org,
-        Elliot Berman <quic_eberman@quicinc.com>,
-        Xin Liu <xin.liu@oss.qualcomm.com>,
-        Srinivas Kandagatla <srini@kernel.org>,
-        Umang Chheda <umang.chheda@oss.qualcomm.com>,
-        Nirmesh Kumar Singh <nirmesh.singh@oss.qualcomm.com>
-References: <20251109-arm-psci-system_reset2-vendor-reboots-v17-0-46e085bca4cc@oss.qualcomm.com>
- <20251109-arm-psci-system_reset2-vendor-reboots-v17-3-46e085bca4cc@oss.qualcomm.com>
- <20251110134529.uljjqzb3vhda3vya@hu-mojha-hyd.qualcomm.com>
- <gzj4r4elqewjt2gjzhuamslvobz5fgyvt672brwknoozlsplaq@wsebzmi2l6pc>
- <681a72ba-d8fb-bfc2-d2bb-d80ac667bc5c@oss.qualcomm.com>
- <zejaqakbtufwzlzs7xc7xzxezcylqjkmu4nne2mro4riuhgbkc@hlgu3u2w36bb>
- <5c83c9a1-e123-95bb-1434-588ee8c52b25@oss.qualcomm.com>
- <axle2c3i3vfyxpql43dqb4zwzjj65xhsjuhojyf5x26wqo352v@z3nwctubwanx>
-From: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>
-In-Reply-To: <axle2c3i3vfyxpql43dqb4zwzjj65xhsjuhojyf5x26wqo352v@z3nwctubwanx>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTExMDEzMiBTYWx0ZWRfX8CGD09RZHOhL
- RqodXReeL6NliLNiAVxdvdL1FhSvtTlRBFlXNqzg086k40JoNwT+a00Zy4eNnIs9bQ1ezko2rgr
- PellbOb7rmc1qYps+s8Of8phb7oQvBOREQSrINfyf+nUlZFos38Cn52a6kuqv74+ekA1hRktAlw
- mLFlya8U+w3LhQ6Hqbbu8Mq6e8ZUOL5mwAY3SAJzmDyYdyaiJ6DGiS0ao3zBkReUBjemZ8pN2cU
- Dy4sZtWtkP5AjZltagyb+61HjhR50HZzjaU/P4BgTNh2r4hELW9Se+qVKckdypXl+ckhFmLGM25
- l1iJh70szWsCEMSwiJ3fn3FMJp/7S6d1nfY+w/ktLtZA/eXy+LIGR3A+OicmlRceH4Gqonvj0jW
- yHFShKTV5vhba20gP0XHYGNVMSKN3g==
-X-Authority-Analysis: v=2.4 cv=CsKys34D c=1 sm=1 tr=0 ts=691364c9 cx=c_pps
- a=oF/VQ+ItUULfLr/lQ2/icg==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
- a=5lduEm2px6IFDn4QHGYA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=3WC7DwWrALyhR5TkjVHa:22
-X-Proofpoint-ORIG-GUID: 1c18IEFQkaLlH6ukBARy0iJPfdT9nwkx
-X-Proofpoint-GUID: 1c18IEFQkaLlH6ukBARy0iJPfdT9nwkx
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-11_03,2025-11-11_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 impostorscore=0 bulkscore=0 clxscore=1015 phishscore=0
- adultscore=0 malwarescore=0 priorityscore=1501 lowpriorityscore=0 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511110132
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251111144328.887159-2-john.ogness@linutronix.de>
 
-
-
-On 11/11/2025 9:55 PM, Bjorn Andersson wrote:
-> On Tue, Nov 11, 2025 at 08:20:43PM +0530, Shivendra Pratap wrote:
->>
->>
->> On 11/11/2025 12:03 AM, Bjorn Andersson wrote:
->>> On Mon, Nov 10, 2025 at 11:22:40PM +0530, Shivendra Pratap wrote:
->>>>
->>>>
->>>> On 11/10/2025 10:00 PM, Bjorn Andersson wrote:
->>>>> On Mon, Nov 10, 2025 at 07:15:29PM +0530, Mukesh Ojha wrote:
->>>>>> On Sun, Nov 09, 2025 at 08:07:16PM +0530, Shivendra Pratap wrote:
->>>>>>> Current reboot-mode supports a single 32-bit argument for any
->>>>>>> supported mode. Some reboot-mode based drivers may require
->>>>>>> passing two independent 32-bit arguments during a reboot
->>>>>>> sequence, for uses-cases, where a mode requires an additional
->>>>>>> argument. Such drivers may not be able to use the reboot-mode
->>>>>>> driver. For example, ARM PSCI vendor-specific resets, need two
->>>>>>> arguments for its operation – reset_type and cookie, to complete
->>>>>>> the reset operation. If a driver wants to implement this
->>>>>>> firmware-based reset, it cannot use reboot-mode framework.
->>>>>>>
->>>>>>> Introduce 64-bit magic values in reboot-mode driver to
->>>>>>> accommodate dual 32-bit arguments when specified via device tree.
->>>>>>> In cases, where no second argument is passed from device tree,
->>>>>>> keep the upper 32-bit of magic un-changed(0) to maintain backward
->>>>>>> compatibility.
->>>>>>>
->>>>>>> Update the current drivers using reboot-mode for a 64-bit magic
->>>>>>> value.
->>>>
->>>> [SNIP..]
->>>>
->>>>>>> +	if (magic > U32_MAX)
->>>>>>> +		return -EINVAL;
->>>>>>> +
->>>>>>> +	magic_32 = magic;
->>>>>>> +
->>>>>>>  	syscon_rbm = container_of(reboot, struct syscon_reboot_mode, reboot);
->>>>>>>  
->>>>>>>  	ret = regmap_update_bits(syscon_rbm->map, syscon_rbm->offset,
->>>>>>> -				 syscon_rbm->mask, magic);
->>>>>>> +				 syscon_rbm->mask, magic_32);
->>>>>
->>>>> As above, if we're no longer silently discarding bits, I think we should
->>>>> compare the magic against syscon_rbm->mask.
->>>>>
->>>>> No need for a local variable, just type cast after checking the validity.
->>>>
->>>> Trying to summarize below why we added these check-
->>>>
->>>> the patch in v11 used typecasting and did not have any of these checks(link below):
->>>> https://lore.kernel.org/all/20250717-arm-psci-system_reset2-vendor-reboots-v11-2-df3e2b2183c3@oss.qualcomm.com/
->>>>
->>>> As per below upstream review, type cast was removed and bound checks were added all-over patchset:
->>>> "As a general rule of thumb, code with casts is poor quality code. Try
->>>> to write the code without casts." - 
->>>> https://lore.kernel.org/all/8d4a42b6-657f-4c30-8e25-4213d8d53a89@lunn.ch/
->>>>
->>>> We can revert to the typecast way. Please suggest.
->>>>
->>>
->>> Okay, I'm okay with Andrew's original request, stick to that for the
->>> nvmem case. Although I don't fancy the name "magic_32", and would prefer
->>> that you just call it "value" or something.
->>
->> sure will make it proper wherever applicable. 
->>
->>>
->>>
->>> For pon and syscon however, I'm wondering why you have ignored Andrew's
->>> other request from that same email:
->>>
->>> """
->>> You might be able to go further, and validate that magic actually fits
->>> into the field when you consider the << pon->reason_shift.
->>> """
->>>
->>> Writing "if (magic > U32_MAX)" in a snippet of code where magic isn't
->>> allowed to be more than either 32 or 64 is misleading.
->>>
->>> For syscon, it's true that the parameter is an unsigned long, but the
->>> actual limit better be based on syscon_rbm->mask.
->>
->> May be i was not able to interpret it correctly. Basically tried to
->> make sure that magic that now coming in a "u64 magic" should be passed
->> ahead only it its a 32 bit value.
->>
+On Tue 2025-11-11 15:49:22, John Ogness wrote:
+> Allowing irq_work to be scheduled while trying to suspend has shown
+> to cause problems as some architectures interpret the pending
+> interrupts as a reason to not suspend. This became a problem for
+> printk() with the introduction of NBCON consoles. With every
+> printk() call, NBCON console printing kthreads are woken by queueing
+> irq_work. This means that irq_work continues to be queued due to
+> printk() calls late in the suspend procedure.
 > 
-> That is the correct interpretation of the original ask. But what I'm
-> saying is that if you write:
+> Avoid this problem by preventing printk() from queueing irq_work
+> once console suspending has begun. This applies to triggering NBCON
+> and legacy deferred printing as well as klogd waiters.
 > 
-> if (magic > U32_MAX)
+> Since triggering of NBCON threaded printing relies on irq_work, the
+> pr_flush() within console_suspend_all() is used to perform the final
+> flushing before suspending consoles and blocking irq_work queueing.
+> NBCON consoles that are not suspended (due to the usage of the
+> "no_console_suspend" boot argument) transition to atomic flushing.
 > 
-> then that means "check that magic isn't larger than 32 bits". So the
-> reader will see that and understand that magic can only be 32 bits.
-> 
-> But the actual PON magic value is 5 or 6 bits, not 32 - so you should
-> check that the value fits in 5 or 6 bits.
+> Introduce a new global variable @console_offload_blocked to flag
 
-sure. thanks.
+s/console_offload_blocked/console_irqwork_blocked/
 
+> when irq_work queueing is to be avoided. The flag is used by
+> printk_get_console_flush_type() to avoid allowing deferred printing
+> and switch NBCON consoles to atomic flushing. It is also used by
+> vprintk_emit() to avoid klogd waking.
 > 
->> So should i get rid of the checks done here for syscon and pon?
->>
-> 
-> Continuing to silently ignoring other bits would be one option, but
-> you've been asked to sanity check the values, so please do that. You
-> have the code, just compare with the correct value.
+> --- a/kernel/printk/internal.h
+> +++ b/kernel/printk/internal.h
+> @@ -230,6 +230,8 @@ struct console_flush_type {
+>  	bool	legacy_offload;
+>  };
+>  
+> +extern bool console_irqwork_blocked;
+> +
+>  /*
+>   * Identify which console flushing methods should be used in the context of
+>   * the caller.
+> @@ -241,7 +243,7 @@ static inline void printk_get_console_flush_type(struct console_flush_type *ft)
+>  	switch (nbcon_get_default_prio()) {
+>  	case NBCON_PRIO_NORMAL:
+>  		if (have_nbcon_console && !have_boot_console) {
+> -			if (printk_kthreads_running)
+> +			if (printk_kthreads_running && !console_irqwork_blocked)
+>  				ft->nbcon_offload = true;
+>  			else
+>  				ft->nbcon_atomic = true;
+> @@ -251,7 +253,7 @@ static inline void printk_get_console_flush_type(struct console_flush_type *ft)
+>  		if (have_legacy_console || have_boot_console) {
+>  			if (!is_printk_legacy_deferred())
+>  				ft->legacy_direct = true;
+> -			else
+> +			else if (!console_irqwork_blocked)
+>  				ft->legacy_offload = true;
+>  		}
+>  		break;
 
-ok. got it. thanks.
+This is one possibility.
 
-thanks,
-Shivendra
+Another possibility would be to block the irq work
+directly in defer_console_output() and wake_up_klogd().
+It would handle all situations, including printk_trigger_flush()
+or defer_console_output().
+
+Or is there any reason, why these two call paths are not handled?
+
+I do not have strong opinion. This patch makes it more explicit
+when defer_console_output() or wake_up_klogd() is called.
+
+If we move the check into defer_console_output() or wake_up_klogd(),
+it would hide the behavior. But it will make the API more safe
+to use. And wake_up_klogd() is even exported via <linux/printk.h>.
+
+
+> @@ -264,7 +266,7 @@ static inline void printk_get_console_flush_type(struct console_flush_type *ft)
+>  		if (have_legacy_console || have_boot_console) {
+>  			if (!is_printk_legacy_deferred())
+>  				ft->legacy_direct = true;
+> -			else
+> +			else if (!console_irqwork_blocked)
+>  				ft->legacy_offload = true;
+
+This change won't be needed if we move the check into
+defer_console_output() and wake_up_klogd().
+
+>  		}
+>  		break;
+> diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+> index 5aee9ffb16b9a..94fc4a8662d4b 100644
+> --- a/kernel/printk/printk.c
+> +++ b/kernel/printk/printk.c
+> @@ -2426,7 +2429,7 @@ asmlinkage int vprintk_emit(int facility, int level,
+>  
+>  	if (ft.legacy_offload)
+>  		defer_console_output();
+> -	else
+> +	else if (!console_irqwork_blocked)
+>  		wake_up_klogd();
+
+Same here.
+
+>  
+>  	return printed_len;
+
+
+The rest of the patch looks good to me.
+
+Best Regards,
+Petr
 
