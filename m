@@ -1,39 +1,39 @@
-Return-Path: <linux-kernel+bounces-895851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D617C4F1CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:48:47 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9BD4C4F1FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:52:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E8833A9696
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:48:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C1DAC4F19C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:48:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 035053730E5;
-	Tue, 11 Nov 2025 16:48:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F39483730E2;
+	Tue, 11 Nov 2025 16:48:45 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39AD02D979F;
-	Tue, 11 Nov 2025 16:48:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80E713730E5;
+	Tue, 11 Nov 2025 16:48:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762879690; cv=none; b=IK1R2EqMeGMzwrn442XJBvrPp0cjrAzSAVazxKzb2gH7EH2ehxFZQEn9Dz5jfP/dm+wfUJxACPDnUa4wCE5Bv6XB+R0rduSw1EYTiFEKr6DRjbJOffSP+08D+E56TKKIqe2HRO4WXMV6r+CNrPde0kqTGjbwe6//+/cLEhj/6Hc=
+	t=1762879725; cv=none; b=nESS7YtotOpI8mNjVxoY0DyynISU6ptEYz6v7lGr+OKmMPxBezYLOOPPFZR/CpjHotEiTFBfwY3BGlsFYqnoTlB/xaOpfYHrGAw6CX7K91iB+PorSNOxQAzzeatZ74Db6mbW18tn9q2XtyEeAq7SGyk+xEOQAi7vuobcFLaFocg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762879690; c=relaxed/simple;
-	bh=G2bms5tb+3dQg7eVtbpOcHpMDtGN5EDLOO9gbb+Q4Q8=;
+	s=arc-20240116; t=1762879725; c=relaxed/simple;
+	bh=49z32g0qxutzJRq752NeRyM/9fJzJX8OP1/nJk86YwE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=slx5MBvzX6nGsZD2x3S1eBdXFuSCmz2ghQl74HG29AK39xRvf/i1oyK/D8zXNrpf9YYExW1nNBq2MLSxy5K1QGGwvG5Q6ECVBVI2JHeiFZbFLS+N4Xn+/noJXg1Dcj8cQETq/MgncO8WtZwHb8xHLiQ1ftmCqNHPiAH7OLUNzI0=
+	 In-Reply-To:Content-Type; b=QkmyY4dbWoA7hvHXGuyXyfQtp0lf0JSBxhwO7b0ZfWm42erwj7k8j574F7o6NP2ik5uUs2o9REakyyeVgpcX/VZtcjmkIARRxcrWEsqrXNRki7g8mX1A6dLZvC5UFb83PBgA/L4LSFj71dxMTmKaKOOCrya9/6xF3qU4vZCInjA=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BAC03497;
-	Tue, 11 Nov 2025 08:47:59 -0800 (PST)
-Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DBCD33F63F;
-	Tue, 11 Nov 2025 08:48:02 -0800 (PST)
-Message-ID: <0457614c-0f36-4427-835f-2645f3a67c9b@arm.com>
-Date: Tue, 11 Nov 2025 16:48:01 +0000
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0F91C497;
+	Tue, 11 Nov 2025 08:48:35 -0800 (PST)
+Received: from [10.57.73.196] (unknown [10.57.73.196])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 358D53F63F;
+	Tue, 11 Nov 2025 08:48:41 -0800 (PST)
+Message-ID: <43937832-0e03-4f0b-bdce-dfa12fa801c2@arm.com>
+Date: Tue, 11 Nov 2025 16:48:37 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,86 +41,63 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 03/33] ACPI / PPTT: Add acpi_pptt_cache_v1_full to use
- pptt cache as one structure
-To: Jeremy Linton <jeremy.linton@arm.com>, james.morse@arm.com
-Cc: amitsinght@marvell.com, baisheng.gao@unisoc.com,
- baolin.wang@linux.alibaba.com, bobo.shaobowang@huawei.com,
- carl@os.amperecomputing.com, catalin.marinas@arm.com, dakr@kernel.org,
- dave.martin@arm.com, david@redhat.com, dfustini@baylibre.com,
- fenghuay@nvidia.com, gregkh@linuxfoundation.org, gshan@redhat.com,
- guohanjun@huawei.com, jonathan.cameron@huawei.com, kobak@nvidia.com,
- lcherian@marvell.com, lenb@kernel.org, linux-acpi@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- lpieralisi@kernel.org, peternewman@google.com, quic_jiles@quicinc.com,
- rafael@kernel.org, robh@kernel.org, rohit.mathew@arm.com,
- scott@os.amperecomputing.com, sdonthineni@nvidia.com, sudeep.holla@arm.com,
- tan.shaopeng@fujitsu.com, will@kernel.org, xhao@linux.alibaba.com
-References: <20251107123450.664001-1-ben.horgan@arm.com>
- <20251107123450.664001-4-ben.horgan@arm.com>
- <1a52079f-e12f-430b-b3c5-cb184f73c6c7@arm.com>
-From: Ben Horgan <ben.horgan@arm.com>
-Content-Language: en-US
-In-Reply-To: <1a52079f-e12f-430b-b3c5-cb184f73c6c7@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] coresight: etm-perf: Fix reference count leak in
+ etm_setup_aux
+Content-Language: en-GB
+To: Ma Ke <make24@iscas.ac.cn>, mike.leach@linaro.org,
+ james.clark@linaro.org, alexander.shishkin@linux.intel.com,
+ mathieu.poirier@linaro.org
+Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+ stable@vger.kernel.org
+References: <20251111144203.16498-1-make24@iscas.ac.cn>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <20251111144203.16498-1-make24@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Jeremy,
+Hi
 
-On 11/10/25 17:00, Jeremy Linton wrote:
-> Hi,
+On 11/11/2025 14:42, Ma Ke wrote:
+> In etm_setup_aux(), when a user sink is obtained via
+> coresight_get_sink_by_id(), it increments the reference count of the
+> sink device. However, if the sink is used in path building, the path
+> holds a reference, but the initial reference from
+> coresight_get_sink_by_id() is not released, causing a reference count
+> leak. We should release the initial reference after the path is built.
 > 
-> On 11/7/25 6:34 AM, Ben Horgan wrote:
->> In actbl2.h, struct acpi_pptt_cache describes the fields in the original
->> cache type structure. In PPTT table version 3 a new field was added at
->> the
->> end, cache_id. This is described in struct acpi_pptt_cache_v1. Introduce
->> the new, acpi_pptt_cache_v1_full to contain both these structures. Update
->> the existing code to use this new struct. This simplifies the code,
->> removes
->> a non-standard use of ACPI_ADD_PTR and allows using the length in the
->> header to check if the cache_id is valid.
->>
->> Signed-off-by: Ben Horgan <ben.horgan@arm.com>
->> ---
->> Changes since v3:
->> New patch
->> ---
->>   drivers/acpi/pptt.c | 104 ++++++++++++++++++++++++--------------------
->>   1 file changed, 58 insertions(+), 46 deletions(-)
->>
->> diff --git a/drivers/acpi/pptt.c b/drivers/acpi/pptt.c
->> index 1027ca3566b1..1ed2099c0d1a 100644
->> --- a/drivers/acpi/pptt.c
->> +++ b/drivers/acpi/pptt.c
->> @@ -21,6 +21,11 @@
->>   #include <linux/cacheinfo.h>
->>   #include <acpi/processor.h>
->>   +struct acpi_pptt_cache_v1_full {
->> +    struct acpi_pptt_cache        f;
->> +    struct acpi_pptt_cache_v1    extra;
->> +} __packed;
+> Found by code review.
 > 
-> This presumably won't match an acpia change, right? Those structures
-> appear to repeat the fields in the newer structure definitions.
+> Cc: stable@vger.kernel.org
+> Fixes: 0e6c20517596 ("coresight: etm-perf: Allow an event to use different sinks")
+> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+> ---
+>   drivers/hwtracing/coresight/coresight-etm-perf.c | 5 +++++
+>   1 file changed, 5 insertions(+)
 > 
-> Maybe its best to keep this as close to an acpica change and do a quick
-> patch posting for acpica to assure they are onboard with the eventual
-> structure (IIRC it was fast a few years ago when I had a similar problem).
-> 
-> That would avoid a bunch of the churn here of adding the 'f'/'extra'
-> dereferene which would then potentailly have to be reverted at some
-> point when acpica corrects the original structure.
-I've created a pull request on their github:
-https://github.com/acpica/acpica/pull/1059. This extends 'struct
-acpi_pptt_cache_v1' to include all the fields of the Cache Type
-Structure. I think this could be acceptable as there are other commits
-in the history which make breaking changes to structures in the headers.
-Let's see what they say. I got an immediate reply in Chinese but was
-just an out of office.
+> diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c b/drivers/hwtracing/coresight/coresight-etm-perf.c
+> index f677c08233ba..6584f6aa87bf 100644
+> --- a/drivers/hwtracing/coresight/coresight-etm-perf.c
+> +++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
+> @@ -453,6 +453,11 @@ static void *etm_setup_aux(struct perf_event *event, void **pages,
+>   	if (!event_data->snk_config)
+>   		goto err;
+>   
+> +	if (user_sink) {
+> +		put_device(&user_sink->dev);
+> +		user_sink = NULL;
+> +	}
+> +
 
-Thanks,
+I would recommend moving this to the out: label below, to make sure
+we drop the refcount even in the error path.
 
-Ben
+Otherwise looks good to me.
+
+Suzuki
+
+>   out:
+>   	return event_data;
+>   
 
 
