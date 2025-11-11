@@ -1,214 +1,144 @@
-Return-Path: <linux-kernel+bounces-894788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 712BEC4C19B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 08:24:48 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2F4FC4C12C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 08:19:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 206D03BF1C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 07:18:38 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8F41534F57B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 07:19:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C0F4313E15;
-	Tue, 11 Nov 2025 07:18:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8417B30FC18;
+	Tue, 11 Nov 2025 07:19:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JS4l+i7O"
-Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tyYjJ7kr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE01322069A
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 07:18:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C628C212FB9;
+	Tue, 11 Nov 2025 07:19:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762845510; cv=none; b=MwbWIQLkonh1a+64R2KRDFysd3GMkaHsBAhFPIS5St/AYAjq7v3raYVRy46vpN7OpZF5TDp8L1MmSF7yh/oO6TsPbANrOtqIDt89ENtmL+rTh8/tnw1aFSQX56oQsr3FJvlBvY1Qf/9+bgM7Y49+Twqc1pbzdRsCBIzpfK8Jix0=
+	t=1762845567; cv=none; b=cG5rMlQQV2KY4TJgdqnqaYcymXfDwQEQmyD3RLJ0tDWWe3Tjm2HYL4V3Heg7TpMPhWY4AAC9h/Z4sOnc3jJytkyA+uFOcWuEZp/gi/RRvOzia2XVCAzu4ThsiqwxPhPoYnc++iprQMJhXHD4FAYX8WslRvZJi42wuFnijC5HiXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762845510; c=relaxed/simple;
-	bh=QjeAK/V1hSOIidYt60eVOijnzpDc5EzkM8SbDMhoEUI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MrzIIwNXNR77+W0A+4nqByuyrgLwZiabBq8MfbsJ4+2aUGzuji3w9Jd6jLMVdYm3Lglys5X2laD0EUpiJmlCRSm4vDyzMLel1wHoC8arXCIsj44J73xQu7IVlM1M+LOZ3Wqa9h3CmMa8mC8vXNiFE93UOR5KCam29npr0UXkEXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=JS4l+i7O; arc=none smtp.client-ip=209.85.210.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-7c6d13986f8so358500a34.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 23:18:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1762845508; x=1763450308; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4DNECm8WO7Z3HdUuOFhmBYrNsRLb25kfzzIgggmDWEs=;
-        b=JS4l+i7ObUbzkg89Yy1J16HnfJmHKWc/oCzaL8bNbup1eDcCo0K5n5Q7jyct/uFEkR
-         E0evnHR7N5eryey1pQ89ErzPcuKEb1HYxJhQDENSve9JiNw8cjyDft/fqDafkRD3e9M2
-         gBfIXzrA3aB3AWep1q93PNn0aH8ns2VToI0Cc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762845508; x=1763450308;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=4DNECm8WO7Z3HdUuOFhmBYrNsRLb25kfzzIgggmDWEs=;
-        b=S/fKC3AFaXnqhkn3UsRH2oXYd6AlioG0gjYsjaSMIu/QFBq4t8padcrmrNBUC7WZrN
-         OKjP6IsEe5krpfeRWwJUHqEeim4UZk+rRzSZCOPS59IlUXth4bS6ROAYO6P58+krrSv6
-         +rFBkO63ynZPlCIDo2/h3lurXjeeuTYY9cfm+vB8ysKYnILWPn3iEC0N90Di8rlOWGMQ
-         aaAaXnAh4547WI0IATXIWy0syO04q0G4bsY6c2aEQW5R1awbknYPclANkYg595KFv9OU
-         eEG1kj89q5qwCdiXPfiAk2dJCQsA23ErO6JnvvOZQIhYK9t8p7grOV0BIcIVyenDqcX6
-         lOcA==
-X-Forwarded-Encrypted: i=1; AJvYcCWItfT86uAgktX4d3cSy2zI6Ovj5nevlw2OY79tjDjaMeCo+/DhMcL22m3LwJRlt0s58MsyPduUWVUdKdI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhyKwQaAPrNLWY8ai+0vpP7T0yE8T1qHIPAnybirve7GuHUIsr
-	ycLU/9Vp2aKmGKkTvbI+PY3JYyvBVtPfdGYYl70gmbWsgQv5niQ4w7jitYTJANvEb1Sqi7PS6D9
-	eHshWOkFu911B4sVt25g7Bsnp238fEKT6uU0koE8p
-X-Gm-Gg: ASbGncsouL62wNqU440gIYl1ZPXxrWyFslhWUL15CpBPg16QxK+V+KktVY9fFJARarj
-	HVfg91paSzMFSwNx27u3PB3KcMy3wBv68uQk8UvdBAGN4Po79ZoOU6RyELvF1Mzt0HB6C+7mrqJ
-	+fI5zeFByvxWfdF2py3izzpt5eIv1aN3YRB5TAWWbFXT5a6HNByUs6TPCIuRntCcEi3/cVqsFno
-	nclZ5oIR1VWTPyDqHxN4GHFlhLzqDtePqr5DYqr0UsUVWudLNRONxDwWfpZxZPOHX+CzpLxcmfK
-	ClLatySFDGEQqRxBQM5LXp94JJZDuUDuwEXO
-X-Google-Smtp-Source: AGHT+IGFmBeQ1KeQGhBdXMMah9cAVTlZPF7zYgIoM3d6h6tPzR4X9P4PbQV8tIudZI29zZhOnq3tZM6yeAns4b6eY+k=
-X-Received: by 2002:a9d:7f84:0:b0:785:6792:4b3 with SMTP id
- 46e09a7af769-7c720bfa5b2mr875905a34.10.1762845508048; Mon, 10 Nov 2025
- 23:18:28 -0800 (PST)
+	s=arc-20240116; t=1762845567; c=relaxed/simple;
+	bh=bdpTphnNU0HMDNDK84DW5kZvy0Ho2bTylr3DZCZt89g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bAsQc0wEFIF46V5ySi1q1Qn3rag5HLsEQLlIsn2AMGjwEPwAgD0j1QhR21CtmI4TDH+Y1HyTuFGIoPuIE+TImPiVLpeUN3xph58zfVkKtX/dY4VKfnkuIrIiCrTUm3dH9Q7dmyzZmva/Ig7lt8QPsV0LImUJjDRoBaVTgKk5kfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tyYjJ7kr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3628AC19423;
+	Tue, 11 Nov 2025 07:19:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762845567;
+	bh=bdpTphnNU0HMDNDK84DW5kZvy0Ho2bTylr3DZCZt89g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tyYjJ7krm6VyV+xoe/tXca8yY6dwJ2HTJKbbD/6WiOvPNEX093ZzFzxSjdUDyliLn
+	 cH8qsRzsDX6o5oIhqX3uPqcJ4KYNYUtGIwDhDdRtaLvst3vqo6EjNrnjt5hSuEJA6x
+	 DrUZLMPR0nuy9sX1kDtw3l1g0u7UPcznNUbb3w2QLeEONhqsTchQYsfYqbSQ9HHhRR
+	 PNCAaE3GRbyV3cLT6XLZTAJTZeXsXAXL6jsMD2wN8ehJzPDoyRsogf5SKW+RvuiiCX
+	 MMwmIFxF2vP5O+OuuqYdo/cweKXyHlW8T4x2vREs1zPUuUKJtBxz1PFQIhzu5T0tli
+	 A9K7ROanhD9Cw==
+Date: Tue, 11 Nov 2025 12:49:10 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Val Packett <val@packett.cool>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+	manivannan.sadhasivam@oss.qualcomm.com, Rob Clark <robin.clark@oss.qualcomm.com>, 
+	Vignesh Raman <vignesh.raman@collabora.com>, Valentine Burley <valentine.burley@collabora.com>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	"David E. Box" <david.e.box@linux.intel.com>, Kai-Heng Feng <kai.heng.feng@canonical.com>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Heiner Kallweit <hkallweit1@gmail.com>, 
+	Chia-Lin Kao <acelan.kao@canonical.com>, Bjorn Helgaas <helgaas@kernel.org>
+Subject: Re: [PATCH v2 0/2] PCI/ASPM: Enable ASPM and Clock PM by default on
+ devicetree platforms
+Message-ID: <qy4cnuj2dfpfsorpke6vg3skjyj2hgts5hhrrn5c5rzlt6l6uv@b4npmattvfcm>
+References: <20250922-pci-dt-aspm-v2-0-2a65cf84e326@oss.qualcomm.com>
+ <4cp5pzmlkkht2ni7us6p3edidnk25l45xrp6w3fxguqcvhq2id@wjqqrdpkypkf>
+ <36f05566-8c7a-485b-96e7-9792ab355374@packett.cool>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251111093426.1.I76ee34ac45e1469dbeb11de0d1e47d794af7dc88@changeid>
-In-Reply-To: <20251111093426.1.I76ee34ac45e1469dbeb11de0d1e47d794af7dc88@changeid>
-From: Pin-yen Lin <treapking@chromium.org>
-Date: Tue, 11 Nov 2025 15:18:16 +0800
-X-Gm-Features: AWmQ_bkDI05jvVfre0pjIY8zr4xu_0hzg8oICEOEmixXEUt8EEYFfI9I8Iu9sd8
-Message-ID: <CAEXTbpc9=Gt7QrFrtV60+EvKdmBGsVpJxg7yYaa6HfuGGB3OqQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: HID: i2c-hid: elan: Introduce FocalTech FT8112
-To: daniel_peng@pegatron.corp-partner.google.com
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org, 
-	LKML <linux-kernel@vger.kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <36f05566-8c7a-485b-96e7-9792ab355374@packett.cool>
 
-Hi Daniel,
+On Tue, Nov 11, 2025 at 03:51:03AM -0300, Val Packett wrote:
+> 
+> On 11/8/25 1:18 PM, Dmitry Baryshkov wrote:
+> > On Mon, Sep 22, 2025 at 09:46:43PM +0530, Manivannan Sadhasivam via B4 Relay wrote:
+> > > Hi,
+> > > 
+> > > This series is one of the 'let's bite the bullet' kind, where we have decided to
+> > > enable all ASPM and Clock PM states by default on devicetree platforms [1]. The
+> > > reason why devicetree platforms were chosen because, it will be of minimal
+> > > impact compared to the ACPI platforms. So seemed ideal to test the waters.
+> > > 
+> > > This series is tested on Lenovo Thinkpad T14s based on Snapdragon X1 SoC. All
+> > > supported ASPM states are getting enabled for both the NVMe and WLAN devices by
+> > > default.
+> > > [..]
+> > The series breaks the DRM CI on DB820C board (apq8096, PCIe network
+> > card, NFS root). The board resets randomly after some time ([1]).
+> 
+> Is that reset.. due to the watchdog resetting a hard-frozen system?
+> 
+> Me and a bunch of other people in the #aarch64-laptops irc/matrix room have
+> been experiencing these random hard freezes with ASPM enabled for the NVMe
+> SSD, on Hamoa (and Purwa too I think) devices.
+> 
 
-On Tue, Nov 11, 2025 at 9:34=E2=80=AFAM
-<daniel_peng@pegatron.corp-partner.google.com> wrote:
->
-> From: Daniel Peng <Daniel_Peng@pegatron.corp-partner.google.com>
->
-> The FocalTech FT8112 touch screen chip same as Ilitek ili2901 controller
-> has a reset gpio. The difference is that they have different
-> post_gpio_reset_on_delay_ms.
-> FocalTech FT8112 also uses 3.3V power supply.
->
-> Signed-off-by: Daniel Peng <Daniel_Peng@pegatron.corp-partner.google.com>
-> ---
->
->  .../bindings/input/focaltech,ft8112.yaml      | 66 +++++++++++++++++++
->  MAINTAINERS                                   |  1 +
->  2 files changed, 67 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/input/focaltech,ft8=
-112.yaml
->
-> diff --git a/Documentation/devicetree/bindings/input/focaltech,ft8112.yam=
-l b/Documentation/devicetree/bindings/input/focaltech,ft8112.yaml
-> new file mode 100644
-> index 000000000000..391825b24fcb
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/input/focaltech,ft8112.yaml
-> @@ -0,0 +1,66 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/input/focaltech,ft8112.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: FocalTech FT8112 touchscreen controller
-> +
-> +maintainers:
-> +  - Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Interesting! ASPM is tested and found to be working on Hamoa and other Qcom
+chipsets also, except Makena based chipsets that doesn't support L0s due to
+incorrect PHY settings. APQ8096 might be an exception since it is a really old
+target and I'm digging up internally regarding the ASPM support.
 
-List yourself as the maintainer of this binding file instead of the
-subsystem maintainer.
-> +
-> +description:
-> +  Supports the FocalTech FT8112 touchscreen controller.
-> +  This touchscreen controller uses the i2c-hid protocol with a reset GPI=
-O.
-> +
-> +allOf:
-> +  - $ref: /schemas/input/touchscreen/touchscreen.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - focaltech,ft8112
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  panel: true
-> +
-> +  reset-gpios:
-> +    maxItems: 1
-> +
-> +  vcc33-supply: true
-> +
-> +  vccio-supply: true
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - vcc33-supply
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/gpio/gpio.h>
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +
-> +    i2c {
-> +      #address-cells =3D <1>;
-> +      #size-cells =3D <0>;
-> +
-> +      touchscreen@38 {
-> +        compatible =3D "focaltech,ft8112";
-> +        reg =3D <0x38>;
-> +
-> +        interrupt-parent =3D <&pio>;
-> +        interrupts =3D <15 IRQ_TYPE_LEVEL_LOW>>;
+> Totally unpredictable, could be after 4 minutes or 4 days of uptime.
+> Panic-indicator LED not blinking, no reaction to magic SysRq, display image
+> frozen, just a complete hang until the watchdog does the reset.
+> 
 
-You have an extra '>' here. This should be caught by `make
-dt_binding_check`. Please check [1] and [2], and make sure the patches
-are tested before you send them out.
+I have KIOXIA SSD on my T14s. I do see some random hang, but I thought those
+predate the ASPM enablement as I saw them earlier as well. But even before this
+series, we had ASPM enabled for SSDs on Qcom targets (or devices that gets
+enumerated during initial bus scan), so it might be that the SSD doesn't support
+ASPM well enough.
 
-[1]: https://www.kernel.org/doc/Documentation/devicetree/writing-schema.md
-[2]: https://www.linaro.org/blog/tips-and-tricks-for-validating-devicetree-=
-sources-with-the-devicetree-schema/
-> +
-> +        reset-gpios =3D <&pio 126 GPIO_ACTIVE_LOW>;
-> +        vcc33-supply =3D <&pp3300_tchscr_x>;
-> +      };
-> +    };
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index ddecf1ef3bed..69f54515fe98 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -12326,6 +12326,7 @@ T:      git git://git.kernel.org/pub/scm/linux/ke=
-rnel/git/dtor/input.git
->  F:     Documentation/devicetree/bindings/input/
->  F:     Documentation/devicetree/bindings/serio/
->  F:     Documentation/input/
-> +F:     drivers/hid/
+But I'm clueless on why it results in a hang. What I know on ARM platforms is
+that we get SError aborts and other crazy bus/NOC issues if the device doesn't
+respond to the PCIe read request. So the hang could be due to one of those
+issues.
 
-Why did you add this?
+> I have confirmed with a modified (to accept args) enable-aspm.sh script[1]
+> that disabling ASPM *only* for the SSD, while keeping it *on* for the WiFi
+> adapter, is enough to keep the system stable (got to about a month of uptime
+> in that state).
+> 
 
->  F:     drivers/input/
->  F:     include/dt-bindings/input/
->  F:     include/linux/gameport.h
+So this confirms that the controller supports it, and the device (SSD) might be
+of fault here.
 
-Regards,
-Pin-yen
+> If you have reproduced the same issue on an entirely different SoC, it's
+> probably a general driver issue.
+> 
+> Please, please help us debug this using your internal secret debug equipment
+> :)
+> 
+
+Starting from v6.18-rc3, we only enable L0s and L1 by default on all devicetree
+platforms. Are you seeing the hangs post -rc3 also? If so, could you please
+share the SSD model by doing 'lspci -nn'?
+
+Apologies for the inconvenience!
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
