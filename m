@@ -1,298 +1,219 @@
-Return-Path: <linux-kernel+bounces-896252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3C1BC4FF9F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 23:34:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36AF2C4FFA2
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 23:34:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EF8D18909F5
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 22:35:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E76DA1891603
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 22:35:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B9B6293C42;
-	Tue, 11 Nov 2025 22:34:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sb9iQ40K"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8D502EBB8B;
+	Tue, 11 Nov 2025 22:34:42 +0000 (UTC)
+Received: from LO0P265CU003.outbound.protection.outlook.com (mail-uksouthazon11022101.outbound.protection.outlook.com [52.101.96.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8246257831
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 22:34:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762900477; cv=none; b=WObsnqnUhLTpJnThevNpwIG2Y7SLztIsRlfiG0dmQMPxO7nV9y6PbgGOr5RUiTC8d8vYPHP5JUTz/7Z9ckyllp6+Ut4/8h7o6pQwmrjZJMEZDqS2YFogxa0qaBIW0DeRbpOA86ylQN8aLirvvr3W5kzLe6OqNAIP45IzAr0P9cI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762900477; c=relaxed/simple;
-	bh=MKttSrpjw6QWsPg95rk6fpiw6ac992auCnAaONTOVts=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pzTNl5TeJz57Jdm9KuJQhPbEcnR5vQ+stBdf6q8W2IBN4a6Gm/EmrR+KulsSdxzZdcgTtfuhrOEcfbVf6eMlD9PUbkscFSLjuIJ0eVW29kUrACt2I4icaVI+9xWwMFd8HGrZnRYZaMejhZvkrbt5tobsXwwo53wLqyl3sHmArFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Sb9iQ40K; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-bbbc58451a3so125808a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 14:34:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762900475; x=1763505275; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6Hy40ZMKHaLblCgrg8d9mHoEY/ESGBO/Q5ZktpGRvsw=;
-        b=Sb9iQ40KNTUzW68xtP727hPi4ObwN6zr9qESVObjMvBRaxHNzc7SSXsxfuzF3zGjuR
-         M+v40k1lY6BD0BQ6w+m7EM19VTQCc78Y8rvjtuUBTltTUw64J3jehlosCcBzMfT7/qJr
-         p5aTF5joyCR3rl7io5q/Kq2iMcK9vfG1G8XMzm6zVMsMymMx6h0zLa0uy3dYoHcY5gD9
-         TC4cgaerXgrPw5RBXl/ISuNhMXUzR6mUWpRCjb0d/5Dq5xwCeVj5efCJRZuvUIToknn6
-         +cVniEAgR/dC8ynY20uLztbpQnRT0yLNI2R9lBHe4X8QcLcaMY/mmfl0Nbq7l3rTHZLB
-         AQ3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762900475; x=1763505275;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6Hy40ZMKHaLblCgrg8d9mHoEY/ESGBO/Q5ZktpGRvsw=;
-        b=J3TF+SblHEzeP2dM2v8mXrbpH4Qe+7vlWksgR9PiUFoLb8e5UYIqN1kDywnIw8XVvw
-         +E8Q4/niZbfyuOONGA9/zqS7YQLT80mscwM+02XY2R+vLY4J8yuV3+n+uXMz4ko5lTHN
-         zN84mDYBY5+xUT++Gox+vNqNitv20zmUIqrSz+mjdI+hgeKMhYOkWSG1bS/45Q8o/daZ
-         /LUx2UGT3eOGnaeMu5XJgEgCOHBCp2EKhTx5ck/JOT6t8WliQ7xHz5CgH4FWrNtiXetp
-         UIu3q39jMO2IgRDwSe4laq8f0PwT3yHaJ0P3FWnu+NXyV8Wy+O50fFokGz86MfQaI3Pu
-         9CWw==
-X-Forwarded-Encrypted: i=1; AJvYcCWeKQ8Wd30EAelzVNcyCyYaVp429RkHd2CVoUGG5T21ZCZfAWfGqKHe9tffmJgSq3aDD11QnbGMBp1uMNk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxH0MVhhBkOsZTPhnoFzqxNoIaYhWwzReZiM+wOuKdE2s/mxv6G
-	nqbwL9iQFmvHEcn7xS5tvGle6wzrRMqBDWTmFnTwvhx/vGA2eky+oS32
-X-Gm-Gg: ASbGncttnDJdKFQBUp2ullGhyfXCRB7ksSwxbVN9bYL2L1hGPJGV7pe71uV2xkYe+1W
-	8cztlDNXufqQ8DOwjn6uwJBFS9PP1nV3qS6iw2kFfEmzT86CioBI5yDdTr3SmLBYMjRO2IP8I/T
-	lYmzAcTnDiT3QQbHdyOHfIQyFAUCkYVQkZMSkh0Z+AQP6j93z3ycdnBDHQPhgg5C+aTdvi5cw/b
-	yNu7TsmRCqH4Laoz28waO3b6e+K/Lei712WFRh4novaK+GcoY3fjIoyVT5zVEHdFkGewCqzWHZc
-	jQQuUPRJnDj9Xl/HsX2s/sWOidfhU3Sx8SA9M9KYvntjXGo9EsstaMoRtB1gdV+Y1mETg7lN2qh
-	GpUJbIkM3/S+zNzE4ZU/M67cS5rTSS4Mar4ZSLl4jvgD/T5q6ktajhh7FcaQ51sjYk7pH2jNkRi
-	BAGSQ7/190uZvz8cvM2inZFH5YGEg5ahLoXb/Y/NwmxMzRa3L4fUtK
-X-Google-Smtp-Source: AGHT+IF9QQPH+gJH8KntSB7Rwy8vzqw7n+HZ8aPvviHNmqgfUyRLSbtrGmVJLzrEsq8+P4iOrVOKkw==
-X-Received: by 2002:a17:903:286:b0:250:1c22:e78 with SMTP id d9443c01a7336-2984ed281bfmr12130735ad.1.1762900474952;
-        Tue, 11 Nov 2025 14:34:34 -0800 (PST)
-Received: from google.com ([2a00:79e0:2ebe:8:3da7:808e:130d:eeb4])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-bbf167e2fd0sm658034a12.17.2025.11.11.14.34.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Nov 2025 14:34:34 -0800 (PST)
-Date: Tue, 11 Nov 2025 14:34:18 -0800
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Jonathan Denose <jdenose@google.com>
-Cc: Jiri Kosina <jikos@kernel.org>, 
-	Benjamin Tissoires <bentiss@kernel.org>, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] Input: Add lid switch notifier
-Message-ID: <s7nk2xerfa7ocscyaaez7qnygkmrdy2ch355uziodda654ws5p@zswljdmx3747>
-References: <20251111-lid-switch-notifier-v2-0-789723d78d89@google.com>
- <20251111-lid-switch-notifier-v2-1-789723d78d89@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64D2C2DECBD
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 22:34:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.96.101
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762900482; cv=fail; b=mNHsrI6Uz2YqJKIHFiyekjC31O42zZDKyM3Qe2tnDJPqq7v1q+aRSgEyNxGJeu8xqoK4zLdS1/Ny53BFWtWFk+8W2FPryHPL+Kas5QWJhEYwjBJWWXS/VIOzS1N7H+riQ0vDcURpzQhsp4n34r4IFj4TfcLKQF15bhHJeqaeUsI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762900482; c=relaxed/simple;
+	bh=6gmIJenhsJ9I4lxSUv87Y8+z7G8/2HVh/8ADhHg1O+0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=ROQ7o0MUd4IH9MdmIp69PLjZ5jmfjYd5opgQQq9b0EEPew2JXDQr4QKarwYRqM2xUoXvGJeR1oUn1neJSY4w9qSQueGHhUsIpQoiJPA0OehvxVqL96wX0imTQAKvQwv7dci0Bp+26zJMcDeYniU/3Wl8i/o+/wCfLWXMjQq3RIw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atomlin.com; spf=pass smtp.mailfrom=atomlin.com; arc=fail smtp.client-ip=52.101.96.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atomlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=atomlin.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=o6Qmy9LUQiWrw1KB/kiy//fDQlj0jLT33hUF5zB2AA8/FxChfzFvswJsHkF4JHSIWAFYVh69Wx+O7P4UKR6dVU0MFq6uOcDEmUSp6fS26HxffVmkJqK6IuojDTMi2u2sxau7usE8d/kuFURkSnyfUwtd3HgEBxM1gWBtP9pe29QpOQ+LPNTYieE0zPvcprCoEPeP1/sLAH4Yy4upxK0Pc0WmDWoWPe/MrBzCebhoLygKUOJkcPhuS0RliKn8b8uH8rEzyDnnbZJKNvs7IV059hjS/GrTK8TnTwpE7zc35bKaLLnSK7QP/J4FV/mgvB2aae+mr2l4VPIra0IKjEoveA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1XqgUvXLyuj1Z/+VZHn69zcpxK7YsMFeWGWlrKd++ro=;
+ b=huvnu+KJLysPG9VyehwdeiPPnYXAa4/CHnAnLKIA3rkQzx8vVPIa9rG0vmZRRyqtJfH2onKIzDg+S4EJ8U1T+LP8JnTpLbSKerU/knFEvMCyLUR2Ef+IGONeRvQU3DkShfanxItocpK3cxxugve9gNdzNUTLch/9lo/MNMQ2I7wwtp+zvISLxHeNAt+3Ij3piVMSYQ3/wYqWyQEOmLzkiH6DleSy0jA8OzOoegcq/jz8f9cM54FnVXNKuVeWpEOmg79e9zMQLsXdOb17eZKo7ivW6H5pIrEGvQEUOUKVNkEWrnhiDkeXNS+AQ9ov3IFNZCBzzupYR7GWVxrLcB6T5A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=atomlin.com; dmarc=pass action=none header.from=atomlin.com;
+ dkim=pass header.d=atomlin.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=atomlin.com;
+Received: from LO3P123MB3531.GBRP123.PROD.OUTLOOK.COM (2603:10a6:600:be::10)
+ by LO6P123MB7271.GBRP123.PROD.OUTLOOK.COM (2603:10a6:600:33c::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Tue, 11 Nov
+ 2025 22:34:37 +0000
+Received: from LO3P123MB3531.GBRP123.PROD.OUTLOOK.COM
+ ([fe80::8242:da40:efa0:8375]) by LO3P123MB3531.GBRP123.PROD.OUTLOOK.COM
+ ([fe80::8242:da40:efa0:8375%4]) with mapi id 15.20.9320.013; Tue, 11 Nov 2025
+ 22:34:37 +0000
+Date: Tue, 11 Nov 2025 17:34:31 -0500
+From: Aaron Tomlin <atomlin@atomlin.com>
+To: Babu Moger <bmoger@amd.com>
+Cc: "Luck, Tony" <tony.luck@intel.com>, 
+	"Chatre, Reinette" <reinette.chatre@intel.com>, "Dave.Martin@arm.com" <Dave.Martin@arm.com>, 
+	"james.morse@arm.com" <james.morse@arm.com>, "babu.moger@amd.com" <babu.moger@amd.com>, 
+	"tglx@linutronix.de" <tglx@linutronix.de>, "mingo@redhat.com" <mingo@redhat.com>, 
+	"bp@alien8.de" <bp@alien8.de>, "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] x86/resctrl: Add io_alloc_min_cbm_all interface for
+ CBM reset
+Message-ID: <kszvsxhiz7gxmiklsiiybh3hiykvtishw22fkgg6gxlabulzv5@x4dtfw24uz2f>
+References: <fa2c3cbc-2af6-4d98-bd70-8ab49cb0d83e@amd.com>
+ <4whfbgq336xfuov4i4nwwrn35ywwlwizuvpdlstmdqzkhvwrq6@eits26xbwyz6>
+ <bcc8e6d2-8e91-4e91-9dab-f1c00f99c408@amd.com>
+ <knqdzael7yihvznsdzijztawviex2n3i5pqbzslmk3rolnacrh@h3cwjthvyeuz>
+ <SJ1PR11MB6083F15A9FCB09AEC3A46827FCCFA@SJ1PR11MB6083.namprd11.prod.outlook.com>
+ <937022c8-82cb-4f4c-a2a3-ceaf99580cc6@intel.com>
+ <SJ1PR11MB60833A27A1B8057CDDFB1B2BFCCFA@SJ1PR11MB6083.namprd11.prod.outlook.com>
+ <w6thhucyyfnveawixyub2yugsb3s2goiocqtene7s56csrgtfz@x4zll7p6tyla>
+ <7e264e18-23f4-4566-86f2-f0600a243227@amd.com>
+ <589d5db4-68f8-4aee-9d6e-dee5b8754564@amd.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <589d5db4-68f8-4aee-9d6e-dee5b8754564@amd.com>
+X-ClientProxiedBy: BN9PR03CA0989.namprd03.prod.outlook.com
+ (2603:10b6:408:109::34) To CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:400:70::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251111-lid-switch-notifier-v2-1-789723d78d89@google.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LO3P123MB3531:EE_|LO6P123MB7271:EE_
+X-MS-Office365-Filtering-Correlation-Id: 095b26fa-0902-49c5-6620-08de21727e08
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?a0FlYXowMi8vbXd6U1Jud243Y1lpMTlvVWh6NlZBa09EOFoyL1p2REllYm1D?=
+ =?utf-8?B?SnBXOHI0eTl4d2lNbGhJdHgyaEdKc1l3SE1zVDZ6UGlNaHdYT1ZWQ1BwMVI4?=
+ =?utf-8?B?TC9IaDcyZkQ4WDBlV0tHOHZmV1lleWUxUCtTSlZranN3WU1Wa0IrRlY0TTAx?=
+ =?utf-8?B?SnBlWXB5ZmJBUklYWWNVUkRTRk1GZ2Y0ZWRJcC9kVW1mVXpVdjZYMk1yY2xh?=
+ =?utf-8?B?SSs4bVd5bkZjSjhVYzVzVE5GVlllNVVkMVhRL3hCMVpQdTgxUmxma0ZoZFF2?=
+ =?utf-8?B?VkdEQ0FXbkhlQ1hxRStVUmpTdHRyKzBab21mbWx5UHRRUE9KWVVZTHB2MWFv?=
+ =?utf-8?B?SWEycmpVd2RYN3BkTmxVTjBkZnJkQU5uNjhVZ0lYSzdVVThNdzh4RHlheDE5?=
+ =?utf-8?B?dk5ob0NFU2pXay83NE5FT0h5cmFUclgvUnd6bDRtUWlwRUlRdFM0TThzL1Br?=
+ =?utf-8?B?a3VHMWYrSm8vVHNJblpxZDNTbE5Xak8rME9xY0M0Q0krUnlaVlhLakpCUXRh?=
+ =?utf-8?B?RmVnQStTc2NRbmVBdWsxajRxVkw3MXcwTHlDRlBVWjZzNEl0RjA3dm5EZUIw?=
+ =?utf-8?B?V3JXMGxQUW1RNTN0RFlWWDhNT01hZ1AvczRYQjlZa1d6OTZleWNDWFpOekFr?=
+ =?utf-8?B?cGZrKzIxckFETUpXN3AwVUEvcHZjUVFKeW9CMDRDZzdPVHRCT3VucUJhVlZN?=
+ =?utf-8?B?ZmY3WmRYY1lvQnR1NXQvc2RqZkRXQm93bUpJY0VVbWFKbWZvZ0E1QS9iVDkr?=
+ =?utf-8?B?RGsyTnhKRmZ3UzFpME1mQnJvWjM2bUlmU0Vobk01RVVQVWIzZkFLTUhwQXNK?=
+ =?utf-8?B?STk5RFh6NFJMMGlwT0dtZVMrdWdacnNwR3Z3S3VjZ2tZOGNMb2wyd1EraSti?=
+ =?utf-8?B?bkdScnJCVXo1UzJiWmswUUdBcGxyOFRoT2JCb05haTV4dC9lbUc1YUVPdklR?=
+ =?utf-8?B?QUFrMEZ4VjhWWmdDVnVhdVRWWDFVTXo2Z1ZiNGlzUDA1U2VXV2R3QnkyYXNr?=
+ =?utf-8?B?VlRBZFVvdTUzNGhwUlEyNzR0ekNYbDY1L2lJVTNjUVptUnA4dCtLM0hIRUVU?=
+ =?utf-8?B?cWw3eEF4U04yb0pLaGtPR001QVVMSk9saDNLd1pneGcwQnc2dk1KNUQxakR3?=
+ =?utf-8?B?YTM2WUxzeFdEUHhHM1BGK0JhMFNNSGc5MFNGWEg3UWxiMG51cEtMeU5rYXhV?=
+ =?utf-8?B?YVUwT1FDaXBrYzM2cGdLSnozaUJHZGY4M21HaDZEZ3JtUzhiN00zOGhnVit2?=
+ =?utf-8?B?dENrRS9JbFZaMTBab0lKeVNZLzd4UCtaeURmOWdSeVFZQVhVQURPWndjSEZL?=
+ =?utf-8?B?TWxSSmtPQTV0eGlSNUZXb2ZDRTRNS01WNldKOXdlMlVhNlg2NGc2SDRxU21U?=
+ =?utf-8?B?TFByNWI0eVNkUDk2Skx2dS9QQTBTenlDMGp5Tkhwa2NhQUZBUnlkcXFtZzdI?=
+ =?utf-8?B?RC9jSndCQm5uMHBFSXdRczVTTDlyQmRrOHkxbk01QVNlMzhlQTA2R3pjWUFa?=
+ =?utf-8?B?WlNPSFBNN2RLMmhtTGozUWZLT1lFS1Mvek1GRVArNnFxK01JYnlaR3pUa3BN?=
+ =?utf-8?B?Sy9JODgrbkJrR2QxQlRVcjVlRzRQd2ZvQ1V2Vk1naXpXZkFTdWExQzhhR0I1?=
+ =?utf-8?B?eCt6WjhHdDRreCtoZmpnNDVmd2liaFN2VVI1OEovVGZHUnpUV2NXZkJzcmZX?=
+ =?utf-8?B?NHByYU8yL1NuajNJNGFmRkhiSVFMUmtUR3J6SjU5RktWUWdiSEhTRVBmcjBM?=
+ =?utf-8?B?bm9EbXpOR1VzTzZCYS81VzFkVVFoYXFCVWdTWXBObzdzY09jNFVNODJ2VUVW?=
+ =?utf-8?B?bVQxakhPRzRiUUNrakRqVURna1A2ZWtuQkZmWFprSWFQL2F1Unpka1dmSlQ0?=
+ =?utf-8?B?QjEwWjV5R2hVQytxREhDbk50a0RjK1pkZmgwbkhPdHNjRlRKekxKT1BQa0gy?=
+ =?utf-8?Q?gfgYLvZnCM2DW4JFKuFLh6H0liqN8TCF?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LO3P123MB3531.GBRP123.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?QlIrTHBiRUVua2VabUREL3NVa0ZIcUwwS0ZRWk01dU9FUnh5aGh1cDhQd0lW?=
+ =?utf-8?B?elhNT3l3dnB5TG9TMC9ra2k5TGI0WkZzNnp5WUNFcmJLSlpwT21HZER1dENP?=
+ =?utf-8?B?ZTdFLytvUXhzdFA1OXg0NWNjTGw5WmlZc1pTWCtybXdIeUliaWN4dk5IeHNv?=
+ =?utf-8?B?aTJZbW5BK3E3NC81SURaZitQU0g3M2NIOVNINU1FQ0tUaGRPN2hKMEFkWnph?=
+ =?utf-8?B?L2NYNHRvV04rZGUvelJzUWUvam9abnArNzNXYVdNa2xFQVAxRVhxNVUvTVVL?=
+ =?utf-8?B?bGtQUEM0TlBzWlFNUGZNSTVseERkVG5tMG9PbXRuaWVKM0djUGdoaU1WVTZE?=
+ =?utf-8?B?MHBvYnRHOU9qbzNWRjI5SXhIN1diOUUwYjVVWjZyZGdtZG81L2grTjhYTEVZ?=
+ =?utf-8?B?ZXBkV2VoU0xlL1JvbENwYzRrWkNYRVljcmN1MUhhRmhGbTgvUk1SNUhqOWl4?=
+ =?utf-8?B?Z1ZFZkkwYXNabmdEZHE5V2FzZzNnN0Z5NUoxOFkxT20zdzJRbmN6VC9jOUU2?=
+ =?utf-8?B?VVNiNVAxZEVqQ0hQV21nRmp5ZythTHVHbHlwdXNVZWdOeHVtdlRxTXB0OWkv?=
+ =?utf-8?B?UlhPSUZ4eUc4azN6K01ReEZEaGJHTW1WeVhxY1Mvd1prckl2UHBVUWwwS3Z5?=
+ =?utf-8?B?MWpMangyR0tiMDdtYlp0cjhKOERWakpyemc3bTFJVytzNXBWem14eU9wWmhC?=
+ =?utf-8?B?eEV1UHZRQmVQZ1A3SGF1MlhCK2pZQ1dKbVR6K05vdW1mV1hXUW14cXFzenRK?=
+ =?utf-8?B?MmdEdDJOZDZJK2p1d0ZSYVpreWwrK3N3bXJva0o3WFlQNDRvSEhZV1MydTVQ?=
+ =?utf-8?B?anYxUDVpdUw2OHU1ZnphUXlHSFMrVHpzamlFaXVuZlRkc24zZ1Noa1Y2eUd3?=
+ =?utf-8?B?Y3dOM1Y4dzNCaHFoNm0xdDIrbjVhQ1loQklhUm9xV00vVkF3SGhRR2hsWTVE?=
+ =?utf-8?B?THpMcTdicW1aNGpWQ0VENDZBc05RTnErOHNLNjFpd2lUaWg2V0pZVm9YN1I1?=
+ =?utf-8?B?aGhLeUlwa01tUlkxNnhCMUJJLzd4RklkT293N1o2R0RiSE9GeVU3U3RmWGJp?=
+ =?utf-8?B?Nm5iTkJ5Y3FrYjVWYjJRTjVORFhURzB5dFZRdUFiR3VPU1RPYUYrRXNhcENw?=
+ =?utf-8?B?cFFhSDZDWWxtUTgvZER6M3JJVlhDMmM4SmwwdzJwdDZ6QWJYWlB3aUU3amMr?=
+ =?utf-8?B?S01LU016YzlTdWlJeUhFdlFrYW9NRG5XVU1Cc0FwVTVBS091QTBlc0FoSnJs?=
+ =?utf-8?B?OE9Ka085Vjgyc0RvWHo3K2Y4bVg5aWRWNjFhZ3pCTkhOOFkyeDlGU2crcFJj?=
+ =?utf-8?B?UXBUbzZnMDhIeDdrY1lTaFBETUc0aVZuZFJCWDVBdXlXYXZoT0hMY2l3T1ZP?=
+ =?utf-8?B?SGYzWjkzUHNHbmhud2J3Q2NIeTJhSTdoMjJNaHk4eElzbDcyYU1uWUtDRE5w?=
+ =?utf-8?B?eWJGbUtLQlJpakgyNTdpenFrQ21PZS85NmtTTDNnVTNaWmJ3ZStrZmNyeURr?=
+ =?utf-8?B?VXllUlpSRWhLVkdKMnRMVjNYc1JhMTRyeUdwSXRzZ2RSRjhBTUxTL01FTDdC?=
+ =?utf-8?B?Y3lUNmpwVlArREE4cHdqQTRLRm1DenVYNUxEbXR5ajZuYVNLREVFMFpOa3RW?=
+ =?utf-8?B?QVEwRkdFYXB6MnpiZGo3S081Z2psaFM2c3N3dXVpSm9VcmtISTBQdytLaGxz?=
+ =?utf-8?B?MlJaYitDQlVMdVk2OTBVT0k2eExHUU9IckllWXRXNDJiMUpWamZPUUFCTFZQ?=
+ =?utf-8?B?SWdOeXFVOFNkT0c4dmZqNzRUa2VyUGtUK2p2YWhZUHVReTh0WmFTL0U1TUQ1?=
+ =?utf-8?B?ODl1RnVQZTlVQUpIdUk2bi9OQTFWQ2tIWFRoK1JaWUxBcmFORVMzVGk1eFZ1?=
+ =?utf-8?B?VmczZjRpcGRZcnplbi8zYlRxVVV6NjMvSS9CSzhUTTRWbHdrRjZIYXY3NU5V?=
+ =?utf-8?B?aFNQYUpJSlBIOXp5L2pLRXZLaFJheVNZbXBJWDAyOEZTMkdlSHRuNTBYUXZJ?=
+ =?utf-8?B?Rk14Ty9HckZrcDR0Q2hGdm5hak1WNmthL2svSEJRUW5xdXN5ZC9obThld3Vs?=
+ =?utf-8?B?WTcxNmxwRm9IM2R3QlEwKy9ZbHBkZ21lZDFJdld1VXpwVUM4NW1Hc3A4TWxH?=
+ =?utf-8?Q?yFase9qZZ4JO9r88N1S3X110c?=
+X-OriginatorOrg: atomlin.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 095b26fa-0902-49c5-6620-08de21727e08
+X-MS-Exchange-CrossTenant-AuthSource: CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Nov 2025 22:34:37.0496
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: e6a32402-7d7b-4830-9a2b-76945bbbcb57
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: uvIvJpARXVpy8xbFtzBMV4qPpfW/Ezak00jyhzmZXpZ5Kk8Dv7psI+B3azgvtNAe7ijp6+VPpMNrmvvfgJXOnA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LO6P123MB7271
 
-Hi Jonathan,
-
-On Tue, Nov 11, 2025 at 09:34:06PM +0000, Jonathan Denose wrote:
-> This change creates a new input handler which can be included in the
-> build via a new Kconfig option CONFIG_INPUT_LID_NOTIFIER. This input
-> handler listens for lid switch events and publishes them through an
-> atomic notification chain. Other modules may register for events
-> through this notification chain with register_lid_notifier.
+On Tue, Nov 11, 2025 at 03:04:55PM -0600, Babu Moger wrote:
+> > Here’s my understanding of the discussion from this thread:
+> > 
+> > 
+> > We plan to support the following operation:
+> > 
+> >    #echo "*=value" > /sys/fs/resctrl/info/L3/io_alloc_cbm
+> > 
+> Looks like we are going with the above approach where "*" represents all the
+> domain.
 > 
-> Signed-off-by: Jonathan Denose <jdenose@google.com>
-> ---
->  drivers/input/Kconfig        | 11 +++++
->  drivers/input/Makefile       |  1 +
->  drivers/input/lid-notifier.c | 98 ++++++++++++++++++++++++++++++++++++++++++++
->  include/linux/input.h        |  2 +
->  4 files changed, 112 insertions(+)
+> Couple of things to consider.
 > 
-> diff --git a/drivers/input/Kconfig b/drivers/input/Kconfig
-> index 88ecdf5218ee9ba35e1efec6341f8605b621bd49..16f6d24fd04ac8cb5af9d36cc47155ea9be0e177 100644
-> --- a/drivers/input/Kconfig
-> +++ b/drivers/input/Kconfig
-> @@ -38,6 +38,17 @@ config INPUT_LEDS
->  	  To compile this driver as a module, choose M here: the
->  	  module will be called input-leds.
->  
-> +config INPUT_LID_NOTIFIER
-> +	tristate "Include notifier for lid switch events"
-> +	help
-> +	  Say Y here if you would like to create a notifier to publish lid switch
-> +		events.
-> +
-> +	  If unsure, say N.
-> +
-> +	  To compile this driver as a module, choose M here: the
-> +	  module will be called lid-notifier.
+> a. Send a separate patch to add this feature after [1] is merged.
+> 
+> b. Add this change as part of [1] series in patch 9. The series is mostly
+> ready for merge. I can add the changes. Only concern is, it will might delay
+> the series merge little bit.  My expectation is to have this series ready
+> for next merge window.
+> 
+> [1] https://lore.kernel.org/lkml/cover.1761844489.git.babu.moger@amd.com/
+> 
+> Any thoughts?
+> 
+> Thanks
+> 
 
-I think this better not surfaced to users but rather interested drivers
-'select' it.
+Hi Babu, Tony, Reinette,
 
-> +
->  config INPUT_FF_MEMLESS
->  	tristate "Support for memoryless force-feedback devices"
->  	help
-> diff --git a/drivers/input/Makefile b/drivers/input/Makefile
-> index 2cd6e1c9a77844fe09cd3d99533e5d3efb038c7d..1efdba04f79a97e2a122b9198341b18a1855b4b9 100644
-> --- a/drivers/input/Makefile
-> +++ b/drivers/input/Makefile
-> @@ -15,6 +15,7 @@ obj-$(CONFIG_INPUT_MATRIXKMAP)	+= matrix-keymap.o
->  obj-$(CONFIG_INPUT_VIVALDIFMAP)	+= vivaldi-fmap.o
->  
->  obj-$(CONFIG_INPUT_LEDS)	+= input-leds.o
-> +obj-$(CONFIG_INPUT_LID_NOTIFIER)	+= lid-notifier.o
->  obj-$(CONFIG_INPUT_MOUSEDEV)	+= mousedev.o
->  obj-$(CONFIG_INPUT_JOYDEV)	+= joydev.o
->  obj-$(CONFIG_INPUT_EVDEV)	+= evdev.o
-> diff --git a/drivers/input/lid-notifier.c b/drivers/input/lid-notifier.c
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..954b9855532dbd0514860e309d0b76982e947673
-> --- /dev/null
-> +++ b/drivers/input/lid-notifier.c
-> @@ -0,0 +1,98 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + *  Lid event notifier
-> + *
-> + *  Copyright (c) 2025 Jonathan Denose <jdenose@google.com>
-> + */
-> +
-> +#include <linux/device.h>
-> +#include <linux/input.h>
-> +#include <linux/notifier.h>
-> +
-> +static struct input_handler lid_handler;
-> +static struct atomic_notifier_head input_notifier_head;
-> +
-> +int register_lid_notifier(struct notifier_block *notifier)
-> +{
-> +	return atomic_notifier_chain_register(&input_notifier_head, notifier);
-> +}
-> +EXPORT_SYMBOL(register_lid_notifier);
+I believe the most prudent course of action would be to hold off on this
+particular change until the main series has been merged.
 
-I wonder if we want to expose the "raw" notifier or if we want to
-provide a higher-level API that would allocate a notifier blocki, set up
-the callback, and return a "cookie" that can be used to free notifier
-block later. This way we do not need to worry that some enterprising
-driver suppresses notifications for the rest by returning NOTIFY_STOP.
+As I was the one who specifically requested this supporting functionality,
+I would be happy to prepare and submit the follow-up patch for this detail
+myself.
 
-> +
-> +static int lid_handler_connect(struct input_handler *handler,
-> +		struct input_dev *input_dev, const struct input_device_id *id)
 
-Proper alignment of the arguments please.
-
-> +{
-> +	struct input_handle *handle;
-> +	int error;
-> +
-> +	handle = devm_kzalloc(&input_dev->dev, sizeof(struct input_handle), GFP_KERNEL);
-
-This is not driver probe path so devm_kzalloc must not be used here.
-Also "sizeof(*handle)". 
-
-> +	if (!handle)
-> +		return -ENOMEM;
-> +
-> +	handle->dev = input_dev;
-> +	handle->handler = handler;
-> +	handle->name = "lid";
-> +
-> +	error = input_register_handle(handle);
-> +	if (error)
-> +		goto err_free_handle;
-> +
-> +	error = input_open_device(handle);
-> +	if (error)
-> +		goto err_unregister_handle;
-> +
-> +	return 0;
-> +
-> + err_unregister_handle:
-> +	input_unregister_handle(handle);
-> + err_free_handle:
-> +	kfree(handle);
-
-Just FYI: One must never use kfree() with devm_kalloc()ed memory.
-
-> +	return error;
-> +}
-> +
-> +static void lid_handler_disconnect(struct input_handle *handle)
-> +{
-> +	input_close_device(handle);
-> +	input_unregister_handle(handle);
-
-	kfree(handle);
-
-> +}
-> +
-> +static void lid_handler_event(struct input_handle *handle, unsigned int type,
-> +		unsigned int code, int value)
-> +{
-> +	if (type == EV_SW && code == SW_LID)
-> +		atomic_notifier_call_chain(&input_notifier_head, value, handle->dev);
-
-Why do you need to pass the device from which SW_LID originated?
-
-> +}
-> +
-> +static const struct input_device_id lid_handler_ids[] = {
-> +	{
-> +		.flags = INPUT_DEVICE_ID_MATCH_EVBIT | INPUT_DEVICE_ID_MATCH_SWBIT
-> +						| INPUT_DEVICE_ID_MATCH_BUS,
-> +		.evbit = { BIT_MASK(EV_SW) },
-> +		.swbit = { [BIT_WORD(SW_LID)] = BIT_MASK(SW_LID) },
-> +		.bustype = 0x19
-
-Why do we need to match in bus type? The LID does not have to always
-come from ACPI.
-
-> +	},
-> +	{ },
-> +};
-> +
-> +static struct input_handler lid_handler = {
-> +	.connect = lid_handler_connect,
-> +	.disconnect = lid_handler_disconnect,
-> +	.event = lid_handler_event,
-> +	.name = "lid",
-> +	.id_table = lid_handler_ids
-> +};
-> +
-> +static int __init lid_notifier_init(void)
-> +{
-> +	return input_register_handler(&lid_handler);
-> +}
-> +module_init(lid_notifier_init);
-> +
-> +static void __exit lid_notifier_exit(void)
-> +{
-> +	input_unregister_handler(&lid_handler);
-> +}
-> +module_exit(lid_notifier_exit);
-> +
-> +MODULE_AUTHOR("Jonathan Denose <jdenose@google.com>");
-> +MODULE_DESCRIPTION("Lid event notifier");
-> +MODULE_LICENSE("GPL");
-> diff --git a/include/linux/input.h b/include/linux/input.h
-> index 7d7cb0593a63e93c4906c49cde430188db2d1ab5..023eb92c77d9e8721d482b9787632a671671de08 100644
-> --- a/include/linux/input.h
-> +++ b/include/linux/input.h
-> @@ -592,3 +592,5 @@ int input_ff_create_memless(struct input_dev *dev, void *data,
->  		int (*play_effect)(struct input_dev *, void *, struct ff_effect *));
->  
->  #endif
-
-I think this should go into include/linux/lid-notifier.h.
-
-> +
-> +int register_lid_notifier(struct notifier_block *notifier);
-
-Thanks.
-
+Kind regards,
 -- 
-Dmitry
+Aaron Tomlin
 
