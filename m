@@ -1,156 +1,164 @@
-Return-Path: <linux-kernel+bounces-895882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6944BC4F2D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 18:05:04 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91A85C4F2E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 18:06:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E0F3634CB36
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:05:03 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3838B4EC9FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:04:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C1C0377EAD;
-	Tue, 11 Nov 2025 17:04:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A6A73730F1;
+	Tue, 11 Nov 2025 17:04:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AaOuoCkX"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Dq6SLOBZ";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="EdnQn9qo"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA56C3730F8
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 17:04:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ED1232826A
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 17:03:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762880694; cv=none; b=mKtlWnnICubgEBHKZ3esgb5Ap+TNv+bpj9SmvMtZ4SgVCB4ToHxGUI8EiKV4BiIriMiks/QB6j7z1crBQgLrOSm1Q+Q0KRzc60rR8HQrJyFDQ0tmX4DZ9kclNjolZzVtLxRhbu/8g3+Qcq2STz6BZc8wEnNHTgCLeOJHLegSN2E=
+	t=1762880642; cv=none; b=FOkAAfhxvFZoudhP5t5j43PxmcMnNKsbxaPUKnNVMr/wTW2jWJh0cf3a7HFjZfXObuKP9NxKq+tE/Ay4/2HIdvNZk3A58FA+psdDekFUBQY3nWEn6sfn7WFBcSQ1mTgGqXSMuqCAGlK/EKV650M6QdMzFoc/OHjlUexzY8fyAnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762880694; c=relaxed/simple;
-	bh=YubFhKnH81TLGfMHxtluWgwaoXScPwc2G5XHJdHKjtw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=V1guH4qSlTvDJXlQ0wxuSAORwaQukNXiBb1aQF9j+BF8loX39Bg34jNyt7Evp2s2rPJJCdpUT4Z7Me3yT9lK4EVnn6/AQNKRebT+9nAoVis823ay4XcmbwJU4QaUZvUkkjw1PQEn32sAy/lKHYgRNTp4hoOK/bVy02HEHzpeMvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AaOuoCkX; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5943d1d0656so5633980e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 09:04:52 -0800 (PST)
+	s=arc-20240116; t=1762880642; c=relaxed/simple;
+	bh=oY4T/ttoreMDsko7aua6FQ5sUjs/KwHa2EFAh1PvwqY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hQ84W9RFSUTXc4c0alBfCLWv853/8Xit/23UVJiD+cKdFM/uAjSIHxFja7uf5uz200V0iK6LbB9tcz3CoS9Jy4VEn4ge6i1l+30N3xK3/48sPcViA1fp/mY2jBryKqf6wSsOldG318jOe94eJt5E7BQAzj/6n6oCJH2IPGLBEqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Dq6SLOBZ; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=EdnQn9qo; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5ABBGXvl2027911
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 17:03:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=sSqkmTvk/o1zV2BKESv8sOE2j4hMFGCUeKS
+	AHs4JkiY=; b=Dq6SLOBZdEdcLxlp778Gm9OsA+XdoTRZlm4LGBRI3ScwkzOWkyj
+	llkMN1k7DLNF3nrFkrRHAu/VE+Zkp3PG/aXLl+76QzCap4QKj6AomfuJuzckqnnV
+	yk+XsiH9wkCeTUb/G3YjpTFhhAk5l36M0jNiR+5kX2VaXMnGfarfK6QTMHotdgWW
+	UTAHlt4zs9ZXliM4dYG0fGVS2UJp6vj8e2+7N8AB9feoJpV1GNq9ds73I72THouP
+	zKXLj9b+56E2UAdMrjv+SwiF0SmfGsVP+dSuqHX9+3m0kQDdJRBe2rib9QDmrHZu
+	+yKrEVhn5pwczQbU0IoQWfhSe4TdaJUS9eQ==
+Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com [209.85.215.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4abxqw223e-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 17:03:59 +0000 (GMT)
+Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-b9a72a43e42so4036248a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 09:03:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762880691; x=1763485491; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YubFhKnH81TLGfMHxtluWgwaoXScPwc2G5XHJdHKjtw=;
-        b=AaOuoCkXjxB52QlvIj2bOAsEsuz1Aqp22e3xc9jQZs2a8JC1P0XD3DCdMVIK1UU+Go
-         Pu/yWivC9nAzzxvemn5iAcNRzxfBBRzMmmP6pFxopvI9OYDUdj9uqnSwan3yqQFRr6SZ
-         cHvJwQMgCQPmldu+Wpd/5mk2vvW8OuzDfXrWT/uqJpsMb1QanZj+dkoJRNNsayzjADJ7
-         gvUPuLWi4JSOvyK+A7VosMBmhwErY078GpMHiweF4fcWVn79ntC97z9U+fbgdxseZeW+
-         LPDATIpHxYcZvthdzwf19Y40WxMjWIaix7IF9RGbDE1qK+Ave5Nymt0l7awCMd+MroT4
-         7HOQ==
+        d=oss.qualcomm.com; s=google; t=1762880638; x=1763485438; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=sSqkmTvk/o1zV2BKESv8sOE2j4hMFGCUeKSAHs4JkiY=;
+        b=EdnQn9qoKz5Is1CNcjtAVTWydTAeqLBux3lp7NN/Jg8Rx7K+0jXhvEcj7awjcgwyd/
+         +dDf8AlyZliXmNdpWWMkxD1Rwx+Q+HvAfhaF8+Io9Bf13lHZXkZRHRIybxQguYCZEGN5
+         61H2DmZ+Y3F/CEqWR6JNhTWD7AwVViPRoCFLmgg+MKPiV2QFSJT4rjO5n1s9D/peoMNM
+         vr8zZZl65z3M1MtXcmgv92yxVtavGmHS/mxfQBb5htCsovFhDP3IAqERAgdE0gNjSDRO
+         zBMUcX05ezkGpAHibjjh8adOl/B2qe+/PptcQqwNMQdaIyN2ja3dxm9/SyRbzRdStcDL
+         VXsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762880691; x=1763485491;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=YubFhKnH81TLGfMHxtluWgwaoXScPwc2G5XHJdHKjtw=;
-        b=QidmWCEaah7OTcBhsf7bvYyan6W54M7xrlBbF7jkp2LaXJboZ1LI97Y+Ij6cVSVlIh
-         ADS8ZiUopMokwYr3JOSOUAfH/xUtwyStdryIuQ1OyiPYjL+t0LstyeiZHhxDqeXpZB4A
-         WbhnH7PbDXoA/JzJl4QLi7XoCqKM7x9B5lsA5uQnEq2a99dLhXjsbgSi0oV2gaq9f4Y5
-         QLl3gMQihgErLPhaJKJZIPHF94NB4OtkJKjYrwwbjrTDhoc9MP1CuelQS8uPilmsCZs7
-         0MGiMQ7J/2O10gTbZaN7C8gqn6uP6IutIlRjXuNAuqwGhjRZO6gwWJhu4RuBgRzVWdLU
-         bYQg==
-X-Forwarded-Encrypted: i=1; AJvYcCUTjwivkt5HMNhJP0GX/oxsUn4N5unzlvyvctJjlUT4F1STciUSsrKrId/GAzw5XX2GRQl5cm79gtxKW9E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzuNmNT0/l80lDIrIfYgM4eZpSkpHhm1QIMp2GNTk2r+naVBzuv
-	cfQG8dS5k4+Y2YM25NXwv1967Ho59SfEyZ+7x3XwGkzE6JHQqnj4vCHGkRCFzolglQWh1du80Lj
-	bHKBzXz46ZCwyLC6XIVJlyCiyU6iOF60=
-X-Gm-Gg: ASbGncvxcQ17KvKnleGCENxXOqttPbgbCQ2b9Zvo/K//RghsCW3epMSvm6XD6hqtYZN
-	bXQ2KWuGHbIwEWRns5P7bxr4XDVy6gDaPBlFOrEmFjWJT5eJWznGvvDCsj0hl4D428E9NALAhea
-	MaAdAII9Avyw1fNqWvPV1bObMti/LoeXlJ+d6XXxkDqwYQWDYcObvnBrUiWqdcLYFMLHv5nuIO9
-	eIgCIWXTdT/0HCqG5L2F3NOyuTodcl6eT4+JkkwaxkFt1zQiPEE1Ul8OI1d2MQCMeXWv7g=
-X-Google-Smtp-Source: AGHT+IEZlH0mtpomAoYHWcXslTaT22aqDtc9zJerr/PD7lSoxf1ylVfrl0l274mOZbaW4dhFxUMeL2NxxO5NcXsCaD4=
-X-Received: by 2002:a05:6512:23a0:b0:594:7492:8ac9 with SMTP id
- 2adb3069b0e04-59576df8d16mr23940e87.24.1762880690492; Tue, 11 Nov 2025
- 09:04:50 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762880638; x=1763485438;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sSqkmTvk/o1zV2BKESv8sOE2j4hMFGCUeKSAHs4JkiY=;
+        b=j0kZLZbEdL9qVppHESDLHsjb86qYucQIDDhl6eNo8EquZA0mX0JvOeGHHNEGue9tOC
+         q2FF9NDl2FZnOObNpqhzgLTzIEEnbgXN9dF6zrSGI6SfVkZTf36iEupWDG9aCIm58BXM
+         P+7aPzzFugXJkCENNvv0bpcwl+QwjAQMYvWbFWy2K9xhAoKpAYeqKuFvGHC9YWRHLVdL
+         V6xnqJTLP+fjLOcdNVHVQDZWL6u5ARQmErRq9opYTEfsbU9j1OzWhNgsYG2BzeZheJz2
+         FgD7LeTUVKLJdnUngvRVY306YfR3CmcKWVJ1es0WPds3I8ASHh/Bt5eH/+H6zWfqMOpt
+         EPEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUjF8/njgfHuQkhB0JIImEKbHGKkL5cR75ejVni9hFnuspy49UFcnEXc2CrZdUXe5v+2T7prMhXSp0KN8A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJXqbV4k71uTjLlzVEnguRg+jfvpXSCIIzMkTtCHZk1t8k2QHn
+	OGOLDAx6AZs0GcDQf3J/8YO5LH2yJ+1UYRhr1xuP+kvPyGR9RvBE0lWFYQxUE2jNGKd+3v6tFcX
+	rRD0EpGGvxePiN4ZBDAfiOEpiQsfG3bANcNURdhh8fJ72MQhMXsBkeUsO0MyvcLj43EM=
+X-Gm-Gg: ASbGnct+7YCsZzJWFxa6TxyJnjyJlM/gYekPaWainPQlFr1fazF/1nrAkxGA5bbWXYC
+	+wv4RJCDSLRJHw3cF89Px3+MnwImafz3nAuPifyh+safJEJDCDxjU6usSvmdRXntha8VPH/wVAT
+	4xB2XUAlEygNYhDU+I3hehuxIcvyZhPwuMTHPsjtT3vCsipXmhSTAy2hPDArUVxJauLyowyRGSS
+	tI40BMCP97Urt7nV42F7m14XcLi5Wyn7Kbz9AJQ6oHgCjAQRPF8JZ4BW5903Y+x49MiM/tJP5SD
+	eSqCC7SokBKS21wiQI4KmNvF0lqUrRfg/nNbz8ewmR7snOv64JDiPqO0vRr1qUA81bXR+vtB35F
+	tvfbpOgrVy5uXlzBv7AVQSPCLukG8R6qMkHE=
+X-Received: by 2002:a17:902:e78b:b0:269:8d1b:40c3 with SMTP id d9443c01a7336-2984ed2b619mr438825ad.12.1762880638457;
+        Tue, 11 Nov 2025 09:03:58 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHWdsUBA6eSuHxYDMbD8ULmG3xXxYMXzsqpX6BMtcUFNBsubisaSrMVPigEbV83zZrnBZT5qA==
+X-Received: by 2002:a17:902:e78b:b0:269:8d1b:40c3 with SMTP id d9443c01a7336-2984ed2b619mr438335ad.12.1762880637855;
+        Tue, 11 Nov 2025 09:03:57 -0800 (PST)
+Received: from hu-vdadhani-hyd.qualcomm.com ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2984dcea690sm2262405ad.99.2025.11.11.09.03.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Nov 2025 09:03:57 -0800 (PST)
+From: Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>
+To: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
+        krzk+dt@kernel.org, conor+dt@kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        konrad.dybcio@oss.qualcomm.com, dmitry.baryshkov@linaro.org
+Cc: mukesh.savaliya@oss.qualcomm.com,
+        Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>
+Subject: [PATCH 1/1] arm64: dts: qcom: talos: Drop opp-shared from QUP OPP table
+Date: Tue, 11 Nov 2025 22:33:50 +0530
+Message-Id: <20251111170350.525832-1-viken.dadhaniya@oss.qualcomm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251027-tegra186-icc-p2-v4-0-e4e4f57e2103@gmail.com>
- <20251027-tegra186-icc-p2-v4-3-e4e4f57e2103@gmail.com> <82c8dda8-6fcb-48f9-bdaa-f3d1431e41ae@nvidia.com>
- <CALHNRZ8nCojreFCMXfbBBhWAMtmWN-04XtuW8fEsVD9bw+-AzA@mail.gmail.com>
- <CALHNRZ-CO5i9jeLkEG2cmHxcW1bcLhxcBSxjmL2euHfQy8yr-w@mail.gmail.com>
- <e6ce190e-6df7-4c36-abca-f09df3cc80e7@nvidia.com> <99ca4992-5736-417d-854e-379542549bee@kernel.org>
- <7f3dad08-cff5-40c2-8e7f-f6441a3d6b91@nvidia.com> <d5d23eb5-f43c-4e4b-9926-3fba6ffd3acf@nvidia.com>
-In-Reply-To: <d5d23eb5-f43c-4e4b-9926-3fba6ffd3acf@nvidia.com>
-From: Aaron Kling <webgeek1234@gmail.com>
-Date: Tue, 11 Nov 2025 11:04:39 -0600
-X-Gm-Features: AWmQ_blP3BFSBsAjGIzab2QDvUj_EpEv05TJkH9xstMTHLX-1ZR-K3Sg-X-4BUw
-Message-ID: <CALHNRZ8vFJyfFXbxFehWA9TGkdrEUy9Wsm-DxEOT=tVbYTcU5Q@mail.gmail.com>
-Subject: Re: [PATCH v4 3/5] memory: tegra186-emc: Support non-bpmp icc scaling
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTExMDEzOCBTYWx0ZWRfXz9lv5VuEtZ5+
+ 1iCkCQu24Zk4/zLS74QFMAIAdgZSOFgyGqth8P8fVQfOowXAgUX8lGu3e2t+pHypmiys6dAJAJ7
+ jgauoDNY+j3VOD6yqMHNsvnqFva4YTAuCeJ1StNJwe3PlnVu5g2k9JDLEFRX+jBAb4iWO/7y6Wu
+ KOnwZHqHDUXVEMgu8+UC1lpGRpglZ8RTnlwQ14aVHLHwQe/F1IjWtC05gUGk3C7TG33wWEu48Vs
+ OcfAdvZgZw0dd0iipgNGOXfkfDIHfjqQheoI9c325ejvtrKlv57KBbIWU06Cim7NOicGZ6qljIx
+ vrcXRq8Eu8bYjGnEccXg2xoTOoaoResFHYNte1u1fc0G2QeufnT9QEvKEBuXUX+a71KdZDK6RIL
+ kXJ9jXrlhtarjATr9ZiyYO3UndGN9g==
+X-Proofpoint-GUID: g-YpI_Qyk5oqZb0XYaEidL599XxUBjop
+X-Proofpoint-ORIG-GUID: g-YpI_Qyk5oqZb0XYaEidL599XxUBjop
+X-Authority-Analysis: v=2.4 cv=CeIFJbrl c=1 sm=1 tr=0 ts=69136c7f cx=c_pps
+ a=rz3CxIlbcmazkYymdCej/Q==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=EUspDBNiAAAA:8 a=B_wteF72wSsg3gi9yGIA:9 a=bFCP_H2QrGi7Okbo017w:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-11_03,2025-11-11_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 priorityscore=1501 lowpriorityscore=0 bulkscore=0
+ impostorscore=0 clxscore=1015 phishscore=0 malwarescore=0 spamscore=0
+ suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
+ definitions=main-2511110138
 
-On Tue, Nov 11, 2025 at 8:35=E2=80=AFAM Jon Hunter <jonathanh@nvidia.com> w=
-rote:
->
->
-> On 11/11/2025 12:05, Jon Hunter wrote:
->
-> ...
->
-> >>> Thanks for testing. Something is not right because our boards are
-> >>> failing. So may be we are doing/testing something different. However,
-> >>> this should not break. So there is a problem here.
-> >>
-> >>
-> >> Did you meant: "So there is NO problem here"?
-> >
-> > Nope. I mean that this is a problem here.
-> >
-> >> I kept these for 10 days in linux-next and yesterday sent them in pull
-> >> request. If some patches are needed on top, they can still fit coming
-> >> merge window if sent soon.
-> >
-> > Looking back I see it started failing with next-20251103. next-20251031
-> > was fine. Reverting this commit on top of next-20251110 fixes the issue=
-.
-> >
-> > There may be a difference in the firmware being used. Our testing is
-> > based upon an older NVIDIA L4T r32.5.1 release but nonetheless, we
-> > should not break that.
->
->
-> OK, so I see what is happening here. The boot test that we are running
-> has a 2 minute timeout and the board is now failing to boot within that
-> time.
->
-> Adding some debug prints, I can see that initially the EMC clock
-> frequency is 1600MHz and now after this change, on boot the EMC clock
-> get set to 250MHz. Hence, the booting is now taking significantly longer
-> and the test times out.
->
-> We definitely don't want to increase the timeout of the test. Any thought=
-s?
+QUP devices are currently marked with opp-shared in their OPP table,
+causing the kernel to treat them as part of a shared OPP domain. This
+leads to the qcom_geni_serial driver failing to probe with error
+-EBUSY (-16).
 
-My setup uses the boot stack from L4T r32.7.6, though cboot is source
-built and has had changes over time to support newer Android versions.
-There shouldn't be anything there that would affect emc clock, though.
+Remove the opp-shared property to ensure the OPP framework treats the
+QUP OPP table as device-specific, allowing the serial driver to probe
+successfully
 
-I'm seeing the emc clock stay at the boot value, namely 1600MHz. Per
-both debugfs clk/emc/clk_rate and bpmp/debug/clk/emc/rate. I don't
-even see 250MHz as an option. Debugfs emc/available_rates lists 204MHz
-as the closest entry.
+Fixes: f6746dc9e379 ("arm64: dts: qcom: qcs615: Add QUPv3 configuration")
+Signed-off-by: Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>
+---
+ arch/arm64/boot/dts/qcom/talos.dtsi | 1 -
+ 1 file changed, 1 deletion(-)
 
-I'm trying to think what could cause a drop in the selected clock
-rate. This patch should only dynamically change the rate if the opp
-tables exist, enabling the cpufreq based scaling via icc. But those
-tables don't exist on linux-next right now. My test ramdisk does
-nothing except set up sysfs/procfs/etc just enough to run a busybox
-shell for debugging. Do the Nvidia regression testing boot scripts do
-anything to sysfs or debugfs that would affect emc?
+diff --git a/arch/arm64/boot/dts/qcom/talos.dtsi b/arch/arm64/boot/dts/qcom/talos.dtsi
+index eb6f69be4a82..ed89d2d509d5 100644
+--- a/arch/arm64/boot/dts/qcom/talos.dtsi
++++ b/arch/arm64/boot/dts/qcom/talos.dtsi
+@@ -536,7 +536,6 @@ cdsp_smp2p_in: slave-kernel {
+ 
+ 	qup_opp_table: opp-table-qup {
+ 		compatible = "operating-points-v2";
+-		opp-shared;
+ 
+ 		opp-75000000 {
+ 			opp-hz = /bits/ 64 <75000000>;
+-- 
+2.34.1
 
-Aaron
 
