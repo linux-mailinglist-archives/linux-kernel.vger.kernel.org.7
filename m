@@ -1,197 +1,255 @@
-Return-Path: <linux-kernel+bounces-894355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8C4DC49D31
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 01:02:01 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73400C49D3A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 01:06:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6D460348F9D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 00:02:01 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6E96C4E7417
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 00:06:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3BFD34D399;
-	Tue, 11 Nov 2025 00:01:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBE07CA5E;
+	Tue, 11 Nov 2025 00:06:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="c0bkWfqM"
-Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11012063.outbound.protection.outlook.com [40.93.195.63])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="HRGfahFt"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88408173;
-	Tue, 11 Nov 2025 00:01:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.195.63
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762819312; cv=fail; b=uWe2XIC38/75k1jLJxdMaM/QW3cSSLEEGxM38P0UmlCNjpeGKzjRV2SFeswtOCbsUXOSrui6BZ9MGRgMjsDbvzrlqBsq3t/KZoOOH5QFZH6/EzFUSNMSZPDJPBvIv2w0EtMdTsE2tHG/RSjFrlgD8sJX8rZGKmG87uH37SmHTd0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762819312; c=relaxed/simple;
-	bh=CE0NVjgC+7nYhL4xVZXBFskZA2LTwq03APTPgNBB7HM=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=c37TIvxmDoaNCZZ6RyNJ9Cefw9VPVbyZin9+LT/dmyclal+nLgG7lXhFY4ldL0I14c9sxyod8Rl7VBShBv5HFkfIprZWruRbendeT0vafymPLei4vepyC3G8WQ/ltk+Pu+XoTubTWDNeQk3P8ftanusPJ8/NiaRo5M7ZZhr3zRk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=c0bkWfqM; arc=fail smtp.client-ip=40.93.195.63
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=BVsLYUN6qTTXQB8R/FkGKjDXAoYJgFWRT/SQqK0LBHyx2QuojRczijm+O8T32dLt1e/waDQgMO+eWOPm6+w/ITiA/OQkaWaI1T4+2PyJJKYxFD+7X8fprkfXNu5/2AW2uJAJpQO3PEK1LrnNnaQUxfkOT/l8CjcV4wKX184Q9btKCEwB0sJIJDTGgaqPtvqUvo4p39hj1xYKJ/Kt8cmBxgfEwGRPP19Q2cgyjjhSemiRGAAhye+KCr4TxyOm337Cg6XuWHxQLOv35fhnyH22/E/2At/KB2u1fZ+l9TSo+xZaBpCpHIQ13dogb7TMR7A/iA7H8Mm6r4+/BdyHSchsIw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=CE0NVjgC+7nYhL4xVZXBFskZA2LTwq03APTPgNBB7HM=;
- b=u798eSW59U2PIKqGQJlHqam2h+rn1ljpEge3048cSD1IUzOsqlet3psMMK6ptT4EoZBy0/vgGECrV3podbd6X3UMAxBI99TXOIY2pFDv2kpcjUvO6+9oFgiBzVF8VXZMNJ0cMxxKNo9bfxaINJiewockE2ux5GcC6S2bAVkUAlslLtg9HBIv4dXbCJ/6K7/YFX4jU6HEsnq9u1gL/qcte43pkdE1bXyPAndBeA+kZ08yxLbyH0wOKg0WsbEtEmDLe6+m69VB3Rdui6T4uuUldV0+gordA5Do5oOA/iMRPuEJIfimZK5I17LPFPNKS+RZ6OTPWpdZ6v1GNWLO4iH7mw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CE0NVjgC+7nYhL4xVZXBFskZA2LTwq03APTPgNBB7HM=;
- b=c0bkWfqMeSIGIzZ64ohWB8Yf+uAshcVZJAIjyNrHLjGneUKy9A9uYvnwqDMmctxyDXvHJpabS1JbcUq4DAr0ZBivYgysMWCGOz0MlYHEyHsLJUgjDAS/4dyTp4+YFqaJkqhhZAw0kvXXbieYi5I76bkyfWTWVhD8MglYJ04trL2KRGWejWtscnAe5GpUBbBv7kqs5tsiLO++58xYee+QSViasAJOV48M10YaLqZcTiPDq35WDYKoEgPMHp2KiRXfR7OGSn0P8uSfxllUoiFQVOanBwODU6NI4oOBBgScH4iAllrXj6rZFtjaaPtpOoi3+2A319vmEDhSx2wPcQviDQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
- by CY8PR12MB7265.namprd12.prod.outlook.com (2603:10b6:930:57::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Tue, 11 Nov
- 2025 00:01:45 +0000
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91%2]) with mapi id 15.20.9298.015; Tue, 11 Nov 2025
- 00:01:45 +0000
-Message-ID: <0e8988f4-07ba-4c3a-8285-2960bc40dc65@nvidia.com>
-Date: Mon, 10 Nov 2025 19:01:39 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 RESEND 0/7] rust: pci: add config space read/write
- support
-To: Zhi Wang <zhiw@nvidia.com>, rust-for-linux@vger.kernel.org,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: dakr@kernel.org, aliceryhl@google.com, bhelgaas@google.com,
- kwilczynski@kernel.org, ojeda@kernel.org, alex.gaynor@gmail.com,
- boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
- lossin@kernel.org, a.hindborg@kernel.org, tmgross@umich.edu,
- markus.probst@posteo.de, helgaas@kernel.org, cjia@nvidia.com,
- smitra@nvidia.com, ankita@nvidia.com, aniketa@nvidia.com,
- kwankhede@nvidia.com, targupta@nvidia.com, acourbot@nvidia.com,
- jhubbard@nvidia.com, zhiwang@kernel.org
-References: <20251110204119.18351-1-zhiw@nvidia.com>
-Content-Language: en-US
-From: Joel Fernandes <joelagnelf@nvidia.com>
-In-Reply-To: <20251110204119.18351-1-zhiw@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BN9PR03CA0329.namprd03.prod.outlook.com
- (2603:10b6:408:112::34) To SN7PR12MB8059.namprd12.prod.outlook.com
- (2603:10b6:806:32b::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7802E10E0;
+	Tue, 11 Nov 2025 00:06:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762819598; cv=none; b=MlEWgZjyQuzlAxf6za6ib5vsPwmMQoCs3IBuPnYI48fpzkkCxnB9ZVEMJnRRkdo9OQkms7N7Bb+faIgVC3qw+uzeYAOVb4nNq+0nu7Oib8o85nAeOV4FkyKjaj/HlhoyXwcXLwNdp7eApA6mX14S0tfqn4+p7bkwrWhCrSa5Poo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762819598; c=relaxed/simple;
+	bh=b5HS5K/i5xVYvmbaitgAoeK1jJwdqZvJ5YqTS2oQGt0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mqLoQz1HDwt3ZZTZd3pJhj1TfyZf1F2vKVBnHXmTGIacP2eEeZzoB38Dxkiaf9l86EjL4BdxgYRATxBsRCDvdV2t2loudJ6HIih8MihOnNRUHNRmkaq9l/6VaclpPdbgfMEUEGiCEzqrw/4oY351wrWaxCIOuF+uXDV7GN1YVC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=HRGfahFt; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (82-203-161-95.bb.dnainternet.fi [82.203.161.95])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 01CBA229;
+	Tue, 11 Nov 2025 01:04:34 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1762819474;
+	bh=b5HS5K/i5xVYvmbaitgAoeK1jJwdqZvJ5YqTS2oQGt0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HRGfahFtN7D5jcuxstlmLl4C86FOFe5h+RrhdVZauzDfjgVUwnetdZW3MpZMq+G0A
+	 w9qJ85assYM1fs/uzyh3k/P4jkNteNKz8v1vdCQt5ggLDwyZ7paDQWVI993kVMTKzW
+	 ZW+OP3olGOZpzooHk/tYV6rIdfKeB/N7wLEvj6iU=
+Date: Tue, 11 Nov 2025 02:06:27 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Michael Riesch <michael.riesch@collabora.com>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Mehdi Djait <mehdi.djait@linux.intel.com>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	=?utf-8?B?VGjDqW8=?= Lebrun <theo.lebrun@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Gerald Loacker <gerald.loacker@wolfvision.net>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Markus Elfring <Markus.Elfring@web.de>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Kever Yang <kever.yang@rock-chips.com>,
+	Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
+	Collabora Kernel Team <kernel@collabora.com>,
+	Paul Kocialkowski <paulk@sys-base.io>,
+	Alexander Shiyan <eagle.alexander923@gmail.com>,
+	Val Packett <val@packett.cool>, Rob Herring <robh@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	Mehdi Djait <mehdi.djait@bootlin.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Bryan O'Donoghue <bod@kernel.org>, Chen-Yu Tsai <wens@csie.org>
+Subject: Re: [PATCH v14 00/18] media: rockchip: add a driver for the rockchip
+ camera interface
+Message-ID: <20251111000627.GA30837@pendragon.ideasonboard.com>
+References: <20240220-rk3568-vicap-v14-0-b38b6da0fc80@collabora.com>
+ <aQ4tJg8r_j4NyKhv@kekkonen.localdomain>
+ <074cd08e-0412-49f9-8dd9-b1f96eb11717@collabora.com>
+ <20251107185441.GG5558@pendragon.ideasonboard.com>
+ <13c43edb-9592-4779-a39a-7856bb0f964d@collabora.com>
+ <aRGlvQRVoQs0WjyA@kekkonen.localdomain>
+ <b89746e1-4574-4b65-af69-c533576ed185@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|CY8PR12MB7265:EE_
-X-MS-Office365-Filtering-Correlation-Id: 807898e5-6eb3-404a-c288-08de20b58073
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?TXd4OGl0bmFTQ0xRWEU3TGg1Q1R0dStlbXUxYkQ0Z1ZYeU5Mem82eFMrSWU0?=
- =?utf-8?B?R2FhUDNVZk9vV2lKdzdDbjdOcVFEMFc5WWVsZUpIdGxBaGtiaHpJWGRLcXJw?=
- =?utf-8?B?Z0VRNnpyeG1oM3k1YVF2VU16MmtudllOb2RrOVhUK0I5Y1BhSlkyU1UxQzZJ?=
- =?utf-8?B?bWxpTUEweWRoZ2lweDcwQlBoaHhwWnMyMEJtTlNnTG5vREtJT3hheTA1RTd0?=
- =?utf-8?B?Sy9VbEhrODF2ejZmakVPaTFzYUxob3hyNHBWL2JsYm9NV3ZqYUpOQzRXOUN4?=
- =?utf-8?B?b0JPWHU1OXUzOEx4aWhjbmhnWmtUdVhnSnNjMTlYQTNzY1Z5Q0hrOVUwbG13?=
- =?utf-8?B?WmFGMWpFcDQxVkNCOUgzWFhRRENQbTBBUndnclRXOURBZ1NxajYyYnBmaG9Q?=
- =?utf-8?B?cmZlSFN6aHV6QzV2Q3c3WmtrY2ZZbmdOOFBDV2QvVHRPZk42YWljVHV1SlBy?=
- =?utf-8?B?YTlNWmptK3ZHcVFicVcrZm1nc0JlNlJsOW94dDJqTmZPWTZJSXdOeHlUMVR4?=
- =?utf-8?B?L3Y0MTBzV2NZT1ZZcnY5aTJDeHBQZHlVVmFhdDZXOFRnSXd0RGl4cVgrd0xW?=
- =?utf-8?B?N1hmdTQxREI5Y2U1dkFveUtvdm1nMDZRdmxld0FkTjc0TlhKclU1ZFdHeVVW?=
- =?utf-8?B?SU9mTkl1Rlh6NFFTNjdJZktMKyttMFNQWmFmd29ZM3pBdkkyaXRtaDFYbjFo?=
- =?utf-8?B?K2VBU0lrT053RHZlSFJuY25DQkFxYW5hUmZRN1p4aGtHWC9VNWZOTndYVjBs?=
- =?utf-8?B?cUhKbThiSU44YWZ5TWwwcEFjK3FMTFlEK2ErYi9OVzhCaEhaWUpjRXYwTWRw?=
- =?utf-8?B?czFDNnVERU9mSmorSStvUC9zelZhYkkxejNyd09LVnhhaE1CS2UvS2hxd1Ju?=
- =?utf-8?B?UG5Vc0VTNzhuZUhOK3AxWFRhcFIyQTlCN3RpYzd6ZGQrWXFLVEtEdEVpR2lI?=
- =?utf-8?B?djFTVFNHZFppNmNzZmxscFZualdPdnI2N1NBNWc3bG9oNUJEM243VDYxQXVV?=
- =?utf-8?B?aXdwaTdvNmJwT1oyWUxHdStoaVIyYWhLenlJQWl4aXJVM2JaQjI1b200YjBF?=
- =?utf-8?B?d1VEMmhTTWtjeXlYT0QyRzVMNGRHUjdhZmRhVDFnUGJRaTZQYlVHd0xnemZa?=
- =?utf-8?B?RWJmUHB5VlREYWpZblo3MXZjNjRGcHp3RHVjb0FRL0lrb0xmeGozZUlvSlM4?=
- =?utf-8?B?dUFRcUNkdlNMWEx6cXoxUWRUQzZ1OVF5OUFReW1pTjRkUHliWEhlZ0p0Znl5?=
- =?utf-8?B?NklLUDlMS2RHODV3Uno2ZkNGcXU0ZWpvME1UODNmeTRYNElBQzJ4Snh2K0NC?=
- =?utf-8?B?a1RyQXZwUjdhdmlOTFRiczFWaEZ0dlI4T3o4WkFNZ2poejFQWDFXR2NETnBM?=
- =?utf-8?B?ZllHVS9ZejRSMDBrN2JvWHRXdmVONVM3eWJ2K0VnbkMwb0oyYWVkRmpQRTNI?=
- =?utf-8?B?Qzh2TnVxc3dVNFVkSjhxMEVtR3ZDZ0daaEJZSHkwK1NjRmQ2bGNlRVc5UG5C?=
- =?utf-8?B?MVZWNnNCT3kvcy9TTWtrTWZnWGxTeUw3cCtlUC9YR1Y0M3h3R0FOdjJBUTNq?=
- =?utf-8?B?M1ZVT3ZmNzZsdzdiR0ZONTFZbVUyZ1Z2UFMxcEYzVC9obTFQZjBCZ1JzMGYv?=
- =?utf-8?B?SnNXenE0NTNhODF6QzRBazlSZ2hHVnlGSENibkdBR1d2dG05SFFOYWpVN1h2?=
- =?utf-8?B?b3dZL1VwMmxTbExjYjVCSzJOVGYrb0l1KzNCdTNOamZRR1lIUEVuUU9DbFBD?=
- =?utf-8?B?ODNIU1ZnZlpkS0Mrc0RidkRaaEZEVEp6TW1BYUJtOEwyVmdRY0VVOTd2dms4?=
- =?utf-8?B?TjNJQWZUSjE4SmJPM3grRkRtZTIzNGVGbjgwNTJJVjFSVU93UjdGNUlHUmgv?=
- =?utf-8?B?NlpHaGpTclE5cGFBVjdwZWlGWE1pYXltSDNTdjRDby8yYzRJQm9SdkJ5WWcz?=
- =?utf-8?Q?+wu42ToQ+IU2+Xwp8ttsAvIN3sB6VdQC?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Rm1LU0FpZng0ZlFRSmVzUDZxU3l2WXRLN1pDRE5WVFFiMFdGTkhickRkR1d6?=
- =?utf-8?B?QTk2dkh6VEV4VVRrbGZ0RDhNQ29nUmpsWkJVODBPUVR3SVVFVytCa056aC80?=
- =?utf-8?B?OVhBSEltNTlaUlhNOUZjTkdiZit3MFdsTUNheFFwTlcvTzVLZ3VYL1pRYWFP?=
- =?utf-8?B?ODNlL3lNNmRkaTRCUk03bFUzRk8zdXRLY3hQd09TNHh5YWpGTHJ1OHVtRFdZ?=
- =?utf-8?B?aGovZ3JZemFxNWZSMGxzckhRcDRsMnh4bTN0UWcyd3pEMnBxUTB6NVpXbGZ4?=
- =?utf-8?B?V0NrQ2tYODdPRUpEQmNJejJtUGl6WHZlNVhYZnJrdGlUUmViNUc2d1h1aERs?=
- =?utf-8?B?L2RNNXc3MWRYWEluQytmVzRZZ1hqT1FJTzA1alRnTnZ5UmZ0U0JVOWxDUlZl?=
- =?utf-8?B?VE9rRm9RV0FyUkVsR1NOazRYUUNEZUxjb215cHYyMjZXL0ZkQ0xKb0tPNHNU?=
- =?utf-8?B?eXRjc0RpUVlOcGlONkwzTG5CQ2JWMDFkSVorSWhGbEpQeldFUDV0WWlhc2Vi?=
- =?utf-8?B?S090MWJZR1J2ZzZFMjFrQnZhdkpYQjFBMWl4OW9GdC9oNmtyQ3VBY1d3TERF?=
- =?utf-8?B?cmo0Sks1L3RSUjVHNHp1aFNQbGVyWTA5K3lTbjhhRnpBVk4yT2VXYVhKVzNK?=
- =?utf-8?B?WTQ1VjhQNUgxbmw2aEZCM2NENTg0L0VnZTJraTNxRlhqamFPSTBVZ0tKTWhF?=
- =?utf-8?B?Y3NTZU9NaGF2TUJRa1AxMEczYzRkMmF2b3U4dHk1b25CV0kyTXJPb0NlMHN5?=
- =?utf-8?B?NjNvZVNCRmNpaGN1bVdPc3cvcHBxS3RXRHdXWE1vODJlY3BYQ2lPaDQ1eHZn?=
- =?utf-8?B?TXFka3J2M2J6eUhzWVZGTWdnUWNhRWY4Qm1Sa2ZWdWFRTXdsWURmT3dKMlVS?=
- =?utf-8?B?ZTJDSTFPalVIak43ZnYwdVovYjc5WVdUZnRrVG5IcGRiYTBkTjRIRS9RenhR?=
- =?utf-8?B?dWZyT1Nac0IxZmxYbU9IajZDT0R4bmp2S1c2YUxjOG03cU5hY3ZIOEtua3Vv?=
- =?utf-8?B?bU1mdjdmb3hBdzZUMU1QaXlzdHR5ZGgrbTJOeHhxcGNKSnc1QWhhNElVcUdB?=
- =?utf-8?B?MWwzUXpyelJKcnNYV1F3eHVMV1pSTTlUQi8rN3JVRFlvMHViYlBUdURieThu?=
- =?utf-8?B?ZzMwYkZIR1M1TENvQjNvTGtsSEtlQWtudG9NalNxYXBqRkFMZ3lacEhkdEhL?=
- =?utf-8?B?MWVqY1duRTB4YzB6VnozZk5CeVBPcTJDU2hRQkhiaFM0UzNsaUNkNW5IakFO?=
- =?utf-8?B?VThQTjB5Y083RTJNWXNaT1NvNm91TXNMdG50T2dlY1FLeHhMYVM0STcxWFNo?=
- =?utf-8?B?ZnFWVjdUT0Y1Y0xraVoycWwzdjQ3bkFhM1B6UUJpV1RMVm9nYzd1SndGditl?=
- =?utf-8?B?ek9hTjF1N2xyYVE3MGl4a1RzMGxVdmJhOUI0NUV6UGxtcGJYQmxaNmNDa2pL?=
- =?utf-8?B?VE1GREJrb0FTZnBXeGhFbXl1cWZsc3dvQUNLQWFqYUdRNzRSakNmZ1lHb1dB?=
- =?utf-8?B?QnBIdTRKRFVOakR3cE4rbVFLRUdRaEIzR01PUXNvSXJHN2wvVnBacXppSmJZ?=
- =?utf-8?B?azNiblJla0VTcFNSbGFZa2huUUc1QTRXcWM1RWhhaTFFakRuY3czYVFMOG85?=
- =?utf-8?B?YlJxbXVrUnRGNURrazNvczNVQVVQK21YaitSY210NUdZdmpZVU9SNVR4TXVR?=
- =?utf-8?B?M0kzUkVZNnFJaTFMK1NKUjV5MU9Ea0d2V1ZZZkRZVHBTekNGd2Z4UHNnVWty?=
- =?utf-8?B?TG9haThhKzlEOWw2blhhZlhlUEEySkw1UXdtUldnZU83R3R4QzRISUdpYStk?=
- =?utf-8?B?dldSNjBkb0F0Sm53cjRWMTM0emVHUDRvOHlOa2FMM3c0NnV4d1NHN1F4bXRM?=
- =?utf-8?B?UmZRY1JNV2ZCbk40SDdsdnBvdThDRXNGMXFwbTRoejJ3RGd5M2x0RWF1WnFj?=
- =?utf-8?B?VFNtbUFjV3R1Mkd6Tk43VjM1OEltRzQrSWVaZlA3TDgxUGY4dDZ5UmRaTkFH?=
- =?utf-8?B?UDIvUGU2UlY4V1ZtT1FDMit4L0RjTTVoWU5DMXQ0ZWdOOU52cUJpbFVDeEY3?=
- =?utf-8?B?N1ZTRndlSG42djJlR2FDNlYwc1RBVWNTWWt6emc3dGNJRXFuYUdFcE9KWWx1?=
- =?utf-8?Q?kfWwtYF0HdtrfutNtW5L4jvBZ?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 807898e5-6eb3-404a-c288-08de20b58073
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Nov 2025 00:01:45.1226
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: qf9BWpYSJ59LWbIrqoe1ErWCw/dPDiR/VLDOfmRlc6F8SLnZZe7JY5kwmbO/7j61FQpkyvvPrhV2XQsvLU5W4Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7265
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <b89746e1-4574-4b65-af69-c533576ed185@collabora.com>
 
-On 11/10/2025 3:41 PM, Zhi Wang wrote:
-> In the NVIDIA vGPU RFC [1], the PCI configuration space access is
-> required in nova-core for preparing gspVFInfo when vGPU support is
-> enabled. This series is the following up of the discussion with Danilo
-> for how to introduce support of PCI configuration space access in Rust
-> PCI abstractions.
+On Mon, Nov 10, 2025 at 11:29:57AM +0100, Michael Riesch wrote:
+> On 11/10/25 09:43, Sakari Ailus wrote:
+> > On Fri, Nov 07, 2025 at 09:51:37PM +0100, Michael Riesch wrote:
+> >> On 11/7/25 19:54, Laurent Pinchart wrote:
+> >>> On Fri, Nov 07, 2025 at 07:41:59PM +0100, Michael Riesch wrote:
+> >>>> On 11/7/25 18:32, Sakari Ailus wrote:
+> >>>>> On Fri, Oct 24, 2025 at 02:51:29PM +0200, Michael Riesch via B4 Relay wrote:
+> >>>>>> Habidere,
+> >>>>>>
+> >>>>>> This series introduces support for the Rockchip Camera Interface (CIF),
+> >>>>>> which is featured in many Rockchip SoCs in different variations.
+> >>>>>> For example, the PX30 Video Input Processor (VIP) is able to receive
+> >>>>>> video data via the Digital Video Port (DVP, a parallel data interface)
+> >>>>>> and transfer it into system memory using a double-buffering mechanism
+> >>>>>> called ping-pong mode.
+> >>>>>> The RK3568 Video Capture (VICAP) unit, on the other hand, features a
+> >>>>>> DVP and a MIPI CSI-2 receiver that can receive video data independently
+> >>>>>> (both using the ping-pong scheme).
+> >>>>>> The different variants may have additional features, such as scaling
+> >>>>>> and/or cropping.
+> >>>>>> Finally, the RK3588 VICAP unit constitutes an essential piece of the
+> >>>>>> camera interface with one DVP, six MIPI CSI-2 receivers, scale/crop
+> >>>>>> units, and a data path multiplexer (to scaler units, to ISP, ...).
+> >>>>>
+> >>>>> I understand both RK3568 and RK3588 include an ISP. Do you have insight on
+> >>>>> how would this work, should the support for the ISP be added later on?
+> >>>>
+> >>>> Short answer: Yes and yes.
+> >>>>
+> >>>> Long answer:
+> >>>>
+> >>>> The patch series at hand adds support for the PX30 VIP and the RK3568
+> >>>> VICAP. I cannot really say something about the PX30, but on the RK3568
+> >>>> VICAP and ISP are orthogonal (the ISP features its own MIPI CSI-2
+> >>>> receiver, different from that introduced in this series). Thus, ISP
+> >>>> support can be introduced anytime (whenever someone is motivated ;-)).
+> >>>
+> >>> Won't they both be connected to the same sensor though, and probably the
+> >>> same D-PHY in the SoC ? They don't seem entirely separate to me.
+> >>
+> >> The MIPI CSI-2 DPHY is shared, indeed. Thus, they *maybe technically
+> >> could be* connected to the same sensor, but I don't know whether that
+> >> works and fail to see why anyone would to such a thing (if it is about
+> >> raw capture, the MIPI CSI-2 receiver in the ISP can do that on its own).
+> >>
+> >> The DPHY can be operated in split mode, with two lanes for VICAP and two
+> >> lanes for ISP. This is not implemented yet, but can be done at a later
+> >> stage on PHY level (not media related). In this case, ISP and VICAP can
+> >> receive data from different subdevices via CSI-2.
+> > 
+> > The two would be part of the same media graph in that case and as there are
+> > two CSI-2 receivers and a single PHY, the PHY would probably need to have a
+> > sub-device as well, to allow link configuration to be used to select where
+> > the PHY is connected.
+> > 
+> > I don't think we have such a setup elsewhere, and supporting this would
+> > require changes in the MC framework.
+> 
+> What follows is a response that also addresses issues raised during our
+> off-list discussion.
+> 
+> First of all, I agree with you that the RK3568 HW is "a bit special" (to
+> say the least) in that regard. Let's have an outlook to newer SoCs, such
+> as the RK3588: Here, the MIPI CSI-2 DPHYs (there are two of them) with
+> their split mode are present as well, but the assignment is fixed. For
+> example, the RK3588 VICAP has six MIPI CSI-2 receiver units and six MIPI
+> CSI-2 capture units. Units 1 and 2 handle a different MIPI PHY, units 3
+> and 5 handle the DPHYs (without split mode), units 4 and/or 6 are active
+> whenever DPHY 1 and/or 2 is in split mode.
+> 
+> I would model this by adding support for more than one (logical) PHYs
+> (phy-cells = <1>;) and assigning the logical PHYs to the MIPI CSI-2
+> receivers. There is not really a possibility to route anything at this
+> point (routing is done in a MUX unit that takes the different MIPI CSI-2
+> receivers as inputs).
+> 
+> Now back to the peculiar RK3568 situation: By default the split mode of
+> the DPHY is off and both VICAP and ISP are able to receive the same data
+> (from up to four lanes) with their MIPI CSI-2 receivers (not sure
+> whether both can be active at the same time, though).
 
-Hi Zhi, is there a tree with all the patches and dependencies for this series?
+A common use case for capturing data from the same sensor through both
+ISP and VICAP would be routing image data to the ISP and embedded data
+to VICAP. Assuming the hardware is able to do this, there will be users
+interested in this feature.
 
-Typically it is a good idea to provide it with all dependencies, so folks can
-checkout the tree.
+> There are two bits
+> in the GRF that define the lanes that ISP and VICAP receive in split
+> mode (lane 0/1 or lane 2/3). Not sure whether these bits are supposed to
+> be changed during runtime.
+> 
+> I would suggest modelling this on PHY level in DT, e.g., by passing
+> reasonable properties to the dphy node, such as
+>     rockchip,dphy-split-mode;
 
-git format-patch also has an --auto option that adds base commit information, so
-folks know
+Split mode should indeed be conveyed through DT, as it's a property of
+the hardware.
 
-Thanks.
+>     rockchip,dphy-split-invert;
+> where the former activates the split mode and assigns lanes 0/1 to the
+> ISP and lanes 2/3 to the VICAP, and the latter inverts this assignment
+> (lanes 2/3 to the ISP and lanes 0/1 to the VICAP). This would facilitate
+> the reasonable use cases with reasonable effort.
+
+This I'm less convinced about. The routing should be dynamic.
+
+How do you envision the connections to the CSI-2 sources to be modelled
+in DT ? We need ports and endpoints, and data-lanes properties. Where
+would those reside on the RK3568 side ?
+
+> Otherwise, to keep it perfectly general and most flexible and
+> everything, we would have to introduce another subdevice indeed, which
+> would be active on the RK3568 exclusively. Therefore, I don't see that
+> the PHY driver introduces this subdevice, but a specialized (syscon?)
+> MUX driver that deals with the RK3568 GRF bits. Something like this
+> 
+>                            |----------------------|     |-------------|
+>  Sensor A --- /2 lanes --- | lane 0/1      to ISP | --- | ISP MIPI RX |
+>                            |                      |     |-------------|
+>                            |                      |
+>                            |                      |     |-------------|
+>  Sensor B --- /2 lanes --- | lane 2/3    to VICAP | --- |VICAP MIPI RX|
+>                            |----------------------|     |-------------|
+> 
+> But IMHO this will be too much effort for corner use case that I doubt
+> anyone will actually use.
+> 
+> What do you think:
+>  - Let's keep the PHYs out of V4L2/MC, ok?
+>  - Let's model the reasonable use cases with device tree properties in
+>    the dphy DT node, ok?
+
+I think the routing should be dynamic.
+
+> > How does the media graph look like for the device at the moment?
+> 
+> Please take a look at the media graph in the documentation patch (PATCH
+> v14 01/18). This is without the ISP, but gives an overview of what the
+> RK3568 VICAP is capable of.
+> 
+> Best regards,
+> Michael
+> 
+> >> BTW the ISP is able to process the data captured by VICAP, but
+> >> apparently this includes a RAM round trip (VICAP captures to memory, ISP
+> >> operates in mem2mem mode).
+> >>
+> >>> A block diagram that shows connections between the CSI-2 pins, D-PHY,
+> >>> CSI-2 receivers, VICAP and ISP could help.
+> >>>
+> >>>> Once this patch series is merged, I'll push out changes that introduce
+> >>>> support for the RK3588 VICAP. We can discuss the integration of any
+> >>>> RK3588 ISP in this scope then -- and there may be some things to discuss
+> >>>> as there the VICAP and the ISP(s) are directly connected by means of a
+> >>>> MUX unit in the VICAP.
+> >>>>
+> >>>> Alright?
+
+-- 
+Regards,
+
+Laurent Pinchart
 
