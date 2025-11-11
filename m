@@ -1,164 +1,354 @@
-Return-Path: <linux-kernel+bounces-895714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE062C4EC22
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:22:59 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C78F7C4EC3A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:23:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BD0564F1283
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 15:14:36 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 028594F6B2A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 15:15:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBD43363C54;
-	Tue, 11 Nov 2025 15:14:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3743363C41;
+	Tue, 11 Nov 2025 15:14:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="il4tFN4K"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="dKOrlzau"
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C161E363C4C
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 15:14:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BDA9361DA1
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 15:14:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762874042; cv=none; b=TCEvsxHPOEIgb2cP7BNCK3lcZOEsc4JxVryn768c1CGzg4Q6B4ItUM9Ow6FYX+cZZmQUyxxORi/HWnBVA9tJg9aD6Lj/jCm0rIeywS5HlFpJlrZfqby+2c5IDzduxY8Ov7bS6MCwWZQnfkQ5trltp6+eylecemG/Hv/jpQDujqI=
+	t=1762874073; cv=none; b=syJvfdieIewhk61bf87e2f/AmxSriLAehgzA8PCMog+keTPBc4Z2o1J/h5Ehgo3tNQc2nnQLuJCcJau4KxXGMDZnXmOXOt9RLr5nnRohco9EJSlb7p1WWVz4KtPYQXpBtcvOrnAS/9F9LLyPh115YqBQEnEW3gcZUQSmi+02tN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762874042; c=relaxed/simple;
-	bh=exXPbv8F9cIfrhHTxhSis/wzZIan0gY30z+dZ74lt1Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=D5tDAjKuXwqtqqct5L8Yoqq+AR2EVUKbpHTOZGL0QlcH2pXi6bKDycxVV5xCBQqeTmdyH5iVMQPWRYl9vdzgoD1pu0tgzUyHeIQILvw9N+bVfKHWZ0QzC2GqGjEWvZVi37aZ1cCj6nGD8RVx2+nLMHAhKm61WCNGbSTfhiqZkqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=il4tFN4K; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-b55517e74e3so3747113a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 07:14:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762874040; x=1763478840; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OXmtHotN5KZffmUTu9Owly8mSzQe53/VPy+vlDSmfcM=;
-        b=il4tFN4KzuNBhi/uEfuWbsLo6h8y/1l6B93u5BnM/jFv0Gx8hPMH086rPCSRNsCynx
-         0RwkkFaksYt9/jXbbOLv/8mgOmt/IQz2eEVHcIUbRZGkYgfT+TVJ0rMR1luXgs8pVo11
-         Fh/gXDEQLbK7jYj/zcO1Ro8Ee9fBsx2MTBL4LCgaPlfaM8a7pTYYDmTRF1gmHhytuULg
-         OhQHsvlOND8yL2cmgppU2xmVD7j/Q+U2ut9kD49MlEYgaChPykS5cIemw0c68o1kCcLW
-         oIXlG2WpzIEAuccc/sgQVPOFwl7v2cEFG1M9LeocrCr4+IwpO6nd97zMXAWZ4I9YQCZN
-         gMeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762874040; x=1763478840;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=OXmtHotN5KZffmUTu9Owly8mSzQe53/VPy+vlDSmfcM=;
-        b=YlsDHTBX6ba/94Sd3pKbKliOXuMpu+WZSd9/Y4KEFtdQDrN+ywwVuExgkjqaKxn09v
-         sQd/WqCYzJDZva+f0UkiF9lJovmLllzVQ5D3eMu+VFSmYkl65VZBvFNJ9P6tezd2fYlI
-         hdzyFdNyBRnk3dHgFvH42dOSCwU9lLf73q88jasvJuHhn/kODL0fgF6YWt+98fh1EQvH
-         XAiel/wryC7s1TWJ1uXFasnwTGW8XSgd5Waglakp2aM1rl8rTlwmOQqtmZyT9YlvpiJu
-         lzoJiZh8+Z/ORE4ZV/cu5tt1P9xd6JfRZSeGzic/+kk86WNmI+ph2I9ggf6ilp/MOs5l
-         xTKg==
-X-Forwarded-Encrypted: i=1; AJvYcCUcWrApCiKV8g5AcDjJfssyOqJ8cAH+2IeOIWh9qdNKTkNGPfjrFCofI6U0mxCkYS3B3Z8zTbsapzQwwYI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZA05UJa7FhXCOCS0Y3hM+n17LcvCWYPfhZJloLzp+z8Q5N0ks
-	mS7qd4cTEcmJyciEYzAWPZPXIpzO7GqHnKJvGj/CCsT82JwDkXaFKyNw
-X-Gm-Gg: ASbGncsq+FfFABAfvZOizh4nuYxvS33yOcJiDIYeIMSdlZL+SpOVNONTTWAC7ysNxY5
-	SnIeKjSP3azK/3fOkupYLthTG0nfIhHjFq84jYyHgTcims0xF16bsUk4/MlCosHy+gp4w1vs4bc
-	ZqkMLGtphCENCRKRQqMTVrSNrQGeZ4iG5EQhCFPDell/p644zjEQV2iK3OlrIO4xvOGVl36r/RX
-	ydCPdWgq/8suczZDC9/59SACUDFYqIguFYpAN5nm6wM+BZRQ0ePoWo6HMgKD1GL0nCS2NWzhggn
-	en9/fnezibDAdFLejDoRjraKv4BcFyG/z4Ep0QGZPOVg+gLpteQo/hh5uBf0986GGLyhtuAJVdF
-	QohCTZz9oki4F99yq70GNtR6EjiR25+0Ijh8t4ylTxTTU8kA7ZZnfGVkggOS1AmIlbt22IHjbus
-	z/km/Hil3W3c/1gqNgj5+n7Ipn
-X-Google-Smtp-Source: AGHT+IFpHTaG+Oj/fmYZy53il1DO9yHF95r12sk7azQnEZNF97P/gwxxwk/B9EkN5N0uOgZ8NoF85g==
-X-Received: by 2002:a17:903:1103:b0:298:43f4:cc49 with SMTP id d9443c01a7336-29843f4d12emr34013475ad.24.1762874039940;
-        Tue, 11 Nov 2025 07:13:59 -0800 (PST)
-Received: from clint-ThinkPad-L14-Gen-2.. ([110.226.177.165])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2984dcd050asm43325ad.81.2025.11.11.07.13.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Nov 2025 07:13:59 -0800 (PST)
-From: Clint George <clintbgeorge@gmail.com>
-To: gregkh@linuxfoundation.org
-Cc: arnd@arndb.de,
-	clintbgeorge@gmail.com,
-	david.hunter.linux@gmail.com,
-	khalid@kernel.org,
-	linux-kernel-mentees@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org
-Subject: [PATCH v2 3/3] hangcheck-timer: fix coding style spacing
-Date: Tue, 11 Nov 2025 20:43:40 +0530
-Message-ID: <20251111151340.9162-4-clintbgeorge@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251111151340.9162-1-clintbgeorge@gmail.com>
-References: <2025110649-elves-steadying-a4d0@gregkh>
- <20251111151340.9162-1-clintbgeorge@gmail.com>
+	s=arc-20240116; t=1762874073; c=relaxed/simple;
+	bh=H3MMpqivZZRwD2aYJhGyjecG0nGwMZpDn+02x79tScY=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=J/klMUZB7T6onUzwrhn5r13Bml1xTjQMMpep3+2C2Iu7s/lntTgoQdJOyPeNI9VqR6AYT3zWcqSxRPWilhyEgHqJzginK8Mek5B+kxIy2PjI6o8IiqAhKPOlFBpt72KxQfojEBhXRNQtcf3Gpbi8wHnn1OlgdLMmCBW4aNZJESE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=dKOrlzau; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id B75014E4162E;
+	Tue, 11 Nov 2025 15:14:26 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 6E0F9606FB;
+	Tue, 11 Nov 2025 15:14:26 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 92F4F102F24BC;
+	Tue, 11 Nov 2025 16:14:12 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1762874064; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=7R5SuVHot9CpoTkFcfHq9Yksdnr2wM0VbRyDn5Qi10s=;
+	b=dKOrlzauhoCSJVUKuaP9oTCZn7a/MbZ2YlAMNvicAOTuUkcvvFhCxjLV+bx9T1URMFX9KD
+	Xv0onrlrf4j+WXvPuJI65WpdzhDi9F7tNHHVCXx0I93YgctmEO807WWW6869g4FZ+Ptvtw
+	KPo8GugnqzYO6yONmOELShTim5/a0xN+uAVWe82MhZ185fsCPlzyX3yaECJWYx+O5v1WJe
+	zBiYw+Ry4+/Um2fMV7bWNqIO4F9pMfjJkICfM1An54gPdE9T6KJNLMtgiJJa+RPW1F5ZDo
+	llG8ee1T2LOVJ9ZudBWCv3C/RK73b1m+u+qdGUOusNITg3cZ1M7nnnM6LYvWRg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 11 Nov 2025 16:14:11 +0100
+Message-Id: <DE5YP3AVGOG3.OHP68Z0F6KBU@bootlin.com>
+Subject: Re: [PATCH v9 08/10] drm/rockchip: cdn-dp: Add multiple bridges to
+ support PHY port selection
+Cc: <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-phy@lists.infradead.org>,
+ <linux-arm-kernel@lists.infradead.org>,
+ <linux-rockchip@lists.infradead.org>, <dri-devel@lists.freedesktop.org>
+To: "Chaoyi Chen" <kernel@airkyi.com>, "Heikki Krogerus"
+ <heikki.krogerus@linux.intel.com>, "Greg Kroah-Hartman"
+ <gregkh@linuxfoundation.org>, "Dmitry Baryshkov"
+ <dmitry.baryshkov@oss.qualcomm.com>, "Peter Chen" <hzpeterchen@gmail.com>,
+ "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski"
+ <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Vinod Koul"
+ <vkoul@kernel.org>, "Kishon Vijay Abraham I" <kishon@kernel.org>, "Heiko
+ Stuebner" <heiko@sntech.de>, "Sandy Huang" <hjc@rock-chips.com>, "Andy Yan"
+ <andy.yan@rock-chips.com>, "Yubing Zhang" <yubing.zhang@rock-chips.com>,
+ "Frank Wang" <frank.wang@rock-chips.com>, "Andrzej Hajda"
+ <andrzej.hajda@intel.com>, "Neil Armstrong" <neil.armstrong@linaro.org>,
+ "Robert Foss" <rfoss@kernel.org>, "Laurent Pinchart"
+ <Laurent.pinchart@ideasonboard.com>, "Jonas Karlman" <jonas@kwiboo.se>,
+ "Jernej Skrabec" <jernej.skrabec@gmail.com>, "Maarten Lankhorst"
+ <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>, "David Airlie"
+ <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Amit Sunil Dhamne"
+ <amitsd@google.com>, "Chaoyi Chen" <chaoyi.chen@rock-chips.com>, "Dragan
+ Simic" <dsimic@manjaro.org>, "Johan Jonker" <jbx6244@gmail.com>, "Diederik
+ de Haas" <didi.debian@cknow.org>, "Peter Robinson" <pbrobinson@gmail.com>
+From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
+X-Mailer: aerc 0.20.1
+References: <20251111105040.94-1-kernel@airkyi.com>
+ <20251111105040.94-9-kernel@airkyi.com>
+In-Reply-To: <20251111105040.94-9-kernel@airkyi.com>
+X-Last-TLS-Session-Version: TLSv1.3
 
-Fix minor styling issues for proper compliance to the kernel coding
-style.
+Hello Chaoyi,
 
-Signed-off-by: Clint George <clintbgeorge@gmail.com>
----
- drivers/char/hangcheck-timer.c | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+On Tue Nov 11, 2025 at 11:50 AM CET, Chaoyi Chen wrote:
+> From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
+>
+> The RK3399 has two USB/DP combo PHY and one CDN-DP controller. And
+> the CDN-DP can be switched to output to one of the PHYs. If both ports
+> are plugged into DP, DP will select the first port for output.
+>
+> This patch adds support for multiple bridges, enabling users to flexibly
+> select the output port. For each PHY port, a separate encoder and bridge
+> are registered.
+>
+> The change is based on the DRM AUX HPD bridge, rather than the
+> extcon approach. This requires the DT to correctly describe the
+> connections between the first bridge in bridge chain and DP
+> controller. For example, the bridge chain may be like this:
+>
+> PHY aux birdge -> fsa4480 analog audio switch bridge ->
+> onnn,nb7vpq904m USB reminder bridge -> USB-C controller AUX HPD bridge
+>
+> In this case, the connection relationships among the PHY aux bridge
+> and the DP contorller need to be described in DT.
+>
+> In addition, the cdn_dp_parse_next_bridge_dt() will parses it and
+> determines whether to register one or two bridges.
+>
+> Since there is only one DP controller, only one of the PHY ports can
+> output at a time. The key is how to switch between different PHYs,
+> which is handled by cdn_dp_switch_port() and cdn_dp_enable().
+>
+> There are two cases:
+>
+> 1. Neither bridge is enabled. In this case, both bridges can
+> independently read the EDID, and the PHY port may switch before
+> reading the EDID.
+>
+> 2. One bridge is already enabled. In this case, other bridges are not
+> allowed to read the EDID. So we will try to return the cached EDID.
+>
+> Since the scenario of two ports plug in at the same time is rare,
+> I don't have a board which support two TypeC connector to test this.
+> Therefore, I tested forced switching on a single PHY port, as well as
+> output using a fake PHY port alongside a real PHY port.
+>
+> Signed-off-by: Chaoyi Chen <chaoyi.chen@rock-chips.com>
 
-diff --git a/drivers/char/hangcheck-timer.c b/drivers/char/hangcheck-timer.c
-index ff141fdb4..231cbf7b3 100644
---- a/drivers/char/hangcheck-timer.c
-+++ b/drivers/char/hangcheck-timer.c
-@@ -69,7 +69,8 @@ MODULE_VERSION(VERSION_STR);
- static int __init hangcheck_parse_tick(char *str)
- {
- 	int par;
--	if (get_option(&str,&par))
-+
-+	if (get_option(&str, &par))
- 		hangcheck_tick = par;
- 	return 1;
- }
-@@ -77,7 +78,8 @@ static int __init hangcheck_parse_tick(char *str)
- static int __init hangcheck_parse_margin(char *str)
- {
- 	int par;
--	if (get_option(&str,&par))
-+
-+	if (get_option(&str, &par))
- 		hangcheck_margin = par;
- 	return 1;
- }
-@@ -85,7 +87,8 @@ static int __init hangcheck_parse_margin(char *str)
- static int __init hangcheck_parse_reboot(char *str)
- {
- 	int par;
--	if (get_option(&str,&par))
-+
-+	if (get_option(&str, &par))
- 		hangcheck_reboot = par;
- 	return 1;
- }
-@@ -93,7 +96,8 @@ static int __init hangcheck_parse_reboot(char *str)
- static int __init hangcheck_parse_dump_tasks(char *str)
- {
- 	int par;
--	if (get_option(&str,&par))
-+
-+	if (get_option(&str, &par))
- 		hangcheck_dump_tasks = par;
- 	return 1;
- }
-@@ -168,7 +172,7 @@ static int __init hangcheck_init(void)
- static void __exit hangcheck_exit(void)
- {
- 	timer_delete_sync(&hangcheck_ticktock);
--        pr_debug("Hangcheck: Stopped hangcheck timer.\n");
-+	pr_debug("Hangcheck: Stopped hangcheck timer.\n");
- }
- 
- module_init(hangcheck_init);
--- 
-2.43.0
+[...]
 
+> @@ -966,28 +1084,16 @@ static int cdn_dp_pd_event(struct notifier_block *=
+nb,
+>  	return NOTIFY_DONE;
+>  }
+>
+> -static int cdn_dp_bind(struct device *dev, struct device *master, void *=
+data)
+> +static int cdn_bridge_add(struct device *dev,
+> +			  struct drm_bridge *bridge,
+> +			  struct drm_bridge *next_bridge,
+> +			  struct drm_encoder *encoder)
+>  {
+>  	struct cdn_dp_device *dp =3D dev_get_drvdata(dev);
+> -	struct drm_encoder *encoder;
+> +	struct drm_device *drm_dev =3D dp->drm_dev;
+> +	struct drm_bridge *last_bridge =3D NULL;
+>  	struct drm_connector *connector;
+> -	struct cdn_dp_port *port;
+> -	struct drm_device *drm_dev =3D data;
+> -	int ret, i;
+
+[...]
+
+> +	if (next_bridge) {
+> +		ret =3D drm_bridge_attach(encoder, next_bridge, bridge,
+> +					DRM_BRIDGE_ATTACH_NO_CONNECTOR);
+> +		if (ret)
+> +			return ret;
+> +
+> +		last_bridge =3D next_bridge;
+> +		while (drm_bridge_get_next_bridge(last_bridge))
+> +			last_bridge =3D drm_bridge_get_next_bridge(last_bridge);
+
+DRM bridges are now refcounted, and you are not calling drm_bridge_get()
+and drm_bridge_put() here. But here you can use
+drm_bridge_chain_get_last_bridge() which will simplify your job.
+
+Don't forget to call drm_bridge_put() on the returned bridge when the
+bridge is not referenced anymore. This should be as easy as adding a
+cleanup action on the variable declaration above:
+
+-	struct drm_bridge *last_bridge =3D NULL;
++	struct drm_bridge *last_bridge __free(drm_bridge_put) =3D NULL;
+
+> @@ -1029,8 +1147,102 @@ static int cdn_dp_bind(struct device *dev, struct=
+ device *master, void *data)
+>  		return ret;
+>  	}
+>
+> +	if (last_bridge)
+> +		connector->fwnode =3D fwnode_handle_get(of_fwnode_handle(last_bridge->=
+of_node));
+> +
+>  	drm_connector_attach_encoder(connector, encoder);
+>
+> +	return 0;
+> +}
+> +
+> +static int cdn_dp_parse_next_bridge_dt(struct cdn_dp_device *dp)
+> +{
+> +	struct device_node *np =3D dp->dev->of_node;
+> +	struct device_node *port __free(device_node) =3D of_graph_get_port_by_i=
+d(np, 1);
+> +	struct drm_bridge *bridge;
+> +	int count =3D 0;
+> +	int ret =3D 0;
+> +	int i;
+> +
+> +	/* If device use extcon, do not use hpd bridge */
+> +	for (i =3D 0; i < dp->ports; i++) {
+> +		if (dp->port[i]->extcon) {
+> +			dp->bridge_count =3D 1;
+> +			return 0;
+> +		}
+> +	}
+> +
+> +
+> +	/* One endpoint may correspond to one next bridge. */
+> +	for_each_of_graph_port_endpoint(port, dp_ep) {
+> +		struct device_node *next_bridge_node __free(device_node) =3D
+> +			of_graph_get_remote_port_parent(dp_ep);
+> +
+> +		bridge =3D of_drm_find_bridge(next_bridge_node);
+> +		if (!bridge) {
+> +			ret =3D -EPROBE_DEFER;
+> +			goto out;
+> +		}
+> +
+> +		dp->next_bridge_valid =3D true;
+> +		dp->next_bridge_list[count].bridge =3D bridge;
+
+You are storing a reference to a drm_bridge, so have to increment the
+refcount:
+
+		dp->next_bridge_list[count].bridge =3D drm_bridge_get(bridge);
+		                                     ^^^^^^^^^^^^^^
+
+FYI there is a plan to replace of_drm_find_bridge() with a function that
+increases the bridge refcount before returning the bridge, but it's not
+there yet. When that will happen, the explicit drm_bridge_get() won't be
+needed anymore and this code can be updated accordingly.
+
+Also you have to call drm_bridge_put() to release that reference when the
+pointer goes away. I guess that should happen in cdn_dp_unbind().
+
+> +static int cdn_dp_bind(struct device *dev, struct device *master, void *=
+data)
+> +{
+
+In this function you do:
+...(see below)...
+
+> +	struct cdn_dp_device *dp =3D dev_get_drvdata(dev);
+> +	struct drm_bridge *bridge, *next_bridge;
+> +	struct drm_encoder *encoder;
+> +	struct cdn_dp_port *port;
+> +	struct drm_device *drm_dev =3D data;
+> +	struct cdn_dp_bridge *dp_bridge;
+> +	int ret, i;
+> +
+> +	ret =3D cdn_dp_parse_dt(dp);
+> +	if (ret < 0)
+.> +		return ret;
+> +
+> +	ret =3D cdn_dp_parse_next_bridge_dt(dp);
+
+1. compute the next bridges and store them in dp->next_bridge_list[]
+...
+
+> +	if (ret)
+> +		return ret;
+> +
+> +	dp->drm_dev =3D drm_dev;
+> +	dp->connected =3D false;
+> +	dp->active =3D false;
+> +	dp->active_port =3D -1;
+> +	dp->fw_loaded =3D false;
+> +
+> +	for (i =3D 0; i < dp->bridge_count; i++) {
+> +		dp_bridge =3D devm_drm_bridge_alloc(dev, struct cdn_dp_bridge, bridge,
+> +						    &cdn_dp_bridge_funcs);
+> +		if (IS_ERR(dp_bridge))
+> +			return PTR_ERR(dp_bridge);
+> +		dp_bridge->id =3D i;
+> +		dp_bridge->parent =3D dp;
+> +		if (!dp->next_bridge_valid)
+> +			dp_bridge->connected =3D true;
+> +		dp->bridge_list[i] =3D dp_bridge;
+> +	}
+> +
+> +	for (i =3D 0; i < dp->bridge_count; i++) {
+> +		encoder =3D &dp->bridge_list[i]->encoder.encoder;
+> +		bridge =3D &dp->bridge_list[i]->bridge;
+> +		next_bridge =3D dp->next_bridge_list[i].bridge;
+> +		ret =3D cdn_bridge_add(dev, bridge, next_bridge, encoder);
+
+...
+2. pass the dp->next_bridge_list[i].bridge to cdn_bridge_add
+3. not use  dp->next_bridge_list[i] elsewhere
+
+So you may want to change this function to parse into a local array, with
+function scope. If you do this, the drm_bridge_get/put() I mentioned above
+should still exist, but would be localized to this function, thus even
+easier to handle.
+
+Even better, you can parse the DT one bridge at a time inside the for loop,
+so you don't need to store any next_bridge pointer array. This will need a
+bit of rework of cdn_dp_parse_next_bridge_dt() though, and I haven't
+checked in detail so it might be not worth.
+
+[...]
+
+> +struct cdn_dp_bridge {
+> +	struct cdn_dp_device *parent;
+> +	struct drm_bridge bridge;
+> +	struct rockchip_encoder encoder;
+> +	bool connected;
+> +	bool enabled;
+> +	int id;
+> +};
+> +
+> +struct cdn_dp_next_bridge {
+> +	struct cdn_dp_device *parent;
+> +	struct drm_bridge *bridge;
+> +	int id;
+
+The @parent and @id fields are unused if I'm not mistaken.
+
+If it is the case then you can... (see below)
+
+>  struct cdn_dp_device {
+>  	struct device *dev;
+>  	struct drm_device *drm_dev;
+> -	struct drm_bridge bridge;
+> -	struct rockchip_encoder encoder;
+> +	int bridge_count;
+> +	struct cdn_dp_bridge *bridge_list[MAX_PHY];
+> +	struct cdn_dp_next_bridge next_bridge_list[MAX_PHY];
+
+...replace this line with:
+	struct drm_bridge *next_bridge[MAX_PHY];
+
+Unless of course you just don't store the next_bridge at all, as I
+suggested above, and which looks way easier and more efficient.
+
+Best regards,
+Luca
+
+--
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
