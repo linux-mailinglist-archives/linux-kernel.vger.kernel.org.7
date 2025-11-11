@@ -1,173 +1,285 @@
-Return-Path: <linux-kernel+bounces-894584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66342C4B5B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 04:44:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC673C4B5BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 04:46:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B97C434CB01
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 03:44:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85F5C3B0A3C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 03:46:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E38013491D6;
-	Tue, 11 Nov 2025 03:44:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CCA6238C15;
+	Tue, 11 Nov 2025 03:46:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="YO4nAP+f"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FFQ2F+us"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5E617640E
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 03:44:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC8B9CA6F
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 03:46:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762832647; cv=none; b=ha1MIzGdAuCWQDR3oO7LGaDu5LxJb96VUrsn12xXvm0+oY/wYFyPbuROISGulQ9DbsojMo50LbZPJp/u+dBbuNRCtz+TN8+HfCK+/h3BfVu18a2UpHBlqtOU9NYqUfE7Wvyk2NTBanfmTLq+suZqX416gmGpulZflsMp4rTtVdg=
+	t=1762832776; cv=none; b=R/A1PiG8GOQHQtd/eFziIuLwYGV5p2BBcohDHMysuud2jR9lDGZL1vroc0FRY/7JDX8LKYpvbNYv4VL2rXOMnznbqhIAU4ULMf0AvfIQNl5pryVD+4LIpRK3pCTnrBRwh6/kNLkXDqqkspaNtNM6SMjzGz4stVFvsZva+HECENo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762832647; c=relaxed/simple;
-	bh=0ZECHkUSj6g52R5EQ80fJPC8fk2deCqZl66ciVcyS1I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=haRhmRym4HNJNCVjafrL9LQptZqgViWGiQK+SpXsbpQ7ijFn7jsWV9nPxElbMZKQZQJg98DbLY5aIbkXE4nI8yE5V9E6c+IG1/LTpIXyPCymHPFMWqHq6WSs+3eiuh9SdaUNlF4L7AKI37j7n1YkU+oZt1j8JT/Jzn1zbZegAI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=YO4nAP+f; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-47107a9928cso1430535e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 19:44:04 -0800 (PST)
+	s=arc-20240116; t=1762832776; c=relaxed/simple;
+	bh=pDOEyNv+FeV17ijVUKn9FNfPkuvBJRe6UpW+jL9curk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jzq9f4tkxYaadT2E0sf/QOBWdeTW2h1UmcD8pQo6rX4l7vBzLPPPcu5E8yLl4H8MUMfMgpAivUL8LRxCqdrrdHSrWMCnvfyK7u1k5FCRGFFyyxxdFaG2du7xwD7GZ4e6bbw9YJBzAZ1fX1in2IxHuSaQLfrmKmLne5KO03ALrs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FFQ2F+us; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2980343d9d1so68485ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 19:46:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1762832643; x=1763437443; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8iPZXAZg8pQGqZG4u6J8NA9VICiZVn+zK9boW+BJKwU=;
-        b=YO4nAP+f4xWHAYoBC+LvWra4IiFlQfl+d9X8gGBscHn7CL/hD7Cm98QhcV6KMWfRS3
-         dniYnBtrpYeMVeBXBo48ldSVSj1Ou3U3hOK+YfuNQOYKw8p3Iwa9PWVTsz/61D3KqW4a
-         NLnikcgIv/+bVGkb3hoEb732D0u1xZBFPkaUTQUTDF1/xZ6+GopfC02IJpX2ddRWEBgp
-         zCy0IHswzdtmJggzKuuP1gySGmifTT84aUywdosUSEZnQpJzGHMEueWT24edWA0x+DMY
-         szfheSMj9QwytnpMvL4o1nGQZi2r7VU9K2MSogA4nZbiWSUDeihOgGyn2CEcc+A4vrXy
-         PP2g==
+        d=google.com; s=20230601; t=1762832772; x=1763437572; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rvbUw1wMKhrd8a8EygNYwPnFkwIsJC1OmNDHwiXLTJI=;
+        b=FFQ2F+usfvqfsf+CTq6eUH7GlcFMhlk5Yue+8gS8eQ/jJbLwCwNZfPXaek+YfsyjRB
+         ShJMEKdRaiL0Gvzf5rl5SJanXNdm+Ixm6CRvrlKDkY/ygAoUqjL0Loj4BbyZAJqlZvUK
+         xAUkwqxnWe2hh7Xb7fh78eTXx9iz+k1qFJgqq07SgeJWxDvCrwPWXxAYxTETzBp6eZlc
+         8+kmyw8i74PADaY+TWkiiNsM3MzBLsBLFY8/lJGit+yE+SgVHhz1aaFPZBUyhnlDxg0a
+         Y1vlo/eUoaACiEJwVR+EU0tVuvdMnGUPq0jl8GjXqz3tzNZHOF+dEMqpAbzj1vT3lnmd
+         f6Ww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762832643; x=1763437443;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8iPZXAZg8pQGqZG4u6J8NA9VICiZVn+zK9boW+BJKwU=;
-        b=LjzxMAL+hlTpOa1YEvCcvhnwA43U7g9SMQ4uPS2iB2Z/5YofHgjm/LvaInQWCwINRP
-         YBjrc6r1wHScWgFkE0NMdTuJLDWqogonhIIX0SLGKwbXM5HGE+yQeVRsuK1FP+aVOSs6
-         aumJRn4EtlYlE627yJAjzn/RZO6QkZq332qzQenJm3vG/bpIi0UUfGXqcFSjmPt5OVYd
-         ROBm6AZLghHhHEJ0cqtl5wzkRnsESH9lMJDZ96j6hpZbhoV1X5yAOmaqTLtcpQ7oDnqT
-         aA/+7DeWurzerbMVjc282y1wTIVtV0HtS3c4Hry+xkEsgj791vMFP7rvonTcC/GFuz0I
-         VBuA==
-X-Forwarded-Encrypted: i=1; AJvYcCVcg6/Q5yfKDy6e6963Qr+Owj/gBo7NhqBZv9kmJ1PfrfkB3Ch2RDX84asd+wQkc6c17UxeB8Gh3C0jYRY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVkg58R14iCwNBUjrHF86x2ssFo0zVhSmz0Zis0XUGr6erZXZ0
-	yb82BRXibP7UniCjjGm06S08uD1s40SkPlbnX2H6aFO3FAZfsgsJENfnrx2Z2GcOW00=
-X-Gm-Gg: ASbGnctylHDhIN8I3Rv+33r/k9Og+9CXu/Oqtiy3IkROQd+RIUdf4/aMqo5uj/uTma2
-	Q6rcsUP1ae3aznaqXXdVKlGPSOuUkT5m6MgIRHDYjPTGlB98kS75gfNp/XgKazqJ8K2Kw6qPj4Z
-	zYu9OUx0Hmk7FwevJKlkL42x7+rqYWZtyj3g4jpfmaQVOaxvzwo4RhF73LkxfbvuqK2/Agbov16
-	QWBuANVamcZNLUy6G1ZI3KbPfdgGT2su6R6ISBIOtwl2HMwWCQBOsdxcqgIrxqLSnDOSxoWjyrP
-	LaVGh96oOLLYiNPrqdl7S4FxQykaNkM/U/xzfwX0IwPJkXcZL02cKKQKCZivVq5QQ1gkDtwXnEM
-	8kpZ9Y+wDbPyzdWtyy6TxgTwHlCdpkOaAijvv7G7tIiNMOBFtNYvw+pLQkgLd/tecAQlDWa25Lm
-	HV7fEQzylaKjW3tlUWlS5l
-X-Google-Smtp-Source: AGHT+IEX3tDhRdCNc6A4BdqS22VA4H5jZdKkaZYPwJQeMyXBuJuX4/SBu7LMBMgcRV1F8yhicXZQTg==
-X-Received: by 2002:a05:600c:4711:b0:475:d7b8:8505 with SMTP id 5b1f17b1804b1-4777329f181mr52644895e9.7.1762832643133;
-        Mon, 10 Nov 2025 19:44:03 -0800 (PST)
-Received: from localhost ([202.127.77.110])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29651c740b5sm166132835ad.70.2025.11.10.19.44.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Nov 2025 19:44:02 -0800 (PST)
-Date: Tue, 11 Nov 2025 11:44:00 +0800
-From: Heming Zhao <heming.zhao@suse.com>
-To: Ahmet Eray Karadag <eraykrdg1@gmail.com>
-Cc: mark@fasheh.com, jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
-	ocfs2-devel@lists.linux.dev, linux-kernel@vger.kernel.org, david.hunter.linux@gmail.com, 
-	skhan@linuxfoundation.org, syzbot+55c40ae8a0e5f3659f2b@syzkaller.appspotmail.com, 
-	Albin Babu Varghese <albinbabuvarghese20@gmail.com>
-Subject: Re: [RFT PATCH] ocfs2: Invalidate inode if i_mode is zero after
- block read
-Message-ID: <tocd57rydneodajmr7o2r4drjimixftcppzsbycxlwvophhxgi@jhq5lazi5buu>
-References: <20251108120133.37443-3-eraykrdg1@gmail.com>
+        d=1e100.net; s=20230601; t=1762832772; x=1763437572;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=rvbUw1wMKhrd8a8EygNYwPnFkwIsJC1OmNDHwiXLTJI=;
+        b=qPylwt5nkpDAd/9FcDOiy1KUPxh0Wf54mhX57XxquvzmRyjAnHNeaviE3fbRGC/tGH
+         RcEEdR8zvkSfwD/56pX1in7xC+mMmXZPalFd9VBVDxWD8y3M3XyXty3TMntJ7iaRXHe/
+         PXUnK/rE4Jbb4bz4mkvFl5GOMNKQbXLi3X9ei86z/6fX/g/FLY+bh4N1vCJlK9LGwiLu
+         Gaa6duT6SszZsI5HzdJIsMmlEGElCk6DSWpM7DnIn8RQ5Qa7qjTi/mL5YZoGeHQTQ+/H
+         g2Cn+zM8Kc5LmUjzK0cJCc680GPkYU641g70K6Yjm7U+x7XYXqY9b1RcA7Gc8MjNRSNu
+         59ng==
+X-Forwarded-Encrypted: i=1; AJvYcCXIA35K3kDqv1lryt4qDAGii1oaZbhsXdZaPpH9uaKIZnjvzlLGmohJTK0TxMamNF+lfozHnI56fPHZwR0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5IcE7s0P1nzKWXQus146WrIobwxkNsLqXH9U0Bg5Ckm3zKjTU
+	PIy20E5fWVdoV3SvhXfGWRzYVco7BD2KJ9ndI3ENVmAOTuY74MMHfFnF2Kx2/+JEWK/Wq18yDix
+	yVh7UnlxZINgDEheHKz63tzQUWzTqodkwQ9NnEfnu
+X-Gm-Gg: ASbGncujgXn/3d7BoPoHqfZbcFCsd7J16p7mVciOq1gDyLitbrDpMSh5UlGWt6+tUtR
+	9EvXUooxM9DiHigNzUgAC7caLtTvnOUKwcchNaEOgs1YQHXZTlMkz1e/4RCHHGGj6W65iGe7zq1
+	lg7NX8zWugaEnqXHF167dunwoGLQT/nm1UMDm44sz0vo1w5cuN/7VcC6E7522pctAH+SQeANYdW
+	mTNLMhHSSt7P1kVDdfcwVEs6mvddU1VWmJRpq98HyKaNCVtN1fWA+1kHkiqGOWh7g8yYR71
+X-Google-Smtp-Source: AGHT+IG8O42bcuZPn02LBhwgUMQMgrXTHBCyhEZhU1WdI0i7AVqoldCxRNX6OJgF3gSmRDFaN3CsRtzjC6eCCsQq/rU=
+X-Received: by 2002:a17:903:246:b0:274:1a09:9553 with SMTP id
+ d9443c01a7336-29841580f6emr2739085ad.6.1762832771641; Mon, 10 Nov 2025
+ 19:46:11 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251108120133.37443-3-eraykrdg1@gmail.com>
+References: <20251106231508.448793-1-irogers@google.com> <c0648b32-e450-4036-aebe-5faab7edc1bd@linux.intel.com>
+In-Reply-To: <c0648b32-e450-4036-aebe-5faab7edc1bd@linux.intel.com>
+From: Ian Rogers <irogers@google.com>
+Date: Mon, 10 Nov 2025 19:46:00 -0800
+X-Gm-Features: AWmQ_bk-93pQHA1vVGDEUDaSADGkUhyTpk7Ne0lPDrFodBoj6hETnH-tWk1hA8s
+Message-ID: <CAP-5=fUQN5fxaJ9XXJQ_fnf=s1NCvyHVYemzEf2DEwF4JfHJUg@mail.gmail.com>
+Subject: Re: [PATCH v2 00/18] Switch the default perf stat metrics to json
+To: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, James Clark <james.clark@linaro.org>, 
+	Xu Yang <xu.yang_2@nxp.com>, Chun-Tse Shao <ctshao@google.com>, 
+	Thomas Richter <tmricht@linux.ibm.com>, Sumanth Korikkar <sumanthk@linux.ibm.com>, 
+	Collin Funk <collin.funk1@gmail.com>, Thomas Falcon <thomas.falcon@intel.com>, 
+	Howard Chu <howardchu95@gmail.com>, Levi Yun <yeoreum.yun@arm.com>, 
+	Yang Li <yang.lee@linux.alibaba.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, Andi Kleen <ak@linux.intel.com>, 
+	Weilin Wang <weilin.wang@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Nov 08, 2025 at 03:01:35PM +0300, Ahmet Eray Karadag wrote:
-> A panic occurs in ocfs2_unlink due to WARN_ON(inode->i_nlink == 0) when
-> handling a corrupted inode with i_mode=0 and i_nlink=0 in memory.
-> 
-> This "zombie" inode is created because ocfs2_read_locked_inode proceeds
-> even after ocfs2_validate_inode_block successfully validates a block
-> that structurally looks okay (passes checksum, signature etc.) but
-> contains semantically invalid data (specifically i_mode=0). The current
-> validation function doesn't check for i_mode being zero.
-> 
-> This results in an in-memory inode with i_mode=0 being added to the VFS
-> cache, which later triggers the panic during unlink.
-> 
-> Prevent this by adding an explicit check for (i_mode == 0, i_nlink == 0, non-orphan) 
-> within ocfs2_validate_inode_block. If the check is true, return -EFSCORRUPTED to signal
-> corruption. This causes the caller (ocfs2_read_locked_inode) to invoke
-> make_bad_inode(), correctly preventing the zombie inode from entering
-> the cache.
-> 
-> Reported-by: syzbot+55c40ae8a0e5f3659f2b@syzkaller.appspotmail.com
-> Fixes: https://syzkaller.appspot.com/bug?extid=55c40ae8a0e5f3659f2b
-> Co-developed-by: Albin Babu Varghese <albinbabuvarghese20@gmail.com>
-> Signed-off-by: Albin Babu Varghese <albinbabuvarghese20@gmail.com>
-> Signed-off-by: Ahmet Eray Karadag <eraykrdg1@gmail.com>
-> Previous link: https://lore.kernel.org/all/20251022222752.46758-2-eraykrdg1@gmail.com/T/
-> ---
->  fs/ocfs2/inode.c | 9 ++++++++-
->  1 file changed, 8 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/ocfs2/inode.c b/fs/ocfs2/inode.c
-> index 14bf440ea4df..d966df3aa605 100644
-> --- a/fs/ocfs2/inode.c
-> +++ b/fs/ocfs2/inode.c
-> @@ -1455,7 +1455,14 @@ int ocfs2_validate_inode_block(struct super_block *sb,
->  		     (unsigned long long)bh->b_blocknr);
->  		goto bail;
->  	}
-> -
-> +	if (!le16_to_cpu(di->i_links_count) && !le16_to_cpu(di->i_mode) &&
-> +		!(le32_to_cpu(di->i_flags) & OCFS2_ORPHANED_FL)) {
+On Mon, Nov 10, 2025 at 12:38=E2=80=AFAM Mi, Dapeng <dapeng1.mi@linux.intel=
+.com> wrote:
+>
+> Hi Ian,
+>
+> which commit is the patch-set based on? I tried to apply this patch-set o=
+n
+> perf-tools-next branch, but it fails...
 
-1.
-di->i_links_count is the low 16 bits of i_nlink. We need to check both
-di->i_link_count and di->i_link_count_hi.
+Thanks Dapeng,
 
-2.
-We are only interested the the di members' value being ZERO.
-Therefore, calling le16_to_cpu() to perform the conversion is wasting CPU cycles.
-
-3.
-The ocfs2_dinode structure has dozens of members, and syzbot could potentially
-corrupt any one of them. At the same time, the probability of this type of syzbot
-error occurring in a real-world scenario is practically zero. My idea is to
-minimize unnecessary checks.
-I prefer to remove the check for OCFS2_ORPHANED_FL.
-
-4.
-It is an error/exception if either i_links_count or i_mode is zero.
-The code "!di->i_links_count && !di->i_mode" need to be changed to '||'. (I
-didn't test it)
+probably something merged into perf-tools-next since the last time I
+sent out the patches. I'll rebase and send as v3.
 
 Thanks,
-Heming
+Ian
 
-> +		mlog(ML_ERROR, "Invalid dinode #%llu: "
-> +			"Corrupt state (nlink=0, mode=0, !orphan) detected!\n",
-> +		        (unsigned long long)bh->b_blocknr);
-> +		rc = -EFSCORRUPTED;
-> +		goto bail;
-> +	}
->  	/*
->  	 * Errors after here are fatal.
->  	 */
-> -- 
-> 2.43.0
-> 
-> 
+> Thanks,
+>
+> -Dapeng
+>
+> On 11/7/2025 7:14 AM, Ian Rogers wrote:
+> > Prior to this series stat-shadow would produce hard coded metrics if
+> > certain events appeared in the evlist. This series produces equivalent
+> > json metrics and cleans up the consequences in tests and display
+> > output. A before and after of the default display output on a
+> > tigerlake is:
+> >
+> > Before:
+> > ```
+> > $ perf stat -a sleep 1
+> >
+> >  Performance counter stats for 'system wide':
+> >
+> >     16,041,816,418      cpu-clock                        #   15.995 CPU=
+s utilized
+> >              5,749      context-switches                 #  358.376 /se=
+c
+> >                121      cpu-migrations                   #    7.543 /se=
+c
+> >              1,806      page-faults                      #  112.581 /se=
+c
+> >        825,965,204      instructions                     #    0.70  ins=
+n per cycle
+> >      1,180,799,101      cycles                           #    0.074 GHz
+> >        168,945,109      branches                         #   10.532 M/s=
+ec
+> >          4,629,567      branch-misses                    #    2.74% of =
+all branches
+> >  #     30.2 %  tma_backend_bound
+> >                                                   #      7.8 %  tma_bad=
+_speculation
+> >                                                   #     47.1 %  tma_fro=
+ntend_bound
+> >  #     14.9 %  tma_retiring
+> > ```
+> >
+> > After:
+> > ```
+> > $ perf stat -a sleep 1
+> >
+> >  Performance counter stats for 'system wide':
+> >
+> >              2,890      context-switches                 #    179.9 cs/=
+sec  cs_per_second
+> >     16,061,923,339      cpu-clock                        #     16.0 CPU=
+s  CPUs_utilized
+> >                 43      cpu-migrations                   #      2.7 mig=
+rations/sec  migrations_per_second
+> >              5,645      page-faults                      #    351.5 fau=
+lts/sec  page_faults_per_second
+> >          5,708,413      branch-misses                    #      1.4 %  =
+branch_miss_rate         (88.83%)
+> >        429,978,120      branches                         #     26.8 K/s=
+ec  branch_frequency     (88.85%)
+> >      1,626,915,897      cpu-cycles                       #      0.1 GHz=
+  cycles_frequency       (88.84%)
+> >      2,556,805,534      instructions                     #      1.5 ins=
+tructions  insn_per_cycle  (88.86%)
+> >                         TopdownL1                 #     20.1 %  tma_bac=
+kend_bound
+> >                                                   #     40.5 %  tma_bad=
+_speculation      (88.90%)
+> >                                                   #     17.2 %  tma_fro=
+ntend_bound       (78.05%)
+> >                                                   #     22.2 %  tma_ret=
+iring             (88.89%)
+> >
+> >        1.002994394 seconds time elapsed
+> > ```
+> >
+> > Having the metrics in json brings greater uniformity, allows events to
+> > be shared by metrics, and it also allows descriptions like:
+> > ```
+> > $ perf list cs_per_second
+> > ...
+> >   cs_per_second
+> >        [Context switches per CPU second]
+> > ```
+> >
+> > A thorn in the side of doing this work was that the hard coded metrics
+> > were used by perf script with '-F metric'. This functionality didn't
+> > work for me (I was testing `perf record -e instructions,cycles`
+> > with/without leader sampling and then `perf script -F metric` but saw
+> > nothing but empty lines) but anyway I decided to fix it to the best of
+> > my ability in this series. So the script side counters were removed
+> > and the regular ones associated with the evsel used. The json metrics
+> > were all searched looking for ones that have a subset of events
+> > matching those in the perf script session, and all metrics are
+> > printed. This is kind of weird as the counters are being set by the
+> > period of samples, but I carried the behavior forward. I suspect there
+> > needs to be follow up work to make this better, but what is in the
+> > series is superior to what is currently in the tree. Follow up work
+> > could include finding metrics for the machine in the perf.data rather
+> > than using the host, allowing multiple metrics even if the metric ids
+> > of the events differ, fixing pre-existing `perf stat record/report`
+> > issues, etc.
+> >
+> > There is a lot of stat tests that, for example, assume '-e
+> > instructions,cycles' will produce an IPC metric. These things needed
+> > tidying as now the metric must be explicitly asked for and when doing
+> > this ones using software events were preferred to increase
+> > compatibility. As the test updates were numerous they are distinct to
+> > the patches updating the functionality causing periods in the series
+> > where not all tests are passing. If this is undesirable the test fixes
+> > can be squashed into the functionality updates, but this will be kind
+> > of messy, especially as at some points in the series both the old
+> > metrics and the new metrics will be displayed.
+> >
+> > v2: Drop merged patches, add json to document target_cpu/core_wide and
+> >     example to "Add care to picking the evsel for displaying a metric"
+> >     commit message (Namhyung).
+> >
+> > v1: https://lore.kernel.org/lkml/20251024175857.808401-1-irogers@google=
+.com/
+> >
+> > Ian Rogers (18):
+> >   perf metricgroup: Add care to picking the evsel for displaying a
+> >     metric
+> >   perf expr: Add #target_cpu literal
+> >   perf jevents: Add set of common metrics based on default ones
+> >   perf jevents: Add metric DefaultShowEvents
+> >   perf stat: Add detail -d,-dd,-ddd metrics
+> >   perf script: Change metric format to use json metrics
+> >   perf stat: Remove hard coded shadow metrics
+> >   perf stat: Fix default metricgroup display on hybrid
+> >   perf stat: Sort default events/metrics
+> >   perf stat: Remove "unit" workarounds for metric-only
+> >   perf test stat+json: Improve metric-only testing
+> >   perf test stat: Ignore failures in Default[234] metricgroups
+> >   perf test stat: Update std_output testing metric expectations
+> >   perf test metrics: Update all metrics for possibly failing default
+> >     metrics
+> >   perf test stat: Update shadow test to use metrics
+> >   perf test stat: Update test expectations and events
+> >   perf test stat csv: Update test expectations and events
+> >   perf tool_pmu: Make core_wide and target_cpu json events
+> >
+> >  tools/perf/builtin-script.c                   | 238 ++++++++++-
+> >  tools/perf/builtin-stat.c                     | 154 ++-----
+> >  .../arch/common/common/metrics.json           | 151 +++++++
+> >  .../pmu-events/arch/common/common/tool.json   |  12 +
+> >  tools/perf/pmu-events/empty-pmu-events.c      | 229 ++++++----
+> >  tools/perf/pmu-events/jevents.py              |  28 +-
+> >  tools/perf/pmu-events/pmu-events.h            |   2 +
+> >  .../tests/shell/lib/perf_json_output_lint.py  |   4 +-
+> >  tools/perf/tests/shell/lib/stat_output.sh     |   2 +-
+> >  tools/perf/tests/shell/stat+csv_output.sh     |   2 +-
+> >  tools/perf/tests/shell/stat+json_output.sh    |   2 +-
+> >  tools/perf/tests/shell/stat+shadow_stat.sh    |   4 +-
+> >  tools/perf/tests/shell/stat+std_output.sh     |   4 +-
+> >  tools/perf/tests/shell/stat.sh                |   6 +-
+> >  .../perf/tests/shell/stat_all_metricgroups.sh |   3 +
+> >  tools/perf/tests/shell/stat_all_metrics.sh    |   7 +-
+> >  tools/perf/util/evsel.h                       |   1 +
+> >  tools/perf/util/expr.c                        |   8 +-
+> >  tools/perf/util/metricgroup.c                 |  92 +++-
+> >  tools/perf/util/stat-display.c                |  55 +--
+> >  tools/perf/util/stat-shadow.c                 | 404 +-----------------
+> >  tools/perf/util/stat.h                        |   2 +-
+> >  tools/perf/util/tool_pmu.c                    |  24 +-
+> >  tools/perf/util/tool_pmu.h                    |   9 +-
+> >  24 files changed, 756 insertions(+), 687 deletions(-)
+> >  create mode 100644 tools/perf/pmu-events/arch/common/common/metrics.js=
+on
+> >
 
