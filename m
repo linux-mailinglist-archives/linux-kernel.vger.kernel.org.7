@@ -1,179 +1,127 @@
-Return-Path: <linux-kernel+bounces-895242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2C46C4D57F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:13:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F8A2C4D5B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:16:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3B2C14EDE4B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:05:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDBEA3A9108
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:11:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68310350D7F;
-	Tue, 11 Nov 2025 11:05:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AAB33546F0;
+	Tue, 11 Nov 2025 11:10:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="t2U03Uqd"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="xW/aTHYW"
+Received: from out203-205-221-242.mail.qq.com (out203-205-221-242.mail.qq.com [203.205.221.242])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB21034B18B
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 11:05:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A1C8354ADF
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 11:10:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.242
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762859136; cv=none; b=MqNmtb6O8v4uQF4IA+nOkauNyEf2CFPvSK+60sNNenUd8ksbhMX4V778J+z6JKq0KEHoLXVQVyjJX07Y1wk7wTnp5+wMnhD8rtpc6CVwGbRQEWbNfs6LMUQpRyKLvMXzfo191/LrwYqW0RyH43n9gdq1rKcKKEo4txMwAhsF9Lg=
+	t=1762859450; cv=none; b=V+6xzOiYy0cOlR+bkjI1UcAaSVCTu5TCTvwK0Pp+HuSvWKqXV4pAlPJL5Mvr2ZBou0+GaFnlGoSUM/wA1BHfR1Gjr3WiVaxK9KDOh/IuexadrygMvP+aKPSB4OsTD0pokDtvY9SNNJXxyvePUASrxLFjhivfct/1nA1y6dCZjjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762859136; c=relaxed/simple;
-	bh=y66FBoc++SpxBI6FGW3rQvdUsLlCBgJvq0+SdEPQo6c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ox2J5rR6kQ1q4QemjGb/+n1al7wuT7XO1mf03sXD99YQK46Cur8TByp/Y1T8PHwXFwMH7AuPeUjEsdJEiSYz7FPgbwCibiZM+hHlMLX3Y93RDbVcKAJzrYrhkVlfjKR+822h2yH0zPDvtfSLqerL9x4Zv+/xb3rzG0GccDQumQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=t2U03Uqd; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-57bd482dfd2so3538664e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 03:05:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762859133; x=1763463933; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UoH9aK6siRf3TzdqpyJR1VLqiWASMeAZ3/LGdDhqFC8=;
-        b=t2U03Uqd0W5wrdgeVXLyZTIJSUjjteG7dhXJWun9YrX0wu0qAoiYI+4QhGxgwfRWjX
-         ww4hCZvw21l1WoZBlnjqbWuR6JnMkbQo1cBoTafKte/tCU2skdHAUH/qy0i/ELkJh87b
-         bsBgbHI7c444CG9XRIyLNGH1yYJpojLrTCK5MvNGq2IkDF0wvojxsaX594xLpNGtvOQd
-         c2kZD2fLjDjWdA47fFdqDpjHxdBKY5kBAlro/E/VCQhOxkWKUS3JtSrg0wBuhe28mvca
-         jarhx25cA/3iPm+J/RQMrqf/EMIaLcMQ3Df2EJv1twmuRi67nZa4jsaAVsPgrTSxXkCS
-         5g2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762859133; x=1763463933;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=UoH9aK6siRf3TzdqpyJR1VLqiWASMeAZ3/LGdDhqFC8=;
-        b=LQC1Kj6Q6OZ+A5e7fghc2C3kMIIkKRMi2dXiCLxh7KLvl09Ag/3+903uoqxedyk7Mx
-         lIdmdLeZuxqvBA7AipLa2yCdN+RFanpv8HYxdUePAMLyyJ46AIzMPDsobkeLWUdShEq2
-         SrYV8toQ5fpHyghifiybyEZ3TFw3rkwCEtNs8h8M2yi3YrpMipjwSUUSQ2zcPI2uc4GE
-         ocxuKrcarTpxoYYDrE/JKV2vwgPedfoiwk0ZwVuaayr85/nTa0Vp2Rb6bgApiQWi+PSP
-         DkLxh2tgG8Xu6KA7DaISrNZErPeYy2zzd8vymZQukFJbvm+VUaMQRy2miK8yI++IFvwt
-         t44A==
-X-Forwarded-Encrypted: i=1; AJvYcCU9RnU5ePvps2dImpWdxIg6Z8P/o+GkhlykvZBIQ1RMpJgSZMzFQDXwj16/Bs7nF4eivSDCeZFcOlZQp1w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzol7pJzouW0TIyQm8lEGIsDYjn2J/g5QaeEE+AumArDaevuxGV
-	K1ynt+iVhUbMEa/SeTG0ctUYdbi/v5jtMm8jZjgCNns/hX2Es9lYruKncHgyGXNXHyR+TcvYpp/
-	FiDiFHnbQKE4epQ2Ja8ZA4+Wwudd3gwusyJmBYvNYENtbr5Fce+FXpyc=
-X-Gm-Gg: ASbGncsre7/hDFqg8sGjPrIT4YtQbDZt6mmSYd0cYqGvPgGg1AtRqPflfYEmrV4GIZN
-	w5Rch2fP+vXr9ND7JzRU5Prtu5sm8dFUa87YVA9iyvb2qzXwexq9GCWwg7gK5qfjvO3Z/78jaCn
-	kqEynY1w36W8mGcq75rsIzezpy8WdbQykANRm4xvikEmN9Y5jH8LpQt7Y1QZZmQBbf1Iqze0rcd
-	2qL7ZF/t2ptbViizXyokiI85rtOLI1SgZwdCwT+Lr1jZgQe+9ey37Asiwmb
-X-Google-Smtp-Source: AGHT+IFkZiLMnr50CeQ1O4yRkma5Tp7W/uLXb3QVZ0YS6vC4SBgPLtDI8Wk1eXrn9vUKVkhHURYlWyAkxblzklx1FOI=
-X-Received: by 2002:a05:6512:ad1:b0:594:2e42:d49a with SMTP id
- 2adb3069b0e04-5945f1671bbmr3110517e87.21.1762859132818; Tue, 11 Nov 2025
- 03:05:32 -0800 (PST)
+	s=arc-20240116; t=1762859450; c=relaxed/simple;
+	bh=NGZY7D8PfbiFbd887TvButBPycC3r7BwVEmdgLETi1E=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=G+xxzDtZgyXXrjY3vatXKp2mIFKof0brTcmamJ6Ug+I/fQmMkMfF+PRy0kPJWVnKjYHIjmXpaK+Wg5wCcsomDTiuyZRo15Cuy77hv48ub4D94Y2YFSs0ytGd8pzEhWoG7rHFCF+5wHlr8CPvKDQ8Bo7d6/kBqUTW841Cuc0BTS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=xW/aTHYW; arc=none smtp.client-ip=203.205.221.242
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1762859145; bh=5KM/czTHkFEHND165zBXo4h8LPx0eIm+WQx5hjmuObY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=xW/aTHYW1x4ZRti5PsqbAPZF25ISvbe2qgJ6GmpJmfZPhpdpCbA65riVx7Ss9pJx3
+	 ytYs97jPDCJ7BEJM3K1hedaKvqI8WvEg0k7B9pBkOybXuuazqBlJQA2qRVcjbFdCo7
+	 5beh5Lzl4lsf2PpTz77AS/hZQkJsDlIsm2hSNPNs=
+Received: from pek-lxu-l1.corp.ad.wrs.com ([111.201.7.117])
+	by newxmesmtplogicsvrszc50-0.qq.com (NewEsmtp) with SMTP
+	id 169964CC; Tue, 11 Nov 2025 19:05:41 +0800
+X-QQ-mid: xmsmtpt1762859141tr7uwxdsx
+Message-ID: <tencent_F07E963236A64B34744177E3672A3CB93609@qq.com>
+X-QQ-XMAILINFO: MDbayGdXPuoe0yCjW11OIF5FklWQl0wX+LOZc/f+cvUuOiQe/CgaqrlUaSvhyq
+	 k+p+l9joDQveK7VnTuHD3QhthEaJ95H14ovtl22FaTJuM/7kolcxFwHZ+ljMAgZ6EDp2JZzwuE5M
+	 PRGgX1WXpFQFe8O/HGXb6ekmgITxcMRSJo7+FA28NqCJKqHB62vLB3bZtE2xrC2FRYS92Uj0xO9T
+	 xUgBXD7zN9p3MOjRGSYEequpybtNra2coHVecSMnrDGfbN+/EdASTMcA5Np8OEU9rZyPQ5LmHaLO
+	 MD42mYGidXHjKonP/Hi7WY0+oYWN9mfT/lHfDLR7A6P8v6hdcqVOt/yxu1ZLEiEjex+9iWzyGIZi
+	 iDg/T/SnQ0prT0CrvfAK17Ndv8+unHe573RhggVuxzE2zAdCxns4qTxZYRviFCr7wKU3jh0YqLRy
+	 c5+CD95tKj71dasvRrq/wXdDgILZVfAdC+9vx1Hcc4ZvShCqAlsTVNkvHjE8DIaoj21s5qyTgaYi
+	 0I7si44lWF5xZhUi0EKEOGrxBc1A+hd5OL94u0XlNcvtf/PzktEE43lCAZj4L1VW1H01Mj2vYl4o
+	 4CBS75Cf+GHfaT3N0G5TdBN+N4Kx8mfo9ZjzbdlDOlZCOb0y5Ew1VjI6WSXY9HtZ7hOsB/dxSUTk
+	 SUI8qkGFpZAYp/XVWv2GoSICmBixSiYUj55BGZVJVQPtHsZMx6HAkAIeXwo8EeytUXRGqwZv7aV1
+	 Eu0Z0ahueQzhJ2zI+BlCTtPjpgCTxx8+NIZ6XGhW34xtQNAVwMdoKEBs4H3GFszkNoHzcqIgNTTl
+	 KYRe8GW5JvkLZdkdJeWD2ITnz0l1Rb9u2pd/HZwH7vzymdQDSKsAysb1GB9MF2msCNyw6WQwiZfv
+	 HPdi6B5KD8sQ6wvxjBRN1Pk/J28mwQLQxLEaeTQJtusvUL8ltOTp/o6GjV/I6/fQ3pRCjDbt4j7p
+	 jnKFhTGIikeSjfyKsqUwB7c8IyROEamD7t5m2n2CvVWMR4KOjCyg==
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+3932ccb896e06f7414c9@syzkaller.appspotmail.com
+Cc: almaz.alexandrovich@paragon-software.com,
+	linux-kernel@vger.kernel.org,
+	ntfs3@lists.linux.dev,
+	syzkaller-bugs@googlegroups.com
+Subject: [PATCH 1/2] fs/ntfs3: Prevent memory leaks in add sub record
+Date: Tue, 11 Nov 2025 19:05:42 +0800
+X-OQ-MSGID: <20251111110541.2266435-3-eadavis@qq.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <69122a96.a70a0220.22f260.00fe.GAE@google.com>
+References: <69122a96.a70a0220.22f260.00fe.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251031160710.13343-1-antoniu.miclaus@analog.com>
- <20251031160710.13343-3-antoniu.miclaus@analog.com> <CACRpkdYdtcnxyP4xVsqVK+geurEOEURqZO5eLC96YMqh1sE5Sw@mail.gmail.com>
- <3ead5d7aa5e6be2b6df3bb91b35fec37e23353f3.camel@gmail.com>
-In-Reply-To: <3ead5d7aa5e6be2b6df3bb91b35fec37e23353f3.camel@gmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 11 Nov 2025 12:05:19 +0100
-X-Gm-Features: AWmQ_blU6j3_M21L61Yu-JWVhmaHhxtwDX6YhKqEeSy_5sEpbKXDc7z5UbWQeFg
-Message-ID: <CACRpkdZf9D2PH5AR46Pwi8UoyfwumKS4P3ncJ=RN4iu_cJzZ5w@mail.gmail.com>
-Subject: Re: [PATCH 2/2] gpio: adg1712: add driver support
-To: =?UTF-8?B?TnVubyBTw6E=?= <noname.nuno@gmail.com>
-Cc: Antoniu Miclaus <antoniu.miclaus@analog.com>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Nov 10, 2025 at 1:32=E2=80=AFPM Nuno S=C3=A1 <noname.nuno@gmail.com=
-> wrote:
-> On Mon, 2025-11-10 at 11:30 +0100, Linus Walleij wrote:
-> > Hi Antoniu,
-> >
-> > thanks for your patch!
-> >
-> > On Fri, Oct 31, 2025 at 5:08=E2=80=AFPM Antoniu Miclaus
-> > <antoniu.miclaus@analog.com> wrote:
-> >
-> > > Add driver support for the ADG1712, which contains four independent
-> > > single-pole/single-throw (SPST) switches and operates with a
-> > > low-voltage single supply range from +1.08V to +5.5V or a low-voltage
-> > > dual supply range from =C2=B11.08V to =C2=B12.75V.
-> > >
-> > > Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
-> >
-> > So tying into the binding discussion:
-> >
-> > GPIO means "general purpose input/output".
-> >
-> > I am really confused as whether this is:
-> >
-> > - General purpose - seems to be for the purpose of switching
-> >   currents and nothing else.
-> >
-> > - Input/Output - It's switching something else and not inputting
-> >   or outputting anything and this makes the driver look strange.
-> >
-> >
->
-> Not the first time a part like this pops up [1]. At the time, the final
-> conclusion was to go with gpiolib. Naturally you can think otherwise now =
-:)
+If a rb node with the same ino already exists in the rb tree, the newly
+alloced mft_inode in ni_add_subrecord() will not have its memory cleaned
+up, which leads to the memory leak issue reported by syzbot.
 
-I think we might wanna go with gpiolib for the Linux internals, maybe
-we want to add some kind of awareness or flag in gpiolib that this is
-a switch and not an output we can control the level of?
+The best option to avoid this issue is to put the newly alloced mft node
+when a rb node with the same ino already exists in the rb tree and return
+the rb node found in the rb tree to the parent layer.
 
-I could think of this:
+syzbot reported:
+BUG: memory leak
+unreferenced object 0xffff888110bef280 (size 128):
+  backtrace (crc 126a088f):
+    ni_add_subrecord+0x31/0x180 fs/ntfs3/frecord.c:317
+    ntfs_look_free_mft+0xf0/0x790 fs/ntfs3/fsntfs.c:715
 
-- Make .get() and .set() in struct gpio_chip return -ENOTIMP
-  no getting and setting these "lines" because we really cannot
-  control that, these lines will have the level of whatever is on
-  the line we are switching.
+BUG: memory leak
+unreferenced object 0xffff888109093400 (size 1024):
+  backtrace (crc 7197c55e):
+    mi_init+0x2b/0x50 fs/ntfs3/record.c:105
+    mi_format_new+0x40/0x220 fs/ntfs3/record.c:422
 
-- Implement .set_config() and implement the generic pin
-  control property PIN_CONFIG_OUTPUT_ENABLE as 1
-  to switch "on" and 0 for switch "off".
-  See include/linux/pinctrl/pinconf-generic.h
+Fixes: 4342306f0f0d ("fs/ntfs3: Add file operations and implementation")
+Reported-by: syzbot+3932ccb896e06f7414c9@syzkaller.appspotmail.com
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+---
+ fs/ntfs3/frecord.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-This makes it possible to use the gpiolib in a way that is
-non-ambiguous.
+diff --git a/fs/ntfs3/frecord.c b/fs/ntfs3/frecord.c
+index 8f9fe1d7a690..b6cbc1fc3455 100644
+--- a/fs/ntfs3/frecord.c
++++ b/fs/ntfs3/frecord.c
+@@ -325,8 +325,10 @@ bool ni_add_subrecord(struct ntfs_inode *ni, CLST rno, struct mft_inode **mi)
+ 
+ 	mi_get_ref(&ni->mi, &m->mrec->parent_ref);
+ 
+-	ni_add_mi(ni, m);
+-	*mi = m;
++	*mi = ni_ins_mi(ni, &ni->mi_tree, m->rno, &m->node);
++	if (*mi != m)
++		mi_put(m);
++
+ 	return true;
+ }
+ 
+-- 
+2.43.0
 
-We might want to add consumer helpers in
-include/linux/gpio/consumer.h such as:
-
-#include <linux/pinctrl/pinconf-generic.h>
-
-int gpiod_switch_enable(struct gpio_desc *desc)
-{
-   unsigned long cfg =3D pinconf_to_config_packed(PIN_CONFIG_OUTPUT_ENABLE,=
- 1);
-
-   return gpiod_set_config(desc, cfg);
-}
-
-int gpiod_switch_disable(struct gpio_desc *desc)
-{
-   unsigned long cfg =3D pinconf_to_config_packed(PIN_CONFIG_OUTPUT_ENABLE,=
- 0);
-
-   return gpiod_set_config(desc, cfg);
-}
-
-See e.g. rtd_gpio_set_config() in drivers/gpio/gpio-rtd.c for
-an example of how the GPIO driver can unpack and handle
-generic .set_config() options like this.
-
-The binding however needs to be something separate like a proper switch bin=
-ding
-I think or we will confuse other operating systems.
-
-Yours,
-Linus Walleij
 
