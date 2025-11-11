@@ -1,155 +1,116 @@
-Return-Path: <linux-kernel+bounces-894986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B760BC4CA51
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:27:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D98F5C4CA36
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:25:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 01F5B4F3291
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:22:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92E933A3A43
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:23:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B49B2EDD69;
-	Tue, 11 Nov 2025 09:22:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DB002DC35C;
+	Tue, 11 Nov 2025 09:23:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="fMQAzDzE";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="fMQAzDzE"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="G6McQrtI"
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C54712D3EC7
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 09:22:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E722D2EDD69
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 09:23:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762852965; cv=none; b=h1YuU9KC3UiHVhrKTATQ2cibiz1zgEcjyy2JKyMqCbQ1tFKNqpJhVyWVjN3Yzmb9EXxamTNAWJziMjlcibUJV5CNVmw53GPGKG95g62tBXpArJUMB6YtzZe4n3mqrNZz99q6d8tX4YtP1ESQOyCI3w8gDzTf6SWIi6Sp27Tg7PU=
+	t=1762852999; cv=none; b=G9Sd8j5dvoi4SZ5483ZpDGKZqRhUlPaX8CLLIyiZilc/ETIX3VK7qPz56jgARmi5T+4+wYKlspn6RaIG8SBdD8ArhARiZmAY9P2S0r0Pw3IYpv0lGgpBi3asrT2fwAl+z11IyEgdggqAObrKh3pWY4Af0JLraH6dj59SKu+N3A0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762852965; c=relaxed/simple;
-	bh=qE5TmNdkrg+OPgkxw4VKGtn0S2qpfsMV7Ie//La4l1Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nTFrFQsNYQjQPWh2xONkCg+4NWJWjRZARRH2vNjh9/lVgEEY8wyP3gsaE39Quh2/9u3WoAeyuqlZynJ/N9zIUapViBr/sWZ+nFG5qdC1M7MXfybt3t9JyJnC1ADi/hKn6lBiy23+CaGYQqgpgeVV4re9d+LorBaVO8TpRuXaF8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=fMQAzDzE; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=fMQAzDzE; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 8A2F91F6E6;
-	Tue, 11 Nov 2025 09:22:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1762852961; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=koyI6TVnHTLJu0tGNfRG2MBG55y2xcIEjvrKuUb42Zw=;
-	b=fMQAzDzEgr4QabXRni4jJwFAKrgH/1+QqY0XGKaGARK4e9stMjYmDkm5zfsQSflcMtJlwQ
-	US9dpgOkxpg9m/ZqKT8lX3jTik589E5QaHY2Gzk3XasnraQJsjKkP+N0/qgaKZMWxrfzCB
-	0yw/IIkD9jS6Z/ayGTh1RgTEMIu8JcA=
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.com header.s=susede1 header.b=fMQAzDzE
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1762852961; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=koyI6TVnHTLJu0tGNfRG2MBG55y2xcIEjvrKuUb42Zw=;
-	b=fMQAzDzEgr4QabXRni4jJwFAKrgH/1+QqY0XGKaGARK4e9stMjYmDkm5zfsQSflcMtJlwQ
-	US9dpgOkxpg9m/ZqKT8lX3jTik589E5QaHY2Gzk3XasnraQJsjKkP+N0/qgaKZMWxrfzCB
-	0yw/IIkD9jS6Z/ayGTh1RgTEMIu8JcA=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 83541148A5;
-	Tue, 11 Nov 2025 09:22:41 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id vZoKIGEAE2k0ZwAAD6G6ig
-	(envelope-from <dsterba@suse.com>); Tue, 11 Nov 2025 09:22:41 +0000
-From: David Sterba <dsterba@suse.com>
-To: torvalds@linux-foundation.org
-Cc: David Sterba <dsterba@suse.com>,
-	linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Btrfs fixes fro 6.18-rc6
-Date: Tue, 11 Nov 2025 10:22:35 +0100
-Message-ID: <cover.1762852601.git.dsterba@suse.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1762852999; c=relaxed/simple;
+	bh=HW+BHIjHuyTX7OAC9AGqEECbSB0U1bNiaGYXhX8ud1c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MvxBxbuqu6+sUgYTt1txgSASXRshUU7eCdIWa9FCpL8bkz11sfShUUwju2+vPxJLEtldN2ZRnc0RnKXzZfGEp1+FtHNCxbUcEz2qgieU2p3MYa85tLeYYIbuwhhU6IOqIuJUOYA2Y3o5OV4lRWN/j2nuuLOsysOABy4G2fPXkqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=G6McQrtI; arc=none smtp.client-ip=209.85.219.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-8823e39c581so33186806d6.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 01:23:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762852995; x=1763457795; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=HW+BHIjHuyTX7OAC9AGqEECbSB0U1bNiaGYXhX8ud1c=;
+        b=G6McQrtIGCYwTv+qtUcpdpxsjOBOcbABhj3mgP1FPSF14qzrygXKRbZTfaBEW1QzXQ
+         ptH3Eoj5bvdZcC09088K3MdhmAm625hZkmlu2ZALnmSVy4Nj5f7ioO62gatl2JkW9p+W
+         1jXtM3MUjuew7NAMzeHrmR5t6sLAZhIM74qWg8gr8IbF7E187Ihj3yweySyWKcSoozT2
+         Qnr99/VkuaRdBbh87x0j6Wx9VgMiDxfw9FmZloB2G/hux46/1UwpN2sZ07OD2gd5aO24
+         uCD6TXHOo5Abh9hjV0RZtuvY9Juht4VuhNxS/8hC0bNGMpOc949ynwkIGYpllJ/GiXi7
+         +Ddg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762852995; x=1763457795;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HW+BHIjHuyTX7OAC9AGqEECbSB0U1bNiaGYXhX8ud1c=;
+        b=pZ/s+xlk1ZLNaQqOi5oZ1nnb6Q6SSbN5Lo3d4S8TrOvU+qqI800IpA+2l9hZNVXxas
+         xP7slGifwnEDf6Qb3etj4uiLUB8gr9Nmix+flUrFOqU0x2DNUS9oQj6R6j/KHyiHpVT2
+         xawbyqtGksBDZ/VlBXwdTy6OItViabX8IUOiTkiMua7K4soy0kFfEkO6uTh80BcC0OaU
+         pqzf+bHI/EuAly/t3F/5i81TsbieKUv4+bBblrw1A6mNIJqIaHX3qPYTm1JH30gtGcpi
+         fGhYsBR2wdcKI7Q1OGjlIH9SWNfCWk2z5GGomSx/xW24uCAjIcDs7VLg8lBtFx7CIbSp
+         ZGXw==
+X-Forwarded-Encrypted: i=1; AJvYcCVzC0K26MUmezOOALpL9ttEVI8kCjFFnPtDiN+5jg/DEnWDDCorUOyBHS9NxjrEPOYsaEohgPRDEjmBv84=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTgpPXjuDlSkZO2wKZzE2ghux58UcUI4mTBkfkAIrARKGhTX7T
+	cdVWHWVEJY4ocHNY4i1qaSCBGNPcRYDYCgn0XJ1Y9uAGOtsiQpqrhS+wzUgy3am9xPUuGXE2T08
+	4efSS64Owk7u3QzcXdIRxXzkeH0lThGq7yDXFuuYO
+X-Gm-Gg: ASbGncuRmi+UcPPvB4Wxr/vTlXxfeF0TqYyioOvQW++ItFkAXJax0x6TJ8uLhrj+Kyf
+	CeducPa97PY5sqkxvnwCQ1PkVmeNCSYl1QvjceR14v2Zh61DYz/NCo1rnEFt9wlgpY3I4Tcy076
+	jBR1Kt79ot0L7win2va6Bn6Cki1Xdx4jErfoVJqcdZFVCCj8CHhX91RwXDrF6Q1UH6ymB0crFmf
+	5NfmHrpjiBeo3fjkzw/BmioAdi+BCVD2TU4+yyEje3vmt+O31Q2mSsl7lsegMTZ/137Cv3wzgLv
+	3X+YkfO+TRtYVxuqg8U5Czj7pw==
+X-Google-Smtp-Source: AGHT+IE0yzs57LETS85djEZyTYXW5DmddvlcMHLtxP59+D7EFGLVQ5m9xCUc4smiAAZV+t8Cn2za8HGBMs1SjTj1Y9o=
+X-Received: by 2002:a05:6214:1310:b0:880:3e92:3d33 with SMTP id
+ 6a1803df08f44-8823873d584mr174202246d6.34.1762852994390; Tue, 11 Nov 2025
+ 01:23:14 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 8A2F91F6E6
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.com:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCPT_COUNT_THREE(0.00)[4];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:mid,suse.com:dkim]
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -3.01
-X-Spam-Level: 
+References: <cover.1761763681.git.m.wieczorretman@pm.me> <8681ee6683b1c65a1d5d65f21c66e63378806ba0.1761763681.git.m.wieczorretman@pm.me>
+In-Reply-To: <8681ee6683b1c65a1d5d65f21c66e63378806ba0.1761763681.git.m.wieczorretman@pm.me>
+From: Alexander Potapenko <glider@google.com>
+Date: Tue, 11 Nov 2025 10:22:37 +0100
+X-Gm-Features: AWmQ_bn-gtNt_PIr26xFMqgMDiPlRCOzgcJVubPfw4RNrG4hXg8UIUOVQ0zkb_Q
+Message-ID: <CAG_fn=V46UeEvrPb01VRk+60-wL0DA6Y6ZD5HAfVLzHcgRh+VQ@mail.gmail.com>
+Subject: Re: [PATCH v6 05/18] kasan: Fix inline mode for x86 tag-based mode
+To: Maciej Wieczor-Retman <m.wieczorretman@pm.me>
+Cc: xin@zytor.com, peterz@infradead.org, kaleshsingh@google.com, 
+	kbingham@kernel.org, akpm@linux-foundation.org, nathan@kernel.org, 
+	ryabinin.a.a@gmail.com, dave.hansen@linux.intel.com, bp@alien8.de, 
+	morbo@google.com, jeremy.linton@arm.com, smostafa@google.com, kees@kernel.org, 
+	baohua@kernel.org, vbabka@suse.cz, justinstitt@google.com, 
+	wangkefeng.wang@huawei.com, leitao@debian.org, jan.kiszka@siemens.com, 
+	fujita.tomonori@gmail.com, hpa@zytor.com, urezki@gmail.com, ubizjak@gmail.com, 
+	ada.coupriediaz@arm.com, nick.desaulniers+lkml@gmail.com, ojeda@kernel.org, 
+	brgerst@gmail.com, elver@google.com, pankaj.gupta@amd.com, 
+	mark.rutland@arm.com, trintaeoitogc@gmail.com, jpoimboe@kernel.org, 
+	thuth@redhat.com, pasha.tatashin@soleen.com, dvyukov@google.com, 
+	jhubbard@nvidia.com, catalin.marinas@arm.com, yeoreum.yun@arm.com, 
+	mhocko@suse.com, lorenzo.stoakes@oracle.com, samuel.holland@sifive.com, 
+	vincenzo.frascino@arm.com, bigeasy@linutronix.de, surenb@google.com, 
+	ardb@kernel.org, Liam.Howlett@oracle.com, nicolas.schier@linux.dev, 
+	ziy@nvidia.com, kas@kernel.org, tglx@linutronix.de, mingo@redhat.com, 
+	broonie@kernel.org, corbet@lwn.net, andreyknvl@gmail.com, 
+	maciej.wieczor-retman@intel.com, david@redhat.com, maz@kernel.org, 
+	rppt@kernel.org, will@kernel.org, luto@kernel.org, kasan-dev@googlegroups.com, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	x86@kernel.org, linux-kbuild@vger.kernel.org, linux-mm@kvack.org, 
+	llvm@lists.linux.dev, linux-doc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi,
-
-please pull a few more fixes, thanks.
-
-- fix new inode name tracking in tree-llog
-
-- fix conventional zone and stripe calculations in zoned mode
-
-- fix bio reference counts on error paths in relocation and scrub
-
-----------------------------------------------------------------
-The following changes since commit 3b1a4a59a2086badab391687a6a0b86e03048393:
-
-  btrfs: mark dirty extent range for out of bound prealloc extents (2025-10-30 19:18:18 +0100)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git for-6.18-rc5-tag
-
-for you to fetch changes up to c367af440e03eba7beb0c9f3fe540f9bcb69134a:
-
-  btrfs: release root after error in data_reloc_print_warning_inode() (2025-11-05 20:01:12 +0100)
-
-----------------------------------------------------------------
-Filipe Manana (1):
-      btrfs: do not update last_log_commit when logging inode due to a new name
-
-Naohiro Aota (2):
-      btrfs: zoned: fix conventional zone capacity calculation
-      btrfs: zoned: fix stripe width calculation
-
-Zilin Guan (2):
-      btrfs: scrub: put bio after errors in scrub_raid56_parity_stripe()
-      btrfs: release root after error in data_reloc_print_warning_inode()
-
- fs/btrfs/inode.c    |  4 +++-
- fs/btrfs/scrub.c    |  2 ++
- fs/btrfs/tree-log.c |  2 +-
- fs/btrfs/zoned.c    | 60 +++++++++++++++++++++++++----------------------------
- 4 files changed, 34 insertions(+), 34 deletions(-)
+>
+> Explicitly zero out hwasan-instrument-with-calls when enabling inline
+> mode in tag-based KASAN.
+>
+> Signed-off-by: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
+> Reviewed-by: Andrey Konovalov <andreyknvl@gmail.com>
+Reviewed-by: Alexander Potapenko <glider@google.com>
 
