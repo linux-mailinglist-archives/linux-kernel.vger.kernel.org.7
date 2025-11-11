@@ -1,111 +1,88 @@
-Return-Path: <linux-kernel+bounces-896103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5932C4FA6D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 20:54:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2790C4FA70
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 20:55:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A42F13B1359
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 19:54:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F77B3AFFA7
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 19:55:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC30A3A5E94;
-	Tue, 11 Nov 2025 19:54:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U6wvzAoS"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 007913A5E8F;
+	Tue, 11 Nov 2025 19:55:04 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD2B13A5E86
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 19:54:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 370633730E6
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 19:55:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762890872; cv=none; b=X4geUSJePhGc90Jwy39nH5bVRxMuM6SWN2yGpKaJLrj2k661S6rNq2bNFbpeUKbdPsRFf/NZABXX8TKB0Ay+crQM17Xz2EaJUaAmA/c0ASDDVwhxWSRIlqR6NrGubYZzTK+cyCQTVaC3dUCi3mii4dzv8cEwpN2obDsPkoIEeL8=
+	t=1762890903; cv=none; b=XW6Q9MatzAVR6S1ZJ0nWoKKJh03eGX7KNT9qB8XnJXJpTxTi1CuYPK9k+PGTzM6/olzUJKt9KOP1auDBSqJMMKip7dOb+cT0tJD+LzF/eSN05mZ7TB88rQoKenuPlKwA3xYlprqoPkainK1Jm6wJnGGmC/CKMacjRq2Od0c5GGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762890872; c=relaxed/simple;
-	bh=s9+a/eFiDoDkgzy9Ul2SUezw6cD2/LMwGt4BI4jMuWE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=axDwPQ7dS9S2p/YVSPx+nQxUWwuqkOwUKBY1T6i3tRMevq4bljWPtpffuRxfiU0Nt2Rg0CKqL4oZrwhWbcyTlg6gd8HPkJgZoEF6FgwssgSHYLjcWEnaWc8nTsPexOtS9BzRH8auToF2dLhz+xreLXtrAaOrkrQvHPkPTBNkfWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U6wvzAoS; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-297f2c718a8so72335ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 11:54:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762890870; x=1763495670; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=s9+a/eFiDoDkgzy9Ul2SUezw6cD2/LMwGt4BI4jMuWE=;
-        b=U6wvzAoSkY2k15T22W4yOdF48wWhxYUep8p7av8A+5FJXJeWTUfLdLpLZYKS3DLqSR
-         iSVHdagTiJyGuZXe+WARAcFHhC+0fR56yDkUJGJb5AK2UD4pNQJQbBuhH2zZe5gjO7NB
-         gqET0z+VnG1o+FsVCIebqUAQ87rxaPs9jgTU/5Uq0DG6JaYxUbLlHHNYfv/M3IfeiAnb
-         1t81oYQP/XTjyjHCeP6xYbBFGD3ECIHDagyZ0xG7wiOmSF21DnbIkB/txTDO2M9Anoqb
-         0fxlNU5lf8EAXr6okY4e8iky2RpUwSa87yX7Y/tATPtUyBsy+9bZc8NF5hGPdxHa+l5S
-         K5Qw==
+	s=arc-20240116; t=1762890903; c=relaxed/simple;
+	bh=/b3A+J3p4vNsOpsr/qyiCSxEZvkZ6yKbQfF++K0/h94=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=BL1ax0k/tGg9HSZCrBhPmt3UsLNit2UytkOG9N55JusqGIJKpQ5qyH72UpktK7n6wmC3IUmFCp7RBQRyCjOSeDfA6d/CHNAZraJUNssODCy4KtcMwoemePSqYQ5iGEfd5HazQjyim7PCV0czgXbf0HGFU3lL2yF14u8QnyqmLm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-433783ff82aso1752935ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 11:55:02 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762890870; x=1763495670;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=s9+a/eFiDoDkgzy9Ul2SUezw6cD2/LMwGt4BI4jMuWE=;
-        b=j/2EFQ64F/IcAy3S3r5oHa5XWB6iVM7XBxIOXCJQ9lVNN4cQ/bZ0yP1G4MHSMEjNlU
-         bbgn29yKGfjrFKkNdvUXoxtaERo4PBkTRKxyCFI7jPv0fjiqiR/c1JRSOtFE91Y2sE07
-         046JpiiRkIkfHcZjqYr2amtONrYjW0L5qWuOu8VoY/hchMfr9mgKFGTfglkhCiyi6Dcd
-         HSJT5/TkoPgeJA7M1fnJFdkqnt3JfiwlTaFDUrrXBdf1sFdthIp/XWD61qZo49Eufi1d
-         psx6N4afNP3H4khSj0zUVZFwNduc/RVnpLFzTCiwEKxULTsdd66zx5gOo1V+bgvM2dcc
-         48Gw==
-X-Gm-Message-State: AOJu0YytoBtTANqxpTenmAtZk92YOYQ+J4EWJm51LbnTqOvLak1sv0r6
-	ZWxBBA6UepHRMyfLtmZVJWJRh7pxitiNRVFMzc82L3HdTQUhW3GuR2b/n+pz4jv9ABZg3jgueD4
-	aLDLxfCym5W71d9875bJqC3jyG8lt78c=
-X-Gm-Gg: ASbGncvgqYOdpBBDZxIEtP1PXEixZR9oetv45qDuaThG1zFBrRQEpeqqhDyxcElLdMw
-	Lytd1SQCemJXX22D4eqJLGSBAYYzFGExxsBylvqR3/ICbYyA5BUZBReK+12UOtq+3uqecRfQU6M
-	otnCQNw1RS4EdAeQ4Qzs9NMF/whaAAMK/Yfp+wWBkPat3PvTtPjLfFFksnPs8DNlNs9YBHXzSmu
-	dC9AsA+ccZ3kMMuMKgdaxgGB1BBnvwVYDcndQqij1q0qQ/IZ7PLHIKRHJr+fT39rsEfIk+K0b9e
-	KYK+KATZ6SAask/U1rK5/XFMWRr+Jk6HgfBByZ7pQhYGfr+uad5ZYE3gJFLlGjFxeLjpV6gO11t
-	t8G8=
-X-Google-Smtp-Source: AGHT+IFGIw0sPldyd+rtRft0su885bkTxqqUTUuhpd3lcLBUxXPnk/ZZeeLUF53/y6iwwN8RrfJVa1Wt8ImxuyYODE8=
-X-Received: by 2002:a17:902:d50f:b0:298:371:94f1 with SMTP id
- d9443c01a7336-2984ed2b38amr3798265ad.1.1762890870059; Tue, 11 Nov 2025
- 11:54:30 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762890901; x=1763495701;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YkcJir/AGs/NDD7lwcNEuWgp+bPwIs7AWKnvsltB9lI=;
+        b=GfUDkn7TjXf2rG2AGsSups/lW/9RmHp9OmLCo2TLBKeLwe7hEyLhsUOuUE0VmVvLnW
+         dk2sEmH5hpLeh12iKE1wvptjmc8kH90NR9UDZod1eOekTV+hH+/4N/yLVVS/nk2lEWH2
+         o4kDBJ/uIVp2SNgATbbPrvbcS6kcix7Fvj9Pqhqp/HqJ2jIpAN6Av9RlXenG9llnPIHS
+         Kpm0+qEyemdVHFkb3J2ockwl+1GkiZfH7AHlqwvzephrkOfvuwhHKtpUoNNUvFnvTnNl
+         DyCR9EPTzmh3WWUMySmFd+RDo/SdfM2kXBIb20Pf2fPGRxhNWzSB5plBrBh0D1bkraBZ
+         rPuA==
+X-Gm-Message-State: AOJu0YxhZYRnkgh5V806ZV1hF+INDbckZu4FsCXdbeWTyCkkr6PuOsLj
+	bPM3iNaf/+T560pu5rC4mw7OIuWV9Bs9Kw7XQfNwDXVAByOwnos8wvC23d0ATnC6zRPwJUVkkAs
+	H5QuFmI+7MUUkpR2BTPROJTH0TeZFSspIFVLc9geN1pGWy6Ls2zTg9WT7A+w=
+X-Google-Smtp-Source: AGHT+IEiDS+nSC788SRPxYkhBUrK0RgqCDXPFnnz1IWQMv3KwKCujvl3VInGuexOcZQx2UucNf4Q9TBoYS8+8IiHd0/COckt386k
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251111171315.2196103-1-joelagnelf@nvidia.com> <20251111171315.2196103-4-joelagnelf@nvidia.com>
-In-Reply-To: <20251111171315.2196103-4-joelagnelf@nvidia.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 11 Nov 2025 20:54:17 +0100
-X-Gm-Features: AWmQ_bl0L-0Cea_Wx26TMHEqrDOWgYHY0NBpoDZ7Qy4Vo4Y76uHd2eVw2Y9spcU
-Message-ID: <CANiq72nuHUFGMsEYr-KhCB4oMjX72YskG0s7uCB8dcVtTGW-jQ@mail.gmail.com>
-Subject: Re: [PATCH v2 0/3] rust: Introduce support for C linked list interfacing
-To: Joel Fernandes <joelagnelf@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, dakr@kernel.org, airlied@gmail.com, 
-	acourbot@nvidia.com, apopple@nvidia.com, ojeda@kernel.org, 
-	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
-	bjorn3_gh@protonmail.com, lossin@kernel.org, a.hindborg@kernel.org, 
-	aliceryhl@google.com, tmgross@umich.edu, simona@ffwll.ch, 
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
-	jhubbard@nvidia.com, ttabi@nvidia.com, joel@joelfernandes.org, 
-	elle@weathered-steel.dev, daniel.almeida@collabora.com, arighi@nvidia.com, 
-	phasta@kernel.org, nouveau@lists.freedesktop.org
+X-Received: by 2002:a05:6e02:1a81:b0:433:68e3:7677 with SMTP id
+ e9e14a558f8ab-43473d2127amr6523935ab.11.1762890901416; Tue, 11 Nov 2025
+ 11:55:01 -0800 (PST)
+Date: Tue, 11 Nov 2025 11:55:01 -0800
+In-Reply-To: <CAMz+-CMX9fRx=L+r2AwvfMK6NhiFJ50fQQtp=Wm+jR1hPn+GWw@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <69139495.a70a0220.22f260.014a.GAE@google.com>
+Subject: Re: [syzbot] [wireless?] KMSAN: uninit-value in cfg80211_classify8021d
+From: syzbot <syzbot+878ddc3962f792e9af59@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	vnranganath.20@gmail.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 11, 2025 at 6:13=E2=80=AFPM Joel Fernandes <joelagnelf@nvidia.c=
-om> wrote:
->
-> there. I rebased the patches on linux-next. I can also add MAINTAINER ent=
-ries
-> in a future version, if folks agree this should have its own MAINTAINER
-> record.
+Hello,
 
-Yes, it sounds good to me to add one. Please do -- thanks!
+syzbot tried to test the proposed patch but the build/boot failed:
 
-Cheers,
-Miguel
+failed to apply patch:
+checking file net/wireless/util.c
+Hunk #1 FAILED at 963.
+1 out of 1 hunk FAILED
+
+
+
+Tested on:
+
+commit:         24172e0d Merge tag 'arm64-fixes' of git://git.kernel.o..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=bbd3e7f3c2e28265
+dashboard link: https://syzkaller.appspot.com/bug?extid=878ddc3962f792e9af59
+compiler:       
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=17c3b0b4580000
+
 
