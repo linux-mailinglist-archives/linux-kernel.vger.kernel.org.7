@@ -1,124 +1,146 @@
-Return-Path: <linux-kernel+bounces-894368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFE53C49DB0
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 01:23:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E68C7C49DCE
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 01:26:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9B9D94E6521
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 00:23:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11E7018807D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 00:27:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6331E1A2545;
-	Tue, 11 Nov 2025 00:23:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CE561D86DC;
+	Tue, 11 Nov 2025 00:26:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="pBK+uz/9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hljnO8dA"
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C3B2188CC9;
-	Tue, 11 Nov 2025 00:23:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51BBE1DA62E
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 00:26:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762820596; cv=none; b=U8kZUaY+H/tnkWfukAy9g1blNupE1FQu8Il2q/pl7VVPlYZgIEPNvxR9IzERrE4yP0AJ5TJPx/gnjaCZiWykVZ1Gb5D6H5QPldaxGywf0QcthhTGRs20XSyy1Ore2vmbwCqyX56x/dk59a4dmyU0P90HalDF5TEMNcADO09zHJE=
+	t=1762820789; cv=none; b=cOTHwRKNVEJvGxy/tX717K4dPY6I7oiLFWEWBZmebCF1ksoTgcbapddizRAomkGiwv9y7V7VTVxYj5AG82/NR4P9DVLB9PVWUDNJM6eySB6wtFcO985mAU+0J9EEyerdwQ9IELUEuzXAFXPDKe3bRB8m3YpdVEF6sSSNvCSqalo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762820596; c=relaxed/simple;
-	bh=gHyaL6pqvKbF/42T+jG0a6a0x8S6QYiyQ3WK/gyAZKs=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=Sm/o2JNgzFDYvJ2xTQn6h702uXE691TWQaz9QeeBifwUtFFISQitehhwX7w4ZNmMTkoqNcCKFDzXUVSINzJNyV8Qc80nb6bGYcA7mc2XtaHhatss3DHZ9BzrKP3RBgV/0Txb0VC+vu0dzDHkP7/OyOG7C72OD1F8RHJHBqLAezs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=pBK+uz/9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D8D1C19425;
-	Tue, 11 Nov 2025 00:23:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1762820596;
-	bh=gHyaL6pqvKbF/42T+jG0a6a0x8S6QYiyQ3WK/gyAZKs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=pBK+uz/9B/7dT4Dfr1fmhdpoHhdxbIQqjTbyre/CkikfJY2PM+IIamTL2ZV0BAKI6
-	 KK/J5MjNOlWuttzCb4ScA2sCUxaN79WlqRq+Yt72sQj5jhbtkPdo/BxnO6J7GWbfms
-	 VP61krwUmcnmNbdLHyOdfy1bZLglbb1ntnV/rcd8=
-Date: Mon, 10 Nov 2025 16:23:13 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Hugh Dickins <hughd@google.com>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Chris Li
- <chrisl@kernel.org>, Christian Borntraeger <borntraeger@linux.ibm.com>,
- Janosch Frank <frankja@linux.ibm.com>, Claudio Imbrenda
- <imbrenda@linux.ibm.com>, David Hildenbrand <david@redhat.com>, Alexander
- Gordeev <agordeev@linux.ibm.com>, Gerald Schaefer
- <gerald.schaefer@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>, Vasily
- Gorbik <gor@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, Peter Xu
- <peterx@redhat.com>, Alexander Viro <viro@zeniv.linux.org.uk>, Christian
- Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Arnd Bergmann
- <arnd@arndb.de>, Zi Yan <ziy@nvidia.com>, Baolin Wang
- <baolin.wang@linux.alibaba.com>, "Liam R . Howlett"
- <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>, Ryan Roberts
- <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, Barry Song
- <baohua@kernel.org>, Lance Yang <lance.yang@linux.dev>, Muchun Song
- <muchun.song@linux.dev>, Oscar Salvador <osalvador@suse.de>, Vlastimil
- Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan
- <surenb@google.com>, Michal Hocko <mhocko@suse.com>, Matthew Brost
- <matthew.brost@intel.com>, Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim
- <rakie.kim@sk.com>, Byungchul Park <byungchul@sk.com>, Gregory Price
- <gourry@gourry.net>, Ying Huang <ying.huang@linux.alibaba.com>, Alistair
- Popple <apopple@nvidia.com>, Axel Rasmussen <axelrasmussen@google.com>,
- Yuanchu Xie <yuanchu@google.com>, Wei Xu <weixugc@google.com>, Kemeng Shi
- <shikemeng@huaweicloud.com>, Kairui Song <kasong@tencent.com>, Nhat Pham
- <nphamcs@gmail.com>, Baoquan He <bhe@redhat.com>, SeongJae Park
- <sj@kernel.org>, Matthew Wilcox <willy@infradead.org>, Jason Gunthorpe
- <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>, Xu Xin
- <xu.xin16@zte.com.cn>, Chengming Zhou <chengming.zhou@linux.dev>, Jann Horn
- <jannh@google.com>, Miaohe Lin <linmiaohe@huawei.com>, Naoya Horiguchi
- <nao.horiguchi@gmail.com>, Pedro Falcato <pfalcato@suse.de>, Pasha Tatashin
- <pasha.tatashin@soleen.com>, Rik van Riel <riel@surriel.com>, Harry Yoo
- <harry.yoo@oracle.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
- linux-s390@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-arch@vger.kernel.org, damon@lists.linux.dev
-Subject: Re: [PATCH v2 00/16] mm: remove is_swap_[pte, pmd]() + non-swap
- entries, introduce leaf entries
-Message-Id: <20251110162313.baee36f4815b3aeb3f12921e@linux-foundation.org>
-In-Reply-To: <c9e3ad0e-02ef-077c-c12c-f72057eb7817@google.com>
-References: <cover.1762621567.git.lorenzo.stoakes@oracle.com>
-	<CACePvbVq3kFtrue2smXRSZ86+EuNVf6q+awQnU-n7=Q4x7U9Lw@mail.gmail.com>
-	<5b60f6e8-7eab-4518-808a-b34331662da5@lucifer.local>
-	<CACePvbUvQu+So7OoUbJTMLODz8YDAOgWaM8A-RXFj2U_Qc-dng@mail.gmail.com>
-	<3c0e9dd0-70ac-4588-813b-ffb24d40f067@lucifer.local>
-	<c9e3ad0e-02ef-077c-c12c-f72057eb7817@google.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1762820789; c=relaxed/simple;
+	bh=11B5OG3BFeIa+HSUN0j9ki26vjLC9RLJd5ssdki10k4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cIRsEyZ3Vml1gxo8ZrNUnScjgqkNx/ihJZm3T3ul0FeTbomX/fn5Np9xZWtguGwDuAQN+1Dqr1VIkj5VLNv8QwMTIb2RdQFlbDppcJlj1T5EIP9Hvv5KDhyVGfLRqlBTo7QgVVMMJHcBr1cqQ3p6XrCpL0APmKh+wsM0eaRX7/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hljnO8dA; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4edb59dfda5so52601cf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 16:26:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762820787; x=1763425587; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WrcExo6KTeTkOozMgCGJDk2ooOnRaj2e3VUWOrNKsaA=;
+        b=hljnO8dAHlISIR6MKBLw/e9Nb8qnYunERmzz4znK5XCOYRgLL9OZ4FZ4aPDlljpqrD
+         q0CJL8zpzoXZOc7HmqnBABLkF0Mp1dV+2kXE+WG+ORzSilsy0GYXZRXqyBnmZ9q/IUmK
+         /aB4S8BGEjbP9hp56O19/BqTGNgourtZXdirFCJJLhTx5eQ2Q5de9ycciBzqIdh5gVG3
+         dKRdC2z1RWLRGkucLK06QFmTQWn8La2r5oPTr101nnAuMnmY/wFNyZe1cOo57II603Fd
+         +oqfzBVJQ9EakEXvK9+VSteUH2BulSn2j1ugZAGnWNUAQr1FRHChkvUL336M8fqr62DQ
+         AVGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762820787; x=1763425587;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=WrcExo6KTeTkOozMgCGJDk2ooOnRaj2e3VUWOrNKsaA=;
+        b=TomsvHv5/9sedend0sCMM/SDalaweH1HGDF7UyNE3SJk/dBbfuu3cUfy4e0bN3tlhi
+         tE6ES0WT/LgDIWPj7tac5ChVHpAFr9nAgN5hgyRziQWEVaFYdI2S1xd22wxKF6f1YGpy
+         Do9SJ1jDKnMn1YRhiDoDnuM3H2HOXyoC8pmuWCkaPiJRx35dXVXuuPttSQpYwbxTRoyi
+         KjNabFobl2SZEzq7cCG3PIhTlRTueRtGNp+EA1Vq3TRwNt12M7Qjk8NvTys6tvxF/IAZ
+         Qn9wdyTmMd99xPCqjGBlRdz/P9vNwupbqg+v5/ZJ/kbGY4224jtXYzpUPFdB6MwbCUN8
+         ncRw==
+X-Gm-Message-State: AOJu0YzmY1mVLaXN286us/TpztWaZCDX/AbrpGnRng/QtBzfQuxhKP/9
+	IbsYvKuLO44IuF5qyJvTXRQwOaFbIP24toWFKns3bM/onF37Va+lbkUd2zusRR58s4GEoT1lUut
+	Jx+ASWFR8745xF6peifSgpnpRWtmWZkMZcNtsRaUccHKNIHp7SSwzSgkd4hg=
+X-Gm-Gg: ASbGnctaOZpoXTgpgxXmisGXodeH14BqR+JQG12OdRt7JglZeKwT5Et8NhwKUXkt/DD
+	as3ffpxWSShFZzAQ/amIgROXB8yijWXd+GQ/ehgXyK+waEr/kA3zod3kYoLzkAczew90SFxDBCk
+	PN7uGc7OObe02L5yz1AINxFJggc78HujE/6OMdDaZDuRDjYqm4Is2WiHR9RvAudaclI0vjcZR9b
+	dyavQQG78EDdgo8dpQA7kyyPQzCjWOZb7256bXR7RLf8xPFB85XBNfIpXOTUoT3Sdtpe4sZHg4b
+	8Zpn+w==
+X-Google-Smtp-Source: AGHT+IGOZnRSg1Ss3tLeQex8z9s3XYcXM8YxVkDaSrS7HeaMPy0/ge2w1k+DM0HxJ8J//Clu520QCORr7D0Mp9ZPpso=
+X-Received: by 2002:a05:622a:28b:b0:4ed:b665:3779 with SMTP id
+ d75a77b69052e-4edcba56788mr2948691cf.16.1762820786810; Mon, 10 Nov 2025
+ 16:26:26 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+References: <CAMOZA0+TMC8FsFfboe5RKqYNRxYm=cg602p5FXAwpyA64Y4yHA@mail.gmail.com>
+In-Reply-To: <CAMOZA0+TMC8FsFfboe5RKqYNRxYm=cg602p5FXAwpyA64Y4yHA@mail.gmail.com>
+From: Luigi Rizzo <lrizzo@google.com>
+Date: Tue, 11 Nov 2025 01:25:50 +0100
+X-Gm-Features: AWmQ_bkIx95-unvJTdifS3Jv_RrBOGnfjVLdDsV78uRj1Y597L3H-W4nWWtChlw
+Message-ID: <CAMOZA0K1fh4Yb6ZhibE7u3gAqGQDA8V2kUPr0W3t+dNPa4EqVg@mail.gmail.com>
+Subject: Re: [POSSIBLE BUG] behavior change in irq_can_handle_pm() introduced
+ in 8d39d6ec4db5d
+To: linux-kernel@vger.kernel.org, maz@kernel.org, tglx@linutronix.de
+Cc: Luigi Rizzo <rizzo.unipi@gmail.com>, Sean Christopherson <seanjc@google.com>, 
+	Bjorn Helgaas <bhelgaas@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 10 Nov 2025 15:38:55 -0800 (PST) Hugh Dickins <hughd@google.com> wrote:
+On Sat, Nov 8, 2025 at 10:30=E2=80=AFPM Luigi Rizzo <lrizzo@google.com> wro=
+te:
+>
+> BACKGROUND (just to explain how I found the issue; it may exist regardles=
+s):
+>
+> I have some code (soon to be posted here) to implement interrupt moderati=
+on
+> in software using using per-CPU hrtimers. The basic logic is the followin=
+g:
+>
+> - if the system decides an irq needs moderation, it calls disable_irq_nos=
+ync(),
+>   adds the irq_desc in a per-cpu list, and keeps IRQD_IRQ_INPROGRESS set
+>   to prevent migration. The first desc inserted in the list also start
+> an hrtimer;
+>
+> - when the timer fires, the callback clears the bit and calls enable_irq(=
+)
+>   on all linked irq_desc's
+>
+> The relevant code is the following:
+>
+> @@ -207,x +208,x @@ irqreturn_t handle_irq_event(struct irq_desc *desc)
+>
+>         raw_spin_lock(&desc->lock);
+> +       /* if moderation kicks in, disable_irq_nosync() and set an
+> hrtimer. Keep the bit set to prevent migration */
+> +       if (irq_moderation_has_started_timer_and_disabled_irq(desc))
+> +               return ret;
+>         irqd_clear(&desc->irq_data, IRQD_IRQ_INPROGRESS);
+>         return ret;
+...
 
-> > I'm sorry but this is not a reasonable request. I am being as empathetic and
-> > kind as I can be here, but this series is proceeding without arbitrary delay.
-> > 
-> > I will do everything I can to accommodate any concerns or issues you may have
-> > here _within reason_ :)
-> 
-> But Lorenzo, have you even tested your series properly yet, with
-> swapping and folio migration and huge pages and tmpfs under load?
-> Please do.
-> 
-> I haven't had time to bisect yet, maybe there's nothing more needed
-> than a one-liner fix somewhere; but from my experience it is not yet
-> ready for inclusion in mm and next - it stops testing other folks' work.
-> 
-> I haven't tried today's v3, but from the cover letter of differences,
-> it didn't look like much of importance is fixed since v2: which
-> (after a profusion of "Bad swap offet entry 3ffffffffffff" messages,
-> not seen with v1, and probably not really serious) soon hits an Oops
-> or a BUG or something (as v1 did) - I don't have any logs or notes
-> to give yet, just forewarning before pursuing later in the day.
-> 
-> If you think v3 has fixed real crashes under load, please say so:
-> otherwise, I doubt it's worth Andrew hurrying to replace v2 by v3.
+after further debugging, I found that the problem is that disable_irq_nosyn=
+c()
+operates lazily. It marks the interrupt as disabled but leaves it on, actin=
+g on
+the chip only at the next interrupt. With this change
+8d39d6ec4db5d genirq: Prevent migration live lock in handle_edge_irq()
+the next interrupt will find IRQD_IRQ_INPROGRESS set, and block
+until the flag is clear, but that could only happen if the timer handler we=
+re
+allowed to run on the same CPU.
 
-Oh.  Thanks.  I'll move the v3 series into mm-new for now.
+I guess the problem can be avoided by calling
+    irq_set_status_flags(irq, IRQ_DISABLE_UNLAZY);
+on the interrupts where I want to use the my changes in handle_irq_event()
 
+However I still wonder if the change  of behavior is intentional or an unde=
+sired
+side effect
+
+thanks
+luigi
 
