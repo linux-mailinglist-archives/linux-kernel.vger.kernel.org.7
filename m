@@ -1,133 +1,163 @@
-Return-Path: <linux-kernel+bounces-895732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE647C4ECA6
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:33:26 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C8FBC4EC88
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:29:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 56B1C4ED278
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 15:29:16 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 02D9334CC72
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 15:29:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 391E4364EB9;
-	Tue, 11 Nov 2025 15:29:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C14A03659E9;
+	Tue, 11 Nov 2025 15:29:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bYAD6/Ee"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="iRm1X3KL";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="hDd2+SIj";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="iRm1X3KL";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="hDd2+SIj"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7536D344024
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 15:29:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FB09359FB8
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 15:29:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762874949; cv=none; b=mfp6GOYp55/9tvBz8ZF6QE49agfMY8AOyBIrMIOP7stF7UkbpzeTsDsNP+IkpVwdFtzDB/4+wjw3xlaSB0H/Z0BZKewmWYroa6a/c22fMPVtaAZUigKuswmG5T4XoGGblWeqktq27poHWV478oLuFOOYrLOyCd4a1c1LOYarulo=
+	t=1762874964; cv=none; b=tiBHV6mphM7g5BXemSfcDaQIKBd5MqBZlGv+1YBibyzyXB1+EIrai7w6CZ9rpJ4kwagesJ5jAnfEnEHFiQkNsnSwyA+N8dJvb8FOL+ZQJ/gCpwy051U6nia9DJyxfezcUY5EVnApjP44Q4vXnZ6oQ7V7gP3Di9dXD+IEA+IH5pk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762874949; c=relaxed/simple;
-	bh=sHV4YCriJE6MHGsGQWPgrOX/gNbP+xPxtR6RU0E9fDY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=usLL2hzB/vcSwgHLG0n5l56syK/Fc6uKSU1v2ANFFpQkMGitkjfyQvKfr4DWMdK2YQA1zhbCULAYu15vC1laQD0FxqR9UiYwqYmO+of6zAyyMIsPY65KOHWitAAhjqaJzsubyLqgYwvU4lKV648v7p+UIDTl94XuTY2c3itxuyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bYAD6/Ee; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762874948; x=1794410948;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=sHV4YCriJE6MHGsGQWPgrOX/gNbP+xPxtR6RU0E9fDY=;
-  b=bYAD6/EeX0xb1TQJjUoPgN0GTKDjEUin9fBfgFK2MREjybaMaAsMv3+J
-   Quhs4W73bN20C2MoVwwv2TqlvRUFoWsB4IBiddYndFwoWjkR0Pt7X46gd
-   Vd6fTdERyGF3gMqhCnULYjmmlMSG9BToYswGI4bF5J3W1KtN63LrTERvv
-   ywwdCmO67iDir+uwrYlc+xSUV1xLGIBh6R6MLL/XNkhdwCwNbhPXM/7Qi
-   YlMPeYGxNvhD0Y5/D1i2hbCGD/1CBudP16KV9PDM6dIazbg3MV1AayNIN
-   RgCan6hBmxq7IU4NSY9+kIvAMlIT092FJXvc2QMZwaWn2e4Vmtj1XTE6K
-   A==;
-X-CSE-ConnectionGUID: Nhc1reT5TxWze0tMZkK8mw==
-X-CSE-MsgGUID: r7G727cOTc22+F4V5f+Ntw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="64854870"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="64854870"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 07:29:07 -0800
-X-CSE-ConnectionGUID: f7ybnT3wTeaeyy5BxAvp3A==
-X-CSE-MsgGUID: tQ2osJ4ERGCYOccNK9PqSQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,296,1754982000"; 
-   d="scan'208";a="212383820"
-Received: from lucas-s2600cw.jf.intel.com ([10.54.55.69])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 07:29:07 -0800
-From: Lucas De Marchi <lucas.demarchi@intel.com>
-To: intel-xe@lists.freedesktop.org,
-	linux-mtd@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: Lucas De Marchi <lucas.demarchi@intel.com>,
-	Alexander Usyskin <alexander.usyskin@intel.com>,
-	Jani Partanen <jiipee@sotapeli.fi>
-Subject: [PATCH] mtd: intel-dg: Fix accessing regions before setting nregions
-Date: Tue, 11 Nov 2025 07:28:25 -0800
-Message-ID: <20251111-mtd-nregions-v1-1-61db61e78c63@intel.com>
-X-Mailer: git-send-email 2.51.2
+	s=arc-20240116; t=1762874964; c=relaxed/simple;
+	bh=RBEqT8TLv2nUSl8rhSU8ach4I5d5MlMLDf5lwXnpAuk=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TqD64/CIUGidp/NK/DX5biWR280jMPtn4A3IO2Uy5x9ji65UAAInW1GVmSGfCellXF+NajdYusZyOFniDA10foWu688sG08vgy4WvR4Bms7vJ+ArICFoJu82FzkCpyU3t22sBx2IFYPVfKmQZuHqtzXZqwPbqmLII/0U6LtOR9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=iRm1X3KL; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=hDd2+SIj; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=iRm1X3KL; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=hDd2+SIj; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 72D132191C;
+	Tue, 11 Nov 2025 15:29:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1762874960; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2tVplv7/CD6HPjxvcjJ2gXjYAgQwqNemyVrBgR5GIp0=;
+	b=iRm1X3KLVbMuqIEuQRyUiLZp8N+vuwQREuZC/h++GivivuH7lth6AQB5fMNoMr4cbxk2cC
+	Xg9YuSOEFYuT3EkMwDyM62S7edSMTDYVr5FbKbsxL4Q7er4ClgPt+VjAayguLgoyrEsjUu
+	QQ8+LNq3D6Schr4QyBmfEwFPGIx7TBE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1762874960;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2tVplv7/CD6HPjxvcjJ2gXjYAgQwqNemyVrBgR5GIp0=;
+	b=hDd2+SIj1Dz7TBkji7GolO0dEI8xttLFKmDuVW7EWKe8gJNqMj87caEYcorP97vc+FhReN
+	iSz1esIfln2L3ZDA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=iRm1X3KL;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=hDd2+SIj
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1762874960; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2tVplv7/CD6HPjxvcjJ2gXjYAgQwqNemyVrBgR5GIp0=;
+	b=iRm1X3KLVbMuqIEuQRyUiLZp8N+vuwQREuZC/h++GivivuH7lth6AQB5fMNoMr4cbxk2cC
+	Xg9YuSOEFYuT3EkMwDyM62S7edSMTDYVr5FbKbsxL4Q7er4ClgPt+VjAayguLgoyrEsjUu
+	QQ8+LNq3D6Schr4QyBmfEwFPGIx7TBE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1762874960;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2tVplv7/CD6HPjxvcjJ2gXjYAgQwqNemyVrBgR5GIp0=;
+	b=hDd2+SIj1Dz7TBkji7GolO0dEI8xttLFKmDuVW7EWKe8gJNqMj87caEYcorP97vc+FhReN
+	iSz1esIfln2L3ZDA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5E36A149D9;
+	Tue, 11 Nov 2025 15:29:20 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id MMViFlBWE2k2WQAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Tue, 11 Nov 2025 15:29:20 +0000
+Date: Tue, 11 Nov 2025 16:29:20 +0100
+Message-ID: <87cy5ok2pb.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Haein Lee <lhi0729@kaist.ac.kr>
+Cc: perex@perex.cz,
+	Takashi Iwai <tiwai@suse.de>,
+	linux-kernel@vger.kernel.org,
+	linux-sound@vger.kernel.org
+Subject: Re: [PATCH v2] ALSA: usb-audio: Fix NULL pointer dereference in snd_usb_mixer_controls_badd
+In-Reply-To: <vwhdiz65lpej.vwhdiz62bsc0.g5@dooray.com>
+References: <vwhdiz65lpej.vwhdiz62bsc0.g5@dooray.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/30.1 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Change-ID: 20251110-mtd-nregions-e9c66d5fcfae
-X-Mailer: b4 0.15-dev-50d74
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Rspamd-Queue-Id: 72D132191C
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-3.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_TLS_ALL(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -3.51
+X-Spam-Level: 
 
-The regions array is counted by nregions, but it's set only after
-accessing it:
+On Tue, 11 Nov 2025 14:35:22 +0100,
+Haein Lee wrote:
+> 
+> In snd_usb_create_streams(), for UAC version 3 devices, the Interface
+> Association Descriptor (IAD) is retrieved via usb_ifnum_to_if(). If this
+> call fails, a fallback routine attempts to obtain the IAD from the next
+> interface and sets a BADD profile. However, snd_usb_mixer_controls_badd()
+> assumes that the IAD retrieved from usb_ifnum_to_if() is always valid,
+> without performing a NULL check. This can lead to a NULL pointer
+> dereference when usb_ifnum_to_if() fails to find the interface descriptor.
+> 
+> This patch adds a NULL pointer check after calling usb_ifnum_to_if() in
+> snd_usb_mixer_controls_badd() to prevent the dereference.
+> 
+> This issue was discovered by syzkaller, which triggered the bug by sending
+> a crafted USB device descriptor.
+> ---
 
-	[] UBSAN: array-index-out-of-bounds in drivers/mtd/devices/mtd_intel_dg.c:750:15
-	[] index 0 is out of range for type '<unknown> [*]'
-
-Fix it by also fixing an undesired behavior: the loop silently ignores
-ENOMEM and continues setting the other entries.
-
-Cc: Alexander Usyskin <alexander.usyskin@intel.com>
-Reported-by: Jani Partanen <jiipee@sotapeli.fi>
-Closes: https://lore.kernel.org/all/caca6c67-4f1d-49f1-948f-e63b6b937b29@sotapeli.fi
-Fixes: ceb5ab3cb646 ("mtd: add driver for intel graphics non-volatile memory device")
-Signed-off-by: Lucas De Marchi <lucas.demarchi@intel.com>
----
- drivers/mtd/devices/mtd_intel_dg.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/mtd/devices/mtd_intel_dg.c b/drivers/mtd/devices/mtd_intel_dg.c
-index b438ee5aacc34..114e69135b8d9 100644
---- a/drivers/mtd/devices/mtd_intel_dg.c
-+++ b/drivers/mtd/devices/mtd_intel_dg.c
-@@ -738,6 +738,7 @@ static int intel_dg_mtd_probe(struct auxiliary_device *aux_dev,
- 
- 	kref_init(&nvm->refcnt);
- 	mutex_init(&nvm->lock);
-+	nvm->nregions = nregions;
- 
- 	for (n = 0, i = 0; i < INTEL_DG_NVM_REGIONS; i++) {
- 		if (!invm->regions[i].name)
-@@ -745,13 +746,15 @@ static int intel_dg_mtd_probe(struct auxiliary_device *aux_dev,
- 
- 		char *name = kasprintf(GFP_KERNEL, "%s.%s",
- 				       dev_name(&aux_dev->dev), invm->regions[i].name);
--		if (!name)
--			continue;
-+		if (!name) {
-+			ret = -ENOMEM;
-+			goto err;
-+		}
-+
- 		nvm->regions[n].name = name;
- 		nvm->regions[n].id = i;
- 		n++;
- 	}
--	nvm->nregions = n; /* in case where kasprintf fail */
- 
- 	nvm->base = devm_ioremap_resource(device, &invm->bar);
- 	if (IS_ERR(nvm->base)) {
-
+You seem to have forgotten your Signed-off-by tag?
+Please resubmit with it.
 
 
+thanks,
+
+Takashi
 
