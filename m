@@ -1,294 +1,218 @@
-Return-Path: <linux-kernel+bounces-895461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16F22C4E017
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:03:30 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC425C4E014
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:03:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 322814F6A25
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:55:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 12FDC4F755B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:54:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8445324703;
-	Tue, 11 Nov 2025 12:54:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66C1F3AA1AF;
+	Tue, 11 Nov 2025 12:53:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FNsEAXUR"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="kTSD/4HZ"
+Received: from BL0PR03CU003.outbound.protection.outlook.com (mail-eastusazon11012012.outbound.protection.outlook.com [52.101.53.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E0F33246F0
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 12:54:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762865648; cv=none; b=PunKOhMzRvWqZ+3pMO0jWiLtJOUR6YpwOjAFbcIvEK03JbuCyRs2MaLvC+4qWc/PVDXasZNl7kbZwo59us3Q9eJWdGFraop/eIgZSpwh7LFDy6q0R6YYMJRB8wmfGFN02L2KzeEDQZfBZ7cJzR6tnwc/4At3I1PkLZal0cMt7xs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762865648; c=relaxed/simple;
-	bh=unPRQlRCJ21nxfJRMtud04497uOiOiOlZ2lRqQFcIcg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jC0f/hFbHUqxqW2ZM2SPSy3F+seqMmt/JkFJl8Wx9+QLSNJnhnpC3HE9QswQCXhEMvXzqFWP6vX/oAksXf7B0MWEJsIE4PgoUCm1PluiLPnrc4Y7r66mPs4jI6x2doDF9VS7+LP1lWwrinXaiv86amio6qDZUyHb0A7SqCp7zjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FNsEAXUR; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-42b379cd896so1375668f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 04:54:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762865644; x=1763470444; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pixwuy1Oa1ogyBxcT1j1wEd+TT+wyOXiJagDOyZSIQ4=;
-        b=FNsEAXURcTFyTUkbRwvcZ4w2qeI3XtaMjXxHo32MFQm0f/+t28CVzuqqmAxR+IZfWs
-         BbFj4p37er3X0GKQD/3BjgGpeluVPlKx+bAWM6cJDLtt0N7ZMCjznYrcYUWsUHikHxpi
-         uTc45PjnndVraslmw8MAStIuPLHcFV15honrjPip52DBiLKZFID3XrBmEAe3yhBgQUPS
-         /Ot0SbRz5gDaz9NNpCoZiKC2RfROvg0BxZYw+J2bK0pZlibLxCSxJHu3OMj4+vLBClf8
-         QufKS1lrqmWofaIOLo3LxsMX1a8Z0jTphrNqjyUiPQR4G307QXTj+isUMxle4OpBTVfY
-         FTUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762865644; x=1763470444;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=pixwuy1Oa1ogyBxcT1j1wEd+TT+wyOXiJagDOyZSIQ4=;
-        b=qnwwJWxYEehr83+b5KhrE5ghuUax5I4UYMDYty5wbyOqf6tRhp70Tw0pNtbPpZZ3/h
-         +YZnGm02OPSRzhGFJxJ/hWbdwitFJVd0a2kZExnGBPTRvNZBZa5ZRh0FQYmwXyHCIA7r
-         6ukM+Ze31PDx9UGBc4BrPEGFa6ovV66TFHsKzU4EzspBJWp7jWB/7y3poxIeBbhH+0W1
-         P8m/GM4pETX48AXLnvnVA3GoLjWblT/fzpS3s9JNQMsvlL6YIjI9TBs56li1swPONbxa
-         /YvXyGR6dGXInSYOCzljo2TNJ2k0teeHQ7SII2m9V+2XvB+zNSDHKNno3226oTHV0pL0
-         YHQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXlz5sq2+0BPsn00CgNuBG72M9Vv0mhZCCsfM5Rw/Gs24UDOYNaapihFUB3qY/zXsAyc75w7GaPQo8Uuz4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyM7nziGTIRvtdBUrZlxL+Y75+qSNNAE9bmi0s92T9h3FUjDmDf
-	eYP9STxZXuZRYQ2by2DDjioHkVJgG8mMKXANcVoEjUjyeJzikgIBAzN/8R0cCR0b4n5tG0CmHeU
-	A1BUSqOF1iUazoL3Jbj2OEvHXUomd4d8=
-X-Gm-Gg: ASbGncvZi0AycLRkBact6OQSyFBfX+C1eIbYXuN5+8uM0/H/3aKkp7jYgD3jaOG3kf/
-	Gg5NFjCGiQgLcJ1KfCd+hVAuGjvvhpMdXwjPJzf3b6XnHTEVELIsybRizntIF6um6SEW//sMhht
-	efNd76I2gnHUNllJ4iiysLCKUb5OUbIEHP+OphcpeCRt+u/YvBaN/jHZB370Ma7WB4/OyRuy5oF
-	OhXRDvm43ssZwT1TCkbsaGqDrvxqyFgRhcrWFfLJNDcbVbXmqhvf45A1b0QdA==
-X-Google-Smtp-Source: AGHT+IEj7gx0ZiIu8BHrdAC+RVKzNHGyLsGQt9LcZaen6jm13AdkSwj5HFslTJBizBUrMSWhJo2iezYgOwIO6CC4P5o=
-X-Received: by 2002:a05:6000:420b:b0:429:d66b:508f with SMTP id
- ffacd0b85a97d-42b2dc856admr9311463f8f.30.1762865644130; Tue, 11 Nov 2025
- 04:54:04 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE1BC3AA196;
+	Tue, 11 Nov 2025 12:53:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.53.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762865635; cv=fail; b=ADZGeSgUe+L+YveJs5TknjGZczNhkqiLoPAf4MM3XXMQr+fc74QM1rdQwJ823R7bI0gfQdabaTxKGvQoMZQuTDR0IOsceBQpv9hbvGwno8TiM1LpTcUn4beXY0J5T1s2A5RTlvluUmVtMqdk07kkZzz0rCpGLN61Yz+SsfovTjQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762865635; c=relaxed/simple;
+	bh=KXdhWnQsoqrWrSkN2fyTahe7e3XsFVCZFJn5Yi7D07Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=oHt+R0kb6FoQXKDnT8xFN37oh2TbhNKLL1w3lKmcyEghZ0MK79X5Q3pvra0Ek303wfZx3+5wtB+OWB2D7hUVRb+OAWdDECAvemEDOvm+5fh6e6ec8aVJouRMkhtspq8/7w60LICe2dykBG29EG95UMsjA2l91nyhTKumVQ3JLQg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=kTSD/4HZ; arc=fail smtp.client-ip=52.101.53.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=XCgltsRHzhJiLysDpFZiDFSzlwK3DTQzLvmFLCh0/qLW/gRY3fOVt6saD9I24CI/uzL79RrTjCmXmNsZzCNGGgjG+cSLtT0eC4wVGuOnxV+UzHxVvPpBi9QJy5j1GQjja0QykXqFKuMOudIhpJmYLKGSjBzgqJB9rzC1XIlSzJrzpNfQCu9I3yXMO1XMRWNR7ft3+dEcYCKM+hVqfZ8XMqmvj2RIm2RW7D0yLm1ky23dMF9piJ7Y0Erk/k3Uov76ZQ6fC4p/3KiDRLC4y73Dnn2kcfQNnPHY5MVECNFJri21p9woaObwNMt0a6iqtJ3T9CqAje2KUv76CGRGQfQb+Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=tCVmHMOtMcuQpJvFCdwtQOYCo+/BqxWDV4X11Q8serA=;
+ b=rx4BNKlrRwElAALQRpJTojb+aLt3r6LVcDtS+qnA2aKxTz5HGtAQmm6bXIZLuxcIfPVM/ClW00m7MynwEKYQ/Bn4BFMc+rrFQv6A8sUJ8xum+p13MCWQtQa5JPRwxr4qCUYtKGvf/TmWTGkwkug40NsZD3slenhA++g4WdpbLg6O+1Ro0eEM3rSnjsr3bh/ROz3FcQ5HdCveRZ2O6s0yNU1hnnpYq8LxwpOdDv/KrF8HhYxCQnnlWx2zr0cujfXFH8FoMRp9mGtgCU/YK54jUhogGRPBgi1DK2OeTJGWkDe+wdsa+RFS4KJedR7I/cljLH42WCwT2VWPExf7Pb02FQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tCVmHMOtMcuQpJvFCdwtQOYCo+/BqxWDV4X11Q8serA=;
+ b=kTSD/4HZkpaXaF2vfNF49l9OuXdJHT7YI7ZXzK9Fz0FppyKiHtO23pFv4Kb3KvHin4qaLARIAaSQ49y2Y/yvX4Yav3eW3yXVxXM2A+bJaQbRjc7FF+SQ4lSbRwGHW57Ryr5kZPLA7dB5SZ3tkJg3S5neiGT7vODxMJhP2UsJPFY=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from CYYPR12MB8750.namprd12.prod.outlook.com (2603:10b6:930:be::18)
+ by SJ0PR12MB7460.namprd12.prod.outlook.com (2603:10b6:a03:48d::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Tue, 11 Nov
+ 2025 12:53:50 +0000
+Received: from CYYPR12MB8750.namprd12.prod.outlook.com
+ ([fe80::b965:1501:b970:e60a]) by CYYPR12MB8750.namprd12.prod.outlook.com
+ ([fe80::b965:1501:b970:e60a%5]) with mapi id 15.20.9320.013; Tue, 11 Nov 2025
+ 12:53:50 +0000
+Date: Tue, 11 Nov 2025 13:54:17 +0100
+From: Robert Richter <rrichter@amd.com>
+To: Dave Jiang <dave.jiang@intel.com>
+Cc: Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Davidlohr Bueso <dave@stgolabs.net>, linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Gregory Price <gourry@gourry.net>,
+	"Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
+	Terry Bowman <terry.bowman@amd.com>,
+	Joshua Hahn <joshua.hahnjy@gmail.com>
+Subject: Re: [PATCH v4 11/14] cxl/atl: Lock decoders that need address
+ translation
+Message-ID: <aRMx-YYhaouP4LvR@rric.localdomain>
+References: <20251103184804.509762-1-rrichter@amd.com>
+ <20251103184804.509762-12-rrichter@amd.com>
+ <ae28560c-ed16-400b-bf3d-86e2cc8617cf@intel.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ae28560c-ed16-400b-bf3d-86e2cc8617cf@intel.com>
+X-ClientProxiedBy: FR2P281CA0114.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:9d::6) To MW6PR12MB8758.namprd12.prod.outlook.com
+ (2603:10b6:303:23d::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251103145629.21588-1-clamor95@gmail.com> <20251103145629.21588-3-clamor95@gmail.com>
- <aRMw_Qre1FY94soi@kekkonen.localdomain>
-In-Reply-To: <aRMw_Qre1FY94soi@kekkonen.localdomain>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Tue, 11 Nov 2025 14:53:52 +0200
-X-Gm-Features: AWmQ_bkRG5HIb_qQVszAElxxq_kW24NtTOJeleHHATd4PPO2npHibxTgWHp68Qw
-Message-ID: <CAPVz0n1MokJq6d4s0cS3UdevRt2n-HaicPpwiBu=3HVSKfnzfg@mail.gmail.com>
-Subject: Re: [PATCH v4 2/2] media: i2c: add Sony IMX111 CMOS camera sensor driver
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Hans Verkuil <hverkuil@xs4all.nl>, Hans de Goede <hansg@kernel.org>, 
-	=?UTF-8?Q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>, 
-	Sylvain Petinot <sylvain.petinot@foss.st.com>, 
-	Benjamin Mugnier <benjamin.mugnier@foss.st.com>, Dongcheng Yan <dongcheng.yan@intel.com>, 
-	Heimir Thor Sverrisson <heimir.sverrisson@gmail.com>, Tarang Raval <tarang.raval@siliconsignals.io>, 
-	linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CYYPR12MB8750:EE_|SJ0PR12MB7460:EE_
+X-MS-Office365-Filtering-Correlation-Id: a2dd6aad-f815-4d9b-4744-08de21215c1a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?u9Aca4lxX5F46xQDoljmg/QVQ+c16zHxPXBrsQBruE2a5bW+M/lx1KqV6MLI?=
+ =?us-ascii?Q?YM2SScsvYWETjQHvbrHQYwf7+pqpmQsyr/zHvIu5yL4NE5uxnfKw+1Jlpy9d?=
+ =?us-ascii?Q?ADbEO9FeQbBtm0GdcEUSBYI9J7hpMWxPVdQgkTa8WZM3Uke0/4Bf9rKKO3P1?=
+ =?us-ascii?Q?gqMce/0+YKmafL7gJs/0Jr41Bzm1sfVWK3ierOXrDSOMuubn5kW+o8MSE5EW?=
+ =?us-ascii?Q?pg2HrA8o7t5qxXr/5jCP0PmFQ8ruiYqOHMDUPgFyWRxkkg850NHRbpum+ie3?=
+ =?us-ascii?Q?6mrJGplBqwHNwERpIKUDo7ejC+DsrEeH3IqWlspGOIlyTMl2eRv1W2x4C7NG?=
+ =?us-ascii?Q?aragJ5KeDwvL2aFLs3F+SdvCviCk/xvy8M+TSt0iBOAxFBgvl07SpmhKCk9S?=
+ =?us-ascii?Q?QgtQO1uJtu7dvqmuE9kJBA/LF0icuoMAFJ1LuJyw0g/pTb2a3fjEW6yalDa5?=
+ =?us-ascii?Q?gGS8+Y2Ih5xM/gAE+8C70pYAPnjsOMS0qEJ0hqwsJkLmgjCAKpBSStj6Klfv?=
+ =?us-ascii?Q?y6/eE1tz4n/5qpfPaZurI17C5wzdZ12KNIh6VSt3bS82prBChlkgfn64le8g?=
+ =?us-ascii?Q?/bj/KJJ9E0KSyssFknWLHXs31VG7whOSfql4o2KVWQoGGnz6tKcTQZp31TRi?=
+ =?us-ascii?Q?riY0hVj0+LSeaaS9XWQhC4T1X33bDDcl28IpEuG97IA8D0yeomBpUYMSPOYw?=
+ =?us-ascii?Q?cawlKv1O6mxRj9G0H18uzCfgORrzk3/qT2YaMqb+Fk1pIYlqGdEuJNMlhmpL?=
+ =?us-ascii?Q?CVJ/R3j7/erQaMt1R9Qoo3orJJMazfC/gKji61ySYm1i5obj6snQd6h1KpJ6?=
+ =?us-ascii?Q?xks3Skb3bwjQvHdMlTdJt4TvC8begl1UolQfUapGnqeZ6MjQWjjRNQULygQy?=
+ =?us-ascii?Q?ZsBbC/vF9WnSgrxcqrLyfKKzTWZ7lvfGPGrKQfsTScEMg4uy4JrZmmzpZX4Y?=
+ =?us-ascii?Q?71f11YKrS9Eo4dNPOLODrxfiL5st5oOZs7l7paIhmr73nH2RHEyP1IOxfm7c?=
+ =?us-ascii?Q?YFZsfLXBlJuvLEz3iQ7DnEg3n+POuyyJiFJDuNlPKjMrX6ncA065oOnzJ53L?=
+ =?us-ascii?Q?Zx0x1ZfilSBIyqyBYcP87b30rEnpNFNAFC1k0ifk87f/aswC7O9uXsNL1W5Z?=
+ =?us-ascii?Q?iJxRVJrR3xSxNv1tW6E26E2N6z/R62oVt1RUmzlUfuEmK2BWp+N1yhfDrIkJ?=
+ =?us-ascii?Q?Abeohs6hNEacEdTXBny3X+U+Sn1TQVZhOkTXoYxD2Q/kIy6apMsQJb1sHyix?=
+ =?us-ascii?Q?LQt1+bswFJgSULzKdYcFJARCIkFrIkkQ27JFTc3EigFiuC06ybup14STycKj?=
+ =?us-ascii?Q?odTkLrRkYMUez4D2UK4g6YdiLG+jM8Ojw0oojzsLy2VZdvBaQqvm5hZVlkgl?=
+ =?us-ascii?Q?AYERcVB7u/BYTu2EWD7eleETOuWcNpGfNCGXJlSeu/K4qZC4/TSx5pm5TPUW?=
+ =?us-ascii?Q?iZsqWbbCglF8AIPL7pu1SH/4VG/UA6sV?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CYYPR12MB8750.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Jq1exHZ1zPGTOt0y/6MO3UbWP4S6E4tSzx08dhMsZIDx9L6J/XjmwEZ7z93j?=
+ =?us-ascii?Q?9bwt/NLJ13H41LqjK6vIxlSXQjjBR+xQWyDJs3XAMVmMSitvEEFbMVlUQNTq?=
+ =?us-ascii?Q?fkY75fmWKsP8dc7MUZVhq/jGlHciUAlsXp6CLxY9OW85yh/vBd1Gs6abLErH?=
+ =?us-ascii?Q?M3+vQjMUKBuookCLb8kT3PO+uxJzijtLiJ15dGWdkgnMXZehk8HsG44LRLA8?=
+ =?us-ascii?Q?vIzddBWoeYjHVKXwnzsCuHX2iWG7lZ8k/I6fI+71ePT3KVKFMW2Gyc75dSYh?=
+ =?us-ascii?Q?V7R9cyuOGwtLor4nBQ51glfNhSzhj+3JWJGya5s5v8rCmK+2SSa41CLm70xj?=
+ =?us-ascii?Q?SA3PMxEKlt+lQF3UEs6SdS2VzJB+VujsWgTgmFd1Rm7ridvTFyTz7WtkTi41?=
+ =?us-ascii?Q?YYwVk9haIk5XWUovGjItwZSW8xbJ2ULHdsce6chIVGNXOy2dzP3oMB+pwe/p?=
+ =?us-ascii?Q?m4ghybx+8k72o98UlTgWQX3LmT9GM2veL++LGl+DbyAVLHwQ3Lo2CqMAFdXM?=
+ =?us-ascii?Q?TZDXWXMC8lPk2pOQWyUCuuhsSV6Is+Uj0uV92gSLqyKvbZw4hUbKzdJ7oRns?=
+ =?us-ascii?Q?aXAT+btiCUyHfPGhU6iMyeM9Svr/tewRClS5xrtGThFddcfdrePRMSChEb0S?=
+ =?us-ascii?Q?S8+6bKjGLb5ojzptnS86uP2mN7yxHKP4yyuvo4qo/WrBHTvaNWIXqkKhhMG1?=
+ =?us-ascii?Q?KdRJYKVqvk2L5EUiyB8XuleFIdgaZiFcdQN+NX7iB3p6ud8347F005RtJfvc?=
+ =?us-ascii?Q?nMECjWUhdVRQcZMwwFEvPrYwRoQL2oAPfPyDRMpcKTbPTlCrDzb4O9LhIki8?=
+ =?us-ascii?Q?cCSmNZrt39JLL0CLCz/K7Rz4kEEUG51mTE2cfm3NYvO5DeOP3LecUr+VE9Jd?=
+ =?us-ascii?Q?AW/43czAR4a0FtPPSbbvjIelVby/46WFdLaVu8DHKTb6d/6X35MEboc1L9zG?=
+ =?us-ascii?Q?PAs5hLJZUIC39Rt2gi2+vqm2f9NUBUMAamlFwP9+WBOXDi9+icqDRKgm5NoR?=
+ =?us-ascii?Q?HjHhTpOmNCqEduYQJnYY/dF5kQvK/C+jqQ9yctyq7EJPgT64HY7T5FLZYWTy?=
+ =?us-ascii?Q?t0CKR1/lf5TJ0AWdXriDlvh3ffYCwxcSF+vqTElQSWvNb1ob8qCkVDcWyUCX?=
+ =?us-ascii?Q?9wCkTResZJbej9eEjmR9MOvq/5LWFxQDLg46VZlPk659O0lnWgVX1G5LrJrp?=
+ =?us-ascii?Q?kFYXRDuNQ9U918dVP8Qn3ZRyTosRNT8tP39QNbl4Lrnh5hkXWv20lck1C2uo?=
+ =?us-ascii?Q?1QqJ+fAYD3BFVj56qLlmN46ukk6rRRJ1H7iPADdZ6hTfYFxMSDVuAepUZ7wg?=
+ =?us-ascii?Q?Un2pb/SUGjUDnZ5V024017HcGGXIlWewDtmMz4xzmJ6wriIcc6EvIRlxpFMj?=
+ =?us-ascii?Q?KNRo5uwH13iZvAsWFmBjRJREa6rNqyMszWkDSVM938Q61/3Va0nEzO+tB1e8?=
+ =?us-ascii?Q?75QfNze6LjZfTO5I61v8+p2/Ie8lt1nrUq5E4bVJDjKZ10wcLRqG7zOacbx+?=
+ =?us-ascii?Q?fX8sPtGCFog2tCNg7x6vujX8+g+D3PSBTl6e4yRaVMmSU3jvvXECIVhId5m+?=
+ =?us-ascii?Q?tccC19BdyfDsipNKNs00bBZh1WBcxegEun66fYbl?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a2dd6aad-f815-4d9b-4744-08de21215c1a
+X-MS-Exchange-CrossTenant-AuthSource: MW6PR12MB8758.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Nov 2025 12:53:50.5698
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: c0iTP1Cu8SiZrlPQD6YpESvnMYeF/XMEfltQ+FD4eoXXZEdA0lvwm58MuYAXCkjJX4RCuYHLVRnzG7oOIS7o2Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB7460
 
-=D0=B2=D1=82, 11 =D0=BB=D0=B8=D1=81=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 14:5=
-0 Sakari Ailus <sakari.ailus@linux.intel.com> =D0=BF=D0=B8=D1=88=D0=B5:
+On 04.11.25 10:13:34, Dave Jiang wrote:
+> 
+> 
+> On 11/3/25 11:47 AM, Robert Richter wrote:
+> > There is only support to translate addresses from an endpoint to its
+> > CXL host bridge, but not in the opposite direction from the bridge to
+> > the endpoint. Thus, the endpoint address range cannot be determined
+> > and setup manually for a given SPA range of a region. If the endpoint
+> > has address translation enabled, lock it to prevent the kernel from
+> > reconfiguring it.
+> > 
+> > Reviewed-by: Gregory Price <gourry@gourry.net>
+> > Signed-off-by: Robert Richter <rrichter@amd.com>
+> > ---
+> >  drivers/cxl/core/atl.c | 10 ++++++++++
+> >  1 file changed, 10 insertions(+)
+> > 
+> > diff --git a/drivers/cxl/core/atl.c b/drivers/cxl/core/atl.c
+> > index d6aa7e6d0ac5..5c15e4d12193 100644
+> > --- a/drivers/cxl/core/atl.c
+> > +++ b/drivers/cxl/core/atl.c
+> > @@ -158,6 +158,16 @@ static int cxl_prm_translate_hpa_range(struct cxl_root *cxl_root, void *data)
+> >  		return -ENXIO;
+> >  	}
+> >  
+> > +	/*
+> > +	 * There is only support to translate from the endpoint to its
+> > +	 * parent port, but not in the opposite direction from the
+> > +	 * parent to the endpoint. Thus, the endpoint address range
+> > +	 * cannot be determined and setup manually. If the address range
+> > +	 * was translated and modified, forbid reprogramming of the
+> > +	 * decoders and lock them.
+> > +	 */
+> > +	cxld->flags |= CXL_DECODER_F_LOCK;
 >
-> Hi Svyatoslav,
->
-> A few comments below...
->
-> On Mon, Nov 03, 2025 at 04:56:29PM +0200, Svyatoslav Ryhel wrote:
->
-> ...
->
-> > +static int imx111_set_format(struct v4l2_subdev *sd,
-> > +                          struct v4l2_subdev_state *state,
-> > +                          struct v4l2_subdev_format *format)
-> > +{
-> > +     struct imx111 *sensor =3D sd_to_imx111(sd);
-> > +     struct v4l2_mbus_framefmt *mbus_fmt =3D &format->format;
-> > +     struct v4l2_mbus_framefmt *fmt;
-> > +     const struct imx111_mode *mode;
-> > +
-> > +     mode =3D v4l2_find_nearest_size(imx111_modes, ARRAY_SIZE(imx111_m=
-odes),
-> > +                                   width, height,
-> > +                                   mbus_fmt->width, mbus_fmt->height);
-> > +
-> > +     fmt =3D v4l2_subdev_state_get_format(state, format->pad);
->
-> You should set the fields below after changing the controls. Albeit... it
-> won't be perfect in that case either, as only some controls may have been
-> applied. How about just moving the lines below after changing the control=
-s?
->
-> > +
-> > +     fmt->code =3D imx111_get_format_code(sensor, mbus_fmt->code, fals=
-e);
-> > +     fmt->width =3D mode->width;
-> > +     fmt->height =3D mode->height;
-> > +     fmt->colorspace =3D V4L2_COLORSPACE_RAW;
-> > +
-> > +     *mbus_fmt =3D *fmt;
-> > +
-> > +     if (format->which =3D=3D V4L2_SUBDEV_FORMAT_ACTIVE) {
-> > +             int ret;
-> > +
-> > +             sensor->cur_mode =3D mode;
-> > +             sensor->data_depth =3D imx111_get_format_bpp(fmt);
-> > +
-> > +             ret =3D __v4l2_ctrl_s_ctrl_int64(sensor->pixel_rate,
-> > +                                            div_u64(sensor->pixel_clk_=
-raw,
-> > +                                                    2 *
-> > +                                                    sensor->data_depth=
-));
-> > +             if (ret)
-> > +                     return ret;
-> > +
-> > +             ret =3D __v4l2_ctrl_modify_range(sensor->vblank,
-> > +                                            IMX111_VBLANK_MIN,
-> > +                                            IMX111_VTL_MAX - mode->hei=
-ght,
-> > +                                            1,
-> > +                                            mode->vtl_def - mode->heig=
-ht);
-> > +             if (ret)
-> > +                     return ret;
-> > +
-> > +             ret =3D __v4l2_ctrl_s_ctrl(sensor->vblank, mode->vtl_def =
--
-> > +                                      mode->height);
-> > +             if (ret)
-> > +                     return ret;
-> > +
-> > +             ret =3D __v4l2_ctrl_modify_range(sensor->hblank,
-> > +                                            IMX111_HBLANK_MIN,
-> > +                                            IMX111_HTL_MAX - mode->wid=
-th,
-> > +                                            1,
-> > +                                            mode->htl_def - mode->widt=
-h);
-> > +             if (ret)
-> > +                     return ret;
-> > +
-> > +             ret =3D __v4l2_ctrl_s_ctrl(sensor->hblank, mode->htl_def =
--
-> > +                                      mode->width);
-> > +             if (ret)
-> > +                     return ret;
-> > +     }
-> > +
-> > +     return 0;
-> > +}
->
-> ...
->
-> > +static int imx111_probe(struct i2c_client *client)
-> > +{
-> > +     struct device *dev =3D &client->dev;
-> > +     struct imx111 *sensor;
-> > +     int ret;
-> > +
-> > +     sensor =3D devm_kzalloc(dev, sizeof(*sensor), GFP_KERNEL);
-> > +     if (!sensor)
-> > +             return -ENOMEM;
-> > +
-> > +     sensor->regmap =3D devm_cci_regmap_init_i2c(client, 16);
-> > +     if (IS_ERR(sensor->regmap))
-> > +             return dev_err_probe(dev, PTR_ERR(sensor->regmap),
-> > +                                  "Failed to allocate register map\n")=
-;
-> > +
-> > +     sensor->extclk =3D devm_v4l2_sensor_clk_get(dev, NULL);
-> > +     if (IS_ERR(sensor->extclk))
-> > +             return dev_err_probe(dev, PTR_ERR(sensor->extclk),
-> > +                                  "Failed to get clock\n");
-> > +
-> > +     sensor->reset =3D devm_gpiod_get_optional(dev, "reset", GPIOD_OUT=
-_LOW);
-> > +     if (IS_ERR(sensor->reset))
-> > +             return dev_err_probe(dev, PTR_ERR(sensor->reset),
-> > +                                  "Failed to get reset GPIO\n");
-> > +
-> > +     ret =3D devm_regulator_bulk_get_const(dev, ARRAY_SIZE(imx111_supp=
-lies),
-> > +                                         imx111_supplies,
-> > +                                         &sensor->supplies);
-> > +     if (ret < 0)
-> > +             return dev_err_probe(dev, ret, "Failed to get regulators\=
-n");
-> > +
-> > +     ret =3D imx111_parse_dt(sensor);
-> > +     if (ret < 0)
-> > +             return ret;
-> > +
-> > +     ret =3D imx111_clk_init(sensor);
-> > +     if (ret < 0)
-> > +             goto error_ep_free;
-> > +
-> > +     ret =3D imx111_power_on(sensor);
-> > +     if (ret < 0) {
-> > +             dev_err_probe(dev, ret, "Could not power on the device\n"=
-);
-> > +             goto error_ep_free;
-> > +     }
-> > +
-> > +     ret =3D imx111_identify_module(sensor);
-> > +     if (ret < 0) {
-> > +             dev_err_probe(dev, ret, "Could not identify module\n");
-> > +             goto error_power_off;
-> > +     }
-> > +
-> > +     sensor->cur_mode =3D &imx111_modes[IMX111_MODE_3280x2464];
-> > +     sensor->data_depth =3D IMX111_DATA_DEPTH_RAW10;
-> > +
-> > +     ret =3D imx111_initialize(sensor);
-> > +     if (ret < 0)
-> > +             goto error_power_off;
-> > +
-> > +     ret =3D imx111_init_subdev(sensor, client);
-> > +     if (ret < 0) {
-> > +             dev_err(dev, "failed to init controls: %d", ret);
-> > +             goto error_v4l2_ctrl_handler_free;
-> > +     }
-> > +
-> > +     ret =3D v4l2_subdev_init_finalize(&sensor->sd);
-> > +     if (ret)
-> > +             goto error_v4l2_ctrl_handler_free;
-> > +
-> > +     pm_runtime_set_active(dev);
-> > +     pm_runtime_enable(dev);
-> > +
-> > +     ret =3D v4l2_async_register_subdev_sensor(&sensor->sd);
-> > +     if (ret < 0) {
-> > +             dev_err(dev, "failed to register V4L2 subdev: %d", ret);
-> > +             goto error_pm;
-> > +     }
-> > +
-> > +     pm_runtime_idle(dev);
-> > +     pm_runtime_set_autosuspend_delay(dev, 1000);
-> > +     pm_runtime_use_autosuspend(dev);
->
-> The autosuspend should be set before pm_runtime_idle() call(), shouldn't
-> it?
->
-> I can make the two changes before applying, too, if that's ok.
+ 
+> Feels like this should be something the BIOS should enforce if that
+> is the expectation? And the kernel checks and warns if that is not
+> the case.
 
-If you don't mind adjusting commit on your own before applying I have
-no objections. Thank you very much!
+I think this is more a limitation of the kernel implementation rather
+than the BIOS. The BIOS provides enought information by CFMWS, PRM,
+HDM and PCI topology. In theory and if there is demand for it, support
+could be added for driver region setup.
 
-Best regards,
-Svyatoslav R.
+-Robert
 
->
-> --
-> Regards,
->
-> Sakari Ailus
+> 
+> > +
+> >  	ctx->hpa_range = hpa_range;
+> >  	ctx->interleave_ways = ways;
+> >  	ctx->interleave_granularity = gran;
+> 
+?
 
