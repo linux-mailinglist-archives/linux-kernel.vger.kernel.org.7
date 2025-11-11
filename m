@@ -1,72 +1,66 @@
-Return-Path: <linux-kernel+bounces-894684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F199C4B997
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 07:05:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4022C4B99D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 07:05:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 997EC3B8167
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 06:04:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E32901894F7B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 06:05:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 430D02BEC2B;
-	Tue, 11 Nov 2025 06:03:25 +0000 (UTC)
-Received: from localhost.localdomain (unknown [147.136.157.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17E04290DBB;
+	Tue, 11 Nov 2025 06:04:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="EDWHUYPz"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAEF629C35A;
-	Tue, 11 Nov 2025 06:03:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=147.136.157.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDE39237A4F;
+	Tue, 11 Nov 2025 06:03:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762841004; cv=none; b=DCc4vDcK4IjNZOG7dHwAFcYYG78AdmyTpu2gwb1oeTL4h5NJcnqyXl7V8f7PhTmOWVxc1QqRvSn2lfOJqGDCjoVNykVt5XcSpnv6uGV3NZIAspzzGu8aCPs4mlr6fFECeH8Y08uOyT9MAW+WEx86A66eR1ro6VtjjdzczI7Pfe4=
+	t=1762841040; cv=none; b=t43GBUcu9MZjzrxjfnlr5kOv+adtszH5MteQYbEnNJaQaLbQgK909mvylLafRdCDvA4l88M0Nxx/l6MgfK07pxa5Ugd61UFr15ML4dNfkjn4jyEgrqXhgIlJoN7zI6Cl/AjK1JCRZ9P+Jw8CLY0yJbW4DyJApkeMWdSJfgqe2Y4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762841004; c=relaxed/simple;
-	bh=vPHEcWLE1UUmmbuODP6DCPDzUzqHFuJFDlXtOGMvYt0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=d9JQVAFQ2QB91rz00WhcHbqzQ87hKHISao3f4JWxGDa6R8+QUNxIM7Qh/Z6LzMtPGmLe/CiHuO8OoNFeepGCUyvdFcrAoMuAJfqcDT1vd2aVgyWfH4ECsE4Mx7drubwU9aKF2kBBhMxdiIjABU8DJ1UrY5pND56tnCMVXYcuXk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.dev; spf=none smtp.mailfrom=localhost.localdomain; arc=none smtp.client-ip=147.136.157.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=localhost.localdomain
-Received: by localhost.localdomain (Postfix, from userid 1007)
-	id 284958B2A0E; Tue, 11 Nov 2025 14:03:21 +0800 (+08)
-From: Jiayuan Chen <jiayuan.chen@linux.dev>
-To: mptcp@lists.linux.dev
-Cc: Jiayuan Chen <jiayuan.chen@linux.dev>,
-	Matthieu Baerts <matttbe@kernel.org>,
-	Mat Martineau <martineau@kernel.org>,
-	Geliang Tang <geliang@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Shuah Khan <shuah@kernel.org>,
-	Florian Westphal <fw@strlen.de>,
-	Christoph Paasch <cpaasch@apple.com>,
-	Peter Krystad <peter.krystad@linux.intel.com>,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	bpf@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: [PATCH net v5 3/3] selftests/bpf: Add mptcp test with sockmap
-Date: Tue, 11 Nov 2025 14:02:52 +0800
-Message-ID: <20251111060307.194196-4-jiayuan.chen@linux.dev>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251111060307.194196-1-jiayuan.chen@linux.dev>
-References: <20251111060307.194196-1-jiayuan.chen@linux.dev>
+	s=arc-20240116; t=1762841040; c=relaxed/simple;
+	bh=Q6ZqJwzSwcBpazNeZ+tEPPkjzJyuRRBgLuF6059Ca3g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sW3+I5TYzHQT8glRkTq5c7inWoN2fy//h/fyoDNaQ6euJKXI0sZOF6h2d0UUW2sb1b2U3qv/jJXL/mFhZOi7TN4SE6+0ImAAXO4RegoOFSykCv2I2whZFLpp07nZQCW9nUGFT4F0t0cIcxVa0nKa6F8Y0yFsL3mBEMvQDm6BKUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=EDWHUYPz; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=yXHOEfbHGbvqbP1Nad+xAerCqiTYHUSbE0LcjnK5MOc=; b=EDWHUYPzks2P1f8YajAH8QGHua
+	zr78W5BMj2gEuDYW2kwMOb0gXx+iw+tl569j1McNUYCz1l4CXp6yEvXVORBqLfO7PXYliGVhge36S
+	yhg2XUMiUNTKXlbYmfY9ocwzGiTLMqQzd+VrD64XWVNkDlALWgZdbFAIAF2xdSbGHIP7MwZzwLsL8
+	YvgjNOs2CJmFCGSilvI1FvBVFzFl0FuWlZmto/YtqcMn1tIMnjJkOc2fqSAt5EE6ewKQ2gbubIPpq
+	JL11cxH0bsJ/vAuPPCKYCDs9YRiyvbdYkxT8FXjM4ihmGJ9sSIkHDud35x9vBdxz1BhstKhrcWQKm
+	3YEhsIlQ==;
+Received: from [50.53.43.113] (helo=bombadil.infradead.org)
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vIhTw-00000006aj8-09zz;
+	Tue, 11 Nov 2025 06:03:56 +0000
+From: Randy Dunlap <rdunlap@infradead.org>
+To: linux-kernel@vger.kernel.org
+Cc: Randy Dunlap <rdunlap@infradead.org>,
+	Rob Clark <robin.clark@oss.qualcomm.com>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	Abhinav Kumar <abhinav.kumar@linux.dev>,
+	Jessica Zhang <jesszhan0024@gmail.com>,
+	Sean Paul <sean@poorly.run>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	linux-arm-msm@vger.kernel.org,
+	freedreno@lists.freedesktop.org,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>
+Subject: [PATCH] drm/msm/disp: fix kernel-doc warnings
+Date: Mon, 10 Nov 2025 22:03:53 -0800
+Message-ID: <20251111060353.1972869-1-rdunlap@infradead.org>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,238 +69,102 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add test cases to verify that when MPTCP falls back to plain TCP sockets,
-they can properly work with sockmap.
+Fix all kernel-doc warnings in msm_disp_snapshot.h:
 
-Additionally, add test cases to ensure that sockmap correctly rejects
-MPTCP sockets as expected.
+msm_disp_snapshot.h:53: warning: Function parameter or struct member
+ 'blocks' not described in 'msm_disp_state'
+msm_disp_snapshot.h:69: warning: Function parameter or struct member
+ 'node' not described in 'msm_disp_state_block'
+msm_disp_snapshot.h:69: warning: Excess struct member 'drm_dev' description
+ in 'msm_disp_state_block'
+msm_disp_snapshot.h:95: warning: No description found for return value
+ of 'msm_disp_snapshot_state_sync'
+msm_disp_snapshot.h:100: warning: bad line: 
+msm_disp_snapshot.h:117: warning: bad line: 
+msm_disp_snapshot.h:125: warning: bad line: 
+msm_disp_snapshot.h:142: warning: Excess function parameter 'name'
+ description in 'msm_disp_snapshot_add_block'
 
-Signed-off-by: Jiayuan Chen <jiayuan.chen@linux.dev>
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
 ---
- .../testing/selftests/bpf/prog_tests/mptcp.c  | 141 ++++++++++++++++++
- .../selftests/bpf/progs/mptcp_sockmap.c       |  43 ++++++
- 2 files changed, 184 insertions(+)
- create mode 100644 tools/testing/selftests/bpf/progs/mptcp_sockmap.c
+Cc: Rob Clark <robin.clark@oss.qualcomm.com>
+Cc: Dmitry Baryshkov <lumag@kernel.org>
+Cc: Abhinav Kumar <abhinav.kumar@linux.dev>
+Cc: Jessica Zhang <jesszhan0024@gmail.com>
+Cc: Sean Paul <sean@poorly.run>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>
+Cc: linux-arm-msm@vger.kernel.org
+Cc: freedreno@lists.freedesktop.org
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Cc: Maxime Ripard <mripard@kernel.org>
+Cc: Thomas Zimmermann <tzimmermann@suse.de>
+---
+ drivers/gpu/drm/msm/disp/msm_disp_snapshot.h |   13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/mptcp.c b/tools/testing/selftests/bpf/prog_tests/mptcp.c
-index f8eb7f9d4fd2..b976fe626343 100644
---- a/tools/testing/selftests/bpf/prog_tests/mptcp.c
-+++ b/tools/testing/selftests/bpf/prog_tests/mptcp.c
-@@ -6,11 +6,14 @@
- #include <netinet/in.h>
- #include <test_progs.h>
- #include <unistd.h>
-+#include <error.h>
- #include "cgroup_helpers.h"
- #include "network_helpers.h"
-+#include "socket_helpers.h"
- #include "mptcp_sock.skel.h"
- #include "mptcpify.skel.h"
- #include "mptcp_subflow.skel.h"
-+#include "mptcp_sockmap.skel.h"
- 
- #define NS_TEST "mptcp_ns"
- #define ADDR_1	"10.0.1.1"
-@@ -436,6 +439,142 @@ static void test_subflow(void)
- 	close(cgroup_fd);
- }
- 
-+/* Test sockmap on MPTCP server handling non-mp-capable clients. */
-+static void test_sockmap_with_mptcp_fallback(struct mptcp_sockmap *skel)
-+{
-+	int listen_fd = -1, client_fd1 = -1, client_fd2 = -1;
-+	int server_fd1 = -1, server_fd2 = -1, sent, recvd;
-+	char snd[9] = "123456789";
-+	char rcv[10];
-+
-+	/* start server with MPTCP enabled */
-+	listen_fd = start_mptcp_server(AF_INET, NULL, 0, 0);
-+	if (!ASSERT_OK_FD(listen_fd, "sockmap-fb:start_mptcp_server"))
-+		return;
-+
-+	skel->bss->trace_port = ntohs(get_socket_local_port(listen_fd));
-+	skel->bss->sk_index = 0;
-+	/* create client without MPTCP enabled */
-+	client_fd1 = connect_to_fd_opts(listen_fd, NULL);
-+	if (!ASSERT_OK_FD(client_fd1, "sockmap-fb:connect_to_fd"))
-+		goto end;
-+
-+	server_fd1 = xaccept_nonblock(listen_fd, NULL, NULL);
-+	skel->bss->sk_index = 1;
-+	client_fd2 = connect_to_fd_opts(listen_fd, NULL);
-+	if (!ASSERT_OK_FD(client_fd2, "sockmap-fb:connect_to_fd"))
-+		goto end;
-+
-+	server_fd2 = xaccept_nonblock(listen_fd, NULL, NULL);
-+	/* test normal redirect behavior: data sent by client_fd1 can be
-+	 * received by client_fd2
-+	 */
-+	skel->bss->redirect_idx = 1;
-+	sent = xsend(client_fd1, snd, sizeof(snd), 0);
-+	if (!ASSERT_EQ(sent, sizeof(snd), "sockmap-fb:xsend(client_fd1)"))
-+		goto end;
-+
-+	/* try to recv more bytes to avoid truncation check */
-+	recvd = recv_timeout(client_fd2, rcv, sizeof(rcv), MSG_DONTWAIT, 2);
-+	if (!ASSERT_EQ(recvd, sizeof(snd), "sockmap-fb:recv(client_fd2)"))
-+		goto end;
-+
-+end:
-+	if (client_fd1 >= 0)
-+		close(client_fd1);
-+	if (client_fd2 >= 0)
-+		close(client_fd2);
-+	if (server_fd1 >= 0)
-+		close(server_fd1);
-+	if (server_fd2 >= 0)
-+		close(server_fd2);
-+	close(listen_fd);
-+}
-+
-+/* Test sockmap rejection of MPTCP sockets - both server and client sides. */
-+static void test_sockmap_reject_mptcp(struct mptcp_sockmap *skel)
-+{
-+	int listen_fd = -1, server_fd = -1, client_fd1 = -1;
-+	int err, zero = 0;
-+
-+	/* start server with MPTCP enabled */
-+	listen_fd = start_mptcp_server(AF_INET, NULL, 0, 0);
-+	if (!ASSERT_OK_FD(listen_fd, "start_mptcp_server"))
-+		return;
-+
-+	skel->bss->trace_port = ntohs(get_socket_local_port(listen_fd));
-+	skel->bss->sk_index = 0;
-+	/* create client with MPTCP enabled */
-+	client_fd1 = connect_to_fd(listen_fd, 0);
-+	if (!ASSERT_OK_FD(client_fd1, "connect_to_fd client_fd1"))
-+		goto end;
-+
-+	/* bpf_sock_map_update() called from sockops should reject MPTCP sk */
-+	if (!ASSERT_EQ(skel->bss->helper_ret, -EOPNOTSUPP, "should reject"))
-+		goto end;
-+
-+	server_fd = xaccept_nonblock(listen_fd, NULL, NULL);
-+	err = bpf_map_update_elem(bpf_map__fd(skel->maps.sock_map),
-+				  &zero, &server_fd, BPF_NOEXIST);
-+	if (!ASSERT_EQ(err, -EOPNOTSUPP, "server should be disallowed"))
-+		goto end;
-+
-+	/* MPTCP client should also be disallowed */
-+	err = bpf_map_update_elem(bpf_map__fd(skel->maps.sock_map),
-+				  &zero, &client_fd1, BPF_NOEXIST);
-+	if (!ASSERT_EQ(err, -EOPNOTSUPP, "client should be disallowed"))
-+		goto end;
-+end:
-+	if (client_fd1 >= 0)
-+		close(client_fd1);
-+	if (server_fd >= 0)
-+		close(server_fd);
-+	close(listen_fd);
-+}
-+
-+static void test_mptcp_sockmap(void)
-+{
-+	struct mptcp_sockmap *skel;
-+	struct netns_obj *netns;
-+	int cgroup_fd, err;
-+
-+	cgroup_fd = test__join_cgroup("/mptcp_sockmap");
-+	if (!ASSERT_OK_FD(cgroup_fd, "join_cgroup: mptcp_sockmap"))
-+		return;
-+
-+	skel = mptcp_sockmap__open_and_load();
-+	if (!ASSERT_OK_PTR(skel, "skel_open_load: mptcp_sockmap"))
-+		goto close_cgroup;
-+
-+	skel->links.mptcp_sockmap_inject =
-+		bpf_program__attach_cgroup(skel->progs.mptcp_sockmap_inject, cgroup_fd);
-+	if (!ASSERT_OK_PTR(skel->links.mptcp_sockmap_inject, "attach sockmap"))
-+		goto skel_destroy;
-+
-+	err = bpf_prog_attach(bpf_program__fd(skel->progs.mptcp_sockmap_redirect),
-+			      bpf_map__fd(skel->maps.sock_map),
-+			      BPF_SK_SKB_STREAM_VERDICT, 0);
-+	if (!ASSERT_OK(err, "bpf_prog_attach stream verdict"))
-+		goto skel_destroy;
-+
-+	netns = netns_new(NS_TEST, true);
-+	if (!ASSERT_OK_PTR(netns, "netns_new: mptcp_sockmap"))
-+		goto skel_destroy;
-+
-+	if (endpoint_init("subflow") < 0)
-+		goto close_netns;
-+
-+	test_sockmap_with_mptcp_fallback(skel);
-+	test_sockmap_reject_mptcp(skel);
-+
-+close_netns:
-+	netns_free(netns);
-+skel_destroy:
-+	mptcp_sockmap__destroy(skel);
-+close_cgroup:
-+	close(cgroup_fd);
-+}
-+
- void test_mptcp(void)
- {
- 	if (test__start_subtest("base"))
-@@ -444,4 +583,6 @@ void test_mptcp(void)
- 		test_mptcpify();
- 	if (test__start_subtest("subflow"))
- 		test_subflow();
-+	if (test__start_subtest("sockmap"))
-+		test_mptcp_sockmap();
- }
-diff --git a/tools/testing/selftests/bpf/progs/mptcp_sockmap.c b/tools/testing/selftests/bpf/progs/mptcp_sockmap.c
-new file mode 100644
-index 000000000000..d4eef0cbadb9
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/mptcp_sockmap.c
-@@ -0,0 +1,43 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include "bpf_tracing_net.h"
-+
-+char _license[] SEC("license") = "GPL";
-+
-+int sk_index;
-+int redirect_idx;
-+int trace_port;
-+int helper_ret;
-+struct {
-+	__uint(type, BPF_MAP_TYPE_SOCKMAP);
-+	__uint(key_size, sizeof(__u32));
-+	__uint(value_size, sizeof(__u32));
-+	__uint(max_entries, 100);
-+} sock_map SEC(".maps");
-+
-+SEC("sockops")
-+int mptcp_sockmap_inject(struct bpf_sock_ops *skops)
-+{
-+	struct bpf_sock *sk;
-+
-+	/* only accept specified connection */
-+	if (skops->local_port != trace_port ||
-+	    skops->op != BPF_SOCK_OPS_PASSIVE_ESTABLISHED_CB)
-+		return 1;
-+
-+	sk = skops->sk;
-+	if (!sk)
-+		return 1;
-+
-+	/* update sk handler */
-+	helper_ret = bpf_sock_map_update(skops, &sock_map, &sk_index, BPF_NOEXIST);
-+
-+	return 1;
-+}
-+
-+SEC("sk_skb/stream_verdict")
-+int mptcp_sockmap_redirect(struct __sk_buff *skb)
-+{
-+	/* redirect skb to the sk under sock_map[redirect_idx] */
-+	return bpf_sk_redirect_map(skb, &sock_map, redirect_idx, 0);
-+}
--- 
-2.43.0
-
+--- linux-next-20251107.orig/drivers/gpu/drm/msm/disp/msm_disp_snapshot.h
++++ linux-next-20251107/drivers/gpu/drm/msm/disp/msm_disp_snapshot.h
+@@ -38,6 +38,7 @@
+  * struct msm_disp_state - structure to store current dpu state
+  * @dev: device pointer
+  * @drm_dev: drm device pointer
++ * @blocks: list head for hardware state blocks
+  * @atomic_state: atomic state duplicated at the time of the error
+  * @time: timestamp at which the coredump was captured
+  */
+@@ -55,7 +56,7 @@ struct msm_disp_state {
+ /**
+  * struct msm_disp_state_block - structure to store each hardware block state
+  * @name: name of the block
+- * @drm_dev: handle to the linked list head
++ * @node: handle to the linked list head
+  * @size: size of the register space of this hardware block
+  * @state: array holding the register dump of this hardware block
+  * @base_addr: starting address of this hardware block's register space
+@@ -88,8 +89,9 @@ void msm_disp_snapshot_destroy(struct dr
+  * msm_disp_snapshot_state_sync - synchronously snapshot display state
+  * @kms:  the kms object
+  *
+- * Returns state or error
++ * Returns: state or error
+  *
++ * Context:
+  * Must be called with &kms->dump_mutex held
+  */
+ struct msm_disp_state *msm_disp_snapshot_state_sync(struct msm_kms *kms);
+@@ -97,7 +99,7 @@ struct msm_disp_state *msm_disp_snapshot
+ /**
+  * msm_disp_snapshot_state - trigger to dump the display snapshot
+  * @drm_dev:	handle to drm device
+-
++ *
+  * Returns:	none
+  */
+ void msm_disp_snapshot_state(struct drm_device *drm_dev);
+@@ -114,7 +116,7 @@ void msm_disp_state_print(struct msm_dis
+ /**
+  * msm_disp_snapshot_capture_state - utility to capture atomic state and hw registers
+  * @disp_state:	    handle to msm_disp_state struct
+-
++ *
+  * Returns:	none
+  */
+ void msm_disp_snapshot_capture_state(struct msm_disp_state *disp_state);
+@@ -122,7 +124,7 @@ void msm_disp_snapshot_capture_state(str
+ /**
+  * msm_disp_state_free - free the memory after the coredump has been read
+  * @data:	    handle to struct msm_disp_state
+-
++ *
+  * Returns: none
+  */
+ void msm_disp_state_free(void *data);
+@@ -130,7 +132,6 @@ void msm_disp_state_free(void *data);
+ /**
+  * msm_disp_snapshot_add_block - add a hardware block with its register dump
+  * @disp_state:	    handle to struct msm_disp_state
+- * @name:           name of the hardware block
+  * @len:            size of the register space of the hardware block
+  * @base_addr:      starting address of the register space of the hardware block
+  * @fmt:            format in which the block names need to be printed
 
