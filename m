@@ -1,352 +1,233 @@
-Return-Path: <linux-kernel+bounces-895685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D61CC4EA7C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:01:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DF04CC4EA85
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:02:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C787189DE79
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:57:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F9E418C06AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:57:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 313B83112C1;
-	Tue, 11 Nov 2025 14:56:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1375343D8E;
+	Tue, 11 Nov 2025 14:56:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="j5URKchb"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BnEyeh/p";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="qZQgeEBv"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E09F025B305
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 14:56:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F20E025C818
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 14:56:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762872984; cv=none; b=iaxV/3VjPTxPr22OTfR0LqQ6kVW4Rqsc+fHxkMndXHi3+eyQ8zoo+5YU0FmYLHnC3LWz/VeIbLQPbFXBGfvet6AhbMecSIipQI2y1BjabehKwl26rAMA14bR0pUwvFOh5jUhuEzOtGBgZN2Nk5IbS408+iph4sheFDV2GMP7uiI=
+	t=1762873004; cv=none; b=ZZ99zth9B4f1pFIrDsKh8f3goDWYAYsEsVM7PtAqOG06WCk51ZHw1XSevkPbPzLlqo1VG+kWeaqMRuDEo5WZg/GKaw5m9xoFOLRN96/LCLW9HXOEYTloBPgZaj7pUdVAtfT4Ed93UWJFdoTh+ROFpsXzKnrct5/csvhAKbWTAgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762872984; c=relaxed/simple;
-	bh=BGlYUVNTsw42hsroooXzYQrIcdizBBPfg2/G44tubvw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=f6Rml6gt8sWnlX6l3YLZ7maUiGScfYKJ2AA02RULy1pFBTIY55TY/KAn8iN9i8bjA06aEIxga8PKtKVaUKEzkMdVyj5LZc7eEr24Ex2p3Rsg3wD16SLrxdg414omVE2c9DBJxhsEuMOWvYI59cykcmHoWLl2I6/1I3DEepvyhGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=j5URKchb; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-298287a26c3so22295425ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 06:56:22 -0800 (PST)
+	s=arc-20240116; t=1762873004; c=relaxed/simple;
+	bh=DjX4+Bnt6nCSaTOh31I+NVtamBU63UWP22wg01klHls=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=X5w7/e8cblua24nBQnXOraXM0Eh+pLTauRFP4kJOJg6mitOiEEWm9JTeQr1d/mLFBv6bhDR5/entxhNtUX6Crw9tF7kmjwgxbmqiYbaCXNrjxtZBDz2TV5hQ5AyCM26vuTwkXwHXbK7n0qVmDExuSkbK0ZdPEyfUaqCDcb8XWGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BnEyeh/p; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=qZQgeEBv; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762873002;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OGO7wZ0zR6bxjpI3h5K0xPQHJOsx28xRrKSKYu9tvms=;
+	b=BnEyeh/pGLH0LvS8ixPTX15gVABdti1xy+aqUaKLx2LNCok+yavtVUdbKD9kmAmoU7e74q
+	Hb0NQ4F600lntwbWYysiJp2y5ZkrLT+R6z+gOqc4MLnMmJXo0tOTlPrpLbS8snDVtXvEQI
+	QTGIeijOuZg1OHwdad9II9Id6tnXp9k=
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
+ [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-384-WNEuf-sEP-emIgH24MV1sQ-1; Tue, 11 Nov 2025 09:56:40 -0500
+X-MC-Unique: WNEuf-sEP-emIgH24MV1sQ-1
+X-Mimecast-MFC-AGG-ID: WNEuf-sEP-emIgH24MV1sQ_1762873000
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-882485f2984so57142266d6.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 06:56:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1762872982; x=1763477782; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=tSrPXujcyIIc5zBIA1IqBgfqR0DS/PDQZ/DNXNkBnlA=;
-        b=j5URKchbkYtv/Vh+Mfe1vMtWZ8RJXceDJMkpio33eb8RyG7quPN/L35aPPDI6PLeyW
-         XFQflkzPeIpjxfCGYPkvDr7BRnaSE7pMkcx6nsHFX5oN+ofMo4E1AyveBbFtdMbnbiuV
-         D//9Q+LIqnXkMNls0R1rh6mRwuQWaaicglxdvz03wzmrJ7FfWnnsHJeuVllvdEHOp2/L
-         XWwbekOgm5Z4a3D5CqOgfpmltgXNBfc+FKcgavCrmggAcj+HGqbwdx4lA+r/SPvKdE5W
-         YAPzESmLb0cPeVxN14IwWZ0Cn8KoSk+g3slhbzW8ssggbwNbNXSqan9fsZIwkOkwUldn
-         txZQ==
+        d=redhat.com; s=google; t=1762873000; x=1763477800; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=OGO7wZ0zR6bxjpI3h5K0xPQHJOsx28xRrKSKYu9tvms=;
+        b=qZQgeEBvLe28tJW6qYYn8wQ2imnaGmJ8NIZURCI9E8FLIUok2F4gAj1e3532fZUEsD
+         b3d2F7eZDUsTt5YaCrFey9cPZ1DPBQYq6FcsyYfTfcguNbvP2o6ru4hpOIlQJa/W9FHI
+         HEzpbcU2oea0q3QPiiefOis4UKU92M/Qo4R5WQ9hHECshRcT3gPNDpaHnA7TOnBwhU/B
+         tE9mzkiDk0dfn8YAoHBMIpLG5pNu8X3ZQv7SwxkWlatzz/7QKIWEuLZuu66TEqu+6TIR
+         ILSiZcTpjIHtd2vOBuFjjoJg0AmHGMNw9QY8g6oFBhddYC6Q42U5u0r71gXFb5EORAXX
+         sArA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762872982; x=1763477782;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tSrPXujcyIIc5zBIA1IqBgfqR0DS/PDQZ/DNXNkBnlA=;
-        b=Lzmm8wJOP0YT0zd2gbotbJPa6JPsb6afC2vJMQZqnOmE2VBv+vhQ736bknw6m4Z158
-         BrW07PqPpTsoWErwJE6BDbFlpKgEz2CfiHUel0RnOAMz++s/xiBVj8CRA3YfbmlgZmlw
-         pw1pKlwiuoEqeDVbFyqwqB7eDvumsw+WsicHU8cgzTJgfqWrtNzgLrVEnqkMkCYtWIsy
-         8+Unzw9xM6OUf+X0j3zaWv+z6TiD4cNakX5rLEJAjWtyXPjrd5o10yfMtB1t6pDZ6NbY
-         M00yLEiz1L8SL2rFx9SURjeyaMTb2Y/qGIDWaCBHURtHFm2fvbxL00cbhWI5JS1Vq/3D
-         LH7w==
-X-Forwarded-Encrypted: i=1; AJvYcCWTBCjREf6BOZhlrOG/maOTaDMyQNU5yy8F1XdB+B+s1Fg+8bZIeaxKhF8RGBlZ41pd/YwcV1xoVKiZe84=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXbCCeGv84BqGmu5KYXbe24Hn8PXVlvLsdzJ3AU+maqKLu/ohk
-	frBtTsq64L2iXsSbXULqyyHDcsMUQlfpz5HJHo4z/5/61t+Sju6iDCKPf3iBz67YMyLqy8CZ8Wm
-	9rWDF5Zk=
-X-Gm-Gg: ASbGnctx21ejLIFy9C2wwvCivc/DGFZAB0QEc2jVx/BEEEq70BcA5Z3fNhIS4N8ww8W
-	7Kwk7UkpwKIXJHGMw9v56Z9b4xaijRVtVki2M1PGe4Qq3bik5WcTv8t0gbtimDNR8zAHEtfcOx8
-	S9n+jcBc7KO8LbHHjGL1iEngbAAmsgYATQ2aeWcizz/4RNAYEOyX7yNbxxvnOfSi/8pXtVrWzbI
-	2F7rcsTaraG8tzH3MotztfLxh6NCyukzvnc5uGMWCzwrIzpsmPXDXkHF51Z9IjbLrjAy72seqYE
-	gCZOOPfKBLOo9Zpb0oJYdh4CX95aKc6MphxjkgQZvKyPcy5LukdCAIII0+DblkmCCNl4iv3jDSo
-	XKCrqYCI0joC55QOM69v4NrAQJ0j3nYUbTVcgqQfgvit3NaxR9CLb6AXI6nldzBJ65atzd2rVnj
-	m+L20728eD
-X-Google-Smtp-Source: AGHT+IHzw7KGS5V49PmS3dPImgttpK5QuWelyEH8VVaWzQ8/JjHlzL/5enOIxdcpy8EEGYBBT6pxmw==
-X-Received: by 2002:a17:902:e891:b0:295:2cb6:f4a8 with SMTP id d9443c01a7336-297e56dd7bcmr160323645ad.51.1762872981997;
-        Tue, 11 Nov 2025 06:56:21 -0800 (PST)
-Received: from localhost ([106.38.226.56])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29650c5c6b3sm182427605ad.24.2025.11.11.06.56.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Nov 2025 06:56:21 -0800 (PST)
-From: Jian Zhang <zhangjian.3032@bytedance.com>
-To: dwmw2@infradead.org,
-	richard@nod.at,
-	linux-mtd@lists.infradead.org,
-	openbmc@lists.ozlabs.org
-Cc: Jian Zhang <zhangjian.3032@bytedance.com>,
-	Zhihao Cheng <chengzhihao1@huawei.com>,
-	Fedor Pchelkin <pchelkin@ispras.ru>,
-	linux-kernel@vger.kernel.org
-Subject: [[RFC PATCH]] jffs2: attempt to fix "Error garbage collecting node"
-Date: Tue, 11 Nov 2025 22:56:08 +0800
-Message-ID: <20251111145609.1917969-1-zhangjian.3032@bytedance.com>
-X-Mailer: git-send-email 2.47.0
+        d=1e100.net; s=20230601; t=1762873000; x=1763477800;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OGO7wZ0zR6bxjpI3h5K0xPQHJOsx28xRrKSKYu9tvms=;
+        b=eNcKwCRJJYNZB/rhFSws9A1uzGvx6wDpW1jE7ancATeAgfZ54lsIFygQQFmuqpGT9U
+         s/Sq0uSzhoJfKTR6lq0kX/QyF/poAkfexTGovBlM7z8YXBg2YSWNUtsAhZXaErHTNaDv
+         gklQsXMXTU7gQvBtCoAoVT1AkxNWCuYDoDXG1BjnBE27bvYwd9UUjX14WzjUdxGBz9WG
+         ts5gXbupUXnQ7ObUF8cJ5/XfDT2FRUhL6iJXXQCOLt+cg7UHTegTwaIL81jO3S5gQqXT
+         8UUopT3NtelhvIM1BsTMlO8ztieEM9EtS5N8ENs2r3k1spssSFN9ZlK35wrdTOt3tklt
+         yl2g==
+X-Forwarded-Encrypted: i=1; AJvYcCWi71VEnUgyNvR4w5WyIe8qqRzPuua7POuapr9BPQEif3LCSfeH+oMSpef2yEJ4ATLXLFaSWA5Jw+gDELk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YypsARSvY+kT36ok3/iOXUMwzh3h0CKneG6TMHfPaEGwp5oKZmG
+	hl4P9zh7PFrE2gDawreZU/lz3Ei1gOcKONBlujsnK35gfP0gvznVFHYQWwz8/yw0GBXo0XhYCWb
+	U1/gdj/yjsXgh0Qk7tIuGwYDl95lG4G1VV8jedJ2qJp5QpnB+El3wx1GoLyOKqyxNiA==
+X-Gm-Gg: ASbGncspDqXzrg6x8DlNzxhQabzHtjCtUFwkytB0lNGkSjYqtDRrXNQZ3+QI6+TX/4Z
+	Jki2ECyOFFRCLN53JI4YdElb6VGtpaiG5sxJDZYvaMjgwX2NMEhm8BMJNkyacsFhnLY/LuL5U4x
+	RfleYnKeD5j24QkBGFi5bfdU21QQ91kqeRAGpT2nl+okQh3P0zL6oVziRha9Qw9snyy5TRBpAem
+	IdIQaW2pGXfwlisKa2UNRtvmCPZ9J9CdP7HRerKQua8YjPaZTAWodfghJSbw/9P+8VD6heGuwrh
+	mKWsD3pNka1jd3OEjmT1PGiDbTBzlOf//zNsLcpfufFEtXK7+tbqeMpwzsv6pwQ17OQtkOeuJld
+	p92/cerrcmZIb6hZtJArZS+j4MoJxYCaiXnhq6w467KoFvg==
+X-Received: by 2002:a05:6214:240c:b0:77b:2925:a85b with SMTP id 6a1803df08f44-8823866c6e7mr159348566d6.44.1762873000234;
+        Tue, 11 Nov 2025 06:56:40 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGEORJX30Vv4A6mzZNTTYVEP1dBmzzuthZd5tIvL3PbtzkKoRMI26cc5glhHR4AHIslhhMKAQ==
+X-Received: by 2002:a05:6214:240c:b0:77b:2925:a85b with SMTP id 6a1803df08f44-8823866c6e7mr159348246d6.44.1762872999906;
+        Tue, 11 Nov 2025 06:56:39 -0800 (PST)
+Received: from ?IPV6:2601:188:c102:b180:1f8b:71d0:77b1:1f6e? ([2601:188:c102:b180:1f8b:71d0:77b1:1f6e])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8823c56b387sm67927066d6.24.2025.11.11.06.56.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Nov 2025 06:56:39 -0800 (PST)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <307e7687-4320-4b2b-a552-5d8409522cfe@redhat.com>
+Date: Tue, 11 Nov 2025 09:56:37 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -next v2 2/3] cpuset: remove global remote_children list
+To: Chen Ridong <chenridong@huaweicloud.com>, tj@kernel.org,
+ hannes@cmpxchg.org, mkoutny@suse.com
+Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+ lujialin4@huawei.com, chenridong@huawei.com
+References: <20251111132429.950343-1-chenridong@huaweicloud.com>
+ <20251111132429.950343-3-chenridong@huaweicloud.com>
+Content-Language: en-US
+In-Reply-To: <20251111132429.950343-3-chenridong@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-This patch shares analysis and a potential fix for the "Error garbage collecting node"
-issue observed in long-run tests with SPI NOR flash under repeated AC cycles.
-
-TL;DR:
-An unstable block may pass CRC checks multiple times but fail during GC.
-The practical mitigation is to locate such blocks and perform a read-erase-write
-cycle to make them stable; the actual data content is irrelevant.
-
-Background:
-
-In long-run tests, JFFS2 sometimes fails to perform garbage collection, producing logs like:
-
-[    3.470788] jffs2: notice: check_node_data: wrong data CRC in data node at 0x008cc2e8: read 0xb554ca36, calculated 0xc7ac50f7
-...
-[   46.815192] jffs2: Error garbage collecting node at 008cb694, mark node obsolete!
-[   46.840646] jffs2: read_cache_page() returned error: -5
-
-Root cause:
-
-1. During GC, a power loss occurring while an `erase` operation is in progress
-   can leave a block in an unstable state. Reads from this block may yield
-   inconsistent results.
-
-2. A node may pass multiple CRC checks, but during GC — particularly when moving
-   a PRISTINE node — a CRC failure may occur, triggering the garbage collection error.
-
-Detailed analysis:
-
-- In `jffs2_garbage_collect_pristine`, moving a PRISTINE node does not increment
-  the version number. At some point, two nodes with identical version numbers may
-  exist simultaneously.
-
-- With JFFS2 SUMMARY enabled, `jffs2_mark_node_obsolete` only marks the node
-  obsolete in RAM, skipping flash updates. On the next boot, the node may be
-  re-scanned and remain unstable.
-
-- During file/node construction in `jffs2_add_tn_to_tree`, two nodes with the
-  same version number are handled as follows:
-  * Current node valid → discard the new node
-  * Current node CRC error → replace with the new node
-
-  This allows an unstable node to be selected even if it passes CRC on this pass.
-
-Relevant call flow:
-
-jffs2_find_gc_block
-    jffs2_do_crccheck_inode
-        jffs2_do_read_inode_internal
-            jffs2_get_inode_nodes
-                read_dnode
-                    jffs2_add_tn_to_tree
-
-Proposed mitigation:
-
-Locate blocks that may be unstable and perform a read-erase-write cycle to
-stabilize them. The actual data content is not important, only block stability.
-
-Signed-off-by: Jian Zhang <zhangjian.3032@bytedance.com>
----
- fs/jffs2/scan.c | 172 ++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 172 insertions(+)
-
-diff --git a/fs/jffs2/scan.c b/fs/jffs2/scan.c
-index 62879c218d4b..1475d2c0be4c 100644
---- a/fs/jffs2/scan.c
-+++ b/fs/jffs2/scan.c
-@@ -442,6 +442,174 @@ static int jffs2_scan_xref_node(struct jffs2_sb_info *c, struct jffs2_eraseblock
- }
- #endif
- 
-+static inline uint32_t jffs2_calc_node_hdr_crc(const struct jffs2_unknown_node *node)
-+{
-+	struct jffs2_unknown_node crcnode;
-+
-+	crcnode.magic = node->magic;
-+	crcnode.nodetype = cpu_to_je16(je16_to_cpu(node->nodetype) | JFFS2_NODE_ACCURATE);
-+	crcnode.totlen = node->totlen;
-+
-+	return crc32(0, &crcnode, sizeof(crcnode) - 4);
-+}
-+
-+static int jffs2_pre_scan_eraseblock(struct jffs2_sb_info *c, struct jffs2_eraseblock *jeb)
-+{
-+	int ret;
-+	bool error_found = false;
-+	unsigned char *buf;
-+	uint32_t crc;
-+	struct jffs2_unknown_node *node;
-+	struct jffs2_raw_inode *ri;
-+	struct jffs2_raw_dirent *rd;
-+
-+	uint32_t ofs = 0, buf_len = c->sector_size;
-+	uint32_t retlen;
-+
-+	buf = kmalloc(buf_len, GFP_KERNEL);
-+	if (!buf) {
-+		JFFS2_WARNING("Unable to allocate scan buffer of size %u\n", buf_len);
-+		return -ENOMEM;
-+	}
-+
-+	ret = jffs2_fill_scan_buf(c, buf, jeb->offset, buf_len);
-+	if (ret) {
-+		JFFS2_WARNING("Unable to read eraseblock at 0x%08x\n", jeb->offset);
-+		goto exit;
-+	}
-+
-+	while (ofs < c->sector_size) {
-+		if (c->sector_size - ofs < sizeof(struct jffs2_unknown_node)) {
-+			/* Not enough space for a node header */
-+			break;
-+		}
-+
-+		if (*(uint32_t *)(&buf[ofs]) == 0xffffffff) {
-+			/* Reached empty space */
-+			ofs += 4;
-+			continue;
-+		}
-+
-+		node = (struct jffs2_unknown_node *)&buf[ofs];
-+		if (je16_to_cpu(node->magic) != JFFS2_MAGIC_BITMASK) {
-+			ofs += 4;
-+			continue;
-+		}
-+
-+		if (jffs2_calc_node_hdr_crc(node) != je32_to_cpu(node->hdr_crc)) {
-+			JFFS2_WARNING("node header CRC failed at %#08x\n",
-+				      jeb->offset + ofs);
-+			ofs += 4;
-+			error_found = true;
-+			goto check;
-+		}
-+
-+		if (!(je16_to_cpu(node->nodetype) & JFFS2_NODE_ACCURATE)) {
-+			/* This is an obsoleted node */
-+			ofs += PAD(je32_to_cpu(node->totlen));
-+			continue;
-+		}
-+
-+		switch (je16_to_cpu(node->nodetype)) {
-+		case JFFS2_NODETYPE_INODE:
-+			if (c->sector_size - ofs < sizeof(struct jffs2_raw_inode)) {
-+				/* Not enough space for a full inode node */
-+				ofs += 4;
-+				goto check;
-+			}
-+
-+			ri = (struct jffs2_raw_inode *)node;
-+			crc = crc32(0, ri, sizeof(*ri) - 8);
-+			if (crc != je32_to_cpu(ri->node_crc)) {
-+				JFFS2_WARNING("inode node CRC failed at %#08x, read=%#08x, calc=%#08x\n",
-+					      jeb->offset + ofs,
-+					      je32_to_cpu(ri->node_crc), crc);
-+				error_found = true;
-+				goto check;
-+			}
-+
-+			if (je32_to_cpu(ri->dsize)) {
-+				crc = crc32(0, ri->data, je32_to_cpu(ri->csize));
-+				if (je32_to_cpu(ri->data_crc) != crc) {
-+					JFFS2_WARNING("Data CRC failed data node at 0x%08x: Read 0x%08x, calculated 0x%08x\n",
-+						ofs, je32_to_cpu(ri->data_crc), crc);
-+					error_found = true;
-+					goto check;
-+				}
-+			}
-+
-+			ofs += PAD(je32_to_cpu(node->totlen));
-+			break;
-+		case JFFS2_NODETYPE_DIRENT:
-+			if (c->sector_size - ofs < sizeof(struct jffs2_raw_dirent)) {
-+				/* Not enough space for a full dirent node */
-+				ofs += 4;
-+				goto check;
-+			}
-+
-+			rd = (struct jffs2_raw_dirent *)node;
-+			crc = crc32(0, rd, sizeof(*rd) - 8);
-+			if (je32_to_cpu(rd->node_crc) != crc) {
-+				JFFS2_WARNING("Node CRC failed dirent node at 0x%08x: Read 0x%08x, calculated 0x%08x\n",
-+					ofs, je32_to_cpu(rd->node_crc), crc);
-+				error_found = true;
-+				goto check;
-+			}
-+
-+			if (strnlen(rd->name, rd->nsize) != rd->nsize) {
-+				JFFS2_WARNING("Name in dirent node at 0x%08x contains zeroes\n", ofs);
-+				error_found = true;
-+				break;
-+			}
-+
-+			if (rd->nsize) {
-+				crc = crc32(0, rd->name, rd->nsize);
-+				if (je32_to_cpu(rd->name_crc) != crc) {
-+					JFFS2_WARNING("Name CRC failed dirent node at 0x%08x: Read 0x%08x, calculated 0x%08x\n",
-+						ofs, je32_to_cpu(rd->name_crc), crc);
-+					error_found = true;
-+					goto check;
-+				}
-+			}
-+
-+			ofs += PAD(je32_to_cpu(node->totlen));
-+			break;
-+		default:
-+			ofs += PAD(je32_to_cpu(node->totlen));
-+			/* Other node types are not pre-checked */
-+			break;
-+		}
-+	}
-+
-+check:
-+	// find any error during pre-scan, if found, erase the block, and write back.
-+	if (error_found) {
-+			JFFS2_WARNING("Erasing block at 0x%08x error_count %d due to pre-scan errors\n",
-+				jeb->offset);
-+			struct erase_info instr;
-+
-+			instr.addr = jeb->offset;
-+			instr.len = c->sector_size;
-+			ret = mtd_erase(c->mtd, &instr);
-+			if (ret) {
-+				JFFS2_ERROR("Erase at 0x%08x failed during pre-scan: errno %d\n",
-+					jeb->offset, ret);
-+				goto exit;
-+			}
-+
-+			ret = jffs2_flash_direct_write(c, jeb->offset, buf_len, &retlen, buf);
-+			if (ret) {
-+				JFFS2_ERROR("Write back at 0x%08x failed during pre-scan: errno %d\n",
-+					jeb->offset, ret);
-+				goto exit;
-+			}
-+	}
-+exit:
-+
-+	kfree(buf);
-+	return ret;
-+}
-+
- /* Called with 'buf_size == 0' if buf is in fact a pointer _directly_ into
-    the flash, XIP-style */
- static int jffs2_scan_eraseblock (struct jffs2_sb_info *c, struct jffs2_eraseblock *jeb,
-@@ -453,6 +621,10 @@ static int jffs2_scan_eraseblock (struct jffs2_sb_info *c, struct jffs2_eraseblo
- 	int err;
- 	int noise = 0;
- 
-+	err = jffs2_pre_scan_eraseblock(c, jeb);
-+	if (err) // only log warning, continue scanning
-+		JFFS2_WARNING("Pre-scan of eraseblock at 0x%08x failed: err=%d\n",
-+			      jeb->offset, err);
- 
- #ifdef CONFIG_JFFS2_FS_WRITEBUFFER
- 	int cleanmarkerfound = 0;
--- 
-2.47.0
+On 11/11/25 8:24 AM, Chen Ridong wrote:
+> From: Chen Ridong <chenridong@huawei.com>
+>
+> The remote_children list is used to track all remote partitions attached
+> to a cpuset. However, it serves no other purpose. Using a boolean flag to
+> indicate whether a cpuset is a remote partition is a more direct approach,
+> making remote_children unnecessary.
+>
+> This patch replaces the list with a remote_partition flag in the cpuset
+> structure and removes remote_children entirely.
+>
+> Signed-off-by: Chen Ridong <chenridong@huawei.com>
+> ---
+>   kernel/cgroup/cpuset-internal.h | 10 +++++++---
+>   kernel/cgroup/cpuset.c          | 13 ++++---------
+>   2 files changed, 11 insertions(+), 12 deletions(-)
+>
+> diff --git a/kernel/cgroup/cpuset-internal.h b/kernel/cgroup/cpuset-internal.h
+> index 5cac42c5fd97..01976c8e7d49 100644
+> --- a/kernel/cgroup/cpuset-internal.h
+> +++ b/kernel/cgroup/cpuset-internal.h
+> @@ -158,6 +158,13 @@ struct cpuset {
+>   	/* partition root state */
+>   	int partition_root_state;
+>   
+> +	/*
+> +	 * Whether cpuset is a remote partition.
+> +	 * It used to be a list anchoring all remote partitions — we can switch back
+> +	 * to a list if we need to iterate over the remote partitions.
+> +	 */
+> +	bool remote_partition;
+> +
+>   	/*
+>   	 * number of SCHED_DEADLINE tasks attached to this cpuset, so that we
+>   	 * know when to rebuild associated root domain bandwidth information.
+> @@ -172,9 +179,6 @@ struct cpuset {
+>   	/* Handle for cpuset.cpus.partition */
+>   	struct cgroup_file partition_file;
+>   
+> -	/* Remote partition silbling list anchored at remote_children */
+> -	struct list_head remote_sibling;
+> -
+>   	/* Used to merge intersecting subsets for generate_sched_domains */
+>   	struct uf_node node;
+>   };
+> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+> index c90476d52f09..aff3ddc67393 100644
+> --- a/kernel/cgroup/cpuset.c
+> +++ b/kernel/cgroup/cpuset.c
+> @@ -94,9 +94,6 @@ static bool isolated_cpus_updating;
+>   static cpumask_var_t	boot_hk_cpus;
+>   static bool		have_boot_isolcpus;
+>   
+> -/* List of remote partition root children */
+> -static struct list_head remote_children;
+> -
+>   /*
+>    * A flag to force sched domain rebuild at the end of an operation.
+>    * It can be set in
+> @@ -219,7 +216,7 @@ static struct cpuset top_cpuset = {
+>   		 BIT(CS_MEM_EXCLUSIVE) | BIT(CS_SCHED_LOAD_BALANCE),
+>   	.partition_root_state = PRS_ROOT,
+>   	.relax_domain_level = -1,
+> -	.remote_sibling = LIST_HEAD_INIT(top_cpuset.remote_sibling),
+> +	.remote_partition = false,
+I forgot to notify you that this init is also not needed. Anyway, this 
+is a minor issue.
+>   };
+>   
+>   /*
+> @@ -1572,7 +1569,7 @@ static int compute_trialcs_excpus(struct cpuset *trialcs, struct cpuset *cs)
+>   
+>   static inline bool is_remote_partition(struct cpuset *cs)
+>   {
+> -	return !list_empty(&cs->remote_sibling);
+> +	return cs->remote_partition;
+>   }
+>   
+>   static inline bool is_local_partition(struct cpuset *cs)
+> @@ -1621,7 +1618,7 @@ static int remote_partition_enable(struct cpuset *cs, int new_prs,
+>   
+>   	spin_lock_irq(&callback_lock);
+>   	partition_xcpus_add(new_prs, NULL, tmp->new_cpus);
+> -	list_add(&cs->remote_sibling, &remote_children);
+> +	cs->remote_partition = true;
+>   	cpumask_copy(cs->effective_xcpus, tmp->new_cpus);
+>   	spin_unlock_irq(&callback_lock);
+>   	update_isolation_cpumasks();
+> @@ -1651,7 +1648,7 @@ static void remote_partition_disable(struct cpuset *cs, struct tmpmasks *tmp)
+>   	WARN_ON_ONCE(!cpumask_subset(cs->effective_xcpus, subpartitions_cpus));
+>   
+>   	spin_lock_irq(&callback_lock);
+> -	list_del_init(&cs->remote_sibling);
+> +	cs->remote_partition = false;
+>   	partition_xcpus_del(cs->partition_root_state, NULL, cs->effective_xcpus);
+>   	if (cs->prs_err)
+>   		cs->partition_root_state = -cs->partition_root_state;
+> @@ -3603,7 +3600,6 @@ cpuset_css_alloc(struct cgroup_subsys_state *parent_css)
+>   	__set_bit(CS_SCHED_LOAD_BALANCE, &cs->flags);
+>   	fmeter_init(&cs->fmeter);
+>   	cs->relax_domain_level = -1;
+> -	INIT_LIST_HEAD(&cs->remote_sibling);
+>   
+>   	/* Set CS_MEMORY_MIGRATE for default hierarchy */
+>   	if (cpuset_v2())
+> @@ -3874,7 +3870,6 @@ int __init cpuset_init(void)
+>   	nodes_setall(top_cpuset.effective_mems);
+>   
+>   	fmeter_init(&top_cpuset.fmeter);
+> -	INIT_LIST_HEAD(&remote_children);
+>   
+>   	BUG_ON(!alloc_cpumask_var(&cpus_attach, GFP_KERNEL));
+>   
+Reviewed-by: Waiman Long <longman@redhat.com>
 
 
