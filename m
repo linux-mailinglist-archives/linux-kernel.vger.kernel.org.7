@@ -1,207 +1,179 @@
-Return-Path: <linux-kernel+bounces-895401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 787B7C4DA7F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:24:59 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BEE2C4DB9C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:31:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F16C5188A09D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:25:23 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BBD574FD0DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:25:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 884D7358D0C;
-	Tue, 11 Nov 2025 12:24:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B227A358D31;
+	Tue, 11 Nov 2025 12:25:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="gMXc5TrC";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="P8KERs7Q"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="AydTrWNd"
+Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11012008.outbound.protection.outlook.com [40.93.195.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5098B35770F
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 12:24:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762863890; cv=none; b=TAms2R9JPWYZ/2auSG964jNWVvw0TH76b2iNCK7itpW0544mBAH0JagUd4fy0+4ZR9zjPcpHt3IX++O1U4RRC7KZ8rR/6A2HqKrQFDp1aPQEBzbEIPap6bQhMxfdTeRe2dtNVrS+0TPHiazuBtK85xvqcmvnIl7rVDPWr0x7SyM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762863890; c=relaxed/simple;
-	bh=Avw7X3qTk5ackyNEfBq4lhvArrupOq2YpJ4TzkN/XII=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QX7PgQQeEqI2SxlFhu5QDmFl+PaoadE4KRAHfe11s9YFRPiuGs08QPr+A7Ev3ZigQkeBYH5yFawGpLIXzdz7Mm6REqYI57aglZxb5RADjw1SZsYzhf8n8L6IgTN+rsjd65NXK4DkeMcSevgwqvWajn6DfvDEYJTkqIX2vYpqXHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=gMXc5TrC; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=P8KERs7Q; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5ABBGIXF2117343
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 12:24:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	mHNhND58kME9CBxtrtGEGN3WM9sabE8JAt1u7C/HVV0=; b=gMXc5TrC2lD9urT+
-	du95VzmXIYitWe+U2x9j71zg+PZrv/TDApG1hbwYGp4wjiZB2SBAAlHLvJOEZPP1
-	89idFJglIo32nVBjzTo4hV58QRxb0DVmgLcAaXfzdDywk6u4MY6nOZE1+cf+PKvf
-	VUBvn85+s//3vRaPnEAWxpcGj0D++0TfAn7tLQZKRvU+SLQwbQX5oCL11geYuOro
-	4hiRL4PGH4CVNGfXS9J80DE1ik+33+kZNtQ/AVs4jx4aK1uHR4sbHYwo3GF/j2sz
-	p2omw10nWpPsmvGbYN9BukhQ/ResGxdhc8dj7Nag8N0undIXtERwtruQI/39ZFqT
-	LPFzjQ==
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4abpy8jc11-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 12:24:48 +0000 (GMT)
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-297ea27c814so6628225ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 04:24:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1762863888; x=1763468688; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=mHNhND58kME9CBxtrtGEGN3WM9sabE8JAt1u7C/HVV0=;
-        b=P8KERs7Q6XNewMuS0JksUXft1WSRoJPfhRlSM821wht/LI1UeD9bUrXwOUrjA7Ex9a
-         de9eFbQ+w94pF5rmpbTcvN8m5VST5fuKoPxcuQZFVuFkGMqBqVGt9kVIkqPL0bS69rZ5
-         tAGwksq4JJ4jkfxx9NV5WMdlZhlMtHebO/iv+MGI/5nBnVfgmJ7Dvc0+k++yhGrDRyVe
-         aFgcli+qs0RQSj1S7+5a4/Ll6l6jmRXhxCRuX3o6FWB7mKEzneOuIjkTtQ3sXYjbqvrR
-         2ebZ/uG8tME3Idm0b/l7TL2i0PcBkptA96N/jZyZjfTjyr5iZ6FYzm19bjDU6/QwQYNo
-         /7jw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762863888; x=1763468688;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mHNhND58kME9CBxtrtGEGN3WM9sabE8JAt1u7C/HVV0=;
-        b=f+IG9Mb4z5Mp6kFTMazC0jNPbDHIM2fYtz2YO+e4OuTjKSQzVc+s0F3PmXT2ZxaGYq
-         WpFwBAwDvmdxDXMUr1HNE2QQlpAIkY8pIGzFIrDT+ZRrikqJG35qx2pWEfxiR3p7Xy+u
-         RX7RXUuPU4XyiIko/VpRu6rwHm5iHTjaQ09WZX4coBPlAfBkm7Iwq0bU9/PoJoYyVjqf
-         gcyCjZx2V8lhOf4E/aiFAM29ytQ6mByl/S5j4dZCYhMYta2BSUroxqWsC0DtPG2q+xRE
-         N3KMllx5zXKMFBMKrCFp3wT3pmxRu67//HkWHBihRR/d34FlD23H0mKKJ0rKP/PA9sQf
-         uOZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUKFCW5FfLlVJoqClacOfG8/zAnHdj1QSQch+D+yS/Ayhq6j35hPPVgtAUivpljMCyjfeyHmIrWMaTQPz0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxuM+gFkTtFjAyPvUMxqhg74pZ0y00O6jqap6QIxbWKSeKgsu+L
-	9fJjjvTMEdGif1fJ+lqHo3j8UflkutUcrGYykfufgaD9oCj6/CEz4zjrimkbfOLt9j5gnAofsPh
-	D69MyS4IbyYT7UcBFtkYwE3ITwILiSEW11wLsw7kQ5ndDd86A2Fw3FtbW5D7Siw0OyZk=
-X-Gm-Gg: ASbGnctEV1cjC+LECLmkD3buqntUeui9/F2iqhvTNYTLwsjqaaPdf7eQPEcjUJbfYcV
-	48Ra92z5mEbeSuJWsgt9UygTbVGdr3hwW4ugZb+fAwGPXHIch+Sex+1vuPmPg7fo0AdXOtnqHUf
-	M//7DqHUieDgqhYsp0Fuj5JzycM6m8jfWJREXd/KfzRmKJ7GLLlxzIR7hYlWOxiFxL4ZGzvn8Ch
-	45FseweOjJRpzspWFxCpQ9xILHHilmfkusQ1wwfy0IlVekNi2Hoj6T0A1nEM4gSjzn8C+14eCHU
-	UyETx40CO9GD471WXoWm4PfLwrgV7tsETt9S9nGLsXU+YCOeL1KyqII7iKkxIqPC8ta27R8fePH
-	k6IqHMTJkfrZ/uWfw7kr5
-X-Received: by 2002:a17:902:d490:b0:25a:4437:dbb7 with SMTP id d9443c01a7336-29840fee954mr19500115ad.4.1762863887590;
-        Tue, 11 Nov 2025 04:24:47 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGbcdL5X0IACg3A7zoRnqyk+K7b6Xue5ht0hWBXVIM5JAERQTpeICLLunHnEUY591aWR1Lc6w==
-X-Received: by 2002:a17:902:d490:b0:25a:4437:dbb7 with SMTP id d9443c01a7336-29840fee954mr19499845ad.4.1762863887025;
-        Tue, 11 Nov 2025 04:24:47 -0800 (PST)
-Received: from [10.233.17.95] ([114.94.8.21])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2965096b801sm183895025ad.7.2025.11.11.04.24.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Nov 2025 04:24:46 -0800 (PST)
-Message-ID: <ee04e03a-ffd0-43c0-ba77-c7ee20aaac43@oss.qualcomm.com>
-Date: Tue, 11 Nov 2025 20:24:19 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 597A7358D19;
+	Tue, 11 Nov 2025 12:25:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.195.8
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762863936; cv=fail; b=ZvUfMuLSxIkuSIlv6oRqeA/uO679FOUfamIBQTxaXy+u9sVQuY1b6kBu+mipxMQDLZ5aJ2wsWU4NRKUQTFmFr9Pnk/M4CFSNsu0pCZHkPAbA5zxu5nPdHdvBrZUi2fQF2N0YH+bzZYI+bZ53h3aSMNb8nvW2kNxFCDxT3Qmyy0o=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762863936; c=relaxed/simple;
+	bh=Va0ZUN8h4LZYTv/gpwvdRHTHn3ZUj2axJPrf0+NukAQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gO50pXLli8kjVAu3N4VnfxIJ3iheKGsU10OfVrOFMkts5HlRuUiRw5LxBGX664WufZgMQrpqO/MkbpoMlQnouXumgvZdxWtos/ZguJ3Kn2fL9CcqqRcgMk7hoppTkAwb5Nlayje8EyoIWggJOTxvcPkBwmIyZQ6u/6fcHCHQ/Ak=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=AydTrWNd; arc=fail smtp.client-ip=40.93.195.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=bfTSJNhZRffivQDDmk840dDhFUSH7q7xXX2nCD9TXJkgRZRkxkxXKA7bcwJekubOR7ANoS8MRza/m4TC3S17d1WXViYAHbCaOmme2wlWvplS99z4LQLMOWkosN9TgFOWO4yfc8+2TCyNPF/4iUfhd97JFpSZzgMTqSZ0XauTxRqHGkZyUZuM3su12u5BHlxrGIRGJn6U2YSuk48lW7Ryp2H1X5uE4/x+aPYxr6RGwi81oDJf1ci3kAqzfbPbHbuFh79ufwm4hnGfOh890hQHFvu/lH2fhwsveTO8CwK2WcxFSHYlLa6Q6Wzt1XiT+SF6J1U5X9K3ekCHleQdUfi3zA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=568ZJI1t63TwE+2Vg6FBO7twsNmkVlvaTSH/AwD3Ghs=;
+ b=nY8ufuyeLhR3pAmUGgQ3CEMpivCBSRrkBzTXiyfrTY1LHY0L9zhSmIpIiinA7x6P1kO/EPDvvukunP9pFUTYgYer/TNLz4OB+jyfBiV6ZHzAT6/6OBlpQFZYK8eWQsmFM8m/UmsmSDL9JJaoA/ZEFdOnMlkhocB31djuvjBNFmlb4d8w5KVWZzI9iRNTyPTebYTAjoJumNaHUuXEGCutmZKp95tmVL8PktJfJySjlF4GY3icJV7cQbSX+VTscMPjKSZKcW85tsXr1jr11F+l8lnBN4WYYFUqLthHhkX6Q+4urYdg+/sy4igKYeu+K4vIkZz2hMULxmZT43xm+P/3SQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=davemloft.net smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=568ZJI1t63TwE+2Vg6FBO7twsNmkVlvaTSH/AwD3Ghs=;
+ b=AydTrWNdnzpMStlbvQl/k/pq8mjbO0AfqDLNclYMpxJi7Ij4l9rS1yJsJaT369Od8iMiFgtPwBjcZxf+Ixqwp4CLNv7Fn4yGWUmPHOqCS3DyV9bZl/MuqzMtjk7wyMXOGuVOs+nvzLa8PMDP616cKmrlihIAlh7Xha8iMkkTJN9abQi5JuNDUpJAEIxy/ZjknBY8QDjjcqdoyCEyFFBemzE/hocHoibum0WtdHbs/JXfxSZJttcFTvOZDkEaPUmhBo8+uxpSo8MrUMhRwPNXcBJMlKwFCudfgLzGu34LsOFF/KM60GhOyprXApO7Gn/AC0VTwgiu0bQjaN/E/kEtBQ==
+Received: from MN0P223CA0019.NAMP223.PROD.OUTLOOK.COM (2603:10b6:208:52b::34)
+ by SA1PR12MB6679.namprd12.prod.outlook.com (2603:10b6:806:252::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Tue, 11 Nov
+ 2025 12:25:27 +0000
+Received: from BL02EPF00021F69.namprd02.prod.outlook.com
+ (2603:10b6:208:52b:cafe::cc) by MN0P223CA0019.outlook.office365.com
+ (2603:10b6:208:52b::34) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9298.16 via Frontend Transport; Tue,
+ 11 Nov 2025 12:25:16 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ BL02EPF00021F69.mail.protection.outlook.com (10.167.249.5) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9320.13 via Frontend Transport; Tue, 11 Nov 2025 12:25:25 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 11 Nov
+ 2025 04:25:18 -0800
+Received: from drhqmail202.nvidia.com (10.126.190.181) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.20; Tue, 11 Nov 2025 04:25:18 -0800
+Received: from vdi.nvidia.com (10.127.8.10) by mail.nvidia.com
+ (10.126.190.181) with Microsoft SMTP Server id 15.2.2562.20 via Frontend
+ Transport; Tue, 11 Nov 2025 04:25:13 -0800
+From: Tariq Toukan <tariqt@nvidia.com>
+To: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
+	Tariq Toukan <tariqt@nvidia.com>, Mark Bloch <mbloch@nvidia.com>,
+	<netdev@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David
+ S. Miller" <davem@davemloft.net>, Gal Pressman <gal@nvidia.com>, "Leon
+ Romanovsky" <leonro@nvidia.com>, Yael Chemla <ychemla@nvidia.com>, "Moshe
+ Shemesh" <moshe@nvidia.com>, Shahar Shitrit <shshitrit@nvidia.com>, "Maher
+ Sanalla" <msanalla@nvidia.com>
+Subject: [PATCH mlx5-next] net/mlx5: Expose definition for 1600Gbps link mode
+Date: Tue, 11 Nov 2025 14:24:48 +0200
+Message-ID: <1762863888-1092798-1-git-send-email-tariqt@nvidia.com>
+X-Mailer: git-send-email 2.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: qcom: lemans-evk: Enable Bluetooth support
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-        stable@vger.kernel.org, cheng.jiang@oss.qualcomm.com,
-        quic_jiaymao@quicinc.com, quic_chezhou@quicinc.com,
-        quic_shuaz@quicinc.com
-References: <20251110055709.319587-1-wei.deng@oss.qualcomm.com>
- <28ffece5-29b7-4d6f-a6cf-5fdf3b8259ef@oss.qualcomm.com>
-Content-Language: en-US
-From: Wei Deng <wei.deng@oss.qualcomm.com>
-In-Reply-To: <28ffece5-29b7-4d6f-a6cf-5fdf3b8259ef@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: tEZOwKvDA4-L2lP_NkvspEyCeMJJZ6GU
-X-Authority-Analysis: v=2.4 cv=AYW83nXG c=1 sm=1 tr=0 ts=69132b10 cx=c_pps
- a=IZJwPbhc+fLeJZngyXXI0A==:117 a=Uz3yg00KUFJ2y2WijEJ4bw==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=F864Gg6nNBeLBzAGB4AA:9
- a=QEXdDO2ut3YA:10 a=uG9DUKGECoFWVXl0Dc02:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTExMDA5OCBTYWx0ZWRfXxEstbMXTrvqm
- 2a28+A32DyJSkRN0uG+LDDMtFGyEU2XhWHcXNP8XhG3UkxQHZrLYhxQEF3RHebEZZicZJZovIlc
- pqWPz9CLYB4onAHKPIfPI7kc34KtCqQA5lXcsZKI4V72s7v/c2+94xg+97s+tzAXOHwmd5uIT27
- oLyhZqBMdBHdM93RJFA6/tFFsQjhGPZ/yRaoHNjA+PHnIpM4JDlek7iwp+P9UWWmf6+m0kgEGb/
- WA1VEiNhdVex1x+jX4GE3j2vSajWH357iwHGBigpPyfvlXceEC6CoDx5E8iYUeFwLrkQX3lD4+7
- 0slquctVgJNHp3g1BOKjCLZ4F71Y5bd1mjdB621z3c5CbLv72AOTceaY0uo++QemQ+T4IJbxv+M
- 0Opkqs9rxOteA3drQyrRNT0RpUbQ9Q==
-X-Proofpoint-GUID: tEZOwKvDA4-L2lP_NkvspEyCeMJJZ6GU
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-11_02,2025-11-11_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 impostorscore=0 malwarescore=0 adultscore=0 clxscore=1015
- suspectscore=0 priorityscore=1501 lowpriorityscore=0 bulkscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511110098
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL02EPF00021F69:EE_|SA1PR12MB6679:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2705dddf-b262-4e2f-6865-08de211d64be
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|376014|36860700013|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?QmltMvdEpVpfkVbqBWmKwCSM4oWQeFeklI+YzITp28nTZl1VDlvDdKfHoDMG?=
+ =?us-ascii?Q?aKCD+loYMT9l2oxoyA04nOGYi6OSAh+hWUqOs3yZs0aOQTGXuGUdElYH4Okl?=
+ =?us-ascii?Q?a7wadsM81Dgok6i5W89A40FIIEEq4pkhmOJNnrlNLrUnjQjwjjd+1Yhystc5?=
+ =?us-ascii?Q?tUeiZo/g0NmiJkbrutWcI72w3cixJfhknaJ2AjY11/ZRYsqcMJqjpmHcqWyh?=
+ =?us-ascii?Q?xJ2+fSD+k0YqNML/Q5l/N1UefMSG/IEj3vqk780G9JsXqTAL4lJg8L2OQmic?=
+ =?us-ascii?Q?CEaHMDyv/0ZvSsaQ413jQE14SgUv0mRh3EgpOEVxGddBmx1+oe8vwyFyoQHT?=
+ =?us-ascii?Q?v2yAv8r2KFxpfgz2ABKv6kyuKsTOxYn1vgavGnnQIqZdQVyeJOQ5DVqUy23u?=
+ =?us-ascii?Q?hdrGRQLVIhO6ueMkgAlVOiffpdOpQQAdnBZ9jjt4XdVDA3w4BK/8XnO2nVzz?=
+ =?us-ascii?Q?avK3yMCDUjtOLzLoOAOv0uXtflSv+f/09fOo80cA1pl8ZNgV44v5PbIK6Gn9?=
+ =?us-ascii?Q?f08vkkCBUKhENxI7HzFuZChm6y2dIbDJd2gW0VnARVf8/uX/MjysWy7PaZzA?=
+ =?us-ascii?Q?JahmsKaxFKnRgsolrFxJ0QhkuXJsIVtlJTzBTQj29PrJu/R9RS+YDT1Co0mb?=
+ =?us-ascii?Q?3b9nI52+oySqw2JIXoDuW4WHimjHwNzYuvO9X0JJH/UaKd+EVlXSO3ZXDKER?=
+ =?us-ascii?Q?Q271qLv8SPVcxghGiWLn+Sbhi90DL0lgeQ6bHBZ9vHQLhThw0hTUiPkWNr/1?=
+ =?us-ascii?Q?cAEzPhKOCmvlsXxYQNNfTnxC9mvdfHpqO6kWYOYNV0TVGZLg85Sv30wtgUoH?=
+ =?us-ascii?Q?3+Vwq/OG5AhNGX5WIY3wknGLgbx24w+d+qkuv+p7bNx9XnRZNMginssg9XQo?=
+ =?us-ascii?Q?8Xjbudab8Wx9LuWgoHUdz5CSpLUBouTCYHSN/sq5r04pdrwZS6NVq4jjPc9/?=
+ =?us-ascii?Q?SEGUCxcsj72JsiauP7J80kduaWQkxbgVlFvc4u+NfCsz5YkUGJFyFSKl7DN2?=
+ =?us-ascii?Q?iZgyULO93vRqFCVtv7aE/RgVerfwIUNwmODurZc7feORIsJlIKZWjqpb4mcG?=
+ =?us-ascii?Q?/DnqjiJmJ/Dn6zw6dA1jYAJOAcrE+G7Kdz9+OJ9OyQwTjUkLCeJlH6zyaYt0?=
+ =?us-ascii?Q?hrSDvxzHA4HmYmVHsEdwSeEkC69Fqno1Vy3PDusWiggPCGa4uvYdrU/Y2duZ?=
+ =?us-ascii?Q?g0BaBopG7Esj1twJv1781rsPY6OQvdbTDKNJCGhfWSb3X/2jg3z5GMtk0jjr?=
+ =?us-ascii?Q?Nn3ar82WgruTPhD3wAODSqpXqaonPwC4I2EP9aY+L4zt1S8eRYWM89uSv4o5?=
+ =?us-ascii?Q?navUOF1i0yANBeu9X3MQTC0qgiKIH0ns3Tn+3qdvDIl8Z7jU3VKKl4JeGqdo?=
+ =?us-ascii?Q?/ANZysmvldDbg6LOjc+4v+7EPTYNZioI5wf9Ke5rkX67hv7w86h4J5mbJSyN?=
+ =?us-ascii?Q?5LWjwTZzZKedRhBBKcw0jrdaZFXaPjI0Sk574OdFPWwpRLvqlaNrzkN87U9u?=
+ =?us-ascii?Q?oYXXeNnYhmQ3a0ffaXdODRT+3kmbxi9JvEhE6JNVJRHLUjvAMom6X57b5nHV?=
+ =?us-ascii?Q?dJgpo753Zb6Q1fN7yVY=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(376014)(36860700013)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Nov 2025 12:25:25.9934
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2705dddf-b262-4e2f-6865-08de211d64be
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL02EPF00021F69.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB6679
 
-Hi Konrad,
+This patch exposes new link mode for 1600Gbps, utilizing 8 lanes at
+200Gbps per lane.
 
-Thanks for your comments.
+Co-developed-by: Yael Chemla <ychemla@nvidia.com>
+Reviewed-by: Shahar Shitrit <shshitrit@nvidia.com>
+Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
+---
+ include/linux/mlx5/port.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-On 11/10/2025 7:49 PM, Konrad Dybcio wrote:
-> On 11/10/25 6:57 AM, Wei Deng wrote:
->> There's a WCN6855 WiFi/Bluetooth module on an M.2 card. To make
->> Bluetooth work, we need to define the necessary device tree nodes,
->> including UART configuration and power supplies.
->>
->> Since there is no standard M.2 binding in the device tree at present,
->> the PMU is described using dedicated PMU nodes to represent the
->> internal regulators required by the module.
->>
->> The 3.3V supply for the module is assumed to come directly from the
->> main board supply, which is 12V. To model this in the device tree, we
->> add a fixed 12V regulator node as the DC-IN source and connect it to
->> the 3.3V regulator node.
->>
->> Signed-off-by: Wei Deng <wei.deng@oss.qualcomm.com>
->> ---
-> 
-> [...]
-> 
->>  &apps_rsc {
->> @@ -627,6 +708,22 @@ &qupv3_id_2 {
->>  	status = "okay";
->>  };
->>  
->> +&qup_uart17_cts {
->> +	bias-disable;
->> +};
->> +
->> +&qup_uart17_rts {
->> +	bias-pull-down;
->> +};
->> +
->> +&qup_uart17_tx {
->> +	bias-pull-up;
->> +};
->> +
->> +&qup_uart17_rx {
->> +	bias-pull-down;
->> +};
-> 
-> This is notably different than all other platforms' bluetooth pin
-> settings - for example pulling down RX sounds odd, since UART signal
-> is supposed to be high at idle
-> 
-> see hamoa.dtsi : qup_uart14_default as an example
-> 
+diff --git a/include/linux/mlx5/port.h b/include/linux/mlx5/port.h
+index 58770b86f793..1df9d9a57bbc 100644
+--- a/include/linux/mlx5/port.h
++++ b/include/linux/mlx5/port.h
+@@ -112,6 +112,7 @@ enum mlx5e_ext_link_mode {
+ 	MLX5E_400GAUI_2_400GBASE_CR2_KR2	= 17,
+ 	MLX5E_800GAUI_8_800GBASE_CR8_KR8	= 19,
+ 	MLX5E_800GAUI_4_800GBASE_CR4_KR4	= 20,
++	MLX5E_1600TAUI_8_1600TBASE_CR8_KR8	= 23,
+ 	MLX5E_EXT_LINK_MODES_NUMBER,
+ };
+ 
 
-I followed the qup_uart17 settings from lemans-ride-common.dtsi. Since these configurations are not required for Bluetooth functionality. I will remove this configuration in the next patch.
-
-> Konrad
-
+base-commit: 583b4fe1c19d978bb787e0adf9ce469cb7f68455
 -- 
-Best Regards,
-Wei Deng
+2.31.1
 
 
