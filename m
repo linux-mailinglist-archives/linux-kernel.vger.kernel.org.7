@@ -1,101 +1,39 @@
-Return-Path: <linux-kernel+bounces-894636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A87FC4B770
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 05:37:28 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E61CC4B77F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 05:38:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C5D41346FD6
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 04:37:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DE4D64F355F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 04:37:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B37742773F9;
-	Tue, 11 Nov 2025 04:37:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="T474UD14";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="amQ7CydK"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C67F274FEB
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 04:37:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EF103128BA;
+	Tue, 11 Nov 2025 04:37:28 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BFF4303A05;
+	Tue, 11 Nov 2025 04:37:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762835843; cv=none; b=BChimdTKFDXeVMKp2Gdt9MWnXiIJ3mACSAjlHFLIpyf6FRnNe9xNhfoQ1hg1ZJ4J1DE92MZl6b+cQ0heHQD0CWnsEBZ8ScMRB6E4C496OfvQYp1lzaDjpXMGdHOc8JGem0irVq5OiRNiXXWqcAxcQdHGE1qSzjn5vFW9e6FCgZM=
+	t=1762835848; cv=none; b=fSvfaCIlOYjNSTYXT/OwXP79ZGXeHQlph8THF/lU4fOm9gMIhYS8Yclxtee4bHRanSvoRhM5viQZ2ajxKERjapGoxKyZTVMXIfOCodOw8e6MnWwKU4pVgO/CrYcWh10ObWjiM6QWEAubTmCUc+VFgw1ujbtNPMSUP56OyNicFBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762835843; c=relaxed/simple;
-	bh=4Ij8Kpzw53FTvwgkxB14QlL5wIlcFPKB+tSaSgu160E=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=qgoQNLRNtgKbqXdiaQtnWDoPYUamtWi+4PpIa0VgMq91roLzOtE2YvLCKV2EKrLukAmCrHCv56jKWnUflFYMZX+jHW7IHpBHAUOjRNl3xOQkjXR6b1oT/XV/n1Fk3JDkv0aNWTv/wyWBGjgKFR33OXJ5IR2u8Nib3Y+hifmDzwU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=T474UD14; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=amQ7CydK; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762835840;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=C+JproX8T015qBYAZSJqqnExPu+aACtaRVUSOGM3CqU=;
-	b=T474UD14Xn1rGy2GwzWmw1HfdFPlXABoXNiIgq0YaVvK+nbPwlKJmWQn8o1831erFV4VdM
-	F8/Qsr7II8xw7OFJ7L8wo0WxXvXaQUqmtQoGFsqQi4c+W1/amxy4ar3DplKhiSmBjBxMW6
-	rUNx4JOOG02o8Ta5iqd2WBb8F5/YWkU=
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
- [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-283-lilP-b9bNQWBLPFQNV4Kjw-1; Mon, 10 Nov 2025 23:37:18 -0500
-X-MC-Unique: lilP-b9bNQWBLPFQNV4Kjw-1
-X-Mimecast-MFC-AGG-ID: lilP-b9bNQWBLPFQNV4Kjw_1762835838
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4edae6297a2so32534131cf.3
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 20:37:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1762835838; x=1763440638; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=C+JproX8T015qBYAZSJqqnExPu+aACtaRVUSOGM3CqU=;
-        b=amQ7CydK65mTQIwvr6CjGgfX0KE5jH8dHTwAaMQM9aFWGBMKwy/zcSvR4kjmNm6xcF
-         Xs9p9b3PiOhJmNLp1ofZ1H2/CeQdl1Wl40O8+D3iZ+O2IpGOPWjAD9sSJYy3xzi71A5o
-         X0bEAbOjRFGHUX97DZItnPHK26Fc8xjXxINXSfKoUWf57g9xBdhQv25fmAEW41VK5+yA
-         mn+mEDMkbwoADxjZd/bn3Z7KAvrAcNsmHpEPchhtlBR5MiGUhL7uh85HWl5XV2fEnu/J
-         zN/t1WZpGuSJ4QRO5R08vb0SKbKOG2DQ9DWQQ2TZFhuvDKRSm6eMu/6Dv+NPSHDv0B0A
-         KLwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762835838; x=1763440638;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=C+JproX8T015qBYAZSJqqnExPu+aACtaRVUSOGM3CqU=;
-        b=GtO95vgZTRVqYiA3YouM+1q82DlLLJHaLhkzGjQPgvsdp1dLnmq5mS4v0p6i3K1ioo
-         HdI30UmEbWhALnTelZLb/GZa7SluddtzX3vqv8cMqvuSyH5icGfssh4wEbZUB8enzoYF
-         X7cEnbAHygMUHTkVKiohG5+WKe9IuNXBh+WWGnti8kcoQoMKoT4jjMuTF0Ro51qHYDK1
-         10ZOPYOWzRZ2utVL+fCYGXePrasYd6a+gEMl+E2w6xyRG4u41PcUIsmPIfkFRN//ZDgG
-         EzMUyMy5NtIesiZmQWVncq8fFkMlskw1lAihn4x4q5tkdyg+hw7XcEL56xmgTrdsGCZG
-         NRfA==
-X-Forwarded-Encrypted: i=1; AJvYcCVnlOWFsG0Da4aZ11fE2S2Zjzdr/t+EUS9P4sjfppbx8V7RLA7KLiphnkGR2esARX/LpXlMXWCR3nSzqNM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9umkH0Y+v+Ixgp6t8+FyKETfUeDS2sQ1bq7zPvgTRSBDADl9G
-	c0Z5HA+BguBOKZo/dN52EIVGRFK2UI7hu+G1EBQ6OuA6VQIwiITWnxIQsn0OAVzbwESJt3QQNMJ
-	xIHAG+fFvpHHI09f7KTP6LVbtnhnurj5t71HPNZE6MWyXjgeh5f5t5qt5ZQdhKyxfiQ==
-X-Gm-Gg: ASbGncsXe3VXm8Pm4w2H+wRP5KnTCwIWP0IFMw1/XWbNP1VRcTe3WphaosoTw5zyo4n
-	32VnnJYHjWcPEhiAOfpzauFi+4e68SkTSAMFEZeEuwGGyAkjLL1kZheJJgQCcQ7AIPaLh7HeNEG
-	6XpzYOsdQcuMt6PXYNQYDw1U2ey8Hpm6RQW1iYA12l3QNJOpxcfokefRTTZMyaZqHPIb/E+kVy5
-	WzV/p7Yset9eM80RQd3MjQF4WJWWa9/6SZNef4Lp3qEfraC69CBDAmoP9M9sirL7gKqyo+GQRYH
-	MXp6fuhL02tkof6Y6324vvqbmXwQZScfRAIXmwyUFbaoGQAiXutVs3Ftc1692Bht58H4bFjBxoP
-	2m+fmJQVYayo73ceuyvFOsSYdazq8QR1GXMu6UYgYH93gEg==
-X-Received: by 2002:ac8:59c3:0:b0:4ed:8264:919e with SMTP id d75a77b69052e-4eda4f99536mr125294571cf.44.1762835838436;
-        Mon, 10 Nov 2025 20:37:18 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEKIbjVumbhQ6UlTo32QTUXlZ/B0AGMGTqMqjVXCshP8q/ARwDZpWgxkIo7Vshy4zJl+b4h3A==
-X-Received: by 2002:ac8:59c3:0:b0:4ed:8264:919e with SMTP id d75a77b69052e-4eda4f99536mr125294461cf.44.1762835838167;
-        Mon, 10 Nov 2025 20:37:18 -0800 (PST)
-Received: from ?IPV6:2601:188:c102:b180:1f8b:71d0:77b1:1f6e? ([2601:188:c102:b180:1f8b:71d0:77b1:1f6e])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4edb5a108a1sm41301131cf.24.2025.11.10.20.37.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Nov 2025 20:37:17 -0800 (PST)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <e5a25c3d-cd81-48bc-bae0-b1b28778272b@redhat.com>
-Date: Mon, 10 Nov 2025 23:37:16 -0500
+	s=arc-20240116; t=1762835848; c=relaxed/simple;
+	bh=ONY7yg3b/hc6FBRbs5yiQ3fKU5/mD/Cx//exp/T76YE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ERZbhxzomKnKG8wJ+8sJdvn0MvvR/qdbIGLIdsPlL6YXpIb0XX0Pclw2I9p4ffBIeehKkoNZn0LBwdgsoEcNSu5+Ol5w+bv4FoLjwYuaT3VAbUAXBtmiKx8Ns0Nk7kzxGRUkrkbJFOiIkew7loJdV33GDag//PljPx2Oq6AjC0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C5E122F;
+	Mon, 10 Nov 2025 20:37:16 -0800 (PST)
+Received: from [10.164.136.36] (unknown [10.164.136.36])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8BEF33F66E;
+	Mon, 10 Nov 2025 20:37:21 -0800 (PST)
+Message-ID: <938fc839-b27a-484f-a49c-6dc05b3e9983@arm.com>
+Date: Tue, 11 Nov 2025 10:07:18 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -103,61 +41,201 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next 3/3] cpuset: remove need_rebuild_sched_domains
-To: Chen Ridong <chenridong@huaweicloud.com>, tj@kernel.org,
- hannes@cmpxchg.org, mkoutny@suse.com
-Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
- lujialin4@huawei.com, chenridong@huawei.com
-References: <20251110015228.897736-1-chenridong@huaweicloud.com>
- <20251110015228.897736-4-chenridong@huaweicloud.com>
+Subject: Re: [PATCH] arm64/pageattr: Propagate return value from
+ __change_memory_common
+To: Yang Shi <yang@os.amperecomputing.com>, Will Deacon <will@kernel.org>
+Cc: catalin.marinas@arm.com, ryan.roberts@arm.com, rppt@kernel.org,
+ shijie@os.amperecomputing.com, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20251103061306.82034-1-dev.jain@arm.com>
+ <aQjHQt2rYL6av4qw@willie-the-truck>
+ <f594696b-ba33-4c04-9cf5-e88767221ae0@os.amperecomputing.com>
+ <f8b899cf-d377-4dc7-a57c-82826ea5e1ea@arm.com>
+ <aQn4EwKar66UZ7rz@willie-the-truck>
+ <586b8d19-a5d2-4248-869b-98f39b792acb@arm.com>
+ <17eed751-e1c5-4ea5-af1d-e96da16d5e26@arm.com>
+ <c1701ce9-c8b7-4ac8-8dd4-930af3dad7d2@os.amperecomputing.com>
 Content-Language: en-US
-In-Reply-To: <20251110015228.897736-4-chenridong@huaweicloud.com>
+From: Dev Jain <dev.jain@arm.com>
+In-Reply-To: <c1701ce9-c8b7-4ac8-8dd4-930af3dad7d2@os.amperecomputing.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
 
-On 11/9/25 8:52 PM, Chen Ridong wrote:
-> From: Chen Ridong <chenridong@huawei.com>
+On 11/11/25 9:47 am, Yang Shi wrote:
 >
-> Previously, update_cpumasks_hier() used need_rebuild_sched_domains to
-> decide whether to invoke rebuild_sched_domains_locked(). Now that
-> rebuild_sched_domains_locked() only sets force_rebuild, the flag is
-> redundant. Hence, remove it.
 >
-> Signed-off-by: Chen Ridong <chenridong@huawei.com>
-> ---
->   kernel/cgroup/cpuset.c | 6 +-----
->   1 file changed, 1 insertion(+), 5 deletions(-)
+> On 11/10/25 7:39 PM, Dev Jain wrote:
+>>
+>> On 05/11/25 9:27 am, Dev Jain wrote:
+>>>
+>>> On 04/11/25 6:26 pm, Will Deacon wrote:
+>>>> On Tue, Nov 04, 2025 at 09:06:12AM +0530, Dev Jain wrote:
+>>>>> On 04/11/25 12:15 am, Yang Shi wrote:
+>>>>>> On 11/3/25 7:16 AM, Will Deacon wrote:
+>>>>>>> On Mon, Nov 03, 2025 at 11:43:06AM +0530, Dev Jain wrote:
+>>>>>>>> Post a166563e7ec3 ("arm64: mm: support large block mapping when
+>>>>>>>> rodata=full"),
+>>>>>>>> __change_memory_common has a real chance of failing due to split
+>>>>>>>> failure.
+>>>>>>>> Before that commit, this line was introduced in c55191e96caa,
+>>>>>>>> still having
+>>>>>>>> a chance of failing if it needs to allocate pagetable memory in
+>>>>>>>> apply_to_page_range, although that has never been observed to 
+>>>>>>>> be true.
+>>>>>>>> In general, we should always propagate the return value to the 
+>>>>>>>> caller.
+>>>>>>>>
+>>>>>>>> Cc: stable@vger.kernel.org
+>>>>>>>> Fixes: c55191e96caa ("arm64: mm: apply r/o permissions of VM
+>>>>>>>> areas to its linear alias as well")
+>>>>>>>> Signed-off-by: Dev Jain <dev.jain@arm.com>
+>>>>>>>> ---
+>>>>>>>> Based on Linux 6.18-rc4.
+>>>>>>>>
+>>>>>>>>    arch/arm64/mm/pageattr.c | 5 ++++-
+>>>>>>>>    1 file changed, 4 insertions(+), 1 deletion(-)
+>>>>>>>>
+>>>>>>>> diff --git a/arch/arm64/mm/pageattr.c b/arch/arm64/mm/pageattr.c
+>>>>>>>> index 5135f2d66958..b4ea86cd3a71 100644
+>>>>>>>> --- a/arch/arm64/mm/pageattr.c
+>>>>>>>> +++ b/arch/arm64/mm/pageattr.c
+>>>>>>>> @@ -148,6 +148,7 @@ static int change_memory_common(unsigned
+>>>>>>>> long addr, int numpages,
+>>>>>>>>        unsigned long size = PAGE_SIZE * numpages;
+>>>>>>>>        unsigned long end = start + size;
+>>>>>>>>        struct vm_struct *area;
+>>>>>>>> +    int ret;
+>>>>>>>>        int i;
+>>>>>>>>          if (!PAGE_ALIGNED(addr)) {
+>>>>>>>> @@ -185,8 +186,10 @@ static int change_memory_common(unsigned
+>>>>>>>> long addr, int numpages,
+>>>>>>>>        if (rodata_full && (pgprot_val(set_mask) == PTE_RDONLY ||
+>>>>>>>>                    pgprot_val(clear_mask) == PTE_RDONLY)) {
+>>>>>>>>            for (i = 0; i < area->nr_pages; i++) {
+>>>>>>>> - __change_memory_common((u64)page_address(area->pages[i]),
+>>>>>>>> +            ret =
+>>>>>>>> __change_memory_common((u64)page_address(area->pages[i]),
+>>>>>>>>                               PAGE_SIZE, set_mask, clear_mask);
+>>>>>>>> +            if (ret)
+>>>>>>>> +                return ret;
+>>>>>>> Hmm, this means we can return failure half-way through the 
+>>>>>>> operation. Is
+>>>>>>> that something callers are expecting to handle? If so, how can 
+>>>>>>> they tell
+>>>>>>> how far we got?
+>>>>>> IIUC the callers don't have to know whether it is half-way or not
+>>>>>> because the callers will change the permission back (e.g. to RW) 
+>>>>>> for the
+>>>>>> whole range when freeing memory.
+>>>>> Yes, it is the caller's responsibility to set VM_FLUSH_RESET_PERMS 
+>>>>> flag.
+>>>>> Upon vfree(), it will change the direct map permissions back to RW.
+>>>> Ok, but vfree() ends up using update_range_prot() to do that and if we
+>>>> need to worry about that failing (as per your commit message), then
+>>>> we're in trouble because the calls to set_area_direct_map() are 
+>>>> unchecked.
+>>>>
+>>>> In other words, this patch is either not necessary or it is 
+>>>> incomplete.
+>>>
+>>> Here is the relevant email, in the discussion between Ryan and Yang:
+>>>
+>>> https://lore.kernel.org/all/fe52a1d8-5211-4962-afc8-c3f9caf64119@os.amperecomputing.com/ 
+>>>
+>>>
+>>> We had concluded that all callers of set_memory_ro() or 
+>>> set_memory_rox() (which require the
+>>> linear map perm change back to default, upon vfree() ) will call it 
+>>> for the entire region (vm_struct).
+>>> So, when we do the set_direct_map_invalid_noflush, it is guaranteed 
+>>> that the region has already
+>>> been split. So this call cannot fail.
+>>>
+>>> https://lore.kernel.org/all/f8898c87-8f49-4ef2-86ae-b60bcf67658c@os.amperecomputing.com/ 
+>>>
+>>>
+>>> This email notes that there is some code doing set_memory_rw() and 
+>>> unnecessarily setting the VM_FLUSH_RESET_PERMS
+>>> flag, but in that case we don't care about the 
+>>> set_direct_map_invalid_noflush call failing because the protections
+>>> are already RW.
+>>>
+>>> Although we had also observed that all of this is fragile and 
+>>> depends on the caller doing the
+>>> correct thing. The real solution should be somehow getting rid of 
+>>> the BBM style invalidation.
+>>> Ryan had proposed some methods in that email thread.
+>>>
+>>> One solution which I had thought of, is that, observe that we are 
+>>> doing an overkill by
+>>> setting the linear map to invalid and then default, for the *entire* 
+>>> region. What we
+>>> can do is iterate over the linear map alias of the vm_struct *area 
+>>> and only change permission
+>>> back to RW for the pages which are *not* RW. And, those relevant 
+>>> mappings are guaranteed to
+>>> be split because they were changed from RW to not RW.
+>>
+>> @Yang and Ryan,
+>>
+>> I saw Yang's patch here:
+>> https://lore.kernel.org/all/20251023204428.477531-1-yang@os.amperecomputing.com/ 
+>>
+>> and realized that currently we are splitting away the linear map 
+>> alias of the *entire* region.
+>>
+>> Shouldn't this then imply that set_direct_map_invalid_noflush will 
+>> never fail, since even
+>>
+>> a set_memory_rox() call on a single page will split the linear map 
+>> for the entire region,
+>>
+>> and thus there is no fragility here which we were discussing about? I 
+>> may be forgetting
+>>
+>> something, this linear map stuff is confusing enough already.
 >
-> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-> index c357bfb69fe2..22084d8bdc3f 100644
-> --- a/kernel/cgroup/cpuset.c
-> +++ b/kernel/cgroup/cpuset.c
-> @@ -2184,7 +2184,6 @@ static void update_cpumasks_hier(struct cpuset *cs, struct tmpmasks *tmp,
->   {
->   	struct cpuset *cp;
->   	struct cgroup_subsys_state *pos_css;
-> -	bool need_rebuild_sched_domains = false;
->   	int old_prs, new_prs;
->   
->   	rcu_read_lock();
-> @@ -2348,15 +2347,12 @@ static void update_cpumasks_hier(struct cpuset *cs, struct tmpmasks *tmp,
->   		if (!cpumask_empty(cp->cpus_allowed) &&
->   		    is_sched_load_balance(cp) &&
->   		   (!cpuset_v2() || is_partition_valid(cp)))
-> -			need_rebuild_sched_domains = true;
-> +			cpuset_force_rebuild();
->   
->   		rcu_read_lock();
->   		css_put(&cp->css);
->   	}
->   	rcu_read_unlock();
-> -
-> -	if (need_rebuild_sched_domains)
-> -		cpuset_force_rebuild();
->   }
->   
->   /**
-Reviewed-by: Waiman Long <longman@redhat.com>
+> It still may fail due to page table allocation failure when doing 
+> split. But it is still fine. We may run into 3 cases:
+>
+> 1. set_memory_rox succeed to split the whole range, then 
+> set_direct_map_invalid_noflush() will succeed too
+> 2. set_memory_rox fails to split, for example, just change partial 
+> range permission due to page table allocation failure, then 
+> set_direct_map_invalid_noflush() may
+>    a. successfully change the permission back to default till where 
+> set_memory_rox fails at since that range has been successfully split. 
+> It is ok since the remaining range is actually not changed to ro by 
+> set_memory_rox at all
+>    b. successfully change the permission back to default for the whole 
+> range (for example, memory pressure is mitigated when 
+> set_direct_map_invalid_noflush() is called). It is definitely fine as 
+> well
 
+Correct, what I mean to imply here is that, your patch will break this? 
+If set_memory_* is applied on x till y, your patch changes the linear 
+map alias
+
+only from x till y - set_direct_map_invalid_noflush instead operates on 
+0 till size - 1, where 0 <=x <=y <= size - 1. So, it may encounter a -ENOMEM
+
+on [0, x) range while invalidating, and that is *not* okay because we 
+must reset back [0, x) to default?
+
+
+>
+> Hopefully I don't miss anything.
+>
+> Thanks,
+> Yang
+>
+>
+>>
+>>
+>>>
+>>>>
+>>>> Will
+>>>
+>
 
