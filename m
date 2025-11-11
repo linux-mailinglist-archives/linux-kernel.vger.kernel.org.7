@@ -1,133 +1,122 @@
-Return-Path: <linux-kernel+bounces-895206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91FA8C4D34D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:54:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E027CC4D30B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:52:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 156F5189D54E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:52:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33EAB189F909
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:51:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96B9E350D53;
-	Tue, 11 Nov 2025 10:50:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD515350D47;
+	Tue, 11 Nov 2025 10:49:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="i9lolI1B";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="EyvosTSU"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TQh/ngsf"
+Received: from mail-ej1-f73.google.com (mail-ej1-f73.google.com [209.85.218.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A5A8354AC6;
-	Tue, 11 Nov 2025 10:50:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EB522F12AD
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 10:49:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762858207; cv=none; b=kKWVET/qnnuVuuYQXuPvUvRAc2yrv9I2MkdVObCpX0o4ePDPWoT5jPSBQ4dldJ/Uranplo58XrJUMjvOZmNJn7vs+lh1Qy9Sz/k+y3L2+CjuwCFjOuad9kEIwHtJ6R1oWo4kmBCjf+9bpYu5MSoGyTG0Wi9mpGgtsFft7cvJgXA=
+	t=1762858197; cv=none; b=le0DRLM6eOyZrwSwmXkwhgFF3pj6WRsKZZS7kWiVLW0ntnm1tgYiHuBVOF0z1RPdJNoXao9tqPVAE7avo/jzL9vvJEqtEDV1jOgx6I39X7IarQEN2C6o6poLzIDiGdrAF2RzAQfm4FYK49wPPBOTfhUP8P6EdUCFTcQee4omqnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762858207; c=relaxed/simple;
-	bh=aE/WV2Mi+bsanJlDrSl9gQQohVGvHhC6JpfJzLKQvZ4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=D8lxe6FuFYukU6lkybqWyrmHNZI38FHFBLGtpfp5kBpiUfEdr3AJ1nVVQ/F2hpEoxpgK21I46ksLkJjF67NRylpInWX+bzAu1bfHGa/ZqHiaosKHU5eYYDaLon3g7ZASe8Z8ZLY/q8P8Iy5zXZwD++GWhtYk+ReAuubhc/LK4OU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=i9lolI1B; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=EyvosTSU; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1762858201;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EWRbOr5K7jIjvQLAayug9MX0ujPyaf2nA2ZDGHxUXu0=;
-	b=i9lolI1Bn0RSekhyqAdOd2QEQyuNQfRpiFVauBncJw/j0UhgkHldW7kecGbfcSlXNA/yQ8
-	MP36fXmxQNxG10xV2HC32sqKCHX49hdTiga8pEKCuctlnV6kC+jh5VZZ08dMXuDVjoNQfr
-	ktOUq1xg7Iu7O2m32BOvXMiUibO17G7mLy9UlC7ouUXG7TugAgQFUnR/NJAEsdhn5If7lm
-	N5IUIQvL/O6M4MypTLRem110CF7Qu1sTh/DX4ZiKWqjbOVdC3NQJdSMuWhZv8iyk89BN4G
-	aSOVLTogPT6Vw6K+C2CGJgg2FXcd20bfC0imGuYM8BSClN7tGDw2ozutnCQxgw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1762858201;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EWRbOr5K7jIjvQLAayug9MX0ujPyaf2nA2ZDGHxUXu0=;
-	b=EyvosTSUNObO3aUsVv4sVFnmRzSLwrQyEIaGWw1wR9zXbZk9g5nXcBp4wDgx1bd+Ml7GqO
-	FsL2Z9MOKz1Sr9BQ==
-Date: Tue, 11 Nov 2025 11:49:52 +0100
-Subject: [PATCH 06/10] selftests: vDSO: vdso_test_gettimeofday: Use types
- from vdso_types.h
+	s=arc-20240116; t=1762858197; c=relaxed/simple;
+	bh=lbEYnHVMZCw+SBkRqnq7fDqkJ4Pny2l6c7uvDC0nPZk=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=BrcGmhrKEWTyFecx5GyAHq4fVWQRXrfcFZnQTBFglVjgIsmXSV7z/ZOsuohlXc66SYksdKMy4qUL7mRUbkrMiB6MPkBEmL7o1LURiO1bgtvgDn1OWb1acZb+CwFu0DRKEyg5okGYqhvmxapHnIIetzDxSmDnrEr+KZN6VaBQv3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TQh/ngsf; arc=none smtp.client-ip=209.85.218.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-ej1-f73.google.com with SMTP id a640c23a62f3a-b6d35430f56so327445266b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 02:49:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762858194; x=1763462994; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4Ro5+zmjDiZVo/VYqG4VAJIAtKjMJ/x4QPaDxbqP0QE=;
+        b=TQh/ngsf+taX9o5OT8Z/doz7EQg5+tIBSHi5T9e7IsCiN2U98SUzqDHQIG+9Q1vbZI
+         73pp7vVIpATAtft7KOW2dI8VU9aE9MHZIQs/0t/qMlkAtp+R6OooDyaq4JdsKysoL7GT
+         cIbh5HAR78rFCxgEH6210dkzNoPTSTtL5GROxtHFkNBMMo6mNNd7HSt0O1HgbGgBYqTQ
+         mX/4EAl4CjSW7wp4ch8N4s3tUfhj9Pg+c5sAwxquPEMl+1wWnD5f8Ng1sjvn8r6PrDr6
+         sjUG2p9mfli36hQjGqjrDqgINr9qOfVcR9ZI2P1xnRm8Pc9N1AzjG7T9ITCBRNI7SfSh
+         bVIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762858194; x=1763462994;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4Ro5+zmjDiZVo/VYqG4VAJIAtKjMJ/x4QPaDxbqP0QE=;
+        b=lVpdJJ5xVTbctN0kMRxWUnjtYZ9lIdwn49NwQ0m2tZhhGSMXdkadw3gMNyxQrDBylh
+         r3EGIQW40jGAi5doTpXRtp6/7dPeCnTriOvgTtC0JlqW8Ty6adIVq2TXGliV+am3gqc0
+         uFx4+IQl3yfiw2WM3LQPkruCKyIaRlGJTmXv5LPWSkPNA8wIrTt3k0advrlar1M77EpQ
+         Q7o+YcWQfrSV5mZxQqZxST71YaYWN7Tpm75Hp8SlCnNae4XSeD6CW7cVbp+Ay83YM+0X
+         8TiLz3kyKq3UBQWMicOYa1P6OGd6wk1c7171qJaE6WmQ2ez1+8YzU2hiuw6vakhkp35u
+         GgHw==
+X-Forwarded-Encrypted: i=1; AJvYcCX8i7X1MNlNYr0+KPne3b80UBM2hyZ5jdF3SVicCLB14Jai9Ni8Aa4aAjs6a558zDGZ8HmEglXl1ineEiU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGNpmMeQ2QkVAz7lI7dAOYOCC+zuvT2g+hwkCH5GpVvmFzx8BX
+	81cIC/U56/rUD9rqTRk8efaQbQHhpNucJLRHI2sZKMsEzFo8t+5u47SURjGTicBibHEINg47Wqw
+	n14f9QjB4G8YmWkANGA==
+X-Google-Smtp-Source: AGHT+IH0FQAkAML5C/GGvtqqSlXCzyOxX+sOsx/CWfWlt2gwaz++PS3im2tHhF3rtUi2hyc/8XDI2KLRyk8Yt/A=
+X-Received: from ejcsp10.prod.google.com ([2002:a17:907:394a:b0:b6d:5546:e475])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:906:6a28:b0:b50:a389:7aa4 with SMTP id a640c23a62f3a-b72e02730b3mr1230655866b.13.1762858193780;
+ Tue, 11 Nov 2025 02:49:53 -0800 (PST)
+Date: Tue, 11 Nov 2025 10:49:52 +0000
+In-Reply-To: <20251108-bounded_ints-v4-0-c9342ac7ebd1@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+References: <20251108-bounded_ints-v4-0-c9342ac7ebd1@nvidia.com>
+Message-ID: <aRMU0K4xW_sYV5dn@google.com>
+Subject: Re: [PATCH v4 0/4] rust: add Bounded integer type
+From: Alice Ryhl <aliceryhl@google.com>
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Joel Fernandes <joelagnelf@nvidia.com>, Yury Norov <yury.norov@gmail.com>, 
+	Jesung Yang <y.j3ms.n@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20251111-vdso-test-types-v1-6-03b31f88c659@linutronix.de>
-References: <20251111-vdso-test-types-v1-0-03b31f88c659@linutronix.de>
-In-Reply-To: <20251111-vdso-test-types-v1-0-03b31f88c659@linutronix.de>
-To: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
- Vincenzo Frascino <vincenzo.frascino@arm.com>, 
- Shuah Khan <shuah@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, 
- linux-kselftest@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1762858197; l=1506;
- i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
- bh=aE/WV2Mi+bsanJlDrSl9gQQohVGvHhC6JpfJzLKQvZ4=;
- b=tEkNcq7+NZy5sFxOA6RFDjM0t4pvowlJ6pVzOV7q9hXnHptafetJy5+rd7wfBsgZgBtgge72w
- FkfLVCp+K69AIh2VSwEu4oThylG8zjMfei8tYMpgKkbkRP38scbMXLF
-X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
- pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-The libc types are not necessarily compatible with the vDSO functions.
+On Sat, Nov 08, 2025 at 11:23:46AM +0900, Alexandre Courbot wrote:
+> Minor revision adding the feedback received on v3.
+> 
+> Patch 3 adds a MAINTAINERS entry in case the Rust core team would like
+> us to maintain this, but please ignore it if you prefer to take it under
+> the core umbrella.
+> 
+> This series provides `Bounded`, a wrapper type for primitive integers
+> that guarantees that only a given number of bits are used to represent
+> values. This is particularly useful when working with bitfields, as the
+> guarantee that a given value fits within the number of assigned bits can
+> be enforced by the type system, saving cumbersome runtime checks, or
+> (worse) stripping data when bits are silently dropped.
+> 
+> For a basic usage, please see the rustdoc of the `Bounded` type on the
+> second patch.
+> 
+> The first use of this will be to represent bitfields in Nova register
+> types to guarantee that no data is ever stripped when manipulating them.
+> This should eventually allow the `bitfield` and `register` macros to
+> move out of Nova and into the kernel crate.
+> 
+> The last patch is just here to illustrate the use of this module; it is
+> not intended to be merged this cycle as it would likely result in big
+> merge conflicts with the drm tree.
+> 
+> This series applies on top of drm-rust-next for the needs of the last
+> patch, but the first 2 patches should apply cleanly on rust-next. A
+> branch with this series and its dependencies is available here:
+> 
+> https://github.com/Gnurou/linux/tree/b4/bounded_ints
+> 
+> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
 
-Use the dedicated types from vdso_types.h instead.
-
-Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
----
- tools/testing/selftests/vDSO/vdso_test_gettimeofday.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
-
-diff --git a/tools/testing/selftests/vDSO/vdso_test_gettimeofday.c b/tools/testing/selftests/vDSO/vdso_test_gettimeofday.c
-index 636a56ccf8e4e7943ca446fe3fad6897598ca77f..3c14ed654428e0dbe08e9d44671e82737ac61486 100644
---- a/tools/testing/selftests/vDSO/vdso_test_gettimeofday.c
-+++ b/tools/testing/selftests/vDSO/vdso_test_gettimeofday.c
-@@ -12,12 +12,12 @@
- 
- #include <stdio.h>
- #include <sys/auxv.h>
--#include <sys/time.h>
- 
- #include "../kselftest.h"
- #include "parse_vdso.h"
- #include "vdso_config.h"
- #include "vdso_call.h"
-+#include "vdso_types.h"
- 
- int main(int argc, char **argv)
- {
-@@ -33,15 +33,14 @@ int main(int argc, char **argv)
- 	vdso_init_from_sysinfo_ehdr(getauxval(AT_SYSINFO_EHDR));
- 
- 	/* Find gettimeofday. */
--	typedef long (*gtod_t)(struct timeval *tv, struct timezone *tz);
--	gtod_t gtod = (gtod_t)vdso_sym(version, name[0]);
-+	vdso_gettimeofday_t gtod = (vdso_gettimeofday_t)vdso_sym(version, name[0]);
- 
- 	if (!gtod) {
- 		printf("Could not find %s\n", name[0]);
- 		return KSFT_SKIP;
- 	}
- 
--	struct timeval tv;
-+	struct __kernel_old_timeval tv;
- 	long ret = VDSO_CALL(gtod, 2, &tv, 0);
- 
- 	if (ret == 0) {
-
--- 
-2.51.0
-
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
