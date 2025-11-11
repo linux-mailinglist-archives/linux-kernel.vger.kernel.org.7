@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-895209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C08F8C4D3A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:57:12 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C15E0C4D417
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:00:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B10FF18C161E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:54:00 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5311B4F9504
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:53:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B773351FCD;
-	Tue, 11 Nov 2025 10:51:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBD7135470D;
+	Tue, 11 Nov 2025 10:51:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=airkyi.com header.i=@airkyi.com header.b="Nk+qfpJ9"
-Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
+	dkim=pass (1024-bit key) header.d=airkyi.com header.i=@airkyi.com header.b="Oh88cWI9"
+Received: from smtpbg150.qq.com (smtpbg150.qq.com [18.132.163.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35669350A3B;
-	Tue, 11 Nov 2025 10:51:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.243.244.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D7F8350D6D;
+	Tue, 11 Nov 2025 10:51:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.132.163.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762858274; cv=none; b=hOzxs02wC0OKM8Bsq/k2mwCASuOiX0pdd1nGsF5+X7Q0PE+edhn+U+PaW9EDYKARQUGqH/pwnolX/HLRfRoaX1DBEeQbE7xgftDTYSksx/iDKKKXIdBesuadM6AT2zxpDpsSOcPh3Hjf+pdC7xoGW4kfXVOrJTlF/Kfuz0Jczzw=
+	t=1762858277; cv=none; b=hRNLky3kxMDNa87KTqSwoQCchmjAy3U7qqYAzpJPiWQ9UlkUQIrka/5Zqhzi20fUho8nks46XmTevNT+5nyN9JePg70UFN03iQfUtY9TJtviO9cR1wcTrDIBf9tWg5jYFQ+n99kI0BlXXngOT6N0ugBAfGddbcfH+PsnCbmzOzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762858274; c=relaxed/simple;
-	bh=Hph8zBRgkEl5bsXHuqo9OKoVbkY7ij5bPY5xAR4Aii8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=mm04R3XUzrOftgVi0QHQgoCiEGIbrfmP6cMZvPGwa3qoP2wPxgo3w0czAoul1LxVGmosii986fuCi2Rzy7gu4LcGa0Ww2QiyQzYERmn/1OX9bkVOqDP+vOBRYfGj9Ef24agDlkOLkkiwCUX2ZuyQ3btHFBvUo7Gd+Nh06OpWJUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=airkyi.com; spf=pass smtp.mailfrom=airkyi.com; dkim=pass (1024-bit key) header.d=airkyi.com header.i=@airkyi.com header.b=Nk+qfpJ9; arc=none smtp.client-ip=54.243.244.52
+	s=arc-20240116; t=1762858277; c=relaxed/simple;
+	bh=saJYASZoDmHvBZigfXZm9m+GDgk6vGp0Z9kz1QpmUow=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=TXFLFRTJ1Rr0jYUW0mNbmsF9ijNVWNpwvLGTOx6GEzxp7X/XdubT785ZVrZOhH5Nu5rqUySGVdgjmn2QVYpwe+T30UAx2rUS+cQYVA4jTNBEdRVCQzoURBxwPiF5XBzsufz17tU6/EItoMnW+zTnv1hYC5HvjhTsxA5oyebTgBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=airkyi.com; spf=pass smtp.mailfrom=airkyi.com; dkim=pass (1024-bit key) header.d=airkyi.com header.i=@airkyi.com header.b=Oh88cWI9; arc=none smtp.client-ip=18.132.163.193
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=airkyi.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=airkyi.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=airkyi.com;
-	s=altu2504; t=1762858257;
-	bh=3KVgbAMLqk9xskfSyH7zcOVwcHIfJ+/kd/q1XTa1m00=;
+	s=altu2504; t=1762858260;
+	bh=iH4TyyzlCs63+PYsRRwCgixuDYK1uZRjwAYMJ2JsaAI=;
 	h=From:To:Subject:Date:Message-Id;
-	b=Nk+qfpJ9ewTcExuBBLpwLuALH30SowqFYwlZAP3IDc65zssyvPZqE8/6CxTOHG3cb
-	 2K2nRKVwhJ6iZUnYAG1PocXYwxOehgxHvFyWgvTQ8VB45MtXdsR7rh/nsNmyEgUrSn
-	 yR7g1H7S55xBdUFKVbARuQByF7B8rTr5YbPgJkMM=
-X-QQ-mid: zesmtpsz9t1762858252t9993007f
-X-QQ-Originating-IP: QIEzzurO6Fp6z4rwWPRwhcxu3akUrwReXd3stTEf5Lk=
+	b=Oh88cWI9mwcltmI6mzCqokG7anVyG0wGkPHNw9RQkikYJhzW4CK+vpuXosddWOSHr
+	 e+raMD5q41iNqHC+rlTnG+MwbJIbV6epzHX4+3j8y6W+lGiy66ah6X/A6VYbJjWnew
+	 EoE03dvc5jmkrCQR+kGQrL9DgMBmeH8flH81qzoY=
+X-QQ-mid: zesmtpsz9t1762858256t97625740
+X-QQ-Originating-IP: uB8mCGoHOoLZ1YWe3fAK9YaOMzLs1IbVHP3rribHjTI=
 Received: from DESKTOP-8BT1A2O.localdomain ( [58.22.7.114])
 	by bizesmtp.qq.com (ESMTP) with 
-	id ; Tue, 11 Nov 2025 18:50:49 +0800 (CST)
+	id ; Tue, 11 Nov 2025 18:50:53 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 9719519489223886703
+X-BIZMAIL-ID: 18215502699769285738
 From: Chaoyi Chen <kernel@airkyi.com>
 To: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -83,30 +83,30 @@ Cc: linux-usb@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-rockchip@lists.infradead.org,
 	dri-devel@lists.freedesktop.org
-Subject: [PATCH v9 01/10] usb: typec: Add notifier functions
-Date: Tue, 11 Nov 2025 18:50:31 +0800
-Message-Id: <20251111105040.94-2-kernel@airkyi.com>
+Subject: [PATCH v9 02/10] usb: typec: Export all typec device types
+Date: Tue, 11 Nov 2025 18:50:32 +0800
+Message-Id: <20251111105040.94-3-kernel@airkyi.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20251111105040.94-1-kernel@airkyi.com>
 References: <20251111105040.94-1-kernel@airkyi.com>
 X-QQ-SENDSIZE: 520
 Feedback-ID: zesmtpsz:airkyi.com:qybglogicsvrgz:qybglogicsvrgz6b-0
-X-QQ-XMAILINFO: NSXtYWcyD5KOJ/WAmZMlCfNWBjpTa1WtLqaVQ8wXYopUPgZro2Xon46a
-	XS9sJ99VaNFd72j7fNEVg77lMGY6B4XZKcgA89oNgHqGgJ6SZcKuKCCwjv/NOJFqkq6zxrI
-	udyDOrw62QiytuHHy5kNFc9BzSyKqrPsVKtvIdg5tUs2aNhkVqaL8BNqtd7lTAvXXuOUFUj
-	cpVnX+LeeaVJfXMDo9cuLTrokssIka8xdlzPoiIkQRKtOopmH79CiPYGyfueJxvINp+8EA8
-	y6o8uXInQfJZDZx+DWzXB2zAhFJBo5trnsk6DAINhaeimno2uAG+a7dm/5ESDLrG8+X7PrV
-	4QejTTEdG+jcKmce4XJTuK+xGhmxlOe5c0/16QaTK7Zr8IHLr2Mf/E3xPwkLo7g0/35KO6p
-	lpArGBBw8A60RG9dTW60oYP//orUmch6137Teobu2An7Kc/aPXM9+PSiF+FL2Fr28Eved1P
-	XHlPEUyzTC0TnX+XIQeCYjJCgzGYyxiFYPs9Ky2zCmMP8oSTGsEnMLhsX+PF0JcwKkPOnlX
-	3IaRc4FRMi+JdsX5md1SI7nRuKUDXzU8736R5so2TOGRdmGRbnDV3UdeL4RZ8wagqyRer/P
-	x7p+mLSeR0G6EdF5/Jvjy377MM5E5SiSQZ0TsTojBe8lbUAI5ID0vtk7peKFPuGlh7fXxwo
-	tu1azXCqusTpfhHZAO8ByVDCtNhjqwZZzyPp0FplK8hozV7/gfnsUi72Re8mLOOJLE5hk23
-	gqlgCEjpEmUH1dxkK6LWctjyblVUb9VwGdMznFeifY3FpsRoUBy5evhgUGBtve4fO/unaZl
-	n9aAkvHfkY8YSvtNMpexAUOeA3tCF+O79H/W7vkWh+KpYJVau/sMB89LRtVUNo29AByCQze
-	+R8mG2OFSQQ9dvwfv8q6MoJ+w3BVjEShmC3gyswUuvj5mPzvceWLgKF925LU0h6rbpeEF+F
-	nJniIo+PaThCj8KDrwAXau+YEjMaf2kR3X3amp2BBaEJ92M+XclXeQjSlBOpJypkcOsM=
-X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
+X-QQ-XMAILINFO: M8JnMGwRo1mQ6Zj1L8Z6+mPZz/J9Qctn0KuWzPd7LVH5r/u+chG5HR08
+	LFckGIcHBoHG/2ARuCuCTN7wWLmMQyBdBIfultcICgtxbz5r2eaLUGmBz4M0k5z8CRSE1nt
+	S3t6u8GZNZTuCK9M+4BjwamDQQkEn6JJ+H81yA8kvlZPO/NZZtdzOea6kLSvN85ttzPgdLj
+	IqWyZgnYLbhveOOxy0oB9iBYF3oAE+nJzFHDVyPxZ7fdvm0UVDVjewAssPmJrmtco+DxQ6t
+	FnHnoLjEfMfV1qHpK5IFNFAvtYAslZXQGMU5CHFbAEr/yvmEGcC+h5MlU0CzXIgwuzBn4ci
+	EQXyjvOc3MMqUmbR+XsS3mTRgDgS8rC7yJrazE8cKxUYfGeDCMyP9x3Ad/Mz00/LdGbQkzb
+	NogE8HnXig6JIlxYQp/dWZpTrWaQfiOtpOLMJLEzuB4KW6LsLtzGNzcMm8e973OBgVBcbh9
+	IzdYD4OB5TCoKhqyQwUwEAgFfxh+5/MsL7lFOTSgsd35bie8dqnViEjwe/gWG2IEtDiUekQ
+	WEy1zIuKtpHftwL3l7UCmCniHMAkppLh4taL3m0nDh5P4udwpIqDjFQ8TaSnOq4dX8EJngd
+	kDgnV3V4Awwlqwt5IsnRypVpsMoe73K9P7M78+k8x96nHP+C3Hiim4OQxMr8+xVv2NAxm50
+	aKDWNfuTSTavd6k+lIbSHKrOujPHWmU111s6+V1Z3G5Qj0BvoPqPdbGFXROuEAVEBkdvJRb
+	QXomNHEIHBVJ3ahrPgZIrGOpcmypBE91VssP+xjUlqAE4RUJXGy0FIm5GS+7ig+Ee+wrn+Y
+	exMcwuJrV8U+mG3AqqZ0eKJ3hnNKPI4OL0k09x1PSvHTXSFXQRF7RznkTeDNYbYU4Cxdyxc
+	luCcfa9ER/uqspGt6LxVoQwXWNmBNMgTZky4J+cshlD9F+aGHnT8kUeCiZZ6yIOExnG7XM0
+	qmIV8SoUs36P3ol9ZqIGSuO5z8lTwdF1f72JtJ9u8PEpHB64P8M8sjBBlog+ZUspTdXU=
+X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
 X-QQ-RECHKSPAM: 0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -116,121 +116,97 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
 From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
 
-Some other part of kernel may want to know the event of typec bus.
-
-This patch add common notifier function to notify these event.
+Export all typec device types for identification.
 
 Signed-off-by: Chaoyi Chen <chaoyi.chen@rock-chips.com>
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 ---
 
-Changes in v9:
-- Remove redundant header files.
+(no changes since v9)
 
-Changes in v8:
-- Fix coding style.
+ drivers/usb/typec/class.c |  4 ++++
+ drivers/usb/typec/class.h | 10 ----------
+ include/linux/usb/typec.h | 10 ++++++++++
+ 3 files changed, 14 insertions(+), 10 deletions(-)
 
- drivers/usb/typec/Makefile        |  2 +-
- drivers/usb/typec/bus.h           |  2 ++
- drivers/usb/typec/class.c         |  2 ++
- drivers/usb/typec/notify.c        | 23 +++++++++++++++++++++++
- include/linux/usb/typec_altmode.h |  9 +++++++++
- 5 files changed, 37 insertions(+), 1 deletion(-)
- create mode 100644 drivers/usb/typec/notify.c
-
-diff --git a/drivers/usb/typec/Makefile b/drivers/usb/typec/Makefile
-index 7a368fea61bc..20d09c5314d7 100644
---- a/drivers/usb/typec/Makefile
-+++ b/drivers/usb/typec/Makefile
-@@ -1,6 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0
- obj-$(CONFIG_TYPEC)		+= typec.o
--typec-y				:= class.o mux.o bus.o pd.o retimer.o
-+typec-y				:= class.o mux.o notify.o bus.o pd.o retimer.o
- typec-$(CONFIG_ACPI)		+= port-mapper.o
- obj-$(CONFIG_TYPEC)		+= altmodes/
- obj-$(CONFIG_TYPEC_TCPM)	+= tcpm/
-diff --git a/drivers/usb/typec/bus.h b/drivers/usb/typec/bus.h
-index 643b8c81786d..820b59b6d434 100644
---- a/drivers/usb/typec/bus.h
-+++ b/drivers/usb/typec/bus.h
-@@ -26,6 +26,8 @@ struct altmode {
- 	struct altmode			*plug[2];
- };
- 
-+void typec_notify_event(unsigned long event, void *data);
-+
- #define to_altmode(d) container_of(d, struct altmode, adev)
- 
- extern const struct bus_type typec_bus;
 diff --git a/drivers/usb/typec/class.c b/drivers/usb/typec/class.c
-index 9b2647cb199b..9d2aa3dd3f56 100644
+index 9d2aa3dd3f56..449f921acd9c 100644
 --- a/drivers/usb/typec/class.c
 +++ b/drivers/usb/typec/class.c
-@@ -600,6 +600,8 @@ typec_register_altmode(struct device *parent,
- 		return ERR_PTR(ret);
- 	}
+@@ -792,6 +792,7 @@ const struct device_type typec_partner_dev_type = {
+ 	.groups = typec_partner_groups,
+ 	.release = typec_partner_release,
+ };
++EXPORT_SYMBOL_GPL(typec_partner_dev_type);
  
-+	typec_notify_event(TYPEC_ALTMODE_REGISTERED, &alt->adev);
-+
- 	return &alt->adev;
- }
- 
-diff --git a/drivers/usb/typec/notify.c b/drivers/usb/typec/notify.c
-new file mode 100644
-index 000000000000..9e50b54da359
---- /dev/null
-+++ b/drivers/usb/typec/notify.c
-@@ -0,0 +1,23 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <linux/notifier.h>
-+
-+#include "bus.h"
-+
-+static BLOCKING_NOTIFIER_HEAD(typec_notifier_list);
-+
-+int typec_altmode_register_notify(struct notifier_block *nb)
-+{
-+	return blocking_notifier_chain_register(&typec_notifier_list, nb);
-+}
-+EXPORT_SYMBOL_GPL(typec_altmode_register_notify);
-+
-+int typec_altmode_unregister_notify(struct notifier_block *nb)
-+{
-+	return blocking_notifier_chain_unregister(&typec_notifier_list, nb);
-+}
-+EXPORT_SYMBOL_GPL(typec_altmode_unregister_notify);
-+
-+void typec_notify_event(unsigned long event, void *data)
-+{
-+	blocking_notifier_call_chain(&typec_notifier_list, event, data);
-+}
-diff --git a/include/linux/usb/typec_altmode.h b/include/linux/usb/typec_altmode.h
-index f7db3bd4c90e..59e20702504b 100644
---- a/include/linux/usb/typec_altmode.h
-+++ b/include/linux/usb/typec_altmode.h
-@@ -10,6 +10,7 @@
- #define MODE_DISCOVERY_MAX	6
- 
- struct typec_altmode_ops;
-+struct notifier_block;
+ static void typec_partner_link_device(struct typec_partner *partner, struct device *dev)
+ {
+@@ -1146,6 +1147,7 @@ const struct device_type typec_plug_dev_type = {
+ 	.groups = typec_plug_groups,
+ 	.release = typec_plug_release,
+ };
++EXPORT_SYMBOL_GPL(typec_plug_dev_type);
  
  /**
-  * struct typec_altmode - USB Type-C alternate mode device
-@@ -77,6 +78,14 @@ int typec_altmode_notify(struct typec_altmode *altmode, unsigned long conf,
- const struct typec_altmode *
- typec_altmode_get_partner(struct typec_altmode *altmode);
+  * typec_plug_set_num_altmodes - Set the number of available plug altmodes
+@@ -1294,6 +1296,7 @@ const struct device_type typec_cable_dev_type = {
+ 	.groups = typec_cable_groups,
+ 	.release = typec_cable_release,
+ };
++EXPORT_SYMBOL_GPL(typec_cable_dev_type);
  
-+enum usb_typec_event {
-+	TYPEC_ALTMODE_REGISTERED,
-+	TYPEC_ALTMODE_UNREGISTERED,
-+};
-+
-+int typec_altmode_register_notify(struct notifier_block *nb);
-+int typec_altmode_unregister_notify(struct notifier_block *nb);
-+
  /**
-  * struct typec_cable_ops - Cable alternate mode operations vector
-  * @enter: Operations to be executed with Enter Mode Command
+  * typec_cable_get - Get a reference to the USB Type-C cable
+@@ -2033,6 +2036,7 @@ const struct device_type typec_port_dev_type = {
+ 	.uevent = typec_uevent,
+ 	.release = typec_release,
+ };
++EXPORT_SYMBOL_GPL(typec_port_dev_type);
+ 
+ /* --------------------------------------- */
+ /* Driver callbacks to report role updates */
+diff --git a/drivers/usb/typec/class.h b/drivers/usb/typec/class.h
+index db2fe96c48ff..f04f6987bed8 100644
+--- a/drivers/usb/typec/class.h
++++ b/drivers/usb/typec/class.h
+@@ -87,16 +87,6 @@ struct typec_port {
+ #define to_typec_cable(_dev_) container_of(_dev_, struct typec_cable, dev)
+ #define to_typec_partner(_dev_) container_of(_dev_, struct typec_partner, dev)
+ 
+-extern const struct device_type typec_partner_dev_type;
+-extern const struct device_type typec_cable_dev_type;
+-extern const struct device_type typec_plug_dev_type;
+-extern const struct device_type typec_port_dev_type;
+-
+-#define is_typec_partner(dev) ((dev)->type == &typec_partner_dev_type)
+-#define is_typec_cable(dev) ((dev)->type == &typec_cable_dev_type)
+-#define is_typec_plug(dev) ((dev)->type == &typec_plug_dev_type)
+-#define is_typec_port(dev) ((dev)->type == &typec_port_dev_type)
+-
+ extern const struct class typec_mux_class;
+ extern const struct class retimer_class;
+ extern const struct class typec_class;
+diff --git a/include/linux/usb/typec.h b/include/linux/usb/typec.h
+index 309251572e2e..02fed8293415 100644
+--- a/include/linux/usb/typec.h
++++ b/include/linux/usb/typec.h
+@@ -56,6 +56,16 @@ enum typec_role {
+ 	TYPEC_SOURCE,
+ };
+ 
++extern const struct device_type typec_partner_dev_type;
++extern const struct device_type typec_cable_dev_type;
++extern const struct device_type typec_plug_dev_type;
++extern const struct device_type typec_port_dev_type;
++
++#define is_typec_partner(dev) ((dev)->type == &typec_partner_dev_type)
++#define is_typec_cable(dev) ((dev)->type == &typec_cable_dev_type)
++#define is_typec_plug(dev) ((dev)->type == &typec_plug_dev_type)
++#define is_typec_port(dev) ((dev)->type == &typec_port_dev_type)
++
+ static inline int is_sink(enum typec_role role)
+ {
+ 	return role == TYPEC_SINK;
 -- 
 2.51.1
 
