@@ -1,92 +1,100 @@
-Return-Path: <linux-kernel+bounces-894843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C4E6C4C38A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:01:09 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7AE0C4C39F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:02:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B37218C0D93
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 07:59:28 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7DB1A4F37A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 07:59:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 115862D6E6F;
-	Tue, 11 Nov 2025 07:58:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64E202D6E5B;
+	Tue, 11 Nov 2025 07:59:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tjGEIOut"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bmeQHynK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 650C615E8B;
-	Tue, 11 Nov 2025 07:58:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B25932BE059;
+	Tue, 11 Nov 2025 07:59:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762847935; cv=none; b=oNFkGklIFlWA/EXuJl1Z4pNMTuwR2PD0dmEX2B6vIx3S7ubPzKNYqVUA28UXSHyoeNx+sCh48G3Jp/oUf+/uNGtwAtbi/ak8ufNeFfPh85ZZs3DACsrKlEJXSMe9aFDDVajjmLvWbUn8qzd749QDLVg4tvuZskb/Iq3dEoqnHyw=
+	t=1762847985; cv=none; b=vEUoyonMre+B+fixpnBRbbQouKIjWl+eI6ujT4qNZdSvQMiT7JNVEHcpktlujBRN8eIxjAa+0NZuFDPxh7nhEMtft1G8clHSwO+FTfBavcKp6C13KyxlKcfIdKfMdT+F+QBM+7VuXKklFoRem9cG3ciB+Pqk7hcTx8txtXeC2uw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762847935; c=relaxed/simple;
-	bh=t8z+DsR+SctqG4ry1HDsLKkUjYHAZMrxzuomQp6SW58=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=azqMVjU+z3ld2WK8G9HeK5eg47CAauaa+jfeDEGUKOixsJCpf6TvFP+3aVOrqoX/P2I4HfxdJkmS+Mnr3aAHnhhECDcgiHoCKi1yJigcEWmixdaWNRzpR6ui9CWUr5xMXFale9jK2TBCNYhQBnaOI5EQs6T5lRgLmJQ54hII3Lw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tjGEIOut; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 601EEC116D0;
-	Tue, 11 Nov 2025 07:58:54 +0000 (UTC)
+	s=arc-20240116; t=1762847985; c=relaxed/simple;
+	bh=wU/4chIBiKswVk2ZLdfvUxpnXcvkeaW4+cNktUAjkSA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HMwt3pQefpO2haxU8aS7aV6JGvVg+eoihWl67U7ajUVBk9GvHoDGz1ZKDMau26VK/8DxNShnVWD4MyHrjfQs/wrgf7xKx2rmU7Z4XTqmCxTvH/rS3y73i3+1JMz1ASceU+7FGhqpL9XxyBwPEylZ7T/1V+sWjWMhT/Ri2Z4ZPo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bmeQHynK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D44B9C4CEFB;
+	Tue, 11 Nov 2025 07:59:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762847934;
-	bh=t8z+DsR+SctqG4ry1HDsLKkUjYHAZMrxzuomQp6SW58=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tjGEIOutK6PmrJoukZphpytayAF+fN82nQo8X89aDoeZmXiJTESO7W7a4iCGwlnUE
-	 tR9j+ZRBesJWZkPY7Ez3PCi8MvsL2UwzILa6x4Zc8xXRQiXousGE08DFoTBWfkDzuN
-	 Yjvwhez06aDEntSgIccF9r1I2vpPME223IHW8ajRiiyGwOxQzy6l7bPQrZwcTOcAs9
-	 lVKCgVCtyrjySyi9g0K9Ss+DmNDhBqbsmkhfQrxmvpYiCWuJLvnBIqj2PQw2Ve5Q5q
-	 oU6mcH8uWT3AjaMQHSPYLN79vyhiXQQEjbSJC4iZXuIJQnC3wSzn5BYXxI2n10S6KV
-	 deziRAddUrExw==
-Date: Tue, 11 Nov 2025 08:58:52 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Amit Singh <quic_amitsi@quicinc.com>
-Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, vkoul@kernel.org, kishon@kernel.org, 
-	lumag@kernel.org, neil.armstrong@linaro.org, quic_wcheng@quicinc.com, 
-	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, quic_riteshk@quicinc.com, quic_rajeevny@quicinc.com, 
-	quic_vproddut@quicinc.com
-Subject: Re: [PATCH 1/3] dt-bindings: phy: qcom: qmp-combo: add support for
- vdda-aux regulator
-Message-ID: <20251111-innocent-affable-saluki-2bf8bb@kuoka>
-References: <20251110115806.2379442-1-quic_amitsi@quicinc.com>
- <20251110115806.2379442-2-quic_amitsi@quicinc.com>
+	s=k20201202; t=1762847985;
+	bh=wU/4chIBiKswVk2ZLdfvUxpnXcvkeaW4+cNktUAjkSA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=bmeQHynKIRhbZPJkezIqtjLO9IP4QQcvWJ323YnEdJ74ZfTGUsjsvipt0z9watFU5
+	 OfjP+nzjZurfdxRXJS2qw8KCct5DCq4yt34tZqUxiWuvO7VmvYTK6JGVvcGjpn8CNz
+	 q7MieUP+7Tn7ZrhdKhcAxNMcGJi8sLdCMlrM3Ev42g293FgDUXtp0M9Ua/FPLM/IOx
+	 9V16MY6pvfI9cCHVeJi06GyY+MbUdq/N4B6TY0o/5pIryYdhQjV1kQZnduFdxZk+DZ
+	 1TgfEGZIq8dEqtiC4ayeXDafzBEBEClTgFimzLiwfjTJ1xTrVoUCK7ONJYqbJvH3ou
+	 riVZUv5Zv5S5A==
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	James Clark <james.clark@linaro.org>
+Cc: Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	"Chen, Zide" <zide.chen@intel.com>
+Subject: [PATCH] perf tools: Fix missing feature check for inherit + SAMPLE_READ
+Date: Mon, 10 Nov 2025 23:59:44 -0800
+Message-ID: <20251111075944.2328021-1-namhyung@kernel.org>
+X-Mailer: git-send-email 2.51.2.1041.gc1ab5b90ca-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20251110115806.2379442-2-quic_amitsi@quicinc.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Nov 10, 2025 at 05:28:04PM +0530, Amit Singh wrote:
-> Add support for the "vdda-aux" regulator in the QMP PHY binding, with
-> an enable_load of 36000 =C2=B5A. Managing this auxiliary rail in the driv=
-er
-> allows proper power configuration on platforms that provide the supply,
+It should also have PERF_SAMPLE_TID to enable inherit and PERF_SAMPLE_READ
+on recent kernels.  Not having _TID makes the feature check wrongly detect
+the inherit and _READ support.
 
-What is has to do anything with the driver? Why are you documenting the
-driver?
+It was reported that the following command failed due to the error in
+the missing feature check on Intel SPR machines.
 
-I understand this that there is no such supply in the hardware and you
-just poke to someone else's supply.
+  $ perf record -e '{cpu/mem-loads-aux/S,cpu/mem-loads,ldlat=3/PS}' -- ls
+  Error:
+  Failure to open event 'cpu/mem-loads,ldlat=3/PS' on PMU 'cpu' which will be removed.
+  Invalid event (cpu/mem-loads,ldlat=3/PS) in per-thread mode, enable system wide with '-a'.
 
+Fixes: 3b193a57baf15c468 ("perf tools: Detect missing kernel features properly")
+Reported-by: "Chen, Zide" <zide.chen@intel.com>
+Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+---
+ tools/perf/util/evsel.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> improving PHY stability.
->=20
-> This change is a no-op on platforms that do not define the "vdda-aux"
-> regulator.
-
-Which platforms are these? Your patch claims here that all of the
-platforms define vdda-aux, because you did not constrain it per variant.
-
-Best regards,
-Krzysztof
+diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+index 67a898cda86ab559..989c56d4a23f74f4 100644
+--- a/tools/perf/util/evsel.c
++++ b/tools/perf/util/evsel.c
+@@ -2474,7 +2474,7 @@ static bool evsel__detect_missing_features(struct evsel *evsel, struct perf_cpu
+ 	/* Please add new feature detection here. */
+ 
+ 	attr.inherit = true;
+-	attr.sample_type = PERF_SAMPLE_READ;
++	attr.sample_type = PERF_SAMPLE_READ | PERF_SAMPLE_TID;
+ 	if (has_attr_feature(&attr, /*flags=*/0))
+ 		goto found;
+ 	perf_missing_features.inherit_sample_read = true;
+-- 
+2.51.2.1041.gc1ab5b90ca-goog
 
 
