@@ -1,172 +1,124 @@
-Return-Path: <linux-kernel+bounces-895195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92CEDC4D308
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:52:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 48AC1C4D317
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:52:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA60E18C0455
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:50:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81C2018C06EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:51:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7558D351FA2;
-	Tue, 11 Nov 2025 10:49:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7801C3546E7;
+	Tue, 11 Nov 2025 10:50:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rjZazNPo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="m4m/a/NG";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="inbNfnrT"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF0B1350A2B;
-	Tue, 11 Nov 2025 10:49:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 631983546EC;
+	Tue, 11 Nov 2025 10:50:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762858185; cv=none; b=mfM+lrs9czpo7jwpkiKBdfWaAOQFOuBm4Ly3XW1NmKpLfrObTVSXZIrdiPAyt36M4RkDUVveeBw0YL0PLESCTxjpu+H9g2XzbhH83WkNiZSJfLRpAb0vpGPCHNvyXNzNgsfOz4qS7ADZAfrfUWAVQutnC7+xPCqlhy5jJxZdiB4=
+	t=1762858202; cv=none; b=eYpy+TBEkpJZGqYtDy22BrB1cS8eJ9Vep0yPqb9RMfFyn+O8UhcQ+iq7wcp1VF9BTdkeAQhJyAWoPlBj6JK1IHUyJpDuTBcwkl2KsZ5jr6XhU9hAQyp4KScD4/lTw3Pj8SV+Q62UqskSkuvnJBvyHlqgmQxb+txcrKpHvMIEZcE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762858185; c=relaxed/simple;
-	bh=9hX5HSqnT7phfosh2c7z3echmoVIM9fF8P08FgyG5+k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sWu+hKwlnaAQxHaF4vCpcJ0aMTt1M1IczkWgTAXGa4CaTgiUpl8sHgooTb3Gj4srhOyR7dzVXFb6bmCA0ISLw5rIGYymOquTHui4ibti2ALIs1Z+0BNUP4hrF52k0z/sWokMNAhEycvxLvVqytxHi77YgXpMZ8Ijk+O0hIg7vgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rjZazNPo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EC2EC116D0;
-	Tue, 11 Nov 2025 10:49:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762858185;
-	bh=9hX5HSqnT7phfosh2c7z3echmoVIM9fF8P08FgyG5+k=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=rjZazNPoPkvcBXNn06rELtzSt9JafYxFneDez1z9WSgEia294g9i17F+GoXvWY0Oa
-	 MgzcFsTI3Uu1LFfgCBGwAqQpwegUVCjE24KVi1AnXR3OQmd1II3T8YpPv6gXokhhzz
-	 t84FKqB0DUlDOhE0+OBF1/4fw4k5Et+03RaezAI9t0RkoMESZe2Jm331cNZ9tTQWHR
-	 9kjiJnkbcV8pbtu6xNQQVSeZ/Lp3wtFCsnSP3b+NiNy3A3UGlwlGT5vk/C5BJX85ug
-	 6uVpCOzz8rFm/0MAMMgXkd7aF1chfgn9H1R4r7jg2ZvQYMzKvI/sn3A5ujazYHVmwN
-	 2qmWtf9bSU14w==
-Message-ID: <563a0de4-09d6-49f8-90a9-38b72e5c03ce@kernel.org>
-Date: Tue, 11 Nov 2025 11:49:41 +0100
+	s=arc-20240116; t=1762858202; c=relaxed/simple;
+	bh=pYb7vxhtfM5ubqs7Kk23tw+dzy6sb8BnNmtiWjJhBaU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=HsQDJnRw9o8MxzRbTjICxOOwrnErVIT2/L7DYRmYDAxrK84jIZtXXaUbNn2TxDgdVF2zCxSvOcFRDqzscg17KwZKruLcfzO7oq80TSSO/AWeXI9yoa2DMgziKC7fM3WvyQvt4INx1ntjLRVeootubRwn6YRQPap2yMQuDIeWnWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=m4m/a/NG; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=inbNfnrT; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1762858198;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=YP7FhE4la1Gi/u9709bHCz0zBQznM30ilDaWjSYpWL0=;
+	b=m4m/a/NGrfd1WYD8oBqUwxW+brQzaiKgpaIakJoXwhE+Un1YlYWoPTgMq/E1io66zf1RuU
+	XciQVBVs0TPaQAENigMH6HLmdR/uhdhDUL9vmoIA5HmM/P7sSe35sRcBxNEBtjEceJKPgX
+	h4LqH2mqMoBZJaeDWneEJcJtMXUHDu4Wql9tv2a//7JRlVEYKjYoMjtpM+I30PQb48B4u7
+	miuGw4VdAp+E60+gE/6e9sfwdT+f+GCVHgwYWvtFn43t/mwtHq1/f8zPt1hf9H3ESPnaxf
+	DnAEV29/4MbNIE9GQxgcsHjk2y3FtWk/eW30Njca9Aba8Xb5p5CHrLvPNClYfg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1762858198;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=YP7FhE4la1Gi/u9709bHCz0zBQznM30ilDaWjSYpWL0=;
+	b=inbNfnrTEPB1eoYyXZf/4MNrClSCzv/MuEqJUGTpBHs2lwFzF3ggsWLx++xlI2hpvW1NMQ
+	1EkyWCdhlcGgFBAQ==
+Subject: [PATCH 00/10] selftests: vDSO: Stop using libc types for vDSO
+ calls
+Date: Tue, 11 Nov 2025 11:49:46 +0100
+Message-Id: <20251111-vdso-test-types-v1-0-03b31f88c659@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/2] arm64: dts: qcom: Add support to validate direct
- DSI
-To: Sudarshan Shetty <tessolveupstream@gmail.com>, andersson@kernel.org,
- konradybcio@kernel.org
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20251111104245.3420041-1-tessolveupstream@gmail.com>
- <20251111104245.3420041-2-tessolveupstream@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
- QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
- +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
- ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
- 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
- hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
- tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
- 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
- naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
- hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
- whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
- qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
- RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
- Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
- H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
- dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
- AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
- jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
- zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
- XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20251111104245.3420041-2-tessolveupstream@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAMoUE2kC/x3MQQ5AMBBA0avIrE3SaUJxFbGgBrNBOo0Q6d01l
+ m/x/wvKQVihK14IfInKsWdQWYDfxn1llDkbrLEVERm8Zj0wskaMz8mKdePZeEd2ci3k6gy8yP0
+ f+yGlD0o2oEJhAAAA
+X-Change-ID: 20251110-vdso-test-types-68ce0c712b79
+To: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+ Vincenzo Frascino <vincenzo.frascino@arm.com>, 
+ Shuah Khan <shuah@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1762858197; l=1970;
+ i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
+ bh=pYb7vxhtfM5ubqs7Kk23tw+dzy6sb8BnNmtiWjJhBaU=;
+ b=BOaKHqLlljoh4h3uJLCrGUJHXYE3Fxyx6BycI5YgBLuanRhLVBZJHq0xCxUEamJOP5RsIYQY0
+ flhKgOurLQcBHF1NBFCJr5daN1wOHLvFQY1xtbVDgkPmoDAzwTyhuhD
+X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
+ pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-On 11/11/2025 11:42, Sudarshan Shetty wrote:
-> Adds device tree support for the Waveshare 10.1-inch
-> MIPI-DSI panel on the QCS615 talos evk platform.
+Currently the vDSO selftests use the time-related types from libc.
+This works on glibc by chance today but will break with other libc
+implementations or on distributions which switch to 64-bit times
+everywhere.
 
-Why is this a board? Panel is a hat or sort of addon, so overlay, not a
-board.
+The kernel's UAPI headers provide the proper types to use with the vDSO
+(and raw syscalls) but are not necessarily compatible with libc types.
+Introduce a new header which makes the UAPI headers compatible with the
+libc.
 
-> 
-> Signed-off-by: Sudarshan Shetty <tessolveupstream@gmail.com>
-> ---
->  arch/arm64/boot/dts/qcom/Makefile          |  1 +
->  arch/arm64/boot/dts/qcom/talos-evk-dsi.dts | 43 ++++++++++++++++++++++
->  2 files changed, 44 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/qcom/talos-evk-dsi.dts
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
-> index 282d744acd73..d5a3dd98137d 100644
-> --- a/arch/arm64/boot/dts/qcom/Makefile
-> +++ b/arch/arm64/boot/dts/qcom/Makefile
-> @@ -306,6 +306,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= sm8650-qrd.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= sm8750-mtp.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= sm8750-qrd.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= talos-evk.dtb
-> +dtb-$(CONFIG_ARCH_QCOM)	+= talos-evk-dsi.dtb
->  x1e001de-devkit-el2-dtbs	:= x1e001de-devkit.dtb x1-el2.dtbo
->  dtb-$(CONFIG_ARCH_QCOM)	+= x1e001de-devkit.dtb x1e001de-devkit-el2.dtb
->  x1e78100-lenovo-thinkpad-t14s-el2-dtbs	:= x1e78100-lenovo-thinkpad-t14s.dtb x1-el2.dtbo
-> diff --git a/arch/arm64/boot/dts/qcom/talos-evk-dsi.dts b/arch/arm64/boot/dts/qcom/talos-evk-dsi.dts
-> new file mode 100644
-> index 000000000000..8a6dc8b6bf8f
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/qcom/talos-evk-dsi.dts
-> @@ -0,0 +1,43 @@
-> +// SPDX-License-Identifier: BSD-3-Clause
-> +/*
-> + * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
-> + */
-> +/dts-v1/;
-> +
-> +#include "talos-evk-cb.dtsi"
-> +
-> +&i2c1 {
-> +	clock-frequency = <400000>;
-> +
-> +	status = "okay";
-> +
-> +	display_mcu: display-mcu@45 {
-> +		compatible = "waveshare,touchscreen-panel-regulator";
+Also contains some related cleanups.
 
+Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+---
+Thomas Weißschuh (10):
+      Revert "selftests: vDSO: parse_vdso: Use UAPI headers instead of libc headers"
+      selftests: vDSO: Introduce vdso_types.h
+      selftests: vDSO: vdso_test_abi: Use types from vdso_types.h
+      selftests: vDSO: vdso_test_abi: Provide compatibility with 32-bit musl
+      selftests: vDSO: vdso_test_gettimeofday: Remove nolibc checks
+      selftests: vDSO: vdso_test_gettimeofday: Use types from vdso_types.h
+      selftests: vDSO: vdso_test_correctness: Drop SYS_getcpu fallbacks
+      selftests: vDSO: vdso_test_correctness: Use types from vdso_types.h
+      selftests: vDSO: vdso_test_correctness: Provide compatibility with 32-bit musl
+      selftests: vDSO: vdso_test_correctness: Use facilities from parse_vdso.c
 
-It does not look like you tested the DTS against bindings. Please run
-`make dtbs_check W=1` (see
-Documentation/devicetree/bindings/writing-schema.rst or
-https://www.linaro.org/blog/tips-and-tricks-for-validating-devicetree-sources-with-the-devicetree-schema/
-for instructions).
-Maybe you need to update your dtschema and yamllint. Don't rely on
-distro packages for dtschema and be sure you are using the latest
-released dtschema.
-
+ tools/testing/selftests/vDSO/Makefile              |  6 +-
+ tools/testing/selftests/vDSO/parse_vdso.c          |  3 +-
+ tools/testing/selftests/vDSO/vdso_test_abi.c       | 35 ++++-----
+ .../testing/selftests/vDSO/vdso_test_correctness.c | 85 +++++++++-------------
+ .../selftests/vDSO/vdso_test_gettimeofday.c        |  9 +--
+ tools/testing/selftests/vDSO/vdso_types.h          | 70 ++++++++++++++++++
+ 6 files changed, 121 insertions(+), 87 deletions(-)
+---
+base-commit: 8c6abf7bda867b82f8a6d60a0d5ce9cb1da6c433
+change-id: 20251110-vdso-test-types-68ce0c712b79
 
 Best regards,
-Krzysztof
+-- 
+Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+
 
