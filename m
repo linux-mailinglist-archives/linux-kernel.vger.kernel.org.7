@@ -1,88 +1,104 @@
-Return-Path: <linux-kernel+bounces-896104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2790C4FA70
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 20:55:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9B27C4FA5D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 20:51:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F77B3AFFA7
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 19:55:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 310723A8E3B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 19:51:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 007913A5E8F;
-	Tue, 11 Nov 2025 19:55:04 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C0CA393DD8;
+	Tue, 11 Nov 2025 19:51:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tcEq5p+u"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 370633730E6
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 19:55:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 711CE350D6A;
+	Tue, 11 Nov 2025 19:51:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762890903; cv=none; b=XW6Q9MatzAVR6S1ZJ0nWoKKJh03eGX7KNT9qB8XnJXJpTxTi1CuYPK9k+PGTzM6/olzUJKt9KOP1auDBSqJMMKip7dOb+cT0tJD+LzF/eSN05mZ7TB88rQoKenuPlKwA3xYlprqoPkainK1Jm6wJnGGmC/CKMacjRq2Od0c5GGE=
+	t=1762890678; cv=none; b=TH0l9nkSN56Ku/LZNNIEe63K4R6Igz1MNQGg3VbAOi938XLOcYe399ABqokJAh5gRPDo6AEzlzDVsTFEOlnAubZ1FRcOS5MNsqwXz6ej/4lCUEeiO/xlnV+8x8zlE0k2VLRgSe4GzHR6idqfn1ZNxRI3mguy6ftWJsAsXCtORXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762890903; c=relaxed/simple;
-	bh=/b3A+J3p4vNsOpsr/qyiCSxEZvkZ6yKbQfF++K0/h94=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=BL1ax0k/tGg9HSZCrBhPmt3UsLNit2UytkOG9N55JusqGIJKpQ5qyH72UpktK7n6wmC3IUmFCp7RBQRyCjOSeDfA6d/CHNAZraJUNssODCy4KtcMwoemePSqYQ5iGEfd5HazQjyim7PCV0czgXbf0HGFU3lL2yF14u8QnyqmLm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-433783ff82aso1752935ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 11:55:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762890901; x=1763495701;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YkcJir/AGs/NDD7lwcNEuWgp+bPwIs7AWKnvsltB9lI=;
-        b=GfUDkn7TjXf2rG2AGsSups/lW/9RmHp9OmLCo2TLBKeLwe7hEyLhsUOuUE0VmVvLnW
-         dk2sEmH5hpLeh12iKE1wvptjmc8kH90NR9UDZod1eOekTV+hH+/4N/yLVVS/nk2lEWH2
-         o4kDBJ/uIVp2SNgATbbPrvbcS6kcix7Fvj9Pqhqp/HqJ2jIpAN6Av9RlXenG9llnPIHS
-         Kpm0+qEyemdVHFkb3J2ockwl+1GkiZfH7AHlqwvzephrkOfvuwhHKtpUoNNUvFnvTnNl
-         DyCR9EPTzmh3WWUMySmFd+RDo/SdfM2kXBIb20Pf2fPGRxhNWzSB5plBrBh0D1bkraBZ
-         rPuA==
-X-Gm-Message-State: AOJu0YxhZYRnkgh5V806ZV1hF+INDbckZu4FsCXdbeWTyCkkr6PuOsLj
-	bPM3iNaf/+T560pu5rC4mw7OIuWV9Bs9Kw7XQfNwDXVAByOwnos8wvC23d0ATnC6zRPwJUVkkAs
-	H5QuFmI+7MUUkpR2BTPROJTH0TeZFSspIFVLc9geN1pGWy6Ls2zTg9WT7A+w=
-X-Google-Smtp-Source: AGHT+IEiDS+nSC788SRPxYkhBUrK0RgqCDXPFnnz1IWQMv3KwKCujvl3VInGuexOcZQx2UucNf4Q9TBoYS8+8IiHd0/COckt386k
+	s=arc-20240116; t=1762890678; c=relaxed/simple;
+	bh=+TkYWj2WP2rrXzlGB/5wpazuB3fEpfcGkYP/NTndZcY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PMonc/klNqFEShzMNMAxhUV6OmnpYsPyPb2ELuortj3D53duHS2rwq13m8cIbAPWEyGqm4KUeJC68fSv7I+U+VmX3aNJNI387yJNUX4EpMEkAYpaqFrtEkZymjvImQzgBMDs/0zvqGcmtkTB4vAO29ze2YcgV/KjoGHMZNR6zQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tcEq5p+u; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45944C113D0;
+	Tue, 11 Nov 2025 19:51:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762890678;
+	bh=+TkYWj2WP2rrXzlGB/5wpazuB3fEpfcGkYP/NTndZcY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tcEq5p+u6VsePX8Q44km3upZKJ8hxXdTv1IciZS+9UI+bZoSorNsgJ6H1grfIO7TG
+	 VPC0qBP8N+sMaq/kAa8Bee0VVqlMuJCIxIV1hE75WZeeY6+OjLJSa51PhcVFvR7bFi
+	 80Jq8H+v+6RDVG6x9jyOpCIeVKuaHqzgvHB+fB8iSvn6GqbsP60hJnAs2wccY5wwsw
+	 Rl61uFNCswLR+MRBviPWLr2zUGVjJK1Y2fGV0VgFqcVuZuvxxkIOIxyo79zWgGod54
+	 c1hX9jMlgvRotmGi1d0cVwFl3FaZvU9jmHj0BTHNo1Mlo9gUNU/9IpffmKmeGi12RF
+	 578DvrQ4Hh1Jw==
+Date: Tue, 11 Nov 2025 13:55:30 -0600
+From: Bjorn Andersson <andersson@kernel.org>
+To: Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>
+Cc: konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, konrad.dybcio@oss.qualcomm.com, dmitry.baryshkov@linaro.org, 
+	mukesh.savaliya@oss.qualcomm.com
+Subject: Re: [PATCH 1/1] arm64: dts: qcom: talos: Drop opp-shared from QUP
+ OPP table
+Message-ID: <ivinuu2ofm2hf7jvnw67gjfwo46bepunconf5g4kzdcaxs4jvm@6dm5btokf2zi>
+References: <20251111170350.525832-1-viken.dadhaniya@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a81:b0:433:68e3:7677 with SMTP id
- e9e14a558f8ab-43473d2127amr6523935ab.11.1762890901416; Tue, 11 Nov 2025
- 11:55:01 -0800 (PST)
-Date: Tue, 11 Nov 2025 11:55:01 -0800
-In-Reply-To: <CAMz+-CMX9fRx=L+r2AwvfMK6NhiFJ50fQQtp=Wm+jR1hPn+GWw@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <69139495.a70a0220.22f260.014a.GAE@google.com>
-Subject: Re: [syzbot] [wireless?] KMSAN: uninit-value in cfg80211_classify8021d
-From: syzbot <syzbot+878ddc3962f792e9af59@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	vnranganath.20@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251111170350.525832-1-viken.dadhaniya@oss.qualcomm.com>
 
-Hello,
+On Tue, Nov 11, 2025 at 10:33:50PM +0530, Viken Dadhaniya wrote:
+> QUP devices are currently marked with opp-shared in their OPP table,
+> causing the kernel to treat them as part of a shared OPP domain. This
+> leads to the qcom_geni_serial driver failing to probe with error
+> -EBUSY (-16).
+> 
+> Remove the opp-shared property to ensure the OPP framework treats the
+> QUP OPP table as device-specific, allowing the serial driver to probe
+> successfully
+> 
+> Fixes: f6746dc9e379 ("arm64: dts: qcom: qcs615: Add QUPv3 configuration")
 
-syzbot tried to test the proposed patch but the build/boot failed:
+This was merged 11 months ago, and Yu Zhang added bluetooth support 3
+months ago. What changed to break the QUP users? I think it's reasonable
+to use this "Fixes", but we should document - at least on the mailing
+list, where the regression happened.
 
-failed to apply patch:
-checking file net/wireless/util.c
-Hunk #1 FAILED at 963.
-1 out of 1 hunk FAILED
+Regards,
+Bjorn
 
-
-
-Tested on:
-
-commit:         24172e0d Merge tag 'arm64-fixes' of git://git.kernel.o..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=bbd3e7f3c2e28265
-dashboard link: https://syzkaller.appspot.com/bug?extid=878ddc3962f792e9af59
-compiler:       
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=17c3b0b4580000
-
+> Signed-off-by: Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>
+> ---
+>  arch/arm64/boot/dts/qcom/talos.dtsi | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/talos.dtsi b/arch/arm64/boot/dts/qcom/talos.dtsi
+> index eb6f69be4a82..ed89d2d509d5 100644
+> --- a/arch/arm64/boot/dts/qcom/talos.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/talos.dtsi
+> @@ -536,7 +536,6 @@ cdsp_smp2p_in: slave-kernel {
+>  
+>  	qup_opp_table: opp-table-qup {
+>  		compatible = "operating-points-v2";
+> -		opp-shared;
+>  
+>  		opp-75000000 {
+>  			opp-hz = /bits/ 64 <75000000>;
+> -- 
+> 2.34.1
+> 
 
