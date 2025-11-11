@@ -1,92 +1,138 @@
-Return-Path: <linux-kernel+bounces-896306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C743FC5012F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 00:37:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4DE8C50138
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 00:39:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6C45D4E4625
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 23:37:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0714C189764B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 23:39:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E53052D5936;
-	Tue, 11 Nov 2025 23:37:02 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A46632F3C3F;
+	Tue, 11 Nov 2025 23:38:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lkSteknn"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 705B535CBC6;
-	Tue, 11 Nov 2025 23:37:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B53C2E7167
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 23:38:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762904222; cv=none; b=mT+aZui7eUO9O5pE0rSxpRkHEYAQoA87Ng38Mi8LPDabfM6S0MTD1mvUD9J3k1krSty+hPVHhsiI0QGP0+5inBrOupZ/xFPWMdXNsajM40m/5cVjFLG7nSWZRCgQqSjlux0+GXZuaaBIU4M0Dc/LWp8rP9+37Og/Hh0x66BQI0k=
+	t=1762904328; cv=none; b=ig8yiVgaozTO8N1NbQaD3+/rRb7dU1g4QUAacsTQu2FScGrdXWrfQEfw813lbpix0a3TBXTETymgg/uy7EVp7+YvFIp4QYv0AN1GUS3fb3VUsre2+ujvLjrrAyYOW38vVhwWAniQ82qWoJYmQ6I38X1MNdta5pVrMBibaPLmJ7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762904222; c=relaxed/simple;
-	bh=WDGfz0ls/y3RrY2YxjLya0viIXr0Sc8Zi8tju40fwzY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UBiidRsTf9V+QVvDCSvTKpkAEGkYPgYy8jwMi6U6S4W2OQmG6Esb4/FzymkO+xqevu+mV+v40CTsGpU/WpygVcrQP9+IzQWW/or2E3MXMKKsEIjmvpsLCs92Z3pOtV7kSuFJyT/UwOJw9LF35DTKw2Y9KUEsI+tWfI+3qdU8QP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf12.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay03.hostedemail.com (Postfix) with ESMTP id 5BB4EB7687;
-	Tue, 11 Nov 2025 23:36:53 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf12.hostedemail.com (Postfix) with ESMTPA id 8E76019;
-	Tue, 11 Nov 2025 23:36:51 +0000 (UTC)
-Date: Tue, 11 Nov 2025 18:37:03 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Donglin Peng <dolinux.peng@gmail.com>
-Cc: linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org, Sven
- Schnelle <svens@linux.ibm.com>, Masami Hiramatsu <mhiramat@kernel.org>,
- Donglin Peng <pengdonglin@xiaomi.com>
-Subject: Re: [PATCH v2] function_graph: Enable funcgraph-args and
- funcgraph-retaddr to work simultaneously
-Message-ID: <20251111183703.0045ca23@gandalf.local.home>
-In-Reply-To: <20251111135432.2143993-1-dolinux.peng@gmail.com>
-References: <20251111135432.2143993-1-dolinux.peng@gmail.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1762904328; c=relaxed/simple;
+	bh=IigiDIMijXZfeHUvlRiSrhA3g7xJSSMPOXKOot4Hqt4=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=rQO07CTm6ppQaS5Y7zmykzwJoOJxV8akFkaxVJmEUaNT0JCMWi8p8ZCjqMtBUi/YyvRhsxGgQ2d3YqsqS+Hpfnxbexp/qoC5U0sYMvklYRPhpgKeeTNcQMxtQX4OkWMFUQbRstWHuBqPpRu5PazgVK1qZ/mMHnhJ4/yLYk7kkfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--svv.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lkSteknn; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--svv.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-297f3710070so7002625ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 15:38:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762904326; x=1763509126; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=o08iiA1oF5jn1Mz6FqaTpqVxHBWX2moQi08U6ejuhRg=;
+        b=lkSteknn1F2rSCBy3vHP99VBZFH3GYtMwPYRK3qPrLdwtF+dXnZDNLZAYMhJITrSkA
+         xvEtIgMl6hhJ/hYKuTRavkbTd+5+FHvvYNrIJBWBANXVbPqkRNdPPc/vbsEc3uNQq8sm
+         7zd+c+B24UYnFUw6c9Z4YtWxYqj06ffCOQTK5/2JiQQ4S7qgAfaN54WNA5XO8uMCrKml
+         m0PJ8CXVLI3XKN3kr1vV4/U8YVU5NYsZ83/00jZNEka2467ZSrBkKIbK27OKm81GAWgf
+         wVuFYaT+rIPmLIGUwyRIIiVMdap2Y7BWZ+IpoP6zqjQ8yYQq9X/iifUHyx7nzdV0O+uN
+         AwRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762904326; x=1763509126;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=o08iiA1oF5jn1Mz6FqaTpqVxHBWX2moQi08U6ejuhRg=;
+        b=oeAbyakcevRpV7ARo4Xc/Hx4Q8mowupN3+gaqCGf/uUwwYs1WWBxegtvJ0sFlr6MBP
+         HB4CajJ+9ZCrd1iiYlfgazXVnGShkicBE7C8lFYluXMQ76bhBztEoQikASr3zP05kcRS
+         Ufe2SIXd+bZlSeZ8BKHldLSuR+qKLWMObYedg+niQipfyIzWTi3SB/uSgd1ON78bjN/Z
+         7/19VFSVnnkyNDxox0UjIVMLGkkaxjSlg31xzxSFwmeVf6VfyQLl8A1zDssAnU+FQ+9o
+         agPfiIOlgy/X2a26il3pNqey1FGVMlM76E3mmEwFNqgtAYVMSwDZoiX/zbWrMuoWowQJ
+         GDDw==
+X-Forwarded-Encrypted: i=1; AJvYcCUVynGiwaffxkhLQcuyVj2W66UHDrIs3rh5KfmXqini8e5N9FUpPIER5jnqhiVHbMRZa6UrajZSlxUwVAs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCLmh0l09isxKHIsmmU0xl24j/KLxLmk1ukx3jtOmdkL9CPW7A
+	I3y0RWRLheGLviHesl1QcQ5FNm74ydzMnqWFav4CMf8BFOqkX/pi8Gr+K4MZmLSIHfC5PQ==
+X-Google-Smtp-Source: AGHT+IGg+nufIR9VQY7v3jtSQChGQNOiUiFWaFk2h22Va9xsDUuDikugcVDg/5K7wISAywmJpXvdKPs=
+X-Received: from dlbqc13.prod.google.com ([2002:a05:7023:a8d:b0:119:49ca:6bb0])
+ (user=svv job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:288:b0:295:2276:6704
+ with SMTP id d9443c01a7336-2984edeeda1mr12663315ad.51.1762904325926; Tue, 11
+ Nov 2025 15:38:45 -0800 (PST)
+Date: Tue, 11 Nov 2025 15:38:18 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: ct4g11r7s3mbkmku91fmssq9u7mirj9z
-X-Rspamd-Server: rspamout07
-X-Rspamd-Queue-Id: 8E76019
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1+ZZWgIqqT0x7/GFRpbO8xJ/PiUxUgp9v4=
-X-HE-Tag: 1762904211-24697
-X-HE-Meta: U2FsdGVkX19JN6G2Wfa4iXRK0j8m3NnY89TBu1+935o3JfeA1cGQgYNUp9S7gAH/t5fCIW+1kln3BJLNLZO6Kxl5t1uZ1iDuz2fsLbNuAb00mAbNMDAjgGzJgB5Ubr6NzTmHHzmLDz6THLLfIxS4zQD1/hADhKlL1ChFb8iUqMCxtYEA1x1CRfqxfSOu/iFP97L/n9DO7AoQsf3CLnbyYQ7iDaWOYHTC1I4LlQZA4+bfTNjIdpoJ6CIcKGssxiD4rj1AE4w3YN61tGSrPiNOnjzI7kMbggujKgZ+RNC7IKFSGidlSwq18Hm6plWWJsLVS7Mh09NE0oX5NQLWwcQpK7LIMF24UpJe
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.2.1041.gc1ab5b90ca-goog
+Message-ID: <20251111233818.4155828-1-svv@google.com>
+Subject: [PATCH] HID: playstation: Center initial joystick axes to prevent
+ spurious events
+From: Siarhei Vishniakou <svv@google.com>
+To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>, 
+	Roderick Colenbrander <roderick.colenbrander@sony.com>, linux-input@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Cc: Siarhei Vishniakou <svv@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 11 Nov 2025 21:54:32 +0800
-Donglin Peng <dolinux.peng@gmail.com> wrote:
+When a new PlayStation gamepad (DualShock 4 or DualSense) is initialized,
+the input subsystem sets the default value for its absolute axes (e.g.,
+ABS_X, ABS_Y) to 0.
 
-> +	/* Store the retaddr in args[0] */
-> +	if (type == TRACE_GRAPH_RETADDR_ENT)
-> +		entry->args[i++] = retaddr;
-> +
->  #ifdef CONFIG_HAVE_FUNCTION_ARG_ACCESS_API
-> -	if (fregs) {
-> -		for (int i = 0; i < FTRACE_REGS_MAX_ARGS; i++)
-> -			entry->args[i] = ftrace_regs_get_argument(fregs, i);
-> +	if (store_args) {
-> +		while (i < nr_args) {
+However, the hardware's actual neutral/resting state for these joysticks
+is 128 (0x80). This creates a mismatch.
 
-Nit, this could stay as a for loop. You just don't initialize the 'i':
+When the first HID report arrives from the device, the driver sees the
+resting value of 128. The kernel compares this to its initial state of 0
+and incorrectly interprets this as a delta (0 -> 128). Consequently, it
+generates EV_ABS events for this initial, non-existent movement.
 
-		for (; i < nr_args; i++) {
+This behavior can fail userspace 'sanity check' tests (e.g., in
+Android CTS) that correctly assert no motion events should be generated
+from a device that is already at rest.
 
-> +			entry->args[i] = ftrace_regs_get_argument(fregs,
-> +						i - (type == TRACE_GRAPH_RETADDR_ENT ? 1 : 0));
-> +			i++;
+This patch fixes the issue by explicitly setting the initial value of the
+main joystick axes (e.g., ABS_X, ABS_Y, ABS_RX, ABS_RY) to 128 (0x80)
+in the common ps_gamepad_create() function.
 
-Then you don't need the "i++" here.
+This aligns the kernel's initial state with the hardware's expected
+neutral state, ensuring that the first report (at 128) produces no
+delta and thus, no spurious event.
 
--- Steve
+Signed-off-by: Siarhei Vishniakou <svv@google.com>
+---
+ drivers/hid/hid-playstation.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-> +		}
->  	}
+diff --git a/drivers/hid/hid-playstation.c b/drivers/hid/hid-playstation.c
+index 1468fb11e39d..fd9d3c901743 100644
+--- a/drivers/hid/hid-playstation.c
++++ b/drivers/hid/hid-playstation.c
+@@ -718,12 +718,19 @@ static struct input_dev *ps_gamepad_create(struct hid_device *hdev,
+ 	if (IS_ERR(gamepad))
+ 		return ERR_CAST(gamepad);
+ 
++	/* Set initial resting state for joysticks to 128 (center) */
+ 	input_set_abs_params(gamepad, ABS_X, 0, 255, 0, 0);
++	gamepad->absinfo[ABS_X].value = 128;
+ 	input_set_abs_params(gamepad, ABS_Y, 0, 255, 0, 0);
++	gamepad->absinfo[ABS_Y].value = 128;
+ 	input_set_abs_params(gamepad, ABS_Z, 0, 255, 0, 0);
++	gamepad->absinfo[ABS_Z].value = 128;
+ 	input_set_abs_params(gamepad, ABS_RX, 0, 255, 0, 0);
++	gamepad->absinfo[ABS_RX].value = 128;
+ 	input_set_abs_params(gamepad, ABS_RY, 0, 255, 0, 0);
++	gamepad->absinfo[ABS_RY].value = 128;
+ 	input_set_abs_params(gamepad, ABS_RZ, 0, 255, 0, 0);
++	gamepad->absinfo[ABS_RZ].value = 128;
+ 
+ 	input_set_abs_params(gamepad, ABS_HAT0X, -1, 1, 0, 0);
+ 	input_set_abs_params(gamepad, ABS_HAT0Y, -1, 1, 0, 0);
+-- 
+2.51.0.536.g15c5d4f767-goog
+
 
