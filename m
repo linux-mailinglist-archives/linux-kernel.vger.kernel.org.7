@@ -1,158 +1,217 @@
-Return-Path: <linux-kernel+bounces-895924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0582BC4F45E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 18:38:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4C0AC4F452
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 18:38:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 491414EEF2C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:38:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E87093B0A8F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:37:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC90736A022;
-	Tue, 11 Nov 2025 17:37:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 750063A79A4;
+	Tue, 11 Nov 2025 17:36:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="A3oz7lA5"
-Received: from mail-yx1-f41.google.com (mail-yx1-f41.google.com [74.125.224.41])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ohPOIF7K"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D14F3A5E60
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 17:37:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12A6A3A5E81
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 17:36:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762882632; cv=none; b=e8gQFTpVkqXPluEErlH2nqNL9Hv07EmNy1Lk6c+v+1LNkQxKg403nFqpdCdgvADrKVW+jrrKiC8jTMs4F/KJRz9zVgB0S+iR/Sz+w0cGVPEQCEE9D/CeHmrwkCsEBUmu3F7oB5bf23B1hFevER1z+rn9Hq1JFOIr4B2B0eoVkxA=
+	t=1762882613; cv=none; b=Dsihg+LUIq76VoHp/4s82JuQV01Gh7EfcEG85ThvLMzILdv9oY2AdhFmR+/WeTQdA9ixnnbnEgqxJTMLamNvna6+ZijUl7ruccJFL3eaYkbNNjqZXsPm5Rt/mb33kuNbPeF+vRW+TfIVwffMpsRPIO2WAbNEtVCiV0j+/qujf1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762882632; c=relaxed/simple;
-	bh=EvsqPPFe0oeSUmlgAw3dm0536WHrkhiXIamVRC7y0qo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BbRrh5B40sUHI1AkakvwFn4YXU6xhgEDQGz5sMtdu+6KnBO0PBSlMvJJVFlRuRBWrP30rEuq+KQV82F5wMCuKr1UusE64VdGS9igjSnX7BYeeO3YT502iHAhU8ISMm8aObhEQXXbMyQv4NrYL/e7YTbGUI3eIzBPyAzJjt+w2fc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=A3oz7lA5; arc=none smtp.client-ip=74.125.224.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yx1-f41.google.com with SMTP id 956f58d0204a3-63fc6d9fde5so4166092d50.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 09:37:10 -0800 (PST)
+	s=arc-20240116; t=1762882613; c=relaxed/simple;
+	bh=8YGDWKZMZ4rg6g9jadHfjYJ49DLGb0GNWnRjrg7bjP8=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=CufeYTIQ9un2EBq0dK4EXV17X2pmx9FGIn6iixn8psdzdLj3BaVYspyRPE7FaB/DXTp2S2P/Bzv+tUUndsHGZTB/MCZLp9RxZLce1Xbs2XBThg/tvsu/qf/ITB2OBeBPAXgPz0eTzufbPiokCPrpRL6cFzFmfWWz5quewZstNLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ohPOIF7K; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-4775fcf67d8so168615e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 09:36:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762882629; x=1763487429; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8LKCHaTU9AqqSilVdSEk0nqYpEpb/jCCe95SCGOIIGQ=;
-        b=A3oz7lA5twyw0E1kVLDFiJS7dbLpY7Th1fblmNr84kkr0/+5TGO1zFPAbcU5Qd2cyM
-         x74vpEPEu7DoQmAFlFfpQim4orULRoR5IAoD/Tj901CBe7FR13ix+n8RKqTA9S7lCOBR
-         99qS6J9GUXum4JHlUKkf5hjxxOu2xhk36GuTmdVrkWjcyJQLsQGeqGzZ9muPRcAAJ8jH
-         ZEf4yfTix3SqNI/E+fuiYdRjPcBpSEIoBiHVmEzpwOefmy0B4euMkIdMD1YZp/l7J20u
-         D48ntADN+IHsGTG0ii3PHbzhv3Cn2oC3aNOVWB+6bGYno5yXOAk4u7edWHQ+wGDnnnwR
-         fM6Q==
+        d=google.com; s=20230601; t=1762882609; x=1763487409; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=gHk+n1DTS8EFhi+cKHdXuVXK4mRrNAjTvT92loE1bGw=;
+        b=ohPOIF7K8E+ozFul3+YJ9aCbMe61QoiL85Garz+qhXpdRX3kot1txeoP4+BaofPbk9
+         EjWtlXLEUQfFsVx8P3U+dhEsEG1Tw3Sz8W6f57WHgJMm2iqQI+NAWsCHADYQhSYedDWF
+         sPbi2p3fpAxYdNFPyxk4KjMW1+HWgCVOXNHKjA6RoM7Od89w5xIUMOA5nE3VlYf87RpC
+         gzu2aQXEbB51yR50pjidfN0Tic33+uKrNN2ZyV83J89lWLn6kjzz9fINEWa5Gb1NmtYe
+         XqMby7UIsmYhmCTo64aVgJNxfB06sOnwNbMkwRtCoMbbU1VvLFkl6dOqt5CWUDRSZ/Es
+         JPtw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762882629; x=1763487429;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=8LKCHaTU9AqqSilVdSEk0nqYpEpb/jCCe95SCGOIIGQ=;
-        b=BROc0gTq8xNnFOmo0IudImWjh330NziHE4fNfhPVR8Qm8FGU3uEgk/iM3B+enJAwWU
-         QRklbgD30e0/oe97Fih1oYLKAgZdKwmVMLV65K0bqJd194MeKkTqb/zoSMi0o7DWeUXo
-         pryFgJ8/gtxOSMbYpRfzqi1MoS+r+1EMU2HS9O8X9WRnZuetB4AOwdw2UvR4ZORuTv80
-         +X0LmUClUILT6rNWq+Iwa6ZpFQ+tOlgO9PxGoFp9hUMI11eLtFT38Slt+D94F18RYCYU
-         zbMTVLLRXbL5wYpKwaH3Al3t8boUcvpzlwbOAxZnBttM73vAejo7OQDrpkAbSUI1M8Tf
-         muOg==
-X-Gm-Message-State: AOJu0Yz4DdfqMqGxLc8KSpyvRyDYdlWcnBEh5Pzt2In8KuULZ5AGfnfy
-	ERCCbbTxArZk6QhNFK4SprOWmzW25xPUw+b7vcQICF1EBdVIrxqK0Om80q9ZFPbbect9N6sb/fi
-	MzCbV5t4Sm9gu5ZD/HTKCfImbbBDas026e/b/XQJ84w==
-X-Gm-Gg: ASbGncvRmyL4xyaeZ3MUjqk+9srA4X+ES7XYwqASIjcAK6jmmFTurVK82Ffvl3RJLx9
-	vBQpdkQyzmGMds2ZsS2KDrrAnD9142TlZCXY+o5zOoIlj6bk8R45FUaZg4cdrEwR+ZhjlPiG+r/
-	gPxICB725Cx/y475OZARUdnNCHtUlX9qIl3GljtZiyHMa6t8qr3um0+sN77YoPeZ/v4BLve9Tod
-	ymlFs3gnO0/gDmBWoLMT8vg0EfJf2Y9Kc8tlXJRX5rjN56+j8dU03aP2Cgk0XtNou2LZfpK
-X-Google-Smtp-Source: AGHT+IH2f3XqezxeAhdNiKVObMgHBbdajDoMt0Uzx41msTtJ4/Cc2g0V2tOxLNTPJCJid1luqYuD5eKp8Mt/296kpes=
-X-Received: by 2002:a05:690c:c349:b0:784:80c9:a4f8 with SMTP id
- 00721157ae682-787d534ffe1mr94850237b3.6.1762882629298; Tue, 11 Nov 2025
- 09:37:09 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762882609; x=1763487409;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gHk+n1DTS8EFhi+cKHdXuVXK4mRrNAjTvT92loE1bGw=;
+        b=Z9KnifgFLYNDsZ+nhz1rcnDRCdAThnCMghAjQjpKucgymEiT7f3uN6DdzAlWjgpn+r
+         UIHUDKNr5bKnOS2TPdJdgRvZhry285lESa04JYP/dhoxO17ZCnAI3WCLMQBn26Z3KTFu
+         T++4BZyox7ZW/FHN3URp74FuT4VHOB05kRdkOP+XPso8dB6xcMRZqft+gEVrOf7ezfzB
+         bctR6Q5aVQPNs57buutHS9FTvsOllnxwhWDkXIYp4hp2W6S/5Y3cAuiWQ9hrG7n6BH9E
+         ELC0DU3eGPilnky2AWWjXAYz4QJTYvgLTOfHuORaOkYahjITXmaJ7UaJ1j/pfAnZcYcs
+         7uZw==
+X-Forwarded-Encrypted: i=1; AJvYcCUep9C8VZo+lXNTAwjiip/hvudGS2sogKbQzT5kNYKoNkIq1ONSo4Nqb6GoOdzOpFKFLIFedY2koJPRbD8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwfeKpflr8JCVHFHQD33CV+PcvLK4TXCtR42vbpFPHS8lBBVMnG
+	hNPCGDE34XAlU3c/FU4Z0TInzkzgYhWONLog/fXDH2vUchhUlV9lC2R1gGaFTObTb+/49Qe6tz9
+	FceI7jAr69lDLEg==
+X-Google-Smtp-Source: AGHT+IFash/y2AqAf9V3BG0zVcfUyjagtoZoZBAYxC2RDwTCzOL54auCDPMewWsZlZffs19L721j6rDsLwitPA==
+X-Received: from wmcq1.prod.google.com ([2002:a05:600c:c101:b0:477:40c1:3e61])
+ (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:4694:b0:475:e007:baf2 with SMTP id 5b1f17b1804b1-477870ba725mr2270855e9.41.1762882609366;
+ Tue, 11 Nov 2025 09:36:49 -0800 (PST)
+Date: Tue, 11 Nov 2025 17:36:42 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20251107141907.229119-1-marco.crivellari@suse.com>
-In-Reply-To: <20251107141907.229119-1-marco.crivellari@suse.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 11 Nov 2025 18:36:33 +0100
-X-Gm-Features: AWmQ_blId-hdIdA29G_YqWQ_lxGPlkPRdUq8v9Z8X8IVcdr2EYee2EAYY4IIHQM
-Message-ID: <CAPDyKFqpiWuJs3fZkATnfPejmqL=Ei4x1U9QbuaykuZxca9f4Q@mail.gmail.com>
-Subject: Re: [PATCH] mmc: omap: add WQ_PERCPU to alloc_workqueue users
-To: Marco Crivellari <marco.crivellari@suse.com>
-Cc: linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, 
-	linux-omap@vger.kernel.org, Tejun Heo <tj@kernel.org>, 
-	Lai Jiangshan <jiangshanlai@gmail.com>, Frederic Weisbecker <frederic@kernel.org>, 
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Michal Hocko <mhocko@suse.com>, 
-	Aaro Koskinen <aaro.koskinen@iki.fi>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+X-Mailer: b4 0.14.2
+Message-ID: <20251111-b4-ksft-error-on-fail-v3-1-0951a51135f6@google.com>
+Subject: [PATCH RESEND v3] selftests/run_kselftest.sh: exit with error if
+ tests fail
+From: Brendan Jackman <jackmanb@google.com>
+To: Shuah Khan <shuah@kernel.org>
+Cc: "=?utf-8?q?Thomas_Wei=C3=9Fschuh?=" <thomas.weissschuh@linutronix.de>, linux-kselftest@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Brendan Jackman <jackmanb@google.com>
+Content-Type: text/plain; charset="utf-8"
 
-On Fri, 7 Nov 2025 at 15:19, Marco Crivellari <marco.crivellari@suse.com> w=
-rote:
->
-> Currently if a user enqueues a work item using schedule_delayed_work() th=
-e
-> used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
-> WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
-> schedule_work() that is using system_wq and queue_work(), that makes use
-> again of WORK_CPU_UNBOUND.
-> This lack of consistency cannot be addressed without refactoring the API.
->
-> alloc_workqueue() treats all queues as per-CPU by default, while unbound
-> workqueues must opt-in via WQ_UNBOUND.
->
-> This default is suboptimal: most workloads benefit from unbound queues,
-> allowing the scheduler to place worker threads where they=E2=80=99re need=
-ed and
-> reducing noise when CPUs are isolated.
->
-> This continues the effort to refactor workqueue APIs, which began with
-> the introduction of new workqueues and a new alloc_workqueue flag in:
->
-> commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
-> commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
->
-> This change adds a new WQ_PERCPU flag to explicitly request
-> alloc_workqueue() to be per-cpu when WQ_UNBOUND has not been specified.
->
-> With the introduction of the WQ_PERCPU flag (equivalent to !WQ_UNBOUND),
-> any alloc_workqueue() caller that doesn=E2=80=99t explicitly specify WQ_U=
-NBOUND
-> must now use WQ_PERCPU.
->
-> Once migration is complete, WQ_UNBOUND can be removed and unbound will
-> become the implicit default.
->
-> Suggested-by: Tejun Heo <tj@kernel.org>
-> Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
+Parsing KTAP is quite an inconvenience, but most of the time the thing
+you really want to know is "did anything fail"?
 
-Applied for next, thanks!
+Let's give the user the his information without them needing
+to parse anything.
 
-Kind regards
-Uffe
+Because of the use of subshells and namespaces, this needs to be
+communicated via a file. Just write arbitrary data into the file and
+treat non-empty content as a signal that something failed.
 
+In case any user depends on the current behaviour, such as running this
+from a script with `set -e` and parsing the result for failures
+afterwards, add a flag they can set to get the old behaviour, namely
+--no-error-on-fail.
 
-> ---
->  drivers/mmc/host/omap.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/mmc/host/omap.c b/drivers/mmc/host/omap.c
-> index 52ac3f128a1c..4a13111e1698 100644
-> --- a/drivers/mmc/host/omap.c
-> +++ b/drivers/mmc/host/omap.c
-> @@ -1477,7 +1477,7 @@ static int mmc_omap_probe(struct platform_device *p=
-dev)
->         host->nr_slots =3D pdata->nr_slots;
->         host->reg_shift =3D (mmc_omap7xx() ? 1 : 2);
->
-> -       host->mmc_omap_wq =3D alloc_workqueue("mmc_omap", 0, 0);
-> +       host->mmc_omap_wq =3D alloc_workqueue("mmc_omap", WQ_PERCPU, 0);
->         if (!host->mmc_omap_wq) {
->                 ret =3D -ENOMEM;
->                 goto err_plat_cleanup;
-> --
-> 2.51.1
->
+Signed-off-by: Brendan Jackman <jackmanb@google.com>
+---
+Changes in v3:
+- Fixed quoting
+- Link to v2: https://lore.kernel.org/r/20251014-b4-ksft-error-on-fail-v2-1-b3e2657237b8@google.com
+
+Changes in v2:
+- Fixed bug in report_failure()
+- Made error-on-fail the default
+- Link to v1: https://lore.kernel.org/r/20251007-b4-ksft-error-on-fail-v1-1-71bf058f5662@google.com
+---
+ tools/testing/selftests/kselftest/runner.sh | 14 ++++++++++----
+ tools/testing/selftests/run_kselftest.sh    | 14 ++++++++++++++
+ 2 files changed, 24 insertions(+), 4 deletions(-)
+
+diff --git a/tools/testing/selftests/kselftest/runner.sh b/tools/testing/selftests/kselftest/runner.sh
+index 2c3c58e65a419f5ee8d7dc51a37671237a07fa0b..3a62039fa6217f3453423ff011575d0a1eb8c275 100644
+--- a/tools/testing/selftests/kselftest/runner.sh
++++ b/tools/testing/selftests/kselftest/runner.sh
+@@ -44,6 +44,12 @@ tap_timeout()
+ 	fi
+ }
+ 
++report_failure()
++{
++	echo "not ok $*"
++	echo "$*" >> "$kselftest_failures_file"
++}
++
+ run_one()
+ {
+ 	DIR="$1"
+@@ -105,7 +111,7 @@ run_one()
+ 	echo "# $TEST_HDR_MSG"
+ 	if [ ! -e "$TEST" ]; then
+ 		echo "# Warning: file $TEST is missing!"
+-		echo "not ok $test_num $TEST_HDR_MSG"
++		report_failure "$test_num $TEST_HDR_MSG"
+ 	else
+ 		if [ -x /usr/bin/stdbuf ]; then
+ 			stdbuf="/usr/bin/stdbuf --output=L "
+@@ -123,7 +129,7 @@ run_one()
+ 				interpreter=$(head -n 1 "$TEST" | cut -c 3-)
+ 				cmd="$stdbuf $interpreter ./$BASENAME_TEST"
+ 			else
+-				echo "not ok $test_num $TEST_HDR_MSG"
++				report_failure "$test_num $TEST_HDR_MSG"
+ 				return
+ 			fi
+ 		fi
+@@ -137,9 +143,9 @@ run_one()
+ 			echo "ok $test_num $TEST_HDR_MSG # SKIP"
+ 		elif [ $rc -eq $timeout_rc ]; then \
+ 			echo "#"
+-			echo "not ok $test_num $TEST_HDR_MSG # TIMEOUT $kselftest_timeout seconds"
++			report_failure "$test_num $TEST_HDR_MSG # TIMEOUT $kselftest_timeout seconds"
+ 		else
+-			echo "not ok $test_num $TEST_HDR_MSG # exit=$rc"
++			report_failure "$test_num $TEST_HDR_MSG # exit=$rc"
+ 		fi)
+ 		cd - >/dev/null
+ 	fi
+diff --git a/tools/testing/selftests/run_kselftest.sh b/tools/testing/selftests/run_kselftest.sh
+index 0443beacf3621ae36cb12ffd57f696ddef3526b5..d4be97498b32e975c63a1167d3060bdeba674c8c 100755
+--- a/tools/testing/selftests/run_kselftest.sh
++++ b/tools/testing/selftests/run_kselftest.sh
+@@ -33,6 +33,7 @@ Usage: $0 [OPTIONS]
+   -c | --collection COLLECTION	Run all tests from COLLECTION
+   -l | --list			List the available collection:test entries
+   -d | --dry-run		Don't actually run any tests
++  -f | --no-error-on-fail	Don't exit with an error just because tests failed
+   -n | --netns			Run each test in namespace
+   -h | --help			Show this usage info
+   -o | --override-timeout	Number of seconds after which we timeout
+@@ -44,6 +45,7 @@ COLLECTIONS=""
+ TESTS=""
+ dryrun=""
+ kselftest_override_timeout=""
++ERROR_ON_FAIL=true
+ while true; do
+ 	case "$1" in
+ 		-s | --summary)
+@@ -65,6 +67,9 @@ while true; do
+ 		-d | --dry-run)
+ 			dryrun="echo"
+ 			shift ;;
++		-f | --no-error-on-fail)
++			ERROR_ON_FAIL=false
++			shift ;;
+ 		-n | --netns)
+ 			RUN_IN_NETNS=1
+ 			shift ;;
+@@ -105,9 +110,18 @@ if [ -n "$TESTS" ]; then
+ 	available="$(echo "$valid" | sed -e 's/ /\n/g')"
+ fi
+ 
++kselftest_failures_file="$(mktemp --tmpdir kselftest-failures-XXXXXX)"
++export kselftest_failures_file
++
+ collections=$(echo "$available" | cut -d: -f1 | sort | uniq)
+ for collection in $collections ; do
+ 	[ -w /dev/kmsg ] && echo "kselftest: Running tests in $collection" >> /dev/kmsg
+ 	tests=$(echo "$available" | grep "^$collection:" | cut -d: -f2)
+ 	($dryrun cd "$collection" && $dryrun run_many $tests)
+ done
++
++failures="$(cat "$kselftest_failures_file")"
++rm "$kselftest_failures_file"
++if "$ERROR_ON_FAIL" && [ "$failures" ]; then
++	exit 1
++fi
+
+---
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+change-id: 20251007-b4-ksft-error-on-fail-0c2cb3246041
+
+Best regards,
+-- 
+Brendan Jackman <jackmanb@google.com>
+
 
