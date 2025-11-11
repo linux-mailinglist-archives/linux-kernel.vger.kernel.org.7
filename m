@@ -1,203 +1,292 @@
-Return-Path: <linux-kernel+bounces-895207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A76BC4D35F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:55:25 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33176C4D3FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:00:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 190AD189ECC7
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:52:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 51BBC4FB5CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:53:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5963E354AFE;
-	Tue, 11 Nov 2025 10:50:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FC52350A2D;
+	Tue, 11 Nov 2025 10:51:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LgBxe6yC";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DWi326Wa"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=airkyi.com header.i=@airkyi.com header.b="XtSr45r+"
+Received: from smtpbg150.qq.com (smtpbg150.qq.com [18.132.163.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A91F5354AEE;
-	Tue, 11 Nov 2025 10:50:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D2762F5302;
+	Tue, 11 Nov 2025 10:51:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.132.163.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762858208; cv=none; b=dwPj1/YkTVdi81k9h9UYiUbTfNED1YTlDOzgSoztp19+2eytK5+JhkjOGtVALRWsCpfD6Uft+/BtWHuvyD6wmZxTO33mnEzkrKhIx72nGIKMpPZRxKlfXGCAJJmd2B/wY/dvgAQsXXNe0k9LONLj+xsA+HreQGMpf2R/pAvE9fw=
+	t=1762858267; cv=none; b=kweUlQMWZy/U5W0bslfYuvabAUUbP0avvrt/nnHyYALWX25LKuOUd6IXtvjqNPqyZezr97KfsZnumBzHxscrKu4uYOvP0UmGY+9H0VSoiZ1Tex5+4fwdd/hZ1e3jydDgVIHj7mGQIvMRyMsNQWDNvSCGYJ11GIvzuXmaD9Zh/hU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762858208; c=relaxed/simple;
-	bh=EWQJQ6D5JmJ0c/Pv8shy9wjpsGBrg9Cm+Eo4OM5oVz8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ECO/muzsvcB/QgR5CCWogw+Ad4Va0b8iWVAz1NsAVHc4uYU56IscLd6S2N+ruWwgGTumNi867dLtjZ7Sk0au3KpBbcr60dQrBiPqDmlIno47JdEL+tSyRmgNHUqY2SSiD4hJHxVtuh/Mm/XgWe70H76zi1kxB4W3JmTCN4bzJ9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LgBxe6yC; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DWi326Wa; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1762858204;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0Wf3tKTzsmVv2SCafM8ESNg4uW5j8HNf/0LInI7K5hc=;
-	b=LgBxe6yCfLAEF5LSihvW/M5EBwoRmVADNCynZcsc/aLbhld6MLEcFQ7RaLKIJeKNFsMVlv
-	i20oQ0fkag4gzEaXfTtsJhgOmefrb2Uas5TpjfkTNlWJn424KKA2EQ0gIRC32PRwZraCMw
-	GAS9fLnloBgBa/3o0l2GGj9e3rI7cZ7Csn2sNWOrfwtAtRBRHJQIel1VqtuBE09l0lJ2lG
-	IJbChuakpRxFqpH/SknlEBtgZRtxvdlcEqG9My3fWjxeL+SA9rCUtkA0X/M0iu6alGkND0
-	4q2IO1WCUy1eyScP3Ieqdfftu3a6b1mRH11pDvpUNIy0dbhE/tB/xdz9Hg/FUA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1762858204;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0Wf3tKTzsmVv2SCafM8ESNg4uW5j8HNf/0LInI7K5hc=;
-	b=DWi326Wari96UnrgAzh5eP3e1ebJBe0iGmMzJZMlmAUjBdv8ZmWfHotK1HVzEEST8CjYLJ
-	I4rhFxaJAaQb5MCA==
-Date: Tue, 11 Nov 2025 11:49:56 +0100
-Subject: [PATCH 10/10] selftests: vDSO: vdso_test_correctness: Use
- facilities from parse_vdso.c
+	s=arc-20240116; t=1762858267; c=relaxed/simple;
+	bh=uGU2AVXO7ykCV/puli54M/ue42gFICSvYYSvdmQyZm8=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=CB12963uoafTgf+NXAJ6U8oUB/9mfgBNyy6ZA1kALoWEWYgeTN7l9zpgQZUqkUTSu19UQQa77XGYBtXsFSNmYsVCD2C/Yb3x8IEEbuol1fny7x+HtGCK93JP0jaS6eSqlcjlOrmp5HMQDLBL4hDnC138aD8NA53kbVOuz13OYiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=airkyi.com; spf=pass smtp.mailfrom=airkyi.com; dkim=pass (1024-bit key) header.d=airkyi.com header.i=@airkyi.com header.b=XtSr45r+; arc=none smtp.client-ip=18.132.163.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=airkyi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=airkyi.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=airkyi.com;
+	s=altu2504; t=1762858253;
+	bh=Qdarakoh0lu55nEwr1i4FdI827BvE1xKbD7AfhT51Uw=;
+	h=From:To:Subject:Date:Message-Id;
+	b=XtSr45r+fuFx59GsXGQ3fwKFsX4XbQ2KxlHziVTznNmChcZw/uFng9X4UdpNoxUWw
+	 h/zNs9UXYt3aPBOYw1xtsmQd/GlkqQ2/xJTjbbNE1MZfAktN6WWoUB+mE1+tsP6dsV
+	 QSBBTnYA5T3FKE6rG4rgzVqBIFAgosS+xYsx4iFI=
+X-QQ-mid: zesmtpsz9t1762858247t99290bc5
+X-QQ-Originating-IP: xaFyk2tAr9JVxI4G6E1rGJahsyu1PFyvRQQ/B8MzEJU=
+Received: from DESKTOP-8BT1A2O.localdomain ( [58.22.7.114])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Tue, 11 Nov 2025 18:50:43 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 1823713052325328249
+From: Chaoyi Chen <kernel@airkyi.com>
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Peter Chen <hzpeterchen@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Sandy Huang <hjc@rock-chips.com>,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Yubing Zhang <yubing.zhang@rock-chips.com>,
+	Frank Wang <frank.wang@rock-chips.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Amit Sunil Dhamne <amitsd@google.com>,
+	Chaoyi Chen <chaoyi.chen@rock-chips.com>,
+	Dragan Simic <dsimic@manjaro.org>,
+	Johan Jonker <jbx6244@gmail.com>,
+	Diederik de Haas <didi.debian@cknow.org>,
+	Peter Robinson <pbrobinson@gmail.com>
+Cc: linux-usb@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-phy@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	dri-devel@lists.freedesktop.org
+Subject: [PATCH v9 00/10] Add Type-C DP support for RK3399 EVB IND board
+Date: Tue, 11 Nov 2025 18:50:30 +0800
+Message-Id: <20251111105040.94-1-kernel@airkyi.com>
+X-Mailer: git-send-email 2.17.1
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpsz:airkyi.com:qybglogicsvrgz:qybglogicsvrgz6b-0
+X-QQ-XMAILINFO: MhFAoh6gmjppNgUGjKgw7K86FI28KNCryRUtAbrmL8bmhJ9C01Ym/220
+	Lar3r54tI1LpJlYoyVrFKoeWD7dvOLsMAeEIZhZ1hfw5bk//IlrBUn3elPC/ss5RW8vijE1
+	RbKIeF7EX74hTo3ngx5Pcj/k09hzXq83EvgrK/ghLZRG+TCCtEdZbjqBcXRnnAE+c5GZm7C
+	2xJ0XpbVtXADeR+9HC2OuUeG3dMBGkHZQS8x/Ucpyy92a6oIWAH5ac4gaaUekfEWStPCrLu
+	tUF0o9UepycqyGKQMVN354RR/J62u1cmCxaOruQALwHRj4WZxle78Kij8sm97duwOcyPstG
+	XtQ6fSS6hsb0Rcg/DPVHHj/wgxIBu79QBi+mMRonn4k6nS9bjofCJZJQSneUnIqEocQm2vp
+	wKOxYO6rRjYw+M0RXszqmbF86bT12+Dxs7jHObYVE4rGwXUKOKqPNIi7UlWbKCHR7E65kfv
+	phXN40NryYxNMPQ/YXYeMxy6RbOxrWEgV/L3M71SbzrM23sOD0FSvUxMZyDAOZajYSUfekA
+	Jvk7A4VMyBW3viBX4ugmYVH8R7HaqKjZKjfZjSNscP8SUreU8KlZx0vX8ReiVh6/IRiA69W
+	1K1I4gKhyi89ReV/EiwI1ndKNCuchFI6RxQG0vDAn+0r9O6YmaAIV/AEBQ9d3PWLAVTR1sh
+	PgDC7xA1szhHg37hGDdMW3rU17V3gA/SxLFMy5BjL/MiEM/Ez/2+D3qv3XUmjdin5JENXUN
+	IOVgBrA8b/3dNpQ6CLVUeYL7Idxt5mDXjvZku7Tb1iQxSx4VZAdrHK2PebXZ5xRtSuED6h8
+	dSzs+aG5yxeIDcmFspauWRhUQ4096FASEdo7TmPy3O7/hvDjivurmnBkDVJTBgERmdU3DUq
+	yZNjSMylAvoDQ/q2FsAhTJMasr9dtB5OSfjc7AayC0CmXQ39eyTdvZIInX0U5H9P3AdcFGg
+	ytNrVTxbcDYBs+Nvg8W2H/7fpqGPOKFGTscQh+t67HGSLgKse5AnQuPnZxeRkaWBQBtUpRm
+	FVYQKReg==
+X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
+X-QQ-RECHKSPAM: 0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20251111-vdso-test-types-v1-10-03b31f88c659@linutronix.de>
-References: <20251111-vdso-test-types-v1-0-03b31f88c659@linutronix.de>
-In-Reply-To: <20251111-vdso-test-types-v1-0-03b31f88c659@linutronix.de>
-To: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
- Vincenzo Frascino <vincenzo.frascino@arm.com>, 
- Shuah Khan <shuah@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, 
- linux-kselftest@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1762858197; l=4393;
- i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
- bh=EWQJQ6D5JmJ0c/Pv8shy9wjpsGBrg9Cm+Eo4OM5oVz8=;
- b=NyMlxBOo0PMMEcOP2Lmv4zVBVOJuOpCnvzWHrx11IZLIffAKvkFa4mlvB+UaNaLlUJRp4eKxr
- e2vRIzbuDT0A9L/P4Ln0WsnKd/00uoidVccI79JiEWVmKCFXfG0jO85
-X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
- pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-The soname from the vDSO is not a public API. Furthermore it requires
-libc to implement dlsym() and friends.
+From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
 
-Use the facilities from parse_vdso.c instead which uses the official
-vDSO ABI to find it, aligned with the other vDSO selftests.
+This series focuses on adding Type-C DP support for USBDP PHY and DP
+driver. The USBDP PHY and DP will perceive the changes in cable status
+based on the USB PD and Type-C state machines provided by TCPM. Before
+this, the USBDP PHY and DP controller of RK3399 sensed cable state
+changes through extcon, and devices such as the RK3399 Gru-Chromebook
+rely on them. This series should not break them.
 
-Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
----
- tools/testing/selftests/vDSO/Makefile              |  4 +--
- .../testing/selftests/vDSO/vdso_test_correctness.c | 30 ++++++++++------------
- 2 files changed, 14 insertions(+), 20 deletions(-)
+====
+1. DisplayPort HPD status notify
 
-diff --git a/tools/testing/selftests/vDSO/Makefile b/tools/testing/selftests/vDSO/Makefile
-index 2de5cef311c8ab695606cf7f408c04910842e377..a61047bdcd576d47d944f442f9e7140fccfe58e0 100644
---- a/tools/testing/selftests/vDSO/Makefile
-+++ b/tools/testing/selftests/vDSO/Makefile
-@@ -26,13 +26,11 @@ CFLAGS_NOLIBC := -nostdlib -nostdinc -ffreestanding -fno-asynchronous-unwind-tab
- $(OUTPUT)/vdso_test_gettimeofday: parse_vdso.c vdso_test_gettimeofday.c
- $(OUTPUT)/vdso_test_getcpu: parse_vdso.c vdso_test_getcpu.c
- $(OUTPUT)/vdso_test_abi: parse_vdso.c vdso_test_abi.c
-+$(OUTPUT)/vdso_test_correctness: parse_vdso.c vdso_test_correctness.c
- 
- $(OUTPUT)/vdso_standalone_test_x86: vdso_standalone_test_x86.c parse_vdso.c | headers
- $(OUTPUT)/vdso_standalone_test_x86: CFLAGS:=$(CFLAGS_NOLIBC) $(CFLAGS)
- 
--$(OUTPUT)/vdso_test_correctness: vdso_test_correctness.c
--$(OUTPUT)/vdso_test_correctness: LDFLAGS += -ldl
--
- $(OUTPUT)/vdso_test_getrandom: parse_vdso.c
- $(OUTPUT)/vdso_test_getrandom: CFLAGS += -isystem $(top_srcdir)/tools/include \
-                                          $(KHDR_INCLUDES) \
-diff --git a/tools/testing/selftests/vDSO/vdso_test_correctness.c b/tools/testing/selftests/vDSO/vdso_test_correctness.c
-index b27c28cd00a2b974751dffae850f34517ada094d..bda090b8f74632325ba0f15898dbc45656a73090 100644
---- a/tools/testing/selftests/vDSO/vdso_test_correctness.c
-+++ b/tools/testing/selftests/vDSO/vdso_test_correctness.c
-@@ -10,19 +10,21 @@
- #include <time.h>
- #include <stdlib.h>
- #include <unistd.h>
-+#include <sys/auxv.h>
- #include <sys/syscall.h>
--#include <dlfcn.h>
- #include <string.h>
- #include <errno.h>
- #include <sched.h>
- #include <stdbool.h>
- #include <limits.h>
- 
-+#include "parse_vdso.h"
- #include "vdso_config.h"
- #include "vdso_call.h"
- #include "vdso_types.h"
- #include "../kselftest.h"
- 
-+static const char *version;
- static const char **name;
- 
- #ifndef __NR_clock_gettime64
-@@ -87,39 +89,32 @@ static void *vsyscall_getcpu(void)
- 
- static void fill_function_pointers(void)
- {
--	void *vdso = dlopen("linux-vdso.so.1",
--			    RTLD_LAZY | RTLD_LOCAL | RTLD_NOLOAD);
--	if (!vdso)
--		vdso = dlopen("linux-gate.so.1",
--			      RTLD_LAZY | RTLD_LOCAL | RTLD_NOLOAD);
--	if (!vdso)
--		vdso = dlopen("linux-vdso32.so.1",
--			      RTLD_LAZY | RTLD_LOCAL | RTLD_NOLOAD);
--	if (!vdso)
--		vdso = dlopen("linux-vdso64.so.1",
--			      RTLD_LAZY | RTLD_LOCAL | RTLD_NOLOAD);
--	if (!vdso) {
-+	unsigned long sysinfo_ehdr = getauxval(AT_SYSINFO_EHDR);
-+
-+	if (!sysinfo_ehdr) {
- 		printf("[WARN]\tfailed to find vDSO\n");
- 		return;
- 	}
- 
--	vdso_getcpu = (getcpu_t)dlsym(vdso, name[4]);
-+	vdso_init_from_sysinfo_ehdr(sysinfo_ehdr);
-+
-+	vdso_getcpu = (getcpu_t)vdso_sym(version, name[4]);
- 	if (!vdso_getcpu)
- 		printf("Warning: failed to find getcpu in vDSO\n");
- 
- 	vgetcpu = (getcpu_t) vsyscall_getcpu();
- 
--	vdso_clock_gettime = (vdso_clock_gettime_t)dlsym(vdso, name[1]);
-+	vdso_clock_gettime = (vdso_clock_gettime_t)vdso_sym(version, name[1]);
- 	if (!vdso_clock_gettime)
- 		printf("Warning: failed to find clock_gettime in vDSO\n");
- 
- #if defined(VDSO_32BIT)
--	vdso_clock_gettime64 = (vdso_clock_gettime64_t)dlsym(vdso, name[5]);
-+	vdso_clock_gettime64 = (vdso_clock_gettime64_t)vdso_sym(version, name[5]);
- 	if (!vdso_clock_gettime64)
- 		printf("Warning: failed to find clock_gettime64 in vDSO\n");
- #endif
- 
--	vdso_gettimeofday = (vdso_gettimeofday_t)dlsym(vdso, name[0]);
-+	vdso_gettimeofday = (vdso_gettimeofday_t)vdso_sym(version, name[0]);
- 	if (!vdso_gettimeofday)
- 		printf("Warning: failed to find gettimeofday in vDSO\n");
- 
-@@ -422,6 +417,7 @@ static void test_gettimeofday(void)
- 
- int main(int argc, char **argv)
- {
-+	version = versions[VDSO_VERSION];
- 	name = (const char **)&names[VDSO_NAMES];
- 
- 	fill_function_pointers();
+Before v7, I implemented a variety of DP HPD status notify. However,
+they all had various problems and it was difficult to become a generic
+solution.
+
+Under the guidance of Heikki and Dmitry, a decoupled notification
+method between the TypeC and DRM subsystems was introduced in v7.
+First, a notification is sent when TypeC registers a new altmode.
+Then, a generic DP AUX HPD bridge is implemented on the DRM side.
+
+That makes it redundant for each Type-C controller driver to implement
+a similar DP AUX HPD bridge in embedded scenarios.
+
+====
+2. Altmode switching and orientation switching for USBDP PHY
+
+For USB Type-C interfaces, an external Type-C controller chip assists
+by detecting cable attachment, determining plug orientation, and
+reporting USB PD message. The USB/DP combo PHY supports software
+configurable pin mapping and DisplayPort lane assignment. Based on
+these message, the combo PHY can perform both altmode switching and
+orientation switching via software.
+
+The RK3399 EVB IND board has a Type-C interface DisplayPort. It use
+fusb302 chip as Type-C controller. The connection diagram is shown below:
+
+fusb302 chip +---> USB2.0 PHY ----> DWC3 USB controller
+             |
+             +---> USB/DP PHY0 +--> CDN-DP controller
+                               |
+                               +--> DWC3 USB controller
+
+====
+3. Multiple bridge model for RK3399 CDN-DP
+
+The RK3399 has two USB/DP combo PHY and one CDN-DP controller. And
+the CDN-DP can be switched to output to one of the PHYs.
+
+USB/DP PHY0 ---+
+               | <----> CDN-DP controller
+USB/DP PHY1 ---+
+
+In previous versions, if both PHY ports were connected to DP,
+the CDN-DP driver would select the first PHY port for output.
+
+On Dmitry's suggestion, we introduced a multi-bridge model to support
+flexible selection of the output PHY port. For each PHY port, a
+separate encoder and bridge are registered.
+
+The change is based on the DRM AUX HPD bridge, rather than the
+extcon approach. This requires the DT to correctly describe the
+connections between the first bridge in bridge chain and DP
+controller. And Once the first bridge is obtained, we can get the
+last bridge corresponding to the USB-C connector, and then set the
+DRM connector's fwnode to the corresponding one to enable HPD
+notification.
+
+====
+Patch1 add notifier functions for Type-C core.
+Patch2 export all Type-C device types for identification.
+Patch3 add generic USB Type-C DP HPD bridge.
+Patch4 add new Type-C mode switch for RK3399 USBDP phy binding.
+Patch5 add typec_mux and typec_switch for RK3399 USBDP PHY.
+Patch6 add DRM AUX bridge support for RK3399 USBDP PHY.
+Patch7 drops CDN-DP's extcon dependency when Type-C is present.
+Patch8 add multiple bridges to support PHY port selection.
+Patch9 add missing dp_out port for RK3399 CDN-DP.
+Patch10 add Type-C DP support for RK3399 EVB IND board.
+
+Changes in v9:
+- Link to V8: https://lore.kernel.org/all/20251029071435.88-1-kernel@airkyi.com/
+- Remove the exposed DRM_AUX_HPD_BRIDGE option, and select
+DRM_AUX_HPD_TYPEC_BRIDGE when it is available.
+- Add usb role switch for Type-C.
+- Remove USB2 PHY in Type-C connection.
+- ...
+
+Changes in v8:
+- Link to V7: https://lore.kernel.org/all/20251023033009.90-1-kernel@airkyi.com/
+- Export all typec device types for identification.
+- Merge generic DP HPD bridge into one module.
+- Fix coding style.
+
+Changes in v7:
+- Link to V6: https://lore.kernel.org/all/20251016022741.91-1-kernel@airkyi.com/
+- Add notifier functions for Type-C core.
+- Add generic USB Type-C DP HPD bridge.
+
+Changes in v6:
+- Link to V5: https://lore.kernel.org/all/20251011033233.97-1-kernel@airkyi.com/
+- Fix depend in Kconfig.
+- Check DP svid in tcphy_typec_mux_set().
+- Remove mode setting in tcphy_orien_sw_set().
+- Rename some variable names.
+- Attach the DP bridge to the next bridge.
+
+Changes in v5:
+- Link to V4: https://lore.kernel.org/all/20250922012039.323-1-kernel@airkyi.com/
+- Remove the calls related to `drm_aux_hpd_bridge_notify()`.
+- Place the helper functions in the same compilation unit.
+- Add more comments about parent device.
+- Add DRM AUX bridge support for RK3399 USBDP PHY
+- By parsing the HPD bridge chain, set the connector's of_node to the
+of_node corresponding to the USB-C connector.
+- Return EDID cache when other port is already enabled.
+
+Changes in v4:
+- Link to V3: https://lore.kernel.org/all/20250729090032.97-1-kernel@airkyi.com/
+- Add default HPD device for DisplayPort altmode.
+- Introduce multiple bridges for CDN-DP.
+- ...
+
+Changes in v3:
+- Link to V2: https://lore.kernel.org/all/20250718062619.99-1-kernel@airkyi.com/
+- Add more descriptions to clarify the role of the PHY in switching.
+- Fix wrong vdo value.
+- Fix port node in usb-c-connector.
+
+Changes in v2:
+- Link to V1: https://lore.kernel.org/all/20250715112456.101-1-kernel@airkyi.com/
+- Reuse dp-port/usb3-port in rk3399-typec-phy binding.
+- Fix compile error when CONFIG_TYPEC is not enabled.
+- Notify DP HPD state by USB/DP PHY.
+- Ignore duplicate HPD events.
+- Add endpoint to link DP PHY and DP controller.
+- Fix devicetree coding style.
+
+Chaoyi Chen (10):
+  usb: typec: Add notifier functions
+  usb: typec: Export all typec device types
+  drm/bridge: Implement generic USB Type-C DP HPD bridge
+  dt-bindings: phy: rockchip: rk3399-typec-phy: Support mode-switch
+  phy: rockchip: phy-rockchip-typec: Add typec_mux/typec_switch support
+  phy: rockchip: phy-rockchip-typec: Add DRM AUX bridge
+  drm/rockchip: cdn-dp: Support handle lane info without extcon
+  drm/rockchip: cdn-dp: Add multiple bridges to support PHY port
+    selection
+  arm64: dts: rockchip: Add missing dp_out port for RK3399 CDN-DP
+  arm64: dts: rockchip: rk3399-evb-ind: Add support for DisplayPort
+
+ .../phy/rockchip,rk3399-typec-phy.yaml        |   6 +
+ arch/arm64/boot/dts/rockchip/rk3399-base.dtsi |  10 +-
+ .../boot/dts/rockchip/rk3399-evb-ind.dts      | 147 ++++++
+ drivers/gpu/drm/bridge/Kconfig                |  10 +
+ drivers/gpu/drm/bridge/Makefile               |   1 +
+ .../gpu/drm/bridge/aux-hpd-typec-dp-bridge.c  |  50 +++
+ drivers/gpu/drm/rockchip/Kconfig              |   1 +
+ drivers/gpu/drm/rockchip/cdn-dp-core.c        | 354 ++++++++++++---
+ drivers/gpu/drm/rockchip/cdn-dp-core.h        |  24 +-
+ drivers/phy/rockchip/Kconfig                  |   3 +
+ drivers/phy/rockchip/phy-rockchip-typec.c     | 420 +++++++++++++++++-
+ drivers/usb/typec/Makefile                    |   2 +-
+ drivers/usb/typec/bus.h                       |   2 +
+ drivers/usb/typec/class.c                     |   6 +
+ drivers/usb/typec/class.h                     |  10 -
+ drivers/usb/typec/notify.c                    |  23 +
+ include/linux/usb/typec.h                     |  10 +
+ include/linux/usb/typec_altmode.h             |   9 +
+ 18 files changed, 995 insertions(+), 93 deletions(-)
+ create mode 100644 drivers/gpu/drm/bridge/aux-hpd-typec-dp-bridge.c
+ create mode 100644 drivers/usb/typec/notify.c
 
 -- 
-2.51.0
+2.51.1
 
 
