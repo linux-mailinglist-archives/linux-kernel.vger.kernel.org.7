@@ -1,113 +1,138 @@
-Return-Path: <linux-kernel+bounces-895467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7820C4E044
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:06:23 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 991ADC4E063
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:08:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DDE43A60FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:03:49 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 190BB4E92D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:06:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CD183246FF;
-	Tue, 11 Nov 2025 13:03:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18DBF324709;
+	Tue, 11 Nov 2025 13:06:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nx4cjvlP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tg0OtVLz"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C0413246EE
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 13:03:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 021373246F5;
+	Tue, 11 Nov 2025 13:06:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762866225; cv=none; b=NFY4GnHpi4Gl+fXZlOBF49CLDPovf9RC1yDRq3NxTvDAx8JhIXsEz081+UovKLzP3ezFZyIdLLmPCTjeTSDq7VbQF68q1Vw1HqCU2C7BftRN24AaIaCMWUUqDu3mOkpc5/Z947YQvYhSWpwKj0Q9re/NU26ezh/SKhKmDIRzKmo=
+	t=1762866393; cv=none; b=rIw/Zzli9dpzekIhskdkrOION/uadSKCRGmUxyrBbocoPKQ6TLZsJgFwB9ovAKqaZVZt+CzSrblzuFFXQcuxJvp9KCOh0JAsVWDiUa7aK8A5s+B6g+XWm5ToHEcoa0QJq64n+Wo7YYNKjlotukNAOSj3OHSv/XUz1GOsHLjnAuY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762866225; c=relaxed/simple;
-	bh=MnQGngUYZB/AuquYMcvngj/vv0fvRZTP9N1ik/AuqZ8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ZNJYrUvVsozK0ecxrroS6xQ7ubyx283AzxFjw1dB0wzutBfDwovhyanhvBiw63ZCPtZBxlnOkuuAvFhmy9djcIF120t7WbIJVpT0WFPSA+SVY4wK6ynAUvXqw+mT3FkYu4P3jFZjoSqwe7mJqWMIhQBs/LC0tF+gXZjor6VZb40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nx4cjvlP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95D0BC19422;
-	Tue, 11 Nov 2025 13:03:43 +0000 (UTC)
+	s=arc-20240116; t=1762866393; c=relaxed/simple;
+	bh=ahDE0Hde9+gZsnP0JCOLdJBo8hGroTd4JJCH/jgFj/0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pcyFDvhd5C3pJgGaufhpTbLBW+xIlW3dgzZmEuqgiIf5efj9EIHHpzh9qAnFz12H4YF4BWm9mJ41ePu1U0SqUyQLT4DLUY1FSR6G3tKjBo3dS+JcYx86/h5BssdVHxdSuIj4gRnyq5WwDuyecfnLjFN9lblKk2idScNaSwhwvY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tg0OtVLz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6E9AC16AAE;
+	Tue, 11 Nov 2025 13:06:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762866224;
-	bh=MnQGngUYZB/AuquYMcvngj/vv0fvRZTP9N1ik/AuqZ8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=nx4cjvlP88r0deet2wJMyBpLgRhoG5z585/MuON0PuaxnYs55RYvZ1IzQY6H9JByx
-	 8bGGRsHDFEvVTPi1GFJlU1oIwYPn4M5SdsrRJX9Ooy1u69MchU64Wfpv/JPxpTWG9G
-	 Jd1uIKXHmujcrw3CK2LUloly/bMW6Kp56MhenOxEz5AqeC4WvXoDBmB62K7MIbcOr2
-	 h3C1DHdEyZHl7Lgag9Xlyn8nJ0JAgy5Jqng9hzmKIWQeVkRyD6exr1QQxCHV71J19m
-	 hTyHcpPVc0vcXqTTz+mZd4mabIbcZX23RiHeq+5QDwdiewLoAsuK7FiLsyaYQ/tQg+
-	 EL34ZgyDgZJCw==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: Mike Rapoport <rppt@kernel.org>
-Cc: Pasha Tatashin <pasha.tatashin@soleen.com>,  akpm@linux-foundation.org,
-  graf@amazon.com,  pratyush@kernel.org,  linux-kernel@vger.kernel.org,
-  kexec@lists.infradead.org,  linux-mm@kvack.org
-Subject: Re: [PATCH] liveupdate: kho: Enable KHO by default
-In-Reply-To: <aRIwSEF8Y0I6q8Cy@kernel.org> (Mike Rapoport's message of "Mon,
-	10 Nov 2025 20:34:48 +0200")
-References: <20251110180715.602807-1-pasha.tatashin@soleen.com>
-	<aRIwSEF8Y0I6q8Cy@kernel.org>
-Date: Tue, 11 Nov 2025 14:03:42 +0100
-Message-ID: <mafs0cy5oafgx.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=k20201202; t=1762866392;
+	bh=ahDE0Hde9+gZsnP0JCOLdJBo8hGroTd4JJCH/jgFj/0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Tg0OtVLz3wAXRZo7tCvWTInHjKpVK4LV67NTO+lYAZ/bR93jyG2IyFgcvsue4SRjB
+	 0h8QMWesGpk3qXoW3f/y5g5hNGaIhpu5ZvQWDGwHfLvH2QohrLgDnSv/T7XK5D98wL
+	 z5paZ8OThivObxShM274wdwZcvtkA9PuAU6b+qI29fKv1akghKWsQ9OqLPjtgfb1tU
+	 4dhW8r72DwTtl22M6htocWaDV7hTEh5uNlGrHZ2wikbz5TAqNJgsCaWZxjg5IGzZHl
+	 e2ra3fX+DjamK0ohLsg2Y80OH6UCT/oI2TuutGRfJ5NWGrLux815QwhhypwuSp+iZj
+	 JUT65tT6i+w6g==
+Message-ID: <6c7c5f86-a9d5-4b7e-aa08-968077f66ace@kernel.org>
+Date: Tue, 11 Nov 2025 14:06:10 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 02/16] mm: introduce leaf entry type and use to
+ simplify leaf entry logic
+To: Zi Yan <ziy@nvidia.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Janosch Frank <frankja@linux.ibm.com>,
+ Claudio Imbrenda <imbrenda@linux.ibm.com>,
+ Alexander Gordeev <agordeev@linux.ibm.com>,
+ Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+ Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>, Peter Xu <peterx@redhat.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Arnd Bergmann <arnd@arndb.de>, Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>, Nico Pache
+ <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+ Lance Yang <lance.yang@linux.dev>, Muchun Song <muchun.song@linux.dev>,
+ Oscar Salvador <osalvador@suse.de>, Vlastimil Babka <vbabka@suse.cz>,
+ Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
+ Michal Hocko <mhocko@suse.com>, Matthew Brost <matthew.brost@intel.com>,
+ Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
+ Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>,
+ Ying Huang <ying.huang@linux.alibaba.com>,
+ Alistair Popple <apopple@nvidia.com>,
+ Axel Rasmussen <axelrasmussen@google.com>, Yuanchu Xie <yuanchu@google.com>,
+ Wei Xu <weixugc@google.com>, Kemeng Shi <shikemeng@huaweicloud.com>,
+ Kairui Song <kasong@tencent.com>, Nhat Pham <nphamcs@gmail.com>,
+ Baoquan He <bhe@redhat.com>, Chris Li <chrisl@kernel.org>,
+ SeongJae Park <sj@kernel.org>, Matthew Wilcox <willy@infradead.org>,
+ Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
+ Xu Xin <xu.xin16@zte.com.cn>, Chengming Zhou <chengming.zhou@linux.dev>,
+ Jann Horn <jannh@google.com>, Miaohe Lin <linmiaohe@huawei.com>,
+ Naoya Horiguchi <nao.horiguchi@gmail.com>, Pedro Falcato <pfalcato@suse.de>,
+ Pasha Tatashin <pasha.tatashin@soleen.com>, Rik van Riel <riel@surriel.com>,
+ Harry Yoo <harry.yoo@oracle.com>, Hugh Dickins <hughd@google.com>,
+ linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+ linux-s390@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-arch@vger.kernel.org, damon@lists.linux.dev
+References: <cover.1762812360.git.lorenzo.stoakes@oracle.com>
+ <c879383aac77d96a03e4d38f7daba893cd35fc76.1762812360.git.lorenzo.stoakes@oracle.com>
+ <CBBF1711-5881-4B5A-ADE6-1D86C0E94296@nvidia.com>
+From: "David Hildenbrand (Red Hat)" <david@kernel.org>
+Content-Language: en-US
+In-Reply-To: <CBBF1711-5881-4B5A-ADE6-1D86C0E94296@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Nov 10 2025, Mike Rapoport wrote:
-
-> On Mon, Nov 10, 2025 at 01:07:15PM -0500, Pasha Tatashin wrote:
+On 11.11.25 04:25, Zi Yan wrote:
+> On 10 Nov 2025, at 17:21, Lorenzo Stoakes wrote:
+> 
+>> The kernel maintains leaf page table entries which contain either:
 >>
->> Subject: [PATCH] liveupdate: kho: Enable KHO by default
->
-> No need to put a directory (liveupdate) prefix here. "kho: " is enough.
+>> - Nothing ('none' entries)
+>> - Present entries (that is stuff the hardware can navigate without fault)
+> 
+> This is not true for:
+> 
+> 1. pXX_protnone(), where _PAGE_PROTNONE flag also means pXX_present() is
+> true, but hardware would still trigger a fault.
+> 2. pmd_present() where _PAGE_PSE also means a present PMD (see the comment
+> in pmd_present()).
 
-+1
+I'll note that pte_present/pmd_present etc is always about "soft-present".
 
->
-> With that fixed
->
-> Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+For example, if the hardware does not have a hw-managed access bit, 
+doing a pte_mkyoung() would also clear the hw-valid/hw-present bit 
+because we have to catch any next access done by hardware.
 
-Reviewed-by: Pratyush Yadav <pratyush@kernel.org>
+[fun fact: some hardware has an invalid bit instead of a valid/present 
+bit :) IIRC s390x falls into that category]
 
->
->> Upcoming LUO requires KHO for its operations, the requirement to place
->> both KHO=on and liveupdate=on becomes redundant. Set KHO to be enabled
->> by default.
->> 
->> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
->> ---
->>  kernel/liveupdate/kexec_handover.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->> 
->> diff --git a/kernel/liveupdate/kexec_handover.c b/kernel/liveupdate/kexec_handover.c
->> index b54ca665e005..568cd9fe9aca 100644
->> --- a/kernel/liveupdate/kexec_handover.c
->> +++ b/kernel/liveupdate/kexec_handover.c
->> @@ -51,7 +51,7 @@ union kho_page_info {
->>  
->>  static_assert(sizeof(union kho_page_info) == sizeof(((struct page *)0)->private));
->>  
->> -static bool kho_enable __ro_after_init;
->> +static bool kho_enable __ro_after_init = true;
->>  
->>  bool kho_is_enabled(void)
->>  {
->> 
->> base-commit: ab40c92c74c6b0c611c89516794502b3a3173966
->> -- 
->> 2.51.2.1041.gc1ab5b90ca-goog
->> 
+Similar things happen on ordinary PROT_NONE of course (independent of 
+pte_protnone).
+
+A better description might be "there is a page/pfn mapped here, but it 
+might not be accessible by the CPU right now".
+
+We have device-exclusive/device-private nonswap (before this series) 
+entries that fall into the same category, unfortunately ("there is 
+something mapped there that is not accessible by the CPU")
 
 -- 
-Regards,
-Pratyush Yadav
+Cheers
+
+David
 
