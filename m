@@ -1,285 +1,147 @@
-Return-Path: <linux-kernel+bounces-894585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC673C4B5BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 04:46:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B14C6C4B5C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 04:50:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85F5C3B0A3C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 03:46:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F144C3B00B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 03:50:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CCA6238C15;
-	Tue, 11 Nov 2025 03:46:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FFQ2F+us"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC8B9CA6F
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 03:46:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54E7326ED30;
+	Tue, 11 Nov 2025 03:49:55 +0000 (UTC)
+Received: from zg8tmja2lje4os43os4xodqa.icoremail.net (zg8tmja2lje4os43os4xodqa.icoremail.net [206.189.79.184])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D71FE18DB37;
+	Tue, 11 Nov 2025 03:49:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=206.189.79.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762832776; cv=none; b=R/A1PiG8GOQHQtd/eFziIuLwYGV5p2BBcohDHMysuud2jR9lDGZL1vroc0FRY/7JDX8LKYpvbNYv4VL2rXOMnznbqhIAU4ULMf0AvfIQNl5pryVD+4LIpRK3pCTnrBRwh6/kNLkXDqqkspaNtNM6SMjzGz4stVFvsZva+HECENo=
+	t=1762832994; cv=none; b=IkuTvAtbBCt/Jff49IZAz1LSAyO8m3oah+PMBrzbJciLrUMvTVmFSUpSw83RXlMNweEKNSyCdh/KRKfLMQ+UNo7R9s7X3X9fz5srVCTU20nNtoTu65n0urmEPg32pI9gr8L1iCskKzndl0x5LRMX/5PeNShEd28LFK/GcQn1VSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762832776; c=relaxed/simple;
-	bh=pDOEyNv+FeV17ijVUKn9FNfPkuvBJRe6UpW+jL9curk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jzq9f4tkxYaadT2E0sf/QOBWdeTW2h1UmcD8pQo6rX4l7vBzLPPPcu5E8yLl4H8MUMfMgpAivUL8LRxCqdrrdHSrWMCnvfyK7u1k5FCRGFFyyxxdFaG2du7xwD7GZ4e6bbw9YJBzAZ1fX1in2IxHuSaQLfrmKmLne5KO03ALrs0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FFQ2F+us; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2980343d9d1so68485ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 19:46:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762832772; x=1763437572; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rvbUw1wMKhrd8a8EygNYwPnFkwIsJC1OmNDHwiXLTJI=;
-        b=FFQ2F+usfvqfsf+CTq6eUH7GlcFMhlk5Yue+8gS8eQ/jJbLwCwNZfPXaek+YfsyjRB
-         ShJMEKdRaiL0Gvzf5rl5SJanXNdm+Ixm6CRvrlKDkY/ygAoUqjL0Loj4BbyZAJqlZvUK
-         xAUkwqxnWe2hh7Xb7fh78eTXx9iz+k1qFJgqq07SgeJWxDvCrwPWXxAYxTETzBp6eZlc
-         8+kmyw8i74PADaY+TWkiiNsM3MzBLsBLFY8/lJGit+yE+SgVHhz1aaFPZBUyhnlDxg0a
-         Y1vlo/eUoaACiEJwVR+EU0tVuvdMnGUPq0jl8GjXqz3tzNZHOF+dEMqpAbzj1vT3lnmd
-         f6Ww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762832772; x=1763437572;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=rvbUw1wMKhrd8a8EygNYwPnFkwIsJC1OmNDHwiXLTJI=;
-        b=qPylwt5nkpDAd/9FcDOiy1KUPxh0Wf54mhX57XxquvzmRyjAnHNeaviE3fbRGC/tGH
-         RcEEdR8zvkSfwD/56pX1in7xC+mMmXZPalFd9VBVDxWD8y3M3XyXty3TMntJ7iaRXHe/
-         PXUnK/rE4Jbb4bz4mkvFl5GOMNKQbXLi3X9ei86z/6fX/g/FLY+bh4N1vCJlK9LGwiLu
-         Gaa6duT6SszZsI5HzdJIsMmlEGElCk6DSWpM7DnIn8RQ5Qa7qjTi/mL5YZoGeHQTQ+/H
-         g2Cn+zM8Kc5LmUjzK0cJCc680GPkYU641g70K6Yjm7U+x7XYXqY9b1RcA7Gc8MjNRSNu
-         59ng==
-X-Forwarded-Encrypted: i=1; AJvYcCXIA35K3kDqv1lryt4qDAGii1oaZbhsXdZaPpH9uaKIZnjvzlLGmohJTK0TxMamNF+lfozHnI56fPHZwR0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5IcE7s0P1nzKWXQus146WrIobwxkNsLqXH9U0Bg5Ckm3zKjTU
-	PIy20E5fWVdoV3SvhXfGWRzYVco7BD2KJ9ndI3ENVmAOTuY74MMHfFnF2Kx2/+JEWK/Wq18yDix
-	yVh7UnlxZINgDEheHKz63tzQUWzTqodkwQ9NnEfnu
-X-Gm-Gg: ASbGncujgXn/3d7BoPoHqfZbcFCsd7J16p7mVciOq1gDyLitbrDpMSh5UlGWt6+tUtR
-	9EvXUooxM9DiHigNzUgAC7caLtTvnOUKwcchNaEOgs1YQHXZTlMkz1e/4RCHHGGj6W65iGe7zq1
-	lg7NX8zWugaEnqXHF167dunwoGLQT/nm1UMDm44sz0vo1w5cuN/7VcC6E7522pctAH+SQeANYdW
-	mTNLMhHSSt7P1kVDdfcwVEs6mvddU1VWmJRpq98HyKaNCVtN1fWA+1kHkiqGOWh7g8yYR71
-X-Google-Smtp-Source: AGHT+IG8O42bcuZPn02LBhwgUMQMgrXTHBCyhEZhU1WdI0i7AVqoldCxRNX6OJgF3gSmRDFaN3CsRtzjC6eCCsQq/rU=
-X-Received: by 2002:a17:903:246:b0:274:1a09:9553 with SMTP id
- d9443c01a7336-29841580f6emr2739085ad.6.1762832771641; Mon, 10 Nov 2025
- 19:46:11 -0800 (PST)
+	s=arc-20240116; t=1762832994; c=relaxed/simple;
+	bh=STHJLspIN9GMreqf9eZB/pVMf7p4s1+eyp3LDryWZUk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=mB6LduuaMFYHja+uFYej0HKvOdYSq2T7G8fej9zQPVkaLtyJLHU1rY9RhuP+y5ZtpY28ASda3jGJCBDTOUcEE2B1rWZre/v21MjOSKd8AN57HPZ/Yiq5ovafg24v9YE/5br3XYvGiYPwKN/2KGuN1hG/8kTFsT9KHjDUQCkdO0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=206.189.79.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
+Received: from zhangsenchuan$eswincomputing.com ( [10.12.96.83] ) by
+ ajax-webmail-app2 (Coremail) ; Tue, 11 Nov 2025 11:49:24 +0800 (GMT+08:00)
+Date: Tue, 11 Nov 2025 11:49:24 +0800 (GMT+08:00)
+X-CM-HeaderCharset: UTF-8
+From: zhangsenchuan <zhangsenchuan@eswincomputing.com>
+To: "Frank Li" <Frank.li@nxp.com>, mani@kernel.org
+Cc: bhelgaas@google.com, krzk+dt@kernel.org, conor+dt@kernel.org,
+	lpieralisi@kernel.org, kwilczynski@kernel.org, robh@kernel.org,
+	p.zabel@pengutronix.de, jingoohan1@gmail.com,
+	gustavo.pimentel@synopsys.com, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	christian.bruel@foss.st.com, mayank.rana@oss.qualcomm.com,
+	shradha.t@samsung.com, krishna.chundru@oss.qualcomm.com,
+	thippeswamy.havalige@amd.com, inochiama@gmail.com,
+	ningyu@eswincomputing.com, linmin@eswincomputing.com,
+	pinkesh.vaghela@einfochips.com, ouyanghui@eswincomputing.com
+Subject: Re: Re: [PATCH v5 2/2] PCI: eic7700: Add Eswin PCIe host controller
+ driver
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version 2024.2-cmXT6 build
+ 20241203(6b039d88) Copyright (c) 2002-2025 www.mailtech.cn
+ mispb-72143050-eaf5-4703-89e0-86624513b4ce-eswincomputing.com
+In-Reply-To: <aRJBFoRC5rm+5rHa@lizhi-Precision-Tower-5810>
+References: <20251110090716.1392-1-zhangsenchuan@eswincomputing.com>
+ <20251110090953.1429-1-zhangsenchuan@eswincomputing.com>
+ <aRJBFoRC5rm+5rHa@lizhi-Precision-Tower-5810>
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251106231508.448793-1-irogers@google.com> <c0648b32-e450-4036-aebe-5faab7edc1bd@linux.intel.com>
-In-Reply-To: <c0648b32-e450-4036-aebe-5faab7edc1bd@linux.intel.com>
-From: Ian Rogers <irogers@google.com>
-Date: Mon, 10 Nov 2025 19:46:00 -0800
-X-Gm-Features: AWmQ_bk-93pQHA1vVGDEUDaSADGkUhyTpk7Ne0lPDrFodBoj6hETnH-tWk1hA8s
-Message-ID: <CAP-5=fUQN5fxaJ9XXJQ_fnf=s1NCvyHVYemzEf2DEwF4JfHJUg@mail.gmail.com>
-Subject: Re: [PATCH v2 00/18] Switch the default perf stat metrics to json
-To: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, James Clark <james.clark@linaro.org>, 
-	Xu Yang <xu.yang_2@nxp.com>, Chun-Tse Shao <ctshao@google.com>, 
-	Thomas Richter <tmricht@linux.ibm.com>, Sumanth Korikkar <sumanthk@linux.ibm.com>, 
-	Collin Funk <collin.funk1@gmail.com>, Thomas Falcon <thomas.falcon@intel.com>, 
-	Howard Chu <howardchu95@gmail.com>, Levi Yun <yeoreum.yun@arm.com>, 
-	Yang Li <yang.lee@linux.alibaba.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, Andi Kleen <ak@linux.intel.com>, 
-	Weilin Wang <weilin.wang@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Message-ID: <4f4d2055.77.19a71085b29.Coremail.zhangsenchuan@eswincomputing.com>
+X-Coremail-Locale: en_US
+X-CM-TRANSID:TQJkCgC3+q1EshJpOoR6AA--.605W
+X-CM-SenderInfo: x2kd0wpvhquxxxdqqvxvzl0uprps33xlqjhudrp/1tbiAgEDBmkSE
+	9sRjQAAsp
+X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
+	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
+	daVFxhVjvjDU=
 
-On Mon, Nov 10, 2025 at 12:38=E2=80=AFAM Mi, Dapeng <dapeng1.mi@linux.intel=
-.com> wrote:
->
-> Hi Ian,
->
-> which commit is the patch-set based on? I tried to apply this patch-set o=
-n
-> perf-tools-next branch, but it fails...
-
-Thanks Dapeng,
-
-probably something merged into perf-tools-next since the last time I
-sent out the patches. I'll rebase and send as v3.
-
-Thanks,
-Ian
-
-> Thanks,
->
-> -Dapeng
->
-> On 11/7/2025 7:14 AM, Ian Rogers wrote:
-> > Prior to this series stat-shadow would produce hard coded metrics if
-> > certain events appeared in the evlist. This series produces equivalent
-> > json metrics and cleans up the consequences in tests and display
-> > output. A before and after of the default display output on a
-> > tigerlake is:
-> >
-> > Before:
-> > ```
-> > $ perf stat -a sleep 1
-> >
-> >  Performance counter stats for 'system wide':
-> >
-> >     16,041,816,418      cpu-clock                        #   15.995 CPU=
-s utilized
-> >              5,749      context-switches                 #  358.376 /se=
-c
-> >                121      cpu-migrations                   #    7.543 /se=
-c
-> >              1,806      page-faults                      #  112.581 /se=
-c
-> >        825,965,204      instructions                     #    0.70  ins=
-n per cycle
-> >      1,180,799,101      cycles                           #    0.074 GHz
-> >        168,945,109      branches                         #   10.532 M/s=
-ec
-> >          4,629,567      branch-misses                    #    2.74% of =
-all branches
-> >  #     30.2 %  tma_backend_bound
-> >                                                   #      7.8 %  tma_bad=
-_speculation
-> >                                                   #     47.1 %  tma_fro=
-ntend_bound
-> >  #     14.9 %  tma_retiring
-> > ```
-> >
-> > After:
-> > ```
-> > $ perf stat -a sleep 1
-> >
-> >  Performance counter stats for 'system wide':
-> >
-> >              2,890      context-switches                 #    179.9 cs/=
-sec  cs_per_second
-> >     16,061,923,339      cpu-clock                        #     16.0 CPU=
-s  CPUs_utilized
-> >                 43      cpu-migrations                   #      2.7 mig=
-rations/sec  migrations_per_second
-> >              5,645      page-faults                      #    351.5 fau=
-lts/sec  page_faults_per_second
-> >          5,708,413      branch-misses                    #      1.4 %  =
-branch_miss_rate         (88.83%)
-> >        429,978,120      branches                         #     26.8 K/s=
-ec  branch_frequency     (88.85%)
-> >      1,626,915,897      cpu-cycles                       #      0.1 GHz=
-  cycles_frequency       (88.84%)
-> >      2,556,805,534      instructions                     #      1.5 ins=
-tructions  insn_per_cycle  (88.86%)
-> >                         TopdownL1                 #     20.1 %  tma_bac=
-kend_bound
-> >                                                   #     40.5 %  tma_bad=
-_speculation      (88.90%)
-> >                                                   #     17.2 %  tma_fro=
-ntend_bound       (78.05%)
-> >                                                   #     22.2 %  tma_ret=
-iring             (88.89%)
-> >
-> >        1.002994394 seconds time elapsed
-> > ```
-> >
-> > Having the metrics in json brings greater uniformity, allows events to
-> > be shared by metrics, and it also allows descriptions like:
-> > ```
-> > $ perf list cs_per_second
-> > ...
-> >   cs_per_second
-> >        [Context switches per CPU second]
-> > ```
-> >
-> > A thorn in the side of doing this work was that the hard coded metrics
-> > were used by perf script with '-F metric'. This functionality didn't
-> > work for me (I was testing `perf record -e instructions,cycles`
-> > with/without leader sampling and then `perf script -F metric` but saw
-> > nothing but empty lines) but anyway I decided to fix it to the best of
-> > my ability in this series. So the script side counters were removed
-> > and the regular ones associated with the evsel used. The json metrics
-> > were all searched looking for ones that have a subset of events
-> > matching those in the perf script session, and all metrics are
-> > printed. This is kind of weird as the counters are being set by the
-> > period of samples, but I carried the behavior forward. I suspect there
-> > needs to be follow up work to make this better, but what is in the
-> > series is superior to what is currently in the tree. Follow up work
-> > could include finding metrics for the machine in the perf.data rather
-> > than using the host, allowing multiple metrics even if the metric ids
-> > of the events differ, fixing pre-existing `perf stat record/report`
-> > issues, etc.
-> >
-> > There is a lot of stat tests that, for example, assume '-e
-> > instructions,cycles' will produce an IPC metric. These things needed
-> > tidying as now the metric must be explicitly asked for and when doing
-> > this ones using software events were preferred to increase
-> > compatibility. As the test updates were numerous they are distinct to
-> > the patches updating the functionality causing periods in the series
-> > where not all tests are passing. If this is undesirable the test fixes
-> > can be squashed into the functionality updates, but this will be kind
-> > of messy, especially as at some points in the series both the old
-> > metrics and the new metrics will be displayed.
-> >
-> > v2: Drop merged patches, add json to document target_cpu/core_wide and
-> >     example to "Add care to picking the evsel for displaying a metric"
-> >     commit message (Namhyung).
-> >
-> > v1: https://lore.kernel.org/lkml/20251024175857.808401-1-irogers@google=
-.com/
-> >
-> > Ian Rogers (18):
-> >   perf metricgroup: Add care to picking the evsel for displaying a
-> >     metric
-> >   perf expr: Add #target_cpu literal
-> >   perf jevents: Add set of common metrics based on default ones
-> >   perf jevents: Add metric DefaultShowEvents
-> >   perf stat: Add detail -d,-dd,-ddd metrics
-> >   perf script: Change metric format to use json metrics
-> >   perf stat: Remove hard coded shadow metrics
-> >   perf stat: Fix default metricgroup display on hybrid
-> >   perf stat: Sort default events/metrics
-> >   perf stat: Remove "unit" workarounds for metric-only
-> >   perf test stat+json: Improve metric-only testing
-> >   perf test stat: Ignore failures in Default[234] metricgroups
-> >   perf test stat: Update std_output testing metric expectations
-> >   perf test metrics: Update all metrics for possibly failing default
-> >     metrics
-> >   perf test stat: Update shadow test to use metrics
-> >   perf test stat: Update test expectations and events
-> >   perf test stat csv: Update test expectations and events
-> >   perf tool_pmu: Make core_wide and target_cpu json events
-> >
-> >  tools/perf/builtin-script.c                   | 238 ++++++++++-
-> >  tools/perf/builtin-stat.c                     | 154 ++-----
-> >  .../arch/common/common/metrics.json           | 151 +++++++
-> >  .../pmu-events/arch/common/common/tool.json   |  12 +
-> >  tools/perf/pmu-events/empty-pmu-events.c      | 229 ++++++----
-> >  tools/perf/pmu-events/jevents.py              |  28 +-
-> >  tools/perf/pmu-events/pmu-events.h            |   2 +
-> >  .../tests/shell/lib/perf_json_output_lint.py  |   4 +-
-> >  tools/perf/tests/shell/lib/stat_output.sh     |   2 +-
-> >  tools/perf/tests/shell/stat+csv_output.sh     |   2 +-
-> >  tools/perf/tests/shell/stat+json_output.sh    |   2 +-
-> >  tools/perf/tests/shell/stat+shadow_stat.sh    |   4 +-
-> >  tools/perf/tests/shell/stat+std_output.sh     |   4 +-
-> >  tools/perf/tests/shell/stat.sh                |   6 +-
-> >  .../perf/tests/shell/stat_all_metricgroups.sh |   3 +
-> >  tools/perf/tests/shell/stat_all_metrics.sh    |   7 +-
-> >  tools/perf/util/evsel.h                       |   1 +
-> >  tools/perf/util/expr.c                        |   8 +-
-> >  tools/perf/util/metricgroup.c                 |  92 +++-
-> >  tools/perf/util/stat-display.c                |  55 +--
-> >  tools/perf/util/stat-shadow.c                 | 404 +-----------------
-> >  tools/perf/util/stat.h                        |   2 +-
-> >  tools/perf/util/tool_pmu.c                    |  24 +-
-> >  tools/perf/util/tool_pmu.h                    |   9 +-
-> >  24 files changed, 756 insertions(+), 687 deletions(-)
-> >  create mode 100644 tools/perf/pmu-events/arch/common/common/metrics.js=
-on
-> >
+CgoKPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2VzLS0tLS0KPiBGcm9tOiAiRnJhbmsgTGkiIDxGcmFu
+ay5saUBueHAuY29tPgo+IFNlbmQgdGltZTpUdWVzZGF5LCAxMS8xMS8yMDI1IDAzOjQ2OjMwCj4g
+VG86IHpoYW5nc2VuY2h1YW5AZXN3aW5jb21wdXRpbmcuY29tCj4gQ2M6IGJoZWxnYWFzQGdvb2ds
+ZS5jb20sIG1hbmlAa2VybmVsLm9yZywga3J6aytkdEBrZXJuZWwub3JnLCBjb25vcitkdEBrZXJu
+ZWwub3JnLCBscGllcmFsaXNpQGtlcm5lbC5vcmcsIGt3aWxjenluc2tpQGtlcm5lbC5vcmcsIHJv
+YmhAa2VybmVsLm9yZywgcC56YWJlbEBwZW5ndXRyb25peC5kZSwgamluZ29vaGFuMUBnbWFpbC5j
+b20sIGd1c3Rhdm8ucGltZW50ZWxAc3lub3BzeXMuY29tLCBsaW51eC1wY2lAdmdlci5rZXJuZWwu
+b3JnLCBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZywgbGludXgta2VybmVsQHZnZXIua2VybmVs
+Lm9yZywgY2hyaXN0aWFuLmJydWVsQGZvc3Muc3QuY29tLCBtYXlhbmsucmFuYUBvc3MucXVhbGNv
+bW0uY29tLCBzaHJhZGhhLnRAc2Ftc3VuZy5jb20sIGtyaXNobmEuY2h1bmRydUBvc3MucXVhbGNv
+bW0uY29tLCB0aGlwcGVzd2FteS5oYXZhbGlnZUBhbWQuY29tLCBpbm9jaGlhbWFAZ21haWwuY29t
+LCBuaW5neXVAZXN3aW5jb21wdXRpbmcuY29tLCBsaW5taW5AZXN3aW5jb21wdXRpbmcuY29tLCBw
+aW5rZXNoLnZhZ2hlbGFAZWluZm9jaGlwcy5jb20sIG91eWFuZ2h1aUBlc3dpbmNvbXB1dGluZy5j
+b20KPiBTdWJqZWN0OiBSZTogW1BBVENIIHY1IDIvMl0gUENJOiBlaWM3NzAwOiBBZGQgRXN3aW4g
+UENJZSBob3N0IGNvbnRyb2xsZXIgZHJpdmVyCj4gCj4gT24gTW9uLCBOb3YgMTAsIDIwMjUgYXQg
+MDU6MDk6NTNQTSArMDgwMCwgemhhbmdzZW5jaHVhbkBlc3dpbmNvbXB1dGluZy5jb20gd3JvdGU6
+Cj4gPiBGcm9tOiBTZW5jaHVhbiBaaGFuZyA8emhhbmdzZW5jaHVhbkBlc3dpbmNvbXB1dGluZy5j
+b20+Cj4gPgo+ID4gQWRkIGRyaXZlciBmb3IgdGhlIEVzd2luIEVJQzc3MDAgUENJZSBob3N0IGNv
+bnRyb2xsZXIsIHdoaWNoIGlzIGJhc2VkIG9uCj4gPiB0aGUgRGVzaWduV2FyZSBQQ0llIGNvcmUs
+IElQIHJldmlzaW9uIDYuMDBhLiBUaGUgUENJZSBHZW4uMyBjb250cm9sbGVyCj4gPiBzdXBwb3J0
+cyBhIGRhdGEgcmF0ZSBvZiA4IEdUL3MgYW5kIDQgY2hhbm5lbHMsIHN1cHBvcnQgSU5UeCBhbmQg
+TVNJCj4gPiBpbnRlcnJ1cHRzLgo+ID4KPiA+IFNpZ25lZC1vZmYtYnk6IFl1IE5pbmcgPG5pbmd5
+dUBlc3dpbmNvbXB1dGluZy5jb20+Cj4gPiBTaWduZWQtb2ZmLWJ5OiBZYW5naHVpIE91IDxvdXlh
+bmdodWlAZXN3aW5jb21wdXRpbmcuY29tPgo+ID4gU2lnbmVkLW9mZi1ieTogU2VuY2h1YW4gWmhh
+bmcgPHpoYW5nc2VuY2h1YW5AZXN3aW5jb21wdXRpbmcuY29tPgo+ID4gLS0tCj4gPiAgZHJpdmVy
+cy9wY2kvY29udHJvbGxlci9kd2MvS2NvbmZpZyAgICAgICAgfCAgMTEgKwo+ID4gIGRyaXZlcnMv
+cGNpL2NvbnRyb2xsZXIvZHdjL01ha2VmaWxlICAgICAgIHwgICAxICsKPiA+ICBkcml2ZXJzL3Bj
+aS9jb250cm9sbGVyL2R3Yy9wY2llLWVpYzc3MDAuYyB8IDQyMCArKysrKysrKysrKysrKysrKysr
+KysrCj4gPiAgMyBmaWxlcyBjaGFuZ2VkLCA0MzIgaW5zZXJ0aW9ucygrKQo+ID4gIGNyZWF0ZSBt
+b2RlIDEwMDY0NCBkcml2ZXJzL3BjaS9jb250cm9sbGVyL2R3Yy9wY2llLWVpYzc3MDAuYwo+ID4K
+PiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3BjaS9jb250cm9sbGVyL2R3Yy9LY29uZmlnIGIvZHJp
+dmVycy9wY2kvY29udHJvbGxlci9kd2MvS2NvbmZpZwo+ID4gaW5kZXggMzQ5ZDQ2NTczOTNjLi42
+NjU2OGVmYjMyNGYgMTAwNjQ0Cj4gPiAtLS0gYS9kcml2ZXJzL3BjaS9jb250cm9sbGVyL2R3Yy9L
+Y29uZmlnCj4gPiArKysgYi9kcml2ZXJzL3BjaS9jb250cm9sbGVyL2R3Yy9LY29uZmlnCj4gPiBA
+QCAtOTMsNiArOTMsMTcgQEAgY29uZmlnIFBDSUVfQlQxCj4gPiAgCSAgRW5hYmxlcyBzdXBwb3J0
+IGZvciB0aGUgUENJZSBjb250cm9sbGVyIGluIHRoZSBCYWlrYWwtVDEgU29DIHRvIHdvcmsKPiA+
+ICAJICBpbiBob3N0IG1vZGUuIEl0J3MgYmFzZWQgb24gdGhlIFN5bm9wc3lzIERXQyBQQ0llIHY0
+LjYwYSBJUC1jb3JlLgo+ID4KPiAuLi4KPiA+ICsKPiA+ICtzdGF0aWMgdm9pZCBlaWM3NzAwX3Bj
+aWVfcG1lX3R1cm5fb2ZmKHN0cnVjdCBkd19wY2llX3JwICpwcCkKPiA+ICt7Cj4gPiArCXN0cnVj
+dCBkd19wY2llICpwY2kgPSB0b19kd19wY2llX2Zyb21fcHAocHApOwo+ID4gKwo+ID4gKwkvKgo+
+ID4gKwkgKiBIYXJkd2FyZSBkb2Vzbid0IHN1cHBvcnQgZW50ZXIgdGhlIEQzY29kZSBhbmQgTDIv
+TDMgc3RhdGVzLCBzZW5kCj4gPiArCSAqIFBNRV9UdXJuX09mZiBtZXNzYWdlLCB3aGljaCB3aWxs
+IHRoZW4gY2F1c2UgVm1haW4gdG8gYmUgcmVtb3ZlZCBhbmQKPiA+ICsJICogY29udHJvbGxlciBz
+dG9wIHdvcmtpbmcuCj4gPiArCSAqLwo+ID4gKwlkZXZfaW5mbyhwY2ktPmRldiwgIkNhbid0IHNl
+bmQgUE1FX1R1cm5fT2ZmIG1lc3NhZ2VcbiIpOwo+ID4gK30KPiAKPiBEZWZpbmUgYSBxdWlyayB0
+byBsZXQgZHdfcGNpZV9zdXNwZW5kX25vaXJxKCkgc2tpcCBjYWxsIHBtZV90dXJuX29mZigpCj4g
+aW5zdGVhZCBkbyBub3RoaW5nIGhlcmUuIFNvIG90aGVyIGRyaXZlciBjYW4gcmV1c2UgdGhpcyBx
+dWlyayBpZiBtZWV0IHRoZQo+IHNpbWlsYXIgc2l0dWF0aW9uLgoKSGksIEZyYW5rIE1hbmkKClBs
+YW7vvJoKSW4gdGhlIGR3X3BjaWVfc3VzcGVuZF9ub2lycSBmdW5jdGlvbiwgYWRkIHRoZSBub19z
+dXNwcG9ydF9MMjMgZmxhZyB0byAKZGV0ZXJtaW5lIHdoZXRoZXIgdG8gc2tpcCB0aGUgcG1lX3R1
+cm5fb2ZmIGFuZCByZWFkX3BvbGxfdGltZW91dCBmdW5jdGlvbnMuCgogICAgICAgICBzdHJ1Y3Qg
+ZHdfcGNpZSB7CiAgICAgICAgICAgICAgICAgLi4uLi4uLi4uLi4KICAgICAgICAgICAgICAgICBi
+b29sIG5vX3N1c3Bwb3J0X0wyMzsKICAgICAgICAgfQoKCWlmIChwY2ktPm5vX3N1c3Bwb3J0X0wy
+MykKCQlnb3RvIHNraXBfTDIzOwogICAgICAgICAKICAgICAgICAgICAgIC4uLi4uLi4KCiAgICAg
+c2tpcF9MMjM6CiAgICAgICAgZHdfcGNpZV9zdG9wX2xpbmsocGNpKTsKCWlmIChwY2ktPnBwLm9w
+cy0+ZGVpbml0KQoJCXBjaS0+cHAub3BzLT5kZWluaXQoJnBjaS0+cHApOwoKVGhpcyBzdWJtaXNz
+aW9uIGlzIGFsc28gc2tpcHBpbmcgcG1lX3R1cm5fb2ZmIGFuZCByZWFkX3BvbGxfdGltZW91dCwg
+dGhlIGFib3ZlIGFsc28gCmNvbnRyb2xzIHRoZSBzYW1lIGNvZGUuIENvdWxkIGl0IGJlIGNvbnNp
+ZGVyZWQgdG8gbWVyZ2UgdGhlIGFib3ZlIGNvZGUsIHNvIG90aGVyIApkcml2ZXIgY2FuIHJldXNl
+IHRoaXMgZmxhZyBpZiBtZWV0IHRoZSBzaW1pbGFyIHNpdHVhdGlvbi4gT3IgdGhlcmUgYXJlIG90
+aGVyIGJldHRlcgp3YXlzIHRvIHNvbHZlIHRoaXMgcHJvYmxlbT8KaHR0cHM6Ly9sb3JlLmtlcm5l
+bC5vcmcvbGludXgtcGNpL2FSSVNQZ0NaeUVaeFN0SU5AbGl6aGktUHJlY2lzaW9uLVRvd2VyLTU4
+MTAvI3QKCkxvb2tpbmcgZm9yd2FyZCB0byB5b3VyIHJlcGx5LiBUaGFuayB5b3UgdmVyeSBtdWNo
+IQoKS2luZCByZWdhcmRzLApTZW5jaHVhbiBaaGFuZwoKPiAKPiBBbmQgdXNlIHF1aXJrIHRvIGtu
+b3cgaGFyZHdhcmUgbGltaXN0aW9uIGVhc2lseS4KPiAKPiBEbyB5b3Uga25vdyB3aHkgY29udHJv
+bGxlciBzdG9wIHdvcmtpbmcgaWYgdm1haW4gYmUgcmVtb3ZlZC4gU3VwcG9zZSByZXN1bWUKPiB3
+aWxsIHJlaW5pdCBob3N0IGNvbnRyb2xsZXIgYXQgcmVzdW1lLgoKVGhyb3VnaCB0ZXN0aW5nLCBp
+ZiB2bWFpbiBiZSByZW1vdmVkIGFuZCBjb250cm9sbGVyIHN0b3Agd29ya2luZywgdGhlIGRiaSAK
+cmVnaXN0ZXIgc2hvd3MgdGhhdCBpdCBjYW5ub3QgYmUgYWNjZXNzZWRlZC4gVGhlIGxpbmsgc3Rh
+dGUgY2Fubm90IGJlIHJlYWQgCmluIHRoZSByZWFkX3BvbGxfdGltZW91dCBmdW5jdGlvbi4KCj4g
+Cj4gPiArCj4gPiArc3RhdGljIGNvbnN0IHN0cnVjdCBkd19wY2llX2hvc3Rfb3BzIGVpYzc3MDBf
+cGNpZV9ob3N0X29wcyA9IHsKPiA+ICsJLmluaXQgPSBlaWM3NzAwX3BjaWVfaG9zdF9pbml0LAo+
+ID4gKwkuZGVpbml0ID0gZWljNzcwMF9wY2llX2hvc3RfZGVpbml0LAo+ID4gKwkucG1lX3R1cm5f
+b2ZmID0gZWljNzcwMF9wY2llX3BtZV90dXJuX29mZiwKPiA+ICt9Owo+ID4gKwo+IC4uLgo+ID4g
+Mi4yNS4xCj4gPgo=
 
