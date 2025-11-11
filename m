@@ -1,255 +1,206 @@
-Return-Path: <linux-kernel+bounces-894675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECA62C4B92E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 06:53:24 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06DE8C4B93A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 06:59:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85D43188FBD5
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 05:53:49 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9F87F4E45AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 05:58:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65D96275B1A;
-	Tue, 11 Nov 2025 05:53:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1229D279329;
+	Tue, 11 Nov 2025 05:58:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="eGJ7w+Zt"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="bf2NA6+Y"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF450218AB0
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 05:53:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8023B26D4DE
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 05:58:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762840397; cv=none; b=tNJOyYBOPdrmMFH24Uzn9jnljVhix8DwfRF0H47HQlVk5FK4oShwtQkD1e+puZOycc7hiZpuGBfiFuAVBSljyZAPM3B7WsDcP0gVfT0IdblTMcnt8HwdIZcvNzEVmE80Fmk8Qnldh6O9bfNr6Ax3UXSAHpa5RVBRDsP6otcNylI=
+	t=1762840732; cv=none; b=bi8VARHpHyHigWV1oeB2kej4OMYzuXnR4znYUBMOR/hAxpOjGTnCIdYbPuiXslWjH7RPJVP3YRNNf0PqQlkP5uLa3lDJ3llaQG6cdhWUheHAUmgX8/8XsoVDuBZevrx2Y8mRvWfeUlnYRRXZuzHoKxmag25FMUyEaAoKDnowMcU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762840397; c=relaxed/simple;
-	bh=AJ/k8m6pthG8Gcg3my/vKvpdE5aV6yzPlE/491Qkzak=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Rdc1yVUlpgsyKusOfhL84xmt/bekNwkxK1b/nH1JMuPY+Y5YN1gptfhJtSl6m8CClPv+WUWFKYL8eJROHz2Xky9fSiPxMoDCUAqZK2QM2ozmv36TRcuw/3EaSO9Z3otlWDWAdekgXwmljJ5B/btgPPbF+7sgqOkZ8f9PEMxboSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=eGJ7w+Zt; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5AB28NCG020676;
-	Tue, 11 Nov 2025 05:53:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=jR9xBv
-	mP62HE1b+hpq22XRoqsFbon38apNqfhG0YOxs=; b=eGJ7w+Zt94YGKkfBOkp8LX
-	uhYTeuU+TJHmRadTajBDk59vxDK3Yia/lUo/qehN8NQh0KtOHcvlmjNnk5UD1UmX
-	jXNUbkO2IHK8QWk4ZwPZOp+z+x+1NJHxtUpuKbdLdc7MqX7YbN1K1dF2V4YqZ7uI
-	UPS+8JArTMD4ALRgQf3rZLVb7S5XPVuLlNDy2c5t2qsoxYpPcoZgM+TVlTAMjaTs
-	sRLlsaNMmSK/39ZNdwkaccrb50UdvTcDEYS8jFztDUnjiE6G711O2OZutOiMUzbR
-	MnaL3xNynXmfsCr9EHnOPa8iMP71QkQfacaANgoEG3yldZ0M4JTWbGmMZdo33Rrw
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a9wk83jf9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Nov 2025 05:53:03 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5AB5r3xY020166;
-	Tue, 11 Nov 2025 05:53:03 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a9wk83jf8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Nov 2025 05:53:03 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5AB5X6q2011562;
-	Tue, 11 Nov 2025 05:53:02 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4aajw18yyb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Nov 2025 05:53:01 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5AB5qwNb16318788
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 11 Nov 2025 05:52:58 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 101C720043;
-	Tue, 11 Nov 2025 05:52:58 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B146020040;
-	Tue, 11 Nov 2025 05:52:54 +0000 (GMT)
-Received: from [9.39.20.64] (unknown [9.39.20.64])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 11 Nov 2025 05:52:54 +0000 (GMT)
-Message-ID: <56abcc3f-ddd4-49c3-a985-a16d616e4210@linux.ibm.com>
-Date: Tue, 11 Nov 2025 11:22:13 +0530
+	s=arc-20240116; t=1762840732; c=relaxed/simple;
+	bh=5jnWpbWQQnlXG7OiNGwnG/0W4ah2GK8HKHu0tCa/bkU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CFykKUYbjqXPljBA4UxKhGgDP9X2f6bEJvVataCDgTU4jtGXfBM2tSn3G0DRgV6jdZf/YMG/viiGZLXXOSxoxO6s2M3mhVHXHWnmKc9LA1m/H2JHUiLHdyFK6OHpUxwfSHv99lew5TyFj48xU1JcSKy0Ex98SGm8/8r3kyp6hcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=bf2NA6+Y; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b72b495aa81so439239266b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 21:58:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google; t=1762840729; x=1763445529; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4IN4rRfnCOfr9RMuoqowEQ8Wlb2hMDvz+fZbNk629L0=;
+        b=bf2NA6+Yvd2ua4j/lCZ06zSGpaeIuMd0QxydpTqormXj5JI9DfScrlVQDa0NN58U6R
+         vBih8riPqLJJ+u/VD/NUMS2dw1GroYbA/w/9jocCN9AElt5wLXeJpQTSpbge8sTRY5ru
+         0qjwiqo/RF7cOR1X/sTWhM2tNTM2Q7B/ZyMwXvP+S5IczPd2OJDwJ2sggR1ijkpSwgbq
+         F/9a80Tc0Fr5VFAWU7AZePOuSKFDS2a2Ej8RWFbSQqLIc6Y6ugunc3tlPGaZA4itHrlP
+         m+FzKfS0YmXq1PwSQizSavNHzDXQOZHe61JLnfjGzC1/MNDdW6ZI06tNZVIbMWawZD1u
+         DqaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762840729; x=1763445529;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=4IN4rRfnCOfr9RMuoqowEQ8Wlb2hMDvz+fZbNk629L0=;
+        b=bdh4Yn1mZL9y8T6IhmPKBuhUUOzk2j5bIIWyyF3jhidR+48w2dt7n7TvT5llc2jLHg
+         sLMSpua5Kw24FEs8V1l3w6s4zNX9SHv38hEFJi5CdzcdbYylLxn5KaovbOQ0swmcnXhi
+         7wJtIguNEQtcbMQT3cv9mMmpY+V0x1DA1NECKQimBqcxTAxxDbRY1HizSsYu5vmv3ePo
+         o4CvKFVyYCMxFAC/sJ0cfDY9onS94Hk7I8ZBYYqaLrUXmh1kDtIUQVGSLJ5+nYSz6svn
+         W20/nYSyUmNmE4tdFZ7fKRF314cnyercaAEXJ+a4boi7NuneH2i+kyILgmsXWjdUxGSH
+         PItA==
+X-Forwarded-Encrypted: i=1; AJvYcCX/OGEKefB1g1o9XSFlEMJNl8LXKYvobOfVzfNll5+kafSpY+afsJCZuT/a9qFiXlGuuJcgESX2cqt2N2w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZlbjMx7Wk3oipD/HzXwuprSkrjxXBeprlFimFH3WugRgYXNTp
+	CRNeDgMBWjWPzWmaIv+Parao/c9kvUfh4uU6LLPRzVCTF1LAemHK6MFgvaCV3BSZ8mD+gVlbL9E
+	6v98FB3eQiWn7Nz0KpxI4GNruUPOmnq8eHGJ6WxDbfw==
+X-Gm-Gg: ASbGncvAIcL1kUw2u4bX4njm6EdFJU7uSe9x90kWqOtXyRylv554LvUhQHVrqaTYbMt
+	O2C5KaXysMDfzNytgHVnPpPhkIgGMgNagVSq/Y+lXiWe8lhpdHMoXV3glZMVeOdH8nBPL4AXBuB
+	ov8oK/FrdmQ3ZrV6qh5X1DaUAZakgugxYBfOtlLilqJbpCEenw5SQM9k6kKU/pkchO9zn1Y5jDd
+	N25eVCqKUubfh8UsPcIMV4bDMeqlP9EU75JNxk8SbEnLQe/fZknEWSQ2EF62kIL1ho0hE4ZZw==
+X-Google-Smtp-Source: AGHT+IHHZP/aE/tVJZyLz+gOc0YU9Sc0i9PZJYzJ42dLOfI9Sr7WDBO2F0DsSawtvDJdjI2jksVRQSbzge+KnP9adhY=
+X-Received: by 2002:a17:907:1c21:b0:b70:a9fd:1170 with SMTP id
+ a640c23a62f3a-b72e05725a4mr966508366b.65.1762840728609; Mon, 10 Nov 2025
+ 21:58:48 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 5/5] crash: export crashkernel CMA reservation to
- userspace
-To: Baoquan he <bhe@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Aditya Gupta <adityag@linux.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dave Young <dyoung@redhat.com>, Hari Bathini <hbathini@linux.ibm.com>,
-        Jiri Bohac <jbohac@suse.cz>, Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
-        Pingfan Liu <piliu@redhat.com>,
-        "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
-        Shivang Upadhyay <shivangu@linux.ibm.com>,
-        Vivek Goyal <vgoyal@redhat.com>, linuxppc-dev@lists.ozlabs.org,
-        kexec@lists.infradead.org
-References: <20251110043143.484408-1-sourabhjain@linux.ibm.com>
- <20251110043143.484408-6-sourabhjain@linux.ibm.com>
- <aRGPee9izxWPRHj5@MiWiFi-R3L-srv>
- <09c4c181-eb4b-43ea-a439-04b83f4c20ba@linux.ibm.com>
- <aRKOK7ZQ5mOUBzvK@MiWiFi-R3L-srv>
-Content-Language: en-US
-From: Sourabh Jain <sourabhjain@linux.ibm.com>
-In-Reply-To: <aRKOK7ZQ5mOUBzvK@MiWiFi-R3L-srv>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA4MDAyMiBTYWx0ZWRfX8i49R0Z12Rdx
- Yz5xjsGu8ywLiD6Lm5XSYF9qwzfmzce+8AhhmQQmCRfwY+HrGaDm3W0t9zk5lg1aOmqk9AasOvU
- Dvl5hQg95U9XSS8xgV4Q7Zv3IPDTTIJ+GkInNjJTdGY4K8NmCmHdWAUg5c8ZHHbExINMdxo9c2P
- fKgHmiblDCnhiMQpYxYySVD8DF69m5qKPXFvx+YIReM1DvQfX8I9ODSnwNePnTdNYflen8jftmp
- 24N1JkGV2GeWGjduQ3wxCRKjYNtjzygbk04BdpOKgLszh/5SC78joTXA2wCU8qpIvnL8qoMTsZk
- ljv/mL1lzDDDBDuKIAYid0kLlh4oavpePMgvb6Wv3MTqo284c5oFmLaTtwVCaT2SXSubCL4rXRA
- 4EZZD97hBsq8EdSlyWdjQfd06uzstg==
-X-Authority-Analysis: v=2.4 cv=ZK3aWH7b c=1 sm=1 tr=0 ts=6912cf3f cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8 a=Z4Rwk6OoAAAA:8 a=20KFwNOVAAAA:8
- a=pGLkceISAAAA:8 a=voM4FWlXAAAA:8 a=JfrnYn6hAAAA:8 a=bLF1B-K238BkpyBZBwwA:9
- a=QEXdDO2ut3YA:10 a=HkZW87K1Qel5hWWM3VKY:22 a=IC2XNlieTeVoXbcui8wp:22
- a=1CNFftbPRP8L7MoqJWF3:22 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-ORIG-GUID: yL03va81FbIa21mHmbrKh4zId853n8kF
-X-Proofpoint-GUID: jfvOgROHoePxzclwIbTyIQfbKiNzvFHM
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-11_01,2025-11-10_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 lowpriorityscore=0 priorityscore=1501 suspectscore=0
- phishscore=0 impostorscore=0 spamscore=0 bulkscore=0 adultscore=0
- clxscore=1015 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510240000
- definitions=main-2511080022
+References: <20251023-v5_user_cfi_series-v22-0-1935270f7636@rivosinc.com> <20251023-v5_user_cfi_series-v22-25-1935270f7636@rivosinc.com>
+In-Reply-To: <20251023-v5_user_cfi_series-v22-25-1935270f7636@rivosinc.com>
+From: Zong Li <zong.li@sifive.com>
+Date: Tue, 11 Nov 2025 13:58:37 +0800
+X-Gm-Features: AWmQ_bmwbidNFRD3Ln7UsJWJk61pCiG6pfhUPXDjXSV4C1IEKiwyDYyiO7oQK-g
+Message-ID: <CANXhq0oEpCow0G+KsJ6ZPuwsxmAFVqoKGEzygiwSmxFsmntiWg@mail.gmail.com>
+Subject: Re: [PATCH v22 25/28] riscv: create a config for shadow stack and
+ landing pad instr support
+To: debug@rivosinc.com
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Christian Brauner <brauner@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Oleg Nesterov <oleg@redhat.com>, Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, Jann Horn <jannh@google.com>, 
+	Conor Dooley <conor+dt@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, Benno Lossin <lossin@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-arch@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, alistair.francis@wdc.com, 
+	richard.henderson@linaro.org, jim.shu@sifive.com, andybnac@gmail.com, 
+	kito.cheng@sifive.com, charlie@rivosinc.com, atishp@rivosinc.com, 
+	evan@rivosinc.com, cleger@rivosinc.com, alexghiti@rivosinc.com, 
+	samitolvanen@google.com, broonie@kernel.org, rick.p.edgecombe@intel.com, 
+	rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-
-On 11/11/25 06:45, Baoquan he wrote:
-> On 11/10/25 at 02:09pm, Sourabh Jain wrote:
->>
->> On 10/11/25 12:38, Baoquan he wrote:
->>> On 11/10/25 at 10:01am, Sourabh Jain wrote:
->>>> Add a sysfs entry /sys/kernel/kexec/crash_cma_ranges to expose all
->>>> CMA crashkernel ranges.
->>> I am not against this way. While wondering if it's more appropriate to
->>> export them into iomem_resource just like crashk_res and crashk_low_res
->>> doing.
->> Handling conflict is challenging. Hence we don't export crashk_res and
->> crashk_low_res to iomem on powerpc. Checkout [1]
->>
->> And I think conflicts can occur regardless of the order in which System RAM
->> and
->> Crash CMA ranges are added to iomem.
->>
->> [1] https://lore.kernel.org/all/20251016142831.144515-1-sourabhjain@linux.ibm.com/
-> Then I would suggest you add this reason and the link into patch log
-> to keep a record. One day people may post patch to 'optimize' this.
-
-
-Yeah, I will include it in v3. Thanks for the review.
-
-- Sourabh Jain
-
-
+On Fri, Oct 24, 2025 at 12:51=E2=80=AFAM Deepak Gupta via B4 Relay
+<devnull+debug.rivosinc.com@kernel.org> wrote:
 >
->>>> This allows userspace tools configuring kdump to determine how much
->>>> memory is reserved for crashkernel. If CMA is used, tools can warn
->>>> users when attempting to capture user pages with CMA reservation.
->>>>
->>>> The new sysfs hold the CMA ranges in below format:
->>>>
->>>> cat /sys/kernel/kexec/crash_cma_ranges
->>>> 100000000-10c7fffff
->>>>
->>>> Cc: Aditya Gupta <adityag@linux.ibm.com>
->>>> Cc: Andrew Morton <akpm@linux-foundation.org>
->>>> Cc: Baoquan he <bhe@redhat.com>
->>>> Cc: Dave Young <dyoung@redhat.com>
->>>> Cc: Hari Bathini <hbathini@linux.ibm.com>
->>>> Cc: Jiri Bohac <jbohac@suse.cz>
->>>> Cc: Madhavan Srinivasan <maddy@linux.ibm.com>
->>>> Cc: Mahesh J Salgaonkar <mahesh@linux.ibm.com>
->>>> Cc: Pingfan Liu <piliu@redhat.com>
->>>> Cc: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
->>>> Cc: Shivang Upadhyay <shivangu@linux.ibm.com>
->>>> Cc: Vivek Goyal <vgoyal@redhat.com>
->>>> Cc: linuxppc-dev@lists.ozlabs.org
->>>> Cc: kexec@lists.infradead.org
->>>> Signed-off-by: Sourabh Jain <sourabhjain@linux.ibm.com>
->>>> ---
->>>> Changelog:
->>>>    - Add the missing hunk to export crash_cma_ranges sysfs
->>>>
->>>> ---
->>>>    .../ABI/testing/sysfs-kernel-kexec-kdump        | 10 ++++++++++
->>>>    kernel/kexec_core.c                             | 17 +++++++++++++++++
->>>>    2 files changed, 27 insertions(+)
->>>>
->>>> diff --git a/Documentation/ABI/testing/sysfs-kernel-kexec-kdump b/Documentation/ABI/testing/sysfs-kernel-kexec-kdump
->>>> index 00c00f380fea..f59051b5d96d 100644
->>>> --- a/Documentation/ABI/testing/sysfs-kernel-kexec-kdump
->>>> +++ b/Documentation/ABI/testing/sysfs-kernel-kexec-kdump
->>>> @@ -49,3 +49,13 @@ Description:	read only
->>>>    		is used by the user space utility kexec to support updating the
->>>>    		in-kernel kdump image during hotplug operations.
->>>>    User:		Kexec tools
->>>> +
->>>> +What:		/sys/kernel/kexec/crash_cma_ranges
->>>> +Date:		Nov 2025
->>>> +Contact:	kexec@lists.infradead.org
->>>> +Description:	read only
->>>> +		Provides information about the memory ranges reserved from
->>>> +		the Contiguous Memory Allocator (CMA) area that are allocated
->>>> +		to the crash (kdump) kernel. It lists the start and end physical
->>>> +		addresses of CMA regions assigned for crashkernel use.
->>>> +User:		kdump service
->>>> diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
->>>> index 7476a46de5d6..da6ff72b4669 100644
->>>> --- a/kernel/kexec_core.c
->>>> +++ b/kernel/kexec_core.c
->>>> @@ -1271,6 +1271,22 @@ static ssize_t crash_size_store(struct kobject *kobj,
->>>>    }
->>>>    static struct kobj_attribute crash_size_attr = __ATTR_RW(crash_size);
->>>> +static ssize_t crash_cma_ranges_show(struct kobject *kobj,
->>>> +				     struct kobj_attribute *attr, char *buf)
->>>> +{
->>>> +
->>>> +	ssize_t len = 0;
->>>> +	int i;
->>>> +
->>>> +	for (i = 0; i < crashk_cma_cnt; ++i) {
->>>> +		len += sysfs_emit_at(buf, len, "%08llx-%08llx\n",
->>>> +				     crashk_cma_ranges[i].start,
->>>> +				     crashk_cma_ranges[i].end);
->>>> +	}
->>>> +	return len;
->>>> +}
->>>> +static struct kobj_attribute crash_cma_ranges_attr = __ATTR_RO(crash_cma_ranges);
->>>> +
->>>>    #ifdef CONFIG_CRASH_HOTPLUG
->>>>    static ssize_t crash_elfcorehdr_size_show(struct kobject *kobj,
->>>>    			       struct kobj_attribute *attr, char *buf)
->>>> @@ -1289,6 +1305,7 @@ static struct attribute *kexec_attrs[] = {
->>>>    #ifdef CONFIG_CRASH_DUMP
->>>>    	&crash_loaded_attr.attr,
->>>>    	&crash_size_attr.attr,
->>>> +	&crash_cma_ranges_attr.attr,
->>>>    #ifdef CONFIG_CRASH_HOTPLUG
->>>>    	&crash_elfcorehdr_size_attr.attr,
->>>>    #endif
->>>> -- 
->>>> 2.51.1
->>>>
+> From: Deepak Gupta <debug@rivosinc.com>
+>
+> This patch creates a config for shadow stack support and landing pad inst=
+r
+> support. Shadow stack support and landing instr support can be enabled by
+> selecting `CONFIG_RISCV_USER_CFI`. Selecting `CONFIG_RISCV_USER_CFI` wire=
+s
+> up path to enumerate CPU support and if cpu support exists, kernel will
+> support cpu assisted user mode cfi.
+>
+> If CONFIG_RISCV_USER_CFI is selected, select `ARCH_USES_HIGH_VMA_FLAGS`,
+> `ARCH_HAS_USER_SHADOW_STACK` and DYNAMIC_SIGFRAME for riscv.
+>
+> Reviewed-by: Zong Li <zong.li@sifive.com>
+> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
+> ---
+>  arch/riscv/Kconfig                  | 22 ++++++++++++++++++++++
+>  arch/riscv/configs/hardening.config |  4 ++++
+>  2 files changed, 26 insertions(+)
+>
+> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+> index 0c6038dc5dfd..4f9f9358e6e3 100644
+> --- a/arch/riscv/Kconfig
+> +++ b/arch/riscv/Kconfig
+> @@ -1146,6 +1146,28 @@ config RANDOMIZE_BASE
+>
+>            If unsure, say N.
+>
+> +config RISCV_USER_CFI
+> +       def_bool y
+> +       bool "riscv userspace control flow integrity"
+> +       depends on 64BIT && $(cc-option,-mabi=3Dlp64 -march=3Drv64ima_zic=
+fiss) && \
+> +                           $(cc-option,-fcf-protection=3Dfull)
 
+Hi Deepak,
+I noticed that you added a $(cc-option,-fcf-protection=3Dfull) check in
+this version. I think this check will fail by a cc1 warning when using
+a newer toolchain, because -fcf-protection cannot be used alone, it
+must be specified together with the appropriate -march option.
+For example:
+  1. -fcf-protection=3Dbranch requires -march=3D..._zicfilp
+  2. -fcf-protection=3Dreturn requires -march=3D..._zicfiss
+  3. -fcf-protection=3Dfull requires -march=3D..._zicfilp_zicfiss
+
+
+> +       depends on RISCV_ALTERNATIVE
+> +       select RISCV_SBI
+> +       select ARCH_HAS_USER_SHADOW_STACK
+> +       select ARCH_USES_HIGH_VMA_FLAGS
+> +       select DYNAMIC_SIGFRAME
+> +       help
+> +         Provides CPU assisted control flow integrity to userspace tasks=
+.
+> +         Control flow integrity is provided by implementing shadow stack=
+ for
+> +         backward edge and indirect branch tracking for forward edge in =
+program.
+> +         Shadow stack protection is a hardware feature that detects func=
+tion
+> +         return address corruption. This helps mitigate ROP attacks.
+> +         Indirect branch tracking enforces that all indirect branches mu=
+st land
+> +         on a landing pad instruction else CPU will fault. This mitigate=
+s against
+> +         JOP / COP attacks. Applications must be enabled to use it, and =
+old user-
+> +         space does not get protection "for free".
+> +         default y.
+> +
+>  endmenu # "Kernel features"
+>
+>  menu "Boot options"
+> diff --git a/arch/riscv/configs/hardening.config b/arch/riscv/configs/har=
+dening.config
+> new file mode 100644
+> index 000000000000..089f4cee82f4
+> --- /dev/null
+> +++ b/arch/riscv/configs/hardening.config
+> @@ -0,0 +1,4 @@
+> +# RISCV specific kernel hardening options
+> +
+> +# Enable control flow integrity support for usermode.
+> +CONFIG_RISCV_USER_CFI=3Dy
+>
+> --
+> 2.43.0
+>
+>
 
