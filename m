@@ -1,217 +1,133 @@
-Return-Path: <linux-kernel+bounces-895922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4C0AC4F452
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 18:38:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D993AC4F476
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 18:39:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E87093B0A8F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:37:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEC0B3BE29D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:38:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 750063A79A4;
-	Tue, 11 Nov 2025 17:36:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 300933A8D44;
+	Tue, 11 Nov 2025 17:37:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ohPOIF7K"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F4O2sGt8"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12A6A3A5E81
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 17:36:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88A583A5E72
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 17:37:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762882613; cv=none; b=Dsihg+LUIq76VoHp/4s82JuQV01Gh7EfcEG85ThvLMzILdv9oY2AdhFmR+/WeTQdA9ixnnbnEgqxJTMLamNvna6+ZijUl7ruccJFL3eaYkbNNjqZXsPm5Rt/mb33kuNbPeF+vRW+TfIVwffMpsRPIO2WAbNEtVCiV0j+/qujf1Y=
+	t=1762882635; cv=none; b=phmW96p2ZTdAIa5dQtq07UNOg4n3nTfPwLS39Xu5sGcLqimgMDWJ41ZX8QeaM6vVg3ltr1ZelObEOCqU0W/2f2IRUi1+YKzlPmp1M8j/8g4/UkGHl86CTI6F/XoFDBrcEonh6DvpzGeO3eUj/SH/Po99nWE35kMuDunwyyMPcQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762882613; c=relaxed/simple;
-	bh=8YGDWKZMZ4rg6g9jadHfjYJ49DLGb0GNWnRjrg7bjP8=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=CufeYTIQ9un2EBq0dK4EXV17X2pmx9FGIn6iixn8psdzdLj3BaVYspyRPE7FaB/DXTp2S2P/Bzv+tUUndsHGZTB/MCZLp9RxZLce1Xbs2XBThg/tvsu/qf/ITB2OBeBPAXgPz0eTzufbPiokCPrpRL6cFzFmfWWz5quewZstNLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ohPOIF7K; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-4775fcf67d8so168615e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 09:36:50 -0800 (PST)
+	s=arc-20240116; t=1762882635; c=relaxed/simple;
+	bh=vY92TuF7Ej3Ez3brm3uCohFAC0n7L0hYCJSEeQ1xG/A=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=O/qXXe3T0kNd7pmqS6Tbtr47g++gHKXP1ue806FinZ5t4L59eQFvB9KV8Dj2LWEnU0AX7u24RX0HIjsUrxvPyTJvLp8Hv0D7exvoYw6/ojw0HXaKUlv91leWm3myTmeveCcCwEG6yqcAMJg+/L1UBYTN3Vd1FUY42wztNUKk9yg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F4O2sGt8; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-29845b06dd2so6091545ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 09:37:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762882609; x=1763487409; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=gHk+n1DTS8EFhi+cKHdXuVXK4mRrNAjTvT92loE1bGw=;
-        b=ohPOIF7K8E+ozFul3+YJ9aCbMe61QoiL85Garz+qhXpdRX3kot1txeoP4+BaofPbk9
-         EjWtlXLEUQfFsVx8P3U+dhEsEG1Tw3Sz8W6f57WHgJMm2iqQI+NAWsCHADYQhSYedDWF
-         sPbi2p3fpAxYdNFPyxk4KjMW1+HWgCVOXNHKjA6RoM7Od89w5xIUMOA5nE3VlYf87RpC
-         gzu2aQXEbB51yR50pjidfN0Tic33+uKrNN2ZyV83J89lWLn6kjzz9fINEWa5Gb1NmtYe
-         XqMby7UIsmYhmCTo64aVgJNxfB06sOnwNbMkwRtCoMbbU1VvLFkl6dOqt5CWUDRSZ/Es
-         JPtw==
+        d=gmail.com; s=20230601; t=1762882632; x=1763487432; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hMvZzcseQYn3wwdrSrl5c1ZbByxcCXtXHqWe21yxXN0=;
+        b=F4O2sGt8oQfDHD3uHt4XIzyIh9QgjKjU612asDdVUfxvy4iiulTT01u53ZnDG8To3Y
+         +nSPGSd2R47oXQxBdoFTS0RXm7LujKyquflX21YwFykB7DzrmDOmLlIf4uIqE0tpoIaw
+         PSzQ/oYxJ3aU+8z/RME2cYO5RcuZXhQ18VBkHRYTbLgCDCsHUR/KtGNFsxS/9LZHNS8w
+         6dJqvcas+68HzFHetZYLvlHnqGc0YIFuWzFutujlWki/b0XpcqN0snPn5ItOzeFiiI7f
+         mxW3+spdOONkK0TV6pinLFffmdtM8E4lZMTCDcsPF7Q0HT/61I+V4R8b8Dtw2vZM4J/c
+         SoIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762882609; x=1763487409;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gHk+n1DTS8EFhi+cKHdXuVXK4mRrNAjTvT92loE1bGw=;
-        b=Z9KnifgFLYNDsZ+nhz1rcnDRCdAThnCMghAjQjpKucgymEiT7f3uN6DdzAlWjgpn+r
-         UIHUDKNr5bKnOS2TPdJdgRvZhry285lESa04JYP/dhoxO17ZCnAI3WCLMQBn26Z3KTFu
-         T++4BZyox7ZW/FHN3URp74FuT4VHOB05kRdkOP+XPso8dB6xcMRZqft+gEVrOf7ezfzB
-         bctR6Q5aVQPNs57buutHS9FTvsOllnxwhWDkXIYp4hp2W6S/5Y3cAuiWQ9hrG7n6BH9E
-         ELC0DU3eGPilnky2AWWjXAYz4QJTYvgLTOfHuORaOkYahjITXmaJ7UaJ1j/pfAnZcYcs
-         7uZw==
-X-Forwarded-Encrypted: i=1; AJvYcCUep9C8VZo+lXNTAwjiip/hvudGS2sogKbQzT5kNYKoNkIq1ONSo4Nqb6GoOdzOpFKFLIFedY2koJPRbD8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfeKpflr8JCVHFHQD33CV+PcvLK4TXCtR42vbpFPHS8lBBVMnG
-	hNPCGDE34XAlU3c/FU4Z0TInzkzgYhWONLog/fXDH2vUchhUlV9lC2R1gGaFTObTb+/49Qe6tz9
-	FceI7jAr69lDLEg==
-X-Google-Smtp-Source: AGHT+IFash/y2AqAf9V3BG0zVcfUyjagtoZoZBAYxC2RDwTCzOL54auCDPMewWsZlZffs19L721j6rDsLwitPA==
-X-Received: from wmcq1.prod.google.com ([2002:a05:600c:c101:b0:477:40c1:3e61])
- (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:4694:b0:475:e007:baf2 with SMTP id 5b1f17b1804b1-477870ba725mr2270855e9.41.1762882609366;
- Tue, 11 Nov 2025 09:36:49 -0800 (PST)
-Date: Tue, 11 Nov 2025 17:36:42 +0000
+        d=1e100.net; s=20230601; t=1762882632; x=1763487432;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=hMvZzcseQYn3wwdrSrl5c1ZbByxcCXtXHqWe21yxXN0=;
+        b=oLoBvojNFNbHZZ9muG8QjtPUmm76VJGfQDRR0x/NQ6PoXTbucLEOy7IDwE+8vL2iIy
+         ShGhahtU+7F8ofILt2two8EHln3l2LyHrka4ZIUtlnQO7R1csHZUJ5YtJnH1b4l4WPdL
+         Hjj8mIWwwfDDCxwXn4Rp+Fvejvk1U8vfXUVO5V1Qgk2ZHE0/G0ThglQL1obI4JLISEsA
+         kTnHUPv1TA8nsWiCPf0+rYC3dQT46kK3wkfSplNhDSqbbeNRs+dvWTaJeLVl5Gm9fedJ
+         lHL7XFZh1/ltmVNMm0ITd9NDPGMHEbI5WaENQeLqLC0JY30GnEhpxryKOBH0vb4ttBnc
+         IUqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXvl5xUwY9Z4LTV9vGesr602Yuh+3NCGR9JifAHbV2yfXD+a7wBUmrFS260vPnJwBDkIj+70F65mXnbWFE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzFweA9EImNMHqumIM2Ff3n+s30JHT0P/l3ujac0fFjnvf/otY
+	fVbpV4eRF4h88EHFbNC/Xzaed96tt9wTrv24Q/mIcf0S0vprJ5rlbZpV
+X-Gm-Gg: ASbGncsRNSQcaBU/ybHQKUDHY+2nPZcClXZqcWqGro0LONHKlxGv5Z/3/ume2bEtD5l
+	wC3RssRs/54Kk4x7Y8PM1bT8tHzhmM0vtYJxHCLALLh8VBrUxy1jxLUjUyOg8fdC4zaRiQyCVZT
+	6nUhK/lMDyyj5FUHTzaFEeGnhv6c30X0zwjh0AACQtoE1OG/aF3FPM+Xhrku6KHERDiHZKxMSUr
+	gAgDl7+YSMzUkgIhsrE1VBrKiBUlVNv/35IMQ6S61udmctqvO+14sp+qwCBimLkuBCBvmsEJh3E
+	D7uDr7r0+H1SfgOyxiSQftQcQKNfpot05YYB6WGV/rhTZLRylk8XPpkHlQWDLs4GDX/Mrn2m/aN
+	34K5IoL41eXuN3SZ1MmetmEWIR7Uos1K6fup2LX42xWQCPAkQ0ucinAzLx/Pw8vLGJ6aGcxh36p
+	oUSijVjkAtvtc=
+X-Google-Smtp-Source: AGHT+IG5LBnpiDfUi5HlGeAIfhNNNhESoyuw+5Tec48NzHUFnX8+L1Hy73HslnZpG+1krOeegrC8sg==
+X-Received: by 2002:a17:902:f60a:b0:294:cc8d:c0c2 with SMTP id d9443c01a7336-2984ed78ff6mr1696235ad.27.1762882631265;
+        Tue, 11 Nov 2025 09:37:11 -0800 (PST)
+Received: from ustb520lab-MS-7E07.. ([115.25.44.221])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2984dbf10c9sm3162625ad.38.2025.11.11.09.37.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Nov 2025 09:37:10 -0800 (PST)
+From: Jiaming Zhang <r772577952@gmail.com>
+To: kuba@kernel.org
+Cc: davem@davemloft.net,
+	edumazet@google.com,
+	horms@kernel.org,
+	kory.maincent@bootlin.com,
+	kuniyu@google.com,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	pabeni@redhat.com,
+	r772577952@gmail.com,
+	sdf@fomichev.me,
+	syzkaller@googlegroups.com,
+	vladimir.oltean@nxp.com
+Subject: [PATCH v4 0/1] net: core: prevent NULL deref in generic_hwtstamp_ioctl_lower()
+Date: Wed, 12 Nov 2025 01:36:51 +0800
+Message-Id: <20251111173652.749159-1-r772577952@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20251103171557.3c5123cc@kernel.org>
+References: <20251103171557.3c5123cc@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: b4 0.14.2
-Message-ID: <20251111-b4-ksft-error-on-fail-v3-1-0951a51135f6@google.com>
-Subject: [PATCH RESEND v3] selftests/run_kselftest.sh: exit with error if
- tests fail
-From: Brendan Jackman <jackmanb@google.com>
-To: Shuah Khan <shuah@kernel.org>
-Cc: "=?utf-8?q?Thomas_Wei=C3=9Fschuh?=" <thomas.weissschuh@linutronix.de>, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Brendan Jackman <jackmanb@google.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Parsing KTAP is quite an inconvenience, but most of the time the thing
-you really want to know is "did anything fail"?
+Hi Jakub,
 
-Let's give the user the his information without them needing
-to parse anything.
+Sorry for the late response. I have updated the patch, NULL check
+is moved from get/set caller to generic_hwstamp_ioctl_lower().
 
-Because of the use of subshells and namespaces, this needs to be
-communicated via a file. Just write arbitrary data into the file and
-treat non-empty content as a signal that something failed.
+Please let me know if any change is needed :)
 
-In case any user depends on the current behaviour, such as running this
-from a script with `set -e` and parsing the result for failures
-afterwards, add a flag they can set to get the old behaviour, namely
---no-error-on-fail.
+v4:
+- Move NULL check from generic_hwtstamp_get/set_lower()
+  to generic_hwtstamp_ioctl_lower()
 
-Signed-off-by: Brendan Jackman <jackmanb@google.com>
----
-Changes in v3:
-- Fixed quoting
-- Link to v2: https://lore.kernel.org/r/20251014-b4-ksft-error-on-fail-v2-1-b3e2657237b8@google.com
+v3:
+- Add Kory's Reviewed-by tag.
 
-Changes in v2:
-- Fixed bug in report_failure()
-- Made error-on-fail the default
-- Link to v1: https://lore.kernel.org/r/20251007-b4-ksft-error-on-fail-v1-1-71bf058f5662@google.com
----
- tools/testing/selftests/kselftest/runner.sh | 14 ++++++++++----
- tools/testing/selftests/run_kselftest.sh    | 14 ++++++++++++++
- 2 files changed, 24 insertions(+), 4 deletions(-)
+v2:
+- Fix typo in comment ("driver" -> "lower driver")
 
-diff --git a/tools/testing/selftests/kselftest/runner.sh b/tools/testing/selftests/kselftest/runner.sh
-index 2c3c58e65a419f5ee8d7dc51a37671237a07fa0b..3a62039fa6217f3453423ff011575d0a1eb8c275 100644
---- a/tools/testing/selftests/kselftest/runner.sh
-+++ b/tools/testing/selftests/kselftest/runner.sh
-@@ -44,6 +44,12 @@ tap_timeout()
- 	fi
- }
- 
-+report_failure()
-+{
-+	echo "not ok $*"
-+	echo "$*" >> "$kselftest_failures_file"
-+}
-+
- run_one()
- {
- 	DIR="$1"
-@@ -105,7 +111,7 @@ run_one()
- 	echo "# $TEST_HDR_MSG"
- 	if [ ! -e "$TEST" ]; then
- 		echo "# Warning: file $TEST is missing!"
--		echo "not ok $test_num $TEST_HDR_MSG"
-+		report_failure "$test_num $TEST_HDR_MSG"
- 	else
- 		if [ -x /usr/bin/stdbuf ]; then
- 			stdbuf="/usr/bin/stdbuf --output=L "
-@@ -123,7 +129,7 @@ run_one()
- 				interpreter=$(head -n 1 "$TEST" | cut -c 3-)
- 				cmd="$stdbuf $interpreter ./$BASENAME_TEST"
- 			else
--				echo "not ok $test_num $TEST_HDR_MSG"
-+				report_failure "$test_num $TEST_HDR_MSG"
- 				return
- 			fi
- 		fi
-@@ -137,9 +143,9 @@ run_one()
- 			echo "ok $test_num $TEST_HDR_MSG # SKIP"
- 		elif [ $rc -eq $timeout_rc ]; then \
- 			echo "#"
--			echo "not ok $test_num $TEST_HDR_MSG # TIMEOUT $kselftest_timeout seconds"
-+			report_failure "$test_num $TEST_HDR_MSG # TIMEOUT $kselftest_timeout seconds"
- 		else
--			echo "not ok $test_num $TEST_HDR_MSG # exit=$rc"
-+			report_failure "$test_num $TEST_HDR_MSG # exit=$rc"
- 		fi)
- 		cd - >/dev/null
- 	fi
-diff --git a/tools/testing/selftests/run_kselftest.sh b/tools/testing/selftests/run_kselftest.sh
-index 0443beacf3621ae36cb12ffd57f696ddef3526b5..d4be97498b32e975c63a1167d3060bdeba674c8c 100755
---- a/tools/testing/selftests/run_kselftest.sh
-+++ b/tools/testing/selftests/run_kselftest.sh
-@@ -33,6 +33,7 @@ Usage: $0 [OPTIONS]
-   -c | --collection COLLECTION	Run all tests from COLLECTION
-   -l | --list			List the available collection:test entries
-   -d | --dry-run		Don't actually run any tests
-+  -f | --no-error-on-fail	Don't exit with an error just because tests failed
-   -n | --netns			Run each test in namespace
-   -h | --help			Show this usage info
-   -o | --override-timeout	Number of seconds after which we timeout
-@@ -44,6 +45,7 @@ COLLECTIONS=""
- TESTS=""
- dryrun=""
- kselftest_override_timeout=""
-+ERROR_ON_FAIL=true
- while true; do
- 	case "$1" in
- 		-s | --summary)
-@@ -65,6 +67,9 @@ while true; do
- 		-d | --dry-run)
- 			dryrun="echo"
- 			shift ;;
-+		-f | --no-error-on-fail)
-+			ERROR_ON_FAIL=false
-+			shift ;;
- 		-n | --netns)
- 			RUN_IN_NETNS=1
- 			shift ;;
-@@ -105,9 +110,18 @@ if [ -n "$TESTS" ]; then
- 	available="$(echo "$valid" | sed -e 's/ /\n/g')"
- fi
- 
-+kselftest_failures_file="$(mktemp --tmpdir kselftest-failures-XXXXXX)"
-+export kselftest_failures_file
-+
- collections=$(echo "$available" | cut -d: -f1 | sort | uniq)
- for collection in $collections ; do
- 	[ -w /dev/kmsg ] && echo "kselftest: Running tests in $collection" >> /dev/kmsg
- 	tests=$(echo "$available" | grep "^$collection:" | cut -d: -f2)
- 	($dryrun cd "$collection" && $dryrun run_many $tests)
- done
-+
-+failures="$(cat "$kselftest_failures_file")"
-+rm "$kselftest_failures_file"
-+if "$ERROR_ON_FAIL" && [ "$failures" ]; then
-+	exit 1
-+fi
+Best Regards,
+Jiaming Zhang
 
----
-base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
-change-id: 20251007-b4-ksft-error-on-fail-0c2cb3246041
+Jiaming Zhang (1):
+  net: core: prevent NULL deref in generic_hwtstamp_ioctl_lower()
 
-Best regards,
+ net/core/dev_ioctl.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
 -- 
-Brendan Jackman <jackmanb@google.com>
+2.34.1
 
 
