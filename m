@@ -1,143 +1,263 @@
-Return-Path: <linux-kernel+bounces-895990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21478C4F71D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 19:30:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDA97C4F717
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 19:30:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0F0524E5F6F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 18:30:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FFD61893AC9
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 18:30:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1C8E274FF5;
-	Tue, 11 Nov 2025 18:30:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 243E73A1D18;
+	Tue, 11 Nov 2025 18:30:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eNCxDwSD"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o0mHU2Nb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40FC4393DF2;
-	Tue, 11 Nov 2025 18:30:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5403F3A1D11;
+	Tue, 11 Nov 2025 18:30:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762885811; cv=none; b=kN8eZfqn3NF0i7hcZ++AW8vWGrYaN+fVdbTc2dNYgisclczslPUddPjQaFeEpBw77bGp6ESNu9hFqOtDEay9kcyhP5S5NzdItwVzl6P6E7Rel3alCbTHx93ltbNak373nrILZbn0wx6vDLvIDt5zSWW4CpxBM2lLk7Xg9L+bCeQ=
+	t=1762885806; cv=none; b=P8PpBMt9zGZenLliDsAIL3UO5Y/5w4VkGFvdNtARq0N9bZXQwRdFZorA7JkWg/h4XNPZ1UfopMLoYHPh8rzF4tRrl6H3c2GG3GuxeJBbk9lPbtiV9RjleciZfmb0DydG8HoIN5BkIE0jAdJOT8jzc3SGwJNHemRv1P4+6our5cg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762885811; c=relaxed/simple;
-	bh=frb+CMe5pTDhXPmHuFvxkNrj7NrLew9l+h3r+EAkinI=;
+	s=arc-20240116; t=1762885806; c=relaxed/simple;
+	bh=bR+S/G6a5cL9iT3wiJ+fUBO3PPAFX+/KEGXf+e9r7Ds=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s8YUrHTaOgLvWKgsZMMcrJJS6oXxTtjYO/bTgWJtdRsrbYZtBA5xu++CvfBvKXLY1XpZOpvv6B7Scu8ENL9JsmJeUYV8TXapyMyvlRkdsmreeA5eroaSv3SK3bGu7K3AbisxH40K0OnmAW4YWpmyQmhu4oBYOv1+WBK7WY/kSxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eNCxDwSD; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762885810; x=1794421810;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=frb+CMe5pTDhXPmHuFvxkNrj7NrLew9l+h3r+EAkinI=;
-  b=eNCxDwSD444woRvDi/86oVYY8L3gnPG/bGQ0csVwNyapRMrcjD2ovisj
-   8fGG5r3Ruwl3FRs+m7uMsk4TV7Dr8yU3jfumofkkS+ligDwN356/sbODj
-   gW9l1aL45GqTUeP4tZIyPmjuFFmeR5a5RneR7n6AQdzD11faPHxzH2jSJ
-   hV1kOKM1+NWbgE1Xgu5WYBMXIDLAQ1jwjgzNL34WUOlbcSBnO7iUI4U49
-   mH4xbZsvbL1pSIg1R4xWobJ44ZkagItdjZeDtCrHLsm150Zh59J0+rrf+
-   Euxwm8UNCysezBq5k1SgaSOtaIfdmV5MTMtSv5ILAjoBIFLO4NC0ATp3D
-   A==;
-X-CSE-ConnectionGUID: AkVFAfOLTuisSC2NKcwwqg==
-X-CSE-MsgGUID: UYkWZKN4SLyiVZySlZFjpg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11610"; a="68814607"
-X-IronPort-AV: E=Sophos;i="6.19,297,1754982000"; 
-   d="scan'208";a="68814607"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 10:30:09 -0800
-X-CSE-ConnectionGUID: 5AWub5v9Qr6Fkq5BdtFDIw==
-X-CSE-MsgGUID: bSMZ8MmNSxyWCMotWrlxAQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,297,1754982000"; 
-   d="scan'208";a="189753925"
-Received: from lkp-server01.sh.intel.com (HELO 7b01c990427b) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 11 Nov 2025 10:30:07 -0800
-Received: from kbuild by 7b01c990427b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vIt81-0003Tb-0X;
-	Tue, 11 Nov 2025 18:30:05 +0000
-Date: Wed, 12 Nov 2025 02:29:37 +0800
-From: kernel test robot <lkp@intel.com>
-To: Andrea Tomassetti <andrea.tomassetti@sipearl.com>, sudeep.holla@arm.com,
-	jassisinghbrar@gmail.com, rafael@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev,
-	Andrea Tomassetti <andrea.tomassetti@sipearl.com>, lenb@kernel.org,
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	olivierdautricourt@gmail.com,
-	Thibault Cantori <thibault.cantori@sipearl.com>,
-	Olivier Dautricourt <olivier.dautricourt@sipearl.com>
-Subject: Re: [PATCH] mailbox: pcc: support polling mode when there is no
- platform IRQ
-Message-ID: <202511120243.soxAFpqQ-lkp@intel.com>
-References: <20251110150825.3548819-1-andrea.tomassetti@sipearl.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=FyeKYQVHAixOTZPo8Y2zIMZ9+KfUhYH1Vrx2Zsw5a9Vf15GtVOO+ObMI0Td+L8vzo8L62tyPZ8EKAnE/fTvNqBe0qz1zPD3RppDwoPUaMtg5B7Sl7LWX4yHftBhbjRAmJPJD4q9a2OqEH/iX6kN5dByqyeUanlTVLZY3CfhQIec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o0mHU2Nb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C796CC116D0;
+	Tue, 11 Nov 2025 18:29:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762885803;
+	bh=bR+S/G6a5cL9iT3wiJ+fUBO3PPAFX+/KEGXf+e9r7Ds=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=o0mHU2Nb+JnDUJ/4AMKxFQjJfcJUtaWirZTAYNRVYPxqSANsAVDy2a028ZyS5NyNP
+	 3QP8xJfxCiDysZ+4+9ymEwSxzapy72lZ4vUxQ4NMwWhNHNgSMF3vfFwCFbnkIzz4+Y
+	 vVSObd5/n1x8A1MPQi6BqsxLMUn8ltJBTjGbSRGyrQ9XYIg2ERp2YKMe1ePl29J2GW
+	 WeLmqb+20z2EgZ751maQmpVuULYUZol0NdMNKonJQMS9pIAtUmO6FYnIvNd6hJlqCv
+	 rHVn1DX7gYOW0oPTCO1PIvNNvlN8JVs1fPp/pFOHRK1TnMfv387i3sF66ku/XMueCM
+	 gtIfWA/RyEZyQ==
+Date: Tue, 11 Nov 2025 18:29:54 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Emil Renner Berthing <kernel@esmil.dk>,
+	Hal Feng <hal.feng@starfivetech.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Xingyu Wu <xingyu.wu@starfivetech.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>, Lee Jones <lee@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Icenowy Zheng <uwu@icenowy.me>,
+	Maud Spierings <maudspierings@gocontroll.com>,
+	Andy Yan <andyshrk@163.com>, Heiko Stuebner <heiko@sntech.de>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-phy@lists.infradead.org,
+	dri-devel@lists.freedesktop.org, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH RFC 05/13] dt-bindings: mfd: Add starfive,jh7110-hdmi-mfd
+Message-ID: <20251111-late-sycamore-baff8bd0a5b7@spud>
+References: <20251108-jh7110-clean-send-v1-0-06bf43bb76b1@samsung.com>
+ <CGME20251108010500eucas1p1c8b73311765e359bea891ec783237910@eucas1p1.samsung.com>
+ <20251108-jh7110-clean-send-v1-5-06bf43bb76b1@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="MHBF9IdfTAgSUpdQ"
+Content-Disposition: inline
+In-Reply-To: <20251108-jh7110-clean-send-v1-5-06bf43bb76b1@samsung.com>
+
+
+--MHBF9IdfTAgSUpdQ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251110150825.3548819-1-andrea.tomassetti@sipearl.com>
+Content-Transfer-Encoding: quoted-printable
 
-Hi Andrea,
+On Sat, Nov 08, 2025 at 02:04:39AM +0100, Michal Wilczynski wrote:
+> Add the dt-binding for the StarFive JH7110 HDMI MFD (Multi-Function
+> Device).
+>=20
+> The JH7110 HDMI IP is a monolithic block containing both the digital
+> controller and analog PHY in a single register space. This binding
+> defines the MFD parent device, which holds the shared register map and
+> populates its two children: the PHY and the controller. This is
+> necessary to resolve a circular clock dependency between the HDMI block
+> and the VOUT clock generator.
+>=20
+> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+> ---
+>  .../bindings/mfd/starfive,jh7110-hdmi-mfd.yaml     | 93 ++++++++++++++++=
+++++++
+>  MAINTAINERS                                        |  1 +
+>  2 files changed, 94 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/mfd/starfive,jh7110-hdmi-m=
+fd.yaml b/Documentation/devicetree/bindings/mfd/starfive,jh7110-hdmi-mfd.ya=
+ml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..2cbfb2b975083240575a0567b=
+06e6cafd542cf9b
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mfd/starfive,jh7110-hdmi-mfd.yaml
+> @@ -0,0 +1,93 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/mfd/starfive,jh7110-hdmi-mfd.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: StarFive JH7110 HDMI MFD (Controller+PHY)
+> +
+> +maintainers:
+> +  - Michal Wilczynski <m.wilczynski@samsung.com>
+> +
+> +description:
+> +  The StarFive JH7110 HDMI block is a monolithic IP containing both
+> +  the digital controller logic and the analog PHY logic in a single
+> +  register space.
+> +
+> +properties:
+> +  compatible:
+> +    const: starfive,jh7110-hdmi-mfd
 
-kernel test robot noticed the following build warnings:
+Drop "mfd" from this please, maybe using "subsystem" is a more suitable
+alternative?
 
-[auto build test WARNING on rafael-pm/linux-next]
-[also build test WARNING on rafael-pm/bleeding-edge jassibrar-mailbox/for-next linus/master v6.18-rc5 next-20251111]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +patternProperties:
+> +  "^phy(@[0-9a-f]+)?$":
+> +    $ref: ../phy/starfive,jh7110-inno-hdmi-phy.yaml#
+> +  "^controller(@[0-9a-f]+)?$":
+> +    $ref: ../display/bridge/starfive,jh7110-inno-hdmi-controller.yaml#
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Andrea-Tomassetti/mailbox-pcc-support-polling-mode-when-there-is-no-platform-IRQ/20251110-232950
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git linux-next
-patch link:    https://lore.kernel.org/r/20251110150825.3548819-1-andrea.tomassetti%40sipearl.com
-patch subject: [PATCH] mailbox: pcc: support polling mode when there is no platform IRQ
-config: i386-randconfig-061-20251111 (https://download.01.org/0day-ci/archive/20251112/202511120243.soxAFpqQ-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251112/202511120243.soxAFpqQ-lkp@intel.com/reproduce)
+Can you make these absolute references please?
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202511120243.soxAFpqQ-lkp@intel.com/
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/starfive,jh7110-crg.h>
+> +    #include <dt-bindings/reset/starfive,jh7110-crg.h>
+> +
+> +    soc {
+> +        #address-cells =3D <1>;
+> +        #size-cells =3D <1>;
+> +
+> +        hdmi_mfd: hdmi@29590000 {
 
-sparse warnings: (new ones prefixed by >>)
->> drivers/acpi/acpi_pcc.c:89:70: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void *mssg @@     got void [noderef] __iomem *shmem @@
-   drivers/acpi/acpi_pcc.c:89:70: sparse:     expected void *mssg
-   drivers/acpi/acpi_pcc.c:89:70: sparse:     got void [noderef] __iomem *shmem
+And drop any unused labels from here.
+I definitely thing you could do away with the same example being in
+three different places. Maybe one full one here, and two partials in
+each of the children?
 
-vim +89 drivers/acpi/acpi_pcc.c
+> +            compatible =3D "starfive,jh7110-hdmi-mfd";
+> +            reg =3D <0x29590000 0x4000>;
+> +
+> +            hdmi_phy: phy {
+> +                compatible =3D "starfive,jh7110-inno-hdmi-phy";
+> +                clocks =3D <&xin24m>;
+> +                clock-names =3D "refoclk";
+> +                #clock-cells =3D <0>;
+> +                clock-output-names =3D "hdmi_pclk";
+> +                #phy-cells =3D <0>;
+> +            };
+> +
+> +            hdmi_controller: controller {
+> +                compatible =3D "starfive,jh7110-inno-hdmi-controller";
+> +                interrupts =3D <99>;
+> +                clocks =3D <&voutcrg JH7110_VOUTCLK_HDMI_TX_SYS>,
+> +                        <&voutcrg JH7110_VOUTCLK_HDMI_TX_MCLK>,
+> +                        <&voutcrg JH7110_VOUTCLK_HDMI_TX_BCLK>,
+> +                        <&hdmi_phy>;
+> +                clock-names =3D "sys", "mclk", "bclk", "pclk";
+> +                resets =3D <&voutcrg JH7110_VOUTRST_HDMI_TX_HDMI>;
+> +                reset-names =3D "hdmi_tx";
+> +                phys =3D <&hdmi_phy>;
+> +                phy-names =3D "hdmi-phy";
+> +
+> +                ports {
+> +                    #address-cells =3D <1>;
+> +                    #size-cells =3D <0>;
+> +
+> +                    port@0 {
+> +                        reg =3D <0>;
+> +                        hdmi_in: endpoint {
+> +                            remote-endpoint =3D <&dpu_out_dpi0>;
+> +                        };
+> +                    };
+> +
+> +                    port@1 {
+> +                        reg =3D <1>;
+> +                        hdmi_out: endpoint {
+> +                            remote-endpoint =3D <&hdmi_con_in>;
+> +                        };
+> +                    };
+> +                };
+> +            };
+> +        };
+> +    };
+> +
+> +...
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 66fab45bbee8c1a5f73d09bb470d28029b8c6139..052876c6538f980f75ff64e78=
+b6ebea460307904 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -24048,6 +24048,7 @@ STARFIVE JH7110 DISPLAY SUBSYSTEM
+>  M:	Michal Wilczynski <m.wilczynski@samsung.com>
+>  S:	Maintained
+>  F:	Documentation/devicetree/bindings/display/bridge/starfive,jh7110-inno=
+-hdmi-controller.yaml
+> +F:	Documentation/devicetree/bindings/mfd/starfive,jh7110-hdmi-mfd.yaml
+>  F:	Documentation/devicetree/bindings/phy/starfive,jh7110-inno-hdmi-phy.y=
+aml
+>  F:	Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-vout-s=
+ubsystem.yaml
+> =20
+>=20
+> --=20
+> 2.34.1
+>=20
 
-    83	
-    84	static acpi_status
-    85	acpi_pcc_send_msg_polling(struct pcc_data *data)
-    86	{
-    87		int ret;
-    88	
-  > 89		ret = mbox_send_message(data->pcc_chan->mchan, data->pcc_chan->shmem);
-    90		if (ret == -ETIME) {
-    91			pr_err("PCC command executed timeout!\n");
-    92			return AE_TIME;
-    93		}
-    94	
-    95		if (ret < 0)
-    96			return AE_ERROR;
-    97	
-    98		if (!mbox_client_peek_data(data->pcc_chan->mchan))
-    99			return AE_ERROR;
-   100	
-   101		return AE_OK;
-   102	}
-   103	
+--MHBF9IdfTAgSUpdQ
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaROAogAKCRB4tDGHoIJi
+0lFuAQCF+AFB3vd2cBEjM70iO0hvHejdfbLmbcZNcxt68vCp5gEAjTw9rqui2EYo
+3QeXzLstfJTO5hhitM8svk5TR9ugnQM=
+=eZh0
+-----END PGP SIGNATURE-----
+
+--MHBF9IdfTAgSUpdQ--
 
