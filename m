@@ -1,155 +1,252 @@
-Return-Path: <linux-kernel+bounces-895700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22525C4EB28
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:11:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D47C5C4EB4B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:12:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE7201886DB2
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 15:04:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E32EC188C92C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 15:04:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB17534DCEC;
-	Tue, 11 Nov 2025 15:03:31 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18A5E35B13E;
+	Tue, 11 Nov 2025 15:04:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="GLEvraPl"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB7093AA191
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 15:03:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 261ED357702
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 15:04:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762873411; cv=none; b=by+fb7jfK8W+PzSqgYZQzEYfgcnII8uA3sRUOdi67cZirDDyxiRJcFSDvs7IkKXcrndNt30K2PHP/gRwcxmAqywuGkYlOmXlKP+3SdmCxqZR5MkX/HqJyNYna87rn7o2nx175iEQMc46kRxzJIb9j5jIaUbOjjaKtSwRQkn/g74=
+	t=1762873443; cv=none; b=RJw6pV+1o939zvSCR/vgbY0kcWUSyqKqj8vNBXEAcTzO8Xrhg8iG8tIJW83oYogB7oHt1nvDEGUp5eVBZS+wwrAx1hrTPBeyrUfssF16yohdnsQPaYSN5bZgCmNhat0vp8GsdjHdSeW1U3TF5QE+qVgamCj63/SYBpEvZl5bn+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762873411; c=relaxed/simple;
-	bh=hUJRcIkcd8MJeRSicslyC17V8FIUbkHQankf4Vhpl5g=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=mTMVny0yfEBdsFJfZqCy8ByL6duHoYCohKCKwKuw+Io10uxBUNxURGU0pgUgfHVlHpCggh1waJ+zj2GaHjuSh8Tg1Wb6qC3tip3Lp1CJSVkg6j/4TBfeTRNe3Mhb9xP4CZn0jXZFVxWNeuiEDpefdDD5/d3MS5pyn/T5VkSj+4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-4337e3aca0cso31708125ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 07:03:29 -0800 (PST)
+	s=arc-20240116; t=1762873443; c=relaxed/simple;
+	bh=ftiPYvx9c/Uo7f5Ce7Yzxcg1QUwJlxqYP2TiKTcKQ1Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l/DxFMrkq6LlorZjTL4Fhx1hq+h/TnAcAwmjmh6V97SWGEZR1YiQvung2lC+1VjTfRX17sbQIPfTjiMl5v+aAlau5cyXKUIGPMdi95vsxawd4ydrEcpvqq97dih42Qny9gNC9+9iTW4vz6I4T0YYK6KU8JzlWDvDAjiUCqeN+og=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=GLEvraPl; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b7291af7190so611438666b.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 07:04:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1762873439; x=1763478239; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=wi+5dbYm5JIgaP/t7Nx547fFCD450JcmYNBqfgVm42E=;
+        b=GLEvraPl7E1jUbk6wW0/aujwLM40avwzld7SwXplnkC23MIZZugLXkJV/P/Zuy0s6P
+         biwgt8KXmcwkpr/MRUcOWv6ZfmXMOMWJVaSeDZ9vHm46iKDZ+oGcL0se1vfUH7Op4pUs
+         5Vd4PFwIKZI4mZzszYDRTGEK+phtKBSwXAq1BHSWrzwmd7Js5XRPRAe7a8nN/Ojvc46T
+         cfUUdsjSUk9Esk/VP5eyrG6XVWOkwmBqxuWu4/MSPASED/Y6j2znswy7LNUS6lkvdTX2
+         jVz7XQLzgif/7PSXT9EYDQHoCRqG68y3jCzRrHAQmyAkGgDY6JekuENeGUGz+KZKHQ7A
+         hh2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762873409; x=1763478209;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=VWIKko+/f7wc1ywhv8E+Wq3D2G+PPdWhYhHhlr/Wf/0=;
-        b=xRctxG6R1YJy7gNPQtRVbd+jcYwlZpJ+3OINu6BhFpI6waWFbGaj5W1PwuEzfZxgkN
-         mOf6eJtgt8NOsdFqYLbPb1RAC4Ei6PNvEENspX6ctqpOjBqZDsYmcBbeI9k9NC+hAzsC
-         Bf55ZyDOT/0lrY8YsQ6rh2y2kRpMEzgDBPdr1jAA/KjRZWBKxnvhAcRbYzPYclwZKgJF
-         xYYHA+SrF0QO0JxqC6NM3J6GQspA4gSFP94exRIfPxgz9asmIH1+nkOVqQSVlybChvde
-         taw1mohKHGavh/iUnjrkZj2HV49ytWzr8yxkufYJNz2/iw9kzm64Fxi3EGz9JF5wQEww
-         3Bqw==
-X-Forwarded-Encrypted: i=1; AJvYcCVu4Fc8EtoSvN/IcJk6nSFXDvg3MtBOyVZ/Tva+D+Xx41YiXhUR2aBrkc18Qd+t27PQ+uwr2Dn+x+xWMcU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzJ2aak7/7Y70UWhhVS+KxMubQ1F9OV4HBnEkA7qwXdvVPqs6u
-	1boxDkT/XEWulog18RDetpRX9ti7ROqBKIQ3ek5d2smGbRx7EIElItkDVGSFN1awibOKZXaJZEA
-	EPr+3JRM1CIbkwURvh/c6DYXsnVTXo2Qrk4hg9xA07qcvCT9JQOyxEz8lJ98=
-X-Google-Smtp-Source: AGHT+IENJ936kW7WzuEjQC+SSyFflsRYlWjNqxIz+22D2/kU0o9wO1DV5AoyZKptNtCYWA+ibYQGku8g4phivNClA661eTyDbu0q
+        d=1e100.net; s=20230601; t=1762873439; x=1763478239;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wi+5dbYm5JIgaP/t7Nx547fFCD450JcmYNBqfgVm42E=;
+        b=lZ08pSdKLRfkNDPIV+Tb3q+i+wyRjK67T9Jpl5hoFUCFvjXYgA9EOvfNmkNP0Pl1MF
+         D6+cEYGuuAZwJ130REe5STag1eyPcyLKRMgWQrPWT+BTo/2FajgL3BtpMbrRvx7u0xEx
+         WMEvrlhdeapuRjyoEqw2Fu2y+wej/ldYJjS3TW+KJ6eqWWe+7b7QYyCeih8EchHbtkpF
+         tKZawu3xlDLtai0WKJNM+uplu3brudsBtHiLgNkS4DD8SeSwvE5VOEAwguhofXsDicPe
+         O7rBTeDapHjJfDYmbQoY+pLsQvTN+rqs9Siv/ku55AsvGJlsFdqMdqZjEusWSgMRjQSs
+         buJA==
+X-Forwarded-Encrypted: i=1; AJvYcCVFmkQ6FTCn82dZ93aK77lAWDK6eX/+VPsiwitd2kb6H0F8MvMJGj7Yc8r8+XeBXd5aF85t6nGUed9eNbI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjAYXe0+odYWqZE9ELlgs/i9sKewTa4/qyoXH53Qc2QZeJDNnU
+	gX+9A9XzN8p1dmQ4vSZbnlkLjxiO7lmgNVTsJa3yedgKva6fh47hWs94dtp8mZOPh40=
+X-Gm-Gg: ASbGncu5P63VRhknLlJWjtz0aJ5x8Cboc4tZZqs3LHF6CDUbBuuMUqmc7srISr/vDSW
+	fncLndq0h46OO2+Lo1eP9V4QycCEywqHRr34ZMY0SKz60NarmWKMZseb+WdQRiT/qkki+2xdpT7
+	dI6Z/WDlE/FhP6rt4btml2zwyZuiIy8G0GgxKA11S57E9yQDqnKPdJj4udfQJscw3ZWIPw+oDzm
+	xargThFPJSgTRc9Q2RFs/5I1yrlJWlvUGSVqJ44+nPXctrLWT5yNT6+18Fb4TaoVZVvPp6ztUCZ
+	uLTh0Mx+vb+lnXYMPXiE//2hON7+/JWb0jMMWS4b8QfPLkeptPK/AqbGdRXE0ROHgR15AFhwnXI
+	x9QDvjzj1DLfA5CoSiF6abdZjknBTtCd2+lRbFCE7VJKNcDxxJhRTK+ETngiPZXe0hhMK8PWem3
+	TpVShrD/YAG59LmiGpmg==
+X-Google-Smtp-Source: AGHT+IGWUxoIalLG5xLZllX+zCkekRXIo7e3xykwl2APS2wZQPGHNLqastwX+dw6XlJnfwm9Fe+bGg==
+X-Received: by 2002:a17:906:f590:b0:b71:cec2:d54 with SMTP id a640c23a62f3a-b72e04e4ebemr1306841566b.57.1762873437355;
+        Tue, 11 Nov 2025 07:03:57 -0800 (PST)
+Received: from pathway (nat2.prg.suse.com. [195.250.132.146])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bdbc9656sm1374243166b.7.2025.11.11.07.03.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Nov 2025 07:03:56 -0800 (PST)
+Date: Tue, 11 Nov 2025 16:03:53 +0100
+From: Petr Mladek <pmladek@suse.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Corey Minyard <corey@minyard.net>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	"Dr. David Alan Gilbert" <linux@treblig.org>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Rob Clark <robin.clark@oss.qualcomm.com>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Vitaly Lifshits <vitaly.lifshits@intel.com>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Niklas Cassel <cassel@kernel.org>, Calvin Owens <calvin@wbinvd.org>,
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+	Sagi Maimon <maimon.sagi@gmail.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Karan Tilak Kumar <kartilak@cisco.com>,
+	Hans Verkuil <hverkuil+cisco@kernel.org>,
+	Casey Schaufler <casey@schaufler-ca.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
+	Max Kellermann <max.kellermann@ionos.com>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	openipmi-developer@lists.sourceforge.net,
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linaro-mm-sig@lists.linaro.org, amd-gfx@lists.freedesktop.org,
+	linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+	intel-xe@lists.freedesktop.org, linux-mmc@vger.kernel.org,
+	netdev@vger.kernel.org, intel-wired-lan@lists.osuosl.org,
+	linux-pci@vger.kernel.org, linux-s390@vger.kernel.org,
+	linux-scsi@vger.kernel.org, linux-staging@lists.linux.dev,
+	ceph-devel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Gustavo Padovan <gustavo@padovan.org>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	Abhinav Kumar <abhinav.kumar@linux.dev>,
+	Jessica Zhang <jesszhan0024@gmail.com>, Sean Paul <sean@poorly.run>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Lucas De Marchi <lucas.demarchi@intel.com>,
+	Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Vladimir Oltean <olteanv@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Rodolfo Giometti <giometti@enneenne.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Jonathan Lemon <jonathan.lemon@gmail.com>,
+	Stefan Haberland <sth@linux.ibm.com>,
+	Jan Hoeppner <hoeppner@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Satish Kharat <satishkh@cisco.com>,
+	Sesidhar Baddela <sebaddel@cisco.com>,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH v2 01/21] lib/vsprintf: Add specifier for printing struct
+ timespec64
+Message-ID: <aRNQWc8O2y94zoj8@pathway>
+References: <20251111122735.880607-1-andriy.shevchenko@linux.intel.com>
+ <20251111122735.880607-2-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:318b:b0:433:23f0:1ebf with SMTP id
- e9e14a558f8ab-43367dd8574mr190866465ab.9.1762873408970; Tue, 11 Nov 2025
- 07:03:28 -0800 (PST)
-Date: Tue, 11 Nov 2025 07:03:28 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <69135040.a70a0220.22f260.013d.GAE@google.com>
-Subject: [syzbot] [mm?] WARNING in swap_cache_get_folio
-From: syzbot <syzbot+d7bc9ec4a100437aa7a2@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, baohua@kernel.org, bhe@redhat.com, 
-	chrisl@kernel.org, kasong@tencent.com, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, nphamcs@gmail.com, shikemeng@huaweicloud.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251111122735.880607-2-andriy.shevchenko@linux.intel.com>
 
-Hello,
+On Tue 2025-11-11 13:20:01, Andy Shevchenko wrote:
+> A handful drivers want to print a content of the struct timespec64
+> in a format of %lld:%09ld. In order to make their lives easier, add
+> the respecting specifier directly to the printf() implementation.
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>  Documentation/core-api/printk-formats.rst | 11 ++++++++--
+>  lib/tests/printf_kunit.c                  |  4 ++++
+>  lib/vsprintf.c                            | 25 +++++++++++++++++++++++
+>  3 files changed, 38 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/core-api/printk-formats.rst b/Documentation/core-api/printk-formats.rst
+> index 7f2f11b48286..c0b1b6089307 100644
+> --- a/Documentation/core-api/printk-formats.rst
+> +++ b/Documentation/core-api/printk-formats.rst
+> @@ -547,11 +547,13 @@ Time and date
+>  	%pt[RT]s		YYYY-mm-dd HH:MM:SS
+>  	%pt[RT]d		YYYY-mm-dd
+>  	%pt[RT]t		HH:MM:SS
+> -	%pt[RT][dt][r][s]
+> +	%ptSp			<seconds>.<nanoseconds>
 
-syzbot found the following issue on:
+I know that that there was no good choice. But I am curious.
+Does the 'p' stands for some particular word, for example, "plain" ?
 
-HEAD commit:    ab40c92c74c6 Add linux-next specific files for 20251110
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=17f69a58580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=84a798f69f994783
-dashboard link: https://syzkaller.appspot.com/bug?extid=d7bc9ec4a100437aa7a2
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+I do not want to start bike shedding but I think about
+using 'n' as "number".
 
-Unfortunately, I don't have any reproducer for this issue yet.
+> +	%pt[RST][dt][r][s]
+>  
+>  For printing date and time as represented by::
+>  
+> -	R  struct rtc_time structure
+> +	R  content of struct rtc_time
+> +	S  content of struct timespec64
+>  	T  time64_t type
+>  
+>  in human readable format.
+> @@ -563,6 +565,11 @@ The %pt[RT]s (space) will override ISO 8601 separator by using ' ' (space)
+>  instead of 'T' (Capital T) between date and time. It won't have any effect
+>  when date or time is omitted.
+>  
+> +The %ptSp is equivalent to %lld.%09ld for the content of the struct timespec64.
+> +When the other specifiers are given, it becomes the respective equivalent of
+> +%ptT[dt][r][s].%09ld. In other words, the seconds are being printed in
+> +the human readable format followed by a dot and nanoseconds.
+> +
+>  Passed by reference.
+>  
+>  struct clk
+> diff --git a/lib/vsprintf.c b/lib/vsprintf.c
+> index 3f99834fd788..fdd06e8957a3 100644
+> --- a/lib/vsprintf.c
+> +++ b/lib/vsprintf.c
+> @@ -2464,6 +2488,7 @@ early_param("no_hash_pointers", no_hash_pointers_enable);
+>   * - 'g' For block_device name (gendisk + partition number)
+>   * - 't[RT][dt][r][s]' For time and date as represented by:
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/34ed0f0c2fd0/disk-ab40c92c.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/a781fa106d0c/vmlinux-ab40c92c.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/367c75242dc9/bzImage-ab40c92c.xz
+We should add 'S' here as well:
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+d7bc9ec4a100437aa7a2@syzkaller.appspotmail.com
+   * - 't[RST][dt][r][s]' For time and date as represented by:
 
-------------[ cut here ]------------
-WARNING: mm/swap.h:87 at __swap_offset_to_cluster mm/swap.h:87 [inline], CPU#0: swapoff/15184
-WARNING: mm/swap.h:87 at __swap_entry_to_cluster mm/swap.h:93 [inline], CPU#0: swapoff/15184
-WARNING: mm/swap.h:87 at swap_cache_get_folio+0x365/0x530 mm/swap_state.c:94, CPU#0: swapoff/15184
-Modules linked in:
-CPU: 0 UID: 0 PID: 15184 Comm: swapoff Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-RIP: 0010:__swap_offset_to_cluster mm/swap.h:87 [inline]
-RIP: 0010:__swap_entry_to_cluster mm/swap.h:93 [inline]
-RIP: 0010:swap_cache_get_folio+0x365/0x530 mm/swap_state.c:94
-Code: ff 31 ed e9 2a ff ff ff e8 a8 d5 a2 ff 90 0f 0b 90 e9 3d fd ff ff e8 9a d5 a2 ff 90 0f 0b 90 e9 44 fd ff ff e8 8c d5 a2 ff 90 <0f> 0b 90 e9 6b fd ff ff 44 89 f1 80 e1 07 80 c1 03 38 c1 0f 8c 3e
-RSP: 0018:ffffc90003237a40 EFLAGS: 00010293
-RAX: ffffffff821e8784 RBX: 00000000000001ff RCX: ffff88802e633d00
-RDX: 0000000000000000 RSI: 0000000000007a12 RDI: 0003ffffffffffff
-RBP: ffffffff99cad4e0 R08: 0000000000000000 R09: ffffffff82139c79
-R10: dffffc0000000000 R11: fffff9400022a327 R12: ffff8880317bf000
-R13: dffffc0000000000 R14: 0000000000007a12 R15: 0003ffffffffffff
-FS:  00007f3bed90fc80(0000) GS:ffff888125a83000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00005640123d7005 CR3: 0000000034d9a000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- unuse_pte_range mm/swapfile.c:2282 [inline]
- unuse_pmd_range mm/swapfile.c:2332 [inline]
- unuse_pud_range mm/swapfile.c:2352 [inline]
- unuse_p4d_range mm/swapfile.c:2372 [inline]
- unuse_vma mm/swapfile.c:2393 [inline]
- unuse_mm mm/swapfile.c:2411 [inline]
- try_to_unuse+0xd6f/0x2ce0 mm/swapfile.c:2488
- __do_sys_swapoff mm/swapfile.c:2884 [inline]
- __se_sys_swapoff+0x431/0xa10 mm/swapfile.c:2824
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f3bedad6ed7
-Code: 00 66 90 48 83 fe 01 48 8b 15 1d 1f 0d 00 19 c0 83 e0 f0 83 c0 26 64 89 02 b8 ff ff ff ff c3 0f 1f 40 00 b8 a8 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d f1 1e 0d 00 f7 d8 64 89 01 48
-RSP: 002b:00007ffd9a359118 EFLAGS: 00000246 ORIG_RAX: 00000000000000a8
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f3bedad6ed7
-RDX: 0000564029c35a70 RSI: 00007f3bedc5c4e8 RDI: 0000564029c35a20
-RBP: 0000564029c35a20 R08: 0000000000000100 R09: 00007f3bedba9ac0
-R10: 0000000000000004 R11: 0000000000000246 R12: 00007ffd9a359338
-R13: 0000564029c352a0 R14: 00007f3bedcb9000 R15: 00005640123d8d98
- </TASK>
+That said, I am not sure about the optional '[p]'. We could
+either do:
 
+   * - 't[RST][p][dt][r][s]' For time and date as represented by:
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+or
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+   * - 'tSp'	For time represented by struct timespec64 printed
+		as seconds.nanoseconds
+   * - 't[RST][dt][r][s]' For time and date as represented by:
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+>   *      R    struct rtc_time
+> + *      S    struct timespec64
+>   *      T    time64_t
+>   * - 'C' For a clock, it prints the name (Common Clock Framework) or address
+>   *       (legacy clock framework) of the clock
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+Otherwise, it looks good.
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Best Regards,
+Petr
 
