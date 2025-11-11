@@ -1,104 +1,168 @@
-Return-Path: <linux-kernel+bounces-894358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D280CC49D49
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 01:10:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4990DC49D7C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 01:12:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C27154E6E21
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 00:10:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A4B3188B323
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 00:12:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04914CA6F;
-	Tue, 11 Nov 2025 00:10:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 815C02B9A7;
+	Tue, 11 Nov 2025 00:11:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gLz2AIKL"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RQNhfVxW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE74117E4
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 00:09:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E51717D6;
+	Tue, 11 Nov 2025 00:11:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762819800; cv=none; b=YKQ9f2BsS3NMIhu7Raw5Q61bfVS/HdI9YT5MCoLFwaA/FXMR/LVCL+/ri6rh88kdklG6ZlMyan+lqBum4QqeE41mYnF3RFbMDtbgd2+kKpQ+O33YC1MaINWKNXa3qsQgIhpDDnaD5v+GjGKUxIgmVPymi94GW19EpezR6hjnB6o=
+	t=1762819899; cv=none; b=ASJdmkX7niKebNSKI514wIr6iBDkQ8iDvFTXsvF4o5TIBIRYKfJHPWVEzG/yqkH/zq4iS98kR+DKK0CvcNV3tud4RXXwZi9wUeD5rGFrGrQ4bTDf1m4Tf1vaSlFnEEnPxOsFygXGTX2UKZRve7kWe+notf6fEKoUEA4zcPXtvpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762819800; c=relaxed/simple;
-	bh=gZ5/m077XwBZLhAmwLVAiJZP3Ep+Vx20A7NkuQEHPPQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rs/Ctq1wyLz8c7LeS4wUiJ8gvTcHuax8GtC9vD3i7qUz7k7kN82EdkdCdWBtmgiv37uRTCKwt6AhYq+lcWLIBVVLRp9HVGj2jYYLDVZxkZIhKuzgqd2gZEy6MsSUMZjvRIcgsR5tywKVLnnJgbdnUlqZe5224kAT4ULRglq8jNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gLz2AIKL; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5930f751531so3359270e87.3
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 16:09:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762819797; x=1763424597; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pFEHCNfHv1D8JoCl4Nsmjn6JwQRfPNbQJk+sIWcQCWU=;
-        b=gLz2AIKL6xMj9C1Sa7+YRItNJbgrocb9By4S/yhj3r8aSr39URnhLjz/08r0cdz41D
-         LQ62useSgBJ2OYLXR42XyTKLVcjKWQf1XMfMQGwUDAQl/PsFEF34+Se3aFt10vWE+bBl
-         tjoNxZp9EwzAVeTEmnr8sa950CnhThpknF5i0BB8oTyNOg95POPpqG4jRnCw9qGkjnLj
-         MlUMRqHJQGxqUpPJ97iL3E7MQChRtbe1cIRyncJog+MKxle0oBDiWVfT6Nfq0AHjOsmZ
-         VsQz0J38lV1uYVQawzJtyd6V0SMKovkJcM+IDt/BJJrlrtN81ogFiKBNiucB/lcvtQW0
-         FSgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762819797; x=1763424597;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=pFEHCNfHv1D8JoCl4Nsmjn6JwQRfPNbQJk+sIWcQCWU=;
-        b=g/KhEuzEXD4DAbl7xYiF7DozKfL+aOryQ38OGjGKvh/7sMqB6PqozGfOZSaWmvNrbT
-         7Y5+6NKwqKk5JlYtE4sPsEo5wws16eAiqTli1bQNeJ4ZRPvW6wbuYWCHzYfexTxMnllF
-         sYc6m8BmfrF4fi0EcMZYCORqWXXw4iQYylWXH8nRbpjF9OjV4T9/zibInRq4I1OkKQxN
-         X8DigitY9YOdiub+ArI2VVLIQMh17g9PcpC8BjtuU/WqGHMtkT7QTI0o6GfR2abD+3Jv
-         Y9Cs/H0r0UqvFgiZt929+bjHQE/p+FTpt23frmHK5NKP0O1Icurb8cTFnAUi64D2hwb0
-         AKQA==
-X-Forwarded-Encrypted: i=1; AJvYcCVe8M/Nq8r9XfQ//zbufTao2zCSntKeyONha8tWc2NJAap1tXrq+98JS3N3yJXfkUnCzP7npfx0HBnyUuY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsY6qw9A2h+gjIpC+zc4vEDdMJRtn3FEqvLXbU9cL+grFlK1zl
-	lwXPpglTOXYVnDMrzAPPKuWIBS6FPbVZjUxrQOuTw4wTdudGa3IPT+G05Uird6HCjcnDyDX9oR1
-	jFLn9UiYCYZfZUrrE9eP18ZurYRpSAJHipzhHU9Ns
-X-Gm-Gg: ASbGncsia9Y+fxYAJZHVvsb9K5lzcOiS8koBufJfSimuz4JnYIYrsTG8FZ4eEia+6/e
-	/sxVA0KUvQqxw58DX7Is7m9e/vN7lOiegfbIcaLaJerlngv762tjBRQX5qVDWiQJJ2nF1N1qhJE
-	uWjhyjLifybgHeZA9cMy9aj37T54xgmHRGhQZFyUQAlfG7PY7COC3CNcTGI24wDCtbvjE8cat4E
-	q9xIB+O27/G0TgMNSQfpYPxyjER8agxOfUf787LNZ66E0oi4QYoD/kDL7QxpYsSIceOg0I=
-X-Google-Smtp-Source: AGHT+IHo2L5BMywZB4ygtkbG7ou934mmvSM1iJnq4YXV+tyl1PbwOxo9qYD3jNo2QlU6HODLtb4dq1vYUatSp3CdWDk=
-X-Received: by 2002:a05:6512:3d87:b0:594:3020:f88a with SMTP id
- 2adb3069b0e04-5945f146154mr2982019e87.3.1762819796505; Mon, 10 Nov 2025
- 16:09:56 -0800 (PST)
+	s=arc-20240116; t=1762819899; c=relaxed/simple;
+	bh=UJb6mXnrZynjLpPgHUrW0+nPkNlnIA1ohpPmrhdt5kI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=TXi8Wi80fCmXlZBuZvb0nZMteS9+QsWmfuYmjnr4Uaw9mTPoHTY+tI6IGmLxwvbN2OMLB0jjrp9TSMqyQcA7NX+uFT87J3VjN/pMiZxUD+MM8rKlpZes74FZsQ8BdKXuc26o6865gLNYIoKantNk/7vFYRcyysFOvW+GZ8zggz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RQNhfVxW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE3B5C113D0;
+	Tue, 11 Nov 2025 00:11:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762819899;
+	bh=UJb6mXnrZynjLpPgHUrW0+nPkNlnIA1ohpPmrhdt5kI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=RQNhfVxWS3kSkUZ3/Yn/h0BmXL51tmLd+96fcvkdQVv1vGLPiWTHRkycOoEeo86n+
+	 AomTbI2OwWKrh916BvopP2FmTFRSTMpM+ffKgocFApMJHdp1EKgU6X5hO4qa0osljw
+	 17UC1rMSI+vUK4hzsEvsvxu9BntOhbPUYi/m0034GgTDaN8qQYvPNZ+teI5+B2ybWa
+	 HwOKozmrkxff/CrJtzPPwDnYAm5CuGW9jLgaRZXE1tGy7RFW1GXxjP1lsvTw64BiD6
+	 3+AvpY4WKIjmTgnbEp1K+YKbfLbuPtZz53Jb09WBB7saLr4xY2Ybz2RWqug2curgjQ
+	 RYENRwzTM6ubQ==
+Date: Mon, 10 Nov 2025 18:11:37 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Corey Minyard <corey@minyard.net>,
+	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
+	"Dr. David Alan Gilbert" <linux@treblig.org>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Rob Clark <robin.clark@oss.qualcomm.com>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Hans Verkuil <hverkuil@kernel.org>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Vitaly Lifshits <vitaly.lifshits@intel.com>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Niklas Cassel <cassel@kernel.org>, Calvin Owens <calvin@wbinvd.org>,
+	Sagi Maimon <maimon.sagi@gmail.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Karan Tilak Kumar <kartilak@cisco.com>,
+	Casey Schaufler <casey@schaufler-ca.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Petr Mladek <pmladek@suse.com>,
+	Max Kellermann <max.kellermann@ionos.com>,
+	Takashi Iwai <tiwai@suse.de>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	openipmi-developer@lists.sourceforge.net,
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linaro-mm-sig@lists.linaro.org, amd-gfx@lists.freedesktop.org,
+	linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+	intel-xe@lists.freedesktop.org, linux-mmc@vger.kernel.org,
+	netdev@vger.kernel.org, intel-wired-lan@lists.osuosl.org,
+	linux-pci@vger.kernel.org, linux-s390@vger.kernel.org,
+	linux-scsi@vger.kernel.org, linux-staging@lists.linux.dev,
+	ceph-devel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Gustavo Padovan <gustavo@padovan.org>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	Abhinav Kumar <abhinav.kumar@linux.dev>,
+	Jessica Zhang <jesszhan0024@gmail.com>, Sean Paul <sean@poorly.run>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Lucas De Marchi <lucas.demarchi@intel.com>,
+	Thomas =?utf-8?Q?Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Vladimir Oltean <olteanv@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Rodolfo Giometti <giometti@enneenne.com>,
+	Jonathan Lemon <jonathan.lemon@gmail.com>,
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Stefan Haberland <sth@linux.ibm.com>,
+	Jan Hoeppner <hoeppner@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Satish Kharat <satishkh@cisco.com>,
+	Sesidhar Baddela <sebaddel@cisco.com>,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Subject: Re: [PATCH v1 17/23] PCI: epf-test: Switch to use %ptSp
+Message-ID: <20251111001137.GA2145521@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251110-iova-ranges-v1-0-4d441cf5bf6d@fb.com> <20251110-iova-ranges-v1-2-4d441cf5bf6d@fb.com>
-In-Reply-To: <20251110-iova-ranges-v1-2-4d441cf5bf6d@fb.com>
-From: David Matlack <dmatlack@google.com>
-Date: Mon, 10 Nov 2025 16:09:28 -0800
-X-Gm-Features: AWmQ_bl8_Cdy60TogV-QJ49WsEn_RX2LsLOaqoNdfUT7B2UZ4an-cWntLVlYT40
-Message-ID: <CALzav=f5PSLJifD6_0iqLW+Uh+zQ9f_N4zVtq4ikon1gg_h3TA@mail.gmail.com>
-Subject: Re: [PATCH 2/4] vfio: selftests: fix map limit tests to use last
- available iova
-To: Alex Mastro <amastro@fb.com>
-Cc: Alex Williamson <alex@shazbot.org>, Shuah Khan <shuah@kernel.org>, kvm@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Jason Gunthorpe <jgg@ziepe.ca>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251110184727.666591-18-andriy.shevchenko@linux.intel.com>
 
-On Mon, Nov 10, 2025 at 1:11=E2=80=AFPM Alex Mastro <amastro@fb.com> wrote:
-> +       if (region->iova !=3D (~(iova_t)0 & ~(region->size - 1)))
-> +               SKIP(return, "IOMMU address space insufficient for overfl=
-ow test");
-> +
+On Mon, Nov 10, 2025 at 07:40:36PM +0100, Andy Shevchenko wrote:
+> Use %ptSp instead of open coded variants to print content of
+> struct timespec64 in human readable format.
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-If, instead, this was:
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
 
-  region->iova =3D ~(iova_t)0 & ~(region->size - 1);
-
-then I think this test could be run on all platforms. The kernel
-checks for overflow before it checks for valid iova ranges.
+> ---
+>  drivers/pci/endpoint/functions/pci-epf-test.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
+> index b05e8db575c3..debd235253c5 100644
+> --- a/drivers/pci/endpoint/functions/pci-epf-test.c
+> +++ b/drivers/pci/endpoint/functions/pci-epf-test.c
+> @@ -331,9 +331,8 @@ static void pci_epf_test_print_rate(struct pci_epf_test *epf_test,
+>  		rate = div64_u64(size * NSEC_PER_SEC, ns * 1000);
+>  
+>  	dev_info(&epf_test->epf->dev,
+> -		 "%s => Size: %llu B, DMA: %s, Time: %llu.%09u s, Rate: %llu KB/s\n",
+> -		 op, size, dma ? "YES" : "NO",
+> -		 (u64)ts.tv_sec, (u32)ts.tv_nsec, rate);
+> +		 "%s => Size: %llu B, DMA: %s, Time: %ptSp s, Rate: %llu KB/s\n",
+> +		 op, size, dma ? "YES" : "NO", &ts, rate);
+>  }
+>  
+>  static void pci_epf_test_copy(struct pci_epf_test *epf_test,
+> -- 
+> 2.50.1
+> 
 
