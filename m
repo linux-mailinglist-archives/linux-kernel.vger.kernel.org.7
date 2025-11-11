@@ -1,88 +1,160 @@
-Return-Path: <linux-kernel+bounces-894366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA47AC49DA7
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 01:22:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 540F1C49DB9
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 01:23:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79B7B3A1622
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 00:22:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68619188E7B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 00:23:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18EF917DE36;
-	Tue, 11 Nov 2025 00:22:06 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 772751A3154;
+	Tue, 11 Nov 2025 00:23:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gvernon.com header.i=@gvernon.com header.b="MHv9s7Ny"
+Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DA5016132A
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 00:22:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96A851885A5
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 00:23:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762820525; cv=none; b=eQEINZKEMTEcwRTIPM7w6sOBxFJaZ0iawtEv/yszyPJGEbB+hZhTV/dPusFeSG8CIfYLeX8J3IYpyhjpmHOZeo0hqJuXlyogigMs5CpqH0utCb4+QYrDczhK16JIwBahAxeuFNIuSswf4fLBleF3yL1hrho/394AA2tVFkB5I3k=
+	t=1762820596; cv=none; b=K9WRHMf129beQI5pYTs+fosXI9bo9bHB5vkrQzRbiIDh2saAXzGtp+P5IlyGyK3lcOX/4Xy2fHe6MHP+t7Y2tsy6vfp9h85/9t1y5sdESsWxBNTtgErJS43LQuTS6/rYquxJJy/T3i3F7PX0cALWUP9AmNYkjGMMa16vmDxtv+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762820525; c=relaxed/simple;
-	bh=Iz9mP0ENlYhS2Tp92Sc8VaRj0FtbZd49XUVrzCLzUrs=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=JPY2cOpsDPXtE2SO12f/kXNHJGFYkg86d45Txe3pyDHRrnC023vo0AMJ/vJLytI1NFPXuyi64/MlWj2leweenRq1MKTy+xg3p+6IyFnQ+hZfXZFTtGWQEkob/dcR69+ZJ92vn/XFPmPWVXV4YeufTutQy2AZakSBBjlmgtXoPjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-4337b5c3388so69918595ab.2
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 16:22:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762820523; x=1763425323;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1jTaQo/Z88lb4ipSYNqXW5L2hKruWlKS8HEKlvLEFVI=;
-        b=A7pjFOt52P/AzVbPYKs6ggkrAYrU37V5ywljaDuqPkbN8tBbU6+swp3AvN7aNx5+vB
-         dSRzJZ78vxcVeAv8lgo70nfEgZGlpNRJXl4WfJnFs6h4lD1BdVJSx2xiPH8PTTVCe4Uf
-         OtM2M4ln4L1vFBrT5LsoZ676RV3STtYIbJWSuM51ZjF8WEiJIiR9F8jNbKBkLUbTOP5O
-         7oMNw2WH9dZY7Cz5zPGLsCovnZ4teEOpivFvzDKtf/JbAUOG6g7JW89RXoAKGVpV9Qrc
-         PmOp9dhdMNWUiGpbUI9V601bqRI12ObSlFAgYU0WkwWhCXQGcSzcRgzvRZaVbUo1ArVh
-         QePg==
-X-Gm-Message-State: AOJu0YyFFaP+kfki6rieERmMhVtigy8muxIzpbUV8YqbRQp97fpIBbUE
-	6FUzeBGu+gEDrVn12bDT+c2WunUgzekSX4yKDeh/25RVLuNUhmzn7JmjQLkLPofE3MWodV8QW0R
-	qyA8pF/EXVgEpHKzkcL2VBAgpdI2/w8bqFm5R9TazAcwwHjolZi6xt0cWcJk=
-X-Google-Smtp-Source: AGHT+IE4GSPCgJ9IY87Vk5t5aHBC3DnYa94fVr5HFtXXIDKg2ZH9AW9fG0EVlpBF867ThqlUiDjX7r9rnzgypkrwqvFXu+yDgL9H
+	s=arc-20240116; t=1762820596; c=relaxed/simple;
+	bh=bPPdzsFCYqmZxZG1oaCETVPCkyCDDs3i4xm8UUoKQvM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RxL1l8hyub+3b6Led6ko74RbvDPAAiAeep2aRMLcPFzHHlUIuFd498oiJttF/8vq//yY/5Ou/EIUZRoXElVQl7kYlYfFKTLaBHN0y6Pu1TZR701Jk/mebeXQJZ2rFlDYozqqiG34/vXrYNZ9XkUmPx4xo/UgBSM858wED076z50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gvernon.com; spf=pass smtp.mailfrom=gvernon.com; dkim=pass (2048-bit key) header.d=gvernon.com header.i=@gvernon.com header.b=MHv9s7Ny; arc=none smtp.client-ip=95.215.58.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gvernon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gvernon.com
+Date: Tue, 11 Nov 2025 00:23:12 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gvernon.com; s=key1;
+	t=1762820591;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6MzVfzkvlgrw/5KjtWHCkGWxkY9koFjZVoe3P9pnd+0=;
+	b=MHv9s7NyTDDpSTBAokrLPAFFoIjoc34+qo8Nw3cILbrnBCkLgGVbXuKQkXdJJTeVa+S25J
+	/aj9f2w3MOXh/8hXywySn9TX4XgKbN7zCXYrsd/wvQc8d3OrQWe8Gpkt1Up1xJgtqtHRpC
+	+Xi2Hdd0DCZEMYhYf3DtCWW4EuM0HiL8/+546z0oB8CUk+Jp7mX5IRoVG399MsXGDVSPS7
+	5ekbkJ+p6w3DObP+U8w1Wi5ZxrW2iBA0+Iir4k7730t5AobI86QGZ7pZnzBWbabFxOTV0H
+	bSt761VAkd2k5ia3QRhk19TwwpFeX/0rYkYN6IBteypNOnOMu6Bp4JZI0wKVHQ==
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: George Anthony Vernon <contact@gvernon.com>
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+Cc: "frank.li@vivo.com" <frank.li@vivo.com>,
+	"linux-kernel-mentees@lists.linux.dev" <linux-kernel-mentees@lists.linux.dev>,
+	"slava@dubeyko.com" <slava@dubeyko.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"penguin-kernel@i-love.sakura.ne.jp" <penguin-kernel@i-love.sakura.ne.jp>,
+	"syzbot+97e301b4b82ae803d21b@syzkaller.appspotmail.com" <syzbot+97e301b4b82ae803d21b@syzkaller.appspotmail.com>,
+	"skhan@linuxfoundation.org" <skhan@linuxfoundation.org>,
+	"glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH v2 2/2] hfs: Update sanity check of the root record
+Message-ID: <aRKB8C2f1Auy0ccA@Bertha>
+References: <d2b28f73-49c8-4e30-9913-01702da4dfe4@I-love.SAKURA.ne.jp>
+ <20251104014738.131872-4-contact@gvernon.com>
+ <ef0bd6a340e0e4332e809c322186e73d9e3fdec3.camel@ibm.com>
+ <aRJvXWcwkUeal7DO@Bertha>
+ <74eae0401c7a518d1593cce875a402c0a9ded360.camel@ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2581:b0:433:7a7c:e29f with SMTP id
- e9e14a558f8ab-4337a7d0856mr82158035ab.21.1762820523438; Mon, 10 Nov 2025
- 16:22:03 -0800 (PST)
-Date: Mon, 10 Nov 2025 16:22:03 -0800
-In-Reply-To: <xgynmmyztqi2kkzhchyzgzd2clszohjy4vinzb2ij4qyvdz4mc@36tdk5l7bq5s>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <691281ab.a70a0220.22f260.0115.GAE@google.com>
-Subject: Re: [syzbot] [bpf?] KASAN: stack-out-of-bounds Write in __bpf_get_stack
-From: syzbot <syzbot+d1b7fa1092def3628bd7@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, listout@listout.xyz, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <74eae0401c7a518d1593cce875a402c0a9ded360.camel@ibm.com>
+X-Migadu-Flow: FLOW_OUT
 
-Hello,
+On Mon, Nov 10, 2025 at 11:34:39PM +0000, Viacheslav Dubeyko wrote:
+> On Mon, 2025-11-10 at 23:03 +0000, George Anthony Vernon wrote:
+> > On Tue, Nov 04, 2025 at 11:01:31PM +0000, Viacheslav Dubeyko wrote:
+> > > On Tue, 2025-11-04 at 01:47 +0000, George Anthony Vernon wrote:
+> > > > syzbot is reporting that BUG() in hfs_write_inode() fires upon unmount
+> > > > operation when the inode number of the record retrieved as a result of
+> > > > hfs_cat_find_brec(HFS_ROOT_CNID) is not HFS_ROOT_CNID, for commit
+> > > > b905bafdea21 ("hfs: Sanity check the root record") checked the record
+> > > > size and the record type but did not check the inode number.
+> > > > 
+> > > > Reported-by: syzbot+97e301b4b82ae803d21b@syzkaller.appspotmail.com
+> > > > Closes: https://syzkaller.appspot.com/bug?extid=97e301b4b82ae803d21b    
+> > > > Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> > > > Signed-off-by: George Anthony Vernon <contact@gvernon.com>
+> > > > ---
+> > > >  fs/hfs/super.c | 2 +-
+> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > > 
+> > > > diff --git a/fs/hfs/super.c b/fs/hfs/super.c
+> > > > index 47f50fa555a4..a7dd20f2d743 100644
+> > > > --- a/fs/hfs/super.c
+> > > > +++ b/fs/hfs/super.c
+> > > > @@ -358,7 +358,7 @@ static int hfs_fill_super(struct super_block *sb, struct fs_context *fc)
+> > > >  			goto bail_hfs_find;
+> > > >  		}
+> > > >  		hfs_bnode_read(fd.bnode, &rec, fd.entryoffset, fd.entrylength);
+> > > > -		if (rec.type != HFS_CDR_DIR)
+> > > > +		if (rec.type != HFS_CDR_DIR || rec.dir.DirID != cpu_to_be32(HFS_ROOT_CNID))
+> > > 
+> > > This check is completely unnecessary. Because, we have hfs_iget() then [1]:
+> > > 
+> > > The hfs_iget() calls iget5_locked() [2]:
+> > > 
+> > > And iget5_locked() calls hfs_read_inode(). And hfs_read_inode() will call
+> > > is_valid_cnid() after applying your patch. So, is_valid_cnid() in
+> > > hfs_read_inode() can completely manage the issue. This is why we don't need in
+> > > this modification after your first patch.
+> > > 
+> > 
+> > I think Tetsuo's concern is that a directory catalog record with
+> > cnid > 15 might be returned as a result of hfs_bnode_read, which
+> > is_valid_cnid() would not protect against. I've satisfied myself that
+> > hfs_bnode_read() in hfs_fill_super() will populate hfs_find_data fd
+> > correctly and crash out if it failed to find a record with root CNID so
+> > this path is unreachable and there is no need for the second patch.
+> > 
+> 
+> Technically speaking, we can adopt this check to be completely sure that nothing
+> will be wrong during the mount operation. But I believe that is_valid_cnid()
+> should be good enough to manage this. Potential argument could be that the check
+> of rec.dir.DirID could be faster operation than to call hfs_iget(). But mount is
+> rare and not very fast operation, anyway. And if we fail to mount, then the
+> speed of mount operation is not very important.
 
-syzbot tried to test the proposed patch but the build/boot failed:
+Agreed we're not worried about speed that the mount operation can reach
+fail case. The check would have value if the bnode populated in
+hfs_find_data fd by hfs_cat_find_brec() is bad. That would be very
+defensive, I'm not sure it's necessary.
 
-failed to apply patch:
-checking file kernel/bpf/stackmap.c
-Hunk #1 FAILED at 480.
-1 out of 1 hunk FAILED
+Maybe is_valid_cnid() should be is_valid_catalog_cnid(), since that is
+what it is actually testing for at the interface with the VFS. Would you
+agree?
 
+> 
+> > > But I think we need to check that root_inode is not bad inode afterwards:
+> > > 
+> > > 	root_inode = hfs_iget(sb, &fd.search_key->cat, &rec);
+> > > 	hfs_find_exit(&fd);
+> > > 	if (!root_inode || is_bad_inode(root_inode))
+> > > 		goto bail_no_root;
+> > 
+> > Agreed, I see hfs_read_inode might return a bad inode. Thanks for
+> > catching this. I noticed also that it returns an int but the return
+> > value holds no meaning; it is always zero.
+> > 
+> > 
+> 
+> I've realized that hfs_write_inode() doesn't check that inode is bad like other
+> file systems do. Probably, we need to have this check too.
 
+Good point, and similarly with HFS+. I'll take a look.
 
-Tested on:
+Thanks,
 
-commit:         f8c67d85 bpf: Use kmalloc_nolock() in range tree
-git tree:       bpf-next
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e46b8a1c645465a9
-dashboard link: https://syzkaller.appspot.com/bug?extid=d1b7fa1092def3628bd7
-compiler:       
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=114e7084580000
-
+George
 
