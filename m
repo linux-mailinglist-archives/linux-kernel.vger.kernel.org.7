@@ -1,74 +1,100 @@
-Return-Path: <linux-kernel+bounces-895651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1397C4E961
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 15:51:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 553C4C4E92B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 15:49:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1C573BD3DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:43:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 537AC18C0ADD
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:43:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F929341678;
-	Tue, 11 Nov 2025 14:39:49 +0000 (UTC)
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FF0233F387;
+	Tue, 11 Nov 2025 14:39:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="HpvA2JeL";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="UY84aFD5"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1155340DAC;
-	Tue, 11 Nov 2025 14:39:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A0A7339B39;
+	Tue, 11 Nov 2025 14:39:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762871988; cv=none; b=pAmvoHsJNI/UVvQI1hLMq3BkctOUZLRL0iN0f4DqviAGpFGow/PoVJd5nGgNNSbILXhEexpn1iIc+fahH4Gwri9w1wEoDw/6EHl0Tq4V67TvK8XK3kxbrAk87s3c0+KNTvO6m7VFZ3D+zFawJe4cacxz99IH5qBf3lweV3X3cow=
+	t=1762871975; cv=none; b=LmMhOrVAO2AxHnJlX2KbIEmSu4xEOaMa/PDWmkPdp6j0UD8g71K+aAQtSsVLFNEagS0ZeXvrFGYChWi4z/VbHIyHklBGBv4VKG7iQCSokO8DKLpuyIkFzX8UaHeQHsOBqxqKrcoTz+oYjkpJ2lqOCxLtfXn8cLsGm4ghbLjv8po=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762871988; c=relaxed/simple;
-	bh=NXqSvb17NNCUFpvhD7cqdSlUrGCN4ubhKTPQFX6Fflo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ul0+UXxP0Ym1bg5T5tW51WS8UpeGhpzrlzBkcTWtTKZrSl+moyLZuuAD9ROu8NtXJlhcOEv/aKSdlNqbArkG8rZ3HQETldxuHrObpVZgJEAS1+NrYFXnxaDaZ7g5FWLDY9ul0rWRUnN5dzKwn9sdhnbJVal2+dOnHcwXsYZEbl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 5ABEdHtu056322;
-	Tue, 11 Nov 2025 23:39:17 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.10] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 5ABEdGNN056319
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Tue, 11 Nov 2025 23:39:16 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <df9ed36b-ec8a-45e6-bff2-33a97ad3162c@I-love.SAKURA.ne.jp>
-Date: Tue, 11 Nov 2025 23:39:14 +0900
+	s=arc-20240116; t=1762871975; c=relaxed/simple;
+	bh=T4YjsZoRwdzDgjx08Bih7n7FVxeKaoqwpPv8CdLIAvg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D5S2+Fdmd+n+c0okrlf1Yn36UjJiBm1W2cXzHTV6CK7+bMToUTOpOXoKci6HWxqebjt537NXyGZZPcVqGhktj9NJO2JoAxpkBptxuzlY9g9D/pr5SKkeAsth6nklnNM1GYYgH0H1TXyCk6wrT8D3Zip1Y8AZTn8yITp9mDkHlbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HpvA2JeL; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=UY84aFD5; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 11 Nov 2025 15:39:31 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1762871972;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=T4YjsZoRwdzDgjx08Bih7n7FVxeKaoqwpPv8CdLIAvg=;
+	b=HpvA2JeLK7wlX9zTW+73KNR1eVaI+ruGvWla9BmgOadRWKRhYFKgCqLzhrWJVKn5qANS2g
+	K533tGM81GbVBMpfssMw3oqdefgVuwYAhg3fN1QC1S4GtTcTZw9H5FTjZvMhgcWG2oaeX2
+	lGbD/k47DjaTPN5DF/n442zx8WWnUIby0xYSD3gZgY+m9X3QVB00icpA7XI0VOBtboRb/i
+	zBA6Dwv2s98sJoXMSGtbPVwdJE+pVUvoWJ+tBnQFbYO4uM2iWS9oyokfKRkkcrbsplHUb5
+	TnxRZuZa8+yBso7oe0poTH3qUd4MPAbLyndmXonWbk3iNnD0z9qfUpnRPoGbqg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1762871972;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=T4YjsZoRwdzDgjx08Bih7n7FVxeKaoqwpPv8CdLIAvg=;
+	b=UY84aFD56kpelnYGfC1+L4F2qwxqNYNilDKCck2mXX58jbG9auEABUYiSbsP7lBcL/eNW1
+	/Q8SVQS4kup4WZBQ==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Guangbo Cui <jckeep.cuiguangbo@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Waiman Long <longman@redhat.com>, linux-rt-devel@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: [PATCH v4 2/2] PCI/aer_inject: Convert inject_lock to
+ raw_spinlock_t
+Message-ID: <20251111143931.k7QsQ8Tb@linutronix.de>
+References: <20251102105706.7259-1-jckeep.cuiguangbo@gmail.com>
+ <20251102105706.7259-3-jckeep.cuiguangbo@gmail.com>
+ <20251103192120.GJ3419281@noisy.programming.kicks-ass.net>
+ <20251103192709.GV1386988@noisy.programming.kicks-ass.net>
+ <aQydxtOtgPTPxL_9@2a2a0ba7cec8>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] hfs: Validate CNIDs in hfs_read_inode
-To: George Anthony Vernon <contact@gvernon.com>, slava@dubeyko.com,
-        glaubitz@physik.fu-berlin.de, frank.li@vivo.com,
-        linux-fsdevel@vger.kernel.org, skhan@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev,
-        syzbot+97e301b4b82ae803d21b@syzkaller.appspotmail.com
-References: <d2b28f73-49c8-4e30-9913-01702da4dfe4@I-love.SAKURA.ne.jp>
- <20251104014738.131872-3-contact@gvernon.com>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <20251104014738.131872-3-contact@gvernon.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Anti-Virus-Server: fsav303.rs.sakura.ne.jp
-X-Virus-Status: clean
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <aQydxtOtgPTPxL_9@2a2a0ba7cec8>
 
-On 2025/11/04 10:47, George Anthony Vernon wrote:
-> +	if (!is_valid_cnid(inode->i_ino,
-> +			   S_ISDIR(inode->i_mode) ? HFS_CDR_DIR : HFS_CDR_FIL))
-> +		BUG();
+On 2025-11-06 13:08:22 [+0000], Guangbo Cui wrote:
+>=20
+> LGTM, If there are no objections, I=E2=80=99ll include these two patches =
+in the
+> next version of the patchset and add your Signed-off-by tag.
 
-Is it guaranteed that hfs_write_inode() and make_bad_inode() never run in parallel?
-If no, this check is racy because make_bad_inode() makes S_ISDIR(inode->i_mode) == false.
+I would suggest a Suggested-by or a Co-developed-by. Unless you take his
+work, make him the author and simply provide a patch description among
+his "patch".
 
+> Best regards,
+> Guangbo
+
+Sebastian
 
