@@ -1,234 +1,113 @@
-Return-Path: <linux-kernel+bounces-894983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68D5DC4C9F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:23:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D76A5C4CA06
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:23:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 044AA189F164
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:20:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1ADAB18C0806
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:20:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0A582F12B1;
-	Tue, 11 Nov 2025 09:19:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C57D2DC35C;
+	Tue, 11 Nov 2025 09:20:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vGClO8NE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="iC3rAGJP"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD0E12E7F05
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 09:19:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2844A1E7C23
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 09:20:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762852791; cv=none; b=WAmG8LKH3kxRiB6D05TpUTuf0mJsJBCLQqSfowKu5NN3sJLTIhzh/4PHIzG2Tq0vgTcoqVYXaWb2apxfnbWeiX8+3HwqW7M4Cfne1C6IFJBZ5DZ/WCjy9PDfCIPYNn5PAP0OhVBMB9u5GumSsXOzzTDmPNXd0IxkXc6PMJU5qug=
+	t=1762852825; cv=none; b=l13t1Pww3lXZ/SiynkT3I3HJCoqxuYwYkyRXZwj9rXwDD9uKKZ1EVmmtGoagdp6wOyzHRNZiOQmTM0xalN+25EkyE6xesuiQMD9fb0zsauxVFzX1gqTTPhJCiOCyXTIbKPG+iiRX5m8VdUQSM743+XJPPnzbwnKw7LnPlp327Bw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762852791; c=relaxed/simple;
-	bh=dVuTtHvnVZEobITrk9FyDHPMZXl5yRe3omNS/JcWa64=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CBYa9xU1IlxxgeE1QgTKwymWRU8mUaRodk9ezFR5cUfZDNypIUy2i9UYFe1bPrh34wyC3pPhLAq8RpguYfDtbCNYcRcrQpeeqfBoRlJFTbBUjltQetC3EVtvmEDPD9RiLRLq0jF9mrrQ8uWRoSjqwJBilMob8f05NNjC1zDyphE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vGClO8NE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F5CDC19421
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 09:19:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762852791;
-	bh=dVuTtHvnVZEobITrk9FyDHPMZXl5yRe3omNS/JcWa64=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=vGClO8NE0KorCNpVq7YjjPoJy4vppAc1exbgNg08YFojL+dCZUmXYan4Wftv6Gmgv
-	 GEa5Cfno24p5jxvYB/qDkaZk9C5q5w3kRLHUbzXznZ6oolxTsaWOZHMZ30eLed0sXX
-	 Egq/iKpmX81Z2Ojm2N/HTq94Olgee+8BMC8ZQeiiffDB8QDkji4mseoLtGvE7ZrhYn
-	 dP6Lyes8MmmyzNcHmC8Tv8TlcJnJCoZxEs+Jh5/+z/VVpJKPEC43Am3km0NAnjA2Au
-	 zZAMssPqCgroICwsfk9a9tSlMA452D+MVB2qo029A00ncGyiyFIJrvq/hmj6vDJQzp
-	 +9zlwlmMK1NvQ==
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-787f586532bso20021267b3.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 01:19:51 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVk87vz6rO/U51k9mwxbUJZA773CIXkk2D+5KIFe1Wg9akYW9rOqIhxjwX4dmZHj5lmaIDbiZE3bKsSY2M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2Pyq+1/NM4CfFsSu8iArAddy9RAC9J/aKfL4Bftznv0BqYH+K
-	4C5lNY2ET/bW3QEsO2WzuyvBHNPXCzqKfOtHLt+H0xZeHLogIQqAKCL4nqcqdUUeO/srMpX+hPW
-	IvcMsZvQSUYHz0Idc8SmRI+bd+c8dQjvAtcBgRfT7ag==
-X-Google-Smtp-Source: AGHT+IE7U/hfMH//RfLupvft/VoqtwYRbFfH+avnkA19gWihvYeZ3A5/gr7GLzY5y0EQ9dDLUE90MgX0MeQiFlzqDkk=
-X-Received: by 2002:a05:690c:3341:b0:786:6b92:b1f5 with SMTP id
- 00721157ae682-787d5439064mr100470067b3.47.1762852790107; Tue, 11 Nov 2025
- 01:19:50 -0800 (PST)
+	s=arc-20240116; t=1762852825; c=relaxed/simple;
+	bh=LwXh8WK26AJaQ7ZCIdlPCs6xPljwkOq9QQrm0FZM220=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YU3HwdBeO3NMVjb3r47dxfWB/3Nqnhg7yGEclz9JWNCoI8Q8t2q7JCeiL9Sg8Sm748puioGxNyVnlByjV0hhCH/9OhFDvyPaOV/O6xQzlTr0u3NWaRdB8sCOS4/BHknE4iNZuKi0ucrpb9t9Z8rpMzRSzm9zLi7ivYEpQaNWyBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=iC3rAGJP; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=dcYcPJY3H/k/eRT5a19gEpotDGRZ3dyDyv0pbSbHEqM=; b=iC3rAGJPIGbJqt79QVgO4ZHiOM
+	60CHwyGgI0dnucPfdRyI4AtVFKHx/zx6mNB31+4oRunpc8qyuG2X1Ox+T27XJAeS3eNq6XEHOtB7D
+	DpSsECr61/5m1mbzzoS/dXxTPXtI8K7SzcMdbJkYe+DUIn+WKn8GgpCuoqBAT/TXXhSQ3X+gVuoaJ
+	27rRnk6FYaSaKrfF0PrLuoSkU5ZfDiiCvh8O0s4dMdzct2a1aH3fkONl8SyIVwrr3Jrt+29cUq+uh
+	1ACCo1VMUWHNkuCkf5jS36UDdaosRl94NhAWXWqqfLTBuQ5mz1iNZU5HQ/oBt6JalHLsM6ktDmNWF
+	8JJrJErA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vIkXq-00000002RRr-2Ln2;
+	Tue, 11 Nov 2025 09:20:10 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 4E0AF300328; Tue, 11 Nov 2025 10:20:09 +0100 (CET)
+Date: Tue, 11 Nov 2025 10:20:09 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Adam Li <adamli@os.amperecomputing.com>
+Cc: Chris Mason <clm@meta.com>,
+	Joseph Salisbury <joseph.salisbury@oracle.com>,
+	Hazem Mohamed Abuelfotoh <abuehaze@amazon.com>,
+	Josh Don <joshdon@google.com>, mingo@redhat.com,
+	juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/4] sched/fair: Proportional newidle balance
+Message-ID: <20251111092009.GE278048@noisy.programming.kicks-ass.net>
+References: <20251107160645.929564468@infradead.org>
+ <20251107161739.770122091@infradead.org>
+ <ee62fc73-2a08-4648-8852-afa9e2705c8c@os.amperecomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1762621567.git.lorenzo.stoakes@oracle.com>
- <CACePvbVq3kFtrue2smXRSZ86+EuNVf6q+awQnU-n7=Q4x7U9Lw@mail.gmail.com>
- <5b60f6e8-7eab-4518-808a-b34331662da5@lucifer.local> <CACePvbUvQu+So7OoUbJTMLODz8YDAOgWaM8A-RXFj2U_Qc-dng@mail.gmail.com>
- <3c0e9dd0-70ac-4588-813b-ffb24d40f067@lucifer.local>
-In-Reply-To: <3c0e9dd0-70ac-4588-813b-ffb24d40f067@lucifer.local>
-From: Chris Li <chrisl@kernel.org>
-Date: Tue, 11 Nov 2025 01:19:37 -0800
-X-Gmail-Original-Message-ID: <CACePvbUHCrNNy38G4fZP92sdMY7k5pRQkcfo=iPp0=10T5oCEw@mail.gmail.com>
-X-Gm-Features: AWmQ_bkffqW5YvxjFtC7ucCTeEYe-oG-VIvciMpKUSHdG9LRrce-7fJweHmox0c
-Message-ID: <CACePvbUHCrNNy38G4fZP92sdMY7k5pRQkcfo=iPp0=10T5oCEw@mail.gmail.com>
-Subject: Re: [PATCH v2 00/16] mm: remove is_swap_[pte, pmd]() + non-swap
- entries, introduce leaf entries
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank <frankja@linux.ibm.com>, 
-	Claudio Imbrenda <imbrenda@linux.ibm.com>, David Hildenbrand <david@redhat.com>, 
-	Alexander Gordeev <agordeev@linux.ibm.com>, Gerald Schaefer <gerald.schaefer@linux.ibm.com>, 
-	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
-	Sven Schnelle <svens@linux.ibm.com>, Peter Xu <peterx@redhat.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Arnd Bergmann <arnd@arndb.de>, Zi Yan <ziy@nvidia.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>, 
-	Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>, 
-	Lance Yang <lance.yang@linux.dev>, Muchun Song <muchun.song@linux.dev>, 
-	Oscar Salvador <osalvador@suse.de>, Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, 
-	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
-	Matthew Brost <matthew.brost@intel.com>, Joshua Hahn <joshua.hahnjy@gmail.com>, 
-	Rakie Kim <rakie.kim@sk.com>, Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>, 
-	Ying Huang <ying.huang@linux.alibaba.com>, Alistair Popple <apopple@nvidia.com>, 
-	Axel Rasmussen <axelrasmussen@google.com>, Yuanchu Xie <yuanchu@google.com>, 
-	Wei Xu <weixugc@google.com>, Kemeng Shi <shikemeng@huaweicloud.com>, 
-	Kairui Song <kasong@tencent.com>, Nhat Pham <nphamcs@gmail.com>, Baoquan He <bhe@redhat.com>, 
-	SeongJae Park <sj@kernel.org>, Matthew Wilcox <willy@infradead.org>, Jason Gunthorpe <jgg@ziepe.ca>, 
-	Leon Romanovsky <leon@kernel.org>, Xu Xin <xu.xin16@zte.com.cn>, 
-	Chengming Zhou <chengming.zhou@linux.dev>, Jann Horn <jannh@google.com>, 
-	Miaohe Lin <linmiaohe@huawei.com>, Naoya Horiguchi <nao.horiguchi@gmail.com>, 
-	Pedro Falcato <pfalcato@suse.de>, Pasha Tatashin <pasha.tatashin@soleen.com>, 
-	Rik van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>, Hugh Dickins <hughd@google.com>, 
-	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, linux-s390@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-arch@vger.kernel.org, 
-	damon@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ee62fc73-2a08-4648-8852-afa9e2705c8c@os.amperecomputing.com>
 
-On Mon, Nov 10, 2025 at 3:28=E2=80=AFAM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
-> > > > I kind of wish the swap system could still use swp_entry_t. At leas=
-t I
-> > > > don't see any complete reason to massively rename all the swap syst=
-em
-> > > > code if we already know the entry is the limited meaning of swap en=
-try
-> > > > (device + offset).
-> > >
-> > > Well the reason would be because we are trying to keep things consist=
-ent
-> > > and viewing a swap entry as merely being one of the modes of a softle=
-af.
-> >
-> > Your reason applies to the multi-personality non-present pte entries.
-> > I am fine with those as softleaf. However the reasoning does not apply
-> > to the swap entry where we already know it is for actual swap. The
-> > multi-personality does not apply there. I see no conflict with the
-> > swp_entry type there. I argue that it is even cleaner that the swap
-> > codes only refer to those as swp_entry rather than softleaf because
-> > there is no possibility that the swap entry has multi-personality.
->
-> Swap is one of the 'personalities', very explicitly. Having it this way h=
-ugely
-> cleans up the code.
->
-> I'm not sure I really understand your objection given the type will be
-> bit-by-bit compatible.
+On Tue, Nov 11, 2025 at 05:07:45PM +0800, Adam Li wrote:
+> > @@ -12843,6 +12858,22 @@ static int sched_balance_newidle(struct
+> >  			break;
+> >  
+> >  		if (sd->flags & SD_BALANCE_NEWIDLE) {
+> > +			unsigned int weight = 1;
+> > +
+> > +			if (sched_feat(NI_RANDOM)) {
+> > +				/*
+> > +				 * Throw a 1k sided dice; and only run
+> > +				 * newidle_balance according to the success
+> > +				 * rate.
+> > +				 */
+> > +				u32 d1k = sched_rng() % 1024;
+> > +				weight = 1 + sd->newidle_ratio;
+> > +				if (d1k > weight) {
+> > +					update_newidle_stats(sd, 0);
+> > +					continue;
+> > +				}
+> > +				weight = (1024 + weight/2) / weight;
+> > +			}
+> >  
+> e.g: Why 'weight = (1024 + weight/2) / weight'
 
-Just to clarify. I only object to the blanket replacing all the
-swp_entry_t to softleaf_t.
-It seems you are not going to change the swp_entry_t for actual swap
-usage, we are in alignment then.
+Not sure what you're asking, so two answers:
 
-BTW, about the name "softleaf_t", it does not reflect the nature of
-this type is a not presented pte. If you have someone new to guess
-what does  "softleaf_t" mean, I bet none of them would have guessed it
-is a PTE  related value. I have considered  "idlepte_t", something
-given to the reader by the idea that it is not a valid PTE entry. Just
-some food for thought.
+That's a rounding divide. We have a helper for that, but I never can
+remember what its called.
 
-> I'll deal with this when I come to this follow-up series.
->
-> As I said before I'm empathetic to conflicts, but also - this is somethin=
-g we
-> all have to live with. I have had to deal with numerous conflict fixups. =
-They're
-> really not all that bad to fix up.
->
-> And again I'm happy to do it for you if it's too egregious.
->
-> BUT I'm pretty sure we can just keep using swp_entry_t. In fact unless th=
-ere's
-> an absolutely compelling reason not to - this is exactly what I"ll do :)
+The transformation as a whole here is from a ratio to a weight, suppose
+our ratio is 256, this means that we do 1-in-4 or 25% of the balance
+calls. However this also means that each success needs to be weighted as
+4 (=1024/256), otherwise we under-account the successes and not even a
+100% success rate can lift you out the hole.
 
-Good.
+Now, I made it a rounding divide to make it a little easier to climb out
+of said hole (I even considered ceiling divide).
 
-> > > So this series will proceed as it is.
-> >
-> > Please clarify the "proceed as it is" regarding the actual swap code.
-> > I hope you mean you are continuing your series, maybe with
-> > modifications also consider my feedback. After all, you just say " But
-> > I did think perhaps we could maintain this type explicitly for the
-> > _actual_ swap code."
->
-> I mean keeping this series as-is, of course modulo changes in response to=
- review
-> feedback.
->
-> To be clear - I have no plans whatsoever to change the actual swap code _=
-in this
-> series_ beyond what is already here.
->
-> And in the follow-up that will do more on this - I will most likely keep =
-the
-> swp_entry_t as-is in core swap code or at least absolutely minimal change=
-s
-> there.
 
-Ack
-
-> And that series you will be cc'd on and welcome of course to push back on
-> anything you have an issue with :)
->
-> >
-> > > However I'm more than happy to help resolve conflicts - if you want t=
-o send
-> > > me any of these series off list etc. I can rebase to mm-new myself if
-> > > that'd be helpful?
-> >
-> > As I said above, leaving the actual swap code alone is more helpful
-> > and I consider it cleaner as well. We can also look into incremental
-> > change on your V2 to crave out the swap code.
->
-> Well I welcome review feedback.
->
-> I don't think I really touched anything particularly swap-specific that i=
-s
-> problematic, but obviously feel free to review and will absolutely try to
-> accommodate any reasonable requests!
->
-> >
-> > >
-> > > >
-> > > > Does this renaming have any behavior change in the produced machine=
- code?
-> > >
-> > > It shouldn't result in any meaningful change no.
-> >
-> > That is actually the reason to give the swap table change more
-> > priority. Just saying.
->
-> I'm sorry but this is not a reasonable request. I am being as empathetic =
-and
-> kind as I can be here, but this series is proceeding without arbitrary de=
-lay.
->
-> I will do everything I can to accommodate any concerns or issues you may =
-have
-> here _within reason_ :)
-
-I did not expect you to delay this. It is just expressing the
-viewpoint that this is internal clean up for benefit the developers
-rather than the end users.
-
-Keep the existing swp_entry_t for the actual core swap usage is within
-reasonable request. We already align on that.
-
-Chris
 
