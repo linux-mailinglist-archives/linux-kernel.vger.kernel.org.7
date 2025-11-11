@@ -1,110 +1,116 @@
-Return-Path: <linux-kernel+bounces-895559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7E19C4E47E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 15:04:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C78D8C4E47B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 15:03:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80F833B1891
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:00:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0517189D419
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:01:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D9C835A13E;
-	Tue, 11 Nov 2025 14:00:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF0A635B157;
+	Tue, 11 Nov 2025 14:00:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BK6yS3ik"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oib/AhSC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B93733451C6;
-	Tue, 11 Nov 2025 14:00:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15B2335B13D;
+	Tue, 11 Nov 2025 14:00:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762869607; cv=none; b=aP8kodhbJk3p/J9PTDZR7RO+ull/SlYDVXm7yvJuBv/Bjsy8z1tLNlVkIKCHH/cepfX5f3lNRzFrN2y/JO7CkbxC7EfggL/hpVv5fFPP5/U88cUYvCzrUN86WWdDH7qdXcUzIBEUgjE3L2xUIwjvtzqtYbuyCa/shid2MEbVAQU=
+	t=1762869614; cv=none; b=gUCLyJfhpNvSNOKhJnn6ffPxlRKbmEstFJxpMUxZ8OT9qDmPxBkfB2gQhHfR/1cgscb2oIYglsmK0nf9LYuteGP2xY3bUJS4vS7YQqok8Au3xnJJ2cmVgmKttXYtOMFiOp1RGnrKXCQ0A7pt1Hwn8EQJ0DZ+FawiYHsOBJ/9gLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762869607; c=relaxed/simple;
-	bh=D1S3OL4p0+J4mWcZ2dm1aw9L5R0M+rOLhxjglXPSaEc=;
+	s=arc-20240116; t=1762869614; c=relaxed/simple;
+	bh=pKGxohOsLQcLsOLtFArzxf1WdF08CEmoONSvXjw76To=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jGaLNvVdQGE4K200Txnaaq+EGRGvjGLHGCVe0u4n84btaWTweJrnkjdQDP0uyLCVqHTzIGr3GfQ2SLKV1rA6XZQRDAmkRMPtM+qEm1IYu3aKiDcsVHQYKc+C4orfup06g29JQH8vKl5WAEDlfhYm7pJKbSyPRB3FPAyvbp/jW4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BK6yS3ik; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2B6CC113D0;
-	Tue, 11 Nov 2025 14:00:03 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=kVwR0OlI8++61OvoK5G6CqUDWBHqCldkjG1x5H9OVCgTZwkl9kLrm/dLsfIp5qRwNvoKxnN/fTtHqdQWc/tmP4VETfopTXqZ+JsLXUSaq+zyPftPPDYbCboaMe7S/mvu7lzmMaUy1DNvblcZPI5WtqwFEBnbsGU8mYxtLPBIGsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oib/AhSC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECF0FC4CEF5;
+	Tue, 11 Nov 2025 14:00:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762869607;
-	bh=D1S3OL4p0+J4mWcZ2dm1aw9L5R0M+rOLhxjglXPSaEc=;
+	s=k20201202; t=1762869613;
+	bh=pKGxohOsLQcLsOLtFArzxf1WdF08CEmoONSvXjw76To=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BK6yS3ikNQGdeSm87kJZrIJJ2XY6POhOH7MZmL27V0Z5S3dw3nYncaxgaHcY1Lu+F
-	 JfFL1HyiOjKsoFotilBRDoOwnVtfEN+Am17dFZfdhl0iJzjCla5OqcEAQDJEoJm/UW
-	 zQl/cTwTmOjKHw9ttl9MFYwgAmc2524Srxq/IfABJDKxLrba4bc4JT3yXrBsZMKi5H
-	 Da2hh7/+bYFZH+VSJUbPQjShpd8y+P5ZonC8DCmnRcV2ZQTaP9oh5X/y2e05XA9pX1
-	 V2vT6CqyqJnODCdbHc0Dsnc313OsQ0rZJdxY80KZzyZZThukX8LeGbI/ySB71OPEQO
-	 kUp8PlC3G+pJQ==
-Date: Tue, 11 Nov 2025 15:00:01 +0100
-From: Niklas Cassel <cassel@kernel.org>
-To: Shawn Lin <shawn.lin@rock-chips.com>
-Cc: FUKAUMI Naoki <naoki@radxa.com>, Damien Le Moal <dlemoal@kernel.org>,
-	Anand Moon <linux.amoon@gmail.com>, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Dragan Simic <dsimic@manjaro.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Manivannan Sadhasivam <mani@kernel.org>
-Subject: Re: [RESEND] Re: [PATCH] PCI: dw-rockchip: Skip waiting for link up
-Message-ID: <aRNBYX8MbR7PtssY@ryzen>
-References: <780a4209-f89f-43a9-9364-331d3b77e61e@rock-chips.com>
- <4487DA40249CC821+19232169-a096-4737-bc6a-5cec9592d65f@radxa.com>
- <363d6b4d-c999-43d4-866e-880ef7d0dec3@rock-chips.com>
- <0C31787C387488ED+fd39bfe6-0844-4a87-bf48-675dd6d6a2df@radxa.com>
- <dc932773-af5b-4af7-a0d0-8cc72dfbd3c7@rock-chips.com>
- <aRHb4S40a7ZUDop1@ryzen>
- <2n3wamm3txxc6xbmvf3nnrvaqpgsck3w4a6omxnhex3mqeujib@2tb4svn5d3z6>
- <aRJEDEEJr9Ic-RKN@fedora>
- <B721C8A516FDB604+a04b38d3-64ec-423f-9e4c-040c8d2aec76@radxa.com>
- <05bd0efe-9a84-40e9-af07-51c0b0d865bf@rock-chips.com>
+	b=oib/AhSC+LENxt8l6cfvQXi0qe80vMq1BhrYRxNQbXErF+crW6yJqXAhNpM1///Uz
+	 HlPs27FoW2v5V53Fq2sjR5VQejrwefP8RtU42ti9vYEa2rLxPgIfPE7ANItwOm83cq
+	 Tw7/Ou2UnC5MPPX7juv5eZLEHdM34Sq1UH9P4gJodqwEwYn3uBgB+qPbd0BImwAbFm
+	 2f/DT0v3SsWwu51mTIFjFyzo3VwMR98Q/ee9WysUTC4kKNMwZtouEJR3LtoBZ7qpar
+	 /w1T3yW1hrCrjGmQFIkmVne2W9gRdc++8c+SSd84P9sXXbEXboEWjd8tPbmvuOavGb
+	 Juu3kXKCzsjfw==
+Date: Tue, 11 Nov 2025 15:00:10 +0100
+From: Lorenzo Bianconi <lorenzo@kernel.org>
+To: Nick Huang <sef1548@gmail.com>
+Cc: nbd@nbd.name, ryder.lee@mediatek.com, shayne.chen@mediatek.com,
+	sean.wang@mediatek.com, linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH] mt76: connac: remove unused reserved field in gtk rekey
+ TLV struct
+Message-ID: <aRNBak9Xl_wsBJ6w@lore-desk>
+References: <20251111134400.5258-1-sef1548@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="3NAqLAM4O8sK+KAA"
+Content-Disposition: inline
+In-Reply-To: <20251111134400.5258-1-sef1548@gmail.com>
+
+
+--3NAqLAM4O8sK+KAA
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <05bd0efe-9a84-40e9-af07-51c0b0d865bf@rock-chips.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 11, 2025 at 11:17:23AM +0800, Shawn Lin wrote:
-> > 
-> > It works stably on the ROCK 5A. The link speed is 2Gb/s.
-> > 
-> > The ROCK 5C is unstable. It initially worked with a link speed of 4Gb/s,
-> > but eventually started showing kernel oops. The dts files for the 5A and
-> > 5C are compatible and interchangeable, but even using the 5A's dts on
-> > the 5C, the operation remains unstable.
-> 
-> The link speed on ROCK 5A is 2Gb/s also means it's downgraded now. Did
-> ROCK 5A work under the link speed of 4Gb/s before?
-> 
-> In case it's signal integrity relevant, you could enable PCIE_DW_DEBUGFS
-> and refer to Documentation/ABI/testing/debugfs-dwc-pcie to collect
-> RASDES info from there.
+> The 'reserverd' field in struct mt76_connac_gtk_rekey_tlv was unused
+> and misspelled. Removing it cleans up the structure definition and
+> improves code readability.
+>=20
+> Signed-off-by: Nick Huang <sef1548@gmail.com>
+> ---
+>  drivers/net/wireless/mediatek/mt76/mt76_connac_mcu.h | 1 -
+>  1 file changed, 1 deletion(-)
+>=20
+> diff --git a/drivers/net/wireless/mediatek/mt76/mt76_connac_mcu.h b/drive=
+rs/net/wireless/mediatek/mt76/mt76_connac_mcu.h
+> index 27daf4195..28cf46a5f 100644
+> --- a/drivers/net/wireless/mediatek/mt76/mt76_connac_mcu.h
+> +++ b/drivers/net/wireless/mediatek/mt76/mt76_connac_mcu.h
+> @@ -1681,7 +1681,6 @@ struct mt76_connac_gtk_rekey_tlv {
+>  	__le32 group_cipher;
+>  	__le32 key_mgmt; /* NONE-PSK-IEEE802.1X */
+>  	__le32 mgmt_group_cipher;
+> -	u8 reserverd[4];
 
-Just a quick note:
-I've noticed that you cannot blindly look at the link speed in dmesg.
+This field is used to keep the struct size consistent with the fw one so it=
+ is
+expected to not be used.
 
-E.g. on my ROCK 5B boards, I can occasionally see something like:
-[    1.417181] pci 0000:01:00.0: 4.000 Gb/s available PCIe bandwidth, limited by 5.0 GT/s PCIe x1 link
+Regards,
+Lorenzo
 
-However, if I check the actual link speed with lspci after boot:
+>  } __packed;
+> =20
+>  #define MT76_CONNAC_WOW_MASK_MAX_LEN			16
+> --=20
+> 2.48.1
+>=20
 
-# lspci -vvv  -s 0000:01:00.0 | grep LnkSta:
-                LnkSta: Speed 8GT/s, Width x4
+--3NAqLAM4O8sK+KAA
+Content-Type: application/pgp-signature; name=signature.asc
 
-I can see that the link is actually using the correct speed + number of lanes.
+-----BEGIN PGP SIGNATURE-----
 
+iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCaRNBagAKCRA6cBh0uS2t
+rA8XAP92QWJ628UHuby2jMHAqObl3TqsYz3L5+Sblh+15y/FRQEAsXhgZSpVvlhm
+LMdSaMTBNy4ja/h10Tz9E+eYjURNTgc=
+=pcBD
+-----END PGP SIGNATURE-----
 
-Kind regards,
-Niklas
+--3NAqLAM4O8sK+KAA--
 
