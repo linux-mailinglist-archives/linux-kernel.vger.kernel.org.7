@@ -1,317 +1,110 @@
-Return-Path: <linux-kernel+bounces-894852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1272C4C422
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:09:11 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6063AC4C3BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:04:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F29AB3AE9E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 08:03:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 05D574EA38C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 08:02:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36BC315E8B;
-	Tue, 11 Nov 2025 08:03:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE7F22BEC2B;
+	Tue, 11 Nov 2025 08:02:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="qdo1txQg"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vMvGc8hC";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="iUqoMMo0"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67FC02DC335;
-	Tue, 11 Nov 2025 08:03:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A4BB9476;
+	Tue, 11 Nov 2025 08:02:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762848201; cv=none; b=HxPP3fe0S8e7q4vb3vFckuvPnEB8enczWl7Ek3+iU0GZ83MDRdxuF4P5RxByqs9wZ+ujUsZYz6gfbfh8RsmO6wTuJkz2xp2EvOZZOEXxLS2gI9Di302iw+0ElPhF6f/z96Ys1ikf3HhrRePR60U01+DhzyjHODnEJZWKWGqVxeI=
+	t=1762848124; cv=none; b=LF0lspnND+ViBvZfaXIX9AOqmuT8OrcCjlraF16lPlIydY56G5Hif3uB6uULp4RXX95uErONqwq9Z0J7EUEj5yyuR+XcnChCQG3mif609j8SQet9/omCBpFcyhbhptSHinn36kJq7en7PFhthWrr6LtN/nwDTaGKs1YnT4OIebE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762848201; c=relaxed/simple;
-	bh=9WXuOHJHXAsRjndy4oEqyChsAfKCtZ7nHy6fD9HIU+s=;
+	s=arc-20240116; t=1762848124; c=relaxed/simple;
+	bh=4tiOI0qI5k+vWSZUXOPHz8VzDwicg9ES+8RHVjqXnMk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qEPRYIg3sywBih+XT+ak5gMXasTeBKmBwLSb+FKpWW1ti6GBlhhtGUDofjrqgxr/zGFuIsteS8aikL5fCUZvufZa/REyIHCXdFEpkrOwmyq87Qgi7I9mDhsawVWG4zWjRQbQJjez89ABEwdogHkOlRBi7OJ3p4st5IMRlNwLR1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=qdo1txQg; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5AALY1xc017402;
-	Tue, 11 Nov 2025 08:02:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=a9W0L6
-	CfK0bWdTLm9fJi4xkSwBtlng03J+x1NVveACU=; b=qdo1txQgzgOvIHTmCzU7HB
-	Gn+DrVuskN48MqA/40OYsz0tP49ocEYlsaI4/lyOl87fxVMg8ZYDJ6WfohfxUa2H
-	sCIXGOdWkVT7byFFSSNba85ql3Jovzbu3vHW6s+6oA+dceJ5xhYy0xmHLma5lXwH
-	lco3Z991ZRYlMBrC8ph0/LJ1Vvt/e3RGPvY6qNS+2DRsPg2MSEcRVFMIwTtKS8WI
-	KYdt+tIQ5ETwHVz86a6K28vbtfyBvCD2F1E+28XuqeV3bN6vX0T9xvwyMQDiSz6P
-	IcBBYG90bfN/z8xaZDRdprnl55ftC0Cnz9ls8W5PCCk0f7PgPqbw7DMxKYlyocBw
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a9wgwtumd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Nov 2025 08:02:00 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5AB7kG37026652;
-	Tue, 11 Nov 2025 08:01:59 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a9wgwtumb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Nov 2025 08:01:59 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5AB5Gbhj014853;
-	Tue, 11 Nov 2025 08:01:58 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4aahpk1q0u-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Nov 2025 08:01:58 +0000
-Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5AB81uo343188530
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 11 Nov 2025 08:01:56 GMT
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 80F072004B;
-	Tue, 11 Nov 2025 08:01:56 +0000 (GMT)
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 2ADFB20040;
-	Tue, 11 Nov 2025 08:01:54 +0000 (GMT)
-Received: from li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com (unknown [9.111.64.50])
-	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Tue, 11 Nov 2025 08:01:54 +0000 (GMT)
-Date: Tue, 11 Nov 2025 09:01:52 +0100
-From: Alexander Gordeev <agordeev@linux.ibm.com>
-To: Ryan Roberts <ryan.roberts@arm.com>
-Cc: "David Hildenbrand (Red Hat)" <davidhildenbrandkernel@gmail.com>,
-        Kevin Brodsky <kevin.brodsky@arm.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Andreas Larsson <andreas@gaisler.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        David Woodhouse <dwmw2@infradead.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Jann Horn <jannh@google.com>, Juergen Gross <jgross@suse.com>,
-        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-        Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
-        Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
-        Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
-        sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org,
-        x86@kernel.org
-Subject: Re: [PATCH v4 06/12] mm: introduce generic lazy_mmu helpers
-Message-ID: <92eca53f-eb5d-4bd0-ad6c-56c65fdcea86-agordeev@linux.ibm.com>
-References: <20251029100909.3381140-1-kevin.brodsky@arm.com>
- <20251029100909.3381140-7-kevin.brodsky@arm.com>
- <71418b31-aedb-4600-9558-842515dd6c44@arm.com>
- <c764489e-0626-4a50-87b5-39e15d9db733@gmail.com>
- <645178fd-df4e-42fe-b55e-97d9506499be@arm.com>
- <413b2c49-f124-4cda-8fea-a6cc165f6326-agordeev@linux.ibm.com>
- <e428b1d5-65a8-49bc-92dc-ec4a4d933dec@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=uOHvgEhGbDhSCqf7oo5nbMJRf5rj9UbzSse7WHavFaTaqNIMqAdvZAV9JSyrg6a0zZTblXydndSYY80hwXidOXqfqqt8PpcqwziwNJ/VCtBujRWaSKM4jDrT3XpzMZSYnwOdVpCR6BRsvJ1LQHdylMQZvGo/1gctSpZLIaVew50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vMvGc8hC; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=iUqoMMo0; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 11 Nov 2025 09:01:53 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1762848115;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Dx+P3tmh8RRhlJbEuybtXJQuyEPuClVVZRpIZ0Mh1q8=;
+	b=vMvGc8hCbnyKYogzWdAmHFKDT2esfKhiN/1WVwqSpRwIuyM0XqM+Hw24fN35m+ziuw1ZwN
+	H4+vaj9gT0so58eZaRH8Fghkk14qaV5iKGl816Bvl95Y1+05Nmsa5A22vn6+QLq44OC/av
+	mggOpIH2/avhHyT1+xzbnR58gA1b7XoWgsbtocODVQTNhB+0wYf9VyTPM8A41GgLZ5t4bq
+	Y7Cd9e8JFK5AD4aMSrGP8yz6Xp7DpeDz7i8KQdHg5RNahP/caaiOW4aB7ElRolz1Ir2Sxe
+	+puGZu1XqOOmIOzkpppJzZfHGNC2QM7Jac5cHnosNtxaDwcgYRsK2SVgt4aaIw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1762848115;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Dx+P3tmh8RRhlJbEuybtXJQuyEPuClVVZRpIZ0Mh1q8=;
+	b=iUqoMMo0MCvnlPoaGp1XbX6sIHxU35Loi+T+vRoqwekh2f53jfWu9cCkH5+W+iunP1eY2N
+	T/1+j18ur9A+p5Cw==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Harry Yoo <harry.yoo@oracle.com>
+Cc: Qi Zheng <qi.zheng@linux.dev>, Shakeel Butt <shakeel.butt@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>,
+	Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
+	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Meta kernel team <kernel-team@meta.com>,
+	Clark Williams <clrkwllms@kernel.org>,
+	linux-rt-devel@lists.linux.dev
+Subject: Re: [PATCH 0/4] memcg: cleanup the memcg stats interfaces
+Message-ID: <20251111080153.eo8vtb4P@linutronix.de>
+References: <20251110232008.1352063-1-shakeel.butt@linux.dev>
+ <aRKKfdN3B68wxFvN@hyeyoo>
+ <24969292-7543-456f-8b80-09c4521507e2@linux.dev>
+ <gsew67sciieqxbcczp5mzx4lj6pvvclfrxn6or3pzjqmj7eeic@7bxuwqgnqaum>
+ <99429fb8-dcec-43e7-a23b-bee54b8ed6e6@linux.dev>
+ <aRKn4kqHx9m9lWfu@hyeyoo>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e428b1d5-65a8-49bc-92dc-ec4a4d933dec@arm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 6zTX9ZOrNUJdIPkZTpOF6inwbKLmfWMW
-X-Proofpoint-ORIG-GUID: LChZoM8zrhHNbPBL-El76cxb9g1AeKQe
-X-Authority-Analysis: v=2.4 cv=VMPQXtPX c=1 sm=1 tr=0 ts=6912ed78 cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=8nJEP1OIZ-IA:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8 a=7CQSdrXTAAAA:8 a=RmnHjvQuIkE0_jnVAnoA:9
- a=3ZKOabzyN94A:10 a=wPNLvfGTeEIA:10 a=a-qgeE7W1pNrGK8U0ZQC:22
- a=DXsff8QfwkrTrK3sU8N1:22 a=Z5ABNNGmrOfJ6cZ5bIyy:22 a=bWyr8ysk75zN3GCy5bjg:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA4MDAyMiBTYWx0ZWRfXyGhka9ktVQcp
- NtumBxw6X433jOZ6hxU7cflzh+FFuYKWWKnULzVPcUOjZXQmkTAqOCdXlHIsHv1lpUX47VickOd
- +ymisGDp/K22Lqycx3j2XXMo0XpqaRXvqkKxvBKvJKxPXuUfuzt3AXkbSqNOdA4ImI9C+Xq1kxt
- TEOnl7KKGrGzBnDhvUHkdpLWQe2Lh5ecd2l9m9sQhLcN/N7oBhjXJoRqt609HdHHCQ8kIUpq28s
- Sh00eZmpM+PD2+npNB09KeaWuLe3d4wgMIavWSzMSuvE62y1vEOzjS8GZEWtbBR0nfeizZ8kPEd
- goqFEPPBTD0yzYfjqEub6US2xXlbVyhasXpHCLWJWgCsNJJetNjX1OgXN6mLcI9N0yKOs9EGAVS
- 77b7qIhDEPM4ZI6Q7fzDt9a5okKZvQ==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-11_01,2025-11-11_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 priorityscore=1501 lowpriorityscore=0 bulkscore=0
- clxscore=1015 phishscore=0 spamscore=0 malwarescore=0 adultscore=0
- suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510240000
- definitions=main-2511080022
+In-Reply-To: <aRKn4kqHx9m9lWfu@hyeyoo>
 
-On Mon, Nov 10, 2025 at 09:19:40AM +0000, Ryan Roberts wrote:
-> On 10/11/2025 08:11, Alexander Gordeev wrote:
-> > On Fri, Nov 07, 2025 at 03:22:54PM +0000, Ryan Roberts wrote:
-> > 
-> > Hi Ryan,
-> > 
-> >> On 07/11/2025 14:34, David Hildenbrand (Red Hat) wrote:
-> >>>>>   #ifndef pte_batch_hint
-> >>>>> diff --git a/mm/kasan/shadow.c b/mm/kasan/shadow.c
-> >>>>> index 5d2a876035d6..c49b029d3593 100644
-> >>>>> --- a/mm/kasan/shadow.c
-> >>>>> +++ b/mm/kasan/shadow.c
-> >>>>> @@ -305,7 +305,7 @@ static int kasan_populate_vmalloc_pte(pte_t *ptep,
-> >>>>> unsigned long addr,
-> >>>>>       pte_t pte;
-> >>>>>       int index;
-> >>>>>   -    arch_leave_lazy_mmu_mode();
-> >>>>> +    lazy_mmu_mode_pause();
-> >>>>
-> >>>> I wonder if there really are use cases that *require* pause/resume? I think
-> >>>> these kasan cases could be correctly implemented using a new nest level instead?
-> >>>> Are there cases where the effects really need to be immediate or do the effects
-> >>>> just need to be visible when you get to where the resume is?
-> >>>>
-> >>>> If the latter, that could just be turned into a nested disable (e.g. a flush).
-> >>>> In this case, there is only 1 PTE write so no benefit, but I wonder if other
-> >>>> cases may have more PTE writes that could then still be batched. It would be
-> >>>> nice to simplify the API by removing pause/resume if we can?
-> >>>
-> >>> It has clear semantics, clearer than some nest-disable IMHO.
-> >>>
-> >>> Maybe you can elaborate how you would change ("simplify") the API in that
-> >>> regard? What would the API look like?
-> >>
-> >> By simplify, I just meant can we remove lazy_mmu_mode_pause() and
-> >> lazy_mmu_mode_resume() ?
-> >>
-> >>
-> >> We currently have:
-> >>
-> >> apply_to_page_range
-> >>   lazy_mmu_mode_enable()
-> >>     kasan_populate_vmalloc_pte()
-> >>       lazy_mmu_mode_pause()
-> >>       <code>
-> >>       lazy_mmu_mode_resume()
-> >>   lazy_mmu_mode_disable()
-> >>
-> >> Where <code> is setting ptes. But if <code> doesn't need the effects to be
-> >> visible until lazy_mmu_mode_resume(), then you could replace the block with:
-> >>
-> >> apply_to_page_range
-> >>   lazy_mmu_mode_enable()
-> >>     kasan_populate_vmalloc_pte()
-> >>       lazy_mmu_mode_enable()
-> >>       <code>
-> >>       lazy_mmu_mode_disable()
-> >>   lazy_mmu_mode_disable()
-> >>
-> >> However, looking at this more closely, I'm not really clear on why we need *any*
-> >> special attention to lazy mmu inside of kasan_populate_vmalloc_pte() and
-> >> kasan_depopulate_vmalloc_pte().
-> >>
-> >> I *think* that the original concern was that we were doing ptep_get(ptep) inside
-> >> of a lazy_mmu block? So we need to flush so that the getter returns the most
-> >> recent value? But given we have never written to that particular ptep while in
-> >> the lazy mmu block, there is surely no hazard in the first place?
-> > 
-> > There is, please see:
-> > https://lore.kernel.org/linux-mm/cover.1755528662.git.agordeev@linux.ibm.com/
+> > I mean converting these places to use spin_lock() instead of
+> > spin_lock_irq().
 > 
-> I've stared at this for a while, but I'm afraid I still don't see the problem.
-> This all looks safe to me. Could you explain exactly what this issue is?
+> Just one thing I noticed while looking at __folio_migrate_mapping()...
 > 
-> If I've understood correctly, kasan_populate_vmalloc() is called during virtual
-> range allocation by vmalloc. This is not in a nested lazy mmu block (but it
-> wouldn't matter if it was once we have Kevin's nested changes to ensure flush
-> when exiting the nested scope). kasan_populate_vmalloc() calls
-> apply_to_page_range(), which will walk the set of ptes, calling
-> kasan_populate_vmalloc_pte() for each one. kasan_populate_vmalloc_pte() does a
-> ptep_get() then, if none, calls set_pte_at().
+> - xas_lock_irq() -> xas_unlock() -> local_irq_enable()
+> - swap_cluster_get_and_lock_irq() -> swap_cluster_unlock() -> local_irq_enable()
 > 
-> That's not a hazard since you're calling get before the set and you only visit
-> each pte once for the apply_to_page_range() lazy mmu block.
-
-I have to admit I do not remember every detail and would have to recreate
-the issue - which is specific to s390 lazy_mmu implementation I think.
-Both kasan_populate_vmalloc_pte() and kasan_depopulate_vmalloc_pte() do:
-
-apply_to_page_range()
-{
-    arch_enter_lazy_mmu_mode();
-
-    kasan_de|populate_vmalloc_pte()
-    {
-        arch_leave_lazy_mmu_mode();             <--- remove?
-
-        spin_lock(&init_mm.page_table_lock);
-        <PTE update>
-        spin_unlock(&init_mm.page_table_lock);	<--- PTE store should be done
-
-        arch_enter_lazy_mmu_mode();             <--- remove?
-    }
-
-    arch_leave_lazy_mmu_mode();
-}
-
-Upon return from spin_unlock() both kasan callbacks expect the PTE contains
-an updated value to be stored to pgtable. That is true unless we remove
-arch_leave|enter_lazy_mmu_mode() brackets. If we do the value is continued
-to be cached and only stored when the outer arch_leave_lazy_mmu_mode() is
-called. That results in a race between concurrent PTE updaters.
-
-> >> apply_to_existing_page_range() will only call kasan_depopulate_vmalloc_pte()
-> >> once per pte, right? So given we read the ptep before writing it, there should
-> >> be no hazard? If so we can remove pause/resume.
-> > 
-> > Unfortunately, we rather not, please see:
-> > https://lore.kernel.org/linux-mm/d407a381-099b-4ec6-a20e-aeff4f3d750f@arm.com/
+> is wrong because spin_lock_irq() doesn't disable IRQ on PREEMPT_RT.
 > 
-> Sorry but I don't see anything relavent to my point in this mail. Perhaps there
-> is some s390-specific detail that I'm failing to understand?
-
-Sorry, with this message I meant the branch where it was discussed,
-I will try to C&P some excerpts and summarize it here.
-
-* lazy_mmu_mode_enable()
-
-This helper is parameter-free, assuming the MMU unit does not need any
-configuration other than turning it on/off. That is currently true, but
-(as I noted in my other mail) I am going to introduce a friend enable
-function that accepts parameters, creates an arch-specific state and
-uses it while the lazy mmu mode is active:
-
-static inline void arch_enter_lazy_mmu_mode_pte(struct mm_struct *mm,
-						unsigned long addr,
-						unsigned long end,
-						pte_t *ptep)
-{
-	...
-}
-
-* lazy_mmu_mode_resume() -> arch_enter_lazy_mmu_mode()
-
-Conversely, this needs to be -> arch_resume_lazy_mmu_mode(). And it can not
-be arch_enter_lazy_mmu_mode(), since a lazy_mmu_mode_resume() caller does
-not know the parameters passed to the original lazy_mmu_mode_enable(...)-
-friend.
-
+> Not 100% sure if it would be benign or lead to actual bugs that need
+> to be fixed in -stable kernels.
 > 
-> Thanks,
-> Ryan
+> Cc'ing RT folks again :)
 
-Thanks!
+The tail in __folio_migrate_mapping() after xas_unlock()/
+swap_cluster_unlock(), is limited to __mod_lruvec_state() based stats
+updates. There is a preempt_disable_nested() in __mod_zone_page_state()
+to ensure that the update happens on the same CPU and is not preempted.
+On PREEMPT_RT there should be no in-IRQ updates of these counters.
+The IRQ enable at the end does nothing. There might be CPU migration
+between the individual stats updates.
+If it remains like this, it is fine. Please don't advertise ;)
 
-> > 
-> > The problem is kasan code invokes apply_to_page_range(), which enters lazy_mmu
-> > mode unconditionally. I would claim that is rather an obstacle for the kasan
-> > code, not a benefit. But it needs to be tackled.
-> > > Should apply_to_page_range() had an option not to enter the lazy_mmu mode
-> > (e.g. an extra "bool skip_lazy" parameter) - the pause/resume could have
-> > been avoided.
-> > 
-> >> Thanks,
-> >> Ryan
-> > 
-> > Thanks!
+Sebastian
 
