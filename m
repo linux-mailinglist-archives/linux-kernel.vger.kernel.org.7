@@ -1,145 +1,184 @@
-Return-Path: <linux-kernel+bounces-894744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A9E7C4BBCC
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 07:53:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8CA7C4BBED
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 07:55:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 69C254EF4A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 06:52:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DA6C1892A9B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 06:54:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A84EE3002BB;
-	Tue, 11 Nov 2025 06:52:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC1AC347FEC;
+	Tue, 11 Nov 2025 06:54:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="xAFMq6S5"
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XBEaOfZQ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DE2A330D26;
-	Tue, 11 Nov 2025 06:52:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D58D2874F1;
+	Tue, 11 Nov 2025 06:53:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762843964; cv=none; b=o/YKPq3twpxY8/mG5kckivweTcZj2WSvXwobOJNasIN5YCItrRyjPS2jlhXQIBNxULPySU6vCmPJSi35aaQqpXoo9/lhePI8xX8iHiNLm0zA88YwI26ul3KmyVIgMBeXKjGCtIWqpjfT9L/sovwbCIhl+zKGOoOf5JqtjdV1Kcc=
+	t=1762844041; cv=none; b=PRvTwJB0MeK+gjFaFdO24yth4OrFouTsR9MGQyOVMciE6Qvi16DoBsd3O/l1FcF0phRu3/Rsef+U+/Kmf3pkQ/nQY7IO6JZylRp1vgD7X4WKvcia4B0vtRwHAP8KkhKuFNGBBZIEYwgkYDDx/8O26k5VY4hoGVfG1eCzPvlohtw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762843964; c=relaxed/simple;
-	bh=fy7+wkF0oQv3oCtjE+5B16eRZULzNqc8FDFTQSP8DsI=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Tnl5ArZFCRHgGZkue2Z5SavymCPMZ54QyLpYX5GLGq4UlPfV385vaNvvS9rVIu1cwhaWnN0MrcpIYjmNGqi67g+hrb5FbICtflQtecRoiw2qMfOyTlrKDYyDsaMnD+DOCGVGPzcYUtrUUrnA3Lb5Nsg87CpxZuesgqjyiWZRQ78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=xAFMq6S5; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4d5HKK1fsjz9sVh;
-	Tue, 11 Nov 2025 07:52:37 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1762843957; h=from:from:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fy7+wkF0oQv3oCtjE+5B16eRZULzNqc8FDFTQSP8DsI=;
-	b=xAFMq6S5K91Awn1CzwfbwM6gkDU8YecjxplnJ9+RK2FygFCof5IcSlmtVESDLw9RAxXHfQ
-	Qj2vM+YhHhr0zIAVq5KO9IESZ7PnWaM78uhx7HCOe2yn5HSk2l+EFNjNXvLOIH+ZnCy/PH
-	1WtWJotKx2Maly+UnonpmY/wjKNJfrEOYp0ex20ctpbIHrfC4JKYcqD0tVEX0UYurBZRZY
-	zzp6a61rsTXnYZ5KnHZRH3k1ZJq23xjQeW9ifCXIbuAHlRIsCVS1tNkUyR/bNHZVI8O0C4
-	2fzN9tR3mo3eXnHAOP4gosItViM0whSi4IFCjFR3COgUsRWgFv+9iR+LORvxdw==
-Message-ID: <9e74c7a8614591c1f7c08bac1460f7043173c856.camel@mailbox.org>
-Subject: Re: [PATCH] drm/sched: Fix UB in spsc_queue
-From: Philipp Stanner <phasta@mailbox.org>
-Reply-To: phasta@kernel.org
-To: Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, 
- phasta@kernel.org, David Airlie <airlied@gmail.com>, Simona Vetter
- <simona@ffwll.ch>, Alex Deucher <alexander.deucher@amd.com>, Andrey
- Grodzovsky <Andrey.Grodzovsky@amd.com>, dakr@kernel.org, Matthew Brost
- <matthew.brost@intel.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org
-Date: Tue, 11 Nov 2025 07:52:32 +0100
-In-Reply-To: <a3eefc87-2678-4a4d-82c8-f6aedf74be75@amd.com>
-References: <20251110081903.11539-2-phasta@kernel.org>
-	 <ee63ca7d-77d2-44d8-973b-7276f8c4d4a5@amd.com>
-	 <ee9fe54f3764bc0ee4ebafe5c10ad4afe748ef19.camel@mailbox.org>
-	 <2c72eb6e-7792-4212-b06f-5300bc9a42f9@amd.com>
-	 <987527ead1fe93877139a9ee8b6d2ee55eefa1ee.camel@mailbox.org>
-	 <05603d39-0aeb-493e-a1ed-8051a99dfc41@amd.com>
-	 <589a1be140f3c8623a2647b107a1130289eb00ba.camel@mailbox.org>
-	 <a3eefc87-2678-4a4d-82c8-f6aedf74be75@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1762844041; c=relaxed/simple;
+	bh=1ohHqJy3GtnFE3r4lHSgWNj8+fSVY8Y9eoPnFFJARb0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qHN/F2cwEYPTVff6vRCbB1PPVa8dv1yOmJmjgrHQq62ESwhqMPUhO7AtzzOMuytXiL3FCmp7OvKCfiINJ5bXgAfIJ8TQyq8So3edSQGi4/kZg9URGvf9z+0wHR2AxmTBciw8TBhZ+TX6OS1eefNEDL7QsD5PKxubSWhrU+GRLsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XBEaOfZQ; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762844039; x=1794380039;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=1ohHqJy3GtnFE3r4lHSgWNj8+fSVY8Y9eoPnFFJARb0=;
+  b=XBEaOfZQY4t4SGAKPSwKmj1mJ8CQX4lgeKALHX7A2pSzrNqudqujJ8Ef
+   P7abXLXPXHvzq3AFKQhVRrQRaCq0GN2+/ADDx15AKs8xVCxNogeRsbe8I
+   jslNZBaXsf8VuJqVK+oQ8SQCaTiVGNgX2pWxu+OCyojQvl8SdNEShMTPp
+   qBc/k1QoN/0R65ZoWxdF7kKok2TgAUkDcIdaIN79riXAvKymAPyr+n5Qh
+   Fw163Buye7nXAREFKUhSvh79iadWDsJa0NtZse6rL69HMYaHVLQBXcjM7
+   xYMDoImqmJRaksYzTILYu53JegF8Ed9ksT8p+mbBqItc1rENUbwA7PV9V
+   A==;
+X-CSE-ConnectionGUID: B6XHsDO3S9u1rV+bnfHzfQ==
+X-CSE-MsgGUID: XJ2s1zR8Ro+oyrwfdLJ2cw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11609"; a="76250134"
+X-IronPort-AV: E=Sophos;i="6.19,295,1754982000"; 
+   d="scan'208";a="76250134"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 22:53:59 -0800
+X-CSE-ConnectionGUID: 7VwVqiR7RH+xabLrGDwc9g==
+X-CSE-MsgGUID: xrDE0GSYTLmtCPbuDM4V6A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,295,1754982000"; 
+   d="scan'208";a="188145796"
+Received: from lkp-server01.sh.intel.com (HELO 7b01c990427b) ([10.239.97.150])
+  by orviesa006.jf.intel.com with ESMTP; 10 Nov 2025 22:53:56 -0800
+Received: from kbuild by 7b01c990427b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vIiGH-0002sF-1h;
+	Tue, 11 Nov 2025 06:53:53 +0000
+Date: Tue, 11 Nov 2025 14:52:53 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ivan Vecera <ivecera@redhat.com>, netdev@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, Petr Oros <poros@redhat.com>,
+	Prathosh Satish <Prathosh.Satish@microchip.com>,
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+	Jiri Pirko <jiri@resnulli.us>, Michal Schmidt <mschmidt@redhat.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 4/6] dpll: zl3073x: Cache all reference
+ properties in zl3073x_ref
+Message-ID: <202511111402.yEyMEeLb-lkp@intel.com>
+References: <20251110175818.1571610-5-ivecera@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MBO-RS-ID: 1effdb85b9b9436c5dd
-X-MBO-RS-META: fcjbgqxjfgnpt3kh36rkzrjh4wufkjus
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251110175818.1571610-5-ivecera@redhat.com>
 
-On Mon, 2025-11-10 at 17:08 +0100, Christian K=C3=B6nig wrote:
-> On 11/10/25 16:55, Philipp Stanner wrote:
-> > Lock + head (same cache line) + head->next
-> > head->next->next
-> >=20
-> > when popping:
-> >=20
-> > Lock + head + head->previous
-> > head->previous->previous
-> >=20
-> > I don't see why you need a "current" element when you're always only
-> > touching head or tail.
->=20
-> The current element is the one you insert or remove.
+Hi Ivan,
 
-That won't cause a cache miss because you have just created that
-element in the submitting CPU, owning it exclusively.
+kernel test robot noticed the following build warnings:
 
->=20
-> >=20
-> > Now we're speaking mostly the same language :]
-> >=20
-> > If you could RB my DRM TODO patches we'd have a section for drm/sched,
-> > and there we could then soonish add an item for getting rid of spsc.
-> >=20
-> > https://lore.kernel.org/dri-devel/20251107135701.244659-2-phasta@kernel=
-.org/
->=20
-> I can't find that in my inbox anywhere. Can you send it out one more with=
- my AMD mail address on explicit CC? Thanks in advance.
+[auto build test WARNING on net-next/main]
 
-I can see to it. But can't you download the mbox file on the link and
-import it in your mail client?
+url:    https://github.com/intel-lab-lkp/linux/commits/Ivan-Vecera/dpll-zl3073x-Store-raw-register-values-instead-of-parsed-state/20251111-020236
+base:   net-next/main
+patch link:    https://lore.kernel.org/r/20251110175818.1571610-5-ivecera%40redhat.com
+patch subject: [PATCH net-next 4/6] dpll: zl3073x: Cache all reference properties in zl3073x_ref
+config: x86_64-randconfig-161-20251111 (https://download.01.org/0day-ci/archive/20251111/202511111402.yEyMEeLb-lkp@intel.com/config)
+compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251111/202511111402.yEyMEeLb-lkp@intel.com/reproduce)
 
-> > Lockless magic should always be justified by real world use cases.
-> >=20
-> > By the way, back when spsc_queue was implemented, how large were the
-> > real world performance gains you meassured by saving that 1 cache line?
->=20
-> That was actually quite a bit. If you want a real world test case use glM=
-ark2 on any modern HW.
->=20
-> And yeah I know how ridicules that is, the problem is that we still have =
-people using this as indicator for the command submission overhead.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202511111402.yEyMEeLb-lkp@intel.com/
 
-If we were living in a world were you'd always need 5 cache lines than
-that would just be the reality. And 5 would already be better than 8.
-So what's the deal? It seems this was not about "too slow" but about
-"faster than".
+All warnings (new ones prefixed by >>):
 
-There's two topics which often make us pay the high price of buggyness
-and low maintainability. One of them being limitless performance
-optimizations.
-
-I think that correctness always trumps speed. How happy does it make
-your customer if your driver delivers 5 fps more, but the game crashes
-2 times per hour? (which btw happens to me with Steam on my amd card.
-Sometimes there are even hangs without a reset happening, which is
-strange. I'll open a ticket next time I see it happen).
+   drivers/dpll/zl3073x/dpll.c: In function 'zl3073x_dpll_pin_phase_offset_check':
+>> drivers/dpll/zl3073x/dpll.c:1850:35: warning: variable 'ref' set but not used [-Wunused-but-set-variable]
+    1850 |         const struct zl3073x_ref *ref;
+         |                                   ^~~
 
 
-P.
+vim +/ref +1850 drivers/dpll/zl3073x/dpll.c
+
+  1836	
+  1837	/**
+  1838	 * zl3073x_dpll_pin_phase_offset_check - check for pin phase offset change
+  1839	 * @pin: pin to check
+  1840	 *
+  1841	 * Check for the change of DPLL to connected pin phase offset change.
+  1842	 *
+  1843	 * Return: true on phase offset change, false otherwise
+  1844	 */
+  1845	static bool
+  1846	zl3073x_dpll_pin_phase_offset_check(struct zl3073x_dpll_pin *pin)
+  1847	{
+  1848		struct zl3073x_dpll *zldpll = pin->dpll;
+  1849		struct zl3073x_dev *zldev = zldpll->dev;
+> 1850		const struct zl3073x_ref *ref;
+  1851		unsigned int reg;
+  1852		s64 phase_offset;
+  1853		u8 ref_id;
+  1854		int rc;
+  1855	
+  1856		ref_id = zl3073x_input_pin_ref_get(pin->id);
+  1857		ref = zl3073x_ref_state_get(zldev, ref_id);
+  1858	
+  1859		/* No phase offset if the ref monitor reports signal errors */
+  1860		if (!zl3073x_dev_ref_is_status_ok(zldev, ref_id))
+  1861			return false;
+  1862	
+  1863		/* Select register to read phase offset value depending on pin and
+  1864		 * phase monitor state:
+  1865		 * 1) For connected pin use dpll_phase_err_data register
+  1866		 * 2) For other pins use appropriate ref_phase register if the phase
+  1867		 *    monitor feature is enabled.
+  1868		 */
+  1869		if (pin->pin_state == DPLL_PIN_STATE_CONNECTED)
+  1870			reg = ZL_REG_DPLL_PHASE_ERR_DATA(zldpll->id);
+  1871		else if (zldpll->phase_monitor)
+  1872			reg = ZL_REG_REF_PHASE(ref_id);
+  1873		else
+  1874			return false;
+  1875	
+  1876		/* Read measured phase offset value */
+  1877		rc = zl3073x_read_u48(zldev, reg, &phase_offset);
+  1878		if (rc) {
+  1879			dev_err(zldev->dev, "Failed to read ref phase offset: %pe\n",
+  1880				ERR_PTR(rc));
+  1881	
+  1882			return false;
+  1883		}
+  1884	
+  1885		/* Convert to ps */
+  1886		phase_offset = div_s64(sign_extend64(phase_offset, 47), 100);
+  1887	
+  1888		/* Compare with previous value */
+  1889		if (phase_offset != pin->phase_offset) {
+  1890			dev_dbg(zldev->dev, "%s phase offset changed: %lld -> %lld\n",
+  1891				pin->label, pin->phase_offset, phase_offset);
+  1892			pin->phase_offset = phase_offset;
+  1893	
+  1894			return true;
+  1895		}
+  1896	
+  1897		return false;
+  1898	}
+  1899	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
