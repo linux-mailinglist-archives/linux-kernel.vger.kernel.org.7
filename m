@@ -1,247 +1,197 @@
-Return-Path: <linux-kernel+bounces-896287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63508C50088
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 00:03:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FC34C5009A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 00:09:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BA3EE3441CB
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 23:03:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B82AA3AB935
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 23:09:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C3082F12C4;
-	Tue, 11 Nov 2025 23:03:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 946F82F12BB;
+	Tue, 11 Nov 2025 23:08:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="SkvmLeKC"
-Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012025.outbound.protection.outlook.com [52.101.43.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W17u6B68"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D713535CBC8;
-	Tue, 11 Nov 2025 23:03:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.25
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762902186; cv=fail; b=k1aX1V7ulByrAwI/+RQKuyE3+rb17n2cOjT75nShdgIb6n1K30A779S7aEvbmcdTW1kGb/9UQnUdLo7P8Il/4DJfSipVpfD7BTY6sax0k7pcKmarY60svW+SH4oVZXUlLJGJ9ttMA3GJwQLDNXX+v8cGyyEcR16aNYR7PI18Wfg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762902186; c=relaxed/simple;
-	bh=uv6W9ySOWWOJuxXaKuNRz5u5k8Gx4joxo2/hYIdT8s0=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=EVNvCzTXmed7UPYTpLXT2oSLpwat7ok40EDrilEzF0XJmRmHFIaScGnSVgNjCanPxPnR7fngpFDrVbAbZ4oghsrf6ufRHaizJunvfaHGv+H7t1urGpaybcgP4KvBfGaljID3rKfXcaj/+d7wnoZmNX3vDF9uDv/6qaKKFpBHRwQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=SkvmLeKC; arc=fail smtp.client-ip=52.101.43.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=RfL74D/jbq+q0JuLQ5aBTDG1j8kHTyV7YgyK0sMYMO/8ab0UsIV2qK1juPYxyB36/2Jx5F/tKg42rkRAkw82PjVbhqFol45Hrqkoe6TYx5JiP1ZNQYLdQqXbMGwU4eG20vlGeEltxDnC9vKJLTi0MQ6XfpVCExZIFu/ksjQL7IQtvrGOegKmIYbErRoe0Ja7/Nib5IDKqQZ6pdlarwItY32dNkm4OiXQVY0xIjuIcTUhelrL2MhrfOzUGtWqOA/WYIuhEqkySi0FWMT9p+5weafvJcE08WnxecW58jf9pCvLoRh/OQN2swGOFrbsBFyQmxHdzl+ANjzNDHS6/X2gfg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=o4RNJVTg58Lg3vF0bGgVh1ecHX5/n85/cXyA6INkqGQ=;
- b=V/7+gqh9UBCAHZ4PU92tOw9iN0yGnnlfSNM86yejataZb8Qoiz70XOPKHaiHniARDPnQpWc7nPzfw8WXwSBH2VX2EX8rNRBif3MpA0U/gwMMwRF0gbZRfAFVOhYRssF3WKNBB/UuZIJic77teuFtIvz5Wx6ahNvrgC7c6tSvJVK7SKI2z3G3wnk14m3fLYbZBCRczhOKTviOHtSH+8Eg8QGi/zE36fyQbC0ePEW55i68xxd3+wGBgeBemlEudzg+dN2mdStKV66+Tukdeh+GdZ8Thn39dyCWlwoDlHM75qJHoZYXjhcF2y9/7UzU2rJncQz5U6CaYAxAw8QyQppMUw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=o4RNJVTg58Lg3vF0bGgVh1ecHX5/n85/cXyA6INkqGQ=;
- b=SkvmLeKCqKvUQjq/zauK1tWDIZ5ATOJPexggqZrKst1MZODByKMb21slxLqRcuFfkKbsvm0nCPfzltsucRtT+0TpTgKzUQpAeN1fEPhkZD+pC8LqLIU8L3J9aW7SQ80JNxrKf6kvQuXyUfde6TMeLdR14hKfScW/dlWwTLrJJWItTiwFNGWPWpO8Qd9qyF4bRs4Yv3/DDXd0FXmptLuWEBtZWqdTFZ8iaZ+BC2LrYeUzmV/nb4wdcpKhJqvehSMmTTa3RHMYrii0rMTT+aauWCk/ZuTQff5y/0/GXoUwfOfz6nLsYpUh1TaEc5CJIVB97/3QMrS8abarST287fN8sg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
- by CH3PR12MB9099.namprd12.prod.outlook.com (2603:10b6:610:1a5::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.15; Tue, 11 Nov
- 2025 23:03:00 +0000
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91%2]) with mapi id 15.20.9298.015; Tue, 11 Nov 2025
- 23:02:59 +0000
-Message-ID: <0181a17f-5773-4cf0-9473-7d4ee9122105@nvidia.com>
-Date: Tue, 11 Nov 2025 18:02:57 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 07/12] nova-core: Implement the GSP sequencer
-To: Alexandre Courbot <acourbot@nvidia.com>, linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org, dri-devel@lists.freedesktop.org,
- dakr@kernel.org
-Cc: Alistair Popple <apopple@nvidia.com>, Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>, bjorn3_gh@protonmail.com,
- Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- John Hubbard <jhubbard@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
- joel@joelfernandes.org, nouveau@lists.freedesktop.org,
- Nouveau <nouveau-bounces@lists.freedesktop.org>
-References: <20251102235920.3784592-1-joelagnelf@nvidia.com>
- <20251102235920.3784592-8-joelagnelf@nvidia.com>
- <DE5256UCJHXU.27RS8A445Z1XN@nvidia.com>
-Content-Language: en-US
-From: Joel Fernandes <joelagnelf@nvidia.com>
-In-Reply-To: <DE5256UCJHXU.27RS8A445Z1XN@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BL1PR13CA0231.namprd13.prod.outlook.com
- (2603:10b6:208:2bf::26) To SN7PR12MB8059.namprd12.prod.outlook.com
- (2603:10b6:806:32b::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AED2258ED1
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 23:08:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762902536; cv=none; b=PbsciihSfV0Y+Q0dcb/DBJidog2yXBFgTl9dpCwY42QK5sVHCMXwT3c9ma2Je9L+J55U1UN3yoEVjidb5bNkyqLeL+Ub+SBBnxI3vvP/dl6roBzRA+X2u0iUKPCXlzpeCYkIClUxPU4QczpmqG8qt069yvBw0L6YHdZnbqYuZxc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762902536; c=relaxed/simple;
+	bh=lzSt4xZGwU8JDpXsMR/xzbxlzTjUPinjnTH15xJvkbk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iU6rn0HZH48I2/pAF7UHhztaorL7GdJ2gEMn4ka8esK55xKlZCttJOIZaeHOtpjhxAgmH5+pFdB+ubKcT9Xv/ISkvIjwMyMTQMEhvhD4NFBE+bemYrwLk+XwFEMAsL6CyHUMcQd4wTMKZLqG66dVsaAc2cCl5e3h/1JbXByyMVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W17u6B68; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-42b387483bbso124504f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 15:08:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762902533; x=1763507333; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Fz6bHuZsEjx2kw3X2XBGwkXSho2Ygh0BSCqvUOG5fck=;
+        b=W17u6B684W8uhr2KZKmoMh5qlHAQIaTeMKu/9jvHIqzzWjijM0UfZjlDR7rdvQ13l+
+         ZSUKvOXwORpijsX8AxLlGzTmKzsUH65ma67ZBUeFCY9VGg5cpQkeX3czgEbPo5UuRKl6
+         KlHzGicX0P1l7niWDQwRTBnFKtS2U74m/5UdHVOifAwKuGupjT4pZoKHNlanmPkvmLb1
+         f45oqKB+i0wBKwO2vtfCC/8CU4N7rmgu46oJVIiaSsUiYtFha2SME+7kXtZiMUlTKMbO
+         y7rljFNgTSkk2ToDFFhBrlr0gwL4gdckRyev89l2JkNmK8InRvayZhTyqasO9oPyVxl2
+         Ot3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762902533; x=1763507333;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=Fz6bHuZsEjx2kw3X2XBGwkXSho2Ygh0BSCqvUOG5fck=;
+        b=fBhfIATQlWp8kfDzsml8kKTQxLlORQnEiNtXul5QzwGZF9rYtex/alcNlw5ZW+dLZJ
+         l++89mdz9RKy/YuiyRuP12uqIlyuWivVo9t1j6Oq9BCjCO/0sJDf8cqFNVqs2Aq5FszN
+         K07ZsDKuXnVrM5aM4op3tD8ol7j4qNqyk414N5AMpV/LAfCdn3cZ6upx6CaWlPj6KzO7
+         suZC+wDvckUDcU+ENSPE2iA1ZJPE5O4yucz1+VhAOAk/uBRuVA0ErCtcCqQXz9IyHAu/
+         FtRWNm6E3cykbXK1l2se/ERA9jFGq3XAiNAGNuCWAJ80CzjxMWbv7U7egPZiacxlfNPy
+         xg4A==
+X-Forwarded-Encrypted: i=1; AJvYcCW0wLE8RL8LTY7p81akjxdrfqgIsMHAl5aJWsU+/pStwHx+K6Uqh+k4JCFxdzt+gqwJW0SqeLa7VfYKXb8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRlW3OKDMoT2AaC7e1Zpi4CvPYKSZxZdsU18IEKEQ1xP4g0UXn
+	/DdjUwaHMxT4gUEY3B4fQzLEZtBryO8TyojljGqihMXlNeL4L6K5GJW0WjwiKIXxsJEhyG95lKF
+	LRYf//u99LeUyAeqy2YI2vBlilYZR/9I=
+X-Gm-Gg: ASbGncu9dPCwpqw28X/auzz4jDiZNs4b3eVY9Hi5OH+qbn8vocI2ZOjVOCfYO94EkUn
+	AMYy+/5hgp7VryYwRsUdGKafTJ+Aef4hOF9MoyXRZyHU1L01IEQWQ4d7jpODBPeRlOS9WDQxxlh
+	45v2e2gdDxiU173y1ybe63I+vyxb6jHXR7RqluIZ4jaR65vuEWWCZ4bLRnJ/VQpvitXuYZ4hpB+
+	7jnDjm0KUIRU0SlBrw8M1C8pw89N/z0DUaKUM2oquNlIlvryd9NuPF5BZM8B8caqyw9mg==
+X-Google-Smtp-Source: AGHT+IHUtdHMv/cqBlF2IZX4Ed0+tDle0TRpoL7aKBRklYRm3SP4w4aEL9nl6pCo50SjADZ45Zk0Nfh2MxZS/Rv9fDI=
+X-Received: by 2002:a05:6000:26ce:b0:429:8bfe:d842 with SMTP id
+ ffacd0b85a97d-42b4bb8770cmr551863f8f.4.1762902533255; Tue, 11 Nov 2025
+ 15:08:53 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|CH3PR12MB9099:EE_
-X-MS-Office365-Filtering-Correlation-Id: ca0896db-824d-4171-24b0-08de2176757c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?OEtycU1RYkZnNzEyaG5PRmtwUGZQUi8yVmV1a3YxSW5RMm5zQUtLVmp1T1dv?=
- =?utf-8?B?dnZPa202TVE2VmNwLzhHeW9Hc2tXcjRQQ0NydEtUb3Q3Q2ZKS3o3dXFTL1M3?=
- =?utf-8?B?WVN2aUxyZk5SUVhheFNRcUtVS0VLRnFvMndkZ0cvZDNTekhick9tay9LRE5w?=
- =?utf-8?B?S2M3ZWVya3RCeUhQMVRDUW8vTURRM3daOFI4Zk9RamQybzB4WTh2dmk4enZl?=
- =?utf-8?B?RTdWV29kSEJqdjRvcHVFeFVjbGYzaHp5Z25GVVF0d2lwY3h3SVpad2EvUzRD?=
- =?utf-8?B?RWtrN1VzYnVTTU1tVDh3Y0hxWmJKeFRNaTl4S0VnT01uVmltU29tZHZhejAy?=
- =?utf-8?B?d3lrTFdEWjI2amxnc1AvTFltbzZKNEN0U3pCWFJIb2JXS1JORlBpck9abTFk?=
- =?utf-8?B?RFpRWlJoYTlGaXZxWit3alRmb25SaEpPbDErM0M5T0RHcVNFMFdtVml0ejhH?=
- =?utf-8?B?QWl5cXk4R2U1NnBGeXhNYXQ3YWo5Slg5b2NMdFFISENPbkMrL0pzcURyOHFl?=
- =?utf-8?B?YVl1ZHdOa0xnZkJ5OHp0WHBGSi9JR1VZZ04wcWUrRCsyOXNJTEpab0RORk5F?=
- =?utf-8?B?NGt3MEwvUTVFVUYrSUdIRjBBRVNIbzNYc3EyU1dXWDRYY2JtTkV0UVl1NTll?=
- =?utf-8?B?MUVGblpkVFBwSTdsV1o1Unl6eHNCMGpRcVc3V2d4N29GL2pjbFJGTS9IQ24x?=
- =?utf-8?B?dEkxZzgzRkFkOHBjWUhEQ1UrTzA4dmdtckR0b0ExOVlMNzJ3aCtxR28zd0Vj?=
- =?utf-8?B?N1h2dUJGYWpKeWNDSUlkaTJjc1ZSNUtGcmZ3L3ZscDNFTGc2V0RvTmNadjQ5?=
- =?utf-8?B?TnR0dnIybTd3eTRnUUlYNjJuUnNidVZucmM4Lzh4MnRYdDBINGZXd1FMSmhM?=
- =?utf-8?B?WnViQ1dKR25OUGhHcFdzV2d5dWNabzZ2dWlRdERiZVQ0QWJxczNzTjFuM3M3?=
- =?utf-8?B?Z2FsZlJyZ3FrNTNZcnlGTEFveXZZU1Zsb0IwV0hYQ3hyOGNLRWNPeStIS28z?=
- =?utf-8?B?R1pxR2FEZ2lISk1heGpqdXBUU1YxNGo4bGRXT2ZkWEF6R2w5Z3JDSWROQUdT?=
- =?utf-8?B?ZlRnSEU1bnRZcklHVkJ6cFNZdFdRa0M1bTMrNmlZS0N6R2w4cHBKTlpXZmcw?=
- =?utf-8?B?RVJncnc4VEFvN0daeE9DaGxnQldvSlFVN0ZTckd3QmZ0dTRHN1A5a3hPT3Zv?=
- =?utf-8?B?ZzFiSGhLd1UyOGhyVkk4TjVtUkMyb1lxakdlNjMwdmJXclduNCt0ODJGWWtk?=
- =?utf-8?B?NnY3bVNLT0s1Z3VIL1Fra3NYd2lsQWV2SDREVmtWK0lYVE5wVmQ5S0o2M3pX?=
- =?utf-8?B?R0h0b1FuRTdXdGhhazZXYTRESW5Cbm5qQXhOaWFweFB5VUdNQ09HdEprcHUz?=
- =?utf-8?B?MTlpckhUSWlndWlkOVNja2NQeWpzcHBSYkpLUGQrTzZNMWhXdWFZczVDU0NF?=
- =?utf-8?B?dU9YUERmU3F2MmR2TzhLNlhoUnJlcExUSmNaSkdRd25aZEp2bTIrbUFSSlNr?=
- =?utf-8?B?bVNUV1ppMVQzY3l2TXB2M0JYWHV3ZUdPcHVEKzRRMG8reHlyYUtHdFc4Sy9a?=
- =?utf-8?B?L0hrUkpaVTU0dXJJMExDZTFzZ3FUSkRUWmRsSHUvMGViRlZUR3FiTUxXTlpl?=
- =?utf-8?B?dzZVVG1zMjdkN2JDdUJPdzkzZHFjMUppaGRWSGVjQ0xBaHlGMCtuRzZscGhU?=
- =?utf-8?B?eks1MTFKQnJiRGR0czlxT0Z3NFBwNDM2RXhYejNUMGdVWW4wLzBpRjNyaVp4?=
- =?utf-8?B?L3h6NEh2eG1TRGlTRTFEY0l5cVJ0d0hNTDM3UDJQcGdOaE5FeGJSTDVMMm96?=
- =?utf-8?B?R3ljYXlRcTVad0tza0hIU1BVdmNRRTJwUnhDa1ZNM09ZY0VpRCtCdjVob3NQ?=
- =?utf-8?B?eU1oVkg3TnVNcnNjWXBxQUdBSGpEdjdtWUlsZSttWGdZUGwxZ3ZyWnlaRlVL?=
- =?utf-8?Q?aIj7TpHLg3iCdTsOvsQxP2P9hvSGdm45?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?TmhWVkpvZ2FpQk0rbVVLa2l6T2dJSEVJYXp3VmZnRk0rNXlXQ01YZlNkMUNY?=
- =?utf-8?B?RUZYSlNHT0FCME5ZaFpNQ0oyWklyTitDUXNSaGw1UmtiRDhuOFpOVHE5aVY5?=
- =?utf-8?B?Ulhtc3lZeWNoUzNxQTJNWE50NkJmK0VkNE50cGpWa1krVmtKalpmK1NuaWR0?=
- =?utf-8?B?UVY2NEdseWpxTUwxdlRBcEkrUkgwNmFEVHV0Y1VYa1lsTUloWFNOSUxIVXdE?=
- =?utf-8?B?NElhbmRHZ0h1QTJtVmZMQllFaFNnL2JwR2wrOCtGRUxiakEwZ3dmV3JRc3Uy?=
- =?utf-8?B?SklqM0VHd0RDT3BZYWFzSWZxbVArWTRGUVFpbVJnUHhNZkNwUGhQZXpUcmZa?=
- =?utf-8?B?dGtFdGJreFpNTXZCZnkzQ1lwWlYwNDdQTDJWSjdHYkdFWWtnT0wySkV5WG5F?=
- =?utf-8?B?b3RrR3ZmdjNhazNDK2p1cEg2cGZoR3RVTFczZXpRc1pPYXhTWlJJVEczRm1k?=
- =?utf-8?B?QllSSmgrT2VKRzM2Tm5lYlpNZFNZb3JpTldxRkdRRFhuSndvb2dUS0M4Z1BB?=
- =?utf-8?B?SlY5T054TUREdHFsN2xWWUJjNXZzdGlVOHZkc1dEZ0RtT2tLRkVLYzF6ZW4x?=
- =?utf-8?B?TnQrYmxGaWN5WTkwcis5THNudDNjM0JoRS81cEFXamdET0VrVDZWZmJEUWFt?=
- =?utf-8?B?VnBEZU9mVTJGcHV4L2duOW9HR1UrRWdIN21jMGU3NjdzVlorVGRucTVtQ3d5?=
- =?utf-8?B?ZVoxQ1VOWk54RTEzdjFoejFHM3JFYkt5WGUwOHdObVpNRmVYWTVxWjFtRHZk?=
- =?utf-8?B?Szd4M1l4ZUJxOWcyb3dDOThWR3VTeFBySnBZaVJUUFZaWCtKa04vcnNBelJ3?=
- =?utf-8?B?RGkySERGb1U5MnNsZFNYMzA2SHpCRjZ5Y1IxVllibWUyYUd0SGRxS2s4OEI4?=
- =?utf-8?B?ZWRZbGFsa2V6QXBobGdOb2NoNFIvU1NUN0lEdDFGTVFPRngzYm1tUnBZTjho?=
- =?utf-8?B?R0x3RS9ib0hxTmpRYSsyaEI5dVdmYTZTeFFUbDFYTDUyRlVSeHB6N2hKQ0dG?=
- =?utf-8?B?VmMwOVRmb2FXNEcwYXowNW93Z0ZpZmdRUnhUaW9vK3pEUGtZMkl1ajlFaDZo?=
- =?utf-8?B?MzUrTGJtYmRWQ2dpZEhzanBKcHRrNjl2VlVBNm93QXJ5YVAvQ1kyMjl0RmhF?=
- =?utf-8?B?VExXWnZDaHlMRXJreGlNeFkxL2FKWWtaQXBWL1dERDcvTkFlanZIY0dhTXBj?=
- =?utf-8?B?a0ZZMk4xVmQwMXRsak5QcFQ1b3JPRUthL1FaTnYwWi9qUlZhSE5GTzVGenpM?=
- =?utf-8?B?bTFlUnBqUXFGWDdtVlNYRFdsdlhaSkZ5YVlHcmtBZnU4TFh1TW0wUDhZT25R?=
- =?utf-8?B?Qko3eGRMazJBTWgzYzlDSzNuYkVEZ3JXR0k2OThWQ2N0WFRpOVhvckt2aDJl?=
- =?utf-8?B?YVRvcXB2WnkrSEFCY3kzZUNXcEFTKzFqRzArb09Ed0VRcUFpeGZ6aGMrdVBP?=
- =?utf-8?B?elZROXk4SzA2ZEdpWXNyaXpMc3F2TDIrTXE2YXozUUdFVDJhSGxOL3g5VzhZ?=
- =?utf-8?B?ZnJiaDFyRGlCdzRhUS9ubEMrY2dkMzNCV3ZlbFByQ05HdUxVNHRVZmF1cHh1?=
- =?utf-8?B?dXFHVXJlRDgxaTZqZnVTWVk0RDRXMEJ4bzlMc2srS1M0b0pxK2owblljeXhJ?=
- =?utf-8?B?bDlIejJzTFo3cmRJZGNEdy9mRi9pSkhLWmZmMk96SmtaNnlRejhKLzkxWE5Z?=
- =?utf-8?B?SVBOTXR0a0dGRFZORzNxelJpbVVUQWVWQlFIS05lZXo2S0JoRjZJcG1LWXRn?=
- =?utf-8?B?MWFiMHA1YzA5cjJhcEI1VG9JSldQVllYNGNXUTJlNjJ6ZkcrcnlNTmUzeTBR?=
- =?utf-8?B?aGJSMDIvUDlheXBjTEVaUERZdjN5SVFMc3FJQ3RMeWQwb1o3V2d1akEzemZS?=
- =?utf-8?B?eGxoMkJoSkw2RzBBMmRNTHJ3VStnUHM2em1lSnkwOTNObjV0UWhzMnJQOUJS?=
- =?utf-8?B?dUlhYkt6Z2s5cEsxelF3c0JaQm9TYVpnbSswUzhpS0gxYzc1MnF1MUwzaWJR?=
- =?utf-8?B?ZmlWSElNUFl6a2NDK1lPUDJQYURQUXZPYTRzdmpRL1ZwOFN1dDU0eDVYdXhj?=
- =?utf-8?B?L1B6WGFnUWxBVWdKN0wrLzlvU3ZlRkRkWmc2amJaajNIUGk2VVN3TDBqVVNi?=
- =?utf-8?Q?n6KaDgCY8QAzVoQQpuTK1jFy+?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ca0896db-824d-4171-24b0-08de2176757c
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Nov 2025 23:02:59.6194
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: blnJfgPriGq/RIG5FpEOzH5mFYGwB1Li8d4it4tEl25Qytj5Y8B1vg/k+W7mC+VuP3wgn2B6nolMyrGVqojV7A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9099
+References: <20251111-swap-fix-vma-uaf-v1-1-41c660e58562@tencent.com> <CAKEwX=OuhWBZWAKs0JYG6mLqe=NvyiD9L0dOEb=5ZJB-jfFi1Q@mail.gmail.com>
+In-Reply-To: <CAKEwX=OuhWBZWAKs0JYG6mLqe=NvyiD9L0dOEb=5ZJB-jfFi1Q@mail.gmail.com>
+From: Nhat Pham <nphamcs@gmail.com>
+Date: Tue, 11 Nov 2025 15:08:41 -0800
+X-Gm-Features: AWmQ_bmzxwMvKHMB2MWGIM6T7AKaSNIwuKC2a3-Jg9SENE9orxavP6xnPq9AT8M
+Message-ID: <CAKEwX=NKyXf=EEwszOm4BGm3WwHRu=38ThE7Wn=jsDUJGe=bKg@mail.gmail.com>
+Subject: Re: [PATCH] mm, swap: fix potential UAF issue for VMA readahead
+To: Kairui Song <ryncsn@gmail.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Chris Li <chrisl@kernel.org>, Kemeng Shi <shikemeng@huaweicloud.com>, 
+	Baoquan He <bhe@redhat.com>, Barry Song <baohua@kernel.org>, 
+	Huang Ying <ying.huang@linux.alibaba.com>, linux-kernel@vger.kernel.org, 
+	Kairui Song <kasong@tencent.com>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/10/2025 8:43 AM, Alexandre Courbot wrote:
-[..]
-> 
->> +            |cmd| {
->> +                self.current_offset += cmd.size_bytes();
->> +                self.cmds_processed += 1;
->> +                Some(Ok(cmd))
->> +            },
->> +        )
->> +    }
->> +}
->> +
->> +impl<'a, 'b> IntoIterator for &'b GspSequencer<'a> {
->> +    type Item = Result<GspSeqCmd>;
->> +    type IntoIter = GspSeqIter<'b>;
->> +
->> +    fn into_iter(self) -> Self::IntoIter {
->> +        let cmd_data = &self.seq_info.cmd_data[..];
->> +
->> +        GspSeqIter {
->> +            cmd_data,
->> +            current_offset: 0,
->> +            total_cmds: self.seq_info.info.cmdIndex,
->> +            cmds_processed: 0,
->> +            dev: self.dev,
->> +        }
->> +    }
->> +}
-> 
-> You can do without this implementation by just having an `iter` method
-> returning the iterator where appropriate (in the current version this
-> would be `GspSequencer`, but I suggest moving that to the
-> `GspSequencerInfo/GspSequence`).
-> 
+On Tue, Nov 11, 2025 at 11:48=E2=80=AFAM Nhat Pham <nphamcs@gmail.com> wrot=
+e:
+>
+> On Tue, Nov 11, 2025 at 5:36=E2=80=AFAM Kairui Song <ryncsn@gmail.com> wr=
+ote:
+> >
+> > From: Kairui Song <kasong@tencent.com>
+> >
+> > Since commit 78524b05f1a3 ("mm, swap: avoid redundant swap device
+> > pinning"), the common helper for allocating and preparing a folio in th=
+e
+> > swap cache layer no longer tries to get a swap device reference
+> > internally, because all callers of __read_swap_cache_async are already
+> > holding a swap entry reference. The repeated swap device pinning isn't
+> > needed on the same swap device.
+> >
+> > Caller of VMA readahead is also holding a reference to the target
+> > entry's swap device, but VMA readahead walks the page table, so it migh=
+t
+> > encounter swap entries from other devices, and call
+> > __read_swap_cache_async on another device without holding a reference t=
+o
+> > it.
+> >
+> > So it is possible to cause a UAF when swapoff of device A raced with
+> > swapin on device B, and VMA readahead tries to read swap entries from
+> > device A. It's not easy to trigger, but in theory, it could cause real
+> > issues.
+> >
+> > Make VMA readahead try to get the device reference first if the swap
+> > device is a different one from the target entry.
+> >
+> > Cc: stable@vger.kernel.org
+> > Fixes: 78524b05f1a3 ("mm, swap: avoid redundant swap device pinning")
+> > Suggested-by: Huang Ying <ying.huang@linux.alibaba.com>
+> > Signed-off-by: Kairui Song <kasong@tencent.com>
+> > ---
+> > Sending as a new patch instead of V2 because the approach is very
+> > different.
+> >
+> > Previous patch:
+> > https://lore.kernel.org/linux-mm/20251110-revert-78524b05f1a3-v1-1-8831=
+3f2b9b20@tencent.com/
+> > ---
+> >  mm/swap_state.c | 12 ++++++++++++
+> >  1 file changed, 12 insertions(+)
+> >
+> > diff --git a/mm/swap_state.c b/mm/swap_state.c
+> > index 0cf9853a9232..da0481e163a4 100644
+> > --- a/mm/swap_state.c
+> > +++ b/mm/swap_state.c
+> > @@ -745,6 +745,7 @@ static struct folio *swap_vma_readahead(swp_entry_t=
+ targ_entry, gfp_t gfp_mask,
+> >
+> >         blk_start_plug(&plug);
+> >         for (addr =3D start; addr < end; ilx++, addr +=3D PAGE_SIZE) {
+> > +               struct swap_info_struct *si =3D NULL;
+> >                 softleaf_t entry;
+> >
+> >                 if (!pte++) {
+> > @@ -759,8 +760,19 @@ static struct folio *swap_vma_readahead(swp_entry_=
+t targ_entry, gfp_t gfp_mask,
+> >                         continue;
+> >                 pte_unmap(pte);
+> >                 pte =3D NULL;
+> > +               /*
+> > +                * Readahead entry may come from a device that we are n=
+ot
+> > +                * holding a reference to, try to grab a reference, or =
+skip.
+> > +                */
+> > +               if (swp_type(entry) !=3D swp_type(targ_entry)) {
+> > +                       si =3D get_swap_device(entry);
+> > +                       if (!si)
+> > +                               continue;
+> > +               }
+> >                 folio =3D __read_swap_cache_async(entry, gfp_mask, mpol=
+, ilx,
+> >                                                 &page_allocated, false)=
+;
+> > +               if (si)
+> > +                       put_swap_device(si);
+>
+> Shouldn't we reset si to NULL here?
+>
+> Otherwise, suppose we're swapping in a readahead window. One of the
+> swap entries in the window is on a different swapfile from the target
+> entry. We look up and get a reference to that different swapfile,
+> setting it to si.
+>
+> We do the swapping in work, then we release the recently acquired referen=
+ce.
+>
+> In the next iteration in the for loop, we will still see si !=3D NULL,
+> and we put_swap_device() it again, i.e double releasing reference to
+> that swap device.
+>
+> Or am I missing something?
 
-If I do that, it becomes ugly on the caller side.
+Nvm - Andrew pointed out to me that si was NULLED at the beginning of
+the loop. Looks like I was blind :)
 
-Caller side becomes:
-for cmd_result in sequencer.seq_info.iter(&sequencer.dev) {
- ..
-}
-
-instead of the current:
-for cmd_result in sequencer {
- ..
-}
-
-Does it work for you if I remove IntoIterator and just have GspSequencer::iter()
-return the iterator?
-
-Then the caller becomes:
-
-for cmd_result in sequencer.iter() {
- ..
-}
-
-Although I think IntoIterator makes a lot of sense here too, and there are other
-usages of it in rust kernel code. But the sequencer.iter() would work for me.
-
-Thanks.
-
+Anyway:
+Acked-by: Nhat Pham <nphamcs@gmail.com>
 
