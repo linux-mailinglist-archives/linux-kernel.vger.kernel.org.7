@@ -1,92 +1,187 @@
-Return-Path: <linux-kernel+bounces-894496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 911ADC4B2B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 03:08:00 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D966C4B2D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 03:12:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C5AF434C63B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 02:07:58 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1703E4EE706
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 02:10:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 013F5343D8C;
-	Tue, 11 Nov 2025 02:07:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fpZCHUiN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E61C7345CD8;
+	Tue, 11 Nov 2025 02:10:35 +0000 (UTC)
+Received: from bg1.exmail.qq.com (bg1.exmail.qq.com [114.132.65.219])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CECA32F83A3;
-	Tue, 11 Nov 2025 02:07:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADB582F29;
+	Tue, 11 Nov 2025 02:10:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.132.65.219
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762826869; cv=none; b=GIQ67YnVNeRVYIW597zcfiz4dZQgXkS4eu49BmKFPZfCbaXUCZkk4pZwXa30eWovJB9b7yrZgWgiYIKGULjLLtDy/MEAnz19LMKtAPJshMJlgDv4ZJEnOTkHddqcAV25S2s4IpH5SNueblXpde0J7YMoOf9feSGejxjLzatjVZM=
+	t=1762827035; cv=none; b=H9PL+wrLKNM2x8lXYiykMAetSF1VQWoIWzy4MYXj2ZxvLfrJfJtyUBq6ViGvVwqnaPWxXdaiVodCgWTsNiQJEB1h7j/YMIntiAnmImZRQXY00N3sVYSgusXekvOtAJe6eQuOM3gmznZ6nHfnhx4Sh7j5wFc4BUpFbUPVx/yND0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762826869; c=relaxed/simple;
-	bh=K4WT5DI/LVHmAVyUF3Hc6XM6+Zcclzbiou6WsDsETpQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BjKBcFxoJOq7MkI1cJhwL1k6RGi9GA9SgurhR9XjNFhXLb66uD94RwxqkXmtxpi7K45sIsi9HfrPOUMBn91ycKAKBYocas/Dyu0ha/tzW0gMoB2BzgMu7p1LD33dl6Rly7ZbadBrsor/AVwlSA9IyzmYCRtjJbhUbvDLK7uSVks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fpZCHUiN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7441C16AAE;
-	Tue, 11 Nov 2025 02:07:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762826868;
-	bh=K4WT5DI/LVHmAVyUF3Hc6XM6+Zcclzbiou6WsDsETpQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=fpZCHUiNdE0INp+y8GKME3KEFMZP7wbF+SRaAFqCm9r0dO9nv8bKtxUTbh5vgtnkS
-	 r8xmLUbrOjhq3B9dOHBqVk1hwDEinn21GU4jhPJj7mxInE6FAabmZYxM38FAltWNha
-	 4HAdZdIa4Rhx7kXxpRRwdCm7UmolwEQgxr2AXVElO54EBYKUgTilEok/fEbcH30niW
-	 h98IVyANHih0auZWQD3Gsn0Amt0T3c4CFkKDWhItb8msGb72/NPq4Awb8DCxtnuW2G
-	 sKxWTvOMpN4RLf7Cu0VLRwfMra+Sf5Vm7bgBzsZD2tus10HQRXiix2T8Gk16mbs0zl
-	 7EmR5PHMgEfLw==
-Date: Mon, 10 Nov 2025 18:07:46 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc: =?UTF-8?B?QXNiasO4cm4=?= Sloth =?UTF-8?B?VMO4bm5lc2Vu?=
- <ast@fiberby.net>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Donald Hunter
- <donald.hunter@gmail.com>, Simon Horman <horms@kernel.org>, Jacob Keller
- <jacob.e.keller@intel.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- wireguard@lists.zx2c4.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, Jordan Rife <jordan@jrife.io>
-Subject: Re: [PATCH net-next v3 00/11] wireguard: netlink: ynl conversion
-Message-ID: <20251110180746.4074a9ca@kernel.org>
-In-Reply-To: <20251105183223.89913-1-ast@fiberby.net>
-References: <20251105183223.89913-1-ast@fiberby.net>
+	s=arc-20240116; t=1762827035; c=relaxed/simple;
+	bh=VDGwfiR11ixBsaRmmY90McQtvJcD3lWu7mcPA3DCoZg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kU32Wkcw6gq6xmsqS/cWGY8p7rdKIk8WMgojNCRKroZAwRIxJUuB1spYHKRqYAhau1kVTv+D27m/Fith2p7D8wPHtHAI2N8JY075ADPpI0Z/xOk4fhCMeXB79veYDNMLmois0Hz3pvLFKdCSMjPIXl91wH4GNnUxJkPy7IEN5gA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com; spf=pass smtp.mailfrom=radxa.com; arc=none smtp.client-ip=114.132.65.219
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=radxa.com
+X-QQ-mid: zesmtpip3t1762826986t355f97ce
+X-QQ-Originating-IP: Hiq+d1HFsdfBnF0CzHzpOopV81Jpt/t8pVjS27nsYIM=
+Received: from [IPV6:240f:10b:7440:1:62e3:2c99 ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Tue, 11 Nov 2025 10:09:42 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 12658501094839713575
+Message-ID: <B721C8A516FDB604+a04b38d3-64ec-423f-9e4c-040c8d2aec76@radxa.com>
+Date: Tue, 11 Nov 2025 11:09:42 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND] Re: [PATCH] PCI: dw-rockchip: Skip waiting for link up
+To: Niklas Cassel <cassel@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>
+Cc: Shawn Lin <shawn.lin@rock-chips.com>, Damien Le Moal
+ <dlemoal@kernel.org>, Anand Moon <linux.amoon@gmail.com>,
+ linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Dragan Simic <dsimic@manjaro.org>, Lorenzo Pieralisi
+ <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?=
+ <kw@linux.com>, Rob Herring <robh@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>, Heiko Stuebner <heiko@sntech.de>
+References: <55EB0E5F655F3AFC+136b89fd-98d4-42af-a99d-a0bb05cc93f3@radxa.com>
+ <aRCI5kG16_1erMME@ryzen>
+ <F8B2B6FA2884D69A+b7da13f2-0ffb-4308-b1ba-0549bc461be8@radxa.com>
+ <780a4209-f89f-43a9-9364-331d3b77e61e@rock-chips.com>
+ <4487DA40249CC821+19232169-a096-4737-bc6a-5cec9592d65f@radxa.com>
+ <363d6b4d-c999-43d4-866e-880ef7d0dec3@rock-chips.com>
+ <0C31787C387488ED+fd39bfe6-0844-4a87-bf48-675dd6d6a2df@radxa.com>
+ <dc932773-af5b-4af7-a0d0-8cc72dfbd3c7@rock-chips.com>
+ <aRHb4S40a7ZUDop1@ryzen>
+ <2n3wamm3txxc6xbmvf3nnrvaqpgsck3w4a6omxnhex3mqeujib@2tb4svn5d3z6>
+ <aRJEDEEJr9Ic-RKN@fedora>
+Content-Language: en-US
+From: FUKAUMI Naoki <naoki@radxa.com>
+In-Reply-To: <aRJEDEEJr9Ic-RKN@fedora>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpip:radxa.com:qybglogicsvrsz:qybglogicsvrsz4b-0
+X-QQ-XMAILINFO: Ml1iSfLyJEsHuvOrvH1QriXQF9INzJkBMODePrOGpgAgkbli0chZE2CG
+	oLjrgiR7uGB4XyPTvHON+woHHgIrJRyx1vOr29Oe+6s2Gx+Q1oaIKXkfOfi9TCQorhrIDaA
+	1zwDL6MZIQu67bvlzIKE+ynsGU0U1Av2oimbQAGyOfO5Pe73IHgQ70LvLLwf73WgepDpKaR
+	MIz2MxIantWv58Rl00q6AuXe//rIWvaSu68eEFXztSSGZ1aT+k4/3JDt6Xy13NVHdk7cZwj
+	LwwObnOcNUN+yBJuYtKK+vjd+ZbtxBheoc22prKuk40TcvHs0Tdn5u7LQKlHF8pxPdksrnW
+	a9pP1fjNlq9uRu8MINAWgWrhX/qlLzfxpFAeoAEz8QFqQhnvnqxTYWD5CRCvG35jndajpFb
+	z9mBiXEglLEurdW7g2DOudccazUYBjeJ4eRfP/KbP+MUzhqw08etBxq94fR/MfcozJD9mdj
+	wxTpDj1RzcOZTsIL6JN5HEzq7Y2wPZ4aO+pawlkjCA3VeC9+G/J4bMYJ+9hayq6Xo2qKut6
+	tYZCwm7xRx6wD5FGvYT5xNR2AdzPg3YBDhhZxVTvjjXd4aQSa7bpWmbOtIT0W/z1CFwZVHM
+	V284Jw1I+rybPM9SMEYTLsNGW7Y0Zs7RUtA4uBM3T/VJNua4jJanvalxtThXAo9Zt2KnSeH
+	/AFW6AYWKvt1RBpy/jI9WyKGY/CDC6AYgMZPA++lM/z97Q7QqslcIWQMRACKvQqDQtXhTn2
+	uhOiMbjRyC9B/IYccBTDvYOnQgkA+KAqdxW/lMiwr9vnYBQpWto1kwsLPt9KuYxIO8K/SJ2
+	ZMoYI3nz/blOj+p2TkCNJ1xXD7d/LfAcyEeTZDvKSLEXGWII0GnxpbhCkaCScf+z1NRoTKl
+	j5bp70AC4vfLVyNx9lXs2ifXAAQdq+om2/IPxrpxeBDLvQrp4DJLHxvKzV0StjyQX7PVSnP
+	FEYm4TjamFGbobcPUJaz6RYvNYR4XGP8AsmFUY1Q0tJOe0oWT/1nEZx14R3sajgyHljvMOt
+	7OKox8Dw6GzNY4Vbjp
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
+X-QQ-RECHKSPAM: 0
 
-On Wed,  5 Nov 2025 18:32:09 +0000 Asbj=C3=B8rn Sloth T=C3=B8nnesen wrote:
-> This series completes the implementation of YNL for wireguard,
-> as previously announced[1].
->=20
-> This series consist of 5 parts:
-> 1) Patch 01-03 - Misc. changes
-> 2) Patch    04 - Add YNL specification for wireguard
-> 3) Patch 05-07 - Transition to a generated UAPI header
-> 4) Patch    08 - Adds a sample program for the generated C library
-> 5) Patch 09-11 - Transition to generated netlink policy code
->=20
-> The main benefit of having a YNL specification is unlocked after the
-> first 2 parts, the RFC version seems to already have spawned a new
-> Rust netlink binding[2] using wireguard as it's main example.
->=20
-> Part 3 and 5 validates that the specification is complete and aligned,
-> the generated code might have a few warts, but they don't matter too
-> much, and are mostly a transitional problem[3].
->=20
-> Part 4 is possible after part 2, but is ordered after part 3,
-> as it needs to duplicate the UAPI header in tools/include.
+On 11/11/25 04:59, Niklas Cassel wrote:
+> On Mon, Nov 10, 2025 at 09:23:02PM +0530, Manivannan Sadhasivam wrote:
+>>>
+>>> Considering what Shawn says, that the switch gets enumerated properly
+>>> if we simply add a msleep() in ->start_link(), which will be called
+>>> by dw_pcie_host_init() before pci_host_probe() is called...
+>>>
+>>
+>> Yes, that delay probably gives enough time for the link up IRQ to kick in before
+>> the initial bus scan happens.
+> 
+> I think that the problem is that even for platforms with link up IRQ,
+> we will always do:
+> 1) dw_pcie_start_link() (if (!dw_pcie_link_up()))
+> 2) pci_host_probe() from dw_pcie_host_init(), this will enumerate the bus
+> 3) pci_rescan_bus() from the Link Up IRQ handler
+> 
+> Thus, in 2, when enumerating the bus, without performing any of the delays
+> mandated by the PCIe spec, it still seems possible to detect a device (it
+> must have been really quick to initialize), and to communicate with that
+> device, however since we have not performed the delays mandated by the spec,
+> it appears that the device might not yet behave properly.
+> 
+> Hence my suggestion to never call pci_host_probe() in dw_pcie_host_init()
+> for platforms with Link Up IRQ.
+> 
+> At least for pcie-dw-rockchip.c, we only unmask the Link Up IRQ after
+> dw_pcie_host_init() has returned, so I think that your theory: that Shawn's
+> suggested delay causes the Link Up IRQ to kick in before the initial bus
+> scan, is incorrect. (Since the IRQ should not be able to trigger until
+> dw_pcie_host_init() has returned.)
+> 
+> 
+>>
+>>> ...we already have a delay in the link up IRQ handler, before calling
+>>> pci_rescan_bus().
+>>>
+>>
+>> That delay won't help in this case.
+> 
+> Sure, I was just saying that even though Shawn's patch made things work,
+> it seems incorrect, as we do not want to add "the same delay" that we
+> already have in the Link Up IRQ. (The delay in the Link Up IRQ should be
+> the only one.)
+> 
+> 
+>>> I think a better solution would be something like:
+> 
+> (snip)
+> 
+>> This solution will work as long as the PCIe device is powered ON before
+>> start_link(). For CEM and M.2 Key M connectors, the host controller can power
+>> manage the components. But for other specifications/keys requiring custom power
+>> management, a separate driver would be needed.
+>>
+>> That's why I suggested using pwrctrl framework as it can satisfy both usecases.
+>> However, as I said, it needs a bit of rework and I'm close to submitting it.
+>>
+>> But until that gets merged, either we need to revert your link up IRQ change or
+>> have the below patch. IMO, the revert seems simple.
+> 
+> Using pwrctrl framework once it can handle this use case sounds good to me.
+> 
+> FUKAUMI, could you please send a revert of the two patches?
 
-These LGTM, now.
+Leaving the commit message aside, I'm currently testing with a revert of 
+the two patches.
 
-Jason what's your feeling here? AFAICT the changes to the wg code
-are quite minor now.=20
+Vanilla v6.18-rc5, CONFIG_PCI_DYNAMIC_OF_NODES=y, revert ec9fd499b9c6, 
+revert 0e0b45ab5d77.
+
+It works stably on the ROCK 5A. The link speed is 2Gb/s.
+
+The ROCK 5C is unstable. It initially worked with a link speed of 4Gb/s, 
+but eventually started showing kernel oops. The dts files for the 5A and 
+5C are compatible and interchangeable, but even using the 5A's dts on 
+the 5C, the operation remains unstable.
+
+I plan to thoroughly investigate the ROCK 5C's behavior on v6.13, but 
+for now, I believe reverting the two patches is the correct action.
+
+Best regards,
+
+--
+FUKAUMI Naoki
+Radxa Computer (Shenzhen) Co., Ltd.
+
+> Kind regards,
+> Niklas
+> 
+
+
 
