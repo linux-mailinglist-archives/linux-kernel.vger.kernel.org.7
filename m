@@ -1,207 +1,102 @@
-Return-Path: <linux-kernel+bounces-895308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8182EC4D796
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:47:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 25348C4D7B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:49:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6FEC34F745D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:41:03 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 39C4C4FEC23
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:41:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7137D35B14D;
-	Tue, 11 Nov 2025 11:37:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D169E35BDAD;
+	Tue, 11 Nov 2025 11:37:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kAOgASBV";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="sv1ZgNpj"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ACQdESAw"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8DB6357A27;
-	Tue, 11 Nov 2025 11:37:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE0273587A9;
+	Tue, 11 Nov 2025 11:37:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762861046; cv=none; b=kWg92GOkP2uMTFEugHbWwESSqKSTkqSYxUf0ie4aMwKm+Nc85GE5Wo4pcopJDyCkYH7tTrDDrOJdyD2pzWypyhSrCCFLY1GHdl+vh+5DCvDuWrVPQ7FobB1gbI0dAF6P48xkJXEQy7O+fxVKio1571EbsG2B9suULsoJ1+NrtOk=
+	t=1762861062; cv=none; b=MJvlKyzKb3DhsH4jq9aEPeXkIOpWeemeKXDIvor+suHF7z5A5zhkbhEL7IR7WACfP41p2mUtDCAvyIKtnyZC5mSHDVjpTecnNkTI0k20sBkxpnz5SfavUlQ743EgoKR87HsVuUK8QqLfVHSLrQ6buG9we1NJo8TZRoxZ4j7uhEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762861046; c=relaxed/simple;
-	bh=zK6FmVbc1YQzF/L90kA1pdMlvA5rOWYTQpkb8ueebvw=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=ggxYzWEWV9bOR3Z0qpwiZCoPi5okLXep05MG7iD5IglymtkYoobqEUrYLYQScjmvU4NQBwZKOi+61ygn+MRbjzqQyb5VNsGgvdeKpBxd167NnqqY1mK901YHXc7sIClXktqcQTPrGrkgpb/ZuIgYK/OG1q0yU4LJ4X+dPmR/4pA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kAOgASBV; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=sv1ZgNpj; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 11 Nov 2025 11:37:22 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1762861043;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YCrV9AZDABUv7PZhGi/2ks/L1hnfYr+3hAN0MSC4gOw=;
-	b=kAOgASBV/L1wIgad5OJ188aI3wvD5kPXZisYWnE1uQbX8eTG5oYWDx1KJa8SkMoYa6e5Sd
-	fI3LmMRdNFktUR9rmLOhdLP8nGWhvQ2Gv74aSOafqp8JAB9SYQXBwrax+RDPjpmW2VN+D6
-	hHeoNsK2/GYVGkCWoRnljncoKPujP4mdntsg2ZaRJBlh4v0GEg2DmnBpy/7nMF39l8C6u7
-	WCAHZ64Pwl0LtZTym8U/gnxdtROKedkcO3uhDlLnHdNxS2J9QL1WMiU/j43cMa2HQeTyT7
-	zyVBuBjrTKRBupN481cCwb3gUqPZHrwZ/oPWBq9dKs05oVnF1Cov2yHf+nfVAg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1762861043;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YCrV9AZDABUv7PZhGi/2ks/L1hnfYr+3hAN0MSC4gOw=;
-	b=sv1ZgNpj78n72gfI9Xdv2i/d7Q8c4g8Fe4gFcMXdONCEWQ1rFZFHRmBXEIJnUciNoGe6QB
-	xLAoRR/WpFsl2DCQ==
-From: "tip-bot2 for Fernand Sieber" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: sched/core] sched/proxy: Yield the donor task
-Cc: kernel test robot <oliver.sang@intel.com>,
- Peter Zijlstra <peterz@infradead.org>, Fernand Sieber <sieberf@amazon.com>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20251106104022.195157-1-sieberf@amazon.com>
-References: <20251106104022.195157-1-sieberf@amazon.com>
+	s=arc-20240116; t=1762861062; c=relaxed/simple;
+	bh=mnzdprwkhx4iXcuA/dmEYLmWn8J7Co/1UDJk6Go6CrQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qh3ryO+xjE/9zU/YU2KxIhQ1HO+6JuKOfzOi4Q2kqtSCnFuKzQ0hWb11lJNr+h92YprJlienDe0ROvq9c7JLDALXOdPXK0XXInwRBSsimEACbvj+E07+DV5aAzEMe+UjFI+S0wunLWf4QRywRbvoKt2hYNcXRkz/Tb83ZNxWat0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ACQdESAw; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=mnzdprwkhx4iXcuA/dmEYLmWn8J7Co/1UDJk6Go6CrQ=; b=ACQdESAwD0IiqcAwROJp0CEzwe
+	e4yBxBgXXsrdk/I4WYEus+Er/p74hipl695loH5CK3RqWoeCKSsME/nuuJJzwmqaX1Q9QdLfejc7Z
+	RNo5cFCur76TRL+rPL3urQRBxfG6Gi/v5yXdyJcdhytdhthgbX6OU8GgCNByX7GEkD2wNm6yn5b//
+	lqbuW2kGBV/A/jmY9o7Yq/nGPqQ4c9L7iLLN9ppXHxd6elCSeLIJH+6TPHPGFdBCVfAmzfMgrJ3eZ
+	V2jaiK3dCLP+Wp6jpfIeDuzTEP6BP7HISz6koD5xCUv59yDdgSH/o5sDqy07etLcbYNzPXlogD8Ow
+	dPYzMubA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vIlp8-0000000D3z1-1pku;
+	Tue, 11 Nov 2025 10:42:06 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id D58F0303031; Tue, 11 Nov 2025 12:37:32 +0100 (CET)
+Date: Tue, 11 Nov 2025 12:37:32 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+Cc: Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Andi Kleen <ak@linux.intel.com>,
+	Eranian Stephane <eranian@google.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, Dapeng Mi <dapeng1.mi@intel.com>,
+	Zide Chen <zide.chen@intel.com>,
+	Falcon Thomas <thomas.falcon@intel.com>,
+	Xudong Hao <xudong.hao@intel.com>
+Subject: Re: [Patch v9 10/12] perf/x86/intel: Update dyn_constranit base on
+ PEBS event precise level
+Message-ID: <20251111113732.GM278048@noisy.programming.kicks-ass.net>
+References: <20251029102136.61364-1-dapeng1.mi@linux.intel.com>
+ <20251029102136.61364-11-dapeng1.mi@linux.intel.com>
+ <20251106145217.GA4067720@noisy.programming.kicks-ass.net>
+ <09210c12-cc61-4af5-bd13-830fd9650f9b@linux.intel.com>
+ <20251107130552.GB4067720@noisy.programming.kicks-ass.net>
+ <a0416429-23d4-4f4f-af73-bcd87b4e773c@linux.intel.com>
+ <20251110090311.GW3245006@noisy.programming.kicks-ass.net>
+ <97eb5ae9-6c99-497e-a1b9-80bf365bf2d5@linux.intel.com>
+ <380fd742-a7ed-4d6f-9944-b963869a5cb3@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <176286104220.498.5228299661392935552.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <380fd742-a7ed-4d6f-9944-b963869a5cb3@linux.intel.com>
 
-The following commit has been merged into the sched/core branch of tip:
+On Tue, Nov 11, 2025 at 01:41:05PM +0800, Mi, Dapeng wrote:
 
-Commit-ID:     127b90315ca07ccad2618db7ba950a63e3b32d22
-Gitweb:        https://git.kernel.org/tip/127b90315ca07ccad2618db7ba950a63e3b=
-32d22
-Author:        Fernand Sieber <sieberf@amazon.com>
-AuthorDate:    Thu, 06 Nov 2025 12:40:10 +02:00
-Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Tue, 11 Nov 2025 12:33:36 +01:00
+> I tested the queue/perf/core code with a slight code refine on SPR/CWF/PTL.
+> In summary, all things look good. The constraints validation passes on all
+> these 3 platforms, no overlapped constraints are reported. Besides, perf
+> counting/sampling (both legacy PEBS and arch-PEBS) works well, no issue is
+> found.
 
-sched/proxy: Yield the donor task
+Excellent, I pushed out to tip/perf/core.
 
-When executing a task in proxy context, handle yields as if they were
-requested by the donor task. This matches the traditional PI semantics
-of yield() as well.
+> I did a slight change for the intel_pmu_check_dyn_constr() helper. It
+> should be good enough to only validate the GP counters for the PEBS counter
+> and PDIST constraint check. Beside the code style is refined
+> opportunistically. Thanks.
 
-This avoids scenario like proxy task yielding, pick next task selecting the
-same previous blocked donor, running the proxy task again, etc.
-
-Reported-by: kernel test robot <oliver.sang@intel.com>
-Closes: https://lore.kernel.org/oe-lkp/202510211205.1e0f5223-lkp@intel.com
-Suggested-by: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Fernand Sieber <sieberf@amazon.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://patch.msgid.link/20251106104022.195157-1-sieberf@amazon.com
----
- kernel/sched/deadline.c | 2 +-
- kernel/sched/ext.c      | 4 ++--
- kernel/sched/fair.c     | 2 +-
- kernel/sched/rt.c       | 2 +-
- kernel/sched/syscalls.c | 5 +++--
- 5 files changed, 8 insertions(+), 7 deletions(-)
-
-diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-index 6b8a928..13112c6 100644
---- a/kernel/sched/deadline.c
-+++ b/kernel/sched/deadline.c
-@@ -2143,7 +2143,7 @@ static void yield_task_dl(struct rq *rq)
- 	 * it and the bandwidth timer will wake it up and will give it
- 	 * new scheduling parameters (thanks to dl_yielded=3D1).
- 	 */
--	rq->curr->dl.dl_yielded =3D 1;
-+	rq->donor->dl.dl_yielded =3D 1;
-=20
- 	update_rq_clock(rq);
- 	update_curr_dl(rq);
-diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-index b063444..224b72c 100644
---- a/kernel/sched/ext.c
-+++ b/kernel/sched/ext.c
-@@ -1474,7 +1474,7 @@ static bool dequeue_task_scx(struct rq *rq, struct task=
-_struct *p, int deq_flags
- static void yield_task_scx(struct rq *rq)
- {
- 	struct scx_sched *sch =3D scx_root;
--	struct task_struct *p =3D rq->curr;
-+	struct task_struct *p =3D rq->donor;
-=20
- 	if (SCX_HAS_OP(sch, yield))
- 		SCX_CALL_OP_2TASKS_RET(sch, SCX_KF_REST, yield, rq, p, NULL);
-@@ -1485,7 +1485,7 @@ static void yield_task_scx(struct rq *rq)
- static bool yield_to_task_scx(struct rq *rq, struct task_struct *to)
- {
- 	struct scx_sched *sch =3D scx_root;
--	struct task_struct *from =3D rq->curr;
-+	struct task_struct *from =3D rq->donor;
-=20
- 	if (SCX_HAS_OP(sch, yield))
- 		return SCX_CALL_OP_2TASKS_RET(sch, SCX_KF_REST, yield, rq,
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 273e287..f1d8eb3 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -8980,7 +8980,7 @@ static void put_prev_task_fair(struct rq *rq, struct ta=
-sk_struct *prev, struct t
-  */
- static void yield_task_fair(struct rq *rq)
- {
--	struct task_struct *curr =3D rq->curr;
-+	struct task_struct *curr =3D rq->donor;
- 	struct cfs_rq *cfs_rq =3D task_cfs_rq(curr);
- 	struct sched_entity *se =3D &curr->se;
-=20
-diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
-index 1fd97f2..f1867fe 100644
---- a/kernel/sched/rt.c
-+++ b/kernel/sched/rt.c
-@@ -1490,7 +1490,7 @@ static void requeue_task_rt(struct rq *rq, struct task_=
-struct *p, int head)
-=20
- static void yield_task_rt(struct rq *rq)
- {
--	requeue_task_rt(rq, rq->curr, 0);
-+	requeue_task_rt(rq, rq->donor, 0);
- }
-=20
- static int find_lowest_rq(struct task_struct *task);
-diff --git a/kernel/sched/syscalls.c b/kernel/sched/syscalls.c
-index 8f0f603..8078791 100644
---- a/kernel/sched/syscalls.c
-+++ b/kernel/sched/syscalls.c
-@@ -1319,7 +1319,7 @@ static void do_sched_yield(void)
- 	rq =3D this_rq_lock_irq(&rf);
-=20
- 	schedstat_inc(rq->yld_count);
--	current->sched_class->yield_task(rq);
-+	rq->donor->sched_class->yield_task(rq);
-=20
- 	preempt_disable();
- 	rq_unlock_irq(rq, &rf);
-@@ -1388,12 +1388,13 @@ EXPORT_SYMBOL(yield);
-  */
- int __sched yield_to(struct task_struct *p, bool preempt)
- {
--	struct task_struct *curr =3D current;
-+	struct task_struct *curr;
- 	struct rq *rq, *p_rq;
- 	int yielded =3D 0;
-=20
- 	scoped_guard (raw_spinlock_irqsave, &p->pi_lock) {
- 		rq =3D this_rq();
-+		curr =3D rq->donor;
-=20
- again:
- 		p_rq =3D task_rq(p);
+If you could send that as a proper patch -- the thing was horribly
+whitespace mangled.
 
