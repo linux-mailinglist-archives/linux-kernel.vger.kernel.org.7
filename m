@@ -1,51 +1,101 @@
-Return-Path: <linux-kernel+bounces-894635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6A5CC4B76D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 05:37:12 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A87FC4B770
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 05:37:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E7DA188E0C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 04:37:34 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C5D41346FD6
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 04:37:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B65CD273810;
-	Tue, 11 Nov 2025 04:37:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B37742773F9;
+	Tue, 11 Nov 2025 04:37:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="xiGFAE4B"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="T474UD14";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="amQ7CydK"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC129275AF5;
-	Tue, 11 Nov 2025 04:36:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C67F274FEB
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 04:37:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762835823; cv=none; b=n9/Y2/+wkkXx6hKk/GzDnBYj8iigOuamrDpeVKq5aWU8gmv+faHKWK62LKthRJmS5FtTdvYbxZ6k+jZ4HYusXqfiqKeUrVBJA2s+c/4wdU3sqXx58KeJGVl6cq1UTkYXxLwDxgWjgnIZOVmQXftxuwDHP5L7yfcDp+F2ncy+rIA=
+	t=1762835843; cv=none; b=BChimdTKFDXeVMKp2Gdt9MWnXiIJ3mACSAjlHFLIpyf6FRnNe9xNhfoQ1hg1ZJ4J1DE92MZl6b+cQ0heHQD0CWnsEBZ8ScMRB6E4C496OfvQYp1lzaDjpXMGdHOc8JGem0irVq5OiRNiXXWqcAxcQdHGE1qSzjn5vFW9e6FCgZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762835823; c=relaxed/simple;
-	bh=DO7ur9f5H1ZRUCiFO/Sct64D+Ey3WhsVSZbWrgDekSE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tDBl3D2v8KCZ8Y49P7PMwuWt/9kmoVuVnNNnTo4xY9//iHFHLdh//CrSMBhBZ9A0CWICdsgxDIgV9fcr4zZKJ8q+VXVOwldQVecpqvv5bA+SE/VfdFHw7DJXXyZ6hYinWoMB7gCd8wjSR9cEDgcGWV2dNJJgiCatVVMbooK0rrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=xiGFAE4B; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=40/VsnXsFcSLiJgKtc8jxrHRh6TFqjSmtbILrCIHYBk=; b=xiGFAE4BIGLIcVkDMDid+HwM6U
-	8B5FP9TE0g5HTAHMGF+oTK3YwsiNIYWp0amW2u9KSxqvH93NFCm2ARzSXzDRVpAL5pkqTMJiEJJ+d
-	bKU3qU/wDLNVlCylY/worARgJcdpN9zHNnCwsLjOgAXMKk6a0uoTACandDk7Qt2hHGBPHpWp03T4m
-	+7h4OZEVpymlQjRQMPpNzZyg0r4Y33v49zXUZmRRyvaokGVlP2sUXTXoQB/hG5GrLyvcLLEpOoS64
-	Tlzu6VzGNC/1LkYlwPSLIPdOE2Pcu2e2S3KZ0Mf8VFV7iZKk3GduI9AOFC1TdIIe5MssUfvXjm8Z0
-	EBTNViXw==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vIg7l-00000006VqT-2A4X;
-	Tue, 11 Nov 2025 04:36:57 +0000
-Message-ID: <e1799bf2-e261-4f36-9e1b-de324be9dd0a@infradead.org>
-Date: Mon, 10 Nov 2025 20:36:57 -0800
+	s=arc-20240116; t=1762835843; c=relaxed/simple;
+	bh=4Ij8Kpzw53FTvwgkxB14QlL5wIlcFPKB+tSaSgu160E=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=qgoQNLRNtgKbqXdiaQtnWDoPYUamtWi+4PpIa0VgMq91roLzOtE2YvLCKV2EKrLukAmCrHCv56jKWnUflFYMZX+jHW7IHpBHAUOjRNl3xOQkjXR6b1oT/XV/n1Fk3JDkv0aNWTv/wyWBGjgKFR33OXJ5IR2u8Nib3Y+hifmDzwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=T474UD14; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=amQ7CydK; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762835840;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=C+JproX8T015qBYAZSJqqnExPu+aACtaRVUSOGM3CqU=;
+	b=T474UD14Xn1rGy2GwzWmw1HfdFPlXABoXNiIgq0YaVvK+nbPwlKJmWQn8o1831erFV4VdM
+	F8/Qsr7II8xw7OFJ7L8wo0WxXvXaQUqmtQoGFsqQi4c+W1/amxy4ar3DplKhiSmBjBxMW6
+	rUNx4JOOG02o8Ta5iqd2WBb8F5/YWkU=
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
+ [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-283-lilP-b9bNQWBLPFQNV4Kjw-1; Mon, 10 Nov 2025 23:37:18 -0500
+X-MC-Unique: lilP-b9bNQWBLPFQNV4Kjw-1
+X-Mimecast-MFC-AGG-ID: lilP-b9bNQWBLPFQNV4Kjw_1762835838
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4edae6297a2so32534131cf.3
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 20:37:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1762835838; x=1763440638; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=C+JproX8T015qBYAZSJqqnExPu+aACtaRVUSOGM3CqU=;
+        b=amQ7CydK65mTQIwvr6CjGgfX0KE5jH8dHTwAaMQM9aFWGBMKwy/zcSvR4kjmNm6xcF
+         Xs9p9b3PiOhJmNLp1ofZ1H2/CeQdl1Wl40O8+D3iZ+O2IpGOPWjAD9sSJYy3xzi71A5o
+         X0bEAbOjRFGHUX97DZItnPHK26Fc8xjXxINXSfKoUWf57g9xBdhQv25fmAEW41VK5+yA
+         mn+mEDMkbwoADxjZd/bn3Z7KAvrAcNsmHpEPchhtlBR5MiGUhL7uh85HWl5XV2fEnu/J
+         zN/t1WZpGuSJ4QRO5R08vb0SKbKOG2DQ9DWQQ2TZFhuvDKRSm6eMu/6Dv+NPSHDv0B0A
+         KLwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762835838; x=1763440638;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=C+JproX8T015qBYAZSJqqnExPu+aACtaRVUSOGM3CqU=;
+        b=GtO95vgZTRVqYiA3YouM+1q82DlLLJHaLhkzGjQPgvsdp1dLnmq5mS4v0p6i3K1ioo
+         HdI30UmEbWhALnTelZLb/GZa7SluddtzX3vqv8cMqvuSyH5icGfssh4wEbZUB8enzoYF
+         X7cEnbAHygMUHTkVKiohG5+WKe9IuNXBh+WWGnti8kcoQoMKoT4jjMuTF0Ro51qHYDK1
+         10ZOPYOWzRZ2utVL+fCYGXePrasYd6a+gEMl+E2w6xyRG4u41PcUIsmPIfkFRN//ZDgG
+         EzMUyMy5NtIesiZmQWVncq8fFkMlskw1lAihn4x4q5tkdyg+hw7XcEL56xmgTrdsGCZG
+         NRfA==
+X-Forwarded-Encrypted: i=1; AJvYcCVnlOWFsG0Da4aZ11fE2S2Zjzdr/t+EUS9P4sjfppbx8V7RLA7KLiphnkGR2esARX/LpXlMXWCR3nSzqNM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9umkH0Y+v+Ixgp6t8+FyKETfUeDS2sQ1bq7zPvgTRSBDADl9G
+	c0Z5HA+BguBOKZo/dN52EIVGRFK2UI7hu+G1EBQ6OuA6VQIwiITWnxIQsn0OAVzbwESJt3QQNMJ
+	xIHAG+fFvpHHI09f7KTP6LVbtnhnurj5t71HPNZE6MWyXjgeh5f5t5qt5ZQdhKyxfiQ==
+X-Gm-Gg: ASbGncsXe3VXm8Pm4w2H+wRP5KnTCwIWP0IFMw1/XWbNP1VRcTe3WphaosoTw5zyo4n
+	32VnnJYHjWcPEhiAOfpzauFi+4e68SkTSAMFEZeEuwGGyAkjLL1kZheJJgQCcQ7AIPaLh7HeNEG
+	6XpzYOsdQcuMt6PXYNQYDw1U2ey8Hpm6RQW1iYA12l3QNJOpxcfokefRTTZMyaZqHPIb/E+kVy5
+	WzV/p7Yset9eM80RQd3MjQF4WJWWa9/6SZNef4Lp3qEfraC69CBDAmoP9M9sirL7gKqyo+GQRYH
+	MXp6fuhL02tkof6Y6324vvqbmXwQZScfRAIXmwyUFbaoGQAiXutVs3Ftc1692Bht58H4bFjBxoP
+	2m+fmJQVYayo73ceuyvFOsSYdazq8QR1GXMu6UYgYH93gEg==
+X-Received: by 2002:ac8:59c3:0:b0:4ed:8264:919e with SMTP id d75a77b69052e-4eda4f99536mr125294571cf.44.1762835838436;
+        Mon, 10 Nov 2025 20:37:18 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEKIbjVumbhQ6UlTo32QTUXlZ/B0AGMGTqMqjVXCshP8q/ARwDZpWgxkIo7Vshy4zJl+b4h3A==
+X-Received: by 2002:ac8:59c3:0:b0:4ed:8264:919e with SMTP id d75a77b69052e-4eda4f99536mr125294461cf.44.1762835838167;
+        Mon, 10 Nov 2025 20:37:18 -0800 (PST)
+Received: from ?IPV6:2601:188:c102:b180:1f8b:71d0:77b1:1f6e? ([2601:188:c102:b180:1f8b:71d0:77b1:1f6e])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4edb5a108a1sm41301131cf.24.2025.11.10.20.37.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Nov 2025 20:37:17 -0800 (PST)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <e5a25c3d-cd81-48bc-bae0-b1b28778272b@redhat.com>
+Date: Mon, 10 Nov 2025 23:37:16 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,104 +103,61 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Documentation: ipmb: Indent boot time loading steps
-To: Bagas Sanjaya <bagasdotme@gmail.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Documentation <linux-doc@vger.kernel.org>,
- openipmi-developer@lists.sourceforge.net
-Cc: Corey Minyard <corey@minyard.net>, Jonathan Corbet <corbet@lwn.net>
-References: <20251105125449.45643-1-bagasdotme@gmail.com>
+Subject: Re: [PATCH -next 3/3] cpuset: remove need_rebuild_sched_domains
+To: Chen Ridong <chenridong@huaweicloud.com>, tj@kernel.org,
+ hannes@cmpxchg.org, mkoutny@suse.com
+Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+ lujialin4@huawei.com, chenridong@huawei.com
+References: <20251110015228.897736-1-chenridong@huaweicloud.com>
+ <20251110015228.897736-4-chenridong@huaweicloud.com>
 Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20251105125449.45643-1-bagasdotme@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20251110015228.897736-4-chenridong@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 
-
-On 11/5/25 4:54 AM, Bagas Sanjaya wrote:
-> Steps for loading IPMB driver at boot time, written as enumerated
-> sublist, is indented instead on the same level as its parent list.
-> Indent them as appropriate.
-> 
-> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
-
-LGTM. Thanks.
-
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
-
+On 11/9/25 8:52 PM, Chen Ridong wrote:
+> From: Chen Ridong <chenridong@huawei.com>
+>
+> Previously, update_cpumasks_hier() used need_rebuild_sched_domains to
+> decide whether to invoke rebuild_sched_domains_locked(). Now that
+> rebuild_sched_domains_locked() only sets force_rebuild, the flag is
+> redundant. Hence, remove it.
+>
+> Signed-off-by: Chen Ridong <chenridong@huawei.com>
 > ---
->  Documentation/driver-api/ipmb.rst | 48 +++++++++++++++----------------
->  1 file changed, 24 insertions(+), 24 deletions(-)
-> 
-> diff --git a/Documentation/driver-api/ipmb.rst b/Documentation/driver-api/ipmb.rst
-> index 209c49e051163f..dd99d034272b7e 100644
-> --- a/Documentation/driver-api/ipmb.rst
-> +++ b/Documentation/driver-api/ipmb.rst
-> @@ -48,35 +48,35 @@ CONFIG_IPMB_DEVICE_INTERFACE=y
->  
->  1) If you want the driver to be loaded at boot time:
->  
-> -a) Add this entry to your ACPI table, under the appropriate SMBus::
-> +   a) Add this entry to your ACPI table, under the appropriate SMBus::
->  
-> -     Device (SMB0) // Example SMBus host controller
-> -     {
-> -     Name (_HID, "<Vendor-Specific HID>") // Vendor-Specific HID
-> -     Name (_UID, 0) // Unique ID of particular host controller
-> -     :
-> -     :
-> -       Device (IPMB)
-> -       {
-> -         Name (_HID, "IPMB0001") // IPMB device interface
-> -         Name (_UID, 0) // Unique device identifier
-> -       }
-> -     }
-> +        Device (SMB0) // Example SMBus host controller
-> +        {
-> +        Name (_HID, "<Vendor-Specific HID>") // Vendor-Specific HID
-> +        Name (_UID, 0) // Unique ID of particular host controller
-> +        :
-> +        :
-> +          Device (IPMB)
-> +          {
-> +            Name (_HID, "IPMB0001") // IPMB device interface
-> +            Name (_UID, 0) // Unique device identifier
-> +          }
-> +        }
->  
-> -b) Example for device tree::
-> +   b) Example for device tree::
->  
-> -     &i2c2 {
-> -            status = "okay";
-> +        &i2c2 {
-> +               status = "okay";
->  
-> -            ipmb@10 {
-> -                    compatible = "ipmb-dev";
-> -                    reg = <0x10>;
-> -                    i2c-protocol;
-> -            };
-> -     };
-> +               ipmb@10 {
-> +                       compatible = "ipmb-dev";
-> +                       reg = <0x10>;
-> +                       i2c-protocol;
-> +               };
-> +        };
->  
-> -If xmit of data to be done using raw i2c block vs smbus
-> -then "i2c-protocol" needs to be defined as above.
-> +   If xmit of data to be done using raw i2c block vs smbus
-> +   then "i2c-protocol" needs to be defined as above.
->  
->  2) Manually from Linux::
->  
-> 
-> base-commit: 27600b51fbc8b9a4eba18c8d88d7edb146605f3f
+>   kernel/cgroup/cpuset.c | 6 +-----
+>   1 file changed, 1 insertion(+), 5 deletions(-)
+>
+> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+> index c357bfb69fe2..22084d8bdc3f 100644
+> --- a/kernel/cgroup/cpuset.c
+> +++ b/kernel/cgroup/cpuset.c
+> @@ -2184,7 +2184,6 @@ static void update_cpumasks_hier(struct cpuset *cs, struct tmpmasks *tmp,
+>   {
+>   	struct cpuset *cp;
+>   	struct cgroup_subsys_state *pos_css;
+> -	bool need_rebuild_sched_domains = false;
+>   	int old_prs, new_prs;
+>   
+>   	rcu_read_lock();
+> @@ -2348,15 +2347,12 @@ static void update_cpumasks_hier(struct cpuset *cs, struct tmpmasks *tmp,
+>   		if (!cpumask_empty(cp->cpus_allowed) &&
+>   		    is_sched_load_balance(cp) &&
+>   		   (!cpuset_v2() || is_partition_valid(cp)))
+> -			need_rebuild_sched_domains = true;
+> +			cpuset_force_rebuild();
+>   
+>   		rcu_read_lock();
+>   		css_put(&cp->css);
+>   	}
+>   	rcu_read_unlock();
+> -
+> -	if (need_rebuild_sched_domains)
+> -		cpuset_force_rebuild();
+>   }
+>   
+>   /**
+Reviewed-by: Waiman Long <longman@redhat.com>
 
--- 
-~Randy
 
