@@ -1,133 +1,173 @@
-Return-Path: <linux-kernel+bounces-894583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 864BFC4B5B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 04:43:23 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66342C4B5B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 04:44:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 521BF1891860
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 03:43:48 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B97C434CB01
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 03:44:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1D7A34A79A;
-	Tue, 11 Nov 2025 03:43:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E38013491D6;
+	Tue, 11 Nov 2025 03:44:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="BjMPtRNL"
-Received: from canpmsgout04.his.huawei.com (canpmsgout04.his.huawei.com [113.46.200.219])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="YO4nAP+f"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D8167640E;
-	Tue, 11 Nov 2025 03:43:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.219
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5E617640E
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 03:44:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762832595; cv=none; b=srkF9q+J9nB7hQ45b4unBX2wUnTkHgcHPhEf0E3hSOig1rZvgoY5GzeKz9EauIBFbiREgb5Kr4LORQAYYDiIWhCdOL9UOxezP+bjfZ2i/VFByr+BJpJOrg+tmortX1C2Cyj8EiNi6ZSXcAcVhpUw4hAtE2ExC0IzpV6/KsAcRTw=
+	t=1762832647; cv=none; b=ha1MIzGdAuCWQDR3oO7LGaDu5LxJb96VUrsn12xXvm0+oY/wYFyPbuROISGulQ9DbsojMo50LbZPJp/u+dBbuNRCtz+TN8+HfCK+/h3BfVu18a2UpHBlqtOU9NYqUfE7Wvyk2NTBanfmTLq+suZqX416gmGpulZflsMp4rTtVdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762832595; c=relaxed/simple;
-	bh=UmbMwPFQDhX0sgemsDZP1cEnjvFz1CTV1maBqxb2RPo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=XMIedw4EKXhCIPIALw66A4swR6hvx+58xnkJSYy9clWundU27B1+ZURc/vhhnXSWXyEFkHkUtqPD4qUG6sKysq4VQ5TVCYOeK+eFQJEuXBnjtyH//KwZaWnNljXJMOCf9mzffd6sYMP7qnU8lW2HGrCtpm2q7TYbaAafJnMXBYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=BjMPtRNL; arc=none smtp.client-ip=113.46.200.219
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=0kaa3vUiwcAr53RbTBFcjCZZteWEUfi4Wdgy/IuyaD8=;
-	b=BjMPtRNLi+CcIV6s6FBTzainP0aydUB3TmqKoZGdqEmnOiFKUJmBgDMKhlSQls1S43E6WM7+p
-	114ek8lmUZbarbWH+isnSzgy2y50xikq4gxFeynLc75PZKPdYTON4BnDEEAKrdmKqDdxTq8GK0t
-	yx04ydq9h37K7jgZfg+4em4=
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by canpmsgout04.his.huawei.com (SkyGuard) with ESMTPS id 4d5C4k2c1fz1prLS;
-	Tue, 11 Nov 2025 11:41:26 +0800 (CST)
-Received: from dggpemf500013.china.huawei.com (unknown [7.185.36.188])
-	by mail.maildlp.com (Postfix) with ESMTPS id B4EBF180087;
-	Tue, 11 Nov 2025 11:43:05 +0800 (CST)
-Received: from [127.0.0.1] (10.174.178.254) by dggpemf500013.china.huawei.com
- (7.185.36.188) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 11 Nov
- 2025 11:43:04 +0800
-Message-ID: <46c68bcf-8ad4-45ed-9fba-cc908328069b@huawei.com>
-Date: Tue, 11 Nov 2025 11:43:03 +0800
+	s=arc-20240116; t=1762832647; c=relaxed/simple;
+	bh=0ZECHkUSj6g52R5EQ80fJPC8fk2deCqZl66ciVcyS1I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=haRhmRym4HNJNCVjafrL9LQptZqgViWGiQK+SpXsbpQ7ijFn7jsWV9nPxElbMZKQZQJg98DbLY5aIbkXE4nI8yE5V9E6c+IG1/LTpIXyPCymHPFMWqHq6WSs+3eiuh9SdaUNlF4L7AKI37j7n1YkU+oZt1j8JT/Jzn1zbZegAI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=YO4nAP+f; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-47107a9928cso1430535e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 19:44:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1762832643; x=1763437443; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8iPZXAZg8pQGqZG4u6J8NA9VICiZVn+zK9boW+BJKwU=;
+        b=YO4nAP+f4xWHAYoBC+LvWra4IiFlQfl+d9X8gGBscHn7CL/hD7Cm98QhcV6KMWfRS3
+         dniYnBtrpYeMVeBXBo48ldSVSj1Ou3U3hOK+YfuNQOYKw8p3Iwa9PWVTsz/61D3KqW4a
+         NLnikcgIv/+bVGkb3hoEb732D0u1xZBFPkaUTQUTDF1/xZ6+GopfC02IJpX2ddRWEBgp
+         zCy0IHswzdtmJggzKuuP1gySGmifTT84aUywdosUSEZnQpJzGHMEueWT24edWA0x+DMY
+         szfheSMj9QwytnpMvL4o1nGQZi2r7VU9K2MSogA4nZbiWSUDeihOgGyn2CEcc+A4vrXy
+         PP2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762832643; x=1763437443;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8iPZXAZg8pQGqZG4u6J8NA9VICiZVn+zK9boW+BJKwU=;
+        b=LjzxMAL+hlTpOa1YEvCcvhnwA43U7g9SMQ4uPS2iB2Z/5YofHgjm/LvaInQWCwINRP
+         YBjrc6r1wHScWgFkE0NMdTuJLDWqogonhIIX0SLGKwbXM5HGE+yQeVRsuK1FP+aVOSs6
+         aumJRn4EtlYlE627yJAjzn/RZO6QkZq332qzQenJm3vG/bpIi0UUfGXqcFSjmPt5OVYd
+         ROBm6AZLghHhHEJ0cqtl5wzkRnsESH9lMJDZ96j6hpZbhoV1X5yAOmaqTLtcpQ7oDnqT
+         aA/+7DeWurzerbMVjc282y1wTIVtV0HtS3c4Hry+xkEsgj791vMFP7rvonTcC/GFuz0I
+         VBuA==
+X-Forwarded-Encrypted: i=1; AJvYcCVcg6/Q5yfKDy6e6963Qr+Owj/gBo7NhqBZv9kmJ1PfrfkB3Ch2RDX84asd+wQkc6c17UxeB8Gh3C0jYRY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVkg58R14iCwNBUjrHF86x2ssFo0zVhSmz0Zis0XUGr6erZXZ0
+	yb82BRXibP7UniCjjGm06S08uD1s40SkPlbnX2H6aFO3FAZfsgsJENfnrx2Z2GcOW00=
+X-Gm-Gg: ASbGnctylHDhIN8I3Rv+33r/k9Og+9CXu/Oqtiy3IkROQd+RIUdf4/aMqo5uj/uTma2
+	Q6rcsUP1ae3aznaqXXdVKlGPSOuUkT5m6MgIRHDYjPTGlB98kS75gfNp/XgKazqJ8K2Kw6qPj4Z
+	zYu9OUx0Hmk7FwevJKlkL42x7+rqYWZtyj3g4jpfmaQVOaxvzwo4RhF73LkxfbvuqK2/Agbov16
+	QWBuANVamcZNLUy6G1ZI3KbPfdgGT2su6R6ISBIOtwl2HMwWCQBOsdxcqgIrxqLSnDOSxoWjyrP
+	LaVGh96oOLLYiNPrqdl7S4FxQykaNkM/U/xzfwX0IwPJkXcZL02cKKQKCZivVq5QQ1gkDtwXnEM
+	8kpZ9Y+wDbPyzdWtyy6TxgTwHlCdpkOaAijvv7G7tIiNMOBFtNYvw+pLQkgLd/tecAQlDWa25Lm
+	HV7fEQzylaKjW3tlUWlS5l
+X-Google-Smtp-Source: AGHT+IEX3tDhRdCNc6A4BdqS22VA4H5jZdKkaZYPwJQeMyXBuJuX4/SBu7LMBMgcRV1F8yhicXZQTg==
+X-Received: by 2002:a05:600c:4711:b0:475:d7b8:8505 with SMTP id 5b1f17b1804b1-4777329f181mr52644895e9.7.1762832643133;
+        Mon, 10 Nov 2025 19:44:03 -0800 (PST)
+Received: from localhost ([202.127.77.110])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29651c740b5sm166132835ad.70.2025.11.10.19.44.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Nov 2025 19:44:02 -0800 (PST)
+Date: Tue, 11 Nov 2025 11:44:00 +0800
+From: Heming Zhao <heming.zhao@suse.com>
+To: Ahmet Eray Karadag <eraykrdg1@gmail.com>
+Cc: mark@fasheh.com, jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
+	ocfs2-devel@lists.linux.dev, linux-kernel@vger.kernel.org, david.hunter.linux@gmail.com, 
+	skhan@linuxfoundation.org, syzbot+55c40ae8a0e5f3659f2b@syzkaller.appspotmail.com, 
+	Albin Babu Varghese <albinbabuvarghese20@gmail.com>
+Subject: Re: [RFT PATCH] ocfs2: Invalidate inode if i_mode is zero after
+ block read
+Message-ID: <tocd57rydneodajmr7o2r4drjimixftcppzsbycxlwvophhxgi@jhq5lazi5buu>
+References: <20251108120133.37443-3-eraykrdg1@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 24/24] ext4: enable block size larger than page size
-Content-Language: en-GB
-To: Theodore Ts'o <tytso@mit.edu>
-CC: <linux-ext4@vger.kernel.org>, <adilger.kernel@dilger.ca>, <jack@suse.cz>,
-	<linux-kernel@vger.kernel.org>, <kernel@pankajraghav.com>,
-	<mcgrof@kernel.org>, <ebiggers@kernel.org>, <willy@infradead.org>,
-	<yi.zhang@huawei.com>, <yangerkun@huawei.com>, <chengzhihao1@huawei.com>,
-	<libaokun@huaweicloud.com>, Baokun Li <libaokun1@huawei.com>
-References: <20251107144249.435029-1-libaokun@huaweicloud.com>
- <20251107144249.435029-25-libaokun@huaweicloud.com>
- <20251110151604.GE2988753@mit.edu>
-From: Baokun Li <libaokun1@huawei.com>
-In-Reply-To: <20251110151604.GE2988753@mit.edu>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
- dggpemf500013.china.huawei.com (7.185.36.188)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251108120133.37443-3-eraykrdg1@gmail.com>
 
-On 2025-11-10 23:16, Theodore Ts'o wrote:
-> On Fri, Nov 07, 2025 at 10:42:49PM +0800, libaokun@huaweicloud.com wrote:
->> From: Baokun Li <libaokun1@huawei.com>
->>
->> Since block device (See commit 3c20917120ce ("block/bdev: enable large
->> folio support for large logical block sizes")) and page cache (See commit
->> ab95d23bab220ef8 ("filemap: allocate mapping_min_order folios in the page
->> cache")) has the ability to have a minimum order when allocating folio,
->> and ext4 has supported large folio in commit 7ac67301e82f ("ext4: enable
->> large folio for regular file"), now add support for block_size > PAGE_SIZE
->> in ext4.
->>
->> set_blocksize() -> bdev_validate_blocksize() already validates the block
->> size, so ext4_load_super() does not need to perform additional checks.
->>
->> Here we only need to add the FS_LBS bit to fs_flags.
->>
->> In addition, allocation failures for large folios may trigger warn_alloc()
->> warnings. Therefore, as with XFS, mark this feature as experimental.
->>
->> Signed-off-by: Baokun Li <libaokun1@huawei.com>
->> Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
-> Could you add:
->
-> #ifdef CONFIG_TRANSPARENT_HUGEPAGES
-> EXT4_ATTR_FEATURE(blocksize_gt_pagesize);
-> #endif
->
-> in fs/sys/sysfs.c, so that userspace programs (like those in e2fsprogs
-> and xfstests) can test /sys/fs/ext4/features/... to determine whether
-> or not blocksize > pagesize is supported?  That way we can more easily
-> determine whether to test the 64k blocksize configurations in
-> xfstests, and so we can supress the mke2fs warnings:
->
-> mke2fs: 65536-byte blocks too big for system (max 4096)
-> Proceed anyway? (y,N) y
-> Warning: 65536-byte blocks too big for system (max 4096), forced to continue
->
-> ... if the feature flag file is present.
->
-Good idea — sure!
+On Sat, Nov 08, 2025 at 03:01:35PM +0300, Ahmet Eray Karadag wrote:
+> A panic occurs in ocfs2_unlink due to WARN_ON(inode->i_nlink == 0) when
+> handling a corrupted inode with i_mode=0 and i_nlink=0 in memory.
+> 
+> This "zombie" inode is created because ocfs2_read_locked_inode proceeds
+> even after ocfs2_validate_inode_block successfully validates a block
+> that structurally looks okay (passes checksum, signature etc.) but
+> contains semantically invalid data (specifically i_mode=0). The current
+> validation function doesn't check for i_mode being zero.
+> 
+> This results in an in-memory inode with i_mode=0 being added to the VFS
+> cache, which later triggers the panic during unlink.
+> 
+> Prevent this by adding an explicit check for (i_mode == 0, i_nlink == 0, non-orphan) 
+> within ocfs2_validate_inode_block. If the check is true, return -EFSCORRUPTED to signal
+> corruption. This causes the caller (ocfs2_read_locked_inode) to invoke
+> make_bad_inode(), correctly preventing the zombie inode from entering
+> the cache.
+> 
+> Reported-by: syzbot+55c40ae8a0e5f3659f2b@syzkaller.appspotmail.com
+> Fixes: https://syzkaller.appspot.com/bug?extid=55c40ae8a0e5f3659f2b
+> Co-developed-by: Albin Babu Varghese <albinbabuvarghese20@gmail.com>
+> Signed-off-by: Albin Babu Varghese <albinbabuvarghese20@gmail.com>
+> Signed-off-by: Ahmet Eray Karadag <eraykrdg1@gmail.com>
+> Previous link: https://lore.kernel.org/all/20251022222752.46758-2-eraykrdg1@gmail.com/T/
+> ---
+>  fs/ocfs2/inode.c | 9 ++++++++-
+>  1 file changed, 8 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/ocfs2/inode.c b/fs/ocfs2/inode.c
+> index 14bf440ea4df..d966df3aa605 100644
+> --- a/fs/ocfs2/inode.c
+> +++ b/fs/ocfs2/inode.c
+> @@ -1455,7 +1455,14 @@ int ocfs2_validate_inode_block(struct super_block *sb,
+>  		     (unsigned long long)bh->b_blocknr);
+>  		goto bail;
+>  	}
+> -
+> +	if (!le16_to_cpu(di->i_links_count) && !le16_to_cpu(di->i_mode) &&
+> +		!(le32_to_cpu(di->i_flags) & OCFS2_ORPHANED_FL)) {
 
-In my earlier tests I just dropped the warning in mke2fs. That’s a bit
-clumsy though; adding an interface so mke2fs and the kernel can work
-together is much nicer.
+1.
+di->i_links_count is the low 16 bits of i_nlink. We need to check both
+di->i_link_count and di->i_link_count_hi.
 
-It also lets us do what was mentioned in another thread: warn in mke2fs
-instead of in the kernel. I’ll take your suggestion in the next version
-and drop the experimental tag.
+2.
+We are only interested the the di members' value being ZERO.
+Therefore, calling le16_to_cpu() to perform the conversion is wasting CPU cycles.
 
-Thank you for your suggestion!
+3.
+The ocfs2_dinode structure has dozens of members, and syzbot could potentially
+corrupt any one of them. At the same time, the probability of this type of syzbot
+error occurring in a real-world scenario is practically zero. My idea is to
+minimize unnecessary checks.
+I prefer to remove the check for OCFS2_ORPHANED_FL.
 
+4.
+It is an error/exception if either i_links_count or i_mode is zero.
+The code "!di->i_links_count && !di->i_mode" need to be changed to '||'. (I
+didn't test it)
 
-Regards,
-Baokun
+Thanks,
+Heming
 
+> +		mlog(ML_ERROR, "Invalid dinode #%llu: "
+> +			"Corrupt state (nlink=0, mode=0, !orphan) detected!\n",
+> +		        (unsigned long long)bh->b_blocknr);
+> +		rc = -EFSCORRUPTED;
+> +		goto bail;
+> +	}
+>  	/*
+>  	 * Errors after here are fatal.
+>  	 */
+> -- 
+> 2.43.0
+> 
+> 
 
