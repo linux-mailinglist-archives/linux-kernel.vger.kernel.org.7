@@ -1,96 +1,119 @@
-Return-Path: <linux-kernel+bounces-894996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 506EFC4CA96
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:30:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EABC3C4CAB1
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:31:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B07F53BAF36
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:27:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66131420A4D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:29:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58AB32F1FD5;
-	Tue, 11 Nov 2025 09:27:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B4342F0C6F;
+	Tue, 11 Nov 2025 09:29:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mYV7wo/8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=realsil.com.cn header.i=@realsil.com.cn header.b="JdqREjat"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2EC6228CA9;
-	Tue, 11 Nov 2025 09:27:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABAE74A01;
+	Tue, 11 Nov 2025 09:29:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762853240; cv=none; b=aCC0HBJsBRSa5jbHD4lIWw/zmitI9b/e77J1ExNuL2t7pcYRkgSJabq1Dfi4JPp85aEuKSMrmTxWOsfglZEOhi4KuklGzRe9ZmQGzmFut5/62RbCFIL1aaOP8wg3Yeys9/+56ErvMKcxsedoxoQT3FI9cTw63uaGOGD1+C8BavY=
+	t=1762853374; cv=none; b=gFzzwLuA5g9K6PXSmAfgcNR0aSwAXv+PfSVheA8xmu3KpZ7Ltud/dLk0HCCDYi3W2x8SAHff4YXhyJp12uI4hbGUa42gTcKsjDnpRBJDEvwGy58Ouz/VvjHsOP/PLBEbB887T3XDVgAoExoV3/D6BqOsP+F3S7/kcm8lIagRUwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762853240; c=relaxed/simple;
-	bh=L65M4dF3os+W2WKpgS1o4tMupE+uWY2D8hkMGwN/YGo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=txsnKzrv//UyH3bOQY9fOFgahkioOVzrx9281lO4zUSj4r39qNpf7nf3LEEQ6+kpncVOQibuLGmgjXA4/Y135yWUrcJOGl/TB2h9L1UMMVb+wxV1E7PMnVoDB6p/e0xT5esLD+07Xdgq3TMVsatwXu9t9oEX6W0K7sN501DiRKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mYV7wo/8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA64AC4AF0E;
-	Tue, 11 Nov 2025 09:27:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762853240;
-	bh=L65M4dF3os+W2WKpgS1o4tMupE+uWY2D8hkMGwN/YGo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mYV7wo/8/LzMaZ848IcdKOnkMJZIUM+xVBVatsNxOc7iEmJKvwrcTRbO9kXCIvyly
-	 5JisvrnyzgThRa6MSFu209SqjhwygBNKYzDqx0ujEzQuQgAh0evDyOwi5HwrV+H0n/
-	 ABNqHqZPyc4lM+XeETColisFG0JXJcuabvMbVemW78IlL6Dx20TeS+2s8LycI1ukUV
-	 6gea7x2+v5gcWkD7wbWMOWon5Sb8W7/nkwUoucDXEXXS7cujl83nEHpRLMsVtqzKmx
-	 HqnWwL04KPOwitj6dX3Ix8IeeTxg5O2MtNcWGicSSZBufsxbRl1cLIvovBjVKG8pgU
-	 5San4pL7jr2tw==
-Date: Tue, 11 Nov 2025 10:27:15 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Deepanshu Kartikey <kartikey406@gmail.com>
-Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzbot+0b2e79f91ff6579bfa5b@syzkaller.appspotmail.com
-Subject: Re: [PATCH v2] fs/nsfs: skip active ref counting for initial
- namespaces
-Message-ID: <20251111-inhaftiert-observieren-b595499354e4@brauner>
-References: <20251109092333.844185-1-kartikey406@gmail.com>
+	s=arc-20240116; t=1762853374; c=relaxed/simple;
+	bh=ne5yh8ZC2GODRrvuJFNe9SQwcT3vPtcEL0MEUpvQol0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lp4I90TippBouztIsttykFqLVJGia13+ry5okhKjeQPZQOa/El4I6kS2MRuPSPt4fWP+9F9pFIoMve2GleRp61rSVMkHJ/Y+42vXRrbIgOxACe6I4dMGrTL4nDWDh6d9/XQ7NELE1ugu6UOd+eG3Fhuel/QOo0N+IgL4X0bpdCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realsil.com.cn; spf=pass smtp.mailfrom=realsil.com.cn; dkim=pass (2048-bit key) header.d=realsil.com.cn header.i=@realsil.com.cn header.b=JdqREjat; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realsil.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realsil.com.cn
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 5AB9SrFQ23457237, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realsil.com.cn;
+	s=dkim; t=1762853334;
+	bh=qWl0dddmwIBBcOBnbKE9nqFnSO6m1/0E7BD0OMtrhrc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:
+	 Content-Transfer-Encoding:Content-Type;
+	b=JdqREjatnGtMqp3Y1ci7NUfTpPTXFR9uRLUuSmje0nA9LcRACLPLdAACFcJg43255
+	 znhXWO1BOIrQXF6rKc8TVJWaGv4fz4nIVs3OxbYyV1WO96tfcBVtGf8wDXVNkYDu4d
+	 euZKSlFHRqu7u9wrVqi4gRJw+ECQ49QlWwb6V9A6jRE2cqyJpC9JZjmlQrkPaqsZ/P
+	 28Y7GnmJjbNKSX6mngDSpeRIl63fGQTj7OwZ8K+PjRt7zUQm0Wam87JN2xDzbEkAc/
+	 Aa5IQzCr2K4fJqkb2YYqcsPL6asC4hktaisK3SpjmhqZvTZPbDStFivP1cslbapSP5
+	 9Q3tEw09x+mfw==
+Received: from RS-EX-MBS4.realsil.com.cn ([172.29.17.104])
+	by rtits2.realtek.com.tw (8.15.2/3.21/5.94) with ESMTPS id 5AB9SrFQ23457237
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 11 Nov 2025 17:28:54 +0800
+Received: from RS-EX-MBS2.realsil.com.cn (172.29.17.102) by
+ RS-EX-MBS4.realsil.com.cn (172.29.17.104) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Tue, 11 Nov 2025 17:28:53 +0800
+Received: from 172.29.37.154 (172.29.37.152) by RS-EX-MBS2.realsil.com.cn
+ (172.29.17.102) with Microsoft SMTP Server id 15.2.1544.36 via Frontend
+ Transport; Tue, 11 Nov 2025 17:28:53 +0800
+From: javen <javen_xu@realsil.com.cn>
+To: <hkallweit1@gmail.com>, <nic_swsd@realtek.com>, <andrew+netdev@lunn.ch>,
+        <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+        <pabeni@redhat.com>, <horms@kernel.org>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        javen
+	<javen_xu@realsil.com.cn>
+Subject: [PATCH net-next v2] r8169: add support for RTL8125K
+Date: Tue, 11 Nov 2025 17:28:51 +0800
+Message-ID: <20251111092851.3371-1-javen_xu@realsil.com.cn>
+X-Mailer: git-send-email 2.50.1.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251109092333.844185-1-kartikey406@gmail.com>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Sun, Nov 09, 2025 at 02:53:33PM +0530, Deepanshu Kartikey wrote:
-> Initial namespaces are statically allocated and exist for the entire
-> lifetime of the system. They should not participate in active
-> reference counting.
-> 
-> The recent introduction of active reference counting in commit
-> 3a18f809184b ("ns: add active reference count") added functions that
-> unconditionally take/drop active references on all namespaces,
-> including initial ones.
-> 
-> This causes a WARN_ON_ONCE() to trigger when a namespace file for an
-> initial namespace is evicted:
-> 
->   WARNING: ./include/linux/ns_common.h:314 at nsfs_evict+0x18e/0x200
-> 
-> The same pattern exists in nsproxy_ns_active_get() and
-> nsproxy_ns_active_put() which could trigger similar warnings when
-> operating on initial namespaces.
-> 
-> Fix by checking is_initial_namespace() before taking or dropping
-> active references in:
-> - nsfs_evict()
-> - nsproxy_ns_active_get()
-> - nsproxy_ns_active_put()
-> 
-> Reported-by: syzbot+0b2e79f91ff6579bfa5b@syzkaller.appspotmail.com
-> Link: https://syzkaller.appspot.com/bug?extid=0b2e79f91ff6579bfa5b
-> Fixes: 3a18f809184b ("ns: add active reference count")
-> Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
-> ---
+This adds support for chip RTL8125K. Its XID is 0x68a. It is basically
+based on the one with XID 0x688, but with different firmware file.
 
-This is not the way to fix it and it's not the cause of the bug.
-I've sent a series that addresses this issue properly and it's already
-been in next.
+Signed-off-by: javen <javen_xu@realsil.com.cn>
+---
+v2: This adds support for chip RTL8125K. Reuse RTL_GIGA_MAC_VER_64 as its
+chip version number.=0D
+
+---
+ drivers/net/ethernet/realtek/r8169_main.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/net/ethernet/realtek/r8169_main.c b/drivers/net/ethern=
+et/realtek/r8169_main.c
+index d18734fe12e4..eda3af907127 100644
+--- a/drivers/net/ethernet/realtek/r8169_main.c
++++ b/drivers/net/ethernet/realtek/r8169_main.c
+@@ -57,6 +57,7 @@
+ #define FIRMWARE_8125B_2	"rtl_nic/rtl8125b-2.fw"
+ #define FIRMWARE_8125D_1	"rtl_nic/rtl8125d-1.fw"
+ #define FIRMWARE_8125D_2	"rtl_nic/rtl8125d-2.fw"
++#define FIRMWARE_8125K_1	"rtl_nic/rtl8125k-1.fw"
+ #define FIRMWARE_8125BP_2	"rtl_nic/rtl8125bp-2.fw"
+ #define FIRMWARE_8126A_2	"rtl_nic/rtl8126a-2.fw"
+ #define FIRMWARE_8126A_3	"rtl_nic/rtl8126a-3.fw"
+@@ -110,6 +111,7 @@ static const struct rtl_chip_info {
+ 	{ 0x7cf, 0x681,	RTL_GIGA_MAC_VER_66, "RTL8125BP", FIRMWARE_8125BP_2 },
+=20
+ 	/* 8125D family. */
++	{ 0x7cf, 0x68a, RTL_GIGA_MAC_VER_64, "RTL8125K", FIRMWARE_8125K_1 },
+ 	{ 0x7cf, 0x689,	RTL_GIGA_MAC_VER_64, "RTL8125D", FIRMWARE_8125D_2 },
+ 	{ 0x7cf, 0x688,	RTL_GIGA_MAC_VER_64, "RTL8125D", FIRMWARE_8125D_1 },
+=20
+@@ -770,6 +772,7 @@ MODULE_FIRMWARE(FIRMWARE_8125A_3);
+ MODULE_FIRMWARE(FIRMWARE_8125B_2);
+ MODULE_FIRMWARE(FIRMWARE_8125D_1);
+ MODULE_FIRMWARE(FIRMWARE_8125D_2);
++MODULE_FIRMWARE(FIRMWARE_8125K_1);
+ MODULE_FIRMWARE(FIRMWARE_8125BP_2);
+ MODULE_FIRMWARE(FIRMWARE_8126A_2);
+ MODULE_FIRMWARE(FIRMWARE_8126A_3);
+--=20
+2.43.0
+
 
