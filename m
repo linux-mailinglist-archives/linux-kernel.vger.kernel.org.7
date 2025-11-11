@@ -1,245 +1,202 @@
-Return-Path: <linux-kernel+bounces-895190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 673BEC4D35C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:55:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6C49C4D365
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:55:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B5E094F6B2A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:48:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43CBE3AF44F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:48:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C25AD3502B8;
-	Tue, 11 Nov 2025 10:48:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E61A350A1B;
+	Tue, 11 Nov 2025 10:48:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eMlD9tXU"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="knwCUupI";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="w05KIqed";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="knwCUupI";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="w05KIqed"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CB38350D4B
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 10:48:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57164350A07
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 10:48:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762858094; cv=none; b=FC3q5+vfM3c2F85cvUi05ld3N7yKKcdoG1vcupKN6cXMiz7nB51o/fSQNnKcL0hHliwuiXZa2tBlC+8XcrfWuXjC6/Wuh3h7NO/wr18XRkYuBgyKqKJkNUreY9YrojuQvBM4CAMoAgDxTV62NfkELc0gweE06jdqL6Ajpk0FWPs=
+	t=1762858092; cv=none; b=pk5zUbD4ebrkBtdhq1/ygSlA3iJV5NdtkfgtFPUwCCTqpniiINfEWZWNwP2oHOuVwx8C/dAdnWYE0KlrJ6r21F4zumO9wCbiN2iRd3+Px+LB13k+dT5oHZZDC4+Jn8Pr2KGXa3RjyOXrkUKRTjF75hAP2+N68UC/uAFN16aiVQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762858094; c=relaxed/simple;
-	bh=bD+R5u9IlPvwBZGtlBwpRrQZGIJ6U/j8hSw8QCdfnSY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o7hect1EVaUqo884CBGYf5r3uZyIYZdAbsp42bpPWn5JBOY1z1d4NR9EniLF27VeLvwGTBqSQJPj6bzcQu6l6dcrzYX/XFzxQN0fmQjZDyWK6s1jqhPuEGhdleMkDTCvEXhAQ3ittuDIbTMUinnfj2lOqEFtNWpfY3s+9Ts0QkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eMlD9tXU; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-298144fb9bcso19968795ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 02:48:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762858092; x=1763462892; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ma0936PLaG7xVo6vcy1wxniBnOai4MhijJryYDzlRRA=;
-        b=eMlD9tXULfFexZ+T91DhtpgeRCjqkFFvI4GdTc+cZvM0AlZ+LmdeQSLSH9jHc3oQme
-         jmSsHuz85YQC7wXg+nWjCDrQY8UyalzuFCVnfEBUrE2IVUqYNA/vDh3SRuhx2jDGuJKu
-         QkYDLeJ/uZsSqGsJ3i9PVqVj8mDWvLUQbre38NnkHiY0BIj1vJWSJRqXZswzAFHgDEcV
-         UulfZwtdcLfCbby1yw7X2TOebv7ivwuuo/wNzxrIIVD/ArfMirfUY2lpQfB3MxEDnDbe
-         AMb9ubx6QxnJ00pdxmEu2xGZBgBJ8s40b+9pfXGrvyjJL9y5XqmR3+kV3MiwNI2Cawr8
-         p4fQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762858092; x=1763462892;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=ma0936PLaG7xVo6vcy1wxniBnOai4MhijJryYDzlRRA=;
-        b=K5qyTNX9cIHqZF5icjnwo4JKJ7zAnDGnYGD4vVjOe4bqkp+ofR05lTwbGpWSOO3AOy
-         jjKbu/pIiGHfqVVgK8w9io/lLbwDn5KtS8Hbql/QEQQ5jnheTAEqabo78OjWAr8nNMA7
-         LUDvevIAnTy9TfRV88Su/1z6MM7Vzlxocg+79DpaRRn9V/WXDYkndb9ortFPBEPJYlOU
-         8Th9xqIwqHeNMtW9F06PEjQa71Na15UUeJ9qmf9Vgri2+ex2whvv/wjLFaI5drvwxxmH
-         aZ4rQ0ba4PFx9eDyF2442zTAEsD3SbkpZhI7J0mBn4JIjZx8LqLse9IFZUWujkmRbeIZ
-         xnVA==
-X-Forwarded-Encrypted: i=1; AJvYcCWvKLlY5ugsNNr8g8aaLNZ/K09FniTR55c9vezEPeJOXWz+QcCd7wBS+A0jffEX1s7FSBraV4mDMU3yAGU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvsjCX427AfgrdxNGxTTci6oKv4eKo5QvJ2udtyTbwLkJW6wE9
-	01eyaODx3mo+Yj05y4k6n0ZFzbLIJOnDe7fKv2bDajnVGYusVREVj0eTfF2v77HNafrKwc3yvJJ
-	mXrgofd4nC9vz9UOk+NUW2inXfSFw94o0x87RSGf0AA==
-X-Gm-Gg: ASbGncuYZnKkgvArkEY6VdYs2vJ2D9GPs7fXnsoT1J1YYqb10B6W0J5NY6XNs4U41tn
-	IqpO3A41HTkLtxJBZzi39ll0KOXdOndwjxMzeHX6qcSfLH3RGUjMFUIwfn4vjbE+SXlWfgYudgb
-	ORa8ls4l66yUlgmsAPoG6ia2fWop1bkDlixOcTkNyrWLsHaUKYeMEoUcZLpSBMHcwZKr8bud+m2
-	5M9nKxHiAf8ad9+uL1GF03zs3j0XxyC1uReDwvafk6OkVKslheCQXcfoCa+oGTayA6UkAwKHuy3
-	0J+L6re2NJFlE5c6Ab20KGDB54uA
-X-Google-Smtp-Source: AGHT+IGlxZ3D/M8Qal50sIGorQGC2iE46S1vgJuEvrgOBj6Q/H48IKlRoDRYSyp8cXr3EuE7VIGJ78ND1PHoKyJVEVk=
-X-Received: by 2002:a17:903:944:b0:296:3f23:b910 with SMTP id
- d9443c01a7336-297e5619f92mr130510975ad.9.1762858091667; Tue, 11 Nov 2025
- 02:48:11 -0800 (PST)
+	s=arc-20240116; t=1762858092; c=relaxed/simple;
+	bh=rgQ7F2thuGDbBuXypMUAa8Acq8VtWBZYD7mKAcNFois=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fn4MBCij1IIATqn1seljdDR6dnHxSp9b/gqISV01+wB8E3dNAE1Xtc5WbbZptUtqukzPmT9MQ/gDW7VlTA7wrBRsJsS2l1OUB4KNLoAM2mr4qDvKPIlJ7NEdxMt4ifTwrB1Np+YA9sTHK5xilaNVnipxzYnQ9U45BxKIiR78+L0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=knwCUupI; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=w05KIqed; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=knwCUupI; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=w05KIqed; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 7148C21E4B;
+	Tue, 11 Nov 2025 10:48:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762858088; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=H4iMLUEIFp+KFnCBMrOHfoCV2tmUed7YGGquhX1HYzE=;
+	b=knwCUupIdDxL+kXwq5eH6u8/SWHWDOdg72AoaBHLq8FllViMvp9KCbtFMp0mglQr3V7dnj
+	39R6eQGkz9soUG1Ivoqc0XBYGO31n0uCXyoeqekV/fyx4czgBP/skMFDTCLB+Og1aeOKCC
+	81S6KO3lywIj6HUDo2mTbtDsFSRjVYM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762858088;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=H4iMLUEIFp+KFnCBMrOHfoCV2tmUed7YGGquhX1HYzE=;
+	b=w05KIqedIeW2ibbg67OTG8PygRxA4MK6nk2TZ4uU5WZGCe1JGnO+kGkt8oTLDFDkEsxodC
+	75OBHS0M3F0aqPDg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762858088; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=H4iMLUEIFp+KFnCBMrOHfoCV2tmUed7YGGquhX1HYzE=;
+	b=knwCUupIdDxL+kXwq5eH6u8/SWHWDOdg72AoaBHLq8FllViMvp9KCbtFMp0mglQr3V7dnj
+	39R6eQGkz9soUG1Ivoqc0XBYGO31n0uCXyoeqekV/fyx4czgBP/skMFDTCLB+Og1aeOKCC
+	81S6KO3lywIj6HUDo2mTbtDsFSRjVYM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762858088;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=H4iMLUEIFp+KFnCBMrOHfoCV2tmUed7YGGquhX1HYzE=;
+	b=w05KIqedIeW2ibbg67OTG8PygRxA4MK6nk2TZ4uU5WZGCe1JGnO+kGkt8oTLDFDkEsxodC
+	75OBHS0M3F0aqPDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 60D71148FB;
+	Tue, 11 Nov 2025 10:48:08 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id xPGdF2gUE2nYPwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 11 Nov 2025 10:48:08 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 1F726A28C8; Tue, 11 Nov 2025 11:48:08 +0100 (CET)
+Date: Tue, 11 Nov 2025 11:48:08 +0100
+From: Jan Kara <jack@suse.cz>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Chuck Lever <chuck.lever@oracle.com>, Alexander Aring <alex.aring@gmail.com>, 
+	Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
+	Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.org>, 
+	Ronnie Sahlberg <ronniesahlberg@gmail.com>, Shyam Prasad N <sprasad@microsoft.com>, 
+	Tom Talpey <tom@talpey.com>, Bharath SM <bharathsm@microsoft.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, David Howells <dhowells@redhat.com>, 
+	Tyler Hicks <code@tyhicks.com>, NeilBrown <neil@brown.name>, 
+	Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
+	Amir Goldstein <amir73il@gmail.com>, Namjae Jeon <linkinjeon@kernel.org>, 
+	Steve French <smfrench@gmail.com>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	Carlos Maiolino <cem@kernel.org>, Kuniyuki Iwashima <kuniyu@google.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org, 
+	linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, netfs@lists.linux.dev, 
+	ecryptfs@vger.kernel.org, linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	netdev@vger.kernel.org
+Subject: Re: [PATCH v5 17/17] vfs: expose delegation support to userland
+Message-ID: <tcpo34clqby633deon2qnccih24xor2mz6jm4fzh2zj7o24sjc@s5c25qgpgmv2>
+References: <20251105-dir-deleg-ro-v5-0-7ebc168a88ac@kernel.org>
+ <20251105-dir-deleg-ro-v5-17-7ebc168a88ac@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251111004536.460310036@linuxfoundation.org>
-In-Reply-To: <20251111004536.460310036@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Tue, 11 Nov 2025 16:18:00 +0530
-X-Gm-Features: AWmQ_blF9FjAmnxDm-OEcifjrwJ-MY93UlczB0ZdxrxOQ1Q0-Lu0Mfk5wdB590A
-Message-ID: <CA+G9fYusa6ihh0LaYkFzZLoRMbEVm0U6DkHOxY9kXnh2mvB0mg@mail.gmail.com>
-Subject: Re: [PATCH 6.17 000/849] 6.17.8-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, 
-	achill@achill.org, sr@sladewatkins.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251105-dir-deleg-ro-v5-17-7ebc168a88ac@kernel.org>
+X-Spamd-Result: default: False [-2.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_SOME(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[44];
+	TAGGED_RCPT(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	R_RATELIMIT(0.00)[to_ip_from(RL63fqwwx8ot6gmekemcs76f9d)];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[szeredi.hu,zeniv.linux.org.uk,kernel.org,suse.cz,oracle.com,gmail.com,samba.org,manguebit.org,microsoft.com,talpey.com,linuxfoundation.org,redhat.com,tyhicks.com,brown.name,chromium.org,google.com,davemloft.net,vger.kernel.org,lists.samba.org,lists.linux.dev];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Score: -2.30
+X-Spam-Level: 
 
-On Tue, 11 Nov 2025 at 06:17, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.17.8 release.
-> There are 849 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu, 13 Nov 2025 00:43:57 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.17.8-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.17.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+On Wed 05-11-25 11:54:03, Jeff Layton wrote:
+> Now that support for recallable directory delegations is available,
+> expose this functionality to userland with new F_SETDELEG and F_GETDELEG
+> commands for fcntl().
+> 
+> Note that this also allows userland to request a FL_DELEG type lease on
+> files too. Userland applications that do will get signalled when there
+> are metadata changes in addition to just data changes (which is a
+> limitation of FL_LEASE leases).
+> 
+> These commands accept a new "struct delegation" argument that contains a
+> flags field for future expansion.
+> 
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
 
+For new apis CCing linux-api is a good practice ;)
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+...
 
-Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
+> index 3741ea1b73d8500061567b6590ccf5fb4c6770f0..8123fe70e03cfb1ba9ce1b5e20d61b62e462a7ea 100644
+> --- a/include/uapi/linux/fcntl.h
+> +++ b/include/uapi/linux/fcntl.h
+> @@ -79,6 +79,16 @@
+>   */
+>  #define RWF_WRITE_LIFE_NOT_SET	RWH_WRITE_LIFE_NOT_SET
+>  
+> +/* Set/Get delegations */
+> +#define F_GETDELEG		(F_LINUX_SPECIFIC_BASE + 15)
+> +#define F_SETDELEG		(F_LINUX_SPECIFIC_BASE + 16)
+> +
+> +/* Argument structure for F_GETDELEG and F_SETDELEG */
+> +struct delegation {
+> +	unsigned int	d_flags;	/* Must be 0 */
+> +	short		d_type;		/* F_RDLCK, F_WRLCK, F_UNLCK */
+> +};
+> +
 
-## Build
-* kernel: 6.17.8-rc1
-* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
-rc.git
-* git commit: a0476dc10cb160082a35b307f8dbfe4a066d41ec
-* git describe: v6.17.6-886-ga0476dc10cb1
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.17.y/build/v6.17=
-.6-886-ga0476dc10cb1
+I think it would make sense for d_type to be unsigned since it's more or
+less enum. Also struct delegation is going to have a hole in it at the end
+which is always a concern with uAPI structures (passing around
+uninitialized stuff). I think it would be good to put an explicit padding
+there and enforce it is zeroed out.
 
-## Test Regressions (compared to v6.17.6-36-g7914a8bbc909)
+								Honza
 
-## Metric Regressions (compared to v6.17.6-36-g7914a8bbc909)
-
-## Test Fixes (compared to v6.17.6-36-g7914a8bbc909)
-
-## Metric Fixes (compared to v6.17.6-36-g7914a8bbc909)
-
-## Test result summary
-total: 126378, pass: 106987, fail: 4241, skip: 15150, xfail: 0
-
-## Build Summary
-* arc: 5 total, 5 passed, 0 failed
-* arm: 139 total, 139 passed, 0 failed
-* arm64: 57 total, 54 passed, 3 failed
-* i386: 18 total, 18 passed, 0 failed
-* mips: 34 total, 33 passed, 1 failed
-* parisc: 4 total, 4 passed, 0 failed
-* powerpc: 40 total, 39 passed, 1 failed
-* riscv: 25 total, 25 passed, 0 failed
-* s390: 22 total, 22 passed, 0 failed
-* sh: 5 total, 5 passed, 0 failed
-* sparc: 4 total, 3 passed, 1 failed
-* x86_64: 49 total, 48 passed, 1 failed
-
-## Test suites summary
-* boot
-* commands
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-cgroup
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-cpufreq
-* kselftest-efivarfs
-* kselftest-exec
-* kselftest-fpu
-* kselftest-ftrace
-* kselftest-futex
-* kselftest-gpio
-* kselftest-intel_pstate
-* kselftest-ipc
-* kselftest-kcmp
-* kselftest-kvm
-* kselftest-livepatch
-* kselftest-membarrier
-* kselftest-memfd
-* kselftest-mincore
-* kselftest-mm
-* kselftest-mqueue
-* kselftest-net
-* kselftest-net-mptcp
-* kselftest-openat2
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-rust
-* kselftest-seccomp
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-tc-testing
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-x86
-* kunit
-* kvm-unit-tests
-* lava
-* libgpiod
-* libhugetlbfs
-* log-parser-boot
-* log-parser-build-clang
-* log-parser-build-gcc
-* log-parser-test
-* ltp-capability
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-cpuhotplug
-* ltp-crypto
-* ltp-cve
-* ltp-dio
-* ltp-fcntl-locktests
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-smoke
-* ltp-syscalls
-* ltp-tracing
-* perf
-* rcutorture
-* rt-tests-cyclicdeadline
-* rt-tests-pi-stress
-* rt-tests-pmqtest
-* rt-tests-rt-migrate-test
-* rt-tests-signaltest
-
---
-Linaro LKFT
-https://lkft.linaro.org
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
