@@ -1,149 +1,218 @@
-Return-Path: <linux-kernel+bounces-895865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87EA9C4F236
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:55:48 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C637AC4F23F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:56:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9E02189A64B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:55:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CC5F24F3F62
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:54:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA9233730FE;
-	Tue, 11 Nov 2025 16:53:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55AB1377EB3;
+	Tue, 11 Nov 2025 16:53:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jpziUyzC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ShEA+3qU";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="nR/Bi2c2"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EC1F36A009
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 16:53:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5534B36A009
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 16:53:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762879991; cv=none; b=ju5e7lI1hJ4mUgGeerigSqO0+WHeOeYbEQA+nnDGNPndbb3B95j6LR87rdSku7eUWGjku1hvZDck05vEb5ITyNg0rKy5p4qAt1jdXAX+ATIDH7osoqGI2HG4InHN3uyIertx4agcXsoHi8D6GhhJ3RBlwzExChFBf9fDowarFKA=
+	t=1762880006; cv=none; b=juL8OtJ8uXNm7ANsZ3aR2fV4RPhfNfS5mv3PUE3xCKiVBescoNrL/dWjhwHCQ74v4nBVoPrvAFQMuTFAhSwMfJFLpxe9KuFt09Om5K3h0TJWDpgg1CNuPOPxmHxaVPK8wjxfyccHj7LJYdD3zuPkYUtZHdIrgcmI7Qt96Di09r8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762879991; c=relaxed/simple;
-	bh=rIYhvW9MUiGbCKwyd24ZXCqEJm85VEPn9JwM2qTGJYQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cCD0kdLGGtrZjnTSbL6hgacJRxdHuqo86GpuNndA1vhfIf2cmVo7nJzSnHF/7mhMd1jeT20Frgs3yqO6sj6Bd81rlUmepgKdluKn2A+9Qo+A3YIWfWTs3TsODj+r9oXXcaKk7qSkL8Ncv9KZcXC3pQ7CGrYM7MPljt8xry2JHtA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jpziUyzC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF683C19424
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 16:53:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762879991;
-	bh=rIYhvW9MUiGbCKwyd24ZXCqEJm85VEPn9JwM2qTGJYQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=jpziUyzCYc6t1zftYqa4yrCjC10k3rucTYIa+RApM5uEXy598LXIAx4gL7Wk3t11x
-	 +/8/7qcK0YOZXpXhKqTdH5E5KfY2N/R2fgNkQfKfZ563R+OUKKBLuI+ucHJ/Epq3ur
-	 Rr0WAkK7nijSrqquVn3gzPNMMgTPzES/FzjG947NticGlpeIJAAw8vTGQTFhZYnPnh
-	 LTyMNrc3XKQb0j4dwl5AUvfQvalaSrmFjzNEEvWKJGmy/iDXabOdZp0xqDZlMxlCvT
-	 AWzxSisIdpcSR4d7TVx+Q9EW021tvF8WgHaEweV77Yy8WUrjgcJSspT2DbF0RzXFd/
-	 MOT/HthnC+dJg==
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-37a33b06028so38396811fa.2
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 08:53:10 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCW1+2x+E58LOhSE7Ho2elLG4jCk6oQRPBIMnDFMZs4GLOBopxq5CW3tbLqWEtc48ZyBtkf4OKmnkjLBZ+g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzW0K8x5PFeha3TYF9ka4hzEXjsXOy1Wn01ezJ58xm4jKfway9S
-	WfmJQJ0P6xO91d0vVZjTw1jsF6oTrjIQAGeOtNea190tmPyHC+rMEPAHBrFMzB4UTuwFFbsE2Xm
-	RpUKoM2SsmsCYXaQ6oCBSAIZWQ0ldC48=
-X-Google-Smtp-Source: AGHT+IErhlumRwKOijIaqN6phBHODr1C2zh2IndoF+0BKiBjjINyODKSfBYUPIkz2ZC9l1eUPqNxYJiOPmfDk6mwTZk=
-X-Received: by 2002:a05:6512:1092:b0:594:2f72:2f92 with SMTP id
- 2adb3069b0e04-59576df3242mr3362e87.5.1762879989285; Tue, 11 Nov 2025 08:53:09
- -0800 (PST)
+	s=arc-20240116; t=1762880006; c=relaxed/simple;
+	bh=SS0LZ3kWuX/E6hwB65fRvUu+pViB6WaWPy05xJu0hgM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iA6/BJWjih+SO1BZpo1LT+v2w0P2JMK99bEQjCyh9JNN9bz/xLSDcFQ8BmTFuMfmR59XKZ0+saP2nLhO07qxgc1FWr40wMhOZimN0rWD0xGZGQgbtJ+q2p1tY2bw3gMlWmRuFtSV1BMBjAQ8HLc8AO5u0fYWS0u6KF+/neX+i28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ShEA+3qU; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=nR/Bi2c2; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762880003;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Jv9tA8d7GDzG4uMgQEzEG6S975RuueXPPh6IjnESOqs=;
+	b=ShEA+3qUz/B1fl+YsjMX2LMeG+winETTIAQZc6CcRJqvS/xr8W0yzx+do7hbyS9AN7oP0p
+	9gRWBei5Y16/4ggTMWmZZXpCVW2BRfSWj+jeQPJd4IUf0NdMmWnz6xTXwzaQOvCAufqx3r
+	aJwZpTMZkn59xUyTzx0htfKzuA7nGpI=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-552-dBVJVG8oPtm1OPv1N3m22w-1; Tue, 11 Nov 2025 11:53:21 -0500
+X-MC-Unique: dBVJVG8oPtm1OPv1N3m22w-1
+X-Mimecast-MFC-AGG-ID: dBVJVG8oPtm1OPv1N3m22w_1762880000
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-b6d4f19c13cso407924266b.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 08:53:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1762880000; x=1763484800; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=Jv9tA8d7GDzG4uMgQEzEG6S975RuueXPPh6IjnESOqs=;
+        b=nR/Bi2c2/Ax7qDFVXRDI7sfrIVu0mcZ3dHdHBTuz9yqkLhzr6G0EtbmSKXKQxbLzN9
+         zA9Hq+prdbowzINXYFhd4GPXvl6/O7w0ymbk+O1LkKevWPpg/GXTHawv+ZrY83El64gK
+         9Xm3a2BkabFF+vP3Y1vSSqw2ffazV9xztE3IqQoUWE8Bz2Ub8tVxW3wZGTsVNXGHLtvr
+         upMo81dH/v5AACSonPTrXNdlzzjLFNDSAny7o5Vo6VPoGKsNSHazcvqFGVU24j4iSajg
+         h9/3faN+1EewGKB3fz6woSEcUDhqJwYXBLyB2p2SLihXdP8DUIhUklH9jlsNdgd2xAkh
+         vH8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762880000; x=1763484800;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Jv9tA8d7GDzG4uMgQEzEG6S975RuueXPPh6IjnESOqs=;
+        b=p3EreTJogjHXl//FzRJ17ZuMfBTQA4CaMCJUKTsQ7KsJ4jde5QyRBM9Zc7CnfZVcfE
+         jorjAUc4ZaRIbzOuG0WUTzlQoNQ62aC6hBdUbNigvcOP01JZlcBGdyM9KyT6SDpu3LzT
+         bzc6ZKt9GF2TIdokDhOtYfOLv3leQ9jjHNYIzGxacUHyCijPxlYP40NuJ+a1u0qkjXtO
+         7gp2PmEYTpXofMs1qEW0690DW8gmGBJONQW3ilsP2NjldHpSEq/gMRtdfxPQ2yOzOh4o
+         gUEftnim4k8LoIf3t2k0kDeXluyQR2pOuxnFtJVTQh2s0N/3H3xp7/wevnri9xQykh+Z
+         QT3w==
+X-Forwarded-Encrypted: i=1; AJvYcCXvxwVa0jP3dBriUIUFCQehQC2vo7Dyn7nVrUMNrr2qLAwSq4I4TtIHMlTYcm2OLuSyf0ULYa4L6UR3edw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsKQ1UEPfHEMqdIQXOGX0lzutYdQJnd+AIzpkWqwUZSGoMVX/T
+	6aEYPRaYCfQMw6hU2k4QZ2bWUzfby9CU/bDiOActk4Abs+ZXwkXyOGXwKGMAPc9hfk8xyPaSvpU
+	Eb1YdRoudSqVHYCNPGU34HU0L4eVyyXDjvdG8+WMXmA5ps50CLwR86imGOHq7GpqXoQ==
+X-Gm-Gg: ASbGnctVHgGZyTarhhE6SPbFwRMffKueP+YNKoHYgCcG81P+YYp5To6BU/EAPZ/dBRD
+	cG0sNSVWD4bWLXfvT49C+5SMYfjkesdqABsJSrfgBU6ckCQ2UoW1JOrqfaEW6VFf01KngiMUA0t
+	qW34hbgXHB+/G71dmBmdaDpKjDMV/4+gq/BinBiT7ROscesDntmOAAOVTsIR8cBecScOXcQmAHU
+	Za1DnXZI6+XF8RZkpQDkwRSTzMsc/rtZOGI4Y+YG+7uSLeUvGwmuu5oOUhj6sHXIXQpyAIeOwsc
+	KR92Ivnd22punj5BpGQ/M76HRt/DoTYKsk3+C0v8nyLVucx2zdMEB3ieUCIh18l9KkWcyH6Kh+Y
+	cSevKghypvYZUPMI7S1no3DeHeqRc8xuWruBeWUvjLiG/8fVAlyTeOneLcAYj7n0Mv6EXUjf4Ol
+	OcAPnXPw==
+X-Received: by 2002:a17:907:6e8e:b0:b73:246d:cf1c with SMTP id a640c23a62f3a-b73246dd6dbmr271552166b.63.1762880000442;
+        Tue, 11 Nov 2025 08:53:20 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGOoWeSsqurTLnlYY8Ak3yfURZbQCmmYnmQidXFxGNQNo2oGKJYJXgxY7NErKx33j1+dxvJHA==
+X-Received: by 2002:a17:907:6e8e:b0:b73:246d:cf1c with SMTP id a640c23a62f3a-b73246dd6dbmr271549066b.63.1762879999976;
+        Tue, 11 Nov 2025 08:53:19 -0800 (PST)
+Received: from [192.168.10.81] ([176.206.111.214])
+        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-b72bf97d430sm1451420666b.37.2025.11.11.08.53.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Nov 2025 08:53:18 -0800 (PST)
+Message-ID: <3d93c8bc-8f13-42e1-a9e1-0d27d7e8603b@redhat.com>
+Date: Tue, 11 Nov 2025 17:53:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251106173019.1224443-2-ardb+git@google.com> <20251107205020.GEaQ5bjLIU1Y7ePsJY@fat_crate.local>
-In-Reply-To: <20251107205020.GEaQ5bjLIU1Y7ePsJY@fat_crate.local>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Tue, 11 Nov 2025 17:52:58 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXG+R0_yShENKqQj4tfDmUqm6OPEoMTdWADnjLb+2QOOZQ@mail.gmail.com>
-X-Gm-Features: AWmQ_bm_cUVAwmuyi_yulLFMIfhwaqD65bR10gsEni6jf3UihXuXdjuViSXP3Pg
-Message-ID: <CAMj1kXG+R0_yShENKqQj4tfDmUqm6OPEoMTdWADnjLb+2QOOZQ@mail.gmail.com>
-Subject: Re: [RFC PATCH] x86/boot/compressed: Disable physical KASLR when
- memmap= appears
-To: Borislav Petkov <bp@alien8.de>
-Cc: Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org, x86@kernel.org, 
-	kees@kernel.org, Michal Clapinski <mclapinski@google.com>, Chris Li <chrisl@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v1 12/20] KVM: x86: Support REX2-extended register
+ index in the decoder
+To: "Chang S. Bae" <chang.seok.bae@intel.com>, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: seanjc@google.com, chao.gao@intel.com, zhao1.liu@intel.com
+References: <20251110180131.28264-1-chang.seok.bae@intel.com>
+ <20251110180131.28264-13-chang.seok.bae@intel.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=pbonzini@redhat.com; keydata=
+ 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
+In-Reply-To: <20251110180131.28264-13-chang.seok.bae@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, 7 Nov 2025 at 21:50, Borislav Petkov <bp@alien8.de> wrote:
->
-> On Thu, Nov 06, 2025 at 06:30:20PM +0100, Ard Biesheuvel wrote:
-> > Reported-by: Michal Clapinski <mclapinski@google.com>
-> > Reported-by: Chris Li <chrisl@kernel.org>
-> > Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
-> > ---
-> >  arch/x86/boot/compressed/kaslr.c | 100 ++-----------------------------
-> >  1 file changed, 6 insertions(+), 94 deletions(-)
->
-> I love diffstats like that.
->
-> How about this simplification ontop of yours:
->
+On 11/10/25 19:01, Chang S. Bae wrote:
+> Update register index decoding to account for the additional bit fields
+> introduced by the REX2 prefix.
+> 
+> Both ModR/M and opcode register decoding paths now consider the extended
+> index bits (R4, X4, B4) in addition to the legacy REX bits (R3, X3, B3).
+> 
+> Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
 
-Yes, better, although we should still clarify that only physical
-randomization is affected.
+Replying here for both patches 10 and 12, because I think you can merge 
+them in one, I'd prefer to avoid bitfields.
 
-> ---
->
-> diff --git a/arch/x86/boot/compressed/kaslr.c b/arch/x86/boot/compressed/kaslr.c
-> index 96805d6c10a4..7875ae2d514e 100644
-> --- a/arch/x86/boot/compressed/kaslr.c
-> +++ b/arch/x86/boot/compressed/kaslr.c
-> @@ -67,8 +67,6 @@ static unsigned long get_boot_seed(void)
->  #define KASLR_COMPRESSED_BOOT
->  #include "../../lib/kaslr.c"
->
-> -static bool memmap_found;
-> -
->  /*
->   * Store memory limit: MAXMEM on 64-bit and KERNEL_IMAGE_SIZE on 32-bit.
->   * It may be reduced by "mem=nn[KMG]" command line options.
-> @@ -165,9 +163,7 @@ static void handle_mem_options(void)
->                 if (!val && strcmp(param, "--") == 0)
->                         break;
->
-> -               if (!strcmp(param, "memmap")) {
-> -                       memmap_found = true;
-> -               } else if (IS_ENABLED(CONFIG_X86_64) && strstr(param, "hugepages")) {
-> +               if (IS_ENABLED(CONFIG_X86_64) && strstr(param, "hugepages")) {
->                         parse_gb_huge_pages(param, val);
->                 } else if (!strcmp(param, "mem")) {
->                         char *p = val;
-> @@ -724,12 +720,6 @@ static unsigned long find_random_phys_addr(unsigned long minimum,
->         if (minimum + image_size > mem_limit)
->                 return 0;
->
-> -       /* Check if memmap= appears on the command line */
-> -       if (memmap_found) {
-> -               debug_putstr("memmap= found on the command line, disabling physical KASLR\n");
-> -               return 0;
-> -       }
-> -
->         /*
->          * During kexec handover only process KHO scratch areas that are known
->          * not to contain any data that must be preserved.
-> @@ -783,6 +773,11 @@ void choose_random_location(unsigned long input,
->                 return;
->         }
->
-> +       if (cmdline_find_option_bool("memmap")) {
-> +               warn("KASLR disabled: 'memmap' on cmdline.");
-> +               return;
-> +       }
-> +
->         boot_params_ptr->hdr.loadflags |= KASLR_FLAG;
->
->         if (IS_ENABLED(CONFIG_X86_32))
->
->
-> --
-> Regards/Gruss,
->     Boris.
->
-> https://people.kernel.org/tglx/notes-about-netiquette
+You only need a single enum:
+
+enum {
+	REX_B = 1,
+	REX_X = 2,
+	REX_R = 4,
+	REX_W = 8,
+	REX_M = 0x80,
+};
+
+for REX_W/REX_M you access them directly, while for RXB you go through a 
+function:
+
+static inline rex_get_rxb(u8 rex, u8 fld)
+{
+	BUILD_BUG_ON(!__builtin_constant_p(fld));
+	BUILD_BUG_ON(fld != REX_B && fld != REX_X && fld != REX_R);
+
+	rex >>= ffs(fld) - 1;	// bits 0+4
+	return (rex & 1) + (rex & 0x10 ? 8 : 0);
+}
+
+>   	} else {
+>   		reg = (ctxt->b & 7) |
+> -		      (ctxt->rex.bits.b3 * BIT(3));
+> +		      (ctxt->rex.bits.b3 * BIT(3)) |
+> +		      (ctxt->rex.bits.b4 * BIT(4));
+
++		      rex_get_rxb(ctxt->rex, REX_B);
+
+and likewise everywhere else.
+
+>   	}
+>   
+>   	if (ctxt->d & Sse) {
+> @@ -1124,9 +1125,12 @@ static int decode_modrm(struct x86_emulate_ctxt *ctxt,
+>   	int rc = X86EMUL_CONTINUE;
+>   	ulong modrm_ea = 0;
+>   
+> -	ctxt->modrm_reg = ctxt->rex.bits.r3 * BIT(3);
+> -	index_reg       = ctxt->rex.bits.x3 * BIT(3);
+> -	base_reg        = ctxt->rex.bits.b3 * BIT(3);
+> +	ctxt->modrm_reg	= (ctxt->rex.bits.r3 * BIT(3)) |
+> +			  (ctxt->rex.bits.r4 * BIT(4));
+> +	index_reg	= (ctxt->rex.bits.x3 * BIT(3)) |
+> +			  (ctxt->rex.bits.x4 * BIT(4));
+> +	base_reg	= (ctxt->rex.bits.b3 * BIT(3)) |
+> +			  (ctxt->rex.bits.b4 * BIT(4));
+>   
+>   	ctxt->modrm_mod = (ctxt->modrm & 0xc0) >> 6;
+>   	ctxt->modrm_reg |= (ctxt->modrm & 0x38) >> 3;
+
 
