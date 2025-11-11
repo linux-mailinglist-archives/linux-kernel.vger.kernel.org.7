@@ -1,243 +1,240 @@
-Return-Path: <linux-kernel+bounces-895517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49C4EC4E246
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:38:10 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1DF1C4E25E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:39:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B7CD7343D3F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:38:09 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 974A74E44DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:38:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67B8C33ADA7;
-	Tue, 11 Nov 2025 13:38:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5215333ADBF;
+	Tue, 11 Nov 2025 13:38:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="p0sppPvi"
-Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="hjwXGHiK"
+Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 211432F28EB
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 13:37:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B12D33ADB0
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 13:38:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762868281; cv=none; b=dgVKQe23EGIhKUdbt8CCgOV2peTbXHlJeohxzEdqgUqsP2xipSOowtIw3cKP4mJYIiTaGxTQtjt/cpMJO8ecAB/MoPn9lyYYSMX6s1wpkkJmLuPCwKU/0MDmZNupX2DwO1808DTC+le+2jGieG0YOPHc257wFba4XoCzLdpYrVs=
+	t=1762868327; cv=none; b=Z1JhpZGQZEkHJQYTQKBYQEiOIwZii3vS+MTh/A7KC1BzxyalLxljqa0kaLLqzCRY5TTsdL4uh7YlE5DeObZBtNSQfrIMsN1tLk8kfFkWaUwT9Z2i9mYJJTO+ZCWzx7VNW3wu+BJR2idsrDl/Qww5I2awdODLnmabsXacrsOmnfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762868281; c=relaxed/simple;
-	bh=YNQL5SKfM+jpMNhErLoV/0zsWX+kykfzmZSN1N+doaM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mzIx12QXPw8Db8qif/bXjLbfVpr+cXRWONy75eENn3i4UcFR/VSPXoMnqj+DwAEgx43YcFglKwzap8+JHnwYYrsyV3yFdfcasQd3+EwaaK/Tw3cR7YfivUs4DWqLkumahFozGXGDPwsurrV8ILxKsB2aYSzyDxjC96pKXTFGjfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=p0sppPvi; arc=none smtp.client-ip=115.124.30.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1762868274; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-	bh=HsNstYk+5rtzrxRtZDXucMaJcSGksdme1RvPM52n96E=;
-	b=p0sppPviXPr1jUkvoYUUleDTi2woY3c9zWzfmAP/Gzv/ls0N+Gf8YrPI92IqtPUPf6XgeFqJ98shWwfWNZaVMvaH2SCKBFAe0vFKeijrtO5GTHJQlQKWT/ztDLoq8TWPTalBmMA1hoFe9zZSibLvn7fSM8L8ETXzrpdT107bZDY=
-Received: from localhost(mailfrom:feng.tang@linux.alibaba.com fp:SMTPD_---0WsBpWuY_1762868273 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 11 Nov 2025 21:37:54 +0800
-Date: Tue, 11 Nov 2025 21:37:53 +0800
-From: Feng Tang <feng.tang@linux.alibaba.com>
-To: Petr Mladek <pmladek@suse.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Lance Yang <ioworker0@gmail.com>, paulmck@kernel.org,
-	Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] hung_task: Add hung_task_sys_info sysctl to dump sys
- info on task-hung
-Message-ID: <aRM8MU2sTew26SBl@U-2FWC9VHC-2323.local>
-References: <20251106023032.25875-1-feng.tang@linux.alibaba.com>
- <20251106023032.25875-3-feng.tang@linux.alibaba.com>
- <aRInLdgKCzaVeyG0@pathway.suse.cz>
+	s=arc-20240116; t=1762868327; c=relaxed/simple;
+	bh=iIZRyhiMeoQJSf99tXZ/MiRIgRzb2sZdm1bsflFrg2E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZBv/T2TNvPUXuPbgZ9vL+UMF7LciEo0lnaC+LcReYCByf65wkXLh5jSxansElO5wheXL0HfSn8QHDaDSL4uCcj6aXfWcvPeZEoQobqq7bjDPtTMpFcTZqOA8QRVp0Avpyk6MM6UcfRnU2v0gF8gqVyIkADSl/28hc6z8Xdcvfjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=hjwXGHiK; arc=none smtp.client-ip=95.215.58.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <04c35045-ef5b-4e92-9da9-6710ce8fdabf@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1762868313;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xhtWbkyt0Xj2/DzqGHM6gZcLCBc5eD8a8CJobqwdPk0=;
+	b=hjwXGHiKIRp4PAzmeog/+jlqZo0QMEWEcHnUyXjLkUhx0Olj20BqdsuAC/O3CwFfxwgJCc
+	Hs5sld9OhKSN8X6TRZTdDTFiM4V7uOTisLVXvLCVZwKqWO7skS52z0my5dyYvdDuhEG8hQ
+	5M/FF+hhN4SoXsSSj7jsSnLQLM2o+bQ=
+Date: Tue, 11 Nov 2025 21:38:12 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <aRInLdgKCzaVeyG0@pathway.suse.cz>
+Subject: Re: [PATCH bpf-next v6 2/2] selftests/bpf: Add test to verify freeing
+ the special fields when update [lru_,]percpu_hash maps
+To: Yonghong Song <yonghong.song@linux.dev>, bpf@vger.kernel.org
+Cc: ast@kernel.org, andrii@kernel.org, daniel@iogearbox.net,
+ martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me,
+ haoluo@google.com, jolsa@kernel.org, memxor@gmail.com, ameryhung@gmail.com,
+ linux-kernel@vger.kernel.org, kernel-patches-bot@fb.com
+References: <20251105151407.12723-1-leon.hwang@linux.dev>
+ <20251105151407.12723-3-leon.hwang@linux.dev>
+ <9f662e2c-7370-4f99-bdec-bc123495e1c5@linux.dev>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Leon Hwang <leon.hwang@linux.dev>
+In-Reply-To: <9f662e2c-7370-4f99-bdec-bc123495e1c5@linux.dev>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Hi Petr,
 
-On Mon, Nov 10, 2025 at 06:55:57PM +0100, Petr Mladek wrote:
-> On Thu 2025-11-06 10:30:31, Feng Tang wrote:
-> > When task-hung happens, developers may need different kinds of system
-> > information (call-stacks, memory info, locks, etc.) to help debugging.
-> > 
-> > Add 'hung_task_sys_info' sysctl knob to take human readable string like
-> > "tasks,mem,timers,locks,ftrace,...", and when task-hung happens, all
-> > requested information will be dumped. (refer kernel/sys_info.c for more
-> > details).
-> > 
-> > Meanwhile, the newly introduced sys_info() call is used to unify some
-> > existing info-dumping knobs.
-> > 
-> > --- a/kernel/hung_task.c
-> > +++ b/kernel/hung_task.c
-> > @@ -60,12 +61,23 @@ static unsigned long __read_mostly sysctl_hung_task_check_interval_secs;
-> >  static int __read_mostly sysctl_hung_task_warnings = 10;
-> >  
-> >  static int __read_mostly did_panic;
-> > -static bool hung_task_show_lock;
-> >  static bool hung_task_call_panic;
-> > -static bool hung_task_show_all_bt;
-> >  
-> >  static struct task_struct *watchdog_task;
-> >  
-> > +/*
-> > + * A bitmask to control what kinds of system info to be printed when
-> > + * a hung task is detected, it could be task, memory, lock etc. Refer
-> > + * include/linux/sys_info.h for detailed bit definition.
-> > + */
-> > +static unsigned long hung_task_si_mask;
-> > +
-> > +/*
-> > + * There are several sysctl knobs, and this serves as the runtime
-> > + * effective sys_info knob
-> > + */
-> > +static unsigned long cur_si_mask;
-> 
-> It seems that this variable is used to pass information between
-> check_hung_task() and check_hung_uninterruptible_tasks().
-> 
-> And "hung_task_show_lock" and "hung_task_show_all_bt" had the same
-> purpose.
-> 
-> If I get it correctly, we could move these decisions to
-> check_hung_uninterruptible_tasks() and avoid the global
-> variable.
-> 
-> I think that it even makes the code a bit cleaner.
-> 
-> Something like this on top of this patch:
-> 
-> diff --git a/kernel/hung_task.c b/kernel/hung_task.c
-> index 5f0275b2c742..c2a0dfce1e56 100644
-> --- a/kernel/hung_task.c
-> +++ b/kernel/hung_task.c
-> @@ -71,12 +71,6 @@ static struct task_struct *watchdog_task;
->   */
->  static unsigned long hung_task_si_mask;
->  
-> -/*
-> - * There are several sysctl knobs, and this serves as the runtime
-> - * effective sys_info knob
-> - */
-> -static unsigned long cur_si_mask;
-> -
->  #ifdef CONFIG_SMP
->  /*
->   * Should we dump all CPUs backtraces in a hung task event?
-> @@ -229,11 +223,8 @@ static inline void debug_show_blocker(struct task_struct *task, unsigned long ti
->  }
->  #endif
->  
-> -static void check_hung_task(struct task_struct *t, unsigned long timeout,
-> -		unsigned long prev_detect_count)
-> +static void check_hung_task(struct task_struct *t, unsigned long timeout)
->  {
-> -	unsigned long total_hung_task;
-> -
->  	if (!task_is_hung(t, timeout))
->  		return;
->  
-> @@ -243,16 +234,8 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout,
->  	 */
->  	sysctl_hung_task_detect_count++;
->  
-> -	total_hung_task = sysctl_hung_task_detect_count - prev_detect_count;
->  	trace_sched_process_hang(t);
->  
-> -	cur_si_mask = hung_task_si_mask;
-> -	if (sysctl_hung_task_panic && total_hung_task >= sysctl_hung_task_panic) {
-> -		console_verbose();
-> -		cur_si_mask |= SYS_INFO_LOCKS;
-> -		hung_task_call_panic = true;
-> -	}
-> -
->  	/*
->  	 * Ok, the task did not get scheduled for more than 2 minutes,
->  	 * complain:
-> @@ -272,10 +255,7 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout,
->  			" disables this message.\n");
->  		sched_show_task(t);
->  		debug_show_blocker(t, timeout);
-> -		cur_si_mask |= SYS_INFO_LOCKS;
->  
-> -		if (sysctl_hung_task_all_cpu_backtrace)
-> -			cur_si_mask |= SYS_INFO_ALL_BT;
->  		if (!sysctl_hung_task_warnings)
->  			pr_info("Future hung task reports are suppressed, see sysctl kernel.hung_task_warnings\n");
->  	}
-> @@ -315,8 +295,10 @@ static void check_hung_uninterruptible_tasks(unsigned long timeout)
->  {
->  	int max_count = sysctl_hung_task_check_count;
->  	unsigned long last_break = jiffies;
-> +	unsigned long total_hung_task;
->  	struct task_struct *g, *t;
->  	unsigned long prev_detect_count = sysctl_hung_task_detect_count;
-> +	unsigned long si_mask;
->  
->  	/*
->  	 * If the system crashed already then all bets are off,
-> @@ -325,6 +307,14 @@ static void check_hung_uninterruptible_tasks(unsigned long timeout)
->  	if (test_taint(TAINT_DIE) || did_panic)
->  		return;
->  
-> +	si_mask = hung_task_si_mask;
-> +	if (sysctl_hung_task_warnings || hung_task_call_panic) {
-> +		si_mask |= SYS_INFO_LOCKS;
-> +
-> +		if (sysctl_hung_task_all_cpu_backtrace)
-> +			si_mask |= SYS_INFO_ALL_BT;
-> +	}
-> +
->  	rcu_read_lock();
->  	for_each_process_thread(g, t) {
->  
-> @@ -336,16 +326,20 @@ static void check_hung_uninterruptible_tasks(unsigned long timeout)
->  			last_break = jiffies;
->  		}
->  
-> -		check_hung_task(t, timeout, prev_detect_count);
-> +		check_hung_task(t, timeout);
->  	}
->   unlock:
->  	rcu_read_unlock();
->  
-> -	if (unlikely(cur_si_mask)) {
-> -		sys_info(cur_si_mask);
-> -		cur_si_mask = 0;
-> +	total_hung_task = sysctl_hung_task_detect_count - prev_detect_count;
-> +	if (sysctl_hung_task_panic && total_hung_task >= sysctl_hung_task_panic) {
-> +		console_verbose();
-> +		hung_task_call_panic = true;
->  	}
->  
-> +	if (unlikely(si_mask))
-> +		sys_info(si_mask);
-> +
->  	if (hung_task_call_panic)
->  		panic("hung_task: blocked tasks");
->  }
-> 
-> What do you think?
 
-The cleanup looks great to me.
+On 2025/11/7 10:00, Yonghong Song wrote:
+>
+>
+> On 11/5/25 7:14 AM, Leon Hwang wrote:
+>> Add test to verify that updating [lru_,]percpu_hash maps decrements
+>> refcount when BPF_KPTR_REF objects are involved.
+>>
+>> The tests perform the following steps:
+>>
+>> 1. Call update_elem() to insert an initial value.
+>> 2. Use bpf_refcount_acquire() to increment the refcount.
+>> 3. Store the node pointer in the map value.
+>> 4. Add the node to a linked list.
+>> 5. Probe-read the refcount and verify it is *2*.
+>> 6. Call update_elem() again to trigger refcount decrement.
+>> 7. Probe-read the refcount and verify it is *1*.
+>>
+>> Signed-off-by: Leon Hwang <leon.hwang@linux.dev>
+>
+> LGTM with a few nits below.
+>
+> Acked-by: Yonghong Song <yonghong.song@linux.dev>
+>
 
-> Hmm, maybe, we might still need to pass "prev_detect_count" and
-> keep "console_verbose()" in check_hung_task().
+Hi Yonghong,
 
-I think moving the console_verbose() here is fine, as the msg printing
-in check_hung_task() is mostly pr_err() and pr_info() already.
+Thanks for your review and ack.
+
+>> ---
+>>   .../bpf/prog_tests/refcounted_kptr.c          | 57 ++++++++++++++++++
+>>   .../selftests/bpf/progs/refcounted_kptr.c     | 60 +++++++++++++++++++
+>>   2 files changed, 117 insertions(+)
+>>
+>> diff --git a/tools/testing/selftests/bpf/prog_tests/refcounted_kptr.c
+>> b/tools/testing/selftests/bpf/prog_tests/refcounted_kptr.c
+>> index d6bd5e16e6372..086f679fa3f61 100644
+>> --- a/tools/testing/selftests/bpf/prog_tests/refcounted_kptr.c
+>> +++ b/tools/testing/selftests/bpf/prog_tests/refcounted_kptr.c
+>> @@ -44,3 +44,60 @@ void test_refcounted_kptr_wrong_owner(void)
+>>       ASSERT_OK(opts.retval, "rbtree_wrong_owner_remove_fail_a2 retval");
+>>       refcounted_kptr__destroy(skel);
+>>   }
+>> +
+>> +void test_percpu_hash_refcounted_kptr_refcount_leak(void)
+>> +{
+>> +    struct refcounted_kptr *skel;
+>> +    int cpu_nr, fd, err, key = 0;
+>> +    struct bpf_map *map;
+>> +    size_t values_sz;
+>> +    u64 *values;
+>> +    LIBBPF_OPTS(bpf_test_run_opts, opts,
+>> +            .data_in = &pkt_v4,
+>> +            .data_size_in = sizeof(pkt_v4),
+>> +            .repeat = 1,
+>> +    );
+>> +
+>> +    cpu_nr = libbpf_num_possible_cpus();
+>> +    if (!ASSERT_GT(cpu_nr, 0, "libbpf_num_possible_cpus"))
+>> +        return;
+>> +
+>> +    values = calloc(cpu_nr, sizeof(u64));
+>> +    if (!ASSERT_OK_PTR(values, "calloc values"))
+>> +        return;
+>> +
+>> +    skel = refcounted_kptr__open_and_load();
+>> +    if (!ASSERT_OK_PTR(skel, "refcounted_kptr__open_and_load")) {
+>> +        free(values);
+>> +        return;
+>> +    }
+>> +
+>> +    values_sz = cpu_nr * sizeof(u64);
+>> +    memset(values, 0, values_sz);
+>> +
+>> +    map = skel->maps.percpu_hash;
+>> +    err = bpf_map__update_elem(map, &key, sizeof(key), values,
+>> values_sz, 0);
+>> +    if (!ASSERT_OK(err, "bpf_map__update_elem"))
+>> +        goto out;
+>> +
+>> +    fd = bpf_program__fd(skel->progs.percpu_hash_refcount_leak);
+>> +    err = bpf_prog_test_run_opts(fd, &opts);
+>> +    if (!ASSERT_OK(err, "bpf_prog_test_run_opts"))
+>> +        goto out;
+>> +    if (!ASSERT_EQ(opts.retval, 2, "opts.retval"))
+>> +        goto out;
+>> +
+>> +    err = bpf_map__update_elem(map, &key, sizeof(key), values,
+>> values_sz, 0);
+>> +    if (!ASSERT_OK(err, "bpf_map__update_elem"))
+>> +        goto out;
+>> +
+>> +    fd = bpf_program__fd(skel->progs.check_percpu_hash_refcount);
+>> +    err = bpf_prog_test_run_opts(fd, &opts);
+>> +    ASSERT_OK(err, "bpf_prog_test_run_opts");
+>> +    ASSERT_EQ(opts.retval, 1, "opts.retval");
+>> +
+>> +out:
+>> +    refcounted_kptr__destroy(skel);
+>> +    free(values);
+>> +}
+>> +
+>
+> Empty line here.
+>
+>> diff --git a/tools/testing/selftests/bpf/progs/refcounted_kptr.c b/
+>> tools/testing/selftests/bpf/progs/refcounted_kptr.c
+>> index 893a4fdb4b6e9..1aca85d86aebc 100644
+>> --- a/tools/testing/selftests/bpf/progs/refcounted_kptr.c
+>> +++ b/tools/testing/selftests/bpf/progs/refcounted_kptr.c
+>> @@ -568,4 +568,64 @@ int
+>> BPF_PROG(rbtree_sleepable_rcu_no_explicit_rcu_lock,
+>>       return 0;
+>>   }
+>>   +private(kptr_ref) u64 ref;
+>> +
+>> +static int probe_read_refcount(void)
+>> +{
+>> +    u32 refcount;
+>> +
+>> +    bpf_probe_read_kernel(&refcount, sizeof(refcount), (void *) ref);
+>> +    return refcount;
+>> +}
+>> +
+>> +static int __insert_in_list(struct bpf_list_head *head, struct
+>> bpf_spin_lock *lock,
+>> +                struct node_data __kptr **node)
+>> +{
+>> +    struct node_data *node_new, *node_ref, *node_old;
+>> +
+>> +    node_new = bpf_obj_new(typeof(*node_new));
+>> +    if (!node_new)
+>> +        return -1;
+>> +
+>> +    node_ref = bpf_refcount_acquire(node_new);
+>> +    node_old = bpf_kptr_xchg(node, node_new);
+>
+> Change the above to node_old = bpf_kptr_xchg(node, node_node_ref); might
+> be better for reasoning although node_ref/node_new are the same.
+>
+
+Nope — node_ref and node_new are different for the verifier.
+
+When trying node_old = bpf_kptr_xchg(node, node_ref), the verifier reported:
+
+[verifier log snipped for brevity...]
+; bpf_obj_drop(node_ref); @ refcounted_kptr.c:594
+26: (bf) r1 = r6                      ; R1=scalar(id=7) R6=scalar(id=7)
+refs=3
+27: (b7) r2 = 0                       ; R2=0 refs=3
+28: (85) call bpf_obj_drop_impl#54490
+R1 must be referenced or trusted
+processed 27 insns (limit 1000000) max_states_per_insn 0 total_states 2
+peak_states 2 mark_read 0
+
+So the verifier rejected it because R6 became scalar(id=7) from
+ptr_node_data(ref_obj_id=4).
+
+---
+
+Hi Alexei, could you please drop the extra empty line when applying this
+patch?
+
+Then I don't need to send another revision.
 
 Thanks,
-Feng
+Leon
 
-> 
-> Best Regards,
-> Petr
+[...]
 
