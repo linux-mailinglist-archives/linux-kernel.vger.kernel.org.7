@@ -1,424 +1,147 @@
-Return-Path: <linux-kernel+bounces-894498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5767CC4B2D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 03:12:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B700C4B2E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 03:13:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7E2FE4EA129
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 02:10:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 344D13AA323
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 02:07:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A00453446D2;
-	Tue, 11 Nov 2025 02:10:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E8A6342CBD;
+	Tue, 11 Nov 2025 02:07:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GU8Zforo"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kzcwK/l5"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E37382DECBA;
-	Tue, 11 Nov 2025 02:10:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE45632F756
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 02:07:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762827027; cv=none; b=G7fjDqX69AW3Wva2PPDKZWvso8fqy50cscA6klSwPuEAZXIQTAgQaZqQAFM7jB+rBxNqKCT4qpsjuD3ER/GJc156Wz8yCCJErS3oh+WoykjuqxsEO7W5yk0Tact+9jCZwgJP20zVnIPmV/1Nnyw2PSQmcs+cgfM+Uej3pRBz77M=
+	t=1762826839; cv=none; b=cmmTKnxl4yQ/qHv8vmWb4jOks8Y+oBPCEhwMXtUUuCxhIy9rwTt7C2gwVa/no4HlVJ4E1jrk7E/qUDg/UdidAuEEKG/nIlpD13Nd2XCJLU+Rb1W1O+DizYLXirIf4D+kvMF5ZDN99WXokrDLmPfNEZ98gCk2+JcXVTSrs2E4kB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762827027; c=relaxed/simple;
-	bh=1RrVKYLExvh2qmlc0BJ6Or1i2dHqMzPUAJahlaS46Cw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=E9Z6ZwfJ20dw6WupOU/EjUrpfzX/2nIk2Kw1mqG6sBMcGssHlz6hLidozBmy/GnbqF+P/RXGuF1TZeZ2bK0V562t5K8UR1MpnF3PmpD+2e9eObKakysRZLlZqLexPF+ow5oSFNjQ0xbZUxbPrA99Ga8nI72M5xPKlHSlr83Za4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GU8Zforo; arc=none smtp.client-ip=192.198.163.15
+	s=arc-20240116; t=1762826839; c=relaxed/simple;
+	bh=B/atlUk965oK2ZIVai1/Y1GWMyxe/M+JVIxMKyWUm/k=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=VRxKobQJ/23vqJS5jI8aNmMmYRBtCjzmMF/sA0ZEzunv+gzPTTfmXXpS6yySlN8Ou+Er1GxiDV5nJ2PDKWD7PUOI8tmxbsSQgiC/eAkIISIMVGZc3Btn5KrHl1LrhFcLspajE+lEhCxpPefdz2laEPCE6obetYEqcsqJ7IyZuE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kzcwK/l5; arc=none smtp.client-ip=198.175.65.18
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762827026; x=1794363026;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=1RrVKYLExvh2qmlc0BJ6Or1i2dHqMzPUAJahlaS46Cw=;
-  b=GU8Zforo1Vh+N01IxkLvFWoS2v8TfU9H3pGnk7xrxaqZ3tpnkdxBahkd
-   77bvLJzyeXpAJ6E4nBM+oFscRZBcjar7ijOyT91iJ97HgYRyDoW+KVVFY
-   r1YDcFgbQao5qglynoI1O3QGCXDLzAXIq4FXmpk4wKccpSllkHpjwZga4
-   7L9TnG0lzE7bML2EqhxDQeEv879mYHaPByfiI7rxcyN8XzZlAVtOAhAk2
-   1SMR1u8DnHwF8Pdg7bd1J/nqvPfZh74sjnZ4jO6kolRmIm2trgf4Nu51v
-   2Q02rYM2tlK4nYi0/p+ERaq2oe0ZE3UJ9QWER8BveltM/7PkXLH8nsvGA
-   A==;
-X-CSE-ConnectionGUID: s7F7UKR0T5a5CaHzUCQk0g==
-X-CSE-MsgGUID: bY2J1ZV9QGWUNXzeRWVoKw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11609"; a="64974098"
+  t=1762826838; x=1794362838;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=B/atlUk965oK2ZIVai1/Y1GWMyxe/M+JVIxMKyWUm/k=;
+  b=kzcwK/l5IB844DecrvAtn3RokPdaxJ+s1+mz56pIZ0zr9EVx2MBRXLeE
+   ONnLeMHDkWGivRdm74o3zN0AVjBNSwLgEN8fjp1Fu3VOB6eznYnZsxNM2
+   u+VyAvwUzP46L1NRGmyjs7oevcguC18bxTSMR+M3/JMuvHJZ3R/X2rYX9
+   Fn1dsVqfwomteGvxvcyunvWAInCaNeLgDbcSHXIfBjOTIrpakjbjpkSlF
+   8K1IReLPTB3kEFKR271BQLZmVVTavhC+H8ZiXiuwxoXfi0Tomdmne1CIr
+   18swHhZWtkg0iVbO2ql0BF9zh/H7EqVDi+KGLlFE//uRaoosvy3cD3i4a
+   w==;
+X-CSE-ConnectionGUID: LOe/9X79QXWAki4EPCnMwQ==
+X-CSE-MsgGUID: SbutLbGiQUakufNNuagCbQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11609"; a="64926729"
 X-IronPort-AV: E=Sophos;i="6.19,295,1754982000"; 
-   d="scan'208";a="64974098"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 18:10:25 -0800
-X-CSE-ConnectionGUID: 3U/QaBERRp+E3R9nMsZ28Q==
-X-CSE-MsgGUID: D3OGThweTF6i+3vwhmQ+vw==
+   d="scan'208";a="64926729"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 18:07:18 -0800
+X-CSE-ConnectionGUID: OvZrKfK8SWCCf8scRm0pfw==
+X-CSE-MsgGUID: Tb+iXEdYQSSq6jEm7tAkag==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.19,295,1754982000"; 
-   d="scan'208";a="188472971"
-Received: from linux-pnp-server-11.sh.intel.com ([10.239.176.178])
-  by fmviesa007.fm.intel.com with ESMTP; 10 Nov 2025 18:10:21 -0800
-From: Wangyang Guo <wangyang.guo@intel.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Keith Busch <kbusch@kernel.org>,
-	Jens Axboe <axboe@fb.com>,
-	Christoph Hellwig <hch@lst.de>,
-	Sagi Grimberg <sagi@grimberg.me>,
-	linux-kernel@vger.kernel.org,
-	linux-nvme@lists.infradead.org,
-	virtualization@lists.linux-foundation.org,
-	linux-block@vger.kernel.org
-Cc: Wangyang Guo <wangyang.guo@intel.com>,
-	Tianyou Li <tianyou.li@intel.com>,
-	Tim Chen <tim.c.chen@linux.intel.com>,
-	Dan Liang <dan.liang@intel.com>
-Subject: [PATCH RESEND] lib/group_cpus: make group CPU cluster aware
-Date: Tue, 11 Nov 2025 10:06:08 +0800
-Message-ID: <20251111020608.1501543-1-wangyang.guo@intel.com>
-X-Mailer: git-send-email 2.47.3
+   d="scan'208";a="219486474"
+Received: from lkp-server01.sh.intel.com (HELO 7b01c990427b) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 10 Nov 2025 18:07:16 -0800
+Received: from kbuild by 7b01c990427b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vIdmr-0002Wf-2f;
+	Tue, 11 Nov 2025 02:07:13 +0000
+Date: Tue, 11 Nov 2025 10:06:37 +0800
+From: kernel test robot <lkp@intel.com>
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Madhavan Srinivasan <maddy@linux.ibm.com>
+Subject: include/linux/compiler_types.h:557:45: error: call to
+ '__compiletime_assert_308' declared with attribute error: BUILD_BUG_ON
+ failed: !__builtin_constant_p(type)
+Message-ID: <202511111047.GZRksgk7-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-As CPU core counts increase, the number of NVMe IRQs may be smaller than
-the total number of CPUs. This forces multiple CPUs to share the same
-IRQ. If the IRQ affinity and the CPU’s cluster do not align, a
-performance penalty can be observed on some platforms.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   4ea7c1717f3f2344f7a1cdab4f5875cfa89c87a9
+commit: 1518474b70d663baf7757ccd1b1c229c077d9b3e KVM: powerpc: Enable commented out BUILD_BUG_ON() assertion
+date:   7 months ago
+config: powerpc64-randconfig-002-20251111 (https://download.01.org/0day-ci/archive/20251111/202511111047.GZRksgk7-lkp@intel.com/config)
+compiler: powerpc64-linux-gcc (GCC) 12.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251111/202511111047.GZRksgk7-lkp@intel.com/reproduce)
 
-This patch improves IRQ affinity by grouping CPUs by cluster within each
-NUMA domain, ensuring better locality between CPUs and their assigned
-NVMe IRQs.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202511111047.GZRksgk7-lkp@intel.com/
 
-Reviewed-by: Tianyou Li <tianyou.li@intel.com>
-Reviewed-by: Tim Chen <tim.c.chen@linux.intel.com>
-Tested-by: Dan Liang <dan.liang@intel.com>
-Signed-off-by: Wangyang Guo <wangyang.guo@intel.com>
----
- lib/group_cpus.c | 269 +++++++++++++++++++++++++++++++++++------------
- 1 file changed, 204 insertions(+), 65 deletions(-)
+All errors (new ones prefixed by >>):
 
-diff --git a/lib/group_cpus.c b/lib/group_cpus.c
-index 6d08ac05f371..56ca6193736d 100644
---- a/lib/group_cpus.c
-+++ b/lib/group_cpus.c
-@@ -114,48 +114,15 @@ static int ncpus_cmp_func(const void *l, const void *r)
- 	return ln->ncpus - rn->ncpus;
- }
- 
--/*
-- * Allocate group number for each node, so that for each node:
-- *
-- * 1) the allocated number is >= 1
-- *
-- * 2) the allocated number is <= active CPU number of this node
-- *
-- * The actual allocated total groups may be less than @numgrps when
-- * active total CPU number is less than @numgrps.
-- *
-- * Active CPUs means the CPUs in '@cpu_mask AND @node_to_cpumask[]'
-- * for each node.
-- */
--static void alloc_nodes_groups(unsigned int numgrps,
--			       cpumask_var_t *node_to_cpumask,
--			       const struct cpumask *cpu_mask,
--			       const nodemask_t nodemsk,
--			       struct cpumask *nmsk,
--			       struct node_groups *node_groups)
-+static void alloc_groups_to_nodes(unsigned int numgrps,
-+				  unsigned int numcpus,
-+				  struct node_groups *node_groups,
-+				  unsigned int num_nodes)
- {
--	unsigned n, remaining_ncpus = 0;
--
--	for (n = 0; n < nr_node_ids; n++) {
--		node_groups[n].id = n;
--		node_groups[n].ncpus = UINT_MAX;
--	}
--
--	for_each_node_mask(n, nodemsk) {
--		unsigned ncpus;
--
--		cpumask_and(nmsk, cpu_mask, node_to_cpumask[n]);
--		ncpus = cpumask_weight(nmsk);
-+	unsigned int n, remaining_ncpus = numcpus;
-+	unsigned int  ngroups, ncpus;
- 
--		if (!ncpus)
--			continue;
--		remaining_ncpus += ncpus;
--		node_groups[n].ncpus = ncpus;
--	}
--
--	numgrps = min_t(unsigned, remaining_ncpus, numgrps);
--
--	sort(node_groups, nr_node_ids, sizeof(node_groups[0]),
-+	sort(node_groups, num_nodes, sizeof(node_groups[0]),
- 	     ncpus_cmp_func, NULL);
- 
- 	/*
-@@ -226,9 +193,8 @@ static void alloc_nodes_groups(unsigned int numgrps,
- 	 * finally for each node X: grps(X) <= ncpu(X).
- 	 *
- 	 */
--	for (n = 0; n < nr_node_ids; n++) {
--		unsigned ngroups, ncpus;
- 
-+	for (n = 0; n < num_nodes; n++) {
- 		if (node_groups[n].ncpus == UINT_MAX)
- 			continue;
- 
-@@ -246,12 +212,199 @@ static void alloc_nodes_groups(unsigned int numgrps,
- 	}
- }
- 
-+/*
-+ * Allocate group number for each node, so that for each node:
-+ *
-+ * 1) the allocated number is >= 1
-+ *
-+ * 2) the allocated number is <= active CPU number of this node
-+ *
-+ * The actual allocated total groups may be less than @numgrps when
-+ * active total CPU number is less than @numgrps.
-+ *
-+ * Active CPUs means the CPUs in '@cpu_mask AND @node_to_cpumask[]'
-+ * for each node.
-+ */
-+static void alloc_nodes_groups(unsigned int numgrps,
-+			       cpumask_var_t *node_to_cpumask,
-+			       const struct cpumask *cpu_mask,
-+			       const nodemask_t nodemsk,
-+			       struct cpumask *nmsk,
-+			       struct node_groups *node_groups)
-+{
-+	unsigned int n, numcpus = 0;
-+
-+	for (n = 0; n < nr_node_ids; n++) {
-+		node_groups[n].id = n;
-+		node_groups[n].ncpus = UINT_MAX;
-+	}
-+
-+	for_each_node_mask(n, nodemsk) {
-+		unsigned int ncpus;
-+
-+		cpumask_and(nmsk, cpu_mask, node_to_cpumask[n]);
-+		ncpus = cpumask_weight(nmsk);
-+
-+		if (!ncpus)
-+			continue;
-+		numcpus += ncpus;
-+		node_groups[n].ncpus = ncpus;
-+	}
-+
-+	numgrps = min_t(unsigned int, numcpus, numgrps);
-+	alloc_groups_to_nodes(numgrps, numcpus, node_groups, nr_node_ids);
-+}
-+
-+static void assign_cpus_to_groups(unsigned int ncpus,
-+				  struct cpumask *nmsk,
-+				  struct node_groups *nv,
-+				  struct cpumask *masks,
-+				  unsigned int *curgrp,
-+				  unsigned int last_grp)
-+{
-+	unsigned int v, cpus_per_grp, extra_grps;
-+	/* Account for rounding errors */
-+	extra_grps = ncpus - nv->ngroups * (ncpus / nv->ngroups);
-+
-+	/* Spread allocated groups on CPUs of the current node */
-+	for (v = 0; v < nv->ngroups; v++, *curgrp += 1) {
-+		cpus_per_grp = ncpus / nv->ngroups;
-+
-+		/* Account for extra groups to compensate rounding errors */
-+		if (extra_grps) {
-+			cpus_per_grp++;
-+			--extra_grps;
-+		}
-+
-+		/*
-+		 * wrapping has to be considered given 'startgrp'
-+		 * may start anywhere
-+		 */
-+		if (*curgrp >= last_grp)
-+			*curgrp = 0;
-+		grp_spread_init_one(&masks[*curgrp], nmsk, cpus_per_grp);
-+	}
-+}
-+
-+static int alloc_cluster_groups(unsigned int ncpus,
-+				unsigned int ngroups,
-+				struct cpumask *node_cpumask,
-+				cpumask_var_t msk,
-+				const struct cpumask ***clusters_ptr,
-+				struct node_groups **cluster_groups_ptr)
-+{
-+	unsigned int ncluster = 0;
-+	unsigned int cpu, nc, n;
-+	const struct cpumask *cluster_mask;
-+	const struct cpumask **clusters;
-+	struct node_groups *cluster_groups;
-+
-+	cpumask_copy(msk, node_cpumask);
-+
-+	/* Probe how many clusters in this node. */
-+	while (1) {
-+		cpu = cpumask_first(msk);
-+		if (cpu >= nr_cpu_ids)
-+			break;
-+
-+		cluster_mask = topology_cluster_cpumask(cpu);
-+		/* Clean out CPUs on the same cluster. */
-+		cpumask_andnot(msk, msk, cluster_mask);
-+		ncluster++;
-+	}
-+
-+	/* If ngroups < ncluster, cross cluster is inevitable, skip. */
-+	if (ncluster == 0 || ncluster > ngroups)
-+		goto no_cluster;
-+
-+	/* Allocate memory based on cluster number. */
-+	clusters = kcalloc(ncluster, sizeof(struct cpumask *), GFP_KERNEL);
-+	if (!clusters)
-+		goto no_cluster;
-+	cluster_groups = kcalloc(ncluster, sizeof(struct node_groups), GFP_KERNEL);
-+	if (!cluster_groups)
-+		goto fail_cluster_groups;
-+
-+	/* Filling cluster info for later process. */
-+	cpumask_copy(msk, node_cpumask);
-+	for (n = 0; n < ncluster; n++) {
-+		cpu = cpumask_first(msk);
-+		cluster_mask = topology_cluster_cpumask(cpu);
-+		nc = cpumask_weight_and(cluster_mask, node_cpumask);
-+		clusters[n] = cluster_mask;
-+		cluster_groups[n].id = n;
-+		cluster_groups[n].ncpus = nc;
-+		cpumask_andnot(msk, msk, cluster_mask);
-+	}
-+
-+	alloc_groups_to_nodes(ngroups, ncpus, cluster_groups, ncluster);
-+
-+	*clusters_ptr = clusters;
-+	*cluster_groups_ptr = cluster_groups;
-+	return ncluster;
-+
-+ fail_cluster_groups:
-+	kfree(clusters);
-+ no_cluster:
-+	return 0;
-+}
-+
-+/*
-+ * Try group CPUs evenly for cluster locality within a NUMA node.
-+ *
-+ * Return: true if success, false otherwise.
-+ */
-+static bool __try_group_cluster_cpus(unsigned int ncpus,
-+				     unsigned int ngroups,
-+				     struct cpumask *node_cpumask,
-+				     struct cpumask *masks,
-+				     unsigned int *curgrp,
-+				     unsigned int last_grp)
-+{
-+	struct node_groups *cluster_groups;
-+	const struct cpumask **clusters;
-+	unsigned int ncluster;
-+	bool ret = false;
-+	cpumask_var_t nmsk;
-+	unsigned int i, nc;
-+
-+	if (!zalloc_cpumask_var(&nmsk, GFP_KERNEL))
-+		goto fail_nmsk_alloc;
-+
-+	ncluster = alloc_cluster_groups(ncpus, ngroups, node_cpumask, nmsk,
-+					&clusters, &cluster_groups);
-+
-+	if (ncluster == 0)
-+		goto fail_no_clusters;
-+
-+	for (i = 0; i < ncluster; i++) {
-+		struct node_groups *nv = &cluster_groups[i];
-+
-+		/* Get the cpus on this cluster. */
-+		cpumask_and(nmsk, node_cpumask, clusters[nv->id]);
-+		nc = cpumask_weight(nmsk);
-+		if (!nc)
-+			continue;
-+		WARN_ON_ONCE(nv->ngroups > nc);
-+
-+		assign_cpus_to_groups(nc, nmsk, nv, masks, curgrp, last_grp);
-+	}
-+
-+	ret = true;
-+	kfree(cluster_groups);
-+	kfree(clusters);
-+ fail_no_clusters:
-+	free_cpumask_var(nmsk);
-+ fail_nmsk_alloc:
-+	return ret;
-+}
-+
- static int __group_cpus_evenly(unsigned int startgrp, unsigned int numgrps,
- 			       cpumask_var_t *node_to_cpumask,
- 			       const struct cpumask *cpu_mask,
- 			       struct cpumask *nmsk, struct cpumask *masks)
- {
--	unsigned int i, n, nodes, cpus_per_grp, extra_grps, done = 0;
-+	unsigned int i, n, nodes, done = 0;
- 	unsigned int last_grp = numgrps;
- 	unsigned int curgrp = startgrp;
- 	nodemask_t nodemsk = NODE_MASK_NONE;
-@@ -287,7 +440,7 @@ static int __group_cpus_evenly(unsigned int startgrp, unsigned int numgrps,
- 	alloc_nodes_groups(numgrps, node_to_cpumask, cpu_mask,
- 			   nodemsk, nmsk, node_groups);
- 	for (i = 0; i < nr_node_ids; i++) {
--		unsigned int ncpus, v;
-+		unsigned int ncpus;
- 		struct node_groups *nv = &node_groups[i];
- 
- 		if (nv->ngroups == UINT_MAX)
-@@ -301,28 +454,14 @@ static int __group_cpus_evenly(unsigned int startgrp, unsigned int numgrps,
- 
- 		WARN_ON_ONCE(nv->ngroups > ncpus);
- 
--		/* Account for rounding errors */
--		extra_grps = ncpus - nv->ngroups * (ncpus / nv->ngroups);
--
--		/* Spread allocated groups on CPUs of the current node */
--		for (v = 0; v < nv->ngroups; v++, curgrp++) {
--			cpus_per_grp = ncpus / nv->ngroups;
--
--			/* Account for extra groups to compensate rounding errors */
--			if (extra_grps) {
--				cpus_per_grp++;
--				--extra_grps;
--			}
--
--			/*
--			 * wrapping has to be considered given 'startgrp'
--			 * may start anywhere
--			 */
--			if (curgrp >= last_grp)
--				curgrp = 0;
--			grp_spread_init_one(&masks[curgrp], nmsk,
--						cpus_per_grp);
-+		if (__try_group_cluster_cpus(ncpus, nv->ngroups, nmsk,
-+					     masks, &curgrp, last_grp)) {
-+			done += nv->ngroups;
-+			continue;
- 		}
-+
-+		assign_cpus_to_groups(ncpus, nmsk, nv, masks, &curgrp,
-+				      last_grp);
- 		done += nv->ngroups;
- 	}
- 	kfree(node_groups);
+   In file included from <command-line>:
+   In function 'kvmppc_account_exit_stat',
+       inlined from 'kvmppc_account_exit' at arch/powerpc/kvm/timing.h:92:2:
+>> include/linux/compiler_types.h:557:45: error: call to '__compiletime_assert_308' declared with attribute error: BUILD_BUG_ON failed: !__builtin_constant_p(type)
+     557 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |                                             ^
+   include/linux/compiler_types.h:538:25: note: in definition of macro '__compiletime_assert'
+     538 |                         prefix ## suffix();                             \
+         |                         ^~~~~~
+   include/linux/compiler_types.h:557:9: note: in expansion of macro '_compiletime_assert'
+     557 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |         ^~~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:39:37: note: in expansion of macro 'compiletime_assert'
+      39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+         |                                     ^~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:50:9: note: in expansion of macro 'BUILD_BUG_ON_MSG'
+      50 |         BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
+         |         ^~~~~~~~~~~~~~~~
+   arch/powerpc/kvm/timing.h:41:9: note: in expansion of macro 'BUILD_BUG_ON'
+      41 |         BUILD_BUG_ON(!__builtin_constant_p(type));
+         |         ^~~~~~~~~~~~
+
+
+vim +/__compiletime_assert_308 +557 include/linux/compiler_types.h
+
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  543  
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  544  #define _compiletime_assert(condition, msg, prefix, suffix) \
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  545  	__compiletime_assert(condition, msg, prefix, suffix)
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  546  
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  547  /**
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  548   * compiletime_assert - break build and emit msg if condition is false
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  549   * @condition: a compile-time constant condition to check
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  550   * @msg:       a message to emit if condition is false
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  551   *
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  552   * In tradition of POSIX assert, this macro will break the build if the
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  553   * supplied condition is *false*, emitting the supplied error message if the
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  554   * compiler has support to do so.
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  555   */
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  556  #define compiletime_assert(condition, msg) \
+eb5c2d4b45e3d2 Will Deacon 2020-07-21 @557  	_compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  558  
+
+:::::: The code at line 557 was first introduced by commit
+:::::: eb5c2d4b45e3d2d5d052ea6b8f1463976b1020d5 compiler.h: Move compiletime_assert() macros into compiler_types.h
+
+:::::: TO: Will Deacon <will@kernel.org>
+:::::: CC: Will Deacon <will@kernel.org>
+
 -- 
-2.47.3
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
