@@ -1,124 +1,140 @@
-Return-Path: <linux-kernel+bounces-896210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE339C4FD73
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 22:25:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C6F5C4FDB2
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 22:32:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79EA3189A12E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 21:26:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7693B1896F5C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 21:32:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40A13368298;
-	Tue, 11 Nov 2025 21:23:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5183732694E;
+	Tue, 11 Nov 2025 21:31:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="G+bNbcs7";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xgYMqB18"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="mDB9MXB2"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2551935C1B4;
-	Tue, 11 Nov 2025 21:23:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8046A2868B5;
+	Tue, 11 Nov 2025 21:31:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762896200; cv=none; b=VUsInotR4A97qmSWHlGHWPlOtyNtDDYw/X0amQmEpS1NkekkDv1sonZyxr6vguAbQB9Ug1si4OIEySXK32Zm8uTrFlFRUJL8Hnze1kkq+dX9VIvCgmZgjTSrv8P7v5jRQwh/jG1HDe0n/FQsZ4kSGZfO0XUcqNSBdLe9jbqurjY=
+	t=1762896715; cv=none; b=rJUOrwtxkXTI51WjQB9aprG2AtaqZRhQOTVARxEp/tXQYtRANCeGV/+CiEElaDoOHFLhpCv5nIoL+WLj1m5G4Xnd9XVltVTH5m1VE73n1DppL7s83p3NlzjmtkIS2jF58qHsXHI7Z6HOk5C0hz9T8yVWQSPujw3IVmTkDPIUJN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762896200; c=relaxed/simple;
-	bh=zrntGOlyBHhxBHA4p0exHz//deJs0AbIEtuu9NNcig8=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=peamCIxTZggE6pel1hlUKlG8j9VaUEmY83ROHCiiQjPoP59JPtV3N+NcQBCJ87z7L1cnGZV6KQfHIx39hGtwVYFZ65B/FpsHIuPD8ML5KxnULCLtGn+/bspdSwapoJBNDcJOf/xspusfWSIXinbxJnNpuXDmd2UGGR1JQaVyxjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=G+bNbcs7; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xgYMqB18; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 11 Nov 2025 21:23:16 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1762896197;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6+fJKq7jX9Ghb1saXWlXicxrf+ptmR8d6HukYCfEP9c=;
-	b=G+bNbcs7bNwGHog26W5Ha9hoMqmI6BAZKHLwDuIEkbaGHxiFAO08IZQte3koPSg1mKlDRL
-	TzUUXTC47LfWWAMiNxKjqJV4ZgbwCwuuwY33eaEMCylkPpyZFw4Z7iqQi4DPU7VqAmyCLI
-	zqf87hrn2kWEIUFuZ5xDz/Py2OR3ewWsVYJf6s6S6gzsJcXAQqffznWR3G2ZtHIp66ekwJ
-	uk2kLqpOJ/+GN8FVTHNBsYz4DCzgzgJlC+HDGFoB5ock8AcXaKDJCvyOzuZRfb2sRv0Nbi
-	NRNtiNpGFvjSTjnjkJtqvt51ksCUvkWSUwVd1Ug2d+oW4bJoWgy+b5GgovNq5g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1762896197;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6+fJKq7jX9Ghb1saXWlXicxrf+ptmR8d6HukYCfEP9c=;
-	b=xgYMqB18SrtCPol7kHdk/N6zEIMojJdv/HuzRJ6GcgGV1xtV6Hme7egxINXhBr9lb8ZCpC
-	Xz4T4DUMg2oyPICg==
-From: "tip-bot2 for Junhui Liu" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: irq/drivers] dt-bindings: interrupt-controller: Add Anlogic DR1V90 PLIC
-Cc: Junhui Liu <junhui.liu@pigmoral.tech>,
- Thomas Gleixner <tglx@linutronix.de>,
- Conor Dooley <conor.dooley@microchip.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20251021-dr1v90-basic-dt-v3-4-5478db4f664a@pigmoral.tech>
-References: <20251021-dr1v90-basic-dt-v3-4-5478db4f664a@pigmoral.tech>
+	s=arc-20240116; t=1762896715; c=relaxed/simple;
+	bh=6Odj3tYkRiZs6yTQz6IlceMUTLk6AQXtihXfMKVwsFk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cHMb7T9mIxDQ4hvW4JRHNYeTovNYfsPdBccV/cktxVYioQ/A+ciClR2ni8FlQe5iXp3JPbFRXaffng+szStCp0Yr5HUXe5ZoOqMhFv/wFYsSjK8tOwwpx1cSMsdH4SC9TUNx6YQzTBKpbkiYkwBCWMJE6YAK1pVNMrtPjKa3Wzg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=fail (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=mDB9MXB2 reason="signature verification failed"; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [172.27.2.41] (c-76-133-66-138.hsd1.ca.comcast.net [76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 5ABLSeYS360987
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Tue, 11 Nov 2025 13:28:41 -0800
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 5ABLSeYS360987
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025102301; t=1762896521;
+	bh=bzL1y42NUb+51GA1nahiKxPpmYzfoAoFGVxMM1ISNHQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=mDB9MXB23HIeu2vMp0aP0xjdZH1lztVtNQJ4L0qP3vrvVuQFwBLMzudT8ddRlokNk
+	 g3dHPd7GP6uW+pxkSrKHt8S3FfUeFwB4FCXqcnpORWed3Stkbmtw+8Zmu+xgcGI1MM
+	 Xge6IcCgniccOK60FAzVdwQUcGnT6/BCqL2FNvbeyjq4TBKJuapFGLZLck+R2gfdBh
+	 vsyPS/+RSXAVQsHL14/nDLGQ+xkBUnApWuqFWdzwEHiv6BWJsN4XPiTD+Gs6WHQkyo
+	 JNqWoawmdl2ozCEUQtNE3aEYN5lqITkryWFe3s4bYX/iABtBtzgsCBbd8bUtvC/3GW
+	 yIvurM9YnVrWw==
+Message-ID: <85c9b487-eb18-46a9-babe-6223ae3e05f5@zytor.com>
+Date: Tue, 11 Nov 2025 13:28:40 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <176289619645.498.15094597072168596459.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: RFC: Serial port DTR/RTS - O_NRESETDEV
+To: "Theodore Ts'o" <tytso@mit.edu>
+Cc: Maarten Brock <Maarten.Brock@sttls.nl>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <bb44f856-10a2-40c7-a3f7-be50c8e4b0a9@zytor.com>
+ <20251107173743.GA3131573@mit.edu>
+ <dc42f5d4-a707-4442-bda6-1c1990666f54@zytor.com>
+ <20251110033556.GC2988753@mit.edu>
+ <ADB50E23-DC8B-43D0-A345-E10396A3DFD4@zytor.com>
+ <AMBPR05MB11925DA076098B05E418BF64283CEA@AMBPR05MB11925.eurprd05.prod.outlook.com>
+ <20251110201933.GH2988753@mit.edu>
+ <0F8021E8-F288-4669-8195-9948844E36FD@zytor.com>
+ <20251111035143.GJ2988753@mit.edu>
+ <D4AF3E24-8698-4EEC-9D52-655D69897111@zytor.com>
+ <20251111043803.GK2988753@mit.edu>
+Content-Language: en-US, sv-SE
+From: "H. Peter Anvin" <hpa@zytor.com>
+In-Reply-To: <20251111043803.GK2988753@mit.edu>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The following commit has been merged into the irq/drivers branch of tip:
+On 2025-11-10 20:38, Theodore Ts'o wrote:
+> On Mon, Nov 10, 2025 at 07:57:22PM -0800, H. Peter Anvin wrote:
+>> I really think you are looking at this from a very odd point of
+>> view, and you seem to be very inconsistent. Boot time setup? Isn't
+>> that what setserial is for? We have the ability to feed this
+>> configuration already, but you need a file descriptor.
+> 
+> I'm not really fond of adding some new open flag that to me seems
+> **very** serial / RS-485 specific, and so I'm trying to find some
+> way to avoid it.
+> 
 
-Commit-ID:     b90ac5fe3285aa8bed625375d1df959c4c9a2cdb
-Gitweb:        https://git.kernel.org/tip/b90ac5fe3285aa8bed625375d1df959c4c9=
-a2cdb
-Author:        Junhui Liu <junhui.liu@pigmoral.tech>
-AuthorDate:    Tue, 21 Oct 2025 17:41:39 +08:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Tue, 11 Nov 2025 22:17:21 +01:00
+I don't think it is.  "Opening this device for configuration."
 
-dt-bindings: interrupt-controller: Add Anlogic DR1V90 PLIC
+> I also think that that the GPIO style timing requirements of RTS
+> **really** should be done as a line discpline, and not in userspace.
+> 
 
-Add PLIC support for Anlogic DR1V90.
+No disagreement there -- and so it is. What I want to do is a way to *attach*
+that line discipline without poking with the serial port itself.  That's what
+I keep trying to get at.
 
-Signed-off-by: Junhui Liu <junhui.liu@pigmoral.tech>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-Link: https://patch.msgid.link/20251021-dr1v90-basic-dt-v3-4-5478db4f664a@pig=
-moral.tech
----
- Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yam=
-l | 1 +
- 1 file changed, 1 insertion(+)
+>> Honestly, though, I'm far less interested in what 8250-based hardware does than e.g. USB.
+> 
+> I'm quite confident that USB won't have "state" that will be preserved
+> across a reboot, because the device won't even get powered up until
+> the USB device is attached.  And part of the problem was that the
+> requirements weren't particularly clear, and given the insistence that
+> the "state" be preserved even across reboot, despite the serial port
+> autoconfiguration, I had assumed you were posting uing the COM 1/2/3/4
+> ports where autoconfiguration isn't stricty speaking necessary.
+> 
+> In some ways, USB ports might be easier, since it should be possible
+> to specify udev rules which get passed to the driver when the USB
+> serial device is inserted, and so *that* can easily be done without
+> needing a file descriptor.
+> 
+> And for this sort of thing, it seems perfectly fair to hard code some
+> specific behavior using either a boot command line or a udev rule,
+> since you seem to be positing that the serial port will be dedicated
+> to some kind of weird-shit RS-485 bus device, where any time RTS/DTR
+> gets raised, the bus will malfunction in weird and wondrous ways....
 
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/sifive,pl=
-ic-1.0.0.yaml b/Documentation/devicetree/bindings/interrupt-controller/sifive=
-,plic-1.0.0.yaml
-index 234cdc2..6fdb7ae 100644
---- a/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.=
-0.yaml
-+++ b/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.=
-0.yaml
-@@ -58,6 +58,7 @@ properties:
-           - const: andestech,nceplic100
-       - items:
-           - enum:
-+              - anlogic,dr1v90-plic
-               - canaan,k210-plic
-               - eswin,eic7700-plic
-               - sifive,fu540-c000-plic
+But again, it is very much a configuration property.  You don't know where
+your dynamically assigned serial port will end up -- and you *can't*, because
+it is a property of the DCE -- what is plugged *into* the device.
+
+Now you have someone writing a terminal program or something like Arduino and
+decide to enumerate serial ports (which, as I stated, you can't actually do
+right now without opening the devices).  This is why it makes sense for the
+open() caller to declare intent; this is similar to how O_NDELAY replaced
+callout devices.
+
+It would be lovely if we could do something like
+open("/dev/ttyS0/option-string") and so on, but that is well and truly a far
+bigger change to the whole driver API.
+
+	-hpa
+
 
