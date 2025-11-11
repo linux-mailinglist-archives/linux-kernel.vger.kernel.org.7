@@ -1,229 +1,192 @@
-Return-Path: <linux-kernel+bounces-896246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F8FFC4FF6F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 23:18:55 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FDDAC4FF78
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 23:21:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D7751899C54
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 22:19:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1516F4E7A9B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 22:21:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA0562ED17B;
-	Tue, 11 Nov 2025 22:18:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A8672ED17B;
+	Tue, 11 Nov 2025 22:21:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="NFCnAd0C";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="CxyDphfL";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="NFCnAd0C";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="CxyDphfL"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Z0W0FVR4"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 386AD35CBCB
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 22:18:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB9742C11C4;
+	Tue, 11 Nov 2025 22:21:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762899520; cv=none; b=OiMfeoTB+FGufJ1bN4t1GC8+F1K6vvaJBidiakNb2vllHPG0Fq4ZAT4Z+So6CCUVQ7XNaYr91lEsBFE5Lges03oR2ga4H6cKQVGiPMiNzOGYMC9+a81PKFf7pzaydgpoWEsTTTpNo9eim6/8byBXvwwD26LLWmrvtU8ZZoqRx3o=
+	t=1762899674; cv=none; b=R4JdkywqfPm7X3JZPvsKH0SZ6R+Hf5PnaSk0syPdZAzs541D+Zuc7lYEkvnqIsqpt8pDHXYBSrWcoUNk7rHfBnMnxJnHP/12glQpsO3QwPem3oMu31vAr5lz3Jv8ZteQDPsqQfPDk64LzDwK+axdTWFhwQxPso6rZE0N0XFkJn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762899520; c=relaxed/simple;
-	bh=4S5gUi9z3nO2J0CRN5iQdz/hVpLebuMgfP5fRW8bbbg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=o0pEXYpXu6BLE1GIt/0mqe6lYvawPp6mPQylMNP6eoVZb4MNB94T4yojgQB6qsiNuUsSTvE9cbMilDL2KHRZdyxOuqFKTQPXDDgZ2GAiwQ7Cf9rtDCh9thoacx4JskDp8jW++FIi2iD1PcPRgvzgf6ZXNGku4wRMGQqcGeHBhpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=NFCnAd0C; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=CxyDphfL; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=NFCnAd0C; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=CxyDphfL; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 11BDE1F458;
-	Tue, 11 Nov 2025 22:18:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762899516; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=GicdksCSyjI82vUkF0Oi03JhVOMlvz+IX5VHtm4eASA=;
-	b=NFCnAd0CdU+wg3CFf3WCxS3+vuWYLoBI2PXiNTQ3Q/ofKTjPtRvznMzcsWTd5gFZVYKixH
-	I8OqOwM/K8jiD8gC0xphwKIZTqlXmG6TXeZYnL2RRdmQV++Qj7G9979n2lNByBk/jxS6Wo
-	riFP0fp/zVVMr3T+vZ9ldUcGsMx4Bxs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762899516;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=GicdksCSyjI82vUkF0Oi03JhVOMlvz+IX5VHtm4eASA=;
-	b=CxyDphfLW3AsRB2q4RGIcsWDAK20PWCDYLJtNdZth2+v6u1xkPsdzbAo/QlqsS2QQj+A32
-	Fh7g8HeIZDG/rACg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762899516; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=GicdksCSyjI82vUkF0Oi03JhVOMlvz+IX5VHtm4eASA=;
-	b=NFCnAd0CdU+wg3CFf3WCxS3+vuWYLoBI2PXiNTQ3Q/ofKTjPtRvznMzcsWTd5gFZVYKixH
-	I8OqOwM/K8jiD8gC0xphwKIZTqlXmG6TXeZYnL2RRdmQV++Qj7G9979n2lNByBk/jxS6Wo
-	riFP0fp/zVVMr3T+vZ9ldUcGsMx4Bxs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762899516;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=GicdksCSyjI82vUkF0Oi03JhVOMlvz+IX5VHtm4eASA=;
-	b=CxyDphfLW3AsRB2q4RGIcsWDAK20PWCDYLJtNdZth2+v6u1xkPsdzbAo/QlqsS2QQj+A32
-	Fh7g8HeIZDG/rACg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EC89414BB0;
-	Tue, 11 Nov 2025 22:18:35 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id WbznNzu2E2nNBwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Tue, 11 Nov 2025 22:18:35 +0000
-Message-ID: <8219599b-941e-4ffd-875f-6548e217c16c@suse.cz>
-Date: Tue, 11 Nov 2025 23:18:35 +0100
+	s=arc-20240116; t=1762899674; c=relaxed/simple;
+	bh=EupUZ0Y97IkAYfyj1mCfWDcBjmbbyIF9p1kivmfAjN4=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=ejH/k7lE7O1XE3qPZsJNXbbYYrS/KN803s05vgoglU6NApbvKJr9YgTENZESs9qxwxguiR3+zPBrZFucHvX7qYnfwBfi4eAVB3gCXOLt8tTKDaju8hPeog9JIhmx6bf2ug/CoBiTfH9oimYuM7dVYEAVq5fddlhtjOis9FdS2SQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=qti.qualcomm.com; spf=pass smtp.mailfrom=qti.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Z0W0FVR4; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=qti.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qti.qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5ABLlVZA3502223;
+	Tue, 11 Nov 2025 22:21:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:in-reply-to:message-id
+	:mime-version:references:subject:to; s=qcppdkim1; bh=PZe1+0R61+e
+	l68af10hP/F4jsBL57RyNvY7hU56XRXA=; b=Z0W0FVR4E2tuoknwaEwU4PferiQ
+	CvMRsjcoHO8b34Nwo1Zc9x7+wtxNZDnmmRql+NaycDc69yCv6FtYdD+bMlMMDHDm
+	96sORZAAL7E6w3/PBjJ9qDROOx7r6AjNTtI9RSek0FsHzTdY66Qb3uYYPYOT8WCO
+	UUg3wlMBf4EtAxepRhx6mfpcs5nNYXFOu/ywavRCgJEUXevS/WC5iMp9Jtenbdlp
+	RO9xc69EqrXrMAOD4BH/yeMP/bksCU8+tuPKxcowAz3kljeOVMr7vdf5jNx0MEkY
+	OcA7JREBKXorvr82dAmIuWGfdi6h0rEIkhvCg5HT0uY4oJfdm2j1AVsQZ6g==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4acdcc022r-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Nov 2025 22:21:05 +0000 (GMT)
+Received: from pps.filterd (NALASPPMTA03.qualcomm.com [127.0.0.1])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 5ABML4lB030393;
+	Tue, 11 Nov 2025 22:21:04 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by NALASPPMTA03.qualcomm.com (PPS) with ESMTP id 4ac0nkfyvt-1;
+	Tue, 11 Nov 2025 22:21:04 +0000
+Received: from NALASPPMTA03.qualcomm.com (NALASPPMTA03.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 5ABML4EO030387;
+	Tue, 11 Nov 2025 22:21:04 GMT
+Received: from hu-grahamr-lv.qualcomm.com (hu-grahamr-lv.qualcomm.com [10.81.26.100])
+	by NALASPPMTA03.qualcomm.com (PPS) with ESMTP id 5ABML3o8030383;
+	Tue, 11 Nov 2025 22:21:04 +0000
+From: Graham Roff <grahamr@qti.qualcomm.com>
+To: jani.nikula@linux.intel.com
+Cc: corbet@lwn.net, grahamr@qti.qualcomm.com, linux-doc@vger.kernel.org,
+        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+        nathan@kernel.org, nico@fluxnic.net, nsc@kernel.org
+Subject: Re: [PATCH] Support conditional deps using "depends on X if Y"
+Date: Tue, 11 Nov 2025 14:21:03 -0800
+Message-Id: <20251111222103.3322795-1-grahamr@qti.qualcomm.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <e5ef3c59bc100cb44adae6ef624da83af8bce299@intel.com>
+References: <e5ef3c59bc100cb44adae6ef624da83af8bce299@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/mmap_lock: Reset maple state on lock_vma_under_rcu()
- retry
-Content-Language: en-US
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- Suren Baghdasaryan <surenb@google.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Shakeel Butt <shakeel.butt@linux.dev>, Jann Horn <jannh@google.com>,
- stable@vger.kernel.org, syzbot+131f9eb2b5807573275c@syzkaller.appspotmail.com
-References: <20251111215605.1721380-1-Liam.Howlett@oracle.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <20251111215605.1721380-1-Liam.Howlett@oracle.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	TAGGED_RCPT(0.00)[131f9eb2b5807573275c];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	URIBL_BLOCKED(0.00)[suse.cz:email,suse.cz:mid,imap1.dmz-prg2.suse.org:helo,syzkaller.appspot.com:url,appspotmail.com:email,oracle.com:email];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:mid]
-X-Spam-Flag: NO
-X-Spam-Score: -2.80
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: wN65WCwl6FsPj7fXFwPZDHMFi8SZpJ4n
+X-Proofpoint-ORIG-GUID: wN65WCwl6FsPj7fXFwPZDHMFi8SZpJ4n
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTExMDE4MiBTYWx0ZWRfX9F5dJdC+CtdL
+ fnpseWA7FDgZCwo4kkg1v6pWoIFbNHAw8xx0GGftzgI1JLzwqmpGW3jCi5flwW2eIX0wpn7NY9J
+ C/ERRGs7B2Sz9RVxMHcKVi7SlYrRgjG9EIHcHnT6MQ04aWeg3RpLOQObvRknwFMwtEjBCdP2NUS
+ WdA/VYdR164SzlXf1x5AprE7/zO6xwIt4AiVi444z3hBEkg7Yjl2Jbea3vQymj64fSLThsBbFKF
+ JpeRmyiuvBTAQwelCJ8BDYuffleK9bU7NlnOkEgc+MiJTZZIKISDolcCQ433Ov2NSZqCEyuzxE8
+ oBZsLNxz8EyK/FfOhwrMjdsJUKgmYnJgZ+T34zyA/FZbfizCQwnZihD3rfU/T5oXH07FAUedT33
+ RSb2eeShFogABvViCog1XRXN8QAu5A==
+X-Authority-Analysis: v=2.4 cv=L/0QguT8 c=1 sm=1 tr=0 ts=6913b6d1 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=7ZdoGrH5h-tKuaFDneoA:9
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-11_04,2025-11-11_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 malwarescore=0 bulkscore=0 lowpriorityscore=0
+ clxscore=1015 adultscore=0 suspectscore=0 spamscore=0 impostorscore=0
+ phishscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
+ definitions=main-2511110182
 
-On 11/11/25 22:56, Liam R. Howlett wrote:
-> The retry in lock_vma_under_rcu() drops the rcu read lock before
-> reacquiring the lock and trying again.  This may cause a use-after-free
-> if the maple node the maple state was using was freed.
-> 
-> The maple state is protected by the rcu read lock.  When the lock is
-> dropped, the state cannot be reused as it tracks pointers to objects
-> that may be freed during the time where the lock was not held.
-> 
-> Any time the rcu read lock is dropped, the maple state must be
-> invalidated.  Resetting the address and state to MA_START is the safest
-> course of action, which will result in the next operation starting from
-> the top of the tree.
-> 
-> Prior to commit 0b16f8bed19c ("mm: change vma_start_read() to drop RCU
-> lock on failure"), the rcu read lock was dropped and NULL was returned,
-> so the retry would not have happened.  However, now that the read lock
-> is dropped regardless of the return, we may use a freed maple tree node
-> cached in the maple state on retry.
-> 
-> Cc: Suren Baghdasaryan <surenb@google.com>
-> Cc: stable@vger.kernel.org
-> Fixes: 0b16f8bed19c ("mm: change vma_start_read() to drop RCU lock on failure")
+Jani,
 
-The commit is 6.18-rc1 so we don't need Cc: stable, but it's a mm-hotfixes
-material that must go to Linus before 6.18.
+> Right. I guess it takes a while to get used to the idiom A || !A. But
+> then is it counter-productive to add an alternative that is apparently
+> not much more helpful? And then we have two ways to express the same
+> thing.
 
-> Reported-by: syzbot+131f9eb2b5807573275c@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=131f9eb2b5807573275c
-> Signed-off-by: Liam R. Howlett <Liam.Howlett@oracle.com>
+I think that expressing an optional dependency using "depends on
+A if A" is easier to read and understand than "depends on A || !A". And
+it is certainly easier to follow "depends on A if B" rather than
+"depends on A || !B" - even realizing those are equivalent takes a
+class in boolean logic ;)
 
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
+Also, most other Kconfig attributes support the trailing "if <expr>"
+so this makes the language more consistent.
 
-> ---
->  mm/mmap_lock.c | 1 +
->  1 file changed, 1 insertion(+)
+> So the follow-up questions:
 > 
-> diff --git a/mm/mmap_lock.c b/mm/mmap_lock.c
-> index 39f341caf32c0..f2532af6208c0 100644
-> --- a/mm/mmap_lock.c
-> +++ b/mm/mmap_lock.c
-> @@ -257,6 +257,7 @@ struct vm_area_struct *lock_vma_under_rcu(struct mm_struct *mm,
->  		if (PTR_ERR(vma) == -EAGAIN) {
->  			count_vm_vma_lock_event(VMA_LOCK_MISS);
->  			/* The area was replaced with another one */
-> +			mas_set(&mas, address);
->  			goto retry;
->  		}
->  
+> - Can we come up with a more obvious alternative to the specific case of
+>   "A || !A"?
+
+Meaning an entirely different syntax rather than "A if A"? Something
+like "optional_depends on A" (just a made-up example to make the 
+question clear)? That seems to be adding unnecessary syntax when the
+conditional dependency covers both cases ("A if B" and "A if A"). If
+there are any suggestions for a clearer way to express the purely
+optional dependency case then that is worth looking at - but honestly
+the entire concept seems a bit weird (even if widely used). It may 
+just naturally be hard to express the concept in a simple manner.
+
+> - Can we have examples of conversions from "A || !B" to "A if B" in
+>   kernel Kconfigs? As in, don't add features without users.
+
+(In the Zephyr pull-request I listed a number of examples from that 
+project as well.)
+You are correct that most commonly conditional dependencies are used
+for *optional* dependencies, but there are a lot of other conditional
+ones as well. Note when grepping for examples look for both "!A || B"
+and "!B || A" - both forms are present in many places. A few examples:
+
+arch/arm64/Kconfig:
+  depends on ARM64_64K_PAGES || !ARM64_VA_BITS_52 -->
+  depends on ARM64_64K_PAGES if ARM64_VA_BITS_52
+arch/mips/Kconfig:
+  depends on SYS_SUPPORTS_HOTPLUG_CPU || !SMP -->
+  depends on SYS_SUPPORTS_HOTPLUG_CPU if SMP
+arch/riscv/Kconfig:
+  depends on CC_HAS_MIN_FUNCTION_ALIGNMENT || !RISCV_ISA_C -->
+  depends on CC_HAS_MIN_FUNCTION_ALIGNMENT if RISCV_ISA_C
+arch/x86/Kconfig:
+  depends on X86_64 || !SPARSEMEM -->
+  depends on X86_64 if SPARSEMEM
+drivers/acpi/Kconfig:
+  depends on ACPI_WMI || !X86 -->
+  depends on ACPI_WMI if X86
+drivers/bluetooth/Kconfig:
+  depends on USB || !BT_HCIBTUSB_MTK
+  depends on USB if BT_HCIBTUSB_MTK
+mm/Kconfig:
+  depends on !ARM || CPU_CACHE_VIPT -->
+  depends on CPU_CACHE_VIPT if ARM
+kernel/Kconfig.locks:
+  depends on !PREEMPTION || ARCH_INLINE_READ_UNLOCK -->
+  depends on ARCH_INLINE_READ_UNLOCK if PREEMPTION
+
+Are you suggesting an update to the commit text to call out the 
+optional dependency use-case explicitly?
+
+> My point is, there are like 10x more "A || !A" than there are "A || !B".
+> Feels weird to advertize and document the thing for the latter, when the
+> former is the more prevalent case.
+> 
+> $ git grep -E "depends on .*\b([A-Z0-9_]+) \|\| (\!\1\b|\1=n)"
+> 
+> I'm not at all opposed to the change per se.
+
+The Kconfig documentation will cover both cases (in next patch). The
+"A || !A" case is covered already in a special "Optional dependencies"
+section which I will update to use "A if A" as a preferred syntax. I 
+still suggest having the definition section for "depends on" using the 
+easier to understand example of "depends on A if B".
+
+Thanks, 
+
+Graham 
 
 
