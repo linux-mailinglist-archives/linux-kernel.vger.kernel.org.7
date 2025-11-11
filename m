@@ -1,197 +1,210 @@
-Return-Path: <linux-kernel+bounces-895070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD111C4CDED
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:06:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C447CC4CDD5
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:05:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C01F6422061
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:55:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46B1D4A0517
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:55:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 373E9320CC3;
-	Tue, 11 Nov 2025 09:54:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EC9F2FDC41;
+	Tue, 11 Nov 2025 09:55:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="EzCefE+K"
-Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11010011.outbound.protection.outlook.com [52.101.201.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="E09n6Evr";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="rhHNp8rn";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="E09n6Evr";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="rhHNp8rn"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B00662FF149;
-	Tue, 11 Nov 2025 09:54:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.201.11
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762854898; cv=fail; b=EAFpopIY+iMbv0ylKeYsgb1aMGUJhqo8KjO9hYXtxZJiyZvF94F/PJJs3hfaGiktIZW6KPQ4Q/H26nDNkXTylOT/FpPhMgm2EjTSa0ljjL3R9drJkb65Lv+VNzdrXfik57sotR7uSvo7hlAylbxDsNhHFnEkjd3UOodLIyZn+SE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762854898; c=relaxed/simple;
-	bh=ZbQgu0NMI5V7A4aOhwg8z6+L38Lcv0begFUjaeH0AfM=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=fdLA+aqVvyaLLMzeY5MrPwQ5QORCkTzHX/V4bAXt/GDP1LLmvBvTXIbwF7R3YXOYWtexkeS8CFEVmpkCgcQ/RJPGDcDJ8elio0M5wKXM0tNeCXJku6lt9yCT2feUPeWPLXqIGZauuOSDA+cfc4JGWrzqgj5G8XImwuIydA35J6w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=EzCefE+K; arc=fail smtp.client-ip=52.101.201.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=D5TpbF+gUWIuX356RxGQ682hH9VMUc6e3IVtN5Cq3NdsZ0hj3zEUwZhDNjzl4iqB5JDdLZ4NWoeKipoUNqC+V3tKkl2daU4yjNl8iBSQhJ9qEwuPWZOZw+pKZDbOBYBXVvazyt7uGn6dmv6DNvKmUNuJC9oiIv/O6qiIEgvBM9nH9v9bBRXitkO+lzKOgQtfJfg2z+qskQewm/v2vxg04L26HZP7jxV5PXlSzQ77TD3o/onmL4j4C0hYXoeQHlk8Vsc83fbXsIMeF8A6cQxu/4sjeZVHCYSln0mEQQbHkOiH/IgKj0T8lXuIwvj7xQCRnCg6JUZaWP7ZtrwVmk2oGw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ZbQgu0NMI5V7A4aOhwg8z6+L38Lcv0begFUjaeH0AfM=;
- b=l5scv1NYzqe3Tb3i631VBLwWgJb4sUVMqIhqEFk2lGmgT+x3K2x24Mt+toxm/TIpC4V49sM2bL+lWKxZwGCRIdWzFtWrEt82A4uRMlgnmnT77qI12X2JHhlPP4McS3AJUeGr36aA+Jg8DcObYom8JeLomS3Hep4FLFUpUe5tFJwSlBF0SkXboYSohmEyDHdz0GJwzXjOM0HfdKoJ3/pfi99KNUJXOAasJupiScdSHmiVWLIUT5+oTppogRn2u6GGTC8z16qTRwG1ptm2p1h+ykjsd1dlP7Ksw5agqS4kYoPdnfCigjpoj9EvzKUDge/25SejSDw6Ymlf9QGc/SV2aA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microchip.com; dmarc=pass action=none
- header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microchip.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZbQgu0NMI5V7A4aOhwg8z6+L38Lcv0begFUjaeH0AfM=;
- b=EzCefE+KZrZVKIPOKc2No/CEGB3q4VCY2y6IaWDk760D9C0dIxB4+aPDPrett1FzRpbr1B61TI6joDKFRDx9RUjUp1VoEWasuBxwKwb45GCe5Z/jgKd0OQxf47Cdp8kR4zFtx+6VILrd71he093kCWF64kxY3PCjItE8IrFhzOny9k8WSLK8SEZAidpvA4aCjqxLQcKllgs6uQJCzVU3ffOUe5RikL+yvYwwbudK3qHhTgQImNvz9rhtzeEu6qaM4sMOcKE02ViaohCt7Rnoyx7mGON1zzvUn7VYpa69aR5GLhDt8pp+3YhrgluemWs8/9o+SFVB2KAA9tsLRJ1sQQ==
-Received: from SA1PR11MB8278.namprd11.prod.outlook.com (2603:10b6:806:25b::19)
- by DS0PR11MB7880.namprd11.prod.outlook.com (2603:10b6:8:f3::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.15; Tue, 11 Nov
- 2025 09:54:52 +0000
-Received: from SA1PR11MB8278.namprd11.prod.outlook.com
- ([fe80::84fa:e267:e389:fa9]) by SA1PR11MB8278.namprd11.prod.outlook.com
- ([fe80::84fa:e267:e389:fa9%5]) with mapi id 15.20.9298.015; Tue, 11 Nov 2025
- 09:54:52 +0000
-From: <Parthiban.Veerasooran@microchip.com>
-To: <prabhakar.csengg@gmail.com>, <andrew@lunn.ch>, <hkallweit1@gmail.com>,
-	<linux@armlinux.org.uk>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <Horatiu.Vultur@microchip.com>,
-	<geert+renesas@glider.be>, <vladimir.oltean@nxp.com>,
-	<vadim.fedorenko@linux.dev>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-renesas-soc@vger.kernel.org>, <biju.das.jz@bp.renesas.com>,
-	<fabrizio.castro.jz@renesas.com>, <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH net-next v3 3/3] net: phy: mscc: Add support for PHY LED
- control
-Thread-Topic: [PATCH net-next v3 3/3] net: phy: mscc: Add support for PHY LED
- control
-Thread-Index: AQHcUuv6HPaTnXKeIEqo+AdYeA95FrTtPJsA
-Date: Tue, 11 Nov 2025 09:54:52 +0000
-Message-ID: <5be2d1a1-3eb5-44be-aa96-797be13ea7a2@microchip.com>
-References: <20251111091047.831005-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20251111091047.831005-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20251111091047.831005-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Mozilla Thunderbird
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microchip.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SA1PR11MB8278:EE_|DS0PR11MB7880:EE_
-x-ms-office365-filtering-correlation-id: 3301fdd8-9d52-41d4-430c-08de21085c6d
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|7416014|376014|366016|1800799024|921020|38070700021;
-x-microsoft-antispam-message-info:
- =?utf-8?B?bDB3NjV4cUJSODdxcHNMSzJSaGpmQnczUFhyR0JLQ0lnNjQyR2RMYUdRQS8y?=
- =?utf-8?B?Ulp6VENJK0JQb0dGK3hvbXB1dHBpNCttUjF0cGRmSGlsRkNlV2xRWE1qSFZw?=
- =?utf-8?B?djVhRnlvaG16QWU2WVNiWHI2MUtzM3EyTXdRV1FLa2NLRjB6VVg1dW52bGNx?=
- =?utf-8?B?ZzE3czFTYnFtek9OMzhqcHhGL0NuYjNESFV2OFl0ak5PV01nZEdsWDF5V1Bz?=
- =?utf-8?B?ejhZZjFoRnVZVnU2M084QmxYd1p6SlJIcVU4WlJidGZLbWpzakcyRGZjVzFh?=
- =?utf-8?B?VG94djNJVjB3Rm9zNXE5eEhpVnpJM3JRZktUYXNJWWpLb0VvLzZGL0tOYlJC?=
- =?utf-8?B?ZWhiNTNLbS9Pd3g0RzFpM0Erb3RVbmVKV1YwTURsUW9GRnVkaEsxS0VKdXhC?=
- =?utf-8?B?MFZvVnVDNWhsQWw3OEFKZ3lZWHVnSTAzOEYvMG5PZGttWDhqQlYzK01ZVmZz?=
- =?utf-8?B?UUFmNmV1aWlMNEZ2L0xhMzlEeTRLOEk0c0VXRUV3b3JuM3BiMlFhYklOcXFO?=
- =?utf-8?B?N09DcU9YQW5vRVVEbzFDYTJPWW91V1pjYTR5T1lKSTBEbGZFeHhscHVpS20z?=
- =?utf-8?B?dk82eUIvZ1A1UDk0WDdueVhqL2Z5MGY5TTNRUEYwY2NkUysyQ1RST281RWw4?=
- =?utf-8?B?OWQxYVlsaDR1NThRSks0S3FTME1lSHhLaE5Zd2JLL3FBemlzdEo5NG1DYS9U?=
- =?utf-8?B?cHN4TlFUL1FFdEY0RXZGTm9taCsvaEtUSWs2emV5S3RuT2pQMGRURHNrcnRJ?=
- =?utf-8?B?YVZUYzljZnZXbkx3NFFZbnpnR2NkdUUxUVVqQnliam1JUkVoaERoU3YwWnpG?=
- =?utf-8?B?eituRWZZS2JXd29PY1FXZllTcWoxSzZGSkIyckNLdmhTc0JtMDR2ZWg2V0pE?=
- =?utf-8?B?cmJFdVRhRXRLS2FzbWM1eUNSMEdaMnN6Y0orUmxENnUvMzBsbExvS3VVN2dq?=
- =?utf-8?B?Q0VaekVnU0pFQTJ3cXo5blBzd05zYkJOcnhUeUh3OWg5YkQzSmNYc0o5UzVO?=
- =?utf-8?B?QitkaHJPQ0NLQ1UwSkZlM0hyNys1TmJ3b1lrL2hDT21SYUJHL01weDUzM1h1?=
- =?utf-8?B?M1pQYUlBUHhteU9SaElMYjNNOEZRTlhBbG5uK3dPa1VYSWhHWGVHREQ1OHEv?=
- =?utf-8?B?YThUUWxGbGt5YkZVZEZFTjFLTVlybW44djdMRUZJVTJGdngrZnZZcDFNT1kx?=
- =?utf-8?B?d004Q1dYNERSa2FScDQ3eENKdHhlVHlUemxPZU9SdGtTM1hGZ2dtcTREdkhM?=
- =?utf-8?B?RFF5dEdnZHRJLzAzTWVncTk0dUUwWFNXN3MremlCTXRQVmsxaFJNRllNOFRZ?=
- =?utf-8?B?R1ViY2Q5ZjdiRVZZZkNjNEk3WkZwWENEL1k2aXM0NWRLMEtzeHlwMTM1Umwr?=
- =?utf-8?B?REkyYXl6ZFJYTkVPdE9EbkZYY1orbElYTlphRjc4RHV2ZUtwL0lBSmR5YTdF?=
- =?utf-8?B?SE9Fckh3U2k5N1ZZcUhQNG5kMUtaNWVyc29GZGlNbFU5ZGF2ZG52czZ1bGU0?=
- =?utf-8?B?Vnk0REhoL0tkalJTZnIxb2RSdW9MS3Z6amlzSXNuMnA1c3ZUSFNLR1psbUlH?=
- =?utf-8?B?anlSQWZkTjdmSnBpeS9uYjl6U2JoWEJIODFLVUExNHhUU0hLWEcya1ZvcCt1?=
- =?utf-8?B?NjRpWHU4OWZMdFdrOVRtYnk5eFNieW5XZnpKSkVPS2hKY25KRVY5Q05qUitn?=
- =?utf-8?B?eGE5QnlGUW9IQ0Rnc3U4NmFDcWZocm5JQUlZUnRwYWNlTUNSSjltN3JiaXFX?=
- =?utf-8?B?SVNqSWVHOWVtTGxpNUJoTTZZWVdUYkZnN1lZOG9ocGpDRjltcFJRejQwTjFP?=
- =?utf-8?B?dlhaWG1xU3dDL09ScUZJdkhrSEhnVGlVRWRBcWxNQkdWaUc2Nm1KVVFHdTV4?=
- =?utf-8?B?UUNRTXJxSjdkdmR5MjVwQTZ1aWJEWWxuVzNzSzNoN2t3MnFCck1qSWYwS1Ur?=
- =?utf-8?B?TFZsY1c5dy9YSVlOdmV0cHIxSW1MUFVGK2s1WWE2RktET1hicGRqK2w4R054?=
- =?utf-8?B?eFVrZURNQ2tvRmVmTCs4eFNrOFRIcFJSOURoNkFod0dVbUMwNTNsdjhkOXBn?=
- =?utf-8?B?aXNCL2daeERCV0RFWGljcjZXNzd3cTZBNkVCUT09?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR11MB8278.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(921020)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?Nk9LZWdjNExFRElWcWx6b3hyQVM1VFZzMmU2a1JGMEh1MkZ6N3IzRmc3S2lE?=
- =?utf-8?B?TDNscTFFZS9hMjJRRDJia2N1UUdpbmZlYUVJcjA0bWdoUUVtRDJhRHlQYjhy?=
- =?utf-8?B?Zm5GNWJHNXZuUFZYckw4MDBtOENrTTBYRWdoalV2ZHI4MzM4a2JKcHBORHJP?=
- =?utf-8?B?L0ZoNGh3WDZFMHA5YXpzQlNJMC9MditqTTYzZEIwa2pGam5kZlZ2N0c2T0gw?=
- =?utf-8?B?WEJGZUtucTZvSjg1Q1VrSjFoTDhNZUVSeC9RQlo2eWpZOGtYcVVDdHZXWUg4?=
- =?utf-8?B?djBwVCtjWG5RRkZjNTk4QUMyN3VsSFRyRzVORUY2UEhWR1JQcHM4YU54cFRv?=
- =?utf-8?B?bGE5R1dYNnJhc3BEU3J0ZUs5eHBDQkhHc3hic3FnWTRVRm1lTnRWR2N4R0Mz?=
- =?utf-8?B?cDE0bWZXM3Uzdnc4TnRub2xNR1NML0I5Und0ZVhvQjE2RGY2MmZMY0luRXNE?=
- =?utf-8?B?K0Qrd1VsenlFYTVhZTU1OVBhTDl2K3BIRlVUc2lDeHhRdTk5eFc3ZHVTUzJs?=
- =?utf-8?B?N09GVG9QTnk3a2NEL0p3ekwwUnphQUVLS2p0WWQ5Zmt1NjU1b0FXaXZMVXgv?=
- =?utf-8?B?QVhWdFNjZEpmUS9hYW4ybEJGV2liVExIV2JFQnIrbVY2NnhmSTVuQWpHcEtM?=
- =?utf-8?B?cWxpL002dEk4cjhTWFJPOG0ycHZMYTJDbWpWdzdwMk5Sc3NuemlXVSt1T0hq?=
- =?utf-8?B?eUkrcDl6WGNtWFYwM1BLOGhFcENnSE1XSk1vZm8zbXV6TTRrVG1ic1hzRW12?=
- =?utf-8?B?SGY4Q1NGMWlybm1Zc0YrYm1SYk9ERGlKZHpnWFVJNCtIelhNbGk1YWRXMjdh?=
- =?utf-8?B?aTFvMWVUaVNzNXVwTzBhMEZJYjV1YWIzQVo1c3hmdGxEVTI1cHFwdktZVWdx?=
- =?utf-8?B?R3Q3akNYdnFhMEN2a29aQXlFaVc2ampLL0Q2YnRuRUlFeGRlL3lNUFRaNUJN?=
- =?utf-8?B?TTlCUWR4aHV6ZkhicmF3L0tRU3FhdWlPM3Q4OUxDeXorK1U1RUp5a3oranZS?=
- =?utf-8?B?RDdYSVRQN2F2VVlYcy8xTkloRG1KWG9ja0hld3g0Ull5WE5RK20yUXhEM2lk?=
- =?utf-8?B?SFdmR284RXhLZkwxdFVtM0QzbFdDaFN1TnhzOHZBODdlQ25LdmEya1pYMEI0?=
- =?utf-8?B?U2Z5VkYyZDR6OUdoZmNxeWFTN1hFZmVxa0xaamFUS2QyNWJSTW5mdUVzK2FI?=
- =?utf-8?B?QjNGZHQ2bnpMZnBQc2JyNDJkVlpWT3RIQnQycE5FQjhsa0lFUVkrdXNmaGpG?=
- =?utf-8?B?RlNsbTNiUWVJUm9oOG5Jb0NJZ0dlRVR2WlRuWXBuQUl0VlBCVTVtOGhEcEk3?=
- =?utf-8?B?d0ZYR2lRSmdpTWJkWVd4MnEzWDE1MnRtWHVLL2diZEhEN1JITlI5WVB3eDJ3?=
- =?utf-8?B?am1QbU9kVnFYekpxK2x3VnZ3dS9MbzJrVHp4U1Npd1RTVmtVVmxTSmkwT2lr?=
- =?utf-8?B?QnBXWEY1VUlhT2k4U1krVklwYUVmUEpUZzhCa2hFYk95MzE3YzhPU0pqWDdj?=
- =?utf-8?B?VjRLZVpxRFVLQUF3cXhEYTNQZUJtMndibWs4UjY0dXkvMDMwWGJqSW84a1lV?=
- =?utf-8?B?Y0I3NG5zeGFNMTlZcytMMWtoTUpBUStrNy9LZ1B2Qllhc1pESi92NEFlY1NZ?=
- =?utf-8?B?aEJWVkQ4bUI2L0Q4QzdyWktqbDFHRHpoc0RwMWF0TkI1Q2I5bGt5QVY3ZEp5?=
- =?utf-8?B?cW1rSDJlVFdoVWV1elhCTG85Z3VVR2pFWXVUUmFhSlNNWDhDQkJ4SHJsYmQx?=
- =?utf-8?B?WFliS3ZFUVVROEJBMkpWaWZmS0JJaEovODlaYTVlaGJ6ZUpFd2lyMXBUL00v?=
- =?utf-8?B?RmE5Qzh4NVlHTzB0TCs3VS9yUGQ4Y2YxQnkrRkU3SnJtMnM2ZzVKRlg4YlRx?=
- =?utf-8?B?VElKbTUxbUZ4R0FpM0xGcGFsOHdnYjZOMVU3WlMzVHl1czBQSVlmdklyNWNs?=
- =?utf-8?B?Z1laYjBrTFFKQ1hteUxmM2UzQnMzZzZPUkNzQlNRUlAxSHdpRmU1RGNwSGFL?=
- =?utf-8?B?bCt3MnF1NzlyUUZ3TWtNbXFvWEpCWTIzdzg4RFFSOG9QN1Zjc09RM2pRVThs?=
- =?utf-8?B?eElyayt2TTJzU3RPMnVSaGlucG1KNm1uSjVVUEpSVFlxaGhkcC92TDZ3M0NV?=
- =?utf-8?B?MUdGOUR6UWd6S0oxZ1kwc0FPUUhqMlZZalVXSExpcDVqK040STErTzdyeW9T?=
- =?utf-8?B?WHc9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <B62AE94090A3634B9DAA8742F7227A9A@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75A792FB0AE
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 09:55:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762854908; cv=none; b=Htwl/frj/0/xo7/SwWeoXMbcJVRfukt5uwprgiAp+oRuVojX9CqDTunlskKfTi/qn1Il4i+c45fWaOi0Pp6z3HGJneNQeDtq8fWKOBQyhhOWJf3V65AW6SEEhMFT8qSSr58ngtwBzzWMN15hWVr6fYf4+yWK1uHbuwwag4z4NDs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762854908; c=relaxed/simple;
+	bh=2e8u3U8A3l0ZBsKNn5fTNoYP/utgwSrXh5T/6i70r5E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QA0/9rV7I+X31nTPSRg2vV9UpNugnsa5W19MEMCgRtt/YtrnLu//ljbgZZ4lXjcVGkfGDsLuADqYwY4TC7IaUWOsr6f47RDYuiZnwXUzwOWVo58QCpkccCYfLb5tcba2760/bm53uIcP5WBNQ8GTQ8PynB19s72Lp9mRRLGqkQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=E09n6Evr; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=rhHNp8rn; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=E09n6Evr; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=rhHNp8rn; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 9B07F1F78B;
+	Tue, 11 Nov 2025 09:54:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762854898; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=MaNl3KVXDMb4yVsW79umxB3okzTjoLpsTH9fuEvuObI=;
+	b=E09n6EvrRECYQ74NuyMvO0OrLOP2ePwW+yg6IHMP+jX5ArQukh3cD/rjuBGFXY63npAiZv
+	G5DhvO2yOKiSHCocoTMjrGl8ALoLUvgjw8ye+E+14Tq94tOa8+KYZfA5BWjW5tC0pgsrsk
+	RfK36xXh7UP8tZnpNN17NEc6uLBXQFE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762854898;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=MaNl3KVXDMb4yVsW79umxB3okzTjoLpsTH9fuEvuObI=;
+	b=rhHNp8rnyr8L9iaGwd/FjyGBSDZK6E26aKNoCtyKQEe8YDg/hPhVEQBsbSuqf5plYNNAHa
+	zMXog1G3h/miPPDQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762854898; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=MaNl3KVXDMb4yVsW79umxB3okzTjoLpsTH9fuEvuObI=;
+	b=E09n6EvrRECYQ74NuyMvO0OrLOP2ePwW+yg6IHMP+jX5ArQukh3cD/rjuBGFXY63npAiZv
+	G5DhvO2yOKiSHCocoTMjrGl8ALoLUvgjw8ye+E+14Tq94tOa8+KYZfA5BWjW5tC0pgsrsk
+	RfK36xXh7UP8tZnpNN17NEc6uLBXQFE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762854898;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=MaNl3KVXDMb4yVsW79umxB3okzTjoLpsTH9fuEvuObI=;
+	b=rhHNp8rnyr8L9iaGwd/FjyGBSDZK6E26aKNoCtyKQEe8YDg/hPhVEQBsbSuqf5plYNNAHa
+	zMXog1G3h/miPPDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 740DF148C6;
+	Tue, 11 Nov 2025 09:54:58 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 01KAG/IHE2mYCQAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Tue, 11 Nov 2025 09:54:58 +0000
+Message-ID: <75656c78-7e42-4a32-87c0-373416adb4a8@suse.cz>
+Date: Tue, 11 Nov 2025 10:54:58 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: microchip.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR11MB8278.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3301fdd8-9d52-41d4-430c-08de21085c6d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Nov 2025 09:54:52.7203
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: OHHb9NewSNEm8uTzpSBWkUjoxw7TPQSRMDFANw+wGOL79UdfDFRZXJ0PTh8UFBN3H4QFmNSfTynaWI+4y6ez7iRoiwkNPYXbgRqCUPg6rricaKX4hQEYYhfzLCq12bPm
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB7880
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/4] memcg: cleanup the memcg stats interfaces
+Content-Language: en-US
+To: Shakeel Butt <shakeel.butt@linux.dev>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Muchun Song <muchun.song@linux.dev>, Harry Yoo <harry.yoo@oracle.com>,
+ Qi Zheng <qi.zheng@linux.dev>, linux-mm@kvack.org, cgroups@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Meta kernel team <kernel-team@meta.com>
+References: <20251110232008.1352063-1-shakeel.butt@linux.dev>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <20251110232008.1352063-1-shakeel.butt@linux.dev>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:mid,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
 
-T24gMTEvMTEvMjUgMjo0MCBwbSwgUHJhYmhha2FyIHdyb3RlOg0KPiArc3RhdGljIGludCB2c2M4
-NXh4X2xlZF9jb21iaW5lX2Rpc2FibGVfc2V0KHN0cnVjdCBwaHlfZGV2aWNlICpwaHlkZXYsDQo+
-ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB1OCBsZWRfbnVtLCBi
-b29sIGNvbWJpbmVfZGlzYWJsZSkNCj4gK3sNCj4gKyAgICAgICB1MTYgbWFzayA9IExFRF9DT01C
-SU5FX0RJU19NQVNLKGxlZF9udW0pOw0KPiArICAgICAgIHUxNiB2YWwgPSBMRURfQ09NQklORV9E
-SVMobGVkX251bSwgY29tYmluZV9kaXNhYmxlKTsNCkZvbGxvdyByZXZlcnNlIHhtYXMgdHJlZSB2
-YXJpYWJsZSBkZWNsYXJhdGlvbiBzdHlsZS4NCg0KQmVzdCByZWdhcmRzLA0KUGFydGhpYmFuIFYN
-Cj4gKw0KPiArICAgICAgIHJldHVybiBwaHlfbW9kaWZ5KHBoeWRldiwgTVNDQ19QSFlfTEVEX0JF
-SEFWSU9SLCBtYXNrLCB2YWwpOw0KPiArfQ0K
+On 11/11/25 00:20, Shakeel Butt wrote:
+> The memcg stats are safe against irq (and nmi) context and thus does not
+> require disabling irqs. However for some stats which are also maintained
+> at node level, it is using irq unsafe interface and thus requiring the
+> users to still disables irqs or use interfaces which explicitly disables
+> irqs. Let's move memcg code to use irq safe node level stats function
+> which is already optimized for architectures with HAVE_CMPXCHG_LOCAL
+> (all major ones), so there will not be any performance penalty for its
+> usage.
+> 
+> Shakeel Butt (4):
+>   memcg: use mod_node_page_state to update stats
+>   memcg: remove __mod_lruvec_kmem_state
+>   memcg: remove __mod_lruvec_state
+>   memcg: remove __lruvec_stat_mod_folio
+
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
+
+> 
+>  include/linux/memcontrol.h | 28 ++++------------------
+>  include/linux/mm_inline.h  |  2 +-
+>  include/linux/vmstat.h     | 48 ++------------------------------------
+>  mm/filemap.c               | 20 ++++++++--------
+>  mm/huge_memory.c           |  4 ++--
+>  mm/khugepaged.c            |  8 +++----
+>  mm/memcontrol.c            | 20 ++++++++--------
+>  mm/migrate.c               | 20 ++++++++--------
+>  mm/page-writeback.c        |  2 +-
+>  mm/rmap.c                  |  4 ++--
+>  mm/shmem.c                 |  6 ++---
+>  mm/vmscan.c                |  4 ++--
+>  mm/workingset.c            |  2 +-
+>  13 files changed, 53 insertions(+), 115 deletions(-)
+> 
+
 
