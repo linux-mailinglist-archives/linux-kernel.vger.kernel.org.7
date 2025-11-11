@@ -1,154 +1,154 @@
-Return-Path: <linux-kernel+bounces-895552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3A9EC4E427
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:57:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 443D1C4E43F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:59:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DF2EE4ED526
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:55:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 597793B3047
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:55:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D805D35BDA4;
-	Tue, 11 Nov 2025 13:54:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AD513596E8;
+	Tue, 11 Nov 2025 13:55:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VM6fBr1Y"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="XfskZZSY"
+Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EDF7359FAA
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 13:54:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C70727CCE2;
+	Tue, 11 Nov 2025 13:55:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762869293; cv=none; b=SRMx+N2fNBsUoMaxEC77doU2egnj+VRBYNn4OH2TaO7rtorrHLl2MgUnw6yz9WQ6WH9qJdr2i4J44eQD1jJSGvyK6jAgZFbaNMOKbldZD1J9QwWpYaNo5pj/R0Yj/TOzAclaejzNJfpNRdNmcC9bhmgm7d5SjR4ZCxd2NJxTL4Y=
+	t=1762869326; cv=none; b=qZvEV4X3SY6/m+P15SfUH1AG8l/eTQWBvuM/c8bVGxGEZ7bA1sqQhEUeYYWEHZH2ITjwimOTjznfLfZU3R2Q6jbu6wTmnCRX43/DGlhtc0hJi1hTSJ1ZBNafaf2mtX9Sck5dCb/tpD/3MJzLl0PPnqZRc1UpCVYtr8feqxND1Cc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762869293; c=relaxed/simple;
-	bh=A2TkjakrfDdkYRGuTxjcRqTay/V7iT1zDDZWS1m5mUQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TySBtlgxy0tNadjv+njTh+dLZpTzfSjoBN3j9hXCYrz1kfDZsIYC6zplvnh6mlFcnaBjBsKEmZghzK0bhZ2z9doSVv06UgEfFZsBAliut8S0rk7ZbxvjF+GY3o2OTDfhc0PQGvyEkPeoxERM2NDiIBl+YhEJZY3tI5ynXfNSjm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VM6fBr1Y; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-297ea936b39so4128005ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 05:54:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762869289; x=1763474089; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DZoLj4f0GVdI3DGKFlEJ4QWVzpBGFdDaaHgYw2dfwqU=;
-        b=VM6fBr1YGmxYu0TgqLDBmuYZthtRhP2l1NGNo+6VXxP63RHkYR6cUAEkj/dIxOGUDY
-         oNeBF75BrIsmhCH442DLOVHmuDmCsnEl07eWREbkDA9cPqBd3p2KFNJhMdz5pcwbE521
-         Uv1XYgqMlp06hHuWENh50Z2/aORP8v+Uc6ccSwTdklMewwZ5TgE7Zz6CH0K+qfQ9ZAkF
-         nqzieJYyDxQ6ixKS9ex2CgxZLk0cZrYMJrvIq+lWi6e4d5+nzro2LqyuaPGMjGdh1/Gs
-         6HaKBVvNAu7EXRjl3GQZRcdOkpSHq16Nhy5lEsaoRcfzicfeYvXeY+bOkLsY+uQVSBXN
-         t74Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762869289; x=1763474089;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=DZoLj4f0GVdI3DGKFlEJ4QWVzpBGFdDaaHgYw2dfwqU=;
-        b=i15jmvOPirheAfZ6fZa1iaDWw9pa0xy2K5xDVW6gmGtX4PArt0cF9Qw8YoHMgSUDSv
-         L0olZ2rlQ8GNXu+xHcEHO2+khDoS2fD+QOpyAVbamwdz6C4SZ0Bi7/cxCWzlyPihOAaO
-         idnU8wsqjbsnxZvq1FLEEtvqeOupLxUrjX8EDEqtOoDrRQ0vjmHFep3zZXAeSjuKx40l
-         qDQweGvHXJ4ldISgHUxC4IRpd3fqipQrgsMps4mYSebPefLF2gNPiOy3xbjMKvUGunqg
-         z6A05EvDqkoAg6QK0tUuLF7AGIcCP74JGa5C+ZPi0YQyKLRazUg0eLNkng1o9ByQ7MYb
-         AM0A==
-X-Forwarded-Encrypted: i=1; AJvYcCVudmB6PNmfuCzG2Ik1Pnw32RRQbv8YZq5YcyPDXQlyAmu8IA2orXo0AW8nAgM+0tV+ESF+YiBe6ifNBao=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwItGWMIUOVNka7/wsAGJuf/NB8X6yj0EAbtW3g5iHrXLnUoZQq
-	hQzL9GeBSIbbEJHlmUqTRGMKtGcxOJw+ZliOVlkkgtzGKT4a/1YICBvU6JQDclkPilOHGSbdwaJ
-	SwtQVlZT2D61p+arHfotwHSYM7k+5+NI=
-X-Gm-Gg: ASbGncvExtOQspz4Ho8vyT4VTofsKQnZim/1RSwEOqO4WXWIobsHu5UK32pFbDYZfNd
-	RoTpZInJFVUnGEPt2JfiLa/cpNYEH9tdCrI/6Slt8H1jvxRTvx7u0kA6jGzygncg6klO8e/liwz
-	gz7HvDhof5js/u6qAVVU6jV/GesvHjJqJhOfu695nP6wsQotES6h5LcSMaHfw5astc+kc5xg9e3
-	CPB6FB76YrLTcvAUCxayQFoWyW3DQ1vtTgtSEfeGhoI30OgsZFUNaiWhJ78U+3ePM657ISUBukI
-	AOEF99TBiKvFgrMzArwEWnCAlcBzLnxCblXpjE1vCGGOL9AJCv+YnNz6KMlEguIoctIy4ggVd+Y
-	ohbfhVqsziBqv0Q==
-X-Google-Smtp-Source: AGHT+IF0Z68cGNnWIYfhE+GmNXty3zSKglcsJIW8DTGnNaR5oz+N94f18Ae9bgXwDGF1o3kKuYh1bmeQkQ96c2H5z8Y=
-X-Received: by 2002:a17:902:ea09:b0:295:511d:534 with SMTP id
- d9443c01a7336-297e5731561mr84933915ad.10.1762869289453; Tue, 11 Nov 2025
- 05:54:49 -0800 (PST)
+	s=arc-20240116; t=1762869326; c=relaxed/simple;
+	bh=VrBYrXb2gomVRqKKGoZblHBhw98ua0Jd5cvQ+mlX0ZA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lOX68LuO6EXDjwgSSi4i2la5TbiULEC5scfUIy23aWIa4Vnp2Z4B529JMwvqndFZ5Qc3UfgGxlqlMJcB63HEJ6ubmelSCa4rVqDf7/0LiFpBA1ZmlTQJwV7HxWubK2LiNTQ/ht1ry+ap+WHLyfZ4gdn03MedR3y5griDgKmW4xg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=XfskZZSY; arc=none smtp.client-ip=115.124.30.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1762869320; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=JYpEUEDdcRzYzdeW+638BcwXZNQIfYVkyqsW+6NhS0E=;
+	b=XfskZZSYrEF2smAxw+37I99lj036YExbHHegCrW3GsWdLRMYtj/ZoXjzo2JuyM1gfiPrL8F90LnHiShKSNzMd35yclrFyWSzIMRpTxXnN0L3e2W0xdI2CTVtBOu/DlV2GFwJO3XBQcjYrYHMWHwQtW2mpoqiPJUa6/JzqX8e6pE=
+Received: from localhost.localdomain(mailfrom:fangyu.yu@linux.alibaba.com fp:SMTPD_---0WsBpap1_1762869317 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 11 Nov 2025 21:55:19 +0800
+From: fangyu.yu@linux.alibaba.com
+To: anup@brainfault.org,
+	atish.patra@linux.dev,
+	pjw@kernel.org,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	alex@ghiti.fr
+Cc: guoren@kernel.org,
+	kvm@vger.kernel.org,
+	kvm-riscv@lists.infradead.org,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Fangyu Yu <fangyu.yu@linux.alibaba.com>
+Subject: [PATCH v2] RISC-V: KVM: Fix guest page fault within HLV* instructions
+Date: Tue, 11 Nov 2025 21:55:06 +0800
+Message-Id: <20251111135506.8526-1-fangyu.yu@linux.alibaba.com>
+X-Mailer: git-send-email 2.39.3 (Apple Git-146)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251110131913.1789896-1-ojeda@kernel.org>
-In-Reply-To: <20251110131913.1789896-1-ojeda@kernel.org>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 11 Nov 2025 14:54:36 +0100
-X-Gm-Features: AWmQ_blj1Y6aEDrIDY1SHsBj9ipAJhqLELG9lX2PJ-XtkIigMIPK_72YnkrkjN8
-Message-ID: <CANiq72mjFobjfQEtNvk9aA+757RkLpcfmCCEJAH69ZYsr67GdA@mail.gmail.com>
-Subject: Re: [PATCH v2] gendwarfksyms: Skip files with no exports
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Sami Tolvanen <samitolvanen@google.com>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	linux-modules@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev, stable@vger.kernel.org, 
-	Haiyue Wang <haiyuewa@163.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Nov 10, 2025 at 2:19=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> wro=
-te:
->
-> From: Sami Tolvanen <samitolvanen@google.com>
->
-> Starting with Rust 1.91.0 (released 2025-10-30), in upstream commit
-> ab91a63d403b ("Ignore intrinsic calls in cross-crate-inlining cost model"=
-)
-> [1][2], `bindings.o` stops containing DWARF debug information because the
-> `Default` implementations contained `write_bytes()` calls which are now
-> ignored in that cost model (note that `CLIPPY=3D1` does not reproduce it)=
-.
->
-> This means `gendwarfksyms` complains:
->
->       RUSTC L rust/bindings.o
->     error: gendwarfksyms: process_module: dwarf_get_units failed: no debu=
-gging information?
->
-> There are several alternatives that would work here: conditionally
-> skipping in the cases needed (but that is subtle and brittle), forcing
-> DWARF generation with e.g. a dummy `static` (ugly and we may need to
-> do it in several crates), skipping the call to the tool in the Kbuild
-> command when there are no exports (fine) or teaching the tool to do so
-> itself (simple and clean).
->
-> Thus do the last one: don't attempt to process files if we have no symbol
-> versions to calculate.
->
->   [ I used the commit log of my patch linked below since it explained the
->     root issue and expanded it a bit more to summarize the alternatives.
->
->       - Miguel ]
->
-> Cc: stable@vger.kernel.org # Needed in 6.12.y and later (Rust is pinned i=
-n older LTSs).
-> Reported-by: Haiyue Wang <haiyuewa@163.com>
-> Closes: https://lore.kernel.org/rust-for-linux/b8c1c73d-bf8b-4bf2-beb1-84=
-ffdcd60547@163.com/
-> Suggested-by: Miguel Ojeda <ojeda@kernel.org>
-> Link: https://lore.kernel.org/rust-for-linux/CANiq72nKC5r24VHAp9oUPR1HVPq=
-T+=3D0ab9N0w6GqTF-kJOeiSw@mail.gmail.com/
-> Link: https://github.com/rust-lang/rust/commit/ab91a63d403b0105cacd72809c=
-d292a72984ed99 [1]
-> Link: https://github.com/rust-lang/rust/pull/145910 [2]
-> Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+From: Fangyu Yu <fangyu.yu@linux.alibaba.com>
 
-I will send a couple other fixes to Linus this week, so if nobody
-shouts, I will be picking this one.
+When executing HLV* instructions at the HS mode, a guest page fault
+may occur when a g-stage page table migration between triggering the
+virtual instruction exception and executing the HLV* instruction.
 
-Thanks!
+This may be a corner case, and one simpler way to handle this is to
+re-execute the instruction where the virtual  instruction exception
+occurred, and the guest page fault will be automatically handled.
 
-Cheers,
-Miguel
+Fixes: b91f0e4cb8a3 ("RISC-V: KVM: Factor-out instruction emulation into separate sources")
+Signed-off-by: Fangyu Yu <fangyu.yu@linux.alibaba.com>
+
+---
+Changes in v2:
+- Remove unnecessary modifications and add comments(suggested by Anup)
+- Update Fixes tag
+- Link to v1: https://lore.kernel.org/linux-riscv/20250912134332.22053-1-fangyu.yu@linux.alibaba.com/
+---
+ arch/riscv/kvm/vcpu_insn.c | 39 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 39 insertions(+)
+
+diff --git a/arch/riscv/kvm/vcpu_insn.c b/arch/riscv/kvm/vcpu_insn.c
+index de1f96ea6225..a8d796ef2822 100644
+--- a/arch/riscv/kvm/vcpu_insn.c
++++ b/arch/riscv/kvm/vcpu_insn.c
+@@ -323,6 +323,19 @@ int kvm_riscv_vcpu_virtual_insn(struct kvm_vcpu *vcpu, struct kvm_run *run,
+ 							  ct->sepc,
+ 							  &utrap);
+ 			if (utrap.scause) {
++				/**
++				 * If a g-stage page fault occurs, the direct approach
++				 * is to let the g-stage page fault handler handle it
++				 * naturally, however, calling the g-stage page fault
++				 * handler here seems rather strange.
++				 * Considering this is an corner case, we can directly
++				 * return to the guest and re-execute the same PC, this
++				 * will trigger a g-stage page fault again and then the
++				 * regular g-stage page fault handler will populate
++				 * g-stage page table.
++				 */
++				if (utrap.scause == EXC_LOAD_GUEST_PAGE_FAULT)
++					return 1;
+ 				utrap.sepc = ct->sepc;
+ 				kvm_riscv_vcpu_trap_redirect(vcpu, &utrap);
+ 				return 1;
+@@ -378,6 +391,19 @@ int kvm_riscv_vcpu_mmio_load(struct kvm_vcpu *vcpu, struct kvm_run *run,
+ 		insn = kvm_riscv_vcpu_unpriv_read(vcpu, true, ct->sepc,
+ 						  &utrap);
+ 		if (utrap.scause) {
++			/**
++			 * If a g-stage page fault occurs, the direct approach
++			 * is to let the g-stage page fault handler handle it
++			 * naturally, however, calling the g-stage page fault
++			 * handler here seems rather strange.
++			 * Considering this is an corner case, we can directly
++			 * return to the guest and re-execute the same PC, this
++			 * will trigger a g-stage page fault again and then the
++			 * regular g-stage page fault handler will populate
++			 * g-stage page table.
++			 */
++			if (utrap.scause == EXC_LOAD_GUEST_PAGE_FAULT)
++				return 1;
+ 			/* Redirect trap if we failed to read instruction */
+ 			utrap.sepc = ct->sepc;
+ 			kvm_riscv_vcpu_trap_redirect(vcpu, &utrap);
+@@ -504,6 +530,19 @@ int kvm_riscv_vcpu_mmio_store(struct kvm_vcpu *vcpu, struct kvm_run *run,
+ 		insn = kvm_riscv_vcpu_unpriv_read(vcpu, true, ct->sepc,
+ 						  &utrap);
+ 		if (utrap.scause) {
++			/**
++			 * If a g-stage page fault occurs, the direct approach
++			 * is to let the g-stage page fault handler handle it
++			 * naturally, however, calling the g-stage page fault
++			 * handler here seems rather strange.
++			 * Considering this is an corner case, we can directly
++			 * return to the guest and re-execute the same PC, this
++			 * will trigger a g-stage page fault again and then the
++			 * regular g-stage page fault handler will populate
++			 * g-stage page table.
++			 */
++			if (utrap.scause == EXC_LOAD_GUEST_PAGE_FAULT)
++				return 1;
+ 			/* Redirect trap if we failed to read instruction */
+ 			utrap.sepc = ct->sepc;
+ 			kvm_riscv_vcpu_trap_redirect(vcpu, &utrap);
+-- 
+2.50.1
+
 
