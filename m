@@ -1,65 +1,81 @@
-Return-Path: <linux-kernel+bounces-895504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEC53C4E1D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:31:01 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50A6AC4E1C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:29:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EA5C3AD365
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:30:51 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AF1AE4E2DEE
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:29:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C5F33370FE;
-	Tue, 11 Nov 2025 13:30:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C720933AD8E;
+	Tue, 11 Nov 2025 13:29:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="JGPrZC16"
-Received: from omta40.uswest2.a.cloudfilter.net (omta40.uswest2.a.cloudfilter.net [35.89.44.39])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=sladewatkins.com header.i=@sladewatkins.com header.b="mZhid9DW"
+Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CD44255F3F
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 13:30:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.39
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF4B3328277
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 13:29:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762867846; cv=none; b=deeSiGT3SXkYfC/779/lPvmyzo1OmpULHrZyfaOsmea/HU8Ls+Q3DzzXOlro3G9UMOGb2qO8nEUk4rynrQv1MUlNhvcwcCihxq6B7tabRfH2gOB+70kkJMPi6Nos/k7DpUf156a8tzs4HBA2oCfDYl+MQVBW6A+8VYlUUM56Lds=
+	t=1762867784; cv=none; b=f4G1w/lg8l0R2emVH9X4qmPMA1jsolpVnFBs4tDDhJSUZub3eUfkl5n+jxi7k+tXOhcOs3qVy8T8ytR/5+tx5Lc3V4NKVcUnZhbecBa+Y8ZphtJtzjSM7xyFLJlpxvv+He5uAN8o+c+hv572rhLxR8FUgtzc5mM9U47QZ6xYVwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762867846; c=relaxed/simple;
-	bh=v0lSqiq2sWo3T0BJrMwy11NLOv/j2DiOsf7GTvaYqaA=;
+	s=arc-20240116; t=1762867784; c=relaxed/simple;
+	bh=bu//jfiuAwMhl+hkQrkBg3mYTFbqBMdLLj9zyIwZ0fA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fcCpK5ocQ2bT/ZZBGkDDorBJUCnMoS41J2YOmSg5xQ3j+2h0jb3fr7atyB5g+FP+4iRhY2szdk32xD29arfdNPReyj7fXnme7WViAJXugFR13N7CyShbE0NzFCXsd40z33AJTSwSHVdrTJKLO4WrWumo5MX0ESet9iuNc9w6F+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=JGPrZC16; arc=none smtp.client-ip=35.89.44.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
-Received: from eig-obgw-5007b.ext.cloudfilter.net ([10.0.29.167])
-	by cmsmtp with ESMTPS
-	id IoMEvK0p2aPqLIoQmvsV6h; Tue, 11 Nov 2025 13:29:09 +0000
-Received: from gator4166.hostgator.com ([108.167.133.22])
-	by cmsmtp with ESMTPS
-	id IoQlvNoDQFPddIoQmv89C6; Tue, 11 Nov 2025 13:29:08 +0000
-X-Authority-Analysis: v=2.4 cv=OphPyz/t c=1 sm=1 tr=0 ts=69133a24
- a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=F0GicbU7tRTSLTLZ85HXVw==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=7T7KSl7uo7wA:10 a=VwQbUJbxAAAA:8
- a=xLSupZCTIYbk7TSy1gAA:9 a=QEXdDO2ut3YA:10 a=xYX6OU9JNrHFPr8prv8u:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=2jv3T9IIY8maauDuJooEDt1SGO1tZAtuNsKX38mdNHc=; b=JGPrZC1615NoUm7gtzKIIF1KUm
-	rrGWTn+p4TOVknZ4HeAh3LLf6Cew9qfVW+wks3oWWnCbLCQZn554+g1E0msGJFuDgoqFV465QuFx6
-	O/RnzAiJlRPxwATGcvAi/FiGBWF66KtKmAZM1APPh8ESaURWjP7krDZoQiGDbFk3cMa2fgb6+Kg4U
-	MDsdHPYQrRpXznDesHfjH64y8eRZHTYAbBDb5W7soSFXTSaWt101UEEYE6EHXnpAXhwLD3gnV3BKw
-	wLD/gz0AakCkFD42AXlErqQaR92Fb28AcBLtcbRgOS3w8BPSPzTuexIM4hvCKONkpA7+oBD9X8zM7
-	Wbg0uk+A==;
-Received: from m106072098064.v4.enabler.ne.jp ([106.72.98.64]:32830 helo=[10.221.86.44])
-	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.98.1)
-	(envelope-from <gustavo@embeddedor.com>)
-	id 1vIoQl-00000000cju-1tgA;
-	Tue, 11 Nov 2025 07:29:07 -0600
-Message-ID: <a956504a-55af-4c2c-95a0-15663435624a@embeddedor.com>
-Date: Tue, 11 Nov 2025 22:28:57 +0900
+	 In-Reply-To:Content-Type; b=Ug/fK/CEpK9VQlnq/jrXTEiM8yQf7n26uQd/AtpaeB22sglU4ixhjyRcA2HH4Tx+ZSVdUwGN6DiJx22i3EvWwssrtneEPa1xxe1C/lDa1oNYPgNjeB/CTnLpUy0OQI+ZB4eoHeAPR624BJkSw14qiRWYzsETv/6gjbL6RjYgd6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=sladewatkins.com; spf=pass smtp.mailfrom=sladewatkins.com; dkim=pass (2048-bit key) header.d=sladewatkins.com header.i=@sladewatkins.com header.b=mZhid9DW; arc=none smtp.client-ip=209.85.166.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=sladewatkins.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sladewatkins.com
+Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-92aee734585so176668939f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 05:29:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sladewatkins.com; s=google; t=1762867782; x=1763472582; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WMgbmudOUGCxAICCM0T13uChNu/ksfI0OswL7+Y1Lgg=;
+        b=mZhid9DWFhRxX5ffaNaH0fc7kzh4zWxQqRzfwYPDnCrdvFivEhfZ7mJEs5gHUdfuL9
+         cfBSSsz60oytkuhTqYdyg3mLUn0m8of4Lz7UDp+edC265r2nv3YWcm9/BURPBk0T2u3V
+         XdOcj7xpNMLS+RakTqetzrx4/ou0qptvXAh2VK56JGjG1Cu2OxEi+N8p0XbB5tdjzTzL
+         oqpZkFlYzmlhYpHK0nwX+GuxVvex80rs8BhGhv+v4ehXDMSXF1QgyAYJlnxF+O6/PLOR
+         V4X5nz6MXYzBdWNXM4IbR+OVr/ZgjppqkuNrYG4JhTVHaUeyIzkQtsH89HaWf1BMx2XO
+         4S5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762867782; x=1763472582;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WMgbmudOUGCxAICCM0T13uChNu/ksfI0OswL7+Y1Lgg=;
+        b=Jamw6wgpaa/i9xjpZPBOuIJCtvuHM2n2AuUbvzGyNT9bC3zz7gFoMrPEo1BxmTkR7A
+         KhEk7t1cRxd6fYbi4e6yOpZGVlF1WX/K7+sqC3A5KvexpHDndM90dWgQ6MOIvEiCxx84
+         VCz7EzwGsV/LqApVGW0z8tBCqAMgl5zH5qeXWcYUe0iiO5jHhmc6Ty4+fpzevTIsK3YM
+         8mdyCRg4v8QbRW2Zrv1tkrOeS+Yd/d+Ekf5S55p06ni7fm8FQppi3IjNyoGWcUQA13j2
+         tk0zb8m3FChEiiBaQzRc2tbAD/8wEOBUZDRiOACTqeGbj8DcVV7sq5vRoZCnIncB82Ot
+         3TDA==
+X-Forwarded-Encrypted: i=1; AJvYcCVtcBHjX5pnY9hHhTv37PNbwdZrGrloP9iyHJ0xgZwzrhT6+TZP/+KfKsW/pFeqqsR0ibbwHpzjljFkFsI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxeuX5gxZxxC+c+7+VOd+QQ0I4xR/48ZLxTJ4u3u4PHcUiekrMK
+	zOJZ/peUebHlkEmIK8NBy+SKwPSwmwYRCDQgiwYtU0GKCN82lac11/MfBSeIqt70F+I=
+X-Gm-Gg: ASbGncvrmjnzza16gmr7ZQm/ylECsubdg24VnXHv9mZYdAO1ne9pxfNEYwHQa1h2wGo
+	10kY3dDKCvCiTTdA7aUfNZK5iHo3DevQLUUbtn26rCmr/cFvydmGxXAYekEq3igCrFF1jxhbvTH
+	HoK21CePTHHGK2nm9m9Uplo6JdzRATxrN7ckl/G67NCGTF+4SK4u3S+u85jOx+lcQY30KxJw1Wh
+	H5Uk6ktyB6BPHH4OjnPP+QZLByzD7YXdWUvJoIdzpqtA+Z+rwVAGXusM60V71S7Ffr35sSeEc3g
+	fJ2qrRlvboxxj0Ca+EncDMtdLeiD3tgWZ/TbpT5ow7cxJJy3a6cajopcHmQbHrVKzHF0gXCAsyY
+	9jqPgE1OAJasaLMFZchaFVnoJrG0LORPx4neq8C8DL2zHq5S+CRPxNWK64EsgOV+cTJuEccSolt
+	d0s8keLh3hRytwuT0=
+X-Google-Smtp-Source: AGHT+IFtI399GCPHo3UIXPA8nkctB8TO+xlVxynLrsqyE1KKUsZzDqNEKh0oyIwjxAJ4OEJBYNsBiw==
+X-Received: by 2002:a05:6e02:3081:b0:433:3315:e9ee with SMTP id e9e14a558f8ab-43367deab79mr197235215ab.10.1762867781812;
+        Tue, 11 Nov 2025 05:29:41 -0800 (PST)
+Received: from [192.168.5.95] ([174.97.1.113])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5b74698ad28sm6131101173.56.2025.11.11.05.29.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Nov 2025 05:29:41 -0800 (PST)
+Message-ID: <13999fda-8c3b-488e-b14d-12fadb76f9cb@sladewatkins.com>
+Date: Tue, 11 Nov 2025 08:29:39 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,113 +83,36 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] bcache: Avoid -Wflex-array-member-not-at-end
- warning
-To: Coly Li <colyli@fnnas.com>, "Gustavo A. R. Silva"
- <gustavoars@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org
-References: <aRHFchrO3BmVMH5c@kspp>
- <7g2dkwi2nzxe2luykodsknobzr5bkl23d5mbahkyo7adhg55oy@6uisoc7jzgy6>
+Subject: Re: [PATCH 6.17 000/849] 6.17.8-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+ linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+ akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+ patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+ jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+ achill@achill.org
+References: <20251111004536.460310036@linuxfoundation.org>
 Content-Language: en-US
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-In-Reply-To: <7g2dkwi2nzxe2luykodsknobzr5bkl23d5mbahkyo7adhg55oy@6uisoc7jzgy6>
+From: Slade Watkins <sr@sladewatkins.com>
+In-Reply-To: <20251111004536.460310036@linuxfoundation.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 106.72.98.64
-X-Source-L: No
-X-Exim-ID: 1vIoQl-00000000cju-1tgA
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: m106072098064.v4.enabler.ne.jp ([10.221.86.44]) [106.72.98.64]:32830
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 2
-X-Org: HG=hgshared;ORG=hostgator;
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfFF1X/835CIS82zz73I2xkzA+N9MXjMI34OzWIXPZpWU8vuRbb89FMhSwPQ0Khrtb42+HhF82+VVzAxVzrpEFv5Eyxoe0+9Meq0Ed5pfgsQO6TinaFef
- SVb9Qr+eJletZ04Q06vGiJyLt/jVGI2BcSnsTJzK9qudxw1KaPHFNi0DzwuMslcqRP1zTEFe+W06n0xFbPnF4xU7t07ENDxkIMMpxniC43fxtx60PfZYTbTf
 
-
-
-On 11/11/25 22:17, Coly Li wrote:
-> On Mon, Nov 10, 2025 at 07:58:58PM +0800, Gustavo A. R. Silva wrote:
->> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
->> getting ready to enable it, globally.
->>
->> Use the new TRAILING_OVERLAP() helper to fix the following warning:
->>
->> drivers/md/bcache/bset.h:330:27: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
->>
->> This helper creates a union between a flexible-array member (FAM) and a
->> set of MEMBERS that would otherwise follow it.
->>
->> This overlays the trailing MEMBER struct btree_iter_set stack_data[MAX_BSETS];
->> onto the FAM struct btree_iter::data[], while keeping the FAM and the start
->> of MEMBER aligned.
->>
->> The static_assert() ensures this alignment remains, and it's
->> intentionally placed inmediately after the corresponding structures --no
->> blank line in between.
->>
->> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
->> ---
->>   drivers/md/bcache/bset.h | 8 ++++++--
->>   1 file changed, 6 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/md/bcache/bset.h b/drivers/md/bcache/bset.h
->> index 011f6062c4c0..6ee2c6a506a2 100644
->> --- a/drivers/md/bcache/bset.h
->> +++ b/drivers/md/bcache/bset.h
->> @@ -327,9 +327,13 @@ struct btree_iter {
->>   /* Fixed-size btree_iter that can be allocated on the stack */
->>   
->>   struct btree_iter_stack {
->> -	struct btree_iter iter;
->> -	struct btree_iter_set stack_data[MAX_BSETS];
->> +	/* Must be last as it ends in a flexible-array member. */
->> +	TRAILING_OVERLAP(struct btree_iter, iter, data,
->> +		struct btree_iter_set stack_data[MAX_BSETS];
->> +	);
->>   };
->> +static_assert(offsetof(struct btree_iter_stack, iter.data) ==
->> +	      offsetof(struct btree_iter_stack, stack_data));
->>
+On 11/10/2025 7:32 PM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.17.8 release.
+> There are 849 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> I have to say this is ugly. Not the patch, but the gcc 14 warning option
-> of such coding style. Look at TRAILING_OVERLAP() usage here, this is not
-> C, this is something to fix a gcc bug which cannot handle FAM properly.
+> Responses should be made by Thu, 13 Nov 2025 00:43:57 +0000.
+> Anything received after that time might be too late.
 
-This is not a GCC bug.
+6.17.8-rc1 built and run on x86_64 test system with no errors or 
+regressions:
 
-> 
-> Gustavo, this complain is not to you, just I feel a bit sad how GCC makes
-> the code comes to such an ugly way, and it makes things much complicated.
-> For anyone doesn't have deep understanding of TRAILING_OVERLAP(), I
-> highly suspect whether he or she can understand what happens here.
-> 
-> Andrew and Gustavo, is this a mandatary to fix FAM in such way? If yes
-> I take the patch and keep my own opinion. If not, I'd like to see gcc
-> fixes its bug, for the this code I don't see the author does things
-> wrong.
+Tested-by: Slade Watkins <sr@sladewatkins.com>
 
-This is a false positive that needs to be addressed in some way in order to
-enable -Wflex-array-member-not-at-end in mainline.
-
-Here you can take a look at the patches I (and others) have submitted to
-modify similar code over the last year:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/log/?qt=grep&q=-Wflex-array-member-not-at-end
-
-Thanks
--Gustavo
-
-
+Thanks,
+Slade
 
