@@ -1,185 +1,131 @@
-Return-Path: <linux-kernel+bounces-896168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D52D6C4FCAC
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 22:05:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21787C4FC8B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 22:04:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12AF818C0D20
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 21:04:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B953A3B5279
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 21:04:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 886691DF736;
-	Tue, 11 Nov 2025 21:02:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE51D352FA9;
+	Tue, 11 Nov 2025 21:02:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EMZ27BoX"
-Received: from mail-yx1-f50.google.com (mail-yx1-f50.google.com [74.125.224.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jQ2PcjmO"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23BE3352FA7
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 21:01:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4106326922
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 21:02:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762894916; cv=none; b=dUArpHdy9Gnc+ePkCVDom7PD6p1Q6khcDdEjuLyEyMQJC3oJ1ixZ03AgZOhCsJzko3q4w4WB/PSzI4iFXiRurjy9FJbybrjJ+s5wm1cWuqjCbzfrzTN99+gg3n0y5ATWb/Zf/40iUz0jwqCuMjDZ/xmTz9hNAhK9v54r6uteiuU=
+	t=1762894961; cv=none; b=i3d/UXQcWjv+AQcJ10ST8iQ9ach23jwhx8WP3JrmzI4/UVjW3JRxXTQAl1uCxVcPIiHP880Z31Wn9PaqJCk1Q+Jon+F9u4dOCF6sRtsiUjNukW3kPYAQc0XgpRo4+PW6SZsjSCH6a6XXBwEBzWrYr3j2R8+6eHOnAzxpxErhnHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762894916; c=relaxed/simple;
-	bh=m2/ll1uTQe3vdYyhgsBOhN/isiT4ncOezX9iuBFvWf0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N248vKB36KCxRKj1xL9VXxXHySH0B/U0CGc0rNNmUupJKS5Z3EDzHtE6+cV/9+Io9g9dQMWiFHLxEQU8bOeandet9co0CImRxFDCykj6G8W/6rdQQQsVFbUogQ0Xh4trYWF81QWqVX7A4gLeO3E1PGuSunHVeA6C4Zfrv50dtLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EMZ27BoX; arc=none smtp.client-ip=74.125.224.50
+	s=arc-20240116; t=1762894961; c=relaxed/simple;
+	bh=oON1JhPqjwjhg7G9S0lDlzyPRkRNc3w2DTMTGVj9WQc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JmTVOV+GXVc9ii3zjqTcAsXhYptAHxNAxTAeEs52t1gYrH0k0alJTxbFsZCSQo2GI46du1ZIKA/vrNGA/SBYvWKlNtmwdPGAT01bYklt3Jvm8Gpt02FKTH6VieMs55njyTt9JSMLOzFDxMcZmd3T8qjAt9838Dw/7xaaS86Ave4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jQ2PcjmO; arc=none smtp.client-ip=209.85.214.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yx1-f50.google.com with SMTP id 956f58d0204a3-63f97c4eccaso175562d50.2
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 13:01:52 -0800 (PST)
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-297e2736308so126475ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 13:02:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762894911; x=1763499711; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=bDPq8KvClJvWwDQMfmOhMgSMTNNkWL2W9UB4UAss5Bg=;
-        b=EMZ27BoXyrccnWk6j0fZzJXConxIlnb+YJyxYnU4pvHMuVIow6oNh0p44L4eeNPAlb
-         EuU22N0Cu3NLv75bupq/7aQaIC76fv8insPYQvRVpLLgtxNnYfaxq1leWkBbQwLqpal1
-         dN2H45GfOTIZMIalPt3j+RAvbeKU5LUk5X4jrrgVx77EbEaniLj25o8hJrBzM2OzXDLb
-         6EjMCrvHtPJKTl0XLha4W+sb/tyBJSEidqBbro/8EAwK29bMgtOQYDZxKcG0Ho3RXKmv
-         B9Z4B6oHilKtSi+F0GDPzi4IS6pGJKPuoMNThYrWpESSL160+clnPrk3ZeGhyMlHRBO2
-         OiMw==
+        d=gmail.com; s=20230601; t=1762894959; x=1763499759; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QwP6Mm7gy1ZK8oeG4x4mgYN5Qt7fbG4Gah1TecksR98=;
+        b=jQ2PcjmOeqfPM/H74bOl2teruU5Viaz3bkXIWghhZzkMn2ivW3tl75mVkGM0gvFqFp
+         M0yKWW+nzADwJBQsqmEOevp8ACmNwClFgtcRwNyvpAbN25NuBDbkAxA3MmqoDCsGfmtB
+         +mCE8TYsoYm7hm60gwuilPdN58rMepqhS4F2WKslFKey62I+cDHCcZTeYunywAzUYQPI
+         ZOivc+rEow3Rq9Zvw8HFbWhEgzI0fF9XHQF3Rx96SZxVq8vh9jN//wuDL1hVdhJpIzJU
+         celcmpODoMvcfWdXY97rEMRbr9/jmLkcFFpwqDA82U8QMykXW9mtIYXEPwv/C1OY1+65
+         xM+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762894911; x=1763499711;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bDPq8KvClJvWwDQMfmOhMgSMTNNkWL2W9UB4UAss5Bg=;
-        b=ng6RkEN3ZKBBbYB9W6l/YWGlWGPUhGihb+DM8kvZqxPXvqjz+dwQqY92iV4EZpMwu9
-         iiD7aCY+XQHdw44My3I/Xlj4E/UYsC+NeHAaXVMqzGLzT2uYT2GAAKGsINuqgJzul0KN
-         JcldMMRKrITsw2OB7fKczHiDVpoAzWvHo8PvFoDz7feTy0MZPzqr5GgJQxjjb7g334dm
-         sGcJmsx8riiMVEancid9BO8qo/A40aCArOvGOXgOVLrOO1Qq4jt6GU67d68Sb0E18eFR
-         vqcLlqcccSwQl8dNJv7sXFHAQJvneGxn2TaWWSxXJMgJcLOwsyyEtQmu4o6wUiq9YzXR
-         4hRw==
-X-Forwarded-Encrypted: i=1; AJvYcCUvzIOtahmTXTqBgaRySlIe0OFQSlS4kJU+lGvLjxNP+kWDjeY0cGFNqpn8o57Iw1ZwQcrmtqO4OBAMsQU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQYz3z7qWep/Om8DOfeZZ3lqysrQRMpVwQAcVyL9T1fOWmsVtK
-	KgKZrRtRR2RK9SHKttEqX3MC/KajSiJWsvm4fQyyUJmfaXgzr+UbZxYF
-X-Gm-Gg: ASbGncuO7X9OBmbd/0vA7O7f68ZYBeAwupFFTe/1K7tpu39Q0Y4lxX9Yo26mE9+/48o
-	cv5i9RMjSm6l7xe975MHQouEf8yKvTz1g0Q2letCQ81YzuHffa708sJ19Cn/hNjbcQcLMs3pOOf
-	Me1SR8whh/RnggKVD3bts9Kngf+1NGfzPnM08LZ27cVr0G4lcW8kiRilRJRaVvLcLfx3lca6+o0
-	MrYQSu/LyIkFy585VQaPy+jxYLEBLtiskpsn6zzJsdAtTi6IGErBcHJiMrEAZK2Tyvv8kUUUN6f
-	TGTmO7AjOetSFwnquOEN+YOBStVpoGCMYsuUOJwQsPYW/ZpsxwB4HzVG3Pl8msCE4G+t21HR46Y
-	qnBlofdNn0Po+UItOQPc8u2UCY8gSMuc0IPNOvEzWYUO4gs45GoAAwknTJE60d9QUleNteQeXOC
-	H7UqY4cdk3b+ymu7m9eYeGophd077x0On4LM6gDVyWtKpkvg==
-X-Google-Smtp-Source: AGHT+IG5pLwkGsZ+eCK296l8q5rg85wfM1wAQ8NbbJwGyjxk6/mldP/Q7Z6BLYOivEyqJVyS1VY/EA==
-X-Received: by 2002:a53:c048:0:20b0:63f:a165:b9ed with SMTP id 956f58d0204a3-64101a0ab45mr674439d50.6.1762894911625;
-        Tue, 11 Nov 2025 13:01:51 -0800 (PST)
-Received: from devvm11784.nha0.facebook.com ([2a03:2880:25ff:d::])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-787d684218dsm36167807b3.21.2025.11.11.13.01.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Nov 2025 13:01:49 -0800 (PST)
-Date: Tue, 11 Nov 2025 13:01:48 -0800
-From: Bobby Eshleman <bobbyeshleman@gmail.com>
-To: Simon Horman <horms@kernel.org>
-Cc: Stefano Garzarella <sgarzare@redhat.com>, Shuah Khan <shuah@kernel.org>,
-	virtualization@lists.linux.dev, netdev@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Bobby Eshleman <bobbyeshleman@meta.com>
-Subject: Re: [PATCH net-next v3 07/11] selftests/vsock: add check_result()
- for pass/fail counting
-Message-ID: <aROkPIIeGq3Tb0I6@devvm11784.nha0.facebook.com>
-References: <20251106-vsock-selftests-fixes-and-improvements-v3-0-519372e8a07b@meta.com>
- <20251106-vsock-selftests-fixes-and-improvements-v3-7-519372e8a07b@meta.com>
- <aRMjeZVqsnc1BNr-@horms.kernel.org>
+        d=1e100.net; s=20230601; t=1762894959; x=1763499759;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=QwP6Mm7gy1ZK8oeG4x4mgYN5Qt7fbG4Gah1TecksR98=;
+        b=rQFZn74pudakEj78YDtnH6utINbEIEbcXcNCb0f376NXaYtBG0nPwy+fPARORziRYI
+         yA6s1spt8x/aFzSOkDinzZOP7tQ1dJad2WSWMGNZ0OLMIrTPShhl5vbQaDWyLDiAj6N1
+         xB399kgkse89U6neyh6KG/4da/+6WdYPPfSO+Ah796ypYXOHD7lO0cO72ubgszhrCwKY
+         VKeE93K8Hh4r8Ih5KuxFNcLSTB2NtOB9EjnPdpHfqHyqaA1eRLlmTebV8WcSkievQxL4
+         2ZOJ34xsXkQ1VU9IbGtfruEmGV/wacYof71anw/8sD9cY4hacWwVH2psT1knDdewCBmJ
+         Fitg==
+X-Forwarded-Encrypted: i=1; AJvYcCW05OerAkh+2KK7rcuK/58JwJubojjX/Kiix9JSRPoG6nKIstOMMqQZO7Y0UAATWoAOsZVewGZSsMG5HCE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrLtYiYDR1gep11Wdc2R5lL84VPXo0EdkakAYdb1TQ/1gvt+Hh
+	FGFkuRod8mCgWOhe2BCRdrhWtk3hibZdNpqZsZp2Tzqmun+dcWoRM98BcY8Y/MapOiPUFarbRrp
+	75ml1Kudt8nluPZo4+YftCbJxmObwU+c=
+X-Gm-Gg: ASbGncuPA4cF4aq//8BBJWjfUk6VlS7OZifucMG1OmwreI6iiIswoRyKOYpJWI4lnBs
+	9jgZrK8ZQe2E/xc9ZciN51/GcKEfCer+2QjDmD7266NhqLUEwRpE9ilr97LjgjR24lbAbP/r87V
+	mqMLXXIu/fTHjoB++6OUkWSaIV7v1OsJXVF/eTPL7y3pr7of7wS6AssDGVNyDHkek/hCfJZb/pD
+	o68SSKvk3H1dyYrjVa9bwvGTrinEmM2Rf0TEIZ36eJuDaezbE3VR7aPzS8q9qBltn1MgShLUu8W
+	E3mfV9A++fg2WKGUuVzp/Mm+IZTEBYEmfRXc/+S6IluxZynb6jDq9pxWQyv0MTJvoDBGHZWF69u
+	DAOw=
+X-Google-Smtp-Source: AGHT+IFsOytGgnt1U92UtoUky/1wulIEh+Pmaa8W6gEGOIHALbiKUTckaUZPy8kghTMbfkFxlO7xNvj5AdbhpE8EjaQ=
+X-Received: by 2002:a17:902:f551:b0:297:d825:bf22 with SMTP id
+ d9443c01a7336-2984eda386emr4468665ad.5.1762894958907; Tue, 11 Nov 2025
+ 13:02:38 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aRMjeZVqsnc1BNr-@horms.kernel.org>
+References: <20251110122223.1677654-1-ojeda@kernel.org> <20251110122223.1677654-2-ojeda@kernel.org>
+ <20251111.083413.2270464617525340597.fujita.tomonori@gmail.com>
+In-Reply-To: <20251111.083413.2270464617525340597.fujita.tomonori@gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 11 Nov 2025 22:02:26 +0100
+X-Gm-Features: AWmQ_bm-YuisXj51ok0HAEEwIhVZdnLtQdiqb_sOWGEJwZXB-OjiypMxPqOmm74
+Message-ID: <CANiq72=_KAgUZ9u5YY-iw7kyA9R1Nv6eNzZqMLSwOLQk6sR7kw@mail.gmail.com>
+Subject: Re: [PATCH 2/3] rust: net: phy: make example buildable
+To: FUJITA Tomonori <fujita.tomonori@gmail.com>
+Cc: ojeda@kernel.org, alex.gaynor@gmail.com, tmgross@umich.edu, 
+	netdev@vger.kernel.org, rust-for-linux@vger.kernel.org, boqun.feng@gmail.com, 
+	gary@garyguo.net, bjorn3_gh@protonmail.com, lossin@kernel.org, 
+	a.hindborg@kernel.org, aliceryhl@google.com, dakr@kernel.org, 
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev, 
+	Guillaume Gomez <guillaume1.gomez@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 11, 2025 at 11:52:25AM +0000, Simon Horman wrote:
-> On Thu, Nov 06, 2025 at 04:49:51PM -0800, Bobby Eshleman wrote:
-> > From: Bobby Eshleman <bobbyeshleman@meta.com>
-> > 
-> > Add check_result() function to reuse logic for incrementing the
-> > pass/fail counters. This function will get used by different callers as
-> > we add different types of tests in future patches (namely, namespace and
-> > non-namespace tests will be called at different places, and re-use this
-> > function).
-> > 
-> > Reviewed-by: Simon Horman <horms@kernel.org>
-> > Signed-off-by: Bobby Eshleman <bobbyeshleman@meta.com>
-> > ---
-> > Changes in v3:
-> > - increment cnt_total directly (no intermediary var) (Stefano)
-> > - pass arg to check_result() from caller, dont incidentally rely on
-> >   global (Stefano)
-> > - use new create_pidfile() introduce in v3 of earlier patch
-> > - continue with more disciplined variable quoting style
-> > ---
-> >  tools/testing/selftests/vsock/vmtest.sh | 95 +++++++++++++++++++++++++--------
-> >  1 file changed, 72 insertions(+), 23 deletions(-)
-> > 
-> > diff --git a/tools/testing/selftests/vsock/vmtest.sh b/tools/testing/selftests/vsock/vmtest.sh
-> > index 557f9a99a306..05cf370a3db4 100755
-> > --- a/tools/testing/selftests/vsock/vmtest.sh
-> > +++ b/tools/testing/selftests/vsock/vmtest.sh
-> > @@ -46,6 +46,8 @@ readonly TEST_DESCS=(
-> >  	"Run vsock_test using the loopback transport in the VM."
-> >  )
-> >  
-> > +readonly USE_SHARED_VM=(vm_server_host_client vm_client_host_server vm_loopback)
-> > +
-> >  VERBOSE=0
-> >  
-> >  usage() {
-> > @@ -79,6 +81,28 @@ die() {
-> >  	exit "${KSFT_FAIL}"
-> >  }
-> >  
-> > +check_result() {
-> > +	local rc arg
-> > +
-> > +	rc=$1
-> > +	arg=$2
-> > +
-> > +	cnt_total=$(( cnt_total + 1 ))
-> > +
-> > +	if [[ ${rc} -eq $KSFT_PASS ]]; then
-> > +		cnt_pass=$(( cnt_pass + 1 ))
-> > +		echo "ok ${num} ${arg}"
-> > +	elif [[ ${rc} -eq $KSFT_SKIP ]]; then
-> > +		cnt_skip=$(( cnt_skip + 1 ))
-> > +		echo "ok ${num} ${arg} # SKIP"
-> > +	elif [[ ${rc} -eq $KSFT_FAIL ]]; then
-> > +		cnt_fail=$(( cnt_fail + 1 ))
-> > +		echo "not ok ${num} ${arg} # exit=$rc"
-> 
-> Hi Bobby,
-> 
-> Should num be cnt_total above?
-> 
-> > +	fi
-> > +
-> > +	cnt_total=$(( cnt_total + 1 ))
-> 
-> It seems that cnt_total is being incremented twice.
-> Once seems like it ought to be enough.
-> 
+On Tue, Nov 11, 2025 at 12:34=E2=80=AFAM FUJITA Tomonori
+<fujita.tomonori@gmail.com> wrote:
+>
+> I think that some code begin lines with # for use lines in a "#
+> Examples" section, while others do not. Which style is recommended?
 
-Indeed. FWIW, this was fixed in the newest (v4). I messed up a rebase,
-and my eye didn't catch it before sending out.
+There is no hard rule for all cases -- we typically hide things that
+are not important for the example (e.g. fake `mod bindings` that are
+used to support the example but aren't important and would bloat the
+example or confuse the reader).
 
-> > +}
-> > +
-> >  vm_ssh() {
-> >  	ssh -q -o UserKnownHostsFile=/dev/null -p ${SSH_HOST_PORT} localhost "$@"
-> >  	return $?
-> 
-> I'll confess that I didn't notice these myself, but
-> Claude Code with https://github.com/masoncl/review-prompts/ did.
+For imports, some people prefer to see them, others don't. Here, for
+instance, it may be interesting to show the paths (e.g. that the
+`Device` is a `net::phy::` one, or where `C22` is coming from), so we
+could unhide it. So up to you!
 
-Thanks for the note, I'll give it a try. I'm trying to build out my
-pre-send workflow atm, and this looks pretty useful.
+So I think the rule is really: if it is something that we think people
+should see to actually understand the example, then we should show it.
 
-Best,
-Bobby
+And if it is something that would confuse them more than help, or that
+generally should not be used in real code (like the fake bindings),
+then we should hide it.
+
+Ideally `rustdoc` could perhaps support showing the hidden parts with
+the click of a button or similar -- there was e.g.:
+
+    https://github.com/rust-lang/rust/pull/86892
+
+On the other hand, there is already a "Source" button nearby that one
+can click to see it, so it is not too bad. But, yeah, if they need to
+do that, it is likely it shouldn't have been hidden to begin with.
+
+Cheers,
+Miguel
 
