@@ -1,153 +1,168 @@
-Return-Path: <linux-kernel+bounces-896129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7197C4FB73
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 21:33:31 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32BD1C4FB79
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 21:36:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF61B3B75FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 20:32:39 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7817134CEBE
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 20:36:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 723822C08BB;
-	Tue, 11 Nov 2025 20:32:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F22AA2BD001;
+	Tue, 11 Nov 2025 20:36:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="rQG1zSPp"
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Jss3F8/I";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="iwQicVeu"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 305D636CDF8
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 20:32:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7477F33D6C3
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 20:36:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762893147; cv=none; b=QNEK5DVCWa5BBhrOcpqGrErG4vLMpDU6cn9EsnXAK0PQIKrrX5JW7OkaL2+nxu5DWIEY/22BgRbJ5Z/tEg3HeMnvRn5vdEehsbEuWknjgkMoJL4I0MGXaP+vdtP0Bf+J8gEkxzotNy5Y9yJlvPyhUS2Eb/URhTH5j5A1LwwhRbQ=
+	t=1762893364; cv=none; b=L/InpobtJLRvW0BSZsUYrseqTtCrzAHmti5Ym8S3fgBHBunMovospn+PFTSJe1g4decEEp+4rT8FBlkd1IjxlqxhuTi1N2AiEnfqXq6oM/xhtgz3NohbDgSbIlULdStRSbeX0aLx16RGjDleH8abTEcwkRjwPJzbp2vLENnSFLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762893147; c=relaxed/simple;
-	bh=wBRUMwhEZSV4TAk2qivEoV2m32QEQZM0LstkExvKX/k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rxNo34c8WW8QXCjrN9Rj8Eu4PwEDoJUzpyRfN1/tbr+upV2RiK5YxnyAcJ/WnWSA0ZZ0OhcqKf1ThcloIWNQx7s0I/saDkrTPRKN7aZ0xceZ3FawPC46Lbhd7vPq1asLKoHOYScmNBaNl+gT4YAgfnmIPtvj/g1FJLZqZEK3q4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=rQG1zSPp; arc=none smtp.client-ip=209.85.222.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-8b1b8264c86so16255985a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 12:32:24 -0800 (PST)
+	s=arc-20240116; t=1762893364; c=relaxed/simple;
+	bh=/sctv5rhusyXEffbkQLx2PoylbyIn3anAeqxSkeXO/Y=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=BDvqCPyx1dB/XbPGzGOHbWbovcGU2fOpuB4p1FkP/yd4Qy4Lcu++dv3OHFQ/aQm9Bla20OW4yb7RWdnyxMxbk5pFDXm1zb7J1+z+LdBbO4+rEj+dx/hKzAf/dmeoWthfybAfCO6rUjpWnmr0t7RQCU2p/Ru31ZtfVHxzcWJ0nQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Jss3F8/I; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=iwQicVeu; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762893361;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YmCjT8+RKuIKK6LhjKXvotcpZamLjJoCMEYtCkqqZWc=;
+	b=Jss3F8/Igg58Vs4jhhg18AgLCQsajTAZIaxZCX7VOa34MvAA8vsUZ8a5437+RpxhCxCIWx
+	QpO8YVLdT79Llp5Lvm4dEZH2EWW7F10VOWGNTHm6Ji8u0dIvatKLZFrkqlQ4n51xiFzcMR
+	78QiylG6LZc6uCYPt9r+wg2xIqtvc7o=
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
+ [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-199-c4Z-aiOMNviz6dxVJGthYg-1; Tue, 11 Nov 2025 15:36:00 -0500
+X-MC-Unique: c4Z-aiOMNviz6dxVJGthYg-1
+X-Mimecast-MFC-AGG-ID: c4Z-aiOMNviz6dxVJGthYg_1762893359
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4edaf9e48ecso5738761cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 12:36:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1762893143; x=1763497943; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=dYUm7OJZV3XyKHmf7ftlFF/uvzw7zcdGh4/K0Cu0MuQ=;
-        b=rQG1zSPpJy5JmJWeD5WdbGWN0NclQ9xB7Ezo2WgJZnQB5NUjPCBEVjaW8SXIreaeOm
-         VmZeoSu4IUlgL346GGSWGID8VV6Sv5ckRdONhL7RDnHP/BEnAXRWzCiznU/tiZ1L2+NF
-         nRTo+uAoeuc2JnptHVN+CrJlWzPLYTo32tPRvOT/WZdLN4gRaExaXCAIv4B3E7wy674y
-         RjKTrths1xQNXIu5QJIdw/KXHuaTw4Qqcwf26r4Tz56p3SU/h1i3wL24PK8yqQTr6knM
-         DuIWnvkFi4bVIFjl98EKNKLd4KZk+1m//7moVednEmrNIS8q6qvWY7yAUl+lfhSyX7FM
-         MHDg==
+        d=redhat.com; s=google; t=1762893359; x=1763498159; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=YmCjT8+RKuIKK6LhjKXvotcpZamLjJoCMEYtCkqqZWc=;
+        b=iwQicVeuEnENl3z+ZPSeCkoposb7Er0/W5FtAMx9WkOIWA97hUaAI4gD9n7UVFScU/
+         8KBxVgpFiHEuGITV3GsBInvqscnfEgy01+QPlFBzWBiJkO2e+sYvjE1I86+7QvdQUGn/
+         oUwGO1oLkCTNqhhpbiaIH8VL7LLLfyafGV/MhMcTqxYQP+s7rWC8+4AJSwT18LNyvtLb
+         ND7KtDrObdHM9tRbXuiQYUVqKjN8pK+57RXzidOKigpLFfwtCqhQz1Mp7ndV2fKQMtQd
+         /rcKxt+phQS+CwS1CNb6sqcvmUhe4Ga/aHvZJa9ntfpeqceMXWc7yol8FHPEFYHKogLM
+         YkuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762893143; x=1763497943;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dYUm7OJZV3XyKHmf7ftlFF/uvzw7zcdGh4/K0Cu0MuQ=;
-        b=eDEXPcEuCtwKtvmrphudlo253er/X6rcZm1AC5oTy1XcgHzw7ghAcaZW2zQrVEQhm8
-         HXKI2ieWm0GmKpZjwswBx5IXGAZ6wYHSqYUGzjF5aPPT/zM0uPlqnfH1YS53rcLJi6Pv
-         mF2I9gMxL0u93djpLd+1iXFUs8TGJoCf1KJ8lMzk3GVZsJmw4A0wcyzVRFZZ5xX7YZVS
-         6sgfAsREICbwrqg4bxTDJXR4ERdKYIFQDepkgecvKyTXAP7ixbC80sJOKG+w3rXK3VVb
-         dy9IeO5D+5hfpY4B6B7R9Cfcu2Mx6UEDzHovzWyIcpeWCfrlVT1r0QKprcb01AzpePQB
-         ow8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU3r7LxziiUCsQEbW6UjKP7+HNLKJaiR3G+B4k46X7Q9Ly7Bq/staN1+cNm+3ujizTb7ck73QFx3MqmLjU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyl0gZ5YCWQAQEaPZyL+X1K5CHs4QscJZutjZmNSbc/uZuTm1iW
-	28hpqkWTLI65V9kBbVKd/yo4VbugEoqsplot338dg17enrOiAP7VoKhGZoZJfDMmhg==
-X-Gm-Gg: ASbGncsdmczPbbk+DEaPE6ZXmk/yooxpeAyIkmrOH7tq7UUNhfPFPsPl6HDYCsJcUl4
-	Xl0rtq/oT3EPPfdhH5puIHPM7nLoPZZL1OfN32yt+djUAT/kfuKh8GHjWUtGbi6NCkj2LKvClKP
-	3tykG193wQLYVhMrflbaHwgXiRqpBB0mrtmkqlrVC30rbM5V4JZ6Jt5GKeaHSD9I9eouKnr8kTu
-	+xcfgj3hAFS6VGQQg9TPb05JF4e9yr8wb9+rpobybFBC5hO/mWNzsgsE6VTsaiWXtGR63M7n7VY
-	+9JxNUluWgZ/CubEObSq7g6fDHj4Rm2iLIcCBjZpQTwVLADdh1FnYFXC+5aAkG/hg+nXnUXvp3n
-	sY2jBWgcJRlQ4kgUrxCfa1ald0dHE0NiUyUCO1Az8DQ0MoJUkaMYcieDB3YBLKaskBkwDawFieh
-	BIRA60+PYozF4e
-X-Google-Smtp-Source: AGHT+IEkv77qmXfGZnpkhl9iguMrS7tP7L4ASotsDsRR0LhAB5TtV3JsEyFLTrRKLeeoWueAIs48qA==
-X-Received: by 2002:a05:620a:4710:b0:8b2:3411:83ee with SMTP id af79cd13be357-8b29b78f9bbmr75718385a.40.1762893143109;
-        Tue, 11 Nov 2025 12:32:23 -0800 (PST)
-Received: from rowland.harvard.edu ([2601:19b:d03:1700::ba76])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b29a84c6b3sm53008285a.10.2025.11.11.12.32.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Nov 2025 12:32:22 -0800 (PST)
-Date: Tue, 11 Nov 2025 15:32:19 -0500
-From: Alan Stern <stern@rowland.harvard.edu>
-To: ccc194101@163.com
-Cc: Alan Swanson <reiver@improbability.net>, benjamin.tissoires@redhat.com,
-	gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-	usb-storage@lists.one-eyed-alien.net, linux-kernel@vger.kernel.org,
-	Chen Changcheng <chenchangcheng@kylinos.cn>
-Subject: Re: [PATCH v2] usb: usb-storage: No additional quirks need to be
- added to the ECD819-SU3 optical drive.
-Message-ID: <c334a466-ebdc-434b-8a6d-73b177ce25ad@rowland.harvard.edu>
-References: <20251111012737.13662-1-ccc194101@163.com>
+        d=1e100.net; s=20230601; t=1762893359; x=1763498159;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YmCjT8+RKuIKK6LhjKXvotcpZamLjJoCMEYtCkqqZWc=;
+        b=JilzZQthHDaHG1do20Ucn7+NAMQMab/cD0q1PqM9Q2RSuEpWtfsdAIhMU87rj/na+7
+         DAgMhEHn8F7Tu458xJKsi4j1R3sNbPf9Fi1/AEbY3Gy7YqFFSKfBLlFOm47y/uv8uAxP
+         eJ0XxfbLuODvhUCli0yV66crLqbf2D+2QC6nKVbPN6DHk7kv+FQnElg85LK15ZQbe3ci
+         Qt63eot8VW1o/lvrhfTWfyY3vz27iT68520eWdRW3tF2yGIDjpGaILmXPne8ncTjJO5Q
+         EfLX5TcxFYWQRR8b6GyA39FOrfMX6s9euFc3yvIejoA0ac1AqcQXEC3eYG/W4tvDTpSp
+         i1OQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVTanRje6nagKfglJZA1CqPEeMuwYOCPacDtsFgkHBAXCoqkG8qlUROopBM34YLEvcFQnvsKmbo/nYA7G0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjLde/M4S46Hg8BQRWzk1HPjnc+X6fclFgalH/j4U3FDHkCFg8
+	4n26SnXLbvQp1A8lJCvrRE/txWqhDQofYQYXTLA9VklsKAKMx0Z3B6xKKpcbmbHHfl/KV+JCqJ3
+	oOK2kLVGjwBdKwoLD7N0Rz7LT6NIXTdHzMZW2sjA9bo7JWm8klDC5zu6e/NpynEDPvw==
+X-Gm-Gg: ASbGnct/s5hVu/8vG64s7E24zUU3DMkIqH4ciP7pFcGYYP0MIhCvyyKm4PuPIb7c1//
+	KesT6wLU7fhzd5mSGohL+wtYagtDwVcV+8GrjdtDiPeSNWdjmRSwQGJbu3Lw7vcl4ku+MLaS3s4
+	/mGy0HG6s4/ju4OcosuvWIWqvQlBOSf7bLT91yAV7rZL/iUNg+0lifJbqDZ4IldAVwtcV0nyiVt
+	/j+5qg1mDR603gr2+x9qHYvsYpw8ScL8xoxBWdXBm4o7kWrOyxfpJqWu87cbHMuXjHziYi0hE9/
+	ecT1a9snxNWE8Hy29XBCTpFAlMAYd2Ng5mVcykw5l2D0ThDhQqTUAEW3N/1rGxTUqgpTpynv3l0
+	srvUZIQftah+CntmXPUzsa0nA7NIqabZu5U7B8WR7G/sHsw==
+X-Received: by 2002:a05:622a:20a:b0:4ed:6746:5c3d with SMTP id d75a77b69052e-4eddbc6ab24mr10773911cf.16.1762893359477;
+        Tue, 11 Nov 2025 12:35:59 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFBXBwITu8SOdi23m/v1WrAfxj+dAXOJmYX5gcaOHvQFNT+Gbkj5jipIUCqTWyw9/fEMZFKMA==
+X-Received: by 2002:a05:622a:20a:b0:4ed:6746:5c3d with SMTP id d75a77b69052e-4eddbc6ab24mr10773611cf.16.1762893359117;
+        Tue, 11 Nov 2025 12:35:59 -0800 (PST)
+Received: from ?IPV6:2601:188:c102:b180:1f8b:71d0:77b1:1f6e? ([2601:188:c102:b180:1f8b:71d0:77b1:1f6e])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b29a85ede1sm51844285a.19.2025.11.11.12.35.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Nov 2025 12:35:58 -0800 (PST)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <a4e61aa0-5c1f-490e-9cae-5e478ba809ee@redhat.com>
+Date: Tue, 11 Nov 2025 15:35:57 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251111012737.13662-1-ccc194101@163.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH next] cpuset: Treat tasks in attaching process as
+ populated
+To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
+ Waiman Long <llong@redhat.com>
+Cc: Chen Ridong <chenridong@huaweicloud.com>, tj@kernel.org,
+ hannes@cmpxchg.org, cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+ lujialin4@huawei.com, chenridong@huawei.com
+References: <20251111132632.950430-1-chenridong@huaweicloud.com>
+ <dpo6yfx7tb6b3vgayxnqgxwighrl7ds6teaatii5us2a6dqmnw@ioipae3evzo4>
+ <fed9367d-19bd-4df0-b59d-8cb5a624ef34@redhat.com>
+ <sebxxc2px767l447xr7cmkvlsewvdiazp7ksee3u2hlqaka522@egghgtj4oowf>
+Content-Language: en-US
+In-Reply-To: <sebxxc2px767l447xr7cmkvlsewvdiazp7ksee3u2hlqaka522@egghgtj4oowf>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Nov 11, 2025 at 09:27:37AM +0800, ccc194101@163.com wrote:
-> From: Chen Changcheng <chenchangcheng@kylinos.cn>
-> 
-> The optical drive of ECD819-SU3 has the same vid and pid as INIC-3069,
-> as follows:
-> T:  Bus=02 Lev=02 Prnt=02 Port=01 Cnt=01 Dev#=  3 Spd=5000 MxCh= 0
-> D:  Ver= 3.00 Cls=00(>ifc ) Sub=00 Prot=00 MxPS= 9 #Cfgs=  1
-> P:  Vendor=13fd ProdID=3940 Rev= 3.10
-> S:  Manufacturer=HL-DT-ST
-> S:  Product= DVD+-RW GT80N
-> S:  SerialNumber=423349524E4E38303338323439202020
-> C:* #Ifs= 1 Cfg#= 1 Atr=80 MxPwr=144mA
-> I:* If#= 0 Alt= 0 #EPs= 2 Cls=08(stor.) Sub=02 Prot=50 Driver=usb-storage
-> E:  Ad=83(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-> E:  Ad=0a(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-> 
-> This will result in the optical drive device also adding
-> the quirks of US_FL_NO_ATA_1X. When performing an erase operation,
-> it will fail, and the reason for the failure is as follows:
-> [  388.967742] sr 5:0:0:0: [sr0] tag#0 Send: scmd 0x00000000d20c33a7
-> [  388.967742] sr 5:0:0:0: [sr0] tag#0 CDB: ATA command pass through(12)/Blank a1 11 00 00 00 00 00 00 00 00 00 00
-> [  388.967773] sr 5:0:0:0: [sr0] tag#0 Done: SUCCESS Result: hostbyte=DID_TARGET_FAILURE driverbyte=DRIVER_OK cmd_age=0s
-> [  388.967773] sr 5:0:0:0: [sr0] tag#0 CDB: ATA command pass through(12)/Blank a1 11 00 00 00 00 00 00 00 00 00 00
-> [  388.967803] sr 5:0:0:0: [sr0] tag#0 Sense Key : Illegal Request [current]
-> [  388.967803] sr 5:0:0:0: [sr0] tag#0 Add. Sense: Invalid field in cdb
-> [  388.967803] sr 5:0:0:0: [sr0] tag#0 scsi host busy 1 failed 0
-> [  388.967803] sr 5:0:0:0: Notifying upper driver of completion (result 8100002)
-> [  388.967834] sr 5:0:0:0: [sr0] tag#0 0 sectors total, 0 bytes done.
-> 
-> Signed-off-by: Chen Changcheng <chenchangcheng@kylinos.cn>
-> ---
->  drivers/usb/storage/unusual_uas.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/storage/unusual_uas.h b/drivers/usb/storage/unusual_uas.h
-> index 1477e31d7763..352e9d7324a4 100644
-> --- a/drivers/usb/storage/unusual_uas.h
-> +++ b/drivers/usb/storage/unusual_uas.h
-> @@ -98,7 +98,7 @@ UNUSUAL_DEV(0x125f, 0xa94a, 0x0160, 0x0160,
->  		US_FL_NO_ATA_1X),
->  
->  /* Reported-by: Benjamin Tissoires <benjamin.tissoires@redhat.com> */
-> -UNUSUAL_DEV(0x13fd, 0x3940, 0x0000, 0x9999,
-> +UNUSUAL_DEV(0x13fd, 0x3940, 0x0209, 0x0209,
->  		"Initio Corporation",
->  		"INIC-3069",
->  		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
+On 11/11/25 2:25 PM, Michal Koutný wrote:
+> On Tue, Nov 11, 2025 at 10:16:33AM -0500, Waiman Long <llong@redhat.com> wrote:
+>> For internal helper like this one, we may not really need that as
+>> almost all the code in cpuset.c are within either a cpuset_mutex or
+>> callback_lock critical sections. So I am fine with or without it.
+> OK, cpuset_mutex and callback_lock are close but cgroup_is_populated()
+> that caught my eye would also need cgroup_mutex otherwise "the result
+> can only be used as a hint" (quote from cgroup.h).
+>
+> Or is it safe to assume that cpuset_mutex inside cpuset_attach() is
+> sufficient to always (incl. exits) ensure stability of
+> cgroup_is_populated() result?
+>
+> Anyway, I'd find some clarifications in the commit message or the
+> surrounding code about this helpful. (Judgment call, whether with a
+> lockdep macro. My opinion is -- why not.)
 
-A couple of things...
+For attach_in_progress, it is protected by the cpuset_mutex. So it may 
+make sense to add a lockdep_assert_held() for that.
 
-First, the 0x0209 suggestion I made earlier was a mistake; it should 
-have been 0x0309, as reported by Alan Swanson.
+You are right that there are problems WRT the stability of 
+cgroup_is_populated() value.
 
-Second, are you sure that your device doesn't need the IGNORE_RESIDUE 
-flag, like his bluray drive?
+I think "cgrp->nr_populated_csets + cs->attach_in_progress" should be 
+almost stable for the cgroup itself with cpuset_mutex, but there can be 
+a small timing window after cpuset_attach(), but before the stat is 
+updated where the sum is 0, but there are actually tasks in the cgroup.
 
-Alan Stern
+For "cgrp->nr_populated_domain_children + 
+cgrp->nr_populated_threaded_children", it also has the problem that the 
+sum can be 0 but there are attach_in_progress set in one or more of the 
+child cgroups. So even with this patch, we can't guarantee 100% that 
+there can be no task in the partition even if it has empty 
+effective_cpus. It is only a problem for nested local partitions though 
+as remote partitions are not allowed to exhaust all the CPUs from root 
+cgroup.
+
+We should probably document that limitation to warn users if they try to 
+create nested local partitions where the parent partition root of the 
+child partitions has empty effective_cpus.
+
+Cheers,
+Longman
+
+
+
 
