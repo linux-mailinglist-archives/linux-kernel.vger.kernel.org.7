@@ -1,161 +1,188 @@
-Return-Path: <linux-kernel+bounces-895320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id B53A6C4D754
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:44:23 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F1D1C4D832
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:52:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3B35034F88C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:44:23 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A9FEA4FC59F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:44:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 255BF354AD0;
-	Tue, 11 Nov 2025 11:40:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D020A359703;
+	Tue, 11 Nov 2025 11:40:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="JkwyYsJA"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Esh1xndh"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4D671D63C2;
-	Tue, 11 Nov 2025 11:40:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63FAE359701
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 11:40:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762861236; cv=none; b=kQu38c9CJ7hBgQgKH5Eh/+kz9CxAFMyjjQuJYx+jLEGfJEWCSgWT4a6ehHpP4pBx2h8H4U8ZRSzZPwik5NuuC1ApXRA7S0dIbvL0qiT/pq/ndx1SsbuEczz28dcKga1f+DNZEL4VPqbp5sPAPivZxzZYMu0xW09+vgyIslGykWM=
+	t=1762861244; cv=none; b=hmXK15Wk+EXxSTmF4rZIiF/dkpvM11uiNJiqqdw9RUldY7uzhIvbL7dSqafyHvJ791vL2/OBNYv3iFyeQNshTm4WD8r5YFaHZJ+E4rSz1yZL6klCYD6ZNw06w5FtiG82JQdE6CfejZzwlotMySMtkUgmzHOcmTikKwaajjdmBn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762861236; c=relaxed/simple;
-	bh=hR91vdwpSfpmbKbLu2l5eJHLKqT5dbj+LrLS8yyS+a8=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=lEG/jfSO2kHSb7PLN5xa5Yk+hvGDc/LeaSq9K6PcyNveD0LbwOZge5fYY/7eKtgCVh+/pHyeEmqW6aPPUpS9Aq2+/iUmanY81NdK4qTt/Lx0Fey296rbT0IOFJLENV0/TlTyE0wfocNsnlaHO5T9lnI0QCXx85ItK8LOFYD4lc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=JkwyYsJA; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5AB2xXUJ023600;
-	Tue, 11 Nov 2025 11:40:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=8ie7IM
-	GwHdNKCBVnPOW7BNm7UFdHOm5GlpkqJRFNifY=; b=JkwyYsJAS+pUgrTx0Md3Nz
-	xFewumww2vYdaQoDrmPnHHeY2KZXK/EoMJ9rmUUS0HgfffvZ+mbL9ObpGtYhfpDf
-	iPPjGCPCSUuGG1IOHKfIQKR0CqaNhWTtQbJRPUxbLulB/nuN7cnx18wfrCKUsgb9
-	UCLlN/gVdVNEH1OG2cgIIqDHsn14za/6yIHQfqfEqNC2raGumlMXQgA822i+M0AF
-	VePJXFukS8UXy3Qv0IDCyf4+2OfQ216GpzedIosbioR6JGA+8QAJ60DE25DbyC/b
-	QXUnI9uumDD+Z4VezVNRJ+pPxBDVmz1rr+VQwXIbiYRIwvAgdva2wVYACm/rWkYA
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4aa5tjtm3m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Nov 2025 11:40:09 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5ABBe98B001479;
-	Tue, 11 Nov 2025 11:40:09 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4aa5tjtm3h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Nov 2025 11:40:09 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5AB9ehkM008193;
-	Tue, 11 Nov 2025 11:40:08 GMT
-Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4aah6mth9h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Nov 2025 11:40:08 +0000
-Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
-	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5ABBe8oU53412136
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 11 Nov 2025 11:40:08 GMT
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 2901E58054;
-	Tue, 11 Nov 2025 11:40:08 +0000 (GMT)
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1397F58045;
-	Tue, 11 Nov 2025 11:40:07 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.139.215])
-	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 11 Nov 2025 11:40:06 +0000 (GMT)
-Message-ID: <16c73b4e0761a1622770102d1d48982fe9ae86ac.camel@linux.ibm.com>
-Subject: Re: [Patch V1] ima: avoid duplicate policy rules insertions
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Tahera Fahimi <taherafahimi@linux.microsoft.com>, roberto.sassu@huawei.com,
-        dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, code@tyhicks.com
-Cc: Lennart Poettering <mzxreary@0pointer.de>
-In-Reply-To: <20251106181404.3429710-1-taherafahimi@linux.microsoft.com>
-References: <20251106181404.3429710-1-taherafahimi@linux.microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Tue, 11 Nov 2025 06:40:06 -0500
+	s=arc-20240116; t=1762861244; c=relaxed/simple;
+	bh=3s82MD6md8lIZ4jP7QmLgx9ib2Ee6ZW1Vem42sRQwTs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lsxs6OYLfnhCRmwuGELcdaq3c2L7L5Ya4sKBv5URtfJfa1JH+PcR4VHzFKbaUUNVd+UNRDpEEnpUrNN/fJUuh2Vyg9kwZTLcPr4h7tfjJUmR/3LiWLQ3SgjUsrAAG55wfH8oPhbIzxPEukE66GvgTVjFsItMatyzCy1xQx4it6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Esh1xndh; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762861241;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=COiLb7RNZ04NFBfQ8iT/p1YoCtMA6keD7KkqHWMXjZI=;
+	b=Esh1xndh9kukS/V/2COBHIMUIa5Iajsp7ijHlqSL0BfNsQtjYp1ANtILj+hHvo6ZMJ0XpF
+	z6CA7D2DwU4EsAM+m66mIx76a/u3JP82HsG2rIa/g9DtfonNVAk9v7pk7xhZ8OcrFC9yrq
+	If4+pGW/8DNSLNgMnjkE7fo65Qy8kGI=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-29-oqAjKWKEM1eU3fRI3TXULg-1; Tue,
+ 11 Nov 2025 06:40:37 -0500
+X-MC-Unique: oqAjKWKEM1eU3fRI3TXULg-1
+X-Mimecast-MFC-AGG-ID: oqAjKWKEM1eU3fRI3TXULg_1762861236
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3997D180048E;
+	Tue, 11 Nov 2025 11:40:35 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.8])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A44341800378;
+	Tue, 11 Nov 2025 11:40:32 +0000 (UTC)
+Date: Tue, 11 Nov 2025 19:40:29 +0800
+From: Pingfan Liu <piliu@redhat.com>
+To: Juri Lelli <juri.lelli@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Waiman Long <longman@redhat.com>,
+	Chen Ridong <chenridong@huaweicloud.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Pierre Gondois <pierre.gondois@arm.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>
+Subject: Re: [PATCHv5] sched/deadline: Walk up cpuset hierarchy to decide
+ root domain when hot-unplug
+Message-ID: <aRMgrQRqpwvBSPC6@fedora>
+References: <20251110014706.8118-1-piliu@redhat.com>
+ <aRHJHxfEI-tnotRe@jlelli-thinkpadt14gen4.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Evolution 3.54.3 (3.54.3-2.fc41) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: Y3HENMEAaKwFjPzQZBz4-AHpwTJjDbBO
-X-Proofpoint-ORIG-GUID: BrrJooCEo-ClC07HzSrPnYFuIOCppHAW
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA4MDA5OSBTYWx0ZWRfX9934H9BHLfYy
- tu2xJ5e7hh7EFtIkfFcb7YB2vIHcut/CdsHlnYZYU4PN6MInxdifu2FDx/algA2fmDpepUNn+xY
- gG/HCJDiVXIRUJmpVBaW5NbmUjOiJyh9M08V2mAPhyhinxV6Zsbka54LMINNpUCvZNd7mlw4J21
- QHkMJq3iwcMzywjXUjoE6Ml1C/qVUN92+mthb4n5G0iEfPJ8oJpD2hQ2gjYg8hi03g+AkdYnGIT
- XBmILK0sAGb1Zsq3nLk4k0U8FIoMrCsdM7WTBMKBfoRMjUL1EMoI1UzM8lC2wZVRceKGcE9GMtG
- vwHq98DyDFtzIGVJPWQhPM/fQRZFrcN7XK9ZDWhr7YZPEJjYHweBLUw9sLK/1M2URfNz/T2D3KY
- nveQpq5Yeq7DwyqvjlOeedrzjO2dSg==
-X-Authority-Analysis: v=2.4 cv=V6xwEOni c=1 sm=1 tr=0 ts=69132099 cx=c_pps
- a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=yMhMjlubAAAA:8 a=Te6HIuTWUB4XkS3UWhoA:9 a=QEXdDO2ut3YA:10
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-11_02,2025-11-11_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1011 lowpriorityscore=0 adultscore=0 malwarescore=0 impostorscore=0
- suspectscore=0 priorityscore=1501 phishscore=0 bulkscore=0 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2511080099
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aRHJHxfEI-tnotRe@jlelli-thinkpadt14gen4.remote.csb>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-[Cc'ing Lennart Poettering]
+Hi Juri,
 
-On Thu, 2025-11-06 at 18:14 +0000, Tahera Fahimi wrote:
-> Prevent redundant IMA policy rules by checking for duplicates before inse=
-rtion. This ensures that
-> rules are not re-added when userspace is restarted (using systemd-soft-re=
-boot) without a full system
-> reboot. ima_rule_exists() detects duplicates in both temporary and active=
- rule lists.
->=20
-> Signed-off-by: Tahera Fahimi <taherafahimi@linux.microsoft.com>
+Thanks for your review. Please see the comments below.
 
-Sorry for the delay in responding ...
+On Mon, Nov 10, 2025 at 12:14:39PM +0100, Juri Lelli wrote:
+> Hi,
+> 
+> Looks like this has two issues.
+> 
+> On 10/11/25 09:47, Pingfan Liu wrote:
+> 
+> ...
+> 
+> > +/*
+> > + * This function always returns a non-empty bitmap in @cpus. This is because
+> > + * if a root domain has reserved bandwidth for DL tasks, the DL bandwidth
+> > + * check will prevent CPU hotplug from deactivating all CPUs in that domain.
+> > + */
+> > +static void dl_get_task_effective_cpus(struct task_struct *p, struct cpumask *cpus)
+> > +{
+> > +	const struct cpumask *hk_msk;
+> > +
+> > +	hk_msk = housekeeping_cpumask(HK_TYPE_DOMAIN);
+> > +	if (housekeeping_enabled(HK_TYPE_DOMAIN)) {
+> > +		if (!cpumask_intersects(p->cpus_ptr, hk_msk)) {
+> > +			/*
+> > +			 * CPUs isolated by isolcpu="domain" always belong to
+> > +			 * def_root_domain.
+> > +			 */
+> > +			cpumask_andnot(cpus, cpu_active_mask, hk_msk);
+> > +			return;
+> > +		}
+> > +	}
+> > +
+> > +	/*
+> > +	 * If a root domain holds a DL task, it must have active CPUs. So
+> > +	 * active CPUs can always be found by walking up the task's cpuset
+> > +	 * hierarchy up to the partition root.
+> > +	 */
+> > +	cpuset_cpus_allowed(p, cpus);
+> 
+> Grabs callbak_lock spin_lock (sleepable on RT) under pi_lock
+> raw_spin_lock.
+> 
 
-Before trying to fix the "problem", let's try to understand it first.  At l=
-east
-on my test system (-rc5), kexec is working as designed.  On boot, systemd
-replaces the existing builtin IMA policy with a custom IMA policy.  The arc=
-h
-specific policies are not affected, as they are persistent.  On a soft rebo=
-ot
-(kexec), the IMA custom policy is re-loaded as expected.
+Yes, it should be fixed. I'll discuss it in my reply to Waiman's email later.
 
-To verify the above behavior, extend the IMA policy before the soft reboot.=
-=20
-Notice after the soft reboot that the original custom IMA policy is loaded =
-and
-not the extended IMA policy.  Roberto, if there is a problem with this beha=
-vior,
-we'll discuss it independently of this proposed patch.
+> > +}
+> > +
+> > +/* The caller should hold cpuset_mutex */
+> >  void dl_add_task_root_domain(struct task_struct *p)
+> >  {
+> >  	struct rq_flags rf;
+> >  	struct rq *rq;
+> >  	struct dl_bw *dl_b;
+> > +	unsigned int cpu;
+> > +	struct cpumask msk;
+> 
+> Potentially huge mask allocated on the stack.
+> 
 
-The question is why are you seeing duplicate IMA policy rules?  What is spe=
-cial
-about your environment?
+Since there's no way to handle memory allocation failures, could it be
+done by using alloc_cpumask_var() in init_sched_dl_class() to reserve
+the memory for this purpose?
 
---=20
-thanks,
+Best Regards,
 
-Mimi
+Pingfan
+> >  	raw_spin_lock_irqsave(&p->pi_lock, rf.flags);
+> >  	if (!dl_task(p) || dl_entity_is_special(&p->dl)) {
+> > @@ -2891,16 +2923,22 @@ void dl_add_task_root_domain(struct task_struct *p)
+> >  		return;
+> >  	}
+> >  
+> > -	rq = __task_rq_lock(p, &rf);
+> > -
+> > +	/*
+> > +	 * Get an active rq, whose rq->rd traces the correct root
+> > +	 * domain.
+> > +	 * And the caller should hold cpuset_mutex, which gurantees
+> > +	 * the cpu remaining in the cpuset until rq->rd is fetched.
+> > +	 */
+> > +	dl_get_task_effective_cpus(p, &msk);
+> > +	cpu = cpumask_first_and(cpu_active_mask, &msk);
+> > +	BUG_ON(cpu >= nr_cpu_ids);
+> > +	rq = cpu_rq(cpu);
+> >  	dl_b = &rq->rd->dl_bw;
+> > -	raw_spin_lock(&dl_b->lock);
+> >  
+> > +	raw_spin_lock(&dl_b->lock);
+> >  	__dl_add(dl_b, p->dl.dl_bw, cpumask_weight(rq->rd->span));
+> > -
+> >  	raw_spin_unlock(&dl_b->lock);
+> > -
+> > -	task_rq_unlock(rq, p, &rf);
+> > +	raw_spin_unlock_irqrestore(&p->pi_lock, rf.flags);
+> 
+> Thanks,
+> Juri
+> 
+
 
