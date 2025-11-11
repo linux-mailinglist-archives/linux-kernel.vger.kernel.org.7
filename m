@@ -1,39 +1,39 @@
-Return-Path: <linux-kernel+bounces-895879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19B34C4F2BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 18:04:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A77CDC4F2C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 18:04:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BD0B189F049
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:03:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71AA11894855
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:03:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFEE43730F3;
-	Tue, 11 Nov 2025 17:02:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1397D339707;
+	Tue, 11 Nov 2025 17:03:24 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0F6632826A;
-	Tue, 11 Nov 2025 17:02:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85B491AA7BF;
+	Tue, 11 Nov 2025 17:03:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762880567; cv=none; b=d4nFu/Xcg1ACvogTEGF6CX69+SE4y8NWNWxVKE7waJ7ZKHnB0fNf/ivAWpvYoQX+N/xjE9muYQxX6mbOoX1VBGg3C8HbmIVPwNMOw830H1W+jUrpWork/x1T4krvn1/VUPsYvj8hSvV4yaI3wUDcW57xVwP8957J0DhrkwpwUIA=
+	t=1762880603; cv=none; b=rxp0NS/ArM8zpAaOhc9zTTMMo4lE3wpD1B7I4ldFBqOs5s+AIe+ihjhl3Pc5tYXRKGSJ3Awy2es7OtiPQTC0mOiDdIQN3i6TNYlnJ1jhXgB6aLsoUozvxbgs8yW0qafq9DoM4MvV8LVu1bxhmfRRiYTLQkprlx34RnV+aQl48pA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762880567; c=relaxed/simple;
-	bh=h3CaU70Wpl7je4UlRNrwj8Ap9whJXFM9a97Oj0nBeiU=;
+	s=arc-20240116; t=1762880603; c=relaxed/simple;
+	bh=6hgJ697+od9yN3V6FO87e8qKlh58WxLzhORYTJbrO3I=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rFxKt+/YPHjzruE20rlLNKxIra5Tb+q6SMv8VhC88g4ilVt1cq2MJVG8QtkzFlHOGgvP6yNXUtjbPcZFpd0Mq+lOaeTVaQtKIgmp51TO1SgERiqlQYSaHqN0YXZhDyWkBkoOA42cRFmFdjqxxZIryig/rK3tk5ixq8oz3Oq19ww=
+	 In-Reply-To:Content-Type; b=GX7+/4bgzTlJSW2ohzWa5OWOV9aGvBRAngcuflJnijk0i1A6jkeLqQxCxfmFCj8NRseuRDnRpHyxYICVQJEK2P+ofwRLaox8UtSkUZ9G/zEJF0D4NE/FTHBQi/8Lu4FTGjSZieT7Fwd1zeeDq0FIQJQnatb2IvwWFaJeZP/+rxc=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 698FE497;
-	Tue, 11 Nov 2025 09:02:36 -0800 (PST)
-Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8723E3F5A1;
-	Tue, 11 Nov 2025 09:02:39 -0800 (PST)
-Message-ID: <313158c4-055e-481e-9ab1-d5d4213a502a@arm.com>
-Date: Tue, 11 Nov 2025 17:02:38 +0000
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 32480497;
+	Tue, 11 Nov 2025 09:03:13 -0800 (PST)
+Received: from [10.1.31.216] (XHFQ2J9959.cambridge.arm.com [10.1.31.216])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 106E43F5A1;
+	Tue, 11 Nov 2025 09:03:15 -0800 (PST)
+Message-ID: <8f70692c-25a9-4bd0-94ab-43ab435e4b1b@arm.com>
+Date: Tue, 11 Nov 2025 17:03:14 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,176 +41,238 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 04/33] ACPI / PPTT: Find cache level by cache-id
-To: Jonathan Cameron <jonathan.cameron@huawei.com>
-Cc: james.morse@arm.com, amitsinght@marvell.com, baisheng.gao@unisoc.com,
- baolin.wang@linux.alibaba.com, bobo.shaobowang@huawei.com,
- carl@os.amperecomputing.com, catalin.marinas@arm.com, dakr@kernel.org,
- dave.martin@arm.com, david@redhat.com, dfustini@baylibre.com,
- fenghuay@nvidia.com, gregkh@linuxfoundation.org, gshan@redhat.com,
- guohanjun@huawei.com, jeremy.linton@arm.com, kobak@nvidia.com,
- lcherian@marvell.com, lenb@kernel.org, linux-acpi@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- lpieralisi@kernel.org, peternewman@google.com, quic_jiles@quicinc.com,
- rafael@kernel.org, robh@kernel.org, rohit.mathew@arm.com,
- scott@os.amperecomputing.com, sdonthineni@nvidia.com, sudeep.holla@arm.com,
- tan.shaopeng@fujitsu.com, will@kernel.org, xhao@linux.alibaba.com
-References: <20251107123450.664001-1-ben.horgan@arm.com>
- <20251107123450.664001-5-ben.horgan@arm.com>
- <20251110160218.00001d65@huawei.com>
-From: Ben Horgan <ben.horgan@arm.com>
-Content-Language: en-US
-In-Reply-To: <20251110160218.00001d65@huawei.com>
+Subject: Re: [PATCH v4 07/12] mm: enable lazy_mmu sections to nest
+Content-Language: en-GB
+To: Kevin Brodsky <kevin.brodsky@arm.com>, linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org, Alexander Gordeev <agordeev@linux.ibm.com>,
+ Andreas Larsson <andreas@gaisler.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
+ <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ David Hildenbrand <david@redhat.com>, "David S. Miller"
+ <davem@davemloft.net>, David Woodhouse <dwmw2@infradead.org>,
+ "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+ Jann Horn <jannh@google.com>, Juergen Gross <jgross@suse.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
+ Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
+ Peter Zijlstra <peterz@infradead.org>, Suren Baghdasaryan
+ <surenb@google.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Vlastimil Babka <vbabka@suse.cz>, Will Deacon <will@kernel.org>,
+ Yeoreum Yun <yeoreum.yun@arm.com>, linux-arm-kernel@lists.infradead.org,
+ linuxppc-dev@lists.ozlabs.org, sparclinux@vger.kernel.org,
+ xen-devel@lists.xenproject.org, x86@kernel.org
+References: <20251029100909.3381140-1-kevin.brodsky@arm.com>
+ <20251029100909.3381140-8-kevin.brodsky@arm.com>
+ <999feffa-5d1d-42e3-bd3a-d949f2a9de9d@arm.com>
+ <cc9dc398-b9c5-4bb8-94ad-7e7f3ddd5b4f@arm.com>
+ <824bf705-e9d6-4eeb-9532-9059fa56427f@arm.com>
+ <58fd1a6e-f2c4-421c-9b95-dea4b244a515@arm.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <58fd1a6e-f2c4-421c-9b95-dea4b244a515@arm.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi Jonathan,
-
-On 11/10/25 16:02, Jonathan Cameron wrote:
-> On Fri, 7 Nov 2025 12:34:21 +0000
-> Ben Horgan <ben.horgan@arm.com> wrote:
-> 
->> From: James Morse <james.morse@arm.com>
+On 11/11/2025 15:56, Kevin Brodsky wrote:
+> On 11/11/2025 10:24, Ryan Roberts wrote:
+>> [...]
 >>
->> The MPAM table identifies caches by id. The MPAM driver also wants to know
->> the cache level to determine if the platform is of the shape that can be
->> managed via resctrl. Cacheinfo has this information, but only for CPUs that
->> are online.
->>
->> Waiting for all CPUs to come online is a problem for platforms where
->> CPUs are brought online late by user-space.
->>
->> Add a helper that walks every possible cache, until it finds the one
->> identified by cache-id, then return the level.
->>
->> Signed-off-by: James Morse <james.morse@arm.com>
->> Signed-off-by: Ben Horgan <ben.horgan@arm.com>
+>>>>> +		state->active = true;
+>>>>> +		arch_enter_lazy_mmu_mode();
+>>>>> +	}
+>>>>>  }
+>>>>>  
+>>>>>  static inline void lazy_mmu_mode_disable(void)
+>>>>>  {
+>>>>> -	arch_leave_lazy_mmu_mode();
+>>>>> +	struct lazy_mmu_state *state = &current->lazy_mmu_state;
+>>>>> +
+>>>>> +	VM_WARN_ON_ONCE(state->nesting_level == 0);
+>>>>> +	VM_WARN_ON(!state->active);
+>>>>> +
+>>>>> +	if (--state->nesting_level == 0) {
+>>>>> +		state->active = false;
+>>>>> +		arch_leave_lazy_mmu_mode();
+>>>>> +	} else {
+>>>>> +		/* Exiting a nested section */
+>>>>> +		arch_flush_lazy_mmu_mode();
+>>>>> +	}
+>>>>>  }
+>>>>>  
+>>>>>  static inline void lazy_mmu_mode_pause(void)
+>>>>>  {
+>>>>> +	struct lazy_mmu_state *state = &current->lazy_mmu_state;
+>>>>> +
+>>>>> +	VM_WARN_ON(state->nesting_level == 0 || !state->active);
+>>>> nit: do you need the first condition? I think when nesting_level==0, we expect
+>>>> to be !active?
+>>> I suppose this should never happen indeed - I was just being extra
+>>> defensive.
+>>>
+>>> Either way David suggested allowing pause()/resume() to be called
+>>> outside of any section so the next version will bail out on
+>>> nesting_level == 0.
+>> Ignoring my current opinion that we don't need pause/resume at all for now; Are
+>> you suggesting that pause/resume will be completely independent of
+>> enable/disable? I think that would be best. So enable/disable increment and
+>> decrement the nesting_level counter regardless of whether we are paused.
+>> nesting_level 0 => 1 enables if not paused. nesting_level 1 => 0 disables if not
+>> paused. pause disables nesting_level >= 1, resume enables if nesting_level >= 1.
 > 
-> A few things inline.
+> This is something else. Currently the rules are:
 > 
->> ---
->> Changes since v3:
->> Tags dropped due to rework
->> Fallout/simplification from adding acpi_pptt_cache_v1_full
->> Look for each cache type before incrementing level
->> ---
->>  drivers/acpi/pptt.c  | 63 ++++++++++++++++++++++++++++++++++++++++++++
->>  include/linux/acpi.h |  5 ++++
->>  2 files changed, 68 insertions(+)
->>
->> diff --git a/drivers/acpi/pptt.c b/drivers/acpi/pptt.c
->> index 1ed2099c0d1a..71841c106020 100644
->> --- a/drivers/acpi/pptt.c
->> +++ b/drivers/acpi/pptt.c
->> @@ -918,3 +918,66 @@ void acpi_pptt_get_cpus_from_container(u32 acpi_cpu_id, cpumask_t *cpus)
->>  				     entry->length);
->>  	}
->>  }
->> +
->> +/**
->> + * find_acpi_cache_level_from_id() - Get the level of the specified cache
->> + * @cache_id: The id field of the cache
->> + *
->> + * Determine the level relative to any CPU for the cache identified by
->> + * cache_id. This allows the property to be found even if the CPUs are offline.
->> + *
->> + * The returned level can be used to group caches that are peers.
->> + *
->> + * The PPTT table must be rev 3 or later.
->> + *
->> + * If one CPU's L2 is shared with another CPU as L3, this function will return
->> + * an unpredictable value.
->> + *
->> + * Return: -ENOENT if the PPTT doesn't exist, the revision isn't supported or
->> + * the cache cannot be found.
->> + * Otherwise returns a value which represents the level of the specified cache.
->> + */
->> +int find_acpi_cache_level_from_id(u32 cache_id)
->> +{
->> +	int cpu;
->> +	struct acpi_table_header *table;
->> +
->> +	table = acpi_get_pptt();
->> +	if (!table)
->> +		return -ENOENT;
->> +
->> +	if (table->revision < 3)
->> +		return -ENOENT;
->> +
->> +	for_each_possible_cpu(cpu) {
->> +		bool not_empty = true;
->> +		u32 acpi_cpu_id;
->> +		struct acpi_pptt_cache_v1_full *cache;
->> +		struct acpi_pptt_processor *cpu_node;
->> +
->> +		acpi_cpu_id = get_acpi_id_for_cpu(cpu);
+> [A]
 > 
-> Might as well combine this one with declaration.
+> // pausing forbidden
+> enable()
+>     pause()
+>     // pausing/enabling forbidden
+>     resume()
+> disable()
+> 
+> David suggested allowing:
+> 
+> [B]
+> 
+> pause()
+> // pausing/enabling forbidden
+> resume()
+> 
+> Your suggestion is also allowing:
+> 
+> [C]
+> 
+> pause()
+>     // pausing forbidden
+>     enable()
+>     disable()
+> resume()
 
-Will do.
+I think the current kasan kasan_depopulate_vmalloc_pte() path will require [C]
+if CONFIG_DEBUG_PAGEALLOC is enabled on arm64. It calls __free_page() while
+paused. I guess CONFIG_DEBUG_PAGEALLOC will cause __free_page() ->
+debug_pagealloc_unmap_pages() ->->-> update_range_prot() -> lazy_mmu_enable().
 
-> 
->> +		cpu_node = acpi_find_processor_node(table, acpi_cpu_id);
->> +		if (!cpu_node)
->> +			continue;
->> +
->> +		for (int level = 1; not_empty; level++) {
-> 
-> This smells very much like a while loop rather than a for loop. Make
-> it a do/while and you can avoid the somewhat nasty setting not_empty = true
-> just to get in for first iteration.
-> 
-> 		int level = 1;
-> 		do {
-> 			int cache_type[] = { CACHE_TYPE_INST, CACHE_TYPE_DATA, CACHE_TYPE_UNIFIED };
-> 
-> 			not_empty = false;
-> 			for (int i = 0; i < ARRAY_SIZE(cache_type); i++) {
-> 				cache = acpi_find_cache_node(table, acpi_cpu_id, cache_type[i],
-> 							     level, &cpu_node);
-> 				if (!cache)
-> 					continue;
-> 
-> 				not_empty = true;
-> 
-> 				if (acpi_pptt_cache_id_is_valid(cache) &&
-> 				    cache->extra.cache_id == cache_id)
-> 					return level;
-> 			}
-> 		} while (not_empty);
-> 
-> Maybe flip sense of that bool to be empty and !empty for the test.
-
-Yes, this is better. I'll stop abusing the for loop in this patch and
-the next. Changing not_empty to !empty make sense too.
+Arguably you could move the resume() to before the __free_page(). But it just
+illustrates that it's all a bit brittle at the moment...
 
 > 
+>> Perhaps we also need nested pause/resume? Then you just end up with 2 counters;
+>> enable_count and pause_count. Sorry if this has already been discussed.
 > 
->> +			int cache_type[] = {CACHE_TYPE_INST, CACHE_TYPE_DATA, CACHE_TYPE_UNIFIED};
->> +
->> +			not_empty = false;
->> +			for (int i = 0; i < ARRAY_SIZE(cache_type); i++) {
->> +				cache = acpi_find_cache_node(table, acpi_cpu_id, cache_type[i],
->> +							     level, &cpu_node);
->> +				if (!cache)
->> +					continue;
->> +
->> +				not_empty = true;
->> +
->> +				if (acpi_pptt_cache_id_is_valid(cache) &&
->> +				    cache->extra.cache_id == cache_id)
->> +					return level;
->> +			}
->> +		}
->> +	}
->> +
->> +	return -ENOENT;
->> +}
+> And finally:
 > 
+> [D]
 > 
+> pause()
+>     pause()
+>         enable()
+>         disable()
+>     resume()
+> resume()
+> 
+> I don't really mind either way, but I don't see an immediate use for [C]
+> and [D] - the idea is that the paused section is short and controlled,
+> not made up of arbitrary calls. 
+
+If my thinking above is correct, then I've already demonstrated that this is not
+the case. So I'd be inclined to go with [D] on the basis that it is the most robust.
+
+Keeping 2 nesting counts (enable and pause) feels pretty elegant to me and gives
+the fewest opportunities for surprises.
 
 Thanks,
+Ryan
 
-Ben
+> A potential downside of allowing [C] and
+> [D] is that it makes it harder to detect unintended nesting (fewer
+> VM_WARN assertions). Happy to implement it if this proves useful though.
+> 
+> OTOH the idea behind [B] is that it allows the caller of
+> pause()/resume() not to care about whether lazy MMU is actually enabled
+> or not - i.e. the kasan helpers would keep working even if
+> apply_to_page_range() didn't use lazy MMU any more.
+> 
+>>>>> +
+>>>>> +	state->active = false;
+>>>>>  	arch_leave_lazy_mmu_mode();
+>>>>>  }
+>>>>>  
+>>>>>  static inline void lazy_mmu_mode_resume(void)
+>>>>>  {
+>>>>> +	struct lazy_mmu_state *state = &current->lazy_mmu_state;
+>>>>> +
+>>>>> +	VM_WARN_ON(state->nesting_level == 0 || state->active);
+>>>> Similar argument?
+>>>>
+>>>>> +
+>>>>> +	state->active = true;
+>>>>>  	arch_enter_lazy_mmu_mode();
+>>>>>  }
+>>>>>  #else
+>>>>> diff --git a/include/linux/sched.h b/include/linux/sched.h
+>>>>> index cbb7340c5866..11566d973f42 100644
+>>>>> --- a/include/linux/sched.h
+>>>>> +++ b/include/linux/sched.h
+>>>>> @@ -1441,6 +1441,10 @@ struct task_struct {
+>>>>>  
+>>>>>  	struct page_frag		task_frag;
+>>>>>  
+>>>>> +#ifdef CONFIG_ARCH_HAS_LAZY_MMU_MODE
+>>>>> +	struct lazy_mmu_state		lazy_mmu_state;
+>>>>> +#endif
+>>>>> +
+>>>>>  #ifdef CONFIG_TASK_DELAY_ACCT
+>>>>>  	struct task_delay_info		*delays;
+>>>>>  #endif
+>>>>> @@ -1724,6 +1728,18 @@ static inline char task_state_to_char(struct task_struct *tsk)
+>>>>>  	return task_index_to_char(task_state_index(tsk));
+>>>>>  }
+>>>>>  
+>>>>> +#ifdef CONFIG_ARCH_HAS_LAZY_MMU_MODE
+>>>>> +static inline bool in_lazy_mmu_mode(void)
+>>>>> +{
+>>>>> +	return current->lazy_mmu_state.active;
+>>>>> +}
+>>>>> +#else
+>>>>> +static inline bool in_lazy_mmu_mode(void)
+>>>>> +{
+>>>>> +	return false;
+>>>> Just pointing out that this isn't really a correct implementation:
+>>>>
+>>>> lazy_mmu_mode_enable()
+>>>> ASSERT(in_lazy_mmu_mode()) << triggers for arches without lazy mmu
+>>>> lazy_mmu_mode_disable()
+>>>>
+>>>> Although it probably doesn't matter in practice?
+>>> I'd say that the expectation is invalid - lazy MMU mode can only be
+>>> enabled if the architecture supports it. In fact as you pointed out
+>>> above the API may be called in interrupt context but it will have no
+>>> effect, so this sequence would always fail in interrupt context.
+>> Yep, but previously there was no way to query the current state so it didn't
+>> matter. Now you have a query API so it might matter if/when people come along
+>> and use it in unexpected ways.
+> 
+> I suppose the best we can do is document it alongside those helpers
+> (David has already suggested some documentation, see patch 11).
+> 
+>>> Worth nothing that in_lazy_mmu_mode() is only ever called from arch code
+>>> where lazy MMU is implemented. I added the fallback as a matter of
+>>> principle, but it isn't actually required.
+>> Yes, I agree that's the intent. I'm just wondering if it's possible to enforce
+>> that only arch code uses this. Perhaps add some docs to explain that it's only
+>> intended for arches that implement lazy_mmu, and don't define it for arches that
+>> don't, which would catch any generic users?
+> 
+> Yep sounds like the best option - a lot less risk of misuse if it can't
+> be called from generic code :) The build would still succeed on arch's
+> that implement it, but the kernel CI should catch such calls sooner or
+> later.
+> 
+> - Kevin
 
 
