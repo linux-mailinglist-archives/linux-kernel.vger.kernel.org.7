@@ -1,243 +1,122 @@
-Return-Path: <linux-kernel+bounces-895890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 463E5C4F336
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 18:11:36 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54046C4F342
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 18:12:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9ACDE18C2ADB
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:11:56 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 063B64EF927
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:11:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15D78377EB1;
-	Tue, 11 Nov 2025 17:11:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DA31393DCF;
+	Tue, 11 Nov 2025 17:11:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OIPhjcpu"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VMrrB04H"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B75673730D5
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 17:11:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E707A36C5A5;
+	Tue, 11 Nov 2025 17:11:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762881074; cv=none; b=fpcVDzPeKeXJnKay85mlSVUgwyIdwLptOuGxUvJk4Yiy/5rw62W95iitJUuhDVv6uC2bqavBz/pTXQd+6ccxMikKgjpbpdjmY8Go4z//LivYEvAgfzGTA6qjWKQ4605A5BGBoDnhtd4iDW2oR78b+vJgg6LMDs+CKUVqKHj/FiA=
+	t=1762881087; cv=none; b=oyri8DOGSQx6kvAuPcn8018nKsNKBtfkAY3UMWpttR7Xf+JtuQWr9p8NnYrBtPDvQ00YVVKcmwqKFaMoXW7obP4T6WHK+NFXflS4EVf9rMqA1eg7yvskGaUvCu4+X9u2KImWV/nOsTBCC8iPmCp0O69Qt6ImVM81ZmWvza1yYLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762881074; c=relaxed/simple;
-	bh=M5SWC/ZzGICrpsGy0ws7WBFefwMyTwIJqGaOFlz3nW8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ogjap+MphcgDopoCWFATPBeSpbWMn+01kujBVtAuwIeYsJ1n1XPTwWSWUPD9jkCXExcD+8BE5ep1OcqA02r5Pj36erbvc/Cbgu2MnMo315udOH/X4FWjXdaAXbK1zf9/Dn1e4Mwot7v8gpqoeQRoX/OMle/Vpjtriy9UlWeZgJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OIPhjcpu; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-298145fe27eso28962555ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 09:11:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762881072; x=1763485872; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HYA3N5+LW84uc3fFIjJhQ2RE7h8FnuvgCOqxZQpkq8Q=;
-        b=OIPhjcpu5I2CcMnTNd1CfxLLrDO1YTNOqRUD1G5B+wcemg9HTMLdWiG8jAMLCgdNmS
-         QxZD0LyATudpRceb5urcMhhsjnQe5/a7C7YdN194QaveBaRqbHuPX0NXc+gO4PUU08Z4
-         1gpdZG+Z6lNZRZOcXEjNZetmCXBvz8DROE2MG4bzXvd1U7yRWeSKCsnpdaVrd2OsTRYC
-         Zp0BEGF/XWVmHQ+2Ij1oBkf6fPLvnzTFcW55Dpo5EOZDsgYz51OY5sUucdv4BCbhUsCz
-         twoEqfYkuTFBFlhrzLBkvPGWCbZg0RYdjobF85Zhy1OSy6wuAjlpjn2BTMswrX2x17ZV
-         OM0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762881072; x=1763485872;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=HYA3N5+LW84uc3fFIjJhQ2RE7h8FnuvgCOqxZQpkq8Q=;
-        b=HCsE1StG1xdGbS2fw6ToSMFpNcCXnaBzkdaOPIW0SehBA2WqilNy25wWh53BGK+HMe
-         3o8CxTi/ma8wAqgBBXRB/1t5fmT6epcPT1fQ1O2KFOah4Vhf2yziYvkT37Z4FaGTpYwU
-         ZEYYVIrZ6G35YsQmVaUuoIR3Op8O7bvXnTi4WVIBS43rNjL1Ts7nGP30gBuaxyr9SQUV
-         dBY+01dCIMOKOlCbv0MLOV0g28PquLux1aEHMemGvjE2jlldr/5kTNNI6rEoZVbCdGHE
-         PmaFmw2yNs9nkP7ycYCHgqwejTbOzdJ+Qs+koj0LFghWWpGI13yRKMPdiYCUIgZ+pZqF
-         Gc1w==
-X-Forwarded-Encrypted: i=1; AJvYcCUuIix5LKpRpo4fDuaWBl875VooAKZqnbsMCrBRhU7CUgk3EOe2qe/cXfLdv9LCAXoDhKtsLuGOvL86wk8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4WaVzdHlKzpb1sB403jwBsiYB56e2fxaDa1n411OTgeo4VSFH
-	3OBcHbZJdB4Jdqk/I4mSN3WrPN26LUEX/lTtRmN4kpYo2u9bpRCwD671zRKt1/wszZ5wFm3ZeFq
-	GOYSwVogEEcAK0LvT3Qf86O4Dm1oDAcZ5CDM03dfiDg==
-X-Gm-Gg: ASbGnctfnavJBoOHnbKm5zOergKWSJCbEheO/lTlLRhsGFm2UHzd35C5XTgQ/dFi5e/
-	l5ddqpJWkdlxeD7SNNbguIMm8YMnSJj16wCBHE6utP9TAoNfNIhWQ7c498FGW7OC8lYR5kVeES+
-	XPoJVjquMbIqUeknp/ORFmFNF0kb7lrOFCuEcGZIV7INklt8BAvIZQWZLx7AF85egWToVqBZaWw
-	cv3d/ENJ+sr5Bl1DexxGQuGWsxA6aDNU6b3x28wQ0DnJ0AcB3+Hn9LPKajlfT0GtiOXLZnoMfvJ
-	AVc/oxvKcUOt2SB1GpWDsG6gzUI=
-X-Google-Smtp-Source: AGHT+IFlLhpBIxkK/o5HRow5nDOpJpBNkdHxuJq3gOmppeUMKLKNf0PyrtnYTUc2Qk9tZv4yl9D247eFzCIGZIv2wMs=
-X-Received: by 2002:a17:902:ccd1:b0:295:7806:1d7b with SMTP id
- d9443c01a7336-2984eddee65mr509315ad.45.1762881071929; Tue, 11 Nov 2025
- 09:11:11 -0800 (PST)
+	s=arc-20240116; t=1762881087; c=relaxed/simple;
+	bh=hcx3kqxeym77bbJLLtwlcnxx3jS2uIEgaTgsEvo3Xus=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=BdaGH8SlUJA0eORcLGEXmeDQqwbWXJ/Ndq1zJ2RGG7NfLJhxhy0hRv+hNS2EHz4Pk5DjMxeJNQWtbbUI3fpDzo+fdaCD43a1Hwc+V2bNlUKlVm2KRXAipQ48RdvisEoqdxUFJXOCQwQWff5Lwhn8PKZIv3wc4YnGcbB38mQASxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VMrrB04H; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A4CDC4CEF5;
+	Tue, 11 Nov 2025 17:11:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762881086;
+	bh=hcx3kqxeym77bbJLLtwlcnxx3jS2uIEgaTgsEvo3Xus=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=VMrrB04HC6Rbdk8JBTtD67Kap0a4hAl3f71LUuqQHq9oNd9HQM/ghjkXs2HHhoAoV
+	 NspHrhdvzdikKHLg03zzpy1TNfOiKnwYElpfYbkprM77UPcL4XzLld+1oFpEF8bMXG
+	 wamXHjUTaMHFzLv1BjBQfvE2D230bwdPaP8PDXHQVLpUk8e7yaEbVwFQMqJL1NTP70
+	 l/TAtGPfwYb3j0TUUfd1BkC+dieQc91z9maVC+QHyAjnmYS5xaSo+c8FYumLgWbsbJ
+	 S6dgV/VMceHXgQ5wG/q+hgYBdzZqXu7t7fhzjtg7vPhkQ43erzX6t3XMnTjbwaVVFy
+	 oWgTD+js+ojiQ==
+Date: Tue, 11 Nov 2025 11:11:25 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: linux-pci@vger.kernel.org
+Cc: Christian Zigotzky <chzigotzky@xenosoft.de>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	mad skateman <madskateman@gmail.com>,
+	"R . T . Dickinson" <rtd2@xtra.co.nz>,
+	Darren Stevens <darren@stevens-zone.net>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Lukas Wunner <lukas@wunner.de>,
+	luigi burdo <intermediadc@hotmail.com>, Al <al@datazap.net>,
+	Roland <rol7and@gmx.com>, Hongxing Zhu <hongxing.zhu@nxp.com>,
+	hypexed@yahoo.com.au, linuxppc-dev@lists.ozlabs.org,
+	debian-powerpc@lists.debian.org, linux-kernel@vger.kernel.org,
+	Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: [PATCH v2 0/4] PCI/ASPM: Allow quirks to avoid L0s and L1
+Message-ID: <20251111171125.GA2190513@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251111012348.571643096@linuxfoundation.org>
-In-Reply-To: <20251111012348.571643096@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Tue, 11 Nov 2025 22:40:59 +0530
-X-Gm-Features: AWmQ_bkPy11x6qA98zrHbB-fFmThJx0VvL4EnyNUU17Y_7By7h5jvu5tlHvRR1U
-Message-ID: <CA+G9fYs=TLsf6ttjcNep6FSibccva++QJG_FCJsRt+5i7Dxpyw@mail.gmail.com>
-Subject: Re: [PATCH 6.12 000/562] 6.12.58-rc2 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, 
-	achill@achill.org, sr@sladewatkins.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251110222929.2140564-1-helgaas@kernel.org>
 
-On Tue, 11 Nov 2025 at 06:55, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.12.58 release.
-> There are 562 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu, 13 Nov 2025 01:22:51 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.12.58-rc2.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.12.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+On Mon, Nov 10, 2025 at 04:22:24PM -0600, Bjorn Helgaas wrote:
+> From: Bjorn Helgaas <bhelgaas@google.com>
+> 
+> We enabled ASPM too aggressively in v6.18-rc1.  f3ac2ff14834 ("PCI/ASPM:
+> Enable all ClockPM and ASPM states for devicetree platforms") enabled ASPM
+> L0s, L1, and (if advertised) L1 PM Substates.
+> 
+> df5192d9bb0e ("PCI/ASPM: Enable only L0s and L1 for devicetree platforms")
+> (v6.18-rc3) backed off and omitted Clock PM and L1 Substates because we
+> don't have good infrastructure to discover CLKREQ# support, and L1
+> Substates may require device-specific configuration.
+> 
+> L0s and L1 are generically discoverable and should not require
+> device-specific support, but some devices advertise them even though they
+> don't work correctly.  This series is a way to add quirks avoid L0s and L1
+> in this case.
+> 
+> 
+> Bjorn Helgaas (4):
+>   PCI/ASPM: Cache L0s/L1 Supported so advertised link states can be
+>     overridden
+>   PCI/ASPM: Add pcie_aspm_remove_cap() to override advertised link
+>     states
+>   PCI/ASPM: Convert quirks to override advertised link states
+>   PCI/ASPM: Avoid L0s and L1 on Freescale Root Ports
+> 
+>  drivers/pci/pci.h       |  2 ++
+>  drivers/pci/pcie/aspm.c | 25 +++++++++++++++++--------
+>  drivers/pci/probe.c     |  7 +++++++
+>  drivers/pci/quirks.c    | 38 +++++++++++++++++++-------------------
+>  include/linux/pci.h     |  2 ++
+>  5 files changed, 47 insertions(+), 27 deletions(-)
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+Applied to pci/for-linus, hoping for v6.18.  Thanks Shawn and Lukas
+for testing and reviewing.  Any other comments and testing would be
+very welcome.
 
-Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+I think we'll need to add a similar quirk for Christian's X1000
+(https://lore.kernel.org/r/a41d2ca1-fcd9-c416-b111-a958e92e94bf@xenosoft.de),
+but I don't know the device ID for it yet.
 
-## Build
-* kernel: 6.12.58-rc2
-* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
-rc.git
-* git commit: e6b517276bf625e5d0a1f6eec0ed960bd99ec0d9
-* git describe: v6.12.56-605-ge6b517276bf6
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.12.y/build/v6.12=
-.56-605-ge6b517276bf6
-
-## Test Regressions (compared to v6.12.56-41-gc3010c2f692b)
-
-## Metric Regressions (compared to v6.12.56-41-gc3010c2f692b)
-
-## Test Fixes (compared to v6.12.56-41-gc3010c2f692b)
-
-## Metric Fixes (compared to v6.12.56-41-gc3010c2f692b)
-
-## Test result summary
-total: 120229, pass: 101980, fail: 3716, skip: 14186, xfail: 347
-
-## Build Summary
-* arc: 5 total, 5 passed, 0 failed
-* arm: 139 total, 137 passed, 2 failed
-* arm64: 57 total, 51 passed, 6 failed
-* i386: 18 total, 18 passed, 0 failed
-* mips: 34 total, 33 passed, 1 failed
-* parisc: 4 total, 4 passed, 0 failed
-* powerpc: 40 total, 39 passed, 1 failed
-* riscv: 25 total, 24 passed, 1 failed
-* s390: 22 total, 21 passed, 1 failed
-* sh: 5 total, 5 passed, 0 failed
-* sparc: 4 total, 3 passed, 1 failed
-* x86_64: 49 total, 46 passed, 3 failed
-
-## Test suites summary
-* boot
-* commands
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-cgroup
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-cpufreq
-* kselftest-efivarfs
-* kselftest-exec
-* kselftest-fpu
-* kselftest-ftrace
-* kselftest-futex
-* kselftest-gpio
-* kselftest-intel_pstate
-* kselftest-ipc
-* kselftest-kcmp
-* kselftest-kvm
-* kselftest-livepatch
-* kselftest-membarrier
-* kselftest-memfd
-* kselftest-mincore
-* kselftest-mm
-* kselftest-mqueue
-* kselftest-net
-* kselftest-net-mptcp
-* kselftest-openat2
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-seccomp
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-tc-testing
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-x86
-* kunit
-* kvm-unit-tests
-* lava
-* libgpiod
-* libhugetlbfs
-* log-parser-boot
-* log-parser-build-clang
-* log-parser-build-gcc
-* log-parser-test
-* ltp-capability
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-cpuhotplug
-* ltp-crypto
-* ltp-cve
-* ltp-dio
-* ltp-fcntl-locktests
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-smoke
-* ltp-syscalls
-* ltp-tracing
-* perf
-* rcutorture
-* rt-tests-cyclicdeadline
-* rt-tests-pi-stress
-* rt-tests-pmqtest
-* rt-tests-rt-migrate-test
-* rt-tests-signaltest
-
---
-Linaro LKFT
-https://lkft.linaro.org
+> -- 
+> 
+> v1: https://lore.kernel.org/r/20251106183643.1963801-1-helgaas@kernel.org
+> 
+> Changes between v1 and v2:
+> - Cache just the two bits for L0s and L1 support, not the entire Link
+>   Capabilities (Lukas)
+> - Add pcie_aspm_remove_cap() to override the ASPM Support bits in Link
+>   Capabilities (Lukas)
+> - Convert existing quirks to use pcie_aspm_remove_cap() instead of
+>   pci_disable_link_state(), and from FINAL to HEADER (Mani)
 
