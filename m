@@ -1,199 +1,181 @@
-Return-Path: <linux-kernel+bounces-896230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF277C4FECF
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 22:53:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BD14C4FED8
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 22:55:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4DC454E5506
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 21:52:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2218C3B12EC
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 21:55:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A866E2F12BA;
-	Tue, 11 Nov 2025 21:52:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9648A2E62A6;
+	Tue, 11 Nov 2025 21:55:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="NP9YcSBq"
-Received: from CY7PR03CU001.outbound.protection.outlook.com (mail-westcentralusazon11010051.outbound.protection.outlook.com [40.93.198.51])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DYVgh0nx";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="i/xICTU6"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6426B2868B5;
-	Tue, 11 Nov 2025 21:52:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.198.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762897937; cv=fail; b=r5nUf1UWsrEc3oT5z876XnGll7p7Casez2TYTw75AxVWLWyQOPKi5bb6IdfveEnmPPrXtESp4G1f878W/TlDWcTLLm7RAXBqgbpsQRovYVxdeWYXeMrVfriz+lxntv5d6xS8xZspiCtKRhQqh06xCR3k97s//FLoQfu3fqWUhqs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762897937; c=relaxed/simple;
-	bh=6e/ohzuetYx/kqzOS3nvhbsVToW/OcRbKSaRkuWJVX0=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=AnOonrvHS1/31PlN1vSB7/hs+XF6d+TnKUZxItKvcNwKmXCqdYztxlxGAJDfZulq6PoYwU0CTwl4E6MC1hdCb+0fLBzmZfqZTALXbESQfOUWoDgLse3xc7EAI7V31H644cK29Dz3xsmXi/VFHb9kkejkPuQiHlaQ+vVZztpwGgg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=NP9YcSBq; arc=fail smtp.client-ip=40.93.198.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=H6mnuvL/I3nHI/iBevaMm14hJiJIitGOeRA3r8bUf24rrJk/rNDiFh58SXCG463xqeE0r9El9leIxSHQhGT92xuW+PqlOq1GTDaSERK8iYxkMEYhlvTJR+nlAQOouBsN3uQNpHmgwIiCDF15Xm9eRzrC06FdubjXVxBMj4RJKfBJfEUiMkXKQW8Qpzl+WPNMhg5PHmhoolUKGD5wIaNUwnMK5vUxSZd6qJhNsjNqMTYxmBTQ92cAB0/it2BItllhB9RFKnrlmVuz9uFLMIG+ZQBcUVHDPj58gLXPB+QQeeghC5IuyViQUdpUSKB5hA6BCrawHc+x63LPzxLruTAcdA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4LPM/hymK8ajbILyPtti5DjOj6iT5B+HxktK0ozSI/E=;
- b=pGzhQEJNSszz5MAmAHFFWi9K/t/pgjJfShwRzSPXjHD1SU5M3djqBTV5mq0iggKAy2EznZ6rlBa2sXS761ERMxp72asXT2/iVaWMmfDwnMgZAKCbXQONEUNolPmM06AJ1cdeSA/w58veaKxNiHUjJGdyStERDIfMmLjBnS6rO3ml9ACkm1EYXnM9g7d2vbcv5Pp3PjV8uHZXovnro/Laeq/R0DAwgKgOpd3XC2d6D1fYXORoDq2pAuqM/Ww8Il0xPL8qsSQdReOidI0bRxNbB/E6WMXB64aYf1hZFUXusm+p3yIjyeuPeE/WIe6/woY44tPqxIUnttkzhezdqIjP3g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4LPM/hymK8ajbILyPtti5DjOj6iT5B+HxktK0ozSI/E=;
- b=NP9YcSBqrwu2A3hvOz/Qet8TxZwpK1I8wKGnnecHTkkK5OF5oWp+0DKPN8yXuWOaU1fHth1GfuHyrbleemVWw9S9acfJ5C4ZDrseWJCUzb2b27Mm+KXtp1KN2jdwm6L8a8BEsKptsXaJT8Kq0FmMoHznrI1mhEPWuGSa8FBqF1bDarsXdyiA8C4P4b0/3QXeyUQzWShIsLXm7FYopiKVbihWbX6CP8mC2CrehRG8vRZbfgpQps6OgTGqFHAFpW/Yct9X2PciMmxaala47eu1QcpDz6YDIrfjzA8jYnyTyhxz7LeiRKKNob2MwQGLroXVbXV/VQp4OVMaF2hSDx7jOA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
- by CY8PR12MB7681.namprd12.prod.outlook.com (2603:10b6:930:84::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.15; Tue, 11 Nov
- 2025 21:52:13 +0000
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91%2]) with mapi id 15.20.9298.015; Tue, 11 Nov 2025
- 21:52:13 +0000
-Message-ID: <4689d464-4665-41e6-908a-db1629e980f0@nvidia.com>
-Date: Tue, 11 Nov 2025 16:52:10 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/3] rust: Introduce support for C linked list
- interfacing
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
- dri-devel@lists.freedesktop.org, dakr@kernel.org, airlied@gmail.com,
- acourbot@nvidia.com, apopple@nvidia.com, ojeda@kernel.org,
- alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
- bjorn3_gh@protonmail.com, lossin@kernel.org, a.hindborg@kernel.org,
- aliceryhl@google.com, tmgross@umich.edu, simona@ffwll.ch,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- jhubbard@nvidia.com, ttabi@nvidia.com, joel@joelfernandes.org,
- elle@weathered-steel.dev, daniel.almeida@collabora.com, arighi@nvidia.com,
- phasta@kernel.org, nouveau@lists.freedesktop.org
-References: <20251111171315.2196103-1-joelagnelf@nvidia.com>
- <20251111171315.2196103-4-joelagnelf@nvidia.com>
- <CANiq72nuHUFGMsEYr-KhCB4oMjX72YskG0s7uCB8dcVtTGW-jQ@mail.gmail.com>
-Content-Language: en-US
-From: Joel Fernandes <joelagnelf@nvidia.com>
-In-Reply-To: <CANiq72nuHUFGMsEYr-KhCB4oMjX72YskG0s7uCB8dcVtTGW-jQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: BL1PR13CA0021.namprd13.prod.outlook.com
- (2603:10b6:208:256::26) To SN7PR12MB8059.namprd12.prod.outlook.com
- (2603:10b6:806:32b::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5773E2E54CC
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 21:55:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762898112; cv=none; b=ocFpv/0h9GZvnU4t6Sm5pwTjUHKHz0UMQvw3yg+3X4vcXtFenqn3lzNAUJuugZzI8cTgHpjLm9J7JrVE6e7nEKBDcTtIqe8MBWF4pVQnqae+mxU9OA2Ux0nt7f0em2FAxCS7vd0enG3dsBoibcydPZt5i/SZKRqhZhesLcra/IE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762898112; c=relaxed/simple;
+	bh=MdOVB+m45rMEFDn+Bq+cwePT0GndRxWDbiIFqpt2YCc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=sr60kwXRPQ9nCqT0KPXEzwycN/NdYrnuXPAYXfYzt77ol9SiHdQBGpGRLcHx90PY/7Rq8n5oBtcpuC6ly5eraXR1SupsKfYYrKctshJp3Tp8TEhn3dPB5gsORfNodrJJ2hGdiy1VHszvBIb+rRH45x2wM9fZtd3XQEWKaVOE1zI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DYVgh0nx; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=i/xICTU6; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762898110;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=sekYXjOrhbrEeTR1KVQQRJq/2k2UhXo++7CMidIcSxc=;
+	b=DYVgh0nx7Wx8iAw/pxev1Z9Rfnxpdqedcte/3fPO5h4cYL9gtAoCVTgIyuJeDvW8GjCyfN
+	uiQ7v7QuQKQNFUyHEdCOYE9H6OQpG6OOUonWhFehgiVblsPPWkAYpl+argkrNGsdfpYBxM
+	nptBJwOAskctZ6SW4AcCcse5SUp8YMs=
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
+ [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-2-U5PXUTQVOxm6wWWyMi7Piw-1; Tue, 11 Nov 2025 16:55:09 -0500
+X-MC-Unique: U5PXUTQVOxm6wWWyMi7Piw-1
+X-Mimecast-MFC-AGG-ID: U5PXUTQVOxm6wWWyMi7Piw_1762898109
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-8b29b4864b7so56917485a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 13:55:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1762898108; x=1763502908; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=sekYXjOrhbrEeTR1KVQQRJq/2k2UhXo++7CMidIcSxc=;
+        b=i/xICTU6a9PFbTZ67fJO7jqs2qoiVXOdu4HOeWIrWrjtjMPX7EwLUxBkiL7pGwcg99
+         6dP2VdrRRgGJgpKedNGDkgZgrgfTJ+rCd3L/blWfeirY254x/tqwQM27ZLyf3r4gFvEA
+         0S7GZMp42JceWiGk1Xa+8kOvmPiJwcknRE2T2OPeoccPY9bddi6APktRpxmqpmldapAs
+         SIqHw9JyF27DNppQDvCbV+WH9x1bxvyJdFR2DLAxi7YQ67NeoN9Y/yZwglML+gwx4OFt
+         oc4GtdGCteMZqUkcHjMopny/5QR9TeG3Bgbg2glYE2Xx+bWtUaw2QnmQzeDgF1Y3cFL9
+         jf0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762898108; x=1763502908;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sekYXjOrhbrEeTR1KVQQRJq/2k2UhXo++7CMidIcSxc=;
+        b=Q+i6/z0Z3VwzHaL6Ssfh3yDoAZvE3NTpKZBAX+eYxiL32SZ/eoojdOHQ/695LvgCTz
+         A5RXvPJfIlfdck6hsGyud+oJz11U8EbDA3gww3nTTddLcXp2C1i4XoI4tKVXvUVSBws0
+         uW2vEKcCqV6/mdt6++CPvYgiZDb2MfoawCLCBoQVTMKLnbOisdkLou9aOcNmiuKqItGP
+         4gyQx3gO+F+J7/pN9ZfPTXGcTVbxcWtsQhjtSQe7ruRu3B8N1q3vjYWkGKWqMgG37V7V
+         tlJKhgPrz4GLVxzDiAuSmLVRmZbzE9Go7w0l9N9uUuiUqsZxwvMnSrRyd3XU0CCVO4ty
+         0Y1w==
+X-Forwarded-Encrypted: i=1; AJvYcCUBfxDo+vDFz6tZOgCYMo//WSCnUN/Ar8UH5Px60acym3MZYb2jR484VNxjY1E9HzD2v2SSDdtUdPQlRFU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKsQUOB71Bxyj2jhQhxFdhigXDXntQKlEFqg4D9VVG5fejQq5D
+	zUfwVvWSXbQ9QvHl9MdCzOzjWDam4u3a+6EEPtwklQW11dEyIPt/ZN1ikUAIJtKtGVzNGzcDX53
+	690YdqayA5s6YP7UAObFdsF5hg4FD/lh29hQyvRskvuyEFghB2CNeuxMrq61r9y6AMw==
+X-Gm-Gg: ASbGncsCwKhBQ6eZ5fnMmf2sIleEqCrVdZdJpciXt02/H6kIw0pkk6twEs/JjIUVTHr
+	vWxECW+bpY/28TaMDqMUceejQY6ZKd8kgq+cTbCpmORj0FWFihnFjHpoNGUvRfc/efqNdlgfpBV
+	SnMyN4rjFORDyfdgnTcmsGJoB/KO5R/g4LoWrmLOm3TCv4prwlBFauKJ+rP9lPUMJYMd9XzVuuM
+	csLKUltid6ujPwGTt7cZgC0CBHOV71uFGJku7WegXaJVXFRwCX+VWAUWXlin2sSrhUk6+k0+Wyj
+	pLN1ZKXEbuoEssSsx2E8A2aVUXGl1ehB6VaUfeqrSHxT4CLiL1vmjSEneQCi9PGT7SnIlnv9tdE
+	+sFgeU8MyWzGVO1OGL+uWAmyI4igejjw=
+X-Received: by 2002:a05:620a:1997:b0:891:c122:4296 with SMTP id af79cd13be357-8b29b7daae7mr119516885a.41.1762898108655;
+        Tue, 11 Nov 2025 13:55:08 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IG3q6RJGL4tXdFv0MBpLJ0zIlSCrqGboU4B0wfcb2rJgjVxJ9n2CSCtq7Mqu5LGBcREsoJ/Cw==
+X-Received: by 2002:a05:620a:1997:b0:891:c122:4296 with SMTP id af79cd13be357-8b29b7daae7mr119514385a.41.1762898108252;
+        Tue, 11 Nov 2025 13:55:08 -0800 (PST)
+Received: from jkangas-thinkpadp1gen3.rmtuswa.csb ([2601:1c2:4403:8750:d964:d6a9:f204:ed2b])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b29aa032fcsm61335085a.49.2025.11.11.13.55.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Nov 2025 13:55:07 -0800 (PST)
+From: Jared Kangas <jkangas@redhat.com>
+Subject: [PATCH 0/2] pinctrl: s32cc: fix uninitialized memory issues
+Date: Tue, 11 Nov 2025 13:54:10 -0800
+Message-Id: <20251111-pinctrl-s32cc-alloc-init-v1-0-071b3485b776@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|CY8PR12MB7681:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7889e206-cd16-4c64-6bf7-08de216c925f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|7416014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?UklsbEVUVDJPWWtnNStOTy9OWEhEQjV4bldVbXR3NVNJMWRXTm5FOHpLZUhm?=
- =?utf-8?B?b3MzaDk3QWJFR0tSTEF4VC9EZkV1ZFh3S3pkbStwZC8wN09LOS91UWgyMnlT?=
- =?utf-8?B?KzVLSFRrQ3NpWnVkWDlyTlB2R1ozTDhvd0NBZ04zRWUvcy9nRS9MYngydGUx?=
- =?utf-8?B?T2J4UjZaN2g2VFlWR29MVGNwOG5OdGNnUUF4YU9iclQ4M3BiWktQNVNPZE5N?=
- =?utf-8?B?eTFhV1BCMWdtd0pKZEFiVVl3Rmx6NEdNNno1TzdGTUtUOWVTVUx5Zm5zdVBM?=
- =?utf-8?B?MTJEUExZY291b0FrVE10VW1UajhNYjNmRmVFeTE5MThWeXVmSE9QMHdlSzNF?=
- =?utf-8?B?K285aUlSZEt3NWxCQUdRa2Z1cU9JelYveGJIOWc0K29KVkE5YlY1d1J6amMy?=
- =?utf-8?B?QlFsVGRUeWMyMlRid3Y2MzhzQTlGanppSWtPMUN5cjBhZG9qSXcvZjJRcWlS?=
- =?utf-8?B?Nndpekl5MW83NkdtaG4zTjdwZ2oxZWdqZmNUbENjdDA5MWIrbjRNd1R6c3p2?=
- =?utf-8?B?RHIxbmVCRHZqZHJiQ3J2RVdEU2JUUjZCc0tSVWd1SmwxU0djdm5wVnRRbVZP?=
- =?utf-8?B?VjJLVHdmQ0lyWW5HSkU4ZWJqMUFUM2JFYUlvRDNKNGJTU0tzTFR1ZEc4bzFO?=
- =?utf-8?B?ZjNPSi9kNHBVcjM5TlR1MDFJY3BtSEVtb2RXcXVMUWp3QlZCcmtjRmZzeEQ1?=
- =?utf-8?B?YjBsZ2diaC96bDRhWUFsd29hbUM3M1BoaW9QSnN4THlSNDhsK2FiK3N6VjlJ?=
- =?utf-8?B?WkkxWGwvcnpxN1JMR2hwdXVKUEROVHBROGY5eDlINHdoNVJFZDV3bjJSeHFv?=
- =?utf-8?B?bzZLZGhJOEZ4TkdvMmZoVGYrNDg4RXh5cUU1RTJXcmgwcHlRSjVjY21Ga01X?=
- =?utf-8?B?ZEN4eEdOY3JUbytVbGgzSlkvTlg1VkxyRDdRMUJEL2tkN2F1bVNuUnZxaFZC?=
- =?utf-8?B?TVZJeDBMTmJ3ZGI1N1c2ZkdNRy90T2FrNzhSWGxTc3NhNEYzaWNBeDFzZmg0?=
- =?utf-8?B?RFJ3NEY5MlpEajJaUTVIdzNhOWZvcXZWMVp5di9FNkt4L3RTRUdJRlRVd0ZM?=
- =?utf-8?B?ekF3dWlzMnpnUlg5Z0dIcU45TG1MeVI1dWdYTndMMktzTFRMZWhiUUlBUk9W?=
- =?utf-8?B?YnRNRVhPaEhXVEtoWlZmSnhEd1dJY2dWdVk4ZlUzZkFXc2ZMOVFKQ3lNRC90?=
- =?utf-8?B?RE5qL2tMY2pFZ3h2NlpFeVNSbG53bjNpNnYwaTNHSEk1SjFIV3FVajFJdE94?=
- =?utf-8?B?QnJqL3JRQWN0WXk0aVFQWVJrL0JCWVRLcVQ5bThkcFdkd2JBTFI0OXhRSll6?=
- =?utf-8?B?ZEdicFpQZFVIdmdRZ3JlRWMvWmlYelI5Qk1nNGZDTVp3Y29FWXdnNzZOcm1F?=
- =?utf-8?B?YzFzZ1NRRmtMbEFpenZqSmNlMU5CWHpKVUF1NDRRMXhOdVhhNjYvaHluRmd2?=
- =?utf-8?B?NXZvN2JMeTdFdnBkTDVmbDZxbWFWUU14VWhTWTVZTUNaUDZtbEtrN3JhNHQ5?=
- =?utf-8?B?aXNEK05hK25tcHdSYTd1UzZqK2ZmRmxjRFdjMzIvdDE2NlBhdHhjTHdQNHNs?=
- =?utf-8?B?VGM4ditrT2Zkcm1ZSkthaDRpQk9BbmRnRm1jQ2orR2luZCsrRm13QWxndzB2?=
- =?utf-8?B?U0JiZ1Z4dkRMZXdNVmNVdjY0RlRMNnBEejRTWWM4Q0hvNWMyM0E3UGxkUmZa?=
- =?utf-8?B?Rk5tUnhsYzkwWHRGRkx1VUFGQjZHSFNmbWVUbXRHRExkZWUvbGZtRWJVdXpX?=
- =?utf-8?B?L0tlK2hzR1dldE45L1M2YmR5U0xQdjNmaWtrbU9RcmY3VStkM1hERmFUQVcy?=
- =?utf-8?B?TWszRDZpSTltTE9FOXlaQko0TWdGd2JpaURXVHFpZ0dkSGRMdUpQSHNPbFgr?=
- =?utf-8?B?WjRabVVlUnUzRHkwUWszM3Zmc0JqWE1ZbWVzRE9oNGdnbllxUzVLekNzMHBv?=
- =?utf-8?Q?Iygw/Jh8QM15J9P/LIITjejXESkhunMh?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(7416014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?M0VVT3Y2WXIza3ltdWhWRFd1OEFKd2UyMkdxR2FqVmhpTmtpZy9oQ2JxWFRL?=
- =?utf-8?B?UWpLOVFzU2l2K3RvL09WeGNkT2dqV0puazBSYzNWVkxRR0tEbmFGVDZuVFpV?=
- =?utf-8?B?Sk9aWjNFclZNazRNYzB4QlZRWkphenJ2RDZJVW5ya0F2N1d2RFhWaUtyQ1hU?=
- =?utf-8?B?bzMzNW04ZnlHVUtsQVFiMlRla0FLYUtuc1l4MjhmYlUxR2NSVC8wRG5pUnNI?=
- =?utf-8?B?Ukg4bU9Rd2hkdVp0dlVZbnVnaUU2aDVKNmZmQStTMm5LZHpybHF2by9zK25w?=
- =?utf-8?B?OGpUSHc4SWlwOEN1aWJRbGlCYXlIK05oUjhWdmtjNjE4WVA2TTAyWHpYU3Y4?=
- =?utf-8?B?VlZhREZUWUVydWF1SlI1S0h1VTZmOFA4V2JPWk0yVlJsOXZKdERsdDVtOWhJ?=
- =?utf-8?B?L1FxaXJENDU0Umg1WTNSaWZNc0ZJcmVjUS9IOGQ0NW1QSnY0cEY5UDY0UHdM?=
- =?utf-8?B?bU45eDVLS1dKUHRNc3ZDTG8rOHh0cng1dEdYMTBuZTloQWoydU1BQzR0WnZt?=
- =?utf-8?B?Mm01TCtJQ2FvMGZFR2hSTkJIZ0Fzai9mTm42anlvU0FNZWhiMS9SR2pwcEtz?=
- =?utf-8?B?c2JPeVp0R0V6VnUvL2NVb1Q2Ui93SjcvSnIzNmVUUFBPcndiYWJLS0FUTVRY?=
- =?utf-8?B?Um5YYWJNOTEyaDlCUVArbGZTQ25sQ0g2MnhKbjdJRUpWMExNWWkrcjJ0WXNL?=
- =?utf-8?B?UnB3N1JwM1h4ZUJDVVd4dlhmejk4WW1xbllNaTZsMENLUDdUYXBZcXdDOE82?=
- =?utf-8?B?QlRvWm41S1BSY0xGNmI0cFVzNEJCbjN1THI5UmFXUVZTemY4MFpKbFczSVFz?=
- =?utf-8?B?YnZKemZ0ZzJWWHdjRzkraXpWaTlyTEJaWVZIM2U3V3hKcm1JcVVKMFprTkVL?=
- =?utf-8?B?Unc5V3lYdEJXaXk4Y3oxMnF4NlJNV296ZnZHR2xiK0pvNjNsa3h0eVpYNzFG?=
- =?utf-8?B?WGt6VVNnUGlLbEZyYXJ0d2JGanZRWGJlZWtLTUU5K3lZeWh6WlM3Y1RiQlRF?=
- =?utf-8?B?eHhhc3E2Uzl1MGpsaG1SbkdYeXRUMW03ckYzRXJaenJ2MlZNaEl1NUU4Umsw?=
- =?utf-8?B?dUkwMW9LdS9NWTZ5QTV3dUN5SU9GbFV6RXRXaXdFcml6ak9Ud3l1MkthUEVH?=
- =?utf-8?B?WEd2VkIvV252c0orNEUyQTJjOXNJRzNacTF1NXNweXhRcnlQaVdSby92QTFJ?=
- =?utf-8?B?NTlscUZVSFhpeWF6R0gzZGpzeCsxeVhYVFU0a0NLZXlJRHZHREN6MmJDSlJr?=
- =?utf-8?B?dTlHUHpEbGZkV0tvUDNTTjV0NTg5Mk1Sa0txUzllT3U2WHRVOE5LaWJpazM2?=
- =?utf-8?B?RVRMMTA1MHlHdlpjejQrNy8rL2hNZkJ2V0RvTkJtelIvVi9oS2pMeUJrdjVT?=
- =?utf-8?B?eE1kZU4zV085Qnl1MVpNUGZQV2p0N0RNL1JGdEd4UmNEeldNS0E4Z1d0WEw1?=
- =?utf-8?B?K2RrUXRJaHhlY0dMZ0JVRUs5QmFWTUI2NEtlbGNZTWhmb3VIUUFZR0gwS1Nv?=
- =?utf-8?B?UmNUam9ieW5IT3dpNTMwc3pTSFBoWmY4dUlGUGdKUS95ekZKOXdFVkRPMHlo?=
- =?utf-8?B?YUlZSGtsT3hCdzV1N3d1UzJmOWVqbm5RODRqMDZSV09LdE5WYm1OWDJUeHJR?=
- =?utf-8?B?MEtIK3BQcC9GdzlqUU9NelB6WFpXcXlmS1lEWktjOFU5M2x2THJWY28wSGJn?=
- =?utf-8?B?YmJzM2JJQ0FTR1h6S1F5dHJpZDY1N1dkNFJ1T0RLejRmeHVpN2NaYkprZUp6?=
- =?utf-8?B?anozWitOT1gvZnRtMUdWZjRVU2RiNHFlZytDQXVFdGRPMEdQVHREV2xqK2pk?=
- =?utf-8?B?N2o5UVY4bGpkUjFnRWxaMHlFaUdTcldmaEU5TldqSkp2THg2dzNPT05WSGRR?=
- =?utf-8?B?dHczVVlRb0dSVWVFMTBBTUZzWVFsd3FkZ0ZkQkNkUU5JK2NIVWl2dWg3NzV2?=
- =?utf-8?B?R21FVGVucnA5R2p6SFQ5c2QwRWk0ZElvclVHV1Nidkk4d3czMmVmVTJ0S1h5?=
- =?utf-8?B?T3hsSjI4MG5qR2gxa2hzZ1gvOVQ0eEM3L1c2R0toNEgvNWszMTYvdjhVaUZD?=
- =?utf-8?B?VGpRSlNTdzl0a05wQXMydjlVdEt5QnVObGl2OTZtdkQ5L2ZoajNRMGM1VWZG?=
- =?utf-8?Q?4fkssJyqfOdaUYA49xBesGFOG?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7889e206-cd16-4c64-6bf7-08de216c925f
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Nov 2025 21:52:13.0708
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: tb8GIF50MJVuzItyZ1F4SAkR6AR2jo6PQSBQDR/rkrRcDSC2XXOsLV5LHEtI20WewHfiNpnZES4Qvr+I5eudXQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7681
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIKwE2kC/x3MSQqAMAxA0atI1gY6OIBXERc1phooVVoRQby7x
+ eVb/P9A5iScYageSHxJlj0W6LoC2lxcGWUpBqNMq7Xq8JBIZwqYrSFCF8JOKFFOpFk1PBP1xls
+ o+ZHYy/2vx+l9P8MHwpZqAAAA
+X-Change-ID: 20251106-pinctrl-s32cc-alloc-init-cb04ebcc72f3
+To: Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, 
+ Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ NXP S32 Linux Team <s32@nxp.com>, Chester Lin <chester62515@gmail.com>, 
+ Matthias Brugger <mbrugger@suse.com>, 
+ Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Jared Kangas <jkangas@redhat.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1762898106; l=2516;
+ i=jkangas@redhat.com; s=20251111; h=from:subject:message-id;
+ bh=MdOVB+m45rMEFDn+Bq+cwePT0GndRxWDbiIFqpt2YCc=;
+ b=AdTasHXTJYSkS585uvDHRJ55IZFnrgZJSfaxnaDSGB/RTgB+JoI7jS7M+GDTllmpRwiXRd6KK
+ tUaoDvX0B3UCOC4ZPo6dQSBEoeXz6M5/Hr0bB51+McJESjBxOOOBew7
+X-Developer-Key: i=jkangas@redhat.com; a=ed25519;
+ pk=eFM2Mqcfarb4qox390655bUATO0fG9gwgaw7kGmOEZQ=
 
+This is a small series that fixes some uninitialized memory issues in
+pinctrl-s32cc. As an example of how these can affect the kernel, when
+probing i2c-imx, a memory allocation may fail because of the
+uninitialized memory giving a junk allocation size, which prevents chips
+on one of the I2C buses from being detected:
 
+        # i2cdetect -l
+        i2c-1   i2c             401ec000.i2c                            I2C adapter
+        i2c-2   i2c             402dc000.i2c                            I2C adapter
+        i2c-0   i2c             401e4000.i2c                            I2C adapter
+        # i2cdetect -y 0
+             0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
+        00:          -- -- -- -- -- -- -- -- -- -- -- -- --
+        10: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+        20: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+        30: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+        40: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+        50: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+        60: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+        70: -- -- -- -- -- -- -- --
 
-On 11/11/2025 2:54 PM, Miguel Ojeda wrote:
-> On Tue, Nov 11, 2025 at 6:13 PM Joel Fernandes <joelagnelf@nvidia.com> wrote:
->>
->> there. I rebased the patches on linux-next. I can also add MAINTAINER entries
->> in a future version, if folks agree this should have its own MAINTAINER
->> record.
-> 
-> Yes, it sounds good to me to add one. Please do -- thanks!
+Compared to when no failure occurs:
 
-Ok, will do. Thanks!
+        # i2cdetect -l
+        i2c-1   i2c             401ec000.i2c                            I2C adapter
+        i2c-2   i2c             402dc000.i2c                            I2C adapter
+        i2c-0   i2c             401e4000.i2c                            I2C adapter
+        # i2cdetect -y 0
+             0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
+        00:          -- -- -- -- -- -- -- -- -- -- -- -- --
+        10: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+        20: -- -- UU -- -- -- -- -- -- -- -- -- -- -- -- --
+        30: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+        40: -- -- -- -- -- -- -- -- 48 -- -- -- -- -- -- --
+        50: -- 51 -- -- -- -- -- -- -- -- -- -- -- -- -- --
+        60: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+        70: -- -- -- -- -- -- -- --
 
- - Joel
+Signed-off-by: Jared Kangas <jkangas@redhat.com>
+---
+Jared Kangas (2):
+      pinctrl: s32cc: fix uninitialized memory in s32_pinctrl_desc
+      pinctrl: s32cc: initialize gpio_pin_config::list after kmalloc()
+
+ drivers/pinctrl/nxp/pinctrl-s32cc.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+---
+base-commit: e9a6fb0bcdd7609be6969112f3fbfcce3b1d4a7c
+change-id: 20251106-pinctrl-s32cc-alloc-init-cb04ebcc72f3
+
+Best regards,
+-- 
+Jared Kangas <jkangas@redhat.com>
 
 
