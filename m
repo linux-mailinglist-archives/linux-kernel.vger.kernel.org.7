@@ -1,252 +1,170 @@
-Return-Path: <linux-kernel+bounces-895018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 221C4C4CBBF
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:43:17 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56DC8C4CBCB
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:43:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1A3834FA874
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:36:52 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 75FE04F65A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:37:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 723CE2F28E5;
-	Tue, 11 Nov 2025 09:36:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BAB52ED846;
+	Tue, 11 Nov 2025 09:37:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S1N/v3/a"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TWEP18O2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68C152EBBA8;
-	Tue, 11 Nov 2025 09:36:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8AE4252917;
+	Tue, 11 Nov 2025 09:37:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762853793; cv=none; b=TH483+NamsLcV6OwIioErjc1V74ZfxEvEHju16TgQ1f/wefbnIUKiaHUBHhRda9mXd9egUjN1ubu/QJWltNYMAn7iL37j7rYGz6io4yGdngHZWkc4dQi+BT7V3WgIuv8mgWxXORVLxfGBOZjqCcDlGstp5TMXkaVMMxpAx7jzKI=
+	t=1762853840; cv=none; b=jXbEYPPuMFBb/KbDvN5gAuPHOn+cR7hOKrQB8yO2bRnL4ySXLZ4yBsmwLF6Y/xbfP3dB1s3mZewb+INwvZzTH4tQLS6nH+hRZLbCwj62LqXtWr25BFp6AMKMmlpaLxVKIS+awuWYsVbJlOgTktIvoefagiXFtwH5n+W9D6mlD/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762853793; c=relaxed/simple;
-	bh=kMeHaYaR4RkOd0wfcEBGj6Li4yDHZkzpHCvRrYWDPeM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bLIIO/YujfN/+So94VFThvMTcQ9XfFQmv15ggYHRCch0675Px+6GDCnSK8FcOvIBE1IGr5JJxo26ud+l2kFaVmr8N5umUsZcEDeF50OFvQleOZten7X30jUj0IehVA0xjc4XE/AeGmFPfU/qbgEJZw01P3OEjNLGj/63hfaYqbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S1N/v3/a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DBC4C116B1;
-	Tue, 11 Nov 2025 09:36:31 +0000 (UTC)
+	s=arc-20240116; t=1762853840; c=relaxed/simple;
+	bh=hBswxWwybuZIgK/oU6jdvi5SVM4HjiW7Dn5p6TuCD2I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dGwHY6bLGUbkX0wwJz3Eg2IP5/EmnpAs1h5m8pYuhqP+9CALzC9XYhdZuC087A/mA9PU0X/VLHUgCLW3TmQusboyb6HlM2N1KOj+2sgbaklDZYc3eaOkDA1F7gaDTOjfg+k8n6D4PYgSORedUM82grg7gek9+Nh0oVtNoBkQBtQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TWEP18O2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99C0AC116B1;
+	Tue, 11 Nov 2025 09:37:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762853792;
-	bh=kMeHaYaR4RkOd0wfcEBGj6Li4yDHZkzpHCvRrYWDPeM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=S1N/v3/aXlvSJNqErENP+I6ESD2HjWFULqe5rcWLDRBQQhXi77/hj3TlTQL5TQ5Ne
-	 GHD3exZuxCcdjMt/VqOk1no2aNZ7WNhx5NKV0M78SHBPLTIe2g9DSRQBDq1L1HwQQ/
-	 o93P5K15mx25KdpI4eK7oqWo9Zn2EjVf5uXnIYdosJ86ZUet/77dajflzD2lBpdAcf
-	 +w48EIvZwDHDkqT5GUct9R8wZh/OmTMb3SuGg6Ll9CXULgLMiMppMitn41wRnSvxSq
-	 A0eTPyh0+pHdAQZjfkNPL+Kn0w4tfmy6dm3xb+9iE7TxF6g6QXmWbfagQM/5nrFDFY
-	 /mxX3uiKKYaCw==
-Date: Tue, 11 Nov 2025 10:36:28 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: kernel test robot <oliver.sang@intel.com>
-Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [linux-next:master] [ns]  3a18f80918:
- WARNING:at_include/linux/ns_common.h:#put_cred_rcu
-Message-ID: <20251111-neuproduktion-eliminieren-acc4b549e4b8@brauner>
-References: <202511111547.de480df9-lkp@intel.com>
+	s=k20201202; t=1762853840;
+	bh=hBswxWwybuZIgK/oU6jdvi5SVM4HjiW7Dn5p6TuCD2I=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=TWEP18O2jujguz/unAMLA8YV9mO9nkPp/+bnpi3XZ16mItZD4Sd0Zm8TKO64f7YRO
+	 2h91P+GoRDZ55WZIdzHElmpYftKdF3DdGNuYGgAFp43xC2wfI6kDiIKY8HRKAa9rBq
+	 rTvvRpmm2HEP5EnDpfcQO+ZGn1ImPSlRzrpgBZLsEMQPcft0vl8y5cpBQqg7ih2I/m
+	 TYsFjwKf+neGSzLCW/QtF63TIDd2CykFlXqTWaoh6/qUKhMwoVyhwc4TLq46HNIWHO
+	 Vun6ED4hmLYYccF3z0rbgvzciIR4d/iqin3tLRYN3F4n7UWjp0BRXXFyeswBf99kLw
+	 3meBulZABDq4A==
+Message-ID: <10440fd8-aa78-4d73-a927-1f808fbc42c7@kernel.org>
+Date: Tue, 11 Nov 2025 10:37:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <202511111547.de480df9-lkp@intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] w1: therm: Fix off-by-one buffer overflow in
+ alarms_store
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: David Laight <david.laight.linux@gmail.com>,
+ Huisong Li <lihuisong@huawei.com>, Akira Shimahara <akira215corp@gmail.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20251030155614.447905-1-thorsten.blum@linux.dev>
+ <cac46c65-4510-4988-8ba2-507540363ad4@kernel.org>
+ <9DA6251C-C725-46F2-899A-5CF2BE39982E@linux.dev>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <9DA6251C-C725-46F2-899A-5CF2BE39982E@linux.dev>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 11, 2025 at 03:08:10PM +0800, kernel test robot wrote:
+On 09/11/2025 23:11, Thorsten Blum wrote:
+> On 9. Nov 2025, at 19:29, Krzysztof Kozlowski wrote:
+>> On 30/10/2025 16:56, Thorsten Blum wrote:
+>>> -	/* Convert 2nd entry to int */
+>>> -	ret = kstrtoint (token, 10, &temp);
+>>> -	if (ret) {
+>>> -		dev_info(device,
+>>> -			"%s: error parsing args %d\n", __func__, ret);
+>>> -		goto free_m;
+>>> +	p = endp + 1;
+>>> +	temp = simple_strtol(p, &endp, 10);
+>>> +	if (temp < INT_MIN || temp > INT_MAX || p == endp) {
+>>> +		dev_info(device, "%s: error parsing args %d\n",
+>>> +			 __func__, -EINVAL);
+>>> +		goto err;
+>>> 	}
+>>> +	/* Cast to short to eliminate out of range values */
+>>> +	th = int_to_short((int)temp);
+>>>
+>>> -	/* Prepare to cast to short by eliminating out of range values */
+>>> -	th = int_to_short(temp);
+>>> -
+>>> -	/* Reorder if required th and tl */
+>>> +	/* Reorder if required */
+>>> 	if (tl > th)
+>>> 		swap(tl, th);
+>>>
+>>> @@ -1897,35 +1870,30 @@ static ssize_t alarms_store(struct device *device,
+>>> 	 * (th : byte 2 - tl: byte 3)
+>>> 	 */
+>>> 	ret = read_scratchpad(sl, &info);
+>>> -	if (!ret) {
+>>> -		new_config_register[0] = th;	/* Byte 2 */
+>>> -		new_config_register[1] = tl;	/* Byte 3 */
+>>> -		new_config_register[2] = info.rom[4];/* Byte 4 */
+>>> -	} else {
+>>> -		dev_info(device,
+>>> -			"%s: error reading from the slave device %d\n",
+>>> -			__func__, ret);
+>>> -		goto free_m;
+>>> +	if (ret) {
+>>> +		dev_info(device, "%s: error reading from the slave device %d\n",
+>>> +			 __func__, ret);
+>>> +		goto err;
+>>> 	}
+>>> +	new_config_register[0] = th;		/* Byte 2 */
+>>> +	new_config_register[1] = tl;		/* Byte 3 */
+>>> +	new_config_register[2] = info.rom[4];	/* Byte 4 *
+>>
+>> How is this change related?
 > 
-> 
-> Hello,
-> 
-> kernel test robot noticed "WARNING:at_include/linux/ns_common.h:#put_cred_rcu" on:
-> 
-> commit: 3a18f809184bc5a1cfad7cde5b8b026e2ff61587 ("ns: add active reference count")
-> https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
+> Not related, but I thought when I'm already rewriting 80% of the
+> function, I might as well just improve the indentation/formatting.
 
-This is fixed in namespace-6.19 which should've made it into -next about
-five hours ago.
+Fix of buffer overflow should not contain any style changes. And
+definitely changing if/else logic is just style.
 
-Note that "linux-next.git master" is pretty useless. By the time I read
-this mail linux-next's master branch will have already been updated. So
-you should give a commit hash as well or a tag.
-
-> 
-> in testcase: trinity
-> version: 
-> with following parameters:
-> 
-> 	runtime: 300s
-> 	group: group-01
-> 	nr_groups: 5
-> 
-> 
-> 
-> config: x86_64-randconfig-r053-20251109
-> compiler: gcc-14
-> test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 32G
-> 
-> (please refer to attached dmesg/kmsg for entire log/backtrace)
-> 
-> 
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <oliver.sang@intel.com>
-> | Closes: https://lore.kernel.org/oe-lkp/202511111547.de480df9-lkp@intel.com
-> 
-> 
-> [   41.172047][    C1] ------------[ cut here ]------------
-> [   41.172821][    C1] WARNING: CPU: 1 PID: 0 at include/linux/ns_common.h:227 put_cred_rcu (include/linux/ns_common.h:227 include/linux/user_namespace.h:189 kernel/cred.c:88)
-> [   41.173907][    C1] Modules linked in: serio_raw(F) floppy(F) tiny_power_button(F) button(F)
-> [   41.174959][    C1] CPU: 1 UID: 0 PID: 0 Comm: swapper/1 Tainted: GF               T   6.18.0-rc2-00014-g3a18f809184b #1 PREEMPTLAZY  9f2dc8152166a7dcc87d7d6a6b2b12a17475cded
-> [   41.176815][    C1] Tainted: [F]=FORCED_MODULE, [T]=RANDSTRUCT
-> [   41.177517][    C1] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-> [   41.178764][    C1] RIP: 0010:put_cred_rcu (include/linux/ns_common.h:227 include/linux/user_namespace.h:189 kernel/cred.c:88)
-> [   41.179419][    C1] Code: 02 48 89 e8 83 e0 07 83 c0 03 38 d0 7c 0c 84 d2 74 08 48 89 ef e8 0d 9f 55 00 8b 83 30 03 00 00 85 c0 74 09 e8 ae 24 1c 00 90 <0f> 0b 90 e8 a5 24 1c 00 48 89 df e8 fd a9 1b 00 e8 98 24 1c 00 4c
-> All code
-> ========
->    0:	02 48 89             	add    -0x77(%rax),%cl
->    3:	e8 83 e0 07 83       	call   0xffffffff8307e08b
->    8:	c0 03 38             	rolb   $0x38,(%rbx)
->    b:	d0 7c 0c 84          	sarb   $1,-0x7c(%rsp,%rcx,1)
->    f:	d2 74 08 48          	shlb   %cl,0x48(%rax,%rcx,1)
->   13:	89 ef                	mov    %ebp,%edi
->   15:	e8 0d 9f 55 00       	call   0x559f27
->   1a:	8b 83 30 03 00 00    	mov    0x330(%rbx),%eax
->   20:	85 c0                	test   %eax,%eax
->   22:	74 09                	je     0x2d
->   24:	e8 ae 24 1c 00       	call   0x1c24d7
->   29:	90                   	nop
->   2a:*	0f 0b                	ud2		<-- trapping instruction
->   2c:	90                   	nop
->   2d:	e8 a5 24 1c 00       	call   0x1c24d7
->   32:	48 89 df             	mov    %rbx,%rdi
->   35:	e8 fd a9 1b 00       	call   0x1baa37
->   3a:	e8 98 24 1c 00       	call   0x1c24d7
->   3f:	4c                   	rex.WR
-> 
-> Code starting with the faulting instruction
-> ===========================================
->    0:	0f 0b                	ud2
->    2:	90                   	nop
->    3:	e8 a5 24 1c 00       	call   0x1c24ad
->    8:	48 89 df             	mov    %rbx,%rdi
->    b:	e8 fd a9 1b 00       	call   0x1baa0d
->   10:	e8 98 24 1c 00       	call   0x1c24ad
->   15:	4c                   	rex.WR
-> [   41.181507][    C1] RSP: 0018:ffffc900001c8e58 EFLAGS: 00010246
-> [   41.182352][    C1] RAX: 0000000000000000 RBX: ffff8881649b8780 RCX: 0000000000000000
-> [   41.183326][    C1] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-> [   41.184311][    C1] RBP: ffff8881649b8ab0 R08: 0000000000000000 R09: 0000000000000000
-> [   41.185324][    C1] R10: 0000000000000000 R11: 0000000000000000 R12: ffff88815d490c80
-> [   41.186287][    C1] R13: ffffffff83d2b7c0 R14: 0000000000000004 R15: ffffffff813e6e70
-> [   41.187244][    C1] FS:  0000000000000000(0000) GS:ffff888799e76000(0000) knlGS:0000000000000000
-> [   41.188285][    C1] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [   41.191457][    C1] CR2: 00000000004003c0 CR3: 0000000003c88000 CR4: 00000000000406b0
-> [   41.192491][    C1] Call Trace:
-> [   41.192939][    C1]  <IRQ>
-> [   41.193359][    C1]  rcu_do_batch (include/linux/rcupdate.h:341 kernel/rcu/tree.c:2607)
-> [   41.193952][    C1]  ? rcu_pending (kernel/rcu/tree.c:2529)
-> [   41.194567][    C1]  ? rcu_disable_urgency_upon_qs (kernel/rcu/tree.c:725 (discriminator 1))
-> [   41.195408][    C1]  ? trace_irq_enable+0xac/0xe0
-> [   41.196177][    C1]  rcu_core (kernel/rcu/tree.c:2863)
-> [   41.196782][    C1]  handle_softirqs (arch/x86/include/asm/jump_label.h:36 include/trace/events/irq.h:142 kernel/softirq.c:623)
-> [   41.197442][    C1]  __irq_exit_rcu (kernel/softirq.c:496 kernel/softirq.c:723)
-> [   41.198071][    C1]  irq_exit_rcu (kernel/softirq.c:741 (discriminator 38))
-> [   41.198779][    C1]  sysvec_apic_timer_interrupt (arch/x86/kernel/apic/apic.c:1052 (discriminator 35) arch/x86/kernel/apic/apic.c:1052 (discriminator 35))
-> [   41.199466][    C1]  </IRQ>
-> [   41.199885][    C1]  <TASK>
-> [   41.200311][    C1]  asm_sysvec_apic_timer_interrupt (arch/x86/include/asm/idtentry.h:569)
-> [   41.201027][    C1] RIP: 0010:pv_native_safe_halt (arch/x86/kernel/paravirt.c:82)
-> [   41.201736][    C1] Code: 48 8b 3d 28 51 54 02 e8 23 00 00 00 48 2b 05 fc cf af 00 31 ff c3 cc cc cc cc cc cc cc cc cc eb 07 0f 00 2d 97 fc 0e 00 fb f4 <c3> cc cc cc cc 41 57 41 56 41 55 41 54 55 48 89 fd 53 44 8b 6d 00
-> All code
-> ========
->    0:	48 8b 3d 28 51 54 02 	mov    0x2545128(%rip),%rdi        # 0x254512f
->    7:	e8 23 00 00 00       	call   0x2f
->    c:	48 2b 05 fc cf af 00 	sub    0xafcffc(%rip),%rax        # 0xafd00f
->   13:	31 ff                	xor    %edi,%edi
->   15:	c3                   	ret
->   16:	cc                   	int3
->   17:	cc                   	int3
->   18:	cc                   	int3
->   19:	cc                   	int3
->   1a:	cc                   	int3
->   1b:	cc                   	int3
->   1c:	cc                   	int3
->   1d:	cc                   	int3
->   1e:	cc                   	int3
->   1f:	eb 07                	jmp    0x28
->   21:	0f 00 2d 97 fc 0e 00 	verw   0xefc97(%rip)        # 0xefcbf
->   28:	fb                   	sti
->   29:	f4                   	hlt
->   2a:*	c3                   	ret		<-- trapping instruction
->   2b:	cc                   	int3
->   2c:	cc                   	int3
->   2d:	cc                   	int3
->   2e:	cc                   	int3
->   2f:	41 57                	push   %r15
->   31:	41 56                	push   %r14
->   33:	41 55                	push   %r13
->   35:	41 54                	push   %r12
->   37:	55                   	push   %rbp
->   38:	48 89 fd             	mov    %rdi,%rbp
->   3b:	53                   	push   %rbx
->   3c:	44 8b 6d 00          	mov    0x0(%rbp),%r13d
-> 
-> Code starting with the faulting instruction
-> ===========================================
->    0:	c3                   	ret
->    1:	cc                   	int3
->    2:	cc                   	int3
->    3:	cc                   	int3
->    4:	cc                   	int3
->    5:	41 57                	push   %r15
->    7:	41 56                	push   %r14
->    9:	41 55                	push   %r13
->    b:	41 54                	push   %r12
->    d:	55                   	push   %rbp
->    e:	48 89 fd             	mov    %rdi,%rbp
->   11:	53                   	push   %rbx
->   12:	44 8b 6d 00          	mov    0x0(%rbp),%r13d
-> [   41.203822][    C1] RSP: 0018:ffffc9000014fe38 EFLAGS: 00000246
-> [   41.204551][    C1] RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
-> [   41.205618][    C1] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-> [   41.206601][    C1] RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-> [   41.207613][    C1] R10: 0000000000000000 R11: 0000000000000000 R12: ffff8881008322c0
-> [   41.208650][    C1] R13: 1ffff92000029fca R14: dffffc0000000000 R15: 0000000000000000
-> [   41.209689][    C1]  default_idle (arch/x86/include/asm/paravirt.h:107 arch/x86/kernel/process.c:767)
-> [   41.210257][    C1]  default_idle_call (include/linux/cpuidle.h:143 (discriminator 1) kernel/sched/idle.c:123 (discriminator 1))
-> [   41.210879][    C1]  cpuidle_idle_call (kernel/sched/idle.c:191)
-> [   41.211506][    C1]  ? arch_cpu_idle_exit+0x30/0x30
-> [   41.215390][    C1]  ? tick_nohz_start_idle (kernel/time/tick-sched.c:753)
-> [   41.216069][    C1]  ? tsc_verify_tsc_adjust (arch/x86/kernel/tsc_sync.c:81)
-> [   41.216763][    C1]  do_idle (kernel/sched/idle.c:332)
-> [   41.217295][    C1]  cpu_startup_entry (kernel/sched/idle.c:427)
-> [   41.217929][    C1]  start_secondary (arch/x86/kernel/smpboot.c:315)
-> [   41.218650][    C1]  ? set_cpu_sibling_map (arch/x86/kernel/smpboot.c:233)
-> [   41.219100][    C1]  common_startup_64 (arch/x86/kernel/head_64.S:419)
-> [   41.219506][    C1]  </TASK>
-> [   41.219783][    C1] irq event stamp: 42022
-> [   41.220131][    C1] hardirqs last  enabled at (42021): tick_nohz_idle_exit (arch/x86/include/asm/irqflags.h:42 arch/x86/include/asm/irqflags.h:119 kernel/time/tick-sched.c:1472)
-> [   41.220844][    C1] hardirqs last disabled at (42022): __schedule (kernel/sched/core.c:6814)
-> [   41.221520][    C1] softirqs last  enabled at (42010): handle_softirqs (kernel/softirq.c:469 (discriminator 2) kernel/softirq.c:650 (discriminator 2))
-> [   41.222380][    C1] softirqs last disabled at (42001): __irq_exit_rcu (kernel/softirq.c:496 kernel/softirq.c:723)
-> [   41.223139][    C1] ---[ end trace 0000000000000000 ]---
-> 
-> 
-> The kernel config and materials to reproduce are available at:
-> https://download.01.org/0day-ci/archive/20251111/202511111547.de480df9-lkp@intel.com
-> 
-> 
-> 
-> -- 
-> 0-DAY CI Kernel Test Service
-> https://github.com/intel/lkp-tests/wiki
-> 
+Best regards,
+Krzysztof
 
