@@ -1,145 +1,122 @@
-Return-Path: <linux-kernel+bounces-896126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DA66C4FB37
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 21:26:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63071C4FBF7
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 21:55:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB9C13B94D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 20:26:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21E943AEC47
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 20:55:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 376F133D6F2;
-	Tue, 11 Nov 2025 20:26:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53FD53A5E9B;
+	Tue, 11 Nov 2025 20:55:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YISalZIK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="No13vpAF"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 806DF33D6D5;
-	Tue, 11 Nov 2025 20:26:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43958361DD6
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 20:55:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762892775; cv=none; b=K+EhVPgkG+4gbekASEF4SLLRmDkv9fiuAWOo7eiJPnjvNpJzSsQqZQBXXlAisQyC1B7wHacsFnZGEX6UyHPyj0wJ6L1ngXHlVgVnWsYjhQt1B6xwfWHcsTst7X93l1DJm4uClF1KwQguEQSYE3SsuU0NrW9NfefcGdQ4olIBOeU=
+	t=1762894513; cv=none; b=LjwdubtyCWq1G1N/HSUu4a8eNe8968zHhID/OfIK1pcJ6MHye0rAI5MLXAmMk+HAh9Oxg7XTUXtB6aD91FcL7MMQ/r9MntBcVx1RBTbp7xPZRBG3tjAJYZ/xDgwvaFNCWTqOyKcSs3S9xQR/6bkxkDL7hv+1MSkNffs6jc2VW6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762892775; c=relaxed/simple;
-	bh=g11VVLOrnrPR/EWZfPCKV/WPrJOnLP2exJs3CrROv6U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KkyFTPxEh3yVJ/MUin3k/P1YRkioT2RapBmGez/oNV3cInRXMqEsIZoXrDYuqRnxi6x6rBTolvao7WmsLXLL0bVmxEnzC6IqCTRReo0kZH7VmZZ4/oM44GUEMX1mF8+7k6LQSY91tp5rHmqZD8tyOdeMpuWh7JK2L7asYF+IWIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YISalZIK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8212C4CEF5;
-	Tue, 11 Nov 2025 20:25:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762892775;
-	bh=g11VVLOrnrPR/EWZfPCKV/WPrJOnLP2exJs3CrROv6U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YISalZIK3TR8PTD+G8hE2OyU4402PpTibQm6YhhXgyG1aHMBQaLvYwlEFIpFzOQ5X
-	 qoSlvR3ju4pMUrLtTAdx04FnwZt8dBsZWAW0Zqe7hCqv5B0RpR57/3C3aTVO+0fnKR
-	 AYFaNnK9pPJ9rFmcOZncZTAMqpw5+mIW6Zp2N6o/7L624FLpGK0gCV4DdOvhWlHOKp
-	 VmJx6sCEH1hefU34OhpEg0xJvO+Gar1UuQcXM1UlxP8IVtZQ530bfppIa/5fKNpf7o
-	 9kBBt2oZWf/FzCUMy7Bwu4Rn0UxewXeFXI1cH8NEtgskC4ISIoozoNmPZrsaaMNIG+
-	 2N7NuwQcalN0w==
-Date: Tue, 11 Nov 2025 22:25:51 +0200
-From: Mike Rapoport <rppt@kernel.org>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com,
-	dmatlack@google.com, rientjes@google.com, corbet@lwn.net,
-	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com,
-	kanie@linux.alibaba.com, ojeda@kernel.org, aliceryhl@google.com,
-	masahiroy@kernel.org, akpm@linux-foundation.org, tj@kernel.org,
-	yoann.congal@smile.fr, mmaurer@google.com, roman.gushchin@linux.dev,
-	chenridong@huawei.com, axboe@kernel.dk, mark.rutland@arm.com,
-	jannh@google.com, vincent.guittot@linaro.org, hannes@cmpxchg.org,
-	dan.j.williams@intel.com, david@redhat.com,
-	joel.granados@kernel.org, rostedt@goodmis.org,
-	anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn,
-	linux@weissschuh.net, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-mm@kvack.org,
-	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com,
-	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
-	hpa@zytor.com, rafael@kernel.org, dakr@kernel.org,
-	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com,
-	myungjoo.ham@samsung.com, yesanishhere@gmail.com,
-	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com,
-	aleksander.lobakin@intel.com, ira.weiny@intel.com,
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de,
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com,
-	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net,
-	brauner@kernel.org, linux-api@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, saeedm@nvidia.com,
-	ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com,
-	leonro@nvidia.com, witu@nvidia.com, hughd@google.com,
-	skhawaja@google.com, chrisl@kernel.org
-Subject: Re: [PATCH v5 02/22] liveupdate: luo_core: integrate with KHO
-Message-ID: <aRObz4bQzRHH5hJb@kernel.org>
-References: <20251107210526.257742-1-pasha.tatashin@soleen.com>
- <20251107210526.257742-3-pasha.tatashin@soleen.com>
+	s=arc-20240116; t=1762894513; c=relaxed/simple;
+	bh=EeKmYYyqEcmvfED0FbU/MKRN8rnFixpLLEPgHxtZ24Q=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=gAjPmSKvTckffJ/cgEi04W415K3n+M3pkWOLyBDpr4sAWanIzn/Fm/PMCMl94WnXMW0wL4xF7XP0s+SwWKMynWFEN+NP6TQxDdvml8K/6INGwSxNmHspRTsMisqArUyuOOOhioNN4DSwf0dTpx6PCbsb7ysvlFS42HVUpcuUKNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=No13vpAF; arc=none smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5ABKF2e7020797;
+	Tue, 11 Nov 2025 20:26:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=corp-2025-04-25; bh=xC+ZSF9n1po8poKVO7VUqJWqsxklw
+	mpjOkv7AHvwk8U=; b=No13vpAF/iKz0wJaHWNI5OgxAgEA1Nh1Gv2QrtIZJ2zW4
+	xww73uDWd2nnaZHNRNY+Pdytp8294a2puSGGtvGfb0Fxh79W1QSjvksfbKDb0deF
+	wyJNg4IUvrbrQPZZXqUbiOcaE3sxot5SXWf5vWMfO0r6RgX8RTUI34nalAopVKr7
+	XobxxZVRsanVqZI/7vJMrstrQqPWbtj8ddiUFe1PECycTpmvl2+oA52WX45uLTt4
+	TfktIwVgS2n/lKfhulfT9EHUtHhswJnk9kY0zAYLvhmWV3XTYMckcnz+xfHFfKiZ
+	K68xicmGOctXBwYNBBslhi2TOpeQ63MuQCatx4CIw==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4acaptr3mk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 11 Nov 2025 20:26:21 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5ABJ1VET039952;
+	Tue, 11 Nov 2025 20:26:20 GMT
+Received: from brm-x62-16.us.oracle.com (brm-x62-16.us.oracle.com [10.80.150.37])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 4a9va9wdu3-1;
+	Tue, 11 Nov 2025 20:26:20 +0000
+From: Jane Chu <jane.chu@oracle.com>
+To: gregkh@linuxfoundation.org, tj@kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] fs/kernfs: raise sb->maxbytes to MAX_LFS_FILESIZE
+Date: Tue, 11 Nov 2025 13:26:06 -0700
+Message-ID: <20251111202606.1505437-1-jane.chu@oracle.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251107210526.257742-3-pasha.tatashin@soleen.com>
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-11_04,2025-11-11_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxscore=0 phishscore=0
+ mlxlogscore=999 spamscore=0 suspectscore=0 bulkscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2510240000
+ definitions=main-2511110166
+X-Authority-Analysis: v=2.4 cv=BYrVE7t2 c=1 sm=1 tr=0 ts=69139bed b=1 cx=c_pps
+ a=WeWmnZmh0fydH62SvGsd2A==:117 a=WeWmnZmh0fydH62SvGsd2A==:17
+ a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=yPCof4ZbAAAA:8
+ a=XZXHcWFAyepS9mc2pJsA:9
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTExMDE1MiBTYWx0ZWRfXwiwcz0oRCjCB
+ 50uEUy/4rKC4dPFYA6x2iOoT1fdOHZ8vhka8ihoijU2Jcat/IQ6/G0/nxdV4Tf02+3JzQDd0Ezg
+ 2AoDCaq3tPEVVyAo3Qm0IV/NVXBlftbOT4DHkUjA8djzZzeY2Mpsn8WkPeG2TJ6RzHoQnDMAOGP
+ YFjO3qR5gVecuhibuCElQzVaK5U9UtzTnQiuGhqrcMKWf2dbLK666i6d4g8VOBHAL5NswNmOg46
+ hTpnFnZMfCAKz5L7UYC2JIru3ZUPx/bbTLZueM/qPB4BdaOqvXZdf3YlHLsvUdVuT8WX2ypWV0g
+ 5NX3aNd+5MOgK06iooWkehLMDlNN7y+m/zti1OHSsWkBY3Nnd6LGiw7gB+jr2mMtfME8T9MiI7L
+ ZVjmi/XjjUV9aAkl+6fmqdPO0KSiOA==
+X-Proofpoint-GUID: lvI11MFomyWjyqLxxpzot5QeXYKdMiaJ
+X-Proofpoint-ORIG-GUID: lvI11MFomyWjyqLxxpzot5QeXYKdMiaJ
 
-On Fri, Nov 07, 2025 at 04:03:00PM -0500, Pasha Tatashin wrote:
-> Integrate the LUO with the KHO framework to enable passing LUO state
-> across a kexec reboot.
-> 
-> When LUO is transitioned to a "prepared" state, it tells KHO to
-> finalize, so all memory segments that were added to KHO preservation
-> list are getting preserved. After "Prepared" state no new segments
-> can be preserved. If LUO is canceled, it also tells KHO to cancel the
-> serialization, and therefore, later LUO can go back into the prepared
-> state.
-> 
-> This patch introduces the following changes:
-> - During the KHO finalization phase allocate FDT blob.
-> - Populate this FDT with a LUO compatibility string ("luo-v1").
-> 
-> LUO now depends on `CONFIG_KEXEC_HANDOVER`. The core state transition
-> logic (`luo_do_*_calls`) remains unimplemented in this patch.
-> 
-> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+On an ARM64 A1 system, it's possible to have physical memory span
+up to the 64T boundary, like below
 
-...
+$ lsmem -b -r -n -o range,size
+0x0000000080000000-0x00000000bfffffff 1073741824
+0x0000080000000000-0x000008007fffffff 2147483648
+0x00000800c0000000-0x0000087fffffffff 546534588416
+0x0000400000000000-0x00004000bfffffff 3221225472
+0x0000400100000000-0x0000407fffffffff 545460846592
 
-> diff --git a/mm/mm_init.c b/mm/mm_init.c
-> index c6812b4dbb2e..20c850a52167 100644
-> --- a/mm/mm_init.c
-> +++ b/mm/mm_init.c
-> @@ -21,6 +21,7 @@
->  #include <linux/buffer_head.h>
->  #include <linux/kmemleak.h>
->  #include <linux/kfence.h>
-> +#include <linux/liveupdate.h>
->  #include <linux/page_ext.h>
->  #include <linux/pti.h>
->  #include <linux/pgtable.h>
-> @@ -2703,6 +2704,9 @@ void __init mm_core_init(void)
->  	 */
->  	kho_memory_init();
->  
-> +	/* Live Update should follow right after KHO is initialized */
-> +	liveupdate_init();
-> +
+So it's time to extend /sys/kernel/mm/page_idle/bitmap to be able
+to account for >2G number of pages, by raising the kernfs file size
+limit.
 
-Why do you think it should be immediately after kho_memory_init()?
-Any reason this can't be called from start_kernel() or even later as an
-early_initcall() or core_initall()?
+Signed-off-by: Jane Chu <jane.chu@oracle.com>
+---
+ fs/kernfs/mount.c | 1 +
+ 1 file changed, 1 insertion(+)
 
->  	memblock_free_all();
->  	mem_init();
->  	kmem_cache_init();
-> -- 
-> 2.51.2.1041.gc1ab5b90ca-goog
-> 
-> 
-
+diff --git a/fs/kernfs/mount.c b/fs/kernfs/mount.c
+index 76eaf64b9d9e..3ac52e141766 100644
+--- a/fs/kernfs/mount.c
++++ b/fs/kernfs/mount.c
+@@ -298,6 +298,7 @@ static int kernfs_fill_super(struct super_block *sb, struct kernfs_fs_context *k
+ 	if (info->root->flags & KERNFS_ROOT_SUPPORT_EXPORTOP)
+ 		sb->s_export_op = &kernfs_export_ops;
+ 	sb->s_time_gran = 1;
++	sb->s_maxbytes  = MAX_LFS_FILESIZE;
+ 
+ 	/* sysfs dentries and inodes don't require IO to create */
+ 	sb->s_shrink->seeks = 0;
 -- 
-Sincerely yours,
-Mike.
+2.43.5
+
 
