@@ -1,58 +1,55 @@
-Return-Path: <linux-kernel+bounces-894678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48C97C4B94F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 07:00:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBE8DC4B9C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 07:06:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E2BB24E3B1C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 06:00:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 117653B7F55
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 06:06:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6757E22836C;
-	Tue, 11 Nov 2025 06:00:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE45829ACF7;
+	Tue, 11 Nov 2025 06:06:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="D4ewmslm"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="QJFoF6q0"
+Received: from m16.mail.126.com (m16.mail.126.com [220.197.31.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A0052AD1F;
-	Tue, 11 Nov 2025 06:00:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A46E299950
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 06:06:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762840818; cv=none; b=AMIBYzXTzNjy4ctKMfjUsyfx/1Ch7fMTvhKQdTgp7kTuKQt1OVYqhGB/iabJ0++XNQ2DjwjhrOA/yvkvJ8bZQhpwCPmayEXmDo2I83TIjZkovrrjgCCzCqtvNrUOLLrnCAN/K/C4HoOGl7kSlrlj6TFMOVaeEGTSLobk8//JXow=
+	t=1762841209; cv=none; b=IO4KPirKWNxGD2wlyhhBVNiF+0EY523KcT5R65Z1402qrAsXaPQwjFsCD/h9uHK9lBCkmtSS0QtDdngkQiRCqsZAdDPQGikWgJEhxazi1SNXjJP1XZ/019oKmYpKu7ClG1Qatq3kqdxML+4o+gYrMvppTZUcU3+rL8rad6g5kYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762840818; c=relaxed/simple;
-	bh=EdOqdySR24uR3G1tafJApEIPQH+yf+c+cTZ/Kcxlu+k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CRgNEr5gx1HOQROvMoZ/mwvEbBwqID2qyhRuvagdXClZpSdTmzoiSFaXj0sA+xWW/CjvUZMzckjlpcl11yg4tl1umBeaW2DmWpaa9ydOOKX4Y1excfws+kJpYncUoLs3BYWsZVlFS8TvRpN+iDm9vKEJRS5Ob5MaV6NA3p1WwIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=D4ewmslm; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=AnjI+YlcCDEKPvDLLvf5t78gzh87TDaI+olc2x9lr04=; b=D4ewmslmHOfoy1tRnL7VxiRp/A
-	LuuUy3lRjxEgLWUJCu8LRo79j5E261cRGV14MusHqZ7o483CqlOOGlV2RbUSMo2/KYGoCAhvU9kN0
-	WQCxglWoTCBL4ZhUFkXqFXxjIdR2ufiXVqN5piGyCp9yMwU14AcubMpl3VeZILozZjWfXIu6xZf6N
-	eWNCdxv3KaEIZfIbTGiZjzjl2pb2Flk7GuivylqnPuAV2zxS4pbD0JO6eZJnRZxwsXv8htCG2otyo
-	Jr2WKhdSbp0hc5cEBKqCdui5TjuQ8dO/7l38afmyY/tkni64PLgu7BHo9EEtHwOVhlTcT1cAMK4fY
-	CAO6XERw==;
-Received: from [50.53.43.113] (helo=bombadil.infradead.org)
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vIhQI-00000006aU8-3DEh;
-	Tue, 11 Nov 2025 06:00:10 +0000
-From: Randy Dunlap <rdunlap@infradead.org>
-To: linux-kernel@vger.kernel.org
-Cc: Randy Dunlap <rdunlap@infradead.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Sebastian Reichel <sre@kernel.org>,
-	linux-pm@vger.kernel.org
-Subject: [PATCH] power: supply: ab8500_chargalg: improve kernel-doc
-Date: Mon, 10 Nov 2025 22:00:09 -0800
-Message-ID: <20251111060009.1959425-1-rdunlap@infradead.org>
-X-Mailer: git-send-email 2.51.1
+	s=arc-20240116; t=1762841209; c=relaxed/simple;
+	bh=vdsHJs45ooO/M+OZIcoQXZlPX9LYJcRdvesRK5hCxHg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=rk0UmXlhGO8cvCqoDZpRJaWCYL00DLUjlNrT11s3BMKnxJkfiTcxJIgv9JzuAwLbdsR++93cWjloXFeEul1P0ww2qxPrltVgfnKlDuDeo1uBHy7lH8uy4Hzce9TMAkB6kL9RH+tZgiGUVjTd2+0ScmXVNLD6tt4XGLR5aLrCA+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=QJFoF6q0; arc=none smtp.client-ip=220.197.31.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=vd
+	sHJs45ooO/M+OZIcoQXZlPX9LYJcRdvesRK5hCxHg=; b=QJFoF6q0GnOALu+Gx2
+	GNMuuVwsFslbpEM2aXqiIQFmQ8Cq9ouglLmNbJ2LxBJ9LWy/rG/GZaHj7PL5HnOL
+	dn81ALbAUnVItW8q3PbqpmzK/3f2NAALAKbq2W9P7DuaHOBdqACnwcOW+6REXZZ6
+	WrYXFvuZ86tZpU1r9Ey0tjNzg=
+Received: from hpz640.. (unknown [])
+	by gzga-smtp-mtada-g0-3 (Coremail) with SMTP id _____wCHmd5W0hJprKUPAw--.11216S2;
+	Tue, 11 Nov 2025 14:06:15 +0800 (CST)
+From: Xiaole He <hexiaole1994@126.com>
+To: linux-f2fs-devel@lists.sourceforge.net
+Cc: jaegeuk@kernel.org,
+	chao@kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] f2fs: fix has_curseg_enough_space to check all data segments for dentry blocks
+Date: Tue, 11 Nov 2025 14:00:49 +0800
+Message-ID: <20251111060557.337514-1-hexiaole1994@126.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <3a787685-1765-4068-a8da-d595dd257b71@gmail.com>
+References: <3a787685-1765-4068-a8da-d595dd257b71@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,93 +57,20 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wCHmd5W0hJprKUPAw--.11216S2
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUzKsjDUUUU
+X-CM-SenderInfo: 5kh0xt5rohimizu6ij2wof0z/1tbiex8DBmkS0FA33QAAsw
 
-Correct "bad line" warnings and add descriptions for missing entries
-to avoid these warnings:
+Hi Yongpeng,
 
-ab8500_chargalg.c:173: warning: bad line:  is set
-ab8500_chargalg.c:179: warning: bad line:  increased
-ab8500_chargalg.c:247: warning: Function parameter or struct member
- 't_hyst_norm' not described in 'ab8500_chargalg'
-ab8500_chargalg.c:247: warning: Function parameter or struct member
- 't_hyst_lowhigh' not described in 'ab8500_chargalg'
-ab8500_chargalg.c:247: warning: Function parameter or struct member
- 'ccm' not described in 'ab8500_chargalg'
-ab8500_chargalg.c:247: warning: Function parameter or struct member
- 'ac_chg' not described in 'ab8500_chargalg'
-ab8500_chargalg.c:247: warning: Function parameter or struct member
- 'usb_chg' not described in 'ab8500_chargalg'
-ab8500_chargalg.c:308: warning: Function parameter or struct member
- 'state' not described in 'ab8500_chargalg_state_to'
-ab8500_chargalg.c:773: warning: Function parameter or struct member
- 'di' not described in 'ab8500_chargalg_chg_curr_maxim'
+Thanks for your feedback! I've updated the patch per your suggestions:
+- Merged the dentry block check into the main loop to avoid duplication
+- Check data_blocks + dent_blocks for data segments since both can write to the same segment
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
----
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Sebastian Reichel <sre@kernel.org>
-Cc: linux-pm@vger.kernel.org
----
- drivers/power/supply/ab8500_chargalg.c |   15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+Please see the v2 patch.
 
---- linux-next-20251107.orig/drivers/power/supply/ab8500_chargalg.c
-+++ linux-next-20251107/drivers/power/supply/ab8500_chargalg.c
-@@ -170,13 +170,13 @@ struct ab8500_chargalg_events {
-  * @original_iset_ua:	the non optimized/maximised charger current
-  * @current_iset_ua:	the charging current used at this moment
-  * @condition_cnt:	number of iterations needed before a new charger current
--			is set
-+ *			is set
-  * @max_current_ua:	maximum charger current
-  * @wait_cnt:		to avoid too fast current step down in case of charger
-  *			voltage collapse, we insert this delay between step
-  *			down
-  * @level:		tells in how many steps the charging current has been
--			increased
-+ *			increased
-  */
- struct ab8500_charge_curr_maximization {
- 	int original_iset_ua;
-@@ -199,18 +199,20 @@ enum maxim_ret {
-  * @charge_status:	battery operating status
-  * @eoc_cnt:		counter used to determine end-of_charge
-  * @maintenance_chg:	indicate if maintenance charge is active
-- * @t_hyst_norm		temperature hysteresis when the temperature has been
-+ * @t_hyst_norm:	temperature hysteresis when the temperature has been
-  *			over or under normal limits
-- * @t_hyst_lowhigh	temperature hysteresis when the temperature has been
-+ * @t_hyst_lowhigh:	temperature hysteresis when the temperature has been
-  *			over or under the high or low limits
-  * @charge_state:	current state of the charging algorithm
-- * @ccm			charging current maximization parameters
-+ * @ccm:		charging current maximization parameters
-  * @chg_info:		information about connected charger types
-  * @batt_data:		data of the battery
-  * @bm:           	Platform specific battery management information
-  * @parent:		pointer to the struct ab8500
-  * @chargalg_psy:	structure that holds the battery properties exposed by
-  *			the charging algorithm
-+ * @ac_chg:		AC charger power supply
-+ * @usb_chg:		USB charger power supply
-  * @events:		structure for information about events triggered
-  * @chargalg_wq:		work queue for running the charging algorithm
-  * @chargalg_periodic_work:	work to run the charging algorithm periodically
-@@ -300,6 +302,7 @@ ab8500_chargalg_maintenance_timer_expire
- /**
-  * ab8500_chargalg_state_to() - Change charge state
-  * @di:		pointer to the ab8500_chargalg structure
-+ * @state:	new charge algorithm state
-  *
-  * This function gets called when a charge state change should occur
-  */
-@@ -763,7 +766,7 @@ static void init_maxim_chg_curr(struct a
- /**
-  * ab8500_chargalg_chg_curr_maxim - increases the charger current to
-  *			compensate for the system load
-- * @di		pointer to the ab8500_chargalg structure
-+ * @di:		pointer to the ab8500_chargalg structure
-  *
-  * This maximization function is used to raise the charger current to get the
-  * battery current as close to the optimal value as possible. The battery
+Best regards,
+Xiaole
+
 
