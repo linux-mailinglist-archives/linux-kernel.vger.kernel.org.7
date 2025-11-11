@@ -1,187 +1,95 @@
-Return-Path: <linux-kernel+bounces-896296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7160AC500C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 00:24:34 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 349EAC500D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 00:28:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5ABB718974B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 23:24:59 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 844C24E9B97
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 23:27:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EFC02F5465;
-	Tue, 11 Nov 2025 23:24:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09F432F3C09;
+	Tue, 11 Nov 2025 23:27:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y58MTPAs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="Eb7Y946H"
+Received: from r3-22.sinamail.sina.com.cn (r3-22.sinamail.sina.com.cn [202.108.3.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A0DE2F39D7;
-	Tue, 11 Nov 2025 23:24:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64A662D6E5B
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 23:27:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762903458; cv=none; b=OvwsaqRYLh05xT959mzt23Oo+9F9oz8kazgf470dLwe5+enbXi/jw9Wmb56ikwvNIHxTwBVia7AtUYNKcJP6+e0aZzzo8FdlVk0p7JaTD5VwzVZahfnRT7uqvUNdn1sU0HoX3dErMvWBPRtxM6B+RQEgNbiO5Ff4mtSmFhzaWxI=
+	t=1762903670; cv=none; b=n8+NnlC1KFw9iy/6968nASWQeL69rMFgksdsFAcpwFj4ZDLfYXrOvF6V5ZruJd6qpCfi1SXbEU+EJHhMLgdMyzFrWaiAD17QViNf0i+kVK+U0vnkDxLWTAeafCosa2hBnF7ZagzXpGOh6bhY/k32EF9tu2aTWi+oQp1qJ7yCVms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762903458; c=relaxed/simple;
-	bh=CF9vtFLqgxRgpJ1KV2wSkiIvgBr/keqs7YoOKJexPFM=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=kvVw3uQZcUnIIZT+ZqFCO0lJe3admaelrwXiX+Qeg1jE0jCfLRvLsaAXNUAJZXVML7upFZQHF6Mvm8/hHIRkkvatEU/S8bUA/OrnD15CUd/bXKWdnJrbNNtHQZrGvo/5K/CRm44x1Ye/+mD3kqrxi5Gm1K0MghQXXRCHIJhS43c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y58MTPAs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13BDBC113D0;
-	Tue, 11 Nov 2025 23:24:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762903458;
-	bh=CF9vtFLqgxRgpJ1KV2wSkiIvgBr/keqs7YoOKJexPFM=;
-	h=Date:From:To:Cc:Subject:References:From;
-	b=Y58MTPAsmxEUE+yB906hV/bQHDxR3wRsSkr/yoWQ/Kr5UI+2/n5nSwsXceZLrfSmF
-	 T4Vj2TPFGXA+mi7Hd4qjpZcu4oVIgIBEve3RpH0cgZzxsLTfEV/Qo51xxBfWJDvEBK
-	 3/pm1CD40mEQzjlam7B2UoUOVUoWF7qZ2SleAvAIXXs+k2UwfFg8PNUJOqxUlMsOR/
-	 VNtHJKmr1cjJdEh/G7iCpTc/G+y1zAXbUMQdRwkdci7v1UUf3nSJYKCJnqL463utev
-	 8n4NtVr2Acl1lnBW79nP3u+gRp7xuVpUUL2Au9GaPTCJGU+ClDU4uiFGyeF2UPWMiU
-	 4R1es0x/xG0Pw==
-Received: from rostedt by gandalf with local (Exim 4.98.2)
-	(envelope-from <rostedt@kernel.org>)
-	id 1vIxiv-00000000uSr-3IYl;
-	Tue, 11 Nov 2025 18:24:29 -0500
-Message-ID: <20251111232429.641030027@kernel.org>
-User-Agent: quilt/0.68
-Date: Tue, 11 Nov 2025 18:24:09 -0500
-From: Steven Rostedt <rostedt@kernel.org>
-To: linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH v4 3/3] tracing: Have function graph tracer define options per instance
-References: <20251111232406.183056289@kernel.org>
+	s=arc-20240116; t=1762903670; c=relaxed/simple;
+	bh=eZjTmwtz+7Q+Isk/XxtEXZJV8VFvkeLCo6yPTZFlPw4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=fVS7t6OeLN0sFRC2rXxukJHpNHyMaTcyLYrph5cYJh9AGvS7tgqrzK/kyvdNBKIkivK4cSz+h4PN7iq5e4vqGMwRsidUgZeJlPVa5wbw+JlUxvqDepcw4IT503APPEUZBPLY2RAB8XNvqs3p2yHwxm1p+Hk1qZP7ASO+TFtS9Zo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=Eb7Y946H; arc=none smtp.client-ip=202.108.3.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1762903665;
+	bh=6dssGtoxFvrdWgfTT2kXaA+5BFhRRsYwUSv5NHT99RY=;
+	h=From:Subject:Date:Message-ID;
+	b=Eb7Y946HZhuectGR39zvoskGoEsjrZgXcsAqIaCGFaKDe52bGVvlvpCgkMY0VQxaQ
+	 a2tZVwtpCgkvAEot146/marl3LVUsTZoFHtGLyCHdrR70jKUipF8cYI2tptwKYDpxH
+	 Xu1gI4piPL0nqmi5Dma9CFfkWurpi0Zf2NNK+K+w=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.57.85])
+	by sina.com (10.54.253.33) with ESMTP
+	id 6913C66700003DCE; Tue, 12 Nov 2025 07:27:36 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 7485146684944
+X-SMAIL-UIID: 31B521ED859D4A49A9E8A77A33A889AA-20251112-072736-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+a72c325b042aae6403c7@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [trace?] WARNING in tracing_buffers_mmap_close (2)
+Date: Wed, 12 Nov 2025 07:27:26 +0800
+Message-ID: <20251111232728.9139-1-hdanton@sina.com>
+In-Reply-To: <69136cdb.a70a0220.22f260.0142.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-From: Steven Rostedt <rostedt@goodmis.org>
+> Date: Tue, 11 Nov 2025 09:05:31 -0800
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    4a0c9b339199 Merge tag 'probes-fixes-v6.18-rc4' of git://g..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=127c3bcd980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=19d831c6d0386a9c
+> dashboard link: https://syzkaller.appspot.com/bug?extid=a72c325b042aae6403c7
+> compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13fb5342580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=167c3bcd980000
 
-Currently the function graph tracer's options are saved via a global mask
-when it should be per instance. Use the new infrastructure to define a
-"default_flags" field in the tracer structure that is used for the top
-level instance as well as new ones.
+#syz test
 
-Currently the global mask causes confusion:
-
-  # cd /sys/kernel/tracing
-  # mkdir instances/foo
-  # echo function_graph > instances/foo/current_tracer
-  # echo 1 > options/funcgraph-args
-  # echo function_graph > current_tracer
-  # cat trace
-[..]
- 2)               |          _raw_spin_lock_irq(lock=0xffff96b97dea16c0) {
- 2)   0.422 us    |            do_raw_spin_lock(lock=0xffff96b97dea16c0);
- 7)               |              rcu_sched_clock_irq(user=0) {
- 2)   1.478 us    |          }
- 7)   0.758 us    |                rcu_is_cpu_rrupt_from_idle();
- 2)   0.647 us    |          enqueue_hrtimer(timer=0xffff96b97dea2058, base=0xffff96b97dea1740, mode=0);
- # cat instances/foo/options/funcgraph-args
- 1
- # cat instances/foo/trace
-[..]
- 4)               |  __x64_sys_read() {
- 4)               |    ksys_read() {
- 4)   0.755 us    |      fdget_pos();
- 4)               |      vfs_read() {
- 4)               |        rw_verify_area() {
- 4)               |          security_file_permission() {
- 4)               |            apparmor_file_permission() {
- 4)               |              common_file_perm() {
- 4)               |                aa_file_perm() {
- 4)               |                  rcu_read_lock_held() {
-[..]
-
-The above shows that updating the "funcgraph-args" option at the top level
-instance also updates the "funcgraph-args" option in the instance but
-because the update is only done by the instance that gets changed (as it
-should), it's confusing to see that the option is already set in the other
-instance.
-
-Link: https://patch.msgid.link/20251110234342.105763200@kernel.org
-Fixes: c132be2c4fcc1 ("function_graph: Have the instances use their own ftrace_ops for filtering")
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- kernel/trace/trace_functions_graph.c | 18 +++++++++++-------
- 1 file changed, 11 insertions(+), 7 deletions(-)
-
-diff --git a/kernel/trace/trace_functions_graph.c b/kernel/trace/trace_functions_graph.c
-index fe9607edc8f9..4e86adf6dd4d 100644
---- a/kernel/trace/trace_functions_graph.c
-+++ b/kernel/trace/trace_functions_graph.c
-@@ -101,9 +101,9 @@ static struct tracer_flags tracer_flags = {
- 	.opts = trace_opts
- };
- 
--static bool tracer_flags_is_set(u32 flags)
-+static bool tracer_flags_is_set(struct trace_array *tr, u32 flags)
- {
--	return (tracer_flags.val & flags) == flags;
-+	return (tr->current_trace_flags->val & flags) == flags;
- }
- 
- /*
-@@ -263,7 +263,7 @@ static int graph_entry(struct ftrace_graph_ent *trace,
- 
- 	trace_ctx = tracing_gen_ctx();
- 	if (IS_ENABLED(CONFIG_FUNCTION_GRAPH_RETADDR) &&
--	    tracer_flags_is_set(TRACE_GRAPH_PRINT_RETADDR)) {
-+	    tracer_flags_is_set(tr, TRACE_GRAPH_PRINT_RETADDR)) {
- 		unsigned long retaddr = ftrace_graph_top_ret_addr(current);
- 		ret = __trace_graph_retaddr_entry(tr, trace, trace_ctx, retaddr);
- 	} else {
-@@ -441,7 +441,7 @@ static int graph_trace_init(struct trace_array *tr)
- {
- 	int ret;
- 
--	if (tracer_flags_is_set(TRACE_GRAPH_ARGS))
-+	if (tracer_flags_is_set(tr, TRACE_GRAPH_ARGS))
- 		tr->gops->entryfunc = trace_graph_entry_args;
- 	else
- 		tr->gops->entryfunc = trace_graph_entry;
-@@ -1459,7 +1459,8 @@ print_graph_function_flags(struct trace_iterator *iter, u32 flags)
- static enum print_line_t
- print_graph_function(struct trace_iterator *iter)
- {
--	return print_graph_function_flags(iter, tracer_flags.val);
-+	struct trace_array *tr = iter->tr;
-+	return print_graph_function_flags(iter, tr->current_trace_flags->val);
- }
- 
- static enum print_line_t
-@@ -1535,7 +1536,10 @@ static void __print_graph_headers_flags(struct trace_array *tr,
- 
- static void print_graph_headers(struct seq_file *s)
- {
--	print_graph_headers_flags(s, tracer_flags.val);
-+	struct trace_iterator *iter = s->private;
-+	struct trace_array *tr = iter->tr;
-+
-+	print_graph_headers_flags(s, tr->current_trace_flags->val);
- }
- 
- void print_graph_headers_flags(struct seq_file *s, u32 flags)
-@@ -1660,7 +1664,7 @@ static struct tracer graph_trace __tracer_data = {
- 	.reset		= graph_trace_reset,
- 	.print_line	= print_graph_function,
- 	.print_header	= print_graph_headers,
--	.flags		= &tracer_flags,
-+	.default_flags	= &tracer_flags,
- 	.set_flag	= func_graph_set_flag,
- 	.allow_instances = true,
- #ifdef CONFIG_FTRACE_SELFTEST
--- 
-2.51.0
-
-
+--- x/mm/mmap_lock.c
++++ y/mm/mmap_lock.c
+@@ -240,6 +240,7 @@ retry:
+ 		/* Check if the VMA got isolated after we found it */
+ 		if (PTR_ERR(vma) == -EAGAIN) {
+ 			count_vm_vma_lock_event(VMA_LOCK_MISS);
++			mas_set(&mas, address);
+ 			/* The area was replaced with another one */
+ 			goto retry;
+ 		}
+--
 
