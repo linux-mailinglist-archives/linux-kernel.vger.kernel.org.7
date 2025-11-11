@@ -1,254 +1,216 @@
-Return-Path: <linux-kernel+bounces-895878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1F65C4F2D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 18:04:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19B34C4F2BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 18:04:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B0733A62C9
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:02:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BD0B189F049
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:03:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E7FF33468B;
-	Tue, 11 Nov 2025 17:02:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f5x3C+2y"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5406B377E99;
-	Tue, 11 Nov 2025 17:02:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFEE43730F3;
+	Tue, 11 Nov 2025 17:02:47 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0F6632826A;
+	Tue, 11 Nov 2025 17:02:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762880548; cv=none; b=mJzUeyMVgzzvYjYzj3AXZE+OOSb5QVtDPtW28KhLkEy9V+UBInzXRuTg5H4AMhgUhL9B7mUI5rnYRJqWBGPb+CCeH/dj8clbja+pnT1Lpt7wPXtubuo9N+K38HUPoka+oSSXiHrpSEAONIRAiPSStayq7ItdU9l1CtXiYT0JLkI=
+	t=1762880567; cv=none; b=d4nFu/Xcg1ACvogTEGF6CX69+SE4y8NWNWxVKE7waJ7ZKHnB0fNf/ivAWpvYoQX+N/xjE9muYQxX6mbOoX1VBGg3C8HbmIVPwNMOw830H1W+jUrpWork/x1T4krvn1/VUPsYvj8hSvV4yaI3wUDcW57xVwP8957J0DhrkwpwUIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762880548; c=relaxed/simple;
-	bh=aC8mFVsiXSKQII7rj8zfxhDyGl3N32KQM4gxk2P9u9g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rD8PXiUtOTwue+Xng7uETUAkEyD4fPgsuCMXZiCKTISKhhAwxnxnMWtQRjBULzeR9qcUhJ8weyesySSqf67q74Cy36A7J1mCctocatjllYNRCRi2Vk9DREhQ4w1xXl+w3x7unW9DePo2Un2zPpsxIqEbdMkBwD5mCwX8Q3ZgBFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f5x3C+2y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1F8CC19423;
-	Tue, 11 Nov 2025 17:02:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762880547;
-	bh=aC8mFVsiXSKQII7rj8zfxhDyGl3N32KQM4gxk2P9u9g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=f5x3C+2y1jD+A5cP+v5i8GCa6B/a+dIXL20RXE6Md41ka7o8g8EYVMKUW2N7yPjy9
-	 7G7zmmBQB/8i+T5SuWuIN+UUCnUsiz+NMNOcCH4QkYL3gynmSRBRhYV0LGTTh2TWAK
-	 3FFbsjD3yluks9jj5/kf9reZD3Y0eqzQIZZXHxvaqaQO5vj9lOCO1FAGbEwAVuoR7R
-	 LmZZXXDi7VoS7uVVjQCe7deT98bskfftEn8obU2om9HrNFtah24cZ8whp9gvMV/D+F
-	 kMHGyKCi+a1xYFj653hZ0qei3xqUYp6GO/hnUXRqZSaE03oYDJgDcimzFmPlP1yRyb
-	 6tGBIpxK9fFwg==
-Date: Tue, 11 Nov 2025 17:02:21 +0000
-From: Simon Horman <horms@kernel.org>
-To: Dipayaan Roy <dipayanroy@linux.microsoft.com>
-Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
-	decui@microsoft.com, andrew+netdev@lunn.ch, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	longli@microsoft.com, kotaranov@microsoft.com,
-	shradhagupta@linux.microsoft.com, ssengar@linux.microsoft.com,
-	ernis@linux.microsoft.com, shirazsaleem@microsoft.com,
-	linux-hyperv@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
-	dipayanroy@microsoft.com
-Subject: Re: [PATCH net-next, v3] net: mana: Implement ndo_tx_timeout and
- serialize queue resets per port.
-Message-ID: <aRNsHUjW3PybGXCK@horms.kernel.org>
-References: <20251110103541.GA30450@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+	s=arc-20240116; t=1762880567; c=relaxed/simple;
+	bh=h3CaU70Wpl7je4UlRNrwj8Ap9whJXFM9a97Oj0nBeiU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rFxKt+/YPHjzruE20rlLNKxIra5Tb+q6SMv8VhC88g4ilVt1cq2MJVG8QtkzFlHOGgvP6yNXUtjbPcZFpd0Mq+lOaeTVaQtKIgmp51TO1SgERiqlQYSaHqN0YXZhDyWkBkoOA42cRFmFdjqxxZIryig/rK3tk5ixq8oz3Oq19ww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 698FE497;
+	Tue, 11 Nov 2025 09:02:36 -0800 (PST)
+Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8723E3F5A1;
+	Tue, 11 Nov 2025 09:02:39 -0800 (PST)
+Message-ID: <313158c4-055e-481e-9ab1-d5d4213a502a@arm.com>
+Date: Tue, 11 Nov 2025 17:02:38 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251110103541.GA30450@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 04/33] ACPI / PPTT: Find cache level by cache-id
+To: Jonathan Cameron <jonathan.cameron@huawei.com>
+Cc: james.morse@arm.com, amitsinght@marvell.com, baisheng.gao@unisoc.com,
+ baolin.wang@linux.alibaba.com, bobo.shaobowang@huawei.com,
+ carl@os.amperecomputing.com, catalin.marinas@arm.com, dakr@kernel.org,
+ dave.martin@arm.com, david@redhat.com, dfustini@baylibre.com,
+ fenghuay@nvidia.com, gregkh@linuxfoundation.org, gshan@redhat.com,
+ guohanjun@huawei.com, jeremy.linton@arm.com, kobak@nvidia.com,
+ lcherian@marvell.com, lenb@kernel.org, linux-acpi@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ lpieralisi@kernel.org, peternewman@google.com, quic_jiles@quicinc.com,
+ rafael@kernel.org, robh@kernel.org, rohit.mathew@arm.com,
+ scott@os.amperecomputing.com, sdonthineni@nvidia.com, sudeep.holla@arm.com,
+ tan.shaopeng@fujitsu.com, will@kernel.org, xhao@linux.alibaba.com
+References: <20251107123450.664001-1-ben.horgan@arm.com>
+ <20251107123450.664001-5-ben.horgan@arm.com>
+ <20251110160218.00001d65@huawei.com>
+From: Ben Horgan <ben.horgan@arm.com>
+Content-Language: en-US
+In-Reply-To: <20251110160218.00001d65@huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Nov 10, 2025 at 02:35:41AM -0800, Dipayaan Roy wrote:
-> Implement .ndo_tx_timeout for MANA so any stalled TX queue can be detected
-> and a device-controlled port reset for all queues can be scheduled to a
-> ordered workqueue. The reset for all queues on stall detection is
-> recomended by hardware team.
+Hi Jonathan,
+
+On 11/10/25 16:02, Jonathan Cameron wrote:
+> On Fri, 7 Nov 2025 12:34:21 +0000
+> Ben Horgan <ben.horgan@arm.com> wrote:
 > 
-> The change introduces a single ordered workqueue
-> ("mana_per_port_queue_reset_wq") with WQ_UNBOUND | WQ_MEM_RECLAIM and
-> queues exactly one work_struct per port onto it.
-
-I see that this goes some way to addressing Jakub's feedback
-on the commit message in his review of v2. But I this paragraph
-isn't adding much in it's current form. It seems to me some
-explanation of why why WQ_UNBOUND and WQ_MEM_RECLAIM are used is
-appropriate.
-
-[1] https://lore.kernel.org/all/20251029182233.59aea2d3@kernel.org/
-
-> Reviewed-by: Pavan Chebbi <pavan.chebbi@broadcom.com>
-> Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
-> Signed-off-by: Dipayaan Roy <dipayanroy@linux.microsoft.com>
-> ---
-> Changes in v3:
->   -Fixed commit meesage, removed rtnl_trylock and added
->    disable_work_sync, fixed mana_queue_reset_work, and few
->    cosmetics.
-> Changes in v2:
->   -Fixed cosmetic changes.
-> ---
-> ---
->  drivers/net/ethernet/microsoft/mana/mana_en.c | 78 ++++++++++++++++++-
->  include/net/mana/gdma.h                       |  7 +-
->  include/net/mana/mana.h                       |  7 ++
->  3 files changed, 90 insertions(+), 2 deletions(-)
+>> From: James Morse <james.morse@arm.com>
+>>
+>> The MPAM table identifies caches by id. The MPAM driver also wants to know
+>> the cache level to determine if the platform is of the shape that can be
+>> managed via resctrl. Cacheinfo has this information, but only for CPUs that
+>> are online.
+>>
+>> Waiting for all CPUs to come online is a problem for platforms where
+>> CPUs are brought online late by user-space.
+>>
+>> Add a helper that walks every possible cache, until it finds the one
+>> identified by cache-id, then return the level.
+>>
+>> Signed-off-by: James Morse <james.morse@arm.com>
+>> Signed-off-by: Ben Horgan <ben.horgan@arm.com>
 > 
-> diff --git a/drivers/net/ethernet/microsoft/mana/mana_en.c b/drivers/net/ethernet/microsoft/mana/mana_en.c
-> index cccd5b63cee6..636df3b066c5 100644
-> --- a/drivers/net/ethernet/microsoft/mana/mana_en.c
-> +++ b/drivers/net/ethernet/microsoft/mana/mana_en.c
-> @@ -298,6 +298,42 @@ static int mana_get_gso_hs(struct sk_buff *skb)
->  	return gso_hs;
->  }
->  
-> +static void mana_per_port_queue_reset_work_handler(struct work_struct *work)
-> +{
-> +	struct mana_queue_reset_work *reset_queue_work =
-> +			container_of(work, struct mana_queue_reset_work, work);
-> +
-> +	struct mana_port_context *apc = container_of(reset_queue_work,
-> +						     struct mana_port_context,
-> +						     queue_reset_work);
-> +	struct net_device *ndev = apc->ndev;
-> +	int err;
-> +
-> +	rtnl_lock();
-> +
-> +	/* Pre-allocate buffers to prevent failure in mana_attach later */
-> +	err = mana_pre_alloc_rxbufs(apc, ndev->mtu, apc->num_queues);
-> +	if (err) {
-> +		netdev_err(ndev, "Insufficient memory for reset post tx stall detection\n");
-> +		goto out;
-> +	}
-> +
-> +	err = mana_detach(ndev, false);
-> +	if (err) {
-> +		netdev_err(ndev, "mana_detach failed: %d\n", err);
-> +		goto dealloc_pre_rxbufs;
-> +	}
-> +
-> +	err = mana_attach(ndev);
-> +	if (err)
-> +		netdev_err(ndev, "mana_attach failed: %d\n", err);
-> +
-> +dealloc_pre_rxbufs:
-> +	mana_pre_dealloc_rxbufs(apc);
-> +out:
-> +	rtnl_unlock();
-> +}
-> +
->  netdev_tx_t mana_start_xmit(struct sk_buff *skb, struct net_device *ndev)
->  {
->  	enum mana_tx_pkt_format pkt_fmt = MANA_SHORT_PKT_FMT;
-> @@ -802,6 +838,23 @@ static int mana_change_mtu(struct net_device *ndev, int new_mtu)
->  	return err;
->  }
->  
-> +static void mana_tx_timeout(struct net_device *netdev, unsigned int txqueue)
-> +{
-> +	struct mana_port_context *apc = netdev_priv(netdev);
-> +	struct mana_context *ac = apc->ac;
-> +	struct gdma_context *gc = ac->gdma_dev->gdma_context;
-> +
-> +	/* Already in service, hence tx queue reset is not required.*/
-> +	if (gc->in_service)
-> +		return;
-> +
-> +	/* Note: If there are pending queue reset work for this port(apc),
-> +	 * subsequent request queued up from here are ignored. This is because
-> +	 * we are using the same work instance per port(apc).
-> +	 */
-> +	queue_work(ac->per_port_queue_reset_wq, &apc->queue_reset_work.work);
-> +}
-> +
->  static int mana_shaper_set(struct net_shaper_binding *binding,
->  			   const struct net_shaper *shaper,
->  			   struct netlink_ext_ack *extack)
-> @@ -884,7 +937,9 @@ static const struct net_device_ops mana_devops = {
->  	.ndo_bpf		= mana_bpf,
->  	.ndo_xdp_xmit		= mana_xdp_xmit,
->  	.ndo_change_mtu		= mana_change_mtu,
-> -	.net_shaper_ops         = &mana_shaper_ops,
-> +	.ndo_tx_timeout		= mana_tx_timeout,
-> +	.net_shaper_ops		= &mana_shaper_ops,
-> +
->  };
->  
->  static void mana_cleanup_port_context(struct mana_port_context *apc)
-> @@ -3244,6 +3299,7 @@ static int mana_probe_port(struct mana_context *ac, int port_idx,
->  	ndev->min_mtu = ETH_MIN_MTU;
->  	ndev->needed_headroom = MANA_HEADROOM;
->  	ndev->dev_port = port_idx;
-> +	ndev->watchdog_timeo = 15 * HZ;
->  	SET_NETDEV_DEV(ndev, gc->dev);
->  
->  	netif_set_tso_max_size(ndev, GSO_MAX_SIZE);
-> @@ -3283,6 +3339,10 @@ static int mana_probe_port(struct mana_context *ac, int port_idx,
->  
->  	debugfs_create_u32("current_speed", 0400, apc->mana_port_debugfs, &apc->speed);
->  
-> +	/* Initialize the per port queue reset work.*/
-> +	INIT_WORK(&apc->queue_reset_work.work,
-> +		  mana_per_port_queue_reset_work_handler);
-> +
+> A few things inline.
+> 
+>> ---
+>> Changes since v3:
+>> Tags dropped due to rework
+>> Fallout/simplification from adding acpi_pptt_cache_v1_full
+>> Look for each cache type before incrementing level
+>> ---
+>>  drivers/acpi/pptt.c  | 63 ++++++++++++++++++++++++++++++++++++++++++++
+>>  include/linux/acpi.h |  5 ++++
+>>  2 files changed, 68 insertions(+)
+>>
+>> diff --git a/drivers/acpi/pptt.c b/drivers/acpi/pptt.c
+>> index 1ed2099c0d1a..71841c106020 100644
+>> --- a/drivers/acpi/pptt.c
+>> +++ b/drivers/acpi/pptt.c
+>> @@ -918,3 +918,66 @@ void acpi_pptt_get_cpus_from_container(u32 acpi_cpu_id, cpumask_t *cpus)
+>>  				     entry->length);
+>>  	}
+>>  }
+>> +
+>> +/**
+>> + * find_acpi_cache_level_from_id() - Get the level of the specified cache
+>> + * @cache_id: The id field of the cache
+>> + *
+>> + * Determine the level relative to any CPU for the cache identified by
+>> + * cache_id. This allows the property to be found even if the CPUs are offline.
+>> + *
+>> + * The returned level can be used to group caches that are peers.
+>> + *
+>> + * The PPTT table must be rev 3 or later.
+>> + *
+>> + * If one CPU's L2 is shared with another CPU as L3, this function will return
+>> + * an unpredictable value.
+>> + *
+>> + * Return: -ENOENT if the PPTT doesn't exist, the revision isn't supported or
+>> + * the cache cannot be found.
+>> + * Otherwise returns a value which represents the level of the specified cache.
+>> + */
+>> +int find_acpi_cache_level_from_id(u32 cache_id)
+>> +{
+>> +	int cpu;
+>> +	struct acpi_table_header *table;
+>> +
+>> +	table = acpi_get_pptt();
+>> +	if (!table)
+>> +		return -ENOENT;
+>> +
+>> +	if (table->revision < 3)
+>> +		return -ENOENT;
+>> +
+>> +	for_each_possible_cpu(cpu) {
+>> +		bool not_empty = true;
+>> +		u32 acpi_cpu_id;
+>> +		struct acpi_pptt_cache_v1_full *cache;
+>> +		struct acpi_pptt_processor *cpu_node;
+>> +
+>> +		acpi_cpu_id = get_acpi_id_for_cpu(cpu);
+> 
+> Might as well combine this one with declaration.
 
-I think it would make more sense to move this to before the call to
-register_netdev(), which is a few lines above this hunk.
+Will do.
 
-I suppose that because a watchdog timeout is involved, it won't happen in
-practice, but in theory could fire ndo_tx_timeout before INIT_WORK is
-called, resulting in access to the work queue before it is initialised.
+> 
+>> +		cpu_node = acpi_find_processor_node(table, acpi_cpu_id);
+>> +		if (!cpu_node)
+>> +			continue;
+>> +
+>> +		for (int level = 1; not_empty; level++) {
+> 
+> This smells very much like a while loop rather than a for loop. Make
+> it a do/while and you can avoid the somewhat nasty setting not_empty = true
+> just to get in for first iteration.
+> 
+> 		int level = 1;
+> 		do {
+> 			int cache_type[] = { CACHE_TYPE_INST, CACHE_TYPE_DATA, CACHE_TYPE_UNIFIED };
+> 
+> 			not_empty = false;
+> 			for (int i = 0; i < ARRAY_SIZE(cache_type); i++) {
+> 				cache = acpi_find_cache_node(table, acpi_cpu_id, cache_type[i],
+> 							     level, &cpu_node);
+> 				if (!cache)
+> 					continue;
+> 
+> 				not_empty = true;
+> 
+> 				if (acpi_pptt_cache_id_is_valid(cache) &&
+> 				    cache->extra.cache_id == cache_id)
+> 					return level;
+> 			}
+> 		} while (not_empty);
+> 
+> Maybe flip sense of that bool to be empty and !empty for the test.
 
->  	return 0;
->  
->  free_indir:
-> @@ -3488,6 +3548,15 @@ int mana_probe(struct gdma_dev *gd, bool resuming)
->  	if (ac->num_ports > MAX_PORTS_IN_MANA_DEV)
->  		ac->num_ports = MAX_PORTS_IN_MANA_DEV;
->  
-> +	ac->per_port_queue_reset_wq =
-> +			alloc_ordered_workqueue("mana_per_port_queue_reset_wq",
-> +						WQ_UNBOUND | WQ_MEM_RECLAIM);
-> +	if (!ac->per_port_queue_reset_wq) {
-> +		dev_err(dev, "Failed to allocate per port queue reset workqueue\n");
-> +		err = -ENOMEM;
-> +		goto out;
-> +	}
-> +
->  	if (!resuming) {
->  		for (i = 0; i < ac->num_ports; i++) {
->  			err = mana_probe_port(ac, i, &ac->ports[i]);
+Yes, this is better. I'll stop abusing the for loop in this patch and
+the next. Changing not_empty to !empty make sense too.
 
-It is not strictly related to this patch, but the lines above the hunk
-below look like this:
+> 
+> 
+>> +			int cache_type[] = {CACHE_TYPE_INST, CACHE_TYPE_DATA, CACHE_TYPE_UNIFIED};
+>> +
+>> +			not_empty = false;
+>> +			for (int i = 0; i < ARRAY_SIZE(cache_type); i++) {
+>> +				cache = acpi_find_cache_node(table, acpi_cpu_id, cache_type[i],
+>> +							     level, &cpu_node);
+>> +				if (!cache)
+>> +					continue;
+>> +
+>> +				not_empty = true;
+>> +
+>> +				if (acpi_pptt_cache_id_is_valid(cache) &&
+>> +				    cache->extra.cache_id == cache_id)
+>> +					return level;
+>> +			}
+>> +		}
+>> +	}
+>> +
+>> +	return -ENOENT;
+>> +}
+> 
+> 
 
-		apc = netdev_priv(ndev);
-		if (!ndev) {
-			if (i == 0)
-				dev_err(dev, "No net device to remove\n");
+Thanks,
 
-If ndev is null then the call to netdev_priv() will result in a
-NULL pointer dereference. So I think it should be moved
-to after the check for !ndev.
+Ben
 
-> @@ -3557,6 +3626,8 @@ void mana_remove(struct gdma_dev *gd, bool suspending)
->  			goto out;
->  		}
->  
-> +		disable_work_sync(&apc->queue_reset_work.work);
-> +
->  		/* All cleanup actions should stay after rtnl_lock(), otherwise
->  		 * other functions may access partially cleaned up data.
->  		 */
-
-Comments on code flagged by Claude Code with
-https://github.com/masoncl/review-prompts/
 
