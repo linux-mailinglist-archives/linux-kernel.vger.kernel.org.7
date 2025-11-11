@@ -1,132 +1,178 @@
-Return-Path: <linux-kernel+bounces-895453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44D90C4DF1A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:59:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 729ADC4DF3C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:00:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FE743B89E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:53:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 352F83B8BE6
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:53:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB6383AA18E;
-	Tue, 11 Nov 2025 12:46:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69422328240;
+	Tue, 11 Nov 2025 12:47:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="cmpQpyT3";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="VunrRh3C"
-Received: from fhigh-a4-smtp.messagingengine.com (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="OQfOSgYR";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="isCtypYe"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82B762550D4;
-	Tue, 11 Nov 2025 12:46:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 398903AA1BB
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 12:47:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762865188; cv=none; b=nkBZBNBXF7d0fCSn97sQaoxephUNq24JvFkGIbk5zs5Tc1Vlo0Jkac9MWgskMHa12b2WD3fLSXK3sdJ9If80bQPTHEj+3fpOMbeHukuSNsEFW/ZJuzmH4MDNuG/FDB1kgapD6P8wPU2H+1hSabDGoLgmzQjo6V4kZy5L249e7qw=
+	t=1762865222; cv=none; b=LT5+29DfU5NRJMSCdt37QFF7/kXRA67rkzfbuk13NKfWt7XwCw0cPlmAp4AFbdqCWDOsAsPW3Bxcvv3ux0Iy/se1ggoBGZSDJWASt2CtdgupOKufHHG71TpXJCl5SwmicbvI06EszLqUjSjX7xiet7NtUcxFR1GZLBoAlUmnE/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762865188; c=relaxed/simple;
-	bh=+D8jGoDpBa6xNo69zWsaU6PunpWeTPRMygAk91kfZN0=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=uzDV8Wd4E7clK7qhtM195CVBqJTPqhW/glQZsFElwe0zGAwUXf0p9PurlZTYD1WngsTVx/ATLz7B8jKAM4kL9NYcZEwU9kWUDCT15mfJ1JTrzj3RPNt7Ffuos3Xw7eFMYZgQRJVnUSrmEv2qzWu3da51/x9cCJHzgeW3p2joSUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=cmpQpyT3; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=VunrRh3C; arc=none smtp.client-ip=103.168.172.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 7073514000F5;
-	Tue, 11 Nov 2025 07:46:24 -0500 (EST)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-04.internal (MEProxy); Tue, 11 Nov 2025 07:46:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1762865184;
-	 x=1762951584; bh=qPSPi7QKsWbBdZTy5b2peWWJFo3JmlmoZ6aUudf3qcc=; b=
-	cmpQpyT32o12/yKmdmlYsHXboPxRIxWAizKxd0/9YzBhy0/UEKLknNjI+3fTIO0q
-	7FU9sDw+hXE1aVSucaL2vd42AHytkYHA79HSPbFYwMDjP8Yuv6jnT35Mf+bVJHlE
-	Fc/5cTI4IlnHNFGfly+Ip2zf23lN+9kXHMpnTYg4Lr/ycDdd8q3U0B6VVS3z5pXD
-	7bkOMrA6Ln1TKIOt2WPWXSgfsM3Mjud6BHgZrSBku3cUyXSGpcICIn0zOjM6q/NP
-	fUeOLpdHvpWntYiBQEtN7Lg8LDUBTfyZjTdh/syMSnZ3bGTs2uv1DChvqL3kMO6I
-	AKKpsTKgoU4XuQ3QTLg66w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762865184; x=
-	1762951584; bh=qPSPi7QKsWbBdZTy5b2peWWJFo3JmlmoZ6aUudf3qcc=; b=V
-	unrRh3C50B8nlC2ySniXwHhyhI3jX7KuMzD/qvAKGTr+FjPomCAWJrwjQp7UfSMT
-	COn7W9RYQTK7fztKnBilzo14mV1uulpouTCYAEHFZSXwYe0prCaVvL9iSjqOrhOn
-	uVnZp3eSjGyVImrA+32aTzsybajHHCU5TuZcn9Qt8e1z3tWdbhjuA1h/LcY0BbbL
-	jAb/suWuven/2HAbkb1Cjn8POg3hBaviaECtanR7YfloSuMcfQj5G1nLtwa5RQsK
-	7U28JyPW7VXu6X/MSnxC/zBAHCjjUt8/fHkQ3zCFBac36gs6aBtwlPhWrCPL3rLL
-	rCMR9eFotMxAkHi5ESROg==
-X-ME-Sender: <xms:IDATaW27QQWmFxXXCV1Fjxac0TlGJfwvGc0aDsNfs2cKeSnDtNjonw>
-    <xme:IDATaT6Pa3Wpuy-syJNCmiMv-OHamFR8GBcGPduJ0ozl52gAgM873Cc9NTonNZgwA
-    ypNCBSJ0rB_44njWIctjYv3BcsPzGn74FsdQjEBGoKF-16LssJAdLg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvtdduvdefucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdejnecuhfhrohhmpedftehrnhgu
-    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
-    hrnhepvdfhvdekueduveffffetgfdvveefvdelhedvvdegjedvfeehtdeggeevheefleej
-    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnh
-    gusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepjedpmhhouggvpehsmhhtphhouhht
-    pdhrtghpthhtohepvhhinhgtvghniihordhfrhgrshgtihhnohesrghrmhdrtghomhdprh
-    gtphhtthhopehluhhtoheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhhuhgrhhes
-    khgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhglhigsehlihhnuhhtrhhonhhigidrug
-    gvpdhrtghpthhtohepthhhohhmrghsrdifvghishhsshgthhhuhheslhhinhhuthhrohhn
-    ihigrdguvgdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnh
-    gvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkshgvlhhfthgvshhtsehvghgvrhdr
-    khgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:IDATaYcNvlAGEPqong-TCBN9LE_UiAUdbzKsopWPbwG_bRD4ozvaVQ>
-    <xmx:IDATaURs1P1vO3-jXrv_6sn6sqF3SwIqwfB1iJF8qp-5c0p6NIlQXQ>
-    <xmx:IDATaZaMQSfVYyFYSaD97M5SIbOfNXzDSc2ZhVeAni_S0Hop1xHaPw>
-    <xmx:IDATafea6NdIYt3gSdap1__-SvRXgkL43zjVVQO7J4tcYA3OIW47fA>
-    <xmx:IDATaWjTw9Mlxp8qK4ELluiWv9jMmKwvknWI7lOuIT5NEwg5qE7vckUE>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 10E65700063; Tue, 11 Nov 2025 07:46:24 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1762865222; c=relaxed/simple;
+	bh=vI2c24xcDfLO+jj774i6XGCsjUpNaRMZS3K8xPM2Qr4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e6lzeMZbKYGMbq4KBfJFHuznDcLNr0ON49SKZ0rFU0bg/ed/sn3+8zj8BmAdM1jbSTaAum9opykumq4lJjXyySSQH72//xSdiQFsCZDeFEolD0YXjx4JVKlpjUgK7SZanb93Q9vItg2kGFwVKuWpuFYvtBNEm5uG8Lmzmd6u4WA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=OQfOSgYR; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=isCtypYe; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5ABBGJwm2117350
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 12:47:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=gcgrCPztTJBR65GQBdHRM8vG
+	IBP891DcZKanjQPvZlk=; b=OQfOSgYRI409fge3xzAPl1zyGh1B5qggKlE8dJ9t
+	7tGU0Iy6M3IpsQ7petXXseFGlD8E2Fjzu1/UXXq1xmotBXJ5PEtsxTlwh+OpV69g
+	Jd2CqZlRGXOD85TNRmKFGa6jgJYlo4dTgpQzM0kN51g6l01LlZbs9nJgpmTbTEOz
+	oYFhm6zy30mLObmBJyMilSLomeqaFxxlToA2AzNdqKBQSei/1kKkOr1TJHhaQZNk
+	E9It9O4+VrxAYgj151rDfZvzTmVsj+kMyPO+vGzD7/jnRhEGQRwS4bIvJnM71qtB
+	2AZsIUQWQt319t/kgHlprzALrj7ARmEAacxX0voP7QALMg==
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4abpy8jdqb-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 12:47:00 +0000 (GMT)
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4ed7591799eso117514811cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 04:47:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1762865220; x=1763470020; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=gcgrCPztTJBR65GQBdHRM8vGIBP891DcZKanjQPvZlk=;
+        b=isCtypYewDqx3Xqp1Bie+YA2n4Eyke+4xOIX/aZFBsD3gA2z4Wk4IF9y5QCwDaLbis
+         UGU4ja2rWyGTu/6AHSU6wfIiOiy49fgQwZzW0kswmv+LIgHNgR02BRX1cSAzSyZqSLsU
+         72C/z79D8CbBbOBaVbtj71iYPW5eAhH3Mbajr63n34e9xvRDY7PAaE68vMmV3VJ64edK
+         UuswBH/pW5E91NcDS2IX9j9qFXVofF6ZrIKCoD13f83xhWo00FIX/aIoSgaOkG9GoVzy
+         uFb1vNMLvk5CX2A2GVttLGMionkbk6q5l25JZaafK4DyjtQr7velDN8kYt87Gss3V+D8
+         JS5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762865220; x=1763470020;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gcgrCPztTJBR65GQBdHRM8vGIBP891DcZKanjQPvZlk=;
+        b=iIv9e8p8BC/aIt5TrZUldecuw9tZP8x/zMjZDDqgPMGMi9PfR3U29VQM8kMuBR8Iv2
+         51btQzbu83uLsdYxe6iWZ9yElbEJzCrf3+pYq1St1ynz1EpehNVRwMJkOBidkT+SD3O3
+         Ab933KXqQgcgFpec0zmmaSZDWWJD5bWz8tjwuqfH93D0uPcbgmMV2hUBCptZs8VqnK2q
+         5TA7RjxCpqq1DaA1QkEIjno/02tdcPdd8orzYCs2TBHwOlkJ2ZEMdckCEpnlRYp0DMbl
+         QpE8jIeMrHxIGhrQdgTh5tHbg9YqTx/l6PQJOSDGQSXeWt3W84FSxnGweEcH6dk8ntUy
+         aLjw==
+X-Forwarded-Encrypted: i=1; AJvYcCWEzoRhrfL6mNiLCmiENHzmlbG3hZLVMtlVao72tHl3FGdeiQglU6zTrr19pugJauMaaFQbLZkUA7Iu5Ng=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywr16fi3zSp8PlTiCExqml+/73qkP3adeX8v7QuIY5HK6qggAmq
+	viDP+5WoCLA7Emkg6fERoPfzg4xNfOOCtjW1JVkLvjoOWaDBeVc2O8O9hw0hGLXHoR9xmqQs6t7
+	FpZZqJ4fXuChXu3Fh7LoQjDJtqHNmZgrsYnmFTC2IlVVmalR1uwjEESj+nCdzDyCBaqY=
+X-Gm-Gg: ASbGncuumpvkUf1Dx+0fLo+8/BdSnL0G8qYOsnTxLog30AaNafsPK3pziHMWnKKGQQg
+	QFwcBjT2/vlyD9aE+XOll3p2rCEtUvsPXzlh9vs+PWK8yTKKW+yx0tdbad0IWd+tpVzoX5kLJg0
+	2Jw/HttYkQeGmZFNVgnpI6otAROuhvbc1tHJbhPSERs7uro9GJf11PC92djGLDx9SQ9mY3qDCbi
+	U0i5zIcHjP82ChV8EOc6QVs168qjyyjaaznbRhVs9JMWC1ttAQVI6mo0xKp5Mj+Gpg583U2X88R
+	0TIJOHxCVJ+EfcnQoMa2pd7n656xIStuoEEWu3IZm3nzhEHSjQ0hDJcDlV4H+TXODvvy/mIqmyl
+	L6NAPNkf9kf6Jg6JLZGG/xJ6IXToLaNeqC1tE71yQxJxXHEroDLdCzmibKHOmjee4DN5DxzNRVA
+	EmgUyJ8PBruQ4r
+X-Received: by 2002:a05:622a:14cf:b0:4ed:5f45:448a with SMTP id d75a77b69052e-4eda4e8ca02mr155999611cf.6.1762865219502;
+        Tue, 11 Nov 2025 04:46:59 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHhAlncYp5HpdTxD1HrQnjF1b0//yHkzKS+jDNKrjtjAklFMPHNI+T7aD4cdfUGmuDLd6rdcg==
+X-Received: by 2002:a05:622a:14cf:b0:4ed:5f45:448a with SMTP id d75a77b69052e-4eda4e8ca02mr155999401cf.6.1762865219022;
+        Tue, 11 Nov 2025 04:46:59 -0800 (PST)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5944a39eb32sm5013667e87.82.2025.11.11.04.46.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Nov 2025 04:46:58 -0800 (PST)
+Date: Tue, 11 Nov 2025 14:46:56 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: david@ixit.cz
+Cc: Jeff Johnson <jjohnson@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Joel Selvaraj <foss@joelselvaraj.com>, linux-wireless@vger.kernel.org,
+        ath10k@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        phone-devel@vger.kernel.org
+Subject: Re: [PATCH 2/2] arm64: dts: qcom: xiaomi-beryllium: Add
+ firmware-name qualifier to WiFi node
+Message-ID: <wxvtfyfdso3ngqvnhvryeo2w6udoolfp46smv2r3qny2cl7n4o@iawxfnj7qtrw>
+References: <20251111-xiaomi-beryllium-firmware-v1-0-836b9c51ad86@ixit.cz>
+ <20251111-xiaomi-beryllium-firmware-v1-2-836b9c51ad86@ixit.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: AVKYIwYTPfqF
-Date: Tue, 11 Nov 2025 13:45:56 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
- "Andy Lutomirski" <luto@kernel.org>, "Thomas Gleixner" <tglx@linutronix.de>,
- "Vincenzo Frascino" <vincenzo.frascino@arm.com>, shuah <shuah@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Message-Id: <3bdfd610-ec7a-4f3c-ba9f-ec48eecc0835@app.fastmail.com>
-In-Reply-To: <20251111-vdso-test-types-v1-2-03b31f88c659@linutronix.de>
-References: <20251111-vdso-test-types-v1-0-03b31f88c659@linutronix.de>
- <20251111-vdso-test-types-v1-2-03b31f88c659@linutronix.de>
-Subject: Re: [PATCH 02/10] selftests: vDSO: Introduce vdso_types.h
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251111-xiaomi-beryllium-firmware-v1-2-836b9c51ad86@ixit.cz>
+X-Proofpoint-ORIG-GUID: nk7KgZyIqXG9tcBTaNPZmZddBWbl7L7T
+X-Authority-Analysis: v=2.4 cv=AYW83nXG c=1 sm=1 tr=0 ts=69133044 cx=c_pps
+ a=JbAStetqSzwMeJznSMzCyw==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=qG9Bp93c0gXLeqlDJoQA:9 a=CjuIK1q_8ugA:10 a=uxP6HrT_eTzRwkO_Te1X:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTExMDEwMiBTYWx0ZWRfXyNdqndoOIuvN
+ ewr7f8Gj+kIfedTscFo8Jx789OzfMYenJBOMl+5af7NHpcU6niVhV56H3q/SZFnNgGaX7OVkees
+ 7dJEHbIeswlVKkpopq9/CbveA9M9oRXUvH/IRgj/Mdjqhd1Bz7+1aSVGML6KphQ7wTqJ5cl/qEP
+ FViLQS30W4yHczu+07m+Xrg60c1IKYfun9Q4aidFwwVLYgHxyr1iqCheWyivaR/kBJjMOGXxUDb
+ uqhCXVY7q1tfEDdWAFxTV02zqI3V503r8k43vZk8QnDAEUQP/dFHPXnkXqnBJzXzS8DzR0uu43K
+ v+mRcDm78w//20z2gwA2K6o0Kb+yugXddK+I/05sCdd8iVWjMbWO/AHj4onwlTxACdtCHyoWUNo
+ qIHelGF6ikp2FfV7vpAHYMagGErxtA==
+X-Proofpoint-GUID: nk7KgZyIqXG9tcBTaNPZmZddBWbl7L7T
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-11_02,2025-11-11_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 impostorscore=0 malwarescore=0 adultscore=0 clxscore=1015
+ suspectscore=0 priorityscore=1501 lowpriorityscore=0 bulkscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511110102
 
-On Tue, Nov 11, 2025, at 11:49, Thomas Wei=C3=9Fschuh wrote:
-> +/*
-> + * UAPI headers from the libc may be older and not provide these.
-> + */
-> +#if KERNEL_VERSION(5, 5, 0) > LINUX_VERSION_CODE
-> +typedef __kernel_long_t		__kernel_old_time_t;
+On Tue, Nov 11, 2025 at 01:34:23PM +0100, David Heidelberg via B4 Relay wrote:
+> From: David Heidelberg <david@ixit.cz>
+> 
+> Add firmware-name property to the WiFi device tree node to specify
+> board-specific lookup directory.
+> 
+> Signed-off-by: David Heidelberg <david@ixit.cz>
+> ---
+>  arch/arm64/boot/dts/qcom/sdm845-xiaomi-beryllium-common.dtsi | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sdm845-xiaomi-beryllium-common.dtsi b/arch/arm64/boot/dts/qcom/sdm845-xiaomi-beryllium-common.dtsi
+> index 785006a15e979..9b0b0446f4ad3 100644
+> --- a/arch/arm64/boot/dts/qcom/sdm845-xiaomi-beryllium-common.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sdm845-xiaomi-beryllium-common.dtsi
+> @@ -631,6 +631,8 @@ &wcd9340 {
+>  &wifi {
+>  	status = "okay";
+>  
+> +	firmware-name "sdm845/Xiaomi/beryllium";
+
+This wasn't build-tested
+
 > +
-> +struct __kernel_old_timespec {
-> +	__kernel_old_time_t	tv_sec;
-> +	long			tv_nsec;
-> +};
-> +#endif
+>  	vdd-0.8-cx-mx-supply = <&vreg_l5a_0p8>;
+>  	vdd-1.8-xo-supply = <&vreg_l7a_1p8>;
+>  	vdd-1.3-rfa-supply = <&vreg_l17a_1p3>;
+> 
+> -- 
+> 2.51.0
+> 
+> 
 
-Doesn't this also need to define __kernel_old_timeval, which you
-refer to below?
-
-> +typedef __kernel_time_t (*vdso_time_t)(__kernel_time_t *t);
-
-This I think needs to be __kernel_old_time_t instead of __kernel_time_t.
-
-       Arnd
+-- 
+With best wishes
+Dmitry
 
