@@ -1,118 +1,225 @@
-Return-Path: <linux-kernel+bounces-894883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B814BC4C53C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:16:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40720C4C630
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:26:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 618A334F910
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 08:16:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F9604261F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 08:17:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34B0E32F740;
-	Tue, 11 Nov 2025 08:14:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97D18233723;
+	Tue, 11 Nov 2025 08:15:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AcqzUVIg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MXn/Nn5J"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 860A02DC35C;
-	Tue, 11 Nov 2025 08:14:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DA032957B6;
+	Tue, 11 Nov 2025 08:15:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762848898; cv=none; b=DBBctw+51X1NuUFXj0j8EyK9Q56bEgHrZJJTrAEGncin1ddMNTfiqEb7jQ1FAv500iFSWjUu9kyTf1cmVsonjmraJRPq0S9OqoHLFcS6SZdQJzY9ZPufp3H88krn1kuFV8UxtyQ0yEO0Botqb6QYKC06ZL9MslzQ+CNf0RdqMic=
+	t=1762848935; cv=none; b=ZwvUTgj6/dBbZ4b63F5YV+kyTo8atAg7Tg/5R6181dAdsufClYH6CNO8hjFqwIGnDa24pCUH9DGgWxGt/kcmmsFKD7BjaqGbjwzlEqYlaJ/iW9+qHi1OijQcb5aSw9E63Lq29ygow5TWspdSE1mIf1QeA3g3GaO/MA/pjnmTC1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762848898; c=relaxed/simple;
-	bh=h307kAcGDdlAPMSOA8BXjiOpTLM82CH1YDe7PLP/zqs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kn3/8o9uNKLEukJpl20smFHZ/6wdSd+D8l9EN4lJ4ZSSzQ8wAyRR6HJ3T0f33DXyx2jWftJxYqysSZ+yUsWsYVOx0FsSXCRYdU+FZTyu7GqDD0xN2Ln4MgZJFkp63tKgxI6MtEhBSwici0oko+Dbs4hP4hLpRxWyfsDYis+1/cQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AcqzUVIg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73ADAC4CEF7;
-	Tue, 11 Nov 2025 08:14:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762848898;
-	bh=h307kAcGDdlAPMSOA8BXjiOpTLM82CH1YDe7PLP/zqs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AcqzUVIgaCxIK5ctebECQFqIhdURORxhsCGy+GrHzZsRCJrtbOsufz3ZbiGCaMwLG
-	 CseLgtNwvDethRiiSKNVWlR/BI5jUUQpWvMqbTlZ9WmR5W/BeBQqS637QI/3cLsClT
-	 AgafciqiSZgLD93V1R75YdqCjTuvPFE50EMnYjKk1lIB4Qgz2qUUK8K4FaFSYuCEtw
-	 2Zr4p5IQZquGZIXoZo6mTIWVPhtYuclEVOow0km9iyVN9lPyVrO1FMDDPGs7uKDltz
-	 NQoaM+U+dBqqFVrMiu7Htg3HkNqLfXcm+lOLzwRNDuykoTy6o4sLnW41lHLpVuXVWZ
-	 agS5bPNSU9ZMg==
-Date: Tue, 11 Nov 2025 09:14:55 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: adrianhoyin.ng@altera.com
-Cc: gregkh@linuxfoundation.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, dinguyen@kernel.org, Thinh.Nguyen@synopsys.com, 
-	devicetree@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/4] usb: dwc3: add support for configurable DMA
- addressable bits
-Message-ID: <20251111-aardwolf-of-unmatched-potency-7a2eff@kuoka>
-References: <cover.1762839776.git.adrianhoyin.ng@altera.com>
- <c69076470c19fc03d92fc04cdb10960873bc2bc0.1762839776.git.adrianhoyin.ng@altera.com>
+	s=arc-20240116; t=1762848935; c=relaxed/simple;
+	bh=DguBCWqKqS+yK4Y/p3bCA8+XgInji4qk9nohQ91vz6g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Tb5t2yaLSZJ24vm7P0MzsQuGMjhuz4IQaPVJ0lQI09lBHc+Qo5oriqwXBfWz56W55LaYSMNJvEk275uxfB3T5fJd02wuEzLcc9UbRZnZ6Nb6aKbvIUeiU230LpLSYyNZMLBqve/YwJflQ/OHGqRHXzouwb7kmTMay57x7bcfMGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MXn/Nn5J; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762848934; x=1794384934;
+  h=message-id:date:mime-version:subject:to:references:from:
+   in-reply-to:content-transfer-encoding;
+  bh=DguBCWqKqS+yK4Y/p3bCA8+XgInji4qk9nohQ91vz6g=;
+  b=MXn/Nn5JXL7huU8PBBiMCxHFBhlrZXWDnz82mEwhZKEz0VG0g0IA+5Ya
+   qQK/uBbd9gSeh19iZwXG5/LNgR4heqBg10N71Zqg+oZ6LPd21rqwOujHX
+   7W3VOxSCNHDnucsHFNWzQef9ISRsD6a1VxtU5x5RFl1uwixHMDUzraW4s
+   W9O8BvCpG8BGWR7fPlI0qVwPaTd/s9A/UEeAYFDCS8JKy1bC7F16HgGS1
+   OKHl0jF9zSzpP7JGCw7CtTqjW8BEeBLEVPASFKsOkO1ufkzQZnjkd5BE5
+   zryGZx2216NEy5nsuPDhMO0aXdOPj66XW9VAS8IV7zFds+TpaJezsRNtO
+   g==;
+X-CSE-ConnectionGUID: ZFmNc7hGRlmjCybHCx+Yaw==
+X-CSE-MsgGUID: Z7AZG0ieTtamtrHJ+N5NBw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11609"; a="68768368"
+X-IronPort-AV: E=Sophos;i="6.19,296,1754982000"; 
+   d="scan'208";a="68768368"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 00:15:33 -0800
+X-CSE-ConnectionGUID: MmuXOI1dRBiU+Ufnli4obA==
+X-CSE-MsgGUID: 5ZnPeF+JS52e3qUEOz+tTg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,296,1754982000"; 
+   d="scan'208";a="193902406"
+Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.232.65]) ([10.124.232.65])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 00:15:28 -0800
+Message-ID: <e0d29714-df04-48f9-8168-770bf05a0f7f@linux.intel.com>
+Date: Tue, 11 Nov 2025 16:15:25 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <c69076470c19fc03d92fc04cdb10960873bc2bc0.1762839776.git.adrianhoyin.ng@altera.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 01/18] perf metricgroup: Add care to picking the evsel
+ for displaying a metric
+To: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ James Clark <james.clark@linaro.org>, Xu Yang <xu.yang_2@nxp.com>,
+ Chun-Tse Shao <ctshao@google.com>, Thomas Richter <tmricht@linux.ibm.com>,
+ Sumanth Korikkar <sumanthk@linux.ibm.com>,
+ Collin Funk <collin.funk1@gmail.com>, Thomas Falcon
+ <thomas.falcon@intel.com>, Howard Chu <howardchu95@gmail.com>,
+ Levi Yun <yeoreum.yun@arm.com>, Yang Li <yang.lee@linux.alibaba.com>,
+ linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+ Andi Kleen <ak@linux.intel.com>, Weilin Wang <weilin.wang@intel.com>
+References: <20251111040417.270945-1-irogers@google.com>
+ <20251111040417.270945-2-irogers@google.com>
+Content-Language: en-US
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+In-Reply-To: <20251111040417.270945-2-irogers@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 11, 2025 at 02:18:48PM +0800, adrianhoyin.ng@altera.com wrote:
-> From: Adrian Ng Ho Yin <adrianhoyin.ng@altera.com>
->=20
-> Add support for configuring the DMA addressable bit width in the
-> Synopsys DesignWare USB3 (DWC3) core driver.
->=20
-> Altera Agilex5 supports only 40-bit DMA addressing. Setting an incorrect
-> DMA mask (such as the default 64-bit) can lead to address truncation or
-> translation faults when the SMMU is enabled.
->=20
-> This commit introduces a new field, dma_addressable_bits, in the dwc3
-> structure to track the platform=E2=80=99s supported DMA width. The defaul=
-t value
-> is set to 64 bits, but for Agilex5 platforms (altr,agilex5-dwc3), the
-> value is overridden to 40 bits. This field is then used when setting the
-> DMA mask to ensure compatibility with the system=E2=80=99s actual address=
- bus
-> capabilities.
->=20
-> Signed-off-by: Adrian Ng Ho Yin <adrianhoyin.ng@altera.com>
+
+On 11/11/2025 12:04 PM, Ian Rogers wrote:
+> Rather than using the first evsel in the matched events, try to find
+> the least shared non-tool evsel. The aim is to pick the first evsel
+> that typifies the metric within the list of metrics.
+>
+> This addresses an issue where Default metric group metrics may lose
+> their counter value due to how the stat displaying hides counters for
+> default event/metric output.
+>
+> For a metricgroup like TopdownL1 on an Intel Alderlake the change is,
+> before there are 4 events with metrics:
+> ```
+> $ perf stat -M topdownL1 -a sleep 1
+>
+>  Performance counter stats for 'system wide':
+>
+>      7,782,334,296      cpu_core/TOPDOWN.SLOTS/          #     10.4 %  tma_bad_speculation
+>                                                   #     19.7 %  tma_frontend_bound
+>      2,668,927,977      cpu_core/topdown-retiring/       #     35.7 %  tma_backend_bound
+>                                                   #     34.1 %  tma_retiring
+>        803,623,987      cpu_core/topdown-bad-spec/
+>        167,514,386      cpu_core/topdown-heavy-ops/
+>      1,555,265,776      cpu_core/topdown-fe-bound/
+>      2,792,733,013      cpu_core/topdown-be-bound/
+>        279,769,310      cpu_atom/TOPDOWN_RETIRING.ALL/   #     12.2 %  tma_retiring
+>                                                   #     15.1 %  tma_bad_speculation
+>        457,917,232      cpu_atom/CPU_CLK_UNHALTED.CORE/  #     38.4 %  tma_backend_bound
+>                                                   #     34.2 %  tma_frontend_bound
+>        783,519,226      cpu_atom/TOPDOWN_FE_BOUND.ALL/
+>         10,790,192      cpu_core/INT_MISC.UOP_DROPPING/
+>        879,845,633      cpu_atom/TOPDOWN_BE_BOUND.ALL/
+> ```
+>
+> After there are 6 events with metrics:
+> ```
+> $ perf stat -M topdownL1 -a sleep 1
+>
+>  Performance counter stats for 'system wide':
+>
+>      2,377,551,258      cpu_core/TOPDOWN.SLOTS/          #      7.9 %  tma_bad_speculation
+>                                                   #     36.4 %  tma_frontend_bound
+>        480,791,142      cpu_core/topdown-retiring/       #     35.5 %  tma_backend_bound
+>        186,323,991      cpu_core/topdown-bad-spec/
+>         65,070,590      cpu_core/topdown-heavy-ops/      #     20.1 %  tma_retiring
+>        871,733,444      cpu_core/topdown-fe-bound/
+>        848,286,598      cpu_core/topdown-be-bound/
+>        260,936,456      cpu_atom/TOPDOWN_RETIRING.ALL/   #     12.4 %  tma_retiring
+>                                                   #     17.6 %  tma_bad_speculation
+>        419,576,513      cpu_atom/CPU_CLK_UNHALTED.CORE/
+>        797,132,597      cpu_atom/TOPDOWN_FE_BOUND.ALL/   #     38.0 %  tma_frontend_bound
+>          3,055,447      cpu_core/INT_MISC.UOP_DROPPING/
+>        671,014,164      cpu_atom/TOPDOWN_BE_BOUND.ALL/   #     32.0 %  tma_backend_bound
+> ```
+
+It looks the output of cpu_core and cpu_atom events are mixed together,
+like the "cpu_core/INT_MISC.UOP_DROPPING/". Could we resort the events and
+separate the cpu_core and cpu_atom events output? It would make the output
+more read-friendly. Thanks.
+
+
+>
+> Signed-off-by: Ian Rogers <irogers@google.com>
 > ---
->  drivers/usb/dwc3/core.c | 9 ++++++++-
->  drivers/usb/dwc3/core.h | 3 +++
->  2 files changed, 11 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
-> index ae140c356295..20e655364135 100644
-> --- a/drivers/usb/dwc3/core.c
-> +++ b/drivers/usb/dwc3/core.c
-> @@ -2179,6 +2179,9 @@ int dwc3_core_probe(const struct dwc3_probe_data *d=
-ata)
->  	dwc->xhci_resources[0].flags =3D res->flags;
->  	dwc->xhci_resources[0].name =3D res->name;
-> =20
-> +	/* Initialize dma addressable bit to 64 bits as default */
-> +	dwc->dma_addressable_bits =3D 64;
+>  tools/perf/util/metricgroup.c | 48 ++++++++++++++++++++++++++++++++++-
+>  1 file changed, 47 insertions(+), 1 deletion(-)
+>
+> diff --git a/tools/perf/util/metricgroup.c b/tools/perf/util/metricgroup.c
+> index 48936e517803..76092ee26761 100644
+> --- a/tools/perf/util/metricgroup.c
+> +++ b/tools/perf/util/metricgroup.c
+> @@ -1323,6 +1323,51 @@ static int parse_ids(bool metric_no_merge, bool fake_pmu,
+>  	return ret;
+>  }
+>  
+> +/* How many times will a given evsel be used in a set of metrics? */
+> +static int count_uses(struct list_head *metric_list, struct evsel *evsel)
+> +{
+> +	const char *metric_id = evsel__metric_id(evsel);
+> +	struct metric *m;
+> +	int uses = 0;
 > +
->  	/*
->  	 * Request memory region but exclude xHCI regs,
->  	 * since it will be requested by the xhci-plat driver.
-> @@ -2194,6 +2197,9 @@ int dwc3_core_probe(const struct dwc3_probe_data *d=
-ata)
->  			dwc_res.start +=3D DWC3_RTK_RTD_GLOBALS_REGS_START;
+> +	list_for_each_entry(m, metric_list, nd) {
+> +		if (hashmap__find(m->pctx->ids, metric_id, NULL))
+> +			uses++;
+> +	}
+> +	return uses;
+> +}
+> +
+> +/*
+> + * Select the evsel that stat-display will use to trigger shadow/metric
+> + * printing. Pick the least shared non-tool evsel, encouraging metrics to be
+> + * with a hardware counter that is specific to them.
+> + */
+> +static struct evsel *pick_display_evsel(struct list_head *metric_list,
+> +					struct evsel **metric_events)
+> +{
+> +	struct evsel *selected = metric_events[0];
+> +	size_t selected_uses;
+> +	bool selected_is_tool;
+> +
+> +	if (!selected)
+> +		return NULL;
+> +
+> +	selected_uses = count_uses(metric_list, selected);
+> +	selected_is_tool = evsel__is_tool(selected);
+> +	for (int i = 1; metric_events[i]; i++) {
+> +		struct evsel *candidate = metric_events[i];
+> +		size_t candidate_uses = count_uses(metric_list, candidate);
+> +
+> +		if ((selected_is_tool && !evsel__is_tool(candidate)) ||
+> +		    (candidate_uses < selected_uses)) {
+> +			selected = candidate;
+> +			selected_uses = candidate_uses;
+> +			selected_is_tool = evsel__is_tool(selected);
+> +		}
+> +	}
+> +	return selected;
+> +}
+> +
+>  static int parse_groups(struct evlist *perf_evlist,
+>  			const char *pmu, const char *str,
+>  			bool metric_no_group,
+> @@ -1430,7 +1475,8 @@ static int parse_groups(struct evlist *perf_evlist,
+>  			goto out;
 >  		}
-> =20
-> +		if (of_device_is_compatible(parent, "altr,agilex5-dwc3"))
-
-No, this does not scale. Don't sprinkle compatible all over driver code.
-You have driver match data for that.
-
-Best regards,
-Krzysztof
-
+>  
+> -		me = metricgroup__lookup(&perf_evlist->metric_events, metric_events[0],
+> +		me = metricgroup__lookup(&perf_evlist->metric_events,
+> +					 pick_display_evsel(&metric_list, metric_events),
+>  					 /*create=*/true);
+>  
+>  		expr = malloc(sizeof(struct metric_expr));
 
