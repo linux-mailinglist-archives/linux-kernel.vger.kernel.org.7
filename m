@@ -1,671 +1,221 @@
-Return-Path: <linux-kernel+bounces-894446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7F92C4A905
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 02:32:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE8C7C4A998
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 02:33:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76CA1188F9E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 01:25:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 243023B0D24
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 01:26:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2892134A796;
-	Tue, 11 Nov 2025 01:16:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 829043064AB;
+	Tue, 11 Nov 2025 01:17:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="VkuW/KNB"
-Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11011053.outbound.protection.outlook.com [52.101.52.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=minyard-net.20230601.gappssmtp.com header.i=@minyard-net.20230601.gappssmtp.com header.b="1X0bIYLP"
+Received: from mail-oa1-f66.google.com (mail-oa1-f66.google.com [209.85.160.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3186C26CE37
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 01:16:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.52.53
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762823775; cv=fail; b=E3OKgoksLM04nIiYH/QOdxM7BBLgPQuAIm2ghuh7gQgclcs/p7s6xruciwHtmUzz8Jf6rpexc80iit+yZO+0dAy8hc+q4DO+Oor1eIGQf7kvqtNp1cZG6NL6EULmqyQ5coLxtXkLaRx4VWoOeDHUFncQRnRc+VxOeZNMRpHVMUA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762823775; c=relaxed/simple;
-	bh=tCgEs5DNjGSrk5w1V6gtDt0N25XvmFcE5Kyq1WhMsBQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BoeuY09hJkeJ6e/E89jwcw7T+g4bYu1hmeujyX9I113Ta5/uSPGYidxdy7VDJ8kEWFQH5f+ou8fQYoEVkp21cdgcCMITqqK7Kzapy+Ga8bak+h2NJ63+VmoLjyb8+wjClipmMtRzjNbS2YZPU8Y8RTssFgFd4R9vsI8RenykSRQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=VkuW/KNB; arc=fail smtp.client-ip=52.101.52.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=CbNZAFsmPyrapRWcuFS50hp4Cp/dwDjfVl75H9KtLb+gK4ak7Gd/A6Mb4J78URhXaPdyCoETKnkfw+FKBdTUjMnL/SeQ0sKmWNzqU2+MlKjEtDPCrxpPsJqERsyjW7yA6gOEaJQZ2Lb8PYZpYkuczpy5ihtPDm8TR38DN1OBkbNzgP5LGXXtT8bLYOMohGsGVxJ/yi+UmvErYovr5VW8xoVflrnGR2mVLXCMroLD52TrGJWiIAcwgLd3WUcq/hZJcCqeQbIc4mQftCwFqgJzn5h3++GSqNSZNoMFusKid+i76sqSKHZbi4USS/rqrLEWYYaUPcOnlGs2Vs7cMLKncA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Wmj7QPN8OJHFWXxfylXywFP0D/5vh/FNHnZ+3MFl/7c=;
- b=gMF5H9gKERDZlT1v1D/dtghTFyYpGms/g37jABbXxnFE1NNllsIGvhsFnwC5snW9FxEo8NaJuwgCY5Me3DQJMNerZi9qUafpc2yOKaqWUTxdaJRVD+A9kzTZ5Ucv/q7sfjRAckPFIFFxzS8W10gGk8KLYQmRSAho3+6zF0Jtgn9PeJoAlq11ScA13wCtxQfyOFoDzxbtZ56lQjtazc/Hp7TgU9Zqxv8Hx1TmeJx298m9Xh3JhnWBVhtWTKgsCqFzHS9KcmqvO4h1yt4fM21B+gIhRiaO9DMye7erjYmGMeuwy+wZGKOu+wdHM/y0eFe21f7NTqmJhfeMrHrQ3gSMCA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Wmj7QPN8OJHFWXxfylXywFP0D/5vh/FNHnZ+3MFl/7c=;
- b=VkuW/KNB1NnT2b7+7oeYeC3l4OmHbZdAy2Gy7z2Fl5yyH7RrzH6XxdBMGHuIEmudU2vDKNvthcrClRrivPUAMI+K6hrzV0+GbZGItF7T4JiBgwgWqNnXjXkDf4HmptScQ8jDa/1wHRMWwq0RPL/t8WNM/cqRniDInpSpRxj+hsc=
-Received: from CH5P223CA0006.NAMP223.PROD.OUTLOOK.COM (2603:10b6:610:1f3::23)
- by SA1PR12MB999109.namprd12.prod.outlook.com (2603:10b6:806:4a1::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Tue, 11 Nov
- 2025 01:16:06 +0000
-Received: from CH2PEPF00000148.namprd02.prod.outlook.com
- (2603:10b6:610:1f3:cafe::6f) by CH5P223CA0006.outlook.office365.com
- (2603:10b6:610:1f3::23) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9298.16 via Frontend Transport; Tue,
- 11 Nov 2025 01:16:00 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- CH2PEPF00000148.mail.protection.outlook.com (10.167.244.105) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9320.13 via Frontend Transport; Tue, 11 Nov 2025 01:16:06 +0000
-Received: from SATLEXMB06.amd.com (10.181.40.147) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.17; Mon, 10 Nov
- 2025 17:16:03 -0800
-Received: from satlexmb08.amd.com (10.181.42.217) by SATLEXMB06.amd.com
- (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 10 Nov
- 2025 19:16:03 -0600
-Received: from xsjdavidzha51.xilinx.com (10.180.168.240) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
- Transport; Mon, 10 Nov 2025 17:16:02 -0800
-From: David Zhang <yidong.zhang@amd.com>
-To: <ogabbay@kernel.org>, <quic_jhugo@quicinc.com>,
-	<maciej.falkowski@linux.intel.com>, <dri-devel@lists.freedesktop.org>
-CC: David Zhang <yidong.zhang@amd.com>, <linux-kernel@vger.kernel.org>,
-	<sonal.santan@amd.com>, <mario.limonciello@amd.com>, <lizhi.hou@amd.com>,
-	Nishad Saraf <nishads@amd.com>
-Subject: [PATCH V1 5/5] accel/amd_vpci: Add communication channel service
-Date: Mon, 10 Nov 2025 17:15:50 -0800
-Message-ID: <20251111011550.439157-6-yidong.zhang@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251111011550.439157-1-yidong.zhang@amd.com>
-References: <20251111011550.439157-1-yidong.zhang@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B240306B39
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 01:17:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.66
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762823866; cv=none; b=MnPQFi5PbXWacjEjBZDtFhBcCG7jID9AxScKSUO4O+z6KHc51LnVJ6NQNMnzAEoTZWyqyhnyh+ZrpqVRUiziyWotldgOJW3HCSdzDlLyDB7oqpV5vQxIrWeH6Tjnwr9CIpiVLyj+6nAtOaNeJred66oE/EEfmGbuCBMBahX3vvY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762823866; c=relaxed/simple;
+	bh=/awKTS4VkDV7YyuY2XqMrgn1/FWXuaIp1CGhvSR3qsg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YI6l9m1sDbedQg3nGWIUOR9bvWk4YRBA/9e/wn8nbsd0IvN3Ctz8tsrfgv5GFi+1Uo0tj3EzGh7iE65JXDOjoSktDn6V/dBstUa6RggUesCNUmhU4nNI15i+psa5kWqubnRYXXYtgYL/64WhQUXXeWoWCFgKbeCVD4/E5bEA/wg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=minyard.net; spf=none smtp.mailfrom=minyard.net; dkim=pass (2048-bit key) header.d=minyard-net.20230601.gappssmtp.com header.i=@minyard-net.20230601.gappssmtp.com header.b=1X0bIYLP; arc=none smtp.client-ip=209.85.160.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=minyard.net
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=minyard.net
+Received: by mail-oa1-f66.google.com with SMTP id 586e51a60fabf-3c9991e6ad1so180147fac.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 17:17:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=minyard-net.20230601.gappssmtp.com; s=20230601; t=1762823863; x=1763428663; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IjPKo3ybe4fdml1XQE+jQ3G55BcDMlVXlR9cl8yZWH4=;
+        b=1X0bIYLPg5FTcJXhMNg4pxmUb76wfaApB+l+loii0/FgtqX/HWlaE6aNarA3fA9Js9
+         Cwr/pnjVw/q3j5GgfUcYJJmUxw/jTInjI6MeuuAxCyfd67UbKjFyQTJeeL68hCUtpCgv
+         FiR1iNbtgqjlwBPrj2nm0cbbtIsbIvO0nK++V7ByOhJx2aJAFWsu3V+P7WutbzH2gkaJ
+         CBY9dbIIANg6ZmHz/nZ3ngHXtPb7Hj43JsC/t5rIl7DR3aQwyV19mNxAMyhHyzknHFLy
+         qjd9pzDGh7fMH3dh49XFDtb87Ae4NleYzlXTxHYnKhEGBfrmvt+33yPlDBX1ApO1D4i7
+         ip+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762823863; x=1763428663;
+        h=in-reply-to:content-disposition:mime-version:references:reply-to
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=IjPKo3ybe4fdml1XQE+jQ3G55BcDMlVXlR9cl8yZWH4=;
+        b=qiFXsRALBNTQhADttrep+lBuSbiIHFrdTSpDJPMrG/BE1keMecpR78Xj2dfb2sCulX
+         l+Mpl4JmHj7pgICJiPNS7Kp3JASIi8HimQAZqc9s69vbwIGBaUve64XjX4KbOaNqYkSP
+         F6kCRoiluI2kWZyC9AAs1qIS/t7jRTBnZn+aTWijOjNW+tUX/PHPvS68r9wF7/bMgmHd
+         SvKG6GaHQ+n74S9t4ISarNCw33lpIx4GFX2fyoDg77JzLliEm51M+ZMSIvGMng/RJhPV
+         wZVbPasQ35XWwuIflSx14iESyg8tY3H80ZgNsbXEnkJ5ZguTvHVEwl7bG99VmjTH/36v
+         xaKw==
+X-Forwarded-Encrypted: i=1; AJvYcCXWoo8mkOxa+UpbmCxKuWt4gMnjY/rgviMy4fKYBmxpueUiz0Wia8zztGj3mdVRPihfLSnktII3ez3lb+Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2VDg/eFLqX1/re5ErRXkjSTvx4GSWiAjDguABKheVMUwrvWcC
+	3lujrCwPcvW5V6uXaW+6FuCmbgxNO5UMfBKACoiDuAVOGPYbgLU3WcvKwDo+W+Aoxbg=
+X-Gm-Gg: ASbGnctJ77k3UN8dJyO76J72l3LinsFVpgbYF6cooc2Ujew/XXXPk5MR47EiHHNADPJ
+	ffLBULXzeJzm2yYR3bmFj80DVhtXMskRWqnSqW1GyMab87c436bFD4bOjN0Z1CX3B2DX65VbeC4
+	xuG0MGYTBBjCb7BZ2iTu9yOHWRcDkOAptj6lc+/B6jAPw7AJiFDOsWEm2Shqmbq8KY4D3cdkG3v
+	9a4igX1kM0iZ7EY8iqwdQVpFJkwQTjp+drAetC+KJ/iV+i7C7OBkgyFdmVD1Dyj7lVI6mVUkl/p
+	Ot+Ij64W7Oqj7jbMMwDa5AGg2BfOSxeif+B5xQ6x/1w7b/emMTwM6x+/EUzBhKAPPDgBu421QN1
+	bMkZg7Up11uqPUi1shliW9W/KKpqi7+c9MxlVUXJwfiyKChEjo0ghjGWoU98uB8WKnHwrpEE13h
+	OobPRP/Vdjl6ba0g==
+X-Google-Smtp-Source: AGHT+IHYqlJ/DqUior2uObKb688W9mKskJnwhdBfDC1sLOPoqWKjn2HRpxRv5pN7HFxTPVj3Axvofg==
+X-Received: by 2002:a05:6870:46a8:b0:3e1:d34:4283 with SMTP id 586e51a60fabf-3e815aaa2a3mr850172fac.19.1762823862970;
+        Mon, 10 Nov 2025 17:17:42 -0800 (PST)
+Received: from mail.minyard.net ([2001:470:b8f6:1b:b4e9:19a3:cdaf:7174])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-3e7d6f7a27dsm4076840fac.0.2025.11.10.17.17.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Nov 2025 17:17:41 -0800 (PST)
+Date: Mon, 10 Nov 2025 19:17:35 -0600
+From: Corey Minyard <corey@minyard.net>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Christian K??nig <christian.koenig@amd.com>,
+	"Dr. David Alan Gilbert" <linux@treblig.org>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Rob Clark <robin.clark@oss.qualcomm.com>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Hans Verkuil <hverkuil@kernel.org>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Vitaly Lifshits <vitaly.lifshits@intel.com>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Niklas Cassel <cassel@kernel.org>, Calvin Owens <calvin@wbinvd.org>,
+	Sagi Maimon <maimon.sagi@gmail.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Karan Tilak Kumar <kartilak@cisco.com>,
+	Casey Schaufler <casey@schaufler-ca.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Petr Mladek <pmladek@suse.com>,
+	Max Kellermann <max.kellermann@ionos.com>,
+	Takashi Iwai <tiwai@suse.de>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	openipmi-developer@lists.sourceforge.net,
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linaro-mm-sig@lists.linaro.org, amd-gfx@lists.freedesktop.org,
+	linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+	intel-xe@lists.freedesktop.org, linux-mmc@vger.kernel.org,
+	netdev@vger.kernel.org, intel-wired-lan@lists.osuosl.org,
+	linux-pci@vger.kernel.org, linux-s390@vger.kernel.org,
+	linux-scsi@vger.kernel.org, linux-staging@lists.linux.dev,
+	ceph-devel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Gustavo Padovan <gustavo@padovan.org>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	Abhinav Kumar <abhinav.kumar@linux.dev>,
+	Jessica Zhang <jesszhan0024@gmail.com>, Sean Paul <sean@poorly.run>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Lucas De Marchi <lucas.demarchi@intel.com>,
+	Thomas Hellstr??m <thomas.hellstrom@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Vladimir Oltean <olteanv@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Krzysztof Wilczy??ski <kwilczynski@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Rodolfo Giometti <giometti@enneenne.com>,
+	Jonathan Lemon <jonathan.lemon@gmail.com>,
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Stefan Haberland <sth@linux.ibm.com>,
+	Jan Hoeppner <hoeppner@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Satish Kharat <satishkh@cisco.com>,
+	Sesidhar Baddela <sebaddel@cisco.com>,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Subject: Re: [PATCH v1 12/23] ipmi: Switch to use %ptSp
+Message-ID: <aRKOr2hyoqTnh85-@mail.minyard.net>
+Reply-To: corey@minyard.net
+References: <20251110184727.666591-1-andriy.shevchenko@linux.intel.com>
+ <20251110184727.666591-13-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PEPF00000148:EE_|SA1PR12MB999109:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1bc4664b-3bde-469d-5430-08de20bfe3a2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|376014|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?/gjRXC3yd1L2QUQpx3daU29WAVme9D7L00RTlowPVUo7ni7F1o0PAGow0HAY?=
- =?us-ascii?Q?LjGwUDcO10Qtzlcc7qM9bBjilLNRYM8V+xRcNkel0GLIx9DSkSiNXHKlnn01?=
- =?us-ascii?Q?pF+Umf/MlDNey6GnkJFA1uAHscdhQ/r7yvhgLm7msV311lmuogjkab2AISEg?=
- =?us-ascii?Q?YIgoyM8AuDShgauo0FkX0ADxNRYzoCaWqcBly3QRkl4ulntMK673rQIUUjfx?=
- =?us-ascii?Q?Z1Ojb3X6LaPnP+Rdc3HHLq7ZB2BEeOSlBKBT+RDFj2Ir4UXb0QqezVsEdmj5?=
- =?us-ascii?Q?B2XCR1m1TYeYcV6u1RukUAAeQLEW/Ol+cl/vlVmeED8LxInHlXLCLosHMAaI?=
- =?us-ascii?Q?KaSVUQE6Ekf8VyjaHBoRD9XPo+Cj0IBS1eP02TNkquFvyfVYqVgRwaQ/iHGR?=
- =?us-ascii?Q?fSwT1ZM46Fc3bAFmo1GQUZQ31TmExUGW8Iz5HKkkRbJUF190THX4eu/shtzP?=
- =?us-ascii?Q?90wzaM3V0wLzbhm6dZzmhbwFAetbNC54CnM1VftnFlQWK/P08mHE118DMpvC?=
- =?us-ascii?Q?jNzdHtKOCPmQFqrTNzUq3NZIOW2Q2mZg26dBlIrMX1mNysphbrl+2VAYH5MG?=
- =?us-ascii?Q?wSinyj7TqXfSxCKKKbp+isr/Vk9g4iX1KoGzOGscTn/AxZ8Z5SEG45MBdf2z?=
- =?us-ascii?Q?IGJQUebHaG95V1OktbKcOOPOab3MarQQ/wa2KQf0Hs2nuNvj96C+4pEcv05j?=
- =?us-ascii?Q?afubCmr+0Dt0DVhaaAJlEf5DT3G7U25Bcr7UzAf6PfX178B4sKAwK6+mvt4g?=
- =?us-ascii?Q?6xSHJvRwNKWiSB93Q017Nfp6uEdcvVKgqBaYRXh2WlFoX4vlx5xL4bRbZgAR?=
- =?us-ascii?Q?L4FfOYxKJzPLuolwStBi0RH5e8cLm2TXijKY16euAhaMa3/WWUhM+bHEJepr?=
- =?us-ascii?Q?Y9NleXm1SMHS9ZoBMhhyahbTZ0Pc2peZ+JXqqpq5LF6WLxZRBhrHvbh2egtj?=
- =?us-ascii?Q?LQM2GtZ6PcvUyF+3Fj1YCVj5OHrlfjrQWjbxM4tLiLbFrnmQwub4hW5Vr4Lh?=
- =?us-ascii?Q?CJKaSv7H+gTxf1F+CMIy6+uEiGugGZ6oChynXtSgupvHIwnf1I49nfoB0wJY?=
- =?us-ascii?Q?8Fub1LbgL0xItKBQu2Iu62PZ2o84OcnYwJwQA8c1KAVOK8EVS0+7VxkLlji0?=
- =?us-ascii?Q?lCgI7YVBHwW+8fnHH+wqsy01fIbYbKmCTlSrHYZ+W+PE5AbebH3ntPtYbXie?=
- =?us-ascii?Q?gJr98qUHA+Y3jxK/wcQvcbafvWBqRd9wXt82M38jYFZoKxvCbZLdrIa6VLgh?=
- =?us-ascii?Q?j9Vhsa3oQkAUIzdWS+ZbUqeBp18Lt64urT1QLbX3cVNpCIk6vLvNqk99DpwR?=
- =?us-ascii?Q?c6zA9QHrL1aWGfp23r8gZbgv3fv6VEyVwWV+LMrzE74/jGQJMjWQsURn2Wwd?=
- =?us-ascii?Q?aObWCgsQY7+GQIfPAheIiWwqo8Hz/nnq4XuBgvsvCAJlVmKcVd0nnKp2n18b?=
- =?us-ascii?Q?0wZ1MUDkbvb1Zjgzq8ko7ci2lkEmp2aMtNdzDGUWtCkkd39iwRhvYMRSdjLu?=
- =?us-ascii?Q?zB3C7LIgqi6JzKIYyULsHN2m/SPlezg3LSaAdb/RG9UwDv05PmLPqXWUUg7j?=
- =?us-ascii?Q?00SsDGIsiYuah9p/7AA=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(376014)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Nov 2025 01:16:06.2557
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1bc4664b-3bde-469d-5430-08de20bfe3a2
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH2PEPF00000148.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB999109
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251110184727.666591-13-andriy.shevchenko@linux.intel.com>
 
-This patch introduces the communication channel (comm_chan) service, which
-enables communication between the management PF driver and the user PF
-driver.
+On Mon, Nov 10, 2025 at 07:40:31PM +0100, Andy Shevchenko wrote:
+> Use %ptSp instead of open coded variants to print content of
+> struct timespec64 in human readable format.
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-The comm_chan service provides a shared-memory-based command channel
-located in a BAR-mapped region. The user PF driver issues requests by
-writing command messages into this region. The management PF driver
-periodically polls the region and process any pending requests.
+Quite a bit neater, yes.
 
-Supported operations include firmware (xclbin) reloads, where the
-management PF invokes 'versal_pci_load_xclbin' to reprogram the embedded
-firmware through the remote management queue service.
+Acked-by: Corey Minyard <cminyard@mvista.com>
 
-This service provides the foundation for dynamic firmware updates and other
-management requests from the user PFs.
-
-Co-developed-by: Nishad Saraf <nishads@amd.com>
-Signed-off-by: Nishad Saraf <nishads@amd.com>
-Signed-off-by: David Zhang <yidong.zhang@amd.com>
----
- drivers/accel/amd_vpci/Makefile               |   3 +-
- drivers/accel/amd_vpci/versal-pci-comm-chan.c | 295 ++++++++++++++++++
- drivers/accel/amd_vpci/versal-pci-comm-chan.h |  14 +
- drivers/accel/amd_vpci/versal-pci-main.c      |  78 ++++-
- drivers/accel/amd_vpci/versal-pci.h           |   6 +
- 5 files changed, 394 insertions(+), 2 deletions(-)
- create mode 100644 drivers/accel/amd_vpci/versal-pci-comm-chan.c
- create mode 100644 drivers/accel/amd_vpci/versal-pci-comm-chan.h
-
-diff --git a/drivers/accel/amd_vpci/Makefile b/drivers/accel/amd_vpci/Makefile
-index bacd305783dd..8adfde3490fd 100644
---- a/drivers/accel/amd_vpci/Makefile
-+++ b/drivers/accel/amd_vpci/Makefile
-@@ -5,4 +5,5 @@ obj-$(CONFIG_DRM_ACCEL_AMD_VPCI) := versal-pci.o
- versal-pci-y := \
- 	versal-pci-main.o \
- 	versal-pci-rm-queue.o \
--	versal-pci-rm-service.o
-+	versal-pci-rm-service.o \
-+	versal-pci-comm-chan.o
-diff --git a/drivers/accel/amd_vpci/versal-pci-comm-chan.c b/drivers/accel/amd_vpci/versal-pci-comm-chan.c
-new file mode 100644
-index 000000000000..93759dbdf398
---- /dev/null
-+++ b/drivers/accel/amd_vpci/versal-pci-comm-chan.c
-@@ -0,0 +1,295 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Driver for Versal PCIe device
-+ *
-+ * Copyright (C) 2025 Advanced Micro Devices, Inc. All rights reserved.
-+ */
-+
-+#include <linux/bitfield.h>
-+#include <linux/pci.h>
-+
-+#include "versal-pci.h"
-+#include "versal-pci-comm-chan.h"
-+
-+#define COMM_CHAN_PROTOCOL_VERSION		1
-+#define COMM_CHAN_PCI_BAR_OFF			0x2000000
-+#define COMM_CHAN_TIMER				(HZ / 10)
-+#define COMM_CHAN_DATA_LEN			16
-+#define COMM_CHAN_DATA_TYPE_MASK		GENMASK(7, 0)
-+#define COMM_CHAN_DATA_EOM_MASK			BIT(31)
-+#define COMM_CHAN_MSG_END			BIT(31)
-+
-+#define COMM_CHAN_REG_WRDATA_OFF		0x0
-+#define COMM_CHAN_REG_RDDATA_OFF		0x8
-+#define COMM_CHAN_REG_STATUS_OFF		0x10
-+#define COMM_CHAN_REG_ERROR_OFF			0x14
-+#define COMM_CHAN_REG_RIT_OFF			0x1C
-+#define COMM_CHAN_REG_IS_OFF			0x20
-+#define COMM_CHAN_REG_IE_OFF			0x24
-+#define COMM_CHAN_REG_CTRL_OFF			0x2C
-+#define COMM_CHAN_REGS_SIZE			SZ_4K
-+
-+#define COMM_CHAN_IRQ_DISABLE_ALL		0
-+#define COMM_CHAN_IRQ_RECEIVE_ENABLE		BIT(1)
-+#define COMM_CHAN_IRQ_CLEAR_ALL			GENMASK(2, 0)
-+#define COMM_CHAN_CLEAR_FIFO			GENMASK(1, 0)
-+#define COMM_CHAN_RECEIVE_THRESHOLD		15
-+
-+enum comm_chan_req_ops {
-+	COMM_CHAN_REQ_OPS_UNKNOWN		= 0,
-+	COMM_CHAN_REQ_OPS_HOT_RESET		= 5,
-+	COMM_CHAN_REQ_OPS_GET_PROTOCOL_VERSION	= 19,
-+	COMM_CHAN_REQ_OPS_LOAD_XCLBIN_UUID	= 20,
-+	COMM_CHAN_REQ_OPS_MAX,
-+};
-+
-+enum comm_chan_msg_type {
-+	COMM_CHAN_MSG_INVALID			= 0,
-+	COMM_CHAN_MSG_START			= 2,
-+	COMM_CHAN_MSG_BODY			= 3,
-+};
-+
-+enum comm_chan_msg_service_type {
-+	COMM_CHAN_MSG_SRV_RESPONSE		= BIT(0),
-+	COMM_CHAN_MSG_SRV_REQUEST		= BIT(1),
-+};
-+
-+struct comm_chan_hw_msg {
-+	struct {
-+		__u32		type;
-+		__u32		payload_size;
-+	} header;
-+	struct {
-+		__u64		id;
-+		__u32		flags;
-+		__u32		size;
-+		__u32		payload[COMM_CHAN_DATA_LEN - 6];
-+	} body;
-+} __packed;
-+
-+struct comm_chan_srv_req {
-+	__u64			flags;
-+	__u32			opcode;
-+	__u32			data[];
-+};
-+
-+struct comm_chan_srv_ver_resp {
-+	__u32			version;
-+};
-+
-+struct comm_chan_srv_uuid_resp {
-+	__u32			ret;
-+};
-+
-+struct comm_chan_msg {
-+	__u64			id;
-+	__u32			flags;
-+	__u32			len;
-+	__u32			bytes_read;
-+	__u32			data[10];
-+};
-+
-+struct comm_chan_device {
-+	struct versal_pci_device	*vdev;
-+	struct timer_list		timer;
-+	struct work_struct		work;
-+};
-+
-+static inline struct comm_chan_device *to_ccdev_work(struct work_struct *w)
-+{
-+	return container_of(w, struct comm_chan_device, work);
-+}
-+
-+static inline struct comm_chan_device *to_ccdev_timer(struct timer_list *t)
-+{
-+	return container_of(t, struct comm_chan_device, timer);
-+}
-+
-+static inline u32 comm_chan_read(struct comm_chan_device *cdev, u32 offset)
-+{
-+	return readl(cdev->vdev->io_regs + COMM_CHAN_PCI_BAR_OFF + offset);
-+}
-+
-+static inline void comm_chan_write(struct comm_chan_device *cdev, u32 offset, const u32 value)
-+{
-+	writel(value, cdev->vdev->io_regs + COMM_CHAN_PCI_BAR_OFF + offset);
-+}
-+
-+static u32 comm_chan_set_uuid_resp(void *payload, int ret)
-+{
-+	struct comm_chan_srv_uuid_resp *resp = (struct comm_chan_srv_uuid_resp *)payload;
-+	u32 resp_len = sizeof(*resp);
-+
-+	resp->ret = (u32)ret;
-+
-+	return resp_len;
-+}
-+
-+static u32 comm_chan_set_protocol_resp(void *payload)
-+{
-+	struct comm_chan_srv_ver_resp *resp = (struct comm_chan_srv_ver_resp *)payload;
-+	u32 resp_len = sizeof(*resp);
-+
-+	resp->version = COMM_CHAN_PROTOCOL_VERSION;
-+
-+	return resp_len;
-+}
-+
-+static void comm_chan_write_response(struct comm_chan_device *ccdev,
-+				     struct comm_chan_hw_msg *response,
-+				     u64 msg_id, u32 size)
-+{
-+	response->header.type = COMM_CHAN_MSG_START | COMM_CHAN_MSG_END;
-+	response->header.payload_size = size;
-+
-+	response->body.flags = COMM_CHAN_MSG_SRV_RESPONSE;
-+	response->body.size = size;
-+	response->body.id = msg_id;
-+
-+	for (int i = 0; i < COMM_CHAN_DATA_LEN; i++)
-+		comm_chan_write(ccdev, COMM_CHAN_REG_WRDATA_OFF, ((u32 *)response)[i]);
-+}
-+
-+static void comm_chan_send_response(struct comm_chan_device *ccdev, u64 msg_id, int ret)
-+{
-+	struct versal_pci_device *vdev = ccdev->vdev;
-+	struct comm_chan_hw_msg response = {0};
-+	u32 size;
-+
-+	vdev_err(vdev, "return response ret: %d", ret);
-+	size = comm_chan_set_uuid_resp(response.body.payload, ret);
-+
-+	comm_chan_write_response(ccdev, &response, msg_id, size);
-+}
-+
-+static void comm_chan_opcode_response(struct comm_chan_device *ccdev, u64 msg_id, void *payload)
-+{
-+	struct comm_chan_srv_req *req = (struct comm_chan_srv_req *)payload;
-+	struct versal_pci_device *vdev = ccdev->vdev;
-+	struct comm_chan_hw_msg response = {0};
-+	u32 size;
-+	int ret;
-+
-+	switch (req->opcode) {
-+	case COMM_CHAN_REQ_OPS_GET_PROTOCOL_VERSION:
-+		size = comm_chan_set_protocol_resp(response.body.payload);
-+		break;
-+	case COMM_CHAN_REQ_OPS_LOAD_XCLBIN_UUID:
-+		ret = versal_pci_load_xclbin(vdev, (uuid_t *)req->data);
-+		size = comm_chan_set_uuid_resp(response.body.payload, ret);
-+		break;
-+	default:
-+		vdev_err(vdev, "Unsupported request opcode: %d", req->opcode);
-+		size = comm_chan_set_uuid_resp(response.body.payload, -EOPNOTSUPP);
-+		break;
-+	}
-+
-+	vdev_dbg(vdev, "Response opcode: %d", req->opcode);
-+	comm_chan_write_response(ccdev, &response, msg_id, size);
-+}
-+
-+#define STATUS_IS_READY(status) ((status) & BIT(1))
-+#define STATUS_IS_ERROR(status) ((status) & BIT(2))
-+
-+static void comm_chan_check_request(struct work_struct *w)
-+{
-+	struct comm_chan_device *ccdev = to_ccdev_work(w);
-+	u32 status = 0, request[COMM_CHAN_DATA_LEN] = {0};
-+	struct comm_chan_hw_msg *hw_msg;
-+	u8 type, eom;
-+	int i;
-+
-+	status = comm_chan_read(ccdev, COMM_CHAN_REG_IS_OFF);
-+	if (!STATUS_IS_READY(status))
-+		return;
-+	if (STATUS_IS_ERROR(status)) {
-+		vdev_err(ccdev->vdev, "An error has occurred with comms");
-+		return;
-+	}
-+
-+	/* ACK status */
-+	comm_chan_write(ccdev, COMM_CHAN_REG_IS_OFF, status);
-+
-+	for (i = 0; i < COMM_CHAN_DATA_LEN; i++)
-+		request[i] = comm_chan_read(ccdev, COMM_CHAN_REG_RDDATA_OFF);
-+
-+	hw_msg = (struct comm_chan_hw_msg *)request;
-+	type = FIELD_GET(COMM_CHAN_DATA_TYPE_MASK, hw_msg->header.type);
-+	eom = FIELD_GET(COMM_CHAN_DATA_EOM_MASK, hw_msg->header.type);
-+
-+	/*
-+	 * Only support fixed size 64B messages, therefor every msg should
-+	 * have EndOfMsg(eom) as 1. Ignore invalid messages.
-+	 */
-+	if (!eom || type != COMM_CHAN_MSG_START) {
-+		vdev_err(ccdev->vdev, "Unsupported eom 0x%x but type 0x%x", eom, type);
-+		goto enotsupp;
-+	}
-+
-+	if (hw_msg->body.flags != COMM_CHAN_MSG_SRV_REQUEST) {
-+		vdev_err(ccdev->vdev, "Unsupported service request");
-+		goto enotsupp;
-+	}
-+
-+	if (hw_msg->body.size > sizeof(hw_msg->body.payload)) {
-+		vdev_err(ccdev->vdev, "msg is too big: %d", hw_msg->body.size);
-+		goto enotsupp;
-+	}
-+
-+	/* Now decode and respond appropriately */
-+	comm_chan_opcode_response(ccdev, hw_msg->body.id, hw_msg->body.payload);
-+	return;
-+
-+enotsupp:
-+	comm_chan_send_response(ccdev, hw_msg->body.id, -EOPNOTSUPP);
-+}
-+
-+static void comm_chan_sched_work(struct timer_list *t)
-+{
-+	struct comm_chan_device *ccdev = to_ccdev_timer(t);
-+
-+	/* Schedule a work in the general workqueue */
-+	schedule_work(&ccdev->work);
-+	/* Periodic timer */
-+	mod_timer(&ccdev->timer, jiffies + COMM_CHAN_TIMER);
-+}
-+
-+static void comm_chan_config(struct comm_chan_device *ccdev)
-+{
-+	/* Disable interrupts */
-+	comm_chan_write(ccdev, COMM_CHAN_REG_IE_OFF, COMM_CHAN_IRQ_DISABLE_ALL);
-+	/* Clear request and response FIFOs */
-+	comm_chan_write(ccdev, COMM_CHAN_REG_CTRL_OFF, COMM_CHAN_CLEAR_FIFO);
-+	/* Clear interrupts */
-+	comm_chan_write(ccdev, COMM_CHAN_REG_IS_OFF, COMM_CHAN_IRQ_CLEAR_ALL);
-+	/* Setup RIT reg */
-+	comm_chan_write(ccdev, COMM_CHAN_REG_RIT_OFF, COMM_CHAN_RECEIVE_THRESHOLD);
-+	/* Enable RIT interrupt */
-+	comm_chan_write(ccdev, COMM_CHAN_REG_IE_OFF, COMM_CHAN_IRQ_RECEIVE_ENABLE);
-+
-+	/* Create and schedule timer to do recurring work */
-+	INIT_WORK(&ccdev->work, &comm_chan_check_request);
-+	timer_setup(&ccdev->timer, &comm_chan_sched_work, 0);
-+	mod_timer(&ccdev->timer, jiffies + COMM_CHAN_TIMER);
-+}
-+
-+void versal_pci_comm_chan_fini(struct comm_chan_device *ccdev)
-+{
-+	/* First stop scheduling new work then cancel work */
-+	timer_delete_sync(&ccdev->timer);
-+	cancel_work_sync(&ccdev->work);
-+}
-+
-+struct comm_chan_device *versal_pci_comm_chan_init(struct versal_pci_device *vdev)
-+{
-+	struct comm_chan_device *ccdev;
-+
-+	ccdev = devm_kzalloc(&vdev->pdev->dev, sizeof(*ccdev), GFP_KERNEL);
-+	if (!ccdev)
-+		return ERR_PTR(-ENOMEM);
-+
-+	ccdev->vdev = vdev;
-+
-+	comm_chan_config(ccdev);
-+	return ccdev;
-+}
-diff --git a/drivers/accel/amd_vpci/versal-pci-comm-chan.h b/drivers/accel/amd_vpci/versal-pci-comm-chan.h
-new file mode 100644
-index 000000000000..6699c337901b
---- /dev/null
-+++ b/drivers/accel/amd_vpci/versal-pci-comm-chan.h
-@@ -0,0 +1,14 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Driver for Versal PCIe device
-+ *
-+ * Copyright (C) 2025 Advanced Micro Devices, Inc. All rights reserved.
-+ */
-+
-+#ifndef __VERSAL_PCI_COMM_CHAN_H
-+#define __VERSAL_PCI_COMM_CHAN_H
-+
-+struct comm_chan_device *versal_pci_comm_chan_init(struct versal_pci_device *vdev);
-+void versal_pci_comm_chan_fini(struct comm_chan_device *ccdev);
-+
-+#endif	/* __VERSAL_PCI_COMM_CHAN_H */
-diff --git a/drivers/accel/amd_vpci/versal-pci-main.c b/drivers/accel/amd_vpci/versal-pci-main.c
-index 426651739a19..396159c0259c 100644
---- a/drivers/accel/amd_vpci/versal-pci-main.c
-+++ b/drivers/accel/amd_vpci/versal-pci-main.c
-@@ -8,6 +8,7 @@
- #include <linux/pci.h>
- 
- #include "versal-pci.h"
-+#include "versal-pci-comm-chan.h"
- #include "versal-pci-rm-service.h"
- #include "versal-pci-rm-queue.h"
- 
-@@ -98,6 +99,67 @@ static int versal_pci_load_shell(struct versal_pci_device *vdev, char *fw_name)
- 	return ret;
- }
- 
-+int versal_pci_load_xclbin(struct versal_pci_device *vdev, uuid_t *xuuid)
-+{
-+	const char *xclbin_location = "xilinx/xclbins";
-+	char fw_name[128];
-+	const struct firmware *fw;
-+	struct axlf *xclbin;
-+	int ret;
-+
-+	ret = snprintf(fw_name, sizeof(fw_name), "%s/%pUb_%s.xclbin",
-+		       xclbin_location, xuuid, vdev->fw_id);
-+	if (ret >= sizeof(fw_name)) {
-+		vdev_err(vdev, "uuid is too long");
-+		return -EINVAL;
-+	}
-+
-+	vdev_info(vdev, "trying to load %s", fw_name);
-+	ret = request_firmware(&fw, fw_name, &vdev->pdev->dev);
-+	if (ret) {
-+		vdev_warn(vdev, "request xclbin fw %s failed %d", fw_name, ret);
-+		return ret;
-+	}
-+
-+	xclbin = (struct axlf *)fw->data;
-+	if (memcmp(xclbin->magic, VERSAL_XCLBIN_MAGIC_ID, sizeof(VERSAL_XCLBIN_MAGIC_ID))) {
-+		vdev_err(vdev, "Invalid fpga firmware");
-+		ret = -EINVAL;
-+		goto release_firmware;
-+	}
-+
-+	if (!fw->size ||
-+	    fw->size != xclbin->header.length ||
-+	    fw->size < sizeof(*xclbin)) {
-+		vdev_err(vdev, "Invalid xclbin size %zu", fw->size);
-+		ret = -EINVAL;
-+		goto release_firmware;
-+	}
-+
-+	if (!uuid_equal(&vdev->intf_uuid, &xclbin->header.rom_uuid)) {
-+		vdev_err(vdev, "base shell doesn't match uuid %pUb", &xclbin->header.uuid);
-+		ret = -EINVAL;
-+		goto release_firmware;
-+	}
-+
-+	ret = versal_pci_upload_fw(vdev, RM_QUEUE_OP_LOAD_XCLBIN,
-+				   (char *)xclbin, xclbin->header.length);
-+	if (ret) {
-+		vdev_err(vdev, "failed to load xclbin %s : %d", fw_name, ret);
-+		goto release_firmware;
-+	}
-+
-+	vdev_info(vdev, "Downloaded xclbin %pUb of size %lld Bytes",
-+		  &xclbin->header.uuid, xclbin->header.length);
-+
-+	uuid_copy(&vdev->xclbin_uuid, &xclbin->header.uuid);
-+
-+release_firmware:
-+	release_firmware(fw);
-+
-+	return ret;
-+}
-+
- static inline struct versal_pci_device *item_to_vdev(struct config_item *item)
- {
- 	return container_of(to_configfs_subsystem(to_config_group(item)),
-@@ -160,10 +222,13 @@ static const struct config_item_type versal_pci_cfs_table = {
- static int versal_pci_cfs_init(struct versal_pci_device *vdev)
- {
- 	struct configfs_subsystem *subsys = &vdev->cfs_subsys;
-+	char dev_name[64] = "";
-+
-+	snprintf(dev_name, sizeof(dev_name), "%s%x", DRV_NAME, versal_pci_devid(vdev));
- 
- 	snprintf(subsys->su_group.cg_item.ci_namebuf,
- 		 sizeof(subsys->su_group.cg_item.ci_namebuf),
--		 "%s%x", DRV_NAME, versal_pci_devid(vdev));
-+		 "%s", dev_name);
- 
- 	subsys->su_group.cg_item.ci_type = &versal_pci_cfs_table;
- 
-@@ -185,6 +250,7 @@ static void versal_pci_device_teardown(struct versal_pci_device *vdev)
- {
- 	versal_pci_cfs_fini(&vdev->cfs_subsys);
- 	versal_pci_fw_fini(vdev);
-+	versal_pci_comm_chan_fini(vdev->ccdev);
- 	versal_pci_rm_fini(vdev->rdev);
- }
- 
-@@ -236,6 +302,13 @@ static int versal_pci_device_setup(struct versal_pci_device *vdev)
- 		return ret;
- 	}
- 
-+	vdev->ccdev = versal_pci_comm_chan_init(vdev);
-+	if (IS_ERR(vdev->ccdev)) {
-+		ret = PTR_ERR(vdev->ccdev);
-+		vdev_err(vdev, "Failed to init comm channel, err %d", ret);
-+		goto rm_fini;
-+	}
-+
- 	ret = versal_pci_fw_init(vdev);
- 	if (ret) {
- 		vdev_err(vdev, "Failed to init fw, err %d", ret);
-@@ -251,6 +324,9 @@ static int versal_pci_device_setup(struct versal_pci_device *vdev)
- 	return 0;
- 
- comm_chan_fini:
-+	versal_pci_comm_chan_fini(vdev->ccdev);
-+
-+rm_fini:
- 	versal_pci_rm_fini(vdev->rdev);
- 
- 	return ret;
-diff --git a/drivers/accel/amd_vpci/versal-pci.h b/drivers/accel/amd_vpci/versal-pci.h
-index 89f3590137ce..a9b55b2759a7 100644
---- a/drivers/accel/amd_vpci/versal-pci.h
-+++ b/drivers/accel/amd_vpci/versal-pci.h
-@@ -26,6 +26,7 @@
- 	dev_dbg(&(vdev)->pdev->dev, fmt, ##args)
- 
- struct versal_pci_device;
-+struct comm_chan_device;
- struct rm_cmd;
- 
- struct axlf_header {
-@@ -52,13 +53,18 @@ struct versal_pci_device {
- 	struct pci_dev			*pdev;
- 
- 	struct rm_device		*rdev;
-+	struct comm_chan_device         *ccdev;
- 	struct fw_info			fw;
- 
- 	void __iomem			*io_regs;
-+	uuid_t				xclbin_uuid;
- 	uuid_t				intf_uuid;
- 	__u8				fw_id[UUID_STRING_LEN + 1];
- 
- 	struct configfs_subsystem	cfs_subsys;
- };
- 
-+/* versal pci driver APIs */
-+int versal_pci_load_xclbin(struct versal_pci_device *vdev, uuid_t *xclbin_uuid);
-+
- #endif	/* __VERSAL_PCI_H */
--- 
-2.34.1
-
+> ---
+>  drivers/char/ipmi/ipmi_si_intf.c | 3 +--
+>  drivers/char/ipmi/ipmi_ssif.c    | 6 ++----
+>  2 files changed, 3 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/char/ipmi/ipmi_si_intf.c b/drivers/char/ipmi/ipmi_si_intf.c
+> index 70e55f5ff85e..5459ffdde8dc 100644
+> --- a/drivers/char/ipmi/ipmi_si_intf.c
+> +++ b/drivers/char/ipmi/ipmi_si_intf.c
+> @@ -275,8 +275,7 @@ void debug_timestamp(struct smi_info *smi_info, char *msg)
+>  	struct timespec64 t;
+>  
+>  	ktime_get_ts64(&t);
+> -	dev_dbg(smi_info->io.dev, "**%s: %lld.%9.9ld\n",
+> -		msg, t.tv_sec, t.tv_nsec);
+> +	dev_dbg(smi_info->io.dev, "**%s: %ptSp\n", msg, &t);
+>  }
+>  #else
+>  #define debug_timestamp(smi_info, x)
+> diff --git a/drivers/char/ipmi/ipmi_ssif.c b/drivers/char/ipmi/ipmi_ssif.c
+> index 1b63f7d2fcda..ef1582a029f4 100644
+> --- a/drivers/char/ipmi/ipmi_ssif.c
+> +++ b/drivers/char/ipmi/ipmi_ssif.c
+> @@ -1083,10 +1083,8 @@ static int sender(void *send_info, struct ipmi_smi_msg *msg)
+>  		struct timespec64 t;
+>  
+>  		ktime_get_real_ts64(&t);
+> -		dev_dbg(&ssif_info->client->dev,
+> -			"**Enqueue %02x %02x: %lld.%6.6ld\n",
+> -			msg->data[0], msg->data[1],
+> -			(long long)t.tv_sec, (long)t.tv_nsec / NSEC_PER_USEC);
+> +		dev_dbg(&ssif_info->client->dev, "**Enqueue %02x %02x: %ptSp\n",
+> +			msg->data[0], msg->data[1], &t);
+>  	}
+>  	return IPMI_CC_NO_ERROR;
+>  }
+> -- 
+> 2.50.1
+> 
 
