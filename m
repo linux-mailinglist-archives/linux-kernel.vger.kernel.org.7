@@ -1,77 +1,54 @@
-Return-Path: <linux-kernel+bounces-894576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73ABAC4B56C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 04:35:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BD2BC4B575
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 04:35:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E34B03B4B3F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 03:34:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 143333B28E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 03:35:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0907D3491F2;
-	Tue, 11 Nov 2025 03:34:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E2933491F2;
+	Tue, 11 Nov 2025 03:35:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="hufOi6yw"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O91AfSNV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 074D12FFF9A;
-	Tue, 11 Nov 2025 03:34:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C98F60B8A;
+	Tue, 11 Nov 2025 03:35:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762832062; cv=none; b=B0kek46g+yQzTjWi+7c/DphWFUbSiAvFLYyeaY2d2vWcMC/bameYAhgPWfHMyPuB6MuGODMvNidO1VJXIWhmpY3Mp4BF7mmAv8nDu4NP26wnpoVRXMeV529YRy8ZczxcS4ZiUkqUAxvtxcD7hvJYlJxx4vY3h31ts8muszZGFfo=
+	t=1762832107; cv=none; b=Gi4T+PwMju7CYyIEhebe7ICShVO6p/w8vtvImBQ58uY/T6POsA3bngkHXc2ele0VnJri+pJptqR0YIXibsoQ2Kml0VSJqJ3zDx/nWBsIPGY67Pfhn3uyberCs9byz5yZsi1Bl2vIc7eo3ItaX3T8//bYo+WHFuf52o+zF1HlUvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762832062; c=relaxed/simple;
-	bh=LF35iIXpcL8zFGUIieGGpK9i//PdI6Tuyf9zFpaKVuM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T7zJzpkEePST4l1vkosCQCxYxFMZ7Hx0rxwimu7uP/sOkcYrEGBq271KJ5Q7rYSJ9Lf94C6PCHdhmfcI5NrU93g+sByGddio4cULDF+gpoOoZvRS/eeZESnyz+C+00tvNiql6t2aFZMad//WCI8/jUntaum5mvzpRDjG/bBDh60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=hufOi6yw; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=MpcXH5yszQ3e8gyXiQRNSwQwQ9wARDcWwzXFsNwDh2g=; b=hufOi6ywhigtXj8q+a8/OU55N+
-	GAMZ/G4U9nAoXpnIdsvTk+js4o8xAW+gu1elpq9T+SxBd+iBua/O1WSi+tNwcvRcOKlaBRTnMLAk0
-	5Oi30dLoKHhdhqkRRCUvT7bKJr6QiYNIstYa3eMCsImtfTlAl+uls6psrCPoAFyb5tZU=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1vIf8x-00DaO3-99; Tue, 11 Nov 2025 04:34:07 +0100
-Date: Tue, 11 Nov 2025 04:34:07 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: davem@davemloft.net, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	thomas.petazzoni@bootlin.com, Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Russell King <linux@armlinux.org.uk>,
-	linux-arm-kernel@lists.infradead.org,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	=?iso-8859-1?Q?K=F6ry?= Maincent <kory.maincent@bootlin.com>,
-	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
-	Oleksij Rempel <o.rempel@pengutronix.de>,
-	=?iso-8859-1?Q?Nicol=F2?= Veronese <nicveronese@gmail.com>,
-	Simon Horman <horms@kernel.org>, mwojtas@chromium.org,
-	Antoine Tenart <atenart@kernel.org>, devicetree@vger.kernel.org,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Romain Gantois <romain.gantois@bootlin.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	Dimitri Fedrau <dimitri.fedrau@liebherr.com>
-Subject: Re: [PATCH net-next v15 01/15] dt-bindings: net: Introduce the
- ethernet-connector description
-Message-ID: <56410c74-3d0e-4cdc-87a0-230cad8f691a@lunn.ch>
-References: <20251106094742.2104099-1-maxime.chevallier@bootlin.com>
- <20251106094742.2104099-2-maxime.chevallier@bootlin.com>
+	s=arc-20240116; t=1762832107; c=relaxed/simple;
+	bh=9zeEptkI8w6bdJjrk6CgIgbcm9k2lrjPlUN+bSaVvPA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Z2G9b2BrsPoCTfkkICqgowMlcWgTdh5a02amoog1KQLCKbhMOFGA4tU37IjCIbtSsSHttFWN+ihB7SqYdEYI2KuyXt2/wu1S6fWjCgcbSWY31fhScWHMyAgjmqeuDBZJnZeoyQKYF5R7gAUJ4IxllITx4F7l/vcRW3aRgkh0kTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O91AfSNV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82CA0C4CEF5;
+	Tue, 11 Nov 2025 03:35:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762832107;
+	bh=9zeEptkI8w6bdJjrk6CgIgbcm9k2lrjPlUN+bSaVvPA=;
+	h=Date:From:To:Cc:Subject:From;
+	b=O91AfSNVaR8bAIXL5Co8ZGbIkrDraCxUHQedhWXV0D/ggthut+IhW3JvUOU9aDmNM
+	 A6BuP1tkcXHtDi2NLeLoHoH0G8vBODwWWWt5OFzNgeCyWgiUL8wQ8XjNwk0irTRYgp
+	 v6UwtlCvPkGcJ0H56xMirmuGJFnwZ43QHH9V6gW3MFA+4DPsbW/UrbO1h2cw7bGiuL
+	 OlJZcks7kxkic9oTYL8whZt2aAsWcPwOCfewV9Ei6ZqTttExI4otvzNHJFUCPuKkQL
+	 DP4CsWBJyeITAdB4zV2MNNLSR88OivRo2MzbR/x586Q0OdQZs8KroFenYKq1SD/wTs
+	 NOiiVeOonOfHA==
+Date: Tue, 11 Nov 2025 12:35:02 +0900
+From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+To: Zhu Yanjun <zyjzyj2000@gmail.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Leon Romanovsky <leon@kernel.org>
+Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH][next] RDMA/rxe: Avoid -Wflex-array-member-not-at-end warnings
+Message-ID: <aRKu5lNV04Sq82IG@kspp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,27 +57,85 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251106094742.2104099-2-maxime.chevallier@bootlin.com>
 
-On Thu, Nov 06, 2025 at 10:47:26AM +0100, Maxime Chevallier wrote:
-> The ability to describe the physical ports of Ethernet devices is useful
-> to describe multi-port devices, as well as to remove any ambiguity with
-> regard to the nature of the port.
-> 
-> Moreover, describing ports allows for a better description of features
-> that are tied to connectors, such as PoE through the PSE-PD devices.
-> 
-> Introduce a binding to allow describing the ports, for now with 2
-> attributes :
-> 
->  - The number of lanes, which is a quite generic property that allows
->    differentating between multiple similar technologies such as BaseT1
->    and "regular" BaseT (which usually means BaseT4).
+-Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+getting ready to enable it, globally.
 
-You still use lanes here, but the implementation has moved on to
-pairs.
+Use the new TRAILING_OVERLAP() helper to fix the following warning:
 
-Please add my Reviewed-by when you fix this.
+21 drivers/infiniband/sw/rxe/rxe_verbs.h:271:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
 
-	Andrew
+This helper creates a union between a flexible-array member (FAM) and a
+set of MEMBERS that would otherwise follow it.
+
+This overlays the trailing MEMBER struct ib_sge sge[RXE_MAX_SGE]; onto
+the FAM struct rxe_recv_wqe::dma.sge, while keeping the FAM and the
+start of MEMBER aligned.
+
+The static_assert() ensures this alignment remains, and it's
+intentionally placed inmediately after the related structure --no
+blank line in between.
+
+Lastly, move the conflicting declaration struct rxe_resp_info resp;
+to the end of the corresponding structure.
+
+Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+---
+ drivers/infiniband/sw/rxe/rxe_verbs.h | 18 +++++++++++-------
+ 1 file changed, 11 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/infiniband/sw/rxe/rxe_verbs.h b/drivers/infiniband/sw/rxe/rxe_verbs.h
+index fd48075810dd..6498d61e8956 100644
+--- a/drivers/infiniband/sw/rxe/rxe_verbs.h
++++ b/drivers/infiniband/sw/rxe/rxe_verbs.h
+@@ -219,12 +219,6 @@ struct rxe_resp_info {
+ 	u32			rkey;
+ 	u32			length;
+ 
+-	/* SRQ only */
+-	struct {
+-		struct rxe_recv_wqe	wqe;
+-		struct ib_sge		sge[RXE_MAX_SGE];
+-	} srq_wqe;
+-
+ 	/* Responder resources. It's a circular list where the oldest
+ 	 * resource is dropped first.
+ 	 */
+@@ -232,7 +226,15 @@ struct rxe_resp_info {
+ 	unsigned int		res_head;
+ 	unsigned int		res_tail;
+ 	struct resp_res		*res;
++
++	/* SRQ only */
++	/* Must be last as it ends in a flexible-array member. */
++	TRAILING_OVERLAP(struct rxe_recv_wqe, wqe, dma.sge,
++		struct ib_sge		sge[RXE_MAX_SGE];
++	) srq_wqe;
+ };
++static_assert(offsetof(struct rxe_resp_info, srq_wqe.wqe.dma.sge) ==
++	      offsetof(struct rxe_resp_info, srq_wqe.sge));
+ 
+ struct rxe_qp {
+ 	struct ib_qp		ibqp;
+@@ -269,7 +271,6 @@ struct rxe_qp {
+ 
+ 	struct rxe_req_info	req;
+ 	struct rxe_comp_info	comp;
+-	struct rxe_resp_info	resp;
+ 
+ 	atomic_t		ssn;
+ 	atomic_t		skb_out;
+@@ -289,6 +290,9 @@ struct rxe_qp {
+ 	spinlock_t		state_lock; /* guard requester and completer */
+ 
+ 	struct execute_work	cleanup_work;
++
++	/* Must be last as it ends in a flexible-array member. */
++	struct rxe_resp_info	resp;
+ };
+ 
+ enum {
+-- 
+2.43.0
+
 
