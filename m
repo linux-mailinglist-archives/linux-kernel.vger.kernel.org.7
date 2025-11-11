@@ -1,75 +1,90 @@
-Return-Path: <linux-kernel+bounces-895114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3562C4CF98
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:19:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B615C4D038
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:28:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3148342237C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:10:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 077E04A53BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:10:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 116BA339716;
-	Tue, 11 Nov 2025 10:09:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8B5634214A;
+	Tue, 11 Nov 2025 10:10:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="TuSSkB0u"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eNjWiB8D"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B10373148DC;
-	Tue, 11 Nov 2025 10:09:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 478E82F7ADD
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 10:10:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762855791; cv=none; b=Qydun2ar5pN+jQHY1CF2dKxVFzNN7kA+5hWnD9euhMZ8gAFtT7CbmHDb6laHwWjp0dC4Arap4sLnNmNPMQm5fDNWeSknCvdVDCTENfTIpt88E/wuAAZqrRW5htI9ylRPfwoEVTco93TNLuSoiHoSd7Lt+6FCqohyfTGpKLx3NSA=
+	t=1762855822; cv=none; b=CtN9L14ZT/9MIeRHh5dpw02xN+dgHnPjWOQGKLBS3mQKwoE07ze54DTomqeiT7DSAp143+s45vI0obHf2KL2XWjDocfIA//ol11t3Z+1O8E+uqx+spbS13CjSkSfRS7UpzRlodygjoO3tLZd33041eF80F+RFCYiSVRfRjazYlo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762855791; c=relaxed/simple;
-	bh=2yndOFyLYCT5Chd2DCKyii8YdJXvWcxDyDhkZ6w2c2g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=LAUvMgEsDujP9fGbXTmu5s6skxgoApIFr6B5kS7UXX//1nk7U9WYtCD95/PemptTUHBoffg+a9asHK/lK7ZsM6GSLgCkLc0PGqT2+H38+Any4CPcvKAxfzEQzUzY0cmUpXSEBjJVwn9f3BoRrn6tQShUrz60m7yfPQjnnzNWb/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=TuSSkB0u; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 1FA8122DAF;
-	Tue, 11 Nov 2025 11:09:48 +0100 (CET)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id bjIJZSRoLeaa; Tue, 11 Nov 2025 11:09:46 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1762855786; bh=2yndOFyLYCT5Chd2DCKyii8YdJXvWcxDyDhkZ6w2c2g=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=TuSSkB0urDckems45MgdlqY4BOObBmiScFmjJigBGwTcIU9TL+ezyllg3twY//dwy
-	 KdDORgTb4SRUqPMJNJTaUff56ES/sP8Ag8DuGAXqh1+YyTQlafW02vXiZv2kyVluUy
-	 sAkROA54LqRY6Q175JEusfzuHun4p+sjwRQ2wOmSPfOgK5XzQZLFim0S+qv/Ppc+ZO
-	 wcDzygzWB6IkFpusIfWtPNeYFAy4NGQITsllQRaro/UMFlED7ynLwUco0nH32907T0
-	 wAmbfi1PmO29kH4Jg5iCUvDFwVk6iWBalYV+ZUSetp7Qiq7RcxBGg1H7dCsuJWAKBj
-	 36+YXIQ3Fq9Rg==
-From: Yao Zi <ziyao@disroot.org>
-To: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Yanteng Si <si.yanteng@linux.dev>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
-	Philipp Stanner <phasta@kernel.org>,
-	Tiezhu Yang <yangtiezhu@loongson.cn>,
-	Qunqin Zhao <zhaoqunqin@loongson.cn>,
-	Yao Zi <ziyao@disroot.org>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	Furong Xu <0x1207@gmail.com>,
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-	Jacob Keller <jacob.e.keller@intel.com>
-Cc: netdev@vger.kernel.org,
+	s=arc-20240116; t=1762855822; c=relaxed/simple;
+	bh=uTZPPC0MqaGD5cazC/+J4yCXLFiW8fnVzZfjil7OOFQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tJgWGfIcRTjn6FQKDUf5ZrR1vFYaP5IQmQktPBE5CZqLd3yzNnz4iMAXMOwIWs5ttI0/kx0oEITmCjGjnaHawZvw/ZhVT9UEY+AJRagRRPeXX9S4BxJzV7iqliQV0A3+xvtKvgfhqk0sfJK6IYeZYJdakVdyPLScMAIGWu2PaYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eNjWiB8D; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-640a503fbe8so7172521a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 02:10:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762855819; x=1763460619; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nUwW7NcY3A0Nnt9i7cSR6DPTQgR8J//w2MhqorK480s=;
+        b=eNjWiB8D/jigPLwiGnY8jdBs9+2ywMRKzCRuzGaWDUSOIXcUPHzHKeqNVw3mUkFl4t
+         zeUcO1hDUo/6aIARX1nNeasLQt1bBfMyRfAvemHoLYtFgxToblsZaIldC0/hybrpTAdJ
+         OU6nkTNegrw50r75GmEYf1sVBFgf8g8KXKfY0Jo2Dd4Pv+0Ojl0XxCCFsJR0rcc3S7pb
+         BqrUBAiYhA1wTjtq5sX0j9UpPKtfJNY+Txreug2+M10faSZBs79ceJWV9ecd7cBFn8Iq
+         ZoOyKuaBVMIC7xdQmtDEaxxWl19hyPnQ9f6aaccnYj9qpl/a2pWte8egbM9nV1w+M5/q
+         pF9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762855819; x=1763460619;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nUwW7NcY3A0Nnt9i7cSR6DPTQgR8J//w2MhqorK480s=;
+        b=nHCW8yND3lKph5K8drX69E+9pOcQSoXQ7yLUdXfVN3jbUNjicJueVOo2TjfgUeQowV
+         88C4tG5g0RJshvhiUF8Q/UD8I2hByh0K0MVmdsQOq4DX+vAsA6tthIMFAFeTKcjJHdOU
+         SJ0Wbkz3mhUklQcr+W8tYAgnC+KKmGHWLNfKb7mL4A4oKw9Lg8xNMQ18fvLZ1oIN+frw
+         Slsrl9CKTG21YAobXZGBQSqtonXGUsdiOJim+DSSWRr/oCVr+GbL6qNF3T742j+CBfGw
+         Y8Tkp031hBLA2LpIv5LUVLdnO4IEvPxmriUFdIBPGD8c69OyvQ/inTJMimAJydJjLMxv
+         irgg==
+X-Forwarded-Encrypted: i=1; AJvYcCX7FBNYLSG/ecs/ab7rc3qKcZmY8RK2akwEZWS2+s2QYYMbFLzRRtXcsAnLq5pgtH1GlMI7z2+sEYa36Nc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTCi1oeykBH1api4YH7rBckfvX5sgaMkWOlpiDcT55f6u2iNvM
+	xEq0nDXju0ZCXPGI1+3khvr4E2c8wtPMhuFJG1mIiMpqoe9Q5zT8zL9nbGAM23zr
+X-Gm-Gg: ASbGncteiwJmq8ktbzKKJuM/kqbJkEAo0/p8TDHkqkFJbkE5BFGFFxsw7gRu9ro5VQG
+	/liXZLGjhqkQjuTBJnyQJarHvqrsWgIlk0FER2JTb6Xsp7TfzMJvbArSjvpbtfpAZmUO2S090HV
+	WfExEVXaYOPW6yee7M6GstN0hCtTcacW5bvvozy6y2jDLrr9YOpN+YwRDJhJGKIUFrapXIFzeDH
+	cvdDbSmUeu58whml0kkqwvrFS+F8DX6rV2umvhsWXdU41HhqZSswxoLOnJBdc6MvwTVC6VNRy4z
+	vQM0sG0vOISfwJDLwpBqRsmXTVe+MYuFa6l+uy9xGarrs1cy/SQXGYxLp6+sXAfHYfOjMzZczik
+	+ezoJOcvLDUasIJI8w1nNDcN7ml6r4vgEgH2niWOjYvGmxYLfWU/l115WoDI7r2YlZoGq8NKtG9
+	XKnknSF1KCj/jNZf7YafpBc7PE4kQ=
+X-Google-Smtp-Source: AGHT+IFoEtEeYMeGJO6FSQdA3zyfJuoVvv8Fxl9E6UqSytTtpd7ggFbIe5eET0jzR74Qxq0gurNs+w==
+X-Received: by 2002:a05:6402:2554:b0:63b:ef0e:dfa7 with SMTP id 4fb4d7f45d1cf-6415dc044d2mr9942388a12.6.1762855818179;
+        Tue, 11 Nov 2025 02:10:18 -0800 (PST)
+Received: from tempest2.wbe.local (xt27d7.stansat.pl. [83.243.39.215])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6411f86e0cesm13413859a12.33.2025.11.11.02.10.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Nov 2025 02:10:17 -0800 (PST)
+From: Pawel Dembicki <paweldembicki@gmail.com>
+To: linux-wireless@vger.kernel.org
+Cc: Pawel Dembicki <paweldembicki@gmail.com>,
+	Antony Kolitsos <zeusomighty@hotmail.com>,
+	Johannes Berg <johannes.berg@intel.com>,
+	Roopni Devanathan <quic_rdevanat@quicinc.com>,
+	Thomas Fourier <fourier.thomas@gmail.com>,
+	"John W. Linville" <linville@tuxdriver.com>,
+	Lennert Buytenhek <buytenh@wantstofly.org>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next v4 2/3] net: stmmac: loongson: Use generic PCI suspend/resume routines
-Date: Tue, 11 Nov 2025 10:07:27 +0000
-Message-ID: <20251111100727.15560-4-ziyao@disroot.org>
-In-Reply-To: <20251111100727.15560-2-ziyao@disroot.org>
-References: <20251111100727.15560-2-ziyao@disroot.org>
+Subject: [PATCH v4] wifi: mwl8k: inject DSSS Parameter Set element into beacons if missing
+Date: Tue, 11 Nov 2025 11:07:29 +0100
+Message-ID: <20251111100733.2825970-3-paweldembicki@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,103 +93,146 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Convert glue driver for Loongson DWMAC controller to use the generic
-platform suspend/resume routines for PCI controllers, instead of
-implementing its own one.
+Some Marvell AP firmware used with mwl8k misbehaves when beacon frames
+do not contain a WLAN_EID_DS_PARAMS element with the current channel.
+It was reported on OpenWrt Github issues [0].
 
-Signed-off-by: Yao Zi <ziyao@disroot.org>
+When hostapd/mac80211 omits DSSS Parameter Set from the beacon (which is
+valid on some bands), the firmware stops transmitting sane frames and RX
+status starts reporting bogus channel information. This makes AP mode
+unusable.
+
+Newer Marvell drivers (mwlwifi [1]) hard-code DSSS Parameter Set into
+AP beacons for all chips, which suggests this is a firmware requirement
+rather than a mwl8k-specific quirk.
+
+Mirror that behaviour in mwl8k: when setting the beacon, check if
+WLAN_EID_DS_PARAMS is present, and if not, extend the beacon and inject
+a DSSS Parameter Set element, using the current channel from
+hw->conf.chandef.chan.
+
+Tested on Linksys EA4500 (88W8366).
+
+[0] https://github.com/openwrt/openwrt/issues/19088
+[1] https://github.com/kaloz/mwlwifi/blob/db97edf20fadea2617805006f5230665fadc6a8c/hif/fwcmd.c#L675
+
+Fixes: b64fe619e371 ("mwl8k: basic AP interface support")
+Tested-by: Antony Kolitsos <zeusomighty@hotmail.com>
+Signed-off-by: Pawel Dembicki <paweldembicki@gmail.com>
+
 ---
- drivers/net/ethernet/stmicro/stmmac/Kconfig   |  6 +++-
- .../ethernet/stmicro/stmmac/dwmac-loongson.c  | 36 ++-----------------
- 2 files changed, 8 insertions(+), 34 deletions(-)
+V2:
+  - added "wifi:" prefix to commit title
+  - renamed "DS Params" -> "DSSS Parameter Set"
+  - Insert WLAN_EID_DS_PARAMS after WLAN_EID_SSID, WLAN_EID_SUPP_RATES
+    and WLAN_EID_EXT_SUPP_RATES
+V3:
+  - Insert WLAN_EID_DS_PARAMS after WLAN_EID_SSID and WLAN_EID_SUPP_RATES
+    only
+  - Style issues fixes
+V4:
+  - Style issues fixes
+  - Added "Fixes"
+---
+ drivers/net/wireless/marvell/mwl8k.c | 71 ++++++++++++++++++++++++++--
+ 1 file changed, 66 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/Kconfig b/drivers/net/ethernet/stmicro/stmmac/Kconfig
-index 1350f16f7138..d2bff28fe409 100644
---- a/drivers/net/ethernet/stmicro/stmmac/Kconfig
-+++ b/drivers/net/ethernet/stmicro/stmmac/Kconfig
-@@ -367,15 +367,19 @@ config DWMAC_INTEL
- 	  This selects the Intel platform specific bus support for the
- 	  stmmac driver. This driver is used for Intel Quark/EHL/TGL.
- 
-+if STMMAC_LIBPCI
+diff --git a/drivers/net/wireless/marvell/mwl8k.c b/drivers/net/wireless/marvell/mwl8k.c
+index 891e125ad30b..54d6d00ecdf1 100644
+--- a/drivers/net/wireless/marvell/mwl8k.c
++++ b/drivers/net/wireless/marvell/mwl8k.c
+@@ -2966,6 +2966,51 @@ mwl8k_cmd_rf_antenna(struct ieee80211_hw *hw, int antenna, int mask)
+ /*
+  * CMD_SET_BEACON.
+  */
 +
- config DWMAC_LOONGSON
- 	tristate "Loongson PCI DWMAC support"
- 	default MACH_LOONGSON64
--	depends on (MACH_LOONGSON64 || COMPILE_TEST) && STMMAC_ETH && PCI
-+	depends on MACH_LOONGSON64 || COMPILE_TEST
- 	depends on COMMON_CLK
- 	help
- 	  This selects the LOONGSON PCI bus support for the stmmac driver,
- 	  Support for ethernet controller on Loongson-2K1000 SoC and LS7A1000 bridge.
- 
-+endif
++static bool mwl8k_beacon_has_ds_params(const u8 *buf, int len)
++{
++	const struct ieee80211_mgmt *mgmt = (const void *)buf;
++	int ies_len;
 +
- config STMMAC_PCI
- 	tristate "STMMAC PCI bus support"
- 	depends on STMMAC_ETH && PCI
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c
-index 2a3ac0136cdb..584dc4ff8320 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c
-@@ -8,6 +8,7 @@
- #include <linux/device.h>
- #include <linux/of_irq.h>
- #include "stmmac.h"
-+#include "stmmac_libpci.h"
- #include "dwmac_dma.h"
- #include "dwmac1000.h"
- 
-@@ -525,37 +526,6 @@ static int loongson_dwmac_fix_reset(struct stmmac_priv *priv, void __iomem *ioad
- 				  10000, 2000000);
- }
- 
--static int loongson_dwmac_suspend(struct device *dev, void *bsp_priv)
--{
--	struct pci_dev *pdev = to_pci_dev(dev);
--	int ret;
--
--	ret = pci_save_state(pdev);
--	if (ret)
--		return ret;
--
--	pci_disable_device(pdev);
--	pci_wake_from_d3(pdev, true);
--	return 0;
--}
--
--static int loongson_dwmac_resume(struct device *dev, void *bsp_priv)
--{
--	struct pci_dev *pdev = to_pci_dev(dev);
--	int ret;
--
--	pci_restore_state(pdev);
--	pci_set_power_state(pdev, PCI_D0);
--
--	ret = pci_enable_device(pdev);
--	if (ret)
--		return ret;
--
--	pci_set_master(pdev);
--
--	return 0;
--}
--
- static int loongson_dwmac_probe(struct pci_dev *pdev, const struct pci_device_id *id)
++	if (len <= offsetof(struct ieee80211_mgmt, u.beacon.variable))
++		return false;
++
++	ies_len = len - offsetof(struct ieee80211_mgmt, u.beacon.variable);
++
++	return cfg80211_find_ie(WLAN_EID_DS_PARAMS, mgmt->u.beacon.variable,
++				ies_len) != NULL;
++}
++
++static void mwl8k_beacon_copy_inject_ds_params(struct ieee80211_hw *hw,
++					       u8 *buf_dst, const u8 *buf_src,
++					       int src_len)
++{
++	const struct ieee80211_mgmt *mgmt = (const void *)buf_src;
++	static const u8 before_ds_params[] = {
++		WLAN_EID_SSID,
++		WLAN_EID_SUPP_RATES,
++	};
++	const u8 *ies;
++	int hdr_len, left, offs, pos;
++
++	ies = mgmt->u.beacon.variable;
++	hdr_len = offsetof(struct ieee80211_mgmt, u.beacon.variable);
++
++	offs = ieee80211_ie_split(ies, src_len - hdr_len, before_ds_params,
++				  ARRAY_SIZE(before_ds_params), 0);
++
++	pos = hdr_len + offs;
++	left = src_len - pos;
++
++	memcpy(buf_dst, buf_src, pos);
++
++	/* Inject a DSSS Parameter Set after SSID + Supp Rates */
++	buf_dst[pos + 0] = WLAN_EID_DS_PARAMS;
++	buf_dst[pos + 1] = 1;
++	buf_dst[pos + 2] = hw->conf.chandef.chan->hw_value;
++
++	memcpy(buf_dst + pos + 3, buf_src + pos, left);
++}
+ struct mwl8k_cmd_set_beacon {
+ 	struct mwl8k_cmd_pkt_hdr header;
+ 	__le16 beacon_len;
+@@ -2975,17 +3020,33 @@ struct mwl8k_cmd_set_beacon {
+ static int mwl8k_cmd_set_beacon(struct ieee80211_hw *hw,
+ 				struct ieee80211_vif *vif, u8 *beacon, int len)
  {
- 	struct plat_stmmacenet_data *plat;
-@@ -600,8 +570,8 @@ static int loongson_dwmac_probe(struct pci_dev *pdev, const struct pci_device_id
- 	plat->bsp_priv = ld;
- 	plat->setup = loongson_dwmac_setup;
- 	plat->fix_soc_reset = loongson_dwmac_fix_reset;
--	plat->suspend = loongson_dwmac_suspend;
--	plat->resume = loongson_dwmac_resume;
-+	plat->suspend = stmmac_pci_plat_suspend;
-+	plat->resume = stmmac_pci_plat_resume;
- 	ld->dev = &pdev->dev;
- 	ld->loongson_id = readl(res.addr + GMAC_VERSION) & 0xff;
++	bool ds_params_present = mwl8k_beacon_has_ds_params(beacon, len);
+ 	struct mwl8k_cmd_set_beacon *cmd;
+-	int rc;
++	int rc, final_len = len;
  
+-	cmd = kzalloc(sizeof(*cmd) + len, GFP_KERNEL);
++	if (!ds_params_present) {
++		/*
++		 * mwl8k firmware requires a DS Params IE with the current
++		 * channel in AP beacons. If mac80211/hostapd does not
++		 * include it, inject one here. IE ID + length + channel
++		 * number = 3 bytes.
++		 */
++		final_len += 3;
++	}
++
++	cmd = kzalloc(sizeof(*cmd) + final_len, GFP_KERNEL);
+ 	if (cmd == NULL)
+ 		return -ENOMEM;
+ 
+ 	cmd->header.code = cpu_to_le16(MWL8K_CMD_SET_BEACON);
+-	cmd->header.length = cpu_to_le16(sizeof(*cmd) + len);
+-	cmd->beacon_len = cpu_to_le16(len);
+-	memcpy(cmd->beacon, beacon, len);
++	cmd->header.length = cpu_to_le16(sizeof(*cmd) + final_len);
++	cmd->beacon_len = cpu_to_le16(final_len);
++
++	if (ds_params_present)
++		memcpy(cmd->beacon, beacon, len);
++	else
++		mwl8k_beacon_copy_inject_ds_params(hw, cmd->beacon, beacon,
++						   len);
+ 
+ 	rc = mwl8k_post_pervif_cmd(hw, vif, &cmd->header);
+ 	kfree(cmd);
 -- 
-2.51.2
+2.34.1
 
 
