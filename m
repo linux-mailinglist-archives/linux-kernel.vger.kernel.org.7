@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-896272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58021C50038
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 23:51:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31494C50041
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 23:51:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1864C3B07B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 22:51:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 743FC1890B34
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 22:52:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D4A52F2915;
-	Tue, 11 Nov 2025 22:50:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BED032F617F;
+	Tue, 11 Nov 2025 22:50:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DYWlyczZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y4Oo8UR4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B966F2F533B
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 22:50:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 259BE2F60CA
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 22:50:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762901447; cv=none; b=GNrC9rmTCYVWCSnYRAtHWRgOcAXdoB4P4rJRS9k/cjsDHpR809N4m6hbEVECJE2BVK4JEW0rMQHCJC1pgwQbdLOIGuzbK9JzN7BI6eQkp7rUtTAR/ejyOzEPNhhq3mrFNMH/plVF70Mrcz1IsU259T4fd8560hRUdvVuDNB1mHs=
+	t=1762901449; cv=none; b=DOw9ir+qt+cCLNl2966CunETBtGYLEyAP2ssQBYrTTuJIPGWLQQYtEVIPsFupBKlvfk3urPKj0cH4NArOZ7qfuQkcoydg9vyPP4PUcEfnVbzLBlSigLEqpxQq30hkodAOaYY76eqeM/fsGuX0tDMrHmyccSkZZ1Oqy7o4/XQ76M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762901447; c=relaxed/simple;
-	bh=ZqIUy/sw0TbrZF9bJ6CjXw5oR8zyi6SYNa7WHXDShao=;
+	s=arc-20240116; t=1762901449; c=relaxed/simple;
+	bh=MapFwYBdepkknCvD5b+KZQlwR4RcWHE5HPDQANoxlM0=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=JQS/WhFd2N2gX39s19ysi3xMVrqfZUhgrpCWV0J46lCLNPgBrSA6cNJvr/NR+gwS81CMqJCLqkhvtncRJxJEa/4yamDB1SWBqI62U9PAJA+kBOHHXSeNwAif0Ehp4OqcNLaOQtzR8taogPPl1oqnbLfhhaa0ZgmT5J5cxE5Z5Dw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DYWlyczZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A2AEC4CEFB;
-	Tue, 11 Nov 2025 22:50:47 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=rsu2yU0PUU3Qm7RwnkKMHT3G7ThDe7SaEmABhlTSZEbjmu75yGA/I2K3V1wWUk0v1Rr5YIPHdeL1w8C4dSQG5nHJ9U9Nmh/kX/M2Cv6APIOj7ZrapTiGJ1H8eGMI6w1y9jFW+D9AHlnWT0GBdOZPhsfuyoxhiZ4RWnSy/5nyCPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y4Oo8UR4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF25AC19423;
+	Tue, 11 Nov 2025 22:50:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762901447;
-	bh=ZqIUy/sw0TbrZF9bJ6CjXw5oR8zyi6SYNa7WHXDShao=;
+	s=k20201202; t=1762901449;
+	bh=MapFwYBdepkknCvD5b+KZQlwR4RcWHE5HPDQANoxlM0=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=DYWlyczZzCXFpt6htUoHmRxJN4xkciT69dZNrKYb2FMJd+VsJ3SNvjsDrHwNeS00U
-	 pnrJNnKBQNeukBSFjhOs3WUbn00Bg+moiv4ZEMUkaEswyHk3hyJr7+Rh+LfploilXk
-	 3fBQZmUYEILCzRQndlZaUyBwrNVLZ/zhSrBMx+b+VUzzZOt0K2f2GjzxbFKGibHo8I
-	 knmmqPmYg/wLJgKYtKFERkg1hSKdeeys6CbjvSbfLQ2iqX/D7/maSSppT6hHr62tGA
-	 xmk9ymvFWQC9wBAkgQjciF+JIn9g24kEv/pgyJRFQ1uFBj557DSZzjcBJyUBGyKKIO
-	 RIyVWCHQQjG3g==
+	b=Y4Oo8UR4frGw7wi0FYMB2URgXmhKhMYNj84PU8hpt/gqeywOG6OQGBCSFeKcNXstw
+	 vB06erkPXVLw/ALd1llveQEneUAGk2xxd11axDtpHq9GqaH7tq2p8zkV8MJIWc4wBU
+	 jL3xi5Qw0nPj2dPKnfWm4+Iv2Q2JMMFflDwKNeuKV8k4rCvpvz/aoAmWSgklNPTSSq
+	 4cAkfEUGRyqiP0wQZ9uSTh8CYCPvMRyC2CbKcIOvwSBxM36vovsCy9/PvXhahC5xsh
+	 I8Iji9hJUf2AdeP53YryqJBwCVmLT6ClHNNM1F2p0h5mtqXCUSe0c8vYXvrEm9huWr
+	 n566hi/Bp1KrQ==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADCE1380DBCD;
-	Tue, 11 Nov 2025 22:50:18 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33BFB380DBCD;
+	Tue, 11 Nov 2025 22:50:20 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,57 +51,36 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: fix to avoid updating zero-sized
- extent
- in extent cache
+Subject: Re: [f2fs-dev] [PATCH v1] f2fs: fix uninitialized one_time_gc in
+ victim_sel_policy
 From: patchwork-bot+f2fs@kernel.org
 Message-Id: 
- <176290141749.3596344.15754105220634232444.git-patchwork-notify@kernel.org>
-Date: Tue, 11 Nov 2025 22:50:17 +0000
-References: <20251020024213.332873-1-chao@kernel.org>
-In-Reply-To: <20251020024213.332873-1-chao@kernel.org>
-To: Chao Yu <chao@kernel.org>
-Cc: jaegeuk@kernel.org, stable@kernel.org, linux-kernel@vger.kernel.org,
- syzbot+24124df3170c3638b35f@syzkaller.appspotmail.com,
- linux-f2fs-devel@lists.sourceforge.net
+ <176290141874.3596344.13380399502745715174.git-patchwork-notify@kernel.org>
+Date: Tue, 11 Nov 2025 22:50:18 +0000
+References: <20251029051807.3804-1-hexiaole1994@126.com>
+In-Reply-To: <20251029051807.3804-1-hexiaole1994@126.com>
+To: Xiaole He <hexiaole1994@126.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net, daehojeong@google.com,
+ linux-kernel@vger.kernel.org, jaegeuk@kernel.org, stable@kernel.org
 
 Hello:
 
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Mon, 20 Oct 2025 10:42:12 +0800 you wrote:
-> As syzbot reported:
+On Wed, 29 Oct 2025 13:18:07 +0800 you wrote:
+> The one_time_gc field in struct victim_sel_policy is conditionally
+> initialized but unconditionally read, leading to undefined behavior
+> that triggers UBSAN warnings.
 > 
-> F2FS-fs (loop0): __update_extent_tree_range: extent len is zero, type: 0, extent [0, 0, 0], age [0, 0]
-> ------------[ cut here ]------------
-> kernel BUG at fs/f2fs/extent_cache.c:678!
-> Oops: invalid opcode: 0000 [#1] SMP KASAN NOPTI
-> CPU: 0 UID: 0 PID: 5336 Comm: syz.0.0 Not tainted syzkaller #0 PREEMPT(full)
-> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-> RIP: 0010:__update_extent_tree_range+0x13bc/0x1500 fs/f2fs/extent_cache.c:678
-> Call Trace:
->  <TASK>
->  f2fs_update_read_extent_cache_range+0x192/0x3e0 fs/f2fs/extent_cache.c:1085
->  f2fs_do_zero_range fs/f2fs/file.c:1657 [inline]
->  f2fs_zero_range+0x10c1/0x1580 fs/f2fs/file.c:1737
->  f2fs_fallocate+0x583/0x990 fs/f2fs/file.c:2030
->  vfs_fallocate+0x669/0x7e0 fs/open.c:342
->  ioctl_preallocate fs/ioctl.c:289 [inline]
->  file_ioctl+0x611/0x780 fs/ioctl.c:-1
->  do_vfs_ioctl+0xb33/0x1430 fs/ioctl.c:576
->  __do_sys_ioctl fs/ioctl.c:595 [inline]
->  __se_sys_ioctl+0x82/0x170 fs/ioctl.c:583
->  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->  do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f07bc58eec9
+> In f2fs_get_victim() at fs/f2fs/gc.c:774, the victim_sel_policy
+> structure is declared without initialization:
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev,v2] f2fs: fix to avoid updating zero-sized extent in extent cache
-    https://git.kernel.org/jaegeuk/f2fs/c/cbd96c6e304f
+  - [f2fs-dev,v1] f2fs: fix uninitialized one_time_gc in victim_sel_policy
+    https://git.kernel.org/jaegeuk/f2fs/c/f10e76889502
 
 You are awesome, thank you!
 -- 
