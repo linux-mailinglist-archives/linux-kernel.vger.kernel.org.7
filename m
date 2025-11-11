@@ -1,108 +1,89 @@
-Return-Path: <linux-kernel+bounces-895665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1DD1C4E9CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 15:55:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCB84C4E86B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 15:40:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4EEBD4F4D6E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:48:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72A703A6D85
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:33:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B77F7303C96;
-	Tue, 11 Nov 2025 14:48:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cyqMiDtL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 911F52E7182;
+	Tue, 11 Nov 2025 14:33:45 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C18226E14C;
-	Tue, 11 Nov 2025 14:48:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05B58248F78
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 14:33:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762872529; cv=none; b=MptL8xTXOxn1oWOgiyIsPNk/sNYJ5Ey5gyVvj4b5YGtFA4S9EATGZsgIe53mwttp2k+I0L7sS1sbdUzl1LThblSytZfVvIVrHNUjsp/Xjzc13yEmXH56GqHWlIbovq4lp9rw8+HHke5EtnHU5Y3PvYMkXmiEt/xzctMeXBBv28Y=
+	t=1762871625; cv=none; b=JuOL1LGkHsg4gcEF0I2t75zLZJFYCmElNVkaKLDI1Kl3G22d9Qny0tgSJnDks9yAH2thaJOplwz9+KsGMrzbqIASzzXhymXEf4MXGbqeGhAI1wjiHDSUSH0KU45qAWmkp3B6ceBTFGWudMb5pWp3fnkOeJmNFysMsD3Fdj/eysM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762872529; c=relaxed/simple;
-	bh=meqgWx70cSyb1oEZ8r90RVAGKaR5A0M0JKCio8jOwHA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bjdgq3x3Lg+0X35cvRQBcpD5iHryFKmlgW5ausR5Pl1EmScJIKwUA7o+ih/Wwxl+BHfpgD7L29EjlkgWplYM6h8TLyEnCjolPYHhUCGYBZxYpPdXeK9UODp2skqZ4VKqyvVYgvYG4i2VrRa8/Qc5BzMJNMPjQKiPCqg2KVuj+Ls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cyqMiDtL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB2FBC4CEF7;
-	Tue, 11 Nov 2025 14:48:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762872527;
-	bh=meqgWx70cSyb1oEZ8r90RVAGKaR5A0M0JKCio8jOwHA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cyqMiDtLpQmYV/y1vJ85/H3ZFvA6hfmBPzhjLCftTmEkjrUsmvHjLi5sAK4B876p1
-	 3I05twr8DqibBokUJUyvAB2ShnYqJubfO/6Ulw9oXcieaL6h4w1in1L0pVnShCzI0/
-	 yqJlwsiUobmH2u/yUPU4YvykTyATiB6oom2KxwEeAKbJN3UBu+1JhqI5qYZ/qyUw1R
-	 rl36p4atnHq2DjgxvaYu654x+yNYjwvNY4sjBoRISCxE427P52ED2o3/lyhEHH6wCL
-	 xOQJn7A/XwOB4cqp2lWjW6X0J09iSWhvDcA3vvhJLN7Rmkc9dVHH1K72JTTn3xKMnK
-	 w2pr6WtDJSsYw==
-Date: Tue, 11 Nov 2025 15:33:33 +0100
-From: Nicolas Schier <nsc@kernel.org>
-To: Abel Vesa <abel.vesa@linaro.org>
-Cc: Nathan Chancellor <nathan@kernel.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] kbuild: install-extmod-build: Properly fix CC
- expansion when ccache is used
-Message-ID: <aRNJPcFefMojmhfu@derry.ads.avm.de>
-References: <20251111-kbuild-install-extmod-build-fix-cc-expand-third-try-v2-1-15ba1b37e71a@linaro.org>
- <aRM0DmrBq-neaNYw@derry.ads.avm.de>
- <4qwfibqgwhigh4g7ic75ueeyy7py4hgjdg22cyuyvxod7x7vjf@nd4t2em2uaqp>
+	s=arc-20240116; t=1762871625; c=relaxed/simple;
+	bh=hF911FpD7hHlzOp+ZGUO10mJQA5px3sr1D8cTSFnPH4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ddEH1aOy4kolnqLwMM58VXwrbrfGHdG4lzGLr8VjZaxJDBO143SM/maRZU+Vr8YzWOCaw1MS7jktzoIp6zVVl3aYeuLRjxWadEfZesnHXIMCgEWmGDBONpqplOrZ4PtdDEPKhU08sPiZftLu016Atf6PbCAlzWZyN6+53TFTQ60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1vIpR9-0003tQ-9H; Tue, 11 Nov 2025 15:33:35 +0100
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1vIpR8-008DWM-17;
+	Tue, 11 Nov 2025 15:33:34 +0100
+Received: from pza by lupine with local (Exim 4.98.2)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1vIpR8-000000009SG-19RM;
+	Tue, 11 Nov 2025 15:33:34 +0100
+Message-ID: <750f15baa9373252a94b9e8a4e703c3494c49481.camel@pengutronix.de>
+Subject: Re: [PATCH v3] i2c: designware-platdrv: simplify reset control and
+ error handling
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Artem Shimko <a.shimko.dev@gmail.com>
+Cc: andi.shyti@kernel.org, andriy.shevchenko@linux.intel.com,
+ jsd@semihalf.com, 	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+ 	mika.westerberg@linux.intel.com
+Date: Tue, 11 Nov 2025 15:33:34 +0100
+In-Reply-To: <20251111140935.3220840-1-a.shimko.dev@gmail.com>
+References: <3c3ece1a00c6e39d865c231e27508bdde0783070.camel@pengutronix.de>
+	 <20251111140935.3220840-1-a.shimko.dev@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1-1+deb13u1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4qwfibqgwhigh4g7ic75ueeyy7py4hgjdg22cyuyvxod7x7vjf@nd4t2em2uaqp>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Tue, Nov 11, 2025 at 04:28:06PM +0200, Abel Vesa wrote:
-> On 25-11-11 14:03:10, Nicolas Schier wrote:
-> > On Tue, Nov 11, 2025 at 08:43:51AM +0200, Abel Vesa wrote:
-> > > Currently, when cross-compiling and ccache is used, the expanding of CC
-> > > turns out to be without any quotes, leading to the following error:
-> > > 
-> > > make[4]: *** No rule to make target 'aarch64-linux-gnu-gcc'.  Stop.
-> > > make[3]: *** [Makefile:2164: run-command] Error 2
-> > > 
-> > > And it makes sense, because after expansion it ends up like this:
-> > > 
-> > > make run-command KBUILD_RUN_COMMAND=+$(MAKE) \
-> > > HOSTCC=ccache aarch64-linux-gnu-gcc VPATH= srcroot=. $(build)= ...
-> > > 
-> > > So add another set of double quotes to surround whatever CC expands to
-> > > to make sure the aarch64-linux-gnu-gcc isn't expanded to something that
-> > > looks like an entirely separate target.
-> > > 
-> > > Fixes: 140332b6ed72 ("kbuild: fix linux-headers package build when $(CC) cannot link userspace")
-> > > Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> > > ---
-> > > Changes in v2:
-> > > - Moved the new double quotes inside of single ones, to be able
-> > >   to drop the escape, like Nathan suggested.
-> > > - Re-worded the commit message according to the above change.
-> > > - Link to v1: https://lore.kernel.org/r/20251110-kbuild-install-extmod-build-fix-cc-expand-third-try-v1-1-5c0ddb1c67a8@linaro.org
-> > > ---
-> > >  scripts/package/install-extmod-build | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > 
-> > Just as a note: the fix is only required for build rpm packages.
-> 
-> .. or pacman packages. Easy way to reproduce:
-> 
-> make ARCH=arm64 CROSS_COMPILE="aarch64-linux-gnu-" CC="ccache aarch64-linux-gnu-gcc" pacman-pkg
+On Di, 2025-11-11 at 17:09 +0300, Artem Shimko wrote:
+> The current reset control management uses manual deassertion and assertio=
+n
+> calls with goto-based error handling, which complicates the code and miss=
+es
+> the benefits of full device-managed resource handling.
 
-ah sure.  Thanks!
+Unnecessary.
 
 
--- 
-Nicolas
+[...]
+> combined with devm_add_action_or_reset()
+
+No, that's not what I requested in v2.
+
+regards
+Philipp
 
