@@ -1,149 +1,114 @@
-Return-Path: <linux-kernel+bounces-894882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67386C4C59D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:20:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8515C4C5C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:22:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D5641895BA0
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 08:17:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79E283AE5DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 08:14:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF19B333455;
-	Tue, 11 Nov 2025 08:14:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4910532B9B3;
+	Tue, 11 Nov 2025 08:13:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="P+CjRbeD"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D82C032E14A;
-	Tue, 11 Nov 2025 08:14:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="aUVf1kcC";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="eYvUMGkU"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D05C832D7FB;
+	Tue, 11 Nov 2025 08:13:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762848884; cv=none; b=nM5FnaZ3Hh/O4JOCVU8GuJVl7oF047ue2YGpZFJ1JVxmCae7e1Z7IC7Q0TEWjODqLGv1Iv2sVX9FGGcgUGOjFhBfGj4AoOIW6OctJLpKzeqoOUBJW6RbgXCKr0DaM3y/97abNIFk/BF6iStN6VIAyyFn0VWdUqVzCKPg39WgV0A=
+	t=1762848799; cv=none; b=aDqgPuZNMdKqD91nwgtP9mqAE1H8CxezElgAPn/Om2O3vw7iNOIX8ZqRO1iGcXQc2+3csamH3KtsTpcXlqKR8yMnyDuOqTmoUPLT0ztocp+zbMgI9OPrKbvfMYugbvmghtUNt51UanDu2Lms/7lf6Wsvp6XE9QMGPKnLuPuleDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762848884; c=relaxed/simple;
-	bh=papQpdMxZeZiO6Qt8EOXXoWcGPBUIrAgpmOX1fAOG5Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=aYa8lPHP1YUt1OBk6TqA0mRbhRqjGApHux3OFJf4WHDY1mj3ydwFGMA12JXFx1693BmdFaC7Mekg2YtE4RdM0Y4QhL3/3GZqhRDrmnOXUWFk6ZwrN8N+2221lOhPmbPGg7EFvYQVBRs1zTGEzlTkH7lDYXhxxMi+7RtiwX8KFCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=P+CjRbeD; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1231)
-	id 8DFF2212AE4B; Tue, 11 Nov 2025 00:14:42 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 8DFF2212AE4B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1762848882;
-	bh=T4NA8arxo+rcogMEzVL17or5uDR3MncUC/lGtD/Hn6o=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=P+CjRbeD4IJ74AlXQL5IEVSDdThbsyK9diqgJLhxKXRlqw6uiwy76aLAgeYvOE8+L
-	 vt1nvE9/X854hHkksfeDNluXdVfClT4HMio9HMYo/OFQsaT4/dLISssPrX6sf/IBNp
-	 Z2sMVAMqpUFxmeDPPOG3YT+ImPixe+sh88yZ2M/Q=
-From: Aditya Garg <gargaditya@linux.microsoft.com>
-To: kys@microsoft.com,
-	haiyangz@microsoft.com,
-	wei.liu@kernel.org,
-	decui@microsoft.com,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	longli@microsoft.com,
-	kotaranov@microsoft.com,
-	horms@kernel.org,
-	shradhagupta@linux.microsoft.com,
-	ssengar@linux.microsoft.com,
-	ernis@linux.microsoft.com,
-	dipayanroy@linux.microsoft.com,
-	shirazsaleem@microsoft.com,
-	leon@kernel.org,
-	mlevitsk@redhat.com,
-	yury.norov@gmail.com,
-	linux-hyperv@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-rdma@vger.kernel.org,
-	gargaditya@microsoft.com
-Cc: Aditya Garg <gargaditya@linux.microsoft.com>
-Subject: [PATCH net-next v3 2/2] net: mana: Drop TX skb on post_work_request failure and unmap resources
-Date: Tue, 11 Nov 2025 00:13:01 -0800
-Message-Id: <1762848781-357-3-git-send-email-gargaditya@linux.microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1762848781-357-1-git-send-email-gargaditya@linux.microsoft.com>
-References: <1762848781-357-1-git-send-email-gargaditya@linux.microsoft.com>
+	s=arc-20240116; t=1762848799; c=relaxed/simple;
+	bh=C6lX2ebjlhgLc4iODk+xnNtT3RjNgmg/HTqHxjwGbi8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iDWocG3cq7GYWunM3KYj1jbVcvXEDv8STGHRR/zj6PHzQIm2dJj9OXAF4UCZFD3kJ0yHugXNfZKswZi1A4dynWtSvCpIuNikPOCar/cS/DrYe8A6KulBB93Hr40QdaYYIkYMI1OBAHp+SlUUiBbpZdBMUA8zXCVQKyCPGDzZEVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=aUVf1kcC; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=eYvUMGkU; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 11 Nov 2025 09:13:14 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1762848796;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iS8bnyQucgWZHN+P0qBErFEEzOWJVzY1QyWkbweNgxE=;
+	b=aUVf1kcCVCHExvHK/tI+sTyphZadgPxQzP497SVRJsJmFJyw4gUjGfD/GLJvUnL49YwJ3r
+	wfJYp1KuaFxxm8C5MoU+zncsRycyVL2QzhWUo9uwCyhS0nBi54iFOYZDhCy04aZatMFDV4
+	VQouPiJzFnRXrJwKuFYyqbhijWmBE7EnOLgW8x8tuD6ExLfv17u5zZaCdN/HCf2o4SjAi9
+	Srr46+x/dsXZQXe72yYaVR767Y7/Fe683jfPO4kHJluqJQZeLTW4C3GAaAePjRaosSbVQN
+	fU1y767OkjkBkPSVZ/F+3bqRr9mGIIOt7gduTSiviL7FidIpGapgWjl2mSoyYQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1762848796;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iS8bnyQucgWZHN+P0qBErFEEzOWJVzY1QyWkbweNgxE=;
+	b=eYvUMGkUyQ3g0u6PYvTWET+qWfmNbyVZoPCGWxJEkIbtbVCaXNHjZ17sUJ/vzoOE+3rZXb
+	08K/qqLn5OIyPiDg==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Yongliang Gao <leonylgao@gmail.com>, mhiramat@kernel.org,
+	mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	Yongliang Gao <leonylgao@tencent.com>,
+	Huang Cun <cunhuang@tencent.com>
+Subject: Re: [PATCH] trace/pid_list: optimize pid_list->lock contention
+Message-ID: <20251111081314.j8CFfAD6@linutronix.de>
+References: <20251015114952.4014352-1-leonylgao@gmail.com>
+ <20251110183854.48b33b50@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251110183854.48b33b50@gandalf.local.home>
 
-Drop TX packets when posting the work request fails and ensure DMA
-mappings are always cleaned up.
+On 2025-11-10 18:38:54 [-0500], Steven Rostedt wrote:
+> On Wed, 15 Oct 2025 19:49:52 +0800
+> Yongliang Gao <leonylgao@gmail.com> wrote:
+> 
+> > diff --git a/kernel/trace/pid_list.c b/kernel/trace/pid_list.c
+> > index 090bb5ea4a19..62082a4f60db 100644
+> > --- a/kernel/trace/pid_list.c
+> > +++ b/kernel/trace/pid_list.c
+> > @@ -138,14 +138,14 @@ bool trace_pid_list_is_set(struct trace_pid_list *pid_list, unsigned int pid)
+> >  	if (pid_split(pid, &upper1, &upper2, &lower) < 0)
+> >  		return false;
+> >  
+> > -	raw_spin_lock_irqsave(&pid_list->lock, flags);
+> > +	read_lock_irqsave(&pid_list->lock, flags);
+> >  	upper_chunk = pid_list->upper[upper1];
+> >  	if (upper_chunk) {
+> >  		lower_chunk = upper_chunk->data[upper2];
+> >  		if (lower_chunk)
+> >  			ret = test_bit(lower, lower_chunk->data);
+> >  	}
+> > -	raw_spin_unlock_irqrestore(&pid_list->lock, flags);
+> > +	read_unlock_irqrestore(&pid_list->lock, flags);
+> >  
+> >  	return ret;
+> >  }
+> 
+> Unfortunately you cannot do this because this is called while holding the
+> task pi_lock and rq locks. In PREEMPT_RT() the read/write_lock_* turn into
+> mutexes.
+> 
+> Sebastian, is there any equivalent of raw_read/write_locks() that can be
+> used?
 
-Signed-off-by: Aditya Garg <gargaditya@linux.microsoft.com>
----
- drivers/net/ethernet/microsoft/mana/gdma_main.c | 1 -
- drivers/net/ethernet/microsoft/mana/mana_en.c   | 7 +++----
- include/net/mana/mana.h                         | 1 +
- 3 files changed, 4 insertions(+), 5 deletions(-)
+Nope, no read-write lock that can be used in atomic sections. Well,
+there is RCU.
 
-diff --git a/drivers/net/ethernet/microsoft/mana/gdma_main.c b/drivers/net/ethernet/microsoft/mana/gdma_main.c
-index effe0a2f207a..65dd8060c7f4 100644
---- a/drivers/net/ethernet/microsoft/mana/gdma_main.c
-+++ b/drivers/net/ethernet/microsoft/mana/gdma_main.c
-@@ -1332,7 +1332,6 @@ int mana_gd_post_work_request(struct gdma_queue *wq,
- 
- 	if (wq->monitor_avl_buf && wqe_size > mana_gd_wq_avail_space(wq)) {
- 		gc = wq->gdma_dev->gdma_context;
--		dev_err(gc->dev, "unsuccessful flow control!\n");
- 		return -ENOSPC;
- 	}
- 
-diff --git a/drivers/net/ethernet/microsoft/mana/mana_en.c b/drivers/net/ethernet/microsoft/mana/mana_en.c
-index 67ae5421f9ee..066d822f68f0 100644
---- a/drivers/net/ethernet/microsoft/mana/mana_en.c
-+++ b/drivers/net/ethernet/microsoft/mana/mana_en.c
-@@ -491,9 +491,9 @@ netdev_tx_t mana_start_xmit(struct sk_buff *skb, struct net_device *ndev)
- 
- 	if (err) {
- 		(void)skb_dequeue_tail(&txq->pending_skbs);
-+		mana_unmap_skb(skb, apc);
- 		netdev_warn(ndev, "Failed to post TX OOB: %d\n", err);
--		err = NETDEV_TX_BUSY;
--		goto tx_busy;
-+		goto free_sgl_ptr;
- 	}
- 
- 	err = NETDEV_TX_OK;
-@@ -513,7 +513,6 @@ netdev_tx_t mana_start_xmit(struct sk_buff *skb, struct net_device *ndev)
- 	tx_stats->bytes += len + ((num_gso_seg - 1) * gso_hs);
- 	u64_stats_update_end(&tx_stats->syncp);
- 
--tx_busy:
- 	if (netif_tx_queue_stopped(net_txq) && mana_can_tx(gdma_sq)) {
- 		netif_tx_wake_queue(net_txq);
- 		apc->eth_stats.wake_queue++;
-@@ -1679,7 +1678,7 @@ static int mana_move_wq_tail(struct gdma_queue *wq, u32 num_units)
- 	return 0;
- }
- 
--static void mana_unmap_skb(struct sk_buff *skb, struct mana_port_context *apc)
-+void mana_unmap_skb(struct sk_buff *skb, struct mana_port_context *apc)
- {
- 	struct mana_skb_head *ash = (struct mana_skb_head *)skb->head;
- 	struct gdma_context *gc = apc->ac->gdma_dev->gdma_context;
-diff --git a/include/net/mana/mana.h b/include/net/mana/mana.h
-index 50a532fb30d6..d05457d3e1ab 100644
---- a/include/net/mana/mana.h
-+++ b/include/net/mana/mana.h
-@@ -585,6 +585,7 @@ int mana_set_bw_clamp(struct mana_port_context *apc, u32 speed,
- void mana_query_phy_stats(struct mana_port_context *apc);
- int mana_pre_alloc_rxbufs(struct mana_port_context *apc, int mtu, int num_queues);
- void mana_pre_dealloc_rxbufs(struct mana_port_context *apc);
-+void mana_unmap_skb(struct sk_buff *skb, struct mana_port_context *apc);
- 
- extern const struct ethtool_ops mana_ethtool_ops;
- extern struct dentry *mana_debugfs_root;
--- 
-2.43.0
+> -- Steve
 
+Sebastian
 
