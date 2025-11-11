@@ -1,120 +1,197 @@
-Return-Path: <linux-kernel+bounces-895233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20D72C4D4BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:07:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9B23C4D50A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:09:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B31318C0D19
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:01:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 943C2423235
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:01:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9645F3587A2;
-	Tue, 11 Nov 2025 10:55:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FBF1355053;
+	Tue, 11 Nov 2025 10:57:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="haezqG7D"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ngxyr4HG";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="fHCsfdWQ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 426CE357A20;
-	Tue, 11 Nov 2025 10:55:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AEF9355050
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 10:57:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762858555; cv=none; b=bCLHW2n24dGUtRs8EGpSH626M2IfVx1Iaol8Rjt2A0Mq+iGJEIiAe6d5NI/NwcwXXWCgw7bWLAJDlkR/9ryLUAEpDgn7Tps2OvYD/6kNoaARXLxMSK0VcK9Ie4knwv0qzemXHFg9HEuyNJxQqCezfz8fK1X7qNMCE5oS/tV/3WA=
+	t=1762858648; cv=none; b=SxKF9y8eWwf5XmJ1v1H2/5tHQvC0sfYnWYWfvgc2xtka66R0lDGO30ZU4tx56kVuUZ3KbaROlSEsjpGwYn35xPHirNF/VATx6IsQPgYdSqd30Q8qvvTbxYp+Mi0xoaSvNPsq2mbvrhQcD/bM+61weRxAGrY7Aab2png7pdok2Dc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762858555; c=relaxed/simple;
-	bh=SQNuPyry54rGiwTAF83uw3tVzcTs/6Rhfs7Wtk9sekY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VFfwnUW8eLHZBjXlau0uyc54Q3LyFQkuc1BipQJ/Z+3hKmDJ765vMCpk4bT4/AleD+nx4BVg+RRAxht3u3+KKO3fsWVIA0G5cU41ffbEUPHPpdKsO1b+CgVZ4Jm+QKtpcGFiToQvUFkM+KIPu1PQfhEJyGMm9MQQVQcN5/1ET0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=haezqG7D; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=6e7yn7s1XQtiRBa03S5N6GS6xIer9ZSlKTyvpE7kXHI=; b=haezqG7DjCoy/XwUDm/4CRUj0D
-	GU73y9BGJ+J06CCZYEAV18NSFvK2+1iGFIiL/EywksGvZSXsOWRT56UfygWcyZdAGVUQaRDygq3fi
-	5UdtXdRTaTjDec1HPK1hOQDqYq3iN92Mo37Yt4cl72XaGjQzR6U8FtV9PSZCJDpjKW5nfVoJqDZdv
-	/+rbcj2vFPXqZkMQG7l21MB3ps0aAmGRP32UT7wbZbkaYrpnrTaVxJUxOxJrs8ok/5JhocgP+EuF1
-	4FujX3EDXvOfOmpK5JxM0pYpWwOoQpsVeYLBhYaLzA0Ej269G6KQWwR/jyiK9sQxVnHL6JfSE/gD/
-	rJWAyfeg==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vIlAg-0000000CyKB-0fBo;
-	Tue, 11 Nov 2025 10:00:18 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 4AEE6300328; Tue, 11 Nov 2025 11:55:45 +0100 (CET)
-Date: Tue, 11 Nov 2025 11:55:45 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Will Deacon <will@kernel.org>
-Cc: James Clark <james.clark@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>, Leo Yan <leo.yan@arm.com>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev
-Subject: Re: [PATCH v9 1/5] perf: Add perf_event_attr::config4
-Message-ID: <20251111105545.GJ278048@noisy.programming.kicks-ass.net>
-References: <20251029-james-perf-feat_spe_eft-v9-0-d22536b9cf94@linaro.org>
- <20251029-james-perf-feat_spe_eft-v9-1-d22536b9cf94@linaro.org>
- <aQi9MstZTsloKmeo@willie-the-truck>
+	s=arc-20240116; t=1762858648; c=relaxed/simple;
+	bh=NYhtfUxZT1YXAcAQF0qWwjxLnb4vU/OkwMpSzLBjlsI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HwyKycupuwj68NxW5jtGEPrcw5hXmaDKQixVvrJWDKqYJS1GWuyspQzNHicbArkZThw4QBPLGB2T/1JbpeVST5nMmH1ZW7eiaxzquJBNDXpf4UA5kBgAZPCx8zT0Y4ykbO0XM07ZfCbVvqC7ifffp2zVF+HpKTgBAFTdVRd5PQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ngxyr4HG; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=fHCsfdWQ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762858645;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=lLXbfdbNy9/hvVp5w0asRQYfVq1o80iFeNQJCAkbC5k=;
+	b=Ngxyr4HGahZzy288KG8M8EJ2+MHfaAF9foqVEfu/dt5diZDEeknZpgi9DC7ZnKD6/SMd1e
+	fgJrJtRppbR1Pgx42BRuSocbw61ZzHewO4Q9aKS5C6FeQm+V037Txd4IcdDnRgCujCuP3/
+	1wzjSFrbErJPSWtxtRiHeq3brei8e8I=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-60-CPOQwKPYPxq9aF4d9a1Zig-1; Tue, 11 Nov 2025 05:57:24 -0500
+X-MC-Unique: CPOQwKPYPxq9aF4d9a1Zig-1
+X-Mimecast-MFC-AGG-ID: CPOQwKPYPxq9aF4d9a1Zig_1762858643
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-42b2f79759bso2106417f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 02:57:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1762858643; x=1763463443; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lLXbfdbNy9/hvVp5w0asRQYfVq1o80iFeNQJCAkbC5k=;
+        b=fHCsfdWQ3V4PBbz4jsTDxqBxNxltb39q51RMs6y2unPRDs/4gLxyU9wAZN9NbrVMa2
+         fw9tKqEA8J2NZbg/UIjs5dqof8uP2GgQewuru7uln9bOCfNmxSTcQhSm7nHV73w5Nj9R
+         jrvJhda3jm/RAkuqxD55Uns7NzSVvdwnAj0caoLgKvK/s5v+dzSggU7bJzaX4MIgKlcd
+         7faF6pwutADlu5/foyrb6Q0Iisv6pzGgpicddWZE5OwouaEjoOiMnJdzP4jPiJS3El2+
+         cVA7S66R6oQEBiikh+p57l3HJZGfzdYEobhoJJYYwpyENi7JgwdXn0/x6Y1r3jPHY59r
+         LG7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762858643; x=1763463443;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lLXbfdbNy9/hvVp5w0asRQYfVq1o80iFeNQJCAkbC5k=;
+        b=HY8nn5K+EL0U3AwrG8VToV3YuBei6A4ej03/Od0vBL0cD7cHnJtFx7WIEO7EkBO7Oy
+         v0ApIjA2rlOSEhx12F3BQmRMT5rW9OPEO5g/Ho2Nr0lPDsW6r2oNJnFw35TCbcvkmZ/R
+         92ZloA3+Tl0DvT0+PRAJVY9gEAkTB7gF8a5odkb6nvevU7AlIxSk4dsPpIuBgiP2jBem
+         TTwrJLosy4yyYz/XIWegFQjBcqL9bSWQ8TPvdoVMcN3u4/EAGcHxwCky+zpJV/63LaCy
+         Re+Kp/7C5482r8nCGkXLXATKyRNRYIPfHsbRv4fq84pSNAqisXs0HR21RtFrFq30R+Zh
+         LfVg==
+X-Forwarded-Encrypted: i=1; AJvYcCWes3POeyH5wt/xhNDus/sAXuAD5D9nII3/oIFXxxGCgKc7AacU+cgLlXkm4eXEorKOoxtpRR5GaXecdqw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDWMm/BLf3R10XN434eixrleZKMIvZgIAKuHK63E19Wb7/qnsc
+	y2RZhOEt023e8/HGs3mdhcAz9BxC+GJiDOkis/XRuM+NYmNNrezsVRLxKB4HQIVxNVRsYimTkPu
+	DvTlWhL52wH2tAkT/fbMqGeVQrxESyETruLpNWcGF3OrZldB43Zu5J4rl9Zdh51op5kzhGuqfgg
+	==
+X-Gm-Gg: ASbGnctNkSSHD8vH0D70Ihg68l1QwKR/6n+zIC1AyZqrR5MBIIJjaunWnvoRI4F3Bam
+	FMYrZn6NaFS+ssjoDAJ6XSSdQ0bBgdeq6xbXLPgyCxr5kHF4mb7H3JYfzHuuLTF/qqR5zsyRmcm
+	2lmZWlGrdauhnw/IZAWV9LCMMi7MfOo368+cLjiMbYo+NWqv9WsUKuKl4HTYtJ5uQb1ejax54NU
+	3Au+rugtNnJfNKXUhElE9Gi1VKwRnDeeWwqEPANZnNPljTz8j/wfQwB6MEb4aUaMTXwjwY8g97O
+	cOrU1iTH9RVR8QgDQ7oRioQ69G/agFDp0tOhYFM/v/c4oPA9nfgv0lidLfa16suEJyttRj9lu+V
+	nyOdoxwo6YQHHqg==
+X-Received: by 2002:a5d:64e6:0:b0:42b:3680:3567 with SMTP id ffacd0b85a97d-42b36803910mr6819201f8f.18.1762858642766;
+        Tue, 11 Nov 2025 02:57:22 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IExHgXpLyzfVfcHOvkKwXBj1AViraKaxnypuiWpEttXt7rvZ6i7XtflKrBTuB0ga0hZUwj6/g==
+X-Received: by 2002:a5d:64e6:0:b0:42b:3680:3567 with SMTP id ffacd0b85a97d-42b36803910mr6819179f8f.18.1762858642355;
+        Tue, 11 Nov 2025 02:57:22 -0800 (PST)
+Received: from sissix.lzampier.com ([2a06:5900:814a:ab00:3725:2991:6cf3:b3aa])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42ac679607esm27069549f8f.43.2025.11.11.02.57.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Nov 2025 02:57:22 -0800 (PST)
+From: Lucas Zampieri <lzampier@redhat.com>
+To: linux-input@vger.kernel.org
+Cc: Lucas Zampieri <lzampier@redhat.com>,
+	linux-kernel@vger.kernel.org,
+	Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+	Sebastian Reichel <sre@kernel.org>,
+	linux-pm@vger.kernel.org
+Subject: [RFC PATCH 0/1] HID: Add support for multiple batteries per device
+Date: Tue, 11 Nov 2025 10:56:30 +0000
+Message-ID: <20251111105634.1684751-1-lzampier@redhat.com>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aQi9MstZTsloKmeo@willie-the-truck>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Nov 03, 2025 at 02:33:22PM +0000, Will Deacon wrote:
-> On Wed, Oct 29, 2025 at 03:46:01PM +0000, James Clark wrote:
-> > Arm FEAT_SPE_FDS adds the ability to filter on the data source of a
-> > packet using another 64-bits of event filtering control. As the existing
-> > perf_event_attr::configN fields are all used up for SPE PMU, an
-> > additional field is needed. Add a new 'config4' field.
-> > 
-> > Reviewed-by: Leo Yan <leo.yan@arm.com>
-> > Tested-by: Leo Yan <leo.yan@arm.com>
-> > Reviewed-by: Ian Rogers <irogers@google.com>
-> > Signed-off-by: James Clark <james.clark@linaro.org>
-> > ---
-> >  include/uapi/linux/perf_event.h | 2 ++
-> >  1 file changed, 2 insertions(+)
-> > 
-> > diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
-> > index 78a362b80027..0d0ed85ad8cb 100644
-> > --- a/include/uapi/linux/perf_event.h
-> > +++ b/include/uapi/linux/perf_event.h
-> > @@ -382,6 +382,7 @@ enum perf_event_read_format {
-> >  #define PERF_ATTR_SIZE_VER6			120	/* Add: aux_sample_size */
-> >  #define PERF_ATTR_SIZE_VER7			128	/* Add: sig_data */
-> >  #define PERF_ATTR_SIZE_VER8			136	/* Add: config3 */
-> > +#define PERF_ATTR_SIZE_VER9			144	/* add: config4 */
-> >  
-> >  /*
-> >   * 'struct perf_event_attr' contains various attributes that define
-> > @@ -543,6 +544,7 @@ struct perf_event_attr {
-> >  	__u64	sig_data;
-> >  
-> >  	__u64	config3; /* extension of config2 */
-> > +	__u64	config4; /* extension of config3 */
-> 
-> Please can one of the core perf maintainers ack/nak this extension?
+This RFC introduces support for multiple batteries per HID device, addressing
+a long-standing architectural limitation in the HID battery reporting subsystem.
 
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+## Background
+
+The current HID implementation explicitly prevents multiple batteries per device
+through an early return in hidinput_setup_battery() that enforces a single-battery
+assumption. Linux treats peripheral batteries (scope=Device) differently from system
+batteries, with desktop environments often displaying them separately or ignoring
+them entirely. However, this design doesn't account for modern multi-battery hardware patterns.
+
+## Problem Statement
+
+Multiple battery scenarios that cannot be properly reported today:
+
+1. Gaming headsets with charging docks (e.g., SteelSeries Arctis Nova Pro
+   Wireless) - headset battery reported, dock battery invisible
+2. Graphics tablets with stylus batteries (Wacom) - requires driver-specific
+   workarounds
+3. Wireless earbuds with per-earbud batteries plus charging case
+4. Multi-device receivers (Logitech Unifying) - requires proprietary HID++
+   protocol parsing
+
+This forces manufacturers to use proprietary protocols and vendor-specific
+software. Community projects parse USB packets directly because standard HID
+battery reporting cannot handle multi-battery scenarios.
+
+## Why This Matters
+
+The current limitation creates a cycle: OS lacks support, so manufacturers
+implement proprietary protocols, which makes vendor software necessary, which
+reduces pressure to fix the OS limitation. Improving HID core support for
+multiple batteries would enable standardized reporting, reduce the need for
+vendor software, improve OS integration, reduce driver duplication, and provide
+a foundation for future multi-battery devices.
+
+## Proposed Solution
+
+This patch introduces struct hid_battery to encapsulate individual battery
+state, adds a batteries list to struct hid_device for tracking multiple
+batteries, and uses report ID-based identification. The implementation maintains
+full backwards compatibility with existing single-battery code.
+
+## Testing
+
+Tested with split keyboard hardware. Each battery reports independently
+through the power supply interface.
+
+## Request for Comments
+
+Is list-based storage appropriate or would another structure work better?
+Should we support usage-based identification in addition to report ID for
+devices using the same report ID? Is sequential naming (battery-N) sufficient
+or should batteries have semantic role identifiers like "main", "stylus", "dock"?
+
+To HID maintainers (Jiri Kosina, Benjamin Tissoires): Does this belong in
+hid-input.c or should it be separate? Any concerns about the backwards
+compatibility approach? Meaning, should I have removed the whole
+dev->bat legacy mapping and use the new struct?
+
+To power supply maintainers (Sebastian Reichel): Any issues with multiple
+power_supply devices from a single HID device?
+
+Related commits:
+- c6838eeef2fb: HID: hid-input: occasionally report stylus battery
+- a608dc1c0639: HID: input: map battery system charging
+- fd2a9b29dc9c: HID: wacom: Remove AES power_supply after inactivity
+
+Community projects demonstrating the need:
+- HeadsetControl: https://github.com/Sapd/HeadsetControl
+- Solaar: https://github.com/pwr-Solaar/Solaar
+- OpenRazer: https://github.com/openrazer/openrazer
+
+Lucas Zampieri (1):
+  HID: input: Add support for multiple batteries per device
+
+ drivers/hid/hid-core.c  |   4 +
+ drivers/hid/hid-input.c | 193 +++++++++++++++++++++++++++-------------
+ include/linux/hid.h     |  42 ++++++++-
+ 3 files changed, 176 insertions(+), 63 deletions(-)
+
+--
+2.51.1
+
 
