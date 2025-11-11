@@ -1,206 +1,205 @@
-Return-Path: <linux-kernel+bounces-894441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DE23C4A944
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 02:33:02 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DC5AC4A743
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 02:27:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 872813B6167
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 01:23:00 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 02AD14EF340
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 01:23:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4037346FAB;
-	Tue, 11 Nov 2025 01:15:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 580E0347BBF;
+	Tue, 11 Nov 2025 01:15:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hLT7burD"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MCn1GxXV"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94FB41D86FF;
-	Tue, 11 Nov 2025 01:15:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.11
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762823727; cv=fail; b=WNi/0e9kQG+99N3nNfsrVQZiupuu2Dpz1oVWooFKs6muj2fo7OHi4+xghSHyVHtFoZxikQnZbzeCFh5+B7iqL2CZJ3v7ne0GAcVvcXOZHP216Ihn3gKV+vL2HUSjkfbIqQHr0lD+VdDLli40l01KPoFvWPxWJCLoQOT/zwU5TtQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762823727; c=relaxed/simple;
-	bh=1ntJmUt8jx0ioSxBbsb2UmrX7TOVFHKaZgzzk0F96Z8=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=OsoF7HXsy2+XIe7LQbatF2YhEzYuEkhb98rGUpiGHbZ5oRzpf3U+3d2mTTEw08hMSHZQS9fidrnH//uynaA2v52vcVmmHUJLl5XuXGTn4jV95+/H70ZxZjTx63TAEahrA11LR0lNISWkC1ntLMIkVyzZuoetjrpMevhdTlJtTeQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hLT7burD; arc=fail smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762823726; x=1794359726;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=1ntJmUt8jx0ioSxBbsb2UmrX7TOVFHKaZgzzk0F96Z8=;
-  b=hLT7burD7TCjmK9KteMujkKMfv7RxvGSOctyoyQUM73kWZs00iIuqQrF
-   4V5zvr0nFwkwvGKh2fQk9dmUYF9c6KtediIxvClie1mx3/5LFZOS7Biv9
-   FZT0wvr7tGHxIvL8GPKT0595fG6YJBZzrLCcJ8Q1+ed37pVXkuVPFD4g4
-   tQNoi7a2qq1+Ki+Rd8VJ9L0/eVtrbWnObgwk6iX2QsDgvpxkdhkAM37Co
-   QsHEfzjdde8V9nFzs5tzN4N05HrkinnDf4VvqIAm5WWhLzVLqX7G8eR5/
-   IDJbcgf+/Stfg9HM577XCfDZY/5SOUE4BU3Z4eU5ivUKHQzhe9UbSc80Y
-   w==;
-X-CSE-ConnectionGUID: wo1AT3tVQWu9vwnFXOYl9A==
-X-CSE-MsgGUID: wS1cVuBXQmWlxa79sX5UuQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11609"; a="75494071"
-X-IronPort-AV: E=Sophos;i="6.19,295,1754982000"; 
-   d="scan'208";a="75494071"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 17:15:25 -0800
-X-CSE-ConnectionGUID: qQxdUFSkQNyPxJRZtw/NUw==
-X-CSE-MsgGUID: 2Faskmc8TWOnwTQg5jz/sQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,295,1754982000"; 
-   d="scan'208";a="188462283"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 17:15:25 -0800
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Mon, 10 Nov 2025 17:15:24 -0800
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Mon, 10 Nov 2025 17:15:24 -0800
-Received: from DM5PR21CU001.outbound.protection.outlook.com (52.101.62.59) by
- edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Mon, 10 Nov 2025 17:15:24 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=UuQCoNkiYuFflxemwBTCjx1kuaHRkyDOfMan+eQXglqDoEzIgMCrhZ0rOlzQF6F0Hb/KQ7XYwbpHVP5YBsZA83/l+VEY+b8U+plnCSAlYu2SCCXXNnWBGkDvCFxDVBOsldVdR1Cc4LS4ymEHHcBVKj4YqOrHNXK5/33r8XCXS1pCiNTOO2KwmR4WFgYlYvpzlMCFv+RoEiBf92Xk11bLHYSjRu7l6pEh/xi/NrCzksuMPBaiVpGKZ4B7j5Nn6Ms/PRNIo8jRw5K6835PAR45dvozw7qqZiogKmxZLeSbmeGRwEcskD4sokH0aSXQyWCBWgqIGNbQnHRmlBbd15wwLw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RD/OJd+CaY2Nu2PyxNxa9H/G4dvdPH3OzYmD2AyCaFk=;
- b=SJ5rWI7khYYT9wvY4koQanQ35UPusVIWQx2GBAEBfr8omoVOjb37G7y4ttNFoauBylpbagzApOMiPGYeGBpVTV922O7bsVN3qRPnG45FRKe2tJ0GdqCKm9j034Vfuc3zZkNMsOttRTwuGHVCKYUOf27fAr6SLVqumuZVuEUR9RVqlpK8qQ54+rhdFoWPH9/oXczPwW9YiZdepQiSdUmd2CAzeEXN6dL7n3T9VZB9PgzVFUoGuLFbpTgKgdtvegx+SZRGkbLzjTenHyZPJjgQFXOmcYLcCAftn8E7FMXACSK2C0OZDyr+CaLczWEC51RxQrymSI+4fwEcSp5TzdhsUA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SJ1PR11MB6083.namprd11.prod.outlook.com (2603:10b6:a03:48a::9)
- by MW4PR11MB6713.namprd11.prod.outlook.com (2603:10b6:303:1e8::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Tue, 11 Nov
- 2025 01:15:22 +0000
-Received: from SJ1PR11MB6083.namprd11.prod.outlook.com
- ([fe80::acfd:b7e:b73b:9361]) by SJ1PR11MB6083.namprd11.prod.outlook.com
- ([fe80::acfd:b7e:b73b:9361%7]) with mapi id 15.20.9298.010; Tue, 11 Nov 2025
- 01:15:22 +0000
-Date: Mon, 10 Nov 2025 17:15:20 -0800
-From: "Luck, Tony" <tony.luck@intel.com>
-To: Ma Ke <make24@iscas.ac.cn>
-CC: <jbaron@akamai.com>, <bp@alien8.de>, <qiuxu.zhuo@intel.com>,
-	<linux-edac@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<akpm@linux-foundation.org>
-Subject: Re: [PATCH v3] EDAC/ie31200: Fix error handling in
- ie31200_register_mci
-Message-ID: <aRKOKF-UTpdmtxnq@agluck-desk3>
-References: <20251106084735.35017-1-make24@iscas.ac.cn>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20251106084735.35017-1-make24@iscas.ac.cn>
-X-ClientProxiedBy: BYAPR01CA0061.prod.exchangelabs.com (2603:10b6:a03:94::38)
- To SJ1PR11MB6083.namprd11.prod.outlook.com (2603:10b6:a03:48a::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B879C2DE707
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 01:15:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762823746; cv=none; b=G7yul4lwPKvhfKteijTpRONUmcud+R2sBPXCi1sCMPhnqjTaUcZkSNFiuwPTwUfrl8lV/f0Kz5RkMUmCgMlS4DYodkAZRQd3rWcM5o/tMKkMpd8ZDtvS8B3zRX9tVQbxAahWdRm2R8qG1aUzw9Wge7xAZV6bxifFYUsLjbCEHlc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762823746; c=relaxed/simple;
+	bh=UHwWdL8yMFiyzuIXi3IpIyFuianaoUXyCkSZKyhpm4I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S32/LBWB9ghdEKaFWqJmd9M/kLp+wD22AkSi3vTxPvwojkCT8ShB/UsliWZOLxv/T7KBnqUneCzKmho9RTWjGdc1fHbS9Wf6kehFC57EgVhVnuSEEkXwjQyuWEp8vg/bNgV6no1l9Xpt3iIL0vxdGL0sxtaY3FSvVaiZBP3b6dE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MCn1GxXV; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762823743;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lFuNMW6QorcHfFRhlUpmszpPvplH5exAgJCXldoReDA=;
+	b=MCn1GxXVoBSAWRqCthTJkV58iCJlrwDtPwY72f74v4aXDjpeA45clsZ5M7apvklzowLJ40
+	uu1LHvIx5JzT00sIcutIMOpuR+ABXmKuqdRfoexOXyL19I5veo0gj+U1Um4y1UAPdT3gG4
+	4mQgso9drOBDl55W15YJLlyHJqDHMIQ=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-213-dxEhYB_gNzeGhPkRGAx9IQ-1; Mon,
+ 10 Nov 2025 20:15:40 -0500
+X-MC-Unique: dxEhYB_gNzeGhPkRGAx9IQ-1
+X-Mimecast-MFC-AGG-ID: dxEhYB_gNzeGhPkRGAx9IQ_1762823738
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5A91B19560A2;
+	Tue, 11 Nov 2025 01:15:37 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.59])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2CF2F30044E0;
+	Tue, 11 Nov 2025 01:15:33 +0000 (UTC)
+Date: Tue, 11 Nov 2025 09:15:23 +0800
+From: Baoquan he <bhe@redhat.com>
+To: Sourabh Jain <sourabhjain@linux.ibm.com>
+Cc: linux-kernel@vger.kernel.org, Aditya Gupta <adityag@linux.ibm.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Dave Young <dyoung@redhat.com>,
+	Hari Bathini <hbathini@linux.ibm.com>, Jiri Bohac <jbohac@suse.cz>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
+	Pingfan Liu <piliu@redhat.com>,
+	"Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
+	Shivang Upadhyay <shivangu@linux.ibm.com>,
+	Vivek Goyal <vgoyal@redhat.com>, linuxppc-dev@lists.ozlabs.org,
+	kexec@lists.infradead.org
+Subject: Re: [PATCH v3 5/5] crash: export crashkernel CMA reservation to
+ userspace
+Message-ID: <aRKOK7ZQ5mOUBzvK@MiWiFi-R3L-srv>
+References: <20251110043143.484408-1-sourabhjain@linux.ibm.com>
+ <20251110043143.484408-6-sourabhjain@linux.ibm.com>
+ <aRGPee9izxWPRHj5@MiWiFi-R3L-srv>
+ <09c4c181-eb4b-43ea-a439-04b83f4c20ba@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PR11MB6083:EE_|MW4PR11MB6713:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9775b613-835f-4c6b-6f9e-08de20bfc936
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|7053199007;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?JH94jVBVzj9u+MGcljg3dMts+E1dtEIHqCNx4muQXCcXizWJhgCUzHxC3QcG?=
- =?us-ascii?Q?eTFnmAhVYiSORK5BtYU752yQ0g9OfQyoAhLNn6hkcY6LyvTPxpp3UMvtTwkl?=
- =?us-ascii?Q?QSEbXhra06GLBPUa6SJacMXRnXFUw/aqssy4WaNjWvu1DLwQ+wU1i+lRJQJM?=
- =?us-ascii?Q?0StDR6haobssE42s517AIaOzy0ImrCfPfxtBw1jwOJaY4pAOM2NkFbTMmWod?=
- =?us-ascii?Q?MhybFOzpGTPFFfdF7Rg5veRTDCgbtwMqQFadAVvYjdBYXRChUEM+t+l/Fq2b?=
- =?us-ascii?Q?L4uJ63kMKigDC1Bs416HN7XuYDcArpNrQWtl+Jnn0yuq4YD3Lxfi6YcP//pb?=
- =?us-ascii?Q?B+9xFaRgJ97AUDQ37ejV8VEdl8yX7dBB8KGq/i1apuzaCCGoHLYnOyDQFBn2?=
- =?us-ascii?Q?9pWv312tA5/lcHfa/2exw7vKA3staaGKl5ZlNHDhqN9uvYi/0yj1FBPTmWjl?=
- =?us-ascii?Q?beCCdy97U/NhfIzp10FZi5Rp/VJllBZoSuxFw9mVHluspUHdKZaqkAKaB+xe?=
- =?us-ascii?Q?R58282LGcps3Dt3WzsfKajgQSXRR19+RgTEf4Ycp1UX36Owp3BbJS3mGaGjv?=
- =?us-ascii?Q?T9f5HmiNb09Nu1TtKvfTBkikAlzybYOcXjuxzQlb8ywgkyU7ycLuRhwB3tYg?=
- =?us-ascii?Q?YmEiec33abpiN6qSdDClPqN6ldCEw5PUkWBxplVqFjQqMr8Hff9wFHpfj2P9?=
- =?us-ascii?Q?zjpwK1H3ESGkqDiUCddeEPr/BGqXbGa+xNvvM+PPxAda2UoM0O1rn3pbk9ST?=
- =?us-ascii?Q?u8kvXKxFVGCfT0BnLVa9FVhf4WlqwhcMZ2kP5i/VBeHMGbEXpCPQUWZJ9i67?=
- =?us-ascii?Q?OnCrglN3djybTKTR3Ua5CAkW9oJvwyVyVhNS6SkEPeS6LPyBaozMY7YdvPG8?=
- =?us-ascii?Q?SmgYjXvtD9hrbiCqFbZZFepXG2JVLhQUhnhtPhNyVR48nV3EzHQgl29oJxGS?=
- =?us-ascii?Q?cSEOkEZQJa2Z//0ncL6NjpxjCUQj2Dja2IGKHIfDF/viTXINAdafsRCEX1p4?=
- =?us-ascii?Q?MxQ3nqanJj6V/b2Z7WuPVOkeuByRspfUu+ahQQp9Pwb8+FZW3lnA0zALWbh0?=
- =?us-ascii?Q?P8WsuogiEzqptBAI6LTbfkmUyFjmnBY3rA2klWGtgxSsJYQx8xRfUk4vRor9?=
- =?us-ascii?Q?4JZk+4mSTGfK59drSLQbhKQ2a1MuhkLHLJuob3VHz7pMJ+oLEBhnhR86lvCO?=
- =?us-ascii?Q?mXeGiXDmVRtYhLkH2+p5GIuDJspvsEURr3T7F3//Ysw8b851yPcbGG6tCq8x?=
- =?us-ascii?Q?o1yWA5e9Ooe6pLrI54502NnvUBZF80YbQcgSYyk8D9HBV+JZLHXXDs184xOC?=
- =?us-ascii?Q?me/S4eY7zBd1H+TXw81OvqACj3lNL4fvkpY9wdhL5H7lbqBsEWlsvmSouHzV?=
- =?us-ascii?Q?sCWOTrKFCk9YDP683zckbRqmMbVrO9w5hNk/wTOihN3KnbGmh4HC6BrqEIUg?=
- =?us-ascii?Q?CV7GIja4LHsnTpbuGRXEWJa5uLQiGKEn?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ1PR11MB6083.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?v/Qd5yVWWeZRCr9HiHDloxUuJ1AKLfb0kW68IQnCw7dg5EzT3oe2fL5mET/4?=
- =?us-ascii?Q?PuZxt5cmt0w2dYTjqKPWYqZIsjRJGL0VjpWh4P+8VBCxtGrZ6gOiLN0Q36TH?=
- =?us-ascii?Q?uEmnEGSDj/uM2IFSs9hrRTY4ruuTjBZSbM16fpIr0Nkk+FcW41F5Q/VVt67F?=
- =?us-ascii?Q?ObBDNzzxE/9La/NfHfQPApvPTRCnLu0yRxtMwz+6vlKypk1NKwHIg/cHcGxO?=
- =?us-ascii?Q?0qoubQVqyTD4CZKXRD8nm1dLCY9vGGMDlh8357hPpUijsOzkQWEg6wlDmmGp?=
- =?us-ascii?Q?b/ErlaG08zYBC4MGScn0CCn5V1r16kmQ+ZsAdHxzb27a8wojRvlmjFc95xpI?=
- =?us-ascii?Q?9RFYnsYtkk9nsth3/1N62ozMMqrXCnKr9zuzdwgxCW6q/GYtZM4vnVZO8N/l?=
- =?us-ascii?Q?qgbP/T6flfeuQUjForWI5qKYb7dv6JJ46mfLp2etAaCI6KiLDyfCDpF2Lq6h?=
- =?us-ascii?Q?hxxAXRAixrxLM5yfY2e6Bq2yWOXa3l0Lr+klFRgGfFJXN+0ex5zf89grCeHp?=
- =?us-ascii?Q?HMkhO8JNePkL6tO1sOOdpptE5MGdhoOKLDgCW3Uo+ZTbOFt3aWJayylYf8a0?=
- =?us-ascii?Q?p2bTAhzY6T2h0+DqgKa5uXjfiSsVtRSd35wZ7HUOBkbXmJvWsLgpVvXHqiED?=
- =?us-ascii?Q?tpArwYDYDUDmho4/bGcQnydEpI90qBHGaXjhjX9L7RvADZe6KgfyYcS3Kh4p?=
- =?us-ascii?Q?kRNhJaoCMj9wIwSeH3MZww5MAtT0ToPJtnaiiSjQrqVyVUIJd9YGEl7cnxMb?=
- =?us-ascii?Q?GGgifUofbtI9Oh+DWNq6Jn+bc0Pnnu+ExrHrCbj1x17u1jnCspKDRza26Q+5?=
- =?us-ascii?Q?Uc7hhYQxnOLiSQYRHn/01hNfURp7qDAoOpFYOcLEDlWjg4SZJRfxvaEa4VlG?=
- =?us-ascii?Q?slWpem5y25zWIQSbL9srSg/3JusKCMp6vVlvIvxXtWF+RrXSEpuj9+pJMCXQ?=
- =?us-ascii?Q?37h1c9wQPCufi2WJemYdBvGDn9uzRTH+EQVOFFGv2eXS+XwKBU9S8U3skmuO?=
- =?us-ascii?Q?p874aG/IxvnI6esQESc+qKcD38P8xKvxD2wIN91IH+c2iIel+SKW6auSCCZJ?=
- =?us-ascii?Q?8U8N7JgsXB2XfQmQCw78JIyll73gKUcczuJhrQLwbBZcMtSlnpWd3ckLOC6k?=
- =?us-ascii?Q?YTRfbpEIOrYMJ1e02GsqovbFJ4TXQTXJzzJqT75MmRp6rj7BSAI2aW8fcbVB?=
- =?us-ascii?Q?Gbj3YZMz5b4G+sXEPGLJX9UjkLzGpZtmGtnNM6M24n9T5TIyVpEjiTHoAZJY?=
- =?us-ascii?Q?+SfltIbfwq18sCsiTSnJMZegFhI1FtFkUlLu3MjsASXDzMAPUVKUrNUOz3F6?=
- =?us-ascii?Q?gNcsuO+IqAxs14cUu5eE9jDK1vk791J+HSvV4Y4n9TSToF3dTP2t0n6Tciam?=
- =?us-ascii?Q?W2eZ+SG9uzQR6nj8VihncLsKWLK6A5uch29cAjNlTGpRzQE+Q+j8H/ryIODG?=
- =?us-ascii?Q?3Nd/A51qicAul20hrKkHRgX+HyZ7TBra+hio83+zsMVXle5QTte4Gb0NgNW2?=
- =?us-ascii?Q?PZjTT4Bm40R9PRiVovza/jvDwWAX5bjXNxhdcDMU/KctVF1NCNrcLANOMLis?=
- =?us-ascii?Q?IO1Vp+FQZELmvHNbAAHzptKTFqStxWrxGto6Q0RI?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9775b613-835f-4c6b-6f9e-08de20bfc936
-X-MS-Exchange-CrossTenant-AuthSource: SJ1PR11MB6083.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Nov 2025 01:15:22.1305
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: vytKEkm0qqPfqpanfek0n5PWtiln/PJMGcBHybNsYXny9lNVaZu4DSc1d4IPu2VPie3vMlWVW7KF3wpI3FdqXg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR11MB6713
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <09c4c181-eb4b-43ea-a439-04b83f4c20ba@linux.ibm.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Thu, Nov 06, 2025 at 04:47:35PM +0800, Ma Ke wrote:
-> ie31200_register_mci() calls device_initialize() for priv->dev
-> unconditionally. However, in the error path, put_device() is not
-> called, leading to an imbalance. Similarly, in the unload path,
-> put_device() is missing.
+On 11/10/25 at 02:09pm, Sourabh Jain wrote:
 > 
-> Although edac_mc_free() eventually frees the memory, it does not
-> release the device initialized by device_initialize(). For code
-> readability and proper pairing of device_initialize()/put_device(),
-> add put_device() calls in both error and unload paths.
 > 
-> Found by code review.
+> On 10/11/25 12:38, Baoquan he wrote:
+> > On 11/10/25 at 10:01am, Sourabh Jain wrote:
+> > > Add a sysfs entry /sys/kernel/kexec/crash_cma_ranges to expose all
+> > > CMA crashkernel ranges.
+> > I am not against this way. While wondering if it's more appropriate to
+> > export them into iomem_resource just like crashk_res and crashk_low_res
+> > doing.
 > 
-> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+> Handling conflict is challenging. Hence we don't export crashk_res and
+> crashk_low_res to iomem on powerpc. Checkout [1]
+> 
+> And I think conflicts can occur regardless of the order in which System RAM
+> and
+> Crash CMA ranges are added to iomem.
+> 
+> [1] https://lore.kernel.org/all/20251016142831.144515-1-sourabhjain@linux.ibm.com/
 
-Applied v3 version.
+Then I would suggest you add this reason and the link into patch log
+to keep a record. One day people may post patch to 'optimize' this.
 
-Thanks
+> 
+> > 
+> > > This allows userspace tools configuring kdump to determine how much
+> > > memory is reserved for crashkernel. If CMA is used, tools can warn
+> > > users when attempting to capture user pages with CMA reservation.
+> > > 
+> > > The new sysfs hold the CMA ranges in below format:
+> > > 
+> > > cat /sys/kernel/kexec/crash_cma_ranges
+> > > 100000000-10c7fffff
+> > > 
+> > > Cc: Aditya Gupta <adityag@linux.ibm.com>
+> > > Cc: Andrew Morton <akpm@linux-foundation.org>
+> > > Cc: Baoquan he <bhe@redhat.com>
+> > > Cc: Dave Young <dyoung@redhat.com>
+> > > Cc: Hari Bathini <hbathini@linux.ibm.com>
+> > > Cc: Jiri Bohac <jbohac@suse.cz>
+> > > Cc: Madhavan Srinivasan <maddy@linux.ibm.com>
+> > > Cc: Mahesh J Salgaonkar <mahesh@linux.ibm.com>
+> > > Cc: Pingfan Liu <piliu@redhat.com>
+> > > Cc: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+> > > Cc: Shivang Upadhyay <shivangu@linux.ibm.com>
+> > > Cc: Vivek Goyal <vgoyal@redhat.com>
+> > > Cc: linuxppc-dev@lists.ozlabs.org
+> > > Cc: kexec@lists.infradead.org
+> > > Signed-off-by: Sourabh Jain <sourabhjain@linux.ibm.com>
+> > > ---
+> > > Changelog:
+> > >   - Add the missing hunk to export crash_cma_ranges sysfs
+> > > 
+> > > ---
+> > >   .../ABI/testing/sysfs-kernel-kexec-kdump        | 10 ++++++++++
+> > >   kernel/kexec_core.c                             | 17 +++++++++++++++++
+> > >   2 files changed, 27 insertions(+)
+> > > 
+> > > diff --git a/Documentation/ABI/testing/sysfs-kernel-kexec-kdump b/Documentation/ABI/testing/sysfs-kernel-kexec-kdump
+> > > index 00c00f380fea..f59051b5d96d 100644
+> > > --- a/Documentation/ABI/testing/sysfs-kernel-kexec-kdump
+> > > +++ b/Documentation/ABI/testing/sysfs-kernel-kexec-kdump
+> > > @@ -49,3 +49,13 @@ Description:	read only
+> > >   		is used by the user space utility kexec to support updating the
+> > >   		in-kernel kdump image during hotplug operations.
+> > >   User:		Kexec tools
+> > > +
+> > > +What:		/sys/kernel/kexec/crash_cma_ranges
+> > > +Date:		Nov 2025
+> > > +Contact:	kexec@lists.infradead.org
+> > > +Description:	read only
+> > > +		Provides information about the memory ranges reserved from
+> > > +		the Contiguous Memory Allocator (CMA) area that are allocated
+> > > +		to the crash (kdump) kernel. It lists the start and end physical
+> > > +		addresses of CMA regions assigned for crashkernel use.
+> > > +User:		kdump service
+> > > diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
+> > > index 7476a46de5d6..da6ff72b4669 100644
+> > > --- a/kernel/kexec_core.c
+> > > +++ b/kernel/kexec_core.c
+> > > @@ -1271,6 +1271,22 @@ static ssize_t crash_size_store(struct kobject *kobj,
+> > >   }
+> > >   static struct kobj_attribute crash_size_attr = __ATTR_RW(crash_size);
+> > > +static ssize_t crash_cma_ranges_show(struct kobject *kobj,
+> > > +				     struct kobj_attribute *attr, char *buf)
+> > > +{
+> > > +
+> > > +	ssize_t len = 0;
+> > > +	int i;
+> > > +
+> > > +	for (i = 0; i < crashk_cma_cnt; ++i) {
+> > > +		len += sysfs_emit_at(buf, len, "%08llx-%08llx\n",
+> > > +				     crashk_cma_ranges[i].start,
+> > > +				     crashk_cma_ranges[i].end);
+> > > +	}
+> > > +	return len;
+> > > +}
+> > > +static struct kobj_attribute crash_cma_ranges_attr = __ATTR_RO(crash_cma_ranges);
+> > > +
+> > >   #ifdef CONFIG_CRASH_HOTPLUG
+> > >   static ssize_t crash_elfcorehdr_size_show(struct kobject *kobj,
+> > >   			       struct kobj_attribute *attr, char *buf)
+> > > @@ -1289,6 +1305,7 @@ static struct attribute *kexec_attrs[] = {
+> > >   #ifdef CONFIG_CRASH_DUMP
+> > >   	&crash_loaded_attr.attr,
+> > >   	&crash_size_attr.attr,
+> > > +	&crash_cma_ranges_attr.attr,
+> > >   #ifdef CONFIG_CRASH_HOTPLUG
+> > >   	&crash_elfcorehdr_size_attr.attr,
+> > >   #endif
+> > > -- 
+> > > 2.51.1
+> > > 
+> 
 
--Tony
 
