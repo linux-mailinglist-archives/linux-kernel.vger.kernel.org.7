@@ -1,132 +1,105 @@
-Return-Path: <linux-kernel+bounces-895494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E095C4E194
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:24:59 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F23DC4E2EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:39:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7BFA3AD066
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:24:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3AAF34E1DA4
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:39:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 345BD33AD85;
-	Tue, 11 Nov 2025 13:24:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="LF62p4jW"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8785134250F;
+	Tue, 11 Nov 2025 13:39:35 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2568A3AA195;
-	Tue, 11 Nov 2025 13:24:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2465C32471F;
+	Tue, 11 Nov 2025 13:39:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762867489; cv=none; b=JHBIzCFtYnP6cb07M8ULe9WDhPuUbhLwmy1voneP4+/aclC51hMPh+ln/0kU1vI+fM/rZKq0+GjpEypOHjvazkzw/4lLnxw94SZYVE7oUx8iR9KRjNCtARdVk4LZAduPCr7vJWG/KOPCtRRTdJ2zUZBbOwxrjB4XxqBBiDTMm1U=
+	t=1762868375; cv=none; b=jMXOd6en8GGjkfkKMywx34c2tly+b4fkZXWhHiBviJUpJQLJ1sZ25DLxDAGvjYeoSQviFPLMgsbTWfF0mnDM9wjI+4M+J24Ohj/64rvRFx3zpkQeIToET+7kBzWQdq152pRrfFFc3YW+Y31kHE8kt6G75Kdq80T9i8QCaSnzYOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762867489; c=relaxed/simple;
-	bh=+g1uK21001nOzYIJ7ry6HKSrTlukMfqwQbtcT3JfBv4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fuxOGuHpZIjLkEMoxkUJKXZ1tIui5qcVie5zPOhslnzC/ytz/DykOyRLAmGWoWwh3f6yHSGeDa8CYzC0hpmOios3mFLuZFs21SUZSSM/T14vEa9zmrMj0794NRz6piiQgfGAlGn+9GNmNAG8xkHoUnnzJ2fNGYXN32wva3RiWe8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=LF62p4jW; arc=none smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5ABDAYXF009868;
-	Tue, 11 Nov 2025 13:24:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=corp-2025-04-25; bh=5LKeLHsesFfV72BE
-	nO+/XhOB8h3NN0zZCEKrYrjE1vo=; b=LF62p4jWONTZhqMkK3Zjl9waOu2IPW7k
-	azq0jqZIBkk0J1F+c7Q/LKZicNkOuEQ4g6oORbrQKHP6MzEE50saBzR4oFV804mx
-	Yoe0v5OYM/6Mu9dbsaoiF2hFLg2XH7SkWdiTNruNmuQlUJHywzZzxygn34Klqlf/
-	SAoNqRHZtScd7heIcL9TDeRFD5/TNgQbU2D+wuHPTh45A5b5ZvvSqVcQGWCNdt9m
-	BAw9NCiB4lqLl0Ksd2edSJkbb60GS1gFKzpilVXT84P4Pvow0AS3zhsQL4z1SHQI
-	5mYjc13YAObxbEEmmnRGfYSU/OMeeKqA0i/lRIs9Q6FZizTWR8ldUA==
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4ac5st00q5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 11 Nov 2025 13:24:07 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5ABD9pqo007604;
-	Tue, 11 Nov 2025 13:24:07 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4a9vaa1636-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 11 Nov 2025 13:24:05 +0000
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 5ABDO5RL015951;
-	Tue, 11 Nov 2025 13:24:05 GMT
-Received: from lab61.no.oracle.com (lab61.no.oracle.com [10.172.144.82])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 4a9vaa162f-1;
-	Tue, 11 Nov 2025 13:24:04 +0000
-From: =?UTF-8?q?H=C3=A5kon=20Bugge?= <haakon.bugge@oracle.com>
-To: Bjorn Helgaas <bhelgaas@google.com>, Sinan Kaya <okaya@codeaurora.org>
-Cc: =?UTF-8?q?H=C3=A5kon=20Bugge?= <haakon.bugge@oracle.com>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] PCI: Do not attempt to set ExtTag for VFs
-Date: Tue, 11 Nov 2025 14:24:00 +0100
-Message-ID: <20251111132401.1827922-1-haakon.bugge@oracle.com>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1762868375; c=relaxed/simple;
+	bh=pUpRrqx6uPaYtCYfYiROxokEsn1l4zoEcFa5SFjuin0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Q3BGUQnDHuoMf9/BHAjvBLCUrslrZ2sgLOEjrgTV4imW16W7eM3M0lGzQgM9WHIlTDF5QZQlYyHwrqCLqeoyIvQWFNVJCPOL+XYYFxO7/FSNAGaCurQ2frwSzd5oox3xFQoGbzq4aYeyhepKLsrydrIOQhnoAleTm4Xur9zOdf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4d5SLV1rKPzKHM0R;
+	Tue, 11 Nov 2025 21:39:14 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 660C81A01A0;
+	Tue, 11 Nov 2025 21:39:30 +0800 (CST)
+Received: from hulk-vt.huawei.com (unknown [10.67.174.121])
+	by APP4 (Coremail) with SMTP id gCh0CgBXgF2EPBNpML6FAQ--.14435S2;
+	Tue, 11 Nov 2025 21:39:30 +0800 (CST)
+From: Chen Ridong <chenridong@huaweicloud.com>
+To: longman@redhat.com,
+	tj@kernel.org,
+	hannes@cmpxchg.org,
+	mkoutny@suse.com
+Cc: cgroups@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	lujialin4@huawei.com,
+	chenridong@huawei.com
+Subject: [PATCH -next v2 0/3] cpuset: code cleanups
+Date: Tue, 11 Nov 2025 13:24:26 +0000
+Message-Id: <20251111132429.950343-1-chenridong@huaweicloud.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-11_02,2025-11-11_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 malwarescore=0 spamscore=0
- mlxscore=0 bulkscore=0 suspectscore=0 mlxlogscore=999 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2510240000
- definitions=main-2511110107
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTExMDEwNSBTYWx0ZWRfX973FRm71HbbN
- gwAUqa/nlpwFJhvNajUOLxftGLEaYNF4OwvN+jmWQqGmvhYIoeDUXRmypW2eLiY93bqrXkcLaKv
- 0oFAeN54GmezrVo8eoElvGR5Httd7hVeYPJeDcu63exHXVKUP7q7k+3nSepmMGcIoG5hC68y4Hr
- 6nD65rndWCRgXD32poMOfR85q1VleD86Xs4zkxOxAgRW7ghBp8dsSgjkZ4mwlJjlbsLYJdf+hkj
- Dgku8pa9yEyALpWXpARkBxLHIe7JdH+6/saoTCFA782nqnA70pU/Dwtpl2R3hwz+ocIHMTnIwzM
- oWM5Nh2h+j+0y0933q6qOzulaX0/NjXCyucTq2dtiAKoJfHFHY8lslW5V5g/l57WH5M6MJI8ZAC
- xb+KYCjSD97R1+35jCBqInFOyQsR4g==
-X-Authority-Analysis: v=2.4 cv=V+pwEOni c=1 sm=1 tr=0 ts=691338f7 cx=c_pps
- a=XiAAW1AwiKB2Y8Wsi+sD2Q==:117 a=XiAAW1AwiKB2Y8Wsi+sD2Q==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=M51BFTxLslgA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=yPCof4ZbAAAA:8 a=mxn1B8OEhiiVPjgrDlIA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: arz4ei6-gQN8Livd0iVQ6HxWi54ZOtY-
-X-Proofpoint-ORIG-GUID: arz4ei6-gQN8Livd0iVQ6HxWi54ZOtY-
+X-CM-TRANSID:gCh0CgBXgF2EPBNpML6FAQ--.14435S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrtrWUZw18tr48JFyDZw4xJFb_yoW3trc_AF
+	W8ta45trnrJFWSkFy7AF4rta4qyF4UCF1qya4rtw4UAr9xAF17XrnY9rW2qr95uFZ5Xr17
+	J3s0yrZ5ZrnFvjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbzAYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x02
+	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij
+	64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
+	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE
+	2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42
+	xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF
+	7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUwxhLUUUUU
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-The bit for enabling extended tags is Reserved and Preserved (RsvdP)
-for VFs. Hence, bail out early from pci_configure_extended_tags() if
-the device is a VF.
+From: Chen Ridong <chenridong@huawei.com>
 
-Otherwise, we may see incorrect log messages such as:
+Patch 1 simplifies the error handling path in cpuset_set_nodes() by
+returning directly on failure, eliminating an unnecessary jump.
 
-	   kernel: pci 0000:af:00.2: enabling Extended Tags
+Patch 2 removes the global remote_children list and replaces it with
+a boolean remote_partition flag, which provides a more direct way
+to identify remote partitions.
 
-(af:00.2 is a VF)
+Patch 3 removes need_rebuild_sched_domains.
 
-Fixes: 60db3a4d8cc9 ("PCI: Enable PCIe Extended Tags if supported")
-Signed-off-by: Håkon Bugge <haakon.bugge@oracle.com>
 ---
- drivers/pci/probe.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-index 0ce98e18b5a87..014017e15bcc8 100644
---- a/drivers/pci/probe.c
-+++ b/drivers/pci/probe.c
-@@ -2244,7 +2244,8 @@ int pci_configure_extended_tags(struct pci_dev *dev, void *ign)
- 	u16 ctl;
- 	int ret;
- 
--	if (!pci_is_pcie(dev))
-+	/* PCI_EXP_DEVCTL_EXT_TAG is RsvdP in VFs */
-+	if (!pci_is_pcie(dev) || dev->is_virtfn)
- 		return 0;
- 
- 	ret = pcie_capability_read_dword(dev, PCI_EXP_DEVCAP, &cap);
+v2: Patch 2 moves up 'remote_partition' and removes redundant
+    initialization.
+
+Chen Ridong (3):
+  cpuset: simplify node setting on error
+  cpuset: remove global remote_children list
+  cpuset: remove need_rebuild_sched_domains
+
+ kernel/cgroup/cpuset-internal.h | 10 ++++++---
+ kernel/cgroup/cpuset.c          | 40 ++++++++++++---------------------
+ 2 files changed, 21 insertions(+), 29 deletions(-)
+
 -- 
-2.43.5
+2.34.1
 
 
