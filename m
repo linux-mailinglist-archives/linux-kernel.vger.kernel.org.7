@@ -1,329 +1,198 @@
-Return-Path: <linux-kernel+bounces-895978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0416C4F67E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 19:18:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8BE4C4F687
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 19:20:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E81394ED243
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 18:18:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BC033A8113
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 18:19:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7E2928468D;
-	Tue, 11 Nov 2025 18:18:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 495692BE05E;
+	Tue, 11 Nov 2025 18:19:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DE1UvpH/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="gm9UUlft"
+Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11010024.outbound.protection.outlook.com [52.101.193.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7D83824BD;
-	Tue, 11 Nov 2025 18:18:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762885105; cv=none; b=YFreWjXa98H/9NdR/z6B1ndgKIrp3amzgi3A4beEZcs4dN2aKwf6sI9C0oytqHLexc9AG6gFjtlkzLPDkjfEExQge4baMujyN4CrOfyruA1wvgXu+Ienk6JwNrNJOrquLqjlMOWqSvaoIAKBrQZZgv/f2KEENUgXrUC/N2dNoII=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762885105; c=relaxed/simple;
-	bh=9A1g77d6NETJrsVEFwCGkGYcg7oNe/734nbYe0R1toY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qNggRN7seV+eA+TouBnQusnTt5o+ZfRrJ0QWBxNrZXCPmuhQD2JFABT4+dw3bB643Ja+El0vxaT6iI9ajaoyGdatwNIpj8NHLOU6lHcjqjTwblT9TJqSzaPkjokO3f3MP32uruNi/XUQ9ezA0iFO6lF9YTPKswWFz70Up5H0O4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DE1UvpH/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A0EDC116D0;
-	Tue, 11 Nov 2025 18:18:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762885105;
-	bh=9A1g77d6NETJrsVEFwCGkGYcg7oNe/734nbYe0R1toY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DE1UvpH/bC9UZ2eBNdd8mq2OkWzJrQvT+sAdgbmfNQQBPEh/tAnmIjmopSsH+/i5E
-	 U1rDhQJM6MweLo/ufwiBDM1lFfgKcPglJWSBD8nWcdG+Vr4fZgBqLOGcWOkbbkTgFP
-	 qxrcE5TT/HeNEs2/29sSMaAT3+TvBpLE0BqHvBX3DLzbFSNvkQbKU/GZjwnEPwEnUC
-	 jC93p3cJ384/NXhhyYsEV/eB0Jm+haN1qW16cidNuUY6nM7B/Q8WDq45uLjgnaf5td
-	 /1NW0yt7iA2gNM7b0Id+r8yDnMfYFl70ge4s3ljjhcgKNlcbxqbej4tvEWtzceK24a
-	 JhfIq7TMhW33g==
-Date: Tue, 11 Nov 2025 18:18:16 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Michal Wilczynski <m.wilczynski@samsung.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Emil Renner Berthing <kernel@esmil.dk>,
-	Hal Feng <hal.feng@starfivetech.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Xingyu Wu <xingyu.wu@starfivetech.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>, Lee Jones <lee@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Icenowy Zheng <uwu@icenowy.me>,
-	Maud Spierings <maudspierings@gocontroll.com>,
-	Andy Yan <andyshrk@163.com>, Heiko Stuebner <heiko@sntech.de>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-phy@lists.infradead.org,
-	dri-devel@lists.freedesktop.org, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH RFC 01/13] dt-bindings: soc: starfive: Add vout-subsystem
- IP block
-Message-ID: <20251111-massager-twistable-1e88f03d82f8@spud>
-References: <20251108-jh7110-clean-send-v1-0-06bf43bb76b1@samsung.com>
- <CGME20251108010453eucas1p2403ec0dd2c69ae7f3eabe19cf686f345@eucas1p2.samsung.com>
- <20251108-jh7110-clean-send-v1-1-06bf43bb76b1@samsung.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3119824BD;
+	Tue, 11 Nov 2025 18:19:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.24
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762885157; cv=fail; b=dksUKhnYmiNhDUu90mcsCp5HXHLAYEJM8FeN8qQYDMCkcOI+Lw22uQ0rv7zSaleNHSuSB9bQOyI5rfhr9RNKzdeoZULMVItpJYx4VdnHKN1ZT3vp1IieeqnPixvy9MGyO2TCnWalnbreYLK6bWQKN5fPNABIEz2jE4TJIPwpE10=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762885157; c=relaxed/simple;
+	bh=WMT/bkzTseoOqwiqjfSsyD57w+QPHTRCxMOhRy+V4lc=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=BjI2z+B1LYb0RopsySMljbxCV5Yf4J78XpmE+TqiVZrjf27GxvUhpvRNaRyC0Xv0Pqr8kF3QQuzPasYxHW7XTG5oyprQ2yO6rJP7S8QTum4B0q4M1exDkfkxcxZu3XfD3Dm3KMLx3V51Nsd6MoEURrKYMuHO3Cke0w3Y6t5m3Lw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=gm9UUlft; arc=fail smtp.client-ip=52.101.193.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=h5kwUG09f06fsPX76zJS2b5R2Mr7k9aA1aQVhhJAbAEl5GW8VL3Na+PXh1dVy/jukObQy+cZ2p/0FlPqKrsny63uaJ+Ul2T5rFeyWqxJucww0nu6y2R66nOJSR1IA2uRHZ1OFepo1DBCNO026cK8NxUCP1isT2TxLc9Fu7wo3VPfhkyLjJQT+1WCZS7nlYt4wvxvE+ct+mqJl2Y74l0vL3DIZpiI+tJzzjHL7/3qX1S+ZIkrqskhjmYLy/oLNfUGgHc4xVkYioYkcr+82sVMh7ZcFLFkpL5z+Ezqhyl8kmGbuCCxPehwj6qztFF/vulwxyFmVVY7h5aqZFYf9T5PMA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=WMT/bkzTseoOqwiqjfSsyD57w+QPHTRCxMOhRy+V4lc=;
+ b=fJg8Z9RFDT42Dz8Fquu5Kwoth7I7XQnI74DmKuK3X6oq2pleLrNENQ7/Y6eKr0Tohszsy/ZopOOIaO7VJ4+KU1lmWLPFGzRHy31+52vdtHGFifk6tUlzicy+y0oUDu21paBDe3XHxuiXXnSLSMcIwSaB74HlOTBLHoV2V0c9v9pivhv35hC1etozg+DJWMXVzuedBbgJJeNfzoy2W9HIRR8oU8joJ6RnZGYLq1dytJajQfs7ppUDqpR2kqLGKaA0qWu9kQe7XFHz2eTY89cClIwWwGJXPQslztzAqEvGZbQ8kYfZHyCS1NEQq2s2JiQvH99Rm5RavFaT9PCOSi8+bQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WMT/bkzTseoOqwiqjfSsyD57w+QPHTRCxMOhRy+V4lc=;
+ b=gm9UUlftizVAwfwABexY0dA2AnbLOee9WcDqIiaoIqAURMTtk89jHpCvzRNVeqmW0lbw6Mp8+PDwKO3z8ky3JwwtnNM+7DytPs5IHe9FWZaALKfJYXiqEeIYUmk3HQ641PO3Nfj+GEn4LRsgs3oL92sulpu55b7GLZ5gZXckC7ttpk11gNNoY/bDd4Fpe6DYdr3OGOE+2m5ouXYCNKHDQrhr5axe6gPm8Q0y3PL1D5MZF0No3jIhQm3x6/guYiawNSd+M5au93Wrs6b9QQmFDDml96eufWcLfxhcE1b+wcDk/YOUE6jIry5miaaTib0E//Em0jkbWI9f23f/QIDgPQ==
+Received: from LV3PR12MB9404.namprd12.prod.outlook.com (2603:10b6:408:219::9)
+ by DS2PR12MB9750.namprd12.prod.outlook.com (2603:10b6:8:2b0::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Tue, 11 Nov
+ 2025 18:19:13 +0000
+Received: from LV3PR12MB9404.namprd12.prod.outlook.com
+ ([fe80::57ac:82e6:1ec5:f40b]) by LV3PR12MB9404.namprd12.prod.outlook.com
+ ([fe80::57ac:82e6:1ec5:f40b%5]) with mapi id 15.20.9298.015; Tue, 11 Nov 2025
+ 18:19:13 +0000
+From: Chaitanya Kulkarni <chaitanyak@nvidia.com>
+To: Christoph Hellwig <hch@lst.de>
+CC: Jens Axboe <axboe@kernel.dk>, Damien Le Moal <dlemoal@kernel.org>,
+	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Caleb Sander
+ Mateos <csander@purestorage.com>
+Subject: Re: [PATCH 2/2] zloop: use blk_rq_nr_phys_segments() instead of
+ iterating bvecs
+Thread-Topic: [PATCH 2/2] zloop: use blk_rq_nr_phys_segments() instead of
+ iterating bvecs
+Thread-Index: AQHcUQOmREdX9Oxw5EiSTJx46E6UxrTtM02AgACaBwA=
+Date: Tue, 11 Nov 2025 18:19:12 +0000
+Message-ID: <82841969-7892-4222-8f2f-a55bff4ce56f@nvidia.com>
+References: <20251108230101.4187106-1-csander@purestorage.com>
+ <20251108230101.4187106-3-csander@purestorage.com>
+ <20251111090755.GA12545@lst.de>
+In-Reply-To: <20251111090755.GA12545@lst.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Mozilla Thunderbird
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: LV3PR12MB9404:EE_|DS2PR12MB9750:EE_
+x-ms-office365-filtering-correlation-id: 0612c424-86c0-4524-a772-08de214ed0ed
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|10070799003|1800799024|366016|376014|38070700021;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?ZlVNMXRiMzdWQWI2WkpFS0hyanJLZ1JEVnFFcUVUZVFiZUtSdGUyMndSaW1X?=
+ =?utf-8?B?TXlOMmFBZE9MUDZtZ0pRWGhGZmdNLysyVW9YQSszYlkzUnlzQ09TbDVmN29F?=
+ =?utf-8?B?cUdXNW5kMXJTQXB3WnhYOWdCK2tWK3dLcVNwSEZCLytjRURYN0NoSUxxSUc0?=
+ =?utf-8?B?bDc3WEpEVFpQZ0tyOTd5Y3pKeHNORWdHWFprVlZtdVJZUy9nM2ZNUHFqSTJU?=
+ =?utf-8?B?MFM2K2hYUURDTTBDVnJyQkpHMWpIa25nb1l6SHg1R1NuVmxoYVZSTWd6UFRq?=
+ =?utf-8?B?WWcvRS84cVF0TlB3bUduR1hZaDgrNFVMVGxUMEhLZjlaTk9GYkJGa1N4Vkdq?=
+ =?utf-8?B?Qkl6WTMzVlJGeEl3bVFQbVQvc3R1aGlIRmVpOWcxR2RBdTU1MklubXkwdGNp?=
+ =?utf-8?B?dDFXWllWbjlkTU5QbHRRV1dCeDZMM1AzNjdpUWo4UHZYUTZuODlGREg0ZE11?=
+ =?utf-8?B?b3pDWjBieU1kQ2RuZ2RpcVZ2UUg1bFhnWHljSXU3MGNxc0dSUVZzYVM2LzhC?=
+ =?utf-8?B?R0ZTWFpMcjY3OFlhcHZzMHljVGpQOUhicFZTY2VZOUZkVGZrR1Ric0ZwbHFG?=
+ =?utf-8?B?U0VLR2hUWldheU82UXdOYlFZc2I4NmYzL0NtcStlekRNK1RML3BkVEprcGVQ?=
+ =?utf-8?B?S0tBaWJmSTdqUHVsWEgvbFJRRE5OWHBqZDFwQW9laUdWNmI1WUc5L2d6eG0r?=
+ =?utf-8?B?THNYTU1ITmtSN3IyaHZOR3BTWDZQNkpJcFUyL2ZlWWJpSXdIN3N3VnpLeTBz?=
+ =?utf-8?B?L244aHppRnJNTEQydVQrRDJRWHFzbWt0b3BtQitmZDZmZjAwSGtwaDc4TWM2?=
+ =?utf-8?B?THF2ZDZwUnM2OTlUaXp3OVBWaGE4d1Y1SWgxZnN5dFlaQ0I5cmlEVFd2YUtm?=
+ =?utf-8?B?QWx3MWpySzNBV3VSQ1M0UW9vb1F4c0gvRkkxeDZXZnlvdnlIZEorbzVCVkNs?=
+ =?utf-8?B?aUl5K0hRa0FDR2JFQ3Zzd2dvRUdIc0p1bnBSS1ZOemNBVUVSUE9FVmxvckN3?=
+ =?utf-8?B?cE0xRkVJTDlLeHZURWhFRUdJUGRHWndJZUtyd1RjbVdYMzN4SEY4VEhpd01X?=
+ =?utf-8?B?Z1V3ZGZMRWlnTWdJeTE0a0tiUjVONnh0ZklIaHJFMXVBc1RYRmxscHYwRGs2?=
+ =?utf-8?B?cVNnSXl3N1FWb2pwTTdVUUE4TFdYL2NVbHNGWnVMN09lUmRKeUdoRXMwYlJk?=
+ =?utf-8?B?NXNLV3BHbU5TVWp6RXBSSlByUmNwYnVNUU1TMTlKVnVSTmdEZ29remUxaHRP?=
+ =?utf-8?B?TG9ZeitTTU43VGJiSEt2ei9kQXIyR1dxaXdUbFpCSjVQTm45WFk1RDdDd01y?=
+ =?utf-8?B?SHJTK096K1FXOGlHZ2JxM1Q1Nm1Cd3IvRzZrdjJDRWVkdmZMOStzbzU5c08w?=
+ =?utf-8?B?UGRCdk0wTlFFT3pFNVBNS0tYRCs1djZDcFh0V0V3a2NyOFJSUFo5d2ZBVTQy?=
+ =?utf-8?B?a1I0dzFqSTAwNEt6VkxEODhycEFhdFdQYUllVVdNNnNzNE12UnpjOWVIU3JJ?=
+ =?utf-8?B?SzNmRmpETmhRSTRpdXloZktSVFEwaTlXT1FvQ1p2ODBaY1VhQzkweUN1ZHRy?=
+ =?utf-8?B?VEl3NzNPd1h5N2g1VTZzY0ZSYWh3ZnRJSWFwdkF3N0lCRVVLUTllYWVZU09m?=
+ =?utf-8?B?ZjBnaXhmQ2plTko4V05qZkNTTUQwZ3RuZFJ2MkFyWUNCMFBjYlJuUUJhQ0pm?=
+ =?utf-8?B?aWlVYm5NWndhSlpUeDlVbDQ3eXN2OUxiV2hKY0FJMURXNUlGTC9pZjRtSWtt?=
+ =?utf-8?B?WWUzTGhDem9sUU9oUDRqK3JxTlpKWFA0TWNudmxFbDdDZUE0UnJBL1pURSs3?=
+ =?utf-8?B?Q3hWZWRUeTJ3YkRzdk1mOUdyTFFzbkZXcFBIUWhrT1N0UXkvdHl6MnVGUXNC?=
+ =?utf-8?B?dzFlY2hnUVhpUWN6Ni9LWE95cG1uYlRUS0dabWRuYVhWQ1lzcWxsRGRGbHk3?=
+ =?utf-8?B?NnNBTVFzZTlrOVRRL05rVGU2cEdVK1lkdFBCZWU5a0xPbTZ0UWRTNUlUcjhw?=
+ =?utf-8?B?ZUMxRWFQNUlvcGhxemVIUTVYa3FkamFMVGloU202cnpKZ3prcmtoTUxhRmE5?=
+ =?utf-8?Q?cXz+Sf?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR12MB9404.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(1800799024)(366016)(376014)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?N2xLRHdNVHJocGFuMWY2VHlZZkk0UExLL0c5WGxoZWp0aEF6anR5S1pBR2pD?=
+ =?utf-8?B?U2REcDllQWdyYVVESFd4emVVSU11cmZKemI0a29oU2w3TmgxbkFKMCtvdjIv?=
+ =?utf-8?B?NTFWYytsTnlMTk83ZWlHcHBkQi82V3B6VWdXS1pSVDdOQkZYd1RmNmJjNi8v?=
+ =?utf-8?B?N01jZExLdU1SS1FJazRnM1FvWkpad241N1BTT3NmcnVyTmZlTHFGdG13aE1y?=
+ =?utf-8?B?V1hLVTlta05MVFhrM3dGaGI4Q1VzU1lMMXpjRmJKODRscDlubjJwRVc2eDNy?=
+ =?utf-8?B?OEhzVUZWYUFyMERoSmR1OVc0c2NnRkxXckNNbWtYNWJvWExPVy9IYnNmUVE3?=
+ =?utf-8?B?QU5XaWEwVW41SXZwRjZlWnFxOUNoek4yUGN0blBqdTBabWxKbkk2SUN6Vk1S?=
+ =?utf-8?B?WnBHR1pJeWp6emg4Qyt6WS80Y2lNcWE3NnRIczBGMjR1Z2RueDhtYkhDK2NQ?=
+ =?utf-8?B?YTVVNC9Tc1BLajR0NWtGTEpzS2FNazNMaWUvS1E3SG9pcGFzaDN6YXcxWHJF?=
+ =?utf-8?B?eEt4MjVNVnAweUlBZjJMbGFtUUNCK2NuaFc0R0xabWlFcTZZS1lwc0JFZlMw?=
+ =?utf-8?B?bFhFai9ySFBEY3NzN085bEdadGhmTDJzbkUyblZjSFNZWWdVSVM1Yk9mK2JD?=
+ =?utf-8?B?QTh0dlVBMjd0TG50SW9sYkVrdmFaOEJHU1FqZ3JnVTd4NXUwbm0yRzRJSHdK?=
+ =?utf-8?B?Q3RLU2tOa0ZMV2krVGdvT0FTcVdiYlZyM1VGcmhMc1RPcWdCNkFXR1RqOWJ2?=
+ =?utf-8?B?MS93N2llaTJCOC95QiszcldlTVlub1NtWkVkelhMYWxIbWxObFRVdGVxamFK?=
+ =?utf-8?B?Y0EyL25UeDRaUEVGM2w1MlpFY3UzWEFiL1h4dnRBNFFsazJkTjV2NkJ0VUVr?=
+ =?utf-8?B?dVVTV3JCQyt4L3BXZFp4YU5xeUhCVENIWkFpZE5vZEE5THdoUHhCcWNCa2tP?=
+ =?utf-8?B?bHR3WURjYURPTVAxeHlKR3JhaG1BU1ZTSnNGNjR1cDZIQ0d6eXJFSFB1R05z?=
+ =?utf-8?B?VTR6YWZVUVpJek82ZFM0WldSaWtSQmswSC9BU0kyV1B4M3BjbmorNXo0RFVq?=
+ =?utf-8?B?OFdRZStQZWdBOGZ1OVh1aDE0dFdKeUhLVll1cUhnL1hxUUNtZURYUzZuK1ZY?=
+ =?utf-8?B?Yzk3ejRrZUtDZ0ZNVXgyVldLWnMvZ1EvaHVUbjdnektsdFp1NkFTWnB5YzFF?=
+ =?utf-8?B?SENnY2swNklRT3R2eUhzT2tRNFNPSjB3WnpuVjR6amlrSElLeE1JdTNncUti?=
+ =?utf-8?B?djRuTlAyR0tHZ1N3bldzbnFvbjYzKzJHUUtUbDBWSlhyT0JOOXlFa3lCcHJ2?=
+ =?utf-8?B?MlAzMHJ5WEpnK1RpWjUxOFR2QWFncUZkYUg3RFhIVkFDQXcvcnMwcnN5aCsv?=
+ =?utf-8?B?TlpvL0J1NitrK1l5N1NBVzA2MFc1NCt6bDNZZnV0TE44SmM5TEh1RHpZS1p1?=
+ =?utf-8?B?OENaY3FkY2p1eEJ0YmxtdXlGWG5za3diV2M0MkU4UzlUaGFBS0k4S1JmYUo2?=
+ =?utf-8?B?SjBEbVNqNit2Z1BiMnE1a2gyZWFBbWsybk5kMDZNOEFxODlUd1JhTmxWUjdD?=
+ =?utf-8?B?TzI2b1ZIUEFkWGFHWEFDOXpnV2NkMkc3RkRqaUZUQ1d4dDhNamhSVmxDaWZq?=
+ =?utf-8?B?YlNDWi9RNDV4T2hMTVQ3UjJjbFIrd2NvY2JZdVFDT3h0ZS9LT3JhRDZBRmhD?=
+ =?utf-8?B?RXZ1eFRnMGdxK2ZndWZaWmFWN2tzaFExQmdxMGpKcnowdHFXOUNZcWFxUmUx?=
+ =?utf-8?B?eHBLdUJpdDlqOWpIUGNMVHAxSERZbkVldnlVWCtZYUhKOEVNOFR0b2lTZjlq?=
+ =?utf-8?B?SitHNER1ZUpaYkpVaUEyU0VjWjhkb1lYM0ErUXNyaGY5MmpRaXo2WFJnMzBO?=
+ =?utf-8?B?c055UFpzL2p5MjdWaUhFKzkxMHI3MkNSQjc4R05mc21DRCs4c25JOWo4djN6?=
+ =?utf-8?B?UUpsU016Mmp0RHI4VHBKMzRReU1sYTREM2l5UTA5RmgxWTAxWFA1VVhBcERJ?=
+ =?utf-8?B?N2duQy9JcFVwcE9hRWMyQXBDbncwYk5UcnNGM1hqUURBLzdzWXRvbVNGTDZG?=
+ =?utf-8?B?Ym1MdW9WdkhxM0FGUzIxb0cyVTQ5eEdHOEdrU1VWNmpyUklqZm94MlpuWmd5?=
+ =?utf-8?B?WkFqMGYxVFU1dDhGVnVkbDk1NFVMcld2SDBQZ3pRaEY0Ukw2MEF5TjNRQXpW?=
+ =?utf-8?Q?Ixft5nmOEa484EhhznaPSaA5koZunJIf12/t3iZaiw5Z?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <252D817F9F7187408157D86C894FCF0F@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="LyJKcpcoYORwRgse"
-Content-Disposition: inline
-In-Reply-To: <20251108-jh7110-clean-send-v1-1-06bf43bb76b1@samsung.com>
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: LV3PR12MB9404.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0612c424-86c0-4524-a772-08de214ed0ed
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Nov 2025 18:19:12.9269
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: WHYbG/9Uko116TCnmWx8TMN4rFpJLyC4fp0luO58WL1IqX+La9t+ylIaZ6JiRfQeybW+rOSDB2iQRF155R/Aow==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS2PR12MB9750
 
-
---LyJKcpcoYORwRgse
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Sat, Nov 08, 2025 at 02:04:35AM +0100, Michal Wilczynski wrote:
-> Add the dt-binding documentation for the StarFive JH7110 Video Output
-> (VOUT) subsystem.
->=20
-> This node acts as a parent for all devices within the VOUT power domain,
-> including the DC8200 display controller, the VOUTCRG clock generator,
-> and the HDMI MFD block. Its driver is responsible for managing the
-> shared power domain and top-level bus clocks for these children.
->=20
-> It is a bit similar to the display subsystem qcom,sdm845-mdss DT node.
->=20
-> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
-> ---
->  .../starfive/starfive,jh7110-vout-subsystem.yaml   | 156 +++++++++++++++=
-++++++
->  MAINTAINERS                                        |   5 +
->  2 files changed, 161 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/soc/starfive/starfive,jh71=
-10-vout-subsystem.yaml b/Documentation/devicetree/bindings/soc/starfive/sta=
-rfive,jh7110-vout-subsystem.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..4ad9423ea139a537b4cfea26b=
-0ed4ed263aa14a1
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-vout=
--subsystem.yaml
-> @@ -0,0 +1,156 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/soc/starfive/starfive,jh7110-vout-sub=
-system.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: StarFive JH7110 VOUT (Video Output) Subsystem
-> +
-> +maintainers:
-> +  - Michal Wilczynski <m.wilczynski@samsung.com>
-> +
-> +description:
-> +  The JH7110 video output subsystem is an IP block that contains
-> +  the display controller (DC8200), HDMI controller/PHY, and VOUT
-> +  clock generator (VOUTCRG).
-> +
-> +properties:
-> +  compatible:
-> +    const: starfive,jh7110-vout-subsystem
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  power-domains:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  resets:
-> +    maxItems: 1
-> +
-> +  ranges: true
-> +
-> +  '#address-cells':
-> +    const: 2
-> +
-> +  '#size-cells':
-> +    const: 2
-> +
-> +patternProperties:
-> +  "^display@[0-9a-f]+$":
-
-Personally I'd like to see these being regular properties, since there's
-exactly one possible setup for this.
-
-> +    type: object
-> +    description: Verisilicon DC8200 Display Controller node.
-
-Can you add the relevant references here instead of allowing any object?
-
-Cheers,
-Conor.
-
-> +
-> +  "^hdmi@[0-9a-f]+$":
-> +    type: object
-> +    description: StarFive HDMI MFD (PHY + Controller) node.
-> +
-> +  "^clock-controller@[0-9a-f]+$":
-> +    type: object
-> +    description: StarFive VOUT Clock Generator (VOUTCRG) node.
-> +
-> +  "^syscon@[0-9a-f]+$":
-> +    type: object
-> +    description: StarFive VOUT Syscon node.
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - power-domains
-> +  - clocks
-> +  - resets
-> +  - ranges
-> +  - '#address-cells'
-> +  - '#size-cells'
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/starfive,jh7110-crg.h>
-> +    #include <dt-bindings/power/starfive,jh7110-pmu.h>
-> +    #include <dt-bindings/reset/starfive,jh7110-crg.h>
-> +
-> +    soc {
-> +        #address-cells =3D <2>;
-> +        #size-cells =3D <2>;
-> +
-> +        vout_subsystem: display-subsystem@29400000 {
-> +            compatible =3D "starfive,jh7110-vout-subsystem";
-> +            reg =3D <0x0 0x29400000 0x0 0x200000>;
-> +            #address-cells =3D <2>;
-> +            #size-cells =3D <2>;
-> +            ranges;
-> +
-> +            power-domains =3D <&pwrc JH7110_PD_VOUT>;
-> +            clocks =3D <&syscrg JH7110_SYSCLK_NOC_BUS_DISP_AXI>;
-> +            resets =3D <&syscrg JH7110_SYSRST_NOC_BUS_DISP_AXI>;
-> +
-> +            dc8200: display@29400000 {
-> +                compatible =3D "verisilicon,dc";
-> +                reg =3D <0x0 0x29400000 0x0 0x2800>;
-> +                interrupts =3D <95>;
-> +                clocks =3D <&voutcrg JH7110_VOUTCLK_DC8200_CORE>,
-> +                         <&voutcrg JH7110_VOUTCLK_DC8200_AXI>,
-> +                         <&voutcrg JH7110_VOUTCLK_DC8200_AHB>,
-> +                         <&voutcrg JH7110_VOUTCLK_DC8200_PIX0>,
-> +                         <&voutcrg JH7110_VOUTCLK_DC8200_PIX1>;
-> +                clock-names =3D "core", "axi", "ahb", "pix0", "pix1";
-> +                resets =3D <&voutcrg JH7110_VOUTRST_DC8200_AXI>,
-> +                         <&voutcrg JH7110_VOUTRST_DC8200_AHB>,
-> +                         <&voutcrg JH7110_VOUTRST_DC8200_CORE>;
-> +                reset-names =3D "axi", "ahb", "core";
-> +            };
-> +
-> +            hdmi_mfd: hdmi@29590000 {
-> +                compatible =3D "starfive,jh7110-hdmi-mfd";
-> +                reg =3D <0x0 0x29590000 0x0 0x4000>;
-> +                interrupts =3D <99>;
-> +
-> +                hdmi_phy: phy {
-> +                    compatible =3D "starfive,jh7110-inno-hdmi-phy";
-> +                    clocks =3D <&xin24m>;
-> +                    clock-names =3D "refoclk";
-> +                    #clock-cells =3D <0>;
-> +                    clock-output-names =3D "hdmi_pclk";
-> +                    #phy-cells =3D <0>;
-> +                };
-> +
-> +                hdmi_controller: controller {
-> +                    compatible =3D "starfive,jh7110-inno-hdmi-controller=
-";
-> +                    interrupts =3D <99>;
-> +                    clocks =3D <&voutcrg JH7110_VOUTCLK_HDMI_TX_SYS>,
-> +                             <&voutcrg JH7110_VOUTCLK_HDMI_TX_MCLK>,
-> +                             <&voutcrg JH7110_VOUTCLK_HDMI_TX_BCLK>,
-> +                             <&hdmi_phy>;
-> +                    clock-names =3D "sys", "mclk", "bclk", "pclk";
-> +                    resets =3D <&voutcrg JH7110_VOUTRST_HDMI_TX_HDMI>;
-> +                    reset-names =3D "hdmi_tx";
-> +                    phys =3D <&hdmi_phy>;
-> +                    phy-names =3D "hdmi-phy";
-> +                };
-> +            };
-> +
-> +            voutcrg: clock-controller@295c0000 {
-> +                compatible =3D "starfive,jh7110-voutcrg";
-> +                reg =3D <0x0 0x295c0000 0x0 0x10000>;
-> +                clocks =3D <&syscrg JH7110_SYSCLK_VOUT_SRC>,
-> +                         <&syscrg JH7110_SYSCLK_VOUT_TOP_AHB>,
-> +                         <&syscrg JH7110_SYSCLK_VOUT_TOP_AXI>,
-> +                         <&syscrg JH7110_SYSCLK_VOUT_TOP_HDMITX0_MCLK>,
-> +                         <&syscrg JH7110_SYSCLK_I2STX0_BCLK>,
-> +                         <&hdmi_phy>;
-> +                clock-names =3D "vout_src", "vout_top_ahb",
-> +                              "vout_top_axi", "vout_top_hdmitx0_mclk",
-> +                              "i2stx0_bclk", "hdmitx0_pixelclk";
-> +                resets =3D <&syscrg JH7110_SYSRST_VOUT_TOP_SRC>;
-> +                reset-names =3D "vout_top";
-> +                #clock-cells =3D <1>;
-> +                #reset-cells =3D <1>;
-> +            };
-> +        };
-> +    };
-> +
-> +...
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 348caaaa929a519bc0ec5c0c7b587468ef7532d5..99434e54dc39494153677a6ca=
-359d70f2ba2ddb3 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -24044,6 +24044,11 @@ S:	Maintained
->  F:	Documentation/devicetree/bindings/net/starfive,jh7110-dwmac.yaml
->  F:	drivers/net/ethernet/stmicro/stmmac/dwmac-starfive.c
-> =20
-> +STARFIVE JH7110 DISPLAY SUBSYSTEM
-> +M:	Michal Wilczynski <m.wilczynski@samsung.com>
-> +S:	Maintained
-> +F:	Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-vout-s=
-ubsystem.yaml
-> +
->  STARFIVE JH7110 DPHY RX DRIVER
->  M:	Jack Zhu <jack.zhu@starfivetech.com>
->  M:	Changhuang Liang <changhuang.liang@starfivetech.com>
->=20
-> --=20
-> 2.34.1
->=20
-
---LyJKcpcoYORwRgse
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaRN96AAKCRB4tDGHoIJi
-0op6AP94in4x/F+djtzX2cdGh5YC4XpNjLGROQ5E+6usNlM+lgEA8CLCphPZFJZM
-EEQ1XnVlM99yRJUHnSZmsnWiZzmyCQo=
-=wEbO
------END PGP SIGNATURE-----
-
---LyJKcpcoYORwRgse--
+T24gMTEvMTEvMjUgMDE6MDcsIENocmlzdG9waCBIZWxsd2lnIHdyb3RlOg0KPiBPbiBTYXQsIE5v
+diAwOCwgMjAyNSBhdCAwNDowMTowMVBNIC0wNzAwLCBDYWxlYiBTYW5kZXIgTWF0ZW9zIHdyb3Rl
+Og0KPj4gVGhlIG51bWJlciBvZiBidmVjcyBjYW4gYmUgb2J0YWluZWQgZGlyZWN0bHkgZnJvbSBz
+dHJ1Y3QgcmVxdWVzdCdzDQo+PiBucl9waHlzX3NlZ21lbnRzIGZpZWxkIHZpYSBibGtfcnFfbnJf
+cGh5c19zZWdtZW50cygpLCBzbyB1c2UgdGhhdA0KPj4gaW5zdGVhZCBvZiBpdGVyYXRpbmcgb3Zl
+ciB0aGUgYnZlY3MgYW4gZXh0cmEgdGltZS4NCj4gU2FtZSByZWFzb24gdGhpcyBkb2Vzbid0IHdv
+cmsgYXMgTWluZyBleHBsYWluZWQgZm9yIHVibGsuDQo+DQo+IE1heWJlIHdlIHNob3VsZCBsaWZ0
+IHRoaXMgY29kZSBmcm9tIGxvb3Avemxvb3AgaW50byBhIHdlbGwgZG9jdW1lbnRlZA0KPiBjb21t
+b24gaGVscGVyIHRvIG1ha2UgaXQgbW9yZSBvYnZpb3VzPw0KPg0KPg0KQWJzb2x1dGVseSwgcGF0
+Y2ggc2VudCB3aXRoIGFkZGVkIHF1YW50aXRhdGl2ZSBkYXRhIGZyb20gbXkgZXhwZXJpbWVudHMs
+DQp0byBwcm92ZSB3aHkgYWJvdmUgaXMgd3JvbmcsIHBsZWFzZSBoYXZlIGEgbG9vay4NCg0KLWNr
+DQoNCg0K
 
