@@ -1,249 +1,191 @@
-Return-Path: <linux-kernel+bounces-894749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57B58C4BFB7
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 08:11:14 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CCF7C4BF33
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 08:08:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E717420204
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 07:06:17 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7F49734F117
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 07:08:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA3AC34B1A5;
-	Tue, 11 Nov 2025 06:56:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4057A34DB71;
+	Tue, 11 Nov 2025 07:02:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="GPj2br0N"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80BF634B191;
-	Tue, 11 Nov 2025 06:56:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="dUUyDblY"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4911C31CA50;
+	Tue, 11 Nov 2025 07:02:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762844174; cv=none; b=rslq/6PSDHU88BpnZpELqzknGkpy9crn9S0Bl96UJ0yc6Yr5BxBTVQnW03IhSaCu9VEvzveoumnwGt82LxCA8KEcPY41jNUytC+LPNtT3BBFRMqMVKDlEomTet/MAqiar4KRCOVr2Pf0VyyMavYcGRn9N9UydLsPWykR7p6wVvE=
+	t=1762844559; cv=none; b=t8jcnW64yLirbdcImltO1juaW1JP3gf07bMd203HNwReeNNVevfD4ItG9Sf/ohxEQ/93gLivaBuUUrIiI6hglQZY+cuNsM2p9+/qhiuvBjUNLZwPOE5af3ro1t3MV16G17rt9IxarL8/7hBY0aXAHuilSAOahFZGiV29fQQYSoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762844174; c=relaxed/simple;
-	bh=nyp0ilgtqt9/SF8SNMzIL5Lo3gi9su5uPwqkiWOK4qY=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=V7U3VqDYLwBDIiMuZwRR22WvmRlK0J8ookHztGu0dmzyHAICwyPY1SujYXNTyXBjhtBkRl6fRvBOi97aRMog9gzloJQpo7Yqnr3ctIXj1OG1Ii8Pa3gpUP7ThA6veh5NMpLp1vrEO1kf6pwrBxQ8WW/gZ5Q4bosCR/NrowvdVZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=GPj2br0N; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.95.76.239] (unknown [167.220.238.207])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 80362212AE48;
-	Mon, 10 Nov 2025 22:55:57 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 80362212AE48
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1762844162;
-	bh=pdnJouELL9fro4tWBEU9h3VTYbBhk/3zG64E9r7BT5A=;
-	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
-	b=GPj2br0NfQJ7gOmiT4elLxEk0DhdF51QkIIWrD30qsP0l5XLXQbogYooSg93/4baG
-	 0lwwhIp2AkBHJeoxjT3x/HYVUS/YEWan2oDJE/TS8rCZtRJmX1ESfHJUfbB5y0/3Yv
-	 HVqGTsEhkWpTnr9Pfk/hkoDs+soI8jLtNAG6S9ds=
-Message-ID: <f32292e6-b152-4d6d-b678-fc46b8e3d1ac@linux.microsoft.com>
-Date: Tue, 11 Nov 2025 12:25:54 +0530
+	s=arc-20240116; t=1762844559; c=relaxed/simple;
+	bh=pJHq1+CpvYSVLItoTfdznn4/1n9AgIuK6uAkB9mBhLU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dTbHFjkh/LgVwkLNweOpaUATL91sj7chaB1St9NNcoJsUb+ewMz7Isa73qda/OOPW5evaYJhNf8BNlcuZWqkaoELDoBV8O9CD/49YgiCAPqupSgu6zDJMMM1dDd1qkir4Kw7HbW+c+H0ZA19ubxtZcPkHc6O0iXuqa/8G66LcE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=dUUyDblY; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 5fe74a46becc11f0b33aeb1e7f16c2b6-20251111
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=VVvqmxw4oeR9ramVcYJAAvK0TIuwI3k4LpZawcl2Au4=;
+	b=dUUyDblYxSfvpiQ09vUoBj+tQotisU1m2tcq6ZVcpuV6HM2wl2BoXRfAC3akjyyHIpSIHndhZMHn5zyKIx9fER8Bks1S2YnVCoRO2xE31mfv7Sz0NeUs+cF/5pqi75ziDd3enM7nOBQLeLYVMqPXbpYoaxJQdOuIGshhwo6uLGI=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.6,REQID:d5a53038-1a8e-4b40-9708-af58f88314e8,IP:0,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:0
+X-CID-META: VersionHash:a9d874c,CLOUDID:a8e08382-b6af-4b29-9981-6bf838f9504d,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102|836|888|898,TC:-5,Content:0|15|5
+	0,EDM:-3,IP:nil,URL:99|1,File:130,RT:0,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0
+	,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: 5fe74a46becc11f0b33aeb1e7f16c2b6-20251111
+Received: from mtkmbs11n1.mediatek.inc [(172.21.101.185)] by mailgw02.mediatek.com
+	(envelope-from <jh.hsu@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 618227753; Tue, 11 Nov 2025 15:02:24 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ MTKMBS09N2.mediatek.inc (172.21.101.94) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Tue, 11 Nov 2025 15:02:22 +0800
+Received: from mtksitap99.mediatek.inc (10.233.130.16) by
+ mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1748.26 via Frontend Transport; Tue, 11 Nov 2025 15:02:22 +0800
+From: Jack Hsu <jh.hsu@mediatek.com>
+To: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+	<jic23@kernel.org>, <dlechner@baylibre.com>, <nuno.sa@analog.com>,
+	<andy@kernel.org>, <matthias.bgg@gmail.com>,
+	<angelogioacchino.delregno@collabora.com>, <srini@kernel.org>,
+	<ukleinek@kernel.org>, <gregkh@linuxfoundation.org>, <jirislaby@kernel.org>,
+	<daniel.lezcano@linaro.org>, <tglx@linutronix.de>,
+	<chunfeng.yun@mediatek.com>, <wim@linux-watchdog.org>, <linux@roeck-us.net>,
+	<sean.wang@mediatek.com>, <zhiyong.tao@mediatek.com>,
+	<andrew-ct.chen@mediatek.com>, <lala.lin@mediatek.com>,
+	<jitao.shi@mediatek.com>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-iio@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-mediatek@lists.infradead.org>, <linux-pwm@vger.kernel.org>,
+	<linux-serial@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+	<linux-watchdog@vger.kernel.org>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Jack Hsu
+	<jh.hsu@mediatek.com>
+Subject: [PATCH v7 0/9] Add mt8189 dts evaluation board and Makefile
+Date: Tue, 11 Nov 2025 14:59:14 +0800
+Message-ID: <20251111070031.305281-1-jh.hsu@mediatek.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Naman Jain <namjain@linux.microsoft.com>
-Subject: Re: [PATCH v11 2/2] Drivers: hv: Introduce mshv_vtl driver
-To: Peter Zijlstra <peterz@infradead.org>, Paolo Bonzini
- <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>
-Cc: "K . Y . Srinivasan" <kys@microsoft.com>,
- Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
- Dexuan Cui <decui@microsoft.com>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, "H . Peter Anvin"
- <hpa@zytor.com>, linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
- x86@kernel.org, Sean Christopherson <seanjc@google.com>,
- Paolo Bonzini <pbonzini@redhat.com>, Michael Kelley <mhklinux@outlook.com>,
- Mukesh Rathor <mrathor@linux.microsoft.com>,
- Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
- Nuno Das Neves <nunodasneves@linux.microsoft.com>,
- Christoph Hellwig <hch@infradead.org>,
- Saurabh Sengar <ssengar@linux.microsoft.com>,
- ALOK TIWARI <alok.a.tiwari@oracle.com>
-References: <20251110050835.1603847-1-namjain@linux.microsoft.com>
- <20251110050835.1603847-3-namjain@linux.microsoft.com>
- <20251110143834.GA3245006@noisy.programming.kicks-ass.net>
-Content-Language: en-US
-In-Reply-To: <20251110143834.GA3245006@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK: N
 
 
+In this patch series, 
+we add Mediatek MT8189 evaluation board dts, dtsi and Makefile,
+add/update related PMIC MT6319/MT6359 dtsi, 
+and also related dt-binding documents.
 
-On 11/10/2025 8:08 PM, Peter Zijlstra wrote:
-> On Mon, Nov 10, 2025 at 05:08:35AM +0000, Naman Jain wrote:
->> Provide an interface for Virtual Machine Monitor like OpenVMM and its
->> use as OpenHCL paravisor to control VTL0 (Virtual trust Level).
->> Expose devices and support IOCTLs for features like VTL creation,
->> VTL0 memory management, context switch, making hypercalls,
->> mapping VTL0 address space to VTL2 userspace, getting new VMBus
->> messages and channel events in VTL2 etc.
-> 
->> diff --git a/arch/x86/hyperv/hv_vtl.c b/arch/x86/hyperv/hv_vtl.c
->> index 042e8712d8de..dba27e1bcc10 100644
->> --- a/arch/x86/hyperv/hv_vtl.c
->> +++ b/arch/x86/hyperv/hv_vtl.c
->> @@ -249,3 +253,42 @@ int __init hv_vtl_early_init(void)
->>   
->>   	return 0;
->>   }
->> +
->> +DEFINE_STATIC_CALL_NULL(__mshv_vtl_return_hypercall, void (*)(void));
->> +
->> +noinstr void mshv_vtl_return_hypercall(void)
->> +{
->> +	asm volatile ("call " STATIC_CALL_TRAMP_STR(__mshv_vtl_return_hypercall));
->> +}
->> +
->> +/*
->> + * ASM_CALL_CONSTRAINT is intentionally not used in above asm block before making a call to
->> + * __mshv_vtl_return_hypercall, to avoid rbp clobbering before actual VTL return happens.
->> + * This however leads to objtool complain about "call without frame pointer save/setup".
->> + * To ignore that warning, and inform objtool about this non-standard function,
->> + * STACK_FRAME_NON_STANDARD_FP is used.
->> + */
->> +STACK_FRAME_NON_STANDARD_FP(mshv_vtl_return_hypercall);
-> 
->> --- /dev/null
->> +++ b/arch/x86/hyperv/mshv_vtl_asm.S
->> @@ -0,0 +1,98 @@
->> +/* SPDX-License-Identifier: GPL-2.0
->> + *
->> + * Assembly level code for mshv_vtl VTL transition
->> + *
->> + * Copyright (c) 2025, Microsoft Corporation.
->> + *
->> + * Author:
->> + *   Naman Jain <namjain@microsoft.com>
->> + */
->> +
->> +#include <linux/linkage.h>
->> +#include <asm/asm.h>
->> +#include <asm/asm-offsets.h>
->> +#include <asm/frame.h>
->> +#include "mshv-asm-offsets.h"
->> +
->> +	.text
->> +	.section .noinstr.text, "ax"
->> +/*
->> + * void __mshv_vtl_return_call(struct mshv_vtl_cpu_context *vtl0)
-> 
-> Can we please get a few words on the magical context here? Like no NMIs
-> and #DB traps and the like. Because if any of them were possible this
-> code would be horribly broken.
-Sure, I can add below comment:
+based on tag: next-20251111
 
-This function is marked as 'noinstr' to prevent against instrumentation 
-and debugging facilities. NMIs aren't a problem because the NMI handler 
-saves/restores CR2 specifically to guard against #PFs in NMI context 
-clobbering the guest state.
-> 
->> + */
->> +SYM_FUNC_START(__mshv_vtl_return_call)
->> +	/* Push callee save registers */
->> +	pushq %rbp
->> +	mov %rsp, %rbp
->> +	pushq %r12
->> +	pushq %r13
->> +	pushq %r14
->> +	pushq %r15
->> +	pushq %rbx
->> +
->> +	/* register switch to VTL0 clobbers all registers except rax/rcx */
->> +	mov %_ASM_ARG1, %rax
->> +
->> +	/* grab rbx/rbp/rsi/rdi/r8-r15 */
->> +	mov MSHV_VTL_CPU_CONTEXT_rbx(%rax), %rbx
->> +	mov MSHV_VTL_CPU_CONTEXT_rbp(%rax), %rbp
->> +	mov MSHV_VTL_CPU_CONTEXT_rsi(%rax), %rsi
->> +	mov MSHV_VTL_CPU_CONTEXT_rdi(%rax), %rdi
->> +	mov MSHV_VTL_CPU_CONTEXT_r8(%rax), %r8
->> +	mov MSHV_VTL_CPU_CONTEXT_r9(%rax), %r9
->> +	mov MSHV_VTL_CPU_CONTEXT_r10(%rax), %r10
->> +	mov MSHV_VTL_CPU_CONTEXT_r11(%rax), %r11
->> +	mov MSHV_VTL_CPU_CONTEXT_r12(%rax), %r12
->> +	mov MSHV_VTL_CPU_CONTEXT_r13(%rax), %r13
->> +	mov MSHV_VTL_CPU_CONTEXT_r14(%rax), %r14
->> +	mov MSHV_VTL_CPU_CONTEXT_r15(%rax), %r15
->> +
->> +	mov MSHV_VTL_CPU_CONTEXT_cr2(%rax), %rdx
->> +	mov %rdx, %cr2
->> +	mov MSHV_VTL_CPU_CONTEXT_rdx(%rax), %rdx
->> +
->> +	/* stash host registers on stack */
->> +	pushq %rax
->> +	pushq %rcx
->> +
->> +	xor %ecx, %ecx
->> +
->> +	/* make a hypercall to switch VTL */
->> +	call mshv_vtl_return_hypercall
-> 
-> Yuck!
-> 
-> This seems to build for me.
+Note:
+This patch series depends on following dt-binding headers and yamls
+1.dt-binding headers
+  1. mt8189-pinfunc.h
+       https://patchwork.kernel.org/project/linux-mediatek/patch/20250919020525.7904-1-ot_cathy.xu@mediatek.com/
+  2. mt8189_gce.h 
+       https://patchwork.kernel.org/project/linux-mediatek/patch/20250820093831.23437-3-xiandong.wang@mediatek.com/ 
 
-This would have been the cleanest approach. We discussed this before and 
-unfortunately it didn't work. Please find the link to this discussion:
+---
+Changs in v7:
+ - update explanation in cover letter
+ - remove Applied mediatek,mt2701-auxadc.yaml
+   (refer to: https://lore.kernel.org/linux-mediatek/20251101162855.303b3e5e@jic23-huawei/)
+ - remove Applied mediatek,efuse.yaml
+   (refer to: https://lore.kernel.org/linux-mediatek/176236193629.37589.12615931533548308117.b4-ty@kernel.org/)
+ - update dt-bindings commit msg
+   (use "mt8189" instead of "mt8189 evb board")
+ - update xhci.yaml
+   (drop "reset-names" property)
+ - update mt6319 dtsi
+   (change pmic node name as pmic@ )
+ - update mt6359 dtsi node
+   (remove mt635x-auadc.h, remove fg nodes)
+ - update mt8189 dtsi node
+   - update mt8189 clk node
+     (refer to: https://lore.kernel.org/linux-mediatek/20251106124330.1145600-1-irving-ch.lin@mediatek.com/)
+   - xhci node drop "reset-names" property
+   - update mt8189 thermal node
+     (refer to: https://lore.kernel.org/linux-mediatek/20251110094113.3965182-1-hanchien.lin@mediatek.com/)
 
-https://lore.kernel.org/all/9f8007a3-f810-4b60-8942-e721cd6a32c4@linux.microsoft.com/
+ - Link to v6: https://lore.kernel.org/linux-mediatek/20251030134541.784011-1-jh.hsu@mediatek.com/
 
-To summarize above discussion, I see below compilation error with this 
-from objtool. You may have CONFIG_X86_KERNEL_IBT enabled in your 
-workspace, which would have masked this.
+Changs in v6:
+ - add/fix dt-bindings for mt8189 dts node
+ - add pmic mt63xx dtsi for mt8189 evb board
+ - add complete device node of mt8189 evb board
+ - Fix previous version review comments
+ - Link to v5: https://patchwork.kernel.org/project/linux-mediatek/cover/20250718075630.644870-1-sirius.wang@mediatek.com/
+
+Changs in v5:
+ - remove unused cpu-dile-state definition.
+ - change memory size in "reg" property which if filled in by bootloader.
+
+Changs in v4:
+ - Correct cpu-idle-states.
+ - Change the "reg" property name of the "memory" node in the
+   device tree source (DTS) to lowercase.
+
+Changs in v3:
+ - Move ulposc and ulposc3 before cpu nodes.
+ - Refactor cpu-map to a single cluster0.
+ - Change cpu nodes name from medium core to big core.
+ - Move psci before timer nodes.
+
+Changs in v2:
+ - Fix warning issues for make CHECK_DTBS=y.
+ - Add mediatek,uart.yaml document.
+
+---
 
 
-   AS      arch/x86/hyperv/mshv_vtl_asm.o
-arch/x86/hyperv/mshv_vtl_asm.o: error: objtool: static_call: can't find 
-static_call_key symbol: __SCK____mshv_vtl_return_hypercall
-make[4]: *** [scripts/Makefile.build:430: 
-arch/x86/hyperv/mshv_vtl_asm.o] Error 255
-make[4]: *** Deleting file 'arch/x86/hyperv/mshv_vtl_asm.o'
-make[3]: *** [scripts/Makefile.build:556: arch/x86/hyperv] Error 2
+Jack Hsu (9):
+  dt-bindings: arm: Add compatible for MediaTek MT8189
+  dt-bindings: pwm: Support MediaTek MT8189 disp-pwm
+  dt-bindings: serial: Support MediaTek MT8189 uart
+  dt-bindings: timer: Support MediaTek MT8189 timer
+  dt-bindings: usb: Support MediaTek MT8189 xhci
+  dt-bindings: watchdog: Support MediaTek MT8189 wdt
+  arm64: dts: mediatek: Add MT6319 PMIC Support
+  arm64: dts: mediatek: update rtc properties for MT6359
+  arm64: dts: mediatek: Add mt8189 evaluation board dts
 
+ .../devicetree/bindings/arm/mediatek.yaml     |    4 +
+ .../bindings/pwm/mediatek,pwm-disp.yaml       |    1 +
+ .../bindings/serial/mediatek,uart.yaml        |    1 +
+ .../bindings/timer/mediatek,timer.yaml        |    1 +
+ .../bindings/usb/mediatek,mtk-xhci.yaml       |    4 +-
+ .../bindings/watchdog/mediatek,mtk-wdt.yaml   |    1 +
+ arch/arm64/boot/dts/mediatek/Makefile         |    1 +
+ arch/arm64/boot/dts/mediatek/mt6319.dtsi      |   66 +
+ arch/arm64/boot/dts/mediatek/mt6359.dtsi      |    3 +
+ arch/arm64/boot/dts/mediatek/mt8189-evb.dts   | 1082 ++++++
+ arch/arm64/boot/dts/mediatek/mt8189.dtsi      | 3310 +++++++++++++++++
+ 11 files changed, 4473 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt6319.dtsi
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt8189-evb.dts
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt8189.dtsi
 
-Because of this compilation error, I had to implement this wrapper 
-function (mshv_vtl_return_hypercall) which makes this static call in C.
-
-> 
-> ---
-> --- a/arch/x86/hyperv/hv_vtl.c
-> +++ b/arch/x86/hyperv/hv_vtl.c
-> @@ -256,20 +256,6 @@ int __init hv_vtl_early_init(void)
->   
->   DEFINE_STATIC_CALL_NULL(__mshv_vtl_return_hypercall, void (*)(void));
->   
-> -noinstr void mshv_vtl_return_hypercall(void)
-> -{
-> -	asm volatile ("call " STATIC_CALL_TRAMP_STR(__mshv_vtl_return_hypercall));
-> -}
-> -
-> -/*
-> - * ASM_CALL_CONSTRAINT is intentionally not used in above asm block before making a call to
-> - * __mshv_vtl_return_hypercall, to avoid rbp clobbering before actual VTL return happens.
-> - * This however leads to objtool complain about "call without frame pointer save/setup".
-> - * To ignore that warning, and inform objtool about this non-standard function,
-> - * STACK_FRAME_NON_STANDARD_FP is used.
-> - */
-> -STACK_FRAME_NON_STANDARD_FP(mshv_vtl_return_hypercall)
-> -
->   void mshv_vtl_return_call_init(u64 vtl_return_offset)
->   {
->   	static_call_update(__mshv_vtl_return_hypercall,
-> --- a/arch/x86/hyperv/mshv_vtl_asm.S
-> +++ b/arch/x86/hyperv/mshv_vtl_asm.S
-> @@ -9,6 +9,7 @@
->    */
-
-<snip>
-
-Regards,
-Naman
+-- 
+2.45.2
 
 
