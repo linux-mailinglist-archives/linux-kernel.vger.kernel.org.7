@@ -1,107 +1,76 @@
-Return-Path: <linux-kernel+bounces-895905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A217DC4F3C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 18:23:07 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id B326DC4F3C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 18:23:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 535904E94AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:22:38 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3C74834D096
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:23:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8FA426E14C;
-	Tue, 11 Nov 2025 17:22:32 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 216342F90DE
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 17:22:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 540F03730F1;
+	Tue, 11 Nov 2025 17:23:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t/kbXBHn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA1772F6582;
+	Tue, 11 Nov 2025 17:23:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762881752; cv=none; b=IxtSPeDMNaFmHyfDmwOjyeK4Bd2jeIl3JL4sq4yupYcGkUqYNJJDU+i5h5I1Pwl1q1YONFD25Fxu1GjR/PtU9vMcEg+oXmw5kkMl/eYjz2qIKBr3zYe7WaeYz5NJTDRndH0Pjt9EMXrn0HUMUeVXk5+zHy6WplBebraXcfZ9a84=
+	t=1762881788; cv=none; b=psSGXeMC99yelz6104jPBErU83zcpEu2xHwJW1MVd6wJF+vRR+9TClLuhi5maDgbBFU6qnXOx/63clhN/YWsUg7Psg4d6EkdzK4SF1H5DGBkR/3EmAz0IlR3kiykcNfXpnibWXNsFoiRK8MGF/3dRj4z6JTM0dB4Vlx+C0xai08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762881752; c=relaxed/simple;
-	bh=ta0mJzAGxbzIX3XT4Gy2fuZ4gIp1f723cm4yWE5IwCM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IGHjfNBcFbelZCUin0pjz3F1FxN0SgyDJzaHTqb7ZHcICPzvAsECzeGKGuD81KfYOCYg+idqr4x+nr5mCstf+vqVs/DOuDKdlo4nfKQToXVXiov3TFvmO+7aCyhJD9TXAeWSGAb+mawsxyBFVNqy3kYh8mn3xS64WCUOisYgLL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E2AB6497;
-	Tue, 11 Nov 2025 09:22:22 -0800 (PST)
-Received: from e133380.arm.com (e133380.arm.com [10.1.197.68])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8EB0C3F5A1;
-	Tue, 11 Nov 2025 09:22:28 -0800 (PST)
-Date: Tue, 11 Nov 2025 17:22:25 +0000
-From: Dave Martin <Dave.Martin@arm.com>
-To: Reinette Chatre <reinette.chatre@intel.com>
-Cc: "Luck, Tony" <tony.luck@intel.com>, Fenghua Yu <fenghuay@nvidia.com>,
-	Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>,
-	Peter Newman <peternewman@google.com>,
-	James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>,
-	Drew Fustini <dfustini@baylibre.com>, Chen Yu <yu.c.chen@intel.com>,
-	x86@kernel.org, linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev
-Subject: Re: [PATCH v13 12/32] x86,fs/resctrl: Support binary fixed point
- event counters
-Message-ID: <aRNw0cugfo/UGsJ4@e133380.arm.com>
-References: <20251029162118.40604-1-tony.luck@intel.com>
- <20251029162118.40604-13-tony.luck@intel.com>
- <aQtiSmZ14b+U/J4U@e133380.arm.com>
- <aQveOz66Pd3R0FfI@agluck-desk3>
- <3bf7f52c-80e2-470a-9225-36077a37d7d0@intel.com>
+	s=arc-20240116; t=1762881788; c=relaxed/simple;
+	bh=jSit3MaHvxBxOXQtbkDeF8hJwH2XgApqGLO5VPCYbO4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=BbWPqN+0GbA9fnweV/FWU0NxRlPfKRuDS99kBKhLiaqbjuCVNfMvdAHAZ4cedOG0rt60GBrObUzpH2WPGoGBGeNQE9OY61fKZ1bFvQY6HHV0rurMkKxXKlqVhyrQIceIUOUQlOA5+NwPx9N6r3fNJXHk9nJ2hn3w4+4u5GZSsI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t/kbXBHn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE30CC4CEF7;
+	Tue, 11 Nov 2025 17:23:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762881788;
+	bh=jSit3MaHvxBxOXQtbkDeF8hJwH2XgApqGLO5VPCYbO4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=t/kbXBHnne7AxjEaWVBGBUWZ2aTMnR364xmA2Jku1kkhr0yIE/G2rqUcnLeLXw4mh
+	 qh6L+2i3zTtkcsRO/2YyupssU0QhzR+ys1UNQ42D9xnEP7dA2/KXdb8ksDLXF4bDC1
+	 hvac64Uf9aGyMfG3+fIeFgGB1r8cr15igU8PEjmq2FuvKnex7Kgz49eFFd03/ArsL/
+	 C86fIiEEcYdSIhH0DX2xqEd2P6vuxNo4l6pX+Ff8jZlWtkE4eCFxVc/idu7vDXO3e1
+	 qouYSeVoUyAY2G+DY8MjihFntsh+43mCKkxgR/DOtWgeaAYIqe0IQD3buli4JDHmmG
+	 QK9qRW2CwuAnw==
+From: Namhyung Kim <namhyung@kernel.org>
+To: peterz@infradead.org, mingo@redhat.com, acme@kernel.org, 
+ mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org, 
+ irogers@google.com, adrian.hunter@intel.com, james.clark@linaro.org, 
+ song@kernel.org, thomas.falcon@intel.com, kan.liang@linux.intel.com, 
+ Chen Ni <nichen@iscas.ac.cn>
+Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20251111054415.3694140-1-nichen@iscas.ac.cn>
+References: <20251111054415.3694140-1-nichen@iscas.ac.cn>
+Subject: Re: [PATCH] perf symbol: Remove unneeded semicolon
+Message-Id: <176288178672.1455271.12825828031055352324.b4-ty@kernel.org>
+Date: Tue, 11 Nov 2025 09:23:06 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3bf7f52c-80e2-470a-9225-36077a37d7d0@intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-c04d2
 
-Hi,
-
-On Wed, Nov 05, 2025 at 04:09:28PM -0800, Reinette Chatre wrote:
-> Hi Dave and Tony,
+On Tue, 11 Nov 2025 13:44:15 +0800, Chen Ni wrote:
+> Remove unnecessary semicolons reported by Coccinelle/coccicheck and the
+> semantic patch at scripts/coccinelle/misc/semicolon.cocci.
 > 
-> On 11/5/25 3:31 PM, Luck, Tony wrote:
-> > On Wed, Nov 05, 2025 at 02:42:18PM +0000, Dave Martin wrote:
-> >> On Wed, Oct 29, 2025 at 09:20:55AM -0700, Tony Luck wrote:
 > 
-> ...
-> 
-> >>> diff --git a/fs/resctrl/internal.h b/fs/resctrl/internal.h
-> >>> index 40b76eaa33d0..f5189b6771a0 100644
-> >>> --- a/fs/resctrl/internal.h
-> >>> +++ b/fs/resctrl/internal.h
-> >>> @@ -62,6 +62,9 @@ static inline struct rdt_fs_context *rdt_fc2context(struct fs_context *fc)
-> >>>   *			Only valid if @evtid is an MBM event.
-> >>>   * @configurable:	true if the event is configurable
-> >>>   * @any_cpu:		true if the event can be read from any CPU
-> >>> + * @is_floating_point:	event values are displayed in floating point format
-> >>
-> >> Nit: Maybe rebrand this as is_fixed_point, or is_fractional, or similar?
-> >>
-> >> The print syntax is just a decimal fraction, and the hardware
-> >> representation is fixed-point.  Nothing floats.
-> > 
-> > You are right. I can change from is_floating_point to is_fixed_point.
-> > 
-> 
-> This is a fs property though, not hardware, and highlights that the value is displayed in
-> floating point format which is the closest resctrl has to establish a "contract" with user
-> space on what format user space can expect when reading the data as backed with a
-> matching update to resctrl.rst for the events that have this hardcoded by the fs.
-> Whether an architecture uses fixed point format or some other mechanism to determine the
-> value eventually exposed to user space is unique to the architecture. 
+Applied to perf-tools-next, thanks!
 
-Sure, getting the docmuentation right is the most important thing,
-while the internal name for this property is not ABI.
+Best regards,
+Namhyung
 
-(I don't strongly object to "is_floating_point", even if we expose this
-in the filesystem, so long as we document carefully what it means.)
 
-Cheers
----Dave
 
