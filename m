@@ -1,129 +1,125 @@
-Return-Path: <linux-kernel+bounces-895622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FCFAC4E89B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 15:42:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A92A5C4E44E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 15:00:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 740A53AC75A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:35:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89AFD3B377F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:56:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DF9BDF76;
-	Tue, 11 Nov 2025 14:35:30 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 709DA35A136;
+	Tue, 11 Nov 2025 13:55:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="AqRPcRmT";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kgw44OjO"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6E9C2DC767
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 14:35:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58439359713;
+	Tue, 11 Nov 2025 13:55:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762871729; cv=none; b=RCPOEUh4jIf+OPVTnCcwdWbxxMCm5s+d0Zrvi7P3rd+TGjBwFoutkt4jTdMJakneIRabYUMtQylIPEvPpQA6zzobjuccjPwU/g0F5JQCmTeVdCNzLSeWbs42yYM+1mGi7y4YHmg9MuOqDPzbl/DmuoWN+WMZMn4aEFE1Ivqkdgo=
+	t=1762869333; cv=none; b=LSLYAMsxvongw8R2cO4S4QxAGFdoi65PaeSk9Oqd6Xp0JmdfaVLe7PfqJmkmPnH2uDJCyMkEgq0jdGmDDNCY34wIOxfb3NMGTxtzK88DyIxTHpqAeD2NyMDXSbPO5SqdO8C85fmrum760M3ag7yYL5uSUkQ9iTcNSsYHLka5Ang=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762871729; c=relaxed/simple;
-	bh=JTrl+5c+KM67zyb4vk0jknU9NS1WkTcTeyTZ47rmEeg=;
+	s=arc-20240116; t=1762869333; c=relaxed/simple;
+	bh=py6CFBoy2M7OzF/rfzW71e05tRe08SSvbUmqxvQJHlA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hjezTy2N8Z1dE9J/ulnTcn8YAxiqS0C7V9nJYgw4EPxhXVJfCtDO/bITUKK9UZbx076UAAgLsQx1sCPYa0fk5TZWQnh7o8q5WwG68k22EL2xwdIdrMsOvIMQhlpoxyb8ELgCC8xZ+wUn3YF2lWxdeCZvii/DZ8b9zS2wwnX82bM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1vIpSn-0004Hl-V1; Tue, 11 Nov 2025 15:35:17 +0100
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1vIpSn-008DbB-0j;
-	Tue, 11 Nov 2025 15:35:17 +0100
-Received: from pengutronix.de (p54b152ce.dip0.t-ipconnect.de [84.177.82.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id BEA5349D0A4;
-	Tue, 11 Nov 2025 13:55:26 +0000 (UTC)
-Date: Tue, 11 Nov 2025 14:55:26 +0100
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Henrik Brix Andersen <henrik@brixandersen.dk>
-Cc: Vincent Mailhol <mailhol@kernel.org>, 
-	Maximilian Schneider <max@schneidersoft.net>, Wolfgang Grandegger <wg@grandegger.com>, kernel@pengutronix.de, 
-	linux-can@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH can 3/3] can: gs_usb: gs_usb_receive_bulk_callback():
- check actual_length before accessing data
-Message-ID: <20251111-abiding-observant-beetle-e3575f-mkl@pengutronix.de>
-References: <20251108-gs_usb-fix-usb-callbacks-v1-0-8a2534a7ea05@pengutronix.de>
- <20251108-gs_usb-fix-usb-callbacks-v1-3-8a2534a7ea05@pengutronix.de>
- <A5BD68A4-076C-4ADD-B2A8-5D8A128D0473@brixandersen.dk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=L7egThSZz3aqWCAEoYJ4BFW9ELcIQGoTKKSjrnZVpw8/77iP9SuPR5pBwgogBCJFtNceWUm3xWB1oD6/lrdYLWX1BY1soP2mvbJtMs0EhTjgJFaNL2IiFcIURdeKWnSniNgvNP3MDTp97zisH6Yzvh7l26lM5jVn4d9CY0GzTYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=AqRPcRmT; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kgw44OjO; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 11 Nov 2025 14:55:30 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1762869330;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CXL7lUHnq5dAWWan3vscO19pCllA3WFlN5CqXXNwmBk=;
+	b=AqRPcRmTvbMeKbWYUnBtdhiDlAmEyLRNkysDVnqbpS/GjrcUzgqMoW1D42utIJ6wqQUXKL
+	raQyzOXBIVHk97pyVDBydS8pky6dndHxSIxPumw4cofU3pVSD3esen9TRM90Aw6bt7uG7s
+	7uSel9GXc+bmPYaNr4Iknz0Fj9XA2DZ1ePvFO7wDU3QDiI1EgAb6qkV/g8WUxoN4IGbGW6
+	83H5xCuya7BguAXblkHCX+SorjIwKa159l7rKYI6xG5AF0EEYtH1FajYVGkJNZ8Grq2P/f
+	ARBBNEhMx+axUqOxX2spKTcNwKpgTHc4Xc0764z5VkTgqowZGUc1V5E0Ma2xYw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1762869330;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CXL7lUHnq5dAWWan3vscO19pCllA3WFlN5CqXXNwmBk=;
+	b=kgw44OjOm5xmFjlzL4ukALppxVJAa0ZDLmvvFSJ5970O50A75AHCHTcpzgOWW8GHcPDCTR
+	t/JSh6+ZQJ4qmjAw==
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Andy Lutomirski <luto@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Vincenzo Frascino <vincenzo.frascino@arm.com>, 
+	shuah <shuah@kernel.org>, linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH 04/10] selftests: vDSO: vdso_test_abi: Provide
+ compatibility with 32-bit musl
+Message-ID: <20251111144805-ab2781fe-5424-492b-9cb3-55ebaaedc199@linutronix.de>
+References: <20251111-vdso-test-types-v1-0-03b31f88c659@linutronix.de>
+ <20251111-vdso-test-types-v1-4-03b31f88c659@linutronix.de>
+ <29dd9e11-9ae8-415a-acb3-b96af56550b0@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="2ki34qkgihig4krx"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <A5BD68A4-076C-4ADD-B2A8-5D8A128D0473@brixandersen.dk>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <29dd9e11-9ae8-415a-acb3-b96af56550b0@app.fastmail.com>
+
+On Tue, Nov 11, 2025 at 01:59:02PM +0100, Arnd Bergmann wrote:
+> On Tue, Nov 11, 2025, at 11:49, Thomas Weiﬂschuh wrote:
+> > The 32-bit time variants on musl have different names, provide a fallback.
+> >
+> > Signed-off-by: Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
+> > ---
+> >  tools/testing/selftests/vDSO/vdso_test_abi.c | 4 ++++
+> >  1 file changed, 4 insertions(+)
+> >
+> > diff --git a/tools/testing/selftests/vDSO/vdso_test_abi.c 
+> > b/tools/testing/selftests/vDSO/vdso_test_abi.c
+> > index 
+> > bb5a5534ae7e8a46d7e68a561684c29a752b866d..0a6b16a21369642384d43b0efd1bca227a2a4298 
+> > 100644
+> > --- a/tools/testing/selftests/vDSO/vdso_test_abi.c
+> > +++ b/tools/testing/selftests/vDSO/vdso_test_abi.c
+> > @@ -166,7 +166,11 @@ static void 
+> > vdso_test_clock_getres(__kernel_clockid_t clk_id)
+> >  		clock_getres_fail++;
+> >  	}
+> > 
+> > +#ifdef SYS_clock_getres
+> >  	ret = syscall(SYS_clock_getres, clk_id, &sys_ts);
+> > +#else
+> > +	ret = syscall(SYS_clock_getres_time32, clk_id, &sys_ts);
+> > +#endif
+> > 
+> 
+> I think this #ifdef check is not reliable enough and may hide
+> bugs. As with the other syscalls, the best way to call these
+> is to either use __NR_clock_getres_time64 on __kernel_timespec, or
+> to use __NR_clock_getres on __kernel_old_timespec.
+
+Could you give an example for such a bug?
+
+> If we are trying to validate the interface here, we should probably
+> call both if available. If we just want to know the result and
+> trust that both work correctly, I'd always use __NR_clock_getres_time64
+> on 32-bit systems and __NR_clock_getres on 64-bit systems.
+
+As these are vDSO and not timer selftests I think we trust the syscalls.
+But how do we detect a native 64-bit time system? The preprocessor builtins
+won't work as a 32-bit pointer system may use 64-bit time syscalls. I am not
+aware of the UAPI #define, beyond the absence of __NR_clock_getres_time64.
 
 
---2ki34qkgihig4krx
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH can 3/3] can: gs_usb: gs_usb_receive_bulk_callback():
- check actual_length before accessing data
-MIME-Version: 1.0
-
-On 11.11.2025 13:31:06, Henrik Brix Andersen wrote:
-> > +static unsigned int
-> > +gs_usb_get_minimum_length(const struct gs_can *dev, const struct gs_ho=
-st_frame *hf,
-> > +  unsigned int *data_length_p)
-> > +{
-> > + unsigned int minimum_length, data_length;
-> > +
-> > + /* TX echo only uses the header */
-> > + if (hf->echo_id !=3D GS_HOST_FRAME_ECHO_ID_RX) {
-> > + *data_length_p =3D 0;
-> > + return sizeof(hf->header);
-> > + }
->
-> Is this correct? The embedded timestamp is also used in the
-> gs_usb_get_echo_skb() function.
-
-Right, will update.
-
-regards,
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---2ki34qkgihig4krx
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmkTQEsACgkQDHRl3/mQ
-kZxukgf/Q/SYj2Mgk2ee0Hmn5W0aTr8iFN8NbbxbedBErXlMKpihPJBmL+Ypwzjk
-/87YZZymYsYWOZmOpkZgFmqM7Pyhwhpqv837STWQ34Y0eyGn7zeV+vOfAxKh7g/O
-ksI6NT64jV/fPZAhP2YXVZazoRNYV1KGYaMEk6CTKkmOrYjyjMyXhlrrmKQyQFHF
-REBChJ4yHOk2HlKQkk6ITdXzReXWGTl5it7GQInVjN0rnNf8PlaOGwTFe2r9/Axy
-VYK0PgX5tLx3fz5UNL1aTjWEnKEeiAm4aCVQGx51ycQ5mrGiPPK+hKjYGlLcuw2j
-DjkZsK7yVJXjHUXimJQMZgjLFl4Beg==
-=sKdY
------END PGP SIGNATURE-----
-
---2ki34qkgihig4krx--
+Thomas
 
