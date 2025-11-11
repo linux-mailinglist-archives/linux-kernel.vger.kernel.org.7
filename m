@@ -1,191 +1,165 @@
-Return-Path: <linux-kernel+bounces-896099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EFFFC4FA49
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 20:48:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDFECC4FA3D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 20:47:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2BC4E4E9DCF
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 19:47:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BEC521895F47
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 19:47:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C781333757;
-	Tue, 11 Nov 2025 19:47:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2EA333439F;
+	Tue, 11 Nov 2025 19:47:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ulGRTYcF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fkdn7Kgu"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5087B328B55;
-	Tue, 11 Nov 2025 19:47:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 022073254A8;
+	Tue, 11 Nov 2025 19:47:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762890465; cv=none; b=tfcip99/WOpxGwHbURYtkWrTE6aglF9KZ5NmZ/0k/VhQ+Csi8hSiJw6TktWtIJe2i608W3IrYkOkZWw+kI18fypx+zSR/75Rjmi+eDeJNPUiOysmPb5Aj+wuA29iny4bIdtZZgvW9CH6kmCjSlj7Fi5IUL1ZuJHl091OE4THC3g=
+	t=1762890430; cv=none; b=jYT3xsnXukGqxFhKk8y2Yyj6XVnJRyF1AXLhiIe+pfkoabXjxumrLFr9f7w1Z6rqnlr0Kce1DsfVIkPPP75ju/QM+yxaqtsIzX8/YChKRDydwjuswLavEeGGae+aWzSJBh8yBswrZuFK12PbxG9m16To/ASgJ8Ew8YVXtgITrJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762890465; c=relaxed/simple;
-	bh=mCWzpThDjN5TvH7+u9w2bjcbob9OsN/ZO/i3S0cLekY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UJjaAL19AbOtyZaHoeEr2ERnDWk2mYkHZEeg48HXJFD7FtYoGRAATPvg7AtGhoL1ZE6hUjhCPkRaOlaflqO0p79JhApDfKSRyK1LyQNfzHX8weLFYQCq4AIZYD4yMt2h6kY3ZdLKfly4g/NrNZ4VJOLDVy66BH0UfIeRKtBVO74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ulGRTYcF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DC2AC4CEFB;
-	Tue, 11 Nov 2025 19:47:44 +0000 (UTC)
+	s=arc-20240116; t=1762890430; c=relaxed/simple;
+	bh=0Ktb1TweGnNTBqjtAY5SaKqT2o0Or34mDCZKWxPEmao=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=eS/BprpS/X/QR/vlLlWv9D2wuY4ePCaW/qtqd4os42be/6D13Kaz2PlZOsVnFRl3Im05atradtY93dGG3WN3C68w4wo9lQLHAN0VClU8tNeTEOFt41KKJDnCgIFPMTGlQKvwiDMAlPPgLUvt2g/+cs1mR2iJEvWhm1PG9oShwdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fkdn7Kgu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8E20C16AAE;
+	Tue, 11 Nov 2025 19:47:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762890464;
-	bh=mCWzpThDjN5TvH7+u9w2bjcbob9OsN/ZO/i3S0cLekY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ulGRTYcFEuZimkoAP/r0AD2cIzkKuHt5KfougKS4nXxolAjtb8zU7bfDKFn9SE6Fo
-	 QTic7e2gPOvOCbSbnNNfKp3dL+cply1xTky+wOuDfmjYvHLLljjv1IfmpLcLgKnQyx
-	 qDSO8KCIsYuBMIAXixeXc5fiDPLLlU4pmj1Ia4509y7R9l6mDU8LAPKzSHW0e0KwuF
-	 wBaj0VQX9OS3mkh0Bw8zjgOehw/syCPaWdebgfe+0zf22BZmIBHebPgia+GlSxLvz6
-	 HKIJhAXdMiipdJGZtEJwma4lVQ160SL1bn0BPcbL4xk5JwAU7A9jZyw/P1ELXt0DLE
-	 Ug3MrRju2GOjQ==
-Date: Tue, 11 Nov 2025 11:46:03 -0800
-From: Eric Biggers <ebiggers@kernel.org>
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"Jason A . Donenfeld" <Jason@zx2c4.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	linux-arm-kernel@lists.infradead.org, x86@kernel.org
-Subject: Re: [PATCH 2/9] lib/crypto: polyval: Add POLYVAL library
-Message-ID: <20251111194603.GB1748@sol>
-References: <20251109234726.638437-1-ebiggers@kernel.org>
- <20251109234726.638437-3-ebiggers@kernel.org>
- <CAMj1kXE1mhu7u5RwhCBA_RUGV6JSDV-GQPpq+thE-0-oVxrmfw@mail.gmail.com>
- <CAMj1kXHoH2K0dpqyrgFJ-OBmP2QrUWZD3aCfaA_eoPzGsLbPMw@mail.gmail.com>
+	s=k20201202; t=1762890429;
+	bh=0Ktb1TweGnNTBqjtAY5SaKqT2o0Or34mDCZKWxPEmao=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=fkdn7Kgubp9ZYDiM873okv6Y3IUWjscBGuwRu+a4gnVy4Q0Z1O9N7aTE7YUO/JVOd
+	 YNGLNQ34KGaEdrmU7SrG6cAPh1vSc4FIfpa5uUdf/rYY1sblaoVF02rseJd2Bvj+tJ
+	 f/MV+AKWaFYgrMVufQFTNcJZfBKZIP4QyStt/QNT/e7eCnUENSByAHWITjg9qp7FvA
+	 qyAkaPRPh+9p8OeBfohfUXMy50zgabt2bb9k57ieRYN6XyweIlq3TDTqnIAKhbK735
+	 Mv8Hmx9nqGk/FHwNM9G6u9Osfkz5snFOIWizaRlnAs74eC7z6d5nWW7R2iNfiGO0Fi
+	 zTnk1tbm03+Vg==
+Date: Tue, 11 Nov 2025 19:47:03 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Antoni Pokusinski <apokusinski01@gmail.com>
+Cc: marcelo.schmitt1@gmail.com, andy@kernel.org, nuno.sa@analog.com,
+ dlechner@baylibre.com, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/3] iio: mpl3115: use get_unaligned_be24 to retrieve
+ pressure data
+Message-ID: <20251111194703.0dc872a0@jic23-huawei>
+In-Reply-To: <20251110155932.o2oipfzuxhgq4vn4@antoni-VivoBook-ASUSLaptop-X512FAY-K512FA>
+References: <20251105095615.4310-1-apokusinski01@gmail.com>
+	<20251105095615.4310-2-apokusinski01@gmail.com>
+	<aQ1MfTu24hhk-dKP@debian-BULLSEYE-live-builder-AMD64>
+	<20251109163840.64144586@jic23-huawei>
+	<20251110155932.o2oipfzuxhgq4vn4@antoni-VivoBook-ASUSLaptop-X512FAY-K512FA>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMj1kXHoH2K0dpqyrgFJ-OBmP2QrUWZD3aCfaA_eoPzGsLbPMw@mail.gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 11, 2025 at 08:42:29AM +0100, Ard Biesheuvel wrote:
-> On Mon, 10 Nov 2025 at 16:21, Ard Biesheuvel <ardb@kernel.org> wrote:
-> >
-> > Hi,
-> >
-> > On Mon, 10 Nov 2025 at 00:49, Eric Biggers <ebiggers@kernel.org> wrote:
-> > >
-> > > Add support for POLYVAL to lib/crypto/.
-> > >
-> > > This will replace the polyval crypto_shash algorithm and its use in the
-> > > hctr2 template, simplifying the code and reducing overhead.
-> > >
-> > > Specifically, this commit introduces the POLYVAL library API and a
-> > > generic implementation of it.  Later commits will migrate the existing
-> > > architecture-optimized implementations of POLYVAL into lib/crypto/ and
-> > > add a KUnit test suite.
-> > >
-> > > I've also rewritten the generic implementation completely, using a more
-> > > modern approach instead of the traditional table-based approach.  It's
-> > > now constant-time, requires no precomputation or dynamic memory
-> > > allocations, decreases the per-key memory usage from 4096 bytes to 16
-> > > bytes, and is faster than the old polyval-generic even on bulk data
-> > > reusing the same key (at least on x86_64, where I measured 15% faster).
-> > > We should do this for GHASH too, but for now just do it for POLYVAL.
-> > >
-> >
-> > Very nice.
-> >
-> > GHASH might suffer on 32-bit, I suppose, but taking this approach at
-> > least on 64-bit also for GHASH would be a huge improvement.
-> >
-> > I had a stab at replacing the int128 arithmetic with
-> > __builtin_bitreverse64(), but it seems to make little difference (and
-> > GCC does not support it [yet]). I've tried both arm64 and x86, and the
-> > perf delta (using your kunit benchmark) is negligible in either case.
-> 
-> Sigh. I intended to only apply the generic patch and the kunit test,
-> but applied the whole series in the end, which explains perfectly why
-> x86_64 and arm64 performance are identical, given that the generic
-> code isn't even used.
-> 
-> So trying this again, on a Cortex-A72 without Crypto Extensions, I do
-> get a ~30% performance improvement doing the below. I haven't
-> re-tested x86, but given that it does not appear to have a native
-> scalar bit reverse instruction (or __builtin_bitreverse64() is broken
-> for it), there is probably no point in finding out.
-> 
-> Not saying we should do this for POLYVAL, but something to keep in
-> mind for gf128mul.c perhaps.
-> 
-> 
-> --- a/lib/crypto/polyval.c
-> +++ b/lib/crypto/polyval.c
-> @@ -42,11 +42,48 @@
->   * 256-bit => 128-bit reduction algorithm.
->   */
-> 
-> -#ifdef CONFIG_ARCH_SUPPORTS_INT128
-> +#if defined(CONFIG_ARCH_SUPPORTS_INT128) ||
-> __has_builtin(__builtin_bitreverse64)
-> 
->  /* Do a 64 x 64 => 128 bit carryless multiplication. */
->  static void clmul64(u64 a, u64 b, u64 *out_lo, u64 *out_hi)
->  {
-> +       u64 a0 = a & 0x1111111111111111;
-> +       u64 a1 = a & 0x2222222222222222;
-> +       u64 a2 = a & 0x4444444444444444;
-> +       u64 a3 = a & 0x8888888888888888;
-> +
-> +       u64 b0 = b & 0x1111111111111111;
-> +       u64 b1 = b & 0x2222222222222222;
-> +       u64 b2 = b & 0x4444444444444444;
-> +       u64 b3 = b & 0x8888888888888888;
-> +
-> +#if __has_builtin(__builtin_bitreverse64)
-> +#define brev64 __builtin_bitreverse64
-> +       u64 c0 = (a0 * b0) ^ (a1 * b3) ^ (a2 * b2) ^ (a3 * b1);
-> +       u64 c1 = (a0 * b1) ^ (a1 * b0) ^ (a2 * b3) ^ (a3 * b2);
-> +       u64 c2 = (a0 * b2) ^ (a1 * b1) ^ (a2 * b0) ^ (a3 * b3);
-> +       u64 c3 = (a0 * b3) ^ (a1 * b2) ^ (a2 * b1) ^ (a3 * b0);
-> +
-> +       a0 = brev64(a0);
-> +       a1 = brev64(a1);
-> +       a2 = brev64(a2);
-> +       a3 = brev64(a3);
-> +
-> +       b0 = brev64(b0);
-> +       b1 = brev64(b1);
-> +       b2 = brev64(b2);
-> +       b3 = brev64(b3);
-> +
-> +       u64 d0 = (a0 * b0) ^ (a1 * b3) ^ (a2 * b2) ^ (a3 * b1);
-> +       u64 d1 = (a0 * b1) ^ (a1 * b0) ^ (a2 * b3) ^ (a3 * b2);
-> +       u64 d2 = (a0 * b2) ^ (a1 * b1) ^ (a2 * b0) ^ (a3 * b3);
-> +       u64 d3 = (a0 * b3) ^ (a1 * b2) ^ (a2 * b1) ^ (a3 * b0);
-> +
-> +       *out_hi = ((brev64(d0) >> 1) & 0x1111111111111111) ^
-> +                 ((brev64(d1) >> 1) & 0x2222222222222222) ^
-> +                 ((brev64(d2) >> 1) & 0x4444444444444444) ^
-> +                 ((brev64(d3) >> 1) & 0x8888888888888888);
+On Mon, 10 Nov 2025 16:59:32 +0100
+Antoni Pokusinski <apokusinski01@gmail.com> wrote:
 
-Yeah, that's an interesting idea!  So if we bit-reflect the inputs, do
-an n x n => n multiplication, and bit-reflect the output and right-shift
-it by 1, we get the high half of the desired n x n => 2n multiplication.
-(This relies on the fact that carries are being discarded.)  Then we
-don't need an instruction that does an n x n => 2n multiplication or
-produces the high half of it.
+> On Sun, Nov 09, 2025 at 04:38:40PM +0000, Jonathan Cameron wrote:
+> > On Thu, 6 Nov 2025 22:33:49 -0300
+> > Marcelo Schmitt <marcelo.schmitt1@gmail.com> wrote:
+> >   
+> > > On 11/05, Antoni Pokusinski wrote:  
+> > > > The pressure measurement result is arranged as 20-bit unsigned value
+> > > > residing in three 8-bit registers. Hence, it can be retrieved using
+> > > > get_unaligned_be24 and by applying 4-bit shift.
+> > > > 
+> > > > Signed-off-by: Antoni Pokusinski <apokusinski01@gmail.com>
+> > > > ---
+> > > >  drivers/iio/pressure/mpl3115.c | 7 ++++---
+> > > >  1 file changed, 4 insertions(+), 3 deletions(-)
+> > > > 
+> > > > diff --git a/drivers/iio/pressure/mpl3115.c b/drivers/iio/pressure/mpl3115.c    
+> > > ...  
+> > > >  
+> > > > -		*val = be32_to_cpu(tmp) >> chan->scan_type.shift;
+> > > > +		*val = get_unaligned_be24(tmp) >> 4;    
+> > > hmm, now the number of bits shifted is dissociated from the channel characteristics.
+> > > We can do
+> > > 		*val = get_unaligned_be24(tmp) >> (24 - chan->scan_type.realbits);  
+> > This encodes that the field is always aligned to the maximum bit. Whilst it might
+> > be true, there is nothing inherent that says it must be.
+> > 
+> > I'm not sure why we aren't using chan->scan_type.shift though.  
+> The chan->scan_type.shift is 12 for the pressure channel, because
+> .realbits is 32. In order to better reflect the actual data format,
+> the pressure .shift and .realbits should be changed to 4 and 24 respectively
+> and the we could use the chan->scan_type.shift in here indeed.
+> 
+> But then the `iio_generic_buffer` tool should also be updated so that it
+> can manage the scan_data with realbits not being in the form 2^n.
+> Currently it supports only scan sizes of 1,2,4,8 bytes [1].
 
-The availability of hardware bit-reversal is limited, though.  arm32,
-arm64, and mips32r6 have it.  But all of those also have a "multiply
-high" instruction.  So the 30% performance improvement you saw on arm64
-seems surprising to me, as umulh should have been used.  (I verified
-that it's indeed used in the generated asm with both gcc and clang.)
+> 
+> [1]: https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git/tree/tools/iio/iio_generic_buffer.c#n189
 
-The available bit-reversal abstractions aren't too great either, with
-__builtin_bitreverse64() being clang-specific and <linux/bitrev.h>
-having a table-based, i.e. non-constant-time, fallback.  So presumably
-we'd need to add our own which is guaranteed to use the actual
-instructions and not some slow and/or table-based fallback.
+I think this is confusing storagebits and realbits.
 
-I'll definitely look into this more later when bringing this improvement
-to GHASH too.  But for now I think we should go with the version I have
-in my patch.
+storagebits is always power of 2 * 8 because we want them naturally aligned for
+efficient accesses.  realbits is however many bits of actual data we have, so once we
+shift off the bottom "shift" bits, how many to mask.
+  
+This confusion isn't helped by inconsistent names between that
+tool and the kernel. 
 
-- Eric
+Anyhow, I indeed now see why it is shifted by 4 here - thanks for talking me through it!
+
+You could do the much messier
+*val = get_unaligned_be24(tmp) >> (chan->scan_type.shift - (chan->scan_type_storage_bits - 24));
+Which is hideous.  Perhaps a comment will do the job.
+
+/*
+ * Note that chan->scan_type.shift accounts for 24 bit big endian data being
+ * read into the lower addresses of a 32 bit buffer - hence shift here is 4 rather
+ * than 12.
+ */
+
+Or as another option. Could do in _fill_trig_buffer() do
+
+ret = i2c_smbus_read_i2c_block_data(data->client,
+			MPL3115_OUT_PRESS, 3, &buffer[pos + 1]);
+Then set the shift for the pressure channel to 4.  That is, read the 3 bytes
+after leave the most significant byte as 0. 
+
+Whilst technically an ABI change, and correctly written software shouldn't notice.
+
+Jonathan
+
+ 
+> >   
+> > > or maybe
+> > > 		*val = get_unaligned_be24(tmp) >> (sizeof(tmp) - chan->scan_type.realbits);  
+> > 
+> > That one needs a BYTES_TO_BITS factor too.
+> >   
+> > > but it starts becoming too long IMO. Even longer if `tmp` gets a more meaningful
+> > > name. Ah well, any of the three forms should work the same at the end of day so
+> > > no strong opinion.
+> > > 
+> > > Reviewed-by: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+> > >   
+> > > >  		return IIO_VAL_INT;
+> > > >  	}
+> > > >  	case IIO_TEMP: { /* in 0.0625 celsius / LSB */
+> > > > -- 
+> > > > 2.25.1
+> > > >     
+> >  
+> Kind regards,
+> Antoni Pokusinski
+> 
+
 
