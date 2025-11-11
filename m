@@ -1,100 +1,81 @@
-Return-Path: <linux-kernel+bounces-896023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B173C4F81A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 19:51:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF8D4C4F825
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 19:52:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A27344EF49B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 18:51:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C006188E3FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 18:52:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 765B929C33D;
-	Tue, 11 Nov 2025 18:51:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14E7329D27E;
+	Tue, 11 Nov 2025 18:52:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u1NhlQxA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hJaY3/c4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D40B927587D
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 18:51:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 689AB3AA19B;
+	Tue, 11 Nov 2025 18:52:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762887062; cv=none; b=GWpsfOahp8FbXMdtu7JuPtUVHypIEtbVm60Q+t/kIqczNUq4YyHENTyC6DmxLbn6IxGV9FmXdg2NVqS/nrh6h1tnKP3cCVXHrYf49KItEyEDRKxVb2IOZg7HnUhvQDfezo/xueHtk8dxzb3WM7OxcOu0L3i19f2u4rtk6cT9GW8=
+	t=1762887122; cv=none; b=VtJFgxERkUY8fXmYKiFV/g/cqoTVlU+Ip2m3Opa0YeQDuPTnZOvAkBXk3h+PdkXV+4QRD42MVv73KDBAKVBKr0sZScmBMvPy9wvVstETFVflehksF1XosrabAH5vR/A9CVpwuTLgaoMEdhqHw9N63oyRCroyvk629CDGF8UohJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762887062; c=relaxed/simple;
-	bh=XJ4g0f0gVuYpinuWbbR3hceAqP09MK82bKYB3vvGeVY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RuQHLSZbZLL35xdtInf0ecyTIf5LgRHd+BQ+5vNybEoqUv+L4A3Bo8evbhUxK5vUKtXKzCx9KxnZwmt6GF0yIXFaYRnypb0jNVc34otvZc8D4JVjgCsLgDH7CTHUKS970skg3kjE+3EjB0VHMf8U0AAvwkNTOO8wx9ELWFDqOrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u1NhlQxA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CA23C2BCB1
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 18:51:02 +0000 (UTC)
+	s=arc-20240116; t=1762887122; c=relaxed/simple;
+	bh=wKqIegUi0DiJka0SaYsAR82k/GO5oanlw/ZrqT+rYI4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eRaEEZ6x8DL4YFhO/aFSbo6J4lErvPaKMJtsAoEeFK2d6bX/f3ZyGdp8UI+oKpujdUwwrln5M1ZrJXjgTrApI7uqU+yqi3YQB9r+50sAM3R8lYq5mnIXiYKjB1IYvcXcWV9a7N5Ro0Evyz78wEZ0iVodakjanUCgqQBbJjPWKQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hJaY3/c4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFDF5C2BC86;
+	Tue, 11 Nov 2025 18:52:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762887062;
-	bh=XJ4g0f0gVuYpinuWbbR3hceAqP09MK82bKYB3vvGeVY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=u1NhlQxAxeJdhO7bkL3wBsXuhIl5LSvdmcwbJWTX1gG+spiewS/p3BdLBcLpC74v5
-	 AVZq0VFLoGGjLqAcXDviZORf2ZWxB3mE14YMn6+pXVeNkCzbDEh31UAIVC7u+v5h3k
-	 CqGjEoSfFbPgxTZjaUERNg0Eh4HDqsWTMDzJOrJI/xDSRDIEzWv/up9Lof71GUDTY9
-	 0qeAqL73WRJjxKUaqQR2UIO1wB+KjLjPL9NKe8sDMe7nSGMw3DWUEELcQ8YO0Z6yzV
-	 RipWUECuEnIn/UxhYMnFXkQom8aWB4FwvNMUTwaCJxblrD5d44GX4+w+4xOzfTvkPy
-	 /iZ8Hn4BTCOcw==
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5943d1d6471so25437e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 10:51:02 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWLPH4gkdgxRf8gvx6rU8AN9uNTtK6xBUCoPJ+utEscFGmbRsR5TxAKyvvDHPY3gkGunG3MK+6q2VSnnkQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YytUzoh6XAUkznWiszJorIO4ogspT6lZ82EDYR4sJDoyfwu3kBi
-	ZIBeHKuf44IkR7UX7xD7ef4AklNMFikXvgMmJWMWa2O5F+EA5Q7KH1rHKkmiQttMcaXdocDKbUl
-	ElonRL9jo2FxqZaFB0UfV2n28lJZwMHE=
-X-Google-Smtp-Source: AGHT+IH+f6meLkHSJnvqK/GI+08sHMkWRWmZmzjoXE5pVS4YB6CNivhW0spMcyvs1k9S/4LXS4QimEbZb50C4gOFpNY=
-X-Received: by 2002:a05:6512:3d21:b0:594:27fb:e80f with SMTP id
- 2adb3069b0e04-59576e22001mr74109e87.37.1762887060676; Tue, 11 Nov 2025
- 10:51:00 -0800 (PST)
+	s=k20201202; t=1762887121;
+	bh=wKqIegUi0DiJka0SaYsAR82k/GO5oanlw/ZrqT+rYI4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hJaY3/c4Hz0IicNy9MoLgjQ72hFd73LWM4TMqP63GTIdB5LtGou1hjNDUDGl+e7zD
+	 AT6j1WygoT+efMp5+V2fSzW03Cm+yUOQUbt42/hpdA2H4tZckgvVxWisb1xdKNSWal
+	 f/bPa+DZO92VdcbG49H/eXwNxeehNe6TnMde639i1q9Un8Jq0i+x5usTEbtkDlYX/S
+	 Pb1PB14S2v+U/XSQt8C6/C+niFgrViOBm/icjKuwBROUgkWHgCALRlB6UybWi9e4GJ
+	 fXObnVEmiXEAFwUpr/hOzM6bwlPNmfXhiDxOGdi/z40pF6S6E/XfkVvN4u02zuI/yo
+	 mkVtoSvrX+DQA==
+Date: Tue, 11 Nov 2025 08:52:00 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Leon Huang Fu <leon.huangfu@shopee.com>
+Cc: mkoutny@suse.com, akpm@linux-foundation.org, cgroups@vger.kernel.org,
+	corbet@lwn.net, hannes@cmpxchg.org, jack@suse.cz,
+	joel.granados@kernel.org, kyle.meyer@hpe.com, lance.yang@linux.dev,
+	laoar.shao@gmail.com, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	mclapinski@google.com, mhocko@kernel.org, muchun.song@linux.dev,
+	roman.gushchin@linux.dev, shakeel.butt@linux.dev
+Subject: Re: [PATCH mm-new v3] mm/memcontrol: Add memory.stat_refresh for
+ on-demand stats flushing
+Message-ID: <aROF0BXEJtCM7c12@slm.duckdns.org>
+References: <ewcsz3553cd6ooslgzwbubnbaxwmpd23d2k7pw5s4ckfvbb7sp@dffffjvohz5b>
+ <20251111061343.71045-1-leon.huangfu@shopee.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251015205634.3820870-9-ardb+git@google.com> <aROEXadFWdJoQEzx@arm.com>
-In-Reply-To: <aROEXadFWdJoQEzx@arm.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Tue, 11 Nov 2025 19:50:49 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXGYGSrhUbJ8jboSbch6tp00zfpnGdfJEQcbq=RmLFy5CA@mail.gmail.com>
-X-Gm-Features: AWmQ_bmn0XfBWIxhlEWjmu5ftCNZ6fTZUngXH8l15WK1fdsKV0lT36GtFrubF_s
-Message-ID: <CAMj1kXGYGSrhUbJ8jboSbch6tp00zfpnGdfJEQcbq=RmLFy5CA@mail.gmail.com>
-Subject: Re: [PATCH v4 resend 0/7] arm64: Make EFI calls preemptible
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Ard Biesheuvel <ardb+git@google.com>, linux-efi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Peter Zijlstra <peterz@infradead.org>, 
-	Mark Brown <broonie@kernel.org>, Pierre Gondois <Pierre.Gondois@arm.com>, 
-	Sami Mujawar <Sami.Mujawar@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251111061343.71045-1-leon.huangfu@shopee.com>
 
-On Tue, 11 Nov 2025 at 19:45, Catalin Marinas <catalin.marinas@arm.com> wrote:
->
-> On Wed, Oct 15, 2025 at 10:56:35PM +0200, Ard Biesheuvel wrote:
-> > Ard Biesheuvel (7):
-> >   efi: Add missing static initializer for efi_mm::cpus_allowed_lock
-> >   efi/runtime-wrappers: Keep track of the efi_runtime_lock owner
-> >   arm64/fpsimd: Don't warn when EFI execution context is preemptible
-> >   arm64/fpsimd: Permit kernel mode NEON with IRQs off
-> >   arm64/efi: Drop efi_rt_lock spinlock from EFI arch wrapper
-> >   arm64/efi: Move uaccess en/disable out of efi_set_pgd()
-> >   arm64/efi: Call EFI runtime services without disabling preemption
->
-> The series looks fine to me:
->
-> Acked-by: Catalin Marinas <catalin.marinas@arm.com>
->
-> What do you plan to do with this, merge via the EFI tree? Are there any
-> dependencies?
->
+On Tue, Nov 11, 2025 at 02:13:42PM +0800, Leon Huang Fu wrote:
+> We are going to run kernels on 224/256 cores machines, and the flush threshold
+> is 16384 on a 256-core machine. That means we will have stale statistics often,
+> and we will need a way to improve the stats accuracy.
 
-As you prefer - I can take it via the EFI tree, or you can take it.
-There are no conflicts with the other kernel mode FP/SIMD related
-changes that we are taking via libcrypto, and there are no other
-dependencies that I am aware of.
+The thing is that these machines are already common and going to be more and
+more common. These are cases that aren't all that special, so I really hope
+this could be solved in a more generic manner.
+
+Thanks.
+
+-- 
+tejun
 
