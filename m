@@ -1,122 +1,135 @@
-Return-Path: <linux-kernel+bounces-895103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC739C4CF0B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:14:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0660C4CF74
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:17:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62FF74A0277
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:07:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B19D4425F70
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:08:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19F67342144;
-	Tue, 11 Nov 2025 10:05:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B64A6335543;
+	Tue, 11 Nov 2025 10:06:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZinXmRZQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q/VhfSkz"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C5E8340A44
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 10:05:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 101242F0C46;
+	Tue, 11 Nov 2025 10:06:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762855516; cv=none; b=IOsddE9FbQMh3gZsSYU3qtf7lk6rJLmjKlsNaokR8bXPJRgACliB3nu2gKnBxLUZugdY6CQCx5XWolK9dfqsHn8Ppoldw6+SFG9RvStNzGm99Xyni0F1yNEe9KGkJRu+slMTbY/0UjeYHatH5whWS0yXxAjN+5X98aWJSqaeecI=
+	t=1762855567; cv=none; b=mhprLjJyPFovJoDbf6iPKajSlNXsEhvtQszgmTs6akHP8zQ2hRxbj1EJcItCnponu0a+hZjy+rcTR5mO9MJ2aaAuS0IOy989rwEpz5S1hlOPZyqp0GqXsR1Wnl+iFQDi1wTV3tNqAc1DRPgrFvNMrTY8XK7WhTfRP4fqmgjo3Yk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762855516; c=relaxed/simple;
-	bh=SwY69HX5+VyJGypqI9OgmzagGzzfnjk24hRcW5iGh84=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WKMn2jVHfoI0nL09HTZkCHJXBpj/s40H3UOSyXE4kjW+1yCPtDML+TVWYuY1A6DM2GWQ/gjFcl2BYOoQupKUbGAO73DQ9FwhYImqPQs8tN23fOCkLT8ZMAcp3ACQrFODW4sTBPn14YHZ7ARHetkuO7XX1PPTJHI7Y00B/4zbNt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZinXmRZQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E745C116B1;
-	Tue, 11 Nov 2025 10:05:09 +0000 (UTC)
+	s=arc-20240116; t=1762855567; c=relaxed/simple;
+	bh=8SNn1sc/qjsHJtmeS956ja5op53dmBnHINxulZL0Y6I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=o1TfSIcelxDQolcqSjawC94X3omezTtFDWpXFzFbbAVtX9SjmSSzPkWL5s4udKL4OJ4wGqeZ5GCc6ElFCB4Q4vq9st3zmlChKMoDpWzmjR+7bWDESKDzeuPDy6ndgM0X0EimvHdTHPwRCBzdgT6Na3FgW5yTwAGOOw7HT3Aq6J0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q/VhfSkz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D182C4CEF7;
+	Tue, 11 Nov 2025 10:06:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762855516;
-	bh=SwY69HX5+VyJGypqI9OgmzagGzzfnjk24hRcW5iGh84=;
-	h=Date:From:To:Subject:References:In-Reply-To:From;
-	b=ZinXmRZQK3QA863duST9CN8mQG/mCA8r6mYuOdmlL6KZ7dld0KrJ9fwEMzM2nc6tJ
-	 v0KemDEcB4Ng5aonY3wcZ3kIseZOeIaxndeuS6j2qkqPuK9RollPoXh+2ZD0aavIeQ
-	 wzcX1wyiP/EPerloWZJwQ0dwuhNHqWSTWqMLZFDj17+SWm9tNLK3YfDy0psKJDV0bu
-	 UMXS9G6IN9b3jUYQGQOefsNxSYaiKfGXspdEKFB6AkSXnUYseUZ3INd88RBXLHoh/I
-	 bX/ZMR1HnxHTlXewIiBRYs0EJ+API7Q+RzJ7TnSd6l5fAjblN1ElSUsjJr+FaWqJHo
-	 yomewFZj8FEGQ==
-Date: Tue, 11 Nov 2025 12:05:06 +0200
-From: Mike Rapoport <rppt@kernel.org>
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	"David Hildenbrand (Red Hat)" <david@kernel.org>,
-	Peter Xu <peterx@redhat.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, Muchun Song <muchun.song@linux.dev>,
-	Nikita Kalyazin <kalyazin@amazon.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Axel Rasmussen <axelrasmussen@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	James Houghton <jthoughton@google.com>,
-	Hugh Dickins <hughd@google.com>, Michal Hocko <mhocko@suse.com>,
-	Ujwal Kundur <ujwal.kundur@gmail.com>,
-	Oscar Salvador <osalvador@suse.de>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Andrea Arcangeli <aarcange@redhat.com>, conduct@kernel.org
-Subject: Re: [PATCH v4 0/4] mm/userfaultfd: modulize memory types
-Message-ID: <aRMKUoB/nc5A8ZMf@kernel.org>
-References: <aQPCwFZqNd_ZlZ0S@x1.local>
- <d0b037a6-11b9-483b-aa67-b2a8984e56e0@lucifer.local>
- <aQPU-tyo_w68cnKK@x1.local>
- <7768bbb5-f060-45f7-b584-95bd73c47146@kernel.org>
- <aQkUwbx7Z4q1qcSB@x1.local>
- <5f128cbf-7210-42d9-aca1-0a5ed20928c2@kernel.org>
- <aQmplrpNjvCVjWb_@kernel.org>
- <mnjrtg62qh2rd353mbudryvs3neukt26xtovyddm5uosxurmfi@lldnrp7a3666>
- <aRA-se6hJPzHD3mA@kernel.org>
- <ulpftgdk6hgorwsrbtv2tv47b7usn3cow362knuxlzq2az2cl2@krwo6e3zxryn>
+	s=k20201202; t=1762855566;
+	bh=8SNn1sc/qjsHJtmeS956ja5op53dmBnHINxulZL0Y6I=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Q/VhfSkzPUGSOFnaRJQkhbDR7PhLyR/NeMcDTqx+OhMmieqBAgDEyFd0JhKVaxUxq
+	 /FuRujczW8EyA9qfWYF1XIXDOKIsQfFhfk1JIHuj5d61zho+RFf0qrW0qfEr9wvnN5
+	 mLigNaCGmCl91gmuqbyPpqfOr0nWLZOBtiBCxjNPfN0sHHzhVyk2FLgrhqnnrU9rGb
+	 6VBYo5XSIe4K0wJ12ILMm1QHLusdvrNvJA9ZCus/oSEgF8V1CPbUGXpsvYccMjnog4
+	 LTb94FHanqS6I1BqQ3NSDxkZgaCuPGyugGdyjUGxXae8bVGorqGfaNai5hbJcyZuDG
+	 yOFlA+IJeBOlA==
+Message-ID: <58b0d712-48a4-4490-a63f-404716844557@kernel.org>
+Date: Tue, 11 Nov 2025 11:06:02 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ulpftgdk6hgorwsrbtv2tv47b7usn3cow362knuxlzq2az2cl2@krwo6e3zxryn>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] dt-bindings: phy: lan966x: Add optional
+ microchip,sx-tx/rx-inverted
+To: Horatiu Vultur <horatiu.vultur@microchip.com>,
+ Conor Dooley <conor@kernel.org>
+Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, linux-phy@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251110110536.2596490-1-horatiu.vultur@microchip.com>
+ <20251110110536.2596490-3-horatiu.vultur@microchip.com>
+ <20251110-unwound-award-a11d69b9da4f@spud>
+ <20251111095831.lp4kvdfcahtwgrqc@DEN-DL-M31836.microchip.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20251111095831.lp4kvdfcahtwgrqc@DEN-DL-M31836.microchip.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Nov 10, 2025 at 11:34:59AM -0500, Liam R. Howlett wrote:
-> * Mike Rapoport <rppt@kernel.org> [251109 02:12]:
-> > On Thu, Nov 06, 2025 at 11:32:46AM -0500, Liam R. Howlett wrote:
-> > > * Mike Rapoport <rppt@kernel.org> [251104 02:22]:
-> > > > 
-> > > > It seems that "as simple as possible" can even avoid data members in struct
-> > > > vm_uffd_ops, e.g something along these lines:
-> > > 
-> > > I like this because it removes the flag.
-> > > 
-> > > If we don't want to return the folio, we could modify the
-> > > mfill_atomic_pte_continue() to __mfill_atomic_pte_continue() which takes
-> > > a function pointer and have the callers pass a different get_folio() by
-> > > memory type.  Each memory type (anon, shmem, and guest_memfd) would have
-> > > a small stub that would be set in the vm_ops.
-> > 
-> > I'm not sure I follow you here.
-> > What do you mean by "don't want to return the folio"? 
+On 11/11/2025 10:58, Horatiu Vultur wrote:
+> The 11/10/2025 18:43, Conor Dooley wrote:
 > 
-> I didn't get this far in my prototyping, but if we have a way to service
-> the minor fault for the memory types then we could use the function
-> pointer as the way to change how to get the folio vs passing in a
-> pointer to get/set the folio.
+> Hi Conor,
 > 
-> > 
-> > Isn't ->minor_get_folio() is already a different get_folio() by memory
-> > type?
+>> On Mon, Nov 10, 2025 at 12:05:36PM +0100, Horatiu Vultur wrote:
+>>> This allows to invert the N and P signals of the RX and TX Serdes
+>>> signals. This option allows the board designer to trace their signals
+>>> easier on the boards.
+>>
+>> Why can't this just be done in software, debugfs or something like that?
+>> Maybe it's just your description is poor, but sounds like the intention
+>> here is to just switch things around for debug purposes.
 > 
-> Yes.  If you are dead set with handing the folio to the module, then
-> this is what you do.
+> I don't think it should be done through debugfs. As this describes the
+> board layout and I don't think someone will want to change it at
+> runtime to see how things behave. So maybe the description is poor.
 
-uffd does not hand the folio to the module, it gets it from there.
-We can make it even clearer by changing minor_get_folio() declaration to 
+You said it is purely for hardware designer to trace signals, so sorry,
+but that's not DTs purpose.
 
-	struct folio *minor_get_folio(struct inode *inode, pgoff_t pgoff);
-
--- 
-Sincerely yours,
-Mike.
+Best regards,
+Krzysztof
 
