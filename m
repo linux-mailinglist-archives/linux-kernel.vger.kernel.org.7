@@ -1,726 +1,168 @@
-Return-Path: <linux-kernel+bounces-895810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4E58C4EFE0
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:18:46 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01865C4EFE6
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:19:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92A6418C440A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:18:42 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3288A4E79EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:18:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07FE136CE01;
-	Tue, 11 Nov 2025 16:17:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E1F936C5B7;
+	Tue, 11 Nov 2025 16:18:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="naeHFjcf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cbSEVh1O"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA74036C5AD;
-	Tue, 11 Nov 2025 16:17:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2E1F355041
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 16:18:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762877871; cv=none; b=GDUg7MkiXqbWKY+Fw1vUB+l1DvkYfAP0tN6IOG7rOlzxPlrrBAS7Y4NJ/CdDJWijBJfjXVYTB86UiMKb3KNLJbZXUe3H4wwDkX67Tbg+YHsijdzPUW9O3E5beCoNOnbEOPDEr8KyHPXJszgR6ByhqDNLPruo99s8R8OZQKbQn2U=
+	t=1762877913; cv=none; b=GPis3ObiNIIH0Api+J6DEPr6a1UoJ2qB8AqT0AoLy0uCT50v7gJu86iO7Cx9QQGTC4MrZZ4VUjWo/CsWEfXXTErfsKsA14uPbN8n7yhyOr+poCuyXTTd2ESFGzUF5rivh++HCHWzvFQC5O154rUCDFJHKn5bK5vdhtOmyY3tb+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762877871; c=relaxed/simple;
-	bh=pXSkk7JQqoaPjJMx/lQckHYi4LcLVPHAn7LMXiLemvk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nfSXDzvfvDV+83czjolvB/8kzgh6QV+s+/bWOnLyAs/BNrIBZY+4C5wkwaVbe/Tz0HzkgNHpd8badnTjF9JmgFEkO1swPHhccdDXWNTDA6dUxef+4oqqKkqYWcFUOYFNElI7UvkF3hbwxTiYrMAqBlSeEAMoTh6ar8TSM6jk1Kg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=naeHFjcf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07B40C113D0;
-	Tue, 11 Nov 2025 16:17:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762877871;
-	bh=pXSkk7JQqoaPjJMx/lQckHYi4LcLVPHAn7LMXiLemvk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=naeHFjcfXAuxwevVVJIq45BRZNshLz9HVyjCU+93zX0cBhSixu1WeAFPXDwBl6ApC
-	 UKSpxEeL5bu2Qtv1UGRnpQYfVjjQ/qCpBVLqY8xlHyhgCnYXJMYFVOi58BMhVp2vEF
-	 4jMQps3Ojr3HxPMbRKuvBOJ+rdBzGBtpIiTCkZUBoL9eD47mjj8+icITobTY8IxUs6
-	 5tuVT5PKQxUbbsITpcZp5QhEwcc4FE0CkiqtPgpwZE47KiX+pKcrpsy/+C2/ytwKpZ
-	 Jjh4qwlkyQ3Km02ktm+lUjqzjtKLsdpou3g2Y847e4H7kcYelK7S994xYxRzpGUy/A
-	 G06TbeARxivMQ==
-Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
-	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1vIr40-00000007s4n-1jhV;
-	Tue, 11 Nov 2025 17:17:48 +0100
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-	"Jonathan Corbet" <corbet@lwn.net>
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] get_feat.pl: remove it, as it got replaced by get_feat.py
-Date: Tue, 11 Nov 2025 17:17:44 +0100
-Message-ID: <ca4ca7d6b8f5a78c96b31dc46c3027f77ba5ab56.1762877066.git.mchehab+huawei@kernel.org>
-X-Mailer: git-send-email 2.51.1
-In-Reply-To: <cover.1762877066.git.mchehab+huawei@kernel.org>
-References: <cover.1762877066.git.mchehab+huawei@kernel.org>
+	s=arc-20240116; t=1762877913; c=relaxed/simple;
+	bh=WSs/db8+nhSabxecFzkCzX6InR0ma3FBdaaIZ2kzUpE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YkU5JJAQP4/qejgffUkGJF4xMIn+lLDdHwj7IoNMswvEil/+9eURcf9LYGjjCMkbiSCntrMUWZi6V+GJksNzykDozqCeBFu7SQgd2R824npjGCUX+6TWi0TXZHUd1k2yD+P4d6uQ97U+6fg+ip6/mgvYsNEGYDfK5J7wAQRzVYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cbSEVh1O; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-6406f3dcc66so7226498a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 08:18:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762877910; x=1763482710; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uZa3zooHjmwGdeVp4+48ce5dKd796p2blxghBtAzxUM=;
+        b=cbSEVh1OeZZoo6FOxXOjQ5h+K/em9KpOlp9APL5omynfBfQ3q1fFIsIdNj4vPWEyN9
+         pPi8mwyxxPQFOlKJ5Rt87b1UXbkfkqVO3i2BbcikzkHX2+MHs9lEn93QVLsiCaf53n72
+         1C+6tFHRE3U2MGL1NFQTDXwtkVT/hSuc2OSoIP6qYtC/A7H5c/3MTwjXcKnNrKdM7ttI
+         1+aYzP//yNBaHM8pG9XJWi8LSpYHGtudMB53O19iEAgNOstlRJUtYYRgT+jBjpHtMvtD
+         AIonAKmZ1PitE2KHHt58lOGcB2qKPcB/ddsrwideQnTO7u0aTtczjZac3goH2y0Y/B45
+         1x5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762877910; x=1763482710;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=uZa3zooHjmwGdeVp4+48ce5dKd796p2blxghBtAzxUM=;
+        b=rcj2nzMfs0zzzhtXvgE7sFUIO32zM+pl2C3nE5OCVVf4rcwrHraXhDRqTA3s2D3Wcx
+         CUDxNIqHvuuVjb0c2ilM4n5UpLPjMz0HVyNEFdLC1IUA1hvbXcvJVLbJw5Scc95gTILX
+         Xxs0TLLV5x2tsPR2KhYoLxa5hoXUZVqqfANMc1BpxU7J+QUvuAucpKvS8eCptHNRb3YM
+         a9L5IevCs/VNZ8hMrLtGvcHMcpQVzvkJR10/un8Cmwc1ZcUxV8g7hqn6IBTBlK8r34St
+         1UbX4FMMi1pwtvvVOupvpNN7+R6J9HWkI2l22x2j+8yVb05fFuY8AvQFJuQEHkw2q/p2
+         x9HQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXNq+mCVHfSHskXKP3mdHu/QL4OCa9hnqOkky30ntKbLAzXY5xI6jPqMUBBgm2hZP9vbsNLxgmLZRgbBpw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVjxjPhkD8fHoDpmxOyJitUtHqz65T0r5eBupHpEjpbvxmtFKf
+	qUAJf5b7Cs+4HEH/50cL33w2BEbyZEdp1V8bv0IkPct2LeLyCvlruczalopU7VyJYzAA6hjDjFm
+	mI1LWIZbw1gRc+OSh/mMrdaXYCf6llkk=
+X-Gm-Gg: ASbGncvMvcnDkz1OJqrD8g1tmf2ZzXK8u6pauxayYbEPsua8JhHx1uhyvlyVYTNLwSP
+	RCGg5aW5I2q58NoulqQSrCA2jfKLCYjmqmTCHqgkooYlLnZ2eMPiZKiicOfXJNHHAfWRd2i611Z
+	YiXw3+7Nw8qDEpEBMA4JwCi2mk6BxrWJb1CuZUxnKoDiztjnc9EtxPOB2h0E+4O4+nrA52by8IM
+	NbQCobutnlxvWw/oDRpMWXVT8RkqxJ5wj1j1zEnlvLmjiBpvB3UogTPfe33sEMuICVBh/B3TJ43
+	Jkag85oJTixCSly1G/5j
+X-Google-Smtp-Source: AGHT+IGUflb/HrIfwX7os9w4FgoupDHRvKJcM+K+pNSt5ec2cnSHAhxgNhDKHl4asKuAFkHXaTqgfMClUL0oUEmi1ew=
+X-Received: by 2002:a05:6402:34d6:b0:62f:8274:d6bd with SMTP id
+ 4fb4d7f45d1cf-6415dc2bac8mr10438493a12.8.1762877909944; Tue, 11 Nov 2025
+ 08:18:29 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+References: <69135040.a70a0220.22f260.013d.GAE@google.com>
+In-Reply-To: <69135040.a70a0220.22f260.013d.GAE@google.com>
+From: Kairui Song <ryncsn@gmail.com>
+Date: Wed, 12 Nov 2025 00:17:52 +0800
+X-Gm-Features: AWmQ_bl2TBASxhQf6QXwjigZuQ20ctH9V5NouRRx_4-83l4I6XBy-Wo0B5E1vfU
+Message-ID: <CAMgjq7B=OizLoqKca3RjeV0h3p0GQ4uen+gDo3=WdAxQ1gfxnw@mail.gmail.com>
+Subject: Re: [syzbot] [mm?] WARNING in swap_cache_get_folio
+To: syzbot <syzbot+d7bc9ec4a100437aa7a2@syzkaller.appspotmail.com>
+Cc: akpm@linux-foundation.org, chrisl@kernel.org, baohua@kernel.org, 
+	bhe@redhat.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	nphamcs@gmail.com, shikemeng@huaweicloud.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Now that this was rewritten in Python, we can remove the old
-tool.
+On Tue, Nov 11, 2025 at 11:33=E2=80=AFPM syzbot
+<syzbot+d7bc9ec4a100437aa7a2@syzkaller.appspotmail.com> wrote:
+>
+> Hello,
+>
+> syzbot found the following issue on:
+>
+> HEAD commit:    ab40c92c74c6 Add linux-next specific files for 20251110
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D17f69a5858000=
+0
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D84a798f69f994=
+783
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3Dd7bc9ec4a100437=
+aa7a2
+> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b797=
+6-1~exp1~20250708183702.136), Debian LLD 20.1.8
+>
+> Unfortunately, I don't have any reproducer for this issue yet.
+>
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/34ed0f0c2fd0/dis=
+k-ab40c92c.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/a781fa106d0c/vmlinu=
+x-ab40c92c.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/367c75242dc9/b=
+zImage-ab40c92c.xz
+>
+> IMPORTANT: if you fix the issue, please add the following tag to the comm=
+it:
+> Reported-by: syzbot+d7bc9ec4a100437aa7a2@syzkaller.appspotmail.com
+>
+> ------------[ cut here ]------------
+> WARNING: mm/swap.h:87 at __swap_offset_to_cluster mm/swap.h:87 [inline], =
+CPU#0: swapoff/15184
+> WARNING: mm/swap.h:87 at __swap_entry_to_cluster mm/swap.h:93 [inline], C=
+PU#0: swapoff/15184
+> WARNING: mm/swap.h:87 at swap_cache_get_folio+0x365/0x530 mm/swap_state.c=
+:94, CPU#0: swapoff/15184
+> Modules linked in:
+> CPU: 0 UID: 0 PID: 15184 Comm: swapoff Not tainted syzkaller #0 PREEMPT(f=
+ull)
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
+oogle 10/02/2025
+> RIP: 0010:__swap_offset_to_cluster mm/swap.h:87 [inline]
+> RIP: 0010:__swap_entry_to_cluster mm/swap.h:93 [inline]
+> RIP: 0010:swap_cache_get_folio+0x365/0x530 mm/swap_state.c:94
+> Code: ff 31 ed e9 2a ff ff ff e8 a8 d5 a2 ff 90 0f 0b 90 e9 3d fd ff ff e=
+8 9a d5 a2 ff 90 0f 0b 90 e9 44 fd ff ff e8 8c d5 a2 ff 90 <0f> 0b 90 e9 6b=
+ fd ff ff 44 89 f1 80 e1 07 80 c1 03 38 c1 0f 8c 3e
+> RSP: 0018:ffffc90003237a40 EFLAGS: 00010293
+> RAX: ffffffff821e8784 RBX: 00000000000001ff RCX: ffff88802e633d00
+> RDX: 0000000000000000 RSI: 0000000000007a12 RDI: 0003ffffffffffff
+> RBP: ffffffff99cad4e0 R08: 0000000000000000 R09: ffffffff82139c79
+> R10: dffffc0000000000 R11: fffff9400022a327 R12: ffff8880317bf000
+> R13: dffffc0000000000 R14: 0000000000007a12 R15: 0003ffffffffffff
+> FS:  00007f3bed90fc80(0000) GS:ffff888125a83000(0000) knlGS:0000000000000=
+000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00005640123d7005 CR3: 0000000034d9a000 CR4: 00000000003526f0
+> Call Trace:
+>  <TASK>
+>  unuse_pte_range mm/swapfile.c:2282 [inline]
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
----
- tools/docs/get_feat.pl | 641 -----------------------------------------
- 1 file changed, 641 deletions(-)
- delete mode 100755 tools/docs/get_feat.pl
+Hmm, I think this might be also related to the soft leaf entry changes
+recently, unuse_pte_range calls leafent_from_pte and passes the entry
+from it to swap_cache_get_folio. In V2/V1 of softleaf (which is being
+tested here) leafent_from_pte returns an invalid entry if the process
+exit / unmap raced with swapoff.
 
-diff --git a/tools/docs/get_feat.pl b/tools/docs/get_feat.pl
-deleted file mode 100755
-index d75e7c85dc85..000000000000
---- a/tools/docs/get_feat.pl
-+++ /dev/null
-@@ -1,641 +0,0 @@
--#!/usr/bin/env perl
--# SPDX-License-Identifier: GPL-2.0
--
--use strict;
--use Pod::Usage;
--use Getopt::Long;
--use File::Find;
--use Fcntl ':mode';
--use Cwd 'abs_path';
--
--my $help;
--my $man;
--my $debug;
--my $arch;
--my $feat;
--my $enable_fname;
--
--my $basename = abs_path($0);
--$basename =~ s,/[^/]+$,/,;
--
--my $prefix=$basename . "../../Documentation/features";
--
--# Used only at for full features output. The script will auto-adjust
--# such values for the minimal possible values
--my $status_size = 1;
--my $description_size = 1;
--
--GetOptions(
--	"debug|d+" => \$debug,
--	"dir=s" => \$prefix,
--	'help|?' => \$help,
--	'arch=s' => \$arch,
--	'feat=s' => \$feat,
--	'feature=s' => \$feat,
--	"enable-fname" => \$enable_fname,
--	man => \$man
--) or pod2usage(2);
--
--pod2usage(1) if $help;
--pod2usage(-exitstatus => 0, -verbose => 2) if $man;
--
--pod2usage(1) if (scalar @ARGV < 1 || @ARGV > 2);
--
--my ($cmd, $arg) = @ARGV;
--
--pod2usage(2) if ($cmd ne "current" && $cmd ne "rest" && $cmd ne "validate"
--		&& $cmd ne "ls" && $cmd ne "list");
--
--require Data::Dumper if ($debug);
--
--my %data;
--my %archs;
--
--#
--# Displays an error message, printing file name and line
--#
--sub parse_error($$$$) {
--	my ($file, $ln, $msg, $data) = @_;
--
--	$data =~ s/\s+$/\n/;
--
--	print STDERR "Warning: file $file#$ln:\n\t$msg";
--
--	if ($data ne "") {
--		print STDERR ". Line\n\t\t$data";
--	} else {
--	    print STDERR "\n";
--	}
--}
--
--#
--# Parse a features file, storing its contents at %data
--#
--
--my $h_name = "Feature";
--my $h_kconfig = "Kconfig";
--my $h_description = "Description";
--my $h_subsys = "Subsystem";
--my $h_status = "Status";
--my $h_arch = "Architecture";
--
--my $max_size_name = length($h_name);
--my $max_size_kconfig = length($h_kconfig);
--my $max_size_description = length($h_description);
--my $max_size_subsys = length($h_subsys);
--my $max_size_status = length($h_status);
--
--my $max_size_arch = 0;
--my $max_size_arch_with_header;
--my $max_description_word = 0;
--
--sub parse_feat {
--	my $file = $File::Find::name;
--
--	my $mode = (stat($file))[2];
--	return if ($mode & S_IFDIR);
--	return if ($file =~ m,($prefix)/arch-support.txt,);
--	return if (!($file =~ m,arch-support.txt$,));
--
--	if ($enable_fname) {
--		printf ".. FILE %s\n", abs_path($file);
--	}
--
--	my $subsys = "";
--	$subsys = $2 if ( m,.*($prefix)/([^/]+).*,);
--
--	if (length($subsys) > $max_size_subsys) {
--		$max_size_subsys = length($subsys);
--	}
--
--	my $name;
--	my $kconfig;
--	my $description;
--	my $comments = "";
--	my $last_status;
--	my $ln;
--	my %arch_table;
--
--	print STDERR "Opening $file\n" if ($debug > 1);
--	open IN, $file;
--
--	while(<IN>) {
--		$ln++;
--
--		if (m/^\#\s+Feature\s+name:\s*(.*\S)/) {
--			$name = $1;
--			if (length($name) > $max_size_name) {
--				$max_size_name = length($name);
--			}
--			next;
--		}
--		if (m/^\#\s+Kconfig:\s*(.*\S)/) {
--			$kconfig = $1;
--			if (length($kconfig) > $max_size_kconfig) {
--				$max_size_kconfig = length($kconfig);
--			}
--			next;
--		}
--		if (m/^\#\s+description:\s*(.*\S)/) {
--			$description = $1;
--			if (length($description) > $max_size_description) {
--				$max_size_description = length($description);
--			}
--
--			foreach my $word (split /\s+/, $description) {
--				if (length($word) > $max_description_word) {
--					$max_description_word = length($word);
--				}
--			}
--
--			next;
--		}
--		next if (m/^\\s*$/);
--		next if (m/^\s*\-+\s*$/);
--		next if (m/^\s*\|\s*arch\s*\|\s*status\s*\|\s*$/);
--
--		if (m/^\#\s*(.*)/) {
--			$comments .= "$1\n";
--			next;
--		}
--		if (m/^\s*\|\s*(\S+):\s*\|\s*(\S+)\s*\|\s*$/) {
--			my $a = $1;
--			my $status = $2;
--
--			if (length($status) > $max_size_status) {
--				$max_size_status = length($status);
--			}
--			if (length($a) > $max_size_arch) {
--				$max_size_arch = length($a);
--			}
--
--			$status = "---" if ($status =~ m/^\.\.$/);
--
--			$archs{$a} = 1;
--			$arch_table{$a} = $status;
--			next;
--		}
--
--		#Everything else is an error
--		parse_error($file, $ln, "line is invalid", $_);
--	}
--	close IN;
--
--	if (!$name) {
--		parse_error($file, $ln, "Feature name not found", "");
--		return;
--	}
--
--	parse_error($file, $ln, "Subsystem not found", "") if (!$subsys);
--	parse_error($file, $ln, "Kconfig not found", "") if (!$kconfig);
--	parse_error($file, $ln, "Description not found", "") if (!$description);
--
--	if (!%arch_table) {
--		parse_error($file, $ln, "Architecture table not found", "");
--		return;
--	}
--
--	$data{$name}->{where} = $file;
--	$data{$name}->{subsys} = $subsys;
--	$data{$name}->{kconfig} = $kconfig;
--	$data{$name}->{description} = $description;
--	$data{$name}->{comments} = $comments;
--	$data{$name}->{table} = \%arch_table;
--
--	$max_size_arch_with_header = $max_size_arch + length($h_arch);
--}
--
--#
--# Output feature(s) for a given architecture
--#
--sub output_arch_table {
--	my $title = "Feature status on $arch architecture";
--
--	print "=" x length($title) . "\n";
--	print "$title\n";
--	print "=" x length($title) . "\n\n";
--
--	print "=" x $max_size_subsys;
--	print "  ";
--	print "=" x $max_size_name;
--	print "  ";
--	print "=" x $max_size_kconfig;
--	print "  ";
--	print "=" x $max_size_status;
--	print "  ";
--	print "=" x $max_size_description;
--	print "\n";
--	printf "%-${max_size_subsys}s  ", $h_subsys;
--	printf "%-${max_size_name}s  ", $h_name;
--	printf "%-${max_size_kconfig}s  ", $h_kconfig;
--	printf "%-${max_size_status}s  ", $h_status;
--	printf "%-${max_size_description}s\n", $h_description;
--	print "=" x $max_size_subsys;
--	print "  ";
--	print "=" x $max_size_name;
--	print "  ";
--	print "=" x $max_size_kconfig;
--	print "  ";
--	print "=" x $max_size_status;
--	print "  ";
--	print "=" x $max_size_description;
--	print "\n";
--
--	foreach my $name (sort {
--				($data{$a}->{subsys} cmp $data{$b}->{subsys}) ||
--				("\L$a" cmp "\L$b")
--			       } keys %data) {
--		next if ($feat && $name ne $feat);
--
--		my %arch_table = %{$data{$name}->{table}};
--		printf "%-${max_size_subsys}s  ", $data{$name}->{subsys};
--		printf "%-${max_size_name}s  ", $name;
--		printf "%-${max_size_kconfig}s  ", $data{$name}->{kconfig};
--		printf "%-${max_size_status}s  ", $arch_table{$arch};
--		printf "%-s\n", $data{$name}->{description};
--	}
--
--	print "=" x $max_size_subsys;
--	print "  ";
--	print "=" x $max_size_name;
--	print "  ";
--	print "=" x $max_size_kconfig;
--	print "  ";
--	print "=" x $max_size_status;
--	print "  ";
--	print "=" x $max_size_description;
--	print "\n";
--}
--
--#
--# list feature(s) for a given architecture
--#
--sub list_arch_features {
--	print "#\n# Kernel feature support matrix of the '$arch' architecture:\n#\n";
--
--	foreach my $name (sort {
--				($data{$a}->{subsys} cmp $data{$b}->{subsys}) ||
--				("\L$a" cmp "\L$b")
--			       } keys %data) {
--		next if ($feat && $name ne $feat);
--
--		my %arch_table = %{$data{$name}->{table}};
--
--		my $status = $arch_table{$arch};
--		$status = " " x ((4 - length($status)) / 2) . $status;
--
--		printf " %${max_size_subsys}s/ ", $data{$name}->{subsys};
--		printf "%-${max_size_name}s: ", $name;
--		printf "%-5s|   ", $status;
--		printf "%${max_size_kconfig}s # ", $data{$name}->{kconfig};
--		printf " %s\n", $data{$name}->{description};
--	}
--}
--
--#
--# Output a feature on all architectures
--#
--sub output_feature {
--	my $title = "Feature $feat";
--
--	print "=" x length($title) . "\n";
--	print "$title\n";
--	print "=" x length($title) . "\n\n";
--
--	print ":Subsystem: $data{$feat}->{subsys} \n" if ($data{$feat}->{subsys});
--	print ":Kconfig: $data{$feat}->{kconfig} \n" if ($data{$feat}->{kconfig});
--
--	my $desc = $data{$feat}->{description};
--	$desc =~ s/^([a-z])/\U$1/;
--	$desc =~ s/\.?\s*//;
--	print "\n$desc.\n\n";
--
--	my $com = $data{$feat}->{comments};
--	$com =~ s/^\s+//;
--	$com =~ s/\s+$//;
--	if ($com) {
--		print "Comments\n";
--		print "--------\n\n";
--		print "$com\n\n";
--	}
--
--	print "=" x $max_size_arch_with_header;
--	print "  ";
--	print "=" x $max_size_status;
--	print "\n";
--
--	printf "%-${max_size_arch}s  ", $h_arch;
--	printf "%-${max_size_status}s", $h_status . "\n";
--
--	print "=" x $max_size_arch_with_header;
--	print "  ";
--	print "=" x $max_size_status;
--	print "\n";
--
--	my %arch_table = %{$data{$feat}->{table}};
--	foreach my $arch (sort keys %arch_table) {
--		printf "%-${max_size_arch}s  ", $arch;
--		printf "%-${max_size_status}s\n", $arch_table{$arch};
--	}
--
--	print "=" x $max_size_arch_with_header;
--	print "  ";
--	print "=" x $max_size_status;
--	print "\n";
--}
--
--#
--# Output all features for all architectures
--#
--
--sub matrix_lines($$$) {
--	my $desc_size = shift;
--	my $status_size = shift;
--	my $header = shift;
--	my $fill;
--	my $ln_marker;
--
--	if ($header) {
--		$ln_marker = "=";
--	} else {
--		$ln_marker = "-";
--	}
--
--	$fill = $ln_marker;
--
--	print "+";
--	print $fill x $max_size_name;
--	print "+";
--	print $fill x $desc_size;
--	print "+";
--	print $ln_marker x $status_size;
--	print "+\n";
--}
--
--sub output_matrix {
--	my $title = "Feature status on all architectures";
--	my $notcompat = "Not compatible";
--
--	print "=" x length($title) . "\n";
--	print "$title\n";
--	print "=" x length($title) . "\n\n";
--
--	my $desc_title = "$h_kconfig / $h_description";
--
--	my $desc_size = $max_size_kconfig + 4;
--	if (!$description_size) {
--		$desc_size = $max_size_description if ($max_size_description > $desc_size);
--	} else {
--		$desc_size = $description_size if ($description_size > $desc_size);
--	}
--	$desc_size = $max_description_word if ($max_description_word > $desc_size);
--
--	$desc_size = length($desc_title) if (length($desc_title) > $desc_size);
--
--	$max_size_status = length($notcompat) if (length($notcompat) > $max_size_status);
--
--	# Ensure that the status will fit
--	my $min_status_size = $max_size_status + $max_size_arch + 6;
--	$status_size = $min_status_size if ($status_size < $min_status_size);
--
--
--	my $cur_subsys = "";
--	foreach my $name (sort {
--				($data{$a}->{subsys} cmp $data{$b}->{subsys}) or
--				("\L$a" cmp "\L$b")
--			       } keys %data) {
--
--		if ($cur_subsys ne $data{$name}->{subsys}) {
--			if ($cur_subsys ne "") {
--				printf "\n";
--			}
--
--			$cur_subsys = $data{$name}->{subsys};
--
--			my $title = "Subsystem: $cur_subsys";
--			print "$title\n";
--			print "=" x length($title) . "\n\n";
--
--
--			matrix_lines($desc_size, $status_size, 0);
--
--			printf "|%-${max_size_name}s", $h_name;
--			printf "|%-${desc_size}s", $desc_title;
--
--			printf "|%-${status_size}s|\n", "Status per architecture";
--			matrix_lines($desc_size, $status_size, 1);
--		}
--
--		my %arch_table = %{$data{$name}->{table}};
--		my $cur_status = "";
--
--		my (@lines, @descs);
--		my $line = "";
--		foreach my $arch (sort {
--					($arch_table{$b} cmp $arch_table{$a}) or
--					("\L$a" cmp "\L$b")
--				       } keys %arch_table) {
--
--			my $status = $arch_table{$arch};
--
--			if ($status eq "---") {
--				$status = $notcompat;
--			}
--
--			if ($status ne $cur_status) {
--				if ($line ne "") {
--					push @lines, $line;
--					$line = "";
--				}
--				$line = "- **" . $status . "**: " . $arch;
--			} elsif (length($line) + length ($arch) + 2 < $status_size) {
--				$line .= ", " . $arch;
--			} else {
--				push @lines, $line;
--				$line = "  " . $arch;
--			}
--			$cur_status = $status;
--		}
--		push @lines, $line if ($line ne "");
--
--		my $description = $data{$name}->{description};
--		while (length($description) > $desc_size) {
--			my $d = substr $description, 0, $desc_size;
--
--			# Ensure that it will end on a space
--			# if it can't, it means that the size is too small
--			# Instead of aborting it, let's print what we have
--			if (!($d =~ s/^(.*)\s+.*/$1/)) {
--				$d = substr $d, 0, -1;
--				push @descs, "$d\\";
--				$description =~ s/^\Q$d\E//;
--			} else {
--				push @descs, $d;
--				$description =~ s/^\Q$d\E\s+//;
--			}
--		}
--		push @descs, $description;
--
--		# Ensure that the full description will be printed
--		push @lines, "" while (scalar(@lines) < 2 + scalar(@descs));
--
--		my $ln = 0;
--		for my $line(@lines) {
--			if (!$ln) {
--				printf "|%-${max_size_name}s", $name;
--				printf "|%-${desc_size}s", "``" . $data{$name}->{kconfig} . "``";
--			} elsif ($ln >= 2 && scalar(@descs)) {
--				printf "|%-${max_size_name}s", "";
--				printf "|%-${desc_size}s", shift @descs;
--			} else {
--				printf "|%-${max_size_name}s", "";
--				printf "|%-${desc_size}s", "";
--			}
--
--			printf "|%-${status_size}s|\n", $line;
--
--			$ln++;
--		}
--		matrix_lines($desc_size, $status_size, 0);
--	}
--}
--
--
--#
--# Parses all feature files located at $prefix dir
--#
--find({wanted =>\&parse_feat, no_chdir => 1}, $prefix);
--
--print STDERR Data::Dumper->Dump([\%data], [qw(*data)]) if ($debug);
--
--#
--# Handles the command
--#
--if ($cmd eq "current") {
--	$arch = qx(uname -m | sed 's/x86_64/x86/' | sed 's/i386/x86/' | sed 's/s390x/s390/');
--	$arch =~s/\s+$//;
--}
--
--if ($cmd eq "ls" or $cmd eq "list") {
--	if (!$arch) {
--		$arch = qx(uname -m | sed 's/x86_64/x86/' | sed 's/i386/x86/' | sed 's/s390x/s390/');
--		$arch =~s/\s+$//;
--	}
--
--	list_arch_features;
--
--	exit;
--}
--
--if ($cmd ne "validate") {
--	if ($arch) {
--		output_arch_table;
--	} elsif ($feat) {
--		output_feature;
--	} else {
--		output_matrix;
--	}
--}
--
--__END__
--
--=head1 NAME
--
--get_feat.pl - parse the Linux Feature files and produce a ReST book.
--
--=head1 SYNOPSIS
--
--B<get_feat.pl> [--debug] [--man] [--help] [--dir=<dir>] [--arch=<arch>]
--	       [--feature=<feature>|--feat=<feature>] <COMAND> [<ARGUMENT>]
--
--Where <COMMAND> can be:
--
--=over 8
--
--B<current>               - output table in ReST compatible ASCII format
--			   with features for this machine's architecture
--
--B<rest>                  - output table(s)  in ReST compatible ASCII format
--			   with features in ReST markup language. The output
--			   is affected by --arch or --feat/--feature flags.
--
--B<validate>              - validate the contents of the files under
--			   Documentation/features.
--
--B<ls> or B<list>         - list features for this machine's architecture,
--			   using an easier to parse format.
--			   The output is affected by --arch flag.
--
--=back
--
--=head1 OPTIONS
--
--=over 8
--
--=item B<--arch>
--
--Output features for an specific architecture, optionally filtering for
--a single specific feature.
--
--=item B<--feat> or B<--feature>
--
--Output features for a single specific feature.
--
--=item B<--dir>
--
--Changes the location of the Feature files. By default, it uses
--the Documentation/features directory.
--
--=item B<--enable-fname>
--
--Prints the file name of the feature files. This can be used in order to
--track dependencies during documentation build.
--
--=item B<--debug>
--
--Put the script in verbose mode, useful for debugging. Can be called multiple
--times, to increase verbosity.
--
--=item B<--help>
--
--Prints a brief help message and exits.
--
--=item B<--man>
--
--Prints the manual page and exits.
--
--=back
--
--=head1 DESCRIPTION
--
--Parse the Linux feature files from Documentation/features (by default),
--optionally producing results at ReST format.
--
--It supports output data per architecture, per feature or a
--feature x arch matrix.
--
--When used with B<rest> command, it will use either one of the tree formats:
--
--If neither B<--arch> or B<--feature> arguments are used, it will output a
--matrix with features per architecture.
--
--If B<--arch> argument is used, it will output the features availability for
--a given architecture.
--
--If B<--feat> argument is used, it will output the content of the feature
--file using ReStructured Text markup.
--
--=head1 BUGS
--
--Report bugs to Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
--
--=head1 COPYRIGHT
--
--Copyright (c) 2019 by Mauro Carvalho Chehab <mchehab+samsung@kernel.org>.
--
--License GPLv2: GNU GPL version 2 <http://gnu.org/licenses/gpl.html>.
--
--This is free software: you are free to change and redistribute it.
--There is NO WARRANTY, to the extent permitted by law.
--
--=cut
--- 
-2.51.1
+The recent swap table series added some sanity checks and triggers a
+WARN if the entry is invalid so we are seeing this. Softleaf v3 might
+have fixed it.
 
+Just guessing now. I'll also try review the code again in case I
+missed anything...
 
