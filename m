@@ -1,228 +1,143 @@
-Return-Path: <linux-kernel+bounces-895910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAEC7C4F3EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 18:28:42 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A339C4F3FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 18:30:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 637EF18C2D5F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:29:07 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BBF9834D0F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:30:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 063903A1CE1;
-	Tue, 11 Nov 2025 17:28:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A608D36998E;
+	Tue, 11 Nov 2025 17:30:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="pfqk8Swc"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b="imcz45oJ"
+Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4111A369973;
-	Tue, 11 Nov 2025 17:28:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34A6C36A022
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 17:30:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762882113; cv=none; b=UeE7j+ZMI4ZO9qY7lAAJdljjvXJDYCUG6j6n3vnSEHdFPt23iqiEgtfvSMWxA920fR3SkHpc9PZFlPkfAeo4VcKmUVZTrF//sKaMKSNzlmMQQBXEoUyuamzjNQvNSS9Iuh7DK4tRtp1gPKpYe5025Lz7ZLChJEH4SomUuHhmJA4=
+	t=1762882221; cv=none; b=FEw6yEsPG4R4M7ifVsJ7DlgeEWI6XOfME8aqCOQ2YMp07vOpiyNL39G1cyvOMRCJXYoichoURtBU6mEk5y6i/1XkvW890a6Tic6N/l4awsUKBe31y/384l804NYiz/EaaOl9qGutkjHXaPXTyQ1cPeB0poRq19i6omw0d2pRyyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762882113; c=relaxed/simple;
-	bh=bsmd7kg6qnIb8MlMDLkiQd6rQpcUfqqxFWYPX1fT4WE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uYL4PPe6v4par+OgAvjQKhf1/B2961TGMAG/T+DPXoIWQSKL9Uo637L9oI8Oc78fXZk1c66r37mVlyc8I0dXJ6jUeceHqK6vU86PyG4z59y3jf2fesiZFX59W+IDar6aR8NpWK6K0oZV5/TfR6juvWFZWAI6fTxTpy0kz7+m/hM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=pfqk8Swc; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (82-203-161-95.bb.dnainternet.fi [82.203.161.95])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id CD3211D29;
-	Tue, 11 Nov 2025 18:26:22 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1762881983;
-	bh=bsmd7kg6qnIb8MlMDLkiQd6rQpcUfqqxFWYPX1fT4WE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pfqk8SwcT5h2+q1NJF3KwQzpmFNVGC595cqR5z3NIVjAegXLrB56owuRgJqc6E9EP
-	 ACkTo6j2Ub5YCF3saLI3kxZD2yo9WNAWD6EYbbntbHiNqX5gLpxhiTIFz07LTO/Dc1
-	 ygB8oCU1JnuLQ8JWd20ngFgqS/AlJhIqU6wQvChc=
-Date: Tue, 11 Nov 2025 19:28:15 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: "G.N. Zhou (OSS)" <guoniu.zhou@oss.nxp.com>
-Cc: Rui Miguel Silva <rmfrfs@gmail.com>,
-	Martin Kepplinger <martink@posteo.de>,
-	Purism Kernel Team <kernel@puri.sm>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>, Frank Li <frank.li@nxp.com>,
-	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"G.N. Zhou" <guoniu.zhou@nxp.com>
-Subject: Re: [PATCH v7 2/5] media: imx8mq-mipi-csi2: Use
- devm_clk_bulk_get_all() to fetch clocks
-Message-ID: <20251111172815.GA12331@pendragon.ideasonboard.com>
-References: <20251023-csi2_imx8ulp-v7-0-5ecb081ce79b@nxp.com>
- <20251023-csi2_imx8ulp-v7-2-5ecb081ce79b@nxp.com>
- <20251027001151.GN13023@pendragon.ideasonboard.com>
- <AS8PR04MB908014E336F99BEEB504EDB7FAC4A@AS8PR04MB9080.eurprd04.prod.outlook.com>
+	s=arc-20240116; t=1762882221; c=relaxed/simple;
+	bh=exlQD63SqVGMKyRLRu2V27JAcGxlgNW1zdjyDK87WjM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qGrcxKzxwO4OrYYmTbmPJErr2n8gAjTwfFUy5JruWau2A8Qw7WGOw8lTRP79GcERb/UTNvck5jMTRqEBcI1L+ACZiKhSZ+aLeKhHG6KYqFmdkmoPPmtmK4JO9Ui4Kzoty+z1SyhMz6zDpQ5gBrul5pFv1oJQldx7odQyXmycv/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool; spf=pass smtp.mailfrom=packett.cool; dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b=imcz45oJ; arc=none smtp.client-ip=95.215.58.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=packett.cool
+Message-ID: <666481e9-4ce3-415f-bad4-e0b4ccf9a4d2@packett.cool>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=packett.cool;
+	s=key1; t=1762882206;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=alJdU9Lb6Tc8Lmz8IV8/RslU3w9fXrIJxB7VP1A4xVo=;
+	b=imcz45oJII5//pZBJiM0/wBF61l6ANNykPVFuwlg1glsJBg/AXR1arbycirMIsu/5oPuNA
+	E30JjT0ax+ljp5hQFf+LeZRfg9n0hS9VRfXARCk+5a31x3WBBpgaaVSJ2eARTgSEDJ4sE3
+	hreXr38mHOIwgaBU6s6AET6ohi0i5NT97J7MbDBfQYABG1s7w5h2ByqSXPC8KyRetcvBMa
+	5Pf9xlnU6wk9e8Jz+n6+ozC0wYQ7Lxmmb7omDRtwaGKVAiFy+BxIj7Iiq4EZu5deT3wXyw
+	SUoOXRqR0RQiQNtBdQ0Me73jDqdeCmZS1WstIvw3UD1rh4AM9es5BADXQTwWQQ==
+Date: Tue, 11 Nov 2025 14:29:57 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <AS8PR04MB908014E336F99BEEB504EDB7FAC4A@AS8PR04MB9080.eurprd04.prod.outlook.com>
+Subject: Re: [PATCH v2 0/2] PCI/ASPM: Enable ASPM and Clock PM by default on
+ devicetree platforms
+To: Manivannan Sadhasivam <mani@kernel.org>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ manivannan.sadhasivam@oss.qualcomm.com,
+ Rob Clark <robin.clark@oss.qualcomm.com>,
+ Vignesh Raman <vignesh.raman@collabora.com>,
+ Valentine Burley <valentine.burley@collabora.com>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+ Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ "David E. Box" <david.e.box@linux.intel.com>,
+ Kai-Heng Feng <kai.heng.feng@canonical.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Heiner Kallweit <hkallweit1@gmail.com>,
+ Chia-Lin Kao <acelan.kao@canonical.com>, Bjorn Helgaas <helgaas@kernel.org>
+References: <20250922-pci-dt-aspm-v2-0-2a65cf84e326@oss.qualcomm.com>
+ <4cp5pzmlkkht2ni7us6p3edidnk25l45xrp6w3fxguqcvhq2id@wjqqrdpkypkf>
+ <36f05566-8c7a-485b-96e7-9792ab355374@packett.cool>
+ <qy4cnuj2dfpfsorpke6vg3skjyj2hgts5hhrrn5c5rzlt6l6uv@b4npmattvfcm>
+ <c27b5514-1691-448a-9823-8b35955b0fc6@packett.cool>
+ <twn5ryedkpv76ph3i7xbovktz3abqszthl6cxhtv6uczbv4ap7@4wrmlczxzjll>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Val Packett <val@packett.cool>
+In-Reply-To: <twn5ryedkpv76ph3i7xbovktz3abqszthl6cxhtv6uczbv4ap7@4wrmlczxzjll>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Nov 04, 2025 at 07:47:43AM +0000, G.N. Zhou (OSS) wrote:
-> On Monday, October 27, 2025 8:12 AM, Laurent Pinchart wrote:
-> > On Thu, Oct 23, 2025 at 05:19:43PM +0800, Guoniu Zhou wrote:
-> > > From: Guoniu Zhou <guoniu.zhou@nxp.com>
-> > >
-> > > Use devm_clk_bulk_get_all() helper to simplify clock handle code.
-> > >
-> > > No functional changes intended.
-> > >
-> > > Reviewed-by: Frank Li <Frank.Li@nxp.com>
-> > > Signed-off-by: Guoniu Zhou <guoniu.zhou@nxp.com>
-> > > ---
-> > >  drivers/media/platform/nxp/imx8mq-mipi-csi2.c | 52
-> > > ++++++++-------------------
-> > >  1 file changed, 15 insertions(+), 37 deletions(-)
-> > >
-> > > diff --git a/drivers/media/platform/nxp/imx8mq-mipi-csi2.c
-> > > b/drivers/media/platform/nxp/imx8mq-mipi-csi2.c
-> > > index d333ff43539f061b8b9cf88af2cda8c44b3ec2a9..fd202601d401145da8be23df4451
-> > > f6af660642c5 100644
-> > > --- a/drivers/media/platform/nxp/imx8mq-mipi-csi2.c
-> > > +++ b/drivers/media/platform/nxp/imx8mq-mipi-csi2.c
-> > > @@ -71,21 +71,6 @@ enum {
-> > >  	ST_SUSPENDED	= 4,
-> > >  };
-> > >
-> > > -enum imx8mq_mipi_csi_clk {
-> > > -	CSI2_CLK_CORE,
-> > > -	CSI2_CLK_ESC,
-> > > -	CSI2_CLK_UI,
-> > > -	CSI2_NUM_CLKS,
-> > > -};
-> > > -
-> > > -static const char * const imx8mq_mipi_csi_clk_id[CSI2_NUM_CLKS] = {
-> > > -	[CSI2_CLK_CORE] = "core",
-> > > -	[CSI2_CLK_ESC] = "esc",
-> > > -	[CSI2_CLK_UI] = "ui",
-> > > -};
-> > > -
-> > > -#define CSI2_NUM_CLKS	ARRAY_SIZE(imx8mq_mipi_csi_clk_id)
-> > > -
-> > >  struct imx8mq_plat_data {
-> > >  	int (*enable)(struct csi_state *state, u32 hs_settle);
-> > >  	void (*disable)(struct csi_state *state); @@ -111,7 +96,8 @@ struct csi_state {
-> > >  	struct device *dev;
-> > >  	const struct imx8mq_plat_data *pdata;
-> > >  	void __iomem *regs;
-> > > -	struct clk_bulk_data clks[CSI2_NUM_CLKS];
-> > > +	struct clk_bulk_data *clks;
-> > > +	int num_clks;
-> > >  	struct reset_control *rst;
-> > >  	struct regulator *mipi_phy_regulator;
-> > >
-> > > @@ -384,24 +370,16 @@ static void imx8mq_mipi_csi_set_params(struct csi_state *state)
-> > >  			      CSI2RX_SEND_LEVEL);
-> > >  }
-> > >
-> > > -static int imx8mq_mipi_csi_clk_enable(struct csi_state *state) -{
-> > > -	return clk_bulk_prepare_enable(CSI2_NUM_CLKS, state->clks);
-> > > -}
-> > > -
-> > > -static void imx8mq_mipi_csi_clk_disable(struct csi_state *state)
-> > > +static struct clk *find_esc_clk(struct csi_state *state)
-> > 
-> > This is one of the reasons why I don't like devm_clk_bulk_get_all(). I won't
-> > object to this patch, but I don't like it. At the very lest, you should look up the
-> > clock at probe time and cache it in the imx8mq_plat_data structure, to avoid
-> > looking it up multiple times at runtime.
-> 
-> Ok, but could we cache the clock in the csi_state structure? Because the imx8mq_plat_data
-> structure instance is const.
+On 11/11/25 7:06 AM, Manivannan Sadhasivam wrote:
+> On Tue, Nov 11, 2025 at 04:40:01AM -0300, Val Packett wrote:
+>> On 11/11/25 4:19 AM, Manivannan Sadhasivam wrote:
+>>> [..]
+>>>> Totally unpredictable, could be after 4 minutes or 4 days of uptime.
+>>>> Panic-indicator LED not blinking, no reaction to magic SysRq, display image
+>>>> frozen, just a complete hang until the watchdog does the reset.
+>>> I have KIOXIA SSD on my T14s. I do see some random hang, but I thought those
+>>> predate the ASPM enablement as I saw them earlier as well. But even before this
+>>> series, we had ASPM enabled for SSDs on Qcom targets (or devices that gets
+>>> enumerated during initial bus scan), so it might be that the SSD doesn't support
+>>> ASPM well enough.
+>> I certainly remember that ASPM *was* enabled by default when I first got
+>> this laptop, via the custom way that predates this series.
+>>
+>> Actually that custom enablement code getting removed was how I discovered it
+>> was ASPM related!
+>>
+>> I pulled linux-next once and suddenly the system became stable!.. and then I
+>> noticed +2W of battery drain..
+> Because, we only enable L0s and L1 by default and not L1ss.
 
-Yes sorry that's what I meant.
+Back in that short time period between the old code getting removed and 
+this series landing, the default behavior was no ASPM at all, I'm pretty 
+sure.
 
-> > >  {
-> > > -	clk_bulk_disable_unprepare(CSI2_NUM_CLKS, state->clks);
-> > > -}
-> > > -
-> > > -static int imx8mq_mipi_csi_clk_get(struct csi_state *state) -{
-> > > -	unsigned int i;
-> > > +	int i;
-> > >
-> > > -	for (i = 0; i < CSI2_NUM_CLKS; i++)
-> > > -		state->clks[i].id = imx8mq_mipi_csi_clk_id[i];
-> > > +	for (i = 0; i < state->num_clks; i++) {
-> > 
-> > Make state->num_clks unsigned instead of making i signed.
-> > 
-> > > +		if (!strcmp(state->clks[i].id, "esc"))
-> > > +			return state->clks[i].clk;
-> > > +	}
-> > >
-> > > -	return devm_clk_bulk_get(state->dev, CSI2_NUM_CLKS, state->clks);
-> > > +	return NULL;
-> > 
-> > This needs to become a probe error.
-> 
-> Got it, will update in next version.
-> 
-> > >  }
-> > >
-> > >  static int imx8mq_mipi_csi_calc_hs_settle(struct csi_state *state,
-> > > @@ -456,7 +434,7 @@ static int imx8mq_mipi_csi_calc_hs_settle(struct csi_state *state,
-> > >  	 * documentation recommends picking a value away from the boundaries.
-> > >  	 * Let's pick the average.
-> > >  	 */
-> > > -	esc_clk_rate = clk_get_rate(state->clks[CSI2_CLK_ESC].clk);
-> > > +	esc_clk_rate = clk_get_rate(find_esc_clk(state));
-> > >  	if (!esc_clk_rate) {
-> > >  		dev_err(state->dev, "Could not get esc clock rate.\n");
-> > >  		return -EINVAL;
-> > > @@ -783,7 +761,7 @@ static void imx8mq_mipi_csi_pm_suspend(struct device *dev)
-> > >
-> > >  	if (state->state & ST_POWERED) {
-> > >  		imx8mq_mipi_csi_stop_stream(state);
-> > > -		imx8mq_mipi_csi_clk_disable(state);
-> > > +		clk_bulk_disable_unprepare(state->num_clks, state->clks);
-> > >  		state->state &= ~ST_POWERED;
-> > >  	}
-> > >
-> > > @@ -801,7 +779,7 @@ static int imx8mq_mipi_csi_pm_resume(struct device *dev)
-> > >
-> > >  	if (!(state->state & ST_POWERED)) {
-> > >  		state->state |= ST_POWERED;
-> > > -		ret = imx8mq_mipi_csi_clk_enable(state);
-> > > +		ret = clk_bulk_prepare_enable(state->num_clks, state->clks);
-> > >  	}
-> > >  	if (state->state & ST_STREAMING) {
-> > >  		sd_state = v4l2_subdev_lock_and_get_active_state(sd);
-> > > @@ -1027,9 +1005,9 @@ static int imx8mq_mipi_csi_probe(struct platform_device *pdev)
-> > >  	if (IS_ERR(state->regs))
-> > >  		return PTR_ERR(state->regs);
-> > >
-> > > -	ret = imx8mq_mipi_csi_clk_get(state);
-> > > -	if (ret < 0)
-> > > -		return ret;
-> > > +	state->num_clks = devm_clk_bulk_get_all(dev, &state->clks);
-> > > +	if (state->num_clks < 0)
-> > > +		return dev_err_probe(dev, state->num_clks, "Failed to get
-> > > +clocks\n");
-> > >
-> > >  	platform_set_drvdata(pdev, &state->sd);
-> > >
+Again, with the SK hynix SSD I used back then, I *definitely* saw the 
+issue with this series in and no args applied.
 
--- 
-Regards,
+> [..]
+>> I'm currently using the stock drive: Sandisk Corp PC SN740 NVMe SSD
+>> (DRAM-less) [15b7:5015] (rev 01)
+> I'm suspecting the L1ss issue with this SSD since you said above that
+> next/master works fine until you pass 'pcie_aspm=force'. Could you try the below
+> diff with that cmdline option?
 
-Laurent Pinchart
+I did *not* say that it works fine with no arg!
+
+I said that I've only tested this stock WD SSD with 'force' so far, and 
+don't have any data on *this* SSD without 'force' yet.
+
+Now testing with this drive and no arg:
+
+                 LnkCtl: ASPM L1 Enabled; RCB 64 bytes, LnkDisable- CommClk+
+                         ExtSynch+ ClockPM- AutWidDis- BWInt- AutBWInt- 
+FltModeDis-
+
+                 L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2- ASPM_L1.1-
+                            T_CommonMode=0us LTR1.2_Threshold=156672ns
+
+Let's see how it goes.
+
+But it sounds very odd that all the SSDs would be to blame and not the 
+controller.. Other platforms don't seem to be having this issue. Don't 
+Intel and AMD enable L1ss by default?
+
+~val
+
 
