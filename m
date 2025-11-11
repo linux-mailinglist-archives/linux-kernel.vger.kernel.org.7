@@ -1,116 +1,87 @@
-Return-Path: <linux-kernel+bounces-895762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9D7FC4ED5E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:45:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B98CCC4ED6A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:46:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B966D18C2A11
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 15:45:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70BC118C26A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 15:46:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFE1636A011;
-	Tue, 11 Nov 2025 15:45:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D54E2369994;
+	Tue, 11 Nov 2025 15:45:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HF63HSmn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QRLciHpY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43FF536A007
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 15:45:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E3B626E146
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 15:45:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762875916; cv=none; b=tuiblLQbADFYcWUX4EPoltp97cmt99QOe4ijtDLZ4LHpZOV1tNFCYDg+y31Hk4c/IWcG1/Frim5APAg2umC07TX37+6eusjAHKuXXUDxlB2pptRe2i5YoSkhjpozUz4asFMSXR8nOyd9OsiMk7pWzeMgwKneVFoMJOhKGGLM0oI=
+	t=1762875948; cv=none; b=mCjl690K5Hd6UVJNAsMzvZ8lEol21O1FJYg42ARfV+JE16bTjYcnbKZP4InfAGoGgQYKH/vpHtm3XYYc2e0ILXkxzclSOVKcnT4HAiluziYmKz2nWDwvcLao8MsbyFMOr2xspEKjkzuEA/r0+HdTcfDSsVVuZqkbqRFysudEcf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762875916; c=relaxed/simple;
-	bh=7jJ7fSlJr0PoTroRPbLlQUt5EWnBP3C5yC1ZgCDzrtU=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WsqntumpDP2uILXfXZenLPkXigEMDYTcjrbxg4EHuY5aqc6xj6nUiM4qHuBZcjP888XRAGnYAqhFUhKZ5Cc51njqCwc5kCpQTVUxsWfMpvmEKoi6tCO7p4w0KR4QEbFwCKPJswm3iXG6C39ahkTjHeHj+L1wkT9HKaKlVSXzhBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HF63HSmn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBB2AC16AAE;
-	Tue, 11 Nov 2025 15:45:15 +0000 (UTC)
+	s=arc-20240116; t=1762875948; c=relaxed/simple;
+	bh=yd84n8VJ2AqccGgReruEJ8scVcPeApNi1qKo7OD/Izc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UOkquLYCOQja45sr8gQi8wSTBdogAPVdzpXJ3diTXhMgERn8hToiEFaVipCakDe856uryQMFkNsHORg3Eom7vUH3+H2aRVaIK0xCIO1xmrFfqpbacY6TTV6xrzSNdO7aky5L93gUedwsuWXFOxhtz/NwFhHg901P8DRLIcaIfF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QRLciHpY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0CF9C4CEFB;
+	Tue, 11 Nov 2025 15:45:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762875915;
-	bh=7jJ7fSlJr0PoTroRPbLlQUt5EWnBP3C5yC1ZgCDzrtU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=HF63HSmn+5Cct+wTdRjIIOb7bLsGcjWRfWHrYBrqJXXgeQH+oAXsBIhO3cS/s308X
-	 +y8kfnyfNIHf1VKPlycNA6wo/RAcZJWxf7B3hj4tGBtefbx3XcofM92r7xVnPLhC1W
-	 4eDYVURP8lthZGDXQIXS9G0hjc/kH0cHT80rH07MP9iMCgaxj4gctuKeU6bGuceTPT
-	 5IJ12zhs1ZoEvd1hpZM1/eq//MNX7nJ6hdvf2+tmn6qi8N5bVo1QTEGOZaTfJLPeQW
-	 gbgHH2/IrsJO1lBjVVq7FCX/n/3jnUaaCERjsAEi8+sgTL/GQZolaRBbzJSK1LeuC1
-	 6xXu1PGQtUsGg==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <maz@kernel.org>)
-	id 1vIqYT-00000004Ha2-318R;
-	Tue, 11 Nov 2025 15:45:13 +0000
-Date: Tue, 11 Nov 2025 15:45:13 +0000
-Message-ID: <86zf8stvxy.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Johan Hovold <johan@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] clocksource/drivers/arm_arch_timer_mmio: Prevent driver unbind
-In-Reply-To: <20251111153226.579-2-johan@kernel.org>
-References: <20251111153226.579-1-johan@kernel.org>
-	<20251111153226.579-2-johan@kernel.org>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=k20201202; t=1762875947;
+	bh=yd84n8VJ2AqccGgReruEJ8scVcPeApNi1qKo7OD/Izc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=QRLciHpY16lx4ROLHLdBSAxkpRhles14ZiOQwaqMee9hg+vLKEmR1YtgMOvhX3tJI
+	 bYOxtCEkL1qRR3RAvhw+nnADC8LuLRro4TV6R/rNl+OlUXmr6uTlA2fGQJrJhM4IUs
+	 l/xUvd+FEIrImjQr1nQ5cpmXjNVeqp0qZ+nJofQFeI0kO4tHmZEqs8ycjnfqw8jJpw
+	 TEB2eQhDOReyre3PskfT1Po9Z8qHlbgwp1f1Ppas9qTsZD+HKO6EkpvllQCbbvrBsi
+	 97MwGFb1Ak461NkuDmKmBjOD0X1SgBpIFxY/55g2Tqxs4X/OJQFV9rjKsiMhGQevZE
+	 YJGwXVDaC++Qw==
+Received: from johan by xi.lan with local (Exim 4.98.2)
+	(envelope-from <johan@kernel.org>)
+	id 1vIqZ3-000000000S7-132D;
+	Tue, 11 Nov 2025 16:45:50 +0100
+From: Johan Hovold <johan@kernel.org>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kernel@vger.kernel.org,
+	Johan Hovold <johan@kernel.org>
+Subject: [PATCH] clocksource/drivers/stm32-lp: Drop unused module alias
+Date: Tue, 11 Nov 2025 16:45:16 +0100
+Message-ID: <20251111154516.1698-1-johan@kernel.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: johan@kernel.org, mark.rutland@arm.com, daniel.lezcano@linaro.org, tglx@linutronix.de, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Tue, 11 Nov 2025 15:32:24 +0000,
-Johan Hovold <johan@kernel.org> wrote:
-> 
-> Clockevents cannot be deregistered so suppress the bind attributes to
-> prevent the driver from being unbound and releasing the underlying
-> resources after registration.
-> 
-> Fixes: 4891f01527bb ("clocksource/drivers/arm_arch_timer: Add standalone MMIO driver")
-> Signed-off-by: Johan Hovold <johan@kernel.org>
-> ---
->  drivers/clocksource/arm_arch_timer_mmio.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/clocksource/arm_arch_timer_mmio.c b/drivers/clocksource/arm_arch_timer_mmio.c
-> index ebe1987d651e..d10362692fdd 100644
-> --- a/drivers/clocksource/arm_arch_timer_mmio.c
-> +++ b/drivers/clocksource/arm_arch_timer_mmio.c
-> @@ -426,6 +426,7 @@ static struct platform_driver arch_timer_mmio_drv = {
->  	.driver	= {
->  		.name = "arch-timer-mmio",
->  		.of_match_table	= arch_timer_mmio_of_table,
-> +		.suppress_bind_attrs = true,
->  	},
->  	.probe	= arch_timer_mmio_probe,
->  };
-> @@ -434,6 +435,7 @@ builtin_platform_driver(arch_timer_mmio_drv);
->  static struct platform_driver arch_timer_mmio_acpi_drv = {
->  	.driver	= {
->  		.name = "gtdt-arm-mmio-timer",
-> +		.suppress_bind_attrs = true,
->  	},
->  	.probe	= arch_timer_mmio_probe,
->  };
+The driver cannot be built as a module so drop the unused platform
+module alias.
 
-Acked-by: Marc Zyngier <maz@kernel.org>
+Note that platform aliases are not needed for OF probing should it ever
+become possible to build the driver as a module.
 
-	M.
+Signed-off-by: Johan Hovold <johan@kernel.org>
+---
+ drivers/clocksource/timer-stm32-lp.c | 1 -
+ 1 file changed, 1 deletion(-)
 
+diff --git a/drivers/clocksource/timer-stm32-lp.c b/drivers/clocksource/timer-stm32-lp.c
+index c2a699f5c1dd..3d804128c765 100644
+--- a/drivers/clocksource/timer-stm32-lp.c
++++ b/drivers/clocksource/timer-stm32-lp.c
+@@ -289,5 +289,4 @@ static struct platform_driver stm32_clkevent_lp_driver = {
+ };
+ module_platform_driver(stm32_clkevent_lp_driver);
+ 
+-MODULE_ALIAS("platform:stm32-lptimer-timer");
+ MODULE_DESCRIPTION("STMicroelectronics STM32 clockevent low power driver");
 -- 
-Without deviation from the norm, progress is not possible.
+2.51.0
+
 
