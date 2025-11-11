@@ -1,208 +1,188 @@
-Return-Path: <linux-kernel+bounces-895707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 014A0C4EBE9
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:18:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0655AC4EBF9
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:19:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18EA53AB1C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 15:08:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9FC1188388F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 15:12:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1C1235B13E;
-	Tue, 11 Nov 2025 15:08:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52EE535BDD3;
+	Tue, 11 Nov 2025 15:11:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="cyYb0p6h";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="yzK4W7VM"
-Received: from fhigh-a6-smtp.messagingengine.com (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kLcy8r3h"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C96B135B12B;
-	Tue, 11 Nov 2025 15:08:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A575C33F8A4;
+	Tue, 11 Nov 2025 15:11:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762873702; cv=none; b=qljgtHSVKV3Jo1rdFUGmCzFSB4EXzFToF/TOGhD90/zhNhP7ybBCIs2mIGYg9KolakfUtvQ52G4nXoJlp9DoVI987+vTq8O0cDoNI74djWvczvfJzUhMATU9WZ0Fy++F6z0SHx30EpiaqLaQp8xQ4dwZP4Qa0cPrTCOKy6V6uvc=
+	t=1762873911; cv=none; b=bpLGBrR+cFdmwATmL+Y8ej9Midmi8dL68cPprOdDnx1Nie0R+d0/Pt9Nmx+eq2dhSit4uIpwCJYEmUkgImghV4p6aWbj1dNE34jat4/JOTOMZtkfFo1t2HYMbNSq8Q7mt1++c1RrYxzxI/OYlJEVBS6TBOGulWj/Go8zjE7gYFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762873702; c=relaxed/simple;
-	bh=JDx07bvAPbahj4fglxAGAoCCKWjZOg5DcZxJkUZ/dLI=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=OfVZc3KdTZXfMHiKDBPBOY7lNAE5MY0+dQ/nQl+kFkj3OMsl198ADNALF2hmzk8BJ+HZKbhrO+qa5nz9pe4T7LhfydmTio/rI/TLcu1Y+PoOR3buc3ErWBas4Gzw+V0zDbi7aGQQaNcQg4w2NWQZ4Qrhn/OsiRHw75veBGxyz/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=cyYb0p6h; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=yzK4W7VM; arc=none smtp.client-ip=103.168.172.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id CB88114001EB;
-	Tue, 11 Nov 2025 10:08:19 -0500 (EST)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-04.internal (MEProxy); Tue, 11 Nov 2025 10:08:19 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1762873699;
-	 x=1762960099; bh=MxvLacjBhqWkhEIm3/oCehKlqfaCQSU5UAH8tpfHE+s=; b=
-	cyYb0p6hj9z7RNKZzQLh6KyitQEBPD2Uu8BWwGvK3Kpd0ghmHMCaguKwOJ5MaR7U
-	yeKq9NMWIYHKXHN2HaZ9TKOmDgbFa+9g3LAO9uesTkfzsMaTF/08/jcTe7aZGw+v
-	81Oi+qJrvSz7Ug2IFeh8KekLxJ1e6Gtagua3qZAOhsLZm8ecQtAPmdv5faOxnC7d
-	34nYQn/Zj4uP2CC2IaWMV1C+Hofsv8FwcFzKLNUDFGRkLQOYegDO2O/HpgleYYC0
-	dJ1WCTSEv/RnU1Z7y59NkSJh6homfD8wyz2wS6YaYom9KSID/nLEyCLDtL0W3eqX
-	H9vv2f0lphd2Uc1s2kZwwQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762873699; x=
-	1762960099; bh=MxvLacjBhqWkhEIm3/oCehKlqfaCQSU5UAH8tpfHE+s=; b=y
-	zK4W7VMi/7kgTsasA7oljU2mGaqDBAhOi9ERV0uFjG4RlKzBcCsjxCan1MRZYtKm
-	ifKkAyIcif6GRfhHFcLILY0NDms06NpJsRrLhq6DQUTsoLko9dLcvAKkuEfrrNGR
-	gq1SnqHLKZHrr4TwM8iZgFeJO8HPKZltoJ41bB50lEaZGmzUGzBrSNI4ia1AdINU
-	WavdsSSwaAQM4vTFZUsIzbZLLUbiWanB3M5dg65CpupCS8oj5dHkHk01YpwKR9nO
-	8PUQ44aSzRauLb77fVWreOm/5Pn8RWoBr5jyfti1GdKecetqGbDpNXuRuFI2G2eh
-	IyQU2DFtmomXrCJouu/Eg==
-X-ME-Sender: <xms:Y1ETae5QKtPzC_ZNn83XdMWP3tW--DkrQEG9ZQyn8GGMXcl9nFUxrQ>
-    <xme:Y1ETaSsdschrwNMrfZzLzD4sEGiakRwuHf5cQIzRYL4bMmYBvoLAsWyiDXz_nf_DR
-    2Of2f4Gex_EwC3xQ7oq-4bnakLd-39h0zdly4uaAXCiE3Z68Ygd65o>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvtdduheduucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdejnecuhfhrohhmpedftehrnhgu
-    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
-    hrnhepvdfhvdekueduveffffetgfdvveefvdelhedvvdegjedvfeehtdeggeevheefleej
-    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnh
-    gusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepjedpmhhouggvpehsmhhtphhouhht
-    pdhrtghpthhtohepvhhinhgtvghniihordhfrhgrshgtihhnohesrghrmhdrtghomhdprh
-    gtphhtthhopehluhhtoheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhhuhgrhhes
-    khgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhglhigsehlihhnuhhtrhhonhhigidrug
-    gvpdhrtghpthhtohepthhhohhmrghsrdifvghishhsshgthhhuhheslhhinhhuthhrohhn
-    ihigrdguvgdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnh
-    gvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkshgvlhhfthgvshhtsehvghgvrhdr
-    khgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:Y1ETacj57ol8yJoH3aWbK9Jv8zJUNLKMXq1VvgPOzvueUolcGLqCgw>
-    <xmx:Y1ETafFp13VQ2x8dBUxG3UiCr74T3uocqhK9KvWBRKKQE3-OpmyX6Q>
-    <xmx:Y1ETaT_97NH8JM4kjTUiqNTkD69VHqf-eWnq52_VqD04Ku2dlKZ1Iw>
-    <xmx:Y1ETaexo6_MGfUmNZJrqxxnbGwalW4dKQxytvAzR1kP9NFSvhC-pSQ>
-    <xmx:Y1ETaYmlFzqmC2fV-SC6UYerYThFV5UsLh-nxPY78U4gQjiUdXpNeiU9>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 5E3AC700065; Tue, 11 Nov 2025 10:08:19 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1762873911; c=relaxed/simple;
+	bh=ERMwIjPZPLyZ1m6vgFXRkTyy9Qrz1TNQE6MnkYJAz+k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VtoDXOzX6JCJjQSKmuOffJWc/KPb+br2OZ/PCf16Kl/gRcf8vF32kiG9ijCrDQWD0eiFSy9ZzbrxUVHxVwsRlW2828QmXDEudLSF4t1ZJDIJ0nEXSWRLvmcDjqkw6YAlUZ0/aXE37ijcQ7Bvd7GEst9i7pVB9iV0MIuxe5LzfeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kLcy8r3h; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762873910; x=1794409910;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ERMwIjPZPLyZ1m6vgFXRkTyy9Qrz1TNQE6MnkYJAz+k=;
+  b=kLcy8r3hdiOC9QBIDTicvxEX2Rd8U9cdhMwsMXAUJwP5Dm7Bx+my8Uig
+   1ZriZruSr+wd5N2wq7Hbp44++tojLlA1UUc9xDRNoVuTp8gOpuRiMRoSN
+   S7exXVzVhvGLYNAuSpHRFbfqAlviisgjRZBDf9nV/n3HNVo/8WpriwAm0
+   xRKufcLY3zRS6W3TMu+peDFaAgX4mM1xQsbXGedDzyl5UxepB8XDu/WoP
+   9Sho36oRwUrQSVti0kbvjX8yHRFJRvvZoUvYPF1wUqilps6ckLKrf28s8
+   O+NQy3VsAsPCFnd3EcooJbQaSEILbzXo7Y4ffm+mAQepDY+bKwpUQlBG5
+   g==;
+X-CSE-ConnectionGUID: sHkUsP+aSra+1JkKLacnFg==
+X-CSE-MsgGUID: yi6nsrj5R2iOTsBh+Hx68Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="64853652"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="64853652"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 07:11:49 -0800
+X-CSE-ConnectionGUID: Tg9WnHf0Q0eG8nSHQzPs6g==
+X-CSE-MsgGUID: cx04bFEkTZy6uGjWzuertg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,296,1754982000"; 
+   d="scan'208";a="212377532"
+Received: from lkp-server01.sh.intel.com (HELO 7b01c990427b) ([10.239.97.150])
+  by fmviesa002.fm.intel.com with ESMTP; 11 Nov 2025 07:11:47 -0800
+Received: from kbuild by 7b01c990427b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vIq24-0003H1-2H;
+	Tue, 11 Nov 2025 15:11:44 +0000
+Date: Tue, 11 Nov 2025 23:10:45 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ma Ke <make24@iscas.ac.cn>, alexander.shishkin@linux.intel.com,
+	gregkh@linuxfoundation.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+	Ma Ke <make24@iscas.ac.cn>, stable@vger.kernel.org
+Subject: Re: [PATCH] intel_th: Fix error handling in intel_th_output_open
+Message-ID: <202511112222.vMmKmHbd-lkp@intel.com>
+References: <20251111024204.12299-1-make24@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: A5RixjiBPr7B
-Date: Tue, 11 Nov 2025 16:07:58 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-Cc: "Andy Lutomirski" <luto@kernel.org>,
- "Thomas Gleixner" <tglx@linutronix.de>,
- "Vincenzo Frascino" <vincenzo.frascino@arm.com>, shuah <shuah@kernel.org>,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Message-Id: <2976374e-dd64-48ce-9726-56d97e94323c@app.fastmail.com>
-In-Reply-To: 
- <20251111153707-0926c681-0b2a-4cc0-9074-acbe8a6371c2@linutronix.de>
-References: <20251111-vdso-test-types-v1-0-03b31f88c659@linutronix.de>
- <20251111-vdso-test-types-v1-4-03b31f88c659@linutronix.de>
- <29dd9e11-9ae8-415a-acb3-b96af56550b0@app.fastmail.com>
- <20251111144805-ab2781fe-5424-492b-9cb3-55ebaaedc199@linutronix.de>
- <a78a17eb-1df2-471b-9c28-64619c71dc54@app.fastmail.com>
- <20251111153707-0926c681-0b2a-4cc0-9074-acbe8a6371c2@linutronix.de>
-Subject: Re: [PATCH 04/10] selftests: vDSO: vdso_test_abi: Provide compatibility with
- 32-bit musl
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251111024204.12299-1-make24@iscas.ac.cn>
 
-On Tue, Nov 11, 2025, at 15:46, Thomas Wei=C3=9Fschuh wrote:
-> On Tue, Nov 11, 2025 at 03:19:00PM +0100, Arnd Bergmann wrote:
->> Since SYS_clock_getres itself is provided by the libc implementation,
->> I wouldn't trust that this actually means the same as __NR_clock_getr=
-es,
->> and it might be set to __NR_clock_getres_time64.
->
-> Should that case not work anyways, as libc would also need to convert =
-the
-> parameters transparently?
+Hi Ma,
 
-Not sure, I certainly wouldn't expect all libc implementations to
-do this the same way.
+kernel test robot noticed the following build warnings:
 
-> But I'll switch it over to __NR instead.
+[auto build test WARNING on akpm-mm/mm-everything]
+[also build test WARNING on linus/master v6.18-rc5 next-20251111]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Ok
+url:    https://github.com/intel-lab-lkp/linux/commits/Ma-Ke/intel_th-Fix-error-handling-in-intel_th_output_open/20251111-104412
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+patch link:    https://lore.kernel.org/r/20251111024204.12299-1-make24%40iscas.ac.cn
+patch subject: [PATCH] intel_th: Fix error handling in intel_th_output_open
+config: x86_64-buildonly-randconfig-002-20251111 (https://download.01.org/0day-ci/archive/20251111/202511112222.vMmKmHbd-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251111/202511112222.vMmKmHbd-lkp@intel.com/reproduce)
 
->> >> If we are trying to validate the interface here, we should probably
->> >> call both if available. If we just want to know the result and
->> >> trust that both work correctly, I'd always use __NR_clock_getres_t=
-ime64
->> >> on 32-bit systems and __NR_clock_getres on 64-bit systems.
->> >
->> > As these are vDSO and not timer selftests I think we trust the sysc=
-alls.
->> > But how do we detect a native 64-bit time system? The preprocessor =
-builtins
->> > won't work as a 32-bit pointer system may use 64-bit time syscalls.=
- I am not
->> > aware of the UAPI #define, beyond the absence of __NR_clock_getres_=
-time64.
->>=20
->> I would just check __BITS_PER_LONG=3D32 and require a linux-5.6+ kern=
-el
->> at runtime to ensure the 64-bit calls are available.
->
-> That doesn't work for x32. It uses __BITS_PER_LONG but does not have
-> __NR_clock_getres_time64.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202511112222.vMmKmHbd-lkp@intel.com/
 
-Right. In C code, we can usually check for
-'sizeof(time_t) > sizeof(__kernel_long_t)' to catch that case,
-but that doesn't work as easily with the preprocessor.
+All warnings (new ones prefixed by >>):
 
-A more complex setup using both compile-time and run-time fallbacks
-would work, e.g.
+>> drivers/hwtracing/intel_th/core.c:818:6: warning: variable 'err' is used uninitialized whenever 'if' condition is true [-Wsometimes-uninitialized]
+     818 |         if (!fops)
+         |             ^~~~~
+   drivers/hwtracing/intel_th/core.c:836:9: note: uninitialized use occurs here
+     836 |         return err;
+         |                ^~~
+   drivers/hwtracing/intel_th/core.c:818:2: note: remove the 'if' if its condition is always false
+     818 |         if (!fops)
+         |         ^~~~~~~~~~
+     819 |                 goto out_put_device;
+         |                 ~~~~~~~~~~~~~~~~~~~
+   drivers/hwtracing/intel_th/core.c:813:6: warning: variable 'err' is used uninitialized whenever 'if' condition is true [-Wsometimes-uninitialized]
+     813 |         if (!dev || !dev->driver)
+         |             ^~~~~~~~~~~~~~~~~~~~
+   drivers/hwtracing/intel_th/core.c:836:9: note: uninitialized use occurs here
+     836 |         return err;
+         |                ^~~
+   drivers/hwtracing/intel_th/core.c:813:2: note: remove the 'if' if its condition is always false
+     813 |         if (!dev || !dev->driver)
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~
+     814 |                 goto out_no_device;
+         |                 ~~~~~~~~~~~~~~~~~~
+>> drivers/hwtracing/intel_th/core.c:813:6: warning: variable 'err' is used uninitialized whenever '||' condition is true [-Wsometimes-uninitialized]
+     813 |         if (!dev || !dev->driver)
+         |             ^~~~
+   drivers/hwtracing/intel_th/core.c:836:9: note: uninitialized use occurs here
+     836 |         return err;
+         |                ^~~
+   drivers/hwtracing/intel_th/core.c:813:6: note: remove the '||' if its condition is always false
+     813 |         if (!dev || !dev->driver)
+         |             ^~~~~~~
+   drivers/hwtracing/intel_th/core.c:810:9: note: initialize the variable 'err' to silence this warning
+     810 |         int err;
+         |                ^
+         |                 = 0
+   3 warnings generated.
 
-static int
-syscall_clock_getres_old(clockid_t clockid, struct timespec *res);
-#ifdef __NR_clock_getres
-       struct __kernel_old_timespec ts_old;
-       ret =3D syscall(__NR_clock_getres, clockid, &ts_old);
-       if (ret)
-              return ret;
-       res->tv_sec =3D ts_old.sec;
-       res->tv_nsec =3D ts_old.tv_nsec;
-       return 0;
-#else
-       return -ENOSYS;
-#endif
-}
 
-static int
-syscall_clock_getres_time64(clockid_t clockid, struct timespec *res);
-#ifdef __NR_clock_getres_time64
-       struct __kernel_timespec ts_64;
-       ret =3D syscall(__NR_clock_getres_time64, clockid, &ts_64);
-       if (ret)
-              return ret;
-       res->tv_sec =3D ts_64.sec;
-       res->tv_nsec =3D ts_64.tv_nsec;
-       return 0;
-#else
-       return -ENOSYS;
-#endif
-}
+vim +818 drivers/hwtracing/intel_th/core.c
 
-static int
-syscall_clock_getres(clockid_t clockid, struct timespec *res)
-{
-       ret =3D syscall_clock_getres_time64(clockid, res);
-       if (ret !=3D -ENOSYS)
-              return ret;
-       return syscall_clock_getres_old(clockid, &ts_old);
-}
+39f4034693b7c7 Alexander Shishkin 2015-09-22  804  
+39f4034693b7c7 Alexander Shishkin 2015-09-22  805  static int intel_th_output_open(struct inode *inode, struct file *file)
+39f4034693b7c7 Alexander Shishkin 2015-09-22  806  {
+39f4034693b7c7 Alexander Shishkin 2015-09-22  807  	const struct file_operations *fops;
+39f4034693b7c7 Alexander Shishkin 2015-09-22  808  	struct intel_th_driver *thdrv;
+39f4034693b7c7 Alexander Shishkin 2015-09-22  809  	struct device *dev;
+39f4034693b7c7 Alexander Shishkin 2015-09-22  810  	int err;
+39f4034693b7c7 Alexander Shishkin 2015-09-22  811  
+4495dfdd6193d9 Suzuki K Poulose   2019-07-23  812  	dev = bus_find_device_by_devt(&intel_th_bus, inode->i_rdev);
+39f4034693b7c7 Alexander Shishkin 2015-09-22 @813  	if (!dev || !dev->driver)
+b54f5a424fbe0f Ma Ke              2025-11-11  814  		goto out_no_device;
+39f4034693b7c7 Alexander Shishkin 2015-09-22  815  
+39f4034693b7c7 Alexander Shishkin 2015-09-22  816  	thdrv = to_intel_th_driver(dev->driver);
+39f4034693b7c7 Alexander Shishkin 2015-09-22  817  	fops = fops_get(thdrv->fops);
+39f4034693b7c7 Alexander Shishkin 2015-09-22 @818  	if (!fops)
+b54f5a424fbe0f Ma Ke              2025-11-11  819  		goto out_put_device;
+39f4034693b7c7 Alexander Shishkin 2015-09-22  820  
+39f4034693b7c7 Alexander Shishkin 2015-09-22  821  	replace_fops(file, fops);
+39f4034693b7c7 Alexander Shishkin 2015-09-22  822  
+39f4034693b7c7 Alexander Shishkin 2015-09-22  823  	file->private_data = to_intel_th_device(dev);
+39f4034693b7c7 Alexander Shishkin 2015-09-22  824  
+39f4034693b7c7 Alexander Shishkin 2015-09-22  825  	if (file->f_op->open) {
+39f4034693b7c7 Alexander Shishkin 2015-09-22  826  		err = file->f_op->open(inode, file);
+b54f5a424fbe0f Ma Ke              2025-11-11  827  		if (err)
+b54f5a424fbe0f Ma Ke              2025-11-11  828  			goto out_put_device;
+39f4034693b7c7 Alexander Shishkin 2015-09-22  829  	}
+39f4034693b7c7 Alexander Shishkin 2015-09-22  830  
+39f4034693b7c7 Alexander Shishkin 2015-09-22  831  	return 0;
+b54f5a424fbe0f Ma Ke              2025-11-11  832  
+b54f5a424fbe0f Ma Ke              2025-11-11  833  out_put_device:
+b54f5a424fbe0f Ma Ke              2025-11-11  834  	put_device(dev);
+b54f5a424fbe0f Ma Ke              2025-11-11  835  out_no_device:
+b54f5a424fbe0f Ma Ke              2025-11-11 @836  	return err;
+39f4034693b7c7 Alexander Shishkin 2015-09-22  837  }
+39f4034693b7c7 Alexander Shishkin 2015-09-22  838  
 
-but the simpler check falling back to the 'old' version
-is probably sufficient.
-
-    Arnd
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
