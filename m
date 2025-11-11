@@ -1,152 +1,134 @@
-Return-Path: <linux-kernel+bounces-895108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E077EC4CF16
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:14:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6955BC4CF49
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:15:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2EE4E4FC403
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:08:56 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DAF2950081B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:09:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C6C3345CC1;
-	Tue, 11 Nov 2025 10:07:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCA9A3346B1;
+	Tue, 11 Nov 2025 10:09:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dR5JJLwf"
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="Z0/yYO81"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCE2433A032
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 10:07:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1F0A3074AA;
+	Tue, 11 Nov 2025 10:09:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762855622; cv=none; b=A5ctD7Fr83WfLAqFsHbviSz0Buc9+XvuDudlqSVcSP4rHa6+i3qFqAsBHfT8eKXhz5cZ2UY9pwr7ZdQRfcRDhq11sCKWg6tkb+jqAnONiiZXNO1KawEvG+wxVkIA+qOzGNUijB/So2ki4lMQ83rLdIoXEf1SOrlLz5RagXB682Q=
+	t=1762855783; cv=none; b=l80a8/Y4pN1KCHSw7EI4PfxSyvw0U9cyFx5XenzZVTrR8aXxVIq4J9UF9qI6T05bFWYmuruOiQjc4jAKIckXuf1LrBRxznA4Ur2ihJxjctckTch/Yq00voPPPKb+5zDHdDa30OkF1F5oUZZe0jnmQ5/rRSuvzyiZWnXXf2+1RdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762855622; c=relaxed/simple;
-	bh=D9DSXHRVJFLfhBvf9Xi+1f1QYXFfOuwhDhDl0ec9+ko=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UYLsVUgjuMNpLiJNOSwElTY/5Whh/jbEQsBmv3WsLJvHTa497jznRL6F02lvn1z6XeFw+C0BYioypBLXORnuXSW05giMTSAiH9RGMqzHfpQItruMqOcNgHAnx8ezRWmkA70NSX8+JlrcobBqUyWJurC3IGHGwSCp5y821sQlgiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dR5JJLwf; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-78665368a5cso37971157b3.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 02:07:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762855620; x=1763460420; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XmIn+rr47OIki868fF0YXvVBbJdq9zqT2ApwBKYAGgw=;
-        b=dR5JJLwf/PgJSENbgeRN1zMr67kFgnNJZIpIRiNy3X1u+G/zygXyqxfPtE4ncT4CFm
-         kQ9ezWp9mkM9UjPieYfUoarZZxf5IKqCpyMik4Tsd4njpok8G4D2hmbHejAatt7t1gJY
-         q2/vQ4aNFGe0B8OYtfLFKMx1Dml8H7D/UdPVnB0896e/x+ZOqc7zCa7l9qpnrTs+Lzfa
-         SsedkyPr875lcTGH8s8CwsCms2aU/NEwb0VEfpn2B6mJrKEk/osQFyOJgg9NFa1VtoRO
-         M4rsWfvP73xw4qWugDdL52PbHjvBC1bXfCvf2Ujes7Wl69wWpV7/NsRyNTtsqGqjqmai
-         72cA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762855620; x=1763460420;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=XmIn+rr47OIki868fF0YXvVBbJdq9zqT2ApwBKYAGgw=;
-        b=QPhXxzmYSLVWGO5pj8FKcilwwLLK7z3F6B31vRcjZk40L/Jg4mUVIKy4hqF75DnnK0
-         w3EplllRp6taDFh+7NP6MbI1uumMnqDlCiiFgSllF+xEvp+itILp5PLXYvdw2rPDw8Zh
-         AiZqnKEexmdN7jjiF2qzV+3n5x2l+V7mbPka9j3EJxnvXZKz06iZZSDD6hDLv61BMEOc
-         Ca7WquBmfB+AQs/gDaYl1uBejwnOL64OV8kW/en+5r649uR5uNsJMa/lbsjMrChU6Qzr
-         owbDV8aWV3LpgiaisJgB27T90JeAc9eTY4xYQNwfNdPL3gORDWVpdtoPIjQ6hnhpt2Ja
-         6Uag==
-X-Forwarded-Encrypted: i=1; AJvYcCXOIfgFnzzXh2LoGJR3ZEWnuOCpAAH13p3WOwEAxDFKUemgzHCRGqNUknVdVLWsCm/15KJUreQnW9zsPZE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YykyRk31Ehnoc/nY6FYevo+bfSpAwGqHhFdY9aNigV84HBC4Adw
-	fhu2wDXmeijXYDikXiQ35QCrlm1CwhW6x1KUDF3HVLlD9dmAEdxjGuDwCzQCyvv7G1IzdWfpHxG
-	aLYOzxT7Sua8g4lyAiCtiGGZfTXSmzTA=
-X-Gm-Gg: ASbGncuRE2NW5tV1JamUSjxK8afzqtoP8dbrExH1yYtUu4asdxYzgqNzGjkZAp4w6yZ
-	h62skrvSBvf5A3VlXaosrx6a1Rj1dQxB+koqj2ZxqVq5whfEq/bLTZYIFGAnw7gdkUhM075EfRG
-	a7Hk3l8QN9jDrB1Fa+wPEuYt9KFfN58jUImnUJpHtrSdAFcU4tAy6+/1N7JKw9lXIBgGgIk6v40
-	sdcAaSEvdukw3777ZHC8bU28xE3T2BasztHbuX/ajKCfWg8y2lssFcz/fE=
-X-Google-Smtp-Source: AGHT+IE5CdgYP4S6eVmoXO/ZsyBjFqfgRd/wYKtWoj1g+kp/Vi0+gR3ZGX/nKQXM51ALznSDaJ1HWFPt25Qweg0Vcgg=
-X-Received: by 2002:a05:690c:6ac9:b0:786:5be2:d460 with SMTP id
- 00721157ae682-787d5350cdamr108183427b3.1.1762855619827; Tue, 11 Nov 2025
- 02:06:59 -0800 (PST)
+	s=arc-20240116; t=1762855783; c=relaxed/simple;
+	bh=x9Skz4QboTPRNwi8Kr6vybv0DsEwdKJC0C+uVQ+zAgo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=meyW0gn4ki52h5Uq8UWPmy0cNJeGKYkIHJA7OFuF7+x3d4k6/6KTVtLGNDZGk/zxlSJqJX3MDC5Q2GJjFn68OOeH95GMFGfl4kF9Ed1dJmEF22JzGo/a3q8QmQ7l6ciesZO2gao61cOrXNFlUgfKghP2fQNoaq6lyk/se5bkBBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=Z0/yYO81; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 9147220945;
+	Tue, 11 Nov 2025 11:09:32 +0100 (CET)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id sYskvV9Tp9jo; Tue, 11 Nov 2025 11:09:31 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1762855771; bh=x9Skz4QboTPRNwi8Kr6vybv0DsEwdKJC0C+uVQ+zAgo=;
+	h=From:To:Cc:Subject:Date;
+	b=Z0/yYO81gPH91mCxLEOFgHyaLLJfKb3rKRmvgpMT/cgsZF2AdTJ4mCAu2SYQCZ2l8
+	 XGxJ7nzMezjoz671GZdkELdKEvkwUGsAISWI5NcDmhVyYRarzZ45YUNTRhH9qqxY8F
+	 mloHWoQWw6U5J/pNP40GJAVIQPzuk0tB2zJgFsFc+2Vzd2j8obk2Bnaa9rSPy9LmjV
+	 sPpCohlev+z06yX9HhTAAVViA481tY5CTyA/jrm8cVfJoZBQXnhe6vwfHhjB1JDwUI
+	 zrc29hDbgdL3q0ja5av/yHO5DO4taSL8V+HbtCM9RZEJUcAxM425Q6/gxMZju7KyXn
+	 qyrmJYp4BKMhA==
+From: Yao Zi <ziyao@disroot.org>
+To: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Yanteng Si <si.yanteng@linux.dev>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+	Philipp Stanner <phasta@kernel.org>,
+	Tiezhu Yang <yangtiezhu@loongson.cn>,
+	Qunqin Zhao <zhaoqunqin@loongson.cn>,
+	Yao Zi <ziyao@disroot.org>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	Furong Xu <0x1207@gmail.com>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+	Jacob Keller <jacob.e.keller@intel.com>
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next v4 0/3] Unify platform suspend/resume routines for PCI DWMAC glue
+Date: Tue, 11 Nov 2025 10:07:25 +0000
+Message-ID: <20251111100727.15560-2-ziyao@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251110214443.342103-1-jonas.gorski@gmail.com>
- <20251110214443.342103-4-jonas.gorski@gmail.com> <20251110222501.bghtbydtokuofwlr@skbuf>
-In-Reply-To: <20251110222501.bghtbydtokuofwlr@skbuf>
-From: Jonas Gorski <jonas.gorski@gmail.com>
-Date: Tue, 11 Nov 2025 11:06:48 +0100
-X-Gm-Features: AWmQ_bmSO1z1LVSBIAI4czPL30v972CtnbpO3gCqbxlnpZfY5KJuoptPPMAGhlw
-Message-ID: <CAOiHx=k8q7Zyr5CEJ_emKYLRV9SOXPjrrXYkUKs6=MbF_Autxw@mail.gmail.com>
-Subject: Re: [PATCH RFC net-next 3/3] net: dsa: deny 8021q uppers on vlan
- unaware bridged ports
-To: Vladimir Oltean <vladimir.oltean@nxp.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Nov 10, 2025 at 11:25=E2=80=AFPM Vladimir Oltean
-<vladimir.oltean@nxp.com> wrote:
->
-> On Mon, Nov 10, 2025 at 10:44:43PM +0100, Jonas Gorski wrote:
-> > Documentation/networking/switchdev.rst says:
-> >
-> > - with VLAN filtering turned off, the bridge will process all ingress
-> >   traffic for the port, except for the traffic tagged with a VLAN ID
-> >   destined for a VLAN upper.
-> >
-> > But there is currently no way to configure this in dsa. The vlan upper
-> > will trigger a vlan add to the driver, but it is the same message as a
-> > newly configured bridge VLAN.
->
-> hmm, not necessarily. vlan_vid_add() will only go through with
-> vlan_add_rx_filter_info() -> dev->netdev_ops->ndo_vlan_rx_add_vid()
-> if the device is vlan_hw_filter_capable().
->
-> And that's the key, DSA user ports only(*) become vlan_hw_filter_capable(=
-)
-> when under a VLAN _aware_ bridge. (*)actually here is the exception
-> you're probably hitting: due to the ds->vlan_filtering_is_global quirk,
-> unrelated ports become vlan_hw_filter_capable() too, not just the ones
-> under the VLAN-aware bridge. This is possibly what you're seeing and the
-> reason for the incorrect conclusion that VLAN-unaware bridge ports have
-> the behaviour you mention.
+There are currently three PCI-based DWMAC glue drivers in tree,
+stmmac_pci.c, dwmac-intel.c, and dwmac-loongson.c. Both stmmac_pci.c and
+dwmac-intel.c implements the same and duplicated platform suspend/resume
+routines.
 
-Ah, right, no call at all.
+This series introduces a new PCI helper library, stmmac_libpci.c,
+providing a pair of helpers, stmmac_pci_plat_{suspend,resume}, and
+replaces the driver-specific implementation with the helpers to reduce
+code duplication. The helper will also simplify the Motorcomm DWMAC glue
+driver which I'm working on.
 
-But this is about a bridge with VLAN filtering disabled, so filtering
-isn't enabled on any port, so ds->vlan_filtering_is_global does not
-matter.
+The glue driver for Intel controllers isn't covered by the series, since
+its suspend routine doesn't call pci_disable_device() and thus is a
+little different from the new generic helpers.
 
-See my examples in my reply to 0/3, which hopefully clarify what I am
-trying to prevent here.
+I only have Loongson hardware on hand, thus the series is only tested on
+Loongson 3A5000 machine. I could confirm the controller works after
+resume, and WoL works as expected. This shouldn't break stmmac_pci.c,
+either, since the new helpers have the exactly same code as the old
+driver-specific suspend/resume hooks.
 
-> > Therefore traffic tagged with the VID will continue to be forwarded to
-> > other ports, and therefore we cannot support VLAN uppers on ports of a
-> > VLAN unaware bridges.
->
-> Incorrect premise =3D> incorrect conclusion.
-> (not to say that an uncaught problem isn't there for ds->vlan_filtering_i=
-s_global
-> switches, but this isn't it)
+Changed from v3
+- Drop (now) redundant Kconfig depends for DWMAC_LOONGSON and STMMAC_PCI
+- Collect review tags
+- Link to v3: https://lore.kernel.org/netdev/20251104151647.3125-1-ziyao@disroot.org/
 
-This should happen regardless of vlan filtering is global.
+Changed from v2
+- Drop unnecessary "depends on STMMAC_ETH" from STMMAC_LIBPCI
+- Enclose DWMAC_LOONGSON and STMMAC_PCI within "if STMMAC_LIBPCI",
+  instead of depends on the option.
+- Link to v2: https://lore.kernel.org/netdev/20251030041916.19905-1-ziyao@disroot.org/
 
-But I noticed while testing that apparently b53 in filtering=3D0 mode
-does not forward any tagged traffic (and I think I know why ...).
+Changed from v1
+- Separate the new suspend/resume helpers into a new file,
+  stmmac_libpci.c, and provide Kconfig symbol for it
+- Link to v1: https://lore.kernel.org/netdev/20251028154332.59118-1-ziyao@disroot.org/
 
-Is there a way to ask for a replay of the fdb (static) entries? To fix
-this for older switches, we need to disable 802.1q mode, but this also
-switches the ARL from IVL to SVL, which changes the hashing, and would
-break any existing entries. So we need to flush the ARL before
-toggling 802.1q mode, and then reprogram any static entries.
+Yao Zi (3):
+  net: stmmac: Add generic suspend/resume helper for PCI-based
+    controllers
+  net: stmmac: loongson: Use generic PCI suspend/resume routines
+  net: stmmac: pci: Use generic PCI suspend/resume routines
 
-Best regards,
-Jonas
+ drivers/net/ethernet/stmicro/stmmac/Kconfig   | 16 ++++++-
+ drivers/net/ethernet/stmicro/stmmac/Makefile  |  1 +
+ .../ethernet/stmicro/stmmac/dwmac-loongson.c  | 36 ++------------
+ .../ethernet/stmicro/stmmac/stmmac_libpci.c   | 48 +++++++++++++++++++
+ .../ethernet/stmicro/stmmac/stmmac_libpci.h   | 12 +++++
+ .../net/ethernet/stmicro/stmmac/stmmac_pci.c  | 36 ++------------
+ 6 files changed, 81 insertions(+), 68 deletions(-)
+ create mode 100644 drivers/net/ethernet/stmicro/stmmac/stmmac_libpci.c
+ create mode 100644 drivers/net/ethernet/stmicro/stmmac/stmmac_libpci.h
+
+-- 
+2.51.2
+
 
