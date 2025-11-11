@@ -1,190 +1,195 @@
-Return-Path: <linux-kernel+bounces-894820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9A36C4C28E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 08:48:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D39EFC4C295
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 08:49:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35EFC3AB583
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 07:48:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16CD03B9BD7
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 07:48:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BC7226ED36;
-	Tue, 11 Nov 2025 07:48:38 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42888223DEC;
+	Tue, 11 Nov 2025 07:48:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b="S/g6l9WG"
+Received: from PH0PR06CU001.outbound.protection.outlook.com (mail-westus3azon11011053.outbound.protection.outlook.com [40.107.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 482121D79BE;
-	Tue, 11 Nov 2025 07:48:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762847317; cv=none; b=iymo3I/UIAFNgXpc9unfUVzLn6hN41U+JN8043LBcykeOPJkyg9aX0g4z+vHHZZDLJhKl4mDNSrSNlnAzLlNP636yYxxJZqjLWoVlYuHOWW//KGnTOKV686I2t0yO3wBC6dV1c1KFya3s+ZYX89socLqE62yTCH6YuZBVw6HoTY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762847317; c=relaxed/simple;
-	bh=kxVONHuGjjteovUBxV3HVIeM3I5L7gMnD9QPcae3xTI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UKAzHzaCaY9jHMMhbM+t0iQAGROgj2a5tukh426TMwbWuGBhDrzyd7qdUM5EwefnASTL17/pzl1EA0Zbyufuec/eKgjQKfnYDVB+Vlj+0H0Nc3xikOUAI1DCqN3sE02/Mo5QjT0cqy+yLT0S0b9nyIsIzCDO40/ixlPKC4LYan4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 3DEC9227A87; Tue, 11 Nov 2025 08:48:29 +0100 (CET)
-Date: Tue, 11 Nov 2025 08:48:28 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: kernel test robot <oliver.sang@intel.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christoph Lameter <cl@gentwo.org>,
-	David Rientjes <rientjes@google.com>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Harry Yoo <harry.yoo@oracle.com>, linux-mm@kvack.org,
-	oe-lkp@lists.linux.dev, lkp@intel.com, Jens Axboe <axboe@kernel.dk>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Johannes Thumshirn <johannes.thumshirn@wdc.com>,
-	Anuj Gupta <anuj20.g@samsung.com>,
-	Kanchan Joshi <joshi.k@samsung.com>, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: poison_element vs highmem, was Re: [linux-next:master] [block]
- ec7f31b2a2: BUG:unable_to_handle_page_fault_for_address
-Message-ID: <20251111074828.GA6596@lst.de>
-References: <202511111411.9ebfa1ba-lkp@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C2681D79BE;
+	Tue, 11 Nov 2025 07:48:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.208.53
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762847326; cv=fail; b=qgQsbBlmnGq7QzN1TLgqDpUCA1TJw4t4diFF2Hv8t0nCpdUg/ZmiAVaiKBSrRGIwPZbEMOqrbGknKngSLg+4mNTYp2cZOnSkYu8n0FrLmqAjsCknlbb0v6jGSo1xjgJ1zCgu/dNH+6zULA2IaTxdD/WzJOM66Jz0M6h+86h8MPk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762847326; c=relaxed/simple;
+	bh=52W3bfoZxd7ScFmbDzXNGLMwRdsbOud0EpMTaLlRnRA=;
+	h=From:To:Subject:Date:Message-ID:Content-Type:MIME-Version; b=iolwI2YipyI36/L0iKdaxCMxfEb9EgK2ap4XbrsW7BXDwnGP5wyFi1vKWEoO373by2b92DFVltxgE4/z6dlMomNYhgvgOV/ZjhzQhfweI6v4I4gjLJLAIcK+H/2MdAyYfLbsoDFzu5oca9HTfNgeEn1wv91M7ZBVlg0Y6DSaixY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com; spf=pass smtp.mailfrom=altera.com; dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b=S/g6l9WG; arc=fail smtp.client-ip=40.107.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altera.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=fNaWUGH1CGKxPHrdlZLL9Tbxf2QYXNRPO3B0sDtuS/LS10Djn0XIwn/ffsCyXKEzNVefExMLfvaFhWjb2a5uaiDpcooAJBE8Gf1PRjZPHN8mlvZvCpeXVDrQMti3SOLZ1FflwU6x/JGdtFKHCpdmbJKZNZAgaWcinvZEx2Bc/VnAZhjuFw0cv/Oq/15ibb1Xtc8EovexL2vG06URVVrdm4bp1MUuZMOmEZQYJShTKtyxgk33AP35016YUT1QQXuRUVWiBDQS2+w6eSTC8tM7RZV7GovNcm5DQpb/5tF5LlZ8CPf+r78dZ58qUN3cacLD4D5q269MoFi/bVc8Ry8cQg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vvxszyie9Iifbjgfi/WiuZbcl8KZjpU8Iluxhbvh1zw=;
+ b=Ly76kTw47j/ZT1HlHcIigfdnETDyFQtXTCMXBzWOY9wSea/pf6N00+WArtA/a2nT9x5AKF4ZsL8PUnIXRM6mAvhcFq7oiqJ1KTNzcCkcBCoVyBVHhs3ttrBWleuTxSzmKHt6Z/FRWpFzZhAy0iFdYhSaOfGq99GrPTUe5PNHNgW2SzAiAk4yHVGIbLbs8A/7wheeud9mosugL8baTMz9SEfRu1zNKY7xqGfOoFocDGKp4/zqFan1oNvZE4tHGsD+z+MKOttSpDpFPRP/DTpswFgp0bhXZxkj3yMyoU11FIJOdnF5w4gS8pqA5VUZW+c0A1MmWZsOlpQO84WTS2LYCQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=altera.com; dmarc=pass action=none header.from=altera.com;
+ dkim=pass header.d=altera.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=altera.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vvxszyie9Iifbjgfi/WiuZbcl8KZjpU8Iluxhbvh1zw=;
+ b=S/g6l9WGhvMziPKsgRJHiq1rqITezNiILYHQtldpjsHFdck1ZJwGo8H4OROgS3A1k5JUVXlmqfUhSoMoXRZopQhIaKKw1s2Ezy8yseLZ69QZDITNVBm70m+ohIMgD0CsPdXAcL3lkEhQbLesyOWAwOHn6NcFDv+twUgIdYaqBaKvzIpM6OvkFQzA+hppHVQBuo1fvAj92NbVB+/8RdavcKdSBtU9NO+SNoIV5Hzc/M4YKxXityZYsIK4NwXtp45Yf16Me5RixNRVmvLiLV09b0e2Hm08P8zKPKHpg8WC6HY7vNU6dKZr/zYmLfqjV/bm5kjWWV5UQk8Z36HRYRckvQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=altera.com;
+Received: from MN2PR03MB4927.namprd03.prod.outlook.com (2603:10b6:208:1a8::8)
+ by CY1PR03MB8124.namprd03.prod.outlook.com (2603:10b6:930:105::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Tue, 11 Nov
+ 2025 07:48:41 +0000
+Received: from MN2PR03MB4927.namprd03.prod.outlook.com
+ ([fe80::bfcb:80f5:254c:c419]) by MN2PR03MB4927.namprd03.prod.outlook.com
+ ([fe80::bfcb:80f5:254c:c419%5]) with mapi id 15.20.9298.012; Tue, 11 Nov 2025
+ 07:48:41 +0000
+From: Khairul Anuar Romli <khairul.anuar.romli@altera.com>
+To: Moritz Fischer <mdf@kernel.org>,
+	Xu Yilun <yilun.xu@intel.com>,
+	Tom Rix <trix@redhat.com>,
+	Dinh Nguyen <dinguyen@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Mahesh Rao <mahesh.rao@altera.com>,
+	Ho Yin <adrian.ho.yin.ng@altera.com>,
+	Niravkumar L Rabara <nirav.rabara@altera.com>,
+	linux-fpga@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Khairul Anuar Romli <khairul.anuar.romli@altera.com>
+Subject: [PATCH 0/3] Enable FPGA Manager support for Agilex5
+Date: Tue, 11 Nov 2025 15:48:30 +0800
+Message-ID: <cover.1762843803.git.khairul.anuar.romli@altera.com>
+X-Mailer: git-send-email 2.43.7
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BYAPR06CA0051.namprd06.prod.outlook.com
+ (2603:10b6:a03:14b::28) To MN2PR03MB4927.namprd03.prod.outlook.com
+ (2603:10b6:208:1a8::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202511111411.9ebfa1ba-lkp@intel.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN2PR03MB4927:EE_|CY1PR03MB8124:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4551b9a4-3158-44a2-eb22-08de20f6bb1a
+X-MS-Exchange-AtpMessageProperties: SA
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|376014|7416014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?sawh7Zwve3o8sUg/cywwSLhVuHjnXdZ05IXTfZy5nLXQcmZguNC3MvUGEeGi?=
+ =?us-ascii?Q?sjFMKhTD0k9tqRXMYtjoWIWWSSshme3rt2QSS/3eYbefudmNAU1XbaYs81dD?=
+ =?us-ascii?Q?XEfx3RTBnMTU+85O6W/jnoJ0dOsppeHKWFPxtAjsrekJNYL9sm7KVwtXLlpY?=
+ =?us-ascii?Q?i2u0ZEwawSDmowJnaRzvMQ3QaSQ+Ym2/3vQoU3ByF+P+tqx/tPGbTc6C43Ua?=
+ =?us-ascii?Q?QvPLfPJMJlz0IIjPxv8oZ3NhIa4buYv1DZ5x86obVJ48TqSGAxhV8KRBTeFo?=
+ =?us-ascii?Q?2UHMZoc3w7x61hf0aems2PE1H54vDoKifSXaWO+jYh4b+S8J0PGpKB8WX6qU?=
+ =?us-ascii?Q?Cky1kjzfS5MrDyoX17twA/+2Cz27Qewl9FG+HOpCEvhbu2v+RW/KGNYHPz7e?=
+ =?us-ascii?Q?ITz5yoNw27XpfnTEWZAtOjDN5Ju1Kn237pgEe/fF90+I5jb+9vsuC5uC0SB3?=
+ =?us-ascii?Q?Xfn0H5ES3JRf52UsM0lbFI3OuX7LP5F+/9C6n2EHHybHjVrXg9oEZJiZtPlc?=
+ =?us-ascii?Q?J8FuXgfIoKOZB1BFfinq/7YhxbOrqcAJJACpHpwqVGeJVd4s013KPG+xuH6I?=
+ =?us-ascii?Q?BsSY4UszkExWJTKq+l3OpkKD7JhQd5zbD1qP4gxVl3sN2ZA13zAVcOHpSTZS?=
+ =?us-ascii?Q?CffBYeWMM1jcrygC0qejUN8Zrfpx9/FEJbNbtyjwA/u+6xbqaWqR92aOxbmT?=
+ =?us-ascii?Q?NW3C19jKlHUvGLPwCFSVxmSE6XE6ow3Yreylfq1NR23t6E570VxO2NsE/fxb?=
+ =?us-ascii?Q?IdyJclwY17wkiBuTdcT38Fc27OZ4w4zPnj5JMvi9jNGXWpXY+Bb369tEwyCf?=
+ =?us-ascii?Q?mrGRsrO0GXiX+vID7R2sm0vgoCz+iIzp6CXZbZGB6nLHn78b8mZDGsIvuXZ+?=
+ =?us-ascii?Q?AMyzhFBleWPqtnJkLdo/j2nZQ0Fsi53X7JGy9Gm750JVGDqB+qVaJiceCtIG?=
+ =?us-ascii?Q?lG/KRBk511l9rwRXpPtdgjUsHcT+kaurZzBDe/DxwmvRO5GrtT4glzwQod6f?=
+ =?us-ascii?Q?DpEtSMrmYXjIrwWVTIUiPcE/qCjQ33uCNIRyu5vqwS/6DFI0QEQH9HvQ+A6R?=
+ =?us-ascii?Q?kfnTw2T1YzJK49np0aEHuFewg2eJLOpe4Efwwx3mzM9TetQvk9QRM2kio33/?=
+ =?us-ascii?Q?DbVZIIiXmA2F9dLAL9boED/ub/uF15YKw3ExWpFLoUDGivnoDq/Kdj/h3wdM?=
+ =?us-ascii?Q?Y0fjT/uDIFOcanMO4gRLBOvDBj6Ry1Mrb1MX5I3nLzkUg8biiLUWsWeDK0lz?=
+ =?us-ascii?Q?mAHl/d4DbGPUJOsSdZf1klEj0BopxTAZbpnISxpYdDDLKiOauvJJ79ii+knZ?=
+ =?us-ascii?Q?V8G+QW8J/D/Jw2hhYTKYeMpP/KOHk4TJAM56yUu51ymg2atdwKjIAtC0miu6?=
+ =?us-ascii?Q?NmTQPIpRCbb41XCc5FDgvthwigTDAKQyy3cBOfnYAB5YSvDSHrcfHSDz7gkT?=
+ =?us-ascii?Q?KiDFUwAMjM5kwHwgyG46rRj3iBupcVedJp4r0YSicgo21H/zTA/WqGn8r0yb?=
+ =?us-ascii?Q?UAL0I943bBu90/rA8q8rcN3/l6UjSr9L4tIf?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR03MB4927.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?IZepB/byLK+GSu4KpZsEaie79SbyFlpCbM/MjW7jUiCw+XJP3izK3CeypPwb?=
+ =?us-ascii?Q?U5FV8/EGmnlKqqurnXFe3F31kBVdozeDJ4l8pl8M/by3EEXU4rmy9RrbpuD4?=
+ =?us-ascii?Q?I15SJN3VAblEMMa4a6AgjZnpp5wVgTZjiFk1czjfR/7PRjfWRq1EABpd8feJ?=
+ =?us-ascii?Q?4oTSY4MVqgyvnEwYJeE1J+ZEpmciW0VnsfEGAJnddWVek58Bga6TUd7hnehx?=
+ =?us-ascii?Q?DaS2BGR1CZP/HSqpUj+s0CD0uUt4lPtiBJV7HybfAgubDbPu2JnoPAxYN+8d?=
+ =?us-ascii?Q?vme8sALIf0BaDNKSP9f6mS04OijOQJ+QCIQyGXKa2fpHIThDdWnxbsfpRWxk?=
+ =?us-ascii?Q?OBlDwHT393qRFlAB4SNt6hUkIM/Kx/YP4NjKdBH2ISZ1btvIhVqrRJ9RjG0f?=
+ =?us-ascii?Q?HrqN/ss0PlV4fbB/d4qLRYkT7zSuEj7ddUVg0uL4Wnp0IJ/fJT7acDVvKbA8?=
+ =?us-ascii?Q?ASzIrkrIDSLs+It4PBr1j2nWH2aJFR/7mvSAQPXicDTl4nF6CceYlZBoUt6Q?=
+ =?us-ascii?Q?evcPj2syr0YJjIumL0/MtseqmlKozi7Mt+0abCIZrFeRy7rIV8nIUB9/WXoA?=
+ =?us-ascii?Q?QCpInSOsCGCoDczYMfHbwq19JbLdA35wJtRQLgAt9Y0FNNPUHOEJ9fFIXpEF?=
+ =?us-ascii?Q?sNs8XTo3pHlC5u+WfB4LVbPxfG71ozQ8i3CNOC1pPKhis1OKusPmUjd4AoeJ?=
+ =?us-ascii?Q?vHSCVnfAUTpl124a7PM/2h79Iw2UCJQiJwgp9nBfXmPE9eWx0WhTyldLAdp+?=
+ =?us-ascii?Q?GmW2IUvT48bBtdw8SFBt61GzbYsJyL9gDsa25HNoFzqewKqsZ5qy4MCtZinl?=
+ =?us-ascii?Q?kL6gUxh3oEcIb+L4x2dKbX6rplczLF75nE3BHDS3/Ddl2JTADnPyEenYyRdn?=
+ =?us-ascii?Q?gtA7QNxjgeGMqr+KjVLlCbUDuB7rYMXnZ/+3lrG5BfQh1rYaRNzc4Dx7mhJT?=
+ =?us-ascii?Q?BWnx1+n8whB9T0usj1my4oTKT1bEjCgUgR6ntpLzXLCjCC3G1G8d4AO3ANHh?=
+ =?us-ascii?Q?bSzAOAwfBI9Sy00P0AxVtgGFTg+AUs8eWHkoNJ5KjOVR03ytBHcTrbVu/Se8?=
+ =?us-ascii?Q?BG0w+kpx1qg0G7qJ8WSVgIAsuUvuZFMo0e1n3q9JtrCj/VuB9Sbk22Lx3BkK?=
+ =?us-ascii?Q?Cit+wOdKDuws9KlRSPYY/RQ0CiJaPp1LtSCb2XPcNRWHAIG9bmr01E2yyPQQ?=
+ =?us-ascii?Q?2segW0/KXIg5T3JxmBZ7zLH0s8ALPHGbpqabwua9lTRHkRSgk8yxV+7QJ0FA?=
+ =?us-ascii?Q?nrtlYD7Gb1jPjvt9ZQTcZ5ZaFarMhTghdu7GfVL8/kXYhB7GW1lSHIYKyguE?=
+ =?us-ascii?Q?GQKydiLV+wBmP5krgMFn7Ty0DSldF22ritzA4bemWUiNSWvDrLe+14fvtvr6?=
+ =?us-ascii?Q?O8/bBpU3x6Tb2E/lEfYscWCxhKw37J9cuhjEivrnRgpcJtCTpmRJgqLDTgTT?=
+ =?us-ascii?Q?O95K2olM/9dx0ZkDZNXO4OQ4kCiuVPvNnQMEATlzsR2DoZlTkzjUb7AoYcuQ?=
+ =?us-ascii?Q?HBjbCYMUs4NGn1GO8GzvRWSEvv2bJvqTcWCRfWY8QoZSJrgkxR+grRyzlvr4?=
+ =?us-ascii?Q?Qjfxf2zHfVkaFZlCno6hEm1zuXuZqrsIehmFrkNjB9tJ2/f6XZF+c1VhiKOs?=
+ =?us-ascii?Q?og=3D=3D?=
+X-OriginatorOrg: altera.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4551b9a4-3158-44a2-eb22-08de20f6bb1a
+X-MS-Exchange-CrossTenant-AuthSource: MN2PR03MB4927.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Nov 2025 07:48:41.1467
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: fbd72e03-d4a5-4110-adce-614d51f2077a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: C+WPmw+ARPeFw8jx/kK143mtZGbwt3ZqPW/vG6KD+BLqBMCJcRvgMYrfn9RTrydtKEY0EjD2+Jza3k8KC01XnCL/GoyFA+ih4JpD6hpK7mg=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR03MB8124
 
-Looks like this is due to the code in poison_element, which tries
-to memset more than PAGE_SIZE for a single page.  This probably
-implies we are the first users of the mempool page helpers for order > 0,
-or at least the first one tested by anyone on 32-bit with highmem :)
+This patch series adds device tree bindings, driver support, and DTS
+updates to enable FPGA Manager functionality for Intel Agilex5 SoC.
 
-That code seems to come from
+These changes are intended to enable FPGA programming and management
+capabilities on Agilex5-based platforms.
 
-commit bdfedb76f4f5aa5e37380e3b71adee4a39f30fc6
-Author: David Rientjes <rientjes@google.com>
-Date:   Wed Apr 15 16:14:17 2015 -0700
+---
+Notes:
+Patch #3 depends on  "arm64: dts: intel: Add Agilex5 SVC node with memory
+region" from
+https://lore.kernel.org/all/3381ef56c1ff34a0b54cf76010889b5523ead825.1762387665.git.khairul.anuar.romli@altera.com/
 
-    mm, mempool: poison elements backed by slab allocator
+This patch series is applied on socfpga maintainer's tree
+https://git.kernel.org/pub/scm/linux/kernel/git/dinguyen/linux.git/log/?h=socfpga_dts_for_v6.19
+---
+Khairul Anuar Romli (3):
+  dt-bindings: fpga: stratix10: add support for Agilex5
+  fpga: stratix10-soc: Add support for Agilex5
+  arm64: dts: agilex5: add fpga-region and fpga-mgr nodes
 
-originally.  The easiest fix would be to just skip poisoning for this
-case, although that would reduce the usefulness of the poisoning.
+ .../bindings/fpga/intel,stratix10-soc-fpga-mgr.yaml   |  1 +
+ arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi        | 11 +++++++++++
+ drivers/fpga/stratix10-soc.c                          |  1 +
+ 3 files changed, 13 insertions(+)
 
-On Tue, Nov 11, 2025 at 02:23:39PM +0800, kernel test robot wrote:
-> 
-> 
-> Hello,
-> 
-> kernel test robot noticed "BUG:unable_to_handle_page_fault_for_address" on:
-> 
-> commit: ec7f31b2a2d3bf6b9e4d4b8cd156587f1d0607d5 ("block: make bio auto-integrity deadlock safe")
-> https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
-> 
-> [test failed on linux-next/master 9c0826a5d9aa4d52206dd89976858457a2a8a7ed]
-> 
-> in testcase: boot
-> 
-> config: i386-randconfig-016-20251107
-> compiler: clang-20
-> test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 32G
-> [    1.772326][    T1] Call Trace:
-> [    1.772326][    T1]  poison_element (mm/mempool.c:83 mm/mempool.c:102)
-> [    1.772326][    T1]  mempool_init_node (mm/mempool.c:142 mm/mempool.c:226)
-> [    1.772326][    T1]  mempool_init_noprof (mm/mempool.c:250 (discriminator 1))
-> [    1.772326][    T1]  ? mempool_alloc_pages (mm/mempool.c:640)
-> [    1.772326][    T1]  bio_integrity_initfn (block/bio-integrity.c:483 (discriminator 8))
-> [    1.772326][    T1]  ? mempool_alloc_pages (mm/mempool.c:640)
-> [    1.772326][    T1]  do_one_initcall (init/main.c:1283)
-> [    1.772326][    T1]  ? kvm_sched_clock_read (arch/x86/kernel/kvmclock.c:91)
-> [    1.772326][    T1]  ? sched_clock_noinstr (arch/x86/kernel/tsc.c:271)
-> [    1.772326][    T1]  ? local_clock_noinstr (kernel/sched/clock.c:272 kernel/sched/clock.c:309)
-> [    1.772326][    T1]  ? __lock_acquire (kernel/locking/lockdep.c:4674 kernel/locking/lockdep.c:5191)
-> [    1.772326][    T1]  ? kvm_sched_clock_read (arch/x86/kernel/kvmclock.c:91)
-> [    1.772326][    T1]  ? sched_clock_noinstr (arch/x86/kernel/tsc.c:271)
-> [    1.772326][    T1]  ? local_clock_noinstr (kernel/sched/clock.c:272 kernel/sched/clock.c:309)
-> [    1.772326][    T1]  ? local_clock (arch/x86/include/asm/preempt.h:85 (discriminator 9) kernel/sched/clock.c:319 (discriminator 9))
-> [    1.772326][    T1]  ? lock_release (kernel/locking/lockdep.c:353 kernel/locking/lockdep.c:5542 kernel/locking/lockdep.c:5889)
-> [    1.772326][    T1]  ? clockevents_program_event (kernel/time/clockevents.c:?)
-> [    1.772326][    T1]  ? ktime_get (include/linux/seqlock.h:391 (discriminator 3) include/linux/seqlock.h:411 (discriminator 3) kernel/time/timekeeping.c:828 (discriminator 3))
-> [    1.772326][    T1]  ? sched_balance_trigger (kernel/sched/fair.c:?)
-> [    1.772326][    T1]  ? run_posix_cpu_timers (include/linux/sched/deadline.h:15 include/linux/sched/deadline.h:24 kernel/time/posix-cpu-timers.c:1123 kernel/time/posix-cpu-timers.c:1428)
-> [    1.772326][    T1]  ? clockevents_program_event (kernel/time/clockevents.c:336)
-> [    1.772326][    T1]  ? update_process_times (kernel/time/timer.c:2481)
-> [    1.772326][    T1]  ? tick_handle_periodic (kernel/time/tick-common.c:120)
-> [    1.772326][    T1]  ? vmware_sched_clock (arch/x86/kernel/apic/apic.c:1052)
-> [    1.772326][    T1]  ? trace_hardirqs_on (kernel/trace/trace_preemptirq.c:80)
-> [    1.772326][    T1]  ? irqentry_exit (kernel/entry/common.c:224 (discriminator 32768))
-> [    1.772326][    T1]  ? sysvec_apic_timer_interrupt (arch/x86/kernel/apic/apic.c:1052 (discriminator 6))
-> [    1.772326][    T1]  ? handle_exception (arch/x86/entry/entry_32.S:1055)
-> [    1.772326][    T1]  ? netdev_bits (lib/vsprintf.c:650 lib/vsprintf.c:695 lib/vsprintf.c:721 lib/vsprintf.c:1787)
-> [    1.772326][    T1]  ? strlen (arch/x86/lib/string_32.c:167)
-> [    1.772326][    T1]  ? next_arg (lib/cmdline.c:273)
-> [    1.772326][    T1]  ? parameq (kernel/params.c:90 (discriminator 1) kernel/params.c:99 (discriminator 1))
-> [    1.772326][    T1]  ? deadline_init (block/bio-integrity.c:482)
-> [    1.772326][    T1]  do_initcall_level (init/main.c:1344 (discriminator 6))
-> [    1.772326][    T1]  do_initcalls (init/main.c:1358 (discriminator 2))
-> [    1.772326][    T1]  do_basic_setup (init/main.c:1381)
-> [    1.772326][    T1]  kernel_init_freeable (init/main.c:1597)
-> [    1.772326][    T1]  ? rest_init (init/main.c:1475)
-> [    1.772326][    T1]  kernel_init (init/main.c:1485)
-> [    1.772326][    T1]  ret_from_fork (arch/x86/kernel/process.c:164)
-> [    1.772326][    T1]  ? rest_init (init/main.c:1475)
-> [    1.772326][    T1]  ret_from_fork_asm (arch/x86/entry/entry_32.S:737)
-> [    1.772326][    T1]  entry_INT80_32 (arch/x86/entry/entry_32.S:945)
-> [    1.772326][    T1] Modules linked in:
-> [    1.772326][    T1] CR2: 00000000fffba000
-> [    1.772326][    T1] ---[ end trace 0000000000000000 ]---
-> [    1.772326][    T1] EIP: memset (arch/x86/include/asm/string_32.h:168 arch/x86/lib/memcpy_32.c:17)
-> [    1.772326][    T1] Code: a5 8b 4d f4 83 e1 03 74 02 f3 a4 83 c4 04 5e 5f 5d 2e e9 73 41 01 00 90 90 90 3e 8d 74 26 00 55 89 e5 57 56 89 c6 89 d0 89 f7 <f3> aa 89 f0 5e 5f 5d 2e e9 53 41 01 00 cc cc cc 55 89 e5 53 57 56
-> All code
-> ========
->    0:	a5                   	movsl  %ds:(%rsi),%es:(%rdi)
->    1:	8b 4d f4             	mov    -0xc(%rbp),%ecx
->    4:	83 e1 03             	and    $0x3,%ecx
->    7:	74 02                	je     0xb
->    9:	f3 a4                	rep movsb %ds:(%rsi),%es:(%rdi)
->    b:	83 c4 04             	add    $0x4,%esp
->    e:	5e                   	pop    %rsi
->    f:	5f                   	pop    %rdi
->   10:	5d                   	pop    %rbp
->   11:	2e e9 73 41 01 00    	cs jmp 0x1418a
->   17:	90                   	nop
->   18:	90                   	nop
->   19:	90                   	nop
->   1a:	3e 8d 74 26 00       	ds lea 0x0(%rsi,%riz,1),%esi
->   1f:	55                   	push   %rbp
->   20:	89 e5                	mov    %esp,%ebp
->   22:	57                   	push   %rdi
->   23:	56                   	push   %rsi
->   24:	89 c6                	mov    %eax,%esi
->   26:	89 d0                	mov    %edx,%eax
->   28:	89 f7                	mov    %esi,%edi
->   2a:*	f3 aa                	rep stos %al,%es:(%rdi)		<-- trapping instruction
->   2c:	89 f0                	mov    %esi,%eax
->   2e:	5e                   	pop    %rsi
->   2f:	5f                   	pop    %rdi
->   30:	5d                   	pop    %rbp
->   31:	2e e9 53 41 01 00    	cs jmp 0x1418a
->   37:	cc                   	int3
->   38:	cc                   	int3
->   39:	cc                   	int3
->   3a:	55                   	push   %rbp
->   3b:	89 e5                	mov    %esp,%ebp
-> 
-> 
-> The kernel config and materials to reproduce are available at:
-> https://download.01.org/0day-ci/archive/20251111/202511111411.9ebfa1ba-lkp@intel.com
-> 
-> 
-> 
-> -- 
-> 0-DAY CI Kernel Test Service
-> https://github.com/intel/lkp-tests/wiki
----end quoted text---
+-- 
+2.43.7
+
 
