@@ -1,130 +1,99 @@
-Return-Path: <linux-kernel+bounces-895466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08509C4E04A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:06:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A90C4C4E161
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:20:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 22F594EDF02
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:03:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 842DC189620F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:20:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52580324703;
-	Tue, 11 Nov 2025 13:03:06 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78561324701;
+	Tue, 11 Nov 2025 13:20:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l43RlZgC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33B333246F0
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 13:03:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C88EF331A75;
+	Tue, 11 Nov 2025 13:20:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762866185; cv=none; b=W/G7oMXMtZdoo2cwDbFa7sntpgo0JdNA/kgW/lAEWHg/OGffhlbdw3FqZHvTIjj8gALJRh6JTAflNKPVGcfGec2eMLT0kqWMpJhavzZAFxfmUvDV/tCmh2lmnm6r+mykxZy8irvvMDFa6Zi2e1sbaCkzdMqXQ38tunhCV2qIADU=
+	t=1762867212; cv=none; b=IiRn0QLusbPYHJE0aakBofIIsgB1asMvSVHQK4mw9OcCzvQuoM4I8t6K4nDE73WyhbdgylfkFgH6Llx3L5SsikCOp1qI7++PANKvlFrCxlGqXXgSTMi2GZOkgfyIEYZU3IH2cj5J/s5HnipX1XTpWjlb7yZQv/KSCfRIrn8594A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762866185; c=relaxed/simple;
-	bh=Vt1k5EQoPqh3Nrp0Bhb6ewVSEmyuqnxy7cXy4xH/yLA=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=DAfOAwtvXe15f5YBJdAft5DPw+sG7erU2AxiE6OFMNwn9CRN3ZT8dg0j9dnGxeXGShl1Iypg6Olw06F1O7VnN7xi1dqCKaCvLH41CKujJm5PxCo5htnzPx1fKjfMAg3Ok/SJAqEo3cFvbDYCT6I1YIoTwbcapCmq2NekH12zSHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-43329b607e0so60367275ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 05:03:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762866183; x=1763470983;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CGB/TAKZOcKtrhPxjpEL/9Rt1n53HiPGQxYzu5TTEyA=;
-        b=ZM999ttlpzFxnR/Q+vYFmULiGWTrbLkdDWZa9zCAb04d/33vKdxZiprRBKi9TIBhpQ
-         Zq+naQxE1eFxZ3JU0fzT8eiiaKRQ4ar0ZYW+49v0ZJvu+j2IRi7GGcubGUK2qETGQeP5
-         jR3TDADPhiI42+R6eGFMaw6RISNVK1/qqhAEuGdPQHTDue/O2Bdraii8KQt/QzIN4IvB
-         r3sfnfLaYOg4p42v7OZQ1Kns4B440/sCBw3W7D1ZL+wMUqkVfwvvjpLmeNBDA6povFeW
-         QKnTw0beCxlyaaokfPABsQ3cif6Bb3YINzkLi1KKZgWRTGxq9GqrYW4Ghnk2KkIH3WPU
-         4DPw==
-X-Forwarded-Encrypted: i=1; AJvYcCW2Bng7W89UGT26vj6LN33r6z7fLloKsiuaQ3MsCvOdCq6aoyKlKjUSE9xmjDGtgxKalWLDK6rJ40zTrSQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlinmEWO77fim3k6LdU/69W93nrMPQnbY7c0Bmyp7r7G2kyooV
-	1KnrEclkt5fLKg5LfCEN/mgA1HMoZ0i33+Z93g1P/ZV5PcfZbmJQVBjK+l5zIp/2dZKB5aMLPEL
-	FAY44K18E4AMjVOLddSAvUK2D/5trupa81Rv9cB4+nd5DX6CaYTcQD8loT0E=
-X-Google-Smtp-Source: AGHT+IEpTzA/3NqtQbsss3Bt9ogTGA39GU8M8pGLRnvPzS3lXufcYtJkf55mtmGcYxBah4LCmhDhp2qV1vWIUjAYrBjwalX4qAqr
+	s=arc-20240116; t=1762867212; c=relaxed/simple;
+	bh=9mm6g+osJm1/EWGqawmYdfu46laP/lzTSdOtwjYCnTk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CEmwEG//23v2GYfYKF8BZpZ+ZIvaLc9zvgWrPYwCn0k+DhpJF0kP5YCYOt26Nr062O1cjuMFG9//pF2gCThLqL19TOeSTRRpp7osaECLf7b1fjPjLxJVaLEttDflEOLEhOPfVoFWpnIO+AzivMnmPjPDugVXlv3j54DlkbgS5sk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l43RlZgC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED0ADC4CEFB;
+	Tue, 11 Nov 2025 13:20:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762867212;
+	bh=9mm6g+osJm1/EWGqawmYdfu46laP/lzTSdOtwjYCnTk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=l43RlZgCYNkLBeSiru6TxlcyrDsgcT9ZklHl0NU7twHyUVS5OmaJmO2aOVg/3y45h
+	 3njS3UnXWYkkc62+BkDA/NoDDoZfpZqfHMLg1poawfgzdWEgT6r+Wvbf4L0OI85ZHc
+	 T0opZPUtj82FqE1ygKIbfTM1e6YJVS+LjBrjDyfFjezu3zGBGyW8BkxVvXRb4eIy2W
+	 TGB5jJdbIBJVF+isMCrPl4LKu+FjRel5IVrHKdqlLqB2zts4mcm97F6fSS4MSrauwR
+	 4uKL15tBtwcGbpqrjW3bB4qNSkSCS7c+ITwBXRjuhDUWiojTuBIBSU79zv5MH5EiAe
+	 jPW6SupAwy2pA==
+Date: Tue, 11 Nov 2025 14:03:10 +0100
+From: Nicolas Schier <nsc@kernel.org>
+To: Abel Vesa <abel.vesa@linaro.org>
+Cc: Nathan Chancellor <nathan@kernel.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] kbuild: install-extmod-build: Properly fix CC
+ expansion when ccache is used
+Message-ID: <aRM0DmrBq-neaNYw@derry.ads.avm.de>
+References: <20251111-kbuild-install-extmod-build-fix-cc-expand-third-try-v2-1-15ba1b37e71a@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2408:b0:433:29c3:c512 with SMTP id
- e9e14a558f8ab-43367e2d24emr143895815ab.21.1762866183264; Tue, 11 Nov 2025
- 05:03:03 -0800 (PST)
-Date: Tue, 11 Nov 2025 05:03:03 -0800
-In-Reply-To: <20251111-covern-deklamieren-ee89b7b4e502@brauner>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <69133407.a70a0220.22f260.0138.GAE@google.com>
-Subject: Re: [syzbot] [fs?] WARNING in nsproxy_ns_active_put
-From: syzbot <syzbot+0b2e79f91ff6579bfa5b@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, bpf@vger.kernel.org, brauner@kernel.org, 
-	bsegall@google.com, david@redhat.com, dietmar.eggemann@arm.com, jack@suse.cz, 
-	jsavitz@redhat.com, juri.lelli@redhat.com, kartikey406@gmail.com, 
-	kees@kernel.org, liam.howlett@oracle.com, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-security-module@vger.kernel.org, lorenzo.stoakes@oracle.com, 
-	mgorman@suse.de, mhocko@suse.com, mingo@redhat.com, mjguzik@gmail.com, 
-	oleg@redhat.com, paul@paul-moore.com, peterz@infradead.org, 
-	rostedt@goodmis.org, rppt@kernel.org, sergeh@kernel.org, surenb@google.com, 
-	syzkaller-bugs@googlegroups.com, vbabka@suse.cz, vincent.guittot@linaro.org, 
-	viro@zeniv.linux.org.uk, vschneid@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251111-kbuild-install-extmod-build-fix-cc-expand-third-try-v2-1-15ba1b37e71a@linaro.org>
 
-Hello,
+On Tue, Nov 11, 2025 at 08:43:51AM +0200, Abel Vesa wrote:
+> Currently, when cross-compiling and ccache is used, the expanding of CC
+> turns out to be without any quotes, leading to the following error:
+> 
+> make[4]: *** No rule to make target 'aarch64-linux-gnu-gcc'.  Stop.
+> make[3]: *** [Makefile:2164: run-command] Error 2
+> 
+> And it makes sense, because after expansion it ends up like this:
+> 
+> make run-command KBUILD_RUN_COMMAND=+$(MAKE) \
+> HOSTCC=ccache aarch64-linux-gnu-gcc VPATH= srcroot=. $(build)= ...
+> 
+> So add another set of double quotes to surround whatever CC expands to
+> to make sure the aarch64-linux-gnu-gcc isn't expanded to something that
+> looks like an entirely separate target.
+> 
+> Fixes: 140332b6ed72 ("kbuild: fix linux-headers package build when $(CC) cannot link userspace")
+> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> ---
+> Changes in v2:
+> - Moved the new double quotes inside of single ones, to be able
+>   to drop the escape, like Nathan suggested.
+> - Re-worded the commit message according to the above change.
+> - Link to v1: https://lore.kernel.org/r/20251110-kbuild-install-extmod-build-fix-cc-expand-third-try-v1-1-5c0ddb1c67a8@linaro.org
+> ---
+>  scripts/package/install-extmod-build | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-WARNING in __ns_ref_active_put
+Just as a note: the fix is only required for build rpm packages.  For
+the Debian package call of install-extmod-build
+CC="${DEB_HOST_GNU_TYPE}-gcc" is used, no matter what was given to make
+deb-pkg.
 
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 6581 at kernel/nscommon.c:171 __ns_ref_active_put+0x3d7/0x450 kernel/nscommon.c:171
-Modules linked in:
-CPU: 0 UID: 0 PID: 6581 Comm: syz.0.18 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-RIP: 0010:__ns_ref_active_put+0x3d7/0x450 kernel/nscommon.c:171
-Code: 4d 8b 3e e9 1b fd ff ff e8 76 62 32 00 90 0f 0b 90 e9 29 fd ff ff e8 68 62 32 00 90 0f 0b 90 e9 59 fd ff ff e8 5a 62 32 00 90 <0f> 0b 90 e9 72 ff ff ff e8 4c 62 32 00 90 0f 0b 90 e9 64 ff ff ff
-RSP: 0018:ffffc9000238fd68 EFLAGS: 00010293
-RAX: ffffffff818e5946 RBX: 00000000ffffffff RCX: ffff8880302ebc80
-RDX: 0000000000000000 RSI: 00000000ffffffff RDI: 0000000000000000
-RBP: ffffc9000238fe00 R08: ffff888078968c2b R09: 1ffff1100f12d185
-R10: dffffc0000000000 R11: ffffed100f12d186 R12: dffffc0000000000
-R13: 1ffff1100f12d184 R14: ffff888078968c20 R15: ffff888078968c28
-FS:  00007efc0fd536c0(0000) GS:ffff888125cf3000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b33263fff CR3: 0000000030876000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- nsproxy_ns_active_put+0x4a/0x200 fs/nsfs.c:701
- free_nsproxy kernel/nsproxy.c:80 [inline]
- put_nsset kernel/nsproxy.c:316 [inline]
- __do_sys_setns kernel/nsproxy.c:-1 [inline]
- __se_sys_setns+0x1349/0x1b60 kernel/nsproxy.c:534
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7efc0ef90ef7
-Code: 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 b8 34 01 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007efc0fd52fd8 EFLAGS: 00000246 ORIG_RAX: 0000000000000134
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007efc0ef90ef7
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00000000000000c9
-RBP: 00007efc0f011f91 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007efc0f1e6038 R14: 00007efc0f1e5fa0 R15: 00007fff5692b648
- </TASK>
-
-
-Tested on:
-
-commit:         cc719c88 nsproxy: fix free_nsproxy() and simplify crea..
-git tree:       https://github.com/brauner/linux.git namespace-6.19
-console output: https://syzkaller.appspot.com/x/log.txt?x=1613f17c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=59952e73920025e4
-dashboard link: https://syzkaller.appspot.com/bug?extid=0b2e79f91ff6579bfa5b
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-
-Note: no patches were applied.
+Reviewed-by: Nicolas Schier <nsc@kernel.org>
 
