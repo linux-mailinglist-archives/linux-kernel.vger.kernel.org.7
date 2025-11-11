@@ -1,167 +1,122 @@
-Return-Path: <linux-kernel+bounces-896109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8987EC4FA97
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 21:03:30 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8140FC4FAB2
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 21:09:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68D36188705C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 20:03:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 177894E4193
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 20:09:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FC403A8D78;
-	Tue, 11 Nov 2025 20:03:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 065273A8D78;
+	Tue, 11 Nov 2025 20:09:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BEN58QmH"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K0xX4xHB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC18E285CB4;
-	Tue, 11 Nov 2025 20:03:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B21627A917;
+	Tue, 11 Nov 2025 20:09:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762891405; cv=none; b=iu2Ol+aPrJTzULRFHCCukg6+9cxAdUJI+rga3U5vpDSX3a7bgYHHbWb4Gejt5XjkcZcg3H35fhxf8Ph8EtJX9ArX5GfNHG2bYPbu9S6uwAglZvR2asiT72gm5ly9jNZZW2WIMnwmYPLBMB9W2Y1w2k5crKMBSWHSw/xv3gqLRzw=
+	t=1762891764; cv=none; b=mjMdfv+x2F0m1tO45YqFbyaHCuMlP0ySEHk+Zfn1gDi6YeUbX8sQi84C2H56CMv4fJpTsLn9h1Iru692/o920XIQS1Nr9qxYAU/f7a4TxQafaOnzORn0X0iIBTi9KgtZgZzpR9fFG5QzdrI4vFb8zf7Y8XyVU1X3mNlsoG2qlmk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762891405; c=relaxed/simple;
-	bh=o4taJyu2TFRMmZekMAPl8Pnr+JvTkgfSawFd4hOXlws=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=movT5qZyjTJ3xsPX754l2eBKmtlPQ9a/4UZDrnEGSdgKAX1W2c6kJ5LkVuc/JgWaCl6XW/CsVSzcSbCT4Q5rI6wPPwJ3D+18/78wdJTv8RpNHXt+Nnr0MiIF0ifXjCuOdnafvwoDqGPODhvkwNkefgX2ZjcwxdhZilYAn2yoqEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BEN58QmH; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762891404; x=1794427404;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=o4taJyu2TFRMmZekMAPl8Pnr+JvTkgfSawFd4hOXlws=;
-  b=BEN58QmHU5S3qT+XqMzvUP3oYDIhNOAubQ7VLkE3WjXHptouD5yenFHg
-   4LFa/ATfBhDcHJI+q7o4pvvSPXpAbT0X2iTouIuOsOpxPCWDzF+M6giYc
-   9WN3JJvLIzyJTKiCxBs0uPUpsCREYa2k7keahL69YLfyGSIesk3bzed5h
-   W9LLGw9Uomc/IGWDA/n4dCIJsjBhqeY+mgNgrbcrCHHxeFxL9ythN5wot
-   zf73mUvydB10oT9+af3zgtKUXAWHNFIKk7NCJy4LEpNlw6G1PP+En4unW
-   52CWth/hXKMFtM41uB3JscwvOsQjraS2+oRRt6gEDHaCggCjIuHFpRa4l
-   Q==;
-X-CSE-ConnectionGUID: M+ueF5zwQG+VDDt6LNsSjw==
-X-CSE-MsgGUID: dml7qfPJTgO8pwlIMQ2jiQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11610"; a="76305890"
-X-IronPort-AV: E=Sophos;i="6.19,297,1754982000"; 
-   d="scan'208";a="76305890"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 12:03:23 -0800
-X-CSE-ConnectionGUID: oGrHzvJZS4q64oazY/b6ig==
-X-CSE-MsgGUID: Eb/XuKOGTtWSp4zrRxf6nw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,297,1754982000"; 
-   d="scan'208";a="219769514"
-Received: from aksajnan-mobl1.amr.corp.intel.com (HELO [10.125.50.87]) ([10.125.50.87])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 12:03:22 -0800
-Message-ID: <7ea7c72d-7570-4eca-8a8a-d8f93363691e@intel.com>
-Date: Tue, 11 Nov 2025 12:03:22 -0800
+	s=arc-20240116; t=1762891764; c=relaxed/simple;
+	bh=81r8gap8lts5uak30gQAcCTFGWaMYpTnRZ3FoD26fSo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AlbuJauxB6ifAuJQKf12iALz8yMHQaSfZcpvqgKZeLkeoE/Q1liBIhFIgcrAsIYxrgZSxFrqYDA2WVI4RKtPf3WLmTmqXo5hlS3QBtEAkkj2ojhEAn9qULYXljwDLDEDHcRB1moszAm+fVQv4j3dS4ntfdoj0YbM7I0XiM+otv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K0xX4xHB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0CDEC4CEF7;
+	Tue, 11 Nov 2025 20:09:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762891763;
+	bh=81r8gap8lts5uak30gQAcCTFGWaMYpTnRZ3FoD26fSo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=K0xX4xHBtck7k9JBhThfM+d3aYEb5MUt4SThJqw70cU9CCX8JcFVdGRnhNo4Smo5k
+	 ZhF6hQdpnK/xAwpYyI3a3ooBZFmmD1PYEmsHzdNenKgZFNGvPX9e7PZvMf0duoqdpQ
+	 CHtA/XF7lhmx6U9GrRUxX19am0ytMRMIKMrwSve6Y227wbQFLODi5tjSpqDzOln5Fd
+	 3lpJ0200TzZWsh4k6XBJprgVLsTxbcN14NORlhPJH93I9yKsA4JGd5P7ip9u4JjQsn
+	 VQs28VFvnhXhZe82JiTaIjbWCZTR3X8jUdzYn1i5J6KZ6KGn8assRtIwOXU+P+EMfy
+	 aa1VeuLUDWE1A==
+Date: Tue, 11 Nov 2025 12:09:20 -0800
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Michael Kelley <mhklinux@outlook.com>
+Cc: "x86@kernel.org" <x86@kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Petr Mladek <pmladek@suse.com>, Miroslav Benes <mbenes@suse.cz>, 
+	Joe Lawrence <joe.lawrence@redhat.com>, "live-patching@vger.kernel.org" <live-patching@vger.kernel.org>, 
+	Song Liu <song@kernel.org>, laokz <laokz@foxmail.com>, Jiri Kosina <jikos@kernel.org>, 
+	Marcos Paulo de Souza <mpdesouza@suse.com>, Weinan Liu <wnliu@google.com>, 
+	Fazla Mehrab <a.mehrab@bytedance.com>, Chen Zhongjin <chenzhongjin@huawei.com>, 
+	Puranjay Mohan <puranjay@kernel.org>, Dylan Hatch <dylanbhatch@google.com>, 
+	Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH v4 49/63] objtool/klp: Add --checksum option to generate
+ per-function checksums
+Message-ID: <6msqczigbcypeclqlgzgtqew7pddmuu6xxrjli2rna22hul5j4@rc6tyxme34rc>
+References: <cover.1758067942.git.jpoimboe@kernel.org>
+ <1bc263bd69b94314f7377614a76d271e620a4a94.1758067943.git.jpoimboe@kernel.org>
+ <SN6PR02MB41579B83CD295C9FEE40EED6D4FCA@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <5an6r3jzuifkm2b7scmxv4u3suygr77apgue6zneelowbqyjzr@5g6mbczbyk5e>
+ <SN6PR02MB41574AD398AD3DE26DB3D23BD4C5A@SN6PR02MB4157.namprd02.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] perf tools: Fix missing feature check for inherit +
- SAMPLE_READ
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
- Ian Rogers <irogers@google.com>, James Clark <james.clark@linaro.org>,
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
- LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org
-References: <20251111075944.2328021-1-namhyung@kernel.org>
- <ac137eff-674c-4fa4-b870-80878af032a0@intel.com>
- <aRORSxu22OSf-v0X@google.com>
-Content-Language: en-US
-From: "Chen, Zide" <zide.chen@intel.com>
-In-Reply-To: <aRORSxu22OSf-v0X@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <SN6PR02MB41574AD398AD3DE26DB3D23BD4C5A@SN6PR02MB4157.namprd02.prod.outlook.com>
 
+On Wed, Nov 05, 2025 at 03:22:58PM +0000, Michael Kelley wrote:
+> > Thanks for reporting that.  I suppose something like the below would work?
+> > 
+> > Though, maybe the missing xxhash shouldn't fail the build at all.  It's
+> > really only needed for people who are actually trying to run klp-build.
+> > I may look at improving that.
+> 
+> Yes, that would probably be better.
+> 
+> > 
+> > diff --git a/tools/objtool/Makefile b/tools/objtool/Makefile
+> > index 48928c9bebef1..8b95166b31602 100644
+> > --- a/tools/objtool/Makefile
+> > +++ b/tools/objtool/Makefile
+> > @@ -12,7 +12,7 @@ ifeq ($(SRCARCH),loongarch)
+> >  endif
+> > 
+> >  ifeq ($(ARCH_HAS_KLP),y)
+> > -	HAVE_XXHASH = $(shell echo "int main() {}" | \
+> > +	HAVE_XXHASH = $(shell echo -e "#include <xxhash.h>\nXXH3_state_t *state;int main() {}" | \
+> >  		      $(HOSTCC) -xc - -o /dev/null -lxxhash 2> /dev/null && echo y || echo n)
+> >  	ifeq ($(HAVE_XXHASH),y)
+> >  		BUILD_KLP	 := y
+> 
+> Indeed this is what I had in mind for the enhanced check. But the above
+> gets a syntax error:
+> 
+> Makefile:15: *** unterminated call to function 'shell': missing ')'.  Stop.
+> make[4]: *** [Makefile:73: objtool] Error 2
+>
+> As a debugging experiment, adding only the -e option to the existing code
+> like this shouldn't affect anything, 
+> 
+> 	HAVE_XXHASH = $(shell echo -e "int main() {}" | \
+> 
+> but it causes HAVE_XXHASH to always be 'n' even if the xxhash library
+> is present. So the -e option is somehow fouling things up.
+> 
+> Running the equivalent interactively at a 'bash' prompt works as expected.
+> And your proposed patch works correctly in an interactive bash. So
+> something weird is happening in the context of make's shell function,
+> and I haven't been able to figure out what it is.
+> 
+> Do you get the same failures? Or is this some kind of problem with
+> my environment?  I've got GNU make version 4.2.1.
 
+That's weird, it builds fine for me.  I have GNU make 4.4.1.
 
-On 11/11/2025 11:40 AM, Namhyung Kim wrote:
-> On Tue, Nov 11, 2025 at 11:13:20AM -0800, Chen, Zide wrote:
->>
->>
->> On 11/10/2025 11:59 PM, Namhyung Kim wrote:
->>> It should also have PERF_SAMPLE_TID to enable inherit and PERF_SAMPLE_READ
->>> on recent kernels.  Not having _TID makes the feature check wrongly detect
->>> the inherit and _READ support.
->>>
->>> It was reported that the following command failed due to the error in
->>> the missing feature check on Intel SPR machines.
->>>
->>>   $ perf record -e '{cpu/mem-loads-aux/S,cpu/mem-loads,ldlat=3/PS}' -- ls
->>>   Error:
->>>   Failure to open event 'cpu/mem-loads,ldlat=3/PS' on PMU 'cpu' which will be removed.
->>>   Invalid event (cpu/mem-loads,ldlat=3/PS) in per-thread mode, enable system wide with '-a'.
->>>
->>> Fixes: 3b193a57baf15c468 ("perf tools: Detect missing kernel features properly")
->>> Reported-by: "Chen, Zide" <zide.chen@intel.com>
->>> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
->>> ---
->>>  tools/perf/util/evsel.c | 2 +-
->>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
->>> index 67a898cda86ab559..989c56d4a23f74f4 100644
->>> --- a/tools/perf/util/evsel.c
->>> +++ b/tools/perf/util/evsel.c
->>> @@ -2474,7 +2474,7 @@ static bool evsel__detect_missing_features(struct evsel *evsel, struct perf_cpu
->>>  	/* Please add new feature detection here. */
->>>  
->>>  	attr.inherit = true;
->>> -	attr.sample_type = PERF_SAMPLE_READ;
->>> +	attr.sample_type = PERF_SAMPLE_READ | PERF_SAMPLE_TID;
->>
->>
->> Seems this could have some unintended side effects. For example,
->> consider a :ppp event with PERF_SAMPLE_READ and inherit attributes
->> running on a system where the maximum precise_ip is 2:
->>
->> - It fails to open the event on the first attempt;
->> - It goes through the inherit_sample_read detection and fails again
->> after removing inherit;
-> 
-> This is not what we want.  The kernel supports inherit + SAMPLE_READ
-> so it should not remove the inherit bit.
-> 
-> 
->> - Finally, it succeeds after falling back to precision 2 — but the
->> inherit attribute has been unexpectedly removed.
-> 
-> So it'll fallback to precision 2 without removing inherit.
-> 
->>
->> I may have missed something, but I don’t quite understand why commit
->> 3b193a57baf15 ("perf tools: Detect missing kernel features properly")
->> performs the check on a dummy evsel instead of the original one. In this
->> way, it might incorrectly fall back an attribute that doesn’t actually help.
-> 
-> Because different platforms have different limitations on hardware
-> events.  You cannot simply use current event for kernel feature check
-> since it can result in wrong decisions due to the limitation.  So we
-> picked the software event to avoid the hardware characteristics and to
-> focus on kernel features.
-> 
->>
->> This means evsel__detect_missing_features() could theoretically roll
->> back a feature that might not actually work. Given that it cannot
->> restore the original evsel state after a failed attempt, side effects
->> may occur.
-> 
-> The purpose is to turn off the non-supported features only and try with
-> other settings like precise_ip and exclude_kernels and so on.
-
-OK, thanks!
-> Thanks,
-> Namhyung
-> 
-
+-- 
+Josh
 
