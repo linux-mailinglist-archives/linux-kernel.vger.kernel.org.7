@@ -1,76 +1,130 @@
-Return-Path: <linux-kernel+bounces-895049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF72AC4CCAF
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:56:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44482C4CC37
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:49:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DCDF425690
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:49:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21B001890A83
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:49:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E92C221C9E5;
-	Tue, 11 Nov 2025 09:48:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5F3A2F3C07;
+	Tue, 11 Nov 2025 09:49:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jKG3wSjF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="lpAMrkJk"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A482155389;
-	Tue, 11 Nov 2025 09:48:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10EBD2D130B;
+	Tue, 11 Nov 2025 09:49:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762854531; cv=none; b=tympJ2ElTjz4AfEtG4Swk2QQyjPIgRDc6GQD2x9Iunv11PTYFuKQaonhsGawnqVqraK7fW/Hb1OgGLCtzjXXkJTeEAA8IzDAbWXC4FkELbqOFDzwfyBfCW6VD0A8mXSNhl6z/Ce7r25i3UdUsAlO9XhD0vfoLGtglYLfpv10eXc=
+	t=1762854550; cv=none; b=JvT2jSS0cRzN3K9W7S9zB6BX81W9A0lu/O2NDERSDrcke5giZWolHjoiD3DG43rQVOw/1SN9zVg0VKUqnUGcoYnAMFI+bOQrWuwhjOiD2+UnUdNaalIQgQwUu9eHHsl2n1bkvLyhEMqaymlI4dmc7AwuUlqE8H24Tpk6eCFCd94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762854531; c=relaxed/simple;
-	bh=Xmlr8Id/6Z//lY5LW7VmtWmZos+x0Ts3itVyP3tresU=;
+	s=arc-20240116; t=1762854550; c=relaxed/simple;
+	bh=nvoWb3cd+VFNoskVX/9UBGBSWxsWZtmu+agDwT9H9mc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lUxPZU1HAnIymP9gBARcGNmUKAI9Tst5K95Xy3gG4P2PwHr4X1N22QH0CKUFi/ZEeWFszJ6MabUFQLI49Z0jXsaqIAOJGqajSSg59OeUMDYnzlltiwihEVc47f3FOX7V8puS2iFo/dIYaIUlrlArT9j4neNp2rwI7QxLovoWRbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jKG3wSjF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB3BBC116B1;
-	Tue, 11 Nov 2025 09:48:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762854530;
-	bh=Xmlr8Id/6Z//lY5LW7VmtWmZos+x0Ts3itVyP3tresU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jKG3wSjFPl0edwk0JvoFI4JEMuxh8m/peX6ADOH4L1YcpqEShJ6EIAqR+TbqlGEhr
-	 LHmgwZmIYSMs7XxFCcuDY87PmEiNLor/L9GGQ6hUTLkJZuSc1SR2ViGc+cg54Etq6V
-	 wJIBQ2iFVC3zO8jyLTc4pTx/Z3TXvlDn8hwf6EeF/lQZvmI7Dm3dd/yl/DEOOkKa5T
-	 wEno5O+/ROjoDoC67Z6L1yhfyj1ZTTYpY/LCR6NXMpilq+Z/+vY5R8gnyuJvo5Nosm
-	 daASD5Hy4CuajmD49tCtzZGqEZRkTqbWMzGZr+ZtashjTg2p5TJ5Jc17lrybd3hmlt
-	 scyT/K9y3icsQ==
-Date: Tue, 11 Nov 2025 10:48:45 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, 
-	Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Ingo Molnar <mingo@redhat.com>, 
-	Darren Hart <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>, 
-	=?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>, Anna-Maria Behnsen <anna-maria@linutronix.de>, 
-	Frederic Weisbecker <frederic@kernel.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] restart_block: simplify expiration timestamps
-Message-ID: <20251111-formel-seufzen-bdf2c97c735a@brauner>
-References: <20251110-restart-block-expiration-v1-0-5d39cc93df4f@linutronix.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ux3SZLCbJqF3LuT63fufpLjQ+wJk0BrsdK4FR8qD05mJQfiJUvy72/Ief5iFHIQcSWD3AQwPTRymx7UNWdsYBLuMvoSwYuFqFx6+7pxRzTmd35JXwB0omAEP8f9sI7YHt3nsrCJFngFTF1lxr3pm8zKCPichlshuCty6S8iGWh8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=lpAMrkJk; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=3vHk8yv00/JQMYrmI8CKdJho/+2xxViBt86X+AiwkXs=; b=lpAMrkJkFiawgDhsUd7cK2vYGW
+	HHuZnAakrmemk6S3lWl3WIxalRsV0Fxr6TsaMz743ajjVlUUk8WVJAXlPVJ4cjEayDYBDB8DFO2k+
+	/t83snfNII/EsKt1zpPpqhB/UFTr86lPP433nbohp8PheXFfoQl1QMn3iLbIrURUN5rocusBJH1A+
+	C+ab8nwdr5Z4uc1LqBrHaDwvLLGqT+flXKWN+gz9/A7udKvpVzW8CPyhMcxtUbETtgDIRnBzM0A0+
+	E4sH7O377i+vT70DtUZvs6qJcZ2e7vHFUNY0l4ir1hy3qP+eKy5+rp/RbEZjUVLbfU21f0q3LsfEV
+	d4kkO1rA==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:43662)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1vIkzh-000000002It-12u1;
+	Tue, 11 Nov 2025 09:48:57 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1vIkzd-000000002qb-21yZ;
+	Tue, 11 Nov 2025 09:48:53 +0000
+Date: Tue, 11 Nov 2025 09:48:53 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, mcoquelin.stm32@gmail.com,
+	alexandre.torgue@foss.st.com, maxime.chevallier@bootlin.com,
+	boon.khai.ng@altera.com, netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 2/2] net: stmmac: Disable EEE RX clock stop when
+ VLAN is enabled
+Message-ID: <aRMGhXohIK5swFSM@shell.armlinux.org.uk>
+References: <20251111093000.58094-1-ovidiu.panait.rb@renesas.com>
+ <20251111093000.58094-3-ovidiu.panait.rb@renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251110-restart-block-expiration-v1-0-5d39cc93df4f@linutronix.de>
+In-Reply-To: <20251111093000.58094-3-ovidiu.panait.rb@renesas.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Mon, Nov 10, 2025 at 10:38:50AM +0100, Thomas Weißschuh wrote:
-> Various expiration timestamps are stored in the restart block as
-> different types than their respective subsystem is using.
+On Tue, Nov 11, 2025 at 09:30:00AM +0000, Ovidiu Panait wrote:
+> On the Renesas RZ/V2H EVK platform, where the stmmac MAC is connected to a
+> Microchip KSZ9131RNXI PHY, creating or deleting VLAN interfaces may fail
+> with timeouts:
 > 
-> Align the types.
+>     # ip link add link end1 name end1.5 type vlan id 5
+>     15c40000.ethernet end1: Timeout accessing MAC_VLAN_Tag_Filter
+>     RTNETLINK answers: Device or resource busy
 > 
-> Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
-> ---
+> Disabling EEE at runtime avoids the problem:
+> 
+>     # ethtool --set-eee end1 eee off
+>     # ip link add link end1 name end1.5 type vlan id 5
+>     # ip link del end1.5
+> 
+> The stmmac hardware requires the receive clock to be running when writing
+> certain registers, such as those used for MAC address configuration or
+> VLAN filtering. However, by default the driver enables Energy Efficient
+> Ethernet (EEE) and allows the PHY to stop the receive clock when the link
+> is idle. As a result, the RX clock might be stopped when attempting to
+> access these registers, leading to timeouts and other issues.
+> 
+> Commit dd557266cf5fb ("net: stmmac: block PHY RXC clock-stop")
+> addressed this issue for most register accesses by wrapping them in
+> phylink_rx_clk_stop_block()/phylink_rx_clk_stop_unblock() calls.
+> However, VLAN add/delete operations may be invoked with bottom halves
+> disabled, where sleeping is not allowed, so using these helpers is not
+> possible.
+> 
+> Therefore, to fix this, disable the RX clock stop feature in the phylink
+> configuration if VLAN features are set. This ensures the RX clock remains
+> active and register accesses succeed during VLAN operations.
+> 
+> Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 
-@Thomas, @Peter, do the timer/futex changes look fine to you?
+Thanks for the patch. I guess there is no other way around this, since
+as I've previously noted (and as you say above) we can't sleep in the
+VLAN ops to access the PHY.
+
+I would like a comment in the code above this if() to state that EEE
+RX clock stop is disabled to allow access to VLAN registers to work.
+With that added, please add:
+
+Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+
+Thanks!
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
