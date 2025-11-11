@@ -1,77 +1,185 @@
-Return-Path: <linux-kernel+bounces-894574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39FEAC4B54B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 04:32:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EB4CC4B54E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 04:33:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8F311890F9E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 03:33:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E8A61890EA0
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 03:33:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE2B2346E60;
-	Tue, 11 Nov 2025 03:32:38 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BCF7261B77
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 03:32:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB566347FEC;
+	Tue, 11 Nov 2025 03:32:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="SeG3sfe2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DE4C261B77;
+	Tue, 11 Nov 2025 03:32:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762831958; cv=none; b=L1C9WvkM+ealYWsN4flR/ldMSor3GdkSLRPlIhXPT4ILT5UrxzZOT8FzO2YobNfaKjIi87QAEk5IlZU2bC+cbCsL7yvxW6D9XSaPZ0V9XM7H7gzgiL1ADPqpV5c4Ouh/VNYoL4Nvq2EkKlIrRBUvMAwjTqYNfTRdfzK6FxmTAuA=
+	t=1762831970; cv=none; b=iHdGGo953NA/b8UoGqAVoK1LqR6FEW+ksT3X53pNSNSB0AUt0/1pPbIfKOTLVdgvX5BGM/MSjLtEfN+zJs2akmNwb1BNEDHGbwnqOotMYcR0T6ClsUe5p4IeMSuE5Qs0856hoTdC0maizdcuxJeJDg8DPdICEOymDJqRqzwwmSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762831958; c=relaxed/simple;
-	bh=9yrqPyGC2JrbnSYhHBLz45DR2OjZ74laQo3SvwgYy+4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ubHrHPAf+bEzGHkhTjurAV9+ExpvB7Wc5/tM0RdFcXe7hQ3zH2r7NFcorPe82wVbF5DVZEJpFolU+BUDik/TyEmG+fKyLPVt1+ES5noVim/+Rn2B8BIPjy7u2xQxZLJX9DribRIc+92uNDzEPilcKDHxhJqN+XNgn/ldtw3YZkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A909A2F;
-	Mon, 10 Nov 2025 19:32:27 -0800 (PST)
-Received: from [10.163.74.35] (unknown [10.163.74.35])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A62AF3F63F;
-	Mon, 10 Nov 2025 19:32:31 -0800 (PST)
-Message-ID: <cd05f470-b9ef-4fe7-840a-221dafbb886f@arm.com>
-Date: Tue, 11 Nov 2025 09:02:28 +0530
+	s=arc-20240116; t=1762831970; c=relaxed/simple;
+	bh=LKFIiVEm2jCQZUOC18eb6X046/5tk4c9dtMUB9mF9Ls=;
+	h=Date:From:To:Cc:Subject:Message-Id:Mime-Version:Content-Type; b=Zsijbz4O+VWNvMtVcPluboZO0LLxRYZX+8Q7zn/YkLK17kb+6gQUGXWbrmxkgNlrELuWCZNJ6k7THCm0nlOl/UigXu/9K1bGyA6D4oEVbnT+IE9g56rumqUEyLmwuhpb27D6z4KNP6D/K8f/aX8eoqn3PwiJP5aGL616Lu5B7cc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=SeG3sfe2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 814D0C16AAE;
+	Tue, 11 Nov 2025 03:32:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1762831968;
+	bh=LKFIiVEm2jCQZUOC18eb6X046/5tk4c9dtMUB9mF9Ls=;
+	h=Date:From:To:Cc:Subject:From;
+	b=SeG3sfe2DH3jhwil5eCv5W1yEK1utNf2CywgT7n+h0R0RZbPrAjDUXMO/vMGGgvoK
+	 fA0VHZ+1nkLvR6DcaWVZkLXOcOz/zgZa0d5iHi9wQ00/7+5gPelLIJOPw6FhGjXH5J
+	 Uh6Be8m9W6raK3sYxcT45WV2l1y1soOYfX90gi2I=
+Date: Mon, 10 Nov 2025 19:32:47 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ mm-commits@vger.kernel.org
+Subject: [GIT PULL] hotfixes for 6.18-rc6
+Message-Id: <20251110193247.b023ed17d73a8a82510d7002@linux-foundation.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/ptdesc: Derive from the compound head in page_ptdesc()
-To: Matthew Wilcox <willy@infradead.org>
-Cc: linux-mm@kvack.org, vishal.moola@gmail.com,
- Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- linux-kernel@vger.kernel.org
-References: <20251110063725.3118037-1-anshuman.khandual@arm.com>
- <aRHq4OdBCtC_V0eS@casper.infradead.org>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <aRHq4OdBCtC_V0eS@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
 
+Linus, please merge this batch of hotfixes, thanks.
 
-On 10/11/25 7:08 PM, Matthew Wilcox wrote:
-> On Mon, Nov 10, 2025 at 06:37:25AM +0000, Anshuman Khandual wrote:
->> struct ptdesc (including all relevant helpers) support multi order compound
->> pages. But page_ptdesc() coverts given page into its own ptdesc rather than
->> deriving from its compound head as would have been expected otherwise. Just
->> change the macro to fetch the struct ptdesc from the compound head instead,
->> so that the same struct ptdesc is reached from all tail pages.
-> 
-> Please review
-> https://lore.kernel.org/linux-mm/20251020001652.2116669-1-willy@infradead.org/
-> instead.
 
-Sure, will do. Thanks for the pointer.
+The following changes since commit e9a6fb0bcdd7609be6969112f3fbfcce3b1d4a7c:
+
+  Linux 6.18-rc5 (2025-11-09 15:10:19 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-hotfixes-stable-2025-11-10-19-30
+
+for you to fetch changes up to b05addf6f0596edb1f82ab4059438c7ef2d2686d:
+
+  kho: warn and exit when unpreserved page wasn't preserved (2025-11-09 21:19:47 -0800)
+
+----------------------------------------------------------------
+26 hotfixes.  22(!) are cc:stable, 22 are MM.
+
+- a three patch series from Pasha Tatashin which addresses some Kexec
+  Handover issues
+
+- a two patch series from Kiryl Shutsemau which fixes handling of large
+  folios which are mapped outside i_size
+
+- a two patch series from Quanmin Yan which fixes some DAMON time issues
+  on 32-bit machines
+
+Plus the usual shower of singletome.
+
+----------------------------------------------------------------
+Aleksei Nikiforov (1):
+      mm/kmsan: fix kmsan kmalloc hook when no stack depots are allocated yet
+
+Carlos Llamas (1):
+      scripts/decode_stacktrace.sh: fix build ID and PC source parsing
+
+Catalin Marinas (1):
+      mm/huge_memory: initialise the tags of the huge zero folio
+
+Chris Li (1):
+      MAINTAINERS: add Chris and Kairui as the swap maintainer
+
+Dev Jain (1):
+      mm/mremap: honour writable bit in mremap pte batching
+
+Edward Adam Davis (1):
+      nilfs2: avoid having an active sc_timer before freeing sci
+
+Hao Ge (1):
+      codetag: debug: handle existing CODETAG_EMPTY in mark_objexts_empty for slabobj_ext
+
+Isaac J. Manjarres (1):
+      mm/mm_init: fix hash table order logging in alloc_large_system_hash()
+
+Kairui Song (1):
+      mm/shmem: fix THP allocation and fallback loop
+
+Kiryl Shutsemau (2):
+      mm/memory: do not populate page table entries beyond i_size
+      mm/truncate: unmap large folio on split failure
+
+Lance Yang (1):
+      mm/secretmem: fix use-after-free race in fault handler
+
+Martin Kaiser (1):
+      maple_tree: fix tracepoint string pointers
+
+Pasha Tatashin (3):
+      kho: warn and fail on metadata or preserved memory in scratch area
+      kho: increase metadata bitmap size to PAGE_SIZE
+      kho: allocate metadata directly from the buddy allocator
+
+Pedro Demarchi Gomes (1):
+      ksm: use range-walk function to jump over holes in scan_get_next_rmap_item
+
+Peter Oberparleiter (1):
+      gcov: add support for GCC 15
+
+Pratyush Yadav (3):
+      kho: fix out-of-bounds access of vmalloc chunk
+      kho: fix unpreservation of higher-order vmalloc preservations
+      kho: warn and exit when unpreserved page wasn't preserved
+
+Quanmin Yan (2):
+      mm/damon/stat: change last_refresh_jiffies to a global variable
+      mm/damon/sysfs: change next_update_jiffies to a global variable
+
+Wei Yang (1):
+      fs/proc: fix uaf in proc_readdir_de()
+
+Zi Yan (2):
+      mm/huge_memory: do not change split_huge_page*() target order silently
+      mm/huge_memory: preserve PG_has_hwpoisoned if a folio is split to >0 order
+
+ MAINTAINERS                      |   4 +-
+ arch/arm64/kernel/mte.c          |   3 +-
+ arch/arm64/mm/fault.c            |  10 ++++
+ fs/nilfs2/segment.c              |   7 ++-
+ fs/proc/generic.c                |  12 +++--
+ include/linux/gfp.h              |   3 ++
+ include/linux/huge_mm.h          |  55 ++++++++-----------
+ kernel/Kconfig.kexec             |   9 ++++
+ kernel/Makefile                  |   1 +
+ kernel/gcov/gcc_4_7.c            |   4 +-
+ kernel/kexec_handover.c          |  95 +++++++++++++++++++-------------
+ kernel/kexec_handover_debug.c    |  25 +++++++++
+ kernel/kexec_handover_internal.h |  20 +++++++
+ lib/maple_tree.c                 |  30 ++++++-----
+ mm/damon/stat.c                  |   9 ++--
+ mm/damon/sysfs.c                 |  10 ++--
+ mm/filemap.c                     |  28 +++++++---
+ mm/huge_memory.c                 |  35 +++++++-----
+ mm/kmsan/core.c                  |   3 --
+ mm/kmsan/hooks.c                 |   6 ++-
+ mm/kmsan/shadow.c                |   2 +-
+ mm/ksm.c                         | 113 +++++++++++++++++++++++++++++++++++----
+ mm/memory.c                      |  20 ++++++-
+ mm/mm_init.c                     |   2 +-
+ mm/mremap.c                      |   2 +-
+ mm/secretmem.c                   |   2 +-
+ mm/shmem.c                       |   9 ++--
+ mm/slub.c                        |   6 ++-
+ mm/truncate.c                    |  37 ++++++++++---
+ scripts/decode_stacktrace.sh     |  14 ++---
+ 30 files changed, 424 insertions(+), 152 deletions(-)
+ create mode 100644 kernel/kexec_handover_debug.c
+ create mode 100644 kernel/kexec_handover_internal.h
+
 
