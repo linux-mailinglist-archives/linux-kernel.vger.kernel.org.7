@@ -1,210 +1,133 @@
-Return-Path: <linux-kernel+bounces-895936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E6CEC4F500
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 18:49:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4881BC4F506
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 18:50:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D94F189E0BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:50:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3E843B2AF2
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:50:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCFA53730D3;
-	Tue, 11 Nov 2025 17:49:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B6D73A1CF3;
+	Tue, 11 Nov 2025 17:50:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oE9XwjjX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l9N7wtio"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D34F366567;
-	Tue, 11 Nov 2025 17:49:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 356B3366567
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 17:50:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762883371; cv=none; b=XFJFA0CnsOnOHaQKLIOBTqjB5LigMxs5kX0Ot7wZ/Dplpr9jG1LSYAroL+rOoiw60aHeGlhYpBhK8svzZm+ZEWJKSLpzOhXuDtv/kq/RV8g87UC7jdZPivgcINo9rZGFUQC8amnerc5irEZCLM3kvdqLRykDiIowe7V0VX+0x90=
+	t=1762883414; cv=none; b=QkiHGAbJTN2IVnKy8QLFaBThwYfKVGYYfG9lsMSu3ttnwx0qXTHAwN/ztc/LVPRCCiwpOx3sRmjUxhInJvp6DjXhVG9V2/iw0T9+0e5yxE1o/4fFdQnns6bDEwmZ7Zfgjuzr5xMbrb5pPcwsikFGMq8bdTWmlapFabcbgm9P3VM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762883371; c=relaxed/simple;
-	bh=zocJ862gCjpDuUNubmzgR6h99aJwcneiyYTLTKnNI3Y=;
+	s=arc-20240116; t=1762883414; c=relaxed/simple;
+	bh=hIPVTkR2pbZBkmPWapN1AZOJSBeQpLh6MMgTnPaEnDU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nwGpDouyXWY0h7UdgVrw8vPuwhpG9A2jRAKRCYTyXgqcoIIJ1yOYzR2xquJu1aAuMDWMgFnyf9Q9t7vYfEJyxUgJg/ScoCuLATujpv3ZP+JFHWxtwKjl8e3Ch1YlvQnvpvVvIMBcK9eBhiXXC9CwgzyliNJ1DdgammYYA/BMagI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oE9XwjjX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEB74C4CEF7;
-	Tue, 11 Nov 2025 17:49:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762883370;
-	bh=zocJ862gCjpDuUNubmzgR6h99aJwcneiyYTLTKnNI3Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oE9XwjjXJ4zuViCgUJhNrma+dXIqJlBP2R6zTUD36jZAWS90+BR0ADBOISmI1EtA5
-	 OB+N5/fxR2Y/H3F75CR4mlfqvLiYBW6l6uKuZbPn/uWOYnSdGh2FhP1etlOu3eP/MY
-	 atbndOludtfppNkDkZ8zzbX+s3S9C6+6Xaj1quxlWsNZHr9qJTj+0b+8btYRL5cvZL
-	 GRD0fWynnQ95Dy/SC93tYylHIyF4CZXpdahIA453u0AQLXTIydKaePMGkrpMh0h8vf
-	 ek4KHdC/1dSOSlA3hBoQtVltPPsbhH2s5w2v223bcFc2cIvSoSzWFNq5MUm/kft1Uk
-	 VqlK7Fk95LtJA==
-Date: Tue, 11 Nov 2025 17:49:24 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, robh@kernel.org
-Cc: tomm.merciai@gmail.com, linux-renesas-soc@vger.kernel.org,
-	biju.das.jz@bp.renesas.com, Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Peter Rosin <peda@axentia.se>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+	 Content-Type:Content-Disposition:In-Reply-To; b=OSVclf4lZuNm+oGCBXshN58QDYxwd0p4scrgatv0mcah7unziqeaBytnuu0VC9cRV2X/PKec/FMP01USuGWsEavgrq2XFZpZAdvXQon03wf/2+s3OJsXwSWRzNHx2HvydojHIuSrgohN0ZStaQCf4DmuUyAUeimR1eawsDjD2dM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l9N7wtio; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-7b0246b27b2so4768674b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 09:50:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762883412; x=1763488212; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=hIPVTkR2pbZBkmPWapN1AZOJSBeQpLh6MMgTnPaEnDU=;
+        b=l9N7wtio8AUzLmwN8wSh7OcLkQ46rmOau7vEP+5EfWfyJ9n1zO+MtH2m4R6veJrIf/
+         PziNMu3zo3JORe/bcECwbVV7QspYWNmW4f0smqH/FUVDT4GVdh7iw36FKo5AIpzMqz3v
+         mw3o2Q/y9z19VoJuDc65wcr4ZLrQ8FOum6BMJrA6qnBf26iH7e/g41WlLSRhgSon6Edt
+         3WxkfiPfjAEYoifj4wt/DFCXCZWvK7Pc71yKy+Rh33wvxRUUFNLEvz29a1uH7cPG2pQj
+         JrbnLO5LhDLOl9lkKze09hHyOof0zPdVhrrIW3/ck12qzBoZ5VR40HOWNy0kxUKmgmwF
+         wEZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762883412; x=1763488212;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hIPVTkR2pbZBkmPWapN1AZOJSBeQpLh6MMgTnPaEnDU=;
+        b=Q8l3lCmrhrXCwIKOHiSWexp1yQhgnSLjmYgngT1oroiZx4t5j1hG+c07KARahZjKNh
+         xqEdGULXK0nst5NH7qLfgZ2+MwZtfUXwLYqEzziufndCxgO0LEzt2y7ZvBR7d7H+Fi3L
+         /XETIVdsmdacR3cbZ8nj/uvDyN3WmN65wGKkDlZUK+ve/gyPrwp5IXzD1NxGqSlTtbbH
+         sfSk3H/SLcaSkRdc9Cw8wgiDn07ySi4HqB2bjRoWIDOZWk28Hhk5oB10yP0vuy2XW037
+         q206gJ9BHPQLQOfKg93kg9q03xRIK65TalSB4fcWpfhjHJvOidjYAnICHz1+XFIbjUof
+         0NpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCULFIAH0YQWjLx239w7B22dcnMEIMa0w1MbKH1d2Yaru1JfGdiaoGKBEe8uNIxVhmnfdOIYec4CMUXplhw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1wf1dXgZiuEigJvpv6ceJ6xXnkfCQhXXw4xucaOl/XRQK8/bq
+	+LZkiM1pLWupgZ1HkcoNNtDT8j20y+CtYJ8Qkc6xnRU1d9aj3B9Xc00W
+X-Gm-Gg: ASbGncvy2bRtbMCCIhwhkFFXo3w+17dgpQyU4VIoVAr+9JTInwQwMeMO15h9Pauin6Z
+	suxI0TDfFSZI0NO1MwaDhQWNftnXRjKnu6FKi7cHXkkItaMT/nj8095hJputM7ecxjWL89eO+Uq
+	E74KxEurZIRiTsnQxaJQ5TBH51Q1FFcBFGG/bHnhgJnhL93cr6xP70njT+FdZpJDE5jrL0rHeS6
+	YN+q1nbefQa4cDzUVP7L3CU30ulsv/cR/u0l/M2UwquFRzxkHZf+nE/eGAsZo1aBUd8s8Y+JALY
+	ZEPsibCA7s9UOL8uS0FaX6f/Zye9dVAsKVeIetT7UjkP9ro8bT+vPANyZVWIAZh/TZkdCQyq2V7
+	JC9OyKoeEZ9CWPth6vYOn/eH3q+1BI6QHyBzJrDoBF0huMOJu1ysy5J1ws19O18OqaGLFVc8U8o
+	rPXFgREpnbOFnLjfdOIHjVhNr9CiecdFef
+X-Google-Smtp-Source: AGHT+IG2wLRt+FHVuVKrFyDk6D87jUa6ulKsRTc4ElvGIUi+Ps48OV5Tavonxqr9dChaqkEyGsQG4w==
+X-Received: by 2002:a05:6a20:e210:b0:34e:b034:a5e5 with SMTP id adf61e73a8af0-353a385ab2cmr18505176637.51.1762883412297;
+        Tue, 11 Nov 2025 09:50:12 -0800 (PST)
+Received: from joaog-nb ([67.159.246.222])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-bbf165f99f1sm230491a12.23.2025.11.11.09.50.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Nov 2025 09:50:11 -0800 (PST)
+Date: Tue, 11 Nov 2025 14:50:06 -0300
+From: 
+	=?utf-8?Q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <jpaulo.silvagoncalves@gmail.com>
+To: Siddharth Vadapalli <s-vadapalli@ti.com>
+Cc: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>, 
+	Kishon Vijay Abraham I <kishon@ti.com>, Swapnil Jakhade <sjakhade@cadence.com>, 
+	Andrew Davis <afd@ti.com>, Francesco Dolcini <francesco@dolcini.it>, 
+	=?utf-8?Q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <joao.goncalves@toradex.com>, linux-arm-kernel@lists.infradead.org, 
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 04/21] dt-bindings: reset: renesas,rzv2h-usb2phy:
- Document VBUS_SEL mux
-Message-ID: <20251111-character-catnip-0832956a3fb1@spud>
-References: <cover.1762773720.git.tommaso.merciai.xr@bp.renesas.com>
- <8fba0b7235bd398d41329fd087d68f7e98bbbaca.1762773720.git.tommaso.merciai.xr@bp.renesas.com>
- <20251110-resonate-strict-c3d6c42f3e0d@spud>
- <aRJqfh7p9M3NHfCS@tom-desktop>
+Subject: Re: TI K3 AM69 Kernel Panic when PCIe Controller is Enabled
+Message-ID: <lky7ocqazucnh3xhwswvs4idjtljt5ixp3ibwwa45524pvxzrs@kmkml6td7vju>
+References: <pod3anzbqdwl3l2zldz4sd47rtbruep72ehaf7kwcuh2bgflb2@y4ox65e66mkj>
+ <cf751cf7-53a5-438b-9903-903bd8c39b23@ti.com>
+ <oawjd2mscz2untz6zc5mqn6ak2oxdul6pnaexiohe6ae3bow2r@afkvpu4izrvt>
+ <ddc4e2df0a5593d4a6051057c6406db338f4c0ba.camel@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="i+5JGchjTRlwEy8H"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <aRJqfh7p9M3NHfCS@tom-desktop>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ddc4e2df0a5593d4a6051057c6406db338f4c0ba.camel@ti.com>
 
+Hi Siddharth,
 
---i+5JGchjTRlwEy8H
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> I have two suggestions:
+> 1. Disable ASPM using the Linux commandline option:
+> pcie_aspm=off
+> If the bootloader that you are using is U-Boot, you could run:
+> setenv optargs pcie_aspm=off
+> at U-Boot prompt before booting Linux.
+> 2. I had seen an ASPM issue long back in 2022 and had narrowed it down to
+> the Data Link Layer being inactive when the PCIe Core in Linux accesses the
+> Configuration Space of the PCIe Endpoint:
+> https://lore.kernel.org/r/faa13ac2-27b6-94f3-ecde-60256bbbda1b@ti.com/
+> The fix for it is the patch to which I have replied above. Direct link to
+> the patch is:
+> https://lore.kernel.org/r/20220602065544.2552771-1-nathan@nathanrossi.com/
+> and it modifies the ASPM driver to wait for sufficient time if the PCIe
+> Controller doesn't have the
+> ability to report the Data Link Layer state (this is the case for the PCIe
+> Controller on the AM69 and other K3 SoCs from TI).
+>
 
-Tommaso, Rob,
+Thanks for the suggestions.
 
-On Mon, Nov 10, 2025 at 11:43:37PM +0100, Tommaso Merciai wrote:
-> Hi Conor,
-> Thanks for your comment!
->=20
-> On Mon, Nov 10, 2025 at 06:56:31PM +0000, Conor Dooley wrote:
-> > On Mon, Nov 10, 2025 at 01:08:04PM +0100, Tommaso Merciai wrote:
-> > > Document the 'mux-controller' child node in the Renesas RZ/V2H(P)
-> > > USB2PHY reset binding to support describing the USB VBUS_SEL
-> > > multiplexer as a mux-controller.
-> > >=20
-> > > This is required to properly configure the USB PHY VBUS source on
-> > > RZ/V2H(P), RZ/G3E SoCs.
-> > >=20
-> > > Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-> > > ---
-> > > v2->v3:
-> > >  - Manipulate mux-controller as an internal node.
-> >=20
-> > Why is it a child node, rather than just putting the cell in the parent
-> > reset node?
->=20
-> Getting "make dt_binding_check errors" [1] in v2
-> Adding #mux-state-cells =3D <1> into:
->=20
-> 	usb20phyrst: reset-controller@15830000
-> 	usb21phyrst: reset-controller@15840000
->=20
-> Nodes.
->=20
-> Please correct me if I'm wrong.
+I tested both of them and still have the same issue.
 
-I think that that binding is not working as intended. Why require a
-node-name pattern, when it matches on other things too:
-select:
-  anyOf:
-    - properties:
-        $nodename:
-          pattern: '^mux-controller'
-    - required:
-        - '#mux-control-cells'
-    - required:
-        - '#mux-state-cells'
-if the node name always contained mux-controller, the second two here
-would not be needed. Looks to me like the intention was for it to allow
-putting these control/state-cells properties into mfd type nodes.
+One thing I noticed is that if I keep resetting the board, sometimes the
+issue doesn't happen, and I can access the SSD (this is independent of
+having any of the fixes you suggested).
 
-I'd delete the node name property tbh. Rob, you converted this to
-schema, what do you think?
-
-Cheers,
-Conor.
-=20
-> [1] https://patchwork.kernel.org/project/linux-renesas-soc/patch/961741af=
-7d4ec945945164759fe0d78bb3cf4d9d.1762354366.git.tommaso.merciai.xr@bp.renes=
-as.com/
->=20
-> >=20
-> > >  - Improved commit body.
-> > >=20
-> > > v1->v2:
-> > >  - New patch
-> > >=20
-> > >  .../bindings/reset/renesas,rzv2h-usb2phy-reset.yaml   | 11 +++++++++=
-++
-> > >  1 file changed, 11 insertions(+)
-> > >=20
-> > > diff --git a/Documentation/devicetree/bindings/reset/renesas,rzv2h-us=
-b2phy-reset.yaml b/Documentation/devicetree/bindings/reset/renesas,rzv2h-us=
-b2phy-reset.yaml
-> > > index c1b800a10b53..03da74ff2d08 100644
-> > > --- a/Documentation/devicetree/bindings/reset/renesas,rzv2h-usb2phy-r=
-eset.yaml
-> > > +++ b/Documentation/devicetree/bindings/reset/renesas,rzv2h-usb2phy-r=
-eset.yaml
-> > > @@ -37,6 +37,12 @@ properties:
-> > >    '#reset-cells':
-> > >      const: 0
-> > > =20
-> > > +  mux-controller:
-> > > +    $ref: /schemas/mux/mux-controller.yaml#
-> > > +    description: Mux controller for USB VBUS source selection.
-> > > +    type: object
-> > > +    unevaluatedProperties: false
-> > > +
-> > >  required:
-> > >    - compatible
-> > >    - reg
-> > > @@ -44,6 +50,7 @@ required:
-> > >    - resets
-> > >    - power-domains
-> > >    - '#reset-cells'
-> > > +  - mux-controller
-> > > =20
-> > >  additionalProperties: false
-> > > =20
-> > > @@ -58,4 +65,8 @@ examples:
-> > >          resets =3D <&cpg 0xaf>;
-> > >          power-domains =3D <&cpg>;
-> > >          #reset-cells =3D <0>;
-> > > +
-> > > +        mux-controller {
-> > > +          #mux-state-cells =3D <1>;
-> > > +        };
-> > >      };
-> > > --=20
-> > > 2.43.0
-> > >=20
->=20
->=20
-
---i+5JGchjTRlwEy8H
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaRN3JAAKCRB4tDGHoIJi
-0kOLAQCI5K2A+ibI0FbtW+1ELPWJuLm5VD2WFoSS+aZuH4mZngD+KEH6LZ/MiVEc
-Ck342874THE4WX4OIe2YftYE5Z1hago=
-=Z10t
------END PGP SIGNATURE-----
-
---i+5JGchjTRlwEy8H--
+Best Regards,
+João Paulo Gonçalves
 
