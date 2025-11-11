@@ -1,207 +1,205 @@
-Return-Path: <linux-kernel+bounces-895369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC331C4D95B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:07:25 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 583F5C4D94C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:07:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3C454346C88
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:07:25 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C0968344CB5
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:07:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 191793587AD;
-	Tue, 11 Nov 2025 12:07:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE2923563FA;
+	Tue, 11 Nov 2025 12:07:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="fyjIzro3"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="LKUE9JAt"
+Received: from PH8PR06CU001.outbound.protection.outlook.com (mail-westus3azon11012029.outbound.protection.outlook.com [40.107.209.29])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 005823559F8;
-	Tue, 11 Nov 2025 12:07:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762862838; cv=none; b=sVxFFz5gZNgp5gkalzjm7LpjqoXDGslYRNvFVAE9nuLXxGvK+K+BTS8b7O8SwqnhYiUflbtGgIm0+XJfEIo3aEaQSbiWt/Jo9PCk3Xs7TIa95uRlTjSXb3d6PjmzGk0M55zGRycdkIeK7m+0KzU7qUSbKR2My5tP6+jfqQMXFyQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762862838; c=relaxed/simple;
-	bh=O8CvrRoMfamiivBrhxyLoF+42dG2wZYImhw8qkUTm7Y=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=E3sJ5zXyK3GTAymM8floM7BFbNCSCCj6X1FdIPT6boI9o4+6um4A2DTom45NkQjC1CEuUhBx6MIul1T0+pmmKGQpPf0J27V5M8DGUhNPMB0PODG8r+49qNsU8KSCOlcUGc3nCmQEQHYzrMe8EYCUx5A32CHxP9wPw92BXOEl0eM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=fyjIzro3; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 863A0FE;
-	Tue, 11 Nov 2025 13:05:13 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1762862713;
-	bh=O8CvrRoMfamiivBrhxyLoF+42dG2wZYImhw8qkUTm7Y=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=fyjIzro3aBiXkBcHDQQx8QsTQC8m9VXT5JaBenEIju1kycZ+PDjvx3biBqD5F6r2J
-	 xYvqYyWVOoe/PrLUAS48CJgw1AHSUWEZ/bentPCNtclZcEn/HPr8MRgpty6xFjzc2l
-	 kuNmuj1EWPGO0HZLV3o/Z9sdsXJV5Gxa2tGt1Ql8=
-Content-Type: text/plain; charset="utf-8"
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DEF82E8E06;
+	Tue, 11 Nov 2025 12:07:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.209.29
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762862825; cv=fail; b=mzNO8hVUUT8MEhQ2O500MZH4qKsEdcPYMibNrbARJtxxz0jq/y7WC8RV9H0C8Umbf2UwjRyDReXA2S/cqpcx+e5ooApQBBCfakoN7SiChbIVstT95096L6dW3gq5DUcLWT7BUV/LivPAH4dSlmpE8UsxZvsviv2A7pkmN8UAj8A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762862825; c=relaxed/simple;
+	bh=ArehFifUIIBltgDLFXSP3jFYgBn4MJN2VOMNSEEsIBw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=CwcbeYUUrGPB0C5Tc/zwRegXU/SKBOskCSgFgF/N7uMsELGV8+AVEXIYo/NazPXVQ8ObVZg4s6SJkRzyXWxaBw4Hz6zpQ0Wuj0kgIKYXRm2D0DEri6h1Fiwi/Vxae8RwKBTsPimxjGwn3zKoJy/qe8gpWDt3bPgHoyXBe8m1Lp4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=LKUE9JAt; arc=fail smtp.client-ip=40.107.209.29
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=RbmTxDzaJLCEE2BI85w7nS/CBgqO4McP8YpokLEuOrdw84iPfXQfpK0kToYUVNs5GkvVHaQLcxkougmvH1XrXXhWUScnyKwKPSimIlHiYUqaWyvuoZmc8QeA0yZR1OTziHQ9ejo4aQIYEs+dgRn68ktS8a2fnRNzhD0+Eo+2aQ0LFDBLX9AGB5o57PWPCyB4M8H9G0W8vZwQbxCEQ2KkRnrxkUgZgVt2OPMHmkoR3pO19+efCGKlG1lw3lKHBi4Ecu2+fWZT+3EQ9gmmuEjl6mwWSjjsX3o+Nnd+TlfzuNqvzuw7FpZUt8mHgrBr2s/kyazksZoz1qSssaeAoYM3Lg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=uLCNcztp+MVEhyZ+ch9sY16yzSqj2fIZmY5tlgLQI7A=;
+ b=kc7jwhjmQmPWLkOJPibfYkUL5fnR49gwvmg7FXcErMzVp/HutiTlfFkWUxtuG00Gym0hLCVz26p4BZWMK7nXFxKnj78ak5EruaXAC5WhjQmkZ3Yahg24X5ADOTaSBJ2LlO0/z6TB5WQG7hbmYINPL2z7KROeDJha78CWwYSVxGnhUoT8KcDGP2ekrSuUHBnywlheGoxFS1k4TEyHgz4HNx0BHlr2vRNwDp9QP1HrHemK7jV8rR5UZhS1EkmaHODYl7Tk9GP1arpWMVq+3cZ+Vwq34i8QC/bIw0plS/grfRclY5xwUgrn8TbnqOIFZRAwOgyiwEXgwkMaMnOiZb3LGA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=uLCNcztp+MVEhyZ+ch9sY16yzSqj2fIZmY5tlgLQI7A=;
+ b=LKUE9JAtGowlC8D9hcHy80ZUxMYCPSR0Hw00/kIWJaK28nvHAn4yATrWIxEEwH6nLy2/EglA0V7PVyCN1CkTK7IyX2RO0mooIhde9uZfkDxF+odzT2ASq5PRV6+Rc1BcgqHtnAXit8SUTppO5qioZ2ndr9TT7pzIb+0HuTIm20w=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MW6PR12MB8758.namprd12.prod.outlook.com (2603:10b6:303:23d::18)
+ by PH8PR12MB6891.namprd12.prod.outlook.com (2603:10b6:510:1cb::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Tue, 11 Nov
+ 2025 12:07:01 +0000
+Received: from MW6PR12MB8758.namprd12.prod.outlook.com
+ ([fe80::621e:d58f:ba3:b52d]) by MW6PR12MB8758.namprd12.prod.outlook.com
+ ([fe80::621e:d58f:ba3:b52d%3]) with mapi id 15.20.9320.013; Tue, 11 Nov 2025
+ 12:07:00 +0000
+Date: Tue, 11 Nov 2025 13:07:28 +0100
+From: Robert Richter <rrichter@amd.com>
+To: Alison Schofield <alison.schofield@intel.com>
+Cc: Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Davidlohr Bueso <dave@stgolabs.net>, linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Gregory Price <gourry@gourry.net>,
+	"Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
+	Terry Bowman <terry.bowman@amd.com>,
+	Joshua Hahn <joshua.hahnjy@gmail.com>
+Subject: Re: [PATCH v4 12/14] cxl: Simplify cxl_rd_ops allocation and handling
+Message-ID: <aRMnAIwdMnTTK1Tp@rric.localdomain>
+References: <20251103184804.509762-1-rrichter@amd.com>
+ <20251103184804.509762-13-rrichter@amd.com>
+ <aQqF-xCnL2Ugh3hp@aschofie-mobl2.lan>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aQqF-xCnL2Ugh3hp@aschofie-mobl2.lan>
+X-ClientProxiedBy: FR2P281CA0051.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:92::8) To MW6PR12MB8758.namprd12.prod.outlook.com
+ (2603:10b6:303:23d::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250910-rcar-vsp-underrun-revert-v1-1-2fa8d3b1b879@ideasonboard.com>
-References: <20250910-rcar-vsp-underrun-revert-v1-1-2fa8d3b1b879@ideasonboard.com>
-Subject: Re: [PATCH] Revert "media: vsp1: Add underrun debug print"
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Duy Nguyen <duy.nguyen.rh@renesas.com>, Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Date: Tue, 11 Nov 2025 12:07:09 +0000
-Message-ID: <176286282930.2141792.17722042639840544380@ping.linuxembedded.co.uk>
-User-Agent: alot/0.9.1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MW6PR12MB8758:EE_|PH8PR12MB6891:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5e8074f4-845c-4ea5-2452-08de211ad1bf
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?yGYfDfrvXmB1ZZioePIyugqf9GacR0kU6X5veZYLPlRxzA3CksMsYCjUp8Dw?=
+ =?us-ascii?Q?XcXaMYk52ykbzgyBoOu4vD113lfVXupeLKiRe3zEvqvHSmB8Rug/E1bohi1e?=
+ =?us-ascii?Q?/18SSAdLK/SmkewKng/qzU4vIzqupZJr8FeMjwbeDc6r2iQjOkahsbFWjd+Z?=
+ =?us-ascii?Q?1mzl0Mn1gTFhs0UtOzVXqpJ6GBsbg/xrvyQMpimcmza0L1s44fdTJkz4uwYM?=
+ =?us-ascii?Q?ozLYdzA7orz0skof+TlUdb/NO/YDHBEDwuH7PyG9dVaNgzsGpednsuVw617T?=
+ =?us-ascii?Q?a1lSDNVo2Gxjy7QgXY2dUteZ85ScLKP+x+WmR4tVLDsPx7ONvFD/plpNa/7b?=
+ =?us-ascii?Q?77EvN7hlH4gqWSd2isnT3hmVol7nvdJ1x1kUbJ4MhdUOomVoHy6Q8ngWhefy?=
+ =?us-ascii?Q?VTj5UYLGE5djWqj4P/0fhgiLfOjsMiuW7D3zgC/+oWh3i99e+CRYpN7RyDyR?=
+ =?us-ascii?Q?rbCyg57e5exeSrWgqYeDdbQy+PmQVQBoY/lqFupj56PbEuxy2eXJFAp2/H/i?=
+ =?us-ascii?Q?2V1cm6839e1ufp8ti9wNZYtrzYrSA6w3s40xudhcBAqCUJehYsTHrGInm5tA?=
+ =?us-ascii?Q?/Zl54bmTK4e+YhCVqyFoBXdEnfULSh5PiKULzF1NDhknn6zuJOXaJNt6uuoQ?=
+ =?us-ascii?Q?mBHhROgyUR1Ci7EVba6L/MpthhPe5iGq5UV69kaIl1356CV6b3bgQeZXZJSw?=
+ =?us-ascii?Q?R7GiaB54IdLR4Sm6w7kMIC76Embnaqqjr5bEo3HAfXkmc2Yy6jj7nyg2sBfp?=
+ =?us-ascii?Q?M2QJ13vqthumwCBtxiNwHjuBYV3ne16sFIA9Dh1iERSmVpX8hMZbjp09ouSc?=
+ =?us-ascii?Q?uvV8LnYxx1vY46JAwbMsxjfQrjlxbWxyO6BmtpGyZ0eRCnopBmjlmiPn83In?=
+ =?us-ascii?Q?2U+6Ac0xCECnQ2PYGfO0H67pOjNSgX8lnam8zYAMwbor0YkBeWPVEtj8fIBi?=
+ =?us-ascii?Q?l0GkGKuvorOyXaq7iI7w/3Eka2XJ/EDX/Y2mpVU/MIcHABRZCQvYpDCZ7+pe?=
+ =?us-ascii?Q?nGcbsN2MHDNrWfc62Az5O6HYhVFh7J3k6Lm8PPDW4Kw5lMx+gf6Ww8TGTCqR?=
+ =?us-ascii?Q?Hg8FjOcsTP1JyWqeHDJUcHWX0Pe332oHTeTH9LKmRjZCqiBVWCf65gm4dSt2?=
+ =?us-ascii?Q?igNNzsbUlCr8/scHI+fuNL5leSvcbhHaRZwpSECc0AhdJker5lvkYIi955QY?=
+ =?us-ascii?Q?2ctrTdGu5pFqHkNb0ZT5SEBgYY+PE2i6VE+dscmED3O+L+U6PEO7LZJXsrjs?=
+ =?us-ascii?Q?Bkm1RJbtPWt8nmjyVZWf5rwtRTeT3qVnnVUWrQcNqj3H860e2zL5Uy7gR0HH?=
+ =?us-ascii?Q?AisAGJEmAxtVR8mSkUbc6m3DVKlUvHA+XsXQrzzb/scSetLHitCHyMehgSGl?=
+ =?us-ascii?Q?xaOaKwB7reyUkgPTtcC2V0LnCPASMUvnx47/OOd51C43pPToYJxnkJhX2rGw?=
+ =?us-ascii?Q?wsyBUjaC4GsnFyvh9AhpqNgS0ozEl/DO?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW6PR12MB8758.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?UgX9fpkY6Ou+T1O6h1JKQj0nWTMB4Kakj7/n6vVJd/79A+UjsvxNBWAPi6Cp?=
+ =?us-ascii?Q?vdE3052GNazjedfQXwxuvhtbp4q+sJz01L4sWc6p6V9HU+7b7z0QyseV7Lqe?=
+ =?us-ascii?Q?DMxbrSHtYyVL+MSCgqThTlMEyi72H15dgdHKR7tQSV/+h0SZfHAfT+uBk21l?=
+ =?us-ascii?Q?jY1lYLsMNKwSrdW8wXTTXs+bvFDLRJhmQord2u8Znzh8+F0untylThTRJoSQ?=
+ =?us-ascii?Q?kfxbpnPJAFiSJK9J/Lah4N5Qb7qZ8/5JhcOw7AMyb0tklCLeOQcKncd7aEci?=
+ =?us-ascii?Q?kaK90/fP//HZMDWjgwcbDZmv6JgP7ZAMAE2FqIrbwWmoqzy4pGrulNaaVTxt?=
+ =?us-ascii?Q?15NbtuBdQAaMLPFODonHMb8E2OAlz0iPA6ilCQMT38WamnQeKJh2Fe4XBBsI?=
+ =?us-ascii?Q?DdgueAWxgjVsni+EHvcNigz+Jlox/MiJJaay58VD5smv8VdRZB4XgpJ/Nft+?=
+ =?us-ascii?Q?Zgo9e5d54teDsSioBS7QZ+gaMojPykU6FrcnweXyz2iW58qPbhXBvNkmajs3?=
+ =?us-ascii?Q?gHDIIUYi1y+2yIMYJ2HvGW3xxZb64X8h4qwCwnI0SoMdc2vdN2oWlh41gu0q?=
+ =?us-ascii?Q?zIOXr4G9zSBa92ZwFTIW4hHm1c9oXyEhosDvCMyI9DBAFqI4GsOEQimlLoAY?=
+ =?us-ascii?Q?RwoXo+0HezbMlK/KRpujlw6rjMG3HRnbofyj4Ch/x9Kxn/fiP/fylBDlpVwV?=
+ =?us-ascii?Q?edLvvdpuFbSnuFuGXCG4mZ5TX3PUkZd1N/EWEdLvK8fhXBf67qHHJcTYlRjQ?=
+ =?us-ascii?Q?tYLyyrUS9AJ5Y1LjUyqhs+QsY/GptCqL5s1s2u0Bfh1KQySQYgjaNLN1ClcY?=
+ =?us-ascii?Q?g76iInx3Dac12HvvGI1RdBlUbbcflg9Q7YXiQiVN8uevFB1XRfQPMZ0r2cVu?=
+ =?us-ascii?Q?Br5UHnpi/0LvqlrvTa7o6x0k4csGSJM4N91FEHCAdaub6x10fNSh2ar9IQKA?=
+ =?us-ascii?Q?SEEGQA//SCxndxlPuc6a+H+WIxE3tcqGwlIF9LZpE0z4nNfeJZryxUaJU1nD?=
+ =?us-ascii?Q?2zII3lQCqJ7gixIPJFiDUjZSryIlE1+x/xRz4tCj0Sy4+Fg0BBt6j0wntqJ1?=
+ =?us-ascii?Q?CvCuTseIbs60G3102hFxtYm/ooBDSXslIA8ib/b6FXTYcgh3OolITXp0rsCm?=
+ =?us-ascii?Q?nlevbOpigpCnPX//Wt3sKGeW7ixZCnVIj9m7MnJw6NH+AOFvfeAIMKCIn5oh?=
+ =?us-ascii?Q?qK140deSRoimvI3d+OqV6QQZzpD9e715Yfc0fA03eDkUrySbyMEt9xi1YHGH?=
+ =?us-ascii?Q?6cQszk038qtiAGymzSPK2MnNBWmGveGMxkfQUjBHRMKT6QCgzoHuSduSclw/?=
+ =?us-ascii?Q?YTJUdnkVSiHpOm/VHXTLqBuduPVeIqYir4T7siSOqOlNIwReWGXvWg53Rv+C?=
+ =?us-ascii?Q?A+2G++IknXJVFIDo2RzuI6beGwUib8CRWOcxhLrfAryNLhmuNPPKffRJNdpG?=
+ =?us-ascii?Q?xrt32TDG67s9iXKLd9N85L+a9Qr5Dn1hdrOOmSVQxpDIyIOWP1Xz9E3GCUNc?=
+ =?us-ascii?Q?naXYFIyVVoD8hcyvUB21GstAjJr+kJt3VXvN08YlF1SwbbDnIYmtTCl4K7nr?=
+ =?us-ascii?Q?GNCJICHE//fMe3gLR25PiJjoXC4rojXSQKGyXGxw?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5e8074f4-845c-4ea5-2452-08de211ad1bf
+X-MS-Exchange-CrossTenant-AuthSource: MW6PR12MB8758.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Nov 2025 12:07:00.8278
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: nd+magfA33xdIlxo3BvF2BEIC7V9Jzop/vg5ABGosE3wlDhYI2m/IADz6GX45n5WD2wIaNqIdhBCEJKvpCzRPA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB6891
 
-Quoting Tomi Valkeinen (2025-09-10 08:26:43)
-> This reverts commit 1dc30075fb0fe02b74b1ea7fd1c1c734a89f1448.
->=20
-> There have been reports of lots of underruns happening on earlier
-> generation SoCs (M3, E3) with display use cases, e.g.:
->=20
-> vsp1 fea28000.vsp: Underrun occurred at WPF0 (total underruns 1)
->=20
-> but the display still working fine, and reverting the above commit,
-> which added underrun prints, makes the prints go away (obviously).
->=20
-> I made some tests on a remote M3, with no display connected, and I can
-> confirm that there seem to be a single underrun report quite often when
-> enabling a display, and an underrun flood when using interlace display
-> modes.
->=20
-> E3 does not have interlace display support as far as I can see, so the
-> interlace issue does not concern it.
->=20
-> Debugging display issues remotely without a display is quite
-> challenging, and I did not find any issues in the code, nor could I find
-> a way to stop the underruns by twiddling with the related registers.
->=20
-> My pure guess is that the single underruns occurring when starting the
-> display hint at either a startup sequence issue, or some kind of initial
-> fifo loading issue. The interlace underruns hint at a bigger
-> misconfiguration, but as the display works fine, the issue might be just
-> an underrun at the start of the frame and the HW quickly catching up, or
-> at the end of the frame, where one block in the pipeline expects more
-> data but the previous block has already stopped (so maybe a misconfig
-> between using interlaced height vs progressive height?).
->=20
-> But at the moment I have no solution to this, and as the displays work
-> fine, I think it makes sense to just revert the print.
+Alison,
 
-Is there any value in instead 'ignoring' any underruns if say the frame
-count is < 5 to ignore startup underruns, and keep it as an active print
-if something causes underruns later once the pipeline is established?
+On 04.11.25 15:02:19, Alison Schofield wrote:
+> On Mon, Nov 03, 2025 at 07:47:53PM +0100, Robert Richter wrote:
+> > A root decoder's callback handlers are collected in struct cxl_rd_ops.
+> > The structure is dynamically allocated, though it contains only a few
+> > pointers in it. This also requires to check two pointes to check for
+> > the existance of a callback.
+> > 
+> > Simplify the allocation, release and handler check by embedding the
+> > ops statical in struct cxl_root_decoder.
+> > 
+> > Implementation is equivalent to how struct cxl_root_ops handles the
+> > callbacks.
+> 
+> The allocation was intentionally dynamic because the root decoder ops
+> only existed for CFMWS's defined w XOR Arithmetic.
+> 
+> From the commit msg:
+> >> To avoid maintaining a static ops instance populated with mostly NULL
+> >> pointers, allocate the ops structure dynamically only when a platform
+> >> requires overrides (e.g. XOR interleave decoding).
+> >> The setup can be extended as additional callbacks are added.
+> See: 524b2b76f365 ("cxl: Move hpa_to_spa callback to a new root decoder ops structure")
+> 
+> Has the usage changed?
 
-But maybe that doesn't change much - and if there's no current perceived
-issue
+No, code did not change. In another patch I had to change struct
+cxl_root and the cxl_root_ops allocation there. The pattern here is
+the same and the code would benefit from the same change to simplify
+it.
 
+Dynamic allocation does not save much here (only a single pointer
+entry) but requires resource allocation and a 2-level pointer check
+which must be run even if the pointers are NULL. If there is at least
+one pointer set (which becomes more likely with an increased number of
+ops) you need to allocate the whole struct anyway and dynamic alloc
+does net help then. The diffstat also shows the simplification:
 
-Anyway, I don't object to this revert. It's low impact and it's only
-undoing 'your' work so no one else will complain :D
+ 3 files changed, 8 insertions(+), 22 deletions(-)
 
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-
->=20
-> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-> ---
->  drivers/media/platform/renesas/vsp1/vsp1_drm.c  |  3 ---
->  drivers/media/platform/renesas/vsp1/vsp1_drv.c  | 11 +----------
->  drivers/media/platform/renesas/vsp1/vsp1_pipe.h |  2 --
->  drivers/media/platform/renesas/vsp1/vsp1_regs.h |  2 --
->  4 files changed, 1 insertion(+), 17 deletions(-)
->=20
-> diff --git a/drivers/media/platform/renesas/vsp1/vsp1_drm.c b/drivers/med=
-ia/platform/renesas/vsp1/vsp1_drm.c
-> index 15d266439564..b8f211db16fc 100644
-> --- a/drivers/media/platform/renesas/vsp1/vsp1_drm.c
-> +++ b/drivers/media/platform/renesas/vsp1/vsp1_drm.c
-> @@ -721,9 +721,6 @@ int vsp1_du_setup_lif(struct device *dev, unsigned in=
-t pipe_index,
->                 return 0;
->         }
-> =20
-> -       /* Reset the underrun counter */
-> -       pipe->underrun_count =3D 0;
-> -
->         drm_pipe->width =3D cfg->width;
->         drm_pipe->height =3D cfg->height;
->         pipe->interlaced =3D cfg->interlaced;
-> diff --git a/drivers/media/platform/renesas/vsp1/vsp1_drv.c b/drivers/med=
-ia/platform/renesas/vsp1/vsp1_drv.c
-> index b8d06e88c475..68e92d3c5915 100644
-> --- a/drivers/media/platform/renesas/vsp1/vsp1_drv.c
-> +++ b/drivers/media/platform/renesas/vsp1/vsp1_drv.c
-> @@ -47,8 +47,7 @@
-> =20
->  static irqreturn_t vsp1_irq_handler(int irq, void *data)
->  {
-> -       u32 mask =3D VI6_WPF_IRQ_STA_DFE | VI6_WPF_IRQ_STA_FRE |
-> -                  VI6_WPF_IRQ_STA_UND;
-> +       u32 mask =3D VI6_WPF_IRQ_STA_DFE | VI6_WPF_IRQ_STA_FRE;
->         struct vsp1_device *vsp1 =3D data;
->         irqreturn_t ret =3D IRQ_NONE;
->         unsigned int i;
-> @@ -63,14 +62,6 @@ static irqreturn_t vsp1_irq_handler(int irq, void *dat=
-a)
->                 status =3D vsp1_read(vsp1, VI6_WPF_IRQ_STA(i));
->                 vsp1_write(vsp1, VI6_WPF_IRQ_STA(i), ~status & mask);
-> =20
-> -               if ((status & VI6_WPF_IRQ_STA_UND) && wpf->entity.pipe) {
-> -                       wpf->entity.pipe->underrun_count++;
-> -
-> -                       dev_warn_ratelimited(vsp1->dev,
-> -                               "Underrun occurred at WPF%u (total underr=
-uns %u)\n",
-> -                               i, wpf->entity.pipe->underrun_count);
-> -               }
-> -
->                 if (status & VI6_WPF_IRQ_STA_DFE) {
->                         vsp1_pipeline_frame_end(wpf->entity.pipe);
->                         ret =3D IRQ_HANDLED;
-> diff --git a/drivers/media/platform/renesas/vsp1/vsp1_pipe.h b/drivers/me=
-dia/platform/renesas/vsp1/vsp1_pipe.h
-> index 7f623b8cbe5c..9cc2f1646b00 100644
-> --- a/drivers/media/platform/renesas/vsp1/vsp1_pipe.h
-> +++ b/drivers/media/platform/renesas/vsp1/vsp1_pipe.h
-> @@ -137,8 +137,6 @@ struct vsp1_pipeline {
-> =20
->         unsigned int partitions;
->         struct vsp1_partition *part_table;
-> -
-> -       u32 underrun_count;
->  };
-> =20
->  void vsp1_pipeline_reset(struct vsp1_pipeline *pipe);
-> diff --git a/drivers/media/platform/renesas/vsp1/vsp1_regs.h b/drivers/me=
-dia/platform/renesas/vsp1/vsp1_regs.h
-> index 10cfbcd1b6e0..188d26289714 100644
-> --- a/drivers/media/platform/renesas/vsp1/vsp1_regs.h
-> +++ b/drivers/media/platform/renesas/vsp1/vsp1_regs.h
-> @@ -32,12 +32,10 @@
->  #define VI6_STATUS_SYS_ACT(n)          BIT((n) + 8)
-> =20
->  #define VI6_WPF_IRQ_ENB(n)             (0x0048 + (n) * 12)
-> -#define VI6_WPF_IRQ_ENB_UNDE           BIT(16)
->  #define VI6_WPF_IRQ_ENB_DFEE           BIT(1)
->  #define VI6_WPF_IRQ_ENB_FREE           BIT(0)
-> =20
->  #define VI6_WPF_IRQ_STA(n)             (0x004c + (n) * 12)
-> -#define VI6_WPF_IRQ_STA_UND            BIT(16)
->  #define VI6_WPF_IRQ_STA_DFE            BIT(1)
->  #define VI6_WPF_IRQ_STA_FRE            BIT(0)
-> =20
->=20
-> ---
-> base-commit: 76eeb9b8de9880ca38696b2fb56ac45ac0a25c6c
-> change-id: 20250908-rcar-vsp-underrun-revert-f3e64612c62d
->=20
-> Best regards,
-> --=20
-> Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
->
+-Robert
 
