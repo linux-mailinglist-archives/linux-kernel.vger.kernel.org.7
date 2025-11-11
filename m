@@ -1,287 +1,246 @@
-Return-Path: <linux-kernel+bounces-895982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 579E6C4F6CC
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 19:24:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9659DC4F6D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 19:25:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1A5D94E1B4F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 18:24:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AB3118C0971
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 18:25:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5921933CEA1;
-	Tue, 11 Nov 2025 18:23:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65B3D36B06A;
+	Tue, 11 Nov 2025 18:25:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="svEXRkNt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=lucidpixels.com header.i=@lucidpixels.com header.b="gkUFSSLG"
+Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87351824BD;
-	Tue, 11 Nov 2025 18:23:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8E772BEC30
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 18:25:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762885438; cv=none; b=AQgdpLOHrct0xqbCaqbqOdmNY3UOs/JhI9CweheVI+dsup6RQWVcPLnOj8eJb/tmttEqhlH3+BLzRxNdhHe/GXTNr3c1TQmwVYetVKKJrJw9TuCk5HYwJ+s6la9S2pYOea2LJJv4DITf9MSIw7OKefYFKFd01dhWaOW2IJOcUk0=
+	t=1762885516; cv=none; b=bF3XmWgVd1vyCP+FTRaCw3EhNjiF1+2WtyKrztv9AX3j4I5Z/TYzAkrT+hyRQD5MZcgsdwqOtHjeqXq2JG5tJLWBRwmeBgO18y1JghAdHYzQEwsl8yq05TbiQGBAT7iJfEqL51k5RkWVv09ySb/QvHV5Vq/WVcFluRS81ba5dK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762885438; c=relaxed/simple;
-	bh=wEYcTbf1t7TK5WW9GO1kpaI4TRakvg9qgXLkq9cJOpU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d88Oq41nsPZmpwP/xsL/3uTi1HDQ8LEoBJEj/65QdF1LOV02PGmZVDiSJrJ3f1le4zuWB2Y0/hmG9Q3gc0quSFoxUxeKJvvYlSHpibVsXLSpzLHxbJylnKELCvb2c3XcS8CWi8Z6mEKVlY0Cr6TS/hnsqtErwgOou93u1bpLP8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=svEXRkNt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FC9CC16AAE;
-	Tue, 11 Nov 2025 18:23:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762885438;
-	bh=wEYcTbf1t7TK5WW9GO1kpaI4TRakvg9qgXLkq9cJOpU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=svEXRkNtCnUwLzz9/rJbkFLcNcd6SGYPjddbxn4Etm9Jt2qrErXd0qB2spLZdptHN
-	 TB6QNXBuh+iOwtSg0W257gr4zpGKitMLxwsFiYmLNnu3FynnkwyB20He99hD08e5Ma
-	 ZRKd8b8TwRtip9skzFP3yG7VSqUpCZyYSD3VY0W/I+Y32F2Wo88CPCOg+px6vQLJXA
-	 PZvLZDa7nxRs1ylhtnkVEypmlO7dV2T95z0lnd4Q6fv7oyREOIhDAYVVoPXDB1ydv4
-	 E5Dt9Ox6dMYp72GWkqCQvv5fHZH7QOHFK50VrpL1bsBfPaycV8x8IVmtToalySQQ0f
-	 oSkwIuzURyHPQ==
-Date: Tue, 11 Nov 2025 18:23:49 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Michal Wilczynski <m.wilczynski@samsung.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Emil Renner Berthing <kernel@esmil.dk>,
-	Hal Feng <hal.feng@starfivetech.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Xingyu Wu <xingyu.wu@starfivetech.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>, Lee Jones <lee@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Icenowy Zheng <uwu@icenowy.me>,
-	Maud Spierings <maudspierings@gocontroll.com>,
-	Andy Yan <andyshrk@163.com>, Heiko Stuebner <heiko@sntech.de>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-phy@lists.infradead.org,
-	dri-devel@lists.freedesktop.org, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH RFC 04/13] dt-bindings: display: bridge: Add
- starfive,jh7110-hdmi-controller
-Message-ID: <20251111-filler-wisplike-2c30631e82a0@spud>
-References: <20251108-jh7110-clean-send-v1-0-06bf43bb76b1@samsung.com>
- <CGME20251108010458eucas1p11d128a6dd0aab3171db7c001e69ecfc8@eucas1p1.samsung.com>
- <20251108-jh7110-clean-send-v1-4-06bf43bb76b1@samsung.com>
+	s=arc-20240116; t=1762885516; c=relaxed/simple;
+	bh=IgfgsAUifcIa+qGktq+OSaugDBFWvLZ/6tmZQlu/PWs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HA8yaDF2KlrK78ODc9YvRYeP85xc9jLWhdd48G4Jmds+jidml/nS/Hf0nRsntyNTkLLLALpK2mXpmiZemq5SWm3eVH3sBLNXlxJfOnoyAKZx8oBQniDhPSj+YJ65BgzP+MPKOq13H/XsFgH15fN64jzzIQXEupBf5WlLv85yW2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucidpixels.com; spf=pass smtp.mailfrom=lucidpixels.com; dkim=pass (1024-bit key) header.d=lucidpixels.com header.i=@lucidpixels.com header.b=gkUFSSLG; arc=none smtp.client-ip=209.85.160.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucidpixels.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lucidpixels.com
+Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-3e10d1477afso24233fac.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 10:25:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lucidpixels.com; s=google; t=1762885513; x=1763490313; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GtpUxdxH6tHpXNqd2iO08w1vKvEg3zXiBARa+Otl0m0=;
+        b=gkUFSSLG3tFwOG4qiNDy8uFGCp8wuL2bvlkbO3yPusrPwa7e5DbM9aY7T61eoiRm2E
+         IPOO1TUBVWFyEuea/WZjLVv1NA17KIs9WxO7A3YnIAnv589Ex2mLXjbRGWiTvmm7nap/
+         EGYhNizfRnrs72GBcBnDCNJRPD2DjElx6TYwQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762885513; x=1763490313;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=GtpUxdxH6tHpXNqd2iO08w1vKvEg3zXiBARa+Otl0m0=;
+        b=bwj1zFzLhYW9Nu9yKTERrw9Tdqw7UHDZP0AGLSkmCPjSP7v//N+kjSDIlDzYfJF4Ki
+         vQk1gCqxzBA9cX0jqJjQRhtiLiOjZxlhkKz9LFceJ7GiYO/QbaawARcx1crE4hDTg/Id
+         eIYJSNRxp2HO6PoZf8iy7vKVAW3+qled7L0ezz3Qn0nfwJuKxmBm+xJ6iaCAJLr0x6pf
+         0FHUHkzO9D6MgtZoFxEkC0Cgxsophy4XnlsJX0WaS+Gcbf8EUn9a46dbfIZ90ALg/pjH
+         CRx/Jlpp91HDqPa31aijpfICEO7qXRPqh1P7pXVKVREMZ8YUy/mHFcwCTfbfvpJLQEfj
+         garg==
+X-Forwarded-Encrypted: i=1; AJvYcCW3Ou17/PZi4ISMpsdoRa7YS21gK/RkHP535/JN3EjSw5qpbHBEF1Ex83XYar+KG5IdCtP8Qsf4i8DnD9Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsslDIY/Zezu/zl8eGMhZsI0gp7rZmd9U6yOoCjMrPBSpXt70z
+	aVH8ABepfRFGU6B99+ud1E2PXPYvgsz8l5To+lVllRqHD/S7AD49flDgT6x4ZDEV2vzLfN2q9yo
+	ysaluOLGHeQK1LWEovWgvpyH/QPoGdv0T0APTcY3Qrg==
+X-Gm-Gg: ASbGnctPC8h6hrE/wf8ZONrpLI6wEWeKFzX7JnyxZN9l0ux2pQvxYO6K0OP0vXr+Cs1
+	nlCwC1bpgc81nMEHYtui3nqETxs3vddGY5nSIG9EHIl7J10Kawa9HES62P36KYeiw8/4zbi6IJ9
+	zhCIxZ/203oMI9uvB+Y0C5vwkHTu7jaLfpPf6j/udsDNIBANRXuRKnCZR3Zvv+Nff1enbcCNEYN
+	9XOlFsH8xpZzlZU31jVpVIjKQBAnSlPhCStCqiiQVyjgFo+SPDrBjmTLd2LR3NjGHxjcBuBjMU9
+	PUlpFVATJS76b51E4iMLWR9Ppt/8BX/wanLKrKFys0lxzQ6u2Hc/WoOjKu44lEk=
+X-Google-Smtp-Source: AGHT+IGVdcg1pExsgdw3sNUbMbWj2lV1fImaTNjRSyrzu1tSZotBcHq8osVRXnFb5AVR//+Vw+FtIRvg2dx8p6XhnhM=
+X-Received: by 2002:a05:6870:390b:b0:3e0:788f:2600 with SMTP id
+ 586e51a60fabf-3e7c2530997mr5946058fac.12.1762885513036; Tue, 11 Nov 2025
+ 10:25:13 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ZI6TsvLTJLuPL419"
-Content-Disposition: inline
-In-Reply-To: <20251108-jh7110-clean-send-v1-4-06bf43bb76b1@samsung.com>
-
-
---ZI6TsvLTJLuPL419
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <CAO9zADwMjaMp=TmgkBDHVFxdj5FVHtjTn_6qvFaTcAjpbaDSWg@mail.gmail.com>
+ <e5a2b8b2-d4e5-42ce-9324-5748c5e078d4@app.fastmail.com> <1e4dd261-0836-4eea-b7fd-8dec9a7453d9@nvidia.com>
+In-Reply-To: <1e4dd261-0836-4eea-b7fd-8dec9a7453d9@nvidia.com>
+From: Justin Piszcz <jpiszcz@lucidpixels.com>
+Date: Tue, 11 Nov 2025 13:25:02 -0500
+X-Gm-Features: AWmQ_blcsc3mycJcTUxkKy46KcX9boZcZZKVUf7YKxs0lHKkJ_pwLPE_zw9uDCk
+Message-ID: <CAO9zADydZ=WrHbeREhWfetAupvzewM_A9Sz0RV8tY0h9CctoFA@mail.gmail.com>
+Subject: Re: BTRFS error (device nvme1n1p2): bdev /dev/nvme0n1p2 errs: wr 37868055...
+To: Chaitanya Kulkarni <chaitanyak@nvidia.com>
+Cc: Chris Murphy <lists@colorremedies.com>, 
+	"linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>, Btrfs BTRFS <linux-btrfs@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Nov 08, 2025 at 02:04:38AM +0100, Michal Wilczynski wrote:
-> Add the dt-binding for the StarFive JH7110 Innosilicon HDMI controller
-> (DRM bridge).
->=20
-> This device is the second child of the starfive,jh7110-hdmi-mfd node. It
-> consumes register access clocks (sys, mclk, bclk) from the voutcrg and
-> both the pixel clock (pclk) and the PHY from its hdmi_phy sibling.
->=20
-> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
-> ---
->  .../starfive,jh7110-inno-hdmi-controller.yaml      | 123 +++++++++++++++=
-++++++
->  MAINTAINERS                                        |   1 +
->  2 files changed, 124 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/display/bridge/starfive,jh=
-7110-inno-hdmi-controller.yaml b/Documentation/devicetree/bindings/display/=
-bridge/starfive,jh7110-inno-hdmi-controller.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..3707c9dbff9c9fdc0ed7db472=
-0a6dd8eabeeb774
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/bridge/starfive,jh7110-in=
-no-hdmi-controller.yaml
-> @@ -0,0 +1,123 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/display/bridge/starfive,jh7110-inno-h=
-dmi-controller.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: StarFive JH7110 Innosilicon HDMI Controller
-> +
-> +maintainers:
-> +  - Michal Wilczynski <m.wilczynski@samsung.com>
-> +
-> +description:
-> +  The controller portion of the StarFive JH7110 INNO HDMI IP.
-> +
-> +properties:
-> +  compatible:
-> +    const: starfive,jh7110-inno-hdmi-controller
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    items:
-> +      - description: System clock for register access
-> +      - description: Module clock
-> +      - description: Bus clock
-> +      - description: Pixel clock from PHY
-> +
-> +  clock-names:
-> +    items:
-> +      - const: sys
-> +      - const: mclk
-> +      - const: bclk
-> +      - const: pclk
-> +
-> +  resets:
-> +    maxItems: 1
-> +
-> +  reset-names:
-> +    const: hdmi_tx
-> +
-> +  phys:
-> +    maxItems: 1
-> +
-> +  phy-names:
-> +    const: hdmi-phy
-> +
-> +  ports:
-> +    $ref: /schemas/graph.yaml#/properties/ports
-> +    description:
-> +      A graph node with one input port and one output port.
-> +
-> +required:
-> +  - compatible
-> +  - interrupts
-> +  - clocks
-> +  - clock-names
-> +  - resets
-> +  - reset-names
-> +  - phys
-> +  - phy-names
-> +  - ports
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/starfive,jh7110-crg.h>
-> +    #include <dt-bindings/reset/starfive,jh7110-crg.h>
-> +
-> +    soc {
-> +        #address-cells =3D <1>;
-> +        #size-cells =3D <1>;
-> +
-> +        hdmi_mfd: hdmi@29590000 {
-> +            compatible =3D "starfive,jh7110-hdmi-mfd";
-> +            reg =3D <0x29590000 0x4000>;
-> +
-> +            hdmi_phy: phy {
-> +                compatible =3D "starfive,jh7110-inno-hdmi-phy";
-> +                clocks =3D <&xin24m>;
-> +                clock-names =3D "refoclk";
-> +                #clock-cells =3D <0>;
-> +                clock-output-names =3D "hdmi_pclk";
-> +                #phy-cells =3D <0>;
-> +            };
-> +
-> +            hdmi_controller: controller {
+On Tue, Nov 11, 2025 at 1:08=E2=80=AFPM Chaitanya Kulkarni
+<chaitanyak@nvidia.com> wrote:
+>
+> On 11/11/25 08:56, Chris Murphy wrote:
+> >
+> > On Mon, Nov 10, 2025, at 10:05 AM, Justin Piszcz wrote:
+> >> Hello,
+> >>
+> >> I am using an ASUS Pro WS W680-ACE motherboard with 2 x Samsung SSD
+> >> 990 PRO with Heatsink 4TB NVME SSDs with BTRFS R1.  When a BTRFS scrub
+> >> was kicked off this morning, suddenly BTRFS was noting errors for one
+> >> of the drives.  The system became unusable and I had to power cycle
+> >> and re-run the scrub and everything is now OK.  My question is what
+> >> would cause this?
+> > We'd have to see a complete dmesg at the time the problem occurred. If =
+the same device holds system log files, seems like a pretty good chance non=
+e of it made it to persistent storage.
 
-If this stuff doesn't make sense to have an example of without the phy,
-then just have an example in the parent and drop it from both child
-bindings. Or just drop the parent node and phy, and let the binding
-checking tools "invent" a fake phy for checking purposes.
 
-> +                compatible =3D "starfive,jh7110-inno-hdmi-controller";
-> +                interrupts =3D <99>;
-> +                clocks =3D <&voutcrg JH7110_VOUTCLK_HDMI_TX_SYS>,
-> +                         <&voutcrg JH7110_VOUTCLK_HDMI_TX_MCLK>,
-> +                         <&voutcrg JH7110_VOUTCLK_HDMI_TX_BCLK>,
-> +                         <&hdmi_phy>;
-> +                clock-names =3D "sys", "mclk", "bclk", "pclk";
-> +                resets =3D <&voutcrg JH7110_VOUTRST_HDMI_TX_HDMI>;
-> +                reset-names =3D "hdmi_tx";
-> +                phys =3D <&hdmi_phy>;
-> +                phy-names =3D "hdmi-phy";
-> +
-> +                ports {
-> +                    #address-cells =3D <1>;
-> +                    #size-cells =3D <0>;
-> +
-> +                    port@0 {
-> +                        reg =3D <0>;
-> +                        hdmi_in: endpoint {
-> +                            remote-endpoint =3D <&dpu_out_dpi0>;
-> +                        };
-> +                    };
-> +
-> +                    port@1 {
-> +                        reg =3D <1>;
-> +                        hdmi_out: endpoint {
-> +                            remote-endpoint =3D <&hdmi_con_in>;
-> +                        };
-> +                    };
-> +                };
-> +            };
-> +        };
-> +    };
-> +
-> +...
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index a75ba7a44ee84db6a75b91c1a0867a37db2ebcdb..66fab45bbee8c1a5f73d09bb4=
-70d28029b8c6139 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -24047,6 +24047,7 @@ F:	drivers/net/ethernet/stmicro/stmmac/dwmac-star=
-five.c
->  STARFIVE JH7110 DISPLAY SUBSYSTEM
->  M:	Michal Wilczynski <m.wilczynski@samsung.com>
->  S:	Maintained
-> +F:	Documentation/devicetree/bindings/display/bridge/starfive,jh7110-inno=
--hdmi-controller.yaml
->  F:	Documentation/devicetree/bindings/phy/starfive,jh7110-inno-hdmi-phy.y=
-aml
->  F:	Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-vout-s=
-ubsystem.yaml
-> =20
->=20
-> --=20
-> 2.34.1
->=20
+> >none of it made it to persistent storage.
+Absolutely correct!!  Luckily, I do have remote syslog enabled and
+captured the errors that were not logged to persistent storage, do the
+errors below point to an NVME firmware issue?
 
---ZI6TsvLTJLuPL419
-Content-Type: application/pgp-signature; name="signature.asc"
+"2025-11-10 01:42:51","notice","user","","machine1","[4043499.402974]
+BTRFS info (device nvme1n1p2): scrub: started on devid 2"
+"2025-11-10 01:42:51","notice","user","","machine1","[4043499.403000]
+BTRFS info (device nvme1n1p2): scrub: started on devid 1"
+"2025-11-10 01:44:22","notice","user","","machine1","[4043590.683686]
+nvme nvme0: I/O tag 2 (a002) opcode 0x2 (I/O Cmd) QID 2 timeout,
+aborting req_op:READ(0) size:131072"
+"2025-11-10 01:44:22","notice","user","","machine1","[4043590.684742]
+nvme nvme0: I/O tag 3 (c003) opcode 0x2 (I/O Cmd) QID 2 timeout,
+aborting req_op:READ(0) size:131072"
+"2025-11-10 01:44:22","notice","user","","machine1","[4043590.685778]
+nvme nvme0: I/O tag 4 (1004) opcode 0x2 (I/O Cmd) QID 2 timeout,
+aborting req_op:READ(0) size:131072"
+"2025-11-10 01:44:22","notice","user","","machine1","[4043590.686802]
+nvme nvme0: I/O tag 5 (c005) opcode 0x2 (I/O Cmd) QID 2 timeout,
+aborting req_op:READ(0) size:131072"
+"2025-11-10 01:44:22","notice","user","","machine1","[4043590.712274]
+nvme nvme0: I/O tag 6 (0006) opcode 0x2 (I/O Cmd) QID 2 timeout,
+aborting req_op:READ(0) size:131072"
+"2025-11-10 01:44:22","notice","user","","machine1","[4043590.712483]
+nvme nvme0: I/O tag 7 (4007) opcode 0x2 (I/O Cmd) QID 2 timeout,
+aborting req_op:READ(0) size:131072"
+"2025-11-10 01:44:22","notice","user","","machine1","[4043590.712698]
+nvme nvme0: I/O tag 8 (3008) opcode 0x2 (I/O Cmd) QID 2 timeout,
+aborting req_op:READ(0) size:131072"
+"2025-11-10 01:44:22","notice","user","","machine1","[4043590.712906]
+nvme nvme0: I/O tag 9 (5009) opcode 0x2 (I/O Cmd) QID 2 timeout,
+aborting req_op:READ(0) size:131072"
+"2025-11-10 01:44:53","notice","user","","machine1","[4043621.419061]
+nvme nvme0: I/O tag 2 (a002) opcode 0x2 (I/O Cmd) QID 2 timeout, reset
+controller"
+"2025-11-10 01:46:14","notice","user","","machine1","[4043702.821452]
+nvme nvme0: Device not ready; aborting reset, CSTS=3D0x1"
+"2025-11-10 01:46:14","notice","user","","machine1","[4043702.850059]
+nvme nvme0: Abort status: 0x371"
+"2025-11-10 01:46:14","notice","user","","machine1","[4043702.850351]
+nvme nvme0: Abort status: 0x371"
+"2025-11-10 01:46:14","notice","user","","machine1","[4043702.850630]
+nvme nvme0: Abort status: 0x371"
+"2025-11-10 01:46:14","notice","user","","machine1","[4043702.850903]
+nvme nvme0: Abort status: 0x371"
+"2025-11-10 01:46:14","notice","user","","machine1","[4043702.851173]
+nvme nvme0: Abort status: 0x371"
+"2025-11-10 01:46:14","notice","user","","machine1","[4043702.851440]
+nvme nvme0: Abort status: 0x371"
+"2025-11-10 01:46:14","notice","user","","machine1","[4043702.851705]
+nvme nvme0: Abort status: 0x371"
+"2025-11-10 01:46:14","notice","user","","machine1","[4043702.851971]
+nvme nvme0: Abort status: 0x371"
+"2025-11-10 01:46:34","notice","user","","machine1","[4043722.877036]
+nvme nvme0: Device not ready; aborting reset, CSTS=3D0x1"
+"2025-11-10 01:46:35","notice","user","","machine1","[4043722.941289]
+pcieport 0000:00:1b.4: AER: Multiple Uncorrectable (Non-Fatal) error
+message received from 0000:06:00.0"
+"2025-11-10 01:46:35","notice","user","","machine1","[4043722.942254]
+nvme nvme0: Disabling device after reset failure: -19"
+"2025-11-10 01:46:35","notice","user","","machine1","[4043722.969046]
+I/O error, dev nvme0n1, sector 86788096 op 0x1:(WRITE) flags 0x100000
+phys_seg 1 prio class 2"
+"2025-11-10 01:46:35","notice","user","","machine1","[4043722.969083]
+I/O error, dev nvme0n1, sector 464581888 op 0x0:(READ) flags 0x4000
+phys_seg 3 prio class 3"
+"2025-11-10 01:46:35","notice","user","","machine1","[4043722.969128]
+I/O error, dev nvme0n1, sector 45027984 op 0x1:(WRITE) flags 0x4000800
+phys_seg 1 prio class 2"
+"2025-11-10 01:46:35","notice","user","","machine1","[4043722.969127]
+I/O error, dev nvme0n1, sector 117882144 op 0x1:(WRITE) flags 0x1800
+phys_seg 8 prio class 2"
+"2025-11-10 01:46:35","notice","user","","machine1","[4043722.969146]
+BTRFS error (device nvme1n1p2): bdev /dev/nvme0n1p2 errs: wr 2, rd 0,
+flush 0, corrupt 0, gen 0"
+"2025-11-10 01:46:35","notice","user","","machine1","[4043722.969146]
+BTRFS error (device nvme1n1p2): bdev /dev/nvme0n1p2 errs: wr 2, rd 0,
+flush 0, corrupt 0, gen 0"
+"2025-11-10 01:46:35","notice","user","","machine1","[4043722.969163]
+BTRFS error (device nvme1n1p2): bdev /dev/nvme0n1p2 errs: wr 4, rd 0,
+flush 0, corrupt 0, gen 0"
+"2025-11-10 01:46:35","notice","user","","machine1","[4043722.969160]
+BTRFS error (device nvme1n1p2): bdev /dev/nvme0n1p2 errs: wr 3, rd 0,
+flush 0, corrupt 0, gen 0"
+"2025-11-10 01:46:35","notice","user","","machine1","[4043722.969167]
+BTRFS error (device nvme1n1p2): bdev /dev/nvme0n1p2 errs: wr 5, rd 0,
+flush 0, corrupt 0, gen 0"
+"2025-11-10 01:46:35","notice","user","","machine1","[4043722.969167]
+BTRFS error (device nvme1n1p2): bdev /dev/nvme0n1p2 errs: wr 6, rd 0,
+flush 0, corrupt 0, gen 0"
+"2025-11-10 01:46:35","notice","user","","machine1","[4043722.969179]
+BTRFS error (device nvme1n1p2): bdev /dev/nvme0n1p2 errs: wr 7, rd 0,
+flush 0, corrupt 0, gen 0"
+"2025-11-10 01:46:35","notice","user","","machine1","[4043722.969179]
+BTRFS error (device nvme1n1p2): bdev /dev/nvme0n1p2 errs: wr 8, rd 0,
+flush 0, corrupt 0, gen 0"
+"2025-11-10 01:46:35","notice","user","","machine1","[4043722.969184]
+BTRFS error (device nvme1n1p2): bdev /dev/nvme0n1p2 errs: wr 9, rd 0,
+flush 0, corrupt 0, gen 0"
+"2025-11-10 01:46:35","notice","user","","machine1","[4043722.969187]
+BTRFS error (device nvme1n1p2): bdev /dev/nvme0n1p2 errs: wr 10, rd 0,
+flush 0, corrupt 0, gen 0"
+"2025-11-10 01:46:35","notice","user","","machine1","[4043722.972280]
+BTRFS warning (device nvme1n1p2): lost super block write due to IO
+error on /dev/nvme0n1p2 (-5)"
+"2025-11-10 01:46:35","notice","user","","machine1","[4043722.972938]
+BTRFS error (device nvme1n1p2): fixed up error at logical 782844493824
+on dev /dev/nvme0n1p2 physical 237354287104"
+"2025-11-10 01:46:35","notice","user","","machine1","[4043722.972957]
+BTRFS error (device nvme1n1p2): fixed up error at logical 782844821504
+on dev /dev/nvme0n1p2 physical 237354614784"
+"2025-11-10 01:46:35","notice","user","","machine1","[4043722.972960]
+BTRFS error (device nvme1n1p2): fixed up error at logical 782844821504
+on dev /dev/nvme0n1p2 physical 237354614784"
+[ ..]
 
------BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaRN/NQAKCRB4tDGHoIJi
-0mTRAQDrzGla63doQ7J4bgwmc6WLb+V4M/UVNE1RPfdo2TM/PwD/RU18YcQAMUxv
-zYNvIsiBtHO1QpriMfcWzYUSA0r4WAA=
-=LhXK
------END PGP SIGNATURE-----
+> > Chris Murphy
+> >
+> Isolate the problem between kernel and SSD FW by:-
+>
+> 1. run the same workload on different vendor SSDs.
+> 2. run the same workload on qemu nvme emulation.
+>
+> This will allow you to remove the SSD FW out of this question.
 
---ZI6TsvLTJLuPL419--
+Got it, I was running 4B2QJXD7 firmware on both drives when this issue
+occurred.  Recently, Samsung released a new NVME F/W update 7B2QJXD7,
+which they note "address(es) an intermittent non-recognition and blue
+screen issue."  I've flashed the drives to 7B2QJXD7 and will see if
+this issue recurs.
+
+>
+> -ck
+>
+>
 
