@@ -1,67 +1,49 @@
-Return-Path: <linux-kernel+bounces-895578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C8FEC4E4F5
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 15:11:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 59941C4E501
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 15:11:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B140D4EFFDF
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:11:00 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C58DF4E7E21
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:11:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1A0033F372;
-	Tue, 11 Nov 2025 14:10:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E73A340274;
+	Tue, 11 Nov 2025 14:10:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kaspersky.com header.i=@kaspersky.com header.b="M0BU84RW"
-Received: from mx12.kaspersky-labs.com (mx12.kaspersky-labs.com [91.103.66.155])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JSes4h+q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9652B2F7ADC;
-	Tue, 11 Nov 2025 14:10:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.103.66.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A11E32D0C0;
+	Tue, 11 Nov 2025 14:10:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762870245; cv=none; b=RtYvyGFpi3paFG3VTchbIpbkxLM4I3a5dRYgaO/D1QIT7+pAVja3PpnoqBkOIW6TfZiVcDvhO8ml30HP6dYyVyJ25HKHym0mT5T07udcLKHGhskiv1TnM05I0l7XXbOwoEm4U3bZnsvmBGZFDtt2xrrwSHshx8fJ/AVdQRGlObY=
+	t=1762870245; cv=none; b=s5cB3dSVLPFpQFNImbuETjFDzm0VtkY1iU5TuyowsjiMxUDmizb3zdmL+xxrcX5hzt7KHnf9pARqz0FMRUxjgAkN+pSVxCtbuxRMSdqYo0oaaO9pAnwcdi9+2EC7IQLaD6572OSBzVQx46P1MlAZcLaw+qHDZRfD60GZhqMWiiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1762870245; c=relaxed/simple;
-	bh=qjFsNwbmRxO4Hp5vuknqfvOSCdjPaO3iwBWAF9Nevcs=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Eqhj67Sxh0in+nnnnlpMaY6sHP5EpwPZyJzLis8LiZIeDHDG5VC1F3mJT6c744blvMrEKEM2yrX0cI0dwo/t7dRo1/bD59NqknbZHg30Gu6FRCc43LfauMcGM99tWEZINjiCD0DCxch5fxcOnPWbBm/c0f0FJA6UOJtNZlfGzLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kaspersky.com; spf=pass smtp.mailfrom=kaspersky.com; dkim=pass (2048-bit key) header.d=kaspersky.com header.i=@kaspersky.com header.b=M0BU84RW; arc=none smtp.client-ip=91.103.66.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kaspersky.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kaspersky.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kaspersky.com;
-	s=mail202505; t=1762870234;
-	bh=I77upVn73xtl2hhKLa4OtVaXf553s+NjSyLwVjwUjJw=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	b=M0BU84RWOCpgmJ590tapWIk5F9Bod6FsxhQlFSC0tnOCBTmji4/iL0LtUZN2fZ3aS
-	 h/SmCjYz+uNXmuI3xABp55QEgmPP2BEV2lX2bD29mvlvHcaRSzYiFuKzSur2yFgv1P
-	 lhjjyTDop2XHWvwmA+7v0VRc0YSior4k6Ph5Cptf8HOg1AfFiXYXk7AYFIGlPgaVeD
-	 aDsE6lH20rJJQ0rq/Y6hT6lHyJhsF94cfMIMs1l0puQm07mY+PJ5cG0Bc2vI5fCsFb
-	 OfZVGlFE3PlP4hoVXWT9WSuoUjMSvQhHHdOsnqyHdlHun4jZg5JYsMhIbHjz8yxISZ
-	 GGcvuD3ctD/Pw==
-Received: from relay12.kaspersky-labs.com (localhost [127.0.0.1])
-	by relay12.kaspersky-labs.com (Postfix) with ESMTP id 7FEA75A4A7A;
-	Tue, 11 Nov 2025 17:10:34 +0300 (MSK)
-Received: from mail-hq2.kaspersky.com (unknown [91.103.66.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(Client CN "mail-hq2.kaspersky.com", Issuer "Kaspersky MailRelays CA G3" (verified OK))
-	by mailhub12.kaspersky-labs.com (Postfix) with ESMTPS id 4EA0D5A15AB;
-	Tue, 11 Nov 2025 17:10:33 +0300 (MSK)
-Received: from zhigulin-p.avp.ru (10.16.104.190) by HQMAILSRV2.avp.ru
- (10.64.57.52) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.29; Tue, 11 Nov
- 2025 17:09:58 +0300
-From: Pavel Zhigulin <Pavel.Zhigulin@kaspersky.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Pavel Zhigulin <Pavel.Zhigulin@kaspersky.com>, Chunfeng Yun
-	<chunfeng.yun@mediatek.com>, <linux-usb@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>,
-	<stable@vger.kernel.org>
-Subject: [PATCH v2] usb: mtu3: fix possible NULL pointer dereference in ep0_rx_state()
-Date: Tue, 11 Nov 2025 17:09:53 +0300
-Message-ID: <20251111140956.3285945-1-Pavel.Zhigulin@kaspersky.com>
-X-Mailer: git-send-email 2.43.0
+	bh=c2JxMe0Ll+HQtPVbv5Ys63HP4gmrS1IoooEa3rm6o7g=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=U6sPmo0/yekuZ+1BG2Q9Wa/53GWbGOVGvzIUMLW1w2YAfeOukfx7r9VgwG9p+dm0RpUl6D1MfAPcONkWub/RPS0RFc8wD5o1m00vxyOeVmx2tY93GH55OFCFtIAXU6GeQoicuccSKzxpUcRedS9S+Oa1EXNpzZs6XEfSTSwGUJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JSes4h+q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0531C4CEF5;
+	Tue, 11 Nov 2025 14:10:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762870245;
+	bh=c2JxMe0Ll+HQtPVbv5Ys63HP4gmrS1IoooEa3rm6o7g=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=JSes4h+qb6XoYDRT6MZDlWtKJKb0l+ZFUMmGkTTvyKcu/hU3qF0PPKykTdq9tjJia
+	 4QTYkFyYd2CIa9rwCW65QiPvzb34oXxP8tR56idLspGavJJfV/HQvQzacDIwiNMSck
+	 C7XjwfL5uSUErjdcJt52opMTYNrFRykMwWrNgVSc42MnZLs/yos6M1YGWdo2nbP8Xx
+	 c0Qsa7W3r431kXSXJFfHLPEkSEq8smfvOPjB1M2HiU2cMUclphblLgxozAw6RilItV
+	 9utpT6TWNPz1lZRBzzGWNQoFhZXfNWA4pHLjDAO5GN+t8m+zvqJDHf3xGmgUbN41Pp
+	 pUrOymLrWBW2g==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70CD7380CFFB;
+	Tue, 11 Nov 2025 14:10:16 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,103 +51,51 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: HQMAILSRV2.avp.ru (10.64.57.52) To HQMAILSRV2.avp.ru
- (10.64.57.52)
-X-KSE-ServerInfo: HQMAILSRV2.avp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 11/11/2025 13:58:40
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 0
-X-KSE-AntiSpam-Info: Lua profiles 197969 [Nov 11 2025]
-X-KSE-AntiSpam-Info: Version: 6.1.1.11
-X-KSE-AntiSpam-Info: Envelope from: Pavel.Zhigulin@kaspersky.com
-X-KSE-AntiSpam-Info: LuaCore: 75 0.3.75
- aab2175a55dcbd410b25b8694e49bbee3c09cdde
-X-KSE-AntiSpam-Info: {Tracking_cluster_exceptions}
-X-KSE-AntiSpam-Info: {Tracking_real_kaspersky_domains}
-X-KSE-AntiSpam-Info: {Tracking_uf_ne_domains}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info: zhigulin-p.avp.ru:7.1.1,5.0.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;kaspersky.com:7.1.1,5.0.1;lore.kernel.org:7.1.1
-X-KSE-AntiSpam-Info: {Tracking_white_helo}
-X-KSE-AntiSpam-Info: FromAlignment: s
-X-KSE-AntiSpam-Info: Rate: 0
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Deterministic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 11/11/2025 14:00:00
-X-KSE-AttachmentFiltering-Interceptor-Info: no applicable attachment filtering
- rules found
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 11/11/2025 1:40:00 PM
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
-X-KSE-AttachmentFiltering-Interceptor-Info: no applicable attachment filtering
- rules found
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
-X-KSMG-AntiPhishing: NotDetected, bases: 2025/11/11 13:30:00
-X-KSMG-AntiSpam-Interceptor-Info: not scanned
-X-KSMG-AntiSpam-Status: not scanned, disabled by settings
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/11/11 12:29:00 #27910883
-X-KSMG-AntiVirus-Status: NotDetected, skipped
-X-KSMG-LinksScanning: NotDetected, bases: 2025/11/11 13:29:00
-X-KSMG-Message-Action: skipped
-X-KSMG-Rule-ID: 52
+Subject: Re: [PATCH net 0/5] mlx5e misc fixes 2025-11-09
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <176287021525.3454241.13761058812147958076.git-patchwork-notify@kernel.org>
+Date: Tue, 11 Nov 2025 14:10:15 +0000
+References: <1762681073-1084058-1-git-send-email-tariqt@nvidia.com>
+In-Reply-To: <1762681073-1084058-1-git-send-email-tariqt@nvidia.com>
+To: Tariq Toukan <tariqt@nvidia.com>
+Cc: edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ andrew+netdev@lunn.ch, davem@davemloft.net, saeedm@nvidia.com,
+ leon@kernel.org, mbloch@nvidia.com, netdev@vger.kernel.org,
+ linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, gal@nvidia.com
 
-The function 'ep0_rx_state()' accessed 'mreq->request' before verifying
-that mreq was valid. If 'next_ep0_request()' returned NULL, this could
-lead to a NULL pointer dereference. The return value of
-'next_ep0_request()' is checked in every other code path except
-here. It appears that the intended 'if (mreq)' check was mistakenly
-written as 'if (req)', since the req pointer cannot be NULL when mreq
-is not NULL.
+Hello:
 
-Initialize 'mreq' and 'req' to NULL by default, and switch 'req'
-NULL-checking to 'mreq' non-NULL check to prevent invalid memory access.
+This series was applied to netdev/net.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+On Sun, 9 Nov 2025 11:37:48 +0200 you wrote:
+> Hi,
+> 
+> This patchset provides misc bug fixes from the team to the mlx5 Eth
+> driver.
+> 
+> Thanks,
+> Tariq.
+> 
+> [...]
 
-Fixes: df2069acb005 ("usb: Add MediaTek USB3 DRD driver")
-Signed-off-by: Pavel Zhigulin <Pavel.Zhigulin@kaspersky.com>
----
-v2: Add <stable@vger.kernel.org> to CC list
-v1: https://lore.kernel.org/all/20251027193152.3906497-1-Pavel.Zhigulin@kaspersky.com
+Here is the summary with links:
+  - [net,1/5] net/mlx5e: Fix missing error assignment in mlx5e_xfrm_add_state()
+    https://git.kernel.org/netdev/net/c/0bcd5b3b50cc
+  - [net,2/5] net/mlx5e: Trim the length of the num_doorbell error
+    https://git.kernel.org/netdev/net/c/2dc768c05217
+  - [net,3/5] net/mlx5e: Fix maxrate wraparound in threshold between units
+    https://git.kernel.org/netdev/net/c/a7bf4d5063c7
+  - [net,4/5] net/mlx5e: Fix wraparound in rate limiting for values above 255 Gbps
+    https://git.kernel.org/netdev/net/c/43b27d1bd88a
+  - [net,5/5] net/mlx5e: Fix potentially misleading debug message
+    https://git.kernel.org/netdev/net/c/9fcc2b6c1052
 
- drivers/usb/mtu3/mtu3_gadget_ep0.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-diff --git a/drivers/usb/mtu3/mtu3_gadget_ep0.c b/drivers/usb/mtu3/mtu3_gadget_ep0.c
-index e4fd1bb14a55..ee7466ca4d99 100644
---- a/drivers/usb/mtu3/mtu3_gadget_ep0.c
-+++ b/drivers/usb/mtu3/mtu3_gadget_ep0.c
-@@ -508,8 +508,8 @@ static int handle_standard_request(struct mtu3 *mtu,
- /* receive an data packet (OUT) */
- static void ep0_rx_state(struct mtu3 *mtu)
- {
--	struct mtu3_request *mreq;
--	struct usb_request *req;
-+	struct mtu3_request *mreq = NULL;
-+	struct usb_request *req = NULL;
- 	void __iomem *mbase = mtu->mac_base;
- 	u32 maxp;
- 	u32 csr;
-@@ -519,10 +519,11 @@ static void ep0_rx_state(struct mtu3 *mtu)
-
- 	csr = mtu3_readl(mbase, U3D_EP0CSR) & EP0_W1C_BITS;
- 	mreq = next_ep0_request(mtu);
--	req = &mreq->request;
-
- 	/* read packet and ack; or stall because of gadget driver bug */
--	if (req) {
-+	if (mreq) {
-+		req = &mreq->request;
-+
- 		void *buf = req->buf + req->actual;
- 		unsigned int len = req->length - req->actual;
-
---
-2.43.0
 
 
