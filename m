@@ -1,163 +1,210 @@
-Return-Path: <linux-kernel+bounces-894778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBDC3C4C062
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 08:14:14 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71EAFC4C141
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 08:20:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 284B534945D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 07:14:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 67ABF4F79FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 07:14:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AD2F34CFA0;
-	Tue, 11 Nov 2025 07:12:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CAA1281341;
+	Tue, 11 Nov 2025 07:12:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VrsOps3t"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ZxdSYwEi"
+Received: from CY7PR03CU001.outbound.protection.outlook.com (mail-westcentralusazon11010039.outbound.protection.outlook.com [40.93.198.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66E20281341;
-	Tue, 11 Nov 2025 07:11:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762845119; cv=none; b=lOOkfMrWABkBYqANKNTTIPO7NGHm3I20LPrxeK8i+tbtp/JiIgKPXAcoyJtUOWWwBcDeO/FxKrJpCZLKlRUKKoOdGiuLQ3qCM9giuddS+Q98HEVleKrUtMR88bm0XpIl9UVH8qLPlHGdeeOUz1ph7B5T8Gh9m7hZ3+zu6x705RE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762845119; c=relaxed/simple;
-	bh=k+PurIlLRbzMG5NXYczPW4nl/o7m6LjDaYwzjL/sFwQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hUOJOOOrBYs+Sdjy3evCCYhsfwJHlqVGvrtWRUeQcjLG85zcjwcuHpWtlUwM2wXRH64Ji/x/68pP2nyAK51TWQ6y6lUZWCQsCND07XMXOjtdo9i/NnM7gdmkhDyRRjqPPSxJTVW8cUlaHHlgAXmOi+fFfJYuYuc7R0QoiN56vm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VrsOps3t; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A836C4CEF7;
-	Tue, 11 Nov 2025 07:11:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762845119;
-	bh=k+PurIlLRbzMG5NXYczPW4nl/o7m6LjDaYwzjL/sFwQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=VrsOps3t+Aw7Z18FrYnUkWf6RRgvKRTvxje5UnS2oCWKFYwi3EtU1txR0NNe5pp7e
-	 iYnT4MRT3f4VUaNfueXb6fvAil0KQ2yKb1KRri7DN63q/CBkil3SgIcQVDGxBDQwlC
-	 R2pYMtkwEW1rGH1vdY29K0348h+6NnYciWYov/0bVpkIC0gZVPCBCbOzuz8MlT1TXI
-	 ldIGCizCaljSMiZi33P1FErmqagC+v1xsbNjvuT3xNrEV9f9FJKq3wwk3OVfSl1ebR
-	 qUD+JyTQzgRNthkq+vI1vSjUA+VhzF56nrjeEhULtO6MDIwA+0mZmZtgeU/xp8bic8
-	 Kr3XVC2zFpL2w==
-Message-ID: <213345c6-23d3-43d7-9bff-4c6f4d0faf6d@kernel.org>
-Date: Tue, 11 Nov 2025 08:11:53 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1269834CFDF;
+	Tue, 11 Nov 2025 07:12:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.198.39
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762845134; cv=fail; b=dweGsRQbA10G0uyPAugovmrKYyzSclzaBz9qnx+Hh2Sb69C2bH8quI1KS0GRk41Pj0l9V2GH7DfQfVWTM3VvponRgppNE/RMu/zXTU3G/U3XcWL/7XKkSB9njrKF5LnA8hKcXFQxvjSw1Cbt74qnY3+60XIxVfQyYeE1na86ef4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762845134; c=relaxed/simple;
+	bh=f8fnIcTApk6TOAABxcN5okzUPe+LexZw1G1GgBcYLUw=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=CBStKOaeT6z3/SSVGNA5foZrwpLQVnQ9CbpxDYosXuxZ8UjIQVHX3fPflPtaUAstldTajiSkiejwuP/yy1kyFo3yQEAuHGCoYhe+b5JMbTdPRVgxyNlSh0f2wN1VEeXYN4IdsuA1qxVMAGqbcVTSTQneqXP2ICmegqUZZyWBmw4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ZxdSYwEi; arc=fail smtp.client-ip=40.93.198.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=lhdzJHqhyGWLfz1MTUBfOiKvx1HaCLTfio7HopznqgE0YuHBE7O2sc6jjhlm9ll8k95FJxbr5RSSqRLsUM7slNiCnjZ9n+RVEhbbHY2Vn1+q459lfGsaZDmXEhIncUbwKAIxrWMzlxTQe8SwGxYeyWE0dmoIzm1Q+B5KFPjg3tSF75ZT+VGVN2cFuGw24bt4zFc4HL4xkTcY+9afrXzORTGX15mPAfsRihB6zOIrOvNS9kZYDqF7DmyROnyRCYsYdZ1H197qkazx8EgIfy5z2JzbLJmnIYDjBrSg7DhLtW7bd4Y2P6rK2zipwjOOsscSsrv6W+cnegn61VmIO9lTFw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=f8fnIcTApk6TOAABxcN5okzUPe+LexZw1G1GgBcYLUw=;
+ b=rBaZNcQy3l5gageAhK/v/RezjI2oMCeAFwfLwNN7UdLhUzHK+YiRjLRAY6S3k3dpqW2SDrPULoZ7rQVntRQEdOwTrtnNfq0JEmHZnY8+E2Mgt1ngTQAzafpHlbCY8gEH16rTkHm87eDlLM8k+UxGmqLp7JHt0454jS1RlPS8pWe8gGr8EW9nwHrYeSwcZS6JS4GQo6DBDSNL02OggfOzRCtiL9/gf4DaZByzyKB6rR0gVD/jb/wul5QcfkCqs2jBFO8AxI0Gfd54qWX66Bu3GCbrHMpcGfKQCyP4qQH+G8lLB++vYNzM9OLqALALrWJRfWqFc9N7fYWlA0INPC/Irg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 198.47.23.194) smtp.rcpttodomain=kernel.org smtp.mailfrom=ti.com; dmarc=pass
+ (p=quarantine sp=none pct=100) action=none header.from=ti.com; dkim=none
+ (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=f8fnIcTApk6TOAABxcN5okzUPe+LexZw1G1GgBcYLUw=;
+ b=ZxdSYwEiysH9UG8duOG3Bpw4qNykBIJrfdpUDSw9nNjHTJoiIO6VUleJaOJnrfbjFw+6NVhPwX9fWZTdWcBChFi6xlhu2XE1RRTBmjY289u6XCsN+yXPi5zMpEV1/RcEdaF3HW3AQocpkWjBL5gvmkWUD7QsNeiGlQ/8Rt10fAE=
+Received: from CH0PR04CA0003.namprd04.prod.outlook.com (2603:10b6:610:76::8)
+ by MN0PR10MB5984.namprd10.prod.outlook.com (2603:10b6:208:3c8::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Tue, 11 Nov
+ 2025 07:12:06 +0000
+Received: from CH3PEPF0000000D.namprd04.prod.outlook.com
+ (2603:10b6:610:76:cafe::e2) by CH0PR04CA0003.outlook.office365.com
+ (2603:10b6:610:76::8) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9298.16 via Frontend Transport; Tue,
+ 11 Nov 2025 07:11:20 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.23.194)
+ smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
+ action=none header.from=ti.com;
+Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
+ 198.47.23.194 as permitted sender) receiver=protection.outlook.com;
+ client-ip=198.47.23.194; helo=lewvzet200.ext.ti.com; pr=C
+Received: from lewvzet200.ext.ti.com (198.47.23.194) by
+ CH3PEPF0000000D.mail.protection.outlook.com (10.167.244.43) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9320.13 via Frontend Transport; Tue, 11 Nov 2025 07:12:06 +0000
+Received: from DLEE206.ent.ti.com (157.170.170.90) by lewvzet200.ext.ti.com
+ (10.4.14.103) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 11 Nov
+ 2025 01:12:05 -0600
+Received: from DLEE209.ent.ti.com (157.170.170.98) by DLEE206.ent.ti.com
+ (157.170.170.90) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 11 Nov
+ 2025 01:12:04 -0600
+Received: from DLEE209.ent.ti.com ([fe80::9756:3b42:e53b:3cbe]) by
+ DLEE209.ent.ti.com ([fe80::9756:3b42:e53b:3cbe%7]) with mapi id
+ 15.02.2562.020; Tue, 11 Nov 2025 01:12:04 -0600
+From: "Xu, Baojun" <baojun.xu@ti.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: "broonie@kernel.org" <broonie@kernel.org>, "tiwai@suse.de"
+	<tiwai@suse.de>, "andriy.shevchenko@linux.intel.com"
+	<andriy.shevchenko@linux.intel.com>, "13916275206@139.com"
+	<13916275206@139.com>, "Ding, Shenghao" <shenghao-ding@ti.com>,
+	"linux-sound@vger.kernel.org" <linux-sound@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"lgirdwood@gmail.com" <lgirdwood@gmail.com>, "robh@kernel.org"
+	<robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "Yi, Ken" <k-yi@ti.com>, "Lo, Henry"
+	<henry.lo@ti.com>, "Chen, Robin" <robinchen@ti.com>, "Wang, Will"
+	<will-wang@ti.com>, "jim.shil@goertek.com" <jim.shil@goertek.com>,
+	"toastcheng@google.com" <toastcheng@google.com>, "chinkaiting@google.com"
+	<chinkaiting@google.com>
+Subject: Re: [EXTERNAL] Re: [PATCH v1 2/2] ASoC: dt-bindings: ti,tas2781: Add
+ TAS2568/5806M/5806MD/5830 support
+Thread-Topic: [EXTERNAL] Re: [PATCH v1 2/2] ASoC: dt-bindings: ti,tas2781: Add
+ TAS2568/5806M/5806MD/5830 support
+Thread-Index: AQHcUKAKMWLWoEe5pUGqDO3hVAKe47Tq/KmAgABmATCAAIMYAIABJBdF
+Date: Tue, 11 Nov 2025 07:12:04 +0000
+Message-ID: <460cd1da65bd42be890e69f26402670b@ti.com>
+References: <20251108110759.2409-1-baojun.xu@ti.com>
+ <20251108110759.2409-2-baojun.xu@ti.com>
+ <20251109-heavenly-observant-quetzal-b1bead@kuoka>
+ <ecc69a98a23d406ea1eada62144415fc@ti.com>,<035d6c35-c27a-4f5c-8603-ea5857d78e63@kernel.org>
+In-Reply-To: <035d6c35-c27a-4f5c-8603-ea5857d78e63@kernel.org>
+Accept-Language: en-GB, zh-CN, en-US
+Content-Language: en-GB
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-c2processedorg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 4/6] clk: samsung: add Exynos ACPM clock driver
-To: Stephen Boyd <sboyd@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Catalin Marinas <catalin.marinas@arm.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Conor Dooley <conor+dt@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Peter Griffin <peter.griffin@linaro.org>, Rob Herring <robh@kernel.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tudor Ambarus <tudor.ambarus@linaro.org>, Will Deacon <will@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, willmcvicker@google.com, kernel-team@android.com
-References: <20251010-acpm-clk-v6-0-321ee8826fd4@linaro.org>
- <20251010-acpm-clk-v6-4-321ee8826fd4@linaro.org>
- <92f1c027-bacc-4537-a158-2e0890e2e8ee@kernel.org>
- <17695fcf-f33c-4246-8d5c-b2120e9e03b1@linaro.org>
- <176282517011.11952.1566372681481575091@lazor>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <176282517011.11952.1566372681481575091@lazor>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-
-On 11/11/2025 02:39, Stephen Boyd wrote:
-> Quoting Tudor Ambarus (2025-10-20 00:45:58)
->>
->>
->> On 10/20/25 7:54 AM, Krzysztof Kozlowski wrote:
->>>> diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
->>>> index 76a494e95027af26272e30876a87ac293bd56dfa..70a8b82a0136b4d0213d8ff95e029c52436e5c7f 100644
->>>> --- a/drivers/clk/samsung/Kconfig
->>>> +++ b/drivers/clk/samsung/Kconfig
->>>> @@ -95,6 +95,16 @@ config EXYNOS_CLKOUT
->>>>        status of the certains clocks from SoC, but it could also be tied to
->>>>        other devices as an input clock.
->>>>  
->>>> +config EXYNOS_ACPM_CLK
->>>> +    tristate "Clock driver controlled via ACPM interface"
->>>> +    depends on EXYNOS_ACPM_PROTOCOL || (COMPILE_TEST && !EXYNOS_ACPM_PROTOCOL)
->>>
->>> I merged the patches but I don't get why we are not enabling it by
->>> default, just like every other clock driver. What is so special here?
->>
->> Thanks! Are you referring to the depends on line? I needed it otherwise
->> on randconfigs where COMPILE_TEST=y and EXYNOS_ACPM_PROTOCOL=n I get:
->>
->> ERROR: modpost: "devm_acpm_get_by_node" [drivers/clk/samsung/clk-acpm.ko] undefined!
->>
-> 
-> I don't understand that part. The depends on statement "COMPILE_TEST &&
-> !EXYNOS_ACPM_PROTOCOL" is equivalent to COMPILE_TEST=y and
-> EXYNOS_ACPM_PROTOCOL=n, so are you trying to avoid
-> EXYNOS_ACPM_PROTOCOL=y when COMPILE_TEST=y?
-
-This is the standard kconfig module dependency to avoid having built-in
-when other is module:
-EXYNOS_ACPM_PROTOCOL || !EXYNOS_ACPM_PROTOCOL
-It is used everywhere and already documented.
-
-Now, the only difference here is that !EXYNOS_ACPM_PROTOCOL is actually
-not meaningful for the driver, because it is not an optional dependency,
-thus we allow this only for compile testing, therefore:
-|| COMPILE_TEST && !EXYNOS_ACPM_PROTOCOL.
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PEPF0000000D:EE_|MN0PR10MB5984:EE_
+X-MS-Office365-Filtering-Correlation-Id: 935e46f4-ef8b-4b87-de05-08de20f19f32
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|82310400026|7416014|376014|36860700013|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?iso-8859-1?Q?RigImt7ET310PG+tET2OkjmZ0oddKcI/mzCKsTZE7fpb4Kkzoq/gDPKMn9?=
+ =?iso-8859-1?Q?mC5sEZ9eMkcBpdVJ1snYUvF2CrKPDO06g79Zw9XbEWXEjPn0FOgtQZ0ai+?=
+ =?iso-8859-1?Q?c6sM8RpNp4izNBis5ggtK6aAVlUJJWUtDOD6jmhT2yfKvFQ9lUaJm4NCsP?=
+ =?iso-8859-1?Q?sNrBMQhd1WcJEU1tiL5m2cAlLmSDNrQ/l66lW5BWECsaymABQgNhMBbIk3?=
+ =?iso-8859-1?Q?f+2RS9m8lx1/OTzd4wIm2bT4SYeD6stHkObN7Yc4pQ+h4A3+sw8+gzWVVw?=
+ =?iso-8859-1?Q?iJTyRN/JkAEK6zIqWXhWD8znrOBCMJ/4cOGtF5h0RqtHsTrs9jfldvdqzs?=
+ =?iso-8859-1?Q?aTiE2lv1vg+Nc6VPhF69lyidLkO+sEdbVHoXo+RYyDmS9KxgO4rvb/cIeZ?=
+ =?iso-8859-1?Q?Y3quNA64DGRojvqEOtKlo4lnULuxUDhuV8tp3AS9Py6GQL7j18cg72pBsu?=
+ =?iso-8859-1?Q?jLEvXETuUp8nBcxmp6e14eqYY4qEzYHNM6nX2SdMhPDh6pPabhjDR1bt/J?=
+ =?iso-8859-1?Q?8uAxxoSog01fjMAbQ6Rw1/skKzDaJk7JOYB+FhzfNeox6fZSz6MhEysBes?=
+ =?iso-8859-1?Q?MQNw7fG9W5dpkkUVDzOk+6t/BrT+MgfEYIDUEWm9ttzWB2JRc/l/YlhqDK?=
+ =?iso-8859-1?Q?oIYVCbQCrdLYg3JuMwhYR9Xd2jsu9wiV4Apib77oEpcTeslBxjU5H1KODF?=
+ =?iso-8859-1?Q?4f420Raj2+Py/5B1kOxvMM3FSQNbVPth2PzARufQspotnPXTobOwhS4oQF?=
+ =?iso-8859-1?Q?NGgN8xBji1OsdpuMwdqHnJ93jb9zv1xacjN6pCuIdGKrOPb2XqCm04l2BD?=
+ =?iso-8859-1?Q?L0T9ZxZlCIPghCk5FwUgiOwdmZVAZSAiz95ivZqMyyNMp/b3az6aCEtkGb?=
+ =?iso-8859-1?Q?iwFYf00RhDKHi+vfXg2gMwlPQrFtTAlKRkgKhqBJeNOYeYwHRp4/TBFSRF?=
+ =?iso-8859-1?Q?ibbTDRHrvv8HX/6TzZi1IQOqkPI+6+/09jvfARRP2O0yZjl7U91H1nLatb?=
+ =?iso-8859-1?Q?UmR+cGjP1uu0fXbeUAlCm2VOhbQgXuvzw14PCqlt7Dbq6wZFa1PZhCRjr+?=
+ =?iso-8859-1?Q?BHQ72ambeswXKj15cON92KVtw0D9OemzXFwC0sJQ2rFDz6fH33AhTsSFfO?=
+ =?iso-8859-1?Q?Qh8pbOLBGlxUZtxN7yMzcwb+jHd4fro76Ed4+Xt04E3eP9456pL1x1xB6C?=
+ =?iso-8859-1?Q?PYaYKgWO507cmtdaqOW2DIueBRlmpCjeEu9PxlqubpF2uj7tRqXomN7oMV?=
+ =?iso-8859-1?Q?iVe8X9FPKIX+F79TVSPiQRsEXcmLxoQx2A49DWRBBvbJvdUnFJEAVL6UnL?=
+ =?iso-8859-1?Q?e0Sqc7tZEw4H1qVzdDDeu7uSyuEwbUYUiwsGWRquVD7TWEhxMQQAvbm8tW?=
+ =?iso-8859-1?Q?6EaXU8rEidF8zd2Wm3f7DdMAzrGS3OvIH0nIgo3x3mBJnoLPeu9/mo4oAC?=
+ =?iso-8859-1?Q?+J/VcF0qcNJfxY2uLIKoS+DLR4sP7qz6EbrpB9AMRLggKV5rNXlIzmlM67?=
+ =?iso-8859-1?Q?eqcZSYekFXInUxCjmSpkxW3onuczciMq4gCu7WmYTc1GzfKmVsT/piU+hy?=
+ =?iso-8859-1?Q?ReZYqaYYV0PH6K7SgcPG9GxPNi43JpjgMHayHbZx/7zOXhYw6vXDwHyz87?=
+ =?iso-8859-1?Q?fJZtse7GLxXk8=3D?=
+X-Forefront-Antispam-Report:
+	CIP:198.47.23.194;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:lewvzet200.ext.ti.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(7416014)(376014)(36860700013)(7053199007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: ti.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Nov 2025 07:12:06.2648
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 935e46f4-ef8b-4b87-de05-08de20f19f32
+X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.23.194];Helo=[lewvzet200.ext.ti.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH3PEPF0000000D.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR10MB5984
 
 
-Best regards,
-Krzysztof
+> ________________________________________
+> From: Krzysztof Kozlowski <krzk@kernel.org>
+> Sent: 10 November 2025 15:11
+> To: Xu, Baojun
+> Cc: broonie@kernel.org; tiwai@suse.de; andriy.shevchenko@linux.intel.com;=
+ 13916275206@139.com; Ding, Shenghao; linux-sound@vger.kernel.org; linux-ke=
+rnel@vger.kernel.org; lgirdwood@gmail.com; robh@kernel.org; krzk+dt@kernel.=
+org; conor+dt@kernel.org; devicetree@vger.kernel.org; Yi, Ken; Lo, Henry; C=
+hen, Robin; Wang, Will; jim.shil@goertek.com; toastcheng@google.com; chinka=
+iting@google.com
+> Subject: Re: [EXTERNAL] Re: [PATCH v1 2/2] ASoC: dt-bindings: ti,tas2781:=
+ Add TAS2568/5806M/5806MD/5830 support
+>=20
+> >
+> > Hi Krzysztof,
+> >
+> > Thanks for your review.
+> Do you mean I need to add a text file,
+> for example "ti,tas2781.txt", include the required properties,
+> and the example of the devicetree node?
+> >
+>=20
+> Did you read the actual resources I pointed you? I don't know how to
+> express it clearer.
+>=20
+Hi Krzysztof,
+
+Thanks for your review.
+Do you mean I need to add an rst file in Documentation\sound\codecs?
+
+Best Regards
+Jim
+
+>=20
+> Best regards,
+> Krzysztof
+>=20
+> =
 
