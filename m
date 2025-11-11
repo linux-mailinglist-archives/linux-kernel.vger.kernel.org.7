@@ -1,294 +1,317 @@
-Return-Path: <linux-kernel+bounces-895273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B0C1C4D688
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:30:59 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B23CC4D691
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:31:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0F4E94F8BB9
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:25:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4D3844F8E82
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:25:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0DC72F7479;
-	Tue, 11 Nov 2025 11:24:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D62A3559E6;
+	Tue, 11 Nov 2025 11:24:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="CbO3AFM8"
-Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012050.outbound.protection.outlook.com [52.101.43.50])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="uqfKkqv6"
+Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11012000.outbound.protection.outlook.com [40.93.195.0])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0AC117D6
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 11:24:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82BD12ECE93;
+	Tue, 11 Nov 2025 11:24:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.195.0
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762860296; cv=fail; b=MLpHdt1iwBaNzJgQgxIUEatMhpk5g47iyA8Frr6eXBXjKnIOvxft0M6DECPL07WyjcrOSzha5T9q/kN1qox9Uu1UF+wwmQ2lxvaFLUuAQqPgQtYTZuG8Bsinfsvl72UCAGHCbGl3blQ0uLC+4vIVYhiIZCqlRaEBDS6oi7OL4x8=
+	t=1762860297; cv=fail; b=nGXSZZLdLA3lh9oELRxguJYuXfEgbs5VBKIiVuh65UMI7BHgiAHPh/VLP660J7/ctHwRVOBLy2zt2A8V9dNsEgYHw+ea8DhhXAnZ9uaMjm6XCNfXGCJsJk3mE1tSJlzCN+/pIIw++EtE6yKdXWHbH/AQvFWDs46W/R9Ylorna0A=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762860296; c=relaxed/simple;
-	bh=3jUkGYonRsP/2NY/u7N1M6ug+VR3PbqGN3q33+6G2R0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=KDi7UwCoAfk4YFZypi19rnwKIZOW/WTY1zmBLec640B6eubVjUGRKaBWpjsi3g5Oomuq1lGXthQNwQ24+0sscWxz3lsZ4Ne6n0IDh3e4SvnTNIy9VR7CgfG27/Jmbj9iCcSn0AFAK9n0FzjEF1u7i413DEeDgqql7oe/gPNNhh8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=CbO3AFM8; arc=fail smtp.client-ip=52.101.43.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	s=arc-20240116; t=1762860297; c=relaxed/simple;
+	bh=jwpMLjTcaarmSaK6woOXyv0mGXSlKdsvuW5vFKyP75Y=;
+	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=LFB/9HU4tmMCT16QHtcSoHO+run/HMMg7Gi4qNk20DgUmUkUwHdkOScpnFw8VnMEIEcqgIhNqwpEc6QlndwtRBURO0gGFWFqEzo5b9p8hJUEdH/PMmT0Fv9McORJ3M7OO1oK2anIRc4MoPXATKWCfXbq/QwI2QtZvH/pJo4P3lg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=uqfKkqv6; arc=fail smtp.client-ip=40.93.195.0
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=AeRUgNdI08GDlQQ3kSdBSK09KbxkgfKcd72sXxqtuITpSPmvh3Iu80umeKns6khPwD/EoqzVcU1f4QHzejhx5t6A6Y6MPfMGh6zUxWORhEe1n1tQuHTQccKTrVUHbEphtu6v2iGXMa8xsQPdxu6zYdZqN85i5nhAHBONvlrMzvHAOrAo5gQd1+KI6k1D0YypEgfxZL18bqHAZ4VkBn0aSjbSX130cl/WGFqhRxdPq6HkM6Q3cadQQOCrp3Dt9G02/R4faCci1/z9V/BeYfT2U1bEgSVlK4ZmoybxLj5OgB8JChJVn5lTV9q7lcL1UFJunh0dQ+PiRcTbD1H1CMEylQ==
+ b=UcfTMIknLy+fpTBS0SmxZ2Ly5TK1/RAAvOKwBF7aZ0f9lAFF8A7/phpTX3TWhbi2JtV7G4wjbvvDwo+YB0ycPCbW5/NbbaDsilvTUBXnAFP39u+DJcfqzfFOhhitJhs8/tuTDgjwU/NGVgFVKeq1HJ0YjP87I0RhsJgOFyvGGWVO0ExOLVK7sV12Z7aNpNMlqa4RPDuWXIZlyfFQsAKZIUzfUyU4Axqr3gsZAIDIvOW3uVPV/3x04YtQaXjEoiFvv+AGDqeI2w8bW+yFzmJHlZmmCWg0n1TH3UAUg07rQREMEASbGm2SjV1OfCuCDj2a2FlCrJ2xQdXYjbpjq8avXg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wWQPJTRlNZwjPuXInSamIGLtcYyaQ5BmzwUmWdPSKCs=;
- b=UDXGfc29RJ34gaEkjXkBeoUz893cFF/pzxgcka131FiOC6KHIi2iPPkWB78ZJBcslYX2x9I1k2aeMTcFQUniRMUaEyfOEJj4hZrldY8B2uLM6/et8m7XuEMm2OyLFNWuNMxtrfe/OdWb23LYOoP+f0jabK/qmV4uy786FcGdtfi7WlDX08600+vcQOyvBupJHKcviOodpjqkboHMoD7LcLsfug/QQsO4wsiUuRfpWNT87+4kbeiiKkERzJZ2YXj/J6Vq07Mj1eNkaOxMMOcSXQNox3dujYIwKHrU/f+EkK9bfE7ojRQ67G6fToBDApMIPv1q2LPC38HMJALeUzeGHA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=8bytes.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ bh=bYRCBzNjx99Gx4YAWYBM8QReEbNi94jBE9/MGKFNvmg=;
+ b=t3W0YzG8z2pJsD2OmYo9UBgqNrPkZ96+BsdZteQ/2GX4dLHIuLXwMm5C1YuLtHeV1AsHqZdeRcprrQtmKh3DS6dsCB921gev3EWZTFVEkQQbcixaDbW0REx6Ks02DApv4CJel0bmI/WdZswGXHDh+Ua//Zu8BPdG2Cv/uSyHtecRavUnwwVt5/kbFs3gb6/vgW3CP65glnoZtIRE/Q8mNC3XDqd8HYprgBOoJjAjusQh7onKYLuF7K7mqgobDpVeO9VKXOncRclIudFs/0z3ab+gmt1TihSsD4RSyh4d88OI1QQQr20MkYwHc1SKmtsiDm3YepnSORkrlplSUZYInw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wWQPJTRlNZwjPuXInSamIGLtcYyaQ5BmzwUmWdPSKCs=;
- b=CbO3AFM82w1Dx3/95rPYeMUyt55vaNXAU1As7JMNiUBV0pwaLV3WNCYb9EJ/SY0+xfmqstBJQER5AhdiKhxw/UkHF+XSGChNGMQWOZQr8ucj7LTdHz7zDBnBCQwOav1PGWhhglx4aSjC6bByfV+FLxbLvdipdO3T/3RMxR8Uwbk=
-Received: from BY1P220CA0021.NAMP220.PROD.OUTLOOK.COM (2603:10b6:a03:5c3::16)
- by BL3PR12MB6402.namprd12.prod.outlook.com (2603:10b6:208:3b2::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Tue, 11 Nov
- 2025 11:24:50 +0000
-Received: from SJ1PEPF00001CE8.namprd03.prod.outlook.com
- (2603:10b6:a03:5c3:cafe::4b) by BY1P220CA0021.outlook.office365.com
- (2603:10b6:a03:5c3::16) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9320.15 via Frontend Transport; Tue,
- 11 Nov 2025 11:24:50 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
-Received: from satlexmb08.amd.com (165.204.84.17) by
- SJ1PEPF00001CE8.mail.protection.outlook.com (10.167.242.24) with Microsoft
+ bh=bYRCBzNjx99Gx4YAWYBM8QReEbNi94jBE9/MGKFNvmg=;
+ b=uqfKkqv6SiCQjBLLz3aIf6Xfm4SC1yLEmrShbL5ncESlptHsBig3gU0X33KyTIOBeis7VufX3p/gHJ9iqqQPdhlVVPEOCyKZQKAXcTckM529vFNalr4hqRmryWUcptRNQ18+vgsW6GBwlllN6z4yZ+xXvGD6a5OvzQye/2zz/jInhxv+kYGl3OsXhx4nWEg4NdD7K86y1H8INlcQgBH3kbqpQabGslYVbala5w+UbSjPFbXpbZRB2qTnxGEsyXXJ997d3DGTlxKlnZQ3bx2d94g7nnjUHf8Mal4kHeKp+Nu/vDfRK/Z70nj/Z7pOgVuA6BHX4G6/6emJ4IJR8G5sLg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
+ by DS7PR12MB8372.namprd12.prod.outlook.com (2603:10b6:8:eb::8) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9320.13 via Frontend Transport; Tue, 11 Nov 2025 11:24:50 +0000
-Received: from SATLEXMB06.amd.com (10.181.40.147) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.17; Tue, 11 Nov
- 2025 03:24:49 -0800
-Received: from satlexmb07.amd.com (10.181.42.216) by SATLEXMB06.amd.com
- (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 11 Nov
- 2025 05:24:49 -0600
-Received: from [10.136.39.158] (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
- Transport; Tue, 11 Nov 2025 03:24:46 -0800
-Message-ID: <3a81ba12-ca32-4565-9b07-5b89629f0ed5@amd.com>
-Date: Tue, 11 Nov 2025 16:54:40 +0530
+ 15.20.9320.15; Tue, 11 Nov 2025 11:24:52 +0000
+Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
+ ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
+ ([fe80::1660:3173:eef6:6cd9%4]) with mapi id 15.20.9298.015; Tue, 11 Nov 2025
+ 11:24:52 +0000
+Message-ID: <83b76f45-e08f-4fc7-811c-647bac2c3d36@nvidia.com>
+Date: Tue, 11 Nov 2025 11:24:45 +0000
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v11 2/4] i2c: tegra: Add HS mode support
+To: Kartik Rajput <kkartik@nvidia.com>, akhilrajeev@nvidia.com,
+ andi.shyti@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, thierry.reding@gmail.com, ldewangan@nvidia.com,
+ digetx@gmail.com, smangipudi@nvidia.com, linux-i2c@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20251111091627.870613-1-kkartik@nvidia.com>
+ <20251111091627.870613-3-kkartik@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Content-Language: en-US
+In-Reply-To: <20251111091627.870613-3-kkartik@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO2P123CA0032.GBRP123.PROD.OUTLOOK.COM (2603:10a6:600::20)
+ To SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] iommu/amd: Enhance "Completion-wait Time-out" error
- message
-To: Ankit Soni <Ankit.Soni@amd.com>
-CC: <joro@8bytes.org>, <will@kernel.org>, <robin.murphy@arm.com>,
-	<iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<suravee.suthikulpanit@amd.com>, <Vasant.Hegde@amd.com>,
-	<Santosh.Shukla@amd.com>
-References: <20251105080342.820-1-dheerajkumar.srivastava@amd.com>
- <mmmsb4pp37slzy65ez4z5i7z342zx3vdxbll5axuio2ugdzzbt@i6yurbrb7k2o>
-Content-Language: en-US
-From: Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>
-In-Reply-To: <mmmsb4pp37slzy65ez4z5i7z342zx3vdxbll5axuio2ugdzzbt@i6yurbrb7k2o>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF00001CE8:EE_|BL3PR12MB6402:EE_
-X-MS-Office365-Filtering-Correlation-Id: c5d2b1c4-b22b-4c9d-db1f-08de2114ed97
+X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|DS7PR12MB8372:EE_
+X-MS-Office365-Filtering-Correlation-Id: 07cddfef-8134-4668-9f8e-08de2114ee5a
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|376014;
+	BCL:0;ARA:13230040|1800799024|376014|7416014|366016|921020;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?YmpPbm1lMnFLd0RMZkVtSkhQTG5KS3Nlamdkbi90bFlUbE14dHZsRVEvZUts?=
- =?utf-8?B?bStJY1BUOTdLbkhsRzhyUTc3QmcxemwzQTZVWnNja1l2aEwzV1pxZjcxVFVB?=
- =?utf-8?B?MnVHcWgzL2pheFFDWnpqS3R4WENnSndTK1licXhYTzMraFk4R0V3TDJyQml0?=
- =?utf-8?B?NjkxMDdVWDdCL0s5QUJnSTJFSUpQTStWTks3cWw2R3Ywc2JVQzEwU2N5Wksv?=
- =?utf-8?B?em84Y3ByVFpoQXUxYS8rV3JkclNFRmNZekFGWmtIL1N0a09nUUY0U2hVTFdX?=
- =?utf-8?B?WG1kdHpKenBqL0ZzVTNROXI1dWRzTzkrcnJORkFYWmVSNEJWWVRZZnBlc3J0?=
- =?utf-8?B?TW5FaUt2YWFZRllKMytnZWlERzJNYWdDWC9FOEpONjMxL0k1NWwwcFZBVWMv?=
- =?utf-8?B?aC90d3V1RElTZ2lnQ2R6RVRCWCs3cDJESXVYZmVoQ0RRaEZWejk4d2YvaGNP?=
- =?utf-8?B?SnlDZGNZRTAvOGs0UVlkQjcvUVlBUko2VjdIUXMvVkpNMjgzTUtqMlVMV01F?=
- =?utf-8?B?anZIdjZKazNtWEZjQzJ3bTVoWmRzSURZZDRuMXNCaGhEeFFSN0Z5Um8yVEt0?=
- =?utf-8?B?VFo5emNzMFNVQjBUOHlDWUNFSTU2S0dVZ0l5aEozeDAwN2s1SW1KQWZkSXFS?=
- =?utf-8?B?TXJaUVJQcEo4OWFRYlFBcHk5c3ZhWFVtZEF0WklWTk9taHU2bGZaUTllVDJk?=
- =?utf-8?B?YVpJT0hHbmp6S29qNEpKYkZzWU5FUFZNa2VlOFdsQlpReGpkbFg1Zjd5NHlr?=
- =?utf-8?B?UGF2NjEzRG9ZTUt5QTZiQ2pzeXlJNkg3MWNJQ0V0ZGw0Nit1Nk9YR1U2Zk5O?=
- =?utf-8?B?eG9EYmpMLzVWbmtHMU9Wd3hZSngwL056TjRnRWJuRDZLSXRrWUU5OEp5RDB2?=
- =?utf-8?B?ODNrdUI4UGRHN0YwME9ia20vQTlmSEsvclNNakg2Uis5SW01TnVlUFZ1NEVu?=
- =?utf-8?B?ZWplVTVTVlhGNlZjbzFkd0JTZzVzZVVEQWRZbWxDWUpXR2NKWDdEYUIvZmZK?=
- =?utf-8?B?a0pjaG5OQXdaZ0JucnlKVzRVVEo2ZDdBdkVFaTZORWUwbGdUdFlGU096RjRG?=
- =?utf-8?B?a0UyMG50Z1p5ZmVwZ0ZBdG0ycWJlU3J2eDlDY1RSWDNLYlg2d01DcGJpYTJv?=
- =?utf-8?B?b2twbTVWby96TTl3Y3BSa2FabWhGMnI1N0phZExmRlYzWkwyY3IzcitPYW1J?=
- =?utf-8?B?c0JMT2ttUlpzQjFMQ3VxSTFDemtGZ3lqT0Q3MTZtNDdyK3ZsdTlIeWNPTnRD?=
- =?utf-8?B?SG5PNHRoODl0bTVicExtck50U0VnK0Q1MUFSUklwaHcxTFFvN0FBRWYwMUVY?=
- =?utf-8?B?am8wZTVIZFp2bVJERUVCUDJCSExBVDB0ZzBVb1dNZENsaW9GSi92ckxsWnNZ?=
- =?utf-8?B?bGJadTdRZHdZd0pXcVF5QVlhNFRXRXBKUkowZ0JqeHUwUFRQYUNBVithRkRB?=
- =?utf-8?B?QnNESGw1ZWdKQU9ycWdqRkY5a25ZUXZ5SEVxVE0rcGVMMDBiYVEvKysrMGY2?=
- =?utf-8?B?L01XSUc1UzF4MGlmWS80Wkt4M2FJTHVnUEQzbzNyWkJiM0lwWmVCUjBnbjFJ?=
- =?utf-8?B?b2UvclgwSERTc1Z0ajlyNVZYSUpDbSt1TXZJR09TYkxVWnNieW9DWnA1SCs3?=
- =?utf-8?B?bjBFQ0xFY3VUUnBtK3JDMEd6NEhVcURoYkR4NzlzV29VZkE3Tko4OG9nK0VH?=
- =?utf-8?B?bG13WGJQUjUyWmhXd2FsY3ltTjZUTjFmd0JpOTRNV2tUVkVmTmFDbXBPd3dn?=
- =?utf-8?B?VE9Yb1VlOXpVQmlvbnFRWTlUQ21qdVcwdjFFeCtEbW9ZajNtZjBMU3RrN1Vv?=
- =?utf-8?B?bElJSHBsb1phREtMRFNQZG5zVEVSaTA0OGJsMk5RSGxTb3FiM0NkT1BMa1FP?=
- =?utf-8?B?Q2ozY2svU0ExdjVicklMOEdHLzk4TWF4VVYvSGNiMnJlTGZjT1l0aWM5QVB0?=
- =?utf-8?B?ZmFjaWE0ci9ubHBlL25vMDlTcWEyN0JqaGNLUUI3NUJ1WkxBL0NiN0kycEtW?=
- =?utf-8?B?WkZvTTRhQ2V1R2pXVFVaL2s1UERVMEh3a01nQ1M2RC90MGpML1dzT0Y1Y0V3?=
- =?utf-8?B?cVFNQjUyV2wyMm42VkIzVFRTWXh0NVZwdnNqdzlqc3MrTGdBUnNvSWZKdjhM?=
- =?utf-8?Q?KJlY=3D?=
+	=?utf-8?B?enlTRFJRbVpaYk5oc2RBN2ppS2RzcVdjbVQwMTV2aVFQblI2N1B2VWQrQmFD?=
+ =?utf-8?B?U1ZhQU9VUzBOMUR3QzBIay9jcEZZczhUaXBKV0c3MHJCYUxTUGxoR0NkbThx?=
+ =?utf-8?B?OVdtcHRVbnpad05DOWhpVWxWazZ1aGp3N21RaVV3R01Nak04M0RWOE1ubUtX?=
+ =?utf-8?B?RGZ6cTUzenFZWEk3cDg0Wk81KzhKOEtvRkJyT1FWM3ZQTUI0U2VCRVFyYmFt?=
+ =?utf-8?B?Q2NXZ3A5T0pqSjE4MitwcG9kTnRLS2wyWVBwYnVZeUJGM3Vta3FVa1dabzlQ?=
+ =?utf-8?B?Rzluc0hZYjZYODZrcEw3Vk1IelhlN1d6VmJIR2U1NDdoQkFyNDdqSjBEMVd5?=
+ =?utf-8?B?MzQ5NHpPUW5iYThOYmJnM2lveS9NN2N0bVQ5VTF2Rnc2RFpFWE9tZ0l2cEls?=
+ =?utf-8?B?czFvVU1sVXBVUmE3MFRJOUErRk0zUzZobjBralhTVkh6UEx4emNGWS96Z0Rh?=
+ =?utf-8?B?VkU4THY4ME1NbW5PSENRWWF1WUF4ZUpLWUNsQ1pDSmIzTTFrTm5VRGlLZUlY?=
+ =?utf-8?B?R0dXN09HSDlmMGltTmZSM3R5b2ZjZUVDRitOb2Z0bzNRNGJpYWo3OEoyVlgz?=
+ =?utf-8?B?SVdrZG40QmFZdVRYZVNFYTJVQUdCNlBqN3FPYWVyMFBrOTVYdjUrRkttNU5G?=
+ =?utf-8?B?SStQSk9jNkxpanZMdVlBL1NFV0dsVTdMclFMbE1aanJnY3hhSHdLdUllc0ZQ?=
+ =?utf-8?B?VUpUVWxEajUraEUwZVRETEx6NVNlVW9WTEJQNHJhVmdwYzVBQ0dsZG1DZG51?=
+ =?utf-8?B?NzVCam5CWmdkMk40SmpSRFBPNlB3Zno5S3luQkRDREtGaFBzUHZlSUdyb25G?=
+ =?utf-8?B?eSsyQ0xVazd0YnkzdjU3RjYyelJzbEJnTzlZNk5uVmxyWXkrTTdYV05TOU1k?=
+ =?utf-8?B?ZGFPcVVKZExMajNDaGt1OTJqZ0tMdlN0c0I2N3p6M2doQU0xdlc0WmlDS25D?=
+ =?utf-8?B?a1BkTWNrMFFsYW93bFMwUHFJajV1TFR5Yml5TkE4eS9CcWtiM0xvUFpHanRO?=
+ =?utf-8?B?ZHE2UWFUM3g5cnlxK0RLSjhHTkpadU8vT0NRRDBzWjRlSGlTSGQ3eU0rVGVQ?=
+ =?utf-8?B?R205bjNvZnNBUENXSXFxU1NnUnI3Nm5UdnhIem1HWFlHd3k1Q244R0dYMFdl?=
+ =?utf-8?B?TjVVOGljYnpIamJsMnVLZ2hZZkVoS281ZGNuS2F6SHZYL3lYUS9MTlBLQkJq?=
+ =?utf-8?B?cWdYSTVXK2x4YWNsQ0dIb0dPeEpNWFVFYzBhSHpoWm10SjgwbkpYRllUNUYv?=
+ =?utf-8?B?Y1lKSFpuc3NqTi90bmtOU2kySHJsWVB1RE9UMmFkczd3VWNFeXc1OWM1bUxj?=
+ =?utf-8?B?VVF5Tm56OWo2cStQajNFbHkyZWRncUw3ZkxJQU9ZL2hueXN4L0RkbW8wcU40?=
+ =?utf-8?B?UDAvNGNRWWYrTGhqL2NhcXdLYUZENXBDSWQ4aHBNYmxuUXJsbk9wZWoySGhy?=
+ =?utf-8?B?ZUxFUGZlaGp6UEZValNvdXJMS2VvZFlDcWhBTGY1SGFqZ1hyNTlDbDZhckRF?=
+ =?utf-8?B?NHRmemJHL3JiVWZhRGtGTWd2RDZFQUxXMDQrRTRzWGhCcXFTN3dLdkE5N1l4?=
+ =?utf-8?B?N1FBR0pabjNOU2xITnBabjBHVVlSMitJZjBlbEVjSjNuN05VempXOVlVOStS?=
+ =?utf-8?B?eElDRExNRExVVkRXQVdROG9EcFM2bzQ4YWhWTHBwOEpKRE0xYWZ3WFJSWHBt?=
+ =?utf-8?B?TWhRN1JDSk96a1dyUS9tRE1heEZzUXZmUHdwY0d4QXhjOTZoNWpiSFpLTkVZ?=
+ =?utf-8?B?QTJIRXkvMWtwcHhNSjhSWldlZ1YrVnlnUUhkN1ZtK2ZGbWlzQTI0WCs0c2dS?=
+ =?utf-8?B?VzJTdzhXZVhZNHFRbTRMcER2M0ZGemtFdTMxd3FIZWRLeXRnN3A2cExYQWFU?=
+ =?utf-8?B?U3IzeHIwSFF3NGtrSXJnYWZYYXZISEw3aU5aT0JOWnJqWmtWV1RXdFg1MTdM?=
+ =?utf-8?B?RDd1eXNhbGg1RlhiQXlEaGNCTzM5S2hWM1NzVmdNb05RdDBrblUvSmNDK29j?=
+ =?utf-8?B?T3lHamdtT2Q2WkczTC9OUmhXTEdFY1N0aFFMdVRIejB5UWQ3Rmg2SXpNcS8r?=
+ =?utf-8?Q?SZ/sgr?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Nov 2025 11:24:50.1048
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?OTcrVGZTMnRTNVNnRVI0YkpreWJvZWROL1Q2RmdIK1Q4ZmJKN2tYdzIwK0ZQ?=
+ =?utf-8?B?NlhoSkN1enh1NVJWTnUwelVxbVMrQmJESHpIcUdvWGJZVUNTRzFxalZlbmdC?=
+ =?utf-8?B?dlNCRFpZeDJmZENpUmplSm1TV2JQZk9ZOUdiT2JqaHBiMzN3ZHdvb2Y5OUUr?=
+ =?utf-8?B?NzlBVTFJQUZIT00rTCsrcFNkVEtHVVJyRFUxeHpEWXRUUDRXeFc3aGVqMm5S?=
+ =?utf-8?B?cnZjbXdVc3NJK05USW5NalNkTGVHaCswaFR2b09Yenp3a2syVVFDVS9icnZ1?=
+ =?utf-8?B?OXpkdW41SnVtTlU2TStaMFJWb2hJSVo0TS9sYkY4TjJiN1RNV0RQV2doSmxV?=
+ =?utf-8?B?N0drQTNuTEtYRk95c3JjY3pPUy9xMkhlV2t2TFltbHUwUGhvNnVlaDJEd20x?=
+ =?utf-8?B?QW51NWxrYjlKUGNMUXVnZCs2TVV1RjFkSzhrajZBT1FwUzBCcE1jU1lmM1o2?=
+ =?utf-8?B?VUJWdzR5SHY3dnRQTzdLcjRNL3dMbkhMNmppU1NTZkhLcnFlaHZudWlwaFdR?=
+ =?utf-8?B?aGhGYk54MmNOOWpEc1lmYUw4MG03TmFYdEExU3VUTTFWS0ExQkoyZllHYTlk?=
+ =?utf-8?B?WTcrYXc2S0dNQ3pDV1VLejBmMU03Qk5tTGIwSWxxMDY4OW02bFV6dTU5cmdB?=
+ =?utf-8?B?dHQ2WS85SlV2ejFVODY5WC9aZmtPdFlyakpBdFRNWWZSdE44SitVa3pVZzdP?=
+ =?utf-8?B?S0twZ0hLSWhUYjluTVRReWFVZVQ5MXF1K1FseTllSWUxVnhDd25vRGp0aDFK?=
+ =?utf-8?B?bnliR2N1NzBxbzV5cFhsUzNOdzI0cDJmaWlQNG93ZWlGNVQ1NUNsaGxjRlA2?=
+ =?utf-8?B?eWhSY1hZdWViZmxkUmozcFc3d2ZreTg1Tms3K3RuejFDTzVCYkl4TUVJTGpW?=
+ =?utf-8?B?UXN5M3Q3MW9ETmZseGt6ZmpxZWE1QVZaN3JaZE1pdU94bUlrVEVXdzVNR0dn?=
+ =?utf-8?B?UzE1T1FlUktxR1BhUlc4MXQxNm1TL3Y3RnRwRmhZVFpxb2RIRjVtL2llRGlN?=
+ =?utf-8?B?MkxrUXlXUGdLeFFra1VLRnFKWmp5NkFRa2lMcUxvVFc2dzlOcHE3TlhlWW1Q?=
+ =?utf-8?B?V0xwanRDNTJvODVFd3N4MG5XdlVmbTNkQ1ZzbXR0RVVURGxwYU1XUWpPSmhV?=
+ =?utf-8?B?L3pKSXlBTkdzS0dIa2oxb3BGY3dJL2NCUlBWb0hZRnNpS3pOdVNySGRnSVFr?=
+ =?utf-8?B?TE9MWmVBSmplK0NDbmZ4RkRTdldUUjZ6aHdrODR1T1hJeGNsMmE3U2hhUFZO?=
+ =?utf-8?B?TVQ2UGd6cVZhenB3cjdlR2NUc1krcStSMUV5QmtmSC9nYkFVOEpFWnFXQnc3?=
+ =?utf-8?B?SjcvdlJBQzVQR3IzWkZpY2VoK0JJbzE4cnRWSERXbit0TEFaWHh5aFc3RjNR?=
+ =?utf-8?B?ZWxHTytpaUtpaWdzcTZUa1UvRmw2MEEzQU9OczNueWc5QTZkb20rdEdMQlVU?=
+ =?utf-8?B?V01TMUVpQVMrM0p2L0JqMkNNczE4SUNLU0tjeGpRYUE5V1lHZFpmOFBMcWhK?=
+ =?utf-8?B?cHk4WTN3VW9pTDErNFVIcVlhaDJFWFJzZ1I2aUpJdjM4Q0NXNENXbUpiL1hw?=
+ =?utf-8?B?akIwd0xWaEYxemVveGlXekt5Wmt6Sm1ubU9BWXJzY1RIaWVrSWI1OUxTQkds?=
+ =?utf-8?B?UUlVOEs4QnhJRWZMSDR4bnBxRzJXV09sQlI4YVJiTUU4WWgvYk53ZlE1NXJF?=
+ =?utf-8?B?bWxySkZZNXYwMk5SN2QyenluWitkYkNwQTlmZGxaUWsrVmRzdmliSnNKZXVz?=
+ =?utf-8?B?V1VlY0h5dThLTk9YK3ZqNXFVczhCZ0lYWTVmcWM0djZqSmQzTVZsUmFrMFBT?=
+ =?utf-8?B?c3h0bGI4REkxVGxkVjZwWDVONDlPWUM1WUNlVWNoS2Uvd3ZPTmk0eDZ3ZXlw?=
+ =?utf-8?B?MzB3ZkVSS2loYWVuSjY0bjRNZXRkWHN1N3Q0bnk1OW1ELytqVEFJb0VQdGhQ?=
+ =?utf-8?B?YTZMU0FxUVNGK2hnR0ttZWV4cXRZT29lYmZnNmhpUWxXTk1COW9uWTdjYTdQ?=
+ =?utf-8?B?SzNoU1ZVOUlaTFp1ellnWVI0VDExQ0pPMUVkM3U5eXluMlN3bkxaUGtobW52?=
+ =?utf-8?B?Uy9jTHRGWEdaSXlPcVhXSUx3Wk9IdVNrVzVwVWZheGZXbU1USXNZU25YdnBZ?=
+ =?utf-8?Q?rHcfj5WiQdiv7v+p4CP4+sQ3R?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 07cddfef-8134-4668-9f8e-08de2114ee5a
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Nov 2025 11:24:52.0983
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c5d2b1c4-b22b-4c9d-db1f-08de2114ed97
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF00001CE8.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR12MB6402
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: F3IdVBFHgeMKquzrWlP1RkVdKawa7OUfQQiygDYkMB1vXtbLumgheNIErB53IR6YOjTU81sQugwYYDTkV+Fnyw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB8372
 
-Hi Ankit,
 
-Thanks for reviewing the patch.
-
-On 11/7/2025 7:36 PM, Ankit Soni wrote:
-> Hello Dheeraj,
+On 11/11/2025 09:16, Kartik Rajput wrote:
+> From: Akhil R <akhilrajeev@nvidia.com>
 > 
-> On Wed, Nov 05, 2025 at 01:33:42PM +0530, Dheeraj Kumar Srivastava wrote:
->> Current IOMMU driver prints "Completion-wait Time-out" error message with
->> insufficient information to further debug the issue.
->>
->> Enhancing the error message as following:
->> 1. Log IOMMU PCI device ID in the error message.
->> 2. With "amd_iommu_dump=1" kernel command line option, dump entire
->>     command buffer entries including Head and Tail offset.
->>
->> Dump the entire command buffer only on the first 'Completion-wait Time-out'
->> to avoid dmesg spam.
->>
->> Signed-off-by: Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>
->> ---
->> Changes since v3:
->> -> Dump the entire command buffer only on the first 'Completion-wait Time-out'
->>     when amd_iommu_dump=1, instead of dumping it on every occurrence.
->>
->>   drivers/iommu/amd/amd_iommu_types.h |  4 ++++
->>   drivers/iommu/amd/iommu.c           | 28 +++++++++++++++++++++++++++-
->>   2 files changed, 31 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/iommu/amd/amd_iommu_types.h b/drivers/iommu/amd/amd_iommu_types.h
->> index 95f63c5f6159..7576814f944d 100644
->> --- a/drivers/iommu/amd/amd_iommu_types.h
->> +++ b/drivers/iommu/amd/amd_iommu_types.h
->> @@ -247,6 +247,10 @@
->>   #define CMD_BUFFER_ENTRIES 512
->>   #define MMIO_CMD_SIZE_SHIFT 56
->>   #define MMIO_CMD_SIZE_512 (0x9ULL << MMIO_CMD_SIZE_SHIFT)
+> Add support for HS (High Speed) mode transfers, which is supported by
+> Tegra194 onwards. Also adjust the bus frequency such that it uses the
+> fast plus mode when HS mode is not supported.
 > 
-> It's worth adding comment for MASK 4-18.
+> Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
+> Signed-off-by: Kartik Rajput <kkartik@nvidia.com>
+> ---
+> v10 -> v11:
+> 	* Update the if condition as per the comments received on:
+> 	  https://lore.kernel.org/linux-tegra/20251110080502.865953-1-kkartik@nvidia.com/T/#t
+> v9 -> v10:
+>          * Change switch block to an if-else block.
+> v5 -> v9:
+>          * In the switch block, handle the case when hs mode is not
+>            supported. Also update it to use Fast mode for master code
+>            byte as per the I2C spec for HS mode.
+> v3 -> v5:
+>          * Set has_hs_mode_support to false for unsupported SoCs.
+> v2 -> v3:
+>          * Document tlow_hs_mode and thigh_hs_mode.
+> v1 -> v2:
+>          * Document has_hs_mode_support.
+>          * Add a check to set the frequency to fastmode+ if the device
+>            does not support HS mode but the requested frequency is more
+>            than fastmode+.
+> ---
+>   drivers/i2c/busses/i2c-tegra.c | 62 ++++++++++++++++++++++++++--------
+>   1 file changed, 48 insertions(+), 14 deletions(-)
 > 
+> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+> index bd26b232ffb3..2b18ceb837da 100644
+> --- a/drivers/i2c/busses/i2c-tegra.c
+> +++ b/drivers/i2c/busses/i2c-tegra.c
+> @@ -91,6 +91,7 @@
+>   #define I2C_HEADER_IE_ENABLE			BIT(17)
+>   #define I2C_HEADER_REPEAT_START			BIT(16)
+>   #define I2C_HEADER_CONTINUE_XFER		BIT(15)
+> +#define I2C_HEADER_HS_MODE			BIT(22)
+>   #define I2C_HEADER_SLAVE_ADDR_SHIFT		1
+>   
+>   #define I2C_BUS_CLEAR_CNFG			0x084
+> @@ -198,6 +199,8 @@ enum msg_end_type {
+>    * @thigh_std_mode: High period of the clock in standard mode.
+>    * @tlow_fast_fastplus_mode: Low period of the clock in fast/fast-plus modes.
+>    * @thigh_fast_fastplus_mode: High period of the clock in fast/fast-plus modes.
+> + * @tlow_hs_mode: Low period of the clock in HS mode.
+> + * @thigh_hs_mode: High period of the clock in HS mode.
+>    * @setup_hold_time_std_mode: Setup and hold time for start and stop conditions
+>    *		in standard mode.
+>    * @setup_hold_time_fast_fast_plus_mode: Setup and hold time for start and stop
+> @@ -206,6 +209,7 @@ enum msg_end_type {
+>    *		in HS mode.
+>    * @has_interface_timing_reg: Has interface timing register to program the tuned
+>    *		timing settings.
+> + * @has_hs_mode_support: Has support for high speed (HS) mode transfers.
+>    */
+>   struct tegra_i2c_hw_feature {
+>   	bool has_continue_xfer_support;
+> @@ -226,10 +230,13 @@ struct tegra_i2c_hw_feature {
+>   	u32 thigh_std_mode;
+>   	u32 tlow_fast_fastplus_mode;
+>   	u32 thigh_fast_fastplus_mode;
+> +	u32 tlow_hs_mode;
+> +	u32 thigh_hs_mode;
+>   	u32 setup_hold_time_std_mode;
+>   	u32 setup_hold_time_fast_fast_plus_mode;
+>   	u32 setup_hold_time_hs_mode;
+>   	bool has_interface_timing_reg;
+> +	bool has_hs_mode_support;
+>   };
+>   
+>   /**
+> @@ -677,25 +684,28 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
+>   	if (IS_VI(i2c_dev))
+>   		tegra_i2c_vi_init(i2c_dev);
+>   
+> -	switch (t->bus_freq_hz) {
+> -	case I2C_MAX_STANDARD_MODE_FREQ + 1 ... I2C_MAX_FAST_MODE_PLUS_FREQ:
+> -	default:
+> +	if (t->bus_freq_hz <= I2C_MAX_STANDARD_MODE_FREQ) {
+> +		tlow = i2c_dev->hw->tlow_std_mode;
+> +		thigh = i2c_dev->hw->thigh_std_mode;
+> +		tsu_thd = i2c_dev->hw->setup_hold_time_std_mode;
+> +		non_hs_mode = i2c_dev->hw->clk_divisor_std_mode;
+> +	} else {
+>   		tlow = i2c_dev->hw->tlow_fast_fastplus_mode;
+>   		thigh = i2c_dev->hw->thigh_fast_fastplus_mode;
+>   		tsu_thd = i2c_dev->hw->setup_hold_time_fast_fast_plus_mode;
+>   
+> -		if (t->bus_freq_hz > I2C_MAX_FAST_MODE_FREQ)
+> -			non_hs_mode = i2c_dev->hw->clk_divisor_fast_plus_mode;
+> -		else
+> +		/*
+> +		 * When HS mode is supported, the non-hs timing registers will be used for the
+> +		 * master code byte for transition to HS mode. As per the spec, the 8 bit master
+> +		 * code should be sent at max 400kHz. Therefore, limit the bus speed to fast mode.
+> +		 * Whereas when HS mode is not supported, allow the highest speed mode capable.
+> +		 */
+> +		if (t->bus_freq_hz < I2C_MAX_FAST_MODE_PLUS_FREQ ||
+> +		    (t->bus_freq_hz > I2C_MAX_FAST_MODE_PLUS_FREQ &&
+> +			i2c_dev->hw->has_hs_mode_support))
+>   			non_hs_mode = i2c_dev->hw->clk_divisor_fast_mode;
 
-Sure.
+I am still not sure this is correct. Before we had ...
 
->> +#define MMIO_CMD_HEAD_MASK	GENMASK_ULL(18, 4)
->> +#define MMIO_CMD_BUFFER_HEAD(x) FIELD_GET(MMIO_CMD_HEAD_MASK, (x))
->> +#define MMIO_CMD_TAIL_MASK	GENMASK_ULL(18, 4)
-> 
-> Since HEAD and TAIL masks are same, may be, you can use something like
-> MMIO_CMD_HEAD_TAIL_MASK().
-> 
+  if (t->bus_freq_hz > I2C_MAX_FAST_MODE_FREQ)
+      non_hs_mode = i2c_dev->hw->clk_divisor_fast_plus_mode;
 
-Agree, but I’d prefer to keep them as separate definitions for clarity 
-and potential future changes. Let me know if you have any further comments.
+Now we have ...
 
->> +#define MMIO_CMD_BUFFER_TAIL(x) FIELD_GET(MMIO_CMD_TAIL_MASK, (x))
->>   
->>   /* constants for event buffer handling */
->>   #define EVT_BUFFER_SIZE		8192 /* 512 entries */
->> diff --git a/drivers/iommu/amd/iommu.c b/drivers/iommu/amd/iommu.c
->> index eb348c63a8d0..abce078d2323 100644
->> --- a/drivers/iommu/amd/iommu.c
->> +++ b/drivers/iommu/amd/iommu.c
->> @@ -1156,6 +1156,25 @@ irqreturn_t amd_iommu_int_handler(int irq, void *data)
->>    *
->>    ****************************************************************************/
->>   
->> +static void dump_command_buffer(struct amd_iommu *iommu)
->> +{
->> +	struct iommu_cmd *cmd;
->> +	int head, tail, i;
-> 
-> Since readl returns u32, prefer u32 for head/tail to avoid any surprises
-> or sign-ext issues.
+  if (t->bus_freq_hz >= I2C_MAX_FAST_MODE_PLUS_FREQ)
+      non_hs_mode = i2c_dev->hw->clk_divisor_fast_plus_mode;
 
-Sure.
+Don't we want ...
 
-> and similarly use %u in pr_err() below.
+  if (t->bus_freq_hz <= I2C_MAX_FAST_MODE_FREQ)
+      non_hs_mode = i2c_dev->hw->clk_divisor_fast_mode;
+  else if (i2c_dev->hw->has_hs_mode_support)
+      non_hs_mode = i2c_dev->hw->clk_divisor_fast_mode;
+  else
+      non_hs_mode = i2c_dev->hw->clk_divisor_fast_plus_mode;
 
-I’d prefer dumping the head and tail values as integers, so they can be 
-easily mapped to the command buffer entries indexed by integer offsets. 
-Let me know if you have any further comments?
+Or
 
-> 
->> +
->> +	head = readl(iommu->mmio_base + MMIO_CMD_HEAD_OFFSET);
->> +	tail = readl(iommu->mmio_base + MMIO_CMD_TAIL_OFFSET);
->> +
->> +	pr_err("CMD Buffer head=%d tail=%d\n", (int)(MMIO_CMD_BUFFER_HEAD(head)),
->> +	       (int)(MMIO_CMD_BUFFER_TAIL(tail)));
->> +
->> +	for (i = 0; i < CMD_BUFFER_ENTRIES; i++) {
->> +		cmd = (struct iommu_cmd *)(iommu->cmd_buf + i * sizeof(*cmd));
->> +		pr_err("%3d: %08x %08x %08x %08x\n", i, cmd->data[0], cmd->data[1], cmd->data[2],
->> +		       cmd->data[3]);
->> +	}
->> +}
->> +
->> +
-> 
-> Remove extra line.
-> 
+  if (!i2c_dev->hw->has_hs_mode_support && t->bus_freq_hz > 
+I2C_MAX_FAST_MODE_FREQ)
+      non_hs_mode = i2c_dev->hw->clk_divisor_fast_plus_mode;
+  else
+      non_hs_mode = i2c_dev->hw->clk_divisor_fast_mode;
 
-Sure.
+Jon
 
-Thanks
-Dheeraj
-
-> Best,
-> Ankit
-> 
->>   static int wait_on_sem(struct amd_iommu *iommu, u64 data)
->>   {
->>   	int i = 0;
->> @@ -1166,7 +1185,14 @@ static int wait_on_sem(struct amd_iommu *iommu, u64 data)
->>   	}
->>   
->>   	if (i == LOOP_TIMEOUT) {
->> -		pr_alert("Completion-Wait loop timed out\n");
->> +
->> +		pr_alert("IOMMU %04x:%02x:%02x.%01x: Completion-Wait loop timed out\n",
->> +			 iommu->pci_seg->id, PCI_BUS_NUM(iommu->devid),
->> +			 PCI_SLOT(iommu->devid), PCI_FUNC(iommu->devid));
->> +
->> +		if (amd_iommu_dump)
->> +			DO_ONCE_LITE(dump_command_buffer, iommu);
->> +
->>   		return -EIO;
->>   	}
->>   
->> -- 
->> 2.25.1
->>
+-- 
+nvpublic
 
 
