@@ -1,280 +1,196 @@
-Return-Path: <linux-kernel+bounces-895149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BCD3C4D1A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:38:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DB133C4D1B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:39:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E3CA427BA0
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:28:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF6093BC1D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:30:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C10B34C14C;
-	Tue, 11 Nov 2025 10:27:59 +0000 (UTC)
-Received: from mail-oo1-f52.google.com (mail-oo1-f52.google.com [209.85.161.52])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B61834B674;
+	Tue, 11 Nov 2025 10:29:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TLCrMhPQ"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0916B34B682
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 10:27:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0638133BBAA
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 10:29:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762856878; cv=none; b=Hs0o7axe2jVoWo1jtCMdyUdkkWWO5FYCu5SIRKUQODN57H0PRFox+W8CHMeMH91/6iOem7pqrB2yJ9ry3+mmp2R5antZkQo4Fa1uB0y0og6V09zGjTfPZob2M/V+F+/1XwjDIKFuXLScuEU4WQj0HX0/H0C/nOwAl6dh5Jr7So4=
+	t=1762856993; cv=none; b=H7m4gzkNEzDiN0sQUnVOCOaUbHknqwhsGVqgnrBoR+ViwY3ESW3IXkvjIr/2LlNuSS3HDhQPaYjJ1fM0R0Ah3EOPwwPl7s9CfJjWP/mhwxeDDgUlT+KGq5ym85cTdZNGmE7hi1VFSs3DvwQD+la1NQeCCFd/yOIE3IcBrAPAYMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762856878; c=relaxed/simple;
-	bh=/8CzXfuHcEJlSJRA11zs4FnS8Nv46Y0bC/+D45XIcAM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eB6vZFezCsXH2HyVtAuuq/SfoPWJywgJ3x779iKFcCVsIMqTaj7kbde1JPYgen3iDAMpgG3Q+mMW4FFTL+Koxiq5y83vgBaU+AjH5nPJRlNZYZ8YslPEpW24ettJGEgcXrFjgGz03/7AmN8lLyYl0Wb4BUN0Cmp//d9WA8I6bSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.161.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-656c07e3241so1739998eaf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 02:27:56 -0800 (PST)
+	s=arc-20240116; t=1762856993; c=relaxed/simple;
+	bh=HLKGy0mKbpQ8h+3kSmFm7cUNZcoYemdFaDqBdUyA25s=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=qlLZI187VtSPjfdy9O+wPkyouSG38mWm+SxV5khVE8foqQWv2D3VeEGx/f1uBPmDV5ZwyvkA+p9uIv3Gf0UwWcJXT5MoXjURcZuF6e+ZBNVZG075Pq9rx3rs2EkHfxcuvVjR2WcQJE6V7UMIuQXDzbCxT4qONiNadjrDQOPiLJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TLCrMhPQ; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4777771ed1aso18513815e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 02:29:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1762856990; x=1763461790; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=mA4OYGuehEdlKuRHHZkCIxOoAid/iNBTle5X4sDzSO8=;
+        b=TLCrMhPQRzB5j1v8TSW+sC6RojrdNXA+tcJLfzUaCy67lu0rwRNX671GZX7SEsO7VJ
+         jf0LIWKMK6zabvAzsT9FcnEJpS6oZPVF50f5PsBDi6j0i4NxgYvSVGc5GgyIyO22tZRw
+         TZwMmziLkzn5BPKWVbOdWRYwZjKSWuNpyjueKv7Kgatde6o7ePHyG5fcb/l9XGktgzlo
+         tWmxMNqjOEMdG8BmqKjM3lqwtnxvbQQiAiDM8u6IllVDiwPnGDAykBzVQ3FkrHsLXxwo
+         Yn/ZInsymFSXOIZiCtFurlKCJMRleUvC6//X8eCPEMGQYrLxeXbnQYNkF4S6ABIlVsLT
+         +e1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762856876; x=1763461676;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EXcNh9uEcUlM67NldM+wkaR6qeKY7aCoNzjVAfRE4U8=;
-        b=ms3F1xxCeJtEzSMZgDNoIXVn5Y3hO1QLEzcrhgFeXHGkxa5Nn8+jo+9xeE4ciSifj+
-         RYS2ubOqs5wVdFANiCFCVJ0cdWkusWEZtwDwqVvwvSxdJahmkUwcTEGnxwkqV5EheBOn
-         JtK/tVvRatWmfH6VqeQE5eaypsz2UEE/0GKhIiTsgfcx6/wFEF1nldQpfmDs8zk1EkSI
-         x5yy+Pg5HoZIKbjWZns23kAHOGFl0Bt8CgYdiUGHga8s/RkFXm/QMQ8I79YbQtipje4A
-         DLq4jIt+Tdw+ILMLm4CTZZo04Y920q3D8GMUNxVxVB4L9MzHOYw10h0cu9FsueQFnehM
-         7ZKw==
-X-Forwarded-Encrypted: i=1; AJvYcCVcNusSWmhwf15Jzf1EqHZtZhK4oX/HRvGeea5laQiNxQuVZ9qgQIxcMHniK/cRCFbvD4IJJqIkziiC89I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmU5zBqrEpUVJRq/jJN3ZM1qriXkhOpW0RcveNDh9yn4QGd5yk
-	MrazgQ6iT5kPOJee9112R0uL7k5IOyt9d801y2Bu4OsgfOjNB0xipPq9
-X-Gm-Gg: ASbGnct7ul87uMU3xe/7LQK2bGjViUBhZWjG3JlqB9sTFl8H0MU6Lh2BVndkHgAvsLh
-	/FQoSl4DTW+2KeS/20CGeCpS3VPW4WCKDzGtnx7ZuVxYa6kOjtY8cJIxnAFg/+lk982qMipHO7k
-	ZmvRglKzbFeTcp5JNhFD/vZ3uTSx2bxkGU3c+yDad8PvmuR7F9emwIsxvypRiDtp/zwtthBJxgp
-	qgwtCHsr4csPX453l76k3mmy8iWUssNUjX4gIIJWIpBLlHsAXAWGLaUUdOl91BP5ugTsOrXnRS1
-	zqDO/9qUI8J7MjMJkr3pXIG2e+VIvf6h8sVlXha3CkhaFS9QKMqO6U2nWhhGVz2uE/RQjxi/iDl
-	h4JRMwZ2Zl+bqLWDAJRkKkFa/epI+RXKBJsUtyQqEUUxTNGR6b0GDdATujgcwPoAsniQYML8hKo
-	Lkmg==
-X-Google-Smtp-Source: AGHT+IEzVtMODbxRkCJvy3lTstnvvwHWNG9lfiDUwJA7fVsJcqlAOniXiPB2G6BGunxf9fRFY+u0kQ==
-X-Received: by 2002:a05:6870:8123:b0:3e8:172f:da82 with SMTP id 586e51a60fabf-3e8172fdfd0mr1103253fac.19.1762856876015;
-        Tue, 11 Nov 2025 02:27:56 -0800 (PST)
-Received: from gmail.com ([2a03:2880:10ff:8::])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-3e41eba8ce5sm7616709fac.4.2025.11.11.02.27.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Nov 2025 02:27:55 -0800 (PST)
-Date: Tue, 11 Nov 2025 02:27:53 -0800
-From: Breno Leitao <leitao@debian.org>
-To: Andre Carvalho <asantostc@gmail.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Shuah Khan <shuah@kernel.org>, 
-	Simon Horman <horms@kernel.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH net-next v3 6/6] selftests: netconsole: validate target
- resume
-Message-ID: <kv5q2fq3mypb4eenrk6z3j4yjfhrlmjdcgwrsgm7cefvso7n3x@j3mcnw3uaaq5>
-References: <20251109-netcons-retrigger-v3-0-1654c280bbe6@gmail.com>
- <20251109-netcons-retrigger-v3-6-1654c280bbe6@gmail.com>
+        d=1e100.net; s=20230601; t=1762856990; x=1763461790;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mA4OYGuehEdlKuRHHZkCIxOoAid/iNBTle5X4sDzSO8=;
+        b=uKz0cUPESS6lYq0q3sjCmvH04Gtv+MzZqQvigbDx8P5vXHrUhf9Mj9KIZ4MFZnuDIq
+         gWwogcVrJ7Tk21sOrnS2K+QoqjBCOkz4VGOJ/2iVeAr+RkoXwjMfQerLpRKRm/o4BRuY
+         E/cItQtSsREhIdtAwPcLKOGFwlC2zHM9NN4EoAPtfJ4zoNSuGmgb0M4yRsVXZJ0YY/W5
+         aFF+qllB2RocLaA8VimEskCY1Gtk6wiMmWLqc0jIEexdB0fgi+qJdmaCLokxjCqWLPVK
+         tG9ENqYlSot2C3VbxoWUhyFUlDp0cfZvlpwwITPOqaOI5wBgqLyG6SlxoPCS/XYcpGu5
+         8r9g==
+X-Gm-Message-State: AOJu0YxA1W8DC0w3nqLOiG5Oay5X/fJJiPnzhKmFbLcVl4dZy3WUITRK
+	zxkzEEUCB43i/edIlX+FfHXxSQeSJUetmQdUwmNDXZHuXg/v0Bkl3eXn8eSWv74p01I=
+X-Gm-Gg: ASbGncvsWZQvURiugNGImV/8TLi0jxq7KXOwwMxMZbgRWDI7tQHahjXNrSbBvn89Czb
+	NU6bu/zChH8Bs40XgPHXGxUQxxqAbY3b7QIdgQEfKXafSb64I6DSGqmZm1+vBB2SIkY8Eg5Xsy0
+	omYAmKYvOswR87zviTCCdUKytlZFOUClVxvR3vdNPofCuDpYK8MvnlvgPtgFAIkXApsyOUg2yYd
+	YB772QhQ8wMWgSXmKgfN1pt7VB632TWS4i6fSR0ptzq6Pb/AWPRmztUcK5BKQ/iioc3enl21E5i
+	WTpI8vWhA/Gs6vyD+ooNF2L9wo+0+eedf/T+hdWHvRCDmn5TeLGvG/CSqOoFciX2gzMXvgU9x0Z
+	pk1l3KdA4MYf9+TUbLLVV6koIjgyPN9zZCebRfjMyIGmRUOGzp06w9gctC2eXF98c6qopRf8T+4
+	x+ML9medYucKxffn1/5reAgEZKP5c=
+X-Google-Smtp-Source: AGHT+IEvLEjIZw4+8whQM79OrY00R9vJVyO1rxoxD4fhQm/KifAlq8r0yaMnGCz1oNKbvCj2h/xcDg==
+X-Received: by 2002:a05:600c:c4a3:b0:471:1774:3003 with SMTP id 5b1f17b1804b1-47773290e9dmr106627935e9.29.1762856990270;
+        Tue, 11 Nov 2025 02:29:50 -0800 (PST)
+Received: from [10.11.12.107] ([5.12.85.52])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42ac675caecsm27313955f8f.30.2025.11.11.02.29.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Nov 2025 02:29:49 -0800 (PST)
+Message-ID: <5eaaf3cf-a271-467f-b015-9cb9b49590f0@linaro.org>
+Date: Tue, 11 Nov 2025 12:29:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251109-netcons-retrigger-v3-6-1654c280bbe6@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 4/6] clk: samsung: add Exynos ACPM clock driver
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+To: Stephen Boyd <sboyd@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Catalin Marinas <catalin.marinas@arm.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Conor Dooley <conor+dt@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Peter Griffin <peter.griffin@linaro.org>, Rob Herring <robh@kernel.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, Will Deacon <will@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, willmcvicker@google.com, kernel-team@android.com
+References: <20251010-acpm-clk-v6-0-321ee8826fd4@linaro.org>
+ <20251010-acpm-clk-v6-4-321ee8826fd4@linaro.org>
+ <92f1c027-bacc-4537-a158-2e0890e2e8ee@kernel.org>
+ <17695fcf-f33c-4246-8d5c-b2120e9e03b1@linaro.org>
+ <176282517011.11952.1566372681481575091@lazor>
+ <c5db97fa-8789-447f-909a-edbdb55383f8@linaro.org>
+Content-Language: en-US
+In-Reply-To: <c5db97fa-8789-447f-909a-edbdb55383f8@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sun, Nov 09, 2025 at 11:05:56AM +0000, Andre Carvalho wrote:
-> Introduce a new netconsole selftest to validate that netconsole is able
-> to resume a deactivated target when the low level interface comes back.
+
+
+On 11/11/25 8:24 AM, Tudor Ambarus wrote:
 > 
-> The test setups the network using netdevsim, creates a netconsole target
-> and then remove/add netdevsim in order to bring the same interfaces
-> back. Afterwards, the test validates that the target works as expected.
 > 
-> Targets are created via cmdline parameters to the module to ensure that
-> we are able to resume targets that were bound by mac and interface name.
+> On 11/11/25 3:39 AM, Stephen Boyd wrote:
 > 
-> Signed-off-by: Andre Carvalho <asantostc@gmail.com>
-> ---
->  tools/testing/selftests/drivers/net/Makefile       |  1 +
->  .../selftests/drivers/net/lib/sh/lib_netcons.sh    | 30 ++++++-
->  .../selftests/drivers/net/netcons_resume.sh        | 92 ++++++++++++++++++++++
->  3 files changed, 120 insertions(+), 3 deletions(-)
+> Hi, Stephen!
 > 
-> diff --git a/tools/testing/selftests/drivers/net/Makefile b/tools/testing/selftests/drivers/net/Makefile
-> index 68e0bb603a9d..fbd81bec66cd 100644
-> --- a/tools/testing/selftests/drivers/net/Makefile
-> +++ b/tools/testing/selftests/drivers/net/Makefile
-> @@ -17,6 +17,7 @@ TEST_PROGS := \
->  	netcons_cmdline.sh \
->  	netcons_fragmented_msg.sh \
->  	netcons_overflow.sh \
-> +	netcons_resume.sh \
->  	netcons_sysdata.sh \
->  	netpoll_basic.py \
->  	ping.py \
-> diff --git a/tools/testing/selftests/drivers/net/lib/sh/lib_netcons.sh b/tools/testing/selftests/drivers/net/lib/sh/lib_netcons.sh
-> index 8e1085e89647..88b4bdfa84cf 100644
-> --- a/tools/testing/selftests/drivers/net/lib/sh/lib_netcons.sh
-> +++ b/tools/testing/selftests/drivers/net/lib/sh/lib_netcons.sh
-> @@ -186,12 +186,13 @@ function do_cleanup() {
->  }
->  
->  function cleanup() {
-> +	local TARGETPATH=${1:-${NETCONS_PATH}}
->  	# delete netconsole dynamic reconfiguration
-> -	echo 0 > "${NETCONS_PATH}"/enabled
-> +	echo 0 > "${TARGETPATH}"/enabled
->  	# Remove all the keys that got created during the selftest
-> -	find "${NETCONS_PATH}/userdata/" -mindepth 1 -type d -delete
-> +	find "${TARGETPATH}/userdata/" -mindepth 1 -type d -delete
->  	# Remove the configfs entry
-> -	rmdir "${NETCONS_PATH}"
-> +	rmdir "${TARGETPATH}"
->  
->  	do_cleanup
->  }
-> @@ -350,6 +351,29 @@ function check_netconsole_module() {
->  	fi
->  }
->  
-> +function wait_target_state() {
-> +	local TARGET=${1}
-> +	local STATE=${2}
-> +	local FILE="${NETCONS_CONFIGFS}"/"${TARGET}"/"enabled"
+>> Quoting Tudor Ambarus (2025-10-20 00:45:58)
+>>>
+>>>
+>>> On 10/20/25 7:54 AM, Krzysztof Kozlowski wrote:
+>>>>> diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
+>>>>> index 76a494e95027af26272e30876a87ac293bd56dfa..70a8b82a0136b4d0213d8ff95e029c52436e5c7f 100644
+>>>>> --- a/drivers/clk/samsung/Kconfig
+>>>>> +++ b/drivers/clk/samsung/Kconfig
+>>>>> @@ -95,6 +95,16 @@ config EXYNOS_CLKOUT
+>>>>>        status of the certains clocks from SoC, but it could also be tied to
+>>>>>        other devices as an input clock.
+>>>>>  
+>>>>> +config EXYNOS_ACPM_CLK
+>>>>> +    tristate "Clock driver controlled via ACPM interface"
+>>>>> +    depends on EXYNOS_ACPM_PROTOCOL || (COMPILE_TEST && !EXYNOS_ACPM_PROTOCOL)
+>>>>
+>>>> I merged the patches but I don't get why we are not enabling it by
+>>>> default, just like every other clock driver. What is so special here?
+>>>
+>>> Thanks! Are you referring to the depends on line? I needed it otherwise
+>>> on randconfigs where COMPILE_TEST=y and EXYNOS_ACPM_PROTOCOL=n I get:
+>>>
+>>> ERROR: modpost: "devm_acpm_get_by_node" [drivers/clk/samsung/clk-acpm.ko] undefined!
+>>>
+>>
+>> I don't understand that part. The depends on statement "COMPILE_TEST &&
+>> !EXYNOS_ACPM_PROTOCOL" is equivalent to COMPILE_TEST=y and
+>> EXYNOS_ACPM_PROTOCOL=n, so are you trying to avoid
+>> EXYNOS_ACPM_PROTOCOL=y when COMPILE_TEST=y?
+> 
+> My previous comment was misleading.
+> The depends on line allows CONFIG_EXYNOS_ACPM_CLK to be selected in two
+> main scenarios:
+> 1/ if EXYNOS_ACPM_PROTOCOL is enabled the clock driver that uses it can
+>    be enabled (the normal case).
+> 2/ COMPILE_TEST is enabled AND EXYNOS_ACPM_PROTOCOL is NOT enabled. This
+>    is the special scenario for build testing. I want to build test the
+>    clock driver even if EXYNOS_ACPM_PROTOCOL is NOT enabled. For that I
+>    also needed the following patch:
+> 
+> https://lore.kernel.org/linux-samsung-soc/20251021-fix-acpm-clk-build-test-v1-1-236a3d6db7f5@linaro.org/
+> 
 
-local TARGET_PATH="${NETCONS_CONFIGFS}"/"${TARGET}"
+What I described in 2/ EXYNOS_ACPM_PROTOCOL [=n] && EXYNOS_ACPM_CLK [=y] 
+can be achieved with a more relaxed:
+depends on EXYNOS_ACPM_PROTOCOL || COMPILE_TEST
+because of the stub (dummy method) that I referenced in the link above.
 
-> +
-> +	if [ "${STATE}" == "enabled" ]
-> +	then
-> +		ENABLED=1
+It's really what Krzysztof explained in his reply, I wanted to avoid
+the link failure for COMPILE_TEST [=y] when
+EXYNOS_ACPM_PROTOCOL [=m] && EXYNOS_ACPM_CLK [=y].
 
-Shouldn't they be local variables in here ?
+We have the following possibilities with:
+depends on EXYNOS_ACPM_PROTOCOL || (COMPILE_TEST && !EXYNOS_ACPM_PROTOCOL)
+1/ CONMPILE_TEST=n
+EXYNOS_ACPM_PROTOCOL=n EXYNOS_ACPM_CLK=n
+EXYNOS_ACPM_PROTOCOL=m EXYNOS_ACPM_CLK=n,m
+EXYNOS_ACPM_PROTOCOL=y EXYNOS_ACPM_CLK=n,m,y
 
-> +	else
-> +		ENABLED=0
-> +	fi
-> +
-> +	if [ ! -f "$FILE" ]; then
+2/COMPILE_TEST=y
+EXYNOS_ACPM_PROTOCOL=n EXYNOS_ACPM_CLK=n,m,y
+EXYNOS_ACPM_PROTOCOL=m EXYNOS_ACPM_CLK=n,m
+EXYNOS_ACPM_PROTOCOL=y EXYNOS_ACPM_CLK=n,m,y
 
-	if [ ! -f "${TARGET_PATH}" ]; then
+We have the following possibilities with:
+depends on EXYNOS_ACPM_PROTOCOL || COMPILE_TEST
+1/ CONMPILE_TEST=n
+EXYNOS_ACPM_PROTOCOL=n EXYNOS_ACPM_CLK=n
+EXYNOS_ACPM_PROTOCOL=m EXYNOS_ACPM_CLK=n,m
+EXYNOS_ACPM_PROTOCOL=y EXYNOS_ACPM_CLK=n,m,y
 
-> +		echo "FAIL: Target does not exist." >&2
-> +		exit "${ksft_fail}"
-> +	fi
-> +
-> +	slowwait 2 sh -c "test -n \"\$(grep \"${ENABLED}\" \"${FILE}\")\"" || {
+2/COMPILE_TEST=y
+EXYNOS_ACPM_PROTOCOL=n EXYNOS_ACPM_CLK=n,m,y
+EXYNOS_ACPM_PROTOCOL=m EXYNOS_ACPM_CLK=n,m,y <- link failure when y
+EXYNOS_ACPM_PROTOCOL=y EXYNOS_ACPM_CLK=n,m,y
 
-	slowwait 2 sh -c "test -n \"\$(grep \"${ENABLED}\" \"${TARGET_PATH}/enabled\")\"" || {
-
-> +		echo "FAIL: ${TARGET} is not ${STATE}." >&2
-> +	}
-> +}
-> +
->  # A wrapper to translate protocol version to udp version
->  function wait_for_port() {
->  	local NAMESPACE=${1}
-> diff --git a/tools/testing/selftests/drivers/net/netcons_resume.sh b/tools/testing/selftests/drivers/net/netcons_resume.sh
-> new file mode 100755
-> index 000000000000..404df7abef1b
-> --- /dev/null
-> +++ b/tools/testing/selftests/drivers/net/netcons_resume.sh
-> @@ -0,0 +1,92 @@
-> +#!/usr/bin/env bash
-> +# SPDX-License-Identifier: GPL-2.0
-> +
-> +# This test validates that netconsole is able to resume a target that was
-> +# deactivated when its interface was removed when the interface is brought
-> +# back up.
-
-Comment above is a bit harder to understand.
-
-> +#
-> +# The test configures a netconsole target and then removes netdevsim module to
-> +# cause the interface to disappear. Targets are configured via cmdline to ensure
-> +# targets bound by interface name and mac address can be resumed.
-> +# The test verifies that the target moved to disabled state before adding
-> +# netdevsim and the interface back.
-> +#
-> +# Finally, the test verifies that the target is re-enabled automatically and
-> +# the message is received on the destination interface.
-> +#
-> +# Author: Andre Carvalho <asantostc@gmail.com>
-> +
-> +set -euo pipefail
-> +
-> +SCRIPTDIR=$(dirname "$(readlink -e "${BASH_SOURCE[0]}")")
-> +
-> +source "${SCRIPTDIR}"/lib/sh/lib_netcons.sh
-> +
-> +modprobe netdevsim 2> /dev/null || true
-> +rmmod netconsole 2> /dev/null || true
-> +
-> +check_netconsole_module
-> +
-> +# Run the test twice, with different cmdline parameters
-> +for BINDMODE in "ifname" "mac"
-> +do
-> +	echo "Running with bind mode: ${BINDMODE}" >&2
-> +	# Set current loglevel to KERN_INFO(6), and default to KERN_NOTICE(5)
-> +	echo "6 5" > /proc/sys/kernel/printk
-> +
-> +	# Create one namespace and two interfaces
-> +	set_network
-> +	trap do_cleanup EXIT
-
-can we keep these trap lines outside of the loop?
-
-> +
-> +	# Create the command line for netconsole, with the configuration from
-> +	# the function above
-> +	CMDLINE=$(create_cmdline_str "${BINDMODE}")
-> +
-> +	# The content of kmsg will be save to the following file
-> +	OUTPUT_FILE="/tmp/${TARGET}-${BINDMODE}"
-> +
-> +	# Load the module, with the cmdline set
-> +	modprobe netconsole "${CMDLINE}"
-> +	# Expose cmdline target in configfs
-> +	mkdir ${NETCONS_CONFIGFS}"/cmdline0"
-> +	trap 'cleanup "${NETCONS_CONFIGFS}"/cmdline0' EXIT
-> +
-> +	# Target should be enabled
-> +	wait_target_state "cmdline0" "enabled"
-> +
-> +	# Remove low level module
-> +	rmmod netdevsim
-> +	# Target should be disabled
-> +	wait_target_state "cmdline0" "disabled"
-> +
-> +	# Add back low level module
-> +	modprobe netdevsim
-> +	# Recreate namespace and two interfaces
-> +	set_network
-> +	# Target should be enabled again
-> +	wait_target_state "cmdline0" "enabled"
-> +
-> +	# Listen for netconsole port inside the namespace and destination
-> +	# interface
-> +	listen_port_and_save_to "${OUTPUT_FILE}" &
-> +	# Wait for socat to start and listen to the port.
-> +	wait_local_port_listen "${NAMESPACE}" "${PORT}" udp
-> +	# Send the message
-> +	echo "${MSG}: ${TARGET}" > /dev/kmsg
-> +	# Wait until socat saves the file to disk
-> +	busywait "${BUSYWAIT_TIMEOUT}" test -s "${OUTPUT_FILE}"
-> +	# Make sure the message was received in the dst part
-> +	# and exit
-> +	validate_msg "${OUTPUT_FILE}"
-> +
-> +	# kill socat in case it is still running
-> +	pkill_socat
-> +	# Cleanup & unload the module
-> +	cleanup "${NETCONS_CONFIGFS}/cmdline0"
-> +	rmmod netconsole
-
-Why do we need to remove netconsole module in here?
-
-Thanks for this patch. This is solving a real issue we have right now.
---breno
+Thanks,
+ta
 
