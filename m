@@ -1,148 +1,187 @@
-Return-Path: <linux-kernel+bounces-895283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FA7AC4D6E2
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:39:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0364C4D6D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:38:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D03E31891933
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:37:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BACFD3A9DB9
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:37:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B0562F7479;
-	Tue, 11 Nov 2025 11:36:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3381357A28;
+	Tue, 11 Nov 2025 11:37:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="TzpTy6jB"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Vdg23NZs";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GJZosZmu"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 751922727EB;
-	Tue, 11 Nov 2025 11:36:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC6A0357728;
+	Tue, 11 Nov 2025 11:36:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762861018; cv=none; b=QD5xy7GZXbtozUAQ1lCMR3TXqk2iapsbxAYjPfLiiTFDZ1Xa6+z4p8gP8RQK2OP90cjDzup9+APKcThOOGt3eqNDboamMGEfTnq3iG12lfU8WiiVQXPRW45HVnfoYFtZUL71Xn7gsonsqzUUgxujsb6S6QJ/xKK2XqdTSu2d1Oo=
+	t=1762861023; cv=none; b=EN/K/u2l8VPa3RF3ef/WpN0pbzzFmRuCtAG393IJKZ24c9OM7nZNxHD/n2GFae4Il8eFrgrCuWz1ehoG+AoLNN1oX6juW/Npy6lYIM9vsMrLifBRT5unMoQ0Z50SGz05wRX2ShV/GcUcaOE6WHzpa0MiFKTyyC1Ku0fpp7thmcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762861018; c=relaxed/simple;
-	bh=TfwNf40Qp5261OrhcSCO5Jo/DPB7mnjqgGQv1AEa2Ew=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RzlL5YZTT0RiTiNpMpsCUeayS6RgbxwG16lNmplCF/8tkwW+tKwkpi6/4bP9iU2SOELeHZwBD/8rKfN7uK2izWuZms8xMgQD6dbtq6inffR2nNaYKVhKpahlZoTcEXuMyupXDwLpKHRgeffLwMC6fHqzr5VRFUb+/n4zPqTOn5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=TzpTy6jB; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5AAJsmOj000443;
-	Tue, 11 Nov 2025 11:36:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=hkBvzTnghUoWkp4e1DpwhJbchVkbme
-	soLgUC43qriTw=; b=TzpTy6jBo1LMzNvsyh7O2tzH5JzhSu6svzv8wySYDkl+Yp
-	prc/RZIbk032WIuDBPCQsFVM/0D5bxbFpvUp3/pjbvkkeBHI8enTi/dunqGRoIn6
-	uGhLdARO3ZeOwHSs+wLP6MUXmqsqgMbHgVuwgwsFXws6lc1m5/laxKsMPdy7z02Q
-	J3fEjkkK44BH/nXc7UnEMdc3MmK+zREE4AMcy8wa+oOPZknBeUuIfCqkGz9j4q+m
-	VAqQJGvLPQ2SRT0Lat3App6jjk0AsKjPfRC3EsrPqUq4hEJeCzujZRnvJC4My+hv
-	XdnpwUlk3NdMgz7zv4xkv7fYiAEG7/VlrH+giLtA==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4aa3m82vrn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Nov 2025 11:36:53 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5AB9lWB8008218;
-	Tue, 11 Nov 2025 11:36:52 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4aah6mth0u-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Nov 2025 11:36:52 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5ABBamI844237258
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 11 Nov 2025 11:36:48 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A19A220040;
-	Tue, 11 Nov 2025 11:36:48 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5A9C720043;
-	Tue, 11 Nov 2025 11:36:48 +0000 (GMT)
-Received: from osiris (unknown [9.155.211.25])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Tue, 11 Nov 2025 11:36:48 +0000 (GMT)
-Date: Tue, 11 Nov 2025 12:36:47 +0100
-From: Heiko Carstens <hca@linux.ibm.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Alexander Gordeev <agordeev@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Andreas Krebbel <krebbel@linux.ibm.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
-Subject: Re: [RFC PATCH 8/8] s390/syscalls: Switch to generic system call
- table generation
-Message-ID: <20251111113647.8887B5c-hca@linux.ibm.com>
-References: <20251110185440.2667511-1-hca@linux.ibm.com>
- <20251110185440.2667511-9-hca@linux.ibm.com>
- <f4531526-e981-4160-8369-50a8c8d86e36@app.fastmail.com>
+	s=arc-20240116; t=1762861023; c=relaxed/simple;
+	bh=rtawBluZLKXbnO+D6zc4IH1dmac68Tf0R5e+Y2M/EzE=;
+	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=utn8wOaD8L+dlvytgma5rMfCOt76yrS4lO2JS12c8vKuEa6Jco0ASCJIVe2Elht6gZ9hQP8cNN4yJypLdY7eMCpjBsiKe9/lFCz+G9GOs/psZr65/xcuNwjtLqkI1NDp/gkI77+SC+vg2uKzJoYcZtYHbCHTlp4vhNbYdlcF1GU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Vdg23NZs; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GJZosZmu; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 11 Nov 2025 11:36:57 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1762861018;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=if3IBrycrV56tX9OVaxzKqBMYCE68101ZiPoUqOfFho=;
+	b=Vdg23NZsjDLzGjB4Q0NHY7myXjnS4n8qKS1tmxPoNwBU8w8Ui3/r9VHq3W3KeWG8iDGzCl
+	Gacp2+Fn4sfH8Q6qrzQzcQzFu26pdBDJ1TxGNDjTGWBUS2/NXZRF2D6Vq/0lOV7smZedRm
+	nfPnyS+OBudoD2RkT2sx8m33y1tD+49Z7vF3YjuvQ/RXZuKms6hAYd1LgczYTlKdxrZLcz
+	SjQqcY0pFY/UX8ONMIKfvtm+q1tD8gq7RK1E1batHfeJ5NE+BwveudvQxvLDJyyvJtdTbC
+	qY4buAU+a1VtW77kxtwotEZqfwYDVev74/nkVt3FQjlhc0V7LNF0FakFdkc6jA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1762861018;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=if3IBrycrV56tX9OVaxzKqBMYCE68101ZiPoUqOfFho=;
+	b=GJZosZmuN7aHkNdl5yqB4i1lmrIkLX1i/ML4Z/O+cCO9owQbXnx/HJIgLIdVu1JUzQU984
+	3mnxYZPJ1ciYq5Cw==
+From: "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: perf/core] perf/x86/intel: Optimize PEBS extended config
+Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f4531526-e981-4160-8369-50a8c8d86e36@app.fastmail.com>
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=MtZfKmae c=1 sm=1 tr=0 ts=69131fd5 cx=c_pps
- a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
- a=kj9zAlcOel0A:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=IQB1duFbABfeMsQy1igA:9 a=CjuIK1q_8ugA:10
-X-Proofpoint-GUID: f59y20Bzo-ZyZPDnQRgM3t41yNdplSma
-X-Proofpoint-ORIG-GUID: f59y20Bzo-ZyZPDnQRgM3t41yNdplSma
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA4MDA3OSBTYWx0ZWRfX17O53H9BQF6R
- try/qZbnJMkK3b/VDSVfoffnZCGKBdwoyQu8BZvPIRtxDD+5GG+DZfxhXtNDlg8Agh5YVh25OOK
- A0SIsDKbemPFt6JwPLyvqqYJYi0binR6ty33R8Rp7UtqQpb8ZZhWDEravQ3+Q56kti+3EiQF2u3
- 3t8pju+3XpjtMKrlYzJuNN19iS75LRjdGlwlph9M5rl2Z7yUgHGm2p8AZ15pd2Odn8428rC4wnD
- LppQaM2wF3mOnogmPRkVY9JeTaIkqGZ0T0Uy9ik3r3L4yzvUfEwM5sS41qXX9iedpxMzp8/miZS
- Wb5sj7l/bWT2tt8PyXyxA4TMLy9QzjqDbpRShxricrFnjurwmERIAFJFqQwzjvbH9q1rUG6bcgu
- ofHCJ/uIbja0zJ4GCximwPeOeqy5RA==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-11_02,2025-11-11_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 adultscore=0 priorityscore=1501 bulkscore=0 impostorscore=0
- suspectscore=0 lowpriorityscore=0 clxscore=1015 phishscore=0 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2511080079
+Message-ID: <176286101706.498.3720120992640972850.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 10, 2025 at 09:51:53PM +0100, Arnd Bergmann wrote:
-> On Mon, Nov 10, 2025, at 19:54, Heiko Carstens wrote:
-> > +161	common	sched_rr_get_interval		sys_sched_rr_get_interval
-> > +162	common	nanosleep			sys_nanosleep
-> > +163	common	mremap				sys_mremap
-> > +167	common	query_module
-> > +168	common	poll				sys_poll
-> > +169	common	nfsservctl
-> > +172	common	prctl				sys_prctl
-> 
-> Nothing wrong with your patch, but while reading through this, I noticed
-> that we are somewhat inconsistent about syscalls that are gone, with
-> three possible methods:
-> 
-> # 167 was query_module
-> 167	common	query_module                  sys_ni_syscall
-> 167	common	query_module
-> 
-> You use the third one now, which is the same as x86 but nothing
-> else. The second one using an explicit 'sys_ni_syscall' is the
-> most common and has the same effect, so maybe use that as well.
+The following commit has been merged into the perf/core branch of tip:
 
-Ok, will change.
+Commit-ID:     2093d8cf80fa5552d1025a78a8f3a10bf3b6466e
+Gitweb:        https://git.kernel.org/tip/2093d8cf80fa5552d1025a78a8f3a10bf3b=
+6466e
+Author:        Peter Zijlstra <peterz@infradead.org>
+AuthorDate:    Fri, 07 Nov 2025 14:50:20 +01:00
+Committer:     Peter Zijlstra <peterz@infradead.org>
+CommitterDate: Fri, 07 Nov 2025 15:08:23 +01:00
 
-> Eventually we may want to convert everything to the first method
-> and drop the syscall macros, but that would be visible in
-> user-space and might cause regression, so it should be a
-> separate series across all architectures if we want to go there.
+perf/x86/intel: Optimize PEBS extended config
 
-Yes, I thought about to remove them, but this is user space
-visible. Therefore I kept it for now.
+Similar to enable_acr_event, avoid the branch.
+
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+---
+ arch/x86/events/intel/core.c | 25 ++++++++++++++-----------
+ 1 file changed, 14 insertions(+), 11 deletions(-)
+
+diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+index a421595..aad89c9 100644
+--- a/arch/x86/events/intel/core.c
++++ b/arch/x86/events/intel/core.c
+@@ -2582,9 +2582,6 @@ static inline void __intel_pmu_update_event_ext(int idx=
+, u64 ext)
+=20
+ static void intel_pmu_disable_event_ext(struct perf_event *event)
+ {
+-	if (!x86_pmu.arch_pebs)
+-		return;
+-
+ 	/*
+ 	 * Only clear CFG_C MSR for PEBS counter group events,
+ 	 * it avoids the HW counter's value to be added into
+@@ -2602,6 +2599,8 @@ static void intel_pmu_disable_event_ext(struct perf_eve=
+nt *event)
+ 	__intel_pmu_update_event_ext(event->hw.idx, 0);
+ }
+=20
++DEFINE_STATIC_CALL_NULL(intel_pmu_disable_event_ext, intel_pmu_disable_event=
+_ext);
++
+ static void intel_pmu_disable_event(struct perf_event *event)
+ {
+ 	struct hw_perf_event *hwc =3D &event->hw;
+@@ -2610,11 +2609,11 @@ static void intel_pmu_disable_event(struct perf_event=
+ *event)
+ 	switch (idx) {
+ 	case 0 ... INTEL_PMC_IDX_FIXED - 1:
+ 		intel_clear_masks(event, idx);
+-		intel_pmu_disable_event_ext(event);
++		static_call_cond(intel_pmu_disable_event_ext)(event);
+ 		x86_pmu_disable_event(event);
+ 		break;
+ 	case INTEL_PMC_IDX_FIXED ... INTEL_PMC_IDX_FIXED_BTS - 1:
+-		intel_pmu_disable_event_ext(event);
++		static_call_cond(intel_pmu_disable_event_ext)(event);
+ 		fallthrough;
+ 	case INTEL_PMC_IDX_METRIC_BASE ... INTEL_PMC_IDX_METRIC_END:
+ 		intel_pmu_disable_fixed(event);
+@@ -2990,9 +2989,6 @@ static void intel_pmu_enable_event_ext(struct perf_even=
+t *event)
+ 	struct arch_pebs_cap cap;
+ 	u64 ext =3D 0;
+=20
+-	if (!x86_pmu.arch_pebs)
+-		return;
+-
+ 	cap =3D hybrid(cpuc->pmu, arch_pebs_cap);
+=20
+ 	if (event->attr.precise_ip) {
+@@ -3056,6 +3052,8 @@ static void intel_pmu_enable_event_ext(struct perf_even=
+t *event)
+ 		__intel_pmu_update_event_ext(hwc->idx, ext);
+ }
+=20
++DEFINE_STATIC_CALL_NULL(intel_pmu_enable_event_ext, intel_pmu_enable_event_e=
+xt);
++
+ static void intel_pmu_enable_event(struct perf_event *event)
+ {
+ 	u64 enable_mask =3D ARCH_PERFMON_EVENTSEL_ENABLE;
+@@ -3071,12 +3069,12 @@ static void intel_pmu_enable_event(struct perf_event =
+*event)
+ 			enable_mask |=3D ARCH_PERFMON_EVENTSEL_BR_CNTR;
+ 		intel_set_masks(event, idx);
+ 		static_call_cond(intel_pmu_enable_acr_event)(event);
+-		intel_pmu_enable_event_ext(event);
++		static_call_cond(intel_pmu_enable_event_ext)(event);
+ 		__x86_pmu_enable_event(hwc, enable_mask);
+ 		break;
+ 	case INTEL_PMC_IDX_FIXED ... INTEL_PMC_IDX_FIXED_BTS - 1:
+ 		static_call_cond(intel_pmu_enable_acr_event)(event);
+-		intel_pmu_enable_event_ext(event);
++		static_call_cond(intel_pmu_enable_event_ext)(event);
+ 		fallthrough;
+ 	case INTEL_PMC_IDX_METRIC_BASE ... INTEL_PMC_IDX_METRIC_END:
+ 		intel_pmu_enable_fixed(event);
+@@ -8106,8 +8104,13 @@ __init int intel_pmu_init(void)
+ 	if (!is_hybrid() && boot_cpu_has(X86_FEATURE_ARCH_PERFMON_EXT))
+ 		update_pmu_cap(NULL);
+=20
+-	if (x86_pmu.arch_pebs)
++	if (x86_pmu.arch_pebs) {
++		static_call_update(intel_pmu_disable_event_ext,
++				   intel_pmu_disable_event_ext);
++		static_call_update(intel_pmu_enable_event_ext,
++				   intel_pmu_enable_event_ext);
+ 		pr_cont("Architectural PEBS, ");
++	}
+=20
+ 	intel_pmu_check_counters_mask(&x86_pmu.cntr_mask64,
+ 				      &x86_pmu.fixed_cntr_mask64,
 
