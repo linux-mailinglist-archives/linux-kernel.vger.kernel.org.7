@@ -1,158 +1,131 @@
-Return-Path: <linux-kernel+bounces-895125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B13CC4D007
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:25:24 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCC8CC4CFCE
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:22:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 169CB4FF003
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:14:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0A7854FEB73
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:13:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F06FD33B6D9;
-	Tue, 11 Nov 2025 10:14:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45CEB33BBA4;
+	Tue, 11 Nov 2025 10:13:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="JaXCfXUf"
-Received: from mx-relay106-hz1.antispameurope.com (mx-relay106-hz1.antispameurope.com [94.100.133.98])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xt1/s6i7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08D9233C520
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 10:14:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=94.100.133.98
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762856048; cv=pass; b=uchBOBcZhYKNnHiqdnd2W0UT33FYtBptmeF66+QQBvGvT65i7pXa8VMGod50DL3hxPMKma8sMVy/Ydnqgma3vtdV1EW01qJv86lsKaSy/ol92fqNk1gVn9OTyY7zxv23qjgeL9+7MQAKtdiDdDuHJOCfySH/S4x7g/sjwgnwFS4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762856048; c=relaxed/simple;
-	bh=qffjGVKHGKbLT2g/i1slYDW6JONYYo+k1+ICy3WTD/I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KXwlXl0Z79s7lmg6pwYi/VWIhJpzewjdEasZE9rLBV+odpYKHvf4aMiS3bm9Hw74Ib3STYk5fjeJvsJ83/mv9t3sAcgHbzcbxtWTE2dOhmWfZR2XHqgZpRyXbHLtYF7ap2r/Mj6IdI+Kc7DCFrfS2E+hPe4i7wKBKgzRlVAu74A=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=JaXCfXUf; arc=pass smtp.client-ip=94.100.133.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-ARC-Authentication-Results: i=1; mx-gate106-hz1.hornetsecurity.com 1;
- spf=pass reason=mailfrom (ip=94.100.132.6, headerfrom=ew.tq-group.com)
- smtp.mailfrom=ew.tq-group.com
- smtp.helo=hmail-p-smtp01-out04-hz1.hornetsecurity.com; dmarc=pass
- header.from=ew.tq-group.com orig.disposition=pass
-ARC-Message-Signature: a=rsa-sha256;
- bh=5cd8tiR4oA2bomVQnghj6XdfSPPBJKKlunliO1VnFlM=; c=relaxed/relaxed;
- d=hornetsecurity.com; h=from:to:date:subject:mime-version:; i=1; s=hse1;
- t=1762856024;
- b=dnA4vK/iExr2Bz1ts5+8urawnN7DbULmYucYCCA9e6BlOCJrdPWVW+iOKEYFOBxEiyKo4G4f
- eM+jXwv1AU4e/hcQYeOOXNvl7N/BokpeM5f8VqCRbAovOSJrvbhrDLBE094pMLzBuNcnkdemaWs
- adPpwoxbpMtZ+aqwN84W5Lah2+vgaR/RhmLGD0qtVP7P+3/ykBRGeUEt5KeTdCKavH22mh/Mtx7
- WZdaSOveJokz+fcLiBPUTFnokfpZtolTedQmqEQXorU9Ih5pEcghdEd2PDqRjvNh0YMSludJji3
- QxFGIfSQydCHd2L/bE1kFGbA8W0s+lPnnTWsEo0GbNyEw==
-ARC-Seal: a=rsa-sha256; cv=none; d=hornetsecurity.com; i=1; s=hse1;
- t=1762856024;
- b=LTqSEBG/4KnUBwWIrPqhNX/lr5a+os07SuP/O+NKNHVMrugLJWV+V7iI/Mbqn5NDwBPpH7bq
- KXN263m3IQLqDfuVns+3LJ5NQR5PrL3d3xMzzdv12arHrNw3xOdQpGN4Un8HdIWmo8aedVtDX4K
- aQq7sjJP39fPstkMvNJvx6KYWiGoMe7T0bFPs2vYDWHHg1hN0bzdiiRdIO2f0y8GkCtaiY2Mjjr
- /2/ZogCjPwgsAXV+qqdSowXrb5yo/UQSKi2V13DlaR0jjjyE6bWF6Tcty/gSId32Jhik55Nny/U
- jDHMtkp03a6pPW5xE114IGFHSMyl2sV113q0hhHLLfY2A==
-Received: from he-nlb01-hz1.hornetsecurity.com ([94.100.132.6]) by mx-relay106-hz1.antispameurope.com;
- Tue, 11 Nov 2025 11:13:44 +0100
-Received: from steina-w.localnet (host-82-135-125-110.customer.m-online.net [82.135.125.110])
-	(Authenticated sender: alexander.stein@ew.tq-group.com)
-	by hmail-p-smtp01-out04-hz1.hornetsecurity.com (Postfix) with ESMTPSA id 3B9AC220C9E;
-	Tue, 11 Nov 2025 11:13:26 +0100 (CET)
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Nathan Chancellor <nathan@kernel.org>,
- Nicolas Schier <nsc@kernel.org>, linux-arm-kernel@lists.infradead.org
-Cc: devicetree@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-kbuild@vger.kernel.org, Frank Li <Frank.Li@nxp.com>,
- Li Jun <jun.li@nxp.com>, Frank Li <Frank.Li@nxp.com>
-Subject: Re: [PATCH 4/9] arm64: dts: imx8mm-evk: add wakeup-source for usb phy
-Date: Tue, 11 Nov 2025 11:13:25 +0100
-Message-ID: <2809731.mvXUDI8C0e@steina-w>
-Organization: TQ-Systems GmbH
-In-Reply-To: <20251110-misc_dts-v1-4-7564b9f69a18@nxp.com>
-References:
- <20251110-misc_dts-v1-0-7564b9f69a18@nxp.com>
- <20251110-misc_dts-v1-4-7564b9f69a18@nxp.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87D91338F26;
+	Tue, 11 Nov 2025 10:13:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762856023; cv=none; b=aubJEmreyEIQpF90jHXAQ0IvsP1cpXluSIo0F/h84qBE/q7j9xlqYRBZZV2LPmhzfEqX0vt66B4zY/9NMpfNM2wvJ04ivq8aPjCeNa9pjbidY4vFMmyJEOh0P7ZAHxv6hl/lGuMCaJua9il0voekIAQzNjVAe5rEJ4SesxUri9U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762856023; c=relaxed/simple;
+	bh=60IpFEk0TIcnK3O+lPpylMpuTYBhDgvBqs5hRpx6pwI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WJrx45B64bNCeLDH2EjT9EsvXWDv2xcjnRKdGmDAqd4Fieb2Qh1Id+a5h7e/ppi/N3Oe4HcGgPftT6aVs7n05d7LNq5G7axxuAhEzhsQhdkYv3e2g1SPWyrHzBp4N+l0JHllRmLIBe1nSwXXZ2riLxe8XXDGz330BDtjjtMmRjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xt1/s6i7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3060C19425;
+	Tue, 11 Nov 2025 10:13:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762856023;
+	bh=60IpFEk0TIcnK3O+lPpylMpuTYBhDgvBqs5hRpx6pwI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Xt1/s6i71x9zIoJJO4JLJmlbrDgiXC29Znb2nqC53oiW/kwdlDNnC5dKRrX2fuC3S
+	 wgtunIubH2pAF6IjbBOo66P+hIsUg63XyD3sHsDzGMgGRuoxLVELrTb4XTOByJhN1T
+	 +XTdVgVVrgUVJDit/GwHF15PdMZi7REvYwnoCY3lABfDRQG4NOOh/v/h0A9jwsD5CF
+	 7UrLFH80QTg/3wmaeA6/EtK5+IHlqkeatsXrLMNU2jRNBWalgFJIZO8kHScDtPtYBT
+	 KALoNw/xMEBi2c36+8J747elCDJGgBu+dsbKNTJh2Co3QmxPZ3nyFFQzyAN2vQnRVK
+	 YMDvPqD20Xvyw==
+Message-ID: <af7bd4ab-38dd-4a5a-93e5-f457ae3460db@kernel.org>
+Date: Tue, 11 Nov 2025 11:13:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
-X-cloud-security-sender:alexander.stein@ew.tq-group.com
-X-cloud-security-recipient:linux-kernel@vger.kernel.org
-X-cloud-security-crypt: load encryption module
-X-cloud-security-Mailarchiv: E-Mail archived for: alexander.stein@ew.tq-group.com
-X-cloud-security-Mailarchivtype:outbound
-X-cloud-security-Virusscan:CLEAN
-X-cloud-security-disclaimer: This E-Mail was scanned by E-Mailservice on mx-relay106-hz1.antispameurope.com with 108FA11C9E97
-X-cloud-security-connect: he-nlb01-hz1.hornetsecurity.com[94.100.132.6], TLS=1, IP=94.100.132.6
-X-cloud-security-Digest:98cd9670ad177dc9a441365add1c322b
-X-cloud-security:scantime:1.834
-DKIM-Signature: a=rsa-sha256;
- bh=5cd8tiR4oA2bomVQnghj6XdfSPPBJKKlunliO1VnFlM=; c=relaxed/relaxed;
- d=ew.tq-group.com;
- h=content-type:mime-version:subject:from:to:message-id:date; s=hse1;
- t=1762856023; v=1;
- b=JaXCfXUf4kuRxxIDTV6fruQG/6iKs2QguiwXNX4ioq4Dr0Jz3z0UqtwZPt0XXoMNoWAT2QQ9
- a3sMQ2KwgTSoSFr3SJKoifH5/IKUcW4/2lI2SJ2vMUx6Wr8RGC6d+aloN9pXDEmgMyaMpemc+Sa
- nFnQXVTmMtoSeEGpHopMD3R7hlETCNP9xrDGlfqAleF3tjVtbJmgeNpz7aLR2/8hApbQJe/MzEa
- W0ypWxt8o3rZlmcbTSaEgS9/NED/hOgAomMhkEg6pmyYVB9raNbQLz5ukOP2693Qp2fdogCxpHH
- aJwnx0N823dhREh/Ky4eyOz7MQb2krXGt21tkYKCUui5Q==
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] dt-bindings: riscv: spacemit: Add OrangePi R2S
+ board
+To: Yixun Lan <dlan@gentoo.org>
+Cc: michael.opdenacker@rootcommit.com, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Paul Walmsley <pjw@kernel.org>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexandre Ghiti <alex@ghiti.fr>, Yangyu Chen <cyy@cyyself.name>,
+ devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+ spacemit@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20251110220641.1751392-1-michael.opdenacker@rootcommit.com>
+ <20251110220641.1751392-2-michael.opdenacker@rootcommit.com>
+ <20251111-inquisitive-ambrosial-chicken-861542@kuoka>
+ <20251111101149-GYE1651402@gentoo.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20251111101149-GYE1651402@gentoo.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Am Montag, 10. November 2025, 21:54:44 CET schrieb Frank Li:
-> From: Li Jun <jun.li@nxp.com>
->=20
-> USB phy can be wakeup source to support wakeup system from USB.
->=20
-> Signed-off-by: Li Jun <jun.li@nxp.com>
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+On 11/11/2025 11:11, Yixun Lan wrote:
+> Hi Krzysztof, 
+> 
+> On 08:43 Tue 11 Nov     , Krzysztof Kozlowski wrote:
+>> On Mon, Nov 10, 2025 at 10:06:48PM +0000, michael.opdenacker@rootcommit.com wrote:
+>>> From: Michael Opdenacker <michael.opdenacker@rootcommit.com>
+>>>
+>>> Document the compatible string for the OrangePi R2S board [1], which
+>>> is marketed as using the Ky X1 SoC but is in fact identical to
+> Maybe, just say it "same" to clarify the ambiguity?
 
-Typo in subject: Just imx8mm. Remove the '-evk'
+What is exactly "same"? Same die? Or same blocks/pieces? Whichever you
+choose please make it very explicit.
 
 Best regards,
-Alexander
-
-> ---
->  arch/arm64/boot/dts/freescale/imx8mm.dtsi | 2 ++
->  1 file changed, 2 insertions(+)
->=20
-> diff --git a/arch/arm64/boot/dts/freescale/imx8mm.dtsi b/arch/arm64/boot/=
-dts/freescale/imx8mm.dtsi
-> index ed8b4843acb4804379ba025e83a63fe962c2937e..dfff164db827e80ef8822ae33=
-0fa604d1642f6f9 100644
-> --- a/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-> @@ -274,6 +274,7 @@ usbphynop1: usbphynop1 {
->  		assigned-clock-parents =3D <&clk IMX8MM_SYS_PLL1_100M>;
->  		clock-names =3D "main_clk";
->  		power-domains =3D <&pgc_otg1>;
-> +		wakeup-source;
->  	};
-> =20
->  	usbphynop2: usbphynop2 {
-> @@ -284,6 +285,7 @@ usbphynop2: usbphynop2 {
->  		assigned-clock-parents =3D <&clk IMX8MM_SYS_PLL1_100M>;
->  		clock-names =3D "main_clk";
->  		power-domains =3D <&pgc_otg2>;
-> +		wakeup-source;
->  	};
-> =20
->  	soc: soc@0 {
->=20
->=20
-
-
-=2D-=20
-TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht M=FCnchen, HRB 105018
-Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
-http://www.tq-group.com/
-
-
+Krzysztof
 
