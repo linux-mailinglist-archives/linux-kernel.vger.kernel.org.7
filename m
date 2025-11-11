@@ -1,187 +1,145 @@
-Return-Path: <linux-kernel+bounces-894743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id A295BC4BBC3
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 07:52:34 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A9E7C4BBCC
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 07:53:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2877734E068
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 06:52:34 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 69C254EF4A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 06:52:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7B903314D4;
-	Tue, 11 Nov 2025 06:52:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A84EE3002BB;
+	Tue, 11 Nov 2025 06:52:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b="lnZ71E9S"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="xAFMq6S5"
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E9042741AC;
-	Tue, 11 Nov 2025 06:52:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DE2A330D26;
+	Tue, 11 Nov 2025 06:52:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762843944; cv=none; b=qUm4VRvVNREbkI1D9KHhHpcRn6RljlfZMpbnPe+Bf5fRqM4DZZphKnMOyoRnQ6OA4jIhLi+SwwPX/AJEpC9mPWkt5uEZlpKlw6wtdM/vD6I3DwUQX8vM6Ji/bsdslDFmFVuKaixOSdc5JOo9tzOS15xFw3/dJYD8tW64IduJJN8=
+	t=1762843964; cv=none; b=o/YKPq3twpxY8/mG5kckivweTcZj2WSvXwobOJNasIN5YCItrRyjPS2jlhXQIBNxULPySU6vCmPJSi35aaQqpXoo9/lhePI8xX8iHiNLm0zA88YwI26ul3KmyVIgMBeXKjGCtIWqpjfT9L/sovwbCIhl+zKGOoOf5JqtjdV1Kcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762843944; c=relaxed/simple;
-	bh=wh4Kz4Mtx4GbaG4qrRJBIRrF2W1tDBfuMg0z9ciBQgQ=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=uC4DlrxXTHMFJYCEkNrcaYQVZ7O4LL6I50NnVyH8TjzA9GARtHWY+SA7pRzHKsEtHn1TbaVaVA6t3SJXN/fRN+1GXkwjwdmED6lWpC+hMcobJkBP/jLbvorUGJJI1ztUQ2xoszltQ7fma8waN+m4ompEcLV83fRdUvWYsSC2RqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de; spf=pass smtp.mailfrom=public-files.de; dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b=lnZ71E9S; arc=none smtp.client-ip=212.227.17.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=public-files.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=public-files.de;
-	s=s31663417; t=1762843918; x=1763448718; i=frank-w@public-files.de;
-	bh=wh4Kz4Mtx4GbaG4qrRJBIRrF2W1tDBfuMg0z9ciBQgQ=;
-	h=X-UI-Sender-Class:Date:From:To:CC:Subject:Reply-to:In-Reply-To:
-	 References:Message-ID:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=lnZ71E9Shu1JaXwEJS/Rv390+MZc6LpExzCncCdlUOj5KNyA6gNMhQXr7jL0+1mU
-	 Pn3WxlS2Prr4gIxPPG3Iq6zb1WvPWoeP9om5PbTz6XbRJJe1iRLsIsWrmJZgUsKI5
-	 AnwS/+KTc1JEa5Za0QFusCuK++F7fl5TIoLOZ7Hpn0v6jx1oo6VrO9TpbKtK3HbYX
-	 lwxq2950uDSPhgxUfgFU639W5Bm1X/F/jGZCuS3B/GsEMsyrFVN2RKFRT5e0ZWVl0
-	 m/HqM3xIf3CzcfrWJ5OmtsZrYq8hYrbZ007mw3zCJs0ziWPVmyr3VdVH2goyIl+SP
-	 EXbxuhLRoZyCZDM8kQ==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from ehlo.thunderbird.net ([80.245.79.191]) by mail.gmx.net
- (mrgmx105 [212.227.17.168]) with ESMTPSA (Nemesis) id
- 1M4b1y-1vJGCB28Oc-00BR7y; Tue, 11 Nov 2025 07:51:57 +0100
-Date: Tue, 11 Nov 2025 07:51:52 +0100
-From: Frank Wunderlich <frank-w@public-files.de>
-To: Linus Walleij <linus.walleij@linaro.org>, Frank Wunderlich <linux@fw-web.de>
-CC: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Sean Wang <sean.wang@mediatek.com>, Daniel Golle <daniel@makrotopia.org>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- AngeloGioacchino Del Regno <angelogiocchino.delregno@collabora.com>
-Subject: Re: [PATCH v2 1/5] dt-bindings: pinctrl: mt7988: allow gpio-hogs
-User-Agent: K-9 Mail for Android
-Reply-to: frank-w@public-files.de
-In-Reply-To: <CACRpkdZ6wJGRhobbTxvm2ZstHA=P4gaUsqvdm3_n1tKqWJ=50Q@mail.gmail.com>
-References: <20251105195007.199229-1-linux@fw-web.de> <20251105195007.199229-2-linux@fw-web.de> <CACRpkdZ6wJGRhobbTxvm2ZstHA=P4gaUsqvdm3_n1tKqWJ=50Q@mail.gmail.com>
-Message-ID: <19CECEAC-A282-4683-B955-8191AA5ED7A0@public-files.de>
+	s=arc-20240116; t=1762843964; c=relaxed/simple;
+	bh=fy7+wkF0oQv3oCtjE+5B16eRZULzNqc8FDFTQSP8DsI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Tnl5ArZFCRHgGZkue2Z5SavymCPMZ54QyLpYX5GLGq4UlPfV385vaNvvS9rVIu1cwhaWnN0MrcpIYjmNGqi67g+hrb5FbICtflQtecRoiw2qMfOyTlrKDYyDsaMnD+DOCGVGPzcYUtrUUrnA3Lb5Nsg87CpxZuesgqjyiWZRQ78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=xAFMq6S5; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4d5HKK1fsjz9sVh;
+	Tue, 11 Nov 2025 07:52:37 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1762843957; h=from:from:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fy7+wkF0oQv3oCtjE+5B16eRZULzNqc8FDFTQSP8DsI=;
+	b=xAFMq6S5K91Awn1CzwfbwM6gkDU8YecjxplnJ9+RK2FygFCof5IcSlmtVESDLw9RAxXHfQ
+	Qj2vM+YhHhr0zIAVq5KO9IESZ7PnWaM78uhx7HCOe2yn5HSk2l+EFNjNXvLOIH+ZnCy/PH
+	1WtWJotKx2Maly+UnonpmY/wjKNJfrEOYp0ex20ctpbIHrfC4JKYcqD0tVEX0UYurBZRZY
+	zzp6a61rsTXnYZ5KnHZRH3k1ZJq23xjQeW9ifCXIbuAHlRIsCVS1tNkUyR/bNHZVI8O0C4
+	2fzN9tR3mo3eXnHAOP4gosItViM0whSi4IFCjFR3COgUsRWgFv+9iR+LORvxdw==
+Message-ID: <9e74c7a8614591c1f7c08bac1460f7043173c856.camel@mailbox.org>
+Subject: Re: [PATCH] drm/sched: Fix UB in spsc_queue
+From: Philipp Stanner <phasta@mailbox.org>
+Reply-To: phasta@kernel.org
+To: Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, 
+ phasta@kernel.org, David Airlie <airlied@gmail.com>, Simona Vetter
+ <simona@ffwll.ch>, Alex Deucher <alexander.deucher@amd.com>, Andrey
+ Grodzovsky <Andrey.Grodzovsky@amd.com>, dakr@kernel.org, Matthew Brost
+ <matthew.brost@intel.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
+Date: Tue, 11 Nov 2025 07:52:32 +0100
+In-Reply-To: <a3eefc87-2678-4a4d-82c8-f6aedf74be75@amd.com>
+References: <20251110081903.11539-2-phasta@kernel.org>
+	 <ee63ca7d-77d2-44d8-973b-7276f8c4d4a5@amd.com>
+	 <ee9fe54f3764bc0ee4ebafe5c10ad4afe748ef19.camel@mailbox.org>
+	 <2c72eb6e-7792-4212-b06f-5300bc9a42f9@amd.com>
+	 <987527ead1fe93877139a9ee8b6d2ee55eefa1ee.camel@mailbox.org>
+	 <05603d39-0aeb-493e-a1ed-8051a99dfc41@amd.com>
+	 <589a1be140f3c8623a2647b107a1130289eb00ba.camel@mailbox.org>
+	 <a3eefc87-2678-4a4d-82c8-f6aedf74be75@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:uzYatEEE5B8hau/Pb+8bUuG8rdmhERgPUp2bgugRnBTKhzRubn9
- 4C+TgM1iq3VhDZKyEnPmlFIy6KqLil7yG+w7zodDzVE0vQVH0Dv7ciyRu3NYnc20SHpjjbZ
- /c5tWmjyUgQiix9SsX43pCU5/sccCo8hoYFjZUCzQiM02NyK1ygSP7nsOdBbqMHZ5i07mRO
- MM7HMsymKi7lIgCLvhEXQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:C9YoTb5Spqc=;rAp2YuHG9rU5+mAeQNkMk6mu62P
- 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
- DtRSY80IWlvVbof5W1hdwmcgSY=
+X-MBO-RS-ID: 1effdb85b9b9436c5dd
+X-MBO-RS-META: fcjbgqxjfgnpt3kh36rkzrjh4wufkjus
 
-Am 11=2E November 2025 00:34:44 MEZ schrieb Linus Walleij <linus=2Ewalleij@=
-linaro=2Eorg>:
->On Wed, Nov 5, 2025 at 8:50=E2=80=AFPM Frank Wunderlich <linux@fw-web=2Ed=
-e> wrote:
->
->> From: Frank Wunderlich <frank-w@public-files=2Ede>
->>
->> Allow gpio-hogs in pinctrl node for switching pcie on Bananapi R4 Pro=
-=2E
->>
->> Signed-off-by: Frank Wunderlich <frank-w@public-files=2Ede>
->> Reviewed-by: Krzysztof Kozlowski <krzysztof=2Ekozlowski@linaro=2Eorg>
->> Reviewed-by: AngeloGioacchino Del Regno <angelogiocchino=2Edelregno@col=
-labora=2Ecom>
->
->I already applied an earlier version but it seems identical=2E
->Tags were picked up=2E
+On Mon, 2025-11-10 at 17:08 +0100, Christian K=C3=B6nig wrote:
+> On 11/10/25 16:55, Philipp Stanner wrote:
+> > Lock + head (same cache line) + head->next
+> > head->next->next
+> >=20
+> > when popping:
+> >=20
+> > Lock + head + head->previous
+> > head->previous->previous
+> >=20
+> > I don't see why you need a "current" element when you're always only
+> > touching head or tail.
+>=20
+> The current element is the one you insert or remove.
 
-Thank you
+That won't cause a cache miss because you have just created that
+element in the submitting CPU, owning it exclusively.
 
-Code/description is not changed,but angelos tag is wrong there (missing a =
-in email,above is also wrong)=2E Not sure if it has effects for get_maintai=
-ners=2Epl (non-maintainers part)=2E But would be better if you can still fi=
-x it=2E
+>=20
+> >=20
+> > Now we're speaking mostly the same language :]
+> >=20
+> > If you could RB my DRM TODO patches we'd have a section for drm/sched,
+> > and there we could then soonish add an item for getting rid of spsc.
+> >=20
+> > https://lore.kernel.org/dri-devel/20251107135701.244659-2-phasta@kernel=
+.org/
+>=20
+> I can't find that in my inbox anywhere. Can you send it out one more with=
+ my AMD mail address on explicit CC? Thanks in advance.
 
->Yours,
->Linus Walleij
+I can see to it. But can't you download the mbox file on the link and
+import it in your mail client?
+
+> > Lockless magic should always be justified by real world use cases.
+> >=20
+> > By the way, back when spsc_queue was implemented, how large were the
+> > real world performance gains you meassured by saving that 1 cache line?
+>=20
+> That was actually quite a bit. If you want a real world test case use glM=
+ark2 on any modern HW.
+>=20
+> And yeah I know how ridicules that is, the problem is that we still have =
+people using this as indicator for the command submission overhead.
+
+If we were living in a world were you'd always need 5 cache lines than
+that would just be the reality. And 5 would already be better than 8.
+So what's the deal? It seems this was not about "too slow" but about
+"faster than".
+
+There's two topics which often make us pay the high price of buggyness
+and low maintainability. One of them being limitless performance
+optimizations.
+
+I think that correctness always trumps speed. How happy does it make
+your customer if your driver delivers 5 fps more, but the game crashes
+2 times per hour? (which btw happens to me with Steam on my amd card.
+Sometimes there are even hangs without a reset happening, which is
+strange. I'll open a ticket next time I see it happen).
 
 
-regards Frank
+P.
 
