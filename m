@@ -1,189 +1,132 @@
-Return-Path: <linux-kernel+bounces-895452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58FA2C4DF17
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:59:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44D90C4DF1A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:59:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1345218C4F59
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:53:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FE743B89E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:53:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A812B331218;
-	Tue, 11 Nov 2025 12:43:58 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB6383AA18E;
+	Tue, 11 Nov 2025 12:46:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="cmpQpyT3";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="VunrRh3C"
+Received: from fhigh-a4-smtp.messagingengine.com (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D9843246F2
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 12:43:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82B762550D4;
+	Tue, 11 Nov 2025 12:46:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762865038; cv=none; b=NVvzg4FldD+wY6A5ajOxLVlSl9g2XH1O/Nez0nO4eQ2IRAVEgCmWVRmXjmuv4+fCKPDXqGYr80GASolaP1GSNQ8w1+w/k0AZLfuXR8I+24oKYCLs7dNe1WBcyR+M9YZ9AHfC6+AU5OHdC7w4Z4vN3BM+6tBz2t4zJbKq3y4grVQ=
+	t=1762865188; cv=none; b=nkBZBNBXF7d0fCSn97sQaoxephUNq24JvFkGIbk5zs5Tc1Vlo0Jkac9MWgskMHa12b2WD3fLSXK3sdJ9If80bQPTHEj+3fpOMbeHukuSNsEFW/ZJuzmH4MDNuG/FDB1kgapD6P8wPU2H+1hSabDGoLgmzQjo6V4kZy5L249e7qw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762865038; c=relaxed/simple;
-	bh=RYOr3m8WpaE4wWyeNKkvMCSlLs6NHz6cXKgn1dkPwrU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=WFBOXhJ/zWh5177hXmP+TMNuZuhtrH/oAiWjoq6n2axQQ8LJ+ezVqRaNeoYWasYiSA7ihzWFJghyh8lztpZYQ9IMQ0kzhQRSP9nSQijZCLH0ILDayCMyUNh57tKs4NG3mvd26v1U9exzEjJ5EHrtp25T1Xeo3iGvA7BkdG5zzeA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vIniu-0003YX-BC; Tue, 11 Nov 2025 13:43:48 +0100
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vInit-008CdV-2g;
-	Tue, 11 Nov 2025 13:43:47 +0100
-Received: from pza by lupine with local (Exim 4.98.2)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vInit-000000006lb-36qM;
-	Tue, 11 Nov 2025 13:43:47 +0100
-Message-ID: <3c3ece1a00c6e39d865c231e27508bdde0783070.camel@pengutronix.de>
-Subject: Re: [PATCH v2 2/3] i2c: designware-platdrv: complete reset control
- devm conversion
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Artem Shimko <a.shimko.dev@gmail.com>
-Cc: andi.shyti@kernel.org, andriy.shevchenko@linux.intel.com,
- jsd@semihalf.com, 	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
- 	mika.westerberg@linux.intel.com
-Date: Tue, 11 Nov 2025 13:43:47 +0100
-In-Reply-To: <20251111114559.3188740-2-a.shimko.dev@gmail.com>
-References: <e3c2096459bdd0c1d48c00a837cc7f8c18044631.camel@pengutronix.de>
-	 <20251111114559.3188740-1-a.shimko.dev@gmail.com>
-	 <20251111114559.3188740-2-a.shimko.dev@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1-1+deb13u1 
+	s=arc-20240116; t=1762865188; c=relaxed/simple;
+	bh=+D8jGoDpBa6xNo69zWsaU6PunpWeTPRMygAk91kfZN0=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=uzDV8Wd4E7clK7qhtM195CVBqJTPqhW/glQZsFElwe0zGAwUXf0p9PurlZTYD1WngsTVx/ATLz7B8jKAM4kL9NYcZEwU9kWUDCT15mfJ1JTrzj3RPNt7Ffuos3Xw7eFMYZgQRJVnUSrmEv2qzWu3da51/x9cCJHzgeW3p2joSUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=cmpQpyT3; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=VunrRh3C; arc=none smtp.client-ip=103.168.172.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 7073514000F5;
+	Tue, 11 Nov 2025 07:46:24 -0500 (EST)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-04.internal (MEProxy); Tue, 11 Nov 2025 07:46:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1762865184;
+	 x=1762951584; bh=qPSPi7QKsWbBdZTy5b2peWWJFo3JmlmoZ6aUudf3qcc=; b=
+	cmpQpyT32o12/yKmdmlYsHXboPxRIxWAizKxd0/9YzBhy0/UEKLknNjI+3fTIO0q
+	7FU9sDw+hXE1aVSucaL2vd42AHytkYHA79HSPbFYwMDjP8Yuv6jnT35Mf+bVJHlE
+	Fc/5cTI4IlnHNFGfly+Ip2zf23lN+9kXHMpnTYg4Lr/ycDdd8q3U0B6VVS3z5pXD
+	7bkOMrA6Ln1TKIOt2WPWXSgfsM3Mjud6BHgZrSBku3cUyXSGpcICIn0zOjM6q/NP
+	fUeOLpdHvpWntYiBQEtN7Lg8LDUBTfyZjTdh/syMSnZ3bGTs2uv1DChvqL3kMO6I
+	AKKpsTKgoU4XuQ3QTLg66w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762865184; x=
+	1762951584; bh=qPSPi7QKsWbBdZTy5b2peWWJFo3JmlmoZ6aUudf3qcc=; b=V
+	unrRh3C50B8nlC2ySniXwHhyhI3jX7KuMzD/qvAKGTr+FjPomCAWJrwjQp7UfSMT
+	COn7W9RYQTK7fztKnBilzo14mV1uulpouTCYAEHFZSXwYe0prCaVvL9iSjqOrhOn
+	uVnZp3eSjGyVImrA+32aTzsybajHHCU5TuZcn9Qt8e1z3tWdbhjuA1h/LcY0BbbL
+	jAb/suWuven/2HAbkb1Cjn8POg3hBaviaECtanR7YfloSuMcfQj5G1nLtwa5RQsK
+	7U28JyPW7VXu6X/MSnxC/zBAHCjjUt8/fHkQ3zCFBac36gs6aBtwlPhWrCPL3rLL
+	rCMR9eFotMxAkHi5ESROg==
+X-ME-Sender: <xms:IDATaW27QQWmFxXXCV1Fjxac0TlGJfwvGc0aDsNfs2cKeSnDtNjonw>
+    <xme:IDATaT6Pa3Wpuy-syJNCmiMv-OHamFR8GBcGPduJ0ozl52gAgM873Cc9NTonNZgwA
+    ypNCBSJ0rB_44njWIctjYv3BcsPzGn74FsdQjEBGoKF-16LssJAdLg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvtdduvdefucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdejnecuhfhrohhmpedftehrnhgu
+    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
+    hrnhepvdfhvdekueduveffffetgfdvveefvdelhedvvdegjedvfeehtdeggeevheefleej
+    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnh
+    gusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepjedpmhhouggvpehsmhhtphhouhht
+    pdhrtghpthhtohepvhhinhgtvghniihordhfrhgrshgtihhnohesrghrmhdrtghomhdprh
+    gtphhtthhopehluhhtoheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhhuhgrhhes
+    khgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhglhigsehlihhnuhhtrhhonhhigidrug
+    gvpdhrtghpthhtohepthhhohhmrghsrdifvghishhsshgthhhuhheslhhinhhuthhrohhn
+    ihigrdguvgdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnh
+    gvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkshgvlhhfthgvshhtsehvghgvrhdr
+    khgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:IDATaYcNvlAGEPqong-TCBN9LE_UiAUdbzKsopWPbwG_bRD4ozvaVQ>
+    <xmx:IDATaURs1P1vO3-jXrv_6sn6sqF3SwIqwfB1iJF8qp-5c0p6NIlQXQ>
+    <xmx:IDATaZaMQSfVYyFYSaD97M5SIbOfNXzDSc2ZhVeAni_S0Hop1xHaPw>
+    <xmx:IDATafea6NdIYt3gSdap1__-SvRXgkL43zjVVQO7J4tcYA3OIW47fA>
+    <xmx:IDATaWjTw9Mlxp8qK4ELluiWv9jMmKwvknWI7lOuIT5NEwg5qE7vckUE>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 10E65700063; Tue, 11 Nov 2025 07:46:24 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+X-ThreadId: AVKYIwYTPfqF
+Date: Tue, 11 Nov 2025 13:45:56 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+ "Andy Lutomirski" <luto@kernel.org>, "Thomas Gleixner" <tglx@linutronix.de>,
+ "Vincenzo Frascino" <vincenzo.frascino@arm.com>, shuah <shuah@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Message-Id: <3bdfd610-ec7a-4f3c-ba9f-ec48eecc0835@app.fastmail.com>
+In-Reply-To: <20251111-vdso-test-types-v1-2-03b31f88c659@linutronix.de>
+References: <20251111-vdso-test-types-v1-0-03b31f88c659@linutronix.de>
+ <20251111-vdso-test-types-v1-2-03b31f88c659@linutronix.de>
+Subject: Re: [PATCH 02/10] selftests: vDSO: Introduce vdso_types.h
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Di, 2025-11-11 at 14:45 +0300, Artem Shimko wrote:
-> The driver still manually calls reset_control_assert() in error paths and
-> remove function. This creates inconsistent resource management and misses
-> the benefits of full device-managed approach.
->=20
-> Register devm_add_action_or_reset() callback after acquiring reset contro=
-l
-> to handle automatic assertion on probe errors and driver removal. This
-> eliminates all manual reset_control_assert() calls while maintaining
-> identical reset behavior through automatic devm resource management.
->=20
-> Signed-off-by: Artem Shimko <a.shimko.dev@gmail.com>
-> ---
->  drivers/i2c/busses/i2c-designware-platdrv.c | 34 ++++++++++++---------
->  1 file changed, 19 insertions(+), 15 deletions(-)
->=20
-> diff --git a/drivers/i2c/busses/i2c-designware-platdrv.c b/drivers/i2c/bu=
-sses/i2c-designware-platdrv.c
-> index c77029e520dc..d334af1d7c6f 100644
-> --- a/drivers/i2c/busses/i2c-designware-platdrv.c
-> +++ b/drivers/i2c/busses/i2c-designware-platdrv.c
-> @@ -206,6 +206,13 @@ static void i2c_dw_remove_lock_support(struct dw_i2c=
-_dev *dev)
->  		i2c_dw_semaphore_cb_table[dev->semaphore_idx].remove(dev);
->  }
-> =20
-> +static void dw_i2c_plat_assert_reset(void *data)
-> +{
-> +	struct dw_i2c_dev *dev =3D data;
+On Tue, Nov 11, 2025, at 11:49, Thomas Wei=C3=9Fschuh wrote:
+> +/*
+> + * UAPI headers from the libc may be older and not provide these.
+> + */
+> +#if KERNEL_VERSION(5, 5, 0) > LINUX_VERSION_CODE
+> +typedef __kernel_long_t		__kernel_old_time_t;
 > +
-> +	reset_control_assert(dev->rst);
-> +}
-> +
->  static int dw_i2c_plat_probe(struct platform_device *pdev)
->  {
->  	u32 flags =3D (uintptr_t)device_get_match_data(&pdev->dev);
-> @@ -240,34 +247,34 @@ static int dw_i2c_plat_probe(struct platform_device=
- *pdev)
->  	if (IS_ERR(dev->rst))
->  		return PTR_ERR(dev->rst);
-> =20
-> +	ret =3D devm_add_action_or_reset(device, dw_i2c_plat_assert_reset, dev)=
-;
-> +	if (ret)
-> +		return ret;
-> +
+> +struct __kernel_old_timespec {
+> +	__kernel_old_time_t	tv_sec;
+> +	long			tv_nsec;
+> +};
+> +#endif
 
-This is already done by patch 1. Drop these hunks and squash the rest
-into patch 1:
+Doesn't this also need to define __kernel_old_timeval, which you
+refer to below?
 
->  	ret =3D i2c_dw_fw_parse_and_configure(dev);
->  	if (ret)
-> -		goto exit_reset;
-> +		return ret;
-> =20
->  	ret =3D i2c_dw_probe_lock_support(dev);
->  	if (ret) {
->  		ret =3D dev_err_probe(device, ret, "failed to probe lock support\n");
-> -		goto exit_reset;
-> +		return ret;
->  	}
-> =20
->  	i2c_dw_configure(dev);
-> =20
->  	/* Optional interface clock */
->  	dev->pclk =3D devm_clk_get_optional(device, "pclk");
-> -	if (IS_ERR(dev->pclk)) {
-> -		ret =3D dev_err_probe(device, PTR_ERR(dev->pclk), "failed to acquire p=
-clk\n");
-> -		goto exit_reset;
-> -	}
-> +	if (IS_ERR(dev->pclk))
-> +		return dev_err_probe(device, PTR_ERR(dev->pclk), "failed to acquire pc=
-lk\n");
-> =20
->  	dev->clk =3D devm_clk_get_optional(device, NULL);
-> -	if (IS_ERR(dev->clk)) {
-> -		ret =3D dev_err_probe(device, PTR_ERR(dev->clk), "failed to acquire cl=
-ock\n");
-> -		goto exit_reset;
-> -	}
-> +	if (IS_ERR(dev->clk))
-> +		return dev_err_probe(device, PTR_ERR(dev->clk), "failed to acquire clo=
-ck\n");
-> =20
->  	ret =3D i2c_dw_prepare_clk(dev, true);
->  	if (ret)
-> -		goto exit_reset;
-> +		return ret;
-> =20
->  	if (dev->clk) {
->  		struct i2c_timings *t =3D &dev->timings;
-> @@ -315,8 +322,7 @@ static int dw_i2c_plat_probe(struct platform_device *=
-pdev)
->  exit_probe:
->  	dw_i2c_plat_pm_cleanup(dev);
->  	i2c_dw_prepare_clk(dev, false);
-> -exit_reset:
-> -	reset_control_assert(dev->rst);
-> +
->  	return ret;
->  }
-> =20
-> @@ -338,8 +344,6 @@ static void dw_i2c_plat_remove(struct platform_device=
- *pdev)
->  	i2c_dw_prepare_clk(dev, false);
-> =20
->  	i2c_dw_remove_lock_support(dev);
-> -
-> -	reset_control_assert(dev->rst);
->  }
-> =20
->  static const struct of_device_id dw_i2c_of_match[] =3D {
+> +typedef __kernel_time_t (*vdso_time_t)(__kernel_time_t *t);
 
-regards
-Philipp
+This I think needs to be __kernel_old_time_t instead of __kernel_time_t.
+
+       Arnd
 
