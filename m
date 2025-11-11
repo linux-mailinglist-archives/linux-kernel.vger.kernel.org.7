@@ -1,138 +1,142 @@
-Return-Path: <linux-kernel+bounces-895160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C8DDC4D1E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:42:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A87EBC4D1FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:42:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1B3C54F9E4D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:36:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6D7284F14DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:36:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D168034DCEC;
-	Tue, 11 Nov 2025 10:35:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CBA034F472;
+	Tue, 11 Nov 2025 10:35:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XNzcP4Jx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="A5K3Vj1c"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F1932741AC;
-	Tue, 11 Nov 2025 10:35:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 083D234EF03
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 10:35:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762857345; cv=none; b=ktcKOQGN8/yURDDKv2UzWoUZbfq4rA66EII02I7hA5jTz3QD+C0Py7Pxpug0jg0tyvgoRnfNBqjZYP2tMZ6SKSQ/VsMEgJMtuIFo6KcTGSfAWjeVRZPFGAsGHB31Aozim+gzbIFZbAhaplxfaxK3vPRvaYapq5zcbNejqBH1zxU=
+	t=1762857352; cv=none; b=D9SOBrcNRrk+sH0uZu3hFEZeqkOnC00ZyD5yXcGxgBdzd8nh/Z90xUC2J4TF0ZAUAbesMN3LdrLEgYWV3ZHDfkdVqYQBMYuVziyR7GIrYaRiOylRlW3phvdvKC7gY48yrCEHu06TUjSquKz+7YzOjkauKtQ5D+fU4GffEJ8iJjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762857345; c=relaxed/simple;
-	bh=Xq140z8t2Lz9tMLDdMmjzX8uNuNbzNJxr107yZ7r5/o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bY59AMdHU7XuVyPTb3eEdUTeVQ4D3vcta4I8hIqA6He0atvTSfF8nLl3Y4rYE0+D+gZEV+lp4XAT3qhP1/xQEARtC008Y7DBFOtPPhQlExACUshsjWOnFmsgmJxblv/opXgBEW41wzKN43PmFgoyxVgQSkShj3pDRLuZRqrTqs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XNzcP4Jx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 702C5C116D0;
-	Tue, 11 Nov 2025 10:35:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762857344;
-	bh=Xq140z8t2Lz9tMLDdMmjzX8uNuNbzNJxr107yZ7r5/o=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=XNzcP4JxLcsq+v9Gh+HF0DTywnT1mFmvi7yAfyY5RW8Kk6f1dn/zMn6bi49eFCzFf
-	 03qQqT/jWGf9Zlz+J8IuOaHuegSCrMykqwybKOTMVNZLcWUs8Tgl3498RVQCXqDB7h
-	 g8Q7KFBQ+pvtZIdR830u68faptBVurqTFmc28LTu5DoloSbAk+oTbGvllcysqWbjO+
-	 usqZ4XYfF2fKzbeYY+LnQELFECpM53q7d14bsL7hzphs5k7QqLP3W8mg4gwQgGodw9
-	 PgDUubK/O7YU0CQH8YzAJl8jhHija1+4mQE1VTOzVJfKwzRDMXtGtPNKxPhisBdkf1
-	 oMJ94yacWuAgQ==
-Message-ID: <d2cb9d64-ecda-4cda-83e0-fd5d5758972d@kernel.org>
-Date: Tue, 11 Nov 2025 11:35:34 +0100
+	s=arc-20240116; t=1762857352; c=relaxed/simple;
+	bh=b5cTARWnCH0O+wzlNreNZEZCG3YtR/z+aB364cLgDRc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OOcEOI70nvOykIZ0xuf15XXA3u4I/hOlqN8SGpvIeBp0nbA2zdOHCQP3EdbC03cxPSKO/tgy0i9rIV5mi5/KIn/l1/dxXcdS3PJsrkL5VSHy5oecQFjZIpikG6RlTG2Jg5klCvq5OgnsGcmOm/ME05wWsgrQDvxb/5yIk4vejB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=A5K3Vj1c; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-37a48fc48deso37599051fa.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 02:35:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1762857349; x=1763462149; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=b5cTARWnCH0O+wzlNreNZEZCG3YtR/z+aB364cLgDRc=;
+        b=A5K3Vj1cV3ibGiIR+o5kYeDkP1LkFeJkJQ2AYzJ7Ueyiwmtcr2ywQVaykLSnAeMCgj
+         EPqy2hQoLPARSunxPZsKJUddW/N/u34Y+LUskmmXxR/pr+8BN/MVMBB79PzKlZGgIsBF
+         qAz20kgVN/CARA1DsNTJQzLAv6Mj1oepbEhxcK03bRTInIYMy05xLTiHsuTOCFSm5So2
+         0xwf6tCRutJ8t289wOT9kF/akxV3GfJcPvtvY3qJUoEA0TgFNE0ZcM8Vhqfy3zaXX+pN
+         eF8Lk9aHYKL9aXRObdVCeBBNDJEwVilstRk2D7oSVt8Oyd0PSIj750vIt30jb6UL/gKZ
+         ClWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762857349; x=1763462149;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=b5cTARWnCH0O+wzlNreNZEZCG3YtR/z+aB364cLgDRc=;
+        b=CkB6j8KSkVzItZmeraNxoQVe5g5S+lweqDKrvHT4XjMUEkNOVEcb/+T7dCTv9DP2m9
+         A7cOWzrHpt6VRjXiUZMT8zWtasQr3pXokb7cmrfjgjtJQ1FkpVn1D3xDI+NuheOI2D0f
+         5W3K1zg7qfsjVjolUQI63nrDKQCovY3YoOv4xSyhN6pZGfoLz9As9dkX7/Dn5c/Lw0W+
+         fgeukyc9Q7bbfIsA7+fEcFtGuE2MdwU8YiBV+C6K8CIIfBxgWGmR9rUcz3UekkIq49dg
+         Whbbs7K+8pY34PLWbuhw3DZD8kiOhpS2gHBNcxYgv1Rcc4TAnPtnthrdCctcgW1YFf2u
+         MORg==
+X-Forwarded-Encrypted: i=1; AJvYcCXE+KCPf4KEym0uRuGWMLfiYnKaA9TLoCmUk1Y4Lit+m4skrepauiPyg1+xJ4WIRTR0mg7JL0w2ROSD5hs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5TWRPifynO9kvoxF5cRg3sSzAf+gVlHaAAQzUDWxR3K5HcKS2
+	vlzYeAYTKusPKLuBTR+upUDdLMrHHqeRTpw50p71Xae5VOqXdfujC6APgTqvMLrLhPXdgwVzH1Y
+	2X4GYErdvUfVtTYp6BDMNG4mvEV4ytWTXauxe7gvToQ==
+X-Gm-Gg: ASbGnctTEGE6XUUUybvQomT2YlrtHFx2s63hFWieN/vl5eSCtpmdmwx8AlHx7iChZDV
+	UhGtz+Cp7HU4E+cQsEiZLwZRwDmI8v8/IQbQecVcVyhMiS0DtCUxnNaqVsv653VrbezN6n/Ln4q
+	e/VXKFfEaTpFJzEsSsuJzmyKnWXkPzhGVfJBP8bgeAHvEHrHfjUlDRitqjkaI40EsicG6IPmyuO
+	VzwZ/EkIUzC0zUNDCfS1mMB4psB4UHXwioFuyGE4hAsEFL8BolpBO10J4RqzHPRZCn0WfA=
+X-Google-Smtp-Source: AGHT+IHiG+EjsNieo0IH9vKGvPYVnnnJhmFUXHoDPqz54BHP96ylxBdjlT/JInKjKxLz/khK4ncylVpRxXU4D16MeYo=
+X-Received: by 2002:a2e:95d2:0:b0:37a:2f0b:ef24 with SMTP id
+ 38308e7fff4ca-37a7b1995e0mr22288641fa.16.1762857349004; Tue, 11 Nov 2025
+ 02:35:49 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH net v5 3/3] selftests/bpf: Add mptcp test with sockmap
-Content-Language: en-GB, fr-BE
-To: Jiayuan Chen <jiayuan.chen@linux.dev>, mptcp@lists.linux.dev
-Cc: Mat Martineau <martineau@kernel.org>, Geliang Tang <geliang@kernel.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
- <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>,
- Florian Westphal <fw@strlen.de>, Christoph Paasch <cpaasch@apple.com>,
- Peter Krystad <peter.krystad@linux.intel.com>, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, bpf@vger.kernel.org, linux-kselftest@vger.kernel.org
-References: <20251111060307.194196-1-jiayuan.chen@linux.dev>
- <20251111060307.194196-4-jiayuan.chen@linux.dev>
-From: Matthieu Baerts <matttbe@kernel.org>
-Autocrypt: addr=matttbe@kernel.org; keydata=
- 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
- lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
-Organization: NGI0 Core
-In-Reply-To: <20251111060307.194196-4-jiayuan.chen@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20251104203315.85706-1-shenwei.wang@nxp.com> <20251104203315.85706-4-shenwei.wang@nxp.com>
+In-Reply-To: <20251104203315.85706-4-shenwei.wang@nxp.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 11 Nov 2025 11:35:37 +0100
+X-Gm-Features: AWmQ_bnM-SUasW3cn2Gm4EW3aePYZpGnjIZZVnW89VcDCfJSgNXVTHUcuXdKqUo
+Message-ID: <CACRpkdZR2C=+ssYOKnF=hyOqTakGjVxzp5_qz=3-uYRpzaZgNQ@mail.gmail.com>
+Subject: Re: [PATCH v5 3/5] docs: staging: gpio-rpmsg: gpio over rpmsg bus
+To: Shenwei Wang <shenwei.wang@nxp.com>, Bjorn Andersson <andersson@kernel.org>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Jonathan Corbet <corbet@lwn.net>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>, 
+	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, 
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-imx@nxp.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Jiayuan,
+Hi Shenwei,
 
-On 11/11/2025 07:02, Jiayuan Chen wrote:
-> Add test cases to verify that when MPTCP falls back to plain TCP sockets,
-> they can properly work with sockmap.
-> 
-> Additionally, add test cases to ensure that sockmap correctly rejects
-> MPTCP sockets as expected.
+thanks for your patch!
 
-Thank you for the v5.
+Also, a big thanks for working on improving the standardization of rpmsg
+so we can get some order here. This is very important work.
 
-Acked-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+On Tue, Nov 4, 2025 at 9:34=E2=80=AFPM Shenwei Wang <shenwei.wang@nxp.com> =
+wrote:
 
-Cheers,
-Matt
--- 
-Sponsored by the NGI0 Core fund.
+> +- **Major**: Major version number.
+> +
+> +- **Minor**: Minor version number.
 
+I'm not contesting these if they come from similar fields in other rpmsg
+devices.
+
+What I'm thinking is that the driver will eventually have to quirk around
+bugs in the responding rpmsg CPU, and there will be bugs. This can end
+up with this situation:
+
+major,minor =3D (1,2) NXP implementation, no bug
+major,minor =3D (1,2) Sharp implementation, no bug
+major,minor =3D (1,2) Sony implementation, ooops this has a bug
+
+What is the driver going to do here to work around that bug?
+
+The scheme kind of suppose that all vendors use the same codebase
+and they don't.
+
+I would rather have:
+
+**Vendor**: Vendor ID number (such as the PCI or USB ID)
+
+**Version**: Vendor-specific version number (such as SW release)
+
+This will make it possible to identify buggy firmware and apply
+quirks.
+
+My apologies if the rpmsg community has already thought about
+this.
+
+Bjorns input would be appreciated!
+
+Yours,
+Linus Walleij
 
