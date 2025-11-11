@@ -1,252 +1,299 @@
-Return-Path: <linux-kernel+bounces-894913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FC89C4C6F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:42:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4066C4C6C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:38:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6DC224F0435
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 08:37:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DB273A55F2
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 08:37:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B193E2F12A7;
-	Tue, 11 Nov 2025 08:37:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43C3A32B9B3;
+	Tue, 11 Nov 2025 08:37:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PA9r+BGU"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Y+BeQ+50"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C13CD2BDC2A;
-	Tue, 11 Nov 2025 08:37:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.16
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762850252; cv=fail; b=Gs3/fpnXmt4VeQM146B0H/D9T4J1RIyoIXeV6tUX32eA/C8hbWPUrNIWS/f3VumXkqx2vU0aUqANozz3IcEgYI+W79WL8g4BwLdN4KK9nAAXMwVbMBoQhCJQieSUa394KlL5jtUt3gVsiPsek1cbur55i8YNcEREiArLJPbuJoo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762850252; c=relaxed/simple;
-	bh=bxDoBz6ZAJuweefnXcxXxrrPV+l7sOGo40vnXq3AKpM=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=aw2uJ3klbVqgDYymfBOkgnvQ24wCLE5rtYgAfeT65v1vhW/Gc6xctpJvNoNLzN6LQGC56afBVlp7Flux+pH7LBoEzOOusr5JyZZHzkeOoyEHqvf19hcKofB11WKGJslAfNqMvs07Lbtcbavdj7HPouTD51dE24pkbfVxTrOtQc8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PA9r+BGU; arc=fail smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762850250; x=1794386250;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=bxDoBz6ZAJuweefnXcxXxrrPV+l7sOGo40vnXq3AKpM=;
-  b=PA9r+BGUNNrrl0QMqImALePmLhj6sTakjfmbFxISwMajBwYDlsclkDWI
-   gjPmIqSQyIypXlRs1YhsL2N77N8eMF5VrKHtKeo2dgXKe75dVLRQBZzkH
-   4qr2Cg8zhXB8lfiiu76MMC808Cog4fuSp4BiucWp6+mKsOSVw1ukH2yoN
-   JY35Cw9rR8f0JX9wrrh9tiRIbGf8dhdunBaWZL55k8Ps40umTkDkhMGVm
-   AOR/RGQyLGXxNoL0/CImeHLT0AWVc0845zthp/hnKNpx6pOzyLkLxkmSJ
-   +W6CiJOqTGBDZgrJGtvSkw7+yjmkplDLFKRgoM8BwDuxgCLxfnoEUcABD
-   w==;
-X-CSE-ConnectionGUID: 2CCZt+gGTyCyHRfOW0EeCA==
-X-CSE-MsgGUID: Q2ubIDN1T4ec3it9nsD57Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11609"; a="65065266"
-X-IronPort-AV: E=Sophos;i="6.19,296,1754982000"; 
-   d="scan'208";a="65065266"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 00:37:30 -0800
-X-CSE-ConnectionGUID: nZqrXresQU6w+2g8IXWTfw==
-X-CSE-MsgGUID: RuXNUA4KSzSVfDGFms7DEw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,296,1754982000"; 
-   d="scan'208";a="189161560"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 00:37:29 -0800
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Tue, 11 Nov 2025 00:37:29 -0800
-Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Tue, 11 Nov 2025 00:37:29 -0800
-Received: from BL2PR02CU003.outbound.protection.outlook.com (52.101.52.13) by
- edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Tue, 11 Nov 2025 00:37:28 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=IO6aJupgvOvKYR9pGjvxeUgpbyyp0c1wEVU/AfM+K0XIIeEye2viTCW5LJp5aV5N7PI0NfD2Fosgjfh/y8EA0f12k8zdhyVEK8aYXsmRCuGgru3uye2QZqITZhX/rNFCZzNWkVFHmwOd3aHOkoRC3WAgkmN4Z4QTTcX7TCIcO9Zk8A98FVui2nkLpqeyOuKMoOOaRq6m0zF3RV7++xBQUDT4K0n1/bMs/twQM0rkzCjzEidbJF21heGbLj5g759yvMbkgqwfkJ+ftZMl8vjLslzOunnyjz9fiH0nPpeCEwIUPdcztfXjCgG/McG/QBvLtXC+72ewl3ElnGY38tZhCA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GdBp5e4CXkCGk6pSfvaGYaMh2iyD5mQ+oeVnUKrCv1Q=;
- b=YtEoupmsjBUi+EmINy0mv7m3VbomDxiy5VckrUfFD29Xe9PNaGPXKDsirDUXEDKDKyzPnDVSz5QyGhyJdV45HO8QdUeTQrBHdeOtKvHeYa9ZM2r6uqF8gZfJSUwv37uUW3t9TQ11I1dIrbGr8goZdArGnigdBeUphHaPQ+eQZsycmWRNwJXyDCm7iJXu/JUV4EVzqkxwwSoWy/YXF+lY4c6OgywfJiK+TNz6/Bnj7EP6Ok79ALVdwKjtqiGEgJAcj+hobi/YFvvduuT82d6mMCznHLnsqo8D7Vh6yDq00t/mTGpBHl2gwtjLbAKg4UCc8YtGecw8ho42qMsfNDX9CQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SJ5PPF0D43D62C4.namprd11.prod.outlook.com
- (2603:10b6:a0f:fc02::80b) by PH7PR11MB6499.namprd11.prod.outlook.com
- (2603:10b6:510:1f0::13) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.9; Tue, 11 Nov
- 2025 08:37:26 +0000
-Received: from SJ5PPF0D43D62C4.namprd11.prod.outlook.com
- ([fe80::2cfc:dfd4:ebf5:55e0]) by SJ5PPF0D43D62C4.namprd11.prod.outlook.com
- ([fe80::2cfc:dfd4:ebf5:55e0%7]) with mapi id 15.20.9298.015; Tue, 11 Nov 2025
- 08:37:26 +0000
-Date: Tue, 11 Nov 2025 00:37:22 -0800
-From: Alison Schofield <alison.schofield@intel.com>
-To: Terry Bowman <terry.bowman@amd.com>
-CC: <dave@stgolabs.net>, <jonathan.cameron@huawei.com>,
-	<dave.jiang@intel.com>, <dan.j.williams@intel.com>, <bhelgaas@google.com>,
-	<shiju.jose@huawei.com>, <ming.li@zohomail.com>,
-	<Smita.KoralahalliChannabasappa@amd.com>, <rrichter@amd.com>,
-	<dan.carpenter@linaro.org>, <PradeepVineshReddy.Kodamati@amd.com>,
-	<lukas@wunner.de>, <Benjamin.Cheatham@amd.com>,
-	<sathyanarayanan.kuppuswamy@linux.intel.com>, <linux-cxl@vger.kernel.org>,
-	<alucerop@amd.com>, <ira.weiny@intel.com>, <linux-kernel@vger.kernel.org>,
-	<linux-pci@vger.kernel.org>
-Subject: Re: [RESEND v13 23/25] CXL/PCI: Introduce CXL uncorrectable protocol
- error recovery
-Message-ID: <aRL1wrM0xzZm2m76@aschofie-mobl2.lan>
-References: <20251104170305.4163840-1-terry.bowman@amd.com>
- <20251104170305.4163840-24-terry.bowman@amd.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20251104170305.4163840-24-terry.bowman@amd.com>
-X-ClientProxiedBy: SJ0PR13CA0131.namprd13.prod.outlook.com
- (2603:10b6:a03:2c6::16) To SJ5PPF0D43D62C4.namprd11.prod.outlook.com
- (2603:10b6:a0f:fc02::80b)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E08121FF30;
+	Tue, 11 Nov 2025 08:37:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762850256; cv=none; b=LeTRq1IwFsgueQo0KxdBJUx7dg2KUJyrk6nT66yBCu4UAWEZJPxyC30PDG8YKqKaKy+2VbjDrBdO5eThjAXjQyqew7q2TENROPdSXn8YVCc9GdUn7ovpAktxkLcDemrSwOk7VVoCFNpLmW+gLNxGBgwQ0HFSI4gktEOqp659HZI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762850256; c=relaxed/simple;
+	bh=eIneCGwWgW3wItlBDizl/HBWYB6NM2FWyR2b1JvEFfY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ef+77M+E6SNfehd9UqyNyYl+80UCCA2ygZ4ibio8aevxFwyEVh9EH2vNf5CCa6289hxQa81MkmZ+wREldC2gBUuxx7D7LTGQhOb/oo+5T4+nya/3Zzd5bVR0P8q0M2iWzI+7vCUVGa9fIghSVuHVNurQOdf0BuGxJP6tgBaejYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Y+BeQ+50; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1762850251;
+	bh=eIneCGwWgW3wItlBDizl/HBWYB6NM2FWyR2b1JvEFfY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Y+BeQ+50gCXfVnZeiccuwfxAhWB1T8Um6v2BfyrDaa/1D2B7iyXiYe9Z2y7l0ZIdi
+	 0/fWF/Id+gr5YdZYnQYX2qOKsYYY72c87ERDt+LCqi7TPpL3scdjHl0XxIOQbM5MFF
+	 VEVvi63RfXl7KRorC3MuZuWQMtiJWk208TBT/Js5xAMCtEEJ8Of/CFX3GdNfG2pV7B
+	 mKASJJE2j9YRm4APHYw1ZlcBAU2GBmowAVlNjheapfYpmZkTgXSGoxX6604ISc+5rh
+	 kudXGknQioT9sRk/pDJR+JTKzKcK8MFQMi/zjYeUwOXxehSlkBqe4zVMXzG2AAanH8
+	 hNG8UoMfS/zow==
+Received: from [10.40.0.100] (185-67-175-126.lampert.tv [185.67.175.126])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: mriesch)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id C40EE17E124A;
+	Tue, 11 Nov 2025 09:37:29 +0100 (CET)
+Message-ID: <7266245d-46b8-4355-a966-654e816ec93c@collabora.com>
+Date: Tue, 11 Nov 2025 09:37:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PPF0D43D62C4:EE_|PH7PR11MB6499:EE_
-X-MS-Office365-Filtering-Correlation-Id: 727df0a7-c67e-4371-f1d8-08de20fd8aa5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?uu5Ad0I4Q/0tH0X2kRShBRhfIEwiDO+E0pqDKzWA1f0+N+oE4gT79gzsYMEI?=
- =?us-ascii?Q?/Cxo4qLYcqZlkUmGvpgPY/o2JFeefGcVwDobwaAq2pT7i0NdwwBYIR3CZ6s+?=
- =?us-ascii?Q?fqIqjkqNiPmN7KpOZSq9hqswY+e/MJH355yc5G037j6tEFk6LS5qDi3fvEXK?=
- =?us-ascii?Q?8UXXhrt9nrxmXXFFoeG0ItMId+feC+V4nSpLcassHuNQj0E/d5oXl5N+xZoA?=
- =?us-ascii?Q?tsoL1gtloQ4LzpsYChwN3ZATtnrblEYC74b2TF6cI0t3AdKH2MFzPvDyPSjO?=
- =?us-ascii?Q?pkNU6PBfyGBesDvBAlbVb9aBFdJPAri+gvQGtTl9EtM70xiGbaE62cUtVktA?=
- =?us-ascii?Q?9pEbl6LD2aK3/mBMBGuXp96SacCGih9VwNlJj5++Sgmkai2/o7kd1duPZFQA?=
- =?us-ascii?Q?v1oMUBEZYFq3cDWFeRkVjslM/NyoopyWBIgv6KYbdhZcXj6vm8+UP0P3oPUO?=
- =?us-ascii?Q?hQPnq2pQrIMnptl3/bzSxk7QwqWxqQ8q81EAYJe/IDJqwxWbw5tGLO5rYMRB?=
- =?us-ascii?Q?a9dvs476KrJze1VvEAj3sadaWwLPg+C6JKHE7B4IYS9GliEQXbD2F77FBT0+?=
- =?us-ascii?Q?0UV8hO/panIGNOZB3KXapoO0pMGyAN+wyDqn/jjShA7NHB86CRuwtzaAc0ul?=
- =?us-ascii?Q?egaAziTjzS+CLrHat7fxNQsd0cpg+hNY6LrRjFDZJZybdxGGT36IJMYpEnLY?=
- =?us-ascii?Q?2PTuVvWiTuFWFpKq2owDo0sFZDn0VEW39mp/Cpkrt2MU6dbltHzPNbc3SDaN?=
- =?us-ascii?Q?oiNLAvBC8H5QLYAisDZcSl2eJAPDl+wCPpSiywQkldilw/0V9pCYaOsFn2IF?=
- =?us-ascii?Q?deD+ByGAjLDxvecm5hcJYBY1fnxJPkRxwjCLbnD1oS4dmcHiaV5p/pRWqyTi?=
- =?us-ascii?Q?8KhVLfR3gcw/9dOzAKxDdgkUXbXvZOT1gsE/8C5bChIJKPTvASD5xQCfaxi1?=
- =?us-ascii?Q?H5ArCKMnNKd6FQqiGrVJxZ94rpP1IJf5nJkvHbfduKX4yJjQtwMeISIWvbdO?=
- =?us-ascii?Q?g6UW9BFzgGEFFTffSb01QZ/N/lN/zKTgN6X44hO1nGPihb9bysnqh2zQZjjI?=
- =?us-ascii?Q?HikvXe1TbJYRqxetTPkv1o8Ktc3X37Zp4/q7MMOgOeYWu+DNKhftVN9/K962?=
- =?us-ascii?Q?j35kydXDg9Xq6bUxtGHDVj7llq8lJH7e3VuwMutoO+jkCwFp2z66q+KNKJOL?=
- =?us-ascii?Q?c+yr8MeGd1a/qPhldOC8SwQ5z09K9O+zvJrglytl3eVXDaTvNOgGn4w7iapu?=
- =?us-ascii?Q?u7axWVgAmwxP8eGvTX/dMSyI4nNlrziQSjul1m7Rtt3gSt8w2c7rydEblg8/?=
- =?us-ascii?Q?FJ30sTz/l1bVKnlXLgHvN4mpWt1g8soQMw+DGLYeX999kZ5XKUK7WDiP7drX?=
- =?us-ascii?Q?vdDkyH0voXWSWqQZ8xg1RSAttQJ+8SuL9a4FZxd0i+VL6EyQMJl3pwEAJ2sT?=
- =?us-ascii?Q?Bj2HFMKSz6bp7RScP0cniukE6dS3SKJP?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ5PPF0D43D62C4.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?F71p+yDo/x34JqdM+EHGxifo/OGmwCNKO5F8ntpYWnLvuJuF9HKkqCNp6NrK?=
- =?us-ascii?Q?Nek3B8w96QTH6oYYKflypXI66QUnc5aO21gMMfpfmldJgUC0exWwV5pJGL/r?=
- =?us-ascii?Q?zRYRHVXig/lZWSq3D2GgQXfOezbTky468DhwlYv3RpnRljuBVRxdP3Rj0ujx?=
- =?us-ascii?Q?F12l1h8DiBHDmdDAh/+orf24/iB04tpTSaCTpyHAJWV5eKdn65rg6zbggSo3?=
- =?us-ascii?Q?+oaUMmP5jRuu+GseMPnXqebTHO6iJF9WQ+kbEkxvABprrEAaYg5kWzKH76hZ?=
- =?us-ascii?Q?X6j6pg/TqrnZt6TwebiH3G6w6kjbd5wFMSyB6QAFURpaq42RfBTbcx+PZaVd?=
- =?us-ascii?Q?TzhXvWZbxzrPyF/fL2u+usaDXmeWskYFvDMgzFghmL0AkQLGTuZbRyeNWNwT?=
- =?us-ascii?Q?ndRWw3PRjTHSjfc9hhkDk43f0LFEgS81W99t1SLzsUEXFEKx+Og4DhFgaHl6?=
- =?us-ascii?Q?GTU2n2yCO8GdyQlVZM+fcJKMekd/iboCISFLnVJQJzocCHVZK2eovb+ZCeIh?=
- =?us-ascii?Q?hOZgC9v+cAxxMNUpgKfVF+UkARdev14qDH/E6SNotWgJBkILTmeacZw0Bsmu?=
- =?us-ascii?Q?4fauZD/zstB4P7lJl0uJlFX8jVWLAuLrZYmW6hCXkepE4OsJJsPfjz0SMVXX?=
- =?us-ascii?Q?GP5/+nF+o++eNsFtcfDIIvfBb47v+OsK2gi36iBKzey4REyhRl53nLvsozIa?=
- =?us-ascii?Q?WpAFb9VMN86KaOFPbcsu2GJOvi87KqDuGjbabIghZoF8r3bC+ks3wLupmZDy?=
- =?us-ascii?Q?/je7gIMt7pJnSyKiqP42UfllGJ2FX1LI0hTckT3bxlHAp0TOIpv1UgpwbF2O?=
- =?us-ascii?Q?eJ7HnhMhu5AWT3BxxjUUs8JBO0mxAA4h7v8CWX5Qs/POj5GHYhouoXrdvyfO?=
- =?us-ascii?Q?kn9vjQO10fMWmP9qRTCfyPQgbbVqFa5uT8fVpUZh3brC4JMfgabcttv3oL+X?=
- =?us-ascii?Q?AmGHLGkFIw8c5+Ry7KT202DisIZi/+vntQi1Tou/wo7S8J4zRtVwueVnb9Hk?=
- =?us-ascii?Q?VZMyQL9VfjJauBn/qFwOiAv8QqbHv1lDWg6pUBR/P8eZVr5aLD8iSf73J9+a?=
- =?us-ascii?Q?OJ3ndgBWv3jZd5dp6dhqGVpPd050WeniUVoT7YJZZ8V76Z+N/pupGAXmwEdt?=
- =?us-ascii?Q?wVcMntmsnn7gaVBRhaImNIbfL/fieuaRoR4hm6tyNQmOyQbIkKQRc4VOBstz?=
- =?us-ascii?Q?Ya1N3q8PJ2oKhNiGlzuA8M2pXJG2g0mGMJvcJjwJbTCkjeJU+YLiUYWkaeAO?=
- =?us-ascii?Q?cmgpplBDMEOigYHSNoER3hRudGc1WT6dTmdp2aCyq0aOtH0btDbvfJMVd3Io?=
- =?us-ascii?Q?aOOeczyVxDwsNPnRnGIakjiKl+1reRn08Jsp1ytSIlh4LRuptziVuqUyErb2?=
- =?us-ascii?Q?QBUg4nf1KD3O8ydfp6pBFPtIHIFv3ZmbJy0K46Z5LVjoWd+4ZrHFN3VAD982?=
- =?us-ascii?Q?3So8QBEIbpnPAzCic1oe6I2NwXp2gV+LYgaIQGhMnyZr+4g8W9zQW57b7fx5?=
- =?us-ascii?Q?2nrhkNFiQ+R3pG12/yBQxb8N+vCVhaxKaeqg4pEXLO1k3ZY7mUhKEdfqwvSv?=
- =?us-ascii?Q?EgiA413a/CQuhFGJwdEaD1ZXB6NkTDL18kw4+429h6vj7zdcKSS9MdSZmk3U?=
- =?us-ascii?Q?VQ=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 727df0a7-c67e-4371-f1d8-08de20fd8aa5
-X-MS-Exchange-CrossTenant-AuthSource: SJ5PPF0D43D62C4.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Nov 2025 08:37:26.3495
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: l+59fp/dPVxvccqF19xYx3txIP+2kN1CnkXaGW7a27/YEj6BXDBuGojd3G7fXJO5H6fH37YE/TaJc+7LzeOAp1auveYu902DFWHI+cvoRR8=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB6499
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v14 00/18] media: rockchip: add a driver for the rockchip
+ camera interface
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Mehdi Djait <mehdi.djait@linux.intel.com>,
+ Maxime Chevallier <maxime.chevallier@bootlin.com>,
+ =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ Gerald Loacker <gerald.loacker@wolfvision.net>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Markus Elfring <Markus.Elfring@web.de>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring
+ <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Kever Yang <kever.yang@rock-chips.com>,
+ Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>,
+ Collabora Kernel Team <kernel@collabora.com>,
+ Paul Kocialkowski <paulk@sys-base.io>,
+ Alexander Shiyan <eagle.alexander923@gmail.com>,
+ Val Packett <val@packett.cool>, Rob Herring <robh@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ Mehdi Djait <mehdi.djait@bootlin.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Bryan O'Donoghue <bod@kernel.org>, Chen-Yu Tsai <wens@csie.org>
+References: <20240220-rk3568-vicap-v14-0-b38b6da0fc80@collabora.com>
+ <aQ4tJg8r_j4NyKhv@kekkonen.localdomain>
+ <074cd08e-0412-49f9-8dd9-b1f96eb11717@collabora.com>
+ <20251107185441.GG5558@pendragon.ideasonboard.com>
+ <13c43edb-9592-4779-a39a-7856bb0f964d@collabora.com>
+ <aRGlvQRVoQs0WjyA@kekkonen.localdomain>
+ <b89746e1-4574-4b65-af69-c533576ed185@collabora.com>
+ <20251111000627.GA30837@pendragon.ideasonboard.com>
+Content-Language: en-US
+From: Michael Riesch <michael.riesch@collabora.com>
+In-Reply-To: <20251111000627.GA30837@pendragon.ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 04, 2025 at 11:03:03AM -0600, Terry Bowman wrote:
-> Implement cxl_do_recovery() to handle uncorrectable protocol
-> errors (UCE), following the design of pcie_do_recovery(). Unlike PCIe,
-> all CXL UCEs are treated as fatal and trigger a kernel panic to avoid
-> potential CXL memory corruption.
-> 
-> Add cxl_walk_port(), analogous to pci_walk_bridge(), to traverse the
-> CXL topology from the error source through downstream CXL ports and
-> endpoints.
-> 
-> Introduce cxl_report_error_detected(), mirroring PCI's
-> report_error_detected(), and implement device locking for the affected
-> subtree. Endpoints require locking the PCI device (pdev->dev) and the
-> CXL memdev (cxlmd->dev). CXL ports require locking the PCI
-> device (pdev->dev) and the parent CXL port.
-> 
-> The device locks should be taken early where possible. The initially
-> reporting device will be locked after kfifo dequeue. Iterated devices
-> will be locked in cxl_report_error_detected() and must lock the
-> iterated devices except for the first device as it has already been
-> locked.
-> 
-> Export pci_aer_clear_fatal_status() for use when a UCE is not present.
-> 
-> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
-> 
-> ---
-> 
-snip
+Hi Laurent,
 
-> diff --git a/drivers/cxl/core/ras.c b/drivers/cxl/core/ras.c
-> index 5bc144cde0ee..52c6f19564b6 100644
-> --- a/drivers/cxl/core/ras.c
-> +++ b/drivers/cxl/core/ras.c
+On 11/11/25 01:06, Laurent Pinchart wrote:
+> On Mon, Nov 10, 2025 at 11:29:57AM +0100, Michael Riesch wrote:
+>> On 11/10/25 09:43, Sakari Ailus wrote:
+>>> On Fri, Nov 07, 2025 at 09:51:37PM +0100, Michael Riesch wrote:
+>>>> On 11/7/25 19:54, Laurent Pinchart wrote:
+>>>>> On Fri, Nov 07, 2025 at 07:41:59PM +0100, Michael Riesch wrote:
+>>>>>> On 11/7/25 18:32, Sakari Ailus wrote:
+>>>>>>> On Fri, Oct 24, 2025 at 02:51:29PM +0200, Michael Riesch via B4 Relay wrote:
+>>>>>>>> Habidere,
+>>>>>>>>
+>>>>>>>> This series introduces support for the Rockchip Camera Interface (CIF),
+>>>>>>>> which is featured in many Rockchip SoCs in different variations.
+>>>>>>>> For example, the PX30 Video Input Processor (VIP) is able to receive
+>>>>>>>> video data via the Digital Video Port (DVP, a parallel data interface)
+>>>>>>>> and transfer it into system memory using a double-buffering mechanism
+>>>>>>>> called ping-pong mode.
+>>>>>>>> The RK3568 Video Capture (VICAP) unit, on the other hand, features a
+>>>>>>>> DVP and a MIPI CSI-2 receiver that can receive video data independently
+>>>>>>>> (both using the ping-pong scheme).
+>>>>>>>> The different variants may have additional features, such as scaling
+>>>>>>>> and/or cropping.
+>>>>>>>> Finally, the RK3588 VICAP unit constitutes an essential piece of the
+>>>>>>>> camera interface with one DVP, six MIPI CSI-2 receivers, scale/crop
+>>>>>>>> units, and a data path multiplexer (to scaler units, to ISP, ...).
+>>>>>>>
+>>>>>>> I understand both RK3568 and RK3588 include an ISP. Do you have insight on
+>>>>>>> how would this work, should the support for the ISP be added later on?
+>>>>>>
+>>>>>> Short answer: Yes and yes.
+>>>>>>
+>>>>>> Long answer:
+>>>>>>
+>>>>>> The patch series at hand adds support for the PX30 VIP and the RK3568
+>>>>>> VICAP. I cannot really say something about the PX30, but on the RK3568
+>>>>>> VICAP and ISP are orthogonal (the ISP features its own MIPI CSI-2
+>>>>>> receiver, different from that introduced in this series). Thus, ISP
+>>>>>> support can be introduced anytime (whenever someone is motivated ;-)).
+>>>>>
+>>>>> Won't they both be connected to the same sensor though, and probably the
+>>>>> same D-PHY in the SoC ? They don't seem entirely separate to me.
+>>>>
+>>>> The MIPI CSI-2 DPHY is shared, indeed. Thus, they *maybe technically
+>>>> could be* connected to the same sensor, but I don't know whether that
+>>>> works and fail to see why anyone would to such a thing (if it is about
+>>>> raw capture, the MIPI CSI-2 receiver in the ISP can do that on its own).
+>>>>
+>>>> The DPHY can be operated in split mode, with two lanes for VICAP and two
+>>>> lanes for ISP. This is not implemented yet, but can be done at a later
+>>>> stage on PHY level (not media related). In this case, ISP and VICAP can
+>>>> receive data from different subdevices via CSI-2.
+>>>
+>>> The two would be part of the same media graph in that case and as there are
+>>> two CSI-2 receivers and a single PHY, the PHY would probably need to have a
+>>> sub-device as well, to allow link configuration to be used to select where
+>>> the PHY is connected.
+>>>
+>>> I don't think we have such a setup elsewhere, and supporting this would
+>>> require changes in the MC framework.
+>>
+>> What follows is a response that also addresses issues raised during our
+>> off-list discussion.
+>>
+>> First of all, I agree with you that the RK3568 HW is "a bit special" (to
+>> say the least) in that regard. Let's have an outlook to newer SoCs, such
+>> as the RK3588: Here, the MIPI CSI-2 DPHYs (there are two of them) with
+>> their split mode are present as well, but the assignment is fixed. For
+>> example, the RK3588 VICAP has six MIPI CSI-2 receiver units and six MIPI
+>> CSI-2 capture units. Units 1 and 2 handle a different MIPI PHY, units 3
+>> and 5 handle the DPHYs (without split mode), units 4 and/or 6 are active
+>> whenever DPHY 1 and/or 2 is in split mode.
+>>
+>> I would model this by adding support for more than one (logical) PHYs
+>> (phy-cells = <1>;) and assigning the logical PHYs to the MIPI CSI-2
+>> receivers. There is not really a possibility to route anything at this
+>> point (routing is done in a MUX unit that takes the different MIPI CSI-2
+>> receivers as inputs).
+>>
+>> Now back to the peculiar RK3568 situation: By default the split mode of
+>> the DPHY is off and both VICAP and ISP are able to receive the same data
+>> (from up to four lanes) with their MIPI CSI-2 receivers (not sure
+>> whether both can be active at the same time, though).
+> 
+> A common use case for capturing data from the same sensor through both
+> ISP and VICAP would be routing image data to the ISP and embedded data
+> to VICAP. Assuming the hardware is able to do this, there will be users
+> interested in this feature.
 
-snip
+VICAP and ISP would capture different CSI-2 links. AFAIK the embedded
+data is usually transmitted on the same CSI-2 link but on a different
+virtual channel. The MIPI CSI receiver in the ISP is capable of
+capturing (up to three, I think) virtual channels and passing e.g. one
+VC to the ISP and capturing another VC to memory.
 
-> +static int cxl_report_error_detected(struct device *dev, void *data, struct pci_dev *err_pdev)
-> +{
-> +	bool need_lock = (dev != &err_pdev->dev);
-> +	pci_ers_result_t vote, *result = data;
-> +	struct pci_dev *pdev;
-> +
-> +	if (!dev || !dev_is_pci(dev))
-> +		return 0;
-> +	pdev = to_pci_dev(dev);
-> +
-> +	device_lock_if(&pdev->dev, need_lock);
-> +	if (is_pcie_endpoint(pdev) && !cxl_pci_drv_bound(pdev)) {
-> +		device_unlock_if(&pdev->dev, need_lock);
-> +		return PCI_ERS_RESULT_NONE;
+>> There are two bits
+>> in the GRF that define the lanes that ISP and VICAP receive in split
+>> mode (lane 0/1 or lane 2/3). Not sure whether these bits are supposed to
+>> be changed during runtime.
+>>
+>> I would suggest modelling this on PHY level in DT, e.g., by passing
+>> reasonable properties to the dphy node, such as
+>>     rockchip,dphy-split-mode;
+> 
+> Split mode should indeed be conveyed through DT, as it's a property of
+> the hardware.
 
-sparse warns:
-drivers/cxl/core/ras.c:316:24: warning: incorrect type in return expression (different base types)
-drivers/cxl/core/ras.c:316:24:    expected int
-drivers/cxl/core/ras.c:316:24:    got restricted pci_ers_result_t
+Ack!
+
+> 
+>>     rockchip,dphy-split-invert;
+>> where the former activates the split mode and assigns lanes 0/1 to the
+>> ISP and lanes 2/3 to the VICAP, and the latter inverts this assignment
+>> (lanes 2/3 to the ISP and lanes 0/1 to the VICAP). This would facilitate
+>> the reasonable use cases with reasonable effort.
+> 
+> This I'm less convinced about. The routing should be dynamic.
+
+Ack.
+
+> How do you envision the connections to the CSI-2 sources to be modelled
+> in DT ? We need ports and endpoints, and data-lanes properties. Where
+> would those reside on the RK3568 side ?
+
+Goto ASCII sketch below for that...
+
+>> Otherwise, to keep it perfectly general and most flexible and
+>> everything, we would have to introduce another subdevice indeed, which
+>> would be active on the RK3568 exclusively. Therefore, I don't see that
+>> the PHY driver introduces this subdevice, but a specialized (syscon?)
+>> MUX driver that deals with the RK3568 GRF bits. Something like this
+>>
+>>                            |----------------------|     |-------------|
+>>  Sensor A --- /2 lanes --- | lane 0/1      to ISP | --- | ISP MIPI RX |
+>>                            |                      |     |-------------|
+>>                            |                      |
+>>                            |                      |     |-------------|
+>>  Sensor B --- /2 lanes --- | lane 2/3    to VICAP | --- |VICAP MIPI RX|
+>>                            |----------------------|     |-------------|
+>>
+>> But IMHO this will be too much effort for corner use case that I doubt
+>> anyone will actually use.
+>>
+>> What do you think:
+>>  - Let's keep the PHYs out of V4L2/MC, ok?
+>>  - Let's model the reasonable use cases with device tree properties in
+>>    the dphy DT node, ok?
+> 
+> I think the routing should be dynamic.
+
+In this case, my suggestion would be the following:
+
+ - An additional MUX subdevice on the RK3568 only, see sketch above
+ - One or two input ports (depending on split mode being activated)
+ - Two output ports (to ISP MIPI RX, to VICAP MIPI RX)
+ - Routing possible 1:N (both input ports can be connected to one or two
+   output ports)
+ - The subdevice will have ports, endpoints, data-lanes properties on
+   both sides.
+
+The nice thing about it is that the current state can be extended once
+split mode is implemented, IOW patches 01/18 - 17/18 can be readily applied.
+
+Patch 18/18 must not be applied at this time, as this would be the first
+actual usage of the MIPI CSI-2 pipeline. I guess we need to implement
+and insert the new subdevice first for the sake of uAPI compatibility.
+
+So pretty-please-with-sugar-on-top can we merge 01-17 so that I don't
+have to drag these patches along anymore?
+
+Best regards,
+Michael
+
+> 
+>>> How does the media graph look like for the device at the moment?
+>>
+>> Please take a look at the media graph in the documentation patch (PATCH
+>> v14 01/18). This is without the ISP, but gives an overview of what the
+>> RK3568 VICAP is capable of.
+>>
+>> Best regards,
+>> Michael
+>>
+>>>> BTW the ISP is able to process the data captured by VICAP, but
+>>>> apparently this includes a RAM round trip (VICAP captures to memory, ISP
+>>>> operates in mem2mem mode).
+>>>>
+>>>>> A block diagram that shows connections between the CSI-2 pins, D-PHY,
+>>>>> CSI-2 receivers, VICAP and ISP could help.
+>>>>>
+>>>>>> Once this patch series is merged, I'll push out changes that introduce
+>>>>>> support for the RK3588 VICAP. We can discuss the integration of any
+>>>>>> RK3588 ISP in this scope then -- and there may be some things to discuss
+>>>>>> as there the VICAP and the ISP(s) are directly connected by means of a
+>>>>>> MUX unit in the VICAP.
+>>>>>>
+>>>>>> Alright?
+> 
 
 
