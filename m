@@ -1,110 +1,176 @@
-Return-Path: <linux-kernel+bounces-895216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70DCFC4D41D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:00:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B4FE5C4D45F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:03:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A406E18C3DAF
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:56:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89D9A189DC12
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:57:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A14DA358D11;
-	Tue, 11 Nov 2025 10:51:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C733F35505A;
+	Tue, 11 Nov 2025 10:52:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QpaERnuM"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ier0bqY4"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A5493587CF
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 10:51:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B44835504C
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 10:51:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762858294; cv=none; b=eqH3bcd5gTQmkmBwm8yGGNxU5XmhoUzx5BSwRqpuFMOAUwAFf/hkZhfJxgW2YXbDFG2mm4wSAkqw3ysjvvMA2J18jrcCEFFoIyzCYkC//nNIjG6UqEr/4DoOG7opx/OnM3AU+AY7O7FEKmRJO9X6xJNyKOt0aS5XU5DCANrAD5A=
+	t=1762858322; cv=none; b=jOAtqIw/kkJk8eKVe6iOycSLB7Vf8hn4Xw2lCuwQvxLOhlskbk9PktdxR5+SBmu8oph0p5358Etw3XtdRbTT5aPs2e97ocIQAX6qCJJxVqrkWy4o8+/eexmBHZf+lRLHf3kLXXcFfUIeqiuWbp5PMeiunUfxNcD052DntQICTmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762858294; c=relaxed/simple;
-	bh=vPr1scoxGtbmI1TsSsArbT+P8jwt6C9MLoZFTdOfUEA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ravna8fg6U+Jnl4vKrFm1cEBReFiHqhaeslhvQhId5grnVhrUy4FBWsFYzLMKErpfiV8eGae1yjpZsNDprHxl16wC2fW9EeLRt4w5YJy4c/7WlH+WeXhwHKTXuvUfk9f+aq0tWdrbtXG8/EzyUAebBk73mVanQd3/GCj/aPI3ZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QpaERnuM; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b729a941e35so520357266b.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 02:51:31 -0800 (PST)
+	s=arc-20240116; t=1762858322; c=relaxed/simple;
+	bh=m6qWbR+1BOc5g/YUkO6gL6vx0ximRu5ja0IB00oIB0Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kdWQlTFBP0nPK6dDIw0BTkjdDrbebrs7+K3jeDh2edFeOlhcP0+SHwVa1X2Ksbkb8B+m276JWmC8n4BRi/Ens0deo0Mx9MAIW0MpksWsnHGcvLXooi4vbs4+Br/0aGwj9FS3lgeIvKM1QSk/WY708WTydxyR0FC4j7/2Y7Gi1Lw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ier0bqY4; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-42b3c5defb2so1230326f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 02:51:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762858290; x=1763463090; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JyRA6gYtZbT9Mw3sUgTpl2KwYTBM16vhFluIQHKp75o=;
-        b=QpaERnuMTABIskdkD5nmVq7dv34QFBIgaFwvrvRl9fVlr1DbCtHz5B1oHoz4bL2ieE
-         JoQvn992ASDqXAknpRQOKOICUcW63r/nsl5ThTnTVhDFsvudLTejokGkmtXn7O4uc8gc
-         QuyCVll6QY+hPt61DjQBFSBbBpPdXEI9AJZs82IdRe0q7cs9Ygz8xhOY+UkWJYE+hAx7
-         NofMT2tHNoEj1l0Bygb7UMR97Hn4dc076EInKbbJ5qY+GbzsQZLofHEMa/MejlsuPA34
-         yiddEybSXJN7Gnm/Ar+UljD9gkYOjb79ECQi8q8RqxRmSvUx1/mZvD2JU/WypfTPC8zO
-         0tvQ==
+        d=linaro.org; s=google; t=1762858318; x=1763463118; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=U4fv3AqTrlyRPmxlWB1ltGRDPoMxkylJndccFFj9vmU=;
+        b=ier0bqY4y+RoD0OaNwkAWLgWuSC2uFSSOkTQfQsYfQ2ruONR4dtT2K53RqfkxYFcxr
+         oaLUAPg8rBbgqkpfN7QzzpYhMD/hF9dcmEx34NBHm8PytOhZnu3kFP3/ztqlIY3dcY6Q
+         YsrA4dnQ5znrLze/0Q1fpqCaWY0/FE/W7vo/B/qYUUBNVbi5HiEBJyamdt9zpW8UJK90
+         G+AQP0GrC3frGjFx/ud3OTwQwVGeOf3gxI9tlIuD388EzqxdhtjtWrK041tdPjJhrSl5
+         V44aYDSnHv4dO4p9gtBP5zKZg2TzmapjKQr24OA/YYrdPx8OZhAjeGKQGe27z6xa77Uq
+         7ROg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762858290; x=1763463090;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=JyRA6gYtZbT9Mw3sUgTpl2KwYTBM16vhFluIQHKp75o=;
-        b=jm9YShmsc9Ri5LJQKMEZeIUYbZ0eOzBH6IooCqczEm92OBnCfrUQFUV1MPruLUAkcl
-         7v5DC4SF/qtkomgNxl2YDL0X2NkA84NODm9wC/wEqho8Kd96K1t/JjYO3R+INFplUoZ9
-         QTSHQ70EHJnwuwHBZB0RbZ09EWOTcCdeQVfleN6KcM6ewy4TE6MbNyfW1UyR+96YZF9w
-         YjCuzB0uenIqz6xzLqZgJBcQMFrJBLQALRXPJRDKEmdOdLMbw8FDnT2KpK9pB+ccvpP2
-         RBz6eKSA2dt7yTqvmCfQ1Km67ih74eHrghy4G+PsC2q/3heDQW2y+hPC0sRd+mNHry42
-         nehg==
-X-Forwarded-Encrypted: i=1; AJvYcCU1VpyUIlle/KnRaziOgGlRThqh1pEpazypUhvo+KssuUMDJna+yGinkMUEyLVcGMq+3X9I1ADdsXUOr1I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxfrlIoMZUwm2Ei0WnMd0IbK8ZFwd8WNpKUkw0BLPbkahwnwNDA
-	9hkMMbVsgnc/1Y4Lpbu1DtRCxKD5cDYwb6JfRt/bGfiSy1flLwA52HCeKCMFpRAcwHMGtgReINm
-	prVgHaMo2AZ/L2t+qMA5gUPKoPZxTgCU=
-X-Gm-Gg: ASbGncsCYblDPYniKZBjsxTr8P/O93Ert7WIZMOyYOVOmHURD8oTJ+nUaiWdSd6+/nV
-	K1Vh6zeFDXoPd6JhKmDD8aUTFe90jHdyDnb+ax+7CvBKvB0Ifd30z3QYD8+NCpOJ7ZKrlPb+1Ku
-	upmvdgp0Mj9xEIgwZJdEcv/s/A3v8P/vUMNznjs2JXQEpiLxOE+XqhlJDNhHdaBMcNBEH5TSd4k
-	COi7vVkL7mYMsamJ7zo2X8kvj9MGzglO04LWB/0VhSNNQew3/h77RFM72HOXC6xual3lGFZfa32
-	6TAgMmeAqQiYXNYtwh+1wEw3Wg==
-X-Google-Smtp-Source: AGHT+IFP90bpnxcRJbh5J12wLzHjlkCHBBywRDplR18eZEpmH4Rt7zS3FsYlYjWxsSba+YDC3P23rVwO6aIRX36AZeo=
-X-Received: by 2002:a17:907:a0c8:b0:b3f:9b9c:d49e with SMTP id
- a640c23a62f3a-b72e053f2b5mr1192133066b.57.1762858290266; Tue, 11 Nov 2025
- 02:51:30 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762858318; x=1763463118;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=U4fv3AqTrlyRPmxlWB1ltGRDPoMxkylJndccFFj9vmU=;
+        b=OWCPtcOBdcbFRoFn/Ttne9gNr5AYzI5fTgk4ZoSxDIRU9rQusjroZVORIxm3FyshZV
+         0AOO+0t6X3c63nFQtDtEUMuc6cYoxDMciRLN6Guzmrz8ZyxlrHQwWtQ4/5Q227/JmK6p
+         OkN13bmXlZqCIF8ZrpRYq5V/uIZiqmCbR49c7Qs/2UsIy1QApTrom39FVAbnN4DyojZE
+         9ycpoYFlE8GboczejsI8kqwBzcmpkX6KcGoarfexYf/f7ehJgmAeEKQDceEn390UMj3+
+         WcCRDuZIsSlDv+DM6OgmHhlr+o6fP8O0ZB8HdQ7Qi5gF6iZmjcxJ82UTWlYgU935tthz
+         JS7A==
+X-Forwarded-Encrypted: i=1; AJvYcCUKop88G7VN6eNQrUcdTIkL67ANo3J9FaWOlBAYYNI/+/s3zL6gh+6RksBpOrbRCfQLKXRu2nssf/q31q0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxanPk9WatFKbHG9qvHvJMwnOT1gdn7tqKgjs2zBhVlKXA4ggzk
+	Y9P+3NQjP4G9hLJwCNZ4ifvOcyV0np1JkPh0tRGrUx0ESvQ8PDEJsRwztNfZAaqfit8=
+X-Gm-Gg: ASbGncuaYSTz2ZfryzatpWBFQm5e5d/ecrHSZLeHOujQ7Nrk794zH+MjX0pTsOxV/5h
+	KBp/Gf7+7nq9psKYVDavM302Y4TlF9Nj7RNia5SklNj3TvxMsJynkAtgSpjgb129mjT/kMTrt7k
+	tWwIHWtFjplb7JHJ5VMzT6eIPZxui9uPMLPx5OsEug+YP+wbwUQmCttgoHylxCJCfFy+8tswlU3
+	qGCq7XGhcCaiCa02n0SeuFYS4PZ2Vn4dY/AAfRxTclDUuuOvicLa73CsJZRhYHFxED4v4ccZChl
+	CaEZn+n+9HFkDPpWyF1PZD2pDyngwAKr7HGGu5CLMYZR39WVuqIx87gSPdgj2ven9WDFSYtKW0U
+	9kZ4wVtbGWcgBppc5ek0hIdx5IMOZxeJqiTuFSL6VSHwIe8aXycbiuW9D7kwzcr/l0KYAcRIBaG
+	mk+dgaiw==
+X-Google-Smtp-Source: AGHT+IHhoshuEgKwX8/Ru0TwidruwNS7pASY+Vm/EhvoTXpz7woWAzVfFchx4yQuMVjUwDXm+8FRJQ==
+X-Received: by 2002:a5d:5d87:0:b0:42b:4069:428b with SMTP id ffacd0b85a97d-42b4069458cmr4219569f8f.51.1762858318427;
+        Tue, 11 Nov 2025 02:51:58 -0800 (PST)
+Received: from [192.168.1.3] ([185.48.77.170])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b316775f2sm17429537f8f.16.2025.11.11.02.51.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Nov 2025 02:51:58 -0800 (PST)
+Message-ID: <8078e440-e97c-425c-b046-987b642640f7@linaro.org>
+Date: Tue, 11 Nov 2025 10:51:56 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251107142149.989998-1-mjguzik@gmail.com> <20251107142149.989998-2-mjguzik@gmail.com>
- <20251111-zeitablauf-plagen-8b0406abbdc6@brauner>
-In-Reply-To: <20251111-zeitablauf-plagen-8b0406abbdc6@brauner>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Tue, 11 Nov 2025 11:51:17 +0100
-X-Gm-Features: AWmQ_bnCfFeVSWAwyetntRCBd7NVaEKInyv2_DDSmZq9FVu_iIxSbOqFI30GDbo
-Message-ID: <CAGudoHEXQb0yYG8K10HfLdwKF4s7jKpdYHJxsASDAvkrTjd0bw@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] fs: speed up path lookup with cheaper handling of MAY_EXEC
-To: Christian Brauner <brauner@kernel.org>
-Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org, tytso@mit.edu, 
-	torvalds@linux-foundation.org, josef@toxicpanda.com, 
-	linux-btrfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 2/5] perf: arm_spe: Add support for filtering on data
+ source
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Jonathan Corbet <corbet@lwn.net>,
+ Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
+ Joey Gouly <joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>,
+ Zenghui Yu <yuzenghui@huawei.com>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>, Leo Yan <leo.yan@arm.com>,
+ Anshuman Khandual <anshuman.khandual@arm.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-perf-users@vger.kernel.org, linux-doc@vger.kernel.org,
+ kvmarm@lists.linux.dev
+References: <20251029-james-perf-feat_spe_eft-v9-0-d22536b9cf94@linaro.org>
+ <20251029-james-perf-feat_spe_eft-v9-2-d22536b9cf94@linaro.org>
+ <20251110154827.GA278048@noisy.programming.kicks-ass.net>
+Content-Language: en-US
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <20251110154827.GA278048@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 11, 2025 at 10:41=E2=80=AFAM Christian Brauner <brauner@kernel.=
-org> wrote:
->
-> On Fri, Nov 07, 2025 at 03:21:47PM +0100, Mateusz Guzik wrote:
-> > +     if (unlikely(((inode->i_mode & 0111) !=3D 0111) || !no_acl_inode(=
-inode)))
->
-> Can you send a follow-up where 0111 is a constant with some descriptive
-> name, please? Can be local to the file. I hate these raw-coded
-> permission masks with a passion.
->
 
-#define UNIX_PERM_ALL_X 0111?
 
-I have no opinion about hardcoding this vs using a macro, but don't
-have a good name for that one either.
+On 10/11/2025 3:48 pm, Peter Zijlstra wrote:
+> On Wed, Oct 29, 2025 at 03:46:02PM +0000, James Clark wrote:
+>> SPE_FEAT_FDS adds the ability to filter on the data source of packets.
+>> Like the other existing filters, enable filtering with PMSFCR_EL1.FDS
+>> when any of the filter bits are set.
+>>
+>> Each bit maps to data sources 0-63 described by bits[0:5] in the data
+>> source packet (although the full range of data source is 16 bits so
+>> higher value data sources can't be filtered on). The filter is an OR of
+>> all the bits, so for example clearing bits 0 and 3 only includes packets
+>> from data sources 0 OR 3.
+>>
+>> Invert the filter given by userspace so that the default value of 0 is
+>> equivalent to including all values (no filtering). This allows us to
+>> skip adding a new format bit to enable filtering and still support
+>> excluding all data sources which would have been a filter value of 0 if
+>> not for the inversion.
+> 
+> So from that I'm reading the config4 field will only have like 16 bits,
+
+The _data source_ is 16 bits, but the _data source filter_ is 64 bits.
+
+> but here:
+> 
+>> +#define ATTR_CFG_FLD_inv_data_src_filter_CFG	config4	/* inverse of PMSDSFR_EL1 */
+>> +#define ATTR_CFG_FLD_inv_data_src_filter_LO	0
+>> +#define ATTR_CFG_FLD_inv_data_src_filter_HI	63
+> 
+> you claim all 64 bits.
+> 
+> Also, afaict:
+> 
+>    #define ATTR_CFG_FLD_min_latency_CFG            config2 /* PMSLATFR_EL1.MINLAT */
+>    #define ATTR_CFG_FLD_min_latency_LO             0
+>    #define ATTR_CFG_FLD_min_latency_HI             11
+> 
+> Still has more than 16 bits left.
+> 
+> 
+> So why exactly are we needing config4? Can we please get a more solid
+> argument?
+
+Each filter bit position maps onto one numerical data source value. The 
+16 bit field in the data source packet gives us possible data sources 
+from 0 - 65535. The 64 bits of the filter allow us to filter on a subset 
+of data sources (0 - 63), but that uses all 64 bits of the filter with 
+one bit used for each source.
+
+I think you are assuming the data source filter can only filter on a 
+single value as if it was interpreted numerically, rather than bitwise? 
+But it's actually interpreted as a separate filter for each bit, which 
+allows the OR semantics that are described in the commit message.
+
+It might be clearer if I add a few more words to differentiate "data 
+source" and "filter":
+
+   Each bit of the 64 bit filter maps to data sources 0-63 described by
+   bits[0:5] in the data source packet (although the full range of data
+   source is 16 bits so higher value data sources can't be filtered on).
+   The filter is an OR of all the filter bits, so for example clearing
+   filter bits 0 and 3 only includes packets from data sources 0 OR 3.
+
 
