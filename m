@@ -1,147 +1,152 @@
-Return-Path: <linux-kernel+bounces-894586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B14C6C4B5C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 04:50:03 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56BA8C4B5D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 04:52:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F144C3B00B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 03:50:01 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 35ABD4E67F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 03:52:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54E7326ED30;
-	Tue, 11 Nov 2025 03:49:55 +0000 (UTC)
-Received: from zg8tmja2lje4os43os4xodqa.icoremail.net (zg8tmja2lje4os43os4xodqa.icoremail.net [206.189.79.184])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D71FE18DB37;
-	Tue, 11 Nov 2025 03:49:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=206.189.79.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E77882FE059;
+	Tue, 11 Nov 2025 03:52:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="iKTx0+W8"
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D4EA2F5474
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 03:52:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762832994; cv=none; b=IkuTvAtbBCt/Jff49IZAz1LSAyO8m3oah+PMBrzbJciLrUMvTVmFSUpSw83RXlMNweEKNSyCdh/KRKfLMQ+UNo7R9s7X3X9fz5srVCTU20nNtoTu65n0urmEPg32pI9gr8L1iCskKzndl0x5LRMX/5PeNShEd28LFK/GcQn1VSQ=
+	t=1762833123; cv=none; b=lAz/yqmLlEzLyPcOW0nzMNk0oqPVRmPsXqzjHPmwb4S2fUOhfncHoDerKXl9Q+91lLjtVdQj2UFnh1ENY+6NaFaCP1xfGt+ifJjo0RJvHxh5B2WVwt1uZvKWe3G11bwMbW2pWuGbAi/K4y6EtvYPCM9QbKl02ByZAhaAHp70PPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762832994; c=relaxed/simple;
-	bh=STHJLspIN9GMreqf9eZB/pVMf7p4s1+eyp3LDryWZUk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=mB6LduuaMFYHja+uFYej0HKvOdYSq2T7G8fej9zQPVkaLtyJLHU1rY9RhuP+y5ZtpY28ASda3jGJCBDTOUcEE2B1rWZre/v21MjOSKd8AN57HPZ/Yiq5ovafg24v9YE/5br3XYvGiYPwKN/2KGuN1hG/8kTFsT9KHjDUQCkdO0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=206.189.79.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
-Received: from zhangsenchuan$eswincomputing.com ( [10.12.96.83] ) by
- ajax-webmail-app2 (Coremail) ; Tue, 11 Nov 2025 11:49:24 +0800 (GMT+08:00)
-Date: Tue, 11 Nov 2025 11:49:24 +0800 (GMT+08:00)
-X-CM-HeaderCharset: UTF-8
-From: zhangsenchuan <zhangsenchuan@eswincomputing.com>
-To: "Frank Li" <Frank.li@nxp.com>, mani@kernel.org
-Cc: bhelgaas@google.com, krzk+dt@kernel.org, conor+dt@kernel.org,
-	lpieralisi@kernel.org, kwilczynski@kernel.org, robh@kernel.org,
-	p.zabel@pengutronix.de, jingoohan1@gmail.com,
-	gustavo.pimentel@synopsys.com, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	christian.bruel@foss.st.com, mayank.rana@oss.qualcomm.com,
-	shradha.t@samsung.com, krishna.chundru@oss.qualcomm.com,
-	thippeswamy.havalige@amd.com, inochiama@gmail.com,
-	ningyu@eswincomputing.com, linmin@eswincomputing.com,
-	pinkesh.vaghela@einfochips.com, ouyanghui@eswincomputing.com
-Subject: Re: Re: [PATCH v5 2/2] PCI: eic7700: Add Eswin PCIe host controller
- driver
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2024.2-cmXT6 build
- 20241203(6b039d88) Copyright (c) 2002-2025 www.mailtech.cn
- mispb-72143050-eaf5-4703-89e0-86624513b4ce-eswincomputing.com
-In-Reply-To: <aRJBFoRC5rm+5rHa@lizhi-Precision-Tower-5810>
-References: <20251110090716.1392-1-zhangsenchuan@eswincomputing.com>
- <20251110090953.1429-1-zhangsenchuan@eswincomputing.com>
- <aRJBFoRC5rm+5rHa@lizhi-Precision-Tower-5810>
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1762833123; c=relaxed/simple;
+	bh=EWnsbrhjx9CE8E9O3tAfZpamK18dXAIf00y7wu53fA0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b/nrW6bsjC5zioIMeB/BxskzpF8B7ofdAX9rt9Nf3S4qRcj7KF3obnKzhA6RCeYE1Wun5ZbjP/NmFcb3zQgmvYZJpYWKBATyvsGTkEEx73EQ5WGxOI+muUB7KIpaWBw7vrXw9yo8TA81AT0bMJO9yDMiYnjomXiHtOv+cGa/NC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=iKTx0+W8; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from trampoline.thunk.org (pool-173-48-122-154.bstnma.fios.verizon.net [173.48.122.154])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 5AB3phHq007802
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Nov 2025 22:51:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1762833105; bh=T3uUoS64/1g+j1dW9ReEGjN0D7EazGB2spXReUkJcGQ=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=iKTx0+W8/1TW6Eyvn10+EpRvSGS4jHuwbPmWFfa9DAX6U5luS1kY8kh/2pvzYdHu5
+	 O3W7Y0BJVAqTJnii8uWUYDLsPdkCpVa9tGbNsWTJeu4G+bM2u8eL8dr8njtL0DHIE3
+	 G4kgfxe86v2dfJvRukAJVTdJZGjA71LLNfmFusDBv/sIqDHRv20xXNYI1V7ojJrQ7Z
+	 d7/63gToS3WjZC7psKI4K06Bwb/zvtdBkJ9qAv3YsEpdGBPDn1dYUdcGfIgW/3EXZ6
+	 Z3qvjT9Wf6+/+0Skw9fWFBBk1iFkGcQW2mBHGYOgpRgk26ZLPROU0QAQEOAOuiQic8
+	 h33FTlHSJVQGg==
+Received: by trampoline.thunk.org (Postfix, from userid 15806)
+	id 941902E00D9; Mon, 10 Nov 2025 22:51:43 -0500 (EST)
+Date: Mon, 10 Nov 2025 22:51:43 -0500
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Maarten Brock <Maarten.Brock@sttls.nl>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: RFC: Serial port DTR/RTS - O_NRESETDEV
+Message-ID: <20251111035143.GJ2988753@mit.edu>
+References: <bb44f856-10a2-40c7-a3f7-be50c8e4b0a9@zytor.com>
+ <20251107173743.GA3131573@mit.edu>
+ <dc42f5d4-a707-4442-bda6-1c1990666f54@zytor.com>
+ <20251110033556.GC2988753@mit.edu>
+ <ADB50E23-DC8B-43D0-A345-E10396A3DFD4@zytor.com>
+ <AMBPR05MB11925DA076098B05E418BF64283CEA@AMBPR05MB11925.eurprd05.prod.outlook.com>
+ <20251110201933.GH2988753@mit.edu>
+ <0F8021E8-F288-4669-8195-9948844E36FD@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <4f4d2055.77.19a71085b29.Coremail.zhangsenchuan@eswincomputing.com>
-X-Coremail-Locale: en_US
-X-CM-TRANSID:TQJkCgC3+q1EshJpOoR6AA--.605W
-X-CM-SenderInfo: x2kd0wpvhquxxxdqqvxvzl0uprps33xlqjhudrp/1tbiAgEDBmkSE
-	9sRjQAAsp
-X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
-	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
-	daVFxhVjvjDU=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <0F8021E8-F288-4669-8195-9948844E36FD@zytor.com>
 
-CgoKPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2VzLS0tLS0KPiBGcm9tOiAiRnJhbmsgTGkiIDxGcmFu
-ay5saUBueHAuY29tPgo+IFNlbmQgdGltZTpUdWVzZGF5LCAxMS8xMS8yMDI1IDAzOjQ2OjMwCj4g
-VG86IHpoYW5nc2VuY2h1YW5AZXN3aW5jb21wdXRpbmcuY29tCj4gQ2M6IGJoZWxnYWFzQGdvb2ds
-ZS5jb20sIG1hbmlAa2VybmVsLm9yZywga3J6aytkdEBrZXJuZWwub3JnLCBjb25vcitkdEBrZXJu
-ZWwub3JnLCBscGllcmFsaXNpQGtlcm5lbC5vcmcsIGt3aWxjenluc2tpQGtlcm5lbC5vcmcsIHJv
-YmhAa2VybmVsLm9yZywgcC56YWJlbEBwZW5ndXRyb25peC5kZSwgamluZ29vaGFuMUBnbWFpbC5j
-b20sIGd1c3Rhdm8ucGltZW50ZWxAc3lub3BzeXMuY29tLCBsaW51eC1wY2lAdmdlci5rZXJuZWwu
-b3JnLCBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZywgbGludXgta2VybmVsQHZnZXIua2VybmVs
-Lm9yZywgY2hyaXN0aWFuLmJydWVsQGZvc3Muc3QuY29tLCBtYXlhbmsucmFuYUBvc3MucXVhbGNv
-bW0uY29tLCBzaHJhZGhhLnRAc2Ftc3VuZy5jb20sIGtyaXNobmEuY2h1bmRydUBvc3MucXVhbGNv
-bW0uY29tLCB0aGlwcGVzd2FteS5oYXZhbGlnZUBhbWQuY29tLCBpbm9jaGlhbWFAZ21haWwuY29t
-LCBuaW5neXVAZXN3aW5jb21wdXRpbmcuY29tLCBsaW5taW5AZXN3aW5jb21wdXRpbmcuY29tLCBw
-aW5rZXNoLnZhZ2hlbGFAZWluZm9jaGlwcy5jb20sIG91eWFuZ2h1aUBlc3dpbmNvbXB1dGluZy5j
-b20KPiBTdWJqZWN0OiBSZTogW1BBVENIIHY1IDIvMl0gUENJOiBlaWM3NzAwOiBBZGQgRXN3aW4g
-UENJZSBob3N0IGNvbnRyb2xsZXIgZHJpdmVyCj4gCj4gT24gTW9uLCBOb3YgMTAsIDIwMjUgYXQg
-MDU6MDk6NTNQTSArMDgwMCwgemhhbmdzZW5jaHVhbkBlc3dpbmNvbXB1dGluZy5jb20gd3JvdGU6
-Cj4gPiBGcm9tOiBTZW5jaHVhbiBaaGFuZyA8emhhbmdzZW5jaHVhbkBlc3dpbmNvbXB1dGluZy5j
-b20+Cj4gPgo+ID4gQWRkIGRyaXZlciBmb3IgdGhlIEVzd2luIEVJQzc3MDAgUENJZSBob3N0IGNv
-bnRyb2xsZXIsIHdoaWNoIGlzIGJhc2VkIG9uCj4gPiB0aGUgRGVzaWduV2FyZSBQQ0llIGNvcmUs
-IElQIHJldmlzaW9uIDYuMDBhLiBUaGUgUENJZSBHZW4uMyBjb250cm9sbGVyCj4gPiBzdXBwb3J0
-cyBhIGRhdGEgcmF0ZSBvZiA4IEdUL3MgYW5kIDQgY2hhbm5lbHMsIHN1cHBvcnQgSU5UeCBhbmQg
-TVNJCj4gPiBpbnRlcnJ1cHRzLgo+ID4KPiA+IFNpZ25lZC1vZmYtYnk6IFl1IE5pbmcgPG5pbmd5
-dUBlc3dpbmNvbXB1dGluZy5jb20+Cj4gPiBTaWduZWQtb2ZmLWJ5OiBZYW5naHVpIE91IDxvdXlh
-bmdodWlAZXN3aW5jb21wdXRpbmcuY29tPgo+ID4gU2lnbmVkLW9mZi1ieTogU2VuY2h1YW4gWmhh
-bmcgPHpoYW5nc2VuY2h1YW5AZXN3aW5jb21wdXRpbmcuY29tPgo+ID4gLS0tCj4gPiAgZHJpdmVy
-cy9wY2kvY29udHJvbGxlci9kd2MvS2NvbmZpZyAgICAgICAgfCAgMTEgKwo+ID4gIGRyaXZlcnMv
-cGNpL2NvbnRyb2xsZXIvZHdjL01ha2VmaWxlICAgICAgIHwgICAxICsKPiA+ICBkcml2ZXJzL3Bj
-aS9jb250cm9sbGVyL2R3Yy9wY2llLWVpYzc3MDAuYyB8IDQyMCArKysrKysrKysrKysrKysrKysr
-KysrCj4gPiAgMyBmaWxlcyBjaGFuZ2VkLCA0MzIgaW5zZXJ0aW9ucygrKQo+ID4gIGNyZWF0ZSBt
-b2RlIDEwMDY0NCBkcml2ZXJzL3BjaS9jb250cm9sbGVyL2R3Yy9wY2llLWVpYzc3MDAuYwo+ID4K
-PiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3BjaS9jb250cm9sbGVyL2R3Yy9LY29uZmlnIGIvZHJp
-dmVycy9wY2kvY29udHJvbGxlci9kd2MvS2NvbmZpZwo+ID4gaW5kZXggMzQ5ZDQ2NTczOTNjLi42
-NjU2OGVmYjMyNGYgMTAwNjQ0Cj4gPiAtLS0gYS9kcml2ZXJzL3BjaS9jb250cm9sbGVyL2R3Yy9L
-Y29uZmlnCj4gPiArKysgYi9kcml2ZXJzL3BjaS9jb250cm9sbGVyL2R3Yy9LY29uZmlnCj4gPiBA
-QCAtOTMsNiArOTMsMTcgQEAgY29uZmlnIFBDSUVfQlQxCj4gPiAgCSAgRW5hYmxlcyBzdXBwb3J0
-IGZvciB0aGUgUENJZSBjb250cm9sbGVyIGluIHRoZSBCYWlrYWwtVDEgU29DIHRvIHdvcmsKPiA+
-ICAJICBpbiBob3N0IG1vZGUuIEl0J3MgYmFzZWQgb24gdGhlIFN5bm9wc3lzIERXQyBQQ0llIHY0
-LjYwYSBJUC1jb3JlLgo+ID4KPiAuLi4KPiA+ICsKPiA+ICtzdGF0aWMgdm9pZCBlaWM3NzAwX3Bj
-aWVfcG1lX3R1cm5fb2ZmKHN0cnVjdCBkd19wY2llX3JwICpwcCkKPiA+ICt7Cj4gPiArCXN0cnVj
-dCBkd19wY2llICpwY2kgPSB0b19kd19wY2llX2Zyb21fcHAocHApOwo+ID4gKwo+ID4gKwkvKgo+
-ID4gKwkgKiBIYXJkd2FyZSBkb2Vzbid0IHN1cHBvcnQgZW50ZXIgdGhlIEQzY29kZSBhbmQgTDIv
-TDMgc3RhdGVzLCBzZW5kCj4gPiArCSAqIFBNRV9UdXJuX09mZiBtZXNzYWdlLCB3aGljaCB3aWxs
-IHRoZW4gY2F1c2UgVm1haW4gdG8gYmUgcmVtb3ZlZCBhbmQKPiA+ICsJICogY29udHJvbGxlciBz
-dG9wIHdvcmtpbmcuCj4gPiArCSAqLwo+ID4gKwlkZXZfaW5mbyhwY2ktPmRldiwgIkNhbid0IHNl
-bmQgUE1FX1R1cm5fT2ZmIG1lc3NhZ2VcbiIpOwo+ID4gK30KPiAKPiBEZWZpbmUgYSBxdWlyayB0
-byBsZXQgZHdfcGNpZV9zdXNwZW5kX25vaXJxKCkgc2tpcCBjYWxsIHBtZV90dXJuX29mZigpCj4g
-aW5zdGVhZCBkbyBub3RoaW5nIGhlcmUuIFNvIG90aGVyIGRyaXZlciBjYW4gcmV1c2UgdGhpcyBx
-dWlyayBpZiBtZWV0IHRoZQo+IHNpbWlsYXIgc2l0dWF0aW9uLgoKSGksIEZyYW5rIE1hbmkKClBs
-YW7vvJoKSW4gdGhlIGR3X3BjaWVfc3VzcGVuZF9ub2lycSBmdW5jdGlvbiwgYWRkIHRoZSBub19z
-dXNwcG9ydF9MMjMgZmxhZyB0byAKZGV0ZXJtaW5lIHdoZXRoZXIgdG8gc2tpcCB0aGUgcG1lX3R1
-cm5fb2ZmIGFuZCByZWFkX3BvbGxfdGltZW91dCBmdW5jdGlvbnMuCgogICAgICAgICBzdHJ1Y3Qg
-ZHdfcGNpZSB7CiAgICAgICAgICAgICAgICAgLi4uLi4uLi4uLi4KICAgICAgICAgICAgICAgICBi
-b29sIG5vX3N1c3Bwb3J0X0wyMzsKICAgICAgICAgfQoKCWlmIChwY2ktPm5vX3N1c3Bwb3J0X0wy
-MykKCQlnb3RvIHNraXBfTDIzOwogICAgICAgICAKICAgICAgICAgICAgIC4uLi4uLi4KCiAgICAg
-c2tpcF9MMjM6CiAgICAgICAgZHdfcGNpZV9zdG9wX2xpbmsocGNpKTsKCWlmIChwY2ktPnBwLm9w
-cy0+ZGVpbml0KQoJCXBjaS0+cHAub3BzLT5kZWluaXQoJnBjaS0+cHApOwoKVGhpcyBzdWJtaXNz
-aW9uIGlzIGFsc28gc2tpcHBpbmcgcG1lX3R1cm5fb2ZmIGFuZCByZWFkX3BvbGxfdGltZW91dCwg
-dGhlIGFib3ZlIGFsc28gCmNvbnRyb2xzIHRoZSBzYW1lIGNvZGUuIENvdWxkIGl0IGJlIGNvbnNp
-ZGVyZWQgdG8gbWVyZ2UgdGhlIGFib3ZlIGNvZGUsIHNvIG90aGVyIApkcml2ZXIgY2FuIHJldXNl
-IHRoaXMgZmxhZyBpZiBtZWV0IHRoZSBzaW1pbGFyIHNpdHVhdGlvbi4gT3IgdGhlcmUgYXJlIG90
-aGVyIGJldHRlcgp3YXlzIHRvIHNvbHZlIHRoaXMgcHJvYmxlbT8KaHR0cHM6Ly9sb3JlLmtlcm5l
-bC5vcmcvbGludXgtcGNpL2FSSVNQZ0NaeUVaeFN0SU5AbGl6aGktUHJlY2lzaW9uLVRvd2VyLTU4
-MTAvI3QKCkxvb2tpbmcgZm9yd2FyZCB0byB5b3VyIHJlcGx5LiBUaGFuayB5b3UgdmVyeSBtdWNo
-IQoKS2luZCByZWdhcmRzLApTZW5jaHVhbiBaaGFuZwoKPiAKPiBBbmQgdXNlIHF1aXJrIHRvIGtu
-b3cgaGFyZHdhcmUgbGltaXN0aW9uIGVhc2lseS4KPiAKPiBEbyB5b3Uga25vdyB3aHkgY29udHJv
-bGxlciBzdG9wIHdvcmtpbmcgaWYgdm1haW4gYmUgcmVtb3ZlZC4gU3VwcG9zZSByZXN1bWUKPiB3
-aWxsIHJlaW5pdCBob3N0IGNvbnRyb2xsZXIgYXQgcmVzdW1lLgoKVGhyb3VnaCB0ZXN0aW5nLCBp
-ZiB2bWFpbiBiZSByZW1vdmVkIGFuZCBjb250cm9sbGVyIHN0b3Agd29ya2luZywgdGhlIGRiaSAK
-cmVnaXN0ZXIgc2hvd3MgdGhhdCBpdCBjYW5ub3QgYmUgYWNjZXNzZWRlZC4gVGhlIGxpbmsgc3Rh
-dGUgY2Fubm90IGJlIHJlYWQgCmluIHRoZSByZWFkX3BvbGxfdGltZW91dCBmdW5jdGlvbi4KCj4g
-Cj4gPiArCj4gPiArc3RhdGljIGNvbnN0IHN0cnVjdCBkd19wY2llX2hvc3Rfb3BzIGVpYzc3MDBf
-cGNpZV9ob3N0X29wcyA9IHsKPiA+ICsJLmluaXQgPSBlaWM3NzAwX3BjaWVfaG9zdF9pbml0LAo+
-ID4gKwkuZGVpbml0ID0gZWljNzcwMF9wY2llX2hvc3RfZGVpbml0LAo+ID4gKwkucG1lX3R1cm5f
-b2ZmID0gZWljNzcwMF9wY2llX3BtZV90dXJuX29mZiwKPiA+ICt9Owo+ID4gKwo+IC4uLgo+ID4g
-Mi4yNS4xCj4gPgo=
+On Mon, Nov 10, 2025 at 01:05:55PM -0800, H. Peter Anvin wrote:
+> 
+> The parport driver layer is kind of similar to this, in some ways,
+> but in the tty layer that is mostly handled by line disciplines
+> instead. (The parport hardware was generally abused on a much lower
+> level, as a substitute for GPIOs, so even the notion of a byte
+> stream wasn't there.)
+
+I'm not an RS-485 expert, but over the years, I've heard all sorts of
+"interesting" timing requirements.  For example RTS can only be
+dropped when the UART's shift register has completely drained.  That's
+not when the OS has sent the characters to the FIFO (which is why
+tcdrain isn't quite what you want); it's not when the UART has sent
+the transmit interrupt, but when the UART's shift register is *empty*.
+Doing this via the termios interface is decidedly non-optimal[1].
+
+[1] https://www.moxa.com.cn/getmedia/a07808dd-f3d7-473b-9a2f-93b5ce673bb1/moxa-the-secrets-of-rs-485-half-duplex-communication-tech-note-v1.0.pdf
+
+It *can* be done, sure, with some strategic usleep()'s, but not
+necessarily optimally, and it is decidedly hacky.  From what I can
+tell, it's actually not *that* different from treating RTS as a GPIO
+pin, and really, this ought to be done in the kernel if you want
+optimal control oer the timing of when RTS gets toggeled.
+
+> *If* I'm reading the code correctly – which is a little complicated due to the sheer number of abstraction layers – hardware initialization is already deferred until first open, which would mean that disabling autoconfiguration (one of the features in TIOCSSERIAL) would again be a valid reason for wanting to be able to communicate with a device driver before requiring that it puts the underlying hardware in the state expected for operation *in the mode configured* (catch-22).
+
+Well, part of the problem is that the PC's serial port predates PCI,
+so there's no way we can tell whether or not there is a serial port at
+a particular I/O port except by poking certain I/O ports, and seeing
+if there is something that looks like a UART which responds.
+Hopefully this won't accidentaly cause the NSA's thermite-charge
+self-destruct charge from getting set off, and in practice, mainboard
+designers who try to put things at the COM1/2/3/4 generally get weeded
+out thanks to natural selection, hopefully without harming users along
+the way.  :-)
+
+Worse, we also wanted to support serial cards that were at
+non-standard ports, or using non-standard interrupts, and so that's
+one of the reason hardware initialization is deferred until after we
+have a chance to configure the serial device's I/O port and interrupt.
+
+Now, we are in the 21st century, and just as we are trying to declare
+32-bit i386 dead (to the disappointment of legacy hardware owners
+everywhere who are whining about Debian dropping installer support for
+i386), we could try to declare the ISA bus as dead, and no longer
+being supported, and we could probably drop a bunch of this
+complexity.  We probably would need to support COM 1/2/3/4 ports since
+these still tend to be hardwared without a way of detecting it their
+existing via USB or PCI bus discovery mechanisms.  And for those, we
+would still need to do UART autoconfiguration.  I suppose we could
+just assume that all UART's are 16550A's, and that noone would
+actually use older UART's type --- except (a) I bet there are some
+cheap-skate embedded computer designers who decided to use a 8250
+instead of 16550A for $REASONS$, and because of the extreme timing
+requirements of some RS-485 use cases, I believe I have seen
+recommendations to use setserial to actually force the UART into 8250
+mode, to disable the TX FIFO --- all to satisfying the weird-shit RTS
+timing requirements.  (This is where I get my beief that RS-485 !=
+RS-232, and if you want to do all of this weird-shit timing
+requirements because you are trying to implemet a multi-node bus which
+is half-duplex, maybe this should be done in the kernel, damn it!)
+
+
+How about this?  If you really don't want to open the device to
+configure it not to assert DTR/RTS, perhaps we could specify on the
+boot command line that one of TTYS[0123] has a different default line
+discipline, and when tty's are opened when the RS-485 line displine,
+the RS-485 rules apply, which would include not messing with DTR/RTS,
+and if you want to play games with RTS getting dropped as soon as the
+last bit has let the transmit shift register, we can get the kernel do
+this in the line discpline, which arguably would be *way* more
+reliable than playing GPIO-style timing games in userspace.
+
+	      	      		 	      - Ted
 
