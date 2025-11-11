@@ -1,130 +1,113 @@
-Return-Path: <linux-kernel+bounces-895051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44482C4CC37
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:49:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB9DCC4CCD0
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:57:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21B001890A83
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:49:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2760042593A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:49:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5F3A2F3C07;
-	Tue, 11 Nov 2025 09:49:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 467E42EDD72;
+	Tue, 11 Nov 2025 09:49:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="lpAMrkJk"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HOeJ3RVZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10EBD2D130B;
-	Tue, 11 Nov 2025 09:49:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A58326A0DD;
+	Tue, 11 Nov 2025 09:49:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762854550; cv=none; b=JvT2jSS0cRzN3K9W7S9zB6BX81W9A0lu/O2NDERSDrcke5giZWolHjoiD3DG43rQVOw/1SN9zVg0VKUqnUGcoYnAMFI+bOQrWuwhjOiD2+UnUdNaalIQgQwUu9eHHsl2n1bkvLyhEMqaymlI4dmc7AwuUlqE8H24Tpk6eCFCd94=
+	t=1762854546; cv=none; b=rofJN24vak5EWi4zVn71gqX2KrP+JMibSwyojFAbxROLeCUcKWxiYdGqAluyd924PhoHuoVrL8X1u8wjOkfCsAALGPPY0xcO2p4Os1yVcpQz7uYmi0PXzXbu5aBhhC/nzNLpxrLrQQm+0vWuZre+vEDucYj+M710Di14wkH0cSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762854550; c=relaxed/simple;
-	bh=nvoWb3cd+VFNoskVX/9UBGBSWxsWZtmu+agDwT9H9mc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ux3SZLCbJqF3LuT63fufpLjQ+wJk0BrsdK4FR8qD05mJQfiJUvy72/Ief5iFHIQcSWD3AQwPTRymx7UNWdsYBLuMvoSwYuFqFx6+7pxRzTmd35JXwB0omAEP8f9sI7YHt3nsrCJFngFTF1lxr3pm8zKCPichlshuCty6S8iGWh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=lpAMrkJk; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=3vHk8yv00/JQMYrmI8CKdJho/+2xxViBt86X+AiwkXs=; b=lpAMrkJkFiawgDhsUd7cK2vYGW
-	HHuZnAakrmemk6S3lWl3WIxalRsV0Fxr6TsaMz743ajjVlUUk8WVJAXlPVJ4cjEayDYBDB8DFO2k+
-	/t83snfNII/EsKt1zpPpqhB/UFTr86lPP433nbohp8PheXFfoQl1QMn3iLbIrURUN5rocusBJH1A+
-	C+ab8nwdr5Z4uc1LqBrHaDwvLLGqT+flXKWN+gz9/A7udKvpVzW8CPyhMcxtUbETtgDIRnBzM0A0+
-	E4sH7O377i+vT70DtUZvs6qJcZ2e7vHFUNY0l4ir1hy3qP+eKy5+rp/RbEZjUVLbfU21f0q3LsfEV
-	d4kkO1rA==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:43662)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	s=arc-20240116; t=1762854546; c=relaxed/simple;
+	bh=n/kM1AzkAh+XotAdnnKzHeaD66yI0/no2z219kdImyI=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XOYTEH2oqGZFc4noenf5d2TSqSZVbayKtkdRKHn8i3VmhYQ7jYYJ19zT3dC4Z4oO+kgdJ/b7Ob7N2tlGEUHQ7iimiFeImhRS5i/Fp9u815xBXbBtFcVu5+Q5vMJ9Qkfb3mjFRc4GhcFo/ZYB6fGK1WNgJGjgjDjhTkIuFEpKzYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HOeJ3RVZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB372C19421;
+	Tue, 11 Nov 2025 09:49:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762854546;
+	bh=n/kM1AzkAh+XotAdnnKzHeaD66yI0/no2z219kdImyI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=HOeJ3RVZZB/4oSIYEvD8eHEipzvZOFaJqnkE42dmMFp+tB9OuzjLWz04+YM3z7R4U
+	 lcaEalhowL1o71cerk5eX47EHL+ajre+fi2UEyJi1xInplcb7+DTXcolqUX2R5nGjK
+	 6MBMS9grqKVToRjoS/YeVP7uQixVgsoLfttes1N01Nh3coRsXQHPgvQXU4w4kWOnxq
+	 iTV9Sv5znQ/WVyipDX6Eh5zMTxj++G97cXGP2KglHW5b3TIN+Akg5PHoftE2jnkGiu
+	 Nq4Ktn6Go9uKbNUmiwWIpZYgET9XI++vRz/VbZK/uBooblkYrgAlMYga9XRb72DXVa
+	 aZdMFVmKrv7Fg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.98.2)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1vIkzh-000000002It-12u1;
-	Tue, 11 Nov 2025 09:48:57 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1vIkzd-000000002qb-21yZ;
-	Tue, 11 Nov 2025 09:48:53 +0000
-Date: Tue, 11 Nov 2025 09:48:53 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com, maxime.chevallier@bootlin.com,
-	boon.khai.ng@altera.com, netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 2/2] net: stmmac: Disable EEE RX clock stop when
- VLAN is enabled
-Message-ID: <aRMGhXohIK5swFSM@shell.armlinux.org.uk>
-References: <20251111093000.58094-1-ovidiu.panait.rb@renesas.com>
- <20251111093000.58094-3-ovidiu.panait.rb@renesas.com>
+	(envelope-from <maz@kernel.org>)
+	id 1vIkzn-00000004Alt-2bIR;
+	Tue, 11 Nov 2025 09:49:03 +0000
+Date: Tue, 11 Nov 2025 09:49:03 +0000
+Message-ID: <86346kvr00.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Osama Abdelkader <osama.abdelkader@gmail.com>
+Cc: oupton@kernel.org,
+	joey.gouly@arm.com,
+	suzuki.poulose@arm.com,
+	yuzenghui@huawei.com,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] KVM: arm64: add missing newline to sysreg init log
+In-Reply-To: <20251110211051.814728-1-osama.abdelkader@gmail.com>
+References: <20251110211051.814728-1-osama.abdelkader@gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251111093000.58094-3-ovidiu.panait.rb@renesas.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: osama.abdelkader@gmail.com, oupton@kernel.org, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Tue, Nov 11, 2025 at 09:30:00AM +0000, Ovidiu Panait wrote:
-> On the Renesas RZ/V2H EVK platform, where the stmmac MAC is connected to a
-> Microchip KSZ9131RNXI PHY, creating or deleting VLAN interfaces may fail
-> with timeouts:
+On Mon, 10 Nov 2025 21:10:51 +0000,
+Osama Abdelkader <osama.abdelkader@gmail.com> wrote:
 > 
->     # ip link add link end1 name end1.5 type vlan id 5
->     15c40000.ethernet end1: Timeout accessing MAC_VLAN_Tag_Filter
->     RTNETLINK answers: Device or resource busy
+> missing newline so the  message is merged with follow-on logs
+> the change only affects console output formatting, no behavioral impact.
 > 
-> Disabling EEE at runtime avoids the problem:
+> Signed-off-by: Osama Abdelkader <osama.abdelkader@gmail.com>
+> ---
+>  arch/arm64/kvm/arm.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
->     # ethtool --set-eee end1 eee off
->     # ip link add link end1 name end1.5 type vlan id 5
->     # ip link del end1.5
-> 
-> The stmmac hardware requires the receive clock to be running when writing
-> certain registers, such as those used for MAC address configuration or
-> VLAN filtering. However, by default the driver enables Energy Efficient
-> Ethernet (EEE) and allows the PHY to stop the receive clock when the link
-> is idle. As a result, the RX clock might be stopped when attempting to
-> access these registers, leading to timeouts and other issues.
-> 
-> Commit dd557266cf5fb ("net: stmmac: block PHY RXC clock-stop")
-> addressed this issue for most register accesses by wrapping them in
-> phylink_rx_clk_stop_block()/phylink_rx_clk_stop_unblock() calls.
-> However, VLAN add/delete operations may be invoked with bottom halves
-> disabled, where sleeping is not allowed, so using these helpers is not
-> possible.
-> 
-> Therefore, to fix this, disable the RX clock stop feature in the phylink
-> configuration if VLAN features are set. This ensures the RX clock remains
-> active and register accesses succeed during VLAN operations.
-> 
-> Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
+> diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
+> index 870953b4a8a7..156cd1a6106e 100644
+> --- a/arch/arm64/kvm/arm.c
+> +++ b/arch/arm64/kvm/arm.c
+> @@ -2845,7 +2845,7 @@ static __init int kvm_arm_init(void)
+>  
+>  	err = kvm_sys_reg_table_init();
+>  	if (err) {
+> -		kvm_info("Error initializing system register tables");
+> +		kvm_info("Error initializing system register tables\n");
+>  		return err;
+>  	}
+>  
 
-Thanks for the patch. I guess there is no other way around this, since
-as I've previously noted (and as you say above) we can't sleep in the
-VLAN ops to access the PHY.
+Given that everything in kvm_sys_reg_table_init() already screams
+badly when it fails, I don't see the point of an additional message,
+and I'd rather remove it.
 
-I would like a comment in the code above this if() to state that EEE
-RX clock stop is disabled to allow access to VLAN registers to work.
-With that added, please add:
+Thanks,
 
-Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
-
-Thanks!
+	M.
 
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Without deviation from the norm, progress is not possible.
 
