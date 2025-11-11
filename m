@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-896274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B16FBC50050
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 23:53:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 20EDFC50053
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 23:54:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AA5094E7F17
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 22:51:49 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4E0E04F4823
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 22:51:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2809F2F6592;
-	Tue, 11 Nov 2025 22:50:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6F432F8BCB;
+	Tue, 11 Nov 2025 22:50:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cosvdhqL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oV4wwU7P"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 851192F656E;
-	Tue, 11 Nov 2025 22:50:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 117632F7465
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 22:50:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762901450; cv=none; b=Rrt1Dol9cZ16ooJmmt6LQuq1ra+3t7Ml3lnXnMy5W7qOVSZglvFl4eD9qUCjRxyP/DMYYVlMeJ7gIpzIlQ6mbi1xMLOXYdsZ/tMRoXWVB8jy229glIa8nZO929s61Do0MXQZS1QXN/1aDrjFID8lUWVcmVW/ncIMD/J0DfyjNc8=
+	t=1762901452; cv=none; b=ZnsIZSXSz/yJ3BSpza2gWmelmB+/r7jJnYVvBYfWWMixF2toxOZ0dDYbX44NEr+Gcp6EDV9RmbFNR8xKla8dOtLn+1/Dgm1aSdOR2/Alw/3DivE+Y4hoHYoO4Sh42RNKo/D9CjNUJErG3ZurW3iqqXSPlFKBy8KqB/6akSF3Q3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762901450; c=relaxed/simple;
-	bh=vn2gL6MOI11wVy8RMceFUcCj5h0SeTBKfJ0/P0DfPKg=;
+	s=arc-20240116; t=1762901452; c=relaxed/simple;
+	bh=aBeUVRElA6skoKpJp7e24LRjOo41rE3IgWMUo5RwVfo=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=ckHqDCaIesRf65savYF2CJhGUwVw8EXfygz8ACx5NjCbPgNVM93rv+LDQi/M//NEpbr7rp6dod4Gf1Hc1GJluy+r/chrpB3CYE5hhqtST1Bv3kI1IxPwcw/k9c37NGyLIlW3h4AEiS7UypElnUyU9tuIjZKILA3+BThk+GxJm2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cosvdhqL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2495DC113D0;
-	Tue, 11 Nov 2025 22:50:50 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=j88GPd5kgWkok8Cs5bqaZembmhnHI+hS298ys68L3jh51VHW+NmOqwpEVfW8fPulmTt+reguDSHCwg4ic+TJpXBGCosr1qKCgNHWbjnZVQFAHbCxc1ZkxDsJOh+wxlTAMDJsdJwio0fZptMeX11mUe1nVs9FPgKjiCmhqr2DvI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oV4wwU7P; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A415C116B1;
+	Tue, 11 Nov 2025 22:50:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762901450;
-	bh=vn2gL6MOI11wVy8RMceFUcCj5h0SeTBKfJ0/P0DfPKg=;
+	s=k20201202; t=1762901451;
+	bh=aBeUVRElA6skoKpJp7e24LRjOo41rE3IgWMUo5RwVfo=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=cosvdhqLr34OeP8XAUE3+1jUYM8RTNQxEYagv9YUqbW70wGIiaLcN8vvqahXsyAhY
-	 10IWJsh3jKoOvclBo3p7a4U7hW9+HIvNbjCtUN9HNzMqJ8BbMU3VutWn6ChWY/tAzO
-	 Q8u48QbL8j/iyzPAAChTxtLLL/FzLEOCsKsRzfRkqAhyuiT5/aQE7V5kTgUwjLD2q1
-	 L5I8Rka3tu1fg2AT6DbXD6tFnzSa8k9tthj4Cm4UVlCO6LA9k2B3TOkqpp8NBIi3OP
-	 u5tjbskCR2/TU/EdiYmoTZvXmgrA/FJ+PR2Q93Ui+xFB4stBoGaZofyV1l3pNlwSr/
-	 efBLis0aQfk3A==
+	b=oV4wwU7PMLNL8tSbxjcJBNKJZR2Yl7nZx1Bb/IvL3mHJ01hzFaUBvgK1qG8bD7hsV
+	 /DtyjbEDN/rG8im93qORWJ34LamMOqIhE/OJiCAnD8BRURQN2z4DeUx+xwRyLcsEeJ
+	 CwH8DPMUW5pNgVEMxysMZXpvRFBymo1xvjsJSLnV11gt4VjUpzwQSCSk5smqXgqxUR
+	 hmWU/KWEdPu5M3qvluZGjSmRcR6jq1vUY4dKYoYt3LLshIeBRemur5yfOJDaSuACR4
+	 PsXU+iVbPKDB7aK/GFtENSCoqaRLyMEK8Nm7kmwW16JXNz3IzM8NnJa4bUbMlymm8m
+	 1emtmFAaPklMQ==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70D3F380DBCD;
-	Tue, 11 Nov 2025 22:50:21 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB26E380DBCD;
+	Tue, 11 Nov 2025 22:50:22 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,43 +51,45 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: invalidate dentry cache on failed
- whiteout creation
+Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: fix return value of
+ f2fs_recover_fsync_data()
 From: patchwork-bot+f2fs@kernel.org
 Message-Id: 
- <176290142024.3596344.13243926252945264194.git-patchwork-notify@kernel.org>
-Date: Tue, 11 Nov 2025 22:50:20 +0000
-References: <20251027130635.13739-1-kartikey406@gmail.com>
-In-Reply-To: <20251027130635.13739-1-kartikey406@gmail.com>
-To: Deepanshu Kartikey <kartikey406@gmail.com>
-Cc: jaegeuk@kernel.org, chao@kernel.org,
- syzbot+632cf32276a9a564188d@syzkaller.appspotmail.com,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+ <176290142149.3596344.6185023964431728544.git-patchwork-notify@kernel.org>
+Date: Tue, 11 Nov 2025 22:50:21 +0000
+References: <20251105065023.3656975-1-chao@kernel.org>
+In-Reply-To: <20251105065023.3656975-1-chao@kernel.org>
+To: Chao Yu <chao@kernel.org>
+Cc: jaegeuk@kernel.org, stable@kernel.org, linux-kernel@vger.kernel.org,
  linux-f2fs-devel@lists.sourceforge.net
 
 Hello:
 
-This patch was applied to jaegeuk/f2fs.git (dev)
+This series was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Mon, 27 Oct 2025 18:36:34 +0530 you wrote:
-> F2FS can mount filesystems with corrupted directory depth values that
-> get runtime-clamped to MAX_DIR_HASH_DEPTH. When RENAME_WHITEOUT
-> operations are performed on such directories, f2fs_rename performs
-> directory modifications (updating target entry and deleting source
-> entry) before attempting to add the whiteout entry via f2fs_add_link.
+On Wed,  5 Nov 2025 14:50:22 +0800 you wrote:
+> With below scripts, it will trigger panic in f2fs:
 > 
-> If f2fs_add_link fails due to the corrupted directory structure, the
-> function returns an error to VFS, but the partial directory
-> modifications have already been committed to disk. VFS assumes the
-> entire rename operation failed and does not update the dentry cache,
-> leaving stale mappings.
+> mkfs.f2fs -f /dev/vdd
+> mount /dev/vdd /mnt/f2fs
+> touch /mnt/f2fs/foo
+> sync
+> echo 111 >> /mnt/f2fs/foo
+> f2fs_io fsync /mnt/f2fs/foo
+> f2fs_io shutdown 2 /mnt/f2fs
+> umount /mnt/f2fs
+> mount -o ro,norecovery /dev/vdd /mnt/f2fs
+> or
+> mount -o ro,disable_roll_forward /dev/vdd /mnt/f2fs
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev,v2] f2fs: invalidate dentry cache on failed whiteout creation
-    https://git.kernel.org/jaegeuk/f2fs/c/5e8c6aae36ad
+  - [f2fs-dev,1/2] f2fs: fix return value of f2fs_recover_fsync_data()
+    https://git.kernel.org/jaegeuk/f2fs/c/d05faa07e7da
+  - [f2fs-dev,2/2] f2fs: fix to detect recoverable inode during dryrun of find_fsync_dnodes()
+    https://git.kernel.org/jaegeuk/f2fs/c/ca244e9242a1
 
 You are awesome, thank you!
 -- 
