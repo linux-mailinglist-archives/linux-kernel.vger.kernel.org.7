@@ -1,48 +1,49 @@
-Return-Path: <linux-kernel+bounces-895538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8B28C4E3F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:53:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D767C4E3F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:54:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D56971898876
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:53:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 574E03ADEB6
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:53:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D8ED358D09;
-	Tue, 11 Nov 2025 13:53:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4B5231A81A;
+	Tue, 11 Nov 2025 13:53:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WDMPmvxl"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="vfmHbSQo"
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50731301011
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 13:53:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67FBB3590CE
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 13:53:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762869192; cv=none; b=RXOxZjrBjfTtxULy61UcKYwnvnAiVSOqegnGEjcYFhk70a9HCMzBbaM4lGbhXSBuPJrEsVmicDvtVGI1W+zOWed2qtUdGnctJhS5Q31I7iCfVLGSNH9cOksbUnrBeEOoFC58nU3cQIlfq6eGMt1gmNVlhGALekNDxuh93ZqpBk8=
+	t=1762869195; cv=none; b=hf6L7yvR53TT7If2UEny6oSNUit8UqxVylMyhYdGoot68RAJpkM8omolMFEdohjJEBspRVYmmT4EE2ihzrrVCJbQOA4zRZuABCGtrxRcS2e/6m5dWbYSnYJypRPbSiVDdJWOPCKrMRL/Acv0xlyt3VzwRYc5+/MDPhySv80v2LE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762869192; c=relaxed/simple;
-	bh=mfTI/u/NsVYI1/iul5GIzx06TbF9s4sQ8lHLwg5UzyU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mCTLsONUlKzhGxJm94nPb0QVG7WWigSv6FEduoPSSb1Umv3t0jFm/fgJE7eJV+KaUtsPpEUToPWbnJiQr4nT+42pNuqiMbvW/crhZUlGyUn7Ta8AVaWvnXzlcY9sVOd7SFsheWZvqhee9pZfAX9QlsgU92sMtegVpI8vN6PgChw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=WDMPmvxl; arc=none smtp.client-ip=198.137.202.133
+	s=arc-20240116; t=1762869195; c=relaxed/simple;
+	bh=60ZZn0RaxFokmxrmn9HfISJVT1aIkYNfunnuj0np1Pw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=gRW1em0DraYgys/1G8IJcapCkQR4NXi3+VcyfGpcYGSym5KTdngr7Co4QMDgLInyYP4pPBlVQ3fD3wPBl78XtC/4gvI7HSy22j1oVBgDl40pnivEjZmDAZOJBwVYwkSdDh2KljDAA8eoFBDHNSA6bvUszbyN8uxeFkR8ihsKphk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=vfmHbSQo; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=WlDnf+yXkm4HV4Dx0L3C5l/5M/ErgqC9PYLFtVfUOzU=; b=WDMPmvxloX1cwff6FsaJyKMeiH
-	ME3Tg9ixCE5HoHOOWXC30J9R/5MTVjc4XA7D7TGQiQR1hto/IfY/kTVenGIP4ucX1ikfUUce7gK85
-	ksrWLkGbmLvdG8el9I3dQHjkrlLthAFsRs0xwK7zRQowd1ZhWh21fjmcycGuk9iyhbIlMDn68fw7W
-	uabiMzmtvJDHzhSaR5TAj8lZHMM5St7qlmNOP5GBhGa2x6pcOsQO/oMV1GTcILr6lKX/MdVKsxtu+
-	iW/5agHfD2JzRJ7ekEuymoLpEgUgbAUSofdJOSJSf84936oHhqsscJhckM6QLNW6v1pkbDgLZp7PM
-	t4oXgEpA==;
+	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
+	:Reply-To:Content-Type:Content-ID:Content-Description;
+	bh=oJ3MIZLrxHKL3HXjB9g5ZhKNNJWUlT+3FdxZLvo6TYU=; b=vfmHbSQoKbk/eHEQps3YF+WiP5
+	PhmLX7JIBBxB6ei3KUT/QQJE6o3WL7OqfHPAsnzJqb/Fk0K9MAsjUevroY/pdxq9CpdL8ZDMCiPS5
+	phsTWN6C0u1We8I80KKJOWu30SwhSDZ4hMf4Dj+YvHeTl707vhGh2sU44aBLPKHietRYx1drr5Gzg
+	x+RN3bDDI5Om4oh6zYjT20uZWWkgEdBm62bULDw7pMkc2zjFRQR2CVnj1Zoe9rQH4eYG7eqXm61F8
+	XeArfYKWEg9wQNlvET3Y5NElk/GlO7g00tlfCX6gakmyvcaDEVEBKpZmrJfRq0lwqBe61lAZCf+ia
+	VBe747fw==;
 Received: from 2a02-8389-2341-5b80-d601-7564-c2e0-491c.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:d601:7564:c2e0:491c] helo=localhost)
 	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vIony-00000007GX5-0ysl;
-	Tue, 11 Nov 2025 13:53:06 +0000
+	id 1vIoo2-00000007GYa-1FVy;
+	Tue, 11 Nov 2025 13:53:10 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Vlastimil Babka <vbabka@suse.cz>,
 	Andrew Morton <akpm@linux-foundation.org>
@@ -53,10 +54,12 @@ Cc: Christoph Lameter <cl@gentwo.org>,
 	Eric Biggers <ebiggers@kernel.org>,
 	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org
-Subject: mempool_alloc_bulk and various mempool improvements
-Date: Tue, 11 Nov 2025 14:52:28 +0100
-Message-ID: <20251111135300.752962-1-hch@lst.de>
+Subject: [PATCH 1/7] fault-inject: make enum fault_flags available unconditionally
+Date: Tue, 11 Nov 2025 14:52:29 +0100
+Message-ID: <20251111135300.752962-2-hch@lst.de>
 X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20251111135300.752962-1-hch@lst.de>
+References: <20251111135300.752962-1-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,30 +69,41 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Hi all,
+This will allow using should_fail_ex from code without having to
+make it conditional on CONFIG_FAULT_INJECTION.
 
-this series adds a bulk version of mempool_alloc that makes allocating
-multiple objects deadlock safe.
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ include/linux/fault-inject.h | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-The initial users is the blk-crypto-fallback code:
+diff --git a/include/linux/fault-inject.h b/include/linux/fault-inject.h
+index 8c829d28dcf3..58fd14c82270 100644
+--- a/include/linux/fault-inject.h
++++ b/include/linux/fault-inject.h
+@@ -8,6 +8,10 @@
+ struct dentry;
+ struct kmem_cache;
+ 
++enum fault_flags {
++	FAULT_NOWARN =	1 << 0,
++};
++
+ #ifdef CONFIG_FAULT_INJECTION
+ 
+ #include <linux/atomic.h>
+@@ -36,10 +40,6 @@ struct fault_attr {
+ 	struct dentry *dname;
+ };
+ 
+-enum fault_flags {
+-	FAULT_NOWARN =	1 << 0,
+-};
+-
+ #define FAULT_ATTR_INITIALIZER {					\
+ 		.interval = 1,						\
+ 		.times = ATOMIC_INIT(1),				\
+-- 
+2.47.3
 
-  https://lore.kernel.org/linux-block/20251031093517.1603379-1-hch@lst.de/
-
-with which v1 was posted, but I also have a few other users in mind.
-
-Changes since v1:
- - fix build for !CONFIG_FAULT_INJECTION
- - improve the kerneldoc comments further
- - refactor the code so that the mempool_alloc fastpath does not
-   have to deal with arrays
- - don't support !__GFP_DIRECT_RECLAIM for bulk allocations
- - do poll allocations even if not all elements are available
- - s/elem/elems/
- - use a separate failure injection know for the bulk allocator
-
-diffstat:
- include/linux/fault-inject.h |    8 -
- include/linux/mempool.h      |    7 
- mm/mempool.c                 |  341 ++++++++++++++++++++++++++++---------------
- 3 files changed, 240 insertions(+), 116 deletions(-)
 
