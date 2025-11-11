@@ -1,232 +1,234 @@
-Return-Path: <linux-kernel+bounces-894982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF940C4CA1B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:24:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68D5DC4C9F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:23:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0595B4F9EE4
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:18:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 044AA189F164
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:20:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFEAA2F1FDD;
-	Tue, 11 Nov 2025 09:18:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0A582F12B1;
+	Tue, 11 Nov 2025 09:19:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nGhv33bP"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vGClO8NE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 068FA2F1FD7
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 09:18:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD0E12E7F05
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 09:19:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762852714; cv=none; b=G6LFoKjDU7juh0djrFwcRlSjJ05VcOxSMQ3hWdcWEQXaZFJUJlWf30qQ4hkJz35MCNVpCo7l+82sI2yMjJgyrbNLFrl1OzGRELlufHyfAVd6Zq0tlngX3Me8s9TsRysrZD2IEO+ixN7XYWxY8d4YtUF3rbYfZosiInnWrxXF5j4=
+	t=1762852791; cv=none; b=WAmG8LKH3kxRiB6D05TpUTuf0mJsJBCLQqSfowKu5NN3sJLTIhzh/4PHIzG2Tq0vgTcoqVYXaWb2apxfnbWeiX8+3HwqW7M4Cfne1C6IFJBZ5DZ/WCjy9PDfCIPYNn5PAP0OhVBMB9u5GumSsXOzzTDmPNXd0IxkXc6PMJU5qug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762852714; c=relaxed/simple;
-	bh=SYMCs6IARkW/lZNSJmIn0XhOmmhkphMEY31kEhj1XjY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=E+wBUKzxsXy0JwY2C18uqbfQl4z1sxry8FSAmRgNIWTD3b087QKe8UWyIY2/60MG3x07tr04njhSwZ1vFqQFhtRrDPS3ALHyDvZ11PXTrviOr69F4mXRNCfflqIv4M04x8Op2zouiy7Tp0o9Ke26RHsEk9i5S6o85YqQ2KWxWbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nGhv33bP; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b72dad1b713so489894266b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 01:18:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762852710; x=1763457510; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=NHCO1d37EeP+V9PmUIUb4Wzw3rgGoWYS9h8j1CUD1ds=;
-        b=nGhv33bPEGoQcmn/IVr4EDp1O5mi1FowYGcmoy569+8oYvfnlRfYZYkWDRgWxk9yay
-         hI30aLqlyATbw51fks1qCkVjdg771sUmXVd8KHNC6eCS04IPvjg5Ry/GRyErFkqfa3XF
-         0hYrFaqqzRqCmlhiKl+C/bHOLv+2OtzGPAYhce+w/OUE3Vb3USuyqC9Hjo3NXYm1rVnZ
-         novBrlrrDRAAfXnipv3+2q4Dqw6Ath0ycjCY6tJMAShCPHIi+rLBhIH0dmbybkwvvute
-         IOmvm7u5Sw5tOON/4LhtqEL5zzMrAHmZH37b0MSTMMrzbphtLF+xIXK8Q0BiENZ8oESY
-         IhbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762852710; x=1763457510;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NHCO1d37EeP+V9PmUIUb4Wzw3rgGoWYS9h8j1CUD1ds=;
-        b=t02G7LLpurGH+qJF5MGQEKfvAPRmvSOSWqb/vw/r/bqMRcenDXfhB6/4RTlbUqjy0m
-         jpIeI9RMhv6I7ZouwEO6RcIgmlrPq8j19lc1TBZ8zFkAGc8JpIG0XElfv+81NxQzl/7X
-         bYl2R83cY1KxjuAeDjTLhTChhEBW/0ST9O4B5A2zgWXYgf90WntYVO3h0S27h3dRAq69
-         loEwMuJ12xcQHD3OqLdFazQ94faLsTgVuJ8QxojVK2QUbAh5QdgMNpuvbt6QCI+4IdQD
-         kXc3US/7a6rr2WRo0Z68Q5IUySCtXWeb03lv14Q0Feljcz5700Irb2KuHoQUApxgDKWn
-         2XKw==
-X-Forwarded-Encrypted: i=1; AJvYcCVZi2/oJJI2UAbuOek7d3kK7oy9gY+Qk9XfL2yJBpF1KGho7u08dzLztU9regTizzJO7GVRN9oGgNIAkMw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1Ckt3w7mzdvR1o0cDA5MzE8Mhh6pjlYKgAt28OUuhY6DEg5Co
-	TaPsjSlncpaUz5awCsWmozi5BO2dtMycYppMZh+EFxq3ZDGn3yx928/N
-X-Gm-Gg: ASbGncuKAyeJJeiipVrB23dw71Aen+KOsUgC0k1vxP/XeVGr+vsP6ZkM4Qv++YzOeQ9
-	O4toOhdoszMImnBLOdz5dxXxKK74hYBt0B9wpqUVqZeJcJnzZQkKIW6gEfkrgP+nvhrryoiDiDN
-	WMbXaiuVTtzNFpFWCzgNjiw3VezArw6ojj3hTs03ZjQEDcsknyLQrfGucRhizow8OA9tG/zB5y0
-	w2FH0EMkE1kxuDVtEo2IDA2DgCHw/dGDY3XUyI5O//83gT4BaU2vsEcgpFFuKy/u9zz4K9e1DEF
-	zbmsSB4R4OHW6mR6tjpy4+pSHDmjb54hxR5V5eiUOvL/JEcpS13wlz+ZexnIeyx4OGcstuW8uuN
-	KWkUjMRxaBCXJUPMSoNQ1J+SOipaNTTuFN8GnKFQ2ZY91B6tQwWElAfzM4DGeUXj1bK2Ro/mKvV
-	t/82cEY3PAOdKj2pS6kS1hy/ZQQcA=
-X-Google-Smtp-Source: AGHT+IF0sUsr02exVWB3sJgaPpmNYrn8j5MgaPfx/m2oC64aA1GIC9/OXl0RkFQl27OsOWGCqREJSQ==
-X-Received: by 2002:a17:907:6d0b:b0:b6d:6bcd:6c59 with SMTP id a640c23a62f3a-b72e062615bmr1148531166b.64.1762852710016;
-        Tue, 11 Nov 2025 01:18:30 -0800 (PST)
-Received: from tempest2.wbe.local (xt27d7.stansat.pl. [83.243.39.215])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bf97d0ffsm1350690266b.46.2025.11.11.01.18.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Nov 2025 01:18:29 -0800 (PST)
-From: Pawel Dembicki <paweldembicki@gmail.com>
-To: linux-wireless@vger.kernel.org
-Cc: Pawel Dembicki <paweldembicki@gmail.com>,
-	Antony Kolitsos <zeusomighty@hotmail.com>,
-	Johannes Berg <johannes.berg@intel.com>,
-	Roopni Devanathan <quic_rdevanat@quicinc.com>,
-	Thomas Fourier <fourier.thomas@gmail.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3] wifi: mwl8k: inject DSSS Parameter Set element into beacons if missing
-Date: Tue, 11 Nov 2025 10:17:04 +0100
-Message-ID: <20251111091708.2809266-2-paweldembicki@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1762852791; c=relaxed/simple;
+	bh=dVuTtHvnVZEobITrk9FyDHPMZXl5yRe3omNS/JcWa64=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CBYa9xU1IlxxgeE1QgTKwymWRU8mUaRodk9ezFR5cUfZDNypIUy2i9UYFe1bPrh34wyC3pPhLAq8RpguYfDtbCNYcRcrQpeeqfBoRlJFTbBUjltQetC3EVtvmEDPD9RiLRLq0jF9mrrQ8uWRoSjqwJBilMob8f05NNjC1zDyphE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vGClO8NE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F5CDC19421
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 09:19:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762852791;
+	bh=dVuTtHvnVZEobITrk9FyDHPMZXl5yRe3omNS/JcWa64=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=vGClO8NE0KorCNpVq7YjjPoJy4vppAc1exbgNg08YFojL+dCZUmXYan4Wftv6Gmgv
+	 GEa5Cfno24p5jxvYB/qDkaZk9C5q5w3kRLHUbzXznZ6oolxTsaWOZHMZ30eLed0sXX
+	 Egq/iKpmX81Z2Ojm2N/HTq94Olgee+8BMC8ZQeiiffDB8QDkji4mseoLtGvE7ZrhYn
+	 dP6Lyes8MmmyzNcHmC8Tv8TlcJnJCoZxEs+Jh5/+z/VVpJKPEC43Am3km0NAnjA2Au
+	 zZAMssPqCgroICwsfk9a9tSlMA452D+MVB2qo029A00ncGyiyFIJrvq/hmj6vDJQzp
+	 +9zlwlmMK1NvQ==
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-787f586532bso20021267b3.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 01:19:51 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVk87vz6rO/U51k9mwxbUJZA773CIXkk2D+5KIFe1Wg9akYW9rOqIhxjwX4dmZHj5lmaIDbiZE3bKsSY2M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2Pyq+1/NM4CfFsSu8iArAddy9RAC9J/aKfL4Bftznv0BqYH+K
+	4C5lNY2ET/bW3QEsO2WzuyvBHNPXCzqKfOtHLt+H0xZeHLogIQqAKCL4nqcqdUUeO/srMpX+hPW
+	IvcMsZvQSUYHz0Idc8SmRI+bd+c8dQjvAtcBgRfT7ag==
+X-Google-Smtp-Source: AGHT+IE7U/hfMH//RfLupvft/VoqtwYRbFfH+avnkA19gWihvYeZ3A5/gr7GLzY5y0EQ9dDLUE90MgX0MeQiFlzqDkk=
+X-Received: by 2002:a05:690c:3341:b0:786:6b92:b1f5 with SMTP id
+ 00721157ae682-787d5439064mr100470067b3.47.1762852790107; Tue, 11 Nov 2025
+ 01:19:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <cover.1762621567.git.lorenzo.stoakes@oracle.com>
+ <CACePvbVq3kFtrue2smXRSZ86+EuNVf6q+awQnU-n7=Q4x7U9Lw@mail.gmail.com>
+ <5b60f6e8-7eab-4518-808a-b34331662da5@lucifer.local> <CACePvbUvQu+So7OoUbJTMLODz8YDAOgWaM8A-RXFj2U_Qc-dng@mail.gmail.com>
+ <3c0e9dd0-70ac-4588-813b-ffb24d40f067@lucifer.local>
+In-Reply-To: <3c0e9dd0-70ac-4588-813b-ffb24d40f067@lucifer.local>
+From: Chris Li <chrisl@kernel.org>
+Date: Tue, 11 Nov 2025 01:19:37 -0800
+X-Gmail-Original-Message-ID: <CACePvbUHCrNNy38G4fZP92sdMY7k5pRQkcfo=iPp0=10T5oCEw@mail.gmail.com>
+X-Gm-Features: AWmQ_bkffqW5YvxjFtC7ucCTeEYe-oG-VIvciMpKUSHdG9LRrce-7fJweHmox0c
+Message-ID: <CACePvbUHCrNNy38G4fZP92sdMY7k5pRQkcfo=iPp0=10T5oCEw@mail.gmail.com>
+Subject: Re: [PATCH v2 00/16] mm: remove is_swap_[pte, pmd]() + non-swap
+ entries, introduce leaf entries
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank <frankja@linux.ibm.com>, 
+	Claudio Imbrenda <imbrenda@linux.ibm.com>, David Hildenbrand <david@redhat.com>, 
+	Alexander Gordeev <agordeev@linux.ibm.com>, Gerald Schaefer <gerald.schaefer@linux.ibm.com>, 
+	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+	Sven Schnelle <svens@linux.ibm.com>, Peter Xu <peterx@redhat.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Arnd Bergmann <arnd@arndb.de>, Zi Yan <ziy@nvidia.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>, 
+	Lance Yang <lance.yang@linux.dev>, Muchun Song <muchun.song@linux.dev>, 
+	Oscar Salvador <osalvador@suse.de>, Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, 
+	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
+	Matthew Brost <matthew.brost@intel.com>, Joshua Hahn <joshua.hahnjy@gmail.com>, 
+	Rakie Kim <rakie.kim@sk.com>, Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>, 
+	Ying Huang <ying.huang@linux.alibaba.com>, Alistair Popple <apopple@nvidia.com>, 
+	Axel Rasmussen <axelrasmussen@google.com>, Yuanchu Xie <yuanchu@google.com>, 
+	Wei Xu <weixugc@google.com>, Kemeng Shi <shikemeng@huaweicloud.com>, 
+	Kairui Song <kasong@tencent.com>, Nhat Pham <nphamcs@gmail.com>, Baoquan He <bhe@redhat.com>, 
+	SeongJae Park <sj@kernel.org>, Matthew Wilcox <willy@infradead.org>, Jason Gunthorpe <jgg@ziepe.ca>, 
+	Leon Romanovsky <leon@kernel.org>, Xu Xin <xu.xin16@zte.com.cn>, 
+	Chengming Zhou <chengming.zhou@linux.dev>, Jann Horn <jannh@google.com>, 
+	Miaohe Lin <linmiaohe@huawei.com>, Naoya Horiguchi <nao.horiguchi@gmail.com>, 
+	Pedro Falcato <pfalcato@suse.de>, Pasha Tatashin <pasha.tatashin@soleen.com>, 
+	Rik van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>, Hugh Dickins <hughd@google.com>, 
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, linux-s390@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-arch@vger.kernel.org, 
+	damon@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Some Marvell AP firmware used with mwl8k misbehaves when beacon frames
-do not contain a WLAN_EID_DS_PARAMS element with the current channel.
-It was reported on OpenWrt Github issues [0].
+On Mon, Nov 10, 2025 at 3:28=E2=80=AFAM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
+> > > > I kind of wish the swap system could still use swp_entry_t. At leas=
+t I
+> > > > don't see any complete reason to massively rename all the swap syst=
+em
+> > > > code if we already know the entry is the limited meaning of swap en=
+try
+> > > > (device + offset).
+> > >
+> > > Well the reason would be because we are trying to keep things consist=
+ent
+> > > and viewing a swap entry as merely being one of the modes of a softle=
+af.
+> >
+> > Your reason applies to the multi-personality non-present pte entries.
+> > I am fine with those as softleaf. However the reasoning does not apply
+> > to the swap entry where we already know it is for actual swap. The
+> > multi-personality does not apply there. I see no conflict with the
+> > swp_entry type there. I argue that it is even cleaner that the swap
+> > codes only refer to those as swp_entry rather than softleaf because
+> > there is no possibility that the swap entry has multi-personality.
+>
+> Swap is one of the 'personalities', very explicitly. Having it this way h=
+ugely
+> cleans up the code.
+>
+> I'm not sure I really understand your objection given the type will be
+> bit-by-bit compatible.
 
-When hostapd/mac80211 omits DSSS Parameter Set from the beacon (which is
-valid on some bands), the firmware stops transmitting sane frames and RX
-status starts reporting bogus channel information. This makes AP mode
-unusable.
+Just to clarify. I only object to the blanket replacing all the
+swp_entry_t to softleaf_t.
+It seems you are not going to change the swp_entry_t for actual swap
+usage, we are in alignment then.
 
-Newer Marvell drivers (mwlwifi [1]) hard-code DSSS Parameter Set into
-AP beacons for all chips, which suggests this is a firmware requirement
-rather than a mwl8k-specific quirk.
+BTW, about the name "softleaf_t", it does not reflect the nature of
+this type is a not presented pte. If you have someone new to guess
+what does  "softleaf_t" mean, I bet none of them would have guessed it
+is a PTE  related value. I have considered  "idlepte_t", something
+given to the reader by the idea that it is not a valid PTE entry. Just
+some food for thought.
 
-Mirror that behaviour in mwl8k: when setting the beacon, check if
-WLAN_EID_DS_PARAMS is present, and if not, extend the beacon and inject
-a DSSS Parameter Set element, using the current channel from
-hw->conf.chandef.chan.
+> I'll deal with this when I come to this follow-up series.
+>
+> As I said before I'm empathetic to conflicts, but also - this is somethin=
+g we
+> all have to live with. I have had to deal with numerous conflict fixups. =
+They're
+> really not all that bad to fix up.
+>
+> And again I'm happy to do it for you if it's too egregious.
+>
+> BUT I'm pretty sure we can just keep using swp_entry_t. In fact unless th=
+ere's
+> an absolutely compelling reason not to - this is exactly what I"ll do :)
 
-Tested on Linksys EA4500 (88W8366).
+Good.
 
-[0] https://github.com/openwrt/openwrt/issues/19088
-[1] https://github.com/kaloz/mwlwifi/blob/db97edf20fadea2617805006f5230665fadc6a8c/hif/fwcmd.c#L675
+> > > So this series will proceed as it is.
+> >
+> > Please clarify the "proceed as it is" regarding the actual swap code.
+> > I hope you mean you are continuing your series, maybe with
+> > modifications also consider my feedback. After all, you just say " But
+> > I did think perhaps we could maintain this type explicitly for the
+> > _actual_ swap code."
+>
+> I mean keeping this series as-is, of course modulo changes in response to=
+ review
+> feedback.
+>
+> To be clear - I have no plans whatsoever to change the actual swap code _=
+in this
+> series_ beyond what is already here.
+>
+> And in the follow-up that will do more on this - I will most likely keep =
+the
+> swp_entry_t as-is in core swap code or at least absolutely minimal change=
+s
+> there.
 
-Tested-by: Antony Kolitsos <zeusomighty@hotmail.com>
-Signed-off-by: Pawel Dembicki <paweldembicki@gmail.com>
+Ack
 
----
-V2:
-  - added "wifi:" prefix to commit title
-  - renamed "DS Params" -> "DSSS Parameter Set"
-  - Insert WLAN_EID_DS_PARAMS after WLAN_EID_SSID, WLAN_EID_SUPP_RATES
-    and WLAN_EID_EXT_SUPP_RATES
-V3:
-  - Insert WLAN_EID_DS_PARAMS after WLAN_EID_SSID and WLAN_EID_SUPP_RATES
-    only
-  - Style issues fixes
----
- drivers/net/wireless/marvell/mwl8k.c | 71 ++++++++++++++++++++++++++--
- 1 file changed, 66 insertions(+), 5 deletions(-)
+> And that series you will be cc'd on and welcome of course to push back on
+> anything you have an issue with :)
+>
+> >
+> > > However I'm more than happy to help resolve conflicts - if you want t=
+o send
+> > > me any of these series off list etc. I can rebase to mm-new myself if
+> > > that'd be helpful?
+> >
+> > As I said above, leaving the actual swap code alone is more helpful
+> > and I consider it cleaner as well. We can also look into incremental
+> > change on your V2 to crave out the swap code.
+>
+> Well I welcome review feedback.
+>
+> I don't think I really touched anything particularly swap-specific that i=
+s
+> problematic, but obviously feel free to review and will absolutely try to
+> accommodate any reasonable requests!
+>
+> >
+> > >
+> > > >
+> > > > Does this renaming have any behavior change in the produced machine=
+ code?
+> > >
+> > > It shouldn't result in any meaningful change no.
+> >
+> > That is actually the reason to give the swap table change more
+> > priority. Just saying.
+>
+> I'm sorry but this is not a reasonable request. I am being as empathetic =
+and
+> kind as I can be here, but this series is proceeding without arbitrary de=
+lay.
+>
+> I will do everything I can to accommodate any concerns or issues you may =
+have
+> here _within reason_ :)
 
-diff --git a/drivers/net/wireless/marvell/mwl8k.c b/drivers/net/wireless/marvell/mwl8k.c
-index 891e125ad30b..3acf71cb5007 100644
---- a/drivers/net/wireless/marvell/mwl8k.c
-+++ b/drivers/net/wireless/marvell/mwl8k.c
-@@ -2966,6 +2966,51 @@ mwl8k_cmd_rf_antenna(struct ieee80211_hw *hw, int antenna, int mask)
- /*
-  * CMD_SET_BEACON.
-  */
-+
-+static bool mwl8k_beacon_has_ds_params(const u8 *buf, int len)
-+{
-+	const struct ieee80211_mgmt *mgmt = (const void *)buf;
-+	int ies_len;
-+
-+	if (len <= offsetof(struct ieee80211_mgmt, u.beacon.variable))
-+		return false;
-+
-+	ies_len = len - offsetof(struct ieee80211_mgmt, u.beacon.variable);
-+
-+	return cfg80211_find_ie(WLAN_EID_DS_PARAMS, mgmt->u.beacon.variable,
-+				ies_len) != NULL;
-+}
-+
-+static void mwl8k_beacon_copy_inject_ds_params(struct ieee80211_hw *hw,
-+					       u8 *buf_dst, const u8 *buf_src,
-+					       int src_len)
-+{
-+	const struct ieee80211_mgmt *mgmt = (const void *)buf_src;
-+	static const u8 before_ds_params[] = {
-+			WLAN_EID_SSID,
-+			WLAN_EID_SUPP_RATES,
-+			};
-+	const u8 *ies;
-+	int hdr_len, left, offs, pos;
-+
-+	ies = mgmt->u.beacon.variable;
-+	hdr_len = offsetof(struct ieee80211_mgmt, u.beacon.variable);
-+
-+	offs = ieee80211_ie_split(ies, src_len - hdr_len, before_ds_params,
-+				  ARRAY_SIZE(before_ds_params), 0);
-+
-+	pos = hdr_len + offs;
-+	left = src_len - pos;
-+
-+	memcpy(buf_dst, buf_src, pos);
-+
-+	/* Inject a DSSS Parameter Set after SSID + Supp Rates */
-+	buf_dst[pos + 0] = WLAN_EID_DS_PARAMS;
-+	buf_dst[pos + 1] = 1;
-+	buf_dst[pos + 2] = hw->conf.chandef.chan->hw_value;
-+
-+	memcpy(buf_dst + pos + 3, buf_src + pos, left);
-+}
- struct mwl8k_cmd_set_beacon {
- 	struct mwl8k_cmd_pkt_hdr header;
- 	__le16 beacon_len;
-@@ -2975,17 +3020,33 @@ struct mwl8k_cmd_set_beacon {
- static int mwl8k_cmd_set_beacon(struct ieee80211_hw *hw,
- 				struct ieee80211_vif *vif, u8 *beacon, int len)
- {
-+	bool ds_params_present = mwl8k_beacon_has_ds_params(beacon, len);
- 	struct mwl8k_cmd_set_beacon *cmd;
--	int rc;
-+	int rc, final_len = len;
- 
--	cmd = kzalloc(sizeof(*cmd) + len, GFP_KERNEL);
-+	if (!ds_params_present) {
-+		/*
-+		 * mwl8k firmware requires a DS Params IE with the current
-+		 * channel in AP beacons. If mac80211/hostapd does not
-+		 * include it, inject one here. IE ID + length + channel
-+		 * number = 3 bytes.
-+		 */
-+		final_len += 3;
-+	}
-+
-+	cmd = kzalloc(sizeof(*cmd) + final_len, GFP_KERNEL);
- 	if (cmd == NULL)
- 		return -ENOMEM;
- 
- 	cmd->header.code = cpu_to_le16(MWL8K_CMD_SET_BEACON);
--	cmd->header.length = cpu_to_le16(sizeof(*cmd) + len);
--	cmd->beacon_len = cpu_to_le16(len);
--	memcpy(cmd->beacon, beacon, len);
-+	cmd->header.length = cpu_to_le16(sizeof(*cmd) + final_len);
-+	cmd->beacon_len = cpu_to_le16(final_len);
-+
-+	if (ds_params_present)
-+		memcpy(cmd->beacon, beacon, len);
-+	else
-+		mwl8k_beacon_copy_inject_ds_params(hw, cmd->beacon, beacon,
-+						   len);
- 
- 	rc = mwl8k_post_pervif_cmd(hw, vif, &cmd->header);
- 	kfree(cmd);
--- 
-2.34.1
+I did not expect you to delay this. It is just expressing the
+viewpoint that this is internal clean up for benefit the developers
+rather than the end users.
 
+Keep the existing swp_entry_t for the actual core swap usage is within
+reasonable request. We already align on that.
+
+Chris
 
