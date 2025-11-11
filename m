@@ -1,90 +1,207 @@
-Return-Path: <linux-kernel+bounces-894872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7899C4C582
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:19:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AE82C4C585
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:19:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92E5F3BB948
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 08:13:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5272C3BCDB6
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 08:13:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C29BB307AEA;
-	Tue, 11 Nov 2025 08:12:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44A9531B810;
+	Tue, 11 Nov 2025 08:12:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NbSPphKu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="QSeQCwo5";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="snAKhbrQ";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="QSeQCwo5";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="snAKhbrQ"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C94D2FB987;
-	Tue, 11 Nov 2025 08:12:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D0742F7ACA
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 08:12:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762848753; cv=none; b=kxWDeu7IeUQkrewMcD/67UBplOM9O+Mw6n7LPaLgiYfFgYwqaGZhjOy2/CQDoeWBNSJkaNriLGA99DZLPf1j6+L8z8JIbZtVvilzI4j0+WVAqz73w2WXAp9Ig0nm4gUuhodk9Yk5ahoarA3rL0eaJukArOLuoapPFyWXCiDMFcs=
+	t=1762848755; cv=none; b=Ztt59dkkA+jpUaiTVIJ2lpmEkROpg1Ipo67zFdV1rEiZDb3vPWP2N3ocQzfO7VyVUTvmUGdxfOb3pXRkXFilzZT566+RUjy0cNlLmTBIJqAb5HYe3rVfFRDmKNVHhbVvgzuvx2NZe447WucwnOpVgziuxTUUQRqFTAV8bZTzCAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762848753; c=relaxed/simple;
-	bh=3td4GzVGI99SuHF/ck+Aq4smT3AtdPcDpKlSVw5KB3o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PGFOD3fqYG3l9oEKDaEYhFSLlC5H7mcvQ7RXHtWkhlrDg+wd8cJO9Z4pK0f0EE+RyETrzN+K1M3LvizqavaGXkv6SQlBVmBJ2V1GhkCE+JKjBFXiJrL+fe7OOASXaXeL07TtxXi1gyhkdkO6jNZQZp0H4I2oZTXdMVy/jFANtxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NbSPphKu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E65F6C19422;
+	s=arc-20240116; t=1762848755; c=relaxed/simple;
+	bh=P2WlcKnLbTlkay0zUAJe4pIwzy7VN3Zey4XnHfRkpSc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JDFVe7ZSg1p9ZOskBXVLte0q0W/onAYYQZ8FPblj5BKLGzUkgJ/7P6P0Oyt0hqlwTGHDfpK07fkCLkWc9DRS/PWnE74nmegs3eU+Pssc9REI4QvPTV7VNyrcgaLzO5kRjYPWfx+l5LsrsBTpcjlkUdr6K4+gBhgANKOgMVG4ILA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=QSeQCwo5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=snAKhbrQ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=QSeQCwo5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=snAKhbrQ; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 692BD1F456;
 	Tue, 11 Nov 2025 08:12:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762848752;
-	bh=3td4GzVGI99SuHF/ck+Aq4smT3AtdPcDpKlSVw5KB3o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NbSPphKuqyO2xNB1KUDk5h9oQw8fExaDVL1G9SdSs4rxvzyJzk/+1oEouqrpRifEF
-	 7PzwbilBffde6VUZ5tnmYSp0xU+DaLBhZ3c4hbCy9JPgdwuoap3QJlGGmJ174femDH
-	 CudzQaXBD1wA+GWhQHCA4Z7/AhxBsu7bTwsS+qA7YUJXjBgwNPD3fYiv81Q5OUaWWQ
-	 dsR+bezpZvWbNHFHcHjq90uKx30MbZ9gT2tHkTXMNitoMEE0Mq6OEqhOr4fBM3fefK
-	 iykw5fmlevDGCZ8ngvKCFzD1PA91R4CpZehR8KD10ZAUN4B570hHDL/9Ml+7z25oft
-	 7pULNCeh+3S1Q==
-Date: Tue, 11 Nov 2025 09:12:29 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: adrianhoyin.ng@altera.com
-Cc: gregkh@linuxfoundation.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, dinguyen@kernel.org, Thinh.Nguyen@synopsys.com, 
-	devicetree@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/4] dt-bindings: usb: dwc3-altera: Add binding for
- Altera DWC3 wrapper
-Message-ID: <20251111-furry-curvy-gerbil-acad1e@kuoka>
-References: <cover.1762839776.git.adrianhoyin.ng@altera.com>
- <607dec2fdb41cba0220b7b9947e04651f51ff56e.1762839776.git.adrianhoyin.ng@altera.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762848751; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=LkEVwwVdNPznr54vahDaFux3Gygrf9L3jYzCPD/I9qQ=;
+	b=QSeQCwo5M54KhAE4J05hu391Htp7HY4Bdk7GVXnd/Ujz8Sb79fOOWsgwrpSYjnchc1lZo4
+	QhESx/55W77dQ3UXmgmv+8tVSSM5EMtBM2WkFWxmejHtPxBO87Kdb+VZi5TZEE7cYWVPLc
+	yYDiWLM5FTsgp9+2Bv06bDFKC03574c=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762848751;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=LkEVwwVdNPznr54vahDaFux3Gygrf9L3jYzCPD/I9qQ=;
+	b=snAKhbrQ6eVKcyi3GeEbDy8IfNz6t7anBidR0KznKeGLQ5p8Cz52iYod75ny2v5oxnbnhw
+	qdmNQnPmaJgzJzDA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762848751; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=LkEVwwVdNPznr54vahDaFux3Gygrf9L3jYzCPD/I9qQ=;
+	b=QSeQCwo5M54KhAE4J05hu391Htp7HY4Bdk7GVXnd/Ujz8Sb79fOOWsgwrpSYjnchc1lZo4
+	QhESx/55W77dQ3UXmgmv+8tVSSM5EMtBM2WkFWxmejHtPxBO87Kdb+VZi5TZEE7cYWVPLc
+	yYDiWLM5FTsgp9+2Bv06bDFKC03574c=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762848751;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=LkEVwwVdNPznr54vahDaFux3Gygrf9L3jYzCPD/I9qQ=;
+	b=snAKhbrQ6eVKcyi3GeEbDy8IfNz6t7anBidR0KznKeGLQ5p8Cz52iYod75ny2v5oxnbnhw
+	qdmNQnPmaJgzJzDA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4361D1485F;
+	Tue, 11 Nov 2025 08:12:31 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id CcAaEO/vEmkWIgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Tue, 11 Nov 2025 08:12:31 +0000
+Message-ID: <8584cfa8-1da3-46c6-8f5d-7ab49c341e19@suse.cz>
+Date: Tue, 11 Nov 2025 09:12:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <607dec2fdb41cba0220b7b9947e04651f51ff56e.1762839776.git.adrianhoyin.ng@altera.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] mm/madvise: allow guard page install/remove under
+ VMA lock
+Content-Language: en-US
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: David Hildenbrand <david@kernel.org>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>, Mike Rapoport
+ <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
+ Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <cover.1762795245.git.lorenzo.stoakes@oracle.com>
+ <cca1edbd99cd1386ad20556d08ebdb356c45ef91.1762795245.git.lorenzo.stoakes@oracle.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <cca1edbd99cd1386ad20556d08ebdb356c45ef91.1762795245.git.lorenzo.stoakes@oracle.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_TLS_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,suse.cz:email,oracle.com:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
+X-Spam-Level: 
 
-On Tue, Nov 11, 2025 at 02:18:45PM +0800, adrianhoyin.ng@altera.com wrote:
-> From: Adrian Ng Ho Yin <adrianhoyin.ng@altera.com>
->=20
-> Add a device tree binding document for the Altera wrapper around the
-> Synopsys DesignWare USB3 (DWC3) controller. The wrapper manages
-> SoC-specific integration such as clock and reset control for the USB
-> subsystem.
->=20
-> A parent=E2=80=93child node structure is used to comply with the generic =
-DWC3
-> binding, which restricts the core node to a single clock and reset.
-> The wrapper node provides the additional clocks, resets, and address
-> translation required for the Agilex5 integration.
+On 11/10/25 18:22, Lorenzo Stoakes wrote:
+> We only need to keep the page table stable so we can perform this operation
+> under the VMA lock. PTE installation is stabilised via the PTE lock.
+> 
+> One caveat is that, if we prepare vma->anon_vma we must hold the mmap read
+> lock. We can account for this by adapting the VMA locking logic to
+> explicitly check for this case and prevent a VMA lock from being acquired
+> should it be the case.
+> 
+> This check is safe, as while we might be raced on anon_vma installation,
+> this would simply make the check conservative, there's no way for us to see
+> an anon_vma and then for it to be cleared, as doing so requires the
+> mmap/VMA write lock.
+> 
+> We abstract the VMA lock validity logic to is_vma_lock_sufficient() for
+> this purpose, and add prepares_anon_vma() to abstract the anon_vma logic.
+> 
+> In order to do this we need to have a way of installing page tables
+> explicitly for an identified VMA, so we export walk_page_range_vma() in an
+> unsafe variant - walk_page_range_vma_unsafe() and use this should the VMA
+> read lock be taken.
+> 
+> We additionally update the comments in madvise_guard_install() to more
+> accurately reflect the cases in which the logic may be reattempted,
+> specifically THP huge pages being present.
+> 
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
-Also, standard message:
-
-A nit, subject: drop second/last, redundant "binding for". The
-"dt-bindings" prefix is already stating that these are bindings.
-See also:
-https://elixir.bootlin.com/linux/v6.17-rc3/source/Documentation/devicetree/=
-bindings/submitting-patches.rst#L18
-
-Best regards,
-Krzysztof
+Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
 
 
