@@ -1,119 +1,104 @@
-Return-Path: <linux-kernel+bounces-895001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77925C4CA9F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:30:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 695EEC4CB0B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:34:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4406A18843B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:31:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06879420B46
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:31:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69E1D2ED168;
-	Tue, 11 Nov 2025 09:30:25 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06A87252917;
-	Tue, 11 Nov 2025 09:30:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A9952F2915;
+	Tue, 11 Nov 2025 09:30:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Y+hNIpzY"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54C522ED15D
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 09:30:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762853425; cv=none; b=rLOKWwZs4ynHRz2qy65T+xfZVnnAtpM2s29Z5FXC0cWNCchdJAedsTJPXCD+YoXIhkdOG7tRmcQJeFrETdtQtSAY5i7lk0w8GMApuOMd3e4RdT82rdk0IbEO/BfiHRXSbWKMq6pcJjreSvJdI4ppxtUnwEDVD7TK+sX3Hqo6PTo=
+	t=1762853445; cv=none; b=S41iaTZHqZXLyLMEA3Za9yah7xEAM7kk5wQKd83OoASkki7xQBj/sPBiVci3UV1EllyuJRMKZWLPQVMB8znXWF12hi7Ri8wZhx3AGeWJWrc9MJFIF93ajUwgOQFhDkUvLSu8bm0gJZhb7i5w4QN/qtQHkrnU55TkzrsL4YEJtco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762853425; c=relaxed/simple;
-	bh=ljNeeK4x5yrn+fNAvzJq2N4EwG7ZcAo8tqKyuEDSI0E=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kPSSCL+DRbFPQ9Y+R+dueFSl+NroI7aGdU4WQVqQI1m/wJPlEaZ+8HbPIop6IpJ0x2cg9lv1PXH4ZDdrLdu6vsC7T7kMQri7gshqojCm1OW+eUVm3bHgpvT4FwuMMZcq/4+DgprtfJchzQMmXnfTnS9fGptSITu62yowarPcb3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
-X-CSE-ConnectionGUID: OETbkBCET62IWAHyJDXNTQ==
-X-CSE-MsgGUID: 1hBZippCQvOjSV9Th6mHnw==
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 11 Nov 2025 18:30:15 +0900
-Received: from vm01.adwin.renesas.com (unknown [10.226.93.46])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 87F104173001;
-	Tue, 11 Nov 2025 18:30:11 +0900 (JST)
-From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
-To: andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com,
-	rmk+kernel@armlinux.org.uk,
-	maxime.chevallier@bootlin.com,
-	boon.khai.ng@altera.com
-Cc: netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next 2/2] net: stmmac: Disable EEE RX clock stop when VLAN is enabled
-Date: Tue, 11 Nov 2025 09:30:00 +0000
-Message-ID: <20251111093000.58094-3-ovidiu.panait.rb@renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251111093000.58094-1-ovidiu.panait.rb@renesas.com>
-References: <20251111093000.58094-1-ovidiu.panait.rb@renesas.com>
+	s=arc-20240116; t=1762853445; c=relaxed/simple;
+	bh=Pl1O2aK3f7SCaGDeT7WJAGlIhfq/1h/E92nrNOSzuQg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=KyrrfmD1Fse2pbAAG4nF2ZPTV8iEItX9c5fDhpXi+tY29G0N2QwixrjW29fW8aM74b/dYiZKYJW5Vsjo+wKWXAlfqI4jqgD/xukFM0m0PpjW8kpK3crlg2yiS69KxBJ3plGOxkawYeZqIT3H3DwTZkrb/PVnHZd/5p0EwtotwtA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Y+hNIpzY; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762853442;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yfmBGDXPeWaCMkaY7wTnRtorjcH8kduY0v5fCrRVaTM=;
+	b=Y+hNIpzYw9gvqGRlo2URj80C8nJKcjIKhd168lVWg1YIHSF1LsOXfpVjg6TxO6zOicm4cI
+	uc5gTnFr+7eqenXKbbsX28W1JMrTpwyi0f20w5PkbKR+bkgUt1HomHuaR1/0omWFBiv80e
+	H6lIDMNbOThNAadSna1I6sB2spetMxM=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-183-h4Aesh9ZO8SI9YmjnIdt6w-1; Tue,
+ 11 Nov 2025 04:30:37 -0500
+X-MC-Unique: h4Aesh9ZO8SI9YmjnIdt6w-1
+X-Mimecast-MFC-AGG-ID: h4Aesh9ZO8SI9YmjnIdt6w_1762853436
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id ED8F318002CF;
+	Tue, 11 Nov 2025 09:30:35 +0000 (UTC)
+Received: from fweimer-oldenburg.csb.redhat.com (unknown [10.45.225.58])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A3AA530044E5;
+	Tue, 11 Nov 2025 09:30:31 +0000 (UTC)
+From: Florian Weimer <fweimer@redhat.com>
+To: Dave Chinner <david@fromorbit.com>
+Cc: Christoph Hellwig <hch@lst.de>,  Matthew Wilcox <willy@infradead.org>,
+  Hans Holmberg <hans.holmberg@wdc.com>,  linux-xfs@vger.kernel.org,
+  Carlos Maiolino <cem@kernel.org>,  "Darrick J . Wong"
+ <djwong@kernel.org>,  linux-fsdevel@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  libc-alpha@sourceware.org
+Subject: Re: [RFC] xfs: fake fallocate success for always CoW inodes
+In-Reply-To: <aRJaLn72i4yh1mkp@dread.disaster.area> (Dave Chinner's message of
+	"Tue, 11 Nov 2025 08:33:34 +1100")
+References: <20251106133530.12927-1-hans.holmberg@wdc.com>
+	<lhuikfngtlv.fsf@oldenburg.str.redhat.com>
+	<20251106135212.GA10477@lst.de>
+	<aQyz1j7nqXPKTYPT@casper.infradead.org>
+	<lhu4ir7gm1r.fsf@oldenburg.str.redhat.com>
+	<20251106170501.GA25601@lst.de> <878qgg4sh1.fsf@mid.deneb.enyo.de>
+	<aRESlvWf9VquNzx3@dread.disaster.area> <20251110093701.GB22674@lst.de>
+	<aRJaLn72i4yh1mkp@dread.disaster.area>
+Date: Tue, 11 Nov 2025 10:30:28 +0100
+Message-ID: <lhubjl8kjbf.fsf@oldenburg.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On the Renesas RZ/V2H EVK platform, where the stmmac MAC is connected to a
-Microchip KSZ9131RNXI PHY, creating or deleting VLAN interfaces may fail
-with timeouts:
+* Dave Chinner:
 
-    # ip link add link end1 name end1.5 type vlan id 5
-    15c40000.ethernet end1: Timeout accessing MAC_VLAN_Tag_Filter
-    RTNETLINK answers: Device or resource busy
+> I don't see how a glibc posix_fallocate() fallback that does a
+> non-desctructive truncate up though some new interface is any better
+> than just having the filesystem implement ALLOCATE_RANGE without the
+> ENOSPC guarantees in the first place?
 
-Disabling EEE at runtime avoids the problem:
+It's better because you don't have to get consensus among all file
+system developers that implementing ALLOCATE_RANGE as a non-destructive
+truncate is acceptable.  Even it means that future writes to the range
+can fail with ENOSPC, contrary to what POSIX requires for
+posix_fallocate.
 
-    # ethtool --set-eee end1 eee off
-    # ip link add link end1 name end1.5 type vlan id 5
-    # ip link del end1.5
-
-The stmmac hardware requires the receive clock to be running when writing
-certain registers, such as those used for MAC address configuration or
-VLAN filtering. However, by default the driver enables Energy Efficient
-Ethernet (EEE) and allows the PHY to stop the receive clock when the link
-is idle. As a result, the RX clock might be stopped when attempting to
-access these registers, leading to timeouts and other issues.
-
-Commit dd557266cf5fb ("net: stmmac: block PHY RXC clock-stop")
-addressed this issue for most register accesses by wrapping them in
-phylink_rx_clk_stop_block()/phylink_rx_clk_stop_unblock() calls.
-However, VLAN add/delete operations may be invoked with bottom halves
-disabled, where sleeping is not allowed, so using these helpers is not
-possible.
-
-Therefore, to fix this, disable the RX clock stop feature in the phylink
-configuration if VLAN features are set. This ensures the RX clock remains
-active and register accesses succeed during VLAN operations.
-
-Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
----
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index ba4eeba14baa..0d3fb4fa5e12 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -1245,7 +1245,8 @@ static int stmmac_phylink_setup(struct stmmac_priv *priv)
- 	/* Stmmac always requires an RX clock for hardware initialization */
- 	config->mac_requires_rxc = true;
- 
--	if (!(priv->plat->flags & STMMAC_FLAG_RX_CLK_RUNS_IN_LPI))
-+	if (!(priv->plat->flags & STMMAC_FLAG_RX_CLK_RUNS_IN_LPI) &&
-+	    !(priv->dev->features & NETIF_F_VLAN_FEATURES))
- 		config->eee_rx_clk_stop_enable = true;
- 
- 	/* Set the default transmit clock stop bit based on the platform glue */
--- 
-2.51.0
+Thanks,
+Florian
 
 
