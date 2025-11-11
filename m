@@ -1,95 +1,143 @@
-Return-Path: <linux-kernel+bounces-896056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C30AC4F8FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 20:16:45 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07993C4F8F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 20:16:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C10094F2382
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 19:13:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0930E4F4916
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 19:13:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A31632F12A8;
-	Tue, 11 Nov 2025 19:13:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A7042E8E0B;
+	Tue, 11 Nov 2025 19:13:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="BK+z0/Gw"
-Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VYaSYMgI"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52FC92E613C
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 19:13:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3AB72E6CB8;
+	Tue, 11 Nov 2025 19:13:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762888405; cv=none; b=RMZBJGDOF9Rm8bzj9P7cAis4cak1vfnP3g88/8VufOy2+ppklSYfutE6v5ZdJLiW4Std21K5w6QvVrn66ee4SBt8/c5lB98YQDIxgGgxGZ4rFV2FnpCcnmb//2HbA69MmjzUAstBRooQ+Mvy/I9iwBNCGS3iN6ZAg7IXfdFe1FY=
+	t=1762888403; cv=none; b=Mx+rysbOZjvVDtXJia0fYZXXtXlDXqhBbYb0uZFO3xCgOQswJy33UQr9ynwg6J+xYwqk2c+j3WoYTmwovW+GxYieH8LZbdJByhs8jco2CHYXva9Cb9fO8ezdhK0AHtdGdvmATS7ixbt/tnsGPyBEZd5p87mgbWAYxYpsWrqRowU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762888405; c=relaxed/simple;
-	bh=2GOc/f+MZYJh7MJNPngu+YOeG3qkWI4rcxeCs4gXmtY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Aaa4TeqMTctYimRZWW3VWrQ+M4w7C7ADAlkoeOql2VP5FhB16gH80CzYt4EwxFWjyJUK8ATcatJTZKdLs8lxA1ieOAh4CRWbC8QHIA71lBR3xySFvVh6lN8hHD9Ni6f6BE1u+t/KmbmlexTDQz/y8XVhOnZVre5Pv3Wsj+Sg+V0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=BK+z0/Gw; arc=none smtp.client-ip=91.218.175.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1762888391;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WAMF5Kieve7eLi0CA1Q7SiwB8XtOEdddDh5a5e2G5pM=;
-	b=BK+z0/GwfZFWc92LGrJKHMQiWjt8FetZh6gz9F7Q3nigg37iUGQkMuedZ0rPT2Gs1ppbzb
-	W95ukc8Q++q9Y/TmKv2Gbi490gsoalmrdY0sSLJhEoUJRa777q+YEA8iwwAVuqcwuBu3b/
-	81SxkJdLw2+ynMuB7sJquE7X9LFbQzs=
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Michal Hocko <mhocko@suse.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-  linux-kernel@vger.kernel.org,  Alexei Starovoitov <ast@kernel.org>,
-  Suren Baghdasaryan <surenb@google.com>,  Shakeel Butt
- <shakeel.butt@linux.dev>,  Johannes Weiner <hannes@cmpxchg.org>,  Andrii
- Nakryiko <andrii@kernel.org>,  JP Kobryn <inwardvessel@gmail.com>,
-  linux-mm@kvack.org,  cgroups@vger.kernel.org,  bpf@vger.kernel.org,
-  Martin KaFai Lau <martin.lau@kernel.org>,  Song Liu <song@kernel.org>,
-  Kumar Kartikeya Dwivedi <memxor@gmail.com>,  Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH v2 13/23] mm: introduce bpf_out_of_memory() BPF kfunc
-In-Reply-To: <aRG0ZyL93jWm4TAa@tiehlicka> (Michal Hocko's message of "Mon, 10
-	Nov 2025 10:46:15 +0100")
-References: <20251027232206.473085-1-roman.gushchin@linux.dev>
-	<20251027232206.473085-3-roman.gushchin@linux.dev>
-	<aRG0ZyL93jWm4TAa@tiehlicka>
-Date: Tue, 11 Nov 2025 11:13:04 -0800
-Message-ID: <87qzu4pem7.fsf@linux.dev>
+	s=arc-20240116; t=1762888403; c=relaxed/simple;
+	bh=b7t7I5XDD3gowEsFftLfMyOl72dkisSO+vfoQr9K2jo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=E5r7X0ZfXXqM5SV19y/5yFUA08wb8VpBPFzcPTitvOBn+rlKDQ5XVd8RuE6LwpWnZy7/DglI0i/EuhxKzEUGixHODK4VNWNDpcdO5xKIBhQ7qlpl5wuYO+/GKDrp7nnsKyE31lynR3QaRTkklOk5k3YQMpBryVD4Ce0pjNo9+vc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VYaSYMgI; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762888403; x=1794424403;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=b7t7I5XDD3gowEsFftLfMyOl72dkisSO+vfoQr9K2jo=;
+  b=VYaSYMgIs4bX2UAVXyoqjxF0oXyMGTyaGC/bZaG4VMy1asLknCphBzDR
+   xJbK2Y5l56/TwSKN4trIq87LUCDfatCs/jycRl0iO20E2DK6TyUjInyB2
+   KeQtDGp673JfvJgxc+dqyOM1VZteMdnXr3p2/bwzV+z77rM3PSR7Mdk/c
+   zgNRFwqaTSAOUmMKU11llaOBCk7d0Bshy+dkcIDdGzmMyVcSWfl+4BZOE
+   qo5SGdhIs/GC8O9bHLMHJQMH1tLLT6waDrOPBWzuGm5vGUj6FD3d2DPfB
+   MnRV4ZcPrWGk9qRCjFiGapW1N0TY40u2Z+efkaRN5stc25ZiykJHnNhoO
+   w==;
+X-CSE-ConnectionGUID: kJwccaXkTmqTKkkfTmtFkQ==
+X-CSE-MsgGUID: 52tirqCFRKe4gPh9IkBa2A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11610"; a="82352554"
+X-IronPort-AV: E=Sophos;i="6.19,297,1754982000"; 
+   d="scan'208";a="82352554"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 11:13:22 -0800
+X-CSE-ConnectionGUID: /gDl9x7ESBi8msTxn+sZ2Q==
+X-CSE-MsgGUID: Cso6vTjQSw6Pu0fpTDO30w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,297,1754982000"; 
+   d="scan'208";a="189758661"
+Received: from aksajnan-mobl1.amr.corp.intel.com (HELO [10.125.50.87]) ([10.125.50.87])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 11:13:20 -0800
+Message-ID: <ac137eff-674c-4fa4-b870-80878af032a0@intel.com>
+Date: Tue, 11 Nov 2025 11:13:20 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] perf tools: Fix missing feature check for inherit +
+ SAMPLE_READ
+To: Namhyung Kim <namhyung@kernel.org>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>,
+ James Clark <james.clark@linaro.org>
+Cc: Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org
+References: <20251111075944.2328021-1-namhyung@kernel.org>
+Content-Language: en-US
+From: "Chen, Zide" <zide.chen@intel.com>
+In-Reply-To: <20251111075944.2328021-1-namhyung@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Michal Hocko <mhocko@suse.com> writes:
 
-> On Mon 27-10-25 16:21:56, Roman Gushchin wrote:
->> Introduce bpf_out_of_memory() bpf kfunc, which allows to declare
->> an out of memory events and trigger the corresponding kernel OOM
->> handling mechanism.
->> 
->> It takes a trusted memcg pointer (or NULL for system-wide OOMs)
->> as an argument, as well as the page order.
->> 
->> If the BPF_OOM_FLAGS_WAIT_ON_OOM_LOCK flag is not set, only one OOM
->> can be declared and handled in the system at once, so if the function
->> is called in parallel to another OOM handling, it bails out with -EBUSY.
->> This mode is suited for global OOM's: any concurrent OOMs will likely
->> do the job and release some memory. In a blocking mode (which is
->> suited for memcg OOMs) the execution will wait on the oom_lock mutex.
->
-> Rather than relying on BPF_OOM_FLAGS_WAIT_ON_OOM_LOCK would it make
-> sense to take the oom_lock based on the oc->memcg so that this is
-> completely transparent to specific oom bpf handlers?
 
-Idk, I don't have a super-strong opinion here, but giving the user the
-flexibility seems to be more future-proof. E.g. if we split oom lock
-so that we can have competing OOMs in different parts of the memcg tree,
-will we change the behavior?
+On 11/10/2025 11:59 PM, Namhyung Kim wrote:
+> It should also have PERF_SAMPLE_TID to enable inherit and PERF_SAMPLE_READ
+> on recent kernels.  Not having _TID makes the feature check wrongly detect
+> the inherit and _READ support.
+> 
+> It was reported that the following command failed due to the error in
+> the missing feature check on Intel SPR machines.
+> 
+>   $ perf record -e '{cpu/mem-loads-aux/S,cpu/mem-loads,ldlat=3/PS}' -- ls
+>   Error:
+>   Failure to open event 'cpu/mem-loads,ldlat=3/PS' on PMU 'cpu' which will be removed.
+>   Invalid event (cpu/mem-loads,ldlat=3/PS) in per-thread mode, enable system wide with '-a'.
+> 
+> Fixes: 3b193a57baf15c468 ("perf tools: Detect missing kernel features properly")
+> Reported-by: "Chen, Zide" <zide.chen@intel.com>
+> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> ---
+>  tools/perf/util/evsel.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+> index 67a898cda86ab559..989c56d4a23f74f4 100644
+> --- a/tools/perf/util/evsel.c
+> +++ b/tools/perf/util/evsel.c
+> @@ -2474,7 +2474,7 @@ static bool evsel__detect_missing_features(struct evsel *evsel, struct perf_cpu
+>  	/* Please add new feature detection here. */
+>  
+>  	attr.inherit = true;
+> -	attr.sample_type = PERF_SAMPLE_READ;
+> +	attr.sample_type = PERF_SAMPLE_READ | PERF_SAMPLE_TID;
+
+
+Seems this could have some unintended side effects. For example,
+consider a :ppp event with PERF_SAMPLE_READ and inherit attributes
+running on a system where the maximum precise_ip is 2:
+
+- It fails to open the event on the first attempt;
+- It goes through the inherit_sample_read detection and fails again
+after removing inherit;
+- Finally, it succeeds after falling back to precision 2 — but the
+inherit attribute has been unexpectedly removed.
+
+I may have missed something, but I don’t quite understand why commit
+3b193a57baf15 ("perf tools: Detect missing kernel features properly")
+performs the check on a dummy evsel instead of the original one. In this
+way, it might incorrectly fall back an attribute that doesn’t actually help.
+
+This means evsel__detect_missing_features() could theoretically roll
+back a feature that might not actually work. Given that it cannot
+restore the original evsel state after a failed attempt, side effects
+may occur.
+
+
+>  	if (has_attr_feature(&attr, /*flags=*/0))
+>  		goto found;
+>  	perf_missing_features.inherit_sample_read = true;
+
 
