@@ -1,134 +1,265 @@
-Return-Path: <linux-kernel+bounces-895455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AD41C4DE45
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:53:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D014C4DE6F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:54:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BB46434E307
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:53:43 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D716D34E87A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:54:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 917AE328275;
-	Tue, 11 Nov 2025 12:47:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C76E352947;
+	Tue, 11 Nov 2025 12:50:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SH3h+Eku"
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TteFs+rV"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88C7032826A
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 12:47:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15F963AA186;
+	Tue, 11 Nov 2025 12:50:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762865250; cv=none; b=lRgSq1Qg/sxtmPu+xQrrsoISromAdbUjsrJ7hilmBW5oZuqSe2NKGJk6JL50Yker7O9MYCvCC2CUuT11oChpSAOq1JI2Vib+1mNPl/DxN+fVrihZVjNW/wuNlYOSvGUY9Lcm5JBpjBM7Ycs0h9rPumrb98rReN5CbQv33gCoSEA=
+	t=1762865414; cv=none; b=XqVjiPxUWNS0+cbV0qhSvkTMKXBQLWbKfdgDuXP0HKkIlf+wx94PWW8fdPDdvf8Q9VrUKsewIv4F2AW1e5axW4EUlx3z28vJuEz6W0W898DBtxW+NOy98o/IWKZCcAF2ClWaTnjL8OKLFPQNXE9u4m49WE81cSB83kK3dumTCYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762865250; c=relaxed/simple;
-	bh=DiyCVpW74AzfmSw2woljowbltxeP4f6oP4DP84zte4E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tJ+KhPrsQATnhVFAcxzEEGRnJ19mSX1gj+cfhWdEHXYjIgZmQxR2LwITP+vbfZyGIF+j905lLo5Em8NF7HtFiUsG4+YL3wMCKm9LvzS94XTOfAO8A7ruhdJZIVPedq91VGsPaVSaWv3CPdYvxS0n+eU/fhPmQj967iR34bVHnno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SH3h+Eku; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-ba599137cf7so3230501a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 04:47:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762865249; x=1763470049; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DiyCVpW74AzfmSw2woljowbltxeP4f6oP4DP84zte4E=;
-        b=SH3h+Eku82lb2q9WHAlGsguYVJ6KllGZv0q31doOOAbEyc5nDVCdDTbBSlTKbJMtsd
-         PqWtFVV2vQydbfVZQ0VNjtogs11d0n9if5/LUBsIq5LXZ73nNfcUylN/QrXUbUhref7w
-         Ycp/zLmwcd+Ek1lb8ENOKPvj+t/SoHepSCLgfwpDZVhWpYWmr6IPwdXpqOUbW6WGQtFm
-         Rqwnz7fF24kN1KYSj5H9cyOW+fhPKVcaYzWaau9jM2lTjfoRl75V0xAd7c3UtlDZ/sBi
-         R4WJ02ML0RxdWwy3ZS/rRzSrSXZqqS6Cd/96MivCedyLuM/niikBr2GMiWxGRy0t2tQO
-         lCVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762865249; x=1763470049;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=DiyCVpW74AzfmSw2woljowbltxeP4f6oP4DP84zte4E=;
-        b=YIXQIsvAwulwhtzE71QbYnD90WhZmaYpkCwjhDMLlx97VU1dQbs4UTPSEbiR0mDNhw
-         YYs8m5nLdnBxqzZembbUxOnsqZWEyaIPr2AU1a+I7/GKD36PJQUaJoeWwelrqPewTjuP
-         t3y8t8/RFRXZzqSfP8S0l3xEqdxFFJzVQHw3Zxaw9TN0Kp+xZ4+o3BjbPBM+BmX95yyk
-         Q4OSOhV5S5j/qNCc0/NU4Qy/BULt45t1zf0+gnd2p6EHhgtxR260j/Fa8guDF9x52mIB
-         hDYwfL1mvVDh++o4OSn3zUwyo9sRbaM8NizNI26Pt0G1/sYSfYzBQqnCrSl/x7RbyWem
-         3GyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV+Cgbt8SHm/gCodoWEEjbIVvr9j6oE+3lsI4nCBWJdoW753AC18sACzxz0bzGISa9C5gMSdAQFnnl+15Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdttxKaI8JzTVurdIUXpRSxj8PG6aTEWt/rCB4nDeXi0jXSTHk
-	Zz5Y7DwVGxRuDgB2iXuIky84hH2y1Ob74l3HDZ+rDmCX05+EaewSi3EtTM24CbxQnSFsx0PNFnT
-	yS/X9Gma7ArA1IqCGTBd2mXIffIyTdvE=
-X-Gm-Gg: ASbGncuIp5kMuOlUZDMV11CgdUTk2I98u1Do0d1qxsM1XOncoEwyaf432D7fN2arSVv
-	XUvjHprXGosJQcCVkVxNefCcdN7jp92SPOQTzHpArSTJqCeflCzJYQTWb1aGnlb3w+g4sb0BZcC
-	7MoA6Rt77cwQZwLkblq7H2FHDsQBcXrX3/NyiBu4HTiKrIcV/M9ycu55j0I04Aj/s4ct8+/q8IL
-	VXZGNRm1AKL1CunZX14NfVpO/jC3QgNF74GzHOV8aSJezQRBpfdWWWnqA==
-X-Google-Smtp-Source: AGHT+IFJOONKkMfXdqPbe11hbjBNE3dvsWFF9H5OLiJ4S3DIHKfijXdDtwbm5zbR413VDlyjBE1eFW45EeSLVlnkRWU=
-X-Received: by 2002:a17:903:2b04:b0:298:43f4:cc51 with SMTP id
- d9443c01a7336-29843f4d1afmr23812835ad.60.1762865248764; Tue, 11 Nov 2025
- 04:47:28 -0800 (PST)
+	s=arc-20240116; t=1762865414; c=relaxed/simple;
+	bh=1bnxLAQbVIMtxhVwA07iseK+u3QN8a+3xy9ltcFSBKQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=slq1MqNkO6cZhosgAYYFn128ZbbsIMkMwD0UffuEmDqZNDQRiYXciBU495T9P+prrRURgQ7pHP3k+89wR1AwK3xRMO4MM74/POcVk/EsdL33TjuNAgkOoFfZ7Mz8TvVcTFHCGESaFkOJmarb6WQL/rZutLB5af6X5dPvhUDrwt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TteFs+rV; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762865413; x=1794401413;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=1bnxLAQbVIMtxhVwA07iseK+u3QN8a+3xy9ltcFSBKQ=;
+  b=TteFs+rVJSBY381wRKGdQ9Yf2Egr5YgE4yktWhTfNkFpBeF6f9+neEnf
+   b1EsFuk2ppYFSrY0wpzvlsvCygoMDG7rhH6xhrtz7DO6Ubh1YIUC5FRTW
+   vfGwi6EgiEJvyrC8xQUf0QVVEcuHeo4hGgMXPONJXA+sENRrE1VQAw79z
+   ih6P9qErdOTwXjWZKntgjKS8DqlWwtG3o53Nfw5/fxE4JlyiPf8uuzYAi
+   vltiWop85pLYQOTGmHzj3CL7XImqg+HCisq1JfacBCmrwMA5JwjhmOBaf
+   sI8FaOlKIIa5Jujdcc0Efo6tynT1jU9izZ110+U91SL5xAZDreWPeq+K4
+   w==;
+X-CSE-ConnectionGUID: DyxHymXOTFeywHAYEk2HsQ==
+X-CSE-MsgGUID: rKEp9W4ZTDyZjdG2vMW6Ng==
+X-IronPort-AV: E=McAfee;i="6800,10657,11609"; a="68772857"
+X-IronPort-AV: E=Sophos;i="6.19,296,1754982000"; 
+   d="scan'208";a="68772857"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 04:50:12 -0800
+X-CSE-ConnectionGUID: nseLvvlHQ1O5Qbm2PPK2uA==
+X-CSE-MsgGUID: 7sf9lcoUSk6QhjnbK/2L9A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,296,1754982000"; 
+   d="scan'208";a="188920696"
+Received: from egrumbac-mobl6.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.96])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 04:50:07 -0800
+Received: from kekkonen.localdomain (localhost [IPv6:::1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id CB28A11F983;
+	Tue, 11 Nov 2025 14:50:05 +0200 (EET)
+Date: Tue, 11 Nov 2025 14:50:05 +0200
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Hans Verkuil <hverkuil@xs4all.nl>, Hans de Goede <hansg@kernel.org>,
+	=?iso-8859-1?Q?Andr=E9?= Apitzsch <git@apitzsch.eu>,
+	Sylvain Petinot <sylvain.petinot@foss.st.com>,
+	Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
+	Dongcheng Yan <dongcheng.yan@intel.com>,
+	Heimir Thor Sverrisson <heimir.sverrisson@gmail.com>,
+	Tarang Raval <tarang.raval@siliconsignals.io>,
+	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/2] media: i2c: add Sony IMX111 CMOS camera sensor
+ driver
+Message-ID: <aRMw_Qre1FY94soi@kekkonen.localdomain>
+References: <20251103145629.21588-1-clamor95@gmail.com>
+ <20251103145629.21588-3-clamor95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251109214515.121742-1-rpimentel.silva@gmail.com>
- <20251109214515.121742-2-rpimentel.silva@gmail.com> <9d48a54c-0585-4524-b9d5-30696f5ecc8b@kernel.org>
- <CAEnQRZCvpXzGt=7NGv7-s+y0gvOg7Jx4OqbfbW3uv8jDp-jroQ@mail.gmail.com> <CAOMZO5CU09fcBB8oUOO=qC=Du3Q9gnJOQacK=6v+pnSQViex3g@mail.gmail.com>
-In-Reply-To: <CAOMZO5CU09fcBB8oUOO=qC=Du3Q9gnJOQacK=6v+pnSQViex3g@mail.gmail.com>
-From: Daniel Baluta <daniel.baluta@gmail.com>
-Date: Tue, 11 Nov 2025 14:49:49 +0200
-X-Gm-Features: AWmQ_bkTj9C0dCRYaaW6vS8S4HAZCMkKvqfHh7nxztfpxPDtGEV8r1QKd9FonHg
-Message-ID: <CAEnQRZCHKemw2YVT=WVJvUMr9CCWoZ3MORt_mU1V-62C53n-3w@mail.gmail.com>
-Subject: Re: [PATCH v4 2/2] arm64: dts: add support for NXP i.MX8MP FRDM board
-To: Fabio Estevam <festevam@gmail.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rogerio Pimentel <rpimentel.silva@gmail.com>, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, shawnguo@kernel.org, 
-	s.hauer@pengutronix.de, kernel@pengutronix.de, 
-	alexander.stein@ew.tq-group.com, dario.binacchi@amarulasolutions.com, 
-	marex@denx.de, Markus.Niebel@tq-group.com, y.moog@phytec.de, 
-	joao.goncalves@toradex.com, frieder.schrempf@kontron.de, josua@solid-run.com, 
-	francesco.dolcini@toradex.com, primoz.fiser@norik.com, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Xiaofeng Wei <xiaofeng.wei@nxp.com>, 
-	Daniel Baluta <daniel.baluta@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251103145629.21588-3-clamor95@gmail.com>
 
-On Tue, Nov 11, 2025 at 1:50=E2=80=AFPM Fabio Estevam <festevam@gmail.com> =
-wrote:
->
-> Hi Daniel,
->
-> On Tue, Nov 11, 2025 at 5:45=E2=80=AFAM Daniel Baluta <daniel.baluta@gmai=
-l.com> wrote:
->
-> > In addition to that, Rogerio please read:
-> >
-> > https://docs.kernel.org/process/submitting-patches.html
-> >
-> > At this moment I think you should keep the original author of the
-> > patch.
->
-> Right, but NXP makes a total mess with authorship.
+Hi Svyatoslav,
 
-I cannot disagree with you on this, let me clarify it internally with
-NXP colleagues
-and sort everything out.
+A few comments below...
 
-My guess is that when the code was released via the meta-imx-frdm Yocto lay=
-er
-the original authorship was lost.
+On Mon, Nov 03, 2025 at 04:56:29PM +0200, Svyatoslav Ryhel wrote:
 
-Anyhow, what is important for me personally is to have upstream quality cod=
-e.
-Also, in all fairness we should grant authorship to NXP people and follow
+...
 
-https://docs.kernel.org/process/submitting-patches.html
+> +static int imx111_set_format(struct v4l2_subdev *sd,
+> +			     struct v4l2_subdev_state *state,
+> +			     struct v4l2_subdev_format *format)
+> +{
+> +	struct imx111 *sensor = sd_to_imx111(sd);
+> +	struct v4l2_mbus_framefmt *mbus_fmt = &format->format;
+> +	struct v4l2_mbus_framefmt *fmt;
+> +	const struct imx111_mode *mode;
+> +
+> +	mode = v4l2_find_nearest_size(imx111_modes, ARRAY_SIZE(imx111_modes),
+> +				      width, height,
+> +				      mbus_fmt->width, mbus_fmt->height);
+> +
+> +	fmt = v4l2_subdev_state_get_format(state, format->pad);
 
-Thanks a lot for all your help and effort!
+You should set the fields below after changing the controls. Albeit... it
+won't be perfect in that case either, as only some controls may have been
+applied. How about just moving the lines below after changing the controls?
 
-Daniel.
+> +
+> +	fmt->code = imx111_get_format_code(sensor, mbus_fmt->code, false);
+> +	fmt->width = mode->width;
+> +	fmt->height = mode->height;
+> +	fmt->colorspace = V4L2_COLORSPACE_RAW;
+> +
+> +	*mbus_fmt = *fmt;
+> +
+> +	if (format->which == V4L2_SUBDEV_FORMAT_ACTIVE)	{
+> +		int ret;
+> +
+> +		sensor->cur_mode = mode;
+> +		sensor->data_depth = imx111_get_format_bpp(fmt);
+> +
+> +		ret = __v4l2_ctrl_s_ctrl_int64(sensor->pixel_rate,
+> +					       div_u64(sensor->pixel_clk_raw,
+> +						       2 *
+> +						       sensor->data_depth));
+> +		if (ret)
+> +			return ret;
+> +
+> +		ret = __v4l2_ctrl_modify_range(sensor->vblank,
+> +					       IMX111_VBLANK_MIN,
+> +					       IMX111_VTL_MAX - mode->height,
+> +					       1,
+> +					       mode->vtl_def - mode->height);
+> +		if (ret)
+> +			return ret;
+> +
+> +		ret = __v4l2_ctrl_s_ctrl(sensor->vblank, mode->vtl_def -
+> +					 mode->height);
+> +		if (ret)
+> +			return ret;
+> +
+> +		ret = __v4l2_ctrl_modify_range(sensor->hblank,
+> +					       IMX111_HBLANK_MIN,
+> +					       IMX111_HTL_MAX - mode->width,
+> +					       1,
+> +					       mode->htl_def - mode->width);
+> +		if (ret)
+> +			return ret;
+> +
+> +		ret = __v4l2_ctrl_s_ctrl(sensor->hblank, mode->htl_def -
+> +					 mode->width);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+
+...
+
+> +static int imx111_probe(struct i2c_client *client)
+> +{
+> +	struct device *dev = &client->dev;
+> +	struct imx111 *sensor;
+> +	int ret;
+> +
+> +	sensor = devm_kzalloc(dev, sizeof(*sensor), GFP_KERNEL);
+> +	if (!sensor)
+> +		return -ENOMEM;
+> +
+> +	sensor->regmap = devm_cci_regmap_init_i2c(client, 16);
+> +	if (IS_ERR(sensor->regmap))
+> +		return dev_err_probe(dev, PTR_ERR(sensor->regmap),
+> +				     "Failed to allocate register map\n");
+> +
+> +	sensor->extclk = devm_v4l2_sensor_clk_get(dev, NULL);
+> +	if (IS_ERR(sensor->extclk))
+> +		return dev_err_probe(dev, PTR_ERR(sensor->extclk),
+> +				     "Failed to get clock\n");
+> +
+> +	sensor->reset = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_LOW);
+> +	if (IS_ERR(sensor->reset))
+> +		return dev_err_probe(dev, PTR_ERR(sensor->reset),
+> +				     "Failed to get reset GPIO\n");
+> +
+> +	ret = devm_regulator_bulk_get_const(dev, ARRAY_SIZE(imx111_supplies),
+> +					    imx111_supplies,
+> +					    &sensor->supplies);
+> +	if (ret < 0)
+> +		return dev_err_probe(dev, ret, "Failed to get regulators\n");
+> +
+> +	ret = imx111_parse_dt(sensor);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	ret = imx111_clk_init(sensor);
+> +	if (ret < 0)
+> +		goto error_ep_free;
+> +
+> +	ret = imx111_power_on(sensor);
+> +	if (ret < 0) {
+> +		dev_err_probe(dev, ret, "Could not power on the device\n");
+> +		goto error_ep_free;
+> +	}
+> +
+> +	ret = imx111_identify_module(sensor);
+> +	if (ret < 0) {
+> +		dev_err_probe(dev, ret, "Could not identify module\n");
+> +		goto error_power_off;
+> +	}
+> +
+> +	sensor->cur_mode = &imx111_modes[IMX111_MODE_3280x2464];
+> +	sensor->data_depth = IMX111_DATA_DEPTH_RAW10;
+> +
+> +	ret = imx111_initialize(sensor);
+> +	if (ret < 0)
+> +		goto error_power_off;
+> +
+> +	ret = imx111_init_subdev(sensor, client);
+> +	if (ret < 0) {
+> +		dev_err(dev, "failed to init controls: %d", ret);
+> +		goto error_v4l2_ctrl_handler_free;
+> +	}
+> +
+> +	ret = v4l2_subdev_init_finalize(&sensor->sd);
+> +	if (ret)
+> +		goto error_v4l2_ctrl_handler_free;
+> +
+> +	pm_runtime_set_active(dev);
+> +	pm_runtime_enable(dev);
+> +
+> +	ret = v4l2_async_register_subdev_sensor(&sensor->sd);
+> +	if (ret < 0) {
+> +		dev_err(dev, "failed to register V4L2 subdev: %d", ret);
+> +		goto error_pm;
+> +	}
+> +
+> +	pm_runtime_idle(dev);
+> +	pm_runtime_set_autosuspend_delay(dev, 1000);
+> +	pm_runtime_use_autosuspend(dev);
+
+The autosuspend should be set before pm_runtime_idle() call(), shouldn't
+it?
+
+I can make the two changes before applying, too, if that's ok.
+
+-- 
+Regards,
+
+Sakari Ailus
 
