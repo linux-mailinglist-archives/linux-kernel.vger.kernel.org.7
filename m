@@ -1,206 +1,245 @@
-Return-Path: <linux-kernel+bounces-894525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32321C4B3C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 03:44:47 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0710C4B3C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 03:45:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EC8B44E2889
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 02:44:45 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 443C434CA3C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 02:45:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA4B8348883;
-	Tue, 11 Nov 2025 02:44:38 +0000 (UTC)
-Received: from LO2P265CU024.outbound.protection.outlook.com (mail-uksouthazon11021078.outbound.protection.outlook.com [52.101.95.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF60B3491D0;
+	Tue, 11 Nov 2025 02:45:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nPSX672c"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51022330328
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 02:44:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.95.78
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762829078; cv=fail; b=YsSYMfh3jslj3enPgR+CH0v46cXvDCtQ51OUKKyrKVdzvHLwWRtHCHnkTYbq0N60zQJJLaoIVIgIRWKbMN11MjXzADRqEVCRqvaKL7XTHFCfelE/LkX2oSnekpMrIT5nshStGrwsgw1O2FONFcEX8U0ki8jHhC7swYVkg0yljIM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762829078; c=relaxed/simple;
-	bh=PAzQCxxLy0d1vc6KAH89pC87z3EVTmDlDKw+Z/qIDVY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=GjHXpJcPbo0GKp3ggSpMFjtv3E5zu5ARuwB/I55RDIYtzCFzaN9G0mh66X4+q3D7Jevly5ZpClFx5Aa45o2t4EPRd+Ys725CzHcp97QmeSA/TNQqfOw2FYECkF/u/IlBu0kBMWMPEVryl2xOohh/u+rpgqtidMaEYkJNztPdWkw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atomlin.com; spf=pass smtp.mailfrom=atomlin.com; arc=fail smtp.client-ip=52.101.95.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atomlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=atomlin.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=t4dRTVQH85zakkI5O882hwLelCge17CNesB+Y9i2+q9g7KdA9quDFTretTTHEVMSHnGI8Y8vARhpyu+nHcWactxEM0yHr08JZsERlk2e/QvoJz2i+taxIHMpNz+XBJ51y3KAkUmIYDrKaiDNxbvF811zjeQV1TDR/wHe7e0Kgy0UEze9CZgQs6lUD6uZUBqCyHNzV0yBKU5rJKmocWNimmsLUFSabAG2KGDmBuWACj/lnWYcDevTnxWVAhQs7JXzCSzmbhZGmCKG3oGa4xHEHO1XDdaOqNmibyE9wW089T2BtA2mITJf1Jds+dDlD1WegA/b/E+nQJLc+7Xo9Gg4ow==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0WwKrbvcNGu32bkly2LaezwlYczC512ysz4Bws+GP1o=;
- b=BIWtCmRjaAOC+jn56uwHQHQ3dW7l0iLosngiaBcbMnH6A2UDBWMz1MdrlPASdE0acMcnatLzRezd/F1gzLQI0k0z1+M3H0Zpcj5NX4DET0NDRV5ymgs7Ny/TrEgnO/hchgfjkw1b7rESkJEvtpfb1rEqn1kRi5Ij2K8VklYVYta9wKc45lZUjSBX6HvC4xsHd7T3a8HtXw1T/nR0//n8m2YWZjTJDGlDu1npm6UDw4R/5gZf0BrjQ8yCGrb6bCVGMOVQBPBz1UKsv+xUPtKbEQCmB/Ae+ECOWbwERmrbutjiGt6P/aqLekLNBOBNpsVcvdeKse9PTViWfPBYczPmTg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=atomlin.com; dmarc=pass action=none header.from=atomlin.com;
- dkim=pass header.d=atomlin.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=atomlin.com;
-Received: from CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM (2603:10a6:400:70::10)
- by LOAP123MB8301.GBRP123.PROD.OUTLOOK.COM (2603:10a6:600:43b::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Tue, 11 Nov
- 2025 02:44:33 +0000
-Received: from CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM
- ([fe80::de8e:2e4f:6c6:f3bf]) by CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM
- ([fe80::de8e:2e4f:6c6:f3bf%5]) with mapi id 15.20.9298.015; Tue, 11 Nov 2025
- 02:44:32 +0000
-Date: Mon, 10 Nov 2025 21:44:29 -0500
-From: Aaron Tomlin <atomlin@atomlin.com>
-To: "Luck, Tony" <tony.luck@intel.com>
-Cc: "Chatre, Reinette" <reinette.chatre@intel.com>, 
-	Babu Moger <bmoger@amd.com>, "Dave.Martin@arm.com" <Dave.Martin@arm.com>, 
-	"james.morse@arm.com" <james.morse@arm.com>, "babu.moger@amd.com" <babu.moger@amd.com>, 
-	"tglx@linutronix.de" <tglx@linutronix.de>, "mingo@redhat.com" <mingo@redhat.com>, 
-	"bp@alien8.de" <bp@alien8.de>, "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] x86/resctrl: Add io_alloc_min_cbm_all interface for
- CBM reset
-Message-ID: <w6thhucyyfnveawixyub2yugsb3s2goiocqtene7s56csrgtfz@x4zll7p6tyla>
-References: <20251107012401.224515-2-atomlin@atomlin.com>
- <2a0b270a-e398-4d88-aa10-421f2769a759@amd.com>
- <53iuqiul6uo7zj6sfckm2h465cjusaxvpxrtdmnbmhvbzuqiq6@7ogm3zqddzjd>
- <fa2c3cbc-2af6-4d98-bd70-8ab49cb0d83e@amd.com>
- <4whfbgq336xfuov4i4nwwrn35ywwlwizuvpdlstmdqzkhvwrq6@eits26xbwyz6>
- <bcc8e6d2-8e91-4e91-9dab-f1c00f99c408@amd.com>
- <knqdzael7yihvznsdzijztawviex2n3i5pqbzslmk3rolnacrh@h3cwjthvyeuz>
- <SJ1PR11MB6083F15A9FCB09AEC3A46827FCCFA@SJ1PR11MB6083.namprd11.prod.outlook.com>
- <937022c8-82cb-4f4c-a2a3-ceaf99580cc6@intel.com>
- <SJ1PR11MB60833A27A1B8057CDDFB1B2BFCCFA@SJ1PR11MB6083.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <SJ1PR11MB60833A27A1B8057CDDFB1B2BFCCFA@SJ1PR11MB6083.namprd11.prod.outlook.com>
-X-ClientProxiedBy: BN9PR03CA0392.namprd03.prod.outlook.com
- (2603:10b6:408:111::7) To CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:400:70::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5910E330328
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 02:45:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762829102; cv=none; b=be+ipuxtfMj6bxFLzzWcB+DOTDm0dM6lCIuBgkzXZErka1tAeR4GsrGHIRgAy34RLeTgBY4bWtWoBq9aLbTAHaM6f0sDIAkD8BS3exFSa6sAes2lCgvVm4AsnPv6VT/lEQPGYfHZ1UkQEYOJ2kCwlYxBIUKn4uSp/K9UX5U2cDs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762829102; c=relaxed/simple;
+	bh=IVTpkG8sPN8RwEZqKEb4ADfMjzyhzQIRRjkCWARdjUI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CTIJ7qS3BzAiM4cEzUdIDpaUwBAkqDR46g5moiMiyiAjjzPjhQm1sbJSa5PTNEQOV6atStxpbCUvja37N26HVOh/61CNDDN92WRIrhOM8fG+8VocQ/8FP/ZirucN83G4qnEXMZQnRNeppmaQBEgN6qRGlhMOKO7i5NJBjqJG5IE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nPSX672c; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7af6a6f20easo2972812b3a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 18:45:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762829100; x=1763433900; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ADXi46rhPtl2zKrXkKYDt/vvJ4wJ2S3QdPh5Lh3JrjI=;
+        b=nPSX672ciru70LBn8RtWUo283XCRigoGnlt3pfMVGQekJ6vKWvQUuWGRj0MzEUEyWW
+         Omu0epkNymUWFgF8XFer/MD/eZBJCK/IQb/R0gfyR8vNBOHbVx+rP6XXqyU1nXyKCwZY
+         3v0HzI8CVMPgpsLxP06xJjsmr5wRKGCjiAI7tqhbkWtTfqKasdev6L1BQcsfq327hJcT
+         2oHyTbrt2GiM2ZwaThzDMMPZDaF8gnXY8t7zecRiTEgkVnicOFfJJvF4kEDGHUfz7AR+
+         J2bejrFpxZA1f2cTDcDKwj/LSoBzGML46ZtQBccqVDGx+fBTMRHgvUEq3Tg2ef9Iqky7
+         GrVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762829100; x=1763433900;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ADXi46rhPtl2zKrXkKYDt/vvJ4wJ2S3QdPh5Lh3JrjI=;
+        b=bYNubzAb7qMscluZfH5OCbbozvy1GuZdHVvUZapNrr5E8Aq4cvxZ4uYctJmJxLnvI0
+         SbpOG1YmFOLe9ooOle4KUryQ84aaMHKxt19mUnbikGChCwgT09pMRXxBtn110HRcSXTf
+         UOHuR721JG5j9KBrrqCE3M+WqcecRjt1nBqybWD6l6RtTWK0hnV5l7sQswE1URoo5GgD
+         a/JxYq0iY/w+8VTKAhvvlX0OxyETuwMXlOGDCwuRcs1DDnvAtOVfrh4Rksjczh+if+Wq
+         nUQTwdbxPmJBc7LmHp6qnrD1nHIyme5kF3yYF+L41wGHr29Yr8wyfG9cf7iKSTn8EUq+
+         dYgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV1jQFVxQdd7BbvlWv//XhlYYmjuu7DbjUuCJyK8B67Pe3BIuga5aUNhOIlgtqGaXG3IkUwSZCYdwYu9h8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTF72pBDmpxZTUR52QRaH4obEci6e1YS7OHrgnFfaxG9Ce6+3H
+	f6fn/YG6pinpb81hwD79Bebi3cqBeybanRwNV31lA2hxE0mqV0jvVb0I
+X-Gm-Gg: ASbGnct7EJLfQckpgVBZqLi2tK6xEjDXWr0OwyW5UZj9gWjeektESmZ8nKXcXkZk+gX
+	1QIRnjPhiGO2M+OBYjuUjAtf2aFc2koRGbbLeWFpWNUy70MeLKcUSr/eWMODivojazq6qt3zfmC
+	mOhknf5+zMtKL/VDWP5zUWDQcGkfWjeoNZQOu+7bCqoIDkUctilE/sEb6Ya3IVqXCffqHKIKT4n
+	XZC9P8JjbPfF2snG09fFFYq2ofwAJabvsf0jw4qv9Afn80BwEIiq78XF05xBfq6x3vaf2OIrUJv
+	jNuVHJckGv7MED6nUq5UIk3CRB4dltJrtUFgOX8hTCWAEbL7KmLW1dRXYEHIWmERmWZXog0i5yM
+	/cjdpZETGLTK1UcXCWv4SVTuCGdBr4/7KBtI0mBIAunZaDp7CpKI+DRVCenjv2vy0p/20BMfNRQ
+	TfFFoiOyF4AGDGh4/W/eNfxmc=
+X-Google-Smtp-Source: AGHT+IGn7q43rttlZ3nAPDGApmA7SUPOnoa1PNLBTcXnAm83frafkwx+aYxNLBM9B43r52WGh0kVhw==
+X-Received: by 2002:a17:902:744c:b0:296:3f23:b909 with SMTP id d9443c01a7336-297e56c9e07mr105964695ad.39.1762829099546;
+        Mon, 10 Nov 2025 18:44:59 -0800 (PST)
+Received: from [10.189.138.37] ([43.224.245.241])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-bb57baf9905sm4764105a12.17.2025.11.10.18.44.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Nov 2025 18:44:59 -0800 (PST)
+Message-ID: <3a787685-1765-4068-a8da-d595dd257b71@gmail.com>
+Date: Tue, 11 Nov 2025 10:44:54 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CWLP123MB3523:EE_|LOAP123MB8301:EE_
-X-MS-Office365-Filtering-Correlation-Id: ff90d679-7db1-451f-83d2-08de20cc3e76
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?SElybWo5OWQ0Mm9qMnE5UCtSOU4xamUyREtxYVpxaVdNVmFZcFE2cXNwUE4y?=
- =?utf-8?B?U3U5ZlB0Q1FLK3FnM3ozT1BNUitYL0JWbWIxUlJtbDdkUXpCeXp2dDc1OWdC?=
- =?utf-8?B?UHZwMnBnVDNxcnF4WXpCTzMxb2dYalZLaWVYSks3cE5XdENtN2ozZGdyVGVU?=
- =?utf-8?B?eWlXR1BCTDVDaW91L3doSHJmSFE0eldVV0pIMkhsaEpRSlZlR3RvMnl4NDJq?=
- =?utf-8?B?VlZDWDNkcFBiVzZHNWlDRWFqN2hJYm5ZZFlaMGtZQjJQSGtkWmFybk5aMjNr?=
- =?utf-8?B?YTNIT0g2bnZnRElvbHlBWmxTR1RqTlNzTkIwZkdwRE9pcm9rVFVNbEdOUGs0?=
- =?utf-8?B?VUZsSGd5MnhoOExacGJHTmNGbnRUQmlYaWJHUGxmK0tNYVJHMHBqZkFyUW5o?=
- =?utf-8?B?aGY0UUxnMXpkUnJ3NU5BVXJSSU9oZ0c4OGJPQkxub2ZxTnhyRWlOdG02QTVW?=
- =?utf-8?B?d2lhNm9nVzhONEdtcnhuNS9TZzkyNk9Zc2dzVDMzUDhVME1Ia0NlY3pkK3Bh?=
- =?utf-8?B?TkFuL0VZK2M1MlpkMEs5V2hJZ2ZVelRYa0d0QXRmcEYrM2Z2ZlBsMzlHSkg0?=
- =?utf-8?B?dkFzMHh4UDc4OW91YjRRNCt6YXh6dm51UjNPaTRFRXdSMFpDSFJFajIxcE5S?=
- =?utf-8?B?OGhpNXBUckhlTDB6by81S0pEMjNVZG1CcER5T3cxYzlTNThLME5KOEtXOGhO?=
- =?utf-8?B?YUJqeUFFeFlMcUxTWG1DNjhSckpITlY3bGV4RmFZTEdpTytQd1ZIWlp5NXFW?=
- =?utf-8?B?YjhGWENZQndGNTcrcFZNOE1aTEhFRnhsVDdGakhFWklFSC9oV1pldkZsV1Uy?=
- =?utf-8?B?aXdTVE5nWHlNQTVjWWxPbnlWV0Q1OGxCNTI0aFMzQnBqSk03cG5Fbzg3U0k1?=
- =?utf-8?B?VFNjUHZSdzR3QnJWVnV5YklMMGw3QjRnQzRWQVpmOVcreEo5akRXWi90djJu?=
- =?utf-8?B?WlB4Sm5meUlCdXJYZys4MWg1L2JSSGJJeWtya0VBaWNJTlJMaGhDaWEwcWNB?=
- =?utf-8?B?dENVWm9pZVh1ZTRhRXhpaTVjUUhkRmcxZjVIMFNGR3F1dys4UEh3ZmpoMnNJ?=
- =?utf-8?B?VXJxRUh0VWVyZkJvZmZGZEt1MjdKdWdjUkVleVhueE5LYlRKaTBoK2p3U0hp?=
- =?utf-8?B?MXliNitVdXM4R3V1NU5TZ2d3NFppKzM1WW9NRjdta1VkWFdGNlh1SVBBVmE3?=
- =?utf-8?B?N0pJM2h3akVOSmJ6VUJwZG8yRjFtZTM1QTBlVno3amY1dnhvbnowTlhaK2dZ?=
- =?utf-8?B?K3pGMU9hMExZVUxmc3p1c1JialBZbXdtenRlZWQxN1ZyMTluVTNnWCtlbXIz?=
- =?utf-8?B?Q05oVUVZSkd4Tk9McDJMMG9XblE2ZUE1TVhhK1o5Y0tDRFJ1Mkt2R3VWam9q?=
- =?utf-8?B?eGp4U0FRZmljMU4vVDZXd3BheThteC83Q1RYWWVlSzFRUVFZeFA3OFZsaVU4?=
- =?utf-8?B?dzhXdXlQMTc3VlhvYnpNeVZDMmdtY1B0ZUtaeEVyTU01dHlXV3UvMVlVblhB?=
- =?utf-8?B?cjM5SHc1RUdNSnZVcE8vT2w4aGtHdmk1QUlKbUt6Q3RYeVl4R2hWM0xlc28v?=
- =?utf-8?B?MU14Z2NJM1RoUFJlTEp4WlJrUS92RGl3R2FaU1NiNGRCaVBlMUNXa0s1THQv?=
- =?utf-8?B?UGh1TXhJTTU0K2h0NG52MnBHNk1Bcm1RbFFIblQrenVPMUx3OFhkTGF2R3lw?=
- =?utf-8?B?T21aTFpKbGtrMmhvUDBzUytMd00xempLZTZMZVdKUjRGdElEOFZvYVJBaHNC?=
- =?utf-8?B?Q1NXYTgwV2xweitjd1BjbEcyellSakFTZ3J3VjBuSGFuL2ZkVmRpSE1ySElo?=
- =?utf-8?B?RkNWczBJMndMWExZa21IZjBSSmpIKzlOS29Cb1laZ3Jma0JkWkM1ekFZb1BV?=
- =?utf-8?B?eDEydmhuK3c4dFN1TjR3M2dYVkVoR0s0a2tWbUN3UmxjQzFZQ0RSd1FOSnpq?=
- =?utf-8?Q?FOxZrGpGa2xCnyyQTWmUtPmBhKkh36LG?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?U29MVmlNUmJ2QnVLTDJ6SGFLQkY4Vk0yRWxhS0RON2tyQXZ0MEp0Nm5WNWxC?=
- =?utf-8?B?VFhRai9HV3lmbWduSHdOYWYrUnljaDhrOUdCV2h0ZHVIRm5sRy9Ld2h2NjFy?=
- =?utf-8?B?Y3IzZ2xiSXpyTmxJYmlwU3NJdjNGVUVORVRNZ1ZUU0lmNjZZTVlNQUlCRW9P?=
- =?utf-8?B?b2pJS2YvTUtzUitHRmF4bllwaUNTTnV3RFpEdlVPWUxXYy9aUlI0N2RjSEZM?=
- =?utf-8?B?V2xiemJlRGlQQUJHcjgyVXFHdHByN3c4OWdUVTdUd3ljZzA4dDV0MCs4YWVs?=
- =?utf-8?B?U0JSWTBUdUZRa2s0RXZGZy9QN2ZOT0svZE8xMUtLaWtSOXVpMU53ODZJT1cx?=
- =?utf-8?B?WEJSSTRVSnNjdG5aL3VNTG0waEhiUkxIdmhoQm1iQ0RtelRCUHlPL2VJSFdV?=
- =?utf-8?B?TVdFaEY0blVULzBLbUx5cEdYZ3V0Sy95MGJKZ0VkQU1VdUpCbVRmeVdXdWlO?=
- =?utf-8?B?eDdpS0svVGszMnFpRHZTK29tVU0wWUpUNitlOGFkQzFYMkpBdkNWbTk0Vjl4?=
- =?utf-8?B?V0lZbVYrOTJ6Y2RHYjBZcThvS2xFZ21MbHRXK1I2dDR0K2wzN1JlQjFWT2tI?=
- =?utf-8?B?aVhYRUhSb3hqTFk1MzJpMWZqM0lBbWtMd0MxRW9oS1NRZkpjWU13d0x6QXRm?=
- =?utf-8?B?R1VuZk5SSW95Vm1Bb0xaZGdqRGVVRk1jMURuc0tKNEZuSTR2WFM3WHRVZkE3?=
- =?utf-8?B?ekRBK0JSbTFZTi9OUWgvUDBjZTZuOUZZOTdLZTVsSEhkV0pnWHhxVFZRKzhq?=
- =?utf-8?B?VlFLRFF2RTJEbTFrNUFzVnJFMWM5TTFrc1dMK2M1Uy9IWWVSMkRVNUgwaXBP?=
- =?utf-8?B?YWQvVmZYcUVZMFl1bmRrNTE5WHNPWjgwaGFHM2lIQ3A5TDZ2UWRXMmZpRE9w?=
- =?utf-8?B?Q1dPTDkwZGlLbTJmSmQyd2V3ZEZVUnlydFBMM3RCV2tzNXo4TTU4Y0hYSTZS?=
- =?utf-8?B?OFUxWnN0Ui9zcER0S0FMNS9waG5nSE1xT1VLbEVVK3NrOTRJU0phM3lVMDNu?=
- =?utf-8?B?VzVXMlFXTmtTaUdwREpQS1BOWEs0QXpmWDBRaTYxZ0dWNUk0Wk1mellrT2pM?=
- =?utf-8?B?dkpacTE0NEVtcGRHTXo1S2F2TGNLVTZWZG9WSjJVQ0tuVGpPL0J6a3ZLMXdC?=
- =?utf-8?B?a0d5emtwVzUzWTZmNTRTQWl2MjU4RVZzNWVZbzBwTjhKamJoWlBFQzJTM2hU?=
- =?utf-8?B?ckJXY1FldWJlYUtkMUpzT21QWmw5T0tVcnc4ckkvbWlrT213ZWNKbXFKWERD?=
- =?utf-8?B?bS9QYXJoQkJHem53cFE5M2d6a1YyMDl2S0U5V2gyaEtEcGk0YUwzd1B4azRI?=
- =?utf-8?B?SWVQTlZXNnROajBqLzRTNkpoWmdVQ2F4YjBsckhZTjE1TmNJemZ5YUV4MkNT?=
- =?utf-8?B?OFJlblIzbDcxVzZsSkpXRFBQOGJTdW84Z2hlcFN6RDU4ZzdlaEEyMFluYUtF?=
- =?utf-8?B?WnVkSjNrbkFETmhvTTBhNXUxN1JYcUFVS3VKN1VWUmlXenBCcWNpUGp5RHMx?=
- =?utf-8?B?aUQ3d29iQW5RVHRiR3FtRkYxRFNTSVFvQnp1c3ZCbFpmWTZZUkQ4YTNWYTB3?=
- =?utf-8?B?WjVvTXh5NmQ1K2NxSTBjc1J1YklRZ0ZKeEg2TFFZZlBaczNSYzd1NFVYUzZO?=
- =?utf-8?B?amxRcmdxL1N5bmE5RSt0aHlybnduWVZLaktVbnZtZVNpMk45Sy9lTlRHeFpE?=
- =?utf-8?B?YUVES21FcW5DSm82M1NPVG1zbVBOY1VoUTFkaXFoK1VrZy8zZnFJNUdwdVZN?=
- =?utf-8?B?YWlHUisxdm04N1BHRzExRStkNUIwRDVYcC85LzJZbVRZRVRKWjlvZVMxMWpX?=
- =?utf-8?B?bnJBa0xHMFdseHdjM05JcWY3VnRIZlRzdFQ2MHNnbEVzdXZCcDNXa2VPTmND?=
- =?utf-8?B?Z2JJTElCZmtPVW5rL1hQVXdTSzNNUC9pWDBUVWNBZTBqZUozaUtKanVBdVh1?=
- =?utf-8?B?L2orK3pYTHNZb245RTZWSUU1ZXREQXFuaU5XeEpzemR0UHhtVkJlSkZTcmZH?=
- =?utf-8?B?MmtGdFFYOWp1RWNpeTc3WE9KMnBIU05lV1FJdy8zTUtDdHNFNjVXYXJ0elcz?=
- =?utf-8?B?eDJnMUhEaGI0dGdoZll6YjA0UmdGd2FBRXMvRG44RmVqTnhIdDFHYk84Y2dT?=
- =?utf-8?Q?GVDUdBcU7iHC2Q+raAQ8C/sLp?=
-X-OriginatorOrg: atomlin.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ff90d679-7db1-451f-83d2-08de20cc3e76
-X-MS-Exchange-CrossTenant-AuthSource: CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Nov 2025 02:44:32.8883
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: e6a32402-7d7b-4830-9a2b-76945bbbcb57
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ByfdfPYcI/na7iRG0QhLcZPy2dqj7CIHSBPz3upxb1Xkhci6Y0NBbs1RP82JvaDPVL/n0wnY23iVS2jSigheow==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LOAP123MB8301
+User-Agent: Mozilla Thunderbird
+Subject: Re: [f2fs-dev] [PATCH v1] f2fs: fix has_curseg_enough_space to check
+ all data segments for dentry blocks
+To: Xiaole He <hexiaole1994@126.com>, linux-f2fs-devel@lists.sourceforge.net
+Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org, stable@kernel.org,
+ Yongpeng Yang <yangyongpeng@xiaomi.com>
+References: <20251110132654.6485-1-hexiaole1994@126.com>
+Content-Language: en-US
+From: Yongpeng Yang <yangyongpeng.storage@gmail.com>
+In-Reply-To: <20251110132654.6485-1-hexiaole1994@126.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 11, 2025 at 01:40:45AM +0000, Luck, Tony wrote:
-> > Seems like user space has needed information to perform a sane reset?
+On 11/10/25 21:26, Xiaole He wrote:
+> When active_logs == 6, dentry blocks can be allocated to HOT, WARM, or
+> COLD segments based on various conditions in __get_segment_type_6():
+> - age extent cache (if enabled)
+> - FI_HOT_DATA flag (set when dirty_pages <= min_hot_blocks)
+> - rw_hint (defaults to WARM via f2fs_rw_hint_to_seg_type)
+> - file_is_hot(), FI_NEED_IPU, f2fs_is_cow_file(), etc.
 > 
-> Like this:
+> However, has_curseg_enough_space() only checked CURSEG_HOT_DATA segment
+> for dentry blocks, which could lead to incorrect space calculation when
+> dentry blocks are actually allocated to WARM or COLD segments.
 > 
-> 1) 	Read info files to figure out what minimum mask is needed for this system
-> 2)	Use Babu's suggested syntax of
-> 		# echo "L3:*={min_mask_from_step_1}" > schemata
+> Reproducer:
+> Note: This reproducer requires adding a tracepoint to observe segment
+> type. Add the following tracepoint to include/trace/events/f2fs.h:
 > 
-> Rather than Aaron's
+> TRACE_EVENT(f2fs_allocate_data_block,
+>          TP_PROTO(struct f2fs_sb_info *sbi, struct inode *inode,
+>                  enum log_type type, block_t blkaddr),
 > 
-> 	# echo "L3:*=0" > schemata
+>          TP_ARGS(sbi, inode, type, blkaddr),
+> 
+>          TP_STRUCT__entry(
+>                  __field(dev_t, dev)
+>                  __field(ino_t, ino)
+>                  __field(int, type)
+>                  __field(block_t, blkaddr)
+>                  __field(int, is_dir)
+>          ),
+> 
+>          TP_fast_assign(
+>                  __entry->dev = sbi->sb->s_dev;
+>                  __entry->ino = inode ? inode->i_ino : 0;
+>                  __entry->type = type;
+>                  __entry->blkaddr = blkaddr;
+>                  __entry->is_dir = inode ? S_ISDIR(inode->i_mode) : 0;
+>          ),
+> 
+>          TP_printk("dev = (%d,%d), ino = %lu, %s, blkaddr = %u, is_dir = %d",
+>                  show_dev(__entry->dev),
+>                  (unsigned long)__entry->ino,
+>                  show_data_type(__entry->type),
+>                  __entry->blkaddr,
+>                  __entry->is_dir)
+> );
+> 
+> And add the tracepoint call in fs/f2fs/segment.c in
+> f2fs_allocate_data_block() function. Find the location after
+> locate_dirty_segment() calls and before IS_DATASEG() check:
+> 
+> 	locate_dirty_segment(sbi, GET_SEGNO(sbi, old_blkaddr));
+> 	locate_dirty_segment(sbi, GET_SEGNO(sbi, *new_blkaddr));
+> 
+> 	trace_f2fs_allocate_data_block(sbi, folio ? folio->mapping->host : NULL,
+> 					type, *new_blkaddr);
+> 
+> 	if (IS_DATASEG(curseg->seg_type))
+> 
+> 1. Mount F2FS with active_logs=6 and age extent cache disabled:
+>     # mkfs.f2fs -f /dev/sdb1
+>     # mount -t f2fs -o active_logs=6 /dev/sdb1 /mnt/f2fs-test
+> 
+> 2. Enable tracing and f2fs_allocate_data_block tracepoint:
+>     # echo 1 > /sys/kernel/debug/tracing/events/f2fs/f2fs_allocate_data_block/enable
+>     # echo 1 > /sys/kernel/debug/tracing/tracing_on
+>     # echo > /sys/kernel/debug/tracing/trace
+> 
+> 3. Create a directory and write enough files to trigger dirty_pages >
+>     min_hot_blocks (default 16), which will clear FI_HOT_DATA flag:
+>     # mkdir /mnt/f2fs-test/testdir
+>     # cd /mnt/f2fs-test/testdir
+>     # seq 1 8192 | xargs touch
+>     # sync
+> 
+> 4. Observe dentry block allocation:
+>     # cat /sys/kernel/debug/tracing/trace
+> 
+>     The trace output shows dentry blocks (is_dir = 1) allocated to WARM
+>     segment because FI_HOT_DATA is cleared when dirty_pages >
+>     min_hot_blocks (default 16). However, has_curseg_enough_space() only
+>     checked HOT_DATA segment space.
+> 
+> Fix by checking all three data segments (HOT, WARM, COLD) when
+> active_logs == 6, similar to how __get_segment_type_6() can return
+> any of these segment types for dentry blocks.
+> 
+> Fixes: ef095d19e82f ("f2fs: write small sized IO to hot log")
+> Cc: stable@kernel.org
+> Signed-off-by: Xiaole He <hexiaole1994@126.com>
+> ---
+>   fs/f2fs/segment.h | 31 +++++++++++++++++++++++++------
+>   1 file changed, 25 insertions(+), 6 deletions(-)
+> 
+> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+> index 1ce2c8abaf48..c13400a53013 100644
+> --- a/fs/f2fs/segment.h
+> +++ b/fs/f2fs/segment.h
+> @@ -632,15 +632,34 @@ static inline bool has_curseg_enough_space(struct f2fs_sb_info *sbi,
+>   	}
+>   
+>   	/* check current data section for dentry blocks. */
+> -	segno = CURSEG_I(sbi, CURSEG_HOT_DATA)->segno;
+> +	if (F2FS_OPTION(sbi).active_logs == 6) {
+> +		/*
+> +		 * With active_logs == 6, dentry blocks can be allocated to
+> +		 * HOT, WARM, or COLD segments based on age extent cache,
+> +		 * FI_HOT_DATA flag, rw_hint, etc. Check all three.
+> +		 */
+> +		for (i = CURSEG_HOT_DATA; i <= CURSEG_COLD_DATA; i++) {
+> +			segno = CURSEG_I(sbi, i)->segno;
+> +
+> +			if (unlikely(segno == NULL_SEGNO))
+> +				return false;
+> +
+> +			left_blocks = get_left_section_blocks(sbi, i, segno);
+> +
+> +			if (dent_blocks > left_blocks)
+> +				return false;
+> +		}
 
-Hi Tony,
+How about merging this for-loop with the one above to avoid duplicated
+code? Since both dent_blocks and data_blocks may write to data segments,
+should we also check whether data_blocks + dent_blocks > left_blocks?
 
-I am satisfied with either approach.
-
-However, to clarify, the primary function of the "io_alloc_min_cbm_all"
-interface is to efficiently set the lowest architecturally valid CBM across
-all shared L3 domains. This operation relies entirely on
-r->cache.min_cbm_bits. Since this value is guaranteed by the hardware to be
-valid, this approach is robust and will not return an error (e.g., -EINVAL)
-to userspace.
+Yongpeng,
 
 
-Kind regards,
--- 
-Aaron Tomlin
+> +	} else {
+> +		segno = CURSEG_I(sbi, CURSEG_HOT_DATA)->segno;
+>   
+> -	if (unlikely(segno == NULL_SEGNO))
+> -		return false;
+> +		if (unlikely(segno == NULL_SEGNO))
+> +			return false;
+>   
+> -	left_blocks = get_left_section_blocks(sbi, CURSEG_HOT_DATA, segno);
+> +		left_blocks = get_left_section_blocks(sbi, CURSEG_HOT_DATA, segno);
+>   
+> -	if (dent_blocks > left_blocks)
+> -		return false;
+> +		if (dent_blocks > left_blocks)
+> +			return false;
+> +	}
+>   	return true;
+>   }
+>   
+
 
