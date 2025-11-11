@@ -1,136 +1,98 @@
-Return-Path: <linux-kernel+bounces-896089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2837CC4F9D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 20:34:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 04888C4F9D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 20:34:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 170224E2622
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 19:34:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D48CB4E1F28
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 19:34:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F456328B70;
-	Tue, 11 Nov 2025 19:34:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D5EC328B73;
+	Tue, 11 Nov 2025 19:34:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="abYIC78V"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="HSM8/b04"
+Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6CCE2798F8;
-	Tue, 11 Nov 2025 19:34:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9375E328B55
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 19:34:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762889648; cv=none; b=H7j0nOtiX/C1ZXkpGjMzdL8mAU0xEqDKARl5QMmqARR761CnnJemQv8Ar+IRU52jbsDxCf5/w2WBqg84Dt4TM9JnCiDP928BZVTvECmf/MOWXByqbKNfPHnDLiHhzP/Ak+HhRSajyru5V3YhIYUvC4A4YKDXI2oVtPvEaQ4BVp8=
+	t=1762889672; cv=none; b=Zq3LUZxZ+uRfQkf7OimX1Fb7mVU+113gzftuFGHyOG0vt/U/He8G38/vrCqGLrdQNB8uHkg8IjyE0b3ZsMYvys2uqWGzurWwBB5s3wRNrmf+r6ZBes5aczw4CVUrxcOlihiXReHI/33FIwhvKaoGDhVGDZS3yBwHtksOQ95Hy0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762889648; c=relaxed/simple;
-	bh=v7NoUGhdTTQsuzKrcG/+r6lzjJyNg1UzIw6aiVzxVaQ=;
+	s=arc-20240116; t=1762889672; c=relaxed/simple;
+	bh=KssuIzn0oVtRjHR/Q6bWgh+b049osJMeDnfLAZ+GUCw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MS1hD10Z+S6xLYIp0YEjrJ1Z00dHK3n0b9XsyP9mkrpMWXds4p/If3gQOWZQoqEZ1ax0SyhmK8RPmsCOg4qf/vxmQ8JPwe0XdUWEBj6v1GXNjcbgluXSaRmhhBdZZ26igHWwyQ5GwKqpK9QGJ7V8pizTN9qkMtQ/dhA5tN7YVNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=abYIC78V; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2633C4CEF5;
-	Tue, 11 Nov 2025 19:34:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762889647;
-	bh=v7NoUGhdTTQsuzKrcG/+r6lzjJyNg1UzIw6aiVzxVaQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=abYIC78Vki7dMvCS/0slHBey55YuUwvgFqzBHmsduRQvvbcBYefzO6GQCbXCFE5At
-	 rjklwkwPoJzul1Jyy7JyDVHD6zy4CciyyAS6rXxEa7De4bPOu5qLJmOKyRsYtKKT5e
-	 E6GYpWe74to2dWi38S6PS5t5ahhTk8c0GFTgQlpIU+bBpxy/OOt/JHbdd8fL9hANqr
-	 NOSdJ0/w9fQnzGDMud8Jr78a6zV3qA+/+SR1bi/vYf6DnOTvmOij5u432CA+LFeVBH
-	 bgs0q69X8b4yhFSuJNCEQvMb/mbX5ALafghuOYwBsEQ4MJiwoAEtcK/ZXqLmMJ5mJZ
-	 AndYnurX2eZoA==
-Date: Tue, 11 Nov 2025 11:34:04 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: "Chen, Zide" <zide.chen@intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	Peter Zijlstra <peterz@infradead.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	thomas.falcon@intel.com, dapeng1.mi@linux.intel.com,
-	xudong.hao@intel.com
-Subject: Re: [PATCH] perf tools: Refactor precise_ip fallback logic
-Message-ID: <aROPrA02BU1uafrD@google.com>
-References: <aP1ucJiJYBavTHV7@google.com>
- <e10d671a-eb89-4e06-a1eb-e2f12ee41d70@intel.com>
- <aQl3qfyTdAb68l1l@google.com>
- <652bf158-ba9e-4a97-b4c3-3a7f7e39fe85@intel.com>
- <aQzugcpRvOcPEEro@google.com>
- <5f84fe4f-90ef-42d6-8a3a-c1f515a7832a@intel.com>
- <aQ5n4ML9lxY4VAxi@google.com>
- <eb41cde1-9611-4998-a82f-5d6efb80b0d1@intel.com>
- <aRLq0isFxDJlsHlL@google.com>
- <42bafd4d-ff6e-4529-95f7-9c4c963fc49c@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BTou1G7RGP8V6bXf5nnT1Dz+rkOlOenKL9KkthQ+Svuz4h/MH1BXHKJAPdDzhCrgN8jECxu9haC/oEyc2WMrr8oQQLCJ8I6bW3i4OJ1KfuGTcfaIKdpAsxVTOOBwHq5wDo7b7EP+LrQxzW2aD0uegIWathTDiTPhT036dLq/Zc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=HSM8/b04; arc=none smtp.client-ip=91.218.175.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 11 Nov 2025 11:34:11 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1762889657;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=u+/QIYglm3+7rhOS6L7Kr9NAKmdN6FeBGXByzeklErs=;
+	b=HSM8/b04crKD15cHPSnLQx4Hhg2/3Us8iUQB645UpiF+QFOEmAw+UOT0+SyUrYVCQWmUDz
+	tZsE/VL6fS1cWO+eXr2Ms/1rLGv/BLb659T1jvAiYYrHlcmDOEWF/nQvfPODuNJBS9ALRE
+	0a1L69FWHj4U6P9pxJywFzDkIgZrQug=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Roman Gushchin <roman.gushchin@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
+	Muchun Song <muchun.song@linux.dev>, Harry Yoo <harry.yoo@oracle.com>, Qi Zheng <qi.zheng@linux.dev>, 
+	Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org, cgroups@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Meta kernel team <kernel-team@meta.com>
+Subject: Re: [PATCH 0/4] memcg: cleanup the memcg stats interfaces
+Message-ID: <djh4sirs2cgmdhso5fwcx7s6yrkocxbqshcosgrqetfykte2bz@opfihf4wun4v>
+References: <20251110232008.1352063-1-shakeel.butt@linux.dev>
+ <87pl9oqtpg.fsf@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <42bafd4d-ff6e-4529-95f7-9c4c963fc49c@intel.com>
+In-Reply-To: <87pl9oqtpg.fsf@linux.dev>
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Nov 11, 2025 at 11:11:45AM -0800, Chen, Zide wrote:
+On Tue, Nov 11, 2025 at 11:01:47AM -0800, Roman Gushchin wrote:
+> Shakeel Butt <shakeel.butt@linux.dev> writes:
 > 
+> > The memcg stats are safe against irq (and nmi) context and thus does not
+> > require disabling irqs. However for some stats which are also maintained
+> > at node level, it is using irq unsafe interface and thus requiring the
+> > users to still disables irqs or use interfaces which explicitly disables
+> > irqs. Let's move memcg code to use irq safe node level stats function
+> > which is already optimized for architectures with HAVE_CMPXCHG_LOCAL
+> > (all major ones), so there will not be any performance penalty for its
+> > usage.
 > 
-> On 11/10/2025 11:50 PM, Namhyung Kim wrote:
-> > On Fri, Nov 07, 2025 at 02:31:23PM -0800, Chen, Zide wrote:
-> >>
-> >>
-> >> On 11/7/2025 1:42 PM, Namhyung Kim wrote:
-> >>> On Thu, Nov 06, 2025 at 05:23:09PM -0800, Chen, Zide wrote:
-> >>>>
-> >>>>
-> >>>> On 11/6/2025 10:52 AM, Namhyung Kim wrote:
+> Do you have any production data for this or it's theory-based?
 
-> >>> Can you run these commands and show the output here?
-> >>>
-> >>>   $ perf record -e task-clock:S  true
-> >>>   $ perf evlist -v
-> >>
-> >> On 6.18.0-rc4:
-> >>
-> >> $ perf record -e task-clock:S  true
-> >> [ perf record: Woken up 2 times to write data ]
-> >> [ perf record: Captured and wrote 0.006 MB perf.data ]
-> >>
-> >> $ perf evlist -v
-> >> task-clock:Su: type: 1 (PERF_TYPE_SOFTWARE), size: 136, config: 0x1
-> >> (PERF_COUNT_SW_TASK_CLOCK), { sample_period, sample_freq }: 4000,
-> >> sample_type: IP|TID|TIME|READ|ID|PERIOD, read_format: ID|LOST, disabled:
-> >> 1, inherit: 1, exclude_kernel: 1, exclude_hv: 1, mmap: 1, comm: 1, freq:
-> >> 1, enable_on_exec: 1, task: 1, sample_id_all: 1, mmap2: 1, comm_exec: 1,
-> >> ksymbol: 1, bpf_event: 1, build_id: 1
-> > 
-> > Thanks for sharing this.  Yep, it has the inherit bit.
-> > 
-> > I think there's a bug in the missing feature test.  Indeed, it should
-> > also have PERF_SAMPLE_TID for the test according to the kernel comment.
-> > 
-> > 	/*
-> > 	 * We do not support PERF_SAMPLE_READ on inherited events unless
-> > 	 * PERF_SAMPLE_TID is also selected, which allows inherited events to
-> > 	 * collect per-thread samples.
-> > 	 * See perf_output_read().
-> > 	 */
-> > 	if (has_inherit_and_sample_read(attr) && !(attr->sample_type & PERF_SAMPLE_TID))
-> > 		return ERR_PTR(-EINVAL);
+At the moment it is theory-based or more specifically based on the
+comments on HAVE_CMPXCHG_LOCAL variants of stats update functions.
+
 > 
-> It seems that the purpose of the inherit_sample_read fallback is to
-> remove the inherit attribute when both PERF_SAMPLE_READ and inherit are
-> present, but PERF_SAMPLE_TID is not. The new change may not be able to
-> accomplish this?
+> In general I feel we need a benchmark focused on memcg stats:
+> there was a number of performance improvements and regressions in this
+> code over last years, so a dedicated benchmark can help with measuring
+> them.
 
-No, the purpose of the missing feature check is to detect whether the
-current kernel supports this feature or not.  The correct check should
-pass both READ and TID together.
+Yeah it makes sense to have a benchmark. Let me see which benchmark
+trigger this code paths a lot. At the high level, these interfaces are
+used in reclaim and migration which are not really that performance
+critical. I will try benchmarks with a lot of allocs/frees.
 
-Thanks,
-Namhyung
+> 
+> Nice cleanup btw, thanks!
 
+Thanks.
 
