@@ -1,222 +1,277 @@
-Return-Path: <linux-kernel+bounces-895382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFE25C4DA3D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:21:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A6D09C4DA58
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:22:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 08FCC4F6291
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:15:18 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 05C6A4F6337
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:16:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C44D6358D32;
-	Tue, 11 Nov 2025 12:14:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L8+p8JpV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A11F0357711;
-	Tue, 11 Nov 2025 12:14:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFD6E35503D;
+	Tue, 11 Nov 2025 12:16:13 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E4AE2727EB;
+	Tue, 11 Nov 2025 12:16:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762863285; cv=none; b=AzqTi7UjPt+M2ueC5rM4fWRvdPjnEfDBQEI5VaiueYdW94APTQ3wzfk06/cy2N92BZk/lSna2BJmYCHsXquz7o26viBVP/+gVPueGxjNmMQkQyIvo2Ca7pHKU/HyNbRjVHGWjyhzDZZIrKcsC96213k3d93c920OYmk008qzyGU=
+	t=1762863373; cv=none; b=FcwrhqxMibYc0x74mPDlzHieTBWhmKH8vfDucoNNxHZ38vl+cqHfLpplS1EVX7tX6vNV2KUjKkw5hF6vVN9wBfsFvDeKfZNI4s8XP8sOQ7TxvrCRxOYmz1dzb9vXPKcZ7P0dQO91r6CmXzmTpL/8mopTdT+L28xLJMwei9LQzM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762863285; c=relaxed/simple;
-	bh=+rzKQWAbRHUg4ouBJteUhgLiy1lvAwd+xZ2GORVTZyM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=mdW7+gyEWnaNZOk5MefMGkiT44hzxEzZsYI91ATKjsLS+YLek5XfCSakkuLlxXfWb1U5fUu/XGeZ8JRdV++HXqWDPKD9uVRnh1GTVLMHqw8K77VTOty/ftqwULBmD1+otSj77Cmw7a4VEgeLUpTS/6ul30sxeT0DPil/AAlIDk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L8+p8JpV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEFA8C16AAE;
-	Tue, 11 Nov 2025 12:14:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762863285;
-	bh=+rzKQWAbRHUg4ouBJteUhgLiy1lvAwd+xZ2GORVTZyM=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=L8+p8JpVK7PTEkla3qKRiaprmCyYkFkm3RFmbLOQ+JWWKk7+ZMQWwI3ZWJQSouxXT
-	 3ediEo5XyLbdJjUFNBQ6uuyhtSGizG0OZGr4jKhR5Dvlbp1UrgLBAr9ohjtwzEKXeM
-	 G1YDLaAbp57K2IDKGVRUig3r9zCCW6UB+KtgZ0xJSjmBvuFw4BlxXY1t9zQUFi5IzL
-	 4PksDCXtKYKJ4PLRQLxlY6LzZm16nK/tGZwcVOpZHddjo2mHvGH+clbQeWI7WdwHL7
-	 m0cBBE9o1zBeYd+fUA+PUWV0Lbw321Qzal+objZ6KSEKZLc22Iris+EiobHa6jX+WR
-	 nA98vwSRcRnHw==
-Message-ID: <4dd0e1f2dd1ef5103d54e1dceeb2a18fbf7d1e63.camel@kernel.org>
-Subject: Re: [PATCH v5 17/17] vfs: expose delegation support to userland
-From: Jeff Layton <jlayton@kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Alexander Viro
- <viro@zeniv.linux.org.uk>,  Christian Brauner	 <brauner@kernel.org>, Chuck
- Lever <chuck.lever@oracle.com>, Alexander Aring	 <alex.aring@gmail.com>,
- Trond Myklebust <trondmy@kernel.org>, Anna Schumaker	 <anna@kernel.org>,
- Steve French <sfrench@samba.org>, Paulo Alcantara	 <pc@manguebit.org>,
- Ronnie Sahlberg <ronniesahlberg@gmail.com>, Shyam Prasad N	
- <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>, Bharath SM	
- <bharathsm@microsoft.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-  "Rafael J. Wysocki"	 <rafael@kernel.org>, Danilo Krummrich
- <dakr@kernel.org>, David Howells	 <dhowells@redhat.com>, Tyler Hicks
- <code@tyhicks.com>, NeilBrown <neil@brown.name>,  Olga Kornievskaia
- <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, Amir Goldstein
- <amir73il@gmail.com>, Namjae Jeon	 <linkinjeon@kernel.org>, Steve French
- <smfrench@gmail.com>, Sergey Senozhatsky	 <senozhatsky@chromium.org>,
- Carlos Maiolino <cem@kernel.org>, Kuniyuki Iwashima	 <kuniyu@google.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet	
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni	
- <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org, 
-	samba-technical@lists.samba.org, netfs@lists.linux.dev,
- ecryptfs@vger.kernel.org, 	linux-unionfs@vger.kernel.org,
- linux-xfs@vger.kernel.org, netdev@vger.kernel.org
-Date: Tue, 11 Nov 2025 07:14:40 -0500
-In-Reply-To: <tcpo34clqby633deon2qnccih24xor2mz6jm4fzh2zj7o24sjc@s5c25qgpgmv2>
-References: <20251105-dir-deleg-ro-v5-0-7ebc168a88ac@kernel.org>
-	 <20251105-dir-deleg-ro-v5-17-7ebc168a88ac@kernel.org>
-	 <tcpo34clqby633deon2qnccih24xor2mz6jm4fzh2zj7o24sjc@s5c25qgpgmv2>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
- n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
- egyjnSsFt7EGoDjdKqr1TS9syJYFjagYtvWk/UfHlW09X+jOh4vYtfX7iYSx/NfqV3W1D7EDi0PqV
- T2h6v8i8YqsATFPwO4nuiTmL6I40ZofxVd+9wdRI4Db8yUNA4ZSP2nqLcLtFjClYRBoJvRWvsv4lm
- 0OX6MYPtv76hka8lW4mnRmZqqx3UtfHX/hF/zH24Gj7A6sYKYLCU3YrI2Ogiu7/ksKcl7goQjpvtV
- YrOOI5VGLHge0awt7bhMCTM9KAfPc+xL/ZxAMVWd3NCk5SamL2cE99UWgtvNOIYU8m6EjTLhsj8sn
- VluJH0/RcxEeFbnSaswVChNSGa7mXJrTR22lRL6ZPjdMgS2Km90haWPRc8Wolcz07Y2se0xpGVLEQ
- cDEsvv5IMmeMe1/qLZ6NaVkNuL3WOXvxaVT9USW1+/SGipO2IpKJjeDZfehlB/kpfF24+RrK+seQf
- CBYyUE8QJpvTZyfUHNYldXlrjO6n5MdOempLqWpfOmcGkwnyNRBR46g/jf8KnPRwXs509yAqDB6sE
- LZH+yWr9LQZEwARAQABtCVKZWZmIExheXRvbiA8amxheXRvbkBwb29jaGllcmVkcy5uZXQ+iQI7BB
- MBAgAlAhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAUCTpXWPAIZAQAKCRAADmhBGVaCFc65D/4
- gBLNMHopQYgG/9RIM3kgFCCQV0pLv0hcg1cjr+bPI5f1PzJoOVi9s0wBDHwp8+vtHgYhM54yt43uI
- 7Htij0RHFL5eFqoVT4TSfAg2qlvNemJEOY0e4daljjmZM7UtmpGs9NN0r9r50W82eb5Kw5bc/r0km
- R/arUS2st+ecRsCnwAOj6HiURwIgfDMHGPtSkoPpu3DDp/cjcYUg3HaOJuTjtGHFH963B+f+hyQ2B
- rQZBBE76ErgTDJ2Db9Ey0kw7VEZ4I2nnVUY9B5dE2pJFVO5HJBMp30fUGKvwaKqYCU2iAKxdmJXRI
- ONb7dSde8LqZahuunPDMZyMA5+mkQl7kpIpR6kVDIiqmxzRuPeiMP7O2FCUlS2DnJnRVrHmCljLkZ
- Wf7ZUA22wJpepBligemtSRSbqCyZ3B48zJ8g5B8xLEntPo/NknSJaYRvfEQqGxgk5kkNWMIMDkfQO
- lDSXZvoxqU9wFH/9jTv1/6p8dHeGM0BsbBLMqQaqnWiVt5mG92E1zkOW69LnoozE6Le+12DsNW7Rj
- iR5K+27MObjXEYIW7FIvNN/TQ6U1EOsdxwB8o//Yfc3p2QqPr5uS93SDDan5ehH59BnHpguTc27Xi
- QQZ9EGiieCUx6Zh2ze3X2UW9YNzE15uKwkkuEIj60NvQRmEDfweYfOfPVOueC+iFifbQgSmVmZiBM
- YXl0b24gPGpsYXl0b25AcmVkaGF0LmNvbT6JAjgEEwECACIFAk6V0q0CGwMGCwkIBwMCBhUIAgkKC
- wQWAgMBAh4BAheAAAoJEAAOaEEZVoIViKUQALpvsacTMWWOd7SlPFzIYy2/fjvKlfB/Xs4YdNcf9q
- LqF+lk2RBUHdR/dGwZpvw/OLmnZ8TryDo2zXVJNWEEUFNc7wQpl3i78r6UU/GUY/RQmOgPhs3epQC
- 3PMJj4xFx+VuVcf/MXgDDdBUHaCTT793hyBeDbQuciARDJAW24Q1RCmjcwWIV/pgrlFa4lAXsmhoa
- c8UPc82Ijrs6ivlTweFf16VBc4nSLX5FB3ls7S5noRhm5/Zsd4PGPgIHgCZcPgkAnU1S/A/rSqf3F
- LpU+CbVBDvlVAnOq9gfNF+QiTlOHdZVIe4gEYAU3CUjbleywQqV02BKxPVM0C5/oVjMVx3bri75n1
- TkBYGmqAXy9usCkHIsG5CBHmphv9MHmqMZQVsxvCzfnI5IO1+7MoloeeW/lxuyd0pU88dZsV/riHw
- 87i2GJUJtVlMl5IGBNFpqoNUoqmvRfEMeXhy/kUX4Xc03I1coZIgmwLmCSXwx9MaCPFzV/dOOrju2
- xjO+2sYyB5BNtxRqUEyXglpujFZqJxxau7E0eXoYgoY9gtFGsspzFkVNntamVXEWVVgzJJr/EWW0y
- +jNd54MfPRqH+eCGuqlnNLktSAVz1MvVRY1dxUltSlDZT7P2bUoMorIPu8p7ZCg9dyX1+9T6Muc5d
- Hxf/BBP/ir+3e8JTFQBFOiLNdFtB9KZWZmIExheXRvbiA8amxheXRvbkBzYW1iYS5vcmc+iQI4BBM
- BAgAiBQJOldK9AhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRAADmhBGVaCFWgWD/0ZRi4h
- N9FK2BdQs9RwNnFZUr7JidAWfCrs37XrA/56olQl3ojn0fQtrP4DbTmCuh0SfMijB24psy1GnkPep
- naQ6VRf7Dxg/Y8muZELSOtsv2CKt3/02J1BBitrkkqmHyni5fLLYYg6fub0T/8Kwo1qGPdu1hx2BQ
- RERYtQ/S5d/T0cACdlzi6w8rs5f09hU9Tu4qV1JLKmBTgUWKN969HPRkxiojLQziHVyM/weR5Reu6
- FZVNuVBGqBD+sfk/c98VJHjsQhYJijcsmgMb1NohAzwrBKcSGKOWJToGEO/1RkIN8tqGnYNp2G+aR
- 685D0chgTl1WzPRM6mFG1+n2b2RR95DxumKVpwBwdLPoCkI24JkeDJ7lXSe3uFWISstFGt0HL8Eew
- P8RuGC8s5h7Ct91HMNQTbjgA+Vi1foWUVXpEintAKgoywaIDlJfTZIl6Ew8ETN/7DLy8bXYgq0Xzh
- aKg3CnOUuGQV5/nl4OAX/3jocT5Cz/OtAiNYj5mLPeL5z2ZszjoCAH6caqsF2oLyAnLqRgDgR+wTQ
- T6gMhr2IRsl+cp8gPHBwQ4uZMb+X00c/Amm9VfviT+BI7B66cnC7Zv6Gvmtu2rEjWDGWPqUgccB7h
- dMKnKDthkA227/82tYoFiFMb/NwtgGrn5n2vwJyKN6SEoygGrNt0SI84y6hEVbQlSmVmZiBMYXl0b
- 24gPGpsYXl0b25AcHJpbWFyeWRhdGEuY29tPokCOQQTAQIAIwUCU4xmKQIbAwcLCQgHAwIBBhUIAg
- kKCwQWAgMBAh4BAheAAAoJEAAOaEEZVoIV1H0P/j4OUTwFd7BBbpoSp695qb6HqCzWMuExsp8nZjr
- uymMaeZbGr3OWMNEXRI1FWNHMtcMHWLP/RaDqCJil28proO+PQ/yPhsr2QqJcW4nr91tBrv/MqItu
- AXLYlsgXqp4BxLP67bzRJ1Bd2x0bWXurpEXY//VBOLnODqThGEcL7jouwjmnRh9FTKZfBDpFRaEfD
- FOXIfAkMKBa/c9TQwRpx2DPsl3eFWVCNuNGKeGsirLqCxUg5kWTxEorROppz9oU4HPicL6rRH22Ce
- 6nOAON2vHvhkUuO3GbffhrcsPD4DaYup4ic+DxWm+DaSSRJ+e1yJvwi6NmQ9P9UAuLG93S2MdNNbo
- sZ9P8k2mTOVKMc+GooI9Ve/vH8unwitwo7ORMVXhJeU6Q0X7zf3SjwDq2lBhn1DSuTsn2DbsNTiDv
- qrAaCvbsTsw+SZRwF85eG67eAwouYk+dnKmp1q57LDKMyzysij2oDKbcBlwB/TeX16p8+LxECv51a
- sjS9TInnipssssUDrHIvoTTXWcz7Y5wIngxDFwT8rPY3EggzLGfK5Zx2Q5S/N0FfmADmKknG/D8qG
- IcJE574D956tiUDKN4I+/g125ORR1v7bP+OIaayAvq17RP+qcAqkxc0x8iCYVCYDouDyNvWPGRhbL
- UO7mlBpjW9jK9e2fvZY9iw3QzIPGKtClKZWZmIExheXRvbiA8amVmZi5sYXl0b25AcHJpbWFyeWRh
- dGEuY29tPokCOQQTAQIAIwUCU4xmUAIbAwcLCQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEAAOa
- EEZVoIVzJoQALFCS6n/FHQS+hIzHIb56JbokhK0AFqoLVzLKzrnaeXhE5isWcVg0eoV2oTScIwUSU
- apy94if69tnUo4Q7YNt8/6yFM6hwZAxFjOXR0ciGE3Q+Z1zi49Ox51yjGMQGxlakV9ep4sV/d5a50
- M+LFTmYSAFp6HY23JN9PkjVJC4PUv5DYRbOZ6Y1+TfXKBAewMVqtwT1Y+LPlfmI8dbbbuUX/kKZ5d
- dhV2736fgyfpslvJKYl0YifUOVy4D1G/oSycyHkJG78OvX4JKcf2kKzVvg7/Rnv+AueCfFQ6nGwPn
- 0P91I7TEOC4XfZ6a1K3uTp4fPPs1Wn75X7K8lzJP/p8lme40uqwAyBjk+IA5VGd+CVRiyJTpGZwA0
- jwSYLyXboX+Dqm9pSYzmC9+/AE7lIgpWj+3iNisp1SWtHc4pdtQ5EU2SEz8yKvDbD0lNDbv4ljI7e
- flPsvN6vOrxz24mCliEco5DwhpaaSnzWnbAPXhQDWb/lUgs/JNk8dtwmvWnqCwRqElMLVisAbJmC0
- BhZ/Ab4sph3EaiZfdXKhiQqSGdK4La3OTJOJYZphPdGgnkvDV9Pl1QZ0ijXQrVIy3zd6VCNaKYq7B
- AKidn5g/2Q8oio9Tf4XfdZ9dtwcB+bwDJFgvvDYaZ5bI3ln4V3EyW5i2NfXazz/GA/I/ZtbsigCFc
- 8ftCBKZWZmIExheXRvbiA8amxheXRvbkBrZXJuZWwub3JnPokCOAQTAQIAIgUCWe8u6AIbAwYLCQg
- HAwIGFQgCCQoLBBYCAwECHgECF4AACgkQAA5oQRlWghUuCg/+Lb/xGxZD2Q1oJVAE37uW308UpVSD
- 2tAMJUvFTdDbfe3zKlPDTuVsyNsALBGclPLagJ5ZTP+Vp2irAN9uwBuacBOTtmOdz4ZN2tdvNgozz
- uxp4CHBDVzAslUi2idy+xpsp47DWPxYFIRP3M8QG/aNW052LaPc0cedYxp8+9eiVUNpxF4SiU4i9J
- DfX/sn9XcfoVZIxMpCRE750zvJvcCUz9HojsrMQ1NFc7MFT1z3MOW2/RlzPcog7xvR5ENPH19ojRD
- CHqumUHRry+RF0lH00clzX/W8OrQJZtoBPXv9ahka/Vp7kEulcBJr1cH5Wz/WprhsIM7U9pse1f1g
- Yy9YbXtWctUz8uvDR7shsQxAhX3qO7DilMtuGo1v97I/Kx4gXQ52syh/w6EBny71CZrOgD6kJwPVV
- AaM1LRC28muq91WCFhs/nzHozpbzcheyGtMUI2Ao4K6mnY+3zIuXPygZMFr9KXE6fF7HzKxKuZMJO
- aEZCiDOq0anx6FmOzs5E6Jqdpo/mtI8beK+BE7Va6ni7YrQlnT0i3vaTVMTiCThbqsB20VrbMjlhp
- f8lfK1XVNbRq/R7GZ9zHESlsa35ha60yd/j3pu5hT2xyy8krV8vGhHvnJ1XRMJBAB/UYb6FyC7S+m
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.1 (3.58.1-1.fc43) 
+	s=arc-20240116; t=1762863373; c=relaxed/simple;
+	bh=PIgstgd4buWJzHaXU+CcNBXqTQqNTu4JSwpP1XmmIo4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AfYIyi4MtfSv+3t57JmLGWNom7KL/CErY73t3dusuy9eSbe3mrOwZxh2I08Iod0J13EvAdDbxuI/qOAItKVmEtnOvxb7MmvIDCalgc1yj0lEmK5DMpwI48ntmMIA2VO42zK5G2MSjkbjCnQMEXtCcwFAAGYVGFbX01kY/NxOP3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B4FDA2F;
+	Tue, 11 Nov 2025 04:16:01 -0800 (PST)
+Received: from [10.1.31.216] (XHFQ2J9959.cambridge.arm.com [10.1.31.216])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 976253F63F;
+	Tue, 11 Nov 2025 04:16:04 -0800 (PST)
+Message-ID: <b7581d35-29a1-44d4-bf81-395949bd4da1@arm.com>
+Date: Tue, 11 Nov 2025 12:16:03 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 06/12] mm: introduce generic lazy_mmu helpers
+Content-Language: en-GB
+To: Alexander Gordeev <agordeev@linux.ibm.com>
+Cc: "David Hildenbrand (Red Hat)" <davidhildenbrandkernel@gmail.com>,
+ Kevin Brodsky <kevin.brodsky@arm.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Andreas Larsson <andreas@gaisler.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
+ <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ "David S. Miller" <davem@davemloft.net>,
+ David Woodhouse <dwmw2@infradead.org>, "H. Peter Anvin" <hpa@zytor.com>,
+ Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
+ Juergen Gross <jgross@suse.com>, "Liam R. Howlett"
+ <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
+ Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
+ Peter Zijlstra <peterz@infradead.org>, Suren Baghdasaryan
+ <surenb@google.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Vlastimil Babka <vbabka@suse.cz>, Will Deacon <will@kernel.org>,
+ Yeoreum Yun <yeoreum.yun@arm.com>, linux-arm-kernel@lists.infradead.org,
+ linuxppc-dev@lists.ozlabs.org, sparclinux@vger.kernel.org,
+ xen-devel@lists.xenproject.org, x86@kernel.org
+References: <20251029100909.3381140-1-kevin.brodsky@arm.com>
+ <20251029100909.3381140-7-kevin.brodsky@arm.com>
+ <71418b31-aedb-4600-9558-842515dd6c44@arm.com>
+ <c764489e-0626-4a50-87b5-39e15d9db733@gmail.com>
+ <645178fd-df4e-42fe-b55e-97d9506499be@arm.com>
+ <413b2c49-f124-4cda-8fea-a6cc165f6326-agordeev@linux.ibm.com>
+ <e428b1d5-65a8-49bc-92dc-ec4a4d933dec@arm.com>
+ <92eca53f-eb5d-4bd0-ad6c-56c65fdcea86-agordeev@linux.ibm.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <92eca53f-eb5d-4bd0-ad6c-56c65fdcea86-agordeev@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, 2025-11-11 at 11:48 +0100, Jan Kara wrote:
-> On Wed 05-11-25 11:54:03, Jeff Layton wrote:
-> > Now that support for recallable directory delegations is available,
-> > expose this functionality to userland with new F_SETDELEG and F_GETDELE=
-G
-> > commands for fcntl().
-> >=20
-> > Note that this also allows userland to request a FL_DELEG type lease on
-> > files too. Userland applications that do will get signalled when there
-> > are metadata changes in addition to just data changes (which is a
-> > limitation of FL_LEASE leases).
-> >=20
-> > These commands accept a new "struct delegation" argument that contains =
-a
-> > flags field for future expansion.
-> >=20
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
->=20
-> For new apis CCing linux-api is a good practice ;)
->=20
-> ...
->=20
+On 11/11/2025 08:01, Alexander Gordeev wrote:
+> On Mon, Nov 10, 2025 at 09:19:40AM +0000, Ryan Roberts wrote:
+>> On 10/11/2025 08:11, Alexander Gordeev wrote:
+>>> On Fri, Nov 07, 2025 at 03:22:54PM +0000, Ryan Roberts wrote:
+>>>
+>>> Hi Ryan,
+>>>
+>>>> On 07/11/2025 14:34, David Hildenbrand (Red Hat) wrote:
+>>>>>>>   #ifndef pte_batch_hint
+>>>>>>> diff --git a/mm/kasan/shadow.c b/mm/kasan/shadow.c
+>>>>>>> index 5d2a876035d6..c49b029d3593 100644
+>>>>>>> --- a/mm/kasan/shadow.c
+>>>>>>> +++ b/mm/kasan/shadow.c
+>>>>>>> @@ -305,7 +305,7 @@ static int kasan_populate_vmalloc_pte(pte_t *ptep,
+>>>>>>> unsigned long addr,
+>>>>>>>       pte_t pte;
+>>>>>>>       int index;
+>>>>>>>   -    arch_leave_lazy_mmu_mode();
+>>>>>>> +    lazy_mmu_mode_pause();
+>>>>>>
+>>>>>> I wonder if there really are use cases that *require* pause/resume? I think
+>>>>>> these kasan cases could be correctly implemented using a new nest level instead?
+>>>>>> Are there cases where the effects really need to be immediate or do the effects
+>>>>>> just need to be visible when you get to where the resume is?
+>>>>>>
+>>>>>> If the latter, that could just be turned into a nested disable (e.g. a flush).
+>>>>>> In this case, there is only 1 PTE write so no benefit, but I wonder if other
+>>>>>> cases may have more PTE writes that could then still be batched. It would be
+>>>>>> nice to simplify the API by removing pause/resume if we can?
+>>>>>
+>>>>> It has clear semantics, clearer than some nest-disable IMHO.
+>>>>>
+>>>>> Maybe you can elaborate how you would change ("simplify") the API in that
+>>>>> regard? What would the API look like?
+>>>>
+>>>> By simplify, I just meant can we remove lazy_mmu_mode_pause() and
+>>>> lazy_mmu_mode_resume() ?
+>>>>
+>>>>
+>>>> We currently have:
+>>>>
+>>>> apply_to_page_range
+>>>>   lazy_mmu_mode_enable()
+>>>>     kasan_populate_vmalloc_pte()
+>>>>       lazy_mmu_mode_pause()
+>>>>       <code>
+>>>>       lazy_mmu_mode_resume()
+>>>>   lazy_mmu_mode_disable()
+>>>>
+>>>> Where <code> is setting ptes. But if <code> doesn't need the effects to be
+>>>> visible until lazy_mmu_mode_resume(), then you could replace the block with:
+>>>>
+>>>> apply_to_page_range
+>>>>   lazy_mmu_mode_enable()
+>>>>     kasan_populate_vmalloc_pte()
+>>>>       lazy_mmu_mode_enable()
+>>>>       <code>
+>>>>       lazy_mmu_mode_disable()
+>>>>   lazy_mmu_mode_disable()
+>>>>
+>>>> However, looking at this more closely, I'm not really clear on why we need *any*
+>>>> special attention to lazy mmu inside of kasan_populate_vmalloc_pte() and
+>>>> kasan_depopulate_vmalloc_pte().
+>>>>
+>>>> I *think* that the original concern was that we were doing ptep_get(ptep) inside
+>>>> of a lazy_mmu block? So we need to flush so that the getter returns the most
+>>>> recent value? But given we have never written to that particular ptep while in
+>>>> the lazy mmu block, there is surely no hazard in the first place?
+>>>
+>>> There is, please see:
+>>> https://lore.kernel.org/linux-mm/cover.1755528662.git.agordeev@linux.ibm.com/
+>>
+>> I've stared at this for a while, but I'm afraid I still don't see the problem.
+>> This all looks safe to me. Could you explain exactly what this issue is?
+>>
+>> If I've understood correctly, kasan_populate_vmalloc() is called during virtual
+>> range allocation by vmalloc. This is not in a nested lazy mmu block (but it
+>> wouldn't matter if it was once we have Kevin's nested changes to ensure flush
+>> when exiting the nested scope). kasan_populate_vmalloc() calls
+>> apply_to_page_range(), which will walk the set of ptes, calling
+>> kasan_populate_vmalloc_pte() for each one. kasan_populate_vmalloc_pte() does a
+>> ptep_get() then, if none, calls set_pte_at().
+>>
+>> That's not a hazard since you're calling get before the set and you only visit
+>> each pte once for the apply_to_page_range() lazy mmu block.
+> 
+> I have to admit I do not remember every detail and would have to recreate
+> the issue - which is specific to s390 lazy_mmu implementation I think.
+> Both kasan_populate_vmalloc_pte() and kasan_depopulate_vmalloc_pte() do:
+> 
+> apply_to_page_range()
+> {
+>     arch_enter_lazy_mmu_mode();
+> 
+>     kasan_de|populate_vmalloc_pte()
+>     {
+>         arch_leave_lazy_mmu_mode();             <--- remove?
+> 
+>         spin_lock(&init_mm.page_table_lock);
+>         <PTE update>
+>         spin_unlock(&init_mm.page_table_lock);	<--- PTE store should be done
+> 
+>         arch_enter_lazy_mmu_mode();             <--- remove?
+>     }
+> 
+>     arch_leave_lazy_mmu_mode();
+> }
+> 
+> Upon return from spin_unlock() both kasan callbacks expect the PTE contains
+> an updated value to be stored to pgtable. That is true unless we remove
+> arch_leave|enter_lazy_mmu_mode() brackets. If we do the value is continued
+> to be cached and only stored when the outer arch_leave_lazy_mmu_mode() is
+> called. That results in a race between concurrent PTE updaters.
 
-Doh! I definitely will on the next posting.
+OK, I've been staring at the code and KASAN docs and believe I understand the
+problem now. Thanks for your patience!
 
-> > diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
-> > index 3741ea1b73d8500061567b6590ccf5fb4c6770f0..8123fe70e03cfb1ba9ce1b5=
-e20d61b62e462a7ea 100644
-> > --- a/include/uapi/linux/fcntl.h
-> > +++ b/include/uapi/linux/fcntl.h
-> > @@ -79,6 +79,16 @@
-> >   */
-> >  #define RWF_WRITE_LIFE_NOT_SET	RWH_WRITE_LIFE_NOT_SET
-> > =20
-> > +/* Set/Get delegations */
-> > +#define F_GETDELEG		(F_LINUX_SPECIFIC_BASE + 15)
-> > +#define F_SETDELEG		(F_LINUX_SPECIFIC_BASE + 16)
-> > +
-> > +/* Argument structure for F_GETDELEG and F_SETDELEG */
-> > +struct delegation {
-> > +	unsigned int	d_flags;	/* Must be 0 */
-> > +	short		d_type;		/* F_RDLCK, F_WRLCK, F_UNLCK */
-> > +};
-> > +
->=20
-> I think it would make sense for d_type to be unsigned since it's more or
-> less enum.
->=20
+The core of the problem is that the shadow memory which is being allocated here
+is 1/8th the size of the virtual range it covers, and so a single page of shadow
+memory can be shared by multiple vmalloc areas. The implication here is that
+multiple concurrent vmalloc() calls can allocate adjacent areas and both will
+race to allocate the same shadow page. That's why we have the spin lock and the
+check for pte_none(); the winner is the one that sees pte_none() == true and
+will perform the mapping.
 
-FWIW, struct flock has the l_type as a signed short, so that's why I
-copied it here. Making it unsigned is better though.
+And so yes, this does indeed create a read hazzard; there are 2 racing threads,
+both reading and writing the pte.
 
-> Also struct delegation is going to have a hole in it at the end
-> which is always a concern with uAPI structures (passing around
-> uninitialized stuff). I think it would be good to put an explicit padding
-> there and enforce it is zeroed out.
->=20
+One alternative solution would be to grab the spin lock around the whole
+apply_to_page_range(), but for the populate call, that would imply holding the
+lock during __memset(). And for depopulate, it would imply holding it during
+__free_page(). Neither of these are desirable.
 
-Makes sense. I'll incorporate that too.
+So I agree pause/resume are required here. Sorry for the noise!
 
-Thanks!
---=20
-Jeff Layton <jlayton@kernel.org>
+Thanks,
+Ryan
+
+
+> 
+>>>> apply_to_existing_page_range() will only call kasan_depopulate_vmalloc_pte()
+>>>> once per pte, right? So given we read the ptep before writing it, there should
+>>>> be no hazard? If so we can remove pause/resume.
+>>>
+>>> Unfortunately, we rather not, please see:
+>>> https://lore.kernel.org/linux-mm/d407a381-099b-4ec6-a20e-aeff4f3d750f@arm.com/
+>>
+>> Sorry but I don't see anything relavent to my point in this mail. Perhaps there
+>> is some s390-specific detail that I'm failing to understand?
+> 
+> Sorry, with this message I meant the branch where it was discussed,
+> I will try to C&P some excerpts and summarize it here.
+> 
+> * lazy_mmu_mode_enable()
+> 
+> This helper is parameter-free, assuming the MMU unit does not need any
+> configuration other than turning it on/off. That is currently true, but
+> (as I noted in my other mail) I am going to introduce a friend enable
+> function that accepts parameters, creates an arch-specific state and
+> uses it while the lazy mmu mode is active:
+> 
+> static inline void arch_enter_lazy_mmu_mode_pte(struct mm_struct *mm,
+> 						unsigned long addr,
+> 						unsigned long end,
+> 						pte_t *ptep)
+> {
+> 	...
+> }
+> 
+> * lazy_mmu_mode_resume() -> arch_enter_lazy_mmu_mode()
+> 
+> Conversely, this needs to be -> arch_resume_lazy_mmu_mode(). And it can not
+> be arch_enter_lazy_mmu_mode(), since a lazy_mmu_mode_resume() caller does
+> not know the parameters passed to the original lazy_mmu_mode_enable(...)-
+> friend.
+> 
+>>
+>> Thanks,
+>> Ryan
+> 
+> Thanks!
+> 
+>>>
+>>> The problem is kasan code invokes apply_to_page_range(), which enters lazy_mmu
+>>> mode unconditionally. I would claim that is rather an obstacle for the kasan
+>>> code, not a benefit. But it needs to be tackled.
+>>>> Should apply_to_page_range() had an option not to enter the lazy_mmu mode
+>>> (e.g. an extra "bool skip_lazy" parameter) - the pause/resume could have
+>>> been avoided.
+>>>
+>>>> Thanks,
+>>>> Ryan
+>>>
+>>> Thanks!
+
 
