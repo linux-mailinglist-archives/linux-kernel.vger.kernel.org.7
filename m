@@ -1,140 +1,299 @@
-Return-Path: <linux-kernel+bounces-896213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C6F5C4FDB2
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 22:32:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A121C4FDA9
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 22:31:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7693B1896F5C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 21:32:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3295E3ABC20
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 21:30:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5183732694E;
-	Tue, 11 Nov 2025 21:31:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 413BE352F99;
+	Tue, 11 Nov 2025 21:30:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="mDB9MXB2"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uGKgOZih"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8046A2868B5;
-	Tue, 11 Nov 2025 21:31:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5206B33D6D1;
+	Tue, 11 Nov 2025 21:29:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762896715; cv=none; b=rJUOrwtxkXTI51WjQB9aprG2AtaqZRhQOTVARxEp/tXQYtRANCeGV/+CiEElaDoOHFLhpCv5nIoL+WLj1m5G4Xnd9XVltVTH5m1VE73n1DppL7s83p3NlzjmtkIS2jF58qHsXHI7Z6HOk5C0hz9T8yVWQSPujw3IVmTkDPIUJN8=
+	t=1762896599; cv=none; b=LmSoLQkaOoNz+2Yj90u730p41z3IljaPO8zLTmkZXy3eC6itbRMdCMlKhPB7vU7MCRCUjLrKvf9K60AigDc145zyy7qgBgt1KUFyHB6w2OzUdsOH00zF8nENvYCRh96ezVbathLKh9VX/bXInii19lUff+F7+8Shj1uGMR6yiis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762896715; c=relaxed/simple;
-	bh=6Odj3tYkRiZs6yTQz6IlceMUTLk6AQXtihXfMKVwsFk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cHMb7T9mIxDQ4hvW4JRHNYeTovNYfsPdBccV/cktxVYioQ/A+ciClR2ni8FlQe5iXp3JPbFRXaffng+szStCp0Yr5HUXe5ZoOqMhFv/wFYsSjK8tOwwpx1cSMsdH4SC9TUNx6YQzTBKpbkiYkwBCWMJE6YAK1pVNMrtPjKa3Wzg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=fail (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=mDB9MXB2 reason="signature verification failed"; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [172.27.2.41] (c-76-133-66-138.hsd1.ca.comcast.net [76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 5ABLSeYS360987
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Tue, 11 Nov 2025 13:28:41 -0800
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 5ABLSeYS360987
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025102301; t=1762896521;
-	bh=bzL1y42NUb+51GA1nahiKxPpmYzfoAoFGVxMM1ISNHQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=mDB9MXB23HIeu2vMp0aP0xjdZH1lztVtNQJ4L0qP3vrvVuQFwBLMzudT8ddRlokNk
-	 g3dHPd7GP6uW+pxkSrKHt8S3FfUeFwB4FCXqcnpORWed3Stkbmtw+8Zmu+xgcGI1MM
-	 Xge6IcCgniccOK60FAzVdwQUcGnT6/BCqL2FNvbeyjq4TBKJuapFGLZLck+R2gfdBh
-	 vsyPS/+RSXAVQsHL14/nDLGQ+xkBUnApWuqFWdzwEHiv6BWJsN4XPiTD+Gs6WHQkyo
-	 JNqWoawmdl2ozCEUQtNE3aEYN5lqITkryWFe3s4bYX/iABtBtzgsCBbd8bUtvC/3GW
-	 yIvurM9YnVrWw==
-Message-ID: <85c9b487-eb18-46a9-babe-6223ae3e05f5@zytor.com>
-Date: Tue, 11 Nov 2025 13:28:40 -0800
+	s=arc-20240116; t=1762896599; c=relaxed/simple;
+	bh=/bC50lhCtcx6OG7oIZHLvFZOizTdGgNdqLCTc3tazgg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=NQP8WoZOmI238qE13vbIgKwzS5UitDzRHGBkvd8s98EHtZERrK90nf+8mZZpT05uz4lGj9MUaauQW4fy+1UBPksuR5mK2K9HlWXowkSsHxyYFQgCtEzSLb+eDPkao6n7XXFsjcsCq7XGK5BLzGmANnHy5btieP+CwF4IKTJ1OXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uGKgOZih; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CBE2C116D0;
+	Tue, 11 Nov 2025 21:29:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762896598;
+	bh=/bC50lhCtcx6OG7oIZHLvFZOizTdGgNdqLCTc3tazgg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=uGKgOZihX6WkxOXaYaMp7Ce45mAoZy1EdfFSGzxey8lL8ehrEFIL28KuIarmg/MNN
+	 q3HW4jyWthAJ8uUu/tNQsUJIcWjqrwAyZYS2WAzJFEVqjfCokNpJ+pA5pdwBRqWMey
+	 bPGuKEJQFW0OLIvy59Fzs8zpgRKcZmZjpPqjwd1hcYyG4KMM7du5CZ+tP62TLx16s2
+	 vDik8OOPhpjo+w0OVb0HfR9Y1msHmcC+CUnE13AHRG//Nak7D47T7MeOw4cM6XUuLE
+	 SN+jmchssstwp47zqOcbrNN6mzaZpHQXpJoluWRAwVhesyL1Yvf7L+IGOI9KCkFGB8
+	 ZB7mc1l3UU0Dw==
+From: Christian Brauner <brauner@kernel.org>
+To: syzbot <syzbot+0b2e79f91ff6579bfa5b@syzkaller.appspotmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	akpm@linux-foundation.org,
+	bpf@vger.kernel.org,
+	bsegall@google.com,
+	david@redhat.com,
+	dietmar.eggemann@arm.com,
+	jack@suse.cz,
+	jsavitz@redhat.com,
+	juri.lelli@redhat.com,
+	kartikey406@gmail.com,
+	kees@kernel.org,
+	liam.howlett@oracle.com,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-security-module@vger.kernel.org,
+	lorenzo.stoakes@oracle.com,
+	mgorman@suse.de,
+	mhocko@suse.com,
+	mingo@redhat.com,
+	mjguzik@gmail.com,
+	oleg@redhat.com,
+	paul@paul-moore.com,
+	peterz@infradead.org,
+	rostedt@goodmis.org,
+	rppt@kernel.org,
+	sergeh@kernel.org,
+	surenb@google.com,
+	syzkaller-bugs@googlegroups.com,
+	vbabka@suse.cz,
+	vincent.guittot@linaro.org,
+	viro@zeniv.linux.org.uk,
+	vschneid@redhat.com,
+	syzbot+0a8655a80e189278487e@syzkaller.appspotmail.com
+Subject: [PATCH] nsproxy: fix free_nsproxy() and simplify create_new_namespaces()
+Date: Tue, 11 Nov 2025 22:29:44 +0100
+Message-ID: <20251111-sakralbau-guthaben-7dcc277d337f@brauner>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <691360cc.a70a0220.22f260.013e.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: RFC: Serial port DTR/RTS - O_NRESETDEV
-To: "Theodore Ts'o" <tytso@mit.edu>
-Cc: Maarten Brock <Maarten.Brock@sttls.nl>,
-        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <bb44f856-10a2-40c7-a3f7-be50c8e4b0a9@zytor.com>
- <20251107173743.GA3131573@mit.edu>
- <dc42f5d4-a707-4442-bda6-1c1990666f54@zytor.com>
- <20251110033556.GC2988753@mit.edu>
- <ADB50E23-DC8B-43D0-A345-E10396A3DFD4@zytor.com>
- <AMBPR05MB11925DA076098B05E418BF64283CEA@AMBPR05MB11925.eurprd05.prod.outlook.com>
- <20251110201933.GH2988753@mit.edu>
- <0F8021E8-F288-4669-8195-9948844E36FD@zytor.com>
- <20251111035143.GJ2988753@mit.edu>
- <D4AF3E24-8698-4EEC-9D52-655D69897111@zytor.com>
- <20251111043803.GK2988753@mit.edu>
-Content-Language: en-US, sv-SE
-From: "H. Peter Anvin" <hpa@zytor.com>
-In-Reply-To: <20251111043803.GK2988753@mit.edu>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6748; i=brauner@kernel.org; h=from:subject:message-id; bh=/bC50lhCtcx6OG7oIZHLvFZOizTdGgNdqLCTc3tazgg=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQKrzr99kkW6wzH6+UP/PreNc3KE2rfU+NbHrZ+xbWOF t7s6PTXHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABPRDmVkuJPxT1/H9VJg0TpP bYu9tkz6hpfdpUT+6F3i3+xsae+1ieGv0BItmR8v/+iyT+J6VCyx5du09JVfWi1ua75+sX5Kp8w rHgA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On 2025-11-10 20:38, Theodore Ts'o wrote:
-> On Mon, Nov 10, 2025 at 07:57:22PM -0800, H. Peter Anvin wrote:
->> I really think you are looking at this from a very odd point of
->> view, and you seem to be very inconsistent. Boot time setup? Isn't
->> that what setserial is for? We have the ability to feed this
->> configuration already, but you need a file descriptor.
-> 
-> I'm not really fond of adding some new open flag that to me seems
-> **very** serial / RS-485 specific, and so I'm trying to find some
-> way to avoid it.
-> 
+Make it possible to handle NULL being passed to the reference count
+helpers instead of forcing the caller to handle this. Afterwards we can
+nicely allow a cleanup guard to handle nsproxy freeing.
 
-I don't think it is.  "Opening this device for configuration."
+Active reference count handling is not done in nsproxy_free() but rather
+in free_nsproxy() as nsproxy_free() is also called from setns() failure
+paths where a new nsproxy has been prepared but has not been marked as
+active via switch_task_namespaces().
 
-> I also think that that the GPIO style timing requirements of RTS
-> **really** should be done as a line discpline, and not in userspace.
-> 
+Fixes: 3c9820d5c64a ("ns: add active reference count")
+Reported-by: syzbot+0b2e79f91ff6579bfa5b@syzkaller.appspotmail.com
+Reported-by: syzbot+0a8655a80e189278487e@syzkaller.appspotmail.com
+Link: https://lore.kernel.org/690bfb9e.050a0220.2e3c35.0013.GAE@google.com
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+ include/linux/ns_common.h |  11 ++--
+ kernel/nsproxy.c          | 107 +++++++++++++++-----------------------
+ 2 files changed, 48 insertions(+), 70 deletions(-)
 
-No disagreement there -- and so it is. What I want to do is a way to *attach*
-that line discipline without poking with the serial port itself.  That's what
-I keep trying to get at.
-
->> Honestly, though, I'm far less interested in what 8250-based hardware does than e.g. USB.
-> 
-> I'm quite confident that USB won't have "state" that will be preserved
-> across a reboot, because the device won't even get powered up until
-> the USB device is attached.  And part of the problem was that the
-> requirements weren't particularly clear, and given the insistence that
-> the "state" be preserved even across reboot, despite the serial port
-> autoconfiguration, I had assumed you were posting uing the COM 1/2/3/4
-> ports where autoconfiguration isn't stricty speaking necessary.
-> 
-> In some ways, USB ports might be easier, since it should be possible
-> to specify udev rules which get passed to the driver when the USB
-> serial device is inserted, and so *that* can easily be done without
-> needing a file descriptor.
-> 
-> And for this sort of thing, it seems perfectly fair to hard code some
-> specific behavior using either a boot command line or a udev rule,
-> since you seem to be positing that the serial port will be dedicated
-> to some kind of weird-shit RS-485 bus device, where any time RTS/DTR
-> gets raised, the bus will malfunction in weird and wondrous ways....
-
-But again, it is very much a configuration property.  You don't know where
-your dynamically assigned serial port will end up -- and you *can't*, because
-it is a property of the DCE -- what is plugged *into* the device.
-
-Now you have someone writing a terminal program or something like Arduino and
-decide to enumerate serial ports (which, as I stated, you can't actually do
-right now without opening the devices).  This is why it makes sense for the
-open() caller to declare intent; this is similar to how O_NDELAY replaced
-callout devices.
-
-It would be lovely if we could do something like
-open("/dev/ttyS0/option-string") and so on, but that is well and truly a far
-bigger change to the whole driver API.
-
-	-hpa
+diff --git a/include/linux/ns_common.h b/include/linux/ns_common.h
+index 136f6a322e53..825f5865bfc5 100644
+--- a/include/linux/ns_common.h
++++ b/include/linux/ns_common.h
+@@ -114,11 +114,14 @@ static __always_inline __must_check bool __ns_ref_dec_and_lock(struct ns_common
+ }
+ 
+ #define ns_ref_read(__ns) __ns_ref_read(to_ns_common((__ns)))
+-#define ns_ref_inc(__ns) __ns_ref_inc(to_ns_common((__ns)))
+-#define ns_ref_get(__ns) __ns_ref_get(to_ns_common((__ns)))
+-#define ns_ref_put(__ns) __ns_ref_put(to_ns_common((__ns)))
++#define ns_ref_inc(__ns) \
++	do { if (__ns) __ns_ref_inc(to_ns_common((__ns))); } while (0)
++#define ns_ref_get(__ns) \
++	((__ns) ? __ns_ref_get(to_ns_common((__ns))) : false)
++#define ns_ref_put(__ns) \
++	((__ns) ? __ns_ref_put(to_ns_common((__ns))) : false)
+ #define ns_ref_put_and_lock(__ns, __ns_lock) \
+-	__ns_ref_dec_and_lock(to_ns_common((__ns)), __ns_lock)
++	((__ns) ? __ns_ref_dec_and_lock(to_ns_common((__ns)), __ns_lock) : false)
+ 
+ #define ns_ref_active_read(__ns) \
+ 	((__ns) ? __ns_ref_active_read(to_ns_common(__ns)) : 0)
+diff --git a/kernel/nsproxy.c b/kernel/nsproxy.c
+index 94c2cfe0afa1..2c94452dc793 100644
+--- a/kernel/nsproxy.c
++++ b/kernel/nsproxy.c
+@@ -60,6 +60,27 @@ static inline struct nsproxy *create_nsproxy(void)
+ 	return nsproxy;
+ }
+ 
++static inline void nsproxy_free(struct nsproxy *ns)
++{
++	put_mnt_ns(ns->mnt_ns);
++	put_uts_ns(ns->uts_ns);
++	put_ipc_ns(ns->ipc_ns);
++	put_pid_ns(ns->pid_ns_for_children);
++	put_time_ns(ns->time_ns);
++	put_time_ns(ns->time_ns_for_children);
++	put_cgroup_ns(ns->cgroup_ns);
++	put_net(ns->net_ns);
++	kmem_cache_free(nsproxy_cachep, ns);
++}
++
++DEFINE_FREE(nsproxy_free, struct nsproxy *, if (_T) nsproxy_free(_T))
++
++void free_nsproxy(struct nsproxy *ns)
++{
++	nsproxy_ns_active_put(ns);
++	nsproxy_free(ns);
++}
++
+ /*
+  * Create new nsproxy and all of its the associated namespaces.
+  * Return the newly created nsproxy.  Do not attach this to the task,
+@@ -69,76 +90,45 @@ static struct nsproxy *create_new_namespaces(u64 flags,
+ 	struct task_struct *tsk, struct user_namespace *user_ns,
+ 	struct fs_struct *new_fs)
+ {
+-	struct nsproxy *new_nsp;
+-	int err;
++	struct nsproxy *new_nsp __free(nsproxy_free) = NULL;
+ 
+ 	new_nsp = create_nsproxy();
+ 	if (!new_nsp)
+ 		return ERR_PTR(-ENOMEM);
+ 
+ 	new_nsp->mnt_ns = copy_mnt_ns(flags, tsk->nsproxy->mnt_ns, user_ns, new_fs);
+-	if (IS_ERR(new_nsp->mnt_ns)) {
+-		err = PTR_ERR(new_nsp->mnt_ns);
+-		goto out_ns;
+-	}
++	if (IS_ERR(new_nsp->mnt_ns))
++		return ERR_CAST(new_nsp->mnt_ns);
+ 
+ 	new_nsp->uts_ns = copy_utsname(flags, user_ns, tsk->nsproxy->uts_ns);
+-	if (IS_ERR(new_nsp->uts_ns)) {
+-		err = PTR_ERR(new_nsp->uts_ns);
+-		goto out_uts;
+-	}
++	if (IS_ERR(new_nsp->uts_ns))
++		return ERR_CAST(new_nsp->uts_ns);
+ 
+ 	new_nsp->ipc_ns = copy_ipcs(flags, user_ns, tsk->nsproxy->ipc_ns);
+-	if (IS_ERR(new_nsp->ipc_ns)) {
+-		err = PTR_ERR(new_nsp->ipc_ns);
+-		goto out_ipc;
+-	}
++	if (IS_ERR(new_nsp->ipc_ns))
++		return ERR_CAST(new_nsp->ipc_ns);
+ 
+-	new_nsp->pid_ns_for_children =
+-		copy_pid_ns(flags, user_ns, tsk->nsproxy->pid_ns_for_children);
+-	if (IS_ERR(new_nsp->pid_ns_for_children)) {
+-		err = PTR_ERR(new_nsp->pid_ns_for_children);
+-		goto out_pid;
+-	}
++	new_nsp->pid_ns_for_children = copy_pid_ns(flags, user_ns,
++						   tsk->nsproxy->pid_ns_for_children);
++	if (IS_ERR(new_nsp->pid_ns_for_children))
++		return ERR_CAST(new_nsp->pid_ns_for_children);
+ 
+ 	new_nsp->cgroup_ns = copy_cgroup_ns(flags, user_ns,
+ 					    tsk->nsproxy->cgroup_ns);
+-	if (IS_ERR(new_nsp->cgroup_ns)) {
+-		err = PTR_ERR(new_nsp->cgroup_ns);
+-		goto out_cgroup;
+-	}
++	if (IS_ERR(new_nsp->cgroup_ns))
++		return ERR_CAST(new_nsp->cgroup_ns);
+ 
+ 	new_nsp->net_ns = copy_net_ns(flags, user_ns, tsk->nsproxy->net_ns);
+-	if (IS_ERR(new_nsp->net_ns)) {
+-		err = PTR_ERR(new_nsp->net_ns);
+-		goto out_net;
+-	}
++	if (IS_ERR(new_nsp->net_ns))
++		return ERR_CAST(new_nsp->net_ns);
+ 
+ 	new_nsp->time_ns_for_children = copy_time_ns(flags, user_ns,
+-					tsk->nsproxy->time_ns_for_children);
+-	if (IS_ERR(new_nsp->time_ns_for_children)) {
+-		err = PTR_ERR(new_nsp->time_ns_for_children);
+-		goto out_time;
+-	}
++						     tsk->nsproxy->time_ns_for_children);
++	if (IS_ERR(new_nsp->time_ns_for_children))
++		return ERR_CAST(new_nsp->time_ns_for_children);
+ 	new_nsp->time_ns = get_time_ns(tsk->nsproxy->time_ns);
+ 
+-	return new_nsp;
+-
+-out_time:
+-	put_net(new_nsp->net_ns);
+-out_net:
+-	put_cgroup_ns(new_nsp->cgroup_ns);
+-out_cgroup:
+-	put_pid_ns(new_nsp->pid_ns_for_children);
+-out_pid:
+-	put_ipc_ns(new_nsp->ipc_ns);
+-out_ipc:
+-	put_uts_ns(new_nsp->uts_ns);
+-out_uts:
+-	put_mnt_ns(new_nsp->mnt_ns);
+-out_ns:
+-	kmem_cache_free(nsproxy_cachep, new_nsp);
+-	return ERR_PTR(err);
++	return no_free_ptr(new_nsp);
+ }
+ 
+ /*
+@@ -185,21 +175,6 @@ int copy_namespaces(u64 flags, struct task_struct *tsk)
+ 	return 0;
+ }
+ 
+-void free_nsproxy(struct nsproxy *ns)
+-{
+-	nsproxy_ns_active_put(ns);
+-
+-	put_mnt_ns(ns->mnt_ns);
+-	put_uts_ns(ns->uts_ns);
+-	put_ipc_ns(ns->ipc_ns);
+-	put_pid_ns(ns->pid_ns_for_children);
+-	put_time_ns(ns->time_ns);
+-	put_time_ns(ns->time_ns_for_children);
+-	put_cgroup_ns(ns->cgroup_ns);
+-	put_net(ns->net_ns);
+-	kmem_cache_free(nsproxy_cachep, ns);
+-}
+-
+ /*
+  * Called from unshare. Unshare all the namespaces part of nsproxy.
+  * On success, returns the new nsproxy.
+@@ -338,7 +313,7 @@ static void put_nsset(struct nsset *nsset)
+ 	if (nsset->fs && (flags & CLONE_NEWNS) && (flags & ~CLONE_NEWNS))
+ 		free_fs_struct(nsset->fs);
+ 	if (nsset->nsproxy)
+-		free_nsproxy(nsset->nsproxy);
++		nsproxy_free(nsset->nsproxy);
+ }
+ 
+ static int prepare_nsset(unsigned flags, struct nsset *nsset)
+-- 
+2.47.3
 
 
