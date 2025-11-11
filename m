@@ -1,106 +1,127 @@
-Return-Path: <linux-kernel+bounces-895025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E5F9C4CC13
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:47:58 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10041C4CC25
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:48:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4CB1A4F8A15
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:42:16 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B4F3B4F61FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:43:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88AFA2F25E7;
-	Tue, 11 Nov 2025 09:42:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BB622EFD9E;
+	Tue, 11 Nov 2025 09:43:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V72njAGQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bDI6rpIX"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7B2E221FBF;
-	Tue, 11 Nov 2025 09:42:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B4BA2D7398
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 09:43:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762854128; cv=none; b=QJslxRnJ3y4kd6yi/56e4vqXb6DOYVyEjYD6V54x8G6nWmLsBP8YaLHhZN5krdwVqYLxb22VTE5T4o8LLJ3jOYtrb5263f30yNo/yt7Rbemvap8YZVD0x3W1OM8fnnZsNQIrAcc0pILXVeJbNCaHS5dZJ33lxeQ111lnz+cqJlk=
+	t=1762854220; cv=none; b=YTbONLRlWjT3rCEj0MWKZ1y8e5jX+uLA3q6y8H1lYZ9YrPAbyW82BEQIFBRi3CoXKgAmSMGKlpDoC33JXPmwXM9AZ47hjF4U1J8KItAGWNud9wBx77vIQ2sp5cLNOKUWb482ndvX2uLTcXxurxxQaoRhJnRV12xMeH2g0Wb1lNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762854128; c=relaxed/simple;
-	bh=nkOExo96s2hxfPSIrdzXcnwfH+qx2wZ532PcFs6PPvs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uvFyxIpz+JVq8IKhexArd+PgaPCabz0HPoiLoVB3GgmlUYu9sbNHVI0CNZn6RUggH3MbI8ypl3QMEo9CMhBtV8R3ldYNZAkmJgGkFaZs9+gG4Dwy0rF3euGT5u127FZPbzv5VtJv0HnXmqx55nq+pKyimFfSHUUhNw9Ua7IE4kw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V72njAGQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDD98C116B1;
-	Tue, 11 Nov 2025 09:42:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762854128;
-	bh=nkOExo96s2hxfPSIrdzXcnwfH+qx2wZ532PcFs6PPvs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=V72njAGQ7zSNksaeixnxUDvKYSEgW8nxnTX0Kaduk8lrHbDyBtz/Q+1esA5yp5Qes
-	 YD9vwmVs6H3oLlQufPxVG3UBan/BJfjbl9R9l3wdcasOYKougEuZQm+xDPaJx+BtVV
-	 xqUI7DMSDvs7wPFBO2ASL933FuyP+eVgacn2IzpqqcfXJT8XdeFPZ0xNLsvjkKeqdO
-	 r0d3Tc2yPq1jhxPd9VYp75WOoP6AIyFhUKjIOgAxS2hQNlF/pcI9WtDyumz0m5+JfA
-	 6qCMj5CeA8Ua3cne5Wf83GoiVA84LOkyndS25KowkIvMlvtpGHMhhaGY74Q3D4fVPh
-	 /wIAae+rYz3GA==
-From: Christian Brauner <brauner@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-ext4@vger.kernel.org,
-	tytso@mit.edu,
-	torvalds@linux-foundation.org,
-	josef@toxicpanda.com,
-	linux-btrfs@vger.kernel.org
-Subject: Re: [PATCH v3 0/3] cheaper MAY_EXEC handling for path lookup
-Date: Tue, 11 Nov 2025 10:42:02 +0100
-Message-ID: <20251111-brillant-umgegangen-e7c891513bce@brauner>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251107142149.989998-1-mjguzik@gmail.com>
-References: <20251107142149.989998-1-mjguzik@gmail.com>
+	s=arc-20240116; t=1762854220; c=relaxed/simple;
+	bh=pIXt5RY2avngREVQV/WVzy+4eYrZh/+QLtTn4Iny2dI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KdGjeYHWnDYmgOk74p3dqA9Dx9kmdxw7ngKGkC9ZtqmwAsOERTLygKBhpWuUB12byb/Do3HHz6CFw0ALx0boAooCk/tSBUSF7LXXSmQz9HPs0N9+Je9g+Fa/Qy/phJNnCa1qJfils7sHPKLHalGr8nlDk59HQ5cUjmtOSQU3zjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bDI6rpIX; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-3436cbb723fso2505101a91.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 01:43:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762854218; x=1763459018; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pIXt5RY2avngREVQV/WVzy+4eYrZh/+QLtTn4Iny2dI=;
+        b=bDI6rpIXP+VW2NampGr8t7hh8Ew6NtNigDPB3koLxGn1qiiXqZTHvBzvF4LWvCcpie
+         flg5+jhfDcXJcAx627ZwaAODmfN5uIs4uUoGXULR/fI6jc0pZKdchmt023fiRLfuYgYO
+         2cFJ+lV7JQSiX9TkpF2iyVq7+1x5WuECi0S2/82aa1KbPNw4IHTLhknhkhlR5pUlVkHp
+         SCH8nl6PEXDaLYMh6ugXjkdT6KwkahZRD8WytJMwxt4k8GBOdogALG2kzeQLN4eezV+6
+         n701TG65idRjBYGoxWzbIQLodKpsYiK3a/TivfTIAqJvbmjKw9swCowpDTlR8a8vaKfR
+         xS0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762854218; x=1763459018;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=pIXt5RY2avngREVQV/WVzy+4eYrZh/+QLtTn4Iny2dI=;
+        b=RpyMK0OCSBsCqafQtPQ0/kcv6tHC6W0nab76MDk0/3JZ0YNiwF2aZ7VaLNwuke7yiN
+         Gtj7cH9iZuNqOrSjC5QRBDoLjBH1o6HJSfVSOrCrjkKgZS9c+rhDfqEjvdQanrq7xxsJ
+         XTRkY+kg4JLiHsgf4nuXyjb+Q3ggr3OlqdOnkfRsuUm0gXLPvpYsu/kgA3Fy9H8PnmcX
+         jkwbnq8fZvjJX5Bx5hdr0NNqziwP5m+CgNIaug/0XXZZq8QJDri5isPYPH7/l6dO6vZg
+         D/orLvxwGrYt0SH7JAjiloLkaN2seOxsKkPqU6AnCuBkcGMi+7aR0cgvAHaEzuf/vXsy
+         oR8g==
+X-Forwarded-Encrypted: i=1; AJvYcCUDXFyAF9SuLkEKkVO3ux4Y0vSksynlAyxj9UxaWx6TjFTcUbLPyjPjOEuSXWx5zUmDuu9s7vruKuVjd4M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YytioY5Sq9rLWOFrzwlYaP4ianDhzKQYRrrVnK66Fmv9StGp8x+
+	csCtXkkoPXhRY8hL6FQsfGmDx8LXmickGQxaMJiIjmsFPfzPJa3RntZLNH9A98AdHPfshlq3NSt
+	EpPobDzO+0voyoin/xw4kZKXTjFV3S/wI6FPkbkv7
+X-Gm-Gg: ASbGncvJjg8nVBaOMys4IBiGw4/jFZAzspG+DK0ePzZ5KYCdXP3JyNUQfvxJRkZW31+
+	MCmk7zjLdPXCsxf/8KLGZC4kbOjRpH6udF2PmSUu8i9M0Rp3vDzsNWAmtlH/Wu+wuGBTBM/VJeW
+	KeFZQDZb2qA/X4JVm5gS5MBf4VWxD+jATsZN8gdpKdQdzg50f7cgQvSAkKGNRICAy9XcOSruhS+
+	ocGeBwQ1tjyeSqk25MP+oNDh36CvUCufnzn2SY+dylRYtFynZ0hLz5WObDrVYsE/eSJ5BQBav7J
+	rF/woWyj/7fSZ4wYE8m6BZ5Ha2+dJc5KmLzb
+X-Google-Smtp-Source: AGHT+IEXo9sAHez4NR7EbhnospiZemL/LvJQCJ/Qa++0OXR1ORpXnOCB1WU1DKZb7CVWmG9+mXoqaQaxouu4ZLKngmU=
+X-Received: by 2002:a17:90b:6c3:b0:340:5b6a:5bb0 with SMTP id
+ 98e67ed59e1d1-3436ccfd8dfmr13988152a91.26.1762854218118; Tue, 11 Nov 2025
+ 01:43:38 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1506; i=brauner@kernel.org; h=from:subject:message-id; bh=nkOExo96s2hxfPSIrdzXcnwfH+qx2wZ532PcFs6PPvs=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQKs7yOmLn4h1rdtr3zjn3WPy4euS9vC7/NT2lDdqWG5 fFlTPFTO0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACay7xfD/3TDW9YRpcePF6QW X5W8bPd8m/fqtJbpyx+z/uA4VbCZU43hf8KPwK/qdmIzXv6pupPwO3Zjzbw3kRKr3t+X2Dd7yRu xclYA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+References: <cover.1761763681.git.m.wieczorretman@pm.me> <d030a07c956c1e7cbf8cd44d6b42120baaa41723.1761763681.git.m.wieczorretman@pm.me>
+In-Reply-To: <d030a07c956c1e7cbf8cd44d6b42120baaa41723.1761763681.git.m.wieczorretman@pm.me>
+From: Alexander Potapenko <glider@google.com>
+Date: Tue, 11 Nov 2025 10:42:59 +0100
+X-Gm-Features: AWmQ_bkUJ_QlWZiGCG2FxZvthHc4c4y_090hZyMeaaw5jt0Qf6xk9VB1Qerb_Pc
+Message-ID: <CAG_fn=VUzLi1C9jss1eHV=pPh4QFmWk-fQUbhNwrGNSUk-yKaw@mail.gmail.com>
+Subject: Re: [PATCH v6 08/18] x86/mm: Reset tag for virtual to physical
+ address conversions
+To: Maciej Wieczor-Retman <m.wieczorretman@pm.me>
+Cc: xin@zytor.com, peterz@infradead.org, kaleshsingh@google.com, 
+	kbingham@kernel.org, akpm@linux-foundation.org, nathan@kernel.org, 
+	ryabinin.a.a@gmail.com, dave.hansen@linux.intel.com, bp@alien8.de, 
+	morbo@google.com, jeremy.linton@arm.com, smostafa@google.com, kees@kernel.org, 
+	baohua@kernel.org, vbabka@suse.cz, justinstitt@google.com, 
+	wangkefeng.wang@huawei.com, leitao@debian.org, jan.kiszka@siemens.com, 
+	fujita.tomonori@gmail.com, hpa@zytor.com, urezki@gmail.com, ubizjak@gmail.com, 
+	ada.coupriediaz@arm.com, nick.desaulniers+lkml@gmail.com, ojeda@kernel.org, 
+	brgerst@gmail.com, elver@google.com, pankaj.gupta@amd.com, 
+	mark.rutland@arm.com, trintaeoitogc@gmail.com, jpoimboe@kernel.org, 
+	thuth@redhat.com, pasha.tatashin@soleen.com, dvyukov@google.com, 
+	jhubbard@nvidia.com, catalin.marinas@arm.com, yeoreum.yun@arm.com, 
+	mhocko@suse.com, lorenzo.stoakes@oracle.com, samuel.holland@sifive.com, 
+	vincenzo.frascino@arm.com, bigeasy@linutronix.de, surenb@google.com, 
+	ardb@kernel.org, Liam.Howlett@oracle.com, nicolas.schier@linux.dev, 
+	ziy@nvidia.com, kas@kernel.org, tglx@linutronix.de, mingo@redhat.com, 
+	broonie@kernel.org, corbet@lwn.net, andreyknvl@gmail.com, 
+	maciej.wieczor-retman@intel.com, david@redhat.com, maz@kernel.org, 
+	rppt@kernel.org, will@kernel.org, luto@kernel.org, kasan-dev@googlegroups.com, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	x86@kernel.org, linux-kbuild@vger.kernel.org, linux-mm@kvack.org, 
+	llvm@lists.linux.dev, linux-doc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 07 Nov 2025 15:21:46 +0100, Mateusz Guzik wrote:
-> Commit message in patch 1 says it all.
-> 
-> In short, MAY_WRITE checks are elided.
-> 
-> This obsoletes the idea of pre-computing if perm checks are necessary as
-> that turned out to be too hairy. The new code has 2 more branches per
-> path component compared to that idea, but the perf difference for
-> typical paths (< 6 components) was basically within noise. To be
-> revisited if someone(tm) removes other slowdowns.
-> 
-> [...]
-
-Applied to the vfs-6.19.misc branch of the vfs/vfs.git tree.
-Patches in the vfs-6.19.misc branch should appear in linux-next soon.
-
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.19.misc
-
-[1/3] fs: speed up path lookup with cheaper handling of MAY_EXEC
-      https://git.kernel.org/vfs/vfs/c/5ecf656231cc
-[2/3] btrfs: utilize IOP_FASTPERM_MAY_EXEC
-      https://git.kernel.org/vfs/vfs/c/d0231059c7f2
-[3/3] fs: retire now stale MAY_WRITE predicts in inode_permission()
-      https://git.kernel.org/vfs/vfs/c/e3059792dec1
+On Wed, Oct 29, 2025 at 8:07=E2=80=AFPM Maciej Wieczor-Retman
+<m.wieczorretman@pm.me> wrote:
+>
+> From: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
+>
+> Any place where pointer arithmetic is used to convert a virtual address
+> into a physical one can raise errors if the virtual address is tagged.
+>
+> Reset the pointer's tag by sign extending the tag bits in macros that do
+> pointer arithmetic in address conversions. There will be no change in
+> compiled code with KASAN disabled since the compiler will optimize the
+> __tag_reset() out.
+>
+> Signed-off-by: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
+Acked-by: Alexander Potapenko <glider@google.com>
 
