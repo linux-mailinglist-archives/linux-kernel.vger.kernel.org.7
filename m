@@ -1,104 +1,174 @@
-Return-Path: <linux-kernel+bounces-895006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 695EEC4CB0B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:34:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3333C4CB08
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:34:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06879420B46
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:31:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2EE8420B62
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:31:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A9952F2915;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E7EE2F2914;
 	Tue, 11 Nov 2025 09:30:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Y+hNIpzY"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54C522ED15D
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 09:30:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A376C2EBBA8;
+	Tue, 11 Nov 2025 09:30:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762853445; cv=none; b=S41iaTZHqZXLyLMEA3Za9yah7xEAM7kk5wQKd83OoASkki7xQBj/sPBiVci3UV1EllyuJRMKZWLPQVMB8znXWF12hi7Ri8wZhx3AGeWJWrc9MJFIF93ajUwgOQFhDkUvLSu8bm0gJZhb7i5w4QN/qtQHkrnU55TkzrsL4YEJtco=
+	t=1762853445; cv=none; b=ImkFVkOH8nYxBz2ZDAG03KG2qYsSA5jFCDghiA4SuTs4SxKQSWBt+pLNJVUrae8CvVixIryAH7hlCnUQwe6pkeYfyMR8ub5KA8iHN3MhSVIJs5jBxrBRz9AJma+ilFXpqezDHqBezSwh/iXNzoLSIKuf7smGVjvsdQApxfGfzkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1762853445; c=relaxed/simple;
-	bh=Pl1O2aK3f7SCaGDeT7WJAGlIhfq/1h/E92nrNOSzuQg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=KyrrfmD1Fse2pbAAG4nF2ZPTV8iEItX9c5fDhpXi+tY29G0N2QwixrjW29fW8aM74b/dYiZKYJW5Vsjo+wKWXAlfqI4jqgD/xukFM0m0PpjW8kpK3crlg2yiS69KxBJ3plGOxkawYeZqIT3H3DwTZkrb/PVnHZd/5p0EwtotwtA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Y+hNIpzY; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762853442;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yfmBGDXPeWaCMkaY7wTnRtorjcH8kduY0v5fCrRVaTM=;
-	b=Y+hNIpzYw9gvqGRlo2URj80C8nJKcjIKhd168lVWg1YIHSF1LsOXfpVjg6TxO6zOicm4cI
-	uc5gTnFr+7eqenXKbbsX28W1JMrTpwyi0f20w5PkbKR+bkgUt1HomHuaR1/0omWFBiv80e
-	H6lIDMNbOThNAadSna1I6sB2spetMxM=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-183-h4Aesh9ZO8SI9YmjnIdt6w-1; Tue,
- 11 Nov 2025 04:30:37 -0500
-X-MC-Unique: h4Aesh9ZO8SI9YmjnIdt6w-1
-X-Mimecast-MFC-AGG-ID: h4Aesh9ZO8SI9YmjnIdt6w_1762853436
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id ED8F318002CF;
-	Tue, 11 Nov 2025 09:30:35 +0000 (UTC)
-Received: from fweimer-oldenburg.csb.redhat.com (unknown [10.45.225.58])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A3AA530044E5;
-	Tue, 11 Nov 2025 09:30:31 +0000 (UTC)
-From: Florian Weimer <fweimer@redhat.com>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Christoph Hellwig <hch@lst.de>,  Matthew Wilcox <willy@infradead.org>,
-  Hans Holmberg <hans.holmberg@wdc.com>,  linux-xfs@vger.kernel.org,
-  Carlos Maiolino <cem@kernel.org>,  "Darrick J . Wong"
- <djwong@kernel.org>,  linux-fsdevel@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  libc-alpha@sourceware.org
-Subject: Re: [RFC] xfs: fake fallocate success for always CoW inodes
-In-Reply-To: <aRJaLn72i4yh1mkp@dread.disaster.area> (Dave Chinner's message of
-	"Tue, 11 Nov 2025 08:33:34 +1100")
-References: <20251106133530.12927-1-hans.holmberg@wdc.com>
-	<lhuikfngtlv.fsf@oldenburg.str.redhat.com>
-	<20251106135212.GA10477@lst.de>
-	<aQyz1j7nqXPKTYPT@casper.infradead.org>
-	<lhu4ir7gm1r.fsf@oldenburg.str.redhat.com>
-	<20251106170501.GA25601@lst.de> <878qgg4sh1.fsf@mid.deneb.enyo.de>
-	<aRESlvWf9VquNzx3@dread.disaster.area> <20251110093701.GB22674@lst.de>
-	<aRJaLn72i4yh1mkp@dread.disaster.area>
-Date: Tue, 11 Nov 2025 10:30:28 +0100
-Message-ID: <lhubjl8kjbf.fsf@oldenburg.str.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	bh=6BWMhUaGJXcm2r6RkdFwVAQjXyKFudVYkHAINi3qE5Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tWYqRRa9+DLaGCSk0Q5YZ7G5PY2y9rZNI3Dzil9aP6YTXiWJ2nF8ZInhmClOlppdP45xyXAW1qxEeU83DKzg4UVYLfL1c8+ow07d0jkRZJpkt63EMSOeZonwvrFeLef2fTdfKOAVRMdYVAhfKvyNzLcMCaWPF6OmrxUg/HY2OCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9DD9F2F;
+	Tue, 11 Nov 2025 01:30:28 -0800 (PST)
+Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 48B9D3F66E;
+	Tue, 11 Nov 2025 01:30:31 -0800 (PST)
+Message-ID: <58e6a323-5c14-4c64-acb5-84bb8679404a@arm.com>
+Date: Tue, 11 Nov 2025 09:30:29 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 14/33] arm_mpam: Probe hardware to find the supported
+ partid/pmg values
+To: Gavin Shan <gshan@redhat.com>, james.morse@arm.com
+Cc: amitsinght@marvell.com, baisheng.gao@unisoc.com,
+ baolin.wang@linux.alibaba.com, bobo.shaobowang@huawei.com,
+ carl@os.amperecomputing.com, catalin.marinas@arm.com, dakr@kernel.org,
+ dave.martin@arm.com, david@redhat.com, dfustini@baylibre.com,
+ fenghuay@nvidia.com, gregkh@linuxfoundation.org, guohanjun@huawei.com,
+ jeremy.linton@arm.com, jonathan.cameron@huawei.com, kobak@nvidia.com,
+ lcherian@marvell.com, lenb@kernel.org, linux-acpi@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ lpieralisi@kernel.org, peternewman@google.com, quic_jiles@quicinc.com,
+ rafael@kernel.org, robh@kernel.org, rohit.mathew@arm.com,
+ scott@os.amperecomputing.com, sdonthineni@nvidia.com, sudeep.holla@arm.com,
+ tan.shaopeng@fujitsu.com, will@kernel.org, xhao@linux.alibaba.com,
+ Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
+References: <20251107123450.664001-1-ben.horgan@arm.com>
+ <20251107123450.664001-15-ben.horgan@arm.com>
+ <7d0c73d3-1943-469f-813a-eba1dac38d4a@redhat.com>
+ <33f9822a-fbb5-47e1-ab5c-97b30511a97f@redhat.com>
+From: Ben Horgan <ben.horgan@arm.com>
+Content-Language: en-US
+In-Reply-To: <33f9822a-fbb5-47e1-ab5c-97b30511a97f@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-* Dave Chinner:
+Hi Gavin,
 
-> I don't see how a glibc posix_fallocate() fallback that does a
-> non-desctructive truncate up though some new interface is any better
-> than just having the filesystem implement ALLOCATE_RANGE without the
-> ENOSPC guarantees in the first place?
+On 11/10/25 23:26, Gavin Shan wrote:
+> Hi Ben,
+> 
+> On 11/9/25 10:43 AM, Gavin Shan wrote:
+>> On 11/7/25 10:34 PM, Ben Horgan wrote:
+>>> From: James Morse <james.morse@arm.com>
+>>>
+>>> CPUs can generate traffic with a range of PARTID and PMG values,
+>>> but each MSC may also have its own maximum size for these fields.
+>>> Before MPAM can be used, the driver needs to probe each RIS on
+>>> each MSC, to find the system-wide smallest value that can be used.
+>>> The limits from requestors (e.g. CPUs) also need taking into account.
+>>>
+>>> While doing this, RIS entries that firmware didn't describe are created
+>>> under MPAM_CLASS_UNKNOWN.
+>>>
+>>> This adds the low level MSC write accessors.
+>>>
+>>> While we're here, implement the mpam_register_requestor() call
+>>> for the arch code to register the CPU limits. Future callers of this
+>>> will tell us about the SMMU and ITS.
+>>>
+>>> Signed-off-by: James Morse <james.morse@arm.com>
+>>> Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+>>> Reviewed-by: Ben Horgan <ben.horgan@arm.com>
+>>> Tested-by: Fenghua Yu <fenghuay@nvidia.com>
+>>> Tested-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
+>>> Tested-by: Peter Newman <peternewman@google.com>
+>>> Signed-off-by: Ben Horgan <ben.horgan@arm.com>
+>>> ---
+>>> Changes since v3:
+>>>  From Jonathan:
+>>> Stray comma in printk
+>>> Unnecessary braces
+>>> ---
+>>>   drivers/resctrl/mpam_devices.c  | 148 +++++++++++++++++++++++++++++++-
+>>>   drivers/resctrl/mpam_internal.h |   6 ++
+>>>   include/linux/arm_mpam.h        |  14 +++
+>>>   3 files changed, 167 insertions(+), 1 deletion(-)
+[...]
+>>>   static int mpam_msc_hw_probe(struct mpam_msc *msc)
+>>>   {
+>>>       u64 idr;
+>>> +    u16 partid_max;
+>>> +    u8 ris_idx, pmg_max;
+>>> +    struct mpam_msc_ris *ris;
+>>>       struct device *dev = &msc->pdev->dev;
+>>>       lockdep_assert_held(&msc->probe_lock);
+>>> @@ -464,6 +564,40 @@ static int mpam_msc_hw_probe(struct mpam_msc *msc)
+>>>           return -EIO;
+>>>       }
+>>> +    /* Grab an IDR value to find out how many RIS there are */
+>>> +    mutex_lock(&msc->part_sel_lock);
+>>> +    idr = mpam_msc_read_idr(msc);
+>>> +    mutex_unlock(&msc->part_sel_lock);
+>>> +
+>>> +    msc->ris_max = FIELD_GET(MPAMF_IDR_RIS_MAX, idr);
+>>> +
+>>> +    /* Use these values so partid/pmg always starts with a valid
+>>> value */
+>>> +    msc->partid_max = FIELD_GET(MPAMF_IDR_PARTID_MAX, idr);
+>>> +    msc->pmg_max = FIELD_GET(MPAMF_IDR_PMG_MAX, idr);
+>>> +
+>>> +    for (ris_idx = 0; ris_idx <= msc->ris_max; ris_idx++) {
+>>> +        mutex_lock(&msc->part_sel_lock);
+>>> +        __mpam_part_sel(ris_idx, 0, msc);
+>>> +        idr = mpam_msc_read_idr(msc);
+>>> +        mutex_unlock(&msc->part_sel_lock);
+>>> +
+>>> +        partid_max = FIELD_GET(MPAMF_IDR_PARTID_MAX, idr);
+>>> +        pmg_max = FIELD_GET(MPAMF_IDR_PMG_MAX, idr);
+>>> +        msc->partid_max = min(msc->partid_max, partid_max);
+>>> +        msc->pmg_max = min(msc->pmg_max, pmg_max);
+>>> +
+>>> +        mutex_lock(&mpam_list_lock);
+>>> +        ris = mpam_get_or_create_ris(msc, ris_idx);
+>>> +        mutex_unlock(&mpam_list_lock);
+>>> +        if (IS_ERR(ris))
+>>> +            return PTR_ERR(ris);
+>>> +    }
+>>> +
+>>> +    spin_lock(&partid_max_lock);
+>>> +    mpam_partid_max = min(mpam_partid_max, msc->partid_max);
+>>> +    mpam_pmg_max = min(mpam_pmg_max, msc->pmg_max);
+>>> +    spin_unlock(&partid_max_lock);
+>>> +
+> 
+> mpam_register_requestor() could be used here to avoid the capacities
+> (maximal PARTIDs and PMGs) are unexpectedly lowered.
+> 
 
-It's better because you don't have to get consensus among all file
-system developers that implementing ALLOCATE_RANGE as a non-destructive
-truncate is acceptable.  Even it means that future writes to the range
-can fail with ENOSPC, contrary to what POSIX requires for
-posix_fallocate.
+I agree that this is somewhat surprising that without a requestor the
+driver supports 1 PARTID and 1 PMG, but it is intentional behaviour. The
+driver is only intended to be fully functional when a requestor
+(external to this base driver) registers itself and I don't want to add
+a dual meaning to this registration. This will be more obvious once the
+rest of the mpam support is added.
 
 Thanks,
-Florian
+
+Ben
 
 
