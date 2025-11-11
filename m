@@ -1,74 +1,80 @@
-Return-Path: <linux-kernel+bounces-894712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8EE4C4BAB5
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 07:24:38 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97466C4BABE
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 07:26:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11CCC3AE93A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 06:24:37 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1911A4F3F35
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 06:24:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E49E2D63E8;
-	Tue, 11 Nov 2025 06:24:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09ABA2D73A6;
+	Tue, 11 Nov 2025 06:24:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="IpobtpAc"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vGDmdTxE"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 164592D3A75
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 06:24:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 356D12D3EF2
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 06:24:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762842271; cv=none; b=cFWu9KcpjSFpIAiDc4528zR6mz1uHJGZZf0DzSto8zFAU4uucOvu9oDZpncKod0/liP/9APOTTqulhTomwcU1DWSdovZ5QZ+7SaLp4lmCs5Lp0RQVBkCfsbPjve1A7AfSDKPKkn4sBXSLk1l6F25ZSH/EDsLWN5G9qokH8Ibh2U=
+	t=1762842272; cv=none; b=XDS69mvxnbLca3KijRYoRJC3eCdV2MlSZoWuBH7bCa9t3hGHUH03WgSIRAvW22dD9UAtLWZIm0QqawM2GRrThn9ukgTIRoEpQcBPNzwgck+8tlgBFXRNkqWf4zLkwYpcPTX73/GF7p/DEKpqggpaUywfk4xkby77KmKmTS61xjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762842271; c=relaxed/simple;
-	bh=Qq3kShmT4mdn6+8D0AZlmIg446YPwEzIws+XPodZW8s=;
+	s=arc-20240116; t=1762842272; c=relaxed/simple;
+	bh=y9YBY5nmgnF60OnDvu066csi7ngCJh8D2RBv/5Dgjlo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=URMxUNggj3kb9xNJa5lLDd7wkU8vAfP7xcxQj+rxsdXth4eXtLaP/fyXn33HEJ38Cj39AVmOtU4eiJWrKlUe+z0TkZGREARTsDkXH5HOjO1e9lW7KLBYLewNSpSq4l5pUF3AOrrep76FwbJPHr8EfwCgrR1J9yHffrad2wUTABk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=IpobtpAc; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5AAK4jIq032510;
-	Tue, 11 Nov 2025 06:24:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=/Cl5kt
-	BF+kR2ofhBkBReaYBZVkiflK+2fHt7f/GTOa0=; b=IpobtpAcW9ZbWaLMMeL+S/
-	uvOJTY0/T7cY1ROGqpQXJZkuChrilWywWn2HioIcBEry3TqydEjEwHILyTEmrNyQ
-	jWF91DSJuhvYfivdT66RnLnLp1HhxOXagbg/vZ13AosJWzRWrP6CZYK88lWSQSpD
-	fPaSfyUHgMVt/7znn9u6EBZNSq2BufI3giAUSaydlpPl4bH79/w9q68doFceLxwO
-	b3e+0ySAYAHVo7Hfh1wVpdkNwdpPhBSnBUB+AlSfx4giU2qIpktlHprfyAB9YI6t
-	PExPXxna4h37bue3s0PRJl98u7fBXIVaaoauFNYvWlME6Z02mc5qoBLm2BEzCrpg
-	==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a9wgwtheg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Nov 2025 06:24:11 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5AB55rZ8004726;
-	Tue, 11 Nov 2025 06:24:10 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4aagjxsg9u-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Nov 2025 06:24:10 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5AB6O8u315008008
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 11 Nov 2025 06:24:08 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id AAC2520040;
-	Tue, 11 Nov 2025 06:24:08 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7555720043;
-	Tue, 11 Nov 2025 06:24:06 +0000 (GMT)
-Received: from [9.124.210.43] (unknown [9.124.210.43])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 11 Nov 2025 06:24:06 +0000 (GMT)
-Message-ID: <fe64e1cc-f80a-49f6-a2b4-bc936bbd5916@linux.ibm.com>
-Date: Tue, 11 Nov 2025 11:54:05 +0530
+	 In-Reply-To:Content-Type; b=VDL/d14mEO5tC/PhJZQrGzXOFYb96Q3HkNJXQQYkZCbfUw20bJ3HK6a9IlxJfGFm7VL5Lu4yzp/HHIzYLb18YPQt/+vMP7CehMFpM2SMnNnft4gG8fxmu+MtiUM/GRS0zW8KYPdC9+QJ6KMMAqACKd9uG+AYgChuUUidbuacl1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vGDmdTxE; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-42b3d4d9ca6so1127067f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 22:24:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1762842267; x=1763447067; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HX5LjJrt33C/D0Ly5cmrRNsaiFn37WGMaBfVEduzpQg=;
+        b=vGDmdTxEl9g1iKOKlyDfvEzgRkVCAx8yi796ySQ/JUjDBS/8M/png0bgZpZhAwl1Dz
+         8HAVoTcguIaU3hlKVO3Q9HHEnmoGbjDCPIVDTZq37CkR2jGoOJYwQX8K8DM/NLbec/Fc
+         pVSpysucmH/UHetZ8TxZREZsV82NaLznTuSc44CojoF4Vfy42nGfPHpOlrKewh1748hI
+         NwZu5S+4EhU5sLVCYVvX0HW+gCvAq/Gav2V+J1U8xLfvI8AEmPDbuGbtYBcjra82QaqS
+         M2Ki4xfawi95mqPiTaTbpK4S+gy8TWa+ESHblTED4Txw4CNHWmpw7njQhUa9oFgwa/ty
+         e++Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762842267; x=1763447067;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HX5LjJrt33C/D0Ly5cmrRNsaiFn37WGMaBfVEduzpQg=;
+        b=R77F/OKur2Y0tBJvD0+MwahUtJTQ6KfSR6r6lAlRmBWFd71rAcsjaXabPiBP8XfxVq
+         GsDfs62u168XJRNYPJu0FhhOCXYpSW0ZsE+d7MNMokeZu3y7FH81PkKqfdnNCPjzVe+j
+         AZ8UwXrXHufrKrEyvtVk+XgTXas5Nb2DY/cPqBDGgmGEcj1XHSrTvANFaO3fGoy+pGaT
+         wdJpVhiW+CrvUgrS3m2gdschPrTXchFfSCjSsvYw2tFPeXJJsTumzEJxjX3/DJrES1iZ
+         ynQtusYyGC7Q1cvXQqiV9QS+5V8kOa4nqoCBwvoYY6/g2+YxkztNZh5NtTZiiAM07Cjh
+         0xiw==
+X-Gm-Message-State: AOJu0Yxjleb3r20rey3emAYncs7RXKPbT+Pu1mkJZm4mMYrfziMLBfGf
+	hE1BBI7uIHDD5M60N+cqY9+6szDctGa0uj8yqpyJ3dfVWHmaHQmJ+jA3ADcVBVNlv/k=
+X-Gm-Gg: ASbGncsH+5a6ZFSYEBq4QZHnfRPK/3vJbvUQV4jTOVUpf4Qzx+pmd7Vz59EhYpF1y1P
+	lFgDczyYYbf7xULObbFtPo2H6WJqd/hmbJdyZ3WjeUQMFDukd0B+zCOz1PIBILisnnvWrglXPGP
+	GJY1+FoVrG5HxkiCOhZjhln9C8ygxqQDSj7089TEboyzWsBAI9aG4/X7DPtpUIHs0HEXdNZMAoU
+	bbwfRTgYpfHtjlYIqV1rysJXVjdbVV5IUiynOMZnfyFmIn67sPgbpqYpqTZEGJ7sViVQmeraPts
+	gqQYEjK8A0ZBnyyXnFMfh1MF8ovmW1GpGz/Zcgn16U+RkwOGY4LDwyJLJl8bDCb++vBBmTLa/A0
+	g1GyiWvVrXY+jjRmzGfk4AGpNv3kh0lLc8yFGrLTHG1QuSIbNj90hcWc5Q5AhUrM0xdCS2OsE2P
+	HjZR9p5aIlLs/vSHq1
+X-Google-Smtp-Source: AGHT+IFBYADieesRozqati0Og3HqjFZ4qF4AW4MAaR2o7qWHxdawiisFSvlI4HQoLhvY8O0xdado+g==
+X-Received: by 2002:a5d:5d88:0:b0:429:c8e4:b691 with SMTP id ffacd0b85a97d-42b2dcb7b45mr8038733f8f.55.1762842266938;
+        Mon, 10 Nov 2025 22:24:26 -0800 (PST)
+Received: from [10.11.12.107] ([5.12.85.52])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b3123036bsm17839426f8f.28.2025.11.10.22.24.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Nov 2025 22:24:26 -0800 (PST)
+Message-ID: <c5db97fa-8789-447f-909a-edbdb55383f8@linaro.org>
+Date: Tue, 11 Nov 2025 08:24:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,72 +82,78 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] sched/fair: Skip sched_balance_running cmpxchg when
- balance is not due
-To: Tim Chen <tim.c.chen@linux.intel.com>
-Cc: Ingo Molnar <mingo@kernel.org>, Chen Yu <yu.c.chen@intel.com>,
-        Doug Nelson <doug.nelson@intel.com>,
-        Mohini Narkhede <mohini.narkhede@intel.com>,
-        linux-kernel@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        K Prateek Nayak <kprateek.nayak@amd.com>,
-        Peter Zijlstra <peterz@infradead.org>
-References: <6fed119b723c71552943bfe5798c93851b30a361.1762800251.git.tim.c.chen@linux.intel.com>
+Subject: Re: [PATCH v6 4/6] clk: samsung: add Exynos ACPM clock driver
+To: Stephen Boyd <sboyd@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Catalin Marinas <catalin.marinas@arm.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Conor Dooley <conor+dt@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Peter Griffin <peter.griffin@linaro.org>, Rob Herring <robh@kernel.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, Will Deacon <will@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, willmcvicker@google.com, kernel-team@android.com
+References: <20251010-acpm-clk-v6-0-321ee8826fd4@linaro.org>
+ <20251010-acpm-clk-v6-4-321ee8826fd4@linaro.org>
+ <92f1c027-bacc-4537-a158-2e0890e2e8ee@kernel.org>
+ <17695fcf-f33c-4246-8d5c-b2120e9e03b1@linaro.org>
+ <176282517011.11952.1566372681481575091@lazor>
 Content-Language: en-US
-From: Shrikanth Hegde <sshegde@linux.ibm.com>
-In-Reply-To: <6fed119b723c71552943bfe5798c93851b30a361.1762800251.git.tim.c.chen@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <176282517011.11952.1566372681481575091@lazor>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: A8zxKZIyHUsG9f-1IcC-3DSNlzWwmrZY
-X-Proofpoint-ORIG-GUID: A8zxKZIyHUsG9f-1IcC-3DSNlzWwmrZY
-X-Authority-Analysis: v=2.4 cv=VMPQXtPX c=1 sm=1 tr=0 ts=6912d68b cx=c_pps
- a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VnNF1IyMAAAA:8 a=QSENffHbnlRO23lpVA8A:9 a=QEXdDO2ut3YA:10
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA4MDAyMiBTYWx0ZWRfX3t1kx9aUBm90
- P2WhAUReCfeLZObBpx1U/8iXcVHR4P3KRzxl4PvzhHrQZ0r9FERyU4oxQ8SE6lLPR/1gIjgxxzx
- 3S9JyBi3tgUfP8SvfeNrngFOO7f3dQwNDWUpXRD7fWTXUprv6p8OXsiPFNEJUkhNxUSDHXBTObS
- tLPHRe6SID3HaWdhEvSKtaJIJdFmQzNEmNgB8JHR4wCOEd7+Rw5Bryk26hK2W2TVbSaT49aC/nv
- U6qY9lU3PkMlaSD3k9S3O70a1rCwjKY2ShPbIEn1mQ6xnQqtxE1P0A7wdx6T++bhBJja7uGGHuA
- LIhIgZ7jrRgYl6+nERbPd8tD6tr6SFfTgCzVDEludJwWAmhuwWFxQuz+tv4PJIM8madlH0FDzCB
- 42vnDTbqSXpq8NTYO7xTlBlWtzOpbQ==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-11_01,2025-11-10_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 priorityscore=1501 lowpriorityscore=0 bulkscore=0
- clxscore=1015 phishscore=0 spamscore=0 malwarescore=0 adultscore=0
- suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510240000
- definitions=main-2511080022
 
-Hi Tim,
 
-On 11/11/25 12:17 AM, Tim Chen wrote:
-> The NUMA sched domain sets the SD_SERIALIZE flag by default, allowing
-> only one NUMA load balancing operation to run system-wide at a time.
-> 
-> Currently, each sched group leader directly under NUMA domain attempts
-> to acquire the global sched_balance_running flag via cmpxchg() before
-> checking whether load balancing is due or whether it is the designated
-> load balancer for that NUMA domain. On systems with a large number
-> of cores, this causes significant cache contention on the shared
-> sched_balance_running flag.
-> 
-> This patch reduces unnecessary cmpxchg() operations by first checking
-> that the balancer is the designated leader for a NUMA domain from
-> should_we_balance(), and the balance interval has expired before
-> trying to acquire sched_balance_running to load balance a NUMA
-> domain.
-> 
-> On a 2-socket Granite Rapids system with sub-NUMA clustering enabled,
-> running an OLTP workload, 7.8% of total CPU cycles were previously spent
-> in sched_balance_domain() contending on sched_balance_running before
-> this change.
-Looks good to me. Thanks for getting this into current shape.
 
-I see hackbench improving slightly across its variations. So,
-Tested-by: Shrikanth Hegde <sshegde@linux.ibm.com>
+On 11/11/25 3:39 AM, Stephen Boyd wrote:
+
+Hi, Stephen!
+
+> Quoting Tudor Ambarus (2025-10-20 00:45:58)
+>>
+>>
+>> On 10/20/25 7:54 AM, Krzysztof Kozlowski wrote:
+>>>> diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
+>>>> index 76a494e95027af26272e30876a87ac293bd56dfa..70a8b82a0136b4d0213d8ff95e029c52436e5c7f 100644
+>>>> --- a/drivers/clk/samsung/Kconfig
+>>>> +++ b/drivers/clk/samsung/Kconfig
+>>>> @@ -95,6 +95,16 @@ config EXYNOS_CLKOUT
+>>>>        status of the certains clocks from SoC, but it could also be tied to
+>>>>        other devices as an input clock.
+>>>>  
+>>>> +config EXYNOS_ACPM_CLK
+>>>> +    tristate "Clock driver controlled via ACPM interface"
+>>>> +    depends on EXYNOS_ACPM_PROTOCOL || (COMPILE_TEST && !EXYNOS_ACPM_PROTOCOL)
+>>>
+>>> I merged the patches but I don't get why we are not enabling it by
+>>> default, just like every other clock driver. What is so special here?
+>>
+>> Thanks! Are you referring to the depends on line? I needed it otherwise
+>> on randconfigs where COMPILE_TEST=y and EXYNOS_ACPM_PROTOCOL=n I get:
+>>
+>> ERROR: modpost: "devm_acpm_get_by_node" [drivers/clk/samsung/clk-acpm.ko] undefined!
+>>
+> 
+> I don't understand that part. The depends on statement "COMPILE_TEST &&
+> !EXYNOS_ACPM_PROTOCOL" is equivalent to COMPILE_TEST=y and
+> EXYNOS_ACPM_PROTOCOL=n, so are you trying to avoid
+> EXYNOS_ACPM_PROTOCOL=y when COMPILE_TEST=y?
+
+My previous comment was misleading.
+The depends on line allows CONFIG_EXYNOS_ACPM_CLK to be selected in two
+main scenarios:
+1/ if EXYNOS_ACPM_PROTOCOL is enabled the clock driver that uses it can
+   be enabled (the normal case).
+2/ COMPILE_TEST is enabled AND EXYNOS_ACPM_PROTOCOL is NOT enabled. This
+   is the special scenario for build testing. I want to build test the
+   clock driver even if EXYNOS_ACPM_PROTOCOL is NOT enabled. For that I
+   also needed the following patch:
+
+https://lore.kernel.org/linux-samsung-soc/20251021-fix-acpm-clk-build-test-v1-1-236a3d6db7f5@linaro.org/
+
+Cheers,
+ta
 
