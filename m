@@ -1,121 +1,111 @@
-Return-Path: <linux-kernel+bounces-894402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54777C4A2F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 02:06:01 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8356AC4A418
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 02:10:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A29B3AFF49
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 01:04:21 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 023434F3A04
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 01:04:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74C7F26B76A;
-	Tue, 11 Nov 2025 01:04:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78695271A94;
+	Tue, 11 Nov 2025 01:04:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NT+Utmz+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="WkQYLSwa"
+Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF50124E4C6;
-	Tue, 11 Nov 2025 01:04:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BE692701DC
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 01:04:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762823048; cv=none; b=Gq+/9ypn0tBhktNhVrtZFcfmp3tnbhgDw2hO/r2EME75HplcrTGQE9U+5iFyqjtEj88FATumu7J64nS+iJN+iK5IBxy9ywoU8OfcAvmdV03yckdrhqra6NySvdQvsQTTXPCirNdNMCuMGsXn8Jl0G1ckPD+4T0a4y9CcG149tzM=
+	t=1762823053; cv=none; b=eaEr+y8lIfgkHsdCe3YykqNBPZEJwjz1N6XIaOy+J/KDs7wvHfV/hPiYQqkJvlkNwcwMQ2tree1cA4lO7wGmtvET+xi+tKf6gcaGsnV3QvjUT8q3UuDgOEmmTTwFrrwLd4vyKi1gsGb6BMT0WqkRXq+7/4lKgZwye8VUWyFRXvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762823048; c=relaxed/simple;
-	bh=bzFRHvP3Uj2Sd/Q4prwF7kIjFFp2NXwttzrVIDsxfyo=;
-	h=Content-Type:MIME-Version:Message-Id:In-Reply-To:References:
-	 Subject:From:To:Cc:Date; b=Y9BSvf/rT2PNgsH/5T/vnbv4Qbbsm7qjW6MfH5rYu2ip1x/WAji6QjZaHi4SEp0oXYn3iQyE2pXSOI9OgPHGjvrFgB9x2A4CPlKohmdkJPVIuee1Io3EMIzXJtNqdjCnYas4UC18nMA8Q0N306Qn4Aktwa9ZNfvfRAu9JJU5sgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NT+Utmz+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C63A9C19424;
-	Tue, 11 Nov 2025 01:04:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762823045;
-	bh=bzFRHvP3Uj2Sd/Q4prwF7kIjFFp2NXwttzrVIDsxfyo=;
-	h=In-Reply-To:References:Subject:From:To:Cc:Date:From;
-	b=NT+Utmz+pPuJVV3g285HG7IokAnkYEx5JLs4FQjw8bFTKyaO1bdwhViHZ2RkH/qnZ
-	 eW3pelBfw+UwlCEcu8Qz/7agl6hGxEw0WLH6uzpNaILahsTfiP7p23NeOw3hwZzJZF
-	 pPzEvIQje2aiA9q2Z5bZQYsCjag6X1UKetHrckPLfhNetGCoxPs72WcVR/C6Ti8PpC
-	 n9k+PcaX1GEDERfHPNAiSK5v/lMOrZdUshyApWHIPkG0SDaJBZ7E+wdeM0FS4CKE10
-	 QYNTQiDK3ecr0QM1jpxAK1ViOi4I/QOp0IPApBU7CrMyZ0MGO6P3FoA7MAd9AguFat
-	 E7j+qcQ0xavhg==
-Content-Type: multipart/mixed; boundary="===============2251693144866189753=="
+	s=arc-20240116; t=1762823053; c=relaxed/simple;
+	bh=DTdn+TVj4y7K+zN2UdZO2AFswxa/7GKErpCpr9EpG1o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=e/tok391ccEJMNbW3vm3tLkoq55Qu+PHgYU9zYnWJAlQWoCDFYnQCUY0RwDawgvUTnovjHvkCR8PDk+XpGhLATSfeknBU/15Tl6Rikgp/S+QVre/6RmVOrUzoD8vo1Pi2EcoTduzWzdWMwWeUocJjpeq1dcFOgowFSHTA0HO5R4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=WkQYLSwa; arc=none smtp.client-ip=209.85.166.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-94880628ffaso9802939f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 17:04:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1762823051; x=1763427851; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MldjgzoX1SZmnBCXHrYUgqyrT5ShEUH07RGZHBRdusU=;
+        b=WkQYLSwa/insdvvaKQLr3wLwer6iZ/ZXyirwn7wVeVwJU0dJ9xouFgHBxgZ3PvXlHf
+         CTQuKA0cRcLAXayJu5kHZfvpWLm3dO0WGY4/0uIKI3d0EdjOilYUNOtK2q4RS6l1uG05
+         C1RzK8eqMvBla/Z+V2+iYp/WkTBK78ZE+vlqc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762823051; x=1763427851;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MldjgzoX1SZmnBCXHrYUgqyrT5ShEUH07RGZHBRdusU=;
+        b=RCEYrbf+NhXr0Amdp887/S2mgmzErXIG98gCo1NvTbKDVke3rJbbM4HVjkcsaSfj27
+         d2sGee2idPGiNx3uaFIbt+yThduntCrWMEQwnEHf4Th2+TemUcI/T6+foEIZV+shU5NL
+         IIPblkhLVqhsNDn4797Da92NQa38O9Opg85dSPL1t7GtGT/Uodr6S0jFF5aJCR1u3V/m
+         4QCBSkRznlfr+zprJ/yeWZ984j4u8hapQIkUkf89P6d5JObyCSJoirmTPSs7ipwfKPAw
+         gldPEWJYeztGYiucfiR8cnHrIte5Z57a1K0hJssP/UYhkFrFQjwAGItxO62nKj50ZuCW
+         +H2g==
+X-Forwarded-Encrypted: i=1; AJvYcCXFvLFNJbpbGkXJQUOY9F1/lfcNcamFmdXtM4dAeGnBazFZB6pSdaUVBfeZ4ShKVPtMZfNmWplITsXvggg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQUy8xV05Z6mjSJTbRTh2+QOD1exeiFNqUxY33gjC2zg2axl7t
+	oGZ+uebydw7hNXuqS+dwfyllfnGhenb+vP5bKQmaQCj3i7m3kbaBf5KwCpzPMvcULPI=
+X-Gm-Gg: ASbGncti1SSMh7e9BCt2IPIQv0dKpGWzCyScuCjVvWVxAeeHPspv4k+jm5ONjzNxRCX
+	4Uak0Mcr8J9CQgCcQFFLLZforOALiGcPryQjdTO4wPtafbcuZyMU5Rw/IxwjBpdwb37T162YKhN
+	0FfZ4oRHREfDAKcUwWRL7vD2t1meTrfYD96wQwMxXX2ubCi9opsGMYelUFQUFdejgcVGuxPaExx
+	KNANohpe1/2dkR5vZ390GrN+Y72400jmjKQ3hBq66byD40PLI9ZUJwWR1oVl4H3wxBl2CrDuHo4
+	/jQ5pRKF3HtFAm81PUTarfrFf+X9jg62FeQPmdP51O64VxC2LqxiEOC3Fg5aOlGL5QA8bVcB72Y
+	IheIZ2puz+ZtJ7x/NV2nxcQ66mmyPzxOOua/2ZZgTARt5sXRns6swxkJAbSYtL93tMDXAWZwdqA
+	fa83Lz+YhR987Q
+X-Google-Smtp-Source: AGHT+IHCAPfObFCTUaFPUpafgOR5ZP0PrhCGHCniJcUGtCxxVGCtpG3U48p6kW/uACwO8atqxsSGWw==
+X-Received: by 2002:a05:6e02:1c2d:b0:433:794c:8486 with SMTP id e9e14a558f8ab-4338be50e90mr22249085ab.2.1762823051177;
+        Mon, 10 Nov 2025 17:04:11 -0800 (PST)
+Received: from [192.168.1.14] ([38.175.187.108])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-4334f457610sm61159575ab.13.2025.11.10.17.04.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Nov 2025 17:04:10 -0800 (PST)
+Message-ID: <87d3c405-5cff-48f1-94e5-86e30d29c5e5@linuxfoundation.org>
+Date: Mon, 10 Nov 2025 18:04:09 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <0a5af7f40972e72de126df6dd3da4dd17b3231815f71e9721ad528acc8e534fa@mail.kernel.org>
-In-Reply-To: <20251111003721.7629-1-listout@listout.xyz>
-References: <20251111003721.7629-1-listout@listout.xyz>
-Subject: Re: [PATCH bpf-next v2] bpf: Clamp trace length in __bpf_get_stack to fix OOB write
-From: bot+bpf-ci@kernel.org
-To: listout@listout.xyz,syzbot+d1b7fa1092def3628bd7@syzkaller.appspotmail.com
-Cc: andrii@kernel.org,ast@kernel.org,bpf@vger.kernel.org,contact@arnaud-lcm.com,daniel@iogearbox.net,eddyz87@gmail.com,haoluo@google.com,john.fastabend@gmail.com,jolsa@kernel.org,kpsingh@kernel.org,linux-kernel@vger.kernel.org,martin.lau@linux.dev,netdev@vger.kernel.org,sdf@fomichev.me,song@kernel.org,syzkaller-bugs@googlegroups.com,yonghong.song@linux.dev,ast@kernel.org,andrii@kernel.org,daniel@iogearbox.net,martin.lau@kernel.org,eddyz87@gmail.com,yonghong.song@linux.dev,clm@meta.com,ihor.solodrai@linux.dev
-Date: Tue, 11 Nov 2025 01:04:04 +0000 (UTC)
-
---===============2251693144866189753==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] selftests/tracing: Run sample events to clear page cache
+ events
+To: Steven Rostedt <rostedt@goodmis.org>, LKML
+ <linux-kernel@vger.kernel.org>,
+ Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>,
+ linux-kselftest@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20251028122724.4bff9853@gandalf.local.home>
+ <20251110171432.51364be9@gandalf.local.home>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20251110171432.51364be9@gandalf.local.home>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-> diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
-> index 2365541c8..f9081de43 100644
-> --- a/kernel/bpf/stackmap.c
-> +++ b/kernel/bpf/stackmap.c
-> @@ -480,6 +480,7 @@ static long __bpf_get_stack(struct pt_regs *regs, struct task_struct *task,
->  	}
->
->  	trace_nr = trace->nr - skip;
-> +	trace_nr = min_t(u32, trace_nr, max_depth - skip);
->  	copy_len = trace_nr * elem_size;
->
->  	ips = trace->ip + skip;
+On 11/10/25 15:14, Steven Rostedt wrote:
+> 
+> Shuah,
+> 
+> Can you take this through your urgent branch?
 
-Can max_depth - skip underflow when max_depth < skip?
+Applied to linux-kselftest fixes branch. Will send it
+in an urgent pr.
 
-The stack_map_calculate_max_depth() function can return a value less than
-skip when sysctl_perf_event_max_stack is lowered below the skip value:
-
-    max_depth = size / elem_size;
-    max_depth += skip;
-    if (max_depth > curr_sysctl_max_stack)
-        return curr_sysctl_max_stack;
-
-If sysctl_perf_event_max_stack = 10 and skip = 20, this returns 10.
-
-Then max_depth - skip = 10 - 20 underflows to 4294967286 (u32 wraps),
-causing min_t() to not limit trace_nr at all. This means the original OOB
-write is not fixed in cases where skip > max_depth.
-
-With the default sysctl_perf_event_max_stack = 127 and skip up to 255, this
-scenario is reachable even without admin changing sysctls.
-
-The pre-refactor code used:
-
-    num_elem = size / elem_size;
-    trace_nr = (trace_nr <= num_elem) ? trace_nr : num_elem;
-
-Perhaps the fix should directly use num_elem instead of max_depth - skip:
-
-    u32 num_elem = size / elem_size;
-    trace_nr = min_t(u32, trace_nr, num_elem);
-
-Or check for underflow:
-
-    if (max_depth > skip)
-        trace_nr = min_t(u32, trace_nr, max_depth - skip);
-    else
-        trace_nr = 0;
-
-
----
-AI reviewed your patch. Please fix the bug or email reply why it's not a bug.
-See: https://github.com/kernel-patches/vmtest/blob/master/ci/claude/README.md
-
-CI run summary: https://github.com/kernel-patches/bpf/actions/runs/19251115736
-
---===============2251693144866189753==--
+thanks,
+-- Shuah
 
