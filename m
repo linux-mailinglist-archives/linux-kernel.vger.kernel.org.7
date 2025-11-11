@@ -1,127 +1,108 @@
-Return-Path: <linux-kernel+bounces-894491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FDBCC4B1D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 03:00:21 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07BBBC4B235
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 03:02:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA137189873A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 01:54:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 531124F3DBD
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 01:57:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6780930F7F1;
-	Tue, 11 Nov 2025 01:52:00 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D040C4C97
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 01:51:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DC5930498E;
+	Tue, 11 Nov 2025 01:56:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MxmfBm0N"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D9E62D9798;
+	Tue, 11 Nov 2025 01:56:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762825919; cv=none; b=bnFyx1QSCWGwoCm5sVVlYyV0e5zgfJL8rJfCrlnrSDIdQifDW0I3a2C7Hg2CtCv+EL6R0RAVWVj+fpA7LfrVPaCOPfbGeRx5QTA3XuEVV5qqB35qlEd1s4lRTsx2ts3VfTDX2vk86Mk/zzGyhUUXoeIoB5d2eF2bh+bmBhptrhQ=
+	t=1762826213; cv=none; b=RgRA+bRAkAkAkAvJ6sN+PeWAgv7EYUB0a9Z3MBlVJlgHeNkgC1T8vh8T/RFoDXKtokBQiDC8yGHH3c3JDaVrOI+uJyiTCKhySV+Hgqtc9IiumlH6oKKr1FxpyBIAgGfCa8xL/JxRk6JbxHS2QcXX/vzHcmUSmiUlNCa+OZV2s+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762825919; c=relaxed/simple;
-	bh=X7E2kdzhRVt6Ugun7VkqmJCMLDheAhQq82PvzRwRQPA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DAIB+YR6zUatDh+SsE6BeX9aYw+1mLfq3R0oQj+dUAjUAj6ZLalpzxgXcyHxfNHN7VTPq3dkocSKqB773jef0TxpjzU4E74ccbvk0En2hVis8cCHWCnVWK43MM3H/3eXBJnPcnlaUhzfP89J/CsbSgr15dZXES2i9P9aSVv0xAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1952E2F;
-	Mon, 10 Nov 2025 17:51:48 -0800 (PST)
-Received: from [10.163.74.35] (unknown [10.163.74.35])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E0AB23F66E;
-	Mon, 10 Nov 2025 17:51:51 -0800 (PST)
-Message-ID: <73cd2390-f4c9-4b65-95da-a3b20994f958@arm.com>
-Date: Tue, 11 Nov 2025 07:21:48 +0530
+	s=arc-20240116; t=1762826213; c=relaxed/simple;
+	bh=VphCyfEENd4whxy5okj5882S0gPkjzD1ljXyJrlri9M=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=iPQc7MyLroXHFQlKjeFEmwCJMgtH0IbgCAebRm29yRJn10hUEBiss/ykpZFtMsCPt3jvcUklh9ZtPgo50sWSixAe9xpejjMveFw28Q3ouwrgjI4H+OICNMsCFCb5+GsOMRCxw4v1+b2aiG4MEiw1it1VB3m77Za3V+7d7wnOp6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MxmfBm0N; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 144B3C4CEFB;
+	Tue, 11 Nov 2025 01:56:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762826213;
+	bh=VphCyfEENd4whxy5okj5882S0gPkjzD1ljXyJrlri9M=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=MxmfBm0Ny+/qaYrVoKT8KL7lULyFehtAg0TdX4XqyEc+9es2IDPHvHCx4C6uCwk0a
+	 Ib7IYu4m1w1smWVD7J3nk8quEpNaGhXhbdRwzluMlPTdBcJfe6FXKa4vYOWL0phV2w
+	 D+fC70IqzAMfxZU8P2OKQhqWVAc2awoSCKrnZY3Psmdo1u70CTxFWvQdpI4hwfD9uL
+	 vkQj0YeeA6ljP8cUrT744/MzSdSaqx23yaHxXyxbtdbAoBE/Dikmys1367mPyLQPBo
+	 Thrkszyvq6fFt0zf2+ImdIgb6iVrGUgaq9JxTpRebsfYHNHQY4FVQImA3SyXlaX1HD
+	 N0skyOf3a0Hrw==
+Date: Mon, 10 Nov 2025 17:56:50 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Byungchul Park <byungchul@sk.com>
+Cc: linux-mm@kvack.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel_team@skhynix.com,
+ harry.yoo@oracle.com, ast@kernel.org, daniel@iogearbox.net,
+ davem@davemloft.net, hawk@kernel.org, john.fastabend@gmail.com,
+ sdf@fomichev.me, saeedm@nvidia.com, leon@kernel.org, tariqt@nvidia.com,
+ mbloch@nvidia.com, andrew+netdev@lunn.ch, edumazet@google.com,
+ pabeni@redhat.com, akpm@linux-foundation.org, david@redhat.com,
+ lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
+ rppt@kernel.org, surenb@google.com, mhocko@suse.com, horms@kernel.org,
+ jackmanb@google.com, hannes@cmpxchg.org, ziy@nvidia.com,
+ ilias.apalodimas@linaro.org, willy@infradead.org, brauner@kernel.org,
+ kas@kernel.org, yuzhao@google.com, usamaarif642@gmail.com,
+ baolin.wang@linux.alibaba.com, almasrymina@google.com, toke@redhat.com,
+ asml.silence@gmail.com, bpf@vger.kernel.org, linux-rdma@vger.kernel.org,
+ sfr@canb.auug.org.au, dw@davidwei.uk, ap420073@gmail.com,
+ dtatulea@nvidia.com
+Subject: Re: [RFC mm v5 1/2] page_pool: check nmdesc->pp to see its usage as
+ page pool for net_iov not page-backed
+Message-ID: <20251110175650.78902c74@kernel.org>
+In-Reply-To: <20251111014052.GA51630@system.software.com>
+References: <20251103075108.26437-1-byungchul@sk.com>
+	<20251103075108.26437-2-byungchul@sk.com>
+	<20251106173320.2f8e683a@kernel.org>
+	<20251107015902.GA3021@system.software.com>
+	<20251106180810.6b06f71a@kernel.org>
+	<20251107044708.GA54407@system.software.com>
+	<20251107174129.62a3f39c@kernel.org>
+	<20251108022458.GA65163@system.software.com>
+	<20251107183712.36228f2a@kernel.org>
+	<20251110010926.GA70011@system.software.com>
+	<20251111014052.GA51630@system.software.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/ptdesc: Derive from the compound head in page_ptdesc()
-To: "David Hildenbrand (Red Hat)" <davidhildenbrandkernel@gmail.com>,
- linux-mm@kvack.org
-Cc: vishal.moola@gmail.com, Andrew Morton <akpm@linux-foundation.org>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org
-References: <20251110063725.3118037-1-anshuman.khandual@arm.com>
- <048f6173-f538-46eb-b0dd-70f1aaa79562@gmail.com>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <048f6173-f538-46eb-b0dd-70f1aaa79562@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On 10/11/25 2:23 PM, David Hildenbrand (Red Hat) wrote:
-> On 10.11.25 07:37, Anshuman Khandual wrote:
->> struct ptdesc (including all relevant helpers) support multi order compound
->> pages. But page_ptdesc() coverts given page into its own ptdesc rather than
->> deriving from its compound head as would have been expected otherwise. Just
->> change the macro to fetch the struct ptdesc from the compound head instead,
->> so that the same struct ptdesc is reached from all tail pages.
->>
->> Cc: Andrew Morton <akpm@linux-foundation.org>
->> Cc: David Hildenbrand <david@redhat.com>
->> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
->> Cc: Liam R. Howlett <Liam.Howlett@oracle.com>
->> Cc: Vlastimil Babka <vbabka@suse.cz>
->> Cc: Mike Rapoport <rppt@kernel.org>
->> Cc: Suren Baghdasaryan <surenb@google.com>
->> Cc: Michal Hocko <mhocko@suse.com>
->> Cc: Matthew Wilcox <willy@infradead.org>
->> Cc: linux-mm@kvack.org
->> Cc: linux-kernel@vger.kernel.org
->> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
->> ---
->> This applies on v6.18-rc5
->>
->> Found via code inspection. Apparently struct ptdesc could represent a page
->> table page which is multi order looking into helpers as ptdesc_nr_pages(),
->> __pagetable_ctor/dtor() and pagetable_free() etc. Am I missing something ?
->>
->>   include/linux/mm_types.h | 6 +++---
->>   1 file changed, 3 insertions(+), 3 deletions(-)
->>
->> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
->> index 90e5790c318f..f7107bc55d1e 100644
->> --- a/include/linux/mm_types.h
->> +++ b/include/linux/mm_types.h
->> @@ -604,9 +604,9 @@ static_assert(sizeof(struct ptdesc) <= sizeof(struct page));
->>       const struct ptdesc *:        (const struct folio *)(pt),    \
->>       struct ptdesc *:        (struct folio *)(pt)))
->>   -#define page_ptdesc(p)            (_Generic((p),            \
->> -    const struct page *:        (const struct ptdesc *)(p),    \
->> -    struct page *:            (struct ptdesc *)(p)))
->> +#define page_ptdesc(p)            (_Generic((p),                    \
->> +    const struct page *:        (const struct ptdesc *)_compound_head(p),    \
->> +    struct page *:            (struct ptdesc *)_compound_head(p)))
+On Tue, 11 Nov 2025 10:40:52 +0900 Byungchul Park wrote:
+> > > I understand the end goal. I don't understand why patch 1 is a step
+> > > in that direction, and you seem incapable of explaining it. So please
+> > > either follow my suggestion on how to proceed with patch 2 without  
+> > 
+> > struct page and struct netmem_desc should keep difference information.
+> > Even though they are sharing some fields at the moment, it should
+> > eventually be decoupled, which I'm working on now.  
 > 
-> Well, this adds overhead :)
+> I'm removing the shared space between struct page and struct net_iov so
+> as to make struct page look its own way to be shrinked and let struct
+> net_iov be independent.
 > 
-> The real question is when we would be converting from a tail page to a ptdesc.
-> 
-> Take a look at pmd_ptdesc()->pmd_pgtable_page() where we avoid looking up a tail page in the first place.
-> 
+> Introduing a new shared space for page type is non-sense.  Still not
+> clear to you?
 
-Agreed - it does avoid looking into the tail pages. Currently there
-are no instances where tail pages are converted into struct ptdesc.
-But on its own page_ptdesc() does not look right and would not work
-when applied on a tail page.
+I've spent enough time reasoning with out and suggesting alternatives.
+If you respin this please carry:
 
-static inline struct page *pmd_pgtable_page(pmd_t *pmd)
-{
-        unsigned long mask = ~(PTRS_PER_PMD * sizeof(pmd_t) - 1);
-        return virt_to_page((void *)((unsigned long) pmd & mask));
-}
+Nacked-by: Jakub Kicinski <kuba@kernel.org>
 
-static inline struct ptdesc *pmd_ptdesc(pmd_t *pmd)
-{
-        return page_ptdesc(pmd_pgtable_page(pmd));
-}
+Until I say otherwise.
 
