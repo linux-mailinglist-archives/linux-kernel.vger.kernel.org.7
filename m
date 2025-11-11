@@ -1,115 +1,190 @@
-Return-Path: <linux-kernel+bounces-894956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BB2CC4C8D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:11:32 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CD6DC4C919
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:13:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F1881882642
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:07:18 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0D2C34E4740
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:07:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E4A82EDD51;
-	Tue, 11 Nov 2025 09:05:08 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92A1C32C94C;
+	Tue, 11 Nov 2025 09:05:38 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55D272586E8;
-	Tue, 11 Nov 2025 09:05:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C944D2EC55D;
+	Tue, 11 Nov 2025 09:05:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762851907; cv=none; b=p8tx1S6WAZTa/wMRvo2oydkfzWXibRXDC8IMHbEI5sae1WFf8V256Uau1U7uos5sTkRBU5PWCEhSznL4xrnYO3/RertGyJrN5c+YyT78DVYfvduVVSjgIRaETpjvGALSsklrb/4jiOfuzxF2wl2FMq9EDT6xLbNGWnBh7GvrX0c=
+	t=1762851938; cv=none; b=TQ65VublFtj/h/QLHUkl2Cpiylts3cSpkSpAvQlf9ftPYCt34JADFpOWRE6RK6jSx4GdOkg3bzB2LyCeE/PWMJN5j1FS3q0fGJj2T1GclzYRZvdQtrRWw8WYVODUrpKDtvzVlwdtvEhics0j7QU3ar0yvOyvzOgxW/gXeTW+tp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762851907; c=relaxed/simple;
-	bh=p4uF4Vyz6pDkt+BIpm/hfqQUVCIcHglKLllHnH5MJW8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fgc0NwhFpNhcrqvudY8yjDk6hi222/AyfzSJF2/lIEHhT3gYsrrjliXiKvcv/HMtYI0jwllv7l/M8Zd1YkjTvMkgvFIJ7MxmYYBECRS5r5XuyVE3s5UaTtxDzbUierSd4rVNkd2yfKQk2gNeH+pPnfCdfvhiZZk4nSXXnigyHOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id DD2E3227A87; Tue, 11 Nov 2025 10:04:57 +0100 (CET)
-Date: Tue, 11 Nov 2025 10:04:57 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Christoph Hellwig <hch@lst.de>, Florian Weimer <fw@deneb.enyo.de>,
-	Florian Weimer <fweimer@redhat.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Hans Holmberg <hans.holmberg@wdc.com>, linux-xfs@vger.kernel.org,
-	Carlos Maiolino <cem@kernel.org>,
-	"Darrick J . Wong" <djwong@kernel.org>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	libc-alpha@sourceware.org
-Subject: Re: [RFC] xfs: fake fallocate success for always CoW inodes
-Message-ID: <20251111090457.GB11723@lst.de>
-References: <20251106133530.12927-1-hans.holmberg@wdc.com> <lhuikfngtlv.fsf@oldenburg.str.redhat.com> <20251106135212.GA10477@lst.de> <aQyz1j7nqXPKTYPT@casper.infradead.org> <lhu4ir7gm1r.fsf@oldenburg.str.redhat.com> <20251106170501.GA25601@lst.de> <878qgg4sh1.fsf@mid.deneb.enyo.de> <aRESlvWf9VquNzx3@dread.disaster.area> <20251110093701.GB22674@lst.de> <aRJaLn72i4yh1mkp@dread.disaster.area>
+	s=arc-20240116; t=1762851938; c=relaxed/simple;
+	bh=fAvVC9eVF9dhF3dkG3sDy3mPZGnLbG+UdkFF3DtuZJE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OGzHaQdZnR1IUquSaaiy6NdPd6Gh4Ej1NeYj0VMcGcaRjnIavrqsmvKZ15NoRz3ZGTC+7bXHrf+NEFf8JHNbiUKRoV4A5nEtJxrato0/NCKtHofz7Z1zHck+u8+1xbc1NUL++i/WkiwKMwKlfu3ILXR1wiIUxTGJD/NeNtav1r8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [141.14.13.172] (g427.RadioFreeInternet.molgen.mpg.de [141.14.13.172])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id B9AE061B4847B;
+	Tue, 11 Nov 2025 10:05:09 +0100 (CET)
+Message-ID: <981b322f-7b36-43dd-bc75-7154ca50cedb@molgen.mpg.de>
+Date: Tue, 11 Nov 2025 10:05:08 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aRJaLn72i4yh1mkp@dread.disaster.area>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] Bluetooth: btrtl: Avoid loading the config file on
+ security chips
+To: Max Chou <max.chou@realtek.com>
+Cc: Marcel Holtmann <marcel@holtmann.org>,
+ Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+ linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Hilda Wu <hildawu@realtek.com>, alex_lu <alex_lu@realsil.com.cn>,
+ niall_ni@realsil.com.cn, KidmanLee <kidman@realtek.com>
+References: <20251105120204.458231-1-max.chou@realtek.com>
+Content-Language: en-US
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <20251105120204.458231-1-max.chou@realtek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 11, 2025 at 08:33:34AM +1100, Dave Chinner wrote:
-> > Not really.  FALLOC_FL_WRITE_ZEROS does hardware-offloaded zeroing.
+Dear Max,
+
+
+Thank you for your patch. I respond despite your patch already been 
+committed.
+
+Am 05.11.25 um 13:02 schrieb Max Chou:
+> For chips with security enabled, it's only possible to load firmware
+> with a valid signature pattern.
+> If key_id is not zero, it indicates a security chip, and the driver will
+> not load the config file.
 > 
-> That is not required functionality - it is an implementation
-> optimisation.
-
-It's also the reason why it exists.
-
-> WRITE_ZEROES requires that the subsequent write must not need to
-> perform filesystem metadata updates to guarantee data integrity.
-> How the filesystem implements that is up to the filesystem....
-
-No, it can;t require that.  But it is optimizing for that.
-
-> > I think what Florian wants (although I might be misunderstanding him)
-> > is an interface that will increase the file size up to the passed in
-> > size, but never reduce it and lose data.
+> - Example log for a security chip.
 > 
-> Ah, that's not a "zeroing fallocate()" like was suggested. These are
-> the existing FALLOC_FL_ALLOCATE_RANGE file extension semantics.
+> Bluetooth: hci0: RTL: examining hci_ver=0c hci_rev=000a
+>    lmp_ver=0c lmp_subver=8922
 
-Yes, just without allocating.
+No linebreak needed for pasted lines.
 
-> AFAICT, this is exactly what the proposed patch implements - it
-> short circuits the bit we can't guarantee (ENOSPC prevention via
-> preallocation) but retains all the other aspects (non-destructive
-> truncate up) when it returns success.
+> Bluetooth: hci0: RTL: rom_version status=0 version=1
+> Bluetooth: hci0: RTL: btrtl_initialize: key id 1
 
-Yes.
+Maybe you could send a follow-up to make that line more informative by 
+also printing, that this chip runs in security mode.
 
-> I don't see how a glibc posix_fallocate() fallback that does a
-> non-desctructive truncate up though some new interface is any better
-> than just having the filesystem implement ALLOCATE_RANGE without the
-> ENOSPC guarantees in the first place?
-
-For one because applications specifically probing the low-level Linux
-system call will find out what is supported or not.  And Linux fallocate
-has always failed when not supporting the exact semantics, while
-posix_fallocate in glibc always had a (fairly broken) fallback and thus
-applications can somewhat reasonable expect it to not fail.
-
-> > They are both quite different as they both zero the entire passed in
-> > range, even if it already contains data, which is completely different
-> > from the posix_fallocate or fallocate FALLOC_FL_ALLOCATE_RANGE semantics
-> > that leave any existing data intact.
+> Bluetooth: hci0: RTL: loading rtl_bt/rtl8922au_fw.bin
+> Bluetooth: hci0: RTL: cfg_sz 0, total sz 71301
+> Bluetooth: hci0: RTL: fw version 0x41c0c905
 > 
-> Yes. However:
+> - Example log for a normal chip.
 > 
-> 	fallocate(fd, FALLOC_FL_WRITE_ZEROES, old_eof, new_eof - old_eof);
+> Bluetooth: hci0: RTL: examining hci_ver=0c hci_rev=000a
+>    lmp_ver=0c lmp_subver=8922
+> Bluetooth: hci0: RTL: rom_version status=0 version=1
+> Bluetooth: hci0: RTL: btrtl_initialize: key id 0
+> Bluetooth: hci0: RTL: loading rtl_bt/rtl8922au_fw.bin
+> Bluetooth: hci0: RTL: loading rtl_bt/rtl8922au_config.bin
+> Bluetooth: hci0: RTL: cfg_sz 6, total sz 71307
+> Bluetooth: hci0: RTL: fw version 0x41c0c905
 > 
-> is exactly the "zeroing truncate up" operation that was being
-> suggested. It will not overwrite any existing data, except if the
-> application is racing other file extension operations with this one.
+> Tested-by: Hilda Wu <hildawu@realtek.com>
+> Signed-off-by: Nial Ni <niall_ni@realsil.com.cn>
+> Signed-off-by: Max Chou <max.chou@realtek.com>
+> ---
+> Changes in V2:
+> - Print key_id at INFO level
+> - Update commit information for key_id based on review suggestions
+> ---
+>   drivers/bluetooth/btrtl.c | 24 +++++++++++++-----------
+>   1 file changed, 13 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/bluetooth/btrtl.c b/drivers/bluetooth/btrtl.c
+> index 8290932b8f7b..5603b282f9bc 100644
+> --- a/drivers/bluetooth/btrtl.c
+> +++ b/drivers/bluetooth/btrtl.c
+> @@ -50,7 +50,7 @@
+>   
+>   #define	RTL_CHIP_SUBVER (&(struct rtl_vendor_cmd) {{0x10, 0x38, 0x04, 0x28, 0x80}})
+>   #define	RTL_CHIP_REV    (&(struct rtl_vendor_cmd) {{0x10, 0x3A, 0x04, 0x28, 0x80}})
+> -#define	RTL_SEC_PROJ    (&(struct rtl_vendor_cmd) {{0x10, 0xA4, 0x0D, 0x00, 0xb0}})
+> +#define	RTL_SEC_PROJ    (&(struct rtl_vendor_cmd) {{0x10, 0xA4, 0xAD, 0x00, 0xb0}})
+>   
+>   #define RTL_PATCH_SNIPPETS		0x01
+>   #define RTL_PATCH_DUMMY_HEADER		0x02
+> @@ -544,7 +544,6 @@ static int rtlbt_parse_firmware_v2(struct hci_dev *hdev,
+>   {
+>   	struct rtl_epatch_header_v2 *hdr;
+>   	int rc;
+> -	u8 reg_val[2];
+>   	u8 key_id;
+>   	u32 num_sections;
+>   	struct rtl_section *section;
+> @@ -559,14 +558,7 @@ static int rtlbt_parse_firmware_v2(struct hci_dev *hdev,
+>   		.len  = btrtl_dev->fw_len - 7, /* Cut the tail */
+>   	};
+>   
+> -	rc = btrtl_vendor_read_reg16(hdev, RTL_SEC_PROJ, reg_val);
+> -	if (rc < 0)
+> -		return -EIO;
+> -	key_id = reg_val[0];
+> -
+> -	rtl_dev_dbg(hdev, "%s: key id %u", __func__, key_id);
+> -
+> -	btrtl_dev->key_id = key_id;
+> +	key_id = btrtl_dev->key_id;
+>   
+>   	hdr = rtl_iov_pull_data(&iov, sizeof(*hdr));
+>   	if (!hdr)
+> @@ -1081,6 +1073,8 @@ struct btrtl_device_info *btrtl_initialize(struct hci_dev *hdev,
+>   	u16 hci_rev, lmp_subver;
+>   	u8 hci_ver, lmp_ver, chip_type = 0;
+>   	int ret;
+> +	int rc;
+> +	u8 key_id;
+>   	u8 reg_val[2];
+>   
+>   	btrtl_dev = kzalloc(sizeof(*btrtl_dev), GFP_KERNEL);
+> @@ -1191,6 +1185,14 @@ struct btrtl_device_info *btrtl_initialize(struct hci_dev *hdev,
+>   		goto err_free;
+>   	}
+>   
+> +	rc = btrtl_vendor_read_reg16(hdev, RTL_SEC_PROJ, reg_val);
+> +	if (rc < 0)
+> +		goto err_free;
+> +
+> +	key_id = reg_val[0];
+> +	btrtl_dev->key_id = key_id;
+> +	rtl_dev_info(hdev, "%s: key id %u", __func__, key_id);
+> +
+>   	btrtl_dev->fw_len = -EIO;
+>   	if (lmp_subver == RTL_ROM_LMP_8852A && hci_rev == 0x000c) {
+>   		snprintf(fw_name, sizeof(fw_name), "%s_v2.bin",
+> @@ -1213,7 +1215,7 @@ struct btrtl_device_info *btrtl_initialize(struct hci_dev *hdev,
+>   		goto err_free;
+>   	}
+>   
+> -	if (btrtl_dev->ic_info->cfg_name) {
+> +	if (btrtl_dev->ic_info->cfg_name && !btrtl_dev->key_id) {
+>   		if (postfix) {
+>   			snprintf(cfg_name, sizeof(cfg_name), "%s-%s.bin",
+>   				 btrtl_dev->ic_info->cfg_name, postfix);
 
-FALLOC_FL_WRITE_ZEROES is defined to zero the entire range.
-FALLOC_FL_ALLOCATE_RANGE or a truncate up do not zero existing data.
+Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
 
+
+Kind regards,
+
+Paul
 
