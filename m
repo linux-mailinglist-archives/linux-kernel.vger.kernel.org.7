@@ -1,189 +1,203 @@
-Return-Path: <linux-kernel+bounces-894738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71A92C4BBA2
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 07:47:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 23710C4BBD2
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 07:53:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EC8BC4E936B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 06:46:47 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 168EA4EB1B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 06:53:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BDDA342C88;
-	Tue, 11 Nov 2025 06:46:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCA7F343D63;
+	Tue, 11 Nov 2025 06:53:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="HqOt32LO";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="PJnA96WJ";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="HqOt32LO";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="PJnA96WJ"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="JzOUtCoe"
+Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1368624A06B
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 06:46:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AB01279358;
+	Tue, 11 Nov 2025 06:53:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762843599; cv=none; b=eds5nrEhIwJLtcyAQ9YMLlA7gmRT+kQUS0J6FxE5GMKzACJpalBddKBU5ebmAXcbEOFML92DUeQAAxt5tanCv13wg+vA+KWbXs0A2b8uzTYc8ppxGb1EyfjtmoMrH12xD+tOSJuCxZrTKiG3i4iqdbXqzZvMXzBAojOJ7HaoyVM=
+	t=1762844009; cv=none; b=ghR8XFXqqat5OVf69v9dl1fDIpPuuYIezlL8t1dFLx+wK0gU0+56zuglNvN7AckbuCgvX1YQQ9NBA7asL3aajoEae1+RLZL1R+XGLcA/biQbd6Wxnzsclwhl8pRfYuERvTn8u7H26FAAMA7NGTmikE4TMJ0W9odWj3VPKrgIBD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762843599; c=relaxed/simple;
-	bh=n6pmlxFtQsXL6Xf1TdQoBc0m0f4wqOCmg/7N3tSqacQ=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZBFvZWaXifXU3dtC19NT3ne6w8qvQOizmhwYFTxckKVPLfrIC39r+kLCSHjFHOETer3IsMeZhPkqO+EWPw1FD2QohRnLeYB4i7kfueY/LNNEBzOhx2Nl1YbfgigZWG7v1BNhHe3phfGDDUtYqKi/vq1Jyf1YuHNqIagFIzxJf/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=HqOt32LO; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=PJnA96WJ; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=HqOt32LO; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=PJnA96WJ; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 42F1F21E2D;
-	Tue, 11 Nov 2025 06:46:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1762843596; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oC01Lpz3QexT1AG0BuU7w7xpQwTU6MGL/YqYE0NL5XM=;
-	b=HqOt32LOv/yzjcT/EmJqsmXIGMLazgJe2YrkWPI5LiMvh9yPWXf6xpSzt8KvhsUCCCfpBi
-	yJcndp2+q6qw6ZitbLZLGwxhYv+Ldp0+MXIGyAZ6PlJ4NUeYRQLeEM/Zsecpzdyg9/MdBN
-	feUWTe8JljZJiM/Zh21Py5VHeToaBnQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1762843596;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oC01Lpz3QexT1AG0BuU7w7xpQwTU6MGL/YqYE0NL5XM=;
-	b=PJnA96WJD6AXPwK5y0dtIavRgbsLq0keljeZ0MnWgv58v03WjMiN5MrONbKbmP2YoLFB30
-	onkAHjbRp0LduSAA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1762843596; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oC01Lpz3QexT1AG0BuU7w7xpQwTU6MGL/YqYE0NL5XM=;
-	b=HqOt32LOv/yzjcT/EmJqsmXIGMLazgJe2YrkWPI5LiMvh9yPWXf6xpSzt8KvhsUCCCfpBi
-	yJcndp2+q6qw6ZitbLZLGwxhYv+Ldp0+MXIGyAZ6PlJ4NUeYRQLeEM/Zsecpzdyg9/MdBN
-	feUWTe8JljZJiM/Zh21Py5VHeToaBnQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1762843596;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oC01Lpz3QexT1AG0BuU7w7xpQwTU6MGL/YqYE0NL5XM=;
-	b=PJnA96WJD6AXPwK5y0dtIavRgbsLq0keljeZ0MnWgv58v03WjMiN5MrONbKbmP2YoLFB30
-	onkAHjbRp0LduSAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1E5B914807;
-	Tue, 11 Nov 2025 06:46:36 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id YVgoBszbEmlHTgAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Tue, 11 Nov 2025 06:46:36 +0000
-Date: Tue, 11 Nov 2025 07:46:35 +0100
-Message-ID: <87ikfh2his.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Cristian Verde <verde.cristian2005@gmail.com>
-Cc: perex@perex.cz,
-	tiwai@suse.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: UB Sanitizer issue on wake-up from suspend (sound related)
-In-Reply-To: <CAAAWurc_M9YKWmBAiXKe0gBF5Gfq2qksCU2heRv1BVhL+xfUow@mail.gmail.com>
-References: <CAAAWurc_M9YKWmBAiXKe0gBF5Gfq2qksCU2heRv1BVhL+xfUow@mail.gmail.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1762844009; c=relaxed/simple;
+	bh=J6oK6+SeKxBrOPBo6r3183CAPm2M7ajgYMs0yyZy1Cs=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ZJmG7oHKixmRjSJJMGB8Vbfkgp/27gCleYzi541fh88zf1Y+P7jo3PO+d2MmUcrt6bwTsHS68NHXZW/lb+9sbFEJAkEePTxannVw5OeaihtJHMjtwBr3IDRPtRzGQ7maOy6M2mL/s79oxHmLzFwfLeJt6Yqce1vgQzlvjsEfCX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=JzOUtCoe; arc=none smtp.client-ip=115.124.30.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1762844003; h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	bh=cvJiQeCWKw1rGFL3Q8oVIkh9JusjXZv2HTeEiaF2AmI=;
+	b=JzOUtCoeFcVGF8faGXQJeVUBUlEm4uZVMXwS2KFAA1FGNd/GNXyx40cubHKbCtkRep2KgK1xnljT1WCB46Rgc85CqM51Sd7KC3bhu+BeymT60PSWk/mQopkpRuBy3zt6q3nuQzR6k79tmFsntno8MeoPWqXT3fU+RZHcaAt2OD8=
+Received: from DESKTOP-5N7EMDA(mailfrom:ying.huang@linux.alibaba.com fp:SMTPD_---0WsACUYD_1762843681 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 11 Nov 2025 14:48:02 +0800
+From: "Huang, Ying" <ying.huang@linux.alibaba.com>
+To: Kairui Song <ryncsn@gmail.com>
+Cc: Kairui Song via B4 Relay <devnull+kasong.tencent.com@kernel.org>,
+  linux-mm@kvack.org,  Andrew Morton <akpm@linux-foundation.org>,  Kemeng
+ Shi <shikemeng@huaweicloud.com>,  Nhat Pham <nphamcs@gmail.com>,  Baoquan
+ He <bhe@redhat.com>,  Barry Song <baohua@kernel.org>,  Chris Li
+ <chrisl@kernel.org>,  Johannes Weiner <hannes@cmpxchg.org>,  Yosry Ahmed
+ <yosry.ahmed@linux.dev>,  Chengming Zhou <chengming.zhou@linux.dev>,
+  Youngjun Park <youngjun.park@lge.com>,  linux-kernel@vger.kernel.org,
+  stable@vger.kernel.org,  Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Subject: Re: [PATCH] Revert "mm, swap: avoid redundant swap device pinning"
+In-Reply-To: <CAMgjq7BsnGFDCVGRQoa+evBdOposnAKM3yKpf5gGykefUvq-mg@mail.gmail.com>
+	(Kairui Song's message of "Mon, 10 Nov 2025 19:37:01 +0800")
+References: <20251110-revert-78524b05f1a3-v1-1-88313f2b9b20@tencent.com>
+	<875xbiodl2.fsf@DESKTOP-5N7EMDA>
+	<CAMgjq7CTdtjMUUk2YvanL_PMZxS_7+pQhHDP-DjkhDaUhDRjDw@mail.gmail.com>
+	<877bvymaau.fsf@DESKTOP-5N7EMDA>
+	<CAMgjq7BsnGFDCVGRQoa+evBdOposnAKM3yKpf5gGykefUvq-mg@mail.gmail.com>
+Date: Tue, 11 Nov 2025 14:48:00 +0800
+Message-ID: <87h5v1jc9r.fsf@DESKTOP-5N7EMDA>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [0.20 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	INTRODUCTION(2.00)[];
-	SUSPICIOUS_RECIPS(1.50)[];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	FREEMAIL_TO(0.00)[gmail.com];
-	RCPT_COUNT_THREE(0.00)[4];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid]
-X-Spam-Flag: NO
-X-Spam-Score: 0.20
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 10 Nov 2025 20:46:00 +0100,
-Cristian Verde wrote:
-> 
-> 
-> Good evening (in my country),
-> 
-> My name is Cristian Verde and this is my first bug report, so I'm sorry for
-> the crudity.
-> 
-> [ 6173.298248] UBSAN: invalid-load in /build/linux-PxlDdq/linux-6.16.8/sound/
-> core/pcm_native.c:636:46
-> [ 6173.298255] load of value 162 is not a valid value for type '_Bool'
-> [ 6173.298281] nvidia 0000:01:00.0: PM: pci_pm_suspend(): nv_pmops_suspend
-> [nvidia] returns -5
-> [ 6173.298660] nvidia 0000:01:00.0: PM: dpm_run_callback(): pci_pm_suspend
-> returns -5
-> [ 6173.298673] nvidia 0000:01:00.0: PM: failed to suspend async: error -5
-> [ 6173.341921] PM: Some devices failed to suspend, or early wake event
-> detected
-> [ 6173.818931] nvidia 0000:01:00.0: PM: pci_pm_suspend(): nv_pmops_suspend
-> [nvidia] returns -5
-> [ 6173.818991] nvidia 0000:01:00.0: PM: dpm_run_callback(): pci_pm_suspend
-> returns -5
-> [ 6173.819003] nvidia 0000:01:00.0: PM: failed to suspend async: error -5
-> [ 6173.857619] PM: Some devices failed to suspend, or early wake event
-> detected
-> 
-> Also found this Reddit post
-> 
-> I reported it already to Pop_OS maintainers, since I don't know where the
-> problem is (the Pop_OS 22.04 that I'm using has Linux 6.16.8, as can be seen
-> above, so a bit of an older version)
-> 
-> The issue might be related to why the volume slider doesn't work (since it's
-> sound related)? Only happens on the laptop's speakers
-> (LENOVO_MT_82Y7_BU_idea_FM_Yoga Pro 7 14IRH8), not any other audio devices.
-> 
-> If it helps, I had the same issue when I ran Ubuntu 22.04, and didn't have it
-> on another machine (some ASUS).
-> 
-> I can provide other details, and please let me know if I should use
-> other communication channels, thank you very much!
-> 
-> Best regards,
-> Cristian Verde
+Kairui Song <ryncsn@gmail.com> writes:
 
-This must be a bug rather in Nvidia download driver.  It means a wrong
-value is stored in substream->runtime->stop_operating field which
-should have been a boolean.
+> On Mon, Nov 10, 2025 at 6:50=E2=80=AFPM Huang, Ying
+> <ying.huang@linux.alibaba.com> wrote:
+>>
+>> Kairui Song <ryncsn@gmail.com> writes:
+>>
+>> > On Mon, Nov 10, 2025 at 9:56=E2=80=AFAM Huang, Ying
+>> > <ying.huang@linux.alibaba.com> wrote:
+>> >>
+>> >> Hi, Kairui,
+>> >>
+>> >> Kairui Song via B4 Relay <devnull+kasong.tencent.com@kernel.org> writ=
+es:
+>> >>
+>> >> > From: Kairui Song <kasong@tencent.com>
+>> >> >
+>> >> > This reverts commit 78524b05f1a3e16a5d00cc9c6259c41a9d6003ce.
+>> >> >
+>> >> > While reviewing recent leaf entry changes, I noticed that commit
+>> >> > 78524b05f1a3 ("mm, swap: avoid redundant swap device pinning") isn't
+>> >> > correct. It's true that most all callers of __read_swap_cache_async=
+ are
+>> >> > already holding a swap entry reference, so the repeated swap device
+>> >> > pinning isn't needed on the same swap device, but it is possible th=
+at
+>> >> > VMA readahead (swap_vma_readahead()) may encounter swap entries fro=
+m a
+>> >> > different swap device when there are multiple swap devices, and call
+>> >> > __read_swap_cache_async without holding a reference to that swap de=
+vice.
+>> >> >
+>> >> > So it is possible to cause a UAF if swapoff of device A raced with
+>> >> > swapin on device B, and VMA readahead tries to read swap entries fr=
+om
+>> >> > device A. It's not easy to trigger but in theory possible to cause =
+real
+>> >> > issues. And besides, that commit made swap more vulnerable to issues
+>> >> > like corrupted page tables.
+>> >> >
+>> >> > Just revert it. __read_swap_cache_async isn't that sensitive to
+>> >> > performance after all, as it's mostly used for SSD/HDD swap devices=
+ with
+>> >> > readahead. SYNCHRONOUS_IO devices may fallback onto it for swap cou=
+nt >
+>> >> > 1 entries, but very soon we will have a new helper and routine for
+>> >> > such devices, so they will never touch this helper or have redundant
+>> >> > swap device reference overhead.
+>> >>
+>> >> Is it better to add get_swap_device() in swap_vma_readahead()?  Whene=
+ver
+>> >> we get a swap entry, the first thing we need to do is call
+>> >> get_swap_device() to check the validity of the swap entry and prevent
+>> >> the backing swap device from going under us.  This helps us to avoid
+>> >> checking the validity of the swap entry in every swap function.  Does
+>> >> this sound reasonable?
+>> >
+>> > Hi Ying, thanks for the suggestion!
+>> >
+>> > Yes, that's also a feasible approach.
+>> >
+>> > What I was thinking is that, currently except the readahead path, all
+>> > swapin entry goes through the get_swap_device() helper, that helper
+>> > also helps to mitigate swap entry corruption that may causes OOB or
+>> > NULL deref. Although I think it's really not that helpful at all to
+>> > mitigate page table corruption from the kernel side, but seems not a
+>> > really bad idea to have.
+>> >
+>> > And the code is simpler this way, and seems more suitable for a stable
+>> > & mainline fix. If we want  to add get_swap_device() in
+>> > swap_vma_readahead(), we need to do that for every entry that doesn't
+>> > match the target entry's swap device. The reference overhead is
+>> > trivial compared to readhead and bio layer, and only non
+>> > SYNCHRONOUS_IO devices use this helper (madvise is a special case, we
+>> > may optimize that later). ZRAM may fallback to the readahead path but
+>> > this fallback will be eliminated very soon in swap table p2.
+>>
+>> We have 2 choices in general.
+>>
+>> 1. Add get/put_swap_device() in every swap function.
+>>
+>> 2. Add get/put_swap_device() in every caller of the swap functions.
+>>
+>> Personally, I prefer 2.  It works better in situations like calling
+>> multiple swap functions.  It can reduce duplicated references.  It helps
+>> improve code reasoning and readability.
+>
+> Totally agree, that's exactly what the recently added kerneldoc is
+> suggesting, caller of the swap function will need to use refcount or
+> lock to protect the swap device.
+>
+> I'm not suggesting to add get/put in every function, just thinking
+> that maybe reverting it can have some nice side effects.
+>
+> But anyway, this fix should also be good:
+>
+> diff --git a/mm/swap_state.c b/mm/swap_state.c
+> index 3f85a1c4cfd9..4cca4865627f 100644
+> --- a/mm/swap_state.c
+> +++ b/mm/swap_state.c
+> @@ -747,6 +747,7 @@ static struct folio
+> *swap_vma_readahead(swp_entry_t targ_entry, gfp_t gfp_mask,
+>
+>         blk_start_plug(&plug);
+>         for (addr =3D start; addr < end; ilx++, addr +=3D PAGE_SIZE) {
+> +               struct swap_info_struct *si =3D NULL;
+>                 leaf_entry_t entry;
+>
+>                 if (!pte++) {
+> @@ -761,8 +762,12 @@ static struct folio
+> *swap_vma_readahead(swp_entry_t targ_entry, gfp_t gfp_mask,
+>                         continue;
+>                 pte_unmap(pte);
+>                 pte =3D NULL;
+> +               if (swp_type(entry) !=3D swp_type(targ_entry))
+> +                       si =3D get_swap_device(entry);
+>                 folio =3D __read_swap_cache_async(entry, gfp_mask, mpol, =
+ilx,
+>                                                 &page_allocated, false);
+> +               if (si)
+> +                       put_swap_device(si);
+>                 if (!folio)
+>                         continue;
+>                 if (page_allocated) {
+>
+> I'll post a patch if it looks ok.
 
+LGTM with the NULL check as you said in another email.
 
-Takashi
+---
+Best Regards,
+Huang, Ying
 
