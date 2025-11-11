@@ -1,77 +1,86 @@
-Return-Path: <linux-kernel+bounces-896033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BE8FC4F862
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 20:00:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 01F60C4F868
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 20:00:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 207E8189815A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 19:00:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 973921898558
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 19:00:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FBFC2D1F4E;
-	Tue, 11 Nov 2025 18:59:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="NRm7sPR+"
-Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D76132D7394;
+	Tue, 11 Nov 2025 18:59:58 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03F372D1F7B
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 18:59:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66D6A2D63EF;
+	Tue, 11 Nov 2025 18:59:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762887596; cv=none; b=GKV4wF+3huhoIDW9nT+pOu5mlpDfaPK/nD3n64C1Vv8y89dNAWBuiSzhQq95QTVkE4VcFq/n8WlIPcS6FFu6YjoWj7S6GTipTW6gwooJl0qnKGHl3733WeTmo6QuH+fmBNqskkM8dC/PTEtLH7SP7sXMx7kWdbSSUj7KqvYoC0w=
+	t=1762887598; cv=none; b=KusHrpKi7Z3jQDyDb6CWSGZu+9j3bpzjg463Ao8K4DgogQnyMGhpyPs+Vf81k566YHmii0KUuB1R9zPQ/TzcA7N21JBxPhWklsWzEQqGDHwU8oSFzB8S7CU9zbWPMHMDK/o2WABlWae24eRDpLBmMiJU/s6VLoPLo7fdWAFuXqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762887596; c=relaxed/simple;
-	bh=UMnEps90lDVVxQpCV0D0SupS08uIJn0CtLAQpVuX40E=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=kYOjeoTcv4hHKygVyvi/Reh/Kyk+dyk9IMiXeZ5KmlNinaranCi1FHPYWuz4/kcdl776iURn1qjPUb//62RZ1SSdKnmJKknB/tcfH70Ox6nMyKat0jwmsxqNcSVcpMzVnuAdjydl5zXkvf/KJj2lBvtzIKar2XYwp1RVo+54Gc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=NRm7sPR+; arc=none smtp.client-ip=91.218.175.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1762887593;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UMnEps90lDVVxQpCV0D0SupS08uIJn0CtLAQpVuX40E=;
-	b=NRm7sPR+NTC4j8oIQHpvopN6jNVoYW/ZMofwhUSzPQEo1Ux3CnCGioBiEM+9C6Q+Kdfh9c
-	nrz1kfBvONTID8CAT+XGPRraT244HZrAO3hkwarmn1Tx3IOOutvqhPzYEGQlHQNVhlucOX
-	KrIgBZbSrNylk/B/CLMxMDEOJICoQ9Y=
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>,  Johannes Weiner
- <hannes@cmpxchg.org>,  Michal Hocko <mhocko@kernel.org>,  Muchun Song
- <muchun.song@linux.dev>,  Harry Yoo <harry.yoo@oracle.com>,  Qi Zheng
- <qi.zheng@linux.dev>,  Vlastimil Babka <vbabka@suse.cz>,
-  linux-mm@kvack.org,  cgroups@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  Meta kernel team <kernel-team@meta.com>
-Subject: Re: [PATCH 4/4] memcg: remove __lruvec_stat_mod_folio
-In-Reply-To: <20251110232008.1352063-5-shakeel.butt@linux.dev> (Shakeel Butt's
-	message of "Mon, 10 Nov 2025 15:20:08 -0800")
-References: <20251110232008.1352063-1-shakeel.butt@linux.dev>
-	<20251110232008.1352063-5-shakeel.butt@linux.dev>
-Date: Tue, 11 Nov 2025 10:59:39 -0800
-Message-ID: <877bvws8dg.fsf@linux.dev>
+	s=arc-20240116; t=1762887598; c=relaxed/simple;
+	bh=RM0X21HNpS9jnQBGcL9zW14IKiqylzRbIBhUof0T9ps=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hSRWwYZ4v0C8opr8Jrp8EM8SM2wEuyiDLRL/MUrk97gP/46jK5CqfPEAu7uWJZu69KA43xE44tcbHGEPnzmd+2nWeJW90aUxqIwaDmJgZl1YAlF2cYSSUq/2+wSSCU/KBWanIsGXZP1NKpSjL7JJ7d7gNO0veU2vL9yCIg/w320=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2A8BC19422;
+	Tue, 11 Nov 2025 18:59:55 +0000 (UTC)
+Date: Tue, 11 Nov 2025 18:59:53 +0000
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Ard Biesheuvel <ardb+git@google.com>, linux-efi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Mark Brown <broonie@kernel.org>,
+	Pierre Gondois <Pierre.Gondois@arm.com>,
+	Sami Mujawar <Sami.Mujawar@arm.com>
+Subject: Re: [PATCH v4 resend 0/7] arm64: Make EFI calls preemptible
+Message-ID: <aROHqYH_apXByNn0@arm.com>
+References: <20251015205634.3820870-9-ardb+git@google.com>
+ <aROEXadFWdJoQEzx@arm.com>
+ <CAMj1kXGYGSrhUbJ8jboSbch6tp00zfpnGdfJEQcbq=RmLFy5CA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMj1kXGYGSrhUbJ8jboSbch6tp00zfpnGdfJEQcbq=RmLFy5CA@mail.gmail.com>
 
-Shakeel Butt <shakeel.butt@linux.dev> writes:
+On Tue, Nov 11, 2025 at 07:50:49PM +0100, Ard Biesheuvel wrote:
+> On Tue, 11 Nov 2025 at 19:45, Catalin Marinas <catalin.marinas@arm.com> wrote:
+> >
+> > On Wed, Oct 15, 2025 at 10:56:35PM +0200, Ard Biesheuvel wrote:
+> > > Ard Biesheuvel (7):
+> > >   efi: Add missing static initializer for efi_mm::cpus_allowed_lock
+> > >   efi/runtime-wrappers: Keep track of the efi_runtime_lock owner
+> > >   arm64/fpsimd: Don't warn when EFI execution context is preemptible
+> > >   arm64/fpsimd: Permit kernel mode NEON with IRQs off
+> > >   arm64/efi: Drop efi_rt_lock spinlock from EFI arch wrapper
+> > >   arm64/efi: Move uaccess en/disable out of efi_set_pgd()
+> > >   arm64/efi: Call EFI runtime services without disabling preemption
+> >
+> > The series looks fine to me:
+> >
+> > Acked-by: Catalin Marinas <catalin.marinas@arm.com>
+> >
+> > What do you plan to do with this, merge via the EFI tree? Are there any
+> > dependencies?
+> 
+> As you prefer - I can take it via the EFI tree, or you can take it.
+> There are no conflicts with the other kernel mode FP/SIMD related
+> changes that we are taking via libcrypto, and there are no other
+> dependencies that I am aware of.
 
-> The __lruvec_stat_mod_folio is already safe against irqs, so there is no
-> need to have a separate interface (i.e. lruvec_stat_mod_folio) which
-> wraps calls to it with irq disabling and reenabling. Let's rename
-> __lruvec_stat_mod_folio to lruvec_stat_mod_folio.
->
-> Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
+OK, I'll queue them via arm64 shortly.
 
-Acked-by: Roman Gushchin <roman.gushchin@linux.dev>
+-- 
+Catalin
 
