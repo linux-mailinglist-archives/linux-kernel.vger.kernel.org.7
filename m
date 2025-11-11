@@ -1,197 +1,203 @@
-Return-Path: <linux-kernel+bounces-895787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D7EBC4EE93
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:02:29 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95218C4EE84
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:01:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB54218817E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:02:04 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id F2D7B34CDFD
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:01:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C4641F2380;
-	Tue, 11 Nov 2025 16:01:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A78236B06E;
+	Tue, 11 Nov 2025 16:01:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="mh0WtzRM"
-Received: from SN4PR0501CU005.outbound.protection.outlook.com (mail-southcentralusazon11011050.outbound.protection.outlook.com [40.93.194.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P+d9MG4n"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A37B226D4CD;
-	Tue, 11 Nov 2025 16:01:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.194.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762876884; cv=fail; b=h+IHernxiMu2ixJHk1RrZMp+wGaQ7yoshgQqXXSWnV7qhSfYo6DJDgRHBbg6OfN1hIiTU94oCa5iKijE/d1hZf7Sh31FPr25rwA8vbn8cBz78c4PAtXNRhsEbQ04riApqVlOQ8aeNa51l82YTvgRZ3ZqOGj5kacPSbH7WILh4jM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762876884; c=relaxed/simple;
-	bh=tfm8nz049DHXXWY7YlMWuynSur01T/lNgtin68Yg9OY=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=r7PfaFz2x9HmCRxnBoD/djXw18xPoHocsHeTjGBbyQzV7y5VDAqeKzGgqNzpeteJL6ZFAk46jAiZRzmTarR70sJZfeZCSzFwN0ltqsL0I62yMPhndhnvoMmN7DV4e1s/4LlmqB1Rw0zduhqJH6gZQFim8aBbsrJGlr4ivPtzlS0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=mh0WtzRM; arc=fail smtp.client-ip=40.93.194.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=JzPu9Wrkq+RZihQJ8/cBWFRLNrPpoGLqb/ZfqBhV17cyIsTxZz/oAvqWTTuvaXejjUe1FuIjAe+TED0GHeUTS2EDuNCXhGhBGDmA+GiDk0AbrB7Fnm0UxXmh/sDtBHWCxkYmC2lXqq4/JmLuz6WnM5tf8I46o0+G5nmUfaQU4brR3Dcaop31Bza5MjKuOv5TwBYzwqsNqoWHmOabcnZSJIXrBDMbJQMiaL+V4S2StmQecdr+SzyUE198g5HTvqzTTa9rhSOR03eG22aucVM9+QwkLVtPkdlvqJPTyXEu4n7bsqhRGFtIrL7jGC7YMW0ruD7ZPha/D99ZQeKvKXjGUg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tfm8nz049DHXXWY7YlMWuynSur01T/lNgtin68Yg9OY=;
- b=SCLYCEFED80S+gpK+sTyUTIUPK+e6gjixveZg7R00GzD68X31+YO9NnNadPRWiL6HkHjceaw3Leqhc/FgzpA85MBdytODl7qPiuvm5e2SbR/ashrx8p93lXQurDMmifGRizJKhtQBHABlP3jhqwzOIdvi8Td7qFetukYUAa/y1TmOLuPtkmgdn0+LYzP/kOIwI5uRV/KjU27v1lRgpTFOgzuINNHY/LHQU+009rbuf9/2egaF48XzDWPlr3X6IrQsRgExGBFFnZtShjkg9M5CwjQToyGt8jaZGy8WxkOw2cIOBYljN9T/Mi5UeAiy5q7mc21U2t+foH2olanMpRiBA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tfm8nz049DHXXWY7YlMWuynSur01T/lNgtin68Yg9OY=;
- b=mh0WtzRMbM7v45bPODU8chJeSZ+94alOLrb6VwMiV8Kz+aWwrDKolaGEv7uAiNSgJtgqjFByvgBpnJ+vLbHDPpgcO9LFN393LKWtFm7n1WIEXSl/+Ks0UOUnP3+BwBoGP7l0BbTaZkJuc5cTTsWQplZy1StoSloI0X+7FEl+32cOvn+jgZwpBIh5v4lSufOcSFxDZC9eeNKkH6VZxwcFVq9Mp7gtoeVExAx8MFXRg2uYT0QzGnqlagrKBst2PjkF96vYIoQYw3rcVy9MpYw5g7Qy87O9p3u6EIppSE6VHO3Jilzwb70T3NhOr0b33PY7pC1UaD+afzDJlzTXUz3Vfw==
-Received: from LV3PR12MB9404.namprd12.prod.outlook.com (2603:10b6:408:219::9)
- by SJ0PR12MB7458.namprd12.prod.outlook.com (2603:10b6:a03:48d::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Tue, 11 Nov
- 2025 16:01:17 +0000
-Received: from LV3PR12MB9404.namprd12.prod.outlook.com
- ([fe80::57ac:82e6:1ec5:f40b]) by LV3PR12MB9404.namprd12.prod.outlook.com
- ([fe80::57ac:82e6:1ec5:f40b%5]) with mapi id 15.20.9298.015; Tue, 11 Nov 2025
- 16:01:17 +0000
-From: Chaitanya Kulkarni <chaitanyak@nvidia.com>
-To: Kriish Sharma <kriish.sharma2006@gmail.com>, "axboe@kernel.dk"
-	<axboe@kernel.dk>
-CC: "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] blk-mq-dma: fix kernel-doc function name for integrity
- DMA iterator
-Thread-Topic: [PATCH] blk-mq-dma: fix kernel-doc function name for integrity
- DMA iterator
-Thread-Index: AQHcUyRpCpxPOIM9f0mWZohj5MxpBw==
-Date: Tue, 11 Nov 2025 16:01:17 +0000
-Message-ID: <d899eb3f-bd5f-4b14-9ea1-34fd5123a9ac@nvidia.com>
-References: <20251111115810.2320857-1-kriish.sharma2006@gmail.com>
-In-Reply-To: <20251111115810.2320857-1-kriish.sharma2006@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Mozilla Thunderbird
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: LV3PR12MB9404:EE_|SJ0PR12MB7458:EE_
-x-ms-office365-filtering-correlation-id: 0501a6c1-471a-4b9b-979a-08de213b8c54
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|10070799003|1800799024|366016|376014|38070700021;
-x-microsoft-antispam-message-info:
- =?utf-8?B?MnI2WmNxSnVmN3VsMDMvRk5HNGRxd0xFUXJQWnhOQkVteFBuQnk1YjFwWm1t?=
- =?utf-8?B?cjRza1NrN090d2JwOEFBK1QxclVyUWNOVG9vUG4rZzBSSHozRUx1L0dQOWt2?=
- =?utf-8?B?K3RmN2RRaE5XemtwNGVhcWxLb2RQUzg4WGg2VDVUZjdaYjd3VG40N0xwNVVV?=
- =?utf-8?B?OWU4am9zMmdHenFLY0kzdEU1Q09nRkpoaFd4M1N5NzZkbXVOTDBRK080OVY0?=
- =?utf-8?B?SmZFNFZwUW5lSkZ3ZkVCc3Z2aWhFK0ZpRkdNUll1Wm9PM2crZG9ZSTE5aGlS?=
- =?utf-8?B?bk5FTGxJZ3lWeGVGaFR4YStheW01RloxVTVKQVVtcVBOc3FXVWRZNWJ1V1Fq?=
- =?utf-8?B?S2lNZDRVV2VKb21IMVllZDdHeGN2eE94d3NqcWt0QmIrV2hMSS9QRnNGYlpJ?=
- =?utf-8?B?N1d3OS9iU01SYVA5TjlCRWNQeWptVi9LU2F2bnNmaUMvVkdseGUxdmQ1TTlk?=
- =?utf-8?B?ZW01UU8rSlBBK3NycU9ZMW8za2xmWEh5V1hqeFg0b2o5OUpMc3pmZXR0MEYv?=
- =?utf-8?B?eFN6eWRKZ2ZmRjZUaEl5Z3dGTTdqWS9yZGxreTl6dndBcU5WOTRPQUtNZ2VG?=
- =?utf-8?B?S0Izc1VHOXErNTNnT3FEVGFMSDM4RlluV3FCc3EyZVA3RDRUVnpjWFF5Ulhp?=
- =?utf-8?B?aDBYOFFqOXRYTFhTNUJIbDRHNlNUbHVzNHdJa3hRNHE3cUtTT2pXd2RxaFMv?=
- =?utf-8?B?NTBKcDhsZTBZbVpKbE92ZmQ4bVQrYUtNejJSTUlsUVRMYXEvM084RzhaQm5M?=
- =?utf-8?B?dXpuSDIrcm05MDlGc0l0ZkhhblE3TzNNZkxmaFgrdkhCVFR2dUJlckdyL1JE?=
- =?utf-8?B?RFBueTgzdWFaaExYU1doc2s5YUQyZitEaGlmcDR3NW1oa21rNHFYZ24xUWxD?=
- =?utf-8?B?eVB5ZTFqaHBqeEt3aGdUWk1Ea3BUY3pRT3hlajVRTEMyT0tzNS9PM2VzZ0JP?=
- =?utf-8?B?d2JjdGtRYVplQWV0bG5zUGYyWHBGNi9VK0c2Q2JKYUxyaTU1TjJjdCt5YjNz?=
- =?utf-8?B?dkZydnVhR3h1eEZkeEZFVlM0bTd4elFPMGt3NktZNk5GdTNKOWdlVzl3TFBp?=
- =?utf-8?B?NWJ4Ums1YVR1d0U1VGFYcVdMOWF0ak9NSDB2WU1BTDZiRWUrOTBlMnY5eVB1?=
- =?utf-8?B?c2M5L0xSUHdsZW1KTVh4T1ZrSnBENnNkSkJyNXRNQnVOR2dZbWNMbFR3S0lM?=
- =?utf-8?B?MFpyTlZyUm54RFNSemlvM2dIdkxXZXNWMkVmSnpmdVdaanozckwrSWx3SHIy?=
- =?utf-8?B?MmFYQUVFTStkY0EvK282MXI1eHJseVFndDVkKzFUNXUzalhBbXlYc3QyRlNZ?=
- =?utf-8?B?Z0JnMURsL3Y4bTlXVmJmRVc1MytJMmlndExuRjg3RjFGaW5sQzU1d3dSMXVE?=
- =?utf-8?B?UEdxSzJzeXhNRENxR2dPT0E4cmVWT1hweGxWa1d3ZGUvVkJNenk2T1QwYmc2?=
- =?utf-8?B?Z0dDNHRoS0s3N3RBM2RPV2lzNDFMTnpFbzEyQWVBWnNOOWdEQk9BeENCSng0?=
- =?utf-8?B?VTgzblQzT1lFa0hTWTU2VG5NRzIzc0ttWUhFdmpCb1Y4MTQ3UXAwRFpsUzQ2?=
- =?utf-8?B?cXFBdVVqa0FNaXhtc2NJQURmK3dZRDBvT3RrTVZWcjNuL05FdzdJc1dJb3hW?=
- =?utf-8?B?QUpGNTA4bzh2WithdUhxYk5sT3UrajdzQXdnYmdGM0tDYkdLUHp5QVBWT2N2?=
- =?utf-8?B?UFZpbEdBdzI0UXowRnJZb3dFVnRzQTg4NHU3bGcyajNRU3FqNFFwRDlYaUtB?=
- =?utf-8?B?S3Eyd0VjcDZHbFlmNmRZL1JMQlZjMlpqR0duYzRoSGVLbjlBSUs2Nis4OUZy?=
- =?utf-8?B?VUVzQldncHpsbEV0dmFsMmw1SkRxQmpQM0w2dUJTSlQzaTI2Z3JQZnJ0SUNp?=
- =?utf-8?B?SnBTeFo0M0ptUTRYT3ozM3hGWHorZ1c4TzhYSXhVdS9CUmU2VHBCNWJiWHlT?=
- =?utf-8?B?djIzT1lZME83VlVGOGJTeW5POTFkeTFkMTJuRFNLRzN0UFVEZ2lTaVd4b0hX?=
- =?utf-8?B?K1ZLdjhqVjJBSERpSlhSdEZ0cm5wY2ZkN3QrbnpERmxnanlYOS9MZkNsbjNy?=
- =?utf-8?Q?dRzdmu?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR12MB9404.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(1800799024)(366016)(376014)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?YnpSVHMzV0M1cmJtUVMwSDB4T2pMSGNMT0Y5L3RyeWlsanZzQzJScVlKMkRN?=
- =?utf-8?B?L0VuQ3FncUQybzBHWFNyZjc0UmpoaENlbTROQTRscnFXN00xVnVJeUZRVjds?=
- =?utf-8?B?RVZOZUs5dzFaVVdYU0U0OG9DS0VNejNOT1FONndrUXo1VU1rZzJOOW1pNkxU?=
- =?utf-8?B?UFByUjRSMTA3VTIzQWZhWmxIZzlnMUhYbmdxejNjMllYWXA5azM5V0JYRjJm?=
- =?utf-8?B?dlVDd1h5dWNLa09UTnY1VVNZL3VoaVJpSk1abTExQ2xpZFdJblBnenYzT29I?=
- =?utf-8?B?bHZkdGIxUmxwaW0zL2p2MDhWajZNejBXMjhYSnJrS2w4UUcrYUJBeExOZEJH?=
- =?utf-8?B?VG9henp6WEdIdGRmQVBKcHBBUHYyeFVjSStyTE9MTHRFNXlTamR4Uk9JSGIx?=
- =?utf-8?B?YkE3ZjdBaXhqajMwdTVtbGRBWmtFV1pmN1A3dFZ1c3dSeDdHdGpPanQ4eGhY?=
- =?utf-8?B?c2FINERlYzg4Lzg3T3ZETENybUdCZ2x5OHFwR3E4ZlpqRXRWdkdVcjBSRWpi?=
- =?utf-8?B?dldPT2RndFlJZEZiZ0ZOS1BKYUZxbEYyTnY5ZE8zQjZnVHdOUWJQTkIzdnF2?=
- =?utf-8?B?VzhHN1lBMDZZVytrN3ZBQUsvZ1pnMUlVRHVoaG5pMFRmd0pvVmtDQTVDSC9W?=
- =?utf-8?B?OTZUa3NkMU5ReE5BUkpQRi8yOFN6bkVYNDI5eFFhUmdBeXREa0JneGlqT2Q4?=
- =?utf-8?B?TFRCcE5nU2hNd2dEenpETWd3U2tFOWhZbTFzbnhsemxXck1HY3REMUZucWd2?=
- =?utf-8?B?QVZkOEhEbXUwZ0dLOFlmcUNZZTRYUzlZYTNNVmJVRXo5bGc3N29oTG4vdFY0?=
- =?utf-8?B?STJhZ0MyL0pGcGdlVUdjYzl1YXlGZkxyb21rNGpmNjZDWFFaUS9ubitrdFM0?=
- =?utf-8?B?MkFYVmFhc3l5VThYRVNkVXh5d3JoTXN2N2NTZVQ5VlVLU0hweExKb0VXRStC?=
- =?utf-8?B?ZGMrKzJxWkZKeU9UK3N2ZG5WRHBkT3lGSWdoNzJxQUlCM2RKUVV4MUFidEF5?=
- =?utf-8?B?RzdCeWJhZnAvRGZxTUw2c0NPZERPOVovd25VTU53UG40N1laM2g0aG9INUJE?=
- =?utf-8?B?Zk8wRThJdmpJcTU3Ukg4K1VPVWxHK2FaYnBpSVhpSDdRUDJ1SlFZREZOcURC?=
- =?utf-8?B?MFBQS3lNdWpBOE1PaFZpQUpvbzFmUHBCVldPa00wUGUyVW51dS9Cb3N6NCt2?=
- =?utf-8?B?bTBaNlhDMW5IOFZYSzNlVWRvVUtVc1lqb1lIbkpLSzZDS0VPL3B3WVZJWFBo?=
- =?utf-8?B?Sk9HUzVodC9ObmhsVGFHclVZcjhZbnNyOG1kVjFMTzJYeUgzckdhV3dZN2gw?=
- =?utf-8?B?elppTUtZb0w5V2UwTWMraHhWU3hpTWtoTDJteXB5cjdxWDROa1dpU3dLSnpj?=
- =?utf-8?B?RWdDRVVBZjVNUWxsakx2OTdzY05nNUphVzV4YnJkZ0RaU2NTQWd3djJGS2h6?=
- =?utf-8?B?c1AydDRkRTdJSUk3MGlRQTk1T3FPLy9Pb0xLZnJIaDB0MmM1aE5nQnRWODBR?=
- =?utf-8?B?RmNCVndGbkllS2NySFFSekhvZGZxeXRwbWRtaTFHVVM3L2RQdC9aWkVPN0pK?=
- =?utf-8?B?ZWpuekFyUjhSdkY5Y2wrNUo2Q3Bhb2hicGV2elkzbERmZ1hZdEdpRDJ2dVBj?=
- =?utf-8?B?RGRTMUlmSVI1MWlIN0JUZTUvZVU2NlJBTlZkK3YrR2NWMEJ4ZXJ1UFJQdmRD?=
- =?utf-8?B?Mmx2OTR0OUtnV2ZpZ2VmaGdCUDIvS2xPVzdCQzEwamZ0d1UwRjJvblJtTWJa?=
- =?utf-8?B?SzhjNVNRWVVnb2w1ZFpQSU1XKzlrVHg2QkN2b3E3K2VYcTlTa0llSU1WbUc5?=
- =?utf-8?B?UnV6UzhyQzBPYkt6SExtL3Q3MHhzNmhzaHJvdTcwL3g0djhMTHhUMUY5RXlH?=
- =?utf-8?B?L1lsV09pTldpTXU3SHlxYnVLWWQ3UTFNT0JMMDNETEl6R2ZrcFBrRm5uUzBN?=
- =?utf-8?B?cnVwdUR1UUd6ck1PV0pDRE5zd0JTd2xOOGtaS1FmYkhDUTlJc05Dd2NhaUNx?=
- =?utf-8?B?TUlZQWZZNytoRjhwd3dJemhPZWVXQ2VHbkptYnBSVVVJb3NTdWpwWk5uY1Y2?=
- =?utf-8?B?Nm9RVTI3cGtNdERGN25mSGJJYUxHZzBoR0dVWUhsb2xhNHlZWnRiQ1lGb3Nr?=
- =?utf-8?B?Mi9aeld0eDNLa3JaQ3d2Y2xOQVV3ck1BNmJ2bjBwYjJWOWVqd0lCV08zOE9N?=
- =?utf-8?Q?/wsVh62B0WE4KTa9aG1lvxBSFYve3ht2neFFeLytYMPd?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <352A5CDF7A584C4C9222380347B3435B@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C787CA6F
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 16:01:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762876864; cv=none; b=JYpv16t/NLoNG3nblt3qcf+PBSTODP0dUSVAlKlRTmmbK5UOifzjjaps7+T/EVzPRliZ6HKexNO4HHsf+N64LTH597M5LdsIS8bDAvK5PndlUhXGvyLYZl91A1AOd8BMIBRxlU6any+j350+SvWNsk1/1qNCNt8ivRXh6A0lVNE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762876864; c=relaxed/simple;
+	bh=77IDsQYmahI9ijT7fLxWT1kp1PvqrF+ymBNFDP6vCX4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=GrE+EUpqAoJxtYgp79kVrlyAHipmjBYi7K5R0fqdddouDt/WpuuzuXBVNEFWYUbejnHfK79/Oh4Sc/bhkyio6EkdtY22t1DxflzXO5+a490jGWNkuXzMsorktk4FoQC/mO+TScaiJKZEH50DJjA2cNeyGwwnfivHAJgAgG/VRuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P+d9MG4n; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-42b379cd896so1502361f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 08:01:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762876861; x=1763481661; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=77IDsQYmahI9ijT7fLxWT1kp1PvqrF+ymBNFDP6vCX4=;
+        b=P+d9MG4nBoyxWhDPDQJA0O1mVI8+YM4UsEM8CRYYIJHS4Bq4CvDLIDWcq8Pe77AxW3
+         w0jrcrYi9lhXjhTQQQs7+WOrSLWoJICeMeQPv/uAgQB+wPcFyF+0d/qYgo7QHF5DMwui
+         ajMjeH6QppL5KhnIHO71JqVB/6iod6WONzONszJZtWeJqMzHk7GSjnwYuyN6N0o+UcSr
+         PmGc6iNfPEiFq5N2sWCXWtDHG/6E9xRGDDELea2S6ROK3B7p91oT4WR6gK5I9ETzl9rx
+         NdRQpD8T9WIWJjOL1LSSJ94cwpAtH2PMD2Ed2F6CYjxRWcfLxHdfAdmuRhm3TfWq1D3g
+         tS9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762876861; x=1763481661;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=77IDsQYmahI9ijT7fLxWT1kp1PvqrF+ymBNFDP6vCX4=;
+        b=CcvtG3plD+0Mrze950trAFSV9WCEwj791VK3Za7B2TcWNAdGeo7WesgI7Z1QPb67pk
+         iKsyDZMuZgpCLevbhBv9ijjZ8Ed86vd8o+VnU0Qfk/uZ0TMnVlcWfq6ymj/SkFuHro1S
+         1zT6I5O6SPI1Cm0Ci/lYwcgw5GHslILXAKXgQDIu38K/yz69DY586VHY4doNuF6WRYZ0
+         f/+Yala9SKrSTnOoYf7zj+eJ2Osy/1F8n983k43bFG2w3KITK6VSFb8fw1Ma188Odn2W
+         3xoZyKb7LeyctrJgKpywnod0eIyLvfGuwUf9T1j4OGt4rBb7F4ETYrwMlK3qtxnKJvbx
+         bPcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUrtwj1qEwFboSDhDSnTvY3KquwcYBOy8KSOZSJV+YoitG8oHKhpc913Y3P4EDDxE+ifOK3IdihnwmdwhI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMdRnfVEcvPQe+15FA1GU6egDSLCBpK4k9o1FsLkZ/7XOAJJx3
+	XYymOfEIMRcuiAD+mU0uh1xswJcLJwnsWVKmyHDNZx4qlneSXla19eu6
+X-Gm-Gg: ASbGncug3ojfWuh6USqAr5YpQtMmcB25118cf2k/XHOm/1uamuBh4WKTe3uMTJctPO8
+	fEg/PjHjeBi4D0lvnrqVDytk19dsLAmRdEAv400d2sF7ucxHXmE1vE54Y5MMWtffvnUQ63BPfsb
+	aeWNT8wHPAD+4on+qSYSE9cRQExZisz6I71f0tyTy+kWBUDY2JPdFcQKd4D9a/ITERVZFTjdW9Y
+	wMupjDjkL5dwgCR/+hzJM8FdC+KOYZlM2xev1FQOa1Xx+8CK1hErjKFU1TvuLQ3IrTfk2noJwFR
+	DYYjfBUanrUh1VPwlMzl+dTUPLjOWhgvNv7hLVpXtZE9uyovgLXvLCLgWbw8Yq4Q1RTAwqppLHf
+	Oc5/WUAG76Az1maPn6w0S4y7VTRzxv/MPTNtrw8t0gI45qs8g71rX0OmIYFvKVMVXFG/y8Tofr8
+	+552Sd0Mf6sa626vbpsANZm1qt4LTdtQ==
+X-Google-Smtp-Source: AGHT+IFleuPQ+Yh44UnYxk7hUJZAz8lA8CHIsfFNcSgSsYUo+es9pg2BgzYwZlwbevsmgE0KNhYWtQ==
+X-Received: by 2002:a5d:5f83:0:b0:428:5673:11e0 with SMTP id ffacd0b85a97d-42b2dc8725bmr10989423f8f.40.1762876860585;
+        Tue, 11 Nov 2025 08:01:00 -0800 (PST)
+Received: from [192.168.1.187] ([161.230.67.253])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b2e052f32sm22089171f8f.17.2025.11.11.08.00.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Nov 2025 08:01:00 -0800 (PST)
+Message-ID: <0cd7cf10d47683f22a4358635f243a2dfb6be564.camel@gmail.com>
+Subject: Re: [PATCH 2/2] gpio: adg1712: add driver support
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Antoniu Miclaus <antoniu.miclaus@analog.com>, Bartosz Golaszewski
+	 <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+	 <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Date: Tue, 11 Nov 2025 16:01:36 +0000
+In-Reply-To: <CACRpkdZf9D2PH5AR46Pwi8UoyfwumKS4P3ncJ=RN4iu_cJzZ5w@mail.gmail.com>
+References: <20251031160710.13343-1-antoniu.miclaus@analog.com>
+	 <20251031160710.13343-3-antoniu.miclaus@analog.com>
+	 <CACRpkdYdtcnxyP4xVsqVK+geurEOEURqZO5eLC96YMqh1sE5Sw@mail.gmail.com>
+	 <3ead5d7aa5e6be2b6df3bb91b35fec37e23353f3.camel@gmail.com>
+	 <CACRpkdZf9D2PH5AR46Pwi8UoyfwumKS4P3ncJ=RN4iu_cJzZ5w@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: LV3PR12MB9404.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0501a6c1-471a-4b9b-979a-08de213b8c54
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Nov 2025 16:01:17.3725
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: f6nke09EV4uIm51+nK7YkCgZopZZfA79aTx7oSPIzjvl/5CKuz+e3zjO1VP+wNJDuMmaiUtza23AKWiHpmIZnA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB7458
 
-T24gMTEvMTEvMjUgMDM6NTgsIEtyaWlzaCBTaGFybWEgd3JvdGU6DQo+IERvY3VtZW50YXRpb24g
-YnVpbGQgcmVwb3J0ZWQ6DQo+DQo+ICAgIFdhcm5pbmc6IGJsb2NrL2Jsay1tcS1kbWEuYzozNzMg
-ZXhwZWN0aW5nIHByb3RvdHlwZSBmb3IgYmxrX3JxX2ludGVncml0eV9kbWFfbWFwX2l0ZXJfc3Rh
-cnQoKS4gUHJvdG90eXBlIHdhcyBmb3IgYmxrX3JxX2ludGVncml0eV9kbWFfbWFwX2l0ZXJfbmV4
-dCgpIGluc3RlYWQNCj4NCj4gVGhlIGtlcm5lbC1kb2MgY29tbWVudCBhYm92ZSBgYmxrX3JxX2lu
-dGVncml0eV9kbWFfbWFwX2l0ZXJfbmV4dCgpYCB1c2VkDQo+IHRoZSB3cm9uZyBmdW5jdGlvbiBu
-YW1lIChgYmxrX3JxX2ludGVncml0eV9kbWFfbWFwX2l0ZXJfc3RhcnRgKSBpbiBpdHMNCj4gaGVh
-ZGVyLiBUaGlzIHBhdGNoIGNvcnJlY3RzIHRoZSBmdW5jdGlvbiBuYW1lIGluIHRoZSBrZXJuZWwt
-ZG9jIGJsb2NrIHRvDQo+IG1hdGNoIHRoZSBhY3R1YWwgaW1wbGVtZW50YXRpb24sIGVuc3VyaW5n
-IGNsZWFuIGRvY3VtZW50YXRpb24gYnVpbGRzLg0KPg0KPiBGaXhlczogZmVjOWIxNmRjNTU1ICgi
-YmxrLW1xLWRtYTogYWRkIHNjYXR0ZXItbGVzcyBpbnRlZ3JpdHkgZGF0YSBETUEgbWFwcGluZyIp
-DQo+IFNpZ25lZC1vZmYtYnk6IEtyaWlzaCBTaGFybWE8a3JpaXNoLnNoYXJtYTIwMDZAZ21haWwu
-Y29tPg0KDQoNCkxvb2tzIGdvb2QuDQoNClJldmlld2VkLWJ5OiBDaGFpdGFueWEgS3Vsa2Fybmkg
-PGtjaEBudmlkaWEuY29tPg0KDQotY2sNCg0KDQo=
+On Tue, 2025-11-11 at 12:05 +0100, Linus Walleij wrote:
+> On Mon, Nov 10, 2025 at 1:32=E2=80=AFPM Nuno S=C3=A1 <noname.nuno@gmail.c=
+om> wrote:
+> > On Mon, 2025-11-10 at 11:30 +0100, Linus Walleij wrote:
+> > > Hi Antoniu,
+> > >=20
+> > > thanks for your patch!
+> > >=20
+> > > On Fri, Oct 31, 2025 at 5:08=E2=80=AFPM Antoniu Miclaus
+> > > <antoniu.miclaus@analog.com> wrote:
+> > >=20
+> > > > Add driver support for the ADG1712, which contains four independent
+> > > > single-pole/single-throw (SPST) switches and operates with a
+> > > > low-voltage single supply range from +1.08V to +5.5V or a low-volta=
+ge
+> > > > dual supply range from =C2=B11.08V to =C2=B12.75V.
+> > > >=20
+> > > > Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+> > >=20
+> > > So tying into the binding discussion:
+> > >=20
+> > > GPIO means "general purpose input/output".
+> > >=20
+> > > I am really confused as whether this is:
+> > >=20
+> > > - General purpose - seems to be for the purpose of switching
+> > > =C2=A0 currents and nothing else.
+> > >=20
+> > > - Input/Output - It's switching something else and not inputting
+> > > =C2=A0 or outputting anything and this makes the driver look strange.
+> > >=20
+> > >=20
+> >=20
+> > Not the first time a part like this pops up [1]. At the time, the final
+> > conclusion was to go with gpiolib. Naturally you can think otherwise no=
+w :)
+>=20
+> I think we might wanna go with gpiolib for the Linux internals, maybe
+> we want to add some kind of awareness or flag in gpiolib that this is
+> a switch and not an output we can control the level of?
+>=20
+> I could think of this:
+>=20
+> - Make .get() and .set() in struct gpio_chip return -ENOTIMP
+> =C2=A0 no getting and setting these "lines" because we really cannot
+> =C2=A0 control that, these lines will have the level of whatever is on
+> =C2=A0 the line we are switching.
+>=20
+> - Implement .set_config() and implement the generic pin
+> =C2=A0 control property PIN_CONFIG_OUTPUT_ENABLE as 1
+> =C2=A0 to switch "on" and 0 for switch "off".
+> =C2=A0 See include/linux/pinctrl/pinconf-generic.h
+>=20
+> This makes it possible to use the gpiolib in a way that is
+> non-ambiguous.
+>=20
+
+The above makes sense to me. I'll let Antoniu take it from here and check i=
+f=20
+the above fits the usecases he is aware of. Not sure if it makes sense for =
+a piece
+of HW like this but if the usecase is for userspace to control the on/off s=
+tates,
+then I guess we would need .get() and .set(). Or some kind of "frontend" dr=
+iver
+making use of the consumer helpers.
+
+Thanks!
+- Nuno S=C3=A1
+
+> We might want to add consumer helpers in
+> include/linux/gpio/consumer.h such as:
+>=20
+> #include <linux/pinctrl/pinconf-generic.h>
+>=20
+> int gpiod_switch_enable(struct gpio_desc *desc)
+> {
+> =C2=A0=C2=A0 unsigned long cfg =3D pinconf_to_config_packed(PIN_CONFIG_OU=
+TPUT_ENABLE, 1);
+>=20
+> =C2=A0=C2=A0 return gpiod_set_config(desc, cfg);
+> }
+>=20
+> int gpiod_switch_disable(struct gpio_desc *desc)
+> {
+> =C2=A0=C2=A0 unsigned long cfg =3D pinconf_to_config_packed(PIN_CONFIG_OU=
+TPUT_ENABLE, 0);
+>=20
+> =C2=A0=C2=A0 return gpiod_set_config(desc, cfg);
+> }
+>=20
+> See e.g. rtd_gpio_set_config() in drivers/gpio/gpio-rtd.c for
+> an example of how the GPIO driver can unpack and handle
+> generic .set_config() options like this.
+>=20
+> The binding however needs to be something separate like a proper switch b=
+inding
+> I think or we will confuse other operating systems.
+>=20
+> Yours,
+> Linus Walleij
 
