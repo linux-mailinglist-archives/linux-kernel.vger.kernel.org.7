@@ -1,146 +1,142 @@
-Return-Path: <linux-kernel+bounces-895817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43A5FC4F022
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:21:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 26088C4F043
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:23:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 89E5E4E8F08
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:21:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C16654E83BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:23:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5026D36C5B7;
-	Tue, 11 Nov 2025 16:21:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16FB736CDEE;
+	Tue, 11 Nov 2025 16:23:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bXWWicQC"
-Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="j9Zqu+Ab"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C14F369991
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 16:20:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B509E36C59E
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 16:23:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762878060; cv=none; b=hhqj9TKh33jZ4FdTiWakeVBc9i9sD0EMthyqUaMGw6Nj3HNCEMo3wMBj7nRwDNWRXTsa/xXD2QcEWaqREfsV/aWnpiLAg6ra+q6C5i3aV3z5/zC09cCFho62AFmOHvBEFB7wukhZNmiNro4jWJ0ciCGK/DAlsUQrvX49yrpPchg=
+	t=1762878193; cv=none; b=VlctNOfstaaKQuf/W9y19zeVvSyqMopZvRe8af9VfiM7FAoqAEdgIHPzq2xtg/zUpLNcUYm0Pa2jGxBTZn5cO6EB5zBtqkjdKqpJyj2/GLXU5YHBksXmhVhSgpt60RXJVvX42eoDG8ESzwwoHnrQFCSuvOQBaIi9SE7/Hhegck0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762878060; c=relaxed/simple;
-	bh=3ucEiOfLKgb7okcKL0HP1li5Wut0HDdF9YfITezYGeQ=;
+	s=arc-20240116; t=1762878193; c=relaxed/simple;
+	bh=6K2M6sXqSfWuHEO5SZZB6vJuswyuFAvFpqwznwwaw6s=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ftj7COXoytmtOBZaJgehPDlrgA9N+hA9lPuYr0xXgo1zTkMQsAPLSFZt//qXMTU16wJsGUwUL+o4l3Cf4Enmd/F2bk8qVhyIqFl6ycBL7RrRgoYPmJcdLzpVYvSwsW3BZ9+BjFKVn0I0LVS3exEq+MS80/tCOoyGhaXCUgGPQGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bXWWicQC; arc=none smtp.client-ip=209.85.166.174
+	 To:Cc:Content-Type; b=qt/dq+Fj9puut3WQzClqVPhWVY3o2f8RxGt/qCCDw90dg3sXI7G5Y4+nbu4pyeNZa9XOqQLxE+RIuklkGv1yCA0Gcqnl50uFV7UxLA3+EJDVydHc/eYR/L+P2WGTobfJgOQf+tgZkEZ0F0OSShDlSUCctVaBJXDcze1S514vjSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=j9Zqu+Ab; arc=none smtp.client-ip=209.85.214.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-431d824c8cbso199065ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 08:20:59 -0800 (PST)
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2980343d9d1so193965ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 08:23:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762878058; x=1763482858; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1762878191; x=1763482991; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=0lujxXLJQIs/1fMr9wnpYhmMZiP7/CAmNV72V4s+rx0=;
-        b=bXWWicQCCI1NVuvdpiXUJFgSi/2S3dliDDXf2zGoRQBszb9bpL36H/8ctkOqC1g7QR
-         g2zja7KuDFb/qUbgYAVvYLMPttGbvfEMORLpPZezgGpw0mChhjgGfKopaAo2+pAf/K9r
-         kHhxo281biegGH888D//9xxiUT0YEI6tCSpVYu0XIdYBIzSyA+jIv7C2nIASMWYFxgLl
-         /ZsW3xigz5t8KKeqHdnCrzq07a2XE5nlrK8K8WsPa9fZidZIWt+T8wtUBCZV6ZvZsZ42
-         /7pt7f+T4BKtukMGJTC3lnO758ygQn0MWOoLswoi1JmBxx+8blJe6rFsQpOXvCTVyYCV
-         9z9Q==
+        bh=ZkUuhGxVx7htjf3miH8SdELPvuF/att6+BPRWArWBaA=;
+        b=j9Zqu+Abxe+ZBg4SeKM+8X36f3Og+vdq/13ynSR/ZhdVwzIbxM7l9Gd4jSdvSQ4YV5
+         CFW/e5YuTIvolzjrE2W8xkBaAz2Sj2r3BUTSkVMFhB8tu1fr1xiMEJ2nRAoqIwKQ33IN
+         YrVrL7Q/9FyjhmZuZHEoaFs6B1b3nvhkCPrCWT2RLMpTJueBpzLxcEPiSFmejLKXibxk
+         c6Np+H5KRyB7iKEMEkvRqLOA9vyqTuWj+gQpohpEqweQqjKD4ZfTunMLCbCUrG1z/5JL
+         7OuZ05XfqMfV/DSI6YeZpPyr4qWTWlfvJhJmD+1qNs+6Bh4Wp68VvMh37C7ZtOGJJyzu
+         IUjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762878058; x=1763482858;
+        d=1e100.net; s=20230601; t=1762878191; x=1763482991;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=0lujxXLJQIs/1fMr9wnpYhmMZiP7/CAmNV72V4s+rx0=;
-        b=YrFd6miKwifsdzD9xoI1fTDBC4mM6T5DtPSdQuIdWsyacJdjDm12ABbv7O8D7v2gjq
-         Mr1bJSvzMZRixrBjWU4DFCHQHceQP5faWC5dEwZMO2oGAp/egkbsnEwlvSKl4r4Tzxj6
-         7RFoQMczI59ewlp1JvDKAdHfGVg2pR0LnNkBxMAKl0GRo0vCy/wqiikl599R4nFQJEjY
-         X7rUQW/m0GNBw1vG6/fhlpl20gXl/wzV5JgqcvKgXSuiYMmjCw67cN3fpwTFUmnIcWxK
-         AxUP4Dp9Njp8nlenjLdhNJ3IHvat9RmmUdPrwmhcwJxH3DXzJI+2lXIoruXgenVKqxwH
-         HRHw==
-X-Gm-Message-State: AOJu0YwpBlyrFSpRQT/DWldAAW9U2YJ8xnrTX65FtQFDqXN3ZMseJTad
-	rvCFfvw6HLcnPAcDSMJ1rzcxZuzEe39ZtVcGD/A5+VJmJhx3WtNjQAjS0K/8T2hSbq7DBASNcCG
-	ErA6otn4b8XCKuVItj4+dv8txy/f8OEtXpU1eTAZZ
-X-Gm-Gg: ASbGncvUYkHLZreEiBCPmAeaAkyHdhLK/fhUIRLa7S8oFjLH2ApObgyO8FMHXcoL7gJ
-	zDFYeKWUG+0488oTn2vmlzgglM6j+UnXDEX0Y7vEOX0OjYw7vuwfq89foCM3BM31/4yRoqGNd3P
-	EbrapdvPaFBxMTtC+we0GdKk5jBcXuutWAnoVcE++hFPfxYxPLd+HFyAdAQDPlgCt50Vhrmwc72
-	pix8E6s5ZtdSsGZWcp28BCqNDo0gIJIco9fI/h63pxa+pZz7G7PCUCgs+e+IyKSX2wKYu72CY7U
-	PMZtLy0=
-X-Google-Smtp-Source: AGHT+IHurGNVVBdU/NzdCYlOb6sZVxCFf3XJcmvsONpMJvPgax03NCfmaJXep8GUrwJthMRwu/u8+YkBRZaU5SmPgJw=
-X-Received: by 2002:a05:6e02:3289:b0:433:138:eb18 with SMTP id
- e9e14a558f8ab-433be4aa427mr7299635ab.9.1762878058046; Tue, 11 Nov 2025
- 08:20:58 -0800 (PST)
+        bh=ZkUuhGxVx7htjf3miH8SdELPvuF/att6+BPRWArWBaA=;
+        b=upDFDas7yCH7k7DhdmfWbpYqRn60lnJMx2aWknPHXWojVOSHM3ZRESeW1+5RrCBEYi
+         ZcwSujoNftW8ydhyS+7yfGTutdvZAhMvKC53KH0w8bmzn39v53ttgNRlDuGEy5zWAybO
+         ky5AfR0sjKggA57Yhn+RMaoJE9ALMRGz6jQvop2az1b/mgwXd25xvFilqA+sDKIitpJ3
+         bQqxcWup+iXmFXHV30aB/rq2nh5HX5qndDCkQiC29h6dSyqB1n094Mjgl7bv8lJ2gTzQ
+         5FVbcnwpR19qMQ/qNNXhUF6dIKNMnC3SyUkezoHfauSypVcPDR18VfohRAUBfMtQM3Hv
+         578g==
+X-Forwarded-Encrypted: i=1; AJvYcCViyfVm5s3aEV9DZeY0SauWx4eewtQ9VYTN7fd2+ggCIPsGjWmgAHl72g289Wi0qNnfj6kFBbytNMtY8IU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgN/20tl8ZzXc8RTJCrw2xVmRCNGEab/14KcEiW2ClmQIcg4M+
+	Q3/gTg9BkpUG9xZVuz5Eh1elhF3jXHADtRiipLxzrbv+8qKYmPtulbxTfzVv61k1awKZi5SNngx
+	+80JFRuKv3605IZJWwNviduauDlLwTgSvJYoI+9mc
+X-Gm-Gg: ASbGncvAe0K2rs+GZaiTfJO4CKE9oGYMCpqyoOAORLD0jOsmngfmNJZlKlqkbatfOIf
+	Qs6NpMQl8SlyZgb5GkrBZ89kjIQ4b/8mOeV62jFxFu8cVEOG21Li78gWYvgjb853pUUU8im+3pD
+	d94uABCB6oViNuBInc8Cvf6EbuWbGBQUO/1nlBgBhL0Pz2vAO6LHDZ+jSSbMo884vkhM7xbg/+y
+	craDP/MsytujAjs8xg5+4DhNG3BC6ALhRgJ2uvnut7r+7sppf/u4ZQFXC/MLHa0MQVgdNcK3iAe
+	2zE=
+X-Google-Smtp-Source: AGHT+IGjW9VeCdmnQlOPDbbOtgrUBcup+YzsUPtCtblVRIqj97xYrG1xVzenjeYmpZa+4PI1E9DpGWY0UTrKvAd+0z0=
+X-Received: by 2002:a17:902:b715:b0:294:e585:1f39 with SMTP id
+ d9443c01a7336-29841595fc8mr4192095ad.14.1762878190750; Tue, 11 Nov 2025
+ 08:23:10 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251111062815.2546189-1-avagin@google.com> <20251111-umkleiden-umgegangen-c19ef83823c1@brauner>
-In-Reply-To: <20251111-umkleiden-umgegangen-c19ef83823c1@brauner>
-From: Andrei Vagin <avagin@google.com>
-Date: Tue, 11 Nov 2025 08:20:46 -0800
-X-Gm-Features: AWmQ_bkLiXV5lJ6MfoofQgJ668iYrumTv_Un2FnwFwIhq_aBfOusso0zufkwo_Y
-Message-ID: <CAEWA0a5ZjWuyFM9b6076GT6yEn0jYZu06C=huPxpqyxWQiM7QA@mail.gmail.com>
-Subject: Re: [PATCH] fs/namespace: correctly handle errors returned by grab_requested_mnt_ns
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>
+References: <20251111154923.978181-1-petr.pavlu@suse.com>
+In-Reply-To: <20251111154923.978181-1-petr.pavlu@suse.com>
+From: Sami Tolvanen <samitolvanen@google.com>
+Date: Tue, 11 Nov 2025 08:22:34 -0800
+X-Gm-Features: AWmQ_bkt--52MX6mbNFrxPL1Hwy8cf5iG1Co9zB8o3_9L6IQpFMw_TrpSWKzpZE
+Message-ID: <CABCJKucEqEnXtV0TCqxq8_vcZtdcgRCz85jqjbckYq1xuJc9Tw@mail.gmail.com>
+Subject: Re: [PATCH 0/2] module: Remove SHA-1 support for module signing
+To: Petr Pavlu <petr.pavlu@suse.com>
+Cc: David Howells <dhowells@redhat.com>, David Woodhouse <dwmw2@infradead.org>, 
+	Luis Chamberlain <mcgrof@kernel.org>, Daniel Gomez <da.gomez@kernel.org>, 
+	Aaron Tomlin <atomlin@atomlin.com>, keyrings@vger.kernel.org, 
+	linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-)
+Hi Petr,
 
-On Tue, Nov 11, 2025 at 1:13=E2=80=AFAM Christian Brauner <brauner@kernel.o=
-rg> wrote:
+On Tue, Nov 11, 2025 at 7:49=E2=80=AFAM Petr Pavlu <petr.pavlu@suse.com> wr=
+ote:
 >
-> On Tue, Nov 11, 2025 at 06:28:15AM +0000, Andrei Vagin wrote:
-> > grab_requested_mnt_ns was changed to return error codes on failure, but
-> > its callers were not updated to check for error pointers, still checkin=
-g
-> > only for a NULL return value.
-> >
-> > This commit updates the callers to use IS_ERR() or IS_ERR_OR_NULL() and
-> > PTR_ERR() to correctly check for and propagate errors.
-> >
-> > Fixes: 7b9d14af8777 ("fs: allow mount namespace fd")
-> > Cc: Christian Brauner <brauner@kernel.org>
-> > Signed-off-by: Andrei Vagin <avagin@google.com>
-> > ---
+> SHA-1 is considered deprecated and insecure due to vulnerabilities that c=
+an
+> lead to hash collisions. Most distributions have already been using SHA-2
+> for module signing because of this. The default was also changed last yea=
+r
+> from SHA-1 to SHA-512 in f3b93547b91a ("module: sign with sha512 instead =
+of
+> sha1 by default"). This was not reported to cause any issues. Therefore, =
+it
+> now seems to be a good time to remove SHA-1 support for module signing.
 >
-> Thanks. I've folded the following diff into the patch to be more in line
-> with our usual error handling:
+> Looking at the configs of several distributions [1], it seems only Androi=
+d
+> still uses SHA-1 for module signing.
+>
+> @Sami, it this correct and is there a specific reason for using SHA-1?
 
-The diff looks good, thanks. I have another question regarding
-7b9d14af8777 ("fs: allow mount namespace fd"). My understanding is that
-the intention was to allow using mount namespace file descriptors
-(req->spare) for the statmount and listmounts syscalls. If this is
-correct and I haven't missed anything, we need to make one more change:
+It looks like GKI just uses the defaults here. Overall, Android
+doesn't rely on module signing for security, it's only used to
+differentiate between module types. Dropping SHA-1 support sounds like
+a good idea to me.
 
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 9124465dca556..3250cadde6fc4 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -5738,7 +5738,7 @@ static int copy_mnt_id_req(const struct
-mnt_id_req __user *req,
-        ret =3D copy_struct_from_user(kreq, sizeof(*kreq), req, usize);
-        if (ret)
-                return ret;
--       if (kreq->spare !=3D 0)
-+       if (kreq->spare !=3D 0 && kreq->mnt_ns_id !=3D 0)
-                return -EINVAL;
-        /* The first valid unique mount id is MNT_UNIQUE_ID_OFFSET + 1. */
-        if (kreq->mnt_id <=3D MNT_UNIQUE_ID_OFFSET)
-@@ -5755,9 +5755,6 @@ static struct mnt_namespace
-*grab_requested_mnt_ns(const struct mnt_id_req *kreq
- {
-        struct mnt_namespace *mnt_ns;
+> Note: The second patch has a minor conflict with the sign-file update in =
+the
+> series "lib/crypto: Add ML-DSA signing" [2].
+>
+> [1] https://oracle.github.io/kconfigs/?config=3DUTS_RELEASE&config=3DMODU=
+LE_SIG_SHA1&version=3Dbe8f5f6abf0b0979be20ee8d9afa2a49a13500b8
+> [2] https://lore.kernel.org/linux-crypto/61637.1762509938@warthog.procyon=
+.org.uk/
+>
+> Petr Pavlu (2):
+>   module: Remove SHA-1 support for module signing
+>   sign-file: Remove support for signing with PKCS#7
+>
+>  kernel/module/Kconfig |  5 ----
+>  scripts/sign-file.c   | 66 ++-----------------------------------------
+>  2 files changed, 3 insertions(+), 68 deletions(-)
 
--       if (kreq->mnt_ns_id && kreq->spare)
--               return ERR_PTR(-EINVAL);
--
-        if (kreq->mnt_ns_id) {
-                mnt_ns =3D lookup_mnt_ns(kreq->mnt_ns_id);
-                return mnt_ns ? : ERR_PTR(-ENOENT);
+For the series:
 
-Thanks,
-Andrei
+Reviewed-by: Sami Tolvanen <samitolvanen@google.com>
+
+Sami
 
