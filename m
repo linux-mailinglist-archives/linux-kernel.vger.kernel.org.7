@@ -1,147 +1,344 @@
-Return-Path: <linux-kernel+bounces-895075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D24B5C4CDB4
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:04:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26435C4CD39
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:59:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6B3D64F39B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:57:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C58161896977
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:59:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4AC12FD7B3;
-	Tue, 11 Nov 2025 09:57:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADDB632BF32;
+	Tue, 11 Nov 2025 09:58:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BDnvbdt8"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PmgEhAdi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F2EA2F28E5
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 09:57:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70DCA32AABF;
+	Tue, 11 Nov 2025 09:58:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762855070; cv=none; b=aVgcrvMGAhCER70jr5Pn9KKRWNwj9//GvC26YhnBpZ4AFn+KWZZiwZ0LgNl3lZSaAU/L3z/hBcq+Prf99KphNbCmnhpvZjSoG64TBoMrRrYXm7Vs0Oi0L5Vem0u55CSTv5EgqEmMMYgArdXvcXVJ+bhFJ8VIzOnwXqHK/yWgeVc=
+	t=1762855090; cv=none; b=Vr7lZcqKPnJA72DKlBG/+VIAiq2dw6MgQHpm4aSHOXMily88v6Qa6BPwR3GQrovF4jyklvINRXoulRQKBaNGCnAA389xGN5UM6ak0ttyYRaYaNrjZqviLDluv3i6Zbp/TyH4hS42C8yLO1NII+Uf7I5lnHFTzMw63KZx8g8gJdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762855070; c=relaxed/simple;
-	bh=A/FDcgEC0NqdGGYV5LPhCY8eQLNHWRRJowrE/ROA2P8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=NWCZpIxfrij51CH7VKfvNpQ0jEaPNfGK5Nnydh/2Vg8+9nSxIkMDavGsmJWs/6GAn4mFaDbbbmjCbbG0krqFZl52VOA41N5k/lgMk63n9kwb/5zv1M3FrjFxXFpBuln6OCR90k/9tCJ+2X+mwycg08eSa1UFGc7xxHJPO4MaUKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BDnvbdt8; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-477775d3728so23154835e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 01:57:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762855066; x=1763459866; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=A/FDcgEC0NqdGGYV5LPhCY8eQLNHWRRJowrE/ROA2P8=;
-        b=BDnvbdt8iSYN6bxwCsU4EDmY1GHOAcYRVvz+U3H9jx3pABSMYfbGSx7e4UTi4huSV/
-         9XAS5nzciGxhzKRcbEKMWqY5DRPjDJUgwdvYRLN7M9ysHRP5T0ne+Jt4qsaI1dnrQQQs
-         C5bxL+UhfluxUWO+LOFXeJd8VX/plVfE9j1wkoezNcGqES3aGHlM5411aSH8u+lufGZe
-         mEtoYElGp1glT+iVVOZ1hg+VERPjRBvSZ6sEwmhrgA4EkAen0N3m8wYOCnqTHvXuzr12
-         XvHmxn2I45PzjZCems0cO1lnWf/UPp9ZVusRwI33NHkEJ8s79DkDJyj0XDDop8sjtWUr
-         gyLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762855066; x=1763459866;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=A/FDcgEC0NqdGGYV5LPhCY8eQLNHWRRJowrE/ROA2P8=;
-        b=J3iazL6lNen1N7oexE1eqEceY2xxRZf26waU/CyxpsBhLgaLHeIswqPuSRTNAFyr8T
-         JxHBc/nrMM/UHVs2q+6Co6e9LShFW6VPfa+Fe1eAGYXIykhHXYFMf8On1OhlJ69fQjuD
-         hI9wqrr9pNm6cStEQuZQXXZa1Hj8erClHku9zRdCh2lVeDrlfJA9VfiKbo+HLjsGfpb9
-         gg1+iE2DclEJEE5MV9eE6qF5O2Wz3febJUJzIjHjfj1guog6OEq66eyy1vp2p7nO5Nvl
-         mdjqKAtkkQ7q8u4OANp4Rqp7eo1dTVBsgWiG4K0yWWk+rPQf669H3vPs+dLnQqgr7KqN
-         rt6A==
-X-Forwarded-Encrypted: i=1; AJvYcCWNqEteQaHSKVfoVAAZVWT7DVY+symxAFNEvj8DGFFfCv2fJ1DNqcQoJlkOOhi/NkfrKGMDBRnt3Vq/Pvw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5CCQkFhoGEdKnzCkmiBQDlOy1mckgDYQHChD1C45WnHcnnGyp
-	qC1CsCbP5l4xYGmHrExxBrxs+hALayJVaNJRoyoVlM2g5giXfGippcRvh1r6Ufi9lWc=
-X-Gm-Gg: ASbGncvrFLqdKukwL00mQwxGDvuG3crr2T/A9ib9o5I8UcntEGNmj+KnYRYH1OJKc6D
-	13t7Q+jYcfndHua+j4Lw+e7dFsOMbSAp1FGSZ9AToujZ6kgup5nJQYKGe/V9Stq0bX7wO7E7PXc
-	jGDvgqogQ8dcP7Owa5pVXIklDSOLEBtssDL9HcL/Rn3md05Cc37eRLtlvvDuwUpbx9Bl5/9mgLe
-	pDD9EQr0pGGZQeL5N/KSgPsW6Qa8OwS603SkaYrUsvOHtRg7MRQVWJ3jiv1vIiBVyFSIdpovtF3
-	ASbN7PN1mmZm5o9bg6NTzhdiGsjnNLA9/i2dSRWYiGXOPMUy44W2L252zk/t7znqTKyadU7wN6P
-	ko7pbQIoEHoCeRXXPIJCiPcVrB+tiqSfob6Yo247lgNM+1qHMd7ssoOXKqZ11GVsSCJ2moApdMs
-	6XuOqIzg==
-X-Google-Smtp-Source: AGHT+IFx1tQhYEcMAjmeDGusVpDAcsUi3ywSe54TVsoxYy0zvPtJEA10WARNrOByXA/spkwUzB6jqA==
-X-Received: by 2002:a05:600c:1c08:b0:475:df91:de03 with SMTP id 5b1f17b1804b1-47773289066mr81723875e9.39.1762855066460;
-        Tue, 11 Nov 2025 01:57:46 -0800 (PST)
-Received: from draszik.lan ([212.129.83.89])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4775ce211d8sm380577775e9.11.2025.11.11.01.57.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Nov 2025 01:57:45 -0800 (PST)
-Message-ID: <9c344c5f43e71f30ccbd07b201eb470ed8e5fe35.camel@linaro.org>
-Subject: Re: [PATCH v4 1/4] dt-bindings: clock: google,gs101-clock: add
- samsung,sysreg property as required
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Peter Griffin <peter.griffin@linaro.org>, Rob Herring <robh@kernel.org>,
-  Krzysztof Kozlowski	 <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alim Akhtar	 <alim.akhtar@samsung.com>, Tudor
- Ambarus <tudor.ambarus@linaro.org>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Sam Protsenko	
- <semen.protsenko@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Will McVicker <willmcvicker@google.com>, Krzysztof Kozlowski	
- <krzk@kernel.org>, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- kernel-team@android.com
-Date: Tue, 11 Nov 2025 09:57:42 +0000
-In-Reply-To: <3bb47929b08370d9114ff1dd6b0d0f16d354d63b.camel@linaro.org>
-References: <20251110-automatic-clocks-v4-0-8f46929f50b7@linaro.org>
-		 <20251110-automatic-clocks-v4-1-8f46929f50b7@linaro.org>
-	 <3bb47929b08370d9114ff1dd6b0d0f16d354d63b.camel@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-User-Agent: Evolution 3.56.2-2+build3 
+	s=arc-20240116; t=1762855090; c=relaxed/simple;
+	bh=kzHmI0xoFIpZL37C7mUc4yRfRqSiPY61Bd6I2CAG5BQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XzSrj0wYAz0Rb5ld5t73ZbhVJfF+CjAxVa0mcdCyJtKAaziPFU2sqdKZ1IJSz5vNWEWu5Mb2CZPXYftv5TjlZsxIDevSOo2MONDREzClQi++4firUMiiyNFAeLIyEZoxD/0aPUgj5K/AmGifizjqaM6Wl8BegAtFp6zZtR2JVXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PmgEhAdi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E9D5C116D0;
+	Tue, 11 Nov 2025 09:58:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762855090;
+	bh=kzHmI0xoFIpZL37C7mUc4yRfRqSiPY61Bd6I2CAG5BQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=PmgEhAdiAuknJ3d5ajb7CJ44R+1A0rSDPklVME4iaUomQB31FG+KCOBCAgci2vmj3
+	 ZasIkE5ZuEL9SL0HvrQyyEHFyDpEh8lpKvE/50NK1x18vogItDofv7zp29/P6/Fu3g
+	 QSEsMLijkj0dRSfia8G4TgdmsUPOXUB85WHwqEOgLu9EjOQM+q6bAQC6rTc0JKrI0h
+	 t3VUfR+6g14cA2jQoElHhNtw621wt34HZLMUp7+U57f+Zxxs8dQ5O38/GVv9rrdDVa
+	 3aLJ8KD/Z/IW1YC9PZ8KSnugB02gI6R4GRg1Jv9Zj0gCz9HJtlfayA4NsVfTmn1/AR
+	 auPnbCkVPmpmA==
+From: Leon Romanovsky <leon@kernel.org>
+To: Bjorn Helgaas <bhelgaas@google.com>,
+	Logan Gunthorpe <logang@deltatee.com>,
+	Jens Axboe <axboe@kernel.dk>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Leon Romanovsky <leon@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	=?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+	Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Ankit Agrawal <ankita@nvidia.com>,
+	Yishai Hadas <yishaih@nvidia.com>,
+	Shameer Kolothum <skolothumtho@nvidia.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Alex Williamson <alex@shazbot.org>
+Cc: Krishnakant Jaju <kjaju@nvidia.com>,
+	Matt Ochs <mochs@nvidia.com>,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-block@vger.kernel.org,
+	iommu@lists.linux.dev,
+	linux-mm@kvack.org,
+	linux-doc@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linaro-mm-sig@lists.linaro.org,
+	kvm@vger.kernel.org,
+	linux-hardening@vger.kernel.org,
+	Alex Mastro <amastro@fb.com>,
+	Nicolin Chen <nicolinc@nvidia.com>
+Subject: [PATCH v8 01/11] PCI/P2PDMA: Separate the mmap() support from the core logic
+Date: Tue, 11 Nov 2025 11:57:43 +0200
+Message-ID: <20251111-dmabuf-vfio-v8-1-fd9aa5df478f@nvidia.com>
+X-Mailer: git-send-email 2.51.1
+In-Reply-To: <20251111-dmabuf-vfio-v8-0-fd9aa5df478f@nvidia.com>
+References: <20251111-dmabuf-vfio-v8-0-fd9aa5df478f@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+X-Mailer: b4 0.15-dev-3ae27
+Content-Transfer-Encoding: 8bit
 
-T24gVHVlLCAyMDI1LTExLTExIGF0IDA5OjU0ICswMDAwLCBBbmRyw6kgRHJhc3ppayB3cm90ZToK
-PiBIaSBQZXRlciwKPiAKPiBPbiBNb24sIDIwMjUtMTEtMTAgYXQgMTQ6MjEgKzAwMDAsIFBldGVy
-IEdyaWZmaW4gd3JvdGU6Cj4gPiBbLi4uXQo+ID4gCj4gPiBkaWZmIC0tZ2l0IGEvRG9jdW1lbnRh
-dGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Nsb2NrL2dvb2dsZSxnczEwMS1jbG9jay55YW1sCj4g
-PiBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9jbG9jay9nb29nbGUsZ3MxMDEt
-Cj4gPiBjbG9jay55YW1sCj4gPiBpbmRleCAzMWUxMDZlZjkxM2RlYWQ5YTAzOGIzYjZkOGI0M2I5
-NTA1ODdmNmFhLi41Y2U1YmE1MjMxMTBhZjNhMmE3NzQwYjhiYTI4ZTIyNzFjNzZiZGRiIDEwMDY0
-NAo+ID4gLS0tIGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Nsb2NrL2dvb2ds
-ZSxnczEwMS1jbG9jay55YW1sCj4gPiArKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmlu
-ZGluZ3MvY2xvY2svZ29vZ2xlLGdzMTAxLWNsb2NrLnlhbWwKPiA+IEBAIC01Miw2ICs1MiwxMSBA
-QCBwcm9wZXJ0aWVzOgo+ID4gwqDCoCByZWc6Cj4gPiDCoMKgwqDCoCBtYXhJdGVtczogMQo+ID4g
-wqAKPiA+ICvCoCBzYW1zdW5nLHN5c3JlZzoKPiA+ICvCoMKgwqAgJHJlZjogL3NjaGVtYXMvdHlw
-ZXMueWFtbCMvZGVmaW5pdGlvbnMvcGhhbmRsZQo+ID4gK8KgwqDCoCBkZXNjcmlwdGlvbjoKPiA+
-ICvCoMKgwqDCoMKgIFBoYW5kbGUgdG8gc3lzdGVtIHJlZ2lzdGVycyBpbnRlcmZhY2UuCj4gPiAr
-Cj4gPiDCoHJlcXVpcmVkOgo+ID4gwqDCoCAtIGNvbXBhdGlibGUKPiA+IMKgwqAgLSAiI2Nsb2Nr
-LWNlbGxzIgo+ID4gQEAgLTE2Niw2ICsxNzEsMjIgQEAgYWxsT2Y6Cj4gPiDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqAgLSBjb25zdDogYnVzCj4gPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgLSBj
-b25zdDogaXAKPiA+IMKgCj4gPiArwqAgLSBpZjoKPiA+ICvCoMKgwqDCoMKgIHByb3BlcnRpZXM6
-Cj4gPiArwqDCoMKgwqDCoMKgwqAgY29tcGF0aWJsZToKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqAg
-Y29udGFpbnM6Cj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBlbnVtOgo+ID4gK8KgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgIC0gZ29vZ2xlLGdzMTAxLWNtdS1hcG0KPiA+ICvCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoCAtIGdvb2dsZSxnczEwMS1jbXUtbWlzYwo+ID4gK8KgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgIC0gZ29vZ2xlLGdzMTAxLWhzaTAKPiAKPiBTaG91bGRuJ3QgdGhpcyBi
-ZSBnb29nbGUsZ3MxMDEtY211LWhzaTA/Cj4gCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqAgLSBnb29nbGUsZ3MxMDEtY211LWhzaTIKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oCAtIGdvb2dsZSxnczEwMS1jbXUtcGVyaWMwCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqAgLSBnb29nbGUsZ3MxMDEtY211LXBlcmljMQo+ID4gKwo+ID4gK8KgwqDCoCB0aGVuOgo+ID4g
-K8KgwqDCoMKgwqAgcmVxdWlyZWQ6Cj4gPiArwqDCoMKgwqDCoMKgwqAgLSBzYW1zdW5nLHN5c3Jl
-Zwo+IAo+IFRoZSBhYm92ZSBzdGlsbCBhbGxvd3MgKGJ1dCBkb2Vzbid0IGVuZm9yY2UpIHNhbXN1
-bmcsc3lzcmVnIG9uIGNtdS10b3AuCj4gCj4gTWF5YmUgaXQnZCBiZSBiZXR0ZXIgdG8gaW52ZXJ0
-IHRoZSB0ZXN0LCBhcyBjbXUtdG9wIGlzIHRoZSBvbmx5Cj4gb3V0bGllciwgYW5kIHRoZW4gdGhl
-IGJpbmRpbmcgZG9lc24ndCBuZWVkIHRvIGJlIHVwZGF0ZWQgd2hlbiBtb3JlCj4gQ01VcyBhcmUg
-YWRkZWQgKHVudGVzdGVkKToKPiAKPiDCoCAtIGlmOgo+IMKgwqDCoMKgwqAgcHJvcGVydGllczoK
-PiDCoMKgwqDCoMKgwqDCoCBjb21wYXRpYmxlOgo+IMKgwqDCoMKgwqDCoMKgwqDCoCBjb250YWlu
-czoKPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGNvbnN0OiBnb29nbGUsZ3MxMDEtY211LXRvcAo+
-IAo+IMKgwqDCoCB0aGVuOgo+IMKgwqDCoMKgwqAgcmVxdWlyZWQ6Cj4gwqDCoMKgwqDCoMKgwqAg
-LSBzYW1zdW5nLHN5c3JlZwo+IAo+IMKgwqDCoCBlbHNlOgo+IMKgwqDCoMKgwqAgcHJvcGVydGll
-czoKPiDCoMKgwqDCoMKgwqDCoCBzYW1zdW5nLHN5c3JlZzogZmFsc2UKCm9idmlvdXNseSB0aGVu
-OiBhbmQgZWxzZTogY2FzZXMgc2hvdWxkIGJlIHN3YXBwZWQuCgpBLgo=
+From: Leon Romanovsky <leonro@nvidia.com>
+
+Currently the P2PDMA code requires a pgmap and a struct page to
+function. The was serving three important purposes:
+
+ - DMA API compatibility, where scatterlist required a struct page as
+   input
+
+ - Life cycle management, the percpu_ref is used to prevent UAF during
+   device hot unplug
+
+ - A way to get the P2P provider data through the pci_p2pdma_pagemap
+
+The DMA API now has a new flow, and has gained phys_addr_t support, so
+it no longer needs struct pages to perform P2P mapping.
+
+Lifecycle management can be delegated to the user, DMABUF for instance
+has a suitable invalidation protocol that does not require struct page.
+
+Finding the P2P provider data can also be managed by the caller
+without need to look it up from the phys_addr.
+
+Split the P2PDMA code into two layers. The optional upper layer,
+effectively, provides a way to mmap() P2P memory into a VMA by
+providing struct page, pgmap, a genalloc and sysfs.
+
+The lower layer provides the actual P2P infrastructure and is wrapped
+up in a new struct p2pdma_provider. Rework the mmap layer to use new
+p2pdma_provider based APIs.
+
+Drivers that do not want to put P2P memory into VMA's can allocate a
+struct p2pdma_provider after probe() starts and free it before
+remove() completes. When DMA mapping the driver must convey the struct
+p2pdma_provider to the DMA mapping code along with a phys_addr of the
+MMIO BAR slice to map. The driver must ensure that no DMA mapping
+outlives the lifetime of the struct p2pdma_provider.
+
+The intended target of this new API layer is DMABUF. There is usually
+only a single p2pdma_provider for a DMABUF exporter. Most drivers can
+establish the p2pdma_provider during probe, access the single instance
+during DMABUF attach and use that to drive the DMA mapping.
+
+DMABUF provides an invalidation mechanism that can guarantee all DMA
+is halted and the DMA mappings are undone prior to destroying the
+struct p2pdma_provider. This ensures there is no UAF through DMABUFs
+that are lingering past driver removal.
+
+The new p2pdma_provider layer cannot be used to create P2P memory that
+can be mapped into VMA's, be used with pin_user_pages(), O_DIRECT, and
+so on. These use cases must still use the mmap() layer. The
+p2pdma_provider layer is principally for DMABUF-like use cases where
+DMABUF natively manages the life cycle and access instead of
+vmas/pin_user_pages()/struct page.
+
+In addition, remove the bus_off field from pci_p2pdma_map_state since
+it duplicates information already available in the pgmap structure.
+The bus_offset is only used in one location (pci_p2pdma_bus_addr_map)
+and is always identical to pgmap->bus_offset.
+
+Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
+Tested-by: Alex Mastro <amastro@fb.com>
+Tested-by: Nicolin Chen <nicolinc@nvidia.com>
+Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
+---
+ drivers/pci/p2pdma.c       | 43 +++++++++++++++++++++++--------------------
+ include/linux/pci-p2pdma.h | 19 ++++++++++++++-----
+ 2 files changed, 37 insertions(+), 25 deletions(-)
+
+diff --git a/drivers/pci/p2pdma.c b/drivers/pci/p2pdma.c
+index 78e108e47254..59cd6fb40e83 100644
+--- a/drivers/pci/p2pdma.c
++++ b/drivers/pci/p2pdma.c
+@@ -28,9 +28,8 @@ struct pci_p2pdma {
+ };
+ 
+ struct pci_p2pdma_pagemap {
+-	struct pci_dev *provider;
+-	u64 bus_offset;
+ 	struct dev_pagemap pgmap;
++	struct p2pdma_provider mem;
+ };
+ 
+ static struct pci_p2pdma_pagemap *to_p2p_pgmap(struct dev_pagemap *pgmap)
+@@ -204,8 +203,8 @@ static void p2pdma_page_free(struct page *page)
+ {
+ 	struct pci_p2pdma_pagemap *pgmap = to_p2p_pgmap(page_pgmap(page));
+ 	/* safe to dereference while a reference is held to the percpu ref */
+-	struct pci_p2pdma *p2pdma =
+-		rcu_dereference_protected(pgmap->provider->p2pdma, 1);
++	struct pci_p2pdma *p2pdma = rcu_dereference_protected(
++		to_pci_dev(pgmap->mem.owner)->p2pdma, 1);
+ 	struct percpu_ref *ref;
+ 
+ 	gen_pool_free_owner(p2pdma->pool, (uintptr_t)page_to_virt(page),
+@@ -270,14 +269,15 @@ static int pci_p2pdma_setup(struct pci_dev *pdev)
+ 
+ static void pci_p2pdma_unmap_mappings(void *data)
+ {
+-	struct pci_dev *pdev = data;
++	struct pci_p2pdma_pagemap *p2p_pgmap = data;
+ 
+ 	/*
+ 	 * Removing the alloc attribute from sysfs will call
+ 	 * unmap_mapping_range() on the inode, teardown any existing userspace
+ 	 * mappings and prevent new ones from being created.
+ 	 */
+-	sysfs_remove_file_from_group(&pdev->dev.kobj, &p2pmem_alloc_attr.attr,
++	sysfs_remove_file_from_group(&p2p_pgmap->mem.owner->kobj,
++				     &p2pmem_alloc_attr.attr,
+ 				     p2pmem_group.name);
+ }
+ 
+@@ -328,10 +328,9 @@ int pci_p2pdma_add_resource(struct pci_dev *pdev, int bar, size_t size,
+ 	pgmap->nr_range = 1;
+ 	pgmap->type = MEMORY_DEVICE_PCI_P2PDMA;
+ 	pgmap->ops = &p2pdma_pgmap_ops;
+-
+-	p2p_pgmap->provider = pdev;
+-	p2p_pgmap->bus_offset = pci_bus_address(pdev, bar) -
+-		pci_resource_start(pdev, bar);
++	p2p_pgmap->mem.owner = &pdev->dev;
++	p2p_pgmap->mem.bus_offset =
++		pci_bus_address(pdev, bar) - pci_resource_start(pdev, bar);
+ 
+ 	addr = devm_memremap_pages(&pdev->dev, pgmap);
+ 	if (IS_ERR(addr)) {
+@@ -340,7 +339,7 @@ int pci_p2pdma_add_resource(struct pci_dev *pdev, int bar, size_t size,
+ 	}
+ 
+ 	error = devm_add_action_or_reset(&pdev->dev, pci_p2pdma_unmap_mappings,
+-					 pdev);
++					 p2p_pgmap);
+ 	if (error)
+ 		goto pages_free;
+ 
+@@ -972,16 +971,16 @@ void pci_p2pmem_publish(struct pci_dev *pdev, bool publish)
+ }
+ EXPORT_SYMBOL_GPL(pci_p2pmem_publish);
+ 
+-static enum pci_p2pdma_map_type pci_p2pdma_map_type(struct dev_pagemap *pgmap,
+-						    struct device *dev)
++static enum pci_p2pdma_map_type
++pci_p2pdma_map_type(struct p2pdma_provider *provider, struct device *dev)
+ {
+ 	enum pci_p2pdma_map_type type = PCI_P2PDMA_MAP_NOT_SUPPORTED;
+-	struct pci_dev *provider = to_p2p_pgmap(pgmap)->provider;
++	struct pci_dev *pdev = to_pci_dev(provider->owner);
+ 	struct pci_dev *client;
+ 	struct pci_p2pdma *p2pdma;
+ 	int dist;
+ 
+-	if (!provider->p2pdma)
++	if (!pdev->p2pdma)
+ 		return PCI_P2PDMA_MAP_NOT_SUPPORTED;
+ 
+ 	if (!dev_is_pci(dev))
+@@ -990,7 +989,7 @@ static enum pci_p2pdma_map_type pci_p2pdma_map_type(struct dev_pagemap *pgmap,
+ 	client = to_pci_dev(dev);
+ 
+ 	rcu_read_lock();
+-	p2pdma = rcu_dereference(provider->p2pdma);
++	p2pdma = rcu_dereference(pdev->p2pdma);
+ 
+ 	if (p2pdma)
+ 		type = xa_to_value(xa_load(&p2pdma->map_types,
+@@ -998,7 +997,7 @@ static enum pci_p2pdma_map_type pci_p2pdma_map_type(struct dev_pagemap *pgmap,
+ 	rcu_read_unlock();
+ 
+ 	if (type == PCI_P2PDMA_MAP_UNKNOWN)
+-		return calc_map_type_and_dist(provider, client, &dist, true);
++		return calc_map_type_and_dist(pdev, client, &dist, true);
+ 
+ 	return type;
+ }
+@@ -1006,9 +1005,13 @@ static enum pci_p2pdma_map_type pci_p2pdma_map_type(struct dev_pagemap *pgmap,
+ void __pci_p2pdma_update_state(struct pci_p2pdma_map_state *state,
+ 		struct device *dev, struct page *page)
+ {
+-	state->pgmap = page_pgmap(page);
+-	state->map = pci_p2pdma_map_type(state->pgmap, dev);
+-	state->bus_off = to_p2p_pgmap(state->pgmap)->bus_offset;
++	struct pci_p2pdma_pagemap *p2p_pgmap = to_p2p_pgmap(page_pgmap(page));
++
++	if (state->mem == &p2p_pgmap->mem)
++		return;
++
++	state->mem = &p2p_pgmap->mem;
++	state->map = pci_p2pdma_map_type(&p2p_pgmap->mem, dev);
+ }
+ 
+ /**
+diff --git a/include/linux/pci-p2pdma.h b/include/linux/pci-p2pdma.h
+index 951f81a38f3a..1400f3ad4299 100644
+--- a/include/linux/pci-p2pdma.h
++++ b/include/linux/pci-p2pdma.h
+@@ -16,6 +16,16 @@
+ struct block_device;
+ struct scatterlist;
+ 
++/**
++ * struct p2pdma_provider
++ *
++ * A p2pdma provider is a range of MMIO address space available to the CPU.
++ */
++struct p2pdma_provider {
++	struct device *owner;
++	u64 bus_offset;
++};
++
+ #ifdef CONFIG_PCI_P2PDMA
+ int pci_p2pdma_add_resource(struct pci_dev *pdev, int bar, size_t size,
+ 		u64 offset);
+@@ -139,11 +149,11 @@ enum pci_p2pdma_map_type {
+ };
+ 
+ struct pci_p2pdma_map_state {
+-	struct dev_pagemap *pgmap;
++	struct p2pdma_provider *mem;
+ 	enum pci_p2pdma_map_type map;
+-	u64 bus_off;
+ };
+ 
++
+ /* helper for pci_p2pdma_state(), do not use directly */
+ void __pci_p2pdma_update_state(struct pci_p2pdma_map_state *state,
+ 		struct device *dev, struct page *page);
+@@ -162,8 +172,7 @@ pci_p2pdma_state(struct pci_p2pdma_map_state *state, struct device *dev,
+ 		struct page *page)
+ {
+ 	if (IS_ENABLED(CONFIG_PCI_P2PDMA) && is_pci_p2pdma_page(page)) {
+-		if (state->pgmap != page_pgmap(page))
+-			__pci_p2pdma_update_state(state, dev, page);
++		__pci_p2pdma_update_state(state, dev, page);
+ 		return state->map;
+ 	}
+ 	return PCI_P2PDMA_MAP_NONE;
+@@ -181,7 +190,7 @@ static inline dma_addr_t
+ pci_p2pdma_bus_addr_map(struct pci_p2pdma_map_state *state, phys_addr_t paddr)
+ {
+ 	WARN_ON_ONCE(state->map != PCI_P2PDMA_MAP_BUS_ADDR);
+-	return paddr + state->bus_off;
++	return paddr + state->mem->bus_offset;
+ }
+ 
+ #endif /* _LINUX_PCI_P2P_H */
+
+-- 
+2.51.1
 
 
