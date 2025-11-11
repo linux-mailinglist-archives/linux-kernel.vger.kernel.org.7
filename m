@@ -1,147 +1,143 @@
-Return-Path: <linux-kernel+bounces-894926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F29FC4C759
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:50:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EFD7C4C765
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:51:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 69EA74E027F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 08:50:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 380EC1887420
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 08:51:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D2982737E8;
-	Tue, 11 Nov 2025 08:50:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EE442EBDC0;
+	Tue, 11 Nov 2025 08:51:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tqL0h8i4"
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VjSEX8+B"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9653757EA
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 08:50:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 112D42561AE
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 08:50:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762851048; cv=none; b=NUO0wcO4hD24oLpuw47+NDjYpGF7aqNKhMNt5YYXUx9cEERt8wQ1OGqHXuf0jmpkg5paQe+HSvLEldV7cNGtVgoGfEje0OB9csC1DLCYJYotpk33DSXQeC52Alhm6AGRtMZdabLHpWCWp46FjV2trEUPExkkR/94MR0PcxEgAEs=
+	t=1762851060; cv=none; b=kQNJEN71fa/wjIlCG7mTpY5lvU97JzT7Ygxb2SiEcBqtSp8nsZdk+c8I1eEyHvIa/Tyd9a935OHwyzeS+/uGRVxG9csY3pwFVg9iBpA+KAODtlHZowXWpRQyktLKccpg2cuYcde9v89fFgAPsaB4g67bLRHEethns6u3wjaQPkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762851048; c=relaxed/simple;
-	bh=8oJn+F4gp9gQnMSYljsNjq92hs5GdiNacc4G8cz3Ttc=;
+	s=arc-20240116; t=1762851060; c=relaxed/simple;
+	bh=0YRsrI6lk/jpE/TQxXFHe1uone6HcJRymeuTM22KPDU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YgYWWm16ROn4WtJiM5sabQRVrMTJo6DhEV3bB7/RThucMKVoO7r8lyYyTlToflvt4Qh3FADt9Y33X8YivwGzv5H2nMwvWYetWnI2P0t+kFqRrChlJ6SqaOPKrngqV9Kin9yabJT1zUY8lPMr9Lxu3Gsu0Qko2f9PuRNbLnrHz0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tqL0h8i4; arc=none smtp.client-ip=209.85.128.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-71d71bcac45so36378977b3.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 00:50:46 -0800 (PST)
+	 To:Cc:Content-Type; b=YrRzxh5t/Vq2l+bJkrguM8lPW0HLuxX75JxqojuazTIeT0BIhObD4/HuD21Jnvcc/3fjKxCIWCNzvDZHX4HCNDT8lZTdH6ia7I1ZVc90DhZXuAPG/RZfo5uxsIfIjfE0leqq4ujtF9piYYueXR0lAKX7Zbf6CGzXNUtrIs+qlGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VjSEX8+B; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-42b31c610fcso1952105f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 00:50:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762851046; x=1763455846; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Y46zxO1C4o8WUqtj07jqBENmFGWJWEsozuquXurmpj0=;
-        b=tqL0h8i47+3vNbr4bq5tJ31fevP/CsLBYDF8QPX//Iim+eY3KEoU8YJTl9vTjt3K2Y
-         9yOa9dsob875C3OYFS5OtTtYC0tYuH+nubgloz4kdPpi/DyF6DGjR1hf9e06gz59Imfb
-         mu9iYtvmxZw/iQJMHk7VPRwAByZgu9QaAvnVsUKVOjhRBBqJX9Xr8i5vSQ4ijibHYAIj
-         +6CxyOC0e8OoZOLh487Nxno6ftvK9WIsQZzTwwgtP6kyPU5/kYAVm9UBM72YTbqq3hkZ
-         wXNIqZtM5hxoiSzR6tbzbhcQyPkpfAEBgq2/aRXCghHjnMCnCDFCoBYFomxtGh+P+gWl
-         kRSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762851046; x=1763455846;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1762851057; x=1763455857; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Y46zxO1C4o8WUqtj07jqBENmFGWJWEsozuquXurmpj0=;
-        b=PtC5UdQ7ueDokAhuCdTTRNLZyrq2w1QvRBqkF8ANLBcMQYuNkm6vGodagm8+mdZX2B
-         /va53u4TUGT/sBf2RBHGUTkOXaCN3nvMYqN7XEwqDQHcdGEJsEyF81pEJbdCyGNJ+w4E
-         GyJLscBtli2chhNghYOzPCrUUq7aLCDrcxdbN/cuI9beUNwIUk/8GQmfXXU0NQLq8rx5
-         IDL+1zKCDbTkKTOjw629zvt4bHvwUrqUP7nQdw/JQHlu99f9aGUzrZGWDTDSQwSWHRxV
-         2XUXdGZfCWeXqihamUN1gXGdBxwOKDWlTIc6PrBearUezMRaZcvSeDnVuhySO/laERpH
-         dzCA==
-X-Gm-Message-State: AOJu0Yz5hP7KLTQZod405gNM7LXKfRnVgIG1ZFnXm3EEQNZMAEllRU8U
-	TDz/rIhmhFajJ9iLJohpPnpGHubldNOyoA5t0G8elGYE9ydL/js/uoMrtBApUCoEjGeww6GSSwX
-	vLkYGsZvjIowMvE/ir9yMupBn4cBF1nj9F5iJuSowrg==
-X-Gm-Gg: ASbGnctbRpeTfnInYBZ4j7JsUtSJ1zjyAnrq6WviGqyGzzj3EKBHumXMCsRvECn6jEg
-	0vuR6eFxT5yMhADdnyIznjRNG3gEr8g9xv6Wj8i5NQSlzR6cePt0LnfRXoMPlV1wkgvIpnZum7X
-	6WR35USnyL9TVHxbdl3bPvJnN3w+zxNO40Wk98RBMLGVnjD8c9moR6YHFFqwFOKyjd/+a0ggxPp
-	9+foYRHe1dFVjIeT1S7GcsMe0xyVgVjE6s4CYWhU05GnTNENpAxNtHvPh73hf3of+TPlRpMmACC
-	mfEqhAdMf1POqQoRrFz3C+gBwq9faPwWy/LMIyWj
-X-Google-Smtp-Source: AGHT+IFW04NMmm/DmGXKuNoocNXOW1P5E9RSrXkBfL6e/iKOHrJptvsyGLLUH1wJ5OdOEoN0Uvp2X+BW0+RpDBRk76Y=
-X-Received: by 2002:a05:690c:688b:b0:788:c74:d038 with SMTP id
- 00721157ae682-7880c74da71mr3427737b3.39.1762851045790; Tue, 11 Nov 2025
- 00:50:45 -0800 (PST)
+        bh=4AFOtj9BBWikbvrk76I+BOfuLhZBC12T4UuFnubfgtU=;
+        b=VjSEX8+Bau2Yqc5otfkaZpmWy+ce/jsNVbJnZj6sY4wpQ/xq83Q5Iu3wDuoUGxbCWX
+         rHKBgVT08CtErkBqV+fIvf4d/JYvj3pDyAbltVr+STZ/HgWF6u4LTHx9yfg+HXE2ig+x
+         c+fTJA3eFrZpUgphQWqa6o3FwpKKMlGmwKliaKi15QzlC7jiitUSXwRy13x5druPLLrs
+         nGlBETdxjtdcBUUrxewtKAFdignBI+oz2B00rBTSpJ1kV4WSIDPWCbYl5ZfpDLYrFvVw
+         NgEJ6HfeAEF9kiTAkYuYkSwsK19FogYlgdbNMVyV/Z34ZQRyiOCsl1KTRHmsovFi7mT1
+         vFOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762851057; x=1763455857;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=4AFOtj9BBWikbvrk76I+BOfuLhZBC12T4UuFnubfgtU=;
+        b=o+tUJ3BeXtTzkIuff8JhsT8gADtniEuIRYlAku+lWbX/cIV3HxC566ccBbukEOndBx
+         ZERIPke5RtLTcsLV+ej/EBGx1MWnAYiEmuBCoklOodi/bqjeLSIqo1RNCZdHIK1e0rW/
+         2FcCap8ngzqW7kckTxycMuBftjyRt/lCLaxBZSP9HeL07IZriSTIaqW/TWW/jTvScldG
+         2+PIOqUaXmtvFSm47THkwqdJ1v3UquYsCVg+RcoOgLItUM3NjtNWCGCJGz+s/qn6SuZ0
+         aEwKX3y/g7pn6tbG+nJJvWsDHmGMGWEMJXxr5Udq9tJysbD5+bWkDIyBH/gVgbMDme8x
+         ZD/A==
+X-Forwarded-Encrypted: i=1; AJvYcCW98Tq6taOdLsaG50dV3zQ1gvYAr+SPzOw7AvscKR02YVr8u2/Xd2YYCRmtucd0UZ1DKqpU/OwQUgRAZuQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGFsHF4r1ACy7pIaaIfYcP9nY+nU0+hY5YpCE4P7zmj/iiU32d
+	LekcN/LkqJtdqYSf5PBQ0+fA3I/0g8nzpX6O9RyB8KfQ7/e+yHjIPaidhLS11v/3QQ/4cVdz8Ln
+	L+ZYri35VEDIfGeHvTxlNuR6B+nHqPQA=
+X-Gm-Gg: ASbGnctaN65xDWAUadLIa+15MFK+ptpX493ObQt57eVbNULJRwcfJtlvClk9/V0ZHdB
+	29QVAgDAOAdLa3k6YridwKj13FmuR4Z8zqqvOphAjHfYjxhqP0Y1HvcLqeGiQfneQq+xAisw5L8
+	ox/vyyvRROLQD8LcAqD7zNDqHEU5nt5Gzwh/LR9NbRZPFg99jQa3gxVcDZNd+hfGrhKNeH54Qs0
+	qqVe2LaJT2r4LBhOSpSNNhTyzj2BO/fneZrHujxsjf0xgNfA7BfB200YdQbBA==
+X-Google-Smtp-Source: AGHT+IE+da+1r+jgi0DXyIDNB8MGdp+Nzp4Lqz4ylhf8uYWKyvAt57QPmxdapcBrV4Tm8KD8ARq3BHLCSjO12/WC1Hc=
+X-Received: by 2002:adf:9d83:0:b0:42b:3083:55a2 with SMTP id
+ ffacd0b85a97d-42b308356e2mr6996138f8f.63.1762851057106; Tue, 11 Nov 2025
+ 00:50:57 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251111060212.1963608-1-rdunlap@infradead.org>
-In-Reply-To: <20251111060212.1963608-1-rdunlap@infradead.org>
-From: Ilias Apalodimas <ilias.apalodimas@linaro.org>
-Date: Tue, 11 Nov 2025 10:50:09 +0200
-X-Gm-Features: AWmQ_bl9LggH2BnIOi8b_6HMwtRDi2PxmqidNChtL-tYmJN-Isc3DYSw2FH9LTs
-Message-ID: <CAC_iWjKYBgjG=C7NgAFwn6uBSMS0t_WepazvcTQb-gPewL9ckw@mail.gmail.com>
-Subject: Re: [PATCH] efi: stmm: fix kernel-doc "bad line" warnings
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: linux-kernel@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>, 
-	linux-efi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>
+References: <20251107201232.282152-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20251107201232.282152-3-prabhakar.mahadev-lad.rj@bp.renesas.com> <ec28d950-f7ef-4708-88aa-58c2b9b0b92a@lunn.ch>
+In-Reply-To: <ec28d950-f7ef-4708-88aa-58c2b9b0b92a@lunn.ch>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Tue, 11 Nov 2025 08:50:31 +0000
+X-Gm-Features: AWmQ_blqCCNNMwhN5TO78-IZrSmoQkRYNb4dIksXog2xpI2Up-_qLjDEx3kShQY
+Message-ID: <CA+V-a8uLC5OJ7g1MbJVcJeCS9wPVYDoCDUW7i8keUftQLkmmLg@mail.gmail.com>
+Subject: Re: [PATCH net-next v2 2/3] net: phy: mscc: Consolidate probe
+ functions into a common helper
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Horatiu Vultur <horatiu.vultur@microchip.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Vladimir Oltean <vladimir.oltean@nxp.com>, Vadim Fedorenko <vadim.fedorenko@linux.dev>, 
+	Maxime Chevallier <maxime.chevallier@bootlin.com>, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Randy
+Hi Andrew,
 
-On Tue, 11 Nov 2025 at 08:02, Randy Dunlap <rdunlap@infradead.org> wrote:
->
-> Add a beginning " *" to each line to avoid kernel-doc warnings:
->
-> Warning: drivers/firmware/efi/stmm/mm_communication.h:34 bad line:
-> Warning: drivers/firmware/efi/stmm/mm_communication.h:113 bad line:
-> Warning: drivers/firmware/efi/stmm/mm_communication.h:130 bad line:
->
-> Fixes: c44b6be62e8d ("efi: Add tee-based EFI variable driver")
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Thank you for the review.
 
-Is the fixes tag necessary here?
-Acked-by: Ilias Apalodimas <ilias.apalodimas@linaro.org>
 
-Thanks
-/Ilias
-> ---
-> Cc: Ard Biesheuvel <ardb@kernel.org>
-> Cc: linux-efi@vger.kernel.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-> Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>
-> ---
->  drivers/firmware/efi/stmm/mm_communication.h |    6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+On Tue, Nov 11, 2025 at 2:50=E2=80=AFAM Andrew Lunn <andrew@lunn.ch> wrote:
 >
-> --- linux-next-20251107.orig/drivers/firmware/efi/stmm/mm_communication.h
-> +++ linux-next-20251107/drivers/firmware/efi/stmm/mm_communication.h
-> @@ -32,7 +32,7 @@
+> diff(1) has not made this easy...
 >
->  /**
->   * struct efi_mm_communicate_header - Header used for SMM variable communication
-> -
-> + *
->   * @header_guid:  header use for disambiguation of content
->   * @message_len:  length of the message. Does not include the size of the
->   *                header
-> @@ -111,7 +111,7 @@ struct efi_mm_communicate_header {
+I agree, --diff-algorithm=3Dpatience option for format-patch gives a
+better result. I'll send a v3 with this option.
+
+> > +static int vsc85xx_probe_common(struct phy_device *phydev,
+> > +                             const struct vsc85xx_probe_config *cfg,
+> > +                             const u32 *default_led_mode)
+> > +     int ret;
 >
->  /**
->   * struct smm_variable_communicate_header - Used for SMM variable communication
-> -
-> + *
->   * @function:     function to call in Smm.
->   * @ret_status:   return status
->   * @data:         payload
-> @@ -128,7 +128,7 @@ struct smm_variable_communicate_header {
->  /**
->   * struct smm_variable_access - Used to communicate with StMM by
->   *                              SetVariable and GetVariable.
-> -
-> + *
->   * @guid:         vendor GUID
->   * @data_size:    size of EFI variable data
->   * @name_size:    size of EFI name
+> > +     /* Check rate magic if needed (only for non-package PHYs) */
+> > +     if (cfg->check_rate_magic) {
+> > +             ret =3D vsc85xx_edge_rate_magic_get(phydev);
+> > +             if (ret < 0)
+> > +                     return ret;
+> > +     }
+> >
+> >       vsc8531 =3D devm_kzalloc(&phydev->mdio.dev, sizeof(*vsc8531), GFP=
+_KERNEL);
+> >       if (!vsc8531)
+> >               return -ENOMEM;
 >
+> > +     /* Store rate magic if it was checked */
+> > +     if (cfg->check_rate_magic)
+> > +             vsc8531->rate_magic =3D ret;
+>
+>
+> I think we end up with something like the above?
+>
+> I would move the vsc85xx_edge_rate_magic_get() after kzalloc() just to
+> keep it all together.
+>
+Ok, I will group that under single if.
+
+Cheers,
+Prabhakar
 
