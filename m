@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-894461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D21B4C4AEB8
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 02:48:45 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3464DC4ADA2
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 02:45:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B5FA3BD279
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 01:36:07 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BEFBB4FC2D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 01:36:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E921C342151;
-	Tue, 11 Nov 2025 01:30:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 371FE342C8B;
+	Tue, 11 Nov 2025 01:30:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oup1VJi+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KClteFWs"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E64A2DE6EF;
-	Tue, 11 Nov 2025 01:30:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 877A1341AC8;
+	Tue, 11 Nov 2025 01:30:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762824651; cv=none; b=eNzKqBY9D6PrFW0FsbK84qKNAYrrFf1P3eiOyzJlorhPLHvX1lvdZFntfhRa1PTuu7C8FdyQbAenrfjxrvXhEF6JIDUldw4G3iUdeSkjSM5fuYK45AxjfjDSVlniU/1giPQL3ynBAAaL2aWA2fmZdiTKVyiRRXyLUXDrCxJfRq4=
+	t=1762824651; cv=none; b=o44be6JNAa0v/YQordHGOxyByeyHG9pBt9kqEJ6Q4FKYh4iegIAXTtkJovi243ZQMjC7ZskWy1kXZP/YXPvciinJWctbI09d+itWKhkKDDESCw1wtq/AhdJ6qBDufOeKONNts/s60MhYZ2f2WkTqax07LiyintdTW0wQi5LjdDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1762824651; c=relaxed/simple;
-	bh=HrZb5jpUnCxROQGuuROnL3P/s67nLZ04T0l4pc3iJt0=;
+	bh=1tX4uyd8Az7PpfFaw7bnLdYYdll9uXQAPbBlgw/+wDw=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=pIWinDEFjeV/UvnGjjXVVLi66MC89HqVuVgA/6BiiUsoXMTDwWsm2xZ7ShrxO8PV/VfpzhAAO/7S1u1ewg2mGiyVFlqJzxAeHpeLbjMb0Llzle2OdtB+XWQdAxRSgEFdiY349kks8RhDLF5AuFFJ5al7qEP3wcCmL/RDTFzLeZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oup1VJi+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE3A4C19424;
-	Tue, 11 Nov 2025 01:30:49 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=i+4Xsqn4rQziNU7sUvLQ+v+UxXYVwWz36XxFf0NwF2nwrvr1Ge3lCdRaAX3GVdsQfrl5TclP6feS18NG4GmhCmi7gAsWvdX6aKi7CyzLl1TkG0ig5CzykHyJ9tsv8yjE6gxKA94er7+3O/sB5cODt43niBqKuduDKtqAlr2Ewzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KClteFWs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64036C4CEF5;
+	Tue, 11 Nov 2025 01:30:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762824650;
-	bh=HrZb5jpUnCxROQGuuROnL3P/s67nLZ04T0l4pc3iJt0=;
+	s=k20201202; t=1762824651;
+	bh=1tX4uyd8Az7PpfFaw7bnLdYYdll9uXQAPbBlgw/+wDw=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=oup1VJi+6v6e7L9G9TMYYymkg4m7O8kar0BcFlZLlA9uSeoq0ngVpIv12+5gKxRd8
-	 D3FNBJCyeKHFg+hEzQl4/n4VQfqZsyXQEHzeLXvmGNBbYpcBjZ26d9JspLUuEtW0Ly
-	 F3mLUw0Ftz0j0dukgu8kgzJ0K3g1pY77mtWsiCk6VG6I9k8SirfYZ4UrMmHVHhdMFr
-	 j7BQqtKmDuHNLOW3kh9stx8D6IRiRmnMWPgsS6R6FmaxIEuaccdlw02+O9e6BCaYD/
-	 C36kviTBVhC4/a03cbtN5bfv2TAqKr57P9xGX7ggzyUlZ9sBDbUbm+nrBepxxwQeBS
-	 ARxahVMn9+kvQ==
+	b=KClteFWsRfPu+qAcNfN66HUrAfL96k/22R+bx0z++Sq813Kt2n46/7tRTmOteLf10
+	 Hmpbj9Md09fn1/RW4k4lMe14erGVlkz8HBwzkvccnZpnVJgDT1gs5zaD/8erK7bcNX
+	 5f7uA/sErcOLctzKjhLNkZqJb861nDfpTW4LsWpkEbHG3u0uk4hooTQhAp+vkG5WJq
+	 gFkURP8WJFz0m0a/ZRCYp+Nti5U609vO1ceFLhOX1Gjlsbu9+VOXUAOGJk2WEY0PSW
+	 polbWYfzKDjJIXlszFxj59NquUx2vIZrqOmi8FqLE8y5MipWYTa8wRKB/6sEsVZaqY
+	 hHmS6h5P6Vlyw==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADFD4380CFD7;
-	Tue, 11 Nov 2025 01:30:21 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 34116380CFD7;
+	Tue, 11 Nov 2025 01:30:23 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,54 +51,38 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next 0/8] net: dsa: b53: add support for BCM5389/97/98
- and
- BCM63XX ARL formats
+Subject: Re: [PATCH net-next] tg3: Fix num of RX queues being reported by
+ ethtool
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <176282462024.2841507.15060077817611607078.git-patchwork-notify@kernel.org>
-Date: Tue, 11 Nov 2025 01:30:20 +0000
-References: <20251107080749.26936-1-jonas.gorski@gmail.com>
-In-Reply-To: <20251107080749.26936-1-jonas.gorski@gmail.com>
-To: Jonas Gorski <jonas.gorski@gmail.com>
-Cc: florian.fainelli@broadcom.com, andrew@lunn.ch, olteanv@gmail.com,
+ <176282462174.2841507.7131384903411359754.git-patchwork-notify@kernel.org>
+Date: Tue, 11 Nov 2025 01:30:21 +0000
+References: <20251107-tg3_counts-v1-1-337fe5c8ccb7@debian.org>
+In-Reply-To: <20251107-tg3_counts-v1-1-337fe5c8ccb7@debian.org>
+To: Breno Leitao <leitao@debian.org>
+Cc: pavan.chebbi@broadcom.com, mchan@broadcom.com, andrew+netdev@lunn.ch,
  davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
+ michael.chan@broadcom.com
 
 Hello:
 
-This series was applied to netdev/net-next.git (main)
+This patch was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Fri,  7 Nov 2025 09:07:41 +0100 you wrote:
-> Currently b53 assumes that all switches apart from BCM5325/5365 use the
-> same ARL formats, but there are actually multiple formats in use.
+On Fri, 07 Nov 2025 02:36:59 -0800 you wrote:
+> Using num_online_cpus() to report number of queues is actually not
+> correct, as reported by Michael[1].
 > 
-> Older switches use a format apparently introduced with BCM5387/BCM5389,
-> while newer chips use a format apparently introduced with BCM5395.
-> 
-> Note that these numbers are not linear, BCM5397/BCM5398 use the older
-> format.
+> netif_get_num_default_rss_queues() was used to replace num_online_cpus()
+> in the past, but tg3 ethtool callbacks didn't get converted. Doing it
+> now.
 > 
 > [...]
 
 Here is the summary with links:
-  - [net-next,1/8] net: dsa: b53: b53_arl_read{,25}(): use the entry for comparision
-    https://git.kernel.org/netdev/net-next/c/a6e4fd38bf2f
-  - [net-next,2/8] net: dsa: b53: move reading ARL entries into their own function
-    https://git.kernel.org/netdev/net-next/c/4a291fe72267
-  - [net-next,3/8] net: dsa: b53: move writing ARL entries into their own functions
-    https://git.kernel.org/netdev/net-next/c/bf6e9d2ae1db
-  - [net-next,4/8] net: dsa: b53: provide accessors for accessing ARL_SRCH_CTL
-    https://git.kernel.org/netdev/net-next/c/1716be6db04a
-  - [net-next,5/8] net: dsa: b53: split reading search entry into their own functions
-    https://git.kernel.org/netdev/net-next/c/e0c476f325a8
-  - [net-next,6/8] net: dsa: b53: move ARL entry functions into ops struct
-    https://git.kernel.org/netdev/net-next/c/a7e73339ad46
-  - [net-next,7/8] net: dsa: b53: add support for 5389/5397/5398 ARL entry format
-    https://git.kernel.org/netdev/net-next/c/300f78e8b6b7
-  - [net-next,8/8] net: dsa: b53: add support for bcm63xx ARL entry format
-    https://git.kernel.org/netdev/net-next/c/2b3013ac0302
+  - [net-next] tg3: Fix num of RX queues being reported by ethtool
+    https://git.kernel.org/netdev/net-next/c/23c52b58cc38
 
 You are awesome, thank you!
 -- 
