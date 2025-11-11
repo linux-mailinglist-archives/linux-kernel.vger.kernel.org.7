@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-895541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66476C4E3FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:54:35 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 789A4C4E3FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:54:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 11A774EFB4D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:53:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9D7F74E84F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:53:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DF6A3596F6;
-	Tue, 11 Nov 2025 13:53:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB940359706;
+	Tue, 11 Nov 2025 13:53:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lVx3p8+E"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="259CjJXP"
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1FA13596E0
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 13:53:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDC04359701
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 13:53:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762869199; cv=none; b=WtkfDNv71DVu3p+0cPpXByAA8If1UHcwf0snAoFfkBM/XtE0Qcwizeq9ninCylJ/CC8tIZtRSx68UvMVujeMw3pHHH+vfJ2tK5H7PcCTMNCq4ClW6YN6C8ZrxSLg6Fvc8euDJeDRXBfSmyRtHdnPVjnMRFrU3+nQGuzV39EqPcQ=
+	t=1762869204; cv=none; b=sNcZ7HX/a+1pPuRoIZauuZ17XXXLyS1kDGvOccFn5jxd58h1zOjPUB9NKtHGg7yZaaGGFGiOXhBfQjA8/Liw4BosIFe67nu3ClLmBJq86GIPrH9pDF5TiRJwgQ2mb7TrAyuopkMNxU6WQfP6UnUkUD45ZHV7xDJOyCCI5Q1lEfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762869199; c=relaxed/simple;
-	bh=64K+eNfb+pxvbzHTL7yO4Jm6nd4pQMRg8fwdoUcxgKY=;
+	s=arc-20240116; t=1762869204; c=relaxed/simple;
+	bh=NdGIxV40GZFS18IdrerkSZOYc4tA181SEjScKcTbSWo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cUSURNWWbQvpnD0/YnwCkikL3KQKiC7n2OaBZn4qH++DbMGzaM/do/z7jr8wb4hHWBZXtxh8ErIXojhMFrPO6lTLhglduc+U7n6+zxB9pU9q47z1mJiNR8kv86WjIXiIJ/cQhXfDynUe3dteXWRhZ0NrRMRdxvwxVKPCTMwJNxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=lVx3p8+E; arc=none smtp.client-ip=198.137.202.133
+	 MIME-Version; b=k8CGNSHojvnGFdpLOCynZuo5KjAq1vFsJATbap5P0izxjus13Sbo9tFxJzDvAbFHM0dTVb+bzzGOpcPYtr49K8No7W3VayHdz9JMuD/2NssBpGBwgi7Rkx+kXsQtF5qAz3M5BzfRFftFhQbFeGXjk5g+/L8OmM29LrzKinuYl6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=259CjJXP; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
 	:Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=FRYgSq03HmqIdEUfSgNjXfP2N3YHwggqOiGsRy6ACtg=; b=lVx3p8+EDJn3Q0wWD16DuCbHpu
-	sxDl+wdJfuaSIW2jHlbdilkxUvgNcpCK1EINHH3yfAEBiCBHAhXiim4vbwntLC23n1jgVwy2lj8T8
-	hVnsV3t0YIFBxds8WAwcsPOu/y34BsAhtYBRGV5HXV3oICFdk+C+WPVaqPAfanHCEVx0jdOxD48SU
-	oyMsSMFIUkdbruW3Qe6F8VtOPA2EwgzqxDvWj7HCtkv8K/UIQyBDvOd+kRIO7oGAbwDFREqHZH9lh
-	8iVtvNpSIQqwnEz+s3yikd75s7r/uD1ilHB/ffqMgJ816j3ALmGYhyoAZGI57zfzvXKuRMtufq5vE
-	qhDSYgMQ==;
+	bh=ArUALhhnnFb4xiAkoDnrGF2IGhkIYQ7lLR2WNnAtJAA=; b=259CjJXPMHPnTFJE3SN3W5RJz2
+	MGZ9QBB2T4Lt/+BnG7+hzvjlHNezLqLVmiUpGzyC/yKmCA1wBStH1etDAxaEkuJr/UI8U7AKyF8Sp
+	yS4s/mxfV3NkZj+OMFthIg6mjDa3XLNu959JAdbzn942QuNkn6Fe2ugQyq09Mgq1kBOku56luBqgf
+	uO5cSQitNIxS6t09gYaq0VZhir2qpVmq6Kp1pNC7yy0G0BIHB59DsKiZ5r+bMuf0QMovXzFlSMifc
+	l4mrI1gCFeI7uzioa8OMXEnIwc/YYzsF9vRNl71a/Wo8MXj4mRNI1uNdb6vTPwSGlJwzMFTmVWPpp
+	gJK31OPQ==;
 Received: from 2a02-8389-2341-5b80-d601-7564-c2e0-491c.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:d601:7564:c2e0:491c] helo=localhost)
 	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vIoo7-00000007Ga3-0bhi;
-	Tue, 11 Nov 2025 13:53:15 +0000
+	id 1vIooB-00000007Gah-1yuh;
+	Tue, 11 Nov 2025 13:53:20 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Vlastimil Babka <vbabka@suse.cz>,
 	Andrew Morton <akpm@linux-foundation.org>
@@ -54,9 +54,9 @@ Cc: Christoph Lameter <cl@gentwo.org>,
 	Eric Biggers <ebiggers@kernel.org>,
 	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/7] mempool: update kerneldoc comments
-Date: Tue, 11 Nov 2025 14:52:30 +0100
-Message-ID: <20251111135300.752962-3-hch@lst.de>
+Subject: [PATCH 3/7] mempool: add error injection support
+Date: Tue, 11 Nov 2025 14:52:31 +0100
+Message-ID: <20251111135300.752962-4-hch@lst.de>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20251111135300.752962-1-hch@lst.de>
 References: <20251111135300.752962-1-hch@lst.de>
@@ -69,84 +69,67 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Use proper formatting, use full sentences and reduce some verbosity in
-function parameter descriptions.
+Add a call to should_fail_ex that forces mempool to actually allocate
+from the pool to stress the mempool implementation when enabled through
+debugfs.  By default should_fail{,_ex} prints a very verbose stack trace
+that clutters the kernel log, slows down execution and triggers the
+kernel bug detection in xfstests.  Pass FAULT_NOWARN and print a
+single-line message notating the caller instead so that full tests
+can be run with fault injection.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
 ---
- mm/mempool.c | 41 ++++++++++++++++++++++-------------------
- 1 file changed, 22 insertions(+), 19 deletions(-)
+ mm/mempool.c | 21 ++++++++++++++++++---
+ 1 file changed, 18 insertions(+), 3 deletions(-)
 
 diff --git a/mm/mempool.c b/mm/mempool.c
-index 1c38e873e546..1f4701713203 100644
+index 1f4701713203..76ba4d5e656f 100644
 --- a/mm/mempool.c
 +++ b/mm/mempool.c
-@@ -372,18 +372,20 @@ int mempool_resize(mempool_t *pool, int new_min_nr)
- EXPORT_SYMBOL(mempool_resize);
- 
- /**
-- * mempool_alloc - allocate an element from a specific memory pool
-- * @pool:      pointer to the memory pool which was allocated via
-- *             mempool_create().
-- * @gfp_mask:  the usual allocation bitmask.
-+ * mempool_alloc - allocate an element from a memory pool
-+ * @pool:	pointer to the memory pool
-+ * @gfp_mask:	GFP_* flags.  %__GFP_ZERO is not supported.
-  *
-- * this function only sleeps if the alloc_fn() function sleeps or
-- * returns NULL. Note that due to preallocation, this function
-- * *never* fails when called from process contexts. (it might
-- * fail if called from an IRQ context.)
-- * Note: using __GFP_ZERO is not supported.
-+ * Allocate an element from @pool.  This is done by first calling into the
-+ * alloc_fn supplied at pool initialization time, and dipping into the reserved
-+ * pool when alloc_fn fails to allocate an element.
-  *
-- * Return: pointer to the allocated element or %NULL on error.
-+ * This function only sleeps if the alloc_fn callback sleeps, or when waiting
-+ * for elements to become available in the pool.
-+ *
-+ * Return: pointer to the allocated element or %NULL when failing to allocate
-+ * an element.  Allocation failure can only happen when @gfp_mask does not
-+ * include %__GFP_DIRECT_RECLAIM.
+@@ -9,7 +9,7 @@
+  *  started by Ingo Molnar, Copyright (C) 2001
+  *  debugging by David Rientjes, Copyright (C) 2015
   */
- void *mempool_alloc_noprof(mempool_t *pool, gfp_t gfp_mask)
- {
-@@ -456,11 +458,10 @@ EXPORT_SYMBOL(mempool_alloc_noprof);
+-
++#include <linux/fault-inject.h>
+ #include <linux/mm.h>
+ #include <linux/slab.h>
+ #include <linux/highmem.h>
+@@ -20,6 +20,15 @@
+ #include <linux/writeback.h>
+ #include "slab.h"
  
- /**
-  * mempool_alloc_preallocated - allocate an element from preallocated elements
-- *                              belonging to a specific memory pool
-- * @pool:      pointer to the memory pool which was allocated via
-- *             mempool_create().
-+ *                              belonging to a memory pool
-+ * @pool:	pointer to the memory pool
-  *
-- * This function is similar to mempool_alloc, but it only attempts allocating
-+ * This function is similar to mempool_alloc(), but it only attempts allocating
-  * an element from the preallocated elements. It does not sleep and immediately
-  * returns if no preallocated elements are available.
-  *
-@@ -492,12 +493,14 @@ void *mempool_alloc_preallocated(mempool_t *pool)
- EXPORT_SYMBOL(mempool_alloc_preallocated);
++static DECLARE_FAULT_ATTR(fail_mempool_alloc);
++
++static int __init mempool_faul_inject_init(void)
++{
++	return PTR_ERR_OR_ZERO(fault_create_debugfs_attr("fail_mempool_alloc",
++			NULL, &fail_mempool_alloc));
++}
++late_initcall(mempool_faul_inject_init);
++
+ #ifdef CONFIG_SLUB_DEBUG_ON
+ static void poison_error(mempool_t *pool, void *element, size_t size,
+ 			 size_t byte)
+@@ -404,9 +413,15 @@ void *mempool_alloc_noprof(mempool_t *pool, gfp_t gfp_mask)
+ 	gfp_temp = gfp_mask & ~(__GFP_DIRECT_RECLAIM|__GFP_IO);
  
- /**
-- * mempool_free - return an element to the pool.
-- * @element:   pool element pointer.
-- * @pool:      pointer to the memory pool which was allocated via
-- *             mempool_create().
-+ * mempool_free - return an element to a mempool
-+ * @element:	pointer to element
-+ * @pool:	pointer to the memory pool
-+ *
-+ * Returns @element to @pool if it needs replenishing, else frees it using
-+ * the free_fn callback in @pool.
-  *
-- * this function only sleeps if the free_fn() function sleeps.
-+ * This function only sleeps if the free_fn callback sleeps.
-  */
- void mempool_free(void *element, mempool_t *pool)
- {
+ repeat_alloc:
++	if (should_fail_ex(&fail_mempool_alloc, 1, FAULT_NOWARN)) {
++		pr_info("forcing mempool usage for pool %pS\n",
++				(void *)_RET_IP_);
++		element = NULL;
++	} else {
++		element = pool->alloc(gfp_temp, pool->pool_data);
++	}
+ 
+-	element = pool->alloc(gfp_temp, pool->pool_data);
+-	if (likely(element != NULL))
++	if (likely(element))
+ 		return element;
+ 
+ 	spin_lock_irqsave(&pool->lock, flags);
 -- 
 2.47.3
 
