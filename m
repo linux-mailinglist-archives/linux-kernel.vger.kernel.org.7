@@ -1,159 +1,312 @@
-Return-Path: <linux-kernel+bounces-895408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF833C4DBD5
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:33:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 53D48C4DD13
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:45:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1FE704F973D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:27:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4BC134FE0BD
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:38:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A5923590CA;
-	Tue, 11 Nov 2025 12:27:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E963A35A136;
+	Tue, 11 Nov 2025 12:27:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Ld0DXzZa";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="cFNhgKKN"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b="h21gR9aU";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="homK9s+4"
+Received: from fhigh-a4-smtp.messagingengine.com (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0B85358D12
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 12:27:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF6963587B8;
+	Tue, 11 Nov 2025 12:27:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762864047; cv=none; b=XbS0OSMZ4r7y6JfEhHOdTyalEul9ByMyS4Jk5HbEy8ophjwrwDfXNX3Kq6tSJZezAz+3gDvcI4LrXe4gLQseUcXNCSn8NgQGI6jP0Pwo9k6seoSep4yglyPgPH8BSeDwzsYuTHkhBo3PcdcgIn4rMtH1m0sYJlM1nSCCe8uyIxg=
+	t=1762864072; cv=none; b=WJ1FcvtqOZdLFacyoKd74AdYK0EiIHnzUzH2H5y8hlsyqSgHgRC3RpG6TVSykl4z5qMTKaYOifr05o2vhd1ZkgNeRcYnKYL6zSYpgebzux98Yd5218xEgUsjvNFXgDgLzQw3txQjVg09h9bP3wiOAReXOSa7DdEt0yRKloF8KCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762864047; c=relaxed/simple;
-	bh=9VPdrRXuIiNKZGp5Pxv40MBiLERQtMECtEUEhoRYdWk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iWBFmenHqot2i+yCpdBGEHtId5/eyuNF+miL4D2Y6RIAQsRO25FhkuQ0bsk+OnsS0PuogbLJDTJSRRlsbhbARbivdouDXlNkdMjjAFlOlWQGMSKZuEVq7aqkG+AC5efA0C/j4nhWFy3ckJ5bCQ6BcU91NOZifS/c1ItdIHnwvaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Ld0DXzZa; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=cFNhgKKN; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5ABBGIDk2117338
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 12:27:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=pbbrsg49P2hYmXm7dQ5eWDSM
-	EBm36DXZS4l1a3OLYOE=; b=Ld0DXzZarx87x9JI2y8/ul/5gkJi8yJh/Z55cq6p
-	4xtqa0zi81A3mxRcAzsccv269OjllNaHt5kBQQEJvDOIqgqjTauVG35qaoJIgf3g
-	psL0WT1EPGDJafvFMGpXcQTwLp96ePUl0IN90LNGP8se7xfwXL48YxY8x0AtqS8a
-	9Istrm52AUczg19MDs2vOL07nSpcPZfLuswESwKTqJCCNe0uKnhgVJFAo+QPkdu9
-	NCoyEFxVK00YOB/2ML5qw0x8XtrrQQf+U+RH8t+ZnfcbSm0Gl8TN1SOgzO7T0U5g
-	TJOa5APySl5w8hG+eGXRVG0+5+ji0qfvfLNYSEmHnFmsVw==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4abpy8jc6m-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 12:27:22 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4ed74e6c468so57524451cf.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 04:27:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1762864041; x=1763468841; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=pbbrsg49P2hYmXm7dQ5eWDSMEBm36DXZS4l1a3OLYOE=;
-        b=cFNhgKKNhtLvsA30GrXls655vYepZ4TdijQb2zb85x1XFLhnUiqdvj52HnRk3l5kG/
-         NJqnEsBgbX3wNZSqXuY1ZxncHbXoZqbe74UMQm/t106h7f4xibGaklPZ9Ax/Nj7mLNgB
-         z8QsR2tqLVSEtoZ/oWIUywG/XCeO570l798sFwTazoXEagBk2xuPfhPdmPuRHpI0Jc9h
-         6DW0Fz/Nl8LIscE4A+hu+cR8hw6pa9PadTpXcuIQG6z7wArf90WOEM261st+qZvBngG7
-         hMZZJvQksUCKokX9cGBCjlPkwT5jH/9mR29vWspiwBv+bMeFi29kLMTmt/28tc0+EeDK
-         yebQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762864041; x=1763468841;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pbbrsg49P2hYmXm7dQ5eWDSMEBm36DXZS4l1a3OLYOE=;
-        b=qmBVAzBKI6L3kxfu4lD4DiZF098nmZ/ylbOopgjSu7LjCH7f+82mXp79hoCR7usECM
-         5aTtMhz75b+4K791KG1y6PEIG6p9229pFY9tvHPZmZYiZ29umWtgkzrwloxh/mvg09Go
-         AGhneCswO0rEfzWHAX/Cbm08jzhCLWmu4d3ZEFk9hsH6vZclrtit9GKCx34HkTOUZNtg
-         jdqQMcD24oZSxmnSyhbONj07HpW9JLS940UqWbk74FdSQwJOHKM45HkffWukexRjs72q
-         JODAnqG7OuQb5jSXygdD10e/abSrevK7Nw+c/huFdSAc4mnr64vkSP907imcMqHqmFMU
-         H5zw==
-X-Forwarded-Encrypted: i=1; AJvYcCV1n6C4ae8FGBb/awZcDXkbtHUirGlQsdmNqhPNG9PU/zvliuPj3KHX/d5WLb31F+0+6DiJ+0uMSgtLIPg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhcAj1KU8b2/hG243XHX3IReIdvwK3mD2qM4G5d2UITJ6D9vGW
-	XsJQy/2ut3C3D/YdYN4PKgdns2BfmZe995GzFA8XyrTgpYEeB1v6OANUYS31at5v2axckZ8+iIg
-	0JG6CSYUHIDvekK7+8H/jQUoXZRIBV3urdNjfnIyVBOPIS9BBAhc/E314gbch+c/bjVY=
-X-Gm-Gg: ASbGncvWQf7Kic32Emcu4tI/Ih37yEl3oOiKZMV/0f6UgDwgt90pp69sGRfE8w5zL+C
-	reMm8Tpco+m72iE/xBxE30DQof2UogMs6eQM3LvziqVoK2h1VuGPgBBRdrV9lN3+6/tXLVNzuXX
-	XDS6A59C7xBjUi1cmXuEHKVAT+C9C56oRqVtA5EdwJ9PsACTHb/bivoon7WXvGVRzXt0qbJoKZI
-	D4JCOAhFN+g34gTW3EBzXjPhDXLVmWu7Sj7iM6VBlRPGq4p1KfLi5gLMBPz4LbD+ymebVXCRxWB
-	knnNx5PpEtn3yl9YVlZLhqPYIWQgvA9AEZYdLp7HTyEBoRTRN3J+q0QfY8VBPMvGuzYabhTXucX
-	yRNEt2HI/3kDMNzuGt2rER883bFPHb+XaHE41kkfxJBXx1Dk23bSZSnoMdUiK4Z9+LJlFQSNHvY
-	D33BcXr1EpAKeO
-X-Received: by 2002:ac8:5751:0:b0:4ec:eea3:41fa with SMTP id d75a77b69052e-4eda4fe0032mr122499091cf.77.1762864041294;
-        Tue, 11 Nov 2025 04:27:21 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IG0G04Stzhf8pvrcPOEA7hZPvaHFQrTVkryE5kOpt4Q5+i+ssVi1BunvdZnSlbfnyCsgzQ5bw==
-X-Received: by 2002:ac8:5751:0:b0:4ec:eea3:41fa with SMTP id d75a77b69052e-4eda4fe0032mr122498701cf.77.1762864040830;
-        Tue, 11 Nov 2025 04:27:20 -0800 (PST)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5944a5a2042sm4884994e87.112.2025.11.11.04.27.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Nov 2025 04:27:20 -0800 (PST)
-Date: Tue, 11 Nov 2025 14:27:18 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Riccardo Mereu <r.mereu.kernel@arduino.cc>
-Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
-        krzk+dt@kernel.org, conor+dt@kernel.org, broonie@kernel.org,
-        linux@roeck-us.net, Jonathan.Cameron@huawei.com, wenswang@yeah.net,
-        naresh.solanki@9elements.com, michal.simek@amd.com, nuno.sa@analog.com,
-        chou.cosmo@gmail.com, grantpeltier93@gmail.com, eajames@linux.ibm.com,
-        farouk.bouabid@cherry.de, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-spi@vger.kernel.org, mm.facchin@arduino.cc,
-        Riccardo Mereu <r.mereu@arduino.cc>
-Subject: Re: [PATCH 4/5] arm64: dts: qcom: qcm2290: add uart2 node
-Message-ID: <6mr3k3vxgcxpddh4zmheeon77mru6r7hd7udtup2cqmvvziywx@xapbmrtblpti>
-References: <20251106153119.266840-1-r.mereu@arduino.cc>
- <20251106153119.266840-5-r.mereu@arduino.cc>
+	s=arc-20240116; t=1762864072; c=relaxed/simple;
+	bh=9BI5n61qLiP4hmzl3oxkvSzARLyEY3ntDVuVCOxRJ6Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LAwuMlI38vO5aZlMk19ffdmY9PHQ6SWPhUbktrVb+508UZ9DINIpv+l0svxlVsuNGEHVc2cOpDHiSmPMOWDNqEfLZjikhOQRLccj2h8MGHmgs+boKkggkOinD4dwifo/iHg5B5wnYht9XKPyLvPAiggqysvRW/XWDb5JDqFs8Tk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=themaw.net; spf=pass smtp.mailfrom=themaw.net; dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b=h21gR9aU; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=homK9s+4; arc=none smtp.client-ip=103.168.172.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=themaw.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=themaw.net
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id C470C14001D9;
+	Tue, 11 Nov 2025 07:27:48 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-04.internal (MEProxy); Tue, 11 Nov 2025 07:27:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1762864068;
+	 x=1762950468; bh=odCvzHzflLTAc8B/UiMMglkBWYTEtUU7jHdHxgB3fu8=; b=
+	h21gR9aUOjzrDzAhSZHB7JQQ+BsTGhFXXEzoBZ5s7/flcm0VWAf+PzOtW/HJCAAO
+	Uqn18ITg0JbKiLcbuA4MYBSyTEu2yel106bMnSDYzNRk1zIlxLeRRlrugtY0wqjx
+	pFwVwflzl7QuyGR4MfGXOEGae44I/m+QZWU699e8AM/rzjKeOOKBMdKWo6ObCgve
+	Sa9zaIgu7ZF+btnPbayXxz7EibphXSUpJtRHMxlHKZ1kxx7VxF+1q8O2ly0mbUzx
+	1GxoeV6lt6G6sRAchwqOlLZPSpig4bj4h02diKgtg6qw9QzhFe9joRDSBYErCAna
+	Fu9swYJFkKtQCX+VWfq7ug==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762864068; x=
+	1762950468; bh=odCvzHzflLTAc8B/UiMMglkBWYTEtUU7jHdHxgB3fu8=; b=h
+	omK9s+4cw843BfJ15NlcQmt1hTjPuTJMtjylCmmXyNW/TVxjvpth7xn5OqCHhGnU
+	j78yDG9O0vZPj8KyjSCjEHVIiOGjCeYtfVsQBTtYKpebg5Y6PSJi+cBMzhOEKtAa
+	jOMOppcZHLdZV3fudg7zLyY8UwRROCR0nlBdjCbppF+UZzoIxoeZIfiTJeyJ/675
+	UnVaQqDO6hqgiwQm//ZEZWYoW9NJ0NVY8pEf0uyX+eW7A3Ufef2r4OBBY8FmniWq
+	fG2RDvlaIuWsfGao6jLLYr16IV5qvue4W4onQXY6ZcWo2byS7tWyYtkaphcxSEOJ
+	/Xq32TVFASmOaB97K6R7Q==
+X-ME-Sender: <xms:xCsTaZ2hZStZuDiLGavtSkYgB3ucdUSzfqZ8a7g4treYvYx9LxGnLg>
+    <xme:xCsTaZZNItA3yn9Au_LvAbT8IArlLEgWX2gVEK3erYL0EVHGCPMP-4EzosTMMNbVD
+    XScEcukpOqtTrXH0ZIe-7RNlo8gSCtcS4aMtX3WfePjPA64-g>
+X-ME-Received: <xmr:xCsTaRKcDXEImi27sN60Fo4ZJqzZmHvwzC-6VfhE3gpdE1UidP8FEd1kTpp0F_OTayABvowlhOXE--nl8e8qPEuhst4uK1fvo4NCJLwcpg3UeLCHsv8JL-s>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvtdduudelucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpefkrghnucfm
+    vghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuggftrfgrthhtvghrnhepfe
+    ekhfegieegteelffegleetjeekuddvhfehjefhheeuiedtheeuhfekueekffehnecuvehl
+    uhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprhgrvhgvnhesth
+    hhvghmrgifrdhnvghtpdhnsggprhgtphhtthhopeehpdhmohguvgepshhmthhpohhuthdp
+    rhgtphhtthhopegsrhgruhhnvghrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehvih
+    hrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpdhrtghpthhtoheplhhinhhugidq
+    khgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghuthhofh
+    hssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqfhhsuggv
+    vhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:xCsTaYG-y2h-kozUbttnhTpRY9rFAM5tX7IoEoUxdeEpPp-IRNIMqg>
+    <xmx:xCsTaYt53DaTaCAgoabxYzX8txS4o2HaS37qTar8osSBBohk8CrdMQ>
+    <xmx:xCsTaXumBAYW8PPVSeoFF32V3RiS3mCZTKCNWiXnjvi_OELvhZjcEw>
+    <xmx:xCsTaWBANcwvItT1cvjIUz4lZaaXixuaxbDDNqQV1TgNLKo38JLUOg>
+    <xmx:xCsTaXhY5wdpZLNuruvlKeUNSrPkeljlpaVztqMCBMvsUCWGEuMZ-up1>
+Feedback-ID: i31e841b0:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 11 Nov 2025 07:27:46 -0500 (EST)
+Message-ID: <bd4fc8ce-ca3f-4e0f-86c0-f9aaa931a066@themaw.net>
+Date: Tue, 11 Nov 2025 20:27:42 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251106153119.266840-5-r.mereu@arduino.cc>
-X-Proofpoint-ORIG-GUID: hmV_6KTQAE18vD3rgB6JTKoQ1Aw2IGdf
-X-Authority-Analysis: v=2.4 cv=AYW83nXG c=1 sm=1 tr=0 ts=69132baa cx=c_pps
- a=JbAStetqSzwMeJznSMzCyw==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=EUspDBNiAAAA:8 a=D7qGd7DG7pF3fn8uCYwA:9 a=CjuIK1q_8ugA:10
- a=uxP6HrT_eTzRwkO_Te1X:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTExMDA5OSBTYWx0ZWRfXzH2vp0iBVwob
- yQhHpQiS+Yz4g3m/5aLa+0V3TffRS6imVY/29ThUwsK3ro8DbH3bEIr/Z8P9Qr8I2lsbpclW5rF
- tzafI+Nyd90tM4N6T4sCWNrpYN0se3nDFzmpUh3Or2XmqCBibqe3AzP5nsLRJXGDNzniG/mE+Ep
- Har88yZP9br/01CKRo+OaQwTYu8fPbIuJjoTo9GzMfhw4Dp/YaEzV9l6VFIgxw1ayFNOEGJxpxD
- RC5PsJe6QN78k3fwDTQ3FvlLef3cvwqzpXF3a/S6RFcRTi69QWIv9KqvF5JqkPqXX2XZyYAj+TF
- Ynau+0ikTY+vxYivi8jIFmR0Nkth8iBNfVunjnEnIWuxKp4yZX6Yky2DcyPKaT/o6x8RpKvk2/8
- WpwSeel/6U1rSnguT6pAb0kg604ssw==
-X-Proofpoint-GUID: hmV_6KTQAE18vD3rgB6JTKoQ1Aw2IGdf
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-11_02,2025-11-11_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 impostorscore=0 malwarescore=0 adultscore=0 clxscore=1015
- suspectscore=0 priorityscore=1501 lowpriorityscore=0 bulkscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511110099
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] autofs: dont trigger mount if it cant succeed
+To: Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>
+Cc: Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ autofs mailing list <autofs@vger.kernel.org>,
+ linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <20251111060439.19593-1-raven@themaw.net>
+ <20251111060439.19593-3-raven@themaw.net>
+ <20251111-zunahm-endeffekt-c8fb3f90a365@brauner>
+ <20251111102435.GW2441659@ZenIV>
+ <20251111-ortseinfahrt-lithium-21455428ab30@brauner>
+Content-Language: en-AU
+From: Ian Kent <raven@themaw.net>
+Autocrypt: addr=raven@themaw.net;
+ keydata= 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
+In-Reply-To: <20251111-ortseinfahrt-lithium-21455428ab30@brauner>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Nov 06, 2025 at 04:31:18PM +0100, Riccardo Mereu wrote:
-> uart2 is used in Arduino UnoQ as an interface between microprocessor and
-> microcontroller.
-> 
-> Signed-off-by: Riccardo Mereu <r.mereu@arduino.cc>
+On 11/11/25 18:55, Christian Brauner wrote:
+> On Tue, Nov 11, 2025 at 10:24:35AM +0000, Al Viro wrote:
+>> On Tue, Nov 11, 2025 at 11:19:59AM +0100, Christian Brauner wrote:
+>>
+>>>> +	sbi->owner = current->nsproxy->mnt_ns;
+>>> ns_ref_get()
+>>> Can be called directly on the mount namespace.
+>> ... and would leak all mounts in the mount tree, unless I'm missing
+>> something subtle.
+> Right, I thought you actually wanted to pin it.
+> Anyway, you could take a passive reference but I think that's nonsense
+> as well. The following should do it:
+
+Right, I'll need to think about this for a little while, I did think
+
+of using an id for the comparison but I diverged down the wrong path so
+
+this is a very welcome suggestion. There's still the handling of where
+
+the daemon goes away (crash or SIGKILL, yes people deliberately do this
+
+at times, think simulated disaster recovery) which I've missed in this
+
+revision.
+
+
+Al, thoughts please?
+
+
+>
+> UNTESTED, UNCOMPILED
+
+I'll give it a whirl, ;)
+
+
+>
 > ---
->  arch/arm64/boot/dts/qcom/agatti.dtsi | 24 ++++++++++++++++++++++++
->  1 file changed, 24 insertions(+)
-> 
+>   fs/autofs/autofs_i.h |  4 ++++
+>   fs/autofs/inode.c    |  3 +++
+>   fs/autofs/root.c     | 10 ++++++++++
+>   fs/namespace.c       |  6 ++++++
+>   include/linux/fs.h   |  1 +
+>   5 files changed, 24 insertions(+)
+>
+> diff --git a/fs/autofs/autofs_i.h b/fs/autofs/autofs_i.h
+> index 23cea74f9933..2b9d2300d351 100644
+> --- a/fs/autofs/autofs_i.h
+> +++ b/fs/autofs/autofs_i.h
+> @@ -16,6 +16,7 @@
+>   #include <linux/wait.h>
+>   #include <linux/sched.h>
+>   #include <linux/sched/signal.h>
+> +#include <uapi/linux/mount.h>
+>   #include <linux/mount.h>
+>   #include <linux/namei.h>
+>   #include <linux/uaccess.h>
+> @@ -109,11 +110,14 @@ struct autofs_wait_queue {
+>   #define AUTOFS_SBI_STRICTEXPIRE 0x0002
+>   #define AUTOFS_SBI_IGNORE	0x0004
+>   
+>   struct autofs_sb_info {
+>   	u32 magic;
+>   	int pipefd;
+>   	struct file *pipe;
+>   	struct pid *oz_pgrp;
+> +	u64 mnt_ns_id;
+>   	int version;
+>   	int sub_version;
+>   	int min_proto;
+> diff --git a/fs/autofs/inode.c b/fs/autofs/inode.c
+> index f5c16ffba013..247a5784d192 100644
+> --- a/fs/autofs/inode.c
+> +++ b/fs/autofs/inode.c
+> @@ -6,8 +6,10 @@
+>   
+>   #include <linux/seq_file.h>
+>   #include <linux/pagemap.h>
+> +#include <linux/ns_common.h>
+>   
+>   #include "autofs_i.h"
+> +#include "../mount.h"
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+As a module I try really hard to avoid use of non-public definitions.
+
+But if everyone is happy I'm happy too!
 
 
--- 
-With best wishes
-Dmitry
+>   
+>   struct autofs_info *autofs_new_ino(struct autofs_sb_info *sbi)
+>   {
+> @@ -251,6 +253,7 @@ static struct autofs_sb_info *autofs_alloc_sbi(void)
+>   	sbi->min_proto = AUTOFS_MIN_PROTO_VERSION;
+>   	sbi->max_proto = AUTOFS_MAX_PROTO_VERSION;
+>   	sbi->pipefd = -1;
+> +	sbi->mnt_ns_id = to_ns_common(current->nsproxy->mnt_ns)->ns_id;
+>   
+>   	set_autofs_type_indirect(&sbi->type);
+>   	mutex_init(&sbi->wq_mutex);
+> diff --git a/fs/autofs/root.c b/fs/autofs/root.c
+> index 174c7205fee4..f06f62d23e76 100644
+> --- a/fs/autofs/root.c
+> +++ b/fs/autofs/root.c
+> @@ -7,8 +7,10 @@
+>   
+>   #include <linux/capability.h>
+>   #include <linux/compat.h>
+> +#include <linux/ns_common.h>
+>   
+>   #include "autofs_i.h"
+> +#include "../mount.h"
+>   
+>   static int autofs_dir_permission(struct mnt_idmap *, struct inode *, int);
+>   static int autofs_dir_symlink(struct mnt_idmap *, struct inode *,
+> @@ -341,6 +343,14 @@ static struct vfsmount *autofs_d_automount(struct path *path)
+>   	if (autofs_oz_mode(sbi))
+>   		return NULL;
+>   
+> +	/* Refuse to trigger mount if current namespace is not the owner
+> +	 * and the mount is propagation private.
+> +	 */
+> +	if (sbi->mnt_ns_id != to_ns_common(current->nsproxy->mnt_ns)->ns_id) {
+> +		if (vfsmount_to_propagation_flags(path->mnt) & MS_PRIVATE)
+> +			return ERR_PTR(-EPERM);
+> +	}
+> +
+>   	/*
+>   	 * If an expire request is pending everyone must wait.
+>   	 * If the expire fails we're still mounted so continue
+> diff --git a/fs/namespace.c b/fs/namespace.c
+> index d82910f33dc4..27bb12693cba 100644
+> --- a/fs/namespace.c
+> +++ b/fs/namespace.c
+> @@ -5150,6 +5150,12 @@ static u64 mnt_to_propagation_flags(struct mount *m)
+>   	return propagation;
+>   }
+>   
+> +u64 vfsmount_to_propagation_flags(struct vfsmount *mnt)
+> +{
+> +	return mnt_to_propagation_flags(real_mount(mnt));
+> +}
+> +EXPORT_SYMBOL_GPL(vfsmount_to_propagation_flags);
+> +
+>   static void statmount_sb_basic(struct kstatmount *s)
+>   {
+>   	struct super_block *sb = s->mnt->mnt_sb;
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index c895146c1444..a5c2077ce6ed 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -3269,6 +3269,7 @@ extern struct file * open_exec(const char *);
+>   /* fs/dcache.c -- generic fs support functions */
+>   extern bool is_subdir(struct dentry *, struct dentry *);
+>   extern bool path_is_under(const struct path *, const struct path *);
+> +u64 vfsmount_to_propagation_flags(struct vfsmount *mnt);
+>   
+>   extern char *file_path(struct file *, char *, int);
+>   
 
