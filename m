@@ -1,77 +1,115 @@
-Return-Path: <linux-kernel+bounces-894529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B10E8C4B3EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 03:47:58 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C2E6C4B3F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 03:48:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 139E018915A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 02:48:23 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 40CAA4E63AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 02:48:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 927D634A3BF;
-	Tue, 11 Nov 2025 02:47:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 479E23491F4;
+	Tue, 11 Nov 2025 02:48:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CL+OPki3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="sSNpu3UL"
+Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E10E732E14A;
-	Tue, 11 Nov 2025 02:47:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E04DF348887
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 02:48:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762829267; cv=none; b=LSbSXIOXuScwBPm7L8FpAYyNZtch2XvNumOGhep/4DVksfRyJD3mXhLQz+2qhm00s+SZSZfigimFmVzkZK3L1sAsRMMEy9Lew/yP/diG24gitiEI3faFBQE4TuSm0jW5m0afa1giRHK2zisdmZYXKp2o40WwWl2S9nIEvd8Pu+M=
+	t=1762829325; cv=none; b=vAYS18TRPBByItXpLWWgdoqIdVuX5KgvVIek8LsVCREoBSuAnqTj0tdiM5FWh9rtTuMz9YykmGrbMmUrgIBV5uWBJQQNDi3bzwcoG0kibA7RPwXZXLdvMlIw461suu6Cnpvwt2FVGQYCU+NB4GqhD22FKDhSZCi/7eQTYQSRwJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762829267; c=relaxed/simple;
-	bh=kb0U3gFuLG9ebZpEvZgiRVBGfMo6nVWwuyrudqfGv0o=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=orxJsAeVl5S8f0zdNom5AnMl57cYFsbFalucsu4G7M0lNMBZG/ifQmZ0ICQRfOGGmf/7BCQWHPwGC8dNDu9XppLPRzEvT0McmtWiC1lY8+bWT5GLfvv5KsqkA7K3XPj+bKDoo/pxFLyuaGFNwEm0y1mSBuupOZi4M82I8VNa79w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CL+OPki3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D242C4CEF5;
-	Tue, 11 Nov 2025 02:47:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762829265;
-	bh=kb0U3gFuLG9ebZpEvZgiRVBGfMo6nVWwuyrudqfGv0o=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=CL+OPki34UVIhGzekeTPxheEDkeQvSp5/4jpb4qMsYbN6Sf2r4x8bHT2WxS0EumhH
-	 WsFcd4RDuYsmGBxoASEPDFmRj1cImURIfjvverSYcHdgUPcHztVkOZkQq9Q1W7Eocl
-	 lcTjQq3OcTiJAgsNnB55q0AcstEv9n7H5SZWJWAKpU7L6GYnHbY4H3Frfia+frrHMK
-	 9BDsdT6h2aAq04wcchRJFXQ5SO7UHKiyMOI1gOklA0xGQUKaJ1X92Yf7zYBxZJG0ct
-	 hwSh7hNc8v8+Cm9osoiHB66+DTERKIIpPGFJsvS3nHo3wix88OCXK2wv6UeQk4wbLB
-	 JnpPODhCFkrJA==
-Date: Mon, 10 Nov 2025 18:47:43 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Fan Gong <gongfan1@huawei.com>
-Cc: Zhu Yikai <zhuyikai1@h-partners.com>, <netdev@vger.kernel.org>, "David
- S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
- Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Andrew Lunn
- <andrew+netdev@lunn.ch>, Markus Elfring <Markus.Elfring@web.de>, Pavan
- Chebbi <pavan.chebbi@broadcom.com>, ALOK TIWARI <alok.a.tiwari@oracle.com>,
- <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>, luosifu
- <luosifu@huawei.com>, Xin Guo <guoxin09@huawei.com>, Shen Chenyang
- <shenchenyang1@hisilicon.com>, Zhou Shuai <zhoushuai28@huawei.com>, Wu Like
- <wulike1@huawei.com>, Shi Jing <shijing34@huawei.com>, Luo Yang
- <luoyang82@h-partners.com>, Meny Yossefi <meny.yossefi@huawei.com>, Gur
- Stavi <gur.stavi@huawei.com>
-Subject: Re: [PATCH net-next v06 2/5] hinic3: Add PF management interfaces
-Message-ID: <20251110184743.72f0fe8d@kernel.org>
-In-Reply-To: <c344db0c471b6b1321994958727df1c005a65daa.1762581665.git.zhuyikai1@h-partners.com>
-References: <cover.1762581665.git.zhuyikai1@h-partners.com>
-	<c344db0c471b6b1321994958727df1c005a65daa.1762581665.git.zhuyikai1@h-partners.com>
+	s=arc-20240116; t=1762829325; c=relaxed/simple;
+	bh=gi1wRAAF95yTa8IfTtHf+MpTbcQq5jDbCsoK1Xljp3E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AdMVSF1m2b3XOBo+VCrUz6MuO4XRsUdujvogLT2IoF7QPQCuLZjGcdYOLsxffztMGFWgYsAra3BpahP9DCHU4q9m6KybyTAThI+/subAAyB0MxUdRELcuGC8GXCULkLFW16itmjGbZ4g1p97cHm50ysqsbXgV30WTUimqTUPFXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=sSNpu3UL; arc=none smtp.client-ip=95.215.58.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <99429fb8-dcec-43e7-a23b-bee54b8ed6e6@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1762829311;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vpTvE8Rrz+iBUsvxU9XIT/WrbpcwDHgcPlPzJcVRRVg=;
+	b=sSNpu3ULY/cNZ+A4d1Y0Du9gO2K+uzrWXWaVLZBN9O3nQ5viEcBh0vrqe9DZsCltNYRmqV
+	RgokJpqGWgDlp/Zqq4NqdHIH9q0Ot8CaBEYqU5PzvmQwGyBwEsfXaHCCluEmksz7CSBvsd
+	LSerrPmk/XUPXcmgWytmEMdbL7oWrFM=
+Date: Tue, 11 Nov 2025 10:48:18 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH 0/4] memcg: cleanup the memcg stats interfaces
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Harry Yoo <harry.yoo@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Muchun Song <muchun.song@linux.dev>, Vlastimil Babka <vbabka@suse.cz>,
+ linux-mm@kvack.org, cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Meta kernel team <kernel-team@meta.com>
+References: <20251110232008.1352063-1-shakeel.butt@linux.dev>
+ <aRKKfdN3B68wxFvN@hyeyoo> <24969292-7543-456f-8b80-09c4521507e2@linux.dev>
+ <gsew67sciieqxbcczp5mzx4lj6pvvclfrxn6or3pzjqmj7eeic@7bxuwqgnqaum>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Qi Zheng <qi.zheng@linux.dev>
+In-Reply-To: <gsew67sciieqxbcczp5mzx4lj6pvvclfrxn6or3pzjqmj7eeic@7bxuwqgnqaum>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Sat, 8 Nov 2025 14:41:37 +0800 Fan Gong wrote:
-> +	struct semaphore                port_state_sem;
+Hi Shakeel,
 
-You seem to init this semaphore to 1, could you not use a mutex?
-Mutexes are faster and have better debugging. If you have a reason
-for a semaphore please document.
+On 11/11/25 10:39 AM, Shakeel Butt wrote:
+> On Tue, Nov 11, 2025 at 10:23:15AM +0800, Qi Zheng wrote:
+>> Hi,
+>>
+> [...]
+>>>
+>>> Are you or Qi planning a follow-up that converts spin_lock_irq() to
+>>> spin_lock() in places where they disabled IRQs was just to update vmstat?
+>>
+>> Perhaps this change could be implemented together in [PATCH 1/4]?
+>>
+>> Of course, it's also reasonable to make it a separate patch. If we
+>> choose this method, I’m fine with either me or Shakeel doing it.
+>>
+> 
+> Let's do it separately as I wanted to keep the memcg related changes
+> self-contained.
+
+OK.
+
+> 
+> Qi, can you please take a stab at that?
+
+Sure, I will do it.
+
+> 
+>>>
+>>> Qi's zombie memcg series will depends on that work I guess..
+>>
+>> Yes, and there are other places that also need to be converted, such as
+>> __folio_migrate_mapping().
+> 
+> I see __mod_zone_page_state() usage in __folio_migrate_mapping() and
+> using the same reasoning we can convert it to use mod_zone_page_state().
+> Where else do you need to do these conversions (other than
+> __folio_migrate_mapping)?
+
+I mean converting these places to use spin_lock() instead of
+spin_lock_irq().
+
+Thanks,
+Qi
+
 
