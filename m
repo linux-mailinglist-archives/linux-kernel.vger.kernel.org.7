@@ -1,226 +1,181 @@
-Return-Path: <linux-kernel+bounces-894766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EFB0C4BFBD
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 08:11:17 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91E0AC4C0F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 08:18:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E7D9734F243
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 07:11:16 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 479564F6DAE
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 07:11:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 780EB34D915;
-	Tue, 11 Nov 2025 07:04:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA42D34AB01;
+	Tue, 11 Nov 2025 07:05:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UKwCtLps"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="kMdSMd+M"
+Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012041.outbound.protection.outlook.com [52.101.43.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6104534A77A
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 07:03:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762844641; cv=none; b=Pn17cNbP9hyG5YeRHC6GTuP2NtpRPlq4a0rvMbjqkmYOZAVCjZq/2NYBvvk2SFscFw5SKkMhQ8m8bPoAfaWm7FxE6YMEORHJ+JvYxbQE4/nhIzIhcW1+DEjSIqtNTelCHVHb6LoyLEiSyHg4l08XOhCDprh4+TRAWMQ/dIFIoQc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762844641; c=relaxed/simple;
-	bh=2X2sD5EAGRWCC8kFNQTzbZen7FkQMk+gvKPgG/Q/8Oo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=uPy1fvpSSLE+6LS5O0YvEIilXnh3UZmUOSV7C3JW8tMYKv2hjlS5W/it+UwPVwEXQCnsy5Nxnr52g23fU7gBbbrHUWSqkpRsmexJXi5zv/k5HBbpz9FmykZQKjdssZvhcxdSWw07ibcobsSqay191CVdPO/3FOHySy/l5OUnBzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UKwCtLps; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762844639; x=1794380639;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=2X2sD5EAGRWCC8kFNQTzbZen7FkQMk+gvKPgG/Q/8Oo=;
-  b=UKwCtLps9IC3TtZS9ZgQKl6VjwQ4qMFzhOQ8AvxZxz3ZZKGW55K6jxZr
-   4crnCibpOvvOO9HTXXkhDDiGH0aMR/Lxon+9KuT9GapZC7/A8kzRhA5ZF
-   ahJ5UCprz+i+Z0aKEUGJX5jFA8sMYGWaMZpaLpn4htG3ESp6CL9hVRHuj
-   jEiqSIwOVBR6YNd2v3nALZNJPpJFai6zLymmBybp9qfMrbbFEqTkBSpyg
-   WcwfXLzLgVhFqXJN6A42dbsRYsW+U977U07eaLfN8kkZLSHb71VGJK9n6
-   xU5J3kcWbyok7kkAGfIJnViXFzcbfHh/pWJ6+Z3GcPNHQp2St6xVS0SRl
-   Q==;
-X-CSE-ConnectionGUID: zDCd29myQMud7j+cdCSASg==
-X-CSE-MsgGUID: S6pAVHQQSn62z7hhGN9uKA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11609"; a="65059301"
-X-IronPort-AV: E=Sophos;i="6.19,295,1754982000"; 
-   d="scan'208";a="65059301"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 23:03:59 -0800
-X-CSE-ConnectionGUID: XLxnmFOIR2GlG/6OeUPCgg==
-X-CSE-MsgGUID: 0TL7E0xkSFS4/0vNuj6X7A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,295,1754982000"; 
-   d="scan'208";a="189629487"
-Received: from lkp-server01.sh.intel.com (HELO 7b01c990427b) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 10 Nov 2025 23:03:57 -0800
-Received: from kbuild by 7b01c990427b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vIiPy-0002tD-2h;
-	Tue, 11 Nov 2025 07:03:54 +0000
-Date: Tue, 11 Nov 2025 15:03:32 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev,
-	"Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: [gustavoars:testing/wfamnae-next20251110 10/18]
- drivers/scsi/hisi_sas/hisi_sas_v1_hw.c:1002:32: error: invalid application
- of 'sizeof' to incomplete type 'struct ssp_command_iu'
-Message-ID: <202511111408.FUkLQsGp-lkp@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B2B2346FD0;
+	Tue, 11 Nov 2025 07:05:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.41
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762844740; cv=fail; b=WZYiaC3G+rDE7cTP9o4bDx8FJlujJxSMwUyT2chs8UD+uu4i4uIasKVECHXl23AvfRcG5KEtUvZ4dsQohC2/rSv9A4qRba3cZjaVeV3HoRSpWXA7D8RyL0iYm/yMIyqoWYnRBnyrY8pBy8cVbYoIAE92ySvjgngnVQTKyeJdeVM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762844740; c=relaxed/simple;
+	bh=FKNx8F8Gk/HYKfUaXoUd0tBQKChfoStQpfP+Oorni2A=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dy09swKJuhumUfu5AUE1KL82uoPmkVjEPg1DkG0D+HBOaKRsRzrcOo+0tOgpyBuXVV6jwsTmhaDDWI81PSmMePRWJIY2PRBe8qzpqubr6WLb6YI03O3Fztu04M7s2YiTpJffXl1Ul6KTgfiJHLkhbA6vSqwuuZdl/I5KsrPI3N8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=kMdSMd+M; arc=fail smtp.client-ip=52.101.43.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=kn2FjaEfSrJyofNcjBK6mkXd972Lho5Ftmsq9h4wUmNESk9iZnsgu0Ua79UcWxdVsHeDDd69F1cS1NyKbWCcvYvYdxNWrM4+VwwXqbd3NN1tyajU54XJ2NSuEeAoWLsJS1y2sLSAg5yP9K+PG5IY1GdxDOl1s0rMslGi77kiQgYJCLhUTJVLt7IqfmTkGZtXwPEqUedw6/LZcgYwy9ARsJxXPZIjjn2KRRDLqP2vQ/8Nt5gEYxOwWG6+SYGf2c7B8QoHtPOj3TYLWbIq3puN++wcHVolng58MEtXFoyuLjB6wGE3mxQhHMkRtArGGZsoqQ8ddS1+l58B4jLDxgDj+w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=UjrIt1aS+TpVpHd1RtOccDThd+ZrRS3kLtPUaNZ5YMM=;
+ b=rZAv8TeiNGjhCl1uVA3ls51qn92HzNZCmUw/RvfzA3ukSFgz8Uf4LSKyGqdHzrzAWclBmRY8s5wtEZzcoHOzQ60CPXDX3dPPsbwYupmPctOunoJjKVowptQLHKhD+7Ij4r8+NC92DcuOzoXYYYkoFRG8VIKXUOwVqayNpZQh78bgOgLawY+DtXf63YscHXSeMcP5l1oRggpa1PbZMheE3O3yxE5feYU83Ao3w/AfLOo2lNxZiSAmpvRn1KM05FCwkvwXxlnD90VH1fnTIf+8uPFEG8Nrpc72EQdyKSHf0GzvtLsZd0l3Od1n1wBz6dAX19iPrL6yr8Vczihz8OFUPg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=UjrIt1aS+TpVpHd1RtOccDThd+ZrRS3kLtPUaNZ5YMM=;
+ b=kMdSMd+Mx7nMVR/FDMmqP8Gmb9eX8qj1A2iBNtWxuM6tNWSxiksxMtpiQm2k9+zOMIW6FlOKOskDNvPfUun3/C3YFyRtI01XDFWTb/9N3e9pA5nQUgPPmK1UnpU073AWBqCtg/USCvBZcflE5OOvbI5b+Nq4q4Sxt2ISNumRJ9c=
+Received: from CH0PR03CA0092.namprd03.prod.outlook.com (2603:10b6:610:cd::7)
+ by DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Tue, 11 Nov
+ 2025 07:05:36 +0000
+Received: from CH2PEPF00000142.namprd02.prod.outlook.com
+ (2603:10b6:610:cd:cafe::19) by CH0PR03CA0092.outlook.office365.com
+ (2603:10b6:610:cd::7) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9298.16 via Frontend Transport; Tue,
+ 11 Nov 2025 07:05:36 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
+Received: from satlexmb08.amd.com (165.204.84.17) by
+ CH2PEPF00000142.mail.protection.outlook.com (10.167.244.75) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9320.13 via Frontend Transport; Tue, 11 Nov 2025 07:05:35 +0000
+Received: from SATLEXMB05.amd.com (10.181.40.146) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.17; Mon, 10 Nov
+ 2025 23:05:35 -0800
+Received: from satlexmb08.amd.com (10.181.42.217) by SATLEXMB05.amd.com
+ (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 11 Nov
+ 2025 01:05:34 -0600
+Received: from xhdapps-pcie2.xilinx.com (10.180.168.240) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
+ Transport; Mon, 10 Nov 2025 23:05:32 -0800
+From: Devendra K Verma <devendra.verma@amd.com>
+To: <bhelgaas@google.com>, <mani@kernel.org>, <vkoul@kernel.org>
+CC: <dmaengine@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <michal.simek@amd.com>,
+	<Devendra.Verma@amd.com>
+Subject: [PATCH RESEND v6 0/2] Add AMD MDB Endpoint and non-LL mode Support
+Date: Tue, 11 Nov 2025 12:35:29 +0530
+Message-ID: <20251111070531.6808-1-devendra.verma@amd.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+Received-SPF: None (SATLEXMB05.amd.com: devendra.verma@amd.com does not
+ designate permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PEPF00000142:EE_|DS7PR12MB9473:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4f363ab2-02fd-428b-fe7b-08de20f0b688
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|82310400026|376014|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?ndVKAK3c9wYlixZDLm3aF53DaESpEVSFomU1TMZH5TYB8xYrZnCO0i0IYOvu?=
+ =?us-ascii?Q?BWCk6wEEZbUI3x0+96+wIYecvdLRLoFpvjVxRBYW2Dj4KB656iJLbFy0uhOz?=
+ =?us-ascii?Q?jFws+e5es9uwF0gUpqhyZBopwaburIAXIxr3p6EYh9MPQR3QmTyxSNOFzGRp?=
+ =?us-ascii?Q?MEMquNKgqF7i+7kv0UndzIS/m0vIPap710EpWUR6e7HwAakfgGEg3oNchcJk?=
+ =?us-ascii?Q?NanLd1sk7x9MmRTcuneSUxlrYb4E8GHl3eanBLBWIieb1ap0w8xpVWyxjAdb?=
+ =?us-ascii?Q?Hn5micyt63tmhQkWH1eg1kT+xBV/1HpOa07AebfHSdr4Dmal5k5C50E+Gxhg?=
+ =?us-ascii?Q?hascmAqHAdzfwUvIy9zy94eNWLSune6d5x36vlmmgACMKzEf37eUmz4BvuhW?=
+ =?us-ascii?Q?4VJ/zr/49OEi7niRROxQKydbhhsfQmrOnw164NQudqA7vQOEM5FGVCk7JM5/?=
+ =?us-ascii?Q?OZm3j34v5g2JxAtD9NBw3zfY40eFBSH7464fv7gpHYApA9fTyufyNr6mg6hA?=
+ =?us-ascii?Q?UR8jbiybi7wq5Igcgq5Lm/WpGksGqbYgoHX1+Krmq+7x9g0mFh8/4VhWt+8t?=
+ =?us-ascii?Q?YB4qDW8rkShOL9CwT//KSFSp75s2u59jMGhxN5C9KCcmpDfWsG0hn7SG1hLk?=
+ =?us-ascii?Q?YfkFSnkmejhYkaVDPPBWbNlBgujjpLcwrOp3uUd9ilpVBFWaElHWF91ob6zS?=
+ =?us-ascii?Q?rjckk54Mi9yt8VLnz8b5Cefn5iz0BB1ICk7312qzPhyvUbbBUx+a98njAV6j?=
+ =?us-ascii?Q?cLS6ud274rYH+wBblfi9r2ivsLqReoH1MMEhGKAGqfsGfihUg7WpMCIGhSkh?=
+ =?us-ascii?Q?wbFQvPjyuK8Wv+csUZS0IcbucXq5XdNNzBJbnjT5WvHdBMRmjXNz8sSZ3k25?=
+ =?us-ascii?Q?lEIb8+kRv3B41TVHfvt2of1jz9dZQ1IexQjUwI6QTETi+U+D1oNbKINk4cRq?=
+ =?us-ascii?Q?jtNrl3p9XaystjpRqb007zlwZgKPnVAxHR3zwwHIDfXBTv6lwf+zAZcZtgzb?=
+ =?us-ascii?Q?xTIAL6fzweF2X0PuF/ju/DRNCJUpoI68y4GkGVXYvIv7vq6tuEQ58g7NBkuS?=
+ =?us-ascii?Q?pNUDBsIL+P0KvN5kVshy/2DekpTgDaRRCQhevBUREvEsjCBeeFDM3SQJ9y11?=
+ =?us-ascii?Q?DztvJV4+y8NzMhr2wC1RomCNq06Rn/9xbOwO+4w4RTzgxT3KiWHqpYVaNl6L?=
+ =?us-ascii?Q?419tkU8qy+18hiiOZwNU1QUU2AGTNhlOls6GS9XJFWCxp3A8awuaKWufTfv4?=
+ =?us-ascii?Q?PRGWKcl7wcCLic2Av9Y0uqCESxt4IrwLrf3NzV7Tg1ccKaBtIEu1s0u081ag?=
+ =?us-ascii?Q?A4lUcn8AgtSimkOwVyy0nPEI3MuzqeQghoit7o9RK/LzpMNSmwYd8LNe4dU8?=
+ =?us-ascii?Q?my2I2+upRLPo1k1A3J929AaKOBQtXMBwkGRXsvI6hKTS1dY73zd7vlqal1/Z?=
+ =?us-ascii?Q?D8WKazhFnortyjknYncaPWJZbhwID7mzoUN9PkwXRSd69Uq8Au1XT23kpxjg?=
+ =?us-ascii?Q?I/dORjhe8c9sPuq4gvfmKhYaAZw1vyjnGzc5nyQLelUEa1G6zj1AlRQ9h8Ma?=
+ =?us-ascii?Q?hgR/t74OInB98k52d4w=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(376014)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Nov 2025 07:05:35.9346
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4f363ab2-02fd-428b-fe7b-08de20f0b688
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH2PEPF00000142.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB9473
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git testing/wfamnae-next20251110
-head:   be928bdef109364ada67e15d004067a1770a36f0
-commit: fc09359f7ea98c65bfc288e3e37dda0af71652f7 [10/18] scsi: libsas/aci94xx: Avoid multiple -Wflex-array-member-not-at-end warnings
-config: arc-randconfig-001-20251111 (https://download.01.org/0day-ci/archive/20251111/202511111408.FUkLQsGp-lkp@intel.com/config)
-compiler: arc-linux-gcc (GCC) 11.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251111/202511111408.FUkLQsGp-lkp@intel.com/reproduce)
+This series of patch support the following:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202511111408.FUkLQsGp-lkp@intel.com/
+ - AMD MDB Endpoint Support, as part of this patch following are
+   added:
+   o AMD supported device ID and vendor ID (Xilinx)
+   o AMD MDB specific driver data
+   o AMD specific VSEC capabilities to retrieve the base of
+     phys address of MDB side DDR
+   o Logic to assign the offsets to LL and data blocks if
+     more number of channels are enabled than configured
+     in the given pci_data struct.
 
-All errors (new ones prefixed by >>):
+ - Addition of non-LL mode
+   o The IP supported non-LL mode functions
+   o Flexibility to choose non-LL mode via dma_slave_config
+     param peripheral_config, by the client for all the vendors
+     using HDMA IP.
+   o Allow IP utilization if LL mode is not available
 
-   In file included from drivers/scsi/hisi_sas/hisi_sas_v1_hw.c:7:
->> drivers/scsi/hisi_sas/hisi_sas.h:617:47: error: field 'task' has incomplete type
-     617 |                         struct ssp_command_iu task;
-         |                                               ^~~~
-   drivers/scsi/hisi_sas/hisi_sas_v1_hw.c: In function 'prep_ssp_v1_hw':
->> drivers/scsi/hisi_sas/hisi_sas_v1_hw.c:1002:32: error: invalid application of 'sizeof' to incomplete type 'struct ssp_command_iu'
-    1002 |                 dw2 = ((sizeof(struct ssp_command_iu) +
-         |                                ^~~~~~
---
-   In file included from drivers/scsi/hisi_sas/hisi_sas_v2_hw.c:7:
->> drivers/scsi/hisi_sas/hisi_sas.h:617:47: error: field 'task' has incomplete type
-     617 |                         struct ssp_command_iu task;
-         |                                               ^~~~
-   drivers/scsi/hisi_sas/hisi_sas_v2_hw.c: In function 'prep_ssp_v2_hw':
->> drivers/scsi/hisi_sas/hisi_sas_v2_hw.c:1779:25: error: invalid application of 'sizeof' to incomplete type 'struct ssp_command_iu'
-    1779 |         dw2 = (((sizeof(struct ssp_command_iu) + sizeof(struct ssp_frame_hdr)
-         |                         ^~~~~~
---
-   In file included from drivers/scsi/hisi_sas/hisi_sas_main.c:7:
->> drivers/scsi/hisi_sas/hisi_sas.h:617:47: error: field 'task' has incomplete type
-     617 |                         struct ssp_command_iu task;
-         |                                               ^~~~
+Devendra K Verma (2):
+  dmaengine: dw-edma: Add AMD MDB Endpoint Support
+  dmaengine: dw-edma: Add non-LL mode
 
-
-vim +1002 drivers/scsi/hisi_sas/hisi_sas_v1_hw.c
-
-42e7a69368a585 John Garry  2015-11-18   950  
-a2b3820bddfbff Xiang Chen  2018-05-09   951  static void prep_ssp_v1_hw(struct hisi_hba *hisi_hba,
-78bd2b4f6e7c05 Xiaofei Tan 2018-05-21   952  			  struct hisi_sas_slot *slot)
-42e7a69368a585 John Garry  2015-11-18   953  {
-42e7a69368a585 John Garry  2015-11-18   954  	struct sas_task *task = slot->task;
-42e7a69368a585 John Garry  2015-11-18   955  	struct hisi_sas_cmd_hdr *hdr = slot->cmd_hdr;
-42e7a69368a585 John Garry  2015-11-18   956  	struct domain_device *device = task->dev;
-42e7a69368a585 John Garry  2015-11-18   957  	struct hisi_sas_device *sas_dev = device->lldd_dev;
-42e7a69368a585 John Garry  2015-11-18   958  	struct hisi_sas_port *port = slot->port;
-42e7a69368a585 John Garry  2015-11-18   959  	struct sas_ssp_task *ssp_task = &task->ssp_task;
-42e7a69368a585 John Garry  2015-11-18   960  	struct scsi_cmnd *scsi_cmnd = ssp_task->cmd;
-bbfe82cdbaf84e John Garry  2022-02-17   961  	struct sas_tmf_task *tmf = slot->tmf;
-78bd2b4f6e7c05 Xiaofei Tan 2018-05-21   962  	int has_data = 0, priority = !!tmf;
-ebf26e93cfece2 John Garry  2023-08-15   963  	u8 *buf_cmd;
-42e7a69368a585 John Garry  2015-11-18   964  	u32 dw1, dw2;
-42e7a69368a585 John Garry  2015-11-18   965  
-42e7a69368a585 John Garry  2015-11-18   966  	/* create header */
-42e7a69368a585 John Garry  2015-11-18   967  	hdr->dw0 = cpu_to_le32((1 << CMD_HDR_RESP_REPORT_OFF) |
-42e7a69368a585 John Garry  2015-11-18   968  			       (0x2 << CMD_HDR_TLR_CTRL_OFF) |
-42e7a69368a585 John Garry  2015-11-18   969  			       (port->id << CMD_HDR_PORT_OFF) |
-42e7a69368a585 John Garry  2015-11-18   970  			       (priority << CMD_HDR_PRIORITY_OFF) |
-42e7a69368a585 John Garry  2015-11-18   971  			       (1 << CMD_HDR_MODE_OFF) | /* ini mode */
-42e7a69368a585 John Garry  2015-11-18   972  			       (1 << CMD_HDR_CMD_OFF)); /* ssp */
-42e7a69368a585 John Garry  2015-11-18   973  
-42e7a69368a585 John Garry  2015-11-18   974  	dw1 = 1 << CMD_HDR_VERIFY_DTL_OFF;
-42e7a69368a585 John Garry  2015-11-18   975  
-78bd2b4f6e7c05 Xiaofei Tan 2018-05-21   976  	if (tmf) {
-42e7a69368a585 John Garry  2015-11-18   977  		dw1 |= 3 << CMD_HDR_SSP_FRAME_TYPE_OFF;
-42e7a69368a585 John Garry  2015-11-18   978  	} else {
-42e7a69368a585 John Garry  2015-11-18   979  		switch (scsi_cmnd->sc_data_direction) {
-42e7a69368a585 John Garry  2015-11-18   980  		case DMA_TO_DEVICE:
-42e7a69368a585 John Garry  2015-11-18   981  			dw1 |= 2 << CMD_HDR_SSP_FRAME_TYPE_OFF;
-42e7a69368a585 John Garry  2015-11-18   982  			has_data = 1;
-42e7a69368a585 John Garry  2015-11-18   983  			break;
-42e7a69368a585 John Garry  2015-11-18   984  		case DMA_FROM_DEVICE:
-42e7a69368a585 John Garry  2015-11-18   985  			dw1 |= 1 << CMD_HDR_SSP_FRAME_TYPE_OFF;
-42e7a69368a585 John Garry  2015-11-18   986  			has_data = 1;
-42e7a69368a585 John Garry  2015-11-18   987  			break;
-42e7a69368a585 John Garry  2015-11-18   988  		default:
-42e7a69368a585 John Garry  2015-11-18   989  			dw1 |= 0 << CMD_HDR_SSP_FRAME_TYPE_OFF;
-42e7a69368a585 John Garry  2015-11-18   990  		}
-42e7a69368a585 John Garry  2015-11-18   991  	}
-42e7a69368a585 John Garry  2015-11-18   992  
-42e7a69368a585 John Garry  2015-11-18   993  	/* map itct entry */
-42e7a69368a585 John Garry  2015-11-18   994  	dw1 |= sas_dev->device_id << CMD_HDR_DEVICE_ID_OFF;
-42e7a69368a585 John Garry  2015-11-18   995  	hdr->dw1 = cpu_to_le32(dw1);
-42e7a69368a585 John Garry  2015-11-18   996  
-78bd2b4f6e7c05 Xiaofei Tan 2018-05-21   997  	if (tmf) {
-42e7a69368a585 John Garry  2015-11-18   998  		dw2 = ((sizeof(struct ssp_tmf_iu) +
-42e7a69368a585 John Garry  2015-11-18   999  			sizeof(struct ssp_frame_hdr)+3)/4) <<
-42e7a69368a585 John Garry  2015-11-18  1000  			CMD_HDR_CFL_OFF;
-42e7a69368a585 John Garry  2015-11-18  1001  	} else {
-42e7a69368a585 John Garry  2015-11-18 @1002  		dw2 = ((sizeof(struct ssp_command_iu) +
-42e7a69368a585 John Garry  2015-11-18  1003  			sizeof(struct ssp_frame_hdr)+3)/4) <<
-42e7a69368a585 John Garry  2015-11-18  1004  			CMD_HDR_CFL_OFF;
-42e7a69368a585 John Garry  2015-11-18  1005  	}
-42e7a69368a585 John Garry  2015-11-18  1006  
-42e7a69368a585 John Garry  2015-11-18  1007  	dw2 |= (HISI_SAS_MAX_SSP_RESP_SZ/4) << CMD_HDR_MRFL_OFF;
-42e7a69368a585 John Garry  2015-11-18  1008  
-42e7a69368a585 John Garry  2015-11-18  1009  	hdr->transfer_tags = cpu_to_le32(slot->idx << CMD_HDR_IPTT_OFF);
-42e7a69368a585 John Garry  2015-11-18  1010  
-a2b3820bddfbff Xiang Chen  2018-05-09  1011  	if (has_data)
-a2b3820bddfbff Xiang Chen  2018-05-09  1012  		prep_prd_sge_v1_hw(hisi_hba, slot, hdr, task->scatter,
-42e7a69368a585 John Garry  2015-11-18  1013  					slot->n_elem);
-42e7a69368a585 John Garry  2015-11-18  1014  
-42e7a69368a585 John Garry  2015-11-18  1015  	hdr->data_transfer_len = cpu_to_le32(task->total_xfer_len);
-f557e32c0023ea Xiaofei Tan 2017-06-29  1016  	hdr->cmd_table_addr = cpu_to_le64(hisi_sas_cmd_hdr_addr_dma(slot));
-f557e32c0023ea Xiaofei Tan 2017-06-29  1017  	hdr->sts_buffer_addr = cpu_to_le64(hisi_sas_status_buf_addr_dma(slot));
-42e7a69368a585 John Garry  2015-11-18  1018  
-f557e32c0023ea Xiaofei Tan 2017-06-29  1019  	buf_cmd = hisi_sas_cmd_hdr_addr_mem(slot) +
-f557e32c0023ea Xiaofei Tan 2017-06-29  1020  		sizeof(struct ssp_frame_hdr);
-42e7a69368a585 John Garry  2015-11-18  1021  	hdr->dw2 = cpu_to_le32(dw2);
-42e7a69368a585 John Garry  2015-11-18  1022  
-42e7a69368a585 John Garry  2015-11-18  1023  	memcpy(buf_cmd, &task->ssp_task.LUN, 8);
-78bd2b4f6e7c05 Xiaofei Tan 2018-05-21  1024  	if (!tmf) {
-4dc051eb0c6b6c John Garry  2023-08-15  1025  		buf_cmd[9] = task->ssp_task.task_attr;
-42e7a69368a585 John Garry  2015-11-18  1026  		memcpy(buf_cmd + 12, task->ssp_task.cmd->cmnd,
-42e7a69368a585 John Garry  2015-11-18  1027  				task->ssp_task.cmd->cmd_len);
-42e7a69368a585 John Garry  2015-11-18  1028  	} else {
-42e7a69368a585 John Garry  2015-11-18  1029  		buf_cmd[10] = tmf->tmf;
-42e7a69368a585 John Garry  2015-11-18  1030  		switch (tmf->tmf) {
-42e7a69368a585 John Garry  2015-11-18  1031  		case TMF_ABORT_TASK:
-42e7a69368a585 John Garry  2015-11-18  1032  		case TMF_QUERY_TASK:
-42e7a69368a585 John Garry  2015-11-18  1033  			buf_cmd[12] =
-42e7a69368a585 John Garry  2015-11-18  1034  				(tmf->tag_of_task_to_be_managed >> 8) & 0xff;
-42e7a69368a585 John Garry  2015-11-18  1035  			buf_cmd[13] =
-42e7a69368a585 John Garry  2015-11-18  1036  				tmf->tag_of_task_to_be_managed & 0xff;
-42e7a69368a585 John Garry  2015-11-18  1037  			break;
-42e7a69368a585 John Garry  2015-11-18  1038  		default:
-42e7a69368a585 John Garry  2015-11-18  1039  			break;
-42e7a69368a585 John Garry  2015-11-18  1040  		}
-42e7a69368a585 John Garry  2015-11-18  1041  	}
-42e7a69368a585 John Garry  2015-11-18  1042  }
-42e7a69368a585 John Garry  2015-11-18  1043  
-
-:::::: The code at line 1002 was first introduced by commit
-:::::: 42e7a69368a5855b36cbaff130e58e2cc9976ff3 hisi_sas: Add ssp command function
-
-:::::: TO: John Garry <john.garry@huawei.com>
-:::::: CC: Martin K. Petersen <martin.petersen@oracle.com>
+ drivers/dma/dw-edma/dw-edma-core.c    |  41 ++++++++-
+ drivers/dma/dw-edma/dw-edma-core.h    |   1 +
+ drivers/dma/dw-edma/dw-edma-pcie.c    | 169 ++++++++++++++++++++++++++++++++--
+ drivers/dma/dw-edma/dw-hdma-v0-core.c |  61 +++++++++++-
+ drivers/dma/dw-edma/dw-hdma-v0-regs.h |   1 +
+ include/linux/dma/edma.h              |   1 +
+ 6 files changed, 260 insertions(+), 14 deletions(-)
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+1.8.3.1
+
 
