@@ -1,155 +1,287 @@
-Return-Path: <linux-kernel+bounces-894829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86AB0C4C2ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 08:52:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49823C4C2DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 08:51:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A74A94F4E39
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 07:51:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B28743B49D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 07:51:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A14FE299950;
-	Tue, 11 Nov 2025 07:50:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 897632DC76C;
+	Tue, 11 Nov 2025 07:50:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KBWfWD3g"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O19bfxZN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33663271462
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 07:50:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D51F248893;
+	Tue, 11 Nov 2025 07:50:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762847457; cv=none; b=PklihsPiz6fQybUch+gt4bswOkidcKl3QYTxmGpy25I1m+xjsjJ38WYVZInfZEAzdgi344hVwGSv9FCEBQ/3vBg+O2PyGRbAEz+l4oCM2VTxJy5yYbXTFVfctqQfO/r8O2VYEwIuKhVARZNdSalBIhZTj/CBLJpLAcd4w5RqoIk=
+	t=1762847444; cv=none; b=ooqpIbfn+dopO4xspWZi99IRibBSygcc0H1TMNyhdXSGP2aoOqHtcJ28eOwbHVnDQb9o616Ik3u1oFzBTRBuHrhvdqgCmd3O/WDDEHPio0C8PBYE8auno2YEQYe6ZArCahGSX3NCM2s45SRo9M4mKxBjCkMT2+TU8DelHZKt6N8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762847457; c=relaxed/simple;
-	bh=wgbBjKCXPt44908Da8imHeITevGlc2N0snoDZHBarJ0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hPE+RCTZmZQE7feUHWZympFvt5WQMzDta/NccLjIS5rye9o/BvMz7kQfV/JFyxJ5Cv6pC9DES6wFTlC/lAQndV+zaupZBgDQ3Dxis5X0zJbBv0iO3iacpqJbDwzjzbsCg7M69L6B4Fllb3JzT8aJDYBzQEyl3l9JWN4gxxsFg1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KBWfWD3g; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b7260435287so583093566b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 23:50:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762847453; x=1763452253; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QPb3RU6wwcBtxeOtftIdEiiFPQNHy2zbBJnXdVFccXw=;
-        b=KBWfWD3gqQ/8i3tz5nbhvHRxWwe5jwjZVNUzmWvlF8ulvUs7lJm1Lz1A42Yu5Nd3xD
-         xzdNMt/HIfruVJnYYeeZh4XR49qkZ5BST0ynOMpcxk1NGHkLMYJdpyPH662ak7TcPlts
-         jRC59+0zH1QStCQzGMtx8miGfoyemXltZzCEUJBjGvPMQ7BN78Spu/3Nm/vRVu/F6X+j
-         6QPPLTUbDXzqs1tOoDWZ+lA0/nniWOcwmJVQdT2+i0PhBm2UB+orIq4D/mHyULRWGtRH
-         9ufOCqNC3STa2GcyvNxC6xWHgRtSVhPohTK5I2j9mxP96hm8IDhnUhWTsFrvMYGxlEFw
-         6JcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762847453; x=1763452253;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=QPb3RU6wwcBtxeOtftIdEiiFPQNHy2zbBJnXdVFccXw=;
-        b=BkLN3T2jW3HbzdUz3nmlR+7gigCThjXunn1cQSGG9WrclGdpIzxmhqgxuw6UH8f3UE
-         kysKfxB3hBgT4oIbt42KY+1mwpIYlJLwpEVMT1c2fsyNgl2Xyu5cYDiSaDZywUtOl175
-         VvVbtv6c0RRC5Jb9UiiBt9bDQ631XLW6mhtjjvl2Z2j8g72t/x0SpTrYMc1EKy9cQ215
-         punfbXw82A+8tqw15FIwD2dVlOIeESYf9Y93+Ne4+ZYGBncznYpO0mub+Fd2MFEesBlP
-         IEKNZPQbD4rfcSjplNUFOMHsgMuSF6/fnUFA+hXOqvH/MC0rvm3CYQBJ9P5+GB+Aumvi
-         dyfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX6jaSyljVZm//3cSiyLDhvgAa8r5hCnFYV+TWFd2a/cEf/aG9yBWXlMWNeJcxTsJhx7sjgIE6UAAaUzFg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXtMHx1+5OEQDPhGoZ0Tr4/oeL2zkY4UvcyyCXzo2KAGTsR2Nh
-	Ghwwg5F3N1T2Vtdr6BPstHNtE/HZgx854FIJGq2/kEQvvZzlD/cw9QT2ol6jLCY0Sve+/OdCZp1
-	ebETsjsBYLxx6u8oOc32qQq3sSFibNXbnD3sPsHw=
-X-Gm-Gg: ASbGncs4QVSWUQmnEehZQtIEGDQDzARRWNlMZh849cztekd3x1vbIqwMnAUfe30v+Ua
-	ZAK7bUmJygXCs4ZqAb2yIultZq/4WQTD+f4W+F7q3ASVzlaut4jWbMxDHMb5TMz+boqSbWF4Nhb
-	ENI9yypMbDZj98JdCEhD+Aw2Jgu2+yxiO1ahBGFlwWHK+zuwg1agDpXB1H1E9MzXGXYnyx6Kfrj
-	wmJnEHWQYedZzEeZUH+yuzhbmRSITlO0KQCh8jgI46OcWRk5jQt2YKbvZjGbNb7+Lz0kTJYF9au
-	OIUE8HO44m3Q0rStO8TYjZdL62dzzDQxAw==
-X-Google-Smtp-Source: AGHT+IGUExnaVr6M9xvfzXovOqhuvZapgeGIImxDTwkzsYq3skke52Dt66s1HawJ5Sj22ETKPhwaG9CQIrUxADSW9FY=
-X-Received: by 2002:a17:907:3f9b:b0:b72:62b2:26a1 with SMTP id
- a640c23a62f3a-b72e0337345mr920803666b.19.1762847453142; Mon, 10 Nov 2025
- 23:50:53 -0800 (PST)
+	s=arc-20240116; t=1762847444; c=relaxed/simple;
+	bh=vuMoVFupSHUXBD5TFPvCPtN11RLcSgDHxZIZzswyRt4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=maW6/tpSDFGeHIcVfGyxQmGmdyZJBzSO0hKKfwaqgUzVsMUYiXf9A15QqsCYIghU/g0FMb7V37bQcBrb0ZdPkP+rx6KBX0TmOydqo5orcZE9r6Jve8n2r3shVcPSN8M4QLfk5kei75ZK7mTWLZk958p7lbFF0XJQlmTDX0oVC3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O19bfxZN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C73D0C4CEF7;
+	Tue, 11 Nov 2025 07:50:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762847444;
+	bh=vuMoVFupSHUXBD5TFPvCPtN11RLcSgDHxZIZzswyRt4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=O19bfxZNNVrd5ELG/pnDdjCFq+LqYP3lj7A4ofMnvlikXNNd/ySxECqqKiX2IxgiE
+	 2AmvRgcVJoiBJ6VMGHma43EsnRs7IkZRwJhoxAf1lNBQSUs8R7+5rneGG7lAhDzRVy
+	 appYI+1o8wzbiDdB4mDXXxYfbR187dDjHh3Hhjx+Fh60MF/DaQHoJhK3pouVhtGim6
+	 /QRTDmE215rrddJ7X4ByDCle9y97at+blqgiaigArzJ+wh3B8xnSBkct5YTaTVFhpU
+	 0/7LE8q7QYWQQkI4N9c89dar4JGCn23nidg4NmxeUvCzfblkrFVHt0brnwfQOWazq1
+	 VtGN000Iax5JQ==
+Date: Mon, 10 Nov 2025 23:50:42 -0800
+From: Namhyung Kim <namhyung@kernel.org>
+To: "Chen, Zide" <zide.chen@intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+	Peter Zijlstra <peterz@infradead.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	thomas.falcon@intel.com, dapeng1.mi@linux.intel.com,
+	xudong.hao@intel.com
+Subject: Re: [PATCH] perf tools: Refactor precise_ip fallback logic
+Message-ID: <aRLq0isFxDJlsHlL@google.com>
+References: <aPrktlANBHFtV52B@google.com>
+ <576a7d2b-0a82-4738-8b86-507e4d841524@intel.com>
+ <aP1ucJiJYBavTHV7@google.com>
+ <e10d671a-eb89-4e06-a1eb-e2f12ee41d70@intel.com>
+ <aQl3qfyTdAb68l1l@google.com>
+ <652bf158-ba9e-4a97-b4c3-3a7f7e39fe85@intel.com>
+ <aQzugcpRvOcPEEro@google.com>
+ <5f84fe4f-90ef-42d6-8a3a-c1f515a7832a@intel.com>
+ <aQ5n4ML9lxY4VAxi@google.com>
+ <eb41cde1-9611-4998-a82f-5d6efb80b0d1@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251030001857.681432-1-jstultz@google.com> <20251030001857.681432-9-jstultz@google.com>
- <f9b42bf8-e4c8-4028-a977-f324ba2f2275@amd.com>
-In-Reply-To: <f9b42bf8-e4c8-4028-a977-f324ba2f2275@amd.com>
-From: John Stultz <jstultz@google.com>
-Date: Mon, 10 Nov 2025 23:50:40 -0800
-X-Gm-Features: AWmQ_bm8qGh50p49pV_NgYsgWmZWd5A0cVU0KIOWVMlxdIXcGv4iyMlcL-l4ET4
-Message-ID: <CANDhNCp=zbjcy-eCwKHcbgLSJjgzqz8ZLTMyZzNMkuXtLXseMg@mail.gmail.com>
-Subject: Re: [PATCH v23 8/9] sched: Add blocked_donor link to task for smarter
- mutex handoffs
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Juri Lelli <juri.lelli@redhat.com>, Valentin Schneider <valentin.schneider@arm.com>, 
-	"Connor O'Brien" <connoro@google.com>, Joel Fernandes <joelagnelf@nvidia.com>, 
-	Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@redhat.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Valentin Schneider <vschneid@redhat.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Ben Segall <bsegall@google.com>, Zimuzo Ezeozue <zezeozue@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Metin Kaya <Metin.Kaya@arm.com>, 
-	Xuewen Yan <xuewen.yan94@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Suleiman Souhlal <suleiman@google.com>, 
-	kuyo chang <kuyo.chang@mediatek.com>, hupu <hupu.gm@gmail.com>, kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <eb41cde1-9611-4998-a82f-5d6efb80b0d1@intel.com>
 
-On Thu, Oct 30, 2025 at 10:03=E2=80=AFPM K Prateek Nayak <kprateek.nayak@am=
-d.com> wrote:
-> On 10/30/2025 5:48 AM, John Stultz wrote:
-> > @@ -958,7 +964,34 @@ static noinline void __sched __mutex_unlock_slowpa=
-th(struct mutex *lock, unsigne
-> >
-> >       raw_spin_lock_irqsave(&lock->wait_lock, flags);
-> >       debug_mutex_unlock(lock);
-> > -     if (!list_empty(&lock->wait_list)) {
-> > +
-> > +     if (sched_proxy_exec()) {
-> > +             raw_spin_lock(&current->blocked_lock);
-> > +             /*
-> > +              * If we have a task boosting current, and that task was =
-boosting
-> > +              * current through this lock, hand the lock to that task,=
- as that
-> > +              * is the highest waiter, as selected by the scheduling f=
-unction.
-> > +              */
-> > +             donor =3D current->blocked_donor;
-> > +             if (donor) {
->
-> Any concerns on new waiters always appearing as donors and in-turn
-> starving the long time waiters on the list?
->
-Hey!
-  So I'm not sure I'm quite following the concern. The scheduler picks
-"the most important task in that moment" to run and we just want to
-try to to pass the lock off to the donor that was boosting the lock
-owner.
+On Fri, Nov 07, 2025 at 02:31:23PM -0800, Chen, Zide wrote:
+> 
+> 
+> On 11/7/2025 1:42 PM, Namhyung Kim wrote:
+> > On Thu, Nov 06, 2025 at 05:23:09PM -0800, Chen, Zide wrote:
+> >>
+> >>
+> >> On 11/6/2025 10:52 AM, Namhyung Kim wrote:
+> >>> On Tue, Nov 04, 2025 at 11:10:44AM -0800, Chen, Zide wrote:
+> >>>>
+> >>>>
+> >>>> On 11/3/2025 7:48 PM, Namhyung Kim wrote:
+> >>>>> Hello,
+> >>>>>
+> >>>>> Sorry for the delay.
+> >>>>>
+> >>>>> On Mon, Oct 27, 2025 at 11:56:52AM -0700, Chen, Zide wrote:
+> >>>>>>
+> >>>>>>
+> >>>>>> On 10/25/2025 5:42 PM, Namhyung Kim wrote:
+> >>>>>>> On Fri, Oct 24, 2025 at 11:03:17AM -0700, Chen, Zide wrote:
+> >>>>>>>>
+> >>>>>>>>
+> >>>>>>>> On 10/23/2025 7:30 PM, Namhyung Kim wrote:
+> >>>>>>>>> Hello,
+> >>>>>>>>>
+> >>>>>>>>> On Wed, Oct 22, 2025 at 03:08:02PM -0700, Zide Chen wrote:
+> >>>>>>>>>> Commit c33aea446bf555ab ("perf tools: Fix precise_ip fallback logic")
+> >>>>>>>>>> unconditionally called the precise_ip fallback and moved it after the
+> >>>>>>>>>> missing-feature checks so that it could handle EINVAL as well.
+> >>>>>>>>>>
+> >>>>>>>>>> However, this introduced an issue: after disabling missing features,
+> >>>>>>>>>> the event could fail to open, which makes the subsequent precise_ip
+> >>>>>>>>>> fallback useless since it will always fail.
+> >>>>>>>>>>
+> >>>>>>>>>> For example, run the following command on Intel SPR:
+> >>>>>>>>>>
+> >>>>>>>>>> $ perf record -e '{cpu/mem-loads-aux/S,cpu/mem-loads,ldlat=3/PS}' -- ls
+> >>>>>>>>>>
+> >>>>>>>>>> Opening the event "cpu/mem-loads,ldlat=3/PS" returns EINVAL when
+> >>>>>>>>>> precise_ip == 3. It then sets attr.inherit = false, which triggers a
+> >>>>>>>>>
+> >>>>>>>>> I'm curious about this part.  Why the kernel set 'inherit = false'?  IOW
+> >>>>>>>>> how did the leader event (mem-loads-aux) succeed with inherit = true
+> >>>>>>>>> then?
+> >>>>>>>>
+> >>>>>>>> Initially, the inherit = true for both the group leader
+> >>>>>>>> (cpu/mem-loads-aux/S) and the event in question (cpu/mem-loads,ldlat=3/PS).
+> >>>>>>>>
+> >>>>>>>> When the second event fails with EINVAL, the current logic calls
+> >>>>>>>> evsel__detect_missing_features() first. Since this is a PERF_SAMPLE_READ
+> >>>>>>>> event, the inherit attribute falls back to false, according to the
+> >>>>>>>> fallback order implemented in evsel__detect_missing_features().
+> >>>>>>>
+> >>>>>>> Right, that means the kernel doesn't support PERF_SAMPLE_READ with
+> >>>>>>> inherit = true.  How did the first event succeed to open then?
+> >>>>>>
+> >>>>>> The perf tool sets PERF_SAMPLE_TID for Inherit + PERF_SAMPLE_READ
+> >>>>>> events, as implemented in commit 90035d3cd876 ("tools/perf: Allow
+> >>>>>> inherit + PERF_SAMPLE_READ when opening event").
+> >>>>>>
+> >>>>>> Meanwhile, commit 7e8b255650fc ("perf: Support PERF_SAMPLE_READ with
+> >>>>>> inherit") rejects a perf event if has_inherit_and_sample_read(attr) is
+> >>>>>> true and PERF_SAMPLE_TID is not set in attr->sample_type.
+> >>>>>>
+> >>>>>> Therefore, the first event succeeded, while the one opened in
+> >>>>>> evsel__detect_missing_features() which doesn't have PERF_SAMPLE_TID failed.
+> >>>>>
+> >>>>> Why does the first succeed and the second fail?  Don't they have the
+> >>>>> same SAMPLE_READ and SAMPLE_TID + inherit flags?
+> >>>>
+> >>>> Sorry, my previous reply wasn’t entirely accurate. The first event
+> >>>> (cpu/mem-loads-aux/S) succeeds because it’s not a precise event
+> >>>> (precise_ip == 0).
+> >>>
+> >>> I'm not sure how it matters.  I've tested the same command line on SPR
+> >>> and got this message.  It says it failed to open because of inherit and
+> >>> SAMPE_READ.  It didn't have precise_ip too.
+> >>>
+> >>>   $ perf record -e cpu/mem-loads-aux/S -vv true |& less
+> >>>   ...
+> >>>   ------------------------------------------------------------
+> >>>   perf_event_attr:
+> >>>     type                             4 (cpu)
+> >>>     size                             136
+> >>>     config                           0x8203 (mem-loads-aux)
+> >>>     { sample_period, sample_freq }   4000
+> >>>     sample_type                      IP|TID|TIME|READ|ID|PERIOD
+> >>>     read_format                      ID|LOST
+> >>>     disabled                         1
+> >>>     inherit                          1
+> >>>     mmap                             1
+> >>>     comm                             1
+> >>>     freq                             1
+> >>>     enable_on_exec                   1
+> >>>     task                             1
+> >>>     sample_id_all                    1
+> >>>     mmap2                            1
+> >>>     comm_exec                        1
+> >>>     ksymbol                          1
+> >>>     bpf_event                        1
+> >>>   ------------------------------------------------------------
+> >>>   sys_perf_event_open: pid 1161023  cpu 0  group_fd -1  flags 0x8
+> >>>   sys_perf_event_open failed, error -22
+> >>>   Using PERF_SAMPLE_READ / :S modifier is not compatible with inherit, falling back to no-inherit.
+> >>>   ...
+> >>>
+> >>> And it fell back to no-inherit and succeeded.  
+> >>
+> >> On my SPR, with either kernel 6.18.0-rc4 or the older 6.17.0-rc6, my
+> >> test results are different from yours — I didn’t see any EINVAL, and
+> >> there was no fallback. :)
+> > 
+> > Yep, your kernel is recent and has the following commit.
+> > 
+> > 7e8b255650fcfa1d0 ("perf: Support PERF_SAMPLE_READ with inherit")
+> > 
+> > My kernel is 6.6 and it rejects such a combination.  I'll test it on
+> > newer kernels later.
+> > 
+> >>
+> >> It’s strange, but even so, since there’s no group leader in this case, I
+> >> assume that when it falls back to non-inherit, it should pass the
+> >> following check.
+> >>
+> >>         if (task && group_leader &&
+> >>             group_leader->attr.inherit != attr.inherit) {
+> >>                 err = -EINVAL;
+> >>                 goto err_task;
+> >>         }
+> >>
+> >>> I've also found that it
+> >>> worked even with precise_ip = 3.
+> >>>
+> >>>   $ perf record -e cpu/mem-loads-aux/PS -vv true |& less
+> >>>   ...
+> >>>   sys_perf_event_open: pid 1172834  cpu 0  group_fd -1  flags 0x8
+> >>>   sys_perf_event_open failed, error -22
+> >>>   Using PERF_SAMPLE_READ / :S modifier is not compatible with inherit, falling back to no-inherit.
+> >>>   ------------------------------------------------------------
+> >>>   perf_event_attr:
+> >>>     type                             4 (cpu)
+> >>>     size                             136
+> >>>     config                           0x8203 (mem-loads-aux)
+> >>>     { sample_period, sample_freq }   4000
+> >>>     sample_type                      IP|TID|TIME|READ|ID|PERIOD
+> >>>     read_format                      ID|LOST
+> >>>     disabled                         1
+> >>>     mmap                             1
+> >>>     comm                             1
+> >>>     freq                             1
+> >>>     enable_on_exec                   1
+> >>>     task                             1
+> >>>     precise_ip                       3         <<<---- here
+> >>>     sample_id_all                    1
+> >>>     mmap2                            1
+> >>>     comm_exec                        1
+> >>>     ksymbol                          1
+> >>>     bpf_event                        1
+> >>>   ------------------------------------------------------------
+> >>>   sys_perf_event_open: pid 1172834  cpu 0  group_fd -1  flags 0x8 = 4
+> >>>   ...
+> >>
+> >> Again, on my machine, I didn’t see EINVAL, and no fallback to
+> >> non-inherit. In my test, glc_get_event_constraints() successfully forces
+> >> this event (config == 0x8203) to fixed counter 0, so there’s no issue here.
+> > 
+> > That means your missing_features.inherit_sample_read should not be set.
+> > It's strange you have that with the recent kernels.
+> > 
+> > Can you run these commands and show the output here?
+> > 
+> >   $ perf record -e task-clock:S  true
+> >   $ perf evlist -v
+> 
+> On 6.18.0-rc4:
+> 
+> $ perf record -e task-clock:S  true
+> [ perf record: Woken up 2 times to write data ]
+> [ perf record: Captured and wrote 0.006 MB perf.data ]
+> 
+> $ perf evlist -v
+> task-clock:Su: type: 1 (PERF_TYPE_SOFTWARE), size: 136, config: 0x1
+> (PERF_COUNT_SW_TASK_CLOCK), { sample_period, sample_freq }: 4000,
+> sample_type: IP|TID|TIME|READ|ID|PERIOD, read_format: ID|LOST, disabled:
+> 1, inherit: 1, exclude_kernel: 1, exclude_hv: 1, mmap: 1, comm: 1, freq:
+> 1, enable_on_exec: 1, task: 1, sample_id_all: 1, mmap2: 1, comm_exec: 1,
+> ksymbol: 1, bpf_event: 1, build_id: 1
 
-Are you concerned that new waiters would somehow always be further
-left on the rq and would be selected as donors before other waiters on
-the rq? I can sort of see the argument that "new waiters" would be
-running until they try to get the lock, so they may have timeslice
-still available to make them attractive to the scheduler as a donor,
-so maybe they would be re-selected as a donor right away. But I'm
-assuming at some point the fairness is going to cycle any waiting
-donors up to the front of the rq to act as a donor and then have the
-lock handed off.
+Thanks for sharing this.  Yep, it has the inherit bit.
 
-That said, I don't see how this would be very much different from
-new/running optimistic spinners having a better chance at grabbing a
-lock then waiting tasks that aren't running.
+I think there's a bug in the missing feature test.  Indeed, it should
+also have PERF_SAMPLE_TID for the test according to the kernel comment.
 
-But let me know more about what you're thinking of, as I'd like to
-better understand it and see if I could contrive a test to produce
-this sort of concerning behavior.
+	/*
+	 * We do not support PERF_SAMPLE_READ on inherited events unless
+	 * PERF_SAMPLE_TID is also selected, which allows inherited events to
+	 * collect per-thread samples.
+	 * See perf_output_read().
+	 */
+	if (has_inherit_and_sample_read(attr) && !(attr->sample_type & PERF_SAMPLE_TID))
+		return ERR_PTR(-EINVAL);
 
-thanks
--john
+I'll send a patch soon.
+
+Thanks,
+Namhyung
+
 
