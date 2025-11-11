@@ -1,94 +1,153 @@
-Return-Path: <linux-kernel+bounces-895813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79B97C4EFEF
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:19:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D02AC4EFF5
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:20:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 20B1534CF55
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:19:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA02E18C0BD1
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:20:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8012336C59A;
-	Tue, 11 Nov 2025 16:19:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A0C436A012;
+	Tue, 11 Nov 2025 16:19:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h0wvRDQJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KMsA7uHA"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7549369991;
-	Tue, 11 Nov 2025 16:19:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF6E736A033;
+	Tue, 11 Nov 2025 16:19:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762877970; cv=none; b=hTUnuQHY4ELhHZ6p7IsWul2c5xwzRzPA87ba/gveFlGK78atthGtzt5Z1EbjnorQKQaOsOh5M0XDdA/MFsNUsCr50CxpyYZyS62rdebPt8y6nKlKQFPKPdnL8wscNO1b9cPLnm720y4VC1Rq5LhFhO35kxu1vh9pklDFi8n1tCc=
+	t=1762877984; cv=none; b=eo5+yp24aYz8ymehaKSNFyhVvQOY3TQeL34U093qysUlIRb1GuSo5XbrN70o1FWdNaGbuugXGRaqkwP6WobjjDt7bXwSkeE+XD/DuomupJXtM8NafjIbyk4wMGw2s5plCfrwhTl5z56ihlXeod3RxbJC3uFHy0GtpZ6MoPP2r6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762877970; c=relaxed/simple;
-	bh=HIzM0iyT3dDoXIUZ+C66BgDp43e3Tu3Z+4PxsInPwrQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KGF9VxH+BezqFc1C07HdMRumMKjV2JFi0QB6/Sxbykf4ouvwIVUyaqV1OyukKanqRt+BLg+SKGlqO3XhQ2gKW9DTik0uYhV2He92//G482LUyhwvRRMVIu16rHH9fFPmFEaaR894g4wNxZsYxfHqXyNVo7UsTNsGWxZD90TEyLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h0wvRDQJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F763C4CEFB;
-	Tue, 11 Nov 2025 16:19:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762877970;
-	bh=HIzM0iyT3dDoXIUZ+C66BgDp43e3Tu3Z+4PxsInPwrQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=h0wvRDQJj5f5uCXvKhn5dc8STHHQH7StOpxysg6KHMApZLHAkXiz+g41StgoUiu7L
-	 iQolui75WDT3w/Vw3J5DdZKOhVbnmOBk0bxL3q/UC3Z0g+ndM0Nmis6J9u9FuPnuh7
-	 F4THWpnxR1SBp/EiAOQ75+46DxaWcoedbYxpN/R9UaSxfQkCAvB1iVJbBtrCvsK88/
-	 12vqrMa03K5Pm5tNC5+SJ7DZ/Fb+X4hOKiDxqHWA6JVIBa/eT1HlSlIynLYo3zBENS
-	 AG0SVd+au4GKdH+xm7vSx8XelnvDUyneSBfqVra5JRsx4+t/HBoqOxnbvrtdE/c/k1
-	 aGNaw66gcx5Zw==
-From: Mike Rapoport <rppt@kernel.org>
-To: Akinobu Mita <akinobu.mita@gmail.com>
-Cc: Mike Rapoport <rppt@kernel.org>,
-	linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	akpm@linux-foundation.org,
-	dan.j.williams@intel.com
-Subject: Re: [PATCH v2] memblock: fix memblock_estimated_nr_free_pages() for soft-reserved memory
-Date: Tue, 11 Nov 2025 18:19:13 +0200
-Message-ID: <176287786383.1435827.13312587708182229748.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20251111010010.7800-1-akinobu.mita@gmail.com>
-References: <aQo1VjjQw1OZG8nY@kernel.org> <20251111010010.7800-1-akinobu.mita@gmail.com>
+	s=arc-20240116; t=1762877984; c=relaxed/simple;
+	bh=MRIv/WwWQnNcHl/Kgg27XOhKNmjLF/zVaonpwv61t9c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=b2vz2s+wbI05AyofTycWOQdr8QRy6gx2r3fJIxIVY0XXz8ZUrpdtRj5JCBkyUxMmCpiAweEweESh4F1SeZZ9/xll09d/+ZrM6bryl07PvOPVUgacLVtrH0yxGoefaQQA1Obat+PQRTqTM1CtlR6TQ1o0cd4UfZPq9O7kkb3Kq/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KMsA7uHA; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762877983; x=1794413983;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=MRIv/WwWQnNcHl/Kgg27XOhKNmjLF/zVaonpwv61t9c=;
+  b=KMsA7uHATFFhW3O0tF85uxy8UUiCqQkenws3n91noLWy3Os73c2ssdLx
+   8NHRduD1ABrp7LAMIddEJiFxdHYzAfsyTyKrh21P6EhGp2j0nfL69Dq/g
+   ZmP2JCkuke4DwhVt1VyweMVKIizPCSjFILwTLqx/wABXttNs4mnxODjP5
+   vTAqQFP3h1rEJetQFGD/4Wn9IQwAmknZt2Fkjfu4T3SoMmhp6+OnwID67
+   A/r0+Buz/CSkK7OLUdudLGOzOn1P1IedjdXCN4Lc5o0qXbDnWoAeLmEoK
+   t4FJzONaS8DNlIEFq7jJAQfyYmtNGxj/NEStg8KZXZO9f7sHvLTVRwyBJ
+   w==;
+X-CSE-ConnectionGUID: 4B1LItW8TJKND9+z4M6i7A==
+X-CSE-MsgGUID: R3/Ya+FOSDKm4K1ih5SNJw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11610"; a="65098139"
+X-IronPort-AV: E=Sophos;i="6.19,296,1754982000"; 
+   d="scan'208";a="65098139"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 08:19:43 -0800
+X-CSE-ConnectionGUID: ya/rlQVGT12nmby3p5vFMw==
+X-CSE-MsgGUID: lMpFr96bTRadqOMq6LoGyg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,296,1754982000"; 
+   d="scan'208";a="193247151"
+Received: from cpetruta-mobl1.ger.corp.intel.com (HELO [10.245.244.118]) ([10.245.244.118])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 08:19:41 -0800
+Message-ID: <f1259e37-5671-43ca-85f5-a37b68d5507a@linux.intel.com>
+Date: Tue, 11 Nov 2025 18:19:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] usb: xhci: Don't unchain link TRBs on quirky HCs
+To: Michal Pecio <michal.pecio@gmail.com>,
+ Mathias Nyman <mathias.nyman@intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251107110837.7b7d686b.michal.pecio@gmail.com>
+Content-Language: en-US
+From: Mathias Nyman <mathias.nyman@linux.intel.com>
+In-Reply-To: <20251107110837.7b7d686b.michal.pecio@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Mike Rapoport (Microsoft) <rppt@kernel.org>
-
-On Tue, 11 Nov 2025 10:00:10 +0900, Akinobu Mita wrote:
-> memblock_estimated_nr_free_pages() returns the difference between the total
-> size of the "memory" memblock type and the "reserved" memblock type.
+On 11/7/25 12:08, Michal Pecio wrote:
+> Some old HCs ignore transfer ring link TRBs whose chain bit is unset.
+> This breaks endpoint operation and sometimes makes it execute other
+> ring's TDs, which may corrupt their buffers or cause unwanted device
+> action. We avoid this by chaining all link TRBs on affected rings.
 > 
-> The "soft-reserved" memory regions are added to the "reserved" memblock
-> type, but not to the "memory" memblock type. Therefore,
-> memblock_estimated_nr_free_pages() may return a smaller value than
-> expected, or if it underflows, an extremely large value.
+> Fix an omission which allows them to be unchained by cancelling TDs.
 > 
-> [...]
+> The patch was tested by reproducing this condition on an isochronous
+> endpoint (non-power-of-two TDs are sometimes split not to cross 64K)
+> and printing link TRBs in trb_to_noop() on good and buggy HCs.
+> 
+> Actual hardware malfunction is rare since it requires Missed Service
+> Error shortly before the unchained link TRB, at least on NEC and AMD.
+> I have never seen it after commit bb0ba4cb1065 ("usb: xhci: Apply the
+> link chain quirk on NEC isoc endpoints"), but it's Russian roulette
+> and I can't test all affected hosts and workloads. Fairly often MSEs
+> happen after cancellation because the endpoint was stopped.
+> 
+> Signed-off-by: Michal Pecio <michal.pecio@gmail.com>
 
-Applied to fixes branch of memblock.git tree, thanks!
+Makes sense, thanks for fixing this
 
-[1/1] memblock: fix memblock_estimated_nr_free_pages() for soft-reserved memory
-      commit: c42af83c59b65d01c0f7a074e450bbbb43b22f0d
+> ---
+>   drivers/usb/host/xhci-ring.c | 27 ++++++++++++++++-----------
+>   1 file changed, 16 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
+> index a9e468ea19c5..fc0043ca85a4 100644
+> --- a/drivers/usb/host/xhci-ring.c
+> +++ b/drivers/usb/host/xhci-ring.c
+> @@ -128,11 +128,11 @@ static void inc_td_cnt(struct urb *urb)
+>   	urb_priv->num_tds_done++;
+>   }
+>   
+> -static void trb_to_noop(union xhci_trb *trb, u32 noop_type)
+> +static void trb_to_noop(union xhci_trb *trb, u32 noop_type, bool unchain_links)
+>   {
+>   	if (trb_is_link(trb)) {
+> -		/* unchain chained link TRBs */
+> -		trb->link.control &= cpu_to_le32(~TRB_CHAIN);
+> +		if (unchain_links)
+> +			trb->link.control &= cpu_to_le32(~TRB_CHAIN);
+>   	} else {
+>   		trb->generic.field[0] = 0;
+>   		trb->generic.field[1] = 0;
+> @@ -465,7 +465,7 @@ static void xhci_handle_stopped_cmd_ring(struct xhci_hcd *xhci,
+>   		xhci_dbg(xhci, "Turn aborted command %p to no-op\n",
+>   			 i_cmd->command_trb);
+>   
+> -		trb_to_noop(i_cmd->command_trb, TRB_CMD_NOOP);
+> +		trb_to_noop(i_cmd->command_trb, TRB_CMD_NOOP, false);
+>   
+>   		/*
+>   		 * caller waiting for completion is called when command
+> @@ -797,13 +797,18 @@ static int xhci_move_dequeue_past_td(struct xhci_hcd *xhci,
+>    * (The last TRB actually points to the ring enqueue pointer, which is not part
+>    * of this TD.)  This is used to remove partially enqueued isoc TDs from a ring.
+>    */
+> -static void td_to_noop(struct xhci_td *td, bool flip_cycle)
+> +static void td_to_noop(struct xhci_hcd *xhci, struct xhci_virt_ep *ep,
+> +			struct xhci_td *td, bool flip_cycle)
 
-tree: https://git.kernel.org/pub/scm/linux/kernel/git/rppt/memblock
-branch: fixes
+we could avoid passing xhci pointer to td_to_noop() and just grab it from
+the xhci_virt_ep structure instead. i.e. ep->xhci
 
-In the future please start a new thread when sending the next version of a
-patch.
+Otherwise this looks good to me
 
---
-Sincerely yours,
-Mike.
+Thanks
+Mathias
+
 
 
