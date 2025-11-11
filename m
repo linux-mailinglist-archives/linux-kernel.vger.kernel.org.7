@@ -1,103 +1,92 @@
-Return-Path: <linux-kernel+bounces-894509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FAB8C4B32A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 03:23:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEF51C4B330
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 03:24:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6AE674E43D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 02:23:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BF783B2217
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 02:24:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BECD347FCC;
-	Tue, 11 Nov 2025 02:23:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF1B02BCF43;
+	Tue, 11 Nov 2025 02:23:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="KUnq6Eks"
-Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TCykKKwn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47D442BCF43
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 02:23:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DBB4348453;
+	Tue, 11 Nov 2025 02:23:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762827823; cv=none; b=tqYt/mi/VQjFx2qBbQMM1QmfmLZSXl87yVf99wIlP6iC8pJlZx/PURino7L8gI+M0HmcKBDWk3SAQSE40lQoawTqyBRs9DoW/25wPrAtOuHe1y1qZINALkkSU+iu0I4MJirF4g/1AGAeult0wJw9/eFQGFXcFwvx/aag3FAfDlg=
+	t=1762827826; cv=none; b=rcXQ94cQTXokxfOK0GLDhaPsWL75uAIHYXZS10XKeM0vXOVOHZQUCHZhV9vqCvQ7yYk/5lyoT9ekyqSHUHYwkjq8B4LLPppZyS+cEoYQ8XHs5a08emEeDdQgMPbq8e4zqwEwBQQqbthYhremNWYkGSW5Jv44sgAj7dI8ndEU8U4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762827823; c=relaxed/simple;
-	bh=G/LpC2lkRvx8VNyHY6WizXs4laMIh6WBPFY4dGrctC0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sUFQHCAu476aNolxYC9e2w+qy+gljuV0GUCkeTcMC3QLHrlrJ/AOebPQffYoGuQMIKtBK1jJsNL6toUYk3WEunt74tWcsQfJeF4/MQhDQ+NiAiYm2G6eUhzjyhl5kyGK3xNoTRnDPJbCzYI1KdVdP8xb7FGUcx9F4OaN5DK/3TY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=KUnq6Eks; arc=none smtp.client-ip=95.215.58.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <24969292-7543-456f-8b80-09c4521507e2@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1762827809;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=q2QEY03Zb79SqJtXbf2zF+i57eoPzcpd2R1ZoSjupFo=;
-	b=KUnq6Eks5+xX4BoI5CcsTd5M8ayBvzEvJtBfpTPkht0rd2IUTHnBDtE0SJbtanxFBSLrwJ
-	1kF+HodCXj9w701YF+pz1FWfIW9/YROvpD63GjFT3E+sw/148pxBfealvVfcozJ0SmQHjT
-	svDRow3q91F7HoMTCc7SItb+Aeybl6c=
-Date: Tue, 11 Nov 2025 10:23:15 +0800
+	s=arc-20240116; t=1762827826; c=relaxed/simple;
+	bh=qHpvkne1MfqljqcFgy1fzdxefwcfvIBuH7/eQGN1Dmg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ts4fGMGYWWFet2UO1SOOu4asIxnT54HLRygc4wSkJIdNToKXO5eS4qwEz/r3/unscZ5mwZlioh2aeDG13gH2n1g/THoVKPkqkf4s4HLV3j6YCiuGETz96LUCESr7XfJHQ0zCo906O2P84JRH57PXBWwa82kggbbMQJDf6inLFZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TCykKKwn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B7DCC113D0;
+	Tue, 11 Nov 2025 02:23:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762827825;
+	bh=qHpvkne1MfqljqcFgy1fzdxefwcfvIBuH7/eQGN1Dmg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TCykKKwnaPWeBc9cqhdzJlMO1NrWxpDdlk/BJw6E1i09n/B9z0o1TbmaWdAundDul
+	 3SRVsH8yyQDoWNFmRau7QWgA1ImLTBO4kEy+eFD8eNunlWbLhLAZIU/o9qTQn3CxmW
+	 AHHxrwUzb0W7lMQ4d8sLqizfvYNX6JhW+7FqUPBGezlFGQclBO8BFwZslgKu/q+UoJ
+	 nI60MDPhU8+iDX8vQ7dl+eqzL3xfHiG393xpwlutp5n4iP/+ONiDMYHs6v6ITkmuSy
+	 dwnQ+XyeO8xTExrAYKlPkcKyoIN6Riz91lAXScfhCPde8qeEqWsnahJmT26HLR5NMR
+	 97ykEKq6NkPjA==
+Date: Tue, 11 Nov 2025 04:23:41 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Sasha Levin <sashal@kernel.org>
+Cc: workflows@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, rostedt@goodmis.org, kees@kernel.org,
+	konstantin@linuxfoundation.org, corbet@lwn.net,
+	josh@joshtriplett.org
+Subject: Re: [RFC 0/2] Add AI coding assistant configuration to Linux kernel
+Message-ID: <aRKeLRx2NeozFUrc@kernel.org>
+References: <20250725175358.1989323-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 0/4] memcg: cleanup the memcg stats interfaces
-To: Harry Yoo <harry.yoo@oracle.com>, Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Muchun Song <muchun.song@linux.dev>, Vlastimil Babka <vbabka@suse.cz>,
- linux-mm@kvack.org, cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
- Meta kernel team <kernel-team@meta.com>
-References: <20251110232008.1352063-1-shakeel.butt@linux.dev>
- <aRKKfdN3B68wxFvN@hyeyoo>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Qi Zheng <qi.zheng@linux.dev>
-In-Reply-To: <aRKKfdN3B68wxFvN@hyeyoo>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250725175358.1989323-1-sashal@kernel.org>
 
-Hi,
+On Fri, Jul 25, 2025 at 01:53:56PM -0400, Sasha Levin wrote:
+> This patch series adds unified configuration and documentation for AI
+> coding assistants working with the Linux kernel codebase. As AI tools
+> become increasingly common in software development, it's important to
+> establish clear guidelines for their use in kernel development.
 
-On 11/11/25 8:59 AM, Harry Yoo wrote:
-> On Mon, Nov 10, 2025 at 03:20:04PM -0800, Shakeel Butt wrote:
->> The memcg stats are safe against irq (and nmi) context and thus does not
->> require disabling irqs. However for some stats which are also maintained
->> at node level, it is using irq unsafe interface and thus requiring the
->> users to still disables irqs or use interfaces which explicitly disables
->> irqs. Let's move memcg code to use irq safe node level stats function
->> which is already optimized for architectures with HAVE_CMPXCHG_LOCAL
->> (all major ones), so there will not be any performance penalty for its
->> usage.
+I sometimes use tools like sed (just to name one) to generate a patch
+plus edits. I don't think we need contribution guidelines for sed, do
+we? Equally we don't need contribution guidelines for AIs because:
 
-Good job. Thanks!
+1. AI is not a person.
+2. AI has no resposibility.
+3. AI has no needs.
 
-> 
-> Are you or Qi planning a follow-up that converts spin_lock_irq() to
-> spin_lock() in places where they disabled IRQs was just to update vmstat?
+Basic computer science beholds to truth that for any problem there is
+infinite amount of computer programs to solve it. This makes any problem
+we have a moving target constrained by various corner cases, people and
+many other things.
 
-Perhaps this change could be implemented together in [PATCH 1/4]?
+If you want to use AI to generate code, it's obviously fine. I don't
+mind and I don't care, and I don't see anything wrong in that.
 
-Of course, it's also reasonable to make it a separate patch. If we
-choose this method, I’m fine with either me or Shakeel doing it.
+But that is million miles away from being enough to be called as done.
+Generation is about getting up on speed, and in the best case scenario
+to the ballpark.
 
-> 
-> Qi's zombie memcg series will depends on that work I guess..
+Please, let's keep this out of the kernel tree seriously.
 
-Yes, and there are other places that also need to be converted, such as
-__folio_migrate_mapping().
-
-Thanks,
-Qi
-
-> 
-
+BR, Jarkko
 
