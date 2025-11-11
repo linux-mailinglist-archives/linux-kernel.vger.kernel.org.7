@@ -1,56 +1,47 @@
-Return-Path: <linux-kernel+bounces-896137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2699CC4FBC7
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 21:45:32 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 456AFC4FBE0
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 21:51:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C402E34D3D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 20:45:31 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 14BDC4E512D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 20:51:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C81982459C9;
-	Tue, 11 Nov 2025 20:45:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="BvKDE/yg"
-Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E4AE30B533;
+	Tue, 11 Nov 2025 20:51:16 +0000 (UTC)
+Received: from mail.prodrive-technologies.com (mail.prodrive-technologies.com [212.61.153.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 564F033D6FE
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 20:45:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D76822FE566;
+	Tue, 11 Nov 2025 20:51:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.61.153.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762893924; cv=none; b=niyGQIze3T+w32EDhjl4vyrhb4RLAkOrsjKcYlgMtnAgjII2DpNS8syvdiWBUQprPKihf7C8dz+SqcEdMcAx1pOCUtjocOvSAt4MwzeTDEyijHBQ3P+BRQ85Mbk+iHUCObCSZyEHIc8heds4Hcy5XpJvxxYG9vzkSvQHnTwD6Sk=
+	t=1762894275; cv=none; b=ZijZfKklyg6tlXhbpL/8gknIiD7qQT5Q0sz8l0dwxzu/y2QS14I4wxwOTojFKDKFK6U7tnBkrOPenSg9CRrp+ib3ftMNuzxoK5HGyDZ3B07Sptq3lgTPfxlhL3bJ0r3UZ3eiJDBfWbxG7UfK4Mq8cUpIlkXoXmvt488ErzHYGLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762893924; c=relaxed/simple;
-	bh=KOxvBf3xtKRfyDsHFKclQyBpBw5vaD5V/kUzc5jV4pw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BS0n3pIULZhWcHuA9HpZUYKAw/h5m8DBuvQneK6OZ5bB/t70Sn6Na25hZ1ummitKv/5wTSTFUZOC87J9Lc7AO33ka68YKbk2rJmU9EjqshXwZwdVn044zrUNnS1rJKru5IRSs1+FrKDdrcNPOzZjD+80bQPmjcseJwGQsUBDSjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=BvKDE/yg; arc=none smtp.client-ip=91.218.175.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1762893920;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=3GcDNxbMQFbHzyEo8vijDERUnbmPZ0QtGgqSGoFrXLA=;
-	b=BvKDE/ygr+P7Xc5P5wUjAOFuPVKS6Zg2Dv70U77SYUefGEwosf9hoqN/HqQo3FpruemLjo
-	pTiq/c6gDpR/8TbeQHfAIH6dcZmP6vnJiYiF73ME+g2xISwEHyG6P8j10pOJKymTJ4ZaeK
-	vUfMq0WcAORWtxekTVCOF+budWCH+44=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: David Laight <david.laight.linux@gmail.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Huisong Li <lihuisong@huawei.com>,
-	Akira Shimahara <akira215corp@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	stable@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4] w1: therm: Fix off-by-one buffer overflow in alarms_store
-Date: Tue, 11 Nov 2025 21:44:18 +0100
-Message-ID: <20251111204422.41993-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1762894275; c=relaxed/simple;
+	bh=5EuORCmQwU612AxD8Jii/M8es3nwbeh6cIbTThrubR0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OFalgVNz8viUJrZ7ybH+8CWA/97G75c8F5LS+nVJdP0QJK6qRZdJUu7HRYd8ekygQfTTbSaV1QuHwImUvmOrNdarPhpXj3V5LgmvvEzp7K2GkzTnnyfB43x24UnbyzfqDclxdG4mhSwbf7Wnq/BlbdAAuZ3uIhYJatlF3fkSMnM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=prodrive-technologies.com; spf=pass smtp.mailfrom=prodrive-technologies.com; arc=none smtp.client-ip=212.61.153.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=prodrive-technologies.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prodrive-technologies.com
+Received: from EXCOP01.bk.prodrive.nl (10.1.0.22) by EXCOP01.bk.prodrive.nl
+ (10.1.0.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 11 Nov
+ 2025 21:46:02 +0100
+Received: from lnxdevrm02.prodrive.nl (10.1.1.121) by EXCOP01.bk.prodrive.nl
+ (10.1.0.22) with Microsoft SMTP Server id 15.2.1544.4 via Frontend Transport;
+ Tue, 11 Nov 2025 21:46:02 +0100
+From: Martijn de Gouw <martijn.de.gouw@prodrive-technologies.com>
+To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>
+CC: Martijn de Gouw <martijn.de.gouw@prodrive-technologies.com>,
+	<linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] leds: group-multicolor: Add support for initial value.
+Date: Tue, 11 Nov 2025 21:45:55 +0100
+Message-ID: <20251111204556.2803878-1-martijn.de.gouw@prodrive-technologies.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,155 +49,62 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain
 
-The sysfs buffer passed to alarms_store() is allocated with 'size + 1'
-bytes and a NUL terminator is appended. However, the 'size' argument
-does not account for this extra byte. The original code then allocated
-'size' bytes and used strcpy() to copy 'buf', which always writes one
-byte past the allocated buffer since strcpy() copies until the NUL
-terminator at index 'size'.
+It's possible to set a default state for leds in the dts with
+'default-state', but this was not reflected when the LEDs are grouped.
+This patch adds support for keeping the default-state value.
 
-Fix this by parsing the 'buf' parameter directly using simple_strtoll()
-without allocating any intermediate memory or string copying. This
-removes the overflow while simplifying the code.
-
-Cc: stable@vger.kernel.org
-Fixes: e2c94d6f5720 ("w1_therm: adding alarm sysfs entry")
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+Signed-off-by: Martijn de Gouw <martijn.de.gouw@prodrive-technologies.com>
 ---
-Compile-tested only.
+ drivers/leds/rgb/leds-group-multicolor.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
-Changes in v4:
-- Use simple_strtoll because kstrtoint also parses long long internally
-- Return -ERANGE in addition to -EINVAL to match kstrtoint's behavior
-- Remove any changes unrelated to fixing the buffer overflow (Krzysztof)
-  while maintaining the same behavior and return values as before
-- Link to v3: https://lore.kernel.org/lkml/20251030155614.447905-1-thorsten.blum@linux.dev/
-
-Changes in v3:
-- Add integer range check for 'temp' to match kstrtoint() behavior
-- Explicitly cast 'temp' to int when calling int_to_short()
-- Link to v2: https://lore.kernel.org/lkml/20251029130045.70127-2-thorsten.blum@linux.dev/
-
-Changes in v2:
-- Fix buffer overflow instead of truncating the copy using strscpy()
-- Parse buffer directly using simple_strtol() as suggested by David
-- Update patch subject and description
-- Link to v1: https://lore.kernel.org/lkml/20251017170047.114224-2-thorsten.blum@linux.dev/
----
- drivers/w1/slaves/w1_therm.c | 64 ++++++++++++------------------------
- 1 file changed, 21 insertions(+), 43 deletions(-)
-
-diff --git a/drivers/w1/slaves/w1_therm.c b/drivers/w1/slaves/w1_therm.c
-index 9ccedb3264fb..5707fa34e804 100644
---- a/drivers/w1/slaves/w1_therm.c
-+++ b/drivers/w1/slaves/w1_therm.c
-@@ -1836,55 +1836,36 @@ static ssize_t alarms_store(struct device *device,
- 	struct w1_slave *sl = dev_to_w1_slave(device);
- 	struct therm_info info;
- 	u8 new_config_register[3];	/* array of data to be written */
--	int temp, ret;
--	char *token = NULL;
-+	long long temp;
-+	int ret = 0;
- 	s8 tl, th;	/* 1 byte per value + temp ring order */
--	char *p_args, *orig;
--
--	p_args = orig = kmalloc(size, GFP_KERNEL);
--	/* Safe string copys as buf is const */
--	if (!p_args) {
--		dev_warn(device,
--			"%s: error unable to allocate memory %d\n",
--			__func__, -ENOMEM);
--		return size;
--	}
--	strcpy(p_args, buf);
--
--	/* Split string using space char */
--	token = strsep(&p_args, " ");
--
--	if (!token)	{
--		dev_info(device,
--			"%s: error parsing args %d\n", __func__, -EINVAL);
--		goto free_m;
--	}
--
--	/* Convert 1st entry to int */
--	ret = kstrtoint (token, 10, &temp);
-+	const char *p = buf;
-+	char *endp;
+diff --git a/drivers/leds/rgb/leds-group-multicolor.c b/drivers/leds/rgb/leds-group-multicolor.c
+index 548c7dd63ba1e..b3e46a51dfbc7 100644
+--- a/drivers/leds/rgb/leds-group-multicolor.c
++++ b/drivers/leds/rgb/leds-group-multicolor.c
+@@ -69,6 +69,7 @@ static int leds_gmc_probe(struct platform_device *pdev)
+ 	struct mc_subled *subled;
+ 	struct leds_multicolor *priv;
+ 	unsigned int max_brightness = 0;
++	unsigned int default_brightness = 0;
+ 	int i, ret, count = 0, common_flags = 0;
+ 
+ 	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+@@ -96,6 +97,12 @@ static int leds_gmc_probe(struct platform_device *pdev)
+ 
+ 		max_brightness = max(max_brightness, led_cdev->max_brightness);
+ 
++		/* If any LED is on, set brightness to the max brightness.
++		 * The actual brightness of the LED is set as intensity value.
++		 */
++		if (led_cdev->brightness)
++			default_brightness = max_brightness;
 +
-+	temp = simple_strtoll(p, &endp, 10);
-+	if (p == endp || *endp != ' ')
-+		ret = -EINVAL;
-+	else if (temp < INT_MIN || temp > INT_MAX)
-+		ret = -ERANGE;
- 	if (ret) {
- 		dev_info(device,
- 			"%s: error parsing args %d\n", __func__, ret);
--		goto free_m;
-+		goto err;
+ 		count++;
  	}
  
- 	tl = int_to_short(temp);
+@@ -109,14 +116,16 @@ static int leds_gmc_probe(struct platform_device *pdev)
  
--	/* Split string using space char */
--	token = strsep(&p_args, " ");
--	if (!token)	{
--		dev_info(device,
--			"%s: error parsing args %d\n", __func__, -EINVAL);
--		goto free_m;
--	}
--	/* Convert 2nd entry to int */
--	ret = kstrtoint (token, 10, &temp);
-+	p = endp + 1;
-+	temp = simple_strtoll(p, &endp, 10);
-+	if (p == endp)
-+		ret = -EINVAL;
-+	else if (temp < INT_MIN || temp > INT_MAX)
-+		ret = -ERANGE;
- 	if (ret) {
- 		dev_info(device,
- 			"%s: error parsing args %d\n", __func__, ret);
--		goto free_m;
-+		goto err;
- 	}
--
- 	/* Prepare to cast to short by eliminating out of range values */
- 	th = int_to_short(temp);
+ 		subled[i].color_index = led_cdev->color;
  
-@@ -1905,7 +1886,7 @@ static ssize_t alarms_store(struct device *device,
- 		dev_info(device,
- 			"%s: error reading from the slave device %d\n",
- 			__func__, ret);
--		goto free_m;
-+		goto err;
+-		/* Configure the LED intensity to its maximum */
+-		subled[i].intensity = max_brightness;
++		/* Configure the LED intensity to its current brightness */
++		subled[i].intensity = DIV_ROUND_CLOSEST(led_cdev->brightness * max_brightness,
++							led_cdev->max_brightness);
  	}
  
- 	/* Write data in the device RAM */
-@@ -1913,7 +1894,7 @@ static ssize_t alarms_store(struct device *device,
- 		dev_info(device,
- 			"%s: Device not supported by the driver %d\n",
- 			__func__, -ENODEV);
--		goto free_m;
-+		goto err;
- 	}
- 
- 	ret = SLAVE_SPECIFIC_FUNC(sl)->write_data(sl, new_config_register);
-@@ -1922,10 +1903,7 @@ static ssize_t alarms_store(struct device *device,
- 			"%s: error writing to the slave device %d\n",
- 			__func__, ret);
- 
--free_m:
--	/* free allocated memory */
--	kfree(orig);
--
-+err:
- 	return size;
- }
+ 	/* Initialise the multicolor's LED class device */
+ 	cdev = &priv->mc_cdev.led_cdev;
+ 	cdev->brightness_set_blocking = leds_gmc_set;
+ 	cdev->max_brightness = max_brightness;
++	cdev->brightness = default_brightness;
+ 	cdev->color = LED_COLOR_ID_MULTI;
+ 	priv->mc_cdev.num_colors = count;
  
 -- 
-2.51.1
+2.39.2
 
 
