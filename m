@@ -1,174 +1,118 @@
-Return-Path: <linux-kernel+bounces-895659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBE8BC4E96D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 15:51:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CAAB6C4E98B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 15:52:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 460534FBD18
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:45:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EEF594F35ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:45:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC46A335060;
-	Tue, 11 Nov 2025 14:44:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6053831195A;
+	Tue, 11 Nov 2025 14:44:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="B26i8EVw"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TPKIBY6q"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C5D1330339
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 14:44:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BC0C2FC000
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 14:44:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762872256; cv=none; b=J5U7hi0L0Q1Fk8MgTOKwSX713cvtusk8Rg3k3qUi0y5/KYWhEp2RBVWIt34A6OlS+D9CyCac7/XlHvML3iKNxnjDJJ5alLP7h7toeGDIafOSejhDxIUW4frOMnpbKbVM8PQ5+yq82PKq4wU7tgf06tddVtE86Z5ReyKqzj3uMyw=
+	t=1762872279; cv=none; b=dN7Ipt9t6+8r5d/cFjPyWAEo54RiPqYj8u+iZhacWDkmWvuF4wmCB64WhnDnipbUok2+5x/p6WZ7yyZr84HCv2N4rv/RG8d4q1b67/8rFTE63munsRtD0OwnVAfHhp35QCA0FyPTJffVCy6Fj6GZAmhbm8Ad6r82F5cBvmGwZ3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762872256; c=relaxed/simple;
-	bh=lwgS3XbuNGNElPjrkWO6JmcdiBkj45I6XbH04gS8S9M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PpKtmpWmhNqztJfo/uFFmVubl6FaB1BUwyZKJ4PErvbLrK2eL7J3aJ69+7RB3szzOmzFixn/RKdmkf/XUIQjT49ZqyMyb+8Ow2RxSHacYUJTBhJnK0GN03eIUtuvhIRFD9h0adv8Vgx8URUYCeJUgX5wXUKCKn8yj9Yd5QIXNDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=B26i8EVw; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-6417313bddaso4557915a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 06:44:12 -0800 (PST)
+	s=arc-20240116; t=1762872279; c=relaxed/simple;
+	bh=y8t7dgVWv5gPJxaJppIsGqbz1EVFsOkgb6ryGsNSE+A=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=G3gi4v+16JffxldDWe4sIfKZaEIe4vTHLF4jOuRpZ4hYscGXdDgprG0OUpiDHjD3o2TNvA34TjS74QHzE2hI0bF1dbXq98WIH1r4oEvYvD3EebGKwJZx8x266ACUl9zbTUNk+TSMD1Gu7eP+mC9k3+Mm986Yea/hpnfC35etSJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TPKIBY6q; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-64080ccf749so6800496a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 06:44:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762872251; x=1763477051; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1762872275; x=1763477075; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=y1/P4cjnJRMKeJXb4QuiXEQkEuLjYJ7u3PWbuQSeBbc=;
-        b=B26i8EVwNr0OD0zHqdEkjjpOuUUrxB59VdgnsbdKKbkIZgwuyOASDOmOXnd2K8wtI3
-         TR66+bwWeU3e4pgHzj/mxM2Q8bNfvE7FqtzWIiLew0GRLtXfxv8ZPjQKkIoKQousTYtB
-         m9Y5QSUUi0mpaQOmNE+dLnITjVcwIgL8fcdHcwAdJaVbxcX0WndbvAmXlv5/t4Gi3qAn
-         Ghu9Ybbz8F5RP/7EsY5555Jwh3xxk4/lx1CaeR/nZfbmWgiETaYBQCHm9iLv6yoHi8CZ
-         4gcsdQiI3D+EaP9LkQ5qkEwRC7bPOfawNJok+rPsJylwpLIRD/BULbBBvvYIga/6Hq2t
-         DdPw==
+        bh=8UVOB8A+PcaLDpWyQLR0l44MeTzTd0XLGPEhD0sPw9I=;
+        b=TPKIBY6qIQ9C3AvQZA7QxxL9U84z8ztzpGLx59VRFZPMS2/tDejZTl5UknulTpZzJe
+         GTZfMpDFwg+Z4L6KVONVjgkxqH5tQgjvKDsdEqI+VvgR9P8gd5nFo55NYW34ZgqMYh1c
+         1X2ccC820SiueQgmPoMnbeH7+tTU9DmS9exVbxUsnjZZHSXsqGVNTCoGK2sfHd2XJ6Nj
+         ntXkaw7mG5WqI09Iyiv/TJjxP1prkF243r7w7v6vejhGGFo5pLnDjla0DUCpDg9bUGlL
+         /6T2LNG/nRwux+52rp8SA+ayusOeRYt/uMY2TkLhm+x2trxBokaGkgE8AqeLq7tkfBpR
+         fUdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762872251; x=1763477051;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+        d=1e100.net; s=20230601; t=1762872275; x=1763477075;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=y1/P4cjnJRMKeJXb4QuiXEQkEuLjYJ7u3PWbuQSeBbc=;
-        b=EF4b/9nvj9HWgAxdZw1vvdlRQIkZpThvv79Wb+JDgKweAguFKWw+Abwxsx4jTPavgX
-         pfrRS5qzDUtSZT2kMJ+WHXn9BA/pSgiD99TdKNY4+l5R56tG7O2Hd56mRRjuGX7btreV
-         gD+bb3jG9s1Ylu/jwUWXLEnfzHIQhUq+9ADNuBpXt5lhxiNq9TDr3aaIZfQ0eUPX45di
-         r2KczkSgkCjTJCk/5/fWZ44oT1+jK1J/F56E3uoJa3m/8loClWSBMs04PlcUceTeoiBA
-         k07eKFpYvTwULqZpTXZcUIhHffvsBMbNc1jdUALOYo6UuyfoI1YS9iEx1OFV+mpqHmHU
-         GDzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWfCezZtVKo+oEOQZjqUGAD37NiiZsTOCR7iTfyEVKrshRq0Zoe6ZsD1xyq7gILrt+G85v696al8eWRSDw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDut09xqfmDPxl+w4vXjmTi7EdKCnIVmpFLU2e/oOSNEDJumPl
-	2hpEx1Z2PqEeADJ5/RhTqR3zZHeNZk3NO+yRsja/9DDzaFGtlP1qFu+85IuDXvcHEzbnHpap9sx
-	UknYEOrqZ8qtMeWmuvwlDmK2szRtsgci/0IKmJz8Mbg==
-X-Gm-Gg: ASbGncuifFJEoeJwUG+cTqPd9/MS56R7RSpT75WjDPfNDxLC7zz8ZDgn6DMNKgYaZ5u
-	9TDwSP1ix4dKNl7cMz5Ces6DQMSzxt9OQMpbBf6Lau206dHjNe/yEZfOCCR1mrTgfMzSKfo3wNU
-	WNjidXmaEg+xI1/DF3d54Q8Dq/rgiNSkcMeCGDyBUqe3SRE7LQbUmPyTFWnJKq25RM7GeVeXHP0
-	TkcTMLonD9OnGY2lvLfkSbNY6RKbcoRI+7YN/qV5lXyuudqrRPYiSu6TgdbrEHR7Q2Rk8ynwsJq
-	SWwq717kGG6LyvxjpT2nWjMkH1c=
-X-Google-Smtp-Source: AGHT+IHMY6SoKSk0VgpDlYvVT6P+glN4Yq9XXIqVKd9jfwRPr/K5XWhLNKItsuRhohz/IcTpClBme4+jDstH4cTCaYk=
-X-Received: by 2002:a17:907:7ea4:b0:b70:b5ce:e66e with SMTP id
- a640c23a62f3a-b72e02db993mr1289989566b.21.1762872251327; Tue, 11 Nov 2025
- 06:44:11 -0800 (PST)
+        bh=8UVOB8A+PcaLDpWyQLR0l44MeTzTd0XLGPEhD0sPw9I=;
+        b=BoWtZQpqLSmv9snuob+UDqJZZRC9p0s0b0qfltzaP+Ki5y1Dj5KPTNF14p/4fJgVi2
+         OmnadowTb/WUSsnAFsRgwZM6hWuqG7KBpfu4vRLz0g7sGSatbwytEBlZQz2MtCwqwFcA
+         zUqXzoOXA0/YOWFW2EsFOOoLSIZ3ZWHOxtzJ+x0avj8c4OPFGlBlkTo62SChmsw9SBDg
+         JWzdvYb8jy6+gfx5RK0lbErqtK1EcG2+2EFa+NkqIsjOE92DNOxZbBEjYhFrhVXcBqN3
+         2HYR6ssI+x42zaG5hL53IPQmvuxlnKucvFUhmfExMYLnnNubg3ypxsFZfWhTg/Qb0x/g
+         Epsg==
+X-Forwarded-Encrypted: i=1; AJvYcCUffJr7owBMfMB+i/sPQDCGJvphUsVuuQA2RnqIeNgS5vmctqof1A0xJQVnuyvFoIVxOcBpImHbr8+j+kg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7ScYs8XPPHGDnL7nzPJEkzC6TNYK1CvTCz0Nk516g8Ew3HPgj
+	DEjM3YmBXhQ5Xko93Pb/Y5Ldwk5x+GpmdM83eXcCnp7/VKd/0zHfNGOW
+X-Gm-Gg: ASbGncuswenRPJVmSu999QWC9FTZ7T9SUCa8kJPpU1HFaue0j7P+Iirzs9xtf00CC7j
+	nlK5sMx05zqDF4lZVxmKXv9n8ojfT04Ki5XYwg4zQYg5hPpS5WqGvh7KFpVnGQc/albuJiQ7e7C
+	2F9It6kwCLQ7H9iBYgMoT6xq4ibzdQ06fK4QAHwLSZCDxtAV+YVVQxvKOTvO/Z86xHHsvYn5Z4c
+	D7a3oYDVOwqtHbkyGlUOEIMcGcWgnq4rv0d7ek5Idktw4A7xCKyliTAY6JDdeqNf1dQhQwHkpqs
+	gzZDSev+wg2Ch2FUyVB+M/+LsuYl/akX1jUJuiGDvh2bRlKpO3xCwwjZJNLRl3fIyR/0QlKszfd
+	0es8Nm7oqYSySeGFCJwJEwvQF56y3Zz8d7tDwNcETSucJz6POKMyeS/XHMQYru9b3BC3MRngahK
+	up0aEeszkna5rb3hT59K21dAhokM4p7ucLQc5wNCY01gA0fvio5YTupjryXA==
+X-Google-Smtp-Source: AGHT+IHAWGYgmPyEAZJqTKSd2mu0gZImGplk3LiAWkfYTJ+EixWMwN0H4UGNKwJ6rKcqkEZsw5RA9w==
+X-Received: by 2002:a17:907:3d90:b0:b41:4e72:309f with SMTP id a640c23a62f3a-b72e0592203mr1212517066b.50.1762872275331;
+        Tue, 11 Nov 2025 06:44:35 -0800 (PST)
+Received: from fedora.tux.internal (85.191.71.118.dynamic.dhcp.aura-net.dk. [85.191.71.118])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bf97ea95sm1377118366b.44.2025.11.11.06.44.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Nov 2025 06:44:34 -0800 (PST)
+From: Bruno Thomsen <bruno.thomsen@gmail.com>
+To: linux-hwmon@vger.kernel.org
+Cc: Guenter Roeck <linux@roeck-us.net>,
+	Bruno Thomsen <bruno.thomsen@gmail.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 2/2] hwmon: tmp421: remove duplicate return in switch-case
+Date: Tue, 11 Nov 2025 15:44:06 +0100
+Message-ID: <20251111144406.7489-2-bruno.thomsen@gmail.com>
+X-Mailer: git-send-email 2.51.1
+In-Reply-To: <20251111144406.7489-1-bruno.thomsen@gmail.com>
+References: <20251111144406.7489-1-bruno.thomsen@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251111122735.880607-1-andriy.shevchenko@linux.intel.com> <20251111122735.880607-5-andriy.shevchenko@linux.intel.com>
-In-Reply-To: <20251111122735.880607-5-andriy.shevchenko@linux.intel.com>
-From: Sumit Semwal <sumit.semwal@linaro.org>
-Date: Tue, 11 Nov 2025 20:13:59 +0530
-X-Gm-Features: AWmQ_bnAE43qdt9uTp5GKOPhntYFEAk4L2mYcClIlF1B_9-TbeBvnkuEckfJGvA
-Message-ID: <CAO_48GE5LK7hD-KJHHoD-XCRjTPcZWApE2MVvs4OgVdr1=u+rg@mail.gmail.com>
-Subject: Re: [PATCH v2 04/21] dma-buf: Switch to use %ptSp
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Corey Minyard <corey@minyard.net>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	"Dr. David Alan Gilbert" <linux@treblig.org>, Alex Deucher <alexander.deucher@amd.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
-	Rob Clark <robin.clark@oss.qualcomm.com>, Matthew Brost <matthew.brost@intel.com>, 
-	Ulf Hansson <ulf.hansson@linaro.org>, Vitaly Lifshits <vitaly.lifshits@intel.com>, 
-	Manivannan Sadhasivam <mani@kernel.org>, Niklas Cassel <cassel@kernel.org>, Calvin Owens <calvin@wbinvd.org>, 
-	Vadim Fedorenko <vadim.fedorenko@linux.dev>, Sagi Maimon <maimon.sagi@gmail.com>, 
-	"Martin K. Petersen" <martin.petersen@oracle.com>, Karan Tilak Kumar <kartilak@cisco.com>, 
-	Hans Verkuil <hverkuil+cisco@kernel.org>, Casey Schaufler <casey@schaufler-ca.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Petr Mladek <pmladek@suse.com>, 
-	Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>, Max Kellermann <max.kellermann@ionos.com>, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	openipmi-developer@lists.sourceforge.net, linux-media@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
-	amd-gfx@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
-	freedreno@lists.freedesktop.org, intel-xe@lists.freedesktop.org, 
-	linux-mmc@vger.kernel.org, netdev@vger.kernel.org, 
-	intel-wired-lan@lists.osuosl.org, linux-pci@vger.kernel.org, 
-	linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org, 
-	linux-staging@lists.linux.dev, ceph-devel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, 
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Gustavo Padovan <gustavo@padovan.org>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Dmitry Baryshkov <lumag@kernel.org>, 
-	Abhinav Kumar <abhinav.kumar@linux.dev>, Jessica Zhang <jesszhan0024@gmail.com>, 
-	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Lucas De Marchi <lucas.demarchi@intel.com>, 
-	=?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>, 
-	Rodrigo Vivi <rodrigo.vivi@intel.com>, Vladimir Oltean <olteanv@gmail.com>, Andrew Lunn <andrew@lunn.ch>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Tony Nguyen <anthony.l.nguyen@intel.com>, Przemek Kitszel <przemyslaw.kitszel@intel.com>, 
-	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Rodolfo Giometti <giometti@enneenne.com>, Richard Cochran <richardcochran@gmail.com>, 
-	Jonathan Lemon <jonathan.lemon@gmail.com>, Stefan Haberland <sth@linux.ibm.com>, 
-	Jan Hoeppner <hoeppner@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>, 
-	Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev <agordeev@linux.ibm.com>, 
-	Christian Borntraeger <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, 
-	Satish Kharat <satishkh@cisco.com>, Sesidhar Baddela <sebaddel@cisco.com>, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hello Andy,
+Use single read permission return in switch-case that handles
+attributes in tmp421_is_visible().
 
+Signed-off-by: Bruno Thomsen <bruno.thomsen@gmail.com>
+---
+ drivers/hwmon/tmp421.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-On Tue, 11 Nov 2025 at 17:57, Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> Use %ptSp instead of open coded variants to print content of
-> struct timespec64 in human readable format.
->
-> Reviewed-by: Christian K=C3=B6nig <christian.koenig@amd.com>
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Thanks for the patch.
+diff --git a/drivers/hwmon/tmp421.c b/drivers/hwmon/tmp421.c
+index 1eded169e843..23ed3fbc9c99 100644
+--- a/drivers/hwmon/tmp421.c
++++ b/drivers/hwmon/tmp421.c
+@@ -262,7 +262,6 @@ static umode_t tmp421_is_visible(const void *data, enum hwmon_sensor_types type,
+ 	switch (attr) {
+ 	case hwmon_temp_fault:
+ 	case hwmon_temp_input:
+-		return 0444;
+ 	case hwmon_temp_label:
+ 		return 0444;
+ 	case hwmon_temp_enable:
+-- 
+2.51.1
 
-FWIW, please feel free to add
-Acked-by: Sumit Semwal <sumit.semwal@linaro.org>
-
-Best,
-Sumit.
-> ---
->  drivers/dma-buf/sync_debug.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/dma-buf/sync_debug.c b/drivers/dma-buf/sync_debug.c
-> index 67cd69551e42..9e5d662cd4e8 100644
-> --- a/drivers/dma-buf/sync_debug.c
-> +++ b/drivers/dma-buf/sync_debug.c
-> @@ -59,7 +59,7 @@ static void sync_print_fence(struct seq_file *s,
->                 struct timespec64 ts64 =3D
->                         ktime_to_timespec64(fence->timestamp);
->
-> -               seq_printf(s, "@%lld.%09ld", (s64)ts64.tv_sec, ts64.tv_ns=
-ec);
-> +               seq_printf(s, "@%ptSp", &ts64);
->         }
->
->         seq_printf(s, ": %lld", fence->seqno);
-> --
-> 2.50.1
->
 
