@@ -1,221 +1,135 @@
-Return-Path: <linux-kernel+bounces-895683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D987C4EA9D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:03:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A658FC4EA73
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:01:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C97C34F683C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:55:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84520188B704
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:56:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DD0A3246F1;
-	Tue, 11 Nov 2025 14:55:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F6F8331217;
+	Tue, 11 Nov 2025 14:56:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LiwSP0s0"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EFO0Tfxh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40AB22C028A
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 14:55:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2999309EE3;
+	Tue, 11 Nov 2025 14:56:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762872945; cv=none; b=bbOdFCFIJMSfboTBLadyOkEpY0ZVzydeTUrWYaXt9ZfFvCQEQTsu23SYK3eOROBUMEkYS8L8xhkuLIOKDevqCw46gOKSWbCE3n4rwsjDqDbzTPfVuyeL88YF/iTLaxeKYJEQzV6+iudXMAMv+qu78d6OzmF3Soio6fjoOwMEd4c=
+	t=1762872964; cv=none; b=GQJAk1Nuhm8kTrDzNNU88dLsNiEN16nNK35mp0PPV2iV+4KNdxV3Iy2/cF8q7V/vGQsOcuKBis+T6SBdnEI+/YGpr6qaLBn6wQViTIzE6RhxT7XDTigHqGcInQzorlvz5PMIhlvwXGf05+KfLuSVPcWfcrw5aPKOHcj07bwxX44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762872945; c=relaxed/simple;
-	bh=poiBwz5mAEg50OMJ/f1mGkL7ppAET8+TVF8zgnle07Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=J1C7fwdT6/wQdKotCnaYxdXf85Ndjrm4audqdUgMwWE/EGxfH341LxyTp9TXFoI6uH9MGPlzWj/BIbpSZaGI4mYsDldWjdq0FObUzIdWvzgrSbfsej2XXUh1qdHb/7ve+kXNwdbLcigjtyTP1Q3RqJIjg2d4c4T3nRzS/gPmV78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LiwSP0s0; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5943d1d6471so4298658e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 06:55:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762872942; x=1763477742; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5+2iTAdNXPyvzz+6ao8nXIdlLksRACyGhcHi8QO3xHY=;
-        b=LiwSP0s012NLOVJ6Sc935al6PMrPiN4nCgoeDjjGxiEV0zPQ0oLYJOH3Tg4sabJ7Xq
-         LNkxxwAecouyUbDgBn88mJSPcYCZ04rcTV0ppRokwys72urln2a2YwreEXfB1J/ga7Pm
-         eyTB9CeNOi/+1J563RLy3khLdfXdsMrzRHTzoFDzxvTOgK06enHD4xsXutBW8uvXLoSW
-         DQS2PhNvGbBj/C3Vb32i6mS8Zy5jOdDNFVBhdeS4yqJni5xR5lIRkrbX+Lda9AFRV3hA
-         9Xr728rt+OB53k8yP7yLRNuGMuCiqFYa8bbuIsGJNl3XM2YMNPQ6rTfWWWhFu8A9ZQvP
-         9KnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762872942; x=1763477742;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=5+2iTAdNXPyvzz+6ao8nXIdlLksRACyGhcHi8QO3xHY=;
-        b=hnoK8BZATReWGgMiwdT7M0nsvozJjUdjky3rw0VoVS3swM475H6u6YtIITaQHrU8eV
-         hetBu0ohjB+g7hmYRL/Ur8uq8eaLvnJA7mQa3ajsj+kWarFp5V2jfSWQOFjLnWXMwbdc
-         SCOHSw3PknYHjVJ55YrqH9Zv3HKsKTbZ5IuR9uCf+GVD+OCmqKyJWIK29cZwQdnKzqXo
-         qVLW/F1KxSqgEtbP3kdOQIptvHKPaDSfzeTuzmYriH1vSPT0DEr7zDRBuzrLOxLV/EXU
-         d9HZkbSEVIyPp/rEtmHSqZw4jY3hSXgU7uiQRB8wdOqgW0OWwSFhhh06ObcDhZvdHdOE
-         RwfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXI66G9iNfptp1q9+D7vRwXywklrtl0DAF/jNkRfLiD1z0cFzP/uYa1/SIobH/4j2NLCqMxoDvi95NtlmE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPFtaT9cJFjR7sTMuzDIZ+u8muaAiNFS4Pfbjokl6jbG8W6yMP
-	7WyPr3JwTGNJQp6821fzmuh1UcTrpHOMo3KvL3FGWVBr2Rm+oK7o7AKOqJC2WXT93xU=
-X-Gm-Gg: ASbGncuSU5390sCmPa3KXW5AsA4GBqNye3nS90Jc1qC7xva8lWKuFEguT5rUvmiiBld
-	Ztw+IlOxZkWV0Uis5qvj/V5W1lv6kwWW+nQC2fqGfYt4+1Jcuo8Jp9Vc7VPdVCk8+5Uc3cnTjrY
-	Amsxi2RLL3+07KkVhXom7I8pQz5Xrrb+9+qI7JACU5armLWEXjfCmDJhMs91uTpeR4r/GHbm4zh
-	bWTx2PW2BMdaVbQnp31FopQrGPtoysmzW8SJHHPtQsiL4e9N3BcxsQuhabwegNDizmcaljuGuXf
-	T8IR+VSacLr1tFJKIK7Z1p5+zS7lO0BssvXDpitQbIvFLwHjcLiv4C4XXC24hu4tEo1TASb1ZGv
-	TgLTCZxYVkLIHbm/npI/6S1KXBDD9WeMmZt7JYl51wv9gCuFWUSpqK2QL596CI8gWPVOoEon86p
-	cuK8ulaE9ruNF3xxuPYWPtJq8Ptzol
-X-Google-Smtp-Source: AGHT+IFD6IXaxNvIC1u7RqWRp2Nrx86AijzV4Ae4+U9y+/bNW2XoNjpyIk+eMC+4lF0z28KBdYXa/Q==
-X-Received: by 2002:a05:6512:e9c:b0:594:2d53:545 with SMTP id 2adb3069b0e04-5945f1db920mr3654712e87.46.1762872942045;
-        Tue, 11 Nov 2025 06:55:42 -0800 (PST)
-Received: from NB-6746.corp.yadro.com ([188.243.183.84])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5944ff427d0sm4780145e87.68.2025.11.11.06.55.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Nov 2025 06:55:41 -0800 (PST)
-From: Artem Shimko <a.shimko.dev@gmail.com>
-To: p.zabel@pengutronix.de
-Cc: a.shimko.dev@gmail.com,
-	andi.shyti@kernel.org,
-	andriy.shevchenko@linux.intel.com,
-	jsd@semihalf.com,
-	linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	mika.westerberg@linux.intel.com
-Subject: [PATCH v4] i2c: designware-platdrv: simplify reset control and error handling
-Date: Tue, 11 Nov 2025 17:55:36 +0300
-Message-ID: <20251111145536.3232456-1-a.shimko.dev@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <743a73399327e0f11825b1b50b4a0fc90948625d.camel@pengutronix.de>
-References: <743a73399327e0f11825b1b50b4a0fc90948625d.camel@pengutronix.de>
+	s=arc-20240116; t=1762872964; c=relaxed/simple;
+	bh=O/PGfeis5HPQNP+TRiiTqX1JHN1m4XlZ7OUntJXfooY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TXvP0oltJcfO9SfuKVr1IMXeRmxC0zhdT6wN/11vRk4MdJtFc3J95rWrn+z9RoX+FiqnkX2zCp0eeM0ApgoksrHx2AWiQST0fH4gjBU5LULUU0jxlUsyCSXLM3UAlD6Deltz/bVdbTUKrs5K1KG3mSFNXSzbLTckVAHpRDoGVWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EFO0Tfxh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4798C19422;
+	Tue, 11 Nov 2025 14:56:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762872963;
+	bh=O/PGfeis5HPQNP+TRiiTqX1JHN1m4XlZ7OUntJXfooY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EFO0TfxhvNiBJNj3+mPHMLHLr4rm30ye3iGgK0AAEv38u2yJYH2154KNqquD5ZSLg
+	 Q3iosAzBw5AGju6tN4PGRK0nZYkYXC4NOsMIUYmpxJtpgiwqcYLxe1JYM97M1zv+d4
+	 uCGTMBFP1E84GqSj4/xA/0FpTxxjBS+lG/xZh032Iqzss78c3sb42LUmlJKN/BQeyu
+	 OudEJvyn5cKT/xy9SMD5eiemVzS2iIQ246tLhZfaOMQtbgFTq2SozEsxRYjx8Rq5BO
+	 xePxEuHvnFI77KNnbRLulb4Azg74dKBgsvRqur6NfoVYUjyKwmnpzRsoNBiWqlDI2O
+	 jTS+h12+0ATNg==
+Date: Tue, 11 Nov 2025 14:55:58 +0000
+From: Simon Horman <horms@kernel.org>
+To: Ankit Khushwaha <ankitkhushwaha.linux@gmail.com>
+Cc: Steffen Klassert <steffen.klassert@secunet.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+	Jason Xing <kernelxing@tencent.com>, netdev@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-kernel-mentees@lists.linuxfoundation.org
+Subject: Re: [PATCH] selftest: net: fix variable sized type not at the end of
+ struct warnings
+Message-ID: <aRNOfir6X9FmaUrd@horms.kernel.org>
+References: <20251027050856.30270-1-ankitkhushwaha.linux@gmail.com>
+ <aQD8AOZduY4Fit3k@horms.kernel.org>
+ <aQ9-F34aW__rlMuD@fedora>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aQ9-F34aW__rlMuD@fedora>
 
-The current implementation uses separate calls to acquire and deassert
-reset control, requiring manual error handling for the deassertion
-operation. This can be simplified using the dedicated devm function that
-combines both operations.
+On Sat, Nov 08, 2025 at 10:59:59PM +0530, Ankit Khushwaha wrote:
+> On Tue, Oct 28, 2025 at 05:23:12PM +0000, Simon Horman wrote:
+> > On Mon, Oct 27, 2025 at 10:38:56AM +0530, Ankit Khushwaha wrote:
+> > > Some network selftests defined variable-sized types defined at the end of
+> > > struct causing -Wgnu-variable-sized-type-not-at-end warning.
+> > > 
+> > > warning:
+> > > timestamping.c:285:18: warning: field 'cm' with variable sized type 
+> > > 'struct cmsghdr' not at the end of a struct or class is a GNU 
+> > > extension [-Wgnu-variable-sized-type-not-at-end]
+> > >   285 |                 struct cmsghdr cm;
+> > >       |                                ^
+> > > 
+> > > ipsec.c:835:5: warning: field 'u' with variable sized type 'union 
+> > > (unnamed union at ipsec.c:831:3)' not at the end of a struct or class 
+> > > is a GNU extension [-Wgnu-variable-sized-type-not-at-end]
+> > >   835 |                 } u;
+> > >       |                   ^
+> > > 
+> > > This patch move these field at the end of struct to fix these warnings.
+> > > 
+> > > Signed-off-by: Ankit Khushwaha <ankitkhushwaha.linux@gmail.com>
+> > 
+> > Hi Ankit,
+> > 
+> > I don't believe this change is correct.
+> > 
+> > I think that the intention of the code is the char arrays (buf and control)
+> > provide the buffer space for the variable-length trailing field
+> > of the preceding structure. Where we basically have a header followed
+> > by data. But your patch would place the before the header.
+> >
+> Hi Simon,
+> So if buf and control providing the buffer space, then i think it is
+> better to suppress `-Wgnu-variable-sized-type-not-at-end` warning 
+> within this block of code.
+> 
+> 	#pragma GCC diagnostic push
+> 	#pragma GCC diagnostic ignored "-Wgnu-variable-sized-type-not-at-end"
 
-Replace devm_reset_control_get_optional_exclusive() with
-devm_reset_control_get_optional_exclusive_deasserted(), which handles both
-reset acquisition and deassertion in a single call as well as
-reset_control_put() which is called automatically on driver detach. This
-eliminates the need for explicit deassertion and its associated error
-checking while maintaining the same functional behavior through automatic
-resource management.
+I'm unsure of the attitude towards using #pragma like this in kernel code,
+but certainly it would be a new one for me.
 
-As part of this cleanup, streamline the error handling by removing goto
-exit_reset and goto exit_probe labels, using direct returns with
-dev_err_probe() for cleaner and more linear code flow.
+> 
+> 	struct {
+> 		union {
+> 			struct xfrm_algo        alg;
+> 			struct xfrm_algo_aead   aead;
+> 			struct xfrm_algo_auth   auth;
+> 		} u;
+> 		char buf[XFRM_ALGO_KEY_BUF_SIZE];
+> 	} alg = {};
+> 
+> 	#pragma GCC diagnostic pop
+> 
+> I think this would be fine.
 
-Suggested-by: Philipp Zabel <p.zabel@pengutronix.de>
-Signed-off-by: Artem Shimko <a.shimko.dev@gmail.com>
----
+In my view, the most promising approach I am aware of is using
+TRAILING_OVERLAP(), as illustrated in [1]. However, that
+approach was recently rejected, so I guess that means
+it doesn't have much promise after all.
 
-Oh sorry Philipp, now I got it
-
-If you have a time, could you please have a look at this version?
-
-Thank you!
-
---
-Regards,
-Artem
-
- drivers/i2c/busses/i2c-designware-platdrv.c | 43 +++++++--------------
- 1 file changed, 14 insertions(+), 29 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-designware-platdrv.c b/drivers/i2c/busses/i2c-designware-platdrv.c
-index 34d881572351..147eda5f5268 100644
---- a/drivers/i2c/busses/i2c-designware-platdrv.c
-+++ b/drivers/i2c/busses/i2c-designware-platdrv.c
-@@ -236,40 +236,32 @@ static int dw_i2c_plat_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
--	dev->rst = devm_reset_control_get_optional_exclusive(device, NULL);
-+	dev->rst = devm_reset_control_get_optional_exclusive_deasserted(device, NULL);
- 	if (IS_ERR(dev->rst))
--		return dev_err_probe(device, PTR_ERR(dev->rst), "failed to acquire reset\n");
--
--	reset_control_deassert(dev->rst);
-+		return PTR_ERR(dev->rst);
- 
- 	ret = i2c_dw_fw_parse_and_configure(dev);
- 	if (ret)
--		goto exit_reset;
-+		return ret;
- 
- 	ret = i2c_dw_probe_lock_support(dev);
--	if (ret) {
--		ret = dev_err_probe(device, ret, "failed to probe lock support\n");
--		goto exit_reset;
--	}
-+	if (ret)
-+		return dev_err_probe(device, ret, "failed to probe lock support\n");
- 
- 	i2c_dw_configure(dev);
- 
- 	/* Optional interface clock */
- 	dev->pclk = devm_clk_get_optional(device, "pclk");
--	if (IS_ERR(dev->pclk)) {
--		ret = dev_err_probe(device, PTR_ERR(dev->pclk), "failed to acquire pclk\n");
--		goto exit_reset;
--	}
-+	if (IS_ERR(dev->pclk))
-+		return dev_err_probe(device, PTR_ERR(dev->pclk), "failed to acquire pclk\n");
- 
- 	dev->clk = devm_clk_get_optional(device, NULL);
--	if (IS_ERR(dev->clk)) {
--		ret = dev_err_probe(device, PTR_ERR(dev->clk), "failed to acquire clock\n");
--		goto exit_reset;
--	}
-+	if (IS_ERR(dev->clk))
-+		return dev_err_probe(device, PTR_ERR(dev->clk), "failed to acquire clock\n");
- 
- 	ret = i2c_dw_prepare_clk(dev, true);
- 	if (ret)
--		goto exit_reset;
-+		return ret;
- 
- 	if (dev->clk) {
- 		struct i2c_timings *t = &dev->timings;
-@@ -309,16 +301,11 @@ static int dw_i2c_plat_probe(struct platform_device *pdev)
- 	pm_runtime_enable(device);
- 
- 	ret = i2c_dw_probe(dev);
--	if (ret)
--		goto exit_probe;
--
--	return ret;
-+	if (ret) {
-+		dw_i2c_plat_pm_cleanup(dev);
-+		i2c_dw_prepare_clk(dev, false);
-+	}
- 
--exit_probe:
--	dw_i2c_plat_pm_cleanup(dev);
--	i2c_dw_prepare_clk(dev, false);
--exit_reset:
--	reset_control_assert(dev->rst);
- 	return ret;
- }
- 
-@@ -340,8 +327,6 @@ static void dw_i2c_plat_remove(struct platform_device *pdev)
- 	i2c_dw_prepare_clk(dev, false);
- 
- 	i2c_dw_remove_lock_support(dev);
--
--	reset_control_assert(dev->rst);
- }
- 
- static const struct of_device_id dw_i2c_of_match[] = {
--- 
-2.43.0
-
+[1] https://lore.kernel.org/netdev/aPdx4iPK4-KIhjFq@kspp/
 
