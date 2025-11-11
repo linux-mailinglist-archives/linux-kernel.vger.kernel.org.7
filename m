@@ -1,82 +1,125 @@
-Return-Path: <linux-kernel+bounces-895886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87BD8C4F312
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 18:09:48 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4468AC4F318
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 18:10:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D66974E058F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:09:46 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 47FA44E10F0
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:10:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BD6036CE17;
-	Tue, 11 Nov 2025 17:09:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93537393DDA;
+	Tue, 11 Nov 2025 17:09:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="B9Jw8GHN"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=shazbot.org header.i=@shazbot.org header.b="hD8YEHr8";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="flW8iM92"
+Received: from fhigh-a7-smtp.messagingengine.com (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11B542F6577;
-	Tue, 11 Nov 2025 17:09:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41389377EB2;
+	Tue, 11 Nov 2025 17:09:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762880980; cv=none; b=PFmuq9f2BjbJzeHP1SrXq+P1Z2TMvpRdRL5eINAgT7B+hRiHCRCV9yUqfj85NJOngsEfxHfZSQcRUFJ9oBASD5yQQYEKgJNlKQuJWLdk4s9VelaDZw+Nbx+a+SFL3AwlfbFzk1rs6+00/zcpjfTVgN2pdIghCk4Rvx6BHjf9wIY=
+	t=1762880984; cv=none; b=iXBf2YUFj/mKW5kVVSnXZr96qjJdhXT7R1o/eCY4rOFhJJbOWR3kA2gDdsRgLz3+zEDVnuFedCijG2/Dni9OgdETA61gcqxl1BLdWeEY0xG+y6PEsvQ84NCg0Gox/tQ/paDuAxWgfvxsB/YNtbGHOdm7pcrw1Gpq0BGiOhT98yw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762880980; c=relaxed/simple;
-	bh=DmlOJa1fHEn32/Sc8ojajG1QKAcD8mmoC9t6oZqjQ2U=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Uxt4hcWHi0ZaCTLdU/RE8oookUJ+M4r+dU3hvatzHsA02nwkzYfbsPwO42SOGf0x1S9AtQuYwh80ap6IV+e+jSfFn/AdxVjRSnmYR9YE/XrqgQGPTeQCpLWWHjRC4ZBdE8H4sOgliOnsJa/UKKwb5ebhG7RF2gqM8pbBiaB76dc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=B9Jw8GHN; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net AC31540B1B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1762880971; bh=9jXUCFBwjBpcsEQk0cc10lCnTYBRAbS2SKyRSjdCgKo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=B9Jw8GHNuyvp+2m2kK2hfKCEy4Pv2jd1dYeq3TfsLTGvq50LhUblK57uhpq1mwXYq
-	 RQFO57lizQNADOpLpwDUGuTUxuClo2f7nGfO5HnTtNU/gELyA5ld7Iye7So8hn68Xb
-	 hWRly4brmxDAxM4g96Bb352jIZO01MyDwMZgxOt9+mi3xOsNtXNs+pYeEAdFSMF2Yi
-	 bSsfec+XhTx4pxFwLWtsw/ia9uf23Qjz3SwBNGOLg5tpNcpZIhOfu3WkWRuRteHj5n
-	 D01DBR2UOLIipanaBsXD6SJkjTxK4PgaYBW1pMRQQqJBL5uCBCXL/BBU6xQ1w1sM34
-	 Sj5o2FdhjucaA==
-Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id AC31540B1B;
-	Tue, 11 Nov 2025 17:09:31 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Linux Doc Mailing
- List <linux-doc@vger.kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] Convert get_feat to Python
-In-Reply-To: <cover.1762877066.git.mchehab+huawei@kernel.org>
-References: <cover.1762877066.git.mchehab+huawei@kernel.org>
-Date: Tue, 11 Nov 2025 10:09:30 -0700
-Message-ID: <87a50swl6d.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1762880984; c=relaxed/simple;
+	bh=60vl0iDgrCdfu+aHUjEEbOXEEqKsUbq7uIzx1ZL58HU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VRT3+8hxzk6H3pOYDbD4tz9CWBsOf6ThWADvfndjdhgmN4qrixJ7ldxLROsrABErF09hgFdOB6svKLBYefcI+MLXeDhOVYltRET5W5s4WCfWGaXSkalTsn5w6G6oQdFO7q/BiMJQrTyJHBI0ryfcyF0JhFn1BIYKTtQwCinA1a4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shazbot.org; spf=pass smtp.mailfrom=shazbot.org; dkim=pass (2048-bit key) header.d=shazbot.org header.i=@shazbot.org header.b=hD8YEHr8; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=flW8iM92; arc=none smtp.client-ip=103.168.172.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shazbot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shazbot.org
+Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 25AD2140024F;
+	Tue, 11 Nov 2025 12:09:41 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-06.internal (MEProxy); Tue, 11 Nov 2025 12:09:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shazbot.org; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1762880981;
+	 x=1762967381; bh=oelfZn+6Mq6PqWbH7TshwX1xtNUg/MbLDOSurZvE/ck=; b=
+	hD8YEHr8IfMwWDNsbohU+LwnlTv+LbzOw8lNRwxSipLfPTJwU0H7ANo/xgRxZ2in
+	axqXky0Au4VWe0No4JTqbamgeAiHLBOGhS3HcsFYRa1B47+AunHGPI/ZJxDIrGAH
+	CPzw+CjPzzD0px7DySprdQUJMCweQj0QNzTbnSoal1ZbY0TGSKgBylYrsYZWanho
+	XkXhP9V/XZCa0V3pDqmtZX5BplA1mUW+nXF8vBDYSZps+o6awSE+8yh3MmLSVsUw
+	qmfj1AUlPxdhY6vPi4X3iwCFmq4PLF1QJlTiPgCc5ERpivxGXyokpfhyTnjPem0G
+	Hg0Yv40oZY1NOlf3jhpBng==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762880981; x=
+	1762967381; bh=oelfZn+6Mq6PqWbH7TshwX1xtNUg/MbLDOSurZvE/ck=; b=f
+	lW8iM92UvL0SU+6a5HdLBbOCidhNhk45dt2oLYTYxDFdkK276Wz68tFFTMSyM7lH
+	pexoqHP+k5Mj/hEhBqvM6wZjWEhIHukN1iojYQs4j8C9p+j6GasvYMIKqPyRcsre
+	24SWZ3Fc1JmPLLTJxRmihqefGvZglj9ZQbhYIz1Bn2kpSRTBtdjMKHDgUQYhxBKn
+	pE65srjhfAW2oYKzOurgC/zD4ZGlfIA/UXqFbMB4ZiiEVl+xkwlKr1gLNAnEJfC4
+	U/4Tg3OUzI0WZl3XZXXEmrp6gtHen6aNiGXUsVmGvuAXY1KqacvhZatsMpHs2ye1
+	wWyX6x0afzQFUiNkqwGkQ==
+X-ME-Sender: <xms:1G0TafyIFmXDplB7mI_cOne8FJSwE2-wrZL4SeLPK7t-Bvs81E_3Yg>
+    <xme:1G0TaRUbSGxa2FHJVrQDWnHskj1mGx_bTHcAx0Gn4ZoZjxbRS-cXXOk8bn91g-XyV
+    fO29foVizcSqDS0MuHKXrfrLdXbc6Rnw5m22j6UtgV4DWsuG2ac>
+X-ME-Received: <xmr:1G0TaZPBPoQ6us26UQTsAbTNu6DQ0wtf0msI2eGX0H0g30JNAXFN9WJC>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvtddujeehucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkjghfgggtgfesthejredttddtvdenucfhrhhomheptehlvgigucgh
+    ihhllhhirghmshhonhcuoegrlhgvgiesshhhrgiisghothdrohhrgheqnecuggftrfgrth
+    htvghrnhepteetudelgeekieegudegleeuvdffgeehleeivddtfeektdekkeehffehudet
+    hffhnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
+    hlvgigsehshhgriigsohhtrdhorhhgpdhnsggprhgtphhtthhopeejpdhmohguvgepshhm
+    thhpohhuthdprhgtphhtthhopegrmhgrshhtrhhosehfsgdrtghomhdprhgtphhtthhope
+    gumhgrthhlrggtkhesghhoohhglhgvrdgtohhmpdhrtghpthhtohepshhhuhgrhheskhgv
+    rhhnvghlrdhorhhgpdhrtghpthhtohepjhhgghesiihivghpvgdrtggrpdhrtghpthhtoh
+    epkhhvmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhk
+    shgvlhhfthgvshhtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinh
+    hugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:1G0TabB4jyyh1N--Gt3dN5mQlrIYGuptGVrQUo92dPM-n7y8UYBx7g>
+    <xmx:1G0TaedAUVVHFWlv48PNvKM3il7CNXneFXlxfj5SLnJjU_mGcdc3RQ>
+    <xmx:1G0TaSNKxe9FXh9WgHHy6QoMC2uiiOd0Y71KPqJbkTfwXIIoHlbLYA>
+    <xmx:1G0TaWKRHjLUjMaL2OE7zPN07rSPauK-L_Q7kC1mAezTinCyfb7Jnw>
+    <xmx:1W0TaXk6LT6NEp3lVc-sSyFsy5xSXwnjppetkHpJ8W_88fnlRVLWslPD>
+Feedback-ID: i03f14258:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 11 Nov 2025 12:09:39 -0500 (EST)
+Date: Tue, 11 Nov 2025 10:09:37 -0700
+From: Alex Williamson <alex@shazbot.org>
+To: Alex Mastro <amastro@fb.com>
+Cc: David Matlack <dmatlack@google.com>, Shuah Khan <shuah@kernel.org>,
+ Jason Gunthorpe <jgg@ziepe.ca>, <kvm@vger.kernel.org>,
+ <linux-kselftest@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 4/4] vfio: selftests: replace iova=vaddr with
+ allocated iovas
+Message-ID: <20251111100937.4706a54e.alex@shazbot.org>
+In-Reply-To: <20251111-iova-ranges-v2-4-0fa267ff9b78@fb.com>
+References: <20251111-iova-ranges-v2-0-0fa267ff9b78@fb.com>
+	<20251111-iova-ranges-v2-4-0fa267ff9b78@fb.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
+On Tue, 11 Nov 2025 06:52:05 -0800
+Alex Mastro <amastro@fb.com> wrote:
 
-> Hi Jon,
->
-> That's the final series to complete the migration of documentation
-> build: it converts get_feat from Perl to Python.
->
-> With that, no Sphinx in-kernel extensions use fork anymore to call
-> ancillary scripts: everything is now importing Python methods
-> directly from the libraries.
+> vfio_dma_mapping_test and vfio_pci_driver_test currently use iova=vaddr
+> as part of DMA mapping operations. The assumption that these IOVAs
+> are legal has held up on all the hardware we've tested so far, but is
+> not guaranteed. Make the tests more robust by using iova_allocator to
+> vend IOVAs, which queries legally accessible IOVAs from the underlying
+> IOMMUFD or VFIO container.
 
-This, of course, conflicts with my library move ...  Maybe we review
-that and I go first this time? :)
+I've reported hardware that it doesn't work on, QEMU emulates such
+hardware.  The commit message suggests this is more of a theoretical
+problem.  Thanks,
 
-jon
+Alex
 
