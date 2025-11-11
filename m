@@ -1,73 +1,73 @@
-Return-Path: <linux-kernel+bounces-895498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F766C4E1A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:27:57 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C457C4E1A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:27:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0563F4E492A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:27:50 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C9C3E344A2B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:27:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DEBE33ADA4;
-	Tue, 11 Nov 2025 13:27:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2163336EFF;
+	Tue, 11 Nov 2025 13:27:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="htConICG"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZD223dca"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54AE132C938
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 13:27:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9696330E82E
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 13:27:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762867660; cv=none; b=Vu5WkAAXCW96+mOGBW4G70reR6asZ/QiQt1qixk2VqMYh/u2E4NEQYcTPS/8iyqqPDhsKgdyd5bRPIuFgmoHCabOZ237twghlayx9qu2W/SMnJodYNIoh9qv+tGnj6JWXXp6RuEGC0+KEI+3AG/hQEmv71mVDfWYwhWGwuUi0e4=
+	t=1762867659; cv=none; b=smksq/mYqYT9ciNR8BDdZJUPsM+Ptc7pdrzWN9RkYVaTOxs6byPMNeDpWZAL3vUza9UmE6fNPmUUBHpxcy7gs/jloWoKHkLCI7buiQZO4ohNZ/1GHjdm2gM+eGj+XUcXIKkgy17xRi0dqp/ioPojPJ3I+URKWXbQqtOjywigmjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762867660; c=relaxed/simple;
-	bh=Ht/Y+Soaw1mchZVRGdUu4N+yatiVD3fzeKp6v9AIAuM=;
+	s=arc-20240116; t=1762867659; c=relaxed/simple;
+	bh=9G3uHXxhzqG3hPgDQN+4rBJDx+qG0DIBhI4DpkNrabk=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=LoOUMfgo4+YN/0qW42Iym1T4QtX37XDeEdCI1r6VqPkY3j8PgyDJPJglpc2eyz0BRTAaDoPARqIyM+7iv78ZT415+TDO96RMtXeIACsgW3fYp7pVD8gLOzXBhzPoOvn0+HL4qt5V9GezhSRvWiWqK8MQO4iZ9Lhu0LYUl+MHD48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=htConICG; arc=none smtp.client-ip=198.175.65.21
+	 Content-Disposition; b=Wj9GG/8Tbr06KXXT+dAONvYyjVqImu7/CPi8s14k8LJ20pgq61Dkr31mPXrNfwik3xxT1mvOumWDzxAje04Eiaajkf5WOXIoAsrBU4R/jiAhetF1+5k6USMI9umKKA6AgjVZmAu+Q0uyHj0WJnalzZZTfqn1Lw0WzXJW22mTAfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZD223dca; arc=none smtp.client-ip=198.175.65.21
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762867660; x=1794403660;
+  t=1762867658; x=1794403658;
   h=date:from:to:cc:subject:message-id:mime-version;
-  bh=Ht/Y+Soaw1mchZVRGdUu4N+yatiVD3fzeKp6v9AIAuM=;
-  b=htConICG+UbSJz5RyN1KfA3YmOwoAUnB4BlhNxZFBQgQFKzk1hiBMAA/
-   UV24ChLi0Rx/rTc/i+84s6kE0QPiWEci7BN4A8SlvwLH3j3WEfsT3roZi
-   +Pf1mEmU4kyAKW5caONgwS6VzIwddv6FER/M2dYj9sSBC5M1f7/VpjWAd
-   k0yzNx/V3d/FsEkS19X/e8oflfcdtNjrVqNHUqNPlye4aQP8P0PULndSW
-   4s9X+IUwz+zYyrW/ipEvUapU6FvLbv9M/FluWEycZLiHmUMxcMMPLJsvD
-   mObyxyPkCKeHHxG7maT3+invbnnvQy6JlrJ7dTWciRvwu1Fmrz5IMeg/Y
-   A==;
-X-CSE-ConnectionGUID: 1nUQ+GttQnm/uzrP5h5pfw==
-X-CSE-MsgGUID: GyjX+fvXQGC73fzFGvRYmg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="64845530"
+  bh=9G3uHXxhzqG3hPgDQN+4rBJDx+qG0DIBhI4DpkNrabk=;
+  b=ZD223dcaTKExbmIiMaBPp95oeoLBCQynBI0WNSn5+jBeC3vMzvgeoTbP
+   5oVBawJXxHWw5LrGLVVRPsmJKuL4ifxQ04gWs6NjPghWiOrf2To3UDXzl
+   aGyks146b0M6O6+zVK4gBTTqcILjCBrPnObo16skrAtrMx4JiTTCCL4jv
+   epovTV9pCzn4imfzHV0/dCImSlhmgBpb7I/21MIxUkiP3iTR+X9bFV2Ec
+   R1Qicf8AvDLSCVJpQcQ4L2rN26Pcs4ZYsRZmIUqZEyTO55BQk1F7XoUFi
+   0EAqWia2M8s0BxSMZrv1UctEDmYzu6j2HS+3kawQL6y9r8L4mwg2sEI4/
+   w==;
+X-CSE-ConnectionGUID: Ysu5NBvrTymBzL4Z2Ue1rw==
+X-CSE-MsgGUID: JFYOFz1aSdiw4MMX0MIemQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="64845528"
 X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="64845530"
+   d="scan'208";a="64845528"
 Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 05:27:38 -0800
-X-CSE-ConnectionGUID: Qg+HXBESSNakccD5spfX4Q==
-X-CSE-MsgGUID: cfFipR7DQ9m4F1Mn7Xpj7g==
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 05:27:37 -0800
+X-CSE-ConnectionGUID: HQ4n+RL2RVC56YRf0+ulLg==
+X-CSE-MsgGUID: DRg0RBaJQIaDC3bDxR8uxA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.19,296,1754982000"; 
-   d="scan'208";a="219613805"
+   d="scan'208";a="219613806"
 Received: from lkp-server01.sh.intel.com (HELO 7b01c990427b) ([10.239.97.150])
   by orviesa002.jf.intel.com with ESMTP; 11 Nov 2025 05:27:36 -0800
 Received: from kbuild by 7b01c990427b with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1vIoPF-0003Az-1k;
+	id 1vIoPF-0003B2-1n;
 	Tue, 11 Nov 2025 13:27:33 +0000
-Date: Tue, 11 Nov 2025 21:27:12 +0800
+Date: Tue, 11 Nov 2025 21:27:14 +0800
 From: kernel test robot <lkp@intel.com>
 To: Peter Zijlstra <peterz@infradead.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: [tip:sched/core 8/10] kernel/sched/deadline.c:1441:16: error: use of
- undeclared identifier 'd_se'; did you mean 'dl_se'?
-Message-ID: <202511112120.vStICnyl-lkp@intel.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	x86@kernel.org
+Subject: [tip:sched/core 8/10] kernel/sched/deadline.c:1441:23: error: 'd_se'
+ undeclared; did you mean 'dl_se'?
+Message-ID: <202511112143.jHhs83lL-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,26 +80,24 @@ Content-Disposition: inline
 tree:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git sched/core
 head:   46f61fb2e7678daae743d601efac3b957041ed56
 commit: b75a19b9d73e0deb5f761884228b8b15694e2858 [8/10] sched/deadline: Document dl_server
-config: loongarch-allnoconfig (https://download.01.org/0day-ci/archive/20251111/202511112120.vStICnyl-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 996639d6ebb86ff15a8c99b67f1c2e2117636ae7)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251111/202511112120.vStICnyl-lkp@intel.com/reproduce)
+config: i386-allnoconfig (https://download.01.org/0day-ci/archive/20251111/202511112143.jHhs83lL-lkp@intel.com/config)
+compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251111/202511112143.jHhs83lL-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202511112120.vStICnyl-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202511112143.jHhs83lL-lkp@intel.com/
 
 All errors (new ones prefixed by >>):
 
    In file included from kernel/sched/build_policy.c:58:
->> kernel/sched/deadline.c:1441:16: error: use of undeclared identifier 'd_se'; did you mean 'dl_se'?
+   kernel/sched/deadline.c: In function 'update_curr_dl_se':
+>> kernel/sched/deadline.c:1441:23: error: 'd_se' undeclared (first use in this function); did you mean 'dl_se'?
     1441 |         if (dl_server(d_se) && dl_se->dl_throttled && !dl_se->dl_defer)
          |                       ^~~~
          |                       dl_se
-   kernel/sched/deadline.c:1430:70: note: 'dl_se' declared here
-    1430 | static void update_curr_dl_se(struct rq *rq, struct sched_dl_entity *dl_se, s64 delta_exec)
-         |                                                                      ^
-   1 error generated.
+   kernel/sched/deadline.c:1441:23: note: each undeclared identifier is reported only once for each function it appears in
 
 
 vim +1441 kernel/sched/deadline.c
