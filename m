@@ -1,143 +1,141 @@
-Return-Path: <linux-kernel+bounces-895929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 244B4C4F4AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 18:41:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 276EEC4F4B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 18:41:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4CF2F4E50C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:41:20 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3C3C04E8DF1
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:41:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3DA53A1CE8;
-	Tue, 11 Nov 2025 17:41:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18E313A1D11;
+	Tue, 11 Nov 2025 17:41:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4eUnBY3T"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UlWa82Zh"
+Received: from mail-ej1-f74.google.com (mail-ej1-f74.google.com [209.85.218.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E8B7393DCB
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 17:41:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA81D3A1D05
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 17:41:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762882872; cv=none; b=q33xP179a6VCOLIdTz7MUWR2twcjueOQZzBRoLA3uOpYnNlXfVvad0yGpdXNDvPTmqPnNsBwRMx9cLIgKwUwZc2XT2/U/yzakBxyhvUEBVL/eNgJOQwPHPjMt/TT9s3uTqhbEEPkj2+1I20hs2pyyjk+bCFSe5BzBG5tzEuAmy0=
+	t=1762882876; cv=none; b=HLSBOkE7LXvD9bIrUCuBAc1SZSW2tHwOmL/8GKZ71ONazZN6ZPLEBiAF/9ntTWJHISnESf8PuGF70bch6h0BkayhTu8Cv9sIf2tv1NLCDLlNxl7+cbMlSPehki2yTH3F9Drby2yTNP6hPRAFvDjacOB2UOq23Wdh5SHckMQnci0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762882872; c=relaxed/simple;
-	bh=A3dCqptOcTzRgXrYKY6arq6dn0GyZOmvKu8eNBYqvO8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JsvfrrczFmNR1VJwPWHmznoL2X2/koJ1bpaZdUTRC0LHOvCSr5heCg6W/6B5j2PqzIALCVyZJoNDnJSi2cHSfcDP5f8v+YYQEPqCV9KhMMnBqD61DGd+zVp8EDUYXPSFfWzXYLM3upViSGdZDwm9i0/1FHdeyDOcVM7ZUPmuudc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4eUnBY3T; arc=none smtp.client-ip=209.85.216.54
+	s=arc-20240116; t=1762882876; c=relaxed/simple;
+	bh=EGHnGYguqdVtqzE8OSgSk5NT8BRurVLNOwx4JFd9SIc=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=kL+nlBKW+BLuQ9oo25KhK6E3T0oQUFb1hCvfqsjXnRbvYo0bjzYqMFf7N+Gphp3JHsMKoeWgz31QtegdpEo7sVtVdvFSWJoCDofZgzaAhw7jTKxMd+Z6Mw2uolBCT7yjGbdSurCpoxegfksuG+0YKeFQoSQANT0wJQ4yTHtKwy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UlWa82Zh; arc=none smtp.client-ip=209.85.218.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-340bcc92c7dso1134643a91.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 09:41:10 -0800 (PST)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
+Received: by mail-ej1-f74.google.com with SMTP id a640c23a62f3a-b6d40007ea1so1556166b.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 09:41:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762882870; x=1763487670; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VLML9QIDCd2Nh7IkEnXTPWZwGZyyJRn46il9NEEMgiQ=;
-        b=4eUnBY3Tv48SXNCChjsA/6UurtICmK912BAqLI9N/gYaRZP4b2s2OTqJVCrwAILIwJ
-         lZ7sPs0vXV1HjFjnLt3S71ay0yLteC78S/GVb9h7ingpDjRqKcrSbq1/7pPDfmwp/oC5
-         R1pjRLcFDeAEKQef/KB+RxIav7XOZWt/v6W9y9r0wiWVlDuF3t40ffRxUhWpuakian+s
-         ndos/9ESG08mVK0Y4nwZxv/Se0U44Tunm7anjV3KK+mW6GwPmvFJjG5ABHlqYnAWMAtm
-         +lczxEvHo5J2O/pcInvwEjJac/eVQyG+inVIhJfheV8LWNUhbkkN6ODZLMxnjL16b2tx
-         a1Xg==
+        d=google.com; s=20230601; t=1762882873; x=1763487673; darn=vger.kernel.org;
+        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=/Pkn+9vIwNogTuxuW5MtMEzbQcXSFW7NMBZUwaPgd58=;
+        b=UlWa82ZhMYnQnKsmmWLxnZCBfqx1zZnr+BIMcIIqWtbMj9KuAvFT5Q89+xm+pZswky
+         cuFQOKwEmH9Eh9Crk0XyO0KUmaV+e3spyKsvBdzUXxws0PthZdAt4MgJ4t5UVOVv+ZpE
+         hQ399H1vVyw2/NMMi3xn5iahXO8pmVC/7vJgNusnqUKcOxLM1zlYCz8+hTN9kWkbBV45
+         0U7anPFUWbCIzY5+cyG4b+JDspQJNLQ5jXTQqA1ls52RCkorVcAzdZnF31sQrDbtwwZc
+         hy9RB2sQCDkgqD5Aaymdv89AFHb8pOhPrtUSKDwYRuCuXDnMLFHP3qbm4wuLODWbfB6G
+         5sIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762882870; x=1763487670;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VLML9QIDCd2Nh7IkEnXTPWZwGZyyJRn46il9NEEMgiQ=;
-        b=r362nMkX1AUCU1hlC0j/Y0IG4TSpaAGCRBUlpLhoGPqdPqplXzo+wkHMmY1yz1kGzt
-         GzvX+CljBl0WBuUj9MIGTKrbsJ2/kwmvP8C6TEl891DQbz0Ue0agAhldbOv3c1Zo7jbo
-         KjhfOCTVxNHPPB9SiUHvPPFyHCrwiYPPg+U5y6dtarIZuYfVdcr02lLlUJifTQK2kj0z
-         8N/kuHjP7DFN5j4Ix9ZmYSWgjPoaGqeqfOhPHYLKWIH3+BlzQ8sOZBUcbzAF8lj9KXEL
-         v7tH4TMQ/BAEuKwZKU0+kU7hxKwACDf8NmPPSbfveT6p7qd0Xh+Tpyee++GQxE7xOuU1
-         ykcg==
-X-Forwarded-Encrypted: i=1; AJvYcCUkXjvvpGKYuT8uCVWQ7tv7BtEhXB/oaC4Yt5tP5OTIjZz0+KNloxWbKHwN9sVp5IiSXlv+NvJr75sLkCg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwP7oz+LiwN/tLQAWtbIPptai11QwP1gsCJBfDH6c9sRrzC6dO3
-	2xGhH2I9RKyAHtQdjIup5P6LxpteK1hKyF+E/KRMElCGVADFQ9+zjGCYvTp6wfJ97A==
-X-Gm-Gg: ASbGncuWX6zLe07ztbDXGFEzgaFwUCZ+ur9p2tvZAq/XvKoO4fzgysXO8Al+s/Q3Xlf
-	TmCimMsRxfArjhDC5iWgO0IyzUbJVAdxBD/e3UtFOH6lKw0IdmAAecUsDYrmj8BH3N/9LHCkkWQ
-	xPDiMQ+gSqi0OhccMRo+mSM1Hm999kE3rDJ2gUKtNCV4qJrgjU/gyQ65r/sdkYziHpn6gFuiQuk
-	UUD5l16dV5AzRf4IBqCMXCuqkEzVlz/UGaiUhN5Uvua29Ln2GIP0tikcALxeo30rwp9yx2n5W9q
-	4eE4k2LNLystyt+Wz+e01VlPeo921fPRWc14Q1qgMIz2zc12V9DcR0WOWAsSVTKIcYraOvP/FiR
-	1zjVZblS9Dqy/ZR41OCfv2SLi+ZnD7ZRRb59A9qXiEdeaYRAD0j4tYwl0h6XyRgRuqLUPsa7mZ6
-	2qHmnPiEXbkLY9A9HRFRFAhcYVozW9mj9xxHYHroqs5CTYYaFjaCPL
-X-Google-Smtp-Source: AGHT+IEvwmOPuxLIG6g8YJxuSY1Ag9QNyhIsSAktbkG66XXY1WuAd5qXvp+4W0YdAckfJVsZ/Qdviw==
-X-Received: by 2002:a17:90b:4a89:b0:32e:3592:581a with SMTP id 98e67ed59e1d1-343ddeec98cmr150863a91.17.1762882869455;
-        Tue, 11 Nov 2025 09:41:09 -0800 (PST)
-Received: from google.com (132.200.185.35.bc.googleusercontent.com. [35.185.200.132])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-343705c1354sm11607638a91.18.2025.11.11.09.41.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Nov 2025 09:41:08 -0800 (PST)
-Date: Tue, 11 Nov 2025 17:41:04 +0000
-From: David Matlack <dmatlack@google.com>
-To: Alex Mastro <amastro@fb.com>
-Cc: Alex Williamson <alex@shazbot.org>, Shuah Khan <shuah@kernel.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>, kvm@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/4] vfio: selftests: update DMA mapping tests to use
- queried IOVA ranges
-Message-ID: <aRN1MKrfm9GQZpzI@google.com>
-References: <20251111-iova-ranges-v2-0-0fa267ff9b78@fb.com>
+        d=1e100.net; s=20230601; t=1762882873; x=1763487673;
+        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/Pkn+9vIwNogTuxuW5MtMEzbQcXSFW7NMBZUwaPgd58=;
+        b=n5E0Eza2HRTDbR4wLzfzqlI3raIIYQCA3kGLy8MZstNpfE4LvgNaPzR0b/l3MJFXO8
+         04hN3vtBRXPTX2NsVXk0aTdRJziiVQBVjFlggKuCpPGXF/VfmQ/ou62RUnc4j+W+KyXT
+         iQhcUVFKdJCa05pl5PfnEV6vbyrAEryQeA7qJ5GKNOynkppC2+l4QGvzgSHUGX8naEP0
+         LzDc5qD+V7vbmWhCa/4oK/bgThinq+Byv+iXw0962cd1OFxaQeUAXsi/1GHvqlgfDplV
+         A4CsBkzbgL35NvwtOJvjPY2u/bZtk+IAeISgzFP1DRxgFXzQPlRmzeDA5cf0Inbs6mM6
+         YfsA==
+X-Forwarded-Encrypted: i=1; AJvYcCULXtZyJqlBSBUDYcZs6moCHTefPsZg6BVvBHaEtGMVAV37/ZsTYq9m94rf9oYxg/5gEBBnAtD4jxJUpZU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZ0APoLgWG3/Glrqz2tHujU9ElJAoxQbBWXPjORYmyk4Aon6d3
+	8ve1Q8fIdk0Kgh/cnQsiR/lO/X1uVUVmrjgvXvcy/6tLP6iUxMYnVkPQIS7ia4KQzz00Azd3RI8
+	1b5eTFilmcnjzYA==
+X-Google-Smtp-Source: AGHT+IGFy0ukWziLWlhSBOsirOsL+DYT2dzywPbi9FrmXHCzpCDVHG57JmnIvw6h4MX59871sbWi4EI0TM15Aw==
+X-Received: from ejbo8.prod.google.com ([2002:a17:906:3588:b0:b70:b190:7f2f])
+ (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:907:a0c8:b0:b3f:9b9c:d49e with SMTP id a640c23a62f3a-b72e053f2b5mr1344154766b.57.1762882872997;
+ Tue, 11 Nov 2025 09:41:12 -0800 (PST)
+Date: Tue, 11 Nov 2025 17:41:08 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251111-iova-ranges-v2-0-0fa267ff9b78@fb.com>
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIADN1E2kC/3WNwQ7CIBAFf6XZs2uAAtae/A/Tg8BKSWppoGk0D
+ f8u9u5xJnnzdsiUAmXomx0SbSGHOFcQpwbs+Jg9YXCVQTChOGsZGolLsuuELtqMAp0iIZ0xF9U 5qKsl0TO8j+J9qDyGvMb0OQ42/rP/WxtHju1Va6ms6ZzmNx+jn+hs4wuGUsoX8rI/rK8AAAA=
+X-Change-Id: 20251030-b4-prctl-docs-2-d5e24dbb758d
+X-Mailer: b4 0.14.2
+Message-ID: <20251111-b4-prctl-docs-2-v2-1-bc9d14ec9662@google.com>
+Subject: [PATCH v2] Documentation/x86: Fix PR_SET_SPECULATION_CTRL error codes
+From: Brendan Jackman <jackmanb@google.com>
+To: Brendan Jackman <jackmanb@google.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, Peter Zijlstra <peterz@infradead.org>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, 
+	Balbir Singh <sblbir@amazon.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-On 2025-11-11 06:52 AM, Alex Mastro wrote:
-> Not all IOMMUs support the same virtual address width as the processor,
-> for instance older Intel consumer platforms only support 39-bits of
-> IOMMU address space.  On such platforms, using the virtual address as
-> the IOVA and mappings at the top of the address space both fail.
-> 
-> VFIO and IOMMUFD have facilities for retrieving valid IOVA ranges,
-> VFIO_IOMMU_TYPE1_INFO_CAP_IOVA_RANGE and IOMMU_IOAS_IOVA_RANGES,
-> respectively.  These provide compatible arrays of ranges from which
-> we can construct a simple allocator and record the maximum supported
-> IOVA address.
-> 
-> Use this new allocator in place of reusing the virtual address, and
-> incorporate the maximum supported IOVA into the limit testing.  This
-> latter change doesn't test quite the same absolute end-of-address space
-> behavior but still seems to have some value.  Testing for overflow is
-> skipped when a reduced address space is supported as the desired errno
-> is not generated.
-> 
-> This series is based on Alex Williamson's "Incorporate IOVA range info"
-> [1] along with feedback from the discussion in David Matlack's "Skip
-> vfio_dma_map_limit_test if mapping returns -EINVAL" [2].
-> 
-> Given David's plans to split IOMMU concerns from devices as described in
-> [3], this series' home for `struct iova_allocator` and IOVA
-> range helpers are likely to be short lived, since they reside in
-> vfio_pci_device.c. I assume that the rework can move this functionality
-> to a more appropriate location next to other IOMMU-focused code, once
-> such a place exists.
-> 
-> [1] https://lore.kernel.org/all/20251108212954.26477-1-alex@shazbot.org/#t
-> [2] https://lore.kernel.org/all/20251107222058.2009244-1-dmatlack@google.com/
-> [3] https://lore.kernel.org/all/aRIoKJk0uwLD-yGr@google.com/
-> 
-> To: Alex Williamson <alex@shazbot.org>
-> To: David Matlack <dmatlack@google.com>
-> To: Shuah Khan <shuah@kernel.org>
-> To: Jason Gunthorpe <jgg@ziepe.ca>
-> Cc: kvm@vger.kernel.org
-> Cc: linux-kselftest@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Alex Mastro <amastro@fb.com>
+If you force-disable mitigations on the kcmdline, for SPEC_STORE_BYPASS
+this ends up with the prctl returning -ENXIO, but contrary to the
+current docs for the other controls it returns -EPERM. Fix that.
 
-LGTM. And I confirmed this fixes vfio_dma_mapping_test on HW that does
-not support IOVA 0xffffffffffffffff. Thanks!
+Note that this return value should probably be considered a bug. But,
+making the behaviour consistent with the current docs seems more likely
+to break existing users than help anyone out in practice, so just "fix"
+it by specifying it as correct.
 
-Reviewed-by: David Matlack <dmatlack@google.com>
-Tested-by: David Matlack <dmatlack@google.com>
+Since this is getting more wordy and confusing, also be more explicit
+about "control is not possible" be mentioning the boot configuration, to
+better distinguish this case conceptually from the FORCE_DISABLE failure
+mode.
+
+Signed-off-by: Brendan Jackman <jackmanb@google.com>
+---
+Changes in v2:
+- Fixed erroneous reference to PR_SPEC_STORE_BYPASS returning -EPERM.
+- Link to v1: https://lore.kernel.org/r/20251030-b4-prctl-docs-2-v1-1-396645cb8d61@google.com
+---
+ Documentation/userspace-api/spec_ctrl.rst | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
+
+diff --git a/Documentation/userspace-api/spec_ctrl.rst b/Documentation/userspace-api/spec_ctrl.rst
+index ca89151fc0a8e7205e0a0062134d63b213b9ef11..61fe020b23a2ca632879597bd47a321bdedd9faf 100644
+--- a/Documentation/userspace-api/spec_ctrl.rst
++++ b/Documentation/userspace-api/spec_ctrl.rst
+@@ -81,11 +81,15 @@ Value   Meaning
+ ERANGE  arg3 is incorrect, i.e. it's neither PR_SPEC_ENABLE nor
+         PR_SPEC_DISABLE nor PR_SPEC_FORCE_DISABLE.
+ 
+-ENXIO   Control of the selected speculation misfeature is not possible.
+-        See PR_GET_SPECULATION_CTRL.
++ENXIO   For PR_SPEC_STORE_BYPASS: control of the selected speculation misfeature
++        is not possible via prctl, because of the system's boot configuration.
++
++EPERM   Speculation was disabled with PR_SPEC_FORCE_DISABLE and caller tried to
++        enable it again.
++
++EPERM   For PR_SPEC_L1D_FLUSH and PR_SPEC_INDIRECT_BRANCH: control of the
++        mitigation is not possible because of the system's boot configuration.
+ 
+-EPERM   Speculation was disabled with PR_SPEC_FORCE_DISABLE and caller
+-        tried to enable it again.
+ ======= =================================================================
+ 
+ Speculation misfeature controls
+
+---
+base-commit: 131f3d9446a6075192cdd91f197989d98302faa6
+change-id: 20251030-b4-prctl-docs-2-d5e24dbb758d
+
+Best regards,
+-- 
+Brendan Jackman <jackmanb@google.com>
+
 
