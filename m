@@ -1,355 +1,190 @@
-Return-Path: <linux-kernel+bounces-895474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A15A7C4E0D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:11:16 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4BABC4E13A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:16:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CDEF188D937
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:09:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 732F24F20D4
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:11:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21FA8328248;
-	Tue, 11 Nov 2025 13:09:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14DE0328249;
+	Tue, 11 Nov 2025 13:11:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="kbgBCeNb";
-	dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b="rMWCpywP"
-Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="IDwYaVQJ"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E2EF6A33B;
-	Tue, 11 Nov 2025 13:09:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.149.25
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762866543; cv=fail; b=jDzhQAzE3/TNroEPg8rEBsYN4Be/fcfaZ8cxrkS66xNjjiNbqLCos3HA0i1ze5wMDnw9v2NrS3Q3OLiba2xxojNQU54rGC5QwOxCO+wZp0V0uf1gdQuugCyPkF4AhBfRvfSC1v5OfyEzan0OtjP1m9mSS1YgqnQsRjwDKBn0whg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762866543; c=relaxed/simple;
-	bh=rKwFHtJol8fsv0mFCpeWLOn0yWuHHui5f/1roUgVbKI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=m6+ojHo/SWY8coauKz7y5xOfYe9GA2TrAl1UDhZ5j9nrWfob7jCGYhXABVIznZHFGttJtJplD7EUJnPimSq+JapG/Het6oUGLrpadb/OrJK5bIMFmxWjZwwHV94FWCCJHEcCuULf1l5zy7XWw9UtpSUWRydsE4VQyooEOt6jhWI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=kbgBCeNb; dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b=rMWCpywP; arc=fail smtp.client-ip=67.231.149.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-	by mx0a-001ae601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AB60GPe327118;
-	Tue, 11 Nov 2025 07:08:56 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	PODMain02222019; bh=t92MGRzXnivmYgWIf53U6z8PW5Hn/502kLL38C5PbyE=; b=
-	kbgBCeNb3j9LZH4sKSz99WH1oKQ7Vm+Q6PHQ+kVD4+RqTmpBrDxl5i+y7prF5GQI
-	aWGDpq3UfCESYbrh6Eb6a+IGDHML0y35OMv0uWe1IuhdYSs/CcawlmYDPNKjktww
-	JjdwprXkaZimLJO7vspQrqwtJA9u8AQ0blEH30WSJO0oOoWWZ/ZPK3EZrq52e8hL
-	FOhIYTLMOVDWOP434LmAq/g2ZdI7wPMwzhFBVB810LyU4Fw89QVzmlcJDs/ASug/
-	DGPPzX6RQ3Jbqe3UtA9odoLkKh6yAGbrH72OdpIcIgNzGuDirfJc29+tSA+SyYnH
-	cyudZGh8toh6N8BxQvFcKA==
-Received: from co1pr03cu002.outbound.protection.outlook.com (mail-westus2azon11020117.outbound.protection.outlook.com [52.101.46.117])
-	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 4abfvksfr9-1
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Tue, 11 Nov 2025 07:08:55 -0600 (CST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yjTpqjoaYDNEVgFJu5AHoBRGl4mZwsReFvVeoG3Pq5QXpttbCZ048DEKMyuDeN8whbfJz3H+IiWdidijTodKk49FF7r1EMwLri5yoqyUy8wcybAasqBG86l2HyRKA6qPLZuCYYiLvv96iY/6viAfJZsfk3951Wdn/yrUL5AMIYURXOpR58UQ6vE5VgS7McqcH1m2hlpZdzFrIIvA3G6Go10VSwcbXme3PK0ijPAeuWs7c1Phg0JFUNFxhgDexU7pgV0osVg4kG7IlepN9idh1WX/e4SE0lLXpOrZLgCgs8FJABUpnkQAo6CI9JjCBKVaL6K9I5Fn7d4jp203GTUgHA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=t92MGRzXnivmYgWIf53U6z8PW5Hn/502kLL38C5PbyE=;
- b=aWXbFLXYP94GvOBEWF/O2sK5VN8jT09pB+Us9XvSaleESowA//gU5qOvWxs6G1oQH4SDC0angIXpdKkj2i4YYeeX/89wGUfYaQSwLIbdq9n3/ERV3td+drBCWPVxHB8dki8UE0lh0xMll8ph7PN3jTn7GL/XWfz42IMtRVcTFupbdTDiiUUzvYRbJtWfOVlRELZGk+eGc4JcJUnP76Zn9UuCjaleWlMzG5uJtijgiHzeb6riE3zru0JyOqAbybgnGdkEfLwwpNO3+Bk6BAOWpepiT2IVYLl3fDrVIms/HQtDZ4P9FWG9FOazZOXhhyE8i3IF+NAJ5K6yzhTqwgJIGA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
- 84.19.233.75) smtp.rcpttodomain=cirrus.com
- smtp.mailfrom=opensource.cirrus.com; dmarc=fail (p=reject sp=reject pct=100)
- action=oreject header.from=opensource.cirrus.com; dkim=none (message not
- signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=cirrus4.onmicrosoft.com; s=selector2-cirrus4-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=t92MGRzXnivmYgWIf53U6z8PW5Hn/502kLL38C5PbyE=;
- b=rMWCpywP42wropCe/Tb2af6RpdUg2TH2/SL9lx/yXbaRmv23Ff8aL1XST6yeTcN2YcI4tl7DAXfEcG71TSkPFUKtULFLwxo1HUI/vUiP3TBhxXa2j+aj5LmIz25JROQI8P23drV6TC8rTedtG6vAsWNSxdsHq/c7vDDrmXQ16eg=
-Received: from PH8PR15CA0011.namprd15.prod.outlook.com (2603:10b6:510:2d2::28)
- by DS0PR19MB8751.namprd19.prod.outlook.com (2603:10b6:8:1f2::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Tue, 11 Nov
- 2025 13:08:53 +0000
-Received: from CY4PEPF0000EDD6.namprd03.prod.outlook.com
- (2603:10b6:510:2d2:cafe::67) by PH8PR15CA0011.outlook.office365.com
- (2603:10b6:510:2d2::28) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9298.16 via Frontend Transport; Tue,
- 11 Nov 2025 13:09:00 +0000
-X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 84.19.233.75)
- smtp.mailfrom=opensource.cirrus.com; dkim=none (message not signed)
- header.d=none;dmarc=fail action=oreject header.from=opensource.cirrus.com;
-Received-SPF: Fail (protection.outlook.com: domain of opensource.cirrus.com
- does not designate 84.19.233.75 as permitted sender)
- receiver=protection.outlook.com; client-ip=84.19.233.75;
- helo=edirelay1.ad.cirrus.com;
-Received: from edirelay1.ad.cirrus.com (84.19.233.75) by
- CY4PEPF0000EDD6.mail.protection.outlook.com (10.167.241.202) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9320.13
- via Frontend Transport; Tue, 11 Nov 2025 13:08:52 +0000
-Received: from ediswmail9.ad.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
-	by edirelay1.ad.cirrus.com (Postfix) with ESMTPS id 2266A406552;
-	Tue, 11 Nov 2025 13:08:51 +0000 (UTC)
-Received: from ediswws06.ad.cirrus.com (ediswws06.ad.cirrus.com [198.90.208.24])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPSA id 0C02982026C;
-	Tue, 11 Nov 2025 13:08:51 +0000 (UTC)
-From: Richard Fitzgerald <rf@opensource.cirrus.com>
-To: broonie@kernel.org
-Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
-        patches@opensource.cirrus.com
-Subject: [PATCH 2/2] ASoC: cs35l56: Allow restoring factory calibration through ALSA control
-Date: Tue, 11 Nov 2025 13:08:50 +0000
-Message-ID: <20251111130850.513969-3-rf@opensource.cirrus.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251111130850.513969-1-rf@opensource.cirrus.com>
-References: <20251111130850.513969-1-rf@opensource.cirrus.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A93F6328248;
+	Tue, 11 Nov 2025 13:11:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762866703; cv=none; b=tuLlWf8R2IDNiul/DqvvvJHuhb8aqe5SzAfe1CdJOdRE5MGsndo4z7AURclEjjBvKkERpmI64XEDQRGfg1uP4GI+65V1CnFe/If3e+jl8800BU7IsWyy8BejwcnOujk40cEraSQEQZuVJFFafgQ8NKtStDgdWa/8zfUR/gNFRBo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762866703; c=relaxed/simple;
+	bh=l0Xp2gdUHOY3ARXkXTrD+8glhjg9MqV9gwERXhTeKBE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mcP6bQUFGYTFRURAaZVCCmioSoeTdZ5beVmUwWY818QVj59WLxz7clnl88kePvnbnr6PdaYi8mZL1UkwrkW1y81RcU4XtCw+nO3Rxra44UV6hGEOdb8TGc9ptBO9mu0hSBVckqBmsO57C6c3b2uCgjUjfRbFN5XH/91pVp8xMP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=IDwYaVQJ; arc=none smtp.client-ip=212.227.17.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1762866689; x=1763471489; i=w_armin@gmx.de;
+	bh=7d5cSiuqrvKYBz/rIkG/i6IpNv3Dy66WwkCI8QqJXuI=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:
+	 MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=IDwYaVQJomz2JlY+kjOJRDqN3zEiMsxwVBKOeK0TlWrYRH1BvBAz9Z0VNA3Z6dk4
+	 IXQ6FVJgvau0RfQWg4LvLGCbWILumH+VMEaO9O8RknBpau42rbVOFAvGSezJ4qRXx
+	 VSft1JEWAq3J2SEunwnfWkRGCKUQ0MvtlMJSVEZCWGYO8zL8Ldd5PJ79QDorPrM2k
+	 DsQGAIqkGChJdWXH6WY/GgP93TgkaYhPAiEsg3fz/CgUm0/mtugwtOAsJS5jk0sas
+	 UPaDXQOceK1jpCPTSX45cRLJXvZa87mI8yDttaDzxLc568P02N/6/gw/LCqWmCG2F
+	 +DEcRbFdK7uw0uzyOw==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from mx-amd-b650.fritz.box ([93.202.247.91]) by mail.gmx.net
+ (mrgmx104 [212.227.17.168]) with ESMTPSA (Nemesis) id
+ 1N7R1J-1wHBr22OmD-00y4sE; Tue, 11 Nov 2025 14:11:29 +0100
+From: Armin Wolf <W_Armin@gmx.de>
+To: viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	hansg@kernel.org,
+	ilpo.jarvinen@linux.intel.com
+Cc: superm1@kernel.org,
+	jack@suse.cz,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org
+Subject: [PATCH v2 0/4] platform/x86: wmi: Prepare for future changes
+Date: Tue, 11 Nov 2025 14:11:21 +0100
+Message-Id: <20251111131125.3379-1-W_Armin@gmx.de>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000EDD6:EE_|DS0PR19MB8751:EE_
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 024cc419-5708-4bca-9d02-08de2123765e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|36860700013|61400799027|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?VcQ6JGvtzPW6NY07MTMRHMaFpQ7zz/4tGMg3KnIzDceNMk0RBhxYsSOgKYnv?=
- =?us-ascii?Q?GJQztf67XWEUzlpQuF9KVBGq1E5ty3nnrcgvlbBaqxbBgoE7hv5emVvJlzIu?=
- =?us-ascii?Q?Q1oETlz98JtM9s+e0p5rnQgnoyxehzUbioE5BDRuxPtA6VXF1BANjIVVhJJS?=
- =?us-ascii?Q?wx8b/ZkkS6Nz9EFWBBzB5nJVZVK9Y6Jj5LoILAp2Riv8KTWBZ1bioTT0CP/K?=
- =?us-ascii?Q?VrZH0IvoGzdVMmI7fuCimhTQqrqV7HXnEy6JKNEMUtUzo5/4vXB0O1c9yC8o?=
- =?us-ascii?Q?xKADJHKLVXCz/eQ4+kj0FJCi2gJEZEkHLGhEmwcgvSxTgTqmkphr506jiU9k?=
- =?us-ascii?Q?+u2UAWf15ronsg6jl2NkspuyopeKKgUBd76rX5COPYqUPjNqywC/+n/qNJUw?=
- =?us-ascii?Q?xxqnYIUe130aTbsSwrMrbddmgwPvDrs73Q0uJcikfbLcSXS81rtQuvTvdcRZ?=
- =?us-ascii?Q?tLQxwZ8rWQYE67edgXnwhtMVOZqcWkRBA9a+NfQzilZewXH1M3QEcNYiuJk9?=
- =?us-ascii?Q?p+hAzY6RRXnQQOny7UnzqAmBN55rNCxGzWlsVl79WepsVlnteiO9NQvI2Sjb?=
- =?us-ascii?Q?D6pFvvxDc12LgAoVyCTInNVlD6Lw5PLYvER8AYSY2rS30osHXcW7yUunhreQ?=
- =?us-ascii?Q?JPakVsnNPb9sZzWWxGHWvLl+xUcpuiFQxLPpWYfcRwOLiRjLAZbymWesznGg?=
- =?us-ascii?Q?D1mtz1AAV7yUxtOWmgtsn2T3esaWr/JPuSYQffVI4hjtIoIDS/rou0G6ubbN?=
- =?us-ascii?Q?obzUr07jrQl7VZnIyVJuEH8LDBzTrzKgltvMTFNk7/QdgQycCQ8xjrpUMDM0?=
- =?us-ascii?Q?aGT41wXFUFOSbitxn02tCFjb7k9gbDjWjpr18S0je+u4++xJUeD0NyIRxS5q?=
- =?us-ascii?Q?z4FalVrQr5+XEc0HET9G3W3bXY0Wzm8lNTQbHcteJLjkdPGQ5N0MpTQeZ9N3?=
- =?us-ascii?Q?MuqIXC4q0VZymGuIDj3NJNwxWIsbeym3pw8c8AiPbgj6kGZXOGGnIFyrg+FF?=
- =?us-ascii?Q?FKMX5wmgQZMdxGeu2rOMdk2AZoMz2s57JD2qvOw37nPQepUqRJfUSCd/mPj4?=
- =?us-ascii?Q?RWDlgPxoG59hpsOYoPfOgfeDv6JVZMwmGEeZPuoL6rgdvNQr0bGDXBgO3ifW?=
- =?us-ascii?Q?59CyH1zDZOBtTVv+MiNkXu7O0oFGgF8E09J+VUTyVxM2GbyBUzLcybqpClvm?=
- =?us-ascii?Q?HZ3x+atN3al7wu6h5nw/I5GQULR6/cC6cQWdN9I/9Vy0rNcLiT+jHD3QAjPo?=
- =?us-ascii?Q?7q1tyn0rKP7DdTImCPadTZwFyx1HajuW9LkUQ/K5zMlJQmQb4gvo39Tzyzpd?=
- =?us-ascii?Q?D7rzlDz9dxAWbVv7uWYvrveBkg+V5fuP4Vp7b2EZbLZAdDPRsY++86xkPWO5?=
- =?us-ascii?Q?aqBVXh1kcik/YVj0mIanYMBWqgrLUz1RTesaE6j/6z/d5eJlLO6oIgi1Oq/Y?=
- =?us-ascii?Q?ZAN11REwdjvuIs/9wsl0VTC8/K0fXGFFBqMEkztyXgY1cRDENAQpIZWNKgqi?=
- =?us-ascii?Q?b6/X2KL1GGvMXXy7iLPJOLDS/ygy9TdEQH1VzhCpZrFIjuY2g92x1INEy8Yp?=
- =?us-ascii?Q?Iu/BTXLlQO26p6A2QH0=3D?=
-X-Forefront-Antispam-Report:
-	CIP:84.19.233.75;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:edirelay1.ad.cirrus.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(36860700013)(61400799027)(82310400026);DIR:OUT;SFP:1102;
-X-OriginatorOrg: opensource.cirrus.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Nov 2025 13:08:52.3669
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 024cc419-5708-4bca-9d02-08de2123765e
-X-MS-Exchange-CrossTenant-Id: bec09025-e5bc-40d1-a355-8e955c307de8
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=bec09025-e5bc-40d1-a355-8e955c307de8;Ip=[84.19.233.75];Helo=[edirelay1.ad.cirrus.com]
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TreatMessagesAsInternal-CY4PEPF0000EDD6.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR19MB8751
-X-Proofpoint-GUID: U3MO3z3xJMHm_XfycvbtgwJirumHncBv
-X-Authority-Analysis: v=2.4 cv=e5MLiKp/ c=1 sm=1 tr=0 ts=69133567 cx=c_pps
- a=RrdOQlmmxp+bQeXV/0G7LQ==:117 a=h1hSm8JtM9GN1ddwPAif2w==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=6UeiqGixMTsA:10 a=s63m1ICgrNkA:10 a=RWc_ulEos4gA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=w1d2syhTAAAA:8 a=1U5iUAIXTzSLSh6816gA:9
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTExMDEwNSBTYWx0ZWRfX9uhcM3yMePHL
- K01FoV7wUKn39/wCNAxlAR8BcYUDHt2PN+xcDS2K4gu/450VS3BMerBfKSlFDJLTi17hvFc7GzY
- mKKSf+JEO146zA8wpnvY9ibhkq0/fPXGgJI08dVe1rGUC5zldfuAcm3nK4SfhAq3Zx47Yw2W+rR
- +zlXL7IudfwhgQ14G/xOAnwSP6XyK6YGiIlNw9EPuC89O724V6P4nEHcNiScfO1rJEyuEDrrtSl
- 9XAruMv1OI3YivYAnpXrZtkpqSidEAvYXFpbac5tXQ0SXOxCGfpmkOFM2cH6cyn3nggbd98liJO
- GWZNvEKwe/3PYDPZS5b0vWgib8kNAp2IL3yozXs8i3wyBw/Tpkwb7chk6PzUme5i1wf9KuOXzWD
- ybqHlrlHCSgZMPC3fKwhwuAOL0smxg==
-X-Proofpoint-ORIG-GUID: U3MO3z3xJMHm_XfycvbtgwJirumHncBv
-X-Proofpoint-Spam-Reason: safe
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:qlepj94tEOYfnlSLiimPoC3+SFYTX5UAcDQG6J2MG6sAsoahSzM
+ NwlARGWDEfBREuV0RRFWQNXCiC57axetd/fB8gsVi8B1aPwiepVnQpE6JNlUGD7NDoH2kd6
+ c4+8w1/olClSQsaySA0NSyJFT9GleO/h5Mb8qlayWP5hxjyz37aqYSi2k6S4gAbUn3+enpP
+ BCjqWgR2VzycKXF1foxgQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:yI6zRK1hh4Y=;2KmdeyGSE/zIaQQzJ8XYl5v/GIw
+ 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
+ 7P9uwXmbWGdiCd2XxCuEGe/yHM=
 
-Add an ALSA control (CAL_DATA) that can be used to restore amp calibration,
-instead of using debugfs. A readback control (CAL_DATA_RB) is also added
-for factory testing.
+After over a year of reverse engineering, i am finally ready to
+introduce support for WMI-ACPI marshaling inside the WMI driver core.
+Since the resulting patch series is quite large, i am planning to
+submit the necessary patches as three separate patch series.
 
-On ChromeOS the process that restores amp calibration from NVRAM has
-limited permissions and cannot access debugfs. It requires an ALSA control
-that it can write the calibration blob into. ChromeOS also restricts access
-to ALSA controls, which avoids the risk of accidental or malicious
-overwriting of good calibration data with bad data. As this control is not
-needed for normal Linux-based distros it is a Kconfig option.
+This is supposed to be the first of the three patch series. Its main
+purpose is to prepare the WMI driver core for the upcoming changes.
+The first patch fixes an issue inside the nls utf16 to utf8 conversion
+code, while the next two patches fix some minor issues inside the WMI
+driver core itself. The last patch finally moves the code of the WMI
+driver core into a separate repository to allow for future additions
+without cluttering the main directory.
 
-A separate control, CAL_DATA_RB, provides a readback of the current
-calibration data, which could be either from a write to CAL_DATA or the
-result of factory production-line calibration.
+Changes since v1:
+- move WMI driver core to drivers/platoform/wmi to prepare for future
+AArch64 support
 
-The write and read are intentionally separate controls to defeat "dumb"
-save-and-restore tools like alsa-restore that assume it is safe to save
-all control values and write them back in any order at some undefined
-future time. Such behavior carries the risk of restoring stale or bad data
-over the top of good data.
+Armin Wolf (4):
+  fs/nls: Fix utf16 to utf8 conversion
+  platform/x86: wmi: Use correct type when populating ACPI objects
+  platform/x86: wmi: Remove extern keyword from prototypes
+  platform/x86: wmi: Move WMI core code into a separate directory
 
-Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
----
- include/sound/cs35l56.h           |  2 +
- sound/soc/codecs/Kconfig          | 14 +++++++
- sound/soc/codecs/cs35l56-shared.c |  5 ++-
- sound/soc/codecs/cs35l56.c        | 67 +++++++++++++++++++++++++++++++
- 4 files changed, 86 insertions(+), 2 deletions(-)
+ Documentation/driver-api/wmi.rst           |  2 +-
+ MAINTAINERS                                |  2 +-
+ drivers/platform/Kconfig                   |  2 ++
+ drivers/platform/Makefile                  |  1 +
+ drivers/platform/wmi/Kconfig               | 34 ++++++++++++++++++++++
+ drivers/platform/wmi/Makefile              |  8 +++++
+ drivers/platform/{x86/wmi.c =3D> wmi/core.c} | 34 +++++++++++++---------
+ drivers/platform/x86/Kconfig               | 30 -------------------
+ drivers/platform/x86/Makefile              |  1 -
+ fs/nls/nls_base.c                          | 16 +++++++---
+ include/linux/wmi.h                        | 15 ++++------
+ 11 files changed, 85 insertions(+), 60 deletions(-)
+ create mode 100644 drivers/platform/wmi/Kconfig
+ create mode 100644 drivers/platform/wmi/Makefile
+ rename drivers/platform/{x86/wmi.c =3D> wmi/core.c} (98%)
 
-diff --git a/include/sound/cs35l56.h b/include/sound/cs35l56.h
-index bd13958bf19d..883f6a7e50aa 100644
---- a/include/sound/cs35l56.h
-+++ b/include/sound/cs35l56.h
-@@ -388,6 +388,8 @@ int cs35l56_runtime_suspend_common(struct cs35l56_base *cs35l56_base);
- int cs35l56_runtime_resume_common(struct cs35l56_base *cs35l56_base, bool is_soundwire);
- void cs35l56_init_cs_dsp(struct cs35l56_base *cs35l56_base, struct cs_dsp *cs_dsp);
- int cs35l56_get_calibration(struct cs35l56_base *cs35l56_base);
-+int cs35l56_stash_calibration(struct cs35l56_base *cs35l56_base,
-+			      const struct cirrus_amp_cal_data *data);
- ssize_t cs35l56_calibrate_debugfs_write(struct cs35l56_base *cs35l56_base,
- 					const char __user *from, size_t count,
- 					loff_t *ppos);
-diff --git a/sound/soc/codecs/Kconfig b/sound/soc/codecs/Kconfig
-index 6da2fff9323c..433af9bc7564 100644
---- a/sound/soc/codecs/Kconfig
-+++ b/sound/soc/codecs/Kconfig
-@@ -912,6 +912,20 @@ config SND_SOC_CS35L56_CAL_DEBUGFS
- 	  Create debugfs entries used during factory-line manufacture
- 	  for factory calibration.
- 
-+	  If unsure select "N".
-+
-+config SND_SOC_CS35L56_CAL_SET_CTRL
-+	bool "CS35L56 ALSA control to restore factory calibration"
-+	default N
-+	select SND_SOC_CS35L56_CAL_SYSFS_COMMON
-+	help
-+	  Allow restoring factory calibration data through an ALSA
-+	  control. This is only needed on platforms without UEFI or
-+	  some other method of non-volatile storage that the driver
-+	  can access directly.
-+
-+	  On most platforms this is not needed.
-+
- 	  If unsure select "N".
- endmenu
- 
-diff --git a/sound/soc/codecs/cs35l56-shared.c b/sound/soc/codecs/cs35l56-shared.c
-index 4fba4127c40c..7424e1353062 100644
---- a/sound/soc/codecs/cs35l56-shared.c
-+++ b/sound/soc/codecs/cs35l56-shared.c
-@@ -962,8 +962,8 @@ int cs35l56_get_calibration(struct cs35l56_base *cs35l56_base)
- }
- EXPORT_SYMBOL_NS_GPL(cs35l56_get_calibration, "SND_SOC_CS35L56_SHARED");
- 
--static int cs35l56_stash_calibration(struct cs35l56_base *cs35l56_base,
--				     const struct cirrus_amp_cal_data *data)
-+int cs35l56_stash_calibration(struct cs35l56_base *cs35l56_base,
-+			      const struct cirrus_amp_cal_data *data)
- {
- 
- 	/* Ignore if it is empty */
-@@ -980,6 +980,7 @@ static int cs35l56_stash_calibration(struct cs35l56_base *cs35l56_base,
- 
- 	return 0;
- }
-+EXPORT_SYMBOL_NS_GPL(cs35l56_stash_calibration, "SND_SOC_CS35L56_SHARED");
- 
- static int cs35l56_perform_calibration(struct cs35l56_base *cs35l56_base)
- {
-diff --git a/sound/soc/codecs/cs35l56.c b/sound/soc/codecs/cs35l56.c
-index e1eb7360b058..6feef971024b 100644
---- a/sound/soc/codecs/cs35l56.c
-+++ b/sound/soc/codecs/cs35l56.c
-@@ -1040,6 +1040,67 @@ static const struct cs35l56_cal_debugfs_fops cs35l56_cal_debugfs_fops = {
- 	},
- };
- 
-+static int cs35l56_cal_data_rb_ctl_get(struct snd_kcontrol *kcontrol,
-+				    struct snd_ctl_elem_value *ucontrol)
-+{
-+	struct snd_soc_component *component = snd_kcontrol_chip(kcontrol);
-+	struct cs35l56_private *cs35l56 = snd_soc_component_get_drvdata(component);
-+
-+	if (!cs35l56->base.cal_data_valid)
-+		return -ENODATA;
-+
-+	memcpy(ucontrol->value.bytes.data, &cs35l56->base.cal_data,
-+	       sizeof(cs35l56->base.cal_data));
-+
-+	return 0;
-+}
-+
-+static int cs35l56_cal_data_ctl_get(struct snd_kcontrol *kcontrol,
-+				    struct snd_ctl_elem_value *ucontrol)
-+{
-+	struct snd_soc_component *component = snd_kcontrol_chip(kcontrol);
-+	struct cs35l56_private *cs35l56 = snd_soc_component_get_drvdata(component);
-+
-+	/*
-+	 * This control is write-only but mixer libraries often try to read
-+	 * a control before writing it. So we have to implement read.
-+	 * Return zeros so a write of valid data will always be a change
-+	 * from its "current value".
-+	 */
-+	memset(ucontrol->value.bytes.data, 0, sizeof(cs35l56->base.cal_data));
-+
-+	return 0;
-+}
-+
-+static int cs35l56_cal_data_ctl_set(struct snd_kcontrol *kcontrol,
-+				    struct snd_ctl_elem_value *ucontrol)
-+{
-+	struct snd_soc_component *component = snd_kcontrol_chip(kcontrol);
-+	struct cs35l56_private *cs35l56 = snd_soc_component_get_drvdata(component);
-+	const struct cirrus_amp_cal_data *cal_data = (const void *)ucontrol->value.bytes.data;
-+	int ret;
-+
-+	if (cs35l56->base.cal_data_valid)
-+		return -EACCES;
-+
-+	ret = cs35l56_stash_calibration(&cs35l56->base, cal_data);
-+	if (ret)
-+		return ret;
-+
-+	ret = cs35l56_new_cal_data_apply(cs35l56);
-+	if (ret < 0)
-+		return ret;
-+
-+	return 1;
-+}
-+
-+static const struct snd_kcontrol_new cs35l56_cal_data_restore_controls[] = {
-+	SND_SOC_BYTES_E("CAL_DATA", 0, sizeof(struct cirrus_amp_cal_data) / sizeof(u32),
-+			cs35l56_cal_data_ctl_get, cs35l56_cal_data_ctl_set),
-+	SND_SOC_BYTES_E("CAL_DATA_RB", 0, sizeof(struct cirrus_amp_cal_data) / sizeof(u32),
-+			cs35l56_cal_data_rb_ctl_get, NULL),
-+};
-+
- static int cs35l56_set_fw_suffix(struct cs35l56_private *cs35l56)
- {
- 	if (cs35l56->dsp.fwf_suffix)
-@@ -1134,6 +1195,12 @@ static int cs35l56_component_probe(struct snd_soc_component *component)
- 		break;
- 	}
- 
-+	if (!ret && IS_ENABLED(CONFIG_SND_SOC_CS35L56_CAL_SET_CTRL)) {
-+		ret = snd_soc_add_component_controls(component,
-+						     cs35l56_cal_data_restore_controls,
-+						     ARRAY_SIZE(cs35l56_cal_data_restore_controls));
-+	}
-+
- 	if (ret)
- 		return dev_err_probe(cs35l56->base.dev, ret, "unable to add controls\n");
- 
--- 
-2.47.3
+=2D-=20
+2.39.5
 
 
