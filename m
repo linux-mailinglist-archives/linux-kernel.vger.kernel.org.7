@@ -1,113 +1,89 @@
-Return-Path: <linux-kernel+bounces-895050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB9DCC4CCD0
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:57:50 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83B16C4CCA0
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:55:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2760042593A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:49:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CAF154FCD00
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:50:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 467E42EDD72;
-	Tue, 11 Nov 2025 09:49:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 583482F3C07;
+	Tue, 11 Nov 2025 09:49:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HOeJ3RVZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rTinSDaL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A58326A0DD;
-	Tue, 11 Nov 2025 09:49:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9125328D82A;
+	Tue, 11 Nov 2025 09:49:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762854546; cv=none; b=rofJN24vak5EWi4zVn71gqX2KrP+JMibSwyojFAbxROLeCUcKWxiYdGqAluyd924PhoHuoVrL8X1u8wjOkfCsAALGPPY0xcO2p4Os1yVcpQz7uYmi0PXzXbu5aBhhC/nzNLpxrLrQQm+0vWuZre+vEDucYj+M710Di14wkH0cSA=
+	t=1762854572; cv=none; b=KYP20Ehwdgj0TLe/0hUDM3mcK4CuaX5QxOSW1gb1/pQx82bttp9mjYgA4ibHVg4PjqDI52lGkI1aErmSVbCMST232R8b2j4A+kN3ZIrRyPEhHc7Sdc3W9mtIxY9DaZedVAmxEvOTdj0Z6psCzAbS0pr14ZILd58xKN+G5ETgzJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762854546; c=relaxed/simple;
-	bh=n/kM1AzkAh+XotAdnnKzHeaD66yI0/no2z219kdImyI=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XOYTEH2oqGZFc4noenf5d2TSqSZVbayKtkdRKHn8i3VmhYQ7jYYJ19zT3dC4Z4oO+kgdJ/b7Ob7N2tlGEUHQ7iimiFeImhRS5i/Fp9u815xBXbBtFcVu5+Q5vMJ9Qkfb3mjFRc4GhcFo/ZYB6fGK1WNgJGjgjDjhTkIuFEpKzYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HOeJ3RVZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB372C19421;
-	Tue, 11 Nov 2025 09:49:05 +0000 (UTC)
+	s=arc-20240116; t=1762854572; c=relaxed/simple;
+	bh=0x31FgwFPk7tbQJ/dNUF5WAD3jIbIn15xU7iThAjjHs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=p2kPWhVFaFmx2sqBZTDxC5iocov0Fhjrvy57xc77E6xi0A3cWYcb+bmzJF1oy/gBbC7X25uwlv3w3KyB0v0Sf/QWg4ddH7oDE0sLFESiDh2cYT54Qhv0uG3hzH/sUHOnxv28SbovUG1QERG92y8f7XUA07GzeRi5FhuQ/w3gwNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rTinSDaL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B477DC116D0;
+	Tue, 11 Nov 2025 09:49:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762854546;
-	bh=n/kM1AzkAh+XotAdnnKzHeaD66yI0/no2z219kdImyI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=HOeJ3RVZZB/4oSIYEvD8eHEipzvZOFaJqnkE42dmMFp+tB9OuzjLWz04+YM3z7R4U
-	 lcaEalhowL1o71cerk5eX47EHL+ajre+fi2UEyJi1xInplcb7+DTXcolqUX2R5nGjK
-	 6MBMS9grqKVToRjoS/YeVP7uQixVgsoLfttes1N01Nh3coRsXQHPgvQXU4w4kWOnxq
-	 iTV9Sv5znQ/WVyipDX6Eh5zMTxj++G97cXGP2KglHW5b3TIN+Akg5PHoftE2jnkGiu
-	 Nq4Ktn6Go9uKbNUmiwWIpZYgET9XI++vRz/VbZK/uBooblkYrgAlMYga9XRb72DXVa
-	 aZdMFVmKrv7Fg==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <maz@kernel.org>)
-	id 1vIkzn-00000004Alt-2bIR;
-	Tue, 11 Nov 2025 09:49:03 +0000
-Date: Tue, 11 Nov 2025 09:49:03 +0000
-Message-ID: <86346kvr00.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Osama Abdelkader <osama.abdelkader@gmail.com>
-Cc: oupton@kernel.org,
-	joey.gouly@arm.com,
-	suzuki.poulose@arm.com,
-	yuzenghui@huawei.com,
-	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] KVM: arm64: add missing newline to sysreg init log
-In-Reply-To: <20251110211051.814728-1-osama.abdelkader@gmail.com>
-References: <20251110211051.814728-1-osama.abdelkader@gmail.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=k20201202; t=1762854572;
+	bh=0x31FgwFPk7tbQJ/dNUF5WAD3jIbIn15xU7iThAjjHs=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=rTinSDaLC8MIKY3aDvn6MpoxBxnoEP0bd0DTUXK515JNjPujpTZxMGB/5et8wPmqF
+	 eJJaNzKSfKyNFE/egfo4LQrE+3eKsMrCKhh1eA16fGVYgqZkGUUfBzGXwrQB/Y5sH7
+	 iDa3Ew1PVwCqQ1P43hE3uBCWyIqoA25gfUBxbhHY4rWcAdVlclThtqLdgEEcmSeNsp
+	 RIOZhidKtHsOTMA2SJmkBuUuR2TQLFH8ZB51F+fQigqucB/lAuCL3wIuaawDUT9M06
+	 Z8qwftbv0qbp3arpipGVINbKQiftOex/pZfddbYfz+WDC4MBYziUDtWTidk4U5zsBF
+	 e26ohOs0D78Gg==
+From: Christian Brauner <brauner@kernel.org>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fs: touch predicts in do_dentry_open()
+Date: Tue, 11 Nov 2025 10:49:27 +0100
+Message-ID: <20251111-geangelt-vorwurf-8460469949e5@brauner>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20251109125254.1288882-1-mjguzik@gmail.com>
+References: <20251109125254.1288882-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: osama.abdelkader@gmail.com, oupton@kernel.org, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=890; i=brauner@kernel.org; h=from:subject:message-id; bh=0x31FgwFPk7tbQJ/dNUF5WAD3jIbIn15xU7iThAjjHs=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQKs62YudVmyqLlfBc2ro9fuvB/vkWm/Ip7y67zCjL6T r+vYPU6pqOUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAihvoM//0+/u/v1zhcvz01 SewVr5+IrILHva1r1t5jFsrmbv5t8Z+R4e83G6t7D+0O5wX6np5481///c71OjWNvztOadwv/FP mwwEA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Mon, 10 Nov 2025 21:10:51 +0000,
-Osama Abdelkader <osama.abdelkader@gmail.com> wrote:
+On Sun, 09 Nov 2025 13:52:54 +0100, Mateusz Guzik wrote:
+> Helps out some of the asm, the routine is still a mess.
 > 
-> missing newline so the  message is merged with follow-on logs
-> the change only affects console output formatting, no behavioral impact.
 > 
-> Signed-off-by: Osama Abdelkader <osama.abdelkader@gmail.com>
-> ---
->  arch/arm64/kvm/arm.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
-> index 870953b4a8a7..156cd1a6106e 100644
-> --- a/arch/arm64/kvm/arm.c
-> +++ b/arch/arm64/kvm/arm.c
-> @@ -2845,7 +2845,7 @@ static __init int kvm_arm_init(void)
->  
->  	err = kvm_sys_reg_table_init();
->  	if (err) {
-> -		kvm_info("Error initializing system register tables");
-> +		kvm_info("Error initializing system register tables\n");
->  		return err;
->  	}
->  
 
-Given that everything in kvm_sys_reg_table_init() already screams
-badly when it fails, I don't see the point of an additional message,
-and I'd rather remove it.
+Applied to the vfs-6.19.misc branch of the vfs/vfs.git tree.
+Patches in the vfs-6.19.misc branch should appear in linux-next soon.
 
-Thanks,
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-	M.
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
--- 
-Without deviation from the norm, progress is not possible.
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.19.misc
+
+[1/1] fs: touch predicts in do_dentry_open()
+      https://git.kernel.org/vfs/vfs/c/3717e71df8ef
 
