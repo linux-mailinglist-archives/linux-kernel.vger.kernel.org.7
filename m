@@ -1,139 +1,233 @@
-Return-Path: <linux-kernel+bounces-895953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89AF7C4F5AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 19:00:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FB10C4F5B1
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 19:01:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EFC23B90A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 18:00:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 888043B98CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 18:01:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A70543A1CED;
-	Tue, 11 Nov 2025 18:00:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AFD6393DC1;
+	Tue, 11 Nov 2025 18:00:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="aPnq99cS"
-Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IA4sqBM2"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B053393DC1
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 18:00:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92FCC26158C
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 18:00:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762884015; cv=none; b=GAeJjLxaFmxuBwEVMUWLVLiCbLbcEBr1FGRH9V0kM/9yLiXM6JBwqGNWJbqBdLXjJCRE0dXU8oXkCV5NS9pKv/N/8NTtDN5uKOxq2FXnZAuJSNp9nnRtEd9Jmf3HoQQe3AW5rQgCoTaUf59NTaQOB0+6NaeKc1p1vIMVmRV6hOo=
+	t=1762884039; cv=none; b=ZeAI+cbQwDVX2p26IDzuUdt9AcE7VqtrGj4Vz/0Vdxl3+/V1yiGKax8AOQ0um5VA6mHYCriHvmuJ+yi7Y39NI31vDBwFg2t0i9GCGB6FVKuYCe/t8dwkgSj7XL4ca01PqvflOu5LLnsyNxCzP0xIjRB4wN+nSfADX6qbi8xR7hk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762884015; c=relaxed/simple;
-	bh=8BGgfEn97snW7daOKRguJgMVYYh52RpW/KfSxw5SYYE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XKQqM+v/2TXO7y3+7lR6V0SdxzRx2iSZbq27mE0JJaY1WhoDBhOnAiD3BLGi16TjPv33crolrq99v8KdF6XPhd893iHOtwyJLFtXWJ9pkuRvrFJxwqcOuqlNySk3LJZ6U4XKvN+B5tqJv/bGTS9zwgIxPs8TQTVBq0riKj/yf+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=aPnq99cS; arc=none smtp.client-ip=209.85.166.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-43377ee4825so19562725ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 10:00:13 -0800 (PST)
+	s=arc-20240116; t=1762884039; c=relaxed/simple;
+	bh=kATU/DzP4hdGvz7FmmPIwTVU+bE2WNBSBrXqQYIuJ4w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hA43Z9MfM74J6IWvqerW7fcHwTMSq8s4opGXF8SJOKSg4Vj3yZ0XU8XhJiT9cey/Did/ndzyjfy0wIaJOAElgWSlhCfi8WeOGF06cjzDHaLUBMflUAS2/GZ+a8au32yaEc7po6Hi9ETluJbMdznaLFg/Wg/xekCy3E1V6BQmszM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IA4sqBM2; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-640a3317b89so6581647a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 10:00:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1762884013; x=1763488813; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zu4EHUDGvoxogQX+S3l1H2cM4F4fAMlTZfbToOtiANE=;
-        b=aPnq99cSbrBKvJqc5odQzBgFGD+dhmjpJszk0EuKoTB1SITcDBRURFpwmNJd8fkekm
-         EGSwwpPoagIxhUNWFrum2VfBYXI9t8MYJ1YQbSF7NM2wQrPx5OUbYGUgFlh3d20nDDQ/
-         h+js+9Y/pMqU7JrPrYYVQ3sIDWsMMtTRzkHW0=
+        d=gmail.com; s=20230601; t=1762884036; x=1763488836; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9HbiXIUVYuhI5l7PvzzJZfhSL3tvH5Y6RzQWs5tXFd0=;
+        b=IA4sqBM2ne4i4nzd36VoMyLTV2HtAkNPNG/tdK2eCmfg6oO7xIqZa8pGzRUBzFi5Ir
+         W31wAl6yefnb7o44jcwUorUOZfU1Vjd6V4sq+ICzXgGE3/ywcrlB2Sv2CcuwmCOoY+Mk
+         auhMkjoPSKjKPU+l0Cq/zW/XX6xf+reW6eYo0k9auh5hHkwnG9DtCuhBU9zE4fEh58tC
+         gyjdhfDXHuYUSs/mjOtu/z+PQF2CqMLpN9qawD0zyP1oFbdBCeWHhnwH7zURUYbYKXsg
+         vCt3g9xAdGe4zF+7IYFMzXZuCJoFR4SaCBWsYFRIDQXFroPkNHW8FAt3zVaf4MkoDG5N
+         KfWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762884013; x=1763488813;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zu4EHUDGvoxogQX+S3l1H2cM4F4fAMlTZfbToOtiANE=;
-        b=GSPrgWh+gN8iFWeoMjOCXMqWXT9VF4ZI4k1UifVThqxDUDlw7+Sve3JUGWMB/d5hbf
-         hwc41bQa6HVhECNdd6tVOgsHGfRmGyBzae8YNvCM+12YdSP1wfyXdT8U/pEJg5zAort2
-         htfXM9e2r1fcuKnPtxdAR24ypfaZgMRTAchYoIRtxx0vT/oPUsUXwsP+aMp5hW4jDYmK
-         dgf6cR9ecIGdUipIEQmW3whKqpexd/gFEXpmY5ULeOSqDtHYKpYElD3R4xUe5/6LbHCt
-         SPi3AjH7FQbUxjzqmjCkScZNSBWENJwFvYA/nS0s3Dq3WcFd2Of23FZP+s27rsJucVG3
-         12qA==
-X-Forwarded-Encrypted: i=1; AJvYcCXsEXZY9Im9DUftk6+E7XupgVM6zRDZ/5+4xlD6amCyDqm1YnX20Gm3JXqcPguTqGQ8sBDBxwR6/o/YXhU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKrJbrSEnLqwb9+GZTEkSFmqC7WYiAZV5QBNltU0QgpGEyuZTr
-	07YghcHr+oUfeiKciTvjwd50eHc1RGhK0/8f+XjTIvMhjGfsMlpv+vO/Sqs3F2b+TlY=
-X-Gm-Gg: ASbGnctXYmGtRRPObA3z0U7RYn+by8hjdKmp62Q+v0GHVXPwslJmbaQRt6Ok9xr0o5z
-	OltZnl/JT2C7X/ro1/SArZmEO6vM3ilrZ7hRAMIWuzN7xPoA23SmY0XsXFDxFOXlAXFK9XDubPx
-	49jISKs1osIQBYmN6200SaH10WnLRu9BAVj0156TnK7l2TjlVtDlrwTtov1OkYMsyzONRMWjVfK
-	IenZ36MhUcRJ6TXaiOB++QDACJDISJDrUJzkSpHErNAm+/hC+Ls2FgnM+iC+5K/g0wZHymJbYGU
-	U1zZPfzzBy74okflD8wqC3HljNxdvyxDFF8N/6MjHqCyT6WOfAbSGUzKCJNyc3ejmbExYSwGwfJ
-	b/iiTNF3RFiM520+OvrPbXpGG6jySH6mjd0iIl67aN5yU6DNN2dsGOXwCS8/woH5+mG7/cxRhIo
-	g1h+8UxwnEeOH6
-X-Google-Smtp-Source: AGHT+IEQMr3Vpgo000GhycQVvJrz9u/ak9auHMJZ5/xjFusfwrcdqUjlULnvSbDKynTKwDNhnUux7Q==
-X-Received: by 2002:a05:6e02:1fc3:b0:431:d7da:ee29 with SMTP id e9e14a558f8ab-43367e79e87mr145738845ab.28.1762884012698;
-        Tue, 11 Nov 2025 10:00:12 -0800 (PST)
-Received: from [192.168.1.14] ([38.175.187.108])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5b7ab11690fsm116564173.47.2025.11.11.10.00.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Nov 2025 10:00:12 -0800 (PST)
-Message-ID: <641427c7-0069-4bee-8e6a-53347654a926@linuxfoundation.org>
-Date: Tue, 11 Nov 2025 11:00:11 -0700
+        d=1e100.net; s=20230601; t=1762884036; x=1763488836;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=9HbiXIUVYuhI5l7PvzzJZfhSL3tvH5Y6RzQWs5tXFd0=;
+        b=fQdWV5knKzxQ/hDz1d77CR4BNNjWVdnbNxrFvniXuzW1e7MLRl+8fzbi96q0c0yrmM
+         q0uQchzwagOpMt20gUQUTqiBKSeEntC55LWLTOJT4VbATnopCEU4/2/rr0k8o9Fn5sb6
+         czmeXHAdihmL6lL4Q+wnDiRrVGI36ibNgnUz+V2LU/d8uULHGl1YRNDxgcwkvzOYXiRE
+         L3CU+HJobrMcFtTN1t7OLspOhmREJNHSnJabW/AdhzAuc29RM76lfGQnwI7REZZJ70uF
+         Yv5FHi/X9f0DbwR52D5yelOLdNsFirftRGaInpFkWmZh2fn8yBht5RNfj0MrX/Pls/YO
+         ylAA==
+X-Forwarded-Encrypted: i=1; AJvYcCWohkM8UFbrnQ5cfFto6MplDzZzysXq981kFDv3kCRUEDw7unF9fYbkBk7z87i43em1qTSqSGWRKkFeYcU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6Q2frRc0rGDhEvd0KuLPDtewjHZ5VT4rsW3+05dekc3ChfGqD
+	9IXGMZRZsLEaoYDdkYx3SXZurAiijGRwon9ieHLGumNVf1szaRh7vZYpsDTcIqMXJm350grhfcN
+	JNz1YCrJvROcqZ3X2ETsNEFvFuR7AgfI=
+X-Gm-Gg: ASbGnct0Nt4xCNOM7FLhGwFixoG6Ybo9wH1bWgAZWP23XcELv4ektOmyRoabQGeQG7R
+	G6wFtj+ASNqMFJG85TuJxUFmJZCgVFJHxnx+xLE7b2ZpsnIcpEjGI7dTasf+6ZB/L6yjO9boz4+
+	YaQFGRPxds1F4c/UJHcaHWlms0QPGJ8Tcev0J17DeEb5PTr666JqAk/d1qkxoMi+mhh268a6+GQ
+	HTt7J2N5CnZ5PjNiBo6hH4VPFh+SVYwddMssMk0+HkY2Ak0YA1y7nktS1xmT9ic5RduXQsSQAdv
+	NRkf2lH4/xIsXQY=
+X-Google-Smtp-Source: AGHT+IFuYz6RaM7hRc/WcQ4vZzXewSIOn8vea6fhjhW7Umd5v1YbFmLycKdc0r7yHCPCiDACpYaF/NZM++1eZ2f7y60=
+X-Received: by 2002:a17:907:9709:b0:b46:abad:430e with SMTP id
+ a640c23a62f3a-b7331a972abmr3512966b.37.1762884035562; Tue, 11 Nov 2025
+ 10:00:35 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.12 000/565] 6.12.58-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, rwarsow@gmx.de,
- conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
- achill@achill.org, sr@sladewatkins.com,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20251111004526.816196597@linuxfoundation.org>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20251111004526.816196597@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20251110165901.1491476-1-mjguzik@gmail.com> <20251111033226.GP2441659@ZenIV>
+In-Reply-To: <20251111033226.GP2441659@ZenIV>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Tue, 11 Nov 2025 19:00:23 +0100
+X-Gm-Features: AWmQ_bngX1Oah-ZA9B-eywkR85FJ9hEMiYvrt9XCFZFyl54Q2lTDQGDrkBjD5PM
+Message-ID: <CAGudoHG1=RFjUE6cdqg4UJDvaA1QZfUnw++m7QZkwd4V8MZVtw@mail.gmail.com>
+Subject: Re: [PATCH v4] fs: add predicts based on nd->depth
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: brauner@kernel.org, jack@suse.cz, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/10/25 17:37, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.12.58 release.
-> There are 565 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu, 13 Nov 2025 00:43:57 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.58-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.12.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+On Tue, Nov 11, 2025 at 4:32=E2=80=AFAM Al Viro <viro@zeniv.linux.org.uk> w=
+rote:
+>
+> On Mon, Nov 10, 2025 at 05:59:01PM +0100, Mateusz Guzik wrote:
+>
+> > Given these results:
+> > 1. terminate_walk() is called towards the end of the lookup. I failed
+> >    run into a case where it has any depth to clean up. For now predict
+> >    it does not.
+>
+> Easy - just have an error while resolving a nested symlink in the middle
+> of pathname.  On success it will have zero nd->depth, of course.
+>
 
-I am seeing a build failure on my system - the following
-commit could be the reason.
+Ok, I'll update the commit message.
 
-> 
-> Heiner Kallweit <hkallweit1@gmail.com>
->      net: phy: fix phy_disable_eee
-> 
-drivers/net/phy/phy_device.c: In function ‘phy_disable_eee’:
-drivers/net/phy/phy_device.c:3061:29: error: passing argument 1 of ‘linkmode_fill’ makes pointer from integer without a cast [-Wint-conversion]
-  3061 |         linkmode_fill(phydev->eee_broken_modes);
-       |                       ~~~~~~^~~~~~~~~~~~~~~~~~
-       |                             |
-       |                             u32 {aka unsigned int}
+> > 2. legitimize_links() is also called towards the end of lookup and most
+> >    of the time there s 0 depth. Patch consumers to avoid calling into i=
+t
+> >    in that case.
+>
+> On transition from lazy to non-lazy mode on cache miss, ->d_revalidate()
+> saying "dunno, try in non-lazy mode", etc.
+>
+> That can happen inside a nested symlink as well as on the top level, but
+> the latter is more common on most of the loads.
+>
 
-I will go build it without this and update you.
+Given the rest of the e-mail I take it you are clarifying when depth >
+0 in this case, as opposed to contesting the predict.
 
-thanks,
--- Shuah
+> > 3. walk_component() is typically called with WALK_MORE and zero depth,
+> >    checked in that order. Check depth first and predict it is 0.
+>
+> Does it give a measurable effect?
 
+I did not benchmark this patch at all, merely checked for predicts
+going the right way with bpftrace. What do I intend to benchmark is
+the following: cleanup and inlining of func calls to walk_component()
+and step_into(), which happen every time.
+
+The routine got ->depth predicts in this patch because I was already
+sprinkling it.
+
+The current asm of walk_component() is penalized by lookup_slow(!)
+being inlined and convincing the compiler to spill extra registers.
+step_into() also looks like it can be shortened for the common case.
+
+When inlined the compiler should be able to elide branching on WALK_MORE an=
+yway.
+
+You can find profiling info from a kernel running my patches (modulo
+this one) here:
+https://lore.kernel.org/linux-fsdevel/20251111-brillant-umgegangen-e7c89151=
+3bce@brauner/T/#mee42496c2c6495a54c6b0b4da5c4121540ad92d9
+
+walk_component() is hanging out there at over 2.7% and step_into() is
+4.8%. I would suspect there is at least 1% total hiding here for
+trivial fixups + inlining.
+
+That said, I can drop this bit no problem and add it later to the
+patchset which takes care of both walk_component() and step_into()
+(which will come with benchmarks).
+
+>
+> > 4. link_path_walk() predicts not dealing with a symlink, but the other
+> >    part of symlink handling fails to make the same predict. Add it.
+>
+> Unconvincing, that - one is "we have a component; what are the odds of th=
+at
+> component being a symlink?", another - "we have reached the end of pathna=
+me
+> or the end of nested symlink; what are the odds of the latter being the c=
+ase?"
+>
+
+Fair, so I added the following crapper:
+
+diff --git a/fs/dcache.c b/fs/dcache.c
+index de3e4e9777ea..2bac37c09bf6 100644
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -3268,3 +3268,7 @@ void __init vfs_caches_init(void)
+        bdev_cache_init();
+        chrdev_init();
+ }
++
++
++void link_path_walk_probe(int);
++void link_path_walk_probe(int) { }
+diff --git a/fs/namei.c b/fs/namei.c
+index caeed986108d..00125c578af4 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -2470,6 +2470,8 @@ static inline const char *hash_name(struct
+nameidata *nd, const char *name, unsi
+   #define LAST_WORD_IS_DOTDOT  0x2e2e
+ #endif
+
++void link_path_walk_probe(int);
++
+ /*
+  * Name resolution.
+  * This is the basic name resolution function, turning a pathname into
+@@ -2544,6 +2546,7 @@ static int link_path_walk(const char *name,
+struct nameidata *nd)
+                } while (unlikely(*name =3D=3D '/'));
+                if (unlikely(!*name)) {
+ OK:
++                       link_path_walk_probe(depth);
+                        /* pathname or trailing symlink, done */
+                        if (likely(!depth)) {
+                                nd->dir_vfsuid =3D
+i_uid_into_vfsuid(idmap, nd->inode);
+
+then probing over kernel build:
+bpftrace -e 'kprobe:link_path_walk_probe { @[probe] =3D lhist(arg0, 0, 8, 1=
+); }'
+@[kprobe:link_path_walk_probe]:
+[0, 1)           7528231 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@=
+@@@|
+[1, 2)            407905 |@@                                               =
+   |
+
+I think that's nicely skewed.
+
+> I can believe that answers to both questions are fairly low, but they are
+> not the same.  I'd expect the latter to be considerably higher than the
+> former.
+>
+> > -     if (unlikely(!legitimize_links(nd)))
+> > +     if (unlikely(nd->depth && !legitimize_links(nd)))
+>
+> I suspect that
+>         if (unlikely(nd->depth) && !legitimize_links(nd))
+> might be better...
+>
+
+Well it says it is unlikely there is depth, but when there is and
+legitimize_links is called, it is unlikely it fails. I think this
+matches the current intent, except avodiing the func call most of the
+time.
 
