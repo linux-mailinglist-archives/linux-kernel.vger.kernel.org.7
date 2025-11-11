@@ -1,113 +1,247 @@
-Return-Path: <linux-kernel+bounces-894984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D76A5C4CA06
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:23:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCE34C4CA0C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:23:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1ADAB18C0806
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:20:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FEE01881CE6
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:22:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C57D2DC35C;
-	Tue, 11 Nov 2025 09:20:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DE482F12D4;
+	Tue, 11 Nov 2025 09:22:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="iC3rAGJP"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Iq/i8hPW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2844A1E7C23
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 09:20:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E72E2EDD72;
+	Tue, 11 Nov 2025 09:22:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762852825; cv=none; b=l13t1Pww3lXZ/SiynkT3I3HJCoqxuYwYkyRXZwj9rXwDD9uKKZ1EVmmtGoagdp6wOyzHRNZiOQmTM0xalN+25EkyE6xesuiQMD9fb0zsauxVFzX1gqTTPhJCiOCyXTIbKPG+iiRX5m8VdUQSM743+XJPPnzbwnKw7LnPlp327Bw=
+	t=1762852933; cv=none; b=H+kZANSjTbztwhag3Jq/FnuVwkZ8f77Tk6SNHX6JxN2MpAYlXefW8gEgpmVX+AeU+5felhayazQo8PuORLF6TGPkdWX6T7t89oxCnBYjCgjlxtTheT+fZZKvMh/S4yaKW43tichbnUxFg2GWgMeepqhU6yt25ouABgD0qIOqk1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762852825; c=relaxed/simple;
-	bh=LwXh8WK26AJaQ7ZCIdlPCs6xPljwkOq9QQrm0FZM220=;
+	s=arc-20240116; t=1762852933; c=relaxed/simple;
+	bh=YKxB1Tk0c8PA5NVe6KSLcg4q1RUhiINUvY7b/ZMmRUw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YU3HwdBeO3NMVjb3r47dxfWB/3Nqnhg7yGEclz9JWNCoI8Q8t2q7JCeiL9Sg8Sm748puioGxNyVnlByjV0hhCH/9OhFDvyPaOV/O6xQzlTr0u3NWaRdB8sCOS4/BHknE4iNZuKi0ucrpb9t9Z8rpMzRSzm9zLi7ivYEpQaNWyBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=iC3rAGJP; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=dcYcPJY3H/k/eRT5a19gEpotDGRZ3dyDyv0pbSbHEqM=; b=iC3rAGJPIGbJqt79QVgO4ZHiOM
-	60CHwyGgI0dnucPfdRyI4AtVFKHx/zx6mNB31+4oRunpc8qyuG2X1Ox+T27XJAeS3eNq6XEHOtB7D
-	DpSsECr61/5m1mbzzoS/dXxTPXtI8K7SzcMdbJkYe+DUIn+WKn8GgpCuoqBAT/TXXhSQ3X+gVuoaJ
-	27rRnk6FYaSaKrfF0PrLuoSkU5ZfDiiCvh8O0s4dMdzct2a1aH3fkONl8SyIVwrr3Jrt+29cUq+uh
-	1ACCo1VMUWHNkuCkf5jS36UDdaosRl94NhAWXWqqfLTBuQ5mz1iNZU5HQ/oBt6JalHLsM6ktDmNWF
-	8JJrJErA==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vIkXq-00000002RRr-2Ln2;
-	Tue, 11 Nov 2025 09:20:10 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 4E0AF300328; Tue, 11 Nov 2025 10:20:09 +0100 (CET)
-Date: Tue, 11 Nov 2025 10:20:09 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Adam Li <adamli@os.amperecomputing.com>
-Cc: Chris Mason <clm@meta.com>,
-	Joseph Salisbury <joseph.salisbury@oracle.com>,
-	Hazem Mohamed Abuelfotoh <abuehaze@amazon.com>,
-	Josh Don <joshdon@google.com>, mingo@redhat.com,
-	juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/4] sched/fair: Proportional newidle balance
-Message-ID: <20251111092009.GE278048@noisy.programming.kicks-ass.net>
-References: <20251107160645.929564468@infradead.org>
- <20251107161739.770122091@infradead.org>
- <ee62fc73-2a08-4648-8852-afa9e2705c8c@os.amperecomputing.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qg+iqOb2Hbu/X4vfTdGV4HbZTyn6Ut0aPCXzCYA/4IXG2FoAcipgv6G782KoAmvgdZS1MQc7zHeGfVRsU4gjv8RPXI/NFjX41cbFln4B+YFFc2+n2zmKVinCaRNLfw0msQ0Xz04OJjuT6RGk/QbSWlVwMK/2iXLGm6AMBf9YFsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Iq/i8hPW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45B43C19422;
+	Tue, 11 Nov 2025 09:22:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762852932;
+	bh=YKxB1Tk0c8PA5NVe6KSLcg4q1RUhiINUvY7b/ZMmRUw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Iq/i8hPWgHTwu435PI+UGZlLN/X3lyfBrrm+1OwNKieirVMDPmDCkCaFA5KX+Cpoo
+	 jCY0uq+bKxbfSS/6qRug9ACZVWvSIG2hb05Nfywkq6thFqPc80S2JztzaJqBCtX5TK
+	 6ankYgSWSaELPVPWooj+5cT1eMoRBXuIxw8R7wm0f3aC08zRAHgGqQPhTXlh+50TBr
+	 zxjneSB775FAK9WKt6FxPW2yAZcqlXQ0OEYW8MPlkyO1msbbTBkJLfLsWoPQX0KMwY
+	 2kPRjg5gUXXR3fF2VCX329Z0qynUJi5o5aKfiv7nNQoaN9iGP9xwUFoDOYr6HTaRw8
+	 daoW/qmbnCCrQ==
+Date: Tue, 11 Nov 2025 10:21:58 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: Bernd Edlinger <bernd.edlinger@hotmail.de>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Alexey Dobriyan <adobriyan@gmail.com>, 
+	Kees Cook <kees@kernel.org>, Andy Lutomirski <luto@amacapital.net>, 
+	Will Drewry <wad@chromium.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Michal Hocko <mhocko@suse.com>, Serge Hallyn <serge@hallyn.com>, 
+	James Morris <jamorris@linux.microsoft.com>, Randy Dunlap <rdunlap@infradead.org>, 
+	Suren Baghdasaryan <surenb@google.com>, Yafang Shao <laoar.shao@gmail.com>, Helge Deller <deller@gmx.de>, 
+	"Eric W. Biederman" <ebiederm@xmission.com>, Adrian Reber <areber@redhat.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Jens Axboe <axboe@kernel.dk>, 
+	Alexei Starovoitov <ast@kernel.org>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-kselftest@vger.kernel.org, linux-mm@kvack.org, 
+	linux-security-module@vger.kernel.org, tiozhang <tiozhang@didiglobal.com>, 
+	Luis Chamberlain <mcgrof@kernel.org>, "Paulo Alcantara (SUSE)" <pc@manguebit.com>, 
+	Sergey Senozhatsky <senozhatsky@chromium.org>, Frederic Weisbecker <frederic@kernel.org>, 
+	YueHaibing <yuehaibing@huawei.com>, Paul Moore <paul@paul-moore.com>, 
+	Aleksa Sarai <cyphar@cyphar.com>, Stefan Roesch <shr@devkernel.io>, Chao Yu <chao@kernel.org>, 
+	xu xin <xu.xin16@zte.com.cn>, Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.cz>, 
+	David Hildenbrand <david@redhat.com>, Dave Chinner <dchinner@redhat.com>, 
+	Shuah Khan <shuah@kernel.org>, Elena Reshetova <elena.reshetova@intel.com>, 
+	David Windsor <dwindsor@gmail.com>, Mateusz Guzik <mjguzik@gmail.com>, 
+	Ard Biesheuvel <ardb@kernel.org>, "Joel Fernandes (Google)" <joel@joelfernandes.org>, 
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Hans Liljestrand <ishkamiel@gmail.com>, 
+	Penglei Jiang <superman.xpt@gmail.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Adrian Ratiu <adrian.ratiu@collabora.com>, Ingo Molnar <mingo@kernel.org>, 
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>, Cyrill Gorcunov <gorcunov@gmail.com>, 
+	Eric Dumazet <edumazet@google.com>
+Subject: Re: [PATCH v17] exec: Fix dead-lock in de_thread with ptrace_attach
+Message-ID: <20251111-ankreiden-augen-eadcf9bbdfaa@brauner>
+References: <AM8PR10MB470801D01A0CF24BC32C25E7E40E9@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
+ <AM8PR10MB470875B22B4C08BEAEC3F77FE4169@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
+ <AS8P193MB1285DF698D7524EDE22ABFA1E4A1A@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <AS8P193MB12851AC1F862B97FCE9B3F4FE4AAA@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <AS8P193MB1285FF445694F149B70B21D0E46C2@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <AS8P193MB1285937F9831CECAF2A9EEE2E4752@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <GV2PPF74270EBEEEDE0B9742310DE91E9A7E431A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+ <GV2PPF74270EBEE9EF78827D73D3D7212F7E432A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+ <20251105143210.GA25535@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ee62fc73-2a08-4648-8852-afa9e2705c8c@os.amperecomputing.com>
+In-Reply-To: <20251105143210.GA25535@redhat.com>
 
-On Tue, Nov 11, 2025 at 05:07:45PM +0800, Adam Li wrote:
-> > @@ -12843,6 +12858,22 @@ static int sched_balance_newidle(struct
-> >  			break;
-> >  
-> >  		if (sd->flags & SD_BALANCE_NEWIDLE) {
-> > +			unsigned int weight = 1;
+On Wed, Nov 05, 2025 at 03:32:10PM +0100, Oleg Nesterov wrote:
+> I am still thinking about another approach, will write another email.
+> But let me take a closer look at your patch.
+> 
+> First of all, can you split it? See below.
+> 
+> On 08/21, Bernd Edlinger wrote:
+> >
+> > -static int de_thread(struct task_struct *tsk)
+> > +static int de_thread(struct task_struct *tsk, struct linux_binprm *bprm)
+> >  {
+> >  	struct signal_struct *sig = tsk->signal;
+> >  	struct sighand_struct *oldsighand = tsk->sighand;
+> >  	spinlock_t *lock = &oldsighand->siglock;
+> > +	struct task_struct *t;
+> > +	bool unsafe_execve_in_progress = false;
+> >
+> >  	if (thread_group_empty(tsk))
+> >  		goto no_thread_group;
+> > @@ -932,6 +934,19 @@ static int de_thread(struct task_struct *tsk)
+> >  	if (!thread_group_leader(tsk))
+> >  		sig->notify_count--;
+> >
+> > +	for_other_threads(tsk, t) {
+> > +		if (unlikely(t->ptrace)
+> > +		    && (t != tsk->group_leader || !t->exit_state))
+> > +			unsafe_execve_in_progress = true;
+> 
+> you can add "break" into the "if ()" block...
+> 
+> But this is minor. Why do we need "bool unsafe_execve_in_progress" ?
+> If this patch is correct, de_thread() can drop/reacquire cred_guard_mutex
+> unconditionally.
+> 
+> If you really think it makes sense, please make another patch with the
+> changelog.
+> 
+> I'd certainly prefer to avoid this boolean at least for the start. If nothing
+> else to catch the potential problems earlier.
+> 
+> > +	if (unlikely(unsafe_execve_in_progress)) {
+> > +		spin_unlock_irq(lock);
+> > +		sig->exec_bprm = bprm;
+> > +		mutex_unlock(&sig->cred_guard_mutex);
+> > +		spin_lock_irq(lock);
+> 
+> I don't think spin_unlock_irq() + spin_lock_irq() makes any sense...
+> 
+> > @@ -1114,13 +1139,31 @@ int begin_new_exec(struct linux_binprm * bprm)
+> >  	 */
+> >  	trace_sched_prepare_exec(current, bprm);
+> >
+> > +	/* If the binary is not readable then enforce mm->dumpable=0 */
+> > +	would_dump(bprm, bprm->file);
+> > +	if (bprm->have_execfd)
+> > +		would_dump(bprm, bprm->executable);
 > > +
-> > +			if (sched_feat(NI_RANDOM)) {
-> > +				/*
-> > +				 * Throw a 1k sided dice; and only run
-> > +				 * newidle_balance according to the success
-> > +				 * rate.
-> > +				 */
-> > +				u32 d1k = sched_rng() % 1024;
-> > +				weight = 1 + sd->newidle_ratio;
-> > +				if (d1k > weight) {
-> > +					update_newidle_stats(sd, 0);
-> > +					continue;
-> > +				}
-> > +				weight = (1024 + weight/2) / weight;
+> > +	/*
+> > +	 * Figure out dumpability. Note that this checking only of current
+> > +	 * is wrong, but userspace depends on it. This should be testing
+> > +	 * bprm->secureexec instead.
+> > +	 */
+> > +	if (bprm->interp_flags & BINPRM_FLAGS_ENFORCE_NONDUMP ||
+> > +	    is_dumpability_changed(current_cred(), bprm->cred) ||
+> > +	    !(uid_eq(current_euid(), current_uid()) &&
+> > +	      gid_eq(current_egid(), current_gid())))
+> > +		set_dumpable(bprm->mm, suid_dumpable);
+> > +	else
+> > +		set_dumpable(bprm->mm, SUID_DUMP_USER);
+> > +
+> 
+> OK, we need to do this before de_thread() drops cred_guard_mutex.
+> But imo this too should be done in a separate patch, the changelog should
+> explain this change.
+> 
+> > @@ -1361,6 +1387,11 @@ static int prepare_bprm_creds(struct linux_binprm *bprm)
+> >  	if (mutex_lock_interruptible(&current->signal->cred_guard_mutex))
+> >  		return -ERESTARTNOINTR;
+> >
+> > +	if (unlikely(current->signal->exec_bprm)) {
+> > +		mutex_unlock(&current->signal->cred_guard_mutex);
+> > +		return -ERESTARTNOINTR;
+> > +	}
+> 
+> OK, if signal->exec_bprm != NULL, then current is already killed. But
+> proc_pid_attr_write() and ptrace_traceme() do the same. So how about
+> something like
+> 
+> 	int lock_current_cgm(void)
+> 	{
+> 		if (mutex_lock_interruptible(&current->signal->cred_guard_mutex))
+> 			return -ERESTARTNOINTR;
+> 
+> 		if (!current->signal->group_exec_task)
+> 			return 0;
+> 
+> 		WARN_ON(!fatal_signal_pending(current));
+> 		mutex_unlock(&current->signal->cred_guard_mutex);
+> 		return -ERESTARTNOINTR;
+> 	}
+> 
+> ?
+> 
+> Note that it checks ->group_exec_task, not ->exec_bprm. So this change can
+> come in a separate patch too, but I won't insist.
+> 
+> > @@ -453,6 +454,28 @@ static int ptrace_attach(struct task_struct *task, long request,
+> >  				return retval;
+> >  		}
+> >
+> > +		if (unlikely(task == task->signal->group_exec_task)) {
+> > +			retval = down_write_killable(&task->signal->exec_update_lock);
+> > +			if (retval)
+> > +				return retval;
+> > +
+> > +			scoped_guard (task_lock, task) {
+> > +				struct linux_binprm *bprm = task->signal->exec_bprm;
+> > +				const struct cred __rcu *old_cred = task->real_cred;
+> > +				struct mm_struct *old_mm = task->mm;
+> > +
+> > +				rcu_assign_pointer(task->real_cred, bprm->cred);
+> > +				task->mm = bprm->mm;
+> > +				retval = __ptrace_may_access(task, PTRACE_MODE_ATTACH_REALCREDS);
+> > +				rcu_assign_pointer(task->real_cred, old_cred);
+> > +				task->mm = old_mm;
 > > +			}
-> >  
-> e.g: Why 'weight = (1024 + weight/2) / weight'
+> 
+> This is the most problematic change which I can't review...
+> 
+> Firstly, it changes task->mm/real_cred for __ptrace_may_access() and this
+> looks dangerous to me.
 
-Not sure what you're asking, so two answers:
+Yeah, that is not ok. This is effectively override_creds for real_cred
+and that is not a pattern I want to see us establish at all! Temporary
+credential overrides for the subjective credentials is already terrible
+but at least we have the explicit split between real_cred and cred
+expressely for that. So no, that's not an acceptable solution.
 
-That's a rounding divide. We have a helper for that, but I never can
-remember what its called.
-
-The transformation as a whole here is from a ratio to a weight, suppose
-our ratio is 256, this means that we do 1-in-4 or 25% of the balance
-calls. However this also means that each success needs to be weighted as
-4 (=1024/256), otherwise we under-account the successes and not even a
-100% success rate can lift you out the hole.
-
-Now, I made it a rounding divide to make it a little easier to climb out
-of said hole (I even considered ceiling divide).
-
-
+> 
+> Say, current_is_single_threaded() called by another CLONE_VM process can
+> miss group_exec_task and falsely return true. Probably not that bad, in
+> this case old_mm should go away soon, but still...
+> 
+> And I don't know if this can fool the users of task_cred_xxx/__task_cred
+> somehow.
+> 
+> Or. check_unsafe_exec() sets LSM_UNSAFE_PTRACE if ptrace. Is it safe to
+> ptrace the execing task after that? I have no idea what the security hooks
+> can do...
+> 
+> Again, can't review this part.
+> 
+> Oleg.
+> 
 
