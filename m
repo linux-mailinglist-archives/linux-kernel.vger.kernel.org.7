@@ -1,205 +1,209 @@
-Return-Path: <linux-kernel+bounces-894442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DC5AC4A743
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 02:27:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2C7BC4A9A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 02:33:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 02AD14EF340
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 01:23:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 651AE3B9552
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 01:24:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 580E0347BBF;
-	Tue, 11 Nov 2025 01:15:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A48F3491F3;
+	Tue, 11 Nov 2025 01:16:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MCn1GxXV"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="kB7LykuC"
+Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11010004.outbound.protection.outlook.com [52.101.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B879C2DE707
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 01:15:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762823746; cv=none; b=G7yul4lwPKvhfKteijTpRONUmcud+R2sBPXCi1sCMPhnqjTaUcZkSNFiuwPTwUfrl8lV/f0Kz5RkMUmCgMlS4DYodkAZRQd3rWcM5o/tMKkMpd8ZDtvS8B3zRX9tVQbxAahWdRm2R8qG1aUzw9Wge7xAZV6bxifFYUsLjbCEHlc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762823746; c=relaxed/simple;
-	bh=UHwWdL8yMFiyzuIXi3IpIyFuianaoUXyCkSZKyhpm4I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S32/LBWB9ghdEKaFWqJmd9M/kLp+wD22AkSi3vTxPvwojkCT8ShB/UsliWZOLxv/T7KBnqUneCzKmho9RTWjGdc1fHbS9Wf6kehFC57EgVhVnuSEEkXwjQyuWEp8vg/bNgV6no1l9Xpt3iIL0vxdGL0sxtaY3FSvVaiZBP3b6dE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MCn1GxXV; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762823743;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lFuNMW6QorcHfFRhlUpmszpPvplH5exAgJCXldoReDA=;
-	b=MCn1GxXVoBSAWRqCthTJkV58iCJlrwDtPwY72f74v4aXDjpeA45clsZ5M7apvklzowLJ40
-	uu1LHvIx5JzT00sIcutIMOpuR+ABXmKuqdRfoexOXyL19I5veo0gj+U1Um4y1UAPdT3gG4
-	4mQgso9drOBDl55W15YJLlyHJqDHMIQ=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-213-dxEhYB_gNzeGhPkRGAx9IQ-1; Mon,
- 10 Nov 2025 20:15:40 -0500
-X-MC-Unique: dxEhYB_gNzeGhPkRGAx9IQ-1
-X-Mimecast-MFC-AGG-ID: dxEhYB_gNzeGhPkRGAx9IQ_1762823738
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5A91B19560A2;
-	Tue, 11 Nov 2025 01:15:37 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.59])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2CF2F30044E0;
-	Tue, 11 Nov 2025 01:15:33 +0000 (UTC)
-Date: Tue, 11 Nov 2025 09:15:23 +0800
-From: Baoquan he <bhe@redhat.com>
-To: Sourabh Jain <sourabhjain@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, Aditya Gupta <adityag@linux.ibm.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Dave Young <dyoung@redhat.com>,
-	Hari Bathini <hbathini@linux.ibm.com>, Jiri Bohac <jbohac@suse.cz>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
-	Pingfan Liu <piliu@redhat.com>,
-	"Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
-	Shivang Upadhyay <shivangu@linux.ibm.com>,
-	Vivek Goyal <vgoyal@redhat.com>, linuxppc-dev@lists.ozlabs.org,
-	kexec@lists.infradead.org
-Subject: Re: [PATCH v3 5/5] crash: export crashkernel CMA reservation to
- userspace
-Message-ID: <aRKOK7ZQ5mOUBzvK@MiWiFi-R3L-srv>
-References: <20251110043143.484408-1-sourabhjain@linux.ibm.com>
- <20251110043143.484408-6-sourabhjain@linux.ibm.com>
- <aRGPee9izxWPRHj5@MiWiFi-R3L-srv>
- <09c4c181-eb4b-43ea-a439-04b83f4c20ba@linux.ibm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A964634889B
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 01:16:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.4
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762823772; cv=fail; b=ARWTxHq3boR++1u/TFbY2r9GhSSySbGzHF3jRr20f8ONHUEQV5T9t72B/iOHNgez+v0ij3S3vmkjPq84B++bvUOeAs05XHL8/s8XzRkp69dVdHZH8bVZra4TukPL0HAVQzEHNOmsPrCgUUVpigXfqmyxoqtqbzxkT0TJ2cfbldk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762823772; c=relaxed/simple;
+	bh=zmaCbJDCMh5kv7/CP7d6Asd6WijZKDC7QMEu2b47HqQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=B17pUfD1DrQTybXeN666Oc4P28YUX0WsyT9ApyUMrmpYTFk4mWBjW8tyh/oRllSU0pq79NpY0jNzEYxZ5sYk2Rs4NiEnUaJxsLMlwLgp8CAbjDVGAB18OYm2Pkf6e59oEtwiM3KL8+y5MpH9rQ+o2y4MobcmTdAltJ+8wgV2q/0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=kB7LykuC; arc=fail smtp.client-ip=52.101.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=mvsFFwGOfS1XDmD4Njz2VWry3803WjHnStlKi03ISUPHq5miDe23mv0LUweKN9uACQNqWGflP2oPs6EvepHz6TQYb0KBmbXs7+TZnTBN3UGbYSY9LCvSrzhXa7QowJ68VVWoc+2woYXQq1kBr86qmiYzFjAEogaLLUPpJaF0f49slfiJIwo8IKDdntBTxhQA3+ALdppXR8JamHeQrEQxZi8DVhSxaWGDduxZl/as39nXIyzaTODdUptpFfFiZo8D3+m30zNO3/00NBD6/++YAebA8AwLHmfpWDoQ0Lis486RVcQpV4pJxQNQMKkLreAATRqUPngqzjPZHQ5Wj7LciA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=zr6hpG6y4JvNEJdMtpiA7L4CY/gZJJSmRF/1NRe7Qi4=;
+ b=jTW7yAfQUyYIXCJrMoZWJMoYV5en4C0rWCjnL5Yo+vABDcQtAAf3sauuckAWTAYQlyyK5W2DYaR3PDwIoOQRfW5M8Dh1teQahMWS1FOKQyIdU3P2zVBg2JGSot1kKMXufZmk1LwuCYz2o+3Y7ccbV5Wb4kpSkEnijTbd2Te2d1MM6Lw8XmSH8+hjGe+0y3TgbNjZgkweWNRm5PCM3KwkHmyD3F152VpLOzR0WRAZxXHB/Ee0TJVJbbQMuYaKF9bqe58g7ylaT77J5vGVh2Uv3bVrGxMgF+HijikLDGnEFdpit2A8glXBGe0RKk+LUkqKt/jRJlJvU/UwsFlYWXe5oA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zr6hpG6y4JvNEJdMtpiA7L4CY/gZJJSmRF/1NRe7Qi4=;
+ b=kB7LykuCvlLKzd3iLu046b5mIiq4Etpa/FYMfMwKLbbpzDqBPEbih0kL9y/2UyYm+1gehbWIKQKIOX3+xNi0IxEi3wFADU7LU59JhzMjv1hSeNVjD4nJ14bmvxbJIT5DBemd7/sqnZXSemqg7ZjNVuo7w54D/Uc1eTxhXL6kQG4=
+Received: from BYAPR08CA0012.namprd08.prod.outlook.com (2603:10b6:a03:100::25)
+ by MN2PR12MB4253.namprd12.prod.outlook.com (2603:10b6:208:1de::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Tue, 11 Nov
+ 2025 01:15:59 +0000
+Received: from CO1PEPF000044F3.namprd05.prod.outlook.com
+ (2603:10b6:a03:100:cafe::2f) by BYAPR08CA0012.outlook.office365.com
+ (2603:10b6:a03:100::25) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9298.16 via Frontend Transport; Tue,
+ 11 Nov 2025 01:15:55 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
+Received: from satlexmb08.amd.com (165.204.84.17) by
+ CO1PEPF000044F3.mail.protection.outlook.com (10.167.241.73) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9320.13 via Frontend Transport; Tue, 11 Nov 2025 01:15:58 +0000
+Received: from satlexmb08.amd.com (10.181.42.217) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Mon, 10 Nov
+ 2025 17:15:58 -0800
+Received: from xsjdavidzha51.xilinx.com (10.180.168.240) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
+ Transport; Mon, 10 Nov 2025 17:15:56 -0800
+From: David Zhang <yidong.zhang@amd.com>
+To: <ogabbay@kernel.org>, <quic_jhugo@quicinc.com>,
+	<maciej.falkowski@linux.intel.com>, <dri-devel@lists.freedesktop.org>
+CC: David Zhang <yidong.zhang@amd.com>, <linux-kernel@vger.kernel.org>,
+	<sonal.santan@amd.com>, <mario.limonciello@amd.com>, <lizhi.hou@amd.com>
+Subject: [PATCH V1 0/5] accel/amd_vpci: Add new driver for AMD Versal PCI
+Date: Mon, 10 Nov 2025 17:15:45 -0800
+Message-ID: <20251111011550.439157-1-yidong.zhang@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <09c4c181-eb4b-43ea-a439-04b83f4c20ba@linux.ibm.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000044F3:EE_|MN2PR12MB4253:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6f8fa25c-216d-455e-4e1f-08de20bfdf3d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|36860700013|1800799024|82310400026|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?nngH+gbK31o3rGrp26bl4RGdgdf8ASD0/OjjYaK5dalvzMJq1AGVzEy8JDk1?=
+ =?us-ascii?Q?Aui+A1qvgKSiW2SUJfJUd8Hbos9aH5bV0Oe7Vdl8JIhRye/icvImjh1WMli4?=
+ =?us-ascii?Q?RW7A6+A3vI5APEN6pqt/G1mULn3uD9tsNtL1C0uS5R0Q3jluOu4tSsaiIA3e?=
+ =?us-ascii?Q?rtaMb7x4JfULGWGFEaUNYlWJKUUz05WGRolBZxlcu3i+Yc5LONWEGRpA2krr?=
+ =?us-ascii?Q?3Ts9ufSDxQ5MhlmxeZTlM5XZhlABVFJpCY7QOqPnA6ebJPIued5uCOp4Vq05?=
+ =?us-ascii?Q?MbIoAJo6nbgw3MtUSvN3K6POtj2CHTQgUCAHqfCk2hDvZrlIrWNnS2dNMlow?=
+ =?us-ascii?Q?Un8NnaUZpaismgI9Vuc8Yop5T4WiiprJHrjxixIIsQ1ey92RmV2RcQrNcxVo?=
+ =?us-ascii?Q?FHftDbWbjtl9FMURGaePTHhtPchSCCWJt0PfwtpCec2tPh2FumfWa+FCn8KF?=
+ =?us-ascii?Q?SsPzJUFoSg03CEuaX27hWoFx5iVW5YdTcrsm7WOcrZDWXumq8vUoPXNAs6uK?=
+ =?us-ascii?Q?2N+JrnRDliKM5xek2rJKJ4r+fA0YJd0S2Ewc+uRtRBifa8GrkuO1QJ3M6MGl?=
+ =?us-ascii?Q?UItdimwcLteo3oAsERmmeg8wJ+gDzHd5OVvBwJW9i9wUR5vEXY8cubnp2xMR?=
+ =?us-ascii?Q?o0bv3cWahR0TZIMTZs/9cuasL4K7fTNsCp57Hy0TlQ0vv1GOuMQ6QsNCfn4a?=
+ =?us-ascii?Q?fe+z1AHWkk94+zG5NOX16rITdml3XnDBP65i/bzaZks109LT4ir7NQQXxjE9?=
+ =?us-ascii?Q?gB1RQeZdKhDVOXiaa2p1kXH7ez6gBrvnb3AlyGIB46PYtFQ2LcPlSUZupuH3?=
+ =?us-ascii?Q?T5uFbqrYDcSCjSIuMrTqNCTogOCXdQhUbFsiQBT33/IeEzV7UFWmqAFQuHOj?=
+ =?us-ascii?Q?MkwukJlglrVgegUERGQqRhhSEs/SUuk4Qf5uJOTjKPpett8FdDOatP5/c7ir?=
+ =?us-ascii?Q?GNRiIp7A12I0MrDi6BFHY4MB9I0UtSedXXbyMAGbGw2WFDNDfFrp477bxc4X?=
+ =?us-ascii?Q?sSFNIyYqGT8WfTWtdo0y6j3G8j08Gd2p59jpk8NiyAPk6S3ItPx1XiGB3W/3?=
+ =?us-ascii?Q?bhyU3DhTRUDF4ikS/rf56rLtxwd8loAJDa8mG5Uy1u44yILqOL8vzgIIBKmP?=
+ =?us-ascii?Q?x9Gwd8DtHPGYs+4l/1cwt3o1nCa7qxZE3EcPUK8P3dKXte9jynNZ9QCucwl1?=
+ =?us-ascii?Q?KK9GtpH653W9Er78DgINV48EvJEh3Pf5dQMFQo131SKoOd9pyzzcJIxy+z93?=
+ =?us-ascii?Q?fe41kv22FgMM8oxldX0PKmyzdw6KuWqgAnEyE9MaFj2AIxuVYu4LCFrFuPui?=
+ =?us-ascii?Q?QVVETWPuy0jygbM5b5pHkDWaIK1eELftOtVDuRddTZZZamwzf0PUGHNu44zx?=
+ =?us-ascii?Q?YtjuxJTZKD7haAOb8FjpaMmIQP4ffZMP3pFYy2zSg/d9XgeEfxfw81htQMQW?=
+ =?us-ascii?Q?aHQWCemC1//rfBUDJol9yDLANtBiaR9Z4d00WMcr4HQgMhx/iawIh2nV0T75?=
+ =?us-ascii?Q?mKs5P0gE+Sbcqqbk0sRx74ozQ/z9ykYEsDtL?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(36860700013)(1800799024)(82310400026)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Nov 2025 01:15:58.8034
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6f8fa25c-216d-455e-4e1f-08de20bfdf3d
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000044F3.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4253
 
-On 11/10/25 at 02:09pm, Sourabh Jain wrote:
-> 
-> 
-> On 10/11/25 12:38, Baoquan he wrote:
-> > On 11/10/25 at 10:01am, Sourabh Jain wrote:
-> > > Add a sysfs entry /sys/kernel/kexec/crash_cma_ranges to expose all
-> > > CMA crashkernel ranges.
-> > I am not against this way. While wondering if it's more appropriate to
-> > export them into iomem_resource just like crashk_res and crashk_low_res
-> > doing.
-> 
-> Handling conflict is challenging. Hence we don't export crashk_res and
-> crashk_low_res to iomem on powerpc. Checkout [1]
-> 
-> And I think conflicts can occur regardless of the order in which System RAM
-> and
-> Crash CMA ranges are added to iomem.
-> 
-> [1] https://lore.kernel.org/all/20251016142831.144515-1-sourabhjain@linux.ibm.com/
+This patchset introduces a new Linux Kernel Driver, *versal-pci*,  for AMD
+Embedded+ platform.
 
-Then I would suggest you add this reason and the link into patch log
-to keep a record. One day people may post patch to 'optimize' this.
+The AMD Embedded+ platform integrates AMD Ryzen Embedded processors with
+AMD Versal AI Edge adaptive SoCs on a single PCB [1]. The AMD Ryzen
+Embedded processor is connected to the Versal AI Edge adaptive SoC via PCIe
+enabling a tightly coupled heterogeneous compute platform. AMD Embedded+
+platform is used for sensor fusion, AI inferencing, industrial networking,
+control, and visualization.
 
-> 
-> > 
-> > > This allows userspace tools configuring kdump to determine how much
-> > > memory is reserved for crashkernel. If CMA is used, tools can warn
-> > > users when attempting to capture user pages with CMA reservation.
-> > > 
-> > > The new sysfs hold the CMA ranges in below format:
-> > > 
-> > > cat /sys/kernel/kexec/crash_cma_ranges
-> > > 100000000-10c7fffff
-> > > 
-> > > Cc: Aditya Gupta <adityag@linux.ibm.com>
-> > > Cc: Andrew Morton <akpm@linux-foundation.org>
-> > > Cc: Baoquan he <bhe@redhat.com>
-> > > Cc: Dave Young <dyoung@redhat.com>
-> > > Cc: Hari Bathini <hbathini@linux.ibm.com>
-> > > Cc: Jiri Bohac <jbohac@suse.cz>
-> > > Cc: Madhavan Srinivasan <maddy@linux.ibm.com>
-> > > Cc: Mahesh J Salgaonkar <mahesh@linux.ibm.com>
-> > > Cc: Pingfan Liu <piliu@redhat.com>
-> > > Cc: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-> > > Cc: Shivang Upadhyay <shivangu@linux.ibm.com>
-> > > Cc: Vivek Goyal <vgoyal@redhat.com>
-> > > Cc: linuxppc-dev@lists.ozlabs.org
-> > > Cc: kexec@lists.infradead.org
-> > > Signed-off-by: Sourabh Jain <sourabhjain@linux.ibm.com>
-> > > ---
-> > > Changelog:
-> > >   - Add the missing hunk to export crash_cma_ranges sysfs
-> > > 
-> > > ---
-> > >   .../ABI/testing/sysfs-kernel-kexec-kdump        | 10 ++++++++++
-> > >   kernel/kexec_core.c                             | 17 +++++++++++++++++
-> > >   2 files changed, 27 insertions(+)
-> > > 
-> > > diff --git a/Documentation/ABI/testing/sysfs-kernel-kexec-kdump b/Documentation/ABI/testing/sysfs-kernel-kexec-kdump
-> > > index 00c00f380fea..f59051b5d96d 100644
-> > > --- a/Documentation/ABI/testing/sysfs-kernel-kexec-kdump
-> > > +++ b/Documentation/ABI/testing/sysfs-kernel-kexec-kdump
-> > > @@ -49,3 +49,13 @@ Description:	read only
-> > >   		is used by the user space utility kexec to support updating the
-> > >   		in-kernel kdump image during hotplug operations.
-> > >   User:		Kexec tools
-> > > +
-> > > +What:		/sys/kernel/kexec/crash_cma_ranges
-> > > +Date:		Nov 2025
-> > > +Contact:	kexec@lists.infradead.org
-> > > +Description:	read only
-> > > +		Provides information about the memory ranges reserved from
-> > > +		the Contiguous Memory Allocator (CMA) area that are allocated
-> > > +		to the crash (kdump) kernel. It lists the start and end physical
-> > > +		addresses of CMA regions assigned for crashkernel use.
-> > > +User:		kdump service
-> > > diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
-> > > index 7476a46de5d6..da6ff72b4669 100644
-> > > --- a/kernel/kexec_core.c
-> > > +++ b/kernel/kexec_core.c
-> > > @@ -1271,6 +1271,22 @@ static ssize_t crash_size_store(struct kobject *kobj,
-> > >   }
-> > >   static struct kobj_attribute crash_size_attr = __ATTR_RW(crash_size);
-> > > +static ssize_t crash_cma_ranges_show(struct kobject *kobj,
-> > > +				     struct kobj_attribute *attr, char *buf)
-> > > +{
-> > > +
-> > > +	ssize_t len = 0;
-> > > +	int i;
-> > > +
-> > > +	for (i = 0; i < crashk_cma_cnt; ++i) {
-> > > +		len += sysfs_emit_at(buf, len, "%08llx-%08llx\n",
-> > > +				     crashk_cma_ranges[i].start,
-> > > +				     crashk_cma_ranges[i].end);
-> > > +	}
-> > > +	return len;
-> > > +}
-> > > +static struct kobj_attribute crash_cma_ranges_attr = __ATTR_RO(crash_cma_ranges);
-> > > +
-> > >   #ifdef CONFIG_CRASH_HOTPLUG
-> > >   static ssize_t crash_elfcorehdr_size_show(struct kobject *kobj,
-> > >   			       struct kobj_attribute *attr, char *buf)
-> > > @@ -1289,6 +1305,7 @@ static struct attribute *kexec_attrs[] = {
-> > >   #ifdef CONFIG_CRASH_DUMP
-> > >   	&crash_loaded_attr.attr,
-> > >   	&crash_size_attr.attr,
-> > > +	&crash_cma_ranges_attr.attr,
-> > >   #ifdef CONFIG_CRASH_HOTPLUG
-> > >   	&crash_elfcorehdr_size_attr.attr,
-> > >   #endif
-> > > -- 
-> > > 2.51.1
-> > > 
-> 
+AMD Versal PCI driver, versal-pci, is a host-side PCIe driver for AMD
+Embedded+ platform running on AMD Ryzen Embedded processor.
+
+The versal-pci driver is responsible for the management-plane operations
+for the AMD Versal AI Edge adaptive SoC, including:
+
+ - Loading accelerator firmware images
+ - Reset and recovery
+ - Health monitoring
+
+The driver is licensed under GPL-2.0.
+
+The firmwares are distributed as closed binaries. Please see [1] for more
+information. Please see [2] for software architecture.
+
+[1] https://www.amd.com/en/products/embedded/embedded-plus.html
+[2] https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/3011838141/AMD+Embedded+Platforms
+
+David Zhang (5):
+  accel/amd_vpci: Add documentation for AMD Versal PCI accelerator
+    management
+  accel/amd_vpci: Add new driver for AMD Versal PCI accelerator
+  accel/amd_vpci: Add Remote Management(RM) queue infrastructure
+  accel/amd_vpci: Add Remote Management (RM) queue service APIs
+  accel/amd_vpci: Add communication channel service
+
+ Documentation/accel/amd_vpci/amd_vpci.rst     | 122 +++++
+ Documentation/accel/amd_vpci/index.rst        |  11 +
+ Documentation/accel/index.rst                 |   1 +
+ MAINTAINERS                                   |   5 +
+ drivers/accel/Kconfig                         |   1 +
+ drivers/accel/Makefile                        |   3 +-
+ drivers/accel/amd_vpci/Kconfig                |  15 +
+ drivers/accel/amd_vpci/Makefile               |   9 +
+ drivers/accel/amd_vpci/versal-pci-comm-chan.c | 295 +++++++++++
+ drivers/accel/amd_vpci/versal-pci-comm-chan.h |  14 +
+ drivers/accel/amd_vpci/versal-pci-main.c      | 394 ++++++++++++++
+ drivers/accel/amd_vpci/versal-pci-rm-queue.c  | 314 +++++++++++
+ drivers/accel/amd_vpci/versal-pci-rm-queue.h  |  21 +
+ .../accel/amd_vpci/versal-pci-rm-service.c    | 497 ++++++++++++++++++
+ .../accel/amd_vpci/versal-pci-rm-service.h    | 229 ++++++++
+ drivers/accel/amd_vpci/versal-pci.h           |  70 +++
+ 16 files changed, 2000 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/accel/amd_vpci/amd_vpci.rst
+ create mode 100644 Documentation/accel/amd_vpci/index.rst
+ create mode 100644 drivers/accel/amd_vpci/Kconfig
+ create mode 100644 drivers/accel/amd_vpci/Makefile
+ create mode 100644 drivers/accel/amd_vpci/versal-pci-comm-chan.c
+ create mode 100644 drivers/accel/amd_vpci/versal-pci-comm-chan.h
+ create mode 100644 drivers/accel/amd_vpci/versal-pci-main.c
+ create mode 100644 drivers/accel/amd_vpci/versal-pci-rm-queue.c
+ create mode 100644 drivers/accel/amd_vpci/versal-pci-rm-queue.h
+ create mode 100644 drivers/accel/amd_vpci/versal-pci-rm-service.c
+ create mode 100644 drivers/accel/amd_vpci/versal-pci-rm-service.h
+ create mode 100644 drivers/accel/amd_vpci/versal-pci.h
+
+-- 
+2.34.1
 
 
