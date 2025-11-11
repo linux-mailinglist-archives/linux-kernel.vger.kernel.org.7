@@ -1,175 +1,182 @@
-Return-Path: <linux-kernel+bounces-894632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D742BC4B752
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 05:27:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 608C2C4B758
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 05:29:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 68A344F138D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 04:26:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F7F43B6523
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 04:29:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 893983043C7;
-	Tue, 11 Nov 2025 04:26:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YRmwdrC9";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="kReif2sW"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41E2326F443;
+	Tue, 11 Nov 2025 04:29:51 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BCEA28C00D
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 04:26:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D96234D39B
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 04:29:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762835192; cv=none; b=FYo5YsFmqwuxrVp5m5TcdyS/jQu4d18/r4CMQvo7q0NlzODGlUJKSKaJmUcOCKGz0cWgrPYMrVsTGsl0PU86OkyfK6J311HD20xFJBeRMhaWnhnuhK2Nmlkvz3HYcijvn9oME9nha5s3JG9todY9CkyyWU+NZmtGvRzVivkOR3E=
+	t=1762835390; cv=none; b=NSz0A4XjA8oGuVN5/ij2jwW7o940wOZxfGjY+HkOA0Qbl1StFyNn4GgAmXlrYOjFNbvHoaAbryNSPjI2AmS0XICYjioRYpajyH9gIB2WJ5AlpEdhVRUuq6xbwCgQ5S+Gh+jfcSn2rdSQ36NOp5RXcxygAqZXCk/niwKFar6gaBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762835192; c=relaxed/simple;
-	bh=8RMdtaBeUgxOa66xEv3AWKaQqgqZOKBlVnze2K1GYgE=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=TkXYLfngvcfYTPOOLL7lJdJLfuB1I68Sv/P+SS6oYPsbLWOTXiw/c982rLB9wfr9dbZ18NvWzwnwQI79sO8NA9zKjXLT4YJ+JOQe6ZeFE9B5G6b0+WwilZijeVzi+JQt+u7JsPYgc8JUdKGe1+FAqRrKyIdwj4zf1wc83ObVMI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YRmwdrC9; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=kReif2sW; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762835189;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kPEh5FOm5ROsAwzfPYlmN0EmwzoMy2vKzelCep4kRwQ=;
-	b=YRmwdrC91Msb4t26CFiBl1GDCpeDnMEa6LLe7Gi7HZ3mOyoyRgSP92mHaOy7ZoCutvIOPB
-	4ti9UnceI4Q+4cvXxcZbllFOqTllstlcSM66VJv5bAj11jI73T+sPh2IebOUCdnrOQIxRO
-	tpcxJ1YH/Vw2Pob36paDZ174p+2/XCI=
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
- [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-255-z645FVe4PKuzPZcZdzIQHQ-1; Mon, 10 Nov 2025 23:26:28 -0500
-X-MC-Unique: z645FVe4PKuzPZcZdzIQHQ-1
-X-Mimecast-MFC-AGG-ID: z645FVe4PKuzPZcZdzIQHQ_1762835188
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-88236bcdfc4so82820016d6.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 20:26:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1762835188; x=1763439988; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=kPEh5FOm5ROsAwzfPYlmN0EmwzoMy2vKzelCep4kRwQ=;
-        b=kReif2sWfnwQhdfgxGalSgRyAw+PKYL+qehJflK0HIsUiqMAitmWZAj1Qo5iZHGHE8
-         WolLRiMrNmWNj+gbYsBItWSFWIO1PzXHtvSfBfFyHbWWqTbTZ8k1hujWlR214X4MNW3+
-         x/B5dXmkzx90f6bZp187bcidPOpA81r6wL1mb/HaJKvE8526IE5wIHCFK2k8XHBhAxNz
-         R8B0DuJPjc7/yCPDoguMBIa2OPFAfwKx094x/Rt7E1QZICqXA41liU3JwwRdzUfF+goB
-         FEXwJunEI4hTnuzPQItebD4qaTvVbtbxaCBLcjHuzCV8F1+VExaiglJWCagR5KPslL39
-         sCvw==
+	s=arc-20240116; t=1762835390; c=relaxed/simple;
+	bh=cl2Wcb+YO7qxjJUUHZfkp8FQb+1q7+UxxFP9UKGkxWA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=RWuFTTSlSN8d10ike1k3tFHoiyVrzRxAAraayleIj00mS0JNDIs3XGDtHpHjzh1mQSeP/VhDYSb2EMYLMw/ZPgPtj/7MxsPmUwWr6Tdsoe2z2cWcg8xXraMmtYd+s1yqTRkufcZLixpHD2S8cr7WEEa0EEOmzdljegaJGLKY5Ws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-4337853ffbbso27521025ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 20:29:47 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762835188; x=1763439988;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from:x-gm-gg
+        d=1e100.net; s=20230601; t=1762835386; x=1763440186;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kPEh5FOm5ROsAwzfPYlmN0EmwzoMy2vKzelCep4kRwQ=;
-        b=rbcH6ZM7mOaPfpgHgFOOB3NBevUFl39ABnh/qJcCUZIN4NvT+6wTaFD/1wb8XwAJbJ
-         sPpIPxxJOj+yxNEtBZpsJHDXh1DQolThqCvsLYwxxH2tnW3G7Y3whFZ+rvxtSGkH/S2l
-         BZiT/4JjlUaiQvZQiFZOuT3b1Tg3IEjRRSKfmJCkdVA/rSXy8ug7+9vHYES56ZwVf1f0
-         Bit1XSMiZKciss2jf++3g8jhmpTWtd5TFQYth21v7vUetQEQYuB+BEauBf3Uq6mln3ii
-         zzft0j6Tu6SZFUco2NiepHzhpEl+dbq/BrSdlOSfr/wDB53lZT/iB/+gD1BpvHsv7s28
-         GKNw==
-X-Forwarded-Encrypted: i=1; AJvYcCXEKjdNkzyy25CdlSmm9+wz6NLFGbOVWu2lIHZhgzGvSLmjNfsL2iUed7hHP0xsrOAClHQkX1zSQU/PtTg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzuVXKW1913VhE73PfjnG0/X4vXjVcdTKS8MDbE0Fz1Fe04OLqc
-	rqgHJ9VfFEWF0vyuM18Wk6JO5PvLEEuOtmFqHh50zLpTuhnYZ/XO+T2FTu6AtB2SDCqk2I8knDb
-	locbyIzZHABiCHicn98rTLjJx00i49I8gQmbyVthzCvOR+sqLxc7FfuSku7Q9Rkuxag==
-X-Gm-Gg: ASbGncs8dv0sBBzDPXkBfpoOiXE4Nz7PztUcLxQAmfZ+kc1zOzrHpRlv8FRyh7HsDMv
-	XBk0Ez8uaXWlegQ/TnhhYsaH4YREZQ7KcKIj95OjUE07OWgfW/p0VeNSLYq5azvxtwpF+VFNLkW
-	icZJAt7jUKt/EQ+q7OKEMC64S3F1s8Fe6Ltt96X8o0cBQsRoyTymVGzTg4xejAz+MIOe34SIQwe
-	PXEwplu6HMCBo9mimqlgTfefOz1wPo3rLt4jDaFK4bbQEzxpPsObjxtkbobO55R8vW71yygpK7a
-	46VSHA/zgBCozh8TgueN9B/z2jwt4Gtsp5sXqrPj7yiDpKtRjiMgjD9wfCZmaZpGAetX6GUa9Zx
-	WuLKFOrcBvYY/7MnIo0wXE4CUz1h3CR8pDd9mqPHsjIOcLA==
-X-Received: by 2002:ad4:5deb:0:b0:880:6647:1031 with SMTP id 6a1803df08f44-882385bf25amr151425156d6.1.1762835187811;
-        Mon, 10 Nov 2025 20:26:27 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IE827JjhCjMCbcengTfa5HNZ5i9tHdgANx+cncvp5Ytw3zHicS5X1S/lVww1a27gfgSadaHRQ==
-X-Received: by 2002:ad4:5deb:0:b0:880:6647:1031 with SMTP id 6a1803df08f44-882385bf25amr151424996d6.1.1762835187427;
-        Mon, 10 Nov 2025 20:26:27 -0800 (PST)
-Received: from ?IPV6:2601:188:c102:b180:1f8b:71d0:77b1:1f6e? ([2601:188:c102:b180:1f8b:71d0:77b1:1f6e])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-882389939eesm64874876d6.23.2025.11.10.20.26.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Nov 2025 20:26:26 -0800 (PST)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <cd1fbcd1-37e6-4aa8-8654-3305cbe085c3@redhat.com>
-Date: Mon, 10 Nov 2025 23:26:25 -0500
+        bh=LM5P1DP+2J101/qr5C6YsI+Ey/EzCD01ubhDxN7YcrQ=;
+        b=hwX52O/udLkRa9xEEkwYtcgGIFH04msZoUj8DOlQCBFFpwjs6GKsZQZLHRoml7iW+/
+         IfBtEOF0AcS8fy9hbmCBZJqG8bRLK9aMNRusbC2QpCijSkkp2sJxRqGjM+RA+hufIaNq
+         ckBJmyop4oisLkNyMwfZfuPf5o1wuWwlBuzIznaJW51+SFM+RQ4tZbTT3FVzzb7oio7p
+         63KNu4Si38N6iPgyhdg0jQxOlnDv8B0D94/BDMjfJYaTx6IWqoaIGZPHMscIqSGyRdzT
+         E+M7egsUGSPzYu/Ii3MI5ris50lWzuqRrbn7sCM/6c4s6cGfYGzk5+sIo/E6515s/Vv9
+         qFLw==
+X-Gm-Message-State: AOJu0YzIcYzUPsciGqKHCXYIUh1GBI31wrXLojHK/Cpxj7UcHG3Rt3dZ
+	0Bp+ucdYveXMNVGNqY+t92s6f5aEhjZkMe/rwzRnsbTRBQbe8ZexKUR6tbkxf28B8cL23QBc138
+	3EUNsVP5Rnu8CiR89sDz1f3o2/an6gQOXKDAv9sFIBU95CKMq1UMPsSl6tCI=
+X-Google-Smtp-Source: AGHT+IH3SfSi2nCgxS6FcTGPYCWmMC8q1tlSVBpOF1h/FwRiL3YvSIJGCyZlQdVGhbQuR/VWEZfcNrFlLhmaAHUHNuMdLWiiURH4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next 1/3] cpuset: simplify node setting on error
-To: Chen Ridong <chenridong@huaweicloud.com>, tj@kernel.org,
- hannes@cmpxchg.org, mkoutny@suse.com
-Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
- lujialin4@huawei.com, chenridong@huawei.com
-References: <20251110015228.897736-1-chenridong@huaweicloud.com>
- <20251110015228.897736-2-chenridong@huaweicloud.com>
-Content-Language: en-US
-In-Reply-To: <20251110015228.897736-2-chenridong@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:318b:b0:433:23f0:1ebf with SMTP id
+ e9e14a558f8ab-43367dd8574mr166942995ab.9.1762835386368; Mon, 10 Nov 2025
+ 20:29:46 -0800 (PST)
+Date: Mon, 10 Nov 2025 20:29:46 -0800
+In-Reply-To: <69122a59.a70a0220.22f260.00fc.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6912bbba.a70a0220.22f260.0124.GAE@google.com>
+Subject: Forwarded: [PATCH] ocfs2: validate xattr header in ocfs2_validate_inode_block
+From: syzbot <syzbot+ab0ad25088673470d2d9@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 11/9/25 8:52 PM, Chen Ridong wrote:
-> From: Chen Ridong <chenridong@huawei.com>
->
-> There is no need to jump to the 'done' label upon failure, as no cleanup
-> is required. Return the error code directly instead.
->
-> Signed-off-by: Chen Ridong <chenridong@huawei.com>
-> ---
->   kernel/cgroup/cpuset.c | 21 +++++++++------------
->   1 file changed, 9 insertions(+), 12 deletions(-)
->
-> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-> index 8238fd8c0c29..c90476d52f09 100644
-> --- a/kernel/cgroup/cpuset.c
-> +++ b/kernel/cgroup/cpuset.c
-> @@ -2897,21 +2897,19 @@ static int update_nodemask(struct cpuset *cs, struct cpuset *trialcs,
->   	 */
->   	retval = nodelist_parse(buf, trialcs->mems_allowed);
->   	if (retval < 0)
-> -		goto done;
-> +		return retval;
->   
->   	if (!nodes_subset(trialcs->mems_allowed,
-> -			  top_cpuset.mems_allowed)) {
-> -		retval = -EINVAL;
-> -		goto done;
-> -	}
-> +			  top_cpuset.mems_allowed))
-> +		return -EINVAL;
-> +
-> +	/* No change? nothing to do */
-> +	if (nodes_equal(cs->mems_allowed, trialcs->mems_allowed))
-> +		return 0;
->   
-> -	if (nodes_equal(cs->mems_allowed, trialcs->mems_allowed)) {
-> -		retval = 0;		/* Too easy - nothing to do */
-> -		goto done;
-> -	}
->   	retval = validate_change(cs, trialcs);
->   	if (retval < 0)
-> -		goto done;
-> +		return retval;
->   
->   	check_insane_mems_config(&trialcs->mems_allowed);
->   
-> @@ -2921,8 +2919,7 @@ static int update_nodemask(struct cpuset *cs, struct cpuset *trialcs,
->   
->   	/* use trialcs->mems_allowed as a temp variable */
->   	update_nodemasks_hier(cs, &trialcs->mems_allowed);
-> -done:
-> -	return retval;
-> +	return 0;
->   }
->   
->   bool current_cpuset_is_being_rebound(void)
-Reviewed-by: Waiman Long <longman@redhat.com>
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+
+***
+
+Subject: [PATCH] ocfs2: validate xattr header in ocfs2_validate_inode_block
+Author: kartikey406@gmail.com
+
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+
+
+Add validation of inline xattr header fields when validating inode
+blocks to catch corruption early before the inode is used by the
+system. This prevents corrupted xattr counts from causing out-of-bounds
+access and use-after-free bugs in xattr processing code.
+
+The validation checks:
+1. xattr_inline_size does not exceed block size
+2. xattr_inline_size is large enough for header structure
+3. xattr entry count does not exceed available space
+
+This moves validation to the inode block validation stage, providing
+comprehensive protection for all code paths that access inline xattrs.
+
+Reported-by: syzbot+ab0ad25088673470d2d9@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=ab0ad25088673470d2d9
+Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
+---
+ fs/ocfs2/inode.c | 41 +++++++++++++++++++++++++++++++++++++++++
+ fs/ocfs2/xattr.c | 16 ++++++++++++++--
+ 2 files changed, 55 insertions(+), 2 deletions(-)
+
+diff --git a/fs/ocfs2/inode.c b/fs/ocfs2/inode.c
+index fcc89856ab95..9d5342b8dbc6 100644
+--- a/fs/ocfs2/inode.c
++++ b/fs/ocfs2/inode.c
+@@ -1458,6 +1458,47 @@ int ocfs2_validate_inode_block(struct super_block *sb,
+ 		     (unsigned long long)bh->b_blocknr);
+ 		goto bail;
+ 	}
++	if (di->i_dyn_features & cpu_to_le16(OCFS2_INLINE_XATTR_FL)) {
++		struct ocfs2_xattr_header *header;
++		u16 xattr_inline_size;
++		u16 xattr_count;
++		size_t max_entries;
++
++		xattr_inline_size = le16_to_cpu(di->i_xattr_inline_size);
++
++		/* Validate inline size is within block bounds */
++		if (xattr_inline_size > sb->s_blocksize) {
++			mlog(ML_ERROR,
++			     "xattr inline size %u exceeds block size %lu in inode %llu\n",
++			     xattr_inline_size, sb->s_blocksize,
++			     (unsigned long long)bh->b_blocknr);
++			goto bail;
++		}
++		/* If there's xattr data, validate it */
++		if (xattr_inline_size > 0) {
++			/* Must be at least big enough for header */
++			if (xattr_inline_size < sizeof(struct ocfs2_xattr_header)) {
++				mlog(ML_ERROR,
++				     "xattr inline size %u too small for header in inode %llu\n",
++				     xattr_inline_size,
++				     (unsigned long long)bh->b_blocknr);
++				goto bail;
++			}
++			header = (struct ocfs2_xattr_header *)
++				 ((void *)di + sb->s_blocksize - xattr_inline_size);
++			xattr_count = le16_to_cpu(header->xh_count);
++			max_entries = (xattr_inline_size -
++				       sizeof(struct ocfs2_xattr_header)) /
++				       sizeof(struct ocfs2_xattr_entry);
++			if (xattr_count > max_entries) {
++				mlog(ML_ERROR,
++				     "xattr count %u exceeds maximum %zu in inode %llu\n",
++				     xattr_count, max_entries,
++				     (unsigned long long)bh->b_blocknr);
++				goto bail;
++			}
++		}
++	}
+ 
+ 	/*
+ 	 * Errors after here are fatal.
+diff --git a/fs/ocfs2/xattr.c b/fs/ocfs2/xattr.c
+index d70a20d29e3e..db352df00101 100644
+--- a/fs/ocfs2/xattr.c
++++ b/fs/ocfs2/xattr.c
+@@ -928,8 +928,21 @@ static int ocfs2_xattr_list_entries(struct inode *inode,
+ 	size_t result = 0;
+ 	int i, type, ret;
+ 	const char *name;
+-
+-	for (i = 0 ; i < le16_to_cpu(header->xh_count); i++) {
++	u16 count;
++	size_t max_entries;
++	struct super_block *sb = inode->i_sb;
++
++	count = le16_to_cpu(header->xh_count);
++	max_entries = (sb->s_blocksize - sizeof(struct ocfs2_xattr_header)) /
++			sizeof(struct ocfs2_xattr_entry);
++	if (count > max_entries) {
++		mlog(ML_ERROR,
++			"xattr entry count %u exceeds maximum %zu in inode %llu\n",
++			count, max_entries,
++			(unsigned long long)OCFS2_I(inode)->ip_blkno);
++		return -EUCLEAN;
++	}
++	for (i = 0 ; i < count; i++) {
+ 		struct ocfs2_xattr_entry *entry = &header->xh_entries[i];
+ 		type = ocfs2_xattr_get_type(entry);
+ 		name = (const char *)header +
+-- 
+2.43.0
 
 
