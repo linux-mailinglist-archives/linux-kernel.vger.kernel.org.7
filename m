@@ -1,30 +1,30 @@
-Return-Path: <linux-kernel+bounces-895617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCB84C4E86B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 15:40:17 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA717C4E7ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 15:33:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72A703A6D85
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:33:51 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2D91634A4AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:33:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 911F52E7182;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 281962D8DDA;
 	Tue, 11 Nov 2025 14:33:45 +0000 (UTC)
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05B58248F78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 300B82848BA
 	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 14:33:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762871625; cv=none; b=JuOL1LGkHsg4gcEF0I2t75zLZJFYCmElNVkaKLDI1Kl3G22d9Qny0tgSJnDks9yAH2thaJOplwz9+KsGMrzbqIASzzXhymXEf4MXGbqeGhAI1wjiHDSUSH0KU45qAWmkp3B6ceBTFGWudMb5pWp3fnkOeJmNFysMsD3Fdj/eysM=
+	t=1762871624; cv=none; b=gQv4FS7cyDnNoxU2FsnycKNq6cEwcuGwHWprN/ptsprQ99I27i4IQM/VJ5FGEtq1Ghch5/RcljYtAdQF0cu/Xm26AcFsgsVqIyypEkIU9B5SCNYv8rphkMRqD8LAR6Jcer76m70x0wrX4G83ymahvSq3ks51COeqv6fQWzFlYrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762871625; c=relaxed/simple;
-	bh=hF911FpD7hHlzOp+ZGUO10mJQA5px3sr1D8cTSFnPH4=;
+	s=arc-20240116; t=1762871624; c=relaxed/simple;
+	bh=MrWP641Xm605bRx3lhl2q+KtNTn/GUfquxZD1MRCk1s=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ddEH1aOy4kolnqLwMM58VXwrbrfGHdG4lzGLr8VjZaxJDBO143SM/maRZU+Vr8YzWOCaw1MS7jktzoIp6zVVl3aYeuLRjxWadEfZesnHXIMCgEWmGDBONpqplOrZ4PtdDEPKhU08sPiZftLu016Atf6PbCAlzWZyN6+53TFTQ60=
+	 Content-Type:MIME-Version; b=K8Wxqle4CADBffK4eYkDWtgZ0p0KxVCSVaZ9yERnhl5Iahf/j+1JYXQut+ZjERx65kJ/fx0EeZxOtur5f1osZ4DgA6z5gtDHm86s28kCBEDb9A415lSh/Pr1/05YFKHe0iyvMe/irwGPnPSiBDkCHCONF+rg1p1v3w6iQoU/u68=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
@@ -32,29 +32,31 @@ Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
 	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
 	(Exim 4.92)
 	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vIpR9-0003tQ-9H; Tue, 11 Nov 2025 15:33:35 +0100
+	id 1vIpRA-0003tl-E7; Tue, 11 Nov 2025 15:33:36 +0100
 Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
 	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96)
 	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vIpR8-008DWM-17;
-	Tue, 11 Nov 2025 15:33:34 +0100
+	id 1vIpRA-008DWQ-0G;
+	Tue, 11 Nov 2025 15:33:36 +0100
 Received: from pza by lupine with local (Exim 4.98.2)
 	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vIpR8-000000009SG-19RM;
-	Tue, 11 Nov 2025 15:33:34 +0100
-Message-ID: <750f15baa9373252a94b9e8a4e703c3494c49481.camel@pengutronix.de>
-Subject: Re: [PATCH v3] i2c: designware-platdrv: simplify reset control and
- error handling
+	id 1vIpRA-000000009Sb-01hh;
+	Tue, 11 Nov 2025 15:33:36 +0100
+Message-ID: <743a73399327e0f11825b1b50b4a0fc90948625d.camel@pengutronix.de>
+Subject: Re: [PATCH v2 2/3] i2c: designware-platdrv: complete reset control
+ devm conversion
 From: Philipp Zabel <p.zabel@pengutronix.de>
 To: Artem Shimko <a.shimko.dev@gmail.com>
 Cc: andi.shyti@kernel.org, andriy.shevchenko@linux.intel.com,
  jsd@semihalf.com, 	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
  	mika.westerberg@linux.intel.com
-Date: Tue, 11 Nov 2025 15:33:34 +0100
-In-Reply-To: <20251111140935.3220840-1-a.shimko.dev@gmail.com>
-References: <3c3ece1a00c6e39d865c231e27508bdde0783070.camel@pengutronix.de>
-	 <20251111140935.3220840-1-a.shimko.dev@gmail.com>
+Date: Tue, 11 Nov 2025 15:33:35 +0100
+In-Reply-To: <3c3ece1a00c6e39d865c231e27508bdde0783070.camel@pengutronix.de>
+References: <e3c2096459bdd0c1d48c00a837cc7f8c18044631.camel@pengutronix.de>
+		 <20251111114559.3188740-1-a.shimko.dev@gmail.com>
+		 <20251111114559.3188740-2-a.shimko.dev@gmail.com>
+	 <3c3ece1a00c6e39d865c231e27508bdde0783070.camel@pengutronix.de>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.56.1-1+deb13u1 
@@ -69,20 +71,62 @@ X-SA-Exim-Mail-From: p.zabel@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Di, 2025-11-11 at 17:09 +0300, Artem Shimko wrote:
-> The current reset control management uses manual deassertion and assertio=
-n
-> calls with goto-based error handling, which complicates the code and miss=
+On Di, 2025-11-11 at 13:43 +0100, Philipp Zabel wrote:
+> On Di, 2025-11-11 at 14:45 +0300, Artem Shimko wrote:
+> > The driver still manually calls reset_control_assert() in error paths a=
+nd
+> > remove function. This creates inconsistent resource management and miss=
 es
-> the benefits of full device-managed resource handling.
+> > the benefits of full device-managed approach.
+> >=20
+> > Register devm_add_action_or_reset() callback after acquiring reset cont=
+rol
+> > to handle automatic assertion on probe errors and driver removal. This
+> > eliminates all manual reset_control_assert() calls while maintaining
+> > identical reset behavior through automatic devm resource management.
+> >=20
+> > Signed-off-by: Artem Shimko <a.shimko.dev@gmail.com>
+> > ---
+> >  drivers/i2c/busses/i2c-designware-platdrv.c | 34 ++++++++++++---------
+> >  1 file changed, 19 insertions(+), 15 deletions(-)
+> >=20
+> > diff --git a/drivers/i2c/busses/i2c-designware-platdrv.c b/drivers/i2c/=
+busses/i2c-designware-platdrv.c
+> > index c77029e520dc..d334af1d7c6f 100644
+> > --- a/drivers/i2c/busses/i2c-designware-platdrv.c
+> > +++ b/drivers/i2c/busses/i2c-designware-platdrv.c
+> > @@ -206,6 +206,13 @@ static void i2c_dw_remove_lock_support(struct dw_i=
+2c_dev *dev)
+> >  		i2c_dw_semaphore_cb_table[dev->semaphore_idx].remove(dev);
+> >  }
+> > =20
+> > +static void dw_i2c_plat_assert_reset(void *data)
+> > +{
+> > +	struct dw_i2c_dev *dev =3D data;
+> > +
+> > +	reset_control_assert(dev->rst);
+> > +}
+> > +
+> >  static int dw_i2c_plat_probe(struct platform_device *pdev)
+> >  {
+> >  	u32 flags =3D (uintptr_t)device_get_match_data(&pdev->dev);
+> > @@ -240,34 +247,34 @@ static int dw_i2c_plat_probe(struct platform_devi=
+ce *pdev)
+> >  	if (IS_ERR(dev->rst))
+> >  		return PTR_ERR(dev->rst);
+> > =20
+> > +	ret =3D devm_add_action_or_reset(device, dw_i2c_plat_assert_reset, de=
+v);
+> > +	if (ret)
+> > +		return ret;
+> > +
+>=20
+> This is already done by patch 1. Drop these hunks
 
-Unnecessary.
+See [1], _deasserted() already includes assert-on-detach.
 
-
-[...]
-> combined with devm_add_action_or_reset()
-
-No, that's not what I requested in v2.
+[1] https://docs.kernel.org/driver-api/reset.html#c.devm_reset_control_get_=
+optional_exclusive_deasserted
 
 regards
 Philipp
