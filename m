@@ -1,93 +1,73 @@
-Return-Path: <linux-kernel+bounces-894501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D3F9C4B2C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 03:11:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 209BEC4B2FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 03:18:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 177D4188ABFB
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 02:11:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30E493B7E92
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 02:13:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3519346A15;
-	Tue, 11 Nov 2025 02:10:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0D533446DF;
+	Tue, 11 Nov 2025 02:13:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WWYJw75b"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rabwyA/Y"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F6D23469EF;
-	Tue, 11 Nov 2025 02:10:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1282819CCFD;
+	Tue, 11 Nov 2025 02:13:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762827044; cv=none; b=Ca29lUi5jSELwsI7KbHzGiJZXxUsb/3CqmPan6b7LxRAJ93U52T/ufwpmOGX5InNGVMcs0MVAqda1LVyE998hnGPgjXzpnEmuZ5sQjvHNd1TuXJ9LD4ZiWXkyKYdw/Fcy+/OPDdACi/868/KiGgkMGiaSlMSYQa0VsK9AKgPnsE=
+	t=1762827188; cv=none; b=Lxe1OAeuWiMcCNYc2f9hAJVvOVbnaMCWXgJFtDSQlhrdWw+nhioa1ix6msop0XFZz7TShEzdUm16Q2eILyjWiyiMANq4RNURwy2+0Fp9MQrFWasNkiHMJyju/Yzzacg9P/g14THjsQEXvrPc+hWBNj9siHnGH+Chx/PwG15sIOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762827044; c=relaxed/simple;
-	bh=Vucgi6gs/xD/jJPBBcH7kSn3eGn5xTJkLGubZx9DDpo=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=JaREkKbQ31Xg+CdgDQhj2jZLPWpQf4ocxIvoioQIvwKKNzEoapVSGDvywCNojU4I/brI9apuYkDpsY+JogotltcJq5G3GAyU+AJ0c2IjPyxluwIyAw5wH5B3Xv/osSODB4Uv649qp4o7ll4Ii4XrGljYUsg+5dehe0foLKSeMmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WWYJw75b; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCFCCC19424;
-	Tue, 11 Nov 2025 02:10:43 +0000 (UTC)
+	s=arc-20240116; t=1762827188; c=relaxed/simple;
+	bh=1Ri0DfcRggwPTmFPolyws/NpIVbil0D6j3dsoakvaOo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WM9Sr78GdTEMSk+atISCeCCvqg8tDprvoCW+84Ss0nEBIxvhNwEKPeshnFHeUGFNuzjiiTdd7SDOR5u6OESt3Fje5XTLRSg3/07Y/jhzXks/vOmxEatB6mdUQBDMxKcuyLFkUP0/q2otLAnUZZQxWfNCOds/WSV6yW5yznBn5XA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rabwyA/Y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0271AC116D0;
+	Tue, 11 Nov 2025 02:13:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762827043;
-	bh=Vucgi6gs/xD/jJPBBcH7kSn3eGn5xTJkLGubZx9DDpo=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=WWYJw75bYYDPlbhbnspGcufdAEl7lQzQeq8Y1kCw1SQ+7DweTKkSu43JO+m8gYzTr
-	 EleCX1Yfm4bguFXJIfOWNY+TqOsWME7Hzh2eau7lDkA18fAmOwiUAX47uNYX90La2H
-	 sq+2+ADMFJehj3qKTHKCKGZf1Yaadfw/uskjMgs4W85U8/b8vikpl6zw8uyx4m2eq9
-	 o9huSQj08xXzpXdVNW3MJ/CTR3PAkboWB5rClngi6QdCdbJu4V7e7JXklba/01QQNY
-	 ZRUgNAk/wXNj3C5WfLp7XWhfuLoSfiJ3qwcJdD965USl/e4zM569S0gIha5mnXSdAM
-	 r8tdEIg/y4k3Q==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70E8B380CFD7;
-	Tue, 11 Nov 2025 02:10:15 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1762827187;
+	bh=1Ri0DfcRggwPTmFPolyws/NpIVbil0D6j3dsoakvaOo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=rabwyA/YOj9GBdzd/l5+5I0nsonxaTedvc1+h+OFRTS2e/9iuhgRkrDIl/iFoGs73
+	 fKlEsCCjtXJaLtY4oInzY1p/71NFEz6eXmHEkvk2lzmLWjDSSDc/Cfpug+F4tMi1CU
+	 n///74+11iemO04SbLa6Yu45L3yk57S9HkFvAV306QNDlyUC843QAGFUX7PIwgC+iH
+	 tSsQRed2Vw7rN/7FoTQPW26vLVXEeW1Wbkc4/qONNtHibmXpTtcAE6QZVbS7KZLRaH
+	 n7G3FPTyy4ZVX2iC04MDKpWMEgvjKSD3h44zdzluf/hfF9MAm1LVNM4ojU9WVhgse4
+	 IIVnHjKxHcWzw==
+Date: Mon, 10 Nov 2025 18:13:06 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: andrew+netdev@lunn.ch
+Cc: Wei Fang <wei.fang@nxp.com>, claudiu.manoil@nxp.com,
+ vladimir.oltean@nxp.com, xiaoning.wang@nxp.com, davem@davemloft.net,
+ edumazet@google.com, pabeni@redhat.com, aziz.sellami@nxp.com,
+ imx@lists.linux.dev, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 net-next 0/3] net: enetc: add port MDIO support for
+ both i.MX94 and i.MX95
+Message-ID: <20251110181306.5b5a553f@kernel.org>
+In-Reply-To: <20251105043344.677592-1-wei.fang@nxp.com>
+References: <20251105043344.677592-1-wei.fang@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] net/handshake: Fix memory leak in tls_handshake_accept()
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <176282701408.2852248.347346618365991178.git-patchwork-notify@kernel.org>
-Date: Tue, 11 Nov 2025 02:10:14 +0000
-References: <20251106144511.3859535-1-zilin@seu.edu.cn>
-In-Reply-To: <20251106144511.3859535-1-zilin@seu.edu.cn>
-To: Zilin Guan <zilin@seu.edu.cn>
-Cc: chuck.lever@oracle.com, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
- kernel-tls-handshake@lists.linux.dev, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, jianhao.xu@seu.edu.cn
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello:
+On Wed,  5 Nov 2025 12:33:41 +0800 Wei Fang wrote:
+> v2 changes:
+> Improve the commit message.
+> v1 link: https://lore.kernel.org/imx/20251030091538.581541-1-wei.fang@nxp.com/
 
-This patch was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+Andrew, is the explanation good enough? 
 
-On Thu,  6 Nov 2025 14:45:11 +0000 you wrote:
-> In tls_handshake_accept(), a netlink message is allocated using
-> genlmsg_new(). In the error handling path, genlmsg_cancel() is called
-> to cancel the message construction, but the message itself is not freed.
-> This leads to a memory leak.
-> 
-> Fix this by calling nlmsg_free() in the error path after genlmsg_cancel()
-> to release the allocated memory.
-> 
-> [...]
-
-Here is the summary with links:
-  - net/handshake: Fix memory leak in tls_handshake_accept()
-    https://git.kernel.org/netdev/net/c/3072f00bba76
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+If the feature is inherently not safe to use with existing Linux
+locking scheme we can't support it upstream..
 
