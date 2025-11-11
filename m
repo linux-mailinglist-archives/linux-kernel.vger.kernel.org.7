@@ -1,196 +1,292 @@
-Return-Path: <linux-kernel+bounces-895150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB133C4D1B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:39:47 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D62DAC4D143
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:36:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF6093BC1D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:30:00 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A64EC4FAD9F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:30:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B61834B674;
-	Tue, 11 Nov 2025 10:29:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B88B34CFCF;
+	Tue, 11 Nov 2025 10:29:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TLCrMhPQ"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bi0zUZRu"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0638133BBAA
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 10:29:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8990334CFA0
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 10:29:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762856993; cv=none; b=H7m4gzkNEzDiN0sQUnVOCOaUbHknqwhsGVqgnrBoR+ViwY3ESW3IXkvjIr/2LlNuSS3HDhQPaYjJ1fM0R0Ah3EOPwwPl7s9CfJjWP/mhwxeDDgUlT+KGq5ym85cTdZNGmE7hi1VFSs3DvwQD+la1NQeCCFd/yOIE3IcBrAPAYMk=
+	t=1762856998; cv=none; b=UpjVNWE8PihzDJ/kZRMfB735A7Y5oGvoyiC3PvJ2sA+KNUp6NcAGTW/fIMgn4p50vPFp5UVMBfDf4mpcvi1/lk7PbZQSc+z+Ipcgq9Qo7kcTC7DKP8UlVcdOuZd+QRuAV0wgxarMxTuRQ1Jf/rHAkd6NFFOsZY3/HEVyJflo/GA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762856993; c=relaxed/simple;
-	bh=HLKGy0mKbpQ8h+3kSmFm7cUNZcoYemdFaDqBdUyA25s=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=qlLZI187VtSPjfdy9O+wPkyouSG38mWm+SxV5khVE8foqQWv2D3VeEGx/f1uBPmDV5ZwyvkA+p9uIv3Gf0UwWcJXT5MoXjURcZuF6e+ZBNVZG075Pq9rx3rs2EkHfxcuvVjR2WcQJE6V7UMIuQXDzbCxT4qONiNadjrDQOPiLJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TLCrMhPQ; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4777771ed1aso18513815e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 02:29:51 -0800 (PST)
+	s=arc-20240116; t=1762856998; c=relaxed/simple;
+	bh=JpT5+Q52uFzIEER8lnGSXWYhh/xPIlMmBmAdHm4bm/I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ImLOPJQ2tbF3SdnjDg7zLHC/AHp5fDd4JHFd5aPKRMRa0OJK3xOquiQ+QvdYPtBmqCW4tt4gSb3radTS/fUeJdh3FeZ02M8Cqs/xzWdeIzhoAQFSJx7/HtBLguTTYBQn3/T5nBH0ILqfq9mp+95aL5a83DHLLbbghTBYgV21N9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bi0zUZRu; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-42b3298502cso240517f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 02:29:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762856990; x=1763461790; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+        d=gmail.com; s=20230601; t=1762856995; x=1763461795; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=mA4OYGuehEdlKuRHHZkCIxOoAid/iNBTle5X4sDzSO8=;
-        b=TLCrMhPQRzB5j1v8TSW+sC6RojrdNXA+tcJLfzUaCy67lu0rwRNX671GZX7SEsO7VJ
-         jf0LIWKMK6zabvAzsT9FcnEJpS6oZPVF50f5PsBDi6j0i4NxgYvSVGc5GgyIyO22tZRw
-         TZwMmziLkzn5BPKWVbOdWRYwZjKSWuNpyjueKv7Kgatde6o7ePHyG5fcb/l9XGktgzlo
-         tWmxMNqjOEMdG8BmqKjM3lqwtnxvbQQiAiDM8u6IllVDiwPnGDAykBzVQ3FkrHsLXxwo
-         Yn/ZInsymFSXOIZiCtFurlKCJMRleUvC6//X8eCPEMGQYrLxeXbnQYNkF4S6ABIlVsLT
-         +e1g==
+        bh=RFutPZPVcfe1PqaSlwPzNed0vfcXYkJ75DHHS7eesdE=;
+        b=bi0zUZRuEPj3GTFlcW3pWJvM9vNMMsZ/L+L5UsKgknKl6FPzxUwgTGALnVztTtoAzB
+         qoZVEA1o307Q3US8Q4zMWwcdAXi+e9+aalLqmmgfAv8/V5rvBl4FYVVWm6YbroIc4QHm
+         9v4pHT/5TgAf5i/K10+LhqHEachzg8bV0CPZPTENodkNU/uVJdQA7S90kHGiMsK/tWha
+         qnxyO0YldmzGR6t+t6lR2JKFF00nWyjxma+XZYa0B0y+Q7gHLLOKmPSU1EH1IiaHaZqB
+         /A39ZSpCMzFHiXYfV/7w+oyzV+YMeXSjHnhWYfvbJPv7122YzJAqVD7JxN8DszbHAzI7
+         0YMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762856990; x=1763461790;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:x-gm-gg
+        d=1e100.net; s=20230601; t=1762856995; x=1763461795;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mA4OYGuehEdlKuRHHZkCIxOoAid/iNBTle5X4sDzSO8=;
-        b=uKz0cUPESS6lYq0q3sjCmvH04Gtv+MzZqQvigbDx8P5vXHrUhf9Mj9KIZ4MFZnuDIq
-         gWwogcVrJ7Tk21sOrnS2K+QoqjBCOkz4VGOJ/2iVeAr+RkoXwjMfQerLpRKRm/o4BRuY
-         E/cItQtSsREhIdtAwPcLKOGFwlC2zHM9NN4EoAPtfJ4zoNSuGmgb0M4yRsVXZJ0YY/W5
-         aFF+qllB2RocLaA8VimEskCY1Gtk6wiMmWLqc0jIEexdB0fgi+qJdmaCLokxjCqWLPVK
-         tG9ENqYlSot2C3VbxoWUhyFUlDp0cfZvlpwwITPOqaOI5wBgqLyG6SlxoPCS/XYcpGu5
-         8r9g==
-X-Gm-Message-State: AOJu0YxA1W8DC0w3nqLOiG5Oay5X/fJJiPnzhKmFbLcVl4dZy3WUITRK
-	zxkzEEUCB43i/edIlX+FfHXxSQeSJUetmQdUwmNDXZHuXg/v0Bkl3eXn8eSWv74p01I=
-X-Gm-Gg: ASbGncvsWZQvURiugNGImV/8TLi0jxq7KXOwwMxMZbgRWDI7tQHahjXNrSbBvn89Czb
-	NU6bu/zChH8Bs40XgPHXGxUQxxqAbY3b7QIdgQEfKXafSb64I6DSGqmZm1+vBB2SIkY8Eg5Xsy0
-	omYAmKYvOswR87zviTCCdUKytlZFOUClVxvR3vdNPofCuDpYK8MvnlvgPtgFAIkXApsyOUg2yYd
-	YB772QhQ8wMWgSXmKgfN1pt7VB632TWS4i6fSR0ptzq6Pb/AWPRmztUcK5BKQ/iioc3enl21E5i
-	WTpI8vWhA/Gs6vyD+ooNF2L9wo+0+eedf/T+hdWHvRCDmn5TeLGvG/CSqOoFciX2gzMXvgU9x0Z
-	pk1l3KdA4MYf9+TUbLLVV6koIjgyPN9zZCebRfjMyIGmRUOGzp06w9gctC2eXF98c6qopRf8T+4
-	x+ML9medYucKxffn1/5reAgEZKP5c=
-X-Google-Smtp-Source: AGHT+IEvLEjIZw4+8whQM79OrY00R9vJVyO1rxoxD4fhQm/KifAlq8r0yaMnGCz1oNKbvCj2h/xcDg==
-X-Received: by 2002:a05:600c:c4a3:b0:471:1774:3003 with SMTP id 5b1f17b1804b1-47773290e9dmr106627935e9.29.1762856990270;
-        Tue, 11 Nov 2025 02:29:50 -0800 (PST)
-Received: from [10.11.12.107] ([5.12.85.52])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42ac675caecsm27313955f8f.30.2025.11.11.02.29.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Nov 2025 02:29:49 -0800 (PST)
-Message-ID: <5eaaf3cf-a271-467f-b015-9cb9b49590f0@linaro.org>
-Date: Tue, 11 Nov 2025 12:29:44 +0200
+        bh=RFutPZPVcfe1PqaSlwPzNed0vfcXYkJ75DHHS7eesdE=;
+        b=idUn8qJeqZBylpF4uJ/ZTXY++lbj+gpSDe2/PNnannNqs2D0+v6Lp5FGgXcE0J8Y6d
+         5p8XqIfKCbHQIZ2tkMrDR8R4vBe8DlSyn63x3pCw8WRu/UfdTcuhDGJKIPVoNiOqoRUp
+         o0ef8GqTdaE4q6rSJR7PVJisnHaRxn1O75XzuhLeQZnY54+7H6V4O6oFYIYayjrQ05T4
+         kGwplEvUyD7BdQe9MsbmTdkBhAFqfXFTlNAMPU6+AFB6WPi842wLjvc6IBVUWrvIaisZ
+         SD1a0w0Ke2O3qr1FOqBnpa49JmNrgMndP3is39K0H0hyhL7mpK0IRkfXNCDD12MLMBAH
+         P4IQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUQDJa4z2dInFdlZ6bS20vhV2/uuqAODy46ZxQHBXCbdq8wmMHPFlDjiImVvxr+xlLCrM3OytAau2FM7vY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4zV7SbwNFgaIdPRK7uGXc7lJmoUB8nNwyNuBhWe5oIzwVxiZh
+	b0Hjp109tbhoKm8hSp75FmAlVTmiUoGe/RZ21SyHj4t0QcuuT9ovuRVU
+X-Gm-Gg: ASbGncvRcvVC0Gg0IoFZ/wPAwxqFUl6MOCbbFM1DPkbyjHhsTwHF6/Jji7Slpxjf2dJ
+	ys9I6NaiRSn/3hosxSW0jWmiiidlc8bnYK6ElAnsHjdWMRYad4bzOj/Tv0ok8FVpJgfY6MDIHqD
+	DhykO+65QEmZ7FX2y2DJ3mpHi52WpOIuqXBVSfe+gLsTzbnF/3DNh7uFu7igelnw0gUWZJ3pp2o
+	t+azQ/LU3/9mWu9mW0OV46rAbefP0Zc1Q6JDwgpircSb8L7h7RDHmtxz+aCvhYEEf7MbMmWAjDm
+	9fkKddWYx1569zrm05cf4x/QD0SO0PoHTrKEBRk7ARCEeLQdyof3wYDjzn/+dpgMTEmDT3pvC/a
+	hx0/ZEXoGUclhrSWwaNFYIEgH0uUH+Qf5meBiypbNdPcNv6fapF7TVdnRkefj3eqmYpZKY1rs+t
+	p0QMA=
+X-Google-Smtp-Source: AGHT+IGut5UdtaPg5QbZcWX7MUocWV29lStqS7ui1MJFm9Kz4cjLkWJMGOfw9rr3hhx6QpVtMAEIjA==
+X-Received: by 2002:a05:6000:26cf:b0:42b:2deb:829 with SMTP id ffacd0b85a97d-42b4285611amr1239922f8f.3.1762856994563;
+        Tue, 11 Nov 2025 02:29:54 -0800 (PST)
+Received: from skbuf ([2a02:2f04:d00b:be00:7a51:464b:5aed:5e38])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42ac67921c3sm27760824f8f.40.2025.11.11.02.29.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Nov 2025 02:29:53 -0800 (PST)
+Date: Tue, 11 Nov 2025 12:29:51 +0200
+From: Vladimir Oltean <olteanv@gmail.com>
+To: Jonas Gorski <jonas.gorski@gmail.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC net-next 0/3] net: dsa: deny unsupported 8021q uppers
+ on bridge ports
+Message-ID: <20251111102951.lkexwdk5btdqdt46@skbuf>
+References: <20251110214443.342103-1-jonas.gorski@gmail.com>
+ <20251110230124.7pzmkhrkxvtgzh5k@skbuf>
+ <CAOiHx==ymTyVbs7UmNH28UgxcfnMQBtt6qA=ZnKvEF3QLe_z8w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 4/6] clk: samsung: add Exynos ACPM clock driver
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-To: Stephen Boyd <sboyd@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Catalin Marinas <catalin.marinas@arm.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Conor Dooley <conor+dt@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Krzysztof Kozlowski <krzk@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Peter Griffin <peter.griffin@linaro.org>, Rob Herring <robh@kernel.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>, Will Deacon <will@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, willmcvicker@google.com, kernel-team@android.com
-References: <20251010-acpm-clk-v6-0-321ee8826fd4@linaro.org>
- <20251010-acpm-clk-v6-4-321ee8826fd4@linaro.org>
- <92f1c027-bacc-4537-a158-2e0890e2e8ee@kernel.org>
- <17695fcf-f33c-4246-8d5c-b2120e9e03b1@linaro.org>
- <176282517011.11952.1566372681481575091@lazor>
- <c5db97fa-8789-447f-909a-edbdb55383f8@linaro.org>
-Content-Language: en-US
-In-Reply-To: <c5db97fa-8789-447f-909a-edbdb55383f8@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOiHx==ymTyVbs7UmNH28UgxcfnMQBtt6qA=ZnKvEF3QLe_z8w@mail.gmail.com>
 
-
-
-On 11/11/25 8:24 AM, Tudor Ambarus wrote:
+On Tue, Nov 11, 2025 at 10:53:00AM +0100, Jonas Gorski wrote:
+> Hi Vladimir,
 > 
+> On Tue, Nov 11, 2025 at 12:01 AM Vladimir Oltean <olteanv@gmail.com> wrote:
+> >
+> > Hi Jonas,
+> >
+> > On Mon, Nov 10, 2025 at 10:44:40PM +0100, Jonas Gorski wrote:
+> > > Documentation/networking/switchdev.rst is quite strict on how VLAN
+> > > uppers on bridged ports should work:
+> > >
+> > > - with VLAN filtering turned off, the bridge will process all ingress traffic
+> > >   for the port, except for the traffic tagged with a VLAN ID destined for a
+> > >   VLAN upper. (...)
+> > >
+> > > - with VLAN filtering turned on, these VLAN devices can be created as long as
+> > >   the bridge does not have an existing VLAN entry with the same VID on any
+> > >   bridge port. (...)
+> > >
+> > > Presumably with VLAN filtering on, the bridge should also not process
+> > > (i.e. forward) traffic destined for a VLAN upper.
+> > >
+> > > But currently, there is no way to tell dsa drivers that a VLAN on a
+> > > bridged port is for a VLAN upper and should not be processed by the
+> > > bridge.
+> >
+> > You say this as if it mattered. We can add a distinguishing mechanism
+> > (for example we can pass a struct dsa_db to .port_vlan_add(), set to
+> > DSA_DB_PORT for VLAN RX filtering and DSA_DB_BRIDGE for bridge VLANs),
+> > but the premise was that drivers don't need to care, because HW won't do
+> > anything useful with that information.
 > 
-> On 11/11/25 3:39 AM, Stephen Boyd wrote:
+> It matters in the case of VLAN uppers on bridged ports. It does not
+> matter for VLAN uppers on standalone ports.
+
+Ok, and what would a driver do with the info that a port_vlan_add() call
+came from 8021q and not from the bridge?
+
+> > > Both adding a VLAN to a bridge port and adding a VLAN upper to a bridged
+> > > port will call dsa_switch_ops::port_vlan_add(), with no way for the
+> > > driver to know which is which. But even so, most devices likely would
+> > > not support configuring forwarding per VLAN.
+> >
+> > Yes, this is why the status quo is that DSA tries to ensure that VLAN
+> > uppers do not cause ports to forward packets between each other.
+> > You are not really changing the status quo in any way, just fixing some
+> > bugs where that didn't happen effectively. Perhaps you could make that a
+> > bit more clear.
 > 
-> Hi, Stephen!
+> Right, I'm trying to prevent situations where the forwarding will
+> happen despite not being supposed to happen.
 > 
->> Quoting Tudor Ambarus (2025-10-20 00:45:58)
->>>
->>>
->>> On 10/20/25 7:54 AM, Krzysztof Kozlowski wrote:
->>>>> diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
->>>>> index 76a494e95027af26272e30876a87ac293bd56dfa..70a8b82a0136b4d0213d8ff95e029c52436e5c7f 100644
->>>>> --- a/drivers/clk/samsung/Kconfig
->>>>> +++ b/drivers/clk/samsung/Kconfig
->>>>> @@ -95,6 +95,16 @@ config EXYNOS_CLKOUT
->>>>>        status of the certains clocks from SoC, but it could also be tied to
->>>>>        other devices as an input clock.
->>>>>  
->>>>> +config EXYNOS_ACPM_CLK
->>>>> +    tristate "Clock driver controlled via ACPM interface"
->>>>> +    depends on EXYNOS_ACPM_PROTOCOL || (COMPILE_TEST && !EXYNOS_ACPM_PROTOCOL)
->>>>
->>>> I merged the patches but I don't get why we are not enabling it by
->>>> default, just like every other clock driver. What is so special here?
->>>
->>> Thanks! Are you referring to the depends on line? I needed it otherwise
->>> on randconfigs where COMPILE_TEST=y and EXYNOS_ACPM_PROTOCOL=n I get:
->>>
->>> ERROR: modpost: "devm_acpm_get_by_node" [drivers/clk/samsung/clk-acpm.ko] undefined!
->>>
->>
->> I don't understand that part. The depends on statement "COMPILE_TEST &&
->> !EXYNOS_ACPM_PROTOCOL" is equivalent to COMPILE_TEST=y and
->> EXYNOS_ACPM_PROTOCOL=n, so are you trying to avoid
->> EXYNOS_ACPM_PROTOCOL=y when COMPILE_TEST=y?
+> > > So in order to prevent the configuration of configurations with
+> > > unintended forwarding between ports:
+> > >
+> > > * deny configuring more than one VLAN upper on bridged ports per VLAN on
+> > >   VLAN filtering bridges
+> > > * deny configuring any VLAN uppers on bridged ports on VLAN non
+> > >   filtering bridges
+> > > * And consequently, disallow disabling filtering as long as there are
+> > >   any VLAN uppers configured on bridged ports
+> >
+> > First bullet makes some sense, bullets 2 and 3 not so much.
+> >
+> > The first bullet makes just "some" sense because I don't understand why
+> > limit to just bridged ports. We should extend to all NETIF_F_HW_VLAN_CTAG_FILTER
+> > ports as per the dsa_user_manage_vlan_filtering() definitions.
 > 
-> My previous comment was misleading.
-> The depends on line allows CONFIG_EXYNOS_ACPM_CLK to be selected in two
-> main scenarios:
-> 1/ if EXYNOS_ACPM_PROTOCOL is enabled the clock driver that uses it can
->    be enabled (the normal case).
-> 2/ COMPILE_TEST is enabled AND EXYNOS_ACPM_PROTOCOL is NOT enabled. This
->    is the special scenario for build testing. I want to build test the
->    clock driver even if EXYNOS_ACPM_PROTOCOL is NOT enabled. For that I
->    also needed the following patch:
+> Standalone ports are isolated from each other, so the configured VLAN
+> uppers do not matter for forwarding. They will (should) never forward
+> traffic to other ports, regardless of any VLAN (filtering)
+> configuration on the bridge, so there is no issue here (pending
+> correct programming of the switch). Usually isolation trumps any VLAN
+> memberships.
+
+So we would hope, that standalone ports are completely isolated from
+each other, but unless drivers implement ds->fdb_isolation, that isn't a
+given fact. Forwarding might be prevented, but FDB lookups might still
+take place, so when you have this setup:
+
+swp1.100     br0
+ |         /     \
+swp1     swp2    swp3  (bridge vlan add dev swp3 vid 100 master)
+
+and you ping station 00:01:02:03:04:05 from swp1.100, you'd expect it
+goes out the wire on swp1. But if swp3 had previously learned 00:01:02:03:04:05,
+I wouldn't be surprised if the switch tried to forward it in that
+direction instead (failing of course, but dropping the packet in that
+process). We would be saved if the tagger's xmit() would force the
+packet to bypass FDB lookup, but that isn't a given either...
+
+As I'm saying, swp1 can have NETIF_F_HW_VLAN_CTAG_FILTER set due to any
+of the quirks described in dsa_user_manage_vlan_filtering().
+
+It might be a moot point because I haven't verified what are the drivers
+which fulfill all conditions for this to be a practical problem. It might
+as well be the empty set. For example, sja1105 fulfills them all, but
+sja1105_prechangeupper() rejects all 8021q uppers so it is not affected.
+
+> This is purely about unintended/forbidden forwarding between bridged ports.
 > 
-> https://lore.kernel.org/linux-samsung-soc/20251021-fix-acpm-clk-build-test-v1-1-236a3d6db7f5@linaro.org/
+> > Bullets 2 and 3 don't make sense because it isn't explained how VLAN
+> > non-filtering bridge ports could gain the NETIF_F_HW_VLAN_CTAG_FILTER
+> > feature required for them to see RX filtering VLANs programmed to
+> > hardware in the first place.
 > 
+> Let me try with an example:
+> 
+> let's say we have swp1 - swp4, standalone.
+> 
+> allowed forward destinations for all are the cpu port, no filtering.
+> 
+> now we create a bridge between swp2 and swp3.
+> 
+> now swp2 may also forward to swp3, and swp3 to swp2.
+> 
+> swp1 and swp4 may still only forward to cpu (and this doesn't change
+> here. We can ignore them).
+> 
+> Bullet point 1:
+> 
+> If vlan_filtering is enabled, swp2 and swp3 will only forward configured VLANs.
+> 
+> swp2 and swp3 will have NETIF_F_HW_VLAN_CTAG_FILTER (as VLAN filtering
+> is enabled on these ports).
+> 
+> If we enable VID 10 on both ports, the driver will be called with
+> port_vlan_add(.. vid = 10), and they forward VLAN 10 between each
+> other.
+> If we instead create uppers for VID 10 for both ports, the driver will
+> be called with port_vlan_add(... vid = 10) (as
+> NETIF_F_HW_VLAN_CTAG_FILTER is is set), and they forward VLAN 10
+> between each other (oops).
 
-What I described in 2/ EXYNOS_ACPM_PROTOCOL [=n] && EXYNOS_ACPM_CLK [=y] 
-can be achieved with a more relaxed:
-depends on EXYNOS_ACPM_PROTOCOL || COMPILE_TEST
-because of the stub (dummy method) that I referenced in the link above.
+I didn't contest that, and the bridged port example is clear. I just
+said I don't think you're seeing the picture broadly enough on this
+bullet point. I may be wrong though - just want to clarify what I'm
+saying.
 
-It's really what Krzysztof explained in his reply, I wanted to avoid
-the link failure for COMPILE_TEST [=y] when
-EXYNOS_ACPM_PROTOCOL [=m] && EXYNOS_ACPM_CLK [=y].
+> Bullet point 2:
+> 
+> If vlan_filtering is disabled, swp2 and swp3 forward any VID between each other.
+> 
+> swp2 and swp3 won't have NETIF_F_HW_VLAN_CTAG_FILTER (as vlan
+> filtering is disabled on these ports).
+> 
+> If we now create an upper for VID 10 on swp2, then VLAN 10 should not
+> be forwarded to swp3 anymore (as VLAN 10 is now "consumed" by the host
+> on this port).
+> 
+> But since there is no port_vlan_add() call due to filtering disabled
+> (NETIF_F_HW_VLAN_CTAG_FILTER not set), the dsa driver does not know
+> that the forwarding should be inhibited between these ports, and VLAN
+> 10 is still forwarded from swp2 to swp3 (oops).
 
-We have the following possibilities with:
-depends on EXYNOS_ACPM_PROTOCOL || (COMPILE_TEST && !EXYNOS_ACPM_PROTOCOL)
-1/ CONMPILE_TEST=n
-EXYNOS_ACPM_PROTOCOL=n EXYNOS_ACPM_CLK=n
-EXYNOS_ACPM_PROTOCOL=m EXYNOS_ACPM_CLK=n,m
-EXYNOS_ACPM_PROTOCOL=y EXYNOS_ACPM_CLK=n,m,y
+Is this the behaviour with veth bridge ports (that VID 10 packets are
+trapped as opposed to bridged)? I need a software-based reference to
+clearly understand the gap vs DSA's hardware offload.  I don't think
+there's any test for that, but it is good to have one.
 
-2/COMPILE_TEST=y
-EXYNOS_ACPM_PROTOCOL=n EXYNOS_ACPM_CLK=n,m,y
-EXYNOS_ACPM_PROTOCOL=m EXYNOS_ACPM_CLK=n,m
-EXYNOS_ACPM_PROTOCOL=y EXYNOS_ACPM_CLK=n,m,y
+> Bullet point 3:
+> And since having uppers on a bridged ports on a non-filtering bridge
+> does not inhibit forwarding at all, we cannot allow disabling
+> filtering as long as VLAN uppers on bridged ports exist.
+> 
+> Does this now make it clearer what situations I am talking about?
+> 
+> The easy way is to disallow these configurations, which is what I try
+> to attempt (explicitly allowed by switchdev.rst).
+> 
+> One other more expensive options are making bridge ports with VLAN
+> uppers (or more than one upper for a VLAN) standalone and disable
+> forwarding, and only do forwarding in software.
+> 
+> Or add the above mentioned DSA_DB_PORT for vlan uppers on (bridged)
+> ports, regardless of filtering being enabled, and then let the dsa
+> driver handle forwarding per VLAN.
 
-We have the following possibilities with:
-depends on EXYNOS_ACPM_PROTOCOL || COMPILE_TEST
-1/ CONMPILE_TEST=n
-EXYNOS_ACPM_PROTOCOL=n EXYNOS_ACPM_CLK=n
-EXYNOS_ACPM_PROTOCOL=m EXYNOS_ACPM_CLK=n,m
-EXYNOS_ACPM_PROTOCOL=y EXYNOS_ACPM_CLK=n,m,y
+But you still won't get ndo_vlan_rx_add_vid() calls from the 8021q layer
+if you're under a VLAN-unaware bridge, so it doesn't help case #2.
+You'd have to remove the ndo_vlan_rx_add_vid() handling and manually
+track CHANGEUPPER events from 8021q interfaces.
 
-2/COMPILE_TEST=y
-EXYNOS_ACPM_PROTOCOL=n EXYNOS_ACPM_CLK=n,m,y
-EXYNOS_ACPM_PROTOCOL=m EXYNOS_ACPM_CLK=n,m,y <- link failure when y
-EXYNOS_ACPM_PROTOCOL=y EXYNOS_ACPM_CLK=n,m,y
-
-Thanks,
-ta
+> This may or may not be possible, depending on the hardware. One
+> workaround I can think of is to enable a VLAN membership violation
+> trap and then remove the port from the VLAN. But this also has the
+> potential to pull a lot of traffic to the cpu. And requires drivers to
+> be adapted to handle it. And would require filtering, which may get
+> complicated for the non-filtering bridge case.
 
