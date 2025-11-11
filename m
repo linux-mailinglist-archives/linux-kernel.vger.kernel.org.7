@@ -1,87 +1,95 @@
-Return-Path: <linux-kernel+bounces-894990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47C2FC4CA8A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:29:02 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2BCEC4CA18
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:24:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2E0494F96EC
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:24:04 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6C02634F145
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:24:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 195132F12DB;
-	Tue, 11 Nov 2025 09:24:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7788C225761;
+	Tue, 11 Nov 2025 09:24:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="YpNL6rTN"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b4F6wrYi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8038225761;
-	Tue, 11 Nov 2025 09:23:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4A1435950;
+	Tue, 11 Nov 2025 09:24:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762853039; cv=none; b=jm5W5NBOo1oWuFCbitGP+K8LwZELwHD3VRUoO/Mf60Gv4GCj4/zbgYA0wTYlntweXgnUafH30h7djIKP5fnXIklj08BCNqh6bEa9KGXNZffu+48Hh2zNWcdg2AfyN2O30wGqYF7TzUONyUHh/fjsP8S9D9XhCGITPOU24hQNh50=
+	t=1762853074; cv=none; b=S0Uj1OoWYry2MRJPJ0uXJqamDPlXaC+UsvJnddrz3eYpFA7GVBkOGIQMefFSR2GNmJYVP9YDWE5rGhqfxFJnd7WKmVGCKXdcIanJHSEAAQ0Cl+xo789nnTkhjoyPQN3a3Mp2Hp9yIkXADPdXj4j0Bn7ZGfcptLT81wQ/jv2HIHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762853039; c=relaxed/simple;
-	bh=HuwgNnsIx8bsAdhpCRc5zsES9Gw1RU5uXTprjAnG7jo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=EIPN8+aBmgk51XT7ZR4O2Zzd7T0s2GYOJfOs4jzuwUyrMJC0o/PcAxbf2u4e0QBgZGCLJhdoKFmjdYXmofmrOi+PYVDVBESA12xbjF+ntD8feA1+Kad0Vld1+1kCKtySHzySDSahVZNoWyWCbpMC2C31Uxrionohn+RMrJGnwTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=YpNL6rTN; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=UxAL9kVzMDghVPB8gRVQfjQgOsl5ypAhI+eC+thIb2A=;
-	t=1762853037; x=1764062637; b=YpNL6rTNNteO14RY9iSnSy0BcsgEdn4pqM05Sdi4akYS6Qm
-	VPlfwX7CZpJHZM+Byy23pvbpKhJaltowwOjGOfnljqUCwxdZptk6V1H7h0riCIgcHHb2ljYY6PXIt
-	1ylUSIsAMq/DBU9q+Wq6CclOZaC6eGB7CGCdneG7asI7NxPVyCzWO12CwuBn3RWlGfmKsfcqRj9Kn
-	WRCMarg2TK3dAnhRU9QzYOp+CWIYnu33/Ak/uGNYygLydNo92P3FHKE18FB62vm+7Uq8eqaTEUi1i
-	4DG1Ovh/bdwFTNHHxrI0cdE7CEQmLq2ZzGdX+LWKibr4pLRGJJ2VIcGIvoFGmkdg==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98.2)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1vIkbR-0000000FGaf-44MX;
-	Tue, 11 Nov 2025 10:23:54 +0100
-Message-ID: <6eeea6645b52d484a45b57086ea50bf5d8c34f86.camel@sipsolutions.net>
-Subject: Re: [PATCH v3] wifi: mwl8k: inject DSSS Parameter Set element into
- beacons if missing
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Pawel Dembicki <paweldembicki@gmail.com>, linux-wireless@vger.kernel.org
-Cc: Antony Kolitsos <zeusomighty@hotmail.com>, Roopni Devanathan
-	 <quic_rdevanat@quicinc.com>, Thomas Fourier <fourier.thomas@gmail.com>, 
-	linux-kernel@vger.kernel.org
-Date: Tue, 11 Nov 2025 10:23:53 +0100
-In-Reply-To: <20251111091708.2809266-2-paweldembicki@gmail.com>
-References: <20251111091708.2809266-2-paweldembicki@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1762853074; c=relaxed/simple;
+	bh=oqo4ODlyQOZAF+e8zvIC1WyiLILrt4nXl7b8zNXWo44=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nbjlwnuRwKtDgMH8PZ6PY+Wr1Ip5BO86OvlOx+hNo8PzQcZ46sf1SgzMU0+k5/LokwF85rgFF0A+0YG+JHfgMVLpzvRW7c7WtoRIiw8txbFR4FecqGc8reuyskzy8pjSKkZe2yjmldsheFnUB2TwEbQRA/SRT1IMgVHuB2Chi8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b4F6wrYi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A841C116B1;
+	Tue, 11 Nov 2025 09:24:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762853074;
+	bh=oqo4ODlyQOZAF+e8zvIC1WyiLILrt4nXl7b8zNXWo44=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=b4F6wrYigF74u/gM39t5dR4yPM/K39Os3h41DM2HEnQyd7F3uIzD8A3fxAuLwXaFk
+	 Xr0ugeiA8A+oQ7qOVe0xZvkVcmuX5W7EnOj5B/UEG+VJsA+cxjdU5LxoMnQwH01aAF
+	 uQR1i6zpFgV5/1sf/LPS6F2MeS82TASh9CPIwSv+Mo60ws8nZrTolhCqULZXDJ/Inp
+	 WNLVu3MijLSIvYeNENkBYXsmFW0fdmcbbcdaBhDUx4nCfby2JC34XSIJby6UGuj8CN
+	 uSm04F6slHTJtqvCdO2jkOoESqNVSjsmw7pLJat+5mO2wMbErWhjv4xacl5iobdWP9
+	 fu6Hj1x4bETrQ==
+Date: Tue, 11 Nov 2025 10:24:24 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: syzbot <syzbot+0b2e79f91ff6579bfa5b@syzkaller.appspotmail.com>
+Cc: Liam.Howlett@oracle.com, akpm@linux-foundation.org, 
+	bpf@vger.kernel.org, bsegall@google.com, david@redhat.com, dietmar.eggemann@arm.com, 
+	jack@suse.cz, jsavitz@redhat.com, juri.lelli@redhat.com, kartikey406@gmail.com, 
+	kees@kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-security-module@vger.kernel.org, 
+	lorenzo.stoakes@oracle.com, mgorman@suse.de, mhocko@suse.com, mingo@redhat.com, 
+	mjguzik@gmail.com, oleg@redhat.com, paul@paul-moore.com, peterz@infradead.org, 
+	rostedt@goodmis.org, rppt@kernel.org, sergeh@kernel.org, surenb@google.com, 
+	syzkaller-bugs@googlegroups.com, vbabka@suse.cz, vincent.guittot@linaro.org, 
+	viro@zeniv.linux.org.uk, vschneid@redhat.com
+Subject: Re: [syzbot] [fs?] WARNING in nsproxy_ns_active_put
+Message-ID: <20251111-lausbub-wieweit-76ec521875b2@brauner>
+References: <690bfb9e.050a0220.2e3c35.0013.GAE@google.com>
+ <69104fa2.a70a0220.22f260.00a5.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <69104fa2.a70a0220.22f260.00a5.GAE@google.com>
 
+On Sun, Nov 09, 2025 at 12:24:02AM -0800, syzbot wrote:
+> syzbot has bisected this issue to:
+> 
+> commit 3a18f809184bc5a1cfad7cde5b8b026e2ff61587
+> Author: Christian Brauner <brauner@kernel.org>
+> Date:   Wed Oct 29 12:20:24 2025 +0000
+> 
+>     ns: add active reference count
+> 
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=11a350b4580000
+> start commit:   9c0826a5d9aa Add linux-next specific files for 20251107
+> git tree:       linux-next
+> final oops:     https://syzkaller.appspot.com/x/report.txt?x=13a350b4580000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=15a350b4580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=f2ebeee52bf052b8
+> dashboard link: https://syzkaller.appspot.com/bug?extid=0b2e79f91ff6579bfa5b
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1639d084580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1625aa92580000
+> 
+> Reported-by: syzbot+0b2e79f91ff6579bfa5b@syzkaller.appspotmail.com
+> Fixes: 3a18f809184b ("ns: add active reference count")
+> 
+> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
-> +static void mwl8k_beacon_copy_inject_ds_params(struct ieee80211_hw *hw,
-> +					       u8 *buf_dst, const u8 *buf_src,
-> +					       int src_len)
-> +{
-> +	const struct ieee80211_mgmt *mgmt =3D (const void *)buf_src;
-> +	static const u8 before_ds_params[] =3D {
-> +			WLAN_EID_SSID,
-> +			WLAN_EID_SUPP_RATES,
-> +			};
-
-Heh, I meant you should have only one tab to indent the constants, not
-indent the clsoing brace, but I guess I can fix that.
-
-Should this go to wireless? Maybe then a Fixes tag would be nice?
-
-johannes
+#syz test: https://github.com/brauner/linux.git namespace-6.19
 
