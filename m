@@ -1,165 +1,118 @@
-Return-Path: <linux-kernel+bounces-894884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 884FBC4C543
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:17:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B814BC4C53C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:16:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 33CBC348CCA
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 08:17:15 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 618A334F910
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 08:16:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB0B6330B32;
-	Tue, 11 Nov 2025 08:15:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34B0E32F740;
+	Tue, 11 Nov 2025 08:14:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Am5yJ6ZA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AcqzUVIg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2660A1DF736;
-	Tue, 11 Nov 2025 08:15:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 860A02DC35C;
+	Tue, 11 Nov 2025 08:14:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762848906; cv=none; b=MkeFpizmonAt0b657Jmw1CMDuIz4Y9HWrPpi2Rzt5HnFYmKY+jp29Ms5jg5okVSjor52Y0HWK2CC8OITR/8fSXppSQSAkrmNQR3MZp+FCua7tDrsfu/6ZjuwTYSEmYNsHuXW3AFYCBejMPHzZEyDXzyK7SaRYWgARgsVV9GWjC0=
+	t=1762848898; cv=none; b=DBBctw+51X1NuUFXj0j8EyK9Q56bEgHrZJJTrAEGncin1ddMNTfiqEb7jQ1FAv500iFSWjUu9kyTf1cmVsonjmraJRPq0S9OqoHLFcS6SZdQJzY9ZPufp3H88krn1kuFV8UxtyQ0yEO0Botqb6QYKC06ZL9MslzQ+CNf0RdqMic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762848906; c=relaxed/simple;
-	bh=CD0+NBPGFgKFv4iKAMYY2xRaK8tH6fB4P/vMm3nOkUs=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=O5El8cU4pMAxxupsk0sLicdN289tsVc81GLeonZjnploomKOoohxtFxJhyBLizjjNW9/KHN3UzOm8UIaevHgkOSOSWFnzysGKLMtPcu4yODPRC12HA1tjAGkFqw0oM+TwtjnozUBz9P0Y6e61dCMe1YTW2wxL3O7y2ldh/8Z/Q0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Am5yJ6ZA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61DECC4CEF7;
-	Tue, 11 Nov 2025 08:14:59 +0000 (UTC)
+	s=arc-20240116; t=1762848898; c=relaxed/simple;
+	bh=h307kAcGDdlAPMSOA8BXjiOpTLM82CH1YDe7PLP/zqs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kn3/8o9uNKLEukJpl20smFHZ/6wdSd+D8l9EN4lJ4ZSSzQ8wAyRR6HJ3T0f33DXyx2jWftJxYqysSZ+yUsWsYVOx0FsSXCRYdU+FZTyu7GqDD0xN2Ln4MgZJFkp63tKgxI6MtEhBSwici0oko+Dbs4hP4hLpRxWyfsDYis+1/cQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AcqzUVIg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73ADAC4CEF7;
+	Tue, 11 Nov 2025 08:14:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762848905;
-	bh=CD0+NBPGFgKFv4iKAMYY2xRaK8tH6fB4P/vMm3nOkUs=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=Am5yJ6ZAWZOWpoHrkF0W0Kl58ZMWUgY7Ka11YtGDKwYXqwHvSZFWboBqx7IG5tCXI
-	 M/kbLkRjtxBMQXJq0F4pX+0MyrG+q0x91nhpI/BVx4irjWbztwxn7+oFwlodNOS54C
-	 vo5I+pVST0TUJOfugoSWbu9vB9kJabMGVZwCPEgw2o7TzyArmFrF4MEYvloJIGCjPJ
-	 XYCQJzU/dp4dOw/K7gI6r8bglJZzaMTuzSE1pF49ejLASZ/kbWpoDWeHsNHANZn7WI
-	 St/mRmKQbNphwOig+i8SOB7QceSJEaVvQ9zbrYmIu4dbhrx5EkUVpBdRvSyN8Xc6Ae
-	 ksQGpESUaEJeg==
+	s=k20201202; t=1762848898;
+	bh=h307kAcGDdlAPMSOA8BXjiOpTLM82CH1YDe7PLP/zqs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AcqzUVIgaCxIK5ctebECQFqIhdURORxhsCGy+GrHzZsRCJrtbOsufz3ZbiGCaMwLG
+	 CseLgtNwvDethRiiSKNVWlR/BI5jUUQpWvMqbTlZ9WmR5W/BeBQqS637QI/3cLsClT
+	 AgafciqiSZgLD93V1R75YdqCjTuvPFE50EMnYjKk1lIB4Qgz2qUUK8K4FaFSYuCEtw
+	 2Zr4p5IQZquGZIXoZo6mTIWVPhtYuclEVOow0km9iyVN9lPyVrO1FMDDPGs7uKDltz
+	 NQoaM+U+dBqqFVrMiu7Htg3HkNqLfXcm+lOLzwRNDuykoTy6o4sLnW41lHLpVuXVWZ
+	 agS5bPNSU9ZMg==
+Date: Tue, 11 Nov 2025 09:14:55 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: adrianhoyin.ng@altera.com
+Cc: gregkh@linuxfoundation.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, dinguyen@kernel.org, Thinh.Nguyen@synopsys.com, 
+	devicetree@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/4] usb: dwc3: add support for configurable DMA
+ addressable bits
+Message-ID: <20251111-aardwolf-of-unmatched-potency-7a2eff@kuoka>
+References: <cover.1762839776.git.adrianhoyin.ng@altera.com>
+ <c69076470c19fc03d92fc04cdb10960873bc2bc0.1762839776.git.adrianhoyin.ng@altera.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 11 Nov 2025 19:14:53 +1100
-Message-Id: <DE5PS1PZX14G.5IL01JCLBJE6@kernel.org>
-Subject: Re: [PATCH v7 2/4] rust: i2c: add manual I2C device creation
- abstractions
-Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Wolfram Sang" <wsa+renesas@sang-engineering.com>,
- "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
- <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice
- Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>, "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>, "Viresh Kumar"
- <viresh.kumar@linaro.org>, "Asahi Lina" <lina+kernel@asahilina.net>,
- "Wedson Almeida Filho" <wedsonaf@gmail.com>, "Alex Hung"
- <alex.hung@amd.com>, "Tamir Duberstein" <tamird@gmail.com>, "Xiangfei Ding"
- <dingxiangfei2009@gmail.com>, <linux-kernel@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>, <linux-i2c@vger.kernel.org>
-To: "Igor Korotin" <igor.korotin.linux@gmail.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20251110112437.50405-1-igor.korotin.linux@gmail.com>
- <20251110113018.51510-1-igor.korotin.linux@gmail.com>
-In-Reply-To: <20251110113018.51510-1-igor.korotin.linux@gmail.com>
+In-Reply-To: <c69076470c19fc03d92fc04cdb10960873bc2bc0.1762839776.git.adrianhoyin.ng@altera.com>
 
-On Mon Nov 10, 2025 at 10:30 PM AEDT, Igor Korotin wrote:
-> +impl I2cAdapter {
-> +    /// Returns the I2C Adapter index.
-> +    #[inline]
-> +    pub fn get_nr(&self) -> i32 {
-> +        // SAFETY: `self.as_raw` is a valid pointer to a `struct i2c_ada=
-pter`.
-> +        unsafe { (*self.as_raw()).nr }
-> +    }
+On Tue, Nov 11, 2025 at 02:18:48PM +0800, adrianhoyin.ng@altera.com wrote:
+> From: Adrian Ng Ho Yin <adrianhoyin.ng@altera.com>
+>=20
+> Add support for configuring the DMA addressable bit width in the
+> Synopsys DesignWare USB3 (DWC3) core driver.
+>=20
+> Altera Agilex5 supports only 40-bit DMA addressing. Setting an incorrect
+> DMA mask (such as the default 64-bit) can lead to address truncation or
+> translation faults when the SMMU is enabled.
+>=20
+> This commit introduces a new field, dma_addressable_bits, in the dwc3
+> structure to track the platform=E2=80=99s supported DMA width. The defaul=
+t value
+> is set to 64 bits, but for Agilex5 platforms (altr,agilex5-dwc3), the
+> value is overridden to 40 bits. This field is then used when setting the
+> DMA mask to ensure compatibility with the system=E2=80=99s actual address=
+ bus
+> capabilities.
+>=20
+> Signed-off-by: Adrian Ng Ho Yin <adrianhoyin.ng@altera.com>
+> ---
+>  drivers/usb/dwc3/core.c | 9 ++++++++-
+>  drivers/usb/dwc3/core.h | 3 +++
+>  2 files changed, 11 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
+> index ae140c356295..20e655364135 100644
+> --- a/drivers/usb/dwc3/core.c
+> +++ b/drivers/usb/dwc3/core.c
+> @@ -2179,6 +2179,9 @@ int dwc3_core_probe(const struct dwc3_probe_data *d=
+ata)
+>  	dwc->xhci_resources[0].flags =3D res->flags;
+>  	dwc->xhci_resources[0].name =3D res->name;
+> =20
+> +	/* Initialize dma addressable bit to 64 bits as default */
+> +	dwc->dma_addressable_bits =3D 64;
+> +
+>  	/*
+>  	 * Request memory region but exclude xHCI regs,
+>  	 * since it will be requested by the xhci-plat driver.
+> @@ -2194,6 +2197,9 @@ int dwc3_core_probe(const struct dwc3_probe_data *d=
+ata)
+>  			dwc_res.start +=3D DWC3_RTK_RTD_GLOBALS_REGS_START;
+>  		}
+> =20
+> +		if (of_device_is_compatible(parent, "altr,agilex5-dwc3"))
 
-Missing empty line. Also, please try to avoid the "get" prefix for function=
-s /
-methods that do not increase a reference count. What about just index()?
+No, this does not scale. Don't sprinkle compatible all over driver code.
+You have driver match data for that.
 
-> +    /// Gets pointer to an `i2c_adapter` by index.
-> +    pub fn get(index: i32) -> Result<ARef<Self>> {
-> +        // SAFETY: `index` must refer to a valid I2C adapter; the kernel
-> +        // guarantees that `i2c_get_adapter(index)` returns either a val=
-id
-> +        // pointer or NULL. `NonNull::new` guarantees the correct check.
-> +        let adapter =3D NonNull::new(unsafe { bindings::i2c_get_adapter(=
-index) }).ok_or(ENODEV)?;
-> +
-> +        // SAFETY: `adapter` is non-null and points to a live `i2c_adapt=
-er`.
-> +        // `I2cAdapter` is #[repr(transparent)], so this cast is valid.
-> +        Ok(unsafe { (&*adapter.as_ptr().cast::<I2cAdapter<device::Normal=
->>()).into() })
-> +    }
-> +}
-> +
-> +// SAFETY: `I2cAdapter` is a transparent wrapper of a type that doesn't =
-depend on `I2cAdapter`'s generic
-> +// argument.
-> +kernel::impl_device_context_deref!(unsafe { I2cAdapter });
-> +kernel::impl_device_context_into_aref!(I2cAdapter);
-> +
-> +// SAFETY: Instances of `I2cAdapter` are always reference-counted.
-> +unsafe impl crate::types::AlwaysRefCounted for I2cAdapter {
-> +    fn inc_ref(&self) {
-> +        // SAFETY: The existence of a shared reference guarantees that t=
-he refcount is non-zero.
-> +        unsafe { bindings::i2c_get_adapter(self.get_nr()) };
-> +    }
-> +
-> +    unsafe fn dec_ref(obj: NonNull<Self>) {
-> +        // SAFETY: The safety requirements guarantee that the refcount i=
-s non-zero.
-> +        unsafe { bindings::i2c_put_adapter(obj.as_ref().as_raw()) }
-> +    }
-> +}
-> +
-> +/// The i2c board info representation
-> +///
-> +/// This structure represents the Rust abstraction for a C `struct i2c_b=
-oard_info` structure,
-> +/// which is used for manual I2C client creation.
-> +#[repr(transparent)]
-> +pub struct I2cBoardInfo(bindings::i2c_board_info);
-> +
-> +impl I2cBoardInfo {
-> +    const I2C_TYPE_SIZE: usize =3D 20;
-> +    /// Create a new [`I2cBoardInfo`] for a kernel driver.
-> +    #[inline(always)]
-> +    pub const fn new(type_: &'static CStr, addr: u16) -> Self {
-> +        build_assert!(
-> +            type_.len_with_nul() <=3D Self::I2C_TYPE_SIZE,
-> +            "Type exceeds 20 bytes"
-> +        );
-> +        let src =3D type_.as_bytes_with_nul();
-> +        // Replace with `bindings::acpi_device_id::default()` once stabi=
-lized for `const`.
-> +        // SAFETY: FFI type is valid to be zero-initialized.
-> +        let mut i2c_board_info: bindings::i2c_board_info =3D unsafe { co=
-re::mem::zeroed() };
+Best regards,
+Krzysztof
 
-pin_init::zeroed()
-
-> +        let mut i: usize =3D 0;
-> +        while i < src.len() {
-> +            i2c_board_info.type_[i] =3D src[i];
-> +            i +=3D 1;
-> +        }
-> +
-> +        i2c_board_info.addr =3D addr;
-> +        Self(i2c_board_info)
-> +    }
-> +
-> +    fn as_raw(&self) -> *const bindings::i2c_board_info {
-> +        from_ref(&self.0)
-> +    }
-> +}
 
