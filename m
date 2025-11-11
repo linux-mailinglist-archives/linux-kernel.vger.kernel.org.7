@@ -1,208 +1,83 @@
-Return-Path: <linux-kernel+bounces-895524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20C8AC4E337
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:40:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A5E0C4E346
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:41:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 86E9934C231
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:40:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A05903AC8E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:41:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAC1334250E;
-	Tue, 11 Nov 2025 13:40:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="kzk210YO";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="R9Ka4mfl"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11F00342508;
+	Tue, 11 Nov 2025 13:41:02 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DDB033ADBC
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 13:40:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1038033121E;
+	Tue, 11 Nov 2025 13:40:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762868409; cv=none; b=rW3IeJu6nKj5v71HbebI93KWmuFdn9E+o0gSFPmha3aWZdA4gaT+aXavbOaheCyx8p4K+dHVJoiZUyg0JDIDq0gQBNxoZVnJvpZS8Cgc6oKTxirrMlfThG++/XDu5xdDAqbUzeHqb4nZYE8ie+2dPEqV8ZzFIZetruD+FxP+tg0=
+	t=1762868461; cv=none; b=IzIihlEJZleOhwq2CxWWfvAmEC6Gje/uxVC+tH57ZiMmfL1IBd1epdo58Cea6lpS724DnkRlcuALH+0LnOP5vv6fAQ7sMfIJhz8BaDcFxCoLXwUGU0loXOrZF7BYk2xAtOk7ZOcPLszyyGjAtmbldr5k98SJ8FARjfkv1BkkBLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762868409; c=relaxed/simple;
-	bh=s2AjnkkPP2KRJHp+NjW1PV3jCSHP+i1I/AkGCZAB5+o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gSp+Z19fCni0Xc0wSjcP3ENxjTblyt6M0yvgYol9+8EL0e7qldXfQ2eGyJF0F5zTqfUQVHPNI/mWUil6Ywos4djXLjpdQHX9N4XPsnaeGZR7pJVc0yxISQlZlmKW89HdMRIhGIfBRwdEUfg+4loULOsW0nLRdAEAEmmVEjlL9W0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=kzk210YO; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=R9Ka4mfl; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5ABBGg132118093
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 13:40:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=m/9OP2fjJmx3ZLFyrTIOYLQZ
-	UJpxWFVVOvLJMaZcRx4=; b=kzk210YOKcVVi9iPIY1l2uifnvu4ZI3+R485EIuL
-	bJgyV/L/R7oK6k+Y02rhWa0tdG6EPQ6ePFLUXpmasZ4137y2dLBzqGaFZsxPVshG
-	Q4LKtjVSuoRKx0UJNU8mjO3jRZP++LfB7TKMf4vxnnW+7gscLWpiK4oNd2BwPzkm
-	LMr3CcOOffrLtco5jz66kDU9lVO/yYjz3SSxYDp+WKHoL115xfkHWotVWcwimMNc
-	d3pogRbdiP9N3l910mIqdZF3sb4StNESK+zvBkqOQQnoySGBc668rwl93qg4/fuH
-	JdfGbAuhNHd1Mj4+ESoPlT+QYg6UcxcqyzXgxNAHd17p8A==
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4abpy8jhu2-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 13:40:05 +0000 (GMT)
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-34374bfbcccso2700185a91.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 05:40:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1762868405; x=1763473205; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=m/9OP2fjJmx3ZLFyrTIOYLQZUJpxWFVVOvLJMaZcRx4=;
-        b=R9Ka4mflBkk5GXLckw6TXlyvdgGcwBdI65knQQ9Rz2VrCJ5NeU4XpSTbrkfriSb2dv
-         iSZstai/dVP1nt91i1nI9RrSLQY5dyMpwZd38d5NHGsUUVJRoOHTe/gBgNPOEzwy+TkQ
-         uECwk8i6hMA/JPpTnBM0mwHprY7+yu5bnHKyEDAakh/Jx4oN3ZBVFT+bYQXAstRtDtlP
-         lCirDLHG6BL7rlIp2iraPYwJg2uGeP1cPVDIG91LasPzXIPlwA23ZkwNbANgFJUyFZWx
-         1Jz/sJl9ahsygRdWPlLrcTN2mCrh7+op4q19x242vjI6ene2wPSnVb9aMRN3M8ZzLRmA
-         HDuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762868405; x=1763473205;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=m/9OP2fjJmx3ZLFyrTIOYLQZUJpxWFVVOvLJMaZcRx4=;
-        b=OiWAFrAa17ohQ084xeYdz+bv+y8LbsLPWxTnZf2tAcbVLlZZ2WYkR/nnir/JOpGkQK
-         tHFEMpECmN2/CwVMii1qYfOIjnmi00vBeHmgqi63OVo+SYMNLuM4Xpaj/5F1qKKhRIqX
-         X52gB3yUmF2HhTLRPFo60mx2vu2xra1dy+j7VR9ri+SasvX0KuQjnvhSIWxMtGmTyDsg
-         mtKJkkdIMWhaFKehrGAI6ARlxgTIIK7G6ws6PAeVPe/Ux2dOxuvSrfufebnj3omDIUZp
-         W4mcIF9IXl1ktODhSJj3lJ4u8rfiwTg0UIP8vaA90nwdHIE2JXYDlJ5J0PZZTAC5sL7n
-         DmSg==
-X-Forwarded-Encrypted: i=1; AJvYcCVmZZC1kRXEpK06g53WyLJ+6BPk2Z6q6uJeXTRpdH512vKqv9r9Wfd5sqqVkjXnzMO5/gj1MEI55FCdV78=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxddQwoRCf32XEmWRxu/+iAxcJZgB7V1Csy3G1MK5ikLjNtzDkw
-	/zHO/KZN07pFMX+zpmd25TKRKgfBWnzqnfppZniaYf0Z5UcPZOfKzCaKfOym1UKRmCT4HipBthT
-	wV7J2YpDsrvL35QiCAm+0AkbGgDFZIWd55rLBqz1/JDPbcxi+WP0XwuhbrAi7JPL/Qi1aIdrp3H
-	Bs9jZB//ALoq37CIhLv5+KuPR1mA4+207aZp1Dg+pQAw==
-X-Gm-Gg: ASbGnctR+Hqt+fkvJgjT9tDmelF2lg4utxYYWp+ru/AjSVV+aAIkgQxTy2wH4j9QRR2
-	Kg7eZyEPd5idzwwZVMByIrZh4jGBDLzvGrh5c8rBAlJcmx9px/dcTwIDYTlf/7g7zIQamyASQBI
-	mvE3+bo+UODF3qSuzU6Zs7m2fppg8aHE1djEeRuege5A8hOFCeUYZO
-X-Received: by 2002:a17:90b:4a4d:b0:341:8ad7:5f7a with SMTP id 98e67ed59e1d1-3436cbf8ee9mr14324793a91.18.1762868404482;
-        Tue, 11 Nov 2025 05:40:04 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHwgaH141MDvs6mYUD4Q5X8qYaZSdZRIsl83tR7MOsbdijrnHMQlgky3eynMPNNlWF7eVvF8AMO1yx39XcY/Yc=
-X-Received: by 2002:a17:90b:4a4d:b0:341:8ad7:5f7a with SMTP id
- 98e67ed59e1d1-3436cbf8ee9mr14324690a91.18.1762868403713; Tue, 11 Nov 2025
- 05:40:03 -0800 (PST)
+	s=arc-20240116; t=1762868461; c=relaxed/simple;
+	bh=XxB0ZGyv31koe51CUNbQjeRNDFOX4C7Jft4vuVG+Thc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Kw6k6QJ5j4ckRJCGe+J2Te5vWYke/odYJGnq6FDKaXXjLincvrgB13QW+rbb+rFgJRBydjhQkX5wxw66W6mzPx+BTJ0JANT9S4X+DYqdyw85NZeDZyZVoVqOIWfdIvVFyeQAMpXqT9WJ/NHT9yvLYdmzg68TlA1oQsPHo7CvJys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 761E5227AAA; Tue, 11 Nov 2025 14:40:56 +0100 (CET)
+Date: Tue, 11 Nov 2025 14:40:56 +0100
+From: hch <hch@lst.de>
+To: Florian Weimer <fweimer@redhat.com>
+Cc: hch <hch@lst.de>, Hans Holmberg <Hans.Holmberg@wdc.com>,
+	"linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+	Carlos Maiolino <cem@kernel.org>,
+	Dave Chinner <david@fromorbit.com>,
+	"Darrick J . Wong" <djwong@kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"libc-alpha@sourceware.org" <libc-alpha@sourceware.org>,
+	Matthew Wilcox <willy@infradead.org>
+Subject: Re: [RFC] xfs: fake fallocate success for always CoW inodes
+Message-ID: <20251111134056.GA748@lst.de>
+References: <20251106133530.12927-1-hans.holmberg@wdc.com> <lhuikfngtlv.fsf@oldenburg.str.redhat.com> <20251106135212.GA10477@lst.de> <aQyz1j7nqXPKTYPT@casper.infradead.org> <20251106144610.GA14909@lst.de> <8b9e31f4-0ec6-4817-8214-4dfc4e988265@wdc.com> <20251111090547.GC11723@lst.de> <lhu4ir0kiei.fsf@oldenburg.str.redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251107-knp_video-v3-0-50c86cbb0eb8@oss.qualcomm.com>
- <3vbq76dpjnadfrnufojq4zqiv7p5p555rhxfx6yoncc354p3lk@ohcs3ldhuoao> <2d56fc4b-6e3c-4f83-aab1-c48db3b8bb2d@oss.qualcomm.com>
-In-Reply-To: <2d56fc4b-6e3c-4f83-aab1-c48db3b8bb2d@oss.qualcomm.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Date: Tue, 11 Nov 2025 15:39:52 +0200
-X-Gm-Features: AWmQ_blXQdwosO6i2_FdIYV6vtohi336OUCTfZYSjCdbYIy9ZUUucC_8UFt7TfE
-Message-ID: <CAO9ioeXSXwm03e_j8TuXz2Sqr1J2n3uEFH6dJoKVyE+hJx+woQ@mail.gmail.com>
-Subject: Re: [PATCH v3 0/6] media: iris: prepare support for video codecs on
- Qcom vpu4 platform
-To: Vikash Garodia <vikash.garodia@oss.qualcomm.com>
-Cc: Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        "Bryan O'Donoghue" <bod@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Vishnu Reddy <busanna.reddy@oss.qualcomm.com>,
-        "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>,
-        Vishnu Reddy <quic_bvisredd@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Proofpoint-ORIG-GUID: HrJKaUC1c_jVTiPRys8cXheO2F43iieM
-X-Authority-Analysis: v=2.4 cv=AYW83nXG c=1 sm=1 tr=0 ts=69133cb5 cx=c_pps
- a=UNFcQwm+pnOIJct1K4W+Mw==:117 a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10
- a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8
- a=V0DlmUR_jgQx3hgdKxUA:9 a=QEXdDO2ut3YA:10 a=uKXjsCUrEbL0IQVhDsJ9:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTExMDEwOSBTYWx0ZWRfX1z8Y95iyW7By
- ttgRKVqYRk35U/KzJGg6iUIyCWuV5zgoIjPleK4NRR6qzwCfiulifXIsi0DoMcNbhBDAXNKTdJ7
- txRjjsnzQR074PwCJGPWpK6WpADC7D/FuXv4dGq4+xgnI0FiTg7DMjN1ntSepnrUHMtwkkQ4aXD
- iu77Mcz88B/JnKoe1BCGVrhDiAMJK5vTPxXpHzwWEMGJMipLbViDmdapHjMgKO2j/If6CCzDYyO
- U2gerLZ/SwLR+2ghHDpkFYCkgmStzI4fTYuJ/Yu1pGwmNpcs7UBS0IwrCUS5sY69VYTpQQnCeaQ
- pgVE6FAdpXHAf8BqEiou8kHvR/yV9RcD88TThT/QVWGbYHvnQCReNtsLU59Eg+ei+6uxJgrgBdU
- oVnL56GH5lByibg1RJGpv7qfV1DHpw==
-X-Proofpoint-GUID: HrJKaUC1c_jVTiPRys8cXheO2F43iieM
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-11_02,2025-11-11_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 impostorscore=0 malwarescore=0 adultscore=0 clxscore=1015
- suspectscore=0 priorityscore=1501 lowpriorityscore=0 bulkscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511110109
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <lhu4ir0kiei.fsf@oldenburg.str.redhat.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Tue, 11 Nov 2025 at 14:43, Vikash Garodia
-<vikash.garodia@oss.qualcomm.com> wrote:
->
->
-> On 11/11/2025 4:08 PM, Dmitry Baryshkov wrote:
-> > On Fri, Nov 07, 2025 at 03:19:35PM +0530, Vikash Garodia wrote:
-> >> Upcoming Qualcomm kaanapali platform have a newer generation of video
-> >> IP, iris4 or vpu4. The hardware have evolved mostly w.r.t higher number
-> >> of power domains as well as multiple clock sources. It has support for
-> >> new codec(apv), when compared to prior generation.
-> >>
-> >>  From previous version of this series, the kaanapali binding patch(#1/8)
-> >> and the compatible patch(#8/8) have been dropped. The discussion for
-> >> this is captured here [1].
-> >> The series introducs buffer calculation and power sequence for vpu4. It
-> >> prepares for vpu4 when kaanapali is enabled after the binding discussion
-> >> is concluded.
-> >>
-> >>
-> >> gstreamer test:
-> >> Decoders validated with below commands, codec specific:
-> > Why not just run the fluster testsuite?
+On Tue, Nov 11, 2025 at 10:50:13AM +0100, Florian Weimer wrote:
+> > On Tue, Nov 11, 2025 at 08:31:30AM +0000, Hans Holmberg wrote:
+> >> In stead of returning success in fallocate(2), could we in stead return
+> >> an distinct error code that would tell the caller that:
+> >> 
+> >> The optimized allocation not supported, AND there is no use trying to
+> >> preallocate data using writes?
+> >> 
+> >> EUSELESS would be nice to have, but that is not available.
+> >> 
+> >> Then posix_fallocate could fail with -EINVAL (which looks legit according
+> >> to the man page "the underlying filesystem does not support the operation")
+> >> or skip the writes and return success (whatever is preferable)
 > >
->
-> yeah, fluster can also be executed. Individual codec commands were
-> explicitly called out incase someone wants to run standalone gst pipeline.
+> > The problem is that both the existing direct callers of fallocate(2)
+> > including all currently released glibc versions do not expect that
+> > return value.
+> 
+> That could be covered by putting a flag into the mode argument of
+> allocate that triggers the new behavior.
 
-Please switch to fluster (in addition to Gst), ideally running all
-test cases for a codec. While enabling SC7280 support I found that
-there are enough corner cases which are being ignored by the driver.
-One additional bonus is that fluster runs several process in parallel
-by default, catching issues caused by several decode threads running
-in parallel.
+Which basically makes it a new mode, just encoded as a flag for all
+purposes ;-)
 
->
-> >> gst-launch-1.0 multifilesrc location=<input_file.h264> stop-index=0 !
-> >> parsebin ! v4l2h264dec ! video/x-raw ! videoconvert dither=none !
-> >> video/x-raw,format=I420 ! filesink location=<output_file.yuv>
-> >>
-> >> gst-launch-1.0 multifilesrc location=<input_file.hevc> stop-index=0 !
-> >> parsebin ! v4l2h265dec ! video/x-raw ! videoconvert dither=none !
-> >> video/x-raw,format=I420 ! filesink location=<output_file.yuv>
-> >>
-> >> gst-launch-1.0 filesrc location=<input_file.webm> stop-index=0 !
-> >> parsebin ! vp9dec ! video/x-raw ! videoconvert dither=none !
-> >> video/x-raw,format=I420 ! filesink location=<output_file.yuv>
-> >>
-> >> Encoders validated with below commands:
-> >> gst-launch-1.0 -v filesrc location=<input_file.yuv> ! rawvideoparse
-> >> format=nv12 width=<width> height=<height> framerate=30/1 ! v4l2h264enc
-> >> capture-io-mode=4 output-io-mode=4 ! filesink sync=true
-> >> location=<output_file.h264>
-> >>
-> >> gst-launch-1.0 -v filesrc location=<input_file.yuv> ! rawvideoparse
-> >> format=nv12 width=<width> height=<height> framerate=30/1 ! v4l2h265enc
-> >> capture-io-mode=4 output-io-mode=4 ! filesink sync=true
-> >> location=<output_file.hevc>
->
-> Regards,
-> Vikash
-
-
-
--- 
-With best wishes
-Dmitry
 
