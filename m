@@ -1,270 +1,220 @@
-Return-Path: <linux-kernel+bounces-895843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25BC0C4F14F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:42:42 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id E47FDC4F1C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:47:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9697634C6F4
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:42:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4DB2A4F133B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:43:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CB9735A142;
-	Tue, 11 Nov 2025 16:42:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="W9KAFYza"
-Received: from YT3PR01CU008.outbound.protection.outlook.com (mail-canadacentralazon11020087.outbound.protection.outlook.com [52.101.189.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1EE93730CA;
+	Tue, 11 Nov 2025 16:43:29 +0000 (UTC)
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5E2626E14C;
-	Tue, 11 Nov 2025 16:42:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.189.87
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762879355; cv=fail; b=HXH9LsKThwWBvrkz+W27ZOeVmAtAa/MbYuXtm09y0KpbYehEa5jsY/JXT4JphWLTAwm60jbIpeAHQnwjvEtJEEOOnmatin6In1BgxbU54QZarPAyLyPvPaFtEpVLrvaweugjRj75RNG9oHjtLZMVeM9f2CG21heN6DOdiwSrkm0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762879355; c=relaxed/simple;
-	bh=eqg4Cor3xP6nd3M5WBBbvxfcoVm1kt/wBFN/Q++/Kx8=;
-	h=Message-ID:Date:Subject:From:To:Cc:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=icnCgLbkX1uynH+caa2YADgydvQ/9qTDLATmTA9TSu6WX3ybXWwLY5h46Po+BeAnXIXXxg8QFtNks2zHkEFS2DBzfV1AalZsC/HEEdCZO9Tlm/UCJ9CIfoZPsXKsDERKP/1StbMF5oXcXw3DLG3oym0lsEtY6sih9/KZPMn93ec=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=W9KAFYza; arc=fail smtp.client-ip=52.101.189.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=huTShDnWVE5j74U17QXc2VTrGdFnHNX0j9qlEqVReRdIJy4sJ3RfpUOMBez6EPTYt1+ePGjosNPPWCDISgF9GeC82BC7MKKzoGuSOE9ZMEBzjS5Zn/ztiozxZWs1YT09/nvfG0oCFrh1w7JJQbAfNawMuwrgVM9EZem2QxbfFibWerkUdAmenbOuCCvt9gjZQkWgS4xlZEx3m+nJJHbkM+DmdLNBqHbzB7/5HCsjXlWbPe2xJGaASi5R0u9cYdsOvXZ4gurHRRJ3gZA1dUJpA59Pg857w6jxjGM4JjKjkooOvbB/V3Ud8e6oBoriIUx3Ln/HRsmc/G7Za6+xHM/M8A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/g9h0ggTNIQ6A1X735k4Tp4FPvNcT4CBFJR9Fr1WEDU=;
- b=sZH4dvF7bUa7PD0pyAM+2kdbTqrX4scQrThn65X4O/w9MWcxGGtCfbES76+vwDVELxJGHeSiJCub+A8QUlUIqsGEPgQG6/OPPf1XZ2Fykf4g+IPow4svY7hIlIaYyX1dDLy6lo/uYDGy4K+vKmBujlUSVO+MeHkN5D++IiMu9Q43dUzaLrWaD/XLQx+eYmWj00Y2ovep9U2wWdjNTL03JNd5NxnNqHsui5uYZehQA7tgAMb0LP8QyglElEOR3+8qnRI1UzcZdMTb67SeAdGwB1YvqFzaZ8aOE143qvVasrlyfEmiOuo/cDy74z6wr46Ubji7ec/syJ+IlbjhilJWbA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=efficios.com; dmarc=pass action=none header.from=efficios.com;
- dkim=pass header.d=efficios.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/g9h0ggTNIQ6A1X735k4Tp4FPvNcT4CBFJR9Fr1WEDU=;
- b=W9KAFYzafpCIUVC2sX/Ayytu1AUw3kSZAPHIDQEdP3jjQ4GdrPU6XuQJhmKn+0caqZYL0XOR9Ho1K5ubi+SkD+VokXYQN4fDk/CvJdPJJKqXevuWkeFsx5hzWhGUHaG+kr4I4jnbC+UshNk9pw6Lf462KBnfTwXxFMII23lBpqWPPgiizRCjYskBvLP4OVn575opa7oMzoiTngv8Urgqmwpg4eUxBjI7sgsPeb6AFd57+VZ/qNP63g/+esXIt0Kg6jMmJHrqlSzTVHk8wgjP/PaZNAgJgN50fYosbt+TgAwgVaHj9cLzvqr2DAF5LrlNCozn916wK7+jUcMk+d6tZQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=efficios.com;
-Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:be::5)
- by YQXPR01MB5675.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:c01:2b::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.15; Tue, 11 Nov
- 2025 16:42:28 +0000
-Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::50f1:2e3f:a5dd:5b4]) by YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::50f1:2e3f:a5dd:5b4%2]) with mapi id 15.20.9320.013; Tue, 11 Nov 2025
- 16:42:28 +0000
-Message-ID: <b28c9f26-7a79-473c-a390-f502b74b02ac@efficios.com>
-Date: Tue, 11 Nov 2025 11:42:26 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [patch V3 00/12] rseq: Implement time slice extension mechanism
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To: Prakash Sangappa <prakash.sangappa@oracle.com>,
- Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, Peter Zijlstra
- <peterz@infradead.org>, "Paul E. McKenney" <paulmck@kernel.org>,
- Boqun Feng <boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
- Madadi Vineeth Reddy <vineethr@linux.ibm.com>,
- K Prateek Nayak <kprateek.nayak@amd.com>,
- Steven Rostedt <rostedt@goodmis.org>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Arnd Bergmann <arnd@arndb.de>,
- "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
-References: <20251029125514.496134233@linutronix.de>
- <03687B00-0194-4707-ABCB-FB3CD5340F11@oracle.com>
- <2eee5e37-e541-4ac7-9479-cef3e62f234d@efficios.com>
-Content-Language: en-US
-In-Reply-To: <2eee5e37-e541-4ac7-9479-cef3e62f234d@efficios.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: YT4PR01CA0470.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:d6::17) To YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:be::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 636143128D0
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 16:43:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762879409; cv=none; b=LInH1fTHVNNXZfWn7nalXJYHfrm5ukbdHKOuAPkU/TIxdWKMCBNsVfypzIIbTcG9rqwLg9+n2n+WfMM+aFOkdYbtMpBU9i+GfeZqvfFuX2yrpaRf+D+DxGsSfyagenElwhDkulJSFJ4fYaUAGr9cQYXlqlMn/ffdxkJmXaZKv14=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762879409; c=relaxed/simple;
+	bh=j+i/GLeLPEmR6E/R+k78FqFfShGTnyn5HtO+2xzH0NM=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=XsfkB80Q9D+KNCFl2JgbfFDSyxZL1JRaPhcgfYE2zptiw4ApYjz4bGt7SHhXVsIFundbZ+OWcChsON9Yxq4ucO0Z7boOnyI6wh3v0juTkAvjkpYHcj4BDb2Mmagx65zbMWDYfKz4ZMMtYqleQn10qRcUNWDO1cpBF1fZoOVlLKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-43328dcdac1so20520845ab.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 08:43:27 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762879406; x=1763484206;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XOPWsCrCMyoDlgmrt8NzYeObZ9ZGoe4M0O3DQkimHM8=;
+        b=sK8j8CY4SbdeaWAjSvPLGdbu2yxrbGdWqEgxINf5fAP/9Baih7cDx83qdD73q6KtDD
+         Sk+upIKfcHPlguMYG1yehJknhL9araHDbHKcsAMw/crxgKcQbdWrE80g7gUItkHPUIbP
+         n281ps8JvY+UHZUEMZX7CllbtSoOeGF1LPrx5iQuYFjWpRs8hpRD57qDyMj3VcIrvnS5
+         mqgToMOyzKXNMX9nCsXM0ou0bFUk2O47+f7bJR6IYVohFTFMEPbPxwIH0KfY85S1AriX
+         BbUayffL42JScLt81e8RLvvY6ObPG628PwmFwIcafFt1RkGKZJIINHfYntWC/m787RIg
+         B8WA==
+X-Forwarded-Encrypted: i=1; AJvYcCUMBHT/RhyuC5ZEitcsb7v7SA1AhHksIKfrrjTZMkQop+3ifTfDgtenyO35WnmnHkET9cqqxT85rY4r3fM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxcd3VQBv/NYEEr/gVJjw+Y+vUpkSq3ijZ0LIeJXpusVpWAjGth
+	lmG85rlm3KrZr7/lycpbtOdvhIoNb+RgxHsYzKtY/fMd13ssJRRIbNUA7z4BfR1KHhUMDfpzd7S
+	CvmWGJ6fnldQ22na6iVFxbU4TnQTNgPvquzusBL3RImgSKetQj3Gf843OPsM=
+X-Google-Smtp-Source: AGHT+IHFmw0aBLx9trd23PHt0ZvR1ewqpoZk2eLWklFWXUVeSyFIg7OVIkbbj4ebuAgNMHTNHGoYfK+LYWsyo7tV9Ln6pGBPbWek
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: YT2PR01MB9175:EE_|YQXPR01MB5675:EE_
-X-MS-Office365-Filtering-Correlation-Id: a422375b-9baa-47de-6e88-08de21414d2d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?WGVCeWd0cHovemliYklJeEE2S3pWMHhIbElHeFgwZWVldUVYZjJpdEZiUDJy?=
- =?utf-8?B?KzVXVUY4NzlWVi93ZXNSL1k1Q3lsd1VYVi84YU9Bc0FQNzVFT3pmcXYwbCtw?=
- =?utf-8?B?WVNueFJ4c3V2MlBGbkE2TVJVWHcxRjVEaUZzTnFESDZNbCt5dU1URlNnL3Js?=
- =?utf-8?B?anN1aEppbEZhcjF2OWdPbUJINGhqaGczUm5RRUUweTN0WkRCRkxVeTltbjVG?=
- =?utf-8?B?QnhleTc0cTRndFVtWlFiWExZR1ZoZ1dMbWJSZzNWVFFtUVl2MjFuLzkwZ1RP?=
- =?utf-8?B?MUlkT2tJZGNLZk9PNTlxNklCeWNkL2V4T3VscUlENGR5WlJUbExWWUdiVHVZ?=
- =?utf-8?B?NDk5WGpHbm4vbVNEN0gxVndsZ0FMdUR4NytVa1BoTWxxN3g3bkZEcUlDR0Jj?=
- =?utf-8?B?WWYxenZ3Tnk5L3dSYTE0MjJkSlVneFRCNTVYQlRaeWNPYnZNR09NNmRqVS9G?=
- =?utf-8?B?VEFZZTkzaGF2Z3VETUhleDJpTVNlNlFMYXlSZE5xQnpudkhmaGtqRWdmTDcr?=
- =?utf-8?B?eEZrclA3SEFFZnpUNmFsTk5QOUJIbjJWNzY5TmpRbWZPZTlRb3o0blI2U3Jx?=
- =?utf-8?B?YTZxcWV4c0MxNjFaWUpBUUp5c3NrQUpsM25zeDRSV0JBdUczNWQ4aXhJbHhS?=
- =?utf-8?B?bXNiamxhelJVNlBuYnNtNnNWUUpFMHJEVUtWNWFOckc2emQ3amxLUEhXN0JH?=
- =?utf-8?B?MjRxYU80eTJ2aytpZEJuQ0NzUm9VekRWVnU5YytlSElxUmVjS3VLd0hiSHBF?=
- =?utf-8?B?bXgwTHNReXNndXNhVDJLV2tNbHYyWmRUbWpvay9CZnR1UnljZEttaGFWSUJs?=
- =?utf-8?B?TmNlSFNhb3ZnN0hrQzZLRnczWG9iNFZBSW5PSHlzcUt2dHU1ckFMSjZvYXBX?=
- =?utf-8?B?RTJBMnZ1TTBNL2poTWtVWUMvR1BURDhRRFZRRlVvZzFDaCtoV25wOU9URkF5?=
- =?utf-8?B?ZDJVWDFjWVFtZHQzeCswMVZheThETVEwMnNqdDlwR01tbmdHYkxMcmNNRFdt?=
- =?utf-8?B?ZmZkRjY0ODNxOWYrSVltK01mZmxIdWJSZlpFT3pYcFdTVS9kNnB3VCtXYVFv?=
- =?utf-8?B?NUlsNWZoTHBPb21hTytpV2syODhrR1BaeVovK0NvSnhOSEpBcU4wUVhxN0Uy?=
- =?utf-8?B?bEpRZmFZMDhhYll2cEROSVhIM2xJZkowVWtuTCtWZVJJTjhJaTlSY2s4d25y?=
- =?utf-8?B?ZTlLM0ttbmZkWVlZcTNhWGFXYy95MTdvQ05HZXlIdXMyaHRjcjIzd3JBMVo1?=
- =?utf-8?B?SmZsdWtqdlFuTm9sb3dlMHV1T1MyWmtvc0U4NmM1M0ErTllKTC9xcWl6Vzhq?=
- =?utf-8?B?MGc5WVFqUm95a3QrUlFLTEdFcmQvMzhzYTBJTG9VMWxXT2xlbmNPUGJZZjJs?=
- =?utf-8?B?V3VyVkNjMkRwM0I0QnRVM3prYnBQaTNySWs2R0N1ZkMyK3hzekdERTRrSkxs?=
- =?utf-8?B?S2dJcU5rVyt0NXVCQ01QcEQ5UXpTSUN1MC96K2tLTGxlSXgxZ1pScHdVRTY2?=
- =?utf-8?B?L2l3bThVcWRlbFR5U2lLTTNLK2I5anBtOUlBQmNGekJjMXVVMVZnM09RRmtG?=
- =?utf-8?B?dzNVZFgxRlBNMCtvVUQxOG5MN0JsUkVPNWp6ZXJldDVQZkpJTlJpcUx1SmUy?=
- =?utf-8?B?MmkrS3JpbFB2ODJOVmdqeUtaUUNMU29lSHhuR2c0T3JwTEd6WDZVZmhreXlj?=
- =?utf-8?B?Q2FDTzloUXlwZzV1ZW5kT1pBLzdxZkRnQkZPcTl3TS9wR0REeDRES3FNTFFK?=
- =?utf-8?B?Qk41TWx4SG5mL2Fya2prUnJDek1McWJrZUNRbFQ3eDdLNUpoeFlxTDI4T3Rv?=
- =?utf-8?B?dE8rcU9OVHhMZW5PVURNSk1KVHF2ejEvbE1BVXFQM2VEOXBhaFhCV2JienRp?=
- =?utf-8?B?c1docVJJTkZxV0FONmkvWkgzeFRnRFNKdVNHTU9QOHVFSHc9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?bVAxYTA5emxRUDNncmFZdStjVnI2cjcyTWJzWWprRkFKNmRsM1BTR2FvWnQx?=
- =?utf-8?B?cUJhSnZsbWxWSTRVUWdFYmNLdVZ0OEU4aEZySkNDN1NEMUVoQytqQ0ZWNWpH?=
- =?utf-8?B?bGRaRGlidkxab0h3ejRtcW9ZdEV2Tk5yaGVoR09TSkpHeGpqT1JZL1V4YVFw?=
- =?utf-8?B?Q2VpWlNBL0RzK2lGd2xtNG56QkwwU3NhalRvVDIwbXQrc3VkUGZtREZHYjJD?=
- =?utf-8?B?V3A4NTNsWkZRNHFNbjBWd1c1eEdCOTRubG1ESE9hNnpSKzdkaTV2ZHJSQ2Rz?=
- =?utf-8?B?Rm83N3c3ODlVeko1RDRvWGd6MDhCc3doMUhxWE0zNHlxaitwakRyRVgzSitY?=
- =?utf-8?B?REhXZXQ4eUZEK3pqeVhhbk9vTE9UQlRqWDJZTFlscFhkazZzd3F0bUhHUExV?=
- =?utf-8?B?Ymk5cmV2L0VQUmdaZyt6bVpSUnpSSENFOXZ2YXphVzZVcnBCMjc2c0pFTzFT?=
- =?utf-8?B?cjZaYXBaV1N6K3diUTBBb3BodllCS3FSczRWNkFodmpISUNVTzR2Yk1hODVU?=
- =?utf-8?B?eDJ4YmVYSWQxV1cvYnBqaTgrdlhpMFY0d3BEbHZvVDBEYllLWU00N3ZMWWFY?=
- =?utf-8?B?MU1uQU4ranJZbTI5Z2lzbTJrQ1Y3NWFwK0YvWGFPbkswVWVxSW5QRmNHUjRP?=
- =?utf-8?B?STBpQXlNeGg3TndBeXBUSWxKdTJRL0JIWDZCTEhmOExSTCt3MkJCRWlmTlRh?=
- =?utf-8?B?dWtFMlBGdGhReTVMK21hQzUzRzAyb2tiWXhCakhEcWVPcW5UNC9yM0hzZ25p?=
- =?utf-8?B?d2Y2S1pCRHBscmZLRjJocWZzMnB1U09BWTczV1J5SEFTZmdEMGk0cXhJLzlk?=
- =?utf-8?B?bG9RazhoQnNkK2tIYTlNSFJ1dzNyOTZoRlFpdlF3SXdBUVdEaGFObjJTOERz?=
- =?utf-8?B?bFhIeUthYTVWbUU1MTlSMWc1VFBxbW1RYmFxeml2dnpMcXBRci91ZXc0WXM3?=
- =?utf-8?B?eG4veklzaGJRWTBGZzlOOURyUlo5OEt0ei9MSXFla0owVXNPZXNoOGFEZGVt?=
- =?utf-8?B?R3B5NDVZTCtTYnAxeFlYc2h1QlRnUG5hL0cxVWNiekE5cjVTV1AwcTRmaUta?=
- =?utf-8?B?QUduaVVpRW5PVWVXMnRlOFVHMCtmeXhodDhaS2R5d3pMTkVCTUdVeEQ4SjBH?=
- =?utf-8?B?a21wNld6QUN4RjVQUmhBRHp3Uk1UZFZYdDNBbXlnRTU4K0l3OTRCTUlDVGw1?=
- =?utf-8?B?QTN3NWpWQzdzM3lmWmlWMVBmZm0ycmFTVkVJMmptTUxudVEzL0VhbUdkeXJH?=
- =?utf-8?B?azJpRXd0eW9oU3B6VGsrZ1dzb1p0b0huWFZudStXQW5weTlOMHB6VUJ3N0ZK?=
- =?utf-8?B?QWFsQUhCbDdHaWVrNFNUeC9wN09ubm82NGt1NjhoUWxydk5qZWticzFBZGVG?=
- =?utf-8?B?LzdYai9oMEZ2eDROWDJXT2dadWVoUG1CMVl6TVVwZmQ5MHUzcDh5Q1pwMmlo?=
- =?utf-8?B?L1J3NE5LcE8wS2tobUgxdFlJaHpUVVFlWTBRSGNXU3dsTS9QdGgxRUdldW1K?=
- =?utf-8?B?RVZCUml1WnZYNFpYNmJzTnRYZkVHaVVaazNxN0lrZFoyN1hKeHg4SWZBNnpa?=
- =?utf-8?B?dDFxbEhHdktDN0VwVTNvSHpzVmRsWG1pZDdOZ0xQZm1pRzRxdTdSUHJCN3Bm?=
- =?utf-8?B?bVkzKzhLRWRrWW52a1AweDB3VU5JNXRBT2RuVEdubGlHYWlSdzNURG0rRmhH?=
- =?utf-8?B?UkJQRmgvcGVyT2Q1b1VCcDd1MXlNMEFqRXZFZXVJRmRDVFdXUE11MTdoL0x1?=
- =?utf-8?B?dEV5TE81em83S2tya2czSW9KUjhFdWF0OVJ3VXhDRnZ2bTJyT3RNdzNrMkli?=
- =?utf-8?B?MWg2SUVpMlJvMjFFckhOOFBwVDJjbEVFSDBLTGxCanVGS1RGQjNvOGtoZEhB?=
- =?utf-8?B?Rlh5c3U2TnZzNjB3ZlNJZWVSQS9FUmlOWGU5bWpxcFBGbndJWkk1ektJWGVI?=
- =?utf-8?B?VlJqRDZUZi9lTlA0dmZsdGFmUHdwbHM4bGtycFo0Rkh4OGhxQTZSVHM5QU4z?=
- =?utf-8?B?YmJLMXE2QlNYK25HOCtFaU9oYVkrSC80Q2hUOXhlaGtzTCtWVzJ2ODFJcE51?=
- =?utf-8?B?d0FtSFoxcUFrMDM2RC8zMkdNOXR4N3huclU2R3Exb0MrSWNpMVFKWUYwVitR?=
- =?utf-8?B?dlhyTTFDZzFQY0wxUDlXSi9OQmRIVm8yTXJ6WUZwcjNhbHdYRHc3dWtCMlJk?=
- =?utf-8?Q?Zo3QpLm//mSik/NH5OxAYWw=3D?=
-X-OriginatorOrg: efficios.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a422375b-9baa-47de-6e88-08de21414d2d
-X-MS-Exchange-CrossTenant-AuthSource: YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Nov 2025 16:42:28.6057
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4f278736-4ab6-415c-957e-1f55336bd31e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ALwwgPOWYcgtx4hsPfR3h9UE6ItL3gDo6pDWX8NvRabK5PVQ2YACxS7tK+zD0Xgsfu6rAsOnQzDiLL+GBIN38FRwSOxV4GTXwylX/+9f8Ic=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: YQXPR01MB5675
+X-Received: by 2002:a05:6e02:350b:b0:433:74ba:8bf5 with SMTP id
+ e9e14a558f8ab-43374ba8f74mr162559385ab.23.1762879406632; Tue, 11 Nov 2025
+ 08:43:26 -0800 (PST)
+Date: Tue, 11 Nov 2025 08:43:26 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <691367ae.a70a0220.22f260.0141.GAE@google.com>
+Subject: [syzbot] [block?] [trace?] INFO: task hung in blk_trace_startstop
+From: syzbot <syzbot+774863666ef5b025c9d0@syzkaller.appspotmail.com>
+To: axboe@kernel.dk, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, mathieu.desnoyers@efficios.com, 
+	mhiramat@kernel.org, rostedt@goodmis.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 2025-11-10 09:23, Mathieu Desnoyers wrote:
-> On 2025-11-06 12:28, Prakash Sangappa wrote:
-> [...]
->> Hit this watchdog panic.
->>
->> Using following tree. Assume this Is the latest.
->> https://git.kernel.org/pub/scm/linux/kernel/git/tglx/devel.git/ rseq/ 
->> slice
->>
->> Appears to be spinning in mm_get_cid(). Must be the mm cid changes.
->> https://lore.kernel.org/all/20251029123717.886619142@linutronix.de/
-> 
-> When this happened during the development of the "complex" mm_cid
-> scheme, this was typically caused by a stale "mm_cid" being kept around
-> by a task even though it was not actually scheduled, thus causing
-> over-reservation of concurrency IDs beyond the max_cids threshold. This
-> ends up looping in:
-> 
-> static inline unsigned int mm_get_cid(struct mm_struct *mm)
-> {
->          unsigned int cid = __mm_get_cid(mm, READ_ONCE(mm- 
->  >mm_cid.max_cids));
-> 
->          while (cid == MM_CID_UNSET) {
->                  cpu_relax();
->                  cid = __mm_get_cid(mm, num_possible_cpus());
->          }
->          return cid;
-> }
-> 
-> Based on the stacktrace you provided, it seems to happen within
-> sched_mm_cid_fork() within copy_process, so perhaps it's simply an
-> initialization issue in fork, or an issue when cloning a new thread ?
+Hello,
 
-I've spent some time digging through Thomas' implementation of
-mm_cid management. I've spotted something which may explain
-the watchdog panic. Here is the scenario:
+syzbot found the following issue on:
 
-1) A process is constrained to a subset of the possible CPUs,
-    and has enough threads to swap from per-thread to per-cpu mm_cid
-    mode. It runs happily in that per-cpu mode.
+HEAD commit:    4a0c9b339199 Merge tag 'probes-fixes-v6.18-rc4' of git://g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12323812580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e46b8a1c645465a9
+dashboard link: https://syzkaller.appspot.com/bug?extid=774863666ef5b025c9d0
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
 
-2) The number of allowed CPUs is increased for a process, thus invoking
-    mm_update_cpus_allowed. This switches the mode back to per-thread,
-    but delays invocation of mm_cid_work_fn to some point in the future,
-    in thread context, through irq_work + schedule_work.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-    At that point, because only __mm_update_max_cids was called by
-    mm_update_cpus_allowed, the max_cids is updated, but mc->transit
-    is still zero.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/2d880d82a810/disk-4a0c9b33.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/75307faea32a/vmlinux-4a0c9b33.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/9d3f4c38a2eb/bzImage-4a0c9b33.xz
 
-    Also, until mm_cid_fixup_cpus_to_tasks is invoked by either the
-    scheduled work or near the end of sched_mm_cid_fork, or by
-    sched_mm_cid_exit, we are in a state where mm_cids are still
-    owned by CPUs, but we are now in per-thread mm_cid mode, which
-    means that the mc->max_cids value depends on the number of threads.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+774863666ef5b025c9d0@syzkaller.appspotmail.com
 
-3) At that point, a new thread is cloned, thus invoking
-    sched_mm_cid_fork. Calling sched_mm_cid_add_user increases the user
-    count and invokes mm_update_max_cids, which updates the mc->max_cids
-    limit, but does not set the mc->transit flag because this call does not
-    swap from per-cpu to per-task mode (the mode is already per-task).
+INFO: task syz.6.3379:19656 blocked for more than 143 seconds.
+      Not tainted syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz.6.3379      state:D stack:28776 pid:19656 tgid:19654 ppid:16553  task_flags:0x400040 flags:0x00080002
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5325 [inline]
+ __schedule+0x1798/0x4cc0 kernel/sched/core.c:6929
+ __schedule_loop kernel/sched/core.c:7011 [inline]
+ schedule+0x165/0x360 kernel/sched/core.c:7026
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:7083
+ __mutex_lock_common kernel/locking/mutex.c:676 [inline]
+ __mutex_lock+0x7e6/0x1350 kernel/locking/mutex.c:760
+ blk_trace_startstop+0xa3/0x640 kernel/trace/blktrace.c:682
+ blk_trace_ioctl+0x19b/0x430 kernel/trace/blktrace.c:724
+ blkdev_common_ioctl+0xdf4/0x2550 block/ioctl.c:630
+ blkdev_ioctl+0x4f6/0x6d0 block/ioctl.c:699
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:597 [inline]
+ __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:583
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fbcfcb8f6c9
+RSP: 002b:00007fbcfdaa3038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007fbcfcde6090 RCX: 00007fbcfcb8f6c9
+RDX: 0000000000000000 RSI: 0000000000001275 RDI: 0000000000000003
+RBP: 00007fbcfcc11f91 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007fbcfcde6128 R14: 00007fbcfcde6090 R15: 00007fbcfcf0fa28
+ </TASK>
 
-    Immediately after the call to sched_mm_cid_add_user, sched_mm_cid_fork()
-    attempts to call mm_get_cid while the mm_cid mutex and mm_cid lock
-    are held, and loops forever because the mm_cid mask has all
-    the max_cids IDs reserved because of the stale per-cpu CIDs.
+Showing all locks held in the system:
+1 lock held by khungtaskd/31:
+ #0: ffffffff8df3d660 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
+ #0: ffffffff8df3d660 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:867 [inline]
+ #0: ffffffff8df3d660 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x2e/0x180 kernel/locking/lockdep.c:6775
+2 locks held by getty/5588:
+ #0: ffff888032fa10a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
+ #1: ffffc9000332b2f0 (&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_read+0x43e/0x1400 drivers/tty/n_tty.c:2222
+3 locks held by syz.6.3379/19655:
+1 lock held by syz.6.3379/19656:
+ #0: ffff888142f2b068 (&q->debugfs_mutex){+.+.}-{4:4}, at: blk_trace_startstop+0xa3/0x640 kernel/trace/blktrace.c:682
 
-I see two possible issues here:
+=============================================
 
-A) mm_update_cpus_allowed can transition from per-cpu to per-task mm_cid
-    mode without setting the mc->transit flag.
+NMI backtrace for cpu 0
+CPU: 0 UID: 0 PID: 31 Comm: khungtaskd Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ nmi_cpu_backtrace+0x39e/0x3d0 lib/nmi_backtrace.c:113
+ nmi_trigger_cpumask_backtrace+0x17a/0x300 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:160 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:332 [inline]
+ watchdog+0xf60/0xfa0 kernel/hung_task.c:495
+ kthread+0x711/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x4bc/0x870 arch/x86/kernel/process.c:158
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+Sending NMI from CPU 0 to CPUs 1:
+NMI backtrace for cpu 1
+CPU: 1 UID: 0 PID: 19655 Comm: syz.6.3379 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+RIP: 0010:unwind_get_return_address+0x4d/0x90 arch/x86/kernel/unwind_orc.c:369
+Code: c0 75 4c 83 3b 00 74 3a 48 83 c3 48 49 89 df 49 c1 ef 03 43 80 3c 37 00 74 08 48 89 df e8 4b 30 b2 00 48 8b 3b e8 b3 cf 18 00 <85> c0 74 14 43 80 3c 37 00 74 08 48 89 df e8 30 30 b2 00 48 8b 03
+RSP: 0018:ffffc9000b257668 EFLAGS: 00000202
+RAX: 0000000000000001 RBX: ffffc9000b2576d0 RCX: 6861806b914a4f00
+RDX: 0000000000000001 RSI: ffffffff8d8f46a3 RDI: ffffffff846da7ad
+RBP: ffffc9000b257710 R08: ffffc9000b257dd0 R09: 0000000000000000
+R10: ffffc9000b2576d8 R11: fffff5200164aedd R12: ffff888066a03c80
+R13: 1ffff9200164aefc R14: dffffc0000000000 R15: 1ffff9200164aeda
+FS:  00007fbcfdac46c0(0000) GS:ffff88812623b000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f184bdb3ad8 CR3: 0000000043d28000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ arch_stack_walk+0xfc/0x150 arch/x86/kernel/stacktrace.c:26
+ stack_trace_save+0x9c/0xe0 kernel/stacktrace.c:122
+ save_stack+0xf5/0x1f0 mm/page_owner.c:156
+ __reset_page_owner+0x71/0x1f0 mm/page_owner.c:311
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1394 [inline]
+ __free_frozen_pages+0xbc4/0xd30 mm/page_alloc.c:2906
+ relay_destroy_buf+0x10e/0x3a0 kernel/relay.c:200
+ relay_remove_buf kernel/relay.c:220 [inline]
+ kref_put include/linux/kref.h:65 [inline]
+ relay_close_buf kernel/relay.c:435 [inline]
+ relay_open+0x734/0x920 kernel/relay.c:531
+ do_blk_trace_setup+0x561/0x980 kernel/trace/blktrace.c:572
+ blk_trace_setup+0x116/0x1f0 kernel/trace/blktrace.c:614
+ blk_trace_ioctl+0x181/0x430 kernel/trace/blktrace.c:712
+ blkdev_ioctl+0x41d/0x6d0 block/ioctl.c:694
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:597 [inline]
+ __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:583
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fbcfcb8f6c9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fbcfdac4038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007fbcfcde5fa0 RCX: 00007fbcfcb8f6c9
+RDX: 00002000000000c0 RSI: 00000000c0481273 RDI: 0000000000000003
+RBP: 00007fbcfcc11f91 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007fbcfcde6038 R14: 00007fbcfcde5fa0 R15: 00007fbcfcf0fa28
+ </TASK>
 
-B) sched_mm_cid_fork calls mm_get_cpu() before invoking
-    mm_cid_fixup_cpus_to_tasks() which would reclaim stale per-cpu
-    mm_cids and make them available for mm_get_cpu().
 
-Thoughts ?
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Thanks,
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-Mathieu
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
