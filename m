@@ -1,141 +1,81 @@
-Return-Path: <linux-kernel+bounces-894930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA5FDC4C78C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:52:43 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17D6CC4C79B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:53:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFA881888DBA
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 08:52:59 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 260E84E6B60
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 08:53:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 196D7257846;
-	Tue, 11 Nov 2025 08:52:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B5092DF14A;
+	Tue, 11 Nov 2025 08:53:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="jh6LIRvy"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rz2DgqJg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EA72757EA
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 08:52:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6219A757EA;
+	Tue, 11 Nov 2025 08:53:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762851148; cv=none; b=eEM6GYK1KyeFY3+7poXlM5AR5r+lJ63XrYCQiGy81XZn1lW4OJZGkFbzhq/k0ipfS1AyVVt/YwtgkGNVRZ3MEyKoXbBo5Mu9SIleTGp8vg0eztfIHjj7WghhGYKhaWODUmO99Jc10a+KrUs8TRkelRr9kiPdoXMAetLmIrcIyQw=
+	t=1762851194; cv=none; b=QQERjL5v/v9kuV+ljWk1nUwLqYwAQWS9EgxNJ7bzJVHK+wvpk3ZOMh3jSWSHLHjCvplEHWyQmxyZ8xisTwr5iEFEpAvvnb58DSVOrK8nE8SI135UqBzteY0jDquUIkfFJliF5XKgEySd/v7gt7BewRt5L9hw2pPy9jKI8J2BlNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762851148; c=relaxed/simple;
-	bh=AOtxztYb3EUCtWNh0dzQl6PgAK/9e+Oi10O5JPoqGo4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=syw7fTZVqzWGCoTjmtL3CAi4uLM9/FMArfwf3RNCUXGodfSBhfyVlgrOtkP5ptRYuJS/DWJMVpi2fvKk4Pe4XMPhLH9PQD8Xjj1J+rgD2vWS8rIF/Moxm7v3Le/C/10Cp/w1aOI1jciXbBxI45Ga2yqEafaNL+CDxT9dFuCS6pQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=jh6LIRvy; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1762851144;
-	bh=AOtxztYb3EUCtWNh0dzQl6PgAK/9e+Oi10O5JPoqGo4=;
-	h=From:Date:Subject:To:Cc:From;
-	b=jh6LIRvyb5680qh6eoFuSxCsS8+ArGe3FK9/qzJEoSmtRz2ntM7Mb4bTVmmQzN3e6
-	 j4pKsxb3onlQK3Uh1SN5DjmczMcg0ROBoBLlXR8usMf/yduegz0jAujmQPiBsfUFwC
-	 mIIBXqAgtQfzUh/8TQMniH6DP80D5Z8p1s4jRmgEzdWvwY4bT+Lyy8LIxK4pTzQVhk
-	 EiOO0GtUB3OLMy3n7KdAbw2my55p84M63pYVjCSarhqaQSUO9HPxmBbLWERTb9FZ2v
-	 RvK03gfr4TA/MreDaCafqE0IbouGKxAn/tbtIV0f34+xSo9OZzocEoyIBqQYssg1NO
-	 abMMlPbqw9aFg==
-Received: from localhost (unknown [82.79.138.145])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with UTF8SMTPSA id 9A7C017E1318;
-	Tue, 11 Nov 2025 09:52:24 +0100 (CET)
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Date: Tue, 11 Nov 2025 10:52:11 +0200
-Subject: [PATCH v2] drm/amdgpu: Fix kernel-doc comments for some LUT
- properties
+	s=arc-20240116; t=1762851194; c=relaxed/simple;
+	bh=9CmY6ggLRsP/ZfUwsNgbdwlQUOAib45FvdL0W/S9YoI=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=TVXjQrVE5vRuExyB11fFYJtcDdJAy46v9CA7RjHjDwzPmXTnXK1RtIRN2QME6Xo/hhZMWkuPiHGEc7XRqLHZCE0e8aLUO3ahVz776sl67pmM/UPUWt74U7SvmpGNuqid6AbPGWVfLo0R3f+A6/B89Da0FEOyaV+wLV1U591qt00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rz2DgqJg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67789C4CEFB;
+	Tue, 11 Nov 2025 08:53:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762851194;
+	bh=9CmY6ggLRsP/ZfUwsNgbdwlQUOAib45FvdL0W/S9YoI=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=rz2DgqJgWmskNYCHg4H5lvdrlRr7M0uH/wmC0axq+12Lq0T8otZ1LLTw8X2N6ntjR
+	 vyRkwFjwXXhjsyiphq85sf3YUlIPh+cy/XFGXpnKjPe6lgWdGhmOacF/QCTAOCqvTw
+	 Lz773RETmwVd/DMZ5d28fWlRhswr0TFfeFHWP4akvckmJujLwr4WuCPglmFX/YEUCx
+	 lsZCx2XgG0SXMP2xkwnUoWZLeaVa8OXPZov4ktggq7iFi4+/lN2bEar53swxFhLv/t
+	 Av1ymX0iHH6hbMEWlgdzIAboiJ2uHnnZc2asAHVTtFFpOVRcSHrJFDhcQHua9gRqmA
+	 rMl6IEfNoO1Mw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251111-amdgpu-fix-kdoc-lut-v2-1-bcfcc82e962d@collabora.com>
-X-B4-Tracking: v=1; b=H4sIADr5EmkC/32NTQ6CMBSEr0Le2mdoa4G48h6GRX8e0AiUtEA0p
- He3cgCX30zmmwMiBUcR7sUBgXYXnZ8z8EsBZlBzT+hsZuAll2XDBarJ9suGnXvjy3qD47aikLX
- VjZZ1RwR5uQTK/Wl9tpkHF1cfPufJzn7pf9/OkKEoK22UvTFe1Q/jx1FpH9TV+AnalNIXkYsEN
- roAAAA=
-X-Change-ID: 20250823-amdgpu-fix-kdoc-lut-357db8b57fee
-To: Alex Deucher <alexander.deucher@amd.com>, 
- =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Harry Wentland <harry.wentland@amd.com>, Melissa Wen <mwen@igalia.com>
-Cc: kernel@collabora.com, amd-gfx@lists.freedesktop.org, 
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-X-Mailer: b4 0.14.3
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 11 Nov 2025 19:53:03 +1100
+Message-Id: <DE5QL9NMQON4.V7MWURBS3RSQ@kernel.org>
+Subject: Re: [PATCH] rust: io: cleanup imports and use "kernel vertical"
+ style
+Cc: <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ "Danilo Krummrich" <dakr@kernel.org>
+To: <aliceryhl@google.com>, <daniel.almeida@collabora.com>,
+ <ojeda@kernel.org>, <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>,
+ <gary@garyguo.net>, <bjorn3_gh@protonmail.com>, <lossin@kernel.org>,
+ <a.hindborg@kernel.org>, <tmgross@umich.edu>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20251104133301.59402-1-dakr@kernel.org>
+In-Reply-To: <20251104133301.59402-1-dakr@kernel.org>
 
-The following members of struct amdgpu_mode_info do not have valid
-references in the related kernel-doc sections:
+On Wed Nov 5, 2025 at 12:32 AM AEDT, Danilo Krummrich wrote:
+> Commit 46f045db5a94 ("rust: Add read_poll_timeout_atomic function")
+> initiated the first import change in the I/O module using the agreed
+> "kernel vertical" import style [1].
+>
+> For consistency throughout the module, adjust all other imports
+> accordingly.
+>
+> While at it, drop unnecessary imports covered by prelude::*.
+>
+> Link: https://docs.kernel.org/rust/coding-guidelines.html#imports [1]
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 
- - plane_shaper_lut_property
- - plane_shaper_lut_size_property,
- - plane_lut3d_size_property
+Applied to driver-core-testing, thanks!
 
-Correct all affected comment blocks.
-
-Fixes: f545d82479b4 ("drm/amd/display: add plane shaper LUT and TF driver-specific properties")
-Fixes: 671994e3bf33 ("drm/amd/display: add plane 3D LUT driver-specific properties")
-Reviewed-by: Melissa Wen <mwen@igalia.com>
-Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
----
-Changes in v2:
-- Collected R-b tag from Melissa
-- Rebased onto latest drm-misc-next
-- Link to v1: https://lore.kernel.org/r/20250823-amdgpu-fix-kdoc-lut-v1-1-306bcad41267@collabora.com
----
- drivers/gpu/drm/amd/amdgpu/amdgpu_mode.h | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_mode.h b/drivers/gpu/drm/amd/amdgpu/amdgpu_mode.h
-index dc8d2f52c7d6..e244c12ceb23 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_mode.h
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_mode.h
-@@ -368,15 +368,15 @@ struct amdgpu_mode_info {
- 
- 	struct drm_property *plane_ctm_property;
- 	/**
--	 * @shaper_lut_property: Plane property to set pre-blending shaper LUT
--	 * that converts color content before 3D LUT. If
--	 * plane_shaper_tf_property != Identity TF, AMD color module will
-+	 * @plane_shaper_lut_property: Plane property to set pre-blending
-+	 * shaper LUT that converts color content before 3D LUT.
-+	 * If plane_shaper_tf_property != Identity TF, AMD color module will
- 	 * combine the user LUT values with pre-defined TF into the LUT
- 	 * parameters to be programmed.
- 	 */
- 	struct drm_property *plane_shaper_lut_property;
- 	/**
--	 * @shaper_lut_size_property: Plane property for the size of
-+	 * @plane_shaper_lut_size_property: Plane property for the size of
- 	 * pre-blending shaper LUT as supported by the driver (read-only).
- 	 */
- 	struct drm_property *plane_shaper_lut_size_property;
-@@ -400,10 +400,10 @@ struct amdgpu_mode_info {
- 	 */
- 	struct drm_property *plane_lut3d_property;
- 	/**
--	 * @plane_degamma_lut_size_property: Plane property to define the max
--	 * size of 3D LUT as supported by the driver (read-only). The max size
--	 * is the max size of one dimension and, therefore, the max number of
--	 * entries for 3D LUT array is the 3D LUT size cubed;
-+	 * @plane_lut3d_size_property: Plane property to define the max size
-+	 * of 3D LUT as supported by the driver (read-only). The max size is
-+	 * the max size of one dimension and, therefore, the max number of
-+	 * entries for 3D LUT array is the 3D LUT size cubed.
- 	 */
- 	struct drm_property *plane_lut3d_size_property;
- 	/**
-
----
-base-commit: be4cd2a13a31496c7fb9e46a244c4391b8b7cf31
-change-id: 20250823-amdgpu-fix-kdoc-lut-357db8b57fee
-
+    [ Use prelude::* in io/poll.rs. - Danilo ]
 
