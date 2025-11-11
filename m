@@ -1,56 +1,57 @@
-Return-Path: <linux-kernel+bounces-895806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34004C4EF62
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:15:31 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7620DC4EFC8
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:18:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04F4718C354E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:15:54 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BC13A4E49AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:17:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54022312834;
-	Tue, 11 Nov 2025 16:15:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B992A36C5A3;
+	Tue, 11 Nov 2025 16:17:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GWGoehvn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DHoRgqxf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A86F7338902
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 16:15:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CD8B355041;
+	Tue, 11 Nov 2025 16:17:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762877718; cv=none; b=Y29O4EEU8KcLvI+FSJBkjGhHAYFXCkfJxkbNMrhj4xV7BOuS41BGwrsd+OGkWFDJEI9QuRwblvynSsq2zNM0PyVxB8OV5VGK4KCvVCGtuGG5ai/pwrjnbq61vDT0AGQ+WikTW17RXSSCxKzU5w7SV5XwdhKsJsdJyVH8Urv2LPw=
+	t=1762877871; cv=none; b=sTrLsX/2ajNdNxrtwBfRgrGcyslE4U9YkWxLwUNLqododLXoX04ZgLId/G8jlQglwHAndntpX8d60ccWJbOo+4wK/BJyIP8F+F36wjHvaq9cNk6Wkypjh3m0z8ryEPDUifDA6PSuSDeCXFbIhW7qW3NOYM80uQ4ZfaTG6on75Vo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762877718; c=relaxed/simple;
-	bh=fLUCOZcJGqs10IzWWpUN1U+QCtifLHFvmvQS6PWoXi8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=N9hWdsKUW6yKlgza4FBI0euZ/7ItJonL67ZIzKp72Jfrbzpbp4Wdw57YiyU2xzpD1KobkO6fJovsjx6fgoOfA1Lb6jaCkz5mjhh8VeVtd7tvkC1v9Qhq5a9vbqJuHcDDwZ8Q7jSPmc3R5jDy/2lmtj12iFinfkF7VtHYZbQViYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GWGoehvn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 644BEC16AAE;
-	Tue, 11 Nov 2025 16:15:16 +0000 (UTC)
+	s=arc-20240116; t=1762877871; c=relaxed/simple;
+	bh=JHGD5/Ti5dkXRBDtVWfhD0shk250SHYOSoMNMVMSORY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CpsJwjFcrHYSwHViaA0wFbF/XLc5LhG5/7zHcHZnnykMbMHwUIsd0BYzpun84C247GmL6r8EcJ0rs9LaOxVORvl9qbX5cD05N3KmzZNIXPVcBb7djFFV6tryCMW1j0eIMdVmdpBxM22UmdFQNr/tGwXpYJSDv/f+5wKVIzX1a0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DHoRgqxf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC363C4CEF7;
+	Tue, 11 Nov 2025 16:17:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762877718;
-	bh=fLUCOZcJGqs10IzWWpUN1U+QCtifLHFvmvQS6PWoXi8=;
+	s=k20201202; t=1762877870;
+	bh=JHGD5/Ti5dkXRBDtVWfhD0shk250SHYOSoMNMVMSORY=;
 	h=From:To:Cc:Subject:Date:From;
-	b=GWGoehvnXJiDbmFG8JSrPQbK/ND2R25jREsH4qUqkUpz6VdOsJCSB75/6+rdPPttd
-	 rf9PfNB9biA1Ehi0597tOk99ZcBXbNLsmRvN8XATqFhy9UF7w12pfDVjFexjB56v85
-	 naPWyVqvzmMTXpa7cV829H1xytWwLFRpcDpSzoQNA9sDOXqJmIGDOjysl2AUMMTqYg
-	 XHJlaGM9AJtZ7Sv5si/xG3KQ1Em3c2CYV8x0t1Kwl5oUhEj2ysx+mU7jZprqChdw5k
-	 WVZEZkuGMzIv/YCO9kNMacbKuwhlim2Z70vvPBtjZ7/OMZ/+fy5GjjWNq9MmEKkt4L
-	 0F0v/cq97GRgA==
-From: Philipp Stanner <phasta@kernel.org>
-To: Matthew Brost <matthew.brost@intel.com>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Philipp Stanner <phasta@kernel.org>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
-	tursulin@ursulin.net
-Cc: dri-devel@lists.freedesktop.org,
+	b=DHoRgqxfVJvYMNeAxheOuNNiYbwm4F05Mw65ZbPX4fcrYSH90GxWpooxACS6CMrsb
+	 auKhsfgvF9OZbLcGGXUc/IPa2KL2m+k2rxy0Y6K3VzLi+z4SlmH5Bg5QrQ9gTNRPKS
+	 oJTddU3OAP9pbOmgEB425xbJk3emWK8bAM+WBCf1Z727b4WBXWbvfEHopJ4wmgH4pD
+	 YJ9FLqn8eLm5pwgcd2WsAdhn+VstcRf/EnDLf47ZNC/1wU1g2fWLmm30gDuHs9zm4Q
+	 X+/QM5nKHF9DL94LFv38I4EsXUqgqhSW0grvM7GyJAOt0+oij5PfAyEBZvALR5w20U
+	 4mzv+7SI6JQ2Q==
+Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
+	(envelope-from <mchehab+huawei@kernel.org>)
+	id 1vIr40-00000007s4Z-1Nmj;
+	Tue, 11 Nov 2025 17:17:48 +0100
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+	"Jonathan Corbet" <corbet@lwn.net>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/sched: Fix outdated sched_job docu
-Date: Tue, 11 Nov 2025 17:15:03 +0100
-Message-ID: <20251111161502.86180-2-phasta@kernel.org>
-X-Mailer: git-send-email 2.49.0
+Subject: [PATCH 0/3] Convert get_feat to Python
+Date: Tue, 11 Nov 2025 17:17:41 +0100
+Message-ID: <cover.1762877066.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,28 +59,53 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-There is no such thing as a "done_list" anymore. Remove mention of it.
+Hi Jon,
 
-Signed-off-by: Philipp Stanner <phasta@kernel.org>
----
- include/drm/gpu_scheduler.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+That's the final series to complete the migration of documentation
+build: it converts get_feat from Perl to Python.
 
-diff --git a/include/drm/gpu_scheduler.h b/include/drm/gpu_scheduler.h
-index fb88301b3c45..18d6210ce2d0 100644
---- a/include/drm/gpu_scheduler.h
-+++ b/include/drm/gpu_scheduler.h
-@@ -320,7 +320,7 @@ struct drm_sched_fence *to_drm_sched_fence(struct dma_fence *f);
-  * struct drm_sched_job - A job to be run by an entity.
-  *
-  * @queue_node: used to append this struct to the queue of jobs in an entity.
-- * @list: a job participates in a "pending" and "done" lists.
-+ * @list: for enqueueing the job into the list of pending jobs.
-  * @sched: the scheduler instance on which this job is scheduled.
-  * @s_fence: contains the fences for the scheduling of job.
-  * @finish_cb: the callback for the finished fence.
+With that, no Sphinx in-kernel extensions use fork anymore to call
+ancillary scripts: everything is now importing Python methods
+directly from the libraries.
+
+As we don't have a definition yet for the location of the Python
+libraries yet, I opted to place the parse features library inside
+tools/docs/lib. It shouldn't be hard to move it elsewhere once we
+define a better place for them.
+
+There's nothing special on this conversion: it is a direct translation,
+almost bug-compatible with the original version (*).
+
+(*) I did solve two or three caveats on patch 1.
+
+Most of the complexity of the script relies at the logic to produce
+ReST tables. I do have here on my internal scripts a (somewhat) generic
+formatter for ReST tables in Python. I was tempted to convert the logic
+to use it, but, as this could cause regressions, I opted to not do it
+right now, mainly because the matrix table logic is complex. Also,
+I'm tempted to modify a little bit the output there, but extra tests
+are required to see if PDF output would work with complex tables (I
+remember I had a problem with that in the past). So, I'm postponing
+such extra cleanup.
+
+Mauro Carvalho Chehab (3):
+  tools/docs/get_feat.py: convert get_feat.pl to Python
+  Documentation/sphinx/kernel_feat.py: use class directly
+  get_feat.pl: remove it, as it got replaced by get_feat.py
+
+ Documentation/sphinx/kernel_feat.py |  24 +-
+ tools/docs/get_feat.pl              | 641 ----------------------------
+ tools/docs/get_feat.py              | 225 ++++++++++
+ /parse_features.py    | 494 +++++++++++++++++++++
+ 4 files changed, 732 insertions(+), 652 deletions(-)
+ delete mode 100755 tools/docs/get_feat.pl
+ create mode 100755 tools/docs/get_feat.py
+ create mode 100755 tools/docs/lib/parse_features.py
+
 -- 
-2.49.0
+2.51.1
+
 
 
