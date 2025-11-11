@@ -1,223 +1,127 @@
-Return-Path: <linux-kernel+bounces-895871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2294AC4F25D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:57:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 199A7C4F282
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 18:00:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75AE618C0FE9
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:56:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D0173A418E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:57:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40288377E85;
-	Tue, 11 Nov 2025 16:55:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 388BA3730FE;
+	Tue, 11 Nov 2025 16:57:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="b1js4xGl";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="BUXpbIAi"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=colorremedies.com header.i=@colorremedies.com header.b="PSV8Ibxx";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="jU5SqWKg"
+Received: from fhigh-a7-smtp.messagingengine.com (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAAC636A022
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 16:55:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1754A2550D4;
+	Tue, 11 Nov 2025 16:56:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762880141; cv=none; b=eVKvyZvHz07BPdoN0IlAD3ytnL7sR7RPDVd1JT6kCg1uTJQzMN4hgjytiEpejtNpQR3aPU0CsMbT8WQZVKZYOUBx3EgSXBTlW5c/yAKS747V64Ek9570TawmuVdF1ifKDwCLyNR+dz2LnnfbEu5h2h4ySzryQ9mQ+7fhWcPAhIg=
+	t=1762880221; cv=none; b=tjMPSb8pH2uN6OXf91CNPEAOPaDslsscgZRHty1TGJ/+C0vy5kQz095Lr5bLnVbL2wuEBTrtrM9sXlwpkYFAH+DAHthxrDe9wm+QGMLM0FQUEzD8bsHHtvbIfeZ2hGd7e/xf4mVcC6cppZqhUfBv7OWN0PYjMdRbdN9tr9FJlJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762880141; c=relaxed/simple;
-	bh=nlEfTmws0Q46o78NUfhpjE3w9PAskdTxv3a88lJzlpU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aexdao6X61C0EzGiU3zbtq+o/0C7sv2Tv+DngggXam72aG/rDZLJH0Bxc95B4wKbH3UkSVHk3SqJRAlE1+Pgmv/Isbpk/APhJ/JJeIVRQ88GKF5cP2/x/5apftof2B47OAwq0zBBv2C8zpTbYtSFxcrKN/RUIWt98IuFYnWIcoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=b1js4xGl; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=BUXpbIAi; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762880138;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=gnMIv0Ik+hITHUqF7t+6yoyTUpUVXjJtFWV6UcASCo0=;
-	b=b1js4xGlbKUSGz3rtJp2zOMe8x77+rZvE9HrYlFpounWmIxWIVhPEEvg2/u/pRLK10kMeR
-	4eHkveRNxwVdZH0rMP4knXLirU8D1qyZdqH1VMTZ9wYaIPP17qbToIiSwnX7v+ikzAizZc
-	/fdNd4cw6zo7jRyuK0fk6xt7t5VYKRo=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-553-R3_Xg6a5M6-zXB7nCWX3Ng-1; Tue, 11 Nov 2025 11:55:37 -0500
-X-MC-Unique: R3_Xg6a5M6-zXB7nCWX3Ng-1
-X-Mimecast-MFC-AGG-ID: R3_Xg6a5M6-zXB7nCWX3Ng_1762880136
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-42b2b642287so1781786f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 08:55:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1762880136; x=1763484936; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=gnMIv0Ik+hITHUqF7t+6yoyTUpUVXjJtFWV6UcASCo0=;
-        b=BUXpbIAi4TzFpdEinFY81Q/MYpNv6s5W/kRxFAC2GPgT7AgQrAa/1YnyGqPT3NFvkw
-         RsWZE5KdNsBPHD2MI8FEc5jQIn0U33eqJQIyG/fZqzxUjeYQb2LRVG6SHqXHFhFQdS1t
-         RMXcVziQkC6+eJSDzaNpLA64Z1Rkc6Yqyw5whMW9VqCIhTTEcXe5i56TYp+nvY+WOJi7
-         QOR0RCsZXYCKozEb7Nnn/r/VqMaviS02n5VsrjjEu4iXPFMBI6kwHppk3cOu2waqq5C4
-         1KvkFRtQ36rXZyD75aYAXD3A3WNJKyFImc6D+5NMLWo59Cau91HXleSnPYVO4nGK8jYk
-         eJ5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762880136; x=1763484936;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gnMIv0Ik+hITHUqF7t+6yoyTUpUVXjJtFWV6UcASCo0=;
-        b=rh8K2o1+SSgxzQichFIRIr8GdUT51T/ZjEhP3JtqQdbz5Yj2v7dWveaagaPo9PQRd2
-         TU/NicQg2M+qOu+rnI35KCoHGbzxGWP7QI9p2D2yimo1fFyGLo+BLl4+HMLXtQFMGVFU
-         3BFLPiWwYY9bdPDupY6fHX9CWA1Q2/xhwh9AtirHg32wfNtZltdWpQ4UU0/W+mxx57S/
-         UiFnKhWZ4mbIlWDs5cuD7s8ZA9LGry8+RDx3pMQBQrkOyybosl5VlCc69lG4xAHsMDxD
-         YbEsb+S33/pWOC1aMfuKLfonrgqHmCn3YwxXJmoQaTG+dy/7va4gA4pgVlVlQ6TsHEtn
-         Dg0g==
-X-Forwarded-Encrypted: i=1; AJvYcCW0FA8FzJ8OeGILR/0PMZ4bbFArnoRKQu5XsgqUvnunYWbK85PLqEwGpSWOU7aBxjVoxQCAAfPUzitDjB4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRySnRBh7WLI2RjYlwx9Vm7l3eyRSpJ680/EFoUrxkSNgYRE0t
-	pGCA6X4RtLm0mhv9MvjptffaBl5xWGaHBPQsobcOOcXUUJRZF9OILZ0LL2RHpYdZE5OZl4n/xIY
-	72yBgo0+9wx8qFxH1o1TEKIXqiPp+qBmh5Yi4Y4wAytFtbSK2GtSjwv87U/f4ij4UHw==
-X-Gm-Gg: ASbGnctc2H04a0qzD94Z7vJAR3fBTJr/miE010AvTKnqTNB0ZM9sGbS7rjH53GVTZ1w
-	4IHAmY7/Yc1jn1+u1841UQ5hbUVi97dPWsig+McMN3+Z7Et6mpkU4xgb5vQyyjgHxGzswMb43J1
-	2tSuLLScL/rAbwfOrzCBj/QOJ+KN6djRIkjDY1uf3pz4axxtakb3Ks/5Pp1Jqw+PxbXuzhUnP9m
-	QKR9O3szcJRaWQvuKRrjOTMPMhmdoED3oYWj7zOxoDum1n9iHYRa2jPndhUGkrdUgwoOZl289WM
-	fWX5DZ5v1LZFNASdsYvju3OCOdaFr6IoXjVp4UO4J1n/TwqfuktqO+DFIWHIw05yoWg7UNqesUj
-	vEC/oNFW4uivEW2TBMDrtg3a6vPxM47+4UtpRn6Fn7U3JLhIf/Pr2JAmhBlb6NwCzLSTrvNqU07
-	zscL0Eyg==
-X-Received: by 2002:a05:6000:144e:b0:42b:3bfc:d5cb with SMTP id ffacd0b85a97d-42b3bfcde1bmr6451770f8f.51.1762880136107;
-        Tue, 11 Nov 2025 08:55:36 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEwXz8O+8CJxSCaosY+x8WzSmDIqFBYmIyaTJkW/+khTeoschvxJNMBqDWOCSADXh+6y0zXnQ==
-X-Received: by 2002:a05:6000:144e:b0:42b:3bfc:d5cb with SMTP id ffacd0b85a97d-42b3bfcde1bmr6451748f8f.51.1762880135650;
-        Tue, 11 Nov 2025 08:55:35 -0800 (PST)
-Received: from [192.168.10.81] ([176.206.111.214])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-42abe63dfecsm29514102f8f.12.2025.11.11.08.55.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Nov 2025 08:55:31 -0800 (PST)
-Message-ID: <0de0215b-6013-4565-9cda-92a7b6f8c34b@redhat.com>
-Date: Tue, 11 Nov 2025 17:55:28 +0100
+	s=arc-20240116; t=1762880221; c=relaxed/simple;
+	bh=DqXcOTREauByWgEhGQHq/TSUiYK6pnMAOexgqUPfrS8=;
+	h=MIME-Version:Date:From:To:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=gA0+DXNBXA0XAvmxmfkuyHVJdP9fGqQtrMhAkC+/vQRS+FlSgoMAprDiBLcwgz+7o+Kr7rLGZ2OVbvCqHFFzwyS4BAQvlO7vk3fmLFmbafireA/k/LVrzWTMbSSqn/g6eJksZXvJDwUMdJSxl6F/kPQvLcbjjEIySgMdwUC4+ew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=colorremedies.com; spf=pass smtp.mailfrom=colorremedies.com; dkim=pass (2048-bit key) header.d=colorremedies.com header.i=@colorremedies.com header.b=PSV8Ibxx; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=jU5SqWKg; arc=none smtp.client-ip=103.168.172.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=colorremedies.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=colorremedies.com
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 29E8A1400275;
+	Tue, 11 Nov 2025 11:56:58 -0500 (EST)
+Received: from phl-imap-01 ([10.202.2.91])
+  by phl-compute-01.internal (MEProxy); Tue, 11 Nov 2025 11:56:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	colorremedies.com; h=cc:content-transfer-encoding:content-type
+	:content-type:date:date:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to; s=fm1; t=1762880218; x=1762966618; bh=jQ1ckFQTuSMN6aUp1G48v
+	fcpdeK6dBa2SZ0GHuhXz0w=; b=PSV8IbxxaHg/tLIy5K492WGwsS4UfG+yUU9SZ
+	aAkrDoClNnaIHJqlnKLW4IUWL5rQWamSqIgPxvttCW06/ACBArGNlDwA7IdpCuIR
+	O691TUf3n4IeUYow4w+KK51eMoSKtIMax1030Jt2tv32uTfhEqfhYQL04ThI3o6s
+	2OXgtUiw8sR0xx2r5mbqF9IKIuUDYrI6OM0ZMX0fQZYBaJXYIIXNWHpq9SdZFfIm
+	JIgTpG7YrATph80kbOHcQfxbttwFt8qn5aVHuY3xnMJB6YxUWu4K4//zkeE2S4zA
+	FbSx8NRMqx19lY38Mv9f5MWMeE5h8e4/eq2xHG3bpLCTgfOnQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:content-transfer-encoding:content-type
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
+	:x-me-sender:x-sasl-enc; s=fm3; t=1762880218; x=1762966618; bh=j
+	Q1ckFQTuSMN6aUp1G48vfcpdeK6dBa2SZ0GHuhXz0w=; b=jU5SqWKgCPLSAPLyU
+	Ar9xe7qhCSDxKxR4ncXweWInU+IM3dP5K7QKl/5rJHYZDFcunBpVWcnTuqBSSAxl
+	76VQSkzNkxnIkE6kYF0reXL+bW6ij5yXs2ou29GFLjT5NF0YpCtN71Sna2oMZlm6
+	OinulrY/8hrFY9WNcSwU0beyizTSAOHtLlNCCMStXymrBzc/zkodZpp4JJHViry9
+	D8S0P9r6P9RI1jy0hioUCv4rWozIuCOfnNRPuqvW4ZClmrJKiVPgg8gBMLrqL3eE
+	iOGYcubPyfstgCxL2ULNW4I8DZ1iDWnX7kFOfWwQn0I/v87ohUHHnERgBVKn+l12
+	9ChpA==
+X-ME-Sender: <xms:2WoTafVAKmzyYLX4_VFT_WU6AzKtuqc0pfDya012V2dcoSYOicQPUg>
+    <xme:2WoTaSaaxDeDAiqX-bRpeF53QmZbatbCsolKPY8ZPZyrxsGg2vTlBg20N0D5GDp2e
+    gyOdrgdANAzp_4jPKqqtqPMF1Hbo2WExfItFBOHPdOrhlJPYcWtb_5s>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvtddujeefucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepofggfffhvffkjghfufgtgfesthejredtredttdenucfhrhhomhepfdevhhhrihhs
+    ucfouhhrphhhhidfuceolhhishhtshestgholhhorhhrvghmvgguihgvshdrtghomheqne
+    cuggftrfgrthhtvghrnhepteefudehkeehgeekhfdvgefhjedvveeuhfdtgfejgfevieev
+    iedvfedvhfevvdegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilh
+    hfrhhomheplhhishhtshestgholhhorhhrvghmvgguihgvshdrtghomhdpnhgspghrtghp
+    thhtohepgedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheplhhinhhugidqnhhvmh
+    gvsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepjhhpihhsiigt
+    iieslhhutghiughpihigvghlshdrtghomhdprhgtphhtthhopehlihhnuhigqdgsthhrfh
+    hssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhn
+    vghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:2WoTaRD6dkKSgOlwwkrZm7kTbaEX9r6_E3OZTz3vvX5NwipX_5pK9A>
+    <xmx:2WoTaWa_P7OKgEzH_uzzdysmclkLFG1_oN83sR5WnvOGQ5lMTzdS1w>
+    <xmx:2WoTaU61NCF3s_llmjzPtR3CetBNFMYdIX7yUanvPke8WcyJ3JbEyQ>
+    <xmx:2WoTaXZw3stzBqHV186x9ShRgjUOvKQMtR8GgHFVyDyRICByLhWOqA>
+    <xmx:2moTacpLo1jFIrmWbXFvD_-WOOTBnlrxMuZV4vLual0t0lDdhobl8H_M>
+Feedback-ID: i06494636:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id C071618C004E; Tue, 11 Nov 2025 11:56:57 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v1 11/20] KVM: x86: Refactor opcode table lookup in
- instruction emulation
-To: "Chang S. Bae" <chang.seok.bae@intel.com>, kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: seanjc@google.com, chao.gao@intel.com, zhao1.liu@intel.com
-References: <20251110180131.28264-1-chang.seok.bae@intel.com>
- <20251110180131.28264-12-chang.seok.bae@intel.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=pbonzini@redhat.com; keydata=
- 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
-In-Reply-To: <20251110180131.28264-12-chang.seok.bae@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+X-ThreadId: ABlTi-3C1DAF
+Date: Tue, 11 Nov 2025 11:56:37 -0500
+From: "Chris Murphy" <lists@colorremedies.com>
+To: "Justin Piszcz" <jpiszcz@lucidpixels.com>,
+ linux-kernel <linux-kernel@vger.kernel.org>, linux-nvme@lists.infradead.org,
+ "Btrfs BTRFS" <linux-btrfs@vger.kernel.org>
+Message-Id: <e5a2b8b2-d4e5-42ce-9324-5748c5e078d4@app.fastmail.com>
+In-Reply-To: 
+ <CAO9zADwMjaMp=TmgkBDHVFxdj5FVHtjTn_6qvFaTcAjpbaDSWg@mail.gmail.com>
+References: 
+ <CAO9zADwMjaMp=TmgkBDHVFxdj5FVHtjTn_6qvFaTcAjpbaDSWg@mail.gmail.com>
+Subject: Re: BTRFS error (device nvme1n1p2): bdev /dev/nvme0n1p2 errs: wr 37868055...
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-On 11/10/25 19:01, Chang S. Bae wrote:
-> Refactor opcode lookup to clearly separate handling of different byte
-> sequences and prefix types, in preparation for REX2 support.
-> 
-> The decoder begins with a one-byte opcode table by default and falls
-> through to other tables on escape bytes, but the logic is intertwined and
-> hard to extend.
-> 
-> REX2 introduces a dedicated bit in its payload byte to indicate which
-> opcode table to use. To accommodate this mapping bit, the existing lookup
-> path needs to be restructured.
-> 
-> No functional changes intended.
-> 
-> Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
-> ---
->   arch/x86/kvm/emulate.c | 19 +++++++++++--------
->   1 file changed, 11 insertions(+), 8 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/emulate.c b/arch/x86/kvm/emulate.c
-> index 763fbd139242..9c98843094a1 100644
-> --- a/arch/x86/kvm/emulate.c
-> +++ b/arch/x86/kvm/emulate.c
-> @@ -4773,7 +4773,6 @@ int x86_decode_insn(struct x86_emulate_ctxt *ctxt, void *insn, int insn_len, int
->   	ctxt->_eip = ctxt->eip;
->   	ctxt->fetch.ptr = ctxt->fetch.data;
->   	ctxt->fetch.end = ctxt->fetch.data + insn_len;
-> -	ctxt->opcode_len = 1;
->   	ctxt->intercept = x86_intercept_none;
->   	if (insn_len > 0)
->   		memcpy(ctxt->fetch.data, insn, insn_len);
-> @@ -4877,20 +4876,24 @@ int x86_decode_insn(struct x86_emulate_ctxt *ctxt, void *insn, int insn_len, int
->   	if (ctxt->rex.bits.w)
->   		ctxt->op_bytes = 8;
->   
-> -	/* Opcode byte(s). */
-> -	opcode = opcode_table[ctxt->b];
-> -	/* Two-byte opcode? */
-> +	/* Determine opcode byte(s): */
->   	if (ctxt->b == 0x0f) {
-> -		ctxt->opcode_len = 2;
-> +		/* Escape byte: start two-byte opcode sequence */
->   		ctxt->b = insn_fetch(u8, ctxt);
-> -		opcode = twobyte_table[ctxt->b];
-> -
-> -		/* 0F_38 opcode map */
->   		if (ctxt->b == 0x38) {
-> +			/* Three-byte opcode */
->   			ctxt->opcode_len = 3;
->   			ctxt->b = insn_fetch(u8, ctxt);
->   			opcode = opcode_map_0f_38[ctxt->b];
-> +		} else {
-> +			/* Two-byte opcode */
-> +			ctxt->opcode_len = 2;
-> +			opcode = twobyte_table[ctxt->b];
->   		}
-> +	} else {
-> +		/* Single-byte opcode */
-> +		ctxt->opcode_len = 1;
-> +		opcode = opcode_table[ctxt->b];
->   	}
->   	ctxt->d = opcode.flags;
->   
 
-This will also conflict with the VEX patches, overall I think all 10-12 
-patches can be merged in one.
 
-Paolo
+On Mon, Nov 10, 2025, at 10:05 AM, Justin Piszcz wrote:
+> Hello,
+>
+> I am using an ASUS Pro WS W680-ACE motherboard with 2 x Samsung SSD
+> 990 PRO with Heatsink 4TB NVME SSDs with BTRFS R1.  When a BTRFS scrub
+> was kicked off this morning, suddenly BTRFS was noting errors for one
+> of the drives.  The system became unusable and I had to power cycle
+> and re-run the scrub and everything is now OK.  My question is what
+> would cause this?
 
+We'd have to see a complete dmesg at the time the problem occurred. If the same device holds system log files, seems like a pretty good chance none of it made it to persistent storage.
+
+All we know is btrfs sees a bunch of dropped reads, writes, and flush requests. So it's not a btrfs error per se, though it affects btrfs. The issue is with the NVMe drive, its firmware, or a kernel nvme driver bug, or some combination of those.
+
+--
+Chris Murphy
 
