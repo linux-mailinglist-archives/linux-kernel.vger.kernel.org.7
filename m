@@ -1,60 +1,69 @@
-Return-Path: <linux-kernel+bounces-894680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91B47C4B95B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 07:02:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81444C4B967
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 07:03:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 878E23B79B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 06:02:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BB051893C2F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 06:03:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDE53212F98;
-	Tue, 11 Nov 2025 06:02:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Xprq7x27"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B721290DBB;
+	Tue, 11 Nov 2025 06:03:20 +0000 (UTC)
+Received: from localhost.localdomain (unknown [147.136.157.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BC9316EB42;
-	Tue, 11 Nov 2025 06:02:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FC75285071;
+	Tue, 11 Nov 2025 06:03:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=147.136.157.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762840936; cv=none; b=f8i03s6k2wIEHHaPjh9tv3bSyDfVoL9seAgMlj+RQOdIiXbzwHWlaVpMxA+JHlogWWtnhc7XoGitRsNe4/W1Ey2ApoigQA1S97heuuTLueD/DTi/1w9fnBKpclsxNCkvBKZufMOr3rMj4ie6SefUeeuTm3YkqhloDFfUBMbnvq8=
+	t=1762841000; cv=none; b=Iw5c0+QxCQXqDhevrUb7ZR1G0AwMFKQa2zHnUKi4MAB8VXnMob7PhaM/BOEYWtro0Ho3XDUZ6qAbURj/gowERy82vY1FW11L3yrF4dvkVrwCBRLOmLfXQ7jrnJzJkVlRwsh8nrl8Yu/uBcGQ88fIdLDc7xa1DoRGo/zdLMpufRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762840936; c=relaxed/simple;
-	bh=FdJwL9JSzwV4UQQXRcpSy17j+YswctMS26lIS9FG4jA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FahNCDmIcwkGAg2dT6fEjuiT5iFDgakdPbZ9w6W2EXtlTaXvjH7MgK4EXMlmcfcqmswObQmbOwQSh4rr674OWhElM9xIyyjKlTReWHM5mx/y5dOzRbJRE0J+gNUb5DmGkQnxM8PGzr9fDcJxW5M20b2JqZaDnx5z+8cIc7y3elo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Xprq7x27; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=9FvSxcETb6qmgterhtVgRWeeCLevVfNPooXzwD8lXTQ=; b=Xprq7x270sJOgieEKEkVQ+sgKa
-	FQr+nKFZvlGxFGbquPIjpeQQiQxu7kHBsK7svtF4ZZKH+JtRcDmF6XoupbilVC0trVcAfjyxMZAIM
-	f+l6oeoKlDQWqryeDDvUbaRYtd/fWkPtvcM07RT6VTA/jsFDHz/zNzoMx+Xp1bWphPv33maFW4Kii
-	IEOw826/4An5UPNkaaxFcdgTRKURamT5gUvdlbDIGKY6+QfQsC+to1NyL5Dy0wn4hYrIMpFPx/gt6
-	FD8q8/G72zCSA8+17iTlqyop8/HCv7IPJKWHfWh0QgqNs5I9rECTP4Z1a3RT2HSuGos8CklizTsd4
-	PjFUD9Ng==;
-Received: from [50.53.43.113] (helo=bombadil.infradead.org)
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vIhSH-00000006aaj-0cs8;
-	Tue, 11 Nov 2025 06:02:13 +0000
-From: Randy Dunlap <rdunlap@infradead.org>
-To: linux-kernel@vger.kernel.org
-Cc: Randy Dunlap <rdunlap@infradead.org>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	linux-efi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>
-Subject: [PATCH] efi: stmm: fix kernel-doc "bad line" warnings
-Date: Mon, 10 Nov 2025 22:02:12 -0800
-Message-ID: <20251111060212.1963608-1-rdunlap@infradead.org>
-X-Mailer: git-send-email 2.51.1
+	s=arc-20240116; t=1762841000; c=relaxed/simple;
+	bh=kx3Yne0nkJeAFxlO30iUDm78UqKm7f+vgcF0pslWmls=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ctopXfjydBkxU5Vcq6kRbEZmc2XTMNJ7awUU2BQjf6u0uwa36l0dpd0k3kBJvH1/AtBVvOp6meNzw0drIXHbuN+Cthrd33Ia76sf6gEKjTIlSKgUecBsjxEaQ3nkzyls51L8GAenevFqSh/nFIRSxd/N7AdWA6cO16C26P+Q14Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.dev; spf=none smtp.mailfrom=localhost.localdomain; arc=none smtp.client-ip=147.136.157.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=localhost.localdomain
+Received: by localhost.localdomain (Postfix, from userid 1007)
+	id 1EF678B2A0B; Tue, 11 Nov 2025 14:03:10 +0800 (+08)
+From: Jiayuan Chen <jiayuan.chen@linux.dev>
+To: mptcp@lists.linux.dev
+Cc: Jiayuan Chen <jiayuan.chen@linux.dev>,
+	Matthieu Baerts <matttbe@kernel.org>,
+	Mat Martineau <martineau@kernel.org>,
+	Geliang Tang <geliang@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Shuah Khan <shuah@kernel.org>,
+	Christoph Paasch <cpaasch@apple.com>,
+	Florian Westphal <fw@strlen.de>,
+	Peter Krystad <peter.krystad@linux.intel.com>,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	bpf@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: [PATCH net v5 0/3] mptcp: Fix conflicts between MPTCP and sockmap
+Date: Tue, 11 Nov 2025 14:02:49 +0800
+Message-ID: <20251111060307.194196-1-jiayuan.chen@linux.dev>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,51 +72,93 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add a beginning " *" to each line to avoid kernel-doc warnings:
+Overall, we encountered a warning [1] that can be triggered by running the
+selftest I provided.
 
-Warning: drivers/firmware/efi/stmm/mm_communication.h:34 bad line: 
-Warning: drivers/firmware/efi/stmm/mm_communication.h:113 bad line: 
-Warning: drivers/firmware/efi/stmm/mm_communication.h:130 bad line: 
+sockmap works by replacing sk_data_ready, recvmsg, sendmsg operations and
+implementing fast socket-level forwarding logic:
+1. Users can obtain file descriptors through userspace socket()/accept()
+   interfaces, then call BPF syscall to perform these replacements.
+2. Users can also use the bpf_sock_hash_update helper (in sockops programs)
+   to replace handlers when TCP connections enter ESTABLISHED state
+  (BPF_SOCK_OPS_PASSIVE_ESTABLISHED_CB/BPF_SOCK_OPS_ACTIVE_ESTABLISHED_CB)
 
-Fixes: c44b6be62e8d ("efi: Add tee-based EFI variable driver")
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+However, when combined with MPTCP, an issue arises: MPTCP creates subflow
+sk's and performs TCP handshakes, so the BPF program obtains subflow sk's
+and may incorrectly replace their sk_prot. We need to reject such
+operations. In patch 1, we set psock_update_sk_prot to NULL in the
+subflow's custom sk_prot.
+
+Additionally, if the server's listening socket has MPTCP enabled and the
+client's TCP also uses MPTCP, we should allow the combination of subflow
+and sockmap. This is because the latest Golang programs have enabled MPTCP
+for listening sockets by default [2]. For programs already using sockmap,
+upgrading Golang should not cause sockmap functionality to fail.
+
+Patch 2 prevents the WARNING from occurring.
+
+Despite these patches fixing stream corruption, users of sockmap must set
+GODEBUG=multipathtcp=0 to disable MPTCP until sockmap fully supports it.
+
+[1] truncated warning:
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 388 at net/mptcp/protocol.c:68 mptcp_stream_accept+0x34c/0x380
+Modules linked in:
+RIP: 0010:mptcp_stream_accept+0x34c/0x380
+RSP: 0018:ffffc90000cf3cf8 EFLAGS: 00010202
+PKRU: 55555554
+Call Trace:
+ <TASK>
+ do_accept+0xeb/0x190
+ ? __x64_sys_pselect6+0x61/0x80
+ ? _raw_spin_unlock+0x12/0x30
+ ? alloc_fd+0x11e/0x190
+ __sys_accept4+0x8c/0x100
+ __x64_sys_accept+0x1f/0x30
+ x64_sys_call+0x202f/0x20f0
+ do_syscall_64+0x72/0x9a0
+ ? switch_fpu_return+0x60/0xf0
+ ? irqentry_exit_to_user_mode+0xdb/0x1e0
+ ? irqentry_exit+0x3f/0x50
+ ? clear_bhb_loop+0x50/0xa0
+ ? clear_bhb_loop+0x50/0xa0
+ ? clear_bhb_loop+0x50/0xa0
+ entry_SYSCALL_64_after_hwframe+0x76/0x7e
+ </TASK>
+---[ end trace 0000000000000000 ]---
+
+[2]: https://go-review.googlesource.com/c/go/+/607715
+
 ---
-Cc: Ard Biesheuvel <ardb@kernel.org>
-Cc: linux-efi@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>
----
- drivers/firmware/efi/stmm/mm_communication.h |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+v4 -> v5: Dropped redundant selftest code, updated the Fixes tag, and
+          added a Reviewed-by tag.
+v3 -> v4: Addressed questions from Matthieu and Paolo, explained sockmap's
+          operational mechanism, and finalized the changes
+v2 -> v3: Adopted Jakub Sitnicki's suggestions - atomic retrieval of
+          sk_family is required
+v1 -> v2: Had initial discussion with Matthieu on sockmap and MPTCP
+          technical details
 
---- linux-next-20251107.orig/drivers/firmware/efi/stmm/mm_communication.h
-+++ linux-next-20251107/drivers/firmware/efi/stmm/mm_communication.h
-@@ -32,7 +32,7 @@
- 
- /**
-  * struct efi_mm_communicate_header - Header used for SMM variable communication
--
-+ *
-  * @header_guid:  header use for disambiguation of content
-  * @message_len:  length of the message. Does not include the size of the
-  *                header
-@@ -111,7 +111,7 @@ struct efi_mm_communicate_header {
- 
- /**
-  * struct smm_variable_communicate_header - Used for SMM variable communication
--
-+ *
-  * @function:     function to call in Smm.
-  * @ret_status:   return status
-  * @data:         payload
-@@ -128,7 +128,7 @@ struct smm_variable_communicate_header {
- /**
-  * struct smm_variable_access - Used to communicate with StMM by
-  *                              SetVariable and GetVariable.
--
-+ *
-  * @guid:         vendor GUID
-  * @data_size:    size of EFI variable data
-  * @name_size:    size of EFI name
+v4: https://lore.kernel.org/bpf/20251105113625.148900-1-jiayuan.chen@linux.dev/
+v3: https://lore.kernel.org/bpf/20251023125450.105859-1-jiayuan.chen@linux.dev/
+v2: https://lore.kernel.org/bpf/20251020060503.325369-1-jiayuan.chen@linux.dev/T/#t
+v1: https://lore.kernel.org/mptcp/a0a2b87119a06c5ffaa51427a0964a05534fe6f1@linux.dev/T/#t
+
+Jiayuan Chen (3):
+  mptcp: disallow MPTCP subflows from sockmap
+  net,mptcp: fix proto fallback detection with BPF
+  selftests/bpf: Add mptcp test with sockmap
+
+ net/mptcp/protocol.c                          |   6 +-
+ net/mptcp/subflow.c                           |   8 +
+ .../testing/selftests/bpf/prog_tests/mptcp.c  | 141 ++++++++++++++++++
+ .../selftests/bpf/progs/mptcp_sockmap.c       |  43 ++++++
+ 4 files changed, 196 insertions(+), 2 deletions(-)
+ create mode 100644 tools/testing/selftests/bpf/progs/mptcp_sockmap.c
+
+
+base-commit: 8c0726e861f3920bac958d76cf134b5a3aa14ce4
+-- 
+2.43.0
+
 
