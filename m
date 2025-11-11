@@ -1,166 +1,166 @@
-Return-Path: <linux-kernel+bounces-895221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EB38C4D46E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:04:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05927C4D477
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:04:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4A71A4FD8D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:57:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70A801884779
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:58:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C04292EBBA8;
-	Tue, 11 Nov 2025 10:52:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF31D350A16;
+	Tue, 11 Nov 2025 10:53:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UiunqGTe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="By9aR6tG"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07AD5355810;
-	Tue, 11 Nov 2025 10:52:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BF3034C838;
+	Tue, 11 Nov 2025 10:53:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762858363; cv=none; b=tsB7eqGEm/T4DOoo3Z0rjFmxymIOKDT9740YFzntoqxwuo+boBC8StRFdA+tVxDFTERNOdWXftOl7+F9M5eVYp2JQTcXfgw0coxaU63Ov0x4EyrUw+UF0dsgfAvzRlA1P4hnHEps9sjdqhxyRdLkUThsIMtQkTB9ndhqg2KLj0w=
+	t=1762858398; cv=none; b=uXJHx901h0O9OJ1PnLIA/hUDVHOdYnSyfTjaJ1OdbwFXCaXn7/UmYcIcWpBsarWiMoPZusms0Z7uAzCOJA99w9+UVrSficEqQpv+Y6jJzTLu4nGLluOARkMBPjNhvzNepf7oCN33RbtBoSV8lhiY2fKeP6QDkLirIoc1GDSVzwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762858363; c=relaxed/simple;
-	bh=cCTD0QyA+uggkV48vUm1Ubz+S0RgdiJM+7/WyAymWdc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UT2Cn9zi/phBOg7lH63qyv+inApqsc+oY9txe1dYAg19ySbtNt02glq7S+CckiWI6SmSXcKGaCWPf9KFNTo+sO23OM3ulbpnqwrWfvLMwMQuoBKEDa6NQfv0oD1u3Z3l0I2ZG+ZxYK/DqyC8AuFlALtCpVVv8xakp1ppzGJVSlc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UiunqGTe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AC98C4CEF7;
-	Tue, 11 Nov 2025 10:52:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762858362;
-	bh=cCTD0QyA+uggkV48vUm1Ubz+S0RgdiJM+7/WyAymWdc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=UiunqGTeK7ax2HSruGmUA2ckMrYezgj5CGhYF+Z+s/iiYi36SDWlRpBaVYjWrxlZS
-	 GpPdAsRvF0BglDIkxrFbCJuKmhQU6Ygj/NY0EFYH8DHlGZJBmmdjDKxUGAYPDPupjR
-	 /2bys/99YcNICpdjQwVITk6rPtHpBHe2J8frUZHn5BaBKzWXAcTID5KJwIwWAnD/Jd
-	 7Cb4TBUQ3Ceqg2ovdikN1d5VO+S5VQtUgGJTB7NhgAGNCzLebZw6AsvEfJrkuOjtve
-	 LE5l5VnFFcZfobF9oA8rRZ0rp8bB76eUildr3C2+L0M+SQFMAxBWUB0AzlCJUlBH1y
-	 +gRpYZED1x9Kw==
-Message-ID: <f372ea12-b8ed-4372-8657-96f09a6d4fec@kernel.org>
-Date: Tue, 11 Nov 2025 11:52:38 +0100
+	s=arc-20240116; t=1762858398; c=relaxed/simple;
+	bh=+0H9MF3ikGUBaNb3AMAF4EOw8zBuEXaVgvch8FjGW5Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hVTvVcdhNMGMYXEliCuVnrj/Tc+gYDPI+JrZZlq/nlCivyan0KOmMuG44yGQDIIs/yq9fnnEUVyNlhGDCME5bUo2uXTvP2miMWS2TJuwa153XLW1abNqpKuK+rpWg467eY3ti4YW+mg5zEs2hB94gZGwZpebO5bYy2OXtpfBrU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=By9aR6tG; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 40BB525ED6;
+	Tue, 11 Nov 2025 11:53:14 +0100 (CET)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id u99sWGufKARy; Tue, 11 Nov 2025 11:53:13 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1762858393; bh=+0H9MF3ikGUBaNb3AMAF4EOw8zBuEXaVgvch8FjGW5Y=;
+	h=From:To:Cc:Subject:Date;
+	b=By9aR6tGYYB/7Q9RH56U7I5cyXubG/GNsooStruG9eCKE/hdDSqMrsa/KUoY+GVQo
+	 DBHttS0JdqGIPxMiJtdJ+STYUUt4ahPKkDuXFbbjT3NsizbRkcQMUQrfMmo36YfhjC
+	 veaTzhggJHAJiGzGvHww3jb74VMyky9mvXmgTdI2CbBkY/nO8U3Z4yfVl1Vgsv3ejv
+	 9KZzeB22Nz+q/V/ALYcRhg7eqsMWit7XOgBf0ogYlPvUL2Z4bpDoNpVeneX++hHJYd
+	 1DeVE1WDsk58a+EZmOhqborsktzjkGSzjG3GhiV7iNzHGzuuTi84XejdLzon4iw5xw
+	 obF3veqG6m2SQ==
+From: Yao Zi <ziyao@disroot.org>
+To: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Yao Zi <ziyao@disroot.org>,
+	Frank <Frank.Sae@motor-comm.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	Choong Yong Liang <yong.liang.choong@linux.intel.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jisheng Zhang <jszhang@kernel.org>,
+	Furong Xu <0x1207@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: [PATCH net-next v2 0/3] Add DWMAC glue driver for Motorcomm YT6801
+Date: Tue, 11 Nov 2025 10:52:49 +0000
+Message-ID: <20251111105252.53487-1-ziyao@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC] dt-bindings: arm: keystone: add boot_* mailboxes
-To: Anshul Dalal <anshuld@ti.com>, Nishanth Menon <nm@ti.com>,
- Tero Kristo <kristo@kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Vignesh Raghavendra <vigneshr@ti.com>
-References: <20251111-k3_syscon_add_boot_mailboxes-v1-1-529a27f21076@ti.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251111-k3_syscon_add_boot_mailboxes-v1-1-529a27f21076@ti.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 11/11/2025 11:37, Anshul Dalal wrote:
-> The bootloader on K3 devices makes use of mailboxes as per the ROM spec
-> which might be different than one's available to the kernel (firmware
-> spec).
+This series adds glue driver for Motorcomm YT6801 PCIe ethernet
+controller, which is considered mostly compatible with DWMAC-4 IP by
+inspecting the register layout[1]. It integrates a Motorcomm YT8531S PHY
+(confirmed by reading PHY ID) and GMII is used to connect the PHY to
+MAC[2].
 
-Why is this RFC? You don't expect review?
+The initialization logic of the MAC is mostly based on previous upstream
+effort for the controller[3] and the Deepin-maintained downstream Linux
+driver[4] licensed under GPL-2.0 according to its SPDX headers. However,
+this series is a completely re-write of the previous patch series,
+utilizing the existing DWMAC4 driver and introducing a glue driver only.
 
-> 
-> Therefore, this patch adds the missing mailbox entries to the DT binding
-> to represent the mailboxes exposed by the hardware during boot for the
-> purpose of loading the firmware.
-> 
-> Signed-off-by: Anshul Dalal <anshuld@ti.com>
-> ---
->  Documentation/devicetree/bindings/arm/keystone/ti,sci.yaml | 10 +++++++++-
->  1 file changed, 9 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/keystone/ti,sci.yaml b/Documentation/devicetree/bindings/arm/keystone/ti,sci.yaml
-> index 25a2b42105e541cb3c8ad12a0dfec1af038fa907..b5f48647a0f09bb930f052ea0f84a78525c925eb 100644
-> --- a/Documentation/devicetree/bindings/arm/keystone/ti,sci.yaml
-> +++ b/Documentation/devicetree/bindings/arm/keystone/ti,sci.yaml
-> @@ -51,15 +51,23 @@ properties:
->      minItems: 1
->  
->    mbox-names:
-> +    minItems: 2
-> +    maxItems: 6
->      description: |
->        Specifies the mailboxes used to communicate with TI-SCI Controller
-> -      made available from TI-SCI controller.
-> +      made available from TI-SCI controller. All boot_* mailboxes are used by
-> +      the first stage bootloader to load firmware for the device.
+This series only aims to add basic networking functions for the
+controller, features like WoL, RSS and LED control are omitted for now.
+Testing is done on Loongson 3A5000 machine. Through a local GbE switch,
+it reaches 868Mbps (TX)/942Mbps (RX) on average,
 
-Description does not go to mbox-names, but to mboxes.
+## YT6801 TX
 
->      items:
->        - const: rx
->        - const: tx
-> +      - const: notify
-> +      - const: boot_rx
-> +      - const: boot_tx
-> +      - const: boot_notify
->  
->    mboxes:
->      minItems: 2
-> +    maxItems: 6
+Connecting to host 172.16.70.12, port 5201
+[  5] local 172.16.70.230 port 54806 connected to 172.16.70.12 port 5201
+[ ID] Interval           Transfer     Bitrate         Retr  Cwnd
+[  5]   0.00-1.00   sec   102 MBytes   855 Mbits/sec    0    342 KBytes
+[  5]   1.00-2.00   sec   104 MBytes   869 Mbits/sec    0    424 KBytes
+[  5]   2.00-3.00   sec   104 MBytes   868 Mbits/sec    0    474 KBytes
+[  5]   3.00-4.00   sec   103 MBytes   865 Mbits/sec    0    474 KBytes
+[  5]   4.00-5.00   sec   104 MBytes   869 Mbits/sec    0    474 KBytes
+[  5]   5.00-6.00   sec   104 MBytes   873 Mbits/sec    0    474 KBytes
+[  5]   6.00-7.00   sec   103 MBytes   863 Mbits/sec    0    474 KBytes
+[  5]   7.00-8.00   sec   104 MBytes   870 Mbits/sec    0    474 KBytes
+[  5]   8.00-9.00   sec   103 MBytes   863 Mbits/sec    0    474 KBytes
+[  5]   9.00-10.00  sec   105 MBytes   876 Mbits/sec    0    474 KBytes
 
-You need to list the items instead.
+## YT6801 RX
 
->  
->    ti,host-id:
->      $ref: /schemas/types.yaml#/definitions/uint32
+Connecting to host 172.16.70.230, port 5201
+[  5] local 172.16.70.12 port 59346 connected to 172.16.70.230 port 5201
+[ ID] Interval           Transfer     Bitrate         Retr  Cwnd
+[  5]   0.00-1.00   sec   113 MBytes   950 Mbits/sec    0    383 KBytes
+[  5]   1.00-2.00   sec   112 MBytes   941 Mbits/sec    0    406 KBytes
+[  5]   2.00-3.00   sec   113 MBytes   946 Mbits/sec    0    406 KBytes
+[  5]   3.00-4.00   sec   111 MBytes   933 Mbits/sec    0    406 KBytes
+[  5]   4.00-5.00   sec   112 MBytes   938 Mbits/sec    0    406 KBytes
+[  5]   5.00-6.00   sec   112 MBytes   943 Mbits/sec    0    426 KBytes
+[  5]   6.00-7.00   sec   112 MBytes   941 Mbits/sec    0    426 KBytes
+[  5]   7.00-8.00   sec   111 MBytes   932 Mbits/sec    0    426 KBytes
+[  5]   8.00-9.00   sec   113 MBytes   950 Mbits/sec    0    566 KBytes
+[  5]   9.00-10.00  sec   112 MBytes   938 Mbits/sec    0    566 KBytes
 
-You should update the example so it will be complete.
+This series depends on v4 of series "Unify platform suspend/resume
+routines for PCI DWMAC glue"[5] for a clean apply. It has been some time
+since I sent v1 of the series, I'm sorry for the delay. Many thanks for
+your time and review.
 
-Best regards,
-Krzysztof
+[1]: https://lore.kernel.org/all/Z_T6vv013jraCzSD@shell.armlinux.org.uk/
+[2]: https://lore.kernel.org/all/a48d76ac-db08-46d5-9528-f046a7b541dc@motor-comm.com/
+[3]: https://lore.kernel.org/all/a48d76ac-db08-46d5-9528-f046a7b541dc@motor-comm.com/
+[4]: https://github.com/deepin-community/kernel/tree/dc61248a0e21/drivers/net/ethernet/motorcomm/yt6801
+[5]: https://lore.kernel.org/netdev/20251111100727.15560-2-ziyao@disroot.org/
+
+Changed from v1
+- Drop (original) PATCH 1, add no vendor ID entry to linux/pci_ids.h
+- Use PHY_INTERFACE_MODE_GMII instead of PHY_INTERFACE_MODE_INTERNAL
+- Drop extra register read in motorcomm_efuse_read_byte()
+- Rename EPHY_RESET to EPHY_MDIO_PHY_RESET, add a comment to reflect its
+  function better
+- Use the newly-introduced generic PCI suspend/resume routines
+- Generate a random MAC address instead of failing to probe when no MAC
+  address is programmed in eFuse (seen on some OEM EVBs).
+- Collect Tested-by tags
+- Link to v1: https://lore.kernel.org/netdev/20251014164746.50696-2-ziyao@disroot.org/
+
+Yao Zi (3):
+  net: phy: motorcomm: Support YT8531S PHY in YT6801 Ethernet controller
+  net: stmmac: Add glue driver for Motorcomm YT6801 ethernet controller
+  MAINTAINERS: Assign myself as maintainer of Motorcomm DWMAC glue
+    driver
+
+ MAINTAINERS                                   |   6 +
+ drivers/net/ethernet/stmicro/stmmac/Kconfig   |   7 +
+ drivers/net/ethernet/stmicro/stmmac/Makefile  |   1 +
+ .../ethernet/stmicro/stmmac/dwmac-motorcomm.c | 379 ++++++++++++++++++
+ drivers/net/phy/motorcomm.c                   |   4 +
+ 5 files changed, 397 insertions(+)
+ create mode 100644 drivers/net/ethernet/stmicro/stmmac/dwmac-motorcomm.c
+
+-- 
+2.51.2
+
 
