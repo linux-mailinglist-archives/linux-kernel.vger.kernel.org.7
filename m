@@ -1,138 +1,177 @@
-Return-Path: <linux-kernel+bounces-896142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2CDAC4FBF4
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 21:53:59 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CA17C4FBE5
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 21:53:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A322E4E375A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 20:53:58 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8FA394E21AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 20:53:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AACEB3A8D7D;
-	Tue, 11 Nov 2025 20:53:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06A0C361DD6;
+	Tue, 11 Nov 2025 20:52:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U6C44jSO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="h9ZMZVW9"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08CF42E62A6;
-	Tue, 11 Nov 2025 20:53:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF9B62E62A6
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 20:52:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762894433; cv=none; b=uXFOXSuwupmT6MeZNEfMzaI4z52mcmR8MWVKXhcjYswINbo+vUbB2zknvDV/L48WjluYLLBVgvBihhFJZAPPDgu8M9zNiTizm/zqzILYxL7tDaBf2N6HVtS8el6JHonAfrMfSW4RM66PHJ4BK4UNgNYPj18f19tSPYwhjrNKFUM=
+	t=1762894378; cv=none; b=npBwM9DmX4QNlFakDzrBqMDHrifWaeOno2thnmu+2XzV7KF0OBuRWH5CexeHAskxdS9uotnEGVXxNhYryS8LEDwbR/G3kcAuGc8QLYySZ0nsf8ovNe0lDW8C8RxfSDwhGgcoqe4bvIfc0bkxsWTg3ly1io5Ald0X7eJkp0LGL0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762894433; c=relaxed/simple;
-	bh=0YQm/4JsHCkfx5AWtL5CtnIBWM8Fu5DkUObGIb6oFbg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sjEPvvqJu5+oXWJA18O67WLE7SeTkz69Ig8Sx6nvsdo0VYdmlUVARxacsZRK3RbTq93ZBehMTTp1bDwmZRlhxZwqv8Qo1ztyp+PTB4KfmKYd8BVNtnD1SG+yyA5pFSTCNHaI4jmscZEJXnxxvL17108BBe9wB2PuSPFqGg2mXeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U6C44jSO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63796C113D0;
-	Tue, 11 Nov 2025 20:53:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762894432;
-	bh=0YQm/4JsHCkfx5AWtL5CtnIBWM8Fu5DkUObGIb6oFbg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=U6C44jSOxsRg4D1pGq/TSlRiFFX4kh4hlzlHPjBzH7n8+TZlUKHCZ4p33IwD7A+eR
-	 kbSjvwmgeODqsyiQowJHQMIFYR89EdybL9q46M2UEp3w7/sKdh/lMcUV7XBVPK4Yoc
-	 qlqjCh+zNU0il/kcq99yQfMcdjlhdVLHGrTRxn5ZmTMUcj1epsH+8KJSc9rLvW1R0x
-	 3NyTtS58/5DPOCJ5/P4j+TrCltkbKO9ef2PC9wsico68uDtzrCITqayiGCXque/Edp
-	 eRnMdz9/u/WjeV8MZOVrS3/+rulxSsqtFEeLposTSyqxUB88aIMRmqUkNZvSJRwTB8
-	 6fGNKopUIvxfg==
-Date: Tue, 11 Nov 2025 12:52:12 -0800
-From: Eric Biggers <ebiggers@kernel.org>
-To: Md Sadre Alam <quic_mdalam@quicinc.com>
-Cc: adrian.hunter@intel.com, ulf.hansson@linaro.org,
-	linux-mmc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, quic_varada@quicinc.com
-Subject: Re: [PATCH v4] mmc: sdhci-msm: Enable ICE support for non-cmdq eMMC
- devices
-Message-ID: <20251111205212.GA245945@sol>
-References: <20251111104604.2494305-1-quic_mdalam@quicinc.com>
+	s=arc-20240116; t=1762894378; c=relaxed/simple;
+	bh=20fW040rhb53y55JF09naa+/dKCrt2hlbFDcMOkDPi0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HxaIxOpBsrAHgimY9LgQOI0WFbeWkNs67JddtKW9/DIUFf2boKPAgi/fPjB8IKyIhPMvxSpP+7Jmon11Mg2fwlC9Y9OxnA9ho8/SkWkaV8TQf5+3QR/k73x/k16ic5bTGfeDrOBAbgd25/opIXpxELbSO2Bh/9K4HgFD8zEny8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=h9ZMZVW9; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2959197b68eso5015ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 12:52:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762894376; x=1763499176; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lB20FEz15VtCdLa08O1lBT4Wo59H+loRPzGbfYEV9zE=;
+        b=h9ZMZVW9+kbzRIzRPp1EFrfz1QXoykzoS5GSxlT6a4X79wS99rBS5p5j8Ea5hynnHF
+         d9aFG0nXe1iidsjU7c/P5SIwSc44e0iN+6fbBSt3oCjVBmMaMwrTiGGxfzGM6QjXT+Y2
+         sZ9+T3vMJ+dSEVLg42mFwebAW53IyP/lrnUm8up00Q/4K5R5DG8xFlk5SUY4jcRUQuO6
+         TvkrcuvtIn/sRB6PkmvNEjseE8CeHVsXtLOhbwAaA+GCyUuhdPOOdQ0jE80w/CIuhNfC
+         B1w9TIIsG/WTuVhUDK+lpe/I5mZvdSHiOYzr4rembrfa1CfVxLuVs8cO8RQYROFLQoiO
+         9hoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762894376; x=1763499176;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=lB20FEz15VtCdLa08O1lBT4Wo59H+loRPzGbfYEV9zE=;
+        b=sUTv/S/vxwP7C7azDyumbLSpBRg3sHOvPyiy6Fn/DNRnh3S2i81spWeyp+9G1st9iA
+         jCBqGIRNvdwC6+LVUiwYcc1yxHXuUXOmOisiMoeDKPqzcIOp2A6mhTpoYpWAkwQs/W2y
+         UhAT3AbhLauuRBbAE/9IifJbjKjkINNS5y9e3XNs9cj3gr9m92RLmfcv0bAmTWEtxzH7
+         xioGO/jHApnu9o2ccRyAgfPxU5LgiP4b2c84BiFxh+aTgw7O6I1MHyd2dwF0iDN3X4dl
+         B7ANW0nQ1xcmEYr7yQH0+x81KTZA0/ySim/7ZoaffBcU5izJjqFxlkGPGH5QVA1XF0D5
+         faGw==
+X-Forwarded-Encrypted: i=1; AJvYcCVRupuxsiE68Q9slq9AStjlpGxsuJThJ/9nlPtVHB6lE0nkkVor3a+kKWBCD64B31MWXxx1h3AyjKxJKlo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwrQ0FpMjkTtYsiaWYM7ASmOCzuik0mZyAjl/n51UFIJzkrsNYn
+	nlqo+yzca349S9Vb/4KxWPaB6qeYk2mvpBSJGiCNzMe2k+loFHDqWz81R6G8LrnS7oT7tgv3Z2J
+	T9BQeavOmdbGNN1XkALTgz/uhKFdA5mU9rhfNQiJX
+X-Gm-Gg: ASbGncvPjWNtnEJGpqIikoXzkDGQSxUDUUvZ+BPtnkCaE35B0y4DS2yAPsWK9Xa+gJ5
+	iNXsvZUhl02r00D1jrVJoXtM1ZgweHWGiF+Mif7po+4f4K7zUnQj9jL8bGfBzwcFMPiZeRZZwk/
+	N7WoMDZPcCRrbJiuJErf06ZiQeo/Kc3xtWjJErFgMlHAo4sscy5gNxsGDh4wNoO0d5gTGz8aDgQ
+	zJS2Ow6OlLZprkFTfKG1iUP8QhNmF3orNBjCCerhraD1ykLcnqQAleQJ1FWLuWbY4W6ggKYG2+h
+	U7gPpL6GCr4aHJhNgLBDJ5P3QPNW4fmYl86G
+X-Google-Smtp-Source: AGHT+IGILWK3Sees47bVwnkZffzKZ3iRj1UHlgzsog5iRfACCsge4YpukstXKacIcop6wyt7zQWQtjZn/9WH5sg+Wl8=
+X-Received: by 2002:a17:902:dace:b0:294:f745:fe7b with SMTP id
+ d9443c01a7336-2984f836f94mr862465ad.6.1762894375985; Tue, 11 Nov 2025
+ 12:52:55 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251111104604.2494305-1-quic_mdalam@quicinc.com>
+References: <20251111040417.270945-1-irogers@google.com> <20251111040417.270945-7-irogers@google.com>
+ <aRLeyoCQVG46KKEv@google.com>
+In-Reply-To: <aRLeyoCQVG46KKEv@google.com>
+From: Ian Rogers <irogers@google.com>
+Date: Tue, 11 Nov 2025 12:52:45 -0800
+X-Gm-Features: AWmQ_blA26dOnpW1ob14QsjySoD5F96dB3XzLqSOWaLQfqP9XTUOou5f3uryFBk
+Message-ID: <CAP-5=fX8yMXKVbV8_TKaP0_jP3YC9AawgOtUsM+++JC9R0-VAQ@mail.gmail.com>
+Subject: Re: [PATCH v3 06/18] perf script: Change metric format to use json metrics
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
+	James Clark <james.clark@linaro.org>, Xu Yang <xu.yang_2@nxp.com>, 
+	Chun-Tse Shao <ctshao@google.com>, Thomas Richter <tmricht@linux.ibm.com>, 
+	Sumanth Korikkar <sumanthk@linux.ibm.com>, Collin Funk <collin.funk1@gmail.com>, 
+	Thomas Falcon <thomas.falcon@intel.com>, Howard Chu <howardchu95@gmail.com>, 
+	Dapeng Mi <dapeng1.mi@linux.intel.com>, Levi Yun <yeoreum.yun@arm.com>, 
+	Yang Li <yang.lee@linux.alibaba.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, Andi Kleen <ak@linux.intel.com>, 
+	Weilin Wang <weilin.wang@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 11, 2025 at 04:16:04PM +0530, Md Sadre Alam wrote:
-> Enable Inline Crypto Engine (ICE) support for eMMC devices that operate
-> without Command Queue Engine (CQE).This allows hardware-accelerated
-> encryption and decryption for standard (non-CMDQ) requests.
-> 
-> This patch:
-> - Adds ICE register definitions for non-CMDQ crypto configuration
-> - Implements a per-request crypto setup via sdhci_msm_ice_cfg()
-> - Hooks into the request path via mmc_host_ops.request
-> 
-> With this, non-CMDQ eMMC devices can benefit from inline encryption,
-> improving performance for encrypted I/O while maintaining compatibility
-> with existing CQE crypto support.
+On Mon, Nov 10, 2025 at 10:59=E2=80=AFPM Namhyung Kim <namhyung@kernel.org>=
+ wrote:
+>
+> On Mon, Nov 10, 2025 at 08:04:05PM -0800, Ian Rogers wrote:
+> > The metric format option isn't properly supported. This change
+> > improves that by making the sample events update the counts of an
+> > evsel, where the shadow metric code expects to read the values.  To
+> > support printing metrics, metrics need to be found. This is done on
+> > the first attempt to print a metric. Every metric is parsed and then
+> > the evsels in the metric's evlist compared to those in perf script
+> > using the perf_event_attr type and config. If the metric matches then
+> > it is added for printing. As an event in the perf script's evlist may
+> > have >1 metric id, or different leader for aggregation, the first
+> > metric matched will be displayed in those cases.
+> >
+> > An example use is:
+> > ```
+> > $ perf record -a -e '{instructions,cpu-cycles}:S' -a -- sleep 1
+> > $ perf script -F period,metric
+> > ...
+> >      867817
+> >          metric:    0.30  insn per cycle
+> >      125394
+> >          metric:    0.04  insn per cycle
+> >      313516
+> >          metric:    0.11  insn per cycle
+> >          metric:    1.00  insn per cycle
+> > ```
+> >
+> > Signed-off-by: Ian Rogers <irogers@google.com>
+> > ---
+> [SNIP]
+> > @@ -2150,23 +2296,72 @@ static void perf_sample__fprint_metric(struct p=
+erf_script *script,
+> >                        },
+> >               .force_header =3D false,
+> >       };
+> > -     struct evsel *ev2;
+> > -     u64 val;
+> > +     struct perf_counts_values *count, *old_count;
+> > +     int cpu_map_idx, thread_map_idx, aggr_idx;
+> > +     struct evsel *pos;
+> > +
+> > +     if (!init_metrics) {
+> > +             /* One time initialization of stat_config and metric data=
+. */
+> > +             struct script_find_metrics_args args =3D {
+> > +                     .evlist =3D evsel->evlist,
+> > +                     /* TODO: Determine system-wide based on evlist.. =
+*/
+> > +                     .system_wide =3D true,
+>
+> Probably you can check if the thread_map has an entry for -1.
 
-This really should explain that this patch actually applies only to host
-controllers that *do* support CQE.  Just they are using a card that
-doesn't support CQE or CQE was explicitly disabled.  Right?
+Thanks, done. In testing this I found that the CPU map index lookup
+can fail and so I added the same thread map index workaround of just
+aggregating into the first count.
 
-> +static void sdhci_msm_non_cqe_ice_init(struct sdhci_host *host)
-> +{
-> +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-> +	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
-> +	struct mmc_host *mmc = msm_host->mmc;
-> +	struct cqhci_host *cq_host = mmc->cqe_private;
-> +	u32 config;
-> +	u32 ice_cap;
-> +
-> +	config = sdhci_readl(host, HC_VENDOR_SPECIFIC_FUNC4);
-> +	config &= ~DISABLE_CRYPTO;
-> +	sdhci_writel(host, config, HC_VENDOR_SPECIFIC_FUNC4);
-> +	ice_cap = cqhci_readl(cq_host, CQHCI_CAP);
-> +	if (ice_cap & ICE_HCI_SUPPORT) {
-> +		config = cqhci_readl(cq_host, CQHCI_CFG);
-> +		config |= CRYPTO_GENERAL_ENABLE;
-> +		cqhci_writel(cq_host, config, CQHCI_CFG);
-> +	}
-> +	sdhci_msm_ice_enable(msm_host);
-> +}
-> +
-> +static int sdhci_msm_ice_cfg(struct sdhci_host *host, struct mmc_request *mrq)
-> +{
-> +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-> +	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
-> +	struct mmc_host *mmc = msm_host->mmc;
-> +	struct cqhci_host *cq_host = mmc->cqe_private;
-> +	unsigned int crypto_params = 0;
-> +	int key_index;
-> +	bool crypto_enable;
-> +	u64 dun = 0;
-> +
-> +	if (mrq->crypto_ctx) {
-> +		if (!msm_host->ice_init_done) {
-> +			sdhci_msm_non_cqe_ice_init(host);
-> +			msm_host->ice_init_done = true;
-> +		}
+> > +             };
+> > +             if (!stat_config.output)
+> > +                     stat_config.output =3D stdout;
+> > +
+> > +             if (!stat_config.aggr_map) {
+> > +                     /* TODO: currently only global aggregation is sup=
+ported. */
+> > +                     assert(stat_config.aggr_mode =3D=3D AGGR_GLOBAL);
+>
+> IIUC there's no option or config to set different aggregation mode for
+> perf script.
 
-This means sdhci_msm_ice_enable() is called only once per host
-controller.  It looks like the existing call to sdhci_msm_ice_enable()
-happens each time after the host controller is resumed.  So there seems
-to be an inconsistency there.  Which way is correct?
+Right. I don't think this patch needs to do everything given the prior
+behavior wasn't working. We can add an aggregation mode. It probably
+makes more sense to work on this in the context of perf stat report.
 
-> +	} else {
-> +		crypto_enable = false;
-> +		key_index = 0;
-> +		cqhci_writel(cq_host, crypto_params, NONCQ_CRYPTO_PARM);
-
-The values assigned to 'crypto_enable' and 'key_index' are never used.
-
-> +static void sdhci_msm_request(struct mmc_host *mmc, struct mmc_request *mrq)
-> +{
-
-Could you leave a comment here that notes this is used only for non-CQE
-requests and that crypto on CQE requests is handled elsewhere?
-
-- Eric
+Thanks,
+Ian
 
