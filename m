@@ -1,120 +1,172 @@
-Return-Path: <linux-kernel+bounces-895443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8093C4DBFF
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:34:53 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7348C4DC56
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:40:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A21C9189276F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:35:18 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 20CBC4F6960
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:35:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DBEA3A9C09;
-	Tue, 11 Nov 2025 12:34:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE1663AA1BA;
+	Tue, 11 Nov 2025 12:35:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bv5UA32i"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e955swYi"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8263D3A8D7E;
-	Tue, 11 Nov 2025 12:34:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D9883AA1AB;
+	Tue, 11 Nov 2025 12:35:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762864464; cv=none; b=XJr0vAIs63S4SxniErxXC0AG7SK4oExyJrxyxIY6SaGmxfgsJ4xxmk6gpI+frmwxGEqUvP+5TP6DHD7PXetRAfKHOCPZBIjUnxT7ip9vhlgy9XxySgIYt34frDWMC1GU4sZ4hbtJd/K06jMd7pZnn1b4965pPU+VHFdDN2oxTxY=
+	t=1762864502; cv=none; b=CWoWcbufpy4l6zRYIO4E4xwRYIJrNv/CfQiaIbmCUOeZbQgYzXhdD+ZeZUZlmxl2Zt2FLhlJcSAEb5JMai7o8/uaCDYVCGYcpooiETahgBEPE89Q6jeXvN5A0Q5ekhWcSTOlW3j52EWbPX4hXesEKioLM4MH7O05pRNfXF4IR5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762864464; c=relaxed/simple;
-	bh=SpMO8rNLi4WnoDG3Yi9fIqh/wGiw/wFnS+65N5FsU7Q=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=bp7pvzIOfLxKeAsJtNiajrvJQFNOg8qWLAmtnYU0rAhq6wXItRxnHSpz0SMevbt3kW7P8tZ+Z2drI8ASWhNAbQlCi9T6s0mAiJoRn6xt/2dWwx3QPB9D4PM+FhmEvin2lO+UQ1FwxzeLCxCBHzaIz8VIfWxLHDVe1heOq1OEFRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bv5UA32i; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id CF47AC19421;
-	Tue, 11 Nov 2025 12:34:23 +0000 (UTC)
+	s=arc-20240116; t=1762864502; c=relaxed/simple;
+	bh=P9kSJYPFha9VBnjvxXS0Y2nT53KXisQsU5JE1jGqHp0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=R0/qGOFIxkkHWTpZscK9pwDSxdbSM5/iFHo07gwbdGDtCR0BCtMxMegWJAvEasr7onEEWJK3KjN4N+O8ZHnoS5OyGUv0vBWIyl5PgbjSGJR5JikxH/zZk41W+fxCtegqrRVV9TKQR2kpCYJWPuq1QGACqMsvzJJtkqrqB5EFnQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e955swYi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93172C19425;
+	Tue, 11 Nov 2025 12:34:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762864463;
-	bh=SpMO8rNLi4WnoDG3Yi9fIqh/wGiw/wFnS+65N5FsU7Q=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=Bv5UA32ic1+AjfNmANErYBXXeWiQb91m1+Z8kdWhtxuQ4JyrwNHlXVY6k3YDmMU/g
-	 dNtxJYIZWStZVaqZB6hmdcH52dup0MFgNSqh3sOVI8P9Q9JIFKQniON3LfOxMnyGh7
-	 eG8UHSoNQDI+WzoXT6VfZQ1PpYhCmVfyt2E5ywyPLmPMb1PvdEHxyrWH+fJe3nHliC
-	 Zn4LJsLw7IRQ0t9SHrWyWMoPL01YMgaAEdkcFBL1mAxjmYv9pxKAZpYnCRQvtn13VE
-	 v2z+sFRBxmqnvr7zWkWo4FyQYNK4lJYDuYQ9uwU6Z+KQLIDWUv1D944lohfgU+Ep7c
-	 G0vngCkqpMYqQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C44D1CCFA1E;
-	Tue, 11 Nov 2025 12:34:23 +0000 (UTC)
-From: David Heidelberg via B4 Relay <devnull+david.ixit.cz@kernel.org>
-Date: Tue, 11 Nov 2025 13:34:23 +0100
-Subject: [PATCH 2/2] arm64: dts: qcom: xiaomi-beryllium: Add firmware-name
- qualifier to WiFi node
+	s=k20201202; t=1762864501;
+	bh=P9kSJYPFha9VBnjvxXS0Y2nT53KXisQsU5JE1jGqHp0=;
+	h=Date:Reply-To:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=e955swYiMNNYCa7VwRQlSOyFTTfCDSmSdI6bJgsUoU2yhrRFa1DdQu4RLICy+kYem
+	 sjrHJxwqY1uaIzocJnJFb5g0XGYJ4O9VQHKAHILWdLsFXBhZqgtuVDdw4WRqGAHOKB
+	 KOP4i2enGCjielpqLssCrG3oDgBHvsmlqYXEEe2jl7Ie1ThdZrmCbaH+5dJekpgWaP
+	 KKWTRYegj4o6a+C6hZoP5pfbfdk4JQKTFeVdwO02CEFo0a9WiiuzTozni/Oqzas7+p
+	 mHGLn4/d2ArGJ6y19mT0BBdwY3lTqIUlxKKM2iT04fITVrZGeTJEJyDtui736jtK98
+	 ZCobIORO1MfTA==
+Message-ID: <ded3ba14-d2d8-40be-8c0c-d41c4307347c@kernel.org>
+Date: Tue, 11 Nov 2025 13:34:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Reply-To: Daniel Gomez <da.gomez@kernel.org>
+Subject: Re: [PATCH v2 0/3] module: Add compile-time check for embedded NUL
+ characters
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Kees Cook <kees@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>,
+ Hans Verkuil <hverkuil+cisco@kernel.org>,
+ Malcolm Priestley <tvboxspy@gmail.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Hans Verkuil <hverkuil@kernel.org>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ Rusty Russell <rusty@rustcorp.com.au>, Petr Pavlu <petr.pavlu@suse.com>,
+ Sami Tolvanen <samitolvanen@google.com>, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, linux-modules@vger.kernel.org,
+ linux-hardening@vger.kernel.org
+References: <20251010030348.it.784-kees@kernel.org>
+ <3dd1a00d-08f7-4801-a9f7-d6db61c0e0f3@kernel.org>
+ <aRMhLEs9NpGexL7B@black.igk.intel.com>
+Content-Language: en-US
+From: Daniel Gomez <da.gomez@kernel.org>
+Organization: kernel.org
+In-Reply-To: <aRMhLEs9NpGexL7B@black.igk.intel.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251111-xiaomi-beryllium-firmware-v1-2-836b9c51ad86@ixit.cz>
-References: <20251111-xiaomi-beryllium-firmware-v1-0-836b9c51ad86@ixit.cz>
-In-Reply-To: <20251111-xiaomi-beryllium-firmware-v1-0-836b9c51ad86@ixit.cz>
-To: Jeff Johnson <jjohnson@kernel.org>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Joel Selvaraj <foss@joelselvaraj.com>
-Cc: linux-wireless@vger.kernel.org, ath10k@lists.infradead.org, 
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- devicetree@vger.kernel.org, phone-devel@vger.kernel.org, 
- David Heidelberg <david@ixit.cz>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=833; i=david@ixit.cz;
- h=from:subject:message-id;
- bh=PLFjs1iQMEpbEN9hhCiOw/xCedAmYh/qG3YE5NSot4M=;
- b=owEBbQKS/ZANAwAIAWACP8TTSSByAcsmYgBpEy1Okb3cPXX9Y89695Vx+MeosWDF6xW2cVz7g
- tOCsy9+c/2JAjMEAAEIAB0WIQTXegnP7twrvVOnBHRgAj/E00kgcgUCaRMtTgAKCRBgAj/E00kg
- chboD/9HkOnD7mNoc5x0SjLwvUIyjfP/XAyPuo2/fo+b0CgXiafeRyWnTQfk1HQIvAIpTHLaSaY
- cxSWPVxwlrYuaMN41qSBgsCA5GMp0CqGE7v4W/AU3jdEPe5dcueeVM++tDa9cJ1aQPmKG9QQR8d
- fg0pcCErXfEGhm8kXen5sMS2cDj0dd1EolMARMjpAfQW4P8Eq9CcjXq47NiDr6NNooZ2NEEVoMS
- qWLuB4EOYaNe35it/XMxsvrIZ73JIEavQOsvIr/MOZf0rIKhq1wRN+D3AIC0IcC/5VcCncOlTYm
- jy1qEeriVgzGlsaTHX+Mi7C2C1fGhjLy/LUj3yxldJ5c0nNMoQjSAUDOHkBgZ80t8Z5+7esNeAv
- p7OboW1JODXeyNpjQsIT3KcUEoRZaLQmeLkx1AA+FoAXTl1W1HW6htvZHorBr5/dy9aW9p64L3i
- AITU84iFvvuUJ4QrZkItmSdy6CyUfRDsJCezzrs2mgQLurZcCN+kddATl68a3feqzK7bt5tJaeE
- ObeaBHO7sulWi4kFy2keGxX8pzjY+R4shMHOMua/KF7820ouNQJpV0kxYdcYY6E074EVxgEZdrM
- DWeaMLM/4VTt+yd+GZiAHXgfHXRwSPZw0K4cfRocMljeo09chzWtM6cJ31EavNaBaRcUvC8fIAG
- 0N5XwRaWjFwru2Q==
-X-Developer-Key: i=david@ixit.cz; a=openpgp;
- fpr=D77A09CFEEDC2BBD53A7047460023FC4D3492072
-X-Endpoint-Received: by B4 Relay for david@ixit.cz/default with auth_id=355
-X-Original-From: David Heidelberg <david@ixit.cz>
-Reply-To: david@ixit.cz
 
-From: David Heidelberg <david@ixit.cz>
+On 11/11/2025 12.42, Andy Shevchenko wrote:
+> On Wed, Nov 05, 2025 at 02:03:59PM +0100, Daniel Gomez wrote:
+>> On 10/10/2025 05.06, Kees Cook wrote:
+>>>  v2:
+>>>  - use static_assert instead of _Static_assert
+>>>  - add Hans's Reviewed-by's
+>>>  v1: https://lore.kernel.org/lkml/20251008033844.work.801-kees@kernel.org/
+>>>
+>>> Hi!
+>>>
+>>> A long time ago we had an issue with embedded NUL bytes in MODULE_INFO
+>>> strings[1]. While this stands out pretty strongly when you look at the
+>>> code, and we can't do anything about a binary module that just plain lies,
+>>> we never actually implemented the trivial compile-time check needed to
+>>> detect it.
+>>>
+>>> Add this check (and fix 2 instances of needless trailing semicolons that
+>>> this change exposed).
+>>>
+>>> Note that these patches were produced as part of another LLM exercise.
+>>> This time I wanted to try "what happens if I ask an LLM to go read
+>>> a specific LWN article and write a patch based on a discussion?" It
+>>> pretty effortlessly chose and implemented a suggested solution, tested
+>>> the change, and fixed new build warnings in the process.
+>>>
+>>> Since this was a relatively short session, here's an overview of the
+>>> prompts involved as I guided it through a clean change and tried to see
+>>> how it would reason about static_assert vs _Static_assert. (It wanted
+>>> to use what was most common, not what was the current style -- we may
+>>> want to update the comment above the static_assert macro to suggest
+>>> using _Static_assert directly these days...)
+>>>
+>>>   I want to fix a weakness in the module info strings. Read about it
+>>>   here: https://lwn.net/Articles/82305/
+>>>
+>>>   Since it's only "info" that we need to check, can you reduce the checks
+>>>   to just that instead of all the other stuff?
+>>>
+>>>   I think the change to the comment is redundent, and that should be
+>>>   in a commit log instead. Let's just keep the change to the static assert.
+>>>
+>>>   Is "static_assert" the idiomatic way to use a static assert in this
+>>>   code base? I've seen _Static_assert used sometimes.
+>>>
+>>>   What's the difference between the two?
+>>>
+>>>   Does Linux use C11 by default now?
+>>>
+>>>   Then let's not use the wrapper any more.
+>>>
+>>>   Do an "allmodconfig all -s" build to verify this works for all modules
+>>>   in the kernel.
+>>>
+>>>
+>>> Thanks!
+>>>
+>>> -Kees
+>>>
+>>> [1] https://lwn.net/Articles/82305/
+>>>
+>>> Kees Cook (3):
+>>>   media: dvb-usb-v2: lmedm04: Fix firmware macro definitions
+>>>   media: radio: si470x: Fix DRIVER_AUTHOR macro definition
+>>>   module: Add compile-time check for embedded NUL characters
+>>>
+>>>  include/linux/moduleparam.h                   |  3 +++
+>>>  drivers/media/radio/si470x/radio-si470x-i2c.c |  2 +-
+>>>  drivers/media/usb/dvb-usb-v2/lmedm04.c        | 12 ++++++------
+>>>  3 files changed, 10 insertions(+), 7 deletions(-)
+>>>
+>>
+>> Reviewed-by: Daniel Gomez <da.gomez@samsung.com>
+>>
+>> I have also tested a build of v6.18-rc3 + patches using allmodconfig:
+>>
+>> Tested-by: Daniel Gomez <da.gomez@samsung.com>
+> 
+> Folks, are you aware that this change blown up the sparse?
+> Now there is a "bad constant expression" to each MODULE_*() macro line.
 
-Add firmware-name property to the WiFi device tree node to specify
-board-specific lookup directory.
+Thanks for the heads up.
 
-Signed-off-by: David Heidelberg <david@ixit.cz>
----
- arch/arm64/boot/dts/qcom/sdm845-xiaomi-beryllium-common.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+I can see this thread:
 
-diff --git a/arch/arm64/boot/dts/qcom/sdm845-xiaomi-beryllium-common.dtsi b/arch/arm64/boot/dts/qcom/sdm845-xiaomi-beryllium-common.dtsi
-index 785006a15e979..9b0b0446f4ad3 100644
---- a/arch/arm64/boot/dts/qcom/sdm845-xiaomi-beryllium-common.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sdm845-xiaomi-beryllium-common.dtsi
-@@ -631,6 +631,8 @@ &wcd9340 {
- &wifi {
- 	status = "okay";
- 
-+	firmware-name "sdm845/Xiaomi/beryllium";
-+
- 	vdd-0.8-cx-mx-supply = <&vreg_l5a_0p8>;
- 	vdd-1.8-xo-supply = <&vreg_l7a_1p8>;
- 	vdd-1.3-rfa-supply = <&vreg_l17a_1p3>;
+https://lore.kernel.org/all/D1CBCBE2-3A54-410A-B15C-F1C621F9F56B@kernel.org/#t
 
--- 
-2.51.0
+And this:
 
+https://lore.kernel.org/linux-sparse/CACePvbVG2KrGQq4cNKV=wbO5h=jp3M0RO1SdfX8kV4OukjPG8A@mail.gmail.com/T/#t
 
+> 
+> Nice that Uwe is in the Cc list, so IIRC he is Debian maintainer for sparse
+> and perhaps has an influence to it to some extent.
+> 
+
+Would it be better approach to postpone patch 3 from Kent until sparse is fixed?
 
