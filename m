@@ -1,116 +1,94 @@
-Return-Path: <linux-kernel+bounces-895804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBCACC4EF4D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:14:40 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79B97C4EFEF
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:19:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0EAB18C3BE4
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:14:58 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 20B1534CF55
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:19:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5435C36CDE0;
-	Tue, 11 Nov 2025 16:14:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8012336C59A;
+	Tue, 11 Nov 2025 16:19:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f5wcdImD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h0wvRDQJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 993B633556E;
-	Tue, 11 Nov 2025 16:14:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7549369991;
+	Tue, 11 Nov 2025 16:19:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762877651; cv=none; b=YlufL1VKa5IySp4e6uWas4X95279/Uf0zjPvGdhydhlSAfIrZ7pTWwfpDMVsHPWUBucnG5QMy1wAoGHGLT2tegjMVmUlyVfDmi02NZNeLbFvJdECp3jWrRYXgXRT0b4E/JPcKLXSgi3DNVOH3Zg66jLijHZTPxLlpcOJkjy9CAI=
+	t=1762877970; cv=none; b=hTUnuQHY4ELhHZ6p7IsWul2c5xwzRzPA87ba/gveFlGK78atthGtzt5Z1EbjnorQKQaOsOh5M0XDdA/MFsNUsCr50CxpyYZyS62rdebPt8y6nKlKQFPKPdnL8wscNO1b9cPLnm720y4VC1Rq5LhFhO35kxu1vh9pklDFi8n1tCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762877651; c=relaxed/simple;
-	bh=rKuraMxsrbsZcrLfC4Ao1ior3+JXNK/ji1oPIQxDgOg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a+X1EPyZvq+hW4t5oCTYSvgy0WbofI160WCVZvE6T56l3YcKcJ52RJdRvKTxsxxKayIVbK/Q9okP2GXce3WqgjbB/pEkq/UT7XQPJfv4bTeklWbAEfG2sq+aQAakh+EZgYx5P4V42l0Dn3nHTmW9ws75si/Zi0DCDnz2FFYCIuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f5wcdImD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA057C19421;
-	Tue, 11 Nov 2025 16:14:09 +0000 (UTC)
+	s=arc-20240116; t=1762877970; c=relaxed/simple;
+	bh=HIzM0iyT3dDoXIUZ+C66BgDp43e3Tu3Z+4PxsInPwrQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KGF9VxH+BezqFc1C07HdMRumMKjV2JFi0QB6/Sxbykf4ouvwIVUyaqV1OyukKanqRt+BLg+SKGlqO3XhQ2gKW9DTik0uYhV2He92//G482LUyhwvRRMVIu16rHH9fFPmFEaaR894g4wNxZsYxfHqXyNVo7UsTNsGWxZD90TEyLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h0wvRDQJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F763C4CEFB;
+	Tue, 11 Nov 2025 16:19:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762877651;
-	bh=rKuraMxsrbsZcrLfC4Ao1ior3+JXNK/ji1oPIQxDgOg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=f5wcdImDYU2/nFXMnUcIDAb5XS41qFc+EwBQw8sqTJkUI72wjGzzRCdD+4xu0qs/n
-	 BjOHxDYmPWu1zT/ZzqxMd7s7NiaFnhAxLNBVMbUP9CKnk+RnIZcD1ZRzJQKQS2G9lW
-	 57F+ztXjUfq+hmEGQysuPXz1GJ5xe26dLmO9PXcIiZoB/PxFMjcoOobg075R8lTT/x
-	 HhIFtdxhYmqRsbm5fdO/4nDYU4daaQ2kAOBGUexm/PTmzT/+ZmzEBR7YoGrVQRgWjn
-	 CLL7hCCxwiLxTuGO3LoTl5JAU2zV+7kep85Zd1iIdAl+xdy7i48h7OZhe7vxfrCGTP
-	 P1TM6fH7MBD+w==
-Date: Tue, 11 Nov 2025 10:18:22 -0600
-From: Bjorn Andersson <andersson@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, 
-	Riccardo Mereu <r.mereu.kernel@arduino.cc>, konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, broonie@kernel.org, linux@roeck-us.net, 
-	Jonathan.Cameron@huawei.com, wenswang@yeah.net, naresh.solanki@9elements.com, 
-	michal.simek@amd.com, nuno.sa@analog.com, chou.cosmo@gmail.com, 
-	grantpeltier93@gmail.com, eajames@linux.ibm.com, farouk.bouabid@cherry.de, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-spi@vger.kernel.org, mm.facchin@arduino.cc, Riccardo Mereu <r.mereu@arduino.cc>
-Subject: Re: [PATCH 3/5] dt-binding: arm: qcom: add arduino unoq codename
-Message-ID: <jjzeljmhwaem4uiz76ec3wlijtej6xz6qzxxr6v22g2ioy6mqg@rdm4ibk5puld>
-References: <20251106153119.266840-1-r.mereu@arduino.cc>
- <20251106153119.266840-4-r.mereu@arduino.cc>
- <2c67a82a-3a4a-44e5-8c82-42ec6320d5b5@kernel.org>
- <fuz3se3hwtoqlgcifo35qozda5xy2gneatm64f5nsq6n75jteo@vqbu7naldfgq>
+	s=k20201202; t=1762877970;
+	bh=HIzM0iyT3dDoXIUZ+C66BgDp43e3Tu3Z+4PxsInPwrQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=h0wvRDQJj5f5uCXvKhn5dc8STHHQH7StOpxysg6KHMApZLHAkXiz+g41StgoUiu7L
+	 iQolui75WDT3w/Vw3J5DdZKOhVbnmOBk0bxL3q/UC3Z0g+ndM0Nmis6J9u9FuPnuh7
+	 F4THWpnxR1SBp/EiAOQ75+46DxaWcoedbYxpN/R9UaSxfQkCAvB1iVJbBtrCvsK88/
+	 12vqrMa03K5Pm5tNC5+SJ7DZ/Fb+X4hOKiDxqHWA6JVIBa/eT1HlSlIynLYo3zBENS
+	 AG0SVd+au4GKdH+xm7vSx8XelnvDUyneSBfqVra5JRsx4+t/HBoqOxnbvrtdE/c/k1
+	 aGNaw66gcx5Zw==
+From: Mike Rapoport <rppt@kernel.org>
+To: Akinobu Mita <akinobu.mita@gmail.com>
+Cc: Mike Rapoport <rppt@kernel.org>,
+	linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	akpm@linux-foundation.org,
+	dan.j.williams@intel.com
+Subject: Re: [PATCH v2] memblock: fix memblock_estimated_nr_free_pages() for soft-reserved memory
+Date: Tue, 11 Nov 2025 18:19:13 +0200
+Message-ID: <176287786383.1435827.13312587708182229748.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20251111010010.7800-1-akinobu.mita@gmail.com>
+References: <aQo1VjjQw1OZG8nY@kernel.org> <20251111010010.7800-1-akinobu.mita@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <fuz3se3hwtoqlgcifo35qozda5xy2gneatm64f5nsq6n75jteo@vqbu7naldfgq>
 
-On Tue, Nov 11, 2025 at 02:27:03PM +0200, Dmitry Baryshkov wrote:
-> On Fri, Nov 07, 2025 at 08:13:48AM +0100, Krzysztof Kozlowski wrote:
-> > On 06/11/2025 16:31, Riccardo Mereu wrote:
-> > > From: Riccardo Mereu <r.mereu.kernel@arduino.cc>
-> > > 
-> > > Document Arduino UnoQ. Arduino UnoQ is a single-board computer
-> > 
-> > compatible says imola, not unoq.
+From: Mike Rapoport (Microsoft) <rppt@kernel.org>
+
+On Tue, 11 Nov 2025 10:00:10 +0900, Akinobu Mita wrote:
+> memblock_estimated_nr_free_pages() returns the difference between the total
+> size of the "memory" memblock type and the "reserved" memblock type.
 > 
-> And compatibles for various ChromeBooks also use codenames. I think it's
-> not the first time the vendor uses a codename instead of the marketing
-> name inside the compat string.
+> The "soft-reserved" memory regions are added to the "reserved" memblock
+> type, but not to the "memory" memblock type. Therefore,
+> memblock_estimated_nr_free_pages() may return a smaller value than
+> expected, or if it underflows, an extremely large value.
 > 
+> [...]
 
-I appreciate the use of the codename, but both subject and commit
-message is talking about "UnoQ" only and then "imola" shows up only in
-the patch.
+Applied to fixes branch of memblock.git tree, thanks!
 
-@Riccardo, please introduce "imola" in the commit message, so we know
-what it is.
+[1/1] memblock: fix memblock_estimated_nr_free_pages() for soft-reserved memory
+      commit: c42af83c59b65d01c0f7a074e450bbbb43b22f0d
 
-Regards,
-Bjorn
+tree: https://git.kernel.org/pub/scm/linux/kernel/git/rppt/memblock
+branch: fixes
 
-> > 
-> > > combining Qualcomm Dragonwing™ QRB2210 microprocessor with
-> > > STMicroelectronics STM32U585 microcontroller.
-> > > 
-> > > Signed-off-by: Riccardo Mereu <r.mereu@arduino.cc>
-> > > ---
-> > 
-> > 
-> > Please use subject prefixes matching the subsystem. You can get them for
-> > example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
-> > your patch is touching. For bindings, the preferred subjects are
-> > explained here:
-> > https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
-> > 
-> > 
-> > Best regards,
-> > Krzysztof
-> 
-> -- 
-> With best wishes
-> Dmitry
+In the future please start a new thread when sending the next version of a
+patch.
+
+--
+Sincerely yours,
+Mike.
+
 
