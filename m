@@ -1,122 +1,197 @@
-Return-Path: <linux-kernel+bounces-895230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86303C4D4A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:06:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 27BD2C4D4B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:07:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EE0C3B3EC2
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:00:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 993EF420057
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:00:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FCFB3570BE;
-	Tue, 11 Nov 2025 10:55:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52DEA357738;
+	Tue, 11 Nov 2025 10:55:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="C5eRZQTa"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ou6eijKQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 767AC34EEE8;
-	Tue, 11 Nov 2025 10:55:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D3F1357725;
+	Tue, 11 Nov 2025 10:55:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762858543; cv=none; b=srf1J2eiJs95LuKRvHO5VNxngfG+Dj0Oo97sgeI/fv7aXQDQO+lUfzY2qGBUyPUuQEIajdd3CaEoV/AN6YDDQApry6r/oS9+/wC5BMiKrphrTHA9ZE4HvEl0iuYKp/+REqaDJFVV3umvLwBGKkdMkYWbL/MNTrNAUUnUty0228k=
+	t=1762858546; cv=none; b=h4bGZ7j14dp781McoN6IqQrf5nUlDhg2FY7ccREPp2k2FcFs+ErwbnH/MyZbxTe3pH523AslwaeIzg5kV7rjAI+3818PBNc704l+VYk4L94A7rGlTszcfXSt3o1PCS1dlS5aXJVQQl7syRk8XlrJ67++S50GFM+Vjo4aGrtzncc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762858543; c=relaxed/simple;
-	bh=JIiXBQ+HfWnHPFXLFi4PNYjKN8uoAMBbRfj6haUpS3Q=;
+	s=arc-20240116; t=1762858546; c=relaxed/simple;
+	bh=H0X4UWPxfP0HtpuLKbuoNGl0NODn/gG9NPCPa1XRwas=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mtLNH6EbuwJqERnNMzxdgExVRjSqNbgbnDI49NYcNVqCBth7cTMyrYhumFJ2B8hbxNoYamwh4aewjXK6+EzhB7s4cKmsERGaR65eMUJSfh6lMZxRa1NYA+aVeotOqFniT2K8Edx1UtwOKF5uQEqChBwEa4h2dCUSxSS2FvnHeng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=C5eRZQTa; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=xnRd3UIwh+9qZhSCRQpcmxah3gyiZrVdc2k35mDPlXQ=; b=C5eRZQTaySI5US1pSO5wDw2NYR
-	32s1bpXC8pyo8HHTfDBR/mteI4rLGoP6FrtIJK+Dw8jnhwFgyVC9oyVrEFE1yMIVClqRGeN+3nizJ
-	WLKEsvrvkrg6C+M63UXfcMO8zQXCcwap4v2IJN3v5WGTrNZE1Qpwbqv5Yv+lJEjszB2z3VdctDVP0
-	hxRTPDmSyWwfXATdKCZf8dz1qVOGdWa0Sck3qJAU2QvcUMMU9Zl/KjKCNK3Ew3aZos7B9IgHSdibz
-	5wULk7flcbk98o+9ZkgyvojJOLvB3K1q7tv4NxVPXm1NHcxvv+zQux2aRr0Nk/PMVQbidIRHiduKy
-	7qOTS3nA==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vIlAN-0000000CyGv-3VTa;
-	Tue, 11 Nov 2025 10:00:00 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 6527A300328; Tue, 11 Nov 2025 11:55:26 +0100 (CET)
-Date: Tue, 11 Nov 2025 11:55:26 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: James Clark <james.clark@linaro.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>, Leo Yan <leo.yan@arm.com>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev
-Subject: Re: [PATCH v9 2/5] perf: arm_spe: Add support for filtering on data
- source
-Message-ID: <20251111105526.GI278048@noisy.programming.kicks-ass.net>
-References: <20251029-james-perf-feat_spe_eft-v9-0-d22536b9cf94@linaro.org>
- <20251029-james-perf-feat_spe_eft-v9-2-d22536b9cf94@linaro.org>
- <20251110154827.GA278048@noisy.programming.kicks-ass.net>
- <8078e440-e97c-425c-b046-987b642640f7@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=lwFPEcDyfrWg9YmBhVAaXiwvs9SyS96aIw9AVgt7N9TypjUvZM1gzCQysQFQ/yizaTsozknGRQNDF2IO/DxfrtGWsp/tSZg0593P6Pq3agc3hUd+zrbRAapV/XSY1MYcWV2AA7Nm4xn/p6aW/xuAF2bNvqR0bi9dMTJoUIDP3Kc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ou6eijKQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D90ABC116D0;
+	Tue, 11 Nov 2025 10:55:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762858546;
+	bh=H0X4UWPxfP0HtpuLKbuoNGl0NODn/gG9NPCPa1XRwas=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ou6eijKQUCD6/ezjdxy05/4K9NcjBNoq7BVw6xpcAA1Ja2S7Ia9M9H4Xj4m7DW4w8
+	 UsQqUAYcAr0lLEvMc1p69vfRPLGQvdzG7Zi6ewHNwSuumvsVattqCD3y7UKvvN/WQy
+	 wmt4QjSRAKFkyL5wYf+evSyj+MDQiusk1oIrJfNU9NIPb1szFKWk4O63MaL3htZrGB
+	 ql/HItjVNrX5Vnghj8suD+/WICqQhBKGzxE3bQPjq3FZnR1IbSGo04HRb7pS0yHswE
+	 g+n+4fKjlRq7+PnZtEVtwTKFM6JdHhhjhoaUy8lszG01TQ9/x3EsqKMW+RQSW5xb2W
+	 5oByRKVsFwULA==
+Date: Tue, 11 Nov 2025 11:55:42 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Ian Kent <raven@themaw.net>, 
+	Kernel Mailing List <linux-kernel@vger.kernel.org>, autofs mailing list <autofs@vger.kernel.org>, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] autofs: dont trigger mount if it cant succeed
+Message-ID: <20251111-ortseinfahrt-lithium-21455428ab30@brauner>
+References: <20251111060439.19593-1-raven@themaw.net>
+ <20251111060439.19593-3-raven@themaw.net>
+ <20251111-zunahm-endeffekt-c8fb3f90a365@brauner>
+ <20251111102435.GW2441659@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <8078e440-e97c-425c-b046-987b642640f7@linaro.org>
+In-Reply-To: <20251111102435.GW2441659@ZenIV>
 
-On Tue, Nov 11, 2025 at 10:51:56AM +0000, James Clark wrote:
+On Tue, Nov 11, 2025 at 10:24:35AM +0000, Al Viro wrote:
+> On Tue, Nov 11, 2025 at 11:19:59AM +0100, Christian Brauner wrote:
 > 
-> 
-> On 10/11/2025 3:48 pm, Peter Zijlstra wrote:
-> > On Wed, Oct 29, 2025 at 03:46:02PM +0000, James Clark wrote:
-> > > SPE_FEAT_FDS adds the ability to filter on the data source of packets.
-> > > Like the other existing filters, enable filtering with PMSFCR_EL1.FDS
-> > > when any of the filter bits are set.
-> > > 
-> > > Each bit maps to data sources 0-63 described by bits[0:5] in the data
-> > > source packet (although the full range of data source is 16 bits so
-> > > higher value data sources can't be filtered on). The filter is an OR of
-> > > all the bits, so for example clearing bits 0 and 3 only includes packets
-> > > from data sources 0 OR 3.
-> > > 
-> > > Invert the filter given by userspace so that the default value of 0 is
-> > > equivalent to including all values (no filtering). This allows us to
-> > > skip adding a new format bit to enable filtering and still support
-> > > excluding all data sources which would have been a filter value of 0 if
-> > > not for the inversion.
+> > > +	sbi->owner = current->nsproxy->mnt_ns;
 > > 
-> > So from that I'm reading the config4 field will only have like 16 bits,
+> > ns_ref_get()
+> > Can be called directly on the mount namespace.
 > 
-> The _data source_ is 16 bits, but the _data source filter_ is 64 bits.
+> ... and would leak all mounts in the mount tree, unless I'm missing
+> something subtle.
 
-Ah!
+Right, I thought you actually wanted to pin it.
+Anyway, you could take a passive reference but I think that's nonsense
+as well. The following should do it:
 
-> It might be clearer if I add a few more words to differentiate "data source"
-> and "filter":
-> 
->   Each bit of the 64 bit filter maps to data sources 0-63 described by
->   bits[0:5] in the data source packet (although the full range of data
->   source is 16 bits so higher value data sources can't be filtered on).
->   The filter is an OR of all the filter bits, so for example clearing
->   filter bits 0 and 3 only includes packets from data sources 0 OR 3.
+UNTESTED, UNCOMPILED
 
-Yeah, that might've helped :-)
+---
+ fs/autofs/autofs_i.h |  4 ++++
+ fs/autofs/inode.c    |  3 +++
+ fs/autofs/root.c     | 10 ++++++++++
+ fs/namespace.c       |  6 ++++++
+ include/linux/fs.h   |  1 +
+ 5 files changed, 24 insertions(+)
+
+diff --git a/fs/autofs/autofs_i.h b/fs/autofs/autofs_i.h
+index 23cea74f9933..2b9d2300d351 100644
+--- a/fs/autofs/autofs_i.h
++++ b/fs/autofs/autofs_i.h
+@@ -16,6 +16,7 @@
+ #include <linux/wait.h>
+ #include <linux/sched.h>
+ #include <linux/sched/signal.h>
++#include <uapi/linux/mount.h>
+ #include <linux/mount.h>
+ #include <linux/namei.h>
+ #include <linux/uaccess.h>
+@@ -109,11 +110,14 @@ struct autofs_wait_queue {
+ #define AUTOFS_SBI_STRICTEXPIRE 0x0002
+ #define AUTOFS_SBI_IGNORE	0x0004
+ 
+ struct autofs_sb_info {
+ 	u32 magic;
+ 	int pipefd;
+ 	struct file *pipe;
+ 	struct pid *oz_pgrp;
++	u64 mnt_ns_id;
+ 	int version;
+ 	int sub_version;
+ 	int min_proto;
+diff --git a/fs/autofs/inode.c b/fs/autofs/inode.c
+index f5c16ffba013..247a5784d192 100644
+--- a/fs/autofs/inode.c
++++ b/fs/autofs/inode.c
+@@ -6,8 +6,10 @@
+ 
+ #include <linux/seq_file.h>
+ #include <linux/pagemap.h>
++#include <linux/ns_common.h>
+ 
+ #include "autofs_i.h"
++#include "../mount.h"
+ 
+ struct autofs_info *autofs_new_ino(struct autofs_sb_info *sbi)
+ {
+@@ -251,6 +253,7 @@ static struct autofs_sb_info *autofs_alloc_sbi(void)
+ 	sbi->min_proto = AUTOFS_MIN_PROTO_VERSION;
+ 	sbi->max_proto = AUTOFS_MAX_PROTO_VERSION;
+ 	sbi->pipefd = -1;
++	sbi->mnt_ns_id = to_ns_common(current->nsproxy->mnt_ns)->ns_id;
+ 
+ 	set_autofs_type_indirect(&sbi->type);
+ 	mutex_init(&sbi->wq_mutex);
+diff --git a/fs/autofs/root.c b/fs/autofs/root.c
+index 174c7205fee4..f06f62d23e76 100644
+--- a/fs/autofs/root.c
++++ b/fs/autofs/root.c
+@@ -7,8 +7,10 @@
+ 
+ #include <linux/capability.h>
+ #include <linux/compat.h>
++#include <linux/ns_common.h>
+ 
+ #include "autofs_i.h"
++#include "../mount.h"
+ 
+ static int autofs_dir_permission(struct mnt_idmap *, struct inode *, int);
+ static int autofs_dir_symlink(struct mnt_idmap *, struct inode *,
+@@ -341,6 +343,14 @@ static struct vfsmount *autofs_d_automount(struct path *path)
+ 	if (autofs_oz_mode(sbi))
+ 		return NULL;
+ 
++	/* Refuse to trigger mount if current namespace is not the owner
++	 * and the mount is propagation private.
++	 */
++	if (sbi->mnt_ns_id != to_ns_common(current->nsproxy->mnt_ns)->ns_id) {
++		if (vfsmount_to_propagation_flags(path->mnt) & MS_PRIVATE)
++			return ERR_PTR(-EPERM);
++	}
++
+ 	/*
+ 	 * If an expire request is pending everyone must wait.
+ 	 * If the expire fails we're still mounted so continue
+diff --git a/fs/namespace.c b/fs/namespace.c
+index d82910f33dc4..27bb12693cba 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -5150,6 +5150,12 @@ static u64 mnt_to_propagation_flags(struct mount *m)
+ 	return propagation;
+ }
+ 
++u64 vfsmount_to_propagation_flags(struct vfsmount *mnt)
++{
++	return mnt_to_propagation_flags(real_mount(mnt));
++}
++EXPORT_SYMBOL_GPL(vfsmount_to_propagation_flags);
++
+ static void statmount_sb_basic(struct kstatmount *s)
+ {
+ 	struct super_block *sb = s->mnt->mnt_sb;
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index c895146c1444..a5c2077ce6ed 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3269,6 +3269,7 @@ extern struct file * open_exec(const char *);
+ /* fs/dcache.c -- generic fs support functions */
+ extern bool is_subdir(struct dentry *, struct dentry *);
+ extern bool path_is_under(const struct path *, const struct path *);
++u64 vfsmount_to_propagation_flags(struct vfsmount *mnt);
+ 
+ extern char *file_path(struct file *, char *, int);
+ 
 
