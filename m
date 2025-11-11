@@ -1,39 +1,54 @@
-Return-Path: <linux-kernel+bounces-894582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C137CC4B5A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 04:41:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 864BFC4B5B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 04:43:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7515F3B064F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 03:41:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 521BF1891860
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 03:43:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ED4734A764;
-	Tue, 11 Nov 2025 03:41:21 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C4E7314B8E;
-	Tue, 11 Nov 2025 03:41:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1D7A34A79A;
+	Tue, 11 Nov 2025 03:43:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="BjMPtRNL"
+Received: from canpmsgout04.his.huawei.com (canpmsgout04.his.huawei.com [113.46.200.219])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D8167640E;
+	Tue, 11 Nov 2025 03:43:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.219
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762832480; cv=none; b=kzsdvXNLCxU+4k4YEAXE5L/E/PNaqyFEoNaOdjGks3bIbKIE7AIiqxk+V05Q2C8IkhBmZ7wNauza5Jqb3LsQGgErBIz8+vNJqf1yKXldzEgaJVPA11Aw5EHC+u6Nkf5E7Noq2tBdK2ppdDP1JXRlPAFGuzWroS/sFJ4GXErzOgs=
+	t=1762832595; cv=none; b=srkF9q+J9nB7hQ45b4unBX2wUnTkHgcHPhEf0E3hSOig1rZvgoY5GzeKz9EauIBFbiREgb5Kr4LORQAYYDiIWhCdOL9UOxezP+bjfZ2i/VFByr+BJpJOrg+tmortX1C2Cyj8EiNi6ZSXcAcVhpUw4hAtE2ExC0IzpV6/KsAcRTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762832480; c=relaxed/simple;
-	bh=sDswkZJYCUFqFb7Jr1TYvJDWFPReh8rYaSKFz6GHaSU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QLHFhcfy9zGq36CTkgueB8crdwCnsZ9o9DFV4hewl3PwNVIKW/Mgqq8zTIv8dGtcCHJX76yZQA8ctJdPaAxwEcnxSzhfXRsQkXxwHSZq6A9Ie/jDttHHytfyo+PiLTkM9ozTU8vhF2PEH2vYRMvrUbTjdXmkxWgvbQOBeXqiogo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4FF5D2F;
-	Mon, 10 Nov 2025 19:41:10 -0800 (PST)
-Received: from [10.164.136.36] (unknown [10.164.136.36])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1A34B3F63F;
-	Mon, 10 Nov 2025 19:41:11 -0800 (PST)
-Message-ID: <a63d5305-2266-4a60-89e5-d737ba6e2f4c@arm.com>
-Date: Tue, 11 Nov 2025 09:11:08 +0530
+	s=arc-20240116; t=1762832595; c=relaxed/simple;
+	bh=UmbMwPFQDhX0sgemsDZP1cEnjvFz1CTV1maBqxb2RPo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=XMIedw4EKXhCIPIALw66A4swR6hvx+58xnkJSYy9clWundU27B1+ZURc/vhhnXSWXyEFkHkUtqPD4qUG6sKysq4VQ5TVCYOeK+eFQJEuXBnjtyH//KwZaWnNljXJMOCf9mzffd6sYMP7qnU8lW2HGrCtpm2q7TYbaAafJnMXBYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=BjMPtRNL; arc=none smtp.client-ip=113.46.200.219
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=0kaa3vUiwcAr53RbTBFcjCZZteWEUfi4Wdgy/IuyaD8=;
+	b=BjMPtRNLi+CcIV6s6FBTzainP0aydUB3TmqKoZGdqEmnOiFKUJmBgDMKhlSQls1S43E6WM7+p
+	114ek8lmUZbarbWH+isnSzgy2y50xikq4gxFeynLc75PZKPdYTON4BnDEEAKrdmKqDdxTq8GK0t
+	yx04ydq9h37K7jgZfg+4em4=
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by canpmsgout04.his.huawei.com (SkyGuard) with ESMTPS id 4d5C4k2c1fz1prLS;
+	Tue, 11 Nov 2025 11:41:26 +0800 (CST)
+Received: from dggpemf500013.china.huawei.com (unknown [7.185.36.188])
+	by mail.maildlp.com (Postfix) with ESMTPS id B4EBF180087;
+	Tue, 11 Nov 2025 11:43:05 +0800 (CST)
+Received: from [127.0.0.1] (10.174.178.254) by dggpemf500013.china.huawei.com
+ (7.185.36.188) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 11 Nov
+ 2025 11:43:04 +0800
+Message-ID: <46c68bcf-8ad4-45ed-9fba-cc908328069b@huawei.com>
+Date: Tue, 11 Nov 2025 11:43:03 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,96 +56,78 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] mm/khugepaged: do synchronous writeback for
- MADV_COLLAPSE
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Shivank Garg <shivankg@amd.com>, Andrew Morton
- <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>,
- Zi Yan <ziy@nvidia.com>, Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>, Nico Pache
- <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
- Barry Song <baohua@kernel.org>, Lance Yang <lance.yang@linux.dev>,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Zach O'Keefe <zokeefe@google.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- Branden Moore <Branden.Moore@amd.com>
-References: <20251110113254.77822-1-shivankg@amd.com>
- <f21b37bb-7a2b-412b-be76-e8968b4c375d@lucifer.local>
- <3f5f8a48-fa3b-4985-95e1-dd0ac21b5dcc@arm.com>
- <312bfcbd-d31a-40d3-8b9c-edc7b6166113@lucifer.local>
-Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <312bfcbd-d31a-40d3-8b9c-edc7b6166113@lucifer.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v2 24/24] ext4: enable block size larger than page size
+Content-Language: en-GB
+To: Theodore Ts'o <tytso@mit.edu>
+CC: <linux-ext4@vger.kernel.org>, <adilger.kernel@dilger.ca>, <jack@suse.cz>,
+	<linux-kernel@vger.kernel.org>, <kernel@pankajraghav.com>,
+	<mcgrof@kernel.org>, <ebiggers@kernel.org>, <willy@infradead.org>,
+	<yi.zhang@huawei.com>, <yangerkun@huawei.com>, <chengzhihao1@huawei.com>,
+	<libaokun@huaweicloud.com>, Baokun Li <libaokun1@huawei.com>
+References: <20251107144249.435029-1-libaokun@huaweicloud.com>
+ <20251107144249.435029-25-libaokun@huaweicloud.com>
+ <20251110151604.GE2988753@mit.edu>
+From: Baokun Li <libaokun1@huawei.com>
+In-Reply-To: <20251110151604.GE2988753@mit.edu>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
+ dggpemf500013.china.huawei.com (7.185.36.188)
+
+On 2025-11-10 23:16, Theodore Ts'o wrote:
+> On Fri, Nov 07, 2025 at 10:42:49PM +0800, libaokun@huaweicloud.com wrote:
+>> From: Baokun Li <libaokun1@huawei.com>
+>>
+>> Since block device (See commit 3c20917120ce ("block/bdev: enable large
+>> folio support for large logical block sizes")) and page cache (See commit
+>> ab95d23bab220ef8 ("filemap: allocate mapping_min_order folios in the page
+>> cache")) has the ability to have a minimum order when allocating folio,
+>> and ext4 has supported large folio in commit 7ac67301e82f ("ext4: enable
+>> large folio for regular file"), now add support for block_size > PAGE_SIZE
+>> in ext4.
+>>
+>> set_blocksize() -> bdev_validate_blocksize() already validates the block
+>> size, so ext4_load_super() does not need to perform additional checks.
+>>
+>> Here we only need to add the FS_LBS bit to fs_flags.
+>>
+>> In addition, allocation failures for large folios may trigger warn_alloc()
+>> warnings. Therefore, as with XFS, mark this feature as experimental.
+>>
+>> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+>> Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
+> Could you add:
+>
+> #ifdef CONFIG_TRANSPARENT_HUGEPAGES
+> EXT4_ATTR_FEATURE(blocksize_gt_pagesize);
+> #endif
+>
+> in fs/sys/sysfs.c, so that userspace programs (like those in e2fsprogs
+> and xfstests) can test /sys/fs/ext4/features/... to determine whether
+> or not blocksize > pagesize is supported?  That way we can more easily
+> determine whether to test the 64k blocksize configurations in
+> xfstests, and so we can supress the mke2fs warnings:
+>
+> mke2fs: 65536-byte blocks too big for system (max 4096)
+> Proceed anyway? (y,N) y
+> Warning: 65536-byte blocks too big for system (max 4096), forced to continue
+>
+> ... if the feature flag file is present.
+>
+Good idea — sure!
+
+In my earlier tests I just dropped the warning in mke2fs. That’s a bit
+clumsy though; adding an interface so mke2fs and the kernel can work
+together is much nicer.
+
+It also lets us do what was mentioned in another thread: warn in mke2fs
+instead of in the kernel. I’ll take your suggestion in the next version
+and drop the experimental tag.
+
+Thank you for your suggestion!
 
 
-On 10/11/25 7:06 pm, Lorenzo Stoakes wrote:
-> On Mon, Nov 10, 2025 at 06:54:57PM +0530, Dev Jain wrote:
->> On 10/11/25 5:31 pm, Lorenzo Stoakes wrote:
->>> ofc you are addressing this with the !cc->is_khugepaged, but feels like we'd be
->>> better off just doing it in madvise_collapse().
->> I suppose the common case is that writeback is not needed, and I don't know what
->> is the overhead of filemap_write_and_wait_range() in that case, but your
-> Low.
->
->> suggestion will force that unconditional overhead and skip all the early exits
->> possible in hpage_collapse_scan_file()?
-> Which are?
->
-> PMD-mapped folio at start of range, scan abort, non-LRU, spurious ref count
->
-> I don't think this matters.
->
-> And we're trading for putting _yet more_ logic that belongs elsewhere in the
-> wrong place.
->
-> I mean I'd actually be pretty good with us putting it literally in madvise.c,
-> but since we defer the collapse to khugepaged.c then madvise_collapse().
->
->>> I wonder also if doing I/O without getting the mmap lock again and revalidating
->>> is wise, as the state of things might have changed significantly.
->>>
->>> So maybe need a hugepage_vma_revalidate() as well?
->> The file collapse path (apart from collapse_pte_mapped_thp) is solely concerned
->> about doing the collapse in the page cache, for which information about the mm or
->> the vma is not needed, that is why no locking is required. The get_file() in
-> The user has asked specifically to collapse pages in a VMA's range. Yes you can
-> go check the mapping of a pinned file which you're keeping pinned during this
-> operation (wise? Not sure it is).
->
-> This would be the first time in this operation we are doing a _synchronous_ I/O
-> operation where we sleep holding a pin.
->
-> So no, I think we really do need to revalidate.
->
-> 'Collapse some random file we no longer map at this address' is probably not
-> great semantics, also of course, we are revalidating at each PMD anyway.
->
-> Maybe even do a addr -= HPAGE_PMD_SIZE; continue + take it from the top?
->
-> Maybe David has thoughts...
->
->> khugepaged_scan_mm_slot() seems to be serving the same function as maybe_unlock_mmap_for_io().
->> So I don't think this is needed?
-> We're talking about the MADV_COLLAPSE case so don't understand this? I may be
-> missing something here (happens a lot ;)!
+Regards,
+Baokun
 
-My bad, meant to say madvise_collapse() -> get_file().
-
->
->
->>>
->>>> +
->>>>    	result = alloc_charge_folio(&new_folio, mm, cc);
->>>>    	if (result != SCAN_SUCCEED)
->>>>    		goto out;
->>>>
->>>> base-commit: e9a6fb0bcdd7609be6969112f3fbfcce3b1d4a7c
->>>> --
->>>> 2.43.0
->>>>
->>> Thanks, Lorenzo
-> Cheers, Lorenzo
 
