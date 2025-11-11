@@ -1,135 +1,112 @@
-Return-Path: <linux-kernel+bounces-894568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21753C4B525
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 04:29:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53074C4B536
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 04:30:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1972D3A7700
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 03:29:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70CEE188FA7D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 03:31:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 867B434A764;
-	Tue, 11 Nov 2025 03:29:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF7F931353D;
+	Tue, 11 Nov 2025 03:30:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="U51cVDT+"
-Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="li5RAEK4"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E05BC2E54A3;
-	Tue, 11 Nov 2025 03:29:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C4B93D6F;
+	Tue, 11 Nov 2025 03:30:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762831759; cv=none; b=JIiFifBYUWYwutBslXT/p3iAIeIa1V26bGnmXBmYaKwws1c8MdSVLV//XX6b012hzGxdxPihR3epLhv1GhsmxHSsdb1Ry4xUc4MBq6xyxqYGR3tC1AA4xc6Bx/F+GCm4FD2kihjpivzkQX7xhgrJSUcGEg0GNPzKfDqpjf/iDa0=
+	t=1762831828; cv=none; b=FvsJ9688bkUkiyY4SDmteOjC2BvRvDvDbRu+cpIG9okOYF0Zaq7jsn6u8lDjXBQ97VNyEW4nh3Lcqtvkm4TuD9FNntw45GVT9+4R6rktsmEW+C+ynwGH9YDHetX214bXuaMbW3jiXyJMGU15KJtRDRw14zC/o8Cg4kCpKPLKlJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762831759; c=relaxed/simple;
-	bh=DPR/6cYQRqsxotHssDhTpx/SX9RVzW35tP8lTAQyWZM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=c0InPgwyDockSqBQFl11Capm1ohQzjD+bkUiuMij5EZd8R7/Y5exoRi3phpWS1MzukBBXvxWeeGNjDrh2b5q473a4i41JISsxC/w1L3GCX5xSN6+EkmJ4MmUmRjHKQF+x7cso+kgpjKq+HcwVW72eub0lxvx61HKFrq0NpqMWF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=U51cVDT+; arc=none smtp.client-ip=95.215.58.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <b2750e21-2853-414c-9552-4f7faac12afd@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1762831755;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=N4Gwun/4Q7PEKmKnOLx/o5MXaYbKvzj+YtrVyTMLJUI=;
-	b=U51cVDT+HoQJkqGpZyUh24NPRj8r8kB9s7IFPlUaPzcFECva7S0Za+l8wdZrgWmjPfgS9X
-	sSk5DXMwygzYLR9y19gvsioIxANWmk+n4/q0Cg1JMGOY4JFs9V/Rqu1YROgCP4lqMFD6I8
-	3RF7Cs0QV6cRRGItbLSkpv3V9yP3X8k=
-Date: Tue, 11 Nov 2025 11:29:05 +0800
+	s=arc-20240116; t=1762831828; c=relaxed/simple;
+	bh=JlYn9rIy7uyj5CmPIHlFQHH3uFeD9tk9d9asndxWrRY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H2WVqjuCB/Tdd3aYMHpoKWOoJPCDz+CZsBJGdSbjrhiXVe8hZEd3dhkYh610r6P4qYRPiqOG6EAnvcXIxsu4e9eBOTy0mUhJJsKFmjWX4matDESlzIBRyZopxQoKxudgBBkygiy6/5CGfcLHbEdb1xOBf37E2uTY2vUQLaYXeN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=li5RAEK4; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=HW5zNTSs91UiAOz4S9gU+9c/0Itm3O1nWh1VBzNeF+0=; b=li5RAEK4Ot2b7NpWpJAT6oimFX
+	aMLDZKbm/8g9ln8eSjgxmoAur9H+uT9N21oTHrluWXoNaYbc5MCcw125cH9Db11O5yCNpUgzPhc9T
+	aqwWc7sVLADrHYrrSjGGR/hHMZYjxDyaT6LC/JVlZkAYnknLzAMrBztYnwk/b7Jj6Tug=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1vIf5H-00DaMn-49; Tue, 11 Nov 2025 04:30:19 +0100
+Date: Tue, 11 Nov 2025 04:30:19 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Wei Fang <wei.fang@nxp.com>
+Cc: claudiu.manoil@nxp.com, vladimir.oltean@nxp.com, xiaoning.wang@nxp.com,
+	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, aziz.sellami@nxp.com,
+	imx@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 net-next 0/3] net: enetc: add port MDIO support for
+ both i.MX94 and i.MX95
+Message-ID: <4ef9d041-2572-4a8d-9eb8-ddc2c05be102@lunn.ch>
+References: <20251105043344.677592-1-wei.fang@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 0/4] memcg: cleanup the memcg stats interfaces
-To: Harry Yoo <harry.yoo@oracle.com>
-Cc: Shakeel Butt <shakeel.butt@linux.dev>,
- Andrew Morton <akpm@linux-foundation.org>,
- Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Muchun Song <muchun.song@linux.dev>, Vlastimil Babka <vbabka@suse.cz>,
- linux-mm@kvack.org, cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
- Meta kernel team <kernel-team@meta.com>
-References: <20251110232008.1352063-1-shakeel.butt@linux.dev>
- <aRKKfdN3B68wxFvN@hyeyoo> <24969292-7543-456f-8b80-09c4521507e2@linux.dev>
- <gsew67sciieqxbcczp5mzx4lj6pvvclfrxn6or3pzjqmj7eeic@7bxuwqgnqaum>
- <99429fb8-dcec-43e7-a23b-bee54b8ed6e6@linux.dev>
- <hgf4uciz7rp2mpxalcuingafs5ktmsgvom2pefjv3yogel5dh3@7kkwtrnqotnc>
- <982d6b8c-53e7-46f3-9357-afb85319d0a3@linux.dev> <aRKq-JOzoCW9kKMz@hyeyoo>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Qi Zheng <qi.zheng@linux.dev>
-In-Reply-To: <aRKq-JOzoCW9kKMz@hyeyoo>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251105043344.677592-1-wei.fang@nxp.com>
 
-
-
-On 11/11/25 11:18 AM, Harry Yoo wrote:
-> On Tue, Nov 11, 2025 at 11:07:09AM +0800, Qi Zheng wrote:
->>
->>
->> On 11/11/25 11:00 AM, Shakeel Butt wrote:
->>> On Tue, Nov 11, 2025 at 10:48:18AM +0800, Qi Zheng wrote:
->>>> Hi Shakeel,
->>>>
->>>> On 11/11/25 10:39 AM, Shakeel Butt wrote:
->>>>> On Tue, Nov 11, 2025 at 10:23:15AM +0800, Qi Zheng wrote:
->>>>>> Hi,
->>>>>>
->>>>> [...]
->>>>>>>
->>>>>>> Are you or Qi planning a follow-up that converts spin_lock_irq() to
->>>>>>> spin_lock() in places where they disabled IRQs was just to update vmstat?
->>>>>>
->>>>>> Perhaps this change could be implemented together in [PATCH 1/4]?
->>>>>>
->>>>>> Of course, it's also reasonable to make it a separate patch. If we
->>>>>> choose this method, I’m fine with either me or Shakeel doing it.
->>>>>>
->>>>>
->>>>> Let's do it separately as I wanted to keep the memcg related changes
->>>>> self-contained.
->>>>
->>>> OK.
->>>>
->>>>>
->>>>> Qi, can you please take a stab at that?
->>>>
->>>> Sure, I will do it.
->>>>
->>>>>
->>>>>>>
->>>>>>> Qi's zombie memcg series will depends on that work I guess..
->>>>>>
->>>>>> Yes, and there are other places that also need to be converted, such as
->>>>>> __folio_migrate_mapping().
->>>>>
->>>>> I see __mod_zone_page_state() usage in __folio_migrate_mapping() and
->>>>> using the same reasoning we can convert it to use mod_zone_page_state().
->>>>> Where else do you need to do these conversions (other than
->>>>> __folio_migrate_mapping)?
->>>>
->>>> I mean converting these places to use spin_lock() instead of
->>>> spin_lock_irq().
->>>
->>> For only stats, right?
->>
->> Right, for thoes places where they disabled IRQs was just to update
->> vmstat.
+On Wed, Nov 05, 2025 at 12:33:41PM +0800, Wei Fang wrote:
+> >From the hardware perspective, NETC IP has only one external master MDIO
+> interface (eMDIO) for managing external PHYs. The EMDIO function and the
+> ENETC port MDIO are all virtual ports of the eMDIO.
 > 
-> ...Or if they disabled IRQs for other reasons as well, we can still move
-> vmstat update code outside the IRQ disabled region.
-
-Ok, I will take a closer look.
-
+> The difference is that EMDIO function is a 'global port', it can access
+> all the PHYs on the eMDIO, so it provides a means for different software
+> modules to share a single set of MDIO signals to access their PHYs.
 > 
+> But for ENETC port MDIO, each ENETC can access its set of registers to
+> initiate accesses on the MDIO and the eMDIO arbitrates between them,
+> completing one access before proceeding with the next. It is required
+> that each ENETC port MDIO has exclusive access and control of its PHY.
+> Therefore, we need to set the external PHY address for ENETCs, so that
+> its port MDIO can only access its own PHY. If the PHY address accessed
+> by the port MDIO is different from the preset PHY address, the MDIO
+> access will be invalid.
+> 
+> Normally, all ENETCs use the interfaces provided by the EMDIO function
+> to access their PHYs, provided that the ENETC and EMDIO are on the same
+> OS. If an ENETC is assigned to a guest OS, it will not be able to use
+> the interfaces provided by the EMDIO function, so it must uses its port
+> MDIO to access and manage its PHY.
 
+I think i'm slowly starting to understand this. But i'm still missing
+some parts.
+
+What prevents a guest OS from setting the wrong value in its ENETC
+port MDIO and then accessing any PHY on the physical bus?
+
+I assume there is a hypervisor doing this enforcement? But if there is
+a hypervisor doing this enforcement, why does the ENETC port MDIO need
+programming? The hypervisor will block it from accessing anything it
+should not be able to access. A normal MDIO bus scan will find just
+the devices it is allowed to access.
+
+I also think the architecture is wrong. Why is the MAC driver messing
+around with the ENETC Port MDIO hardware? I assume the ENETC port MDIO
+bus driver knows it is a ENETC port MDIO device it is driving? It
+should be the one looking at the device tree description of its bus,
+checking it has one and only one device described on the bus, and
+programming itself with the device the hypervisor will let through.
+Not that i think this is actually necessary, let the hypervisor
+enforce it...
+
+	Andrew
 
