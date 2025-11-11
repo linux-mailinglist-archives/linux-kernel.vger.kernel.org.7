@@ -1,104 +1,127 @@
-Return-Path: <linux-kernel+bounces-895503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 679E7C4E1CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:30:35 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C82DC4E1DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:31:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1E6B189842E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:30:58 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id CC00C345CBB
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:31:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AD0733ADA6;
-	Tue, 11 Nov 2025 13:30:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 174A133AD97;
+	Tue, 11 Nov 2025 13:31:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bMT6vELf";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="+/6v5WvR"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="k5HHy5nt"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CC1F261B8A;
-	Tue, 11 Nov 2025 13:30:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC079328277;
+	Tue, 11 Nov 2025 13:31:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762867829; cv=none; b=iy0bB7cAA94vDWW8nedu+7V4IKXx7fx1tTT7qFU6ZkjcuV88V7sWgmY42Wgh+D6MPcv8+AyLHGxtSVrSy2WxiupIeIM0Ku7q7Wc9xdL3sq+ebtz/yiqgRdXq7x8FaokD78zn/UFWZMsGvYZFONgL+CXffeKLTmine9ntWj/L/zU=
+	t=1762867867; cv=none; b=WNB9YG/uKpHWqwP+XDq8Zv4horO5UFFV3cmDm85I02lh340lnrqreQ1abfsuQZQgu2w7QbevXWYxb7VNj9FJS1S2JU4WKB/Ww8FIt8DBsUCQ7cAR+2az5ZSVUaw+b43nZluyXGOKcsu2t76veMUgdaj+Dws0uAtIlFm6OQNyLb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762867829; c=relaxed/simple;
-	bh=bF2Itc4QySqrWk46WOXPnAM1dW3/5wrclk+0WNC3B/0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ew3N3htnvTIbOrrN0YHougIhDNdxFvw2qqeWxOCj/RQE4dCq62QHjbG9TgFsiG5QTJ3gVfuYF0SZauWpAkzqFrGXpzsyfWJJ7QdTLVieJ0zpx29i4HslhuoiVehfiNrkw21m3Yluu5ro5jfXlUAWXF7JfV80oG96y76Uq0ECmaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bMT6vELf; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=+/6v5WvR; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 11 Nov 2025 14:30:23 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1762867825;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Dicw9R/FuDXh/9SkmjZZ3oQxoKblN46We9FAQNIidZk=;
-	b=bMT6vELfr/Pb8aQ0ZUdGxWNQl+1SYlFrEKkfbpGS7JKqPxCfyA6Q9hk1Ig+uXYn+sDiX9F
-	sInG5bhYXIygf/pJUSJN5iz45JZfbJGywVqDaT92HiCJ6G2vkP6TD7UweRmTVFUDR+Wadf
-	y8YmfoLS//M+oB7vbbmvIDKteY/XnJwv2EdUIPvaXQ+AaSvft8ARDSUWb9DKBSWsnI3SVT
-	nvXMJ4aG20ir7A5COQrnurbdsAiahPq7E7zxvj20OJSYXCVBwgyzOcKi5S7AvTzvegBLm4
-	xHUok+XKmvGVI+chgAqvxW1xl5ROkIDdbixBIbzcNIroAUbjnT/yoQF4KV3q/w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1762867825;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Dicw9R/FuDXh/9SkmjZZ3oQxoKblN46We9FAQNIidZk=;
-	b=+/6v5WvR6R/gnZ7adCL6VahikeRbs0DOD5KjSNS9UiwXRajwedqQW7c/ie10gzPmqOfqic
-	v268xtOZ41Rg0VDA==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Liangyan <liangyan.peng@bytedance.com>
-Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-	namhyung@kernel.org, mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	irogers@google.com, adrian.hunter@intel.com, james.clark@linaro.org,
-	zengxianjun@bytedance.com, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] perf/core: Fix pending work re-queued in
- __perf_event_overflow
-Message-ID: <20251111133023.YqDNgQak@linutronix.de>
-References: <20251109103253.57081-1-liangyan.peng@bytedance.com>
- <20251109164122.80138-1-liangyan.peng@bytedance.com>
+	s=arc-20240116; t=1762867867; c=relaxed/simple;
+	bh=ZN7ilIPCvm1ED39/18OAcpT6wbPgwA+407V2M/i4Nuk=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=uUq8S5/G7PYZv80IPUUf6rWa6JOuYp0pipagTDGkEgbEX1nBgRxDlm3/ru++8SEtaQ43rLZXp48pnQi7dXZaZbjz4xQDCUur//XYv3uPjSrkb+Il/TII39werO2ivDdiRiHgJthvDpoLKG5JirFzuxfxenFDcjOZYcXMDT0yP4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=k5HHy5nt; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762867866; x=1794403866;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=ZN7ilIPCvm1ED39/18OAcpT6wbPgwA+407V2M/i4Nuk=;
+  b=k5HHy5ntZnEcVowuzDVXwthgjT6bSQ5rDMgbDiVV/gi7qpvNkrBMw134
+   wgSBrfXaHSjKL02pr0uwFYiY2RmZmkYwHBDVg/f73Wr5fe7pw3MW9k9U8
+   v+Huf/tU8DSRWwtzErCNLFIUWLhKreD6kZJXTb71aedz7RjeLExIGaDjb
+   VbnKIVAVmtMnF+XOnUNNUAvz6KJi0NZW1I/EQnDy+uoXjgQ1wGWYVxPLU
+   IlhKZDgUJOVLsS0+V9Tsn8aN4kO6x04Y/F3EzMSvRm+zJ765oNLVjEcvt
+   kDVm5tVs2SchiCvjgSPiIreold71a90Voy7u5aK7KaGv50MZemUEm96P2
+   w==;
+X-CSE-ConnectionGUID: vGzsgCXtSuqv81LuWdnB4A==
+X-CSE-MsgGUID: 3dGoK7P9Q/SpSkq/XDqDEg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11609"; a="68776232"
+X-IronPort-AV: E=Sophos;i="6.19,296,1754982000"; 
+   d="scan'208";a="68776232"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 05:30:57 -0800
+X-CSE-ConnectionGUID: g74Wvx2uRIK5WbjK9OJ2cw==
+X-CSE-MsgGUID: 0bViU1sPRQKPBMIty2HMag==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,296,1754982000"; 
+   d="scan'208";a="194162513"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.132])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 05:30:54 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Tue, 11 Nov 2025 15:30:50 +0200 (EET)
+To: =?ISO-8859-15?Q?H=E5kon_Bugge?= <haakon.bugge@oracle.com>
+cc: Bjorn Helgaas <bhelgaas@google.com>, Sinan Kaya <okaya@codeaurora.org>, 
+    linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: Do not attempt to set ExtTag for VFs
+In-Reply-To: <20251111132401.1827922-1-haakon.bugge@oracle.com>
+Message-ID: <dc6f1dc8-a2e7-d48f-49a2-ee6e0288e672@linux.intel.com>
+References: <20251111132401.1827922-1-haakon.bugge@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20251109164122.80138-1-liangyan.peng@bytedance.com>
+Content-Type: multipart/mixed; boundary="8323328-955354008-1762867850=:1002"
 
-On 2025-11-10 00:41:22 [+0800], Liangyan wrote:
-> We got warning below during perf test.
-=E2=80=A6
->=20
-> A race condition occurs between task context and IRQ context when
-> handling sigtrap tracepoint event overflows:
->=20
-> 1. In task context, an event is overflowed and its pending work is
->    queued to task->task_works
-> 2. Before pending_work is set, the same event overflows in IRQ context
-> 3. Both contexts queue the same perf pending work to task->task_works
->=20
-> This double queuing causes:
-> - task_work_run() enters infinite loop calling perf_pending_task()
-> - Potential warnings and use-after-free when event is freed in
-> perf_pending_task()
->=20
-> Fix the race by disabling interrupts during queuing of perf pending work.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Makes sense. Lets it does not overflow in NMI, too.
-Either way I suggest to trim the commit message and remove the
-backtrace as it probably does not add any value.
+--8323328-955354008-1762867850=:1002
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-Sebastian
+On Tue, 11 Nov 2025, H=C3=A5kon Bugge wrote:
+
+> The bit for enabling extended tags is Reserved and Preserved (RsvdP)
+> for VFs.
+
+Please add a PCIe spec reference.
+
+> Hence, bail out early from pci_configure_extended_tags() if
+> the device is a VF.
+>=20
+> Otherwise, we may see incorrect log messages such as:
+>=20
+> =09   kernel: pci 0000:af:00.2: enabling Extended Tags
+>=20
+> (af:00.2 is a VF)
+>=20
+> Fixes: 60db3a4d8cc9 ("PCI: Enable PCIe Extended Tags if supported")
+> Signed-off-by: H=C3=A5kon Bugge <haakon.bugge@oracle.com>
+> ---
+>  drivers/pci/probe.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+> index 0ce98e18b5a87..014017e15bcc8 100644
+> --- a/drivers/pci/probe.c
+> +++ b/drivers/pci/probe.c
+> @@ -2244,7 +2244,8 @@ int pci_configure_extended_tags(struct pci_dev *dev=
+, void *ign)
+>  =09u16 ctl;
+>  =09int ret;
+> =20
+> -=09if (!pci_is_pcie(dev))
+> +=09/* PCI_EXP_DEVCTL_EXT_TAG is RsvdP in VFs */
+> +=09if (!pci_is_pcie(dev) || dev->is_virtfn)
+>  =09=09return 0;
+> =20
+>  =09ret =3D pcie_capability_read_dword(dev, PCI_EXP_DEVCAP, &cap);
+>=20
+
+--=20
+ i.
+
+--8323328-955354008-1762867850=:1002--
 
