@@ -1,502 +1,136 @@
-Return-Path: <linux-kernel+bounces-894720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62ABAC4BAE8
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 07:37:43 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E56B4C4BAEB
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 07:38:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E874B3B54DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 06:37:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AF28F4E2E87
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 06:38:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE35A2D6E74;
-	Tue, 11 Nov 2025 06:37:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bFQSHMfb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84A132D6E74;
+	Tue, 11 Nov 2025 06:38:04 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57BD5257845;
-	Tue, 11 Nov 2025 06:37:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9444A28031D
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 06:38:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762843054; cv=none; b=aKhPLmLbVTiDRVeZsatCXqPcOlnKJfkh3A4KaoPfkjFL4BhGgxxUhYdDTQ8SOvoUG/YY3Oevi/JWIRPonhh+rYIukH9pAdzLNtcVxsNn3dPa0S1dWW4usDHOeTZ126W5ZUKUBgtMFkrS1p07uHNyxu6c0fPnfjPb3xXYEuGNsIo=
+	t=1762843084; cv=none; b=ACWTo7uI+LdCPOM4WCn0apljByjp0ivwSipFoJ61mEdk9S9JrN8JpCSoYHshXNQJq3aXkLEUtlBrnrUeMFV4ks+FmpMtbrybq+c0JHmekLc9CdnEdtbtHB6eGTCsPvzhtfR4Oq7BAQbDEWTi4x+m0Ql6g4w5yW0T1m0i7cA0DcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762843054; c=relaxed/simple;
-	bh=6MViIM9/7t1IqgruydtUqi5FbfXktT9o5O9C7n/JeVw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b5YdyAuJdHcE6NoVgSWVKD1tcr4j1DYaxHNrjOzcdQ/m/Aa3YJbX9FWSEMmj3otZ9eUg+AGDVTeYYWbdjPHAMor/SFfyV8OFFxTWOhQ+RO1Pe1zi7ImyztK/YBOtQftkiGxkrF0ChLFu3dDZl029ui9aH2pEy5VC+62c4nTBbp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bFQSHMfb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21D15C19422;
-	Tue, 11 Nov 2025 06:37:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762843054;
-	bh=6MViIM9/7t1IqgruydtUqi5FbfXktT9o5O9C7n/JeVw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bFQSHMfbEVrGGligCrBW9p29+lYQKzUjT1Gkryo5CQyfug6I+rNbB26vov2hYfePJ
-	 8F4zz1xlIXxq82EVBsTzHqO0osGrVeK55GHlhCdJF8qtf0wyS+QJsomL8pUuC+XHJ+
-	 c7cCFdvn/TWoBtJmvPwjaE58WC3/TLRD0c3ELUeoWHyvb68ailCtwWhJUA4SpKKXsc
-	 NcKdw9UHK/XK9m+bxK90sc7LnJucBO2tihRCJLYMOdKMuIV9OSsO+fTx8PfzPQ2ucp
-	 EKogFWz/+hpeRKup78gQNCe7Wc4Vt0kgunUMDw8dg3RRVleXmbmQ5hTuQdbg/n2FLS
-	 XQpMjiNEZqIgg==
-Date: Mon, 10 Nov 2025 22:37:31 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	James Clark <james.clark@linaro.org>, Xu Yang <xu.yang_2@nxp.com>,
-	Chun-Tse Shao <ctshao@google.com>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Sumanth Korikkar <sumanthk@linux.ibm.com>,
-	Collin Funk <collin.funk1@gmail.com>,
-	Thomas Falcon <thomas.falcon@intel.com>,
-	Howard Chu <howardchu95@gmail.com>,
-	Dapeng Mi <dapeng1.mi@linux.intel.com>,
-	Levi Yun <yeoreum.yun@arm.com>,
-	Yang Li <yang.lee@linux.alibaba.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, Andi Kleen <ak@linux.intel.com>,
-	Weilin Wang <weilin.wang@intel.com>
-Subject: Re: [PATCH v3 03/18] perf jevents: Add set of common metrics based
- on default ones
-Message-ID: <aRLZq4Po-1AJ8br4@google.com>
-References: <20251111040417.270945-1-irogers@google.com>
- <20251111040417.270945-4-irogers@google.com>
+	s=arc-20240116; t=1762843084; c=relaxed/simple;
+	bh=EUE0tSIeUkqTe0uubIifNRYGjRyKsnJUPUUuHXKwnkM=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=YZjqurdzxiJNarYDKsmLBBMaxPbzOdzsxgmviIYN6jQLfjiCGkl8HyPIjiZbNjc+hpiW9tCqVbG/N1dPA8wcD2rlsfP0bwtmBuTt0LjivtxlKW1ak4FqZwPn6W8dJOwdlOEjCNu2HXE/pdbwcnAzVLgDtmVeoM6zx4yyxcRpApE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-43376637642so27291585ab.2
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 22:38:02 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762843082; x=1763447882;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=T5TwnobHm+AJHSM3uutDHRIdI+BLiOD6yaks9pALk5Y=;
+        b=BG2nngouixtTglOwhTOLphd5h3pUjOh+XOUNezfto+EhsamNnSkZo5XFoWiNewtmJf
+         2E0Ykx5wEaJN74VKu66Tu4hCj1A/NyTv+Gis4JxDLPHZBKZc1vW6Kc3gkQh2n6BqINNe
+         ZWMpt6fBRUsIwnDEUihnhhUatvsW75z6OociojiU1OUgOlQmXhmI5QhgiOZhA9pQijxp
+         ZhfdV6tmcwFfYKSE/m0olUx+M3IFChhH4bu+0ILAN25Df49zE2132K45CIs5xhj7a6qh
+         IywaEG8Ke7a/aPC8m5dksrmGfFXToWEhmtcYBx1nz6zXnrJ6xiyQuKSytor+5CQZVtSM
+         P62g==
+X-Forwarded-Encrypted: i=1; AJvYcCVfgn8JSNx56bie4QjX8p3zzSnPAsZ1Y5pQ6DN78c9vMdqv/HDMrB4cTCoUjC8UUNzXRjYT3S1PakRZB98=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjfHYNT+pbIeMFrQgd+dUAh2QKrZVmNbDGQL6DmTPWWjNkI3Nn
+	nyKnAkYunz8f+rTpJGqqrYrsAJquBzaCFDK0khIlmLC/d3QqvgKsIWqFeaiCjV6DExqVg7or8cc
+	sqlhz/VqARH6+EQ3LBKdm4Sj8Dw8W4naf3228wdvRFrYCPLcdV9YBdFve3rQ=
+X-Google-Smtp-Source: AGHT+IEAESKeXPkc9BcSPei1vRYm0woJ/+RwN6F1yKrKG30QZS6eG3o1Kqw5Hjm/G5sU1B5hQztW1sIZIYe0p6jDlrSX0NeMosLI
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251111040417.270945-4-irogers@google.com>
+X-Received: by 2002:a05:6e02:156a:b0:433:2aad:9869 with SMTP id
+ e9e14a558f8ab-43367e7a659mr143492275ab.30.1762843081813; Mon, 10 Nov 2025
+ 22:38:01 -0800 (PST)
+Date: Mon, 10 Nov 2025 22:38:01 -0800
+In-Reply-To: <CADfthj2kwRdbSo1PJPFnztaSv2hXC+Oo9q2PCTNDEwSKknoLkg@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6912d9c9.a70a0220.22f260.012b.GAE@google.com>
+Subject: Re: [syzbot] [ext4?] kernel BUG in ext4_write_inline_data (3)
+From: syzbot <syzbot+f3185be57d7e8dda32b8@syzkaller.appspotmail.com>
+To: albinbabuvarghese20@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Nov 10, 2025 at 08:04:02PM -0800, Ian Rogers wrote:
-> Add support to getting a common set of metrics from a default
-> table. It simplifies the generation to add json metrics at the same
-> time. The metrics added are CPUs_utilized, cs_per_second,
-> migrations_per_second, page_faults_per_second, insn_per_cycle,
-> stalled_cycles_per_instruction, frontend_cycles_idle,
-> backend_cycles_idle, cycles_frequency, branch_frequency and
-> branch_miss_rate based on the shadow metric definitions.
-> 
-> Following this change the default perf stat output on an alderlake looks like:
-> ```
-> $ perf stat -a -- sleep 1
-> 
->  Performance counter stats for 'system wide':
-> 
->     28,165,735,434      cpu-clock                        #   27.973 CPUs utilized
->             23,220      context-switches                 #  824.406 /sec
->                833      cpu-migrations                   #   29.575 /sec
->             35,293      page-faults                      #    1.253 K/sec
->        997,341,554      cpu_atom/instructions/           #    0.84  insn per cycle              (35.63%)
->     11,197,053,736      cpu_core/instructions/           #    1.97  insn per cycle              (58.21%)
->      1,184,871,493      cpu_atom/cycles/                 #    0.042 GHz                         (35.64%)
->      5,676,692,769      cpu_core/cycles/                 #    0.202 GHz                         (58.22%)
->        150,525,309      cpu_atom/branches/               #    5.344 M/sec                       (42.80%)
->      2,277,232,030      cpu_core/branches/               #   80.851 M/sec                       (58.21%)
->          5,248,575      cpu_atom/branch-misses/          #    3.49% of all branches             (42.82%)
->         28,829,930      cpu_core/branch-misses/          #    1.27% of all branches             (58.22%)
->                        (software)                 #    824.4 cs/sec  cs_per_second
->              TopdownL1 (cpu_core)                 #     12.6 %  tma_bad_speculation
->                                                   #     28.8 %  tma_frontend_bound       (66.57%)
->              TopdownL1 (cpu_core)                 #     25.8 %  tma_backend_bound
->                                                   #     32.8 %  tma_retiring             (66.57%)
->                        (software)                 #   1253.1 faults/sec  page_faults_per_second
->                                                   #      0.0 GHz  cycles_frequency       (42.80%)
->                                                   #      0.2 GHz  cycles_frequency       (74.92%)
->              TopdownL1 (cpu_atom)                 #     22.3 %  tma_bad_speculation
->                                                   #     17.2 %  tma_retiring             (49.95%)
->              TopdownL1 (cpu_atom)                 #     30.6 %  tma_backend_bound
->                                                   #     29.8 %  tma_frontend_bound       (49.94%)
->                        (cpu_atom)                 #      6.9 K/sec  branch_frequency     (42.89%)
->                                                   #     80.5 K/sec  branch_frequency     (74.93%)
->                                                   #     29.6 migrations/sec  migrations_per_second
->                                                   #     28.0 CPUs  CPUs_utilized
->                        (cpu_atom)                 #      0.8 instructions  insn_per_cycle  (42.91%)
->                                                   #      2.0 instructions  insn_per_cycle  (75.14%)
->                        (cpu_atom)                 #      3.8 %  branch_miss_rate         (35.75%)
->                                                   #      1.2 %  branch_miss_rate         (66.86%)
-> 
->        1.007063529 seconds time elapsed
-> ```
-> 
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
->  .../arch/common/common/metrics.json           |  86 +++++++++++++
->  tools/perf/pmu-events/empty-pmu-events.c      | 115 +++++++++++++-----
->  tools/perf/pmu-events/jevents.py              |  21 +++-
->  tools/perf/pmu-events/pmu-events.h            |   1 +
->  tools/perf/util/metricgroup.c                 |  31 +++--
->  5 files changed, 212 insertions(+), 42 deletions(-)
->  create mode 100644 tools/perf/pmu-events/arch/common/common/metrics.json
-> 
-> diff --git a/tools/perf/pmu-events/arch/common/common/metrics.json b/tools/perf/pmu-events/arch/common/common/metrics.json
-> new file mode 100644
-> index 000000000000..d1e37db18dc6
-> --- /dev/null
-> +++ b/tools/perf/pmu-events/arch/common/common/metrics.json
-> @@ -0,0 +1,86 @@
-> +[
-> +    {
-> +        "BriefDescription": "Average CPU utilization",
-> +        "MetricExpr": "(software@cpu\\-clock\\,name\\=cpu\\-clock@ if #target_cpu else software@task\\-clock\\,name\\=task\\-clock@) / (duration_time * 1e9)",
-> +        "MetricGroup": "Default",
-> +        "MetricName": "CPUs_utilized",
-> +        "ScaleUnit": "1CPUs",
-> +        "MetricConstraint": "NO_GROUP_EVENTS"
-> +    },
-> +    {
-> +        "BriefDescription": "Context switches per CPU second",
-> +        "MetricExpr": "(software@context\\-switches\\,name\\=context\\-switches@ * 1e9) / (software@cpu\\-clock\\,name\\=cpu\\-clock@ if #target_cpu else software@task\\-clock\\,name\\=task\\-clock@)",
-> +        "MetricGroup": "Default",
-> +        "MetricName": "cs_per_second",
-> +        "ScaleUnit": "1cs/sec",
-> +        "MetricConstraint": "NO_GROUP_EVENTS"
-> +    },
-> +    {
-> +        "BriefDescription": "Process migrations to a new CPU per CPU second",
-> +        "MetricExpr": "(software@cpu\\-migrations\\,name\\=cpu\\-migrations@ * 1e9) / (software@cpu\\-clock\\,name\\=cpu\\-clock@ if #target_cpu else software@task\\-clock\\,name\\=task\\-clock@)",
-> +        "MetricGroup": "Default",
-> +        "MetricName": "migrations_per_second",
-> +        "ScaleUnit": "1migrations/sec",
-> +        "MetricConstraint": "NO_GROUP_EVENTS"
-> +    },
-> +    {
-> +        "BriefDescription": "Page faults per CPU second",
-> +        "MetricExpr": "(software@page\\-faults\\,name\\=page\\-faults@ * 1e9) / (software@cpu\\-clock\\,name\\=cpu\\-clock@ if #target_cpu else software@task\\-clock\\,name\\=task\\-clock@)",
-> +        "MetricGroup": "Default",
-> +        "MetricName": "page_faults_per_second",
-> +        "ScaleUnit": "1faults/sec",
-> +        "MetricConstraint": "NO_GROUP_EVENTS"
-> +    },
-> +    {
-> +        "BriefDescription": "Instructions Per Cycle",
-> +        "MetricExpr": "instructions / cpu\\-cycles",
-> +        "MetricGroup": "Default",
-> +        "MetricName": "insn_per_cycle",
-> +        "MetricThreshold": "insn_per_cycle < 1",
-> +        "ScaleUnit": "1instructions"
-> +    },
-> +    {
-> +        "BriefDescription": "Max front or backend stalls per instruction",
-> +        "MetricExpr": "max(stalled\\-cycles\\-frontend, stalled\\-cycles\\-backend) / instructions",
-> +        "MetricGroup": "Default",
-> +        "MetricName": "stalled_cycles_per_instruction"
-> +    },
-> +    {
-> +        "BriefDescription": "Frontend stalls per cycle",
-> +        "MetricExpr": "stalled\\-cycles\\-frontend / cpu\\-cycles",
-> +        "MetricGroup": "Default",
-> +        "MetricName": "frontend_cycles_idle",
-> +        "MetricThreshold": "frontend_cycles_idle > 0.1"
-> +    },
-> +    {
-> +        "BriefDescription": "Backend stalls per cycle",
-> +        "MetricExpr": "stalled\\-cycles\\-backend / cpu\\-cycles",
-> +        "MetricGroup": "Default",
-> +        "MetricName": "backend_cycles_idle",
-> +        "MetricThreshold": "backend_cycles_idle > 0.2"
-> +    },
-> +    {
-> +        "BriefDescription": "Cycles per CPU second",
-> +        "MetricExpr": "cpu\\-cycles / (software@cpu\\-clock\\,name\\=cpu\\-clock@ if #target_cpu else software@task\\-clock\\,name\\=task\\-clock@)",
-> +        "MetricGroup": "Default",
-> +        "MetricName": "cycles_frequency",
-> +        "ScaleUnit": "1GHz",
-> +        "MetricConstraint": "NO_GROUP_EVENTS"
-> +    },
-> +    {
-> +        "BriefDescription": "Branches per CPU second",
-> +        "MetricExpr": "branches / (software@cpu\\-clock\\,name\\=cpu\\-clock@ if #target_cpu else software@task\\-clock\\,name\\=task\\-clock@)",
-> +        "MetricGroup": "Default",
-> +        "MetricName": "branch_frequency",
-> +        "ScaleUnit": "1000K/sec",
+Hello,
 
-We talked it should be 1000M/sec, right?
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+WARNING in ext4_dirty_folio
 
-Thanks,
-Namhyung
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 19829 at fs/ext4/inode.c:3964 ext4_dirty_folio+0x172/0x1b0 fs/ext4/inode.c:3964
+Modules linked in:
+CPU: 1 UID: 0 PID: 19829 Comm: syz-executor822 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+RIP: 0010:ext4_dirty_folio+0x172/0x1b0 fs/ext4/inode.c:3964
+Code: 74 7f 47 ff 4c 89 e7 48 89 de 5b 41 5c 41 5d 41 5e 41 5f 5d e9 3f 2b d0 ff e8 5a 7f 47 ff 90 0f 0b 90 eb e0 e8 4f 7f 47 ff 90 <0f> 0b 90 eb a7 e8 44 7f 47 ff 48 89 df 48 c7 c6 60 a3 5e 8b e8 a5
+RSP: 0018:ffffc9000d1d7368 EFLAGS: 00010293
+RAX: ffffffff82782371 RBX: ffffea0001557e80 RCX: ffff888024e5dac0
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 1ffffd40002aafd0 R08: ffffea0001557e87 R09: 1ffffd40002aafd0
+R10: dffffc0000000000 R11: fffff940002aafd1 R12: ffff88806060ede8
+R13: 1ffffd40002aafd1 R14: 0000000000000000 R15: ffffea0001557e88
+FS:  0000000000000000(0000) GS:ffff88812646a000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fa65112e498 CR3: 000000005edfa000 CR4: 0000000000350ef0
+Call Trace:
+ <TASK>
+ zap_present_folio_ptes mm/memory.c:1629 [inline]
+ zap_present_ptes mm/memory.c:1709 [inline]
+ do_zap_pte_range mm/memory.c:1810 [inline]
+ zap_pte_range mm/memory.c:1854 [inline]
+ zap_pmd_range mm/memory.c:1946 [inline]
+ zap_pud_range mm/memory.c:1975 [inline]
+ zap_p4d_range mm/memory.c:1996 [inline]
+ unmap_page_range+0x17c9/0x4370 mm/memory.c:2017
+ unmap_single_vma mm/memory.c:2060 [inline]
+ unmap_vmas+0x399/0x580 mm/memory.c:2104
+ exit_mmap+0x240/0xb40 mm/mmap.c:1280
+ __mmput+0x118/0x430 kernel/fork.c:1133
+ exit_mm+0x1da/0x2c0 kernel/exit.c:582
+ do_exit+0x648/0x2300 kernel/exit.c:954
+ do_group_exit+0x21c/0x2d0 kernel/exit.c:1107
+ get_signal+0x1285/0x1340 kernel/signal.c:3034
+ arch_do_signal_or_restart+0xa0/0x790 arch/x86/kernel/signal.c:337
+ exit_to_user_mode_loop+0x72/0x130 kernel/entry/common.c:40
+ exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
+ syscall_exit_to_user_mode_work include/linux/entry-common.h:175 [inline]
+ syscall_exit_to_user_mode include/linux/entry-common.h:210 [inline]
+ do_syscall_64+0x2bd/0xfa0 arch/x86/entry/syscall_64.c:100
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fa6510dab89
+Code: Unable to access opcode bytes at 0x7fa6510dab5f.
+RSP: 002b:00007fa65106d178 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
+RAX: fffffffffffffe00 RBX: 00007fa651163718 RCX: 00007fa6510dab89
+RDX: 0000000000000000 RSI: 0000000000000080 RDI: 00007fa651163718
+RBP: 00007fa651163710 R08: 00007fa65106d6c0 R09: 00007fa65106d6c0
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007fa65116371c
+R13: 000000000000006e R14: 00007ffc0f4ff620 R15: 00007ffc0f4ff708
+ </TASK>
 
 
-> +        "MetricConstraint": "NO_GROUP_EVENTS"
-> +    },
-> +    {
-> +        "BriefDescription": "Branch miss rate",
-> +        "MetricExpr": "branch\\-misses / branches",
-> +        "MetricGroup": "Default",
-> +        "MetricName": "branch_miss_rate",
-> +        "MetricThreshold": "branch_miss_rate > 0.05",
-> +        "ScaleUnit": "100%"
-> +    }
-> +]
-> diff --git a/tools/perf/pmu-events/empty-pmu-events.c b/tools/perf/pmu-events/empty-pmu-events.c
-> index 2fdf4fbf36e2..d78c1857ac4b 100644
-> --- a/tools/perf/pmu-events/empty-pmu-events.c
-> +++ b/tools/perf/pmu-events/empty-pmu-events.c
-> @@ -1303,21 +1303,32 @@ static const char *const big_c_string =
->  /* offset=127519 */ "sys_ccn_pmu.read_cycles\000uncore\000ccn read-cycles event\000config=0x2c\0000x01\00000\000\000\000\000\000"
->  /* offset=127596 */ "uncore_sys_cmn_pmu\000"
->  /* offset=127615 */ "sys_cmn_pmu.hnf_cache_miss\000uncore\000Counts total cache misses in first lookup result (high priority)\000eventid=1,type=5\000(434|436|43c|43a).*\00000\000\000\000\000\000"
-> -/* offset=127758 */ "CPI\000\0001 / IPC\000\000\000\000\000\000\000\00000"
-> -/* offset=127780 */ "IPC\000group1\000inst_retired.any / cpu_clk_unhalted.thread\000\000\000\000\000\000\000\00000"
-> -/* offset=127843 */ "Frontend_Bound_SMT\000\000idq_uops_not_delivered.core / (4 * (cpu_clk_unhalted.thread / 2 * (1 + cpu_clk_unhalted.one_thread_active / cpu_clk_unhalted.ref_xclk)))\000\000\000\000\000\000\000\00000"
-> -/* offset=128009 */ "dcache_miss_cpi\000\000l1d\\-loads\\-misses / inst_retired.any\000\000\000\000\000\000\000\00000"
-> -/* offset=128073 */ "icache_miss_cycles\000\000l1i\\-loads\\-misses / inst_retired.any\000\000\000\000\000\000\000\00000"
-> -/* offset=128140 */ "cache_miss_cycles\000group1\000dcache_miss_cpi + icache_miss_cycles\000\000\000\000\000\000\000\00000"
-> -/* offset=128211 */ "DCache_L2_All_Hits\000\000l2_rqsts.demand_data_rd_hit + l2_rqsts.pf_hit + l2_rqsts.rfo_hit\000\000\000\000\000\000\000\00000"
-> -/* offset=128305 */ "DCache_L2_All_Miss\000\000max(l2_rqsts.all_demand_data_rd - l2_rqsts.demand_data_rd_hit, 0) + l2_rqsts.pf_miss + l2_rqsts.rfo_miss\000\000\000\000\000\000\000\00000"
-> -/* offset=128439 */ "DCache_L2_All\000\000DCache_L2_All_Hits + DCache_L2_All_Miss\000\000\000\000\000\000\000\00000"
-> -/* offset=128503 */ "DCache_L2_Hits\000\000d_ratio(DCache_L2_All_Hits, DCache_L2_All)\000\000\000\000\000\000\000\00000"
-> -/* offset=128571 */ "DCache_L2_Misses\000\000d_ratio(DCache_L2_All_Miss, DCache_L2_All)\000\000\000\000\000\000\000\00000"
-> -/* offset=128641 */ "M1\000\000ipc + M2\000\000\000\000\000\000\000\00000"
-> -/* offset=128663 */ "M2\000\000ipc + M1\000\000\000\000\000\000\000\00000"
-> -/* offset=128685 */ "M3\000\0001 / M3\000\000\000\000\000\000\000\00000"
-> -/* offset=128705 */ "L1D_Cache_Fill_BW\000\00064 * l1d.replacement / 1e9 / duration_time\000\000\000\000\000\000\000\00000"
-> +/* offset=127758 */ "CPUs_utilized\000Default\000(software@cpu\\-clock\\,name\\=cpu\\-clock@ if #target_cpu else software@task\\-clock\\,name\\=task\\-clock@) / (duration_time * 1e9)\000\000Average CPU utilization\000\0001CPUs\000\000\000\00001"
-> +/* offset=127943 */ "cs_per_second\000Default\000software@context\\-switches\\,name\\=context\\-switches@ * 1e9 / (software@cpu\\-clock\\,name\\=cpu\\-clock@ if #target_cpu else software@task\\-clock\\,name\\=task\\-clock@)\000\000Context switches per CPU second\000\0001cs/sec\000\000\000\00001"
-> +/* offset=128175 */ "migrations_per_second\000Default\000software@cpu\\-migrations\\,name\\=cpu\\-migrations@ * 1e9 / (software@cpu\\-clock\\,name\\=cpu\\-clock@ if #target_cpu else software@task\\-clock\\,name\\=task\\-clock@)\000\000Process migrations to a new CPU per CPU second\000\0001migrations/sec\000\000\000\00001"
-> +/* offset=128434 */ "page_faults_per_second\000Default\000software@page\\-faults\\,name\\=page\\-faults@ * 1e9 / (software@cpu\\-clock\\,name\\=cpu\\-clock@ if #target_cpu else software@task\\-clock\\,name\\=task\\-clock@)\000\000Page faults per CPU second\000\0001faults/sec\000\000\000\00001"
-> +/* offset=128664 */ "insn_per_cycle\000Default\000instructions / cpu\\-cycles\000insn_per_cycle < 1\000Instructions Per Cycle\000\0001instructions\000\000\000\00000"
-> +/* offset=128776 */ "stalled_cycles_per_instruction\000Default\000max(stalled\\-cycles\\-frontend, stalled\\-cycles\\-backend) / instructions\000\000Max front or backend stalls per instruction\000\000\000\000\000\00000"
-> +/* offset=128939 */ "frontend_cycles_idle\000Default\000stalled\\-cycles\\-frontend / cpu\\-cycles\000frontend_cycles_idle > 0.1\000Frontend stalls per cycle\000\000\000\000\000\00000"
-> +/* offset=129068 */ "backend_cycles_idle\000Default\000stalled\\-cycles\\-backend / cpu\\-cycles\000backend_cycles_idle > 0.2\000Backend stalls per cycle\000\000\000\000\000\00000"
-> +/* offset=129193 */ "cycles_frequency\000Default\000cpu\\-cycles / (software@cpu\\-clock\\,name\\=cpu\\-clock@ if #target_cpu else software@task\\-clock\\,name\\=task\\-clock@)\000\000Cycles per CPU second\000\0001GHz\000\000\000\00001"
-> +/* offset=129368 */ "branch_frequency\000Default\000branches / (software@cpu\\-clock\\,name\\=cpu\\-clock@ if #target_cpu else software@task\\-clock\\,name\\=task\\-clock@)\000\000Branches per CPU second\000\0001000K/sec\000\000\000\00001"
-> +/* offset=129547 */ "branch_miss_rate\000Default\000branch\\-misses / branches\000branch_miss_rate > 0.05\000Branch miss rate\000\000100%\000\000\000\00000"
-> +/* offset=129650 */ "CPI\000\0001 / IPC\000\000\000\000\000\000\000\00000"
-> +/* offset=129672 */ "IPC\000group1\000inst_retired.any / cpu_clk_unhalted.thread\000\000\000\000\000\000\000\00000"
-> +/* offset=129735 */ "Frontend_Bound_SMT\000\000idq_uops_not_delivered.core / (4 * (cpu_clk_unhalted.thread / 2 * (1 + cpu_clk_unhalted.one_thread_active / cpu_clk_unhalted.ref_xclk)))\000\000\000\000\000\000\000\00000"
-> +/* offset=129901 */ "dcache_miss_cpi\000\000l1d\\-loads\\-misses / inst_retired.any\000\000\000\000\000\000\000\00000"
-> +/* offset=129965 */ "icache_miss_cycles\000\000l1i\\-loads\\-misses / inst_retired.any\000\000\000\000\000\000\000\00000"
-> +/* offset=130032 */ "cache_miss_cycles\000group1\000dcache_miss_cpi + icache_miss_cycles\000\000\000\000\000\000\000\00000"
-> +/* offset=130103 */ "DCache_L2_All_Hits\000\000l2_rqsts.demand_data_rd_hit + l2_rqsts.pf_hit + l2_rqsts.rfo_hit\000\000\000\000\000\000\000\00000"
-> +/* offset=130197 */ "DCache_L2_All_Miss\000\000max(l2_rqsts.all_demand_data_rd - l2_rqsts.demand_data_rd_hit, 0) + l2_rqsts.pf_miss + l2_rqsts.rfo_miss\000\000\000\000\000\000\000\00000"
-> +/* offset=130331 */ "DCache_L2_All\000\000DCache_L2_All_Hits + DCache_L2_All_Miss\000\000\000\000\000\000\000\00000"
-> +/* offset=130395 */ "DCache_L2_Hits\000\000d_ratio(DCache_L2_All_Hits, DCache_L2_All)\000\000\000\000\000\000\000\00000"
-> +/* offset=130463 */ "DCache_L2_Misses\000\000d_ratio(DCache_L2_All_Miss, DCache_L2_All)\000\000\000\000\000\000\000\00000"
-> +/* offset=130533 */ "M1\000\000ipc + M2\000\000\000\000\000\000\000\00000"
-> +/* offset=130555 */ "M2\000\000ipc + M1\000\000\000\000\000\000\000\00000"
-> +/* offset=130577 */ "M3\000\0001 / M3\000\000\000\000\000\000\000\00000"
-> +/* offset=130597 */ "L1D_Cache_Fill_BW\000\00064 * l1d.replacement / 1e9 / duration_time\000\000\000\000\000\000\000\00000"
->  ;
->  
->  static const struct compact_pmu_event pmu_events__common_default_core[] = {
-> @@ -2603,6 +2614,29 @@ static const struct pmu_table_entry pmu_events__common[] = {
->  },
->  };
->  
-> +static const struct compact_pmu_event pmu_metrics__common_default_core[] = {
-> +{ 127758 }, /* CPUs_utilized\000Default\000(software@cpu\\-clock\\,name\\=cpu\\-clock@ if #target_cpu else software@task\\-clock\\,name\\=task\\-clock@) / (duration_time * 1e9)\000\000Average CPU utilization\000\0001CPUs\000\000\000\00001 */
-> +{ 129068 }, /* backend_cycles_idle\000Default\000stalled\\-cycles\\-backend / cpu\\-cycles\000backend_cycles_idle > 0.2\000Backend stalls per cycle\000\000\000\000\000\00000 */
-> +{ 129368 }, /* branch_frequency\000Default\000branches / (software@cpu\\-clock\\,name\\=cpu\\-clock@ if #target_cpu else software@task\\-clock\\,name\\=task\\-clock@)\000\000Branches per CPU second\000\0001000K/sec\000\000\000\00001 */
-> +{ 129547 }, /* branch_miss_rate\000Default\000branch\\-misses / branches\000branch_miss_rate > 0.05\000Branch miss rate\000\000100%\000\000\000\00000 */
-> +{ 127943 }, /* cs_per_second\000Default\000software@context\\-switches\\,name\\=context\\-switches@ * 1e9 / (software@cpu\\-clock\\,name\\=cpu\\-clock@ if #target_cpu else software@task\\-clock\\,name\\=task\\-clock@)\000\000Context switches per CPU second\000\0001cs/sec\000\000\000\00001 */
-> +{ 129193 }, /* cycles_frequency\000Default\000cpu\\-cycles / (software@cpu\\-clock\\,name\\=cpu\\-clock@ if #target_cpu else software@task\\-clock\\,name\\=task\\-clock@)\000\000Cycles per CPU second\000\0001GHz\000\000\000\00001 */
-> +{ 128939 }, /* frontend_cycles_idle\000Default\000stalled\\-cycles\\-frontend / cpu\\-cycles\000frontend_cycles_idle > 0.1\000Frontend stalls per cycle\000\000\000\000\000\00000 */
-> +{ 128664 }, /* insn_per_cycle\000Default\000instructions / cpu\\-cycles\000insn_per_cycle < 1\000Instructions Per Cycle\000\0001instructions\000\000\000\00000 */
-> +{ 128175 }, /* migrations_per_second\000Default\000software@cpu\\-migrations\\,name\\=cpu\\-migrations@ * 1e9 / (software@cpu\\-clock\\,name\\=cpu\\-clock@ if #target_cpu else software@task\\-clock\\,name\\=task\\-clock@)\000\000Process migrations to a new CPU per CPU second\000\0001migrations/sec\000\000\000\00001 */
-> +{ 128434 }, /* page_faults_per_second\000Default\000software@page\\-faults\\,name\\=page\\-faults@ * 1e9 / (software@cpu\\-clock\\,name\\=cpu\\-clock@ if #target_cpu else software@task\\-clock\\,name\\=task\\-clock@)\000\000Page faults per CPU second\000\0001faults/sec\000\000\000\00001 */
-> +{ 128776 }, /* stalled_cycles_per_instruction\000Default\000max(stalled\\-cycles\\-frontend, stalled\\-cycles\\-backend) / instructions\000\000Max front or backend stalls per instruction\000\000\000\000\000\00000 */
-> +
-> +};
-> +
-> +static const struct pmu_table_entry pmu_metrics__common[] = {
-> +{
-> +     .entries = pmu_metrics__common_default_core,
-> +     .num_entries = ARRAY_SIZE(pmu_metrics__common_default_core),
-> +     .pmu_name = { 0 /* default_core\000 */ },
-> +},
-> +};
-> +
->  static const struct compact_pmu_event pmu_events__test_soc_cpu_default_core[] = {
->  { 126205 }, /* bp_l1_btb_correct\000branch\000L1 BTB Correction\000event=0x8a\000\00000\000\000\000\000\000 */
->  { 126267 }, /* bp_l2_btb_correct\000branch\000L2 BTB Correction\000event=0x8b\000\00000\000\000\000\000\000 */
-> @@ -2664,21 +2698,21 @@ static const struct pmu_table_entry pmu_events__test_soc_cpu[] = {
->  };
->  
->  static const struct compact_pmu_event pmu_metrics__test_soc_cpu_default_core[] = {
-> -{ 127758 }, /* CPI\000\0001 / IPC\000\000\000\000\000\000\000\00000 */
-> -{ 128439 }, /* DCache_L2_All\000\000DCache_L2_All_Hits + DCache_L2_All_Miss\000\000\000\000\000\000\000\00000 */
-> -{ 128211 }, /* DCache_L2_All_Hits\000\000l2_rqsts.demand_data_rd_hit + l2_rqsts.pf_hit + l2_rqsts.rfo_hit\000\000\000\000\000\000\000\00000 */
-> -{ 128305 }, /* DCache_L2_All_Miss\000\000max(l2_rqsts.all_demand_data_rd - l2_rqsts.demand_data_rd_hit, 0) + l2_rqsts.pf_miss + l2_rqsts.rfo_miss\000\000\000\000\000\000\000\00000 */
-> -{ 128503 }, /* DCache_L2_Hits\000\000d_ratio(DCache_L2_All_Hits, DCache_L2_All)\000\000\000\000\000\000\000\00000 */
-> -{ 128571 }, /* DCache_L2_Misses\000\000d_ratio(DCache_L2_All_Miss, DCache_L2_All)\000\000\000\000\000\000\000\00000 */
-> -{ 127843 }, /* Frontend_Bound_SMT\000\000idq_uops_not_delivered.core / (4 * (cpu_clk_unhalted.thread / 2 * (1 + cpu_clk_unhalted.one_thread_active / cpu_clk_unhalted.ref_xclk)))\000\000\000\000\000\000\000\00000 */
-> -{ 127780 }, /* IPC\000group1\000inst_retired.any / cpu_clk_unhalted.thread\000\000\000\000\000\000\000\00000 */
-> -{ 128705 }, /* L1D_Cache_Fill_BW\000\00064 * l1d.replacement / 1e9 / duration_time\000\000\000\000\000\000\000\00000 */
-> -{ 128641 }, /* M1\000\000ipc + M2\000\000\000\000\000\000\000\00000 */
-> -{ 128663 }, /* M2\000\000ipc + M1\000\000\000\000\000\000\000\00000 */
-> -{ 128685 }, /* M3\000\0001 / M3\000\000\000\000\000\000\000\00000 */
-> -{ 128140 }, /* cache_miss_cycles\000group1\000dcache_miss_cpi + icache_miss_cycles\000\000\000\000\000\000\000\00000 */
-> -{ 128009 }, /* dcache_miss_cpi\000\000l1d\\-loads\\-misses / inst_retired.any\000\000\000\000\000\000\000\00000 */
-> -{ 128073 }, /* icache_miss_cycles\000\000l1i\\-loads\\-misses / inst_retired.any\000\000\000\000\000\000\000\00000 */
-> +{ 129650 }, /* CPI\000\0001 / IPC\000\000\000\000\000\000\000\00000 */
-> +{ 130331 }, /* DCache_L2_All\000\000DCache_L2_All_Hits + DCache_L2_All_Miss\000\000\000\000\000\000\000\00000 */
-> +{ 130103 }, /* DCache_L2_All_Hits\000\000l2_rqsts.demand_data_rd_hit + l2_rqsts.pf_hit + l2_rqsts.rfo_hit\000\000\000\000\000\000\000\00000 */
-> +{ 130197 }, /* DCache_L2_All_Miss\000\000max(l2_rqsts.all_demand_data_rd - l2_rqsts.demand_data_rd_hit, 0) + l2_rqsts.pf_miss + l2_rqsts.rfo_miss\000\000\000\000\000\000\000\00000 */
-> +{ 130395 }, /* DCache_L2_Hits\000\000d_ratio(DCache_L2_All_Hits, DCache_L2_All)\000\000\000\000\000\000\000\00000 */
-> +{ 130463 }, /* DCache_L2_Misses\000\000d_ratio(DCache_L2_All_Miss, DCache_L2_All)\000\000\000\000\000\000\000\00000 */
-> +{ 129735 }, /* Frontend_Bound_SMT\000\000idq_uops_not_delivered.core / (4 * (cpu_clk_unhalted.thread / 2 * (1 + cpu_clk_unhalted.one_thread_active / cpu_clk_unhalted.ref_xclk)))\000\000\000\000\000\000\000\00000 */
-> +{ 129672 }, /* IPC\000group1\000inst_retired.any / cpu_clk_unhalted.thread\000\000\000\000\000\000\000\00000 */
-> +{ 130597 }, /* L1D_Cache_Fill_BW\000\00064 * l1d.replacement / 1e9 / duration_time\000\000\000\000\000\000\000\00000 */
-> +{ 130533 }, /* M1\000\000ipc + M2\000\000\000\000\000\000\000\00000 */
-> +{ 130555 }, /* M2\000\000ipc + M1\000\000\000\000\000\000\000\00000 */
-> +{ 130577 }, /* M3\000\0001 / M3\000\000\000\000\000\000\000\00000 */
-> +{ 130032 }, /* cache_miss_cycles\000group1\000dcache_miss_cpi + icache_miss_cycles\000\000\000\000\000\000\000\00000 */
-> +{ 129901 }, /* dcache_miss_cpi\000\000l1d\\-loads\\-misses / inst_retired.any\000\000\000\000\000\000\000\00000 */
-> +{ 129965 }, /* icache_miss_cycles\000\000l1i\\-loads\\-misses / inst_retired.any\000\000\000\000\000\000\000\00000 */
->  
->  };
->  
-> @@ -2759,7 +2793,10 @@ static const struct pmu_events_map pmu_events_map[] = {
->  		.pmus = pmu_events__common,
->  		.num_pmus = ARRAY_SIZE(pmu_events__common),
->  	},
-> -	.metric_table = {},
-> +	.metric_table = {
-> +		.pmus = pmu_metrics__common,
-> +		.num_pmus = ARRAY_SIZE(pmu_metrics__common),
-> +	},
->  },
->  {
->  	.arch = "testarch",
-> @@ -3208,6 +3245,22 @@ const struct pmu_metrics_table *pmu_metrics_table__find(void)
->          return map ? &map->metric_table : NULL;
->  }
->  
-> +const struct pmu_metrics_table *pmu_metrics_table__default(void)
-> +{
-> +        int i = 0;
-> +
-> +        for (;;) {
-> +                const struct pmu_events_map *map = &pmu_events_map[i++];
-> +
-> +                if (!map->arch)
-> +                        break;
-> +
-> +                if (!strcmp(map->cpuid, "common"))
-> +                        return &map->metric_table;
-> +        }
-> +        return NULL;
-> +}
-> +
->  const struct pmu_events_table *find_core_events_table(const char *arch, const char *cpuid)
->  {
->          for (const struct pmu_events_map *tables = &pmu_events_map[0];
-> diff --git a/tools/perf/pmu-events/jevents.py b/tools/perf/pmu-events/jevents.py
-> index 786a7049363f..5d3f4b44cfb7 100755
-> --- a/tools/perf/pmu-events/jevents.py
-> +++ b/tools/perf/pmu-events/jevents.py
-> @@ -755,7 +755,10 @@ static const struct pmu_events_map pmu_events_map[] = {
->  \t\t.pmus = pmu_events__common,
->  \t\t.num_pmus = ARRAY_SIZE(pmu_events__common),
->  \t},
-> -\t.metric_table = {},
-> +\t.metric_table = {
-> +\t\t.pmus = pmu_metrics__common,
-> +\t\t.num_pmus = ARRAY_SIZE(pmu_metrics__common),
-> +\t},
->  },
->  """)
->      else:
-> @@ -1237,6 +1240,22 @@ const struct pmu_metrics_table *pmu_metrics_table__find(void)
->          return map ? &map->metric_table : NULL;
->  }
->  
-> +const struct pmu_metrics_table *pmu_metrics_table__default(void)
-> +{
-> +        int i = 0;
-> +
-> +        for (;;) {
-> +                const struct pmu_events_map *map = &pmu_events_map[i++];
-> +
-> +                if (!map->arch)
-> +                        break;
-> +
-> +                if (!strcmp(map->cpuid, "common"))
-> +                        return &map->metric_table;
-> +        }
-> +        return NULL;
-> +}
-> +
->  const struct pmu_events_table *find_core_events_table(const char *arch, const char *cpuid)
->  {
->          for (const struct pmu_events_map *tables = &pmu_events_map[0];
-> diff --git a/tools/perf/pmu-events/pmu-events.h b/tools/perf/pmu-events/pmu-events.h
-> index e0535380c0b2..559265a903c8 100644
-> --- a/tools/perf/pmu-events/pmu-events.h
-> +++ b/tools/perf/pmu-events/pmu-events.h
-> @@ -127,6 +127,7 @@ int pmu_metrics_table__find_metric(const struct pmu_metrics_table *table,
->  const struct pmu_events_table *perf_pmu__find_events_table(struct perf_pmu *pmu);
->  const struct pmu_events_table *perf_pmu__default_core_events_table(void);
->  const struct pmu_metrics_table *pmu_metrics_table__find(void);
-> +const struct pmu_metrics_table *pmu_metrics_table__default(void);
->  const struct pmu_events_table *find_core_events_table(const char *arch, const char *cpuid);
->  const struct pmu_metrics_table *find_core_metrics_table(const char *arch, const char *cpuid);
->  int pmu_for_each_core_event(pmu_event_iter_fn fn, void *data);
-> diff --git a/tools/perf/util/metricgroup.c b/tools/perf/util/metricgroup.c
-> index 76092ee26761..e67e04ce01c9 100644
-> --- a/tools/perf/util/metricgroup.c
-> +++ b/tools/perf/util/metricgroup.c
-> @@ -424,10 +424,18 @@ int metricgroup__for_each_metric(const struct pmu_metrics_table *table, pmu_metr
->  		.fn = fn,
->  		.data = data,
->  	};
-> +	const struct pmu_metrics_table *tables[2] = {
-> +		table,
-> +		pmu_metrics_table__default(),
-> +	};
-> +
-> +	for (size_t i = 0; i < ARRAY_SIZE(tables); i++) {
-> +		int ret;
->  
-> -	if (table) {
-> -		int ret = pmu_metrics_table__for_each_metric(table, fn, data);
-> +		if (!tables[i])
-> +			continue;
->  
-> +		ret = pmu_metrics_table__for_each_metric(tables[i], fn, data);
->  		if (ret)
->  			return ret;
->  	}
-> @@ -1581,19 +1589,22 @@ static int metricgroup__has_metric_or_groups_callback(const struct pmu_metric *p
->  
->  bool metricgroup__has_metric_or_groups(const char *pmu, const char *metric_or_groups)
->  {
-> -	const struct pmu_metrics_table *table = pmu_metrics_table__find();
-> +	const struct pmu_metrics_table *tables[2] = {
-> +		pmu_metrics_table__find(),
-> +		pmu_metrics_table__default(),
-> +	};
->  	struct metricgroup__has_metric_data data = {
->  		.pmu = pmu,
->  		.metric_or_groups = metric_or_groups,
->  	};
->  
-> -	if (!table)
-> -		return false;
-> -
-> -	return pmu_metrics_table__for_each_metric(table,
-> -						  metricgroup__has_metric_or_groups_callback,
-> -						  &data)
-> -		? true : false;
-> +	for (size_t i = 0; i < ARRAY_SIZE(tables); i++) {
-> +		if (pmu_metrics_table__for_each_metric(tables[i],
-> +							metricgroup__has_metric_or_groups_callback,
-> +							&data))
-> +			return true;
-> +	}
-> +	return false;
->  }
->  
->  static int metricgroup__topdown_max_level_callback(const struct pmu_metric *pm,
-> -- 
-> 2.51.2.1041.gc1ab5b90ca-goog
-> 
+Tested on:
+
+commit:         4427259c Merge tag 'riscv-for-linus-6.18-rc6' of git:/..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1044b0b4580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=2c614fa9e6f5bdc1
+dashboard link: https://syzkaller.appspot.com/bug?extid=f3185be57d7e8dda32b8
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1771a7cd980000
+
 
