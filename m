@@ -1,84 +1,77 @@
-Return-Path: <linux-kernel+bounces-895147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1952BC4D109
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:34:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BCD3C4D1A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:38:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 38DBC4F88E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:27:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E3CA427BA0
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:28:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E380A34BA40;
-	Tue, 11 Nov 2025 10:27:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="sjb5S7mK"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C10B34C14C;
+	Tue, 11 Nov 2025 10:27:59 +0000 (UTC)
+Received: from mail-oo1-f52.google.com (mail-oo1-f52.google.com [209.85.161.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 522E9345739;
-	Tue, 11 Nov 2025 10:27:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0916B34B682
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 10:27:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762856856; cv=none; b=N/ZA/Y1vnpbxFCCS42rVLGBPkGZIpOGCo6sxAckPjDw++ADxmVK7FKUopQMwHUAJ1fwP2qe9ePNyw87CBFGI79xqMM9EXcsWKqaSF/SJW8wHwInxgPQ/93l1k63TRi3+Ga64QBFS0bILrt0ubRF+x/jKjk6y5+8F08GXPepLkTc=
+	t=1762856878; cv=none; b=Hs0o7axe2jVoWo1jtCMdyUdkkWWO5FYCu5SIRKUQODN57H0PRFox+W8CHMeMH91/6iOem7pqrB2yJ9ry3+mmp2R5antZkQo4Fa1uB0y0og6V09zGjTfPZob2M/V+F+/1XwjDIKFuXLScuEU4WQj0HX0/H0C/nOwAl6dh5Jr7So4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762856856; c=relaxed/simple;
-	bh=JirDSvUgdW0BcnI08nHDbc8VOnVTAsZAJyon3YU6egM=;
+	s=arc-20240116; t=1762856878; c=relaxed/simple;
+	bh=/8CzXfuHcEJlSJRA11zs4FnS8Nv46Y0bC/+D45XIcAM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hew4T6xTmiqBvQhXSw2rT2ZxdOrldklQlukqDo85KcsIr3fLpri+EnTRBDQmPuRfRCo1yBBKoDcmffQUbsqc6pjxSi78gHanXjdkSKDDbWgWWPlxNpeXDg9bDO6qWOw3LQZWHwrMxGn0XG29V7QpGBZ6pnyaBw5UuLE4W5lLiWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=sjb5S7mK; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=iCozD/S14h9YyVEvZtzrw1OeE8+mwrBwtubAIDfZfYw=; b=sjb5S7mK2brT+EtiKy3b3jYsHd
-	lNYMJRyT9YAluzwMc8XiVCT6lDbgLRAv3jkpzWQaIvSJiMVlTu0KB7Qeb3Zp7tud9XR4oQJS5GTtM
-	wxeAFYkz/k6xVOXGOnLOFp9YHVm0W6z8GlyCJCZZ0wJOYVI7CnH4Pv0pgFsU4MylNjQJoXiWiA6Fm
-	P+slWCcWrcvHBNtm3WSymnLMQIyuEJ2LWAiciGDcRLeuqppHzpm5GiYI/g2u4LGqNQC2HfcFNFeCC
-	75V0Liz50oP+KjQ1uk1/50UGtZ/pFqw6GrHY0kVXbojzKRFWy6yONwogjg7nInxJrfnb8JC+dZ5/6
-	MghJ6MCA==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vIlaq-00000003ivF-1kLK;
-	Tue, 11 Nov 2025 10:27:20 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 455A4300328; Tue, 11 Nov 2025 11:27:19 +0100 (CET)
-Date: Tue, 11 Nov 2025 11:27:19 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Maciej Wieczor-Retman <m.wieczorretman@pm.me>
-Cc: xin@zytor.com, kaleshsingh@google.com, kbingham@kernel.org,
-	akpm@linux-foundation.org, nathan@kernel.org,
-	ryabinin.a.a@gmail.com, dave.hansen@linux.intel.com, bp@alien8.de,
-	morbo@google.com, jeremy.linton@arm.com, smostafa@google.com,
-	kees@kernel.org, baohua@kernel.org, vbabka@suse.cz,
-	justinstitt@google.com, wangkefeng.wang@huawei.com,
-	leitao@debian.org, jan.kiszka@siemens.com,
-	fujita.tomonori@gmail.com, hpa@zytor.com, urezki@gmail.com,
-	ubizjak@gmail.com, ada.coupriediaz@arm.com,
-	nick.desaulniers+lkml@gmail.com, ojeda@kernel.org,
-	brgerst@gmail.com, elver@google.com, pankaj.gupta@amd.com,
-	glider@google.com, mark.rutland@arm.com, trintaeoitogc@gmail.com,
-	jpoimboe@kernel.org, thuth@redhat.com, pasha.tatashin@soleen.com,
-	dvyukov@google.com, jhubbard@nvidia.com, catalin.marinas@arm.com,
-	yeoreum.yun@arm.com, mhocko@suse.com, lorenzo.stoakes@oracle.com,
-	samuel.holland@sifive.com, vincenzo.frascino@arm.com,
-	bigeasy@linutronix.de, surenb@google.com, ardb@kernel.org,
-	Liam.Howlett@oracle.com, nicolas.schier@linux.dev, ziy@nvidia.com,
-	kas@kernel.org, tglx@linutronix.de, mingo@redhat.com,
-	broonie@kernel.org, corbet@lwn.net, andreyknvl@gmail.com,
-	maciej.wieczor-retman@intel.com, david@redhat.com, maz@kernel.org,
-	rppt@kernel.org, will@kernel.org, luto@kernel.org,
-	kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, x86@kernel.org,
-	linux-kbuild@vger.kernel.org, linux-mm@kvack.org,
-	llvm@lists.linux.dev, linux-doc@vger.kernel.org
-Subject: Re: [PATCH v6 15/18] x86/kasan: Handle UD1 for inline KASAN reports
-Message-ID: <20251111102719.GH278048@noisy.programming.kicks-ass.net>
-References: <cover.1761763681.git.m.wieczorretman@pm.me>
- <8b0daaf83752528418bf2dd8d08906c37fa31f69.1761763681.git.m.wieczorretman@pm.me>
+	 Content-Type:Content-Disposition:In-Reply-To; b=eB6vZFezCsXH2HyVtAuuq/SfoPWJywgJ3x779iKFcCVsIMqTaj7kbde1JPYgen3iDAMpgG3Q+mMW4FFTL+Koxiq5y83vgBaU+AjH5nPJRlNZYZ8YslPEpW24ettJGEgcXrFjgGz03/7AmN8lLyYl0Wb4BUN0Cmp//d9WA8I6bSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.161.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-656c07e3241so1739998eaf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 02:27:56 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762856876; x=1763461676;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EXcNh9uEcUlM67NldM+wkaR6qeKY7aCoNzjVAfRE4U8=;
+        b=ms3F1xxCeJtEzSMZgDNoIXVn5Y3hO1QLEzcrhgFeXHGkxa5Nn8+jo+9xeE4ciSifj+
+         RYS2ubOqs5wVdFANiCFCVJ0cdWkusWEZtwDwqVvwvSxdJahmkUwcTEGnxwkqV5EheBOn
+         JtK/tVvRatWmfH6VqeQE5eaypsz2UEE/0GKhIiTsgfcx6/wFEF1nldQpfmDs8zk1EkSI
+         x5yy+Pg5HoZIKbjWZns23kAHOGFl0Bt8CgYdiUGHga8s/RkFXm/QMQ8I79YbQtipje4A
+         DLq4jIt+Tdw+ILMLm4CTZZo04Y920q3D8GMUNxVxVB4L9MzHOYw10h0cu9FsueQFnehM
+         7ZKw==
+X-Forwarded-Encrypted: i=1; AJvYcCVcNusSWmhwf15Jzf1EqHZtZhK4oX/HRvGeea5laQiNxQuVZ9qgQIxcMHniK/cRCFbvD4IJJqIkziiC89I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmU5zBqrEpUVJRq/jJN3ZM1qriXkhOpW0RcveNDh9yn4QGd5yk
+	MrazgQ6iT5kPOJee9112R0uL7k5IOyt9d801y2Bu4OsgfOjNB0xipPq9
+X-Gm-Gg: ASbGnct7ul87uMU3xe/7LQK2bGjViUBhZWjG3JlqB9sTFl8H0MU6Lh2BVndkHgAvsLh
+	/FQoSl4DTW+2KeS/20CGeCpS3VPW4WCKDzGtnx7ZuVxYa6kOjtY8cJIxnAFg/+lk982qMipHO7k
+	ZmvRglKzbFeTcp5JNhFD/vZ3uTSx2bxkGU3c+yDad8PvmuR7F9emwIsxvypRiDtp/zwtthBJxgp
+	qgwtCHsr4csPX453l76k3mmy8iWUssNUjX4gIIJWIpBLlHsAXAWGLaUUdOl91BP5ugTsOrXnRS1
+	zqDO/9qUI8J7MjMJkr3pXIG2e+VIvf6h8sVlXha3CkhaFS9QKMqO6U2nWhhGVz2uE/RQjxi/iDl
+	h4JRMwZ2Zl+bqLWDAJRkKkFa/epI+RXKBJsUtyQqEUUxTNGR6b0GDdATujgcwPoAsniQYML8hKo
+	Lkmg==
+X-Google-Smtp-Source: AGHT+IEzVtMODbxRkCJvy3lTstnvvwHWNG9lfiDUwJA7fVsJcqlAOniXiPB2G6BGunxf9fRFY+u0kQ==
+X-Received: by 2002:a05:6870:8123:b0:3e8:172f:da82 with SMTP id 586e51a60fabf-3e8172fdfd0mr1103253fac.19.1762856876015;
+        Tue, 11 Nov 2025 02:27:56 -0800 (PST)
+Received: from gmail.com ([2a03:2880:10ff:8::])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-3e41eba8ce5sm7616709fac.4.2025.11.11.02.27.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Nov 2025 02:27:55 -0800 (PST)
+Date: Tue, 11 Nov 2025 02:27:53 -0800
+From: Breno Leitao <leitao@debian.org>
+To: Andre Carvalho <asantostc@gmail.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Shuah Khan <shuah@kernel.org>, 
+	Simon Horman <horms@kernel.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH net-next v3 6/6] selftests: netconsole: validate target
+ resume
+Message-ID: <kv5q2fq3mypb4eenrk6z3j4yjfhrlmjdcgwrsgm7cefvso7n3x@j3mcnw3uaaq5>
+References: <20251109-netcons-retrigger-v3-0-1654c280bbe6@gmail.com>
+ <20251109-netcons-retrigger-v3-6-1654c280bbe6@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,124 +80,201 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8b0daaf83752528418bf2dd8d08906c37fa31f69.1761763681.git.m.wieczorretman@pm.me>
+In-Reply-To: <20251109-netcons-retrigger-v3-6-1654c280bbe6@gmail.com>
 
-On Wed, Oct 29, 2025 at 08:09:51PM +0000, Maciej Wieczor-Retman wrote:
-> From: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
+On Sun, Nov 09, 2025 at 11:05:56AM +0000, Andre Carvalho wrote:
+> Introduce a new netconsole selftest to validate that netconsole is able
+> to resume a deactivated target when the low level interface comes back.
 > 
-> Inline KASAN on x86 should do tag mismatch reports by passing the
-> metadata through the UD1 instruction and the faulty address through RDI,
-> a scheme that's already used by UBSan and is easy to extend.
+> The test setups the network using netdevsim, creates a netconsole target
+> and then remove/add netdevsim in order to bring the same interfaces
+> back. Afterwards, the test validates that the target works as expected.
 > 
-> The current LLVM way of passing KASAN software tag mode metadata is done
-> using the INT3 instruction. However that should be changed because it
-> doesn't align to how the kernel already handles UD1 for similar use
-> cases. Since inline software tag-based KASAN doesn't work on x86 due to
-> missing compiler support it can be fixed and the INT3 can be changed to
-> UD1 at the same time.
+> Targets are created via cmdline parameters to the module to ensure that
+> we are able to resume targets that were bound by mac and interface name.
 > 
-> Add a kasan component to the #UD decoding and handling functions.
+> Signed-off-by: Andre Carvalho <asantostc@gmail.com>
+> ---
+>  tools/testing/selftests/drivers/net/Makefile       |  1 +
+>  .../selftests/drivers/net/lib/sh/lib_netcons.sh    | 30 ++++++-
+>  .../selftests/drivers/net/netcons_resume.sh        | 92 ++++++++++++++++++++++
+>  3 files changed, 120 insertions(+), 3 deletions(-)
 > 
-> Make part of that hook - which decides whether to die or recover from a
-> tag mismatch - arch independent to avoid duplicating a long comment on
-> both x86 and arm64 architectures.
-> 
-
-> diff --git a/arch/x86/include/asm/kasan.h b/arch/x86/include/asm/kasan.h
-> index 396071832d02..375651d9b114 100644
-> --- a/arch/x86/include/asm/kasan.h
-> +++ b/arch/x86/include/asm/kasan.h
-> @@ -6,6 +6,24 @@
->  #include <linux/kasan-tags.h>
->  #include <linux/types.h>
->  #define KASAN_SHADOW_OFFSET _AC(CONFIG_KASAN_SHADOW_OFFSET, UL)
-> +
-> +/*
-> + * LLVM ABI for reporting tag mismatches in inline KASAN mode.
-> + * On x86 the UD1 instruction is used to carry metadata in the ECX register
-> + * to the KASAN report. ECX is used to differentiate KASAN from UBSan when
-> + * decoding the UD1 instruction.
-> + *
-> + * SIZE refers to how many bytes the faulty memory access
-> + * requested.
-> + * WRITE bit, when set, indicates the access was a write, otherwise
-> + * it was a read.
-> + * RECOVER bit, when set, should allow the kernel to carry on after
-> + * a tag mismatch. Otherwise die() is called.
-> + */
-> +#define KASAN_ECX_RECOVER	0x20
-> +#define KASAN_ECX_WRITE		0x10
-> +#define KASAN_ECX_SIZE_MASK	0x0f
-> +#define KASAN_ECX_SIZE(ecx)	(1 << ((ecx) & KASAN_ECX_SIZE_MASK))
->  #define KASAN_SHADOW_SCALE_SHIFT 3
-
-> diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
-> index 6b22611e69cc..40fefd306c76 100644
-> --- a/arch/x86/kernel/traps.c
-> +++ b/arch/x86/kernel/traps.c
-> @@ -179,6 +179,9 @@ __always_inline int decode_bug(unsigned long addr, s32 *imm, int *len)
->  	if (X86_MODRM_REG(v) == 0)	/* EAX */
->  		return BUG_UD1_UBSAN;
->  
-> +	if (X86_MODRM_REG(v) == 1)	/* ECX */
-> +		return BUG_UD1_KASAN;
-> +
->  	return BUG_UD1;
+> diff --git a/tools/testing/selftests/drivers/net/Makefile b/tools/testing/selftests/drivers/net/Makefile
+> index 68e0bb603a9d..fbd81bec66cd 100644
+> --- a/tools/testing/selftests/drivers/net/Makefile
+> +++ b/tools/testing/selftests/drivers/net/Makefile
+> @@ -17,6 +17,7 @@ TEST_PROGS := \
+>  	netcons_cmdline.sh \
+>  	netcons_fragmented_msg.sh \
+>  	netcons_overflow.sh \
+> +	netcons_resume.sh \
+>  	netcons_sysdata.sh \
+>  	netpoll_basic.py \
+>  	ping.py \
+> diff --git a/tools/testing/selftests/drivers/net/lib/sh/lib_netcons.sh b/tools/testing/selftests/drivers/net/lib/sh/lib_netcons.sh
+> index 8e1085e89647..88b4bdfa84cf 100644
+> --- a/tools/testing/selftests/drivers/net/lib/sh/lib_netcons.sh
+> +++ b/tools/testing/selftests/drivers/net/lib/sh/lib_netcons.sh
+> @@ -186,12 +186,13 @@ function do_cleanup() {
 >  }
 >  
-> @@ -357,6 +360,11 @@ static noinstr bool handle_bug(struct pt_regs *regs)
->  		}
->  		break;
+>  function cleanup() {
+> +	local TARGETPATH=${1:-${NETCONS_PATH}}
+>  	# delete netconsole dynamic reconfiguration
+> -	echo 0 > "${NETCONS_PATH}"/enabled
+> +	echo 0 > "${TARGETPATH}"/enabled
+>  	# Remove all the keys that got created during the selftest
+> -	find "${NETCONS_PATH}/userdata/" -mindepth 1 -type d -delete
+> +	find "${TARGETPATH}/userdata/" -mindepth 1 -type d -delete
+>  	# Remove the configfs entry
+> -	rmdir "${NETCONS_PATH}"
+> +	rmdir "${TARGETPATH}"
 >  
-> +	case BUG_UD1_KASAN:
-> +		kasan_inline_handler(regs);
-> +		handled = true;
-> +		break;
-> +
->  	default:
->  		break;
->  	}
+>  	do_cleanup
+>  }
+> @@ -350,6 +351,29 @@ function check_netconsole_module() {
+>  	fi
+>  }
+>  
+> +function wait_target_state() {
+> +	local TARGET=${1}
+> +	local STATE=${2}
+> +	local FILE="${NETCONS_CONFIGFS}"/"${TARGET}"/"enabled"
 
-> +void kasan_inline_handler(struct pt_regs *regs)
-> +{
-> +	int metadata = regs->cx;
-> +	u64 addr = regs->di;
-> +	u64 pc = regs->ip;
-> +	bool recover = metadata & KASAN_ECX_RECOVER;
-> +	bool write = metadata & KASAN_ECX_WRITE;
-> +	size_t size = KASAN_ECX_SIZE(metadata);
+local TARGET_PATH="${NETCONS_CONFIGFS}"/"${TARGET}"
+
 > +
-> +	if (user_mode(regs))
-> +		return;
+> +	if [ "${STATE}" == "enabled" ]
+> +	then
+> +		ENABLED=1
+
+Shouldn't they be local variables in here ?
+
+> +	else
+> +		ENABLED=0
+> +	fi
 > +
-> +	if (!kasan_report((void *)addr, size, write, pc))
-> +		return;
+> +	if [ ! -f "$FILE" ]; then
+
+	if [ ! -f "${TARGET_PATH}" ]; then
+
+> +		echo "FAIL: Target does not exist." >&2
+> +		exit "${ksft_fail}"
+> +	fi
 > +
-> +	kasan_die_unless_recover(recover, "Oops - KASAN", regs, metadata, die);
+> +	slowwait 2 sh -c "test -n \"\$(grep \"${ENABLED}\" \"${FILE}\")\"" || {
+
+	slowwait 2 sh -c "test -n \"\$(grep \"${ENABLED}\" \"${TARGET_PATH}/enabled\")\"" || {
+
+> +		echo "FAIL: ${TARGET} is not ${STATE}." >&2
+> +	}
 > +}
+> +
+>  # A wrapper to translate protocol version to udp version
+>  function wait_for_port() {
+>  	local NAMESPACE=${1}
+> diff --git a/tools/testing/selftests/drivers/net/netcons_resume.sh b/tools/testing/selftests/drivers/net/netcons_resume.sh
+> new file mode 100755
+> index 000000000000..404df7abef1b
+> --- /dev/null
+> +++ b/tools/testing/selftests/drivers/net/netcons_resume.sh
+> @@ -0,0 +1,92 @@
+> +#!/usr/bin/env bash
+> +# SPDX-License-Identifier: GPL-2.0
+> +
+> +# This test validates that netconsole is able to resume a target that was
+> +# deactivated when its interface was removed when the interface is brought
+> +# back up.
 
-I'm confused. Going by the ARM64 code, the meta-data is constant per
-site -- it is encoded in the break immediate.
+Comment above is a bit harder to understand.
 
-And I suggested you do the same on x86 by using the single byte
-displacement instruction encoding.
+> +#
+> +# The test configures a netconsole target and then removes netdevsim module to
+> +# cause the interface to disappear. Targets are configured via cmdline to ensure
+> +# targets bound by interface name and mac address can be resumed.
+> +# The test verifies that the target moved to disabled state before adding
+> +# netdevsim and the interface back.
+> +#
+> +# Finally, the test verifies that the target is re-enabled automatically and
+> +# the message is received on the destination interface.
+> +#
+> +# Author: Andre Carvalho <asantostc@gmail.com>
+> +
+> +set -euo pipefail
+> +
+> +SCRIPTDIR=$(dirname "$(readlink -e "${BASH_SOURCE[0]}")")
+> +
+> +source "${SCRIPTDIR}"/lib/sh/lib_netcons.sh
+> +
+> +modprobe netdevsim 2> /dev/null || true
+> +rmmod netconsole 2> /dev/null || true
+> +
+> +check_netconsole_module
+> +
+> +# Run the test twice, with different cmdline parameters
+> +for BINDMODE in "ifname" "mac"
+> +do
+> +	echo "Running with bind mode: ${BINDMODE}" >&2
+> +	# Set current loglevel to KERN_INFO(6), and default to KERN_NOTICE(5)
+> +	echo "6 5" > /proc/sys/kernel/printk
+> +
+> +	# Create one namespace and two interfaces
+> +	set_network
+> +	trap do_cleanup EXIT
 
-	ud1	0xFF(%ecx), %ecx
+can we keep these trap lines outside of the loop?
 
-Also, we don't have to use a fixed register for the address, you can do:
+> +
+> +	# Create the command line for netconsole, with the configuration from
+> +	# the function above
+> +	CMDLINE=$(create_cmdline_str "${BINDMODE}")
+> +
+> +	# The content of kmsg will be save to the following file
+> +	OUTPUT_FILE="/tmp/${TARGET}-${BINDMODE}"
+> +
+> +	# Load the module, with the cmdline set
+> +	modprobe netconsole "${CMDLINE}"
+> +	# Expose cmdline target in configfs
+> +	mkdir ${NETCONS_CONFIGFS}"/cmdline0"
+> +	trap 'cleanup "${NETCONS_CONFIGFS}"/cmdline0' EXIT
+> +
+> +	# Target should be enabled
+> +	wait_target_state "cmdline0" "enabled"
+> +
+> +	# Remove low level module
+> +	rmmod netdevsim
+> +	# Target should be disabled
+> +	wait_target_state "cmdline0" "disabled"
+> +
+> +	# Add back low level module
+> +	modprobe netdevsim
+> +	# Recreate namespace and two interfaces
+> +	set_network
+> +	# Target should be enabled again
+> +	wait_target_state "cmdline0" "enabled"
+> +
+> +	# Listen for netconsole port inside the namespace and destination
+> +	# interface
+> +	listen_port_and_save_to "${OUTPUT_FILE}" &
+> +	# Wait for socat to start and listen to the port.
+> +	wait_local_port_listen "${NAMESPACE}" "${PORT}" udp
+> +	# Send the message
+> +	echo "${MSG}: ${TARGET}" > /dev/kmsg
+> +	# Wait until socat saves the file to disk
+> +	busywait "${BUSYWAIT_TIMEOUT}" test -s "${OUTPUT_FILE}"
+> +	# Make sure the message was received in the dst part
+> +	# and exit
+> +	validate_msg "${OUTPUT_FILE}"
+> +
+> +	# kill socat in case it is still running
+> +	pkill_socat
+> +	# Cleanup & unload the module
+> +	cleanup "${NETCONS_CONFIGFS}/cmdline0"
+> +	rmmod netconsole
 
-	ud1	0xFF(%ecx), %reg
+Why do we need to remove netconsole module in here?
 
-and have %reg tell us what register the address is in.
-
-Then you can recover the meta-data from the displacement immediate and
-the address from whatever register is denoted.
-
-This avoids the 'callsite' from having to clobber cx and move the address
-into di.
-
-What you have here will work, and I don't suppose we care about code
-density with KASAN much, but it could've been so much better :/
-
-
+Thanks for this patch. This is solving a real issue we have right now.
+--breno
 
