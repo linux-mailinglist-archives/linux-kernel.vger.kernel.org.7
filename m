@@ -1,241 +1,114 @@
-Return-Path: <linux-kernel+bounces-894637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E61CC4B77F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 05:38:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 81F0CC4B782
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 05:38:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DE4D64F355F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 04:37:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CCCCB4EE1FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 04:38:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EF103128BA;
-	Tue, 11 Nov 2025 04:37:28 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BFF4303A05;
-	Tue, 11 Nov 2025 04:37:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F1DD278161;
+	Tue, 11 Nov 2025 04:38:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="eehdZMur"
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA379277029
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 04:38:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762835848; cv=none; b=fSvfaCIlOYjNSTYXT/OwXP79ZGXeHQlph8THF/lU4fOm9gMIhYS8Yclxtee4bHRanSvoRhM5viQZ2ajxKERjapGoxKyZTVMXIfOCodOw8e6MnWwKU4pVgO/CrYcWh10ObWjiM6QWEAubTmCUc+VFgw1ujbtNPMSUP56OyNicFBI=
+	t=1762835894; cv=none; b=edJ2O0wzSAvNHq6/1EaoFB3uIQIOcb2By/mhliU0Zg9Xqi05T3fOBT6DmapRSQR4UmigoCr2O7EV5ShGqIvaNj8kS+VF28ce4/vx7zY7AVIleSTffoqCzC8ugag2ty5t0u8rBQAa1lbQ6xnMAHNOjvGc5Pm7pdXYN8hpA4Dmx04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762835848; c=relaxed/simple;
-	bh=ONY7yg3b/hc6FBRbs5yiQ3fKU5/mD/Cx//exp/T76YE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ERZbhxzomKnKG8wJ+8sJdvn0MvvR/qdbIGLIdsPlL6YXpIb0XX0Pclw2I9p4ffBIeehKkoNZn0LBwdgsoEcNSu5+Ol5w+bv4FoLjwYuaT3VAbUAXBtmiKx8Ns0Nk7kzxGRUkrkbJFOiIkew7loJdV33GDag//PljPx2Oq6AjC0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C5E122F;
-	Mon, 10 Nov 2025 20:37:16 -0800 (PST)
-Received: from [10.164.136.36] (unknown [10.164.136.36])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8BEF33F66E;
-	Mon, 10 Nov 2025 20:37:21 -0800 (PST)
-Message-ID: <938fc839-b27a-484f-a49c-6dc05b3e9983@arm.com>
-Date: Tue, 11 Nov 2025 10:07:18 +0530
+	s=arc-20240116; t=1762835894; c=relaxed/simple;
+	bh=JwD+WfOXVSJGzZ8waVpo6l9WuxaN4TeD3oBx/bSxw9w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hlMfq+koakxQIoloQCBpVZWEv3EZgtDbvrytA9VyPhrjgshpOjMypIIoovSQ50X9fHTa9/5F2nhjELenWPGKhtVQDXwoIGNpGqo8xKVvP9ZdLXl8M+AAU9yMYI9oLpFMgb+XUTaf5IJOXNf1lC8I/UPB42D0CgFV3HJ8YyaKzag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=eehdZMur; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from trampoline.thunk.org (pool-173-48-122-154.bstnma.fios.verizon.net [173.48.122.154])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 5AB4c3EB024917
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 10 Nov 2025 23:38:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1762835885; bh=7f9nskz50US5otTMA56btf4ZARhkZmFuBPp3q+iG5ok=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=eehdZMur31zN5Wddqp0swc/sc6oyq2We5uCcxSJJDU8i2RcIrmb+Ex81Ma2pDX8+6
+	 RhxhzsLaKJhKqoCX5gAg8H3nfyQOua/XHBTcFJOjJoNkOfVQGcrSaDHLQrK/ZJrikO
+	 MuAn1VJTH77w1vKa6qDIzQ4WfBXme6mq9JM760ej0QW2Wdrgxa7c9K5oEp/3X8URuI
+	 tVKtIJHuOnnWXmFm3D/qRfLM7cTkJNptdJtTFSIYyBOwOemxRtjSM+dZ+LCPIfGqTp
+	 E4urQcNeyC6FGo1v5erx/eAEgWNyKjTRrGjJ4eP+kC5Z2aL+sI4S+R8deR1nXfLqtf
+	 P4BNQDVtWW2UA==
+Received: by trampoline.thunk.org (Postfix, from userid 15806)
+	id A9A7B2E00D9; Mon, 10 Nov 2025 23:38:03 -0500 (EST)
+Date: Mon, 10 Nov 2025 23:38:03 -0500
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Maarten Brock <Maarten.Brock@sttls.nl>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: RFC: Serial port DTR/RTS - O_NRESETDEV
+Message-ID: <20251111043803.GK2988753@mit.edu>
+References: <bb44f856-10a2-40c7-a3f7-be50c8e4b0a9@zytor.com>
+ <20251107173743.GA3131573@mit.edu>
+ <dc42f5d4-a707-4442-bda6-1c1990666f54@zytor.com>
+ <20251110033556.GC2988753@mit.edu>
+ <ADB50E23-DC8B-43D0-A345-E10396A3DFD4@zytor.com>
+ <AMBPR05MB11925DA076098B05E418BF64283CEA@AMBPR05MB11925.eurprd05.prod.outlook.com>
+ <20251110201933.GH2988753@mit.edu>
+ <0F8021E8-F288-4669-8195-9948844E36FD@zytor.com>
+ <20251111035143.GJ2988753@mit.edu>
+ <D4AF3E24-8698-4EEC-9D52-655D69897111@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64/pageattr: Propagate return value from
- __change_memory_common
-To: Yang Shi <yang@os.amperecomputing.com>, Will Deacon <will@kernel.org>
-Cc: catalin.marinas@arm.com, ryan.roberts@arm.com, rppt@kernel.org,
- shijie@os.amperecomputing.com, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20251103061306.82034-1-dev.jain@arm.com>
- <aQjHQt2rYL6av4qw@willie-the-truck>
- <f594696b-ba33-4c04-9cf5-e88767221ae0@os.amperecomputing.com>
- <f8b899cf-d377-4dc7-a57c-82826ea5e1ea@arm.com>
- <aQn4EwKar66UZ7rz@willie-the-truck>
- <586b8d19-a5d2-4248-869b-98f39b792acb@arm.com>
- <17eed751-e1c5-4ea5-af1d-e96da16d5e26@arm.com>
- <c1701ce9-c8b7-4ac8-8dd4-930af3dad7d2@os.amperecomputing.com>
-Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <c1701ce9-c8b7-4ac8-8dd4-930af3dad7d2@os.amperecomputing.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <D4AF3E24-8698-4EEC-9D52-655D69897111@zytor.com>
 
+On Mon, Nov 10, 2025 at 07:57:22PM -0800, H. Peter Anvin wrote:
+> I really think you are looking at this from a very odd point of
+> view, and you seem to be very inconsistent. Boot time setup? Isn't
+> that what setserial is for? We have the ability to feed this
+> configuration already, but you need a file descriptor.
 
-On 11/11/25 9:47 am, Yang Shi wrote:
->
->
-> On 11/10/25 7:39 PM, Dev Jain wrote:
->>
->> On 05/11/25 9:27 am, Dev Jain wrote:
->>>
->>> On 04/11/25 6:26 pm, Will Deacon wrote:
->>>> On Tue, Nov 04, 2025 at 09:06:12AM +0530, Dev Jain wrote:
->>>>> On 04/11/25 12:15 am, Yang Shi wrote:
->>>>>> On 11/3/25 7:16 AM, Will Deacon wrote:
->>>>>>> On Mon, Nov 03, 2025 at 11:43:06AM +0530, Dev Jain wrote:
->>>>>>>> Post a166563e7ec3 ("arm64: mm: support large block mapping when
->>>>>>>> rodata=full"),
->>>>>>>> __change_memory_common has a real chance of failing due to split
->>>>>>>> failure.
->>>>>>>> Before that commit, this line was introduced in c55191e96caa,
->>>>>>>> still having
->>>>>>>> a chance of failing if it needs to allocate pagetable memory in
->>>>>>>> apply_to_page_range, although that has never been observed to 
->>>>>>>> be true.
->>>>>>>> In general, we should always propagate the return value to the 
->>>>>>>> caller.
->>>>>>>>
->>>>>>>> Cc: stable@vger.kernel.org
->>>>>>>> Fixes: c55191e96caa ("arm64: mm: apply r/o permissions of VM
->>>>>>>> areas to its linear alias as well")
->>>>>>>> Signed-off-by: Dev Jain <dev.jain@arm.com>
->>>>>>>> ---
->>>>>>>> Based on Linux 6.18-rc4.
->>>>>>>>
->>>>>>>>    arch/arm64/mm/pageattr.c | 5 ++++-
->>>>>>>>    1 file changed, 4 insertions(+), 1 deletion(-)
->>>>>>>>
->>>>>>>> diff --git a/arch/arm64/mm/pageattr.c b/arch/arm64/mm/pageattr.c
->>>>>>>> index 5135f2d66958..b4ea86cd3a71 100644
->>>>>>>> --- a/arch/arm64/mm/pageattr.c
->>>>>>>> +++ b/arch/arm64/mm/pageattr.c
->>>>>>>> @@ -148,6 +148,7 @@ static int change_memory_common(unsigned
->>>>>>>> long addr, int numpages,
->>>>>>>>        unsigned long size = PAGE_SIZE * numpages;
->>>>>>>>        unsigned long end = start + size;
->>>>>>>>        struct vm_struct *area;
->>>>>>>> +    int ret;
->>>>>>>>        int i;
->>>>>>>>          if (!PAGE_ALIGNED(addr)) {
->>>>>>>> @@ -185,8 +186,10 @@ static int change_memory_common(unsigned
->>>>>>>> long addr, int numpages,
->>>>>>>>        if (rodata_full && (pgprot_val(set_mask) == PTE_RDONLY ||
->>>>>>>>                    pgprot_val(clear_mask) == PTE_RDONLY)) {
->>>>>>>>            for (i = 0; i < area->nr_pages; i++) {
->>>>>>>> - __change_memory_common((u64)page_address(area->pages[i]),
->>>>>>>> +            ret =
->>>>>>>> __change_memory_common((u64)page_address(area->pages[i]),
->>>>>>>>                               PAGE_SIZE, set_mask, clear_mask);
->>>>>>>> +            if (ret)
->>>>>>>> +                return ret;
->>>>>>> Hmm, this means we can return failure half-way through the 
->>>>>>> operation. Is
->>>>>>> that something callers are expecting to handle? If so, how can 
->>>>>>> they tell
->>>>>>> how far we got?
->>>>>> IIUC the callers don't have to know whether it is half-way or not
->>>>>> because the callers will change the permission back (e.g. to RW) 
->>>>>> for the
->>>>>> whole range when freeing memory.
->>>>> Yes, it is the caller's responsibility to set VM_FLUSH_RESET_PERMS 
->>>>> flag.
->>>>> Upon vfree(), it will change the direct map permissions back to RW.
->>>> Ok, but vfree() ends up using update_range_prot() to do that and if we
->>>> need to worry about that failing (as per your commit message), then
->>>> we're in trouble because the calls to set_area_direct_map() are 
->>>> unchecked.
->>>>
->>>> In other words, this patch is either not necessary or it is 
->>>> incomplete.
->>>
->>> Here is the relevant email, in the discussion between Ryan and Yang:
->>>
->>> https://lore.kernel.org/all/fe52a1d8-5211-4962-afc8-c3f9caf64119@os.amperecomputing.com/ 
->>>
->>>
->>> We had concluded that all callers of set_memory_ro() or 
->>> set_memory_rox() (which require the
->>> linear map perm change back to default, upon vfree() ) will call it 
->>> for the entire region (vm_struct).
->>> So, when we do the set_direct_map_invalid_noflush, it is guaranteed 
->>> that the region has already
->>> been split. So this call cannot fail.
->>>
->>> https://lore.kernel.org/all/f8898c87-8f49-4ef2-86ae-b60bcf67658c@os.amperecomputing.com/ 
->>>
->>>
->>> This email notes that there is some code doing set_memory_rw() and 
->>> unnecessarily setting the VM_FLUSH_RESET_PERMS
->>> flag, but in that case we don't care about the 
->>> set_direct_map_invalid_noflush call failing because the protections
->>> are already RW.
->>>
->>> Although we had also observed that all of this is fragile and 
->>> depends on the caller doing the
->>> correct thing. The real solution should be somehow getting rid of 
->>> the BBM style invalidation.
->>> Ryan had proposed some methods in that email thread.
->>>
->>> One solution which I had thought of, is that, observe that we are 
->>> doing an overkill by
->>> setting the linear map to invalid and then default, for the *entire* 
->>> region. What we
->>> can do is iterate over the linear map alias of the vm_struct *area 
->>> and only change permission
->>> back to RW for the pages which are *not* RW. And, those relevant 
->>> mappings are guaranteed to
->>> be split because they were changed from RW to not RW.
->>
->> @Yang and Ryan,
->>
->> I saw Yang's patch here:
->> https://lore.kernel.org/all/20251023204428.477531-1-yang@os.amperecomputing.com/ 
->>
->> and realized that currently we are splitting away the linear map 
->> alias of the *entire* region.
->>
->> Shouldn't this then imply that set_direct_map_invalid_noflush will 
->> never fail, since even
->>
->> a set_memory_rox() call on a single page will split the linear map 
->> for the entire region,
->>
->> and thus there is no fragility here which we were discussing about? I 
->> may be forgetting
->>
->> something, this linear map stuff is confusing enough already.
->
-> It still may fail due to page table allocation failure when doing 
-> split. But it is still fine. We may run into 3 cases:
->
-> 1. set_memory_rox succeed to split the whole range, then 
-> set_direct_map_invalid_noflush() will succeed too
-> 2. set_memory_rox fails to split, for example, just change partial 
-> range permission due to page table allocation failure, then 
-> set_direct_map_invalid_noflush() may
->    a. successfully change the permission back to default till where 
-> set_memory_rox fails at since that range has been successfully split. 
-> It is ok since the remaining range is actually not changed to ro by 
-> set_memory_rox at all
->    b. successfully change the permission back to default for the whole 
-> range (for example, memory pressure is mitigated when 
-> set_direct_map_invalid_noflush() is called). It is definitely fine as 
-> well
+I'm not really fond of adding some new open flag that to me seems
+**very** serial / RS-485 specific, and so I'm trying to find some
+way to avoid it.
 
-Correct, what I mean to imply here is that, your patch will break this? 
-If set_memory_* is applied on x till y, your patch changes the linear 
-map alias
+I also think that that the GPIO style timing requirements of RTS
+**really** should be done as a line discpline, and not in userspace.
 
-only from x till y - set_direct_map_invalid_noflush instead operates on 
-0 till size - 1, where 0 <=x <=y <= size - 1. So, it may encounter a -ENOMEM
+> Honestly, though, I'm far less interested in what 8250-based hardware does than e.g. USB.
 
-on [0, x) range while invalidating, and that is *not* okay because we 
-must reset back [0, x) to default?
+I'm quite confident that USB won't have "state" that will be preserved
+across a reboot, because the device won't even get powered up until
+the USB device is attached.  And part of the problem was that the
+requirements weren't particularly clear, and given the insistence that
+the "state" be preserved even across reboot, despite the serial port
+autoconfiguration, I had assumed you were posting uing the COM 1/2/3/4
+ports where autoconfiguration isn't stricty speaking necessary.
 
+In some ways, USB ports might be easier, since it should be possible
+to specify udev rules which get passed to the driver when the USB
+serial device is inserted, and so *that* can easily be done without
+needing a file descriptor.
 
->
-> Hopefully I don't miss anything.
->
-> Thanks,
-> Yang
->
->
->>
->>
->>>
->>>>
->>>> Will
->>>
->
+And for this sort of thing, it seems perfectly fair to hard code some
+specific behavior using either a boot command line or a udev rule,
+since you seem to be positing that the serial port will be dedicated
+to some kind of weird-shit RS-485 bus device, where any time RTS/DTR
+gets raised, the bus will malfunction in weird and wondrous ways....
+
+     	     	     	  	      	 - Ted
 
