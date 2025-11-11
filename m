@@ -1,218 +1,100 @@
-Return-Path: <linux-kernel+bounces-895867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80D89C4F248
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:56:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4213EC4F25A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:57:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 394274F47C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:55:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DB723BE424
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:55:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0B03393DD5;
-	Tue, 11 Nov 2025 16:53:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60B87393DFC;
+	Tue, 11 Nov 2025 16:53:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iJB2KNJD";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="I7CzNzI/"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="fEktPkp0"
+Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C547377EBE
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 16:53:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 062EA377EBE;
+	Tue, 11 Nov 2025 16:53:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762880010; cv=none; b=tX7ftqNYBabZ02QT7CI6OuFhwky6m9hwfxY54BeNXUbN174sgDfkBk6HTde/qkuU41UDtLR5YYwCKm2iodjsGZt/7qiXTKMBtUsZuDo4h/hLmL3EOLo7pfNEpvZEPMCORjZFRhi9lIGUr5xg2svd6r2SLc6+1honk9jkFK5eD98=
+	t=1762880019; cv=none; b=sRnQgUhIdyv6LpUHKKD2Yo9h1TE1nQWDigtWb+L/NsPOe6eVDYoPm0KxioX2Is9M9wMkie92HPckkF2Wuc/Kzl6YLQX9TSPhVuPaOeqlrJrk3GzpgMJrbw+z0Dpj/wQCbkxihJbTO3AFfqXgDa154VqwBw3ChKeIo68hs8lSXls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762880010; c=relaxed/simple;
-	bh=SS0LZ3kWuX/E6hwB65fRvUu+pViB6WaWPy05xJu0hgM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qg0r8mtSCZibmfdJNqL7nG9LrpSuIZ09ufFIVkqq14FpEjfPcBc7B2FpGoJuZpP4T7Ce6zB9DJMXOVbyuZVI6PQM/WWVyJzaFx9DeTKQvk2Ub2E2nmdCgC/kPQu4yoDo+WIvAtoctjp8pK4V5r87I5iKP7YfgAnjmE/i4wVec7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iJB2KNJD; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=I7CzNzI/; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762880008;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Jv9tA8d7GDzG4uMgQEzEG6S975RuueXPPh6IjnESOqs=;
-	b=iJB2KNJDjZKas9tWGhHoTtvF1pEfBQ4Y+1yAblzr0B9mw+ihWA+ms6m0I7M26n2Gaox0ZL
-	LxNtvR0lS9hsNYaT+EscVentlIddbLH3PxcEAhush4KA+DcCXE+oZbCbhswHRDxvNec+MJ
-	xAIB6mDc/a0G4pNUT2Kzd9Frh8vt5JI=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-515-bnEwcyi-NLmhSkmombiI8A-1; Tue, 11 Nov 2025 11:53:27 -0500
-X-MC-Unique: bnEwcyi-NLmhSkmombiI8A-1
-X-Mimecast-MFC-AGG-ID: bnEwcyi-NLmhSkmombiI8A_1762880006
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-b72de28c849so348140366b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 08:53:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1762880006; x=1763484806; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=Jv9tA8d7GDzG4uMgQEzEG6S975RuueXPPh6IjnESOqs=;
-        b=I7CzNzI/LVx8TR6964pA0QufkAXXCFWHq7dYm8HSPOWbWX1Cbx2uHhsrrbXYkkZ9i2
-         schN4KYeeBNKsuI/7esSv9JGaMC7of1FN0eF4fpH33myPDE2CjgVDTVZqRG3zWsQVNr7
-         FR8Tn33MVuJod+XQ835LHDLZa8FLNWpRepxg62GlwsutgAVTdAC0+claddXci4PgUJo3
-         70xMKS622p2t1PlYahcJZXMCrGsChYMcqknbdTiWOS/mw5AjdSeYpJNgXnoY66HVkmzi
-         76ojuo/FH0gA+jebFS3RvWeWms0XfmN1xA8z9qNjasQa+MZxoh/3P23eRHpvGPg0OEZU
-         ra0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762880006; x=1763484806;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Jv9tA8d7GDzG4uMgQEzEG6S975RuueXPPh6IjnESOqs=;
-        b=EEqiWgKEIl2DQndFch7xf8SjeRdqKHz4cUqMoQF/YlcwQVaDA3BTJ8knG0SQRNET5/
-         0bzNNOR8i8xoOXOVcK05XUtIe5MtaG56ilssHz/182PaHux3LTeCk3dRLp2vIJ8NGg0y
-         1PBTNI8Z+Mjuzr0onn+MIuu5Gbx68PpypBsR5PIEgZoLM2ex/J9NoD94Sk3lv+syN2Ig
-         VhnZEw2IDRMkeei3Xg3Z76recRZes5SSb2z51fnu9qMD3cPeeVowwfoTygTlkwHEm+tZ
-         ZgWiIR9PCme2Ubaed4IStad5LLn7F7jye9Iy3t4++0pz+nTQb9lsxi9yCy1wqtMjJv7h
-         jx9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUXvmFpjEeYcZP23oMbgvzI3J8gVMyaIgaP+7hN7ma8DsaEy8JQCRh+kK6BRdpg6sCe5J24aTtq6eXdS50=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdMdzVju59xF+v48fj/RxUODgfLNeaJklqI/CfaEK7CI3S9t7r
-	ngc6P8n19+lpgJmZQkbEDIWepkvlM29RbKIhYIshdG2abQOgFlHikAp76yfpmqLq2eao5WzJfzv
-	QppPn7Z42efaQxKVagbqDQIn7WE5e7ZkhHCMgRFvRocfxfbrHGPCz36cb6rDbys7vHg==
-X-Gm-Gg: ASbGncv9T53t2R3/CjDlechts4YImKd7vsgR00JE9cy1Y5V8bdq5dwhT2imJMNYQaV0
-	hHMz2Uhd/im9aLxaN1vmJg+zJ7bbIpggfe6lgI1hgozE4Wnu2uY8l6jJ/Zfo6mVWOqa4lpv04xJ
-	fqiDRxdndazPUxqYkeAO+03bm9rV5G7f4UswjheQTKFW5A/8jAAWzuvskygBaqpUkXW7I+4gIy/
-	UzNHIfoeALJ+SkQ0ZkRcNLJmg7+xx/LMsExqyxVMpuBkyT9BI9kVyaC/iHe/Gz61deErLdDnsDh
-	vrRqME5SCDp4qy/5NYS6MTmdLb4N80x2kKWN0voyF5bDZR/JXmAJD0nkOBv3dl9cwbmU3rW7vhL
-	pfn+47ylF2t+9TcUXSEaez8v6NhI70kpzNefnjNhe+IfENs6cjGX2jior2zSwrz4M8r86zCtFty
-	/HVsJ0pg==
-X-Received: by 2002:a17:907:2d8f:b0:b70:b13c:3622 with SMTP id a640c23a62f3a-b72e02d20acmr1307170766b.4.1762880005761;
-        Tue, 11 Nov 2025 08:53:25 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHi5yK53r4gzdwr4cN+XIhmGedNSM+6slG564RO1Q+SEbGpJKZilfw72VaC5vPjhYR0V+gqJA==
-X-Received: by 2002:a17:907:2d8f:b0:b70:b13c:3622 with SMTP id a640c23a62f3a-b72e02d20acmr1307167266b.4.1762880005311;
-        Tue, 11 Nov 2025 08:53:25 -0800 (PST)
-Received: from [192.168.10.81] ([176.206.111.214])
-        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-b72bf97d430sm1451420666b.37.2025.11.11.08.53.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Nov 2025 08:53:23 -0800 (PST)
-Message-ID: <1ebf3a23-5671-41c1-8daa-c83f2f105936@redhat.com>
-Date: Tue, 11 Nov 2025 17:53:16 +0100
+	s=arc-20240116; t=1762880019; c=relaxed/simple;
+	bh=XhJi0us/Z67NEUU934MQXpGjDJb7m3ZTCE9LamAPZEg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=JLFVqvDIXUO4SG51OMSpE9ukA01xU5BInPedZpMjzkQiYjOWqAPvmzB3tXs9uyjYRxkW8p4UqrNDtRgZ6Xfq5J1xRsR1gKHtVX4neCSmL5ti69owLzAwOcWaKU7cpgEkXa+UKJpeg/YGxSZHXp9ZuzZVDRpONDsVowrXuVETs1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=fEktPkp0; arc=none smtp.client-ip=198.37.111.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1762880015;
+	bh=XhJi0us/Z67NEUU934MQXpGjDJb7m3ZTCE9LamAPZEg=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=fEktPkp0+4HyQdW7EOFEr5S19iaHQ9wZh7WuBpt6eIEhQgHXb6oSLWZbwQSSYnYje
+	 oHcDtYoYUuCt4Tkr7xz2Xl+xWenFe3m6XU9nSp7ZS+9dfZizw7wxoW3irc2ruGXe98
+	 sT7oYwInJ6o//K3YpuWt2qG9HaHm15YfpUEq1eTs=
+Received: from [10.144.238.181] (unknown [173.15.200.114])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 74C271C0202;
+	Tue, 11 Nov 2025 11:53:35 -0500 (EST)
+Message-ID: <922480ff44bda3b6ecfda1ae780c659644560f94.camel@HansenPartnership.com>
+Subject: Re: [PATCH 2/2] sign-file: Remove support for signing with PKCS#7
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Petr Pavlu <petr.pavlu@suse.com>, David Howells <dhowells@redhat.com>, 
+ David Woodhouse <dwmw2@infradead.org>, Luis Chamberlain
+ <mcgrof@kernel.org>, Daniel Gomez <da.gomez@kernel.org>,  Sami Tolvanen
+ <samitolvanen@google.com>, Aaron Tomlin <atomlin@atomlin.com>
+Cc: keyrings@vger.kernel.org, linux-modules@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Date: Tue, 11 Nov 2025 11:53:34 -0500
+In-Reply-To: <20251111154923.978181-3-petr.pavlu@suse.com>
+References: <20251111154923.978181-1-petr.pavlu@suse.com>
+	 <20251111154923.978181-3-petr.pavlu@suse.com>
+Autocrypt: addr=James.Bottomley@HansenPartnership.com;
+ prefer-encrypt=mutual;
+ keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.3 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v1 12/20] KVM: x86: Support REX2-extended register
- index in the decoder
-To: "Chang S. Bae" <chang.seok.bae@intel.com>, kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: seanjc@google.com, chao.gao@intel.com, zhao1.liu@intel.com
-References: <20251110180131.28264-1-chang.seok.bae@intel.com>
- <20251110180131.28264-13-chang.seok.bae@intel.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=pbonzini@redhat.com; keydata=
- xsEhBFRCcBIBDqDGsz4K0zZun3jh+U6Z9wNGLKQ0kSFyjN38gMqU1SfP+TUNQepFHb/Gc0E2
- CxXPkIBTvYY+ZPkoTh5xF9oS1jqI8iRLzouzF8yXs3QjQIZ2SfuCxSVwlV65jotcjD2FTN04
- hVopm9llFijNZpVIOGUTqzM4U55sdsCcZUluWM6x4HSOdw5F5Utxfp1wOjD/v92Lrax0hjiX
- DResHSt48q+8FrZzY+AUbkUS+Jm34qjswdrgsC5uxeVcLkBgWLmov2kMaMROT0YmFY6A3m1S
- P/kXmHDXxhe23gKb3dgwxUTpENDBGcfEzrzilWueOeUWiOcWuFOed/C3SyijBx3Av/lbCsHU
- Vx6pMycNTdzU1BuAroB+Y3mNEuW56Yd44jlInzG2UOwt9XjjdKkJZ1g0P9dwptwLEgTEd3Fo
- UdhAQyRXGYO8oROiuh+RZ1lXp6AQ4ZjoyH8WLfTLf5g1EKCTc4C1sy1vQSdzIRu3rBIjAvnC
- tGZADei1IExLqB3uzXKzZ1BZ+Z8hnt2og9hb7H0y8diYfEk2w3R7wEr+Ehk5NQsT2MPI2QBd
- wEv1/Aj1DgUHZAHzG1QN9S8wNWQ6K9DqHZTBnI1hUlkp22zCSHK/6FwUCuYp1zcAEQEAAc0j
- UGFvbG8gQm9uemluaSA8cGJvbnppbmlAcmVkaGF0LmNvbT7CwU0EEwECACMFAlRCcBICGwMH
- CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRB+FRAMzTZpsbceDp9IIN6BIA0Ol7MoB15E
- 11kRz/ewzryFY54tQlMnd4xxfH8MTQ/mm9I482YoSwPMdcWFAKnUX6Yo30tbLiNB8hzaHeRj
- jx12K+ptqYbg+cevgOtbLAlL9kNgLLcsGqC2829jBCUTVeMSZDrzS97ole/YEez2qFpPnTV0
- VrRWClWVfYh+JfzpXmgyhbkuwUxNFk421s4Ajp3d8nPPFUGgBG5HOxzkAm7xb1cjAuJ+oi/K
- CHfkuN+fLZl/u3E/fw7vvOESApLU5o0icVXeakfSz0LsygEnekDbxPnE5af/9FEkXJD5EoYG
- SEahaEtgNrR4qsyxyAGYgZlS70vkSSYJ+iT2rrwEiDlo31MzRo6Ba2FfHBSJ7lcYdPT7bbk9
- AO3hlNMhNdUhoQv7M5HsnqZ6unvSHOKmReNaS9egAGdRN0/GPDWr9wroyJ65ZNQsHl9nXBqE
- AukZNr5oJO5vxrYiAuuTSd6UI/xFkjtkzltG3mw5ao2bBpk/V/YuePrJsnPFHG7NhizrxttB
- nTuOSCMo45pfHQ+XYd5K1+Cv/NzZFNWscm5htJ0HznY+oOsZvHTyGz3v91pn51dkRYN0otqr
- bQ4tlFFuVjArBZcapSIe6NV8C4cEiSTOwE0EVEJx7gEIAMeHcVzuv2bp9HlWDp6+RkZe+vtl
- KwAHplb/WH59j2wyG8V6i33+6MlSSJMOFnYUCCL77bucx9uImI5nX24PIlqT+zasVEEVGSRF
- m8dgkcJDB7Tps0IkNrUi4yof3B3shR+vMY3i3Ip0e41zKx0CvlAhMOo6otaHmcxr35sWq1Jk
- tLkbn3wG+fPQCVudJJECvVQ//UAthSSEklA50QtD2sBkmQ14ZryEyTHQ+E42K3j2IUmOLriF
- dNr9NvE1QGmGyIcbw2NIVEBOK/GWxkS5+dmxM2iD4Jdaf2nSn3jlHjEXoPwpMs0KZsgdU0pP
- JQzMUMwmB1wM8JxovFlPYrhNT9MAEQEAAcLBMwQYAQIACQUCVEJx7gIbDAAKCRB+FRAMzTZp
- sadRDqCctLmYICZu4GSnie4lKXl+HqlLanpVMOoFNnWs9oRP47MbE2wv8OaYh5pNR9VVgyhD
- OG0AU7oidG36OeUlrFDTfnPYYSF/mPCxHttosyt8O5kabxnIPv2URuAxDByz+iVbL+RjKaGM
- GDph56ZTswlx75nZVtIukqzLAQ5fa8OALSGum0cFi4ptZUOhDNz1onz61klD6z3MODi0sBZN
- Aj6guB2L/+2ZwElZEeRBERRd/uommlYuToAXfNRdUwrwl9gRMiA0WSyTb190zneRRDfpSK5d
- usXnM/O+kr3Dm+Ui+UioPf6wgbn3T0o6I5BhVhs4h4hWmIW7iNhPjX1iybXfmb1gAFfjtHfL
- xRUr64svXpyfJMScIQtBAm0ihWPltXkyITA92ngCmPdHa6M1hMh4RDX+Jf1fiWubzp1voAg0
- JBrdmNZSQDz0iKmSrx8xkoXYfA3bgtFN8WJH2xgFL28XnqY4M6dLhJwV3z08tPSRqYFm4NMP
- dRsn0/7oymhneL8RthIvjDDQ5ktUjMe8LtHr70OZE/TT88qvEdhiIVUogHdo4qBrk41+gGQh
- b906Dudw5YhTJFU3nC6bbF2nrLlB4C/XSiH76ZvqzV0Z/cAMBo5NF/w=
-In-Reply-To: <20251110180131.28264-13-chang.seok.bae@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-On 11/10/25 19:01, Chang S. Bae wrote:
-> Update register index decoding to account for the additional bit fields
-> introduced by the REX2 prefix.
-> 
-> Both ModR/M and opcode register decoding paths now consider the extended
-> index bits (R4, X4, B4) in addition to the legacy REX bits (R3, X3, B3).
-> 
-> Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
+On Tue, 2025-11-11 at 16:48 +0100, Petr Pavlu wrote:
+> The PKCS#7 code in sign-file allows for signing only with SHA-1.
+> Since SHA-1 support for module signing has been removed, drop PKCS#7
+> support in favor of using only CMS.
 
-Replying here for both patches 10 and 12, because I think you can merge 
-them in one, I'd prefer to avoid bitfields.
+The change log is a bit alarmist.  CMS really *is* PKCS7 and most
+literature will refer to CMS as PKCS7.  What you're really deprecating
+is the use of the PKCS7_sign() API which can only produce SHA-1
+Signatures ... openssl is fully capable of producing any hash PKCS7
+signatures using a different PKCS7_... API set but the CMS_... API is
+newer.
 
-You only need a single enum:
+The point being the module signature type is still set to PKEY_ID_PKCS7
+so it doesn't square with the commit log saying "drop PKCS#7 support".
+What you really mean is only use the openssl CMS_... API for producing
+PKCS7 signatures.
 
-enum {
-	REX_B = 1,
-	REX_X = 2,
-	REX_R = 4,
-	REX_W = 8,
-	REX_M = 0x80,
-};
+Regards,
 
-for REX_W/REX_M you access them directly, while for RXB you go through a 
-function:
-
-static inline rex_get_rxb(u8 rex, u8 fld)
-{
-	BUILD_BUG_ON(!__builtin_constant_p(fld));
-	BUILD_BUG_ON(fld != REX_B && fld != REX_X && fld != REX_R);
-
-	rex >>= ffs(fld) - 1;	// bits 0+4
-	return (rex & 1) + (rex & 0x10 ? 8 : 0);
-}
-
->   	} else {
->   		reg = (ctxt->b & 7) |
-> -		      (ctxt->rex.bits.b3 * BIT(3));
-> +		      (ctxt->rex.bits.b3 * BIT(3)) |
-> +		      (ctxt->rex.bits.b4 * BIT(4));
-
-+		      rex_get_rxb(ctxt->rex, REX_B);
-
-and likewise everywhere else.
-
->   	}
->   
->   	if (ctxt->d & Sse) {
-> @@ -1124,9 +1125,12 @@ static int decode_modrm(struct x86_emulate_ctxt *ctxt,
->   	int rc = X86EMUL_CONTINUE;
->   	ulong modrm_ea = 0;
->   
-> -	ctxt->modrm_reg = ctxt->rex.bits.r3 * BIT(3);
-> -	index_reg       = ctxt->rex.bits.x3 * BIT(3);
-> -	base_reg        = ctxt->rex.bits.b3 * BIT(3);
-> +	ctxt->modrm_reg	= (ctxt->rex.bits.r3 * BIT(3)) |
-> +			  (ctxt->rex.bits.r4 * BIT(4));
-> +	index_reg	= (ctxt->rex.bits.x3 * BIT(3)) |
-> +			  (ctxt->rex.bits.x4 * BIT(4));
-> +	base_reg	= (ctxt->rex.bits.b3 * BIT(3)) |
-> +			  (ctxt->rex.bits.b4 * BIT(4));
->   
->   	ctxt->modrm_mod = (ctxt->modrm & 0xc0) >> 6;
->   	ctxt->modrm_reg |= (ctxt->modrm & 0x38) >> 3;
+James
 
 
