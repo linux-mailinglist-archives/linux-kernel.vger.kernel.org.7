@@ -1,234 +1,204 @@
-Return-Path: <linux-kernel+bounces-895264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA535C4D60A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:20:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15FA9C4D664
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:28:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F70018837FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:20:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FB693AA357
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:23:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F00235581B;
-	Tue, 11 Nov 2025 11:20:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A2AA3559F9;
+	Tue, 11 Nov 2025 11:22:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="WtNyA4/d"
-Received: from CY7PR03CU001.outbound.protection.outlook.com (mail-westcentralusazon11010024.outbound.protection.outlook.com [40.93.198.24])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RoBpfm4m"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2FB9335071;
-	Tue, 11 Nov 2025 11:20:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.198.24
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762860018; cv=fail; b=IPzrER8Qv3Pq5138I0RY1GWSLGZXnYRNeCunWNMheP6tu29QLo1Yg8jqP91wjjlvtbHKA6Zx7KoNZCbRcVRBGcV0uAcK25VaH1v7yunBh+qNF8qL7nUoNsy7jZpxbe192C69h8AJPKb5eYgSjzj4LY2ZS1bn2mu2uNsvK2M1Ld4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762860018; c=relaxed/simple;
-	bh=7dZhR3ccJ6BW0q3VoQPkWh2cdNrNT0Y75O1j8KPJXXU=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=gkGcYa+niS2OrRufvCAI/rKmimzRkfj3tCOgLjElUoT6f0ktdx4Ye0W3dOp08I4kLU1hKd3d7+FNEBDjtDglw0FS1ysAqnRm6dN69UnOk72XcWDwuCbxPGqyDwFT4Qd8WJygAWAuP3KFGJ/zrkLKeuIyh5+iuTGjY4b6SP8Dx1k=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=WtNyA4/d; arc=fail smtp.client-ip=40.93.198.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=e7C3DQ0qvBSLSyG+IMfxNgREA0hMYbM3t5gnboXGeLqWWIwgBvjOJBdWqL6ukll12GqU/mzO3ptgvr64HfEW570Uluru+Td6QqxzjWf2TIA6TT/shony5CQLoyPjwX96KeTfzu6OmbfkmPGurLw2aIHsBwQJAuWRjQyKS8E6KOELGHpiT4s7ftd5Dg+AmwL9NYyIo9qMjnuZ6+fc/D3iAr/jfg4RjcOyOnr1QMy3JpGCtwi22RqyocTgkPN0XKhDZse4QQQYqcGpx8iCOV9GC6TEEpLGTiriwBlURe3A4lXLY4uNIx7dUChD0cfix5kyiaDEEnloEfUOeDXb9b5MKA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=V5xrnzSjvtjycs8BSdoTQsRO5lGbbBaow81YVOkGl+k=;
- b=ulU6OiPFF/7aMmEhzIr5yJTMvhz+bw1lHRvBmclcVAyxiVgrVJdPlHMzl3kBpDgpPXwx06lTW8/ijCNJeonYbvoqArO5U/lWea8LicCWXNvukbiCef85tKC8W8/PAOeXk5twPvgQwQCVL74wKquBGHWnKzAn7Vy9sbOCld6PNrXvlkUWXCxLJ27cj7NaD7rSG/gXAddjwHW58haBjKLf9M3oUYP480fZhEMu3H1MK1p0OCW5M3cQnFhJ580Trfhv9miOVWcmS37/iUS0TMg+7ShGpv5Vbj8ziMeFZPP8rCE1662VKFb0NGvsp338W8baTC/NA819GtVvzEa5HNowbA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=V5xrnzSjvtjycs8BSdoTQsRO5lGbbBaow81YVOkGl+k=;
- b=WtNyA4/dhk9aCjt2KbC/03wZ8km3fv/CeHFJyfwBAPsry+3Kr862AlDdL8la5lvaJCx0fKxSTuG8ns2pwPA27ISEOAjarCop/4dQRiy6kYZC0RhFSq9iM0lLX8oHkZkM1Pc6oOSR9d8eFJr1ROHzMY+lRDEGOlDPH0mpgpO7KYFito6UsGawgD+NM+Lvo6/zv4g2Xc39ly7PDlEKIrzLllHKtw8qD+02E9MwKA3MDGdyeuE0EyCD6UK2C+NEn0X2rWgNe6dRSUmGjgXkCxS7zb9mKTNUrC7w4YdkShQrwKzBlhkJDPykOwFFnqvYy6ifszIIN5eYv9i3WJeU+bFQnw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from BN9PR12MB5179.namprd12.prod.outlook.com (2603:10b6:408:11c::18)
- by IA1PR12MB8189.namprd12.prod.outlook.com (2603:10b6:208:3f0::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Tue, 11 Nov
- 2025 11:20:12 +0000
-Received: from BN9PR12MB5179.namprd12.prod.outlook.com
- ([fe80::44e5:415d:e1a8:6e42]) by BN9PR12MB5179.namprd12.prod.outlook.com
- ([fe80::44e5:415d:e1a8:6e42%7]) with mapi id 15.20.9320.013; Tue, 11 Nov 2025
- 11:20:12 +0000
-Message-ID: <69767b5b-8699-4d45-8ab7-b8965d750bc2@nvidia.com>
-Date: Tue, 11 Nov 2025 16:50:00 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/8] cpufreq: CPPC: Add generic helpers for sysfs
- show/store
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: rafael@kernel.org, lenb@kernel.org, robert.moore@intel.com,
- corbet@lwn.net, pierre.gondois@arm.com, zhenglifeng1@huawei.com,
- rdunlap@infradead.org, ray.huang@amd.com, gautham.shenoy@amd.com,
- mario.limonciello@amd.com, perry.yuan@amd.com, ionela.voinescu@arm.com,
- zhanjie9@hisilicon.com, linux-pm@vger.kernel.org,
- linux-acpi@vger.kernel.org, linux-doc@vger.kernel.org,
- acpica-devel@lists.linux.dev, linux-kernel@vger.kernel.org,
- linux-tegra@vger.kernel.org, treding@nvidia.com, jonathanh@nvidia.com,
- vsethi@nvidia.com, ksitaraman@nvidia.com, sanjayc@nvidia.com,
- nhartman@nvidia.com, bbasu@nvidia.com, sumitg@nvidia.com
-References: <20251105113844.4086250-1-sumitg@nvidia.com>
- <20251105113844.4086250-2-sumitg@nvidia.com>
- <s5xt53i6c5wryje5x6zlq75r3lx6nxb7pat6umnghpnldi4p2h@jaeew4iimdd3>
-Content-Language: en-US
-From: Sumit Gupta <sumitg@nvidia.com>
-In-Reply-To: <s5xt53i6c5wryje5x6zlq75r3lx6nxb7pat6umnghpnldi4p2h@jaeew4iimdd3>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: MA0PR01CA0065.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a01:ad::9) To BN9PR12MB5179.namprd12.prod.outlook.com
- (2603:10b6:408:11c::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B13BB30E82E;
+	Tue, 11 Nov 2025 11:22:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762860159; cv=none; b=fDg7MwbmsxDY+fuWOykgMUAKrL/NqTLq6qM5vPLxpRKee8gRKDK1gMtX93fIabWpQAIKOLwHT+Eeqwjt+qG0mMIs6W2X1+8LPdPaZq8clqqzfXcxqEKa3IXLOsBsuvx6YpqdDEL/06JX5gwL7PnvfKGMjch9NDReEwR++6UN9is=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762860159; c=relaxed/simple;
+	bh=Qqa7vlU2LmRoidNI3H+dtyzXwYS/YoqLxD8vZyRNneA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TdO/OrUe8P6PmuFIYxS5xEhCH6CyuRLBGqK+nrHsXoz0rbeaBjX1qzMbncAxqBI/JtkN4uS+gCMgMzJMcFDw0OxAFnYRHH0+8D0cMJM6pv4dNuAiN374yoPAWCKsyP3Rx3pGw6PMrdqP0Jfy4ohLtfIdHY4QUuaccPp3bEOnIRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RoBpfm4m; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762860157; x=1794396157;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Qqa7vlU2LmRoidNI3H+dtyzXwYS/YoqLxD8vZyRNneA=;
+  b=RoBpfm4mN3Ccq0oaYBH+DO1xHGTyxBATqmNpiysmawt3TZZzUgiXM+Ev
+   OKzxwa42NsK1nBIn15kz3nO1MOSC3/jK6ra7JqK0OICXz6K23dJ1ybyXP
+   pVWV3z7ulZQ+Utve6qSC5Kz/AHDvr7fBT6pPGNDBIfzHOoS2XxDgGXjvz
+   FTXEMEIP2yByXP8YFdZ2dsfcFfk7jldNzHd5lwlIonNZOQArHNbBSqCLY
+   0yq4puj35Z10gp64ioLGxXJdXrubhu503CMf1Af0QMzZ27sChB/C3jmCg
+   T4op95f832Y04ICgguHeLMnbTlP9DpYwUHADN47Pen1Lh9CGYRSWB9xm6
+   A==;
+X-CSE-ConnectionGUID: W4qDxJSHRBeAZayS9VJa/A==
+X-CSE-MsgGUID: 04ygD0CXSoO3k5qKSivwZQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11609"; a="82317624"
+X-IronPort-AV: E=Sophos;i="6.19,296,1754982000"; 
+   d="scan'208";a="82317624"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 03:22:37 -0800
+X-CSE-ConnectionGUID: M2uXnUFfQjK85tdzgDm3Dg==
+X-CSE-MsgGUID: +qtUA1mmS5eAjAEeHoet1w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,296,1754982000"; 
+   d="scan'208";a="193053753"
+Received: from egrumbac-mobl6.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.96])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 03:22:31 -0800
+Received: from kekkonen.localdomain (localhost [IPv6:::1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id DEC9011F983;
+	Tue, 11 Nov 2025 13:22:28 +0200 (EET)
+Date: Tue, 11 Nov 2025 13:22:28 +0200
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Matthias Fend <matthias.fend@emfend.at>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Hans Verkuil <hverkuil@kernel.org>,
+	Hans de Goede <hansg@kernel.org>,
+	Ricardo Ribalda <ribalda@chromium.org>,
+	=?iso-8859-1?Q?Andr=E9?= Apitzsch <git@apitzsch.eu>,
+	Tarang Raval <tarang.raval@siliconsignals.io>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
+	Sylvain Petinot <sylvain.petinot@foss.st.com>,
+	Dongcheng Yan <dongcheng.yan@intel.com>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	Jingjing Xiong <jingjing.xiong@intel.com>,
+	Heimir Thor Sverrisson <heimir.sverrisson@gmail.com>,
+	Mehdi Djait <mehdi.djait@linux.intel.com>,
+	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>,
+	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Hao Yao <hao.yao@intel.com>,
+	bsp-development.geo@leica-geosystems.com
+Subject: Re: [PATCH v5 2/2] media: i2c: add Himax HM1246 image sensor driver
+Message-ID: <aRMcdD43ShUFQKkN@kekkonen.localdomain>
+References: <20251104-hm1246-v5-0-97c8f25b5419@emfend.at>
+ <20251104-hm1246-v5-2-97c8f25b5419@emfend.at>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN9PR12MB5179:EE_|IA1PR12MB8189:EE_
-X-MS-Office365-Filtering-Correlation-Id: be94955e-c082-405e-295f-08de2114479c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?L3IrVlRMUHN2REIxUmRQUjIvYW40bUVWdDNaNjJMUkx6eHhYaGxncVZHREtH?=
- =?utf-8?B?M0tCT2poNnhreWRvekx5MzhOUU9oVVNyeWlHU3VVc0d1K0NRY25XcEoyT1lq?=
- =?utf-8?B?MlhvRjd1VkFrTkNHMDlSa2NIT1RyaEhUYjFRSVBpZjhRZ1huZ2NFb1lXRlJh?=
- =?utf-8?B?c0lwSmZzNlZZdjJGSHBRKzZ6RXo4MTczbDN6UGRFZisrNHZacGxRdVZmaFNa?=
- =?utf-8?B?amt6MHN0WGdLSXBNcFpzVG56TitVSTVrdUcxdi9rSm1UZ01XSFJaU3FsVTlB?=
- =?utf-8?B?YWphVVhRell2bkJwbmdsWVoxYWdlK2lseTFpdUtrUHp3dmhLNWo2WnZ1c2o2?=
- =?utf-8?B?WkdhSkNNUUg3dzcyMjRRWi9BMFVFcUhqOWMzbHhCK1VSUUFuZXhCckdjdE9j?=
- =?utf-8?B?Yitld2doNmo5cHdMd2ZoeGxJNlRuVW02RDNEMUUyNUVGbTZjNFExSDhmUHgv?=
- =?utf-8?B?aGdUUDF6VVFxeTRmNVVGU1BWVm1HNEVmSmdxYjk2Ri84TUY4L29oTUtLS3Jy?=
- =?utf-8?B?RHdrandTOFpuYU0zT1NKTktFQ1NOMVNHV3UwUittMHhOZnQ2R1pQYi9KeFRI?=
- =?utf-8?B?bDF1cFBPRmo5YmZERjVnMkVYSlVhN2g4eDNIKzNNbDBIaEc3Y2NDdmswZjJv?=
- =?utf-8?B?WmVTVUpDOERLTXYwUEIrWkkzSjJiL0JsWmhYOC83Zk12N2lhZVQzejZFRmRa?=
- =?utf-8?B?UzgrSVk4NWF3ZndLd2dsOFdSQUNVMy9kNHcrQkhuS3NsR0ZWa0ZkSkFIQXpa?=
- =?utf-8?B?Y0tHQVhhNTZDSStPMUtUWXFPNVJzSWlzS3N2VEFPcUZiYSthVmZWRmVsd1Iw?=
- =?utf-8?B?eldZWXZ6L0F4T2F4S1NjdW1wNjBCUDkxbHFQZ3lDSk0wZ3ZIT3AzVjhQb1pZ?=
- =?utf-8?B?Q0FqN2wwV045YUJoM1ZLbnU2UDVDZHArYkFHS0xvaGNWQ051eHphNHdjZzVr?=
- =?utf-8?B?V1RKVTBrR21mc1JobXg3Q3hpQjI4WWhGaTV6Yi8vclZpd0ExdUhaT0EvOXJJ?=
- =?utf-8?B?bm1tRFB2TjE1YllzcklKeW05RXhWOURpWjR1elE2b1cwUFpHaTE3RGtRSHNk?=
- =?utf-8?B?VUM2OFJQeEQ0LzhnN3RGU1E0OXNkVk9TbmxVaEhYNjJDWHpGWTJUNm1TYjU0?=
- =?utf-8?B?cUNsTHFnY3ByN0ZKQUlNd2s4RUJQVnpZZWxRTFVEc250cUpwcXc0blFBd2Vq?=
- =?utf-8?B?SkhnRUU1U3dtZ3A4MzlJNmZOUmlMdWVraFV4SmlYOWpjcXZGMmpyK25tOTVQ?=
- =?utf-8?B?Z1YrN3RrWVgyRHhSdzl3Z05YOE5JQ1pTOVI0Mk1jZXVUQ011em03c0JNRjgz?=
- =?utf-8?B?Z0psY01uM2xXTkZUdmFYOFgxVGxBNUt4dC94U2Q1NWxmSkM5Nk0rRkt1T281?=
- =?utf-8?B?bThWTzEzUmI2Z0xUYk9qU0dWVXdLYURBVTlCME12WnprcW05azE2UDViTURH?=
- =?utf-8?B?dkh2ekZlOXcvUWFTS3QyS25pMWdSY1hMR2YrK2NJeTVrcUI3Zmg2SWgvK29i?=
- =?utf-8?B?NHVSZ2tzMnBscURCUW1uZlI2THplemFqenJNZlJiVjYzQTYvemFjb3MyaDdy?=
- =?utf-8?B?alNMU2dRUlFyaTVBQUFHcEp6bE1DTEdDbHFzYTBpVlBNSVFkTnZpWGc2ZURW?=
- =?utf-8?B?MkNSRUl3RHVVSmUyUzJOaGFRNVdlbTdDVDFXYmxCaGI3RVI3cFlNRXhpcmww?=
- =?utf-8?B?OTVBNzZLN2Y3S2pBamcvdk9TUVppbmxpaFVycU9NWVZZN000MGNVQ1Eva2xG?=
- =?utf-8?B?ekZKcEFUZmZHdUJtc1RMMmhPWU1ib3Z5ZE51SEVpaE8wd1U1Y25SZkxmRmlG?=
- =?utf-8?B?bUtUQm9KbXpBNkdKTW4zc1owZXZ0c2RkNGxucHpFYmV4ZllwZnVISjhJMnkr?=
- =?utf-8?B?NjkwaEUwUGdmNjJmOXk0b2oxTko0SlhOV1hIS3ptcFZteXN6ZWZ1a2NUT25N?=
- =?utf-8?Q?y6PFiJTe+V1LER+gLDgDXQhVwevZp+ZN?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR12MB5179.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?a2FBcDJ3S0hQSlZKTjRCK24vOCt3WEIzMUh4RFhZeDkrWCsxdUFpcFNQRzZK?=
- =?utf-8?B?YUtEUklSSGwxZ0gzSUdCOXZ3cUFqeGNSOG1ZM3JrUisxVTRtck1Hb0VnZk5Z?=
- =?utf-8?B?encyVFhxaWYxNW5EMlF3RldDYlpuV1pTUGVDa05MZGxFNy9Ed05NOHlxZ3Ax?=
- =?utf-8?B?Q0xUZWk3VkVuc2dPNGZzeVd2dXExVzVpSkNnUDE3bXVxRUt6dkM3bDhwNFBF?=
- =?utf-8?B?QlRDVEZOU2FycXRONllsVG5XSFB1VUYrMHRFVzl4NmRyOFFPcXBiTFU1MGph?=
- =?utf-8?B?ZlRWVHpBS3V0YStWc2UvYk0rVXk4U0NockdDaUtBQ3ZPNHUwMmI3OVR4aUdM?=
- =?utf-8?B?VlltaXZ4Wmd6S2hwSzdpUHo2ZENzVDFxRUs5QXRla0NlOVpmeVpZZHJlUEJY?=
- =?utf-8?B?ZkhvVmdUZlY2RnA5SWwrQ2pUWTV5bVFKNVNPWFN3R1dvZGVFY0FMUGkwRE5Z?=
- =?utf-8?B?Q3NpY1QyUUxaWURMOWVOREVjVXNaWWl5Z2IwTGNoMVkvSjEvcGovcWRZY2pi?=
- =?utf-8?B?OVpFM1RyaUt0ZTQ5aDNHSUppUkovdFRaazZxNHhKMWdNKzE2ZnFwb24xYzNo?=
- =?utf-8?B?TjRSWGlXYjU0eU15TVpoTnBvZlJIMG9XcXhIekl6TWtmaDY3YmppdGdHYU8z?=
- =?utf-8?B?TjRpSjFLR1NQVXlhR055TmFrZkRmS3FTSEtwc0U1VUdrdkduVEd6ZndpLzZI?=
- =?utf-8?B?OEsrNlMwc01BS21nTWdzVnl5ZDhSWXI2b0l3a0JGSW5rU2ZEWHJwZjV6Q1RQ?=
- =?utf-8?B?a3k5QlJQYWk2RlI2RHlCNk1KaEQ3UFl0NG9YTkFta1Y4cFJiQlhqNEludUZE?=
- =?utf-8?B?eWtPMSs0a3ViZGk5WU1yNHdMa0tlWGNoZ2tQOE5FYU5JanpILzJ6SDNadFVX?=
- =?utf-8?B?ZGdlODdMYmxVZ05NMitJNUMxSVRldW5pVkVZbC9QRGw0RjNsZ3FNYnNJbFFI?=
- =?utf-8?B?QUx2aDlyNlB2clFWVE9tOE5wL2xxODZPNGY3RlpzS0hPQkZxQ0VXR2NtUWpT?=
- =?utf-8?B?cUFvY096QlowTUh2eUJCQzJ4QnZUSmNUOThzNXJwTWNqYWN6T0ROanBVaEdR?=
- =?utf-8?B?S3p4eVdsNWlVc2hISXJaT1FTaHVpVnA0akRmTFZOaHlPVVFERkxWa0g4VXor?=
- =?utf-8?B?Vko0R245N1BWSnc4Yis4NHp1Nnk5b0VsQkRBbUNteUJhb3M3b0ZTaVV4bHV6?=
- =?utf-8?B?aWRqcXg5R3kxTFJnL0Z6RWFGTGFKc2JEWlR4cjRxOGZiL3hrMS96U0Nla3FP?=
- =?utf-8?B?Znd6TDRtMXNUUlV1VjQrZ3ZiZzgvNkZVNzFueVZqcmNEdVFkRnlacXgvbi9P?=
- =?utf-8?B?Tzdncis5bzN6em05dXZCbDNlWUxYVFk0MGxQZnd0Z09CbE5YMCtPUC9zZE5k?=
- =?utf-8?B?VGdjNGlTaU5mVXNUdkwxdHJuUWJLLzl3VEZaS2JyRm1vNUpjV282ZW54aG9u?=
- =?utf-8?B?S3pyYjJ0WGVqcyt4eCsvMFhqY2FXODV3aW5BY2pEU0Jhd2N5NHoybWN1ci9O?=
- =?utf-8?B?bUcxcHF6L3RqanYyZEVheG10ckJqWFlqZkpwOForbmVleFc0SVl5MDZFbjVG?=
- =?utf-8?B?aGloT2gwaTZJQnlEVGw1d1pvSkpSVDBtZHNteXVyWlladFNzVzJEVzAzaHpJ?=
- =?utf-8?B?Uzk5T3Q5SEZkcURJcVRTai8yS3ROMEpQTitKVmFmS3hscTdwcFBOU1RRSWZi?=
- =?utf-8?B?d0lBUjlqdmcrZEptUkdYWUxqVkV2bFVTOFE1UzRjS0laQ0JObi85Mk9XVlFp?=
- =?utf-8?B?ZDAvZ3Y4ZEw2aUkwWWVQWEowL0swaXhMQUlUMHFzUnhDc29iZklKQnVKYWJU?=
- =?utf-8?B?cHR3cGtkY1hlTC9kTFQ5a1ZXYitqNlNZWFh2TUkwcFJNM3orUmNrNEtmV3hp?=
- =?utf-8?B?UlRsWXQwQTZWVVozMGdTT2tmbXA5dXV0OUpFOGR1Wmt4QTJDc3Y4eVlCYmpB?=
- =?utf-8?B?d21MN3RIOGtIbmZ6YWVGRGlaY3BjM2NKckM1Nys5YzJjdUxFK3FaMGh3ZThz?=
- =?utf-8?B?R2Q1YW9ua3hZMVV0SlFCakNTSDhldE82SGQyeDJ5enlUYytuVDZKK3hCcnEr?=
- =?utf-8?B?ckY1WEJVcXcybHBRZFBWbDBTYWZySHlndk9CblpPV1UyQkJtRndvRGkvSlFH?=
- =?utf-8?Q?etUbYdQQKbaicmly8hukBj/fn?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: be94955e-c082-405e-295f-08de2114479c
-X-MS-Exchange-CrossTenant-AuthSource: BN9PR12MB5179.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Nov 2025 11:20:12.1107
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 8Po7pqdRtPExnQafUhhgkYwW6V9Q0BM8OXLB0c0dH1/fu2NwufAozXDtbHAWuVjv/9wLDsm26MX3q3RV6gFpbQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB8189
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251104-hm1246-v5-2-97c8f25b5419@emfend.at>
 
+Hi Matthias,
 
-On 10/11/25 16:26, Viresh Kumar wrote:
-> External email: Use caution opening links or attachments
->
->
-> On 05-11-25, 17:08, Sumit Gupta wrote:
->> diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
->> -static ssize_t show_auto_act_window(struct cpufreq_policy *policy, char *buf)
->> +static ssize_t cppc_cpufreq_sysfs_show_u64(unsigned int cpu, int (*get_func)(int, u64 *), char *buf)
->>   {
->>        u64 val;
->> -     int ret;
->> -
->> -     ret = cppc_get_auto_act_window(policy->cpu, &val);
->> +     int ret = get_func(cpu, &val);
-> Why no casting required here, when you need it ...
+On Tue, Nov 04, 2025 at 11:31:34AM +0100, Matthias Fend wrote:
+> +static int hm1246_init_controls(struct hm1246 *hm1246)
+> +{
+> +	const struct hm1246_mode *mode = &hm1246_modes[0];
+> +	struct v4l2_fwnode_device_properties props;
+> +	struct v4l2_ctrl_handler *ctrl_hdlr;
+> +	s64 pixel_rate, exposure_max, vblank_min, hblank;
+> +	int ret;
+> +
+> +	ctrl_hdlr = &hm1246->ctrls;
+> +	v4l2_ctrl_handler_init(ctrl_hdlr, 11);
+> +
+> +	hm1246->hflip_ctrl = v4l2_ctrl_new_std(ctrl_hdlr, &hm1246_ctrl_ops,
+> +					       V4L2_CID_HFLIP, 0, 1, 1, 0);
+> +	if (hm1246->hflip_ctrl)
+> +		hm1246->hflip_ctrl->flags |= V4L2_CTRL_FLAG_MODIFY_LAYOUT;
+> +
+> +	hm1246->vflip_ctrl = v4l2_ctrl_new_std(ctrl_hdlr, &hm1246_ctrl_ops,
+> +					       V4L2_CID_VFLIP, 0, 1, 1, 0);
+> +	if (hm1246->vflip_ctrl)
+> +		hm1246->vflip_ctrl->flags |= V4L2_CTRL_FLAG_MODIFY_LAYOUT;
+> +
+> +	v4l2_ctrl_cluster(2, &hm1246->hflip_ctrl);
+> +
+> +	hm1246->link_freq_ctrl =
+> +		v4l2_ctrl_new_int_menu(ctrl_hdlr, &hm1246_ctrl_ops,
+> +				       V4L2_CID_LINK_FREQ,
+> +				       ARRAY_SIZE(hm1246_link_freqs) - 1, 0,
+> +				       hm1246_link_freqs);
+> +	if (hm1246->link_freq_ctrl)
+> +		hm1246->link_freq_ctrl->flags |= V4L2_CTRL_FLAG_READ_ONLY;
+> +
+> +	pixel_rate = div_u64(hm1246_link_freqs[mode->link_freq_index],
+> +			     mode->clocks_per_pixel);
+> +	hm1246->pixel_rate_ctrl = v4l2_ctrl_new_std(ctrl_hdlr, &hm1246_ctrl_ops,
+> +						    V4L2_CID_PIXEL_RATE,
+> +						    pixel_rate, pixel_rate, 1,
+> +						    pixel_rate);
+> +
+> +	vblank_min = mode->vts_min - mode->height;
+> +	hm1246->vblank_ctrl = v4l2_ctrl_new_std(ctrl_hdlr, &hm1246_ctrl_ops,
+> +						V4L2_CID_VBLANK, vblank_min,
+> +						HM1246_VTS_MAX - mode->height,
+> +						1, vblank_min);
+> +
+> +	hblank = mode->hts - mode->width;
+> +	hm1246->hblank_ctrl = v4l2_ctrl_new_std(ctrl_hdlr, &hm1246_ctrl_ops,
+> +						V4L2_CID_HBLANK, hblank, hblank,
+> +						1, hblank);
+> +	if (hm1246->hblank_ctrl)
+> +		hm1246->hblank_ctrl->flags |= V4L2_CTRL_FLAG_READ_ONLY;
+> +
+> +	v4l2_ctrl_new_std(ctrl_hdlr, &hm1246_ctrl_ops, V4L2_CID_ANALOGUE_GAIN,
+> +			  HM1246_ANALOG_GLOBAL_GAIN_MIN,
+> +			  HM1246_ANALOG_GLOBAL_GAIN_MAX,
+> +			  HM1246_ANALOG_GLOBAL_GAIN_STEP,
+> +			  HM1246_ANALOG_GLOBAL_GAIN_MIN);
+> +
+> +	exposure_max = mode->vts_min - HM1246_COARSE_INTG_MARGIN;
+> +	hm1246->exposure_ctrl = v4l2_ctrl_new_std(ctrl_hdlr, &hm1246_ctrl_ops,
+> +						  V4L2_CID_EXPOSURE,
+> +						  HM1246_COARSE_INTG_MIN,
+> +						  exposure_max,
+> +						  HM1246_COARSE_INTG_STEP,
+> +						  exposure_max);
+> +
+> +	v4l2_ctrl_new_std_menu_items(ctrl_hdlr, &hm1246_ctrl_ops,
+> +				     V4L2_CID_TEST_PATTERN,
+> +				     ARRAY_SIZE(hm1246_test_pattern_menu) - 1,
+> +				     0, 0, hm1246_test_pattern_menu);
+> +
+> +	ret = v4l2_fwnode_device_parse(hm1246->dev, &props);
+> +	if (ret)
+> +		goto err_v4l2_ctrl_handler_free;
 
-Will add casting here.
+If you move this to the beginning of the function, you can return if this
+fails.
 
-     int ret = get_func((int)cpu, &val);
+> +
+> +	ret = v4l2_ctrl_new_fwnode_properties(ctrl_hdlr, &hm1246_ctrl_ops,
+> +					      &props);
+> +	if (ret)
+> +		goto err_v4l2_ctrl_handler_free;
 
->> -static ssize_t store_auto_act_window(struct cpufreq_policy *policy,
->> -                                  const char *buf, size_t count)
->> +static ssize_t cppc_cpufreq_sysfs_store_u64(unsigned int cpu, int (*set_func)(int, u64),
->> +                                         const char *buf, size_t count)
->>   {
->> -     u64 usec;
->> +     u64 val;
->>        int ret;
->>
->> -     ret = kstrtou64(buf, 0, &usec);
->> +     ret = kstrtou64(buf, 0, &val);
->>        if (ret)
->>                return ret;
->>
->> -     ret = cppc_set_auto_act_window(policy->cpu, usec);
->> -     if (ret)
->> -             return ret;
->> +     ret = set_func((int)cpu, val);
-> ... here ?
->
-> --
-> viresh
+I'd omit the error check for this altogether. See also
+<20251111112057.95655-1-sakari.ailus@linux.intel.com> on LMML.
 
-Checked this and the current change looks correct.
+> +
+> +	if (ctrl_hdlr->error) {
+> +		ret = ctrl_hdlr->error;
+> +		goto err_v4l2_ctrl_handler_free;
+> +	}
 
-Thank you.
-Sumit Gupta
+-- 
+Kind regards,
 
-
+Sakari Ailus
 
