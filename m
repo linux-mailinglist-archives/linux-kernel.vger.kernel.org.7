@@ -1,165 +1,231 @@
-Return-Path: <linux-kernel+bounces-895844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C816C4F1A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:46:02 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE136C4F1F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:51:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4ECF53AD5BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:43:15 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8AD2B4E536E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:47:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CBBE3730CA;
-	Tue, 11 Nov 2025 16:43:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C35DE3730DA;
+	Tue, 11 Nov 2025 16:47:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cA6NfSRa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="W7je2reV"
+Received: from PH0PR06CU001.outbound.protection.outlook.com (mail-westus3azon11011047.outbound.protection.outlook.com [40.107.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74BA22D8DDA;
-	Tue, 11 Nov 2025 16:43:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762879389; cv=none; b=VN9+jDi8ukq87tI66D2RvbzFFT6nhMGxwBJFZuDif84pTxqYpBgF1/a3LjUL05YvWuaqrjWE4hQoUuV9Xz0g+OunEG1wDc516DegdLOV4K4CvdfFJZWLADx51VW1AFJdwbgnEhN4jXNmBTXJmt7xSdYrs+dXIwztYAV8UZGAeCk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762879389; c=relaxed/simple;
-	bh=ymIv2XmLKmBikeDaavFp5j6Vf01oLyyEEmybdOlwNE4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VW3cK4I0CH9bA5o9nnB2QECJGajRBlEd6H75YDHa7BMBjqD5Etln+JEd/afPT6UGCwwEOfKrzYEW/XpwltLsd1iDrvul2mbxV1q7yWb9RVG0U+dAc/6YhARr2ePpEzotWi2HhtIesT2Y0cyrC9kiH7fSOFjuJTA5U30M+b/yNqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cA6NfSRa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E0F7C4CEF5;
-	Tue, 11 Nov 2025 16:43:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762879388;
-	bh=ymIv2XmLKmBikeDaavFp5j6Vf01oLyyEEmybdOlwNE4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cA6NfSRa0UklYUuKU+oSfTLjJU9hDSw6ryaU9+Y6RC3gTnxUm50500ZZqf1rH1s2g
-	 K7IyeEKKbt83fCABf/5KT6MNkexLR3blFqcHy3trLKdWKYqLJD8MdXgjEyeYsw2Fna
-	 h+R9nOI8yJTSdwHbykW87+TUDqJn2BsUnwkVW/KnLNzo0nYpZytz60VK5IsNTK5zT9
-	 E/nP3UolhRZ98396VogMEpEUDFqJ2UmW//QDgeR4r1/XRgKYps3577NSyTh6ngylOh
-	 q38DDRUJYLU4o7QmRkNHZ7c6cDSmWzS1oCS4+Wv+ZvbHiR/gW+gJgvvAmFx79TBqjv
-	 dNIxQp2WHVuIQ==
-Date: Tue, 11 Nov 2025 10:47:21 -0600
-From: Bjorn Andersson <andersson@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Amit Singh <quic_amitsi@quicinc.com>, konradybcio@kernel.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	quic_riteshk@quicinc.com, quic_rajeevny@quicinc.com, quic_vproddut@quicinc.com
-Subject: Re: [PATCH] arm64: dts: qcom: qcs6490-rb3gen2: Use 'edp_hot'
- function for hpd gpio
-Message-ID: <jqfmzls6eeydxozzyewkfutqpdzfavlx6mci6pl6f2ts7cjjeg@b32k3pf362zb>
-References: <20251031085739.440153-1-quic_amitsi@quicinc.com>
- <nzg7auudxocxnpnjsc2emot7sgh5azvucl72jqzgqsp4jhzint@hykb2xyx66uh>
- <c6ef0324-c932-4c80-8252-97dd3ee255d3@quicinc.com>
- <rqufdgme5cmtbvharugka2zc6c4g4am4j6enrkanc6uaxdbr77@dlptsjv7u7lr>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3591C2D979F;
+	Tue, 11 Nov 2025 16:47:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.208.47
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762879655; cv=fail; b=GO6B5eOLWHT/+uOHyX6C7cnhqm3w+WCgTfpVo62hNpRrStDhQyTKji12/AyIhOHUEFCiE3X1J0OrI/JGKXpnLLqwheeuDnL8XV+C7inGALQyfEjyjYQAnlX6mtcTCtOGbHHZ+7fFYmXOLkD1THZRn5hBSXen4nHgUntNrFBC6+Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762879655; c=relaxed/simple;
+	bh=8BXemLozzsV3FJUqqSbAl4bQ4NXByITD+ZET1N7csAk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=D1/ZHs5AUeeERdU2GVjB0mMXNBBzXsoDc4wU95VCPEbOKml7UVM885LIsdMnhf0jNwSSk/lcHOkoXePOsP3ko4WH/7xXR9b4byLVHbGiENVZI/0b3GylGzH8tyBKhu9k/eh8k2rTiRi5yuoGngmO+WwMEUkTU9VeP8Sf5ko9/Ik=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=W7je2reV; arc=fail smtp.client-ip=40.107.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=JnGkL/XbxRtX0CYGOcAFve3OLRNNqRVzmGus+lcjQoleWHuBRbDHIrOLt4W5XYFyQKlWQNdoRzqnth5AyGs3Nh4FcsurWH8a0QrKgMV2lThGHezfWUhZw1mBxAtyEQ0XjJBdafxBCmzLtYOZCEO+3Ihp08k7mZBx2lZ0Pd3J9/0draksEUawOIUHObBISc4yLL94XhA9vpJKnIT2PDNeqW3DCkDBBRQq0iPYA9yhsqjf6jqDMl9PegEB6idi1kDfkMc3KcG4noSrmePv7uxzaIpV0IQXxpn6k5mUIgQwOf7GCMPBe9bKv69waxGaOG0CUwQHKe1u7r7rJaC8EOECPw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=m8VJpG/0KNA8kDLg5gYXNVX1SLUU03kfbaPpg6z2LLg=;
+ b=ZBuNrw7QZJ8GXJ9cdJaYyJtR+fNll18Ufg7MjV/ZSV/MtNeQ92qLZx10+WRSr9tyrKReFWkZNm65tpYUBRBKS+xb5uQw4/QrNcgntLk5G7p4FG7YgFhzna+XgTzYesXvKPcI3c07NcuxG2id92Hur/hVBSnHepnDobd7nr2mPUr6zay2c3nC321qEbSWBKTgcZZqTD8MkFie3LDVI09jVxsPREdrhnIxv3vEdR2cn9e9BETAH/NRsjLYdUevc7dLSXii0GvzJCIPltja24ukxrR7LfFzlYz59YkprWdyaIXzYpOxOJY3bfYa+I9Ppl1Gh1VDuEMDJkWMz+qGe596fQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=nxp.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=m8VJpG/0KNA8kDLg5gYXNVX1SLUU03kfbaPpg6z2LLg=;
+ b=W7je2reV2iwDaSpcs7ZaFaJ+XawHqo3ZFLLLDjTyz3XI67Rw9UpLXza9yW7nUQVCEmSrvxQThJWJFrsxFkYvtE/hZnnN2rmaeeD5HpoBon3HWDX2CEXML2Qy9ztcK5xpr3AUegWOt9IvwLrUESCFVkXDLzCkRVrzGbPk2w2Da5g=
+Received: from MW4P221CA0017.NAMP221.PROD.OUTLOOK.COM (2603:10b6:303:8b::22)
+ by MN2PR12MB4176.namprd12.prod.outlook.com (2603:10b6:208:1d5::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Tue, 11 Nov
+ 2025 16:47:30 +0000
+Received: from SJ1PEPF00002325.namprd03.prod.outlook.com
+ (2603:10b6:303:8b:cafe::2) by MW4P221CA0017.outlook.office365.com
+ (2603:10b6:303:8b::22) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9320.15 via Frontend Transport; Tue,
+ 11 Nov 2025 16:47:26 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
+Received: from satlexmb08.amd.com (165.204.84.17) by
+ SJ1PEPF00002325.mail.protection.outlook.com (10.167.242.88) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9320.13 via Frontend Transport; Tue, 11 Nov 2025 16:47:29 +0000
+Received: from satlexmb10.amd.com (10.181.42.219) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Tue, 11 Nov
+ 2025 08:47:26 -0800
+Received: from satlexmb08.amd.com (10.181.42.217) by satlexmb10.amd.com
+ (10.181.42.219) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Tue, 11 Nov
+ 2025 08:47:26 -0800
+Received: from [172.31.8.141] (10.180.168.240) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
+ Transport; Tue, 11 Nov 2025 08:47:26 -0800
+Message-ID: <1698d1f9-440c-41e1-86ab-a8b09f4ddd59@amd.com>
+Date: Tue, 11 Nov 2025 10:47:25 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <rqufdgme5cmtbvharugka2zc6c4g4am4j6enrkanc6uaxdbr77@dlptsjv7u7lr>
+User-Agent: Mozilla Thunderbird
+Reply-To: <tanmay.shah@amd.com>
+Subject: Re: [PATCH 0/3] remoteproc: xlnx: remote crash recovery
+To: Peng Fan <peng.fan@nxp.com>, Mathieu Poirier <mathieu.poirier@linaro.org>,
+	"Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+CC: "andersson@kernel.org" <andersson@kernel.org>,
+	"linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20251028045730.1622685-1-tanmay.shah@amd.com>
+ <20251029032422.GA7297@nxa18884-linux.ap.freescale.net>
+ <b9ce8b9c-6391-47fd-b7b5-be5cddf9cd4e@amd.com>
+ <1bb3a121-614d-4040-9cbe-505ccb7a7fcc@amd.com>
+ <20251030042124.GA18595@nxa18884-linux.ap.freescale.net>
+ <aRIo2MUol09Onu9B@p14s>
+ <PAXPR04MB8459029D7DCF4A6D2DDCB54288CFA@PAXPR04MB8459.eurprd04.prod.outlook.com>
+Content-Language: en-US
+From: Tanmay Shah <tanmay.shah@amd.com>
+In-Reply-To: <PAXPR04MB8459029D7DCF4A6D2DDCB54288CFA@PAXPR04MB8459.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF00002325:EE_|MN2PR12MB4176:EE_
+X-MS-Office365-Filtering-Correlation-Id: 040e0626-6157-4fbb-cd72-08de214200f5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|82310400026|1800799024|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?a1NhVHkrdU1kWXg3Q1BrVk96bGlEemlTbVUvVm5ueTNWU3ZBNy9iaXlRQThx?=
+ =?utf-8?B?Y2taV2txVGw5R3dTblZMM214VjdJcHJlOE5tb09iWXE5Rzl6WmZCZ0pUWW94?=
+ =?utf-8?B?OHZwL0hRWnp0WTJiS04ybGtSUE5ZMThqVWg0V1U0NHFwYXR5a3JyWlVsSzJs?=
+ =?utf-8?B?MjVHNW5XRnhITGVTMzlBbzd0bEhmNWZKVUQxclJwaVI3K2xsbzJGbUprTXgy?=
+ =?utf-8?B?OVY5eXBsQUo3RWc2S0VBYUJualR1QUFEdlMzbEovNzNhQ1NIVHFER0tCWHRo?=
+ =?utf-8?B?UGNpRWlTb00rOGk5aXFlQXZFaFBURTNrSkswU3pQQklWZzBUVVZkOW50U3RI?=
+ =?utf-8?B?K2tzK2RibzhMc0xsVUFoaXIxTEsva2E4Mm1LOFE5c2Y1ZktVckczRXZ1QmZB?=
+ =?utf-8?B?RkJYYVhpR1JSQjB2QUFDNHFEV0F6UEdOVFd5WHVnWHV2blYrYUxlQk9GWmc2?=
+ =?utf-8?B?WWJ6bVg4WlJWTVFwZi92ZUdENUJtWUxGQUlTWDRSRmZuYVh0bFdJU0xyNVFz?=
+ =?utf-8?B?TmR3SEVuaUwrUXhyR2xXZ3Njb2JKaEZtNS9WK0QyVGo4OEJ0RzVPcVpvanJX?=
+ =?utf-8?B?dngvdFd0RGFSMzZ2YksxZ21WalJtWlBRMkVJU0czTEhZNWFJclAwSEZCQ0dn?=
+ =?utf-8?B?anhCazhlL0VraGVnQkFSUHgzbmxINm9obTZlTGZNd01CaGxlYTgvcHBoRzZl?=
+ =?utf-8?B?VXJTRGd1bUNXVEViclFEek1zQ0RqRlBZbzJCTVZNZTJTc3dtUVhsWUhEZ29m?=
+ =?utf-8?B?R1FkREF1ZXpCR29tcEVjTUVrN1I0QW92L1dOQ0RaeUhqQTVYNlhmNGc3ejVW?=
+ =?utf-8?B?ZUhIQS9rNmZQSEVQTHZISnp2d2RjMzBqYU1WTWFucmo1Rko5c0VtNzVYbnQ1?=
+ =?utf-8?B?Znh6SzZzUzlUeHAvR3NVbER6aDNsTythaUtaVGNxNTNHY3JzbVlEQXpkdzFK?=
+ =?utf-8?B?cnlweDFrZGl3cEo4RmxDK1dyM1VFRzNlMUdrUDBwbWRTSjk1bjJJTm1TV2pj?=
+ =?utf-8?B?bXZWcTBXQVpyVVlRcVNrUzNISTl6UDZQN29RVi9TWjd1RjVvOWEzTGxqUUNO?=
+ =?utf-8?B?OGtydE5LVzd0T1R4TUNMR01yd2pSeEpGWGtRUkdDTjNrbW5QM2c4cTBXRVB5?=
+ =?utf-8?B?K3JhWlJQeWg1aTJBdlpPQXNsWFkxSVo0S1lxYlpUNVFwYWlibEZranphWHRz?=
+ =?utf-8?B?clI1MjAwR0t5Ny9RdkR4TFpES2Z6eVdyM08yaEVZT1NjdE0wYUxoZlhhSnJ6?=
+ =?utf-8?B?S2R2NG5MM0ZlaVNlSnViazBKNW5ycjU0aHdiejMzdEJMUDJOTDFXMm4yN2E4?=
+ =?utf-8?B?ck4xQmxPbGR1MFFROEo3YlJ4dGJJMTNLWThLT0JJRHFEbjJoUGNhc0Q3Z1R2?=
+ =?utf-8?B?dVE3QU5QV0tDeGpqWWZiVU1aV1M2UCtJeEZBREdUUEw0UkVWWHFHL2pDQlJx?=
+ =?utf-8?B?eUkvMlNaQXR3WkNYKzZQdDFqSmQzakdoR29UNjBuQ3JxS1ZieldsUUhidUs0?=
+ =?utf-8?B?SmZVT0xZMzh6bVJ5Qk1ubTl4bHl3eWZ4bVNCbEljY3BsdnpBb0R6TGNUbUZ4?=
+ =?utf-8?B?Z044UTc1RjhvMSsxS2JqNERqdVVqTmlpTmNYd0lQOEJrdUUzQ0xrS3Z2WXBZ?=
+ =?utf-8?B?U3Vsa0h3cG0yNGFTaU42OHdsdjU0WTkyYitIZ0duQTlYTnBLVXlvekZoK0l2?=
+ =?utf-8?B?VDZZc2d5bFdueXg1M1BYaHBWNFlGYmVHZDBvSGxjSGlGTVkxM1REakZsQUE0?=
+ =?utf-8?B?RkJ4Mit1aUQvRTJxNjhpYmVDZmJjVWhVRGFISmNuSURIUGxub0Q3TjRzNW9E?=
+ =?utf-8?B?Y3FzRC9RYUNXSXNXQVNXcEI1MS90aWdOcDBLWmgxZ0QxSG9XbFZYV3owTCs0?=
+ =?utf-8?B?Qm1OVmpFUWZtdVBKTWpBOEMyaHFIWlpmZlBDV0doeGJFeTRLRzluWm9weEJv?=
+ =?utf-8?B?NXlDb0FCb2l3N1Flb2NiakxwK3Z3RXMxdU9WVjkxZXJlU0NkN2VxMk5iVUR3?=
+ =?utf-8?B?NkNVUHdpelk3NktLNFNtMWFFOENIaWphWVBQTEs3WVBjcDJQRjQ3ZWUxWGpz?=
+ =?utf-8?B?UnhjMzc4TWVlZHowZE9ZRFBqaldpRWV3Y1U5T3IzNDl5NlFvWG1tK01sZjV1?=
+ =?utf-8?Q?5RfE=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(1800799024)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Nov 2025 16:47:29.9519
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 040e0626-6157-4fbb-cd72-08de214200f5
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF00002325.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4176
 
-On Tue, Nov 11, 2025 at 05:14:54PM +0200, Dmitry Baryshkov wrote:
-> On Thu, Nov 06, 2025 at 03:01:07PM +0530, Amit Singh wrote:
-> > 
-> > 
-> > On 11/2/2025 12:29 AM, Bjorn Andersson wrote:
-> > > On Fri, Oct 31, 2025 at 02:27:39PM +0530, Amit Singh wrote:
-> > >> Currently, hpd gpio is configured as a general-purpose gpio, which does
-> > >> not support interrupt generation. This change removes the generic
-> > >> hpd-gpios property and assigns the edp_hot function to the pin,
-> > >> enabling proper irq support.
-> > >>
-> > > 
-> > > No, it replaces the use of display-connector for hotplug detect with the
-> > > DP-controller's internal HPD logic.
-> > > 
-> > > There might be good reasons to do so, but you need to describe them.
-> > > 
-> > > I'm guessing that there are still some issues in the DP driver's logic
-> > > for handling of external HPD? This should be addressed by fixing that
-> > > logic in the DP driver, to ensure that this (display-connector +
-> > > hpd-gpios) works, and then you should send this patch again explaining
-> > > why the internal HPD hardware does a better job.
-> > > 
-> > > Regards,
-> > > Bjorn
-> > 
-> > Thanks for the feedback and clarification.
-> > 
-> > We observed a specific use case where using the GPIO-based external HPD
-> > handling via display-connector leads to a functional issue.
+
+
+On 11/11/25 1:12 AM, Peng Fan wrote:
+> Hi Mathieu, Tanmay
 > 
-> You are describing driver behaviour. It is known that this part of the
-> DP driver is broken. There is nothing wrong with using HPD pin as a GPIO
-> in the DP connector.
+>> Subject: Re: [PATCH 0/3] remoteproc: xlnx: remote crash recovery
+> ....
+>>>
+>>
+>> So what is happening here - Peng, do you plan on providing more
+>> debugging information? Tanmay - are you planning on sending a
+>> second revision?
+>>
+> 
+> Sorry for delay.  I gave a hack with below changes(at end) and it works.
+> The below change is just hack code to let me verify the rproc->power value.
+> The issue with current patchset is that after rproc_attach(),
+> the rproc->power will be 0. So recovery only works for the 1st time,
+> when it is triggered again, rproc_detach() will abort early in the if check:
+> if (!atomic_dec_and_test(&rproc->power)) {
+> ret = 0;
+> return ret;
+> }
+> 
+> ---------------
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index a92c6cd6df67b..2b69304084d11 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -1786,7 +1786,9 @@ static int rproc_attach_recovery(struct rproc *rproc)
+>          if (ret)
+>                  return ret;
+>   
+> -       return rproc_attach(rproc);
+> +       ret = rproc_attach(rproc);
+> +       atomic_set(&rproc->power, 1);
+> +       return ret;
+>   }
+> 
+> Thanks,
+> Peng.
 > 
 
-I agree.
+Hi Peng,
 
-> > When the DisplayPort cable is already connected and the display is active,
-> > and we perform a system reboot, the display does not come up automatically
-> > after boot with the current configuration (using hpd-gpios).
-> > This happens because we do not receive a connect event post boot —
-> > the GPIO-based HPD path does not generate an interrupt in this scenario,
-> > as the line remains high and no edge event is triggered.
-> > 
-> > However, when we configure the pin with the edp_hot function and use the
-> > internal HPD logic of the DP controller, the controller correctly detects
-> > the HPD state after reboot. The internal HPD block generates the necessary
-> > interrupt, and the display comes up automatically without requiring a
-> > replug event.
-> > 
-> > This behavior aligns with other Qualcomm reference platforms where,
-> > if the controller’s internal HPD is available, it is preferred over
-> > the external GPIO path. Using the internal HPD provides more reliable
-> > detection and keeps the configuration consistent across platforms.
-> > So, this change ensures:
-> > 1. The display recovers correctly after reboot when the cable
-> > remains connected.
-> > 2. We leverage the controller’s native HPD interrupt capability for
-> > better reliability.
-> > 3. We maintain consistency with other DP-enabled Qualcomm boards that
-> > use internal HPD.
-> 
-> I think, this DT might have been purposedly written in order to show how
-> the HPD signals can be coming from the GPIO pin through the external
-> bridge. As such I'm really reluctant to ack this change.
+This issue should be fixed after using rproc_boot instead of 
+rproc_attach. rproc_boot makes sure that rproc_attach is atomic 
+operation and it also increases power count as you mentioned above.
+
+Thanks,
+Tanmay
+
+>>> Thanks,
+>>> Peng
+>>>
+>>>>>
+>>>>> Thanks,
+>>>>> Tanmay
+>>>>>
+>>>>>> Thanks,
+>>>>>> Peng
+>>>>>
+>>>>
 > 
 
-That is correct, I explicitly wanted to describe the connector and the
-HPD signal therein, and at the time of merging this worked (I was even
-under the impression that we do get the right HPD state at boot and
-bring up the display, but it's been a while so I'm not 100% certain that
-I tested that scenario).
-
-I'm fine with dropping the hpd-gpios for reasons such that the HPD
-hardware does a better job at HPD handling - but that's not what we have
-here. So I share your reluctance.
-
-
-PS. Using the internal HPD for detection implies that we need to keep
-the DP block powered and (partially) clocked, so we should at some point
-figure out how to dynamically switch between GPIO and HPD...
-
-Regards,
-Bjorn
-
-> > 4. edp_hot follows the Source device behavior upon HPD pulse
-> > Detection [VESA DP standard v1.4 section 5.1.4].
-> > 
-> > I’ll add these details to the commit message in the next revision.
-> > 
-> > Thanks,
-> > Amit
-> 
-> -- 
-> With best wishes
-> Dmitry
 
