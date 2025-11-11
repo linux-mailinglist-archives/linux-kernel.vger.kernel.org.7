@@ -1,375 +1,243 @@
-Return-Path: <linux-kernel+bounces-895248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64348C4D591
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:14:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A5F0C4D637
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:25:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2153189F640
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:08:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F124A3AFB82
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:22:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8B75354AD1;
-	Tue, 11 Nov 2025 11:07:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2700C3559C9;
+	Tue, 11 Nov 2025 11:21:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=HOTMAIL.DE header.i=@HOTMAIL.DE header.b="b/9FQu5G"
-Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazolkn19011031.outbound.protection.outlook.com [52.103.33.31])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="qdp4U2TM"
+Received: from SN4PR0501CU005.outbound.protection.outlook.com (mail-southcentralusazon11011063.outbound.protection.outlook.com [40.93.194.63])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 989602F7AA6;
-	Tue, 11 Nov 2025 11:07:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.33.31
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F19434B683;
+	Tue, 11 Nov 2025 11:21:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.194.63
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762859276; cv=fail; b=F6MIjF5r2cxRS1zrt1crfwA/GIR+H1VWGtN0LdcKdXqXiqMMLqDZXb7x1kdn2lGBsM2jbG7+qd8vPb0ir2VZesN48j2BNvTqeT/+sZ4B0LzO2E6wNu/1g1QzUyWx8powXnmPv4AkWtMRzhOwVIrprcJAlYOMQu+sos8wcvHpm2o=
+	t=1762860116; cv=fail; b=Rw+bjXMh0pyLcVQOkFij6knXUgNuVQokbqEBm+Sqattx6e3J8MajbEEn32OO0I3N/DWNfB1BlQLJKzr9Z73tz4XH66YzL+5ghiWTlb1zlBtiRkbbOAct8ymmYGfzr7UWoqRZsMVMLW9eJkzG6ecKWq/2STuruMQ4f3EqC8XuW3Y=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762859276; c=relaxed/simple;
-	bh=FsMOi5i77cQ3GPJoTwHdD0y87Ov3KFg7fElNQt9Z/Mk=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Avg7ckFSzCAfPvFjA1StqchqOiYKb2BqatQwEi7uBTCVNgL84bR7TdmoHYaBJjf3UJH6lpMCUmWL0Jblyzn8pkVYaQB8lV6+AwhCrN0knfD8JeUR7qwHPeGycC5N8fLcNAT4i0Hw418n5nonbLRGydsjMyOGdXMTdz5q3p1yfHA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.de; spf=pass smtp.mailfrom=hotmail.de; dkim=pass (2048-bit key) header.d=HOTMAIL.DE header.i=@HOTMAIL.DE header.b=b/9FQu5G; arc=fail smtp.client-ip=52.103.33.31
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hotmail.de
+	s=arc-20240116; t=1762860116; c=relaxed/simple;
+	bh=gCGLt4uy9IGLN/ZmjXL5UsAZ14t3LyuF13JiC321BkA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KKcigngkH0qXKaDZeRipbqV4xH9fZ7hYN5t4QktAoznJo/eyZ3gZ63bORBsV4MHXkALahDZxbYj2Rxa60FMItIdLQzB7+D15z2KFiT62CDkmwcbZ5N2SZYMqY/+lrQ8wAf6J3jmJIF63AMus8T3SW7GXweWdOa3JHUPxkOEJewE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=qdp4U2TM; arc=fail smtp.client-ip=40.93.194.63
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kdiER4FX4NKFNeq1yZODLf7Vjtw6lPydgPqIJGsZ3GmNNgY67FlW2lNuTJaM0LA6987VP7zosjY1YODcoj6q3GGHNI3D6VCZwl/H2GvVDX/Yibbk7JcjNMLLzYNtcNRgk3AotbRBz/+Rufh/Ya2ItbYN7U4P0i2ZU3tK1NxO5iRz/mgHM0WvXhE5NVrKw/1kfYYXgb1qkExc4tS0o6XrOy24R0OGV15eendOKEU74740pKOWQc9ORgLOztt6yK3MAlL6BjFlFTjEFym9fXkyZ2PTNNuc92pj8M3ooigUoUcKbXZzdkNI0E8+C8v87QkRtox7/oIF5XXSUT13xtTifQ==
+ b=Aw8zGop/tr8f3zfCq6x/W3jxyBUt0HnxD65uOXsVUnz/TAdZVoqDpRg0PtybAM92w4RovJ7trcyxhTJaz3Q0DmietgGhPMR+cNUk3dyu4jgokGCj6Ge86noifXe2G+NreYHqcxhVaULN/WW3Ii7h/PxZX2fcdqtlDt/VZT+EoYBLikRunEwJYCcX1Y2XHRsOxsnwwMY5Ki/ikrtUu68Gt78UtzF+mJt9EYe0uJxWFWpYBygE+yQQJqU49bQAUveajagKdJkqsJ0IRDfNuY//sfuq33F35Di9TB42vJ9388hKgYOgOSHdUtmcfY8GduvevmwMNc+YcSw7YELH+++4Yw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bUNenhQhlCOx3VL7piVBsfQhhog8UCi73UWST9oscEI=;
- b=qaw1tt2eNVE14ES6mniYnNDGSIZjS+gMBxDkvpWLEiTlAgans2FvTCOmc8Ln8XX7oY4ewBRNGTJ3R3A8nEnqcL0EKrBGb7jb4s+lMB1Dcv8zdUuwvDSFJZAWnDgUyKf3I8PUhpzXSwvMgAzwIGOsSorJ3bRXcBWj8qmHMi3XvSUH3rOiCFoMBFwll0tOHZ/bNo9TupyoGmPjLFC4Q/APWOS1O3ytKNF3hKcEKrQ+f4/uOvWG/RdqB5MTjOedIOfaco1gRYQWDiGm97NkyC2nVQzowaKdBHELBkvlQ7uobyBMrkBErcOI16u25RZjxgC3NLFu0Zh3yEOV+3pt8dAbRw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=HOTMAIL.DE;
- s=selector1;
+ bh=Fz04j89tIaVo7xyhXvepye3oqUlKfWLjAd/nd0nddGY=;
+ b=saYeZi1xpwySo+/X2DyO+H3+hE334V43iN53l1Dir8W+hDjd8az1DxPXFRIxMucYQ0mGVpqdsk1mHzeoeBiBmOWGn+6hvh9FRvvHWCZLicku5e2YAjfP8/oIQUUQ+vXeoQMjYmlgy3bEs94JjiDZAPFx/Cc+8UOd+BsrveZMsmKnij54IyhdGafzyUYrt+uqb+awySh7YNzWi11qY4GEj8B32LyNQWm0nmTJrR/H3PDliWuvb4HMTzOMgFbe6YRjKEhFuY53Zvp15m8+oY8OiVidDBmx/F2rJfIumAYCTxV19s0BniyZOM6uuCuiBEMGVBgaenoQSNoEGHmNpYwowA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 198.47.21.194) smtp.rcpttodomain=gondor.apana.org.au smtp.mailfrom=ti.com;
+ dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bUNenhQhlCOx3VL7piVBsfQhhog8UCi73UWST9oscEI=;
- b=b/9FQu5GvYggMtIRW2oEzuQym7NU4EE0zDjjOdWySw6kBpMGPA5r91MFzHWQNyGS1UzrYMYDHYjdOwX4VRHmiCEHq3gvyNicbxKhO0QXD94uSoV3Z122nNtgdiGzEdG1gEuBEenLRrKXRQeEIPSB4cNZFR7B0Ho+dah9AQ/GvaXdgPQO8HCAGfF4r73pGkefJc3EM6/i2T4Do+zNkGz7mHmOZtnjkDb5BtDoM4ziFBdlQtf87KIYme1No/t8pARlQZinftpJPiI2HEvNNMZ2pqxPhT0ZdjE/S3ovmt0/5/C/zdl4ILQ3ZDwKS/57Ggh4ZXPye7KEZtlhtUEVEl2jpw==
-Received: from GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM
- (2603:10a6:158:401::8d4) by VI0P195MB3290.EURP195.PROD.OUTLOOK.COM
- (2603:10a6:800:2d4::21) with Microsoft SMTP Server (version=TLS1_2,
+ bh=Fz04j89tIaVo7xyhXvepye3oqUlKfWLjAd/nd0nddGY=;
+ b=qdp4U2TMsNi9BcxuVDmscgjrtwa4tmxg5ipbSwbzsqwoAK8LGlcRhGgQjbbGex/3X54R6leQYYVWje8/0xH/rA3HxGr4KWa8KweF7SfdsABvqjFHIwNOg5ez5yV6ZJuf5mPmKU/2v6iFrWnDumuxco3yTne/hNnCqQ9F16qAFHA=
+Received: from SA9PR13CA0011.namprd13.prod.outlook.com (2603:10b6:806:21::16)
+ by CY8PR10MB6708.namprd10.prod.outlook.com (2603:10b6:930:94::7) with
+ Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Tue, 11 Nov
- 2025 11:07:49 +0000
-Received: from GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM
- ([fe80::dde:411d:b5f2:49]) by GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM
- ([fe80::dde:411d:b5f2:49%8]) with mapi id 15.20.9298.007; Tue, 11 Nov 2025
- 11:07:49 +0000
-Message-ID:
- <GV2PPF74270EBEEDCF80CEE0F08891ED37BE4CFA@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
-Date: Tue, 11 Nov 2025 12:07:39 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v17] exec: Fix dead-lock in de_thread with ptrace_attach
-To: Christian Brauner <brauner@kernel.org>, Oleg Nesterov <oleg@redhat.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
- Alexey Dobriyan <adobriyan@gmail.com>, Kees Cook <kees@kernel.org>,
- Andy Lutomirski <luto@amacapital.net>, Will Drewry <wad@chromium.org>,
- Andrew Morton <akpm@linux-foundation.org>, Michal Hocko <mhocko@suse.com>,
- Serge Hallyn <serge@hallyn.com>, James Morris
- <jamorris@linux.microsoft.com>, Randy Dunlap <rdunlap@infradead.org>,
- Suren Baghdasaryan <surenb@google.com>, Yafang Shao <laoar.shao@gmail.com>,
- Helge Deller <deller@gmx.de>, "Eric W. Biederman" <ebiederm@xmission.com>,
- Adrian Reber <areber@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
- Jens Axboe <axboe@kernel.dk>, Alexei Starovoitov <ast@kernel.org>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
- linux-security-module@vger.kernel.org, tiozhang <tiozhang@didiglobal.com>,
- Luis Chamberlain <mcgrof@kernel.org>,
- "Paulo Alcantara (SUSE)" <pc@manguebit.com>,
- Sergey Senozhatsky <senozhatsky@chromium.org>,
- Frederic Weisbecker <frederic@kernel.org>, YueHaibing
- <yuehaibing@huawei.com>, Paul Moore <paul@paul-moore.com>,
- Aleksa Sarai <cyphar@cyphar.com>, Stefan Roesch <shr@devkernel.io>,
- Chao Yu <chao@kernel.org>, xu xin <xu.xin16@zte.com.cn>,
- Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.cz>,
- David Hildenbrand <david@redhat.com>, Dave Chinner <dchinner@redhat.com>,
- Shuah Khan <shuah@kernel.org>, Elena Reshetova <elena.reshetova@intel.com>,
- David Windsor <dwindsor@gmail.com>, Mateusz Guzik <mjguzik@gmail.com>,
- Ard Biesheuvel <ardb@kernel.org>,
- "Joel Fernandes (Google)" <joel@joelfernandes.org>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Hans Liljestrand <ishkamiel@gmail.com>,
- Penglei Jiang <superman.xpt@gmail.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Adrian Ratiu <adrian.ratiu@collabora.com>, Ingo Molnar <mingo@kernel.org>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>,
- Cyrill Gorcunov <gorcunov@gmail.com>, Eric Dumazet <edumazet@google.com>
-References: <AM8PR10MB470801D01A0CF24BC32C25E7E40E9@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
- <AM8PR10MB470875B22B4C08BEAEC3F77FE4169@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
- <AS8P193MB1285DF698D7524EDE22ABFA1E4A1A@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <AS8P193MB12851AC1F862B97FCE9B3F4FE4AAA@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <AS8P193MB1285FF445694F149B70B21D0E46C2@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <AS8P193MB1285937F9831CECAF2A9EEE2E4752@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <GV2PPF74270EBEEEDE0B9742310DE91E9A7E431A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
- <GV2PPF74270EBEE9EF78827D73D3D7212F7E432A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
- <20251105143210.GA25535@redhat.com>
- <20251111-ankreiden-augen-eadcf9bbdfaa@brauner>
-Content-Language: en-US
-From: Bernd Edlinger <bernd.edlinger@hotmail.de>
-In-Reply-To: <20251111-ankreiden-augen-eadcf9bbdfaa@brauner>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR4P281CA0407.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:d0::16) To GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM
- (2603:10a6:158:401::8d4)
-X-Microsoft-Original-Message-ID:
- <a3ac126a-4e5a-4ba7-b3dc-2284c58ada9a@hotmail.de>
+ 2025 11:21:50 +0000
+Received: from SN1PEPF000252A4.namprd05.prod.outlook.com
+ (2603:10b6:806:21:cafe::e0) by SA9PR13CA0011.outlook.office365.com
+ (2603:10b6:806:21::16) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9320.15 via Frontend Transport; Tue,
+ 11 Nov 2025 11:21:07 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.21.194)
+ smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
+ action=none header.from=ti.com;
+Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
+ 198.47.21.194 as permitted sender) receiver=protection.outlook.com;
+ client-ip=198.47.21.194; helo=flwvzet200.ext.ti.com; pr=C
+Received: from flwvzet200.ext.ti.com (198.47.21.194) by
+ SN1PEPF000252A4.mail.protection.outlook.com (10.167.242.11) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9320.13 via Frontend Transport; Tue, 11 Nov 2025 11:21:48 +0000
+Received: from DFLE212.ent.ti.com (10.64.6.70) by flwvzet200.ext.ti.com
+ (10.248.192.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 11 Nov
+ 2025 05:21:48 -0600
+Received: from DFLE209.ent.ti.com (10.64.6.67) by DFLE212.ent.ti.com
+ (10.64.6.70) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 11 Nov
+ 2025 05:21:47 -0600
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE209.ent.ti.com
+ (10.64.6.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Tue, 11 Nov 2025 05:21:47 -0600
+Received: from pratham-Workstation-PC (pratham-workstation-pc.dhcp.ti.com [10.24.69.191])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5ABBLk0D828241;
+	Tue, 11 Nov 2025 05:21:47 -0600
+From: T Pratham <t-pratham@ti.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller"
+	<davem@davemloft.net>
+CC: T Pratham <t-pratham@ti.com>, <linux-crypto@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Manorit Chawdhry <m-chawdhry@ti.com>,
+	"Kamlesh Gurudasani" <kamlesh@ti.com>, Shiva Tripathi <s-tripathi1@ti.com>,
+	"Kavitha Malarvizhi" <k-malarvizhi@ti.com>, Vishal Mahaveer <vishalm@ti.com>,
+	"Praneeth Bajjuri" <praneeth@ti.com>
+Subject: [PATCH v6 0/4] Add support for more AES modes in TI DTHEv2
+Date: Tue, 11 Nov 2025 16:38:29 +0530
+Message-ID: <20251111112137.976121-1-t-pratham@ti.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: GV2PPF74270EBEE:EE_|VI0P195MB3290:EE_
-X-MS-Office365-Filtering-Correlation-Id: e79ebff6-40ed-409c-0203-08de21128cc4
-X-MS-Exchange-SLBlob-MailProps:
-	9IecXKUgicBJ8NNsyPoVvrHIv5xlNgd3DClhicMbZQGQScwPSSUB4wtX+IKcX8H5ch33TMqBacURcGqnTQ7S4GsR91tRmQcgeP/Ywgg6phjXdIH5JVALj0y6lZ4ojz6sD6z1TwChJe+b0+GwZw5V7S589G7IKipf2H9+dicTHVyJ/0LBfng6jHpeWGBUZy+uT/r5edtMWHEl18wmHlqTLxeHXknOE21I/88bf6h0dLptgnzw/9xCT5U0EfbLYF0V73JVUkUvUpm9UD4B//M2fo18R3CoRBl9fdSegjcSC9wzcfdAKPumyrF6u9eVKTE384q4iISmZwfYBe6Uw0aeMA9CJkkoicYt+QFrIYqF6aZy/smwopYSnObrXcpPs472xTVHyXc4/NhB/LJVGvFdG2tIGIXMEcgxd5rTFwYbKbtQ/gGCn/hjGZ/N9mX30bwFZmGQoksGcbF2KsXuBC4rYpqC/6mDZYC9FN2fEadkM2E2p28LMg1WRuk6aI16E2zWvXCU3ZtEmvv9t6sCayIz8BdEmwMutlGzBdbsDx/8WaBREna0lbhx6xWUtR/wyWhfSlMivKOo1w3BGNm3o25iNmzrxTeYRHMDgNbhpono40QPG1YPdBr/YvISmaAPnT1EYoHHrl7rTKhWfFMo19SEy/Kj25Y+rv+swXRiqnNr+RFm7AlXAXaoYopv9TuFGHLyvEzbIU73WVwWlLxgCoHNXlp1Ix2HqWZt6d2rAmnMeW32v7zBSyQMiw==
+X-MS-TrafficTypeDiagnostic: SN1PEPF000252A4:EE_|CY8PR10MB6708:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8e61a31f-2318-4c14-f3e0-08de2114816f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|5072599009|19110799012|8060799015|41001999006|6090799003|15080799012|12121999013|461199028|23021999003|51005399006|3412199025|440099028|40105399003;
+	BCL:0;ARA:13230040|376014|82310400026|1800799024|36860700013;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ZW9EK1VrRm5qbE45STJmK3BnaVBKcVR1d0c1TitBakJNRXBUakVMdEJmMzZt?=
- =?utf-8?B?Zmpsb0NUa2IrV3JBbTd6eTJmWkIwd1BLcVExdmpTN1R3ZG9aSGl5RnVCWlhh?=
- =?utf-8?B?Q29pQzgwSDBaZlY3RzZabDFPUm55YXlYUSt3WEpVMTUxQzZ6SzZTdmN2MCtr?=
- =?utf-8?B?bW5ORERWcmttWnB5alFjdVRZNFFNWWZNUG5iSlo4WTZFZHlHazFxVU5iRWVP?=
- =?utf-8?B?NXFwcHZRVVFqWm1LVCt1SVdFemdaWmdzdTkzNGdFK05oWi85bGpWeFYrc3pM?=
- =?utf-8?B?dXM0S2RMS0l5b1htLzNCbzg0a3BqQ3Z1WFhmeUlwdWZvQkI4U3cxL25Bb3gw?=
- =?utf-8?B?bTQwdEEyWmt4by9nc2pBWmVsUXFqa2lFSE9HMDZ4b0VWV28rK0xsOGI3eVkz?=
- =?utf-8?B?SXF4eC9OQ05uamUzWlZ1SUF3N1h6bHNPeUZJMGtNK1U3QlozcjkvaE9DUnc0?=
- =?utf-8?B?aXZmbGlhVjVYN0NiY0JIQUxtckdSb2w1VjhRQiszK3Y4VUREVzhNb1czMElV?=
- =?utf-8?B?T3E5L0s5QVlqUHZJcHpzUWxuTDB1Zm1xeFJobFpVeVZmSDRZSjEwR1BoQlIx?=
- =?utf-8?B?elZCd2VGaVBJQ1lhbGFPVXJpVUY0SVdRZmNOdWcwdmw0RWU1KzIxbDVjSXJN?=
- =?utf-8?B?bjE3dSs4WFU1WVhYL2tCWE15N0VUZGdCTDd6Rk9UNkF3bU1XaDc2OFdnbS96?=
- =?utf-8?B?WnZVd0VXeDVSODNmdUNWZ0pxcnRnL2djNCtCT0tqZ0M5UXlOcytDY3B2bWpl?=
- =?utf-8?B?dFdKb3RaSFFtYlpzUlMwdnRYSEg4dHVPbTlYbE9TMjZJL3EzSGRnREJ5VVRX?=
- =?utf-8?B?VWl6ZWVtZmpxaG5BdHdkMG80QVdYUHhrQmp6ejdVaThzc1IycVNZRzB3Y2RS?=
- =?utf-8?B?N2gvZzByZ25XMDlNMkFiZG9BSENibnpZeHNVVDhxdUsvOHp2QXdBQTVuclM5?=
- =?utf-8?B?U2kxZFBsUVlrVGV0OFRyK2RlVTdJWXM3aUlYalJJVGxRVWplUmtvalhHMDg4?=
- =?utf-8?B?Wmh0NmVrejgyVTg4OGtrVHh0WUZxMlY1ckZIc3dIYkk0bmFCWXh4YitLSmJq?=
- =?utf-8?B?OXZhbDJqSGw1VWhzNEZEK3hnVkZlZFRzeDJTazRmRFgxRHAxY1FCVkVLUVow?=
- =?utf-8?B?R09GWVA1VXc4L3hnVVExR1JVNUhBaDV4cUtLOS9VeHh3T3I0Sm11OGFkSGs1?=
- =?utf-8?B?cWRaZVlQMVFzOHU4b1h5MHRHSDVoSFluWmdmUkRuaEpoNVhFOFJpU0FqTmxF?=
- =?utf-8?B?M3YyaVFwRUFWTm1vY2llNGtvNFNZTE5jYUNIUjc0bmlybDI4cnZOcW5kYUN3?=
- =?utf-8?B?cE5HYklWeEpSOFJqcmpiMXE1bVVtcytMenJNeGRTWmd6R0lPRkxjYnF6TmhF?=
- =?utf-8?B?dng0RmJQOEVhRWs4Y0JaKytjazZFaDRHQ1hFSkN1eDhtTk1QTnFUakorTUpT?=
- =?utf-8?B?TURkaENVSEtpUVJRdUtFbjVyUzdQQkZLOTg1N3FsTXFxRTlWOVRpTEhoNWRG?=
- =?utf-8?B?ZXFVbGhWS1pCTUhTR2dIbjZiZlcxdU5PVmpHa1MvaytXVVhMZ0hZVkJvRmdi?=
- =?utf-8?B?RVhXQ3pJc1l0STVibnFjL3Bsd0xOT2tpL2xIaEpHdmRMdXhmVXhFRVVCYm95?=
- =?utf-8?B?VkpOTUVOclE1TGRSbDRvc25sMGUwSTNXWUl6MHRsR29UOWFGd0R2azRaZWto?=
- =?utf-8?B?YXBGLzR3UGd4elBpUE51SVRGR2lwRWhPUnVPTXF0RjVXSkUrNUR0SWdBPT0=?=
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?cDJ6Qk1BR1hVRkxXbGlOelJnTWlTNW9XUnQyOEpYZEY5MnJDV2lSL3Z2MXht?=
- =?utf-8?B?eDNiNThkQ1ZDRUFoZ255czcyaWRKVmU3VisvY1pSVHVKMnF5eDFEd1pwalZj?=
- =?utf-8?B?REpHTXJMSS9NMXBuN3Azcnp0a2xhWHBFUysydjNyNnVocXZIOUlGU3MrTTRu?=
- =?utf-8?B?Q2lXOWRIWWhhSGtQUWhUT0pCWjFzQ3FZTEViSFBXWkJ5QVpCTFBwYm5UVXpK?=
- =?utf-8?B?RnRDdGRqSE5zUlB1QkRGNURFVHU4eWdCdUNML2xld1JnSGNad2NPZWYvY1Ew?=
- =?utf-8?B?amV4NFlhQ0lOV0MwRlgzSDQ1V2YzRUlHWFVaK00xWWVyWExIUlBCYXFVdm9h?=
- =?utf-8?B?R1gxZ0xCaVNFRHRWOFByVWtlSmcxdWlTUGVybWlBRDNsUG43THEzOXJBVWNS?=
- =?utf-8?B?SE9nSEpUOGZnZWFqNVNMdnBwTnl3MVhGU2NzOVdjNlJiMmVXQ3hxUUh4R21F?=
- =?utf-8?B?cWh2RERJUXpsME1QUEhxY0l3b05BWkJENjg1ZmMyKyszTEZ4RXRYSW1kVHVy?=
- =?utf-8?B?a2lrcE5RZTk2b2NZV3hOVVhtbnIrNktsb0RqUTFqQk5iaFZ5VXVlMlMwenVn?=
- =?utf-8?B?L0ozZ0x1b2M5MURYcUNobzhqdnptWEE5a3VscGhNR1h3RG1Ua2FiekM2UjlG?=
- =?utf-8?B?YUhxV1RCYnBTTmcrOVdmQUFRQkdHL3c4cVU4NHdwN2xQVXpHa1Jld0tqUHBE?=
- =?utf-8?B?c2U2cnRZSWRmQnZCa0NCZ0ZKckZiNlVnTGRkcmI4cVVaaEh6WklocUNNK0Jh?=
- =?utf-8?B?TnlaSGw1YkFmMnNsZDFCdmQ5d25QenkyNkNUWEg5VVd0aE5PK2VqVjBsZExD?=
- =?utf-8?B?ekY4eGt4eVFDSHRFaUtwT3c4MlRyOUUzdEVPbDlTd0dmaFVaVnU5alR4ZG55?=
- =?utf-8?B?QUpLZmxtOEFsbHgyOVFmcVd5TEt6d3FONVA4M0cycWZhQlhtbzNvMnArRmI0?=
- =?utf-8?B?WkdoaElDaVNOZEVvdm05OWdTQ3dsZzJRbU1xaE1Ba29yMW1UZlcrMnRQVm1R?=
- =?utf-8?B?TnhVTXVOU1psL2hmN2RrdGkwT0paYkZxRHdsdWIxckcrbnRIK3JjOHpyQkR5?=
- =?utf-8?B?NnpIc1hscHYrdTFyYXI5MU5nMDFKNGJRSDg5MXlQUitZTHcwcXp5RFNLUzNJ?=
- =?utf-8?B?ZlIwTjd2em5QWjF5aFVDZjd4MHBBVnlHQ1NzSktrSWNlTDBrVmU0T2hGcnZ4?=
- =?utf-8?B?bnA2YWdrOTRteVVBalFORFo1cVoyYzVLOWkxSGxhRm1vSnBhbTFlSmpIb3Zn?=
- =?utf-8?B?aDFMREtVTUxMVnRUcVZhN29MbGt0MlpWeGI4djZUR0pSVW11SXJ6RUQ2ZzZp?=
- =?utf-8?B?THhiTS9qSHYxYmh3TWpaazJlcDJuVHhOQVNjUVB1NXIyQWtHdk1McmNOWlVV?=
- =?utf-8?B?UGxkTXFoVUMrQXhFZmxUUVhTR21PUlZBOTBlb0llZlpTQnVldDB1MW55d1gx?=
- =?utf-8?B?anN1ZzU0VldCcm1HMnRFaUNNaHQ2QW9IREFhOEIwYkJBSUdzRy9Da3dzcnJn?=
- =?utf-8?B?TFNXWmxJUCtSR3F4QlN3QVE2L1VmODV3OTF3RjJWc2xyTEpZUllOT1d3UXpq?=
- =?utf-8?B?cGpiN0Q3TkdnVlc5dE1ubmN4NUd4cVBuYUNmY25vL0g1YTJKSHUyVWJnK0Rp?=
- =?utf-8?B?eHVzQ205R1ZrcU41VW9WOWtGM2FZK212R0FRVnpPVDFoMFIwRzJMYnVZTWZQ?=
- =?utf-8?B?UzBWUXIrNGEveW5zcmQvblh4WGpHb1FKRGZOYmdPVTQ4U3o3aWEwT3FDOTdQ?=
- =?utf-8?Q?kQYLNqW+/oPyUL6C021DbNAIVbm0iEdt0oltAmP?=
-X-OriginatorOrg: sct-15-20-8534-20-msonline-outlook-87dd8.templateTenant
-X-MS-Exchange-CrossTenant-Network-Message-Id: e79ebff6-40ed-409c-0203-08de21128cc4
-X-MS-Exchange-CrossTenant-AuthSource: GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Nov 2025 11:07:49.3292
+	=?us-ascii?Q?PbovpwxyqTLZFes+px41/rhxdc693kaUYfIhNy3S3NJ+oJ0Yf9cHDtInJBLH?=
+ =?us-ascii?Q?DBNanVuDtLwAZQf/swTe/9FLOX1E8QOEVj0nCVQMKWb5ShYR5Ryd20E8NSBE?=
+ =?us-ascii?Q?EsO8q5arBPMaWYPU4NoPqu8vvVudR/jdPNtEnRfafJWeRCSIWGH2CnbHD3/o?=
+ =?us-ascii?Q?fBFZpzEbTa7fVgQEePvV9DHlwfNMfdsDvS7FcF5o7BWu1Q09nQKfXTekyV67?=
+ =?us-ascii?Q?7wuFmHLgoc0E5uyt8vBZfFd5rq6a821VJPTmL27byplEhofB78BCCHG43AVp?=
+ =?us-ascii?Q?4nZo7xcbM7Hn5njIpOBdLKWqh9LGaKI9BB3F41m6frUE1UlhO34UFfA7Cyeh?=
+ =?us-ascii?Q?HpJ24VlTPWaBZfj7jxPPxpJgkdPhF8b6zX+b6/8qEnRklS5RgfFhoVp3NM1K?=
+ =?us-ascii?Q?KPhk6I7mc0Xv9yaoKfvWG+vBx2sap9OTAASWw4Bf/AXgLrg0sZdc+B8+xm9o?=
+ =?us-ascii?Q?51u00ovH7F43KprmzQUDvRG3Kzzy3WsE2lXiFK9PHAD+I6oXP+UdWl4ZABop?=
+ =?us-ascii?Q?HTCNA47VYa4W502921pb4ODDJlRZFY0dxPj9MRPd6dKqF8QHF7gm1hkOOOib?=
+ =?us-ascii?Q?/AsPpNxEQonym09D6RaKMGSDYmupiJCC9utaKBE5xkVhvxU/3prayufptQNT?=
+ =?us-ascii?Q?zoO+K/y+TUfgOxTASlA8FazOr5+W+ysqSUCx40noZDZaw6OJq6Cy6XM6OqxI?=
+ =?us-ascii?Q?r4IUjHVJDnHrn4FagFnV77j60Lx6ZTJfkQd9ecHRb1CTuuvt2DhTfuJaJYno?=
+ =?us-ascii?Q?vIrtQ+6NES+xRLlewhgqkod4YyhWi/p3fIrVpi9Dj4qlP7ei45ykjAL/tILL?=
+ =?us-ascii?Q?2aHD7YESgDW+o2jEa14XQKRoWep2IOPBiwuZDEAmaUq9evlqZu8ehwSKaV5m?=
+ =?us-ascii?Q?d17IDtoWU/vwcfXRdWxW0wCKusCd7x2tJaHGTJ9nEwGI+0iYZ5JMSekQxCLW?=
+ =?us-ascii?Q?zOkQy6+GHINnie7nIPaCriO8UhnNTqIKWhmtCBL+9P0xG3oedTzzX+E4H8wW?=
+ =?us-ascii?Q?qUUrnvF8RW3PXah+OkjiEEBrZYbmIUye3B1duzvtVLpKMBRoSA6w3ZHCQbdu?=
+ =?us-ascii?Q?OP4KA4dppkM0zM8+wV2xihxlLLa3s5kDkLFgIo7PJCwb7XEZO1KIGmkSmZA2?=
+ =?us-ascii?Q?3R9XpFFYfUveDcCLp+SNML7v7baR7S/ElbuVz9METvkZrmINyI2U58SiulnS?=
+ =?us-ascii?Q?bAspz4FtFFvhTapCGYJQK1S0lZTQgCKIgumfPzu71RC0UhEbsJuUSq/eTLxa?=
+ =?us-ascii?Q?YpvFsGR2EGhvaOeDMutE2JByFzclMXariI0XWmjikeT6tV4m7tiwSzVeps6v?=
+ =?us-ascii?Q?o/163ANa9pfsPOwn4fC/dEvNMiJRY9JrQAB44zSikMV4Se4v9uvBEbwGtCGS?=
+ =?us-ascii?Q?Ai31KAk9wdXL603hTat1SUN0UpulGDGG/vySZGpPzf+StZkhOvxXQF6DOYts?=
+ =?us-ascii?Q?t9K1jd7q/av4nxpgbI48GWZfqxNSjxysmnhuxXTvDedLqCOT6cjr9VVmz7oE?=
+ =?us-ascii?Q?zZGJ8Y6i/ITddr6xpA/65lf6qrauD03/udDY?=
+X-Forefront-Antispam-Report:
+	CIP:198.47.21.194;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:flwvzet200.ext.ti.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(376014)(82310400026)(1800799024)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: ti.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Nov 2025 11:21:48.7100
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0P195MB3290
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8e61a31f-2318-4c14-f3e0-08de2114816f
+X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.21.194];Helo=[flwvzet200.ext.ti.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SN1PEPF000252A4.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR10MB6708
 
-On 11/11/25 10:21, Christian Brauner wrote:
-> On Wed, Nov 05, 2025 at 03:32:10PM +0100, Oleg Nesterov wrote:
->> I am still thinking about another approach, will write another email.
->> But let me take a closer look at your patch.
->>
->> First of all, can you split it? See below.
->>
->> On 08/21, Bernd Edlinger wrote:
->>>
->>> -static int de_thread(struct task_struct *tsk)
->>> +static int de_thread(struct task_struct *tsk, struct linux_binprm *bprm)
->>>  {
->>>  	struct signal_struct *sig = tsk->signal;
->>>  	struct sighand_struct *oldsighand = tsk->sighand;
->>>  	spinlock_t *lock = &oldsighand->siglock;
->>> +	struct task_struct *t;
->>> +	bool unsafe_execve_in_progress = false;
->>>
->>>  	if (thread_group_empty(tsk))
->>>  		goto no_thread_group;
->>> @@ -932,6 +934,19 @@ static int de_thread(struct task_struct *tsk)
->>>  	if (!thread_group_leader(tsk))
->>>  		sig->notify_count--;
->>>
->>> +	for_other_threads(tsk, t) {
->>> +		if (unlikely(t->ptrace)
->>> +		    && (t != tsk->group_leader || !t->exit_state))
->>> +			unsafe_execve_in_progress = true;
->>
->> you can add "break" into the "if ()" block...
->>
->> But this is minor. Why do we need "bool unsafe_execve_in_progress" ?
->> If this patch is correct, de_thread() can drop/reacquire cred_guard_mutex
->> unconditionally.
->>
->> If you really think it makes sense, please make another patch with the
->> changelog.
->>
->> I'd certainly prefer to avoid this boolean at least for the start. If nothing
->> else to catch the potential problems earlier.
->>
->>> +	if (unlikely(unsafe_execve_in_progress)) {
->>> +		spin_unlock_irq(lock);
->>> +		sig->exec_bprm = bprm;
->>> +		mutex_unlock(&sig->cred_guard_mutex);
->>> +		spin_lock_irq(lock);
->>
->> I don't think spin_unlock_irq() + spin_lock_irq() makes any sense...
->>
->>> @@ -1114,13 +1139,31 @@ int begin_new_exec(struct linux_binprm * bprm)
->>>  	 */
->>>  	trace_sched_prepare_exec(current, bprm);
->>>
->>> +	/* If the binary is not readable then enforce mm->dumpable=0 */
->>> +	would_dump(bprm, bprm->file);
->>> +	if (bprm->have_execfd)
->>> +		would_dump(bprm, bprm->executable);
->>> +
->>> +	/*
->>> +	 * Figure out dumpability. Note that this checking only of current
->>> +	 * is wrong, but userspace depends on it. This should be testing
->>> +	 * bprm->secureexec instead.
->>> +	 */
->>> +	if (bprm->interp_flags & BINPRM_FLAGS_ENFORCE_NONDUMP ||
->>> +	    is_dumpability_changed(current_cred(), bprm->cred) ||
->>> +	    !(uid_eq(current_euid(), current_uid()) &&
->>> +	      gid_eq(current_egid(), current_gid())))
->>> +		set_dumpable(bprm->mm, suid_dumpable);
->>> +	else
->>> +		set_dumpable(bprm->mm, SUID_DUMP_USER);
->>> +
->>
->> OK, we need to do this before de_thread() drops cred_guard_mutex.
->> But imo this too should be done in a separate patch, the changelog should
->> explain this change.
->>
->>> @@ -1361,6 +1387,11 @@ static int prepare_bprm_creds(struct linux_binprm *bprm)
->>>  	if (mutex_lock_interruptible(&current->signal->cred_guard_mutex))
->>>  		return -ERESTARTNOINTR;
->>>
->>> +	if (unlikely(current->signal->exec_bprm)) {
->>> +		mutex_unlock(&current->signal->cred_guard_mutex);
->>> +		return -ERESTARTNOINTR;
->>> +	}
->>
->> OK, if signal->exec_bprm != NULL, then current is already killed. But
->> proc_pid_attr_write() and ptrace_traceme() do the same. So how about
->> something like
->>
->> 	int lock_current_cgm(void)
->> 	{
->> 		if (mutex_lock_interruptible(&current->signal->cred_guard_mutex))
->> 			return -ERESTARTNOINTR;
->>
->> 		if (!current->signal->group_exec_task)
->> 			return 0;
->>
->> 		WARN_ON(!fatal_signal_pending(current));
->> 		mutex_unlock(&current->signal->cred_guard_mutex);
->> 		return -ERESTARTNOINTR;
->> 	}
->>
->> ?
->>
->> Note that it checks ->group_exec_task, not ->exec_bprm. So this change can
->> come in a separate patch too, but I won't insist.
->>
->>> @@ -453,6 +454,28 @@ static int ptrace_attach(struct task_struct *task, long request,
->>>  				return retval;
->>>  		}
->>>
->>> +		if (unlikely(task == task->signal->group_exec_task)) {
->>> +			retval = down_write_killable(&task->signal->exec_update_lock);
->>> +			if (retval)
->>> +				return retval;
->>> +
->>> +			scoped_guard (task_lock, task) {
->>> +				struct linux_binprm *bprm = task->signal->exec_bprm;
->>> +				const struct cred __rcu *old_cred = task->real_cred;
->>> +				struct mm_struct *old_mm = task->mm;
->>> +
->>> +				rcu_assign_pointer(task->real_cred, bprm->cred);
->>> +				task->mm = bprm->mm;
->>> +				retval = __ptrace_may_access(task, PTRACE_MODE_ATTACH_REALCREDS);
->>> +				rcu_assign_pointer(task->real_cred, old_cred);
->>> +				task->mm = old_mm;
->>> +			}
->>
->> This is the most problematic change which I can't review...
->>
->> Firstly, it changes task->mm/real_cred for __ptrace_may_access() and this
->> looks dangerous to me.
-> 
-> Yeah, that is not ok. This is effectively override_creds for real_cred
-> and that is not a pattern I want to see us establish at all! Temporary
-> credential overrides for the subjective credentials is already terrible
-> but at least we have the explicit split between real_cred and cred
-> expressely for that. So no, that's not an acceptable solution.
-> 
+DTHEv2 is a new cryptography engine introduced in TI AM62L SoC. The
+features of DTHEv2 and details of AES modes supported were detailed in
+[1]. Additional hardware details available in SoC TRM [2].
 
-Well when this is absolutely not acceptable then I would have to change
-all security engines to be aware of the current and the new credentials.
-That may be as well be possible but would be a rather big change.
-Of course that was only meant as a big exception, and somehow safe
-as long as it is protected under the right mutexes: cred_guard_mutex,
-exec_update_lock and task_lock at least.
+This patch series adds support for the following AES modes:
+ - AES-XTS
+ - AES-CTR
+ - AES-GCM
+ - AES-CCM
 
->>
->> Say, current_is_single_threaded() called by another CLONE_VM process can
->> miss group_exec_task and falsely return true. Probably not that bad, in
->> this case old_mm should go away soon, but still...
->>
->> And I don't know if this can fool the users of task_cred_xxx/__task_cred
->> somehow.
->>
->> Or. check_unsafe_exec() sets LSM_UNSAFE_PTRACE if ptrace. Is it safe to
->> ptrace the execing task after that? I have no idea what the security hooks
->> can do...
->>
->> Again, can't review this part.
->>
+The driver is tested using full kernel crypto selftests
+(CRYPTO_SELFTESTS_FULL) which all pass successfully [3].
 
-Never mind, your review was really helpful.  At the very least it pointed
-out some places where better comments are needed.
+Signed-off-by: T Pratham <t-pratham@ti.com>
+---
+[1]: [PATCH v7 0/2] Add support for Texas Instruments DTHEv2 Crypto Engine
+Link: https://lore.kernel.org/all/20250820092710.3510788-1-t-pratham@ti.com/
 
-Thanks
-Bernd.
+[2]: Section 14.6.3 (DMA Control Registers -> DMASS_DTHE)
+Link: https://www.ti.com/lit/ug/sprujb4/sprujb4.pdf
 
->> Oleg.
->>
+[3]: DTHEv2 AES Engine kernel self-tests logs
+Link: https://gist.github.com/Pratham-T/aaa499cf50d20310cb27266a645bfd60
+
+Change log:
+v6:
+ - Removed memory alloc calls on the data path (CTR padding in aes_run),
+   replaced with scatterlist chaining for added a pad buffer. Added two
+   accompanying helpers dthe_chain_pad_sg() and
+   dthe_unchain_padded_sg(). 
+ - Replaced GFP_KERNEL to GFP_ATOMIC in AEAD src and dst scatterlist
+   prep functions to avoid deadlock in data path.
+ - Added fallback to software in AEADs on failure.
+v5:
+ - Simplified AES-XTS fallback allocation, directly using xts(aes) for
+   alg_name
+ - Changed fallback to sync and allocated on stack
+v4:
+ - Return -EINVAL in AES-XTS when cryptlen = 0
+ - Added software fallback for AES-XTS when ciphertext stealing is
+   required (cryptlen is not multiple of AES_BLOCK_SIZE)
+ - Changed DTHE_MAX_KEYSIZE definition to use AES_MAX_KEY_SIZE instead
+   of AES_KEYSIZE_256
+ - In AES-CTR, also pad dst scatterlist when padding src scatterlist
+ - Changed polling for TAG ready to use readl_relaxed_poll_timeout()
+ - Used crypto API functions to access struct members instead of
+   directly accessing them (crypto_aead_tfm and aead_request_flags)
+ - Allocated padding buffers in AEAD algos on the stack.
+ - Changed helper functions dthe_aead_prep_* to return ERR_PTR on error
+ - Changed some error labels in dthe_aead_run to improve clarity
+ - Moved iv_in[] declaration from middle of the function to the top
+ - Corrected setting CCM M value in the hardware register
+ - Added checks for CCM L value input in the algorithm from IV.
+ - Added more fallback cases for CCM where hardware has limitations
+v3:
+ - Added header files to remove implicit declaration error.
+ - Corrected assignment of src_nents and dst_nents in dthe_aead_run
+ (Ran the lkp kernel test bot script locally to ensure no more such
+ errors are present)
+v2:
+ - Corrected assignment of variable unpadded_cryptlen in dthe_aead_run.
+ - Removed some if conditions which are always false, and documented the
+   cases in comments.
+ - Moved polling of TAG ready register to a separate function and
+   returning -ETIMEDOUT on poll timeout.
+ - Corrected comments to adhere to kernel coding guidelines.
+
+Link to previous version:
+
+v5: https://lore.kernel.org/all/20251022180302.729728-1-t-pratham@ti.com/
+v4: https://lore.kernel.org/all/20251009111727.911738-1-t-pratham@ti.com/
+v3: https://lore.kernel.org/all/20250910100742.3747614-1-t-pratham@ti.com/
+v2: https://lore.kernel.org/all/20250908140928.2801062-1-t-pratham@ti.com/
+v1: https://lore.kernel.org/all/20250905133504.2348972-4-t-pratham@ti.com/
+---
+
+T Pratham (4):
+  crypto: ti - Add support for AES-XTS in DTHEv2 driver
+  crypto: ti - Add support for AES-CTR in DTHEv2 driver
+  crypto: ti - Add support for AES-GCM in DTHEv2 driver
+  crypto: ti - Add support for AES-CCM in DTHEv2 driver
+
+ drivers/crypto/ti/Kconfig         |   5 +
+ drivers/crypto/ti/dthev2-aes.c    | 964 +++++++++++++++++++++++++++++-
+ drivers/crypto/ti/dthev2-common.c |  19 +
+ drivers/crypto/ti/dthev2-common.h |  33 +-
+ 4 files changed, 1004 insertions(+), 17 deletions(-)
+
+-- 
+2.43.0
 
 
