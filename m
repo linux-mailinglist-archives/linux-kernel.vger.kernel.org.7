@@ -1,268 +1,228 @@
-Return-Path: <linux-kernel+bounces-895121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67850C4CFC8
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:22:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87AC9C4D0B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:31:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 359DE4FA989
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:12:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BF9F3A7E1B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:13:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1D93334C1B;
-	Tue, 11 Nov 2025 10:12:34 +0000 (UTC)
-Received: from mail-oo1-f46.google.com (mail-oo1-f46.google.com [209.85.161.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D7CA3396E4;
+	Tue, 11 Nov 2025 10:13:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b="tyhVY50C";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="OLkIdpU2"
+Received: from fhigh-b8-smtp.messagingengine.com (fhigh-b8-smtp.messagingengine.com [202.12.124.159])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04B6E2DEA75
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 10:12:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBD0D20C00C;
+	Tue, 11 Nov 2025 10:13:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762855954; cv=none; b=WxYzzOOXus0rRHcpzPsJzD7fi+8MJm174C7opjf5aDbbnEocMdb0hECAXdgXZqZ9JTT6hjOlC5uy8pzZiNVPtex4rwS/kw7GuhtcYvTO8KviVnd3zy8W0yH6/vywPHIT+lZcAfbJg38Nd7mZ4dHJ3I3thpyeuDMfvaePICcVP+8=
+	t=1762856008; cv=none; b=mHGAa2CX2hZgYcWQ2f9pA4LdMbWqECw+BoGNuxKPkKD67HC1ETVFfEo3P6K0PD2unw3J1LFOfINPgLDdbNv9C22xkA6ljR+DJqIz3xk5oDqI9cvNKRktfmnM20eB01dsZWOU2g7UPi/5lYtmMvPp5WuvIaZk7IkyUPL6cW8kIt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762855954; c=relaxed/simple;
-	bh=WAj76DydZj4CIC9aQ/rvGOUH+A9Zbu1Qohl7CV2gKcc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EtNtXoQ6XkrysE5q7g1GAiTw/63NXrAIc7QYPHKQKEcNMDI3hDvgdWIexB2+9d/nJIdMYRu1/EAyFlzXpc6O54j7iXaeMtO92xtUkQtuRm8ooctm2DiCkf/zJ0WLR1wVZ/exNYBB9PiAiVkf2AxY5KjoKFJxiBXuRxG2jncUvRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.161.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f46.google.com with SMTP id 006d021491bc7-656bb297df2so619638eaf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 02:12:31 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762855951; x=1763460751;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=d93P9SBrZbsmx5OIoldWG9QXDZwaWCjQ8D5gNZLMBrU=;
-        b=k7jlY2/wGrYvON6/aVr+eDpfdEFfp8quNrtbPUewiPXZqFT3p9xwukXDSyDrNYZpwR
-         39agoEGK8E75mwzH4wef/aeO9JsrO2ulZGERE9c2z4ddHQ6kyo3QK+p4eiYMXwNS1IUw
-         vcUWFvlgTu91lkIcACCWgnTqaEBgEqm4gLkPR4zX8bxBqB/fNmRrImVntraDtaDDTaAU
-         Rne7UhHIw8sZAchv9vXVBEVm2/qQglbLaVeRCi8bDr38K7xPXuaBzj+5/6OIJMsgUlZS
-         6MKWh5MbsXOL+cUAMX0VbkVF83LMVhvgkhBaH1a9gQYZFOr4sOsxemJypt/qdHBF+ZQ5
-         zTIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWqJP6I7n83xXQ/J82/YH3wHtzQ+sqC5I14hPUxCXhfKY8cBbkiI1YkXWDjmvCibuijNA8j7KVmlcRFkpw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3oSDA8PLoc5WoxLpW/jk4sTx+ji7oNsjS+Sh9olntZpDNrjlz
-	/Gas3/2+X84e4I0rQnWNn8KNF1P0lmPFwYUNNYFRkKFtNGPlmRNAvdCb
-X-Gm-Gg: ASbGncvmx8ve14cIFTpA6jUbV6ZPkMWO40xwZ7axwQTyw2vIipIGf5MYNQmOyrPo5eV
-	08tnKwz33Bp6P6PR0sqEYkJAzKH6JBrSgEmyzxUSNtU7MAAr7/3wkG/dD+b8d21EhJ6cy/rddBg
-	wAJX5T8FgyFxpSDArJkE8BUXZ3PdIVXo4T8JjuYVJuAyPqaJseG8gp6XMu+GBB174RID0UwMcTu
-	jt4xaNPlDMHNjRIiFj7xksDFt7Oo6tBUdFkZi0eFBSt8Hnvz1PclfQAASjOixlHCHsZipsyy5Op
-	GYgE2tFSL2QdwA1hUyZ3GXf38/5u9LOhwAdbR4fq3BGUaKSBkl34UxzbGTVGC1B5X5R+sZajaSX
-	CXqVI2gjFECoq9zDO8y0DzYUroIbBJFviRbQnE3jT6Wm9YBHdnjfZeJ4wWu0MJ6kZZwFj64Ng2l
-	O7NMLe9WoqNB8pFw==
-X-Google-Smtp-Source: AGHT+IH7+LY6boZXNhSOAKanHLT9JkTRtS0g/6VaSLyR6710lVl+xvo91GwsE75JjB1doJnEGSLx6A==
-X-Received: by 2002:a05:6808:1924:b0:43f:2140:c5b7 with SMTP id 5614622812f47-4502a1d129amr5768112b6e.19.1762855950943;
-        Tue, 11 Nov 2025 02:12:30 -0800 (PST)
-Received: from gmail.com ([2a03:2880:10ff:42::])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-656c5713288sm6875102eaf.5.2025.11.11.02.12.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Nov 2025 02:12:30 -0800 (PST)
-Date: Tue, 11 Nov 2025 02:12:26 -0800
-From: Breno Leitao <leitao@debian.org>
-To: Andre Carvalho <asantostc@gmail.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Shuah Khan <shuah@kernel.org>, 
-	Simon Horman <horms@kernel.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH net-next v3 5/6] netconsole: resume previously
- deactivated target
-Message-ID: <e4loxbog76cspufl7hu37uhdc54dtqjqryikwsnktdncpqvonb@mu6rsa3qbtvk>
-References: <20251109-netcons-retrigger-v3-0-1654c280bbe6@gmail.com>
- <20251109-netcons-retrigger-v3-5-1654c280bbe6@gmail.com>
+	s=arc-20240116; t=1762856008; c=relaxed/simple;
+	bh=b2tb4vNeTxBKP+2qsvprGO/rFMyQOvS1BTTRxCnEB7s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BKa202izg98X5NJ0GGdMXvNU8oPVKEpg3SLdNnqyMUPuA8dIpOLvdnVuKig5vycGCN73wYXRiSnPZG8twbmwVHRUjxPCEwwlUR2/T7npP9tHwRJ5DzeZ+2GLpN1mIbMj9uh58dDXCKkmzQt8d83OOm7dtI+nA/XZv3PWKzd132U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=themaw.net; spf=pass smtp.mailfrom=themaw.net; dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b=tyhVY50C; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=OLkIdpU2; arc=none smtp.client-ip=202.12.124.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=themaw.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=themaw.net
+Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id A81387A008D;
+	Tue, 11 Nov 2025 05:13:24 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-12.internal (MEProxy); Tue, 11 Nov 2025 05:13:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1762856004;
+	 x=1762942404; bh=yFaNrcCaUleBOCT1JaSY6Y7k8O9SW4zaCpInBRc85dc=; b=
+	tyhVY50CAEq0YcgsAqrAJ5n31hQ5q7fXP+awJxP90fJjO6tovnKyuG4u1pVgylKA
+	Svi5UdNCiIW/2yEnseiYdskX+uehSPuntJgotxOyqzjPa2wd5v3djGGllqkzv4+P
+	EnEs8vekkI9KBK8lUngfKOLLYTsEzEYN4k6bBXuhrs4hdur04Ba1jvC/IE2qeyaJ
+	7wAJFXSwa43kWe2P1eT9fpo0uJxl2PzE3nxTUIeqeuWLDgYDGEDIRG2dmLUQDLRx
+	dyq5JwK96vn01yLSEYA8Ngh8KYE4kbo/8/7JLi87RHUKtH5HkZTGL0OGgaAknQ4I
+	dZubb/p/mAZun22BB9ygjQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762856004; x=
+	1762942404; bh=yFaNrcCaUleBOCT1JaSY6Y7k8O9SW4zaCpInBRc85dc=; b=O
+	LkIdpU26jDXyIJ2eINKOHLLaev7e5B16iWBCl0o0m32kqpO5hX3YoOG1qMbDw2lp
+	fKHCQNn0SWoQKCu0s0u+K1IJyn3q8SOR7rcXeFRDzHQQ1E2PoTj733Rxjd+OaztH
+	DsL5fcSSL3oQbRLEAdAVUiNIRPPQ3y9ybunwNg320O4HWkHEKSaNzZmOmf7Joj1T
+	8ZOg7TPSKgXEnI6ePufELf4F6xRAuGHwT9feoXHKV1GzfEK2AwEb7PJlr72yr3GX
+	XDsZtAMLdxlI2UT/Up29uhNFlFRZkJLWv+f90dbLo5kVqkTf4ANy4UdChCt+Datp
+	3tyqaKROtUhEEk+aMJYhg==
+X-ME-Sender: <xms:RAwTaaQAKc09Ae_Sb_HxXD7Sesw6EbQkJ9Vy-_od_Uc2lJ2c_kUKaQ>
+    <xme:RAwTaZENJuQ4zvbWkUw-Px3qeXBHrdkmSdO8-Gr2bc4PwktE2jGjVZBXFGkFvOoOI
+    g9JvOR2kfE6qo1ufTOYpCWsW0VxOJwzxmWWDkSKTU5YJqeX>
+X-ME-Received: <xmr:RAwTafHbhfp3peikmVsqQk6JW6C9DARYHYtXrlmrL88gtyEmC_79z7OxnWO3PH44STOkIMV6R4Xcrav8sZuobmkAqkuw7GhgCQ9h5ObYgL_7tv8hOGbPYUY>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvtddtledvucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpefkrghnucfm
+    vghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuggftrfgrthhtvghrnhepfe
+    ekhfegieegteelffegleetjeekuddvhfehjefhheeuiedtheeuhfekueekffehnecuvehl
+    uhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprhgrvhgvnhesth
+    hhvghmrgifrdhnvghtpdhnsggprhgtphhtthhopeehpdhmohguvgepshhmthhpohhuthdp
+    rhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpdhrtghpth
+    htohepsghrrghunhgvrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidq
+    khgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghuthhofh
+    hssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqfhhsuggv
+    vhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:RAwTaXRK9T18st2KcQxrPkQCBn6vJgYqTiCcEcAY5_Orc3ERu7i9hQ>
+    <xmx:RAwTaQJiTQtU7xVEiR4LRtashujmbVZxva3RDzlcHYO9qjI66_EKvg>
+    <xmx:RAwTaSaLpmrhLYnjBb_Eejm8gOPxIBBxW0YQHKuuc62s9XVXesMnZQ>
+    <xmx:RAwTaS8_OTDT2X-VZ048macRO1oGHvIZCf5jcCJApGw_ZpX6l5kr6A>
+    <xmx:RAwTabMGL_MZVagvnAJgzz9IZBwr0e41OUgfSj4FIe4Ovc0R-S2yd5pw>
+Feedback-ID: i31e841b0:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 11 Nov 2025 05:13:22 -0500 (EST)
+Message-ID: <3b7aee07-cf68-4186-b81d-2c4d9e44cc55@themaw.net>
+Date: Tue, 11 Nov 2025 18:13:19 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251109-netcons-retrigger-v3-5-1654c280bbe6@gmail.com>
-
-On Sun, Nov 09, 2025 at 11:05:55AM +0000, Andre Carvalho wrote:
-> Attempt to resume a previously deactivated target when the associated
-> interface comes back (NETDEV_UP event is received) by calling
-> __netpoll_setup_hold on the device.
-> 
-> Depending on how the target was setup (by mac or interface name), the
-> corresponding field is compared with the device being brought up.
-> 
-> Targets that are candidates for resuming are removed from the target list
-> and added to a temporarily list, as __netpoll_setup_hold might allocate.
-> __netpoll_setup_hold assumes RTNL is held (which is guaranteed to be the
-> case when handling the event) and holds a reference to the device in case
-> of success. This reference will be removed upon target (or netconsole)
-> removal by netpoll_cleanup.
-> 
-> Target transitions to STATE_DISABLED in case of failures resuming it to
-> avoid retrying the same target indefinitely.
-> 
-> Signed-off-by: Andre Carvalho <asantostc@gmail.com>
-> ---
->  drivers/net/netconsole.c | 62 +++++++++++++++++++++++++++++++++++++++++++-----
->  1 file changed, 56 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/net/netconsole.c b/drivers/net/netconsole.c
-> index 5a374e6d178d..50d6df101c20 100644
-> --- a/drivers/net/netconsole.c
-> +++ b/drivers/net/netconsole.c
-> @@ -135,10 +135,12 @@ enum target_state {
->   * @stats:	Packet send stats for the target. Used for debugging.
->   * @state:	State of the target.
->   *		Visible from userspace (read-write).
-> - *		We maintain a strict 1:1 correspondence between this and
-> - *		whether the corresponding netpoll is active or inactive.
-> + *		From a userspace perspective, the target is either enabled or
-> + *		disabled. Internally, although both STATE_DISABLED and
-> + *		STATE_DEACTIVATED correspond to inactive netpoll the latter is>
-> + *		due to interface state changes and may recover automatically.
-
- *		disabled. Internally, although both STATE_DISABLED and
- *		STATE_DEACTIVATED correspond to inactive targets, the latter is
- *		due to automatic interface state changes and will try
- *		recover automatically, if the interface comes back
- *		online.
-
->   *		Also, other parameters of a target may be modified at
-> - *		runtime only when it is disabled (state == STATE_DISABLED).
-> + *		runtime only when it is disabled (state != STATE_ENABLED).
->   * @extended:	Denotes whether console is extended or not.
->   * @release:	Denotes whether kernel release version should be prepended
->   *		to the message. Depends on extended console.
-> @@ -1445,17 +1447,50 @@ static int prepare_extradata(struct netconsole_target *nt)
->  }
->  #endif	/* CONFIG_NETCONSOLE_DYNAMIC */
->  
-> +/* Attempts to resume logging to a deactivated target. */
-> +static void maybe_resume_target(struct netconsole_target *nt,
-> +				struct net_device *ndev)
-> +{
-> +	int ret;
-> +
-> +	ret = __netpoll_setup_hold(&nt->np, ndev);
-> +	if (ret) {
-> +		/* netpoll fails setup once, do not try again. */
-> +		nt->state = STATE_DISABLED;
-> +	} else {
-> +		nt->state = STATE_ENABLED;
-> +		pr_info("network logging resumed on interface %s\n",
-> +			nt->np.dev_name);
-> +	}
-> +}
-
-I am not sure that helper is useful, I would simplify the last patch
-with this one and write something like:
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] autofs: dont trigger mount if it cant succeed
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Christian Brauner <brauner@kernel.org>,
+ Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ autofs mailing list <autofs@vger.kernel.org>,
+ linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <20251111060439.19593-1-raven@themaw.net>
+ <20251111060439.19593-3-raven@themaw.net> <20251111065951.GQ2441659@ZenIV>
+ <d8040d10-3e2a-44d9-9df2-f275dc050fcd@themaw.net>
+ <20251111090416.GR2441659@ZenIV>
+Content-Language: en-AU
+From: Ian Kent <raven@themaw.net>
+Autocrypt: addr=raven@themaw.net;
+ keydata= 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
+In-Reply-To: <20251111090416.GR2441659@ZenIV>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
-	/* Attempts to resume logging to a deactivated target. */
-	static void maybe_resume_target(struct netconsole_target *nt,
-					struct net_device *ndev)
-	{
-		int ret;
+On 11/11/25 17:04, Al Viro wrote:
+> On Tue, Nov 11, 2025 at 04:25:29PM +0800, Ian Kent wrote:
+>
+>>> Huh?  What's to guarantee that superblock won't outlive the namespace?
+>> Not 30 minutes after I posted these I was thinking about the case the daemon
+>>
+>> (that mounted this) going away, very loosely similar I think. Setting the
+>>
+>> mounting process's namespace when it mounts it is straight forward but what
+>>
+>> can I do if the process crashes ...
+>>
+>>
+>> I did think that if the namespace is saved away by the process that mounts
+>>
+>> it that the mount namespace would be valid at least until it umounts it but
+>>
+>> yes there are a few things that can go wrong ...
+> Umm...
+>
+> 1) super_block != mount; unshare(CLONE_NEWNS) by anyone in the namespace of
+> that mount *will* create a clone of that mount, with exact same ->mnt_sb
+> and yes, in a separate namespace.
+>
+> 2) mount does not pin a namespace.  chdir into it, umount -l and there you go...
+>
+> 3) mount(2) can bloody well create more than one struct mount, all with the
+> same ->mnt_sb.
+>
+> So I'd say there's more than a few things that can go wrong here.
+>
+> Said that, this "we need a daemon in that namespace" has been a source of
+> assorted headaches for decades now; could we do anything about that?
+> After all, a thread can switch from one namespace to another these
+> days (setns(2))...
 
-		ret = __netpoll_setup_hold(&nt->np, ndev);
-		if (ret) {
-			/* netpoll fails setup once, do not try again. */
-			nt->state = STATE_DISABLED;
-			return;
-		}
+Not sure the motivation here is "we need a daemon in that namespace", it's
 
-		netdev_hold(ndev, &np->dev_tracker, GFP_KERNEL);
-		nt->state = STATE_ENABLED;
-		pr_info("network logging resumed on interface %s\n",
-			nt->np.dev_name);
-	}
+more my struggling to find a suitable check for the problem case even though
 
-> +
-> +/* Check if the target was bound by mac address. */
-> +static bool bound_by_mac(struct netconsole_target *nt)
-> +{
-> +	return is_valid_ether_addr(nt->np.dev_mac);
-> +}
-
-Awesome. I liked this helper. It might be useful it some other places, and
-eventually transformed into a specific type in the target (in case we need to
-in the future)
-
-Can we use it egress_dev also? If so, please separate this in a separate patch.
-
-> +/* Checks if a target matches a device. */
-> +static bool target_match(struct netconsole_target *nt, struct net_device *ndev)
-> +{
-> +	if (bound_by_mac(nt))
-> +		return !memcmp(nt->np.dev_mac, ndev->dev_addr, ETH_ALEN);
-> +	return !strncmp(nt->np.dev_name, ndev->name, IFNAMSIZ);
-> +}
-> +
->  /* Handle network interface device notifications */
->  static int netconsole_netdev_event(struct notifier_block *this,
->  				   unsigned long event, void *ptr)
->  {
-> -	unsigned long flags;
-> -	struct netconsole_target *nt, *tmp;
->  	struct net_device *dev = netdev_notifier_info_to_dev(ptr);
-> +	struct netconsole_target *nt, *tmp;
-> +	LIST_HEAD(resume_list);
->  	bool stopped = false;
-> +	unsigned long flags;
->  
->  	if (!(event == NETDEV_CHANGENAME || event == NETDEV_UNREGISTER ||
-> -	      event == NETDEV_RELEASE || event == NETDEV_JOIN))
-> +	      event == NETDEV_RELEASE || event == NETDEV_JOIN ||
-> +	      event == NETDEV_UP))
->  		goto done;
->  
->  	mutex_lock(&target_cleanup_list_lock);
-> @@ -1475,11 +1510,26 @@ static int netconsole_netdev_event(struct notifier_block *this,
->  				stopped = true;
->  			}
->  		}
-> +		if (nt->state == STATE_DEACTIVATED && event == NETDEV_UP &&
-> +		    target_match(nt, dev))
-> +			list_move(&nt->list, &resume_list);
-
-I think it would be better to move the nt->state == STATE_DEACTIVATED to target_match and use
-the case above. As the following:
-
-	if (nt->np.dev == dev) {
-		switch (event) {
-		case NETDEV_CHANGENAME:
-		....
-		case NETDEV_UP:
-			if (target_match(nt, dev))
-				list_move(&nt->list, &resume_list);
+it does look a lot like what you say.
 
 
->  		netconsole_target_put(nt);
->  	}
->  	spin_unlock_irqrestore(&target_list_lock, flags);
->  	mutex_unlock(&target_cleanup_list_lock);
->  
+Thinking back the problem has always been the amount of stuff that's not
 
-Write a comment saying that maybe_resume_target() might be called with IRQ
-enabled.
+appropriate for the kernel, automount map parsing is pretty ugly, for 
+example.
 
 
-> +	list_for_each_entry_safe(nt, tmp, &resume_list, list) {
-> +		maybe_resume_target(nt, dev);
-> +
-> +		/* At this point the target is either enabled or disabled and
-> +		 * was cleaned up before getting deactivated. Either way, add it
-> +		 * back to target list.
-> +		 */
-> +		spin_lock_irqsave(&target_list_lock, flags);
-> +		list_move(&nt->list, &target_list);
-> +		spin_unlock_irqrestore(&target_list_lock, flags);
-> +	}
-> +
->  	if (stopped) {
->  		const char *msg = "had an event";
->  
-Also, extract the code below in a static function. Similar to
-netconsole_process_cleanups_core(), but passing resume_list argument.
+A better split of duties is probably what we would need to do.
 
-Let's try to keep netconsole_netdev_event() simple to read and reason about.
+
+But if we did that then we'd probably want to re-define/re-write the user
+
+space <-> kernel space communications as well to assist with the division
+
+of labour. In the beginning there was a proposal to do just that, not sure
+
+I still have that stuff, I'll have a look around ... or do you have 
+something
+
+else specific in mind?
+
+
+Anyway, for the moment, I think your saying just taking an ns_common 
+reference
+
+will be problematic as well.
+
+
+Ian
+
 
