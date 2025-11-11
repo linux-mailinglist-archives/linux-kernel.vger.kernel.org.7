@@ -1,117 +1,130 @@
-Return-Path: <linux-kernel+bounces-895262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 430E6C4D61C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:23:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AD44C4D601
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:20:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59E543A5CAD
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:19:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88958189BC3A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:20:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97D673559C1;
-	Tue, 11 Nov 2025 11:19:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB743355816;
+	Tue, 11 Nov 2025 11:19:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cny9TFof"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="rxnPq/ZE"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DABB935580C
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 11:19:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C5333557F4;
+	Tue, 11 Nov 2025 11:19:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762859976; cv=none; b=riSOtl7p8dttznIhfOAi3hVg550EOuRhE+MXR+s9VB7Gn/s3zVptor4Nzb1ZIYQt+iaxhMveu1vYubo/OkQSOvJ/MdvsWDBXmEzF9pAi6l5JhBfcra+1wfCufdvYp/pPbWB2YCSa1O+RheslIU7JPgP5nmmN4VLswXZDQrBNKog=
+	t=1762859969; cv=none; b=EItFS2csFCX3gxQmHk8buV/xH08wvvt3BdqG0pB6W8c5lgpT/DYfKj6Dz7zdWKb+u7fx/R2SJbpUsi856p/zH6Oz3RU3D37/3yJyzY1FGxPvRrhKxqeunmjW8VV9ql48cviMIiXUvF2zMhx5aJW0ZmthIjmVPFNCLqhGax8iHOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762859976; c=relaxed/simple;
-	bh=9T0WYmDAOm7giXvF1mgj/3D0HBRvqmglFqNtm8BgpMI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=vFumFB4MxyCEYjc7oTOZ/XV7DV8UAGcC7r9CUMtKRxvwDu2aqpsfcd/Q9YGGIzskj69ezestTj0DJTpZ8budzrAPE6wHDwZFFmDHVGCFz/yi9yKbadiLCblwYUvHI0EDeMrovs0HntzjPvWosv+g3nEOcIsJZqTjFGNRrCdKsUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cny9TFof; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762859973; x=1794395973;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=9T0WYmDAOm7giXvF1mgj/3D0HBRvqmglFqNtm8BgpMI=;
-  b=cny9TFof5ruHmctx08FmcOatfM+rCK+5kTp7gBoEXJOnHmT7IzaASjiL
-   uu4XxNFKRZ6iX5pzW0pKVMlZ1+h+e+gm3BdAznD8cgMch9nH/GzmGU8mN
-   BpRVK91tS7GsYvP8C/PMlkiqZZibnDgeaXmoXtxUmL/YUi6+KX0fX9Neu
-   nnwog0sKXU4uMBu8wTzuJAfandR1Ybc0ILYqi5nHXg+fRjuBAUSYjzD2q
-   0WfGX2W0M+IFyRX7qVy2BVlclcLF15KmMwrXht12Q1/1YVhfeWM3FJPd8
-   3hbHVw82qe4u8pWzRLNZZbmFa4X9xquduryCZhQEaa1R3AuNcYRk2XVAh
-   w==;
-X-CSE-ConnectionGUID: uoTRvaTZTBOs3lTISRCGJg==
-X-CSE-MsgGUID: zBRzguvlSRavWCepY8l1ig==
-X-IronPort-AV: E=McAfee;i="6800,10657,11609"; a="63922916"
-X-IronPort-AV: E=Sophos;i="6.19,296,1754982000"; 
-   d="scan'208";a="63922916"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 03:19:32 -0800
-X-CSE-ConnectionGUID: 7KRySQPbRYeXDo4od8bOMg==
-X-CSE-MsgGUID: dkfo88vgSVqNB4eYiK/VeA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,296,1754982000"; 
-   d="scan'208";a="226200394"
-Received: from black.igk.intel.com ([10.91.253.5])
-  by orviesa001.jf.intel.com with ESMTP; 11 Nov 2025 03:19:33 -0800
-Received: by black.igk.intel.com (Postfix, from userid 1003)
-	id 802FC98; Tue, 11 Nov 2025 12:19:31 +0100 (CET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Lee Jones <lee@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev
-Cc: Yixun Lan <dlan@gentoo.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 2/2] mfd: simple-mfd-i2c: don't use "proxy" headers
-Date: Tue, 11 Nov 2025 12:18:36 +0100
-Message-ID: <20251111111930.796837-3-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20251111111930.796837-1-andriy.shevchenko@linux.intel.com>
-References: <20251111111930.796837-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1762859969; c=relaxed/simple;
+	bh=ZCkrLrdtl/TJK7P9GqgfOJ7Yn+ztUjdaPcoi6gbBTGk=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:Cc:To:Subject:
+	 References:In-Reply-To; b=u8QXmGn/WrkmKNXDAlfi37ChtlQcGJLPkqLua3rQqVf6OUilkMmyuYBkk2SQkULlpIRFwdfcUXmRzI9Z1WfwabMEljDary/Tl9Qh4GfIn2kCB+kSmsSpsLAiloJZ1C6bg5t8tPAkFMgTTFrykUjWb2h6HYxY3cY7ztgti+MVuak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=rxnPq/ZE; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5AAMWobD003733;
+	Tue, 11 Nov 2025 11:19:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=ISidRw
+	HOdCxNCu4Mw4ATtHZgbgXoK5yMiXFsFpp75N4=; b=rxnPq/ZEdeanfo2PE2HFYt
+	ndk5EgL81hX0uRKPzI+HTKHh17YK21TZzCGMiNlM/5VNZVEB/qMp4czR1hIQS3WM
+	RlMkGKk4UuNRrvBHtqVq4hincMleZ/cSEagwUnGUsy86sVQxrqhos5pZidVHWpgw
+	TVI/EKprBdsGWShLmAXpJQhg/typCgYnrz5dX3PQPAUpwdHh0g9l/7dqCcAoabtj
+	I0/125nIsYtq3JdZYZe8MRevGaOOW99bWb/co78UZUEyjxPGpWPcIjEsQdjgETNu
+	2GuiOwD+TGKjUF3zzSF/w94sVEggTYJQy67COILy/7uqsYPjoCoPsfiRDd+uZpfA
+	==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4aa5cj3kf1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Nov 2025 11:19:25 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5AB9ZXxv007313;
+	Tue, 11 Nov 2025 11:19:24 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4aajdja96q-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Nov 2025 11:19:24 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5ABBJKgW44564754
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 11 Nov 2025 11:19:20 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id AE62A20043;
+	Tue, 11 Nov 2025 11:19:20 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8735920040;
+	Tue, 11 Nov 2025 11:19:20 +0000 (GMT)
+Received: from darkmoore (unknown [9.111.33.212])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 11 Nov 2025 11:19:20 +0000 (GMT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 11 Nov 2025 12:19:15 +0100
+Message-Id: <DE5TP7CFG19D.14EK6NZT344MT@linux.ibm.com>
+From: "Christoph Schlameuss" <schlameuss@linux.ibm.com>
+Cc: <linux-kernel@vger.kernel.org>, <linux-s390@vger.kernel.org>,
+        <borntraeger@de.ibm.com>, <frankja@linux.ibm.com>, <nsg@linux.ibm.com>,
+        <nrb@linux.ibm.com>, <seiden@linux.ibm.com>, <hca@linux.ibm.com>,
+        <svens@linux.ibm.com>, <agordeev@linux.ibm.com>, <gor@linux.ibm.com>,
+        <david@redhat.com>, <gerald.schaefer@linux.ibm.com>
+To: "Claudio Imbrenda" <imbrenda@linux.ibm.com>, <kvm@vger.kernel.org>
+Subject: Re: [PATCH v3 01/23] KVM: s390: Refactor pgste lock and unlock
+ functions
+X-Mailer: aerc 0.20.1
+References: <20251106161117.350395-1-imbrenda@linux.ibm.com>
+ <20251106161117.350395-2-imbrenda@linux.ibm.com>
+In-Reply-To: <20251106161117.350395-2-imbrenda@linux.ibm.com>
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=Ss+dKfO0 c=1 sm=1 tr=0 ts=69131bbd cx=c_pps
+ a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=VnNF1IyMAAAA:8 a=apF0X0kuH7Hmyh56T0oA:9 a=QEXdDO2ut3YA:10 a=zZCYzV9kfG8A:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA4MDA5NSBTYWx0ZWRfX1zN8aePvQJjK
+ urU8X8tNzgWz5bpPaLIH/XwCQt+hpg6qN5v2i1JuCeTwNnuOxNicbzQr1ebLfSJ6kvwrEycwcig
+ Wu0Mjxpd472g5YeWOwJfvO4q6+mCWQfC+leKFxlp1spTxC/umlfAUFPpWwIiu5sYHo392Ln3kXX
+ bLodYv1UXQ/Hvof7qjRCb37LxMp4tPlrnfPYZ1rmfSa7jgrFsstAPmzHfVMeHDoDCxEeYryzJdX
+ /cB6mUIOo/6sTbQYv0EBnwc1vKyAww8CAKzsYCT6CEtcyTs9mL8Kzr5N5cmJ7AIrN/I8G3wwdy2
+ c9/fh/9ilXLnem/PVpu4w6PxgII/bC/MrbLg5VTxO8TZN/H3nTKuZNo7U2Z9qyyNNCp/pK351zs
+ yc6zcqeNUAXtc25gsXeCibBpPEoHXw==
+X-Proofpoint-GUID: uEzukqOUA2tEvm3hHI7uvKNO2iuxUedZ
+X-Proofpoint-ORIG-GUID: uEzukqOUA2tEvm3hHI7uvKNO2iuxUedZ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-11_02,2025-11-11_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1011 suspectscore=0 impostorscore=0 bulkscore=0 phishscore=0
+ lowpriorityscore=0 adultscore=0 priorityscore=1501 spamscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2511080095
 
-Update header inclusions to follow IWYU (Include What You Use) principle.
+On Thu Nov 6, 2025 at 5:10 PM CET, Claudio Imbrenda wrote:
+> Move the pgste lock and unlock functions back into mm/pgtable.c and
+> duplicate them in mm/gmap_helpers.c to avoid function name collisions
+> later on.
+>
+> Signed-off-by: Claudio Imbrenda <imbrenda@linux.ibm.com>
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/mfd/simple-mfd-i2c.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+Reviewed-by: Christoph Schlameuss <schlameuss@linux.ibm.com>
 
-diff --git a/drivers/mfd/simple-mfd-i2c.c b/drivers/mfd/simple-mfd-i2c.c
-index 5fd0ef3fa44a..8b751d8e3b5a 100644
---- a/drivers/mfd/simple-mfd-i2c.c
-+++ b/drivers/mfd/simple-mfd-i2c.c
-@@ -15,12 +15,18 @@
-  * will be subsequently registered.
-  */
- 
-+#include <linux/array_size.h>
-+#include <linux/dev_printk.h>
-+#include <linux/err.h>
- #include <linux/i2c.h>
--#include <linux/kernel.h>
- #include <linux/mfd/core.h>
-+#include <linux/mod_devicetable.h>
- #include <linux/module.h>
- #include <linux/of_platform.h>
-+#include <linux/platform_device.h>
-+#include <linux/property.h>
- #include <linux/regmap.h>
-+#include <linux/stddef.h>
- 
- #include "simple-mfd-i2c.h"
- 
--- 
-2.50.1
-
+> ---
+>  arch/s390/include/asm/pgtable.h | 22 ----------------------
+>  arch/s390/mm/gmap_helpers.c     | 23 ++++++++++++++++++++++-
+>  arch/s390/mm/pgtable.c          | 23 ++++++++++++++++++++++-
+>  3 files changed, 44 insertions(+), 24 deletions(-)
 
