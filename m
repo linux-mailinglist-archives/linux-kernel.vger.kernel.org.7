@@ -1,119 +1,135 @@
-Return-Path: <linux-kernel+bounces-895281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A784C4D6B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:36:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8144BC4D6BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:36:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D09763AA04A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:32:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2B723A9377
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:34:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F40EF2F90DE;
-	Tue, 11 Nov 2025 11:32:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 884273563C6;
+	Tue, 11 Nov 2025 11:34:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bdk4nOGU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="iqvtZoji"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BF7F351FAC;
-	Tue, 11 Nov 2025 11:32:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B7FD2F90DE;
+	Tue, 11 Nov 2025 11:34:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762860757; cv=none; b=iv1PCbpph9n/nHqtuZKFPHpW581icu5RqOxfasM3Z1L8xRloDwsOsz2Ry9kEmNRXeIpMzJG1s8ICZC1jgpda6cKrGTqayXTbNhjmmhUF5uzDk3NGLqVIXWU8W0Vaxrxi11o6wmtGF+40O8JikoV1t/f0aNg09kse3Rk4GdTQfy0=
+	t=1762860861; cv=none; b=CBmhhPajGHBSOfR+i4AbTC9EzkBDvr4wI4ui6rbIoyJZ556ciF3Sadb+r2KojEdzvC2KZaTy8OXTv/z7F27zpaF9at/xU1cfdLDL9SgiVZ3HzntGnhv1i/4E/S15Lk/T+F0fmY/KTLPpSjZrwI16pyp+Bp9veU8rcBkAP2xRWLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762860757; c=relaxed/simple;
-	bh=V/R/fkJJkItwm+6N2Ddx4DMHXtmIlw1DhrCfor2usuM=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=dZVdSsCZte/qlzhDuDxOQUFhg9hcL0tpqmc3mF0Q0pnrK1zIUlxmC56D9iRSY2oD9S6PKBzvyszRRUSeBnKj29mLprHQo3I63e3aUALV5YdMP0Vz3QFhzPlpgJObd/3PboQq2KfEC9dtad3A81mjK2C2yjfsrD6niD8He1ch/WY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bdk4nOGU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C110C16AAE;
-	Tue, 11 Nov 2025 11:32:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762860756;
-	bh=V/R/fkJJkItwm+6N2Ddx4DMHXtmIlw1DhrCfor2usuM=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=Bdk4nOGUCUwSAM84sqwYyE7Q+6AQUWMimRfqEJnsSVvmNhMoK5F4qfMM2gNwFj6Gt
-	 vTM1zTLJHSH94YN/aF3BeZv8MNEpJ90J6oxUOmwQEy9q7LE95rfnyTe2qoNm1+JtM8
-	 PVTeeDqK8tWiau5MAChMXTScXOUyvQBzKo47uFHyYBlonqn7dq1DeQ7gvnuDe0lCb+
-	 9kw1qFSsoRdQ+ndLmgMKpjIc8WM0DbCJrN53a6kFIfpwJ17dv5L9dTbhzf2RmqIsZV
-	 DtScx3NlLx0tgwHAB2617s4mUriDGz1/nJx1tjSflMl+xjmpAkllxGAflX6/o3ZeBH
-	 H12e/83S1N44g==
-Date: Tue, 11 Nov 2025 05:32:34 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1762860861; c=relaxed/simple;
+	bh=kocVr2Dpl91oUEtI35ZgzEXJi0aefoXjocA/MF3uR/4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kAf2wzkjGIkPKqggyGn7jvJpRSRKMqaVMi662GsIf5Vzm9wVHNClF1teJQ6+qQRgntH+D2on6J4Xhe7EsfMohwb2flTwjOq0zy6obl58vNQSkS7gkPodZ7nPo4/XZNHrZClXy/gqb/KmJZ7aanoogNvlRICJHWZ8K6I7Rf4c4iI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=iqvtZoji; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5AAKjEGA022632;
+	Tue, 11 Nov 2025 11:34:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=2yRxE5f3QKPtWWmwJiCqlnY6QVijbd
+	OgRGXf7AvOJ1o=; b=iqvtZoji7EplJqZIgTHaWbdI25KNCHc2m2j54Ga3KaFSby
+	IfyqxB46l5cYHD6Y+zV4fXrnuw0O1hQSzAQgYLZQCCoCAzDL6eym7Xe5Rn0oypnG
+	R86cviwcWKjaR0WmIJDd9tG+PBqMJWHcf2h/4JbM8cXpDzNIzvY2JiA3Rl2+2eVE
+	3GJgf2ZsiMdvUejpWdwukE6gLTn4tqwLtWBFfebr5v6k72sn2W363dUfjufcwzwM
+	kwDnZJJgo6C6sHs15VtJxxV0saRX6uKNxTxB6X0aUv+KNqpoDYrLU5iWlFxJkteG
+	xz8GIt6EGB7dlIkkhIpQIbkyqvg3sQ+MvvlVopZA==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4aa3m82vf3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Nov 2025 11:34:17 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5AB9P4Mr008182;
+	Tue, 11 Nov 2025 11:34:16 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4aah6mtgqg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Nov 2025 11:34:16 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5ABBYCPA38535624
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 11 Nov 2025 11:34:12 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 91AD620043;
+	Tue, 11 Nov 2025 11:34:12 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3A01420040;
+	Tue, 11 Nov 2025 11:34:12 +0000 (GMT)
+Received: from osiris (unknown [9.155.211.25])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Tue, 11 Nov 2025 11:34:12 +0000 (GMT)
+Date: Tue, 11 Nov 2025 12:34:11 +0100
+From: Heiko Carstens <hca@linux.ibm.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Alexander Gordeev <agordeev@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Andreas Krebbel <krebbel@linux.ibm.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
+Subject: Re: [RFC PATCH 5/8] s390: Remove compat support
+Message-ID: <20251111113411.8887A5a-hca@linux.ibm.com>
+References: <20251110185440.2667511-1-hca@linux.ibm.com>
+ <20251110185440.2667511-6-hca@linux.ibm.com>
+ <fdeed5df-5c97-4df6-9475-874fccc5b0c5@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: andersson@kernel.org, krzk+dt@kernel.org, konradybcio@kernel.org, 
- linux-kernel@vger.kernel.org, conor+dt@kernel.org, 
- devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org
-To: Sudarshan Shetty <tessolveupstream@gmail.com>
-In-Reply-To: <20251111104245.3420041-1-tessolveupstream@gmail.com>
-References: <20251111104245.3420041-1-tessolveupstream@gmail.com>
-Message-Id: <176286075476.2360625.8458719015985662424.robh@kernel.org>
-Subject: Re: [PATCH v1 1/2] dt-bindings: arm: qcom: Add waveshare MIPI-DSI
- panels support
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fdeed5df-5c97-4df6-9475-874fccc5b0c5@app.fastmail.com>
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=MtZfKmae c=1 sm=1 tr=0 ts=69131f39 cx=c_pps
+ a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
+ a=kj9zAlcOel0A:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=PIVeMw-qnhxw_CoLOA8A:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-GUID: iUWNaTwXUMqaXLRX4Yx5nd24Dzxs0AV_
+X-Proofpoint-ORIG-GUID: iUWNaTwXUMqaXLRX4Yx5nd24Dzxs0AV_
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA4MDA3OSBTYWx0ZWRfXwY9FQp6cw0+i
+ 6wMVfWacl4vddUw0xGeIgZH7ukCk8FcE5IHsaNnfVXRokTbUojBKZB7mv/sdjYj9ug9poIFABIa
+ mbvc3fZ6weibxYBSxt9cGz5s6WZYckovVLjgpsHMNGipfWVXP4u7BpeeQIFj04+IGMbdpvB5no/
+ T1aFsbvGDi5a0EDHSIG3iYMFD70LIduA58PsxkBUwQ2x4N9mlkIkMF58DTIPzHAyKTITSzVvaLy
+ UyoDlVHn3Qy9TylWnUXhPEHptwG7LjidwfKkbT1jST6UppJW5tGB9tU948gpH/bvUR7SkOPWXGQ
+ gIWj5R6hLgAl+vQ7HOQu/81zaGj8v1PC+7S8Lfg09x2zhbhJfM4YCQhsVn1UoFct95I3SGZLnq3
+ Dt8cCB6jD0PtBkIty5LtC3etVGKdVw==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-11_02,2025-11-11_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 adultscore=0 priorityscore=1501 bulkscore=0 impostorscore=0
+ suspectscore=0 lowpriorityscore=0 clxscore=1015 phishscore=0 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2511080079
 
-
-On Tue, 11 Nov 2025 16:12:44 +0530, Sudarshan Shetty wrote:
-> Device tree bindings for Waveshare MIPI-DSI panels
-> of various sizes (5.0, 5.5, 7.0, 8.0, and 10.1).
-> These panels require proper power sequencing via an external
-> regulator and a backlight node for brightness control.
+On Mon, Nov 10, 2025 at 10:33:32PM +0100, Arnd Bergmann wrote:
+> On Mon, Nov 10, 2025, at 19:54, Heiko Carstens wrote:
 > 
-> Signed-off-by: Sudarshan Shetty <tessolveupstream@gmail.com>
-> ---
->  .../display/panel/waveshare,dsi-panel.yaml    | 84 +++++++++++++++++++
->  ...waveshare,touchscreen-panel-regulator.yaml | 72 ++++++++++++++++
->  2 files changed, 156 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/panel/waveshare,dsi-panel.yaml
->  create mode 100644 Documentation/devicetree/bindings/regulator/waveshare,touchscreen-panel-regulator.yaml
+> > diff --git a/arch/s390/configs/compat.config b/arch/s390/configs/compat.config
+> > deleted file mode 100644
+> > index 6fd051453ae8..000000000000
+> > --- a/arch/s390/configs/compat.config
+> > +++ /dev/null
+> > @@ -1,3 +0,0 @@
+> > -# Help: Enable compat support
+> > -CONFIG_COMPAT=y
+> > -CONFIG_COMPAT_32BIT_TIME=y
 > 
+> I think you missed a reference to this file at
+> 
+> tools/testing/selftests/nolibc/Makefile.nolibc:DEFCONFIG_s390       = defconfig compat.config
 
-My bot found errors running 'make dt_binding_check' on your patch:
-
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-Documentation/devicetree/bindings/regulator/waveshare,touchscreen-panel-regulator.example.dts:23.16-34.7: Warning (unit_address_vs_reg): /i2c@980000: node has a unit name, but no reg or ranges property
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/regulator/waveshare,touchscreen-panel-regulator.example.dtb: /: '#gpio-cells' is a dependency of 'gpio-controller'
-	from schema $id: http://devicetree.org/schemas/gpio/gpio.yaml
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/regulator/waveshare,touchscreen-panel-regulator.example.dtb: /: gpio-controller: 'oneOf' conditional failed, one must be fixed:
-	True was expected
-	{'compatible': ['test,gpio'], '#gpio-cells': 2, 'phandle': 2} is not of type 'boolean'
-	{'compatible': ['test,gpio'], '#gpio-cells': 2, 'phandle': 2} is not of type 'null'
-	from schema $id: http://devicetree.org/schemas/gpio/gpio.yaml
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/regulator/waveshare,touchscreen-panel-regulator.example.dtb: /: i2c@980000: 'anyOf' conditional failed, one must be fixed:
-	'reg' is a required property
-	'ranges' is a required property
-	from schema $id: http://devicetree.org/schemas/root-node.yaml
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/regulator/waveshare,touchscreen-panel-regulator.example.dtb: /: 'compatible' is a required property
-	from schema $id: http://devicetree.org/schemas/root-node.yaml
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/regulator/waveshare,touchscreen-panel-regulator.example.dtb: /: 'model' is a required property
-	from schema $id: http://devicetree.org/schemas/root-node.yaml
-Documentation/devicetree/bindings/display/panel/waveshare,dsi-panel.example.dts:20.21-37.11: Warning (unit_address_vs_reg): /example-0/dsi@ae94000: node has a unit name, but no reg or ranges property
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20251111104245.3420041-1-tessolveupstream@gmail.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+Yes, and there is quite a bit more s390 specific compat stuff in
+nolibc which I missed. Will address that - thanks!
 
