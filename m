@@ -1,169 +1,128 @@
-Return-Path: <linux-kernel+bounces-895768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4318C4ED94
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:49:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C47B3C4ED9D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:50:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E418318C3989
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 15:48:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E75A1881F72
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 15:50:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC142364EA9;
-	Tue, 11 Nov 2025 15:48:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A691E36A028;
+	Tue, 11 Nov 2025 15:49:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IfQHDM29"
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="HQJ4mWO5"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A079E311583
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 15:48:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3274D3064AE
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 15:49:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762876095; cv=none; b=Nr66SgXf+QDhhYB3y0Go4Wu8sfxmdq53NzH3AOPhMRKKsLApJ/+q0tALPeRiP41YP1qmhDtQSVq0EIwZodD/7eEi4g5FkUcQHEO2+1/1k4GyvI53xj8HnBgX+ma9aj/h6Df/YLcS5OusHlFVGwqw5SwhYAOQpRUVYEqE3wkzRRo=
+	t=1762876196; cv=none; b=uSvz9X4qTD+9LvhOLNMR+P643Plz+lgm28aTMdJOlMsp5R06pHAMH53856tUK3zTrgVgSIwE2k4mvAkPiWW6dfDGQU+2jC7hHT4iCZtXyDuBjf27XGS8C1zAXvYlU5aGBAd2VwnIdXUabWlFcJZmqO+u4iLg40zb2D3KjcGMsFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762876095; c=relaxed/simple;
-	bh=2YsMTLpmOLn95OEADZmPKaAxC+FcbQoGHx2UChouhRk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rL9biGLfZ8E8xdklY93xMPCRYB3YuPHTuvvPcgJu8osZ9GrAFtBtZWIH0inIzqNTMD5AMHHZB+UrgL9l0EQaAkHmlcIPIW6v0AHxhY4PRIbbMcLcRX/Xu7Mo2mhGTVZzfW4OGcLJbY+jhv81xLV/OYM2TPt3BgpSzCWRrhTGi84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IfQHDM29; arc=none smtp.client-ip=209.85.222.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-8b2627269d5so340437885a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 07:48:13 -0800 (PST)
+	s=arc-20240116; t=1762876196; c=relaxed/simple;
+	bh=CqEtGAdcdC9fF+g+1J10KIaSPEMvCZFYGfAXTUffalk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NMg4o2tfzNTAg+mR3nNPcFIjp/W+8ZjzJ8+AeZNVvUG/BoBXF5KNg7I0l9ivXFNzwObMBV4O3RQqiS7auvazjDLJ/0OYoM/Wz3nSI/WLId1AAP4KstRzLU+m1ybhNGbm0u9NDmakKCoMJo3r7Wl14oApnett+HoXTyj8hW6/Iko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=HQJ4mWO5; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-47112edf9f7so20893495e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 07:49:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762876092; x=1763480892; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Zjo+6EqMgK5JhcaDAg4iVPh7lPSM1/wDO/zr9B2pTG8=;
-        b=IfQHDM29AF8g/g7sH6xLfqedCFeVJJzVxzp/olC3kOSslq9KJQySMZqyp96KdnCoQc
-         79TU4MmjVW5q2p876etWuh/NUL98rhljTclqPxtzDsaf8oAJxpos5T9Vz0JChTpzlVPw
-         zH3hTe/CmTY9R18LwuazryKTwjkexd9auRwtKWWN6Lgm0XGpfh9oTPEl7Z73ZSBjo4In
-         X08cxktKDqg6K5VSXXYyhEKzqIrgPQrl6lPDHg1laNR+7FbAkGYcJhp0Citr9ICtwIGU
-         hHoteofx+rqa5TtxQ0zhUqjzL8rRS/nY7Q0jT8cKJ0F22HmyWXteHaZztPm5ye88ly5/
-         mb+w==
+        d=suse.com; s=google; t=1762876192; x=1763480992; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wBOHrHOppf1AdfPIS3ZyxdiMnLLRYeZxEryWRgXkM8w=;
+        b=HQJ4mWO5KdT3b6efSL/NBYrQceKYWI/EPshSUVWwECZYRWgG8FzzN+f9kdyX2g+jgm
+         rx9YQqw3hoWIo1qMK/24AX4Mdj+bczviBzsjX6Ab25e5ZpD5u6YLOu0JbP4P7kKpedTX
+         cYMD+TOtDTPFbQtIKubJWKaCffKhwNXei+o43rWDPKAh0uXfN0IInzPHUnLmWplAKkxE
+         ou8o9gW8NxmT4oACIesT6yC9tgnf2+4i8JZkS4iXjvydKGofPcL7ZIG6hFH6bkYwQZe0
+         DubRgJVUXzw+H1P99vDR0Cg0nO8ToN7YgE1nKGnCQ68Lnv8hkpvrolq5BHoRhmmGGzb4
+         qI9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762876092; x=1763480892;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Zjo+6EqMgK5JhcaDAg4iVPh7lPSM1/wDO/zr9B2pTG8=;
-        b=m28KHz6qrcvCc1RS+stn4g+9q27ULnk2zCiotxuLyrie+BgO3+GJTfEfnRh3MAJQgM
-         OboGnCc8r5omAIlF5UMxum7AtDxRtoGRbGi3XtCHL5PLSs36Z83YIWDGZeH1ld/faFcp
-         /NOInrYAp3gKFZ8dqSUgFjF/TWuY0VxkejLeJafs2Z9k+gstb4dLrhauz3/WsRou2UAj
-         PGHx9ErHJrhRJJZKscEdp7/W72Z8txcaW8QGn7Lviuola7mnaQoaBsxABbSC8KZtRFt8
-         V8CMNPBQXd/NWgUHTI+zIbPXxVgzClsovg/gz75ynxi6jVUfILv73Sy0tO2IfTiYpD26
-         UMJA==
-X-Forwarded-Encrypted: i=1; AJvYcCWzu5otGbSngguZXoTiwcIM56N2lfHia1WkMzPd0AJpA/fqFDtXuYIyV08lBthwu08ah1gYrvMTXNYrtBM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQWByUhTB4xqZU5jmd09wbl5GumHF6L9hUPs4ge5uVUg8XE0Ah
-	9c4TpRmxKoA9v8CAcF3w21eOhLiI310NMt7TEhI1kj6bXpr/WPQVS5lj
-X-Gm-Gg: ASbGncvKxTZb3fRHH9cEYM9uy5ShghPZ26+DZoDhXpVs6Y/diWEUQ+RVOAkbTbK6tBo
-	K5HyAd8GlQuLdyqBTTqm5b81tv7JBAQBj2BpifHdMKmvRkIPY1gC1S96ud9d4zJHM+qS0EUbS3A
-	WJNRwAve8Cwnx5v5MRnWI6ymiIuekDvAavRLvKzTDNSvaR1xA+AgNSAsiI5+g0ZdUU6rIJUzO9k
-	ahJBEftu2NODI4Z7O4f8fwn2yg1j+HUYgyttTjvnfJJUrI7t0Xfx4M7KfPdgHa/PMTROe7NR5XQ
-	bGgbyqjFGJKqkTylzKqgdw2CAT44QWkqlybjZXTixU4TtwKsRTpGQscFkRDhHNtC89rGbKslJP9
-	euUphz176S9UN9M2+VhrN0k81qAsU3mWCTsx4hVonWwelpQBk5IJr9Ag/6rX/3xoHX6Xk2g6zn9
-	ifYyaXKkTw7t8TnQ==
-X-Google-Smtp-Source: AGHT+IFJ5Gk9VZ95D4A12JbFGZOYydzV7K+WeCJvr4ZyANHVoUa1GE7mGCggYVoDXWOhm8w9/nF55w==
-X-Received: by 2002:a05:620a:1982:b0:8b2:7ba9:8cf8 with SMTP id af79cd13be357-8b27ba991f8mr817713185a.42.1762876092576;
-        Tue, 11 Nov 2025 07:48:12 -0800 (PST)
-Received: from dschatzberg-fedora-PF3DHTBV ([2620:10d:c091:500::7:708f])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b29aa00850sm5607885a.44.2025.11.11.07.48.12
+        d=1e100.net; s=20230601; t=1762876192; x=1763480992;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wBOHrHOppf1AdfPIS3ZyxdiMnLLRYeZxEryWRgXkM8w=;
+        b=J107uU3NR6v6z7ZTiO82K96BeZovv/tUU/0FUerE4abnfwVLyze7AjPpO9OiLzykth
+         LVhmXNOR0dJBZxvDgSlb2oTjrwahzP8oCrOoWvOow3rxGwTxxEcToWu8askHjNDOqGP3
+         a/TnzpW8z/8tqdImdfbv8SUBzUqggBexMGLblackn+54BQn5OrAjxCfGSWv2Lv+dCknp
+         V1XHirzTwJnv2lMM9LmMGC2j6gpelU/+j4oqayzBXEVjaqJCK55uvAi5jrjsZ77xt80i
+         gPdRNXq9fI+rcbBsCPMRQao31+MxDVV9xn2G+Us6gUvy2zuzt6SALt7CnaZvyNXcFrJg
+         1Lug==
+X-Forwarded-Encrypted: i=1; AJvYcCXgGr5HzbPiDlKhXvae62+xS7O+9mmzItsQIYai/vw4o8AMvbl2NwnFrz3Am4enpKvkmtNYpHes/eqQ+PQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRrIlKEIV+u8HJr5z2MqO04EFopzO80tEQ2ch8T9VHjGaZqEBl
+	/NJIphj52i/jauGoidKt3z2gumVPeUST2yBUXeOaGD/cSTQZCk7z35hCuSlQ7meYVx8=
+X-Gm-Gg: ASbGncuOwvqkxdksy/WRr+kZIKfo4RaI6HZWHUJ6fM8DZuZL/7R4QS+fUF82pQ8g06x
+	F2yabh9xuUuvQCLQWQhm2NUFva7t8kQbXLUL3fNlGIkYgLKWraQiVRJBX6wUy8rL+ZKVbPizJVH
+	dDn3i+fx2HMIylFjYwV5sKJq1sgyAS8My5VZrR0tC/t+7vkqlkE4IW8AuWsTRj087M943ev9OOB
+	Kt6V4JHjj3qDU7tIkebu0WQrSJmoETi8WBcAAXvIgDmNdzFkaBP9b0lKyTe+NfxjxsUU33k5E6F
+	OUOVfB/pcZk3L5DgGotgS7IYOj2lNN5CcO42zpsu/7puXwX8CM4X6MXU1iPi/0n1Up1zAGmFMIX
+	sqWr9bR7TzprpabO9+7+beiip3hzFm0LynRX6mjG993IaTrMDwPQZMCVIcq+flU7UirgHSrc7gy
+	zI1guHqVYrk1A0DZcqm4pqoVhtFlGctEL5ZRweyuI=
+X-Google-Smtp-Source: AGHT+IF3w/+X8esWpOXfnuyljikULLGSD9qW7Bkx3W/HLFcTqZLnglxnZWVL5Dg8R8MNDHTN0J812A==
+X-Received: by 2002:a05:600c:3493:b0:475:f16b:bcbf with SMTP id 5b1f17b1804b1-47773237269mr93820995e9.14.1762876192518;
+        Tue, 11 Nov 2025 07:49:52 -0800 (PST)
+Received: from zovi.suse.cz (nat2.prg.suse.com. [195.250.132.146])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42abe62b23csm28269916f8f.10.2025.11.11.07.49.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Nov 2025 07:48:12 -0800 (PST)
-Date: Tue, 11 Nov 2025 10:48:10 -0500
-From: Dan Schatzberg <schatzberg.dan@gmail.com>
-To: Tejun Heo <tj@kernel.org>
-Cc: David Vernet <void@manifault.com>,
-	Andrea Righi <andrea.righi@linux.dev>,
-	Changwoo Min <changwoo@igalia.com>,
-	Emil Tsalapatis <etsal@meta.com>, sched-ext@lists.linux.dev,
+        Tue, 11 Nov 2025 07:49:52 -0800 (PST)
+From: Petr Pavlu <petr.pavlu@suse.com>
+To: David Howells <dhowells@redhat.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Petr Pavlu <petr.pavlu@suse.com>,
+	Daniel Gomez <da.gomez@kernel.org>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Aaron Tomlin <atomlin@atomlin.com>
+Cc: keyrings@vger.kernel.org,
+	linux-modules@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 07/13] sched_ext: Make scx_exit() and scx_vexit() return
- bool
-Message-ID: <aRNaupq88QaAoE5_@dschatzberg-fedora-PF3DHTBV>
-References: <20251109183112.2412147-1-tj@kernel.org>
- <20251109183112.2412147-8-tj@kernel.org>
+Subject: [PATCH 0/2] module: Remove SHA-1 support for module signing
+Date: Tue, 11 Nov 2025 16:48:30 +0100
+Message-ID: <20251111154923.978181-1-petr.pavlu@suse.com>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251109183112.2412147-8-tj@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Sun, Nov 09, 2025 at 08:31:06AM -1000, Tejun Heo wrote:
-> Make scx_exit() and scx_vexit() return bool indicating whether the calling
-> thread successfully claimed the exit. This will be used by the abort mechanism
-> added in a later patch.
-> 
-> Cc: Dan Schatzberg <schatzberg.dan@gmail.com>
-> Cc: Emil Tsalapatis <etsal@meta.com>
-> Signed-off-by: Tejun Heo <tj@kernel.org>
-> ---
->  kernel/sched/ext.c | 14 +++++++++-----
->  1 file changed, 9 insertions(+), 5 deletions(-)
-> 
-> diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-> index afa89ca3659e..033c8b8e88e8 100644
-> --- a/kernel/sched/ext.c
-> +++ b/kernel/sched/ext.c
-> @@ -177,18 +177,21 @@ MODULE_PARM_DESC(slice_bypass_us, "bypass slice in microseconds, applied on [un]
->  static void process_ddsp_deferred_locals(struct rq *rq);
->  static u32 reenq_local(struct rq *rq);
->  static void scx_kick_cpu(struct scx_sched *sch, s32 cpu, u64 flags);
-> -static void scx_vexit(struct scx_sched *sch, enum scx_exit_kind kind,
-> +static bool scx_vexit(struct scx_sched *sch, enum scx_exit_kind kind,
->  		      s64 exit_code, const char *fmt, va_list args);
->  
-> -static __printf(4, 5) void scx_exit(struct scx_sched *sch,
-> +static __printf(4, 5) bool scx_exit(struct scx_sched *sch,
->  				    enum scx_exit_kind kind, s64 exit_code,
->  				    const char *fmt, ...)
->  {
->  	va_list args;
-> +	bool ret;
->  
->  	va_start(args, fmt);
-> -	scx_vexit(sch, kind, exit_code, fmt, args);
-> +	ret = scx_vexit(sch, kind, exit_code, fmt, args);
->  	va_end(args);
-> +
-> +	return ret;
->  }
->  
->  #define scx_error(sch, fmt, args...)	scx_exit((sch), SCX_EXIT_ERROR, 0, fmt, ##args)
-> @@ -4399,14 +4402,14 @@ static void scx_error_irq_workfn(struct irq_work *irq_work)
->  	kthread_queue_work(sch->helper, &sch->disable_work);
->  }
->  
-> -static void scx_vexit(struct scx_sched *sch,
-> +static bool scx_vexit(struct scx_sched *sch,
->  		      enum scx_exit_kind kind, s64 exit_code,
->  		      const char *fmt, va_list args)
->  {
->  	struct scx_exit_info *ei = sch->exit_info;
->  
->  	if (!scx_claim_exit(sch, kind))
-> -		return;
-> +		return false;
->  
->  	ei->exit_code = exit_code;
->  #ifdef CONFIG_STACKTRACE
-> @@ -4423,6 +4426,7 @@ static void scx_vexit(struct scx_sched *sch,
->  	ei->reason = scx_exit_reason(ei->kind);
->  
->  	irq_work_queue(&sch->error_irq_work);
-> +	return true;
->  }
->  
->  static int alloc_kick_syncs(void)
-> -- 
-> 2.51.1
->
+SHA-1 is considered deprecated and insecure due to vulnerabilities that can
+lead to hash collisions. Most distributions have already been using SHA-2
+for module signing because of this. The default was also changed last year
+from SHA-1 to SHA-512 in f3b93547b91a ("module: sign with sha512 instead of
+sha1 by default"). This was not reported to cause any issues. Therefore, it
+now seems to be a good time to remove SHA-1 support for module signing.
 
-Reviewed-by: Dan Schatzberg <schatzberg.dan@gmail.com>
+Looking at the configs of several distributions [1], it seems only Android
+still uses SHA-1 for module signing.
+
+@Sami, it this correct and is there a specific reason for using SHA-1?
+
+Note: The second patch has a minor conflict with the sign-file update in the
+series "lib/crypto: Add ML-DSA signing" [2].
+
+[1] https://oracle.github.io/kconfigs/?config=UTS_RELEASE&config=MODULE_SIG_SHA1&version=be8f5f6abf0b0979be20ee8d9afa2a49a13500b8
+[2] https://lore.kernel.org/linux-crypto/61637.1762509938@warthog.procyon.org.uk/
+
+Petr Pavlu (2):
+  module: Remove SHA-1 support for module signing
+  sign-file: Remove support for signing with PKCS#7
+
+ kernel/module/Kconfig |  5 ----
+ scripts/sign-file.c   | 66 ++-----------------------------------------
+ 2 files changed, 3 insertions(+), 68 deletions(-)
+
+
+base-commit: 4427259cc7f7571a157fbc9b5011e1ef6fe0a4a8
+-- 
+2.51.1
+
 
