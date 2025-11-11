@@ -1,252 +1,161 @@
-Return-Path: <linux-kernel+bounces-895319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEEB5C4D853
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:53:18 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id B53A6C4D754
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:44:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 556DF4FC23F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:44:08 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3B35034F88C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:44:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9219D357A28;
-	Tue, 11 Nov 2025 11:39:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 255BF354AD0;
+	Tue, 11 Nov 2025 11:40:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Lp+G840p"
-Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazon11013058.outbound.protection.outlook.com [40.107.201.58])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="JkwyYsJA"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01A452F39A1
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 11:39:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.201.58
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762861162; cv=fail; b=VIHunsm9vsGixiR67AmIbxFuZ0cGNCph2ezsDgHeHQ5DcN/ovGIDNrILvTcwaM9/tkRF1CTKmzPAPa4qDgHLO/ICxVpE6AbhjMjXRIXmvy4jRI36PJ0LggI+31nP9od7xc1AY/Iqot4CP3U1ous4atNH3ryprHIRSH+qP2ml3jI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762861162; c=relaxed/simple;
-	bh=1Ha81Dx2XQUFHiIENzYT+3NBXkabB/pAKcRPbXKtymw=;
-	h=Message-ID:Subject:From:To:CC:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=HlwlOLsawOiyPiOxzPiGze9Y/wY1wG/WOmelK3Vw963OreEoc1iOKLEnFG+WnybYrsjhletNjsiJfONaPYUl8U6rhSOdl/ZbYNf0NWwmUk7BFLpcY7H/Awr19Rvf10mFBI7sKAaI2tfdPLbrTqgN+eFuPTZSQzqmTjIkbNq5um4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Lp+G840p; arc=fail smtp.client-ip=40.107.201.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gVfgNkVQ4gtUa8ydQRqnPxA/3oVGeRTBMqKjcyNA+DWolb84bK2/53N3Gh0I5TNAc4HuTK75Bq6Uv2Rd8tcCvbtsllDlMVFyckUn65JRdyEpQ1O9vslXuWzjkR8U3np5zJ8HbZ+8EsNXJF0BPS8/jpLqLik/fSyzBc8I1QJXJ8oSFyZ3AVJpv6B89r2YxGFT8RGjAmP8MlTy6onfOk2HmN1pmIcLjCIYhi/Ge1k6YTmPCvJPAiWOUWM3bVqtjqgZKjaOvFOK0RDmWyu6C3Ag81AVEe0slnrHdf9gvXchOd4rNjKMJyFcINNyAyHZQe2Daog0TsNg4FBwBCCrwdK8tA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=f0C24cVbwUgh6E3G4JJse8ra03SYOwbkc6jf2Y0AK6o=;
- b=oY/9sezoPuiJ+aUOENsw3x8l5dzKFTFaBWor7smGGR7Dny2PNepN1BfineEDVBZdvKrhIQdcXkmbHo4u/nEKC/FdzA8IUa0lhB7OmTXqzzZ9X1EBDt7bRRBbp4u+iSj/op/Q7ZGyp+u5SLulujnZa0I19uGOQ+zoOWL0XeXSuGrceLFN31Op7zc3s18tbRDem3WwncpQ/iXIGqdPmWZwlJTw28OvzJuwLjai46ErSRNOSEcTODmQtrySWG/kFQ5NOgn0tNE61Y2Y8Jd1CINkLzk6sFyS8KymHYzmtGXzx9v9gbv1zKf+Ldu5WFZlMbY0h1syMAl0b+ZD3G9jxCp4Rw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 198.47.21.194) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=ti.com;
- dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=f0C24cVbwUgh6E3G4JJse8ra03SYOwbkc6jf2Y0AK6o=;
- b=Lp+G840prtmjv/N/sjqxB6XwZdc6sYmye/T0SGWf24VGJEdSd1otXrFL+yggWUx3WTUUVEVJA9NjvzQMOI4pz/ol7DYT8dJPxqNX7duSHKT5O0vH0YOdURMO3VrTJtqpIb4ACqzN2CQwp7V4/urSRvLGGLu+QrQ/K0Dtmz41HuM=
-Received: from SJ0PR13CA0017.namprd13.prod.outlook.com (2603:10b6:a03:2c0::22)
- by BN0PR10MB5000.namprd10.prod.outlook.com (2603:10b6:408:128::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.12; Tue, 11 Nov
- 2025 11:39:17 +0000
-Received: from SJ1PEPF00001CE4.namprd03.prod.outlook.com
- (2603:10b6:a03:2c0:cafe::b8) by SJ0PR13CA0017.outlook.office365.com
- (2603:10b6:a03:2c0::22) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9320.15 via Frontend Transport; Tue,
- 11 Nov 2025 11:39:17 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.21.194)
- smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
- action=none header.from=ti.com;
-Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
- 198.47.21.194 as permitted sender) receiver=protection.outlook.com;
- client-ip=198.47.21.194; helo=flwvzet200.ext.ti.com; pr=C
-Received: from flwvzet200.ext.ti.com (198.47.21.194) by
- SJ1PEPF00001CE4.mail.protection.outlook.com (10.167.242.20) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9320.13 via Frontend Transport; Tue, 11 Nov 2025 11:39:16 +0000
-Received: from DFLE102.ent.ti.com (10.64.6.23) by flwvzet200.ext.ti.com
- (10.248.192.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.2.2562.20; Tue, 11 Nov
- 2025 05:39:12 -0600
-Received: from DFLE201.ent.ti.com (10.64.6.59) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 11
- Nov 2025 05:39:12 -0600
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE201.ent.ti.com
- (10.64.6.59) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Tue, 11 Nov 2025 05:39:11 -0600
-Received: from [10.24.73.74] (uda0492258.dhcp.ti.com [10.24.73.74])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5ABBd9JS846495;
-	Tue, 11 Nov 2025 05:39:10 -0600
-Message-ID: <cc48c040dac2edc27b453bc482d62309cea25c06.camel@ti.com>
-Subject: Re: drivers/pci/controller/cadence/pci-j721e.c:648:undefined
- reference to `cdns_pcie_host_disable'
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: Manivannan Sadhasivam <mani@kernel.org>, kernel test robot <lkp@intel.com>
-CC: Chen Wang <unicorn_wang@outlook.com>, <oe-kbuild-all@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>
-Date: Tue, 11 Nov 2025 17:09:25 +0530
-In-Reply-To: <h4yvzfhpd7exv2o2oxed7ocobn5zpwmtvzoxffj4rqsiq2dqfr@sobzxhwa5c23>
-References: <202511111705.MZ7ls8Hm-lkp@intel.com>
-	 <h4yvzfhpd7exv2o2oxed7ocobn5zpwmtvzoxffj4rqsiq2dqfr@sobzxhwa5c23>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4D671D63C2;
+	Tue, 11 Nov 2025 11:40:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762861236; cv=none; b=kQu38c9CJ7hBgQgKH5Eh/+kz9CxAFMyjjQuJYx+jLEGfJEWCSgWT4a6ehHpP4pBx2h8H4U8ZRSzZPwik5NuuC1ApXRA7S0dIbvL0qiT/pq/ndx1SsbuEczz28dcKga1f+DNZEL4VPqbp5sPAPivZxzZYMu0xW09+vgyIslGykWM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762861236; c=relaxed/simple;
+	bh=hR91vdwpSfpmbKbLu2l5eJHLKqT5dbj+LrLS8yyS+a8=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=lEG/jfSO2kHSb7PLN5xa5Yk+hvGDc/LeaSq9K6PcyNveD0LbwOZge5fYY/7eKtgCVh+/pHyeEmqW6aPPUpS9Aq2+/iUmanY81NdK4qTt/Lx0Fey296rbT0IOFJLENV0/TlTyE0wfocNsnlaHO5T9lnI0QCXx85ItK8LOFYD4lc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=JkwyYsJA; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5AB2xXUJ023600;
+	Tue, 11 Nov 2025 11:40:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=8ie7IM
+	GwHdNKCBVnPOW7BNm7UFdHOm5GlpkqJRFNifY=; b=JkwyYsJAS+pUgrTx0Md3Nz
+	xFewumww2vYdaQoDrmPnHHeY2KZXK/EoMJ9rmUUS0HgfffvZ+mbL9ObpGtYhfpDf
+	iPPjGCPCSUuGG1IOHKfIQKR0CqaNhWTtQbJRPUxbLulB/nuN7cnx18wfrCKUsgb9
+	UCLlN/gVdVNEH1OG2cgIIqDHsn14za/6yIHQfqfEqNC2raGumlMXQgA822i+M0AF
+	VePJXFukS8UXy3Qv0IDCyf4+2OfQ216GpzedIosbioR6JGA+8QAJ60DE25DbyC/b
+	QXUnI9uumDD+Z4VezVNRJ+pPxBDVmz1rr+VQwXIbiYRIwvAgdva2wVYACm/rWkYA
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4aa5tjtm3m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Nov 2025 11:40:09 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5ABBe98B001479;
+	Tue, 11 Nov 2025 11:40:09 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4aa5tjtm3h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Nov 2025 11:40:09 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5AB9ehkM008193;
+	Tue, 11 Nov 2025 11:40:08 GMT
+Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4aah6mth9h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Nov 2025 11:40:08 +0000
+Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
+	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5ABBe8oU53412136
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 11 Nov 2025 11:40:08 GMT
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2901E58054;
+	Tue, 11 Nov 2025 11:40:08 +0000 (GMT)
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1397F58045;
+	Tue, 11 Nov 2025 11:40:07 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.139.215])
+	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 11 Nov 2025 11:40:06 +0000 (GMT)
+Message-ID: <16c73b4e0761a1622770102d1d48982fe9ae86ac.camel@linux.ibm.com>
+Subject: Re: [Patch V1] ima: avoid duplicate policy rules insertions
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Tahera Fahimi <taherafahimi@linux.microsoft.com>, roberto.sassu@huawei.com,
+        dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, code@tyhicks.com
+Cc: Lennart Poettering <mzxreary@0pointer.de>
+In-Reply-To: <20251106181404.3429710-1-taherafahimi@linux.microsoft.com>
+References: <20251106181404.3429710-1-taherafahimi@linux.microsoft.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1-1 
+Date: Tue, 11 Nov 2025 06:40:06 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF00001CE4:EE_|BN0PR10MB5000:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3f2005bb-a652-48a7-f413-08de2116f23b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|32650700017|376014|1800799024|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?QU9jWmF3bmhtRkdNa3FTODhOMnlHU2lMWXVTU0NETWFFaFltTCtnTTIvUEJX?=
- =?utf-8?B?N3BMUGlsVmswandwYkpldWQzcHhQNGhUanNkc0dwZjI0Qi9semdkUnhDZENm?=
- =?utf-8?B?UHpwampvVTB6Mm8wTmVGcGVpeTZCN29nbysySDdNQlUxSGxCbWkxWGI5VEQ2?=
- =?utf-8?B?QWhCWjZYL2lnbFlqaE9yaHZHVkFsNHBsNDhNcVI2SHcrdVJzNnpwUFBTbE1H?=
- =?utf-8?B?UXoyNERHYStzdE1KZWhETVhWdWg1d0IwR29wYkRQcWFDUVZaNWpqZ3JJQmIy?=
- =?utf-8?B?V2thcS9KYXZFV3pQOHIwbm9FVDM4bHJvODdaMFBSY2JTZnJwb292TG1jWU90?=
- =?utf-8?B?OXFyRENJcTZpZlZxRUI0RUxZTmMvakk2bHdzZnVXN1hvWVBrQXcySnhXN1VC?=
- =?utf-8?B?V3FaQzZ6aTNjd3hIS2Z2Tm1VWVM2VG95cmNlb3g5RVJNNUNnNW0ybFZnVHBi?=
- =?utf-8?B?VlFRVEEyVzJndXg3WFJtVXBOUWllMDhNbElJSWlwRmNUbzV5NUNFVGxMTmp5?=
- =?utf-8?B?d3pJZ0pzVUpWQzVHZWZiSCtFMXR4YVZIY3k1elZLTnlMckJMcEk5M1dYeEU1?=
- =?utf-8?B?NURpQ2FUcC9UcUpBZXIzTGkxS1pLV3NWVnFnUC8yczRCUUpIbWVybm9rYnFS?=
- =?utf-8?B?dFlMejU5emtFcEdFcXkxOXdoT1dLTnl0VXlYcjJTenJ3T292bDA0dVoybzlx?=
- =?utf-8?B?WmdYNVcwNnBFSGUraWl3Z2hRaXdnY2I4bG1WejNlNE82L3prZkhwajNxcDJL?=
- =?utf-8?B?NE9EMlVrVHVhOGFMZGhGT3kwMGpRTXBjbEx3blUvMEI2YTVLbE9oNGdFcm1n?=
- =?utf-8?B?WE9zejBFSGlVbC8zMk85T3Y3M251NDJXYUk5YmN4Mmo1cUphTmtpdmx1eUE2?=
- =?utf-8?B?cGRsbmwrTlZ4RFBKcnZaT2hEcVdDMmVyendJREQ5Mi9pN1czN211RGtVSjZZ?=
- =?utf-8?B?RG9PenZDV3VwdVV0ejZ2RTVqR0l3U2ZuNndqWXhrUEhuL3o1NlI4VVZBWlla?=
- =?utf-8?B?REFzWi94VXR1aVd0TlJ0eVVkWk1TcU1XQVAyNWFtK1BvRHNGRVFrY0FqUS90?=
- =?utf-8?B?bG0wWi96YXBBem91Q1lRbUFpVnVSSDNubEljMS92MWtsN0haSCszSjdpdWw5?=
- =?utf-8?B?T0NUcHlxOExJWUMwVmt1U1RHdVZhNVVBMEtWWldWaWdPYi82enFoWXdhVThZ?=
- =?utf-8?B?UjJpODlzSjJ0dkZoZE1xNmJoRTltVllTdSt1VEltRDhrYUFkUFgxVWhjZWxI?=
- =?utf-8?B?UVphT2luVnc1SERZSG44b3hKU0pOR3h5cVBzd283YkdqWjErN1h6R2xSSy9p?=
- =?utf-8?B?Mm1DWkVLSk1RWDdXUGdRczhaSDJveURNaitQQUNZZlF5a1hvVXRxRVAvejdq?=
- =?utf-8?B?YlY0bzJSa2ZJdUg0WVhjdFVXYTZJL25XVHdYcnRYTkJ2d29adjNzbjhzWWdr?=
- =?utf-8?B?UVVDczRBbXp4NGl2T1B0emYwQVNzdjVIRHQranR2b3lJVXlYTnhibmUvMUs0?=
- =?utf-8?B?RmJZVVYwbzlZNHhaWXE0dnpZZGZHS2V2TmxSZnZGMGJEUEl2bXNMNjdldHNF?=
- =?utf-8?B?RlNnVW5qenEvRlRzaDYrSnZnckNmQ21MeXYwbFdZUU9ZTWp1ZS90N0tnMWMr?=
- =?utf-8?B?SzZudjdqclllTzhvMGJmVTdQdTE2VEZNVFZqcVhDbzVWcmUzaXoyUW44MUpQ?=
- =?utf-8?B?aS84RW8rUEx2T2t0ckZHMzZpYXFWL2xTUnRaQXBoNkFjMko0R2dEU1RqcGxC?=
- =?utf-8?B?cFRhVG9OV015ekRudDE5ZmM3dXNteTRzMjYxdTRFUXNkRCtDL2M5MUw3Qmoz?=
- =?utf-8?B?Nk00M01IVFhmcll5SlJxSGg3bEhxc1l3QUs3MHFsdGJvQWxuU05HMGlXK2lm?=
- =?utf-8?B?THJPRW9EeDkvWERCMVRmS1hRa0UzeUNVYzFvYW1XMDUzMVFlTjFBeWt2KzRJ?=
- =?utf-8?B?Z2hEMG1xaHZRV3dpSnlvL1Mzb3lORXZoR1M5cUF2c2lHODE2VXRBa1RBNjZZ?=
- =?utf-8?B?cW84alkxN0t4Q0lGeXI2bEVmSjZQRVc0R1lOVXRiKy9aVnZyTm9udjZkUFJX?=
- =?utf-8?B?S0NSOFlOa1dwcnlpcFA1NXFVeTdleTNiSFc2bXNoSXR6WTQwZkw5TUVTY2dy?=
- =?utf-8?Q?UJTI=3D?=
-X-Forefront-Antispam-Report:
-	CIP:198.47.21.194;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:flwvzet200.ext.ti.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(36860700013)(32650700017)(376014)(1800799024)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: ti.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Nov 2025 11:39:16.8842
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3f2005bb-a652-48a7-f413-08de2116f23b
-X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.21.194];Helo=[flwvzet200.ext.ti.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF00001CE4.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN0PR10MB5000
+User-Agent: Evolution 3.54.3 (3.54.3-2.fc41) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: Y3HENMEAaKwFjPzQZBz4-AHpwTJjDbBO
+X-Proofpoint-ORIG-GUID: BrrJooCEo-ClC07HzSrPnYFuIOCppHAW
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA4MDA5OSBTYWx0ZWRfX9934H9BHLfYy
+ tu2xJ5e7hh7EFtIkfFcb7YB2vIHcut/CdsHlnYZYU4PN6MInxdifu2FDx/algA2fmDpepUNn+xY
+ gG/HCJDiVXIRUJmpVBaW5NbmUjOiJyh9M08V2mAPhyhinxV6Zsbka54LMINNpUCvZNd7mlw4J21
+ QHkMJq3iwcMzywjXUjoE6Ml1C/qVUN92+mthb4n5G0iEfPJ8oJpD2hQ2gjYg8hi03g+AkdYnGIT
+ XBmILK0sAGb1Zsq3nLk4k0U8FIoMrCsdM7WTBMKBfoRMjUL1EMoI1UzM8lC2wZVRceKGcE9GMtG
+ vwHq98DyDFtzIGVJPWQhPM/fQRZFrcN7XK9ZDWhr7YZPEJjYHweBLUw9sLK/1M2URfNz/T2D3KY
+ nveQpq5Yeq7DwyqvjlOeedrzjO2dSg==
+X-Authority-Analysis: v=2.4 cv=V6xwEOni c=1 sm=1 tr=0 ts=69132099 cx=c_pps
+ a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=yMhMjlubAAAA:8 a=Te6HIuTWUB4XkS3UWhoA:9 a=QEXdDO2ut3YA:10
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-11_02,2025-11-11_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1011 lowpriorityscore=0 adultscore=0 malwarescore=0 impostorscore=0
+ suspectscore=0 priorityscore=1501 phishscore=0 bulkscore=0 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2511080099
 
-On Tue, 2025-11-11 at 16:24 +0530, Manivannan Sadhasivam wrote:
+[Cc'ing Lennart Poettering]
 
-Hello Mani,
-
-> + Siddharth
-
-Thank you for notifying me of this.
-
+On Thu, 2025-11-06 at 18:14 +0000, Tahera Fahimi wrote:
+> Prevent redundant IMA policy rules by checking for duplicates before inse=
+rtion. This ensures that
+> rules are not re-added when userspace is restarted (using systemd-soft-re=
+boot) without a full system
+> reboot. ima_rule_exists() detects duplicates in both temporary and active=
+ rule lists.
 >=20
-> On Tue, Nov 11, 2025 at 05:28:54PM +0800, kernel test robot wrote:
-> > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.=
-git master
-> > head:   4427259cc7f7571a157fbc9b5011e1ef6fe0a4a8
-> > commit: 1c72774df028429836eec3394212f2921bb830fc PCI: sg2042: Add Sophg=
-o SG2042 PCIe driver
-> > date:   8 weeks ago
-> > config: loongarch-randconfig-r113-20251110 (https://download.01.org/0da=
-y-ci/archive/20251111/202511111705.MZ7ls8Hm-lkp@intel.com/config)
-> > compiler: loongarch64-linux-gcc (GCC) 15.1.0
-> > reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/arc=
-hive/20251111/202511111705.MZ7ls8Hm-lkp@intel.com/reproduce)
-> >=20
-> > If you fix the issue in a separate patch/commit (i.e. not just a new ve=
-rsion of
-> > the same patch/commit), kindly add following tags
-> > > Reported-by: kernel test robot <lkp@intel.com>
-> > > Closes: https://lore.kernel.org/oe-kbuild-all/202511111705.MZ7ls8Hm-l=
-kp@intel.com/
-> >=20
-> > All errors (new ones prefixed by >>):
-> >=20
-> >    loongarch64-linux-ld: drivers/pci/controller/cadence/pci-j721e.o: in=
- function `j721e_pcie_remove':
-> > > > drivers/pci/controller/cadence/pci-j721e.c:648:(.text+0x83c): undef=
-ined reference to `cdns_pcie_host_disable'
-> >=20
->=20
-> From .config:
->=20
-> CONFIG_PCIE_CADENCE=3Dy
-> CONFIG_PCIE_CADENCE_HOST=3Dm
-> CONFIG_PCIE_CADENCE_EP=3Dy
-> CONFIG_PCIE_CADENCE_PLAT=3Dy
-> # CONFIG_PCIE_CADENCE_PLAT_HOST is not set
-> CONFIG_PCIE_CADENCE_PLAT_EP=3Dy
-> CONFIG_PCIE_SG2042_HOST=3Dm
-> CONFIG_PCI_J721E=3Dy
-> # CONFIG_PCI_J721E_HOST is not set
-> CONFIG_PCI_J721E_EP=3Dy
->=20
-> PCI_J721E selects PCIE_CADENCE_HOST only if PCI_J721E_HOST is selected,
-> otherwise, it will not select it. This will take care of the dependency b=
-etween
-> PCI_J721E and PCIE_CADENCE_{HOST/EP}.
->=20
-> But if PCIE_CADENCE_HOST is selected as a module by other drivers like,
-> CONFIG_PCIE_SG2042_HOST=3Dm, then if PCI_J721E is selected as a built-in =
-using
-> CONFIG_PCI_J721E_EP=3Dy, it results in this build error as the built-in d=
-river
-> becomes dependent on a symbol from a loadable module.
+> Signed-off-by: Tahera Fahimi <taherafahimi@linux.microsoft.com>
 
-While I don't deny the build error associated with the above config, it is
-an invalid config in the sense that the Glue drivers for two different
-devices are being enabled. This seems to be a generic issue wherein
-multiple drivers tend to depend on a library/common driver. How is it
-handled in such cases?
-Is there a notion of reordering configs to ensure that such build errors
-are avoided?
+Sorry for the delay in responding ...
 
-If PCI_J721E_EP was selected as 'y' before 'PCI_SG2042_HOST' being selected
-as 'm', it would have resulted in 'PCIE_CADENCE_EP' being selected as 'y'
-and this won't cause a build error even with 'PCI_SG2042_HOST' selected as
-'m'.
+Before trying to fix the "problem", let's try to understand it first.  At l=
+east
+on my test system (-rc5), kexec is working as designed.  On boot, systemd
+replaces the existing builtin IMA policy with a custom IMA policy.  The arc=
+h
+specific policies are not affected, as they are persistent.  On a soft rebo=
+ot
+(kexec), the IMA custom policy is re-loaded as expected.
 
->=20
-> I guess, we should force PCIE_CADENCE_{HOST/EP} to be 'bool' as it is get=
-ting
-> selected by multiple drivers.
+To verify the above behavior, extend the IMA policy before the soft reboot.=
+=20
+Notice after the soft reboot that the original custom IMA policy is loaded =
+and
+not the extended IMA policy.  Roberto, if there is a problem with this beha=
+vior,
+we'll discuss it independently of this proposed patch.
 
-This will defeat the purpose of the series that enabled loadable module
-support for the pci-j721e.c driver and the pcie-cadence-host/ep.c drivers.
+The question is why are you seeing duplicate IMA policy rules?  What is spe=
+cial
+about your environment?
 
-Is there a way to address the issue by updating Kconfig? Specifically, is
-there a way to re-order the 'select' scheme to fix the build error?
+--=20
+thanks,
 
-
-Regards,
-Siddharth.
+Mimi
 
