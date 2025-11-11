@@ -1,110 +1,118 @@
-Return-Path: <linux-kernel+bounces-896140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 456AFC4FBE0
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 21:51:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B8F66C4FBD0
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 21:47:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 14BDC4E512D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 20:51:19 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0BBC64E5814
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 20:47:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E4AE30B533;
-	Tue, 11 Nov 2025 20:51:16 +0000 (UTC)
-Received: from mail.prodrive-technologies.com (mail.prodrive-technologies.com [212.61.153.67])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69AA432AAB4;
+	Tue, 11 Nov 2025 20:46:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fnZrN9oF"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D76822FE566;
-	Tue, 11 Nov 2025 20:51:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.61.153.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D164293C42
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 20:46:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762894275; cv=none; b=ZijZfKklyg6tlXhbpL/8gknIiD7qQT5Q0sz8l0dwxzu/y2QS14I4wxwOTojFKDKFK6U7tnBkrOPenSg9CRrp+ib3ftMNuzxoK5HGyDZ3B07Sptq3lgTPfxlhL3bJ0r3UZ3eiJDBfWbxG7UfK4Mq8cUpIlkXoXmvt488ErzHYGLQ=
+	t=1762894015; cv=none; b=jF1ryOlADvAkAsszRHeT7Ou1tWdCidvpGVz9wldyZ2Zl0w+agAw35h+vyuWRC1IA9GbSNvBSkCdHuSB/VLW2WB3NAAorqcZPWk7fkPGgHmvLe1Ao6xmxSiqT3ymYNQk7ywVJbsL0vQ01ubk8ijvjh9IGn9r2hAjQ6x3EHs+CGrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762894275; c=relaxed/simple;
-	bh=5EuORCmQwU612AxD8Jii/M8es3nwbeh6cIbTThrubR0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OFalgVNz8viUJrZ7ybH+8CWA/97G75c8F5LS+nVJdP0QJK6qRZdJUu7HRYd8ekygQfTTbSaV1QuHwImUvmOrNdarPhpXj3V5LgmvvEzp7K2GkzTnnyfB43x24UnbyzfqDclxdG4mhSwbf7Wnq/BlbdAAuZ3uIhYJatlF3fkSMnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=prodrive-technologies.com; spf=pass smtp.mailfrom=prodrive-technologies.com; arc=none smtp.client-ip=212.61.153.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=prodrive-technologies.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prodrive-technologies.com
-Received: from EXCOP01.bk.prodrive.nl (10.1.0.22) by EXCOP01.bk.prodrive.nl
- (10.1.0.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 11 Nov
- 2025 21:46:02 +0100
-Received: from lnxdevrm02.prodrive.nl (10.1.1.121) by EXCOP01.bk.prodrive.nl
- (10.1.0.22) with Microsoft SMTP Server id 15.2.1544.4 via Frontend Transport;
- Tue, 11 Nov 2025 21:46:02 +0100
-From: Martijn de Gouw <martijn.de.gouw@prodrive-technologies.com>
-To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>
-CC: Martijn de Gouw <martijn.de.gouw@prodrive-technologies.com>,
-	<linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] leds: group-multicolor: Add support for initial value.
-Date: Tue, 11 Nov 2025 21:45:55 +0100
-Message-ID: <20251111204556.2803878-1-martijn.de.gouw@prodrive-technologies.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1762894015; c=relaxed/simple;
+	bh=UnmrJNFh5uwNsZAyJRqYSz9Eybog28Whpwhvzqd3qCQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rZbG+pOgRhVMX2u1psV46RKcbaE/d9N+dvS3w+D6RjOO13xtDFXCxYvII0qLxzsCaUicdF64NhfU67rABveeEIPOyR8cE//g0VUk8rVz3bodNnthgW7kPF7x1ieN73ULGq9qYF6QXTepOTqwg5Cn7yBZWy0dpRtmNsvK1iTFmX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fnZrN9oF; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-297e2736308so117845ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 12:46:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762894011; x=1763498811; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UnmrJNFh5uwNsZAyJRqYSz9Eybog28Whpwhvzqd3qCQ=;
+        b=fnZrN9oFQtmJMlwzZYrO8tKGRyObtSxHJ4RoGdwBMwdfMi064QPG0RIzo/BoInbZfT
+         qFn4DIcBsUT4Ln3+jpmZbZGVfR+UvoNyVSGek4tkPdQOcPhSEKMhxi9obC++q+9Pkuo3
+         RX13NXgIgY6WUY5h1TwzMYbCbKaek+PPtCJand1CcEVK+BOngZybpa82GGJL5MGbuYeP
+         O7KzruND1elIJs3KJroFKnyxEn5bZHVZLWXFKnE3GlHqRyAf5fPGIwFFcrKaZKjZj0nA
+         cCvFzNsXZo3WJGd5C1Ysgdobmu9s0vKQmZRkX2xVKbNeYK1kh6kjdxQld5MsKfWKrBOX
+         gBUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762894011; x=1763498811;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=UnmrJNFh5uwNsZAyJRqYSz9Eybog28Whpwhvzqd3qCQ=;
+        b=oTvbMWvQNHwnlbEiU0iJEpV2tDxG7LxGDbgOepKbs6Ke6W/XdogWXwl9hMJ3Si8DCj
+         KvSrW8Nscam50QshyTODx5Cc6wUNTri0PUSKHU726G8/Rln2M8AFigBJKFY7P38+0/OS
+         GfyUedBDif/uUKHcVKmUjOSqkKTTa0/ZaxOtcPL4iarFt+quU2PgtGBwoSlV3dzch4z6
+         iDWB448xPRFN/gKQexBRGYsCrudMyZv1Xa/pYWJKwFeF9Jg9znmduw7h8qwlYVktprRM
+         2RK8FixRmFN6oEWmv2wDGa+oXfVDw/k57/CmJMaj5+fa8qkA7pgwRE+UgRcMTLZ+Dh5p
+         D7/g==
+X-Forwarded-Encrypted: i=1; AJvYcCXNrzf2h8+8TnAGvORoVGn20uVWOAgTe/K0Lrk7UoNmVPKjwAdQZeRMJEspNF2Ulrs2MURw20w2KtxOoWA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnKihLPWe1msKPhrxhCVvKTUVhP5WD2smk692/ep7C1PEVlIaq
+	r8zxHSl5xPXyltWBvYfFUe4kSNmwqZb7nc0jnFpQKIAdZZwP8BlqDjl8bA8d5v+g/jFJBLYfkam
+	XaV7Vowd6E4ojyS9fWUucxpb3SeEb6SA=
+X-Gm-Gg: ASbGncvrG1wC491XQNi5puSh1h9Vf6EdQ6eugvfFYvhN0XOCgbaDT4CcIao/GBa9dY0
+	+ArCUzR4RO4rJf8QLouQ6tFH24V2KBDZYtjnqr5zS4cdl3HiWpcM772Hs40FdvGGFO8lZCAaozQ
+	lIca9z1LoZbXTczPCR10OgET5gl0zL7xEqUAyBoKgcD7Tzv9eNsCsIi2b7Fm7g61pgkTXggcEwT
+	T1K3zvaUCCn7GSfogZDbV4skZztLA/3vf0lDLbT3xPOXoneitz8iEV6kH+2+Ne8Hj3Znjstb0GJ
+	0/cTnvlblKFeN1bemtJULbiHXgez3wr9/Qa+Oip0OPDJazavFPf34imWM1AFTFlAFUshLZ/PsWO
+	Y3xlX1mawJG4Drg==
+X-Google-Smtp-Source: AGHT+IHN94JtmIxHN9rzLf3rPXm6Pv6p3OVtQxAw7lqD/kLIt+UFSlitVjA3+blOuHUQSodn0SFbjWMtxcUyzXogkrc=
+X-Received: by 2002:a17:902:ea10:b0:258:a3a1:9aa5 with SMTP id
+ d9443c01a7336-2984ec953e3mr4844665ad.0.1762894011055; Tue, 11 Nov 2025
+ 12:46:51 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+References: <20251108-bounded_ints-v4-0-c9342ac7ebd1@nvidia.com> <DE5PQ3927GMS.31N4JGGZK3M1N@nvidia.com>
+In-Reply-To: <DE5PQ3927GMS.31N4JGGZK3M1N@nvidia.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 11 Nov 2025 21:46:39 +0100
+X-Gm-Features: AWmQ_bnepqni23BVP3fPyeHHA_HCKx7foH7uXjpDqrNPb0vXM57eeTTzvo-sJS0
+Message-ID: <CANiq72nYgvsTLvaXkGDN6ZReHipZVSgg1BzCgjC05h+dmsFe3g@mail.gmail.com>
+Subject: Re: [PATCH v4 0/4] rust: add Bounded integer type
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: Alice Ryhl <aliceryhl@google.com>, Danilo Krummrich <dakr@kernel.org>, 
+	Miguel Ojeda <ojeda@kernel.org>, Joel Fernandes <joelagnelf@nvidia.com>, 
+	Yury Norov <yury.norov@gmail.com>, Jesung Yang <y.j3ms.n@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-It's possible to set a default state for leds in the dts with
-'default-state', but this was not reflected when the LEDs are grouped.
-This patch adds support for keeping the default-state value.
+On Tue, Nov 11, 2025 at 9:12=E2=80=AFAM Alexandre Courbot <acourbot@nvidia.=
+com> wrote:
+>
+> Hi Rust core team,
+>
+> With -rc6 approaching, may I enquire on the appetite to merge this for
+> 6.19? This is the last hard dependency for moving the bitfield/register
+> macros out of Nova, so we need it if we want to tackle this for the next
+> cycle.
+>
+> Please let me know if there is more I can do to bring this to shape! :)
 
-Signed-off-by: Martijn de Gouw <martijn.de.gouw@prodrive-technologies.com>
----
- drivers/leds/rgb/leds-group-multicolor.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+Let's get some testing in linux-next :)
 
-diff --git a/drivers/leds/rgb/leds-group-multicolor.c b/drivers/leds/rgb/leds-group-multicolor.c
-index 548c7dd63ba1e..b3e46a51dfbc7 100644
---- a/drivers/leds/rgb/leds-group-multicolor.c
-+++ b/drivers/leds/rgb/leds-group-multicolor.c
-@@ -69,6 +69,7 @@ static int leds_gmc_probe(struct platform_device *pdev)
- 	struct mc_subled *subled;
- 	struct leds_multicolor *priv;
- 	unsigned int max_brightness = 0;
-+	unsigned int default_brightness = 0;
- 	int i, ret, count = 0, common_flags = 0;
- 
- 	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-@@ -96,6 +97,12 @@ static int leds_gmc_probe(struct platform_device *pdev)
- 
- 		max_brightness = max(max_brightness, led_cdev->max_brightness);
- 
-+		/* If any LED is on, set brightness to the max brightness.
-+		 * The actual brightness of the LED is set as intensity value.
-+		 */
-+		if (led_cdev->brightness)
-+			default_brightness = max_brightness;
-+
- 		count++;
- 	}
- 
-@@ -109,14 +116,16 @@ static int leds_gmc_probe(struct platform_device *pdev)
- 
- 		subled[i].color_index = led_cdev->color;
- 
--		/* Configure the LED intensity to its maximum */
--		subled[i].intensity = max_brightness;
-+		/* Configure the LED intensity to its current brightness */
-+		subled[i].intensity = DIV_ROUND_CLOSEST(led_cdev->brightness * max_brightness,
-+							led_cdev->max_brightness);
- 	}
- 
- 	/* Initialise the multicolor's LED class device */
- 	cdev = &priv->mc_cdev.led_cdev;
- 	cdev->brightness_set_blocking = leds_gmc_set;
- 	cdev->max_brightness = max_brightness;
-+	cdev->brightness = default_brightness;
- 	cdev->color = LED_COLOR_ID_MULTI;
- 	priv->mc_cdev.num_colors = count;
- 
--- 
-2.39.2
+Acked-by: Miguel Ojeda <ojeda@kernel.org>
 
+Thanks!
+
+Cheers,
+Miguel
 
