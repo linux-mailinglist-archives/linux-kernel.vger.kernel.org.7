@@ -1,158 +1,324 @@
-Return-Path: <linux-kernel+bounces-895668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BF4BC4EA03
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 15:57:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9E4DC4E9B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 15:54:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 03FF54F668E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:51:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8880188F9D4
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:50:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6D7A30EF86;
-	Tue, 11 Nov 2025 14:50:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0F4A328602;
+	Tue, 11 Nov 2025 14:50:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CzTpweft"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="4P9MiOXg"
+Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11011033.outbound.protection.outlook.com [52.101.62.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 639541A3178;
-	Tue, 11 Nov 2025 14:50:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762872654; cv=none; b=ZN0Si/iRpr2zEYEJHyyQ++A3tYjcsqwmFllp3nqAq/FHyc0YPgnt0h80dIDmv2DqRsoN1bbceYPwd8i/S4M45vpNbZ3X3besOcqBAORdd8FDOHXiOLGRlmM1VHOb80G2y2kVMiChpXMndSXJwv/c+k1F9WfKJVwu/1/3Yc/8A34=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762872654; c=relaxed/simple;
-	bh=v99117MGYVWmQZnJ8EGbbfXSAArRfL4nDoBBh2bne0k=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oEoJ/0cLpRE/JQGYEHm5UJtWJ/UjXDaAEiC0WRhOoSY299ApFYxR0MNrF1Sqgw1jDqz4l6x15MmACFmRcgBHmlmh0zikrHbozUZwKPMFXCYomFXT7+nqdakXIrLtRHjGYMXc6Jt1ZlBf4Ow/as6ukbMFBOrsEv8tFb01Xt2uRnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CzTpweft; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762872652; x=1794408652;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=v99117MGYVWmQZnJ8EGbbfXSAArRfL4nDoBBh2bne0k=;
-  b=CzTpweftI8n3pomtIPEf3e4vAzOyVjpx57F9FtnPi1xw4hIIGCNnlexY
-   GQuBeYTQY33vCW5zC4tJZtRAmWDcHo5luhFXiszYZSWNXgQIeudJS15xB
-   QUIGTzqzCQxzot+660h5QMHS9fqDsO3zHBLKTbpUFzGiVFF665DiQF1cX
-   O9rGnGlTKk7pRzGrqXFWiKdhi91BrtAMAa8Le0/RDNqWhkyXA2U4CBdyl
-   OhU+ZEJwOjWWyxQhonwhmuX2eVStmbV15TcWAhw0g6UOIIeWeHmnJ4KT8
-   mWfAsAZ1w4UGNZHJ+oHSLdpXjX3lZxNZHmsvG3oxyFIQRslmLjYFlpFQ1
-   A==;
-X-CSE-ConnectionGUID: SzuYB5imQU6IkXOYx4kfHw==
-X-CSE-MsgGUID: szC5LjsYR56gN+G5XD+9cw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11610"; a="75551553"
-X-IronPort-AV: E=Sophos;i="6.19,296,1754982000"; 
-   d="scan'208";a="75551553"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 06:50:52 -0800
-X-CSE-ConnectionGUID: FGtMBDK+RgOAC3HYYAW2/w==
-X-CSE-MsgGUID: qFIxIRoeSXWx1i2ax5LMyg==
-X-ExtLoop1: 1
-Received: from black.igk.intel.com ([10.91.253.5])
-  by fmviesa003.fm.intel.com with ESMTP; 11 Nov 2025 06:50:50 -0800
-Received: by black.igk.intel.com (Postfix, from userid 1003)
-	id B3F4B98; Tue, 11 Nov 2025 15:50:48 +0100 (CET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Philipp Stanner <phasta@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Jonathan Corbet <corbet@lwn.net>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>
-Subject: [PATCH v2 2/2] devres: Move devm_alloc_percpu() and related to devres.h
-Date: Tue, 11 Nov 2025 15:49:46 +0100
-Message-ID: <20251111145046.997309-3-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20251111145046.997309-1-andriy.shevchenko@linux.intel.com>
-References: <20251111145046.997309-1-andriy.shevchenko@linux.intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 311DC1A3178;
+	Tue, 11 Nov 2025 14:49:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.33
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762872602; cv=fail; b=Xl0qL+qThV+/j4wvfCWl4PZyS9W9c3Yt1po+H6HBvUrlr7a9jJ9kC62dc9KvO1Mu29Dwk++wZNsyVlmdsckkIyL0NyLE2yxtaDuL+iidQLj/AZxovTytmlbzombry5WugbiA5dSTxiqPuHqLA+XGiE/VzvinK3JSmnxV9idr9mc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762872602; c=relaxed/simple;
+	bh=I2pkeHQ2Xz6QbadaKb/LvRPuzCckK0IryY58uKTdsq0=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=XksG2mbYuxWR6NEVn9uJig+FT41KeXhU0+X5hkTHgt4M7sYIlTt/U52+tgeYv4bJH2NifJvx0+qUoij1+i+Q7sy+ZggZwj5enm8/umTYyvOTvoo3GP5aquxnc2YONvF3s7Sd9we+raJPGXOCN7IYIHzlLMag3Mmnm/WF4f7wNeI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=4P9MiOXg; arc=fail smtp.client-ip=52.101.62.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=tLr6zKieMSVVefIlFTh7nsIlEvZpHlmLKfgr8BaEY0Y8L5rqp0Fj3BxStwAIBbT5BGQq1k67Uh00lg6IOUu6z7+68JNOe+6BJ5sywANpENpahOCVgN5sNEIekfhYBCZ1Tm1xDGNIV4O/gQo51keDFUfhN7oCVMUGYxtBukaXZxi8SqO+vubeD25jv5He1IaKDAuqqsdrxf7CzTQUGJebnOxx+K1TCGWwYnizVSg5SorW/8xTR1m0LUTBq9AOozQCVgvgXYJEHg8Wio1BNC91aH4ojUOJ02KjaRRsxjcyZ9uqD4ayxZdOyGFjAe79f/K6soKZr8KE1omYk9ex0pbOyg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=GkwU1mVH+FzBYHWZ3X6mk/Izupa+NNZcIjjrI7JLXfo=;
+ b=AOudp2oYNzb9houkyo++FnpeGyGX0J5MHiIWdJfdMNZJTqw/1zUbCC0+2M+o+gFF52D32J9Y9LWAANI1keCnJPbVVLgchVmwtmtB2N+rVJUXBmTstK5lSCA7jWzn1ZL/mJTHMdV+MYWOjztNGMHtEJHoYKC5u+oDxBsIrbaTiRja7keZYFQhqd4svBu7KtgHzKK9nfQswo4RnzP+qOG5ZDP5jsW1Qo2SrZS30TGTvJTYmpFamBxSka3CseZTOFwp1iJMrlDZP7jPrVtIDWq/CPGLPhgsh+J53ZR0wFAH6HVhVL/tebQ3ZHA4rUuaxckh9C53KjO4WkW01owOr5iNvw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GkwU1mVH+FzBYHWZ3X6mk/Izupa+NNZcIjjrI7JLXfo=;
+ b=4P9MiOXgvEP+e7EzPGB5BGeeuBZHm2J677y9FNU1WMGmPWwaOhSXPDvMxl0uv8xTfoPZeDJVTGqK3e/GeBu6cxClu0JYS1+9LWRsH6W2WWGiZB2ZrD0fq6nI90UOCmvHGVzrVUKwbB87qtvUOkzbqVy34JSJs3ATrrVFM1qdcIo=
+Received: from BL1PR12MB5144.namprd12.prod.outlook.com (2603:10b6:208:316::6)
+ by CH3PR12MB9147.namprd12.prod.outlook.com (2603:10b6:610:19a::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Tue, 11 Nov
+ 2025 14:49:53 +0000
+Received: from BL1PR12MB5144.namprd12.prod.outlook.com
+ ([fe80::491a:cce3:e531:3c42]) by BL1PR12MB5144.namprd12.prod.outlook.com
+ ([fe80::491a:cce3:e531:3c42%4]) with mapi id 15.20.9320.013; Tue, 11 Nov 2025
+ 14:49:53 +0000
+From: "Deucher, Alexander" <Alexander.Deucher@amd.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Corey Minyard
+	<corey@minyard.net>, "Koenig, Christian" <Christian.Koenig@amd.com>, "Dr.
+ David Alan Gilbert" <linux@treblig.org>, Thomas Zimmermann
+	<tzimmermann@suse.de>, Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Rob Clark <robin.clark@oss.qualcomm.com>, Matthew Brost
+	<matthew.brost@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>, Vitaly
+ Lifshits <vitaly.lifshits@intel.com>, Manivannan Sadhasivam
+	<mani@kernel.org>, Niklas Cassel <cassel@kernel.org>, Calvin Owens
+	<calvin@wbinvd.org>, Vadim Fedorenko <vadim.fedorenko@linux.dev>, Sagi Maimon
+	<maimon.sagi@gmail.com>, "Martin K. Petersen" <martin.petersen@oracle.com>,
+	Karan Tilak Kumar <kartilak@cisco.com>, Hans Verkuil
+	<hverkuil+cisco@kernel.org>, Casey Schaufler <casey@schaufler-ca.com>, Steven
+ Rostedt <rostedt@goodmis.org>, Petr Mladek <pmladek@suse.com>, Viacheslav
+ Dubeyko <Slava.Dubeyko@ibm.com>, Max Kellermann <max.kellermann@ionos.com>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"openipmi-developer@lists.sourceforge.net"
+	<openipmi-developer@lists.sourceforge.net>, "linux-media@vger.kernel.org"
+	<linux-media@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
+	<dri-devel@lists.freedesktop.org>, "linaro-mm-sig@lists.linaro.org"
+	<linaro-mm-sig@lists.linaro.org>, "amd-gfx@lists.freedesktop.org"
+	<amd-gfx@lists.freedesktop.org>, "linux-arm-msm@vger.kernel.org"
+	<linux-arm-msm@vger.kernel.org>, "freedreno@lists.freedesktop.org"
+	<freedreno@lists.freedesktop.org>, "intel-xe@lists.freedesktop.org"
+	<intel-xe@lists.freedesktop.org>, "linux-mmc@vger.kernel.org"
+	<linux-mmc@vger.kernel.org>, "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>, "intel-wired-lan@lists.osuosl.org"
+	<intel-wired-lan@lists.osuosl.org>, "linux-pci@vger.kernel.org"
+	<linux-pci@vger.kernel.org>, "linux-s390@vger.kernel.org"
+	<linux-s390@vger.kernel.org>, "linux-scsi@vger.kernel.org"
+	<linux-scsi@vger.kernel.org>, "linux-staging@lists.linux.dev"
+	<linux-staging@lists.linux.dev>, "ceph-devel@vger.kernel.org"
+	<ceph-devel@vger.kernel.org>, "linux-trace-kernel@vger.kernel.org"
+	<linux-trace-kernel@vger.kernel.org>
+CC: Rasmus Villemoes <linux@rasmusvillemoes.dk>, Sergey Senozhatsky
+	<senozhatsky@chromium.org>, Jonathan Corbet <corbet@lwn.net>, Sumit Semwal
+	<sumit.semwal@linaro.org>, Gustavo Padovan <gustavo@padovan.org>, David
+ Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+	<mripard@kernel.org>, Dmitry Baryshkov <lumag@kernel.org>, Abhinav Kumar
+	<abhinav.kumar@linux.dev>, Jessica Zhang <jesszhan0024@gmail.com>, Sean Paul
+	<sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, Konrad
+ Dybcio <konradybcio@kernel.org>, Lucas De Marchi <lucas.demarchi@intel.com>,
+	=?iso-8859-2?Q?Thomas_Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>, Vladimir Oltean <olteanv@gmail.com>,
+	Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, Tony Nguyen <anthony.l.nguyen@intel.com>, Przemek
+ Kitszel <przemyslaw.kitszel@intel.com>,
+	=?iso-8859-2?Q?Krzysztof_Wilczy=F1ski?= <kwilczynski@kernel.org>, Kishon
+ Vijay Abraham I <kishon@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Rodolfo Giometti <giometti@enneenne.com>, Richard Cochran
+	<richardcochran@gmail.com>, Jonathan Lemon <jonathan.lemon@gmail.com>, Stefan
+ Haberland <sth@linux.ibm.com>, Jan Hoeppner <hoeppner@linux.ibm.com>, Heiko
+ Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, Alexander
+ Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger
+	<borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, Satish
+ Kharat <satishkh@cisco.com>, Sesidhar Baddela <sebaddel@cisco.com>, "James
+ E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, Mauro Carvalho
+ Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>, Masami
+ Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+	<mathieu.desnoyers@efficios.com>, Andrew Morton <akpm@linux-foundation.org>
+Subject: RE: [PATCH v2 05/21] drm/amdgpu: Switch to use %ptSp
+Thread-Topic: [PATCH v2 05/21] drm/amdgpu: Switch to use %ptSp
+Thread-Index: AQHcUwahm1/91wHoNkKlQRJwdZtlULTtjo6Q
+Date: Tue, 11 Nov 2025 14:49:53 +0000
+Message-ID:
+ <BL1PR12MB5144DAA1CB83640FBE834FFFF7CFA@BL1PR12MB5144.namprd12.prod.outlook.com>
+References: <20251111122735.880607-1-andriy.shevchenko@linux.intel.com>
+ <20251111122735.880607-6-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20251111122735.880607-6-andriy.shevchenko@linux.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+ MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_Enabled=True;MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_SetDate=2025-11-11T14:49:03.0000000Z;MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_Name=Open
+ Source;MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_ContentBits=3;MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_Method=Privileged
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BL1PR12MB5144:EE_|CH3PR12MB9147:EE_
+x-ms-office365-filtering-correlation-id: d4b40aa3-753f-488e-1215-08de213192e4
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|7416014|376014|1800799024|366016|921020|38070700021;
+x-microsoft-antispam-message-info:
+ =?iso-8859-2?Q?OrgQba1o8VRkBRZy5KjWGPJFxxdvb9PI2OytFVyn9ss6KeRgUuNKhjHq35?=
+ =?iso-8859-2?Q?TostFJ91nWS81XunmUZXFcM2dNwFIbkVmwmviAN+9MjVoCn72yk+qV9/5A?=
+ =?iso-8859-2?Q?21+5lZS4OSEk52i+HU2wOlVTAPVHrqsJeulWOiRwU3/W7rwng+pLW2yAp+?=
+ =?iso-8859-2?Q?As3Ne6InDCuJtLmdM8uov6bkArZCyP2vOHy+lt3GAWT01g6K5BgDCr2uC9?=
+ =?iso-8859-2?Q?gf4ACKmQUAIB7dloGnx7EDamcoMLI7LN7KDxEM/GgryhlxofaJUn54ONUo?=
+ =?iso-8859-2?Q?87XOuy1pofi8FmPIPCfM2TnaXnPHxJAV0CBZqO6++8OdKlBUDhpCMtlIZm?=
+ =?iso-8859-2?Q?aunWC2gJWf6w0vRU3d9r7qYJTuKlUZZM9YLSTWYgwHzAOiTEoGuYVN2SEn?=
+ =?iso-8859-2?Q?hbbGJ09XHFDsWtThS7skygDzK0JLlRoixUeCBowVxhRxdT9qCGUaESEHZz?=
+ =?iso-8859-2?Q?inQGnPOVbW1Ym7bDVbXMAiH6oG6Pk3QVQwVoAEe1FroEFxhmFkNfjOliQI?=
+ =?iso-8859-2?Q?TSBwpejmYUIomMkjHXkMn/TZ+A2CBlihIjFM0LN+Ttl3qet+43xn0ORJny?=
+ =?iso-8859-2?Q?c6k6BReErVvD5d/rPI2DEJd+wLjA3QGsBhggqq+j+SIyRx69buZvU5zOGB?=
+ =?iso-8859-2?Q?Iovxhmb5Hev18SvFA3KGQHd+9cC8H/FFHvoO0zAQ++a5eoduMTa6BIYJCM?=
+ =?iso-8859-2?Q?KM8Hm28rtQBlYR37ydHv8Ix1gpMobT6UHT9m4rYv1FeeV1S6CH9gzPviZd?=
+ =?iso-8859-2?Q?iRBR/QrNWdDIOs53ce6k8U6BVctuRZP/B8fEW0rS/sR4g0GqBBvS0K2Lcs?=
+ =?iso-8859-2?Q?ooXVutaSDB5BgNCt2OFKXSqZmozfl3Wi17iZHZlEnq4Uxwndzyh0xV035m?=
+ =?iso-8859-2?Q?Zd/y26S9fGY8r4WKahf9kzkOtVXM50z+Znb5Igz94CrhVMvB6G3CqIJ31z?=
+ =?iso-8859-2?Q?C0aWEQ4nSVIzW7LrUPygs19CkKZLZ0+k+SlA5pbFEoB/0GXk09e+tbaDGZ?=
+ =?iso-8859-2?Q?tQwmpzNwF7Lkphf9pszGwyl7CsRPAV5/OnmXvYIGCiCuVqfckFKDFkTUr3?=
+ =?iso-8859-2?Q?Q2VRcX9xwHIQS2QKu2Zsi3AotquwCdxWm4a46szrCjX9xPSQs027Rm7Cl9?=
+ =?iso-8859-2?Q?4b085D4VFJV0eboQCARbXD2zkQ76uWewrb+xqoHw3onhtBEPlWOezuxiSH?=
+ =?iso-8859-2?Q?PtvjCkcR3kZ7x6cjCVOdh6Bcnigv6mXjZWYm7kMNFh8XlAt0M135Y/vzuP?=
+ =?iso-8859-2?Q?4kHzyErkKxpFPVf+wj7UWcwfYNKqkP+XTkHACDpnvNjyFieGfOYm/IEr/6?=
+ =?iso-8859-2?Q?h93VPcZULXAj4o9XCHEh/f5CxjM0h/55TO4i0pS8C704uFEmSCreSXZzkq?=
+ =?iso-8859-2?Q?DFkORbsr9XMN+B+8bpblyDG6BB5Mu7wP/b4jm2Bn3qzPx2XRhHwduUFLyc?=
+ =?iso-8859-2?Q?ngfIa6ZBGzNEAUio7tLJqTIpPwAYf0BhC/gvyivI6UEpHF6YrCTeGYG+tp?=
+ =?iso-8859-2?Q?/HKhtRnFwD7iRSeeaIy94LpY7oQi1insn6B8R/kOoYspHnlG8YuppUjqHs?=
+ =?iso-8859-2?Q?0glvuqnkbygBFDPvLiba3YNSWWURlRA8Vo9XEbKseLDk9A/bFw=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR12MB5144.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(921020)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?iso-8859-2?Q?YdFRE1eWrPnF1GjQxYY0iivBiOqCLGtbo/c8RewREhlsgtC52oCM8zemPI?=
+ =?iso-8859-2?Q?0qvXvKbT+ZMeYZQXNbhSEV8Sg8tSlMGI5V2NO0+p6pxP99hKRk1COI4llZ?=
+ =?iso-8859-2?Q?ST/JV80w6gw+skR6ltDbLAnwO2u/lLPr2sO21LQh1+CXnIRMinHpG8MZx1?=
+ =?iso-8859-2?Q?nEW0grvYDrKv97xxD7p69ayMEcyrpAYL1KwPs6f5M7syyFwQB7/xxtcCNT?=
+ =?iso-8859-2?Q?/bsNITszdE5LmV4JeNJOTz4Q0PEfx36uLSXyMyFtjPFNGBkZlz8p3TdPCw?=
+ =?iso-8859-2?Q?NApYU7IU7DQCUNCWwTq1UKY0MDBCcvYjDJ7UgtoMKQoco2TX8sgzA5FjR7?=
+ =?iso-8859-2?Q?SgrOJQfMoipCUnG5+xURExhi8TNpm9Z+S69rbDNORhsb9Hr6+i8UutL1JA?=
+ =?iso-8859-2?Q?Pss1pw2Ox+ih9kSrok60aWWMn4ak12yytPJ2u9svnFi1WELcZr1n0R01l9?=
+ =?iso-8859-2?Q?XnnD2imFQ9ZKk3NRZ7QfWKZKYFvSaY3kSTYYzA1hWUX8UIlxDjos+zkgXd?=
+ =?iso-8859-2?Q?Z721P/FFL4iJeooBRjT9HtUIfIpi/w61N4W5e0IT+jxcmFR9qngdP2vG3N?=
+ =?iso-8859-2?Q?yDxarCQayMQDH7FcttW7LnPNiszlNR72jUyLAL94FTnEv7T8009qnZPJyX?=
+ =?iso-8859-2?Q?SU0FdWiZJ3sBv6u9NglxMcudswyLdufcX+a0tlHma2PxWJvNnMf0SvClXe?=
+ =?iso-8859-2?Q?oLPfLaCtYfMPQdHbviakBEL65iMf3lbmRfLDC/MBLawgmYbDOD0oK51Cht?=
+ =?iso-8859-2?Q?js+b1cG4f+9yWC28tIq3s/m6PeCO9CRY9WjaEbJUktLtwUhNZWUYgWkb2U?=
+ =?iso-8859-2?Q?+vNbELTISQ/KeHKGITtUmsnGpUXStXWSvaFx/PEGqrhyBVXmP9hJE6IdJs?=
+ =?iso-8859-2?Q?KWk7i+gfjPJh7oGin0qoJ5q63Di5I0x9zHNNPsbnTu8nHTZOw+WzfjR2Ig?=
+ =?iso-8859-2?Q?IevCIZDu7N6V1fR6+pOn9bUD7grI8lKghyP/ziUA7dM5XzzXJXl8DtW3zc?=
+ =?iso-8859-2?Q?qkJr7ItoFSSv2+kNOA+03nTw0GecoT/x4ETpC+1f8JXgaH5TDc6i+Ouh2O?=
+ =?iso-8859-2?Q?kBCS9BWRtGq0kS3EJlqHYGFkTc/RDazOYHLReoXS0KW9NUw76g5IzbBu5M?=
+ =?iso-8859-2?Q?JL87YPJ5Nn4py0aP4oqbPLjuTfUqatXTGdgy2FgDG+kyfGJZlrTZfKJuw5?=
+ =?iso-8859-2?Q?GFm4WH+0OSWqq4qL8knsiKECPX4NWNXdQ1etGJGCHFqew9wb6pPckPMqV9?=
+ =?iso-8859-2?Q?14QR8ZZS9fvH2tWGG/wOFfCeEu7jKHouX1heuvxBE0pnSzEBGxRrKL/+Ik?=
+ =?iso-8859-2?Q?pq0s5ZoSz6537o1pgzuSprTrALvxluza4vmbWJg2D0vX2jMYP3D39/kesj?=
+ =?iso-8859-2?Q?+LguNMz2DQ2xnIJaGDQufP1KUJSDuUcoqEDnXzZJuzkcfNspQ6PNZI24Rx?=
+ =?iso-8859-2?Q?1C2BpsS4iEpMa7Ab5yKzLyWDDMtUqEqSnFNzFhbMLfzDSUhVU2gogmr8oz?=
+ =?iso-8859-2?Q?A+1/S7/hrAujQl07+mHY4SZsGs4CQzDLN6sd5mU1H1R6kUIJKQ68YbM16N?=
+ =?iso-8859-2?Q?DlCyqmqXDoEEqS6n04RPnZIKOJYWo3OfQWqTTxfCJ/4ywkBhfIdsI0yBK1?=
+ =?iso-8859-2?Q?GE0em/cq9Hlrc=3D?=
+Content-Type: text/plain; charset="iso-8859-2"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BL1PR12MB5144.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d4b40aa3-753f-488e-1215-08de213192e4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Nov 2025 14:49:53.4262
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: +UWf/dYI0w3WKb4fcGJtSH5FXiPAuJpcMfWbfhyLN3SsBFmhHj6n4u4N2adU0+K4dmMYqSb6UrCDOkmV4OPSLA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9147
 
-Move devm_alloc_percpu() and related to devres.h where it belongs,
+[Public]
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- include/linux/device.h        | 18 ------------------
- include/linux/device/devres.h | 17 +++++++++++++++++
- 2 files changed, 17 insertions(+), 18 deletions(-)
+> -----Original Message-----
+> From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Sent: Tuesday, November 11, 2025 7:20 AM
+> To: Corey Minyard <corey@minyard.net>; Koenig, Christian
+> <Christian.Koenig@amd.com>; Dr. David Alan Gilbert <linux@treblig.org>;
+> Deucher, Alexander <Alexander.Deucher@amd.com>; Thomas Zimmermann
+> <tzimmermann@suse.de>; Dmitry Baryshkov
+> <dmitry.baryshkov@oss.qualcomm.com>; Rob Clark
+> <robin.clark@oss.qualcomm.com>; Matthew Brost
+> <matthew.brost@intel.com>; Ulf Hansson <ulf.hansson@linaro.org>; Andy
+> Shevchenko <andriy.shevchenko@linux.intel.com>; Vitaly Lifshits
+> <vitaly.lifshits@intel.com>; Manivannan Sadhasivam <mani@kernel.org>;
+> Niklas Cassel <cassel@kernel.org>; Calvin Owens <calvin@wbinvd.org>; Vadi=
+m
+> Fedorenko <vadim.fedorenko@linux.dev>; Sagi Maimon
+> <maimon.sagi@gmail.com>; Martin K. Petersen
+> <martin.petersen@oracle.com>; Karan Tilak Kumar <kartilak@cisco.com>;
+> Hans Verkuil <hverkuil+cisco@kernel.org>; Casey Schaufler <casey@schaufle=
+r-
+> ca.com>; Steven Rostedt <rostedt@goodmis.org>; Petr Mladek
+> <pmladek@suse.com>; Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>; Max
+> Kellermann <max.kellermann@ionos.com>; linux-doc@vger.kernel.org; linux-
+> kernel@vger.kernel.org; openipmi-developer@lists.sourceforge.net; linux-
+> media@vger.kernel.org; dri-devel@lists.freedesktop.org; linaro-mm-
+> sig@lists.linaro.org; amd-gfx@lists.freedesktop.org; linux-arm-
+> msm@vger.kernel.org; freedreno@lists.freedesktop.org; intel-
+> xe@lists.freedesktop.org; linux-mmc@vger.kernel.org;
+> netdev@vger.kernel.org; intel-wired-lan@lists.osuosl.org; linux-
+> pci@vger.kernel.org; linux-s390@vger.kernel.org; linux-scsi@vger.kernel.o=
+rg;
+> linux-staging@lists.linux.dev; ceph-devel@vger.kernel.org; linux-trace-
+> kernel@vger.kernel.org
+> Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>; Sergey Senozhatsky
+> <senozhatsky@chromium.org>; Jonathan Corbet <corbet@lwn.net>; Sumit
+> Semwal <sumit.semwal@linaro.org>; Gustavo Padovan
+> <gustavo@padovan.org>; David Airlie <airlied@gmail.com>; Simona Vetter
+> <simona@ffwll.ch>; Maarten Lankhorst
+> <maarten.lankhorst@linux.intel.com>; Maxime Ripard <mripard@kernel.org>;
+> Dmitry Baryshkov <lumag@kernel.org>; Abhinav Kumar
+> <abhinav.kumar@linux.dev>; Jessica Zhang <jesszhan0024@gmail.com>; Sean
+> Paul <sean@poorly.run>; Marijn Suijten <marijn.suijten@somainline.org>;
+> Konrad Dybcio <konradybcio@kernel.org>; Lucas De Marchi
+> <lucas.demarchi@intel.com>; Thomas Hellstr=F6m
+> <thomas.hellstrom@linux.intel.com>; Rodrigo Vivi <rodrigo.vivi@intel.com>=
+;
+> Vladimir Oltean <olteanv@gmail.com>; Andrew Lunn <andrew@lunn.ch>;
+> David S. Miller <davem@davemloft.net>; Eric Dumazet
+> <edumazet@google.com>; Jakub Kicinski <kuba@kernel.org>; Paolo Abeni
+> <pabeni@redhat.com>; Tony Nguyen <anthony.l.nguyen@intel.com>;
+> Przemek Kitszel <przemyslaw.kitszel@intel.com>; Krzysztof Wilczy=F1ski
+> <kwilczynski@kernel.org>; Kishon Vijay Abraham I <kishon@kernel.org>;
+> Bjorn Helgaas <bhelgaas@google.com>; Rodolfo Giometti
+> <giometti@enneenne.com>; Richard Cochran <richardcochran@gmail.com>;
+> Jonathan Lemon <jonathan.lemon@gmail.com>; Stefan Haberland
+> <sth@linux.ibm.com>; Jan Hoeppner <hoeppner@linux.ibm.com>; Heiko
+> Carstens <hca@linux.ibm.com>; Vasily Gorbik <gor@linux.ibm.com>;
+> Alexander Gordeev <agordeev@linux.ibm.com>; Christian Borntraeger
+> <borntraeger@linux.ibm.com>; Sven Schnelle <svens@linux.ibm.com>; Satish
+> Kharat <satishkh@cisco.com>; Sesidhar Baddela <sebaddel@cisco.com>;
+> James E.J. Bottomley <James.Bottomley@HansenPartnership.com>; Mauro
+> Carvalho Chehab <mchehab@kernel.org>; Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org>; Xiubo Li <xiubli@redhat.com>; Ilya Dryomov
+> <idryomov@gmail.com>; Masami Hiramatsu <mhiramat@kernel.org>;
+> Mathieu Desnoyers <mathieu.desnoyers@efficios.com>; Andrew Morton
+> <akpm@linux-foundation.org>
+> Subject: [PATCH v2 05/21] drm/amdgpu: Switch to use %ptSp
+>
+> Use %ptSp instead of open coded variants to print content of struct
+> timespec64 in human readable format.
+>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-diff --git a/include/linux/device.h b/include/linux/device.h
-index 0c6377f6631c..0be95294b6e6 100644
---- a/include/linux/device.h
-+++ b/include/linux/device.h
-@@ -281,24 +281,6 @@ int __must_check device_create_bin_file(struct device *dev,
- void device_remove_bin_file(struct device *dev,
- 			    const struct bin_attribute *attr);
- 
--/**
-- * devm_alloc_percpu - Resource-managed alloc_percpu
-- * @dev: Device to allocate per-cpu memory for
-- * @type: Type to allocate per-cpu memory for
-- *
-- * Managed alloc_percpu. Per-cpu memory allocated with this function is
-- * automatically freed on driver detach.
-- *
-- * RETURNS:
-- * Pointer to allocated memory on success, NULL on failure.
-- */
--#define devm_alloc_percpu(dev, type)      \
--	((typeof(type) __percpu *)__devm_alloc_percpu((dev), sizeof(type), \
--						      __alignof__(type)))
--
--void __percpu *__devm_alloc_percpu(struct device *dev, size_t size,
--				   size_t align);
--
- struct device_dma_parameters {
- 	/*
- 	 * a low level driver may set these to teach IOMMU code about
-diff --git a/include/linux/device/devres.h b/include/linux/device/devres.h
-index 8c5f57e0d613..9c1e3d643d69 100644
---- a/include/linux/device/devres.h
-+++ b/include/linux/device/devres.h
-@@ -9,6 +9,7 @@
- #include <linux/stdarg.h>
- #include <linux/types.h>
- #include <asm/bug.h>
-+#include <asm/percpu.h>
- 
- struct device;
- struct device_node;
-@@ -96,6 +97,22 @@ devm_kvasprintf(struct device *dev, gfp_t gfp, const char *fmt, va_list ap);
- char * __printf(3, 4) __malloc
- devm_kasprintf(struct device *dev, gfp_t gfp, const char *fmt, ...);
- 
-+/**
-+ * devm_alloc_percpu - Resource-managed alloc_percpu
-+ * @dev: Device to allocate per-cpu memory for
-+ * @type: Type to allocate per-cpu memory for
-+ *
-+ * Managed alloc_percpu. Per-cpu memory allocated with this function is
-+ * automatically freed on driver detach.
-+ *
-+ * RETURNS:
-+ * Pointer to allocated memory on success, NULL on failure.
-+ */
-+#define devm_alloc_percpu(dev, type)      \
-+	((typeof(type) __percpu *)__devm_alloc_percpu((dev), sizeof(type), __alignof__(type)))
-+
-+void __percpu *__devm_alloc_percpu(struct device *dev, size_t size, size_t align);
-+
- unsigned long devm_get_free_pages(struct device *dev, gfp_t gfp_mask, unsigned int order);
- void devm_free_pages(struct device *dev, unsigned long addr);
- 
--- 
-2.50.1
+Acked-by: Alex Deucher <alexander.deucher@amd.com>
+
+> ---
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_dev_coredump.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_dev_coredump.c
+> b/drivers/gpu/drm/amd/amdgpu/amdgpu_dev_coredump.c
+> index 8a026bc9ea44..4e2fe6674db8 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_dev_coredump.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_dev_coredump.c
+> @@ -217,8 +217,7 @@ amdgpu_devcoredump_read(char *buffer, loff_t
+> offset, size_t count,
+>       drm_printf(&p, "version: " AMDGPU_COREDUMP_VERSION "\n");
+>       drm_printf(&p, "kernel: " UTS_RELEASE "\n");
+>       drm_printf(&p, "module: " KBUILD_MODNAME "\n");
+> -     drm_printf(&p, "time: %lld.%09ld\n", coredump->reset_time.tv_sec,
+> -                coredump->reset_time.tv_nsec);
+> +     drm_printf(&p, "time: %ptSp\n", &coredump->reset_time);
+>
+>       if (coredump->reset_task_info.task.pid)
+>               drm_printf(&p, "process_name: %s PID: %d\n",
+> --
+> 2.50.1
 
 
