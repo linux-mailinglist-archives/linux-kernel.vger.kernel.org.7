@@ -1,111 +1,206 @@
-Return-Path: <linux-kernel+bounces-895751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A486C4ED1B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:40:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 65F11C4ED27
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:41:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 734873BDB33
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 15:37:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23E853BE251
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 15:38:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C280E36657F;
-	Tue, 11 Nov 2025 15:36:52 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C501366547;
+	Tue, 11 Nov 2025 15:37:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="AH/sxwr+"
+Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6A40366560;
-	Tue, 11 Nov 2025 15:36:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A40B303A08
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 15:37:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762875411; cv=none; b=G9ZhbG9eK0Lbxg1KAeQ9foZfdBvkqQJ/tLJpTz3LQFqUpzjd4jOfoRl8ZTxeWnGnZgi0Y/0djLzB0RsQp77QKpdPmsQNbWCr5QfUkeJC08KtawAJ/7dyhfp2T1tqHydRKWOlgyYs9BrQCJuN1IePQMm5Z2gzqkzL9PCD9Gk1f7U=
+	t=1762875478; cv=none; b=JOPwp+NBYRcPGTfJTmiRORsfrRa1f9iPwlUno4rRBF5xL/xzS8gZV+fwTeKab95gVxUX512K/0Bs8lBFr8aUfrzO0wZogYzNnDH3mpr+1SifQnxv7FUQay5NMMiXwQPdmOloB1smMuOysciJqCbeN4+5fje3TazppcWw0zF+TO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762875411; c=relaxed/simple;
-	bh=oRo8XMvH7Pu2q88qkH8f1jma9N+uA/qxX+1TD2qlLDU=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KeAfQkst51xC5ZRa+MIBWpvbCQ1eW/kM0CnvPXJegY9auqYJBMTkR8Bka36+4uzRyzFZHZ7DLGQ+TA41VgUnv/hQmGHAtSVu2TuQvspAloZA4KIFCcpTrbmLyfjpN4DoMIrMTmCQXfslG7Ua55pgEOvxlRZvhTHB7eQMZ9mjurc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4d5Vxm69vGzHnH6b;
-	Tue, 11 Nov 2025 23:36:28 +0800 (CST)
-Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
-	by mail.maildlp.com (Postfix) with ESMTPS id 33E43140370;
-	Tue, 11 Nov 2025 23:36:46 +0800 (CST)
-Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
- (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.36; Tue, 11 Nov
- 2025 15:36:45 +0000
-Date: Tue, 11 Nov 2025 15:36:44 +0000
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Robert Richter <rrichter@amd.com>
-CC: Alison Schofield <alison.schofield@intel.com>, Vishal Verma
-	<vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan Williams
-	<dan.j.williams@intel.com>, Dave Jiang <dave.jiang@intel.com>, "Davidlohr
- Bueso" <dave@stgolabs.net>, <linux-cxl@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Gregory Price <gourry@gourry.net>, "Fabio M.
- De Francesco" <fabio.m.de.francesco@linux.intel.com>, Terry Bowman
-	<terry.bowman@amd.com>, Joshua Hahn <joshua.hahnjy@gmail.com>
-Subject: Re: [PATCH v4 14/14] cxl/region: Remove local variable @inc in
- cxl_port_setup_targets()
-Message-ID: <20251111153644.000065bd@huawei.com>
-In-Reply-To: <20251103184804.509762-15-rrichter@amd.com>
-References: <20251103184804.509762-1-rrichter@amd.com>
-	<20251103184804.509762-15-rrichter@amd.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1762875478; c=relaxed/simple;
+	bh=tlRn2Zr6waGfESp+v75z26Egg0nYRqY7h018d106ygY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pxnPkHcMRJnOSptYmCB5TSC36ShnA4uXrsaXgFqHgNTzotKMXjN7ZskA0UMA4A9+qlX3dzzaiG7SAlrhNSpR3kkx6r8P3Lj6P/NWqExshC0lsx4lbB5Tfkt8AvH/EBkIdiwp99dUAXFbgittT6FjojhsCTqwKCqWaZ+fv/W6rg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=AH/sxwr+; arc=none smtp.client-ip=91.218.175.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <b4d1988f-59ba-40a2-8d73-34fdecb4ff3f@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1762875464;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bmRvIZCuGTuDP1eUFzMKvlZSU2aU2eVTuu31lnKyx8g=;
+	b=AH/sxwr+BhLhqvyddla32yy/t/eDL9n80VI/XrOzQwOfxg+iZE9RiJA18GR6bdPtf3Fmyu
+	TF08d+p3K/7G80I7IYWOUMVKRcyM2M6jra17u9yL3CS25PzPVzVewRgVD7Qr+nyf0+czn6
+	Vi8yuw7WJ4hX+ldWR87emuQcXDpW4Cw=
+Date: Tue, 11 Nov 2025 07:37:32 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500012.china.huawei.com (7.191.174.4) To
- dubpeml100005.china.huawei.com (7.214.146.113)
+Subject: Re: [PATCH][next] RDMA/rxe: Avoid -Wflex-array-member-not-at-end
+ warnings
+To: Leon Romanovsky <leon@kernel.org>,
+ "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Zhu Yanjun <zyjzyj2000@gmail.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+ linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org
+References: <aRKu5lNV04Sq82IG@kspp> <20251111115621.GO15456@unreal>
+ <a9e5156b-2279-4ddd-992c-ca8ca7ab218a@embeddedor.com>
+ <20251111141945.GQ15456@unreal>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Zhu Yanjun <yanjun.zhu@linux.dev>
+In-Reply-To: <20251111141945.GQ15456@unreal>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, 3 Nov 2025 19:47:55 +0100
-Robert Richter <rrichter@amd.com> wrote:
 
-> Simplify the code by removing local variable @inc. The variable is not
-> used elsewhere, remove it and directly increment the target number.
-> 
-> Signed-off-by: Robert Richter <rrichter@amd.com>
-Hmm. I wonder what the thought process behind this once was? Ah well
-clearly not needed now and I can't be bothered to do the archeology /
-have too much other stuff to review!
+在 2025/11/11 6:19, Leon Romanovsky 写道:
+> On Tue, Nov 11, 2025 at 09:14:05PM +0900, Gustavo A. R. Silva wrote:
+>>
+>> On 11/11/25 20:56, Leon Romanovsky wrote:
+>>> On Tue, Nov 11, 2025 at 12:35:02PM +0900, Gustavo A. R. Silva wrote:
+>>>> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+>>>> getting ready to enable it, globally.
+>>>>
+>>>> Use the new TRAILING_OVERLAP() helper to fix the following warning:
+>>>>
+>>>> 21 drivers/infiniband/sw/rxe/rxe_verbs.h:271:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+>>>>
+>>>> This helper creates a union between a flexible-array member (FAM) and a
+>>>> set of MEMBERS that would otherwise follow it.
+>>>>
+>>>> This overlays the trailing MEMBER struct ib_sge sge[RXE_MAX_SGE]; onto
+>>>> the FAM struct rxe_recv_wqe::dma.sge, while keeping the FAM and the
+>>>> start of MEMBER aligned.
+>>>>
+>>>> The static_assert() ensures this alignment remains, and it's
+>>>> intentionally placed inmediately after the related structure --no
+>>>> blank line in between.
+>>>>
+>>>> Lastly, move the conflicting declaration struct rxe_resp_info resp;
+>>>> to the end of the corresponding structure.
+>>>>
+>>>> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+>>>> ---
+>>>>    drivers/infiniband/sw/rxe/rxe_verbs.h | 18 +++++++++++-------
+>>>>    1 file changed, 11 insertions(+), 7 deletions(-)
+>>>>
+>>>> diff --git a/drivers/infiniband/sw/rxe/rxe_verbs.h b/drivers/infiniband/sw/rxe/rxe_verbs.h
+>>>> index fd48075810dd..6498d61e8956 100644
+>>>> --- a/drivers/infiniband/sw/rxe/rxe_verbs.h
+>>>> +++ b/drivers/infiniband/sw/rxe/rxe_verbs.h
+>>>> @@ -219,12 +219,6 @@ struct rxe_resp_info {
+>>>>    	u32			rkey;
+>>>>    	u32			length;
+>>>> -	/* SRQ only */
+>>>> -	struct {
+>>>> -		struct rxe_recv_wqe	wqe;
+>>>> -		struct ib_sge		sge[RXE_MAX_SGE];
+>>>> -	} srq_wqe;
+>>>> -
+>>>>    	/* Responder resources. It's a circular list where the oldest
+>>>>    	 * resource is dropped first.
+>>>>    	 */
+>>>> @@ -232,7 +226,15 @@ struct rxe_resp_info {
+>>>>    	unsigned int		res_head;
+>>>>    	unsigned int		res_tail;
+>>>>    	struct resp_res		*res;
+>>>> +
+>>>> +	/* SRQ only */
+>>>> +	/* Must be last as it ends in a flexible-array member. */
+>>>> +	TRAILING_OVERLAP(struct rxe_recv_wqe, wqe, dma.sge,
+>>>> +		struct ib_sge		sge[RXE_MAX_SGE];
+>>>> +	) srq_wqe;
+>>> Will this change be enough?
+>>>
+>>> diff --git a/drivers/infiniband/sw/rxe/rxe_verbs.h b/drivers/infiniband/sw/rxe/rxe_verbs.h
+>>> index fd48075810dd..9ab11421a585 100644
+>>> --- a/drivers/infiniband/sw/rxe/rxe_verbs.h
+>>> +++ b/drivers/infiniband/sw/rxe/rxe_verbs.h
+>>> @@ -219,12 +219,6 @@ struct rxe_resp_info {
+>>>           u32                     rkey;
+>>>           u32                     length;
+>>> -       /* SRQ only */
+>>> -       struct {
+>>> -               struct rxe_recv_wqe     wqe;
+>>> -               struct ib_sge           sge[RXE_MAX_SGE];
+>>> -       } srq_wqe;
+>>> -
+>>>           /* Responder resources. It's a circular list where the oldest
+>>>            * resource is dropped first.
+>>>            */
+>>> @@ -232,6 +226,12 @@ struct rxe_resp_info {
+>>>           unsigned int            res_head;
+>>>           unsigned int            res_tail;
+>>>           struct resp_res         *res;
+>>> +
+>>> +       /* SRQ only */
+>>> +       struct {
+>>> +               struct ib_sge           sge[RXE_MAX_SGE];
+>>> +               struct rxe_recv_wqe     wqe;
+>>> +       } srq_wqe;
+>>>    };
+>> The question is if this is really what you want?
+>>
+>> sge[RXE_MAX_SGE] is of the following type:
+>>
+>> struct ib_sge {
+>>          u64     addr;
+>>          u32     length;
+>>          u32     lkey;
+>> };
+>>
+>> and struct rxe_recv_wqe::dma.sge[] is of type:
+>>
+>> struct rxe_sge {
+>>          __aligned_u64 addr;
+>>          __u32   length;
+>>          __u32   lkey;
+>> };
+>>
+>> Both types are basically the same, and the original code looks
+>> pretty much like what people do when they want to pre-allocate
+>> a number of elements (of the same element type as the flex array)
+>> for a flexible-array member.
+>>
+>> Based on the above, the change you suggest seems a bit suspicious,
+>> and I'm not sure that's actually what you want?
+> You wrote about this error: "warning: structure containing a flexible array
+> member is not at the end of another structure".
+>
+> My suggestion was simply to move that flex array to be the last element
+> and save us from the need to have some complex, magic macro in RXE.
 
-Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+Thanks, I agree with this approach. The macro is rather complicated, and 
+this solution fixes the problem in a straightforward way.
 
-> ---
->  drivers/cxl/core/region.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
-> index dec003084521..a81fbe9cedae 100644
-> --- a/drivers/cxl/core/region.c
-> +++ b/drivers/cxl/core/region.c
-> @@ -1332,7 +1332,7 @@ static int cxl_port_setup_targets(struct cxl_port *port,
->  				  struct cxl_endpoint_decoder *cxled)
->  {
->  	struct cxl_root_decoder *cxlrd = cxlr->cxlrd;
-> -	int parent_iw, parent_ig, ig, iw, rc, inc = 0, pos = cxled->pos;
-> +	int parent_iw, parent_ig, ig, iw, rc, pos = cxled->pos;
->  	struct cxl_port *parent_port = to_cxl_port(port->dev.parent);
->  	struct cxl_region_ref *cxl_rr = cxl_rr_load(port, cxlr);
->  	struct cxl_memdev *cxlmd = cxled_to_memdev(cxled);
-> @@ -1524,9 +1524,8 @@ static int cxl_port_setup_targets(struct cxl_port *port,
->  		cxlsd->target[cxl_rr->nr_targets_set] = ep->dport;
->  		cxlsd->cxld.target_map[cxl_rr->nr_targets_set] = ep->dport->port_id;
->  	}
-> -	inc = 1;
-> +	cxl_rr->nr_targets_set++;
->  out_target_set:
-> -	cxl_rr->nr_targets_set += inc;
->  	dev_dbg(&cxlr->dev, "%s:%s target[%d] = %s for %s:%s @ %d\n",
->  		dev_name(port->uport_dev), dev_name(&port->dev),
->  		cxl_rr->nr_targets_set - 1, dev_name(ep->dport->dport_dev),
+Yanjun.Zhu
+
+>
+> Thanks
+>
+>> Thanks
+>> -Gustavo
+>>
+>>
+>>
+>>
+>>
+-- 
+Best Regards,
+Yanjun.Zhu
 
 
