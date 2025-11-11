@@ -1,118 +1,190 @@
-Return-Path: <linux-kernel+bounces-894468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D664C4AF8F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 02:51:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9370FC4AE1D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 02:47:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72E1E3BCA22
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 01:43:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EA693B9B58
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 01:34:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB4F62FD7D0;
-	Tue, 11 Nov 2025 01:38:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3C12334C20;
+	Tue, 11 Nov 2025 01:29:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Y8HyvojN"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="X4TlHS5+"
+Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5AC82F656B;
-	Tue, 11 Nov 2025 01:38:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A6AE2BE7B8
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 01:29:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762825097; cv=none; b=RB/d4RIQjscJXszFbzcK/2r2qJIiLWPpW8LIZk/Iv9K3/WS34ahWk0GNAhJwHMi6ff6oYD2X3yFepm47ePnTF5oDIWi/wKAJZ2veYRyGFOcS+nyARQV7Ncx5etVOUKaENYSWxaV+PZndxnrddUM35Vvjcbl+U2YLsN4dh1Ui/zE=
+	t=1762824548; cv=none; b=o/gWL/95L5ooEgCePO9AHZAJndq2fjcpKMOyEv2ZPK8G60UsIVdIpwAODTO3X4LTxUWT1+RJYnuEsSutqbcpG3EccMObwY7noFiGod5/yqMNm7fYK2DlCUW72CXOrTtNUtkp8kjSteJ93hHCg0ecTA5OfJdMixRIRptS6yifdHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762825097; c=relaxed/simple;
-	bh=Enplq6FoC/aSX02Ph3h9IHJ410hCGHU+sJFbXCZOcXo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SC+JgZjrpkk2n8WkVy4GmJIgLcinmWcPDLomLZLPQkD6hR7Cts9SxiNFnNTUHsQG7G4HaE9dsLROAC+KRUxmUFCkwlQ/mqJe7gISGS4bPgX+6K1CUXiA3lrPr2MfmPexGHI2SeRmRwk/ldy+edAX43EQ3UlEZNKIQisWg7kHIBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Y8HyvojN; arc=none smtp.client-ip=117.135.210.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=aN
-	BX9NEEMgRbUzZGrmxI1h1qShk0I+ZbWYOrtv746pU=; b=Y8HyvojN3l2zcvA92I
-	eoLe2Ar669/ACFcE6UrssWyKLdvMM5qJTDQnMQauTD4qvr3zV44JDYeRD/Wmu+eg
-	CPdClW+IDPT42Af8tgOvWctIKeSprduIJ5Z0XxxjEXC2fv/fOahPRb1qq1S6QpJO
-	A2PU7hjvP7sLdEqSrvcDq9pV8=
-Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g1-1 (Coremail) with SMTP id _____wA38ZsLkRJp47bnCQ--.61S2;
-	Tue, 11 Nov 2025 09:27:42 +0800 (CST)
-From: ccc194101@163.com
-To: stern@rowland.harvard.edu,
-	benjamin.tissoires@redhat.com
-Cc: gregkh@linuxfoundation.org,
-	linux-usb@vger.kernel.org,
-	usb-storage@lists.one-eyed-alien.net,
-	linux-kernel@vger.kernel.org,
-	Chen Changcheng <chenchangcheng@kylinos.cn>
-Subject: [PATCH v2] usb: usb-storage: No additional quirks need to be added to the ECD819-SU3 optical drive.
-Date: Tue, 11 Nov 2025 09:27:37 +0800
-Message-Id: <20251111012737.13662-1-ccc194101@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1762824548; c=relaxed/simple;
+	bh=JniPNzR2zrzCfTZJfDvwxJryTw6qwXKnH7duhMCvPKI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UFagqJE4Z7SSH0pi/0GQdGW/Qgi2XFEkQ2BtBu+/iLURK+Jq/ZA3X+T3M0psHlnUf9lQw7k74zayFaJaGXmCIzKxZI/FkLzLprWVuICSCw4UyuMXlVDo1aTW5kJFOlyka5FnwE2YmrCuCC8rjYTcCkfCDqzweFK4G1AXe1vE/Rs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=X4TlHS5+; arc=none smtp.client-ip=95.215.58.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1762824534;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jkCMn6326n5t3YdXIXOy3mMQo+0cpCyiOzgcX5JM5n4=;
+	b=X4TlHS5+5+xX48of/7wvV+4pRZbxJ6vbhmMX8oHZjqDozXm4cUR5/ieDih6LJeK7X4K+/r
+	fKx0kjVXNlgxsIxhATRBHjECnDn/V3065eVGpNu0DDq4ilwNkir6lyWYNoaZ2nnLdHBwJO
+	Ob2bzVZl7fQIwwNUj9uuHfFLyods9Ms=
+From: Menglong Dong <menglong.dong@linux.dev>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: sjenning@redhat.com, Peter Zijlstra <peterz@infradead.org>,
+ Menglong Dong <menglong8.dong@gmail.com>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>,
+ Eduard <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, "David S. Miller" <davem@davemloft.net>,
+ David Ahern <dsahern@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, X86 ML <x86@kernel.org>,
+ "H. Peter Anvin" <hpa@zytor.com>, jiang.biao@linux.dev,
+ bpf <bpf@vger.kernel.org>, Network Development <netdev@vger.kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH bpf-next] bpf,x86: do RSB balance for trampoline
+Date: Tue, 11 Nov 2025 09:28:11 +0800
+Message-ID: <5025905.GXAFRqVoOG@7950hx>
+In-Reply-To:
+ <CAADnVQKQ2Pqhb9wNjRuEP5AoGc6-MfLhQLD++gQPf3VB_rV+fQ@mail.gmail.com>
+References:
+ <20251104104913.689439-1-dongml2@chinatelecom.cn>
+ <13884259.uLZWGnKmhe@7950hx>
+ <CAADnVQKQ2Pqhb9wNjRuEP5AoGc6-MfLhQLD++gQPf3VB_rV+fQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wA38ZsLkRJp47bnCQ--.61S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7Zw1UurW8Xr4fZF47GF48Zwb_yoW8Kw15pr
-	WUJ3yDCrZ5GF1Sgwn7tFWUuFyft3WDAF48CayUGw45Xrn0y3WktryDAa48J3srCw43ZF12
-	gayqyry8KFy8GaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j2eHDUUUUU=
-X-CM-SenderInfo: 5fffimiurqiqqrwthudrp/xtbC0A5GJWkSkQ5eLAAA3r
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-Migadu-Flow: FLOW_OUT
 
-From: Chen Changcheng <chenchangcheng@kylinos.cn>
+On 2025/11/11 00:32, Alexei Starovoitov wrote:
+> On Mon, Nov 10, 2025 at 3:43=E2=80=AFAM Menglong Dong <menglong.dong@linu=
+x.dev> wrote:
+> >
+> >
+> > Do you think if it is worth to implement the livepatch with
+> > bpf trampoline by introduce the CONFIG_LIVEPATCH_BPF?
+> > It's easy to achieve it, I have a POC for it, and the performance
+> > of the livepatch increase from 99M/s to 200M/s according to
+> > my bench testing.
+>=20
+> what do you mean exactly?
 
-The optical drive of ECD819-SU3 has the same vid and pid as INIC-3069,
-as follows:
-T:  Bus=02 Lev=02 Prnt=02 Port=01 Cnt=01 Dev#=  3 Spd=5000 MxCh= 0
-D:  Ver= 3.00 Cls=00(>ifc ) Sub=00 Prot=00 MxPS= 9 #Cfgs=  1
-P:  Vendor=13fd ProdID=3940 Rev= 3.10
-S:  Manufacturer=HL-DT-ST
-S:  Product= DVD+-RW GT80N
-S:  SerialNumber=423349524E4E38303338323439202020
-C:* #Ifs= 1 Cfg#= 1 Atr=80 MxPwr=144mA
-I:* If#= 0 Alt= 0 #EPs= 2 Cls=08(stor.) Sub=02 Prot=50 Driver=usb-storage
-E:  Ad=83(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E:  Ad=0a(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
+This is totally another thing, and we can talk about it later. Let
+me have a simple describe here.
 
-This will result in the optical drive device also adding
-the quirks of US_FL_NO_ATA_1X. When performing an erase operation,
-it will fail, and the reason for the failure is as follows:
-[  388.967742] sr 5:0:0:0: [sr0] tag#0 Send: scmd 0x00000000d20c33a7
-[  388.967742] sr 5:0:0:0: [sr0] tag#0 CDB: ATA command pass through(12)/Blank a1 11 00 00 00 00 00 00 00 00 00 00
-[  388.967773] sr 5:0:0:0: [sr0] tag#0 Done: SUCCESS Result: hostbyte=DID_TARGET_FAILURE driverbyte=DRIVER_OK cmd_age=0s
-[  388.967773] sr 5:0:0:0: [sr0] tag#0 CDB: ATA command pass through(12)/Blank a1 11 00 00 00 00 00 00 00 00 00 00
-[  388.967803] sr 5:0:0:0: [sr0] tag#0 Sense Key : Illegal Request [current]
-[  388.967803] sr 5:0:0:0: [sr0] tag#0 Add. Sense: Invalid field in cdb
-[  388.967803] sr 5:0:0:0: [sr0] tag#0 scsi host busy 1 failed 0
-[  388.967803] sr 5:0:0:0: Notifying upper driver of completion (result 8100002)
-[  388.967834] sr 5:0:0:0: [sr0] tag#0 0 sectors total, 0 bytes done.
+I mean to implement the livepatch by bpf trampoline. For now,
+the livepatch is implemented with ftrace, which will break the
+RSB and has more overhead in x86_64.
 
-Signed-off-by: Chen Changcheng <chenchangcheng@kylinos.cn>
----
- drivers/usb/storage/unusual_uas.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+It can be easily implemented by replace the "origin_call" with the
+address that livepatch offered.
 
-diff --git a/drivers/usb/storage/unusual_uas.h b/drivers/usb/storage/unusual_uas.h
-index 1477e31d7763..352e9d7324a4 100644
---- a/drivers/usb/storage/unusual_uas.h
-+++ b/drivers/usb/storage/unusual_uas.h
-@@ -98,7 +98,7 @@ UNUSUAL_DEV(0x125f, 0xa94a, 0x0160, 0x0160,
- 		US_FL_NO_ATA_1X),
- 
- /* Reported-by: Benjamin Tissoires <benjamin.tissoires@redhat.com> */
--UNUSUAL_DEV(0x13fd, 0x3940, 0x0000, 0x9999,
-+UNUSUAL_DEV(0x13fd, 0x3940, 0x0209, 0x0209,
- 		"Initio Corporation",
- 		"INIC-3069",
- 		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
+> I don't want to add more complexity to bpf trampoline.
 
-base-commit: e9a6fb0bcdd7609be6969112f3fbfcce3b1d4a7c
--- 
-2.25.1
+If you mean the arch-specification, it won't add the complexity.
+Otherwise, it can make it a little more simple in x86_64 with following
+patch:
+
+=2D-- a/arch/x86/net/bpf_jit_comp.c
++++ b/arch/x86/net/bpf_jit_comp.c
+@@ -3176,7 +3176,7 @@ static int __arch_prepare_bpf_trampoline(struct bpf_t=
+ramp_image *im, void *rw_im
+ 					 void *rw_image_end, void *image,
+ 					 const struct btf_func_model *m, u32 flags,
+ 					 struct bpf_tramp_links *tlinks,
+=2D					 void *func_addr)
++					 void *func_addr, void *origin_call_param)
+ {
+ 	int i, ret, nr_regs =3D m->nr_args, stack_size =3D 0;
+ 	int regs_off, nregs_off, ip_off, run_ctx_off, arg_stack_off, rbx_off;
+@@ -3280,6 +3280,7 @@ static int __arch_prepare_bpf_trampoline(struct bpf_t=
+ramp_image *im, void *rw_im
+ 			orig_call +=3D ENDBR_INSN_SIZE;
+ 		orig_call +=3D X86_PATCH_SIZE;
+ 	}
++	orig_call =3D origin_call_param ?: orig_call;
+=20
+ 	prog =3D rw_image;
+=20
+@@ -3369,15 +3370,10 @@ static int __arch_prepare_bpf_trampoline(struct bpf=
+_tramp_image *im, void *rw_im
+ 			LOAD_TRAMP_TAIL_CALL_CNT_PTR(stack_size);
+ 		}
+=20
+=2D		if (flags & BPF_TRAMP_F_ORIG_STACK) {
+=2D			emit_ldx(&prog, BPF_DW, BPF_REG_6, BPF_REG_FP, 8);
+=2D			EMIT2(0xff, 0xd3); /* call *rbx */
+=2D		} else {
+=2D			/* call original function */
+=2D			if (emit_rsb_call(&prog, orig_call, image + (prog - (u8 *)rw_image)))=
+ {
+=2D				ret =3D -EINVAL;
+=2D				goto cleanup;
+=2D			}
++		/* call original function */
++		if (emit_rsb_call(&prog, orig_call, image + (prog - (u8 *)rw_image))) {
++			ret =3D -EINVAL;
++			goto cleanup;
+ 		}
+ 		/* remember return value in a stack for bpf prog to access */
+ 		emit_stx(&prog, BPF_DW, BPF_REG_FP, BPF_REG_0, -8);
+
+> Improve current livepatching logic ? jmp vs call isn't special.
+
+Some kind. According to my testing, the performance of bpf
+trampoline is much better than ftrace trampoline, so if we
+can implement it with bpf trampoline, the performance can be
+improved. Of course, the bpf trampoline need to offer a API
+to the livepatch for this propose.
+
+Any way, let me finish the work in this patch first. After that,
+I can send a RFC of the proposal.
+
+Thanks!
+Menglong Dong
+
+>=20
+> > The results above is tested with return-trunk disabled. With the
+> > return-trunk enabled, the performance decrease from 58M/s to
+> > 52M/s. The main performance improvement comes from the RSB,
+> > and the return-trunk will always break the RSB, which makes it has
+> > no improvement. The calling to per-cpu-ref get and put make
+> > the bpf trampoline based livepatch has a worse performance
+> > than ftrace based.
+> >
+> > Thanks!
+> > Menglong Dong
+> >
+> > >
+> >
+> >
+> >
+> >
+>=20
+>=20
+
+
+
 
 
