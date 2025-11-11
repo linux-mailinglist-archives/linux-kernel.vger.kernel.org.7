@@ -1,171 +1,98 @@
-Return-Path: <linux-kernel+bounces-894623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90461C4B6CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 05:11:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62EFAC4B708
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 05:15:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0204A4F5127
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 04:09:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 765283BAB2F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 04:09:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3021434C83A;
-	Tue, 11 Nov 2025 04:07:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EA6134CFA7;
+	Tue, 11 Nov 2025 04:08:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zCjZOCu0"
-Received: from mail-yx1-f44.google.com (mail-yx1-f44.google.com [74.125.224.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="XKCQsOF0"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6941526F29F
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 04:07:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F30223148D8;
+	Tue, 11 Nov 2025 04:08:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762834073; cv=none; b=B3ZOolWLy7t9YLGwhp9vKHE51Kx34wY2ImfnER/yvHCrs9YFHnPzoNSBA8OrCF3nYM3sBYKYkHto2mEB3Nf4M6OIxiunfPWFjEVjUKRYFX8DuhRrQnkmferRbP1f1XjDVDQnPLaBCx+2EcHNdd3uw3t5kY6XQAIKI9ubbgl9Wb4=
+	t=1762834084; cv=none; b=epAMzLTAHtHpmxd/FsSjHAglZ+iTHaFF7fEr5RvLub5IC4peJR5mmas5v53C4R7jcjWLSOtxuG1NwTm/HSwtphgdGVCOR0tgoboXBVoCE330SuN24CjXzV/qOciJ+p4UQyTfUv0wjz41eGfuobO5YeGUz/sqppoLdhBHNNe7F24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762834073; c=relaxed/simple;
-	bh=sDNd3xKtQvuFQAbxJpzalFUBsuOA54Wttu1ZWggpyB4=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=XnYc95nbJqz8YWnrCPeWemL0ZUH2uBLrz6BZAmUTQ/7zNX4s2R1dLt3tcFmoAiM5CjiAbhvLe/upBZEn6HTtXPorKPafyKJ5uCzgLfcfKMkPK++IanNPOYc8fOIwNCaoAvsS6jp2vdiMWi60HVoa4ZaZpjhtA09SUn/yV/Sa4IU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zCjZOCu0; arc=none smtp.client-ip=74.125.224.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yx1-f44.google.com with SMTP id 956f58d0204a3-63f9beb27b9so3329307d50.1
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 20:07:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762834070; x=1763438870; darn=vger.kernel.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=tQtvX2XQ8t15gjBEKpXNNs3ZpjZjdksPbAQ0ahr9C3A=;
-        b=zCjZOCu0BeaWv5mb2hY4SDz/t/r4SViDFuaciRkffcF0F/xBEeI/T3/p/dEew7Yt7s
-         kO7tISPHZT4t0insBD2ax0ZrTu4EFmGMp+tI8kx8EsxldNoE5ozgxQUndJBQ/SAYuyrj
-         6DAGXYBXWTlqfKcGb6xdEtFUARPosxO6VWBu839ymHxPQjg4Tp50Yn9TCsrE6lNQ5fjQ
-         pN6DmgNoDU3YIF518O4A9B0KBp+stmwFhyUQOrmGpOBihtWOfsutNF+oHmBLmVvqZEVt
-         IwR0ZfkDT879st2KmK5QYHt/npvji/lpm3/mq8mJqXO0nZ4t+j4cBUIAN5YB+mDPuKZn
-         /6hw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762834070; x=1763438870;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tQtvX2XQ8t15gjBEKpXNNs3ZpjZjdksPbAQ0ahr9C3A=;
-        b=MJRZs+LQB/ofPli0XFfPUiMMNfQ71Hdp3czYpqPJrLZGzjSnsO0eVWcExmH/bJuJG/
-         l6ZWbPcwpE6YMFHFypZx4sECe4QW/3azmAnyRdZ2EnCjALAtaAqZPNwrZvgBCratF8NQ
-         C1dMyUJTBypBlINSZ5hTjof6IFJ0w2keiNuagCUjfAWfC9GHVKpBLsSBx0JsR9fNcZhp
-         OzhxPbVUElfuhhsQ2/AlqtrwM45WyPV3kTPJnCWWumFQvqbFes8lYPBhFODGnvpLNccY
-         zockwF2PHhR2acbPVEc2Ud+OTHmh6v+txbvdHlUFKRP4wEHhKVE8tLFE7M2u7QsIWG/g
-         Bb5A==
-X-Forwarded-Encrypted: i=1; AJvYcCWkOeOt0QiZ4Rb++nGYUMdIr0/faKN15UXgSN7af1mYDluc8+jQN8h8ta+q/pf+1HBgZrEONDfXSwDvv4I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKj+hkO5gyAphAte+k6IyzyLIKhA88kqkp8OuImpZMptH88r1G
-	SbGIu9euXNTlZDNut/xj4E8IyVZ9kwV3DO/C1pvo03Yu5kfkBCw3k16m5W2CdcxyLA==
-X-Gm-Gg: ASbGncvuXpW+QOcUBEL8k+gYv1lJ8s3L1e2etUMtHbDYDA0HmHAQ4rcbGyepj1NaIsi
-	aBzD374OHAJhpM34Nk35Uyan16LQ6om0+5C7HlrO+Uy21o+P22GXowtFTVlGAawoZ3d+t3uWkfI
-	g0EWz+6HGGivsERVf0A7SHl9ngTDB78m2IgqWR13WycE7jL5FubRyFLUfwaXOZ+PjNCI51iRmu6
-	luF99R9kYzIWxoNmvB6UVGsQnhxE85OOvPzumne06Rp61hMPWVtXuMt6dvtUxc76JkuDpFmXe7R
-	0/RfGBEgZHRHOsXLGKWs7rIzFvvJ8VcTxYRa4LUjo2vh/sltjkshN6wrQJDAoueHF3gHhtS4XJH
-	7q9Iqoxi5dX+iaMEyiw4ng3IMfvj0lYWL9AJRTwwyOeSBu9PMm/r3BPrgVecuvinAGLJBjJEwd5
-	xxU2ctgJjxy3JFX52aiCwccVaI53D6TlIFeSqeT328bGfF3D0YRlNmlrg1s+d2BnSqDtI4PHwPP
-	dPFAU+jrg==
-X-Google-Smtp-Source: AGHT+IHG/jZ//4QM4bUIX92EmnHpoMxramdxwXCxkW843uk4feMGQ0nNfJGMFAqbmmzMPaRjaD7rEg==
-X-Received: by 2002:a05:690e:d47:b0:640:e6aa:b2bf with SMTP id 956f58d0204a3-640e6aab4e1mr5979840d50.43.1762834070176;
-        Mon, 10 Nov 2025 20:07:50 -0800 (PST)
-Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-640d2d68bf0sm3436465d50.11.2025.11.10.20.07.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Nov 2025 20:07:49 -0800 (PST)
-Date: Mon, 10 Nov 2025 20:07:34 -0800 (PST)
-From: Hugh Dickins <hughd@google.com>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-    Andrew Morton <akpm@linux-foundation.org>
-cc: Hugh Dickins <hughd@google.com>, Chris Li <chrisl@kernel.org>, 
-    Christian Borntraeger <borntraeger@linux.ibm.com>, 
-    Janosch Frank <frankja@linux.ibm.com>, 
-    Claudio Imbrenda <imbrenda@linux.ibm.com>, 
-    David Hildenbrand <david@redhat.com>, 
-    Alexander Gordeev <agordeev@linux.ibm.com>, 
-    Gerald Schaefer <gerald.schaefer@linux.ibm.com>, 
-    Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
-    Sven Schnelle <svens@linux.ibm.com>, Peter Xu <peterx@redhat.com>, 
-    Alexander Viro <viro@zeniv.linux.org.uk>, 
-    Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-    Arnd Bergmann <arnd@arndb.de>, Zi Yan <ziy@nvidia.com>, 
-    Baolin Wang <baolin.wang@linux.alibaba.com>, 
-    "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
-    Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>, 
-    Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>, 
-    Lance Yang <lance.yang@linux.dev>, Muchun Song <muchun.song@linux.dev>, 
-    Oscar Salvador <osalvador@suse.de>, Vlastimil Babka <vbabka@suse.cz>, 
-    Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
-    Michal Hocko <mhocko@suse.com>, Matthew Brost <matthew.brost@intel.com>, 
-    Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>, 
-    Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>, 
-    Ying Huang <ying.huang@linux.alibaba.com>, 
-    Alistair Popple <apopple@nvidia.com>, 
-    Axel Rasmussen <axelrasmussen@google.com>, 
-    Yuanchu Xie <yuanchu@google.com>, Wei Xu <weixugc@google.com>, 
-    Kemeng Shi <shikemeng@huaweicloud.com>, Kairui Song <kasong@tencent.com>, 
-    Nhat Pham <nphamcs@gmail.com>, Baoquan He <bhe@redhat.com>, 
-    SeongJae Park <sj@kernel.org>, Matthew Wilcox <willy@infradead.org>, 
-    Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>, 
-    Xu Xin <xu.xin16@zte.com.cn>, Chengming Zhou <chengming.zhou@linux.dev>, 
-    Jann Horn <jannh@google.com>, Miaohe Lin <linmiaohe@huawei.com>, 
-    Naoya Horiguchi <nao.horiguchi@gmail.com>, 
-    Pedro Falcato <pfalcato@suse.de>, 
-    Pasha Tatashin <pasha.tatashin@soleen.com>, 
-    Rik van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>, 
-    linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
-    linux-s390@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-    linux-mm@kvack.org, linux-arch@vger.kernel.org, damon@lists.linux.dev
-Subject: Re: [PATCH v2 00/16] mm: remove is_swap_[pte, pmd]() + non-swap
- entries, introduce leaf entries
-In-Reply-To: <20251110162313.baee36f4815b3aeb3f12921e@linux-foundation.org>
-Message-ID: <ba5d8603-4140-1678-b2d5-d49ab1a40fe0@google.com>
-References: <cover.1762621567.git.lorenzo.stoakes@oracle.com> <CACePvbVq3kFtrue2smXRSZ86+EuNVf6q+awQnU-n7=Q4x7U9Lw@mail.gmail.com> <5b60f6e8-7eab-4518-808a-b34331662da5@lucifer.local> <CACePvbUvQu+So7OoUbJTMLODz8YDAOgWaM8A-RXFj2U_Qc-dng@mail.gmail.com>
- <3c0e9dd0-70ac-4588-813b-ffb24d40f067@lucifer.local> <c9e3ad0e-02ef-077c-c12c-f72057eb7817@google.com> <20251110162313.baee36f4815b3aeb3f12921e@linux-foundation.org>
+	s=arc-20240116; t=1762834084; c=relaxed/simple;
+	bh=3kzAFjCM6HbXSpkV+jQ9TGQC4bAtu1w924qOSfk6wzY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QNJ53D/romk9mg1oONbm0NkveiMuE05ByW85xPRgvD+iVLmP5zn9bxkcSUnpMvAE4gxxrnmq+c/dDdqxFkG+vWjgAQdHTeoZO2mG3tMfDWM8WTbwX//TCshMED7Bn6o+27hijK/4m2uYJ2sOO7H1ixUnIdlFlGhwJGPvK0qozOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=XKCQsOF0; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=Gd10wbrN2noGIROSPOS+j8rDV/mJIhsf3ducn3FrnCU=; b=XKCQsOF0NRdKSrpk3e7LM+5zvv
+	GgeuD3o+ZS9X2X7xT3/GmwP4i1mldHv/nitvF0SI7Cxqkl9F+FI2Eti85pSauTvRN0LQ880Jumv8D
+	M5c6TK0hNPIICFUQtcCHLaQmFvrhqexWyIgWLRxGge3rHIx1kloJOb0QuchsDZ36/sHE=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1vIffd-00Dae4-0p; Tue, 11 Nov 2025 05:07:53 +0100
+Date: Tue, 11 Nov 2025 05:07:53 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: davem@davemloft.net, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	thomas.petazzoni@bootlin.com, Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Russell King <linux@armlinux.org.uk>,
+	linux-arm-kernel@lists.infradead.org,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	=?iso-8859-1?Q?K=F6ry?= Maincent <kory.maincent@bootlin.com>,
+	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
+	Oleksij Rempel <o.rempel@pengutronix.de>,
+	=?iso-8859-1?Q?Nicol=F2?= Veronese <nicveronese@gmail.com>,
+	Simon Horman <horms@kernel.org>, mwojtas@chromium.org,
+	Antoine Tenart <atenart@kernel.org>, devicetree@vger.kernel.org,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Romain Gantois <romain.gantois@bootlin.com>,
+	Daniel Golle <daniel@makrotopia.org>,
+	Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+Subject: Re: [PATCH net-next v15 14/15] net: phy: dp83822: Add SFP support
+ through the phy_port interface
+Message-ID: <5b9a42b0-e2f8-490a-be5a-21c998717074@lunn.ch>
+References: <20251106094742.2104099-1-maxime.chevallier@bootlin.com>
+ <20251106094742.2104099-15-maxime.chevallier@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251106094742.2104099-15-maxime.chevallier@bootlin.com>
 
-On Mon, 10 Nov 2025, Andrew Morton wrote:
-> On Mon, 10 Nov 2025 15:38:55 -0800 (PST) Hugh Dickins <hughd@google.com> wrote:
+On Thu, Nov 06, 2025 at 10:47:39AM +0100, Maxime Chevallier wrote:
+> The DP83822 can support 100BaseFX. This mode was only accessible through
+> custom DT properties, but there also exist SFP modules that support
+> these modes. As this only requires setting the relevant supported
+> interface in the driver, expose the port capability with the new
+> phy_port API, allowing SFP support.
 > 
-> > > I'm sorry but this is not a reasonable request. I am being as empathetic and
-> > > kind as I can be here, but this series is proceeding without arbitrary delay.
-> > > 
-> > > I will do everything I can to accommodate any concerns or issues you may have
-> > > here _within reason_ :)
-> > 
-> > But Lorenzo, have you even tested your series properly yet, with
-> > swapping and folio migration and huge pages and tmpfs under load?
-> > Please do.
-> > 
-> > I haven't had time to bisect yet, maybe there's nothing more needed
-> > than a one-liner fix somewhere; but from my experience it is not yet
-> > ready for inclusion in mm and next - it stops testing other folks' work.
-> > 
-> > I haven't tried today's v3, but from the cover letter of differences,
-> > it didn't look like much of importance is fixed since v2: which
-> > (after a profusion of "Bad swap offet entry 3ffffffffffff" messages,
-> > not seen with v1, and probably not really serious) soon hits an Oops
-> > or a BUG or something (as v1 did) - I don't have any logs or notes
-> > to give yet, just forewarning before pursuing later in the day.
-> > 
-> > If you think v3 has fixed real crashes under load, please say so:
-> > otherwise, I doubt it's worth Andrew hurrying to replace v2 by v3.
-> 
-> Oh.  Thanks.  I'll move the v3 series into mm-new for now.
+> Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+> Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
 
-Lorenzo, I can happily apologize: the v3 series in mm-everything-
-2025-11-11-01-20 is a big improvement over v2 and v1, it is showing
-none of the bad behaviours I saw with those.  I've not searched or
-compared for what actually fixed those symptoms (though have now
-spotted mails from Shivank and Kairui regarding 3ffffffffffff),
-I'm content now to move on to unrelated work...
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-Thanks,
-Hugh
+    Andrew
 
