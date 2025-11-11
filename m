@@ -1,158 +1,99 @@
-Return-Path: <linux-kernel+bounces-895914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BAFFC4F410
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 18:34:28 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 465C1C4F413
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 18:35:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EE6954EB5B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:34:26 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E994F34D155
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:35:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27C81377E9E;
-	Tue, 11 Nov 2025 17:34:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="gqHSa2Da";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="CLQ19KY7";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ipx5z8bi";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="DZT8p5E2"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FE78328244
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 17:34:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D61B1328244;
+	Tue, 11 Nov 2025 17:34:55 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33C193AA1BB
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 17:34:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762882462; cv=none; b=hzw5jp6VpgKKC0CLafPTv3X1Eou3AtEkMl+0wlyde6BxQ73YDMYnWmQma3kWBGnwxmzyBsY6CpXnYyjcBQhYr9TunFdQV/WRt+IZ9X2zOi5oNjuGl3kullIujd5c+YdvcvF76Rh25YHfrzVSammW8bT1D3qUvT20eHmknvN0ZGA=
+	t=1762882495; cv=none; b=iRYu8nBlb2APjmKBlcDVeC5AjGTrSMD+6N1YdU9Gbu5sIrxEhMqdeA8Yq7luaPs3BxX+V7ITEKgNty9uqFiqK/Yknoyrwabic18RzucsfNo4u2SkK9ZGpQWWHfu5hfN3DzD2VWhJxt4+sic68VRJrujrZqd9ir7aFcnosqHAWgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762882462; c=relaxed/simple;
-	bh=HAX/bqf3b9TONupOaUirhSAkDc3jcOXLWNYRjwVlWDY=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TlT4vP6UNDFp7QzK0PZZvWAACmtQkUaw0ow0eNxcvhBmXRys7nLTMT2QdW3qIWfrhdV5Xnuu979h8lL205S9Nq/PSE7+vxLOD2rN7rcIt+Z9E6ChNze6SH5/sfH0LjbCCG0I18EuI0mRo9JWvBEIuzvPWnDoJqMC1vFMcBBSAZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=gqHSa2Da; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=CLQ19KY7; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ipx5z8bi; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=DZT8p5E2; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 1F8742127E;
-	Tue, 11 Nov 2025 17:34:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1762882458; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=F3/tqFUaAI1FSDSHta890x3Ayxz38ULlWQmPJtNMdys=;
-	b=gqHSa2DaT7clhC++vQsKrklEUaz0xQNDy6GCnAK7lIMC186VsZhCbs1enVga6dVqsOZyfq
-	ElzoGKGP90OTPAs+QJHikPl2LJKfzFPBGfp8ZyrzQBBdxEVXxdgeZZsRZY8gSpmXX+YEYh
-	qTwAmbcgO4uC5CV68yXJqAalffucpOc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1762882458;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=F3/tqFUaAI1FSDSHta890x3Ayxz38ULlWQmPJtNMdys=;
-	b=CLQ19KY7edQfJHQFQbspliHBN0JqevBOqOOUXv8lG1h/n9x59JMnACYWrr+ersox0jeT/o
-	nURn6N3gmV2lnaDQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=ipx5z8bi;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=DZT8p5E2
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1762882457; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=F3/tqFUaAI1FSDSHta890x3Ayxz38ULlWQmPJtNMdys=;
-	b=ipx5z8bi5YFuwc8tlnbMgV2gEegGCVg18HwO+IWtqervMWYFIO+ojNVFw12xaoGD4KEh5K
-	3gk8sLxovXlzhHShH/luRs1YD95jhr9zGH9Dr4PjIOQSN7xzmzvdUtXdZMYqcs4VPaFJXf
-	0844iuTHUjuUELSBdfTSKALd2B6+VW4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1762882457;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=F3/tqFUaAI1FSDSHta890x3Ayxz38ULlWQmPJtNMdys=;
-	b=DZT8p5E2QsrX0sWzqPiynuPywYWJkm3DROxEcWkUJkEO9WFtVG4YYkoF6gAZZlaj6d435y
-	WodvHTkkog1Is8Bw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E7E6114A91;
-	Tue, 11 Nov 2025 17:34:16 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id xzIgN5hzE2mUVAAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Tue, 11 Nov 2025 17:34:16 +0000
-Date: Tue, 11 Nov 2025 18:34:16 +0100
-Message-ID: <874ir0jwx3.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Haein Lee <lhi0729@kaist.ac.kr>
-Cc: Takashi Iwai <tiwai@suse.de>,
-	perex@perex.cz,
-	linux-kernel@vger.kernel.org,
-	linux-sound@vger.kernel.org
-Subject: Re: [PATCH v3] ALSA: usb-audio: Fix NULL pointer dereference in snd_usb_mixer_controls_badd
-In-Reply-To: <vwhzmoba9j2f.vwhzmob9u9e2.g6@dooray.com>
-References: <vwhzmoba9j2f.vwhzmob9u9e2.g6@dooray.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/30.1 Mule/6.0
+	s=arc-20240116; t=1762882495; c=relaxed/simple;
+	bh=lRtd39TzVsOLDLM6mhyvwF9cxQ9l1wDoC0v6x7Tl4VM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TqcQiQJknNx4/y6iyGhjbwzcjP1TUqcf3ZNfGTMIZJCHZkOKOyUZ8AR+qKBhS49C+tfhAdJJnZBja8MgOrLAkR5bSNvYdJalYoOZ/rx0sE1u6fE7ftHBq921uOM+DKccGRAhHgXK7KxfKvKl3Bd7mrUK//zleEfjtPxhUTPfQ1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EBB0C497;
+	Tue, 11 Nov 2025 09:34:45 -0800 (PST)
+Received: from e133380.arm.com (e133380.arm.com [10.1.197.68])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9ADBD3F5A1;
+	Tue, 11 Nov 2025 09:34:51 -0800 (PST)
+Date: Tue, 11 Nov 2025 17:34:48 +0000
+From: Dave Martin <Dave.Martin@arm.com>
+To: "Luck, Tony" <tony.luck@intel.com>
+Cc: Fenghua Yu <fenghuay@nvidia.com>,
+	Reinette Chatre <reinette.chatre@intel.com>,
+	Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>,
+	Peter Newman <peternewman@google.com>,
+	James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>,
+	Drew Fustini <dfustini@baylibre.com>, Chen Yu <yu.c.chen@intel.com>,
+	x86@kernel.org, linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev
+Subject: Re: [PATCH v13 12/32] x86,fs/resctrl: Support binary fixed point
+ event counters
+Message-ID: <aRNzuMtoBT90CEAs@e133380.arm.com>
+References: <20251029162118.40604-1-tony.luck@intel.com>
+ <20251029162118.40604-13-tony.luck@intel.com>
+ <aQtiSmZ14b+U/J4U@e133380.arm.com>
+ <aRIYZOm6ZtpQFr4m@agluck-desk3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 1F8742127E
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-3.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	ARC_NA(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid]
-X-Spam-Score: -3.51
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aRIYZOm6ZtpQFr4m@agluck-desk3>
 
-On Tue, 11 Nov 2025 16:37:54 +0100,
-Haein Lee wrote:
-> 
-> In snd_usb_create_streams(), for UAC version 3 devices, the Interface
-> Association Descriptor (IAD) is retrieved via usb_ifnum_to_if(). If this
-> call fails, a fallback routine attempts to obtain the IAD from the next
-> interface and sets a BADD profile. However, snd_usb_mixer_controls_badd()
-> assumes that the IAD retrieved from usb_ifnum_to_if() is always valid,
-> without performing a NULL check. This can lead to a NULL pointer
-> dereference when usb_ifnum_to_if() fails to find the interface descriptor.
-> 
-> This patch adds a NULL pointer check after calling usb_ifnum_to_if() in
-> snd_usb_mixer_controls_badd() to prevent the dereference.
-> 
-> This issue was discovered by syzkaller, which triggered the bug by sending
-> a crafted USB device descriptor.
-> 
-> Signed-off-by: Haein Lee <lhi0729@kaist.ac.kr>
+Hi Tony,
 
-Applied now.  Thanks.
+On Mon, Nov 10, 2025 at 08:52:52AM -0800, Luck, Tony wrote:
+> On Wed, Nov 05, 2025 at 02:42:18PM +0000, Dave Martin wrote:
+> > > +static void print_event_value(struct seq_file *m, unsigned int binary_bits, u64 val)
+> > > +{
+> > > +	unsigned long long frac;
+> > > +	char buf[10];
+> > 
+> > In place of the magic number 10, how about
+> > decplaces[MAX_BINARY_BITS] + 1 ?
+> > 
+> > (I think the compiler should accept that as an initialiser if the array
+> > is const.)
+> 
+> The compiler (gcc 15.2.1) accepts without any warnings. But generates
+> different code.
+> 
+> sparse complains:
+> fs/resctrl/ctrlmondata.c:640:45: warning: Variable length array is used.
 
+Hmmm.  Shame.
 
-Takashi
+(Of course, this is only a warning.  sparse may not know how to
+determine that the resulting buffer is limited to a sane size, but
+looking at the code makes it pretty obvious.  Perhaps best avoided,
+though.)
+
+> I may change the hard coded constant to 21 (guaranteed to be big enough
+> for a "long long" plus terminating NUL byte.)
+
+I guess.  We may be able to sidestep this, though (see my other reply
+about getting rid of buf[] altogether.)
+
+Cheers
+---Dave
 
