@@ -1,155 +1,98 @@
-Return-Path: <linux-kernel+bounces-895330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EC2BC4D8A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:57:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B5ACC4D842
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:52:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2BCB94F14E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:46:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CF011896BDD
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:47:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E18A1357A27;
-	Tue, 11 Nov 2025 11:46:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50A1C34CFBA;
+	Tue, 11 Nov 2025 11:46:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dc7G/FQr"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jL8GcXI1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 885FF3570A0
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 11:46:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1FCF2FBE02;
+	Tue, 11 Nov 2025 11:46:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762861578; cv=none; b=SZzn89JI1rJwczoeZppqqqIXZkaQ1x/PaBX+I89diMmCRVTuys4UA2vDa0uCfaPUVRqhu8/5PUSQ2FKvf85YB9lWPkUSXtVAbMx8OWEyCMMJ55bcYWgFeYj4RJtbLq/kUvXF+Yg6LAio04CXWV0zJ8HA1HJWqWCaOsO1Pg4N+6Y=
+	t=1762861614; cv=none; b=qz7woJVkUh2EoanLsQPvIPEL6I5Ud3nHMEOv4lTKftyLnrsrO8eDEEsSBZfOXsBeFLvertLNanO5C0YPEaU4bui+2X6JWeLSMxUfmc7RH7+JRG4paqY55ekSe/OFvFORVVsxjOpzb1ga1cuOPx/8p8/lfxy0hv8066y2UMJOTuw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762861578; c=relaxed/simple;
-	bh=SbEoUjzRdYSzRtrur4zv59kSlcqgvNU4/0/HoJXMLTQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=brlzZD9c//n2MdkR7knwww4Rk7okjbsSrbWRHxO/XpnQyHA3Fp1b2AOpvQUYNWjkCpMQDsd864NSxq80VwCxIqsHRfbvDWNu+uPRTcrGgemBruz14DOz2yzohQag6x6kMttSMj5RWrXq/d4fiRiuZUqJgJevL0uo//eRD8GTE+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dc7G/FQr; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b3e7cc84b82so768396066b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 03:46:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762861575; x=1763466375; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=J5I7f4jaWq/Be7PYF2soJzUGXwHm93DFveuU61+E2QA=;
-        b=dc7G/FQrlwISc3SsEHdZjJ1I/rw6N06+XoF0gXa+624Ca6aK1JJd/iDRAxbAlXJLHS
-         NOpa+MiqoJa/lXzxKlxEQVEG0htOUcufVXbsbOdOzWgdmDEVQx3EylMqanEGSolbf1BA
-         YV9D+PKWsEaXzj2aKdQXVcCJ5FYUvJh8HPx8li7Ys+a9HK4Juvvs5+8J8XDLNIvS2RXr
-         +lO5hO1b/dWM04V+VGwcpfJaBcI1ok0AdfOCIVCwq2/u4E6xniy9uGbcYep7R4G7DDXw
-         JK9ug/lJsI9QUSM4Ceui9HIj/Vtc1oG1zn/wxETf03VBepk7vzv//JxRn/n22hhxFpUR
-         G2gw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762861575; x=1763466375;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=J5I7f4jaWq/Be7PYF2soJzUGXwHm93DFveuU61+E2QA=;
-        b=TujWJkl4YvDR1E6YFB9kj9wtOFYHjGK8dyEPc/fawc8bD6v8tZk5OS/rhptg7QKHLR
-         h/7F46G28xt1txk/XYaNMTGjEJfIabji6ASll3xiazSQBeY0Hqd0mkHdhT1do3H0wnc1
-         g6tcmRv/s8ej15a/FkuXA+1OzM42S74FpfMa6cm0Y2qn4ettiLclU7Tfjl8RYrodoBKS
-         UNJT7yOidjNntBJlw0iey1h0LemM7aBp++CF5M51sFFSTnG1It3dy8BulLk+6LhdZLPF
-         wMFGK77SoBtrVv5G7ZE9MzDsdh/7VD/EcNT2j2j+79ClTLky/JLtMczV4SqiivMSq8qI
-         Onhg==
-X-Forwarded-Encrypted: i=1; AJvYcCVRHxPXQmonXo3hgbrILoHMHujROAHnyasITne4z+ETkyKacvpJy9CINAgsWpVMp/pUly0i20EOjSdzsKU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCsMo/kpdd2zhpV8UC31MIjhuDu3E+yXqnvC4mRvwNq28rcKlC
-	fz38JCRnDQU/TyTRAQSms812ZWjrL53wFQIXR+1rYdH/b/VKj0/iRD+l
-X-Gm-Gg: ASbGncslrVDOPThIipU4R7i9DugTAK/defqcLjLaDE34SbsRbAnA5eJLaJscNKLVjG4
-	PxHEqaVkqHsFsR0bBCRlPKTrrZDQqQawwVR2sclzQAg9tUaxCJ+/VvLjWUz5MH8upKGzq3S4Q8U
-	V+bs5DlrG/QBny47wCHGKMXjYpv2HrJjOxH6KYHF2sojRTPPVbYd9kvAsqOYIWDf6OD8SIjsT/k
-	5NgA4Uebdp3BpzANNj41EXQRtS9nRqcwDDP1Dk7JlUzmgTNpN8sBcA4gJBIyuq7W1X89B30XqS0
-	snO4sAMjVw4TQgXYHX/rMzv+Bpv+glQfKaLaS3y7v5qUaXX3I2cq+jS202h+VwDLkP4frsMT+yk
-	4JAoknfW1bIQFp7vzl1w7dj1AJ3tE32Jk63p/R25RTc71kn7068ngkjpmWQjVeURHAfn8FSiO9C
-	EfIQ0oNIhefk3NrRzehQ==
-X-Google-Smtp-Source: AGHT+IFFuE0IpmRKltf3NCJrfvjuMROiYig/x7vdZGNFBWVaI1wobtpu87KOcr6O03jx1C8wR0fYCQ==
-X-Received: by 2002:a17:907:96ab:b0:b70:be0b:6ba8 with SMTP id a640c23a62f3a-b72e0623f36mr1268911866b.61.1762861574774;
-        Tue, 11 Nov 2025 03:46:14 -0800 (PST)
-Received: from NB-6746.corp.yadro.com ([188.243.183.84])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72fcde0779sm682374466b.40.2025.11.11.03.46.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Nov 2025 03:46:14 -0800 (PST)
-From: Artem Shimko <a.shimko.dev@gmail.com>
-To: p.zabel@pengutronix.de
-Cc: a.shimko.dev@gmail.com,
-	andi.shyti@kernel.org,
-	andriy.shevchenko@linux.intel.com,
-	jsd@semihalf.com,
-	linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	mika.westerberg@linux.intel.com
-Subject: [PATCH v2 3/3] i2c: designware-platdrv: streamline error handling
-Date: Tue, 11 Nov 2025 14:45:59 +0300
-Message-ID: <20251111114559.3188740-3-a.shimko.dev@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251111114559.3188740-1-a.shimko.dev@gmail.com>
-References: <e3c2096459bdd0c1d48c00a837cc7f8c18044631.camel@pengutronix.de>
- <20251111114559.3188740-1-a.shimko.dev@gmail.com>
+	s=arc-20240116; t=1762861614; c=relaxed/simple;
+	bh=rbNJbwQaBcRf4KNiq9G/qg/S5qDVdWHZCk623jvQNEs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cAOCe69wduJljLVbAi5rr3xx0801qXtiwgy8dD9Ni1jQXlzWYwXkUDPnSwtAlxYA+kacJkaET59dfGRdd05v7k/Q2cnf92kBy0IiG0lvFAVjlCeTfB9wv4oBoPOXu1ayrRhs2lSr3wYgtmfdKr8GTScH0iVjRorsA7AC9O5LuGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jL8GcXI1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85A76C116D0;
+	Tue, 11 Nov 2025 11:46:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762861614;
+	bh=rbNJbwQaBcRf4KNiq9G/qg/S5qDVdWHZCk623jvQNEs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=jL8GcXI1ItZe32CT+KBn/kcGiBK5XTxl56y0yOPgqp1VB5uPY3YVkQzBqryEom4Us
+	 6Zwh3BEgMVaSc8DUKiUAUELh4nvvhMOmCVTWZ+cOnEpbQcRuv9WkyU70Uk4XEnxLlB
+	 xiWDE5OqCwBfefOHM45rBf+DAahj7rPIakb7ufLw8LXDYSMe3dzCtP1vlHFpWNP35h
+	 EOBj9Ht2Jld0TP5FzfhsLwhUY0qTyinhetCtip7kJXUQAKd3XLAY8ZVbxyBxhCAQDJ
+	 jbnmpYMlQXOFD8r1i5+LCNL4sPnNZpeKWR2yTnMEz8qp3dUyp4Ozv1BCQw5VX7zArq
+	 q6mwlVg36qVaA==
+Message-ID: <13bf4434-13a1-4db0-8bcf-4c52edaa68f3@kernel.org>
+Date: Tue, 11 Nov 2025 05:46:51 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] EDAC/altera: Use INTTEST register for Ethernet and USB
+ SBE injection
+To: niravkumarlaxmidas.rabara@altera.com, bp@alien8.de, tony.luck@intel.com
+Cc: linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20251111081333.1279635-1-niravkumarlaxmidas.rabara@altera.com>
+Content-Language: en-US
+From: Dinh Nguyen <dinguyen@kernel.org>
+In-Reply-To: <20251111081333.1279635-1-niravkumarlaxmidas.rabara@altera.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The probe function uses unnecessary goto statements and error variable
-reassignments that complicate the code flow. The goto exit_probe pattern
-adds indirection for simple error cleanup, while redundant error assignment
-in lock support probe clutters the error handling.
 
-Simplify the error paths by removing the goto exit_probe label and handling
-PM runtime cleanup directly after i2c_dw_probe() failure. Additionally,
-replace the error variable reassignment in i2c_dw_probe_lock_support() with
-direct dev_err_probe() return. These changes make the error handling more
-linear and readable while maintaining identical functionality.
 
-Signed-off-by: Artem Shimko <a.shimko.dev@gmail.com>
----
- drivers/i2c/busses/i2c-designware-platdrv.c | 18 ++++++------------
- 1 file changed, 6 insertions(+), 12 deletions(-)
+On 11/11/25 02:13, niravkumarlaxmidas.rabara@altera.com wrote:
+> From: Niravkumar L Rabara <niravkumarlaxmidas.rabara@altera.com>
+> 
+> The current single-bit error injection mechanism flips bits directly in
+> ECC RAM by performing write and read operations. When the ECC RAM is
+> actively used by the Ethernet or USB controller, this approach sometimes
+> trigger a false double-bit error.
+> 
+> Switch both Ethernet and USB EDAC devices to use the INTTEST register
+> (altr_edac_a10_device_inject_fops) for single-bit error injection,
+> similar to the existing double-bit error injection method.
+> 
+> Fixes: 064acbd4f4ab ("EDAC, altera: Add Stratix10 peripheral support")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Niravkumar L Rabara <niravkumarlaxmidas.rabara@altera.com>
+> ---
+> 
+> v2 changes:
+>   - Add missing Cc tag
+> 
+> v1 link:
+> https://lore.kernel.org/all/20251101051723.917688-1-niravkumarlaxmidas.rabara@altera.com/
+> 
+>   drivers/edac/altera_edac.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/edac/altera_edac.c b/drivers/edac/altera_edac.c
+> index 103b2c2eba2a..5c5d4585d8ae 100644
+> --- a/drivers/edac/altera_edac.c
+> +++ b/drivers/edac/altera_edac.c
 
-diff --git a/drivers/i2c/busses/i2c-designware-platdrv.c b/drivers/i2c/busses/i2c-designware-platdrv.c
-index d334af1d7c6f..ab15a924dad5 100644
---- a/drivers/i2c/busses/i2c-designware-platdrv.c
-+++ b/drivers/i2c/busses/i2c-designware-platdrv.c
-@@ -256,10 +256,8 @@ static int dw_i2c_plat_probe(struct platform_device *pdev)
- 		return ret;
- 
- 	ret = i2c_dw_probe_lock_support(dev);
--	if (ret) {
--		ret = dev_err_probe(device, ret, "failed to probe lock support\n");
--		return ret;
--	}
-+	if (ret)
-+		return dev_err_probe(device, ret, "failed to probe lock support\n");
- 
- 	i2c_dw_configure(dev);
- 
-@@ -314,14 +312,10 @@ static int dw_i2c_plat_probe(struct platform_device *pdev)
- 	pm_runtime_enable(device);
- 
- 	ret = i2c_dw_probe(dev);
--	if (ret)
--		goto exit_probe;
--
--	return ret;
--
--exit_probe:
--	dw_i2c_plat_pm_cleanup(dev);
--	i2c_dw_prepare_clk(dev, false);
-+	if (ret) {
-+		dw_i2c_plat_pm_cleanup(dev);
-+		i2c_dw_prepare_clk(dev, false);
-+	}
- 
- 	return ret;
- }
--- 
-2.43.0
-
+Acked-by: Dinh Nguyen <dinguyen@kernel.org>
 
