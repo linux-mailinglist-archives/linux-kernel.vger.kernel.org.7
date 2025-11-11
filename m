@@ -1,277 +1,293 @@
-Return-Path: <linux-kernel+bounces-895385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6D09C4DA58
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:22:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EC49C4DA0C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:19:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 05C6A4F6337
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:16:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75C6C3AC8E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:16:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFD6E35503D;
-	Tue, 11 Nov 2025 12:16:13 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E4AE2727EB;
-	Tue, 11 Nov 2025 12:16:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 851B5357A57;
+	Tue, 11 Nov 2025 12:16:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="AFV17qS3";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="AWzrCFeo"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEA51357A5F
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 12:16:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762863373; cv=none; b=FcwrhqxMibYc0x74mPDlzHieTBWhmKH8vfDucoNNxHZ38vl+cqHfLpplS1EVX7tX6vNV2KUjKkw5hF6vVN9wBfsFvDeKfZNI4s8XP8sOQ7TxvrCRxOYmz1dzb9vXPKcZ7P0dQO91r6CmXzmTpL/8mopTdT+L28xLJMwei9LQzM8=
+	t=1762863395; cv=none; b=X5zDc9rwRDI3K+na85hj+6k0iFS+i7JgusT6e0IlvnS/aFyKhbq4p8o34/2ZCdnpIs3cZbwjvRownszkTditg64KP8HKn8gn6cblQr1GqytpQl2x2IpdUw+VijHIvKDEa6EfSVP4EnGUWddju2hcy/oia9UBrzUcZSkBce3kcS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762863373; c=relaxed/simple;
-	bh=PIgstgd4buWJzHaXU+CcNBXqTQqNTu4JSwpP1XmmIo4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AfYIyi4MtfSv+3t57JmLGWNom7KL/CErY73t3dusuy9eSbe3mrOwZxh2I08Iod0J13EvAdDbxuI/qOAItKVmEtnOvxb7MmvIDCalgc1yj0lEmK5DMpwI48ntmMIA2VO42zK5G2MSjkbjCnQMEXtCcwFAAGYVGFbX01kY/NxOP3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B4FDA2F;
-	Tue, 11 Nov 2025 04:16:01 -0800 (PST)
-Received: from [10.1.31.216] (XHFQ2J9959.cambridge.arm.com [10.1.31.216])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 976253F63F;
-	Tue, 11 Nov 2025 04:16:04 -0800 (PST)
-Message-ID: <b7581d35-29a1-44d4-bf81-395949bd4da1@arm.com>
-Date: Tue, 11 Nov 2025 12:16:03 +0000
+	s=arc-20240116; t=1762863395; c=relaxed/simple;
+	bh=CiRvglEz9obpczRFYFCnvUegm9hz7KRAd0dcBoMgiIo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RhzpuSg871sM/t2lqxfDLvqYFF44OzK52egvWlAyC1adXVf59UKKWkV/YH+/0L72ILtx5wQ3bs4yoQhON9O0/y9QFeEpIR17ly4tY2b+BPbBWBCgMxxj0wwKEOukhXcSBVD/no9YQXGWiAGsXM/cY78xpIh2zDzTHKvsedIgaRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=AFV17qS3; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=AWzrCFeo; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5ABBGIWV2117343
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 12:16:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=YPO+lkN1ZUT9aHfKkRZz4Gwg
+	81V38xdtB3mnx9BFJgM=; b=AFV17qS3+1H/L5MHE1t6a4QQT5YS9LjVhVsDOtOe
+	PWIgwBZjBaoQUY+YFQHYjeiRos/5mOHATtGiHwWYJv38CRgQIZb8HsZtCfOatfWG
+	Bi3z0awzFspJJIS5zueCNqSi6hDJZGRvR6fC61N7JkKtnJBcqp9lcmsNbwyKpXi9
+	fPXgSqkzCVm1NIhjIjYioXybuKLOhpD78MwkvhjXPINxF79kJBRk/10rzZTQe6Zd
+	STC9qIP6OSFNzmWI5ZsTKlEyTCnI8gqVL6jzzQexR/zcOPDkEv35ITOxii+w8l0M
+	6Q6Ts/h1CXpU4sNrpwOomKXlqTjEGrKNN4OG2CnaDBaJhQ==
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4abpy8jbdn-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 12:16:33 +0000 (GMT)
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-88237204cc8so107559306d6.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 04:16:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1762863392; x=1763468192; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=YPO+lkN1ZUT9aHfKkRZz4Gwg81V38xdtB3mnx9BFJgM=;
+        b=AWzrCFeoPskyVMp4x+51B9XTgBIgO3qFWQGyjy14SkoHxlpBvkZMYhYeX4/fUvXmvL
+         wJhhFmAcK2ieFd1SHcAd0RS7jcsKUNz7OMEi7TFWOZYAm1SNr6gfPpOAQSg+aLFt8pFP
+         N1ngn8540mN1nVFxQttgQdOon3DFQIcxNaRSyQXSej3/UBJqY43SpTENOHKyQNvLK8Pe
+         g7MtTuZ54XMA7zwur8bzYwQZOk+M2tZ7wWdWXlL+gw/7fQfJs25Yk06w/ZXoq3ZKl7pW
+         Le2c2v2TsmqMA9yuejf1GYaT1ZRzF8IPmMALeV5V6hHiM+PVG2cRGD4oc5WjlP8TK1a2
+         KI5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762863392; x=1763468192;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YPO+lkN1ZUT9aHfKkRZz4Gwg81V38xdtB3mnx9BFJgM=;
+        b=MSfA7SL3/TOMFoxfGPc4uzSyIqQOOQysqSBVZ1HkK3PjjeH4UnjniImjoNX2Xac5OL
+         fUuAURjRtvbrtzmNRJhaCOdEBpp/3m/dr1PmzO96vDLrueS5JiZBUu0WR4ac14yJ376R
+         1S6hQW+Lvw2+S4bta7KHRu0g3d//5/q+ERkI8P77e6DMpDXSgbYD5wRaucr8Xf4IC7Od
+         lXCVnpt0F3dE2HUTg58IaYCCC9I5Ql1Arl/TXis11sWZSEwiyDcIJ527oOiGfHYCrrar
+         v7HaeaEwwH3m/MLCGyQOR+gkm+i4dKqGvllcdAqKe1ELW8O5rD3r2C2DaDnEyDju4ofE
+         yJtg==
+X-Forwarded-Encrypted: i=1; AJvYcCV0jkzHeFSubBXEzh8lHn3mWwwMNhjfr5AnAOW1tp/G2joESqK7bAW52ZgoQINQP9V9Sn/CAtwHGdWQCTI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/PnqrG9socU0mMEfYmTsNVh9a9B/ryJGb0hjhnwpY/jSvfBZw
+	EFN9hHy7psvL//wabuwOGsk33m7y1iw84pBhMKaLwkUOaQlv+8E3gITP7i1rcX+RjSSV1PDxwuT
+	LSIDSz31MaPkreI3asXmlqYRTtIHYFKWfy5XSl6f56lKKCIyNnJNullhkA96PZmJ0SnI=
+X-Gm-Gg: ASbGncttwZn8cNHOLLB0UbvQOkN+q6j6uhkmhxJbiXBgZZ12PF8FG0ZwM563HbwBwMj
+	MYDHyxkWj/fmsyGZF5eA0N/TVT/6Dqc7SfqREcjzfEhgf14OY/3XLcErTfZptI6mrNMPEW0Kpid
+	P4+24VzqMQvM7Q+6wXiz17SSwyZ5gVNUhVyKK5fOKN6L6zbQU8/9k9lkfeteabxhUN0avM24w9Q
+	XCGY/Z69qVEMgW9BYPn8BzEVhmfWgpDvvzW50EB+9xm7u74Tj0kON0wqVud7secLEvVPoVkxE6A
+	a76+iddL6KwjzCLdg2pwKse8pdkY5jrWQcuIJvVqMxfisondUR0Ra50XI4liJM5EqGRCAQxa2hT
+	lUzZYQe7Cpmly0oIvqugVKzB7rlgLUgX/rbdlhIUGBypzgfh2f/J/BIMTs56cVEk8TpaxiIGSNk
+	eX6TOYUOLKYHsP
+X-Received: by 2002:a05:6214:f03:b0:880:8600:efbf with SMTP id 6a1803df08f44-882386d5b99mr166814526d6.56.1762863391900;
+        Tue, 11 Nov 2025 04:16:31 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEIqLMQI26kS8Yvv7q+uFtZNNaKWnnzqEHGEoO7KaLW48CDb63G5eW64vATn4eGy4RIMOQajA==
+X-Received: by 2002:a05:6214:f03:b0:880:8600:efbf with SMTP id 6a1803df08f44-882386d5b99mr166813666d6.56.1762863391140;
+        Tue, 11 Nov 2025 04:16:31 -0800 (PST)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-37a5f0edc2asm41895861fa.40.2025.11.11.04.16.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Nov 2025 04:16:30 -0800 (PST)
+Date: Tue, 11 Nov 2025 14:16:27 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: "Aiqun(Maria) Yu" <aiqun.yu@oss.qualcomm.com>
+Cc: Taniya Das <taniya.das@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, jingyi.wang@oss.qualcomm.com,
+        Ajit Pandey <ajit.pandey@oss.qualcomm.com>,
+        Imran Shaik <imran.shaik@oss.qualcomm.com>,
+        Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 4/6] clk: qcom: rpmh: Add support for Kaanapali rpmh
+ clocks
+Message-ID: <42xj5qgoh3m26y4hmdck5hfyqaxncfaeugymrmrxb7tusxjvm2@wsjztnhbp5jf>
+References: <20251030-gcc_kaanapali-v2-v2-0-a774a587af6f@oss.qualcomm.com>
+ <20251030-gcc_kaanapali-v2-v2-4-a774a587af6f@oss.qualcomm.com>
+ <swma6lyjfmyhl5ookdzvpjn5qresgsze5wptg45jfgj7ub6a4t@bdgfstw6gzoq>
+ <507b121b-98c0-4632-8a61-e9d7a6a13a3e@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 06/12] mm: introduce generic lazy_mmu helpers
-Content-Language: en-GB
-To: Alexander Gordeev <agordeev@linux.ibm.com>
-Cc: "David Hildenbrand (Red Hat)" <davidhildenbrandkernel@gmail.com>,
- Kevin Brodsky <kevin.brodsky@arm.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Andreas Larsson <andreas@gaisler.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
- <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- "David S. Miller" <davem@davemloft.net>,
- David Woodhouse <dwmw2@infradead.org>, "H. Peter Anvin" <hpa@zytor.com>,
- Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
- Juergen Gross <jgross@suse.com>, "Liam R. Howlett"
- <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
- Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
- Peter Zijlstra <peterz@infradead.org>, Suren Baghdasaryan
- <surenb@google.com>, Thomas Gleixner <tglx@linutronix.de>,
- Vlastimil Babka <vbabka@suse.cz>, Will Deacon <will@kernel.org>,
- Yeoreum Yun <yeoreum.yun@arm.com>, linux-arm-kernel@lists.infradead.org,
- linuxppc-dev@lists.ozlabs.org, sparclinux@vger.kernel.org,
- xen-devel@lists.xenproject.org, x86@kernel.org
-References: <20251029100909.3381140-1-kevin.brodsky@arm.com>
- <20251029100909.3381140-7-kevin.brodsky@arm.com>
- <71418b31-aedb-4600-9558-842515dd6c44@arm.com>
- <c764489e-0626-4a50-87b5-39e15d9db733@gmail.com>
- <645178fd-df4e-42fe-b55e-97d9506499be@arm.com>
- <413b2c49-f124-4cda-8fea-a6cc165f6326-agordeev@linux.ibm.com>
- <e428b1d5-65a8-49bc-92dc-ec4a4d933dec@arm.com>
- <92eca53f-eb5d-4bd0-ad6c-56c65fdcea86-agordeev@linux.ibm.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <92eca53f-eb5d-4bd0-ad6c-56c65fdcea86-agordeev@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <507b121b-98c0-4632-8a61-e9d7a6a13a3e@oss.qualcomm.com>
+X-Proofpoint-ORIG-GUID: sw-6bnHU_int693TKZeXJaZBzIXN8qbQ
+X-Authority-Analysis: v=2.4 cv=AYW83nXG c=1 sm=1 tr=0 ts=69132921 cx=c_pps
+ a=UgVkIMxJMSkC9lv97toC5g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=EUspDBNiAAAA:8 a=40rvkjjxWIT4wm9QV3sA:9 a=CjuIK1q_8ugA:10
+ a=1HOtulTD9v-eNWfpl4qZ:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTExMDA5NyBTYWx0ZWRfX79FO7sCHnIzT
+ QojkliSoFYUUG3N/u40WPIPiEL7/MDn0qktWtoX0wkUFpXNy/3lZZ6HOO4GyuN69Mg35bj9tC+U
+ 6geVN5YzfRgOf2CD+3pEdQN36H70EACXK0Ux9LrHlsTWfdzVLw+MfTIg53n6F+4czYrjOXSlGWD
+ QPGZhi+9qDe1dvYUJb0HY7cIKYDZ5jiDyL/E64ydXFIxRq1LrLeFpIYBYYMZCc5/rvCAAw2KOW6
+ p37mZJeu0AKHFXw1gha4VnKrg63lcX/27ZChNERdg43XI64/rDCHbDgoEPLFwdhnFvUqtdmt3eB
+ m4mwfm2nynbpEWR0SIYl+Xq8dNsHhrs0N2gOHuVy8/VtRaqMxAfaBFWfO0HpVbV4Po5kmJ+2yzA
+ uODdxAxftV4nv5jGW4WRcYQQkb9jyQ==
+X-Proofpoint-GUID: sw-6bnHU_int693TKZeXJaZBzIXN8qbQ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-11_02,2025-11-11_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 impostorscore=0 malwarescore=0 adultscore=0 clxscore=1015
+ suspectscore=0 priorityscore=1501 lowpriorityscore=0 bulkscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511110097
 
-On 11/11/2025 08:01, Alexander Gordeev wrote:
-> On Mon, Nov 10, 2025 at 09:19:40AM +0000, Ryan Roberts wrote:
->> On 10/11/2025 08:11, Alexander Gordeev wrote:
->>> On Fri, Nov 07, 2025 at 03:22:54PM +0000, Ryan Roberts wrote:
->>>
->>> Hi Ryan,
->>>
->>>> On 07/11/2025 14:34, David Hildenbrand (Red Hat) wrote:
->>>>>>>   #ifndef pte_batch_hint
->>>>>>> diff --git a/mm/kasan/shadow.c b/mm/kasan/shadow.c
->>>>>>> index 5d2a876035d6..c49b029d3593 100644
->>>>>>> --- a/mm/kasan/shadow.c
->>>>>>> +++ b/mm/kasan/shadow.c
->>>>>>> @@ -305,7 +305,7 @@ static int kasan_populate_vmalloc_pte(pte_t *ptep,
->>>>>>> unsigned long addr,
->>>>>>>       pte_t pte;
->>>>>>>       int index;
->>>>>>>   -    arch_leave_lazy_mmu_mode();
->>>>>>> +    lazy_mmu_mode_pause();
->>>>>>
->>>>>> I wonder if there really are use cases that *require* pause/resume? I think
->>>>>> these kasan cases could be correctly implemented using a new nest level instead?
->>>>>> Are there cases where the effects really need to be immediate or do the effects
->>>>>> just need to be visible when you get to where the resume is?
->>>>>>
->>>>>> If the latter, that could just be turned into a nested disable (e.g. a flush).
->>>>>> In this case, there is only 1 PTE write so no benefit, but I wonder if other
->>>>>> cases may have more PTE writes that could then still be batched. It would be
->>>>>> nice to simplify the API by removing pause/resume if we can?
->>>>>
->>>>> It has clear semantics, clearer than some nest-disable IMHO.
->>>>>
->>>>> Maybe you can elaborate how you would change ("simplify") the API in that
->>>>> regard? What would the API look like?
->>>>
->>>> By simplify, I just meant can we remove lazy_mmu_mode_pause() and
->>>> lazy_mmu_mode_resume() ?
->>>>
->>>>
->>>> We currently have:
->>>>
->>>> apply_to_page_range
->>>>   lazy_mmu_mode_enable()
->>>>     kasan_populate_vmalloc_pte()
->>>>       lazy_mmu_mode_pause()
->>>>       <code>
->>>>       lazy_mmu_mode_resume()
->>>>   lazy_mmu_mode_disable()
->>>>
->>>> Where <code> is setting ptes. But if <code> doesn't need the effects to be
->>>> visible until lazy_mmu_mode_resume(), then you could replace the block with:
->>>>
->>>> apply_to_page_range
->>>>   lazy_mmu_mode_enable()
->>>>     kasan_populate_vmalloc_pte()
->>>>       lazy_mmu_mode_enable()
->>>>       <code>
->>>>       lazy_mmu_mode_disable()
->>>>   lazy_mmu_mode_disable()
->>>>
->>>> However, looking at this more closely, I'm not really clear on why we need *any*
->>>> special attention to lazy mmu inside of kasan_populate_vmalloc_pte() and
->>>> kasan_depopulate_vmalloc_pte().
->>>>
->>>> I *think* that the original concern was that we were doing ptep_get(ptep) inside
->>>> of a lazy_mmu block? So we need to flush so that the getter returns the most
->>>> recent value? But given we have never written to that particular ptep while in
->>>> the lazy mmu block, there is surely no hazard in the first place?
->>>
->>> There is, please see:
->>> https://lore.kernel.org/linux-mm/cover.1755528662.git.agordeev@linux.ibm.com/
->>
->> I've stared at this for a while, but I'm afraid I still don't see the problem.
->> This all looks safe to me. Could you explain exactly what this issue is?
->>
->> If I've understood correctly, kasan_populate_vmalloc() is called during virtual
->> range allocation by vmalloc. This is not in a nested lazy mmu block (but it
->> wouldn't matter if it was once we have Kevin's nested changes to ensure flush
->> when exiting the nested scope). kasan_populate_vmalloc() calls
->> apply_to_page_range(), which will walk the set of ptes, calling
->> kasan_populate_vmalloc_pte() for each one. kasan_populate_vmalloc_pte() does a
->> ptep_get() then, if none, calls set_pte_at().
->>
->> That's not a hazard since you're calling get before the set and you only visit
->> each pte once for the apply_to_page_range() lazy mmu block.
+On Tue, Nov 11, 2025 at 07:44:36PM +0800, Aiqun(Maria) Yu wrote:
+> On 11/11/2025 6:46 PM, Dmitry Baryshkov wrote:
+> > On Thu, Oct 30, 2025 at 04:39:07PM +0530, Taniya Das wrote:
+> >> Add the RPMH clocks present in Kaanapali SoC.
+> >>
+> >> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+> >> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
+> >> ---
+> >>  drivers/clk/qcom/clk-rpmh.c | 42 ++++++++++++++++++++++++++++++++++++++++++
+> >>  1 file changed, 42 insertions(+)
+> >>
+> >> diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
+> >> index 1a98b3a0c528c24b600326e6b951b2edb6dcadd7..fd0fe312a7f2830a27e6effc0c0bd905d9d5ebed 100644
+> >> --- a/drivers/clk/qcom/clk-rpmh.c
+> >> +++ b/drivers/clk/qcom/clk-rpmh.c
+> >> @@ -395,6 +395,19 @@ DEFINE_CLK_RPMH_VRM(clk4, _a, "C4A_E0", 1);
+> >>  DEFINE_CLK_RPMH_VRM(clk5, _a, "C5A_E0", 1);
+> >>  DEFINE_CLK_RPMH_VRM(clk8, _a, "C8A_E0", 1);
+> >>  
+> >> +DEFINE_CLK_RPMH_VRM(ln_bb_clk1, _a2_e0, "C6A_E0", 2);
+> >> +DEFINE_CLK_RPMH_VRM(ln_bb_clk2, _a2_e0, "C7A_E0", 2);
+> >> +DEFINE_CLK_RPMH_VRM(ln_bb_clk3, _a2_e0, "C8A_E0", 2);
 > 
-> I have to admit I do not remember every detail and would have to recreate
-> the issue - which is specific to s390 lazy_mmu implementation I think.
-> Both kasan_populate_vmalloc_pte() and kasan_depopulate_vmalloc_pte() do:
 > 
-> apply_to_page_range()
-> {
->     arch_enter_lazy_mmu_mode();
-> 
->     kasan_de|populate_vmalloc_pte()
->     {
->         arch_leave_lazy_mmu_mode();             <--- remove?
-> 
->         spin_lock(&init_mm.page_table_lock);
->         <PTE update>
->         spin_unlock(&init_mm.page_table_lock);	<--- PTE store should be done
-> 
->         arch_enter_lazy_mmu_mode();             <--- remove?
->     }
-> 
->     arch_leave_lazy_mmu_mode();
-> }
-> 
-> Upon return from spin_unlock() both kasan callbacks expect the PTE contains
-> an updated value to be stored to pgtable. That is true unless we remove
-> arch_leave|enter_lazy_mmu_mode() brackets. If we do the value is continued
-> to be cached and only stored when the outer arch_leave_lazy_mmu_mode() is
-> called. That results in a race between concurrent PTE updaters.
+> Shall this suffix necessary to have e0?
 
-OK, I've been staring at the code and KASAN docs and believe I understand the
-problem now. Thanks for your patience!
-
-The core of the problem is that the shadow memory which is being allocated here
-is 1/8th the size of the virtual range it covers, and so a single page of shadow
-memory can be shared by multiple vmalloc areas. The implication here is that
-multiple concurrent vmalloc() calls can allocate adjacent areas and both will
-race to allocate the same shadow page. That's why we have the spin lock and the
-check for pte_none(); the winner is the one that sees pte_none() == true and
-will perform the mapping.
-
-And so yes, this does indeed create a read hazzard; there are 2 racing threads,
-both reading and writing the pte.
-
-One alternative solution would be to grab the spin lock around the whole
-apply_to_page_range(), but for the populate call, that would imply holding the
-lock during __memset(). And for depopulate, it would imply holding it during
-__free_page(). Neither of these are desirable.
-
-So I agree pause/resume are required here. Sorry for the noise!
-
-Thanks,
-Ryan
-
+Can there be C6A_E1 at some point?
 
 > 
->>>> apply_to_existing_page_range() will only call kasan_depopulate_vmalloc_pte()
->>>> once per pte, right? So given we read the ptep before writing it, there should
->>>> be no hazard? If so we can remove pause/resume.
->>>
->>> Unfortunately, we rather not, please see:
->>> https://lore.kernel.org/linux-mm/d407a381-099b-4ec6-a20e-aeff4f3d750f@arm.com/
->>
->> Sorry but I don't see anything relavent to my point in this mail. Perhaps there
->> is some s390-specific detail that I'm failing to understand?
+> >> +
+> >> +DEFINE_CLK_RPMH_VRM(rf_clk1, _a_e0, "C1A_E0", 1);
+> >> +DEFINE_CLK_RPMH_VRM(rf_clk2, _a_e0, "C2A_E0", 1);
+> > 
+> > What is the difference between these clocks and clk[3458] defined few
+> > lines above? Why are they named differently? If the other name is
+> > incorrect, please fix it.
 > 
-> Sorry, with this message I meant the branch where it was discussed,
-> I will try to C&P some excerpts and summarize it here.
-> 
-> * lazy_mmu_mode_enable()
-> 
-> This helper is parameter-free, assuming the MMU unit does not need any
-> configuration other than turning it on/off. That is currently true, but
-> (as I noted in my other mail) I am going to introduce a friend enable
-> function that accepts parameters, creates an arch-specific state and
-> uses it while the lazy mmu mode is active:
-> 
-> static inline void arch_enter_lazy_mmu_mode_pte(struct mm_struct *mm,
-> 						unsigned long addr,
-> 						unsigned long end,
-> 						pte_t *ptep)
-> {
-> 	...
-> }
-> 
-> * lazy_mmu_mode_resume() -> arch_enter_lazy_mmu_mode()
-> 
-> Conversely, this needs to be -> arch_resume_lazy_mmu_mode(). And it can not
-> be arch_enter_lazy_mmu_mode(), since a lazy_mmu_mode_resume() caller does
-> not know the parameters passed to the original lazy_mmu_mode_enable(...)-
-> friend.
-> 
->>
->> Thanks,
->> Ryan
-> 
-> Thanks!
-> 
->>>
->>> The problem is kasan code invokes apply_to_page_range(), which enters lazy_mmu
->>> mode unconditionally. I would claim that is rather an obstacle for the kasan
->>> code, not a benefit. But it needs to be tackled.
->>>> Should apply_to_page_range() had an option not to enter the lazy_mmu mode
->>> (e.g. an extra "bool skip_lazy" parameter) - the pause/resume could have
->>> been avoided.
->>>
->>>> Thanks,
->>>> Ryan
->>>
->>> Thanks!
+> Good shot. Only now I can understand the previous comments.
 
+In future please ask questions instead of ignoring the comments that the
+engineer can understand.
+
+> IMO for kaanapali Taniya was addressed to have the right rf_clkN naming
+> here.
+> 
+> I think the point is glymur is not using "rf_clkN" for rf_clk, sm8750 is
+> not using "ln_bb_clkN" instead it is using clkN:
+
+I don't think it's that important. These clocks either should be handled
+similarly, or there should be a good reason not to do it.
+
+> 
+> static struct clk_hw *sm8750_rpmh_clocks[] = {
+> 	[RPMH_CXO_CLK]		= &clk_rpmh_bi_tcxo_div2.hw,
+> 	[RPMH_CXO_CLK_A]	= &clk_rpmh_bi_tcxo_div2_ao.hw,
+> 	[RPMH_LN_BB_CLK1]	= &clk_rpmh_clk6_a2.hw,
+> 	[RPMH_LN_BB_CLK1_A]	= &clk_rpmh_clk6_a2_ao.hw,
+> 	[RPMH_LN_BB_CLK3]	= &clk_rpmh_clk8_a2.hw,
+> 	[RPMH_LN_BB_CLK3_A]	= &clk_rpmh_clk8_a2_ao.hw,
+> 	[RPMH_RF_CLK1]		= &clk_rpmh_rf_clk1_a.hw,
+> 	[RPMH_RF_CLK1_A]	= &clk_rpmh_rf_clk1_a_ao.hw,
+> 	[RPMH_RF_CLK2]		= &clk_rpmh_rf_clk2_a.hw,
+> 	[RPMH_RF_CLK2_A]	= &clk_rpmh_rf_clk2_a_ao.hw,
+> 	[RPMH_RF_CLK3]		= &clk_rpmh_rf_clk3_a2.hw,
+> 	[RPMH_RF_CLK3_A]	= &clk_rpmh_rf_clk3_a2_ao.hw,
+> 	[RPMH_IPA_CLK]		= &clk_rpmh_ipa.hw,
+> };
+> static struct clk_hw *glymur_rpmh_clocks[] = {
+> 	[RPMH_CXO_CLK]		= &clk_rpmh_bi_tcxo_div2.hw,
+> 	[RPMH_CXO_CLK_A]	= &clk_rpmh_bi_tcxo_div2_ao.hw,
+> 	[RPMH_RF_CLK3]		= &clk_rpmh_clk3_a.hw,
+> 	[RPMH_RF_CLK3_A]	= &clk_rpmh_clk3_a_ao.hw,
+> 	[RPMH_RF_CLK4]		= &clk_rpmh_clk4_a.hw,
+> 	[RPMH_RF_CLK4_A]	= &clk_rpmh_clk4_a_ao.hw,
+> 	[RPMH_RF_CLK5]		= &clk_rpmh_clk5_a.hw,
+> 	[RPMH_RF_CLK5_A]	= &clk_rpmh_clk5_a_ao.hw,
+> };
+> 
+> > 
+> >> +
+> >> +DEFINE_CLK_RPMH_VRM(rf_clk3, _a2_e0, "C3A_E0", 2);
+> >> +DEFINE_CLK_RPMH_VRM(rf_clk4, _a2_e0, "C4A_E0", 2);
+> >> +DEFINE_CLK_RPMH_VRM(rf_clk5, _a2_e0, "C5A_E0", 2);
+> >> +
+> >> +DEFINE_CLK_RPMH_VRM(div_clk1, _a4_e0, "C11A_E0", 4);
+> >> +
+> >>  DEFINE_CLK_RPMH_BCM(ce, "CE0");
+> >>  DEFINE_CLK_RPMH_BCM(hwkm, "HK0");
+> >>  DEFINE_CLK_RPMH_BCM(ipa, "IP0");
+> >> @@ -901,6 +914,34 @@ static const struct clk_rpmh_desc clk_rpmh_glymur = {
+> >>  	.num_clks = ARRAY_SIZE(glymur_rpmh_clocks),
+> >>  };
+> >>  
+> >> +static struct clk_hw *kaanapali_rpmh_clocks[] = {
+> >> +	[RPMH_CXO_CLK]		= &clk_rpmh_bi_tcxo_div2.hw,
+> >> +	[RPMH_CXO_CLK_A]	= &clk_rpmh_bi_tcxo_div2_ao.hw,
+> >> +	[RPMH_DIV_CLK1]		= &clk_rpmh_div_clk1_a4_e0.hw,
+> >> +	[RPMH_LN_BB_CLK1]	= &clk_rpmh_ln_bb_clk1_a2_e0.hw,
+> >> +	[RPMH_LN_BB_CLK1_A]	= &clk_rpmh_ln_bb_clk1_a2_e0_ao.hw,
+> >> +	[RPMH_LN_BB_CLK2]	= &clk_rpmh_ln_bb_clk2_a2_e0.hw,
+> >> +	[RPMH_LN_BB_CLK2_A]	= &clk_rpmh_ln_bb_clk2_a2_e0_ao.hw,
+> >> +	[RPMH_LN_BB_CLK3]	= &clk_rpmh_ln_bb_clk3_a2_e0.hw,
+> >> +	[RPMH_LN_BB_CLK3_A]	= &clk_rpmh_ln_bb_clk3_a2_e0_ao.hw,
+> >> +	[RPMH_RF_CLK1]		= &clk_rpmh_rf_clk1_a_e0.hw,
+> >> +	[RPMH_RF_CLK1_A]	= &clk_rpmh_rf_clk1_a_e0_ao.hw,
+> >> +	[RPMH_RF_CLK2]		= &clk_rpmh_rf_clk2_a_e0.hw,
+> >> +	[RPMH_RF_CLK2_A]	= &clk_rpmh_rf_clk2_a_e0_ao.hw,
+> >> +	[RPMH_RF_CLK3]		= &clk_rpmh_rf_clk3_a2_e0.hw,
+> >> +	[RPMH_RF_CLK3_A]	= &clk_rpmh_rf_clk3_a2_e0_ao.hw,
+> >> +	[RPMH_RF_CLK4]		= &clk_rpmh_rf_clk4_a2_e0.hw,
+> >> +	[RPMH_RF_CLK4]		= &clk_rpmh_rf_clk4_a2_e0_ao.hw,
+> >> +	[RPMH_RF_CLK5_A]	= &clk_rpmh_rf_clk5_a2_e0.hw,
+> >> +	[RPMH_RF_CLK5_A]	= &clk_rpmh_rf_clk5_a2_e0_ao.hw,
+> >> +	[RPMH_IPA_CLK]		= &clk_rpmh_ipa.hw,
+> >> +};
+> >> +
+> >> +static const struct clk_rpmh_desc clk_rpmh_kaanapali = {
+> >> +	.clks = kaanapali_rpmh_clocks,
+> >> +	.num_clks = ARRAY_SIZE(kaanapali_rpmh_clocks),
+> >> +};
+> >> +
+> >>  static struct clk_hw *of_clk_rpmh_hw_get(struct of_phandle_args *clkspec,
+> >>  					 void *data)
+> >>  {
+> >> @@ -991,6 +1032,7 @@ static int clk_rpmh_probe(struct platform_device *pdev)
+> >>  
+> >>  static const struct of_device_id clk_rpmh_match_table[] = {
+> >>  	{ .compatible = "qcom,glymur-rpmh-clk", .data = &clk_rpmh_glymur},
+> >> +	{ .compatible = "qcom,kaanapali-rpmh-clk", .data = &clk_rpmh_kaanapali},
+> >>  	{ .compatible = "qcom,milos-rpmh-clk", .data = &clk_rpmh_milos},
+> >>  	{ .compatible = "qcom,qcs615-rpmh-clk", .data = &clk_rpmh_qcs615},
+> >>  	{ .compatible = "qcom,qdu1000-rpmh-clk", .data = &clk_rpmh_qdu1000},
+> >>
+> >> -- 
+> >> 2.34.1
+> >>
+> > 
+> 
+> -- 
+> Thx and BRs,
+> Aiqun(Maria) Yu
+
+-- 
+With best wishes
+Dmitry
 
