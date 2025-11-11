@@ -1,216 +1,106 @@
-Return-Path: <linux-kernel+bounces-894824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D92AC4C2A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 08:49:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 318DEC4C2C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 08:50:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52069189E6CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 07:49:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BFAC3ADDC1
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 07:50:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6B6E26ED36;
-	Tue, 11 Nov 2025 07:49:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE51C299950;
+	Tue, 11 Nov 2025 07:49:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b="R3/HtJ5d"
-Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11012028.outbound.protection.outlook.com [40.93.195.28])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JoFTKMV5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D4582E8B71;
-	Tue, 11 Nov 2025 07:48:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.195.28
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762847340; cv=fail; b=tMVeUUs3Y9FBdkPSpMFUvehnfCkmlpEo7Nvv9XSsFQ7UVWL7jYRdaKkgEbC82hGGuAaUeTKTw0fh1i+4/89O53h/QMyGcXOUQI5fIeRXb1qv4qkTgh2LupzWonLsfCbyK63wMm81IXoJfq/8bbO01mxm361+VfuMloCvUm9nhz0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762847340; c=relaxed/simple;
-	bh=rpFZce/4sEzLT21IiIUmh9JL4w4h8PoPU+jFUs+fwus=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=uLFzdrycYx7tv8eUv1vxDLKhLkWhm/bE7icpru+hbh6FN3NEOHnmrNWfbFuDf4saz4QCEg6INTuIaT1Q43RNg98QB5Al2kkPea56CcgKyRkG5MgsAunNeTdnE1hRKkPZ/7AfYQ6FQ5ZOdocxjjxK4paMJFEObag5OxmmUdwtieA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com; spf=pass smtp.mailfrom=altera.com; dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b=R3/HtJ5d; arc=fail smtp.client-ip=40.93.195.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altera.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=FlmxlmvlP+0ytf48eM68FnrIeKNnuGxTfLzASfSAwxOTGhOTdO9TPf4JCwlilTGgyQmvpjPXPKRUIutcq8OxeMAINomLZhuULn1a47aJquAwQrObLWLBLcDioKzzrSip4vw+q9Shl4lYq3FyBxrUbHWoANq973UUkQEpaVEz4NK4j2OXAz7HaaLlCzdmd5pSC+rx4TBvsvwVs5FL9qxqKEIF09wPpDcVdFjx6uM8NZ2To9OswxqjR3QAq6wMR2HmwZWCvnAJ2EH8iSxJaQu3oo1xHYWXv2qlONRaxZbYwtFCd2jY6GlY0WYqtwrxvHLMLKjre8wv4JzyygCRIkjOMw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zu/fFjgfXN/zQsqLkZEKHFBiaXRAPG/LL6nkSBtzOR4=;
- b=N8V+1P565xuS0g08OfPIPzVJF5RxCgqPnYz1C22CYwlVJxBXKFISufSArHnbmhdjtO3EsAE2uad1gMwyHQqGyJPdv2nQ1LTE4xZymHzNvBrVV2I68z6rW/4MBfjp+0w8UUcFXHnpyGRkGihwmfa79eWV0UtjB80dOjsk1R6JLPBY5c1aa/1O11qDCK74oTCZf9yeZ+eCGtvhxuR1ioWZHZK7gr7Uk/fGpG99haS9TkoV7NAqebevgQvQIWw5hOZNDlVSQxobdDrqSVJhkD9BT8D0AcLwMv2GSelJAB7q7Q6TNE3fIU8NN8HisycGkw/h50ZEleVFglQgsZTq4F2hLA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=altera.com; dmarc=pass action=none header.from=altera.com;
- dkim=pass header.d=altera.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=altera.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zu/fFjgfXN/zQsqLkZEKHFBiaXRAPG/LL6nkSBtzOR4=;
- b=R3/HtJ5dIBEToYkiW+2g2jJPMiIeBx7ELLNe4DQSdhfSW02hW3IUrtVSWI3gbBQd6AAs1AadpmIM+tCFA312Xoqq7fuwGdudkzS1j45VdMjHGd8rGKF6x3MHpLGlo9QxackavD011vHc8A0tvJhSAe13vZBUFYLDR782a5VLCff974Qwe3zIZRMonNpfblZm7vIcZChg9UI/G+8ZtFqQAVt0Zo9C2fuWuxb/9b2qydARqtZJamfriwTeW4clXu0aHHn5ioo/jNcx+d2LEc33yUT1kS6TYDzPbJDyzOJ+65VXNhgll8UGvNvPFuTDPDVIEG3fgFOUgdUJCRxhGZxPXA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=altera.com;
-Received: from MN2PR03MB4927.namprd03.prod.outlook.com (2603:10b6:208:1a8::8)
- by CY1PR03MB8124.namprd03.prod.outlook.com (2603:10b6:930:105::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Tue, 11 Nov
- 2025 07:48:56 +0000
-Received: from MN2PR03MB4927.namprd03.prod.outlook.com
- ([fe80::bfcb:80f5:254c:c419]) by MN2PR03MB4927.namprd03.prod.outlook.com
- ([fe80::bfcb:80f5:254c:c419%5]) with mapi id 15.20.9298.012; Tue, 11 Nov 2025
- 07:48:56 +0000
-From: Khairul Anuar Romli <khairul.anuar.romli@altera.com>
-To: Moritz Fischer <mdf@kernel.org>,
-	Xu Yilun <yilun.xu@intel.com>,
-	Tom Rix <trix@redhat.com>,
-	Dinh Nguyen <dinguyen@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Mahesh Rao <mahesh.rao@altera.com>,
-	Ho Yin <adrian.ho.yin.ng@altera.com>,
-	Niravkumar L Rabara <nirav.rabara@altera.com>,
-	linux-fpga@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Khairul Anuar Romli <khairul.anuar.romli@altera.com>
-Subject: [PATCH 3/3] arm64: dts: agilex5: add fpga-region and fpga-mgr nodes
-Date: Tue, 11 Nov 2025 15:48:33 +0800
-Message-ID: <6fc26f2a847a40d070bc1d24d4b7a99450009e67.1762843803.git.khairul.anuar.romli@altera.com>
-X-Mailer: git-send-email 2.43.7
-In-Reply-To: <cover.1762843803.git.khairul.anuar.romli@altera.com>
-References: <cover.1762843803.git.khairul.anuar.romli@altera.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: BYAPR06CA0051.namprd06.prod.outlook.com
- (2603:10b6:a03:14b::28) To MN2PR03MB4927.namprd03.prod.outlook.com
- (2603:10b6:208:1a8::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DB88221FBF;
+	Tue, 11 Nov 2025 07:49:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762847399; cv=none; b=IRaJBeRiTdD7Rj7qa2mGTj0WlvQjEyoABB2EK2t8Zd1eI7lE4GID3h74sTQgd8YX2qWvwKUY/2cKEDKyEJf8wOkDUtAi2udPzelOo9Q79RXRIst9ZU2sXTYDLu7T5rhvKUAw0SVf9d16RmHkPpimgBQ6m+bgTrKa2i3tTjAFFJU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762847399; c=relaxed/simple;
+	bh=LtD7jh1jiHyiFX3iVP+B4S4da4HrLV4LEooD4oBo27c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pGVl2ayySlJgalDkvWwwgJBFVPtikmQ98+cYJBJfY0Gro1+1PQZt46p4zu6a/qHOpyXWLb5Zama9Z/uOffhFxfR2nMiNfswbEPRr/GEDbyZkinp5k0VIJsFn02gIN+oyjefoEVrAhL7QTn5BBOZ3bkZFeYghUS+ML7iSX9fIRaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JoFTKMV5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7B81C19423;
+	Tue, 11 Nov 2025 07:49:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762847398;
+	bh=LtD7jh1jiHyiFX3iVP+B4S4da4HrLV4LEooD4oBo27c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JoFTKMV5c9VBms5D1QoGJ/1cmQlq6ndI44MgJvLg+2cKTvNT7VCTKai7D8BJaSmsL
+	 1lXEZ/4I8pKMhvjzVyTP07+o9t+mBRZzL7jx/AfC5SqyiBA3CYQw1j4mwskoWdsesY
+	 FAX1tlQ6elMo6Z2UKve1n3Sb9XIhxk4Vnhok3b1nXsSbEa77ohIzvPU4cbbLgQcx59
+	 lmRb1KLQhdPI9nVBwQGBqkglY+ZtLQkcvzl/PyC+3aqowHCzu+pUffziPJsf/4fmSY
+	 Hq0aErDgQz7DV6zwmH3X/2iNtV8uUVM0K5DHDOwwZiAbMEA5uOGHP57205mbfEVYFZ
+	 iiW/zl9nKuv8A==
+Date: Tue, 11 Nov 2025 08:49:55 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+Cc: Rob Clark <robin.clark@oss.qualcomm.com>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Sean Paul <sean@poorly.run>, Dmitry Baryshkov <lumag@kernel.org>, 
+	Abhinav Kumar <abhinav.kumar@linux.dev>, Jessica Zhang <jesszhan0024@gmail.com>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Jonathan Marek <jonathan@marek.ca>, 
+	Jordan Crouse <jordan@cosmicpenguin.net>, Will Deacon <will@kernel.org>, 
+	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Connor Abbott <cwabbott0@gmail.com>, 
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev, 
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 20/21] dt-bindings: display/msm/gmu: Add Adreno X2-85
+ GMU
+Message-ID: <20251111-magnetic-jasper-slug-3abc3e@kuoka>
+References: <20251110-kaana-gpu-support-v2-0-bef18acd5e94@oss.qualcomm.com>
+ <20251110-kaana-gpu-support-v2-20-bef18acd5e94@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN2PR03MB4927:EE_|CY1PR03MB8124:EE_
-X-MS-Office365-Filtering-Correlation-Id: e48ad62c-9f50-4775-f575-08de20f6c424
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|376014|7416014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?m2kb9XvFuQ33/M0h8raXtClgqYZOzm4kySJgv8kAsKq9I/wxHi9LlImA68bI?=
- =?us-ascii?Q?Kwf04mS5t7OczgioNndo4F0lvNUdX19H8o+V556qJmnFJoWoDKLxSByzJec6?=
- =?us-ascii?Q?H4tXBb9EWq3Z4qIeA0mXC9D81P4LzKp8cBWkIsLzH6k7QwuQdceOCs1VlbqK?=
- =?us-ascii?Q?l9qO7mouCAsiEpolBvOazbA4hSiT3pV0o4wevwf6yPHp5p5pM5l6YjzgJ0iz?=
- =?us-ascii?Q?OtbmMNNFvLQUwCpAJvqwFeFIRst5NZsq2IEtvBijYFDkOEagD0LM/eE5qZXV?=
- =?us-ascii?Q?1co2BCGwLu7tiR3QQAfrBgc88oWRuKG282YcYcagJgYqtZ8Q9SZpD5yF0cAc?=
- =?us-ascii?Q?aW2qZOJc+TqPjp28zUwuXOCKQUnORPnDengj1OsY/VqRsHLE4cHknFUPj7k1?=
- =?us-ascii?Q?v9PokTwWgcsoTRS3TEgEPafjEFtG59JxE1Xo9vkE0znxpN4HnRB2ZJwtqDwQ?=
- =?us-ascii?Q?q5fxI+sqqiAFA6D4J+YTapplQIRGwt81WlS++//SImuJfrZ28E8pp0mcpHFk?=
- =?us-ascii?Q?vLgu12iRwP3RDi3n9bCUX8PM//PicT17IQzahM0mgfiat33Y/LBPmpp9ns6n?=
- =?us-ascii?Q?Gb5tkk6s9WPdTbvFyJT2NfRryVY+MujorgEpdbz/J444DKVbNAS+Pnn+7oiL?=
- =?us-ascii?Q?wl+M4x41Y/f5UBDUuVf+MbM170SNwc3nmnW5dXPLcWfxFQlJINUMJSlaoh00?=
- =?us-ascii?Q?UxBE1jxrM/CigLWd9T/sPoUKmt22+yMPasIAljyftLR8zBx6bI8zPJWJhMcH?=
- =?us-ascii?Q?u0kJME78Iwgy8vQa+GMFGvJmSVF6L99fnSqrENIkHHI27ampTFGRP3c2j/Um?=
- =?us-ascii?Q?CT0n/6L3lCpizTRJ72DArW/Foi/03PFS7byHIY6fCWLDKmH1Y9BjLMPC0HmB?=
- =?us-ascii?Q?oqic/w0ps71fL/nR1Z/HjROc0jVvnRXMbfuybESMgwHmqd7taOOeVkMmd4c9?=
- =?us-ascii?Q?coYAk9Dwcb7CZzpYenj/wbvC+ikMJMcN2mKRMF4is4475IiNhK3S5udtmDJZ?=
- =?us-ascii?Q?1oTYihFoAhmueQGsAFr5yzvzipRA1jxeZ755+XANeuCLiDHUgZkdWsqqPqFw?=
- =?us-ascii?Q?8TbQ7+FIaEEBOF4aUelEzie91Lg/vdabJjqjLQkdyell0aDtAoBJS9x3oElK?=
- =?us-ascii?Q?+zNN5ZlzbzMMBmuilCbmtCaL+XfnwmAPa0lm+QFa2KUkqjT4StGGtyC3Atj0?=
- =?us-ascii?Q?NpYHsVIBP3Fwz3XPj/qPTAyanioQbApgJFN3CP5ieydxBFKWH9MLVDssaYb/?=
- =?us-ascii?Q?GUAACrfsIpzqx9vBrOs6/h7rQrqlrmIJDiS9tdV5YHvBhQCHl4h++IlcLKkr?=
- =?us-ascii?Q?3lZNo7WgeWYCzLXh9n2s2AO5PAVr/2HaAN6ywRlafnsjsmtRlJc3o6XBtM7I?=
- =?us-ascii?Q?V3QEN514aya5K7mPFvNapuSD0/DkNQUPDyhXM1JW2lI/QgqcI7zGUIITsbzc?=
- =?us-ascii?Q?S8oDpH0ckQWibY4BkTlAg5GZ0vAvtFBS7JO0CobVSVoHl77cXt4EQMaI7GK+?=
- =?us-ascii?Q?3zUhw/raZFGa98c=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR03MB4927.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?kJUA7SQxpUcT26gXJ0YeTUIqnQ4WVdciupVM2AX07ZfRjMB5DoLrfEgRq3CU?=
- =?us-ascii?Q?XX/BSpslCSCNIDx3l/YplZ/VB3/PYweNv0faW10Ub6cPCAYM/rC9V+U7AWua?=
- =?us-ascii?Q?XrPCVjDbjWXljdSuZtu9s9rSTPt/ZipZ1xz6ifyc2g49TObsnk+xNnBGzvuq?=
- =?us-ascii?Q?8joVkvMUzrR5iYdZIr+2elmxwzUtD4Gl+3wiLfhMrpVGQZoDJDTQxYLFCJiD?=
- =?us-ascii?Q?sSjYNrbDILHwMxF1jnAyBNyRo/Spwt7VYLvmmqGAfo9IYE9UMeJITBL/y75v?=
- =?us-ascii?Q?k4909SDr6IWv9/htBi86/LcnBuxtD8kfXrnFG8xlA8tvkPCZIyZjXCS3kAaE?=
- =?us-ascii?Q?Qkn3Bv95blyH+0qwdWDR+0BST0aOw4kIKpu9UeJ+5pIP6mh/zIBmwRWDs6NI?=
- =?us-ascii?Q?vKf9gz9wVOkEpFxKnJDY7MHet/xyGwQ/tPq34JNmB2t2QAmYWT6ANmpKa6yR?=
- =?us-ascii?Q?UomRpE0kb0qaJzrTGXc6C12t0h1cx2A+e7Ajw9Dz27LpIdVyYc8+xk3cLQ5w?=
- =?us-ascii?Q?NhOuXYcvRp8jRe2OjnTEka6i1zbwjwB/o6OHRWOZUbucIAR2qjq6BLYJYW7F?=
- =?us-ascii?Q?f/V5vn+8y+rEJOhg1LwELPpUCZl0mR1p5nWa0uoPYc22eYqY0VeBg7omkZED?=
- =?us-ascii?Q?Lq/bTys+wPs2bdHdN4How6E7fC7ynReKejuXvlxBWRd9c9N/4KE5Ss4Gfegg?=
- =?us-ascii?Q?S+HSdFIaeuxkgJN3TA8JcqHLwDBCBzUrH+Vz6/gNt7peiTiPZQuK3xFZXia8?=
- =?us-ascii?Q?tuElEQGA03tytv3SIBSfw1ECi27svqtpXEcttlJfucnXJPOzk/RkfnJ13OIb?=
- =?us-ascii?Q?wwKxRelYCGIpQQDVaqA9wUrYzEQ/+w46Ma7HI3BsRaprmhl0GV9Xh9EntaDV?=
- =?us-ascii?Q?Hb93WqXq3RQWj9UTGKxLBSl2SnTe0P0Xcbj+dI5OycdgloH7ix8NtdTCdkMP?=
- =?us-ascii?Q?EnkXRsrT+SRRQ/jivJMzmgJQRDVaIetUFqqzPkE0SsVeAYaWeE4d2TR0Xgkz?=
- =?us-ascii?Q?oTh4mNFdvh/MS/ibpYLjMQ0MgIhML4NIox2gRNsa6ssXT906Zsl1qyi9EGuJ?=
- =?us-ascii?Q?jn7uWPXaweRd9nlGDl9ALOyURF7ici5KgL0xtjikO/UXyGHVevk4YtaIdTdQ?=
- =?us-ascii?Q?sLJCF7CSVFjW6zypPupxvpAOC2S3rOUwOvbxl5E+BxnkeZ+/8WDdaw1xWZTH?=
- =?us-ascii?Q?K/r5EmunUVu/BoorRIo94cVCjUoeU3silbEo4ALlONG6uHTa9kXTSKAi9wav?=
- =?us-ascii?Q?5jct7XNTHGeSbK+5AwR9mx1YzDsXBqIDcBcHdPbj1r53RGTDgZwI7OO2CTma?=
- =?us-ascii?Q?PHK03KKKV4rC63zQ64d4QjUM1C2qmG7h8JDq/vkGhizLnp8jq9+UNu4qufwa?=
- =?us-ascii?Q?sguM6vIv24916k7DaIoHqB9r0RZerBPZ1kqK80XMok1pQO4qdn67XIWfOaBw?=
- =?us-ascii?Q?hq3J/NuLUWRF4TS+QSfsNvuIPmxSI5WTZ+2nHq4cHSjNvmtg7rlDniDyn9/B?=
- =?us-ascii?Q?AbzJ8399TTG2yazupAIQ74JEOAVx9R2SbhwEjX0rWzODNuC9cETePlNjWVFy?=
- =?us-ascii?Q?8MM77yKrkxuuwGu5zP8a5UpvCijZtleiohy0180711+sJgrUoR0/gM8oEh0d?=
- =?us-ascii?Q?yg=3D=3D?=
-X-OriginatorOrg: altera.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e48ad62c-9f50-4775-f575-08de20f6c424
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR03MB4927.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Nov 2025 07:48:56.1920
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: fbd72e03-d4a5-4110-adce-614d51f2077a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: cHnduYUdHMIySyNSXzWjnivpXhBcT/IHlnJ/khSUQDn1EgNrCXLQaeKi6uxh40/KvIX+cGMh52VN9PtXaFgm75D9xy4Xby7j7A1EU0Bc3wI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR03MB8124
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251110-kaana-gpu-support-v2-20-bef18acd5e94@oss.qualcomm.com>
 
-The Intel Agilex 5 SoC contains a programmable FPGA region that requires
-proper device tree description to enable FPGA manager support in the
-Linux kernel. Without the 'fpga-region' and 'fpga-mgr' nodes, the
-kernel cannot detect or manage the FPGA hardware correctly.
+On Mon, Nov 10, 2025 at 10:07:26PM +0530, Akhil P Oommen wrote:
+> Document Adreno X2-85 GMU found in Glymur chipsets in the
+> dt-binding specification. It is very similar to Adreno 840
+> GMU with the additional requirement of RSCC HUB clock.
+> 
+> Signed-off-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+> ---
 
-This patch adds a 'fpga-region' node with compatible = "fpga-region",
-along with appropriate #address-cells and #size-cells properties, to
-describe the FPGA region layout.
+<form letter>
+This is a friendly reminder during the review process.
 
-It also defines the 'fpga_mgr' node with compatible =
-"intel,agilex5-soc-fpga-mgr" and links it from the 'fpga-region' node
-via the 'fpga-mgr' property.
+It looks like you received a tag and forgot to add it.
 
-Signed-off-by: Khairul Anuar Romli <khairul.anuar.romli@altera.com>
----
- arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+If you do not know the process, here is a short explanation:
+Please add Acked-by/Reviewed-by/Tested-by tags when posting new
+versions of patchset, under or above your Signed-off-by tag, unless
+patch changed significantly (e.g. new properties added to the DT
+bindings). Tag is "received", when provided in a message replied to you
+on the mailing list. Tools like b4 can help here. However, there's no
+need to repost patches *only* to add the tags. The upstream maintainer
+will do that for tags received on the version they apply.
 
-diff --git a/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi b/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
-index bf7128adddde..10dd8ec641cc 100644
---- a/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
-+++ b/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
-@@ -85,9 +85,20 @@ svc {
- 			method = "smc";
- 			memory-region = <&service_reserved>;
- 			iommus = <&smmu 10>;
-+
-+			fpga_mgr: fpga-mgr {
-+				compatible = "intel,agilex5-soc-fpga-mgr";
-+			};
- 		};
- 	};
- 
-+	fpga-region {
-+		compatible = "fpga-region";
-+		#address-cells = <0x2>;
-+		#size-cells = <0x2>;
-+		fpga-mgr = <&fpga_mgr>;
-+	};
-+
- 	psci {
- 		compatible = "arm,psci-0.2";
- 		method = "smc";
--- 
-2.43.7
+Please read:
+https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/submitting-patches.rst#L577
+
+If a tag was not added on purpose, please state why and what changed.
+</form letter>
+
+Best regards,
+Krzysztof
 
 
