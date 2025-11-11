@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-894607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AFE9C4B681
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 05:06:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1118C4B699
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 05:08:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54B961895127
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 04:06:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17D753BA1FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 04:05:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75FFB34B683;
-	Tue, 11 Nov 2025 04:04:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C61834B421;
+	Tue, 11 Nov 2025 04:04:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wZ7jMP0M"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tMHZ+qj8"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A29A134B1AF
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 04:04:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAD8734B41E
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 04:04:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762833881; cv=none; b=dRUEUw+M35ggbFNfHMvWpegynD07+E0GEXFrrdtT9f2WR4lxhD493Vn6Pz+DgNvQr4ajzVPMcN3GWVdkleddcQJrq6/AxxXgJiVi3kJwmYnuo6dBg21SKN+rP/zwSa6LqhzvCV3gk4HHRJmZIVkKOzhcGRAdOqxm4lyBnkRDOiw=
+	t=1762833883; cv=none; b=pG2/QPGezvwdo970goC9Signhpe9PMna88VotE817z8oKKqbEE2xzSBNtCTYAHi3MlLtlpaLPvVBqCuRi8f1FsA27aUuymr2bnfx+x9wKC5ikP5Lnf64O/CAmdaYSuw/e4uUdt7F/7At/sgmwRcE3jJ7IyAdl2ufhQ3Cp1hh608=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762833881; c=relaxed/simple;
-	bh=qUm5bx6/0XmDAeu6sv2CUrTMbOhB3wBeqNrPm7lQTZE=;
+	s=arc-20240116; t=1762833883; c=relaxed/simple;
+	bh=cZF5rXK0ot4f5Ll54hzIMYMkIxY+GXfM/HIllfqaohs=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=MQNoY8b8ag/RDHRktoHe91SbrasS5yT5jLF4eFa0L+ctg50FsbiiVqV2JDV+dznXiD0D0IT2cCxEj2kqFumMN4LKhvYOK5xTNky6M2OxOyvQ6gD06bewvz454gl1tPd975kTIjmaBNOmuklTGi8dfAAkRtAb1y0TrBm4w1kMmPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wZ7jMP0M; arc=none smtp.client-ip=209.85.214.202
+	 To:Content-Type; b=QVo5LVxfFMC1eQA+fVRcFNkCuhoWyGH4LVgFlTkOdaABoNimyJttCfPg5x9yJdC4I4HwQSJtLZt8J/4eUVRHfwlmobr1mmbEv8SQ2HkU+nsSFrZ8ZxHxgdfljn6uAzsNCDgeeK+HuzFjYYsK/U43oobTLrNY54hLbnDS8le4tfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tMHZ+qj8; arc=none smtp.client-ip=209.85.214.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2982b47ce35so16860275ad.2
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 20:04:39 -0800 (PST)
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-297b35951b7so62947525ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 20:04:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762833879; x=1763438679; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1762833881; x=1763438681; darn=vger.kernel.org;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=TDoLCBgO0tcXliKlxdM4YCl/0JA9B7dwGS5M2BAbZyM=;
-        b=wZ7jMP0MMZ9RwL9TsAtyKt9YesLjYlbc9U2we951Uw1uF+xAPFggP5dGzNaTfY42IQ
-         z29Uzx1MWTaefyxHBRP/G9YBKrma216sttGjKXMLHuzkscpplZT5+0FtHlxD8xd0hTI4
-         nHtJ4xs0xywf9xnuRKg9MkA7oX43bzoFzcwFT8RXJG7AXX7VRzGv0SEbjdSQLZDty6wN
-         tl14REo+IRW5qkLTSMtdYi/TbZKXqUaH3FaW2qHr2oORHtNfTi5jruaH33ylbfK7DZsQ
-         HmpOGc/AFXOG8BJW8PZWSITwq6r2Fv0J0MQyJ6QsQZp0bSjOR+RVQjEoGf5mvdUGn+ec
-         81eg==
+        bh=CJrFojSq6nlkAfypEMFi1zUKz5050bK3dx0VztPcSL4=;
+        b=tMHZ+qj8E2QRfuhNUb4UXJNNDTw2JFFhWTcQT612muYlXUcXRAj772/9qMEvXT6Z3Q
+         zL4BGjDwroZe4GLZueozy4yLTGLuTeOyPv2zsOGnSca339MkO4DTiPT0YXEmzwpimVGC
+         +vN/slGRzVT+HZGC57XXAiUZQ1sGvw6i03BJHAUmvfk6HB6thkujsBRXlwtwiEOJ0Fhs
+         aWMCJI6Y6QrmWbwh2kuGcA7J9NCSRIMATVmk7IvqFltowbluJe+zVFfuYzerWt+ds7f8
+         P5qq5+YXTWF7GniPmE0j/QNhBljK6Yq1Vlx0DjOYPatLdcs2IKhmaPmIu0xxYolDFM7I
+         Rqlg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762833879; x=1763438679;
+        d=1e100.net; s=20230601; t=1762833881; x=1763438681;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TDoLCBgO0tcXliKlxdM4YCl/0JA9B7dwGS5M2BAbZyM=;
-        b=N9E9WDCwjxrhSNdUrRIIb8nNAxWwhsilRwUsS0P9J3QywdCnrq6RjK65LKfdcEADe8
-         BCwDVTywJyuEN/l1wVsjz+wxlddBjUUmL71IA58i96HCC0SHvrQBJ/G33vJzj0UjI2B5
-         ZDdT/EQ5qz2UXuhtc7aUSCRkBtZoEWSF5VoKfLjGKoHge+2Yivp1kwVE5jKoUqOnL/5J
-         oLINmrayNwmetrrPn51VKcI01m07NTS44VPbHc+jcNqFzn4AZ+kbG6hGCmhdJ/TwUP+n
-         lxia4W6eh1crQCrYhtH56EVyZX93XN57gOEWKKW76LQGZmGaRY6SeqM+xP5RLZsrYMpq
-         cbIg==
-X-Forwarded-Encrypted: i=1; AJvYcCUS3WS1JvY0aDZwHTgoUDg/bXZDbrw76cXZ/AO8Xcz28EWfJsKFn67YT18aQqjyLaXPwxWOEFvvTHejjj0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZkC1/FU+dD0QxCntMzaGDkTbw7PrSTRQeJIZpRj/4tIcnZzWW
-	itjgHSo39tQbPFkKbkDSYvp7gBbTsoEGsIvCEgjWkX238W9p9GYwhD1QGvh43G5rHziY068wJRO
-	IgzU7EmmE4A==
-X-Google-Smtp-Source: AGHT+IG0tdChuTLKBtEvp/BgUyBD047haky1gD/MXzE6Sqj8bB3iyElIkrSbGdCG0yZvQbzlxgMtuvW4Q5wa
-X-Received: from dybph5.prod.google.com ([2002:a05:7301:4185:b0:2a4:603a:d428])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:1a27:b0:297:ec1a:9db8
- with SMTP id d9443c01a7336-297ec1a9e0dmr149289465ad.49.1762833879157; Mon, 10
- Nov 2025 20:04:39 -0800 (PST)
-Date: Mon, 10 Nov 2025 20:04:06 -0800
+        bh=CJrFojSq6nlkAfypEMFi1zUKz5050bK3dx0VztPcSL4=;
+        b=byANOIeWNAiY5aLXZt3Fn7zPd0DBgfpXQvY4QTBLzfGH25yga2Tptug3ln09mXvo2I
+         AxX1kESK+orOlKidWFov7oF5M6pT/fse05kvYFda64MpQzglFhjq1GGlTI68hXJ0qXXf
+         XnkwM8JY85C+yXbn9kOPG20QOS4CMpMp6en6j7O8m5swFQPrkRnF85YofSa8YWJQsDeZ
+         edNAgZUgJKgKzd2yWUX13gNOH25zs+bpjX9O6IYkOjvfEPLC9WDL7NmrKsGSjVJ8wdwZ
+         WLpZKmMqElTUV6aopeks9ZJoos0SA3pifvtcngjjJBhTSFHX64uxT3KdtkebS0uoLxx+
+         Hx8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUFLYELFWix3Q8Su1w2anIl/TnfsvnDoJvnMyp5qEjegtdxzwYB8DXbCKMSKLGdNezFzoxsP7cr1n94Oi8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz85k9FLkrGUK9CB4UqQ95rDznsaNALEHmRvgT4wM2kEhV/8pP6
+	E+DGVbpf8r2gkglmdE7kHIN6JhXBoMja/vaqHwJ7DoSMJ6/MrDgd3V+ElJTVRuF7ONv+1HmPY4d
+	PY55XgHQ2IA==
+X-Google-Smtp-Source: AGHT+IF4k0uFcaS7/tC4cyXC8wsIhicVjSl/j9UnN2s9TsgyF6DRp0WIZCwddGEHn70Zm1RF4d0DU8ZooCF5
+X-Received: from dlbqd3.prod.google.com ([2002:a05:7023:b03:b0:119:49ca:6b8c])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:da8c:b0:298:3e3a:ae6
+ with SMTP id d9443c01a7336-2983e3a0b4bmr30376125ad.48.1762833881039; Mon, 10
+ Nov 2025 20:04:41 -0800 (PST)
+Date: Mon, 10 Nov 2025 20:04:07 -0800
 In-Reply-To: <20251111040417.270945-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20251111040417.270945-1-irogers@google.com>
 X-Mailer: git-send-email 2.51.2.1041.gc1ab5b90ca-goog
-Message-ID: <20251111040417.270945-8-irogers@google.com>
-Subject: [PATCH v3 07/18] perf stat: Remove hard coded shadow metrics
+Message-ID: <20251111040417.270945-9-irogers@google.com>
+Subject: [PATCH v3 08/18] perf stat: Fix default metricgroup display on hybrid
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -90,523 +90,60 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	Weilin Wang <weilin.wang@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Now that the metrics are encoded in common json the hard coded
-printing means the metrics are shown twice. Remove the hard coded
-version.
+The logic to skip output of a default metric line was firing on
+Alderlake and not displaying 'TopdownL1 (cpu_atom)'. Remove the
+need_full_name check as it is equivalent to the different PMU test in
+the cases we care about, merge the 'if's and flip the evsel of the PMU
+test. The 'if' is now basically saying, if the output matches the last
+printed output then skip the output.
 
-This means that when specifying events, and those events correspond to
-a hard coded metric, the metric will no longer be displayed. The
-metric will be displayed if the metric is requested. Due to the adhoc
-printing in the previous approach it was often found frustrating, the
-new approach avoids this.
-
-The default perf stat output on an alderlake now looks like:
+Before:
 ```
-$ perf stat -a -- sleep 1
-
- Performance counter stats for 'system wide':
-
-             7,932      context-switches                 #    281.7 cs/sec  cs_per_second
-             TopdownL1 (cpu_core)                 #     10.3 %  tma_bad_speculation
-                                                  #     17.3 %  tma_frontend_bound
-             TopdownL1 (cpu_core)                 #     37.3 %  tma_backend_bound
-                                                  #     35.2 %  tma_retiring
-             5,901      page-faults                      #    209.5 faults/sec  page_faults_per_second
-       418,955,116      cpu_atom/cpu-cycles/             #      0.0 GHz  cycles_frequency       (49.77%)
-     1,113,933,476      cpu_core/cpu-cycles/             #      0.0 GHz  cycles_frequency
-                                                  #     14.6 %  tma_bad_speculation
-                                                  #      8.5 %  tma_retiring             (50.17%)
-                                                  #     41.8 %  tma_backend_bound
-                                                  #     35.1 %  tma_frontend_bound       (50.31%)
-        32,196,918      cpu_atom/branches/               #      1.1 K/sec  branch_frequency     (60.24%)
-       445,404,717      cpu_core/branches/               #     15.8 K/sec  branch_frequency
-               235      cpu-migrations                   #      8.3 migrations/sec  migrations_per_second
-    28,160,951,165      cpu-clock                        #     28.0 CPUs  CPUs_utilized
-       382,285,763      cpu_atom/cpu-cycles/             #      0.4 instructions  insn_per_cycle  (60.18%)
-     1,114,029,255      cpu_core/cpu-cycles/             #      2.3 instructions  insn_per_cycle
-         1,768,727      cpu_atom/branches-misses/        #      6.5 %  branch_miss_rate         (49.68%)
-         4,505,904      cpu_core/branches-misses/        #      1.0 %  branch_miss_rate
-
-       1.007137632 seconds time elapsed
+             TopdownL1 (cpu_core)                 #     11.3 %  tma_bad_speculation
+                                                  #     24.3 %  tma_frontend_bound
+             TopdownL1 (cpu_core)                 #     33.9 %  tma_backend_bound
+                                                  #     30.6 %  tma_retiring
+                                                  #     42.2 %  tma_backend_bound
+                                                  #     25.0 %  tma_frontend_bound       (49.81%)
+                                                  #     12.8 %  tma_bad_speculation
+                                                  #     20.0 %  tma_retiring             (59.46%)
+```
+After:
+```
+             TopdownL1 (cpu_core)                 #      8.3 %  tma_bad_speculation
+                                                  #     43.7 %  tma_frontend_bound
+                                                  #     30.7 %  tma_backend_bound
+                                                  #     17.2 %  tma_retiring
+             TopdownL1 (cpu_atom)                 #     31.9 %  tma_backend_bound
+                                                  #     37.6 %  tma_frontend_bound       (49.66%)
+                                                  #     18.0 %  tma_bad_speculation
+                                                  #     12.6 %  tma_retiring             (59.58%)
 ```
 
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/perf/builtin-script.c    |   1 -
- tools/perf/util/stat-display.c |   4 +-
- tools/perf/util/stat-shadow.c  | 392 +--------------------------------
- tools/perf/util/stat.h         |   2 +-
- 4 files changed, 6 insertions(+), 393 deletions(-)
+ tools/perf/util/stat-shadow.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-index 2966d6f1316e..d43797acb91b 100644
---- a/tools/perf/builtin-script.c
-+++ b/tools/perf/builtin-script.c
-@@ -2358,7 +2358,6 @@ static void perf_sample__fprint_metric(struct thread *thread,
- 	evlist__for_each_entry(evsel->evlist, pos) {
- 		cpu_aggr_map__for_each_idx(aggr_idx, stat_config.aggr_map) {
- 			perf_stat__print_shadow_stats(&stat_config, pos,
--						count->val,
- 						aggr_idx,
- 						&ctx);
- 		}
-diff --git a/tools/perf/util/stat-display.c b/tools/perf/util/stat-display.c
-index 4d0e353846ea..eabeab5e6614 100644
---- a/tools/perf/util/stat-display.c
-+++ b/tools/perf/util/stat-display.c
-@@ -902,7 +902,7 @@ static void printout(struct perf_stat_config *config, struct outstate *os,
- 										 &num, from, &out);
- 			} while (from != NULL);
- 		} else {
--			perf_stat__print_shadow_stats(config, counter, uval, aggr_idx, &out);
-+			perf_stat__print_shadow_stats(config, counter, aggr_idx, &out);
- 		}
- 	} else {
- 		pm(config, os, METRIC_THRESHOLD_UNKNOWN, /*format=*/NULL, /*unit=*/NULL, /*val=*/0);
-@@ -1274,7 +1274,7 @@ static void print_metric_headers(struct perf_stat_config *config,
- 
- 		os.evsel = counter;
- 
--		perf_stat__print_shadow_stats(config, counter, 0, 0, &out);
-+		perf_stat__print_shadow_stats(config, counter, /*aggr_idx=*/0, &out);
- 	}
- 
- 	if (!config->json_output)
 diff --git a/tools/perf/util/stat-shadow.c b/tools/perf/util/stat-shadow.c
-index 4df614f8e200..afbc49e8cb31 100644
+index afbc49e8cb31..c1547128c396 100644
 --- a/tools/perf/util/stat-shadow.c
 +++ b/tools/perf/util/stat-shadow.c
-@@ -20,357 +20,12 @@
- struct stats walltime_nsecs_stats;
- struct rusage_stats ru_stats;
- 
--enum {
--	CTX_BIT_USER	= 1 << 0,
--	CTX_BIT_KERNEL	= 1 << 1,
--	CTX_BIT_HV	= 1 << 2,
--	CTX_BIT_HOST	= 1 << 3,
--	CTX_BIT_IDLE	= 1 << 4,
--	CTX_BIT_MAX	= 1 << 5,
--};
--
--enum stat_type {
--	STAT_NONE = 0,
--	STAT_NSECS,
--	STAT_CYCLES,
--	STAT_INSTRUCTIONS,
--	STAT_STALLED_CYCLES_FRONT,
--	STAT_STALLED_CYCLES_BACK,
--	STAT_BRANCHES,
--	STAT_BRANCH_MISS,
--	STAT_CACHE_REFS,
--	STAT_CACHE_MISSES,
--	STAT_L1_DCACHE,
--	STAT_L1_ICACHE,
--	STAT_LL_CACHE,
--	STAT_ITLB_CACHE,
--	STAT_DTLB_CACHE,
--	STAT_L1D_MISS,
--	STAT_L1I_MISS,
--	STAT_LL_MISS,
--	STAT_DTLB_MISS,
--	STAT_ITLB_MISS,
--	STAT_MAX
--};
--
--static int evsel_context(const struct evsel *evsel)
--{
--	int ctx = 0;
--
--	if (evsel->core.attr.exclude_kernel)
--		ctx |= CTX_BIT_KERNEL;
--	if (evsel->core.attr.exclude_user)
--		ctx |= CTX_BIT_USER;
--	if (evsel->core.attr.exclude_hv)
--		ctx |= CTX_BIT_HV;
--	if (evsel->core.attr.exclude_host)
--		ctx |= CTX_BIT_HOST;
--	if (evsel->core.attr.exclude_idle)
--		ctx |= CTX_BIT_IDLE;
--
--	return ctx;
--}
--
- void perf_stat__reset_shadow_stats(void)
- {
- 	memset(&walltime_nsecs_stats, 0, sizeof(walltime_nsecs_stats));
- 	memset(&ru_stats, 0, sizeof(ru_stats));
- }
- 
--static enum stat_type evsel__stat_type(struct evsel *evsel)
--{
--	/* Fake perf_hw_cache_op_id values for use with evsel__match. */
--	u64 PERF_COUNT_hw_cache_l1d_miss = PERF_COUNT_HW_CACHE_L1D |
--		((PERF_COUNT_HW_CACHE_OP_READ) << 8) |
--		((PERF_COUNT_HW_CACHE_RESULT_MISS) << 16);
--	u64 PERF_COUNT_hw_cache_l1i_miss = PERF_COUNT_HW_CACHE_L1I |
--		((PERF_COUNT_HW_CACHE_OP_READ) << 8) |
--		((PERF_COUNT_HW_CACHE_RESULT_MISS) << 16);
--	u64 PERF_COUNT_hw_cache_ll_miss = PERF_COUNT_HW_CACHE_LL |
--		((PERF_COUNT_HW_CACHE_OP_READ) << 8) |
--		((PERF_COUNT_HW_CACHE_RESULT_MISS) << 16);
--	u64 PERF_COUNT_hw_cache_dtlb_miss = PERF_COUNT_HW_CACHE_DTLB |
--		((PERF_COUNT_HW_CACHE_OP_READ) << 8) |
--		((PERF_COUNT_HW_CACHE_RESULT_MISS) << 16);
--	u64 PERF_COUNT_hw_cache_itlb_miss = PERF_COUNT_HW_CACHE_ITLB |
--		((PERF_COUNT_HW_CACHE_OP_READ) << 8) |
--		((PERF_COUNT_HW_CACHE_RESULT_MISS) << 16);
--
--	if (evsel__is_clock(evsel))
--		return STAT_NSECS;
--	else if (evsel__match(evsel, HARDWARE, HW_CPU_CYCLES))
--		return STAT_CYCLES;
--	else if (evsel__match(evsel, HARDWARE, HW_INSTRUCTIONS))
--		return STAT_INSTRUCTIONS;
--	else if (evsel__match(evsel, HARDWARE, HW_STALLED_CYCLES_FRONTEND))
--		return STAT_STALLED_CYCLES_FRONT;
--	else if (evsel__match(evsel, HARDWARE, HW_STALLED_CYCLES_BACKEND))
--		return STAT_STALLED_CYCLES_BACK;
--	else if (evsel__match(evsel, HARDWARE, HW_BRANCH_INSTRUCTIONS))
--		return STAT_BRANCHES;
--	else if (evsel__match(evsel, HARDWARE, HW_BRANCH_MISSES))
--		return STAT_BRANCH_MISS;
--	else if (evsel__match(evsel, HARDWARE, HW_CACHE_REFERENCES))
--		return STAT_CACHE_REFS;
--	else if (evsel__match(evsel, HARDWARE, HW_CACHE_MISSES))
--		return STAT_CACHE_MISSES;
--	else if (evsel__match(evsel, HW_CACHE, HW_CACHE_L1D))
--		return STAT_L1_DCACHE;
--	else if (evsel__match(evsel, HW_CACHE, HW_CACHE_L1I))
--		return STAT_L1_ICACHE;
--	else if (evsel__match(evsel, HW_CACHE, HW_CACHE_LL))
--		return STAT_LL_CACHE;
--	else if (evsel__match(evsel, HW_CACHE, HW_CACHE_DTLB))
--		return STAT_DTLB_CACHE;
--	else if (evsel__match(evsel, HW_CACHE, HW_CACHE_ITLB))
--		return STAT_ITLB_CACHE;
--	else if (evsel__match(evsel, HW_CACHE, hw_cache_l1d_miss))
--		return STAT_L1D_MISS;
--	else if (evsel__match(evsel, HW_CACHE, hw_cache_l1i_miss))
--		return STAT_L1I_MISS;
--	else if (evsel__match(evsel, HW_CACHE, hw_cache_ll_miss))
--		return STAT_LL_MISS;
--	else if (evsel__match(evsel, HW_CACHE, hw_cache_dtlb_miss))
--		return STAT_DTLB_MISS;
--	else if (evsel__match(evsel, HW_CACHE, hw_cache_itlb_miss))
--		return STAT_ITLB_MISS;
--	return STAT_NONE;
--}
--
--static enum metric_threshold_classify get_ratio_thresh(const double ratios[3], double val)
--{
--	assert(ratios[0] > ratios[1]);
--	assert(ratios[1] > ratios[2]);
--
--	return val > ratios[1]
--		? (val > ratios[0] ? METRIC_THRESHOLD_BAD : METRIC_THRESHOLD_NEARLY_BAD)
--		: (val > ratios[2] ? METRIC_THRESHOLD_LESS_GOOD : METRIC_THRESHOLD_GOOD);
--}
--
--static double find_stat(const struct evsel *evsel, int aggr_idx, enum stat_type type)
--{
--	struct evsel *cur;
--	int evsel_ctx = evsel_context(evsel);
--	struct perf_pmu *evsel_pmu = evsel__find_pmu(evsel);
--
--	evlist__for_each_entry(evsel->evlist, cur) {
--		struct perf_stat_aggr *aggr;
--
--		/* Ignore the evsel that is being searched from. */
--		if (evsel == cur)
--			continue;
--
--		/* Ignore evsels that are part of different groups. */
--		if (evsel->core.leader->nr_members > 1 &&
--		    evsel->core.leader != cur->core.leader)
--			continue;
--		/* Ignore evsels with mismatched modifiers. */
--		if (evsel_ctx != evsel_context(cur))
--			continue;
--		/* Ignore if not the cgroup we're looking for. */
--		if (evsel->cgrp != cur->cgrp)
--			continue;
--		/* Ignore if not the stat we're looking for. */
--		if (type != evsel__stat_type(cur))
--			continue;
--
--		/*
--		 * Except the SW CLOCK events,
--		 * ignore if not the PMU we're looking for.
--		 */
--		if ((type != STAT_NSECS) && (evsel_pmu != evsel__find_pmu(cur)))
--			continue;
--
--		aggr = &cur->stats->aggr[aggr_idx];
--		if (type == STAT_NSECS)
--			return aggr->counts.val;
--		return aggr->counts.val * cur->scale;
--	}
--	return 0.0;
--}
--
--static void print_ratio(struct perf_stat_config *config,
--			const struct evsel *evsel, int aggr_idx,
--			double numerator, struct perf_stat_output_ctx *out,
--			enum stat_type denominator_type,
--			const double thresh_ratios[3], const char *_unit)
--{
--	double denominator = find_stat(evsel, aggr_idx, denominator_type);
--	double ratio = 0;
--	enum metric_threshold_classify thresh = METRIC_THRESHOLD_UNKNOWN;
--	const char *fmt = NULL;
--	const char *unit = NULL;
--
--	if (numerator && denominator) {
--		ratio = numerator / denominator * 100.0;
--		thresh = get_ratio_thresh(thresh_ratios, ratio);
--		fmt = "%7.2f%%";
--		unit = _unit;
--	}
--	out->print_metric(config, out->ctx, thresh, fmt, unit, ratio);
--}
--
--static void print_stalled_cycles_front(struct perf_stat_config *config,
--				const struct evsel *evsel,
--				int aggr_idx, double stalled,
--				struct perf_stat_output_ctx *out)
--{
--	const double thresh_ratios[3] = {50.0, 30.0, 10.0};
--
--	print_ratio(config, evsel, aggr_idx, stalled, out, STAT_CYCLES, thresh_ratios,
--		    "frontend cycles idle");
--}
--
--static void print_stalled_cycles_back(struct perf_stat_config *config,
--				const struct evsel *evsel,
--				int aggr_idx, double stalled,
--				struct perf_stat_output_ctx *out)
--{
--	const double thresh_ratios[3] = {75.0, 50.0, 20.0};
--
--	print_ratio(config, evsel, aggr_idx, stalled, out, STAT_CYCLES, thresh_ratios,
--		    "backend cycles idle");
--}
--
--static void print_branch_miss(struct perf_stat_config *config,
--			const struct evsel *evsel,
--			int aggr_idx, double misses,
--			struct perf_stat_output_ctx *out)
--{
--	const double thresh_ratios[3] = {20.0, 10.0, 5.0};
--
--	print_ratio(config, evsel, aggr_idx, misses, out, STAT_BRANCHES, thresh_ratios,
--		    "of all branches");
--}
--
--static void print_l1d_miss(struct perf_stat_config *config,
--			const struct evsel *evsel,
--			int aggr_idx, double misses,
--			struct perf_stat_output_ctx *out)
--{
--	const double thresh_ratios[3] = {20.0, 10.0, 5.0};
--
--	print_ratio(config, evsel, aggr_idx, misses, out, STAT_L1_DCACHE, thresh_ratios,
--		    "of all L1-dcache accesses");
--}
--
--static void print_l1i_miss(struct perf_stat_config *config,
--			const struct evsel *evsel,
--			int aggr_idx, double misses,
--			struct perf_stat_output_ctx *out)
--{
--	const double thresh_ratios[3] = {20.0, 10.0, 5.0};
--
--	print_ratio(config, evsel, aggr_idx, misses, out, STAT_L1_ICACHE, thresh_ratios,
--		    "of all L1-icache accesses");
--}
--
--static void print_ll_miss(struct perf_stat_config *config,
--			const struct evsel *evsel,
--			int aggr_idx, double misses,
--			struct perf_stat_output_ctx *out)
--{
--	const double thresh_ratios[3] = {20.0, 10.0, 5.0};
--
--	print_ratio(config, evsel, aggr_idx, misses, out, STAT_LL_CACHE, thresh_ratios,
--		    "of all LL-cache accesses");
--}
--
--static void print_dtlb_miss(struct perf_stat_config *config,
--			const struct evsel *evsel,
--			int aggr_idx, double misses,
--			struct perf_stat_output_ctx *out)
--{
--	const double thresh_ratios[3] = {20.0, 10.0, 5.0};
--
--	print_ratio(config, evsel, aggr_idx, misses, out, STAT_DTLB_CACHE, thresh_ratios,
--		    "of all dTLB cache accesses");
--}
--
--static void print_itlb_miss(struct perf_stat_config *config,
--			const struct evsel *evsel,
--			int aggr_idx, double misses,
--			struct perf_stat_output_ctx *out)
--{
--	const double thresh_ratios[3] = {20.0, 10.0, 5.0};
--
--	print_ratio(config, evsel, aggr_idx, misses, out, STAT_ITLB_CACHE, thresh_ratios,
--		    "of all iTLB cache accesses");
--}
--
--static void print_cache_miss(struct perf_stat_config *config,
--			const struct evsel *evsel,
--			int aggr_idx, double misses,
--			struct perf_stat_output_ctx *out)
--{
--	const double thresh_ratios[3] = {20.0, 10.0, 5.0};
--
--	print_ratio(config, evsel, aggr_idx, misses, out, STAT_CACHE_REFS, thresh_ratios,
--		    "of all cache refs");
--}
--
--static void print_instructions(struct perf_stat_config *config,
--			const struct evsel *evsel,
--			int aggr_idx, double instructions,
--			struct perf_stat_output_ctx *out)
--{
--	print_metric_t print_metric = out->print_metric;
--	void *ctxp = out->ctx;
--	double cycles = find_stat(evsel, aggr_idx, STAT_CYCLES);
--	double max_stalled = max(find_stat(evsel, aggr_idx, STAT_STALLED_CYCLES_FRONT),
--				find_stat(evsel, aggr_idx, STAT_STALLED_CYCLES_BACK));
--
--	if (cycles) {
--		print_metric(config, ctxp, METRIC_THRESHOLD_UNKNOWN, "%7.2f ",
--			     "insn per cycle", instructions / cycles);
--	} else {
--		print_metric(config, ctxp, METRIC_THRESHOLD_UNKNOWN, /*fmt=*/NULL,
--			     "insn per cycle", 0);
--	}
--	if (max_stalled && instructions) {
--		if (out->new_line)
--			out->new_line(config, ctxp);
--		print_metric(config, ctxp, METRIC_THRESHOLD_UNKNOWN, "%7.2f ",
--			     "stalled cycles per insn", max_stalled / instructions);
--	}
--}
--
--static void print_cycles(struct perf_stat_config *config,
--			const struct evsel *evsel,
--			int aggr_idx, double cycles,
--			struct perf_stat_output_ctx *out)
--{
--	double nsecs = find_stat(evsel, aggr_idx, STAT_NSECS);
--
--	if (cycles && nsecs) {
--		double ratio = cycles / nsecs;
--
--		out->print_metric(config, out->ctx, METRIC_THRESHOLD_UNKNOWN, "%8.3f",
--				  "GHz", ratio);
--	} else {
--		out->print_metric(config, out->ctx, METRIC_THRESHOLD_UNKNOWN, /*fmt=*/NULL,
--				  "GHz", 0);
--	}
--}
--
--static void print_nsecs(struct perf_stat_config *config,
--			const struct evsel *evsel,
--			int aggr_idx __maybe_unused, double nsecs,
--			struct perf_stat_output_ctx *out)
--{
--	print_metric_t print_metric = out->print_metric;
--	void *ctxp = out->ctx;
--	double wall_time = avg_stats(&walltime_nsecs_stats);
--
--	if (wall_time) {
--		print_metric(config, ctxp, METRIC_THRESHOLD_UNKNOWN, "%8.3f", "CPUs utilized",
--			nsecs / (wall_time * evsel->scale));
--	} else {
--		print_metric(config, ctxp, METRIC_THRESHOLD_UNKNOWN, /*fmt=*/NULL,
--			     "CPUs utilized", 0);
--	}
--}
--
- static int prepare_metric(const struct metric_expr *mexp,
- 			  const struct evsel *evsel,
- 			  struct expr_parse_ctx *pctx,
-@@ -682,56 +337,15 @@ void *perf_stat__print_shadow_stats_metricgroup(struct perf_stat_config *config,
- 
- void perf_stat__print_shadow_stats(struct perf_stat_config *config,
- 				   struct evsel *evsel,
--				   double avg, int aggr_idx,
-+				   int aggr_idx,
- 				   struct perf_stat_output_ctx *out)
- {
--	typedef void (*stat_print_function_t)(struct perf_stat_config *config,
--					const struct evsel *evsel,
--					int aggr_idx, double misses,
--					struct perf_stat_output_ctx *out);
--	static const stat_print_function_t stat_print_function[STAT_MAX] = {
--		[STAT_INSTRUCTIONS] = print_instructions,
--		[STAT_BRANCH_MISS] = print_branch_miss,
--		[STAT_L1D_MISS] = print_l1d_miss,
--		[STAT_L1I_MISS] = print_l1i_miss,
--		[STAT_DTLB_MISS] = print_dtlb_miss,
--		[STAT_ITLB_MISS] = print_itlb_miss,
--		[STAT_LL_MISS] = print_ll_miss,
--		[STAT_CACHE_MISSES] = print_cache_miss,
--		[STAT_STALLED_CYCLES_FRONT] = print_stalled_cycles_front,
--		[STAT_STALLED_CYCLES_BACK] = print_stalled_cycles_back,
--		[STAT_CYCLES] = print_cycles,
--		[STAT_NSECS] = print_nsecs,
--	};
- 	print_metric_t print_metric = out->print_metric;
- 	void *ctxp = out->ctx;
--	int num = 1;
-+	int num = 0;
- 
--	if (config->iostat_run) {
-+	if (config->iostat_run)
- 		iostat_print_metric(config, evsel, out);
--	} else {
--		stat_print_function_t fn = stat_print_function[evsel__stat_type(evsel)];
--
--		if (fn)
--			fn(config, evsel, aggr_idx, avg, out);
--		else {
--			double nsecs =	find_stat(evsel, aggr_idx, STAT_NSECS);
--
--			if (nsecs) {
--				char unit = ' ';
--				char unit_buf[10] = "/sec";
--				double ratio = convert_unit_double(1000000000.0 * avg / nsecs,
--								   &unit);
--
--				if (unit != ' ')
--					snprintf(unit_buf, sizeof(unit_buf), "%c/sec", unit);
--				print_metric(config, ctxp, METRIC_THRESHOLD_UNKNOWN, "%8.3f",
--					     unit_buf, ratio);
--			} else {
--				num = 0;
--			}
+@@ -256,11 +256,9 @@ static void perf_stat__print_metricgroup_header(struct perf_stat_config *config,
+ 	 * event. Only align with other metics from
+ 	 * different metric events.
+ 	 */
+-	if (last_name && !strcmp(last_name, name)) {
+-		if (!need_full_name || last_pmu != evsel->pmu) {
+-			out->print_metricgroup_header(config, ctxp, NULL);
+-			return;
 -		}
--	}
++	if (last_name && !strcmp(last_name, name) && last_pmu == evsel->pmu) {
++		out->print_metricgroup_header(config, ctxp, NULL);
++		return;
+ 	}
  
- 	perf_stat__print_shadow_stats_metricgroup(config, evsel, aggr_idx,
- 						  &num, NULL, out);
-diff --git a/tools/perf/util/stat.h b/tools/perf/util/stat.h
-index 230474f49315..b42da4a29c44 100644
---- a/tools/perf/util/stat.h
-+++ b/tools/perf/util/stat.h
-@@ -184,7 +184,7 @@ struct perf_stat_output_ctx {
- 
- void perf_stat__print_shadow_stats(struct perf_stat_config *config,
- 				   struct evsel *evsel,
--				   double avg, int aggr_idx,
-+				   int aggr_idx,
- 				   struct perf_stat_output_ctx *out);
- bool perf_stat__skip_metric_event(struct evsel *evsel, u64 ena, u64 run);
- void *perf_stat__print_shadow_stats_metricgroup(struct perf_stat_config *config,
+ 	if (need_full_name && evsel->pmu)
 -- 
 2.51.2.1041.gc1ab5b90ca-goog
 
