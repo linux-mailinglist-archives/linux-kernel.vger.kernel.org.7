@@ -1,84 +1,123 @@
-Return-Path: <linux-kernel+bounces-895409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 915F0C4DBD2
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:33:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35E59C4D9AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:13:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C2E144F98D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:27:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF4A63AC389
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:09:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9664D2F5A22;
-	Tue, 11 Nov 2025 12:27:29 +0000 (UTC)
-Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D49E9358D28;
-	Tue, 11 Nov 2025 12:27:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7C95357A5A;
+	Tue, 11 Nov 2025 12:09:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MF7kToZn"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F33D2E6116
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 12:09:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762864047; cv=none; b=JGnrvjTivU83Jv9u58RooNoOFxOCgphw7R7fOnzhKkJ9vL5D245QZJdztE+Vu3jwp3x1OhKNkBW1W2+Pu5H/CL7MEgN50gMVqlHYOgug1fDyGtnTkdthxEU1n/XjaaXprYT1tt/l55M7Ds4qxvOqktYtV2+8XNwql2G2DxbjfBk=
+	t=1762862946; cv=none; b=RqajAUkVKj/fmC5e/QqoSvZ/C3mVgFKusap2Yf/7U7QRHhkxEFDELOZiuDKoh1qbylMrcC1R2QwqAyQuNzrPTtFlwFTYt67ASbVoxb3qMecX3kDEV6ZKu7FwMR7A2yble7ftuDGWgZRlDWcTNNM92E9vOp4UIqsSVD3CHL8+U4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762864047; c=relaxed/simple;
-	bh=yLBDgpfb+ZWlt1wIEutyVTcYIut2GF1MDXmgRtt1ScU=;
+	s=arc-20240116; t=1762862946; c=relaxed/simple;
+	bh=SbqShAIE3SZM5AqKJRVAvqGq43IpxY2ybj2d3tdXMSI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uvz2EErHaVuUhnK6TT2yC5MWbdjqyd0kSf7+pkgPgbUwwygrVVlN6R+qL4wqZfaAMdWxIAWoYLD7E+/MvsTTtiN6cyjM5Vg9M/pVTAtrnmKokW9v5OYmx9K/COeMsJ7OfLdJcyaw4tEGta4dVCN4isGBF8mBj2F/uRkLgAgu6nQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
-Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
-	id 1vInSx-0008Ku-00; Tue, 11 Nov 2025 13:27:19 +0100
-Received: by alpha.franken.de (Postfix, from userid 1000)
-	id 04361C06A7; Tue, 11 Nov 2025 13:08:22 +0100 (CET)
-Date: Tue, 11 Nov 2025 13:08:21 +0100
-From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To: Aleksander Jan Bajkowski <olek2@wp.pl>
-Cc: jd@cjdns.fr, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	linux-mips@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mips: dts: econet: fix EN751221 core type
-Message-ID: <aRMnNcQw8IZvO5Vm@alpha.franken.de>
-References: <20251017180124.67687-1-olek2@wp.pl>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zpr1Yf9OxPzv/L330krm1xAyCd/dK9CZ1dbgtwpW25TIQF9CifjyESP0ivXrcPvpP0uySrBFM+xh5tzDTKrQQuEBu1q2ajCsitq4ewpEuMya868aU9mTFdKq3nwpfL7Dz7q2bJwsTUeN+PR+cxR1J8Gax7drNxPjuapNzvT3irk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MF7kToZn; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762862943;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZRHAUY22f4DMZXjGNy9kKErIJtv/qXFs3nnNzhiEiMY=;
+	b=MF7kToZngZgWA0aN8vycbVxi+2LQ79atdmgxXaqk3fjEFOiqife5++aK/MsKrztfgv+EGm
+	VpYbJi6RXs7BAGTMYaS1yNGp6oyDe6fQ63ITV84CFQNT1qNf/0UqmnnLtA9KBCDun4MclX
+	TpzvQbAGSAjwjPYzieR7e7qAaDUYGHs=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-626-v5kAbdCLOKGzNWrqMNMF5A-1; Tue,
+ 11 Nov 2025 07:08:57 -0500
+X-MC-Unique: v5kAbdCLOKGzNWrqMNMF5A-1
+X-Mimecast-MFC-AGG-ID: v5kAbdCLOKGzNWrqMNMF5A_1762862935
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EA3371955D48;
+	Tue, 11 Nov 2025 12:08:52 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.74])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9BA411800451;
+	Tue, 11 Nov 2025 12:08:44 +0000 (UTC)
+Date: Tue, 11 Nov 2025 20:08:39 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: "Guo, Wangyang" <wangyang.guo@intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@fb.com>,
+	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+	virtualization@lists.linux-foundation.org,
+	linux-block@vger.kernel.org, Tianyou Li <tianyou.li@intel.com>,
+	Tim Chen <tim.c.chen@linux.intel.com>,
+	Dan Liang <dan.liang@intel.com>
+Subject: Re: [PATCH RESEND] lib/group_cpus: make group CPU cluster aware
+Message-ID: <aRMnR5DRdsU8lGtU@fedora>
+References: <20251111020608.1501543-1-wangyang.guo@intel.com>
+ <aRKssW96lHFrT2ZN@fedora>
+ <b94a0d74-0770-4751-9064-2ef077fada14@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251017180124.67687-1-olek2@wp.pl>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b94a0d74-0770-4751-9064-2ef077fada14@intel.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Fri, Oct 17, 2025 at 08:01:19PM +0200, Aleksander Jan Bajkowski wrote:
-> In fact, it is a multi-threaded MIPS34Kc, not a single-threaded MIPS24Kc.
+On Tue, Nov 11, 2025 at 01:31:04PM +0800, Guo, Wangyang wrote:
+> On 11/11/2025 11:25 AM, Ming Lei wrote:
+> > On Tue, Nov 11, 2025 at 10:06:08AM +0800, Wangyang Guo wrote:
+> > > As CPU core counts increase, the number of NVMe IRQs may be smaller than
+> > > the total number of CPUs. This forces multiple CPUs to share the same
+> > > IRQ. If the IRQ affinity and the CPU’s cluster do not align, a
+> > > performance penalty can be observed on some platforms.
+> > 
+> > Can you add details why/how CPU cluster isn't aligned with IRQ
+> > affinity? And how performance penalty is caused?
 > 
-> Fixes: 0ec488700972 ("mips: dts: Add EcoNet DTS with EN751221 and SmartFiber XP8421-B board")
-> Signed-off-by: Aleksander Jan Bajkowski <olek2@wp.pl>
-> ---
->  arch/mips/boot/dts/econet/en751221.dtsi | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/mips/boot/dts/econet/en751221.dtsi b/arch/mips/boot/dts/econet/en751221.dtsi
-> index 66197e73d4f0..2abeef5b744a 100644
-> --- a/arch/mips/boot/dts/econet/en751221.dtsi
-> +++ b/arch/mips/boot/dts/econet/en751221.dtsi
-> @@ -18,7 +18,7 @@ cpus: cpus {
->  
->  		cpu@0 {
->  			device_type = "cpu";
-> -			compatible = "mips,mips24KEc";
-> +			compatible = "mips,mips34Kc";
->  			reg = <0>;
->  		};
->  	};
-> -- 
-> 2.47.3
+> Intel Xeon E platform packs 4 CPU cores as 1 module (cluster) and share the
+> L2 cache. Let's say, if there are 40 CPUs in 1 NUMA domain and 11 IRQs to
+> dispatch. The existing algorithm will map first 7 IRQs each with 4 CPUs and
+> remained 4 IRQs each with 3 CPUs each. The last 4 IRQs may have cross
+> cluster issue. For example, the 9th IRQ which pinned to CPU32, then for
+> CPU31, it will have cross L2 memory access.
 
-applied to mips-fixes
 
-Thomas.
+CPUs sharing L2 usually have small number, and it is common to see one queue
+mapping includes CPUs from different L2.
 
--- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+So how much does crossing L2 hurt IO perf?
+
+They still should share same L3 cache, and cpus_share_cache() should be
+true when the IO completes on the CPU which belong to different L2 with the
+submission CPU, and remote completion via IPI won't be triggered.
+
+From my observation, remote completion does hurt NVMe IO perf very much,
+for example, AMD's crossing L3 mapping.
+
+
+Thanks,
+Ming
+
 
