@@ -1,72 +1,46 @@
-Return-Path: <linux-kernel+bounces-894459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9370FC4AE1D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 02:47:09 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EE1CC4A9B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 02:34:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EA693B9B58
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 01:34:38 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9795234C74D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 01:34:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3C12334C20;
-	Tue, 11 Nov 2025 01:29:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 713A223FC41;
+	Tue, 11 Nov 2025 01:28:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="X4TlHS5+"
-Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cMHl+5eF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A6AE2BE7B8
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 01:29:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEE5B30C60B;
+	Tue, 11 Nov 2025 01:28:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762824548; cv=none; b=o/gWL/95L5ooEgCePO9AHZAJndq2fjcpKMOyEv2ZPK8G60UsIVdIpwAODTO3X4LTxUWT1+RJYnuEsSutqbcpG3EccMObwY7noFiGod5/yqMNm7fYK2DlCUW72CXOrTtNUtkp8kjSteJ93hHCg0ecTA5OfJdMixRIRptS6yifdHM=
+	t=1762824523; cv=none; b=X+JmxgMQTJBqgynYJEtRUy++ZNS/UxFWYTKHB4HKIJeogtil7WoGOdAvv3BHtbpzbcTt/fmeWoFN8q+fGJOlLi026WLhW5Rtxe+FoDF+b5kbgAb11SnVoesJvl67gjaxuAuUu+xy+rTPvWmpHr6Z1IFTWDAHVao4hgbno1u/vEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762824548; c=relaxed/simple;
-	bh=JniPNzR2zrzCfTZJfDvwxJryTw6qwXKnH7duhMCvPKI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UFagqJE4Z7SSH0pi/0GQdGW/Qgi2XFEkQ2BtBu+/iLURK+Jq/ZA3X+T3M0psHlnUf9lQw7k74zayFaJaGXmCIzKxZI/FkLzLprWVuICSCw4UyuMXlVDo1aTW5kJFOlyka5FnwE2YmrCuCC8rjYTcCkfCDqzweFK4G1AXe1vE/Rs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=X4TlHS5+; arc=none smtp.client-ip=95.215.58.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1762824534;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jkCMn6326n5t3YdXIXOy3mMQo+0cpCyiOzgcX5JM5n4=;
-	b=X4TlHS5+5+xX48of/7wvV+4pRZbxJ6vbhmMX8oHZjqDozXm4cUR5/ieDih6LJeK7X4K+/r
-	fKx0kjVXNlgxsIxhATRBHjECnDn/V3065eVGpNu0DDq4ilwNkir6lyWYNoaZ2nnLdHBwJO
-	Ob2bzVZl7fQIwwNUj9uuHfFLyods9Ms=
-From: Menglong Dong <menglong.dong@linux.dev>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: sjenning@redhat.com, Peter Zijlstra <peterz@infradead.org>,
- Menglong Dong <menglong8.dong@gmail.com>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>,
- Eduard <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, "David S. Miller" <davem@davemloft.net>,
- David Ahern <dsahern@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, X86 ML <x86@kernel.org>,
- "H. Peter Anvin" <hpa@zytor.com>, jiang.biao@linux.dev,
- bpf <bpf@vger.kernel.org>, Network Development <netdev@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH bpf-next] bpf,x86: do RSB balance for trampoline
-Date: Tue, 11 Nov 2025 09:28:11 +0800
-Message-ID: <5025905.GXAFRqVoOG@7950hx>
-In-Reply-To:
- <CAADnVQKQ2Pqhb9wNjRuEP5AoGc6-MfLhQLD++gQPf3VB_rV+fQ@mail.gmail.com>
-References:
- <20251104104913.689439-1-dongml2@chinatelecom.cn>
- <13884259.uLZWGnKmhe@7950hx>
- <CAADnVQKQ2Pqhb9wNjRuEP5AoGc6-MfLhQLD++gQPf3VB_rV+fQ@mail.gmail.com>
+	s=arc-20240116; t=1762824523; c=relaxed/simple;
+	bh=hIEDz7mFJDt47GLd6MQk3+qekT9YS/OeDoeWC9NFHGs=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=PiOFKAFBVSmgx+/i3+QupN5lAje3lC8fWqMU4n03T/s3Rz1krklkE7vXsiBQCtVxkbcxcFRxdT3R4nDqn62UvMX4sueyWefGqvEoiqzLoTDMLUAs300AonzDWhAI1yMKsV6Hyipcb4C3nYJcTRZ5lo/+yHHDyBJ8GQfMgueG1SQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cMHl+5eF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53E02C16AAE;
+	Tue, 11 Nov 2025 01:28:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762824523;
+	bh=hIEDz7mFJDt47GLd6MQk3+qekT9YS/OeDoeWC9NFHGs=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=cMHl+5eFIDrpf7oqDMGo9dvbPm4kxa9IjFIzGuuSb5W4Y3rIZwnXqqUiBEFBA7xhv
+	 hJCjg3BsZ9Mb+2NpXl84/2ImMsARku4Qafejp5zNOMX5bqWVId20jR+exT9LQFqM4i
+	 cFi6e15yp2PE+YPDsOV2OBAXdstsHYtwQI2SiOBmqogrU6fN2FYV95V8LYRj4kL3ze
+	 +LFfMpKH8OLpwPPWYhTxsb7vTRQ8ixNZ149OfRgDgDfNBaG2vtT/zaSoH518glPhcX
+	 oD9zNGyCyjjYJHJA5XRM5LECNGLkeMzIboYaYNf7zu/mpIg4nE/bwPfS798RnIahQA
+	 kN4YgF/hIMT4w==
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,117 +48,209 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20251002092036.2504858-1-wenst@chromium.org>
+References: <20251002092036.2504858-1-wenst@chromium.org>
+Subject: Re: [PATCH] clk: tests: Add tests for clk lookup by name
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Chen-Yu Tsai <wenst@chromium.org>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Chen-Yu Tsai <wenst@chromium.org>
+Date: Mon, 10 Nov 2025 17:28:41 -0800
+Message-ID: <176282452107.11952.13260719139557505056@lazor>
+User-Agent: alot/0.11
 
-On 2025/11/11 00:32, Alexei Starovoitov wrote:
-> On Mon, Nov 10, 2025 at 3:43=E2=80=AFAM Menglong Dong <menglong.dong@linu=
-x.dev> wrote:
-> >
-> >
-> > Do you think if it is worth to implement the livepatch with
-> > bpf trampoline by introduce the CONFIG_LIVEPATCH_BPF?
-> > It's easy to achieve it, I have a POC for it, and the performance
-> > of the livepatch increase from 99M/s to 200M/s according to
-> > my bench testing.
+Quoting Chen-Yu Tsai (2025-10-02 02:20:35)
+> Clk lookup (by name) recently gained some performance improvements at
+> the expense of more complexity within the lookup code.
 >=20
-> what do you mean exactly?
-
-This is totally another thing, and we can talk about it later. Let
-me have a simple describe here.
-
-I mean to implement the livepatch by bpf trampoline. For now,
-the livepatch is implemented with ftrace, which will break the
-RSB and has more overhead in x86_64.
-
-It can be easily implemented by replace the "origin_call" with the
-address that livepatch offered.
-
-> I don't want to add more complexity to bpf trampoline.
-
-If you mean the arch-specification, it won't add the complexity.
-Otherwise, it can make it a little more simple in x86_64 with following
-patch:
-
-=2D-- a/arch/x86/net/bpf_jit_comp.c
-+++ b/arch/x86/net/bpf_jit_comp.c
-@@ -3176,7 +3176,7 @@ static int __arch_prepare_bpf_trampoline(struct bpf_t=
-ramp_image *im, void *rw_im
- 					 void *rw_image_end, void *image,
- 					 const struct btf_func_model *m, u32 flags,
- 					 struct bpf_tramp_links *tlinks,
-=2D					 void *func_addr)
-+					 void *func_addr, void *origin_call_param)
- {
- 	int i, ret, nr_regs =3D m->nr_args, stack_size =3D 0;
- 	int regs_off, nregs_off, ip_off, run_ctx_off, arg_stack_off, rbx_off;
-@@ -3280,6 +3280,7 @@ static int __arch_prepare_bpf_trampoline(struct bpf_t=
-ramp_image *im, void *rw_im
- 			orig_call +=3D ENDBR_INSN_SIZE;
- 		orig_call +=3D X86_PATCH_SIZE;
- 	}
-+	orig_call =3D origin_call_param ?: orig_call;
-=20
- 	prog =3D rw_image;
-=20
-@@ -3369,15 +3370,10 @@ static int __arch_prepare_bpf_trampoline(struct bpf=
-_tramp_image *im, void *rw_im
- 			LOAD_TRAMP_TAIL_CALL_CNT_PTR(stack_size);
- 		}
-=20
-=2D		if (flags & BPF_TRAMP_F_ORIG_STACK) {
-=2D			emit_ldx(&prog, BPF_DW, BPF_REG_6, BPF_REG_FP, 8);
-=2D			EMIT2(0xff, 0xd3); /* call *rbx */
-=2D		} else {
-=2D			/* call original function */
-=2D			if (emit_rsb_call(&prog, orig_call, image + (prog - (u8 *)rw_image)))=
- {
-=2D				ret =3D -EINVAL;
-=2D				goto cleanup;
-=2D			}
-+		/* call original function */
-+		if (emit_rsb_call(&prog, orig_call, image + (prog - (u8 *)rw_image))) {
-+			ret =3D -EINVAL;
-+			goto cleanup;
- 		}
- 		/* remember return value in a stack for bpf prog to access */
- 		emit_stx(&prog, BPF_DW, BPF_REG_FP, BPF_REG_0, -8);
-
-> Improve current livepatching logic ? jmp vs call isn't special.
-
-Some kind. According to my testing, the performance of bpf
-trampoline is much better than ftrace trampoline, so if we
-can implement it with bpf trampoline, the performance can be
-improved. Of course, the bpf trampoline need to offer a API
-to the livepatch for this propose.
-
-Any way, let me finish the work in this patch first. After that,
-I can send a RFC of the proposal.
-
-Thanks!
-Menglong Dong
-
+> To make sure that this works as intended and doesn't break, add some
+> basic tests for this part of the CCF.
 >=20
-> > The results above is tested with return-trunk disabled. With the
-> > return-trunk enabled, the performance decrease from 58M/s to
-> > 52M/s. The main performance improvement comes from the RSB,
-> > and the return-trunk will always break the RSB, which makes it has
-> > no improvement. The calling to per-cpu-ref get and put make
-> > the bpf trampoline based livepatch has a worse performance
-> > than ftrace based.
-> >
-> > Thanks!
-> > Menglong Dong
-> >
-> > >
-> >
-> >
-> >
-> >
+> A new "clk_hw_lookup()" function is added purely for running kunit
+> tests.
 >=20
+> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+> ---
+>  drivers/clk/clk.c      | 11 +++++++
+>  drivers/clk/clk.h      |  4 +++
+>  drivers/clk/clk_test.c | 66 +++++++++++++++++++++++++++++++++++++++++-
+>  3 files changed, 80 insertions(+), 1 deletion(-)
 >=20
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 85d2f2481acf..a17d0070d11f 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -778,6 +778,17 @@ struct clk *__clk_lookup(const char *name)
+>         return !core ? NULL : core->hw->clk;
+>  }
+> =20
+> +#if IS_ENABLED(CONFIG_CLK_KUNIT_TEST)
+> +/* This is only provided for kunit tests to test the core lookup functio=
+ns. */
+> +struct clk_hw *clk_hw_lookup(const char *name)
+> +{
+> +       struct clk_core *core =3D clk_core_lookup(name);
+> +
+> +       return !core ? NULL : core->hw;
+> +}
+> +EXPORT_SYMBOL_GPL(clk_hw_lookup);
+> +#endif
+
+I think we can't do this ifdef because we may have some sort of build
+that builds the kunit module after the kernel is built with a different
+configuration. Just do the module import thing instead. I hope that
+avoids this problem.
+
+> +
+>  static void clk_core_get_boundaries(struct clk_core *core,
+>                                     unsigned long *min_rate,
+>                                     unsigned long *max_rate)
+> diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
+> index a268d7b5d4cb..b3b5ce0ad897 100644
+> --- a/drivers/clk/clk_test.c
+> +++ b/drivers/clk/clk_test.c
+> @@ -175,6 +175,8 @@ static const struct clk_ops clk_multiple_parents_no_r=
+eparent_mux_ops =3D {
+>         .set_parent =3D clk_multiple_parents_mux_set_parent,
+>  };
+> =20
+> +#define DUMMY_CLK_NAME "test_dummy_rate"
+> +
+>  static int clk_test_init_with_ops(struct kunit *test, const struct clk_o=
+ps *ops)
+>  {
+>         struct clk_dummy_context *ctx;
+> @@ -187,7 +189,7 @@ static int clk_test_init_with_ops(struct kunit *test,=
+ const struct clk_ops *ops)
+>         ctx->rate =3D DUMMY_CLOCK_INIT_RATE;
+>         test->priv =3D ctx;
+> =20
+> -       init.name =3D "test_dummy_rate";
+> +       init.name =3D DUMMY_CLK_NAME;
+>         init.ops =3D ops;
+>         ctx->hw.init =3D &init;
+> =20
+
+Please don't change existing tests in the same patch as introducing
+other tests. A failure in the existing test is difficult to untangle
+from the new test. Tests shouldn't be changed after they're written
+either because we have to be careful that they're still correct when we
+don't have tests for the tests.
+
+> @@ -3541,6 +3543,67 @@ static struct kunit_suite clk_hw_get_dev_of_node_t=
+est_suite =3D {
+>         .test_cases =3D clk_hw_get_dev_of_node_test_cases,
+>  };
+> =20
+> +/*
+> + * Test that clk lookup with a name that is not registered returns NULL.
+> + */
+> +static void clk_lookup_not_registered_clk_returns_NULL(struct kunit *tes=
+t)
+> +{
+> +       KUNIT_EXPECT_PTR_EQ(test, NULL, clk_hw_lookup(DUMMY_CLK_NAME));
+
+Just write
+
+	KUNIT_EXPECT_PTR_EQ(test, NULL, clk_hw_lookup("not_registered"));
+
+so we don't have to look at what the definition of DUMMY_CLK_NAME is.
+
+> +}
+> +
+> +/*
+> + * Test that clk lookup with a name that is registered returns the clk.
+> + */
+> +static void clk_lookup_registered_clk_returns_clk(struct kunit *test)
+> +{
+> +       struct clk_hw *hw;
+> +       struct clk_init_data init =3D {
+> +               .name =3D DUMMY_CLK_NAME,
+> +               .ops =3D &empty_clk_ops,
+> +       };
+
+Please do
+
+	const char *clk_name =3D "valid_clk";
+	struct clk_init_data init =3D {
+		.name =3D clk_name,
+		.ops =3D &empty_clk_ops,
+	};
 
 
+> +
+> +       hw =3D kunit_kzalloc(test, sizeof(*hw), GFP_KERNEL);
+> +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, hw);
+> +
+> +       hw->init =3D &init;
+> +       KUNIT_ASSERT_EQ(test, 0, clk_hw_register_kunit(test, NULL, hw));
+> +
+> +       KUNIT_EXPECT_PTR_EQ(test, hw, clk_hw_lookup(DUMMY_CLK_NAME));
 
+And=20
 
+	KUNIT_EXPECT_PTR_EQ(test, hw, clk_hw_lookup(clk_name));
+
+so that the name is fully self contained to this function.
+
+> +}
+> +
+> +/*
+> + * Test that clk lookup with a name that was unregistered returns NULL.
+> + */
+> +static void clk_lookup_unregistered_clk_returns_NULL(struct kunit *test)
+> +{
+> +       struct clk_hw *hw;
+> +       struct clk_init_data init =3D {
+> +               .name =3D DUMMY_CLK_NAME,
+> +               .ops =3D &empty_clk_ops,
+> +       };
+> +
+> +       hw =3D kunit_kzalloc(test, sizeof(*hw), GFP_KERNEL);
+> +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, hw);
+> +
+> +       hw->init =3D &init;
+> +       KUNIT_ASSERT_FALSE(test, clk_hw_register(NULL, hw));
+
+Use KUNIT_ASSERT_EQ instead because clk_hw_register() doesn't return a
+bool. Also, use the kunit registration function clk_hw_register_kunit()
+to simplify the unregistration path which is missing here.
+
+> +
+> +       clk_hw_unregister(hw);
+
+Before we unregister here we should assert that clk_hw_lookup() returns
+non-NULL.
+
+> +
+> +       KUNIT_EXPECT_PTR_EQ(test, NULL, clk_hw_lookup(DUMMY_CLK_NAME));
+
+Same name comment applies here as well.
+
+> +}
+> +
+> +static struct kunit_case clk_lookup_test_cases[] =3D {
+> +       KUNIT_CASE(clk_lookup_not_registered_clk_returns_NULL),
+> +       KUNIT_CASE(clk_lookup_registered_clk_returns_clk),
+> +       KUNIT_CASE(clk_lookup_unregistered_clk_returns_NULL),
+> +       {}
+> +};
+> +
+> +static struct kunit_suite clk_lookup_test_suite =3D {
+> +       .name =3D "clk-lookup",
+> +       .test_cases =3D clk_lookup_test_cases,
+> +};
+> =20
+>  kunit_test_suites(
+>         &clk_assigned_rates_suite,
+> @@ -3560,6 +3623,7 @@ kunit_test_suites(
+>         &clk_register_clk_parent_data_device_suite,
+>         &clk_single_parent_mux_test_suite,
+>         &clk_uncached_test_suite,
+> +       &clk_lookup_test_suite,
+
+Please keep this alphabetically sorted.
+
+>  );
+>  MODULE_DESCRIPTION("Kunit tests for clk framework");
+>  MODULE_LICENSE("GPL v2");
 
