@@ -1,171 +1,214 @@
-Return-Path: <linux-kernel+bounces-894869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30974C4C50F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:15:31 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1289CC4C536
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:16:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2C18A4F0E46
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 08:11:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DC6384F4E83
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 08:12:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 949F12BE658;
-	Tue, 11 Nov 2025 08:10:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7A722F0C5B;
+	Tue, 11 Nov 2025 08:12:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="TlgJz8pw"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DjS5ATKY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA8541EEE6
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 08:10:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 414C1231A30;
+	Tue, 11 Nov 2025 08:12:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762848643; cv=none; b=hvk26zYtS4olH9ZZCN1ufBj2pzf5SludZnS/tApbBdPFjJQzvlTFPTsRpZatWwjjV18UrHdy6ezEPNSC3uGH7seC382vEkErxlzWP+e3xp+xBQThdU4HFWVNZd2Nq41UG/eF5magZkE54U/qotknN22QLShjnGdq7UJOvjte5+Y=
+	t=1762848724; cv=none; b=hk/ScuaI67Gv7TP/zwFx+GwqAcddjHe50ak2tVDQFsSHXh4lnDEqnlksffyOLMR9QNa57d/8SyQMuUFgZE33mpCyQbZC3hTAK6C/q6FX/ScewL1HoO2/+sqkur/KeYCv99KT0i/u/x9tvWPhxjQmzG6ITVC5F1SuChzmIGrI08g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762848643; c=relaxed/simple;
-	bh=l6nRJ7tdRGvxA4c5h4KBMAhCvuaIH/Goxb69gB+0GP0=;
+	s=arc-20240116; t=1762848724; c=relaxed/simple;
+	bh=4ZXwNEdFPGw7GT9HjFLGQbQOpg79yaQP7NEbItrxbUY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X1cDvelXO49MZWIzpYhED8h+SdJD+LRuyCG8aoe2L7RlQVwZuoqVkgELyMUdWSGC543mC1Pbtdx8Zauvz1kdJUUTtsAayktpTkBeEPQMxDgfxeLLITRyB8kY38jh3Z8EHGgSRb8IC/7gcf9CUDZm4X/PM4RNa6baFXmXlr8YEDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=TlgJz8pw; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-6417313bddaso3942844a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 00:10:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1762848640; x=1763453440; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TQbue78pKwkHXp+W4v6uPbf6iMxcJPuiWhAhoJWq+ek=;
-        b=TlgJz8pw921GFXv+BAHpqmxytw9WivNw3nHQNI+q+p2xvs6o/Jzc6woYDg95mMxvhm
-         F1lBRg8PceWaaEqCW0UHnxmsk7Ex9Z9zPoFxb5hS0dBtNI2U7xWS3QIOUdo5Kdi9VF5L
-         Yep3aPijohcNipi37iHEjlJJmmS1dNWuKgTdjdu8RO1ZTmdo/REk0zcT4BN9VjLOUlEg
-         QFHFUO4LE5KiX48lHSTjsK+mA3bWahtg89m30bPbLtPVo7Cm/t1gdkYOPo4FYTtdR8Gs
-         hh65vPPkcHFYyNhaQpzJCdea7Zo3A2CH32nqZQz/PrrQ64u9jli/A9mkzcEPonAbaeAH
-         2xog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762848640; x=1763453440;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TQbue78pKwkHXp+W4v6uPbf6iMxcJPuiWhAhoJWq+ek=;
-        b=CdmPu6HXQ/br3aHzX3baCaNFZCyx3DZ2uHF/RIu8IWvdGhXOAJugLnpSzAXYv2qXAP
-         pvrA02c098yQi1PSmSLR3LIefMEpZ8P4B49HYmrkORPvp5jRZ/SE/EZpyMoJmkHNVxHa
-         kM6DtytPDzzhZO9HoNDTvZ7XqaUstZ/TQZrm/CAZOyQzQQbZ2iaiO8k+MijIvI4haBR6
-         Sm0ad3tp82ymzfxtfalkKMw3o6XFxtkJL7HeguOL6pdsy/c5MN+BKB0PGKq28ouvF3RC
-         b3BTAfReMB6rsPisJ7cdvi/mb4jXRe7bNHE1McEZYvY5Muv7ztdoIssulnjm3YqUSwV9
-         +JHg==
-X-Forwarded-Encrypted: i=1; AJvYcCV1dfkWUIs+Tj2mq1tGBjtEEkiRto5WpD23pJOCePX98RWt4GByfqiPJagRJUOjqi6njkLr/q1bMR9dNPc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWPIRrnT84DT9JrPFaonnsJ3fDk3R2SoNCLBm8xGJoE2z9U9xh
-	H5HQ/CvP7ph4vNPWrOfISKh4sZGu/3t72pa7TAxgJB3mx5SebQVwUfR6jAbFxRlhr3s=
-X-Gm-Gg: ASbGncsLo1tAvTFITfUeCk61Ls5DXSl8edM2bU0sGJMMY8WcH8CXWr+WkqEEmWns1Fu
-	CgI4Z7/V4hHcerpZYaDlXOG2Cs6ee7gHvR9Y2UhXaXDwOk86dBniqEZMtKRQaPEFX/85WzlEsRZ
-	AQOOHGk/lpXcMLSj0qJ7amzfmCA+WbwgA8tPqzNyUJ43veKJDrpkozzOon4FWYOdECMXEZhXZuy
-	p+RBm4RxE2FQRdaVulVar7L2IdqcEhhLlRDVxfyk6ddAWG3Wpj5lS+MIB/+UTZAJvYpCSbGjQ3v
-	zwbdwnMGNBqgobG3HzE9+NkOCmjGVrWBSBlhj/jouK7qKTRMR4UhL53yTIOICB1QO6zLLmko2yt
-	FNVDocYFK49TZULcGA2Glb/FK96sIR262W6bSXhwhff55W6WBIxZzmQKOjVAtV7BMAXTI11qepm
-	VoifIGj6wocA4EWlCko+RIYrqj
-X-Google-Smtp-Source: AGHT+IEZYvAe437RcYeslkObkmRF/TXOLhs0HzqzcY6BdpIa2QVGfreM/sajryoPs6lMwNHAyeu0Pg==
-X-Received: by 2002:a17:907:3d44:b0:b6d:8da0:9a35 with SMTP id a640c23a62f3a-b72e028d598mr1171710366b.13.1762848639974;
-        Tue, 11 Nov 2025 00:10:39 -0800 (PST)
-Received: from localhost (109-81-31-109.rct.o2.cz. [109.81.31.109])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bf40768fsm1292308366b.23.2025.11.11.00.10.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Nov 2025 00:10:39 -0800 (PST)
-Date: Tue, 11 Nov 2025 09:10:38 +0100
-From: Michal Hocko <mhocko@suse.com>
-To: Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
-Cc: Leon Huang Fu <leon.huangfu@shopee.com>, linux-mm@kvack.org,
-	tj@kernel.org, hannes@cmpxchg.org, roman.gushchin@linux.dev,
-	shakeel.butt@linux.dev, muchun.song@linux.dev,
-	akpm@linux-foundation.org, joel.granados@kernel.org, jack@suse.cz,
-	laoar.shao@gmail.com, mclapinski@google.com, kyle.meyer@hpe.com,
-	corbet@lwn.net, lance.yang@linux.dev, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
-Subject: Re: [PATCH mm-new v3] mm/memcontrol: Add memory.stat_refresh for
- on-demand stats flushing
-Message-ID: <aRLvfoMKcVEZGSym@tiehlicka>
-References: <20251110101948.19277-1-leon.huangfu@shopee.com>
- <ewcsz3553cd6ooslgzwbubnbaxwmpd23d2k7pw5s4ckfvbb7sp@dffffjvohz5b>
+	 Content-Type:Content-Disposition:In-Reply-To; b=P0sIse7GFwtJ5p/3ybW/0UglNdfICOyBlj2CnVVctsCgYe1386xf4SPCyBQmjG0tInOBO4jkZSsn1xUnhRUTpbb1NouuPD23tbunRaZ/3XFv2nJdi8+Am92KRQpNQOaUaBL7jh9nV2SweY1/M/cnSmpGeyBLkNPPNvOHwb0lluA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DjS5ATKY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71204C116B1;
+	Tue, 11 Nov 2025 08:12:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762848722;
+	bh=4ZXwNEdFPGw7GT9HjFLGQbQOpg79yaQP7NEbItrxbUY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DjS5ATKYv15086zaWRU1IJZZxMePDSv63QCvJdbsIHKKXg0ZnyOX3yWze54eD+VtX
+	 Hg6EABbTS107eOnk6okFHIO8PGT2fEDUu+8bZCc0JIueK+mvvzCKCTdCFGTzl+zUef
+	 ixEXkRxPw3HKdmx6oFWyODYRPmg6Kf4YTbWVXqbH+4m7Djw4IUcG5IvYnNWbleoDHr
+	 I2npKp7xROwO89PYmgO4fAJvErqheFqF2wOeAoaMJJgbNO8sxV7+V4qt/A6yJoks0t
+	 ORJzBdwgmaylVoB+euWbf8xKKIFZyCYjZO6z8811fmR3mQWt/+LkoPrnLCrw2JaJT/
+	 nptYUCl7C94xg==
+Date: Tue, 11 Nov 2025 09:12:00 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: adrianhoyin.ng@altera.com
+Cc: gregkh@linuxfoundation.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, dinguyen@kernel.org, Thinh.Nguyen@synopsys.com, 
+	devicetree@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/4] dt-bindings: usb: dwc3-altera: Add binding for
+ Altera DWC3 wrapper
+Message-ID: <20251111-amiable-chicken-of-music-efe7dd@kuoka>
+References: <cover.1762839776.git.adrianhoyin.ng@altera.com>
+ <607dec2fdb41cba0220b7b9947e04651f51ff56e.1762839776.git.adrianhoyin.ng@altera.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ewcsz3553cd6ooslgzwbubnbaxwmpd23d2k7pw5s4ckfvbb7sp@dffffjvohz5b>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <607dec2fdb41cba0220b7b9947e04651f51ff56e.1762839776.git.adrianhoyin.ng@altera.com>
 
-On Mon 10-11-25 14:50:11, Michal Koutny wrote:
-> Hello Leon.
-> 
-> On Mon, Nov 10, 2025 at 06:19:48PM +0800, Leon Huang Fu <leon.huangfu@shopee.com> wrote:
-> > Memory cgroup statistics are updated asynchronously with periodic
-> > flushing to reduce overhead. The current implementation uses a flush
-> > threshold calculated as MEMCG_CHARGE_BATCH * num_online_cpus() for
-> > determining when to aggregate per-CPU memory cgroup statistics. On
-> > systems with high core counts, this threshold can become very large
-> > (e.g., 64 * 256 = 16,384 on a 256-core system), leading to stale
-> > statistics when userspace reads memory.stat files.
-> > 
-> > This is particularly problematic for monitoring and management tools
-> > that rely on reasonably fresh statistics, as they may observe data
-> > that is thousands of updates out of date.
-> > 
-> > Introduce a new write-only file, memory.stat_refresh, that allows
-> > userspace to explicitly trigger an immediate flush of memory statistics.
-> 
-> I think it's worth thinking twice when introducing a new file like
-> this...
-> 
-> > Writing any value to this file forces a synchronous flush via
-> > __mem_cgroup_flush_stats(memcg, true) for the cgroup and all its
-> > descendants, ensuring that subsequent reads of memory.stat and
-> > memory.numa_stat reflect current data.
-> > 
-> > This approach follows the pattern established by /proc/sys/vm/stat_refresh
-> > and memory.peak, where the written value is ignored, keeping the
-> > interface simple and consistent with existing kernel APIs.
-> > 
-> > Usage example:
-> >   echo 1 > /sys/fs/cgroup/mygroup/memory.stat_refresh
-> >   cat /sys/fs/cgroup/mygroup/memory.stat
-> > 
-> > The feature is available in both cgroup v1 and v2 for consistency.
-> 
-> First, I find the motivation by the testcase (not real world) weak when
-> considering such an API change (e.g. real world would be confined to
-> fewer CPUs or there'd be other "traffic" causing flushes making this a
-> non-issue, we don't know here).
+On Tue, Nov 11, 2025 at 02:18:45PM +0800, adrianhoyin.ng@altera.com wrote:
+> From: Adrian Ng Ho Yin <adrianhoyin.ng@altera.com>
+>=20
+> Add a device tree binding document for the Altera wrapper around the
+> Synopsys DesignWare USB3 (DWC3) controller. The wrapper manages
+> SoC-specific integration such as clock and reset control for the USB
+> subsystem.
+>=20
+> A parent=E2=80=93child node structure is used to comply with the generic =
+DWC3
 
-I do agree that the current justification is rather weak.
+No, that's long time legacy. Use single node.
 
-> Second, this is open to everyone (non-root) who mkdir's their cgroups.
-> Then why not make it the default memory.stat behavior? (Tongue-in-cheek,
-> but [*].)
-> 
-> With this change, we admit the implementation (async flushing) and leak
-> it to the users which is hard to take back. Why should we continue doing
-> any implicit in-kernel flushing afterwards?
+> binding, which restricts the core node to a single clock and reset.
+> The wrapper node provides the additional clocks, resets, and address
+> translation required for the Agilex5 integration.
+>=20
+> Signed-off-by: Adrian Ng Ho Yin <adrianhoyin.ng@altera.com>
+> ---
+>  .../devicetree/bindings/usb/dwc3-altera.yaml  | 78 +++++++++++++++++++
+>  1 file changed, 78 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/usb/dwc3-altera.yaml
+>=20
+> diff --git a/Documentation/devicetree/bindings/usb/dwc3-altera.yaml b/Doc=
+umentation/devicetree/bindings/usb/dwc3-altera.yaml
+> new file mode 100644
+> index 000000000000..c998d587723d
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/usb/dwc3-altera.yaml
 
-In theory you are correct but I think it is also good to recognize the
-reality. Keeping accurate stats is _expensive_ and we are always
-struggling to keep a balance between accurace and runtime overhead. Yet
-there will always be those couple special cases that would like to have
-precision we do not want to pay for in general case.
+Filename matching compatible.
 
-We have recognized that in /proc/vmstat casee already without much added
-maintenance burden. This seem a very similar case. If there is a general
-consensus that we want to outsource all those special cases into BPF
-then fine (I guess) but I believe BPF approach is figting a completely
-different problem (data formating overhead rather than accuracy).
+> @@ -0,0 +1,78 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/usb/dwc3-altera.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Altera DWC3 USB Controller Wrapper
+> +
+> +maintainers:
+> +  - Adrian Ng <adrianhoyin.ng@altera.com>
+> +
+> +description: |
 
-All that being said I do agree that we should have a more real usecase
-than LTP test to justify a new interface. I am personally not convinced
-about BPF-only way to address this fundamental precision-vs-overhead
-battle.
--- 
-Michal Hocko
-SUSE Labs
+Do not need '|' unless you need to preserve formatting.
+
+> +  The Altera SoCFPGA wrapper around the Synopsys DesignWare USB3 (DWC3) =
+core.
+> +  The wrapper provides SoC-specific integration such as reset and clock =
+control.
+> +
+> +properties:
+> +  compatible:
+> +    const: altr,agilex5-dwc3
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    minItems: 1
+> +    maxItems: 2
+
+No, this cannot be flexible. Please do not write bindings completely
+different than everything else.
+
+List the items, fix size/length of the array.
+
+> +
+> +  resets:
+> +    minItems: 1
+> +    maxItems: 2
+
+Same problem,
+
+> +
+> +  "#address-cells":
+> +    const: 1
+> +
+> +  "#size-cells":
+> +    const: 1
+
+No. Use single node.
+
+> +
+> +  ranges: true
+
+Drop
+
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - ranges
+> +  - clocks
+> +  - resets
+> +
+> +patternProperties:
+> +  "^usb(@[0-9a-f]+)?$":
+> +    type: object
+> +    $ref: /schemas/usb/snps,dwc3.yaml#
+
+Drop
+
+> +
+> +unevaluatedProperties: false
+
+That's wrong in this context. Please read example-schema or writing
+schema.
+
+> +
+> +examples:
+> +  - |
+> +    usb@11000000 {
+> +        compatible =3D "altr,agilex5-dwc3";
+> +        reg =3D <0x11000000 0x100000>;
+> +        ranges =3D <0x0 0x11000000 0x100000>;
+> +        #address-cells =3D <1>;
+> +        #size-cells =3D <1>;
+> +        clocks =3D <&clkmgr 54>, <&clkmgr 55>;
+> +        resets =3D <&rst 36>, <&rst 44>;
+> +
+> +        dwc3: usb@0 {
+> +            compatible =3D "snps,dwc3";
+> +            reg =3D <0x0 0x100000>;
+> +            interrupts =3D <0 94 4>;
+
+We don't use such code... Look at any decent DTS.
+
+> +            iommus =3D <&smmu 7>;
+> +            phys =3D <&usbphy0>, <&usbphy0>;
+> +            phy-names =3D "usb2-phy", "usb3-phy";
+> +            dr_mode =3D "host";
+> +            maximum-speed =3D "super-speed";
+> +            snps,dis_u2_susphy_quirk;
+> +            snps,dis_u3_susphy_quirk;
+> +            status =3D "okay";
+
+Drop
+
+This is a pretty poor binding. You just repeat basic mistakes, fixed in
+other NEW bindings. Last time few-line patch, with obvious issues, had
+two reviewed-by from Altera. This one - bigger patch - no one cared to
+review?
+
+Best regards,
+Krzysztof
+
 
