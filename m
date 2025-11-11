@@ -1,163 +1,118 @@
-Return-Path: <linux-kernel+bounces-895653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C137CC4E937
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 15:49:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3AB7C4E985
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 15:52:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D34124F575C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:43:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F157F3BEF20
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:44:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9516E3446AB;
-	Tue, 11 Nov 2025 14:41:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JpVH0z82"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7DC6306B33;
+	Tue, 11 Nov 2025 14:41:57 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10CFE334C28;
-	Tue, 11 Nov 2025 14:41:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19EED304994;
+	Tue, 11 Nov 2025 14:41:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762872072; cv=none; b=rTlzinDPv8yIf1UiES/baoJ0GAoWKCCgvRQIY8lxKkj3UAnj0nUSZAOmvrrhSQW4rwHQilvn2MnLPcBLgt1EiFjnD7uShUSKTqWN2yTKVs2R2y84C1KHdWLz9vkwsRTLRhtrQidkniL8+bvCpgesizYpRnKzZ9sXwLU8l3O+hbM=
+	t=1762872117; cv=none; b=RWdtng/S9H4H8leVV6zGYnmKHqFngvDAULSVhWN4IALEnHabb0uDifm4duQaQMeeBTKPFqlEkwnVInLiThqA69JRQrpEeQJ5yPxqDgrnVfyipDDQ++MM4Lk/wR8MeIYDSqiduU+kkyus1SxPk0uPRiXBWeWc8tl9iTlsqWfw20I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762872072; c=relaxed/simple;
-	bh=CJT2bHiYVzimb6xUOlUijV6ufxC2fzRRaAwV5VvZxnE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pW61wcR0L6p+NycEtRgCCtNinvemdrVrLSNOXUrxYAyAj4ZhpdxkCQZ58OidfdCTff9JLkDcEwBUwTDxpFFOmhRc1jvl5T6iOCTr/p6+zQZDNp2HX27PgAb1Og/y+ZWMqL+vMCI5cg5nIKXcrhn51+kI2SGJHErhQ+iOXydOthw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JpVH0z82; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762872071; x=1794408071;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=CJT2bHiYVzimb6xUOlUijV6ufxC2fzRRaAwV5VvZxnE=;
-  b=JpVH0z82xNdF0Ix4LVAbR8U1WuxZS6kToiKjZSfn1fB3U29ViDjc11ye
-   mS53nFpBS7//RD1yh7Sz8NJUNl9s02TeFVEcF/zc1Z6dozmdwojpaWCbf
-   RQvihGlRlCIcXFbBANJfbSPJc6g8DzE0oW8IcmRdSg0jSOuIiMwbUzA+H
-   Ok0zMvCQX1dEllng5m+cKSBI79ypTM+DPtpexRgaRv2qc0iOaN0qr3DX3
-   AbaUA2YSsFEZl8k3R2Xz987GWlLtf3ePeCKDP7I5qQGy1akdroHUfsQd+
-   iNnCK23I1CJVQwXkzHFzDfkSeKKsEEQvVLvvltXuXyURNbK7kCHvguqo9
-   w==;
-X-CSE-ConnectionGUID: Bo4WUZPyQB693rKsC/zyAA==
-X-CSE-MsgGUID: kuEySbvBQ4W2K8ofOTMeKA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11610"; a="68793482"
-X-IronPort-AV: E=Sophos;i="6.19,296,1754982000"; 
-   d="scan'208";a="68793482"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 06:41:08 -0800
-X-CSE-ConnectionGUID: dyI0WteNTQGUcNMhK/iXZA==
-X-CSE-MsgGUID: y+S2diDMTYywfLgXZzwwYQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,296,1754982000"; 
-   d="scan'208";a="189407293"
-Received: from black.igk.intel.com ([10.91.253.5])
-  by fmviesa009.fm.intel.com with ESMTP; 11 Nov 2025 06:41:06 -0800
-Received: by black.igk.intel.com (Postfix, from userid 1003)
-	id 223B597; Tue, 11 Nov 2025 15:41:05 +0100 (CET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Philipp Stanner <phasta@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Jonathan Corbet <corbet@lwn.net>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>
-Subject: [PATCH v1 1/2] devres: Remove unused devm_free_percpu()
-Date: Tue, 11 Nov 2025 15:39:57 +0100
-Message-ID: <20251111144104.910241-2-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20251111144104.910241-1-andriy.shevchenko@linux.intel.com>
-References: <20251111144104.910241-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1762872117; c=relaxed/simple;
+	bh=ewWPghOlpShkgcZg6ReXF7OA4p30iuReGJpeYovkw7w=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VarAp2n2UHY4VyoTX/zhG/p7dZr6mQ49jyGRjJJL21euQWZfAZBkbJm/vLkBPPHD6f720trqrU9lizFBtgV35O6vEcofP6bQAKS4AVPgyEB/rGEEYgT8dAeSyrKLRmo+cjLLpSg3LBGgkePzt+4Um8Aturgpkt2p9JnBtNXkBDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4d5Tk84T4szJ46Dv;
+	Tue, 11 Nov 2025 22:41:20 +0800 (CST)
+Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
+	by mail.maildlp.com (Postfix) with ESMTPS id 9DA19140136;
+	Tue, 11 Nov 2025 22:41:51 +0800 (CST)
+Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
+ (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.36; Tue, 11 Nov
+ 2025 14:41:50 +0000
+Date: Tue, 11 Nov 2025 14:41:49 +0000
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Robert Richter <rrichter@amd.com>
+CC: Alison Schofield <alison.schofield@intel.com>, Vishal Verma
+	<vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan Williams
+	<dan.j.williams@intel.com>, Dave Jiang <dave.jiang@intel.com>, "Davidlohr
+ Bueso" <dave@stgolabs.net>, <linux-cxl@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Gregory Price <gourry@gourry.net>, "Fabio M.
+ De Francesco" <fabio.m.de.francesco@linux.intel.com>, Terry Bowman
+	<terry.bowman@amd.com>, Joshua Hahn <joshua.hahnjy@gmail.com>
+Subject: Re: [PATCH v4 03/14] cxl/region: Rename misleading variable name
+ @hpa to @hpa_range
+Message-ID: <20251111144149.00007c63@huawei.com>
+In-Reply-To: <20251103184804.509762-4-rrichter@amd.com>
+References: <20251103184804.509762-1-rrichter@amd.com>
+	<20251103184804.509762-4-rrichter@amd.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500012.china.huawei.com (7.191.174.4) To
+ dubpeml100005.china.huawei.com (7.214.146.113)
 
-Remove unused devm_free_percpu().
+On Mon, 3 Nov 2025 19:47:44 +0100
+Robert Richter <rrichter@amd.com> wrote:
 
-By the way, it was never used in the drivers/ from day 1.
+> @hpa is actually a @hpa_range, rename variables accordingly.
+> 
+> Reviewed-by: Gregory Price <gourry@gourry.net>
+> Signed-off-by: Robert Richter <rrichter@amd.com>
+Passing comment below on readability (unrelated to the change you made)
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- .../driver-api/driver-model/devres.rst        |  1 -
- drivers/base/devres.c                         | 25 -------------------
- include/linux/device.h                        |  1 -
- 3 files changed, 27 deletions(-)
+Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
 
-diff --git a/Documentation/driver-api/driver-model/devres.rst b/Documentation/driver-api/driver-model/devres.rst
-index 2b36ebde9cec..0198ac65e874 100644
---- a/Documentation/driver-api/driver-model/devres.rst
-+++ b/Documentation/driver-api/driver-model/devres.rst
-@@ -383,7 +383,6 @@ NET
- 
- PER-CPU MEM
-   devm_alloc_percpu()
--  devm_free_percpu()
- 
- PCI
-   devm_pci_alloc_host_bridge()  : managed PCI host bridge allocation
-diff --git a/drivers/base/devres.c b/drivers/base/devres.c
-index c948c88d3956..f54db6d138ab 100644
---- a/drivers/base/devres.c
-+++ b/drivers/base/devres.c
-@@ -1222,13 +1222,6 @@ static void devm_percpu_release(struct device *dev, void *pdata)
- 	free_percpu(p);
- }
- 
--static int devm_percpu_match(struct device *dev, void *data, void *p)
--{
--	struct devres *devr = container_of(data, struct devres, data);
--
--	return *(void **)devr->data == p;
--}
--
- /**
-  * __devm_alloc_percpu - Resource-managed alloc_percpu
-  * @dev: Device to allocate per-cpu memory for
-@@ -1264,21 +1257,3 @@ void __percpu *__devm_alloc_percpu(struct device *dev, size_t size,
- 	return pcpu;
- }
- EXPORT_SYMBOL_GPL(__devm_alloc_percpu);
--
--/**
-- * devm_free_percpu - Resource-managed free_percpu
-- * @dev: Device this memory belongs to
-- * @pdata: Per-cpu memory to free
-- *
-- * Free memory allocated with devm_alloc_percpu().
-- */
--void devm_free_percpu(struct device *dev, void __percpu *pdata)
--{
--	/*
--	 * Use devres_release() to prevent memory leakage as
--	 * devm_free_pages() does.
--	 */
--	WARN_ON(devres_release(dev, devm_percpu_release, devm_percpu_match,
--			       (void *)(__force unsigned long)pdata));
--}
--EXPORT_SYMBOL_GPL(devm_free_percpu);
-diff --git a/include/linux/device.h b/include/linux/device.h
-index b031ff71a5bd..0c6377f6631c 100644
---- a/include/linux/device.h
-+++ b/include/linux/device.h
-@@ -298,7 +298,6 @@ void device_remove_bin_file(struct device *dev,
- 
- void __percpu *__devm_alloc_percpu(struct device *dev, size_t size,
- 				   size_t align);
--void devm_free_percpu(struct device *dev, void __percpu *pdata);
- 
- struct device_dma_parameters {
- 	/*
--- 
-2.50.1
+Dave, I wonder if it is reasonable to queue at least some of Robert's series
+like this one so that people can start basing on top of those and the
+merge conflicts will be less painful in the long run.
+
+> ---
+>  drivers/cxl/core/region.c | 30 ++++++++++++++++--------------
+>  1 file changed, 16 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+> index a780e65532a7..bb889c891cf7 100644
+> --- a/drivers/cxl/core/region.c
+> +++ b/drivers/cxl/core/region.c
+
+> @@ -3577,12 +3578,13 @@ int cxl_add_to_region(struct cxl_endpoint_decoder *cxled)
+>  		return -ENXIO;
+>  
+>  	/*
+> -	 * Ensure that if multiple threads race to construct_region() for @hpa
+> -	 * one does the construction and the others add to that.
+> +	 * Ensure that if multiple threads race to construct_region()
+> +	 * for the HPA range one does the construction and the others
+> +	 * add to that.
+
+Unrelated but a few commas would make this easier to read. Something like:
+
+	 * Ensure that, if multiple threads race to construct_region()
+	 * for the HPA range, one does the construction and the others
+	 * add to that.
+
+>  	 */
+>  	mutex_lock(&cxlrd->range_lock);
+>  	struct cxl_region *cxlr __free(put_cxl_region) =
+> -		cxl_find_region_by_range(cxlrd, hpa);
+> +		cxl_find_region_by_range(cxlrd, hpa_range);
+>  	if (!cxlr)
+>  		cxlr = construct_region(cxlrd, cxled);
+>  	mutex_unlock(&cxlrd->range_lock);
 
 
