@@ -1,172 +1,172 @@
-Return-Path: <linux-kernel+bounces-895444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7348C4DC56
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:40:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 580F2C4DDD9
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:50:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 20CBC4F6960
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:35:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64F2718C13F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:45:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE1663AA1BA;
-	Tue, 11 Nov 2025 12:35:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6AB63AA1BA;
+	Tue, 11 Nov 2025 12:37:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e955swYi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dyF9fQDy";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="mPwuRNGr"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D9883AA1AB;
-	Tue, 11 Nov 2025 12:35:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 933F03AA18D
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 12:37:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762864502; cv=none; b=CWoWcbufpy4l6zRYIO4E4xwRYIJrNv/CfQiaIbmCUOeZbQgYzXhdD+ZeZUZlmxl2Zt2FLhlJcSAEb5JMai7o8/uaCDYVCGYcpooiETahgBEPE89Q6jeXvN5A0Q5ekhWcSTOlW3j52EWbPX4hXesEKioLM4MH7O05pRNfXF4IR5Y=
+	t=1762864623; cv=none; b=D62uXMuizX6WxSRFOPrrCP73oU1VZNJKq5V6v7lj2nv6IjC3Rv6wdzzzli9SxvxooB7BTTCcw0RRXQ/l6GMRw2J/5PZqjNDAg7IoD8BNdQ9PMgZxxq82YaJOQeDnr0qnI84vmhXsI/ksgyazoLa5C5JGwDZCYtp4dxGlkHAnXqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762864502; c=relaxed/simple;
-	bh=P9kSJYPFha9VBnjvxXS0Y2nT53KXisQsU5JE1jGqHp0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=R0/qGOFIxkkHWTpZscK9pwDSxdbSM5/iFHo07gwbdGDtCR0BCtMxMegWJAvEasr7onEEWJK3KjN4N+O8ZHnoS5OyGUv0vBWIyl5PgbjSGJR5JikxH/zZk41W+fxCtegqrRVV9TKQR2kpCYJWPuq1QGACqMsvzJJtkqrqB5EFnQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e955swYi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93172C19425;
-	Tue, 11 Nov 2025 12:34:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762864501;
-	bh=P9kSJYPFha9VBnjvxXS0Y2nT53KXisQsU5JE1jGqHp0=;
-	h=Date:Reply-To:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=e955swYiMNNYCa7VwRQlSOyFTTfCDSmSdI6bJgsUoU2yhrRFa1DdQu4RLICy+kYem
-	 sjrHJxwqY1uaIzocJnJFb5g0XGYJ4O9VQHKAHILWdLsFXBhZqgtuVDdw4WRqGAHOKB
-	 KOP4i2enGCjielpqLssCrG3oDgBHvsmlqYXEEe2jl7Ie1ThdZrmCbaH+5dJekpgWaP
-	 KKWTRYegj4o6a+C6hZoP5pfbfdk4JQKTFeVdwO02CEFo0a9WiiuzTozni/Oqzas7+p
-	 mHGLn4/d2ArGJ6y19mT0BBdwY3lTqIUlxKKM2iT04fITVrZGeTJEJyDtui736jtK98
-	 ZCobIORO1MfTA==
-Message-ID: <ded3ba14-d2d8-40be-8c0c-d41c4307347c@kernel.org>
-Date: Tue, 11 Nov 2025 13:34:56 +0100
+	s=arc-20240116; t=1762864623; c=relaxed/simple;
+	bh=5dqdNo3mNkTyuVVJxOfXWQlM4vdL2fXY/f6lg8rt8x8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=PP9CEH2q0a0G9kLXCBBSQFB/7ShdPbZms75uHRp+xkZTXfiQE3s6zVXMHlHT/rfCBC9l6LbSAeeDnL6TsqDkfYowNFsK+6aGX57hpAW/1/sEfwBtZHdcsj2uupR00mZfx8N+wqVTjtdjUNdCy3jtMkF0PVYAAA3HMKuFzq6OgZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dyF9fQDy; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=mPwuRNGr; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762864620;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HJil3CsSx+8fOj31OoVJWOQNTlYu8I58IHhwpqoKvHs=;
+	b=dyF9fQDykrpMLhqCVhW4iH6un46TZYOGHPWcUs874/euvo1WI3YXwaLAQNWsdEkqXbmIqk
+	alALYrXmJEORRuKMNp6pA92KOh0PEsJv1Dtj8GIVWzuZh2XuaGA6X+os+Qof9PF4KJHPoh
+	bGRfniW6PJAWLh44H2sOGAfYulqo+Ug=
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
+ [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-382-XD_oBSYwMbS3xF7Ys9E-jw-1; Tue, 11 Nov 2025 07:36:57 -0500
+X-MC-Unique: XD_oBSYwMbS3xF7Ys9E-jw-1
+X-Mimecast-MFC-AGG-ID: XD_oBSYwMbS3xF7Ys9E-jw_1762864616
+Received: by mail-ed1-f69.google.com with SMTP id 4fb4d7f45d1cf-6409cea8137so914949a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 04:36:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1762864616; x=1763469416; darn=vger.kernel.org;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=HJil3CsSx+8fOj31OoVJWOQNTlYu8I58IHhwpqoKvHs=;
+        b=mPwuRNGraz2FloDjjZW58TFYOKa2vusLMVu2/EYH0Gymc8KlQT2pYKbbk4XC2Y428e
+         lpLqp24A1/XZXJd6sOCvVp9gJgywdeDaC8f7CymMHBRegn/MrFQFC3iByhmlm8eptHu+
+         ja0MhL4V+xcCybVrQa8TJ8n/mJ4xFESUQ58iNhPQQancjm9MzaHgWqTvfwTRYDIQjzxJ
+         tiE6jNRCe+4Qlh8dRwYbzJ3ExmvXZsSdH4CCQ5ZmdfSnCWMLkaWIFt0SGyejFTEVb9pY
+         G63DQnBVg8LM6ccu1aHLaiLxN/8uZEf7Caslm38yROvZlluqj3oPK12z3COQUfhTL9Kh
+         qASg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762864616; x=1763469416;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HJil3CsSx+8fOj31OoVJWOQNTlYu8I58IHhwpqoKvHs=;
+        b=Wj3Ghlj9/RKQDLEy+NXRMwRIYUbiij2o6BlS+DpI1zgQx/1BWoIf6FbTMZdQcdYpLa
+         JbKsKRidfBXAqO9OXqxs/paatf72wbKhI2iPIAa5prgcQI05O4IOPgSeJ+/C4RmB2zu8
+         8UXy124XyW1G/7yq8uu349qmWlhNhMq+aMxgzboEtnPy3UEzPg6Wwk+M2MM1ZQrYqCj+
+         BauWjyM2gvZXC219R42RqNDyLu9WpRCtCA8c2a3JXxf4dT2esoR/gRaLhVAajbz/IrfK
+         Ro1wkcjTiii73MV430IQBE16wv/bK6yO161cXRYc8MCu8y2XVbF0NgQUYf9obXa9rP0Z
+         h5og==
+X-Forwarded-Encrypted: i=1; AJvYcCUfDPjNfjY9FZ2rmrRaV++NCR/gMz+IvKmL+5D2X93YzM5B8PGI9pgaKnWot7t2fnGPhSbzxWpVk6LRCj4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPHauP1/raHNdCWJmmpzGp+uUccb281i0drDYHFS6fTYPubH73
+	/kNgVKCHG8nLB7AAQdDBNSXE/LUcaMaGFKiqpQNhx5epJvlqRfYnqYIFPfP3ExV7IiLNyVfMLlP
+	jNWscAf4U2NFJPH1J/kdY28xkz0z+i1heFPIeEaoSld6ng7o9DVY5NAwgjv+KL79D7A==
+X-Gm-Gg: ASbGncuPE7oNJPSoSccycUJEiwNrjapBMJ/Cj718z37CamU936Hyfc7DnKm9HuCNFcc
+	7UWRjeHHXqFEXCxIvcelgX92sUuELaaXRwvR5fdBVavZRYXOSgsePMhVdu0SRSuOi7+MRxXEMTO
+	ZfFPhBKlxgcAPPhQGtVOi4A+rOAwMnA0e5A+Vrx2fN/Ex3s11+IUa+tsE1dXMha6plvCyZKrMrh
+	rqTXKsx9HU2EqFSqLwgHTpg08sM7mibEU4ppYZ4WGAiAD6hgNbbc8Ru1ajVr61ui9AVG0mJhq3x
+	mpigboRtmVo4TpK4aEwVsbjAU3HK1x6bvyU6sF/VJBgUz26g8TtExg3XmRwS7YV4ViWmiDn/M6F
+	woGemZi3N86g2XXGurc6dIcVrZg==
+X-Received: by 2002:a05:6402:5189:b0:641:6b44:75de with SMTP id 4fb4d7f45d1cf-642e275ace8mr2893714a12.5.1762864615742;
+        Tue, 11 Nov 2025 04:36:55 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGfkAwSb/V5JIwU5moExHjbeMcWwrXGoX+mdVUHDtdTxf3WoXuBjDbonnmfpi475Ak1gHNtpA==
+X-Received: by 2002:a05:6402:5189:b0:641:6b44:75de with SMTP id 4fb4d7f45d1cf-642e275ace8mr2893656a12.5.1762864615046;
+        Tue, 11 Nov 2025 04:36:55 -0800 (PST)
+Received: from alrua-x1.borgediget.toke.dk (alrua-x1.borgediget.toke.dk. [2a0c:4d80:42:443::2])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6411f814164sm13449948a12.13.2025.11.11.04.36.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Nov 2025 04:36:54 -0800 (PST)
+Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
+	id 83146329590; Tue, 11 Nov 2025 13:36:51 +0100 (CET)
+From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
+To: Byungchul Park <byungchul@sk.com>, Jakub Kicinski <kuba@kernel.org>
+Cc: linux-mm@kvack.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel_team@skhynix.com,
+ harry.yoo@oracle.com, ast@kernel.org, daniel@iogearbox.net,
+ davem@davemloft.net, hawk@kernel.org, john.fastabend@gmail.com,
+ sdf@fomichev.me, saeedm@nvidia.com, leon@kernel.org, tariqt@nvidia.com,
+ mbloch@nvidia.com, andrew+netdev@lunn.ch, edumazet@google.com,
+ pabeni@redhat.com, akpm@linux-foundation.org, david@redhat.com,
+ lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
+ rppt@kernel.org, surenb@google.com, mhocko@suse.com, horms@kernel.org,
+ jackmanb@google.com, hannes@cmpxchg.org, ziy@nvidia.com,
+ ilias.apalodimas@linaro.org, willy@infradead.org, brauner@kernel.org,
+ kas@kernel.org, yuzhao@google.com, usamaarif642@gmail.com,
+ baolin.wang@linux.alibaba.com, almasrymina@google.com,
+ asml.silence@gmail.com, bpf@vger.kernel.org, linux-rdma@vger.kernel.org,
+ sfr@canb.auug.org.au, dw@davidwei.uk, ap420073@gmail.com,
+ dtatulea@nvidia.com
+Subject: Re: [RFC mm v5 1/2] page_pool: check nmdesc->pp to see its usage as
+ page pool for net_iov not page-backed
+In-Reply-To: <20251111024500.GA79866@system.software.com>
+References: <20251107015902.GA3021@system.software.com>
+ <20251106180810.6b06f71a@kernel.org>
+ <20251107044708.GA54407@system.software.com>
+ <20251107174129.62a3f39c@kernel.org>
+ <20251108022458.GA65163@system.software.com>
+ <20251107183712.36228f2a@kernel.org>
+ <20251110010926.GA70011@system.software.com>
+ <20251111014052.GA51630@system.software.com>
+ <20251110175650.78902c74@kernel.org>
+ <20251111021741.GB51630@system.software.com>
+ <20251111024500.GA79866@system.software.com>
+X-Clacks-Overhead: GNU Terry Pratchett
+Date: Tue, 11 Nov 2025 13:36:51 +0100
+Message-ID: <87346kn3to.fsf@toke.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: Daniel Gomez <da.gomez@kernel.org>
-Subject: Re: [PATCH v2 0/3] module: Add compile-time check for embedded NUL
- characters
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Kees Cook <kees@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>,
- Hans Verkuil <hverkuil+cisco@kernel.org>,
- Malcolm Priestley <tvboxspy@gmail.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Hans Verkuil <hverkuil@kernel.org>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- Rusty Russell <rusty@rustcorp.com.au>, Petr Pavlu <petr.pavlu@suse.com>,
- Sami Tolvanen <samitolvanen@google.com>, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, linux-modules@vger.kernel.org,
- linux-hardening@vger.kernel.org
-References: <20251010030348.it.784-kees@kernel.org>
- <3dd1a00d-08f7-4801-a9f7-d6db61c0e0f3@kernel.org>
- <aRMhLEs9NpGexL7B@black.igk.intel.com>
-Content-Language: en-US
-From: Daniel Gomez <da.gomez@kernel.org>
-Organization: kernel.org
-In-Reply-To: <aRMhLEs9NpGexL7B@black.igk.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On 11/11/2025 12.42, Andy Shevchenko wrote:
-> On Wed, Nov 05, 2025 at 02:03:59PM +0100, Daniel Gomez wrote:
->> On 10/10/2025 05.06, Kees Cook wrote:
->>>  v2:
->>>  - use static_assert instead of _Static_assert
->>>  - add Hans's Reviewed-by's
->>>  v1: https://lore.kernel.org/lkml/20251008033844.work.801-kees@kernel.org/
->>>
->>> Hi!
->>>
->>> A long time ago we had an issue with embedded NUL bytes in MODULE_INFO
->>> strings[1]. While this stands out pretty strongly when you look at the
->>> code, and we can't do anything about a binary module that just plain lies,
->>> we never actually implemented the trivial compile-time check needed to
->>> detect it.
->>>
->>> Add this check (and fix 2 instances of needless trailing semicolons that
->>> this change exposed).
->>>
->>> Note that these patches were produced as part of another LLM exercise.
->>> This time I wanted to try "what happens if I ask an LLM to go read
->>> a specific LWN article and write a patch based on a discussion?" It
->>> pretty effortlessly chose and implemented a suggested solution, tested
->>> the change, and fixed new build warnings in the process.
->>>
->>> Since this was a relatively short session, here's an overview of the
->>> prompts involved as I guided it through a clean change and tried to see
->>> how it would reason about static_assert vs _Static_assert. (It wanted
->>> to use what was most common, not what was the current style -- we may
->>> want to update the comment above the static_assert macro to suggest
->>> using _Static_assert directly these days...)
->>>
->>>   I want to fix a weakness in the module info strings. Read about it
->>>   here: https://lwn.net/Articles/82305/
->>>
->>>   Since it's only "info" that we need to check, can you reduce the checks
->>>   to just that instead of all the other stuff?
->>>
->>>   I think the change to the comment is redundent, and that should be
->>>   in a commit log instead. Let's just keep the change to the static assert.
->>>
->>>   Is "static_assert" the idiomatic way to use a static assert in this
->>>   code base? I've seen _Static_assert used sometimes.
->>>
->>>   What's the difference between the two?
->>>
->>>   Does Linux use C11 by default now?
->>>
->>>   Then let's not use the wrapper any more.
->>>
->>>   Do an "allmodconfig all -s" build to verify this works for all modules
->>>   in the kernel.
->>>
->>>
->>> Thanks!
->>>
->>> -Kees
->>>
->>> [1] https://lwn.net/Articles/82305/
->>>
->>> Kees Cook (3):
->>>   media: dvb-usb-v2: lmedm04: Fix firmware macro definitions
->>>   media: radio: si470x: Fix DRIVER_AUTHOR macro definition
->>>   module: Add compile-time check for embedded NUL characters
->>>
->>>  include/linux/moduleparam.h                   |  3 +++
->>>  drivers/media/radio/si470x/radio-si470x-i2c.c |  2 +-
->>>  drivers/media/usb/dvb-usb-v2/lmedm04.c        | 12 ++++++------
->>>  3 files changed, 10 insertions(+), 7 deletions(-)
->>>
->>
->> Reviewed-by: Daniel Gomez <da.gomez@samsung.com>
->>
->> I have also tested a build of v6.18-rc3 + patches using allmodconfig:
->>
->> Tested-by: Daniel Gomez <da.gomez@samsung.com>
-> 
-> Folks, are you aware that this change blown up the sparse?
-> Now there is a "bad constant expression" to each MODULE_*() macro line.
+Byungchul Park <byungchul@sk.com> writes:
 
-Thanks for the heads up.
+> On Tue, Nov 11, 2025 at 11:17:41AM +0900, Byungchul Park wrote:
+>> On Mon, Nov 10, 2025 at 05:56:50PM -0800, Jakub Kicinski wrote:
+>> > On Tue, 11 Nov 2025 10:40:52 +0900 Byungchul Park wrote:
+>> > > > > I understand the end goal. I don't understand why patch 1 is a step
+>> > > > > in that direction, and you seem incapable of explaining it. So please
+>> > > > > either follow my suggestion on how to proceed with patch 2 without
+>> > > >
+>> > > > struct page and struct netmem_desc should keep difference information.
+>> > > > Even though they are sharing some fields at the moment, it should
+>> > > > eventually be decoupled, which I'm working on now.
+>> > >
+>> > > I'm removing the shared space between struct page and struct net_iov so
+>> > > as to make struct page look its own way to be shrinked and let struct
+>> > > net_iov be independent.
+>> > >
+>> > > Introduing a new shared space for page type is non-sense.  Still not
+>> > > clear to you?
+>> > 
+>> > I've spent enough time reasoning with out and suggesting alternatives.
+>> 
+>> I'm not trying to be arguing but trying my best to understand you and
+>> want to adopt your opinion.  However, it's not about objection but I
+>> really don't understand what you meant.  Can anyone explain what he
+>> meant who understood?
+>
+> If no objection against Jakub's opinion, I will resend with his
+> alternaltive applied.
 
-I can see this thread:
+No objection from me :)
 
-https://lore.kernel.org/all/D1CBCBE2-3A54-410A-B15C-F1C621F9F56B@kernel.org/#t
+-Toke
 
-And this:
-
-https://lore.kernel.org/linux-sparse/CACePvbVG2KrGQq4cNKV=wbO5h=jp3M0RO1SdfX8kV4OukjPG8A@mail.gmail.com/T/#t
-
-> 
-> Nice that Uwe is in the Cc list, so IIRC he is Debian maintainer for sparse
-> and perhaps has an influence to it to some extent.
-> 
-
-Would it be better approach to postpone patch 3 from Kent until sparse is fixed?
 
