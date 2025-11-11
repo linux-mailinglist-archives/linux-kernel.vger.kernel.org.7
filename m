@@ -1,165 +1,62 @@
-Return-Path: <linux-kernel+bounces-896027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0617C4F83A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 19:55:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2649EC4F846
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 19:57:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFAC63A5733
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 18:55:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A0EF3A82EE
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 18:57:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73E722BEFF8;
-	Tue, 11 Nov 2025 18:55:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4B8C2C0288;
+	Tue, 11 Nov 2025 18:57:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="HAXezBSR"
-Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lydnH510"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC8E9252292
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 18:55:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49A78283FD9;
+	Tue, 11 Nov 2025 18:57:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762887341; cv=none; b=k9vVToAZgqit6nniS7EnB2To6TnBA513Son1y0B6Fvx2TaFDSRYmwlNvs7wJ5UMmIYHMQeIt8RPdJC4I50P63eWvKJrLi6AN+B9dQUERT0y7b0uCb3oE5NAqr9YUR3hlGbb5GVedDYEgj3+ZN4WzZ5dnKikwA+e2LrPji7/XBRs=
+	t=1762887429; cv=none; b=Lmo9P2j6tasEuAfvhMnqfbn7xBys179eNUzLODTIkw76gYonVjh8qpnoGi736lXIqXmpHcAEY11MJxdhhCckKsrHBpABMM0U92X25khiSqsdsLpfBPimeNN+miDxsOUNcSgrOke25xYCf1NITyEkKQ/RFDjvMgHf4VpZJFEmztA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762887341; c=relaxed/simple;
-	bh=D3LH1D14RTYnGMZJXON1DwndSko5rujuhxnqiK1VLQM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ia9K/oqgoyXyc38OJRo4ajlusHu5/HU9c3bt+FCKWGz5crkA7tbBPxmuuCdD2zh/WIHVOy/Lvkq8yKm+dazNH8lfhX6QtLOxie78+vRo+LWla/eO7pcEt9JcBm9WzffJBT/79/DdmUjAXh63fuBtQwlmsSxU7Nm0ED3wfPZUJRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=HAXezBSR; arc=none smtp.client-ip=95.215.58.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 11 Nov 2025 18:55:30 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1762887335;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hOi6XjO42RDCAcEGgINwcv4u2ylLtSQlkzdIS1Ook3U=;
-	b=HAXezBSRKSG12htgc94ooYjp8Q3BzxPqyavlanGPJB3berpmrEiDwsyRERNw1Gv0v9kckF
-	Fth4uPhwS4bh8sXnNvEJEfo9KVyJGhCp5QEQmcYHIc7yGkoxXUrGt32JFe9qROXt1fnqjG
-	P01t4kaD4LXaRywdEjUVWSCy543bbXM=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yosry Ahmed <yosry.ahmed@linux.dev>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Jim Mattson <jmattson@google.com>, 
-	Maxim Levitsky <mlevitsk@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org
-Subject: Re: [PATCH 2/6] KVM: nSVM: Always recalculate LBR MSR intercepts in
- svm_update_lbrv()
-Message-ID: <6ving6sg3ywr23epd3fmorzhovdom5uaty4ae4itit2amxafql@iui7as55sb55>
-References: <20251108004524.1600006-1-yosry.ahmed@linux.dev>
- <20251108004524.1600006-3-yosry.ahmed@linux.dev>
- <aktjuidgjmdqdlc42mmy4hby5zc2e5at7lgrmkfxavlzusveus@ai7h3sk6j37b>
+	s=arc-20240116; t=1762887429; c=relaxed/simple;
+	bh=2U8wuJYFi4TCh0Oeb/qD/CR2N+iOmfI8LcPn8XIWdkQ=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References; b=UjSDWdqHdDkZAZ1XKEnzQmaI5zOWpSjulxL/ZIhly9WEaoNy9qNbX9d/6RrBd+wCsY1Dr2F15PqjcmpPnK63Wh/UJHkmAsiHZzgYHsZ0SriHU2zSujy+lHako27tW2SVXfftFWUnkSUhoWaGolli0OBpRBzk9cacgdZhdfAKXdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lydnH510; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA9B9C19425;
+	Tue, 11 Nov 2025 18:57:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762887427;
+	bh=2U8wuJYFi4TCh0Oeb/qD/CR2N+iOmfI8LcPn8XIWdkQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=lydnH510LhaUyPz8Dp3ej+Uv2J2zrOjJ2j0xt4AlnRnwEgjUnESblCelEo4Sh+Zi7
+	 ntUEaOtcNDlv9C99BMz2Etp/yEBUpnxhjREfUtT7IMDGrZmnCFBC6ZygfKD2a2YXTU
+	 gKh4WM4u1RxxHu4LzQ4jSwgDvPUDWDCAOZZqnOSgXXqjSkRM/92Y6A84Cxb0CAlVB3
+	 +P+sTH1ZYhePpq39VieNU+xAnBySC1tyEHmJAOBHwa0BNFdqbsX429JvBhUusVmvFV
+	 p8/kpAdh/yXyPiyKQr/rYobLWFm7znYxSRgPUbh5OO/0IjsjhYQvU+N+nPVgIwAoZ+
+	 //iDPvqWZWpmA==
+Date: Tue, 11 Nov 2025 08:57:06 -1000
+Message-ID: <f159fcdc4464a4bee8994784cdf16c5b@kernel.org>
+From: Tejun Heo <tj@kernel.org>
+To: Bert Karwatzki <spasswolf@web.de>
+Cc: Calvin Owens <calvin@wbinvd.org>, bigeasy@linutronix.de, dschatzberg@meta.com, peterz@infradead.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Subject: Re: [PATCH] cgroup: include missing header for struct irq_work
+In-Reply-To: <20251111170145.106356-1-spasswolf@web.de>
+References: <20251111170145.106356-1-spasswolf@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aktjuidgjmdqdlc42mmy4hby5zc2e5at7lgrmkfxavlzusveus@ai7h3sk6j37b>
-X-Migadu-Flow: FLOW_OUT
 
-On Tue, Nov 11, 2025 at 03:11:37AM +0000, Yosry Ahmed wrote:
-> On Sat, Nov 08, 2025 at 12:45:20AM +0000, Yosry Ahmed wrote:
-> > svm_update_lbrv() is called when MSR_IA32_DEBUGCTLMSR is updated, and on
-> > nested transitions where LBRV is used. It checks whether LBRV enablement
-> > needs to be changed in the current VMCB, and if it does, it also
-> > recalculate intercepts to LBR MSRs.
-> > 
-> > However, there are cases where intercepts need to be updated even when
-> > LBRV enablement doesn't. Example scenario:
-> > - L1 has MSR_IA32_DEBUGCTLMSR cleared.
-> > - L1 runs L2 without LBR_CTL_ENABLE (no LBRV).
-> > - L2 sets DEBUGCTLMSR_LBR in MSR_IA32_DEBUGCTLMSR, svm_update_lbrv()
-> >   sets LBR_CTL_ENABLE in VMCB02 and disables intercepts to LBR MSRs.
-> > - L2 exits to L1, svm_update_lbrv() is not called on this transition.
-> > - L1 clears MSR_IA32_DEBUGCTLMSR, svm_update_lbrv() finds that
-> >   LBR_CTL_ENABLE is already cleared in VMCB01 and does nothing.
-> > - Intercepts remain disabled, L1 reads to LBR MSRs read the host MSRs.
-> > 
-> > Fix it by always recalculating intercepts in svm_update_lbrv().
-> 
-> This actually breaks hyperv_svm_test, because svm_update_lbrv() is
-> called on every nested transition, calling
-> svm_recalc_lbr_msr_intercepts() -> svm_set_intercept_for_msr() and
-> setting svm->nested.force_msr_bitmap_recalc to true.
-> 
-> This breaks the hyperv optimization in nested_svm_vmrun_msrpm() AFAICT.
-> 
-> I think there are two ways to fix this:
-> - Add another bool to svm->nested to track LBR intercepts, and only call
->   svm_set_intercept_for_msr() if the intercepts need to be updated.
-> 
-> - Update svm_set_intercept_for_msr() itself to do nothing if the
->   intercepts do not need to be changed, which is more clutter but
->   applies to other callers as well so could shave cycles elsewhere (see
->   below).
-> 
-> Sean, Paolo, any preferences?
-> 
-> Here's what updating svm_set_intercept_for_msr() looks like:
+Applied to cgroup/for-6.19.
 
-and that diff breaks userspace_msr_exit_test :)
+Thanks.
 
-Here's an actually tested diff:
-
-diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-index 2fbb0b88c6a3e..88717429ba9d5 100644
---- a/arch/x86/kvm/svm/svm.c
-+++ b/arch/x86/kvm/svm/svm.c
-@@ -664,24 +664,38 @@ void svm_set_intercept_for_msr(struct kvm_vcpu *vcpu, u32 msr, int type, bool se
- {
-        struct vcpu_svm *svm = to_svm(vcpu);
-        void *msrpm = svm->msrpm;
-+       bool recalc = false;
-+       bool already_set;
-
-        /* Don't disable interception for MSRs userspace wants to handle. */
-        if (type & MSR_TYPE_R) {
--               if (!set && kvm_msr_allowed(vcpu, msr, KVM_MSR_FILTER_READ))
-+               set = set || !kvm_msr_allowed(vcpu, msr, KVM_MSR_FILTER_READ);
-+               already_set = svm_test_msr_bitmap_read(msrpm, msr);
-+
-+               if (!set && already_set)
-                        svm_clear_msr_bitmap_read(msrpm, msr);
--               else
-+               else if (set && !already_set)
-                        svm_set_msr_bitmap_read(msrpm, msr);
-+
-+               recalc |= (set != already_set);
-        }
-
-        if (type & MSR_TYPE_W) {
--               if (!set && kvm_msr_allowed(vcpu, msr, KVM_MSR_FILTER_WRITE))
-+               set = set || !kvm_msr_allowed(vcpu, msr, KVM_MSR_FILTER_WRITE);
-+               already_set = svm_test_msr_bitmap_write(msrpm, msr);
-+
-+               if (!set && already_set)
-                        svm_clear_msr_bitmap_write(msrpm, msr);
--               else
-+               else if (set && !already_set)
-                        svm_set_msr_bitmap_write(msrpm, msr);
-+
-+               recalc |= (set != already_set);
-        }
-
--       svm_hv_vmcb_dirty_nested_enlightenments(vcpu);
--       svm->nested.force_msr_bitmap_recalc = true;
-+       if (recalc) {
-+               svm_hv_vmcb_dirty_nested_enlightenments(vcpu);
-+               svm->nested.force_msr_bitmap_recalc = true;
-+       }
- }
-
- void *svm_alloc_permissions_map(unsigned long size, gfp_t gfp_mask)
-
----
-
-For the record, I don't want to just use svm_test_msr_bitmap_*() in
-svm_update_lbrv() because there is no direct equivalent in older kernels
-as far as I can tell, so a backport would be completely inapplicable.
+--
+tejun
 
