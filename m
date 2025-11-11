@@ -1,257 +1,283 @@
-Return-Path: <linux-kernel+bounces-895060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 042DDC4CD3F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:59:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E68CCC4CD8D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:02:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C0F344FABF3
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:53:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AEAC3B1A7C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:53:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E5292FFDE0;
-	Tue, 11 Nov 2025 09:53:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 766FF2FD7B9;
+	Tue, 11 Nov 2025 09:53:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nLKmIRK6"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HulecNlH"
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EE472FB0AE;
-	Tue, 11 Nov 2025 09:53:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762854786; cv=fail; b=g2jqdGOl3x5oWhBJ3WFNIHNOn6yg41PW+IaGs/Gxjq6QqJLGSzR/9Ayndwcc+kE6LO+K1GBt4MiKixz/gkLo9J6ik0h0iey8zRrzc3fRkEhRiYFG0oUOHLipni5HA2b+3O2Udk8YUXe7gIziVpBaIG97JrWlSqVnOGbX1nGUJoY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762854786; c=relaxed/simple;
-	bh=qBmD6GIku4ZPqSLA4GtA61cI+t8Bo+u7M9dy4PX+U5k=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=hVuz4ZUHWBtKKLwiGxakWMlrQwE8JVMF19ZtUbGcWp2wAjDgL+Qwy6YS1dyN63CYv5W1PlMK5qpBXnW2E/KOHzP8koI4E0p/8ZCRdm1x1TiojkeBrXKNjgpFEVVJK1MOpc3pAPLZ9Kmto6qTGqWfDPfCuvScAkPMp0Lpk5HZvSc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nLKmIRK6; arc=fail smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762854784; x=1794390784;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=qBmD6GIku4ZPqSLA4GtA61cI+t8Bo+u7M9dy4PX+U5k=;
-  b=nLKmIRK6A4CWZ4LvLh+png3vTU0rAAh2vekuTS1eh0P+y5XROUI63wzT
-   155lpjwTx6QrTVknElqDVITUmTChspy997ciR/DOb9MMTx3mVH+J2kuvZ
-   MSLOVGr/X0bQ73j3v3xRJ1e6G9rfkyuttVAbA7yfj4Flmgg3xiJhDVia9
-   lj1XNX+feef7nEtVkN5jU634eLQkX8PEYuoT9hgqtDKqAaoUMu7UK7/af
-   VJ0UXVRUmaECmXFj19RNr3C/+YNfImw1pzSXq3n4tKiZeaC1zKr8zJt1e
-   XeIxFNHtQ+QhBEJc1B1/hmqLBZg4X3lp9EXhvCM0ctRlKPLvkOUh8je72
-   A==;
-X-CSE-ConnectionGUID: JolLTg4rQDCyYQboms7V5w==
-X-CSE-MsgGUID: HgurX2MaSKWNExXzPNdY2Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11609"; a="65005341"
-X-IronPort-AV: E=Sophos;i="6.19,296,1754982000"; 
-   d="scan'208";a="65005341"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 01:53:03 -0800
-X-CSE-ConnectionGUID: bi6Zq3nmRnKOY8TCM93xHg==
-X-CSE-MsgGUID: QtBSM7MfR++NYnr8kgpiGg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,296,1754982000"; 
-   d="scan'208";a="188179388"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
-  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 01:53:03 -0800
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Tue, 11 Nov 2025 01:53:02 -0800
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Tue, 11 Nov 2025 01:53:02 -0800
-Received: from PH7PR06CU001.outbound.protection.outlook.com (52.101.201.57) by
- edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Tue, 11 Nov 2025 01:53:02 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=MF4JfDsejF93AUud9s6QOB+ltGEhd+K+4egfENeOvxdQ/Zr8SlmQ4G04v/nc9YVtNpYbGv9ma1+iEkWiv5ERPQkoRbQg2WleZAx7r3tYScxbFNwfdD9DNh+jTU2Ma16SLdivQZf7xD7baS3eJyGy2hkM3W5OEAnwFJBcH5lI+BTs0uOqhHNGzlra8AGsvm3vgsdAeEl4jCck+1QXywGJ1CZpMVqzlg68d3+N+qebdyJuwnN5+fP7Sv8gsAYLF5eA3akNU709aOhlJbpXjAQQT69dc5QHLm72nOPvXOEiK6OoFflwL3NEgXMUZ0I4FB6VWLoFBJ1p4SS3jgh0kE7RQg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qBmD6GIku4ZPqSLA4GtA61cI+t8Bo+u7M9dy4PX+U5k=;
- b=ahKZ7KrlA70Ym3M7BoAqBPiu5DJxE/2BmgeXJ/TJeq9PkkHxJt3MRFKHsDHTdtU4D44X8cQTMWns8Jzua+PM1ujFJn9jxS3Bot8LPv6PnhzYOmoO2iXaCEQjUdeOdc0aKIf+yPy9vnaHcZGA4CGjnvCxEiZFxCFtDLzV1F5V2DfrwRkkvTxLvQYIpzXk6E2TAaBWIOGFWW/neCXtWn+R/Y7zbakvusUEIRismnntYTNoT1K0IajytDFSXNcnlhcCKSS9y9P5qr4nj9biJ5j+gdNmDY2aSOIjdvekT7q7eUeTd5dMJIaV/l5rqE959zu56lMoQL9MW85P55l+o+nNzg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from BL1PR11MB5525.namprd11.prod.outlook.com (2603:10b6:208:31f::10)
- by BY1PR11MB8053.namprd11.prod.outlook.com (2603:10b6:a03:525::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Tue, 11 Nov
- 2025 09:52:54 +0000
-Received: from BL1PR11MB5525.namprd11.prod.outlook.com
- ([fe80::1a2f:c489:24a5:da66]) by BL1PR11MB5525.namprd11.prod.outlook.com
- ([fe80::1a2f:c489:24a5:da66%6]) with mapi id 15.20.9320.013; Tue, 11 Nov 2025
- 09:52:54 +0000
-From: "Huang, Kai" <kai.huang@intel.com>
-To: "pbonzini@redhat.com" <pbonzini@redhat.com>, "seanjc@google.com"
-	<seanjc@google.com>, "Zhao, Yan Y" <yan.y.zhao@intel.com>
-CC: "quic_eberman@quicinc.com" <quic_eberman@quicinc.com>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "Li, Xiaoyao"
-	<xiaoyao.li@intel.com>, "Du, Fan" <fan.du@intel.com>, "Hansen, Dave"
-	<dave.hansen@intel.com>, "david@redhat.com" <david@redhat.com>,
-	"thomas.lendacky@amd.com" <thomas.lendacky@amd.com>, "vbabka@suse.cz"
-	<vbabka@suse.cz>, "tabba@google.com" <tabba@google.com>, "kas@kernel.org"
-	<kas@kernel.org>, "michael.roth@amd.com" <michael.roth@amd.com>, "Weiny, Ira"
-	<ira.weiny@intel.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "binbin.wu@linux.intel.com"
-	<binbin.wu@linux.intel.com>, "ackerleytng@google.com"
-	<ackerleytng@google.com>, "Yamahata, Isaku" <isaku.yamahata@intel.com>,
-	"Peng, Chao P" <chao.p.peng@intel.com>, "zhiquan1.li@intel.com"
-	<zhiquan1.li@intel.com>, "Annapurve, Vishal" <vannapurve@google.com>,
-	"Edgecombe, Rick P" <rick.p.edgecombe@intel.com>, "Miao, Jun"
-	<jun.miao@intel.com>, "x86@kernel.org" <x86@kernel.org>, "pgonda@google.com"
-	<pgonda@google.com>
-Subject: Re: [RFC PATCH v2 08/23] KVM: x86/tdp_mmu: Alloc external_spt page
- for mirror page table splitting
-Thread-Topic: [RFC PATCH v2 08/23] KVM: x86/tdp_mmu: Alloc external_spt page
- for mirror page table splitting
-Thread-Index: AQHcB3/ZiG/UW8CYfEyrm1+D4EYkRbTt0uOA
-Date: Tue, 11 Nov 2025 09:52:54 +0000
-Message-ID: <5559b6a10b9345b350a595a8d5c52c19062cd8dd.camel@intel.com>
-References: <20250807093950.4395-1-yan.y.zhao@intel.com>
-	 <20250807094308.4551-1-yan.y.zhao@intel.com>
-In-Reply-To: <20250807094308.4551-1-yan.y.zhao@intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Evolution 3.56.2 (3.56.2-2.fc42) 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BL1PR11MB5525:EE_|BY1PR11MB8053:EE_
-x-ms-office365-filtering-correlation-id: 4f4ed314-8bbe-4f36-9092-08de21081620
-x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|7416014|38070700021;
-x-microsoft-antispam-message-info: =?utf-8?B?MkQ1akdqSmRyWHdWRHhkZzFKQW4zeU9uZjBlOGl4cDk2OGNFOUQ0TDloaEMy?=
- =?utf-8?B?V3pRTm5kTTRJRnFURE9jdldMSWFqYlhmL1U5anlJTjJGVldlendMTlgvb0lV?=
- =?utf-8?B?TnBZQVl0blZ4M3UzYlUvdDNrbnQ3OGFKekY4N0hTcVBhalJnUzFIRnBJU3Nm?=
- =?utf-8?B?eFNmL0xaMlk3aWxTWVRYZE94dmY0UEtsY2lpYm5Eb1hSclJFWVlZbFIzSzVo?=
- =?utf-8?B?VWVGQ3laVWE5ejE3S1ZaQ29XWG9RZGZVOUdqcUUzcGdUb2hwbm9JUEJZUTJv?=
- =?utf-8?B?aDZ4VjB2d1dFQW1qYmtpSmloY3lsSmdLVDJzSWc1L2tqc0JMM3Q1aDBuOWFV?=
- =?utf-8?B?STM3OUJKZ2tKL3FYR09zc3ZOSnBlWHo1cUZCN1BtRnF4K1VCS0dpbkRVeXdB?=
- =?utf-8?B?NEtIYmpwVlNGcnpnMHNjTGZVR0k5U0Z4WU1CT2s2OFpvOVlrQVpaN1RXbElJ?=
- =?utf-8?B?RjdzUkJKMFFreTVPTTNRWUJ2RDlYeHdkQllKUGhVQy9IVm0vWWpuT0JBTUZk?=
- =?utf-8?B?bHFzQ0FRRHlMWjNZYUhoZkN2U08xejVkVlpjOHNkdW5oT3dRVUR0ck1JaXVL?=
- =?utf-8?B?VTNWNUpkWEJSMUF3eE5DS1pmMEw5aFpRUkRTNjZhUWplTUtNU3pqK1JKNk8x?=
- =?utf-8?B?MFFFcUhFM3hUanB4VkVZUmRqSlFrZWVweFk5bDR0OHh3NWU4enc3ZHhRWHBu?=
- =?utf-8?B?bmtxMmVUMVR5NzVmaHF3VkpLcnNxbkJ2c3JZTzhxdExXMFhLOUhlQ1NKYTZP?=
- =?utf-8?B?ZzZ0RTI0Q25oYUpQZkRvT3hVaUo3a0NtaDg2WmFIQVVic2R1NXQ5WC9URHlv?=
- =?utf-8?B?d203bU1FeVNKd1hFU0t3SVNKaCtiNGhMTGwrOW8xcVNZY0thSnZTbWhZVnhX?=
- =?utf-8?B?eU1oeitBQkErUkNrQVIybE9oM2RWSEFEdjFnM2cyQnhoMXBQbWlVL2lyOHMz?=
- =?utf-8?B?OUV1d1RReWlDRjduajFnbitQdDlrN3NWcU1rU1hySEQ0NTY2dUp1T3hIeUJV?=
- =?utf-8?B?U1V5aEpCclV4bUtwZ280MGdGVWIxM2wvRktQWlhFMmFMS3R4cE9VZTlyTU8v?=
- =?utf-8?B?b1pSRTN2K1dxV0ZjTkM3dlp2dzQzK1R0bVlBTWd4QnZNUlZYNXpCQTV2aWp4?=
- =?utf-8?B?dWllUlc1WEN3NHRLSDQxM1ZseFJIMDAyc2o0VnoxR1lNemtxTjJUeW5zMzdO?=
- =?utf-8?B?VEo1aHAwWnJ6OWFiY1o2b01UZTJVbHBJUlg0TEk5Q0I1NzlLQ3dhOE50bnNE?=
- =?utf-8?B?OXdQMXFPeDlSanIvWHMySFpzL1RjYWovaVQzd01SUG9MU0ljVHo2N2Z2bG1F?=
- =?utf-8?B?cUY4YURhRDhLZHc0aGxxeTFEODJPTjM0cnB6SEFvUUpadU5VYUIveXgvaFB0?=
- =?utf-8?B?T1EvbDNIZnVWMUcwaTlLU1FpQ2xLTFRacUcrOTc3SHJESml6Z00vaDJqZHl4?=
- =?utf-8?B?eSs1TzF4NWJtS3NBUHJNSDgveTU5U3RGd1BJaHJuUE9RbkZPcWluSXluTndZ?=
- =?utf-8?B?K3YrUTlVUXZSNHJNeEhhVUUvT1dhZUNmR3ljQmpzenNZYU5pRXJCV2RkdVpS?=
- =?utf-8?B?UG1SdjFpcFVzVjUrODZYMmZVMkk4UnBldnNlYyttUWNUdndjWXNadStWbEp2?=
- =?utf-8?B?d2NSVFRSVytrKzFtK3R6bEgwakY4NjFJSEpSTCtOUmE3ZmVRMnVXRnllMUZk?=
- =?utf-8?B?WDY4c29ibkpURXR5dHFHYjBwVUtPUFl1SXY5TGV4bm9rcDFmTVdDK21la2JH?=
- =?utf-8?B?Z2Z1WllLNy9tZjEvYlhZZ0xXTDlhdUJCczhXamZHNFB2emtKNFRIT3lrY2ZU?=
- =?utf-8?B?ck1VQVYreGxseWZJd2lPN2FPd2xHQkg4WWVvWjJHV0FIZG9yb3ZIcVJqMHNZ?=
- =?utf-8?B?NzRIMG5zT2cvdDhZbU1vYWtPMllYek1xRG9naDdJeDdBTWpXMWZrZlM3L3Ay?=
- =?utf-8?B?YVZDMzZSbldzMEd2QTZhMDNrWjU0MEo2UDhMZGtaU29xU2hyTWNqS2lDTWVK?=
- =?utf-8?B?L1VWNmg4elVGMTgzYytwREtWb3h2VDQ1Q2pWcytSQzNtUHV5OTk2b1dNVkR4?=
- =?utf-8?Q?/JSnoV?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR11MB5525.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7416014)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?ZkkvWGRIbkpGdkRDNlhmUXp4c2VlSk1heCtzSFJBOUtoVUJneldnWERwd0JI?=
- =?utf-8?B?K21hOGVUbTZRUDNnZDR0TFZOdG5VVmoxRWQxTWYwdE8wUk1GZ3dzR2psVzFU?=
- =?utf-8?B?L0xQVTZqcmZmK21Ic085a2Naakg3L3lrWitmK3VFcDJWcFFEVDhSYTI3dW9T?=
- =?utf-8?B?c2pVa3BuYTdvRUd4ZXBpdFhaazMvODNvQ1RGUGc3Zkwyd3FCT01YTGtVaTRW?=
- =?utf-8?B?R25YZytmdThhcmNhZ00vN1c2cmFIaWJiMWhRanpwTTVJYnBramZ4TktjNTRE?=
- =?utf-8?B?eW4vcHovMCs3b0l0Z1RvTkJOV2NtU3pZZGxZT0VMYUNadEU4SVZUV3NxSGxx?=
- =?utf-8?B?T2xNUURrSnVpcGxoWlZmbXRPU3VFTGxvSGRZUlhWeSszdGgzblo2L0ZtOXUv?=
- =?utf-8?B?RmgvVDZjZnVrVEZFVzI1Sm0wQlRNVkJMTkNCNHM2bTZrSUJXd2gySzNzZW96?=
- =?utf-8?B?cHltNU9VYWx0SHVoQzdSakpzNDJxOThuZTFEdHg1NEROUzAxS2hQVHBabUxQ?=
- =?utf-8?B?bGVncDRjdm1VTHFPQWhTVEI0VE9xci9WODY1SG9QRVV0MVdUcUw1TlVoM2Yr?=
- =?utf-8?B?S3B4UVlRM2FDN1ZBdWxrVUIrNTl6YWFIb0NZWDI2ZEpUOW5QV3Jac3d3VzNW?=
- =?utf-8?B?L0VlZ294UUJUZWVtUnMrc0gycDVtdVhXeHVOcGl2QnZNOGpPSmVObmpxY0g5?=
- =?utf-8?B?RUpDRHArMEsrSHlrdTBkbmc5YWVLcllQWWd6RFI1bWptd3FGTVlmUnlRaERK?=
- =?utf-8?B?RElnb2N5dSs4bnZnYXlPSXZzL2JmSUVUb2ZscElML3A4VXZpR1B5aVNxcmFZ?=
- =?utf-8?B?VElQeElTb2JFN2NqbzlLbCswRkxyQXdCZ1N4cUkyZUNxUWFkRjJGTGVxS2V0?=
- =?utf-8?B?MTJ1WGxlMjJ4ZUttbmVkWHM2OVkwRFVVL0tueWxkVXlNbm8xQm81MkF6ZHI0?=
- =?utf-8?B?SUthNjFIV0tkTVFIVlRWczd1U0NkbWM4YnRzUmxhbEdBa1ZrSkkzZzVUblhy?=
- =?utf-8?B?OHppS2xPYWVwT2p6cXBhYkU3QmlXUW5QbmN6UjhlRWZPcEhCb0lEeGwwLzlX?=
- =?utf-8?B?YTJmZmxhUnQ5V2huV3l3U3FxbVJxYWl2UXh1T2x3OU03WGNzZDFPalJRQVVB?=
- =?utf-8?B?bEsyM0UwQzY0Nll6RlE2RTE0R0piY08vUCtDOUF2czhxbmtXVGpzU3lOUUlZ?=
- =?utf-8?B?cTJHQ0w1TFJKRXJYblRZVm9rR3ZzQWVGc0NCNWk0cUxSdzhGYnY2elZhdnBL?=
- =?utf-8?B?eGU4WVVicWNxSHlWNWdtaEhHVmh4d1ZvU29GNWFEK1V5Y2VKRW1KOWZVZk9Y?=
- =?utf-8?B?a0lRZndhMWxNeGt6MFQ5M2tMdTRIZEhXNkNkNENnb09BTnVKWTI5SUZiNzRw?=
- =?utf-8?B?YmR6WmRucmozM3l0d1ZEL0lDeVI5dE14cG5uRmNJTE0vS1htWjVKR0NaQzhn?=
- =?utf-8?B?VzJ3cC93V1VXNnF3cDdnQnlkdkxyaHFjbWt0U1dYMUVCZ3U5K05Yd1h5Tkpx?=
- =?utf-8?B?RXFXWlRFZktScWZCenJ1d0tVeFJ3SzR1RU9Xd3FHdG9DeUJEL2I2NTR1cVY4?=
- =?utf-8?B?ejJCb2Z4REtENHpNUzd1Tjd5TVYydFpLLytTeWJNSXliaFZtc1FxSDVBL3dl?=
- =?utf-8?B?VU16ck9wc3hneEtwell4V1FwTjJ3c0hiMmVCcHRUbDVlRlJ3bkdkT3RFMGRW?=
- =?utf-8?B?TmV1S01Ody9LMUQ5Y2NQUldiV0JZTmdFV3BVNTdpYkROMG9OVGtYMEZsbkZB?=
- =?utf-8?B?elpISEtnN0pQT2NXaUJsZFlFZWpNTEVJS3FXWENGWjNpeklmUStmZFlUVjcv?=
- =?utf-8?B?d3l0eGkycWRGeTE3eXJBQ1dPQ0U5dDRoYmIyNkp0V1llMm1mTmJJQ0xHaVJQ?=
- =?utf-8?B?ajAzczZ5NEFKRjQ0ejBYYkdqVitZT2FPYmxISHNDbHhzOWEyNS9QbHJRNk9B?=
- =?utf-8?B?ajg3RkJ6R04ybDIrU3Rhb2FuY3BkTklTdVlOMFR6Zy85SjNZbXdhcC9MNkdk?=
- =?utf-8?B?RWZCVjkvN083TkpHSGNpZm1zRmp0NXVKa0tEZVJqaVdYQy9ZQzRCc2hiaG1m?=
- =?utf-8?B?czM0eVdUS2dITU1DeDJvQmJCdVpTTENmT3ZoVTlMQU5vZnJsZzFuUmtidGtp?=
- =?utf-8?Q?QHb8SCpsfZUidCss9I4i5skVL?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <66E8118E2ACC34498A999F7E217AD973@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B644F2FD7B2
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 09:53:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762854794; cv=none; b=D72XvwGWwZKekBYehrtNlT7I1Cp9AAwIC8Qgf0fnFsO2vssSz6TnkT3LbaIr7E0xNJwK/DGfC0VhTAfySZUJgPdSfSMNJKhE4e1/NZAk3MPOL7vh2oAQTApW4OIsfweADlNLtJPvCaUwe+EdcTRWX6+gKJiBZyU6gb81NF+QKgo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762854794; c=relaxed/simple;
+	bh=KC/FtaD7GZlypAuVRR7zqPHHKnWewGdbZEtDc8ssmpo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Yh7hciA/Jam9BM6V+5EqXV9Rlu1kMhQkuLkE0Bo5v6Vpdh0M3S+NwCki5gI+y5qo1tbuYPfFVjj509BmqWTDxLlvSzI3oAXn3sXDKEbqxn3IQgTGuIj7OratekiJ33BAXOGXm8mohATrAZbp8bYoAkAQFkXQJsDLY35fVoLUKR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HulecNlH; arc=none smtp.client-ip=209.85.128.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-71d71bcab6fso35007677b3.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 01:53:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762854792; x=1763459592; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PyXx/XqXF1D8laPygGvxhQVfuy/TOB8qpygNndyh+h8=;
+        b=HulecNlHkU34xlyKnD2xbr4UzcDv2WbQJw83MDAqjWRZKHvNDKlCVhvYTfeglKfCXH
+         kqsiMmA6Ih+J8phn+SlJMVDGjrkNsykbeltx3RYmBQhKALX7otrNEJQ3jGWpiyMVVKXK
+         APH2hXr15LBr2pq+c0lCPPo1yxUcSGV6jJT6PgEU9YXGGE6LxqxbsEqVeV6dj0ujEkjC
+         VEdoIixB4pqKUJWfzEKC/yJi9J+clh9rry+79sSPEM+RqyQhq0xkkdHJLxM4nzBFHTd2
+         fiMPPhKR/XMZkLYABmQywg9LoLYSyhohJy3+KQ5CO9vAqnBix5A3KhGckPob9BDt9ZYk
+         bS0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762854792; x=1763459592;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=PyXx/XqXF1D8laPygGvxhQVfuy/TOB8qpygNndyh+h8=;
+        b=iT3/M+s1l3CwqlLWEKGK/G/ZqhCaJeY7KnZgAcXpnZe8VCD3qV+zOWepgxaVt9aaZt
+         jF6x7To7czniEXhIUY03fszlC2pYLjAY53WC52VC/R9ooYZwfR1Cz5OqE/ZKmwaVYpxp
+         pG06tT5DYYpoePDh+hOLXcS/d7GXmks2yRGP9ekVFjbYSAUXh9zk1Xk7utZiiltfSqT9
+         Psi9QBjjJ8e4ZL4EN5euRUX6rz+uhyGn1HoMbfbo3w7BFasK/j4qLxAv1UAdsoG+hK+6
+         MTRGokTIuvCEttuiLELt5RuCkkggtzhUH9f8SpRjZcUFwHjm0nW8cy20LFfJWoFt4GWu
+         u42Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWtPo3hHpACl1ITiNni6FlifdN8qVc3GmpeSGb8+cXYX2jQx+767OVKfLIRf+plmifhCOAl/Ob+Q9IkBYM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyN2/fmHFLTvUHNzBwlZjlLlQ7sI9DXIzYja7SKZbZ+ldBZgZkG
+	Qn2WdPtPQpfkZVLgkVmtYfk3c5+pZJCAJVwDMAuWIew5b+W421wv3PyFqIogXJEbptvj60e6C87
+	t+XtCrRko+nNKXJnug0g+d7Q/mY3qAow=
+X-Gm-Gg: ASbGncsVStZCrSgKbAA510QEcacFJU5MiajH7h79VuVJ7TrbFotFHJI75y01tQHDZf4
+	bxvJR4YNPi+9hvIn3k05/0y5gP4Cgfq2UbMi8xIIg+BJeI93VwYl2JVuoK2CFYYzX5uFkFGCKqK
+	dOByJTjY4wc6EWqVIDhZpdTzkkHFp6WBhPuUfCOLm77EofIm62MIr+JF1eh5SIiyCP8N2w2k8Et
+	F0ldBaqJtiFaUG7dsG6ociPgMx6G/OZFYkYrvQdx1GlTCan4o/U4lfpHsA=
+X-Google-Smtp-Source: AGHT+IF9cL8R75S5fEHKMWwHyOCM8yxLp2zyYPXr/dVSYHl4uTdJ+SmI0MDP5Zccup4b3rFR5/FSamFpoN56cAOne0Q=
+X-Received: by 2002:a05:690e:4319:b0:63f:c10e:6422 with SMTP id
+ 956f58d0204a3-640d4521e01mr8042406d50.8.1762854791585; Tue, 11 Nov 2025
+ 01:53:11 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BL1PR11MB5525.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4f4ed314-8bbe-4f36-9092-08de21081620
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Nov 2025 09:52:54.7674
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: u66lNRQxTnL5m0Q2/qH+++ApW8klahDWI4d2yrSOSYbkKn+LLWXRkVA/cVRcMgaz3mR1l5oBwzEYtmjZb+XxCg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY1PR11MB8053
-X-OriginatorOrg: intel.com
+References: <20251110214443.342103-1-jonas.gorski@gmail.com> <20251110230124.7pzmkhrkxvtgzh5k@skbuf>
+In-Reply-To: <20251110230124.7pzmkhrkxvtgzh5k@skbuf>
+From: Jonas Gorski <jonas.gorski@gmail.com>
+Date: Tue, 11 Nov 2025 10:53:00 +0100
+X-Gm-Features: AWmQ_bmVu_tf7Qwi2USmUQ1KPdAesVol6XAFAeMYSR2SRaeAWkqula63Sj7g6Dk
+Message-ID: <CAOiHx==ymTyVbs7UmNH28UgxcfnMQBtt6qA=ZnKvEF3QLe_z8w@mail.gmail.com>
+Subject: Re: [PATCH RFC net-next 0/3] net: dsa: deny unsupported 8021q uppers
+ on bridge ports
+To: Vladimir Oltean <olteanv@gmail.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Simon Horman <horms@kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, 
+	Vladimir Oltean <vladimir.oltean@nxp.com>, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-T24gVGh1LCAyMDI1LTA4LTA3IGF0IDE3OjQzICswODAwLCBZYW4gWmhhbyB3cm90ZToNCj4gRnJv
-bTogSXNha3UgWWFtYWhhdGEgPGlzYWt1LnlhbWFoYXRhQGludGVsLmNvbT4NCj4gDQo+IEVuaGFu
-Y2UgdGRwX21tdV9hbGxvY19zcF9zcGxpdCgpIHRvIGFsbG9jYXRlIGEgcGFnZSBmb3Igc3AtPmV4
-dGVybmFsX3NwdCwNCgkgIF4NCgkgIHRkcF9tbXVfYWxsb2Nfc3BfZm9yX3NwbGl0KCkNCg0KDQpb
-Li4uXQ0KDQo+ICtzdGF0aWMgc3RydWN0IGt2bV9tbXVfcGFnZSAqdGRwX21tdV9hbGxvY19zcF9m
-b3Jfc3BsaXQoYm9vbCBtaXJyb3IpOw0KPiArDQoNCkl0IGRvZXNuJ3Qgc2VlbSB5b3UgbmVlZCBz
-dWNoIGRlY2xhcmF0aW9uIGluIF90aGlzXyBwYXRjaC4gIElmIGFueSBsYXRlcg0KcGF0Y2ggbmVl
-ZHMgaXQsIHRoZW4gcGVyaGFwcyBpdCdzIGJldHRlciB0byBkbyBpbiB0aGF0IHBhdGNoLg0KDQo+
-ICBzdGF0aWMgdm9pZCB0ZHBfYWNjb3VudF9tbXVfcGFnZShzdHJ1Y3Qga3ZtICprdm0sIHN0cnVj
-dCBrdm1fbW11X3BhZ2UgKnNwKQ0KPiAgew0KPiAgCWt2bV9hY2NvdW50X3BndGFibGVfcGFnZXMo
-KHZvaWQgKilzcC0+c3B0LCArMSk7DQo+IEBAIC0xNDc1LDcgKzE0NzcsNyBAQCBib29sIGt2bV90
-ZHBfbW11X3dycHJvdF9zbG90KHN0cnVjdCBrdm0gKmt2bSwNCj4gIAlyZXR1cm4gc3B0ZV9zZXQ7
-DQo+ICB9DQo+ICANCj4gLXN0YXRpYyBzdHJ1Y3Qga3ZtX21tdV9wYWdlICp0ZHBfbW11X2FsbG9j
-X3NwX2Zvcl9zcGxpdCh2b2lkKQ0KPiArc3RhdGljIHN0cnVjdCBrdm1fbW11X3BhZ2UgKnRkcF9t
-bXVfYWxsb2Nfc3BfZm9yX3NwbGl0KGJvb2wgbWlycm9yKQ0KPiAgew0KPiAgCXN0cnVjdCBrdm1f
-bW11X3BhZ2UgKnNwOw0KPiAgDQo+IEBAIC0xNDg5LDYgKzE0OTEsMTUgQEAgc3RhdGljIHN0cnVj
-dCBrdm1fbW11X3BhZ2UgKnRkcF9tbXVfYWxsb2Nfc3BfZm9yX3NwbGl0KHZvaWQpDQo+ICAJCXJl
-dHVybiBOVUxMOw0KPiAgCX0NCj4gIA0KPiArCWlmIChtaXJyb3IpIHsNCj4gKwkJc3AtPmV4dGVy
-bmFsX3NwdCA9ICh2b2lkICopZ2V0X3plcm9lZF9wYWdlKEdGUF9LRVJORUxfQUNDT1VOVCk7DQo+
-ICsJCWlmICghc3AtPmV4dGVybmFsX3NwdCkgew0KPiArCQkJZnJlZV9wYWdlKCh1bnNpZ25lZCBs
-b25nKXNwLT5zcHQpOw0KPiArCQkJa21lbV9jYWNoZV9mcmVlKG1tdV9wYWdlX2hlYWRlcl9jYWNo
-ZSwgc3ApOw0KPiArCQkJcmV0dXJuIE5VTEw7DQo+ICsJCX0NCj4gKwl9DQo+ICsNCj4gIAlyZXR1
-cm4gc3A7DQo+ICB9DQo+ICANCj4gQEAgLTE1NjgsNyArMTU3OSw3IEBAIHN0YXRpYyBpbnQgdGRw
-X21tdV9zcGxpdF9odWdlX3BhZ2VzX3Jvb3Qoc3RydWN0IGt2bSAqa3ZtLA0KPiAgCQkJZWxzZQ0K
-PiAgCQkJCXdyaXRlX3VubG9jaygma3ZtLT5tbXVfbG9jayk7DQo+ICANCj4gLQkJCXNwID0gdGRw
-X21tdV9hbGxvY19zcF9mb3Jfc3BsaXQoKTsNCj4gKwkJCXNwID0gdGRwX21tdV9hbGxvY19zcF9m
-b3Jfc3BsaXQoaXNfbWlycm9yX3NwKHJvb3QpKTsNCj4gIA0KPiAgCQkJaWYgKHNoYXJlZCkNCj4g
-IAkJCQlyZWFkX2xvY2soJmt2bS0+bW11X2xvY2spOw0K
+Hi Vladimir,
+
+On Tue, Nov 11, 2025 at 12:01=E2=80=AFAM Vladimir Oltean <olteanv@gmail.com=
+> wrote:
+>
+> Hi Jonas,
+>
+> On Mon, Nov 10, 2025 at 10:44:40PM +0100, Jonas Gorski wrote:
+> > Documentation/networking/switchdev.rst is quite strict on how VLAN
+> > uppers on bridged ports should work:
+> >
+> > - with VLAN filtering turned off, the bridge will process all ingress t=
+raffic
+> >   for the port, except for the traffic tagged with a VLAN ID destined f=
+or a
+> >   VLAN upper. (...)
+> >
+> > - with VLAN filtering turned on, these VLAN devices can be created as l=
+ong as
+> >   the bridge does not have an existing VLAN entry with the same VID on =
+any
+> >   bridge port. (...)
+> >
+> > Presumably with VLAN filtering on, the bridge should also not process
+> > (i.e. forward) traffic destined for a VLAN upper.
+> >
+> > But currently, there is no way to tell dsa drivers that a VLAN on a
+> > bridged port is for a VLAN upper and should not be processed by the
+> > bridge.
+>
+> You say this as if it mattered. We can add a distinguishing mechanism
+> (for example we can pass a struct dsa_db to .port_vlan_add(), set to
+> DSA_DB_PORT for VLAN RX filtering and DSA_DB_BRIDGE for bridge VLANs),
+> but the premise was that drivers don't need to care, because HW won't do
+> anything useful with that information.
+
+It matters in the case of VLAN uppers on bridged ports. It does not
+matter for VLAN uppers on standalone ports.
+
+> > Both adding a VLAN to a bridge port and adding a VLAN upper to a bridge=
+d
+> > port will call dsa_switch_ops::port_vlan_add(), with no way for the
+> > driver to know which is which. But even so, most devices likely would
+> > not support configuring forwarding per VLAN.
+>
+> Yes, this is why the status quo is that DSA tries to ensure that VLAN
+> uppers do not cause ports to forward packets between each other.
+> You are not really changing the status quo in any way, just fixing some
+> bugs where that didn't happen effectively. Perhaps you could make that a
+> bit more clear.
+
+Right, I'm trying to prevent situations where the forwarding will
+happen despite not being supposed to happen.
+
+> > So in order to prevent the configuration of configurations with
+> > unintended forwarding between ports:
+> >
+> > * deny configuring more than one VLAN upper on bridged ports per VLAN o=
+n
+> >   VLAN filtering bridges
+> > * deny configuring any VLAN uppers on bridged ports on VLAN non
+> >   filtering bridges
+> > * And consequently, disallow disabling filtering as long as there are
+> >   any VLAN uppers configured on bridged ports
+>
+> First bullet makes some sense, bullets 2 and 3 not so much.
+>
+> The first bullet makes just "some" sense because I don't understand why
+> limit to just bridged ports. We should extend to all NETIF_F_HW_VLAN_CTAG=
+_FILTER
+> ports as per the dsa_user_manage_vlan_filtering() definitions.
+
+Standalone ports are isolated from each other, so the configured VLAN
+uppers do not matter for forwarding. They will (should) never forward
+traffic to other ports, regardless of any VLAN (filtering)
+configuration on the bridge, so there is no issue here (pending
+correct programming of the switch). Usually isolation trumps any VLAN
+memberships.
+
+This is purely about unintended/forbidden forwarding between bridged ports.
+
+> Bullets 2 and 3 don't make sense because it isn't explained how VLAN
+> non-filtering bridge ports could gain the NETIF_F_HW_VLAN_CTAG_FILTER
+> feature required for them to see RX filtering VLANs programmed to
+> hardware in the first place.
+
+Let me try with an example:
+
+let's say we have swp1 - swp4, standalone.
+
+allowed forward destinations for all are the cpu port, no filtering.
+
+now we create a bridge between swp2 and swp3.
+
+now swp2 may also forward to swp3, and swp3 to swp2.
+
+swp1 and swp4 may still only forward to cpu (and this doesn't change
+here. We can ignore them).
+
+Bullet point 1:
+
+If vlan_filtering is enabled, swp2 and swp3 will only forward configured VL=
+ANs.
+
+swp2 and swp3 will have NETIF_F_HW_VLAN_CTAG_FILTER (as VLAN filtering
+is enabled on these ports).
+
+If we enable VID 10 on both ports, the driver will be called with
+port_vlan_add(.. vid =3D 10), and they forward VLAN 10 between each
+other.
+If we instead create uppers for VID 10 for both ports, the driver will
+be called with port_vlan_add(... vid =3D 10) (as
+NETIF_F_HW_VLAN_CTAG_FILTER is is set), and they forward VLAN 10
+between each other (oops).
+
+Bullet point 2:
+
+If vlan_filtering is disabled, swp2 and swp3 forward any VID between each o=
+ther.
+
+swp2 and swp3 won't have NETIF_F_HW_VLAN_CTAG_FILTER (as vlan
+filtering is disabled on these ports).
+
+If we now create an upper for VID 10 on swp2, then VLAN 10 should not
+be forwarded to swp3 anymore (as VLAN 10 is now "consumed" by the host
+on this port).
+
+But since there is no port_vlan_add() call due to filtering disabled
+(NETIF_F_HW_VLAN_CTAG_FILTER not set), the dsa driver does not know
+that the forwarding should be inhibited between these ports, and VLAN
+10 is still forwarded from swp2 to swp3 (oops).
+
+Bullet point 3:
+And since having uppers on a bridged ports on a non-filtering bridge
+does not inhibit forwarding at all, we cannot allow disabling
+filtering as long as VLAN uppers on bridged ports exist.
+
+Does this now make it clearer what situations I am talking about?
+
+The easy way is to disallow these configurations, which is what I try
+to attempt (explicitly allowed by switchdev.rst).
+
+One other more expensive options are making bridge ports with VLAN
+uppers (or more than one upper for a VLAN) standalone and disable
+forwarding, and only do forwarding in software.
+
+Or add the above mentioned DSA_DB_PORT for vlan uppers on (bridged)
+ports, regardless of filtering being enabled, and then let the dsa
+driver handle forwarding per VLAN. This may or may not be possible,
+depending on the hardware. One workaround I can think of is to enable
+a VLAN membership violation trap and then remove the port from the
+VLAN. But this also has the potential to pull a lot of traffic to the
+cpu. And requires drivers to be adapted to handle it. And would
+require filtering, which may get complicated for the non-filtering
+bridge case.
+
+> > An alternative solution suggested by switchdev.rst would be to treat
+> > these ports as standalone, and do the filtering/forwarding in software.
+> >
+> > But likely DSA supported switches are used on low power devices, where
+> > the performance impact from this would be large.
+> >
+> > While going through the code, I also found one corner case where it was
+> > possible to add bridge VLANs shared with VLAN uppers, while adding
+> > VLAN uppers shared with bridge VLANs was properly denied. This is the
+> > first patch as this seems to be like the least controversial.
+> >
+> > Sent as a RFC for now due to the potential impact, though a preliminary
+> > test didn't should any failures with bridge_vlan_{un,}aware.sh and
+> > local_termination.sh selftests on BCM63268.
+> >
+> > A potential selftest for bridge_vlan_{un,}aware.sh I could think of
+> >
+> > - bridge p3, p4
+> > - add VLAN uppers on p1 - p4 with a unique VLAN
+> >   if refused, treat as allowed failure
+> > - check if p4 sees traffic from p1
+> >
+> > If p1 and p4 are isolated (so implicitly p2 and p3), its fine, and if
+> > the configuration is rejected is also fine, but forwarding is not.
+>
+> Sounds like something which would be fit for
+> tools/testing/selftests/net/forwarding/no_forwarding.sh.
+
+Oh, wasn't aware of this one, yeah, that seems appropriate. Thanks!
+Will try to come up with a test.
+
+Best Regards,
+Jonas
 
