@@ -1,155 +1,162 @@
-Return-Path: <linux-kernel+bounces-896147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 725A4C4FC1E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 21:58:31 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F7F0C4FC33
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 21:59:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id EA37C34D1CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 20:58:30 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4303D4EDCBB
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 20:59:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C057B3A9BED;
-	Tue, 11 Nov 2025 20:58:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A67C43A9BE3;
+	Tue, 11 Nov 2025 20:59:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="dukZk/14"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="NJIomaC5"
+Received: from mail-io1-f99.google.com (mail-io1-f99.google.com [209.85.166.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FD223A5E9B
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 20:58:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D3CD3A9BF0
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 20:59:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762894700; cv=none; b=HiUpMs1wEQo69ro5SOWoELES+LRfKBF/ulhJWpP0LM028YZFCSVOJkWREFj0R++cUKD4hiAqDw/GXOlLbhWSQUVWLCkB4ZMUniqwO5ISWV6n6i51SZ4a30qvASHrT3fSPdpAQlID9LN1jDSFUSVI9Bbmd4HZKqIAepNZSjuWy1c=
+	t=1762894743; cv=none; b=RjmQEY56GJVq96AwiR/XEK7uYkayQKo5CPt/2f00ldIsZQUwM7G5EzRfho+P9IbrGqKHtoQU2+y8OZh5+huf1eh9MAhy9B2rOXlLdiZaqBJv8xjGW9F0Yu6d69kZQZcVjT6X+bKupVTACbhS8fl9pP5rzgDeqxv7xsxg0/pvRzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762894700; c=relaxed/simple;
-	bh=5IPiXaFkwwZtaZuDIqZvEEkFtfPxtooPB1hfynQopyI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=u65mf6bVVxsNGA7ud3ZF+7QDaQX97t75o2pWQ+PaFbs2yyTm1KdUyxOk4JnGVvDUB1dpcLrIoKGQ04NFFkxuwEqSm+WqWQ8/T7oRHqH2dAIpYuQOzhsxSmlXkbr1Fw7zqn3tFd1lAiLjchqL1LadbMTL9Ut+JCpkBqF4aNvZS6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=dukZk/14; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-640860f97b5so144784a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 12:58:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1762894697; x=1763499497; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=5IPiXaFkwwZtaZuDIqZvEEkFtfPxtooPB1hfynQopyI=;
-        b=dukZk/14N6P3AY3E//uOob/83ZX56Gg3zcmtlFUOVT0+RBuc3oVCii9zMzDt0mS7Y7
-         pVxePc4+xS3rsb78/9whAgzRXbpZ9dSenr/uKwitxoKL6a39CklQbTWQ84DfE2/2sDpj
-         5QrK0yluU7KAdt4/YJyY7bqqDFuGoapuWkAZ/HeBtbDOA+cZvre8wbqZwmo3DpJqRjA0
-         AX7ORJWzHwifdvbBKOHF2epxKMLN6oG013yAfpraAz+Z4jBYjZ1Rwwj04Ke5bFL85FyZ
-         Hh10I029esix4doxY7fQeqwVT0nERTFDdl81yfWXS23v8Rn7emvqPTcO43gGhwJP6rNh
-         ln8g==
+	s=arc-20240116; t=1762894743; c=relaxed/simple;
+	bh=zhqpMMHJA43pv/+KdT9F7BoGDi/CIcsiUS1ejxY5CQg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=XM0dTZmwDPbe7DzM8infNnPNhyem3xH88IN+h0K/zdtXXIBQMvSf6iZC031YZm36cXyzYNZVubZQ+B/a/Ng9d1Rh2BHisJp3+nANOfqh9y7684QpN1+zCJrAYKNGuP2E/+7xeG9gFOiwnv/7ILrBlEE5BtzQluYX4tpeY+1xHnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=NJIomaC5; arc=none smtp.client-ip=209.85.166.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-io1-f99.google.com with SMTP id ca18e2360f4ac-94880a46f3fso5607039f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 12:59:00 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762894697; x=1763499497;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5IPiXaFkwwZtaZuDIqZvEEkFtfPxtooPB1hfynQopyI=;
-        b=l6AiNCaBxozkjejHjmM7ooyVku1TgZNk277VuXZDy8oZ0tIq4Jq8WZcJC+1quX8o/K
-         l42eNSrtgKfLfsc+PcTulb7vpbr9lqLpdPUkP02PeWHz2Qiuc4+w+inq4U1NA/jZyY2X
-         rChXtIgx6W7L0murv/WvF9SN8aOl1uANhUvFHJpB0fZ+XaP9NJodVIPXCgYoUhh+359w
-         mBO315uQEER8x7MVmJZj3FVYue7kAGKCfAJQ0fDeFcqdPjWrvLDneInSpWFD2/zPQPWR
-         W9AbwpbH9GfcqWlROs5PFArjiIVYXgxPms43F3ZmbIvDfjlXy84Q2dbk/J4nU1+pVaKE
-         t5tw==
-X-Forwarded-Encrypted: i=1; AJvYcCV2lobafJo5LElhkdRaDwYeswry9dX4eOjhv+vvnONKNrddeIf+ne3Yz6+IXf4smBHxo7I3RN988vPvG5A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YygE0RsF/iPqHM4H07vuNF2HiFSnYFKZQJO38xXomtbGYy+84pV
-	p7pf5Nht0JiCE8PJcVpRynXMDGqOchtz2KZSQ8E1oyzfXuPs5INUumpUTa9oTrWKcwsrLcRPtek
-	B4IEhK22FC48aOl3wA7PlzlfICM3BXvNDnYrqJvLsiw==
-X-Gm-Gg: ASbGncuOby+O/NcfP4esRsAfa2udP31zx7+r2RuNp4mNIM3FpbnYjyyK3Zw8YZegVZU
-	O9Rn01pnWT7A1yFEXdJfr6MCYKvW7VekJ7q/lAtsQ0TdvBkLY6Y0lPdTjmMsShfLFRi52s4CB4C
-	7zdCSGno739HdYVglTBSsKV7QC96BKubC5vceMYGM0ZCAhYpfUQZNDFCdO2+vsSVrHyeO3UM7JW
-	sqQEPpHb2JxNjwUK2Xg5mK61mqC5dsn8szJhsnt6Zd6d9xQMFibldA9Pg==
-X-Google-Smtp-Source: AGHT+IHuAFVKekWd1XIceTepFQM+2KcFkyr0+Jt/14Gjj3YjuSVXCqO15zGETNvx22Zso3bXtPLN06bMXeUC9RPF4AI=
-X-Received: by 2002:a05:6402:1450:b0:640:ee09:bfc1 with SMTP id
- 4fb4d7f45d1cf-6431a57e0ecmr566813a12.37.1762894696728; Tue, 11 Nov 2025
- 12:58:16 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762894739; x=1763499539;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:dkim-signature:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2KrK/OwsZWQEUZ5NhloRbUhuZmbyRGhs65jfLK1FGUw=;
+        b=MNR/uOpoDWnsRNIBPgw3ETgzCH8csJWObSISx3w/A2cU41ZkPPgqGVNiGAyyoiaHu9
+         WfFIyPHAtn7okREvyHYF7hW8be1yBIIpPe2O4g9TKUHlzgi/gu/cABpdAobQGnFW3051
+         jyenxwXzfLSREp7BslZK+qacE/m7A+x1JDqod4Sp7eQxnZFSTUMgJ32htMmcE3CNNz4n
+         uHQbMVPsKU/IWPcc+GXjN/KlnnUJEGkNRzE1OL5P94924rMKJqQkcp9FiZw3PkACDAJN
+         3YBR3bvyQq6rhz5kvAAw8tOuUKM2XqisWgFVT0Zji+K/iZswt/Moe/XaRgM12JHUfQtS
+         aHaw==
+X-Forwarded-Encrypted: i=1; AJvYcCVfmelBTmszoHsMvvZbk+kzPW8l0JG3laS6GoYm6X9+IJOvvDEqY8cH4zJhK6GJeFMtF6JtCA0+rYX5XyA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbgIfoA6Rd4nSrUGLFL1t+zAYWjpQERy/EOfICHlNxijTa+DNE
+	J0T3/10KaIdvN2E39SVzkaDNI9lEk2R0LHq2usJyijuKH3SviNGWbhynYBQZFvDkdrQQIy1NimD
+	ju8y0VqoNvFewUTcon+LU5HWY/WHHk0M0a8qAbdwVIRKsPAiGBip0tmSIFgB+Gcic3mNu7eOq4r
+	KVTmEdH0v5THyiRsW5yx4HpN1jnwlcMneXST7I50w9yiBXvNhNi22+M1cOGKWBtmNbIBRRanYwJ
+	5tK/gYpgFgvdBarjo/vgvudJogR
+X-Gm-Gg: ASbGncsznjwpWvlJiwxVQQIV7UfNnOIFNPit0VMSHpGbLXTexCyVcoE4NA+46GIfzQR
+	h27KNOI7vKNpuLPOkoUC/Y3LDQqDpwWcmafUqw/oxW6bW7AsqI5Lidac452n4i3gW36LxYu/cbm
+	JJbnySjIyMrVeFFW0Fj6Js4EeVs2fHao7hfIh8koHpiK3wHzo68OqxqWVpkmR4N6raAWpYL3bp3
+	AIgCvLwrQ6bii9PUlFDqtfpdbK/ARL/SfcU3y81WV/n8XvXvsJWOGKl76v+krQtFndGRqR1dGfs
+	CCM47KEpVt8BULZJ495re1BWg3bc2N2FOMBmwV8GuBarhbWwcjB2qRJNPoAJgI9CyvG0Zlvp7uw
+	H5ibfJrPO67/X/tp+DN3jJ1UNBDaasUj/O/fMgQ7NdWxlyvqgwhs2FA9DwdtDpxFt+e+6mhHrDV
+	eiYZBW8udlH0zG8Wl6bPY9/RM+27IN08KNt7LEV4tY
+X-Google-Smtp-Source: AGHT+IF+Jp4TZZNdb10Dlv1cbJi58GlI+BOxy9UbOQY/mMuQP4DLHpNvJr/SsPE4NForvYxVTA+SZzff7xnw
+X-Received: by 2002:a05:6602:27c2:b0:945:a7ce:646c with SMTP id ca18e2360f4ac-948c46418eamr88566539f.10.1762894739389;
+        Tue, 11 Nov 2025 12:58:59 -0800 (PST)
+Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com (address-144-49-247-14.dlp.protect.broadcom.com. [144.49.247.14])
+        by smtp-relay.gmail.com with ESMTPS id 8926c6da1cb9f-5b7ab14ec76sm58169173.29.2025.11.11.12.58.59
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 11 Nov 2025 12:58:59 -0800 (PST)
+X-Relaying-Domain: broadcom.com
+X-CFilter-Loop: Reflected
+Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-b57cf8dba28so118532a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 12:58:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1762894738; x=1763499538; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2KrK/OwsZWQEUZ5NhloRbUhuZmbyRGhs65jfLK1FGUw=;
+        b=NJIomaC5GKL1a1ywhiL2y12zlZD+BUQdBcZ6CqT5YUTU42HhCGhukodoqFZy0pGcu1
+         4pOfW6wzZ7ehLy/sy6htlkcRAjgf8kQCDuq2JvcHur275g8Vpwo0MusG/vh+V6FeBHsd
+         OQHMEWaQBax4DGhkzGYpWHJHTSNF4kvxXd5QA=
+X-Forwarded-Encrypted: i=1; AJvYcCX+/1uuDHdfnnKGefBmABpaT2sg3PYcWV6UUe3+Jsnlv16Wo4SiNvJRMbZ/n7IalakmrV5T5xyUXnDXvtM=@vger.kernel.org
+X-Received: by 2002:a05:6a20:7351:b0:342:f5bc:7cfb with SMTP id adf61e73a8af0-3590b82e3ddmr641137637.56.1762894737970;
+        Tue, 11 Nov 2025 12:58:57 -0800 (PST)
+X-Received: by 2002:a05:6a20:7351:b0:342:f5bc:7cfb with SMTP id adf61e73a8af0-3590b82e3ddmr641113637.56.1762894737539;
+        Tue, 11 Nov 2025 12:58:57 -0800 (PST)
+Received: from localhost.localdomain ([192.19.203.250])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-bbf18b53574sm497131a12.38.2025.11.11.12.58.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Nov 2025 12:58:57 -0800 (PST)
+From: Bhargava Marreddy <bhargava.marreddy@broadcom.com>
+To: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	andrew+netdev@lunn.ch,
+	horms@kernel.org
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	michael.chan@broadcom.com,
+	pavan.chebbi@broadcom.com,
+	vsrama-krishna.nemani@broadcom.com,
+	vikas.gupta@broadcom.com,
+	Bhargava Marreddy <bhargava.marreddy@broadcom.com>
+Subject: [net-next 00/12] bng_en: enhancements for link, Rx/Tx, LRO/TPA & stats
+Date: Wed, 12 Nov 2025 02:27:50 +0530
+Message-ID: <20251111205829.97579-1-bhargava.marreddy@broadcom.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251107210526.257742-1-pasha.tatashin@soleen.com>
- <20251107210526.257742-3-pasha.tatashin@soleen.com> <aRHiCxoJnEGmj17q@kernel.org>
- <CA+CK2bCHhbBtSJCx38gxjfR6DM1PjcfsOTD-Pqzqyez1_hXJ7Q@mail.gmail.com> <aROZi043lxtegqWE@kernel.org>
-In-Reply-To: <aROZi043lxtegqWE@kernel.org>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Tue, 11 Nov 2025 15:57:39 -0500
-X-Gm-Features: AWmQ_bkvWgSaihTKA4ZFuehWCb49R8fZ8C14CFTHsoW2qubcK_JcQqaA8FvRRnI
-Message-ID: <CA+CK2bAsrEqpt9d3s0KXpjcO9WPTJjymdwtiiyWVS6uq5KKNgA@mail.gmail.com>
-Subject: Re: [PATCH v5 02/22] liveupdate: luo_core: integrate with KHO
-To: Mike Rapoport <rppt@kernel.org>
-Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com, 
-	dmatlack@google.com, rientjes@google.com, corbet@lwn.net, 
-	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, 
-	ojeda@kernel.org, aliceryhl@google.com, masahiroy@kernel.org, 
-	akpm@linux-foundation.org, tj@kernel.org, yoann.congal@smile.fr, 
-	mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com, 
-	axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com, 
-	vincent.guittot@linaro.org, hannes@cmpxchg.org, dan.j.williams@intel.com, 
-	david@redhat.com, joel.granados@kernel.org, rostedt@goodmis.org, 
-	anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn, 
-	linux@weissschuh.net, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-mm@kvack.org, gregkh@linuxfoundation.org, tglx@linutronix.de, 
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, 
-	hpa@zytor.com, rafael@kernel.org, dakr@kernel.org, 
-	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com, 
-	myungjoo.ham@samsung.com, yesanishhere@gmail.com, Jonathan.Cameron@huawei.com, 
-	quic_zijuhu@quicinc.com, aleksander.lobakin@intel.com, ira.weiny@intel.com, 
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
-	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net, 
-	brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	saeedm@nvidia.com, ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com, 
-	leonro@nvidia.com, witu@nvidia.com, hughd@google.com, skhawaja@google.com, 
-	chrisl@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=y
+Content-Transfer-Encoding: 8bit
+X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
 
-Hi Mike,
+Hi,
 
-Thank you for review, my comments below:
+This series enhances the bng_en driver by adding:
+1. Link query support
+2. Tx support (standard + TSO)
+3. Rx support (standard + LRO/TPA)
+4. ethtool link set/get functionality
+5. Hardware statistics reporting via ethtool ‑S
 
-> > This is why this call is placed first in reboot(), before any
-> > irreversible reboot notifiers or shutdown callbacks are performed. If
-> > an allocation problem occurs in KHO, the error is simply reported back
-> > to userspace, and the live update update is safely aborted.
->
-> This is fine. But what I don't like is that we can't use kho without
-> liveupdate. We are making debugfs optional, we have a way to call
+Bhargava Marreddy (12):
+  bng_en: Query PHY and report link status
+  bng_en: Extend bnge_set_ring_params() for rx-copybreak
+  bng_en: Add RX support
+  bng_en: Handle an HWRM completion request
+  bng_en: Add TX support
+  bng_en: Add support to handle AGG events
+  bng_en: Add TPA related functions
+  bng_en: Add support for TPA events
+  bng_en: Add ethtool link settings and capabilities support
+  bng_en: Add initial support for ethtool stats display
+  bng_en: Create per-PF workqueue and timer for asynchronous events
+  bng_en: Query firmware for statistics and accumulate
 
-Yes you can: you can disable liveupdate (i.e. not supply liveupdate=1
-via kernel parameter) and use KHO the old way: drive it from the
-userspace. However, if liveupdate is enabled, liveupdate becomes the
-driver of KHO as unfortunately KHO has these weird states at the
-moment.
+ drivers/net/ethernet/broadcom/bnge/Makefile   |    4 +-
+ drivers/net/ethernet/broadcom/bnge/bnge.h     |   41 +
+ .../net/ethernet/broadcom/bnge/bnge_core.c    |   35 +-
+ .../net/ethernet/broadcom/bnge/bnge_ethtool.c |  653 +++++++
+ .../net/ethernet/broadcom/bnge/bnge_hw_def.h  |  214 +++
+ .../ethernet/broadcom/bnge/bnge_hwrm_lib.c    |  395 ++++
+ .../ethernet/broadcom/bnge/bnge_hwrm_lib.h    |    9 +
+ .../net/ethernet/broadcom/bnge/bnge_link.c    | 1289 +++++++++++++
+ .../net/ethernet/broadcom/bnge/bnge_link.h    |  191 ++
+ .../net/ethernet/broadcom/bnge/bnge_netdev.c  |  736 +++++++-
+ .../net/ethernet/broadcom/bnge/bnge_netdev.h  |  474 ++++-
+ .../net/ethernet/broadcom/bnge/bnge_txrx.c    | 1604 +++++++++++++++++
+ .../net/ethernet/broadcom/bnge/bnge_txrx.h    |  118 ++
+ 13 files changed, 5713 insertions(+), 50 deletions(-)
+ create mode 100644 drivers/net/ethernet/broadcom/bnge/bnge_hw_def.h
+ create mode 100644 drivers/net/ethernet/broadcom/bnge/bnge_link.c
+ create mode 100644 drivers/net/ethernet/broadcom/bnge/bnge_link.h
+ create mode 100644 drivers/net/ethernet/broadcom/bnge/bnge_txrx.c
+ create mode 100644 drivers/net/ethernet/broadcom/bnge/bnge_txrx.h
 
-> kho_finalize() on the reboot path and it does not seem an issue to do it
-> even without liveupdate. But then we force kho_finalize() into
-> liveupdate_reboot() allowing weird configurations where kho is there but
-> it's unusable.
+-- 
+2.47.3
 
-What do you mean KHO is there but unusable, we should not have such a state...
-
-> What I'd like to see is that we can finalize KHO on kexec reboot path even
-> when liveupdate is not compiled and until then the patch that makes KHO
-> debugfs optional should not go further IMO.
->
-> Another thing I didn't check in this series yet is how finalization driven
-> from debugfs interacts with liveupdate internal handling?
-
-I think what we can do is the following:
-- Remove "Kconfig: make debugfs optional" from this series, and
-instead make that change as part of stateless KHO work.
-- This will ensure that when liveupdate=0 always KHO finalize is fully
-support the old way.
-- When liveupdate=1 always disable KHO debugfs "finalize" API, and
-allow liveupdate to drive it automatically. It would add another
-liveupdate_enable() check to KHO, and is going to be removed as part
-of stateless KHO work.
-
-Pasha
 
