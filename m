@@ -1,210 +1,132 @@
-Return-Path: <linux-kernel+bounces-895829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 737F8C4F0C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:35:48 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C23A7C4F0D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:36:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C1F274ECB82
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:31:57 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 786A64F0024
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:33:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64EAB274B4D;
-	Tue, 11 Nov 2025 16:31:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0787636CE09;
+	Tue, 11 Nov 2025 16:33:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="bpM/0HuS"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mD3jyXI/";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1epcTIyp"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B80636C5A5
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 16:31:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8FB33128D0;
+	Tue, 11 Nov 2025 16:33:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762878712; cv=none; b=hmrm0l1UXIzX91Ft7PeFmLkP7JJ4c4a1rtQ2JkLFwlgZXdV744jZuub3sibcbJ4u+QaQbDgPHb/vhqPgkP30V8iQ6WoLqDkd7g23KifjKRViiEJc7jBFyLCUR8qnGXiUuxXQ71ajecrqqsD65lMRfW/MwKUQKLV+TqtpYfNJ7OY=
+	t=1762878785; cv=none; b=bC+HIqRh0U1yIkn7eiisIFPXm1LV7OCWBNB9U/LBJWnYO6/DpAa9fHHMe6vccen1WApyC/qN8KvznTIaRiciFd9/V6P/hv4E5GqxMaEYzvii6TIcZY/m70lLs3LHoq7dIlF/tEqFfxsTJUro7s8MOX3D6NiKu8Qd81Ot+tNI0Q0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762878712; c=relaxed/simple;
-	bh=/7JhdeqHU+pWuZo7BJYr/RwCCv41S/jJab+74+3hwpA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h1exomNJaHMLPaNehqjXSE/UOUs0vFvY1R/vB3rYmpV7EnZwht14hxRYlgtPSeOKGU+R2ElgMhMQPSJYBtf0eq5MLquizJuPUYwY2FGgvn17V+e9y1mi07II/QptbNPbT1T7xxoVLrZ9PjR6g2zWtWf7/BibQfR3y09ipZxrTfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=bpM/0HuS; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-63b9da57cecso6929395a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 08:31:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1762878709; x=1763483509; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=PJEhmkdX/tZ6LlQiQX/bCOF/D5Lhd4PVnpUuCIOrAzo=;
-        b=bpM/0HuSOo+MutJFeGQXYeeqH6ySa1JHquNYE35DJOb5b/oorzJdQDskdaHH/CJweE
-         plltLQ2siyhCqffJ2X0A7BhdqhKJXMcqI5seSkos/Fdxt3uBeLmQRISRnvJM5VYXxOHM
-         rSkAq6Wrv06FUBYV+k/Zjut9+jDe+6J4jz/0fP9nTgmSteQ4Qd0E3R5IU/Hd4w7OXeNI
-         gSTK6uenuOJn8oWAXs2Rv51D0tJiLDn415SBzMCk3l8FpuqerI2nj9rPfV0tTlZzb3Z8
-         HYPpK80uo0jM2am3I1GEbiSfDEWjndlj5v0KuH6mZzUnSZAbuAdykkitjcyDcAfFgQfO
-         IP+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762878709; x=1763483509;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PJEhmkdX/tZ6LlQiQX/bCOF/D5Lhd4PVnpUuCIOrAzo=;
-        b=OPKy2yay8VznhZMUKBlzfJ4l69Sf23PSa2cjYzckCOHtX10aNhcN3crHc/8P2ESXrh
-         GscUifQ5YXpm6BCLZBFxfOMmfVhuXIitf51K/oAM0Yovb9xXz/hlNvMFJ4CATI2ErHfA
-         QWta55QJ/Ma+wsj/wcR2oD8d0qKMDfKXI28Vy9MNxa9Ij8zgVjNP8Frr5C/lVdS797UV
-         NOZ1mwhlitdbAJXSh/z73R7lI9KW/RGhfJCIupJUisl0RDN5ElQKRKUfaVJfbsn+ePIC
-         hFCboD9naOre2P0sEzecSuu91aiNDH0LVZ7FINEwsZWAo8C901l8bW651D9ZeqqkpDq3
-         iAXA==
-X-Forwarded-Encrypted: i=1; AJvYcCWnJ6gBpVqpyJwmGtKtMKdz8A+IFe1AMTyGzOwo/cnUFzZBhOnlSIXM6rgPovUpjqaXzd/4DCA5Nd0T+aw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YycP+N9eYgrZOJv9AXtTYWbGnEBsuLTtMZu5yvu1HUNIDxJqPVw
-	RBeQTWfBSHQKjMcmKuKH+rYguECwXSchCMKId89FKzFAvQ8sFVRmFc3LKiosbZ36eqw=
-X-Gm-Gg: ASbGncuk691Yqbk82+eJRqBP1Zab+XgH06EhpEJezH1lnS/DzcOpIYy0nMT8uEBJwWG
-	P0mrmkvtRTUmTHvgyinMl+qvjb/ajPGCd39HyrcGrz6XH0WtZNkWZgdPZMPn2PAys+O61yP/DWb
-	BTu42ssnJMmGdcs6N/8+cPiw927i+Whd0Ui/IlH8pKSMMkEv79Pdxkg5KGaaHjrayOp9pJxmWAv
-	9Vh3I0FdB56FLFoIptcLijCfTUhtiZKOF0YfIhOVNCxjWElbY+OPqEH7BPwYRiZIGArfI0+2GNI
-	PvzxEwafXnxTZogK0UYfL0jw5fhIDuxJCpPL2QLu+5jwnNa03ymyqWsKrx47tgC7oCAURD8yjmi
-	h1fGlauXuPuiYKaoyxrBQSgr1C56lZyzysgaJG4T+b12jRwfdE7ivnqGjzCvGB60hwJsX6OwIsG
-	3C5WqBix5MxHMS32/RWLDMf/s/D3U3
-X-Google-Smtp-Source: AGHT+IHeMXFBK2R94y0xAavt77FqJhtG78dDnrH6Srnh9imuOjXwMgWyuYOPJ4SCpRj8L5bEITGGSg==
-X-Received: by 2002:a17:907:960a:b0:b6d:519f:2389 with SMTP id a640c23a62f3a-b72e04ad8b5mr1360986366b.52.1762878708718;
-        Tue, 11 Nov 2025 08:31:48 -0800 (PST)
-Received: from pathway (nat2.prg.suse.com. [195.250.132.146])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bf312e51sm1366249866b.17.2025.11.11.08.31.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Nov 2025 08:31:48 -0800 (PST)
-Date: Tue, 11 Nov 2025 17:31:46 +0100
-From: Petr Mladek <pmladek@suse.com>
-To: John Ogness <john.ogness@linutronix.de>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Sherry Sun <sherry.sun@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
-	Jon Hunter <jonathanh@nvidia.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Derek Barbosa <debarbos@redhat.com>, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH printk v1 1/1] printk: Avoid scheduling irq_work on
- suspend
-Message-ID: <aRNk8vLuvfOOlAjV@pathway>
-References: <20251111144328.887159-1-john.ogness@linutronix.de>
- <20251111144328.887159-2-john.ogness@linutronix.de>
+	s=arc-20240116; t=1762878785; c=relaxed/simple;
+	bh=S5P/PhEdoD2k2xnS/aZY8xWRfjQ1chwbdFYooGWzon4=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=QFReGm4zCcgTxRDhHIChVrBpNSoSR0mHbjjCCHW7k6acOdRl4tX/l3/HpgdZBR6iRNaB+qM0t8VAog3iWVG6AIY5FsL6vfgqZZLqNX65f86tyMqSdj4zyKfryp07wLYxiP3BowZB0jaNpDjdMsuwxTHOpp4yiEXLl06kI3+Id40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mD3jyXI/; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1epcTIyp; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 11 Nov 2025 16:33:00 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1762878781;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ES7vbUa4cgoLAOp81KRbnzRbKDkr2RwaSrBkEXBX7jc=;
+	b=mD3jyXI/W0PEaLF6BAd70FnwKIU+WsO+YDTOhXNzO+5U9tTGmFwz05zVW/DoaXM3LjBQmL
+	c55K8lPH5T+CAvfQxi7s1StE7dk3vqYjXtEQWhAJYaiz7gouraPyGY+sdRxTYi/6+6NKUe
+	udXBmEqKuGZ7ECs+3b/an7e3+w8w4vH55o/2f3GIZ5gA1IqSu8EKwFp/T7C1B6uo7QztYd
+	jMhzQQWrAVzPiWCvLleV/0EBIuI4VtOA32QcSXU5u2ZBhLaJcSS7nPq0d1oAhTqQ8lz8Re
+	7jXV2fIOdsP9SNgT4O2sb6BfSSb2+5LAHoNB0CVRDA///Wvsq81cptgG/d3ePQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1762878781;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ES7vbUa4cgoLAOp81KRbnzRbKDkr2RwaSrBkEXBX7jc=;
+	b=1epcTIypyhCMBiuj9PtM4OfehUeOr5rbtI4TmrSoreoX3u6BP14UFyADNVcvkCXDvqLWAa
+	WbfoPLmlQOuJ3uAg==
+From: "tip-bot2 for Shrikanth Hegde" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: sched/core] sched/deadline: Minor cleanup in select_task_rq_dl()
+Cc: Shrikanth Hegde <sshegde@linux.ibm.com>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+ Juri Lelli <juri.lelli@redhat.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20251014100342.978936-2-sshegde@linux.ibm.com>
+References: <20251014100342.978936-2-sshegde@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251111144328.887159-2-john.ogness@linutronix.de>
+Message-ID: <176287878001.498.15264501628715691732.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue 2025-11-11 15:49:22, John Ogness wrote:
-> Allowing irq_work to be scheduled while trying to suspend has shown
-> to cause problems as some architectures interpret the pending
-> interrupts as a reason to not suspend. This became a problem for
-> printk() with the introduction of NBCON consoles. With every
-> printk() call, NBCON console printing kthreads are woken by queueing
-> irq_work. This means that irq_work continues to be queued due to
-> printk() calls late in the suspend procedure.
-> 
-> Avoid this problem by preventing printk() from queueing irq_work
-> once console suspending has begun. This applies to triggering NBCON
-> and legacy deferred printing as well as klogd waiters.
-> 
-> Since triggering of NBCON threaded printing relies on irq_work, the
-> pr_flush() within console_suspend_all() is used to perform the final
-> flushing before suspending consoles and blocking irq_work queueing.
-> NBCON consoles that are not suspended (due to the usage of the
-> "no_console_suspend" boot argument) transition to atomic flushing.
-> 
-> Introduce a new global variable @console_offload_blocked to flag
+The following commit has been merged into the sched/core branch of tip:
 
-s/console_offload_blocked/console_irqwork_blocked/
+Commit-ID:     65177ea9f64d7402a0b8028e0dbbd01e8a9d1b1d
+Gitweb:        https://git.kernel.org/tip/65177ea9f64d7402a0b8028e0dbbd01e8a9=
+d1b1d
+Author:        Shrikanth Hegde <sshegde@linux.ibm.com>
+AuthorDate:    Tue, 14 Oct 2025 15:33:41 +05:30
+Committer:     Peter Zijlstra <peterz@infradead.org>
+CommitterDate: Tue, 11 Nov 2025 17:27:55 +01:00
 
-> when irq_work queueing is to be avoided. The flag is used by
-> printk_get_console_flush_type() to avoid allowing deferred printing
-> and switch NBCON consoles to atomic flushing. It is also used by
-> vprintk_emit() to avoid klogd waking.
-> 
-> --- a/kernel/printk/internal.h
-> +++ b/kernel/printk/internal.h
-> @@ -230,6 +230,8 @@ struct console_flush_type {
->  	bool	legacy_offload;
->  };
->  
-> +extern bool console_irqwork_blocked;
-> +
->  /*
->   * Identify which console flushing methods should be used in the context of
->   * the caller.
-> @@ -241,7 +243,7 @@ static inline void printk_get_console_flush_type(struct console_flush_type *ft)
->  	switch (nbcon_get_default_prio()) {
->  	case NBCON_PRIO_NORMAL:
->  		if (have_nbcon_console && !have_boot_console) {
-> -			if (printk_kthreads_running)
-> +			if (printk_kthreads_running && !console_irqwork_blocked)
->  				ft->nbcon_offload = true;
->  			else
->  				ft->nbcon_atomic = true;
-> @@ -251,7 +253,7 @@ static inline void printk_get_console_flush_type(struct console_flush_type *ft)
->  		if (have_legacy_console || have_boot_console) {
->  			if (!is_printk_legacy_deferred())
->  				ft->legacy_direct = true;
-> -			else
-> +			else if (!console_irqwork_blocked)
->  				ft->legacy_offload = true;
->  		}
->  		break;
+sched/deadline: Minor cleanup in select_task_rq_dl()
 
-This is one possibility.
+In select_task_rq_dl, there is only one goto statement, there is no
+need for it.
 
-Another possibility would be to block the irq work
-directly in defer_console_output() and wake_up_klogd().
-It would handle all situations, including printk_trigger_flush()
-or defer_console_output().
+No functional changes.
 
-Or is there any reason, why these two call paths are not handled?
+Signed-off-by: Shrikanth Hegde <sshegde@linux.ibm.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Acked-by: Juri Lelli <juri.lelli@redhat.com>
+Link: https://patch.msgid.link/20251014100342.978936-2-sshegde@linux.ibm.com
+---
+ kernel/sched/deadline.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-I do not have strong opinion. This patch makes it more explicit
-when defer_console_output() or wake_up_klogd() is called.
-
-If we move the check into defer_console_output() or wake_up_klogd(),
-it would hide the behavior. But it will make the API more safe
-to use. And wake_up_klogd() is even exported via <linux/printk.h>.
-
-
-> @@ -264,7 +266,7 @@ static inline void printk_get_console_flush_type(struct console_flush_type *ft)
->  		if (have_legacy_console || have_boot_console) {
->  			if (!is_printk_legacy_deferred())
->  				ft->legacy_direct = true;
-> -			else
-> +			else if (!console_irqwork_blocked)
->  				ft->legacy_offload = true;
-
-This change won't be needed if we move the check into
-defer_console_output() and wake_up_klogd().
-
->  		}
->  		break;
-> diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-> index 5aee9ffb16b9a..94fc4a8662d4b 100644
-> --- a/kernel/printk/printk.c
-> +++ b/kernel/printk/printk.c
-> @@ -2426,7 +2429,7 @@ asmlinkage int vprintk_emit(int facility, int level,
->  
->  	if (ft.legacy_offload)
->  		defer_console_output();
-> -	else
-> +	else if (!console_irqwork_blocked)
->  		wake_up_klogd();
-
-Same here.
-
->  
->  	return printed_len;
-
-
-The rest of the patch looks good to me.
-
-Best Regards,
-Petr
+diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+index 4dd4b2f..67f540c 100644
+--- a/kernel/sched/deadline.c
++++ b/kernel/sched/deadline.c
+@@ -2384,7 +2384,7 @@ select_task_rq_dl(struct task_struct *p, int cpu, int f=
+lags)
+ 	struct rq *rq;
+=20
+ 	if (!(flags & WF_TTWU))
+-		goto out;
++		return cpu;
+=20
+ 	rq =3D cpu_rq(cpu);
+=20
+@@ -2422,7 +2422,6 @@ select_task_rq_dl(struct task_struct *p, int cpu, int f=
+lags)
+ 	}
+ 	rcu_read_unlock();
+=20
+-out:
+ 	return cpu;
+ }
+=20
 
