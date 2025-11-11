@@ -1,114 +1,110 @@
-Return-Path: <linux-kernel+bounces-895560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 282F4C4E475
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 15:03:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7E19C4E47E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 15:04:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 580EA189CA34
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:01:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80F833B1891
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:00:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54AD135B12B;
-	Tue, 11 Nov 2025 14:00:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D9C835A13E;
+	Tue, 11 Nov 2025 14:00:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="bn0JuxZ5"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BK6yS3ik"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E94C83AA195;
-	Tue, 11 Nov 2025 14:00:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B93733451C6;
+	Tue, 11 Nov 2025 14:00:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762869609; cv=none; b=r/ZNnzzPtXN6qA/q2zXlSOfsqVxU8/QviZeZbhqdib0wbuQswRCEIjTJ7aWHHhCMJVw6Xm+sPDzYqV+/bLgwMTcALXCkHKacAi25m8BOR+p1XOwYPT3qSIQoLoyh4O3+ppVFpTP0ma+m/JEqldHouXOkd2uKulxqeLx/nDwHcms=
+	t=1762869607; cv=none; b=aP8kodhbJk3p/J9PTDZR7RO+ull/SlYDVXm7yvJuBv/Bjsy8z1tLNlVkIKCHH/cepfX5f3lNRzFrN2y/JO7CkbxC7EfggL/hpVv5fFPP5/U88cUYvCzrUN86WWdDH7qdXcUzIBEUgjE3L2xUIwjvtzqtYbuyCa/shid2MEbVAQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762869609; c=relaxed/simple;
-	bh=cF3UDCrQejavFDcic3XHyemHWcv82tiOF5VKo1Nlqfc=;
+	s=arc-20240116; t=1762869607; c=relaxed/simple;
+	bh=D1S3OL4p0+J4mWcZ2dm1aw9L5R0M+rOLhxjglXPSaEc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bJT54/RaTOsfj77Bu5cpJdVVdcQp6jakiP+iNQt/rpYIY7nu7AVg6+FVkUwplKgRZK6vstCKPRFT0aii56hwOElcuEAq5lrILHKuV7MPZzLrIPr5LSPSgB63uy2ErO149Ss/1afheO75hj/PLZBcLn7eXi6o7lexOmtoDdDEQfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=bn0JuxZ5; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id A44BB40E01A8;
-	Tue, 11 Nov 2025 14:00:04 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id gFB325oj--ej; Tue, 11 Nov 2025 14:00:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1762869599; bh=DVda1F0A/H/TQAbUvsduEWnI3b2Zm6i5TYT5FnHqBDw=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=jGaLNvVdQGE4K200Txnaaq+EGRGvjGLHGCVe0u4n84btaWTweJrnkjdQDP0uyLCVqHTzIGr3GfQ2SLKV1rA6XZQRDAmkRMPtM+qEm1IYu3aKiDcsVHQYKc+C4orfup06g29JQH8vKl5WAEDlfhYm7pJKbSyPRB3FPAyvbp/jW4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BK6yS3ik; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2B6CC113D0;
+	Tue, 11 Nov 2025 14:00:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762869607;
+	bh=D1S3OL4p0+J4mWcZ2dm1aw9L5R0M+rOLhxjglXPSaEc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bn0JuxZ5crAkQ77fFPdkbaERlWl4ClYYZCINWvdeOGU+/l8JIutiaLNfOkJjh7U3+
-	 4mf9LoJuELBn3bal34Ecs7yj7QmCzpMbSF7TboUFrilVwZCfoZkK6jBpg8tj9RGbO0
-	 WX7LDvEr0QPTVvBoyUtYuHmeRD0XQzp4obrlbtz6gBRBqQv9u57xkM+TIsgTTKfOcU
-	 BlJYSRLwFzmMxBtXjH6RO34tjkfY8AbNETCprlFe3I8/xbqiWxMl8zKjgfXw04i9dd
-	 0sC0we9H6Cdi61vz9iuS6fgVf9Xat998iqLZOPu2FkjE/cKgtTy1upxLokHrJ6mHPX
-	 59R5eg9CnXI/U3eNIY137hdanYLP0gj+qpRglr4gjT+YK1rTx3znXyv+/wBuq/XA/j
-	 IHWOoJXVgX18ZVcRiNpew1zDkyb/IOE3Aqibc1pcgmA96ujbn57Jn7SRAgi3pAaZSF
-	 ueTKIX1Yz2HFSoors6S7qGGcVtQo0tnDer03f1ZowunlOOgR+BifpIYJUv1k88b6Sh
-	 ITdY7QyNsccNzj8JPg+LIsOXeud/JSd4MLDnE2WtrbisdMpo7fLo61ePi0pr36WCbz
-	 i5WqCR3+N3ARju2cqMhFBm19W0xONK6RlFxDj4LJIlCuteFVXO8XE8Lu/KHFb0HTcw
-	 wUPzKkkjwVfJBAaqvQzrSDsA=
-Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 59ACC40E016E;
-	Tue, 11 Nov 2025 13:59:53 +0000 (UTC)
-Date: Tue, 11 Nov 2025 14:59:52 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: niravkumarlaxmidas.rabara@altera.com
-Cc: dinguyen@kernel.org, tony.luck@intel.com, linux-edac@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v2] EDAC/altera: Use INTTEST register for Ethernet and
- USB SBE injection
-Message-ID: <20251111135952.GBaRNBWEoHvOQKcEF8@fat_crate.local>
-References: <20251111081333.1279635-1-niravkumarlaxmidas.rabara@altera.com>
+	b=BK6yS3ikNQGdeSm87kJZrIJJ2XY6POhOH7MZmL27V0Z5S3dw3nYncaxgaHcY1Lu+F
+	 JfFL1HyiOjKsoFotilBRDoOwnVtfEN+Am17dFZfdhl0iJzjCla5OqcEAQDJEoJm/UW
+	 zQl/cTwTmOjKHw9ttl9MFYwgAmc2524Srxq/IfABJDKxLrba4bc4JT3yXrBsZMKi5H
+	 Da2hh7/+bYFZH+VSJUbPQjShpd8y+P5ZonC8DCmnRcV2ZQTaP9oh5X/y2e05XA9pX1
+	 V2vT6CqyqJnODCdbHc0Dsnc313OsQ0rZJdxY80KZzyZZThukX8LeGbI/ySB71OPEQO
+	 kUp8PlC3G+pJQ==
+Date: Tue, 11 Nov 2025 15:00:01 +0100
+From: Niklas Cassel <cassel@kernel.org>
+To: Shawn Lin <shawn.lin@rock-chips.com>
+Cc: FUKAUMI Naoki <naoki@radxa.com>, Damien Le Moal <dlemoal@kernel.org>,
+	Anand Moon <linux.amoon@gmail.com>, linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Dragan Simic <dsimic@manjaro.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Manivannan Sadhasivam <mani@kernel.org>
+Subject: Re: [RESEND] Re: [PATCH] PCI: dw-rockchip: Skip waiting for link up
+Message-ID: <aRNBYX8MbR7PtssY@ryzen>
+References: <780a4209-f89f-43a9-9364-331d3b77e61e@rock-chips.com>
+ <4487DA40249CC821+19232169-a096-4737-bc6a-5cec9592d65f@radxa.com>
+ <363d6b4d-c999-43d4-866e-880ef7d0dec3@rock-chips.com>
+ <0C31787C387488ED+fd39bfe6-0844-4a87-bf48-675dd6d6a2df@radxa.com>
+ <dc932773-af5b-4af7-a0d0-8cc72dfbd3c7@rock-chips.com>
+ <aRHb4S40a7ZUDop1@ryzen>
+ <2n3wamm3txxc6xbmvf3nnrvaqpgsck3w4a6omxnhex3mqeujib@2tb4svn5d3z6>
+ <aRJEDEEJr9Ic-RKN@fedora>
+ <B721C8A516FDB604+a04b38d3-64ec-423f-9e4c-040c8d2aec76@radxa.com>
+ <05bd0efe-9a84-40e9-af07-51c0b0d865bf@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251111081333.1279635-1-niravkumarlaxmidas.rabara@altera.com>
+In-Reply-To: <05bd0efe-9a84-40e9-af07-51c0b0d865bf@rock-chips.com>
 
-On Tue, Nov 11, 2025 at 04:13:33PM +0800, niravkumarlaxmidas.rabara@altera.com wrote:
-> From: Niravkumar L Rabara <niravkumarlaxmidas.rabara@altera.com>
+On Tue, Nov 11, 2025 at 11:17:23AM +0800, Shawn Lin wrote:
+> > 
+> > It works stably on the ROCK 5A. The link speed is 2Gb/s.
+> > 
+> > The ROCK 5C is unstable. It initially worked with a link speed of 4Gb/s,
+> > but eventually started showing kernel oops. The dts files for the 5A and
+> > 5C are compatible and interchangeable, but even using the 5A's dts on
+> > the 5C, the operation remains unstable.
 > 
-> The current single-bit error injection mechanism flips bits directly in
-> ECC RAM by performing write and read operations. When the ECC RAM is
-> actively used by the Ethernet or USB controller, this approach sometimes
-> trigger a false double-bit error.
+> The link speed on ROCK 5A is 2Gb/s also means it's downgraded now. Did
+> ROCK 5A work under the link speed of 4Gb/s before?
 > 
-> Switch both Ethernet and USB EDAC devices to use the INTTEST register
-> (altr_edac_a10_device_inject_fops) for single-bit error injection,
-> similar to the existing double-bit error injection method.
-> 
-> Fixes: 064acbd4f4ab ("EDAC, altera: Add Stratix10 peripheral support")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Niravkumar L Rabara <niravkumarlaxmidas.rabara@altera.com>
-> ---
-> 
-> v2 changes:
->  - Add missing Cc tag
-> 
-> v1 link:
-> https://lore.kernel.org/all/20251101051723.917688-1-niravkumarlaxmidas.rabara@altera.com/
-> 
->  drivers/edac/altera_edac.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> In case it's signal integrity relevant, you could enable PCIE_DW_DEBUGFS
+> and refer to Documentation/ABI/testing/debugfs-dwc-pcie to collect
+> RASDES info from there.
 
-Applied, thanks.
+Just a quick note:
+I've noticed that you cannot blindly look at the link speed in dmesg.
 
--- 
-Regards/Gruss,
-    Boris.
+E.g. on my ROCK 5B boards, I can occasionally see something like:
+[    1.417181] pci 0000:01:00.0: 4.000 Gb/s available PCIe bandwidth, limited by 5.0 GT/s PCIe x1 link
 
-https://people.kernel.org/tglx/notes-about-netiquette
+However, if I check the actual link speed with lspci after boot:
+
+# lspci -vvv  -s 0000:01:00.0 | grep LnkSta:
+                LnkSta: Speed 8GT/s, Width x4
+
+I can see that the link is actually using the correct speed + number of lanes.
+
+
+Kind regards,
+Niklas
 
