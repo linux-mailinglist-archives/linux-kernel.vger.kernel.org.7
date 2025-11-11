@@ -1,161 +1,196 @@
-Return-Path: <linux-kernel+bounces-895601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7A9AC4E757
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 15:27:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D199CC4E77E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 15:28:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9C763B11AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:20:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDB9C3A5B1A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:21:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD17131283C;
-	Tue, 11 Nov 2025 14:19:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB4F51C6FE1;
+	Tue, 11 Nov 2025 14:19:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="ZhYP9xnI";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="2WZpgtF1"
-Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QZ6D1xUB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A99513009F8;
-	Tue, 11 Nov 2025 14:19:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 313173009F8;
+	Tue, 11 Nov 2025 14:19:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762870764; cv=none; b=toMNFe1zVNiyMzI59kNMnOGBUcGQHlEcLWd3f0ShH/XBQrUDJQ7fEZwGbSiD53kut4dYieP2ak7VF9W7jOoiEJPM0bkTybiEqx0LErKOhisM8VzHD/r3d+M+V+MbH+dVMs5r3PetOp2fsG+zeIjTMngwdsF8Z4Q+MkM8Ll4ZeLU=
+	t=1762870790; cv=none; b=TYps8uiXJ4r66Y01Yba+ivbuB6ryzOSPVriduiGQY8SKFpdg65te16jLkp/9RUARvrwwIgrlC4Z9ZzIuN7zcwgY9x/Zjh/UWm0UzrVZSgdInssn6tHgdJedElTVM4NIFc/u4vdZ39pw1DqifYKEFaJdbMsJKeqc4Z7wgCOEWNwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762870764; c=relaxed/simple;
-	bh=NpByBHiupA9mwAKBz1qThmMNm5PKagkHfsCY5dM5c18=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=YLXC6SdbB9+ThdPTdPA1P2/uc+APF6268sqvJTVKK/0mT+O3a3Vl3+3HMEX5f+fJnLdSc4HCFs0/zYZ4gszhhEw9DZPx5eBmt4vaQkg2BZ0g22778vWArxkrtNOX1ctE+8wONGNuI/PS+WX7rgynKFbJ5EuRocy2nmvfL2O4II0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=ZhYP9xnI; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=2WZpgtF1; arc=none smtp.client-ip=103.168.172.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailfout.phl.internal (Postfix) with ESMTP id 87241EC01B5;
-	Tue, 11 Nov 2025 09:19:21 -0500 (EST)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-04.internal (MEProxy); Tue, 11 Nov 2025 09:19:21 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1762870761;
-	 x=1762957161; bh=bVi+m0X0BXfoG2Nsfva8RYjAvFJDsmuCQjkkB+K0KuA=; b=
-	ZhYP9xnI9wliJLlntLzoUk1X4TQVE9oL6i0Hh9ddlf5shEUa7wojA5MS+keq0F+U
-	MCg8WXVDMGat+8kgjSlbDmAXsZ/EYGiYBxhOT/1wYITAFtwF9JEmenebDLUHadUq
-	xELkTz5BXifZlI9WnWmB2zs4Aj68I9mFp2NgkVrtec7sFVTnb7+uv5p9tJpq04DS
-	SyL3gCMJTly+qBOsbKhi8dt5UcQJDOT0UyWaJpAKJ/cGgPt8zwyL4FwIuEgLVrIU
-	NKwrRXG7EgLO6iGIxdOZNojr06FBJ5ZyCAM0wssbQvZooIbjB/YXj/e/PVuXzcvk
-	9gtDn3liKiFqMPM1svNc8g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762870761; x=
-	1762957161; bh=bVi+m0X0BXfoG2Nsfva8RYjAvFJDsmuCQjkkB+K0KuA=; b=2
-	WZpgtF15oW2ZZpYzJ4yyEuOlfgRGDZpWxWad2X3OMvlEZA5NEAdh+5HC0pacTBLM
-	FNnSutjoZIfyuZKbCLOP3z/k/KguXKHroUCFuJr3q1Q28D2hniFquTPeCTDSRnzY
-	aDF8Arlu8DORQYSLRg08FjxwEMk9NJj/7z5Luc+rblBQ/JHNvNRk21o9kKOf6Wvc
-	w5t8sl2NqqXalZthbTq4gGMH1vdC72P7daJTyNbuQ5iQmKYKY5IkY5Lv1EUgcSNB
-	BrKqJINcZin8wB9pE85B+LQK5cFVaF1zKd/BSaPU5rPatI1WOz1DBCmS3FQL/Bdj
-	RbkYr8y8Fpg3ZKQdDnx/A==
-X-ME-Sender: <xms:6UUTaWw66VOFgMf7OLXVMB781_YbgWqXGE7R1EEeunTwwoqjnybFaw>
-    <xme:6UUTadG76aNHLXNT-3DGUQDVC-bW_vm0fzKyDO6TgKlzfFFyiuykeV_tGS5F9sU9j
-    RiN2C0i7PjJtfjEANtOHlhYu838rBeSbnKRibnHZfX4zv5KLujGiTth>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvtddugeduucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdejnecuhfhrohhmpedftehrnhgu
-    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
-    hrnhepvdfhvdekueduveffffetgfdvveefvdelhedvvdegjedvfeehtdeggeevheefleej
-    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnh
-    gusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepjedpmhhouggvpehsmhhtphhouhht
-    pdhrtghpthhtohepvhhinhgtvghniihordhfrhgrshgtihhnohesrghrmhdrtghomhdprh
-    gtphhtthhopehluhhtoheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhhuhgrhhes
-    khgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhglhigsehlihhnuhhtrhhonhhigidrug
-    gvpdhrtghpthhtohepthhhohhmrghsrdifvghishhsshgthhhuhheslhhinhhuthhrohhn
-    ihigrdguvgdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnh
-    gvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkshgvlhhfthgvshhtsehvghgvrhdr
-    khgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:6UUTacaV_5flJD5-LccgC0AsOYvjOOrTZ7t_2FcugszkZU57Mwg66g>
-    <xmx:6UUTaRcJOHHzxKj802S8vRgtI-kpqlJh7TRiSLFPZWVIzHaFAK6LMw>
-    <xmx:6UUTaW3kFFScndluEqR1wAzGbZBOGH5k9sJBqrPCZf8xVQk-5b14nQ>
-    <xmx:6UUTaYIrBDu0GFJL5kbaPES6fOKs7-ChGuwblM-wDvgzEbdoE6sSmw>
-    <xmx:6UUTacfl4kXKy2oa8eV9Y0ckV5i6S0FGHI-lDM1C78_9h7BffmPL9DgB>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id F0F1C700054; Tue, 11 Nov 2025 09:19:20 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1762870790; c=relaxed/simple;
+	bh=F/G18b/qrnGePtXJA8yNc/KyviNlsV6BniqKSGhcuKs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DGyXwLN/W5qkXGOLQXvdpoSG7dtmUSVM3+LfhxAkjv9VSPUNIwRFyjC6lRYFuK/M6ijqsAPZnKEIIfT6UR9DoL1vkzEnKd11uKdYQJ0ylodvQWilGo+063cPb2n4oPbvT26L9780ls9X6qOnRMsHzQ5eYTDH5WsHwcHYLjdhsgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QZ6D1xUB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 360C1C4CEF5;
+	Tue, 11 Nov 2025 14:19:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762870789;
+	bh=F/G18b/qrnGePtXJA8yNc/KyviNlsV6BniqKSGhcuKs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QZ6D1xUBOHjSqie6c88Lfv8Vjj8UGymIATadTnHoCZU5AZ8TYJoADIMYaXBk3Dcd2
+	 Rghi7mgqwqohPEhy33mfi1ZOEkCErCLSCmHC9t0PLTPATLREkrT1VBsXas7pubbZe0
+	 ilxJcxehrPySNlQ6/sBA3YddzP2VzpAllOjvmYkswi6lBtjMDJko4b7yiIjx7pTfss
+	 whxSASEyVAYV5Pknrc6RDwa1K2yjZ9MrIj+nM6AllROiGgPbskVZ5mdTDCMzitZDL9
+	 2CYVb96vco3QDZ+czSzJXCGOUrRYzWfnGqZFw6OFQYEVeCLjky3FT+xlHSZao8yuRD
+	 ZRVrCFTFfU3dQ==
+Date: Tue, 11 Nov 2025 16:19:45 +0200
+From: Leon Romanovsky <leon@kernel.org>
+To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Zhu Yanjun <zyjzyj2000@gmail.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH][next] RDMA/rxe: Avoid -Wflex-array-member-not-at-end
+ warnings
+Message-ID: <20251111141945.GQ15456@unreal>
+References: <aRKu5lNV04Sq82IG@kspp>
+ <20251111115621.GO15456@unreal>
+ <a9e5156b-2279-4ddd-992c-ca8ca7ab218a@embeddedor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: A5RixjiBPr7B
-Date: Tue, 11 Nov 2025 15:19:00 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-Cc: "Andy Lutomirski" <luto@kernel.org>,
- "Thomas Gleixner" <tglx@linutronix.de>,
- "Vincenzo Frascino" <vincenzo.frascino@arm.com>, shuah <shuah@kernel.org>,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Message-Id: <a78a17eb-1df2-471b-9c28-64619c71dc54@app.fastmail.com>
-In-Reply-To: 
- <20251111144805-ab2781fe-5424-492b-9cb3-55ebaaedc199@linutronix.de>
-References: <20251111-vdso-test-types-v1-0-03b31f88c659@linutronix.de>
- <20251111-vdso-test-types-v1-4-03b31f88c659@linutronix.de>
- <29dd9e11-9ae8-415a-acb3-b96af56550b0@app.fastmail.com>
- <20251111144805-ab2781fe-5424-492b-9cb3-55ebaaedc199@linutronix.de>
-Subject: Re: [PATCH 04/10] selftests: vDSO: vdso_test_abi: Provide compatibility with
- 32-bit musl
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a9e5156b-2279-4ddd-992c-ca8ca7ab218a@embeddedor.com>
 
-On Tue, Nov 11, 2025, at 14:55, Thomas Wei=C3=9Fschuh wrote:
-> On Tue, Nov 11, 2025 at 01:59:02PM +0100, Arnd Bergmann wrote:
->> On Tue, Nov 11, 2025, at 11:49, Thomas Wei=C3=9Fschuh wrote:
->> >=20
->> > +#ifdef SYS_clock_getres
->> >  	ret =3D syscall(SYS_clock_getres, clk_id, &sys_ts);
->> > +#else
->> > +	ret =3D syscall(SYS_clock_getres_time32, clk_id, &sys_ts);
->> > +#endif
->> >=20
->>=20
->> I think this #ifdef check is not reliable enough and may hide
->> bugs. As with the other syscalls, the best way to call these
->> is to either use __NR_clock_getres_time64 on __kernel_timespec, or
->> to use __NR_clock_getres on __kernel_old_timespec.
->
-> Could you give an example for such a bug?
+On Tue, Nov 11, 2025 at 09:14:05PM +0900, Gustavo A. R. Silva wrote:
+> 
+> 
+> On 11/11/25 20:56, Leon Romanovsky wrote:
+> > On Tue, Nov 11, 2025 at 12:35:02PM +0900, Gustavo A. R. Silva wrote:
+> > > -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+> > > getting ready to enable it, globally.
+> > > 
+> > > Use the new TRAILING_OVERLAP() helper to fix the following warning:
+> > > 
+> > > 21 drivers/infiniband/sw/rxe/rxe_verbs.h:271:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> > > 
+> > > This helper creates a union between a flexible-array member (FAM) and a
+> > > set of MEMBERS that would otherwise follow it.
+> > > 
+> > > This overlays the trailing MEMBER struct ib_sge sge[RXE_MAX_SGE]; onto
+> > > the FAM struct rxe_recv_wqe::dma.sge, while keeping the FAM and the
+> > > start of MEMBER aligned.
+> > > 
+> > > The static_assert() ensures this alignment remains, and it's
+> > > intentionally placed inmediately after the related structure --no
+> > > blank line in between.
+> > > 
+> > > Lastly, move the conflicting declaration struct rxe_resp_info resp;
+> > > to the end of the corresponding structure.
+> > > 
+> > > Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+> > > ---
+> > >   drivers/infiniband/sw/rxe/rxe_verbs.h | 18 +++++++++++-------
+> > >   1 file changed, 11 insertions(+), 7 deletions(-)
+> > > 
+> > > diff --git a/drivers/infiniband/sw/rxe/rxe_verbs.h b/drivers/infiniband/sw/rxe/rxe_verbs.h
+> > > index fd48075810dd..6498d61e8956 100644
+> > > --- a/drivers/infiniband/sw/rxe/rxe_verbs.h
+> > > +++ b/drivers/infiniband/sw/rxe/rxe_verbs.h
+> > > @@ -219,12 +219,6 @@ struct rxe_resp_info {
+> > >   	u32			rkey;
+> > >   	u32			length;
+> > > -	/* SRQ only */
+> > > -	struct {
+> > > -		struct rxe_recv_wqe	wqe;
+> > > -		struct ib_sge		sge[RXE_MAX_SGE];
+> > > -	} srq_wqe;
+> > > -
+> > >   	/* Responder resources. It's a circular list where the oldest
+> > >   	 * resource is dropped first.
+> > >   	 */
+> > > @@ -232,7 +226,15 @@ struct rxe_resp_info {
+> > >   	unsigned int		res_head;
+> > >   	unsigned int		res_tail;
+> > >   	struct resp_res		*res;
+> > > +
+> > > +	/* SRQ only */
+> > > +	/* Must be last as it ends in a flexible-array member. */
+> > > +	TRAILING_OVERLAP(struct rxe_recv_wqe, wqe, dma.sge,
+> > > +		struct ib_sge		sge[RXE_MAX_SGE];
+> > > +	) srq_wqe;
+> > 
+> > Will this change be enough?
+> > 
+> > diff --git a/drivers/infiniband/sw/rxe/rxe_verbs.h b/drivers/infiniband/sw/rxe/rxe_verbs.h
+> > index fd48075810dd..9ab11421a585 100644
+> > --- a/drivers/infiniband/sw/rxe/rxe_verbs.h
+> > +++ b/drivers/infiniband/sw/rxe/rxe_verbs.h
+> > @@ -219,12 +219,6 @@ struct rxe_resp_info {
+> >          u32                     rkey;
+> >          u32                     length;
+> > -       /* SRQ only */
+> > -       struct {
+> > -               struct rxe_recv_wqe     wqe;
+> > -               struct ib_sge           sge[RXE_MAX_SGE];
+> > -       } srq_wqe;
+> > -
+> >          /* Responder resources. It's a circular list where the oldest
+> >           * resource is dropped first.
+> >           */
+> > @@ -232,6 +226,12 @@ struct rxe_resp_info {
+> >          unsigned int            res_head;
+> >          unsigned int            res_tail;
+> >          struct resp_res         *res;
+> > +
+> > +       /* SRQ only */
+> > +       struct {
+> > +               struct ib_sge           sge[RXE_MAX_SGE];
+> > +               struct rxe_recv_wqe     wqe;
+> > +       } srq_wqe;
+> >   };
+> 
+> The question is if this is really what you want?
+> 
+> sge[RXE_MAX_SGE] is of the following type:
+> 
+> struct ib_sge {
+>         u64     addr;
+>         u32     length;
+>         u32     lkey;
+> };
+> 
+> and struct rxe_recv_wqe::dma.sge[] is of type:
+> 
+> struct rxe_sge {
+>         __aligned_u64 addr;
+>         __u32   length;
+>         __u32   lkey;
+> };
+> 
+> Both types are basically the same, and the original code looks
+> pretty much like what people do when they want to pre-allocate
+> a number of elements (of the same element type as the flex array)
+> for a flexible-array member.
+> 
+> Based on the above, the change you suggest seems a bit suspicious,
+> and I'm not sure that's actually what you want?
 
-If CONFIG_COMPAT_32BIT_TIME is disabled, 32-bit targets
-only provide clock_getres_time64, so using SYS_clock_getres
-may -ENOSYS.
+You wrote about this error: "warning: structure containing a flexible array
+member is not at the end of another structure".
 
-Since SYS_clock_getres itself is provided by the libc implementation,
-I wouldn't trust that this actually means the same as __NR_clock_getres,
-and it might be set to __NR_clock_getres_time64.
+My suggestion was simply to move that flex array to be the last element
+and save us from the need to have some complex, magic macro in RXE.
 
->> If we are trying to validate the interface here, we should probably
->> call both if available. If we just want to know the result and
->> trust that both work correctly, I'd always use __NR_clock_getres_time=
-64
->> on 32-bit systems and __NR_clock_getres on 64-bit systems.
->
-> As these are vDSO and not timer selftests I think we trust the syscall=
-s.
-> But how do we detect a native 64-bit time system? The preprocessor bui=
-ltins
-> won't work as a 32-bit pointer system may use 64-bit time syscalls. I =
-am not
-> aware of the UAPI #define, beyond the absence of __NR_clock_getres_tim=
-e64.
+Thanks
 
-I would just check __BITS_PER_LONG=3D32 and require a linux-5.6+ kernel
-at runtime to ensure the 64-bit calls are available.
-
-    Arnd
+> 
+> Thanks
+> -Gustavo
+> 
+> 
+> 
+> 
+> 
 
