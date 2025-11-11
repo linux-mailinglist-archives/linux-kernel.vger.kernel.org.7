@@ -1,82 +1,65 @@
-Return-Path: <linux-kernel+bounces-895499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E12A5C4E1B5
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:29:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DEC53C4E1D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:31:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A65E53AD0E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:28:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EA5C3AD365
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:30:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3610632C938;
-	Tue, 11 Nov 2025 13:28:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C5F33370FE;
+	Tue, 11 Nov 2025 13:30:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="biphaIgi"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="JGPrZC16"
+Received: from omta40.uswest2.a.cloudfilter.net (omta40.uswest2.a.cloudfilter.net [35.89.44.39])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A7B132BF20
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 13:28:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CD44255F3F
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 13:30:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762867701; cv=none; b=NuWk/BXWkaVWT7JpNpNa3A0AHRH2tv2NoAzzsW9wOkoXEOAv6hnn/MVeSaB75IAHoiknQvGadA4Q61+hJUOTOKOvBytkBQ2ccTEeNku780PtxAmtajU12bmb4AMae3lmzhgnr3nSKwBb/UDobCj+9Rxou9LVoxWCcSKWQxIEtfY=
+	t=1762867846; cv=none; b=deeSiGT3SXkYfC/779/lPvmyzo1OmpULHrZyfaOsmea/HU8Ls+Q3DzzXOlro3G9UMOGb2qO8nEUk4rynrQv1MUlNhvcwcCihxq6B7tabRfH2gOB+70kkJMPi6Nos/k7DpUf156a8tzs4HBA2oCfDYl+MQVBW6A+8VYlUUM56Lds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762867701; c=relaxed/simple;
-	bh=Ps3gQmpslE/MDFfUlSXSWxtYwxFYzuGV/LZBPe3oXNg=;
+	s=arc-20240116; t=1762867846; c=relaxed/simple;
+	bh=v0lSqiq2sWo3T0BJrMwy11NLOv/j2DiOsf7GTvaYqaA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Vy8bE7XY0B8r99NM4ws6r8xfS+iyHBO82SOwLvGBiZW17xOOqvyMkey8j3I2PHSRqfmrMVLjArdzUQvtp97fQ3cZeZn8OruJcrZv6KIOquMX/UnHofgArj77GjN6pQvbtsqZP4k8TjPPfSa1Y1aMoGfio6SJfFPJ9iznI5DXDZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=biphaIgi; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b729a941e35so540607266b.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 05:28:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762867698; x=1763472498; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1DsffIE3Ut5DM8ko3+QK0VsDuxwCG+5a0A0i4trOLW8=;
-        b=biphaIgiFboNYxuvMrpABotpYu2XtMn4dnngVvy+3IC0mUX5a9uNosPbxdc+eL5EAm
-         zcuRXVEeW6zL7UrJ8WlsqYETPeR7+fKFO+IGmbQ+112nAtWbQvBz0KpUV9goPqLMGHRI
-         uiJ4s8iiKUtmjBwCICwQb2AHuu27/YCfGGQQRyFu2TH/URHnFKmFf1td9Vwr3OK8ZvLh
-         XbWh4G9XQrn4D60ID4Vl0tFG1OLueFI5RZjCNQYnred9mv9EYTic0wdbM/FVXOJKMAmr
-         1gNrfiUstSF8Tg6jkOM9yc3An4goiwCIcu8K5ENXx8ruWnZiPhsiIHIXHF6f32FtZqdx
-         K0RA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762867698; x=1763472498;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1DsffIE3Ut5DM8ko3+QK0VsDuxwCG+5a0A0i4trOLW8=;
-        b=kIT5tIxqr9vFekF2Sj0mwd+NzCwMxD5ChGqEs5s0HDcSzH++jpUy3X6oxRRycCKR52
-         0EVpj1xlcGtfQFBlgKCRbn/PVpWsAWI3FGOafzMUPKM9wZPgdrCAyVQ8IJ3g+idbOh5C
-         W1V6PiucaEPjkt0XabXqU47nIWE8YAYc3jo1CaeO+F9G9+3PC5Ag/sQCXDlHbjBQwubx
-         rWbIdCBvm1RIbwKWurBwcY64nSLspWf5NZPU6X0mbdlfG1jfwEJGhSOQw8iNFYMtSu0+
-         CZzasM/XQM5K/QFqDJ4udhLK+dnY0eL0hlGws+swlaxx+pVi7IwOJk2a6TfrIKOL5r2C
-         K6Hg==
-X-Forwarded-Encrypted: i=1; AJvYcCVQ5O8W3xz/jLitGt5ZbWEo8/uA37zmvfpngLiOEUSM8DECq7Sk3JPe/t7EsccCdL3C5Bb4wzW68HTsWcc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYEp8pgA1cFYSkvu4x/NN4P80lqYG+iHcXvzBA7Im/WBaJ/fVp
-	J3cZnf2ZOf/agCkLEE6yJZ+geUkdNRKe9n/wyArCJZCcUGB/17CriePw
-X-Gm-Gg: ASbGncuca5JPtRLtNt1a1Byy48Gi7JJfnejl4n2wUdh67CEy9MzIditvaJwJePAWjsZ
-	tdaw3pPBKv6YtVjq4tw4vjNuqgkkgLXX2rTs/3nrpD6nWRmdamb2z7U5wIVoJ+9j1MpiyC36knr
-	BtjAFy3xIFUTN1sFde4F/OprruwAsjtvNoeU+TgGy/Y5addOIn4O308QLJpiMRat9vIcF9iSl8g
-	4zcQrpuVUPITA3QKEsWKRHTr3ED7UKY03Bblwz+/ulE2faJ+cvbqTkM8NfsOhjSFUiBKUGulS2C
-	tTVs3wZc1pp1A0LyyJVuoP7ucqLotXYRwnSf9TCA0lwEtv0xnthai1u6d2DZXPFvtg7m0Cs8izW
-	xv0p5ze4WmRpaICmzMwCV3PSL//Rfvypl/VESJFjxF86vi7FHWbt3grWPcacjUSgI7S8brdUi7q
-	M3EPx0J1fb2j4nAIoczZ9jjJPl9WOwlVmf+43HdH4wadWKljoQGybkKhcdnt/N7Q/23rRln741/
-	h0b6DeeJCYUKA==
-X-Google-Smtp-Source: AGHT+IF5Dj1MIXDn+W74uXHIewjQZN4zVvvvgRaDGdjD9YPnaJjpUwWG1pTssah7cODBcp1Kuh1Rkw==
-X-Received: by 2002:a17:907:7b96:b0:b72:b495:827a with SMTP id a640c23a62f3a-b72e041274amr1311048866b.38.1762867698259;
-        Tue, 11 Nov 2025 05:28:18 -0800 (PST)
-Received: from ?IPV6:2001:9e8:f12a:4201:6800:ff88:97b6:8eae? ([2001:9e8:f12a:4201:6800:ff88:97b6:8eae])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bf9be184sm1334911266b.56.2025.11.11.05.28.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Nov 2025 05:28:17 -0800 (PST)
-Message-ID: <0c77dc63-7e85-4085-b48d-1885aa52bdd9@gmail.com>
-Date: Tue, 11 Nov 2025 14:28:16 +0100
+	 In-Reply-To:Content-Type; b=fcCpK5ocQ2bT/ZZBGkDDorBJUCnMoS41J2YOmSg5xQ3j+2h0jb3fr7atyB5g+FP+4iRhY2szdk32xD29arfdNPReyj7fXnme7WViAJXugFR13N7CyShbE0NzFCXsd40z33AJTSwSHVdrTJKLO4WrWumo5MX0ESet9iuNc9w6F+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=JGPrZC16; arc=none smtp.client-ip=35.89.44.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-5007b.ext.cloudfilter.net ([10.0.29.167])
+	by cmsmtp with ESMTPS
+	id IoMEvK0p2aPqLIoQmvsV6h; Tue, 11 Nov 2025 13:29:09 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id IoQlvNoDQFPddIoQmv89C6; Tue, 11 Nov 2025 13:29:08 +0000
+X-Authority-Analysis: v=2.4 cv=OphPyz/t c=1 sm=1 tr=0 ts=69133a24
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=F0GicbU7tRTSLTLZ85HXVw==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=7T7KSl7uo7wA:10 a=VwQbUJbxAAAA:8
+ a=xLSupZCTIYbk7TSy1gAA:9 a=QEXdDO2ut3YA:10 a=xYX6OU9JNrHFPr8prv8u:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=2jv3T9IIY8maauDuJooEDt1SGO1tZAtuNsKX38mdNHc=; b=JGPrZC1615NoUm7gtzKIIF1KUm
+	rrGWTn+p4TOVknZ4HeAh3LLf6Cew9qfVW+wks3oWWnCbLCQZn554+g1E0msGJFuDgoqFV465QuFx6
+	O/RnzAiJlRPxwATGcvAi/FiGBWF66KtKmAZM1APPh8ESaURWjP7krDZoQiGDbFk3cMa2fgb6+Kg4U
+	MDsdHPYQrRpXznDesHfjH64y8eRZHTYAbBDb5W7soSFXTSaWt101UEEYE6EHXnpAXhwLD3gnV3BKw
+	wLD/gz0AakCkFD42AXlErqQaR92Fb28AcBLtcbRgOS3w8BPSPzTuexIM4hvCKONkpA7+oBD9X8zM7
+	Wbg0uk+A==;
+Received: from m106072098064.v4.enabler.ne.jp ([106.72.98.64]:32830 helo=[10.221.86.44])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1vIoQl-00000000cju-1tgA;
+	Tue, 11 Nov 2025 07:29:07 -0600
+Message-ID: <a956504a-55af-4c2c-95a0-15663435624a@embeddedor.com>
+Date: Tue, 11 Nov 2025 22:28:57 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,53 +67,113 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 1/2] dt-bindings: gpio: add gpio-line-mux controller
+Subject: Re: [PATCH][next] bcache: Avoid -Wflex-array-member-not-at-end
+ warning
+To: Coly Li <colyli@fnnas.com>, "Gustavo A. R. Silva"
+ <gustavoars@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org
+References: <aRHFchrO3BmVMH5c@kspp>
+ <7g2dkwi2nzxe2luykodsknobzr5bkl23d5mbahkyo7adhg55oy@6uisoc7jzgy6>
 Content-Language: en-US
-To: Rob Herring <robh@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Peter Rosin <peda@axentia.se>, Geert Uytterhoeven <geert+renesas@glider.be>,
- linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Thomas Richard <thomas.richard@bootlin.com>,
- Conor Dooley <conor.dooley@microchip.com>
-References: <20251111092705.196465-1-jelonek.jonas@gmail.com>
- <20251111092705.196465-2-jelonek.jonas@gmail.com>
- <20251111125716.GA2560355-robh@kernel.org>
-From: Jonas Jelonek <jelonek.jonas@gmail.com>
-In-Reply-To: <20251111125716.GA2560355-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <7g2dkwi2nzxe2luykodsknobzr5bkl23d5mbahkyo7adhg55oy@6uisoc7jzgy6>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 106.72.98.64
+X-Source-L: No
+X-Exim-ID: 1vIoQl-00000000cju-1tgA
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: m106072098064.v4.enabler.ne.jp ([10.221.86.44]) [106.72.98.64]:32830
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 2
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfFF1X/835CIS82zz73I2xkzA+N9MXjMI34OzWIXPZpWU8vuRbb89FMhSwPQ0Khrtb42+HhF82+VVzAxVzrpEFv5Eyxoe0+9Meq0Ed5pfgsQO6TinaFef
+ SVb9Qr+eJletZ04Q06vGiJyLt/jVGI2BcSnsTJzK9qudxw1KaPHFNi0DzwuMslcqRP1zTEFe+W06n0xFbPnF4xU7t07ENDxkIMMpxniC43fxtx60PfZYTbTf
 
-Hi Rob,
 
-On 11.11.25 13:57, Rob Herring wrote:
-> On Tue, Nov 11, 2025 at 09:27:03AM +0000, Jonas Jelonek wrote:
->> +    maxItems: 1
->> +    description:
->> +      Phandle to the multiplexer to control access to the GPIOs.
->> +
->> +  ngpios: false
-> No need for this.
-(...)
->> +        gpio-line-names = "SFP1_LOS", "SFP1_MOD_ABS", "SFP1_TX_FAULT";
->> +        gpio-line-mux-states = <0>, <1>, <3>;
-> gpio-line-names is defined to have an entry for all lines. So 
-> gpio-line-mux-states is not necessary. You can just do:
->
-> gpio-line-names = "SFP1_LOS", "SFP1_MOD_ABS", "", "SFP1_TX_FAULT";
 
-Not sure if I'm getting this wrong, but this ties the GPIO line index to the
-multiplexer state. Is that still the correct way if my multiplexer needs
-states '15', '17, '18'? Then I would need something like this:
+On 11/11/25 22:17, Coly Li wrote:
+> On Mon, Nov 10, 2025 at 07:58:58PM +0800, Gustavo A. R. Silva wrote:
+>> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+>> getting ready to enable it, globally.
+>>
+>> Use the new TRAILING_OVERLAP() helper to fix the following warning:
+>>
+>> drivers/md/bcache/bset.h:330:27: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+>>
+>> This helper creates a union between a flexible-array member (FAM) and a
+>> set of MEMBERS that would otherwise follow it.
+>>
+>> This overlays the trailing MEMBER struct btree_iter_set stack_data[MAX_BSETS];
+>> onto the FAM struct btree_iter::data[], while keeping the FAM and the start
+>> of MEMBER aligned.
+>>
+>> The static_assert() ensures this alignment remains, and it's
+>> intentionally placed inmediately after the corresponding structures --no
+>> blank line in between.
+>>
+>> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+>> ---
+>>   drivers/md/bcache/bset.h | 8 ++++++--
+>>   1 file changed, 6 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/md/bcache/bset.h b/drivers/md/bcache/bset.h
+>> index 011f6062c4c0..6ee2c6a506a2 100644
+>> --- a/drivers/md/bcache/bset.h
+>> +++ b/drivers/md/bcache/bset.h
+>> @@ -327,9 +327,13 @@ struct btree_iter {
+>>   /* Fixed-size btree_iter that can be allocated on the stack */
+>>   
+>>   struct btree_iter_stack {
+>> -	struct btree_iter iter;
+>> -	struct btree_iter_set stack_data[MAX_BSETS];
+>> +	/* Must be last as it ends in a flexible-array member. */
+>> +	TRAILING_OVERLAP(struct btree_iter, iter, data,
+>> +		struct btree_iter_set stack_data[MAX_BSETS];
+>> +	);
+>>   };
+>> +static_assert(offsetof(struct btree_iter_stack, iter.data) ==
+>> +	      offsetof(struct btree_iter_stack, stack_data));
+>>
+> 
+> I have to say this is ugly. Not the patch, but the gcc 14 warning option
+> of such coding style. Look at TRAILING_OVERLAP() usage here, this is not
+> C, this is something to fix a gcc bug which cannot handle FAM properly.
 
-gpio-line-names = "", "", "", "", "", "", "", "", "", "", "", "", "", "", "A", "", "B", "C"; 
+This is not a GCC bug.
 
-And it would cause the virtual GPIO controller to provide more GPIO lines than
-desired/expected/needed.
+> 
+> Gustavo, this complain is not to you, just I feel a bit sad how GCC makes
+> the code comes to such an ugly way, and it makes things much complicated.
+> For anyone doesn't have deep understanding of TRAILING_OVERLAP(), I
+> highly suspect whether he or she can understand what happens here.
+> 
+> Andrew and Gustavo, is this a mandatary to fix FAM in such way? If yes
+> I take the patch and keep my own opinion. If not, I'd like to see gcc
+> fixes its bug, for the this code I don't see the author does things
+> wrong.
 
-> Rob
+This is a false positive that needs to be addressed in some way in order to
+enable -Wflex-array-member-not-at-end in mainline.
 
-Best,
-Jonas
+Here you can take a look at the patches I (and others) have submitted to
+modify similar code over the last year:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/log/?qt=grep&q=-Wflex-array-member-not-at-end
+
+Thanks
+-Gustavo
+
+
 
