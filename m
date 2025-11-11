@@ -1,103 +1,97 @@
-Return-Path: <linux-kernel+bounces-896086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 269DBC4F9BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 20:29:02 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id E213FC4F9C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 20:30:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 571A03BABFD
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 19:27:48 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F0CCA4E2AD5
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 19:30:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 832C5327200;
-	Tue, 11 Nov 2025 19:27:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D915326D5C;
+	Tue, 11 Nov 2025 19:29:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nQu0sUR7"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jIO2W4Ot"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F10B3271E2
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 19:27:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B866A325712;
+	Tue, 11 Nov 2025 19:29:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762889235; cv=none; b=U2ViNIfk/rwNlTh3kMVP4VmhueaX+x/UQJZFZFlubF/ybqV+e8BkBEW//5/1f43GAmzX8G5LWP+n3hoGxdtkuRF8sHoGw/1BMcq5Mx3VkD8D57sJzmHNLBNI4xOmQnOOJwJ3IU+63j4mIBQht+Nnx99DejMAWs5dPklBxtiJ0+Y=
+	t=1762889396; cv=none; b=K/PArSr8VJVJb3WsopnDB+s/aoC5q3sweeeABnpaxdG9Bt856s4i0J+tTvlvZVIKUX2z2RrzyQpIgmjzKSZ/BGunGtnKi9aSz+IVmPxpNuLNy4mg1Ar2RzPw4N/FIU6HblcUqdPG60eTTGUnxZBB6Lf1TJcW4lQY2/ldAgXQXoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762889235; c=relaxed/simple;
-	bh=T4q4eI/PjUjqDPpGU0Tf2NYnENnLstWCYa50yyn4bPo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=t2v1SdbeCRPnIAPqODcCtg3SqGsedLfQ5ykggviesk5r1K+D8fbgAK4H0K3Q+HcitPiHxLpgHpCnSl1Vg6P+IENv8V7y9Jy8JlgqMcMvcxZ1rp09wUiC1zLnVMyR3sZzm56uuVCDRRRBo3cYrwl84G6zyrlqQGIj1TZZrsemgZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nQu0sUR7; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-594516d941cso60401e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 11:27:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762889231; x=1763494031; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=T4q4eI/PjUjqDPpGU0Tf2NYnENnLstWCYa50yyn4bPo=;
-        b=nQu0sUR7DB7tDzowR5qZobA4FUDiRlSpO6wWrJ6ejebQBijIGVgMizvWluGbRYGHrI
-         MmpeIczgC/b9cTkdMIGSud/jVbR5GCP8rm/tsVg5eGBvOPLYD5kCr4F17bkv4PsHxc4E
-         LIAotl/MOOd9P5dPuSxOpUGTIPl49BCyvxtwP4WnvB3wHKbxJrK2ObYjyNfkKn7pSGW7
-         7VzU781J9WU/MYo6jEzuR+W6p88/KcfcXEO/y09pPmbHuh7Yg53jk05HcVW6YZdNocE6
-         a2VKZkaCz/xB8LEI15xi9Kqmy1haib4TfKy4aYVXuhbN2VEWOuJI2mAEE8wVACSaSkWB
-         RCGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762889231; x=1763494031;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=T4q4eI/PjUjqDPpGU0Tf2NYnENnLstWCYa50yyn4bPo=;
-        b=UkdrWz/ahZ1Pvp2nQ8BKxiWpbCi8lCeFUixcJNQ1XxA2xSOjyNAXePHWdOuW6SRlpi
-         Oyiq5sibljNc5LKeYYgyzwyug3uhmMi10u2rIGepkaUMUHFqhhslD0tmXs+E2/laia5Q
-         bgTLUcBK6lfRvEwwJNOXjBB0ufe/lw8LLo56y9l5zRgcD0rmDLfibIQgmM7wnSEUFKLS
-         kqh/oTk2RHxoBXSlre+ufKYWlOoAJHDb765c7CHtZWs5jo0sE1SgUt01MxSrwQB3O+gc
-         Zpi8nPGvWAV0sR1S2w7IYag6w9k2ZJCIqjJWpvbXxluhlY8LK8gL7LJ0LHIn0AMYXNqb
-         HLIg==
-X-Forwarded-Encrypted: i=1; AJvYcCWsXHrI82I/7yD2oLWrJGxDotP/nCgDthPnYIscAdem7t1zKNk4CjVTFFIl9sjs8X4Y0igo+2JlWJiPu4Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxpao/LPc3x8W3xYaKBNEv+zgeYTb+luL1NbfXO0yHw/un1HS4x
-	/FOQQMwb9AjUQeJA0/STmiI/F/rZ/piWLcHrsaH2PBG/eCQHjbGdjVJa3vZjx3uXW9luwXhu78U
-	JJP6R4SKhGcjV5Ve6xCpzkCgmPzje24Sy0yMkrJUQ
-X-Gm-Gg: ASbGncsIYyPsf/3Opg8wFgH/VWhOQyQ21jvgYhTAI/OaoFFcMIZY80UkeokO5rtZTpM
-	fIvyqAvTbCIA8pa10HNm4PlpyYldUybVasb2PsLCtdEo3KCVi7vWWai1/YUApUqVKPhkUH1EQXs
-	KCEN3232lS9SHHoZr7HfNR7vDKw34egwoSbKUkQw9CCcpBxQX13bTglAZLYxGacpEdIjZnKsMtM
-	QG8sqO4SOO9xKij9Hf8VNt/Sqaeh/oF5yqcpab7Qzs2UisOb6Zqn1Ljxy1W/yHRBSWnfRfHZB5K
-	XwoLcA==
-X-Google-Smtp-Source: AGHT+IFsoUNsZKjerOV56G4XYKfZyWvAntKSJGGhk3vCYo0YWbEwNmd5TjSqbsr3l2nPJ1TiKUWXTC0bT2qotuyukbQ=
-X-Received: by 2002:a05:6512:230a:b0:594:750e:1f53 with SMTP id
- 2adb3069b0e04-59576e13618mr100574e87.25.1762889231088; Tue, 11 Nov 2025
- 11:27:11 -0800 (PST)
+	s=arc-20240116; t=1762889396; c=relaxed/simple;
+	bh=QEQRyRtbWV2VK7CgqH0yvvXph5ozEnh5UmyQPeLfVak=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IEFii/h3LxwbJCa80QPDqDy7Fw5KNx5yykLve58OCPLONJUvrAb1G1o8QGtxIqwi8uIK9kAo0RT0TWaDzBp/OVmeyLR4i1WDi9oxxjra/vXxzQOkUHz8Z/SmJRy1kGsFm5wtpgihiPJ1RaERJ5JpT1uNb1QUN/9BJ0d/DkNW1+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jIO2W4Ot; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFAC0C4CEF7;
+	Tue, 11 Nov 2025 19:29:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762889396;
+	bh=QEQRyRtbWV2VK7CgqH0yvvXph5ozEnh5UmyQPeLfVak=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jIO2W4OtgKY8Tu7AnSbQwCcBHruQkERn9khHXG5ZP9BkFDGtNiLrOEt8qgyIIiS7a
+	 Q16FiKtsbrCwHX4c6inNBoli/nGF3K6U6ryZF3NIk9W8U1qYo0T1YPfshZZ2QqU55q
+	 ctougBfuUO26wUOAEkGD+cvECce2Qv4IaLwvlKNUFbtS0oZnkAx13sdupkf+VvVEUA
+	 0dxzWNpdDA26tHFOfz2apRmUjhcPUkqmpkuV64/xyVFdd7+LHkKJpBKSSKTaSllMEe
+	 OuLl0gVinFmgCF44b6Db5HkTbX9yBV4Y7lTY63mi5MTmcVncvrgHL3hS3GjWnBcAtr
+	 O8cu7OLX4j1AQ==
+Date: Tue, 11 Nov 2025 11:28:15 -0800
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-crypto@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
+	"Jason A . Donenfeld" <Jason@zx2c4.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	linux-arm-kernel@lists.infradead.org, x86@kernel.org
+Subject: Re: [PATCH 0/9] POLYVAL library
+Message-ID: <20251111192815.GA1748@sol>
+References: <20251109234726.638437-1-ebiggers@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251111-iova-ranges-v3-0-7960244642c5@fb.com>
-In-Reply-To: <20251111-iova-ranges-v3-0-7960244642c5@fb.com>
-From: David Matlack <dmatlack@google.com>
-Date: Tue, 11 Nov 2025 11:26:43 -0800
-X-Gm-Features: AWmQ_bn4dxVx1lBNbH8PWoRfGDh1pL7JrgTYZHIYTl7d2EJCVBbNB8Ju5ASDoi4
-Message-ID: <CALzav=cmkiFUjENpYk3TT7czAeoh8jzp4WX_+diERu7JhyGCpA@mail.gmail.com>
-Subject: Re: [PATCH v3 0/4] vfio: selftests: update DMA mapping tests to use
- queried IOVA ranges
-To: Alex Mastro <amastro@fb.com>
-Cc: Alex Williamson <alex@shazbot.org>, Shuah Khan <shuah@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>, 
-	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251109234726.638437-1-ebiggers@kernel.org>
 
-On Tue, Nov 11, 2025 at 10:48=E2=80=AFAM Alex Mastro <amastro@fb.com> wrote=
-:
->
-> Changes in v3:
-> - Update capability chain cycle detection
-> - Clarify the iova=3Dvaddr commit message
-> - Link to v2: https://lore.kernel.org/r/20251111-iova-ranges-v2-0-0fa267f=
-f9b78@fb.com
+On Sun, Nov 09, 2025 at 03:47:15PM -0800, Eric Biggers wrote:
+> This series is targeting libcrypto-next.  It can also be retrieved from:
+> 
+>     git fetch https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git polyval-lib-v1
+> 
+> This series migrates the POLYVAL code to lib/crypto/.  It turns out that
+> just like Poly1305, the library is a much better fit for it.
+> 
+> This series also replaces the generic implementation of POLYVAL with a
+> much better one.
+> 
+> Notably, this series improves the performance of HCTR2, since it
+> eliminates unnecessary overhead that was being incurred by accessing
+> POLYVAL via the crypto_shash API.  I see a 45% increase in throughput
+> with 64-byte messages, 53% with 128-byte, or 6% with 4096-byte.
+> 
+> It also eliminates the need to explicitly enable the optimized POLYVAL
+> code, as it's now enabled automatically when HCTR2 support is enabled.
+> 
+> Eric Biggers (9):
+>   crypto: polyval - Rename conflicting functions
+>   lib/crypto: polyval: Add POLYVAL library
+>   lib/crypto: tests: Add KUnit tests for POLYVAL
+>   lib/crypto: arm64/polyval: Migrate optimized code into library
+>   lib/crypto: x86/polyval: Migrate optimized code into library
+>   crypto: hctr2 - Convert to use POLYVAL library
+>   crypto: polyval - Remove the polyval crypto_shash
+>   crypto: testmgr - Remove polyval tests
+>   fscrypt: Drop obsolete recommendation to enable optimized POLYVAL
+> 
 
-All tests are still passing on v3 for me.
+Applied to https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git/log/?h=libcrypto-next
+
+- Eric
 
