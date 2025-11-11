@@ -1,223 +1,270 @@
-Return-Path: <linux-kernel+bounces-895396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03E5FC4DA83
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:25:27 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B69CC4DB81
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:28:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43D613AA77D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:22:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F076E4F966A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:23:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 833CD358D04;
-	Tue, 11 Nov 2025 12:22:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 460AF2EBB87;
+	Tue, 11 Nov 2025 12:23:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="pOiyXfTS";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="MJ7GEwXi"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="FOgq18Vl"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD0A535773F
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 12:22:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8EB71E1A05;
+	Tue, 11 Nov 2025 12:23:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762863744; cv=none; b=vGoDUgzGxawp6FC6+KJydeaSdTwQKIiq02MvFubPEdGSsOSKBmfAloIL/4hAGkbkUWOv0Iyp99rP80Sw34eSJRYzaY6vDL6SBNWcywVJsdXR7TCZ9Rr91Yut+yIvp8vLrJY0LliI2ixsO7SCyd00CnO9zyidgWWnKbRQmZObozg=
+	t=1762863793; cv=none; b=QAYqtgQKn3jSzzsjEHXC3oxNmjCLMui4+wZGFoayXNRCmXJQJqui4Tx1vlouM5/kuqIuqCsm7O+4oV4RYBZEI4D74N/0lMbJIB080ySxFZbj6uq96ZtY6VCn5s2Ze3t3bdSPSboFsbOFqSedclFnQVA1gVLx1/NpZa8IDkfCH7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762863744; c=relaxed/simple;
-	bh=uMxXOjJXaWW5Jx0Nm2V04BCLZlkXJIu5lhGx0yBPCag=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oNjPi9aPyMsXd8OWZWzhrCxW6vkiZ4t+0Eb3034MpRSORVUiUgRFmIl/yNXe1eyMsi7YafCimlIjIlk+B6GqIOOUV8TCNEzT/HqgZBfl4QxaeaKvPIVH9+Cr2AkoxPe3x986D/RxxG0VNRr6yzIpMDCoe0idy+zfU4V1ITyOuC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=pOiyXfTS; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=MJ7GEwXi; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5ABBGYZb2231957
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 12:22:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=h8DUvR1H6dSsGWPpCOhKkZ2y
-	qS1zJBTq22Qwh3D/TRE=; b=pOiyXfTS4T80C9spBigWSNNHyC+MAApS9mtn03Xr
-	TkadIToCC9c01KmX65m9g+1i7iIJ7XfW9dGhcSZcYnyxLl3O9X3LdkHVsrh7xMU1
-	mKT3SDO3Fia3ohYjL12Xi4Gb6N6AFiy61zdF6dkptdx8x/Bq3Ni+ouvfXp8ttt3S
-	ifhPKNYphh84/LWarDEUabz3e6lQ/vOIS47t1nvuDDsc1h52SLA1Hr+y03uSA2sv
-	p4EQLxOKZ4GirWg7KNFjp026XcYwAb4l9ZSPIDFsUnusigwuln7OMX7URPCJauIQ
-	qF1rJmJQFyApPTLCvNxSpEB4+bCuPo4XBJwMvR8D8yDQwA==
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4abkwsax6q-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 12:22:21 +0000 (GMT)
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4ecf9548410so116419561cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 04:22:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1762863741; x=1763468541; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=h8DUvR1H6dSsGWPpCOhKkZ2yqS1zJBTq22Qwh3D/TRE=;
-        b=MJ7GEwXi1L1Ky3brHunRcJH8JSuNMCW5xkWLr35ALoDUD+B0OVD5Min4eE+wv34u95
-         7S0oiFxc5xcV8dTqqlZ3OcoCyhBsj0Su/6yYOvI/6ZTv22fZG7hXT9mjGt004F73D0xt
-         /gPxGmJYnY7zcdC5JxU1pBV2Hx9UWq6HTQGMbyf96KhzVPUzOYB92Mun44uiUxw/zCEp
-         vYIeFsfppx3CTHQynHAjG0uZSL9W3MmtpEKhQjwI73cQ0rxTcrCJZpH7R8BVruLjJK0+
-         AwlHFld4K8vcg3aH8OYJ2/bg+vzqY0BwPaBBBkOXBnHSs5tFMEM8eO9D6xGTNHFPHsE3
-         Ubsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762863741; x=1763468541;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=h8DUvR1H6dSsGWPpCOhKkZ2yqS1zJBTq22Qwh3D/TRE=;
-        b=Cq2H/NJ1vHFyn2oXlAJJmhvRCgfPqtWM68W6OVHRUfcMQSX13YnGq79KY41G2uF0jf
-         BwUFqopXMgsESNKhiOX3OXGadUmesE+Zn5uoAvn3KamuQPGe6fDcjhxVeYbJGV9JN6hU
-         c8pjo7DYMmguvPE119u6VvjMUEgL/DnNTqbCHz6xAoztG4b6rUtx9ve8ECBS7FNIJnhV
-         8AIutbxJY/fwTsKBO7IWnPURug6ppXskjiSf6TbaG4g4lTjG4vWcwLqTY1F5egA7yGpt
-         ZrOY96hDnumFunzL8qJAE0KiNHo4YzHopxenT17jXHktSLeG9vO78DYqtxo8qr4R2w3c
-         ir/g==
-X-Forwarded-Encrypted: i=1; AJvYcCUzZf+rzupM70acuTxS6/JRc67cuWKLqMuSz+e4wRRpLBPu4EsB6qBoO6F5WJiXli+Xe/JvfLdBNqmtm9Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwexFBIOEbwTE4l1IX0jww2jfn8PDyev504q0sBh4izAnq7o/Gd
-	Zk006nzu+Ud6PNplBcUtqR4OMFot1t9rRPjcNVzHYNVL8SVNqgEtY/b6OqlQFdFUc89vC6w3XV1
-	/cB9NtAlnrFwYM13ksyNPtffyNNy3jxx8y2XErcAo5TcAMY3kuxiaj+XAB5wrG0is7mM=
-X-Gm-Gg: ASbGncu2ZTw7CbrtHkJYjMRWmgbJpLqxMMB4UnXB13uyfX0+TwLwN9ydL430pi2ulWC
-	D6MsrXaeo+sJnGcC9i5e1RXOvvSaj/V2y9uovdFsfX5QlXaygOf3gfZKHCwpCC+4aG+AzB8VRnv
-	0ssbN8EV3Lmbu52dvSA2FVpZzkLQxKZEiCzSlUbo8dAyt/9uwDstxPWDQeRsttusTDEMFK7k1ul
-	YrhhtVDyCPSoU5TezzKq9R5yVoNsYwYCtgea3yg2+ufcVuTmsIfwJEIu5rb1EAs3CfV1exkOU5z
-	NdoRG9mVmq6bNwSw6RDcGwfwkiY6sxQ8UUSFdRNeX2Hqd5DNoKSEq2aEX4dzlQxvrHEFCaaXd8E
-	jigxRljqyIsPyUHpfLH6GhmfRLzwRLzBiJ7WycU8WvMsoQK5b9YRqErbc/Pp2J8p8qFjpUOfs8m
-	BB/AGFI/IuMsqU
-X-Received: by 2002:ac8:5808:0:b0:4ed:b06b:d6a5 with SMTP id d75a77b69052e-4edb06be774mr109131221cf.4.1762863740897;
-        Tue, 11 Nov 2025 04:22:20 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHqlE6SPjHtKXlVAFeEPtooYjb0zreq0QgU5VB8K6LLCKt/01Nkgp4mrx5FBdtNHHl5wrpKww==
-X-Received: by 2002:ac8:5808:0:b0:4ed:b06b:d6a5 with SMTP id d75a77b69052e-4edb06be774mr109130881cf.4.1762863740423;
-        Tue, 11 Nov 2025 04:22:20 -0800 (PST)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5944a019f8fsm4832974e87.33.2025.11.11.04.22.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Nov 2025 04:22:19 -0800 (PST)
-Date: Tue, 11 Nov 2025 14:22:17 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Pavan Kondeti <pavan.kondeti@oss.qualcomm.com>,
-        hrishabh.rajput@oss.qualcomm.com,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH v5 1/2] firmware: qcom: scm: Register gunyah watchdog
- device
-Message-ID: <zbwcg5pkdspkcnvaitac6y5iko346qyuzuipqhkoedcaqm2dpa@zmszuwhm5q7z>
-References: <20251107-gunyah_watchdog-v5-0-4c6e3fb6eb17@oss.qualcomm.com>
- <20251107-gunyah_watchdog-v5-1-4c6e3fb6eb17@oss.qualcomm.com>
- <hbxtbaoavlsw7pbmg3cfkbyx4nacjfiikckhqgpvlggbh6hu5b@jyporqecfzni>
- <263d1390-eff5-4846-b2c2-31f96fc3248e@quicinc.com>
- <3794bb0e-5e2c-4d5e-8d81-d302fa36677c@quicinc.com>
- <56aqammkwte3tcdzni2unufjp4t4yaqazzdkigrwqsxp3ghcqe@ppe2pjwg3hrl>
- <60583236-692f-4605-9f56-f7dadb46558d@kernel.org>
+	s=arc-20240116; t=1762863793; c=relaxed/simple;
+	bh=ab9Tx7OdaNNwimnpgR7WLe8oFQGeeCXeqmmfh0669Zk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DAgZyxDV9XbAcm3mWqqKRRFG7zxcI+SuW+fV3CxhCFWrMMZy+NqPTMX7RgePng4g1hmyzZwAs8Zq+gbGwDe6ciH7rqt/Qrs8E4TN0AK7HRcvHNqq1dYwBwcxxsdjnjsZDnLAqeYgsbj9QLiQnFz8s1IreO24WizMX0v3lJUCJOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=FOgq18Vl; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id D4F1C741;
+	Tue, 11 Nov 2025 13:21:09 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1762863670;
+	bh=ab9Tx7OdaNNwimnpgR7WLe8oFQGeeCXeqmmfh0669Zk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=FOgq18VlmJ5UwZTFBgtQwXt8wPw9ptq2e7EOI/4SOcCpVyQrZ/36udHil0mW7Yr/G
+	 6CKrFxllwvrm6wGSN1kdtWNJp8j1KZp71x5wIRKDxc9LBytE7YErycu8nnIopx12jg
+	 fCuE6aDlpBXeQpo1Sma2nV4SFlehSTkR0YAwE/J4=
+Message-ID: <c5ab80df-0d60-4984-ad21-7dd1182b990f@ideasonboard.com>
+Date: Tue, 11 Nov 2025 14:23:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <60583236-692f-4605-9f56-f7dadb46558d@kernel.org>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTExMDA5OCBTYWx0ZWRfX6L4wHRVOzd48
- k1oZGQIzKUbYaAvu3Ia1MIhs1Gr5Tvp60toRIfn2di2r/daXzbsTQIwN/sYiH82DN+1QCxbX5GG
- CZy0lSZ+Dzdhg+1G3lmwPHiyhWAGwtYykxUzh2SwHbVj8gR4bBmiP9S7LcscAPvDxnBZZ0wmnfW
- 5mwzg9Rs842FCCcmZvdtoikKS5plRYTVadj2sa24r8FBlJSPvJ6mZAr3vpbtq1GSOAr20qMTWLe
- Z1bMdzOfXnfU3yJy96eu3smt2mm1biSo9wptG7aFpolZGrFEHWUhF2g01zpf5iC1EKKUuMRUdsL
- iWVAa/iKCRZBZ53KENH6Kpmqsgtq1/G4X1jLBMpOiR1/f6cY3OcV79LBP7THmYkSu+uoWkDA34M
- 0KKQT8vF55JexCaNOmBcOWzT2VVX1A==
-X-Authority-Analysis: v=2.4 cv=Vosuwu2n c=1 sm=1 tr=0 ts=69132a7d cx=c_pps
- a=WeENfcodrlLV9YRTxbY/uA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=mhC3O9B1GX6jFu3mhFkA:9 a=CjuIK1q_8ugA:10 a=kacYvNCVWA4VmyqE58fU:22
-X-Proofpoint-GUID: BuD-z16oFaoC6d9nW95vGoZa4hzY6mwD
-X-Proofpoint-ORIG-GUID: BuD-z16oFaoC6d9nW95vGoZa4hzY6mwD
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-11_02,2025-11-11_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 adultscore=0 clxscore=1015 priorityscore=1501
- suspectscore=0 spamscore=0 impostorscore=0 malwarescore=0 phishscore=0
- bulkscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
- definitions=main-2511110098
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Revert "media: vsp1: Add underrun debug print"
+To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ Duy Nguyen <duy.nguyen.rh@renesas.com>
+References: <20250910-rcar-vsp-underrun-revert-v1-1-2fa8d3b1b879@ideasonboard.com>
+ <176286282930.2141792.17722042639840544380@ping.linuxembedded.co.uk>
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Content-Language: en-US
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ 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
+In-Reply-To: <176286282930.2141792.17722042639840544380@ping.linuxembedded.co.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 11, 2025 at 11:41:51AM +0100, Krzysztof Kozlowski wrote:
-> On 11/11/2025 11:34, Dmitry Baryshkov wrote:
-> > On Tue, Nov 11, 2025 at 10:51:43AM +0530, Pavan Kondeti wrote:
-> >> On Mon, Nov 10, 2025 at 09:43:53AM +0530, Pavan Kondeti wrote:
-> >>> On Sat, Nov 08, 2025 at 07:26:46PM +0200, Dmitry Baryshkov wrote:
-> >>>>> +static void qcom_scm_gunyah_wdt_free(void *data)
-> >>>>> +{
-> >>>>> +	struct platform_device *gunyah_wdt_dev = data;
-> >>>>> +
-> >>>>> +	platform_device_unregister(gunyah_wdt_dev);
-> >>>>> +}
-> >>>>> +
-> >>>>> +static void qcom_scm_gunyah_wdt_init(struct qcom_scm *scm)
-> >>>>> +{
-> >>>>> +	struct platform_device *gunyah_wdt_dev;
-> >>>>> +	struct device_node *np;
-> >>>>> +	bool of_wdt_available;
-> >>>>> +	int i;
-> >>>>> +	uuid_t gunyah_uuid = UUID_INIT(0xc1d58fcd, 0xa453, 0x5fdb, 0x92, 0x65,
-> >>>>
-> >>>> static const?
-> >>>>
-> >>>>> +				       0xce, 0x36, 0x67, 0x3d, 0x5f, 0x14);
-> >>>>> +	static const char * const of_wdt_compatible[] = {
-> >>>>> +		"qcom,kpss-wdt",
-> >>>>> +		"arm,sbsa-gwdt",
-> >>>>> +	};
-> >>>>> +
-> >>>>> +	/* Bail out if we are not running under Gunyah */
-> >>>>> +	if (!arm_smccc_hypervisor_has_uuid(&gunyah_uuid))
-> >>>>> +		return;
-> >>>>
-> >>>> This rquires 'select HAVE_ARM_SMCCC_DISCOVERY'
-> >>>>
-> >>>
-> >>> Probably `depends on HAVE_ARM_SMCCC_DISCOVERY` is correct here.
-> >>>
-> >>
-> >> Dmitry / Bjorn,
-> >>
-> >> We are debating on this internally on how to resolve this dependency
-> >>
-> >> - QCOM_SCM depends on HAVE_ARM_SMCCC_DISCOVERY which means restricting
-> >>   QCOM_SCM compilation than what it is today.
-> >>
-> >> - Adding #ifdefry around arm_smccc_hypervisor_has_uuid usage in qcom scm driver 
-> >>
-> >> - Adding stub for `arm_smccc_hypervisor_has_uuid()` which is not done
-> >>   for any of the functions defined in drivers/firmware/smccc/smccc.c
-> >>
-> >> We are trending towards the first option above. Please let us know if
-> >> you think otherwise.
-> > 
-> > The same as before: 'select HAVE_ARM_SMCCC_DISCOVERY'.
+Hi,
+
+On 11/11/2025 14:07, Kieran Bingham wrote:
+> Quoting Tomi Valkeinen (2025-09-10 08:26:43)
+>> This reverts commit 1dc30075fb0fe02b74b1ea7fd1c1c734a89f1448.
+>>
+>> There have been reports of lots of underruns happening on earlier
+>> generation SoCs (M3, E3) with display use cases, e.g.:
+>>
+>> vsp1 fea28000.vsp: Underrun occurred at WPF0 (total underruns 1)
+>>
+>> but the display still working fine, and reverting the above commit,
+>> which added underrun prints, makes the prints go away (obviously).
+>>
+>> I made some tests on a remote M3, with no display connected, and I can
+>> confirm that there seem to be a single underrun report quite often when
+>> enabling a display, and an underrun flood when using interlace display
+>> modes.
+>>
+>> E3 does not have interlace display support as far as I can see, so the
+>> interlace issue does not concern it.
+>>
+>> Debugging display issues remotely without a display is quite
+>> challenging, and I did not find any issues in the code, nor could I find
+>> a way to stop the underruns by twiddling with the related registers.
+>>
+>> My pure guess is that the single underruns occurring when starting the
+>> display hint at either a startup sequence issue, or some kind of initial
+>> fifo loading issue. The interlace underruns hint at a bigger
+>> misconfiguration, but as the display works fine, the issue might be just
+>> an underrun at the start of the frame and the HW quickly catching up, or
+>> at the end of the frame, where one block in the pipeline expects more
+>> data but the previous block has already stopped (so maybe a misconfig
+>> between using interlaced height vs progressive height?).
+>>
+>> But at the moment I have no solution to this, and as the displays work
+>> fine, I think it makes sense to just revert the print.
 > 
-> HAVE_ARM_SMCCC_DISCOVERY has a dependency which is not always selected
-> (e.g. ARM32), thus selecting it might lead to warnings of unmet
-> dependencies.
-
-Then `if (!IS_ENABLED(CONFIG_HAVE_ARM_SMCCC_DISCOVERY))` might be a good
-option here (and depend on GICv3 selecting it).
-
-> Whichever they choose here, they need to be sure to
-> actually compile test it, because existing patch lacks that and reports
-> are proving lack of building.
+> Is there any value in instead 'ignoring' any underruns if say the frame
+> count is < 5 to ignore startup underruns, and keep it as an active print
+> if something causes underruns later once the pipeline is established?
 > 
-> Best regards,
-> Krzysztof
+> But maybe that doesn't change much - and if there's no current perceived
+> issue
+A single underrun at enable time could/should probably be ignored, as it
+might be just issue with the initial fifo filling or such (even then
+it's a bit annoying, but I've seen some HW docs (not on this platform)
+telling to ignore such underruns).
 
--- 
-With best wishes
-Dmitry
+But that wouldn't help with the underrun flood for interlace. I think
+there's a clear issue for ilace here, but I have no idea where exactly.
+And, the display works fine, so the display controller can recover
+instantly.
+
+> Anyway, I don't object to this revert. It's low impact and it's only
+> undoing 'your' work so no one else will complain :D
+
+Yep... I hate disabling error reporting, but I think it's the best
+option here, at least until someone with the board can debug it
+properly. In any case, if there are "real" underruns, the error is also
+visible on the display, you don't need the console print to show it.
+
+> Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+
+Thanks!
+
+ Tomi
+
+>>
+>> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+>> ---
+>>  drivers/media/platform/renesas/vsp1/vsp1_drm.c  |  3 ---
+>>  drivers/media/platform/renesas/vsp1/vsp1_drv.c  | 11 +----------
+>>  drivers/media/platform/renesas/vsp1/vsp1_pipe.h |  2 --
+>>  drivers/media/platform/renesas/vsp1/vsp1_regs.h |  2 --
+>>  4 files changed, 1 insertion(+), 17 deletions(-)
+>>
+>> diff --git a/drivers/media/platform/renesas/vsp1/vsp1_drm.c b/drivers/media/platform/renesas/vsp1/vsp1_drm.c
+>> index 15d266439564..b8f211db16fc 100644
+>> --- a/drivers/media/platform/renesas/vsp1/vsp1_drm.c
+>> +++ b/drivers/media/platform/renesas/vsp1/vsp1_drm.c
+>> @@ -721,9 +721,6 @@ int vsp1_du_setup_lif(struct device *dev, unsigned int pipe_index,
+>>                 return 0;
+>>         }
+>>  
+>> -       /* Reset the underrun counter */
+>> -       pipe->underrun_count = 0;
+>> -
+>>         drm_pipe->width = cfg->width;
+>>         drm_pipe->height = cfg->height;
+>>         pipe->interlaced = cfg->interlaced;
+>> diff --git a/drivers/media/platform/renesas/vsp1/vsp1_drv.c b/drivers/media/platform/renesas/vsp1/vsp1_drv.c
+>> index b8d06e88c475..68e92d3c5915 100644
+>> --- a/drivers/media/platform/renesas/vsp1/vsp1_drv.c
+>> +++ b/drivers/media/platform/renesas/vsp1/vsp1_drv.c
+>> @@ -47,8 +47,7 @@
+>>  
+>>  static irqreturn_t vsp1_irq_handler(int irq, void *data)
+>>  {
+>> -       u32 mask = VI6_WPF_IRQ_STA_DFE | VI6_WPF_IRQ_STA_FRE |
+>> -                  VI6_WPF_IRQ_STA_UND;
+>> +       u32 mask = VI6_WPF_IRQ_STA_DFE | VI6_WPF_IRQ_STA_FRE;
+>>         struct vsp1_device *vsp1 = data;
+>>         irqreturn_t ret = IRQ_NONE;
+>>         unsigned int i;
+>> @@ -63,14 +62,6 @@ static irqreturn_t vsp1_irq_handler(int irq, void *data)
+>>                 status = vsp1_read(vsp1, VI6_WPF_IRQ_STA(i));
+>>                 vsp1_write(vsp1, VI6_WPF_IRQ_STA(i), ~status & mask);
+>>  
+>> -               if ((status & VI6_WPF_IRQ_STA_UND) && wpf->entity.pipe) {
+>> -                       wpf->entity.pipe->underrun_count++;
+>> -
+>> -                       dev_warn_ratelimited(vsp1->dev,
+>> -                               "Underrun occurred at WPF%u (total underruns %u)\n",
+>> -                               i, wpf->entity.pipe->underrun_count);
+>> -               }
+>> -
+>>                 if (status & VI6_WPF_IRQ_STA_DFE) {
+>>                         vsp1_pipeline_frame_end(wpf->entity.pipe);
+>>                         ret = IRQ_HANDLED;
+>> diff --git a/drivers/media/platform/renesas/vsp1/vsp1_pipe.h b/drivers/media/platform/renesas/vsp1/vsp1_pipe.h
+>> index 7f623b8cbe5c..9cc2f1646b00 100644
+>> --- a/drivers/media/platform/renesas/vsp1/vsp1_pipe.h
+>> +++ b/drivers/media/platform/renesas/vsp1/vsp1_pipe.h
+>> @@ -137,8 +137,6 @@ struct vsp1_pipeline {
+>>  
+>>         unsigned int partitions;
+>>         struct vsp1_partition *part_table;
+>> -
+>> -       u32 underrun_count;
+>>  };
+>>  
+>>  void vsp1_pipeline_reset(struct vsp1_pipeline *pipe);
+>> diff --git a/drivers/media/platform/renesas/vsp1/vsp1_regs.h b/drivers/media/platform/renesas/vsp1/vsp1_regs.h
+>> index 10cfbcd1b6e0..188d26289714 100644
+>> --- a/drivers/media/platform/renesas/vsp1/vsp1_regs.h
+>> +++ b/drivers/media/platform/renesas/vsp1/vsp1_regs.h
+>> @@ -32,12 +32,10 @@
+>>  #define VI6_STATUS_SYS_ACT(n)          BIT((n) + 8)
+>>  
+>>  #define VI6_WPF_IRQ_ENB(n)             (0x0048 + (n) * 12)
+>> -#define VI6_WPF_IRQ_ENB_UNDE           BIT(16)
+>>  #define VI6_WPF_IRQ_ENB_DFEE           BIT(1)
+>>  #define VI6_WPF_IRQ_ENB_FREE           BIT(0)
+>>  
+>>  #define VI6_WPF_IRQ_STA(n)             (0x004c + (n) * 12)
+>> -#define VI6_WPF_IRQ_STA_UND            BIT(16)
+>>  #define VI6_WPF_IRQ_STA_DFE            BIT(1)
+>>  #define VI6_WPF_IRQ_STA_FRE            BIT(0)
+>>  
+>>
+>> ---
+>> base-commit: 76eeb9b8de9880ca38696b2fb56ac45ac0a25c6c
+>> change-id: 20250908-rcar-vsp-underrun-revert-f3e64612c62d
+>>
+>> Best regards,
+>> -- 
+>> Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+>>
+
 
