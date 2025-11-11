@@ -1,159 +1,170 @@
-Return-Path: <linux-kernel+bounces-895864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D9B7C4F239
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:56:01 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D6B3C4F1F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:51:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D52D73BD2EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:54:15 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 751054F0385
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:48:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A01253A5E91;
-	Tue, 11 Nov 2025 16:52:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 224703730F3;
+	Tue, 11 Nov 2025 16:48:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Oo53m6Jr"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VX/zQ+Mr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CA49393DE4;
-	Tue, 11 Nov 2025 16:52:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A7F62D979F;
+	Tue, 11 Nov 2025 16:48:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762879964; cv=none; b=uRPdcyzFFMyltnAxwu1E//uqIForctapTXm9t/7CjDwaOpKaYH2sJNBqUxW30AMmCk4ac921B71ZYJxNy1MTA61lwigdXa3m6OJppI4D+G+3vQPwJdwek3qxZEzFdMfANRBQYNXWGOi6/sqmvTZ1LcuSbX1aX8pYRdjnVo0K9NM=
+	t=1762879704; cv=none; b=U1TnR2t0riYUpcrzI7ZxoueIAKusunbeCZaadyTJLBv9fUEzSVL35udM4pLSIOoCw5LEfM7nbx4WxdNn6S/cUQTYSh97bdCu37mL5Ja2SQTrb0LjS3cibsnDIdcMVvwoF04vYQwaROk7uybE0R+2rQbrVtVn9b8GFDSh7kjdU94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762879964; c=relaxed/simple;
-	bh=CNbIw9fNzTPV1RkVKp4DE66YjQbF8SqInj7PpgPBGEc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=LMBvOo9UK3N02U4j7ck52+/YHXu34MW4uumi4IIVskqf1Jub6i/MqUaqmLuqhjCB7EHB3xAhpQ/c/o8YYirV5VILIbaynKgUQEcVPvq1ojv08ya6olbJ0MuJFPSuX5iuJqAXX1qMJC8dhP3AHLfojrGGoNRbU6mmdGMXliaTLNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Oo53m6Jr; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762879962; x=1794415962;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=CNbIw9fNzTPV1RkVKp4DE66YjQbF8SqInj7PpgPBGEc=;
-  b=Oo53m6Jr8TNEkq6SMDH6KbKk+lItpt9TE9g/PGwjxrQbXFLipCjYQ6w2
-   oQPreMYMMZdHJ0QSScgr99fayQrWdBwMduFbjCpxc8gNCPTa0ZIhCOdqX
-   xMiW23tdxHMrII8QQ85hPFmVvYM6tA6lF76kvYF02KxFKvWWWjug2VByC
-   PFo5vfOEUTs3hfHuYOoxa3JyQ9UPO+vXWaraOc/a/RvuSPHMjGD+Da0lB
-   z81dyXnuinCQVMSYL2N0vhPvhEFxSv0quGzUVl0mM04O7EgtkJ4IllQNR
-   eH4PjJHa6WGVMNECH3bDkTTTB+yU6WA1CiNWipM93SezNHx1e1OS/D4tH
-   A==;
-X-CSE-ConnectionGUID: gb2HY82GQCiDEnetdTGo7w==
-X-CSE-MsgGUID: n9ECiYVFRU26Lz9kp0wODg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11610"; a="76049278"
-X-IronPort-AV: E=Sophos;i="6.19,297,1754982000"; 
-   d="scan'208";a="76049278"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 08:52:40 -0800
-X-CSE-ConnectionGUID: 6JGWJySLSmOq6t4wa7aCTQ==
-X-CSE-MsgGUID: jEloUee4QJexVjRb9dIPqQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,297,1754982000"; 
-   d="scan'208";a="193112860"
-Received: from black.igk.intel.com ([10.91.253.5])
-  by orviesa003.jf.intel.com with ESMTP; 11 Nov 2025 08:52:38 -0800
-Received: by black.igk.intel.com (Postfix, from userid 1003)
-	id 8747C9D; Tue, 11 Nov 2025 17:52:33 +0100 (CET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Richard Cochran <richardcochran@gmail.com>,
-	Jonathan Lemon <jonathan.lemon@gmail.com>,
-	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH net-next v1 7/7] ptp: ocp: don't use "proxy" headers
-Date: Tue, 11 Nov 2025 17:52:14 +0100
-Message-ID: <20251111165232.1198222-8-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20251111165232.1198222-1-andriy.shevchenko@linux.intel.com>
-References: <20251111165232.1198222-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1762879704; c=relaxed/simple;
+	bh=QAvwD+snMlu/Jt3TEUyKWNI/wTAgmcqVgGGWrd7NCxc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Rw0TUNkVYX5mixOCVIE+qx+GxY3hzi7P0FjKPpRUDO6IBE5LKReq1jcut3kuVVStRSmKBm43HA2RdY2A9hN7zyLv4B5yGK/QTS76F/9aQYOnZPJe6CAJ/K/+TN+hWw4OODwE6e16l0G+LeRKkGUhOzaIKl2dpxYaNzKVZAIe8o8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VX/zQ+Mr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D216C113D0;
+	Tue, 11 Nov 2025 16:48:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762879703;
+	bh=QAvwD+snMlu/Jt3TEUyKWNI/wTAgmcqVgGGWrd7NCxc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VX/zQ+MraddmjGS5f342TmJypvx87sOhUbJxHx0rqYphAz3YQmrJUNZuQBNXaRXGm
+	 hrfBbAUIvwgkEvXJMgQUvHLi4bgfa8AlbUlOzsJkkDfWOC69e4Q33z/O93FyufXUk9
+	 P/aA7/fHxMEcwzOtHB2sfxCuFSOZhKsFRys6LHAUnteHtY3ctsHN/gLFHgGJlwUtGw
+	 WDGrLDBSa6pW4WNWoE83le9Q1tpITLm8SmWmBqt06uxcnZAeioOFZqTlEWF45/5dMv
+	 Pal1wuA4DLTVZX6mU+TS4qq96/+JuwEG8bL9GNUtLjAvmuWUYdVKsbwX4X41oDV1Gd
+	 N7BvOLOnr9z+g==
+Date: Tue, 11 Nov 2025 10:52:34 -0600
+From: Bjorn Andersson <andersson@kernel.org>
+To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+Cc: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Sebastian Reichel <sre@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>, 
+	Souvik Chakravarty <Souvik.Chakravarty@arm.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Andy Yan <andy.yan@rock-chips.com>, 
+	Mark Rutland <mark.rutland@arm.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Konrad Dybcio <konradybcio@kernel.org>, 
+	cros-qcom-dts-watchers@chromium.org, Vinod Koul <vkoul@kernel.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, Moritz Fischer <moritz.fischer@ettus.com>, 
+	John Stultz <john.stultz@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+	Stephen Boyd <swboyd@chromium.org>, Andre Draszik <andre.draszik@linaro.org>, 
+	Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-arm-msm@vger.kernel.org, Elliot Berman <quic_eberman@quicinc.com>, 
+	Xin Liu <xin.liu@oss.qualcomm.com>, Srinivas Kandagatla <srini@kernel.org>, 
+	Elliot Berman <elliot.berman@oss.qualcomm.com>, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH v17 09/12] arm64: dts: qcom: qcs6490-rb3gen2: Add PSCI
+ SYSTEM_RESET2 types
+Message-ID: <cvfr4zaceknma6camborq4ro3lwbx3dfps2zjagwhwmvwoxriz@jwybwtzdd46u>
+References: <20251109-arm-psci-system_reset2-vendor-reboots-v17-0-46e085bca4cc@oss.qualcomm.com>
+ <20251109-arm-psci-system_reset2-vendor-reboots-v17-9-46e085bca4cc@oss.qualcomm.com>
+ <20251110122824.5je5jfoanivl6xrh@hu-mojha-hyd.qualcomm.com>
+ <btvknf3tcqhgxzf7ckyvfwix6hxle2bs4whyayan5haaejo3sm@gnbszdys32lm>
+ <20251110161950.ngs4ihn3asijoqks@hu-mojha-hyd.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251110161950.ngs4ihn3asijoqks@hu-mojha-hyd.qualcomm.com>
 
-Update header inclusions to follow IWYU (Include What You Use) principle.
+On Mon, Nov 10, 2025 at 09:49:50PM +0530, Mukesh Ojha wrote:
+> On Mon, Nov 10, 2025 at 09:30:26AM -0600, Bjorn Andersson wrote:
+> > On Mon, Nov 10, 2025 at 05:58:24PM +0530, Mukesh Ojha wrote:
+> > > On Sun, Nov 09, 2025 at 08:07:22PM +0530, Shivendra Pratap wrote:
+> > > > From: Elliot Berman <elliot.berman@oss.qualcomm.com>
+> > > > 
+> > > > Add support for SYSTEM_RESET2 vendor-specific resets in
+> > > > qcs6490-rb3gen2 as reboot-modes.  Describe the resets:
+> > > > "bootloader" will cause device to reboot and stop in the
+> > > > bootloader's fastboot mode. "edl" will cause device to reboot
+> > > > into "emergency download mode", which permits loading images via
+> > > > the Firehose protocol.
+> > > > 
+> > > > Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> > > > Signed-off-by: Elliot Berman <elliot.berman@oss.qualcomm.com>
+> > > > Signed-off-by: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>
+> > > > ---
+> > > >  arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 7 +++++++
+> > > >  1 file changed, 7 insertions(+)
+> > > > 
+> > > > diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+> > > > index 721a26d49ccaeb1429e2cc1c3a5c8d9517da3be6..cebdedd5d614b9efb6dfbee91dd67f3c3e322a38 100644
+> > > > --- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+> > > > +++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+> > > > @@ -935,6 +935,13 @@ &pon_resin {
+> > > >  	status = "okay";
+> > > >  };
+> > > >  
+> > > > +&psci {
+> > > > +	reboot-mode {
+> > > > +		mode-bootloader = <0x10001 0x2>;
+> > > > +		mode-edl = <0 0x1>;
+> > > > +	};
+> > > > +};
+> > > > +
+> > > 
+> > > Make sense for this as it leverages sc7280 and adding it there would not
+> > > have made sense.
+> > > 
+> > 
+> > Why wouldn't it make sense?
+> 
+> It is better to add for platforms we know their firmware support this
+> from day1 and not add for something like chrome or any other variant of
+> sc7280 where this support would never come or not tested.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/ptp/ptp_ocp.c | 31 ++++++++++++++++++++++++++++---
- 1 file changed, 28 insertions(+), 3 deletions(-)
+So SYSTEM_RESET2 only exist in newer firmware versions and hence this
+isn't (and won't be) broadly available in SC7280 devices.
 
-diff --git a/drivers/ptp/ptp_ocp.c b/drivers/ptp/ptp_ocp.c
-index 984293a2a696..4b18f1e5ae9a 100644
---- a/drivers/ptp/ptp_ocp.c
-+++ b/drivers/ptp/ptp_ocp.c
-@@ -1,28 +1,53 @@
- // SPDX-License-Identifier: GPL-2.0-only
- /* Copyright (c) 2020 Facebook */
- 
--#include <linux/bits.h>
-+#include <linux/array_size.h>
-+#include <linux/bitops.h>
- #include <linux/clk-provider.h>
- #include <linux/clkdev.h>
-+#include <linux/container_of.h>
- #include <linux/crc16.h>
- #include <linux/debugfs.h>
-+#include <linux/device.h>
- #include <linux/dpll.h>
- #include <linux/err.h>
- #include <linux/i2c.h>
--#include <linux/init.h>
--#include <linux/kernel.h>
-+#include <linux/idr.h>
-+#include <linux/interrupt.h>
-+#include <linux/io.h>
-+#include <linux/ioport.h>
-+#include <linux/kstrtox.h>
-+#include <linux/limits.h>
-+#include <linux/math64.h>
-+#include <linux/minmax.h>
- #include <linux/module.h>
- #include <linux/mtd/mtd.h>
-+#include <linux/mutex.h>
- #include <linux/nvmem-consumer.h>
- #include <linux/pci.h>
- #include <linux/platform_data/i2c-ocores.h>
- #include <linux/platform_data/i2c-xiic.h>
- #include <linux/platform_device.h>
- #include <linux/ptp_clock_kernel.h>
-+#include <linux/seq_file.h>
- #include <linux/serial_8250.h>
-+#include <linux/slab.h>
- #include <linux/spi/altera.h>
- #include <linux/spi/spi.h>
- #include <linux/spi/xilinx_spi.h>
-+#include <linux/spinlock.h>
-+#include <linux/sprintf.h>
-+#include <linux/stddef.h>
-+#include <linux/string.h>
-+#include <linux/sysfs.h>
-+#include <linux/time.h>
-+#include <linux/timekeeping.h>
-+#include <linux/timer.h>
-+#include <linux/types.h>
-+#include <linux/workqueue.h>
-+
-+#include <asm/byteorder.h>
-+
- #include <net/devlink.h>
- 
- #define PCI_DEVICE_ID_META_TIMECARD		0x0400
--- 
-2.50.1
+That would be excellent information to put in the commit message, so
+others writing Kodiak dts doesn't feel the urge to copy this and debug
+why it doesn't work.
 
+> > 
+> > > Acked-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+> > > 
+> > 
+> > Please read submitting-patches.rst about Acked-by, and use Reviewed-by
+> > going forward.
+> 
+> I was acking the idea of this particular change in platform file compared to
+> other patches, if above reason looks fine, can be converted to R-by.
+> 
+
+That's appreciated, but per the documentation, the meaning of acked-by
+is different.
+
+Regards,
+Bjorn
+
+> > 
+> > Regards,
+> > Bjorn
+> > 
+> > > >  &qup_uart7_cts {
+> > > >  	/*
+> > > >  	 * Configure a bias-bus-hold on CTS to lower power
+> > > > 
+> > > > -- 
+> > > > 2.34.1
+> > > > 
+> > > 
+> > > -- 
+> > > -Mukesh Ojha
+> > > 
+> 
+> -- 
+> -Mukesh Ojha
 
