@@ -1,240 +1,342 @@
-Return-Path: <linux-kernel+bounces-894469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF570C4B0AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 02:55:23 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBE37C4AF50
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 02:50:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4E093BB89D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 01:43:46 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2AF6F4F9CA6
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 01:44:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F304D341AB8;
-	Tue, 11 Nov 2025 01:38:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51FF93054DE;
+	Tue, 11 Nov 2025 01:39:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="L6g1Zc06"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ada+ciGL"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 223F426E16C;
-	Tue, 11 Nov 2025 01:38:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.9
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762825104; cv=fail; b=JTmsKXmiAiLXLlEwSu3H0c6Ld6bh3FO38Oae2c06nBJ+uQ82AU1W9vlMb924IG+cNpOh2jcPHp8HENT8uIECrll+/TR0pGihdXUX6FbU8l3734clhIAu+mLGEWBLrZWPid3Kzcu/Wba8czir3nH2ETbCsoKcZRaUcu3w45srYS8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762825104; c=relaxed/simple;
-	bh=9GuXh/hJUe207FbZNvR2lQ17NWvJehZO7NjlhN2H/AU=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ZFDokDXHoys9gpg9XJO63jXIWHe8yBIA+1JYBsWrFJCdzVu5NT+RA/NczBMvHqD90DyqENcRbHf6rKHhMiF8l4uIPt9fAkKYljX56M/6zEfppCfcDZxrhxIzEO7S9M3lUXl7HD1lr3B+Itnb52Mnnf9xuZjDrknN5mGFVjPmQ/Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=L6g1Zc06; arc=fail smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762825104; x=1794361104;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=9GuXh/hJUe207FbZNvR2lQ17NWvJehZO7NjlhN2H/AU=;
-  b=L6g1Zc06xDtL92UWzvPACmEhAzkLu3ej0vG2B+L4Yji/8wGp4yRU6kVC
-   3yX4Y4EnWE5C9wKxymFEknDo2lNgg/x6pwJ9JkJxVnT+/6ulmvBFeC8M1
-   o+EK0PYex/bmFcD3NHPPBIISTRGNq2Sb3/QMpzxLzl9B/Zrer0vNt+wv2
-   7/UOMkZRsSnMt9SQ6U3rzReFElXBGCuBbA4iAF/NkcLzLq8tjJ0PEP5iR
-   S01J5kovJ8samuHLMKss5ManV9fr88HW5kCJos46GUzWxPJsizAF3hAgv
-   9xNVtudqs6VQRjzTWZ2mZhM8eKkSTts5JCTa63uLbivsNipFeDnHNm4CJ
-   g==;
-X-CSE-ConnectionGUID: p2VQjpz0R8mSEYvIqy0WNA==
-X-CSE-MsgGUID: grAah3oyRL6nROlvXBLDwQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11609"; a="87513255"
-X-IronPort-AV: E=Sophos;i="6.19,295,1754982000"; 
-   d="scan'208";a="87513255"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 17:38:23 -0800
-X-CSE-ConnectionGUID: jtaE9xTtTl6+OI7jlJ3u+w==
-X-CSE-MsgGUID: NNmswenBRDCQDposCVNxVw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,295,1754982000"; 
-   d="scan'208";a="212209983"
-Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
-  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2025 17:38:22 -0800
-Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
- fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Mon, 10 Nov 2025 17:38:21 -0800
-Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
- FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Mon, 10 Nov 2025 17:38:21 -0800
-Received: from SN4PR0501CU005.outbound.protection.outlook.com (40.93.194.12)
- by edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Mon, 10 Nov 2025 17:38:21 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=LZWBRpqJrObY7QdZatVHM9vtdIIlNwKku8dNNztLnRy3mRmBK0yR6a2Bs5W52n8AlvHHA2mdVd9FDKz0xFIgLP5sVQgbopQ0iZ21wm2F+kPbgfh5oc48oWPD/ZJHQCEZk3DlYxv356GQ1VI8gFGVllTUuMy24Y4iLrON87EduGVwmYWgL++IvY0vhSgJJ0DyQWM+qaPtLmoYZbxwv+zggmamJh+2yeHqGYjsuYWzVWWinqsXslMUbapsSG8ib38wHivo9GieZJTMK45dbc3FZasZevmVFLwZmPGw+pMnP9Dw8StSsYbiS6WH7HERzPAAiMb79+wzsV0B5W8n9Tzp4w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9GuXh/hJUe207FbZNvR2lQ17NWvJehZO7NjlhN2H/AU=;
- b=GLqH9EUGtzZNO3ImWewJq18/RiG9l03UhYS5EEr5HmoRg5cwJjmympfXn+s7DZ+wQ+qyt+XtoZJa2GM9RK3aTAOgH5bzFrDOtKtQ577MM2Dodr2Af2k/UzG6BS4BsQ57qejYf8mAwehjrOpWFjWfAj+mqjs1l6NhmNCpQn3/P6EpH8YP2265y6za5UyEtEhsItayR4bbu2uvKZ8N1UUQADRf1mpJDDWCOmfcWVhjwOrlKVAsVxEd31YUCs2yXUW4l7PzRDim2UerzSpORDX3M7ghX3xpYwW9MgimxnBAl263b6XvaZanY6rt6A/F5gvuu2tfLGCbMMES6PTGkajzSQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from BN9PR11MB5276.namprd11.prod.outlook.com (2603:10b6:408:135::18)
- by SJ0PR11MB5152.namprd11.prod.outlook.com (2603:10b6:a03:2ae::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Tue, 11 Nov
- 2025 01:38:19 +0000
-Received: from BN9PR11MB5276.namprd11.prod.outlook.com
- ([fe80::b576:d3bd:c8e0:4bc1]) by BN9PR11MB5276.namprd11.prod.outlook.com
- ([fe80::b576:d3bd:c8e0:4bc1%5]) with mapi id 15.20.9298.015; Tue, 11 Nov 2025
- 01:38:19 +0000
-From: "Tian, Kevin" <kevin.tian@intel.com>
-To: "Winiarski, Michal" <michal.winiarski@intel.com>, Alex Williamson
-	<alex@shazbot.org>, "De Marchi, Lucas" <lucas.demarchi@intel.com>,
-	=?utf-8?B?VGhvbWFzIEhlbGxzdHLDtm0=?= <thomas.hellstrom@linux.intel.com>,
-	"Vivi, Rodrigo" <rodrigo.vivi@intel.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-	Yishai Hadas <yishaih@nvidia.com>, Shameer Kolothum
-	<skolothumtho@nvidia.com>, "intel-xe@lists.freedesktop.org"
-	<intel-xe@lists.freedesktop.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"Brost, Matthew" <matthew.brost@intel.com>, "Wajdeczko, Michal"
-	<Michal.Wajdeczko@intel.com>
-CC: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "Jani
- Nikula" <jani.nikula@linux.intel.com>, Joonas Lahtinen
-	<joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, "Laguna,
- Lukasz" <lukasz.laguna@intel.com>, Christoph Hellwig <hch@infradead.org>
-Subject: RE: [PATCH v5 28/28] vfio/xe: Add device specific vfio_pci driver
- variant for Intel graphics
-Thread-Topic: [PATCH v5 28/28] vfio/xe: Add device specific vfio_pci driver
- variant for Intel graphics
-Thread-Index: AQHcUqd+vf1n1dVj5UmyiLVe2Lh3r7TssNbQ
-Date: Tue, 11 Nov 2025 01:38:19 +0000
-Message-ID: <BN9PR11MB527638018267BA3AF8CD49678CCFA@BN9PR11MB5276.namprd11.prod.outlook.com>
-References: <20251111010439.347045-1-michal.winiarski@intel.com>
- <20251111010439.347045-29-michal.winiarski@intel.com>
-In-Reply-To: <20251111010439.347045-29-michal.winiarski@intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BN9PR11MB5276:EE_|SJ0PR11MB5152:EE_
-x-ms-office365-filtering-correlation-id: 2e836767-b030-463b-df1c-08de20c2fe31
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016|38070700021|921020;
-x-microsoft-antispam-message-info: =?utf-8?B?WTlIRUNIRWloK1h6VUpzREttUEtkSDFWckg2SGF0WFN5VkY5b3N0TElycWdM?=
- =?utf-8?B?TEpUZFRIQ0NFMGxNbWRZTVFFc3FCTzhDSlgzNEh2SmwvZ08wVFNVNGJPS2tv?=
- =?utf-8?B?QnN1TEhnOVBhWlZyZ0d5RWtaUi96ZDB2SjN4dEdqb2I5T2JCbEYxb21DU2F0?=
- =?utf-8?B?a1MveXp0cVB2bHUyQThEYnp3bFcwOTIrN3kyTGZhck0zYk1ZcVhXNmV6UUlt?=
- =?utf-8?B?dVpxY3NOVHdVYllrTWtGS3gyL1ZzaVRmRE5qUGFKM0xKcjFXSk9uK1E2ZkNT?=
- =?utf-8?B?YUxnRkcxdFZYdWtVR01tdDZ3OGx3Sm0wakJKcVhNRlUxald3Y1ZYVkwrUUFp?=
- =?utf-8?B?aFB3UUxiVzJ1R0VLM05mTmdQaXBMR2V6S09KWVdoT1ZDYUNjSVlKcklEODVu?=
- =?utf-8?B?OVF1YVFxb0tib0hSVVUxRnNZUXJ4NDhqOHN2VHJoNzhUUFNYcm9TVzZTZE9n?=
- =?utf-8?B?ZzNmckFyeGlFZVpPK3pwekRpeE1IaENxNmdEV3ZHR1JrK2FoTzhSQUhrS3Rk?=
- =?utf-8?B?NlBGckhEL1VPV1JsQzNPUVhKWU1PTDJBaU92VithVGF3Tlo1Wm5hSmVnWnla?=
- =?utf-8?B?cDMxWWY2TGV4dWxKcHZQeEcvS3RMaXRMd3YwQlIvWFdwc1ZwUWFKZGdycDlK?=
- =?utf-8?B?bzZLREh4SmxuaDlYazlYMjN4aTFueUFWYTlsaEcxWjJSbHdJNTZERlBuVzB5?=
- =?utf-8?B?NElxMVM2NTlXa1FMbkQvaFZVSDJOcUJCbnZ1Nk4yUk45ZWw1Q0NYdktuNmlF?=
- =?utf-8?B?SWJCNmNxcGdJNTVRS3R5M2h3SjRQbkVxQWpSZEFCOXNoelRVMml3Ymw1SFdI?=
- =?utf-8?B?eGVxaFJIVG1PR0tzOWdHVGRTQ3hwU3dXOC9URW0wTzBDbjVOREdOWGhucWd1?=
- =?utf-8?B?NVFsUDdFbnIyd3lQN0loT0tLSzNxYWlxOXpOYzdZdjZ1eHIzMUZPOXl2V0d0?=
- =?utf-8?B?Y0I0NEc0bjBPWFgrK3lpWmJGZE9jWW1paDlSNlpMQUduckhwZjZOczdveVk0?=
- =?utf-8?B?YmRkZnZ5bWt6OVpUS3NEZlBpMUI3c200bDBMc1EyT2dMODRpZVhyNzdyRFhE?=
- =?utf-8?B?Y0Flb2ovNVZjbTVlMDd0SXhsS2RkeE1pM2t3OS9td0Z1ZHlrcWJuaHhUcVpl?=
- =?utf-8?B?dEdrVWQ0QlVRTSt4THNoUmNSREozbFd3dFE3M1FUVzE4S3h4ck1FWEdSTVdC?=
- =?utf-8?B?Z2JVMWJzcVdJaVgycEhZd2Y1Sko0Z0FYTnFSUWNkOVRITzJKUjZrcDNWMytQ?=
- =?utf-8?B?ZVNKc3NUb3F3Mm93SDk2L3dRTkhBL1VsUTg4dllnYUpYaWpVcEc5NS9QSTZW?=
- =?utf-8?B?QTk4M2tJUWtKQlptNVNnSHdaOUVaSGVKMWkvNGxMc1B4ckIxUyt5c0xBV0FX?=
- =?utf-8?B?bnNadDBaSHhGTjV1S3NPeXk2Y3BUakxkT3k5aUNxRWRMZVdjd2xBV1FVZTZE?=
- =?utf-8?B?dUFQbU4xSUZaOGZtdzVJUlhoS1YvN1FHR2k3QWZINXl0WnMzNEFrTWt0TTJN?=
- =?utf-8?B?TWtQUnNVNVN3RmY3WDB5ejdobGs2WENOZDl3K2hiSjVkaERVSWdKOHBFTVhm?=
- =?utf-8?B?bmcwTXIyMDhscThqdXc3SkxLWDdmTFlmQ0hNcXJZNUd2aEdBcFYwNjdFWjBp?=
- =?utf-8?B?WTVIK04xdTF4cXVScWxiM3piMnlneGFlaUFQTU1CVzJ4U0tWQnZIVGJYZnpo?=
- =?utf-8?B?UUlnR1NtcTUvVTJWSDNYSjh5ZjB5UEpZSkloUU5TY29mcUZ3dHdSU3AyRHhz?=
- =?utf-8?B?dkk0WjRESWxsbVBZZkpLME4xZlN3Sk5OL0VYRC9ibjRkN21RQjdrY3lvS0hi?=
- =?utf-8?B?Z1NoVjdBL0VFaEQ3WFVmWWlPVGF4U01HS2VhRHd0M09XTTVoM1NqK3FhVUUr?=
- =?utf-8?B?VHdQZTY3RnV2U1FxbEVGV1FqT1A4bWtGMG5SMzdmVUZMWVhyUkF3cE9qRUpu?=
- =?utf-8?B?ekxveTVnUG1GaEg3Y3NOY0g5SU5FZ1ZubnpTUmhXNDhHU1hsVUJXaDFnYm5r?=
- =?utf-8?B?VjFYS3VqeDAxbGE5Ni9CVnBzZWdBSjdnZHVHSGtmbkRJdWx1UUQycmJDTzRQ?=
- =?utf-8?B?QjlOYUVlUi9ieGVHcGR6Y1R6VTVpSnlPenRQdz09?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR11MB5276.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(38070700021)(921020);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?NHZ0SnlkaXF0RFpCcHVOMVJXR1JsVnluMnQrclo0ZTNpNy9Lemp2QldmTE1p?=
- =?utf-8?B?cURydFEyVGVwMERZTmhzZWcyZDlSdURocTRGenc5NytadTVEQTRCT0o3TkUy?=
- =?utf-8?B?dXp4V2E0WXI0cVhrcXZENkUxL1VBYjdsVlY4TlJodnhTWVhyQTNsTzJsdm5O?=
- =?utf-8?B?dTRCbU1ic1BUQkpOaS9UV0NBQ1B5YVdWUHJ6dm1oUkV4Tm9UdHRqeER3RlVD?=
- =?utf-8?B?dWtMa3NtWGRQUVVUa3NkMmttQm1LMU56eUtGNE53bDBlSlo1cFUvYnovUm1V?=
- =?utf-8?B?N2NRemFtdWZCNzJnOU1JMklNWUJDN3R6RzhHcHEycUZZbGpkV1VmVGdSbEdi?=
- =?utf-8?B?cVp4U0JOaUwrckZhQ1VPTnRic0NLbzFseW0rU0xlUDhKUHZ1OG0rclZ4aVhN?=
- =?utf-8?B?VmdJaTl2c2plT0FPbkJPSEtWMHBxcko1d1N4TWNQTGpaenI0U0gyOGJwU0py?=
- =?utf-8?B?c0ZKS05PUTJyandBRXJGSWhlWDJNc3JjRkNhZlhha29OSHNLN3BzUVNmV3FP?=
- =?utf-8?B?OFNuQVJCODJlSU1nVzI5TS9nVWswa3lJdHRBVkpwaGVEM1d4blJSV3Z5Ynd2?=
- =?utf-8?B?NDBDdFEvSW4zK2xCUTVpaXR3VS9ERHlIVkF6T0RQaFZQTExMUXpQVnU5alpp?=
- =?utf-8?B?d09oSU9PaTZ0M1IvejN2WmhlLzJyQW43VXArLyt3N0lRNnJYT29wbFNhZGdW?=
- =?utf-8?B?SGN3Y0YvMmhyc2RGbjNlZzFVRmlIbXhiWWg1ZnFxbERwWGhqRDFsZzhhWHJD?=
- =?utf-8?B?OFA5UU9qZ1VmUjVQWVp5dCt0K01BVHBCNEsxSnZoSXowYnltYStGZnNHM1RD?=
- =?utf-8?B?RFBmai9yZXlTYzdjUXBLSWd2bGVpSDlPYnVJUWljOGFLaTFrTnRvUHpwZDYw?=
- =?utf-8?B?czE0cUNiU1NvSnhoOFRPUURUWDltTHlIbDdpZE92KzhqNjVyd2pJMXNYOXdZ?=
- =?utf-8?B?OWpUV0NQV2lrY0UweGlvNW1UbWVDSmZtRHJBMVBDSEkrNEdGajlqNFVESUs3?=
- =?utf-8?B?bFYzaW5qWE5hMm8xUytUMWEyZVFGZFArYkVZaUczVGF1K3JabEk1b1RIbkVV?=
- =?utf-8?B?RDJpcU5NNm5LZW9wQ1pmNStGNDhaU0tjajZ4VmZxOWtkVlFOS0U3cFVXWXo3?=
- =?utf-8?B?TENIMzBtMitVZkhWNTgvMTBMZVprZXRpOHRmQ1NEdTFXa2Fza1BFWnR3MDQw?=
- =?utf-8?B?OVpVQTJOQTFzL252QTl3S3daN1NPRnI5bFpoWTNIT2wzZUhJY0EwQlA2eDV0?=
- =?utf-8?B?ZFpnT2pwTVM4V3VTTjA0RnY5MTRNN2YvS0xVSFFmbXJWMFlRMndrbjdlWG5N?=
- =?utf-8?B?a0JIWDVodUR3Z0tTOWtRb01TeVZ2Kzh0V1JqZHlIdi9KK3k5YkpQQ2tMcE5X?=
- =?utf-8?B?VHJNdm52TThLcFE4ekx0L3I5YklyTUdjNlJFUzlEMEszcDdwcnJzelNESE5D?=
- =?utf-8?B?eVJsbkxCU2FpRXhBeHpuUy9ReXZGQ1RDSWd6LzFzVHNuWVFsN3VwTHYrM3pZ?=
- =?utf-8?B?UXdDcExPbUJ2eE1UM0NXOXpoVStTLzY4emxVUG5oYisxTVhkLzJiVkZQak9Y?=
- =?utf-8?B?TVJrbDFoUkJRMGpOUjgyRmcwTjMrNVFuaFA5TUh2bnFUTHVmQUtOeHhMdlpC?=
- =?utf-8?B?WDZZbzVwMHROUTRjaTFYUTEvUFNycHZrMVppR0EwZXF5TEVxT016aXVwV2p3?=
- =?utf-8?B?Q08zZ2RTZFpOc1NCZXdRTjR3Z2J4bGZYeEZKYWZmSE11VVVaTEV0MVI1Q1o1?=
- =?utf-8?B?bk5ydVBCamZTYWZlbHFEL3hwSldGaWVSZmdOelA0RUgrdHAwTWJFS3BESkpR?=
- =?utf-8?B?TE9NdzFLL3poR3p0S3kyaVo4STVFUE1jQWRxUlRkc3V1akhqc01WVEovUmtM?=
- =?utf-8?B?cUNEc1U5ZGgwdG94SGRaSTlteW1iamtOU1QwSGYzT0xJbmduczVvaVN1Q2dS?=
- =?utf-8?B?QjBUd3dyZmRtKzhTNzFlYUxyekttdzV1RkE5QU0wRnVtOGEyWGJUTHRadGFT?=
- =?utf-8?B?TEh5cVpld2M2ZUFibnpnbjhrWGhlQi9JSW13Q0h5RHJ4Qk85S3Rkd1Axb3l5?=
- =?utf-8?B?aG9WcmV0bjZkb2JmcUNjMVZmMnVQREV6VFBjZCtvYkVBS1F5T0R0Y0VVNTRa?=
- =?utf-8?Q?NJrkvY5VESK3Ai9aTUN8Gz2kd?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4818724466D
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 01:39:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762825160; cv=none; b=F/bU4KbMG9V5Lb0mxpW3t9kPjXCaWbSSsHfjaXsfZ2XEHXcQ3D1Oy1Ylv+pA5FxqFs+I3vgDrFVjdA8Dluxe5+s8udPm7BYIe53/FVytrjMJodhNSQSUDk+3m4GNt/IBUX8V8SjjQY/JvGT6s7lQO41QrmOLdPANn7/CSm7BmaQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762825160; c=relaxed/simple;
+	bh=fvwFoq0gImqhWs/uGmAkMzEp/a3GodXI2N7RdQuDsd8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OxhZwos6CjDrRmdUwPBKi/DPlFMVOYnnJ75QLRHpZihB9n7r2LgC6HRKayHv2ALm6NqxPIpEsuypHM6CDj5+uGsV4i2/RdOWqUI+iZTmH0xQt4v7wd+VHUAzWzJVjKa09hMoUBdX1yo4IuitJw24OAEOXQ5WyTzNSo+r/HIecT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ada+ciGL; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5943d1d0656so4733109e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 17:39:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762825156; x=1763429956; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VjcYut8mRbJ+0NSwSCXDTcCxzwARv5RKrw9qEU6ZPVw=;
+        b=Ada+ciGLTRpOFndzcSUqGbCDaL6GRIHbSPcXoHw01IZbEn/xUSykZ2O+WTRWXHK4Qh
+         da6gdEwu8jRZjb0Kks4hcdutZ2u5e5mrzFKxEo9clZuBp6tCDECKrHrjOMhAv9Dpk19c
+         XiIlMxkWPkwuHriM0MgvqJZowFfj7sMX2UgA/Rz7Dc36shJ8F/qW/RnBLDJiqikC6vnM
+         NHIPSRl/M+mn0ffEG6pBXHmaylRQHYviIb72rKkwg06l/4j6fOGohmmL20CZPvPT8bT1
+         LW2hghwnFa/uXBVlizk5YGOwSelxgyac7X5GF4CAJ1eqkn+YkeVHJcdg2idkbqr+hkAb
+         MyAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762825156; x=1763429956;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=VjcYut8mRbJ+0NSwSCXDTcCxzwARv5RKrw9qEU6ZPVw=;
+        b=XGIQYIiubrS2yTo94/xDc1/p3uHY53U1zm+sh2p0LFZvbcRDFDztesIdv67RmBMJxM
+         Nm3gbNJTYnUyVQxGnX7iRhTxy1SRUZGwgsBcW67FG7QBhnQoqj4C0DlIMV6Pw882nxUl
+         Qw+wGEWRM8sUhN5Fhml5vqEg37QmKtifsy2CiGXijdE2TNhSF9HosLMcfO5j6S0A91Fp
+         aTM8Jr3LSETKWiyu4wwsqN+llGebgP1mhemECJlR1cBINlrIgsm3nOifkjk34ndsIt6H
+         oZ0d1X7qPKYsY95a0ddqrBF1exV83hrxpuZ9vaAEq0LdGsK5EzvveZv1FwPfxquvGHH1
+         1Raw==
+X-Forwarded-Encrypted: i=1; AJvYcCWp97P1Pr9Euu/oiug5BoDxkOICMuMy7WzO+D9qE/XXIwrUW18noZ4Wj2JjooCZt624ZxJ5zD1MKlJf5SA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcGaJs7CQxvcRniEqkFIDY4Gjh3RVeEk7hoeCL7z3kl5z/ftBE
+	nBL/3vvvYBTr976Rlh72enIBdkR7aQ3lkgVApbXjCpF3p3GYWvGJ26P9muxEls2hInSivsfraLJ
+	3UXzbcf1slqP8Il6kmj4fyOGoOJPLZy0LnIjJyk0=
+X-Gm-Gg: ASbGnct8u9+aM1cXpvrEnrZ2STAhbeywTs2gMgGqnxBuC/BoITGiLDDnznbEvRhAC8r
+	Mxs6HnF0jH05YDfbmH9Z0oTnR54hic/7Xj1gmQz1FG2K3IxoboVJXgJhXjmb+YJSb35d7hb43mN
+	lHVjJ6hwswBPWoHAGHEnBe5wdJkXDisD/U8HbYSbHY9NOnGvamMsF90YEPltppv8BH273bf94Jd
+	cTTL+luohuF5VyN/ILOTtdu7luYMZs73iBEniEbPpYFYuYM1jq5XiQi18oB
+X-Google-Smtp-Source: AGHT+IEhImSP6xd5JDndxNfD3dM5Fv9ktgq6QQM4H7U2o/38q6/GJM+SH8kLSOHnhbLX0bLIVVmq69pxx3NQ+9d8IHM=
+X-Received: by 2002:a05:6512:158b:b0:594:2d3a:ac3a with SMTP id
+ 2adb3069b0e04-5945f1cbad0mr3388082e87.50.1762825156065; Mon, 10 Nov 2025
+ 17:39:16 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BN9PR11MB5276.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2e836767-b030-463b-df1c-08de20c2fe31
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Nov 2025 01:38:19.3294
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: PVPLey8hNn2WmybrT2mEsFJ6Lible4q/q1kGksxS7JSoyBWjzB3AygS3UPRZdzpNT9hQO+DHMCrC5smgVonXDw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB5152
-X-OriginatorOrg: intel.com
+References: <20251027-tegra186-icc-p2-v4-0-e4e4f57e2103@gmail.com>
+ <20251027-tegra186-icc-p2-v4-3-e4e4f57e2103@gmail.com> <82c8dda8-6fcb-48f9-bdaa-f3d1431e41ae@nvidia.com>
+ <CALHNRZ8nCojreFCMXfbBBhWAMtmWN-04XtuW8fEsVD9bw+-AzA@mail.gmail.com>
+In-Reply-To: <CALHNRZ8nCojreFCMXfbBBhWAMtmWN-04XtuW8fEsVD9bw+-AzA@mail.gmail.com>
+From: Aaron Kling <webgeek1234@gmail.com>
+Date: Mon, 10 Nov 2025 19:39:04 -0600
+X-Gm-Features: AWmQ_bniIgBfNBUUe3XT27DkKk0oRrjwOmlAqGlN-teWyJ6LnH1WV5-UL2Cz7WA
+Message-ID: <CALHNRZ-CO5i9jeLkEG2cmHxcW1bcLhxcBSxjmL2euHfQy8yr-w@mail.gmail.com>
+Subject: Re: [PATCH v4 3/5] memory: tegra186-emc: Support non-bpmp icc scaling
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thierry Reding <thierry.reding@gmail.com>, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-PiBGcm9tOiBXaW5pYXJza2ksIE1pY2hhbCA8bWljaGFsLndpbmlhcnNraUBpbnRlbC5jb20+DQo+
-IFNlbnQ6IFR1ZXNkYXksIE5vdmVtYmVyIDExLCAyMDI1IDk6MDUgQU0NCj4gKw0KPiArCS8qDQo+
-ICsJICogQXMgdGhlIGhpZ2hlciBWRklPIGxheWVycyBhcmUgaG9sZGluZyBsb2NrcyBhY3Jvc3Mg
-cmVzZXQgYW5kIHVzaW5nDQo+ICsJICogdGhvc2Ugc2FtZSBsb2NrcyB3aXRoIHRoZSBtbV9sb2Nr
-IHdlIG5lZWQgdG8gcHJldmVudCBBQkJBDQo+IGRlYWRsb2NrDQo+ICsJICogd2l0aCB0aGUgc3Rh
-dGVfbXV0ZXggYW5kIG1tX2xvY2suDQo+ICsJICogSW4gY2FzZSB0aGUgc3RhdGVfbXV0ZXggd2Fz
-IHRha2VuIGFscmVhZHkgd2UgZGVmZXIgdGhlIGNsZWFudXANCj4gd29yaw0KPiArCSAqIHRvIHRo
-ZSB1bmxvY2sgZmxvdyBvZiB0aGUgb3RoZXIgcnVubmluZyBjb250ZXh0Lg0KPiArCSAqLw0KPiAr
-CXNwaW5fbG9jaygmeGVfdmRldi0+cmVzZXRfbG9jayk7DQo+ICsJeGVfdmRldi0+ZGVmZXJyZWRf
-cmVzZXQgPSB0cnVlOw0KPiArCWlmICghbXV0ZXhfdHJ5bG9jaygmeGVfdmRldi0+c3RhdGVfbXV0
-ZXgpKSB7DQo+ICsJCXNwaW5fdW5sb2NrKCZ4ZV92ZGV2LT5yZXNldF9sb2NrKTsNCj4gKwkJcmV0
-dXJuOw0KPiArCX0NCj4gKwlzcGluX3VubG9jaygmeGVfdmRldi0+cmVzZXRfbG9jayk7DQo+ICsJ
-eGVfdmZpb19wY2lfc3RhdGVfbXV0ZXhfdW5sb2NrKHhlX3ZkZXYpOw0KPiArDQo+ICsJeGVfdmZp
-b19wY2lfcmVzZXQoeGVfdmRldik7DQo+ICt9DQoNCkphc29uIHN1Z2dlc3RlZCB0byBkbyB0aGlz
-IGluIHRoZSBjb3JlIGdpdmVuIGl0J3MgY29tbW9uIFsxXS4NCg0KSWYgeW91IGRpc2FncmVlLCB0
-aGVuIHBsZWFzZSByYWlzZSBpdCBhbmQgZ2V0IGNvbnNlbnN1cyBpbiB0aGF0IHRocmVhZA0KaW5z
-dGVhZCBvZiBydXNoaW5nIHRvIHBvc3QgYSBuZXcgdmVyc2lvbi4uLg0KDQpbMV0gaHR0cHM6Ly9s
-b3JlLmtlcm5lbC5vcmcvYWxsLzIwMjUxMTA4MDA0NzU0LkdEMTg1OTE3OEB6aWVwZS5jYS8NCg==
+On Mon, Nov 10, 2025 at 3:55=E2=80=AFPM Aaron Kling <webgeek1234@gmail.com>=
+ wrote:
+>
+> On Mon, Nov 10, 2025 at 3:25=E2=80=AFPM Jon Hunter <jonathanh@nvidia.com>=
+ wrote:
+> >
+> >
+> > On 27/10/2025 18:55, Aaron Kling via B4 Relay wrote:
+> > > From: Aaron Kling <webgeek1234@gmail.com>
+> > >
+> > > This adds support for dynamic frequency scaling of external memory on
+> > > devices with bpmp firmware that does not support bwmgr.
+> > >
+> > > Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> > > ---
+> > >   drivers/memory/tegra/tegra186-emc.c | 132 +++++++++++++++++++++++++=
+++++++++++-
+> > >   1 file changed, 130 insertions(+), 2 deletions(-)
+> > >
+> > > diff --git a/drivers/memory/tegra/tegra186-emc.c b/drivers/memory/teg=
+ra/tegra186-emc.c
+> > > index 9959ad5804b444b269456d1fbae87b4bc111661b..74be09968baa7a0fbdce4=
+359f470ce56b18acb10 100644
+> > > --- a/drivers/memory/tegra/tegra186-emc.c
+> > > +++ b/drivers/memory/tegra/tegra186-emc.c
+> > > @@ -18,6 +18,17 @@ struct tegra186_emc_dvfs {
+> > >       unsigned long rate;
+> > >   };
+> > >
+> > > +enum emc_rate_request_type {
+> > > +     EMC_RATE_DEBUG,
+> > > +     EMC_RATE_ICC,
+> > > +     EMC_RATE_TYPE_MAX,
+> > > +};
+> > > +
+> > > +struct emc_rate_request {
+> > > +     unsigned long min_rate;
+> > > +     unsigned long max_rate;
+> > > +};
+> > > +
+> > >   struct tegra186_emc {
+> > >       struct tegra_bpmp *bpmp;
+> > >       struct device *dev;
+> > > @@ -33,8 +44,90 @@ struct tegra186_emc {
+> > >       } debugfs;
+> > >
+> > >       struct icc_provider provider;
+> > > +
+> > > +     /*
+> > > +      * There are multiple sources in the EMC driver which could req=
+uest
+> > > +      * a min/max clock rate, these rates are contained in this arra=
+y.
+> > > +      */
+> > > +     struct emc_rate_request requested_rate[EMC_RATE_TYPE_MAX];
+> > > +
+> > > +     /* protect shared rate-change code path */
+> > > +     struct mutex rate_lock;
+> > >   };
+> > >
+> > > +static void tegra186_emc_rate_requests_init(struct tegra186_emc *emc=
+)
+> > > +{
+> > > +     unsigned int i;
+> > > +
+> > > +     for (i =3D 0; i < EMC_RATE_TYPE_MAX; i++) {
+> > > +             emc->requested_rate[i].min_rate =3D 0;
+> > > +             emc->requested_rate[i].max_rate =3D ULONG_MAX;
+> > > +     }
+> > > +}
+> > > +
+> > > +static int emc_request_rate(struct tegra186_emc *emc,
+> > > +                         unsigned long new_min_rate,
+> > > +                         unsigned long new_max_rate,
+> > > +                         enum emc_rate_request_type type)
+> > > +{
+> > > +     struct emc_rate_request *req =3D emc->requested_rate;
+> > > +     unsigned long min_rate =3D 0, max_rate =3D ULONG_MAX;
+> > > +     unsigned int i;
+> > > +     int err;
+> > > +
+> > > +     /* select minimum and maximum rates among the requested rates *=
+/
+> > > +     for (i =3D 0; i < EMC_RATE_TYPE_MAX; i++, req++) {
+> > > +             if (i =3D=3D type) {
+> > > +                     min_rate =3D max(new_min_rate, min_rate);
+> > > +                     max_rate =3D min(new_max_rate, max_rate);
+> > > +             } else {
+> > > +                     min_rate =3D max(req->min_rate, min_rate);
+> > > +                     max_rate =3D min(req->max_rate, max_rate);
+> > > +             }
+> > > +     }
+> > > +
+> > > +     if (min_rate > max_rate) {
+> > > +             dev_err_ratelimited(emc->dev, "%s: type %u: out of rang=
+e: %lu %lu\n",
+> > > +                                 __func__, type, min_rate, max_rate)=
+;
+> > > +             return -ERANGE;
+> > > +     }
+> > > +
+> > > +     err =3D clk_set_rate(emc->clk, min_rate);
+> > > +     if (err)
+> > > +             return err;
+> > > +
+> > > +     emc->requested_rate[type].min_rate =3D new_min_rate;
+> > > +     emc->requested_rate[type].max_rate =3D new_max_rate;
+> > > +
+> > > +     return 0;
+> > > +}
+> > > +
+> > > +static int emc_set_min_rate(struct tegra186_emc *emc, unsigned long =
+rate,
+> > > +                         enum emc_rate_request_type type)
+> > > +{
+> > > +     struct emc_rate_request *req =3D &emc->requested_rate[type];
+> > > +     int ret;
+> > > +
+> > > +     mutex_lock(&emc->rate_lock);
+> > > +     ret =3D emc_request_rate(emc, rate, req->max_rate, type);
+> > > +     mutex_unlock(&emc->rate_lock);
+> > > +
+> > > +     return ret;
+> > > +}
+> > > +
+> > > +static int emc_set_max_rate(struct tegra186_emc *emc, unsigned long =
+rate,
+> > > +                         enum emc_rate_request_type type)
+> > > +{
+> > > +     struct emc_rate_request *req =3D &emc->requested_rate[type];
+> > > +     int ret;
+> > > +
+> > > +     mutex_lock(&emc->rate_lock);
+> > > +     ret =3D emc_request_rate(emc, req->min_rate, rate, type);
+> > > +     mutex_unlock(&emc->rate_lock);
+> > > +
+> > > +     return ret;
+> > > +}
+> > > +
+> > >   /*
+> > >    * debugfs interface
+> > >    *
+> > > @@ -107,7 +200,7 @@ static int tegra186_emc_debug_min_rate_set(void *=
+data, u64 rate)
+> > >       if (!tegra186_emc_validate_rate(emc, rate))
+> > >               return -EINVAL;
+> > >
+> > > -     err =3D clk_set_min_rate(emc->clk, rate);
+> > > +     err =3D emc_set_min_rate(emc, rate, EMC_RATE_DEBUG);
+> > >       if (err < 0)
+> > >               return err;
+> > >
+> > > @@ -137,7 +230,7 @@ static int tegra186_emc_debug_max_rate_set(void *=
+data, u64 rate)
+> > >       if (!tegra186_emc_validate_rate(emc, rate))
+> > >               return -EINVAL;
+> > >
+> > > -     err =3D clk_set_max_rate(emc->clk, rate);
+> > > +     err =3D emc_set_max_rate(emc, rate, EMC_RATE_DEBUG);
+> > >       if (err < 0)
+> > >               return err;
+> > >
+> > > @@ -217,6 +310,12 @@ static int tegra186_emc_get_emc_dvfs_latency(str=
+uct tegra186_emc *emc)
+> > >       return 0;
+> > >   }
+> > >
+> > > +static inline struct tegra186_emc *
+> > > +to_tegra186_emc_provider(struct icc_provider *provider)
+> > > +{
+> > > +     return container_of(provider, struct tegra186_emc, provider);
+> > > +}
+> > > +
+> > >   /*
+> > >    * tegra186_emc_icc_set_bw() - Set BW api for EMC provider
+> > >    * @src: ICC node for External Memory Controller (EMC)
+> > > @@ -227,6 +326,33 @@ static int tegra186_emc_get_emc_dvfs_latency(str=
+uct tegra186_emc *emc)
+> > >    */
+> > >   static int tegra186_emc_icc_set_bw(struct icc_node *src, struct icc=
+_node *dst)
+> > >   {
+> > > +     struct tegra186_emc *emc =3D to_tegra186_emc_provider(dst->prov=
+ider);
+> > > +     struct tegra_mc *mc =3D dev_get_drvdata(emc->dev->parent);
+> > > +     unsigned long long peak_bw =3D icc_units_to_bps(dst->peak_bw);
+> > > +     unsigned long long avg_bw =3D icc_units_to_bps(dst->avg_bw);
+> > > +     unsigned long long rate =3D max(avg_bw, peak_bw);
+> > > +     const unsigned int ddr =3D 2;
+> > > +     int err;
+> > > +
+> > > +     /*
+> > > +      * Do nothing here if bwmgr is supported in BPMP-FW. BPMP-FW se=
+ts the final
+> > > +      * Freq based on the passed values.
+> > > +      */
+> > > +     if (mc->bwmgr_mrq_supported)
+> > > +             return 0;
+> > > +
+> > > +     /*
+> > > +      * Tegra186 EMC runs on a clock rate of SDRAM bus. This means t=
+hat
+> > > +      * EMC clock rate is twice smaller than the peak data rate beca=
+use
+> > > +      * data is sampled on both EMC clock edges.
+> > > +      */
+> > > +     do_div(rate, ddr);
+> > > +     rate =3D min_t(u64, rate, U32_MAX);
+> > > +
+> > > +     err =3D emc_set_min_rate(emc, rate, EMC_RATE_ICC);
+> > > +     if (err)
+> > > +             return err;
+> > > +
+> > >       return 0;
+> > >   }
+> > >
+> > > @@ -329,6 +455,8 @@ static int tegra186_emc_probe(struct platform_dev=
+ice *pdev)
+> > >       platform_set_drvdata(pdev, emc);
+> > >       emc->dev =3D &pdev->dev;
+> > >
+> > > +     tegra186_emc_rate_requests_init(emc);
+> > > +
+> > >       if (tegra_bpmp_mrq_is_supported(emc->bpmp, MRQ_EMC_DVFS_LATENCY=
+)) {
+> > >               err =3D tegra186_emc_get_emc_dvfs_latency(emc);
+> > >               if (err)
+> > >
+> >
+> >
+> > FYI, this patch is causing a boot regression on Tegra194 devices. I
+> > noticed that tegra194-p2972-0000 and tegra194-p3509-0000+p3668-0000 are
+> > no longer booting and bisect is pointing to this. I will have a closer
+> > look and try to see why this is.
+>
+> Interesting. Both were booting for me during my verification, though
+> my use case involves the dt changes that I don't believe have been
+> picked up yet. Thought I had explicitly verified without the dt
+> changes too, though. Since I was asked to do so on this or one of the
+> other similar series. I will try to check linux-next as-is soon.
+
+I just built next-20251110 using the standard arm64 defconfig and
+flashed the resulting Image and dtb's to p2972 and p3518 (p3509+p3668)
+and both booted to cli on a barebones busybox ramdisk. I do not see
+any errors from tegra-mc, and the only error I see from tegra186-emc
+is that it can't find the opp tables, which is expected without the dt
+changes, and is not fatal.
+
+Aaron
 
