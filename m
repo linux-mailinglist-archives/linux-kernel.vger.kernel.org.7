@@ -1,200 +1,147 @@
-Return-Path: <linux-kernel+bounces-895449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80938C4DE6C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:54:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7ED8C4DF26
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:59:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B3D6E4F2E2B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:45:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9992C18C4D3B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:52:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA18E324709;
-	Tue, 11 Nov 2025 12:41:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DD3E331206;
+	Tue, 11 Nov 2025 12:42:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="PsYvOGtK"
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="JibmJuZ2";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="FZstT35i"
+Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C60D13AA18C
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 12:41:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2966732827F;
+	Tue, 11 Nov 2025 12:42:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762864889; cv=none; b=cNK7K/JedSP/g/2Ig+fkhH+0oOYNTCEx+KfSGzldS7qG+uPblUz+wx7nbwbcp/MbJcrkUELKHxw1P6fCZpHXtgajWw1at2vaMzlVG2dZvNFw0B5B0a9OIjdUMGfc6PdXkLe+eJ+RY1voLatu+4K9NdfhGhFQnDcgevA7edNdnLA=
+	t=1762864940; cv=none; b=EdaAJVtYhw48VnLDBOTn55ciFrAYXyJMJvASUcRj/tFo1NbxVKv4pgMbigD9AIcV+jLkL3SvzsgJhC85kt7QJpfO6Ndh/gl0d0ZOok31rktMVB8fV4qVXobgejBt2EJTF8Cd2nKbiR5jsE7rrYJHUsfdxFo0d6heNtXuJnbJ1Ok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762864889; c=relaxed/simple;
-	bh=9xfPxgCLwxDWC5uci7Tam0tmDzUGxKMfBCJoi5gKe1Y=;
-	h=Content-Type:Message-ID:Date:MIME-Version:Subject:From:To:Cc:
-	 References:In-Reply-To; b=LCj3j0ZGdr358CdGKLH2v7je3jDDofml2CEFHbKYg2XmN0lZoR1DGnedl7yj/XLd5kmOI4toiNEx2BDhQ8gmGRCNqy5JhTYPlwZhQaGAtdqn9tlWUwfmEoyI23K8mRCzqbG/xpKOcAuRGhnBY2LKsWfpMdZzYaVehXOPh3iKi0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=PsYvOGtK; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4d5R3k5z7Rz9tmC;
-	Tue, 11 Nov 2025 13:41:22 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1762864882;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YaqLqGN9uEL7J+fQAaVt6gXOp13qBprJ55CUYxPRXWY=;
-	b=PsYvOGtKywmYqU2YST64pri4JLscxq2SxIRuEHRw7c3GIlX+MY3LK2Ay1BP1SIblCZPU1f
-	hWJHOVxY1E6mVCiBALDoHwg+5e+jJNFNmO+Os0Ai2o7Qg/4R7eMH+7YK6CtXVDp+r78vJL
-	9hEdYtyBUkdanu6aK/HfWgd+fgp0ITe8XQ/xqVIvrMBx0Ir0usjqc1khtrlTJYj+01SMD+
-	cDaC1113noCWYfVEk7KmyqIBlEHx6TxMTABmPLwLTK08L28Pt9GJWufHporvXfRtFTmHs0
-	yPYVRC2MZIjHNmttVmZ7vRFeWrJF1SyL6clRZy8uhErXaf0sQMQCz7RUxhUVDw==
-Content-Type: multipart/mixed; boundary="------------c8xoJb3xBtNTMKbm6r52N0KM"
-Message-ID: <5145f071-c8bd-4b9d-94b1-2afe651cf25a@mailbox.org>
-Date: Tue, 11 Nov 2025 13:41:21 +0100
+	s=arc-20240116; t=1762864940; c=relaxed/simple;
+	bh=cz32zYSwqb1PQwJobwLomOiySUR6tQ6fOUsgjeY7AEs=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=b/uYsooa4Z+qHMTvWJtBAeZ+M2FHSgtywa8IIdrNGWHB7rVbUflL88aQFf9mLp/cAc8z8wkbyAZHNtwkSI8wN8Aavuiuij5V429MgMao3bmphiJzH+vdEOeSu5nNozjCCMjZgpiw21cZzpTsQJIGsrCqmJ3mPeB33maeAWTpess=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=JibmJuZ2; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=FZstT35i; arc=none smtp.client-ip=103.168.172.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfout.phl.internal (Postfix) with ESMTP id 187E0EC00B6;
+	Tue, 11 Nov 2025 07:42:16 -0500 (EST)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-04.internal (MEProxy); Tue, 11 Nov 2025 07:42:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1762864936;
+	 x=1762951336; bh=t83Ou404aXmm0kHf+liFHD5vp+Jq6h/HE7hxSSqNQM4=; b=
+	JibmJuZ2LTm29ue9/WbzZMU5N5DLUcOSp78hofujU2xZ9Q127kN/OssfV5W45hW5
+	hUiRrvEgNwWojWZYXxDd/KIdyxIO7TiNwVSEvUvgmaE/nyERHJ2JrW1KlD+6pjTb
+	YSX83awqmbQYOUgu/IJ4OvjnMIVMGDpNHM8lhC2TXBlr+X6rDRRcnVaLAsxOpKY3
+	CWoRuQf8EhR0IwWsrk8FgNRYRLkrV7wIXRdy9YHjH3pFwnHmn+ai5Xi6LE6Vb4nx
+	QUqKg9xD9QF6utPPq7O9PFxESS1qwh3t5TLp0AnCxZh5fWXbL5WiTCniCi7hcky9
+	FZ4lKcaDxGjNhCDyk7lfPA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762864936; x=
+	1762951336; bh=t83Ou404aXmm0kHf+liFHD5vp+Jq6h/HE7hxSSqNQM4=; b=F
+	ZstT35iVuamPgchGRgIr5TJsWorDc3G8IzQ1SROewxjhZSMdUNqCPghFuUR/4Yct
+	vYsbO0t8bFlt8DASsHD8DEeMw36BafMYomAz0XU4A+dfHJjJMownqCVD0APPdVoF
+	LBmNrzvj5GYjXkijg4C/SWhYr9DnlLcAjR5BFvnyUHrNVLgDzb7+3hu6y3Vh4bpS
+	75BljSDCZ1lUVedUUKum9m5NlvU9lFAJNQCWB6d9Y7WOichVJHoTOwJLeShkT9tH
+	HDGPVH2lrg408dmbgHDZaTy8yFlhcdm6zXmvMicAIFhSBzDA8IpyMQ5c7iobktqI
+	jZggN2Okw7ZKLl3CreFlw==
+X-ME-Sender: <xms:Jy8TaSHR04fw7GoBuiiKVAJlm329x6mvjJnux8fuJiFDY0nQdhEA7w>
+    <xme:Jy8TaeKEDmcW5ZwkjZxbtzohL6pCVOFaMqUo7XeJTZFPLIGzPYo52EDfYfGMYNIpQ
+    723BwXa9v9l8AjNROJa3h7C2W-WCK-wbcJI5bPclCggpXRF2ZcjosI>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvtdduvddvucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhgu
+    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
+    hrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefggfevudegudevledvkefhvdei
+    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnh
+    gusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepledpmhhouggvpehsmhhtphhouhht
+    pdhrtghpthhtohepthhorhhvrghlughssehlihhnuhigqdhfohhunhgurghtihhonhdroh
+    hrghdprhgtphhtthhopegrghhorhguvggvvheslhhinhhugidrihgsmhdrtghomhdprhgt
+    phhtthhopegsohhrnhhtrhgrvghgvghrsehlihhnuhigrdhisghmrdgtohhmpdhrtghpth
+    htohepghhorheslhhinhhugidrihgsmhdrtghomhdprhgtphhtthhopehhtggrsehlihhn
+    uhigrdhisghmrdgtohhmpdhrtghpthhtohepkhhrvggssggvlheslhhinhhugidrihgsmh
+    drtghomhdprhgtphhtthhopehsvhgvnhhssehlihhnuhigrdhisghmrdgtohhmpdhrtghp
+    thhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtg
+    hpthhtoheplhhinhhugidqshefledtsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:Jy8TaRrauODixvUAE3Ct5jhL1XXDw_YqnvtPngkQ7Ma7MfHq4OcCiQ>
+    <xmx:Jy8TafgLhVVxsW0bQhkIrfb39EpUpoMQIsrDD8uZe1ak91enCuz1TQ>
+    <xmx:Jy8TabMD0tqXl3aNfykVhqttGQYgLNh4boNxw7Z0vjANTGp324Gycw>
+    <xmx:Jy8TaRzQ8zrivufqAnGn9mYJ0c8vPygkGPX4ksK3KwVkidHdAr8SYA>
+    <xmx:KC8TaYaTy9TUotw93g9-X4RsvKDW9-YQDItWtSnRWl0G9nsQMqK8lSlp>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 84B25700065; Tue, 11 Nov 2025 07:42:15 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: BUG: spinlock bad magic on CPU#1, irq/39-firewire/245 (v6.18-rc4,
- ppc64)
-From: Erhard Furtner <erhard_f@mailbox.org>
-To: linux-kernel@vger.kernel.org
-Cc: Takashi Sakamoto <o-takashi@sakamocchi.jp>,
- linux1394-devel@lists.sourceforge.net
-References: <992eaf94-6fbb-4611-9a29-2db2e2148965@mailbox.org>
-Content-Language: en-US, de-DE
-In-Reply-To: <992eaf94-6fbb-4611-9a29-2db2e2148965@mailbox.org>
-X-MBO-RS-ID: c205490f944b71ac2e7
-X-MBO-RS-META: o94pfpre3ca4mjfaqwjri7ry1ojuarf1
+X-ThreadId: AMQSEuwlfej7
+Date: Tue, 11 Nov 2025 13:41:23 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Heiko Carstens" <hca@linux.ibm.com>,
+ "Alexander Gordeev" <agordeev@linux.ibm.com>,
+ "Vasily Gorbik" <gor@linux.ibm.com>,
+ "Christian Borntraeger" <borntraeger@linux.ibm.com>,
+ "Sven Schnelle" <svens@linux.ibm.com>,
+ "Andreas Krebbel" <krebbel@linux.ibm.com>,
+ "Linus Torvalds" <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
+Message-Id: <34f6144b-600e-42f3-88f5-3e712a328986@app.fastmail.com>
+In-Reply-To: <20251110185440.2667511-1-hca@linux.ibm.com>
+References: <20251110185440.2667511-1-hca@linux.ibm.com>
+Subject: Re: [RFC PATCH 0/8] s390: Remove compat support
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-This is a multi-part message in MIME format.
---------------c8xoJb3xBtNTMKbm6r52N0KM
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+On Mon, Nov 10, 2025, at 19:54, Heiko Carstens wrote:
+> Remove s390 compat support to allow for code simplification and especially
+> reduced test effort. To the best of our knowledge there aren't any 31 bit
+> binaries out in the world anymore that would matter for newer kernels or
+> newer distributions.
+>
+> Distributions do not provide compat packages since quite some time or even
+> have CONFIG_COMPAT disabled.
+>
+> Instead of adding deprecation warnings to config option, or adding kernel
+> messages, just remove the code. Deprecation warnings haven't proven to be
+> useful. If it turns out there is still a reason to keep the compat support
+> this series can be reverted at any time in the future.
+>
+> Arnd, we talked about this two weeks ago. I would appreciate if you could
+> have a look at this series, especially the last patch of this series.
+>
+> Patches 1-3 are just some random cleanups / preparations.
+> Patches 4-6 remove compat support.
+> Patches 7-8 switch s390 to generic system call table generation
 
-On 11/9/25 15:17, Erhard Furtner wrote:
-> [...]
-> firewire_ohci 0001:03:0e.0: added OHCI v1.0 device as card 0, 8 IR + 8 
-> IT contexts, quirks 0x0
-> BUG: spinlock bad magic on CPU#1, irq/39-firewire/245
->   lock: 0xc00000001f672618, .magic: 00000000, .owner: irq/39- 
-> firewire/245, .owner_cpu: 1
-> CPU: 1 UID: 0 PID: 245 Comm: irq/39-firewire Tainted: G N  6.18.0-rc4- 
-> PMacG5 #1 PREEMPTLAZY
-> Tainted: [N]=TEST
-> Hardware name: PowerMac11,2 PPC970MP 0x440101 PowerMac
-> Call Trace:
-> [c000000005dafb20] [c000000000bc054c] __dump_stack+0x30/0x54 (unreliable)
-> [c000000005dafb50] [c000000000bc04e4] dump_stack_lvl+0x98/0xd0
-> [c000000005dafb90] [c0000000000f22a8] spin_dump+0x88/0xb4
-> [c000000005dafc10] [c0000000000f1d4c] do_raw_spin_unlock+0xdc/0x164
-> [c000000005dafc50] [c000000000bf65d0] _raw_spin_unlock+0x18/0x68
-> [c000000005dafc70] [c0003d0013ce1d5c] 
-> fw_core_handle_bus_reset+0xa98/0xb64 [firewire_core]
-> [c000000005dafdc0] [c0003d0013d19aec] 
-> handle_selfid_complete_event+0x610/0x764 [firewire_ohci]
-> [c000000005dafe80] [c000000000106050] irq_thread_fn+0x40/0x9c
-> [c000000005dafec0] [c000000000105ecc] irq_thread+0x1c0/0x298
-> [c000000005daff60] [c0000000000b5e54] kthread+0x250/0x280
-> [c000000005daffe0] [c00000000000bd30] start_kernel_thread+0x14/0x18
-I bisected the issue. First bad commit is:
+Loooks good to me overall,
 
-  # git bisect good
-7d138cb269dbd2fa9b0da89a9c10503d1cf269d5 is the first bad commit
-commit 7d138cb269dbd2fa9b0da89a9c10503d1cf269d5
-Author: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Date:   Tue Sep 16 08:47:44 2025 +0900
+Reviewed-by: Arnd Bergmann <arnd@arndb.de>
 
-     firewire: core: use spin lock specific to topology map
+I agree it's rather unlikely that anyone is still using 31-bit
+binaries, it was only really from 2000 to 2002 that commercial
+distros were missing s390x support. Debian moved to 64-bit-only
+much later than the others, but had both fewer user and fewer
+third-party applications that might require old binaries.
 
-     At present, the operation for read transaction to topology map 
-register is
-     not protected by any kind of lock primitives. This causes a potential
-     problem to result in the mixed content of topology map.
-
-     This commit adds and uses spin lock specific to topology map.
-
-     Link: 
-https://lore.kernel.org/r/20250915234747.915922-4-o-takashi@sakamocchi.jp
-     Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-
-  drivers/firewire/core-topology.c    | 22 ++++++++++++++--------
-  drivers/firewire/core-transaction.c |  6 +++++-
-  include/linux/firewire.h            |  6 +++++-
-  3 files changed, 24 insertions(+), 10 deletions(-)
-
-
-Bisect.log attached.
-
-Regards,
-Erhard F.
---------------c8xoJb3xBtNTMKbm6r52N0KM
-Content-Type: text/x-log; charset=UTF-8; name="bisect.log"
-Content-Disposition: attachment; filename="bisect.log"
-Content-Transfer-Encoding: base64
-
-Z2l0IGJpc2VjdCBzdGFydAojIFN0YXR1czogd2FydGUgYXVmIGd1dGVuIHVuZCBzY2hsZWNo
-dGVuIENvbW1pdAojIGdvb2Q6IFtlNWYwYTY5OGIzNGVkNzYwMDJkYzVjZmYzODA0YTYxYzgw
-MjMzYTdhXSBMaW51eCA2LjE3CmdpdCBiaXNlY3QgZ29vZCBlNWYwYTY5OGIzNGVkNzYwMDJk
-YzVjZmYzODA0YTYxYzgwMjMzYTdhCiMgU3RhdHVzOiB3YXJ0ZSBhdWYgc2NobGVjaHRlbiBD
-b21taXQsIDEgZ3V0ZXIgQ29tbWl0IGJla2FubnQKIyBiYWQ6IFtlOWE2ZmIwYmNkZDc2MDli
-ZTY5NjkxMTJmM2ZiZmNjZTNiMWQ0YTdjXSBMaW51eCA2LjE4LXJjNQpnaXQgYmlzZWN0IGJh
-ZCBlOWE2ZmIwYmNkZDc2MDliZTY5NjkxMTJmM2ZiZmNjZTNiMWQ0YTdjCiMgYmFkOiBbZjc5
-ZTc3MjI1OGRmMzExYzJjYjIxNTk0Y2EwOTk2MzE4ZTcyMGQyOF0gTWVyZ2UgdGFnICdtZWRp
-YS92Ni4xOC0xJyBvZiBnaXQ6Ly9naXQua2VybmVsLm9yZy9wdWIvc2NtL2xpbnV4L2tlcm5l
-bC9naXQvbWNoZWhhYi9saW51eC1tZWRpYQpnaXQgYmlzZWN0IGJhZCBmNzllNzcyMjU4ZGYz
-MTFjMmNiMjE1OTRjYTA5OTYzMThlNzIwZDI4CiMgYmFkOiBbMGYwNDhjODc4ZWUzMmE0MjU5
-ZGJmMjhlMGFkOGZkMGI3MWVlMDA4NV0gTWVyZ2UgdGFnICdzb2MtZHQtNi4xOCcgb2YgZ2l0
-Oi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L3NvYy9zb2MKZ2l0
-IGJpc2VjdCBiYWQgMGYwNDhjODc4ZWUzMmE0MjU5ZGJmMjhlMGFkOGZkMGI3MWVlMDA4NQoj
-IGdvb2Q6IFtjMDUwZGFmNjlmM2VkZjcyZTI3NGVhYTMyMWY2NjNiMTc3OWM0MzkxXSBNZXJn
-ZSB0YWcgJ3B3bS9mb3ItNi4xOC1yYzEnIG9mIGdpdDovL2dpdC5rZXJuZWwub3JnL3B1Yi9z
-Y20vbGludXgva2VybmVsL2dpdC91a2xlaW5lay9saW51eApnaXQgYmlzZWN0IGdvb2QgYzA1
-MGRhZjY5ZjNlZGY3MmUyNzRlYWEzMjFmNjYzYjE3NzljNDM5MQojIGJhZDogWzk3OTJkNjYw
-YTRlOTFkMzFhNmIxYWYxMDVhZTNmMWMyOTEwN2U5NGJdIE1lcmdlIHRhZyAnZGV2aWNldHJl
-ZS1mb3ItNi4xOCcgb2YgZ2l0Oi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJu
-ZWwvZ2l0L3JvYmgvbGludXgKZ2l0IGJpc2VjdCBiYWQgOTc5MmQ2NjBhNGU5MWQzMWE2YjFh
-ZjEwNWFlM2YxYzI5MTA3ZTk0YgojIGJhZDogW2YwN2MzNjk1YmY2NTIyMGE2OWE4NDg0Nzhi
-ZDkwOTliZGVhYWZhNzhdIE1lcmdlIHRhZyAnZmlyZXdpcmUtdXBkYXRlcy02LjE4JyBvZiBn
-aXQ6Ly9naXQua2VybmVsLm9yZy9wdWIvc2NtL2xpbnV4L2tlcm5lbC9naXQvaWVlZTEzOTQv
-bGludXgxMzk0CmdpdCBiaXNlY3QgYmFkIGYwN2MzNjk1YmY2NTIyMGE2OWE4NDg0NzhiZDkw
-OTliZGVhYWZhNzgKIyBnb29kOiBbZWExYzZjNTkyNTIyMjA4ZGYxZGNhYzllOGYxZGViN2Nj
-NTZhNTFiN10gTWVyZ2UgdGFnICdzcGktdjYuMTgnIG9mIGdpdDovL2dpdC5rZXJuZWwub3Jn
-L3B1Yi9zY20vbGludXgva2VybmVsL2dpdC9icm9vbmllL3NwaQpnaXQgYmlzZWN0IGdvb2Qg
-ZWExYzZjNTkyNTIyMjA4ZGYxZGNhYzllOGYxZGViN2NjNTZhNTFiNwojIGdvb2Q6IFsyZDI3
-NDUzNjI0NWI1OGE0Mzc1M2EyM2Q4NGRmYWRjOWRmMWRmNDg5XSBNZXJnZSB0YWcgJ21tYy12
-Ni4xOCcgb2YgZ2l0Oi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0
-L3VsZmgvbW1jCmdpdCBiaXNlY3QgZ29vZCAyZDI3NDUzNjI0NWI1OGE0Mzc1M2EyM2Q4NGRm
-YWRjOWRmMWRmNDg5CiMgZ29vZDogW2I0OTE4MDAzY2Y1NGY5OTAwNGMxMzZjMjZmOTZiNmRm
-N2FiNDlmYWNdIE1lcmdlIHRhZyAnbWZkLW5leHQtNi4xOCcgb2YgZ2l0Oi8vZ2l0Lmtlcm5l
-bC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L2xlZS9tZmQKZ2l0IGJpc2VjdCBnb29k
-IGI0OTE4MDAzY2Y1NGY5OTAwNGMxMzZjMjZmOTZiNmRmN2FiNDlmYWMKIyBiYWQ6IFtlMzFi
-OTkwY2FmZDQ5YThjNTZlYWM1NTA5NGMxYTc4M2Y1ODI2YjQ3XSBmaXJld2lyZTogY29yZTog
-Y29kZSByZWZhY3RvcmluZyBmb3IgdGhlIGNhc2Ugb2YgZ2VuZXJhdGlvbiBtaXNtYXRjaApn
-aXQgYmlzZWN0IGJhZCBlMzFiOTkwY2FmZDQ5YThjNTZlYWM1NTA5NGMxYTc4M2Y1ODI2YjQ3
-CiMgZ29vZDogW2E0YmFjNTVkOTlkMzc5NzYyMDllMmZjMmMzMmJkM2RmYzg2YjA0NDddIGZp
-cmV3aXJlOiBjb3JlOiBjb2RlIHJlZmFjdG9yaW5nIHdoZXRoZXIgcm9vdCBub2RlIGlzIGN5
-Y2xlIG1hc3RlciBjYXBhYmxlCmdpdCBiaXNlY3QgZ29vZCBhNGJhYzU1ZDk5ZDM3OTc2MjA5
-ZTJmYzJjMzJiZDNkZmM4NmIwNDQ3CiMgYmFkOiBbNDIwYmQ3MDY4Y2JmYWVhMGE4NTc0NzJk
-ZDYzMWRjNDgzMTFlMmE4Zl0gZmlyZXdpcmU6IGNvcmU6IHVzZSBzcGluIGxvY2sgc3BlY2lm
-aWMgdG8gdHJhbnNhY3Rpb24KZ2l0IGJpc2VjdCBiYWQgNDIwYmQ3MDY4Y2JmYWVhMGE4NTc0
-NzJkZDYzMWRjNDgzMTFlMmE4ZgojIGdvb2Q6IFszNzliODcwYzI4YzZhNjE1YTEwMWRmNzk4
-NmViYTcwZmVhOTllZmY3XSBmaXJld2lyZTogY29yZTogdXNlIGhlbHBlciBtYWNyb3MgaW5z
-dGVhZCBvZiBkaXJlY3QgYWNjZXNzIHRvIEhaCmdpdCBiaXNlY3QgZ29vZCAzNzliODcwYzI4
-YzZhNjE1YTEwMWRmNzk4NmViYTcwZmVhOTllZmY3CiMgZ29vZDogWzgwYzViMDIzYTdkNmFl
-NDFiZDc5YWFkZWNlNGNiMWZjNjJlOTVhMDhdIGZpcmV3aXJlOiBjb3JlOiB1c2Ugc2NvcGVk
-X2d1YXJkKCkgdG8gbWFuYWdlIGNyaXRpY2FsIHNlY3Rpb24gdG8gdXBkYXRlIHRvcG9sb2d5
-CmdpdCBiaXNlY3QgZ29vZCA4MGM1YjAyM2E3ZDZhZTQxYmQ3OWFhZGVjZTRjYjFmYzYyZTk1
-YTA4CiMgYmFkOiBbN2QxMzhjYjI2OWRiZDJmYTliMGRhODlhOWMxMDUwM2QxY2YyNjlkNV0g
-ZmlyZXdpcmU6IGNvcmU6IHVzZSBzcGluIGxvY2sgc3BlY2lmaWMgdG8gdG9wb2xvZ3kgbWFw
-CmdpdCBiaXNlY3QgYmFkIDdkMTM4Y2IyNjlkYmQyZmE5YjBkYTg5YTljMTA1MDNkMWNmMjY5
-ZDUKIyBnb29kOiBbMDdjNDQ2ZTM1Yjg5YmM4Nzc0NzkyZjgwMzZlNTk1Y2ZmZGY1YjE2Ml0g
-ZmlyZXdpcmU6IGNvcmU6IG1haW50YWluIHBoeSBwYWNrZXQgcmVjZWl2ZXJzIGxvY2FsbHkg
-aW4gY2RldiBsYXllcgpnaXQgYmlzZWN0IGdvb2QgMDdjNDQ2ZTM1Yjg5YmM4Nzc0NzkyZjgw
-MzZlNTk1Y2ZmZGY1YjE2MgojIGZpcnN0IGJhZCBjb21taXQ6IFs3ZDEzOGNiMjY5ZGJkMmZh
-OWIwZGE4OWE5YzEwNTAzZDFjZjI2OWQ1XSBmaXJld2lyZTogY29yZTogdXNlIHNwaW4gbG9j
-ayBzcGVjaWZpYyB0byB0b3BvbG9neSBtYXAK
-
---------------c8xoJb3xBtNTMKbm6r52N0KM--
+      Arnd
 
