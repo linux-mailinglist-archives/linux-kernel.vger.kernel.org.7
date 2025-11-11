@@ -1,81 +1,62 @@
-Return-Path: <linux-kernel+bounces-896266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11CEFC4FFF0
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 23:49:38 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 671EAC4FFE1
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 23:47:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 035944E2AD4
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 22:49:37 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E18314E02B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 22:47:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96A112BEC5E;
-	Tue, 11 Nov 2025 22:49:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3997A263F30;
+	Tue, 11 Nov 2025 22:47:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ij5J06Xp"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="P2kIxoEu"
+Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70A1C1D90DF;
-	Tue, 11 Nov 2025 22:49:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 692E663CB
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 22:47:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762901370; cv=none; b=JQxm/qk/RAORyHh5QYRDza/0Z9AWkGztV3AeKu7qp1ukLEE+cU2YobDmR1kUufMcScG22fY+aVASRe2s/s15gAruilKdXvwDD7LjnU5VEgD4sa5SKWfO+myxjK1vgq+RqNKLL/nOnEbEl3spADa4NgumC4OUSSl+uONEZV9nHt0=
+	t=1762901254; cv=none; b=FFWR4rlbmxVx/db33Rx4/exvXfH5eqb7GzJvynwHzR1H+YyL6e3vl+DVbra9erdg41vXFKOmLRkxe5GwW3MGP7IvVlGwfesTWduxUYQAOtjFsqLqJUs54Gj3fmblKi1wtcLeGfBfYC465wTJoTtBfgCw9DsCaBi+iX64gY9sgXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762901370; c=relaxed/simple;
-	bh=/fHUw/ANnosy7hAphJl/q9TvTk58/LAGaJ/yzGfpkOw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ec3MDdtzws5YNaRMulWgq1ZeUA6a29ayzzsuYKhRjM3UXl7MtMMsvnCVa0u/jg3n0eowbMVXI0NsiDQ1wlHUS32QkPAQqKJhCdfxuJYyJFVZCfJBrJvW3sNrh+VPVh+yxYN6CD8uewzMtIAx6te4q87QSmsOpHTAxg5f8Y7sAKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ij5J06Xp; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762901369; x=1794437369;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=/fHUw/ANnosy7hAphJl/q9TvTk58/LAGaJ/yzGfpkOw=;
-  b=ij5J06Xp3vHkachmhwiT9P9E2p8xC/FP/Sf5tcpWZpiW7KT7byNFQDze
-   j5Ikl0FzxBIyQUwUkZjeCi7w8E3rDWg+8TbfESY0dwDRx4nB+NcO5TY93
-   AOxZP3GX8KWNv5hvQnG4gNYt347+9CS1tYi7DF6JOMDUl9sD37TZqqsFh
-   DmIM+uqeya7/hDxm5ZrD7qh64tgR5Y9aAFkpYN52W87Z0SyuMhXcrH+GB
-   iFxheB1i++v0RUOFl7inWj7j7BvtzHD6F1mqKiF4R5C+U4KJVm7ry3ZYt
-   xNXaZArSa8YwcjqszPW+CwV02EYVYTfVXyCTjmGUwEI0beRLvf7mYVmEo
-   g==;
-X-CSE-ConnectionGUID: F77s67gOQUC9nmtdI2oiLQ==
-X-CSE-MsgGUID: 04JlmyU5Shqs0NElzLp3tg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11610"; a="90435546"
-X-IronPort-AV: E=Sophos;i="6.19,297,1754982000"; 
-   d="scan'208";a="90435546"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 14:49:28 -0800
-X-CSE-ConnectionGUID: qJRHqiKTSOiUWwCaKbEdYg==
-X-CSE-MsgGUID: 81Btt+n+S6q67465fTl6TQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,297,1754982000"; 
-   d="scan'208";a="219791871"
-Received: from 9cc2c43eec6b.jf.intel.com ([10.54.77.43])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 14:49:27 -0800
-From: Zide Chen <zide.chen@intel.com>
-To: Namhyung Kim <namhyung@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Rogers <irogers@google.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	thomas.falcon@intel.com,
-	dapeng1.mi@linux.intel.com,
-	xudong.hao@intel.com,
-	Zide Chen <zide.chen@intel.com>
-Subject: [PATCH] perf test: Add a perf event fallback test
-Date: Tue, 11 Nov 2025 14:42:46 -0800
-Message-ID: <20251111224246.73673-1-zide.chen@intel.com>
-X-Mailer: git-send-email 2.51.1
+	s=arc-20240116; t=1762901254; c=relaxed/simple;
+	bh=T1zlvBTizWWLx1b9NGa0sy+D18UfFqWTOzQfia8zTBA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AfL1VrTWRCLASOQC/faTJJcHXydm2+ID15bslOUmOO2lLuxzygumjBfO3702rSeZBTQWnL2mgIBU0BxfA1b5cekXln3WJftMH9+0KAkT7CP2iUu6zSqN4J0xPXPGUvNMnwa3Gum4F+KJg8leSIG/nTLdjbmHvxqogO/Ae3H5l8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=P2kIxoEu; arc=none smtp.client-ip=91.218.175.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1762901249;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=yjptLzCE3l7Flv0vKYe34mrtiOciiauwKDvgQUUWCqU=;
+	b=P2kIxoEuLTUjpF5TwR+N8EYrXHN7JFtRLzY1fH0fhQ4mCdKdY9AfQicuY7FFDvyHVfK0yr
+	bGPfi5azs0qhQEkFLZ9YSfh9c/54QmCtMwIaXdVV6q49eTdZ6SQOtlrOJNhVCS6Q0VKW/7
+	oDN2+IpDV/WK1Xv//2C7Ky/eTvBuBIs=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Cezary Rojewski <cezary.rojewski@intel.com>,
+	Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+	Bard Liao <yung-chuan.liao@linux.intel.com>,
+	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] ASoC: Intel: atom: Replace deprecated strcpy in sst_slot_enum_info
+Date: Tue, 11 Nov 2025 23:47:01 +0100
+Message-ID: <20251111224706.87508-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,118 +64,29 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-This adds test cases to verify the precise ip fallback logic:
+strcpy() is deprecated; use the safer strscpy() instead.
 
-- If the system supports precise ip, for an event given with the maximum
-  precision level, it should be able to decrease precise_ip to find a
-  supported level.
-- The same fallback behavior should also work in more complex scenarios,
-  such as event groups or when PEBS is involved
-
-Additional fallback tests, such as those covering missing feature cases,
-can be added in the future.
-
-Suggested-by: Ian Rogers <irogers@google.com>
-Reviewed-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
-Signed-off-by: Zide Chen <zide.chen@intel.com>
+Link: https://github.com/KSPP/linux/issues/88
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
 ---
- .../tests/shell/test_event_open_fallback.sh   | 86 +++++++++++++++++++
- 1 file changed, 86 insertions(+)
- create mode 100755 tools/perf/tests/shell/test_event_open_fallback.sh
+ sound/soc/intel/atom/sst-atom-controls.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/tests/shell/test_event_open_fallback.sh b/tools/perf/tests/shell/test_event_open_fallback.sh
-new file mode 100755
-index 000000000000..72c1ac32c785
---- /dev/null
-+++ b/tools/perf/tests/shell/test_event_open_fallback.sh
-@@ -0,0 +1,86 @@
-+#!/bin/bash
-+# Perf event open fallback test
-+# SPDX-License-Identifier: GPL-2.0
-+
-+skip_cnt=0
-+ok_cnt=0
-+err_cnt=0
-+
-+cleanup()
-+{
-+	rm -f perf.data
-+	rm -f perf.data.old
-+	trap - EXIT TERM INT
-+}
-+
-+trap_cleanup()
-+{
-+	cleanup
-+	exit 1
-+}
-+
-+trap trap_cleanup EXIT TERM INT
-+
-+perf_record()
-+{
-+	perf record "$@" -- true 1>/dev/null 2>&1
-+}
-+
-+test_decrease_precise_ip()
-+{
-+	echo "Decrease precise ip test"
-+
-+	perf list pmu | grep -q 'cycles' || return 2
-+
-+	if ! perf_record -e cycles; then
-+		return 2
-+	fi
-+
-+	# It should reduce precision level down to 0 if needed.
-+	if ! perf_record -e cycles:ppp; then
-+		return 1
-+	fi
-+	return 0
-+}
-+
-+test_decrease_precise_ip_complicated()
-+{
-+	echo "Decrease precise ip test (complicated case)"
-+
-+	perf list pmu | grep -q 'mem-loads-aux' || return 2
-+
-+	if ! perf_record -e '{cpu/mem-loads-aux/S,cpu/mem-loads/PS}'; then
-+		return 1
-+	fi
-+	return 0
-+}
-+
-+count_result()
-+{
-+	if [ "$1" -eq 2 ] ; then
-+		skip_cnt=$((skip_cnt + 1))
-+		return
-+	fi
-+	if [ "$1" -eq 0 ] ; then
-+		ok_cnt=$((ok_cnt + 1))
-+		return
-+	fi
-+	err_cnt=$((err_cnt + 1))
-+}
-+
-+ret=0
-+test_decrease_precise_ip		|| ret=$? ; count_result $ret ; ret=0
-+test_decrease_precise_ip_complicated	|| ret=$? ; count_result $ret ; ret=0
-+
-+cleanup
-+
-+if [ ${err_cnt} -gt 0 ] ; then
-+	exit 1
-+fi
-+
-+if [ ${ok_cnt} -gt 0 ] ; then
-+	exit 0
-+fi
-+
-+# Skip
-+exit 2
+diff --git a/sound/soc/intel/atom/sst-atom-controls.c b/sound/soc/intel/atom/sst-atom-controls.c
+index 38116c758717..799d4f0881e3 100644
+--- a/sound/soc/intel/atom/sst-atom-controls.c
++++ b/sound/soc/intel/atom/sst-atom-controls.c
+@@ -142,7 +142,7 @@ static int sst_slot_enum_info(struct snd_kcontrol *kcontrol,
+ 
+ 	if (uinfo->value.enumerated.item > e->max - 1)
+ 		uinfo->value.enumerated.item = e->max - 1;
+-	strcpy(uinfo->value.enumerated.name,
++	strscpy(uinfo->value.enumerated.name,
+ 		e->texts[uinfo->value.enumerated.item]);
+ 
+ 	return 0;
 -- 
 2.51.1
 
