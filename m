@@ -1,220 +1,115 @@
-Return-Path: <linux-kernel+bounces-895845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E47FDC4F1C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:47:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2DBAC4F1B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:46:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4DB2A4F133B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:43:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D95B63BB92A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:44:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1EE93730CA;
-	Tue, 11 Nov 2025 16:43:29 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 483893730C9;
+	Tue, 11 Nov 2025 16:44:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="rfXPZSdW"
+Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 636143128D0
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 16:43:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09C7735BDBC
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 16:44:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762879409; cv=none; b=LInH1fTHVNNXZfWn7nalXJYHfrm5ukbdHKOuAPkU/TIxdWKMCBNsVfypzIIbTcG9rqwLg9+n2n+WfMM+aFOkdYbtMpBU9i+GfeZqvfFuX2yrpaRf+D+DxGsSfyagenElwhDkulJSFJ4fYaUAGr9cQYXlqlMn/ffdxkJmXaZKv14=
+	t=1762879479; cv=none; b=dA3d+z4He4e5UQ+oSJVhukjn97Mp7gJ7oIkwR27nVDyMJclyvcr6+txPJlk3nm+44WBScGogYNHi5QrkVx8A8+DbPqtt3+j0r0mMrAngmk5azQ+E+70/2sR9zWJRlSF5SgVhklO8qR4aWUw15hnOBThGtNXMiG997FaHXo3fEGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762879409; c=relaxed/simple;
-	bh=j+i/GLeLPEmR6E/R+k78FqFfShGTnyn5HtO+2xzH0NM=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=XsfkB80Q9D+KNCFl2JgbfFDSyxZL1JRaPhcgfYE2zptiw4ApYjz4bGt7SHhXVsIFundbZ+OWcChsON9Yxq4ucO0Z7boOnyI6wh3v0juTkAvjkpYHcj4BDb2Mmagx65zbMWDYfKz4ZMMtYqleQn10qRcUNWDO1cpBF1fZoOVlLKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-43328dcdac1so20520845ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 08:43:27 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762879406; x=1763484206;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XOPWsCrCMyoDlgmrt8NzYeObZ9ZGoe4M0O3DQkimHM8=;
-        b=sK8j8CY4SbdeaWAjSvPLGdbu2yxrbGdWqEgxINf5fAP/9Baih7cDx83qdD73q6KtDD
-         Sk+upIKfcHPlguMYG1yehJknhL9araHDbHKcsAMw/crxgKcQbdWrE80g7gUItkHPUIbP
-         n281ps8JvY+UHZUEMZX7CllbtSoOeGF1LPrx5iQuYFjWpRs8hpRD57qDyMj3VcIrvnS5
-         mqgToMOyzKXNMX9nCsXM0ou0bFUk2O47+f7bJR6IYVohFTFMEPbPxwIH0KfY85S1AriX
-         BbUayffL42JScLt81e8RLvvY6ObPG628PwmFwIcafFt1RkGKZJIINHfYntWC/m787RIg
-         B8WA==
-X-Forwarded-Encrypted: i=1; AJvYcCUMBHT/RhyuC5ZEitcsb7v7SA1AhHksIKfrrjTZMkQop+3ifTfDgtenyO35WnmnHkET9cqqxT85rY4r3fM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxcd3VQBv/NYEEr/gVJjw+Y+vUpkSq3ijZ0LIeJXpusVpWAjGth
-	lmG85rlm3KrZr7/lycpbtOdvhIoNb+RgxHsYzKtY/fMd13ssJRRIbNUA7z4BfR1KHhUMDfpzd7S
-	CvmWGJ6fnldQ22na6iVFxbU4TnQTNgPvquzusBL3RImgSKetQj3Gf843OPsM=
-X-Google-Smtp-Source: AGHT+IHFmw0aBLx9trd23PHt0ZvR1ewqpoZk2eLWklFWXUVeSyFIg7OVIkbbj4ebuAgNMHTNHGoYfK+LYWsyo7tV9Ln6pGBPbWek
+	s=arc-20240116; t=1762879479; c=relaxed/simple;
+	bh=4cFlTn1ndDkONGK1hqa3YKpwy44LbNZPfGhXgFQq30w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iBqzDGstIRBHVyaDtsx/wIw+AAuHwoD9PbAj9F1dcgmmfXrP0/jAuzoIZWBtFWTaoJBlWqbrAzcJaNj6sv/bfJlKs4RAO3K21ETaUWGCLBFXwqrdudgwK8PXxVlU28HMd2osYqeYvM4OWpe3GU7Lx/hD9ZRd3Nn3K19ry6Up9lM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=rfXPZSdW; arc=none smtp.client-ip=95.215.58.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 11 Nov 2025 08:44:14 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1762879463;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AFGArA0AwyLodhjb1ON/WMsB8iA1cwp5MzvB1sHE/Ws=;
+	b=rfXPZSdWWJKvfp/fyeozoSkkYJwyDMDkRUVrEra7CvbSs6AFwxYotJETtKrWvS3TJZRC2h
+	Arwcb/Xt1oFuQUnzOeHaCFe/795zZ0GNk5RO/LZXgNAfpb+qLnIUjCIe0slSEGkSjAeNYH
+	bROAJPYA4Fq3TcbIL99NO0L3yuoCXjU=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Harry Yoo <harry.yoo@oracle.com>, Qi Zheng <qi.zheng@linux.dev>, 
+	hannes@cmpxchg.org, hughd@google.com, mhocko@suse.com, roman.gushchin@linux.dev, 
+	muchun.song@linux.dev, david@redhat.com, lorenzo.stoakes@oracle.com, ziy@nvidia.com, 
+	imran.f.khan@oracle.com, kamalesh.babulal@oracle.com, axelrasmussen@google.com, 
+	yuanchu@google.com, weixugc@google.com, akpm@linux-foundation.org, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
+	Muchun Song <songmuchun@bytedance.com>, Qi Zheng <zhengqi.arch@bytedance.com>, 
+	Clark Williams <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	linux-rt-devel@lists.linux.dev
+Subject: Re: [PATCH v1 04/26] mm: vmscan: refactor move_folios_to_lru()
+Message-ID: <jzihvbb6w26d4codfigy2o7b2h26izb4ahihouw54cvuzau54d@jyaa6rgpzuai>
+References: <366385a3-ed0e-440b-a08b-9cf14165ee8f@linux.dev>
+ <aQ3yLER4C4jY70BH@harry>
+ <hfutmuh4g5jtmrgeemq2aqr2tvxz6mnqaxo5l5vddqnjasyagi@gcscu5khrjxm>
+ <aRFKY5VGEujVOqBc@hyeyoo>
+ <2a68bddf-e6e6-4960-b5bc-1a39d747ea9b@linux.dev>
+ <aRF7eYlBKmG3hEFF@hyeyoo>
+ <aqdvjyzfk6vpespzcszfkmx522iy7hvddefcjgusrysglpdykt@uqedtngotzmy>
+ <8d6655f8-2756-45bb-85c1-223c3a5e656c@linux.dev>
+ <aRKqm24Lrg-JnCoh@hyeyoo>
+ <20251111084900.babaOj0w@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:350b:b0:433:74ba:8bf5 with SMTP id
- e9e14a558f8ab-43374ba8f74mr162559385ab.23.1762879406632; Tue, 11 Nov 2025
- 08:43:26 -0800 (PST)
-Date: Tue, 11 Nov 2025 08:43:26 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <691367ae.a70a0220.22f260.0141.GAE@google.com>
-Subject: [syzbot] [block?] [trace?] INFO: task hung in blk_trace_startstop
-From: syzbot <syzbot+774863666ef5b025c9d0@syzkaller.appspotmail.com>
-To: axboe@kernel.dk, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, mathieu.desnoyers@efficios.com, 
-	mhiramat@kernel.org, rostedt@goodmis.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251111084900.babaOj0w@linutronix.de>
+X-Migadu-Flow: FLOW_OUT
 
-Hello,
+On Tue, Nov 11, 2025 at 09:49:00AM +0100, Sebastian Andrzej Siewior wrote:
+> On 2025-11-11 12:16:43 [+0900], Harry Yoo wrote:
+> > > However, in the !CONFIG_HAVE_CMPXCHG_LOCAL case, mod_node_page_state()
+> > > still calls local_irq_save(). Is this feasible in the PREEMPT_RT kernel?
+> > 
+> > Hmm I was going to say it's necessary, but AFAICT we don't allocate
+> > or free memory in hardirq context on PREEMPT_RT (that's the policy)
+> > and so I'd say it's not necessary to disable IRQs.
+> > 
+> > Sounds like we still want to disable IRQs only on !PREEMPT_RT on
+> > such architectures?
+> > 
+> > Not sure how seriously do PREEMPT_RT folks care about architectures
+> > without HAVE_CMPXCHG_LOCAL. (riscv and loongarch have ARCH_SUPPORTS_RT
+> > but doesn't have HAVE_CMPXCHG_LOCAL).
+> 
+> We take things seriously and you shouldn't make assumption based on
+> implementation. Either the API can be used as such or not.
+> In case of mod_node_page_state(), the non-IRQ off version
+> (__mod_node_page_state()) has a preempt_disable_nested() to ensure
+> atomic update on PREEMPT_RT without disabling interrupts.
+> 
 
-syzbot found the following issue on:
+Harry is talking about mod_node_page_state() on
+!CONFIG_HAVE_CMPXCHG_LOCAL which is disabling irqs.
 
-HEAD commit:    4a0c9b339199 Merge tag 'probes-fixes-v6.18-rc4' of git://g..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12323812580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e46b8a1c645465a9
-dashboard link: https://syzkaller.appspot.com/bug?extid=774863666ef5b025c9d0
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+void mod_node_page_state(struct pglist_data *pgdat, enum node_stat_item item,
+					long delta)
+{
+	unsigned long flags;
 
-Unfortunately, I don't have any reproducer for this issue yet.
+	local_irq_save(flags);
+	__mod_node_page_state(pgdat, item, delta);
+	local_irq_restore(flags);
+}
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/2d880d82a810/disk-4a0c9b33.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/75307faea32a/vmlinux-4a0c9b33.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/9d3f4c38a2eb/bzImage-4a0c9b33.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+774863666ef5b025c9d0@syzkaller.appspotmail.com
-
-INFO: task syz.6.3379:19656 blocked for more than 143 seconds.
-      Not tainted syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz.6.3379      state:D stack:28776 pid:19656 tgid:19654 ppid:16553  task_flags:0x400040 flags:0x00080002
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5325 [inline]
- __schedule+0x1798/0x4cc0 kernel/sched/core.c:6929
- __schedule_loop kernel/sched/core.c:7011 [inline]
- schedule+0x165/0x360 kernel/sched/core.c:7026
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:7083
- __mutex_lock_common kernel/locking/mutex.c:676 [inline]
- __mutex_lock+0x7e6/0x1350 kernel/locking/mutex.c:760
- blk_trace_startstop+0xa3/0x640 kernel/trace/blktrace.c:682
- blk_trace_ioctl+0x19b/0x430 kernel/trace/blktrace.c:724
- blkdev_common_ioctl+0xdf4/0x2550 block/ioctl.c:630
- blkdev_ioctl+0x4f6/0x6d0 block/ioctl.c:699
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:597 [inline]
- __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:583
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fbcfcb8f6c9
-RSP: 002b:00007fbcfdaa3038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007fbcfcde6090 RCX: 00007fbcfcb8f6c9
-RDX: 0000000000000000 RSI: 0000000000001275 RDI: 0000000000000003
-RBP: 00007fbcfcc11f91 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007fbcfcde6128 R14: 00007fbcfcde6090 R15: 00007fbcfcf0fa28
- </TASK>
-
-Showing all locks held in the system:
-1 lock held by khungtaskd/31:
- #0: ffffffff8df3d660 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
- #0: ffffffff8df3d660 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:867 [inline]
- #0: ffffffff8df3d660 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x2e/0x180 kernel/locking/lockdep.c:6775
-2 locks held by getty/5588:
- #0: ffff888032fa10a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
- #1: ffffc9000332b2f0 (&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_read+0x43e/0x1400 drivers/tty/n_tty.c:2222
-3 locks held by syz.6.3379/19655:
-1 lock held by syz.6.3379/19656:
- #0: ffff888142f2b068 (&q->debugfs_mutex){+.+.}-{4:4}, at: blk_trace_startstop+0xa3/0x640 kernel/trace/blktrace.c:682
-
-=============================================
-
-NMI backtrace for cpu 0
-CPU: 0 UID: 0 PID: 31 Comm: khungtaskd Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- nmi_cpu_backtrace+0x39e/0x3d0 lib/nmi_backtrace.c:113
- nmi_trigger_cpumask_backtrace+0x17a/0x300 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:160 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:332 [inline]
- watchdog+0xf60/0xfa0 kernel/hung_task.c:495
- kthread+0x711/0x8a0 kernel/kthread.c:463
- ret_from_fork+0x4bc/0x870 arch/x86/kernel/process.c:158
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-Sending NMI from CPU 0 to CPUs 1:
-NMI backtrace for cpu 1
-CPU: 1 UID: 0 PID: 19655 Comm: syz.6.3379 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-RIP: 0010:unwind_get_return_address+0x4d/0x90 arch/x86/kernel/unwind_orc.c:369
-Code: c0 75 4c 83 3b 00 74 3a 48 83 c3 48 49 89 df 49 c1 ef 03 43 80 3c 37 00 74 08 48 89 df e8 4b 30 b2 00 48 8b 3b e8 b3 cf 18 00 <85> c0 74 14 43 80 3c 37 00 74 08 48 89 df e8 30 30 b2 00 48 8b 03
-RSP: 0018:ffffc9000b257668 EFLAGS: 00000202
-RAX: 0000000000000001 RBX: ffffc9000b2576d0 RCX: 6861806b914a4f00
-RDX: 0000000000000001 RSI: ffffffff8d8f46a3 RDI: ffffffff846da7ad
-RBP: ffffc9000b257710 R08: ffffc9000b257dd0 R09: 0000000000000000
-R10: ffffc9000b2576d8 R11: fffff5200164aedd R12: ffff888066a03c80
-R13: 1ffff9200164aefc R14: dffffc0000000000 R15: 1ffff9200164aeda
-FS:  00007fbcfdac46c0(0000) GS:ffff88812623b000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f184bdb3ad8 CR3: 0000000043d28000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- arch_stack_walk+0xfc/0x150 arch/x86/kernel/stacktrace.c:26
- stack_trace_save+0x9c/0xe0 kernel/stacktrace.c:122
- save_stack+0xf5/0x1f0 mm/page_owner.c:156
- __reset_page_owner+0x71/0x1f0 mm/page_owner.c:311
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1394 [inline]
- __free_frozen_pages+0xbc4/0xd30 mm/page_alloc.c:2906
- relay_destroy_buf+0x10e/0x3a0 kernel/relay.c:200
- relay_remove_buf kernel/relay.c:220 [inline]
- kref_put include/linux/kref.h:65 [inline]
- relay_close_buf kernel/relay.c:435 [inline]
- relay_open+0x734/0x920 kernel/relay.c:531
- do_blk_trace_setup+0x561/0x980 kernel/trace/blktrace.c:572
- blk_trace_setup+0x116/0x1f0 kernel/trace/blktrace.c:614
- blk_trace_ioctl+0x181/0x430 kernel/trace/blktrace.c:712
- blkdev_ioctl+0x41d/0x6d0 block/ioctl.c:694
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:597 [inline]
- __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:583
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fbcfcb8f6c9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fbcfdac4038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007fbcfcde5fa0 RCX: 00007fbcfcb8f6c9
-RDX: 00002000000000c0 RSI: 00000000c0481273 RDI: 0000000000000003
-RBP: 00007fbcfcc11f91 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007fbcfcde6038 R14: 00007fbcfcde5fa0 R15: 00007fbcfcf0fa28
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Is PREEMPT_RT fine with this?
 
