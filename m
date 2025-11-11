@@ -1,355 +1,224 @@
-Return-Path: <linux-kernel+bounces-894567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02FD0C4B51E
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 04:28:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00687C4B530
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 04:29:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CACAD3A861F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 03:28:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A634D188F96E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 03:30:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46DE4346E53;
-	Tue, 11 Nov 2025 03:28:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I/AKBxXJ"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E0B5346E60;
+	Tue, 11 Nov 2025 03:29:44 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 808F93431F2
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 03:28:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA79633B6C8;
+	Tue, 11 Nov 2025 03:29:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762831710; cv=none; b=hq9qmAmuLlbNnC5b+6LipHJsz1O4AcLwUylc1Na0a5hoUygtpo6KMF2Q7CIIkdQ0oEg+L8FZyp0KfaMONpo5v7rV4ajCWZCw7ZAHG0bGIazHx68YZbAsAM56oBEvdNIW+yLQro/jryxfAdoyvJrJDHIwHsRjWTK5vnUsEefcHXk=
+	t=1762831783; cv=none; b=tBgIeg8BFKq6m0waBPRuXAhgfaKOZaBaLCkGdD+smofg92RYX86ssNdhRZVlp8zyA6Bd0RbohVZHtNkOaqqdi0E8lT5loW2XNT4yTocIEcH4r7wt5rsiL3cllcK2DnLDxxLSgI02Ih5nZwJNa7xmK0nuhHp8A2zB2gphzAYaq44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762831710; c=relaxed/simple;
-	bh=O5P21HYEMt1FLKMvaeJi1khRf2XtmoeOLz6ch+k7Wvg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TLMuFhsqr+3DmmxbcJzrHbY6RLfZIhZku9qUs+5rbxPPlMejI1Duziwx6OIew9yxqBYH3O1VCn9o+B+wHGvD7F3oHOAHHsGJa5sUrBSDEI7t4AEPhzLPVLIVIKN890ALVhIxT1+8HpRl/cVeQj6hgmWa/EeFYCMqWPCjTToeIv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I/AKBxXJ; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b6ceb3b68eeso2337188a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 19:28:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762831708; x=1763436508; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YC2Dx9iOrDi6+zQwMWroDp4lgkRo3PWjkQHuKtphfrc=;
-        b=I/AKBxXJw8pvRlFAgFzdHQ4S3cS0gAiBk3wDJqin5iFIHur64PfFUhLlRYGTAN0HI0
-         DUOBYol5ymXMtjQb+QKcvIBPzpbhz4dA1iOFdt+4lPFByyV6rAYgJ0+HYulqSq+7zHnE
-         VJH5rUzOHo2JEs66J2YhJlpTJ/Nhi5Dzbe8cQZLm8auwYzDFy3I7lwQM5p+y6EA3HJBm
-         7IrsL6QmYJbMjxS4XLJca5DpmQRYhXOOjeqVWGj9wQ+DMBLpl0xUaXnpWSPnH+ImETdl
-         ZCvrXTZ+3ye+vVeYfSYbI0KxCobgO7BO1rDNiIqN7QNWxz0i7olZP6kYB/cFPtAcn8D8
-         jKTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762831708; x=1763436508;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YC2Dx9iOrDi6+zQwMWroDp4lgkRo3PWjkQHuKtphfrc=;
-        b=XVuSrsAZbIptE9HJouDj+1xBMQhh2h9MaIJwbNdPPZdMJe8qiZcdpvXq9msqpzfNZ7
-         ufMKXiFSbmdJE/U5AFu24HMDOAtBTbr01r+ANbaoD0BdsiQp49EDi9vpAzMC9XuTClPG
-         id4kns3a4/BNOil/cZ4Jk0NVeNi82+PmBPLSqOKxK5R3/7TiExCAzAeKqkGnem+shHUS
-         QieTSzkP6UauIyofesB1Ih1ZUH5w0RUq6xAioAERQOSp6omErXRuN5punbXpG16pqrMc
-         +uoqsmNHvt5MzxTE0f5+l5eSKV7hktbjozPr4mcqrtBCrbiB/itu3SboE4MXAFNMtdcu
-         uYyA==
-X-Forwarded-Encrypted: i=1; AJvYcCU1WabmqRKbr+4jibcq0TMsxmYeIq40251EWSCFdE4v/pBt7gr1olsYyI1I+RBOFwbS866v3sGQ/Quu+ec=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbCG6bn7DLVwPPYCn0jXhHMVuyJTDb1Xmay+Kx/oe0CCji5S53
-	gPwTXLvOXH1fDQ6s+sLou8Izgs96mJq5qCyJoNRvjSsmwm01AtF7X9nw
-X-Gm-Gg: ASbGncuHeF0kSATcWyZBls37U6MjgCQ3LAnIXjRWVXCBDbwaC4NZIoUUIInzvD0jUdX
-	9FkCeRKLCAsqAZPRJz+gKJt0qzrSVdkHAF2fgd6F09hkFrgoAQR9exP5E6+FnuIsSyUmjeQSsL/
-	qz0KViU8Q/9HwnGgZur718TQ2VsLjFDS+nkwAAfMnsEpQcb/H/sFg8Whe/pGAMCgGYI9xnJ7iXv
-	ybH/I8vTlDbRyJl3L3v4APE7G4Ie4lA7o3XfyoOaKxyKeJAV7C+bhYu13xHSMZ3TTjvARrdx7/B
-	6l7p4kgER63pBGz/RC2AlbHEn3CxfU8F4frqwyqZkg1cqNU+9Zwu6JdY9BS6ucKaq6tQEMI9Dza
-	T83+DE4zSvzjkgc7Wd3iFaFNGUeytWrkBbnp1QoU9S41GlpovphxoehtbOLJSSYSet4NXG0e/xe
-	F5yUDot0aMHjrpgOauPF0niwmBZG288VMkt0Zuy8/R0RjTafZcKI1KLwQb
-X-Google-Smtp-Source: AGHT+IEsqSgvnp4g7IL4+htc9J2RSl9i6k2BLfkSYr1KEs4TwmlJTB5tNVwK9T1T1vD82tjFfhEQNw==
-X-Received: by 2002:a17:902:ec90:b0:295:560a:e474 with SMTP id d9443c01a7336-297e56c9f49mr144165115ad.32.1762831707718;
-        Mon, 10 Nov 2025 19:28:27 -0800 (PST)
-Received: from [10.0.2.15] (KD106167137155.ppp-bb.dion.ne.jp. [106.167.137.155])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29651ca4262sm164545005ad.86.2025.11.10.19.28.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Nov 2025 19:28:27 -0800 (PST)
-Message-ID: <1c742563-5408-4fe1-b122-8a7a14cf737f@gmail.com>
-Date: Tue, 11 Nov 2025 12:28:24 +0900
+	s=arc-20240116; t=1762831783; c=relaxed/simple;
+	bh=pB6VyIn2ISz7+hyAjKBphHnsEcbljCtFxrEDnr/zy8I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=b641krbI0aUCEm2/uZOm8iXfQJcM2pi//2C9rP5FtEvFfjc1GqL2ck/RThaAtIjHkR/YufgC9vyjnXacIZvC/7sU8kAq50/mI231J8pGYKJGcPU9A3S0920ERaZK9qjxFh5SPxhEnxR0gLbE+LQmUEGewChnSoS19x+LvrMLFCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from DESKTOP-L0HPE2S (unknown [124.16.141.245])
+	by APP-05 (Coremail) with SMTP id zQCowABXXG2ZrRJphq9PAA--.15902S2;
+	Tue, 11 Nov 2025 11:29:31 +0800 (CST)
+From: Haotian Zhang <vulab@iscas.ac.cn>
+To: wim@linux-watchdog.org,
+	linux@roeck-us.net
+Cc: linux-watchdog@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Haotian Zhang <vulab@iscas.ac.cn>
+Subject: [PATCH] platform/x86: wdat_wdt: Fix ACPI table leak on probe errors
+Date: Tue, 11 Nov 2025 11:28:32 +0800
+Message-ID: <20251111032832.1985-1-vulab@iscas.ac.cn>
+X-Mailer: git-send-email 2.50.1.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] Documentation: f2fs: wrap tables in literal code
- blocks
-To: Masaharu Noguchi <nogunix@gmail.com>, jaegeuk@kernel.org, chao@kernel.org
-Cc: corbet@lwn.net, linux-f2fs-devel@lists.sourceforge.net,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251109095416.2428351-1-nogunix@gmail.com>
-Content-Language: en-US
-From: Akira Yokosawa <akiyks@gmail.com>
-In-Reply-To: <20251109095416.2428351-1-nogunix@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowABXXG2ZrRJphq9PAA--.15902S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxWr15ur1kKFyUCFyrAF1rXrb_yoWrCF1xpF
+	WfCayYqrWjqr4Uur1xtw4DZFW3Ka1Iqayjqry8Cw1Sva45Kr1Yqa4FyryjqFs5GrWkGFW5
+	WF1UtF4UuFWjvF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkl14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY1x0262kKe7AKxVWU
+	AVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14
+	v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkG
+	c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI
+	0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4U
+	MIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7VUjuHq7UUUU
+	U==
+X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiBwoDA2kSglW-0QAAsP
 
-Hi again,
+wdat_wdt_probe() calls acpi_get_table() to obtain the WDAT ACPI table but
+returns early on multiple error paths without calling acpi_put_table().
+This causes a permanent ACPI table memory leak if the driver probe fails.
 
-On Sun,  9 Nov 2025 18:54:16 +0900, Masaharu Noguchi wrote:
-> Sphinx LaTeX builder fails with the following error when it tries to
-> turn the ASCII tables in f2fs.rst into nested longtables:
-> 
->   Markup is unsupported in LaTeX:
->   filesystems/f2fs:: longtable does not support nesting a table.
-> 
-> Wrap the tables in literal code blocks so that Sphinx renders them as
-> verbatim text instead. This prevents the LaTeX builder from attempting
-> unsupported table nesting and fixes the pdfdocs build.
-> 
-> Akira Yokosawa pointed out that the in-development Sphinx 8.3 latex
-> builder already handles these nested tables. I still want to fix the
-> current documentation because Sphinx 8.3 is not released yet, and the
-> LaTeX build on the stable 8.2.x series (which also requires
-> "docutils<0.22" for now) remains broken without this change.
-> 
-> Link: https://lore.kernel.org/lkml/20251011172415.114599-1-nogunix@gmail.com/
-> Changes in v2:
->  - wrap the compression level table in a literal block and add the
->    missing blank lines so docutils no longer warns about malformed
->    tables
->  - consistently use ``.. code-block:: none`` for the other ASCII tables
->    that previously triggered the LaTeX error
-> 
-> Signed-off-by: Masaharu Noguchi <nogunix@gmail.com>
-> ---
->  Documentation/filesystems/f2fs.rst | 115 +++++++++++++++--------------
->  1 file changed, 61 insertions(+), 54 deletions(-)
-> 
-> diff --git a/Documentation/filesystems/f2fs.rst b/Documentation/filesystems/f2fs.rst
-> index a8d02fe5be83..07b8e752476d 100644
-> --- a/Documentation/filesystems/f2fs.rst
-> +++ b/Documentation/filesystems/f2fs.rst
-> @@ -188,34 +188,36 @@ fault_type=%d		 Support configuring fault injection type, should be
->  			 enabled with fault_injection option, fault type value
->  			 is shown below, it supports single or combined type.
->  
-> -			 ===========================      ==========
-> -			 Type_Name                        Type_Value
-> -			 ===========================      ==========
-> -			 FAULT_KMALLOC                    0x00000001
-> -			 FAULT_KVMALLOC                   0x00000002
-> -			 FAULT_PAGE_ALLOC                 0x00000004
-> -			 FAULT_PAGE_GET                   0x00000008
-> -			 FAULT_ALLOC_BIO                  0x00000010 (obsolete)
-> -			 FAULT_ALLOC_NID                  0x00000020
-> -			 FAULT_ORPHAN                     0x00000040
-> -			 FAULT_BLOCK                      0x00000080
-> -			 FAULT_DIR_DEPTH                  0x00000100
-> -			 FAULT_EVICT_INODE                0x00000200
-> -			 FAULT_TRUNCATE                   0x00000400
-> -			 FAULT_READ_IO                    0x00000800
-> -			 FAULT_CHECKPOINT                 0x00001000
-> -			 FAULT_DISCARD                    0x00002000
-> -			 FAULT_WRITE_IO                   0x00004000
-> -			 FAULT_SLAB_ALLOC                 0x00008000
-> -			 FAULT_DQUOT_INIT                 0x00010000
-> -			 FAULT_LOCK_OP                    0x00020000
-> -			 FAULT_BLKADDR_VALIDITY           0x00040000
-> -			 FAULT_BLKADDR_CONSISTENCE        0x00080000
-> -			 FAULT_NO_SEGMENT                 0x00100000
-> -			 FAULT_INCONSISTENT_FOOTER        0x00200000
-> -			 FAULT_TIMEOUT                    0x00400000 (1000ms)
-> -			 FAULT_VMALLOC                    0x00800000
-> -			 ===========================      ==========
-> +			 .. code-block:: none
-> +
-> +			     ===========================      ==========
-> +			     Type_Name                        Type_Value
-> +			     ===========================      ==========
-> +			     FAULT_KMALLOC                    0x00000001
-> +			     FAULT_KVMALLOC                   0x00000002
-> +			     FAULT_PAGE_ALLOC                 0x00000004
-> +			     FAULT_PAGE_GET                   0x00000008
-> +			     FAULT_ALLOC_BIO                  0x00000010 (obsolete)
-> +			     FAULT_ALLOC_NID                  0x00000020
-> +			     FAULT_ORPHAN                     0x00000040
-> +			     FAULT_BLOCK                      0x00000080
-> +			     FAULT_DIR_DEPTH                  0x00000100
-> +			     FAULT_EVICT_INODE                0x00000200
-> +			     FAULT_TRUNCATE                   0x00000400
-> +			     FAULT_READ_IO                    0x00000800
-> +			     FAULT_CHECKPOINT                 0x00001000
-> +			     FAULT_DISCARD                    0x00002000
-> +			     FAULT_WRITE_IO                   0x00004000
-> +			     FAULT_SLAB_ALLOC                 0x00008000
-> +			     FAULT_DQUOT_INIT                 0x00010000
-> +			     FAULT_LOCK_OP                    0x00020000
-> +			     FAULT_BLKADDR_VALIDITY           0x00040000
-> +			     FAULT_BLKADDR_CONSISTENCE        0x00080000
-> +			     FAULT_NO_SEGMENT                 0x00100000
-> +			     FAULT_INCONSISTENT_FOOTER        0x00200000
-> +			     FAULT_TIMEOUT                    0x00400000 (1000ms)
-> +			     FAULT_VMALLOC                    0x00800000
-> +			     ===========================      ==========
->  mode=%s			 Control block allocation mode which supports "adaptive"
->  			 and "lfs". In "lfs" mode, there should be no random
->  			 writes towards main area.
-> @@ -296,14 +298,15 @@ nocheckpoint_merge	 Disable checkpoint merge feature.
->  compress_algorithm=%s	 Control compress algorithm, currently f2fs supports "lzo",
->  			 "lz4", "zstd" and "lzo-rle" algorithm.
->  compress_algorithm=%s:%d Control compress algorithm and its compress level, now, only
-> -			 "lz4" and "zstd" support compress level config.
-> -
-> -                         =========      ===========
-> -			 algorithm	level range
-> -                         =========      ===========
-> -			 lz4		3 - 16
-> -			 zstd		1 - 22
-> -                         =========      ===========
-> +			 "lz4" and "zstd" support compress level config::
-> +
-> +				 =========      ===========
-> +				 algorithm	level range
-> +				 =========      ===========
-> +				 lz4		3 - 16
-> +				 zstd		1 - 22
-> +				 =========      ===========
-> +
->  compress_log_size=%u	 Support configuring compress cluster size. The size will
->  			 be 4KB * (1 << %u). The default and minimum sizes are 16KB.
->  compress_extension=%s	 Support adding specified extension, so that f2fs can enable
-> @@ -368,38 +371,42 @@ errors=%s		 Specify f2fs behavior on critical errors. This supports modes:
->  			 the partition in read-only mode. By default it uses "continue"
->  			 mode.
->  
-> -			 ====================== =============== =============== ========
-> -			 mode			continue	remount-ro	panic
-> -			 ====================== =============== =============== ========
-> -			 access ops		normal		normal		N/A
-> -			 syscall errors		-EIO		-EROFS		N/A
-> -			 mount option		rw		ro		N/A
-> -			 pending dir write	keep		keep		N/A
-> -			 pending non-dir write	drop		keep		N/A
-> -			 pending node write	drop		keep		N/A
-> -			 pending meta write	keep		keep		N/A
-> -			 ====================== =============== =============== ========
-> +			 .. code-block:: none
-> +
-> +			     ====================== =============== =============== ========
-> +			     mode			continue	remount-ro	panic
-> +			     ====================== =============== =============== ========
-> +			     access ops		normal		normal		N/A
-> +			     syscall errors		-EIO		-EROFS		N/A
-> +			     mount option		rw		ro		N/A
-> +			     pending dir write	keep		keep		N/A
-> +			     pending non-dir write	drop		keep		N/A
-> +			     pending node write	drop		keep		N/A
-> +			     pending meta write	keep		keep		N/A
-> +			     ====================== =============== =============== ========
->  nat_bits		 Enable nat_bits feature to enhance full/empty nat blocks access,
->  			 by default it's disabled.
->  lookup_mode=%s		 Control the directory lookup behavior for casefolded
->  			 directories. This option has no effect on directories
->  			 that do not have the casefold feature enabled.
->  
-> -			 ================== ========================================
-> -			 Value		    Description
-> -			 ================== ========================================
-> -			 perf		    (Default) Enforces a hash-only lookup.
-> +			 .. code-block:: none
-> +
-> +			     ================== ========================================
-> +			     Value		    Description
-> +			     ================== ========================================
-> +			     perf		    (Default) Enforces a hash-only lookup.
->  					    The linear search fallback is always
->  					    disabled, ignoring the on-disk flag.
-> -			 compat		    Enables the linear search fallback for
-> +			     compat		    Enables the linear search fallback for
->  					    compatibility with directory entries
->  					    created by older kernel that used a
->  					    different case-folding algorithm.
->  					    This mode ignores the on-disk flag.
-> -			 auto		    F2FS determines the mode based on the
-> +			     auto		    F2FS determines the mode based on the
->  					    on-disk `SB_ENC_NO_COMPAT_FALLBACK_FL`
->  					    flag.
-> -			 ================== ========================================
-> +			     ================== ========================================
->  ======================== ============================================================
->  
->  Debugfs Entries
+Add a single cleanup path which calls acpi_put_table() and redirect all
+error returns to it, ensuring the ACPI table is always released.
 
-My R-b tag was sent without inspecting the source .rst after the change.
+Fixes: 058dfc767008 ("ACPI / watchdog: Add support for WDAT hardware watchdog")
+Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
+---
+ drivers/watchdog/wdat_wdt.c | 66 ++++++++++++++++++++++++-------------
+ 1 file changed, 44 insertions(+), 22 deletions(-)
 
-Using TABs inside ASCII tables degrades their readability.
-
-Masaharu, can you consider applying follow-up change below, which replaces
-TABs with white spaces except for the leading ones, and submit a v3?
-
-Thanks, Akira
-
----------8<---------8<---------8<---------8<---------8<---------8<---------8<-------
-diff --git a/Documentation/filesystems/f2fs.rst b/Documentation/filesystems/f2fs.rst
-index 07b8e752476d..fbe9f8d35366 100644
---- a/Documentation/filesystems/f2fs.rst
-+++ b/Documentation/filesystems/f2fs.rst
-@@ -374,15 +374,15 @@ errors=%s		 Specify f2fs behavior on critical errors. This supports modes:
- 			 .. code-block:: none
+diff --git a/drivers/watchdog/wdat_wdt.c b/drivers/watchdog/wdat_wdt.c
+index 650fdc7996e1..f827844a0c69 100644
+--- a/drivers/watchdog/wdat_wdt.c
++++ b/drivers/watchdog/wdat_wdt.c
+@@ -318,7 +318,7 @@ static int wdat_wdt_probe(struct platform_device *pdev)
+ 	struct resource *res;
+ 	void __iomem **regs;
+ 	acpi_status status;
+-	int i, ret;
++	int i, ret = 0;
  
- 			     ====================== =============== =============== ========
--			     mode			continue	remount-ro	panic
-+			     mode                   continue        remount-ro      panic
- 			     ====================== =============== =============== ========
--			     access ops		normal		normal		N/A
--			     syscall errors		-EIO		-EROFS		N/A
--			     mount option		rw		ro		N/A
--			     pending dir write	keep		keep		N/A
--			     pending non-dir write	drop		keep		N/A
--			     pending node write	drop		keep		N/A
--			     pending meta write	keep		keep		N/A
-+			     access ops             normal          normal          N/A
-+			     syscall errors         -EIO            -EROFS          N/A
-+			     mount option           rw              ro              N/A
-+			     pending dir write      keep            keep            N/A
-+			     pending non-dir write  drop            keep            N/A
-+			     pending node write     drop            keep            N/A
-+			     pending meta write     keep            keep            N/A
- 			     ====================== =============== =============== ========
- nat_bits		 Enable nat_bits feature to enhance full/empty nat blocks access,
- 			 by default it's disabled.
-@@ -393,19 +393,19 @@ lookup_mode=%s		 Control the directory lookup behavior for casefolded
- 			 .. code-block:: none
+ 	status = acpi_get_table(ACPI_SIG_WDAT, 0,
+ 				(struct acpi_table_header **)&tbl);
+@@ -326,19 +326,27 @@ static int wdat_wdt_probe(struct platform_device *pdev)
+ 		return -ENODEV;
  
- 			     ================== ========================================
--			     Value		    Description
-+			     Value              Description
- 			     ================== ========================================
--			     perf		    (Default) Enforces a hash-only lookup.
--					    The linear search fallback is always
--					    disabled, ignoring the on-disk flag.
--			     compat		    Enables the linear search fallback for
--					    compatibility with directory entries
--					    created by older kernel that used a
--					    different case-folding algorithm.
--					    This mode ignores the on-disk flag.
--			     auto		    F2FS determines the mode based on the
--					    on-disk `SB_ENC_NO_COMPAT_FALLBACK_FL`
--					    flag.
-+			     perf               (Default) Enforces a hash-only lookup.
-+			                        The linear search fallback is always
-+			                        disabled, ignoring the on-disk flag.
-+			     compat             Enables the linear search fallback for
-+			                        compatibility with directory entries
-+			                        created by older kernel that used a
-+			                        different case-folding algorithm.
-+			                        This mode ignores the on-disk flag.
-+			     auto               F2FS determines the mode based on the
-+			                        on-disk `SB_ENC_NO_COMPAT_FALLBACK_FL`
-+			                        flag.
- 			     ================== ========================================
- ======================== ============================================================
+ 	wdat = devm_kzalloc(dev, sizeof(*wdat), GFP_KERNEL);
+-	if (!wdat)
+-		return -ENOMEM;
++	if (!wdat) {
++		ret = -ENOMEM;
++		goto out_put_table;
++	}
  
+ 	regs = devm_kcalloc(dev, pdev->num_resources, sizeof(*regs),
+ 			    GFP_KERNEL);
+-	if (!regs)
+-		return -ENOMEM;
++	if (!regs) {
++		ret = -ENOMEM;
++		goto out_put_table;
++	}
+ 
+ 	/* WDAT specification wants to have >= 1ms period */
+-	if (tbl->timer_period < 1)
+-		return -EINVAL;
+-	if (tbl->min_count > tbl->max_count)
+-		return -EINVAL;
++	if (tbl->timer_period < 1) {
++		ret = -EINVAL;
++		goto out_put_table;
++	}
++	if (tbl->min_count > tbl->max_count) {
++		ret = -EINVAL;
++		goto out_put_table;
++	}
+ 
+ 	wdat->period = tbl->timer_period;
+ 	wdat->wdd.min_timeout = DIV_ROUND_UP(wdat->period * tbl->min_count, 1000);
+@@ -355,15 +363,20 @@ static int wdat_wdt_probe(struct platform_device *pdev)
+ 		res = &pdev->resource[i];
+ 		if (resource_type(res) == IORESOURCE_MEM) {
+ 			reg = devm_ioremap_resource(dev, res);
+-			if (IS_ERR(reg))
+-				return PTR_ERR(reg);
++			if (IS_ERR(reg)) {
++				ret = PTR_ERR(reg);
++				goto out_put_table;
++			}
+ 		} else if (resource_type(res) == IORESOURCE_IO) {
+ 			reg = devm_ioport_map(dev, res->start, 1);
+-			if (!reg)
+-				return -ENOMEM;
++			if (!reg) {
++				ret = -ENOMEM;
++				goto out_put_table;
++			}
+ 		} else {
+ 			dev_err(dev, "Unsupported resource\n");
+-			return -EINVAL;
++			ret = -EINVAL;
++			goto out_put_table;
+ 		}
+ 
+ 		regs[i] = reg;
+@@ -385,8 +398,10 @@ static int wdat_wdt_probe(struct platform_device *pdev)
+ 		}
+ 
+ 		instr = devm_kzalloc(dev, sizeof(*instr), GFP_KERNEL);
+-		if (!instr)
+-			return -ENOMEM;
++		if (!instr) {
++			ret = -ENOMEM;
++			goto out_put_table;
++		}
+ 
+ 		INIT_LIST_HEAD(&instr->node);
+ 		instr->entry = entries[i];
+@@ -417,7 +432,8 @@ static int wdat_wdt_probe(struct platform_device *pdev)
+ 
+ 		if (!instr->reg) {
+ 			dev_err(dev, "I/O resource not found\n");
+-			return -EINVAL;
++			ret = -EINVAL;
++			goto out_put_table;
+ 		}
+ 
+ 		instructions = wdat->instructions[action];
+@@ -425,8 +441,10 @@ static int wdat_wdt_probe(struct platform_device *pdev)
+ 			instructions = devm_kzalloc(dev,
+ 						    sizeof(*instructions),
+ 						    GFP_KERNEL);
+-			if (!instructions)
+-				return -ENOMEM;
++			if (!instructions) {
++				ret = -ENOMEM;
++				goto out_put_table;
++			}
+ 
+ 			INIT_LIST_HEAD(instructions);
+ 			wdat->instructions[action] = instructions;
+@@ -443,7 +461,7 @@ static int wdat_wdt_probe(struct platform_device *pdev)
+ 
+ 	ret = wdat_wdt_enable_reboot(wdat);
+ 	if (ret)
+-		return ret;
++		goto out_put_table;
+ 
+ 	platform_set_drvdata(pdev, wdat);
+ 
+@@ -460,12 +478,16 @@ static int wdat_wdt_probe(struct platform_device *pdev)
+ 
+ 	ret = wdat_wdt_set_timeout(&wdat->wdd, timeout);
+ 	if (ret)
+-		return ret;
++		goto out_put_table;
+ 
+ 	watchdog_set_nowayout(&wdat->wdd, nowayout);
+ 	watchdog_stop_on_reboot(&wdat->wdd);
+ 	watchdog_stop_on_unregister(&wdat->wdd);
+-	return devm_watchdog_register_device(dev, &wdat->wdd);
++	ret = devm_watchdog_register_device(dev, &wdat->wdd);
++
++out_put_table:
++	acpi_put_table((struct acpi_table_header *)tbl);
++	return ret;
+ }
+ 
+ static int wdat_wdt_suspend_noirq(struct device *dev)
+-- 
+2.50.1.windows.1
+
 
