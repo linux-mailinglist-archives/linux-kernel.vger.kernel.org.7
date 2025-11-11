@@ -1,87 +1,57 @@
-Return-Path: <linux-kernel+bounces-896026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33BADC4F834
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 19:54:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0617C4F83A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 19:55:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1456B188DBC4
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 18:55:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFAC63A5733
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 18:55:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1920F2C0288;
-	Tue, 11 Nov 2025 18:54:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73E722BEFF8;
+	Tue, 11 Nov 2025 18:55:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="REdD8h/z"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="HAXezBSR"
+Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4FB12BD5BB
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 18:54:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC8E9252292
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 18:55:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762887286; cv=none; b=qCrSJkYsAcgSHCgGPCBOA8NYTMIRi+HUfXagZFEI98FHgTMg3IBGjTcjvTBtaEK6LQ/YmYOcNqf078EHXavHvKUeMglVzh+fG6gyVlqCGgWSXDei6Nd4Hv4yyubcbxZRqHfalSZzTc3mxaSylVH8wnnTC7xBsfDdjhSMG+2IZg4=
+	t=1762887341; cv=none; b=k9vVToAZgqit6nniS7EnB2To6TnBA513Son1y0B6Fvx2TaFDSRYmwlNvs7wJ5UMmIYHMQeIt8RPdJC4I50P63eWvKJrLi6AN+B9dQUERT0y7b0uCb3oE5NAqr9YUR3hlGbb5GVedDYEgj3+ZN4WzZ5dnKikwA+e2LrPji7/XBRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762887286; c=relaxed/simple;
-	bh=gNjTFrNkSvtB3DchgmaRfnaI4p/1hKhkmvofjmSh3bI=;
+	s=arc-20240116; t=1762887341; c=relaxed/simple;
+	bh=D3LH1D14RTYnGMZJXON1DwndSko5rujuhxnqiK1VLQM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AsGGdjqhxwh4n0CVsWkEzGiYFnghDLJgwHuq43MxdvzEuTdXCca7el2Jpj0OxavKPsXXt535ATVmMY+kVWhrG7URT2njesXTktSleg976QxEwrLaGc3SJU83pYxrYksCW2/oMgWW1Bsm1ESt5OmHxpq8cnW1ziNSaMzPmaoWi6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=REdD8h/z; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-42b32ff5d10so732528f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 10:54:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762887283; x=1763492083; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=PdRUynOgPlBXPJo6ql5MWyX9Riir7hsBESxiC86Kk1c=;
-        b=REdD8h/zY3mS4QHg3GBtBWydN/gY5Sy4U9WLLR2CwEtpm0tzbgcdmUFh+/TRyR0Dkr
-         r5WKCaqMnCsI0O3XMeYRbTaMOou7012/KuacLz8RcTP8+nBKQsxNCNzVr3MQs0BL5R6A
-         aAugd7P8i+EH+l4iOJ2pfFzus9zkXLf8zwUo9giDA/4Yn0LOvWO4bWy+tzx9hAJTYyef
-         3wF6gZ7a9iWF9NvUO2v22YP8syRMzFdRx4QzsQbpO0Gwxg2TGI84GSVcHWeOMQM+roB8
-         /Bj5dmh8vhYDpINq6SfQcSHZY3euyAsOVnyARLGSRtCiLXGisoqs9a3HiNhZGMBEQRXs
-         KyEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762887283; x=1763492083;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PdRUynOgPlBXPJo6ql5MWyX9Riir7hsBESxiC86Kk1c=;
-        b=nA0MudM/3MV/0zWxgYikh0USKCGUQgH3uwsl2cEsSLk+A/yN92c+hLqii1D97fE8Hh
-         7j2MhasaPgpOlORDZWHwhOVkQrFNAexlVit/fTyKcAigUXenTLmO9vbQERBZfuyy7B+1
-         XsmZoXutsXHz9y0hdqTtkyadG+QAheIYWl1pel46TmI5Vo4HplD2Eegrh81GlR8uit5z
-         nYJfqRPB6KEeAhymwaWal5vnklWStEW5LveelmYNXPJj/xZTxRt69hFl++fgzunACEbM
-         snRP/Mc2bdit/R4KrEd+IosIMO3OVOoY4j4oK3ICZLVu/IUeajtpr7vILfB05sl46Fou
-         a1tw==
-X-Forwarded-Encrypted: i=1; AJvYcCU2YTwuCqaO2oWQyFHtGQnTI/TSRvDS/HCB5ES8zKR2LxnErTO9hDX/XL0V72Ao/AbA8J+DZwrHah+s2KM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxkv3WCOIHYh3UJ7W7X3+Q8PGqmI52K8kXkCwR6bT11wm+jc9PO
-	fRVhlIIQwHJNNvylnG0/bnH/1tVmqxMzW6D1jrqsxtNv3cWejFxfCLap
-X-Gm-Gg: ASbGncudyOAVP6W6KjTUD4hTforL/v14KIE6WpFLztxYhVcFkuV0f7uzxsVp/sjuIYZ
-	MCH5Ec9wRkvNmwpj2r7JY6mNAX9THeY/Kd5kePrh54OxhM4WAMUlxz5i19i8dmZtqZUYqaD/Ogh
-	2dX9VzG0gyqMmBXsiLqgnYSqmtWXe4nbqAePw4h04lueVQMDwtYPPdIX5Y+54aJmwQlbAQ3CveH
-	d4zoCfxgxpvl2NYoyUYnrQIWWRpulMDX9JgVJQZah+ZShQTmWyau/O/JFZn2Bmt0Dm9XC9UsSn7
-	f6TF2l+DlwGYv7pCjWlTDkpSI/UUJzM4XNmGntDkRsEMkgzE6y0XuPN5cApsJhmfRqNq7CYY8jG
-	pkLqgp3YS6woT3c2CC8zZ0BtcJRI5qu3pHuMEQum3dq6zbZ/gSEOpBGX7XNgT9rz+0i9PFuBWxj
-	6hBCcvhMfROQ==
-X-Google-Smtp-Source: AGHT+IGd0fmmG6z7kuRrMZdV6g6rc2EMUpgF61dCExt4OzGkFObjrnlzVeQMOCeTSTsuKBksjsQQTg==
-X-Received: by 2002:adf:a41b:0:b0:42b:47ef:1d59 with SMTP id ffacd0b85a97d-42b47ef221bmr2063764f8f.4.1762887282987;
-        Tue, 11 Nov 2025 10:54:42 -0800 (PST)
-Received: from osama ([197.46.148.47])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4776bcd51dfsm271008845e9.5.2025.11.11.10.54.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Nov 2025 10:54:42 -0800 (PST)
-Date: Tue, 11 Nov 2025 20:54:39 +0200
-From: Osama Abdelkader <osama.abdelkader@gmail.com>
-To: Marc Zyngier <maz@kernel.org>
-Cc: oupton@kernel.org, joey.gouly@arm.com, suzuki.poulose@arm.com,
-	yuzenghui@huawei.com, linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] KVM: arm64: add missing newline to sysreg init log
-Message-ID: <aROGOivTetFI01S_@osama>
-References: <20251110211051.814728-1-osama.abdelkader@gmail.com>
- <86346kvr00.wl-maz@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ia9K/oqgoyXyc38OJRo4ajlusHu5/HU9c3bt+FCKWGz5crkA7tbBPxmuuCdD2zh/WIHVOy/Lvkq8yKm+dazNH8lfhX6QtLOxie78+vRo+LWla/eO7pcEt9JcBm9WzffJBT/79/DdmUjAXh63fuBtQwlmsSxU7Nm0ED3wfPZUJRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=HAXezBSR; arc=none smtp.client-ip=95.215.58.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 11 Nov 2025 18:55:30 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1762887335;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hOi6XjO42RDCAcEGgINwcv4u2ylLtSQlkzdIS1Ook3U=;
+	b=HAXezBSRKSG12htgc94ooYjp8Q3BzxPqyavlanGPJB3berpmrEiDwsyRERNw1Gv0v9kckF
+	Fth4uPhwS4bh8sXnNvEJEfo9KVyJGhCp5QEQmcYHIc7yGkoxXUrGt32JFe9qROXt1fnqjG
+	P01t4kaD4LXaRywdEjUVWSCy543bbXM=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yosry Ahmed <yosry.ahmed@linux.dev>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Jim Mattson <jmattson@google.com>, 
+	Maxim Levitsky <mlevitsk@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
+Subject: Re: [PATCH 2/6] KVM: nSVM: Always recalculate LBR MSR intercepts in
+ svm_update_lbrv()
+Message-ID: <6ving6sg3ywr23epd3fmorzhovdom5uaty4ae4itit2amxafql@iui7as55sb55>
+References: <20251108004524.1600006-1-yosry.ahmed@linux.dev>
+ <20251108004524.1600006-3-yosry.ahmed@linux.dev>
+ <aktjuidgjmdqdlc42mmy4hby5zc2e5at7lgrmkfxavlzusveus@ai7h3sk6j37b>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,47 +60,106 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <86346kvr00.wl-maz@kernel.org>
+In-Reply-To: <aktjuidgjmdqdlc42mmy4hby5zc2e5at7lgrmkfxavlzusveus@ai7h3sk6j37b>
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Nov 11, 2025 at 09:49:03AM +0000, Marc Zyngier wrote:
-> On Mon, 10 Nov 2025 21:10:51 +0000,
-> Osama Abdelkader <osama.abdelkader@gmail.com> wrote:
+On Tue, Nov 11, 2025 at 03:11:37AM +0000, Yosry Ahmed wrote:
+> On Sat, Nov 08, 2025 at 12:45:20AM +0000, Yosry Ahmed wrote:
+> > svm_update_lbrv() is called when MSR_IA32_DEBUGCTLMSR is updated, and on
+> > nested transitions where LBRV is used. It checks whether LBRV enablement
+> > needs to be changed in the current VMCB, and if it does, it also
+> > recalculate intercepts to LBR MSRs.
 > > 
-> > missing newline so the  message is merged with follow-on logs
-> > the change only affects console output formatting, no behavioral impact.
+> > However, there are cases where intercepts need to be updated even when
+> > LBRV enablement doesn't. Example scenario:
+> > - L1 has MSR_IA32_DEBUGCTLMSR cleared.
+> > - L1 runs L2 without LBR_CTL_ENABLE (no LBRV).
+> > - L2 sets DEBUGCTLMSR_LBR in MSR_IA32_DEBUGCTLMSR, svm_update_lbrv()
+> >   sets LBR_CTL_ENABLE in VMCB02 and disables intercepts to LBR MSRs.
+> > - L2 exits to L1, svm_update_lbrv() is not called on this transition.
+> > - L1 clears MSR_IA32_DEBUGCTLMSR, svm_update_lbrv() finds that
+> >   LBR_CTL_ENABLE is already cleared in VMCB01 and does nothing.
+> > - Intercepts remain disabled, L1 reads to LBR MSRs read the host MSRs.
 > > 
-> > Signed-off-by: Osama Abdelkader <osama.abdelkader@gmail.com>
-> > ---
-> >  arch/arm64/kvm/arm.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
-> > index 870953b4a8a7..156cd1a6106e 100644
-> > --- a/arch/arm64/kvm/arm.c
-> > +++ b/arch/arm64/kvm/arm.c
-> > @@ -2845,7 +2845,7 @@ static __init int kvm_arm_init(void)
-> >  
-> >  	err = kvm_sys_reg_table_init();
-> >  	if (err) {
-> > -		kvm_info("Error initializing system register tables");
-> > +		kvm_info("Error initializing system register tables\n");
-> >  		return err;
-> >  	}
-> >  
+> > Fix it by always recalculating intercepts in svm_update_lbrv().
 > 
-> Given that everything in kvm_sys_reg_table_init() already screams
-> badly when it fails, I don't see the point of an additional message,
-> and I'd rather remove it.
+> This actually breaks hyperv_svm_test, because svm_update_lbrv() is
+> called on every nested transition, calling
+> svm_recalc_lbr_msr_intercepts() -> svm_set_intercept_for_msr() and
+> setting svm->nested.force_msr_bitmap_recalc to true.
 > 
-> Thanks,
+> This breaks the hyperv optimization in nested_svm_vmrun_msrpm() AFAICT.
 > 
-> 	M.
+> I think there are two ways to fix this:
+> - Add another bool to svm->nested to track LBR intercepts, and only call
+>   svm_set_intercept_for_msr() if the intercepts need to be updated.
 > 
-> -- 
-> Without deviation from the norm, progress is not possible.
+> - Update svm_set_intercept_for_msr() itself to do nothing if the
+>   intercepts do not need to be changed, which is more clutter but
+>   applies to other callers as well so could shave cycles elsewhere (see
+>   below).
+> 
+> Sean, Paolo, any preferences?
+> 
+> Here's what updating svm_set_intercept_for_msr() looks like:
 
-Thanks Marc. I just sent the patch to drop that message.
+and that diff breaks userspace_msr_exit_test :)
 
-Thank you,
-Osama
+Here's an actually tested diff:
+
+diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
+index 2fbb0b88c6a3e..88717429ba9d5 100644
+--- a/arch/x86/kvm/svm/svm.c
++++ b/arch/x86/kvm/svm/svm.c
+@@ -664,24 +664,38 @@ void svm_set_intercept_for_msr(struct kvm_vcpu *vcpu, u32 msr, int type, bool se
+ {
+        struct vcpu_svm *svm = to_svm(vcpu);
+        void *msrpm = svm->msrpm;
++       bool recalc = false;
++       bool already_set;
+
+        /* Don't disable interception for MSRs userspace wants to handle. */
+        if (type & MSR_TYPE_R) {
+-               if (!set && kvm_msr_allowed(vcpu, msr, KVM_MSR_FILTER_READ))
++               set = set || !kvm_msr_allowed(vcpu, msr, KVM_MSR_FILTER_READ);
++               already_set = svm_test_msr_bitmap_read(msrpm, msr);
++
++               if (!set && already_set)
+                        svm_clear_msr_bitmap_read(msrpm, msr);
+-               else
++               else if (set && !already_set)
+                        svm_set_msr_bitmap_read(msrpm, msr);
++
++               recalc |= (set != already_set);
+        }
+
+        if (type & MSR_TYPE_W) {
+-               if (!set && kvm_msr_allowed(vcpu, msr, KVM_MSR_FILTER_WRITE))
++               set = set || !kvm_msr_allowed(vcpu, msr, KVM_MSR_FILTER_WRITE);
++               already_set = svm_test_msr_bitmap_write(msrpm, msr);
++
++               if (!set && already_set)
+                        svm_clear_msr_bitmap_write(msrpm, msr);
+-               else
++               else if (set && !already_set)
+                        svm_set_msr_bitmap_write(msrpm, msr);
++
++               recalc |= (set != already_set);
+        }
+
+-       svm_hv_vmcb_dirty_nested_enlightenments(vcpu);
+-       svm->nested.force_msr_bitmap_recalc = true;
++       if (recalc) {
++               svm_hv_vmcb_dirty_nested_enlightenments(vcpu);
++               svm->nested.force_msr_bitmap_recalc = true;
++       }
+ }
+
+ void *svm_alloc_permissions_map(unsigned long size, gfp_t gfp_mask)
+
+---
+
+For the record, I don't want to just use svm_test_msr_bitmap_*() in
+svm_update_lbrv() because there is no direct equivalent in older kernels
+as far as I can tell, so a backport would be completely inapplicable.
 
