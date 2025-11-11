@@ -1,134 +1,122 @@
-Return-Path: <linux-kernel+bounces-895325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93100C4D769
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:45:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A082CC4D7B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:49:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3EC2D34F9E0
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F021189FD21
 	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:45:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37B413587C8;
-	Tue, 11 Nov 2025 11:42:48 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD6EE357A24;
+	Tue, 11 Nov 2025 11:41:43 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F160E3587BC;
-	Tue, 11 Nov 2025 11:42:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12E103043AF;
+	Tue, 11 Nov 2025 11:41:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762861367; cv=none; b=u7fu1OqeE8D2gkq6/T+wzYc5X+GnWouGKolQTABwK5NTR1modNrD/yTOMkBpcj5ulT1RZekfa/aw0S1k7KaBxxetPgqRv1WUc0xnk4JJdOI79oWFzzXefQDK4vZAIYxXsLiqBPQug94PvelfMzcQ654ir9NcMPs1E/PwN8Uz29E=
+	t=1762861303; cv=none; b=tmZg0heZR57EsWTBHK4NLuwImvWXN0oRMMRmwfYwzlZx7V8jWAAhkeNtAfoJ+3IXWnuWNUiZRO4q8neP3/w+TR6e3bZcYXUc241IftDejEexsPhe2ceagNqiX1Akha2oj1vi0k7h+FGNiwTzs88uw5Rpy/1tlgrwE0M7Ii7bL38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762861367; c=relaxed/simple;
-	bh=mFaVVam+QsIKOh8Y6I3dylyPM9lrSlVkAj+8EE1Oo8k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eLqqHyPz4M2NXjJfylqG0P0DeKFB82bDEW4NfT1iVqHIz0yj0CuQGg1saxBvgsQbINnX5PzmZOckEugASnYFCRL1UajGVQjPIvpjaVVNN0BOFPQLukU4e8TLCPH1R89zT9bOX5/CwdiUXtGonW4ZHb9uj/1DSP1kUwta24jAecU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from DESKTOP-L0HPE2S (unknown [124.16.141.245])
-	by APP-05 (Coremail) with SMTP id zQCowAAnLG0nIRNpxCBaAA--.18506S2;
-	Tue, 11 Nov 2025 19:42:32 +0800 (CST)
-From: Haotian Zhang <vulab@iscas.ac.cn>
-To: abelvesa@kernel.org,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	peng.fan@nxp.com,
-	kernel@pengutronix.de,
-	festevam@gmail.com
-Cc: linux-clk@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
+	s=arc-20240116; t=1762861303; c=relaxed/simple;
+	bh=NsifAaH4IJiJWQHRSEMOi7t8dMMrh3UzrvwkyayXbpY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CoLeSjX12k/OiKJyoLYnOPWWq5jH9QUP6CAC9DrZ/fLH9gSNEhkWvOUUVy39UNGfsykad2OREDbkbqnPZU56qPqJfIHqYsWFM2ai4ovi5JgVACm3c8OJXTlgJBzn3yn8oqwoeil+sJvlhHgPfoofkAKo2Aazqsvjin4nN2mdMq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from localhost (unknown [116.232.48.119])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id EF2F1340F5F;
+	Tue, 11 Nov 2025 11:41:40 +0000 (UTC)
+Date: Tue, 11 Nov 2025 19:41:33 +0800
+From: Yixun Lan <dlan@gentoo.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Michael Opdenacker <michael.opdenacker@rootcommit.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Paul Walmsley <pjw@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Yangyu Chen <cyy@cyyself.name>, devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
-	Haotian Zhang <vulab@iscas.ac.cn>
-Subject: [PATCH] clk: imx: imx95-blk-ctl: Fix clock leak in error paths
-Date: Tue, 11 Nov 2025 19:41:23 +0800
-Message-ID: <20251111114123.2075-1-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.50.1.windows.1
+	Troy Mitchell <troy.mitchell@linux.spacemit.com>
+Subject: Re: [PATCH v3 1/2] dt-bindings: riscv: spacemit: Add OrangePi R2S
+ board
+Message-ID: <20251111114133-GYA1677599@gentoo.org>
+References: <20251110220641.1751392-1-michael.opdenacker@rootcommit.com>
+ <20251110220641.1751392-2-michael.opdenacker@rootcommit.com>
+ <20251111-inquisitive-ambrosial-chicken-861542@kuoka>
+ <20251111101149-GYE1651402@gentoo.org>
+ <af7bd4ab-38dd-4a5a-93e5-f457ae3460db@kernel.org>
+ <1d469324-84c8-4b5d-ae68-d77e3c822656@rootcommit.com>
+ <2eb5ea0b-d071-4e17-abc8-7db5c78919f2@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowAAnLG0nIRNpxCBaAA--.18506S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7ZFWUKFWUtrykZF4fJrykGrg_yoW8AFW8pF
-	WxXFySkrW0gryIgw47Aw48XFyYgay7ta48try7C3Wru393GF10qF4rtFy0q3WvyFZ5C343
-	JryvqFs8ua909r7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9K14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
-	n2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCY02Avz4vE14v_Gw4l42xK82IYc2Ij64vIr4
-	1l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK
-	67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI
-	8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAv
-	wI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14
-	v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfU5UDGDUUUU
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiDAYDA2kTAhVZtQAAsL
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2eb5ea0b-d071-4e17-abc8-7db5c78919f2@kernel.org>
 
-The probe function enables bc->clk_apb early but fails to disable it
-when bc_data is NULL or clk_hw_data allocation fails. The cleanup
-path also misses pm_runtime_put_sync() when rpm is enabled.
+Hi All,
 
-Add err_disable_clk label to ensure clk_disable_unprepare() is called
-on all error paths. Add pm_runtime_put_sync() in cleanup path when rpm
-is enabled.
+On 11:34 Tue 11 Nov     , Krzysztof Kozlowski wrote:
+> On 11/11/2025 11:29, Michael Opdenacker wrote:
+> > Greetings
+> > 
+> > Thanks one more time for the reviews!
+> > 
+> > On 11/11/25 11:13, Krzysztof Kozlowski wrote:
+> >> On 11/11/2025 11:11, Yixun Lan wrote:
+> >>> Hi Krzysztof,
+> >>>
+> >>> On 08:43 Tue 11 Nov     , Krzysztof Kozlowski wrote:
+> >>>> On Mon, Nov 10, 2025 at 10:06:48PM +0000, michael.opdenacker@rootcommit.com wrote:
+> >>>>> From: Michael Opdenacker <michael.opdenacker@rootcommit.com>
+> >>>>>
+> >>>>> Document the compatible string for the OrangePi R2S board [1], which
+> >>>>> is marketed as using the Ky X1 SoC but is in fact identical to
+> >>> Maybe, just say it "same" to clarify the ambiguity?
+> >> What is exactly "same"? Same die? Or same blocks/pieces? Whichever you
+> >> choose please make it very explicit.
+> > 
+> > Maybe Troy Mitchell from Spacemit can shed light on this question.
+> > 
+> > Anyway, I could use the same wording as in this commit introducing 
+> > "OrangePi RV2":
+> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/arch?id=bab8dea259100a99e047fd11a48940b229d30031
+> > 
+> > "The board is described as using the Ky X1 SoC, which, based on 
+> > available downstream sources and testing, appears to be identical or 
+> > very closely related to the SpacemiT K1 SoC".
+sorry for bringing confusion in previous series, we had no further discussion on this..
 
-Fixes: 5224b189462f ("clk: imx: add i.MX95 BLK CTL clk driver")
-Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
----
- drivers/clk/imx/clk-imx95-blk-ctl.c | 18 ++++++++++++++----
- 1 file changed, 14 insertions(+), 4 deletions(-)
+> > 
+> > What do you think?
+> 
+> This clearly suggests they are not identical thus you should have also
+> dedicated compatible. Let me then precise, I thought it is obvious, that
+> except writing it more detailed in commit msg, you also need proper
+> binding expressing this. If this is not the same die and they look
+> compatible, then usually it means you need a compatible.
+> 
 
-diff --git a/drivers/clk/imx/clk-imx95-blk-ctl.c b/drivers/clk/imx/clk-imx95-blk-ctl.c
-index 7e88877a6245..b12aded2b304 100644
---- a/drivers/clk/imx/clk-imx95-blk-ctl.c
-+++ b/drivers/clk/imx/clk-imx95-blk-ctl.c
-@@ -380,13 +380,19 @@ static int imx95_bc_probe(struct platform_device *pdev)
- 	}
- 
- 	bc_data = of_device_get_match_data(dev);
--	if (!bc_data)
--		return devm_of_platform_populate(dev);
-+	if (!bc_data) {
-+		ret = devm_of_platform_populate(dev);
-+		if (ret)
-+			clk_disable_unprepare(bc->clk_apb);
-+		return ret;
-+	}
- 
- 	clk_hw_data = devm_kzalloc(dev, struct_size(clk_hw_data, hws, bc_data->num_clks),
- 				   GFP_KERNEL);
--	if (!clk_hw_data)
--		return -ENOMEM;
-+	if (!clk_hw_data) {
-+		ret = -ENOMEM;
-+		goto err_disable_clk;
-+	}
- 
- 	if (bc_data->rpm_enabled) {
- 		devm_pm_runtime_enable(&pdev->dev);
-@@ -444,7 +450,11 @@ static int imx95_bc_probe(struct platform_device *pdev)
- 			continue;
- 		clk_hw_unregister(hws[i]);
- 	}
-+	if (bc_data->rpm_enabled && pm_runtime_enabled(bc->dev))
-+		pm_runtime_put_sync(&pdev->dev);
- 
-+err_disable_clk:
-+	clk_disable_unprepare(bc->clk_apb);
- 	return ret;
- }
- 
+to be explicit, the Xy X1 has same die, same packaging as SpacemiT K1,
+so we should not introduce new compatible in the SoC level, but a new
+board compatible in patch [1/2] is ok to me
+
+I hope this clarify this issue..
+
 -- 
-2.50.1.windows.1
-
+Yixun Lan (dlan)
 
