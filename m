@@ -1,112 +1,155 @@
-Return-Path: <linux-kernel+bounces-896057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C829C4F908
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 20:17:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A83C1C4F91D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 20:18:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2C0E94F1D49
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 19:16:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B958189E926
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 19:18:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AECE4324B2F;
-	Tue, 11 Nov 2025 19:16:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 790AC3254A5;
+	Tue, 11 Nov 2025 19:17:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mfQpeiJp"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WAB3TiSt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74CCD2FFDC1
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 19:16:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A78742571BE;
+	Tue, 11 Nov 2025 19:17:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762888583; cv=none; b=uJfj3VdfrY+1cueMrxkD3VryiI7iHrRtLs1+toG2ObnzbRp04Th5theQOyYtlgqAjNWFjphYKVG5aca77iqsAXC/eNqks+lL+s3vuLWIVUcVXuI2gNUiePcPZ64itdSgHfu3Lm2ACgVFf0z4DVkW3fJFY5V9y0gXOugBKEwRJO0=
+	t=1762888668; cv=none; b=TBb/aWU0jTg8i0jrNz1WbVOW3lAeZPR7pCcbL2SO9eWbBAbFI+p5TLUiNcOnDjVktgn9W0YfppWECngOdTywYmQjWyoSJu6uPH1bVs7nXt4oXJ3+sCo3WrPnuAlntbUuEeGRWuy8nHCSlFm7j9UjmzfZjzZ/AGSSPdh3KFkWX3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762888583; c=relaxed/simple;
-	bh=80BdFIZCX/Ki5YJrxpdlffy4WVqbtfvYTmjHy4innFw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HUkPwth2JItp2nciT8Z02a4wcHTEENwXLPvzSwks1WALDiPRKKHptU78OhgfnHol9Gs8N97t1G/4jZ/Fe5quwe2F58u69RscFNcGccB71gellXUEl8qbdCJBnlN/pLqaksRj/eggc/9bEYZsI5QmgNZ0v/o0qpV/9WtqyUU/bXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mfQpeiJp; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5942bac322dso45515e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 11:16:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762888579; x=1763493379; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=80BdFIZCX/Ki5YJrxpdlffy4WVqbtfvYTmjHy4innFw=;
-        b=mfQpeiJpvXVxGXxZp6HrwIz11czsZThVXawxzb0SJ8QFTeQsSUYkgMTafgwbxnbeWZ
-         /Oj6NwMq1PS4AO9QNKBiW8Yt/RDjMOT4QvoC/CvtR0jGXfYeh/sZ9biYV0DSzoC86/8n
-         +XJJA2cDosXWf+AqYAVZMDC9N3E3MiyKVWrHsq2N+lqYCRrn3Fz0cMesoW9jZWrPJamK
-         I4/anel0gThkrNyfdM8TlaxmLAsN9Rq6yEVIJxzgfarn8lClQZFXeoE45hGGywHWeJ/a
-         H8rO8VFUscZrAmL+8eOiEox4qC5o9ymHDBrNkVQG4V2jlKxnRQCZIq9h8T1O8NrT4mDK
-         qgPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762888579; x=1763493379;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=80BdFIZCX/Ki5YJrxpdlffy4WVqbtfvYTmjHy4innFw=;
-        b=vfwHQ2M5UWOhg+C6/i+69MbadyJSlVWtKR/u6N8iJDz/unhB3MYH79AIwYhodmoSEC
-         kKzFvK9JpedBe02YIrOnUdk2n8kK8ohgB7lT0zEhfnuimVU4fLVgaucNeMBif/BeBIvz
-         AMHcLH8xnqZ4A7sWGHUayLkhKWxjo+AjoQyW2Rb6K6tDWkpHGfdQMZ8gj2+Ga20rXk+H
-         5h/IOJ9CtNI1IvUcLCN+1iyBG2QWPdoDuCTxTxAGTAbRDUUJiQdQ1dq47h2SUtOhH7t7
-         CwEyKK8BeCiJrym+8tIdWDWJhY7y0udCkHXum9gta64tLyu+4ZER4m5hofnflfnupSrW
-         nO7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXxDPm22q1Ve/IzS1tOtrZNaX6Nep4G/ZgxlJks8IC1bvKdxynpTi7AkzBXlj0IFesaL/deyuK9/vYRUnk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxiSjMVZgxKypJbDOSxXNkSyxW1uhhIwf7DB/d6b62tUFESE374
-	o4l9QOpuMqoFslrp7VxWfMjcLZvzRHlWhivexc0wBEDuqgofwgDzDvylfOlStsh0//zk2gvOkpG
-	f3vRVEA+pq7xDEqz3GnXhMt6L3khnJe4HPxA9hksn
-X-Gm-Gg: ASbGnctbOihnF3eDqclRdl7Km6AirrK+gqk++vVmSjKFM2cV8dxe2Ae5XqNeyGYIIPz
-	nodXHvNdlre5WNDoL3hdSh5levSs4RZZFDUJ7pCEGEub2GO9vE3oGcanNA1fs2i6uuq+FMmnY4u
-	tIBzbaXyMigyWkLIyhXFdLVM1uZ4hA0eEWsl7/GWOC8GF1grmO59wNYeaRPZRXDNlr7J8fJYmLL
-	z8QiWhwHDf+DE4jkqSklg9hbR53Oi21quMPMYeI0V+rkF7Xp+KkP9JPD+JOYBrC16PQrYE=
-X-Google-Smtp-Source: AGHT+IEfUooUtARmY5RbLRHvk+8vMoq0ZHORJSMW+6rEU4tWb33g8X0C3UE6Mtd74+wf2jJ25PQD8czLv2JmcqYfKjg=
-X-Received: by 2002:a05:6512:3ba0:b0:594:27eb:e130 with SMTP id
- 2adb3069b0e04-59576e3add5mr141912e87.46.1762888579231; Tue, 11 Nov 2025
- 11:16:19 -0800 (PST)
+	s=arc-20240116; t=1762888668; c=relaxed/simple;
+	bh=41RLRtaKbXKVyhTCyKGvYapSSOb8728iYPhMLtH1kSQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=njk41oaX0JhW9Mt/26CCUL8MvphIpHTP/uT229bHmQbCVE0u/e6FsK8isfCKz77W0NicfbISBjWgpbhHRB+dVO2YlBLaGxAVFr8SdN4wroFJZ+k3XA4sOGHPzh7eLcmrDIAyc9jg0e4h8LDgBXo96EE927CYGEwbQXHjbXZT8IA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WAB3TiSt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D8EDC4CEFB;
+	Tue, 11 Nov 2025 19:17:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762888668;
+	bh=41RLRtaKbXKVyhTCyKGvYapSSOb8728iYPhMLtH1kSQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=WAB3TiStxkM1FNwO8Op8NHHDZWFMtIxWcQcyMeysB/zEXMu7NC5jN7X7oCAZuO/uB
+	 kcb7FtT/bygYU7KdFv5BXUDnSmTnFkOZ8nnrMugK3rc8YAb9Myqj0+j/30pn8eY8Mi
+	 FkINs55JVB5sRHCnTlFQ5BMCeVelWSh/mOsZSAa3tc2o2UVRqLAHzjnGrk3XfMFmKE
+	 yUZtkwYIljsWxIjRlVV5OUJuG4eBUG7Ex4ojuJLvn0I0Ye5hWgfKtnWEOSOBCHSp4c
+	 JDb7nCKhP6NvnxojBfFa0FUjKp21Eg/jL89c2RHwG69wReDvu3Q1lYYDIxR5d/e8TK
+	 8F/IQbicLA9ig==
+Date: Tue, 11 Nov 2025 19:17:33 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Nicolas Ferre <nicolas.ferre@microchip.com>, Alexandre
+ Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea
+ <claudiu.beznea@tuxon.dev>, Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+ Herbert Xu <herbert@gondor.apana.org.au>, David Miller
+ <davem@davemloft.net>, Linus Walleij <linus.walleij@linaro.org>, Bartosz
+ Golaszewski <brgl@bgdev.pl>, Joel Stanley <joel@jms.id.au>, Andrew Jeffery
+ <andrew@codeconstruct.com.au>, Crt Mori <cmo@melexis.com>, Lars-Peter
+ Clausen <lars@metafoo.de>, Jacky Huang <ychuang3@nuvoton.com>, Shan-Chun
+ Hung <schung@nuvoton.com>, Yury Norov <yury.norov@gmail.com>, Rasmus
+ Villemoes <linux@rasmusvillemoes.dk>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>, Johannes Berg <johannes@sipsolutions.net>,
+ Jakub Kicinski <kuba@kernel.org>, Alex Elder <elder@ieee.org>, David Laight
+ <david.laight.linux@gmail.com>, Vincent Mailhol
+ <mailhol.vincent@wanadoo.fr>, Jason Baron <jbaron@akamai.com>, Borislav
+ Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Kim Seer Paller
+ <kimseer.paller@analog.com>, David Lechner <dlechner@baylibre.com>, Nuno
+ =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ Richard Genoud <richard.genoud@bootlin.com>, Cosmin Tanislav
+ <demonsingur@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, Jianping
+ Shen <Jianping.Shen@de.bosch.com>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org,
+ linux-crypto@vger.kernel.org, linux-edac@vger.kernel.org,
+ qat-linux@intel.com, linux-gpio@vger.kernel.org,
+ linux-aspeed@lists.ozlabs.org, linux-iio@vger.kernel.org,
+ linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next v5 10/23] iio: imu: smi330: #undef
+ field_{get,prep}() before definition
+Message-ID: <20251111191351.06c0e660@jic23-huawei>
+In-Reply-To: <CAMuHMdX8c1VkBuPDpJ5mpCcRH+zEX4F1bQKFf_V8N9ZZtCYqxA@mail.gmail.com>
+References: <cover.1761588465.git.geert+renesas@glider.be>
+	<97549838f28a1bb7861cfb42ee687f832942b13a.1761588465.git.geert+renesas@glider.be>
+	<20251102104326.0f1db96a@jic23-huawei>
+	<CAMuHMdUkm2hxSW1yeKn8kZkSrosr8V-QTrHKSMkY2CPJ8UH_BQ@mail.gmail.com>
+	<20251109125956.106c9a1a@jic23-huawei>
+	<CAMuHMdX8c1VkBuPDpJ5mpCcRH+zEX4F1bQKFf_V8N9ZZtCYqxA@mail.gmail.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251028-fix-unmap-v6-0-2542b96bcc8e@fb.com> <aQ1A_XQAyFqD5s77@google.com>
- <aQ5xmwPOAzG4b_vm@google.com> <aQ6Qmrzf7X0EP9aJ@devgpu015.cco6.facebook.com>
-In-Reply-To: <aQ6Qmrzf7X0EP9aJ@devgpu015.cco6.facebook.com>
-From: David Matlack <dmatlack@google.com>
-Date: Tue, 11 Nov 2025 11:15:50 -0800
-X-Gm-Features: AWmQ_blx19T1nIePJX2Mp264v8PUGfcIhqfsMzZn25t7rUocwejd4J798irQbmU
-Message-ID: <CALzav=eDfqU9aPx5MEkgQMYRf7ZVfd7wycNcWpPJCUw+dxkgSA@mail.gmail.com>
-Subject: Re: [PATCH v6 0/5] vfio: handle DMA map/unmap up to the addressable limit
-To: Alex Mastro <amastro@fb.com>
-Cc: Alex Williamson <alex@shazbot.org>, Jason Gunthorpe <jgg@ziepe.ca>, 
-	Alejandro Jimenez <alejandro.j.jimenez@oracle.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Nov 7, 2025 at 4:36=E2=80=AFPM Alex Mastro <amastro@fb.com> wrote:
->
-> On Fri, Nov 07, 2025 at 10:24:27PM +0000, David Matlack wrote:
-> > On 2025-11-07 12:44 AM, David Matlack wrote:
-> > > On 2025-10-28 09:14 AM, Alex Mastro wrote:
-> > For type1, I tracked down -EINVAL as coming from
-> > vfio_iommu_iova_dma_valid() returning false.
-> >
-> > The system I tested on only supports IOVAs up through
-> > 0x00ffffffffffffff.
-> >
-> > Do you know what systems supports up to 0xffffffffffffffff? I would lik=
-e
-> > to try to make sure I am getting test coverage there when running these
-> > tests.
->
-> I observed this on an AMD EPYC 9654 server.
+On Mon, 10 Nov 2025 09:59:34 +0100
+Geert Uytterhoeven <geert@linux-m68k.org> wrote:
 
-Thanks. I was able to find a similar server to that that supports iova
-0xffffffffffffffff and have added that to my test workflow.
+> Hi Jonathan,
+
+Hi Geert,
+
+> 
+> On Sun, 9 Nov 2025 at 14:01, Jonathan Cameron <jic23@kernel.org> wrote:
+> > On Mon, 3 Nov 2025 11:09:36 +0100
+> > Geert Uytterhoeven <geert@linux-m68k.org> wrote:  
+> > > On Sun, 2 Nov 2025 at 11:43, Jonathan Cameron <jic23@kernel.org> wrote:  
+> > > > On Mon, 27 Oct 2025 19:41:44 +0100
+> > > > Geert Uytterhoeven <geert+renesas@glider.be> wrote:
+> > > >  
+> > > > > Prepare for the advent of globally available common field_get() and
+> > > > > field_prep() macros by undefining the symbols before defining local
+> > > > > variants.  This prevents redefinition warnings from the C preprocessor
+> > > > > when introducing the common macros later.
+> > > > >
+> > > > > Suggested-by: Yury Norov <yury.norov@gmail.com>
+> > > > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>  
+> > > >
+> > > > So this is going to make a mess of merging your series given this is
+> > > > queued up for next merge window.
+> > > >
+> > > > I can pick this one up perhaps and we loop back to the replacement of
+> > > > these in a future patch?  Or perhaps go instead with a rename
+> > > > of these two which is probably nicer in the intermediate state than
+> > > > undefs.  
+> > >
+> > > Renaming would mean a lot of churn.
+> > > Just picking up the #undef patch should be simple and safe? The
+> > > removal of the underf and redef can be done in the next cycle.
+> > > Thanks!  
+> >
+> > Only 1 call of each of these in the driver, so churn is small either way.
+> >
+> > To avoid a bisection problem if your tree merges first I need to modify
+> > this stuff in the original patch or leave it for Linus to deal with as
+> > a merge conflict resolution which is mess I'd rather do without.  
+> 
+> If you add the #undef, there won't be any bisection problem?
+
+Two different things.  The bisection comment was about squashing into the
+original driver patch - not what was squashed.  Your tree may well merge
+before mine does and a bisection could therefore land in between the 
+driver introduction and a patch I merge today.
+
+The rename is a preference only because I don't want an undef that smells
+like a hack / bug work around kicking around in the tree for significant time
+(probably a whole kernel cycle). In this case the churn is very similar
+with that or a rename of the macros - so rename it is.
+
+Jonathan
+
+ 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+
 
