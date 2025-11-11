@@ -1,81 +1,80 @@
-Return-Path: <linux-kernel+bounces-896214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 497DEC4FDDF
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 22:34:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E881C4FDD6
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 22:34:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AC67F4E5D0C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 21:34:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 060233B44AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 21:34:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4985B32694C;
-	Tue, 11 Nov 2025 21:34:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8F91350A3E;
+	Tue, 11 Nov 2025 21:34:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RTP36pAB"
-Received: from mail-io1-f73.google.com (mail-io1-f73.google.com [209.85.166.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iQo/Z0Bd"
+Received: from mail-io1-f74.google.com (mail-io1-f74.google.com [209.85.166.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28F2D254AE1
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 21:34:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 651B532692A
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 21:34:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762896855; cv=none; b=ACdK0/aLznUBL+9scv3UAczQMTdXXg2jrjE6EVrbCsVg7CvhaCvcAPAR/eAT0aNEpt3vy5AhtCGBvoxcEbGtdPolDoDteRH9R1J3DbLWcVcEwrOaYU5FEvTCvUYw/ZcLXH68mtW1MQYqSSWib7m11t5t5G0u4seCOi/yv2g3T0s=
+	t=1762896857; cv=none; b=ntR1BYa6RbpOTUKKjwHB+g0WUTXH3bXNSTMPPh5AxVQt1jBCMLS1OaiR5ITz2GIuFGXBfYizH6t9Ht2cxyUP86AxV3rvg7Af9RPVaG/2pzCWAiIeAqupXr7HcGUJ9K8DOJgk+TDWjKa45+CJojPdQ6HcemmP939k4gKJ4PgPj3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762896855; c=relaxed/simple;
-	bh=EpsHWbCPS9QBJDYgd2PMk6G793IhLD6U7GlG4xPdmcs=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=exXwILuO48EJnWeQbKTteoQ323xWchMFa46PDciMRbd/PAhM8yr4FqADtpe0q/PBiPbFgfhE48zycdb4zeYy5Gv8QMEQibekuJG5+6lCcvhG0LV3B1EH+Nnx+HZRXjQ3OgpTI2qxDSz0jhI6GmOF9TZnkXSsXtvBJUD2gSuGkqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jdenose.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RTP36pAB; arc=none smtp.client-ip=209.85.166.73
+	s=arc-20240116; t=1762896857; c=relaxed/simple;
+	bh=AnByqz1bsGNOs4HLx4XQOtBMS6f5gX7qFPGQCvk1TLA=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=CIV0AxXZoFMvmaahqqAsz/K5yVh4rQGQLNngNunu6dkKACcfacEprnWUsEmCYXgZ+fKYESeJZg9bm51vhtd5MZkDEZoRomG4YygbzYHhROF/cW6E9Gb9+6HwIsASJ4BkOrDRvL8MeWvzkVJN3sCI+oO71X1o6FN+733e0clQ2MY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jdenose.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iQo/Z0Bd; arc=none smtp.client-ip=209.85.166.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jdenose.bounces.google.com
-Received: by mail-io1-f73.google.com with SMTP id ca18e2360f4ac-948bf83a707so16690239f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 13:34:13 -0800 (PST)
+Received: by mail-io1-f74.google.com with SMTP id ca18e2360f4ac-9486920a552so34337739f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 13:34:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762896853; x=1763501653; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=faoL/581sKLIsYsWqc2fTjhaZ/7dqlOr2SS7YQEysnk=;
-        b=RTP36pABvNesvLLaLW+q4Ft6in/TEzB+g25EuSsaawLo2+L8l9FnOTWJw0MfiRz+yk
-         QbYVKaWFcaMOO+AUEw7VKeGvaPqOG4h6lDSwfcObx+8o9vbCMnDS5Xm8CWDsu8evuciO
-         em78SWtKRIHTtIgGeYHzjWell0SJExtTHChQ8nN57K3y8olvpd0opN7oMn4Q9rCbERG/
-         FIwaP/i6X2zAV03PlPynPuXOWemBzkYpbOBvfWUqtpVQbxiZU9cgJn2O0EhMnDA2BHrS
-         +2/ltbDrkTvHriwA0SBu6cG948Zjslo+XC53tRu9nqjniZJhT8swOC/L4Tji4BRL4bLc
-         +5Tg==
+        d=google.com; s=20230601; t=1762896854; x=1763501654; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Na3+uPKcwDcTaL/Dq2WsexmKJ67v5tFMZ2PH94guhSY=;
+        b=iQo/Z0Bdk+9qF1i+uEPLYprQJmOJ8LtchKO+bW8h2F9MsbuUZRb9DNjEaIzTj82J27
+         xzK4f3mFNLcvcoc9YkeuLxC5K5g5dLqCDeKwGujckFQAOgkuXkAWWIRTx6/VFWDyzcSl
+         knEhsLbPXQ0KiN7/AiU5X5Hg/3MYq9uzwspLIf3/G6RlO/5Is74wmDJYbuZUeWcHhsjU
+         pNFFN8+Mw4z0A+7UGmzTwNrRyi4XcrtGUSdhRJwkc/+/vbMaWnyikOyRX/TsKlK6tSbi
+         VIresbxIl5/CyO2YKV8EaRGZVo5NgDR4p1mLa+fp2Chmz7pwhdli1cs8xSQHTcfaizOF
+         PtSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762896853; x=1763501653;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=faoL/581sKLIsYsWqc2fTjhaZ/7dqlOr2SS7YQEysnk=;
-        b=mYBCS97hhSFX5pibitMfyvS5FvZmNgKcuJL6qAWnOtgpVGc6+s6hds88Vc7GuTk17Z
-         RGxGIkUH9zNSInafneGKXeLO1JiZo/zWiC+VG6zAiSZe6fCjx33Cz4KX+07r//VT2X9T
-         6wUYbu9uYFWdr2o88HcgJWH0zSGboCNYb+pK5kYwuWjIOcdYK+mBvoEp0LP4fvIh+FD8
-         aqD3w8cikQsEj5uMFcIyzkUpi07gYRc1M5S/x3gm7Wx9g80jIxkYpbjC+P6SuVpWP7w3
-         FwStSigHeM/oZT2X8/4dNo+besM0hsHTFPC8scIKwqGMUW80jNZAqSSwqx0WkAuRj6R8
-         CJ+w==
-X-Forwarded-Encrypted: i=1; AJvYcCVDr8lGWp0nawJvFuTrw0i3IOuPANJ/UIs9pwtVue+m8Po/AvLH0s4JTgy77PdWM7dT0m0rE9HenfHWras=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXIVw8NX0xZoBdYTe6z1w/3Ddkt2WRvVoryQdBj6TCMXZjxi8s
-	Wz/2A4HFt/FVsgbrO8iL2PGLYvw91nCu/tN+Ow02qvoeEO2ncmraT34bu5M/OlggOQA5uZBOjcj
-	gb9itJsnyug==
-X-Google-Smtp-Source: AGHT+IG/aZ9go7ZOrpCGgjTMFHeYQjMInmzwgOFE9yrvISrzaBcnwr39cpcFXvyVvz87vkDjNUO/YT25zrlI
-X-Received: from iota25.prod.google.com ([2002:a5d:8159:0:b0:945:a6dd:926f])
- (user=jdenose job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6602:2770:b0:948:3f60:a625
- with SMTP id ca18e2360f4ac-948c4551927mr87902539f.3.1762896853288; Tue, 11
- Nov 2025 13:34:13 -0800 (PST)
-Date: Tue, 11 Nov 2025 21:34:05 +0000
+        d=1e100.net; s=20230601; t=1762896854; x=1763501654;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Na3+uPKcwDcTaL/Dq2WsexmKJ67v5tFMZ2PH94guhSY=;
+        b=pNRWqnDFdH6j9q6oOVieAP7bBxGDwvLEy2rar4EtbUTjt/VGQKcPr75EKdsGItXzO3
+         2tupwrtV0HmX+Y9qYvUNzSTh3e//IVDrskw2RsJnxuxcp78FVqlZ5XmjqgaaPtOSYssz
+         jUN9ynFChtt6Mnp/rA5+ld4DCmsP5jFwCjxKDIG5JZcpNiemBkSkqEN2Njw6eYSchARb
+         pnnMXszeDiEoC6l0cFh9bWtYOU/MWwVnevNQyreF3QglP2jEdiWSgHSeSMntNd3F6l6K
+         cvCaL+ytHUC+LGDlV7YM0XA/nyPX45bWVUE35fizWzkpO8OUvKn53LPTy+NAxL9C0fwg
+         mAcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUgrS5XN5BR4EP+Sykf+Bt2mfnrr8iodxef8FpbMgFqnUTrCVM8GzLgeMld06zVYeLJNy6sorTJ3sioU70=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywplro3Yfbkalg04OpcjN25M/UVKRP1L0RWrnF75uMkv6Qpy4f0
+	kzQxEFHZTIYSQooYcz8AWEgQNCHFkevbrYAsYh9yDuo9nsRNxCDOEeE26ZUckkOWIKO48oqABmE
+	GNsDUGTsmww==
+X-Google-Smtp-Source: AGHT+IG5Y1zQcwRPyoiX7OW8d2M0A0XY9OUzEt5RJmXGBYW7vPztaaHhQmLph8kZZjliKinJZ3XSFbfZVabL
+X-Received: from jabbs11.prod.google.com ([2002:a05:6638:450b:b0:5b7:5e9c:2b4e])
+ (user=jdenose job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6602:1411:b0:948:26e8:c3c6
+ with SMTP id ca18e2360f4ac-948c4711b8fmr99553139f.17.1762896854532; Tue, 11
+ Nov 2025 13:34:14 -0800 (PST)
+Date: Tue, 11 Nov 2025 21:34:06 +0000
+In-Reply-To: <20251111-lid-switch-notifier-v2-0-789723d78d89@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-X-B4-Tracking: v=1; b=H4sIAM2rE2kC/22Nyw6CMBBFf4XM2jEdHkpd+R+GhbQDTIKUtAQ1p
- P9uJS5dnpPcczcI7IUDXLINPK8SxE0J8kMGZrhPPaPYxJCrvCJFJY5iMTxlMQNObpFO2COZVmu
- q7elcWUjL2XMnr716axIPEhbn3/vJSl/76xXqb28lVGiq2hrdUlloe+2d60c+GveAJsb4AUwjq Di3AAAA
-X-Change-Id: 20251014-lid-switch-notifier-1cb9918d675d
+References: <20251111-lid-switch-notifier-v2-0-789723d78d89@google.com>
 X-Mailer: b4 0.14.2
-Message-ID: <20251111-lid-switch-notifier-v2-0-789723d78d89@google.com>
-Subject: [PATCH v2 0/2] Implement lid-notifier for lid switch events
+Message-ID: <20251111-lid-switch-notifier-v2-1-789723d78d89@google.com>
+Subject: [PATCH v2 1/2] Input: Add lid switch notifier
 From: Jonathan Denose <jdenose@google.com>
 To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jiri Kosina <jikos@kernel.org>, 
 	Benjamin Tissoires <bentiss@kernel.org>
@@ -83,38 +82,170 @@ Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
 	Jonathan Denose <jdenose@google.com>
 Content-Type: text/plain; charset="utf-8"
 
-To circumvent a hardware issue where the touchpad is not physically
-connected to the lid angle sensor, implement a notifier chain which
-broadcasts lid switch events and a notifier_block which can be enabled
-via a quirk to listen for those events turning the touchpad surface
-on or off based on if the lid is open or closed. This will prevent
-issues resulting from interference between the laptop lid and the
-touchpad.
+This change creates a new input handler which can be included in the
+build via a new Kconfig option CONFIG_INPUT_LID_NOTIFIER. This input
+handler listens for lid switch events and publishes them through an
+atomic notification chain. Other modules may register for events
+through this notification chain with register_lid_notifier.
 
 Signed-off-by: Jonathan Denose <jdenose@google.com>
 ---
-Changes in v2:
-- Remove notifier logic from input core and add lid-notifier module which exposes lid events
-- Kconfig: Add CONFIG_INPUT_LID_NOTIFIER option to include lid-notifier
-- Link to v1: https://lore.kernel.org/r/20251030-lid-switch-notifier-v1-0-c58dc9b1439d@google.com
-
----
-Jonathan Denose (2):
-      Input: Add lid switch notifier
-      HID: multitouch: Toggle touch surface on Elan touchpad on lid event
-
- drivers/hid/hid-multitouch.c | 32 ++++++++++++++-
  drivers/input/Kconfig        | 11 +++++
  drivers/input/Makefile       |  1 +
  drivers/input/lid-notifier.c | 98 ++++++++++++++++++++++++++++++++++++++++++++
  include/linux/input.h        |  2 +
- 5 files changed, 143 insertions(+), 1 deletion(-)
----
-base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
-change-id: 20251014-lid-switch-notifier-1cb9918d675d
+ 4 files changed, 112 insertions(+)
 
-Best regards,
+diff --git a/drivers/input/Kconfig b/drivers/input/Kconfig
+index 88ecdf5218ee9ba35e1efec6341f8605b621bd49..16f6d24fd04ac8cb5af9d36cc47155ea9be0e177 100644
+--- a/drivers/input/Kconfig
++++ b/drivers/input/Kconfig
+@@ -38,6 +38,17 @@ config INPUT_LEDS
+ 	  To compile this driver as a module, choose M here: the
+ 	  module will be called input-leds.
+ 
++config INPUT_LID_NOTIFIER
++	tristate "Include notifier for lid switch events"
++	help
++	  Say Y here if you would like to create a notifier to publish lid switch
++		events.
++
++	  If unsure, say N.
++
++	  To compile this driver as a module, choose M here: the
++	  module will be called lid-notifier.
++
+ config INPUT_FF_MEMLESS
+ 	tristate "Support for memoryless force-feedback devices"
+ 	help
+diff --git a/drivers/input/Makefile b/drivers/input/Makefile
+index 2cd6e1c9a77844fe09cd3d99533e5d3efb038c7d..1efdba04f79a97e2a122b9198341b18a1855b4b9 100644
+--- a/drivers/input/Makefile
++++ b/drivers/input/Makefile
+@@ -15,6 +15,7 @@ obj-$(CONFIG_INPUT_MATRIXKMAP)	+= matrix-keymap.o
+ obj-$(CONFIG_INPUT_VIVALDIFMAP)	+= vivaldi-fmap.o
+ 
+ obj-$(CONFIG_INPUT_LEDS)	+= input-leds.o
++obj-$(CONFIG_INPUT_LID_NOTIFIER)	+= lid-notifier.o
+ obj-$(CONFIG_INPUT_MOUSEDEV)	+= mousedev.o
+ obj-$(CONFIG_INPUT_JOYDEV)	+= joydev.o
+ obj-$(CONFIG_INPUT_EVDEV)	+= evdev.o
+diff --git a/drivers/input/lid-notifier.c b/drivers/input/lid-notifier.c
+new file mode 100644
+index 0000000000000000000000000000000000000000..954b9855532dbd0514860e309d0b76982e947673
+--- /dev/null
++++ b/drivers/input/lid-notifier.c
+@@ -0,0 +1,98 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ *  Lid event notifier
++ *
++ *  Copyright (c) 2025 Jonathan Denose <jdenose@google.com>
++ */
++
++#include <linux/device.h>
++#include <linux/input.h>
++#include <linux/notifier.h>
++
++static struct input_handler lid_handler;
++static struct atomic_notifier_head input_notifier_head;
++
++int register_lid_notifier(struct notifier_block *notifier)
++{
++	return atomic_notifier_chain_register(&input_notifier_head, notifier);
++}
++EXPORT_SYMBOL(register_lid_notifier);
++
++static int lid_handler_connect(struct input_handler *handler,
++		struct input_dev *input_dev, const struct input_device_id *id)
++{
++	struct input_handle *handle;
++	int error;
++
++	handle = devm_kzalloc(&input_dev->dev, sizeof(struct input_handle), GFP_KERNEL);
++	if (!handle)
++		return -ENOMEM;
++
++	handle->dev = input_dev;
++	handle->handler = handler;
++	handle->name = "lid";
++
++	error = input_register_handle(handle);
++	if (error)
++		goto err_free_handle;
++
++	error = input_open_device(handle);
++	if (error)
++		goto err_unregister_handle;
++
++	return 0;
++
++ err_unregister_handle:
++	input_unregister_handle(handle);
++ err_free_handle:
++	kfree(handle);
++	return error;
++}
++
++static void lid_handler_disconnect(struct input_handle *handle)
++{
++	input_close_device(handle);
++	input_unregister_handle(handle);
++}
++
++static void lid_handler_event(struct input_handle *handle, unsigned int type,
++		unsigned int code, int value)
++{
++	if (type == EV_SW && code == SW_LID)
++		atomic_notifier_call_chain(&input_notifier_head, value, handle->dev);
++}
++
++static const struct input_device_id lid_handler_ids[] = {
++	{
++		.flags = INPUT_DEVICE_ID_MATCH_EVBIT | INPUT_DEVICE_ID_MATCH_SWBIT
++						| INPUT_DEVICE_ID_MATCH_BUS,
++		.evbit = { BIT_MASK(EV_SW) },
++		.swbit = { [BIT_WORD(SW_LID)] = BIT_MASK(SW_LID) },
++		.bustype = 0x19
++	},
++	{ },
++};
++
++static struct input_handler lid_handler = {
++	.connect = lid_handler_connect,
++	.disconnect = lid_handler_disconnect,
++	.event = lid_handler_event,
++	.name = "lid",
++	.id_table = lid_handler_ids
++};
++
++static int __init lid_notifier_init(void)
++{
++	return input_register_handler(&lid_handler);
++}
++module_init(lid_notifier_init);
++
++static void __exit lid_notifier_exit(void)
++{
++	input_unregister_handler(&lid_handler);
++}
++module_exit(lid_notifier_exit);
++
++MODULE_AUTHOR("Jonathan Denose <jdenose@google.com>");
++MODULE_DESCRIPTION("Lid event notifier");
++MODULE_LICENSE("GPL");
+diff --git a/include/linux/input.h b/include/linux/input.h
+index 7d7cb0593a63e93c4906c49cde430188db2d1ab5..023eb92c77d9e8721d482b9787632a671671de08 100644
+--- a/include/linux/input.h
++++ b/include/linux/input.h
+@@ -592,3 +592,5 @@ int input_ff_create_memless(struct input_dev *dev, void *data,
+ 		int (*play_effect)(struct input_dev *, void *, struct ff_effect *));
+ 
+ #endif
++
++int register_lid_notifier(struct notifier_block *notifier);
+
 -- 
-Jonathan Denose <jdenose@google.com>
+2.51.2.1041.gc1ab5b90ca-goog
 
 
