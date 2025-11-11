@@ -1,264 +1,150 @@
-Return-Path: <linux-kernel+bounces-895948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C758C4F575
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 18:56:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47AC2C4F581
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 18:59:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26BBF18C1860
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:56:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 254DA1888EE2
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 18:00:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B40F33A5E6C;
-	Tue, 11 Nov 2025 17:56:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43BAC3A5E65;
+	Tue, 11 Nov 2025 17:59:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZWTivq5a";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="NWaM8By6"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b="z/Nam/XU"
+Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E06943A1D1B
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 17:56:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 142E136B05F;
+	Tue, 11 Nov 2025 17:59:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.153.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762883765; cv=none; b=mXLN113qLbRX5ZGI+8ZTwAe9ydcjHjZv2dHILknZx0YWrY51zXIbqkU0x3nC7vpUHn6F3BVttw4jHNabL6ls9XgHYhXn+E7jI/zSmmo3LbPRiS5uwhg9iiBT2Za8bTSvd/6MYkZgli/wGRqtpsawVqaeb0CFvA2cYVEReSpStb8=
+	t=1762883970; cv=none; b=rrc73BEcnWLXJ3/l/N4MtjDa8HMv8fFPvhEwSX8o07tK8idLvEKKrL071KRxO9w5Hz2oxANNtnfVU6+ddpdIusf8xXutfj0XEY5pDSjBM2ICkYQwqug/BdedXLICMRF7uvy0zXgrLh0+U6WHxrP7CEG4rowb3RbpkSVgda/QjzU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762883765; c=relaxed/simple;
-	bh=xRbkyTX1fJw/xyprWtN1kMSYrUOxW+P2z/B7LlIHjac=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i7O4ast9yBuBU4pwTUAc7UjLdLA6gjBpxvu34T18pTWfUrtw4emLHpgvq4y0OTNylvMh4HNAlB0wziRwE4qrW4FWiupl4lydHId1rp7xN30cVjGgAGOK2wZHYv+vQRA+QlX3o3w3cVPs5tetzM8SHi3CkA/NETpSuk7GglOteD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZWTivq5a; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=NWaM8By6; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762883762;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=fNlxVhI2wninSgC+yfdHHvz7AE8gBjF6ZWWgDwooKq0=;
-	b=ZWTivq5ar795id6eONsTpoQj93MCLyduir2t4CR2ZspuFVr8WINZgKd0gw5wuylU/vG2aE
-	EOi5PYukKyZo/3G7AlRAP5n0wBD++QrOjsUpCz+WawRi6JC4eKBfnwfhwJkD6YxDMPtv3D
-	0QcwB4BzWH3KwgrzfZx6R8iQqDur9tM=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-173--SjUHDTOPEOk5H1zBsXymA-1; Tue, 11 Nov 2025 12:56:01 -0500
-X-MC-Unique: -SjUHDTOPEOk5H1zBsXymA-1
-X-Mimecast-MFC-AGG-ID: -SjUHDTOPEOk5H1zBsXymA_1762883758
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4775d110fabso277195e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 09:56:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1762883758; x=1763488558; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=fNlxVhI2wninSgC+yfdHHvz7AE8gBjF6ZWWgDwooKq0=;
-        b=NWaM8By63//er93e+2uSd1fc0dyjoM78C7gvWSzB2kayKUQzw/CTax2Xuk/Iv+Z48f
-         /rBtZX88gQ8I2iu9UjP+tfyI1BEDAJuObZfQSnuIwAoyCn+EMBSnkwtkR/wL9HTdDFwi
-         QwGwmgjHW0BSImbcMvf8jEhSsBHYw7r5xI1eA97SGKWIHaz7Dre0MSXZ3S6Wtju59kmD
-         ix9CwihR6sHDHZkgYXyl2VQNyYVt/yPQnrk8i00SLjrqf1e4noncWXoxOsLFdPMuignd
-         0aob35nCeBXpmKRSrZYSeNSiT5WrgCk3kR2+E/cHfEpojOzMIbTi+M4wK7sYz+3d/nMD
-         uDWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762883758; x=1763488558;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fNlxVhI2wninSgC+yfdHHvz7AE8gBjF6ZWWgDwooKq0=;
-        b=pkQYWb1xixOwOMzdnYc0GCTs4p6NGmbVU4utWWJtvKBBHx4XfGZp7YGKaeG5VYN3LG
-         fapxhBwVpDPWzk8P9xDF+c5n0H/wvuatdWCdi60VMDA2vgKujWNyomEZREZ0oPPIwY6x
-         +ONJ5AlERc7jsuXJlzeC5CRwVh9tEQG4R34YEHzo81F5FMax2qdg0o82nRYM3iJQG7Ck
-         WZZDTX79g6LYPa7xrF7OSgviIVyPVak3iPN9NXtvdLBjm0slC0Th0ARGlKjJO8pdsHGW
-         jbPmRGpZODACB1I4JlyUxxTU4LsyQamIlRfe2fn9S0g8Z1aRVvHebBZTjvCh3LdX50X+
-         hKnA==
-X-Forwarded-Encrypted: i=1; AJvYcCWc2U8LWaHiPB1dst7WhJaQ7xnoprLeiePNx4BdHsvn2akuSW+P9WGhEk54BXfPk7HVnnBroLNhxNVq5dk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAVd58G0YebCaYQvwTDCN7MZKFyfAuZhQs8/sFk8au69KC8pvi
-	YIgcv6D3axxgCis9h/ntLhHo40xI557U/R38ChSpQDZDXPD3+YcxThWXI//BOHHjVZaLeAfCrDE
-	v+hEUh/MIrBLhaUl6/tXWyu20M8TYbIA5OiYLgwXgGxOikNrFEKvDiIk1Z7HfT2PRVw==
-X-Gm-Gg: ASbGncuVLr3dNi4HAh+JmJkOVRIwE9ROxC1uXmbGgkrdoGqgYM+HeiHU4n2+SXdQCAJ
-	RaCJ5mxIZRjLQFWp53KuadD+tLkydwlr4i9oDYC6sAxFKbyfclA4P/74OfMA4EKh/2W9kVakSiD
-	Nj6znig4kUNV6YQRnIDtsw24EOruIU4oP2QVSqcqoCS+yjgtsuLZIvHMUqn5GecewtdwItA5xE3
-	l3te72HyfYgKu++Ufos+GUTd4H/BqyTQ26ZW0yXaR2kQmcI+LGnLJn2BGPjstevsbg6EHIgOGIy
-	atS1fju1S9w56L91GampN2MFZglBqBHRIrXdY9SDK2iaYzrkekwIuD5lKMSuGHbQfGjbV7SVv24
-	6XyUKE0uPMfK18hv0jU0ZcKqzahm4Ar3j2MfwaT/Xez+HVLX7IyfX+dusicXfVBFQk6QpmIyU/v
-	Et3B6vxA==
-X-Received: by 2002:a05:600c:1f0e:b0:476:84e9:b571 with SMTP id 5b1f17b1804b1-47787049ddfmr2552515e9.14.1762883758434;
-        Tue, 11 Nov 2025 09:55:58 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFtX2Hn3jD1AkyTxJ6T5fTcMIWn87gWtGe1QJBHyjSwpsjpLajTE9QnPUWyilSIkap92vR8PA==
-X-Received: by 2002:a05:600c:1f0e:b0:476:84e9:b571 with SMTP id 5b1f17b1804b1-47787049ddfmr2552275e9.14.1762883757974;
-        Tue, 11 Nov 2025 09:55:57 -0800 (PST)
-Received: from [192.168.10.81] ([176.206.111.214])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-47782ceb0f9sm42703475e9.4.2025.11.11.09.55.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Nov 2025 09:55:56 -0800 (PST)
-Message-ID: <6a093929-5e35-485a-934c-e0913d14ac14@redhat.com>
-Date: Tue, 11 Nov 2025 18:55:54 +0100
+	s=arc-20240116; t=1762883970; c=relaxed/simple;
+	bh=wPj5vVJ1YtKHjf81QWXyvaJqGXJKZIFerpk4kTAdFjI=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r53IvnQx0WNLvyHwWsT+JYXmW4iBN8oEX76xFdEkQN4Rdf3Zl1Db09PuhQN/iEPBWAPKH+dUnfdqvemh0GpoYJsJTBz5Wl6SuOy5uNHzJAe+63mZG2ePPdPrDhtCtbbN3INVUSBdsDjOOPgC4zUpgXGXZ0C5kX2R+ohbR3SHNOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b=z/Nam/XU; arc=none smtp.client-ip=67.231.153.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
+Received: from pps.filterd (m0109331.ppops.net [127.0.0.1])
+	by mx0a-00082601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5ABCFLAc1434375;
+	Tue, 11 Nov 2025 09:59:22 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=s2048-2025-q2; bh=DvfPjs5kBAETFMTBWW1/
+	kBVT3srDOto+/Gf3urRsfIU=; b=z/Nam/XUvMzD5evT9DfklRxO5OwIMVxF20MQ
+	p69zSIk7AsFCrZgmlimsnaiFFwZmUXRfnyC70EzkO0EMbH4e8WEUXBfqpxH6syNJ
+	JErsOJgbZorBUEpLD45UYTbBhaD6CfTqwnLxHtsp7IC10WYCyzQyZdrmjza0ewep
+	QkMpI6h7B26oNYuhATzrEee5O5KywE43LWR7/CgH1X/mPV3Wi+jdXNjpVjFd5rwf
+	geUSV/NMhkVxjCe48KxrosI16Dc4HKshnyCpbm+dW4tKBipjvPXvyE6tyIAK+nRV
+	TFgl6F2tSBnnlLZV2mFBg1CM5fS+cBaz26FUy9iI6XkMBQTfNw==
+Received: from mail.thefacebook.com ([163.114.134.16])
+	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 4ac502aqye-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Tue, 11 Nov 2025 09:59:22 -0800 (PST)
+Received: from devgpu015.cco6.facebook.com (2620:10d:c085:108::150d) by
+ mail.thefacebook.com (2620:10d:c08b:78::2ac9) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.2562.20; Tue, 11 Nov 2025 17:59:08 +0000
+Date: Tue, 11 Nov 2025 09:59:00 -0800
+From: Alex Mastro <amastro@fb.com>
+To: Alex Williamson <alex@shazbot.org>
+CC: David Matlack <dmatlack@google.com>, Shuah Khan <shuah@kernel.org>,
+        Jason
+ Gunthorpe <jgg@ziepe.ca>, <kvm@vger.kernel.org>,
+        <linux-kselftest@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/4] vfio: selftests: add iova range query helpers
+Message-ID: <aRN5ZBWJ16I/TtY5@devgpu015.cco6.facebook.com>
+References: <20251111-iova-ranges-v2-0-0fa267ff9b78@fb.com>
+ <20251111-iova-ranges-v2-1-0fa267ff9b78@fb.com>
+ <20251111100948.513f013b.alex@shazbot.org>
+ <aRNz4ynek6siv0FZ@devgpu015.cco6.facebook.com>
+ <20251111105202.3aa734aa.alex@shazbot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v1 16/20] KVM: x86: Decode REX2 prefix in the emulator
-To: "Chang S. Bae" <chang.seok.bae@intel.com>, kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: seanjc@google.com, chao.gao@intel.com, zhao1.liu@intel.com
-References: <20251110180131.28264-1-chang.seok.bae@intel.com>
- <20251110180131.28264-17-chang.seok.bae@intel.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=pbonzini@redhat.com; keydata=
- xsEhBFRCcBIBDqDGsz4K0zZun3jh+U6Z9wNGLKQ0kSFyjN38gMqU1SfP+TUNQepFHb/Gc0E2
- CxXPkIBTvYY+ZPkoTh5xF9oS1jqI8iRLzouzF8yXs3QjQIZ2SfuCxSVwlV65jotcjD2FTN04
- hVopm9llFijNZpVIOGUTqzM4U55sdsCcZUluWM6x4HSOdw5F5Utxfp1wOjD/v92Lrax0hjiX
- DResHSt48q+8FrZzY+AUbkUS+Jm34qjswdrgsC5uxeVcLkBgWLmov2kMaMROT0YmFY6A3m1S
- P/kXmHDXxhe23gKb3dgwxUTpENDBGcfEzrzilWueOeUWiOcWuFOed/C3SyijBx3Av/lbCsHU
- Vx6pMycNTdzU1BuAroB+Y3mNEuW56Yd44jlInzG2UOwt9XjjdKkJZ1g0P9dwptwLEgTEd3Fo
- UdhAQyRXGYO8oROiuh+RZ1lXp6AQ4ZjoyH8WLfTLf5g1EKCTc4C1sy1vQSdzIRu3rBIjAvnC
- tGZADei1IExLqB3uzXKzZ1BZ+Z8hnt2og9hb7H0y8diYfEk2w3R7wEr+Ehk5NQsT2MPI2QBd
- wEv1/Aj1DgUHZAHzG1QN9S8wNWQ6K9DqHZTBnI1hUlkp22zCSHK/6FwUCuYp1zcAEQEAAc0j
- UGFvbG8gQm9uemluaSA8cGJvbnppbmlAcmVkaGF0LmNvbT7CwU0EEwECACMFAlRCcBICGwMH
- CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRB+FRAMzTZpsbceDp9IIN6BIA0Ol7MoB15E
- 11kRz/ewzryFY54tQlMnd4xxfH8MTQ/mm9I482YoSwPMdcWFAKnUX6Yo30tbLiNB8hzaHeRj
- jx12K+ptqYbg+cevgOtbLAlL9kNgLLcsGqC2829jBCUTVeMSZDrzS97ole/YEez2qFpPnTV0
- VrRWClWVfYh+JfzpXmgyhbkuwUxNFk421s4Ajp3d8nPPFUGgBG5HOxzkAm7xb1cjAuJ+oi/K
- CHfkuN+fLZl/u3E/fw7vvOESApLU5o0icVXeakfSz0LsygEnekDbxPnE5af/9FEkXJD5EoYG
- SEahaEtgNrR4qsyxyAGYgZlS70vkSSYJ+iT2rrwEiDlo31MzRo6Ba2FfHBSJ7lcYdPT7bbk9
- AO3hlNMhNdUhoQv7M5HsnqZ6unvSHOKmReNaS9egAGdRN0/GPDWr9wroyJ65ZNQsHl9nXBqE
- AukZNr5oJO5vxrYiAuuTSd6UI/xFkjtkzltG3mw5ao2bBpk/V/YuePrJsnPFHG7NhizrxttB
- nTuOSCMo45pfHQ+XYd5K1+Cv/NzZFNWscm5htJ0HznY+oOsZvHTyGz3v91pn51dkRYN0otqr
- bQ4tlFFuVjArBZcapSIe6NV8C4cEiSTOwE0EVEJx7gEIAMeHcVzuv2bp9HlWDp6+RkZe+vtl
- KwAHplb/WH59j2wyG8V6i33+6MlSSJMOFnYUCCL77bucx9uImI5nX24PIlqT+zasVEEVGSRF
- m8dgkcJDB7Tps0IkNrUi4yof3B3shR+vMY3i3Ip0e41zKx0CvlAhMOo6otaHmcxr35sWq1Jk
- tLkbn3wG+fPQCVudJJECvVQ//UAthSSEklA50QtD2sBkmQ14ZryEyTHQ+E42K3j2IUmOLriF
- dNr9NvE1QGmGyIcbw2NIVEBOK/GWxkS5+dmxM2iD4Jdaf2nSn3jlHjEXoPwpMs0KZsgdU0pP
- JQzMUMwmB1wM8JxovFlPYrhNT9MAEQEAAcLBMwQYAQIACQUCVEJx7gIbDAAKCRB+FRAMzTZp
- sadRDqCctLmYICZu4GSnie4lKXl+HqlLanpVMOoFNnWs9oRP47MbE2wv8OaYh5pNR9VVgyhD
- OG0AU7oidG36OeUlrFDTfnPYYSF/mPCxHttosyt8O5kabxnIPv2URuAxDByz+iVbL+RjKaGM
- GDph56ZTswlx75nZVtIukqzLAQ5fa8OALSGum0cFi4ptZUOhDNz1onz61klD6z3MODi0sBZN
- Aj6guB2L/+2ZwElZEeRBERRd/uommlYuToAXfNRdUwrwl9gRMiA0WSyTb190zneRRDfpSK5d
- usXnM/O+kr3Dm+Ui+UioPf6wgbn3T0o6I5BhVhs4h4hWmIW7iNhPjX1iybXfmb1gAFfjtHfL
- xRUr64svXpyfJMScIQtBAm0ihWPltXkyITA92ngCmPdHa6M1hMh4RDX+Jf1fiWubzp1voAg0
- JBrdmNZSQDz0iKmSrx8xkoXYfA3bgtFN8WJH2xgFL28XnqY4M6dLhJwV3z08tPSRqYFm4NMP
- dRsn0/7oymhneL8RthIvjDDQ5ktUjMe8LtHr70OZE/TT88qvEdhiIVUogHdo4qBrk41+gGQh
- b906Dudw5YhTJFU3nC6bbF2nrLlB4C/XSiH76ZvqzV0Z/cAMBo5NF/w=
-In-Reply-To: <20251110180131.28264-17-chang.seok.bae@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20251111105202.3aa734aa.alex@shazbot.org>
+X-Proofpoint-GUID: e1yVIs7jH70XmYrKTK7gWc5NuAWppnOt
+X-Authority-Analysis: v=2.4 cv=CPInnBrD c=1 sm=1 tr=0 ts=6913797a cx=c_pps
+ a=CB4LiSf2rd0gKozIdrpkBw==:117 a=CB4LiSf2rd0gKozIdrpkBw==:17
+ a=kj9zAlcOel0A:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=FOH2dFAWAAAA:8 a=KS96cTW66y6CtfVdv8wA:9 a=CjuIK1q_8ugA:10
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-ORIG-GUID: e1yVIs7jH70XmYrKTK7gWc5NuAWppnOt
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTExMDE0NiBTYWx0ZWRfX/8KDQuzfSw9h
+ hff7Yx6wXmpSFX5SKyT0wYWEc5WUwyAcpDkoH8utFnmmida4UVNY5rUnkqgLB4lSSqtO4FYhU56
+ oqAJ73kNbJwNNJx8io8p81xWF0zNTqwrqtg3gwxxHO5kW8W7HVrwk2tArdVHff9Md47y0vmRFV/
+ u9xuHtEb6bC6FPf4tRLd2cpDRRon5ph2MSvY1csNW4khp4HI5o4BN9j5uGoHHu/bATgO04PdK5b
+ 5e2qW4700iMwhtZPK4yNeZHUJ4xVNIvkdSJmBh0uNlBfwPvHzhU4PhNEiEPYWLSZ8BnY8l0VrGq
+ QX0N/3dC9QbbPKRr+Uxic7TquB0pPSwvV4O5L5wupbiTS/gAx4D2SaWRbqbLiAUxFkafVM4W++V
+ 0ph5Y1v8E3LlpbNlNzLxeGjHyPhlBg==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-11_03,2025-11-11_02,2025-10-01_01
 
-On 11/10/25 19:01, Chang S. Bae wrote:
-> Extend the instruction emulator to recognize and interpret the REX2
-> prefix byte. Also, detect and flag invalid prefix sequences after a REX2
-> prefix.
+On Tue, Nov 11, 2025 at 10:52:02AM -0700, Alex Williamson wrote:
+> On Tue, 11 Nov 2025 09:35:31 -0800
+> Alex Mastro <amastro@fb.com> wrote:
 > 
-> In the existing prefix-decoding loop,
->    * The loop exits when the first non-prefix byte is encountered.
->    * Any non-REX prefix clears previously recorded REX information.
+> > On Tue, Nov 11, 2025 at 10:09:48AM -0700, Alex Williamson wrote:
+> > > On Tue, 11 Nov 2025 06:52:02 -0800
+> > > Alex Mastro <amastro@fb.com> wrote:  
+> > > > diff --git a/tools/testing/selftests/vfio/lib/vfio_pci_device.c b/tools/testing/selftests/vfio/lib/vfio_pci_device.c
+> > > > index a381fd253aa7..7a523e3f2dce 100644
+> > > > --- a/tools/testing/selftests/vfio/lib/vfio_pci_device.c
+> > > > +++ b/tools/testing/selftests/vfio/lib/vfio_pci_device.c
+> > > > @@ -29,6 +29,173 @@
+> > > >  	VFIO_ASSERT_EQ(__ret, 0, "ioctl(%s, %s, %s) returned %d\n", #_fd, #_op, #_arg, __ret); \
+> > > >  } while (0)
+> > > >  
+> > > > +static struct vfio_info_cap_header *next_cap_hdr(void *buf, size_t bufsz,
+> > > > +						 size_t *cap_offset)
+> > > > +{
+> > > > +	struct vfio_info_cap_header *hdr;
+> > > > +
+> > > > +	if (!*cap_offset)
+> > > > +		return NULL;
+> > > > +
+> > > > +	VFIO_ASSERT_LT(*cap_offset, bufsz);
+> > > > +	VFIO_ASSERT_GE(bufsz - *cap_offset, sizeof(*hdr));
+> > > > +
+> > > > +	hdr = (struct vfio_info_cap_header *)((u8 *)buf + *cap_offset);
+> > > > +
+> > > > +	if (hdr->next)
+> > > > +		VFIO_ASSERT_GT(hdr->next, *cap_offset);  
+> > > 
+> > > This might be implementation, but I don't think it's a requirement.
+> > > The vfio capability chains are based on PCI capabilities, which have no
+> > > ordering requirement.  Thanks,  
+> > 
+> > My main interest was to enforce that the chain doesn't contain a cycle, and
+> > checking for monotonically increasing cap offset was the simplest way I could
+> > think of to guarantee such.
+> > 
+> > If there isn't such a check, and kernel vends a malformed cycle-containing
+> > chain, chain traversal would infinite loop.
+> > 
+> > Given the location of this test code coupled to the kernel tree, do you think
+> > such assumptions about implementation still reach too far? If yes, I can either
+> > remove this check, or try to make cycle detection more relaxed about offsets
+> > potentially going backwards.
 > 
-> For REX2, however, once a REX2 prefix is encountered, most subsequent
-> prefixes are invalid. So, each subsequent prefix needs to be validated
-> before continuing the loop.
+> I've seen cycle detection in PCI config space implemented as just a
+> depth/ttl counter.  Max cycles is roughly (buffer-size/header-size).  I
+> think that would be sufficient if we want to include that sanity
+> testing.  Thanks,
+
+Thanks, that's a good suggestion -- will take this in v3.
+
 > 
-> Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
-> ---
-> RFC note:
-> The REX2 decoding itself is straightforward. The additional logic is
-> mainly to detect and handle invalid prefix sequences. If this seems
-> excessive, there is a chance to cut off this check since VMX would raise
-> '#UD' on such cases anyway.
-> ---
->   arch/x86/kvm/emulate.c | 24 +++++++++++++++++++++++-
->   1 file changed, 23 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/kvm/emulate.c b/arch/x86/kvm/emulate.c
-> index 9bd61ea496e5..f9381a4055d6 100644
-> --- a/arch/x86/kvm/emulate.c
-> +++ b/arch/x86/kvm/emulate.c
-> @@ -4844,7 +4844,7 @@ int x86_decode_insn(struct x86_emulate_ctxt *ctxt, void *insn, int insn_len, int
->   	ctxt->op_bytes = def_op_bytes;
->   	ctxt->ad_bytes = def_ad_bytes;
->   
-> -	/* Legacy prefixes. */
-> +	/* Legacy and REX/REX2 prefixes. */
->   	for (;;) {
->   		switch (ctxt->b = insn_fetch(u8, ctxt)) {
->   		case 0x66:	/* operand-size override */
-> @@ -4887,9 +4887,20 @@ int x86_decode_insn(struct x86_emulate_ctxt *ctxt, void *insn, int insn_len, int
->   		case 0x40 ... 0x4f: /* REX */
->   			if (mode != X86EMUL_MODE_PROT64)
->   				goto done_prefixes;
-> +			if (ctxt->rex_prefix == REX2_PREFIX)
-> +				break;
->   			ctxt->rex_prefix = REX_PREFIX;
->   			ctxt->rex.raw    = 0x0f & ctxt->b;
->   			continue;
-> +		case 0xd5: /* REX2 */
-> +			if (mode != X86EMUL_MODE_PROT64)
-> +				goto done_prefixes;
-Here you should also check
-
-	if (ctxt->rex_prefix == REX_PREFIX) {
-		ctxt->rex_prefix = REX2_INVALID;
-		goto done_prefixes;
-	}
-
-> +			if (ctxt->rex_prefix == REX2_PREFIX &&
-> +			    ctxt->rex.bits.m0 == 0)
-> +				break;
-> +			ctxt->rex_prefix = REX2_PREFIX;
-> +			ctxt->rex.raw    = insn_fetch(u8, ctxt);
-> +			continue;
-After REX2 always comes the main opcode byte, so you can "goto 
-done_prefixes" here.  Or even jump here already; in pseudocode:
-
-	ctxt->b = insn_fetch(u8, ctxt);
-	if (rex2 & REX_M)
-		goto decode_twobyte;
-	else
-		goto decode_onebyte;
-
-...
-
-	if (ctxt->b == 0x0f) {
-decode_twobyte:
-		...
-		if (ctxt->b == 0x38 && ctxt->rex_prefix != REX2_PREFIX)
-			...
-	} else {
-decode_onebyte:
-		...
-	}
-
-
-
->   		case 0xf0:	/* LOCK */
->   			ctxt->lock_prefix = 1;
->   			break;
-> @@ -4901,6 +4912,17 @@ int x86_decode_insn(struct x86_emulate_ctxt *ctxt, void *insn, int insn_len, int
->   			goto done_prefixes;
->   		}
->   
-> +		if (ctxt->rex_prefix == REX2_PREFIX) {
-> +			/*
-> +			 * A legacy or REX prefix following a REX2 prefix
-> +			 * forms an invalid byte sequences. Likewise,
-> +			 * a second REX2 prefix following a REX2 prefix
-> +			 * with M0=0 is invalid.
-> +			 */
-> +			ctxt->rex_prefix = REX2_INVALID;
-> +			goto done_prefixes;
-> +		}
-
-... and this is not needed.
-
-Paolo
-
->   		/* Any legacy prefix after a REX prefix nullifies its effect. */
->   		ctxt->rex_prefix = REX_NONE;
->   		ctxt->rex.raw = 0;
-
+> Alex
 
