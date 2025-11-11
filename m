@@ -1,105 +1,95 @@
-Return-Path: <linux-kernel+bounces-894371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C7D5C49DD7
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 01:28:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E82AC49DF2
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 01:30:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 431B0188970B
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 00:29:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B90D188D927
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 00:31:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60ECC1E5B60;
-	Tue, 11 Nov 2025 00:28:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEBA81FDA92;
+	Tue, 11 Nov 2025 00:30:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lTUNj1uA"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FErf+LGw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A7AD1DF72C
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 00:28:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 412E61519AC;
+	Tue, 11 Nov 2025 00:30:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762820913; cv=none; b=AxHW80z+qvJk9TudHJ4VExc/DPZdV4mJdkOsu8hMHq0Cj+DHHTvZVelMZ/AkO3PioolLDtnhZpdKlWWEAnjGPQOeaUY14YgUooLCTraM4Td5w18dljxA9XOTe9cyEPUbE60TC7dNYMbgDfC7GBuNZRWVSFIT+6PwEouSrlR1HiM=
+	t=1762821043; cv=none; b=jUK/zt34SQvUc2RK41sUxecD94d/kdHkO96dHjOeclpKubhC9yloN2XoPhdHZYl/hmBMO+ryA6UzP13FZIoDcIuX86vjNqGoZE4JnxwUwdDFyc9Y+9hJeFUHgBdarqu96q52W9PA7Bavh3xuVVHvXLnIi9fKeTRCUeEwNFlAaZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762820913; c=relaxed/simple;
-	bh=s4QAbzqezKxpC48X2jJAmws2M/K0ewRQ0evWM/FvHM8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=bJh1ZXCkRxCJnXPUz9GlGeLuw9TlPNBFvoa0dbuhHHD5hqjJwmR2SX64qTVh+cvq1F41F2FQzrjrkOYAe63mby340cfY2cdV34b4bRzvzykfUB4eJW9Z7rWuAz0XC3ilsO43UxXjj6htcBHmXfh/6ggjFPG7EQfHf5VAiWLOqv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lTUNj1uA; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-297b35951b7so60830395ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 16:28:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762820912; x=1763425712; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=s+ps9iZNMlQxigkmZVc26wKVrUeiyrptMcRHW4fOt+A=;
-        b=lTUNj1uA9XEgIM5g3rzQOYHICp+Fz45ilYQQIRyFhske5mM96eKUBWxgsSVIb/GO2v
-         sKJHaXGy1vPPex8cf4fm3cpoLIKcDPjWqLizM7gpj9cnzs0BAg0MtDUi0AgLmIm2KUiY
-         GFBBW0QW2yXlemy4mFkJ2PE9CKiOMfmsAFyOnrcLc/P4nOod++8vxrOa/N1miZzRzRBp
-         EwjocjmFOg/PAUAMlXs8rBrL6upB/b/1taJa+RWzbv/dAOVtMDQMVJDy7DWTDxbCrPyp
-         p3e2Hc8stnRUX01F+wZev4vZEAmq14G44P1a+DC4glot+XLi+07n3LRjP9ETY0IKjowi
-         BVeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762820912; x=1763425712;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=s+ps9iZNMlQxigkmZVc26wKVrUeiyrptMcRHW4fOt+A=;
-        b=peVelJ089rLeTI6lq3KItztZDL1Ej2adJBlwL+2AotM7/IJf7WeMrziNPy7Qg42dcg
-         YiSRZedHdpHGrIe3CCx4+i9UPSKX/8Q+jWJWvJvePbUgvajY7laPLeLtP1zsjpTz/V0M
-         0vRpjcD6T0eC0r86lf1A/bOAYLqs94mT36CjEVMvRWXdBAeVu/r2fUTiogeF9hSX3LNz
-         CSyfmjGjm+WAYgQA6CsDGaiW+89dLj+tGm6VJbnhpKnW7ogg8+nyE5Ixtrk0KbwMhCD3
-         bJJqHwIbYhBOtYO+Zcpt7lFJYWq0IGVRxTv2e8+r9InzrSwvNhgAPp+OF7FtQLYgJAo7
-         7e6w==
-X-Forwarded-Encrypted: i=1; AJvYcCVJz4Z50bpWLGGRL5zt96GiZ59M2Kv4fNjnopP9iiYFDM4NjkH40dWHQalH/LdIJ2inHi66Gp6kNThkB3Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBGR54OLnU5i8YrNvahyxOPyv82/nUnlckOtTMPdWBslTYmCOa
-	8eHkB1bv75Y3MH/ZPOvFnfuD8sl/1E3ahfP91bMVbHgbFOSLyvaZyT/uA8nud5e1bdX6P7EACsP
-	Maso0FQ==
-X-Google-Smtp-Source: AGHT+IHAUfMmNpy6nhd6gmlvKTfMVnDRil73JRGuUHbbN42OotsFUvytc5toTQSvaIczNMpYZj9tI76zEks=
-X-Received: from plzv12.prod.google.com ([2002:a17:902:b7cc:b0:297:e585:34c1])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:1109:b0:24c:965a:f94d
- with SMTP id d9443c01a7336-297e56df7b3mr148989735ad.46.1762820911660; Mon, 10
- Nov 2025 16:28:31 -0800 (PST)
-Date: Mon, 10 Nov 2025 16:28:30 -0800
-In-Reply-To: <20251107034802.39763-1-fuqiang.wng@gmail.com>
+	s=arc-20240116; t=1762821043; c=relaxed/simple;
+	bh=B4VMH9VIBesNio0hvZT25KAARBNpcqNnEDJoyUG+DcA=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=r2IB6kasT9WS7ktiG/KLK2w5aLJ3pTAt6vdRzZzqRh0wuQTe4u3yxHYrTe9C8nwEX6bA1sF7oCeJiDRYdaAnjEMrojIYdG4HA/PijMRYD02ll29fhlHlkPfivfYhpfn9IWETHTAyZjrvL1AcPejAL5AHenV+RDkxDkRzvupxhgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FErf+LGw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1159C16AAE;
+	Tue, 11 Nov 2025 00:30:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762821042;
+	bh=B4VMH9VIBesNio0hvZT25KAARBNpcqNnEDJoyUG+DcA=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=FErf+LGwhymSBNx567BBMzezTHfeIDpAQY0XnJLeJ60MIoofkJ8SDHastFyqFMod0
+	 UmNUdLoO6S9DVeOKmAr7P8VdKk75wxL12UAf2hh0JUA72NJquAcr+gHIeOmBs/Az2g
+	 /MaYzJVt8+Fx9CD2138t9G1OkxoGHGEvsE0QQKqx43KcTWJXYnKQpPn6c0HXHyN9SO
+	 hDN6LJOTPktmhEaDHCzsaTv9PQizk1k0tMxTB9oukOeykUxLJIIVzBKmk4rJ05SDyt
+	 eZ6VdQQEeflHmNj0XwYthAI4iGBKOVlp9zKp+HjCAHp8MyJictHT6rVLyox3PIvUQp
+	 FkBscGSy4qIbQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70CCB380CFD7;
+	Tue, 11 Nov 2025 00:30:14 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251107034802.39763-1-fuqiang.wng@gmail.com>
-Message-ID: <aRKDLo_SFJxyQWG5@google.com>
-Subject: Re: [PATCH v5 0/1] KVM: x86: fix some kvm period timer BUG
-From: Sean Christopherson <seanjc@google.com>
-To: fuqiang wang <fuqiang.wng@gmail.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	Marcelo Tosatti <mtosatti@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>, 
-	Maxim Levitsky <mlevitsk@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	yu chen <33988979@163.com>, dongxu zhang <xu910121@sina.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] ptp: ocp: Document sysfs output format for backward
+ compatibility
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <176282101299.2823873.13816529606804209236.git-patchwork-notify@kernel.org>
+Date: Tue, 11 Nov 2025 00:30:12 +0000
+References: <20251107074533.416048-1-zhongqiu.han@oss.qualcomm.com>
+In-Reply-To: <20251107074533.416048-1-zhongqiu.han@oss.qualcomm.com>
+To: Zhongqiu Han <zhongqiu.han@oss.qualcomm.com>
+Cc: jonathan.lemon@gmail.com, vadim.fedorenko@linux.dev,
+ richardcochran@gmail.com, andrew+netdev@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Nov 07, 2025, fuqiang wang wrote:
-> =================================
-> Fix both issues in a single patch
-> =================================
+Hello:
+
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Fri,  7 Nov 2025 15:45:33 +0800 you wrote:
+> Add a comment to ptp_ocp_tty_show() explaining that the sysfs output
+> intentionally does not include a trailing newline. This is required for
+> backward compatibility with existing userspace software that reads the
+> sysfs attribute and uses the value directly as a device path.
 > 
-> In versions v2 and v3, I split these two issues into two separate patches
-> for fixing. However, this caused patch 2 to revert some of the changes made
-> by patch 1.
+> A previous attempt to add a newline to align with common kernel
+> conventions broke userspace applications that were opening device paths
+> like "/dev/ttyS4\n" instead of "/dev/ttyS4", resulting in ENOENT errors.
+> 
+> [...]
 
-FWIW, my initial reaction was that I liked splitting this into two patches better,
-but after digging through all the angles of this for a few hours, I agree that it's
-better to skip the "don't let the delta go negative" patch, because that patch
-really only addresses a symptom that shouldn't happen in the first place.
+Here is the summary with links:
+  - ptp: ocp: Document sysfs output format for backward compatibility
+    https://git.kernel.org/netdev/net-next/c/5b9192c2c075
 
-> In patch 4, I attempted to merge the two patches into one and tried to
-> describe both issues in the commit message, but I did not do it well. In
-> this version, I have included more details in the commit message and the
-> cover letter.
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
