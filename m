@@ -1,127 +1,137 @@
-Return-Path: <linux-kernel+bounces-895252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F8A2C4D5B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:16:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F26BCC4D56A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:12:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDBEA3A9108
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:11:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EBDE1892C0C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:06:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AAB33546F0;
-	Tue, 11 Nov 2025 11:10:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 404D7350A16;
+	Tue, 11 Nov 2025 11:06:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="xW/aTHYW"
-Received: from out203-205-221-242.mail.qq.com (out203-205-221-242.mail.qq.com [203.205.221.242])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QtmDRNlG";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="EJ7bZ0kJ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A1C8354ADF
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 11:10:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.242
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C99B333DEE7
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 11:06:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762859450; cv=none; b=V+6xzOiYy0cOlR+bkjI1UcAaSVCTu5TCTvwK0Pp+HuSvWKqXV4pAlPJL5Mvr2ZBou0+GaFnlGoSUM/wA1BHfR1Gjr3WiVaxK9KDOh/IuexadrygMvP+aKPSB4OsTD0pokDtvY9SNNJXxyvePUASrxLFjhivfct/1nA1y6dCZjjA=
+	t=1762859176; cv=none; b=ofj5ebtnnqrWlACp3KN8SpadtoW9BthsPFvOcdEtWKzQgXzFKmbCMB2JX05+kFD4cxyOynobebiVbohQcpis7Q36haNQtcac56RWZD+yw2QAooRrru0Wssefuii/pjxaWHtrf8v1RhB2M4FR94KOflTl11k/x/4OymmBgcmnfT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762859450; c=relaxed/simple;
-	bh=NGZY7D8PfbiFbd887TvButBPycC3r7BwVEmdgLETi1E=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=G+xxzDtZgyXXrjY3vatXKp2mIFKof0brTcmamJ6Ug+I/fQmMkMfF+PRy0kPJWVnKjYHIjmXpaK+Wg5wCcsomDTiuyZRo15Cuy77hv48ub4D94Y2YFSs0ytGd8pzEhWoG7rHFCF+5wHlr8CPvKDQ8Bo7d6/kBqUTW841Cuc0BTS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=xW/aTHYW; arc=none smtp.client-ip=203.205.221.242
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1762859145; bh=5KM/czTHkFEHND165zBXo4h8LPx0eIm+WQx5hjmuObY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=xW/aTHYW1x4ZRti5PsqbAPZF25ISvbe2qgJ6GmpJmfZPhpdpCbA65riVx7Ss9pJx3
-	 ytYs97jPDCJ7BEJM3K1hedaKvqI8WvEg0k7B9pBkOybXuuazqBlJQA2qRVcjbFdCo7
-	 5beh5Lzl4lsf2PpTz77AS/hZQkJsDlIsm2hSNPNs=
-Received: from pek-lxu-l1.corp.ad.wrs.com ([111.201.7.117])
-	by newxmesmtplogicsvrszc50-0.qq.com (NewEsmtp) with SMTP
-	id 169964CC; Tue, 11 Nov 2025 19:05:41 +0800
-X-QQ-mid: xmsmtpt1762859141tr7uwxdsx
-Message-ID: <tencent_F07E963236A64B34744177E3672A3CB93609@qq.com>
-X-QQ-XMAILINFO: MDbayGdXPuoe0yCjW11OIF5FklWQl0wX+LOZc/f+cvUuOiQe/CgaqrlUaSvhyq
-	 k+p+l9joDQveK7VnTuHD3QhthEaJ95H14ovtl22FaTJuM/7kolcxFwHZ+ljMAgZ6EDp2JZzwuE5M
-	 PRGgX1WXpFQFe8O/HGXb6ekmgITxcMRSJo7+FA28NqCJKqHB62vLB3bZtE2xrC2FRYS92Uj0xO9T
-	 xUgBXD7zN9p3MOjRGSYEequpybtNra2coHVecSMnrDGfbN+/EdASTMcA5Np8OEU9rZyPQ5LmHaLO
-	 MD42mYGidXHjKonP/Hi7WY0+oYWN9mfT/lHfDLR7A6P8v6hdcqVOt/yxu1ZLEiEjex+9iWzyGIZi
-	 iDg/T/SnQ0prT0CrvfAK17Ndv8+unHe573RhggVuxzE2zAdCxns4qTxZYRviFCr7wKU3jh0YqLRy
-	 c5+CD95tKj71dasvRrq/wXdDgILZVfAdC+9vx1Hcc4ZvShCqAlsTVNkvHjE8DIaoj21s5qyTgaYi
-	 0I7si44lWF5xZhUi0EKEOGrxBc1A+hd5OL94u0XlNcvtf/PzktEE43lCAZj4L1VW1H01Mj2vYl4o
-	 4CBS75Cf+GHfaT3N0G5TdBN+N4Kx8mfo9ZjzbdlDOlZCOb0y5Ew1VjI6WSXY9HtZ7hOsB/dxSUTk
-	 SUI8qkGFpZAYp/XVWv2GoSICmBixSiYUj55BGZVJVQPtHsZMx6HAkAIeXwo8EeytUXRGqwZv7aV1
-	 Eu0Z0ahueQzhJ2zI+BlCTtPjpgCTxx8+NIZ6XGhW34xtQNAVwMdoKEBs4H3GFszkNoHzcqIgNTTl
-	 KYRe8GW5JvkLZdkdJeWD2ITnz0l1Rb9u2pd/HZwH7vzymdQDSKsAysb1GB9MF2msCNyw6WQwiZfv
-	 HPdi6B5KD8sQ6wvxjBRN1Pk/J28mwQLQxLEaeTQJtusvUL8ltOTp/o6GjV/I6/fQ3pRCjDbt4j7p
-	 jnKFhTGIikeSjfyKsqUwB7c8IyROEamD7t5m2n2CvVWMR4KOjCyg==
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+3932ccb896e06f7414c9@syzkaller.appspotmail.com
-Cc: almaz.alexandrovich@paragon-software.com,
-	linux-kernel@vger.kernel.org,
-	ntfs3@lists.linux.dev,
-	syzkaller-bugs@googlegroups.com
-Subject: [PATCH 1/2] fs/ntfs3: Prevent memory leaks in add sub record
-Date: Tue, 11 Nov 2025 19:05:42 +0800
-X-OQ-MSGID: <20251111110541.2266435-3-eadavis@qq.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <69122a96.a70a0220.22f260.00fe.GAE@google.com>
-References: <69122a96.a70a0220.22f260.00fe.GAE@google.com>
+	s=arc-20240116; t=1762859176; c=relaxed/simple;
+	bh=wgdtMOgnIdauBeWDydYoY+O9WRpPfmsDE4Q2ko8WTUY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sY8ppPNk0gbfOSadCU7aoQXwhICN0TmEQt18suZorpaK6hpFZHEbo8ttxr4PBRXvV321gnGt+IVLr9Pv9sQ4oH+miXjeSdqEJhzAUVgF6I1AYbsSBMDrZXbankfDR4hKpDNC3VtyjTpb7luNTKOOKKwXso0BL38hFU6IBZ2M7kE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QtmDRNlG; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=EJ7bZ0kJ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762859173;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0GDbVFAUnTTBAQqYxAS+qt3Sk5mP5Wt8XB64j/zpUDE=;
+	b=QtmDRNlGPZtCDYAC83oVNcwYLiCm6rDZyf0koeCW1XNOS/iufswkYhAVaQzWOiPBHFGMIG
+	ENpEB6xkMBfzTH0AYRYGblaa5kSOFeJDIF+vCK6Xf2usTjaSXfDhIM31HFf+o6oUqrBR3f
+	9Tiksmiino+VsmDwJyqDHYLUTf+cD5w=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-643-FemGY0K_MaqTCtdZ2P2RSQ-1; Tue, 11 Nov 2025 06:06:12 -0500
+X-MC-Unique: FemGY0K_MaqTCtdZ2P2RSQ-1
+X-Mimecast-MFC-AGG-ID: FemGY0K_MaqTCtdZ2P2RSQ_1762859171
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-b6d7405e6a8so70413666b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 03:06:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1762859171; x=1763463971; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0GDbVFAUnTTBAQqYxAS+qt3Sk5mP5Wt8XB64j/zpUDE=;
+        b=EJ7bZ0kJo2yATF1Ax0+Gv2vL9VgSZ9K5mJ1Qr5IYFkn1Druvc5tdiecGfeIsD+JPnD
+         IA724Y4/VisadMlPGYmYermk5Dg5BLSH6eM0bjptnKEXDBeSd+TR6JgdyRzHqrv5C9nr
+         /HtDh2naisPlhTkpnMeEpXKlxpvhGJpPTfYSASc3xM3+V6NwdvciQbRyfz5SQQKi3zBS
+         onrfDlqjaSbsqvbtQu47/bOFYcKtalqYNhs1GbtE38AxGrOg14thKhJ9IAezQrtIGzEr
+         9jYbzTn5XF0j2r/30Kl7fsgC2DYChGPfcdrLX7BaIhPyHQVEByLH/adJN5TCenl+Ppw+
+         OwJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762859171; x=1763463971;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=0GDbVFAUnTTBAQqYxAS+qt3Sk5mP5Wt8XB64j/zpUDE=;
+        b=p4XLsWrzpoyE5C06tMM3vsaL8LN7koVX289DJAsBTPc3DzJcD8iRy/QaMv6/nZXGWd
+         n+KWf1v5f4aw4EWfN+8G2mQIYwNStjY1JNCbZz5alYFdeEkNoARlbR01rHTPSNTbMiUg
+         N7jHPj4jzOmIVbzxzVkAtCKy9HaLuBszkyobenU9DVaYX3QxGjxLMz9D8fW1NQ53z051
+         DK0Hh84dt5HNjcf26PHPCiMWLStImu+QfaqqR3tY2cLci4vNFIeyalAodtDa5a4dSBgc
+         i4d+ZAu10npDCRaRTM0L7Abbdm1qlV3xjeqm7FteRoFaLva33ATtlFLX6ikjWAs4l5iP
+         2tyA==
+X-Forwarded-Encrypted: i=1; AJvYcCXIISM9TcBE8EiVxyCsuB9XRjwPA7SVL4/Hiay7qQJr6kCFvxei517pZCFU+mdky433i2eq/OyfA4U4WOU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4OL09JVF8rdOfvwqTCuSyeTaLqMdPH3XDdYjMcF21mM4sxg0M
+	ma+qxPpxsO9JtSTqG+UhrFT68oNZbjbkfR20iZrWdB+6l5hwomN44sJr3AaUSn84kq3IaTRcDOl
+	jNvs4GSP24SjzpA8HL6LUBlD8ARLmYJIbrfn+c+sG0ZThTmeHt4REbuw86xy3BZRDBhhXSLfz7n
+	Az3uTWXIexAUP1633TqJYPBcrfNpky3RdWFri8miZEI7vCd6cdgvM=
+X-Gm-Gg: ASbGnctYswab5VQehIrauGnyATTY4e3pOWDB1+ZH5DgQmM0WX3ZdgMWIwh6cNZEuHQG
+	/YDHlY8DBhqhKlriE+pDCGgnNoEzeKBHp1VVlDtH10GHsv9bRBfUwAa0TkdnZw5lnSyxCQHmJE2
+	1bsgD5S4IzvNnhYVfeynn29bAc0gx5d1QVGK+9aY519aeq9TrytB3GJ28Tx4ZRYGTr2A9GWW0bF
+	h7MkZ4q/FpL6Wl5
+X-Received: by 2002:a17:907:847:b0:b07:e258:4629 with SMTP id a640c23a62f3a-b731d592612mr365867966b.16.1762859170929;
+        Tue, 11 Nov 2025 03:06:10 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IH00joUcH98KIScPdspMz6C7WmzE6y9BjmZMzMPi9/1/g0CWswqBDBalNWaO//kifqVOVeSio6hNYd8TE3PJWo=
+X-Received: by 2002:a17:907:847:b0:b07:e258:4629 with SMTP id
+ a640c23a62f3a-b731d592612mr365865466b.16.1762859170594; Tue, 11 Nov 2025
+ 03:06:10 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <acd8109245882afd78cdf2805a2344c20fef1a08.1762434837.git.rrobaina@redhat.com>
+ <e92df5b09f0907f78bb07467b38d2330@paul-moore.com> <CAABTaaCVsFOmouRZED_DTMPy_EimSAsercz=8A3RLTUYnpvf_A@mail.gmail.com>
+ <aRHd_WFBcyiL1Ufe@strlen.de>
+In-Reply-To: <aRHd_WFBcyiL1Ufe@strlen.de>
+From: Ricardo Robaina <rrobaina@redhat.com>
+Date: Tue, 11 Nov 2025 08:05:59 -0300
+X-Gm-Features: AWmQ_bms7BujCKPIYEHexBScB1G6ShV9xg4dnReCgV_Fb1MzdZWI32KI09CCb4A
+Message-ID: <CAABTaaA7XKVcV8GdmdkKLP+9gfKpv5f4oJupVXzR6KEaOFS9cQ@mail.gmail.com>
+Subject: Re: [PATCH v5 1/2] audit: add audit_log_packet_ip4 and
+ audit_log_packet_ip6 helper functions
+To: Florian Westphal <fw@strlen.de>
+Cc: Paul Moore <paul@paul-moore.com>, audit@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org, 
+	coreteam@netfilter.org, eparis@redhat.com, pablo@netfilter.org, 
+	kadlec@netfilter.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-If a rb node with the same ino already exists in the rb tree, the newly
-alloced mft_inode in ni_add_subrecord() will not have its memory cleaned
-up, which leads to the memory leak issue reported by syzbot.
+On Mon, Nov 10, 2025 at 9:43=E2=80=AFAM Florian Westphal <fw@strlen.de> wro=
+te:
+>
+> Ricardo Robaina <rrobaina@redhat.com> wrote:
+> > > +int audit_log_nft_skb(struct audit_buffer *ab,
+> > > +                     struct sk_buff *skb, u8 nfproto)
+> > Thanks for reviewing this patch, Paul.
+> >
+> > It makes sense to me. I'll work on a newer version addressing your sugg=
+estions.
+>
+> Nit, but as you need to resend anyway, can you also make this
+> 'const struct sk_buff *' ?
+>
+> Also, given this isn't nftables specific, I suggest
+> audit_log_nf_skb, audit_log_netfilter_skb or some such instead.
+>
+> Thanks.
+>
 
-The best option to avoid this issue is to put the newly alloced mft node
-when a rb node with the same ino already exists in the rb tree and return
-the rb node found in the rb tree to the parent layer.
-
-syzbot reported:
-BUG: memory leak
-unreferenced object 0xffff888110bef280 (size 128):
-  backtrace (crc 126a088f):
-    ni_add_subrecord+0x31/0x180 fs/ntfs3/frecord.c:317
-    ntfs_look_free_mft+0xf0/0x790 fs/ntfs3/fsntfs.c:715
-
-BUG: memory leak
-unreferenced object 0xffff888109093400 (size 1024):
-  backtrace (crc 7197c55e):
-    mi_init+0x2b/0x50 fs/ntfs3/record.c:105
-    mi_format_new+0x40/0x220 fs/ntfs3/record.c:422
-
-Fixes: 4342306f0f0d ("fs/ntfs3: Add file operations and implementation")
-Reported-by: syzbot+3932ccb896e06f7414c9@syzkaller.appspotmail.com
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
----
- fs/ntfs3/frecord.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/fs/ntfs3/frecord.c b/fs/ntfs3/frecord.c
-index 8f9fe1d7a690..b6cbc1fc3455 100644
---- a/fs/ntfs3/frecord.c
-+++ b/fs/ntfs3/frecord.c
-@@ -325,8 +325,10 @@ bool ni_add_subrecord(struct ntfs_inode *ni, CLST rno, struct mft_inode **mi)
- 
- 	mi_get_ref(&ni->mi, &m->mrec->parent_ref);
- 
--	ni_add_mi(ni, m);
--	*mi = m;
-+	*mi = ni_ins_mi(ni, &ni->mi_tree, m->rno, &m->node);
-+	if (*mi != m)
-+		mi_put(m);
-+
- 	return true;
- }
- 
--- 
-2.43.0
+Sure!
 
 
