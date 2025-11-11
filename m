@@ -1,87 +1,142 @@
-Return-Path: <linux-kernel+bounces-895839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA20BC4F143
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:41:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E5D9C4F0FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:38:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 63AB04F1C96
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:38:53 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 175FF4F6450
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:34:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38B813730C1;
-	Tue, 11 Nov 2025 16:38:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AB553730C4;
+	Tue, 11 Nov 2025 16:34:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="s6aQOsUf"
-Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="joznMm13"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 143B126A0C7;
-	Tue, 11 Nov 2025 16:38:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96F312080C1;
+	Tue, 11 Nov 2025 16:34:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762879127; cv=none; b=ZZD8OMfj66SklhWFcmpuFlz6ee9pazU2e/xnEoToFfkGSs+pLzT8SR462ALUjrZWxfnzntQ1/M2fyo8EJn8jObX30EW7u0ZBiJHIs7LAJWErkZKT382uXEZ+/sUf1ToU+1j4ZMhUeiiNHqRb147hU1+jLsITDRzYDVPHfA+7r+w=
+	t=1762878855; cv=none; b=TUCz1r5wm8oeYFuwICy2aWd/XjlvrVTIuyV0vRt1G8dhzqRSPk6VVplP6pr07vfaIPROHNbJS+JeSLlBcwj5UdHVWwJ9thvTV2yHKEvTzxXI5ueUvyMYaXJ6wh720nNYLYLJTw1Jly0nT0hI9PRB6lI2VZYljgCLAjggch9cVMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762879127; c=relaxed/simple;
-	bh=WeZF0bR2aaIUY2TSMFnLen1JJjH7doVUB12Z5g9qkN8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=JEMc51zIJGiqMiFEG+qzHmX+egJNBHx/e88+PUIQ96sPF7T6K8t/WxdlPYwDZpJagj25G1+N/2EkAzFC9Gr/N1ujI286GeG4Lt5kyhfpK+d5VN8/4d/CzIz0dCGXpVdhGbedau/Pgts9B1Fei8YWpMPD+8L1Fs3bCsPmg4Gs64A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=s6aQOsUf; arc=none smtp.client-ip=199.89.3.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 003.mia.mailroute.net (Postfix) with ESMTP id 4d5XKd0JGWzltMW0;
-	Tue, 11 Nov 2025 16:38:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1762879123; x=1765471124; bh=WeZF0bR2aaIUY2TSMFnLen1J
-	JjH7doVUB12Z5g9qkN8=; b=s6aQOsUfA6lKJj1FgeO/7K0H/5vVj70QFyJSbWwa
-	W6bvZPUi0OBBkibBRqYl3v3vrZ6ZhnSpsGJj/g5RXvKUALbZW2nG6a9OZELw8hwV
-	gZoJqSB0m9Q6qL88iouwGbShQ5LdtRDugw5YCW/D6vOOP4K/MhCvgdj04iQtIO02
-	rwxIaCtymm0RPtUdGv5abVpCj/2Anek1WDiedRakXXoarXgrNe+LuBpeTKnTY8lq
-	g3iaMhjE2QC0ykhQR7DZ24CblnRrtb+oLcOQZs6BLUtO+LO5xwUGBM81KTUmg43H
-	Qnp2/lxC0LwyrK65Kp7xE7nFX6UNA9VrOBKCGEiThzaWFg==
-X-Virus-Scanned: by MailRoute
-Received: from 003.mia.mailroute.net ([127.0.0.1])
- by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id 37B7QlRuUsE6; Tue, 11 Nov 2025 16:38:43 +0000 (UTC)
-Received: from [10.111.50.167] (191.sub-174-194-195.myvzw.com [174.194.195.191])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4d5XKN0Z7hzltMRG;
-	Tue, 11 Nov 2025 16:38:31 +0000 (UTC)
-Message-ID: <4395dab0-155a-4c9f-9f56-534068845b12@acm.org>
-Date: Tue, 11 Nov 2025 08:38:26 -0800
+	s=arc-20240116; t=1762878855; c=relaxed/simple;
+	bh=o/SZWMBbQ0JCS1M9ZO5LlTR4JXs77rGENL4pHZrJbVI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AQwe5e+E56q7mq1qm7ncn0H83+VJklSHAOSoykXlcX2QUxpgJ/iLqbcE/Qqbt/0pZqkuuU4VkD6iGJ3e0OZh6FRkMspWnmh3lrjUldfefwZN8xFe6E2vZM26CT27juPfbYLRK6QCJp9M53lO0gZd/lsZwLceyDR6PBqOT1ykFnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=joznMm13; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FEE5C113D0;
+	Tue, 11 Nov 2025 16:34:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762878855;
+	bh=o/SZWMBbQ0JCS1M9ZO5LlTR4JXs77rGENL4pHZrJbVI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=joznMm13PDNcKA7KhYms1P5FFb4cNMGS9aern9MJrSIPX5KS/7NkjxI1N/EVpM0v9
+	 HhXf52URqZ97j1UmHBT2bkeeJKG6dlWDNuKek4LY36GF4ooFcIlWgpiRAEHD6KPUd5
+	 kPBdB7n3MSmCHjqPSPokd9Hl0O99YEdngmHkXu7g4BC8VcG7d8qE2ngpSdCeghA7sf
+	 Zvrm66Hshf1UH6ibPYpFXolOFCsNMru2H0PyyvBy0oMac943AT47Hm8B86t7zvkl1u
+	 7/BD3U5zeVw678NtertiCmEUune4xNx4eSxfFhgqxcNPnrbWW3VfzgP9efc3Qov9t6
+	 jGbYGpfxFtiwA==
+Date: Tue, 11 Nov 2025 10:38:27 -0600
+From: Bjorn Andersson <andersson@kernel.org>
+To: Pavan Kondeti <pavan.kondeti@oss.qualcomm.com>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+	hrishabh.rajput@oss.qualcomm.com, Konrad Dybcio <konradybcio@kernel.org>, 
+	Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck <linux@roeck-us.net>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, linux-watchdog@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH v5 1/2] firmware: qcom: scm: Register gunyah watchdog
+ device
+Message-ID: <rt777beinysf5nuy57frn7okwglsl77xqikmvobao32bznhnkf@mzg243ddzlpl>
+References: <20251107-gunyah_watchdog-v5-0-4c6e3fb6eb17@oss.qualcomm.com>
+ <20251107-gunyah_watchdog-v5-1-4c6e3fb6eb17@oss.qualcomm.com>
+ <hbxtbaoavlsw7pbmg3cfkbyx4nacjfiikckhqgpvlggbh6hu5b@jyporqecfzni>
+ <263d1390-eff5-4846-b2c2-31f96fc3248e@quicinc.com>
+ <3794bb0e-5e2c-4d5e-8d81-d302fa36677c@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] UFS: Make TM command timeout configurable from host side
-To: Seunghui Lee <sh043.lee@samsung.com>, linux-kernel@vger.kernel.org,
- linux-scsi@vger.kernel.org, alim.akhtar@samsung.com, avri.altman@wdc.com,
- martin.petersen@oracle.com, peter.wang@mediatek.com, beanhuo@micron.com,
- adrian.hunter@intel.com, storage.sec@samsung.com
-References: <CGME20251106012702epcas1p28fdeed020ea44f18dcc751c283fbbcc2@epcas1p2.samsung.com>
- <20251106012654.4094-1-sh043.lee@samsung.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20251106012654.4094-1-sh043.lee@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3794bb0e-5e2c-4d5e-8d81-d302fa36677c@quicinc.com>
 
-On 11/5/25 5:26 PM, Seunghui Lee wrote:
-> Currently, UFS driver uses hardcoded TM_CMD_TIMEOUT (100ms) for all
-> Task Management commands, which may not be optimal for different UFS
-> devices and use cases.
+On Tue, Nov 11, 2025 at 10:51:43AM +0530, Pavan Kondeti wrote:
+> On Mon, Nov 10, 2025 at 09:43:53AM +0530, Pavan Kondeti wrote:
+> > On Sat, Nov 08, 2025 at 07:26:46PM +0200, Dmitry Baryshkov wrote:
+> > > > +static void qcom_scm_gunyah_wdt_free(void *data)
+> > > > +{
+> > > > +	struct platform_device *gunyah_wdt_dev = data;
+> > > > +
+> > > > +	platform_device_unregister(gunyah_wdt_dev);
+> > > > +}
+> > > > +
+> > > > +static void qcom_scm_gunyah_wdt_init(struct qcom_scm *scm)
+> > > > +{
+> > > > +	struct platform_device *gunyah_wdt_dev;
+> > > > +	struct device_node *np;
+> > > > +	bool of_wdt_available;
+> > > > +	int i;
+> > > > +	uuid_t gunyah_uuid = UUID_INIT(0xc1d58fcd, 0xa453, 0x5fdb, 0x92, 0x65,
+> > > 
+> > > static const?
+> > > 
+> > > > +				       0xce, 0x36, 0x67, 0x3d, 0x5f, 0x14);
+> > > > +	static const char * const of_wdt_compatible[] = {
+> > > > +		"qcom,kpss-wdt",
+> > > > +		"arm,sbsa-gwdt",
+> > > > +	};
+> > > > +
+> > > > +	/* Bail out if we are not running under Gunyah */
+> > > > +	if (!arm_smccc_hypervisor_has_uuid(&gunyah_uuid))
+> > > > +		return;
+> > > 
+> > > This rquires 'select HAVE_ARM_SMCCC_DISCOVERY'
+> > > 
+> > 
+> > Probably `depends on HAVE_ARM_SMCCC_DISCOVERY` is correct here.
+> > 
+> 
+> Dmitry / Bjorn,
+> 
+> We are debating on this internally on how to resolve this dependency
+> 
+> - QCOM_SCM depends on HAVE_ARM_SMCCC_DISCOVERY which means restricting
+>   QCOM_SCM compilation than what it is today.
 
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+What does that imply? What is the actual impact? (Do I need to go read
+the dependency tree myself?)
 
+> 
+> - Adding #ifdefry around arm_smccc_hypervisor_has_uuid usage in qcom scm driver 
+> 
+> - Adding stub for `arm_smccc_hypervisor_has_uuid()` which is not done
+>   for any of the functions defined in drivers/firmware/smccc/smccc.c
+> 
+> We are trending towards the first option above. Please let us know if
+> you think otherwise.
+
+What is this trend driven by? Is it coin toss or is there a reason? My
+gut feeling is trending towards one of the latter two options...
+
+But you're effectively asking us to go research these three options,
+determine the pros/cons and then tell you what we think, at which point I
+presume you will tell us what you think about each option.
+
+It would be better if you made a suggestion and told us why you think
+this is the best choice - then we can either agree with your reasoning,
+or choose to ask more questions or do some research.
+
+Regards,
+Bjorn
+
+> Thanks,
+> Pavan
 
