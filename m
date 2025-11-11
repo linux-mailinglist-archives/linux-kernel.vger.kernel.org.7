@@ -1,129 +1,194 @@
-Return-Path: <linux-kernel+bounces-894971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15607C4C986
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:18:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23690C4C977
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:17:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CAB13AAA3D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:12:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 953281887BFA
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:13:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7271227C84B;
-	Tue, 11 Nov 2025 09:12:24 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B2242EC0A1;
+	Tue, 11 Nov 2025 09:13:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="koVbJfLF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 868C429CEB;
-	Tue, 11 Nov 2025 09:12:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3F8E262FC7;
+	Tue, 11 Nov 2025 09:13:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762852344; cv=none; b=ZM4eoPjkKfCAij0s/XM9zvpw84vrNGr3Mp9GCOAXZXcsyM/bLFAx7qZgiXldJzQ+qJwDwtpF05SZs0pOGZzOB0Ft84OuRpQJhTetoF7/5p8HHxYR9R5u3Id/dnoHGcT+OzCmcmDT7kBQ5LZL6PrJARDhMx10D+jcFftgNA1kum8=
+	t=1762852399; cv=none; b=FXFuSf12xvUPxMkbkv2kHsf7/X5i5Y7UaRFDKELj6DGPHyMwGMx7gOlmzIdSBZ//s/yTwivQC+4smBxU1nIDre9mpgs9HqYD57qaSlju3LsnALzf+cCcooOPvecaORIPG3FO7kYTDIOW3WumLP2+9yCbri0dMxVFLB7pEhEMXBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762852344; c=relaxed/simple;
-	bh=qkDWonWLbSZwhF8OLcBhudBMpXCbcTT+1PwDeGeJf+w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gwwOHsInMJD+aVpNZR9P8x1AaJbol7W9RRRE6q7JDKvjUGM7viMADRsetJ1GaW09+4NQtDSl+4cJbdIyDFKvEzy6CbQhDwRD1zFh9CnXINbIlyDHhOXZjPp82IzT257AHjRzvoomhOurvkCi/iLR+5V2l9IEQT8bIlBNAPsEQTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [141.14.13.172] (g427.RadioFreeInternet.molgen.mpg.de [141.14.13.172])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 2E68D61B4847C;
-	Tue, 11 Nov 2025 10:12:05 +0100 (CET)
-Message-ID: <2c938b9d-6a11-47ed-9995-cd576d9088f6@molgen.mpg.de>
-Date: Tue, 11 Nov 2025 10:12:03 +0100
+	s=arc-20240116; t=1762852399; c=relaxed/simple;
+	bh=67bbpUv1c6D8+8ny0J/gkB+aNs+NU8lTnMX848gbpDk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IZ7hx/aHtVBAtWSXuE3mv6dyUJMvJPeA3kFvE7gyheQ8dR8tLZNnQegUsQmk4imcyHVNPLNzMi2Up2IygXkgasqRI2ters56XY2+vs96so10+kcslqqNkLzh6gXHTSQj06gNWYvPVICtEYN1mrEQT/pMaS84uU71hwA75ebmbAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=koVbJfLF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF714C4CEFB;
+	Tue, 11 Nov 2025 09:13:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762852399;
+	bh=67bbpUv1c6D8+8ny0J/gkB+aNs+NU8lTnMX848gbpDk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=koVbJfLFGaFqgtLogMDXWKWJPq2xRfIi602FUbaM8NELvsPmJh9JUUYECFwwUDvNd
+	 8LIQELdwibGGRrrc5JmVUcCiCZ9zJkX3T69XLsa4ivgiqugr/93QN4BpVDhyjs8IdD
+	 K3xPewB1S+SltIl7IOgHMTmiAIBSY0s8r/N3HV7BG2K3oX1HabPbv8Tl9WPSNoD8qy
+	 p1wiVG2WIGXXj2wWm3uMOJbBDwGNuiyci3jESB1QPGGRAPKHy03fK2bvZ2x1Uy4RQ7
+	 g6KGR9JBnXFPml5nMHqavxmZpxtdImEtV5Qp8xjqVHgg5YQ7K9RHLXpgEIkEXk3pjt
+	 lW035xmPEHmTQ==
+Date: Tue, 11 Nov 2025 10:13:15 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Andrei Vagin <avagin@google.com>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH] fs/namespace: correctly handle errors returned by
+ grab_requested_mnt_ns
+Message-ID: <20251111-umkleiden-umgegangen-c19ef83823c1@brauner>
+References: <20251111062815.2546189-1-avagin@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Bluetooth: btrtl: Avoid loading the config file on
- security chips
-To: Max Chou <max.chou@realtek.com>
-Cc: Marcel Holtmann <marcel@holtmann.org>,
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
- linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
- Hilda Wu <hildawu@realtek.com>, alex_lu@realsil.com.cn,
- niall_ni@realsil.com.cn, Kidman Lee <kidman@realtek.com>
-References: <20251105063736.456618-1-max.chou@realtek.com>
- <08601ca9-e038-45a7-bd98-4ab24013a84f@molgen.mpg.de>
- <acb85eada47f40d4ab6bfd4ae42f5861@realtek.com>
-Content-Language: en-US
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <acb85eada47f40d4ab6bfd4ae42f5861@realtek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251111062815.2546189-1-avagin@google.com>
 
-Dear Max,
-
-
-Thank you for your reply, and thank you for sending out v2.
-
-Am 05.11.25 um 10:19 schrieb Max Chou:
-
-[…]
-
->> -----Original Message-----
->> From: Paul Menzel [mailto:pmenzel@molgen.mpg.de]
->> Sent: Wednesday, November 5, 2025 3:58 PM
-
->> Am 05.11.25 um 07:37 schrieb Max Chou:
->>> For chips with security enabled, it's only possible to load firmware
->>> with a valid signature pattern.
->>
->> How can security be enabled?
->>
->> What is currently logged? An error?
+On Tue, Nov 11, 2025 at 06:28:15AM +0000, Andrei Vagin wrote:
+> grab_requested_mnt_ns was changed to return error codes on failure, but
+> its callers were not updated to check for error pointers, still checking
+> only for a NULL return value.
 > 
-> The security chips will be shipped to specific brand customers and
-> are managed by an eFuse, which is programmed during manufacturing.> Currently, loading the config file causes initialization to fail on 
-security chips.
-> The security chips can only load firmware files that contain a valid signature.
+> This commit updates the callers to use IS_ERR() or IS_ERR_OR_NULL() and
+> PTR_ERR() to correctly check for and propagate errors.
 > 
->> Please go into the changes. What is the vendor command 0xAD over 0x0D?
+> Fixes: 7b9d14af8777 ("fs: allow mount namespace fd")
+> Cc: Christian Brauner <brauner@kernel.org>
+> Signed-off-by: Andrei Vagin <avagin@google.com>
+> ---
+
+Thanks. I've folded the following diff into the patch to be more in line
+with our usual error handling:
+
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 74a162a5703a..76f6e868f352 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -134,16 +134,15 @@ __cacheline_aligned_in_smp DEFINE_SEQLOCK(mount_lock);
+ 
+ static void mnt_ns_release(struct mnt_namespace *ns)
+ {
+-	if (IS_ERR_OR_NULL(ns))
+-		return;
+ 	/* keep alive for {list,stat}mount() */
+-	if (refcount_dec_and_test(&ns->passive)) {
++	if (ns && refcount_dec_and_test(&ns->passive)) {
+ 		fsnotify_mntns_delete(ns);
+ 		put_user_ns(ns->user_ns);
+ 		kfree(ns);
+ 	}
+ }
+-DEFINE_FREE(mnt_ns_release, struct mnt_namespace *, if (_T) mnt_ns_release(_T))
++DEFINE_FREE(mnt_ns_release, struct mnt_namespace *,
++	    if (!IS_ERR(_T)) mnt_ns_release(_T))
+ 
+ static void mnt_ns_release_rcu(struct rcu_head *rcu)
+ {
+@@ -5750,10 +5749,7 @@ static struct mnt_namespace *grab_requested_mnt_ns(const struct mnt_id_req *kreq
+ 
+ 	if (kreq->mnt_ns_id) {
+ 		mnt_ns = lookup_mnt_ns(kreq->mnt_ns_id);
+-		return mnt_ns ? : ERR_PTR(-ENOENT);
+-	}
+-
+-	if (kreq->spare) {
++	} else if (kreq->spare) {
+ 		struct ns_common *ns;
+ 
+ 		CLASS(fd, f)(kreq->spare);
+@@ -5771,6 +5767,8 @@ static struct mnt_namespace *grab_requested_mnt_ns(const struct mnt_id_req *kreq
+ 	} else {
+ 		mnt_ns = current->nsproxy->mnt_ns;
+ 	}
++	if (!mnt_ns)
++		return ERR_PTR(-ENOENT);
+ 
+ 	refcount_inc(&mnt_ns->passive);
+ 	return mnt_ns;
+
+>  fs/namespace.c | 23 ++++++++++++++---------
+>  1 file changed, 14 insertions(+), 9 deletions(-)
 > 
-> Actually, the current value is incorrect. The correct value for the
-> parameters of the vendor command is 0xAD.
-Understood. You should have mentioned in the commit message of v2, and 
-maybe explain how that typo happened, and where that command is documented.
-
->>> - Example log for a security chip.
->>>
->>> Bluetooth: hci0: RTL: examining hci_ver=0c hci_rev=000a
->>>     lmp_ver=0c lmp_subver=8922
->>> Bluetooth: hci0: RTL: rom_version status=0 version=1
->>> Bluetooth: hci0: RTL: loading rtl_bt/rtl8922au_fw.bin
->>> Bluetooth: hci0: RTL: cfg_sz 0, total sz 71301
->>> Bluetooth: hci0: RTL: fw version 0x41c0c905
->>>
->>> - Example log for a normal chip.
->>>
->>> Bluetooth: hci0: RTL: examining hci_ver=0c hci_rev=000a
->>>     lmp_ver=0c lmp_subver=8922
->>> Bluetooth: hci0: RTL: rom_version status=0 version=1
->>> Bluetooth: hci0: RTL: loading rtl_bt/rtl8922au_fw.bin
->>> Bluetooth: hci0: RTL: loading rtl_bt/rtl8922au_config.bin
->>> Bluetooth: hci0: RTL: cfg_sz 6, total sz 71307
->>> Bluetooth: hci0: RTL: fw version 0x41c0c905
->>>
->>> Tested-by: Hilda Wu <hildawu@realtek.com>
->>> Signed-off-by: Nial Ni <niall_ni@realsil.com.cn>
->>> Signed-off-by: Max Chou <max.chou@realtek.com>
->>> ---
->>>    drivers/bluetooth/btrtl.c | 24 +++++++++++++-----------
->>>    1 file changed, 13 insertions(+), 11 deletions(-)
-
-[…]
-
-
-Kind regards,
-
-Paul
+> diff --git a/fs/namespace.c b/fs/namespace.c
+> index d82910f33dc4..9124465dca55 100644
+> --- a/fs/namespace.c
+> +++ b/fs/namespace.c
+> @@ -144,8 +144,10 @@ static inline struct mnt_namespace *node_to_mnt_ns(const struct rb_node *node)
+>  
+>  static void mnt_ns_release(struct mnt_namespace *ns)
+>  {
+> +	if (IS_ERR_OR_NULL(ns))
+> +		return;
+>  	/* keep alive for {list,stat}mount() */
+> -	if (ns && refcount_dec_and_test(&ns->passive)) {
+> +	if (refcount_dec_and_test(&ns->passive)) {
+>  		fsnotify_mntns_delete(ns);
+>  		put_user_ns(ns->user_ns);
+>  		kfree(ns);
+> @@ -5756,8 +5758,10 @@ static struct mnt_namespace *grab_requested_mnt_ns(const struct mnt_id_req *kreq
+>  	if (kreq->mnt_ns_id && kreq->spare)
+>  		return ERR_PTR(-EINVAL);
+>  
+> -	if (kreq->mnt_ns_id)
+> -		return lookup_mnt_ns(kreq->mnt_ns_id);
+> +	if (kreq->mnt_ns_id) {
+> +		mnt_ns = lookup_mnt_ns(kreq->mnt_ns_id);
+> +		return mnt_ns ? : ERR_PTR(-ENOENT);
+> +	}
+>  
+>  	if (kreq->spare) {
+>  		struct ns_common *ns;
+> @@ -5801,8 +5805,8 @@ SYSCALL_DEFINE4(statmount, const struct mnt_id_req __user *, req,
+>  		return ret;
+>  
+>  	ns = grab_requested_mnt_ns(&kreq);
+> -	if (!ns)
+> -		return -ENOENT;
+> +	if (IS_ERR(ns))
+> +		return PTR_ERR(ns);
+>  
+>  	if (kreq.mnt_ns_id && (ns != current->nsproxy->mnt_ns) &&
+>  	    !ns_capable_noaudit(ns->user_ns, CAP_SYS_ADMIN))
+> @@ -5912,8 +5916,8 @@ static void __free_klistmount_free(const struct klistmount *kls)
+>  static inline int prepare_klistmount(struct klistmount *kls, struct mnt_id_req *kreq,
+>  				     size_t nr_mnt_ids)
+>  {
+> -
+>  	u64 last_mnt_id = kreq->param;
+> +	struct mnt_namespace *ns;
+>  
+>  	/* The first valid unique mount id is MNT_UNIQUE_ID_OFFSET + 1. */
+>  	if (last_mnt_id != 0 && last_mnt_id <= MNT_UNIQUE_ID_OFFSET)
+> @@ -5927,9 +5931,10 @@ static inline int prepare_klistmount(struct klistmount *kls, struct mnt_id_req *
+>  	if (!kls->kmnt_ids)
+>  		return -ENOMEM;
+>  
+> -	kls->ns = grab_requested_mnt_ns(kreq);
+> -	if (!kls->ns)
+> -		return -ENOENT;
+> +	ns = grab_requested_mnt_ns(kreq);
+> +	if (IS_ERR(ns))
+> +		return PTR_ERR(ns);
+> +	kls->ns = ns;
+>  
+>  	kls->mnt_parent_id = kreq->mnt_id;
+>  	return 0;
+> -- 
+> 2.51.2.1041.gc1ab5b90ca-goog
+> 
 
