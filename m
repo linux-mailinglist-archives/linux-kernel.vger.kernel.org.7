@@ -1,95 +1,90 @@
-Return-Path: <linux-kernel+bounces-896167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 153C0C4FC85
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 22:04:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D52D6C4FCAC
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 22:05:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C73423B8DAB
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 21:04:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12AF818C0D20
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 21:04:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 201962E091D;
-	Tue, 11 Nov 2025 21:01:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 886691DF736;
+	Tue, 11 Nov 2025 21:02:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="dDmdMGQ5"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EMZ27BoX"
+Received: from mail-yx1-f50.google.com (mail-yx1-f50.google.com [74.125.224.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 078A72797AC
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 21:01:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23BE3352FA7
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 21:01:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762894903; cv=none; b=FYVmO/g/eLDAvpcnVqUalGrDbXTGWnI0T3DTF3cJvRbzeqc3NmhOUE8wsU7ckU8EW6QGYeoSV44EeeXhGzWYtVK5bSKyWLqk3asascCJFu2PN13T1oAG8pW1kiu6X9f5TtYCmqOL+Z1+gRYtqroEpKj1wVz5kyHax+ApbtE/pls=
+	t=1762894916; cv=none; b=dUArpHdy9Gnc+ePkCVDom7PD6p1Q6khcDdEjuLyEyMQJC3oJ1ixZ03AgZOhCsJzko3q4w4WB/PSzI4iFXiRurjy9FJbybrjJ+s5wm1cWuqjCbzfrzTN99+gg3n0y5ATWb/Zf/40iUz0jwqCuMjDZ/xmTz9hNAhK9v54r6uteiuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762894903; c=relaxed/simple;
-	bh=00mv0TjCUbXDRMs+VKrHJYkUdKXkKT462q4ka73JY3U=;
+	s=arc-20240116; t=1762894916; c=relaxed/simple;
+	bh=m2/ll1uTQe3vdYyhgsBOhN/isiT4ncOezX9iuBFvWf0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=th92BYn9zTLK6Q6wAMhSVFJ+8zCFg0hmvPj6kHWzG+TmpgeaP84MNsbMHsW2mDr4cbx19V3IpcWgi/NEX58MvDGOBU7AaaKoj9UVEFbMPRmjStfB9uIvNcvqiEYf8Kmj70Fnc29tjEI89+iTTpT8V+F1L5CDn8Ak9K0ssv9DVqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=dDmdMGQ5; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-6417313bddaso156380a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 13:01:40 -0800 (PST)
+	 Content-Type:Content-Disposition:In-Reply-To; b=N248vKB36KCxRKj1xL9VXxXHySH0B/U0CGc0rNNmUupJKS5Z3EDzHtE6+cV/9+Io9g9dQMWiFHLxEQU8bOeandet9co0CImRxFDCykj6G8W/6rdQQQsVFbUogQ0Xh4trYWF81QWqVX7A4gLeO3E1PGuSunHVeA6C4Zfrv50dtLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EMZ27BoX; arc=none smtp.client-ip=74.125.224.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yx1-f50.google.com with SMTP id 956f58d0204a3-63f97c4eccaso175562d50.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 13:01:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1762894899; x=1763499699; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1762894911; x=1763499711; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=AOtZbxVqz3T0EH1q1J5hisXUupKcXN5oOYovjWYI2BY=;
-        b=dDmdMGQ54eC8AihcZoP1DwUwOZ84UMouBumbPJmV7NyCMUXstvKJNRbpr/2i/Y8lAP
-         RWc3Y6kUcJd7s41Il2BObfyPZBL7H9XOFTI5xHZhIM1am1rQ3ybdkwUpizbWuW+r4irl
-         P06SHJbecjOuAqv2kzWfeK/dtBosGE5qa8DabdYshiD0Yjz6md3dVbL4LP/LTFK8VJ1S
-         FhyaoQfZ813cmSsgU+jG5V6hhr33/xOdbcCujRuhfhtOdqRa8W6F+H52EygoTObM09gb
-         Su0ABP06YmSP/zcJPGny4F00RnNy+vnvDR8J+mnciacD0gv5KjkbjJiF5R42GQ3pCF25
-         pD7A==
+        bh=bDPq8KvClJvWwDQMfmOhMgSMTNNkWL2W9UB4UAss5Bg=;
+        b=EMZ27BoXyrccnWk6j0fZzJXConxIlnb+YJyxYnU4pvHMuVIow6oNh0p44L4eeNPAlb
+         EuU22N0Cu3NLv75bupq/7aQaIC76fv8insPYQvRVpLLgtxNnYfaxq1leWkBbQwLqpal1
+         dN2H45GfOTIZMIalPt3j+RAvbeKU5LUk5X4jrrgVx77EbEaniLj25o8hJrBzM2OzXDLb
+         6EjMCrvHtPJKTl0XLha4W+sb/tyBJSEidqBbro/8EAwK29bMgtOQYDZxKcG0Ho3RXKmv
+         B9Z4B6oHilKtSi+F0GDPzi4IS6pGJKPuoMNThYrWpESSL160+clnPrk3ZeGhyMlHRBO2
+         OiMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762894899; x=1763499699;
+        d=1e100.net; s=20230601; t=1762894911; x=1763499711;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=AOtZbxVqz3T0EH1q1J5hisXUupKcXN5oOYovjWYI2BY=;
-        b=LOB9rM+tz8a8HicwUBkDLnDY8GcpMOMN0IJowElohPYTx6KKbHHpE2MKDjbqLljoa5
-         z+uUAQRHTv4zUa+T0sx05wa7qoAFTHkOG5WLQCskozcyUr5spWYs+bwNEIM8e3c80/u+
-         lTsGNWcu8zE+NDdbtkZVDdizh3bsBE081i8MffM5/1xfuU01Z2CeXQDUY9m/iKQ8wPnM
-         YwqAhY9pUOtv/sJSL5hSJw3zbh+nxYdnejkyl/O7btudI+DrdzTY9x8xJBhcscdsgqbz
-         5tt0VD/jq4Pa3tCEmqqzEKQVg3DCANPicY7ZwGTvw63Vki8gCuVsPVrPDAhsvlcGc411
-         qFGw==
-X-Forwarded-Encrypted: i=1; AJvYcCUMoSq7F5tpMxMa56G3x5Be0KawOcb4QeEl2o3V6ULSpBIncQl0hu+Ydwq47MdGIK458wiLmujr7IU3RKM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFOfHK0L3JU7TVia33NPPXMoUP4DLRvq1axmwV947+3pU7ENF7
-	7CmZQDY4mqsX1D3ySTMavDdY39ZLZcle5stRkRfKg9WcdK3SCaKbvmWXnDkLALhC7Cc=
-X-Gm-Gg: ASbGncswHAcdLwb8WAseaf/24fbS1M2li3nAAsoXm9yn393qlazS/N6kMBbHKU2W6qW
-	mcSfi1zWUGC7jg8bIsTHWfXL7Q9MpoL+CJ7TTqk1H2vbYVvCLDcYpM9iR65GdyqNZpEQYyNIO9f
-	1b1skdLSXpNZ/Ll1jGK8oUi+o382DJD39nwzyoNv9ZJUki7zxo9roPpNQNE/Q+lnHQP7ixah5LJ
-	67LHlzJKBRdU7l4d7LFA/OjbpG+jDPqIIe2AK0L19RQljsNKY1p7wi5Ew3h5FQbrTOwE4YRL/4g
-	ZAIsxUleBWYtQDzndGOO27XcZ+njGj95j5oGz4zb8DZhRaI0shxkhMu1R4JXBCR5XeAKE0RoVuu
-	ci6exsecjSDibZwxg6IfFd/84JhtLiuXuXMbzceVNA2pDEXg6yv21Ey/2ntqySOBlduVSaxiyKI
-	0ZxZjgF9UJ+pWNuDba/58KOhLP
-X-Google-Smtp-Source: AGHT+IFHxQR5RsZZYuu15UkFc5wCGawdUUh/83F65t7RT/bR8gwY77ILDOKtOxH1D+cIwgNbNyoHRA==
-X-Received: by 2002:a05:6402:42cf:b0:640:9d8f:3c73 with SMTP id 4fb4d7f45d1cf-6431a577ae9mr518057a12.32.1762894899315;
-        Tue, 11 Nov 2025 13:01:39 -0800 (PST)
-Received: from localhost (109-81-31-109.rct.o2.cz. [109.81.31.109])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6411f86e12fsm14093400a12.34.2025.11.11.13.01.38
+        bh=bDPq8KvClJvWwDQMfmOhMgSMTNNkWL2W9UB4UAss5Bg=;
+        b=ng6RkEN3ZKBBbYB9W6l/YWGlWGPUhGihb+DM8kvZqxPXvqjz+dwQqY92iV4EZpMwu9
+         iiD7aCY+XQHdw44My3I/Xlj4E/UYsC+NeHAaXVMqzGLzT2uYT2GAAKGsINuqgJzul0KN
+         JcldMMRKrITsw2OB7fKczHiDVpoAzWvHo8PvFoDz7feTy0MZPzqr5GgJQxjjb7g334dm
+         sGcJmsx8riiMVEancid9BO8qo/A40aCArOvGOXgOVLrOO1Qq4jt6GU67d68Sb0E18eFR
+         vqcLlqcccSwQl8dNJv7sXFHAQJvneGxn2TaWWSxXJMgJcLOwsyyEtQmu4o6wUiq9YzXR
+         4hRw==
+X-Forwarded-Encrypted: i=1; AJvYcCUvzIOtahmTXTqBgaRySlIe0OFQSlS4kJU+lGvLjxNP+kWDjeY0cGFNqpn8o57Iw1ZwQcrmtqO4OBAMsQU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQYz3z7qWep/Om8DOfeZZ3lqysrQRMpVwQAcVyL9T1fOWmsVtK
+	KgKZrRtRR2RK9SHKttEqX3MC/KajSiJWsvm4fQyyUJmfaXgzr+UbZxYF
+X-Gm-Gg: ASbGncuO7X9OBmbd/0vA7O7f68ZYBeAwupFFTe/1K7tpu39Q0Y4lxX9Yo26mE9+/48o
+	cv5i9RMjSm6l7xe975MHQouEf8yKvTz1g0Q2letCQ81YzuHffa708sJ19Cn/hNjbcQcLMs3pOOf
+	Me1SR8whh/RnggKVD3bts9Kngf+1NGfzPnM08LZ27cVr0G4lcW8kiRilRJRaVvLcLfx3lca6+o0
+	MrYQSu/LyIkFy585VQaPy+jxYLEBLtiskpsn6zzJsdAtTi6IGErBcHJiMrEAZK2Tyvv8kUUUN6f
+	TGTmO7AjOetSFwnquOEN+YOBStVpoGCMYsuUOJwQsPYW/ZpsxwB4HzVG3Pl8msCE4G+t21HR46Y
+	qnBlofdNn0Po+UItOQPc8u2UCY8gSMuc0IPNOvEzWYUO4gs45GoAAwknTJE60d9QUleNteQeXOC
+	H7UqY4cdk3b+ymu7m9eYeGophd077x0On4LM6gDVyWtKpkvg==
+X-Google-Smtp-Source: AGHT+IG5pLwkGsZ+eCK296l8q5rg85wfM1wAQ8NbbJwGyjxk6/mldP/Q7Z6BLYOivEyqJVyS1VY/EA==
+X-Received: by 2002:a53:c048:0:20b0:63f:a165:b9ed with SMTP id 956f58d0204a3-64101a0ab45mr674439d50.6.1762894911625;
+        Tue, 11 Nov 2025 13:01:51 -0800 (PST)
+Received: from devvm11784.nha0.facebook.com ([2a03:2880:25ff:d::])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-787d684218dsm36167807b3.21.2025.11.11.13.01.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Nov 2025 13:01:38 -0800 (PST)
-Date: Tue, 11 Nov 2025 22:01:37 +0100
-From: Michal Hocko <mhocko@suse.com>
-To: Waiman Long <llong@redhat.com>
-Cc: Leon Huang Fu <leon.huangfu@shopee.com>, linux-mm@kvack.org,
-	tj@kernel.org, mkoutny@suse.com, hannes@cmpxchg.org,
-	roman.gushchin@linux.dev, shakeel.butt@linux.dev,
-	muchun.song@linux.dev, akpm@linux-foundation.org,
-	joel.granados@kernel.org, jack@suse.cz, laoar.shao@gmail.com,
-	mclapinski@google.com, kyle.meyer@hpe.com, corbet@lwn.net,
-	lance.yang@linux.dev, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
-Subject: Re: [PATCH mm-new v3] mm/memcontrol: Add memory.stat_refresh for
- on-demand stats flushing
-Message-ID: <aROkMU-OFAmYPBgo@tiehlicka>
-References: <20251110101948.19277-1-leon.huangfu@shopee.com>
- <9a9a2ede-af6e-413a-97a0-800993072b22@redhat.com>
- <aROS7yxDU6qFAWzp@tiehlicka>
- <061cdd9e-a70b-4d45-909a-6d50f4da8ef3@redhat.com>
+        Tue, 11 Nov 2025 13:01:49 -0800 (PST)
+Date: Tue, 11 Nov 2025 13:01:48 -0800
+From: Bobby Eshleman <bobbyeshleman@gmail.com>
+To: Simon Horman <horms@kernel.org>
+Cc: Stefano Garzarella <sgarzare@redhat.com>, Shuah Khan <shuah@kernel.org>,
+	virtualization@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Bobby Eshleman <bobbyeshleman@meta.com>
+Subject: Re: [PATCH net-next v3 07/11] selftests/vsock: add check_result()
+ for pass/fail counting
+Message-ID: <aROkPIIeGq3Tb0I6@devvm11784.nha0.facebook.com>
+References: <20251106-vsock-selftests-fixes-and-improvements-v3-0-519372e8a07b@meta.com>
+ <20251106-vsock-selftests-fixes-and-improvements-v3-7-519372e8a07b@meta.com>
+ <aRMjeZVqsnc1BNr-@horms.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,43 +93,93 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <061cdd9e-a70b-4d45-909a-6d50f4da8ef3@redhat.com>
+In-Reply-To: <aRMjeZVqsnc1BNr-@horms.kernel.org>
 
-On Tue 11-11-25 15:44:07, Waiman Long wrote:
-> 
-> On 11/11/25 2:47 PM, Michal Hocko wrote:
-> > On Tue 11-11-25 14:10:28, Waiman Long wrote:
-> > [...]
-> > > > +static void memcg_flush_stats(struct mem_cgroup *memcg, bool force)
-> > > > +{
-> > > > +	if (mem_cgroup_disabled())
-> > > > +		return;
-> > > > +
-> > > > +	memcg = memcg ?: root_mem_cgroup;
-> > > > +	__mem_cgroup_flush_stats(memcg, force);
-> > > > +}
-> > > Shouldn't we impose a limit in term of how frequently this
-> > > memcg_flush_stats() function can be called like at most a few times per
-> > This effectivelly invalidates the primary purpose of the interface to
-> > provide a method to get as-fresh-as-possible value AFAICS.
+On Tue, Nov 11, 2025 at 11:52:25AM +0000, Simon Horman wrote:
+> On Thu, Nov 06, 2025 at 04:49:51PM -0800, Bobby Eshleman wrote:
+> > From: Bobby Eshleman <bobbyeshleman@meta.com>
 > > 
-> > > second to prevent abuse from user space as stat flushing is expensive? We
-> > > should prevent some kind of user space DoS attack by using this new API if
-> > > we decide to implement it.
-> > What exactly would be an attack vector?
+> > Add check_result() function to reuse logic for incrementing the
+> > pass/fail counters. This function will get used by different callers as
+> > we add different types of tests in future patches (namely, namespace and
+> > non-namespace tests will be called at different places, and re-use this
+> > function).
+> > 
+> > Reviewed-by: Simon Horman <horms@kernel.org>
+> > Signed-off-by: Bobby Eshleman <bobbyeshleman@meta.com>
+> > ---
+> > Changes in v3:
+> > - increment cnt_total directly (no intermediary var) (Stefano)
+> > - pass arg to check_result() from caller, dont incidentally rely on
+> >   global (Stefano)
+> > - use new create_pidfile() introduce in v3 of earlier patch
+> > - continue with more disciplined variable quoting style
+> > ---
+> >  tools/testing/selftests/vsock/vmtest.sh | 95 +++++++++++++++++++++++++--------
+> >  1 file changed, 72 insertions(+), 23 deletions(-)
+> > 
+> > diff --git a/tools/testing/selftests/vsock/vmtest.sh b/tools/testing/selftests/vsock/vmtest.sh
+> > index 557f9a99a306..05cf370a3db4 100755
+> > --- a/tools/testing/selftests/vsock/vmtest.sh
+> > +++ b/tools/testing/selftests/vsock/vmtest.sh
+> > @@ -46,6 +46,8 @@ readonly TEST_DESCS=(
+> >  	"Run vsock_test using the loopback transport in the VM."
+> >  )
+> >  
+> > +readonly USE_SHARED_VM=(vm_server_host_client vm_client_host_server vm_loopback)
+> > +
+> >  VERBOSE=0
+> >  
+> >  usage() {
+> > @@ -79,6 +81,28 @@ die() {
+> >  	exit "${KSFT_FAIL}"
+> >  }
+> >  
+> > +check_result() {
+> > +	local rc arg
+> > +
+> > +	rc=$1
+> > +	arg=$2
+> > +
+> > +	cnt_total=$(( cnt_total + 1 ))
+> > +
+> > +	if [[ ${rc} -eq $KSFT_PASS ]]; then
+> > +		cnt_pass=$(( cnt_pass + 1 ))
+> > +		echo "ok ${num} ${arg}"
+> > +	elif [[ ${rc} -eq $KSFT_SKIP ]]; then
+> > +		cnt_skip=$(( cnt_skip + 1 ))
+> > +		echo "ok ${num} ${arg} # SKIP"
+> > +	elif [[ ${rc} -eq $KSFT_FAIL ]]; then
+> > +		cnt_fail=$(( cnt_fail + 1 ))
+> > +		echo "not ok ${num} ${arg} # exit=$rc"
 > 
-> just repeatedly write a string to the new cgroup file. It will then call
-> css_rstat_flush() repeatedly. It is not a real DoS attack, but it can still
-> consume a lot of cpu time and slow down other tasks.
+> Hi Bobby,
+> 
+> Should num be cnt_total above?
+> 
+> > +	fi
+> > +
+> > +	cnt_total=$(( cnt_total + 1 ))
+> 
+> It seems that cnt_total is being incremented twice.
+> Once seems like it ought to be enough.
+> 
 
-How does that differ from writing a limit that would cause a constant
-memory reclaim from a worklad that you craft and cause a constant CPU
-activity and even worse lock contention?
+Indeed. FWIW, this was fixed in the newest (v4). I messed up a rebase,
+and my eye didn't catch it before sending out.
 
-I guess the answer is that you do not let untrusted entities to create
-cgroup hierarchies and allow to modify or generally have a write access
-to control files. Or am I missing something?
--- 
-Michal Hocko
-SUSE Labs
+> > +}
+> > +
+> >  vm_ssh() {
+> >  	ssh -q -o UserKnownHostsFile=/dev/null -p ${SSH_HOST_PORT} localhost "$@"
+> >  	return $?
+> 
+> I'll confess that I didn't notice these myself, but
+> Claude Code with https://github.com/masoncl/review-prompts/ did.
+
+Thanks for the note, I'll give it a try. I'm trying to build out my
+pre-send workflow atm, and this looks pretty useful.
+
+Best,
+Bobby
 
