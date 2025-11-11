@@ -1,146 +1,160 @@
-Return-Path: <linux-kernel+bounces-896105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAA41C4FA76
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 20:56:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F3EBC4FA8E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 21:02:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CA3184E325A
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 19:56:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E09441886A57
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 20:02:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58A813A5E9A;
-	Tue, 11 Nov 2025 19:56:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C0E03A8D77;
+	Tue, 11 Nov 2025 20:01:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lh2lGBcV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dXBa4OIJ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE08E3385B9;
-	Tue, 11 Nov 2025 19:56:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00D2427A917;
+	Tue, 11 Nov 2025 20:01:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762890992; cv=none; b=AcQ8jx5cMpdo0MwxRn1FI6uRYdzfiU6BsFdB6Cn2mzDDT/ePoqsKLIhGf1QW1kFYcits6z2xTVph3P5scltd4MDY76Sv3q57Har1lbMfxo3d9j7ZNePxl1PIRgXbSt4ILqfBX3DVwVBoHXNm3E4GcoM2WosEQ9ZoiyHu11B3vDk=
+	t=1762891299; cv=none; b=XBiqKaDK17YUleunc8KKgJSImNQB12bJkWSYgLgA5XX7SbhQSWxNSXZxROAYjbtmzShZaMhWKI3J0jwlptDfYKy+D8t7dbISczs3uUw1iBGThjJgx5+Fe2zCirD2a789fm76X8c/tYSbl1WGNazgP25U57K4CKhGEOYLJkoD0mU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762890992; c=relaxed/simple;
-	bh=JBRmwot3y2dmJnDCYjDaLSw3pBD+HA8/baatgNi9Gck=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gpPuIJJbdfP7eP/HAqOmql2IT3b4UCqfmI4VNl7aJPeaRnfz9gPsmY+sNDGydJ5iQTCVP77US/O9q43iYHokxdz7lVyN6n7ENc6iEkL4OntIogXfUDiQOjyWlp8D6QSgBxIfX6VFecp2A//QGETJodBxkKGIGIQMdQOZzrBPXlw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lh2lGBcV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71964C4CEF7;
-	Tue, 11 Nov 2025 19:56:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762890992;
-	bh=JBRmwot3y2dmJnDCYjDaLSw3pBD+HA8/baatgNi9Gck=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Lh2lGBcV98LMEbj2W7WA7m++0rlgiA06DUcn64mUFiGRBEzSHA3ObbYefpePkEVa3
-	 S8lbAw525l6LwWQMzc6J9flBfSOvwVfmcK+qQLDwvVDB7TANEX7b8mMCtH57SzsgvA
-	 2UCyzf4tNzx0aFc0u8hk/B0LIXHMsBhhSFVx5PXxT8Hy5vn48EjHPygZU5UzYHMLLA
-	 c/mqHqUpxExm7IuhubeYMUYamKgeUy6CsNjpJWgXHe/SDHtxXAJ1nPQAUa/3ZjA+C0
-	 1nK8Ftv3qZhnHyQwp/ZKhw8bCMQ/8NmhuZI2HskWyYXRebvker12IjKNfYV9cVAVBN
-	 bb1HPxcpvHSMA==
-Date: Tue, 11 Nov 2025 14:00:44 -0600
-From: Bjorn Andersson <andersson@kernel.org>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
-	"Maulik Shah (mkshah)" <maulik.shah@oss.qualcomm.com>, Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Mark Brown <broonie@kernel.org>, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/4] soc: qcom: rpmh: Add support to read back
- resource settings
-Message-ID: <7larzpksbafl5wc66s6uhufnm6qtvjtzqb7uqlkakqyhvjfqkq@ryp2qypz5a6i>
-References: <20251022-add-rpmh-read-support-v2-2-5c7a8e4df601@oss.qualcomm.com>
- <litd6qcxuios7uwwcrz55ea24kj26onrjo2aekouynsce6wslj@vatjbulg64mb>
- <4831d12b-a42a-464a-a70f-e0e40cf4ae4b@oss.qualcomm.com>
- <5c0b4712-4a54-4a1a-ad73-dc3bdb21a0ff@oss.qualcomm.com>
- <cb361d77-6845-45c9-b418-67649880495e@oss.qualcomm.com>
- <ef247fe6-6d9c-4a74-b3f8-a56857332758@oss.qualcomm.com>
- <9a227c15-dc60-4086-8d81-f80e3398a083@oss.qualcomm.com>
- <18e8d5db-e32a-4893-9d1f-5003670cedeb@oss.qualcomm.com>
- <7656e8f6-e281-4f7b-9ff4-1b2722234091@linaro.org>
- <7b68381a-0f7f-43ff-b934-9db5d9b2e69f@oss.qualcomm.com>
+	s=arc-20240116; t=1762891299; c=relaxed/simple;
+	bh=bIgxj6tsW2gXzHC4yOUbUnjX1qh2NiifQnGM0+JrDkI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AYbIzIMzbmgIr+ydSyb25RbC7NyuBtsLNegnBTyB/zeWfqYR0TFQ6VJVNIbbDgw61U7M5oPhjvC+8R5ldhowuPJ8tkmlp2bDwjhGPMPHkREg+L95LVNRJuVHJ8ZjKXjCaHG3eV/LZpgoBNY1xtvl8UM/cqBkXHDnkQVz12NBxfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dXBa4OIJ; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762891298; x=1794427298;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=bIgxj6tsW2gXzHC4yOUbUnjX1qh2NiifQnGM0+JrDkI=;
+  b=dXBa4OIJtbIt8j8epv9XDauk5/TTs7K7OgDwFIHb+t1u+hxopjBS/Zs6
+   8ybdwfJpaJDxIzb8PifuCe2jmkNrgBzCy0xxsY5LjQ5e6pUbGfw4dgYUa
+   fhyoaJCR5X8q8IsuKAnS6zn2B1/NCYix2obK1/cpgWmifbb4bagHGInVU
+   Tm+Po7/co3ESrcLqKB6tnJwfZDdhdCi8B6nlgrS1zV7PVrF7vG75izVvt
+   XpqRvIJl2EUBX/cfXrN+G3LEiLbvhVl790HM3LeP8FVLssO/y3N0AGzER
+   /z3zomkwszOXvuPvbe7EWxoJyHutyAUhpRBKSipzOX7007ogjKcswanpG
+   g==;
+X-CSE-ConnectionGUID: GHSz5gAfSSynL5i6OSe29Q==
+X-CSE-MsgGUID: yo3ss4ceRnO2dUwY3fSloA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11610"; a="76305742"
+X-IronPort-AV: E=Sophos;i="6.19,297,1754982000"; 
+   d="scan'208";a="76305742"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 12:01:37 -0800
+X-CSE-ConnectionGUID: DQ20mfd0RYa3uQt00C/ANg==
+X-CSE-MsgGUID: Q8AD/NA5StupJ+h4idY1mg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,297,1754982000"; 
+   d="scan'208";a="219769155"
+Received: from aksajnan-mobl1.amr.corp.intel.com (HELO [10.125.50.87]) ([10.125.50.87])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 12:01:36 -0800
+Message-ID: <b097dc88-f66c-4f0d-b694-aefb73128fad@intel.com>
+Date: Tue, 11 Nov 2025 12:01:36 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7b68381a-0f7f-43ff-b934-9db5d9b2e69f@oss.qualcomm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] perf tools: Refactor precise_ip fallback logic
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+ Peter Zijlstra <peterz@infradead.org>,
+ Adrian Hunter <adrian.hunter@intel.com>, Ingo Molnar <mingo@redhat.com>,
+ Jiri Olsa <jolsa@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ thomas.falcon@intel.com, dapeng1.mi@linux.intel.com, xudong.hao@intel.com
+References: <aP1ucJiJYBavTHV7@google.com>
+ <e10d671a-eb89-4e06-a1eb-e2f12ee41d70@intel.com>
+ <aQl3qfyTdAb68l1l@google.com>
+ <652bf158-ba9e-4a97-b4c3-3a7f7e39fe85@intel.com>
+ <aQzugcpRvOcPEEro@google.com>
+ <5f84fe4f-90ef-42d6-8a3a-c1f515a7832a@intel.com>
+ <aQ5n4ML9lxY4VAxi@google.com>
+ <eb41cde1-9611-4998-a82f-5d6efb80b0d1@intel.com>
+ <aRLq0isFxDJlsHlL@google.com>
+ <42bafd4d-ff6e-4529-95f7-9c4c963fc49c@intel.com>
+ <aROPrA02BU1uafrD@google.com>
+Content-Language: en-US
+From: "Chen, Zide" <zide.chen@intel.com>
+In-Reply-To: <aROPrA02BU1uafrD@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 27, 2025 at 04:47:26PM +0100, Konrad Dybcio wrote:
-> On 10/27/25 3:38 PM, Neil Armstrong wrote:
-> > On 10/27/25 14:29, Konrad Dybcio wrote:
-> >> On 10/23/25 11:46 AM, Maulik Shah (mkshah) wrote:
-> >>>
-> >>>
-> >>> On 10/23/2025 2:39 PM, Konrad Dybcio wrote:
-> >>>> On 10/23/25 10:57 AM, Maulik Shah (mkshah) wrote:
-> >>>>>
-> >>>>>
-> >>>>> On 10/23/2025 1:47 PM, Konrad Dybcio wrote:
-> >>>>>> On 10/23/25 6:46 AM, Maulik Shah (mkshah) wrote:
-> >>>>>>>
-> >>>>>>>
-> >>>>>>> On 10/23/2025 2:51 AM, Bjorn Andersson wrote:
-> >>>>>>>> On Wed, Oct 22, 2025 at 02:38:54AM +0530, Kamal Wadhwa wrote:
-> >>>>>>>>> From: Maulik Shah <maulik.shah@oss.qualcomm.com>
-> >>>>>>>>>
-> >>>>>>>>> All rpmh_*() APIs so far have supported placing votes for various
-> >>>>>>>>> resource settings but the H/W also have option to read resource
-> >>>>>>>>> settings.
-> >>>>>>>>>
-> >>>>>>>>> This change adds a new rpmh_read() API to allow clients
-> >>>>>>>>> to read back resource setting from H/W. This will be useful for
-> >>>>>>>>> clients like regulators, which currently don't have a way to know
-> >>>>>>>>> the settings applied during bootloader stage.
-> >>>>>>>>>
-> >>>>>>>>
-> >>>>>>>> Allow me to express my disappointment over the fact that you sat on this
-> >>>>>>>> for 7 years!
-> >>>>>>>
-> >>>>>>> This was a dead API (even in downstream) with no user since SDM845/ 7 years.
-> >>>>>>> Read support was eventually removed from downstream driver too for the same reason.
-> >>>>>>> There were early discussions to remove read support from RSC H/W, due to lack of users.
-> >>>>>>> Its not realized yet and all SoCs still supports read.
-> >>>>>>
-> >>>>>> Can we read BCM states from HLOS this way too?
-> >>>>>
-> >>>>> Yes, Any of ARC/BCM/VRM can be read to get HLOS/DRV2 votes.
-> >>>>
-> >>>> Wow this is amazing..
-> >>>>
-> >>>> Do you have code for this already, or should I hack on it?
-> >>>
-> >>> No, it won't be of much help, as i said above it gets HLOS/DRV2 votes only for a given resource.
-> >>> More specifically, the read does not give the aggregated vote result across all the DRVs.
-> >>
-> >> Hm, perhaps it could still be of *some* use
-> >>
-> >> But maybe reading back rpmhpd and rpmhcc states would be of more
-> >> use!
-> > 
-> > The interconnect core definitely supports reading back the state at boot.
+
+
+On 11/11/2025 11:34 AM, Namhyung Kim wrote:
+> On Tue, Nov 11, 2025 at 11:11:45AM -0800, Chen, Zide wrote:
+>>
+>>
+>> On 11/10/2025 11:50 PM, Namhyung Kim wrote:
+>>> On Fri, Nov 07, 2025 at 02:31:23PM -0800, Chen, Zide wrote:
+>>>>
+>>>>
+>>>> On 11/7/2025 1:42 PM, Namhyung Kim wrote:
+>>>>> On Thu, Nov 06, 2025 at 05:23:09PM -0800, Chen, Zide wrote:
+>>>>>>
+>>>>>>
+>>>>>> On 11/6/2025 10:52 AM, Namhyung Kim wrote:
 > 
-> Maulik probably isn't impressed with us only being able to provide
-> information about HLOS votes, as e.g. ADSP could be voting on the same
-> bus in parallel.
+>>>>> Can you run these commands and show the output here?
+>>>>>
+>>>>>   $ perf record -e task-clock:S  true
+>>>>>   $ perf evlist -v
+>>>>
+>>>> On 6.18.0-rc4:
+>>>>
+>>>> $ perf record -e task-clock:S  true
+>>>> [ perf record: Woken up 2 times to write data ]
+>>>> [ perf record: Captured and wrote 0.006 MB perf.data ]
+>>>>
+>>>> $ perf evlist -v
+>>>> task-clock:Su: type: 1 (PERF_TYPE_SOFTWARE), size: 136, config: 0x1
+>>>> (PERF_COUNT_SW_TASK_CLOCK), { sample_period, sample_freq }: 4000,
+>>>> sample_type: IP|TID|TIME|READ|ID|PERIOD, read_format: ID|LOST, disabled:
+>>>> 1, inherit: 1, exclude_kernel: 1, exclude_hv: 1, mmap: 1, comm: 1, freq:
+>>>> 1, enable_on_exec: 1, task: 1, sample_id_all: 1, mmap2: 1, comm_exec: 1,
+>>>> ksymbol: 1, bpf_event: 1, build_id: 1
+>>>
+>>> Thanks for sharing this.  Yep, it has the inherit bit.
+>>>
+>>> I think there's a bug in the missing feature test.  Indeed, it should
+>>> also have PERF_SAMPLE_TID for the test according to the kernel comment.
+>>>
+>>> 	/*
+>>> 	 * We do not support PERF_SAMPLE_READ on inherited events unless
+>>> 	 * PERF_SAMPLE_TID is also selected, which allows inherited events to
+>>> 	 * collect per-thread samples.
+>>> 	 * See perf_output_read().
+>>> 	 */
+>>> 	if (has_inherit_and_sample_read(attr) && !(attr->sample_type & PERF_SAMPLE_TID))
+>>> 		return ERR_PTR(-EINVAL);
+>>
+>> It seems that the purpose of the inherit_sample_read fallback is to
+>> remove the inherit attribute when both PERF_SAMPLE_READ and inherit are
+>> present, but PERF_SAMPLE_TID is not. The new change may not be able to
+>> accomplish this?
 > 
-> I suppose the very same applies to what I suggested with clk and rpmhpd
-> although probably it's less of a problem there
+> No, the purpose of the missing feature check is to detect whether the
+> current kernel supports this feature or not.  The correct check should
+> pass both READ and TID together.
+
+
+OK, thanks!
+
+> Thanks,
+> Namhyung
 > 
 
-Reading back the state serves the purpose of dealing with smooth
-transition from bootloader, which we very much would like to have.
-
-Being able to read the aggregated state is useful for debugging, but
-it's a shared state that can change at any point in time, so we should
-never act upon such information.
-
-Regards,
-Bjorn
-
-> Konrad
 
