@@ -1,223 +1,347 @@
-Return-Path: <linux-kernel+bounces-895163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AA51C4D236
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:45:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F0B9C4D18B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:38:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1661D4EFE89
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:38:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA1A8189D9A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:38:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EE5834E763;
-	Tue, 11 Nov 2025 10:38:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BCD134EF04;
+	Tue, 11 Nov 2025 10:37:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="hxwI973J"
-Received: from BL0PR03CU003.outbound.protection.outlook.com (mail-eastusazon11012056.outbound.protection.outlook.com [52.101.53.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ABmQSe0O";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="jkz/qW7s";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="VntBozyr";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="T2bebI6e"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2C1B2F3C3F;
-	Tue, 11 Nov 2025 10:37:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.53.56
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762857479; cv=fail; b=Os16JdHlM8rLPotbGAmHkeZYAR8OZAY75wHNCThMPXs0GpoIckWg+lOOfPNJXlA+YPgVs16syKKCSrglLe0FEBUqxvz4Lpo2Z4ym+pMPgNxI7bA7lQdwIdCKA4wxhAaWrA1BeA+++nuxLXf0Ij6O5apP17UHiqZnPUYikL71OlI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762857479; c=relaxed/simple;
-	bh=mj0q0SnTkW02eP9ExxyFhZNUJ90oEVn+DZtgzBwS78s=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=S0x2JL8D19TDKC1Qf6tSJSC0sCBWXBeo+4iAqW7ui2g6uY3JluOwgYLRoZLM9t8RQxgn4moZ/8WAWVNNY9iU4PaCEycVTWK2b5Y/C6CDhxBYKiYo68Bl7SaKzISIRV5y8aHVPFr5C/rQmEbobx6gwcnayKuY8tbl82Mczf3lia8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=hxwI973J; arc=fail smtp.client-ip=52.101.53.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ZChkAM3zfRq3HiA/3ZUOUKatpN6y4O+4AJwwZr75df1hPA9WdjxhCJBrEksdwMjcrDqYERkdpLPkrTfqagY+Rv9UysYYNLz3f1TXJaglB871PKWYLQQIyaa7AbuLBNfeYkkxhcysGe1GMyRXNDEUrUvke6YZW0NTyuxC6C3iDAQv6hnFkhDBKGkRQ7jyMeqsHhUTDvPgFENcgFwQa9FQkPA6c7QEUum+f6FPlJ4AUwpZ/DIt4pnBOerGfx7rgXQEV62VCOT41fLPpzL0p1udmem25Jn34FozbT7KyXlbrVEb+/a+SsM2YmaEPLuvyuuDq48rx3W3Cn3BiW2FCGRSKQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=eB+fhLcfB1i0mBadf1iV4l+D+XZbe35Q4EopZkorEw8=;
- b=rF2HTKQgqknbbNUpwpAubwxk+WUbvxpPCLnWCY+VcUlMjWQi9lZtREWASWIr6VChOeZVCI7w1aomiU2QqgN2032hcfSd1wkv8WY2rhKSQejbYXl6o7I8/HUtja18BBT22iAwkHiNYWl8GlaVn0PTR9fkaJwDvXNgFVrs5eYDYMIZa56cwx7CshehjZ+BljFAv+1CjjEQjizocl1wapV0V7q7Lbw3ydoSWhyts5YaFY6ocsWfwT8KTfjsSCPOwOf4A3KKcPehKvu2ttTt6pYv5BsRTOmpHIblkH7u5xCBGSfXxn6DTThRPML7F9bCx8soVyTAdaZsGGvZ98chgMhilg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 198.47.21.195) smtp.rcpttodomain=lists.infradead.org smtp.mailfrom=ti.com;
- dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=eB+fhLcfB1i0mBadf1iV4l+D+XZbe35Q4EopZkorEw8=;
- b=hxwI973JBMl9RMGwyiLlY8vjWlqFrWxEMyuxkkGA8GoQ9QTrfUXHHY8R0nfH5EVDxpVTOP9uq2V9299F8FD9eEZgmuij5sB+ppdSBEDF1Y0kA93+8DccKPyZjYTTTPk/F0oZTIc4CDIy9etexgU/AXNeoco65JY27vrhx68eDLs=
-Received: from MW4PR03CA0225.namprd03.prod.outlook.com (2603:10b6:303:b9::20)
- by BY5PR10MB4164.namprd10.prod.outlook.com (2603:10b6:a03:210::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Tue, 11 Nov
- 2025 10:37:53 +0000
-Received: from CO1PEPF000066E8.namprd05.prod.outlook.com
- (2603:10b6:303:b9:cafe::b6) by MW4PR03CA0225.outlook.office365.com
- (2603:10b6:303:b9::20) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9298.16 via Frontend Transport; Tue,
- 11 Nov 2025 10:37:53 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.21.195)
- smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
- action=none header.from=ti.com;
-Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
- 198.47.21.195 as permitted sender) receiver=protection.outlook.com;
- client-ip=198.47.21.195; helo=flwvzet201.ext.ti.com; pr=C
-Received: from flwvzet201.ext.ti.com (198.47.21.195) by
- CO1PEPF000066E8.mail.protection.outlook.com (10.167.249.6) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9320.13 via Frontend Transport; Tue, 11 Nov 2025 10:37:52 +0000
-Received: from DFLE211.ent.ti.com (10.64.6.69) by flwvzet201.ext.ti.com
- (10.248.192.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 11 Nov
- 2025 04:37:47 -0600
-Received: from DFLE213.ent.ti.com (10.64.6.71) by DFLE211.ent.ti.com
- (10.64.6.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 11 Nov
- 2025 04:37:47 -0600
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE213.ent.ti.com
- (10.64.6.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Tue, 11 Nov 2025 04:37:47 -0600
-Received: from localhost (dhcp-172-24-233-105.dhcp.ti.com [172.24.233.105])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5ABAbkhm778082;
-	Tue, 11 Nov 2025 04:37:47 -0600
-From: Anshul Dalal <anshuld@ti.com>
-Date: Tue, 11 Nov 2025 16:07:32 +0530
-Subject: [PATCH RFC] dt-bindings: arm: keystone: add boot_* mailboxes
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B4D434EEFA
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 10:37:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762857463; cv=none; b=MGAOAZUJZ2m4cXI2TUbECpm20rQTL/dursVQiHitJg6CRiP6fCifrAHkDFO6ErZZmxrqNIXRzIYu4DEu5qHZ5HgyIcTbhIJoimAvnwwDUAHzEvwRk8ufzwEfvnmecNdu4YJsWFBdLGBWwIgQprYB4n0iHBgsJI+MnLApODWmaZ0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762857463; c=relaxed/simple;
+	bh=hyNCHdMdIEMpcB1iHJpcmtHhO0cY+NOEEI3eHb/ZxTw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pg4XKnsOyAkJz5bDsFgc9upTSIoaAE1O2VlZzXy7FoxMXRds1YGyLXATGNDlfRtiky1gSCNUuJii+UMvMDr1GAIO/yFQjTBDpqLrZdiDE/RjxHgsnhlDkrV4lmJPaamrwURbUdObLCgsfr+P8p0EJgbXsi0YtCUCeugS9bXRtbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ABmQSe0O; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=jkz/qW7s; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=VntBozyr; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=T2bebI6e; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id E1E551F750;
+	Tue, 11 Nov 2025 10:37:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762857457; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TEc5BMTgakLjP2lCVtIyTqJLSeq6a+T/g0/3T6sOX5U=;
+	b=ABmQSe0O1DSmwu4YW8RIxEoGNBGD+4SQhQzJNFk7ZIK/wi1vrlGnLIPVriMj95Ui3+p9mx
+	Yd9UGrSajO0qV2Bht3YikO09LuHTEssfjHksnNrnqdIMybRvVPBE2k7viEu7oL10CxU7Wp
+	zZEbIsiQ2mLyhAEHZgq5Jy4hmevTtak=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762857457;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TEc5BMTgakLjP2lCVtIyTqJLSeq6a+T/g0/3T6sOX5U=;
+	b=jkz/qW7s9eoNvg0Y9NyoTKRl1CvNA7QZbsZl15s/0xIal0ZkL87Xv+ZpSBJWNabgCS/cBA
+	sSwA+bE4gBgZFbCA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=VntBozyr;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=T2bebI6e
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762857456; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TEc5BMTgakLjP2lCVtIyTqJLSeq6a+T/g0/3T6sOX5U=;
+	b=VntBozyrZOAwKMhMIiNgxjR0KRGEpKVeRCJN7GjFlWWR3GAVTLaBB12PQhXoalsSNvR29T
+	eJAe4uA/CLjC/RkCVPY1m/Z0HuNeRSv2ONIkwfnmCBZ7yfZsVyA36iQF4JOwCbXzwqXCJV
+	4rlGyoMFfgMKp2cuB4/q0PLoHrmRCrY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762857456;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TEc5BMTgakLjP2lCVtIyTqJLSeq6a+T/g0/3T6sOX5U=;
+	b=T2bebI6e2BNXdytzddpspO6C6YUZ4uUPoYnCUJiePajNoGohIT8FiWbGYBMGrmJPUekWob
+	EW3tQuc1bsO/icAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CF8A1148F0;
+	Tue, 11 Nov 2025 10:37:36 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id IuCoMvARE2kbNQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 11 Nov 2025 10:37:36 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 8D536A28C8; Tue, 11 Nov 2025 11:37:36 +0100 (CET)
+Date: Tue, 11 Nov 2025 11:37:36 +0100
+From: Jan Kara <jack@suse.cz>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Chuck Lever <chuck.lever@oracle.com>, Alexander Aring <alex.aring@gmail.com>, 
+	Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
+	Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.org>, 
+	Ronnie Sahlberg <ronniesahlberg@gmail.com>, Shyam Prasad N <sprasad@microsoft.com>, 
+	Tom Talpey <tom@talpey.com>, Bharath SM <bharathsm@microsoft.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, David Howells <dhowells@redhat.com>, 
+	Tyler Hicks <code@tyhicks.com>, NeilBrown <neil@brown.name>, 
+	Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
+	Amir Goldstein <amir73il@gmail.com>, Namjae Jeon <linkinjeon@kernel.org>, 
+	Steve French <smfrench@gmail.com>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	Carlos Maiolino <cem@kernel.org>, Kuniyuki Iwashima <kuniyu@google.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org, 
+	linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, netfs@lists.linux.dev, 
+	ecryptfs@vger.kernel.org, linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	netdev@vger.kernel.org, NeilBrown <neilb@ownmail.net>
+Subject: Re: [PATCH v5 09/17] vfs: clean up argument list for vfs_create()
+Message-ID: <g3si4zuuhxleat2gkebyhnokq5eiymatgi36ad25datcbvinfs@nsk4fop6sz5f>
+References: <20251105-dir-deleg-ro-v5-0-7ebc168a88ac@kernel.org>
+ <20251105-dir-deleg-ro-v5-9-7ebc168a88ac@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20251111-k3_syscon_add_boot_mailboxes-v1-1-529a27f21076@ti.com>
-X-B4-Tracking: v=1; b=H4sIAOsRE2kC/x3MwQrCMAwA0F8ZOVtYOyubV8EP8DqktEvUoDbSi
- EzG/t3i8V3eAkqFSWHfLFDow8qSK+ymgekW85UMYzW41nlrW2/uXdCvTpJDRAxJ5B2ekR9JZlL
- Tb71LiEM/7BzU4lXowvO/H+F0PMB5XX9gKwCHcwAAAA==
-X-Change-ID: 20251105-k3_syscon_add_boot_mailboxes-8452bdd98962
-To: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>, "Santosh
- Shilimkar" <ssantosh@kernel.org>, Rob Herring <robh@kernel.org>, "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Vignesh Raghavendra <vigneshr@ti.com>,
-	"Anshul Dalal" <anshuld@ti.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1762857465; l=1731;
- i=anshuld@ti.com; s=20251022; h=from:subject:message-id;
- bh=mj0q0SnTkW02eP9ExxyFhZNUJ90oEVn+DZtgzBwS78s=;
- b=N395AF1oLLoFjT9c5dLzWgWB4HxJltMuVOdbZgTCSykhGvd83ZsrXP4pW1p1iDLwzatfkYKMo
- wSFWhMCQqtUATD727SQlxHzwDC7+hjON9SRFxuPNC4rXzOnXJNAz7JY
-X-Developer-Key: i=anshuld@ti.com; a=ed25519;
- pk=Kv8FlQElcrR6efyEHmjtE83y8e0HKvqPyvVY+PJ4UFw=
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000066E8:EE_|BY5PR10MB4164:EE_
-X-MS-Office365-Filtering-Correlation-Id: c55d4f23-c200-4c10-d7d9-08de210e5dda
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|36860700013|1800799024|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?dVhIVjIydFNJdDd0a1VZajdOWGRJZ3ZlYVhmUmc4U1dNY01vTFVoQ2RWWWd3?=
- =?utf-8?B?eGZzTC9hay9Jb25ZWWF1TDhqQ0N5TEdSM3I0bXI5dmtUWE5uUTBvc3d4WEw4?=
- =?utf-8?B?VkMzdC8vWjRNbDFpMFJ2aG11STBmVzdMTG92RXJiWnB1L09aeWw2RDNnenZO?=
- =?utf-8?B?d3QwYUNtQVVVTE0yU0Y5b3NiSUlsOEh2aDNTMUxMdWFpOTlpQlpHUFowWmpV?=
- =?utf-8?B?SWg0Y3VzUDhOOGs3bVE5WjVNVk5wdjgwRnRkTDIxVjBucnN0cEpZYnJjbngy?=
- =?utf-8?B?VHZKQzc4RTFOaGtYTGI0RFd5dTYxclNSYTR3d1cycTExZVZjRDM5ZjlMQW9k?=
- =?utf-8?B?d2EyczEzQ0xzQ0JZZWdMSklLVGlZWkhWWFRYOE1pTzhMUTBLTzZQQ1hBRnlE?=
- =?utf-8?B?dE5xcHVhU3k0ZWttQW9MTFlPSUZNOVdkT3lNSStZY1dJbCt0eUhma0VzSUli?=
- =?utf-8?B?d3l2Y1ErU2FwNkErQnhEMzJ1MWdrakcrYVNWL0VZc0JXblJqQmg5Q081bllu?=
- =?utf-8?B?cFFwSHlOaW04SlJKVHNraUVKbnJRMk5ZOUxwZUxOM3IzZU85alFBMlFBWnpt?=
- =?utf-8?B?dDV4SXlaR2luM1RXSHhZOUhsYVdZN2YybWFEWm81cml6c1BQMFduMmwrdU5r?=
- =?utf-8?B?bGYwNkZyQi9GKy9OMnM0Q29yVWh6S2hUa0tkZTZ1TzVRYW9EdVBEc0I5UU5F?=
- =?utf-8?B?WWU4dE1xSjR6MzNJYXZLVDRVeC9kWEk4TFFaZVk0OFA4SXJPMytIR0VuVU9s?=
- =?utf-8?B?R3ZFTGpUL282UTFxQVdRNHFHbnNZMlBqemNRUmxUY1ZIbTgwT0Fob0crWENT?=
- =?utf-8?B?eUpiN3JqaUVIN0N3clkwZGUrbnl4eVNRdlpQdVNpd3lReWgwWHdDbms0Z2FN?=
- =?utf-8?B?TFZ5b2l2dHk2YjNYWENReVhmVzh0aVh0RFNyOVJ3U3dDQjZSWTZPMVJWemFV?=
- =?utf-8?B?MjlYTEpNdnZMV3p0M3hQa2g0ck4rUFg5Y2w4UzZXVUVjMThWTCsrVmNpcDk0?=
- =?utf-8?B?M0MvSjJHemF0dXErZmhLUHNUckdwZDYveVJ0N2FlVW8ycGV1RHRCOE85Y2M4?=
- =?utf-8?B?bEpaRzlLd2VCK0FsVUJVS3lxZVEvem1MdGpjejc5OUZXNElXcG9DUVlWVUc4?=
- =?utf-8?B?OTRJdGNyeHZXODFYYjQ1c0hoUm9UcDdmOHlEaS9RYUp6c1l5R0hLdllYdGdw?=
- =?utf-8?B?QUlSVytTdExnbW9Rb2IyNldwUjNQSHpqRVdJYk9hRCtmcnBWaGUxMVVZbzRj?=
- =?utf-8?B?T1Rqd3dOVkhRMTVKeDJCcWRFRzRuMUZtSDFxa1ZmY29iWGFvd3RNR3g1TVJp?=
- =?utf-8?B?MnplT3JMaUlRUWZ6ZXhXMnZCZGVLb0ZzeEF0MU5JNHlVWHF1M2VydmVWUVgw?=
- =?utf-8?B?TU01SjhtRzZuYWJLbXltZ2xyNVhyOStzYmNBV0ptL0FZc1lYaE5iaFNXRXh2?=
- =?utf-8?B?aDdjcDVxVFF0RmxoV3hrMWIycXA0ZE1zZDFXSW1YeklxQ240d2xQU1ZpV1Vu?=
- =?utf-8?B?dHRWRzFNU3owTklTSGtjb3dJMFhsbjFvN0hOczJyRnFDdVg3K0pHRDZSYWpv?=
- =?utf-8?B?UUtKNlY1cVJuRTNoZnlZMjh5aThRUXNHU0pDcTc0REV3eWJnTi9kdHZGRzZl?=
- =?utf-8?B?MDlNUGVpVUNwZ0RMOWNlUHVoaHFSQkxmOGdFeGk4Z1lRNXNWT1hzRml4bTQ4?=
- =?utf-8?B?VHVRMDlrb0RIek16RFpGY3dVYWRuZVFQTFlCelNOUlBZTlZhR1ZuWlNDdDdU?=
- =?utf-8?B?aVhxeE5HeWFZRzIrWGFBcHg0WGJkRUViTnlZK1oyL3RKVFB1MGdYY0dQRWZh?=
- =?utf-8?B?UmdtNFB4WTdsaXEwQTcvazJrMHFhOVFEZWNnbjAxSjN0TFpFaUpySGdBOGw1?=
- =?utf-8?B?OXl6Q1VseUhGc2c1TkFDa05yZkdzcVVTbHFFTDI4SU81dmZBU21RNGxkc2ow?=
- =?utf-8?B?eGgveGhnSkZ4czJFRUo3cTlnVmxiSGJTMHVTMTJKYnU2WElFNGkzNFp4ZW85?=
- =?utf-8?B?RDh1VWxlWWIyTUdOVFg1QUdVdXBHdWYyZkhTLytTZWxFbjEzNjFOREluSDhM?=
- =?utf-8?B?VVNqYWN5cFZYK0Z6WnM0SGFFTllXWkpkak94TUx2T2pyMGZrKzhmR3dxM0p6?=
- =?utf-8?Q?vOt8=3D?=
-X-Forefront-Antispam-Report:
-	CIP:198.47.21.195;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:flwvzet201.ext.ti.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(376014)(36860700013)(1800799024)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: ti.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Nov 2025 10:37:52.0362
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c55d4f23-c200-4c10-d7d9-08de210e5dda
-X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.21.195];Helo=[flwvzet201.ext.ti.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CO1PEPF000066E8.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR10MB4164
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251105-dir-deleg-ro-v5-9-7ebc168a88ac@kernel.org>
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: E1E551F750
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-2.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_TLS_LAST(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[45];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com,ownmail.net];
+	FREEMAIL_CC(0.00)[szeredi.hu,zeniv.linux.org.uk,kernel.org,suse.cz,oracle.com,gmail.com,samba.org,manguebit.org,microsoft.com,talpey.com,linuxfoundation.org,redhat.com,tyhicks.com,brown.name,chromium.org,google.com,davemloft.net,vger.kernel.org,lists.samba.org,lists.linux.dev,ownmail.net];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	TAGGED_RCPT(0.00)[];
+	R_RATELIMIT(0.00)[to_ip_from(RLpnapcpkwxdkc5mopt1ezhhna)];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Score: -2.51
 
-The bootloader on K3 devices makes use of mailboxes as per the ROM spec
-which might be different than one's available to the kernel (firmware
-spec).
+On Wed 05-11-25 11:53:55, Jeff Layton wrote:
+> As Neil points out:
+> 
+> "I would be in favour of dropping the "dir" arg because it is always
+> d_inode(dentry->d_parent) which is stable."
+> 
+> ...and...
+> 
+> "Also *every* caller of vfs_create() passes ".excl = true".  So maybe we
+> don't need that arg at all."
+> 
+> Drop both arguments from vfs_create() and fix up the callers.
+> 
+> Suggested-by: NeilBrown <neilb@ownmail.net>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
 
-Therefore, this patch adds the missing mailbox entries to the DT binding
-to represent the mailboxes exposed by the hardware during boot for the
-purpose of loading the firmware.
+Looks good. Feel free to add:
 
-Signed-off-by: Anshul Dalal <anshuld@ti.com>
----
- Documentation/devicetree/bindings/arm/keystone/ti,sci.yaml | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-diff --git a/Documentation/devicetree/bindings/arm/keystone/ti,sci.yaml b/Documentation/devicetree/bindings/arm/keystone/ti,sci.yaml
-index 25a2b42105e541cb3c8ad12a0dfec1af038fa907..b5f48647a0f09bb930f052ea0f84a78525c925eb 100644
---- a/Documentation/devicetree/bindings/arm/keystone/ti,sci.yaml
-+++ b/Documentation/devicetree/bindings/arm/keystone/ti,sci.yaml
-@@ -51,15 +51,23 @@ properties:
-     minItems: 1
- 
-   mbox-names:
-+    minItems: 2
-+    maxItems: 6
-     description: |
-       Specifies the mailboxes used to communicate with TI-SCI Controller
--      made available from TI-SCI controller.
-+      made available from TI-SCI controller. All boot_* mailboxes are used by
-+      the first stage bootloader to load firmware for the device.
-     items:
-       - const: rx
-       - const: tx
-+      - const: notify
-+      - const: boot_rx
-+      - const: boot_tx
-+      - const: boot_notify
- 
-   mboxes:
-     minItems: 2
-+    maxItems: 6
- 
-   ti,host-id:
-     $ref: /schemas/types.yaml#/definitions/uint32
+								Honza
 
----
-base-commit: 1c353dc8d962de652bc7ad2ba2e63f553331391c
-change-id: 20251105-k3_syscon_add_boot_mailboxes-8452bdd98962
-
-Best regards,
+> ---
+>  fs/ecryptfs/inode.c      |  3 +--
+>  fs/namei.c               | 11 ++++-------
+>  fs/nfsd/nfs3proc.c       |  2 +-
+>  fs/nfsd/vfs.c            |  3 +--
+>  fs/open.c                |  4 +---
+>  fs/overlayfs/overlayfs.h |  2 +-
+>  fs/smb/server/vfs.c      |  3 +--
+>  include/linux/fs.h       |  3 +--
+>  8 files changed, 11 insertions(+), 20 deletions(-)
+> 
+> diff --git a/fs/ecryptfs/inode.c b/fs/ecryptfs/inode.c
+> index 88631291b32535f623a3fbe4ea9b6ed48a306ca0..d109e3763a88150bfe64cd2d5564dc9802ef3386 100644
+> --- a/fs/ecryptfs/inode.c
+> +++ b/fs/ecryptfs/inode.c
+> @@ -188,8 +188,7 @@ ecryptfs_do_create(struct inode *directory_inode,
+>  
+>  	rc = lock_parent(ecryptfs_dentry, &lower_dentry, &lower_dir);
+>  	if (!rc)
+> -		rc = vfs_create(&nop_mnt_idmap, lower_dir,
+> -				lower_dentry, mode, true);
+> +		rc = vfs_create(&nop_mnt_idmap, lower_dentry, mode);
+>  	if (rc) {
+>  		printk(KERN_ERR "%s: Failure to create dentry in lower fs; "
+>  		       "rc = [%d]\n", __func__, rc);
+> diff --git a/fs/namei.c b/fs/namei.c
+> index f439429bdfa271ccc64c937771ef4175597feb53..9586c6aba6eae05a9fc3c103b8501d98767bef53 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -3461,10 +3461,8 @@ static inline umode_t vfs_prepare_mode(struct mnt_idmap *idmap,
+>  /**
+>   * vfs_create - create new file
+>   * @idmap:	idmap of the mount the inode was found from
+> - * @dir:	inode of the parent directory
+>   * @dentry:	dentry of the child file
+>   * @mode:	mode of the child file
+> - * @want_excl:	whether the file must not yet exist
+>   *
+>   * Create a new file.
+>   *
+> @@ -3474,9 +3472,9 @@ static inline umode_t vfs_prepare_mode(struct mnt_idmap *idmap,
+>   * On non-idmapped mounts or if permission checking is to be performed on the
+>   * raw inode simply pass @nop_mnt_idmap.
+>   */
+> -int vfs_create(struct mnt_idmap *idmap, struct inode *dir,
+> -	       struct dentry *dentry, umode_t mode, bool want_excl)
+> +int vfs_create(struct mnt_idmap *idmap, struct dentry *dentry, umode_t mode)
+>  {
+> +	struct inode *dir = d_inode(dentry->d_parent);
+>  	int error;
+>  
+>  	error = may_create(idmap, dir, dentry);
+> @@ -3490,7 +3488,7 @@ int vfs_create(struct mnt_idmap *idmap, struct inode *dir,
+>  	error = security_inode_create(dir, dentry, mode);
+>  	if (error)
+>  		return error;
+> -	error = dir->i_op->create(idmap, dir, dentry, mode, want_excl);
+> +	error = dir->i_op->create(idmap, dir, dentry, mode, true);
+>  	if (!error)
+>  		fsnotify_create(dir, dentry);
+>  	return error;
+> @@ -4383,8 +4381,7 @@ static int do_mknodat(int dfd, struct filename *name, umode_t mode,
+>  	idmap = mnt_idmap(path.mnt);
+>  	switch (mode & S_IFMT) {
+>  		case 0: case S_IFREG:
+> -			error = vfs_create(idmap, path.dentry->d_inode,
+> -					   dentry, mode, true);
+> +			error = vfs_create(idmap, dentry, mode);
+>  			if (!error)
+>  				security_path_post_mknod(idmap, dentry);
+>  			break;
+> diff --git a/fs/nfsd/nfs3proc.c b/fs/nfsd/nfs3proc.c
+> index b6d03e1ef5f7a5e8dd111b0d56c061f1e91abff7..30ea7ffa2affdb9a959b0fd15a630de056d6dc3c 100644
+> --- a/fs/nfsd/nfs3proc.c
+> +++ b/fs/nfsd/nfs3proc.c
+> @@ -344,7 +344,7 @@ nfsd3_create_file(struct svc_rqst *rqstp, struct svc_fh *fhp,
+>  	status = fh_fill_pre_attrs(fhp);
+>  	if (status != nfs_ok)
+>  		goto out;
+> -	host_err = vfs_create(&nop_mnt_idmap, inode, child, iap->ia_mode, true);
+> +	host_err = vfs_create(&nop_mnt_idmap, child, iap->ia_mode);
+>  	if (host_err < 0) {
+>  		status = nfserrno(host_err);
+>  		goto out;
+> diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
+> index c400ea94ff2e837fd59719bf2c4b79ef1d064743..464fd54675f3b16fce9ae5f05ad22e0e6b363eb3 100644
+> --- a/fs/nfsd/vfs.c
+> +++ b/fs/nfsd/vfs.c
+> @@ -1552,8 +1552,7 @@ nfsd_create_locked(struct svc_rqst *rqstp, struct svc_fh *fhp,
+>  	err = 0;
+>  	switch (type) {
+>  	case S_IFREG:
+> -		host_err = vfs_create(&nop_mnt_idmap, dirp, dchild,
+> -				      iap->ia_mode, true);
+> +		host_err = vfs_create(&nop_mnt_idmap, dchild, iap->ia_mode);
+>  		if (!host_err)
+>  			nfsd_check_ignore_resizing(iap);
+>  		break;
+> diff --git a/fs/open.c b/fs/open.c
+> index fdaa6f08f6f4cac5c2fefd3eafa5e430e51f3979..e440f58e3ce81e137aabdf00510d839342a19219 100644
+> --- a/fs/open.c
+> +++ b/fs/open.c
+> @@ -1171,9 +1171,7 @@ struct file *dentry_create(const struct path *path, int flags, umode_t mode,
+>  	if (IS_ERR(f))
+>  		return f;
+>  
+> -	error = vfs_create(mnt_idmap(path->mnt),
+> -			   d_inode(path->dentry->d_parent),
+> -			   path->dentry, mode, true);
+> +	error = vfs_create(mnt_idmap(path->mnt), path->dentry, mode);
+>  	if (!error)
+>  		error = vfs_open(path, f);
+>  
+> diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
+> index d215d7349489686b66bb66e939b27046f7d836f6..2bdc434941ebc70f6d4f57cca4f68125112a7bc4 100644
+> --- a/fs/overlayfs/overlayfs.h
+> +++ b/fs/overlayfs/overlayfs.h
+> @@ -235,7 +235,7 @@ static inline int ovl_do_create(struct ovl_fs *ofs,
+>  				struct inode *dir, struct dentry *dentry,
+>  				umode_t mode)
+>  {
+> -	int err = vfs_create(ovl_upper_mnt_idmap(ofs), dir, dentry, mode, true);
+> +	int err = vfs_create(ovl_upper_mnt_idmap(ofs), dentry, mode);
+>  
+>  	pr_debug("create(%pd2, 0%o) = %i\n", dentry, mode, err);
+>  	return err;
+> diff --git a/fs/smb/server/vfs.c b/fs/smb/server/vfs.c
+> index c5f0f3170d586cb2dc4d416b80948c642797fb82..83ece2de4b23bf9209137e7ca414a72439b5cc2e 100644
+> --- a/fs/smb/server/vfs.c
+> +++ b/fs/smb/server/vfs.c
+> @@ -188,8 +188,7 @@ int ksmbd_vfs_create(struct ksmbd_work *work, const char *name, umode_t mode)
+>  	}
+>  
+>  	mode |= S_IFREG;
+> -	err = vfs_create(mnt_idmap(path.mnt), d_inode(path.dentry),
+> -			 dentry, mode, true);
+> +	err = vfs_create(mnt_idmap(path.mnt), dentry, mode);
+>  	if (!err) {
+>  		ksmbd_vfs_inherit_owner(work, d_inode(path.dentry),
+>  					d_inode(dentry));
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 12873214e1c7811735ea5d2dee3d57e2a5604d8f..21876ef1fec90181b9878372c7c7e710773aae9f 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -2111,8 +2111,7 @@ bool inode_owner_or_capable(struct mnt_idmap *idmap,
+>  /*
+>   * VFS helper functions..
+>   */
+> -int vfs_create(struct mnt_idmap *, struct inode *,
+> -	       struct dentry *, umode_t, bool);
+> +int vfs_create(struct mnt_idmap *, struct dentry *, umode_t);
+>  struct dentry *vfs_mkdir(struct mnt_idmap *, struct inode *,
+>  			 struct dentry *, umode_t, struct delegated_inode *);
+>  int vfs_mknod(struct mnt_idmap *, struct inode *, struct dentry *,
+> 
+> -- 
+> 2.51.1
+> 
 -- 
-Anshul Dalal <anshuld@ti.com>
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
