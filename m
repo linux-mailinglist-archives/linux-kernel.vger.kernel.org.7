@@ -1,56 +1,72 @@
-Return-Path: <linux-kernel+bounces-895341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7B04C4D847
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:53:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F2AEC4D8AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:57:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 72FDF34F8D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:53:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AC331898D2A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:54:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FBE3357735;
-	Tue, 11 Nov 2025 11:52:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2646635770E;
+	Tue, 11 Nov 2025 11:54:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XsIlg9UR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="folMIwpP"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCD50350A3F
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 11:52:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 696F3355028;
+	Tue, 11 Nov 2025 11:54:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762861962; cv=none; b=mLXd21vpM0AyQnwoh24nmEWBLpLfxAR09v8y9eFnr901lVETSANwzUcYbfovxJckeEUXPd+65jr4OVtC5wmOD6sjUKjJmewvJNj9Jj8T+HoPO9vCs2ZChgiHywOrAuxFlSSI+qiR8yH/yEt/dhXt2vBZ6v8fEMsYfclQlrIJLVc=
+	t=1762862067; cv=none; b=tUyQO/Ssl8AesNuqFfZkZNOSWlLiNpAjdvp96Gplcyu5xRx0PF2ZlqHZGd+hNB1KC58XFLazv5TIWXrPB/o3ct8KJNmzC70voaNWD5gVqeuGg84PciZWg7OJpAFZyeNIkvUjCatwH7ac9A9rkQCcA8ikOi4RhLNRptp+a031FcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762861962; c=relaxed/simple;
-	bh=f6RcoELmzojj6s6Tg/noSowPetDGuPHU0f5LoaPLD7g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=k7SSy11wAyiH0lhqtNPX4QQOi/ifCnxHB/P0UbXP+88oLzgNUP4Sd/qeuqr9Ap3cT9CDe395CdZ8ryjJAnRWhDA4bUUnksGs5anePpB5O2OPr2yhCUlTCQ0F/kzIyLzmR9afhj4/t5/SN5U9uzvEoWgWhE5DOf3PCX8BzWG1uEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XsIlg9UR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56582C19423;
-	Tue, 11 Nov 2025 11:52:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762861962;
-	bh=f6RcoELmzojj6s6Tg/noSowPetDGuPHU0f5LoaPLD7g=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=XsIlg9URmd5Z32DmwfJllCOqoT4FFNMrnIOQpTunvJgHxOGWaXwm4UYd8PztkT1Jz
-	 v2iD7wCWOpWjrVTXF/DFIdRztCnzfRBUZGuuEr8Gplt6vGjjm8oQ7K2mR2zbCBTXce
-	 YA5HSI7jin3x1KD7XZLRuEIQxLV5FiZwFtZ3oM1UdeUp837MXeVqHccA4PlpO3rifq
-	 dmIokR5pPUYGaOcMLobqGpbDpR4J5xUHpKYy1VjgTTvIMOE0URKvwwd7AmGfVxsWQ/
-	 C02M6HnS1QB/20qc6aX88xvSqCToNklNa9H2xpg7RBPnnLg/Fxi3P73bqU0r2oGY5i
-	 VQ/jyIzkFvD7A==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net,
+	s=arc-20240116; t=1762862067; c=relaxed/simple;
+	bh=iv+F62RMJYJhksSfYQqP6498EgmrEbAkvJ3B3DxrSW0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PXgT3qCbEwGvRzpRqNnUPa/j4y+333pgqfMRaA+fZsveUmkVYH70GctQ2iJuvnJpnqnzCw7xCqVZwVeiekJUeHsI+KpwodJNfTTigzamIj/BT6cC4zOQiYDBJx46GzztSMj0mVwgBfsy5vRXzpPRZIH4IvyVvn3Htp1LdPw+MKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=folMIwpP; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762862065; x=1794398065;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=iv+F62RMJYJhksSfYQqP6498EgmrEbAkvJ3B3DxrSW0=;
+  b=folMIwpPChOcOpEGnGNKkdIb3IDPCfrIvosYPW72p25zMctnRV1gdL9p
+   K9jJcMtZJJepqG2mLewAkKkFxX7iUckDT16St5LBHVjKIR7CHXA1W1Q0x
+   pBeVqx7Z4ByoKceXMQYUv/r+FIIoo8OhktqfgujnFsC9ANtDWVp0TtgcI
+   D6c4Pt8gTpBsBHBWPi27KaAHvgbXTNHdg94KXz2KyTCwnhHqY44hn28dx
+   p1mphv8t5JLhRA55NJl77pjMbqIO7fgH3NXNgmwifrRAjEr2ep34aso9N
+   YEjeHCLCJ9szAzOmVZbRhuDjR+tKZeM7rzGk2haiXN1acTfmZ6XrLuxct
+   g==;
+X-CSE-ConnectionGUID: oY2Ubp6vRLeugifnc972+Q==
+X-CSE-MsgGUID: AO3yBGm2Q0yjdo/qxtThuA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11609"; a="67525254"
+X-IronPort-AV: E=Sophos;i="6.19,296,1754982000"; 
+   d="scan'208";a="67525254"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 03:54:25 -0800
+X-CSE-ConnectionGUID: LjpDYG46Q1mpKPZcDG7Tyg==
+X-CSE-MsgGUID: FNqviYrvS2GBsUGu8fXm2g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,296,1754982000"; 
+   d="scan'208";a="219667753"
+Received: from yungchua-desk.itwn.intel.com ([10.227.8.136])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 03:54:23 -0800
+From: Bard Liao <yung-chuan.liao@linux.intel.com>
+To: linux-sound@vger.kernel.org,
+	vkoul@kernel.org
+Cc: vinod.koul@linaro.org,
 	linux-kernel@vger.kernel.org,
-	Chao Yu <chao@kernel.org>
-Subject: [PATCH 2/2] f2fs: change default schedule timeout value
-Date: Tue, 11 Nov 2025 19:52:29 +0800
-Message-ID: <20251111115229.1729729-2-chao@kernel.org>
-X-Mailer: git-send-email 2.51.2.1041.gc1ab5b90ca-goog
-In-Reply-To: <20251111115229.1729729-1-chao@kernel.org>
-References: <20251111115229.1729729-1-chao@kernel.org>
+	pierre-louis.bossart@linux.dev,
+	bard.liao@intel.com
+Subject: [PATCH] soundwire: dmi-quirks: add mapping for Avell B.ON (OEM rebranded of NUC15)
+Date: Tue, 11 Nov 2025 19:54:12 +0800
+Message-ID: <20251111115413.245828-1-yung-chuan.liao@linux.intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,57 +75,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This patch changes default schedule timeout value from 20ms to 1ms,
-in order to give caller more chances to check whether IO or non-IO
-congestion condition has already been mitigable.
+From: Peter Ujfalusi <peter.ujfalusi@linux.intel.com>
 
-In addition, default interval of periodical discard submission is
-kept to 20ms.
+Avell B.ON is an OEM re-branded NUC15 'Bishop County' LAPBC510 and
+LAPBC710.
 
-Signed-off-by: Chao Yu <chao@kernel.org>
+Link: https://github.com/thesofproject/linux/issues/5529
+Signed-off-by: Peter Ujfalusi <peter.ujfalusi@linux.intel.com>
+Reviewed-by: Kai Vehmanen <kai.vehmanen@linux.intel.com>
+Signed-off-by: Bard Liao <yung-chuan.liao@linux.intel.com>
 ---
- fs/f2fs/f2fs.h    | 6 ++++--
- fs/f2fs/segment.c | 2 +-
- 2 files changed, 5 insertions(+), 3 deletions(-)
+ drivers/soundwire/dmi-quirks.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 0d0e0a01a659..74cbbd84f39b 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -407,6 +407,8 @@ struct discard_entry {
- #define DEFAULT_DISCARD_GRANULARITY		16
- /* default maximum discard granularity of ordered discard, unit: block count */
- #define DEFAULT_MAX_ORDERED_DISCARD_GRANULARITY	16
-+/* default interval of periodical discard submission */
-+#define DEFAULT_DISCARD_INTERVAL	(msecs_to_jiffies(20))
- 
- /* max discard pend list number */
- #define MAX_PLIST_NUM		512
-@@ -656,8 +658,8 @@ enum {
- 
- #define DEFAULT_RETRY_IO_COUNT	8	/* maximum retry read IO or flush count */
- 
--/* IO/non-IO congestion wait timeout value, default: 20ms */
--#define	DEFAULT_SCHEDULE_TIMEOUT	(msecs_to_jiffies(20))
-+/* IO/non-IO congestion wait timeout value, default: 1ms */
-+#define	DEFAULT_SCHEDULE_TIMEOUT	(msecs_to_jiffies(1))
- 
- /* timeout value injected, default: 1000ms */
- #define DEFAULT_FAULT_TIMEOUT	(msecs_to_jiffies(1000))
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 58a5d6bc675f..d146c5816912 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -3462,7 +3462,7 @@ static unsigned int __issue_discard_cmd_range(struct f2fs_sb_info *sbi,
- 			blk_finish_plug(&plug);
- 			mutex_unlock(&dcc->cmd_lock);
- 			trimmed += __wait_all_discard_cmd(sbi, NULL);
--			f2fs_schedule_timeout(DEFAULT_SCHEDULE_TIMEOUT);
-+			f2fs_schedule_timeout(DEFAULT_DISCARD_INTERVAL);
- 			goto next;
- 		}
- skip:
+diff --git a/drivers/soundwire/dmi-quirks.c b/drivers/soundwire/dmi-quirks.c
+index 91ab97a456fa..5854218e1a27 100644
+--- a/drivers/soundwire/dmi-quirks.c
++++ b/drivers/soundwire/dmi-quirks.c
+@@ -122,6 +122,17 @@ static const struct dmi_system_id adr_remap_quirk_table[] = {
+ 		},
+ 		.driver_data = (void *)intel_tgl_bios,
+ 	},
++	{
++		/*
++		 * quirk used for Avell B.ON (OEM rebrand of NUC15 'Bishop County'
++		 * LAPBC510 and LAPBC710)
++		 */
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "Avell High Performance"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "B.ON"),
++		},
++		.driver_data = (void *)intel_tgl_bios,
++	},
+ 	{
+ 		/* quirk used for NUC15 'Rooks County' LAPRC510 and LAPRC710 skews */
+ 		.matches = {
 -- 
-2.49.0
+2.43.0
 
 
