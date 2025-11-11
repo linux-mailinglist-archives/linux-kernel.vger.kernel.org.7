@@ -1,154 +1,135 @@
-Return-Path: <linux-kernel+bounces-896319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44B9BC50180
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 00:49:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93ECCC50168
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 00:45:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41326189CF10
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 23:47:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52F4A3AD715
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 23:45:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD9232F83C2;
-	Tue, 11 Nov 2025 23:45:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEC522EDD50;
+	Tue, 11 Nov 2025 23:45:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nr2iyjRO"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4XccFDvA"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4FB62F3C09
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 23:45:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEDB31E50E
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 23:45:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762904754; cv=none; b=XoMuPk1XGaIRuPiBprokdM8lu1zxCht4wBzVIFTtexSnlxW00cLscRmWXdTqSt7GMIV9V1bFbEXSOfvVTJGNay6ZQ6xWQt+t9cGEf74Rjc8BpJRM4wiq2l9+WKjQoa7S9NopE1eAgyQltqCgZmoYHhXG9GrFS9D6iu7oSIec42I=
+	t=1762904730; cv=none; b=QklV8QNvbhhf5yUKTEuSytXmz+QEWa25he4BPR+CZn++QTYK1YvuN0+iCggdgdTJCAWSanWWQ8tyqKsF7FQvyRUs1g7hr6J0fxyLDADaZ0NFUjTYJrtjzbBqCme7V5kw6YEGu4Sb1c+cPmW+QnOqiACkc9OrxAs6isZO9vRkuz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762904754; c=relaxed/simple;
-	bh=piyGLJt485dKGIG+BiHrcokwe3Zha2zC7r7tpiO1YtA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fGpxIcUSgXJJJ7xEnVfsPJsKDTf+CpFz+dh2btGJiaFJwFI7KBmAzQ0Ah3/ZSRQm+lALmF1lAu54J+iPTCmdDp0S17CwlYY5XXlGL36BnEd7vSAkSAIje5R+OK2FNxvTJMz262MK2k3Gu2dvNrKakEKZyz9HXH7rUmMlVR3Ah+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nr2iyjRO; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-3438d4ae152so356467a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 15:45:52 -0800 (PST)
+	s=arc-20240116; t=1762904730; c=relaxed/simple;
+	bh=qxooVqZ8G74g4ULaPe+b1bpS5QJxwVoELBCS6dYu+SY=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=HKEN/DVNjgz1c9NBah53KaK/3JxHdzplWJrhwLJLqQeicsgiTNjSq+M5TlNTgCsTLhZgTkJyUJsLHPbpnhoSW0mYv87BEFcmsg/gty4nNkWcvpHxmbORu2ru51FnyXUhWqaSm5OjxB9bocenQEALeb4RYsJCDcykBDy1hBygGyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--svv.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4XccFDvA; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--svv.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-29848363458so5500015ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 15:45:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762904752; x=1763509552; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ku+uUPMeqOTqJ/waoV9S1SGRJDVLJtYE++c1OnVYckI=;
-        b=nr2iyjROAtMI+8vXWTYO0+AtWN+gUExTs8IwL7nfaHoG9ZUu8ln5ra/ovQBnR80OVn
-         BkDLBL7n5zbweV6U0uqd1ANX8UnRV4M2aEPm+sJ1NlwqhAxuT+cal26CuAHDPi83NpAQ
-         H5i1g4GEUr0QSVRW14hNABL5/SuuT+dAjxUCv0fOhzbVF8/wo4VxaqF6tmGCJfRkqd/s
-         3E6yhiBtCU75N9syebroGQ5nkGRVsoKqWdp/QEcjTp2za/XZsyzbJyspPcSfASqetgMx
-         Y9+3p+vmoGfoa0KDMkgJTsXuItCxw4eN4DpTZXSMNnTa4X1nU2wHrOd9pj3lKpPsrQLC
-         XxYQ==
+        d=google.com; s=20230601; t=1762904727; x=1763509527; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=SkAgq4uxa7nmEDHPV7OO8AWFIpaAVvZ4Bew+s0IZT0g=;
+        b=4XccFDvANQnOeF+G2HQUbZf0Eksrkmr9F/XCsKAFk1K7CNXPKGiLx3H/d9VJVVKlhZ
+         IZ/4mBl+MJEZ0GwkG1NVBUop3pMJg7GIibeeJgx6aN7RN0oGpdJiayupgnhn5O5rWKWF
+         e8fFGygkIma6BEU3opWkM0wUpawIVYhuo5zl57QbhrmoRzvfH6lU14iqfyn/ntu8DCp9
+         ockJLroYXJKFJbEAJDSiC4sfoEsI7pxltEi5g7VHY8oPruoT9ziOqjwQjlFPr36TqfPG
+         /WiS5gk0RaYhIgtxVDj3Ow/Q+kxbW0pF5wonaLsnjSqKBXA0FXz6M9VJEYSdni4E9EBU
+         hL8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762904752; x=1763509552;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=ku+uUPMeqOTqJ/waoV9S1SGRJDVLJtYE++c1OnVYckI=;
-        b=MKddiKfk9ZTnX55kMa4YGIbA80olf/pfQyRxeIpMH/driuRUvphIt9cXSTni4t7+g6
-         WHoVEdO96XCX7xsQ1ap9G8H+/tSKnwI75LyjmK6/fqBFy4VOGl/2gyHypMQmhy/bIsOS
-         ax2AEt75sSKD8nAK0pzRLwb55HPLi7UvqHvaEjeeao377GzVMLkPSvZhjtKYUXJP92y1
-         pCh5xsOijh0ZhzRLSE9A5r+bGqBSA4p8qGWJudN3nJCuQChi9M4UxFPJgFw2e2H4yWy7
-         3e54irVgPupLMfRStqlQ4Qq4JTKkEbBflNc90uPmUOUAktgWj4nv8oQrSpcuKWHXuOQ/
-         GyqA==
-X-Gm-Message-State: AOJu0YympicbvhbWA2+cC7yTA3R6di0AnNn8rnoajgIZyNkQ9bKz2Ir5
-	UEy82cKeu5vviqhQV+iH7wjCrBdojQFWILTmKKfW6on/yFsG9oFesTAl
-X-Gm-Gg: ASbGncv5li4LRkLQZGBfKLRSUzQErfVg++UIca/dbNO/5+adrbEU9TIh9Sc/zXZgOz0
-	KfOy25KPI1sEAV+2IP206IrRPVS4d0l8cuGcxawDH99zACp9SAucSjFWv/7u9U1CCmLXJF5BTIs
-	Icb2vGlndVp264a0Amnp+o/vcf1rbdOr000xsQSAkSRVoRBnr3sxyKtmaMqYl/3+XtcMr55bLDT
-	1IZqFNRVSlayT2O46Sn0oQnFQyeG1BnLxmK+8gzT6dz0iqz9F0UqVBgoyTciSF+c98m482FI2x6
-	t3srOlUce79Sbmy9uFcEgdqvpYWyqv/0OYwWLUkDfBXLBSIb7wtQ/lCUJw2NO7sc/e4KU6wq82m
-	9sDM8qK/XYcUgvWWBDx4Hf3YIx7gXcQ9HuvE8jVQ1jZGvWR4nVealU/mos/Sw+TnDlP862UJjUX
-	OqyIZSWoch9ILHA04Depad4fy+VxhmSGTiHlUcqdTnnjSeIE3JZzqJwEgAag4h7Y2lYia9ZoxWU
-	UK7gboAgA==
-X-Google-Smtp-Source: AGHT+IFt1zGwYGAmAVjS+MJ38BSYObFsBFiqI8Px7FyooYwE/yqV2VYEEU1VfGxit7rguzbRU6nxWw==
-X-Received: by 2002:a17:90b:562f:b0:33b:dec9:d9aa with SMTP id 98e67ed59e1d1-343dde8a9c6mr1021769a91.25.1762904752048;
-        Tue, 11 Nov 2025 15:45:52 -0800 (PST)
-Received: from toolbx.alistair23.me (2403-580b-97e8-0-82ce-f179-8a79-69f4.ip6.aussiebb.net. [2403:580b:97e8:0:82ce:f179:8a79:69f4])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-bbf06e85bb4sm784308a12.0.2025.11.11.15.45.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Nov 2025 15:45:51 -0800 (PST)
-From: alistair23@gmail.com
-X-Google-Original-From: alistair.francis@wdc.com
-To: kbusch@kernel.org,
-	axboe@kernel.dk,
-	hch@lst.de,
-	sagi@grimberg.me,
-	hare@suse.de,
-	kch@nvidia.com,
-	linux-nvme@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org,
-	alistair23@gmail.com,
-	Alistair Francis <alistair.francis@wdc.com>
-Subject: [PATCH v2 4/4] nvme: Allow reauth from sysfs
-Date: Wed, 12 Nov 2025 09:45:18 +1000
-Message-ID: <20251111234519.3467440-5-alistair.francis@wdc.com>
-X-Mailer: git-send-email 2.51.1
-In-Reply-To: <20251111234519.3467440-1-alistair.francis@wdc.com>
-References: <20251111234519.3467440-1-alistair.francis@wdc.com>
+        d=1e100.net; s=20230601; t=1762904727; x=1763509527;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=SkAgq4uxa7nmEDHPV7OO8AWFIpaAVvZ4Bew+s0IZT0g=;
+        b=YfnR3bMfx7zUj2vk//o4W8ldVSpqP6yFOYBlpgrB9uHe0K4PMQRrmSRdlATngLQsFY
+         k9BqhaqbR8Sdy6MITekjj6QvJ6W5FXW8W3nz7PmFFiOdMvWZQJXVcwW/85jygCqLdsS7
+         FEvj8eDjwH6cFACE2JbXabpgS816YL0SQGDNTX08VV4iZLrXj1DchXiJrL4oTfeGOJAg
+         GbgYHtb5ADpsO0tBpEKOsB8ed+Ai7+IkT+ZuLOdQw4rEjDplgs0TtOdIaeb5G2GuD9n8
+         QyQwU8mUi3qrqgKImHUCcZWfEu5OAzXWWkBeChEVBdmnBrvmoPT8jfguJYqKSavJNoHc
+         KPDw==
+X-Forwarded-Encrypted: i=1; AJvYcCWXBjqp1/RLzGVUV1Ku/QdRvytf7+yhY2MsswbQMVaTKG6MaCyHHw0nM+Kn2XaGCCG+dFvT1vxFtNafEyw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyq2/VmX5V3p4QpCBAiIWG4oki3rDwHtUSkbg2IqH+LoWqgzRMl
+	bpwVp/2vvrYzr1Q+xgDUGEHmhdMdIBt1CL8NrY+/ViEgWEHKEOpTMb7vr/HIdi3xyelRJw==
+X-Google-Smtp-Source: AGHT+IHi8saf2F8wVaPEUpOukbg9CK0jA+tPs9m1AXQ0+2z7mS0WR+FRBSqOKKylZcLB1P8ogvHJtsc=
+X-Received: from dlqq25.prod.google.com ([2002:a05:7022:6399:b0:11a:4dfb:95fc])
+ (user=svv job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:1967:b0:277:3488:787e
+ with SMTP id d9443c01a7336-2984ed79f0dmr12519685ad.12.1762904727382; Tue, 11
+ Nov 2025 15:45:27 -0800 (PST)
+Date: Tue, 11 Nov 2025 15:45:19 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.2.1041.gc1ab5b90ca-goog
+Message-ID: <20251111234519.369652-1-svv@google.com>
+Subject: [PATCH v2] HID: playstation: Center initial joystick axes to prevent
+ spurious events
+From: Siarhei Vishniakou <svv@google.com>
+To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>, 
+	Roderick Colenbrander <roderick.colenbrander@sony.com>, linux-input@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Cc: Siarhei Vishniakou <svv@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-From: Alistair Francis <alistair.francis@wdc.com>
+When a new PlayStation gamepad (DualShock 4 or DualSense) is initialized,
+the input subsystem sets the default value for its absolute axes (e.g.,
+ABS_X, ABS_Y) to 0.
 
-Allow userspace to trigger a reauth (REPLACETLSPSK) from sysfs.
-This can be done by writing to the sysfs file.
+However, the hardware's actual neutral/resting state for these joysticks
+is 128 (0x80). This creates a mismatch.
 
-echo 0 > /sys/devices/virtual/nvme-fabrics/ctl/nvme0/tls_configured_key
+When the first HID report arrives from the device, the driver sees the
+resting value of 128. The kernel compares this to its initial state of 0
+and incorrectly interprets this as a delta (0 -> 128). Consequently, it
+generates EV_ABS events for this initial, non-existent movement.
 
-Signed-off-by: Alistair Francis <alistair.francis@wdc.com>
+This behavior can fail userspace 'sanity check' tests (e.g., in
+Android CTS) that correctly assert no motion events should be generated
+from a device that is already at rest.
+
+This patch fixes the issue by explicitly setting the initial value of the
+main joystick axes (e.g., ABS_X, ABS_Y, ABS_RX, ABS_RY) to 128 (0x80)
+in the common ps_gamepad_create() function.
+
+This aligns the kernel's initial state with the hardware's expected
+neutral state, ensuring that the first report (at 128) produces no
+delta and thus, no spurious event.
+
+Signed-off-by: Siarhei Vishniakou <svv@google.com>
 ---
-v2:
- - Trigger on any value written to `tls_configured_key`
+ drivers/hid/hid-playstation.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
- drivers/nvme/host/sysfs.c | 23 ++++++++++++++++++++++-
- 1 file changed, 22 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/nvme/host/sysfs.c b/drivers/nvme/host/sysfs.c
-index 6d10e12136d0..db1c53e00501 100644
---- a/drivers/nvme/host/sysfs.c
-+++ b/drivers/nvme/host/sysfs.c
-@@ -806,7 +806,28 @@ static ssize_t tls_configured_key_show(struct device *dev,
+diff --git a/drivers/hid/hid-playstation.c b/drivers/hid/hid-playstation.c
+index 1468fb11e39d..a145b5ea4405 100644
+--- a/drivers/hid/hid-playstation.c
++++ b/drivers/hid/hid-playstation.c
+@@ -718,11 +718,16 @@ static struct input_dev *ps_gamepad_create(struct hid_device *hdev,
+ 	if (IS_ERR(gamepad))
+ 		return ERR_CAST(gamepad);
  
- 	return sysfs_emit(buf, "%08x\n", key_serial(key));
- }
--static DEVICE_ATTR_RO(tls_configured_key);
-+
-+static ssize_t tls_configured_key_store(struct device *dev,
-+					struct device_attribute *attr,
-+					const char *buf, size_t count)
-+{
-+	struct nvme_ctrl *ctrl = dev_get_drvdata(dev);
-+	int error;
-+
-+	if (!ctrl->opts || !ctrl->opts->concat)
-+		return -EOPNOTSUPP;
-+
-+	error = nvme_auth_negotiate(ctrl, 0);
-+	if (error < 0)
-+		return error;
-+
-+	error = nvme_auth_wait(ctrl, 0);
-+	if (error < 0)
-+		return error;
-+
-+	return count;
-+}
-+static DEVICE_ATTR_RW(tls_configured_key);
++	/* Set initial resting state for joysticks to 128 (center) */
+ 	input_set_abs_params(gamepad, ABS_X, 0, 255, 0, 0);
++	gamepad->absinfo[ABS_X].value = 128;
+ 	input_set_abs_params(gamepad, ABS_Y, 0, 255, 0, 0);
++	gamepad->absinfo[ABS_Y].value = 128;
+ 	input_set_abs_params(gamepad, ABS_Z, 0, 255, 0, 0);
+ 	input_set_abs_params(gamepad, ABS_RX, 0, 255, 0, 0);
++	gamepad->absinfo[ABS_RX].value = 128;
+ 	input_set_abs_params(gamepad, ABS_RY, 0, 255, 0, 0);
++	gamepad->absinfo[ABS_RY].value = 128;
+ 	input_set_abs_params(gamepad, ABS_RZ, 0, 255, 0, 0);
  
- static ssize_t tls_keyring_show(struct device *dev,
- 		struct device_attribute *attr, char *buf)
+ 	input_set_abs_params(gamepad, ABS_HAT0X, -1, 1, 0, 0);
 -- 
-2.51.1
+2.51.2.1041.gc1ab5b90ca-goog
 
 
