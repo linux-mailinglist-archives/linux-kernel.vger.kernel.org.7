@@ -1,247 +1,334 @@
-Return-Path: <linux-kernel+bounces-895531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33168C4E3BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:48:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B843C4E3BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:48:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8F7E188D339
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:46:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5CA83A93A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:47:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A6B934253A;
-	Tue, 11 Nov 2025 13:46:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AFFC32470D;
+	Tue, 11 Nov 2025 13:47:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=HOTMAIL.DE header.i=@HOTMAIL.DE header.b="knHjsv1S"
-Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazolkn19013015.outbound.protection.outlook.com [52.103.33.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PA8pv61W"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 353602FB0AE;
-	Tue, 11 Nov 2025 13:45:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.33.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762868760; cv=fail; b=oB4QCuwORkzuGtwj3oK6vsaGl7lIo1FHTEskIaEi2u1UjKTBLE49bNoooQ9wCDWFVgDz0Xen5+iaG/AHj8WDnB4nlxpk2Jkmq5w0774vePwvqL54PGmrCFsQbzjnJ8Id8CksowgFTgledFufUpQkn3mGL6XBvJX8VrqywNC7psU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762868760; c=relaxed/simple;
-	bh=6BOkoDiNKouO9TBuOxBpGQ/uk9kTURZP9mCWioXPaRE=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=j4aW4/Lor9sM2yPc91VidLca3za5JOsRPCVNZpFBUux7r9LwgJ1a1KUFaZNA32Ah9dZm+zLnCP+Mu314HU8Q2e63YlYpP0ATxi0tSYcXqODAbX2A8rjq6oIfftAnmH0ewDVQDcdeOAedh8dR7SOw8TL8RtDr8Lrqc33toFKlNiw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.de; spf=pass smtp.mailfrom=hotmail.de; dkim=pass (2048-bit key) header.d=HOTMAIL.DE header.i=@HOTMAIL.DE header.b=knHjsv1S; arc=fail smtp.client-ip=52.103.33.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hotmail.de
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=MGQHao4d2HwRuiQULDXA5EbYI7gztscIySaJAPbjK2JnbDX2wS831+9jxVmBGTKvtW1Ncva2/8GCUorgAL9gp/h9buNztQvz2TNFNn/ldxrS4qZgAi4rqky6+SGDo1ceKGWL6eWyOu5JscmsOmD4B/++EAEQSWNFXdkyfKdXEsplJxSm9hbwHPQ4L+fzad1hu47NHPw7KH8GvYQrzS1JPUsQuuvze5bBaL5Lb4U3SeaIIUOBJPJARRZ8gnU67jSk2MMBGZ1JvhUVdMfK/10fiTqzk4nqNcNIJCGhTmKuV1gEJH8x51khvhqtgv9q0qh8oymokKGHDowCoQ3o4mJ4Mw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cuwSnVGEkz1g41aMKQg/7O/O5yTefEOJ8q0x9JiRM1w=;
- b=n4funlopkvQxyTeZDoUde2fazL3gKUjEYi3S69gfCfBnhNhkrIAa3M9LicqSn7+qtw+rT9k1gUUtV5YqpPtB9+oRLTdqxQvm2nZD+tXMuNSupQaoQA2gp/y+M5WBTbsJ3/K9/0QVe9cD0h4IrFMbE88f27fN2jVO3kKoEwmVv328DFkrEznHbPjBO/d+Un+LV+fsJHnvZ53kmNlf/9R6OYDuA4YJorWPxnABYcRia9fiaXQBXylXv36d+6E8Do4S/jbiikRIiJd/0yWolxWS6RBDylC41KWeXsvKcAKH7V2cQle8ICdXvejnZS40Ht5sZ2MUZWkgDon9oG8XTzx05Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=HOTMAIL.DE;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cuwSnVGEkz1g41aMKQg/7O/O5yTefEOJ8q0x9JiRM1w=;
- b=knHjsv1Sce0P3QvKzaGKQpc0GSleHx0FGpfxtiXO8KcbGRY+9tbqQQTtt11p+QTGjjkLcuq+5qI1Rx6WSDS/36Pk8Fs05f/P9Z5SyjD0HHV9UBdpNIBZgr4PpjrSZaQOaTLgUHlzO9TIBw7sk43s1llsMrWPrXp13namU4Kc1+j0kyqXUOWe3a3pliDL0Pw/+9AtLxK/LK6OowKcSUHD8gRaGINXV27PbBBkoveHgQnW+7ZQjiKZTImcua7ZVkxTZGLBwqH8dt8GynfEz3jYESSFDfDU7RDyuH3giDyvI+j5V9rLfP5KGTrBKq45SngK+L5LRg34XyJjlaqPPL9AxA==
-Received: from GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM
- (2603:10a6:158:401::8d4) by DB8P195MB0551.EURP195.PROD.OUTLOOK.COM
- (2603:10a6:10:15a::8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.15; Tue, 11 Nov
- 2025 13:45:54 +0000
-Received: from GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM
- ([fe80::dde:411d:b5f2:49]) by GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM
- ([fe80::dde:411d:b5f2:49%8]) with mapi id 15.20.9298.007; Tue, 11 Nov 2025
- 13:45:54 +0000
-Message-ID:
- <GV2PPF74270EBEE16FE36CF873C5C2309A9E4CFA@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
-Date: Tue, 11 Nov 2025 14:45:44 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v17] exec: Fix dead-lock in de_thread with ptrace_attach
-Content-Language: en-US
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Christian Brauner <brauner@kernel.org>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Alexey Dobriyan <adobriyan@gmail.com>, Kees Cook <kees@kernel.org>,
- Andy Lutomirski <luto@amacapital.net>, Will Drewry <wad@chromium.org>,
- Andrew Morton <akpm@linux-foundation.org>, Michal Hocko <mhocko@suse.com>,
- Serge Hallyn <serge@hallyn.com>, James Morris
- <jamorris@linux.microsoft.com>, Randy Dunlap <rdunlap@infradead.org>,
- Suren Baghdasaryan <surenb@google.com>, Yafang Shao <laoar.shao@gmail.com>,
- Helge Deller <deller@gmx.de>, "Eric W. Biederman" <ebiederm@xmission.com>,
- Adrian Reber <areber@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
- Jens Axboe <axboe@kernel.dk>, Alexei Starovoitov <ast@kernel.org>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
- linux-security-module@vger.kernel.org, tiozhang <tiozhang@didiglobal.com>,
- Luis Chamberlain <mcgrof@kernel.org>,
- "Paulo Alcantara (SUSE)" <pc@manguebit.com>,
- Sergey Senozhatsky <senozhatsky@chromium.org>,
- Frederic Weisbecker <frederic@kernel.org>, YueHaibing
- <yuehaibing@huawei.com>, Paul Moore <paul@paul-moore.com>,
- Aleksa Sarai <cyphar@cyphar.com>, Stefan Roesch <shr@devkernel.io>,
- Chao Yu <chao@kernel.org>, xu xin <xu.xin16@zte.com.cn>,
- Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.cz>,
- David Hildenbrand <david@redhat.com>, Dave Chinner <dchinner@redhat.com>,
- Shuah Khan <shuah@kernel.org>, Elena Reshetova <elena.reshetova@intel.com>,
- David Windsor <dwindsor@gmail.com>, Mateusz Guzik <mjguzik@gmail.com>,
- Ard Biesheuvel <ardb@kernel.org>,
- "Joel Fernandes (Google)" <joel@joelfernandes.org>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Hans Liljestrand <ishkamiel@gmail.com>,
- Penglei Jiang <superman.xpt@gmail.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Adrian Ratiu <adrian.ratiu@collabora.com>, Ingo Molnar <mingo@kernel.org>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>,
- Cyrill Gorcunov <gorcunov@gmail.com>, Eric Dumazet <edumazet@google.com>
-References: <AM8PR10MB470875B22B4C08BEAEC3F77FE4169@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
- <AS8P193MB1285DF698D7524EDE22ABFA1E4A1A@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <AS8P193MB12851AC1F862B97FCE9B3F4FE4AAA@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <AS8P193MB1285FF445694F149B70B21D0E46C2@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <AS8P193MB1285937F9831CECAF2A9EEE2E4752@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <GV2PPF74270EBEEEDE0B9742310DE91E9A7E431A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
- <GV2PPF74270EBEE9EF78827D73D3D7212F7E432A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
- <20251105143210.GA25535@redhat.com>
- <20251111-ankreiden-augen-eadcf9bbdfaa@brauner>
- <GV2PPF74270EBEEDCF80CEE0F08891ED37BE4CFA@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
- <aRM2POTDTxEzeF2F@redhat.com>
-From: Bernd Edlinger <bernd.edlinger@hotmail.de>
-In-Reply-To: <aRM2POTDTxEzeF2F@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR4P281CA0361.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:f8::17) To GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM
- (2603:10a6:158:401::8d4)
-X-Microsoft-Original-Message-ID:
- <c10c17c7-b22a-4b1d-b1d7-02579c8f49a1@hotmail.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F79C34EF04
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 13:47:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762868865; cv=none; b=i208ukJQz/8OEqELBfU7HXBayR0PJ0Y2ZkOGT8iylAPhGJsUf2fttYkqBGm113hXCY9scVZ4Pwlog0hzcTcKz/H2CO7QzINg8SIDwrr/tRaGsblC5IfI+odnbHcxszvBtVAZP8WSr6Mt1LDWuP9oPyljE5EEOpOk9w/jQC04bgk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762868865; c=relaxed/simple;
+	bh=haChyGDwKRZ9L+wSPxgovAlg+vrVWqA+m8tlPgoIgUI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ChlJtXo25sm/tOMibSAvq5w5Prjf2vTK3Aho+zc+DxoE8oE8vdv4nMKZN5BAujh2n1smnfhZW2nXhPG516S29/siBUyyC3S+fx64rHnStArIEVUvMMX5sV3e+FHbJufXLbF52PINkLhWK0PulHcdcq6eOYLPm5KY4ANltv1+8dI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PA8pv61W; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-6408f9cb1dcso7208222a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 05:47:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762868861; x=1763473661; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MBzO+mXtLSjzlqpu0X8GUg0PfYd6eR/HUmvEOL2AIZg=;
+        b=PA8pv61WO1KTmC/IsRvGQr339IuAy+aOlkmSMgfBHL0yiSSvlMBD1nujD8OouWNOw7
+         Tyzg2Xbrai46SR3zjpujLAOiuAS268pxffmvRMEWSnXBdUAfy180FplJm3lutS1KiezA
+         gpj3RKfbR7ttYWBzGJQICky78Kb6an0SCt+i5yibSfn+IhlwTTgCqjJDzXGw09COys2M
+         PtmkSswJeWixM2NY4AZq0yZQjTY9z3gdW60FkNwsLlSVFpkEvVBDvXoL7pvtDMV78DJ0
+         J0LmsSLci9G41VPTXDUMQ2I0ZurIKYJNnpDp1q9/yQAjnHkJDt48BJvm83skccFg/b+W
+         /LDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762868861; x=1763473661;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=MBzO+mXtLSjzlqpu0X8GUg0PfYd6eR/HUmvEOL2AIZg=;
+        b=qi/jl/7VvohjDFG67EtE6Yjzw+eNJrhc9FOMZSlg5kuX72ggFAlbCFvU4lMXfByYxJ
+         WGCi7LpgRJB0kIzB9QfgW1rcN+GfNUobMbEYko4jp9WuzKVnYjF+9w/oGGtVgasMCmdF
+         ltlgQMWUdVp6e5i+hXfKEp2s0yGOak5vhkJORRddWzH6mlaWQhyMlNCOYwRTYF54Qux7
+         t4DwR1AWmSPSlge7sD64dlFXnsxep5/CXJdBtWnS8sqJJEHcZFItUlu8KdcySJwToBqY
+         wVLsahMLYbk1CG3IMMqEkGTseSGQV96iD1jB/nvnEC23V8nnKtM/JMkFA+o9epiOO1N5
+         3JAw==
+X-Gm-Message-State: AOJu0YwpxBDIR6ClpIlKTKKbMddW6eTNao4N5DnXHzmZd0qvon9kSBUh
+	X2ikxXE68yB/jeyCKBmbIW2DDti4bx99rMARc9BHdvjaNT4QUPZUssZRDSJx6GqBH0DW9IsY5Yf
+	8PXMvw11Ch6qL434sVezqZg4x6q/L3vs=
+X-Gm-Gg: ASbGncteICpf1gg9MFCg9/Pnw9kOfy/d12LtM+wqnTXr9lyJ408ZHbFb13iTso+/dhp
+	5MAuXBN9VVrQn1hMzy0b+e4hXUWF6kUMQ1njSIAr+ghuQeipaCScF2xppkFrXZxT2drzeK7R3bR
+	odDNDKBde/mDgX1Ul9bTvqLfwkCK3AcH6NXkcK6DmmE71OaHYqesKhEm3uFFy4xWU/ttMfP+DMR
+	s7+jSBxYNI3ApsuC8a8fKy/sDcGMsgsZT8edPXZYErjNZHH4fGx1baVjltQeQ==
+X-Google-Smtp-Source: AGHT+IFP0FuqM0yhKHSoBdPjP97vvll1I7DWDIDzF8bj+ZIcWBz1zQIEqx5YwoSccS6mBD4f8xI5cM+023m9whJuzpo=
+X-Received: by 2002:a17:907:7203:b0:b70:b661:cfcb with SMTP id
+ a640c23a62f3a-b72e0410257mr1371826066b.31.1762868861200; Tue, 11 Nov 2025
+ 05:47:41 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: GV2PPF74270EBEE:EE_|DB8P195MB0551:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7a940342-c76a-4808-9571-08de2128a272
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|6090799003|461199028|5072599009|19110799012|51005399006|8060799015|23021999003|15080799012|3412199025|440099028|40105399003;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?R1ZKaDFTMHoxMXZEQzI2aElweUhoUWhJb0N0eEJxSWljUHBnNWVQc08vQ2dS?=
- =?utf-8?B?RStkd3JMODNxSE9TM0lDa1dacUR5cWs1ajlmSnNJTzAvSnkrbitQaUFwb1Js?=
- =?utf-8?B?YXBHSDBoWlMrQ2VBR0hPQ0tscURrNTF4SVo3SlhvRUpZeFN6ZEdQcVFMV1Jl?=
- =?utf-8?B?a0V4V3FNNTVHRksyN2JtbW1BZjFRK05wTnlQNU51Vy9NL0ZZM3k2T1Frdnd3?=
- =?utf-8?B?dGhFVU5VSGtDdmFGME96bjhhU05Nd0ZhVXM4WnFqRU9hbXpGeTluNU5vdElp?=
- =?utf-8?B?UkJ5ZHArNm14OE81WllGMTFXUDdjYmlLZTUranlGd1NmbzRoLzVDeUpnY2hI?=
- =?utf-8?B?VGFQa3IzcDdsT0U0VlAxSTlYQW51ZGN1aTlwZUthR0tUMnluSU5MRkNSMCsx?=
- =?utf-8?B?R2lud0JhMTArczY4MVlIZXRMdkMrRVFybTZ1WWxJLzYzTWdBa1FiZzdBekpy?=
- =?utf-8?B?dzFzdXp0dEdJTU50ZVVaYldKNVErWnpxbk5kdDZxVW1VWTJYMWpMbkxOSi9x?=
- =?utf-8?B?UmV2czllZTZ6N0tzemU2MzhRSzc4aVNBZ0VTOXI5Kzc0a1JMV042aWNMZHll?=
- =?utf-8?B?WFZZWDlPUSs3eUhNRytheTd5eFhFMURkZVRFTTVVcGJlc2RGTHlUK1VHT3F3?=
- =?utf-8?B?WENaK0VodklEK0xnQjRRT1JxZUlEbTB6OTVYUDJDM051b1RDakNqTSt6d255?=
- =?utf-8?B?OFJKN2tWN0NJbmdqc2dZL1lCTHIvTE00ZUt6YkNoUWVLYWdqcjFCaXJ0QUox?=
- =?utf-8?B?aFBhZUlKbmE4Nkp3MDlLMHFMOXI1OVZUYkhHSWo5eWFTcGtESnZjL01maGJ5?=
- =?utf-8?B?YXdTQk5qVXVDaldGT1NJc0E3VkkyNERlSDErK1h6OVl4ODVPcUQ5djBSWGNl?=
- =?utf-8?B?eE1lVzhmYzl2emh3MjJaM2VLNGE1SnhSKzJzYnRPMUx3Yk1GMXUwQmw3TzJ3?=
- =?utf-8?B?K2pMY281YThIeFBSQXZxZTRra3NoTDdWMUlhMFgxNGNxRTdxWHVNenBvSFlO?=
- =?utf-8?B?ekxKZEp1eFpMaW81dFZ1MXp5MXpaeHQ4WGNScVpkUkZiNGl0bEcrMEhHNjg0?=
- =?utf-8?B?MkFZaUVGdU9hcFRqTmxCWGs1WWZvcFJmdGhFaCtXWWlpZk9ZMkRkU0xFOFor?=
- =?utf-8?B?N3dPQTAzUGkzcXBxSUkzZ3lmdTZjSnFQWEs3ZE5kbkNFSmorRHhjMDljU2lD?=
- =?utf-8?B?UjluV2hnWUs3V0lOVVlqUWIyYTVsZWczbDVWSW84ZFpIYXBtYSsxbFJiekxV?=
- =?utf-8?B?SUU2U1l6bWRzYkl1K25rZ3ZnVi9GeGlIY2hNZGhhYkdEQm9aQkpBTHZtRmQv?=
- =?utf-8?B?NSt5MkE1aklyNnZ1NzdKVkFxTzdtOTR5Z3ZJSEp2SUIwUkxUUE5pblpqZlp4?=
- =?utf-8?B?S28yYWpoWmZuNk4xQXlpNXhQOUVPaTVSVE40Z3haTHplei8wc3ZZVzhzbm1V?=
- =?utf-8?B?U3RiNjREM2lJZnI5M1NFUVZxV3JKWEdXNG9WdW5NTW1xT3huRk1qUU9iWWpT?=
- =?utf-8?B?anpRM1EyOTI3aUVCbkF2YktKTUt0aG1RZVYvZGFidnpWZ09SQy9ZRUw2Q1V4?=
- =?utf-8?B?a0lEMiszeU9lYWJwblFCNlpuSlNncFUxWjJBYkI1S2R0c0laTWcvcXRpSjYr?=
- =?utf-8?B?R2xKQVhEbmZucGVTb0ZjK05VYU85U2c9PQ==?=
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?VDNpU3V6VnZmeFBNN2tCcml6c2JrWE5EY3JMVzY1KzhuNXVFUUt6T1R6K2Uv?=
- =?utf-8?B?d29VZnJOOVRaazNqOFlIS0FMcE13MFV1WmRBVVlSUGphbGFSYWtpU3B0N1J2?=
- =?utf-8?B?OHRzTEI0ai9tM3F4blgrMnpzeUptTHp0c3FlN1d6bnJtaGs0b3VTVVdLSGt2?=
- =?utf-8?B?YUJpZUJwYWFxVEU3VnJjTS9CSVdFWmV5TUJMdkZVZWtRRWJjVE1zZ1huTmt1?=
- =?utf-8?B?QitObzhiaUxIdll5TlNtSjRlaWNLY1BtbWNPNm12SnRXcXBsbjROaU5pL1Q4?=
- =?utf-8?B?RDgrL3FlQnBOL3MraFkweUJZWEJLQWhhVlppZStNN3VXbWI4bFNteXBNTTZ4?=
- =?utf-8?B?RTVnc3BLUDdodktwWE5USHpoaCtHZkVVZ2VnaElIVGhrSDdqeG9TVzdOOURh?=
- =?utf-8?B?ZzRvWkdNa0ZmcjFhMUd0dnlHRDc2SS9jZUVkSE5HSVhOdGJSek5EdGFzSU5x?=
- =?utf-8?B?YXVFekQ0N3dJdm5ZM0QvM0NSYlJTZmNmYlVNNldIMy9RWlNyZlVRRm9LSmFj?=
- =?utf-8?B?NDVWVENuOXRqbkw3Nk5QTFMwS2FVSGdpeWMxQ0FkSlQ0VkhPNmYxUHBpM1pu?=
- =?utf-8?B?N1JUekF1SS8yMGMwb1RxL2xmeTNBNFJ0c04xMnZvUjBHa2l6UVdaQ0MzTkh4?=
- =?utf-8?B?Q0ZJS2J1Q2FlQllpdTRndUUrclpkWU5hT3pNYWJMT3NOd3NpZis3RVlKNUh5?=
- =?utf-8?B?Z1FROE4rQUhKMXNYVU5qVWRvOHBWSlYyTGtaQjMzbU9FM0VPZmtDMkpTSS9r?=
- =?utf-8?B?eEM4SjF1VVFPQkpncXl0OEFiRWNQU2ZXK2J2Y1k3b2NQUFp5SnZYanBaemhK?=
- =?utf-8?B?RjVSSzFsRDMvVHMvMENSM1dRZlVRWENFSzBSUXI5ZGJXalEybTNVb1Y4Wndp?=
- =?utf-8?B?a1FLeTdmcERSSkdZR1kyWSszWndTa2FyU0llV0p4Y0NPa2l5MytqR2NEaWtx?=
- =?utf-8?B?Mi9MSkExbTFzcWs1NWxuMUJTc096dEtoUzdmMjE4MG1QMWg2clp6OFdaMTBD?=
- =?utf-8?B?YnJCbFE4RVQrR1N5V0g4Zm9ueGh1MGVmR3dmRzVObGV3bksyYlE0VGpWNGYx?=
- =?utf-8?B?RmlMeGdQRDVCNEN0T3NSYTdxOC91QWw0WTZYT25xZ2VDRnM0Y0tTSHB0aXFM?=
- =?utf-8?B?YkZiRDhSYmlIckxwajVidUlIaHFaQktnRCtCZkFuMXpOeWp0UkttV2tWRmwz?=
- =?utf-8?B?QjlocmhNK2Y4eDJybGF6aVp3VDFYdGRuTjhnQXcrZG9URm9HRFYyZ0pzZ0pL?=
- =?utf-8?B?eDJJSk1idWhJa1pXalAyYktaY2NHSnhDRFd2ajZrSklpYmM4NjZnbmxBMmZv?=
- =?utf-8?B?K0lRQ3hycGZZTDBmdG5VNFVVa2NIWFVIQXBkT0NJU3JTa2JOSGpNS2ZaT0FL?=
- =?utf-8?B?eGxWVllBbEE4c3huaVZKYlBieGFmZnJQWWlIemt4a1BOOXJsdjE5N3Z5TUhE?=
- =?utf-8?B?ZmVNalFUV1hOQ3IwV0NweUFhRmJnT2duUStzUXViNElJczVxbDNVR2crcFRs?=
- =?utf-8?B?SFltY3p5Rm1TS2JOR0ZVbzVCVDgyYlYwTitobFc3dy9vV2UweE5vS3psUXNO?=
- =?utf-8?B?S0g5WEsvc3B0dmFrRkxPUGFNQWh2bTNKNSthVVRkblVzZzdBaVhtQjVWMVNC?=
- =?utf-8?B?bGthQmdoRWRNNW5UOFkzRnhtVGhPeDYwM1N5UlczdGVWb3pSbEZkVm5FT1RD?=
- =?utf-8?B?emhlUFA3SmN6T3VqNk83Y0xEMVplTCtiK0RReUR6UzduVUk5MTllME56MWVE?=
- =?utf-8?Q?HGCR/DMwb2ksjIwMY7tQ4JWtA8lV8S0boTHLFdu?=
-X-OriginatorOrg: sct-15-20-8534-20-msonline-outlook-87dd8.templateTenant
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7a940342-c76a-4808-9571-08de2128a272
-X-MS-Exchange-CrossTenant-AuthSource: GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Nov 2025 13:45:54.4898
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8P195MB0551
+References: <20251011164156.3678012-1-dolinux.peng@gmail.com> <20251110154337.774db22f@gandalf.local.home>
+In-Reply-To: <20251110154337.774db22f@gandalf.local.home>
+From: Donglin Peng <dolinux.peng@gmail.com>
+Date: Tue, 11 Nov 2025 21:47:29 +0800
+X-Gm-Features: AWmQ_bmmgh4pGUV55tc_XDOjeHyzORXKIv19acRME2IKux_0Vl_lB60OtcS1XOI
+Message-ID: <CAErzpmtjuq7nrrLPd=Av3p_5TzWD8HwEU1FMNmYZxiBgfZRaFQ@mail.gmail.com>
+Subject: Re: [PATCH] function_graph: Enable funcgraph-args and
+ funcgraph-retaddr to work simultaneously
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	Sven Schnelle <svens@linux.ibm.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	pengdonglin <pengdonglin@xiaomi.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/11/25 14:12, Oleg Nesterov wrote:
-> On 11/11, Bernd Edlinger wrote:
->>
->> On 11/11/25 10:21, Christian Brauner wrote:
->>> On Wed, Nov 05, 2025 at 03:32:10PM +0100, Oleg Nesterov wrote:
->>>>
->>>> This is the most problematic change which I can't review...
->>>>
->>>> Firstly, it changes task->mm/real_cred for __ptrace_may_access() and this
->>>> looks dangerous to me.
->>>
->>> Yeah, that is not ok. This is effectively override_creds for real_cred
->>> and that is not a pattern I want to see us establish at all! Temporary
->>> credential overrides for the subjective credentials is already terrible
->>> but at least we have the explicit split between real_cred and cred
->>> expressely for that. So no, that's not an acceptable solution.
->>>
->>
->> Well when this is absolutely not acceptable then I would have to change
->> all security engines to be aware of the current and the new credentials.
-> 
-> Hmm... even if we find another way to avoid the deadlock? Say, the patches
-> I sent...
-> 
+On Tue, Nov 11, 2025 at 4:43=E2=80=AFAM Steven Rostedt <rostedt@goodmis.org=
+> wrote:
+>
+> On Sun, 12 Oct 2025 00:41:56 +0800
+> pengdonglin <dolinux.peng@gmail.com> wrote:
+>
+> > From: pengdonglin <pengdonglin@xiaomi.com>
+>
+> Sorry for the late reply. I finally got around to looking at this.
+>
+> >
+> > Currently, funcgraph-args and funcgraph-retaddr cannot be used together=
+. This patch
+> > resolves the conflict by having funcgraph-retaddr reuse the implementat=
+ion of
+> > funcgraph-args -- specifically, storing the return address in the last =
+entry of the
+> > args array.
+> >
+> > As a result, both features now coexist seamlessly and function as inten=
+ded.
+> >
+> > To verify the change, use perf to trace vfs_write with both options ena=
+bled:
+> >
+> >  # perf_6_17 ftrace -G vfs_write --graph-opts args,retaddr
+> >  ......
+> >  0)               |  down_read(sem=3D0xffff8880100bea78) { /* <-n_tty_w=
+rite+0xa3/0x540 */
+> >  0)   0.075 us    |    __cond_resched(); /* <-down_read+0x12/0x160 */
+> >  0)   0.079 us    |    preempt_count_add(val=3D1); /* <-down_read+0x3b/=
+0x160 */
+> >  0)   0.077 us    |    preempt_count_sub(val=3D1); /* <-down_read+0x8b/=
+0x160 */
+> >  0)   0.754 us    |  }
+> >
+> > Cc: Steven Rostedt (Google) <rostedt@goodmis.org>
+> > Cc: Sven Schnelle <svens@linux.ibm.com>
+> > Cc: Masami Hiramatsu <mhiramat@kernel.org>
+> > Signed-off-by: pengdonglin <pengdonglin@xiaomi.com>
+> > Signed-off-by: pengdonglin <dolinux.peng@gmail.com>
+> > ---
+> >  include/linux/ftrace.h               |  11 --
+> >  kernel/trace/trace.h                 |   7 --
+> >  kernel/trace/trace_entries.h         |  29 +-----
+> >  kernel/trace/trace_functions_graph.c | 148 +++++++++++----------------
+> >  kernel/trace/trace_selftest.c        |   1 -
+> >  5 files changed, 58 insertions(+), 138 deletions(-)
+> >
+> > diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
+> > index 7ded7df6e9b5..88cb54d73bdb 100644
+> > --- a/include/linux/ftrace.h
+> > +++ b/include/linux/ftrace.h
+> > @@ -1129,17 +1129,6 @@ struct ftrace_graph_ent {
+> >       int depth;
+> >  } __packed;
+> >
+> > -/*
+> > - * Structure that defines an entry function trace with retaddr.
+> > - * It's already packed but the attribute "packed" is needed
+> > - * to remove extra padding at the end.
+> > - */
+> > -struct fgraph_retaddr_ent {
+> > -     unsigned long func; /* Current function */
+> > -     int depth;
+> > -     unsigned long retaddr;  /* Return address */
+> > -} __packed;
+>
+> I really like the clean up, but unfortunately, this breaks user space.
+>
+> We still need the retaddr event, as that is what user space expects.
+>
+> That said, this could do the same thing as the func-args. That is, it can
+> add the function arguments after the retaddr field.
 
-Maybe, but it looks almost too simple ;-)
+Thanks, will do in v2.
 
-   164          sleep(2);
-   165          /* deadlock may happen here */
-   166          k = ptrace(PTRACE_ATTACH, thread2_tid, 0L, 0L);
+Thanks,
+Donglin
 
-what happens if you change the test expectation here, that the
-ptrace may fail instead of succeed?
+>
+> >       TRACE_GRAPH_RET,
+> > diff --git a/kernel/trace/trace_functions_graph.c b/kernel/trace/trace_=
+functions_graph.c
+> > index a7f4b9a47a71..b618b6a673b7 100644
+> > --- a/kernel/trace/trace_functions_graph.c
+> > +++ b/kernel/trace/trace_functions_graph.c
+> > @@ -16,6 +16,12 @@
+> >  #include "trace.h"
+> >  #include "trace_output.h"
+> >
+> > +#ifdef CONFIG_FUNCTION_GRAPH_RETADDR
+> > +#define  STORE_RETADDR  1
+> > +#else
+> > +#define  STORE_RETADDR  0
+> > +#endif
+> > +
+> >  /* When set, irq functions will be ignored */
+> >  static int ftrace_graph_skip_irqs;
+> >
+> > @@ -29,19 +35,17 @@ struct fgraph_cpu_data {
+> >
+> >  struct fgraph_ent_args {
+> >       struct ftrace_graph_ent_entry   ent;
+> > -     /* Force the sizeof of args[] to have FTRACE_REGS_MAX_ARGS entrie=
+s */
+> > -     unsigned long                   args[FTRACE_REGS_MAX_ARGS];
+> > +     /* Force the sizeof of args[] to have (FTRACE_REGS_MAX_ARGS+STORE=
+_RETADDR) entries,
+> > +      * and the last entry is used to store the retaddr
+> > +      */
+> > +     unsigned long                   args[FTRACE_REGS_MAX_ARGS + STORE=
+_RETADDR];
+>
+> I'm thinking, if it is a different event, then it can still use the same
+> array. But retaddr will be first, and not last.
 
-What signals does the debugger receive after that point?
-Is the debugger notified that the debugged process continues,
-has the same PID, and is no longer ptraced?
+Thanks, will do in v2.
 
-Thanks
-Bernd.
+Thanks,
+Donglin
 
-> Oleg.
-> 
+>
+> >  };
+> >
+> >  struct fgraph_data {
+> >       struct fgraph_cpu_data __percpu *cpu_data;
+> >
+> >       /* Place to preserve last processed entry. */
+> > -     union {
+> > -             struct fgraph_ent_args          ent;
+> > -             /* TODO allow retaddr to have args */
+> > -             struct fgraph_retaddr_ent_entry rent;
+> > -     };
+> > +     struct fgraph_ent_args          ent;
+>
+> Where this could still be the same.
+>
+> >       struct ftrace_graph_ret_entry   ret;
+> >       int                             failed;
+> >       int                             cpu;
+> > @@ -127,11 +131,19 @@ static int __graph_entry(struct trace_array *tr, =
+struct ftrace_graph_ent *trace,
+> >       struct ring_buffer_event *event;
+> >       struct trace_buffer *buffer =3D tr->array_buffer.buffer;
+> >       struct ftrace_graph_ent_entry *entry;
+> > +     unsigned long retaddr =3D 0;
+> >       int size;
+> > +     int i =3D 0;
+> >
+> >       /* If fregs is defined, add FTRACE_REGS_MAX_ARGS long size words =
+*/
+> >       size =3D sizeof(*entry) + (FTRACE_REGS_MAX_ARGS * !!fregs * sizeo=
+f(long));
+> >
+> > +     if (IS_ENABLED(CONFIG_FUNCTION_GRAPH_RETADDR) &&
+> > +         tracer_flags_is_set(TRACE_GRAPH_PRINT_RETADDR)) {
+> > +             retaddr =3D ftrace_graph_top_ret_addr(current);
+> > +             size +=3D sizeof(long);
+> > +     }
+> > +
+> >       event =3D trace_buffer_lock_reserve(buffer, TRACE_GRAPH_ENT, size=
+, trace_ctx);
+> >       if (!event)
+> >               return 0;
+> > @@ -141,11 +153,17 @@ static int __graph_entry(struct trace_array *tr, =
+struct ftrace_graph_ent *trace,
+> >
+> >  #ifdef CONFIG_HAVE_FUNCTION_ARG_ACCESS_API
+> >       if (fregs) {
+> > -             for (int i =3D 0; i < FTRACE_REGS_MAX_ARGS; i++)
+> > +             for (; i < FTRACE_REGS_MAX_ARGS; i++)
+> >                       entry->args[i] =3D ftrace_regs_get_argument(fregs=
+, i);
+> >       }
+> >  #endif
+> >
+> > +     /*
+> > +      * Store retaddr to [0] if fregs is NULL, else to [FTRACE_REGS_MA=
+X_ARGS]
+> > +      */
+> > +     if (retaddr)
+> > +             entry->args[i] =3D retaddr;
+> > +
+>
+> Move this up before the args.
 
+Thanks, will do in v2.
+
+Thanks,
+Donglin
+
+>
+> >       trace_buffer_unlock_commit_nostack(buffer, event);
+> >
+> >       return 1;
+> > @@ -158,38 +176,6 @@ int __trace_graph_entry(struct trace_array *tr,
+> >       return __graph_entry(tr, trace, trace_ctx, NULL);
+> >  }
+> >
+> > -#ifdef CONFIG_FUNCTION_GRAPH_RETADDR
+> > -int __trace_graph_retaddr_entry(struct trace_array *tr,
+> > -                             struct ftrace_graph_ent *trace,
+> > -                             unsigned int trace_ctx,
+> > -                             unsigned long retaddr)
+> > -{
+> > -     struct ring_buffer_event *event;
+> > -     struct trace_buffer *buffer =3D tr->array_buffer.buffer;
+> > -     struct fgraph_retaddr_ent_entry *entry;
+> > -
+> > -     event =3D trace_buffer_lock_reserve(buffer, TRACE_GRAPH_RETADDR_E=
+NT,
+> > -                                       sizeof(*entry), trace_ctx);
+>
+> The reserve would need to use TRACE_GRAPH_RETADDR_ENT if retaddr is set.
+> But I still think you can consolidate the code.
+>
+> -- Steve
+>
+> > -     if (!event)
+> > -             return 0;
+> > -     entry   =3D ring_buffer_event_data(event);
+> > -     entry->graph_ent.func =3D trace->func;
+> > -     entry->graph_ent.depth =3D trace->depth;
+> > -     entry->graph_ent.retaddr =3D retaddr;
+> > -     trace_buffer_unlock_commit_nostack(buffer, event);
+> > -
+> > -     return 1;
+> > -}
+> > -#else
+> > -int __trace_graph_retaddr_entry(struct trace_array *tr,
+> > -                             struct ftrace_graph_ent *trace,
+> > -                             unsigned int trace_ctx,
+> > -                             unsigned long retaddr)
+> > -{
+> > -     return 1;
+> > -}
+> > -#endif
+> > -
+> >  static inline int ftrace_graph_ignore_irqs(void)
+> >  {
+> >       if (!ftrace_graph_skip_irqs || trace_recursion_test(TRACE_IRQ_BIT=
+))
 
