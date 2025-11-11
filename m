@@ -1,110 +1,84 @@
-Return-Path: <linux-kernel+bounces-895363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EA12C4D93D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:06:31 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F85BC4D99A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 13:12:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E21B518844AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:04:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 288324F3062
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:04:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADC66341650;
-	Tue, 11 Nov 2025 12:03:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8750626ED53;
+	Tue, 11 Nov 2025 12:04:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="T6MBAlE9"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e9o0NZ/J"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AB16273D8D
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 12:03:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0F923009F8;
+	Tue, 11 Nov 2025 12:04:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762862621; cv=none; b=NU1Oxg8Vs66I6yAaIOKWzMFpFPAfNFVMo+4yqL2c/K/jUVA4tCzvR/tRWwtxzER2o5ztWO5YFMXsz/lAQgGsus4J5wkE2ZPieYIMQ4+fhxhCXwbw42SW8kObOTMS6+D9wO5ZnGIPkhNnnY/yBQedvcR0/Xkrc7VphjhzN8pStrY=
+	t=1762862649; cv=none; b=cttK39N0xHZwrYdvXTD8Dos/SKEvK5sWAghj/5fKoYZmGoZ8kE7VG4YQjqGFwXB3u9nvwPEM7UJ36gx19pnneN6MOHs+M8oKxwGYBl8hmqQ1K4BpRFKTqcZUdf3dVbt67bBBAkQRiy6wmOB1xUZyRoLmf5Tg7xJEiLoF2sNOKvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762862621; c=relaxed/simple;
-	bh=i5kTeJu5utIxHsxfwz0A0kB+pA68IurFxsSvc3yAIvg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RbflsiGRtNMNWDLM/K0pBt8LFWq6bzFgtplmMgfPlJodtjyu7ITdwcby2/ZXlbesk8yj9Orz6IPph/IE7QyEkcvijPaA+Byz1l6/OtqHnbmXdJX3PJPou0h6kNyjt5EgWsNAgdOoiZV9usGPvvvGqlr+YznioVRvTwGG1gbFnew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=T6MBAlE9; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5945510fd7aso3125605e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 04:03:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1762862617; x=1763467417; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KljB7KA8H9UEbKdOlknFY9ShE3Ul6YXvW8YhMZmV7dU=;
-        b=T6MBAlE91+fR68qvC+UI39dl3Pl0ZCzXXH3CkPNvz3jI0Uu/5CmFmf2wRRFMRe/27D
-         0lSuOEiKfwudDoLLObQgD8s1CbXSE2Mc79MMoWLmBkyoYKliikrZz2PkvQgKPoTnncoq
-         /Grhzag1mImY5RKEi5CiLshDejVjYQmgjtq9DPQXIlyu6fy3ynnS62cqbMvejM2EeC0x
-         d4KL/7gTv94xq8Srub29vYtyK7ghb40ldcWkG1+24pa8eZc0NdY8MKLIasGnYOXEwgwA
-         LGNTkUNUr7RXy1UMFO2OKTirCwcc4ig79VAHGjZvwxQZc6pctFKTiOSxEUnoynq/v+4A
-         NPGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762862617; x=1763467417;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=KljB7KA8H9UEbKdOlknFY9ShE3Ul6YXvW8YhMZmV7dU=;
-        b=NsMXrPnhVcxmVp7rL+UaP5YJGDQaKc0oMYIsMIyLVG4i3sv8rG5+XBuOfD7gN67c8N
-         x7OqBUzMK76pf9W61O870H5t7fCi0HIWdxJnAU+/SHBOmkXH7b0hWF2F8jsamPTbygyT
-         MRW6wufeZCy+R4D9XCp17ilOxRJzojjJUWyw/cPiLDQx2TkDmAXZHlEAfzVgyeAzuXNs
-         m4MDSE++xigv80tbbU4QSsqVc6EB5NMuhICVbot+qnjYFrghg61wJBicfjZqwEbNQ5fE
-         Mk/wQK2eB4V2Chr2s65+ZF1tutRc++r6bLBux1vgKdQnRB+Sn23t9lI9lXrLJ/wq0QdZ
-         ln2w==
-X-Gm-Message-State: AOJu0YxQW84DaW7pSf9HoW6yiawP2wDWtmNGnlzCD4IauN4xFLZIJjS/
-	uAsHFaGVrLVgBXqOlLa45tkOG5lgZt/7G72qtOetrlFvrSXTV6uFaFwAz07AYpD2S+ETKAzarVg
-	oACTc6jkRmNPLY1qbkDtbGFJT98NVSJNkPuHPaHvvFg==
-X-Gm-Gg: ASbGncu/3kG757mwb0Mc3DcwI7dgwNrXNXwvLi5QGuYQC4xOmIKGnWXxSdtSQp8eSQz
-	utTY3PxQSqTiSZT4p5qqS+MON3kbDit/g5fiCeSuVVHMMaz6d6eWBVyfd1Ua9NaaH4qMo+5qSB3
-	vyrylTnYILWV6kouOiIAoRuVxmthi+hcRuhlYhWSwtr064g49r3xd0r+IkOvhKrDVcALLgh6B4w
-	XzI5QAJzNo0/j01mPM0ZZvJ9/7wV1TaayPlVNV4riFHpJOBqdnpi2ebb4QyJ082BHAyqXXolMsX
-	g54eUBix4gTFJWCGQ+p35rKI8Uaq
-X-Google-Smtp-Source: AGHT+IE79G5EhyzCGFO5KShwUVwQMKTk9DLfvtXgvYUrm3xN6l8t83Xw7QhBO96Fv1jh8YdyD7Y7DE1SL12Jvgo2IgU=
-X-Received: by 2002:a05:6512:e98:b0:594:2d64:bce7 with SMTP id
- 2adb3069b0e04-5945f14610cmr3166689e87.11.1762862617351; Tue, 11 Nov 2025
- 04:03:37 -0800 (PST)
+	s=arc-20240116; t=1762862649; c=relaxed/simple;
+	bh=CXuSHy0O31aSj5lEOnrDTRMS+CyKcDRXkUzk/B6pN8E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ExcMxD7xnyTKMOvrLh1vOEWDACBhV90M5k5PMIy9CLyGLwVr45e3yCyNBYSAEvE4zGN6dgrReXT2LURxOnFo8KDWpqOTMA+4wmNUrjeDnAOH0D954NQBI0PsriOYGfIpMuwcXc7w1QmSIpwMBWgDECRKvfo1+GyY2lsgovB3RqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e9o0NZ/J; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACBADC4CEF7;
+	Tue, 11 Nov 2025 12:04:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762862649;
+	bh=CXuSHy0O31aSj5lEOnrDTRMS+CyKcDRXkUzk/B6pN8E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=e9o0NZ/JbFwc0f+dXwdos4UAh8440bpnL5TeGbCKyOfGKD2tdnW54cbgFD2Q1lqv+
+	 XZeOb4LHNLZbP5jojQY33R+6tdtQhEzdHhovDkJ0xnU6X7wKw63U0A5CwNd0mMzGpm
+	 9USvbr7UPvBhO6scn1T2nrQycv9252QaPeurZL6R719Mxlch60WxMkXwpUXYuXykQN
+	 /smLJi9G0/OFRzJinqppGQzQYdiJIiKOrEn97bfPMPZhSVAhWZxHwtSpRddx+18gP7
+	 2vh7WJjkjsABJwADhBthuN5WeGXHgcgIq4eJj9ovehL9/vPatK/na/fIGi1MU4syba
+	 HAJaFhlxg6IGA==
+Date: Tue, 11 Nov 2025 13:04:05 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: syzbot <syzbot+0a8655a80e189278487e@syzkaller.appspotmail.com>
+Cc: jack@suse.cz, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Subject: Re: [syzbot] [fs?] WARNING in nsproxy_ns_active_get
+Message-ID: <20251111-komponente-verprellen-a5ba489f5830@brauner>
+References: <690bfb60.050a0220.2e3c35.0012.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251107152950.293899-1-marco.crivellari@suse.com> <176286176938.477075.17121782345964029950.b4-ty@csgroup.eu>
-In-Reply-To: <176286176938.477075.17121782345964029950.b4-ty@csgroup.eu>
-From: Marco Crivellari <marco.crivellari@suse.com>
-Date: Tue, 11 Nov 2025 13:03:26 +0100
-X-Gm-Features: AWmQ_bnOYD56Kc4jcqB1Td1b1Q7AnUCQFEmxY7td5AXiEMwVkgsUHWrdJFOKphU
-Message-ID: <CAAofZF6OnMGid8T=gSezk4YWJkZsET4VmFcbCVTzQU3HWHsUgg@mail.gmail.com>
-Subject: Re: [PATCH] soc: fsl: qbman: add WQ_PERCPU to alloc_workqueue users
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
-	Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, 
-	Frederic Weisbecker <frederic@kernel.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
-	Michal Hocko <mhocko@suse.com>, Kees Cook <kees@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <690bfb60.050a0220.2e3c35.0012.GAE@google.com>
 
-On Tue, Nov 11, 2025 at 12:51=E2=80=AFPM Christophe Leroy
-<christophe.leroy@csgroup.eu> wrote:
->
->[...]
->
-> Applied, thanks!
->
-> [1/1] soc: fsl: qbman: add WQ_PERCPU to alloc_workqueue users
->       commit: bdedc7414642e9c3793933d43b72c67f3b7db326
->
+On Wed, Nov 05, 2025 at 05:35:28PM -0800, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    17490bd0527f Add linux-next specific files for 20251104
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1006532f980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=9995c0d2611ab121
+> dashboard link: https://syzkaller.appspot.com/bug?extid=0a8655a80e189278487e
+> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1406532f980000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1166ff34580000
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/a4d318147846/disk-17490bd0.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/86641a470170/vmlinux-17490bd0.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/35c008a540c8/bzImage-17490bd0.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+0a8655a80e189278487e@syzkaller.appspotmail.com
 
-Many thanks!
-
---=20
-
-Marco Crivellari
-
-L3 Support Engineer, Technology & Product
+#syz test: https://github.com/brauner/linux.git namespace-6.19
 
