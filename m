@@ -1,77 +1,127 @@
-Return-Path: <linux-kernel+bounces-895574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D942DC4E51F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 15:12:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBB6BC4E4FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 15:11:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F36C3AE4BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:09:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 795F0189787C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:10:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ABEF31195A;
-	Tue, 11 Nov 2025 14:09:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDA1432827A;
+	Tue, 11 Nov 2025 14:10:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="qkerQOBU"
-Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="K0xXkCsK"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AF892EBBA8
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 14:09:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D309B31195A
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 14:10:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762870184; cv=none; b=W6jF2YApnlahQ6PtzSZxp2amtWjCbnZnk7IJKgD9Kq4Sh5Kz5fuCbMKuL32OVQI082WZc0y1TpF6DL8fVQJ+GCMlJilLQ1W0bjM3coDPsPGxIc6+sk8MUmW0zVaN8uaTS5hS6AF1N0/zJbqW1PHaaJWhLlqpw9mq5hdxeCwKd88=
+	t=1762870203; cv=none; b=B2LEuusXDuAcnvPVK2l5kaux1+jsi9+9Wo11vmik8rahCuhFy3eIIP8bqAQrYVfmxlSNQtkfb8OcczE6QFKftzC+Y+XQ1zrDOz0mBuQygj4wBfZLPuJu3BDZ6LbYzh/NIDY8Ml1C4jty0lKTjyoKMlPOwTXxHew3wj/LjH1LO0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762870184; c=relaxed/simple;
-	bh=JZkQjf1Sarg45c1oEVUVCoWxz7kcsUmp2qSWQ5FlFzo=;
+	s=arc-20240116; t=1762870203; c=relaxed/simple;
+	bh=L8iD7ISPG2fGHbO2n2GzUqN8VPD4vbOEio6K+3ptYII=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G3mBrO44L/qKFUOU3Lw2pSChlRxCQKpCWam5WWTXe+t4qKKMNc8UzLYYrIh+O731p04MuH7P1IyAP43btqZX3ucE0SY7hgwhaCog6KLOQ5Sa4ITCQ3EWLKMk+tS4h4egEwVnrxOayPfDjpuO4xtze3Apu0Nu7dOggrYlLhTuj2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=qkerQOBU; arc=none smtp.client-ip=115.124.30.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1762870179; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-	bh=sYOG6nKjCxsoQ9O4ldDugrraizvxW0Zd9RlSB6q6qdY=;
-	b=qkerQOBUltL8zrFLJrpGNYEowYgRx5++D51BGFcf+YaqQqPVe+EmvYOkVH/D9/2kM+/btkiF0BJyABECfwmnrnA3mRnyAHjFlzkCPNwN0G0SVT8oVZItMWb3j6kGssdAq8N/C42cBu+PT5CmbPhatePMaSQr/t23tuOAu7ndYWk=
-Received: from localhost(mailfrom:feng.tang@linux.alibaba.com fp:SMTPD_---0WsC0OrK_1762870178 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 11 Nov 2025 22:09:38 +0800
-Date: Tue, 11 Nov 2025 22:09:38 +0800
-From: Feng Tang <feng.tang@linux.alibaba.com>
-To: Petr Mladek <pmladek@suse.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Lance Yang <ioworker0@gmail.com>, paulmck@kernel.org,
-	Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] docs: panic: correct some sys_ifo names in sysctl doc
-Message-ID: <aRNDooww1M_3lH55@U-2FWC9VHC-2323.local>
-References: <20251106023032.25875-1-feng.tang@linux.alibaba.com>
- <20251106023032.25875-2-feng.tang@linux.alibaba.com>
- <aRIYUzM65_ZigeIU@pathway.suse.cz>
+	 Content-Type:Content-Disposition:In-Reply-To; b=SpeCfjb54sYNweoo2jowEKdsWy8Y7aP/x4XBX8uXlIo3iR0hNEAlM0vsrpXsAQoA2yOrhS3CYkvha/0vPS1D0zRqSDnyAveDaStZSLbOqJnwZvpTUD8uCne5SiCeaSj1A9H95CmrchBIKSA95HRY5IgHmtpHS/pjhdJ9Vz2VDnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=K0xXkCsK; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762870200;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Z0jAePqN6TOEf6jTJjCEwq53g6vGvq/lRpJXMiEpVl8=;
+	b=K0xXkCsKlE5ctbvqM1CdbifTk17x09d6tND+sT0KvKHhekWSeI8fcp4f7H00tm+W4ZqTp0
+	j0zy9ItRKEzdabSTx0/PEYD2xXrzy9EHOT9zZSgmKOf0em5ovS63DWoUEabCCMKoBLPyQQ
+	xwhYjz4sCjUtRtGWR8LASyckoVX0t4w=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-650-vw-lvJJNOaevRjFJJf1SIA-1; Tue,
+ 11 Nov 2025 09:09:55 -0500
+X-MC-Unique: vw-lvJJNOaevRjFJJf1SIA-1
+X-Mimecast-MFC-AGG-ID: vw-lvJJNOaevRjFJJf1SIA_1762870193
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8E8DA195607F;
+	Tue, 11 Nov 2025 14:09:53 +0000 (UTC)
+Received: from fedora (unknown [10.44.33.247])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 19CF31800576;
+	Tue, 11 Nov 2025 14:09:50 +0000 (UTC)
+Received: by fedora (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Tue, 11 Nov 2025 15:09:53 +0100 (CET)
+Date: Tue, 11 Nov 2025 15:09:49 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: Cyrill Gorcunov <gorcunov@gmail.com>
+Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
+	linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH 2/3] exec: don't wait for zombie threads with
+ cred_guard_mutex held
+Message-ID: <aRNDrfjKQJpPNIUo@redhat.com>
+References: <AS8P193MB12851AC1F862B97FCE9B3F4FE4AAA@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <AS8P193MB1285FF445694F149B70B21D0E46C2@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <AS8P193MB1285937F9831CECAF2A9EEE2E4752@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <GV2PPF74270EBEEEDE0B9742310DE91E9A7E431A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+ <GV2PPF74270EBEE9EF78827D73D3D7212F7E432A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+ <aRDL3HOB21pMVMWC@redhat.com>
+ <aRDMNWx-69fL_gf-@redhat.com>
+ <aRHFSrTxYSOkFic7@grain>
+ <aRIAEYH2iLLN-Fjg@redhat.com>
+ <aRJd8Z-DrYrjRt4r@grain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aRIYUzM65_ZigeIU@pathway.suse.cz>
+In-Reply-To: <aRJd8Z-DrYrjRt4r@grain>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Mon, Nov 10, 2025 at 05:52:35PM +0100, Petr Mladek wrote:
-> On Thu 2025-11-06 10:30:30, Feng Tang wrote:
-> > Some sys_info names wered forgotten to change in patch iterations, while
-> > the right names are defined in kernel/sys_info.c.
-> > 
-> > Fixes: d747755917bf ("panic: add 'panic_sys_info' sysctl to take human readable string parameter")
-> > Signed-off-by: Feng Tang <feng.tang@linux.alibaba.com>
-> 
-> LGTM, feel free to use:
-> 
-> Reviewed-by: Petr Mladek <pmladek@suse.com>
+On 11/11, Cyrill Gorcunov wrote:
+>
+> Anyway while looking into patch I got wonder why
+>
+> +static int wait_for_notify_count(struct task_struct *tsk)
+> +{
+> +	for (;;) {
+> +			return -EINTR;
+> +		set_current_state(TASK_KILLABLE);
+> +		if (!tsk->signal->notify_count)
+> +			break;
+>
+> We have no any barrier here in fetching @notify_count? I mean updating
+> this value is done under locks (spin or read/write) in turn condition
+> test is a raw one. Not a big deal since set_current_state() and schedule()
 
-Thanks you!
+Yes, so I think that, correctness-wise, this doesn't need additional barriers.
 
-- Feng
+> but I've
+> been a bit confused that we don't use some read_once here or something.
+
+Yes, this needs READ_ONCE() to avoid the warnings from KCSAN. And in fact
+this code was written with READ_ONCE() but I removed it before sending this
+RFC.
+
+I was going to do this later. I always forget how KCSAN works, IIUC I also
+need to add WRITE_ONCE() into exit_notify() and __exit_signal() to make
+KCSAN happy, even if ->notify_count is always updated under the lock.
+
+Same for the "if (me->signal->group_exec_task == me)" check in begin_new_exec().
+
+Right now I would like to know if this RFC (approach) makes any sense,
+especially because 3/3 adds a user-visible change.
+
+Oleg.
+
 
