@@ -1,206 +1,152 @@
-Return-Path: <linux-kernel+bounces-895463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 112E0C4E023
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:04:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5CDEC4E02E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 14:04:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D9013AB6AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:57:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4656D3A3A45
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 12:59:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6B0025A2DE;
-	Tue, 11 Nov 2025 12:57:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78D0625A2DE;
+	Tue, 11 Nov 2025 12:59:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EyO5VqE5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="UqtWHWSc";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="xsSGmQ/7"
+Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02F783AA190;
-	Tue, 11 Nov 2025 12:57:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 095DC3AA1A4;
+	Tue, 11 Nov 2025 12:59:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762865839; cv=none; b=VJhl10ftvuRKApCdtuMssw7RLkkEx5HT8kqKiXuqGEADbfjywO4gSby4iKZPf2FiwP8mKFC/tsyjWRt2Ck9B5tYzQg+RCT29b5Ovv6lahzHCgvhqSaSVtoECTRfl5/1fqk7p6xptqhO3oOeOfzT6lDTQPykvWbW5Y6e+P+SF6/4=
+	t=1762865967; cv=none; b=avnSxxCkPqFTekg/GBu39gEDEf+N5Z+hmYTgXWUFDOKpFsbnHvAcwvMtwuNIs45UhSGksUPRGtEyCOEBYZciyFJglk7/CHVf1B8cIer2GWxxfovppN7LmY+bgysl1aeMusF9VAoywNbUUn9k5guXzvbLc48eVls550cOLf31oWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762865839; c=relaxed/simple;
-	bh=MjH9p/+LiZ+r7NEuBOPrqSJjE3YW0uIHvCW2oADt5lE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IKMI6FoQ8DyQBAJR0tgw2UnYphgGo5dahiC/Dhs4Tnr/VpX7xiF0hVEwLctLKKkJHw+94uhrd5JX2aNWyQIMlCtiNuz29wikbwYvxQXYJZUqmI/RRLp7XW7bz5f5RA9TFty/LuZB6CT+Q/NSYZ4j6dA2jNtv3ZtSJBVofuUi+qU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EyO5VqE5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48115C4CEF7;
-	Tue, 11 Nov 2025 12:57:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762865838;
-	bh=MjH9p/+LiZ+r7NEuBOPrqSJjE3YW0uIHvCW2oADt5lE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EyO5VqE55DxGU9ycLNHGF0eZ/oY4Rm8O8YckXm94ZVwTfkv0ezSP8fBTsK1tPGp9R
-	 TFChE+UjyhNtFTRyHxm/EHpvHeHh4Z9XCgdBX0HuJhH9uiEMxEjDvNBbio0Kgs14X0
-	 iuQqZmisDC0Zg2oBpaHKqQnwBDZygj9C2wIZMBhqLlqmYOxCm52hJGJbOXQlgRi/EB
-	 FvbyeekYUT3bDEYa9J8YZniSpa3uRvkZibdN7fgyPB3nxzs1fKj5lKY5+TXBPeJsgg
-	 sW1ob78VeS6mHGuisfWX4UzemODQBDdrrpPK4gevs1Dn3yt9LBo2fHUZNEwKWdE0fY
-	 SWnlH9SvmkBcg==
-Date: Tue, 11 Nov 2025 06:57:16 -0600
-From: Rob Herring <robh@kernel.org>
-To: Jonas Jelonek <jelonek.jonas@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Peter Rosin <peda@axentia.se>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Thomas Richard <thomas.richard@bootlin.com>,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: Re: [PATCH v6 1/2] dt-bindings: gpio: add gpio-line-mux controller
-Message-ID: <20251111125716.GA2560355-robh@kernel.org>
-References: <20251111092705.196465-1-jelonek.jonas@gmail.com>
- <20251111092705.196465-2-jelonek.jonas@gmail.com>
+	s=arc-20240116; t=1762865967; c=relaxed/simple;
+	bh=byl3iwP0rDxRmVpU3HYfkY1xTveCtw/y/ASjLYrcWdA=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=V2JvYgJy7MIK0hB9+PvoBar8bbCejvix9Bw9w2LBEftq7zLivnGFRA/uMymzJhdLBCZqYhqyaz/0S15LCHt6pblsGwTUXRsMdrNQIrJpORF22lA1UpcDzHtNmP2cUUhq8OreBlH8RqchNzgm1mLnshQ2Q3H7qTuyuLewx0r39nY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=UqtWHWSc; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=xsSGmQ/7; arc=none smtp.client-ip=103.168.172.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfout.phl.internal (Postfix) with ESMTP id 3F130EC0183;
+	Tue, 11 Nov 2025 07:59:25 -0500 (EST)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-04.internal (MEProxy); Tue, 11 Nov 2025 07:59:25 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1762865965;
+	 x=1762952365; bh=lpZ/xuA4REV8ZqmvRWc8U7MR0aL6JOz5DLY/YkHrw9k=; b=
+	UqtWHWScYmiVul6s0RQOIos8pdzTB+NUEpkxiwWBBXXpvQBQZmceO0sJWmXhHaUO
+	Ue5SjkpYWIv+CrJF+358rv5Um65ldn162OBdqLEYGWvp1BMBaNItTFDSJ236ljH3
+	UyB+s3OdF/bOzbQfL3luE0pBj4qUICHxVNw0YYwgDILlfGe7YlePxCgz1EkNZ7Is
+	zxJxtkBdYh9G6Es07wf9z2r7osm7Rz1h2FY8VuG82u2RrJmSHtUOW6XLqHojU6Xl
+	38cxWmsVFWK1VKnXcmAds8Fq6U1ZN8l36qJ0PqaYPDQ9hs3nidEB6OlZNLvC7iQK
+	i6HQZ7lrcj/30goutiVCMw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762865965; x=
+	1762952365; bh=lpZ/xuA4REV8ZqmvRWc8U7MR0aL6JOz5DLY/YkHrw9k=; b=x
+	sSGmQ/7E9E3pqz0aYax7BxnB7Ohe2Ai/IMwtxMvAFPxb3dnOU7DB915wf0b/NFqi
+	LpK9ScL0/JOyVb7Tgvw/KzoAMG+ZkyRye1CBAmiZF5ymH+DhMLLpAXw1q11um/t3
+	bpu8kjZThO7KeVX7UD7/W2m4PJazsQSu4YvxYyjDodXCli9wHc24plpndarD6Rti
+	mPovccDyvit/TTneO97YHbB/TzQMXpRqqP8ffqOhWHigG0ELwpgEPKWvtUGzVENW
+	Dez1F2Sy8K7/DqxrmAm34D7NZpvVJq8cbT0fXDDKkPAC/xNzQWjt3jGtK0Rbtfpe
+	KSv8M6p0u5794QAmbEsxw==
+X-ME-Sender: <xms:LDMTacJmPJUOMS65REH6oCKh4efqNTNNhKOUa5UpEXqW9ahNQ5IjTg>
+    <xme:LDMTaW_gcKF7Ai4FSctoQD5FhpiA7P3uX_ZbQ36qCGzr0yPIQv1ll8dbhXs7GjKQZ
+    8KJUDWBc1cmQwuHvzne_SxBDB_W2f1vpf2rzcGOpX0sxAMLHP3xf24>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvtdduvdehucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdejnecuhfhrohhmpedftehrnhgu
+    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
+    hrnhepvdfhvdekueduveffffetgfdvveefvdelhedvvdegjedvfeehtdeggeevheefleej
+    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnh
+    gusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepjedpmhhouggvpehsmhhtphhouhht
+    pdhrtghpthhtohepvhhinhgtvghniihordhfrhgrshgtihhnohesrghrmhdrtghomhdprh
+    gtphhtthhopehluhhtoheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhhuhgrhhes
+    khgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhglhigsehlihhnuhhtrhhonhhigidrug
+    gvpdhrtghpthhtohepthhhohhmrghsrdifvghishhsshgthhhuhheslhhinhhuthhrohhn
+    ihigrdguvgdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnh
+    gvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkshgvlhhfthgvshhtsehvghgvrhdr
+    khgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:LDMTaZwmmJhmb7RfxaHmaaOndIe_wmmglbdB_wo4nvBtD-6ruRaWBQ>
+    <xmx:LDMTaTX4ld0Xsh4WQ7G7zXqfacLqK54TtOamYNDEmHDS6Rd7nyBIHA>
+    <xmx:LDMTaTOokFBQuNSsckkmwEMbglX48-zBIX20rTzJPpHuW2pj0yOVwg>
+    <xmx:LDMTadBqIhzOV20ccI31YAGRwX5QrNW5V_VMD2fT1xhcRcwEvv1YDw>
+    <xmx:LTMTad1PeIzSn5WBhkfWaPoUul2bzlnWrFPuW_vHicCEh0EqdEnWN5Ut>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id D0E25700054; Tue, 11 Nov 2025 07:59:24 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251111092705.196465-2-jelonek.jonas@gmail.com>
+X-ThreadId: A5RixjiBPr7B
+Date: Tue, 11 Nov 2025 13:59:02 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+ "Andy Lutomirski" <luto@kernel.org>, "Thomas Gleixner" <tglx@linutronix.de>,
+ "Vincenzo Frascino" <vincenzo.frascino@arm.com>, shuah <shuah@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Message-Id: <29dd9e11-9ae8-415a-acb3-b96af56550b0@app.fastmail.com>
+In-Reply-To: <20251111-vdso-test-types-v1-4-03b31f88c659@linutronix.de>
+References: <20251111-vdso-test-types-v1-0-03b31f88c659@linutronix.de>
+ <20251111-vdso-test-types-v1-4-03b31f88c659@linutronix.de>
+Subject: Re: [PATCH 04/10] selftests: vDSO: vdso_test_abi: Provide compatibility with
+ 32-bit musl
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 11, 2025 at 09:27:03AM +0000, Jonas Jelonek wrote:
-> Add dt-schema for a gpio-line-mux controller which exposes virtual
-> GPIOs for a shared GPIO controlled by a multiplexer, e.g. a gpio-mux.
-> 
-> The gpio-line-mux controller is a gpio-controller, thus has mostly the
-> same semantics. However, it requires a mux-control to be specified upon
-> which it will operate.
-> 
-> Signed-off-by: Jonas Jelonek <jelonek.jonas@gmail.com>
-> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+On Tue, Nov 11, 2025, at 11:49, Thomas Wei=C3=9Fschuh wrote:
+> The 32-bit time variants on musl have different names, provide a fallb=
+ack.
+>
+> Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
 > ---
->  .../bindings/gpio/gpio-line-mux.yaml          | 109 ++++++++++++++++++
->  1 file changed, 109 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-line-mux.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/gpio/gpio-line-mux.yaml b/Documentation/devicetree/bindings/gpio/gpio-line-mux.yaml
-> new file mode 100644
-> index 000000000000..0228e9915b92
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/gpio/gpio-line-mux.yaml
-> @@ -0,0 +1,109 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/gpio/gpio-line-mux.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: GPIO line mux
-> +
-> +maintainers:
-> +  - Jonas Jelonek <jelonek.jonas@gmail.com>
-> +
-> +description: |
-> +  A GPIO controller to provide virtual GPIOs for a 1-to-many input-only mapping
-> +  backed by a single shared GPIO and a multiplexer. A simple illustrated
-> +  example is
+>  tools/testing/selftests/vDSO/vdso_test_abi.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+>
+> diff --git a/tools/testing/selftests/vDSO/vdso_test_abi.c=20
+> b/tools/testing/selftests/vDSO/vdso_test_abi.c
+> index=20
+> bb5a5534ae7e8a46d7e68a561684c29a752b866d..0a6b16a21369642384d43b0efd1b=
+ca227a2a4298=20
+> 100644
+> --- a/tools/testing/selftests/vDSO/vdso_test_abi.c
+> +++ b/tools/testing/selftests/vDSO/vdso_test_abi.c
+> @@ -166,7 +166,11 @@ static void=20
+> vdso_test_clock_getres(__kernel_clockid_t clk_id)
+>  		clock_getres_fail++;
+>  	}
+>=20
+> +#ifdef SYS_clock_getres
+>  	ret =3D syscall(SYS_clock_getres, clk_id, &sys_ts);
+> +#else
+> +	ret =3D syscall(SYS_clock_getres_time32, clk_id, &sys_ts);
+> +#endif
+>=20
 
-colon on the end.
+I think this #ifdef check is not reliable enough and may hide
+bugs. As with the other syscalls, the best way to call these
+is to either use __NR_clock_getres_time64 on __kernel_timespec, or
+to use __NR_clock_getres on __kernel_old_timespec.
 
-> +
-> +            +----- A
-> +    IN     /
-> +    <-----o------- B
-> +        / |\
-> +        | | +----- C
-> +        | |  \
-> +        | |   +--- D
-> +        | |
-> +       M1 M0
-> +
-> +    MUX CONTROL
-> +
-> +     M1 M0   IN
-> +      0  0   A
-> +      0  1   B
-> +      1  0   C
-> +      1  1   D
-> +
-> +  This can be used in case a real GPIO is connected to multiple inputs and
-> +  controlled by a multiplexer, and another subsystem/driver does not work
-> +  directly with the multiplexer subsystem.
-> +
-> +properties:
-> +  compatible:
-> +    const: gpio-line-mux
-> +
-> +  gpio-controller: true
-> +
-> +  "#gpio-cells":
-> +    const: 2
-> +
-> +  gpio-line-mux-states:
-> +    description: Mux states corresponding to the virtual GPIOs.
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +
-> +  gpio-line-names: true
-> +
-> +  mux-controls:
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+If we are trying to validate the interface here, we should probably
+call both if available. If we just want to know the result and
+trust that both work correctly, I'd always use __NR_clock_getres_time64
+on 32-bit systems and __NR_clock_getres on 64-bit systems.
 
-Already has a type. Drop the ref.
-
-> +    maxItems: 1
-> +    description:
-> +      Phandle to the multiplexer to control access to the GPIOs.
-> +
-> +  ngpios: false
-
-No need for this.
-
-> +
-> +  muxed-gpios:
-> +    maxItems: 1
-> +    description:
-> +      GPIO which is the '1' in 1-to-many and is shared by the virtual GPIOs
-> +      and controlled via the mux.
-> +
-> +required:
-> +  - compatible
-> +  - gpio-controller
-> +  - gpio-line-mux-states
-> +  - mux-controls
-> +  - muxed-gpios
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/gpio/gpio.h>
-> +    #include <dt-bindings/mux/mux.h>
-> +
-> +    sfp_gpio_mux: mux-controller-1 {
-> +        compatible = "gpio-mux";
-> +        mux-gpios = <&gpio0 0 GPIO_ACTIVE_HIGH>,
-> +                    <&gpio0 1 GPIO_ACTIVE_HIGH>;
-> +        #mux-control-cells = <0>;
-> +        idle-state = <MUX_IDLE_AS_IS>;
-> +    };
-> +
-> +    sfp1_gpio: sfp-gpio-1 {
-> +        compatible = "gpio-line-mux";
-> +        gpio-controller;
-> +        #gpio-cells = <2>;
-> +
-> +        mux-controls = <&sfp_gpio_mux>;
-> +        muxed-gpios = <&gpio0 2 GPIO_ACTIVE_HIGH>;
-> +
-> +        gpio-line-names = "SFP1_LOS", "SFP1_MOD_ABS", "SFP1_TX_FAULT";
-> +        gpio-line-mux-states = <0>, <1>, <3>;
-
-gpio-line-names is defined to have an entry for all lines. So 
-gpio-line-mux-states is not necessary. You can just do:
-
-gpio-line-names = "SFP1_LOS", "SFP1_MOD_ABS", "", "SFP1_TX_FAULT";
-
-Rob
+      Arnd
 
