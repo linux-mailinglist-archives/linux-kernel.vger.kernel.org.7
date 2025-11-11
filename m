@@ -1,219 +1,225 @@
-Return-Path: <linux-kernel+bounces-894980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38362C4CA09
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:23:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5062BC4D383
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 11:56:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 160434F6DC3
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 09:17:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C65AE3AA145
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 10:49:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2DD92F28E9;
-	Tue, 11 Nov 2025 09:17:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B36BD350A3B;
+	Tue, 11 Nov 2025 10:49:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="siwMQcww"
-Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11012032.outbound.protection.outlook.com [40.93.195.32])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=improbability.net header.i=@improbability.net header.b="henWl7qQ"
+Received: from out12-53.antispamcloud.com (out12-53.antispamcloud.com [185.201.16.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE2402EDD69;
-	Tue, 11 Nov 2025 09:17:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.195.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762852635; cv=fail; b=JUUoBv3+kvUK+9AoajP+lx/aJz+Ep6mqjXNGUuRdbpvt3+/asy2We85NuCqvxS25lcfdrhiPpoVcceEUlVw2Og6dh9xIDk/a7pb2Wh28THwi+Wd95mMv3QrJc3jmfg7eYEUhusYC+7t/obGufZDofGhJheCD4WxcwzqjhlaLyQo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762852635; c=relaxed/simple;
-	bh=kxaCokdgSkJnZcGMzb6S+MPyE0jeAWwecDQ8O9yK77A=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EtS95uGgMTZN1vLdKc16LpzKjvliyJ/GOVz0fWtGcRcGPWI3SRvdcprHmkFKKsSXATv81MTblto2oKKEeLOoauAgXpGaryepd6ecnSEh4d24Ki1qzxrS/kecHiubqdm9NgDF8lt9PoJ8l2IJ7LRguHZBC4SN8ZBehNzOhNro6f8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=siwMQcww; arc=fail smtp.client-ip=40.93.195.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ZvZdP4Cd8ktUsacGXCDiOGYei/CepJe51mKwIo7hSMfUXM8Aclw6Ez6GZ/KmV0749SeN8wxcOILYRw1a7aiRxScmI24x7NVVkiUth5+y9b441+buLZVaUN+RurEnyU/1tairs3PKOcrSVJxNU+EjsOAO0Kh1hMURf2khIZ2qEfe7c9WNtaNT8OxX+T2mhu/FM5s6kSrTufvtGJTZb6DKALzgbE7aF2EnSP9VKJ8MuJLvodU5bIEnv6289VstK0G9ylceRfnxc+ieG80Wps9kkcgyo5KCd/Hpl6ZczTd5p8xqaZLDsmUIDmR90keC3HtBV6gaiEnFXPYJQyqyrg/icQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xtk1ueF1k9MxWwGmLjGxgJkVLrR2K8aRmR9C8pvv20Y=;
- b=h1Kl4IetugX+Fo3jYR5ztN6WN4WicJqJcT9phtR7ewDcUleOuGYBPJkZihEv0SUgVO6X+SaPOlP3AfS0ViAd4h0O8dDfFrb5QxMu7vJ7NxaKxGEA2RomBTekagLx2li9YpZK0CvS7j4Kz6keHEnj5QmHEIUXjJiEv1QeboUAZq4eRwJBeo7nobXUQCk8gln6WoPnNNLvti0R/oR3/6NMpLE6hUSP+45OhG6sAeforNU2n8pLqlNr4EgIyymc5Re+L7QsWgzobzln7cxTnQo4UGvg49/NsiciEa1DP8w+90CZK2sfqkEVR8qyot6/F0hE8t/jESsU/ggR8USgBCLJXg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xtk1ueF1k9MxWwGmLjGxgJkVLrR2K8aRmR9C8pvv20Y=;
- b=siwMQcww1IIeX8kogUTGRtYYYktEkCyD+e8XHEL8IYQXuAUh51VQAlrq6Cdd4IjB0Pp85YGc9aRlmUayY13lWEIXzHdqNK5JFjL+zv8Xi6sJvYhX89id9v/mLLtJkCtM88+rBFdNO+0Ex6BGmlU6FyhlDps6zTNp/kgB3a9uh2osnCytITAmy0To86FDPp78SksN7OXvf7R5RkYoTi4Sn+uJvdNJj/m6+O7NZEzNttwj/W4PKwtOUBSp4zxpeAuYfKpXOseXrRGfAa1wwgAhwTfHjeqirZrSLnWNhzd/uuM6aXq4Q/+X3KzbYDTnUkM0YjZhfGcA7KpEF0XvASw61A==
-Received: from BY5PR16CA0036.namprd16.prod.outlook.com (2603:10b6:a03:1a0::49)
- by LV0PR12MB999094.namprd12.prod.outlook.com (2603:10b6:408:32e::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Tue, 11 Nov
- 2025 09:17:10 +0000
-Received: from SJ1PEPF000026C8.namprd04.prod.outlook.com
- (2603:10b6:a03:1a0:cafe::51) by BY5PR16CA0036.outlook.office365.com
- (2603:10b6:a03:1a0::49) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9298.16 via Frontend Transport; Tue,
- 11 Nov 2025 09:17:10 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- SJ1PEPF000026C8.mail.protection.outlook.com (10.167.244.105) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9320.13 via Frontend Transport; Tue, 11 Nov 2025 09:17:10 +0000
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 11 Nov
- 2025 01:16:54 -0800
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail203.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 11 Nov
- 2025 01:16:53 -0800
-Received: from kkartik-desktop.nvidia.com (10.127.8.13) by mail.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server id 15.2.2562.20 via Frontend
- Transport; Tue, 11 Nov 2025 01:16:49 -0800
-From: Kartik Rajput <kkartik@nvidia.com>
-To: <akhilrajeev@nvidia.com>, <andi.shyti@kernel.org>, <robh@kernel.org>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <thierry.reding@gmail.com>,
-	<jonathanh@nvidia.com>, <ldewangan@nvidia.com>, <digetx@gmail.com>,
-	<smangipudi@nvidia.com>, <linux-i2c@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <kkartik@nvidia.com>
-Subject: [PATCH v11 4/4] i2c: tegra: Add Tegra264 support
-Date: Tue, 11 Nov 2025 14:46:27 +0530
-Message-ID: <20251111091627.870613-5-kkartik@nvidia.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251111091627.870613-1-kkartik@nvidia.com>
-References: <20251111091627.870613-1-kkartik@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30380347FF8;
+	Tue, 11 Nov 2025 10:49:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.201.16.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762858164; cv=none; b=F3+OBbd3u3x368Ys59cjAKjnUyIHXnEu3RsLLMNztzAt7hmVACncLbmbdWM1pcl8u6hhBhNVX7LePdzY3GMFQfId8F0PI/UOouiJNcBq8/e58ijPY0Pnb7/QGif9bouw2UQZiZhkH0jju40zTc3pfBtMYNSiTdjCcqIo7t1hZx4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762858164; c=relaxed/simple;
+	bh=1dSGNHsW/A6Q/Lg6on2gRsPF3sTD2Xo6JnPp5HiOY5w=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=q65U1j2taVQvcDEsR0ihq11VSL7U1tnMAJEG2VCsMJjfIRHSNWIiHnPpyoTL/S9jS1+cXhQvKdjLtWN+e0HwEWrqKrUVAoUxAgj1hVkpVIYy49zg0wqqt4ImigxiGQ/DjJOeP39eTlu7fiZdayKxSWrTwaSdgQb+zv1vA07xjuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=improbability.net; spf=pass smtp.mailfrom=improbability.net; dkim=pass (2048-bit key) header.d=improbability.net header.i=@improbability.net header.b=henWl7qQ; arc=none smtp.client-ip=185.201.16.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=improbability.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=improbability.net
+Received: from s1234.lon1.mysecurecloudhost.com ([192.250.239.241])
+	by mx323.antispamcloud.com with esmtps  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <reiver@improbability.net>)
+	id 1vIkUo-00HChG-Bb; Tue, 11 Nov 2025 10:17:09 +0100
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=improbability.net; s=default; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=qxfEH7hPGa+On03jIM0VIes3D4OUHi4QJqrLF/L7BCg=; b=henWl7qQJgq5tRARztcWqKON7a
+	EhWW3Uz1l5mLIXIZTZdsg3DbqQLlmeXc75sdSSU27KlgujypxlSum5FRwpca8fMVLHcfKfgCPQilr
+	iJUezTueQhCFA7jQ820ht9hIkkeTimDrguk2lilsIRguqi0wm7+T7EhdcA3v6mIgwToDxQ4PGmwa3
+	9ESPylS0k+7GbXfNTjlG4xhJmPfRZJs/GKHndEZi99Fe9WySgK1ojUzB5X04Y/eOyiaeGM381/ht8
+	m4HA1xM2j4uLhCyYjYc6XmKQvTsG/75xKNiYtIr3dxnjPcTMdigKOc0eRgqc+HyE3ei6syJy3H9P3
+	UP9YcQUQ==;
+Received: from slartibartfast.improbability.net ([51.155.134.81]:37600)
+	by s1234.lon1.mysecurecloudhost.com with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <reiver@improbability.net>)
+	id 1vIkUl-00000003uN9-2zvy;
+	Tue, 11 Nov 2025 09:16:59 +0000
+Received: from trillian.improbability.net (trillian.improbability.net [192.168.1.20])
+	by slartibartfast.improbability.net (Postfix) with ESMTPSA id CC0553FC98;
+	Tue, 11 Nov 2025 09:16:53 +0000 (GMT)
+Message-ID: <4afce7468aef7b19b32e61d392775d3656097dd1.camel@improbability.net>
+Subject: Re: [PATCH] usb: usb-storage: No additional quirks need to be added
+ to the ECD819-SU3 optical drive.
+From: Alan Swanson <reiver@improbability.net>
+To: Alan Stern <stern@rowland.harvard.edu>, ccc194101@163.com, Benjamin
+ Tissoires <benjamin.tissoires@redhat.com>
+Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org, 
+	usb-storage@lists.one-eyed-alien.net, linux-kernel@vger.kernel.org, Chen
+ Changcheng <chenchangcheng@kylinos.cn>
+Date: Tue, 11 Nov 2025 09:16:53 +0000
+In-Reply-To: <c7bf59b5-8078-4b47-b56a-7b5568272d07@rowland.harvard.edu>
+References: <20251107061046.32339-1-ccc194101@163.com>
+	 <c7bf59b5-8078-4b47-b56a-7b5568272d07@rowland.harvard.edu>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF000026C8:EE_|LV0PR12MB999094:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5ca34b6c-2a22-48b7-12ab-08de210317ee
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|376014|1800799024|36860700013|7416014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?XxQoE04Za6caA0aYnSwXK+TiKu+I4Sbj+X6e9i4qU3A5eLEEBSFXoBzkB5Ju?=
- =?us-ascii?Q?4HkIaLTG8iA237siCJSzm2kZL/ew5sYNo40XgHgGFPdMtOl61Dty1DsnF7rh?=
- =?us-ascii?Q?ytRtRdaBTx8XPok83tQ2bELYRl9F8fKcREpXjEcurHaoEjga9LQMPKSqX2FP?=
- =?us-ascii?Q?/PDm6lPDRx6xLw4SjutP/k6zzy81iXN1jP3xezk+FW26aGcqqpPs7rcs/1CB?=
- =?us-ascii?Q?EROvrxTinvsRJWnxahwCpDDjmsZSObLmYBtD2v7s8E09ylK//oITVGd6qlDI?=
- =?us-ascii?Q?SSg0+NMUV91QPyU4i5B6X/wUXbwr2mDhwyZrWVcmtcb/ura13F49GeNajoEH?=
- =?us-ascii?Q?k18wE66RMz4AJe5pEYz9B9yXTl7KbUoq9hQ6s2oSweSNuHIHD8fGe2jNEc9x?=
- =?us-ascii?Q?LXfwimYA/GHhbkcGWgzIvWflzhYvQghzQ7Di+1S5KTJA+RMk7IHheGQorqmu?=
- =?us-ascii?Q?bm/q+Typ5X8+gC6Xs+0MoQ+lfoCDykZ+DCPF4he0NLzfGapF4aelfONFJCCY?=
- =?us-ascii?Q?9phgAhRO4drpYN4Xd7WcQZMTHJIK1absngk3jAVlFn81DoNe5ljrMeHuNOfj?=
- =?us-ascii?Q?BU65nGWrfR4nMK9b7jXByA5HnGZXevzR7H8yvrewBtLhSIvmSglLSJZdHeaU?=
- =?us-ascii?Q?4RCtn6mkFR9yoOMK0FA/MszcamOrVGQa+Nm6sTJy3l3UhyGAmvIK9c+prgmc?=
- =?us-ascii?Q?bgyTztY3oC7YE4Acu2Kpo5aRRCy4+whpCENuW3JkirgBshFV/LxzmR/pEWIJ?=
- =?us-ascii?Q?Kf7nCvXFSLfsZxz3gfGwZPM5lm5LZDyKuJhhn2MK0ui+ZoaaC3zZeC2CPbGL?=
- =?us-ascii?Q?WCNjbot7pBl2uasqzOd9GTWE9oHnqFyDfwmyYQu/uJX1oHnnexcMEpyxOIJA?=
- =?us-ascii?Q?nSUmS6LzZFPFkNKxDFDTnonvhs1S9CMgXBndVgT1TB58c8BT8KmZOUchwGYX?=
- =?us-ascii?Q?EhuJg3SsNYSZ0c/bQEPSfPfFPa4AT+RtVUO7LWyzbunQ3vEvsrA8et19KiEC?=
- =?us-ascii?Q?DMCfluQPtUedsmWb5s4XPTA4ZyQSDYSMLTK3nB8G9mrNwekyVEVazT8reCMD?=
- =?us-ascii?Q?hBna5jpmg4wTd1bfXZa7Vt6wJtEJlBM100U+dg82pyfaHEqd2gTX9Q3/LrmE?=
- =?us-ascii?Q?LuW5+CU1S8TAfxyF1MLvT0Ruye3Fm92/qkEpjzaQOhIWF40thcLlaJZPRLgN?=
- =?us-ascii?Q?5JymcwA8l/HEBc3zhEZj1LDI3LBtDaeJR0nOdi7jYoJHijpUDrDw763nfAEx?=
- =?us-ascii?Q?xjelAp7p1fnHj6OFT1eM5KQM3cIzAe4MJ71tvGadJxfz0f5b4yy0IVlpSJzr?=
- =?us-ascii?Q?KAXacjW4b+wi7o8u6w4zYoDHFrDdHtKoR+RuyoyHYGjl97kEcIfSdx1IA/Op?=
- =?us-ascii?Q?CFkQoi1+j93o003aHLPCA+pUDWh+yXQV/6TCEUVdigiBnmd8w+3eGOTjfZ7G?=
- =?us-ascii?Q?ZesQfGOSsy5hlJNlo3m+fedM6DoBbcg51DwWOHO9moQrwbpF0EBfxSkBaHzw?=
- =?us-ascii?Q?i66u00X5Sb9aia0SuGwh/ZQi9FhLP//4cx2ELW+l3Wc603me52X2cbc70+tY?=
- =?us-ascii?Q?5li5VIXLMPq6orPKe1mB1H9ea2yulG28UZHpWUkd?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(376014)(1800799024)(36860700013)(7416014)(921020);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Nov 2025 09:17:10.2013
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5ca34b6c-2a22-48b7-12ab-08de210317ee
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF000026C8.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV0PR12MB999094
+X-Get-Message-Sender-Via: s1234.lon1.mysecurecloudhost.com: authenticated_id: alan@improbability.net
+X-Authenticated-Sender: s1234.lon1.mysecurecloudhost.com: alan@improbability.net
+X-Spampanel-Domain: d1229.lon1.mysecurecloudhost.com
+X-Spampanel-Username: 192.250.239.241
+Authentication-Results: antispamcloud.com; auth=pass smtp.auth=192.250.239.241@d1229.lon1.mysecurecloudhost.com
+X-Spampanel-Outgoing-Class: ham
+X-Spampanel-Outgoing-Evidence: SB/global_tokens (0.0043894851864)
+X-Recommended-Action: accept
+X-Filter-ID: 9kzQTOBWQUFZTohSKvQbgI7ZDo5ubYELi59AwcWUnuXRV6fYilBGTKRNAUznEwVQcxeJ+5QOHW6w
+ NV4edBVjSyu2SmbhJN1U9FKs8X3+Nt0WZhm/A7favMlTtMMNvR2DuY5FeE90WzUxH4RDkM+uBZQA
+ 0TzuaUrBEDY9PSHFDNHoJI9x5PQ7cU2ndxUXEY3wm4o6+OOHG41bxJ7WNm9w/bHsMNslPCFjpAg9
+ IRecn+1fMBVPwy1qm9vOskMrq5tbzctJcUtGEDQswhEiplZLEBOSzdZ/GF80GNJkFDc0xgMS8I2u
+ 7zgBBfqRIErs6sICR9790Oz0HjaDUI8Ir9yITSU9n537p1CW2dbfl1gcOLg7QmvsjddsYxwxv6Tt
+ 0f7Wb1HgElnnwmI9eQkYzxF3C+ZJoOHj69i0BZRo2CU9catLzXqe6ITS3mkbowtcZzOh0PqfkbqP
+ DiZE3Gi3tUzyT/r/3z+Aap+PdRtmkEyNuQfsvRSY3ewS3dqRFaymMKMbzr/2zoXweWNnQgshW94P
+ r02TKo2fbQFpqpjXNjYEe5Na4e5q10uVyb78T7glhczlviqwgZJlE30bq/X+Udm0PJ2gglS3uuBv
+ bZoNes8GF+I3rgvAsgpTkXEF17wLF36Xb7LLybmhhoq3RkO+UvnR4l/d4HFfSWYNXfSMr4zlS/FI
+ Yh0e5hsgm8GdmZRPyMgjb+69oCpor83wcA/rpZmc23ws3TRjaC42FtNJuTWwh7xqbm+zqSM4k6j2
+ TH8Swu6fU2Itm39BdCc4FEP6OrUewqJCAQmMLvXikQefbUCVd9DQiNZCUwNFpc2zkFrJyOuvhvGO
+ VVI7WeTDH6ZxDPNtY4AQTRo0m20kQNWfj5m+TAtWBb39uS1TjWG2Inx+Ts2QUryYcSJLFEwVd01V
+ IyXuC+YO51DVvXHoNVOhxxzoCYVrBZS7JNrGjow/xYyiAN4ild/VYLya6BPOMxZOhLJWyfAMJ1F+
+ oCfzoCHVyrP2w1N1yZlV0dwirMfQf4goSwVww6JipksfZg5yrj/4ywfbQiw7dvPAeqUgS+pDASno
+ Z/jBGcf2xdasH+nZ6a3Qbn6ZFLSxclWLSn7JdSiBd2PodQO/mb799gO9+KX54Xn6wMUb2ruP8y0I
+ syrU/DceoY/L69w3tjz3Rn5otHepytbONY230kB5fZStFNF4ZmgcKaHbSwzSiNUCLdf/Kh3nIOf4
+ ZuM7jUXIESohoO51xWmU8V8m3NS9QcOAFgORbyI3tCu0lcKpjvuRc7Yjvlf6cycyen7/FcoXV8lk
+ ZNqm4EHQ8gCIIbwZRfIXI+uKLs8bUmLnH5akOJT+IdTS9Ldz2aggvjDKmWdAh+liXkZcVqv3Yon5
+ y/vcIKE4+MoDT8NV3zfqvwCQoJhkm/lvZPPSF2dUfeyr3wt4oYbErMkhUCDIzNEeKoFWMa2RVHHx
+ qlYbVXCPMxBzegUA6g0aqoYzNpP/MS+4ayUpOtEhdxekWDmK9g==
+X-Report-Abuse-To: spam@quarantine14.antispamcloud.com
+X-Complaints-To: abuse@master.antispamcloud.com
 
-From: Akhil R <akhilrajeev@nvidia.com>
+On Fri, 2025-11-07 at 10:49 -0500, Alan Stern wrote:
+> On Fri, Nov 07, 2025 at 02:10:46PM +0800, ccc194101@163.com=A0wrote:
+> > From: Chen Changcheng <chenchangcheng@kylinos.cn>
+> >=20
+> > The optical drive of ECD819-SU3 has the same vid and pid as INIC-
+> > 3069,
+> > as follows:
+> > T:=A0 Bus=3D02 Lev=3D02 Prnt=3D02 Port=3D01 Cnt=3D01 Dev#=3D=A0 3 Spd=
+=3D5000 MxCh=3D 0
+> > D:=A0 Ver=3D 3.00 Cls=3D00(>ifc ) Sub=3D00 Prot=3D00 MxPS=3D 9 #Cfgs=3D=
+=A0 1
+> > P:=A0 Vendor=3D13fd ProdID=3D3940 Rev=3D 3.10
+> > S:=A0 Manufacturer=3DHL-DT-ST
+> > S:=A0 Product=3D DVD+-RW GT80N
+> > S:=A0 SerialNumber=3D423349524E4E38303338323439202020
+> > C:* #Ifs=3D 1 Cfg#=3D 1 Atr=3D80 MxPwr=3D144mA
+> > I:* If#=3D 0 Alt=3D 0 #EPs=3D 2 Cls=3D08(stor.) Sub=3D02 Prot=3D50 Driv=
+er=3Dusb-
+> > storage
+> > E:=A0 Ad=3D83(I) Atr=3D02(Bulk) MxPS=3D1024 Ivl=3D0ms
+> > E:=A0 Ad=3D0a(O) Atr=3D02(Bulk) MxPS=3D1024 Ivl=3D0ms
+> >=20
+> > This will result in the optical drive device also adding
+> > the quirks of US_FL_NO_ATA_1X. When performing an erase operation,
+> > it will fail, and the reason for the failure is as follows:
+> > [=A0 388.967742] sr 5:0:0:0: [sr0] tag#0 Send: scmd
+> > 0x00000000d20c33a7
+> > [=A0 388.967742] sr 5:0:0:0: [sr0] tag#0 CDB: ATA command pass
+> > through(12)/Blank a1 11 00 00 00 00 00 00 00 00 00 00
+> > [=A0 388.967773] sr 5:0:0:0: [sr0] tag#0 Done: SUCCESS Result:
+> > hostbyte=3DDID_TARGET_FAILURE driverbyte=3DDRIVER_OK cmd_age=3D0s
+> > [=A0 388.967773] sr 5:0:0:0: [sr0] tag#0 CDB: ATA command pass
+> > through(12)/Blank a1 11 00 00 00 00 00 00 00 00 00 00
+> > [=A0 388.967803] sr 5:0:0:0: [sr0] tag#0 Sense Key : Illegal Request
+> > [current]
+> > [=A0 388.967803] sr 5:0:0:0: [sr0] tag#0 Add. Sense: Invalid field in
+> > cdb
+> > [=A0 388.967803] sr 5:0:0:0: [sr0] tag#0 scsi host busy 1 failed 0
+> > [=A0 388.967803] sr 5:0:0:0: Notifying upper driver of completion
+> > (result 8100002)
+> > [=A0 388.967834] sr 5:0:0:0: [sr0] tag#0 0 sectors total, 0 bytes
+> > done.
+> >=20
+> > Signed-off-by: Chen Changcheng <chenchangcheng@kylinos.cn>
+> > ---
+> > =A0drivers/usb/storage/unusual_uas.h | 6 ++++++
+> > =A01 file changed, 6 insertions(+)
+> >=20
+> > diff --git a/drivers/usb/storage/unusual_uas.h
+> > b/drivers/usb/storage/unusual_uas.h
+> > index 1477e31d7763..6d32b787bff8 100644
+> > --- a/drivers/usb/storage/unusual_uas.h
+> > +++ b/drivers/usb/storage/unusual_uas.h
+> > @@ -97,6 +97,12 @@ UNUSUAL_DEV(0x125f, 0xa94a, 0x0160, 0x0160,
+> > =A0		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
+> > =A0		US_FL_NO_ATA_1X),
+> > =A0
+> > +UNUSUAL_DEV(0x13fd, 0x3940, 0x0310, 0x0310,
+> > +		"Initio Corporation",
+> > +		"external DVD burner ECD819-SU3",
+> > +		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
+> > +		NULL),
+> > +
+> > =A0/* Reported-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+> > */
+> > =A0UNUSUAL_DEV(0x13fd, 0x3940, 0x0000, 0x9999,
+> > =A0		"Initio Corporation",
+>=20
+> It's unprecedented to have two quirks with the same VID and PID,
+> where=20
+> the second augments the first by virtue of its wider range of
+> bcdDevice=20
+> values.
+>=20
+> As explained in commit 89f23d51defc ("uas: Add US_FL_IGNORE_RESIDUE
+> for=20
+> Initio Corporation INIC-3069"), the original Initio Corporation=20
+> quirk in unusual_uas.h was added as a copy of the corresponding quirk
+> in=20
+> unusual_devs.h, which applies only to bcdDevice =3D 0x0209.=A0 Should we=
+=20
+> simply limit the existing unusual_uas.h quirk in the same way?
+>=20
+> Benjamin and Alan, you two appear to be the people who originally
+> reported the need for this uas quirk.=A0 Do you have any objection to=20
+> changing the bcdDevice range from 0x0000 - 0x9999 to 0x0209 -
+> 0x0209?=A0=20
+> Or can you suggest a range that does not include 0x0310?
 
-Add support for Tegra264 SoC which supports 17 generic I2C controllers,
-two of which are in the AON (always-on) partition of the SoC. In
-addition to the features supported by Tegra194 it also supports a
-SW mutex register to allow sharing the same I2C instance across
-multiple firmware.
+Can only provide lsusb details for my device. Still need the residue
+flag for use with MakeMKV.
 
-Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
-Signed-off-by: Kartik Rajput <kkartik@nvidia.com>
-Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
----
-v4 -> v10:
-	* Set has_mst_reset = true for Tegra264.
-v1 -> v4:
-        * Update commit message to mention the SW mutex feature
-          available on Tegra264.
----
- drivers/i2c/busses/i2c-tegra.c | 30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+Bus 002 Device 002: ID 13fd:3940 Initio Corporation external DVD burner
+ECD819-SU3
+Negotiated speed: SuperSpeed (5Gbps)
+Device Descriptor:
+  bLength                18
+  bDescriptorType         1
+  bcdUSB               3.00
+  bDeviceClass            0 [unknown]
+  bDeviceSubClass         0 [unknown]
+  bDeviceProtocol         0
+  bMaxPacketSize0         9
+  idVendor           0x13fd Initio Corporation
+  idProduct          0x3940 external DVD burner ECD819-SU3
+  bcdDevice            3.09
+  iManufacturer           1 Optiarc
+  iProduct                2 BD ROM BC-5500H
+  iSerial                 3 20202020202020202020202020202020
+  bNumConfigurations      1
 
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 3c20cb4a8fa6..a4b215dc14fd 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -1805,7 +1805,37 @@ static const struct tegra_i2c_hw_feature tegra256_i2c_hw = {
- 	.has_interface_timing_reg = true,
- };
- 
-+static const struct tegra_i2c_hw_feature tegra264_i2c_hw = {
-+	.has_continue_xfer_support = true,
-+	.has_per_pkt_xfer_complete_irq = true,
-+	.clk_divisor_hs_mode = 1,
-+	.clk_divisor_std_mode = 0x1d,
-+	.clk_divisor_fast_mode = 0x15,
-+	.clk_divisor_fast_plus_mode = 0x8,
-+	.has_config_load_reg = true,
-+	.has_multi_master_mode = true,
-+	.has_slcg_override_reg = true,
-+	.has_mst_fifo = true,
-+	.has_mst_reset = true,
-+	.quirks = &tegra194_i2c_quirks,
-+	.supports_bus_clear = true,
-+	.has_apb_dma = false,
-+	.tlow_std_mode = 0x8,
-+	.thigh_std_mode = 0x7,
-+	.tlow_fast_fastplus_mode = 0x2,
-+	.thigh_fast_fastplus_mode = 0x2,
-+	.tlow_hs_mode = 0x4,
-+	.thigh_hs_mode = 0x2,
-+	.setup_hold_time_std_mode = 0x08080808,
-+	.setup_hold_time_fast_fast_plus_mode = 0x02020202,
-+	.setup_hold_time_hs_mode = 0x090909,
-+	.has_interface_timing_reg = true,
-+	.has_hs_mode_support = true,
-+	.has_mutex = true,
-+};
-+
- static const struct of_device_id tegra_i2c_of_match[] = {
-+	{ .compatible = "nvidia,tegra264-i2c", .data = &tegra264_i2c_hw, },
- 	{ .compatible = "nvidia,tegra256-i2c", .data = &tegra256_i2c_hw, },
- 	{ .compatible = "nvidia,tegra194-i2c", .data = &tegra194_i2c_hw, },
- 	{ .compatible = "nvidia,tegra186-i2c", .data = &tegra186_i2c_hw, },
--- 
-2.43.0
-
+--=20
+Alan.
 
