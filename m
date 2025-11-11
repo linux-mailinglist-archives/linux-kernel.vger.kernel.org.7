@@ -1,265 +1,197 @@
-Return-Path: <linux-kernel+bounces-894354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18E3BC49D28
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 01:01:01 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8C4DC49D31
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 01:02:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A60ED3AD824
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 00:00:59 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6D460348F9D
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 00:02:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB67D7260B;
-	Tue, 11 Nov 2025 00:00:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3BFD34D399;
+	Tue, 11 Nov 2025 00:01:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gvernon.com header.i=@gvernon.com header.b="oF/vWZ9Z"
-Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="c0bkWfqM"
+Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11012063.outbound.protection.outlook.com [40.93.195.63])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23F8834D38D
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 00:00:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762819253; cv=none; b=QZuQO1wS3Vvx85mQ+Rw8KpJZdAKDSRXX76nj7IBQ1aeruca5BVroGiCVbjJv/OtMJvssECE6JtGugVLWEHtaUaAJn8oSTjk8H82vOLH0M2vrlgO2ksazlbJXUbSrtyJMWoh/fnK0q40H4sxcGUU4mVXYlxjEuSdZ3KeB8Ce7cVI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762819253; c=relaxed/simple;
-	bh=TNXiWOj5jEmx1EnsWyHYPudlbSIJrp8NFO/dblJJa3I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B8zQhk2WEC/u5VIdqc1zaQwO5eh7Qb9/kFWcSJ/UTZukIBAFNkm4mEaAkutNbZ4xDZXkhNK64pp/d7PAmEruyOg175PMYjRWF7J1JlCZwblwL0Px40Wz2pIb9Evoj8FfvNZeUzaKMq6OM0UvdiE399UAAiiN4/jVkp8TsaODV9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gvernon.com; spf=pass smtp.mailfrom=gvernon.com; dkim=pass (2048-bit key) header.d=gvernon.com header.i=@gvernon.com header.b=oF/vWZ9Z; arc=none smtp.client-ip=91.218.175.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gvernon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gvernon.com
-Date: Tue, 11 Nov 2025 00:00:57 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gvernon.com; s=key1;
-	t=1762819247;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ppqVDuKsAD0whBouc8l1jbd4uRdLsWjiB6hmI07xXzc=;
-	b=oF/vWZ9ZcS4nAmyVy0p+TiXFN2RRBnSqrjzpRElMpGkGHxsf1YVzBXZSswWxs+d3g7jDKI
-	xG0UjHtHTJK66UGkEpggFENjNlmuK1TfopndjAKRrOCXutrzeupl1HKrjxi1H/DT9Qequ4
-	YTNEyttd6PlUW7xhQi1aE68lL4JSRAX28FyZlYpZZH9GIDg6DiU+9s6gC+1JtozNw6E0go
-	XNTXEK7R+2QBElvjIzqHGLF3GoI98rfa4gDAcubtA6aihfzgtJzFVbn5zodPQbf79v5WCm
-	ua8jX7kJjbyGH1+DwHkERpsVZfbZTKaTfOG/VaDiXIQSemJob+QrtF74faguvA==
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: George Anthony Vernon <contact@gvernon.com>
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-Cc: "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
-	"slava@dubeyko.com" <slava@dubeyko.com>,
-	"frank.li@vivo.com" <frank.li@vivo.com>,
-	"skhan@linuxfoundation.org" <skhan@linuxfoundation.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-kernel-mentees@lists.linux.dev" <linux-kernel-mentees@lists.linux.dev>,
-	"penguin-kernel@i-love.sakura.ne.jp" <penguin-kernel@i-love.sakura.ne.jp>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"syzbot+97e301b4b82ae803d21b@syzkaller.appspotmail.com" <syzbot+97e301b4b82ae803d21b@syzkaller.appspotmail.com>
-Subject: Re: [PATCH v2 1/2] hfs: Validate CNIDs in hfs_read_inode
-Message-ID: <aRJ8uYyD0ydI8MUk@Bertha>
-References: <d2b28f73-49c8-4e30-9913-01702da4dfe4@I-love.SAKURA.ne.jp>
- <20251104014738.131872-3-contact@gvernon.com>
- <e13da4581ff5e8230fa5488f6e5d97695fc349b0.camel@ibm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88408173;
+	Tue, 11 Nov 2025 00:01:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.195.63
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762819312; cv=fail; b=uWe2XIC38/75k1jLJxdMaM/QW3cSSLEEGxM38P0UmlCNjpeGKzjRV2SFeswtOCbsUXOSrui6BZ9MGRgMjsDbvzrlqBsq3t/KZoOOH5QFZH6/EzFUSNMSZPDJPBvIv2w0EtMdTsE2tHG/RSjFrlgD8sJX8rZGKmG87uH37SmHTd0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762819312; c=relaxed/simple;
+	bh=CE0NVjgC+7nYhL4xVZXBFskZA2LTwq03APTPgNBB7HM=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=c37TIvxmDoaNCZZ6RyNJ9Cefw9VPVbyZin9+LT/dmyclal+nLgG7lXhFY4ldL0I14c9sxyod8Rl7VBShBv5HFkfIprZWruRbendeT0vafymPLei4vepyC3G8WQ/ltk+Pu+XoTubTWDNeQk3P8ftanusPJ8/NiaRo5M7ZZhr3zRk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=c0bkWfqM; arc=fail smtp.client-ip=40.93.195.63
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=BVsLYUN6qTTXQB8R/FkGKjDXAoYJgFWRT/SQqK0LBHyx2QuojRczijm+O8T32dLt1e/waDQgMO+eWOPm6+w/ITiA/OQkaWaI1T4+2PyJJKYxFD+7X8fprkfXNu5/2AW2uJAJpQO3PEK1LrnNnaQUxfkOT/l8CjcV4wKX184Q9btKCEwB0sJIJDTGgaqPtvqUvo4p39hj1xYKJ/Kt8cmBxgfEwGRPP19Q2cgyjjhSemiRGAAhye+KCr4TxyOm337Cg6XuWHxQLOv35fhnyH22/E/2At/KB2u1fZ+l9TSo+xZaBpCpHIQ13dogb7TMR7A/iA7H8Mm6r4+/BdyHSchsIw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CE0NVjgC+7nYhL4xVZXBFskZA2LTwq03APTPgNBB7HM=;
+ b=u798eSW59U2PIKqGQJlHqam2h+rn1ljpEge3048cSD1IUzOsqlet3psMMK6ptT4EoZBy0/vgGECrV3podbd6X3UMAxBI99TXOIY2pFDv2kpcjUvO6+9oFgiBzVF8VXZMNJ0cMxxKNo9bfxaINJiewockE2ux5GcC6S2bAVkUAlslLtg9HBIv4dXbCJ/6K7/YFX4jU6HEsnq9u1gL/qcte43pkdE1bXyPAndBeA+kZ08yxLbyH0wOKg0WsbEtEmDLe6+m69VB3Rdui6T4uuUldV0+gordA5Do5oOA/iMRPuEJIfimZK5I17LPFPNKS+RZ6OTPWpdZ6v1GNWLO4iH7mw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CE0NVjgC+7nYhL4xVZXBFskZA2LTwq03APTPgNBB7HM=;
+ b=c0bkWfqMeSIGIzZ64ohWB8Yf+uAshcVZJAIjyNrHLjGneUKy9A9uYvnwqDMmctxyDXvHJpabS1JbcUq4DAr0ZBivYgysMWCGOz0MlYHEyHsLJUgjDAS/4dyTp4+YFqaJkqhhZAw0kvXXbieYi5I76bkyfWTWVhD8MglYJ04trL2KRGWejWtscnAe5GpUBbBv7kqs5tsiLO++58xYee+QSViasAJOV48M10YaLqZcTiPDq35WDYKoEgPMHp2KiRXfR7OGSn0P8uSfxllUoiFQVOanBwODU6NI4oOBBgScH4iAllrXj6rZFtjaaPtpOoi3+2A319vmEDhSx2wPcQviDQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
+ by CY8PR12MB7265.namprd12.prod.outlook.com (2603:10b6:930:57::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Tue, 11 Nov
+ 2025 00:01:45 +0000
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91%2]) with mapi id 15.20.9298.015; Tue, 11 Nov 2025
+ 00:01:45 +0000
+Message-ID: <0e8988f4-07ba-4c3a-8285-2960bc40dc65@nvidia.com>
+Date: Mon, 10 Nov 2025 19:01:39 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 RESEND 0/7] rust: pci: add config space read/write
+ support
+To: Zhi Wang <zhiw@nvidia.com>, rust-for-linux@vger.kernel.org,
+ linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: dakr@kernel.org, aliceryhl@google.com, bhelgaas@google.com,
+ kwilczynski@kernel.org, ojeda@kernel.org, alex.gaynor@gmail.com,
+ boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+ lossin@kernel.org, a.hindborg@kernel.org, tmgross@umich.edu,
+ markus.probst@posteo.de, helgaas@kernel.org, cjia@nvidia.com,
+ smitra@nvidia.com, ankita@nvidia.com, aniketa@nvidia.com,
+ kwankhede@nvidia.com, targupta@nvidia.com, acourbot@nvidia.com,
+ jhubbard@nvidia.com, zhiwang@kernel.org
+References: <20251110204119.18351-1-zhiw@nvidia.com>
+Content-Language: en-US
+From: Joel Fernandes <joelagnelf@nvidia.com>
+In-Reply-To: <20251110204119.18351-1-zhiw@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BN9PR03CA0329.namprd03.prod.outlook.com
+ (2603:10b6:408:112::34) To SN7PR12MB8059.namprd12.prod.outlook.com
+ (2603:10b6:806:32b::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e13da4581ff5e8230fa5488f6e5d97695fc349b0.camel@ibm.com>
-X-Migadu-Flow: FLOW_OUT
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|CY8PR12MB7265:EE_
+X-MS-Office365-Filtering-Correlation-Id: 807898e5-6eb3-404a-c288-08de20b58073
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?TXd4OGl0bmFTQ0xRWEU3TGg1Q1R0dStlbXUxYkQ0Z1ZYeU5Mem82eFMrSWU0?=
+ =?utf-8?B?R2FhUDNVZk9vV2lKdzdDbjdOcVFEMFc5WWVsZUpIdGxBaGtiaHpJWGRLcXJw?=
+ =?utf-8?B?Z0VRNnpyeG1oM3k1YVF2VU16MmtudllOb2RrOVhUK0I5Y1BhSlkyU1UxQzZJ?=
+ =?utf-8?B?bWxpTUEweWRoZ2lweDcwQlBoaHhwWnMyMEJtTlNnTG5vREtJT3hheTA1RTd0?=
+ =?utf-8?B?Sy9VbEhrODF2ejZmakVPaTFzYUxob3hyNHBWL2JsYm9NV3ZqYUpOQzRXOUN4?=
+ =?utf-8?B?b0JPWHU1OXUzOEx4aWhjbmhnWmtUdVhnSnNjMTlYQTNzY1Z5Q0hrOVUwbG13?=
+ =?utf-8?B?WmFGMWpFcDQxVkNCOUgzWFhRRENQbTBBUndnclRXOURBZ1NxajYyYnBmaG9Q?=
+ =?utf-8?B?cmZlSFN6aHV6QzV2Q3c3WmtrY2ZZbmdOOFBDV2QvVHRPZk42YWljVHV1SlBy?=
+ =?utf-8?B?YTlNWmptK3ZHcVFicVcrZm1nc0JlNlJsOW94dDJqTmZPWTZJSXdOeHlUMVR4?=
+ =?utf-8?B?L3Y0MTBzV2NZT1ZZcnY5aTJDeHBQZHlVVmFhdDZXOFRnSXd0RGl4cVgrd0xW?=
+ =?utf-8?B?N1hmdTQxREI5Y2U1dkFveUtvdm1nMDZRdmxld0FkTjc0TlhKclU1ZFdHeVVW?=
+ =?utf-8?B?SU9mTkl1Rlh6NFFTNjdJZktMKyttMFNQWmFmd29ZM3pBdkkyaXRtaDFYbjFo?=
+ =?utf-8?B?K2VBU0lrT053RHZlSFJuY25DQkFxYW5hUmZRN1p4aGtHWC9VNWZOTndYVjBs?=
+ =?utf-8?B?cUhKbThiSU44YWZ5TWwwcEFjK3FMTFlEK2ErYi9OVzhCaEhaWUpjRXYwTWRw?=
+ =?utf-8?B?czFDNnVERU9mSmorSStvUC9zelZhYkkxejNyd09LVnhhaE1CS2UvS2hxd1Ju?=
+ =?utf-8?B?UG5Vc0VTNzhuZUhOK3AxWFRhcFIyQTlCN3RpYzd6ZGQrWXFLVEtEdEVpR2lI?=
+ =?utf-8?B?djFTVFNHZFppNmNzZmxscFZualdPdnI2N1NBNWc3bG9oNUJEM243VDYxQXVV?=
+ =?utf-8?B?aXdwaTdvNmJwT1oyWUxHdStoaVIyYWhLenlJQWl4aXJVM2JaQjI1b200YjBF?=
+ =?utf-8?B?d1VEMmhTTWtjeXlYT0QyRzVMNGRHUjdhZmRhVDFnUGJRaTZQYlVHd0xnemZa?=
+ =?utf-8?B?RWJmUHB5VlREYWpZblo3MXZjNjRGcHp3RHVjb0FRL0lrb0xmeGozZUlvSlM4?=
+ =?utf-8?B?dUFRcUNkdlNMWEx6cXoxUWRUQzZ1OVF5OUFReW1pTjRkUHliWEhlZ0p0Znl5?=
+ =?utf-8?B?NklLUDlMS2RHODV3Uno2ZkNGcXU0ZWpvME1UODNmeTRYNElBQzJ4Snh2K0NC?=
+ =?utf-8?B?a1RyQXZwUjdhdmlOTFRiczFWaEZ0dlI4T3o4WkFNZ2poejFQWDFXR2NETnBM?=
+ =?utf-8?B?ZllHVS9ZejRSMDBrN2JvWHRXdmVONVM3eWJ2K0VnbkMwb0oyYWVkRmpQRTNI?=
+ =?utf-8?B?Qzh2TnVxc3dVNFVkSjhxMEVtR3ZDZ0daaEJZSHkwK1NjRmQ2bGNlRVc5UG5C?=
+ =?utf-8?B?MVZWNnNCT3kvcy9TTWtrTWZnWGxTeUw3cCtlUC9YR1Y0M3h3R0FOdjJBUTNq?=
+ =?utf-8?B?M1ZVT3ZmNzZsdzdiR0ZONTFZbVUyZ1Z2UFMxcEYzVC9obTFQZjBCZ1JzMGYv?=
+ =?utf-8?B?SnNXenE0NTNhODF6QzRBazlSZ2hHVnlGSENibkdBR1d2dG05SFFOYWpVN1h2?=
+ =?utf-8?B?b3dZL1VwMmxTbExjYjVCSzJOVGYrb0l1KzNCdTNOamZRR1lIUEVuUU9DbFBD?=
+ =?utf-8?B?ODNIU1ZnZlpkS0Mrc0RidkRaaEZEVEp6TW1BYUJtOEwyVmdRY0VVOTd2dms4?=
+ =?utf-8?B?TjNJQWZUSjE4SmJPM3grRkRtZTIzNGVGbjgwNTJJVjFSVU93UjdGNUlHUmgv?=
+ =?utf-8?B?NlpHaGpTclE5cGFBVjdwZWlGWE1pYXltSDNTdjRDby8yYzRJQm9SdkJ5WWcz?=
+ =?utf-8?Q?+wu42ToQ+IU2+Xwp8ttsAvIN3sB6VdQC?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Rm1LU0FpZng0ZlFRSmVzUDZxU3l2WXRLN1pDRE5WVFFiMFdGTkhickRkR1d6?=
+ =?utf-8?B?QTk2dkh6VEV4VVRrbGZ0RDhNQ29nUmpsWkJVODBPUVR3SVVFVytCa056aC80?=
+ =?utf-8?B?OVhBSEltNTlaUlhNOUZjTkdiZit3MFdsTUNheFFwTlcvTzVLZ3VYL1pRYWFP?=
+ =?utf-8?B?ODNlL3lNNmRkaTRCUk03bFUzRk8zdXRLY3hQd09TNHh5YWpGTHJ1OHVtRFdZ?=
+ =?utf-8?B?aGovZ3JZemFxNWZSMGxzckhRcDRsMnh4bTN0UWcyd3pEMnBxUTB6NVpXbGZ4?=
+ =?utf-8?B?V0NrQ2tYODdPRUpEQmNJejJtUGl6WHZlNVhYZnJrdGlUUmViNUc2d1h1aERs?=
+ =?utf-8?B?L2RNNXc3MWRYWEluQytmVzRZZ1hqT1FJTzA1alRnTnZ5UmZ0U0JVOWxDUlZl?=
+ =?utf-8?B?VE9rRm9RV0FyUkVsR1NOazRYUUNEZUxjb215cHYyMjZXL0ZkQ0xKb0tPNHNU?=
+ =?utf-8?B?eXRjc0RpUVlOcGlONkwzTG5CQ2JWMDFkSVorSWhGbEpQeldFUDV0WWlhc2Vi?=
+ =?utf-8?B?S090MWJZR1J2ZzZFMjFrQnZhdkpYQjFBMWl4OW9GdC9oNmtyQ3VBY1d3TERF?=
+ =?utf-8?B?cmo0Sks1L3RSUjVHNHp1aFNQbGVyWTA5K3lTbjhhRnpBVk4yT2VXYVhKVzNK?=
+ =?utf-8?B?WTQ1VjhQNUgxbmw2aEZCM2NENTg0L0VnZTJraTNxRlhqamFPSTBVZ0tKTWhF?=
+ =?utf-8?B?Y3NTZU9NaGF2TUJRa1AxMEczYzRkMmF2b3U4dHk1b25CV0kyTXJPb0NlMHN5?=
+ =?utf-8?B?NjNvZVNCRmNpaGN1bVdPc3cvcHBxS3RXRHdXWE1vODJlY3BYQ2lPaDQ1eHZn?=
+ =?utf-8?B?TXFka3J2M2J6eUhzWVZGTWdnUWNhRWY4Qm1Sa2ZWdWFRTXdsWURmT3dKMlVS?=
+ =?utf-8?B?ZTJDSTFPalVIak43ZnYwdVovYjc5WVdUZnRrVG5IcGRiYTBkTjRIRS9RenhR?=
+ =?utf-8?B?dWZyT1Nac0IxZmxYbU9IajZDT0R4bmp2S1c2YUxjOG03cU5hY3ZIOEtua3Vv?=
+ =?utf-8?B?bU1mdjdmb3hBdzZUMU1QaXlzdHR5ZGgrbTJOeHhxcGNKSnc1QWhhNElVcUdB?=
+ =?utf-8?B?MWwzUXpyelJKcnNYV1F3eHVMV1pSTTlUQi8rN3JVRFlvMHViYlBUdURieThu?=
+ =?utf-8?B?ZzMwYkZIR1M1TENvQjNvTGtsSEtlQWtudG9NalNxYXBqRkFMZ3lacEhkdEhL?=
+ =?utf-8?B?MWVqY1duRTB4YzB6VnozZk5CeVBPcTJDU2hRQkhiaFM0UzNsaUNkNW5IakFO?=
+ =?utf-8?B?VThQTjB5Y083RTJNWXNaT1NvNm91TXNMdG50T2dlY1FLeHhMYVM0STcxWFNo?=
+ =?utf-8?B?ZnFWVjdUT0Y1Y0xraVoycWwzdjQ3bkFhM1B6UUJpV1RMVm9nYzd1SndGditl?=
+ =?utf-8?B?ek9hTjF1N2xyYVE3MGl4a1RzMGxVdmJhOUI0NUV6UGxtcGJYQmxaNmNDa2pL?=
+ =?utf-8?B?VE1GREJrb0FTZnBXeGhFbXl1cWZsc3dvQUNLQWFqYUdRNzRSakNmZ1lHb1dB?=
+ =?utf-8?B?QnBIdTRKRFVOakR3cE4rbVFLRUdRaEIzR01PUXNvSXJHN2wvVnBacXppSmJZ?=
+ =?utf-8?B?azNiblJla0VTcFNSbGFZa2huUUc1QTRXcWM1RWhhaTFFakRuY3czYVFMOG85?=
+ =?utf-8?B?YlJxbXVrUnRGNURrazNvczNVQVVQK21YaitSY210NUdZdmpZVU9SNVR4TXVR?=
+ =?utf-8?B?M0kzUkVZNnFJaTFMK1NKUjV5MU9Ea0d2V1ZZZkRZVHBTekNGd2Z4UHNnVWty?=
+ =?utf-8?B?TG9haThhKzlEOWw2blhhZlhlUEEySkw1UXdtUldnZU83R3R4QzRISUdpYStk?=
+ =?utf-8?B?dldSNjBkb0F0Sm53cjRWMTM0emVHUDRvOHlOa2FMM3c0NnV4d1NHN1F4bXRM?=
+ =?utf-8?B?UmZRY1JNV2ZCbk40SDdsdnBvdThDRXNGMXFwbTRoejJ3RGd5M2x0RWF1WnFj?=
+ =?utf-8?B?VFNtbUFjV3R1Mkd6Tk43VjM1OEltRzQrSWVaZlA3TDgxUGY4dDZ5UmRaTkFH?=
+ =?utf-8?B?UDIvUGU2UlY4V1ZtT1FDMit4L0RjTTVoWU5DMXQ0ZWdOOU52cUJpbFVDeEY3?=
+ =?utf-8?B?N1ZTRndlSG42djJlR2FDNlYwc1RBVWNTWWt6emc3dGNJRXFuYUdFcE9KWWx1?=
+ =?utf-8?Q?kfWwtYF0HdtrfutNtW5L4jvBZ?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 807898e5-6eb3-404a-c288-08de20b58073
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Nov 2025 00:01:45.1226
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: qf9BWpYSJ59LWbIrqoe1ErWCw/dPDiR/VLDOfmRlc6F8SLnZZe7JY5kwmbO/7j61FQpkyvvPrhV2XQsvLU5W4Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7265
 
-On Tue, Nov 04, 2025 at 10:34:15PM +0000, Viacheslav Dubeyko wrote:
-> On Tue, 2025-11-04 at 01:47 +0000, George Anthony Vernon wrote:
-> > hfs_read_inode previously did not validate CNIDs read from disk, thereby
-> > allowing inodes to be constructed with disallowed CNIDs and placed on
-> > the dirty list, eventually hitting a bug on writeback.
-> > 
-> > Validate reserved CNIDs according to Apple technical note TN1150.
-> 
-> The TN1150 technical note describes HFS+ file system and it needs to take into
-> account the difference between HFS and HFS+. So, it is not completely correct
-> for the case of HFS to follow to the TN1150 technical note as it is.
+On 11/10/2025 3:41 PM, Zhi Wang wrote:
+> In the NVIDIA vGPU RFC [1], the PCI configuration space access is
+> required in nova-core for preparing gspVFInfo when vGPU support is
+> enabled. This series is the following up of the discussion with Danilo
+> for how to introduce support of PCI configuration space access in Rust
+> PCI abstractions.
 
-I've checked Inside Macintosh: Files Chapter 2 page 70 to make sure HFS
-is the same (CNIDs 1 - 5 are assigned, and all of 1-15 are reserved).
-I will add this to the commit message for V3.
+Hi Zhi, is there a tree with all the patches and dependencies for this series?
 
-> > 
-> > This issue was discussed at length on LKML previously, the discussion
-> > is linked below.
-> > 
-> > Syzbot tested this patch on mainline and the bug did not replicate.
-> > This patch was regression tested by issuing various system calls on a
-> > mounted HFS filesystem and validating that file creation, deletion,
-> > reads and writes all work.
-> > 
-> > Link: https://lore.kernel.org/all/427fcb57-8424-4e52-9f21-7041b2c4ae5b@  
-> > I-love.SAKURA.ne.jp/T/
-> > Reported-by: syzbot+97e301b4b82ae803d21b@syzkaller.appspotmail.com
-> > Closes: https://syzkaller.appspot.com/bug?extid=97e301b4b82ae803d21b  
-> > Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-> > Tested-by: syzbot+97e301b4b82ae803d21b@syzkaller.appspotmail.com
-> > Signed-off-by: George Anthony Vernon <contact@gvernon.com>
-> > ---
-> >  fs/hfs/inode.c | 67 +++++++++++++++++++++++++++++++++++++++-----------
-> >  1 file changed, 53 insertions(+), 14 deletions(-)
-> > 
-> > diff --git a/fs/hfs/inode.c b/fs/hfs/inode.c
-> > index 9cd449913dc8..bc346693941d 100644
-> > --- a/fs/hfs/inode.c
-> > +++ b/fs/hfs/inode.c
-> > @@ -321,6 +321,38 @@ static int hfs_test_inode(struct inode *inode, void *data)
-> >  	}
-> >  }
-> >  
-> > +/*
-> > + * is_valid_cnid
-> > + *
-> > + * Validate the CNID of a catalog record
-> > + */
-> > +static inline
-> > +bool is_valid_cnid(u32 cnid, u8 type)
-> > +{
-> > +	if (likely(cnid >= HFS_FIRSTUSER_CNID))
-> > +		return true;
-> > +
-> > +	switch (cnid) {
-> > +	case HFS_ROOT_CNID:
-> > +		return type == HFS_CDR_DIR;
-> > +	case HFS_EXT_CNID:
-> > +	case HFS_CAT_CNID:
-> > +		return type == HFS_CDR_FIL;
-> > +	case HFS_POR_CNID:
-> > +		/* No valid record with this CNID */
-> > +		break;
-> > +	case HFS_BAD_CNID:
-> 
-> HFS is ancient file system that was needed to work with floppy disks. And bad
-> sectors management was regular task and responsibility of HFS for the case of
-> floppy disks (HDD was also not very reliable at that times). So, HFS implements
-> the bad block management. It means that, potentially, Linux kernel could need to
-> mount a file system volume that created by ancient Mac OS.
-> 
-> I don't think that it's correct management of HFS_BAD_CNID. We must to expect to
-> have such CNID for the case of HFS.
-> 
+Typically it is a good idea to provide it with all dependencies, so folks can
+checkout the tree.
 
-HFS_BAD_CNID is reserved for internal use of the filesystem
-implementation. Since we never intend to use it, there is no correct
-logical path that we should ever construct an inode with CNID 5. It does
-not correspond to a record that the user can open, as it is a special
-CNID used only for extent records used to mark blocks as allocated so
-they are not used, a behaviour which we do not implement in the Linux
-HFS or HFS+ drivers. Disallowing this CNID will not prevent correctly
-formed filesystems from being mounted. I also don't think that
-presenting an internal record-keeping structure to the VFS would make
-sense or would be consistent with other filesystems.
+git format-patch also has an --auto option that adds base commit information, so
+folks know
 
-> > +	case HFS_EXCH_CNID:
-> > +		/* Not implemented */
-> > +		break;
-> > +	default:
-> > +		/* Invalid reserved CNID */
-> > +		break;
-> > +	}
-> > +
-> > +	return false;
-> > +}
-> > +
-> >  /*
-> >   * hfs_read_inode
-> >   */
-> > @@ -350,6 +382,8 @@ static int hfs_read_inode(struct inode *inode, void *data)
-> >  	rec = idata->rec;
-> >  	switch (rec->type) {
-> >  	case HFS_CDR_FIL:
-> > +		if (!is_valid_cnid(rec->file.FlNum, HFS_CDR_FIL))
-> > +			goto make_bad_inode;
-> >  		if (!HFS_IS_RSRC(inode)) {
-> >  			hfs_inode_read_fork(inode, rec->file.ExtRec, rec->file.LgLen,
-> >  					    rec->file.PyLen, be16_to_cpu(rec->file.ClpSize));
-> > @@ -371,6 +405,8 @@ static int hfs_read_inode(struct inode *inode, void *data)
-> >  		inode->i_mapping->a_ops = &hfs_aops;
-> >  		break;
-> >  	case HFS_CDR_DIR:
-> > +		if (!is_valid_cnid(rec->dir.DirID, HFS_CDR_DIR))
-> > +			goto make_bad_inode;
-> >  		inode->i_ino = be32_to_cpu(rec->dir.DirID);
-> >  		inode->i_size = be16_to_cpu(rec->dir.Val) + 2;
-> >  		HFS_I(inode)->fs_blocks = 0;
-> > @@ -380,8 +416,12 @@ static int hfs_read_inode(struct inode *inode, void *data)
-> >  		inode->i_op = &hfs_dir_inode_operations;
-> >  		inode->i_fop = &hfs_dir_operations;
-> >  		break;
-> > +	make_bad_inode:
-> > +		pr_warn("rejected cnid %lu. Volume is probably corrupted, try performing fsck.\n", inode->i_ino);
-> 
-> The "invalid cnid" could sound more relevant than "rejected cnid" for my taste.
-> 
-> The whole message is too long. What's about to have two messages here?
-> 
-> pr_warn("invalid cnid %lu\n", inode->i_ino);
-> pr_warn("Volume is probably corrupted, try performing fsck.\n");
-> 
-Good improvement!
-> 
-> > +		fallthrough;
-> >  	default:
-> >  		make_bad_inode(inode);
-> > +		break;
-> >  	}
-> >  	return 0;
-> >  }
-> > @@ -441,20 +481,19 @@ int hfs_write_inode(struct inode *inode, struct writeback_control *wbc)
-> >  	if (res)
-> >  		return res;
-> >  
-> > -	if (inode->i_ino < HFS_FIRSTUSER_CNID) {
-> > -		switch (inode->i_ino) {
-> > -		case HFS_ROOT_CNID:
-> > -			break;
-> > -		case HFS_EXT_CNID:
-> > -			hfs_btree_write(HFS_SB(inode->i_sb)->ext_tree);
-> > -			return 0;
-> > -		case HFS_CAT_CNID:
-> > -			hfs_btree_write(HFS_SB(inode->i_sb)->cat_tree);
-> > -			return 0;
-> > -		default:
-> > -			BUG();
-> > -			return -EIO;
-> > -		}
-> > +	if (!is_valid_cnid(inode->i_ino,
-> > +			   S_ISDIR(inode->i_mode) ? HFS_CDR_DIR : HFS_CDR_FIL))
-> 
-> What's about to introduce static inline function or local variable for
-> S_ISDIR(inode->i_mode) ? HFS_CDR_DIR : HFS_CDR_FIL? I don't like this two line
-> implementation.
-
-Okay, I will rewrite this.
-
-> 
-> > +		BUG();
-> 
-> I am completely against of leaving BUG() here. Several fixes of syzbot issues
-> were the exchanging BUG() on returning error code. I don't want to investigate
-> the another syzbot issue that will involve this BUG() here. Let's return error
-> code here.
-> 
-> Usually, it makes sense to have BUG() for debug mode and to return error code
-> for the case of release mode. But we don't have the debug mode for HFS code.
-
-I prefer BUG() because I think it is a serious bug that we should not
-allow for a bad inode to be written. I am willing to take responsibility
-for investigating further issues if they appear as a result of this. Of
-course, the final say on BUG() or -EIO is yours as the maintainer.
-
-> 
-> Thanks,
-> Slava.
-> 
-Many thanks for your time and efforts,
-
-George
+Thanks.
 
