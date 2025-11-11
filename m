@@ -1,287 +1,234 @@
-Return-Path: <linux-kernel+bounces-895902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD2F2C4F3A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 18:20:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 024FEC4F3AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 18:21:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BA8E94EBA4F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:20:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55AD83BD8E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 17:21:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1FBE393DEB;
-	Tue, 11 Nov 2025 17:20:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E21A6393DE9;
+	Tue, 11 Nov 2025 17:21:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aT4r4y75"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="dGzxIXGt"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 362C5393DDB
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 17:20:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 042E73730DA;
+	Tue, 11 Nov 2025 17:21:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762881643; cv=none; b=GhEBUJDhcIXQAlgmZhFlujxWXk9GCrm/2M4nqrqMq7Uac720JibqRqRQ073rc0+o62sUM5suytLkqGLp9hle26RSIoXWB57Rv/Fg1qp1r4bY9PcP0H2xg2Q+2MBZyHn1z/N80+ZZn3qg15eJ0g2oCFSYkIfKGgjX/9EB8JrRk1o=
+	t=1762881694; cv=none; b=S3pXR9x6n7cVGtFskHxtrMNQcjhRuRBa+t+ncmy0ReT23zy+AtBrBlmd+h0IwduyVaSOf7ADPmwkr/HRTW9l7e5Qyuv9SQSVvtPqOadlYeF8s6A09xewEaQuAknJSS7IzM36dnG3G3t0JRe/lBOXObzYBK1aFMwmw4PyFpLHGko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762881643; c=relaxed/simple;
-	bh=Ea0HQtp76cFTkTjjNdFmHXQwralfHu7jRHZMlC1su5A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Qjd028sTiChpkCKFUDKqowRWHH+h/OZdTu9j0mhDDLXBvaq0cpjWe79igndj+9ygHVLgyu9Ajy0wc0yUGEhr+NXCogdhICsivMk4jgHfZJW7QdHu3dTaPOj3OR2HYL3vKVuXXfcCUXMkKTJzAK1oEqdwnz0bG7WtAdSnAoNV7Jk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aT4r4y75; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-295c64cb951so252755ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 09:20:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762881641; x=1763486441; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XuqiAU6njLQzvwMnm5NjR5NkcPrTa0+hIMlqeny7nRE=;
-        b=aT4r4y75ft0fWihB8hGI/zSDV/YawRvf3P1BXTz6xi6XDWP7D4Qc4c/1D2ZQSArPg3
-         0x+jcV7XcYc4qBppZFknY/z7OYgCNXxess5h4HNOjk6jnABEVwOSt5X/Gnc0iaVo9uFn
-         HeWcj8fs3kavr9biOysDZl+ZhlGmB6p3jL2RkgKMfQYdZV04r87oWRwWBJJEbcVP3yGM
-         Hh8MkigicP3I1aiZc0PwR4PAxWyECACX0ISkl06+XcNt33ZtOD0X3EaLo7w6yWOJcKiu
-         Qaztq05FmBWFM2j67EKhNeFGegzDx2gZcIL36iYFUmNWt/24qc6RpRnp665ZZW1klliV
-         9BPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762881641; x=1763486441;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=XuqiAU6njLQzvwMnm5NjR5NkcPrTa0+hIMlqeny7nRE=;
-        b=uBTAB7VV9khOH81XzXesAV0Cu35tHPTs3NzwEPgGlKp8pOQ3UbkNN5KC5Kx88lvzjy
-         OSocY9H3zKw+0Fok49yCH5CkpZu1eiwnjA9Q46jV/jOphkAQ4n6O7DcO6JqiwATp29fP
-         M9bbcLQ3H5MqGKuInouwxaROzEW2GxDe/5jn6c46SYC4UU/SkSqQGaV2Br+9VChlEDca
-         sqK8bf5eW6joQpcRytcvg7J5Ahgc9/k0zqU7MAHB2uPSMCQp6dxrGwhqJGJy7ihUYAx4
-         jW3xmh+hpypQkB2lKBAn2/Th0935kQE+pGsFAZZPYtNYs6NzOt5BnAq2sdSAxDpOFjDQ
-         yUTw==
-X-Forwarded-Encrypted: i=1; AJvYcCUG+1nCU2T1hRQkbAjRob+ibfVtv9CG3BFnW5HWberBXAfboL8G+Ee14c+DzXnUbgUBLiVvRzqgtvGqHGM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIAMieFZuaSrdk+RsinvDMvub7mYjRNesTKZ3rS8MAewcifcvT
-	Pe3+DUk8WOybmvdMiBHP4Aymrqb/aqfQNV0yc5K3XlBzj6nCjNNTWySfA5rv8xfwveJJB9v/iYn
-	pcYHvLWT9cO5Gzej7evsXfoRv41kOAmA8ANVktOjX
-X-Gm-Gg: ASbGnctTsHZAgtl/QWRFmoJ/A13Ar8e3LjaC+HJ5gy+NAotTPMQCJofu3CxTJg5UNlq
-	j3ugmjDjx942DCUuzDGEwiNQdWBXpl6CgYVBDThOPIFSmnxUT7eeHFW6QohdjrclPag1ZrUVsIz
-	6jnrhTMLRs/Qqcuf3OvmFE4Fi2laovw1L/iV51bI1dcNeOnbIuSDpjt8s0HPpUAL4WNQO9eNhcf
-	XfGn8sv/0BmnG/4GZJ6do5My7fYu/soj5ezBP3p2ByEnfC0QJtgyUtq4bWcI67PVl8Wy9iP2jjU
-	K6Y/BPtkf7j14e+/FdzuL24hSA==
-X-Google-Smtp-Source: AGHT+IGgeWz4q3klBcad1a8/ik5ZTtMnoBglCnwh8mpt7C9cn98lgz2wrQSDRJJTFRt0RZ/9qtbKtxdCNTdhsCu6Gt4=
-X-Received: by 2002:a17:903:246:b0:274:1a09:9553 with SMTP id
- d9443c01a7336-29841580f6emr5676315ad.6.1762881641167; Tue, 11 Nov 2025
- 09:20:41 -0800 (PST)
+	s=arc-20240116; t=1762881694; c=relaxed/simple;
+	bh=O8mHQn3liP2UUlM+m+8C3tF9osLYbychnmMSAfVoFLk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LzRDxsDg8beyJAPI2Htjq0qw3o9ThkT5J4JoJyY3/7b1gChySt4PQUIkJbMN0EVkM2jR4QxShleTrF7QHydoO6KKzyl6BQBWjhUwfvQ4Kjk4Zi6cg7yPjWj6KJmz7sxZYm0PGVxF/8hgJMlna57K0NBIaZGYt2BSB3JDUM2IgB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=dGzxIXGt; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (82-203-161-95.bb.dnainternet.fi [82.203.161.95])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 204461D29;
+	Tue, 11 Nov 2025 18:19:31 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1762881571;
+	bh=O8mHQn3liP2UUlM+m+8C3tF9osLYbychnmMSAfVoFLk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dGzxIXGtlQ5L+Iapz2cmB+eUbSgZNY7dVy0UcLiiGUG0eP7hLLH5gUYeh9o+lwAKU
+	 PWYr+Xg9mdInlXCnKvMk9bfBuzWtZGvyj0KpOUJilAMPOdwReU1BngnydP+FN05gbq
+	 MrbJgZEI03PSVgnUe/cmZKyLWcIN13Mq6iCRmUzg=
+Date: Tue, 11 Nov 2025 19:21:24 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	Duy Nguyen <duy.nguyen.rh@renesas.com>
+Subject: Re: [PATCH] Revert "media: vsp1: Add underrun debug print"
+Message-ID: <20251111172124.GH4270@pendragon.ideasonboard.com>
+References: <20250910-rcar-vsp-underrun-revert-v1-1-2fa8d3b1b879@ideasonboard.com>
+ <176286282930.2141792.17722042639840544380@ping.linuxembedded.co.uk>
+ <c5ab80df-0d60-4984-ad21-7dd1182b990f@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251111040417.270945-1-irogers@google.com> <20251111040417.270945-2-irogers@google.com>
- <e0d29714-df04-48f9-8168-770bf05a0f7f@linux.intel.com>
-In-Reply-To: <e0d29714-df04-48f9-8168-770bf05a0f7f@linux.intel.com>
-From: Ian Rogers <irogers@google.com>
-Date: Tue, 11 Nov 2025 09:20:30 -0800
-X-Gm-Features: AWmQ_blhqsdu0pEFBeuHgEMF4isl1j0ZSrqJNUNsNdjggBQgjZSDio6o-ThKEhs
-Message-ID: <CAP-5=fWWxbRS4D1GsPvSgr32cfCGaT68qV0Q6-FLQ90R-bhH3w@mail.gmail.com>
-Subject: Re: [PATCH v3 01/18] perf metricgroup: Add care to picking the evsel
- for displaying a metric
-To: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, James Clark <james.clark@linaro.org>, 
-	Xu Yang <xu.yang_2@nxp.com>, Chun-Tse Shao <ctshao@google.com>, 
-	Thomas Richter <tmricht@linux.ibm.com>, Sumanth Korikkar <sumanthk@linux.ibm.com>, 
-	Collin Funk <collin.funk1@gmail.com>, Thomas Falcon <thomas.falcon@intel.com>, 
-	Howard Chu <howardchu95@gmail.com>, Levi Yun <yeoreum.yun@arm.com>, 
-	Yang Li <yang.lee@linux.alibaba.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, Andi Kleen <ak@linux.intel.com>, 
-	Weilin Wang <weilin.wang@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <c5ab80df-0d60-4984-ad21-7dd1182b990f@ideasonboard.com>
 
-On Tue, Nov 11, 2025 at 12:15=E2=80=AFAM Mi, Dapeng <dapeng1.mi@linux.intel=
-.com> wrote:
->
->
-> On 11/11/2025 12:04 PM, Ian Rogers wrote:
-> > Rather than using the first evsel in the matched events, try to find
-> > the least shared non-tool evsel. The aim is to pick the first evsel
-> > that typifies the metric within the list of metrics.
+On Tue, Nov 11, 2025 at 02:23:05PM +0200, Tomi Valkeinen wrote:
+> On 11/11/2025 14:07, Kieran Bingham wrote:
+> > Quoting Tomi Valkeinen (2025-09-10 08:26:43)
+> >> This reverts commit 1dc30075fb0fe02b74b1ea7fd1c1c734a89f1448.
+> >>
+> >> There have been reports of lots of underruns happening on earlier
+> >> generation SoCs (M3, E3) with display use cases, e.g.:
+> >>
+> >> vsp1 fea28000.vsp: Underrun occurred at WPF0 (total underruns 1)
+> >>
+> >> but the display still working fine, and reverting the above commit,
+> >> which added underrun prints, makes the prints go away (obviously).
+> >>
+> >> I made some tests on a remote M3, with no display connected, and I can
+> >> confirm that there seem to be a single underrun report quite often when
+> >> enabling a display, and an underrun flood when using interlace display
+> >> modes.
+> >>
+> >> E3 does not have interlace display support as far as I can see, so the
+> >> interlace issue does not concern it.
+> >>
+> >> Debugging display issues remotely without a display is quite
+> >> challenging, and I did not find any issues in the code, nor could I find
+> >> a way to stop the underruns by twiddling with the related registers.
+> >>
+> >> My pure guess is that the single underruns occurring when starting the
+> >> display hint at either a startup sequence issue, or some kind of initial
+> >> fifo loading issue. The interlace underruns hint at a bigger
+> >> misconfiguration, but as the display works fine, the issue might be just
+> >> an underrun at the start of the frame and the HW quickly catching up, or
+> >> at the end of the frame, where one block in the pipeline expects more
+> >> data but the previous block has already stopped (so maybe a misconfig
+> >> between using interlaced height vs progressive height?).
+> >>
+> >> But at the moment I have no solution to this, and as the displays work
+> >> fine, I think it makes sense to just revert the print.
+> > 
+> > Is there any value in instead 'ignoring' any underruns if say the frame
+> > count is < 5 to ignore startup underruns, and keep it as an active print
+> > if something causes underruns later once the pipeline is established?
+> > 
+> > But maybe that doesn't change much - and if there's no current perceived
+> > issue
+> 
+> A single underrun at enable time could/should probably be ignored, as it
+> might be just issue with the initial fifo filling or such (even then
+> it's a bit annoying, but I've seen some HW docs (not on this platform)
+> telling to ignore such underruns).
+> 
+> But that wouldn't help with the underrun flood for interlace. I think
+> there's a clear issue for ilace here, but I have no idea where exactly.
+> And, the display works fine, so the display controller can recover
+> instantly.
+> 
+> > Anyway, I don't object to this revert. It's low impact and it's only
+> > undoing 'your' work so no one else will complain :D
+> 
+> Yep... I hate disabling error reporting, but I think it's the best
+> option here, at least until someone with the board can debug it
+> properly. In any case, if there are "real" underruns, the error is also
+> visible on the display, you don't need the console print to show it.
+
+Quoting https://lore.kernel.org/all/1651584010-10156-1-git-send-email-erosca@de.adit-jv.com/
+
+"A barely noticeable (especially if hardly reproducible) display flicker
+may not be the biggest concern in the development environment. However,
+an automotive OEM will not only notice it, but will also be haunted by
+its phenomenon/nature till it is understood in the greatest detail and
+ultimately eradicated, to avoid impairing user experience.
+
+Troubleshooting the above without the right tools becomes a nightmare."
+
+I think we need to get to the bottom of this and fix the root cause,
+unless we receive an explicit acknowledgement from Renesas that underrun
+detection is not desired.
+
+> > Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 > >
-> > This addresses an issue where Default metric group metrics may lose
-> > their counter value due to how the stat displaying hides counters for
-> > default event/metric output.
-> >
-> > For a metricgroup like TopdownL1 on an Intel Alderlake the change is,
-> > before there are 4 events with metrics:
-> > ```
-> > $ perf stat -M topdownL1 -a sleep 1
-> >
-> >  Performance counter stats for 'system wide':
-> >
-> >      7,782,334,296      cpu_core/TOPDOWN.SLOTS/          #     10.4 %  =
-tma_bad_speculation
-> >                                                   #     19.7 %  tma_fro=
-ntend_bound
-> >      2,668,927,977      cpu_core/topdown-retiring/       #     35.7 %  =
-tma_backend_bound
-> >                                                   #     34.1 %  tma_ret=
-iring
-> >        803,623,987      cpu_core/topdown-bad-spec/
-> >        167,514,386      cpu_core/topdown-heavy-ops/
-> >      1,555,265,776      cpu_core/topdown-fe-bound/
-> >      2,792,733,013      cpu_core/topdown-be-bound/
-> >        279,769,310      cpu_atom/TOPDOWN_RETIRING.ALL/   #     12.2 %  =
-tma_retiring
-> >                                                   #     15.1 %  tma_bad=
-_speculation
-> >        457,917,232      cpu_atom/CPU_CLK_UNHALTED.CORE/  #     38.4 %  =
-tma_backend_bound
-> >                                                   #     34.2 %  tma_fro=
-ntend_bound
-> >        783,519,226      cpu_atom/TOPDOWN_FE_BOUND.ALL/
-> >         10,790,192      cpu_core/INT_MISC.UOP_DROPPING/
-> >        879,845,633      cpu_atom/TOPDOWN_BE_BOUND.ALL/
-> > ```
-> >
-> > After there are 6 events with metrics:
-> > ```
-> > $ perf stat -M topdownL1 -a sleep 1
-> >
-> >  Performance counter stats for 'system wide':
-> >
-> >      2,377,551,258      cpu_core/TOPDOWN.SLOTS/          #      7.9 %  =
-tma_bad_speculation
-> >                                                   #     36.4 %  tma_fro=
-ntend_bound
-> >        480,791,142      cpu_core/topdown-retiring/       #     35.5 %  =
-tma_backend_bound
-> >        186,323,991      cpu_core/topdown-bad-spec/
-> >         65,070,590      cpu_core/topdown-heavy-ops/      #     20.1 %  =
-tma_retiring
-> >        871,733,444      cpu_core/topdown-fe-bound/
-> >        848,286,598      cpu_core/topdown-be-bound/
-> >        260,936,456      cpu_atom/TOPDOWN_RETIRING.ALL/   #     12.4 %  =
-tma_retiring
-> >                                                   #     17.6 %  tma_bad=
-_speculation
-> >        419,576,513      cpu_atom/CPU_CLK_UNHALTED.CORE/
-> >        797,132,597      cpu_atom/TOPDOWN_FE_BOUND.ALL/   #     38.0 %  =
-tma_frontend_bound
-> >          3,055,447      cpu_core/INT_MISC.UOP_DROPPING/
-> >        671,014,164      cpu_atom/TOPDOWN_BE_BOUND.ALL/   #     32.0 %  =
-tma_backend_bound
-> > ```
->
-> It looks the output of cpu_core and cpu_atom events are mixed together,
-> like the "cpu_core/INT_MISC.UOP_DROPPING/". Could we resort the events an=
-d
-> separate the cpu_core and cpu_atom events output? It would make the outpu=
-t
-> more read-friendly. Thanks.
+> >> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+> >> ---
+> >>  drivers/media/platform/renesas/vsp1/vsp1_drm.c  |  3 ---
+> >>  drivers/media/platform/renesas/vsp1/vsp1_drv.c  | 11 +----------
+> >>  drivers/media/platform/renesas/vsp1/vsp1_pipe.h |  2 --
+> >>  drivers/media/platform/renesas/vsp1/vsp1_regs.h |  2 --
+> >>  4 files changed, 1 insertion(+), 17 deletions(-)
+> >>
+> >> diff --git a/drivers/media/platform/renesas/vsp1/vsp1_drm.c b/drivers/media/platform/renesas/vsp1/vsp1_drm.c
+> >> index 15d266439564..b8f211db16fc 100644
+> >> --- a/drivers/media/platform/renesas/vsp1/vsp1_drm.c
+> >> +++ b/drivers/media/platform/renesas/vsp1/vsp1_drm.c
+> >> @@ -721,9 +721,6 @@ int vsp1_du_setup_lif(struct device *dev, unsigned int pipe_index,
+> >>                 return 0;
+> >>         }
+> >>  
+> >> -       /* Reset the underrun counter */
+> >> -       pipe->underrun_count = 0;
+> >> -
+> >>         drm_pipe->width = cfg->width;
+> >>         drm_pipe->height = cfg->height;
+> >>         pipe->interlaced = cfg->interlaced;
+> >> diff --git a/drivers/media/platform/renesas/vsp1/vsp1_drv.c b/drivers/media/platform/renesas/vsp1/vsp1_drv.c
+> >> index b8d06e88c475..68e92d3c5915 100644
+> >> --- a/drivers/media/platform/renesas/vsp1/vsp1_drv.c
+> >> +++ b/drivers/media/platform/renesas/vsp1/vsp1_drv.c
+> >> @@ -47,8 +47,7 @@
+> >>  
+> >>  static irqreturn_t vsp1_irq_handler(int irq, void *data)
+> >>  {
+> >> -       u32 mask = VI6_WPF_IRQ_STA_DFE | VI6_WPF_IRQ_STA_FRE |
+> >> -                  VI6_WPF_IRQ_STA_UND;
+> >> +       u32 mask = VI6_WPF_IRQ_STA_DFE | VI6_WPF_IRQ_STA_FRE;
+> >>         struct vsp1_device *vsp1 = data;
+> >>         irqreturn_t ret = IRQ_NONE;
+> >>         unsigned int i;
+> >> @@ -63,14 +62,6 @@ static irqreturn_t vsp1_irq_handler(int irq, void *data)
+> >>                 status = vsp1_read(vsp1, VI6_WPF_IRQ_STA(i));
+> >>                 vsp1_write(vsp1, VI6_WPF_IRQ_STA(i), ~status & mask);
+> >>  
+> >> -               if ((status & VI6_WPF_IRQ_STA_UND) && wpf->entity.pipe) {
+> >> -                       wpf->entity.pipe->underrun_count++;
+> >> -
+> >> -                       dev_warn_ratelimited(vsp1->dev,
+> >> -                               "Underrun occurred at WPF%u (total underruns %u)\n",
+> >> -                               i, wpf->entity.pipe->underrun_count);
+> >> -               }
+> >> -
+> >>                 if (status & VI6_WPF_IRQ_STA_DFE) {
+> >>                         vsp1_pipeline_frame_end(wpf->entity.pipe);
+> >>                         ret = IRQ_HANDLED;
+> >> diff --git a/drivers/media/platform/renesas/vsp1/vsp1_pipe.h b/drivers/media/platform/renesas/vsp1/vsp1_pipe.h
+> >> index 7f623b8cbe5c..9cc2f1646b00 100644
+> >> --- a/drivers/media/platform/renesas/vsp1/vsp1_pipe.h
+> >> +++ b/drivers/media/platform/renesas/vsp1/vsp1_pipe.h
+> >> @@ -137,8 +137,6 @@ struct vsp1_pipeline {
+> >>  
+> >>         unsigned int partitions;
+> >>         struct vsp1_partition *part_table;
+> >> -
+> >> -       u32 underrun_count;
+> >>  };
+> >>  
+> >>  void vsp1_pipeline_reset(struct vsp1_pipeline *pipe);
+> >> diff --git a/drivers/media/platform/renesas/vsp1/vsp1_regs.h b/drivers/media/platform/renesas/vsp1/vsp1_regs.h
+> >> index 10cfbcd1b6e0..188d26289714 100644
+> >> --- a/drivers/media/platform/renesas/vsp1/vsp1_regs.h
+> >> +++ b/drivers/media/platform/renesas/vsp1/vsp1_regs.h
+> >> @@ -32,12 +32,10 @@
+> >>  #define VI6_STATUS_SYS_ACT(n)          BIT((n) + 8)
+> >>  
+> >>  #define VI6_WPF_IRQ_ENB(n)             (0x0048 + (n) * 12)
+> >> -#define VI6_WPF_IRQ_ENB_UNDE           BIT(16)
+> >>  #define VI6_WPF_IRQ_ENB_DFEE           BIT(1)
+> >>  #define VI6_WPF_IRQ_ENB_FREE           BIT(0)
+> >>  
+> >>  #define VI6_WPF_IRQ_STA(n)             (0x004c + (n) * 12)
+> >> -#define VI6_WPF_IRQ_STA_UND            BIT(16)
+> >>  #define VI6_WPF_IRQ_STA_DFE            BIT(1)
+> >>  #define VI6_WPF_IRQ_STA_FRE            BIT(0)
+> >>  
+> >>
+> >> ---
+> >> base-commit: 76eeb9b8de9880ca38696b2fb56ac45ac0a25c6c
+> >> change-id: 20250908-rcar-vsp-underrun-revert-f3e64612c62d
 
-So the metrics are tagged as to not group the events:
-https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.gi=
-t/tree/tools/perf/pmu-events/arch/x86/alderlake/adl-metrics.json?h=3Dperf-t=
-ools-next#n117
-Running with each metric causes the output to be:
-```
-$ perf stat -M tma_bad_speculation,tma_backend_bound,tma_frontend_bound,tma=
-_retiring
--a sleep 1
+-- 
+Regards,
 
- Performance counter stats for 'system wide':
-
-     1,615,145,897      cpu_core/TOPDOWN.SLOTS/          #      8.1 %
-tma_bad_speculation
-                                                  #     42.5 %
-tma_frontend_bound       (49.89%)
-       243,037,087      cpu_core/topdown-retiring/       #     34.5 %
-tma_backend_bound        (49.89%)
-       129,341,306      cpu_core/topdown-bad-spec/
-                         (49.89%)
-         2,679,894      cpu_core/INT_MISC.UOP_DROPPING/
-                         (49.89%)
-       696,940,348      cpu_core/topdown-fe-bound/
-                         (49.89%)
-       563,319,011      cpu_core/topdown-be-bound/
-                         (49.89%)
-     1,795,034,847      cpu_core/slots/
-                         (50.11%)
-       262,140,961      cpu_core/topdown-retiring/
-                         (50.11%)
-        44,589,349      cpu_core/topdown-heavy-ops/      #     14.4 %
-tma_retiring             (50.11%)
-       160,987,341      cpu_core/topdown-bad-spec/
-                         (50.11%)
-       778,250,364      cpu_core/topdown-fe-bound/
-                         (50.11%)
-       622,499,674      cpu_core/topdown-be-bound/
-                         (50.11%)
-        90,849,750      cpu_atom/TOPDOWN_RETIRING.ALL/   #      8.1 %
-tma_retiring
-                                                  #     17.2 %
-tma_bad_speculation
-       223,878,243      cpu_atom/CPU_CLK_UNHALTED.CORE/
-       423,068,733      cpu_atom/TOPDOWN_FE_BOUND.ALL/   #     37.8 %
-tma_frontend_bound
-       413,413,499      cpu_atom/TOPDOWN_BE_BOUND.ALL/   #     36.9 %
-tma_backend_bound
-```
-so you can see that it is the effect of not grouping the events that
-leads to the cpu_core and cpu_atom split.
-
-The code that does sorting/fixing/adding of events, primarily to fix
-topdown, is parse_events__sort_events_and_fix_groups:
-https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.gi=
-t/tree/tools/perf/util/parse-events.c?h=3Dperf-tools-next#n2030
-but I've tried to make that code respect the incoming evsel list order
-because if a user specifies an order then they generally expect it to
-be respected (unless invalid or because of topdown events). For
---metric-only the event order doesn't really matter.
-
-Anyway, I think trying to fix this is out of scope for this patch
-series, although I agree with you about the readability. The behavior
-here matches old behavior such as:
-```
-$ perf --version
-perf version 6.16.12
-$ perf stat -M TopdownL1 -a sleep 1
-
- Performance counter stats for 'system wide':
-
-    11,086,754,658      cpu_core/TOPDOWN.SLOTS/          #     27.1 %
-tma_backend_bound
-                                                  #      7.5 %
-tma_bad_speculation
-                                                  #     36.5 %
-tma_frontend_bound
-                                                  #     28.9 %
-tma_retiring
-     3,219,475,010      cpu_core/topdown-retiring/
-       820,655,931      cpu_core/topdown-bad-spec/
-       418,883,912      cpu_core/topdown-heavy-ops/
-     4,082,884,459      cpu_core/topdown-fe-bound/
-     3,012,532,414      cpu_core/topdown-be-bound/
-     1,030,171,196      cpu_atom/TOPDOWN_RETIRING.ALL/   #     17.4 %
-tma_retiring
-                                                  #     16.5 %
-tma_bad_speculation
-     1,185,093,601      cpu_atom/CPU_CLK_UNHALTED.CORE/  #     29.8 %
-tma_backend_bound
-                                                  #     36.4 %
-tma_frontend_bound
-     2,154,914,153      cpu_atom/TOPDOWN_FE_BOUND.ALL/
-        14,988,684      cpu_core/INT_MISC.UOP_DROPPING/
-     1,763,486,868      cpu_atom/TOPDOWN_BE_BOUND.ALL/
-
-       1.004103365 seconds time elapsed
-```
-ie the cpu_core and cpu_atom mixing of events isn't a regression
-introduced here. There isn't a simple fix for the ordering, as we
-don't want to mess up the non-metric cases. I'm happy if you think
-things can be otherwise to make a change.
-
-Thanks,
-Ian
+Laurent Pinchart
 
