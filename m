@@ -1,97 +1,112 @@
-Return-Path: <linux-kernel+bounces-894515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2857C4B36F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 03:30:43 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D4B3C4B37B
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 03:31:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0BD93B6753
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 02:30:42 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 09CFA34C87A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 02:31:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D31ED348454;
-	Tue, 11 Nov 2025 02:30:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2163313E3B;
+	Tue, 11 Nov 2025 02:31:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rA7dzTdE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iEpdfLZ5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35F1C7082A;
-	Tue, 11 Nov 2025 02:30:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FA1E3054CE;
+	Tue, 11 Nov 2025 02:31:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762828237; cv=none; b=UeNXS75rz6FYI+xLLTjlqWW6uXhCoN0Cuf30j6sMn6P9WCq+WCWnkl7nxNtpsjPrrKIbSYj3vQBYW+YKPysXpjsgHnNVW52rPmOlX7XIQRY8jEgffr145J6+lTaa2CQkeAPEzF8Osf6Xj9HWg6dKX58eGcnxvqdF5QwPRIdqY4o=
+	t=1762828285; cv=none; b=EVjHNLlt8nsch/KdbHmfr9CIUCZeS5oX6kUG9reCSjTT2M0Vjffy8SnAZZv1/mfdNha0dinpWGWHFse/J7ZrZB2Dxx3eAIELf3Nd66QH0AliMl6KgdP4E+GqqbL5Ag1wgfjcDPtleHr3l8rwqgC8MxOMptzemkaHD+dI65d5L8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762828237; c=relaxed/simple;
-	bh=GgV9Iv0esINc2xmUnKv9b395UQpf4cgOVLAgAe8BYeo=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=Jp4ZPi9r0LbEKF/7FmnlmsAsVArzCSQYyEus4mVMZZO3/i0ECeUFFw4vZsqabC0o5EkHSqcyt4/vYSnPVbj0zZbPKtja4v1NVb7+gK15hXXG1OQJFcINMpCrI6M9zMr0rMMI76qiHFqUApOOHfKhcDcxOeGEWoUQxpzKX+FPZXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rA7dzTdE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA668C113D0;
-	Tue, 11 Nov 2025 02:30:36 +0000 (UTC)
+	s=arc-20240116; t=1762828285; c=relaxed/simple;
+	bh=IS6C6wNPv5uaZiVZqfJg8GnUvDAPgN7kUTq7DQhwLtg=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=sGV7i/7N3gb+RpZRPfiREZ8KG1XBU/P+jjGfe9xBauMyO6a2xslKEmKJfx7l6C1mY74m2H/sr3PluCxMZEVedOsoeTHTIsA9P3FEiS+rpvSn66URI8sR6Wx+FVQZG9lUIn4EdjNhO6NriHTaciOosny9VYpsH3tVa9mKk4hvedQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iEpdfLZ5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81A34C116B1;
+	Tue, 11 Nov 2025 02:31:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762828236;
-	bh=GgV9Iv0esINc2xmUnKv9b395UQpf4cgOVLAgAe8BYeo=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=rA7dzTdEnsMtlUI/BO6+bJRyZQkbU01fQaFDAxTZ9MGaXz/OxgFFRRYB87O5pFUaA
-	 ZYZYjC9Xin0Sq1fzVTH40owmL03Lsxwsc6zx5q7ET4CQS4P6ofdDpG7ZZm2svNxjkg
-	 afSbOpno0TdBclf7KlBUPcFCZhXAYyQZ8cJJlqBKXnWRvWakHjGQ2dWWAUTGahmaoU
-	 0JE8+ys1cPZQakoxIifP3biAKkxN/lbYgE6XlIjT6H8WfKGSePI1nkgsYWtiRUSrlm
-	 eFoS+a6s/hvii7RIH4wVT6L4XuRkzkhS9K5o+C/Hz/B/TZSC7LUp2hXM/VR/HaEh25
-	 UYd4R1tsY7Yow==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70F1A380CFD7;
-	Tue, 11 Nov 2025 02:30:08 +0000 (UTC)
+	s=k20201202; t=1762828284;
+	bh=IS6C6wNPv5uaZiVZqfJg8GnUvDAPgN7kUTq7DQhwLtg=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=iEpdfLZ5zGQ1xzW0xT82A2p1lELSA0L9VWxRMD5xj9UCHM9/1/6qKWif4iRqIK1hi
+	 zMgCdSKHVRwgSdrgoB3Zc4JTc3AV0ro6/mYYEeKnpWdIWE23Iv5UDC034ryWsBh1HP
+	 O2qX9eqRcQlu7cRWlM2Gf3E1rg4MkkOUROJrJiJ9qGMwT4ajh4YKmIkmWOCJix5Kr3
+	 1bZ3wRHVc/NVlfXwZYnJLl7iTMtnmK+qKHy/ruEtwV532sKXcrmb/zI+rikqetScuB
+	 w/4GtNGYws8ixTWPejpKhL3h0En8FrFXcqcJO1VCc2Or/3Hk0r5jIxFYuPFmP4LUZt
+	 KEY0anfY2wTiQ==
+Date: Mon, 10 Nov 2025 20:31:22 -0600
 Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] net: mdio: fix resource leak in
- mdiobus_register_device()
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <176282820725.2856551.7984445263108394336.git-patchwork-notify@kernel.org>
-Date: Tue, 11 Nov 2025 02:30:07 +0000
-References: 
- <4b419377f8dd7d2f63f919d0f74a336c734f8fff.1762584481.git.buday.csaba@prolan.hu>
-In-Reply-To: 
- <4b419377f8dd7d2f63f919d0f74a336c734f8fff.1762584481.git.buday.csaba@prolan.hu>
-To: Buday Csaba <buday.csaba@prolan.hu>
-Cc: andrew@lunn.ch, hkallweit1@gmail.com, linux@armlinux.org.uk,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- mail@david-bauer.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: linux-input@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+ Daniel Peng <Daniel_Peng@pegatron.corp-partner.google.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, devicetree@vger.kernel.org, 
+ Conor Dooley <conor+dt@kernel.org>
+To: daniel_peng@pegatron.corp-partner.google.com
+In-Reply-To: <20251111093426.1.I76ee34ac45e1469dbeb11de0d1e47d794af7dc88@changeid>
+References: <20251111093426.1.I76ee34ac45e1469dbeb11de0d1e47d794af7dc88@changeid>
+Message-Id: <176282828282.1500650.453785854206330008.robh@kernel.org>
+Subject: Re: [PATCH 1/2] dt-bindings: HID: i2c-hid: elan: Introduce
+ FocalTech FT8112
 
-Hello:
 
-This patch was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Sat, 8 Nov 2025 07:49:22 +0100 you wrote:
-> Fix a possible leak in mdiobus_register_device() when both a
-> reset-gpio and a reset-controller are present.
-> Clean up the already claimed reset-gpio, when the registration of
-> the reset-controller fails, so when an error code is returned, the
-> device retains its state before the registration attempt.
+On Tue, 11 Nov 2025 09:34:57 +0800, daniel_peng@pegatron.corp-partner.google.com wrote:
+> From: Daniel Peng <Daniel_Peng@pegatron.corp-partner.google.com>
 > 
-> Link: https://lore.kernel.org/all/20251106144603.39053c81@kernel.org/
-> Fixes: 71dd6c0dff51 ("net: phy: add support for reset-controller")
-> Signed-off-by: Buday Csaba <buday.csaba@prolan.hu>
+> The FocalTech FT8112 touch screen chip same as Ilitek ili2901 controller
+> has a reset gpio. The difference is that they have different
+> post_gpio_reset_on_delay_ms.
+> FocalTech FT8112 also uses 3.3V power supply.
 > 
-> [...]
+> Signed-off-by: Daniel Peng <Daniel_Peng@pegatron.corp-partner.google.com>
+> ---
+> 
+>  .../bindings/input/focaltech,ft8112.yaml      | 66 +++++++++++++++++++
+>  MAINTAINERS                                   |  1 +
+>  2 files changed, 67 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/input/focaltech,ft8112.yaml
+> 
 
-Here is the summary with links:
-  - [net] net: mdio: fix resource leak in mdiobus_register_device()
-    https://git.kernel.org/netdev/net/c/e6ca8f533ed4
+My bot found errors running 'make dt_binding_check' on your patch:
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+yamllint warnings/errors:
 
+dtschema/dtc warnings/errors:
+Error: Documentation/devicetree/bindings/input/focaltech,ft8112.example.dts:36.31-33 syntax error
+FATAL ERROR: Unable to parse input tree
+make[2]: *** [scripts/Makefile.dtbs:132: Documentation/devicetree/bindings/input/focaltech,ft8112.example.dtb] Error 1
+make[2]: *** Waiting for unfinished jobs....
+make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1547: dt_binding_check] Error 2
+make: *** [Makefile:248: __sub-make] Error 2
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20251111093426.1.I76ee34ac45e1469dbeb11de0d1e47d794af7dc88@changeid
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
 
