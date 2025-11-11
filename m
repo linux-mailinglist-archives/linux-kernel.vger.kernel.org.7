@@ -1,223 +1,172 @@
-Return-Path: <linux-kernel+bounces-894782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95DEDC4C17D
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 08:22:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 631C3C4C183
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 08:22:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9557D3BDA43
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 07:15:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C30A03BE385
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 07:15:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFC3D34AB18;
-	Tue, 11 Nov 2025 07:13:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D2A7221282;
+	Tue, 11 Nov 2025 07:15:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e0UskhF1";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="Fxe2ZzP9"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="RA3qUKG9"
+Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FCCF34A775
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 07:13:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D20834D38B
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 07:15:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762845225; cv=none; b=OKn3OYKygT4kn9ichZgM2pKb71kKjOObTxmdo3HfXllqej14V3hPVFKwf8lbn0JIK6mtHQaNrZDLRyVVSsEVULe3Hs1d2yONKR7CkmvI4KcmxtTvQR8rVKCgm4+ZGUmxSPCNvEUqfc39ziQp7UkOt864mY3a//eu4c634qTN7Oc=
+	t=1762845335; cv=none; b=snGHA9EwW0ZIVa2XQ1DElW4aV8MMsaikwK6FWpfhbYVf9OIvFE9jVoSiv7L98Ne6sXNZKYgwBAb45ESa1RQD8UZeQlmh+QB/wld/6Gui+UriQb2I6X1ZmSjn7GSsrwZSQFxX/lymUfy9oKIMEWcXtldD0ut9Wc1S3Od+9SaZoX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762845225; c=relaxed/simple;
-	bh=KJedQhalOpEG5NfPc77xs7k6VW0PXuVbwYfi428j2JE=;
+	s=arc-20240116; t=1762845335; c=relaxed/simple;
+	bh=wrbtYmF5M2Btq/6WUxsAnzshgHMYJjYmmWYOAPlWha4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=h2Jf893sDY5XbPiuMAIYYkO1P9Kyv1AKT+qRpMuUCg/AeW/IiSlDV7lDq8HvoLT9tkfoF+UE//ViJSugwFPOatTHF6jQwVh6wJuI/Prs5W6PsZ35E85wUux+GMqsdKAYVTfDP92Yh/rBOIJBTvY6ZXzuf7cjdfhIi8ih8uCFS4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=e0UskhF1; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=Fxe2ZzP9; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762845222;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qQOor7E4dbeNIdzwuyVMMdwivPTgd7AVyRPfTl2aFVc=;
-	b=e0UskhF1Qf5gh11Zt06WcgSXS5Epfc1XaeFfKysODjO+iCQ4kHgxPt857IdqT5RhOaPkM3
-	0Xj1LzGp4HsVdZaF2SWWdYEzSB84R1XgbqxVIekTL2f7/isp1ZNyxpHKIrloOhLXEoQtXE
-	JQSQshk9nHFv4pG72AOAMxv3CxuaHBg=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-549-s8_sTVRIPz-ReIGLF4Rxmg-1; Tue, 11 Nov 2025 02:13:40 -0500
-X-MC-Unique: s8_sTVRIPz-ReIGLF4Rxmg-1
-X-Mimecast-MFC-AGG-ID: s8_sTVRIPz-ReIGLF4Rxmg_1762845219
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-47778daa4d2so16978605e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 23:13:40 -0800 (PST)
+	 To:Cc:Content-Type; b=BeC9gbmqBSyFD+MKOHWEUZ6DO1K0vRTuliCN6f7ogSS8wKRFR/ASvCMHW7O4dab8+WxhwQa5sg+ISJ91PhyWZlTKvoNPFQpSL9eD9cL7iFbu3TXYjcJLzll+S6nZqW9Vy77LxHI3Chc4373n/uygSk6WbMR9jP1pQkyObyfTJYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=RA3qUKG9; arc=none smtp.client-ip=209.85.160.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-3e80c483a13so820530fac.2
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 23:15:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1762845219; x=1763450019; darn=vger.kernel.org;
+        d=bytedance.com; s=google; t=1762845333; x=1763450133; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=qQOor7E4dbeNIdzwuyVMMdwivPTgd7AVyRPfTl2aFVc=;
-        b=Fxe2ZzP9SBXIzjj/FEwvd503DTRjWyCOhbl5PbSTd3YwFEk0AobjMdhlVVsXZRyJkg
-         OIGEfSTeor0OKVvYLizrveUTqy0goCI97JrQ7A596RatLcgB4L3xxPI0ujpBQ75LWLW7
-         Y5TXKTJgk6fXGdCWM0JfuDWDkm5qM2QXJRyzyLYbWsTn0wZvcihudLxm5JRGo95YxI6J
-         S3WkTdMt4lvm6zWD1q392kt/niYqHd4Sq/yNUKQrdg288a/flRRcdSePl4CPKnM3dk0K
-         yj1CbgSAH/WmL/U5yBlFHYW4yuq+H2jizMdA0KI66hBj/Db1hyx3EMRV1+WX0oRtGLvW
-         TAZA==
+        bh=dGMbS3VEvjhgNpVe1MttoJ7jTkjbM/PBhlD1Dx+012U=;
+        b=RA3qUKG9Vay/L9MubkIcoIwyDTpVy40Pn61bYxtFPm9We+inudZzdPs3UmKv8yYVN3
+         F02mlJuse6HRumMBv/t1u+ofTvXZtvJ38F7ff6Uk4fJsRTSIDgEMuN0bzvk6BuEjD8KP
+         Lc2ynXip/Q9MWdzhkrlzPBjbOuTEJ5iOcBzMOycrpQ3I3OmkjHquILuUNbvFvGrWAJdm
+         /a2/6Jx4Snz/EV9tEELhAVUhS1pTjrxpSwEottI5rw97t9f3sVomdrfEntgGDaEFNcFL
+         YaaKPcOm87yUVLf18vkABK/42FF0csCMUd2E2vIqg/OBDQt4gGH671AUrWEZdI8BeC+r
+         3obQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762845219; x=1763450019;
+        d=1e100.net; s=20230601; t=1762845333; x=1763450133;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=qQOor7E4dbeNIdzwuyVMMdwivPTgd7AVyRPfTl2aFVc=;
-        b=OCbDxVXXQw33LG1eFGLgwHyyhQgrh0xZoWuu0M7CHt5ogY+Uc+oNrmxXwKIcBOu5Br
-         S2HiXulC9B5ESafpGQ+2dHbHmxbZVssx1KVvRaG3xsMILS82MBkvjUuBeDUJ9NvKftkC
-         KeftoN59zpYV4q0kGCtp3tWfJxGdXS727C66dHTvEdRzWNdQaJtBthmuGSYnJSvEWUJv
-         mOTa9ECQvo2DuhaIQZ6huOCsEKh2lan8M3Q5ku4LiP6cKyDga6O0xyts1z2emrGrwTfn
-         tztRLhVAeOum4eWUrr62D4Rb0C0nrr0qUcyNFzZG+GwiFi8G0yUS2cgkgzt3N1i1ruZp
-         s03Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW3HzTYXDE5D5YuYBf9T0e5un63F8fjC6SPv+ex8+m6mSM4N7pyGrnFEBNIbdp9QdT7QojwJWD96uJ3UgE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjM122Y2ewJIeCn5ZNjgd4yy0oVPd/3Qmbdf+tsyKw73ZLcQV5
-	kcgBDfwgd0bWfeD4TFTqfB15c2zUCVzb+RFygmzQDDgLoKrGnE5mMkDW+t5U5sQ8eVPlcEWXLA1
-	Uw/VGy1tmokf/GoDMLbEfMo5dbtohdsQ0gCtF0vtlVQzCS77XFACpoj9hkpudrylrEs6T17rxJd
-	Fc3SccKM2oJ0js5yHR39i9VJzBjkOOPjAspBsp3T8h8gkxUgs9
-X-Gm-Gg: ASbGncs7AWal3wTjlrOst43aSL50ugPWueJX7r3ZhTN/IL/+QgaeJJL90iJA3yqbVlM
-	XvkZhfCl0Utx6YgmUCFU04wLM5BhXcDCRCPYbz1LPtjbL570HeVaF7FejrOSrzGUElVJ1kQ/8zZ
-	yNruOZtlhr+rLECuDx4B7vcE3Y6mO8WUi3/Ij1pOHhEjmR6skHaTH26ow=
-X-Received: by 2002:a05:600c:444b:b0:477:7a78:3016 with SMTP id 5b1f17b1804b1-4777a783204mr56164145e9.8.1762845219440;
-        Mon, 10 Nov 2025 23:13:39 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEw/+Bs8p75RPgUBjuCYroBPzYtzRIGy+11fRuWx6Iz1E14m6XadOX1hcZgO52e5MYFfXjwjk/ig8B+S2Lnoz4=
-X-Received: by 2002:a05:600c:444b:b0:477:7a78:3016 with SMTP id
- 5b1f17b1804b1-4777a783204mr56163945e9.8.1762845218970; Mon, 10 Nov 2025
- 23:13:38 -0800 (PST)
+        bh=dGMbS3VEvjhgNpVe1MttoJ7jTkjbM/PBhlD1Dx+012U=;
+        b=ZHl/5TUGUAYmdDHEB/mHJOi80go5PYniwZVnPOBU0npPPFpggRxXbHzNajfMkAuzXj
+         ACjB+PARcDLwa0xBR5W5Z98L3I3pRxsOFj3gf2Bo2cnCSc9QVkLimCAoKKPO3SbGZ1Ny
+         lKOX9417MMkirwKIxMLw5E5S5nLSByQ7krwZp83TQhOOJRcmM8HUbH/Xjcfxy41oceWW
+         alcVW/3Izs2nEvPjvVFiqNVQGKmC7lBtzisTtLTiDfREDVloknVJ1eD+6eBygQqO9Mv9
+         GO/G+OTNdqNJ9w/FygQDRsQZvhswc4CBSJb0ij+ecXdNIVIEWVKVkPcggZaXw3FDGy49
+         SH8g==
+X-Forwarded-Encrypted: i=1; AJvYcCUwfhFlPxnYd/bCubVW0i8duPCfWewyimlZdNgBDbRV6oPVxgguigo1IDe/kdcrdkvy4cLbFjS9uk1h9Z0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+5F9RtZj1GV7dYljCDySHLGq8e0Mm8BRmRsUStNlUx8CoKk2W
+	rV94m4SHOt+13zR+oYlOMQmNim8yiIhkejkQbljOp8+r8XlyqcKHZ8/jVG7vw+7X0/iTpP32bj2
+	kXDm4KpRyUPfIk3kiqXTfAztOkgyDUoSfIUkl4/7LWA==
+X-Gm-Gg: ASbGncs3VQ4avIg6nhR9nfPDBHgFjVvxWiQFkBtA8QP/uVrX9I/Mf9Blvmc7w76/H7H
+	66tWMewSEAuUYAgqt+LZK8InuxoYkqYCICoOxWTIoagyr39OSoZNtn3CVE0YQFlVJyjFd/kPcKV
+	aTDvA5IQnThz1ktyI30/eLcyGYT90Gss+FhdY6x3R0JSw0vK/LoER9mwiZBPJFnIlYIL2LSD/GL
+	8fPAGTCMHZC6fVLFYIQqTWBUrEuKvfAUwbP0tq12Lm/PMKSOTA3AOZdspcfLcDxLM5stzMgFQ==
+X-Google-Smtp-Source: AGHT+IHWbJ4Yp3gQoh0gR8ti6hW2JnDfbC3dn3VOEzDDEL8ykj+19tubGTkAQQf4eOHdb+UN2vP0PrZVV2xFeQuhHI4=
+X-Received: by 2002:a05:6808:15a6:b0:44d:badf:f41a with SMTP id
+ 5614622812f47-4502a2df5d2mr5427044b6e.32.1762845333082; Mon, 10 Nov 2025
+ 23:15:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cc6cdd116c3ad9d990df21f13c6d8e8a83815bbd.1758641374.git.jstancek@redhat.com>
- <CAFxkdApQVEqCjQMAUqy8cuKnMy8GY9j+brgPZBkxCpeGi5xHxA@mail.gmail.com>
- <CAASaF6zvFa-mPaPfKnBcerfVBkDt5B3TEn7P9jjAfentqSNmxQ@mail.gmail.com> <d2e51443-49dd-445a-88aa-f29d7b777bce@csgroup.eu>
-In-Reply-To: <d2e51443-49dd-445a-88aa-f29d7b777bce@csgroup.eu>
-From: Jan Stancek <jstancek@redhat.com>
-Date: Tue, 11 Nov 2025 08:13:22 +0100
-X-Gm-Features: AWmQ_bmxCpD__pGofmjig0yXldv2fVwGSDiIyFzuYlizjt54SnDPYGTazzntDqc
-Message-ID: <CAASaF6xv6D+Bebv8u5BpDP4-9hb5qX6HRfcdVNaUxb2ke2vuVA@mail.gmail.com>
-Subject: Re: [PATCH RESEND] powerpc/tools: drop `-o pipefail` in gcc check scripts
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: Justin Forbes <jforbes@fedoraproject.org>, maddy@linux.ibm.com, mpe@ellerman.id.au, 
-	linuxppc-dev@lists.ozlabs.org, npiggin@gmail.com, 
-	linux-kernel@vger.kernel.org, joe.lawrence@redhat.com
+References: <20251014031425.93284-1-cuiyunhui@bytedance.com>
+ <20251014031425.93284-2-cuiyunhui@bytedance.com> <aQixsIQXTjYyhRVj@willie-the-truck>
+ <CAEEQ3wk5Ru4-=4Ecnc6kQAAbR57806xxYTz0o1z4KfgZE6Cg6w@mail.gmail.com> <aQ3v15yrm9JaWgrm@willie-the-truck>
+In-Reply-To: <aQ3v15yrm9JaWgrm@willie-the-truck>
+From: yunhui cui <cuiyunhui@bytedance.com>
+Date: Tue, 11 Nov 2025 15:15:21 +0800
+X-Gm-Features: AWmQ_bnoZJigBSCLU3lJje6heEEH-Frt6iL4puU2iLrcXPWUx0zHPoaDlQHxw1Y
+Message-ID: <CAEEQ3wnC-xGZ_m4+vJ42KzU4DdQb1CGfZh_=Nz5wkFuXKS7Y3w@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH v4 1/2] watchdog: move arm64 watchdog_hld
+ into common code
+To: Will Deacon <will@kernel.org>
+Cc: akpm@linux-foundation.org, alex@ghiti.fr, anup@brainfault.org, 
+	aou@eecs.berkeley.edu, atish.patra@linux.dev, catalin.marinas@arm.com, 
+	dianders@chromium.org, johannes@sipsolutions.net, lihuafei1@huawei.com, 
+	mark.rutland@arm.com, masahiroy@kernel.org, maz@kernel.org, mingo@kernel.org, 
+	nicolas.schier@linux.dev, palmer@dabbelt.com, paul.walmsley@sifive.com, 
+	suzuki.poulose@arm.com, thorsten.blum@linux.dev, wangjinchao600@gmail.com, 
+	yangyicong@hisilicon.com, zhanjie9@hisilicon.com, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, linux-riscv@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 10, 2025 at 12:33=E2=80=AFPM Christophe Leroy
-<christophe.leroy@csgroup.eu> wrote:
+Hi Will,
+
+On Fri, Nov 7, 2025 at 9:11=E2=80=AFPM Will Deacon <will@kernel.org> wrote:
 >
->
->
-> Le 30/10/2025 =C3=A0 19:09, Jan Stancek a =C3=A9crit :
-> > On Mon, Oct 6, 2025 at 10:19=E2=80=AFPM Justin Forbes <jforbes@fedorapr=
-oject.org> wrote:
-> >>
-> >> On Tue, Sep 23, 2025 at 9:31=E2=80=AFAM Jan Stancek <jstancek@redhat.c=
-om> wrote:
-> >>>
-> >>> We've been observing rare non-deterministic kconfig failures during
-> >>> olddefconfig, where ARCH_USING_PATCHABLE_FUNCTION_ENTRY was getting
-> >>> disabled and with it number of other config options that depend on it=
-.
-> >>>
-> >>> The reason is that gcc-check-fpatchable-function-entry.sh can fail
-> >>> if `grep -q` (or scripts/dummy-tools/gcc) is fast enough to exit whil=
+> On Fri, Nov 07, 2025 at 10:42:25AM +0800, yunhui cui wrote:
+> > On Mon, Nov 3, 2025 at 9:44=E2=80=AFPM Will Deacon <will@kernel.org> wr=
+ote:
+> > >
+> > > On Tue, Oct 14, 2025 at 11:14:24AM +0800, Yunhui Cui wrote:
+> > > > @@ -306,3 +307,85 @@ void __init hardlockup_config_perf_event(const=
+ char *str)
+> > > >       wd_hw_attr.type =3D PERF_TYPE_RAW;
+> > > >       wd_hw_attr.config =3D config;
+> > > >  }
+> > > > +
+> > > > +#ifdef CONFIG_WATCHDOG_PERF_ADJUST_PERIOD
+> > > > +/*
+> > > > + * Safe maximum CPU frequency in case a particular platform doesn'=
+t implement
+> > > > + * cpufreq driver. Although, architecture doesn't put any restrict=
+ions on
+> > > > + * maximum frequency but 5 GHz seems to be safe maximum given the =
+available
+> > > > + * CPUs in the market which are clocked much less than 5 GHz. On t=
+he other
+> > > > + * hand, we can't make it much higher as it would lead to a large =
+hard-lockup
+> > > > + * detection timeout on parts which are running slower (eg. 1GHz o=
+n
+> > > > + * Developerbox) and doesn't possess a cpufreq driver.
+> > > > + */
+> > > > +#define SAFE_MAX_CPU_FREQ    5000000000UL // 5 GHz
+> > > > +__weak u64 hw_nmi_get_sample_period(int watchdog_thresh)
+> > > > +{
+> > > > +     unsigned int cpu =3D smp_processor_id();
+> > > > +     unsigned long max_cpu_freq;
+> > > > +
+> > > > +     max_cpu_freq =3D cpufreq_get_hw_max_freq(cpu) * 1000UL;
+> > > > +     if (!max_cpu_freq)
+> > > > +             max_cpu_freq =3D SAFE_MAX_CPU_FREQ;
+> > > > +
+> > > > +     return (u64)max_cpu_freq * watchdog_thresh;
+> > > > +}
+> > >
+> > > Why does this function become __weak? Neither arm64 nor riscv overrid=
 e
-> >>> there is still someone writing on other side of pipe. `pipefail`
-> >>> propagates that error up to kconfig.
-> >>>
-> >>> This can be seen for example with:
-> >>>    # (set -e; set -o pipefail; yes | grep -q y); echo $?
-> >>>    141
-> >>>
-> >>> or by running the actual check script in loop extensively:
-> >>>    ----------------------------- 8< -------------------------------
-> >>>    function kconfig()
-> >>>    {
-> >>>      for i in `seq 1 100`; do
-> >>>        arch/powerpc/tools/gcc-check-fpatchable-function-entry.sh \
-> >>>          ./scripts/dummy-tools/gcc -mlittle-endian \
-> >>>          || { echo "Oops"; exit 1; }
-> >>>      done
-> >>>    }
-> >>>
-> >>>    for ((i=3D0; i<$(nproc); i++)); do kconfig & done
-> >>>    wait; echo "Done"
-> >>>    ----------------------------- >8 -------------------------------
-> >>>
-> >>> Fixes: 0f71dcfb4aef ("powerpc/ftrace: Add support for -fpatchable-fun=
-ction-entry")
-> >>> Fixes: b71c9ffb1405 ("powerpc: Add arch/powerpc/tools directory")
-> >>> Reported-by: Joe Lawrence <joe.lawrence@redhat.com>
-> >>> Acked-by: Joe Lawrence <joe.lawrence@redhat.com>
-> >>> Signed-off-by: Jan Stancek <jstancek@redhat.com>
-> >>> ---
-> >>>   arch/powerpc/tools/gcc-check-fpatchable-function-entry.sh | 1 -
-> >>>   arch/powerpc/tools/gcc-check-mprofile-kernel.sh           | 1 -
-> >>>   2 files changed, 2 deletions(-)
-> >>>
-> >>> diff --git a/arch/powerpc/tools/gcc-check-fpatchable-function-entry.s=
-h b/arch/powerpc/tools/gcc-check-fpatchable-function-entry.sh
-> >>> index 06706903503b..baed467a016b 100755
-> >>> --- a/arch/powerpc/tools/gcc-check-fpatchable-function-entry.sh
-> >>> +++ b/arch/powerpc/tools/gcc-check-fpatchable-function-entry.sh
-> >>> @@ -2,7 +2,6 @@
-> >>>   # SPDX-License-Identifier: GPL-2.0
-> >>>
-> >>>   set -e
-> >>> -set -o pipefail
-> >>>
-> >>>   # To debug, uncomment the following line
-> >>>   # set -x
-> >>> diff --git a/arch/powerpc/tools/gcc-check-mprofile-kernel.sh b/arch/p=
-owerpc/tools/gcc-check-mprofile-kernel.sh
-> >>> index 73e331e7660e..6193b0ed0c77 100755
-> >>> --- a/arch/powerpc/tools/gcc-check-mprofile-kernel.sh
-> >>> +++ b/arch/powerpc/tools/gcc-check-mprofile-kernel.sh
-> >>> @@ -2,7 +2,6 @@
-> >>>   # SPDX-License-Identifier: GPL-2.0
-> >>>
-> >>>   set -e
-> >>> -set -o pipefail
-> >>>
-> >>>   # To debug, uncomment the following line
-> >>>   # set -x
-> >>> --
-> >>> 2.47.1
-> >>
-> >> Would love to see this picked up, it fixes a problem we have run into
-> >> with our CI.
-> >>
-> >> Tested-by: Justin M. Forbes <jforbes@fedoraproject.org>
+> > > it afaict.
 > >
-> > Thanks Justin.
-> >
-> > Would any maintainers also care to review? Ty.
-> >
+> > Would you say there=E2=80=99s any particular issue here? If some archit=
+ectures
+> > might need to override the hw_nmi_get_sample_period() function later
+> > on, wouldn=E2=80=99t __weak be a more reasonable choice?
 >
-> Is the problem only with those scripts ? I see other scripts using
-> pipefail in the kernel:
+> __weak is pretty brittle (it can depend on link order if you have multipl=
+e
+> targets) and I suspect it prevents inlining when LTO isn't enabled. It's
+> cleaner and more robust for architectures to provide their hooks by
+> #defining the symbol, as is done commonly in other parts of the kernel.
+>
+> But in this particular case, it's completely unnecessary because there
+> isn't an architectural override and so this function should simply be
+> static.
 
-As far as kconfig goes, we've observed this issue only with the two
-gcc-check scripts.
-
+Since the function is declared as u64 hw_nmi_get_sample_period(int
+watchdog_thresh) in nmi.h, it cannot be static.
+I will remove the __weak modifier in the next version.
 
 >
-> arch/powerpc/tools/gcc-check-fpatchable-function-entry.sh:set -o pipefail
-> arch/powerpc/tools/gcc-check-mprofile-kernel.sh:set -o pipefail
-> drivers/gpu/drm/ci/dt-binding-check.sh:set -euxo pipefail
-> drivers/gpu/drm/ci/dtbs-check.sh:set -euxo pipefail
-> drivers/gpu/drm/ci/kunit.sh:set -euxo pipefail
-> drivers/gpu/drm/ci/setup-llvm-links.sh:set -euo pipefail
-> scripts/check-uapi.sh:set -o pipefail
->
-> Christophe
->
+> Will
 
+Thanks,
+Yunhui
 
