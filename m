@@ -1,52 +1,47 @@
-Return-Path: <linux-kernel+bounces-894784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69B27C4C180
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 08:22:38 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9EDDC4C0EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 08:18:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C39321890060
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 07:17:11 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6524134F1C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 07:18:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD2172DA760;
-	Tue, 11 Nov 2025 07:16:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10DBA2DA760;
+	Tue, 11 Nov 2025 07:17:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b="uPwfVwpY"
-Received: from hr2.samba.org (hr2.samba.org [144.76.82.148])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G+HVM2aC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED1B534D38B;
-	Tue, 11 Nov 2025 07:16:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.76.82.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5194E22069A
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 07:17:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762845396; cv=none; b=iYLHVQNRBy6RHlXX8HpFjjO29ZGNHd/R9w7DAUvkpv+tIQALlTI1MYnU2blO/m+j8ZN3W2Oq65jY+cmRXIm7Dl5ce18FV+mu0s3gfAB/BGGEu2HwOCcn2WTSI0fAbg/Vme0w03R92OyiWF5nBWusZjN4wiiKLdWgcsSVcrjU198=
+	t=1762845474; cv=none; b=Doix9+Z4dMYWqvTqQf1agfco9bmVUEWMG1G4yWMWyj2huxiYTagfGX+zTZ4lv3dFZDJSDELHjLh1RLYiCs9kncjKVDw+WuUMr11kZUPwFicDWrZ5wjEbJAd9peia0RuiggknFSHOOsv6re5vjIycaevT8TL630K9fSDte293qhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762845396; c=relaxed/simple;
-	bh=tgRN+3Ff01SBIW4c46omJ2zyYnVI86tEs2SnSuHespA=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=DGygfqex3fSSsTDTsoPIS3V/QDu7+W1aquE7mZP+GDKMtb1SbYAvOqlSZI9fZlP98rw7TFTV7UtRH2VrkAghY7PoqiX1seZhp5TMM0SxM7ZVzvSezYreIN2SI5mpd7LXrcun5/s8QOjhAbJHT8uXlCN7YHiGwH1FgLzzicumIF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org; spf=pass smtp.mailfrom=samba.org; dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b=uPwfVwpY; arc=none smtp.client-ip=144.76.82.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samba.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
-	s=42; h=Cc:To:From:Date:Message-ID;
-	bh=w+EJWcxfCKB7hHIJqXC79RKDukiV8IvOIbkLhkk22F0=; b=uPwfVwpY9mYy7lFIUV0vGENAdl
-	ho3zdIXXQvIa+h/tDfeGfNMnmCeZy7+/ePzXMowqVr7uBjiRoL3c/YadnaPn7IWAxfkQkE7NWGR2X
-	8/03QlTNBVbUChKI7/WbBGPcySPewpd9I7VBE9j6ynA5R3uj9ZTzAVHy7vcbBpxYT/Nji8ZEAUzvb
-	iwLVsG2ws2zJmchL9saRKRT59HnK/mWZ30glO8GDx8NqoiycodCNocXwH3Gg2l/r3x3wkjHqLo6RL
-	OubPU/Q++hrl/9tLyUr8y94kJ2jsGLyJcBVbCkY8tmYswnZO5BIM5e82Wjdumih2gVLhysrcZXeKh
-	qFJ7a28W62MVFKPmWkpSufDcdsvpj3vlOZYojeG1BnrdOtMr9JnIR03VVmOgAZ8Jyu52OovXuRfno
-	PDtmvkXvLfEB1a2YNvzAKk+irt+UM14UWl2qpSEMlWpPs0WZ3wLvS/l2QQgz4bWC/V7IKrO0QBPFC
-	yKvJdutZWBcnrqB/k8u5sg6O;
-Received: from [127.0.0.2] (localhost [127.0.0.1])
-	by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__ECDSA_SECP256R1_SHA256__CHACHA20_POLY1305:256)
-	(Exim)
-	id 1vIic9-00DZNA-36;
-	Tue, 11 Nov 2025 07:16:31 +0000
-Message-ID: <10da0cb9-8c92-413d-b8df-049279100458@samba.org>
-Date: Tue, 11 Nov 2025 08:16:29 +0100
+	s=arc-20240116; t=1762845474; c=relaxed/simple;
+	bh=FybQ4/3AZJou/+49uOTNiyNNNev/lS1TDMWjNHq9vDA=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Og1MPdYcTf0sr6LcFDXihOFWOAjK3CEq5lJfZP4gaVW8aP265Y8qW04Yp2G3+RHLt5QboEnLjk2KmFD9rSVybPwc4Naxmd+UB0TCaLHZ886g/wJt0CP9q/7QbXIfxLLzflF36YwaRzYPMKIzrGLfidTXlRDZ/TJ+lbp9t/s1Y/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G+HVM2aC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5C9EC19422;
+	Tue, 11 Nov 2025 07:17:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762845473;
+	bh=FybQ4/3AZJou/+49uOTNiyNNNev/lS1TDMWjNHq9vDA=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=G+HVM2aCVSzuL0pvTj1iE2VNLH1L5Sfn60E2OZgCrVG908jaGBXCmnno+B4X2RUvc
+	 GvOro0DZqdcZwhle4q/IzEKZEX5B+JaJ4/fZT3hBADQaJIMVKhB7JunsyIVwl07NY1
+	 KRtRBIY+x9uELcsM7BuMX+kLISzcGeAwGjuCvAd+uYSiNacb6z+thwH5oOzd/lQZ2s
+	 ZCNP+PdfCsanPSapUfnNwMXSxa8VquCJNBJfyFDlTJtoCH894ESji3d2hPAtEs5uN1
+	 DtME2edrPC/MePZXv9+CNQvR0F8yyD4TsVDLBcazxNa6EdEzYJ7bjHfoBbBqT15Y9E
+	 M0Psty4mzqntQ==
+Message-ID: <2eb3b1e7-931a-4a2c-92ac-4267a6a654ad@kernel.org>
+Date: Tue, 11 Nov 2025 15:17:50 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,89 +49,116 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ksmbd: server: avoid busy polling in accept loop
-From: Stefan Metzmacher <metze@samba.org>
-To: Qingfang Deng <dqfext@gmail.com>, Namjae Jeon <linkinjeon@kernel.org>,
- Steve French <smfrench@gmail.com>,
- Sergey Senozhatsky <senozhatsky@chromium.org>, Tom Talpey <tom@talpey.com>,
- Ronnie Sahlberg <lsahlber@redhat.com>, Hyunchul Lee <hyc.lee@gmail.com>,
- linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: netdev@vger.kernel.org
-References: <20251030064736.24061-1-dqfext@gmail.com>
- <2516ed5d-fed2-47a3-b1eb-656d79d242f3@samba.org>
+Cc: chao@kernel.org, jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
+ stable@kernel.org
+Subject: Re: [PATCH v2] f2fs: fix has_curseg_enough_space to check all data
+ segments for dentry blocks
+To: Xiaole He <hexiaole1994@126.com>, linux-f2fs-devel@lists.sourceforge.net
+References: <20251111060557.337514-1-hexiaole1994@126.com>
+ <20251111061051.337547-1-hexiaole1994@126.com>
 Content-Language: en-US
-In-Reply-To: <2516ed5d-fed2-47a3-b1eb-656d79d242f3@samba.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <20251111061051.337547-1-hexiaole1994@126.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Am 11.11.25 um 07:55 schrieb Stefan Metzmacher:
-> Am 30.10.25 um 07:47 schrieb Qingfang Deng:
->> The ksmbd listener thread was using busy waiting on a listening socket by
->> calling kernel_accept() with SOCK_NONBLOCK and retrying every 100ms on
->> -EAGAIN. Since this thread is dedicated to accepting new connections,
->> there is no need for non-blocking mode.
->>
->> Switch to a blocking accept() call instead, allowing the thread to sleep
->> until a new connection arrives. This avoids unnecessary wakeups and CPU
->> usage.
->>
->> Also remove:
->>    - TCP_NODELAY, which has no effect on a listening socket.
->>    - sk_rcvtimeo and sk_sndtimeo assignments, which only caused accept()
->>      to return -EAGAIN prematurely.
+On 11/11/25 14:10, Xiaole He wrote:
+> When active_logs == 6, dentry blocks can be allocated to HOT, WARM, or
+> COLD segments based on various conditions in __get_segment_type_6():
+> - age extent cache (if enabled)
+> - FI_HOT_DATA flag (set when dirty_pages <= min_hot_blocks)
+> - rw_hint (defaults to WARM via f2fs_rw_hint_to_seg_type)
+> - file_is_hot(), FI_NEED_IPU, f2fs_is_cow_file(), etc.
 > 
-> Aren't these inherited to the accepted sockets?
-> So we need to apply them to the accepted sockets now
-> instead of dropping them completely?
+> However, has_curseg_enough_space() only checked CURSEG_HOT_DATA segment
+> for dentry blocks, which could lead to incorrect space calculation when
+> dentry blocks are actually allocated to WARM or COLD segments.
+> 
+> Reproducer:
+> Note: This reproducer requires adding a tracepoint to observe segment
+> type. Add the following tracepoint to include/trace/events/f2fs.h:
+> 
+> TRACE_EVENT(f2fs_allocate_data_block,
+>         TP_PROTO(struct f2fs_sb_info *sbi, struct inode *inode,
+>                 enum log_type type, block_t blkaddr),
+> 
+>         TP_ARGS(sbi, inode, type, blkaddr),
+> 
+>         TP_STRUCT__entry(
+>                 __field(dev_t, dev)
+>                 __field(ino_t, ino)
+>                 __field(int, type)
+>                 __field(block_t, blkaddr)
+>                 __field(int, is_dir)
+>         ),
+> 
+>         TP_fast_assign(
+>                 __entry->dev = sbi->sb->s_dev;
+>                 __entry->ino = inode ? inode->i_ino : 0;
+>                 __entry->type = type;
+>                 __entry->blkaddr = blkaddr;
+>                 __entry->is_dir = inode ? S_ISDIR(inode->i_mode) : 0;
+>         ),
+> 
+>         TP_printk("dev = (%d,%d), ino = %lu, %s, blkaddr = %u, is_dir = %d",
+>                 show_dev(__entry->dev),
+>                 (unsigned long)__entry->ino,
+>                 show_data_type(__entry->type),
+>                 __entry->blkaddr,
+>                 __entry->is_dir)
+> );
+> 
+> And add the tracepoint call in fs/f2fs/segment.c in
+> f2fs_allocate_data_block() function. Find the location after
+> locate_dirty_segment() calls and before IS_DATASEG() check:
+> 
+>         locate_dirty_segment(sbi, GET_SEGNO(sbi, old_blkaddr));
+>         locate_dirty_segment(sbi, GET_SEGNO(sbi, *new_blkaddr));
+> 
+>         trace_f2fs_allocate_data_block(sbi, folio ? folio->mapping->host : NULL,
+>                                         type, *new_blkaddr);
+> 
+>         if (IS_DATASEG(curseg->seg_type))
+> 
+> 1. Mount F2FS with active_logs=6 and age extent cache disabled:
+>    # mkfs.f2fs -f /dev/sdb1
+>    # mount -t f2fs -o active_logs=6 /dev/sdb1 /mnt/f2fs-test
+> 
+> 2. Enable tracing and f2fs_allocate_data_block tracepoint:
+>    # echo 1 > /sys/kernel/debug/tracing/events/f2fs/f2fs_allocate_data_block/enable
+>    # echo 1 > /sys/kernel/debug/tracing/tracing_on
+>    # echo > /sys/kernel/debug/tracing/trace
+> 
+> 3. Create a directory and write enough files to trigger dirty_pages >
+>    min_hot_blocks (default 16), which will clear FI_HOT_DATA flag:
+>    # mkdir /mnt/f2fs-test/testdir
+>    # cd /mnt/f2fs-test/testdir
+>    # seq 1 8192 | xargs touch
+>    # sync
+> 
+> 4. Observe dentry block allocation:
+>    # cat /sys/kernel/debug/tracing/trace
+> 
+>    The trace output shows dentry blocks (is_dir = 1) allocated to WARM
+>    segment because FI_HOT_DATA is cleared when dirty_pages >
+>    min_hot_blocks (default 16). However, has_curseg_enough_space() only
+>    checked HOT_DATA segment space.
+> 
+> Fix by merging the dentry block check into the main data/node block
+> check loop and checking data_blocks + dent_blocks for data segments,
+> since both regular data blocks and dentry blocks can be written to the
+> same segment. When active_logs == 6, dentry blocks can be allocated to
+> any of the three data segments (HOT, WARM, COLD), so all three segments
+> need to account for dentry blocks. When active_logs != 6, dentry blocks
+> are always allocated to HOT_DATA segment only, so only HOT_DATA segment
+> needs to account for dentry blocks, while WARM and COLD segments only
+> check data_blocks.
+> 
+> Fixes: ef095d19e82f ("f2fs: write small sized IO to hot log")
+> Cc: stable@kernel.org
+> Signed-off-by: Xiaole He <hexiaole1994@126.com>
 
-Actually the timeouts are added to the client connection,
-but not the TCP_NODELAY.
+Reviewed-by: Chao Yu <chao@kernel.org>
 
-But looking at it more detailed I'm wondering if this might
-introduce a deadlock.
-
-We have this in the accepting thread:
-
-         while (!kthread_should_stop()) {
-                 mutex_lock(&iface->sock_release_lock);
-                 if (!iface->ksmbd_socket) {
-                         mutex_unlock(&iface->sock_release_lock);
-                         break;
-                 }
-                 ret = kernel_accept(iface->ksmbd_socket, &client_sk, 0);
-                 mutex_unlock(&iface->sock_release_lock);
-                 if (ret)
-                         continue;
-
-
-And in the stopping code this:
-
-         case NETDEV_DOWN:
-                 iface = ksmbd_find_netdev_name_iface_list(netdev->name);
-                 if (iface && iface->state == IFACE_STATE_CONFIGURED) {
-                         ksmbd_debug(CONN, "netdev-down event: netdev(%s) is going down\n",
-                                         iface->name);
-                         tcp_stop_kthread(iface->ksmbd_kthread);
-                         iface->ksmbd_kthread = NULL;
-                         mutex_lock(&iface->sock_release_lock);
-                         tcp_destroy_socket(iface->ksmbd_socket);
-                         iface->ksmbd_socket = NULL;
-                         mutex_unlock(&iface->sock_release_lock);
-
-                         iface->state = IFACE_STATE_DOWN;
-                         break;
-                 }
-
-
-
-I guess that now kernel_accept() call waits forever holding iface->sock_release_lock
-and tcp_stop_kthread(iface->ksmbd_kthread); doesn't have any impact anymore
-as we may never reach kthread_should_stop() anymore.
-
-We may want to do a kernel_sock_shutdown(ksmbd_socket, SHUT_RDWR) after
-tcp_stop_kthread(iface->ksmbd_kthread); but before mutex_lock(&iface->sock_release_lock);
-so that kernel_accept() hopefully returns directly.
-And we only call sock_release(ksmbd_socket); under the iface->sock_release_lock mutex.
-
-metze
+Thanks,
 
