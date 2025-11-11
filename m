@@ -1,233 +1,103 @@
-Return-Path: <linux-kernel+bounces-895954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FB10C4F5B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 19:01:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BB24C4F5C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 19:01:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 888043B98CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 18:01:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52EA118C2B6F
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 18:01:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AFD6393DC1;
-	Tue, 11 Nov 2025 18:00:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB45D36CE0C;
+	Tue, 11 Nov 2025 18:01:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IA4sqBM2"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fMnkboKg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92FCC26158C
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 18:00:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB1671FC0ED;
+	Tue, 11 Nov 2025 18:01:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762884039; cv=none; b=ZeAI+cbQwDVX2p26IDzuUdt9AcE7VqtrGj4Vz/0Vdxl3+/V1yiGKax8AOQ0um5VA6mHYCriHvmuJ+yi7Y39NI31vDBwFg2t0i9GCGB6FVKuYCe/t8dwkgSj7XL4ca01PqvflOu5LLnsyNxCzP0xIjRB4wN+nSfADX6qbi8xR7hk=
+	t=1762884077; cv=none; b=h10T/uKQ32KYVczMsJgY43NmaNFSvcJDJQ/EoPy7dLCOI1rWNVRzAMIiogDJk+5i/9tHLH5/MhiDgjK2f7qeVAIVJ+Msq52AOqC2TRRFXsNv+cXeXcWtTujkPo+8Nd70//1JLFFbMl2/d6/9YHKz+dz5XlLQUzKoCdtPByJrV7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762884039; c=relaxed/simple;
-	bh=kATU/DzP4hdGvz7FmmPIwTVU+bE2WNBSBrXqQYIuJ4w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hA43Z9MfM74J6IWvqerW7fcHwTMSq8s4opGXF8SJOKSg4Vj3yZ0XU8XhJiT9cey/Did/ndzyjfy0wIaJOAElgWSlhCfi8WeOGF06cjzDHaLUBMflUAS2/GZ+a8au32yaEc7po6Hi9ETluJbMdznaLFg/Wg/xekCy3E1V6BQmszM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IA4sqBM2; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-640a3317b89so6581647a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 10:00:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762884036; x=1763488836; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9HbiXIUVYuhI5l7PvzzJZfhSL3tvH5Y6RzQWs5tXFd0=;
-        b=IA4sqBM2ne4i4nzd36VoMyLTV2HtAkNPNG/tdK2eCmfg6oO7xIqZa8pGzRUBzFi5Ir
-         W31wAl6yefnb7o44jcwUorUOZfU1Vjd6V4sq+ICzXgGE3/ywcrlB2Sv2CcuwmCOoY+Mk
-         auhMkjoPSKjKPU+l0Cq/zW/XX6xf+reW6eYo0k9auh5hHkwnG9DtCuhBU9zE4fEh58tC
-         gyjdhfDXHuYUSs/mjOtu/z+PQF2CqMLpN9qawD0zyP1oFbdBCeWHhnwH7zURUYbYKXsg
-         vCt3g9xAdGe4zF+7IYFMzXZuCJoFR4SaCBWsYFRIDQXFroPkNHW8FAt3zVaf4MkoDG5N
-         KfWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762884036; x=1763488836;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=9HbiXIUVYuhI5l7PvzzJZfhSL3tvH5Y6RzQWs5tXFd0=;
-        b=fQdWV5knKzxQ/hDz1d77CR4BNNjWVdnbNxrFvniXuzW1e7MLRl+8fzbi96q0c0yrmM
-         q0uQchzwagOpMt20gUQUTqiBKSeEntC55LWLTOJT4VbATnopCEU4/2/rr0k8o9Fn5sb6
-         czmeXHAdihmL6lL4Q+wnDiRrVGI36ibNgnUz+V2LU/d8uULHGl1YRNDxgcwkvzOYXiRE
-         L3CU+HJobrMcFtTN1t7OLspOhmREJNHSnJabW/AdhzAuc29RM76lfGQnwI7REZZJ70uF
-         Yv5FHi/X9f0DbwR52D5yelOLdNsFirftRGaInpFkWmZh2fn8yBht5RNfj0MrX/Pls/YO
-         ylAA==
-X-Forwarded-Encrypted: i=1; AJvYcCWohkM8UFbrnQ5cfFto6MplDzZzysXq981kFDv3kCRUEDw7unF9fYbkBk7z87i43em1qTSqSGWRKkFeYcU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6Q2frRc0rGDhEvd0KuLPDtewjHZ5VT4rsW3+05dekc3ChfGqD
-	9IXGMZRZsLEaoYDdkYx3SXZurAiijGRwon9ieHLGumNVf1szaRh7vZYpsDTcIqMXJm350grhfcN
-	JNz1YCrJvROcqZ3X2ETsNEFvFuR7AgfI=
-X-Gm-Gg: ASbGnct0Nt4xCNOM7FLhGwFixoG6Ybo9wH1bWgAZWP23XcELv4ektOmyRoabQGeQG7R
-	G6wFtj+ASNqMFJG85TuJxUFmJZCgVFJHxnx+xLE7b2ZpsnIcpEjGI7dTasf+6ZB/L6yjO9boz4+
-	YaQFGRPxds1F4c/UJHcaHWlms0QPGJ8Tcev0J17DeEb5PTr666JqAk/d1qkxoMi+mhh268a6+GQ
-	HTt7J2N5CnZ5PjNiBo6hH4VPFh+SVYwddMssMk0+HkY2Ak0YA1y7nktS1xmT9ic5RduXQsSQAdv
-	NRkf2lH4/xIsXQY=
-X-Google-Smtp-Source: AGHT+IFuYz6RaM7hRc/WcQ4vZzXewSIOn8vea6fhjhW7Umd5v1YbFmLycKdc0r7yHCPCiDACpYaF/NZM++1eZ2f7y60=
-X-Received: by 2002:a17:907:9709:b0:b46:abad:430e with SMTP id
- a640c23a62f3a-b7331a972abmr3512966b.37.1762884035562; Tue, 11 Nov 2025
- 10:00:35 -0800 (PST)
+	s=arc-20240116; t=1762884077; c=relaxed/simple;
+	bh=f1tQc9fKxPXjOAXomvZMDR+OXXQMQ2u54M9yxOwFvaQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JN/s1b8iPFlRq0QyrGNC5ripWPJeAQZVfFg4HUJi+5eeHVlyaQcgBeu5k8EFA9JCy2z4fie9jfAmiuiiZb0ceXOhuOdBUZFYEyOwnY0mrSmX0IPfuzyAyrCB0+5e+ph1er6LsQflf7OgeOjnH4MiNJXUwdolC12pXQ062an45N8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fMnkboKg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 609F8C113D0;
+	Tue, 11 Nov 2025 18:01:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762884076;
+	bh=f1tQc9fKxPXjOAXomvZMDR+OXXQMQ2u54M9yxOwFvaQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fMnkboKgujlmFzn+1F12YPG0LrNsL91vnvn/TUaHmyNFFWL5O9ua8Vt0+9og4W4SD
+	 BBCkFndVJY/FAdIdXHQXE6w8eGcsHc2LUrZ4bFj3ascztlgJN7KftPO0B3TxD/R0mJ
+	 IYimW6mPvZwjTg+oxfVYA9OERnqCnrI6nVwyu8IibLiP6fX9/el1eW4d6S5qXDwDzK
+	 b7vto81dT3Fu1sK1LpH9Rdpxm91E2mhmKIbXEwmrhIgLPSmwkM2pxG9JMtrEql9Q11
+	 IdfxuLPKBWCFZiovJcrbeDfko2anZvHPKTe9vsZFm1ZF/YCTBHL+CZmEL55qjbdTei
+	 FY+9eoDAR1lZQ==
+Date: Tue, 11 Nov 2025 18:01:08 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Jack Hsu <jh.hsu@mediatek.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	jic23@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com,
+	andy@kernel.org, matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com, srini@kernel.org,
+	ukleinek@kernel.org, gregkh@linuxfoundation.org,
+	jirislaby@kernel.org, daniel.lezcano@linaro.org, tglx@linutronix.de,
+	chunfeng.yun@mediatek.com, wim@linux-watchdog.org,
+	linux@roeck-us.net, sean.wang@mediatek.com,
+	zhiyong.tao@mediatek.com, andrew-ct.chen@mediatek.com,
+	lala.lin@mediatek.com, jitao.shi@mediatek.com,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-iio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-pwm@vger.kernel.org,
+	linux-serial@vger.kernel.org, linux-usb@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	Project_Global_Chrome_Upstream_Group@mediatek.com
+Subject: Re: [PATCH v7 5/9] dt-bindings: usb: Support MediaTek MT8189 xhci
+Message-ID: <20251111-ocelot-ipod-4d5f902b640b@spud>
+References: <20251111070031.305281-1-jh.hsu@mediatek.com>
+ <20251111070031.305281-6-jh.hsu@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251110165901.1491476-1-mjguzik@gmail.com> <20251111033226.GP2441659@ZenIV>
-In-Reply-To: <20251111033226.GP2441659@ZenIV>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Tue, 11 Nov 2025 19:00:23 +0100
-X-Gm-Features: AWmQ_bngX1Oah-ZA9B-eywkR85FJ9hEMiYvrt9XCFZFyl54Q2lTDQGDrkBjD5PM
-Message-ID: <CAGudoHG1=RFjUE6cdqg4UJDvaA1QZfUnw++m7QZkwd4V8MZVtw@mail.gmail.com>
-Subject: Re: [PATCH v4] fs: add predicts based on nd->depth
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: brauner@kernel.org, jack@suse.cz, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="mkp7Vm+0xTxl2wgI"
+Content-Disposition: inline
+In-Reply-To: <20251111070031.305281-6-jh.hsu@mediatek.com>
+
+
+--mkp7Vm+0xTxl2wgI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 11, 2025 at 4:32=E2=80=AFAM Al Viro <viro@zeniv.linux.org.uk> w=
-rote:
->
-> On Mon, Nov 10, 2025 at 05:59:01PM +0100, Mateusz Guzik wrote:
->
-> > Given these results:
-> > 1. terminate_walk() is called towards the end of the lookup. I failed
-> >    run into a case where it has any depth to clean up. For now predict
-> >    it does not.
->
-> Easy - just have an error while resolving a nested symlink in the middle
-> of pathname.  On success it will have zero nd->depth, of course.
->
+On Tue, Nov 11, 2025 at 02:59:19PM +0800, Jack Hsu wrote:
+> modify dt-binding for support mt8189 dts node of xhci
+>=20
+> Signed-off-by: Jack Hsu <jh.hsu@mediatek.com>
 
-Ok, I'll update the commit message.
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+pw-bot: not-applicable
 
-> > 2. legitimize_links() is also called towards the end of lookup and most
-> >    of the time there s 0 depth. Patch consumers to avoid calling into i=
-t
-> >    in that case.
->
-> On transition from lazy to non-lazy mode on cache miss, ->d_revalidate()
-> saying "dunno, try in non-lazy mode", etc.
->
-> That can happen inside a nested symlink as well as on the top level, but
-> the latter is more common on most of the loads.
->
+--mkp7Vm+0xTxl2wgI
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Given the rest of the e-mail I take it you are clarifying when depth >
-0 in this case, as opposed to contesting the predict.
+-----BEGIN PGP SIGNATURE-----
 
-> > 3. walk_component() is typically called with WALK_MORE and zero depth,
-> >    checked in that order. Check depth first and predict it is 0.
->
-> Does it give a measurable effect?
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaRN55AAKCRB4tDGHoIJi
+0nZ6AP46To/9lZ7sJV4I2ivoFKzECzpBwHjBzWlqIKPxNe0XpwEAoe7F6s2tr9ca
+hGvlAGOJEUCvxWDv5C09Q2U7m+8MuwI=
+=k5Lj
+-----END PGP SIGNATURE-----
 
-I did not benchmark this patch at all, merely checked for predicts
-going the right way with bpftrace. What do I intend to benchmark is
-the following: cleanup and inlining of func calls to walk_component()
-and step_into(), which happen every time.
-
-The routine got ->depth predicts in this patch because I was already
-sprinkling it.
-
-The current asm of walk_component() is penalized by lookup_slow(!)
-being inlined and convincing the compiler to spill extra registers.
-step_into() also looks like it can be shortened for the common case.
-
-When inlined the compiler should be able to elide branching on WALK_MORE an=
-yway.
-
-You can find profiling info from a kernel running my patches (modulo
-this one) here:
-https://lore.kernel.org/linux-fsdevel/20251111-brillant-umgegangen-e7c89151=
-3bce@brauner/T/#mee42496c2c6495a54c6b0b4da5c4121540ad92d9
-
-walk_component() is hanging out there at over 2.7% and step_into() is
-4.8%. I would suspect there is at least 1% total hiding here for
-trivial fixups + inlining.
-
-That said, I can drop this bit no problem and add it later to the
-patchset which takes care of both walk_component() and step_into()
-(which will come with benchmarks).
-
->
-> > 4. link_path_walk() predicts not dealing with a symlink, but the other
-> >    part of symlink handling fails to make the same predict. Add it.
->
-> Unconvincing, that - one is "we have a component; what are the odds of th=
-at
-> component being a symlink?", another - "we have reached the end of pathna=
-me
-> or the end of nested symlink; what are the odds of the latter being the c=
-ase?"
->
-
-Fair, so I added the following crapper:
-
-diff --git a/fs/dcache.c b/fs/dcache.c
-index de3e4e9777ea..2bac37c09bf6 100644
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -3268,3 +3268,7 @@ void __init vfs_caches_init(void)
-        bdev_cache_init();
-        chrdev_init();
- }
-+
-+
-+void link_path_walk_probe(int);
-+void link_path_walk_probe(int) { }
-diff --git a/fs/namei.c b/fs/namei.c
-index caeed986108d..00125c578af4 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -2470,6 +2470,8 @@ static inline const char *hash_name(struct
-nameidata *nd, const char *name, unsi
-   #define LAST_WORD_IS_DOTDOT  0x2e2e
- #endif
-
-+void link_path_walk_probe(int);
-+
- /*
-  * Name resolution.
-  * This is the basic name resolution function, turning a pathname into
-@@ -2544,6 +2546,7 @@ static int link_path_walk(const char *name,
-struct nameidata *nd)
-                } while (unlikely(*name =3D=3D '/'));
-                if (unlikely(!*name)) {
- OK:
-+                       link_path_walk_probe(depth);
-                        /* pathname or trailing symlink, done */
-                        if (likely(!depth)) {
-                                nd->dir_vfsuid =3D
-i_uid_into_vfsuid(idmap, nd->inode);
-
-then probing over kernel build:
-bpftrace -e 'kprobe:link_path_walk_probe { @[probe] =3D lhist(arg0, 0, 8, 1=
-); }'
-@[kprobe:link_path_walk_probe]:
-[0, 1)           7528231 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@=
-@@@|
-[1, 2)            407905 |@@                                               =
-   |
-
-I think that's nicely skewed.
-
-> I can believe that answers to both questions are fairly low, but they are
-> not the same.  I'd expect the latter to be considerably higher than the
-> former.
->
-> > -     if (unlikely(!legitimize_links(nd)))
-> > +     if (unlikely(nd->depth && !legitimize_links(nd)))
->
-> I suspect that
->         if (unlikely(nd->depth) && !legitimize_links(nd))
-> might be better...
->
-
-Well it says it is unlikely there is depth, but when there is and
-legitimize_links is called, it is unlikely it fails. I think this
-matches the current intent, except avodiing the func call most of the
-time.
+--mkp7Vm+0xTxl2wgI--
 
