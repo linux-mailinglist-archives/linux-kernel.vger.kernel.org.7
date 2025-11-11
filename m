@@ -1,120 +1,116 @@
-Return-Path: <linux-kernel+bounces-895761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9294EC4ED58
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:44:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9D7FC4ED5E
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:45:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BBD718C1565
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 15:45:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B966D18C2A11
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 15:45:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9232514286;
-	Tue, 11 Nov 2025 15:44:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFE1636A011;
+	Tue, 11 Nov 2025 15:45:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HzG6rQ3X"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HF63HSmn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E983F2E6CA4;
-	Tue, 11 Nov 2025 15:44:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43FF536A007
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 15:45:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762875887; cv=none; b=M3jKdUJqxCQxvEYWpNMycBGOrCkf2jSpHyux6DvyLGUsVE5jxSL+1/7HJh9hjZHeNN6UdS+gPRieQyxbDCRpsh34zS53Ogb+u4g6XH0eBXQm7ozSj8mP4ADSS/QbpQN5MLnLAxUkXs/V3og5/RNYG3Uq9vU66jw27aB5gY2iMqA=
+	t=1762875916; cv=none; b=tuiblLQbADFYcWUX4EPoltp97cmt99QOe4ijtDLZ4LHpZOV1tNFCYDg+y31Hk4c/IWcG1/Frim5APAg2umC07TX37+6eusjAHKuXXUDxlB2pptRe2i5YoSkhjpozUz4asFMSXR8nOyd9OsiMk7pWzeMgwKneVFoMJOhKGGLM0oI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762875887; c=relaxed/simple;
-	bh=kEIGVMJBVgHNfIsiqOwArbHxxwlSOP5asagz3P1dOYM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=PHmRPSa7RF1wg6Xb8GGTuR23HYT+xOe+ZN4l8tkppd0BOKwLoZAYbWTbBdJef1fiRBYibIN4rLr5Vn1psH+O063IOCBVAzHEwxzMda0QdQ1f3je7sUHOU/0EgDjYHZDmM4w87GnpF27NXxXmpMry5NoUNPCXGtFrq/8ti+G4QN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HzG6rQ3X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9780C4CEF5;
-	Tue, 11 Nov 2025 15:44:46 +0000 (UTC)
+	s=arc-20240116; t=1762875916; c=relaxed/simple;
+	bh=7jJ7fSlJr0PoTroRPbLlQUt5EWnBP3C5yC1ZgCDzrtU=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WsqntumpDP2uILXfXZenLPkXigEMDYTcjrbxg4EHuY5aqc6xj6nUiM4qHuBZcjP888XRAGnYAqhFUhKZ5Cc51njqCwc5kCpQTVUxsWfMpvmEKoi6tCO7p4w0KR4QEbFwCKPJswm3iXG6C39ahkTjHeHj+L1wkT9HKaKlVSXzhBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HF63HSmn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBB2AC16AAE;
+	Tue, 11 Nov 2025 15:45:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762875886;
-	bh=kEIGVMJBVgHNfIsiqOwArbHxxwlSOP5asagz3P1dOYM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=HzG6rQ3XnpbNRMYPZqf6GW3qRv66U2ogE5HBMLFcHTastXLV865vpAqesAjiTw0xW
-	 vuoYR5fSX/oc0NdvRHNDpqRQ+65k1MKSmY1klwOIFU+PNl0hzHhQXHn2hZWHDWMO2r
-	 mX7AX9TNL5UHcfOgNWcU+h0F2A8piJLgOJPWlZvK8n+KG3evkRQ1AKGMUOCN9h5FNI
-	 e+6FBekHbauDgnPHF0EgKlFZiJhDCy5L57NdDJbtRWoz1G6Fm6EJT/KwMrilkusw3l
-	 V8xVkucrNjEElXKevi5q0jxAzK41WFn+5tsOO7TRqF376loU+B9V09Fzf4ZmgqjoE3
-	 j/I3ZOlpGG+2w==
-Date: Tue, 11 Nov 2025 09:44:45 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Lukas Wunner <lukas@wunner.de>
-Cc: linux-pci@vger.kernel.org, Christian Zigotzky <chzigotzky@xenosoft.de>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	mad skateman <madskateman@gmail.com>,
-	"R . T . Dickinson" <rtd2@xtra.co.nz>,
-	Darren Stevens <darren@stevens-zone.net>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	luigi burdo <intermediadc@hotmail.com>, Al <al@datazap.net>,
-	Roland <rol7and@gmx.com>, Hongxing Zhu <hongxing.zhu@nxp.com>,
-	hypexed@yahoo.com.au, linuxppc-dev@lists.ozlabs.org,
-	debian-powerpc@lists.debian.org, linux-kernel@vger.kernel.org,
-	Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [PATCH v2 0/4] PCI/ASPM: Allow quirks to avoid L0s and L1
-Message-ID: <20251111154445.GA2175922@bhelgaas>
+	s=k20201202; t=1762875915;
+	bh=7jJ7fSlJr0PoTroRPbLlQUt5EWnBP3C5yC1ZgCDzrtU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=HF63HSmn+5Cct+wTdRjIIOb7bLsGcjWRfWHrYBrqJXXgeQH+oAXsBIhO3cS/s308X
+	 +y8kfnyfNIHf1VKPlycNA6wo/RAcZJWxf7B3hj4tGBtefbx3XcofM92r7xVnPLhC1W
+	 4eDYVURP8lthZGDXQIXS9G0hjc/kH0cHT80rH07MP9iMCgaxj4gctuKeU6bGuceTPT
+	 5IJ12zhs1ZoEvd1hpZM1/eq//MNX7nJ6hdvf2+tmn6qi8N5bVo1QTEGOZaTfJLPeQW
+	 gbgHH2/IrsJO1lBjVVq7FCX/n/3jnUaaCERjsAEi8+sgTL/GQZolaRBbzJSK1LeuC1
+	 6xXu1PGQtUsGg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1vIqYT-00000004Ha2-318R;
+	Tue, 11 Nov 2025 15:45:13 +0000
+Date: Tue, 11 Nov 2025 15:45:13 +0000
+Message-ID: <86zf8stvxy.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Johan Hovold <johan@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] clocksource/drivers/arm_arch_timer_mmio: Prevent driver unbind
+In-Reply-To: <20251111153226.579-2-johan@kernel.org>
+References: <20251111153226.579-1-johan@kernel.org>
+	<20251111153226.579-2-johan@kernel.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aRMC9z93mI5BKbW0@wunner.de>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: johan@kernel.org, mark.rutland@arm.com, daniel.lezcano@linaro.org, tglx@linutronix.de, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Tue, Nov 11, 2025 at 10:33:43AM +0100, Lukas Wunner wrote:
-> On Mon, Nov 10, 2025 at 04:22:24PM -0600, Bjorn Helgaas wrote:
-> > We enabled ASPM too aggressively in v6.18-rc1.  f3ac2ff14834 ("PCI/ASPM:
-> > Enable all ClockPM and ASPM states for devicetree platforms") enabled ASPM
-> > L0s, L1, and (if advertised) L1 PM Substates.
-> > 
-> > df5192d9bb0e ("PCI/ASPM: Enable only L0s and L1 for devicetree platforms")
-> > (v6.18-rc3) backed off and omitted Clock PM and L1 Substates because we
-> > don't have good infrastructure to discover CLKREQ# support, and L1
-> > Substates may require device-specific configuration.
-> > 
-> > L0s and L1 are generically discoverable and should not require
-> > device-specific support, but some devices advertise them even though they
-> > don't work correctly.  This series is a way to add quirks avoid L0s and L1
-> > in this case.
+On Tue, 11 Nov 2025 15:32:24 +0000,
+Johan Hovold <johan@kernel.org> wrote:
 > 
-> Reviewed-by: Lukas Wunner <lukas@wunner.de>
+> Clockevents cannot be deregistered so suppress the bind attributes to
+> prevent the driver from being unbound and releasing the underlying
+> resources after registration.
+> 
+> Fixes: 4891f01527bb ("clocksource/drivers/arm_arch_timer: Add standalone MMIO driver")
+> Signed-off-by: Johan Hovold <johan@kernel.org>
+> ---
+>  drivers/clocksource/arm_arch_timer_mmio.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/clocksource/arm_arch_timer_mmio.c b/drivers/clocksource/arm_arch_timer_mmio.c
+> index ebe1987d651e..d10362692fdd 100644
+> --- a/drivers/clocksource/arm_arch_timer_mmio.c
+> +++ b/drivers/clocksource/arm_arch_timer_mmio.c
+> @@ -426,6 +426,7 @@ static struct platform_driver arch_timer_mmio_drv = {
+>  	.driver	= {
+>  		.name = "arch-timer-mmio",
+>  		.of_match_table	= arch_timer_mmio_of_table,
+> +		.suppress_bind_attrs = true,
+>  	},
+>  	.probe	= arch_timer_mmio_probe,
+>  };
+> @@ -434,6 +435,7 @@ builtin_platform_driver(arch_timer_mmio_drv);
+>  static struct platform_driver arch_timer_mmio_acpi_drv = {
+>  	.driver	= {
+>  		.name = "gtdt-arm-mmio-timer",
+> +		.suppress_bind_attrs = true,
+>  	},
+>  	.probe	= arch_timer_mmio_probe,
+>  };
 
-Thanks!
+Acked-by: Marc Zyngier <maz@kernel.org>
 
-> I note that a number of drivers call pci_disable_link_state() or
-> pci_disable_link_state_locked() to disable ASPM on probe.
-> Can we convert (all of) these to quirks which use the new helper
-> introduced here?
-> 
-> I think that would be useful because it would disable ASPM even if
-> the driver isn't available and thus avoid e.g. AER messages caused
-> by ASPM issues.
-> 
-> pcie_aspm_init_link_state() also contains the following code comment:
-> 
-> 	/*
-> 	 * At this stage drivers haven't had an opportunity to change the
-> 	 * link policy setting. Enabling ASPM on broken hardware can cripple
-> 	 * it even before the driver has had a chance to disable ASPM, so
-> 	 * default to a safe level right now. If we're enabling ASPM beyond
-> 	 * the BIOS's expectation, we'll do so once pci_enable_device() is
-> 	 * called.
-> 	 */
-> 
-> If we'd mask out incorrect or non-working L0s/L1 capabilities for all
-> devices early during enumeration via quirks, we wouldn't have to go
-> through these contortions of setting up deeper ASPM states only at
-> device enable time.
+	M.
 
-I definitely agree.  I forgot to follow up on all of those cases.
-There aren't that many of them, but it looks like probably too many to
-address for v6.18, and I *think* it's safe to wait and deal with them
-for v6.19.
-
-Bjorn
+-- 
+Without deviation from the norm, progress is not possible.
 
