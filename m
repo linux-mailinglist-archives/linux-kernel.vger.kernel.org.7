@@ -1,148 +1,152 @@
-Return-Path: <linux-kernel+bounces-895956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C481FC4F5CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 19:02:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 380EFC4F5D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 19:02:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E29718823BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 18:02:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC618189D20A
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 18:02:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4554B3A5E69;
-	Tue, 11 Nov 2025 18:01:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E8812F60DB;
+	Tue, 11 Nov 2025 18:01:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="aI8bGIWA"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="FP4DPIrS"
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0AA6377EB2;
-	Tue, 11 Nov 2025 18:01:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91FA627587D;
+	Tue, 11 Nov 2025 18:01:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762884079; cv=none; b=gsVmyyVossGoGd9yerfYdk2tqJyyVKHp54c1nXfPN6ekL7XV7WgOheq3KnaSKgzy1KPiK7NkTewg8OnjzULrd8xTLamyemsiPsEfvGJp1VXpPpEF79oU9qtpRVxYHTWo6tp9jTRSD1EvxxAvScf8Ca0K4bQtfQF6oAOykFfxfoY=
+	t=1762884096; cv=none; b=QkUpYhjCG0y+uGoNczCg9gaxvpd9t3ksNE1jmsteo2ZAp/9VT9jchj4typ7nk9F9yqVX/GIQz663U0okH9L+45Wdec2MRJhH0Qe2IEq//G2xbnvZUDWQYjC7jm9aTuVkYZt7vl92sJudTvBaIdfHinvDVZpdaEYOf0kLg9JAUF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762884079; c=relaxed/simple;
-	bh=V1ag2OD93r959ox7dcTyir2tmmX5qPQGA8yHiqRXedI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hfE0wWw6yC5rQD3uYRjzMYI0TYgPL2B/7BEcfld2RaSqh7bwi8ZlcskeJmCa/BBs9qdqMKeaGeRJP05Mf6b6tw5UOeo1BmMOErNWgLWvsAVjUtdpgJYNPwxXSa30VRain+qxmKrtEqTEA93/5jw4QEAj+sM4zTkipKFyp0IUDBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=aI8bGIWA; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from gaggiata.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id EAB1B1FBD9;
-	Tue, 11 Nov 2025 19:01:15 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1762884076;
-	bh=GeOtfZ/2jEXI4JZJbkmlwASajVLEWsFaSswuR8dEivA=;
-	h=Received:From:To:Subject;
-	b=aI8bGIWAI2vpUM0Q1gPxC2D2j9khL0+ZtZzVyH/TwXYIPPPmZbyTTLZfONdwF9m16
-	 k12Sml81K6lHHHhQTB0FRpKbInzV7b56G/tXHR6RXMoq8/b0bp6bi0T4aR+jSoMq5/
-	 zf2WPxwIJCmqbSD8cIg9hUcldH0gZTEX0KGb+Z8zUfuweGEZuoq/UyDtaH1bEUolv9
-	 qzgS7Kgla9vdvLDhzbhwFsyZW7TUxq09EpZ5iHFDf4FaNxV5DV/R6RBz+yzNr7BM8Q
-	 dbndxxKuojLcQ0kkU2Udhl3n4cnXZ4ZttnHDho3njVX/eahgVLYioaId67rQgsEfMx
-	 s816fstyTSeww==
-Received: by gaggiata.pivistrello.it (Postfix, from userid 1000)
-	id 92C177F982; Tue, 11 Nov 2025 19:01:15 +0100 (CET)
-Date: Tue, 11 Nov 2025 19:01:15 +0100
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Francesco Dolcini <francesco@dolcini.it>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	"Kirill A. Shutemov" <kas@kernel.org>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Rick Edgecombe <rick.p.edgecombe@intel.com>,
-	Max Krummenacher <max.krummenacher@toradex.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	Ernest Van Hoecke <ernest.vanhoecke@toradex.com>,
-	Emanuele Ghidoli <emanuele.ghidoli@toradex.com>,
-	=?iso-8859-1?Q?Jo=E3o_Paulo_Gon=E7alves?= <joao.goncalves@toradex.com>,
-	Vitor Soares <vitor.soares@toradex.com>,
-	Francesco Dolcini <francesco.dolcini@toradex.com>
-Subject: Re: [PATCH v2 2/2] arm64: dts: freescale: add Toradex SMARC iMX95
-Message-ID: <aRN562k3NXCMghEl@gaggiata.pivistrello.it>
-References: <20251111151618.70132-1-francesco@dolcini.it>
- <20251111151618.70132-3-francesco@dolcini.it>
- <aRNeMJWsCTRO3j6X@lizhi-Precision-Tower-5810>
+	s=arc-20240116; t=1762884096; c=relaxed/simple;
+	bh=uFWA3teT7TosQucoMFTr49PCOAPfaa0i4DqQX56vHt4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DDfZZkZ2BD3eLsIWlqLnw6w2/1qHGdgdat4darSgsvIBha5OQTfAXD6jFfLVbu3eOLDq84Hi+KdXjGymiXXd7FE51aKnSZv/cWECmApvNpAWex+2yAInqDlNFf2PfgwASp8O+lT0B+2SZXxOFwW+IjUnH/NC1shz18eqZkuK8kU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=FP4DPIrS; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4d5Z924mmVz9ss7;
+	Tue, 11 Nov 2025 19:01:26 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1762884086;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jWsd4vZTjWLUJaUc98A7GiceajcfWMWAR9nAKjmOjpA=;
+	b=FP4DPIrSJvn+BI0/A1buudkDLRu2pDBGk+r/fpvwVDwYuugwBaIxXP5ETBjInp4t4yG1cm
+	eFNfUH+RHufIpQ8jMQSC2X3mRzuClHwuKZoPQsGPYMB3+1v4b41OyB/325TfJiEzp+vrZn
+	y7agp279myUCtu804rmL1mW3bgvDuMMscwLnQbWdRccHP3NWrJXwaL5u5BZ8nDYd5EHBG8
+	+TcE/mAtaxKz15PGJRZjr6GlVkDobufnuGnY4yw4ICujJgjvvhmQeisGd5No+Cdzs+75mw
+	vwDu/GvYK2IPc7r03tQ5fGPBCW8nRFr7oczXHZWjbuw+RQ8zPYTPnFngaREYpA==
+Message-ID: <880280be-1cd0-41b6-bc89-9168f374a9b9@pankajraghav.com>
+Date: Tue, 11 Nov 2025 19:01:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aRNeMJWsCTRO3j6X@lizhi-Precision-Tower-5810>
+Subject: Re: [PATCH v3 24/24] ext4: enable block size larger than page size
+To: libaokun@huaweicloud.com, linux-ext4@vger.kernel.org
+Cc: tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz,
+ linux-kernel@vger.kernel.org, mcgrof@kernel.org, ebiggers@kernel.org,
+ willy@infradead.org, yi.zhang@huawei.com, yangerkun@huawei.com,
+ chengzhihao1@huawei.com, libaokun1@huawei.com
+References: <20251111142634.3301616-1-libaokun@huaweicloud.com>
+ <20251111142634.3301616-25-libaokun@huaweicloud.com>
+Content-Language: en-US
+From: Pankaj Raghav <kernel@pankajraghav.com>
+In-Reply-To: <20251111142634.3301616-25-libaokun@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello Frank,
 
-On Tue, Nov 11, 2025 at 11:02:56AM -0500, Frank Li wrote:
-> On Tue, Nov 11, 2025 at 04:16:14PM +0100, Francesco Dolcini wrote:
-> > From: Max Krummenacher <max.krummenacher@toradex.com>
-> >
-> > Add DT support for Toradex SMARC iMX95 SoM and Development carrier
-> > board.
-> >
-> > The module consists of an NXP i.MX95 family SoC, up to 16GB of LPDDR5
-> > RAM and up to 128GB of storage, a USB 3.0 Host Hub and 2.0 OTG, two
-> > Gigabit Ethernet PHYs, a 10 Gigabit Ethernet interface, an I2C EEPROM
-> > and Temperature Sensor, an RX8130 RTC, a Quad/Dual lane CSI interface,
-> > and some optional addons: TPM 2.0, DSI, LVDS, DisplayPort (through a
-> > DSI-DP bridge), and Wi-Fi/BT module.
-> >
-> > Link: https://www.toradex.com/computer-on-modules/smarc-arm-family/nxp-imx95
-> > Link: https://www.toradex.com/products/carrier-board/smarc-development-board-kit
-> > Signed-off-by: Max Krummenacher <max.krummenacher@toradex.com>
-> > Co-developed-by: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
-> > Signed-off-by: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
-> > Co-developed-by: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
-> > Signed-off-by: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
-> > Co-developed-by: João Paulo Gonçalves <joao.goncalves@toradex.com>
-> > Signed-off-by: João Paulo Gonçalves <joao.goncalves@toradex.com>
-> > Co-developed-by: Vitor Soares <vitor.soares@toradex.com>
-> > Signed-off-by: Vitor Soares <vitor.soares@toradex.com>
-> > Co-developed-by: Francesco Dolcini <francesco.dolcini@toradex.com>
-> > Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
-> > ---
-> > v2:
-> >  - move enable-active-high after gpio
-> >  - add newline between properties and child node in som_dsi2dp_bridge
-> > ---
-> >  arch/arm64/boot/dts/freescale/Makefile        |    1 +
-> >  .../dts/freescale/imx95-toradex-smarc-dev.dts |  277 ++++
-> >  .../dts/freescale/imx95-toradex-smarc.dtsi    | 1155 +++++++++++++++++
-> >  3 files changed, 1433 insertions(+)
-> >  create mode 100644 arch/arm64/boot/dts/freescale/imx95-toradex-smarc-dev.dts
-> >  create mode 100644 arch/arm64/boot/dts/freescale/imx95-toradex-smarc.dtsi
-> >
-> > diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
-> > index 75676b908299..28f8eaf18471 100644
-> > --- a/arch/arm64/boot/dts/freescale/Makefile
-> > +++ b/arch/arm64/boot/dts/freescale/Makefile
-> > @@ -390,6 +390,7 @@ dtb-$(CONFIG_ARCH_MXC) += imx943-evk.dtb
-> >  dtb-$(CONFIG_ARCH_MXC) += imx95-15x15-evk.dtb
-> >  dtb-$(CONFIG_ARCH_MXC) += imx95-19x19-evk.dtb
-> >  dtb-$(CONFIG_ARCH_MXC) += imx95-19x19-evk-sof.dtb
-> > +dtb-$(CONFIG_ARCH_MXC) += imx95-toradex-smarc-dev.dtb
-> >  dtb-$(CONFIG_ARCH_MXC) += imx95-tqma9596sa-mb-smarc-2.dtb
-> >
-> ...
-> > +
-> > +/* SMARC PCIE_A / M2 Key B */
-> > +&pcie0 {
-> > +	status = "okay";
+On 11/11/25 15:26, libaokun@huaweicloud.com wrote:
+> From: Baokun Li <libaokun1@huawei.com>
 > 
-> Nit: if there are next version, please consider add supports-clkreq.
+> Since block device (See commit 3c20917120ce ("block/bdev: enable large
+> folio support for large logical block sizes")) and page cache (See commit
+> ab95d23bab220ef8 ("filemap: allocate mapping_min_order folios in the page
+> cache")) has the ability to have a minimum order when allocating folio,
+> and ext4 has supported large folio in commit 7ac67301e82f ("ext4: enable
+> large folio for regular file"), now add support for block_size > PAGE_SIZE
+> in ext4.
+> 
+> set_blocksize() -> bdev_validate_blocksize() already validates the block
+> size, so ext4_load_super() does not need to perform additional checks.
+> Here we only need to add the FS_LBS bit to fs_flags.
+> 
+> In addition, block sizes larger than the page size are currently supported
+> only when CONFIG_TRANSPARENT_HUGEPAGE is enabled. To make this explicit,
+> a blocksize_gt_pagesize entry has been added under /sys/fs/ext4/feature/,
+> indicating whether bs > ps is supported. This allows mke2fs to check the
+> interface and determine whether a warning should be issued when formatting
+> a filesystem with block size larger than the page size.
+> 
 
-What do you expect exactly?
-Maybe what you are looking for is in imx95-toradex-smarc.dtsi?
+If you are planning to send another revision, then it would be nice to include
+the corresponding patch to mke2fs as well? I don't know how ext4 process works but
+just a suggestion.
+> Suggested-by: Theodore Ts'o <tytso@mit.edu>
+> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+> Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
+> Reviewed-by: Jan Kara <jack@suse.cz>
+> ---
 
-Francesco
+Looks good,
+Reviewed-by: Pankaj Raghav <p.raghav@samsung.com>
+
+>  fs/ext4/super.c | 3 ++-
+>  fs/ext4/sysfs.c | 6 ++++++
+>  2 files changed, 8 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+> index f1aeba47b0e3..29bc8f5eb527 100644
+> --- a/fs/ext4/super.c
+> +++ b/fs/ext4/super.c
+> @@ -7451,7 +7451,8 @@ static struct file_system_type ext4_fs_type = {
+>  	.init_fs_context	= ext4_init_fs_context,
+>  	.parameters		= ext4_param_specs,
+>  	.kill_sb		= ext4_kill_sb,
+> -	.fs_flags		= FS_REQUIRES_DEV | FS_ALLOW_IDMAP | FS_MGTIME,
+> +	.fs_flags		= FS_REQUIRES_DEV | FS_ALLOW_IDMAP | FS_MGTIME |
+> +				  FS_LBS,
+>  };
+>  MODULE_ALIAS_FS("ext4");
+>  
+> diff --git a/fs/ext4/sysfs.c b/fs/ext4/sysfs.c
+> index 987bd00f916a..0018e09b867e 100644
+> --- a/fs/ext4/sysfs.c
+> +++ b/fs/ext4/sysfs.c
+> @@ -332,6 +332,9 @@ EXT4_ATTR_FEATURE(fast_commit);
+>  #if IS_ENABLED(CONFIG_UNICODE) && defined(CONFIG_FS_ENCRYPTION)
+>  EXT4_ATTR_FEATURE(encrypted_casefold);
+>  #endif
+> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> +EXT4_ATTR_FEATURE(blocksize_gt_pagesize);
+> +#endif
+>  
+>  static struct attribute *ext4_feat_attrs[] = {
+>  	ATTR_LIST(lazy_itable_init),
+> @@ -351,6 +354,9 @@ static struct attribute *ext4_feat_attrs[] = {
+>  	ATTR_LIST(fast_commit),
+>  #if IS_ENABLED(CONFIG_UNICODE) && defined(CONFIG_FS_ENCRYPTION)
+>  	ATTR_LIST(encrypted_casefold),
+> +#endif
+> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> +	ATTR_LIST(blocksize_gt_pagesize),
+>  #endif
+>  	NULL,
+>  };
+
 
