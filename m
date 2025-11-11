@@ -1,124 +1,136 @@
-Return-Path: <linux-kernel+bounces-896134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85638C4FBA3
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 21:41:35 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF057C4FBAC
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 21:43:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62EF41899317
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 20:42:00 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 71A4434D2B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 20:43:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB35733D6D5;
-	Tue, 11 Nov 2025 20:41:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEFDE325721;
+	Tue, 11 Nov 2025 20:43:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="aaXNtQQV"
-Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="kjZeZPDL"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ED6533D6C7
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 20:41:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAFEE324B0B
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 20:43:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762893687; cv=none; b=rwAocGoLDeIlZQoW/dTr7A/OkeI0TahArjKtYRCxI9kKir4SpJ2T7A7szog2cCH40mwxZqOE89pS5itKDGGbY4EktdBRwFOhA5PiSE7huPqgs2Ff18Hh1ltmIRK5VJuQ2aqfV0OxnixV651GMw8tm4vGtY0QYlUDJ0W4JpdB/cs=
+	t=1762893785; cv=none; b=dSRWr+n4292ueeqypkKxTbaAQY+i5E9KlVQAm8i+2KiECAxg1yf5b972UvdMrWHGyBsOWcjb0T2IQrSDDBYEY7jfOZD5/utLN6kaQujfOhJXJmKQIvSwk2bb9xueZUabAiYm8IbFBIM3W3I3Qx9w1QoZoLxIsM8W9tYNMwHr/s0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762893687; c=relaxed/simple;
-	bh=YEr04aoMcmyecPDZJfLTTNm/R81XpSd91kOBrbpoX5s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DhNj83eadkAl4II0ezDwJSwHG6+y6wg+IGIKzP9iA2ZghRGSu4Uszu+t6WB5OLYTKuEdWzzmSYS81CNv4wSB7a55y/M7lc0EUUxQbM3+mWoVeD//rmbSv9rNsEs3o+gLy+ZXDd5K1gS5WRQbDNEyO3z5/tqktS5rXhtlwRM/4dU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=aaXNtQQV; arc=none smtp.client-ip=209.85.166.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-43320651e53so638965ab.3
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 12:41:25 -0800 (PST)
+	s=arc-20240116; t=1762893785; c=relaxed/simple;
+	bh=afDorv6qTDLWr/6bW/pgEAxgseeZod61+oQ5b0c9gVA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=V/uKXlHLNhexyzP6w0ylEbGPtklg1gaa7t0KvntkMEQ+LPGxApfj/7tO4vLhkRfb2QvKq1eIVZ8T5KsNtZo/9HJQItuIuVEuZPJOjIjviFTQ44J8x4ysCL/X+lhQG7BWzMRKWUSM9zo5bpZy29Wl+xF7PzA+r29puaHENdeXNwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=kjZeZPDL; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-640b4a52950so124792a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 12:43:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1762893685; x=1763498485; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5r/++3mVCJ9xD+Mh5hsq3AQxsTxN+uDvyJmdcqTQc8I=;
-        b=aaXNtQQVT0QVZ74s0Bb2mWmlC27v3Ww1CcjHi9IRDMJQfXaIJLQwAfi2yb8ibsKBvE
-         OG+Y5fudBEJy+JgiMEZbxpdGQhZ5cBABrHNUsHlGJF7acxt0YiMrlVT7peqeGO7QOlaR
-         ukkgbEvwdobj6n79HUmW1TEmS8jzT8qLvdP7A=
+        d=soleen.com; s=google; t=1762893782; x=1763498582; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SPkvNL6hC2GnwSkZWOxF7zaqo/2CIWUpjYpRKjrtIiQ=;
+        b=kjZeZPDLc9huzMRycBoiJ6E38hShgDY2fnCGfqXIwYNmofiMbcYAc/p8YxqWDjqTNA
+         JaVeuBTJXnQzgo0YKMVLWywCgKwDxmJNWSSarlRE1d1WbZ3aU9hllAoTBFhNV7xhe230
+         R+qeLbnKd53WUVG1UB1CgfZ5XbEbeeqQ4hIuPdmM1JIwL9I2ui0FZmKWLJzAKQRtoNCQ
+         iaCHWnvChovqOlyX/2R6gKTSQYE73+inIluJPzo2XTiwCJUd7a4HBbiAhOZmfWtX3hKy
+         Qv40wzz2avQHoJB4kKPktx4Gnn6lsWffBPm7wI1LjgAEJuSgniTJP3QF+cbdER95ylKx
+         h0xw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762893685; x=1763498485;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5r/++3mVCJ9xD+Mh5hsq3AQxsTxN+uDvyJmdcqTQc8I=;
-        b=rV2wYfmYNYJcn6y+/7ugZCKm4iin0Tjnnj/hQH1lrMLLzgnDNzfFp2ZtDcOrNXuBQC
-         wJPm5MMSoqqduPmSIb+8mhN+pKwRak8bkQFQmKX0zRltF6F/D8fFgIi+jfChW4rWgLxp
-         7L6Jlja6+PAbe403Irshjs1uIX3oKzl5k/NMaiJxlbrmmBbXvrxC25soMrF8tJEKeGoE
-         QXTaflxQEVPHXTONT2SngLb1G+h4yPyQ9ayiMytnGuA+HXmVKg1BlQkoLlo3I8XS9aVp
-         EQN5bOubMNNceAY7a4FryMzSUFucttJkRZXekRNyejnMcxMet6bU0uAY+QCbF623Llho
-         9bxg==
-X-Forwarded-Encrypted: i=1; AJvYcCX28ceOEg4HCaELO0/mt55ihXFMnqnF/PeS5/R98lGNYxiAd8p4IgDZrMNQ4RmxVV04RKYv2LU+sA22Qng=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxRn0oCOGPMFmrJpwJVcWXEhLR2CYeH1oDRvhXD7EVIHUw6ak8
-	s2NNEHZcH/bx0wFK8X7cl+rhCi97W7NGG+2LllltxWigomJVzwqqzXwPC9R7D0KHX/0=
-X-Gm-Gg: ASbGncuBkp/Fgl2iWW/di7rHD3FPyP2ZdFhFCDBSZy9iCoOk/DLk66zQhWTzS6E869B
-	KT+45udO390nN2EFtx/QHcASVozqY92g+kmWFgN3CaxH8a49oGrm3AjRHLb0k3pT1+dN4g7zPf7
-	m04hZhzewHV6nGWogqO0zJ6zpu8L7neodbFy2rMIE9hVl5M1XsAAtowmz525LOH+RzkxZ6Th8DL
-	8Qnbeml3fZzxy3WSxHPPbAMQ0rmkVatbOF/80KER5r1QU2q3EH1NiB2VUniqLDaNspdkWuQ8Y7d
-	dRhwWvjL8jD4YmJv1LSNO0cdK8LWVnhbq4cKTJrwJLqrsJEXcldcL1HNUqObBQFfQEg+mlbCGjq
-	oUNPb2Jg6azSyDgKmMuw3FJ8Cu7u7PnS24jbjdxj70iXas+5++9qU9MuWb0OWaJyTapmKNM8E2b
-	p3yCAYN7ohbjpbzcmGv6GBfng=
-X-Google-Smtp-Source: AGHT+IHc85hYIBG9ds9G2pphrlClRxY7dfT0RUGyDwgFy2LVDtnEan/ZgMhySlr1XPzoCUV2ctuLfA==
-X-Received: by 2002:a05:6e02:174e:b0:433:5e33:d424 with SMTP id e9e14a558f8ab-43473cff5demr8186165ab.2.1762893684483;
-        Tue, 11 Nov 2025 12:41:24 -0800 (PST)
-Received: from [192.168.1.14] ([38.175.187.108])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-4347338d4d7sm2687265ab.20.2025.11.11.12.41.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Nov 2025 12:41:24 -0800 (PST)
-Message-ID: <b7cc8106-6383-4035-bf9a-f3abcf0b7da3@linuxfoundation.org>
-Date: Tue, 11 Nov 2025 13:41:22 -0700
+        d=1e100.net; s=20230601; t=1762893782; x=1763498582;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=SPkvNL6hC2GnwSkZWOxF7zaqo/2CIWUpjYpRKjrtIiQ=;
+        b=BRBvTp9dJ11XXS72vgIW7qMjk8Z/xRxSrobr/nYxycI+pv+by5unJBkT6X2h27ZcFZ
+         JeuGDDLY3aFwh05rbkYHKqBGrBzOd1gt1yFnoCfTDfWfYKGVXHeYXq5MhWDRZh04Siv2
+         mfGxJenfl7OQOXOea9OSM0G/od+sXQslVdAgISNHVwgIh9zL9I50nxvcyVR3xfLD9vgc
+         czezqXOHz7mF/NbJ+h1JppMZ2Nu3bHdltvRm1niZveZ/C/2TOMzzAVk2Rejd2QIZwm8f
+         BJnfpB375FAzVjInKlIgCCluTXROOgS9bJkEwDGVb6kupGYvyN84a4OIkONQt0/Om5I1
+         vGog==
+X-Forwarded-Encrypted: i=1; AJvYcCVjeHakOBD4QIdlUsMlzjmmCFw0L0wDI4XwfGqi1h5vMvDEwaNz+OytXv3QTYcowobyd8NapHDwaNkU9qE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTZY4QSPGBS5c3qEXu4pW49uyI2n8ultL1+EZ0U/nWIorRiZPo
+	wG6Fm0QVaWazh/3dxwRn5ODtqRtXfgqGT1V0826AeOBFPQ7vpihFVHFsLH7I3ss1OR0cA1yuBmD
+	qJt5KBZUion96mXeYnAHGnvR/2/ZVxkrk03SOn+4Uaw==
+X-Gm-Gg: ASbGncuviLPuyTbM3yX1P/0rlUZxwRl1ZDqnxcTIneSgCz9Pg1DMUXftZsGT76+FcsP
+	8UUBgUl83zOZC4P2kfu468vetmD+FibTyn6I87N/9yPVzNVYlqSjxumFLQs85y/1+wGc+HQRUd4
+	h5Dap+8dU7Yzaohr62JOeXdbEU+0G84wBzHVqkExOEBK1ajFS76/5NScGneylq1bOMfirgKQFXF
+	0J1clbs10oY1Jvby9+cVZlGJoQRDSDVBpuNI5EneVU8+v4sbPK6J8AwzMfcE1y/JE1h
+X-Google-Smtp-Source: AGHT+IEAy8cPLsziX/RCDUv2Dd6Ywa5OE8z1bKSydNZGkCZ2bkHrdBqmgyzeg7NbMT02IJqrhiQfoZnn25FUb9ZItfc=
+X-Received: by 2002:a05:6402:3046:10b0:63b:feb1:3288 with SMTP id
+ 4fb4d7f45d1cf-6431a55ddb0mr392712a12.25.1762893781751; Tue, 11 Nov 2025
+ 12:43:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.12 000/565] 6.12.58-rc1 review
-To: Slade Watkins <sr@sladewatkins.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, rwarsow@gmx.de,
- conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
- achill@achill.org, Shuah Khan <skhan@linuxfoundation.org>
-References: <20251111004526.816196597@linuxfoundation.org>
- <641427c7-0069-4bee-8e6a-53347654a926@linuxfoundation.org>
- <07d63659-72b1-43d0-9139-2a0b6d73edd4@sladewatkins.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <07d63659-72b1-43d0-9139-2a0b6d73edd4@sladewatkins.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20251107210526.257742-1-pasha.tatashin@soleen.com>
+ <20251107210526.257742-3-pasha.tatashin@soleen.com> <aRObz4bQzRHH5hJb@kernel.org>
+ <CA+CK2bDnaLJS9GdO_7Anhwah2uQrYYk_RhQMSiRL-YB=8ZZZWQ@mail.gmail.com>
+In-Reply-To: <CA+CK2bDnaLJS9GdO_7Anhwah2uQrYYk_RhQMSiRL-YB=8ZZZWQ@mail.gmail.com>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Tue, 11 Nov 2025 15:42:24 -0500
+X-Gm-Features: AWmQ_bnMmE_G9j7GUZRZnZwadwZMShQe0h1eQQimW1N6CMMoPEVysMT2zmRBrNU
+Message-ID: <CA+CK2bD3hps+atqUZ2LKyuoOSRRUWpTPE+frd5g13js4EAFK8g@mail.gmail.com>
+Subject: Re: [PATCH v5 02/22] liveupdate: luo_core: integrate with KHO
+To: Mike Rapoport <rppt@kernel.org>
+Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com, 
+	dmatlack@google.com, rientjes@google.com, corbet@lwn.net, 
+	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, 
+	ojeda@kernel.org, aliceryhl@google.com, masahiroy@kernel.org, 
+	akpm@linux-foundation.org, tj@kernel.org, yoann.congal@smile.fr, 
+	mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com, 
+	axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com, 
+	vincent.guittot@linaro.org, hannes@cmpxchg.org, dan.j.williams@intel.com, 
+	david@redhat.com, joel.granados@kernel.org, rostedt@goodmis.org, 
+	anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn, 
+	linux@weissschuh.net, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-mm@kvack.org, gregkh@linuxfoundation.org, tglx@linutronix.de, 
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, 
+	hpa@zytor.com, rafael@kernel.org, dakr@kernel.org, 
+	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com, 
+	myungjoo.ham@samsung.com, yesanishhere@gmail.com, Jonathan.Cameron@huawei.com, 
+	quic_zijuhu@quicinc.com, aleksander.lobakin@intel.com, ira.weiny@intel.com, 
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
+	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net, 
+	brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	saeedm@nvidia.com, ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com, 
+	leonro@nvidia.com, witu@nvidia.com, hughd@google.com, skhawaja@google.com, 
+	chrisl@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/11/25 12:47, Slade Watkins wrote:
-> On 11/11/2025 1:00 PM, Shuah Khan wrote:
->> I am seeing a build failure on my system - the following
->> commit could be the reason.
->>
->>>
->>> Heiner Kallweit <hkallweit1@gmail.com>
->>>      net: phy: fix phy_disable_eee
->>>
-> 
-> Hey Shuah,
-> 
-> Just to save you some time, this patch was already dropped from 6.12.58-rc2! :)
-> 
-> rc2: https://lore.kernel.org/stable/20251111012348.571643096@linuxfoundation.org/
-> 
+On Tue, Nov 11, 2025 at 3:39=E2=80=AFPM Pasha Tatashin
+<pasha.tatashin@soleen.com> wrote:
+>
+> > >       kho_memory_init();
+> > >
+> > > +     /* Live Update should follow right after KHO is initialized */
+> > > +     liveupdate_init();
+> > > +
+> >
+> > Why do you think it should be immediately after kho_memory_init()?
+> > Any reason this can't be called from start_kernel() or even later as an
+> > early_initcall() or core_initall()?
+>
+> Unfortunately, no, even here it is too late, and we might need to find
+> a way to move the kho_init/liveupdate_init earlier. We must be able to
+> preserve HugeTLB pages, and those are reserved earlier in boot.
 
-Thanks. I noticed that right after sending the email. I am building
-rc2 now.
+Just to clarify: liveupdate_init() is needed to start using:
+liveupdate_flb_incoming_* API, and FLB data is needed during HugeTLB
+reservation.
 
-thanks,
--- Shuah
+Pasha
 
