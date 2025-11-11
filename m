@@ -1,83 +1,81 @@
-Return-Path: <linux-kernel+bounces-894717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57143C4BAD9
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 07:28:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6132BC4BAE2
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 07:29:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04AC7189278F
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 06:29:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19B3E3A6582
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 06:29:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D17902D73A6;
-	Tue, 11 Nov 2025 06:28:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E9DA2D594D;
+	Tue, 11 Nov 2025 06:29:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="dJwQKWHR"
-Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11010028.outbound.protection.outlook.com [52.101.85.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ow31pOuO"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BD492D0C7A;
-	Tue, 11 Nov 2025 06:28:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.28
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762842511; cv=fail; b=JKfoaXFMWZhMswyACgtLnE0peFkXkmOy4f3bDUOa6M95kWtsNl7Y1JfiA9uJGePQDk0g+sfaXrzp4OiPTz+SnK/rNFGBW4mMHW3Vi3FQSWeahdSOAuS6L68rVyKZ1vaFdXWoIUAx7zNcect68qRAvp2xqcwptu5MCw3FUpjjVQ0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762842511; c=relaxed/simple;
-	bh=vvjkNG/cIS1+9yN5fPFmlIWIPeb7AMAsbNBlrUmswxM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Jiq1eX0FKpDEuQ9y+blfcVAb14YpDLihYQ1qki8HdZhR1vEYBY6UwA2YJ97y5JGZzbr2UnMI+BbO1GqQYzo91G5ueNeSDKMPAvd0kKrlhHiuRclCyWjpQ0OBY+uG37PGKf7VJig0dKbAKqv8sZJS9/KCc+7JGILW+4vGzeihla8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=dJwQKWHR; arc=fail smtp.client-ip=52.101.85.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=PNSxBvrYRlN+sWJgCUWpQ5twrY0RHqV/CebtCDAjgZ3FyTujKizP9IdS6JEH/QaA+Jr0ZCjG50CyVl74jM+uxh+kCCEHuwVrbatOGgQLwXuxp5+N3LzjsG/4S5VpxJErubAUnhcVisksaO7AVKRk8gegDl1sYDNilizCzn6DkBE8He7mMwgQNEu1kmAXbfV2sTz7vAnYAavPlU7c30iFnHMpIy+gDgZN2z3Tqevk0brxn3emM3JG2TjvTeRhVRHM4uK50bWrh0tKoAf06jnsO/sjh63Z3PU5B11qnSIMxwTtuDKvkWC4dC1j1JQ4pxlrcuUuU60WMWIqucIKXG4rPg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=26CZP3n03XL1oyHKQ6x1nClQkVh4Koje3/Kbb+rSW8c=;
- b=pZcfhVWE6byE7ko2cD+DE9XSRcIBZDtGAx3ZdcQ/lNIr1UrWMWW0M7b9o87s2/uaAJex8KGTT06GA2vTXWIJYKpM0ldJDsXjKzV7QD+hlS3XYyDo4A41nV92RuKIUPL8aqBd+g1goMiXH3p4Xidg+bhJjz+d0nM/RnOpRwtPEWwFMY4YfuCigyl80Lpx7+gXhJEwBlcMcu75b6VIfe+FZx8jSYCA11yFt8URaUJ4NXXLLP6PsXYpvZNdk7dhHYyEqqME1Gx0NnZ1SY+GvfmHjbJbRzURyPP31MmV284Axzzo5oNu3+L/Neys9NjL6nKSgBOlStm1HGQBfSiM7tz2hA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=gmail.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=26CZP3n03XL1oyHKQ6x1nClQkVh4Koje3/Kbb+rSW8c=;
- b=dJwQKWHReV9m82zeuQAMXZ6f8OptN1epO2X+xHmhFH0vropINt35EoOW507DH8pNKXYjk6UoGbet9AAlgClA0h2gyryZUM1MbjdBZ23X7ENVJsA03Lglt5BwBWPxxEJfW5n2GUMKPaB0CTitZWTzAsMr+GQrZxGp06GsUMDTu/A=
-Received: from DM6PR04CA0019.namprd04.prod.outlook.com (2603:10b6:5:334::24)
- by MW3PR12MB4425.namprd12.prod.outlook.com (2603:10b6:303:5e::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.13; Tue, 11 Nov
- 2025 06:28:26 +0000
-Received: from DS2PEPF0000343C.namprd02.prod.outlook.com
- (2603:10b6:5:334:cafe::3c) by DM6PR04CA0019.outlook.office365.com
- (2603:10b6:5:334::24) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9320.15 via Frontend Transport; Tue,
- 11 Nov 2025 06:28:26 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
-Received: from satlexmb08.amd.com (165.204.84.17) by
- DS2PEPF0000343C.mail.protection.outlook.com (10.167.18.39) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9320.13 via Frontend Transport; Tue, 11 Nov 2025 06:28:26 +0000
-Received: from satlexmb10.amd.com (10.181.42.219) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Mon, 10 Nov
- 2025 22:28:25 -0800
-Received: from satlexmb08.amd.com (10.181.42.217) by satlexmb10.amd.com
- (10.181.42.219) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Mon, 10 Nov
- 2025 22:28:25 -0800
-Received: from [10.136.37.117] (10.180.168.240) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
- Transport; Mon, 10 Nov 2025 22:28:22 -0800
-Message-ID: <7bc4b0b7-42ea-42fc-ae96-3084f44bdc81@amd.com>
-Date: Tue, 11 Nov 2025 11:58:21 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E5A5287263
+	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 06:29:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762842583; cv=none; b=fkvECeikvnim9DdfsO7rkp4p56SZaFFGmqwVwVd7ljTDDTXjFe6zVEiNpA5d0bGBXqjCuPJOCoa7K9+QOp6uvIW15lXONM5//iftjyY4HyMHLiPjRNCRO6vbEnb5AXTrRLzcWlV65vPY9hemXMHgNeAn/tYkXIgbFwyL0QE8WQI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762842583; c=relaxed/simple;
+	bh=98VHIJNXts5pkqDxpusii3VJgY4opzx6AuTlyTNUPio=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MeraB0xMwGMii0QONCg9fsEHsv5rICVLPG94EjvfjqetRo5466O0DdhVjXsPw6Ew2ro8NB4kzkEHpJWEPSn5MgruspvjOnz9ywzklXXfiml5XQ5aIEnel00R+XyG0Dmqh32RzivNOPElpqwY8O39FT7BWTL/ldiCWt9762d4NaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ow31pOuO; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-29555b384acso35925265ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Nov 2025 22:29:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762842581; x=1763447381; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=sKqgvyJtGNbVzE7kGd6bpftMWsr85S+/cQsPs3EDLeQ=;
+        b=Ow31pOuOKX52dQ6Ry3XfUWwmX8XmWsGZ2BMymuI2yNbjMorbZYL9kE30w/zsRCbdij
+         wnzy3h0P5jw/ne5KvuiOVnfEMAlkINxIasjXaUKfigc4TFL5H98v//k4oNVXi+JDk0uJ
+         G2Czq58S9kQUldAFC/Nn1zQ/kseoG5mga899AP5rTKzabCXl8VtDOXVa0IVpKTUP08r8
+         2b2EJyZTH9rmQmd0FKgAdKCIJTxS/do6Yvod0PuARag4WlL3diOIjFK8OIiCjeMrbx9x
+         1kz3ZIl3lXW+pGzIXw6WJY910mGBTLKD3ZkgF0M8ZOl6h/tHPxlJMfjj2jKZUO3C2tgK
+         jIEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762842581; x=1763447381;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sKqgvyJtGNbVzE7kGd6bpftMWsr85S+/cQsPs3EDLeQ=;
+        b=frJy6NStSK1XxIht3yIGGNGSZHBfNJDlPOg3ckG+GmTCZ83Ow927MFGmLtSpDm3zij
+         tacZBjRZsGlz40RojjVTjefZ6LfPX+e3Rr8hh492q+/5pemYEsuYX8A+YHHcu+Wqby96
+         LfKBCdGT9CvUcZDRhC+2rGe/DvAIFZgok7hXE2+U8t4Hp9znq8FgZaLx3+86Y0G5Zo3B
+         eULZuSp4cL7qRaoMHjmS7TipPLgzQYsCbdSQWtn6mIGwmayqrnxhW9hjbQYNBtJReOMs
+         inncbvJAjeKqNZhdcrqTyXKezdxwxHTXu/I00sYeeJn111vwIr//eJNU2MASLykmVUGs
+         0lvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUmdxK4igLmSSN6Zlg8fc4IkX/RnB69hQuX5owLddNJIObu+uZBk0gQy08nHX2X4CIjqgo5LXQ//6CCjYY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3h9zM9gKQiPl4WyZoWtZ0taOy68dX8sez3KKlJPNZKdO65eE5
+	Yn7Zp2qhSiqznVrt8YLNj8WfSpsRhMBYS8yUttmfSjjU8xTmS3GkbaiG
+X-Gm-Gg: ASbGnctyJL+4YTSad7+ghzP6WCqkSkgJHKf123fNaRqKkIkqKsW38uxc2VB0OsCnJVB
+	TkMyzk/GwgI0qNs4guguYku/Y56gnwUdDFB3upN63JTbTwvyRgJjs/7vVT89sUOcvZYMalkr2Df
+	5dlNYJ4Dm70Vb6RlfTx6gxEtAyn40QXqGh82INurbyYAcVQsn1tR1B+dgrAzManS5iEVC7V3d1H
+	po4asdoPXTvK7EEFVvmlZhsFSxLoyhr76O7KBEt5lAwNfoiojp+atQWeIgGEvmlP6VK32j9IpcB
+	Ibrud0Lc5bdsdR2+EUgdPkQ/qqoiWzIcp0fhcUoslh4xjgTTB2oHZxn9WOGeLqmSZBBCsztJiG2
+	SIEyETDPiK711f97u9cpHxzGWVQkS0DlMfjRjILlFqCCmUK9gd58nb4u19uKpDOtWEkDPMyzSwe
+	EZhp3FJVmoi2WI+qdB5C7gd4q4kpUUYUgL8d83atK6TnWk
+X-Google-Smtp-Source: AGHT+IF40G3iSq8Wz5OHk5M+HgDuMFVNr7+LzM/sauYtkMXM6MYI+qYKqu0qHN2JK/1VfKDa/+xIQA==
+X-Received: by 2002:a17:902:db05:b0:295:7806:1d64 with SMTP id d9443c01a7336-297e5666153mr136774245ad.25.1762842581251;
+        Mon, 10 Nov 2025 22:29:41 -0800 (PST)
+Received: from [10.189.138.37] ([43.224.245.241])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-297d83c941esm114165585ad.44.2025.11.10.22.29.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Nov 2025 22:29:41 -0800 (PST)
+Message-ID: <635c7224-5bfe-40fd-9338-d9c600b7def4@gmail.com>
+Date: Tue, 11 Nov 2025 14:29:38 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,206 +83,164 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/10] sched/kvm: Semantics-aware vCPU scheduling for
- oversubscribed KVM
-To: Wanpeng Li <kernellwp@gmail.com>, Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, "Paolo
- Bonzini" <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>
-CC: Steven Rostedt <rostedt@goodmis.org>, Vincent Guittot
-	<vincent.guittot@linaro.org>, Juri Lelli <juri.lelli@redhat.com>,
-	<linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>, Wanpeng Li
-	<wanpengli@tencent.com>
-References: <20251110033232.12538-1-kernellwp@gmail.com>
+Subject: Re: [f2fs-dev] [PATCH v2] f2fs: fix has_curseg_enough_space to check
+ all data segments for dentry blocks
+To: Xiaole He <hexiaole1994@126.com>, linux-f2fs-devel@lists.sourceforge.net
+Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org, stable@kernel.org,
+ Yongpeng Yang <yangyongpeng@xiaomi.com>
+References: <20251111060557.337514-1-hexiaole1994@126.com>
+ <20251111061051.337547-1-hexiaole1994@126.com>
 Content-Language: en-US
-From: K Prateek Nayak <kprateek.nayak@amd.com>
-In-Reply-To: <20251110033232.12538-1-kernellwp@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+From: Yongpeng Yang <yangyongpeng.storage@gmail.com>
+In-Reply-To: <20251111061051.337547-1-hexiaole1994@126.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS2PEPF0000343C:EE_|MW3PR12MB4425:EE_
-X-MS-Office365-Filtering-Correlation-Id: 32a8036e-a836-447c-83ea-08de20eb8572
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|30052699003|1800799024|376014|7416014|82310400026|36860700013|13003099007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?aVZvTUpiWkM0eVBlQzJmUnRIVHd0ZE9tMGkxaEp6WDVpTHF2UkUyUVU1clND?=
- =?utf-8?B?ek9RdG5xejI0aytoWEYrTWtaeXhFaUJrRHlqUitEZkcxWFltWEdCY2dEcGxs?=
- =?utf-8?B?c1RGSXpha3h6RUI5UEZkQWFsU3JhS2ZPRVBoSkpTTXhUNFhPaHRkUFNhZmVp?=
- =?utf-8?B?WEkzRURvV1RUY0wwWmhnMzFKVHJHeENQUHVGSkF0a25hWENnUWpkNnZpTDNX?=
- =?utf-8?B?SFZmcXZKY2V1UEE2MXdTMTVJQStqLzNKMWxucXBmY1d2THN3bHdOVy9kOHV5?=
- =?utf-8?B?eWJ1Q3BrdEMwbHZER3RNYlBJTUIvUnpSbzRNc3dUTFp3Qi9WUnlIeFptQ3pR?=
- =?utf-8?B?UlIzdTlnSXo4WGRiaHowRlU1NGRPZTV4N0RmOHZBZkt6MEJEeGliMTZtMisz?=
- =?utf-8?B?NXFCVmN0eGJmTkZGWm9GWlVXeTNnT0FSY1o3UE11SUdnMFpjdy82UWtzSVFj?=
- =?utf-8?B?QWpITXg2KzR2RS80SWszVE9MWkZnSHJ5L1JlcFg4RldEbjgxN242eEhQWUF3?=
- =?utf-8?B?R1Bic05nQ2dPQ3daY3RxSVBjRVNPZWkyMTIzblBrWk5EbkkxRnc5T0Z3VmJp?=
- =?utf-8?B?S2ZzTWZIYXcwYmdDQmoxZmtMN3lQZ05DRFFPZzRKT2p5bEJ2VUZBd0ZmYlpL?=
- =?utf-8?B?bk1aeWFWNzV5Znl4d3Zra1FsWm9GV256dFdOaURCVHZwdC9uQzdkZDZpNXBU?=
- =?utf-8?B?VzlhYVpGRE5JMWJuV3duK3pEM3JETzRobFpVbGJ1QXl6bU9VQmdic1BVTnZy?=
- =?utf-8?B?OHlsaEo4NU9lQWlRRUQ2Q1IreHFNQktVUjc2NW9vaVZLTi8reDlPMGxoRWsx?=
- =?utf-8?B?TklnQzRDUmRSY0NlWGlBN3RQL0xSVDMxWDBySmJDdUZ0b1NOYzljS2Zva0cz?=
- =?utf-8?B?WlRxc042ZndKUnNiUkdkUmdkREJ0cTBzNkllWThqMTh4UHVxNHFwNFJudWRR?=
- =?utf-8?B?UXZTU1JDYm43V21UbGlITG1hVVA1dmFWc2dZWStyME56NGVIWlF5QSszTEpQ?=
- =?utf-8?B?cTRSYVRGeUJnRktNajZPSFpsbUR6N0l0WTdwSktiUHRRS3FVaHN1STFETGI2?=
- =?utf-8?B?WnR1VmNjSDZ6LzdLeS9FODVkTGJiTkk3Yk9RWjZySVNDV3NFZklaSGs0TlZv?=
- =?utf-8?B?VTNhSUUySnhTVVUyRDZDTERYUHpGL1JYaUI5dnRyODEvd2RzS1BZMHFWQ1p0?=
- =?utf-8?B?VERXYmxzUENXaXRFREhrRG03Vk5jdUJlQWFmejN1eU10WkhZVzFZZDhtOGsw?=
- =?utf-8?B?OEZBSS9FL1JtOTQ3MkkzNmVDQVFKaEtNajN2TkdXemNReURYaVg3dG14VmRB?=
- =?utf-8?B?a250TnorT2NWV2RpbU5FOW13WHNaUmptOW1VYnA5RmxCYkkyUjROMDBWem4v?=
- =?utf-8?B?NjJ5aWp2ZFRNTUY4di9BMnVVNk9JSFp1MTRRZWtBcS9CUHVIRzQ0MFk1blph?=
- =?utf-8?B?dWppdGY2Zmo0MnNGU0FPcUlwaWRHTUNjRXBPM3pJWG9ZQWdwTjhmTkN1VGNH?=
- =?utf-8?B?MjBLKzlnN2tsTVpSUGRacGFjK0pRdFp2d0xzRTlnaksxQ05CLysyYWg4L0NW?=
- =?utf-8?B?YzIrSTA4OWlyRHkvMjY4UzFaN3ErelVYZi9aVkZHekhKdzBoL2VtNUZReDJP?=
- =?utf-8?B?K1F0d1RDK2xlanQrVGxMOXlMWm80a0FUcVBVYnRETzVORWdINEg5QUs1dHNC?=
- =?utf-8?B?eis1TVUwakRudnFsQ04xYmREVkhWdjdyOGRLenlhNWE2T1Rwd3FUbGM5eGdD?=
- =?utf-8?B?NG9xMzhlWkIwWjZVZWYyNzR5aHZscDFXYmZJdDBtU25DVVFZbnJSdHR1Qm4r?=
- =?utf-8?B?ZGpxRkRCVHVCZHVDeGRJUTYvWlpsa3Z5NlZZRCtmRGVqMkRvTk04VTYzdExQ?=
- =?utf-8?B?amRDT3NmN2ZWOVNKRFhOd2ZDODFvK216djE5Qm9Jazdzc0IybUowMk5pdjFO?=
- =?utf-8?B?QmVQNDBqTWhrUGpubTVVczh5LzJlaGJlaUhPNTNXKzFTQkxCRklUdTIvZk1r?=
- =?utf-8?B?aEhBZ09vTjk4S2pEdWVBYk9FWS82NlVhTGdCZW10NjVNOXhCWXBubjZWd1NR?=
- =?utf-8?Q?Sq1k/N?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(30052699003)(1800799024)(376014)(7416014)(82310400026)(36860700013)(13003099007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Nov 2025 06:28:26.0685
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 32a8036e-a836-447c-83ea-08de20eb8572
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS2PEPF0000343C.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR12MB4425
 
-Hello Wanpeng,
-
-I haven't looked at the entire series and the penalty calculation math
-but I've a few questions looking at the cover-letter.
-
-On 11/10/2025 9:02 AM, Wanpeng Li wrote:
-> From: Wanpeng Li <wanpengli@tencent.com>
+On 11/11/25 14:10, Xiaole He wrote:
+> When active_logs == 6, dentry blocks can be allocated to HOT, WARM, or
+> COLD segments based on various conditions in __get_segment_type_6():
+> - age extent cache (if enabled)
+> - FI_HOT_DATA flag (set when dirty_pages <= min_hot_blocks)
+> - rw_hint (defaults to WARM via f2fs_rw_hint_to_seg_type)
+> - file_is_hot(), FI_NEED_IPU, f2fs_is_cow_file(), etc.
 > 
-> This series addresses long-standing yield_to() inefficiencies in
-> virtualized environments through two complementary mechanisms: a vCPU
-> debooster in the scheduler and IPI-aware directed yield in KVM.
+> However, has_curseg_enough_space() only checked CURSEG_HOT_DATA segment
+> for dentry blocks, which could lead to incorrect space calculation when
+> dentry blocks are actually allocated to WARM or COLD segments.
 > 
-> Problem Statement
-> -----------------
+> Reproducer:
+> Note: This reproducer requires adding a tracepoint to observe segment
+> type. Add the following tracepoint to include/trace/events/f2fs.h:
 > 
-> In overcommitted virtualization scenarios, vCPUs frequently spin on locks
-> held by other vCPUs that are not currently running. The kernel's
-> paravirtual spinlock support detects these situations and calls yield_to()
-> to boost the lock holder, allowing it to run and release the lock.
+> TRACE_EVENT(f2fs_allocate_data_block,
+>          TP_PROTO(struct f2fs_sb_info *sbi, struct inode *inode,
+>                  enum log_type type, block_t blkaddr),
 > 
-> However, the current implementation has two critical limitations:
+>          TP_ARGS(sbi, inode, type, blkaddr),
 > 
-> 1. Scheduler-side limitation:
+>          TP_STRUCT__entry(
+>                  __field(dev_t, dev)
+>                  __field(ino_t, ino)
+>                  __field(int, type)
+>                  __field(block_t, blkaddr)
+>                  __field(int, is_dir)
+>          ),
 > 
->    yield_to_task_fair() relies solely on set_next_buddy() to provide
->    preference to the target vCPU. This buddy mechanism only offers
->    immediate, transient preference. Once the buddy hint expires (typically
->    after one scheduling decision), the yielding vCPU may preempt the target
->    again, especially in nested cgroup hierarchies where vruntime domains
->    differ.
-
-So what you are saying is there are configurations out there where vCPUs
-of same guest are put in different cgroups? Why? Does the use case
-warrant enabling the cpu controller for the subtree? Are you running
-with the "NEXT_BUDDY" sched feat enabled?
-
-If they are in the same cgroup, the recent optimizations/fixes to
-yield_task_fair() in queue:sched/core should help remedy some of the
-problems you might be seeing.
-
-For multiple cgroups, perhaps you can extend yield_task_fair() to do:
-
-( Only build and boot tested on top of
-    git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git sched/core
-  at commit f82a0f91493f "sched/deadline: Minor cleanup in
-  select_task_rq_dl()" )
-
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index b4617d631549..87560f5a18b3 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -8962,10 +8962,28 @@ static void yield_task_fair(struct rq *rq)
- 	 * which yields immediately again; without the condition the vruntime
- 	 * ends up quickly running away.
- 	 */
--	if (entity_eligible(cfs_rq, se)) {
-+	do {
-+		cfs_rq = cfs_rq_of(se);
-+
-+		/*
-+		 * Another entity will be selected at next pick.
-+		 * Single entity on cfs_rq can never be ineligible.
-+		 */
-+		if (!entity_eligible(cfs_rq, se))
-+			break;
-+
- 		se->vruntime = se->deadline;
- 		se->deadline += calc_delta_fair(se->slice, se);
--	}
-+
-+		/*
-+		 * If we have more than one runnable task queued below
-+		 * this cfs_rq, the next pick will likely go for a
-+		 * different entity now that we have advanced the
-+		 * vruntime and the deadline of the running entity.
-+		 */
-+		if (cfs_rq->h_nr_runnable > 1)
-+			break;
-+	} while ((se = parent_entity(se)));
- }
- 
- static bool yield_to_task_fair(struct rq *rq, struct task_struct *p)
----
-
-With that, I'm pretty sure there is a good chance we'll not select the
-hierarchy that did a yield_to() unless there is a large discrepancy in
-their weights and just advancing se->vruntime to se->deadline once isn't
-enough to make it ineligible and you'll have to do it multiple time (at
-which point that cgroup hierarchy needs to be studied).
-
-As for the problem that NEXT_BUDDY hint is used only once, you can
-perhaps reintroduce LAST_BUDDY which sets does a set_next_buddy() for
-the "prev" task during schedule?
-
+>          TP_fast_assign(
+>                  __entry->dev = sbi->sb->s_dev;
+>                  __entry->ino = inode ? inode->i_ino : 0;
+>                  __entry->type = type;
+>                  __entry->blkaddr = blkaddr;
+>                  __entry->is_dir = inode ? S_ISDIR(inode->i_mode) : 0;
+>          ),
 > 
->    This creates a ping-pong effect: the lock holder runs briefly, gets
->    preempted before completing critical sections, and the yielding vCPU
->    spins again, triggering another futile yield_to() cycle. The overhead
->    accumulates rapidly in workloads with high lock contention.
+>          TP_printk("dev = (%d,%d), ino = %lu, %s, blkaddr = %u, is_dir = %d",
+>                  show_dev(__entry->dev),
+>                  (unsigned long)__entry->ino,
+>                  show_data_type(__entry->type),
+>                  __entry->blkaddr,
+>                  __entry->is_dir)
+> );
 > 
-> 2. KVM-side limitation:
+> And add the tracepoint call in fs/f2fs/segment.c in
+> f2fs_allocate_data_block() function. Find the location after
+> locate_dirty_segment() calls and before IS_DATASEG() check:
 > 
->    kvm_vcpu_on_spin() attempts to identify which vCPU to yield to through
->    directed yield candidate selection. However, it lacks awareness of IPI
->    communication patterns. When a vCPU sends an IPI and spins waiting for
->    a response (common in inter-processor synchronization), the current
->    heuristics often fail to identify the IPI receiver as the yield target.
-
-Can't that be solved on the KVM end? Also shouldn't Patch 6 be on top
-with a "Fixes:" tag.
-
+>          locate_dirty_segment(sbi, GET_SEGNO(sbi, old_blkaddr));
+>          locate_dirty_segment(sbi, GET_SEGNO(sbi, *new_blkaddr));
 > 
->    Instead, the code may boost an unrelated vCPU based on coarse-grained
->    preemption state, missing opportunities to accelerate actual IPI
->    response handling. This is particularly problematic when the IPI receiver
->    is runnable but not scheduled, as lock-holder-detection logic doesn't
->    capture the IPI dependency relationship.
-
-Are you saying the yield_to() is called with an incorrect target vCPU?
-
+>          trace_f2fs_allocate_data_block(sbi, folio ? folio->mapping->host : NULL,
+>                                          type, *new_blkaddr);
 > 
-> Combined, these issues cause excessive lock hold times, cache thrashing,
-> and degraded throughput in overcommitted environments, particularly
-> affecting workloads with fine-grained synchronization patterns.
+>          if (IS_DATASEG(curseg->seg_type))
 > 
--- 
-Thanks and Regards,
-Prateek
+> 1. Mount F2FS with active_logs=6 and age extent cache disabled:
+>     # mkfs.f2fs -f /dev/sdb1
+>     # mount -t f2fs -o active_logs=6 /dev/sdb1 /mnt/f2fs-test
+> 
+> 2. Enable tracing and f2fs_allocate_data_block tracepoint:
+>     # echo 1 > /sys/kernel/debug/tracing/events/f2fs/f2fs_allocate_data_block/enable
+>     # echo 1 > /sys/kernel/debug/tracing/tracing_on
+>     # echo > /sys/kernel/debug/tracing/trace
+> 
+> 3. Create a directory and write enough files to trigger dirty_pages >
+>     min_hot_blocks (default 16), which will clear FI_HOT_DATA flag:
+>     # mkdir /mnt/f2fs-test/testdir
+>     # cd /mnt/f2fs-test/testdir
+>     # seq 1 8192 | xargs touch
+>     # sync
+> 
+> 4. Observe dentry block allocation:
+>     # cat /sys/kernel/debug/tracing/trace
+> 
+>     The trace output shows dentry blocks (is_dir = 1) allocated to WARM
+>     segment because FI_HOT_DATA is cleared when dirty_pages >
+>     min_hot_blocks (default 16). However, has_curseg_enough_space() only
+>     checked HOT_DATA segment space.
+> 
+> Fix by merging the dentry block check into the main data/node block
+> check loop and checking data_blocks + dent_blocks for data segments,
+> since both regular data blocks and dentry blocks can be written to the
+> same segment. When active_logs == 6, dentry blocks can be allocated to
+> any of the three data segments (HOT, WARM, COLD), so all three segments
+> need to account for dentry blocks. When active_logs != 6, dentry blocks
+> are always allocated to HOT_DATA segment only, so only HOT_DATA segment
+> needs to account for dentry blocks, while WARM and COLD segments only
+> check data_blocks.
+> 
+> Fixes: ef095d19e82f ("f2fs: write small sized IO to hot log")
+> Cc: stable@kernel.org
+> Signed-off-by: Xiaole He <hexiaole1994@126.com>
+> ---
+> Changes in v2 (per Yongpeng's feedback):
+> - Merged dentry block check into the main loop to avoid duplication
+> - Check data_blocks + dent_blocks for data segments (both can write to same segment)
+> ---
+>   fs/f2fs/segment.h | 24 ++++++++++++------------
+>   1 file changed, 12 insertions(+), 12 deletions(-)
+> 
+> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+> index 1ce2c8abaf48..acda720a54eb 100644
+> --- a/fs/f2fs/segment.h
+> +++ b/fs/f2fs/segment.h
+> @@ -626,21 +626,21 @@ static inline bool has_curseg_enough_space(struct f2fs_sb_info *sbi,
+>   
+>   		left_blocks = get_left_section_blocks(sbi, i, segno);
+>   
+> -		blocks = i <= CURSEG_COLD_DATA ? data_blocks : node_blocks;
+> +		if (i <= CURSEG_COLD_DATA) {
+> +			blocks = data_blocks;
+> +			/*
+> +			 * With active_logs == 6, dentry blocks can be allocated to
+> +			 * any data segment. With active_logs != 6, dentry blocks
+> +			 * are always allocated to HOT_DATA segment.
+> +			 */
+> +			if ((F2FS_OPTION(sbi).active_logs == 6) || (i == CURSEG_HOT_DATA))
+> +				blocks += dent_blocks;
+> +		} else {
+> +			blocks = node_blocks;
+> +		}
+>   		if (blocks > left_blocks)
+>   			return false;
+>   	}
+> -
+> -	/* check current data section for dentry blocks. */
+> -	segno = CURSEG_I(sbi, CURSEG_HOT_DATA)->segno;
+> -
+> -	if (unlikely(segno == NULL_SEGNO))
+> -		return false;
+> -
+> -	left_blocks = get_left_section_blocks(sbi, CURSEG_HOT_DATA, segno);
+> -
+> -	if (dent_blocks > left_blocks)
+> -		return false;
+>   	return true;
+>   }
+>   
 
+Looks good to me,
+Reviewed-by: Yongpeng Yang <yangyongpeng@xiaomi.com>
+
+Thanks
+Yongpeng,
 
