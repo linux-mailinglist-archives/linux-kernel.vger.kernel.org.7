@@ -1,149 +1,79 @@
-Return-Path: <linux-kernel+bounces-895738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-895750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3AD9C4ECC4
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:35:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D803EC4ED21
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 16:41:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86BE13B753C
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 15:31:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C204B3BD94C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 15:36:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08DDB366557;
-	Tue, 11 Nov 2025 15:31:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C3kE4ClJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C915836996F;
+	Tue, 11 Nov 2025 15:36:50 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 299A735F8D7;
-	Tue, 11 Nov 2025 15:31:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B62F366562;
+	Tue, 11 Nov 2025 15:36:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762875094; cv=none; b=GdmYsbYmvNSxh/bWYOSs3v1xL6F6hNZ4BEPprvdn1FvznUMjBtX3MeE3mg8pYWpziH7KV4g9YyJxMXi77ZNYIvI1bUZ2k8toZCmb9DtNttssO9Aas5wViPxxjRTKR/EX6zOD5vgzUJlqNalzyOfNpC6lt30nIo2A4yRiCuIQn0I=
+	t=1762875409; cv=none; b=B6zs9injkHOKscaqMhX+U0AJYY04k5p8rILZbiOFqn+RenEVgmR6UHD2MKTt5cnX92T5uhvtHFWWa5FgFaH1hI8tD6sZUtn+l2Q5hbjqCx0uEUOWom5k8FIRuJDu3Qx+qciv6f+vXhMFM+q2cB+u9cLkQzCtAzMPpTMlg8juYQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762875094; c=relaxed/simple;
-	bh=4UJ1g/RrS+1ok3QrqJbUIP9v0jFKaMDfl7/AKpbi0Ts=;
+	s=arc-20240116; t=1762875409; c=relaxed/simple;
+	bh=9+6HcLZ+rN/pP4x7GqoMSdRqDZk9W3d7cDMcK026P0M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rdV/0YnbJzIEyoKYl+XHqVzcF0xBHUbd8LRWNDvvecGMxeZTJqQtPOxRhLkYgygFYCViO9ZT+/6T5jzFkqjljyLKiHszhybGnFFMTHoawGeXyejt2Yyx+KysYQPmkGYtGdgfQ+wfmO0xI3AQeLU+4AfDt4tAsugH1FS9fpS6GKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C3kE4ClJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C218FC19422;
-	Tue, 11 Nov 2025 15:31:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762875092;
-	bh=4UJ1g/RrS+1ok3QrqJbUIP9v0jFKaMDfl7/AKpbi0Ts=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=C3kE4ClJ9ge3PmupH8qGcfzs6GX2cnMkEQ+8Qe0tnSB90r6kana3akA4DX909CPnb
-	 Qxfy29plOEbifdRwWnq4a/Miy+W+AE8cvSmYGgoOw3ZKc9jfyl2npUUj1KS1PnD9f/
-	 qiP3BELSI5m2gMnBUZLr0XGw0m97s/6vSsefGggrgcOlA06SZMRR3eqrzIMn25/uOJ
-	 254AOx5GFlvZp9jY02BXzKXB0ZOBmP2qCZNqvmgql5TBET5sKpPiX3eFnAt0Gowecb
-	 RYEksejsE4tyfVECaDAZlbdKRt5BSs0Tgpz//Akil9t1xx5l2ifBjronUXeeYLpnzM
-	 5355npDMkjuOg==
-Date: Tue, 11 Nov 2025 09:35:43 -0600
-From: Bjorn Andersson <andersson@kernel.org>
-To: Praveen Talari <praveen.talari@oss.qualcomm.com>
-Cc: Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Jiri Slaby <jirislaby@kernel.org>, Dmitry Baryshkov <lumag@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, alexey.klimov@linaro.org, 
-	krzk@kernel.org, bryan.odonoghue@linaro.org, jorge.ramirez@oss.qualcomm.com, 
-	dmitry.baryshkov@oss.qualcomm.com, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
-	psodagud@quicinc.com, djaggi@quicinc.com, quic_msavaliy@quicinc.com, 
-	quic_vtanuku@quicinc.com, quic_arandive@quicinc.com, quic_shazhuss@quicinc.com, 
-	quic_cchiluve@quicinc.com, Prasad Sodagudi <prasad.sodagudi@oss.qualcomm.com>
-Subject: Re: [PATCH v1 2/4] pinctrl: qcom: msm: Fix potential deadlock in
- pinmux configuration
-Message-ID: <z2oh7r56b7w3genfbq4jj24nvjehmnncufwwp6oj6duhafdaja@f2dle7jfao7e>
-References: <20251110101043.2108414-1-praveen.talari@oss.qualcomm.com>
- <20251110101043.2108414-3-praveen.talari@oss.qualcomm.com>
- <l2jnveusblgo5cfou3mx3usn7qgenj65wfyrnycmaqamkvhkee@gy745hkc3poc>
- <5cd78217-8da9-4290-b098-8210280e65d8@oss.qualcomm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=kK5f0T8OCNqJhIPJs4FTUQZI/zUUL0uKkes1Z6DAtLJLo7JDIu5ypQQ6FWkk0WnKSGeFonSJ0Bv82I8oijOe2tKERb5pkNU0zfp9l3fjiRVlg1THMx3i5hS+1yBaBRM/03vl/Mctdlo/ZNSmX/qwKeKrUfaT6JrT/ZIMs+393Bw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 2DAD8227AAA; Tue, 11 Nov 2025 16:36:40 +0100 (CET)
+Date: Tue, 11 Nov 2025 16:36:39 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Chuck Lever <chuck.lever@oracle.com>
+Cc: Dai Ngo <dai.ngo@oracle.com>,
+	Benjamin Coddington <bcodding@hammerspace.com>, jlayton@kernel.org,
+	neilb@ownmail.net, okorniev@redhat.com, tom@talpey.com, hch@lst.de,
+	alex.aring@gmail.com, viro@zeniv.linux.org.uk, brauner@kernel.org,
+	jack@suse.cz, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org
+Subject: Re: [Patch 0/2] NFSD: Fix server hang when there are multiple
+ layout conflicts
+Message-ID: <20251111153639.GA9887@lst.de>
+References: <20251106170729.310683-1-dai.ngo@oracle.com> <ADB5A1E8-F1BF-4B42-BD77-96C57B135305@hammerspace.com> <e38104d7-1c2e-4791-aa78-d4458233dcb6@oracle.com> <5f014677-42c4-4638-a2ef-a1f285977ff4@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5cd78217-8da9-4290-b098-8210280e65d8@oss.qualcomm.com>
+In-Reply-To: <5f014677-42c4-4638-a2ef-a1f285977ff4@oracle.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Tue, Nov 11, 2025 at 10:52:25AM +0530, Praveen Talari wrote:
-> Hi Bjorn,
+On Tue, Nov 11, 2025 at 10:34:04AM -0500, Chuck Lever wrote:
+> > This would help, and I prefer this route rather than rework __break_lease
+> > to return EAGAIN/jukebox while the server recalling the layout.
 > 
-> Thank you for review.
+> Jeff is looking at continuing Neil's work in this area.
 > 
-> On 11/11/2025 9:38 AM, Bjorn Andersson wrote:
-> > On Mon, Nov 10, 2025 at 03:40:41PM +0530, Praveen Talari wrote:
-> > > Replace disable_irq() with disable_irq_nosync() in msm_pinmux_set_mux()
-> > > to prevent potential deadlock when wakeup IRQ is triggered on the same
-> > 
-> > "potential"? In what case will calling disable_irq() from the irq
-> > handler of that irq not deadlock?
-> > 
-> > > GPIO being reconfigured.
-> > > 
-> > > The issue occurs when a wakeup IRQ is triggered on a GPIO and the IRQ
-> > > handler attempts to reconfigure the same GPIO's pinmux. In this scenario,
-> > > msm_pinmux_set_mux() calls disable_irq() which waits for the currently
-> > > running IRQ handler to complete, creating a circular dependency that
-> > > results in deadlock.
-> > > 
-> > > Using disable_irq_nosync() avoids waiting for the IRQ handler to
-> > > complete, preventing the deadlock condition while still properly
-> > > disabling the interrupt during pinmux reconfiguration.
-> > > 
-> > > Suggested-by: Prasad Sodagudi <prasad.sodagudi@oss.qualcomm.com>
-> > 
-> > That's weird, I debugged your deadlock for you and told you to make this
-> > very change in:
-> > 
-> > https://lore.kernel.org/all/7sxsfyu2kqbycyfftwfhrncwk3dfnubmzhyi2rqi3jtvi5qsnh@bya3cii45zhn/
-> > 
-> > So I guess Prasad told you how to fix this issue before I invested the
-> > time helping you?
-> 
-> Yes, that’s correct. Prasad had suggested it earlier.
-> 
+> Adding more threads, IMHO, is not a good long term solution for this
+> particular issue. There's no guarantee that the server won't get stuck
+> no matter how many threads are created, and practically speaking, there
+> are only so many threads that can be created before the server goes
+> belly up. Or put another way, there's no way to formally prove that the
+> server will always be able to make forward progress with this solution.
 
-Okay, then this patch looks good.
+Agreed.
 
-Regards,
-Bjorn
+> We want NFSD to have a generic mechanism for deferring work so that an
+> nfsd thread never waits more than a few dozen milliseconds for anything.
+> This is the tactic NFSD uses for delegation recalls, for example.
 
-> Thanks,
-> Praveen Talari
-> 
-> > 
-> > 
-> > Change looks good, and description captures the problem.
-> > 
-> > Reviewed-by: Bjorn Andersson <andersson@kernel.org>
-> > 
-> > Regards,
-> > Bjorn
-> > 
-> > > Signed-off-by: Praveen Talari <praveen.talari@oss.qualcomm.com>
-> > > ---
-> > >   drivers/pinctrl/qcom/pinctrl-msm.c | 2 +-
-> > >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
-> > > index 67525d542c5b..e99871b90ab9 100644
-> > > --- a/drivers/pinctrl/qcom/pinctrl-msm.c
-> > > +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-> > > @@ -189,7 +189,7 @@ static int msm_pinmux_set_mux(struct pinctrl_dev *pctldev,
-> > >   	 */
-> > >   	if (d && i != gpio_func &&
-> > >   	    !test_and_set_bit(d->hwirq, pctrl->disabled_for_mux))
-> > > -		disable_irq(irq);
-> > > +		disable_irq_nosync(irq);
-> > >   	raw_spin_lock_irqsave(&pctrl->lock, flags);
-> > > -- 
-> > > 2.34.1
-> > > 
+Agreed.  This would also be for I/O itself, as with O_DIRECT we can
+fully support direct I/O, and even with buffered I/O there is some
+limited non-blocking read and write support.
 
