@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-894786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-894787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9EDDC4C0EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 08:18:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95AF7C4C19C
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 08:24:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6524134F1C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 07:18:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23FE6189C4AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 11 Nov 2025 07:18:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10DBA2DA760;
-	Tue, 11 Nov 2025 07:17:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D28E329C66;
+	Tue, 11 Nov 2025 07:18:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G+HVM2aC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WS4zEskl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5194E22069A
-	for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 07:17:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AAB72459C9;
+	Tue, 11 Nov 2025 07:17:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762845474; cv=none; b=Doix9+Z4dMYWqvTqQf1agfco9bmVUEWMG1G4yWMWyj2huxiYTagfGX+zTZ4lv3dFZDJSDELHjLh1RLYiCs9kncjKVDw+WuUMr11kZUPwFicDWrZ5wjEbJAd9peia0RuiggknFSHOOsv6re5vjIycaevT8TL630K9fSDte293qhs=
+	t=1762845481; cv=none; b=MOibc688Urun4SWlynkh4r1il5rMiFxygJ/k/48CDU/eXNYAKfz90ILjuVFN5nJfVGIW0i5A7FPhH+nlaZWz6V6/zPy4BtylxQAXOiZoSDbFxmR1MTKB2UeNllaQVpPpBl3iToSrhJXsgc/Begotia+0PC4HFm0WzyZCRKjxfr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762845474; c=relaxed/simple;
-	bh=FybQ4/3AZJou/+49uOTNiyNNNev/lS1TDMWjNHq9vDA=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Og1MPdYcTf0sr6LcFDXihOFWOAjK3CEq5lJfZP4gaVW8aP265Y8qW04Yp2G3+RHLt5QboEnLjk2KmFD9rSVybPwc4Naxmd+UB0TCaLHZ886g/wJt0CP9q/7QbXIfxLLzflF36YwaRzYPMKIzrGLfidTXlRDZ/TJ+lbp9t/s1Y/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G+HVM2aC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5C9EC19422;
-	Tue, 11 Nov 2025 07:17:52 +0000 (UTC)
+	s=arc-20240116; t=1762845481; c=relaxed/simple;
+	bh=nFjY/NLOGH3SLyK9YM2DaehQQgiJfQ5DDVKyBdysy0o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uCbLW1f/MNvbaZeg51vuOvc8TDKIN7lyHOF4x5JDCvteovhfjwM6FKaj+8UjAT0pR9RTdOfMYh9JBJj/BOjXAjXV3MZBMBNLWoHAr8SJUyBH5TlSIxWNr0prr0w7KJloZF/QkJfvG/0zrN45eodymcIx4UFStvIy4FhsS1CG58o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WS4zEskl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FB9BC16AAE;
+	Tue, 11 Nov 2025 07:17:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762845473;
-	bh=FybQ4/3AZJou/+49uOTNiyNNNev/lS1TDMWjNHq9vDA=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=G+HVM2aCVSzuL0pvTj1iE2VNLH1L5Sfn60E2OZgCrVG908jaGBXCmnno+B4X2RUvc
-	 GvOro0DZqdcZwhle4q/IzEKZEX5B+JaJ4/fZT3hBADQaJIMVKhB7JunsyIVwl07NY1
-	 KRtRBIY+x9uELcsM7BuMX+kLISzcGeAwGjuCvAd+uYSiNacb6z+thwH5oOzd/lQZ2s
-	 ZCNP+PdfCsanPSapUfnNwMXSxa8VquCJNBJfyFDlTJtoCH894ESji3d2hPAtEs5uN1
-	 DtME2edrPC/MePZXv9+CNQvR0F8yyD4TsVDLBcazxNa6EdEzYJ7bjHfoBbBqT15Y9E
-	 M0Psty4mzqntQ==
-Message-ID: <2eb3b1e7-931a-4a2c-92ac-4267a6a654ad@kernel.org>
-Date: Tue, 11 Nov 2025 15:17:50 +0800
+	s=k20201202; t=1762845479;
+	bh=nFjY/NLOGH3SLyK9YM2DaehQQgiJfQ5DDVKyBdysy0o=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=WS4zEskl4bUf8swlIe3uH4R/1Suhu4fYqB0rboWe+cYaPUxRkyM3a9SUC7gXqTt/y
+	 LcNw4SA3wblG5mR8HRNZTAELbBV98NNEn/Q3K1rHkeWwMKwZSOOsWAgk3+bhdLh2Cy
+	 wCU//SRdM1R3WJAvsfjTeGYWV1JHLyuKvlWGV9S3oLtQXXGp0wNrKUCHKAYjF3P+rY
+	 H4Qw4t2eiaawqBe+d0/v+j1KfvzGYLHGVPjstkJmXh7FG3cidtsVINCZDEK0zE/md9
+	 cG/tA0VFNfrF6mBNPTIULjH4fae2FhXR4NjOZnF7znhYahcetesXepXrFAUGi0LSEP
+	 KRoU0vWF+ff9g==
+Message-ID: <d6ba62ec-25b2-4c51-8915-8e69d76b610e@kernel.org>
+Date: Tue, 11 Nov 2025 08:17:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,116 +49,109 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org, jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
- stable@kernel.org
-Subject: Re: [PATCH v2] f2fs: fix has_curseg_enough_space to check all data
- segments for dentry blocks
-To: Xiaole He <hexiaole1994@126.com>, linux-f2fs-devel@lists.sourceforge.net
-References: <20251111060557.337514-1-hexiaole1994@126.com>
- <20251111061051.337547-1-hexiaole1994@126.com>
+Subject: Re: [EXTERNAL] Re: [PATCH v1 2/2] ASoC: dt-bindings: ti,tas2781: Add
+ TAS2568/5806M/5806MD/5830 support
+To: "Xu, Baojun" <baojun.xu@ti.com>
+Cc: "broonie@kernel.org" <broonie@kernel.org>, "tiwai@suse.de"
+ <tiwai@suse.de>,
+ "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
+ "13916275206@139.com" <13916275206@139.com>,
+ "Ding, Shenghao" <shenghao-ding@ti.com>,
+ "linux-sound@vger.kernel.org" <linux-sound@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+ "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+ <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "Yi, Ken" <k-yi@ti.com>, "Lo, Henry" <henry.lo@ti.com>,
+ "Chen, Robin" <robinchen@ti.com>, "Wang, Will" <will-wang@ti.com>,
+ "jim.shil@goertek.com" <jim.shil@goertek.com>,
+ "toastcheng@google.com" <toastcheng@google.com>,
+ "chinkaiting@google.com" <chinkaiting@google.com>
+References: <20251108110759.2409-1-baojun.xu@ti.com>
+ <20251108110759.2409-2-baojun.xu@ti.com>
+ <20251109-heavenly-observant-quetzal-b1bead@kuoka>
+ <ecc69a98a23d406ea1eada62144415fc@ti.com>
+ <035d6c35-c27a-4f5c-8603-ea5857d78e63@kernel.org>
+ <460cd1da65bd42be890e69f26402670b@ti.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20251111061051.337547-1-hexiaole1994@126.com>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <460cd1da65bd42be890e69f26402670b@ti.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 11/11/25 14:10, Xiaole He wrote:
-> When active_logs == 6, dentry blocks can be allocated to HOT, WARM, or
-> COLD segments based on various conditions in __get_segment_type_6():
-> - age extent cache (if enabled)
-> - FI_HOT_DATA flag (set when dirty_pages <= min_hot_blocks)
-> - rw_hint (defaults to WARM via f2fs_rw_hint_to_seg_type)
-> - file_is_hot(), FI_NEED_IPU, f2fs_is_cow_file(), etc.
+On 11/11/2025 08:12, Xu, Baojun wrote:
 > 
-> However, has_curseg_enough_space() only checked CURSEG_HOT_DATA segment
-> for dentry blocks, which could lead to incorrect space calculation when
-> dentry blocks are actually allocated to WARM or COLD segments.
+>> ________________________________________
+>> From: Krzysztof Kozlowski <krzk@kernel.org>
+>> Sent: 10 November 2025 15:11
+>> To: Xu, Baojun
+>> Cc: broonie@kernel.org; tiwai@suse.de; andriy.shevchenko@linux.intel.com; 13916275206@139.com; Ding, Shenghao; linux-sound@vger.kernel.org; linux-kernel@vger.kernel.org; lgirdwood@gmail.com; robh@kernel.org; krzk+dt@kernel.org; conor+dt@kernel.org; devicetree@vger.kernel.org; Yi, Ken; Lo, Henry; Chen, Robin; Wang, Will; jim.shil@goertek.com; toastcheng@google.com; chinkaiting@google.com
+>> Subject: Re: [EXTERNAL] Re: [PATCH v1 2/2] ASoC: dt-bindings: ti,tas2781: Add TAS2568/5806M/5806MD/5830 support
+>>
+>>>
+>>> Hi Krzysztof,
+>>>
+>>> Thanks for your review.
+>> Do you mean I need to add a text file,
+>> for example "ti,tas2781.txt", include the required properties,
+>> and the example of the devicetree node?
+>>>
+>>
+>> Did you read the actual resources I pointed you? I don't know how to
+>> express it clearer.
+>>
+> Hi Krzysztof,
 > 
-> Reproducer:
-> Note: This reproducer requires adding a tracepoint to observe segment
-> type. Add the following tracepoint to include/trace/events/f2fs.h:
-> 
-> TRACE_EVENT(f2fs_allocate_data_block,
->         TP_PROTO(struct f2fs_sb_info *sbi, struct inode *inode,
->                 enum log_type type, block_t blkaddr),
-> 
->         TP_ARGS(sbi, inode, type, blkaddr),
-> 
->         TP_STRUCT__entry(
->                 __field(dev_t, dev)
->                 __field(ino_t, ino)
->                 __field(int, type)
->                 __field(block_t, blkaddr)
->                 __field(int, is_dir)
->         ),
-> 
->         TP_fast_assign(
->                 __entry->dev = sbi->sb->s_dev;
->                 __entry->ino = inode ? inode->i_ino : 0;
->                 __entry->type = type;
->                 __entry->blkaddr = blkaddr;
->                 __entry->is_dir = inode ? S_ISDIR(inode->i_mode) : 0;
->         ),
-> 
->         TP_printk("dev = (%d,%d), ino = %lu, %s, blkaddr = %u, is_dir = %d",
->                 show_dev(__entry->dev),
->                 (unsigned long)__entry->ino,
->                 show_data_type(__entry->type),
->                 __entry->blkaddr,
->                 __entry->is_dir)
-> );
-> 
-> And add the tracepoint call in fs/f2fs/segment.c in
-> f2fs_allocate_data_block() function. Find the location after
-> locate_dirty_segment() calls and before IS_DATASEG() check:
-> 
->         locate_dirty_segment(sbi, GET_SEGNO(sbi, old_blkaddr));
->         locate_dirty_segment(sbi, GET_SEGNO(sbi, *new_blkaddr));
-> 
->         trace_f2fs_allocate_data_block(sbi, folio ? folio->mapping->host : NULL,
->                                         type, *new_blkaddr);
-> 
->         if (IS_DATASEG(curseg->seg_type))
-> 
-> 1. Mount F2FS with active_logs=6 and age extent cache disabled:
->    # mkfs.f2fs -f /dev/sdb1
->    # mount -t f2fs -o active_logs=6 /dev/sdb1 /mnt/f2fs-test
-> 
-> 2. Enable tracing and f2fs_allocate_data_block tracepoint:
->    # echo 1 > /sys/kernel/debug/tracing/events/f2fs/f2fs_allocate_data_block/enable
->    # echo 1 > /sys/kernel/debug/tracing/tracing_on
->    # echo > /sys/kernel/debug/tracing/trace
-> 
-> 3. Create a directory and write enough files to trigger dirty_pages >
->    min_hot_blocks (default 16), which will clear FI_HOT_DATA flag:
->    # mkdir /mnt/f2fs-test/testdir
->    # cd /mnt/f2fs-test/testdir
->    # seq 1 8192 | xargs touch
->    # sync
-> 
-> 4. Observe dentry block allocation:
->    # cat /sys/kernel/debug/tracing/trace
-> 
->    The trace output shows dentry blocks (is_dir = 1) allocated to WARM
->    segment because FI_HOT_DATA is cleared when dirty_pages >
->    min_hot_blocks (default 16). However, has_curseg_enough_space() only
->    checked HOT_DATA segment space.
-> 
-> Fix by merging the dentry block check into the main data/node block
-> check loop and checking data_blocks + dent_blocks for data segments,
-> since both regular data blocks and dentry blocks can be written to the
-> same segment. When active_logs == 6, dentry blocks can be allocated to
-> any of the three data segments (HOT, WARM, COLD), so all three segments
-> need to account for dentry blocks. When active_logs != 6, dentry blocks
-> are always allocated to HOT_DATA segment only, so only HOT_DATA segment
-> needs to account for dentry blocks, while WARM and COLD segments only
-> check data_blocks.
-> 
-> Fixes: ef095d19e82f ("f2fs: write small sized IO to hot log")
-> Cc: stable@kernel.org
-> Signed-off-by: Xiaole He <hexiaole1994@126.com>
+> Thanks for your review.
+> Do you mean I need to add an rst file in Documentation\sound\codecs?
 
-Reviewed-by: Chao Yu <chao@kernel.org>
+Where anything like that is explained in the docs I linked? Do you
+understand what patch I commented on and what documented I linked?
 
-Thanks,
+Best regards,
+Krzysztof
 
