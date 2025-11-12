@@ -1,96 +1,105 @@
-Return-Path: <linux-kernel+bounces-896577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4088C50B55
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 07:29:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 247F4C50B6D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 07:31:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D3F9E4E423D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 06:29:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BC8B3B58AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 06:30:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32BF02DC788;
-	Wed, 12 Nov 2025 06:29:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28F042D73BB;
+	Wed, 12 Nov 2025 06:30:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hamik.net header.i=@hamik.net header.b="Am/tIkv9";
-	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="dd0ifvxJ"
-Received: from e226-9.smtp-out.us-east-2.amazonses.com (e226-9.smtp-out.us-east-2.amazonses.com [23.251.226.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UChEiKpH"
+Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9402B24C076;
-	Wed, 12 Nov 2025 06:29:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=23.251.226.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22C0F9476
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 06:30:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762928978; cv=none; b=UEq0Owx1Vk42SQNWzXy4Fh2tJrl6doNzq8ITBMA530Vq/8ySULxWzpy7/OThfhZVhL6HcuXXeRYbYzKIRa3dGGIUpY1UrVR2qNQ36qZ51rxjxjpQkvhnVLYs50Z3qsUOICf0qgv6haXcHQAHE4ycYTliWYhVMxH3bLp0XJ29UQw=
+	t=1762929051; cv=none; b=R2Hwx1c9JL8C2lUJ3HJkP1MQxLrrQ+tWcPbn3ZnN6jSdeHS5FHVtDYrPxvUhhdKabNB8z9NI/3bNjmbAa49M1+HLvapPB7Jme0B9QZqyLLj+r0S9jRy4aP95ZFrt8WWz6Gpr0/8oiv0tvc2RC5kfeatpXtgGQ7JpNUljrKVu5hI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762928978; c=relaxed/simple;
-	bh=gaiL6bZBrkX6HIsIRrnmsHaREvPKYmFeupL3ZACspMk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tb/wOzXr4+Ba1f9TtVFPPSrAHDDTG5leWHe0urSenl248crm6HFsHq0PQ86HGHJ9k5xkfrs/86hNU/45LXyzYvYrGCOtIK0274qQMEpdtTk+aqgzsLH/48i3RQszvvMIwgFeSx1pjcQ0jn0tYt0lvRycwaX68oYdhaRYIbcZ/kQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hamik.net; spf=pass smtp.mailfrom=us-east-2.amazonses.com; dkim=pass (2048-bit key) header.d=hamik.net header.i=@hamik.net header.b=Am/tIkv9; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=dd0ifvxJ; arc=none smtp.client-ip=23.251.226.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hamik.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=us-east-2.amazonses.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=dmdftaxaeg5wm4n7u6njourd62jd53oe; d=hamik.net; t=1762928975;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Transfer-Encoding;
-	bh=gaiL6bZBrkX6HIsIRrnmsHaREvPKYmFeupL3ZACspMk=;
-	b=Am/tIkv9HZI8FiQo2/4w6RtPml3WUYh/NlR8kdDXi40DyLC/giB9FDf8z+YngbrP
-	P8TkB9QfQKaqewAOtwtf4hvsKVWKMDPaBDDQRe82jgho4idCqbfunT23F2Ysue7eDEO
-	ACu5q1TCQVHYlimh2K1SzRIBYbtNOI/odagKcasPWTdyWIqG7lNe5KhIX0E45ShqU45
-	EPtNrhicay2AsS8J7WXBbPrQtdH249fgd3ZxsN1BgZw4AYDk8uDFeM+HXVeHMf/gY9u
-	dSJAxF1HQe2huopchN4HGB/GB8cqNtyAkM1fnAxN7LIJ8xlAL2sVTOPmqN/+KzJY0Iv
-	xIBNBfBoYw==
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=ndjes4mrtuzus6qxu3frw3ubo3gpjndv; d=amazonses.com; t=1762928975;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Feedback-ID;
-	bh=gaiL6bZBrkX6HIsIRrnmsHaREvPKYmFeupL3ZACspMk=;
-	b=dd0ifvxJVflm3JjCmlGoLca/eXV7LHyAdCutgvu6VzbbOeh3oxF92ZGUBeHSHS1f
-	Csfa8IHkRdpsns1mTqEdatvZ+jVtNBIKTtbVujxFW0FnJJdiI10tawMsFCDqHCEMw3w
-	bu2NmBlSUKiXdNKmgLdG1/vayCSymvR/9OfJZV6M=
-From: Dan Hamik <dan@hamik.net>
-To: pkshih@realtek.com
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Dan Hamik <dan@hamik.net>
-Subject: [PATCH] wifi: rtw89: rtw8852bu: Added dev id for ASUS AX67 NANO USB Wifi dongle
-Date: Wed, 12 Nov 2025 06:29:35 +0000
-Message-ID: <010f019a76c15f3a-7a1290d7-0cbd-41b3-93ef-d8de15b65cad-000000@us-east-2.amazonses.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1762929051; c=relaxed/simple;
+	bh=kOtdLpSOXm01g2ajg6nCUQyFUDPOfE5SRjD63G5rjgo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=s6nCe6uEEuEeU/3bJFRQKhNvjGYtkiP6TvioQEdI6wWTvMv7YgodHuMh963Yz4j0GmGoYT+xhRoNfxT+WXJN+IGbHATumz5vcoTGBFOWJMnuIB+0trETXwbKspMNY3dMtztP9RSkP/FbKaclwPyCF5hsvqJ7foWA/bkloJ+ip7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UChEiKpH; arc=none smtp.client-ip=209.85.219.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-88246676008so6460796d6.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 22:30:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762929049; x=1763533849; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=BjJJZtAaSnwRZTljAMTrxcYfYnvT0WqvSKI0ci9ciw0=;
+        b=UChEiKpHpZy1iRCXjP3TyjzX7t/uDznqRfZE/pXgMOMRFcUEnG3fFm9PaodMdwXJSw
+         E2unYzYw0QPOmhN2LnqFoh9DDkiYYYPXDRKR7dlWG+5PismJPBqWLnvFjqxy0AHq77pg
+         DBLWpfwtS5HR7e5RiOMki2ZvY2+02XgUIzA6ZJZVu0MsYDyqAWp4Q6lUoDj0p7+C/kGt
+         amrZXKXTuLPtlakM3i6oblhUU7Z43LMrQsC5JtanZyj6mUyOJG37/pbsBMOtp61Ii71O
+         JXB67oB3cWpoST+fn8LCsDceZIpMDhpCerD63+Jhdjz51cqf8laWiXzL21qlfN5HrgUU
+         W/iw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762929049; x=1763533849;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BjJJZtAaSnwRZTljAMTrxcYfYnvT0WqvSKI0ci9ciw0=;
+        b=VdBCtOrexn0SplUkFh0pF6941PQ2T8YFmnV3xFAUv+yz4esNcuHzvjJPNyrBxKI8AF
+         d5f/1OuQCXZgOJgsm/irhrVa/OMpPx+v71G7viAOuCIJRPTQVAUyvLNzWw64Tgq/EIzz
+         OO+j5BcEAnfXjzp5bfab8wowiwwo0Mq5TMqDMw2J1ZfYYpQmcRsNrnLJuLJuF61LETH7
+         vgpKMn6npTn8Le0tApaukSqUZuuoxXcEMZK1R24Sw0OoRomGtUqhva/+JkAIExFftlfS
+         wCOUUmZgVAWgWROZ/sKa50YLKFMD8KT8UlcWOdNh02W3fnR0RPK4sA4OCHkj0vVv0a6A
+         N8Sg==
+X-Gm-Message-State: AOJu0YxxTzRbBVU0lkQ6yCB17drcZfl2Bq6PMJOcW/jyRQr53NAw0CqM
+	9zbhaFezUAlQNGQNUV+1r3DUK7ob5SEczyfOujyFmXce0sCBsWl0qunU+lyh6Q==
+X-Gm-Gg: ASbGncuD7eLqwiUsIKeoWmfddL0LQlu1SyBLS73XczFP8brcNk3JBFycBdUI/itgkzh
+	xEOYhb5WszBJEQyj18krM+OBoQb36FgDUN+kzNZfLth/bSx2Xw1lCNzfqccFVY7n1vpIti4c2Cx
+	5EKXHOxOFMBtXe/9r98PiSnxYWK0H57uaXs9QoOW829CJKmQcZGo/eG5pmo/iL6WKsHnuIo/+H8
+	e1A8rjrk1O8pmS5P7YrjCsDFxnz1O0OUyO02lz22NXewQ4LIb1wlzJZxUOhX6x9aYQcshiVdR1K
+	eAL5/FYnxyXWuEtlJ9gcCdIC2bVFnCzS1tSAPWd8x3uYZ1q8gkZJZo/ItDxWgYI0yKLhNZdhF/U
+	T/XrYUustoaooJwLvmUS25RE3dVkUXZMZwKuDkeaXcXMOYNw=
+X-Google-Smtp-Source: AGHT+IGqNhYmOdKeltGLX/KLSKoplWtPXoQM3NK5fxBoy1HIki6VZdr524CffwyRwqBnNuhXt0GvEw==
+X-Received: by 2002:ad4:5bae:0:b0:880:4219:62c1 with SMTP id 6a1803df08f44-882718f7cc7mr29723196d6.15.1762929048854;
+        Tue, 11 Nov 2025 22:30:48 -0800 (PST)
+Received: from ryzen ([2601:644:8000:8e26::ea0])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-882638344cesm24932036d6.42.2025.11.11.22.30.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Nov 2025 22:30:48 -0800 (PST)
+From: Rosen Penev <rosenp@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Dinh Nguyen <dinguyen@kernel.org>
+Subject: [PATCHv2 0/2] firmware: stratix10-rsu: add COMPILE_TEST support
+Date: Tue, 11 Nov 2025 22:30:31 -0800
+Message-ID: <20251112063033.176276-1-rosenp@gmail.com>
+X-Mailer: git-send-email 2.51.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Feedback-ID: ::1.us-east-2.zaPTHEWiOjctLYOPn6UYZ0ckxmMPCJEH8rpm8BETxak=:AmazonSES
-X-SES-Outgoing: 2025.11.12-23.251.226.9
 
-Add the USB device ID 0x0b05:0x1cb6 to the rtw8852bu driver to support the
-ASUS AX67 Nano WiFi 6 USB adapter.This device uses the same Realtek
-RTL8852BU chipset as other supported models.
+First commit fixes 32-bit target compilation.
 
-Tested on: Linux Mint 22 with kernel 6.8.0-87-generic.
-The adapter initializes successfully and connects to networks.
+Second adds COMPILE_TEST and cleans up the depends.
 
-Signed-off-by: Dan Hamik <dan@hamik.net>
----
- drivers/net/wireless/realtek/rtw89/rtw8852bu.c | 2 ++
- 1 file changed, 2 insertions(+)
+v2: remove unrelated changes.
 
-diff --git a/drivers/net/wireless/realtek/rtw89/rtw8852bu.c b/drivers/net/wireless/realtek/rtw89/rtw8852bu.c
-index 0694272f7ffa..83bdea040f40 100644
---- a/drivers/net/wireless/realtek/rtw89/rtw8852bu.c
-+++ b/drivers/net/wireless/realtek/rtw89/rtw8852bu.c
-@@ -28,6 +28,8 @@ static const struct usb_device_id rtw_8852bu_id_table[] = {
- 	  .driver_info = (kernel_ulong_t)&rtw89_8852bu_info },
- 	{ USB_DEVICE_AND_INTERFACE_INFO(0x0b05, 0x1a62, 0xff, 0xff, 0xff),
- 	  .driver_info = (kernel_ulong_t)&rtw89_8852bu_info },
-+	{ USB_DEVICE_AND_INTERFACE_INFO(0x0b05, 0x1cb6, 0xff, 0xff, 0xff),
-+	  .driver_info = (kernel_ulong_t)&rtw89_8852bu_info },
- 	{ USB_DEVICE_AND_INTERFACE_INFO(0x0db0, 0x6931, 0xff, 0xff, 0xff),
- 	  .driver_info = (kernel_ulong_t)&rtw89_8852bu_info },
- 	{ USB_DEVICE_AND_INTERFACE_INFO(0x2001, 0x3327, 0xff, 0xff, 0xff),
--- 
-2.43.0
+Rosen Penev (2):
+  firmware: stratix10-rsu: fix 32-bit compilation
+  firmware: stratix10-rsu: add COMPILE_TEST support
+
+ drivers/firmware/Kconfig         |  2 +-
+ drivers/firmware/stratix10-rsu.c | 12 ++++++------
+ 2 files changed, 7 insertions(+), 7 deletions(-)
+
+--
+2.51.2
 
 
