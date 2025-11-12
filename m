@@ -1,180 +1,178 @@
-Return-Path: <linux-kernel+bounces-897259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2ED47C526D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:18:44 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 988B4C5267C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:13:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 225A5420747
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 13:08:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CF3544F66DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 13:08:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 480443396E0;
-	Wed, 12 Nov 2025 13:08:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 080723375DF;
+	Wed, 12 Nov 2025 13:08:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b="12Ug5jif"
-Received: from server.couthit.com (server.couthit.com [162.240.164.96])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MQg7vxCO"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5599338586;
-	Wed, 12 Nov 2025 13:08:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.240.164.96
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91B95337107
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 13:08:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762952903; cv=none; b=JiLFBWAjWDvda53t3VZjXYgF/FxNZs5wAAjj7iNyZWtL2qm/sfFB2IjENY9IZ6789n6yVK8uL59lxEOlq/HgqDCSfMpFyFNsTquiwm6ZUM+3ea1lJv/hxeYwYrY3tPdsSIFEzI2YEkFPTtMcvZoCSzB4aIyQyeIixjxghntoB+U=
+	t=1762952898; cv=none; b=CljKMZzWh/ffND18Op70K29AvCmFdpplXCa5Xiqi6BHi/PO9OBzBZYg1Ec+Yfo7xuR/mVH13etvwjoXCffF9ciLoMvwe4ynd4AeBFpK6jHoFy96axf0EcohTTPQ3PRsVa39APg9nqqVWGTfE5ljfkIPkwqGLtJlqHA8OqAM+mAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762952903; c=relaxed/simple;
-	bh=EBXnt/vZg0J5/1rLP2hcelCt/wXUC+JcRZCc5yg5rk4=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=VfDNLi6pctybLvbv89uLK/0LHN9wbFIBhdGWdHF8tip104ZaJXydAr14yI0m5fiWBU1h3Pyxu7+b4/UObjGJo11KOOHl1F5Vg+u2ZUPp26be/G4Gc+GORmuBA1pkoLHwARyKPAS71sDmkuffvdvsXfnRHzCcE7Pi/jZKcVqZgc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com; spf=pass smtp.mailfrom=couthit.com; dkim=pass (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b=12Ug5jif; arc=none smtp.client-ip=162.240.164.96
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=couthit.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=couthit.com
-	; s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:
-	References:In-Reply-To:Message-ID:Cc:To:From:Date:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=HvvE9WtcjHoTZVjSJYj4iXnVgOEsxF/6OfDNJ2uRNxg=; b=12Ug5jifwKRDravl3MVuc8Khb0
-	zSYZRFC5hAilUZhi8TUztAdeB7ycICRFykWuE4PjNgQrw429SxwEGklPRG2FxGe2qEAUutLSLkmE2
-	j79MOlJirKQle8emeYrahQohQ0/wgr+6IdVxsrKQvLYH7hO2mMNIlzGGWutJuddLVmeC4pyWv/MmK
-	5ZPg86sYC4yWBv9ufJManpACltCFYHY1oFeoriO56PJQOaqrxC5FHO7L/C7JsZmXk9Tu7tOwrgDYv
-	RplyLdhvj19vsVpZZiTEDK6Xe1RCpRJUe/ELTKQ+AQzWZjS/NHjSxdCs1ZKgf4gcsZSxsrNn7d9kF
-	sBHPlVhw==;
-Received: from [122.175.9.182] (port=6520 helo=zimbra.couthit.local)
-	by server.couthit.com with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.98.1)
-	(envelope-from <parvathi@couthit.com>)
-	id 1vJAa5-0000000Fnh7-2Yzi;
-	Wed, 12 Nov 2025 08:08:13 -0500
-Received: from localhost (localhost [127.0.0.1])
-	by zimbra.couthit.local (Postfix) with ESMTP id 215811A6489B;
-	Wed, 12 Nov 2025 18:38:01 +0530 (IST)
-Received: from zimbra.couthit.local ([127.0.0.1])
- by localhost (zimbra.couthit.local [127.0.0.1]) (amavis, port 10032)
- with ESMTP id FRgP7a_hUyVw; Wed, 12 Nov 2025 18:37:59 +0530 (IST)
-Received: from localhost (localhost [127.0.0.1])
-	by zimbra.couthit.local (Postfix) with ESMTP id B590A1A6489A;
-	Wed, 12 Nov 2025 18:37:59 +0530 (IST)
-X-Virus-Scanned: amavis at couthit.local
-Received: from zimbra.couthit.local ([127.0.0.1])
- by localhost (zimbra.couthit.local [127.0.0.1]) (amavis, port 10026)
- with ESMTP id WxatnibBDCKn; Wed, 12 Nov 2025 18:37:59 +0530 (IST)
-Received: from zimbra.couthit.local (zimbra.couthit.local [10.10.10.103])
-	by zimbra.couthit.local (Postfix) with ESMTP id 8D3BD1A6489B;
-	Wed, 12 Nov 2025 18:37:59 +0530 (IST)
-Date: Wed, 12 Nov 2025 18:37:59 +0530 (IST)
-From: Parvathi Pudi <parvathi@couthit.com>
-To: ALOK TIWARI <alok.a.tiwari@oracle.com>
-Cc: Parvathi Pudi <parvathi@couthit.com>, andrew+netdev <andrew+netdev@lunn.ch>, 
-	davem <davem@davemloft.net>, edumazet <edumazet@google.com>, 
-	kuba <kuba@kernel.org>, pabeni <pabeni@redhat.com>, 
-	danishanwar <danishanwar@ti.com>, rogerq <rogerq@kernel.org>, 
-	pmohan <pmohan@couthit.com>, basharath <basharath@couthit.com>, 
-	afd <afd@ti.com>, linux-kernel <linux-kernel@vger.kernel.org>, 
-	netdev <netdev@vger.kernel.org>, 
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, 
-	pratheesh <pratheesh@ti.com>, j-rameshbabu <j-rameshbabu@ti.com>, 
-	Vignesh Raghavendra <vigneshr@ti.com>, praneeth <praneeth@ti.com>, 
-	srk <srk@ti.com>, rogerq <rogerq@ti.com>, 
-	krishna <krishna@couthit.com>, mohan <mohan@couthit.com>
-Message-ID: <482294584.44920.1762952879480.JavaMail.zimbra@couthit.local>
-In-Reply-To: <a29c40ff-7209-4b60-a17f-2aab09318dc1@oracle.com>
-References: <20251110125539.31052-1-parvathi@couthit.com> <20251110125539.31052-2-parvathi@couthit.com> <a29c40ff-7209-4b60-a17f-2aab09318dc1@oracle.com>
-Subject: Re: [External] : [PATCH net-next v4 1/3] net: ti: icssm-prueth:
- Adds helper functions to configure and maintain FDB
+	s=arc-20240116; t=1762952898; c=relaxed/simple;
+	bh=5BUX+aPleMlR+0TV9/SdhpG8VKnucDfm0cN98ifo74I=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=oWlx5RUJBHaELsBJ//fYDowgGoJrOhbjRLildQdM3lD2bZDyMRPOZQeODuVBsTEvsWjk1woz3KLaBpKfmFl1RCUvR1abxWB2ixMxCxkXbSyMXefGO7gaRWDREI545uPznjYYti5gRN88n3FFFYPukEpr0BDBfcvSP33gdJPK6R4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MQg7vxCO; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-42b3c965ca9so451200f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 05:08:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762952895; x=1763557695; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rZszFFp41//TiDs/7bMBLMV0kim0Oaw39R679g7Q4aw=;
+        b=MQg7vxCOxVtjqzVjZJeg/LG4xhBIwo76dywzPY96rMrD3A9azjUcGX0FyAADfrolrO
+         4VfFXGYT3InoubzSj5W2zBnVXnURQGYktXlLwSnBJipaWsaUu23cRMK5clUZr9L/S6ZU
+         4OCohlM5hkbvxvgrQL29L5aaXvlypjt9nY6e8DHUT/Y/BTJmKLM6JfwhTopIFh9YsOG/
+         /ERq0WZEJr8DyCgbLoJV6TvdnUK8BTEJmvcKf0enugFZbMyRoYgZIyxopwJicMwozSb0
+         GCJb8jucLiUNuNmQkN+5nhu9SIYdlOmusAJI2mQ+bgeQAnbYnFeFTmEW9USQUrSAhwX+
+         WUGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762952895; x=1763557695;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=rZszFFp41//TiDs/7bMBLMV0kim0Oaw39R679g7Q4aw=;
+        b=bKbPG/EDIMyQrQBLmrJcUEWb2z7xNCeA/qtxVMxQyLmiarY6IqWsyjPxw8h1Dk7RK7
+         JRM/FsEWDviDjgb4R0a4x685DkMcaCuDVIU1wTV3XKy2QBq4soKfWR7/ddYpdXU/OPFY
+         KwP2Icx0+b98wme7CvRnwXzd4lf8V4d9zCWxTiqfst24aDFjZii4ijtu7wZLRibAFWwM
+         e1vBM0zBjvlyq61UYRvgsyqiJJbx+9So1LvMoYoNIWk3C+s/GAq7wVNU/4TypB5pSsjF
+         NiRyj6+qwB3IR/hipFBF/VKvkxrB752A1zWrrVN4DeOjMOEokWO+Oupmtjok8e62nH5t
+         8Gow==
+X-Forwarded-Encrypted: i=1; AJvYcCWCgCUCBvxjQGKd945jR0BJV6OWTVw6Ri6ebCcbtw7z0em5OcW88baokNj4gWL7GBY6ZWx3h2tyBs6k6i8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzF4HlZxrjM77PEECXMU7Yf2BVEWjqA3Dm5gtgj5Ezq2FEmBK08
+	X7IwEEOc84eiMfz8Qlu8//NM7lP0gavfeMvoblwnEbrI1y0Ke5krv7lZ
+X-Gm-Gg: ASbGncswuEONaHJZK45MSEjH+IEvoWiIb2MY2nupHqKGXC0/FCb7XIY84eOxIkVHKEW
+	OE8f1qcbLEQwEBIGZxLeH59SJzZ0e1t9SoIaHBiqIkeOj7RPOwjHx3mBS9VAmbBvAaiDyTjA7Uf
+	JcbjneKUdpNn6n+kWcd4QTRdIoDugDRBNMGP/UU1384Ej7FYN05LmNQpfAUx9vR1NMC8yxvpgiY
+	mcQQ71nLNN6ad7LMKbN/BD6uSTnOJiAMq7bOmuHi6nu6yrv5KfwjymEsx6Qvr2tUxtaptnuESEJ
+	t1epTOba6yM+foK72YyqOMn6J956ISiQi0/B7O/wjpvwWcu2q5SZxGkV6RZ5/a6KgkLw1zA2zlI
+	UpWKs/+NSpenwG2jTkMzWCqvApY6oMKeI8JBu2F6xvMIWSbocja0Ig9LL83JDI+pDlTW9+up9+2
+	Bh9UKO5wge9SwV+5+vAAKnyJ0kzTf9CiUVo6+0ChGgSA==
+X-Google-Smtp-Source: AGHT+IHL9AQYgo6qFd6z0/B2T05jAm1hrIoKtL5TpQMpLpCe7ZFr6wNffq1HGZAD0MUTPoLFq+5yjg==
+X-Received: by 2002:a5d:5889:0:b0:42b:3c25:cd07 with SMTP id ffacd0b85a97d-42b4bdd2288mr2450774f8f.61.1762952894523;
+        Wed, 12 Nov 2025 05:08:14 -0800 (PST)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b4789896esm8318176f8f.38.2025.11.12.05.08.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Nov 2025 05:08:14 -0800 (PST)
+Date: Wed, 12 Nov 2025 13:08:12 +0000
+From: David Laight <david.laight.linux@gmail.com>
+To: Tony Luck <tony.luck@intel.com>
+Cc: Fenghua Yu <fenghuay@nvidia.com>, Reinette Chatre
+ <reinette.chatre@intel.com>, Maciej Wieczor-Retman
+ <maciej.wieczor-retman@intel.com>, Peter Newman <peternewman@google.com>,
+ James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>, Drew
+ Fustini <dfustini@baylibre.com>, Dave Martin <Dave.Martin@arm.com>, Chen Yu
+ <yu.c.chen@intel.com>, x86@kernel.org, linux-kernel@vger.kernel.org,
+ patches@lists.linux.dev
+Subject: Re: [PATCH v13 12/32] x86,fs/resctrl: Support binary fixed point
+ event counters
+Message-ID: <20251112130812.51532c2e@pumpkin>
+In-Reply-To: <20251029162118.40604-13-tony.luck@intel.com>
+References: <20251029162118.40604-1-tony.luck@intel.com>
+	<20251029162118.40604-13-tony.luck@intel.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Mailer: Zimbra 9.0.0_ZEXTRAS_20240927 (ZimbraWebClient - GC138 (Linux)/9.0.0_ZEXTRAS_20240927)
-Thread-Topic: : [PATCH net-next v4 1/3] net: ti: icssm-prueth: Adds helper functions to configure and maintain FDB
-Thread-Index: V0LWKQ7E4ab9hK965b5QamKIOHDnsg==
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - server.couthit.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - couthit.com
-X-Get-Message-Sender-Via: server.couthit.com: authenticated_id: smtp@couthit.com
-X-Authenticated-Sender: server.couthit.com: smtp@couthit.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
 
-Hi,
+On Wed, 29 Oct 2025 09:20:55 -0700
+Tony Luck <tony.luck@intel.com> wrote:
 
->> +static int icssm_prueth_sw_insert_fdb_entry(struct prueth_emac *emac,
->> +					    const u8 *mac, u8 is_static)
->> +{
->> +	struct fdb_index_tbl_entry __iomem *bucket_info;
->> +	struct fdb_mac_tbl_entry __iomem *mac_info;
->> +	struct prueth *prueth = emac->prueth;
->> +	struct prueth_emac *other_emac;
->> +	enum prueth_port other_port_id;
->> +	u8 hash_val, mac_tbl_idx;
->> +	struct fdb_tbl *fdb;
->> +	u8 flags;
->> +	u16 val;
->> +	s16 ret;
->> +	int err;
->> +
->> +	fdb = prueth->fdb_tbl;
->> +	other_port_id = (emac->port_id == PRUETH_PORT_MII0) ?
->> +			 PRUETH_PORT_MII1 : PRUETH_PORT_MII0;
->> +
->> +	other_emac = prueth->emac[other_port_id - 1];
->> +
->> +	if (fdb->total_entries == FDB_MAC_TBL_MAX_ENTRIES)
->> +		return -ENOMEM;
->> +
->> +	if (ether_addr_equal(mac, emac->mac_addr) ||
->> +	    ether_addr_equal(mac, other_emac->mac_addr)) {
->> +		/* Don't insert fdb of own mac addr */
->> +		return -EINVAL;
->> +	}
->> +
->> +	/* Get the bucket that the mac belongs to */
->> +	hash_val = icssm_prueth_sw_fdb_hash(mac);
->> +	bucket_info = FDB_IDX_TBL_ENTRY(hash_val);
->> +
->> +	if (!readw(&bucket_info->bucket_entries)) {
->> +		mac_tbl_idx = icssm_prueth_sw_fdb_find_open_slot(fdb);
->> +		writew(mac_tbl_idx, &bucket_info->bucket_idx);
->> +	}
->> +
->> +	ret = icssm_prueth_sw_find_fdb_insert(fdb, prueth, bucket_info, mac,
->> +					      emac->port_id - 1);
->> +	if (ret < 0)
->> +		/* mac is already in fdb table */
->> +		return 0;
->> +
->> +	mac_tbl_idx = ret;
+> resctrl assumes that all monitor events can be displayed as unsigned
+> decimal integers.
 > 
-> If ret == -1 mac_tbl_idx wraps to 255 silently.
+> Hardware architecture counters may provide some telemetry events with
+> greater precision where the event is not a simple count, but is a
+> measurement of some sort (e.g. Joules for energy consumed).
 > 
-
-Thanks. Theoretically, assigning -1 to an unsigned variable would
-result in 255 due to signed-to-unsigned conversion. However, in
-this case, the above code already checks if (ret < 0) and returns early,
-so the assignment to mac_tbl_idx never happens when ret is negative. 
-
->> +
->> +	err = icssm_prueth_sw_fdb_spin_lock(fdb);
->> +	if (err) {
->> +		dev_err(prueth->dev, "PRU lock timeout %d\n", ret);
+> Add a new argument to resctrl_enable_mon_event() for architecture code
+> to inform the file system that the value for a counter is a fixed-point
+> value with a specific number of binary places.
+> Only allow architecture to use floating point format on events that the
+> file system has marked with mon_evt::is_floating_point.
 > 
-> wrong var ret print.
-> return ret or err here ?
+> Display fixed point values with values rounded to an appropriate number
+> of decimal places for the precision of the number of binary places
+> provided. Add one extra decimal place for every three additional binary
+> places, except for low precision binary values where exact representation
+> is possible:
 > 
+>   1 binary place is 0.0 or 0.5			=> 1 decimal place
+>   2 binary places is 0.0, 0.25, 0.5, 0.75	=> 2 decimal places
+>   3 binary places is 0.0, 0.125, etc.		=> 3 decimal places
+> 
+> Signed-off-by: Tony Luck <tony.luck@intel.com>
+> Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
+> ---
+>  include/linux/resctrl.h            |  3 +-
+>  fs/resctrl/internal.h              |  8 +++
+>  arch/x86/kernel/cpu/resctrl/core.c |  6 +--
+>  fs/resctrl/ctrlmondata.c           | 84 ++++++++++++++++++++++++++++++
+>  fs/resctrl/monitor.c               | 10 +++-
+>  5 files changed, 105 insertions(+), 6 deletions(-)
+> 
+> diff --git a/include/linux/resctrl.h b/include/linux/resctrl.h
+> index 702205505dc9..a7e5a546152d 100644
+> --- a/include/linux/resctrl.h
+> +++ b/include/linux/resctrl.h
+> @@ -409,7 +409,8 @@ u32 resctrl_arch_get_num_closid(struct rdt_resource *r);
+>  u32 resctrl_arch_system_num_rmid_idx(void);
+>  int resctrl_arch_update_domains(struct rdt_resource *r, u32 closid);
+>  
+> -void resctrl_enable_mon_event(enum resctrl_event_id eventid, bool any_cpu);
+> +void resctrl_enable_mon_event(enum resctrl_event_id eventid, bool any_cpu,
+> +			      unsigned int binary_bits);
+>  
+>  bool resctrl_is_mon_event_enabled(enum resctrl_event_id eventid);
+>  
+> diff --git a/fs/resctrl/internal.h b/fs/resctrl/internal.h
+> index 40b76eaa33d0..f5189b6771a0 100644
+> --- a/fs/resctrl/internal.h
+> +++ b/fs/resctrl/internal.h
+> @@ -62,6 +62,9 @@ static inline struct rdt_fs_context *rdt_fc2context(struct fs_context *fc)
+>   *			Only valid if @evtid is an MBM event.
+>   * @configurable:	true if the event is configurable
+>   * @any_cpu:		true if the event can be read from any CPU
+> + * @is_floating_point:	event values are displayed in floating point format
+> + * @binary_bits:	number of fixed-point binary bits from architecture,
+> + *			only valid if @is_floating_point is true
+>   * @enabled:		true if the event is enabled
+>   */
+>  struct mon_evt {
+> @@ -71,6 +74,8 @@ struct mon_evt {
+>  	u32			evt_cfg;
+>  	bool			configurable;
+>  	bool			any_cpu;
+> +	bool			is_floating_point;
+> +	unsigned int		binary_bits;
+>  	bool			enabled;
+>  };
 
-We will address this in the next version.
+Nit: You've added 4 bytes of padding.
 
-
-Thanks and Regards,
-Parvathi.
+	David
 
