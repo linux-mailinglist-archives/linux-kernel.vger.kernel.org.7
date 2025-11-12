@@ -1,130 +1,86 @@
-Return-Path: <linux-kernel+bounces-897804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6184C539F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:17:09 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77D32C539FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:18:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D78A7344902
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:15:44 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 10121345BFC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:16:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54A0F346A0D;
-	Wed, 12 Nov 2025 17:15:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ggSu3pVJ"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CA9A32825C;
+	Wed, 12 Nov 2025 17:16:08 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CBCA345757
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 17:15:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B951199939
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 17:16:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762967703; cv=none; b=s47wdn6ehNR/1Hw+V0hKpEXi/LxngCthePfTUkcAF9/WjXu22uRRwPLQxUBHpRpsqX+B/+n8As8gINzKrwIUN5snFNtC0IwTBc8TNJ35TdP6SbKrPI9AAvWJ11B9GAHdDGxvopUhoVxS/uCvu2G8uVj0yL9HoI+t7QTN9IU8pMI=
+	t=1762967768; cv=none; b=c8nJUPWmgWVh+hMzpRkjjrYeE1IfFbwYDanf7S7svAK7BiGLhsfttLDzL5EFPWgnUi8UoMa3jJ0A4hBB4UcEzidKnw/eHNwpOk1X7e5lSU9w1MA4sPdm0UuV8Py52hg65eYgNa4zp6lUKmP7nn89cDMDWAzYkkf8fWfLl6yja8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762967703; c=relaxed/simple;
-	bh=9Vl4M+L7saM4H5FI9WoIntBj62joT4QeAS05d655lsE=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Lfkq3/jFrMEkbV8Q0JuAZ5MCpYR0Ye6cfUEMZggpJO/wwvpeXjNtjzUtGJwg83zqb5hOecR7D49B2lMDX+pG1/87S1+RLgCD1WaAxOsc4PCqCzNi4+Xtwj36OtC9tJNatW8kCFFK871fYMApzzn0s/yXdwpUri2N7v8WKK9iPzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ggSu3pVJ; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-295592eb5dbso11865475ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:15:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762967701; x=1763572501; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=86qJtDww2XHXYjGdCBBHyykKWyscomPO9oojHmUWOnc=;
-        b=ggSu3pVJqSFerjEAGe1wRjxRPxtPY+ZhrT5jiwuf1KgX25tWUjy+XT6BZBJttiBTM5
-         /tJj4i31h2RPaycEqIE1hUvRuxmmg6BMe3Iw6QlHNz54DJQu0Z0kEB5pGmC7ENNB0yrb
-         WA9dltwJTS0LygM2joX+c3wPXnCPKcFQcuqNvfnHIWudUhT0PtnYJZ5LD1pcEmCMyE2c
-         Cc9DfdFFenBRKOeZzWGNcf0EmBGFQYcfzdZmH+RV71YOF48PO1InFUGhPkoPusNGQRCA
-         v36KLheJQH2uSuNPkqbhF6w8vIYWNZDLqCk0BlNt95IgUP6zW6wSqD6RO4KKh4InX21E
-         aW/Q==
+	s=arc-20240116; t=1762967768; c=relaxed/simple;
+	bh=LLRpqKf2OQual0Xd886KZPna4Rrlj4e6Cs+uISGSbqY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=rWHzJpMYxmcbCNvXVz23wyIerZK3DZTBV4hyzJDt83ybREtSsIa9mSELQIc4yItQvXoCuYNNXLbgbxhFCnKz/b/n0ZHgJmgRvDzvM3uWAmI1wDtwfeOuBIm9dGUYcc69hTadunesgN3+KQ/HPORk8MWfB7rpobmaWSAB+FI+wJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-43376637642so11539955ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:16:04 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762967701; x=1763572501;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=86qJtDww2XHXYjGdCBBHyykKWyscomPO9oojHmUWOnc=;
-        b=Gde+Ihm4LHOhBluUwC5W2LWwXNQl5UeWNjZVZamLkZqLTpJ7ONeLOc6iwZxjlsK12h
-         bJMFgKYqDt8TL/XGsMgDBQcykyf15YdxwkLMJE4PMBcl1o1Z9GsBvXF/5BYYJrkJco45
-         OxR7fSuoTw1EiQKUJSRzrnT9r6TdC0u/S8+yjWLlIls36HTJf5okHbmu/CwInHyJ2hN/
-         7uG6Up1jWpg7Ue8ixVUp1vhi8dgzpZ73A/8dNMyjiCcXcPzIYKJPZtQAvyKBg0uphxzy
-         NUyj7JCVx5GpFgNdTIcVRKkeFi1DdCmEH95Kj1YBuzVydFwOJTPWJOILMs/8nRZmTKuS
-         kReQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUcf966zONWN3ypa4GVJZH7lD1u4yy2V2AIt5lFsKHzVDQMfadD3upJ5ab8IAwSavXdHy2dfDecXLTDtt4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRDzcevh7VN0nHRJPgQ9pLzQFtwBZMve9212YH3h3ulDPFoREE
-	sgQqDf/HahMZC/GaPMu0l9SdCNqVmU/IT5/T3fdeccg/L8LNWu66HQujUzPnpxVekm/IOz+8sn7
-	2VG5q1g==
-X-Google-Smtp-Source: AGHT+IGrMR5JgwNv/Me2MYMypHfVwaZ3yclITiMGko+pOjGEm/IXIepqef+u9s5d279WEqGMcQz9Rix8Ljg=
-X-Received: from plcr3.prod.google.com ([2002:a17:903:143:b0:273:67d3:6303])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:28c:b0:27e:f018:d2fb
- with SMTP id d9443c01a7336-2984ed2b896mr45483095ad.6.1762967701625; Wed, 12
- Nov 2025 09:15:01 -0800 (PST)
-Date: Wed, 12 Nov 2025 09:15:00 -0800
-In-Reply-To: <20251112164144.GAaRS4yKgF0gQrLSnR@fat_crate.local>
+        d=1e100.net; s=20230601; t=1762967764; x=1763572564;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qIZagm7PY5Vqrf/AsqeZx+IteYacJLML22dt5R2/KV4=;
+        b=o3njq1WqZmOyP2NWZjjX2WVCSwKMgAAdRL0alOpqVHKoJYDR44gST6857Sl9te48OY
+         mAC9wk29AHQjjCF/ZnLinMPQ/bKfXZzIEv2eYHcKogcaUwmss20YDDqGIwzsdpJGsYym
+         pLaxm+IbD3GMBjKNMKalunLAis/RvBfExnLgivtjqieOVv2XjEH50lfjTDgPddm/LEGI
+         jPd02pQkPNQs+ZO4eQ/cg6+dSjGsQD/Bll8AxRwu3lECwqoa7t3/F8GL1vLWMU2IgI3b
+         XivdAVCIc9P/qPNfisKccy/C6b1S5AIiD6Om8VNrscnmeqM1TysWsbx2peBNTdQJB4f5
+         4ldQ==
+X-Gm-Message-State: AOJu0Yw5p30x934IZy9Q/OaM4ETpGzhDn/+lCEDl2wXEaTODi1PkOlYa
+	wOwz1sd+Hkp8fpnVVt8bArOeR+9JZBb63X0V37LKArqnb4SV0X+RW74Das98ENTXqu3LgtFouhN
+	o0RddZJc0vyT6VRkog40I1dU0CNMpsLWN+ASYS82jVve9qVDLeiTWHDgJ8Lc=
+X-Google-Smtp-Source: AGHT+IFBCXhPQ5+vvu5B/JgVSVdMWhHJtcT/+CoGdkX8huZH1zZQFoYqWply+RGD3nLQtX0EnZg//JZWsHHLqEF7X0iMH/Cwr1Gc
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251031003040.3491385-1-seanjc@google.com> <20251031003040.3491385-5-seanjc@google.com>
- <20251112164144.GAaRS4yKgF0gQrLSnR@fat_crate.local>
-Message-ID: <aRTAlEaq-bI5AMFA@google.com>
-Subject: Re: [PATCH v4 4/8] KVM: VMX: Handle MMIO Stale Data in VM-Enter
- assembly via ALTERNATIVES_2
-From: Sean Christopherson <seanjc@google.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, 
-	Brendan Jackman <jackmanb@google.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:1909:b0:42e:72ee:cde6 with SMTP id
+ e9e14a558f8ab-43473d11968mr53504465ab.12.1762967763604; Wed, 12 Nov 2025
+ 09:16:03 -0800 (PST)
+Date: Wed, 12 Nov 2025 09:16:03 -0800
+In-Reply-To: <aRS3-Fgb94VD7Msl@rpthibeault-XPS-13-9305>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6914c0d3.a70a0220.3124cb.0009.GAE@google.com>
+Subject: Re: [syzbot] [xfs?] KASAN: slab-out-of-bounds Read in xlog_cksum
+From: syzbot <syzbot+9f6d080dece587cfdd4c@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, rpthibeault@gmail.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Nov 12, 2025, Borislav Petkov wrote:
-> On Thu, Oct 30, 2025 at 05:30:36PM -0700, Sean Christopherson wrote:
-> > @@ -137,6 +138,12 @@ SYM_FUNC_START(__vmx_vcpu_run)
-> >  	/* Load @regs to RAX. */
-> >  	mov (%_ASM_SP), %_ASM_AX
-> >  
-> > +	/* Stash "clear for MMIO" in EFLAGS.ZF (used below). */
-> 
-> Oh wow. Alternatives interdependence. What can go wrong. :)
+Hello,
 
-Nothing, it's perfect. :-D
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-> > +	ALTERNATIVE_2 "",								\
-> > +		      __stringify(test $VMX_RUN_CLEAR_CPU_BUFFERS_FOR_MMIO, %ebx), 	\
-> 
-> So this VMX_RUN_CLEAR_CPU_BUFFERS_FOR_MMIO bit gets set here:
-> 
->         if (cpu_feature_enabled(X86_FEATURE_CLEAR_CPU_BUF_MMIO) &&
->             kvm_vcpu_can_access_host_mmio(&vmx->vcpu))
->                 flags |= VMX_RUN_CLEAR_CPU_BUFFERS_FOR_MMIO;
-> 
-> So how static and/or dynamic is this?
+Reported-by: syzbot+9f6d080dece587cfdd4c@syzkaller.appspotmail.com
+Tested-by: syzbot+9f6d080dece587cfdd4c@syzkaller.appspotmail.com
 
-kvm_vcpu_can_access_host_mmio() is very dynamic.  It can be different between
-vCPUs in a VM, and can even change on back-to-back runs of the same vCPU.
+Tested on:
 
-> 
-> IOW, can you stick this into a simple variable which is unconditionally
-> updated and you can use it in X86_FEATURE_CLEAR_CPU_BUF_MMIO case and
-> otherwise it simply remains unused?
+commit:         24172e0d Merge tag 'arm64-fixes' of git://git.kernel.o..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=123d8692580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f0fd60646ed018d
+dashboard link: https://syzkaller.appspot.com/bug?extid=9f6d080dece587cfdd4c
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=11524914580000
 
-Can you elaborate?  I don't think I follow what you're suggesting.
-
-> 
-> Because then you get rid of that yuckiness.
-> 
-> Thx.
-> 
-> -- 
-> Regards/Gruss,
->     Boris.
-> 
-> https://people.kernel.org/tglx/notes-about-netiquette
+Note: testing is done by a robot and is best-effort only.
 
