@@ -1,130 +1,169 @@
-Return-Path: <linux-kernel+bounces-896512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F5F0C508DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 05:42:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CF4C8C508E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 05:43:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F6B13AA9F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 04:42:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CE9D3ABC5A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 04:43:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 382F42D663F;
-	Wed, 12 Nov 2025 04:42:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2F162D29C2;
+	Wed, 12 Nov 2025 04:42:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="f+PIfh75"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GvcUDq0O"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D632822FE11;
-	Wed, 12 Nov 2025 04:42:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C2961917FB
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 04:42:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762922530; cv=none; b=TKHb1PHlB3Ue2v6ltn7p7PzW6BH0ZTpDU8nDSHC+K4bwKgE1vSIQE6nEB63L3h1lzc+NSuDWp9QIVpw/89v6xM+qRSNsubUHcdgSd8S+svhDbFQ4ozll5M6sNvve0EoU4xEJVAfbdzzudlczkWN5gK0RyLVtEMNR5bpysYQ6z2k=
+	t=1762922579; cv=none; b=ZPZe2oEmzpI4KMNmwRJkilwfkGe8FgESEnmfmM2KkPiYVrTXlbTXvp0stFKra1OTB7BkbGoJoaGEGUlePeeKWOSSON3YBwVN23L5l6V1vI5Bko//lpynKIeDjAbA0wGqmxICEKyo1nYXQHuWvLLJHy8GHf2OGnxPc5Rf7zRwrQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762922530; c=relaxed/simple;
-	bh=GLYw3Wn04JyOqHVXMsQzxMfHvtDlm9PHNM4uI4txX8k=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=DGjq7S47mHg75NYQyLxHL3BXsBGXqhcfgLx6HFjRpCVZmu2V9dCTUWrpshrA5QNR/cpdIHaiJX9JqpjSpVdRrnBLg+ZpPjESBSOUwX4qZ0G0EmzvPT4014kkaa2sEBl3PogxVLvd7QPt+9ZwSNykE5sh3/7uEl5/axmgelvm6+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=f+PIfh75; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1762922523;
-	bh=QxgkfyzxdThS9YoDZeGsCiyzILKZluDzAbu4dUF9DuI=;
-	h=Date:From:To:Cc:Subject:From;
-	b=f+PIfh75SmJmA8OHnlWPNUov9pJ7M95Wuay7mBSueyC/JkmQ0D71n+8l4tnSgQN06
-	 narFyknyefjUSLisdK3OlldQ5JZIk5otEtLU3q4IjSlHh8vD8jau4iRWqu4kIroTUK
-	 3pPuGHVjtL/pWP7xXY8u32JjrUueUeXOmw/6QRFS35LXPpCrn6+Ob470wWCRl/zl0x
-	 pz9kQ9wttis8ZrwENPGpTxved0pSmRayIBxc4N3vwhHi3HSzkndnQ2KtiM3Oaew5Ss
-	 qxf5kVyoOkXT0/ZKLiSPRZZGyarUFZuHpKH3dIHeZ8aYJECme2z8Ox/c7sNI1A6VVZ
-	 x7UdICuVSGxww==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	s=arc-20240116; t=1762922579; c=relaxed/simple;
+	bh=6HV5R0vQv4BNsQt+Yhsxf1lzNigzlSp6ywMkqsoT8N4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=COMZxvsSXyDKcm3UcKmeFEAMcxCyiTZkwhXMwlRc/eMlJv92JzGPxzPq9NqVkNAaPOR+ac3ApXqitp7cdbln0mE01lIuq/efYyPYMAazucYJbV2TxhJKRbJ/pXj9GUrGKoYgwq0wUZ3yoYUMpka+OBUyEqrf2qBLjcOGzSyytOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GvcUDq0O; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762922576;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=k7wfzbMX9zppyyEMbKM6+79VccQHudzEP6zJVdKYqxo=;
+	b=GvcUDq0OAuk2vJfncANY7PT73KuQpU+5K8szr3Vycj7ofyUGXjzwTeBUU/oclT+xpEidZ9
+	GdmuhuTJAfNkwdTyQn3vKFGGPWcTXls27noZMIcS3ul7o+hZN2IdtCrhsY+gC24dYE9AXq
+	PI+NabMto3V214P6Fmb8eBZzDF/wcjo=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-453-szULz0khMiy_j8U_Wp5yjw-1; Tue,
+ 11 Nov 2025 23:42:50 -0500
+X-MC-Unique: szULz0khMiy_j8U_Wp5yjw-1
+X-Mimecast-MFC-AGG-ID: szULz0khMiy_j8U_Wp5yjw_1762922569
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4d5rN918M3z4w1j;
-	Wed, 12 Nov 2025 15:42:01 +1100 (AEDT)
-Date: Wed, 12 Nov 2025 15:42:00 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
- "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: Dapeng Mi <dapeng1.mi@linux.intel.com>, Kan Liang
- <kan.liang@linux.intel.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the tip tree
-Message-ID: <20251112154200.4d3671f9@canb.auug.org.au>
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 773831956089;
+	Wed, 12 Nov 2025 04:42:47 +0000 (UTC)
+Received: from cmirabil.redhat.com (unknown [10.22.65.154])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id D57271955F1A;
+	Wed, 12 Nov 2025 04:42:43 +0000 (UTC)
+From: Charles Mirabile <cmirabil@redhat.com>
+To: fj1078ii@fujitsu.com
+Cc: catalin.marinas@arm.com,
+	fj2767dz@fujitsu.com,
+	guohanjun@huawei.com,
+	ilkka@os.amperecomputing.com,
+	lenb@kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	lpieralisi@kernel.org,
+	rafael@kernel.org,
+	sudeep.holla@arm.com,
+	will@kernel.org
+Subject: Re: [PATCH v4] ACPI: AGDI: Add interrupt signaling mode support
+Date: Tue, 11 Nov 2025 23:42:37 -0500
+Message-ID: <20251112044239.4049011-1-cmirabil@redhat.com>
+In-Reply-To: <OSAPR01MB7669F9B9E145A50B38819E13D5CEA@OSAPR01MB7669.jpnprd01.prod.outlook.com>
+References: <OSAPR01MB7669F9B9E145A50B38819E13D5CEA@OSAPR01MB7669.jpnprd01.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/7iJbiTeduhtv795sD8uwsya";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
---Sig_/7iJbiTeduhtv795sD8uwsya
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi All—
 
-Hi all,
+On Mon, Nov 10, 2025 at 07:38:17AM +0000, Kazuhiro Abe (Fujitsu) wrote:
+> Hi Will,
+> 
+> > Hi Will,
+> > 
+> > > [You don't often get email from will@kernel.org. Learn why this is
+> > > important at https://aka.ms/LearnAboutSenderIdentification ]
+> > >
+> > > On Mon, Oct 20, 2025 at 09:23:05PM +0800, Hanjun Guo wrote:
+> > > > On 2025/10/17 15:39, Kazuhiro Abe wrote:
+> > > > > AGDI has two types of signaling modes: SDEI and interrupt.
+> > > > > Currently, the AGDI driver only supports SDEI.
+> > > > > Therefore, add support for interrupt signaling mode The interrupt
+> > > > > vector is retrieved from the AGDI table, and call panic function
+> > > > > when an interrupt occurs.
+> > > > >
+> > > > > Reviewed-by: Ilkka Koskinen <ilkka@os.amperecomputing.com>
+> > > > > Signed-off-by: Kazuhiro Abe <fj1078ii@aa.jp.fujitsu.com>
+> > > > > ---
+> > > > > Hanjun, I have addressed all your comments.
+> > > > > Please review them.
+> > > > >
+> > > > > v3->v4
+> > > > >   - Add a comment to the flags member.
+> > > > >   - Fix agdi_interrupt_probe.
+> > > > >   - Fix agdi_interrupt_remove.
+> > > > >   - Add space in struct initializsation.
+> > > > >   - Delete curly braces.
+> > > >
+> > > > Looks good to me,
+> > > >
+> > > > Acked-by: Hanjun Guo <guohanjun@huawei.com>
+> > >
+> > > I wasn't cc'd on the original patch but I couldn't figure out why it
+> > > uses IRQF_NO_AUTOEN when requesting the irq given that the first thing
+> > > it does is enable it.
+> > 
+> > I misunderstood the usage of request_irq and enable_irq.
+> > Since there's no need to separate them, I will remove IRQF_NO_AUTOEN and the
+> > enable_irq call, and send v5.
+> 
+> I found out when calling request_nmi, removing IRQF_NO_AUTOEN results in an error (-EINVAL).
+> Therefore, I would like to keep IRQF_NO_AUTOEN specified.
+> If you have any comments on this version, please let me know.
 
-After merging the tip tree, today's linux-next build (i386 defconfig)
-failed like this:
+Could it be that this is just a bug in `request_nmi`? I see the following:
 
-arch/x86/events/intel/ds.c: In function 'intel_pmu_drain_arch_pebs':
-arch/x86/events/intel/ds.c:2983:24: error: cast from pointer to integer of =
-different size [-Werror=3Dpointer-to-int-cast]
- 2983 |         top =3D (void *)((u64)cpuc->pebs_vaddr +
-      |                        ^
-arch/x86/events/intel/ds.c:2983:15: error: cast to pointer from integer of =
-different size [-Werror=3Dint-to-pointer-cast]
- 2983 |         top =3D (void *)((u64)cpuc->pebs_vaddr +
-      |               ^
-cc1: all warnings being treated as errors
+if (!desc || (irq_settings_can_autoenable(desc) &&
+    !(irqflags & IRQF_NO_AUTOEN)) ||
+    !irq_settings_can_request(desc) ||
+    WARN_ON(irq_settings_is_per_cpu_devid(desc)) ||
+    !irq_supports_nmi(desc))
+	return -EINVAL;
 
-Caused by commit
+Perhaps there is just a missing `!` before `irq_settings_can_autoenable`.
 
-  d21954c8a0ff ("perf/x86/intel: Process arch-PEBS records or record fragme=
-nts")
+As far as I can tell it has always been wrong - git blame points me to the
+original commit where that code was introduced:
 
-I have reverted commits
+b525903c254da ("genirq: Provide basic NMI management for interrupt lines")
 
-  2093d8cf80fa ("perf/x86/intel: Optimize PEBS extended config")
-  02da693f6658 ("perf/x86/intel: Check PEBS dyn_constraints")
-  bd24f9beed59 ("perf/x86/intel: Add a check for dynamic constraints")
-  bb5f13df3c45 ("perf/x86/intel: Add counter group support for arch-PEBS")
-  52448a0a7390 ("perf/x86/intel: Setup PEBS data configuration and enable l=
-egacy groups")
-  e89c5d1f290e ("perf/x86/intel: Update dyn_constraint base on PEBS event p=
-recise level")
-  2721e8da2de7 ("perf/x86/intel: Allocate arch-PEBS buffer and initialize P=
-EBS_BASE MSR")
-  d21954c8a0ff ("perf/x86/intel: Process arch-PEBS records or record fragme=
-nts")
+I looked and the only two callers are using `IRQF_NO_AUTOEN` so I guess it
+just hasn't been noticed yet.
 
-for today.
+Happy to send a patch to fix it.
 
---=20
-Cheers,
-Stephen Rothwell
+> 
+> Best Regards,
+> Kazuhiro Abe
+> 
+> > 
+> > Best Regards,
+> > Kazuhiro Abe
+> > 
+> > >
+> > > Will
 
---Sig_/7iJbiTeduhtv795sD8uwsya
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Best—Charlie
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmkUEBgACgkQAVBC80lX
-0GyFyAf9FuzOh/9HJ3qs/jBHirOuxBq6NOoIKk0bwZN35tF4SJWRSYYN4/I1evWr
-DPuv9M/EtAkvENd9URR+mODHDggL4NI9fWD0jnbpu7ViRBa0Hl2pCFp78XUsjDuB
-6Twt4mDr8efmFfrEse7sfxXyNX76c0HMTt4m7t3dtglREkMQNQ/J+fgT13D672Vq
-rTgPcm2/TZ1E6jEyWSemR8DFM1GTpttDDYzSeIXkKYkSCt+NLjBfqZbyX+rI53ZU
-0IMDXGBazKh+HrrUTVwf5+7bcNEHbw+KlkJonQXqHwYgesfAe7Zh3FFFNkIMGtZE
-k5RxNhj1I9KocBVhzyHrH70LUyPNGg==
-=mCiV
------END PGP SIGNATURE-----
-
---Sig_/7iJbiTeduhtv795sD8uwsya--
 
