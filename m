@@ -1,165 +1,111 @@
-Return-Path: <linux-kernel+bounces-897350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A39DC52B46
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:27:23 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B28CC529B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:05:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 272754EF6DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:05:29 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BB13E34CEB6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:05:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75A9226E706;
-	Wed, 12 Nov 2025 14:05:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a+xPixGs"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 384F025BEE5;
+	Wed, 12 Nov 2025 14:05:48 +0000 (UTC)
+Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 501181ADC83
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 14:05:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 623361ADC83
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 14:05:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762956322; cv=none; b=Vlv5fVLAEnf+SCSP0EhtWQHOkUFCbi/zhWj6gXbQy0TSyGeGpZIbK1Z7jS4pzTP9JfDHJnEjkBKhty3UXPItxn038VHQ1odIb1bwtnddKW9CO2SEIUiCgxWt++1AjBx+Y0qWKHQvGIWyA0Oc4celhyql6qdL9CMkc1E12HrDCeY=
+	t=1762956347; cv=none; b=doUi+X1KVp1E8fV/0nNYPF6s/pDiEVpUI8kchVCtLKW5cMPtwCzIkRF3VvYYLZ/fVIk0plCaaZekaP2FstocC4LiZhFPwGFgJfz5Zh70V4Ds1QLFnF+/OBZrndwWKoNAKh9bVe7ZucdhQKQndxtAh5KkUCX5SNAPdWuzjGqot+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762956322; c=relaxed/simple;
-	bh=h+naC3WP5Hca5p6GdNfPWAs3ASYye9OHxLz/qrFbh3k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GYJf01ftK4CHfNPIcs74emQ6asrST0oTFoPaRxs7mHnHopUL2puYst6L12nkuOOBCbxwHEC/FtwYoNpygnH+KPrwpz8gmtRDVTQG7Db6AExEPZz28BuWcDoFzw0bLeI2FTynlUb+WsVHJef78D4uz6sQp7YpnghKdHRat8ILM4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a+xPixGs; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1762956347; c=relaxed/simple;
+	bh=NXXQBYMTzm3gLErILMueN+E6s1/7eXeyEb6HsfSTTZ4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=c8YrzT/dIQJUf1OdMqreSYSt93sHsaLIzc2wxY2TeAtMCTTeeDfjMagZptmOISgERUsgB+xAt2azpxhElW/VwUUni9sNkALEaRVyW7P4MUfYUBRlOr9G/uL59nDEMyqmIBWth4bmNHRp9pInHue+Rnl6lH5xOKt8smyJMuYMFcY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-34361025290so830111a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 06:05:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762956321; x=1763561121; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5IgqMB/v3xeO5BgQjIq0XWQN2JeRWzsu5Px5Hi7zIAE=;
-        b=a+xPixGsrNtHQ3HpCDXmeCI5F9CWxk1JxIuJtQTjQgbtXs8OUSjpr6AzdrHfz/3LMw
-         8WzTxgwgzxMb050YKouW5Y9s+gSTuKuVlFUuLq39VLdbT+bF7QnHFLbWEQMS5VzSo0yS
-         aeGp5WPVgZ86PNL6PLbsPd5u+1uHQ8p4GD5SHla5cOgAnTp3KGi6XApwJgoK99esj542
-         9Asf1Vv5dDTQBYBPGtkt4mZqMkeb3NSu1mbKMqqASDaM22XEm03/sGx/zN40OjcM5j9r
-         FjO6EM1sO4vpVklmf43HDp0Tv9hw0IFjHnsFfcCDuqYc0eMdH4X5WdNJwdKcaGjzF4Yl
-         1O/Q==
+Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-7c6d1ebb0c4so592347a34.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 06:05:46 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762956321; x=1763561121;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+        d=1e100.net; s=20230601; t=1762956345; x=1763561145;
+        h=content-transfer-encoding:content-disposition:mime-version
+         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=5IgqMB/v3xeO5BgQjIq0XWQN2JeRWzsu5Px5Hi7zIAE=;
-        b=rvBmTt98Jp7/nhJOfIj1gHb0bJyn+jJmsNTKWIiCjDOxQ4gR9FKqEqDdmiGpvqJrkk
-         IS+iGZgAocjqZAonbYC/K1dVrRZYesb5T1vQabYg8UhG0aTIr4FhALZYR2SWDjfpS1bn
-         mLhkBnA9rpjHFu4jNqe62wNvJocgMSiMY6+jKpwad9h+p2ZeaQN77FpTA0tNqsn22mqY
-         YQJZQueH2YikBb7MX81ht633evk4ZzhyoV/qj5magPJ+3vfp+mndPHc8YSyQVfkjv6In
-         JzivqsXJuQfr2ljbshrWUJgq1OaX4bL2/iHCin3+JF7x5fVGHmYX68XRIDsAVVy7smzn
-         eg6g==
-X-Forwarded-Encrypted: i=1; AJvYcCW8uGZRWIwlAcU1Bstx4qos7tLbXBq66RnWiuTLc6zEL3QAPCLnu/88xoIVqwnPTn0hqI5RraHlhnzYw8o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCOwjzTMG58Hm1OSQWLvAkLwTB+4l76Ckexwzbk6Szv3kTPKnw
-	zE8eiPcoh5esTINf1x2fSLrgPyAOXCn69InBlcJCZJQZfNGlQhjleyZ6+hOAIi/xVLwkcEzt52B
-	AJ5ExduX96jxLG5o11T1Vz5XLZLGkwLk=
-X-Gm-Gg: ASbGncunZeWjF4Z0ruMktny0UYqCeF9nYTYCmx/Th2WY+MledJZfXI8oQZQrQltxGuL
-	2D4ixtZxKU8P2meZHr0g5IYfQOv9aPYUJb/69cYiZPSLYMq0ryPntInXp6ZUpnha1QY1xEScBqE
-	85iHnPZkz98yajFZv3qEuGPLa5bo9VZhE+ZLK6kjr+Ne1fDxyWql2ckuNcRRvAI9/IcgURcXt7L
-	9XaI9M912hZLfgw0iodgRWcjm+IaRUyHOAE5Wt1c0EYFs8riuHPZlKxkdfi
-X-Google-Smtp-Source: AGHT+IGGE4/VL1DEyxNrJ9gXhy58i37XginUx1Z79nbxZV1zaeXJiHFTS6UKxC5C1DeQKZdokBPv7izFiH2R6Na0d44=
-X-Received: by 2002:a17:90b:3f88:b0:33e:2934:6e11 with SMTP id
- 98e67ed59e1d1-343dde1328emr4083273a91.11.1762956320459; Wed, 12 Nov 2025
- 06:05:20 -0800 (PST)
+        bh=NXXQBYMTzm3gLErILMueN+E6s1/7eXeyEb6HsfSTTZ4=;
+        b=hp/YBUuDnLaJzty5WqT3j9QVpy/kQmlX9/5g+V5VXMMiITbn+rJlEveeScwdvxOK1P
+         wgfIr1q/s2AFikf3B0rd7+76t/4jgLT64Blo/0Z3cVo8aQiZpRzKIxceVC1TRLyHhkTI
+         hppmJtxXSeGbEIHUML8jxaDgNOICyHcWWHfFOUhE4WxMOmyddMqFDd7ccksSg/oYloVL
+         HaV8LeHqQNNgivPAALzgGeLlCY7Z2Pvt80ANSUHpQLjOSmNtmHOyt3ULgbTt6T4jwTlX
+         DYcEVrVOFoqMfzYybJChJVbLCVSqkPMwrGBQ7YzzUrlhCE/uZiwc6FOwjddGn2TaCEF3
+         ifyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUPWphLpkNTxCJQhqC9AbdnGuQUK5DDBFLLjl+ZHbaP2LDpE8ADxjETutc6DUmy4hGztYMKsS0nnAWqHow=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJdngxOE+2THqYL9moon6LyiKIP3fHMBVr6Qells8o+9rJNYlM
+	fhfPCJV3ZJs8Se4VVSVbQDXtd0VX5d7JBrheuCbUQd/ZDWegRQPPRFAz
+X-Gm-Gg: ASbGncsFQ5jwifP7wST3T0cdyldBqVA5U1sx99EX1RLtEhSdrEEImjOfdTf7EYP5hDZ
+	qbhoiYZ9wHR0dlLD1jorImKvhnZtHEDxag6RuBqdNJMfDoR1vbXLXCuNVBtllCDXADyN24T1SKx
+	08vfZUAKDo7n6/WyUQfultr4sii8JtAEvi6AaQzlvQ+nEno/jUrOgrc6jFQJd3pIg+epaPXURd7
+	4Uc4QkBoACJ7nR5K+s+RaQsetMfdEkN4z8JwlosA9YNMSMvHPtMFSAKHT3sn2y/tfb4uffXU3wX
+	hZ1D/XvU4dWPDFQTY2WVs9aIxCUUFpXV5TKhbZmu0a9q+IXbOvoG2kXEVYbTeSp+ERQsfRHMGKA
+	g/qvj+b5M+H/Aj3vwv/vt+yqNSsnv9XWJmojxVRaIsjR7juAfEn4+IXk2prPwKF28hg0cBhi7Nz
+	RRR8Y=
+X-Google-Smtp-Source: AGHT+IH9uVCwmTm6OkyU88vI+odVy0Xu6AMckvPgZAxQBcY/7uShVAzXssPRx3eOQ5f7SoJW+dUiXA==
+X-Received: by 2002:a05:6808:6f97:b0:450:7169:8108 with SMTP id 5614622812f47-450740fabc0mr1503640b6e.0.1762956345284;
+        Wed, 12 Nov 2025 06:05:45 -0800 (PST)
+Received: from gmail.com ([2a03:2880:10ff:4b::])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-45031835261sm5175949b6e.16.2025.11.12.06.05.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Nov 2025 06:05:44 -0800 (PST)
+Date: Wed, 12 Nov 2025 06:05:43 -0800
+From: Breno Leitao <leitao@debian.org>
+To: catalin.marinas@arm.com, will@kernel.org, mark.rutland@arm.com
+Cc: paulmck@kernel.org, mhiramat@kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-team@meta.com
+Subject: arm64: pseudo NMI bootconfig question
+Message-ID: <rs4igmsjrm6r2aio4nbe5jos3vcqk2u4bjhltjwtj2pn3cquip@kv3grgec7qrb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251109214515.121742-1-rpimentel.silva@gmail.com>
- <20251109214515.121742-2-rpimentel.silva@gmail.com> <9d48a54c-0585-4524-b9d5-30696f5ecc8b@kernel.org>
- <CAEnQRZCvpXzGt=7NGv7-s+y0gvOg7Jx4OqbfbW3uv8jDp-jroQ@mail.gmail.com>
- <CAOMZO5CU09fcBB8oUOO=qC=Du3Q9gnJOQacK=6v+pnSQViex3g@mail.gmail.com>
- <CAEnQRZCHKemw2YVT=WVJvUMr9CCWoZ3MORt_mU1V-62C53n-3w@mail.gmail.com>
- <CAEnQRZBBJ4PGDOk7hBP_qsk7bBiec8pHb0DYKs2mhOAahNyKww@mail.gmail.com>
- <baafb460-fb65-4cd2-9911-89d828199d9b@kernel.org> <2e160fe1-bcb2-41cf-817e-ac2a36959b16@kernel.org>
- <CAEnQRZDg0yAjR-a-4J2ZKAjh3mm8NeQCA=o2kyNJtXMAFCMLAA@mail.gmail.com>
- <56530f64-6ddf-4d2a-a079-0578db260449@kernel.org> <CAEnQRZD=h5qOC445U3_+HPh7aCE8TohSpZmg9hgkRE7mg5HUpA@mail.gmail.com>
-In-Reply-To: <CAEnQRZD=h5qOC445U3_+HPh7aCE8TohSpZmg9hgkRE7mg5HUpA@mail.gmail.com>
-From: Rogerio Pimentel <rpimentel.silva@gmail.com>
-Date: Wed, 12 Nov 2025 09:04:26 -0500
-X-Gm-Features: AWmQ_bkE3E5kBt-au_w0tdPJgXF5KUKjHFMKLDQ12VqLfiSClucWeakQI7DwekA
-Message-ID: <CAOkaPuX7YeUJJj15dY0vD8mngg5MS5uBwU_UfrFRFjrghR7NDw@mail.gmail.com>
-Subject: Re: [PATCH v4 2/2] arm64: dts: add support for NXP i.MX8MP FRDM board
-To: Daniel Baluta <daniel.baluta@gmail.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Fabio Estevam <festevam@gmail.com>, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, shawnguo@kernel.org, 
-	s.hauer@pengutronix.de, kernel@pengutronix.de, 
-	alexander.stein@ew.tq-group.com, dario.binacchi@amarulasolutions.com, 
-	marex@denx.de, Markus.Niebel@tq-group.com, y.moog@phytec.de, 
-	joao.goncalves@toradex.com, frieder.schrempf@kontron.de, josua@solid-run.com, 
-	francesco.dolcini@toradex.com, primoz.fiser@norik.com, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Xiaofeng Wei <xiaofeng.wei@nxp.com>, 
-	Daniel Baluta <daniel.baluta@nxp.com>, Joseph Guo <qijian.guo@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-On Wed, Nov 12, 2025 at 7:33=E2=80=AFAM Daniel Baluta <daniel.baluta@gmail.=
-com> wrote:
->
-> <snip>
->
-> > > We (NXP) immensely  appreciate individual contributions from everyone=
-.
-> > >
-> > > We need to be fair, the v1 of this patchset was taken from NXP
-> > > downstream without
-> > > respecting the Developer Certificate of Origin.
-> >
-> > No, it wasn't. Please read carefully DCO. The chain here was not
-> > correct, but that's the only thing.
-> >
->
-> Indeed carefully reading the DCO Clause b) you are right.
->
-> > >
-> > > E.g there were commits pulled in from our internal tree without
-> > > keeping the S-o-B tags.
-> >
-> > Read DCO, please. It is not mandatory to keep 3rd party SoB. It is
-> > perfectly fine to skip it, if needed according to (b) of DCO certifying=
-.
-> >
->
-> True. In my understanding though if one bases their work on others work
-> they should at least keep the S-o-b tag as a common courtesy.
->
-> Commit messages explicitly says that the work is based on NXP internal
-> tree patches.
->
-> At this point I leave to Rogerio's appreciation on which S-o-B flags
-> to pull and how much
-> of his work is based on NXP tree.
->
-> Thanks a lot Rogerio and Krzysztof for helping move this forward.
+Hello,
 
-Thanks Daniel, Krzysztof and Fabio for the review and discussion.
-I understand and agree with Krzysztof's point, but if there are no problems=
-,
-I would like to keep all the names suggested by Daniel:
+In most major Linux distributions, it’s common to have a separate debug kernel
+build. This variant is compiled with additional debug configuration options to
+provide deeper observability and easier debugging, typically at the expense of
+some performance.
 
-Author: Xiaofeng Wei <xiaofeng.wei@nxp.com>
+This approach is also used in several companies, including mine. The debug
+flavor is usually a drop-in replacement deployed when investigating
+issues, allowing quicker identification before more detailed manual
+debugging.
 
-Signed-off-by: Xiaofeng Wei <xiaofeng.wei@nxp.com>
+I’m currently debugging some hung tasks using the debug kernel flavor and
+noticed that backtraces weren’t printed correctly because PSEUDO NMI isn’t
+enabled.
 
-Co-developed-by: Joseph Guo <qijian.guo@nxp.com>
-Signed-off-by: Joseph Guo <qijian.guo@nxp.com>
+AFAIK, to enable PSEUDO NMI on ARM, the following are required:
 
-Co-developed-by: Steven Yang <steven.yang@nxp.com>
-Signed-off-by: Steven Yang <steven.yang@nxp.com>
+ cmdline: irqchip.gicv3_pseudo_nmi=1
+ config: CONFIG_ARM64_PSEUDO_NMI=y
 
-Co-developed-by: Lei Xu <lei.xu@nxp.com>
-Signed-off-by: Lei Xu <lei.xu@nxp.com>
+I wanted to have pseudo NMI enabled by default in the debug kernel
+(without relying on kernel command-line parameters), but this isn’t
+possible today. The reason is that `irqchip.gicv3_pseudo_nmi` is an early
+parameter, which can’t be set through bootconfig, so, independent of my
+.config, I need to hack cmdline arguments to have the debuggability
+I need.
 
-Co-developed-by: Rogerio Pimentel <rpimentel.silva@gmail.com>
-Signed-off-by: Rogerio Pimentel <rpimentel.silva@gmail.com>
+Question:
+
+Would it make sense to provide an option to enable pseudo NMI in certain
+kernel configuration without requiring an extra command-line parameter?
 
