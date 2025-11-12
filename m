@@ -1,266 +1,1262 @@
-Return-Path: <linux-kernel+bounces-896409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7CCEC504BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 03:05:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6C9AC504D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 03:06:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 21F7E4EA80E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 02:05:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7017C3AA9DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 02:06:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01438296BA7;
-	Wed, 12 Nov 2025 02:04:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C38EE296BDB;
+	Wed, 12 Nov 2025 02:06:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SfimH5Ym"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Nv9xWlw5"
+Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11011027.outbound.protection.outlook.com [52.101.62.27])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 263741EFF9B;
-	Wed, 12 Nov 2025 02:04:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762913094; cv=none; b=Yfe6Izxoty6B5QMUS6aAB1Y+KJ7v8pS6SERP2DnIGBhH8WMXfNwfXhCQ5OVl+fd9dulfHrFXbk/JvzYFZInWPs8pFj0jIdZodJdMlb7AC06VaBt7LqUXW7Di4JnsdylH8xxoX8pN1Z8+yhCBXHYLsV5S//1N/a+2F1vVOCl5ZYU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762913094; c=relaxed/simple;
-	bh=Uz5EtMpVn6519xtKF+vC8bmfybmH8hJy0801N8rm/0E=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ffmXuF0kbmRCXzOcCtUXu12510jGCk5nXp+Q20B+fg1vH6NaNWbMNDj45WQqkJYUpeSlcYTOTDP3kOFYumOzWrNd/t+nGuVYPNSFopw3m5x3UvmHyLCyEOGn9nFETZ++G6yE+MHkJ5tXAfOaLcoqYpF0Lf25pYy3X1fTUPt8ie8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SfimH5Ym; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 181E9C4CEF5;
-	Wed, 12 Nov 2025 02:04:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762913093;
-	bh=Uz5EtMpVn6519xtKF+vC8bmfybmH8hJy0801N8rm/0E=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=SfimH5Ymq9+ZbUxv0zM93q32qDniKAP6tfxR1/i/RjL5r7IDdzB55S2ZkvWbTfScU
-	 r/ipl1c8XnG3MaW82bNzP+jBX30kmI+EDfRgbwHC6n4ib19i7CyKtvTb7QGJqoSpuw
-	 c+pItosmZSbf86kKRMrmlVXqQ41EyVw3wqDctH+G9RiYZ/1rJP9+AETWlmMjn0+idI
-	 wFIncnF7vGpvuWtbWgixKjrf/Gvfe0Oeayc8C9CfiYAM9tTgkIx6E2TEzd1oSI6SA0
-	 94Obomw2t+GTBbBQyl831yEhgBOPfYjZKkd+wuGFzIupRD3ilLhFkwJ46U88qUKo00
-	 NcKHrikY/VIiA==
-Date: Tue, 11 Nov 2025 18:04:51 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Florian Fuchs <fuchsfl@gmail.com>
-Cc: Geoff Levand <geoff@infradead.org>, netdev@vger.kernel.org, Andrew Lunn
- <andrew+netdev@lunn.ch>, "David S . Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Madhavan
- Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>,
- Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy
- <christophe.leroy@csgroup.eu>, linuxppc-dev@lists.ozlabs.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] net: ps3_gelic_net: handle skb allocation failures
-Message-ID: <20251111180451.0ef1dc9c@kernel.org>
-In-Reply-To: <20251110114523.3099559-1-fuchsfl@gmail.com>
-References: <20251110114523.3099559-1-fuchsfl@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61537148FE6;
+	Wed, 12 Nov 2025 02:06:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.27
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762913181; cv=fail; b=QxDWfpVH6uLY9G14xhzMNvpguAo8ROQK3+j1OgiQwvzt4yC7NAYqBJE8Bk/ruWVnwBDXviUbkQKrMN13HBACf5jDJ036Uml24k4XkIwNk+ofkRB6gMautw5V1wS55/rptyfGiOFhbGlI5d9QWTl7mtU3nv+VZv34W06oSCTHo3c=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762913181; c=relaxed/simple;
+	bh=ytM/6Y3Bd3fc9moMDmnZPfPCxY+ETN//pBFRaVRbyTA=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Ahz3q5Idg1MO8gBqfSW4KrlFcdtDoi7tplMslmXi+ZrNZSC5TsMUyBh08EqhHBFKS0+fT8svUAYpK8rbfpM5gacGli2MEQvVaNG8pF+cef2vrlOAdegaiU6pO9ypCqJ/m5NcVtJyg1I1MD8BhzffJdHwIjwLC58aCzNfYEbgTNs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Nv9xWlw5; arc=fail smtp.client-ip=52.101.62.27
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=FPK1NEqAa+O8IwCuf17AO1CqLDhaP4X36iad23SBLXYZYiabbtef0NGxD3tZN1fu4hcKcIkiApnQoeNQPwlg2+YEL3rG1TNpuWnULevT5hVbZLyvsOq1dTiiUpQCXpg8nV0VLnc79ZzTUzKJYVIWHI4gqhwXypuPC+4cew3kY4y2thFVjyFK0MkTrmav/Eo38gwaVsKobLiznCXCuHniYdnAnp5PYo5f+4TykdADgkgsEBK6yvNEhmOey6GEyx0qzk1oUrFacs5FeOEaRoSPKKMarjuu8WtOYbFdS56J5vD1Q4NemQqhGqSBo5CW4Qsoo+uFXMO1BtI3zWZW0rDUeg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=PMtYWkSJ/C54Rtjy3caVdsyw/KIRBRlYO0ChnLunPl0=;
+ b=VsDuSfAtTI88IUTnreIO/lXx/fS26ljYU91k7r8wvbIgBQrQdpkSQiB8Coey90YuMpZntn6Rn5ECgv7eEZb46UvxANRbpHk1FcKndSSIVTvXtxUF1eDRBGHnB4/1pB9UJvs2noZPeKHpRWEq3DyHESGV+GhozRUGCkcA2/6meLapN2oUDnqv3sH0jMLPYEAc/fc6QfW8Z+wcJayVs4OV77rjyyVWbHeoMfgwejJrRyXPThuxd6dJVWLwSleGqCCSb9UsNdrc+3zduypT4zgBakZLv9wMyQqebIifMZ5ZGYM/PzVjkBthWhKTOUwFrX023f5D9XqFy42Atl0Ez7g23g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=PMtYWkSJ/C54Rtjy3caVdsyw/KIRBRlYO0ChnLunPl0=;
+ b=Nv9xWlw5/vTAfiL8HkUMPhlFHLTGGtewHBZssuQEiDuzgPkEMYJ6GfHGe0fFS5MHgwIwOWcPR9+8pKGeowYTQyW3TpigTi8pHl8Om0KooUGvV6qD63u2k+NyEo6oAtImtd4jkwd5E+XDjhz3eZQVJGMm/avdc2WvIMHhhqzp8OU=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from CH3PR12MB9194.namprd12.prod.outlook.com (2603:10b6:610:19f::7)
+ by BN7PPF7C0ACC722.namprd12.prod.outlook.com (2603:10b6:40f:fc02::6d5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.15; Wed, 12 Nov
+ 2025 02:06:12 +0000
+Received: from CH3PR12MB9194.namprd12.prod.outlook.com
+ ([fe80::53fb:bf76:727f:d00f]) by CH3PR12MB9194.namprd12.prod.outlook.com
+ ([fe80::53fb:bf76:727f:d00f%7]) with mapi id 15.20.9320.013; Wed, 12 Nov 2025
+ 02:06:12 +0000
+Message-ID: <e22b9d92-cd54-4094-ab72-23d80e2744fb@amd.com>
+Date: Wed, 12 Nov 2025 13:05:56 +1100
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH kernel 6/6] crypto/ccp: Implement SEV-TIO PCIe IDE
+ (phase1)
+To: Jonathan Cameron <jonathan.cameron@huawei.com>
+Cc: linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
+ linux-pci@vger.kernel.org, Tom Lendacky <thomas.lendacky@amd.com>,
+ John Allen <john.allen@amd.com>, Herbert Xu <herbert@gondor.apana.org.au>,
+ "David S. Miller" <davem@davemloft.net>, Ashish Kalra
+ <ashish.kalra@amd.com>, Joerg Roedel <joro@8bytes.org>,
+ Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+ Dan Williams <dan.j.williams@intel.com>, Bjorn Helgaas
+ <bhelgaas@google.com>, Eric Biggers <ebiggers@google.com>,
+ Brijesh Singh <brijesh.singh@amd.com>, Gary R Hook <gary.hook@amd.com>,
+ "Borislav Petkov (AMD)" <bp@alien8.de>, Kim Phillips <kim.phillips@amd.com>,
+ Vasant Hegde <vasant.hegde@amd.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+ Michael Roth <michael.roth@amd.com>, Xu Yilun <yilun.xu@linux.intel.com>,
+ Gao Shiyuan <gaoshiyuan@baidu.com>, Sean Christopherson <seanjc@google.com>,
+ Nikunj A Dadhania <nikunj@amd.com>, Dionna Glaze <dionnaglaze@google.com>,
+ iommu@lists.linux.dev, linux-coco@lists.linux.dev
+References: <20251111063819.4098701-1-aik@amd.com>
+ <20251111063819.4098701-7-aik@amd.com> <20251111114742.00007cd8@huawei.com>
+From: Alexey Kardashevskiy <aik@amd.com>
+Content-Language: en-US
+In-Reply-To: <20251111114742.00007cd8@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SY6PR01CA0138.ausprd01.prod.outlook.com
+ (2603:10c6:10:1b9::14) To CH3PR12MB9194.namprd12.prod.outlook.com
+ (2603:10b6:610:19f::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB9194:EE_|BN7PPF7C0ACC722:EE_
+X-MS-Office365-Filtering-Correlation-Id: e6388787-b093-487b-6bdc-08de21900d84
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?cDVqRStqdk5xcS9OUndNUWlzSGZXcmdMYnhhWngxQkVETHRHcG92dXVZWmpu?=
+ =?utf-8?B?L2lPRGREYlFqMVBTZ0pYdXZGVW52Q0NVaFdWNEd4d2Eydk9UTW9kd2tSRWZl?=
+ =?utf-8?B?R3ZFTk5uTmZqMW4zLzJ6cFNpNVNlNUdFMVNJcTJqVWZvUWJ4UjZOOEgrWDZ2?=
+ =?utf-8?B?Tko0T2xyc3BYUDV0RFpmZGdKY0FadVE2VXhKRVg4cVQxVHU3OWpYYW9rMDB6?=
+ =?utf-8?B?bWlObnBaUTluYndmZ2UvQXUrOXBlSEVIbUlqdVYzWHpYeUsvMUU2VGhDaHE1?=
+ =?utf-8?B?TjJLVkZXd2VJaDZOd1pnMTRla0wyb2RodlRYZndFM2JocTFPUTBZUTZYcjFK?=
+ =?utf-8?B?dXJpSVVFUzRwM0dDcmRuSDN1TlNrUHp2a3ZUNFNTa0l4OUNOLzFQTXU3Vi81?=
+ =?utf-8?B?ZkszMGJ5TEZla2JsWEIzVEFNNzlSb0taLzlvUEFWeTVkT2ZPZFBsWDVaUEYw?=
+ =?utf-8?B?T1pMYkd1N3RjNmVQS05xVkIwTnRnRUNIamI0OW8vSzFRY3hjY2hBT0Z3eHdl?=
+ =?utf-8?B?bGlZSHhENE1YME9lcUxFYkNRUk4zdGFzcmExMmprSVZhZ3BrUVM1VzNmMUh0?=
+ =?utf-8?B?SVhUbVBqWS9ocko0UEVSNmpXcUtGbHJYenAxdWRBcCtlZVl0U3lXaHZVbEMx?=
+ =?utf-8?B?OCtsRVRURS9qc2YvSi9yZjlCcThQbmxoNUhITVdtcGxKLzd3V2VvYVFVR0dR?=
+ =?utf-8?B?cTdxV21lZzVvNFBmbzhXNWJDMWI4d0hPTGRSaytuZEZJaUtOdkdjejZmekR5?=
+ =?utf-8?B?bkt2U1lGOEpuSjRscitDSGZuL3pCcXlxMngwd0lYaWdnUmZiT2lROGdRd0xG?=
+ =?utf-8?B?N2xBWEptUWdxOEJSa0hKN3NlblVwMlhqNHlqNThKZU5jUGtENzAxS3BnQy9n?=
+ =?utf-8?B?d3pZTkdBNW53NDlxRmgrNXdSQlEvYzRQVUdEclRPYml6dnBXam9tQlh0aGd2?=
+ =?utf-8?B?YUlLMWtwK3pJQXdRVzdzZHVabkFnUERBdmxRMzJCeHJvbTV3TXI1empQNUZj?=
+ =?utf-8?B?cWZpUDJhMGNlZDM5MXJNcXNvc0RwTkZhcFJkajRPOTJDQmdhUzlFWnQ3eHcr?=
+ =?utf-8?B?WFlKNSttOUhwbW8vY2lvS2lJZmo0cHpkaTFBWWpzYkhUdXpoUUR0M2VvSWV1?=
+ =?utf-8?B?VzhMWHpZSTU4WHRiT3ZXeWwxNnN4WERyTFlwNjl3cUFhdmFPL2dNZXlEUmhv?=
+ =?utf-8?B?YnhML0hTb3EyQWczVjd4Y1V0RTdIOC95eVUzVGdyZS9GbnV3U0VET0RIaEIv?=
+ =?utf-8?B?dHloaHZ6Zzh3UGtaL3Fra2RkSy8yejA3MEFmMlFZK1NYL0VvR2JDOFRPWmow?=
+ =?utf-8?B?TVVJaXVqd1VMeU5DTlVObkhDU3dna0NESFpncTkyRFlONm1Xa0hDcDEzWFd2?=
+ =?utf-8?B?WHhDbTk4QW5hck1OazI5a1g1aWh5ZjZOaitBU05IWGYyelhtTDF0bjJqYlpE?=
+ =?utf-8?B?MWlvaXJIQXFNRGVJdHNvbUQ1eEl2UlRVREM3NVZpUnNzRUJHVlBwTC9SZDgz?=
+ =?utf-8?B?bTJFK0dkR1dmTUVVcjZJRW9RUTgxU2Rsem5RSzhCWk4ySWcyUHB0WU1DcDdB?=
+ =?utf-8?B?RHdjYllINUJnRTdxSUY3cTZjVUZmOWFlQXZ1c2pDaEwzUVFvREtCU1hUYktV?=
+ =?utf-8?B?a1JZWCt3Y25rNXlQNVgrenJFVzFjbTFQamxSWm5sSXdsMTdOK0hkQTlpRmd5?=
+ =?utf-8?B?Y1pBSzhCNGxVM21NZkZ6bGFwRCsrY1ZDenFHN3hxU1g4ZlZtVFpFMzNHbXk2?=
+ =?utf-8?B?bG9aNFlKazVEV2N5dkhjbEVMaUpCbFlVVm9lSE5yU0FiMnRQVXpxVktiN0hR?=
+ =?utf-8?B?Tk5icnNFcWxFMld4R1lDcEk2S1RRM250UUZGYUVvV1R6WUR3UHNzeTZLWUtN?=
+ =?utf-8?B?ak1qSG9mOGpvTUJ6MGFLSC9aV2Q1c3NncDk3SGZDbUlaaTZLdlBSN0VDeEd3?=
+ =?utf-8?Q?GPC2yoBeSBLbNGfw43jmMNKyHHHZzzWP?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB9194.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?QWxLZHpnMGp6RnRpMGU0dHpQNHBSQ1ltRzY0YkpxdUNkSTdBWkdMY3dIZGpn?=
+ =?utf-8?B?U3dMaDF5eE16Y1FsVzRqc3VUU2NLNy94RkhBT21qUDhGT283Sk4zUmI4U1gz?=
+ =?utf-8?B?TmFOMUs1bjVZVEUwdkdqbDN3aXZha0xIY2w4K2haVGtXMzJEekd5M1ZubjQw?=
+ =?utf-8?B?ZDNobjcwTVU5M3RIdFYwZjVsNm44YW1iRS8wbXFDMG5QSjZzUUhFOC81Qlhy?=
+ =?utf-8?B?RVM5aEthdEl2dWxjdlhoSjh6NWdyNGRPRTlFakp4S3czSE9nL2xEMHBOOVJQ?=
+ =?utf-8?B?bEVRUW5MMmZhQ0JzT1NJL0doZEY2UFljMFBvblNOc1JNZzl2UWF4WXJZdHpR?=
+ =?utf-8?B?YmtvcFlhcDgzTGU0WDF6b014OWMyOWVveHFRVVNudjBVclhhbUJlUTZmNDNT?=
+ =?utf-8?B?dHlVWkxyVW9WYnZRRko2eEFpMVk0OENRcmtybmMvV3pUM1o5VkVDaUdGWjEr?=
+ =?utf-8?B?ZjdJZUhoanV2MjZIZHEvU0RDZFNacU1sNzNjcHB2ZVpkVThTdDdGUnRZQzBG?=
+ =?utf-8?B?ck5aTDRjQk5DVkkxRkdLT3c1V2dUc0ZoT2c4SVZsSW0xcmNsWG9KMmhoSk9T?=
+ =?utf-8?B?d1c1WVJ0K2RMV00xZnZGeCtOQXMyekdQdDZUS1pJOWhkWGU4YlFFekthWExP?=
+ =?utf-8?B?ZGY3bzdGbEF3SFBCcUJpcDQ0Y1RjbUZqRDRTbkEreXFPajl5bUp3RnlzWTh2?=
+ =?utf-8?B?N2dtRkw0M001TkVkWkxpS2dhemdVYnJLRmxCNFhlcllNdTZSbDRoNkVsdTdT?=
+ =?utf-8?B?SlNrbGZIaFJ0VGJwblU2b3VNdXVwMytBZi81MStwdlRhQkdCeTA1SjkyS1ZF?=
+ =?utf-8?B?aDEzVTdpYzN3UC9HZ2RhODZ4TUN6YS9ZLzlBeHVGY2NJcXI3SmhNejFZR21S?=
+ =?utf-8?B?dlRWWWxFMWxDVFVsUTE4R3JyVmNxeURybFhRYTlhV0czaUFkSTg1UEhjaU1M?=
+ =?utf-8?B?RjJxMncxOEQ5T3YrUDVSS3B3L3puT1IrVjhReVB1aHQ1eVM1enNjRlVIVW9L?=
+ =?utf-8?B?UFFRaCtFMElhVEE4ZEFjY3RUNCtEZUF2UjB2WVdCa0lpa3NrclBYRWE4bkRq?=
+ =?utf-8?B?K0tuQjAzWnRVRW9qWkF1TUc4aU0xVUNIRHZxRFBRTjRDWGkzTUdVczN3TFpB?=
+ =?utf-8?B?d3RNZVZoSzl1YTJRVkRVRkpxTDZoSGR0VGNwQ0tWUzlOZlhjRmN2d3Z2bFBF?=
+ =?utf-8?B?YzVHM2ZvYlphb3JBZ1BXMGZpbGVKWjNweFczbDFtdHVMakkwcyt4OTdlSy9n?=
+ =?utf-8?B?VHk2Y0lWWHoySFQvZkFYWHQwSEprMDJrTFJNa1h2dkpOc1VIOElWTmlzNVRP?=
+ =?utf-8?B?eDZ0WmVJZmw3WTlCM3hyNDBWUFFSS051TzlPTnB6dHlRWXE0RjY5azg4WVZx?=
+ =?utf-8?B?RVdUbE9ZY2ttZ0F2SkNaUWkzQ2hCWHRwb0hZVERkblVwWmlqTXJheVIxOCtw?=
+ =?utf-8?B?R2tpdlV1ZFZRMWNBbGpvOWNMbDczNVpCb0JiTlI4alVEcDlUTmhVUW95N0Ja?=
+ =?utf-8?B?Y0tGZjZWZ2xyTStxbVRub0pYd05CTEZpQmg5aUJMOVZxam5aT0l2SlA3NVlp?=
+ =?utf-8?B?MERZZ1JyMk1RVGtYRVBXK0hLbUwvaWVCYk01OUtONEozWlhTS0NkUXhtT1B5?=
+ =?utf-8?B?ZHFXS2lZczA1S1M1czVTR2pvWWxkT05ub3VhR3ZPOCtwd2Q1ZWdPMHlxY25x?=
+ =?utf-8?B?VERKdXBpZzIwRkRtcnkzV3RDdytQNXhDYk5tbVMwNldYdUZzWUo4TExvdkN3?=
+ =?utf-8?B?blZSRTNKSXMwUWNuZk5uTkpRSllRaEFXOVc1SjFpb3NTMnZSL2RvUU9NTFlY?=
+ =?utf-8?B?RHJta2NqSitDU1crNTlKRjc4ZGQxaVNrN2tjS05EZDl5U0ZsUmU3NkhuQlJn?=
+ =?utf-8?B?SzVWdWQvZVFDNEZCNEFnVFQ0YTJSaWMvSXIxV3dsZTVJSzhEckdxOHl3cUVW?=
+ =?utf-8?B?UWxQT3FhOWtiN3c3MDdMMmNtZXcrM1JjcElFOTVYbEF4amRwSTVwSTdaS0VI?=
+ =?utf-8?B?UjVjWTVlM3JIVjNNK1Mzb28yemNNMUo0MXdaZWxydkpNN0tFeldDcGxWd1lF?=
+ =?utf-8?B?SlBJYnRVN3d3ZmUxb2RhQXFTdFZRQ1VKeWFqL0xEN2l1V0E1RUFPMW1vRDZa?=
+ =?utf-8?Q?NVMANUH1CTtAakujqK6QTyRX1?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e6388787-b093-487b-6bdc-08de21900d84
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB9194.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2025 02:06:12.3407
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Q7gpAb1PPmWBl54eMVOgjC73qK7qBzRWtjhyeQRB74TWDrO0krrNMaJK+7PUae/79I/IN0qwHMQaDb8yFqitEA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PPF7C0ACC722
 
-On Mon, 10 Nov 2025 12:45:23 +0100 Florian Fuchs wrote:
-> Handle skb allocation failures in RX path, to avoid NULL pointer
-> dereference and RX stalls under memory pressure. If the refill fails
-> with -ENOMEM, complete napi polling and wake up later to retry via timer.
-> Also explicitly re-enable RX DMA after oom, so the dmac doesn't remain
-> stopped in this situation.
+
+
+On 11/11/25 22:47, Jonathan Cameron wrote:
+> On Tue, 11 Nov 2025 17:38:18 +1100
+> Alexey Kardashevskiy <aik@amd.com> wrote:
 > 
-> Previously, memory pressure could lead to skb allocation failures and
-> subsequent Oops like:
+>> Implement the SEV-TIO (Trusted I/O) firmware interface for PCIe TDISP
+>> (Trust Domain In-Socket Protocol). This enables secure communication
+>> between trusted domains and PCIe devices through the PSP (Platform
+>> Security Processor).
+>>
+>> The implementation includes:
+>> - Device Security Manager (DSM) operations for establishing secure links
+>> - SPDM (Security Protocol and Data Model) over DOE (Data Object Exchange)
+>> - IDE (Integrity Data Encryption) stream management for secure PCIe
+>>
+>> This module bridges the SEV firmware stack with the generic PCIe TSM
+>> framework.
+>>
+>> This is phase1 as described in Documentation/driver-api/pci/tsm.rst.
+>>
+>> On AMD SEV, the AMD PSP firmware acts as TSM (manages the security/trust).
+>> The CCP driver provides the interface to it and registers in the TSM
+>> subsystem.
+>>
+>> Implement SEV TIO PSP command wrappers in sev-dev-tio.c and store
+>> the data in the SEV-TIO-specific structs.
+>>
+>> Implement TSM hooks and IDE setup in sev-dev-tsm.c.
+>>
+>> Signed-off-by: Alexey Kardashevskiy <aik@amd.com>
+> Hi Alexey,
 > 
-> 	Oops: Kernel access of bad area, sig: 11 [#2]
-> 	Hardware name: SonyPS3 Cell Broadband Engine 0x701000 PS3
-> 	NIP [c0003d0000065900] gelic_net_poll+0x6c/0x2d0 [ps3_gelic] (unreliable)
-> 	LR [c0003d00000659c4] gelic_net_poll+0x130/0x2d0 [ps3_gelic]
-> 	Call Trace:
-> 	  gelic_net_poll+0x130/0x2d0 [ps3_gelic] (unreliable)
-> 	  __napi_poll+0x44/0x168
-> 	  net_rx_action+0x178/0x290
+> Various minor comments inline.
 > 
-> Steps to reproduce the issue:
-> 	1. Start a continuous network traffic, like scp of a 20GB file
-> 	2. Inject failslab errors using the kernel fault injection:
-> 	    echo -1 > /sys/kernel/debug/failslab/times
-> 	    echo 30 > /sys/kernel/debug/failslab/interval
-> 	    echo 100 > /sys/kernel/debug/failslab/probability
-> 	3. After some time, traces start to appear, kernel Oopses
-> 	   and the system stops
+> Thanks,
 > 
-> Step 2 is not always necessary, as it is usually already triggered by
-> the transfer of a big enough file.
-
-Have you actually tested this on a real device?
-Please describe the testing you have done rather that "how to test".
-
-> Fixes: 02c1889166b4 ("ps3: gigabit ethernet driver for PS3, take3")
-> Signed-off-by: Florian Fuchs <fuchsfl@gmail.com>
-> ---
->  drivers/net/ethernet/toshiba/ps3_gelic_net.c | 54 +++++++++++++++-----
->  drivers/net/ethernet/toshiba/ps3_gelic_net.h |  1 +
->  2 files changed, 42 insertions(+), 13 deletions(-)
+> Jonathan
 > 
-> diff --git a/drivers/net/ethernet/toshiba/ps3_gelic_net.c b/drivers/net/ethernet/toshiba/ps3_gelic_net.c
-> index 5ee8e8980393..a8121f7583f9 100644
-> --- a/drivers/net/ethernet/toshiba/ps3_gelic_net.c
-> +++ b/drivers/net/ethernet/toshiba/ps3_gelic_net.c
-> @@ -259,6 +259,7 @@ void gelic_card_down(struct gelic_card *card)
->  	mutex_lock(&card->updown_lock);
->  	if (atomic_dec_if_positive(&card->users) == 0) {
->  		pr_debug("%s: real do\n", __func__);
-> +		timer_delete_sync(&card->rx_oom_timer);
->  		napi_disable(&card->napi);
-
-I think the ordering here should be inverted
-
->  		/*
->  		 * Disable irq. Wireless interrupts will
-> @@ -970,7 +971,8 @@ static void gelic_net_pass_skb_up(struct gelic_descr *descr,
->   * gelic_card_decode_one_descr - processes an rx descriptor
->   * @card: card structure
->   *
-> - * returns 1 if a packet has been sent to the stack, otherwise 0
-> + * returns 1 if a packet has been sent to the stack, -ENOMEM on skb alloc
-> + * failure, otherwise 0
->   *
->   * processes an rx descriptor by iommu-unmapping the data buffer and passing
->   * the packet up to the stack
-> @@ -981,16 +983,17 @@ static int gelic_card_decode_one_descr(struct gelic_card *card)
->  	struct gelic_descr_chain *chain = &card->rx_chain;
->  	struct gelic_descr *descr = chain->head;
->  	struct net_device *netdev = NULL;
-> -	int dmac_chain_ended;
-> +	int dmac_chain_ended = 0;
->  
->  	status = gelic_descr_get_status(descr);
->  
->  	if (status == GELIC_DESCR_DMA_CARDOWNED)
->  		return 0;
->  
-> -	if (status == GELIC_DESCR_DMA_NOT_IN_USE) {
-> +	if (status == GELIC_DESCR_DMA_NOT_IN_USE || !descr->skb) {
->  		dev_dbg(ctodev(card), "dormant descr? %p\n", descr);
-> -		return 0;
-> +		dmac_chain_ended = 1;
-> +		goto refill;
->  	}
->  
->  	/* netdevice select */
-> @@ -1048,9 +1051,10 @@ static int gelic_card_decode_one_descr(struct gelic_card *card)
->  refill:
->  
->  	/* is the current descriptor terminated with next_descr == NULL? */
-> -	dmac_chain_ended =
-> -		be32_to_cpu(descr->hw_regs.dmac_cmd_status) &
-> -		GELIC_DESCR_RX_DMA_CHAIN_END;
-> +	if (!dmac_chain_ended)
-> +		dmac_chain_ended =
-> +			be32_to_cpu(descr->hw_regs.dmac_cmd_status) &
-> +			GELIC_DESCR_RX_DMA_CHAIN_END;
-
-TBH handling the OOM inside the Rx function seems a little fragile.
-What if there is a packet to Rx as we enter. I don't see any loop here
-it just replaces the used buffer..
-
->  	/*
->  	 * So that always DMAC can see the end
->  	 * of the descriptor chain to avoid
-> @@ -1062,10 +1066,12 @@ static int gelic_card_decode_one_descr(struct gelic_card *card)
->  	gelic_descr_set_status(descr, GELIC_DESCR_DMA_NOT_IN_USE);
->  
->  	/*
-> -	 * this call can fail, but for now, just leave this
-> -	 * descriptor without skb
-> +	 * this call can fail, propagate the error
->  	 */
-> -	gelic_descr_prepare_rx(card, descr);
-> +	int ret = gelic_descr_prepare_rx(card, descr);
-> +
-
-please dont declare variables half way thru a function and dont
-separate function call from its error check with empty lines
-
-> +	if (ret)
-> +		return ret;
->  
->  	chain->tail = descr;
->  	chain->head = descr->next;
-> @@ -1087,6 +1093,17 @@ static int gelic_card_decode_one_descr(struct gelic_card *card)
->  	return 1;
->  }
->  
-> +/**
-> + *  gelic_rx_oom_timer - Restart napi poll if oom occurred
-> + *  @t: timer list
-> + */
-
-This kdoc is worthless 
-
-> +static void gelic_rx_oom_timer(struct timer_list *t)
-> +{
-> +	struct gelic_card *card = timer_container_of(card, t, rx_oom_timer);
-> +
-> +	napi_schedule(&card->napi);
-> +}
-> +
->  /**
->   * gelic_net_poll - NAPI poll function called by the stack to return packets
->   * @napi: napi structure
-> @@ -1099,12 +1116,21 @@ static int gelic_net_poll(struct napi_struct *napi, int budget)
->  {
->  	struct gelic_card *card = container_of(napi, struct gelic_card, napi);
->  	int packets_done = 0;
-> +	int work_result = 0;
->  
->  	while (packets_done < budget) {
-> -		if (!gelic_card_decode_one_descr(card))
-> -			break;
-> +		work_result = gelic_card_decode_one_descr(card);
-> +		if (work_result == 1) {
-> +			packets_done++;
-> +			continue;
-> +		}
-> +		break;
-
-common / success path should be the less indented one.
-
-> +	}
->  
-> -		packets_done++;
-> +	if (work_result == -ENOMEM) {
-> +		napi_complete_done(napi, packets_done);
-> +		mod_timer(&card->rx_oom_timer, jiffies + 1);
-> +		return packets_done;
->  	}
->  
->  	if (packets_done < budget) {
-> @@ -1576,6 +1602,8 @@ static struct gelic_card *gelic_alloc_card_net(struct net_device **netdev)
->  	mutex_init(&card->updown_lock);
->  	atomic_set(&card->users, 0);
->  
-> +	timer_setup(&card->rx_oom_timer, gelic_rx_oom_timer, 0);
-> +
->  	return card;
->  }
->  
-> diff --git a/drivers/net/ethernet/toshiba/ps3_gelic_net.h b/drivers/net/ethernet/toshiba/ps3_gelic_net.h
-> index f7d7931e51b7..c10f1984a5a1 100644
-> --- a/drivers/net/ethernet/toshiba/ps3_gelic_net.h
-> +++ b/drivers/net/ethernet/toshiba/ps3_gelic_net.h
-> @@ -268,6 +268,7 @@ struct gelic_vlan_id {
->  struct gelic_card {
->  	struct napi_struct napi;
->  	struct net_device *netdev[GELIC_PORT_MAX];
-> +	struct timer_list rx_oom_timer;
->  	/*
->  	 * hypervisor requires irq_status should be
->  	 * 8 bytes aligned, but u64 member is
+>> diff --git a/drivers/crypto/ccp/sev-dev-tio.h b/drivers/crypto/ccp/sev-dev-tio.h
+>> new file mode 100644
+>> index 000000000000..c72ac38d4351
+>> --- /dev/null
+>> +++ b/drivers/crypto/ccp/sev-dev-tio.h
 > 
-> base-commit: 96a9178a29a6b84bb632ebeb4e84cf61191c73d5
+>> diff --git a/drivers/crypto/ccp/sev-dev-tio.c b/drivers/crypto/ccp/sev-dev-tio.c
+>> new file mode 100644
+>> index 000000000000..ca0db6e64839
+>> --- /dev/null
+>> +++ b/drivers/crypto/ccp/sev-dev-tio.c
+> 
+>> +static size_t sla_dobj_id_to_size(u8 id)
+>> +{
+>> +	size_t n;
+>> +
+>> +	BUILD_BUG_ON(sizeof(struct spdm_dobj_hdr_resp) != 0x10);
+>> +	switch (id) {
+>> +	case SPDM_DOBJ_ID_REQ:
+>> +		n = sizeof(struct spdm_dobj_hdr_req);
+>> +		break;
+>> +	case SPDM_DOBJ_ID_RESP:
+>> +		n = sizeof(struct spdm_dobj_hdr_resp);
+>> +		break;
+>> +	default:
+>> +		WARN_ON(1);
+>> +		n = 0;
+>> +		break;
+>> +	}
+>> +
+>> +	return n;
+> 
+> Maybe just returning above would be simpler and remove need for local variables
+> etc.
+>> +}
+>>
+>> + * struct sev_data_tio_dev_connect - TIO_DEV_CONNECT
+>> + *
+>> + * @length: Length in bytes of this command buffer.
+>> + * @spdm_ctrl: SPDM control structure defined in Section 5.1.
+>> + * @device_id: The PCIe Routing Identifier of the device to connect to.
+>> + * @root_port_id: The PCIe Routing Identifier of the root port of the device
+> 
+> A few of these aren't present in the structure so out of date docs I think
+> 
+>> + * @segment_id: The PCIe Segment Identifier of the device to connect to.
+>> + * @dev_ctx_sla: Scatter list address of the device context buffer.
+>> + * @tc_mask: Bitmask of the traffic classes to initialize for SEV-TIO usage.
+>> + *           Setting the kth bit of the TC_MASK to 1 indicates that the traffic
+>> + *           class k will be initialized.
+>> + * @cert_slot: Slot number of the certificate requested for constructing the SPDM session.
+>> + * @ide_stream_id: IDE stream IDs to be associated with this device.
+>> + *                 Valid only if corresponding bit in TC_MASK is set.
+>> + */
+>> +struct sev_data_tio_dev_connect {
+>> +	u32 length;
+>> +	u32 reserved1;
+>> +	struct spdm_ctrl spdm_ctrl;
+>> +	u8 reserved2[8];
+>> +	struct sla_addr_t dev_ctx_sla;
+>> +	u8 tc_mask;
+>> +	u8 cert_slot;
+>> +	u8 reserved3[6];
+>> +	u8 ide_stream_id[8];
+>> +	u8 reserved4[8];
+>> +} __packed;
+>> +
+>> +/**
+>> + * struct sev_data_tio_dev_disconnect - TIO_DEV_DISCONNECT
+>> + *
+>> + * @length: Length in bytes of this command buffer.
+>> + * @force: Force device disconnect without SPDM traffic.
+>> + * @spdm_ctrl: SPDM control structure defined in Section 5.1.
+>> + * @dev_ctx_sla: Scatter list address of the device context buffer.
+>> + */
+>> +struct sev_data_tio_dev_disconnect {
+>> +	u32 length;
+>> +	union {
+>> +		u32 flags;
+>> +		struct {
+>> +			u32 force:1;
+>> +		};
+>> +	};
+>> +	struct spdm_ctrl spdm_ctrl;
+>> +	struct sla_addr_t dev_ctx_sla;
+>> +} __packed;
+>> +
+>> +/**
+>> + * struct sev_data_tio_dev_meas - TIO_DEV_MEASUREMENTS
+>> + *
+>> + * @length: Length in bytes of this command buffer
+> 
+> flags need documentation as well.
+
+Agrh. I asked the Cursor's AI to fix them all and yet it missed a bunch :)
+
+> Generally I'd avoid bitfields and rely on defines so we don't hit
+> the weird stuff the c spec allows to be done with bitfields.
+
+imho bitfields are okay until different endianness but here is always LE.
+
+>> + * @raw_bitstream: 0: Requests the digest form of the attestation report
+>> + *                 1: Requests the raw bitstream form of the attestation report
+>> + * @spdm_ctrl: SPDM control structure defined in Section 5.1.
+>> + * @dev_ctx_sla: Scatter list address of the device context buffer.
+>> + */
+>> +struct sev_data_tio_dev_meas {
+>> +	u32 length;
+>> +	union {
+>> +		u32 flags;
+>> +		struct {
+>> +			u32 raw_bitstream:1;
+>> +		};
+>> +	};
+>> +	struct spdm_ctrl spdm_ctrl;
+>> +	struct sla_addr_t dev_ctx_sla;
+>> +	u8 meas_nonce[32];
+>> +} __packed;
+> 
+>> +/**
+>> + * struct sev_data_tio_dev_reclaim - TIO_DEV_RECLAIM command
+>> + *
+>> + * @length: Length in bytes of this command buffer
+>> + * @dev_ctx_paddr: SPA of page donated by hypervisor
+>> + */
+>> +struct sev_data_tio_dev_reclaim {
+>> +	u32 length;
+>> +	u32 reserved;
+> Why a u32 for this reserved, but u8[] arrays for some of thos in
+> other structures like sev_data_tio_asid_fence_status.
+
+I am just repeating the SEV TIO spec (which is getting polished now so I'll sync up with that).
+
+> I'd aim for consistency on that. I don't really mind which option!
+>> +	struct sla_addr_t dev_ctx_sla;
+>> +} __packed;
+>> +
+>> +/**
+>> + * struct sev_data_tio_asid_fence_clear - TIO_ASID_FENCE_CLEAR command
+>> + *
+>> + * @length: Length in bytes of this command buffer
+>> + * @dev_ctx_paddr: Scatter list address of device context
+>> + * @gctx_paddr: System physical address of guest context page
+> 
+> As below wrt to complete docs.
+> 
+>> + *
+>> + * This command clears the ASID fence for a TDI.
+>> + */
+>> +struct sev_data_tio_asid_fence_clear {
+>> +	u32 length;				/* In */
+>> +	u32 reserved1;
+>> +	struct sla_addr_t dev_ctx_paddr;	/* In */
+>> +	u64 gctx_paddr;			/* In */
+>> +	u8 reserved2[8];
+>> +} __packed;
+>> +
+>> +/**
+>> + * struct sev_data_tio_asid_fence_status - TIO_ASID_FENCE_STATUS command
+>> + *
+>> + * @length: Length in bytes of this command buffer
+> Kernel-doc complains about undocument structure elements, so you probably have
+> to add a trivial comment for the two reserved ones to keep it happy.
+> 
+>> + * @dev_ctx_paddr: Scatter list address of device context
+>> + * @asid: Address Space Identifier to query
+>> + * @status_pa: System physical address where fence status will be written
+>> + *
+>> + * This command queries the fence status for a specific ASID.
+>> + */
+>> +struct sev_data_tio_asid_fence_status {
+>> +	u32 length;				/* In */
+>> +	u8 reserved1[4];
+>> +	struct sla_addr_t dev_ctx_paddr;	/* In */
+>> +	u32 asid;				/* In */
+>> +	u64 status_pa;
+>> +	u8 reserved2[4];
+>> +} __packed;
+>> +
+>> +static struct sla_buffer_hdr *sla_buffer_map(struct sla_addr_t sla)
+>> +{
+>> +	struct sla_buffer_hdr *buf;
+>> +
+>> +	BUILD_BUG_ON(sizeof(struct sla_buffer_hdr) != 0x40);
+>> +	if (IS_SLA_NULL(sla))
+>> +		return NULL;
+>> +
+>> +	if (sla.page_type == SLA_PAGE_TYPE_SCATTER) {
+>> +		struct sla_addr_t *scatter = sla_to_va(sla);
+>> +		unsigned int i, npages = 0;
+>> +		struct page **pp;
+>> +
+>> +		for (i = 0; i < SLA_SCATTER_LEN(sla); ++i) {
+>> +			if (WARN_ON_ONCE(SLA_SZ(scatter[i]) > SZ_4K))
+>> +				return NULL;
+>> +
+>> +			if (WARN_ON_ONCE(scatter[i].page_type == SLA_PAGE_TYPE_SCATTER))
+>> +				return NULL;
+>> +
+>> +			if (IS_SLA_EOL(scatter[i])) {
+>> +				npages = i;
+>> +				break;
+>> +			}
+>> +		}
+>> +		if (WARN_ON_ONCE(!npages))
+>> +			return NULL;
+>> +
+>> +		pp = kmalloc_array(npages, sizeof(pp[0]), GFP_KERNEL);
+> 
+> Could use a __free to avoid needing to manually clean this up.
+> 
+>> +		if (!pp)
+>> +			return NULL;
+>> +
+>> +		for (i = 0; i < npages; ++i)
+>> +			pp[i] = sla_to_page(scatter[i]);
+>> +
+>> +		buf = vm_map_ram(pp, npages, 0);
+>> +		kfree(pp);
+>> +	} else {
+>> +		struct page *pg = sla_to_page(sla);
+>> +
+>> +		buf = vm_map_ram(&pg, 1, 0);
+>> +	}
+>> +
+>> +	return buf;
+>> +}
+> 
+>> +
+>> +/* Expands a buffer, only firmware owned buffers allowed for now */
+>> +static int sla_expand(struct sla_addr_t *sla, size_t *len)
+>> +{
+>> +	struct sla_buffer_hdr *oldbuf = sla_buffer_map(*sla), *newbuf;
+>> +	struct sla_addr_t oldsla = *sla, newsla;
+>> +	size_t oldlen = *len, newlen;
+>> +
+>> +	if (!oldbuf)
+>> +		return -EFAULT;
+>> +
+>> +	newlen = oldbuf->capacity_sz;
+>> +	if (oldbuf->capacity_sz == oldlen) {
+>> +		/* This buffer does not require expansion, must be another buffer */
+>> +		sla_buffer_unmap(oldsla, oldbuf);
+>> +		return 1;
+>> +	}
+>> +
+>> +	pr_notice("Expanding BUFFER from %ld to %ld bytes\n", oldlen, newlen);
+>> +
+>> +	newsla = sla_alloc(newlen, true);
+>> +	if (IS_SLA_NULL(newsla))
+>> +		return -ENOMEM;
+>> +
+>> +	newbuf = sla_buffer_map(newsla);
+>> +	if (!newbuf) {
+>> +		sla_free(newsla, newlen, true);
+>> +		return -EFAULT;
+>> +	}
+>> +
+>> +	memcpy(newbuf, oldbuf, oldlen);
+>> +
+>> +	sla_buffer_unmap(newsla, newbuf);
+>> +	sla_free(oldsla, oldlen, true);
+>> +	*sla = newsla;
+>> +	*len = newlen;
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int sev_tio_do_cmd(int cmd, void *data, size_t data_len, int *psp_ret,
+>> +			  struct tsm_dsm_tio *dev_data, struct tsm_spdm *spdm)
+>> +{
+>> +	int rc;
+>> +
+>> +	*psp_ret = 0;
+>> +	rc = sev_do_cmd(cmd, data, psp_ret);
+>> +
+>> +	if (WARN_ON(!spdm && !rc && *psp_ret == SEV_RET_SPDM_REQUEST))
+>> +		return -EIO;
+>> +
+>> +	if (rc == 0 && *psp_ret == SEV_RET_EXPAND_BUFFER_LENGTH_REQUEST) {
+>> +		int rc1, rc2;
+>> +
+>> +		rc1 = sla_expand(&dev_data->output, &dev_data->output_len);
+>> +		if (rc1 < 0)
+>> +			return rc1;
+>> +
+>> +		rc2 = sla_expand(&dev_data->scratch, &dev_data->scratch_len);
+>> +		if (rc2 < 0)
+>> +			return rc2;
+>> +
+>> +		if (!rc1 && !rc2)
+>> +			/* Neither buffer requires expansion, this is wrong */
+> 
+> Is this check correct?  I think you return 1 on no need to expand.
+
+
+Well, if the PSP said "need expansion" but did not say "of what", then I'd thinkg it is screwed and I do not really want to continue. May return 0 but make it WARN_ON_ONCE(!rc1 && !rc2) if it is better.
+
+> 
+>> +			return -EFAULT;
+>> +
+>> +		*psp_ret = 0;
+>> +		rc = sev_do_cmd(cmd, data, psp_ret);
+>> +	}
+>> +
+>> +	if (spdm && (rc == 0 || rc == -EIO) && *psp_ret == SEV_RET_SPDM_REQUEST) {
+>> +		struct spdm_dobj_hdr_resp *resp_hdr;
+>> +		struct spdm_dobj_hdr_req *req_hdr;
+>> +		struct sev_tio_status *tio_status = to_tio_status(dev_data);
+>> +		size_t resp_len = tio_status->spdm_req_size_max -
+>> +			(sla_dobj_id_to_size(SPDM_DOBJ_ID_RESP) + sizeof(struct sla_buffer_hdr));
+>> +
+>> +		if (!dev_data->cmd) {
+>> +			if (WARN_ON_ONCE(!data_len || (data_len != *(u32 *) data)))
+>> +				return -EINVAL;
+>> +			if (WARN_ON(data_len > sizeof(dev_data->cmd_data)))
+>> +				return -EFAULT;
+>> +			memcpy(dev_data->cmd_data, data, data_len);
+>> +			memset(&dev_data->cmd_data[data_len], 0xFF,
+>> +			       sizeof(dev_data->cmd_data) - data_len);
+>> +			dev_data->cmd = cmd;
+>> +		}
+>> +
+>> +		req_hdr = sla_to_dobj_req_hdr(dev_data->reqbuf);
+>> +		resp_hdr = sla_to_dobj_resp_hdr(dev_data->respbuf);
+>> +		switch (req_hdr->data_type) {
+>> +		case DOBJ_DATA_TYPE_SPDM:
+>> +			rc = TSM_PROTO_CMA_SPDM;
+>> +			break;
+>> +		case DOBJ_DATA_TYPE_SECURE_SPDM:
+>> +			rc = TSM_PROTO_SECURED_CMA_SPDM;
+>> +			break;
+>> +		default:
+>> +			rc = -EINVAL;
+>> +			return rc;
+> 
+> 			return -EINVAL;
+> 
+>> +		}
+>> +		resp_hdr->data_type = req_hdr->data_type;
+>> +		spdm->req_len = req_hdr->hdr.length - sla_dobj_id_to_size(SPDM_DOBJ_ID_REQ);
+>> +		spdm->rsp_len = resp_len;
+>> +	} else if (dev_data && dev_data->cmd) {
+>> +		/* For either error or success just stop the bouncing */
+>> +		memset(dev_data->cmd_data, 0, sizeof(dev_data->cmd_data));
+>> +		dev_data->cmd = 0;
+>> +	}
+>> +
+>> +	return rc;
+>> +}
+>> +
+> 
+>> +static int spdm_ctrl_init(struct tsm_spdm *spdm, struct spdm_ctrl *ctrl,
+>> +			  struct tsm_dsm_tio *dev_data)
+> 
+> This seems like a slightly odd function as it is initializing two different
+> things.  To me I'd read this as only initializing the spdm_ctrl structure.
+> Perhaps split, or rename?
+> 
+>> +{
+>> +	ctrl->req = dev_data->req;
+>> +	ctrl->resp = dev_data->resp;
+>> +	ctrl->scratch = dev_data->scratch;
+>> +	ctrl->output = dev_data->output;
+>> +
+>> +	spdm->req = sla_to_data(dev_data->reqbuf, SPDM_DOBJ_ID_REQ);
+>> +	spdm->rsp = sla_to_data(dev_data->respbuf, SPDM_DOBJ_ID_RESP);
+>> +	if (!spdm->req || !spdm->rsp)
+>> +		return -EFAULT;
+>> +
+>> +	return 0;
+>> +}
+> 
+>> +
+>> +int sev_tio_init_locked(void *tio_status_page)
+>> +{
+>> +	struct sev_tio_status *tio_status = tio_status_page;
+>> +	struct sev_data_tio_status data_status = {
+>> +		.length = sizeof(data_status),
+>> +	};
+>> +	int ret = 0, psp_ret = 0;
+> 
+> ret always set before use so don't initialize.
+> 
+>> +
+>> +	data_status.status_paddr = __psp_pa(tio_status_page);
+>> +	ret = __sev_do_cmd_locked(SEV_CMD_TIO_STATUS, &data_status, &psp_ret);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	if (tio_status->length < offsetofend(struct sev_tio_status, tdictx_size) ||
+>> +	    tio_status->flags & 0xFFFFFF00)
+>> +		return -EFAULT;
+>> +
+>> +	if (!tio_status->tio_en && !tio_status->tio_init_done)
+>> +		return -ENOENT;
+>> +
+>> +	if (tio_status->tio_init_done)
+>> +		return -EBUSY;
+>> +
+>> +	struct sev_data_tio_init ti = { .length = sizeof(ti) };
+>> +
+>> +	ret = __sev_do_cmd_locked(SEV_CMD_TIO_INIT, &ti, &psp_ret);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	ret = __sev_do_cmd_locked(SEV_CMD_TIO_STATUS, &data_status, &psp_ret);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	return 0;
+> 	return __sev_do_cmd_locked() perhaps.
+> 
+>> +}
+>> +
+>> +int sev_tio_dev_create(struct tsm_dsm_tio *dev_data, u16 device_id,
+>> +		       u16 root_port_id, u8 segment_id)
+>> +{
+>> +	struct sev_tio_status *tio_status = to_tio_status(dev_data);
+>> +	struct sev_data_tio_dev_create create = {
+>> +		.length = sizeof(create),
+>> +		.device_id = device_id,
+>> +		.root_port_id = root_port_id,
+>> +		.segment_id = segment_id,
+>> +	};
+>> +	void *data_pg;
+>> +	int ret;
+>> +
+>> +	dev_data->dev_ctx = sla_alloc(tio_status->devctx_size, true);
+>> +	if (IS_SLA_NULL(dev_data->dev_ctx))
+>> +		return -ENOMEM;
+>> +
+>> +	data_pg = snp_alloc_firmware_page(GFP_KERNEL_ACCOUNT);
+>> +	if (!data_pg) {
+>> +		ret = -ENOMEM;
+>> +		goto free_ctx_exit;
+>> +	}
+>> +
+>> +	create.dev_ctx_sla = dev_data->dev_ctx;
+>> +	ret = sev_tio_do_cmd(SEV_CMD_TIO_DEV_CREATE, &create, sizeof(create),
+>> +			     &dev_data->psp_ret, dev_data, NULL);
+>> +	if (ret)
+>> +		goto free_data_pg_exit;
+>> +
+>> +	dev_data->data_pg = data_pg;
+>> +
+>> +	return ret;
+> 
+> return 0;  Might as well make it clear this is always a good path.
+> 
+>> +
+>> +free_data_pg_exit:
+>> +	snp_free_firmware_page(data_pg);
+>> +free_ctx_exit:
+>> +	sla_free(create.dev_ctx_sla, tio_status->devctx_size, true);
+>> +	return ret;
+>> +}
+> 
+>> +
+>> +int sev_tio_dev_connect(struct tsm_dsm_tio *dev_data, u8 tc_mask, u8 ids[8], u8 cert_slot,
+>> +			struct tsm_spdm *spdm)
+>> +{
+>> +	struct sev_data_tio_dev_connect connect = {
+>> +		.length = sizeof(connect),
+>> +		.tc_mask = tc_mask,
+>> +		.cert_slot = cert_slot,
+>> +		.dev_ctx_sla = dev_data->dev_ctx,
+>> +		.ide_stream_id = {
+>> +			ids[0], ids[1], ids[2], ids[3],
+>> +			ids[4], ids[5], ids[6], ids[7]
+>> +		},
+>> +	};
+>> +	int ret;
+>> +
+>> +	if (WARN_ON(IS_SLA_NULL(dev_data->dev_ctx)))
+>> +		return -EFAULT;
+>> +	if (!(tc_mask & 1))
+>> +		return -EINVAL;
+>> +
+>> +	ret = spdm_ctrl_alloc(dev_data, spdm);
+>> +	if (ret)
+>> +		return ret;
+>> +	ret = spdm_ctrl_init(spdm, &connect.spdm_ctrl, dev_data);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	ret = sev_tio_do_cmd(SEV_CMD_TIO_DEV_CONNECT, &connect, sizeof(connect),
+>> +			     &dev_data->psp_ret, dev_data, spdm);
+>> +
+>> +	return ret;
+> 
+> return sev_tio_do_cmd...
+> 
+>> +}
+>> +
+>> +int sev_tio_dev_disconnect(struct tsm_dsm_tio *dev_data, struct tsm_spdm *spdm, bool force)
+>> +{
+>> +	struct sev_data_tio_dev_disconnect dc = {
+>> +		.length = sizeof(dc),
+>> +		.dev_ctx_sla = dev_data->dev_ctx,
+>> +		.force = force,
+>> +	};
+>> +	int ret;
+>> +
+>> +	if (WARN_ON_ONCE(IS_SLA_NULL(dev_data->dev_ctx)))
+>> +		return -EFAULT;
+>> +
+>> +	ret = sspdm_ctrl_initpdm_ctrl_init(spdm, &dc.spdm_ctrl, dev_data);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	ret = sev_tio_do_cmd(SEV_CMD_TIO_DEV_DISCONNECT, &dc, sizeof(dc),
+>> +			     &dev_data->psp_ret, dev_data, spdm);
+>> +
+>> +	return ret;
+> 
+> return sev_tio..
+> 
+>> +}
+>> +
+>> +int sev_tio_asid_fence_clear(struct sla_addr_t dev_ctx, u64 gctx_paddr, int *psp_ret)
+>> +{
+>> +	struct sev_data_tio_asid_fence_clear c = {
+>> +		.length = sizeof(c),
+>> +		.dev_ctx_paddr = dev_ctx,
+>> +		.gctx_paddr = gctx_paddr,
+>> +	};
+>> +
+>> +	return sev_do_cmd(SEV_CMD_TIO_ASID_FENCE_CLEAR, &c, psp_ret);
+>> +}
+>> +
+>> +int sev_tio_asid_fence_status(struct tsm_dsm_tio *dev_data, u16 device_id, u8 segment_id,
+>> +			      u32 asid, bool *fenced)
+> The meaning of return codes in these functions is a mix of errno and SEV specific.
+> Perhaps some documentation to make that clear, or even a typedef for the SEV ones?
+>> +{
+>> +	u64 *status = prep_data_pg(u64, dev_data);
+>> +	struct sev_data_tio_asid_fence_status s = {
+>> +		.length = sizeof(s),
+>> +		.dev_ctx_paddr = dev_data->dev_ctx,
+>> +		.asid = asid,
+>> +		.status_pa = __psp_pa(status),
+>> +	};
+>> +	int ret;
+>> +
+>> +	ret = sev_do_cmd(SEV_CMD_TIO_ASID_FENCE_STATUS, &s, &dev_data->psp_ret);
+>> +
+>> +	if (ret == SEV_RET_SUCCESS) {
+> 
+> I guess this gets more complex in future series to mean that checking
+> the opposite isn't the way to go?
+> 	if (ret != SEV_RET_SUCCESS)
+> 		return ret;
+> 
+> If not I'd do that to reduce indent and have a nice quick exit
+> for errors.
+> 
+>> +		u8 dma_status = *status & 0x3;
+>> +		u8 mmio_status = (*status >> 2) & 0x3;
+>> +
+>> +		switch (dma_status) {
+>> +		case 0:
+> These feel like magic numbers that could perhaps have defines to give
+> them pretty names?
+>> +			*fenced = false;
+>> +			break;
+>> +		case 1:
+>> +		case 3:
+>> +			*fenced = true;
+>> +			break;
+>> +		default:
+>> +			pr_err("%04x:%x:%x.%d: undefined DMA fence state %#llx\n",
+>> +			       segment_id, PCI_BUS_NUM(device_id),
+>> +			       PCI_SLOT(device_id), PCI_FUNC(device_id), *status);
+>> +			*fenced = true;
+>> +			break;
+>> +		}
+>> +
+>> +		switch (mmio_status) {
+>> +		case 0:
+> Same as above, names might be nice.
+>> +			*fenced = false;
+>> +			break;
+>> +		case 3:
+>> +			*fenced = true;
+>> +			break;
+>> +		default:
+>> +			pr_err("%04x:%x:%x.%d: undefined MMIO fence state %#llx\n",
+>> +			       segment_id, PCI_BUS_NUM(device_id),
+>> +			       PCI_SLOT(device_id), PCI_FUNC(device_id), *status);
+>> +			*fenced = true;
+>> +			break;
+>> +		}
+>> +	}
+>> +
+>> +	return ret;
+>> +}
+> 
+>> diff --git a/drivers/crypto/ccp/sev-dev-tsm.c b/drivers/crypto/ccp/sev-dev-tsm.c
+>> new file mode 100644
+>> index 000000000000..4702139185a2
+>> --- /dev/null
+>> +++ b/drivers/crypto/ccp/sev-dev-tsm.c
+> 
+>> +
+>> +static uint nr_ide_streams = TIO_DEFAULT_NR_IDE_STREAMS;
+>> +module_param_named(ide_nr, nr_ide_streams, uint, 0644);
+>> +MODULE_PARM_DESC(ide_nr, "Set the maximum number of IDE streams per PHB");
+>> +
+>> +#define dev_to_sp(dev)		((struct sp_device *)dev_get_drvdata(dev))
+>> +#define dev_to_psp(dev)		((struct psp_device *)(dev_to_sp(dev)->psp_data))
+>> +#define dev_to_sev(dev)		((struct sev_device *)(dev_to_psp(dev)->sev_data))
+>> +#define tsm_dev_to_sev(tsmdev)	dev_to_sev((tsmdev)->dev.parent)
+>> +#define tsm_pf0_to_sev(t)	tsm_dev_to_sev((t)->base.owner)
+>> +
+>> +/*to_pci_tsm_pf0((pdev)->tsm)*/
+> 
+> Left over of something?
+> 
+>> +#define pdev_to_tsm_pf0(pdev)	(((pdev)->tsm && (pdev)->tsm->dsm_dev) ? \
+>> +				((struct pci_tsm_pf0 *)((pdev)->tsm->dsm_dev->tsm)) : \
+>> +				NULL)
+>> +
+>> +#define tsm_pf0_to_data(t)	(&(container_of((t), struct tio_dsm, tsm)->data))
+>> +
+>> +static int sev_tio_spdm_cmd(struct pci_tsm_pf0 *dsm, int ret)
+>> +{
+>> +	struct tsm_dsm_tio *dev_data = tsm_pf0_to_data(dsm);
+>> +	struct tsm_spdm *spdm = &dsm->spdm;
+>> +	struct pci_doe_mb *doe_mb;
+>> +
+>> +	/* Check the main command handler response before entering the loop */
+>> +	if (ret == 0 && dev_data->psp_ret != SEV_RET_SUCCESS)
+>> +		return -EINVAL;
+>> +	else if (ret <= 0)
+>> +		return ret;
+> 
+> 	if (ret <= 0)
+> 		return ret;
+> 
+> as returned already in the if path.
+> 
+>> +
+>> +	/* ret > 0 means "SPDM requested" */
+>> +	while (ret > 0) {
+>> +		/* The proto can change at any point */
+>> +		if (ret == TSM_PROTO_CMA_SPDM) {
+>> +			doe_mb = dsm->doe_mb;
+>> +		} else if (ret == TSM_PROTO_SECURED_CMA_SPDM) {
+>> +			doe_mb = dsm->doe_mb_sec;
+>> +		} else {
+>> +			ret = -EFAULT;
+>> +			break;
+> I'd be tempted to do
+> 		else
+> 			return -EFAULT;
+> here and similar if the other error path below.
+>> +		}
+>> +
+>> +		ret = pci_doe(doe_mb, PCI_VENDOR_ID_PCI_SIG, ret,
+>> +			      spdm->req, spdm->req_len, spdm->rsp, spdm->rsp_len);
+>> +		if (ret < 0)
+>> +			break;
+>> +
+>> +		WARN_ON_ONCE(ret == 0); /* The response should never be empty */
+>> +		spdm->rsp_len = ret;
+>> +		ret = sev_tio_continue(dev_data, &dsm->spdm);
+>> +	}
+>> +
+>> +	return ret;
+>> +}
+>> +
+>> +static int stream_enable(struct pci_ide *ide)
+>> +{
+>> +	struct pci_dev *rp = pcie_find_root_port(ide->pdev);
+>> +	int ret;
+>> +
+>> +	ret = pci_ide_stream_enable(rp, ide);
+> 
+> I would suggest using a goto for the cleanup to avoid having
+> an unusual code flow, but more interesting to me is why pci_ide_stream_enable()
+> has side effects on failure that means we have to call pci_ide_stream_disable().
+> 
+> Looking at Dan's patch I can see that we might have programmed things
+> but then the hardware failed to set them up.   
+> Perhaps we should push
+> cleanup into that function or at least add something to docs to point
+> out that we must cleanup whether or not that function succeeds?
+
+
+pci_ide_stream_enable() is called on the rootport and then the endpoint and the revert is done on the rootport, cannot push the cleanup to pci_ide_stream_enable().
+
+
+
+> 
+>> +	if (!ret)
+>> +		ret = pci_ide_stream_enable(ide->pdev, ide);
+>> +
+>> +	if (ret)
+>> +		pci_ide_stream_disable(rp, ide);
+>> +
+>> +	return ret;
+>> +}
+>> +
+>> +static int streams_enable(struct pci_ide **ide)
+>> +{
+>> +	int ret = 0;
+>> +
+>> +	for (int i = 0; i < TIO_IDE_MAX_TC; ++i) {
+>> +		if (ide[i]) {
+>> +			ret = stream_enable(ide[i]);
+>> +			if (ret)
+> Personal taste thing so up to you but I'd do return ret;
+> here and return 0 at the end.
+>> +				break;
+>> +		}
+>> +	}
+>> +
+>> +	return ret;
+>> +}
+> 
+>> +static u8 streams_setup(struct pci_ide **ide, u8 *ids)
+>> +{
+>> +	bool def = false;
+>> +	u8 tc_mask = 0;
+>> +	int i;
+>> +
+>> +	for (i = 0; i < TIO_IDE_MAX_TC; ++i) {
+>> +		if (!ide[i]) {
+>> +			ids[i] = 0xFF;
+>> +			continue;
+>> +		}
+>> +
+>> +		tc_mask |= 1 << i;
+> 
+> Kind of obvious either way but perhaps a slight preference for
+> 		tc_mask |= BIT(i);
+> 
+>> +		ids[i] = ide[i]->stream_id;
+>> +
+>> +		if (!def) {
+>> +			struct pci_ide_partner *settings;
+>> +
+>> +			settings = pci_ide_to_settings(ide[i]->pdev, ide[i]);
+>> +			settings->default_stream = 1;
+>> +			def = true;
+>> +		}
+>> +
+>> +		stream_setup(ide[i]);
+>> +	}
+>> +
+>> +	return tc_mask;
+>> +}
+>> +
+>> +static int streams_register(struct pci_ide **ide)
+>> +{
+>> +	int ret = 0, i;
+>> +
+>> +	for (i = 0; i < TIO_IDE_MAX_TC; ++i) {
+>> +		if (!ide[i])
+>> +			continue;
+> Worth doing if the line is long or there is more to do here.  Maybe there
+> is in some follow up series, but fo rnow
+> 		if (ide[i]) {
+> 			ret = pci_ide_stream_register(ide[i]);
+> 			if (ret)
+> 				return ret;
+> 		}
+> Seems cleaner to me.
+> 
+>> +
+>> +		ret = pci_ide_stream_register(ide[i]);
+>> +		if (ret)
+>> +			break;
+>> +	}
+>> +
+>> +	return ret;
+>> +}
+> 
+>> +static void stream_teardown(struct pci_ide *ide)
+>> +{
+>> +	pci_ide_stream_teardown(ide->pdev, ide);
+>> +	pci_ide_stream_teardown(pcie_find_root_port(ide->pdev), ide);
+>> +}
+>> +
+>> +static void streams_teardown(struct pci_ide **ide)
+> 
+> Seems unbalanced to have stream_alloc take
+> the struct tsm_dsm_tio * pointer to just access dev_data->ide
+> but the teardown passes that directly.
+> 
+> I'm be happier if they were both passed the same thing (either struct pci_ide **ide
+> or struct tsm_dsm_tio *dev_data).
+> Slight preference for struct pci_ide **ide in stream_alloc as well.
+> 
+>> +{
+>> +	for (int i = 0; i < TIO_IDE_MAX_TC; ++i) {
+>> +		if (ide[i]) {
+>> +			stream_teardown(ide[i]);
+>> +			pci_ide_stream_free(ide[i]);
+>> +			ide[i] = NULL;
+>> +		}
+>> +	}
+>> +}
+>> +
+>> +static int stream_alloc(struct pci_dev *pdev, struct tsm_dsm_tio *dev_data,
+>> +			unsigned int tc)
+>> +{
+>> +	struct pci_dev *rp = pcie_find_root_port(pdev);
+>> +	struct pci_ide *ide;
+>> +
+>> +	if (dev_data->ide[tc]) {
+>> +		pci_err(pdev, "Stream for class=%d already registered", tc);
+>> +		return -EBUSY;
+>> +	}
+>> +
+>> +	/* FIXME: find a better way */
+>> +	if (nr_ide_streams != TIO_DEFAULT_NR_IDE_STREAMS)
+>> +		pci_notice(pdev, "Enable non-default %d streams", nr_ide_streams);
+>> +	pci_ide_set_nr_streams(to_pci_host_bridge(rp->bus->bridge), nr_ide_streams);
+>> +
+>> +	ide = pci_ide_stream_alloc(pdev);
+>> +	if (!ide)
+>> +		return -EFAULT;
+>> +
+>> +	/* Blindly assign streamid=0 to TC=0, and so on */
+>> +	ide->stream_id = tc;
+>> +
+>> +	dev_data->ide[tc] = ide;
+>> +
+>> +	return 0;
+>> +}
+> 
+> 
+>> +
+>> +static int dsm_create(struct pci_tsm_pf0 *dsm)
+>> +{
+>> +	struct pci_dev *pdev = dsm->base_tsm.pdev;
+>> +	u8 segment_id = pdev->bus ? pci_domain_nr(pdev->bus) : 0;
+>> +	struct pci_dev *rootport = pcie_find_root_port(pdev);
+>> +	u16 device_id = pci_dev_id(pdev);
+>> +	struct tsm_dsm_tio *dev_data = tsm_pf0_to_data(dsm);
+>> +	struct page *req_page;
+>> +	u16 root_port_id;
+>> +	u32 lnkcap = 0;
+>> +	int ret;
+>> +
+>> +	if (pci_read_config_dword(rootport, pci_pcie_cap(rootport) + PCI_EXP_LNKCAP,
+>> +				  &lnkcap))
+>> +		return -ENODEV;
+>> +
+>> +	root_port_id = FIELD_GET(PCI_EXP_LNKCAP_PN, lnkcap);
+>> +
+>> +	req_page = alloc_page(GFP_KERNEL_ACCOUNT | __GFP_ZERO);
+> 
+> Allocate then leak a page?  req_page isn't used.
+> 
+>> +	if (!req_page)
+>> +		return -ENOMEM;
+>> +
+>> +	ret = sev_tio_dev_create(dev_data, device_id, root_port_id, segment_id);
+>> +	if (ret)
+>> +		goto free_resp_exit;
+>> +
+>> +	return 0;
+>> +
+>> +free_resp_exit:
+>> +	__free_page(req_page);
+>> +	return ret;
+>> +}
+>> +
+>> +static int dsm_connect(struct pci_dev *pdev)
+>> +{
+>> +	struct pci_tsm_pf0 *dsm = pdev_to_tsm_pf0(pdev);
+>> +	struct tsm_dsm_tio *dev_data = tsm_pf0_to_data(dsm);
+>> +	u8 ids[TIO_IDE_MAX_TC];
+>> +	u8 tc_mask;
+>> +	int ret;
+>> +
+>> +	ret = stream_alloc(pdev, dev_data, 0);
+> 
+> As above. I'd use dev_data->ide instead of dev_data as the parameter here
+> to match the other cases later.  I'm guessing this parameter choice
+> was something that underwent evolution and perhaps ended up less
+> than ideal.
+> 
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	ret = dsm_create(dsm);
+>> +	if (ret)
+>> +		goto ide_free_exit;
+>> +
+>> +	tc_mask = streams_setup(dev_data->ide, ids);
+>> +
+>> +	ret = sev_tio_dev_connect(dev_data, tc_mask, ids, dsm->cert_slot, &dsm->spdm);
+>> +	ret = sev_tio_spdm_cmd(dsm, ret);
+>> +	if (ret)
+>> +		goto free_exit;
+>> +
+>> +	streams_enable(dev_data->ide);
+>> +
+>> +	ret = streams_register(dev_data->ide);
+>> +	if (ret)
+>> +		goto free_exit;
+>> +
+>> +	return 0;
+>> +
+>> +free_exit:
+>> +	sev_tio_dev_reclaim(dev_data, &dsm->spdm);
+>> +
+>> +	streams_disable(dev_data->ide);
+>> +ide_free_exit:
+>> +
+>> +	streams_teardown(dev_data->ide);
+>> +
+>> +	if (ret > 0)
+>> +		ret = -EFAULT;
+> 
+> My gut feeling would be that this manipulation of positive
+> return codes should be pushed to where it is more obvious why it is happening.
+> Either inside the functions or int the if (ret) blocks above.
+> It's sufficiently unusual I'd like it to be more obvious.
+> 
+>> +	return ret;
+>> +}
+>> +
+>> +static void dsm_disconnect(struct pci_dev *pdev)
+>> +{
+>> +	bool force = SYSTEM_HALT <= system_state && system_state <= SYSTEM_RESTART;
+>> +	struct pci_tsm_pf0 *dsm = pdev_to_tsm_pf0(pdev);
+>> +	struct tsm_dsm_tio *dev_data = tsm_pf0_to_data(dsm);
+>> +	int ret;
+>> +
+>> +	ret = sev_tio_dev_disconnect(dev_data, &dsm->spdm, force);
+>> +	ret = sev_tio_spdm_cmd(dsm, ret);
+>> +	if (ret && !force) {
+>> +		ret = sev_tio_dev_disconnect(dev_data, &dsm->spdm, true);
+>> +		sev_tio_spdm_cmd(dsm, ret);
+>> +	}
+>> +
+>> +	sev_tio_dev_reclaim(dev_data, &dsm->spdm);
+>> +
+>> +	streams_disable(dev_data->ide);
+>> +	streams_unregister(dev_data->ide);
+>> +	streams_teardown(dev_data->ide);
+>> +}
+>> +
+>> +static struct pci_tsm_ops sev_tsm_ops = {
+>> +	.probe = dsm_probe,
+>> +	.remove = dsm_remove,
+>> +	.connect = dsm_connect,
+>> +	.disconnect = dsm_disconnect,
+>> +};
+>> +
+>> +void sev_tsm_init_locked(struct sev_device *sev, void *tio_status_page)
+>> +{
+>> +	struct sev_tio_status *t __free(kfree) = kzalloc(sizeof(*t), GFP_KERNEL);
+> Whilst it is fine here, general advice is don't mix gotos and cleanup.h magic
+> in a given function (see the comments in the header).
+> 
+>> +	struct tsm_dev *tsmdev;
+>> +	int ret;
+>> +
+>> +	WARN_ON(sev->tio_status);
+>> +
+>> +	if (!t)
+>> +		return;
+>> +
+>> +	ret = sev_tio_init_locked(tio_status_page);
+>> +	if (ret) {
+>> +		pr_warn("SEV-TIO STATUS failed with %d\n", ret);
+>> +		goto error_exit;
+>> +	}
+>> +
+>> +	tsmdev = tsm_register(sev->dev, &sev_tsm_ops);
+>> +	if (IS_ERR(tsmdev))
+>> +		goto error_exit;
+>> +
+>> +	memcpy(t, tio_status_page, sizeof(*t));
+> 
+> If it weren't for the goto then this could be
+> 
+> 	struct sev_tio_status *t __free(kfree) =
+> 		kmemdup(tio_status_page, sizeof(*t), GFP_KERNEL;
+> 	if (!t)
+> 		return;
+> 
+> 
+>> +
+>> +	pr_notice("SEV-TIO status: EN=%d INIT_DONE=%d rq=%d..%d rs=%d..%d "
+>> +		  "scr=%d..%d out=%d..%d dev=%d tdi=%d algos=%x\n",
+>> +		  t->tio_en, t->tio_init_done,
+>> +		  t->spdm_req_size_min, t->spdm_req_size_max,
+>> +		  t->spdm_rsp_size_min, t->spdm_rsp_size_max,
+>> +		  t->spdm_scratch_size_min, t->spdm_scratch_size_max,
+>> +		  t->spdm_out_size_min, t->spdm_out_size_max,
+>> +		  t->devctx_size, t->tdictx_size,
+>> +		  t->tio_crypto_alg);
+>> +
+>> +	sev->tsmdev = tsmdev;
+>> +	sev->tio_status = no_free_ptr(t);
+>> +
+>> +	return;
+>> +
+>> +error_exit:
+>> +	pr_err("Failed to enable SEV-TIO: ret=%d en=%d initdone=%d SEV=%d\n",
+>> +	       ret, t->tio_en, t->tio_init_done,
+>> +	       boot_cpu_has(X86_FEATURE_SEV));
+>> +	pr_err("Check BIOS for: SMEE, SEV Control, SEV-ES ASID Space Limit=99,\n"
+>> +	       "SNP Memory (RMP Table) Coverage, RMP Coverage for 64Bit MMIO Ranges\n"
+>> +	       "SEV-SNP Support, SEV-TIO Support, PCIE IDE Capability\n");
+> 
+> Superficially feels to me that some of this set of helpful messages is only relevant
+> to some error paths - maybe just print the most relevant parts where those problems
+> are detected?
+Well, really only "SNP Memory (RMP Table) Coverage" will make SNP_INIT_EX fail (and it is off by default) but for SEV-TIO to work - all these need to be enabled so I mention them all here. I guess I'll remove the whole "Check BIOS" thing, the defaults have changed now.
+
+Thanks for the review, I'll fix what I have not commented on.
+
+>> +}
+>> +
+>> +void sev_tsm_uninit(struct sev_device *sev)
+>> +{
+>> +	if (sev->tsmdev)
+>> +		tsm_unregister(sev->tsmdev);
+>> +
+>> +	sev->tsmdev = NULL;
+>> +}
+> 
+> 
+
 -- 
-pw-bot: cr
+Alexey
+
 
