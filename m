@@ -1,137 +1,204 @@
-Return-Path: <linux-kernel+bounces-897775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEA92C53B68
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:36:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FA7EC539E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:16:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CA766504D50
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:48:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4F9415478A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:55:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD84534028D;
-	Wed, 12 Nov 2025 16:48:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70564345725;
+	Wed, 12 Nov 2025 16:55:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ONiq9J/n"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="J2AHPp2Y"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FBB72D130C;
-	Wed, 12 Nov 2025 16:48:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A4C1343D9E;
+	Wed, 12 Nov 2025 16:55:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762966103; cv=none; b=K8yoONJ96WlAk3Q/ktvhots212ElYcGNoCE+RoUOMVPcLehHGbqcq7h0X2SttK2U/UpAhLF4ZOn5kJqZXGdvkx3ODc+1/tPt9gMaxMzKBcmDSKwVrAdvF2sb3oBDVzx4pDOfcoDOdbBxB9d8/lbWkH6w5c0bZy5SyGwaDdeGqUM=
+	t=1762966508; cv=none; b=aB9zGxDjO2/0EpltMjD8ICSt9ROLb5jT1V+fo5GqANL2+dLotvVWP0OOmWkEQ7gbqf17gCNFy6JNuh5FzSer1sqTE1SLC2JkRucqFkPV6hi93S3O1MuJlRmIOcnzQ84a54xfkqmMa9yX9cOJYqVY7jDwTH7ByJ6L9M/sHarYQEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762966103; c=relaxed/simple;
-	bh=jNXBwcauIctGxZlYI7hnjg2/rQapqiJy1yTJJHRlDGo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tAxLyoWJ1pdzEKKiacUOX7XW0GTgL/25lO4mQpZOtgvgIpFhgYwlONIUrdfw727kO9UIUE4dmq7l5phgJeGQinvQdtF9a4u36pOy2c2amAswWgtFtx897JrNwnyyJP7H4+sInwf81QLFCDiRFnXWJanYKfYwRxSC81vJfZS0GA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ONiq9J/n; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FFDEC4CEF7;
-	Wed, 12 Nov 2025 16:48:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762966102;
-	bh=jNXBwcauIctGxZlYI7hnjg2/rQapqiJy1yTJJHRlDGo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ONiq9J/nOYCU6JIsjV6en5nGh0WX/LkzKvKhs2tOxHnJZu1BLYUBrLW7EIBnRHqnZ
-	 4FSoHQxhcCyhy+XBsZB6lDf2/Bj4kIBQ5WtQ1+uHvBnl+jOt1nEeSujImRug3xm567
-	 LMtGvGIk4oDbA4tUk4Yb+6+tI2l2UlYfLlhvSAU6PBwMJR/pyiWfa666NNXxH0caSo
-	 rgORdw8NH66/Wc8d9DW/n+pHGysjx6oMdla5IHnxk9x97UrvW7bXx1U6j2MBclLXfI
-	 ZN8ODIPV/g5dTzXxnAgTsj4CRlFUs4Vw2b8loiPc9Hn2OBcshgJuYrCdWsgAOvfuEv
-	 RWrz8s3sKUduQ==
-Received: from johan by xi.lan with local (Exim 4.98.2)
-	(envelope-from <johan@kernel.org>)
-	id 1vJE17-000000007Kr-3lAr;
-	Wed, 12 Nov 2025 17:48:22 +0100
-Date: Wed, 12 Nov 2025 17:48:21 +0100
-From: Johan Hovold <johan@kernel.org>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Nicolas Schier <nicolas.schier@linux.dev>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [PATCH] modpost: drop '*_probe' from section check whitelist
-Message-ID: <aRS6VQCKB7dXGbXx@hovoldconsulting.com>
-References: <20251020091613.22562-1-johan@kernel.org>
- <20251022203955.GA3256590@ax162>
+	s=arc-20240116; t=1762966508; c=relaxed/simple;
+	bh=WfIods2bJfQPmp7PBIC2biv1hfgAC7/+RMioDm3ndSA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YKPB+2YswBcM8PiabLGga0IlG3QAP1tNhEND90wBF1lIIA9hxpyvr46NsbDBqfi6bJQy+FhlLHGH1V7UTnAokpAF2i0BW+kP1BvS/+m5cm3rt+QaWzaItLTSgUnV/P4fCdflGkvdaacqUZ3l8OdHCkjPhHs7Ffr1Ry4Kgu+EGDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=J2AHPp2Y; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762966506; x=1794502506;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=WfIods2bJfQPmp7PBIC2biv1hfgAC7/+RMioDm3ndSA=;
+  b=J2AHPp2YgM8prlrdY3k8mWko5nxW3UwwlhTBV63ZHcPejBAdFNA9NQ/b
+   PGUw2T3LFcsUvsOdvCHOhQ81Rld8M/EIY5LWH2HcaqmFvAGqMSe6ZZ0tq
+   ZkffWLFv/OTrhU3yfz0JAtnt8Xom1cowSv88Vy16YxmhT6E2+CizI6aDH
+   AAawjMLOBSGiE4+lFO8FW3qjeYuc2KnPFYopLUUqdDa2r4jHQ5H0YxXSi
+   CQC1wBv8exJ0Yfavie8Jr6R/mCVs9fAMMAfDDEyD7hRCCDqkSh14ULEzc
+   /cis6E/LFES8MmV4BVqKbuWILNRM5BgUiCVvI6M2ZCToPl6o19pEVQH1J
+   A==;
+X-CSE-ConnectionGUID: Z2/q6B6fTiidC0zBQvHHSQ==
+X-CSE-MsgGUID: 2r81bIqzTJ6qmbiZPpUIeg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11611"; a="64919280"
+X-IronPort-AV: E=Sophos;i="6.19,299,1754982000"; 
+   d="scan'208";a="64919280"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2025 08:55:00 -0800
+X-CSE-ConnectionGUID: qsZVJDRASg6Nc88wTEmIjQ==
+X-CSE-MsgGUID: YLe/dq/UTyWSb7cCZw0/rQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,299,1754982000"; 
+   d="scan'208";a="189440184"
+Received: from 9cc2c43eec6b.jf.intel.com ([10.54.77.43])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2025 08:55:01 -0800
+From: Zide Chen <zide.chen@intel.com>
+To: Namhyung Kim <namhyung@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Rogers <irogers@google.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	thomas.falcon@intel.com,
+	dapeng1.mi@linux.intel.com,
+	xudong.hao@intel.com,
+	Zide Chen <zide.chen@intel.com>
+Subject: [PATCH V2] perf test: Add a perf event fallback test
+Date: Wed, 12 Nov 2025 08:48:23 -0800
+Message-ID: <20251112164823.80168-1-zide.chen@intel.com>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251022203955.GA3256590@ax162>
+Content-Transfer-Encoding: 8bit
 
-Hi Nathan,
+This adds test cases to verify the precise ip fallback logic:
 
-On Wed, Oct 22, 2025 at 10:39:55PM +0200, Nathan Chancellor wrote:
-> On Mon, Oct 20, 2025 at 11:16:13AM +0200, Johan Hovold wrote:
-> > Several symbol patterns used to be whitelisted to allow drivers to refer
-> > to functions annotated with __devinit and __devexit, which have since
-> > been removed.
-> > 
-> > Commit e1dc1bfe5b27 ("modpost: remove more symbol patterns from the
-> > section check whitelist") removed most of these patterns but left
-> > '*_probe' after a reported warning in an irqchip driver.
-> > 
-> > Turns out that was indeed an incorrect reference which has now been
-> > fixed by commit 9b685058ca93 ("irqchip/qcom-irq-combiner: Fix section
-> > mismatch").
-> > 
-> > A recently added clocksource driver also relies on this suffix to
-> > suppress another valid warning, and that is being fixed separately. [1]
-> > 
-> > Note that drivers with valid reasons for suppressing the warnings can
-> > use the __ref macros.
-> > 
-> > Link: https://lore.kernel.org/lkml/20251017054943.7195-1-johan@kernel.org/ [1]
-> > Signed-off-by: Johan Hovold <johan@kernel.org>
-> > ---
-> > 
-> > As mentioned above there are still two drivers relying on the "_probe"
-> > pattern to suppress valid warnings so perhaps it's best to hold off on
-> > merging this until the corresponding fixes are in mainline (e.g. next
-> > cycle or so unless Thomas can fast-track them).
-> 
-> Yeah, if it were fast tracked as a fix for 6.18, we could either use
-> that tag as the base for kbuild-next (as we have not take any patches
-> for 6.19 yet) or if they are 6.19 material, Thomas could provide us with
-> a signed tag or stable shared branch so that we could take this for 6.19
-> and have a clean tree. Whatever works.
+- If the system supports precise ip, for an event given with the maximum
+  precision level, it should be able to decrease precise_ip to find a
+  supported level.
+- The same fallback behavior should also work in more complex scenarios,
+  such as event groups or when PEBS is involved
 
-Daniel has queued the clocksource fix for 6.19 now so I guess we can
-just wait until both fixes hit mainline and either send this one to
-Linus after that for -rc1 (or -rc2), or just wait until 6.20.
+Additional fallback tests, such as those covering missing feature cases,
+can be added in the future.
 
-I'll send a reminder when both are in Linus's tree.
- 
-> Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+Suggested-by: Ian Rogers <irogers@google.com>
+Reviewed-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+Signed-off-by: Zide Chen <zide.chen@intel.com>
+---
+v2:
+- Incorporated Namhyung's suggestion to change cycles:ppp to cycles:P
 
-Thanks for reviewing.
+ .../tests/shell/test_event_open_fallback.sh   | 86 +++++++++++++++++++
+ 1 file changed, 86 insertions(+)
+ create mode 100755 tools/perf/tests/shell/test_event_open_fallback.sh
 
-> >  scripts/mod/modpost.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
-> > index 47c8aa2a6939..5c499dace0bb 100644
-> > --- a/scripts/mod/modpost.c
-> > +++ b/scripts/mod/modpost.c
-> > @@ -953,7 +953,7 @@ static int secref_whitelist(const char *fromsec, const char *fromsym,
-> >  	/* symbols in data sections that may refer to any init/exit sections */
-> >  	if (match(fromsec, PATTERNS(DATA_SECTIONS)) &&
-> >  	    match(tosec, PATTERNS(ALL_INIT_SECTIONS, ALL_EXIT_SECTIONS)) &&
-> > -	    match(fromsym, PATTERNS("*_ops", "*_probe", "*_console")))
-> > +	    match(fromsym, PATTERNS("*_ops", "*_console")))
-> >  		return 0;
-> >  
-> >  	/* Check for pattern 3 */
-> > -- 
-> > 2.49.1
-> > 
+diff --git a/tools/perf/tests/shell/test_event_open_fallback.sh b/tools/perf/tests/shell/test_event_open_fallback.sh
+new file mode 100755
+index 000000000000..9c411153c01b
+--- /dev/null
++++ b/tools/perf/tests/shell/test_event_open_fallback.sh
+@@ -0,0 +1,86 @@
++#!/bin/bash
++# Perf event open fallback test
++# SPDX-License-Identifier: GPL-2.0
++
++skip_cnt=0
++ok_cnt=0
++err_cnt=0
++
++cleanup()
++{
++	rm -f perf.data
++	rm -f perf.data.old
++	trap - EXIT TERM INT
++}
++
++trap_cleanup()
++{
++	cleanup
++	exit 1
++}
++
++trap trap_cleanup EXIT TERM INT
++
++perf_record()
++{
++	perf record "$@" -- true 1>/dev/null 2>&1
++}
++
++test_decrease_precise_ip()
++{
++	echo "Decrease precise ip test"
++
++	perf list pmu | grep -q 'cycles' || return 2
++
++	if ! perf_record -e cycles; then
++		return 2
++	fi
++
++	# It should reduce precision level down to 0 if needed.
++	if ! perf_record -e cycles:P; then
++		return 1
++	fi
++	return 0
++}
++
++test_decrease_precise_ip_complicated()
++{
++	echo "Decrease precise ip test (complicated case)"
++
++	perf list pmu | grep -q 'mem-loads-aux' || return 2
++
++	if ! perf_record -e '{cpu/mem-loads-aux/S,cpu/mem-loads/PS}'; then
++		return 1
++	fi
++	return 0
++}
++
++count_result()
++{
++	if [ "$1" -eq 2 ] ; then
++		skip_cnt=$((skip_cnt + 1))
++		return
++	fi
++	if [ "$1" -eq 0 ] ; then
++		ok_cnt=$((ok_cnt + 1))
++		return
++	fi
++	err_cnt=$((err_cnt + 1))
++}
++
++ret=0
++test_decrease_precise_ip		|| ret=$? ; count_result $ret ; ret=0
++test_decrease_precise_ip_complicated	|| ret=$? ; count_result $ret ; ret=0
++
++cleanup
++
++if [ ${err_cnt} -gt 0 ] ; then
++	exit 1
++fi
++
++if [ ${ok_cnt} -gt 0 ] ; then
++	exit 0
++fi
++
++# Skip
++exit 2
+-- 
+2.51.1
 
-Johan
 
