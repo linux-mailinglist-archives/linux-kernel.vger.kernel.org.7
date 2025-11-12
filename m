@@ -1,193 +1,215 @@
-Return-Path: <linux-kernel+bounces-896339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8622AC50241
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 01:45:25 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DC5DC50247
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 01:45:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E91313AB39A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 00:45:18 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1D93F4E7A28
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 00:45:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3291F1EB5DB;
-	Wed, 12 Nov 2025 00:45:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03A951E7C23;
+	Wed, 12 Nov 2025 00:45:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="K9DgNGF2"
-Received: from PH0PR06CU001.outbound.protection.outlook.com (mail-westus3azon11011028.outbound.protection.outlook.com [40.107.208.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="i4BGXkob"
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C15361339B1
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 00:45:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.208.28
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762908311; cv=fail; b=GP46lQSFl8oWQbCz4XLpCUuu8Px0CXyF0Rtb/v/JUFLBnrRqnikWR/eXzdqk8nHgOJ0ek3NZ2b/yq4jL7Z4kcoBRJuHQSpm1/Lj/UYua6WcKuM7Fqw3ntlFbvtVxjLrNk82p5fIhbAtluylT7TYqhFIwKBbmKv6wyXRVLMwnxJM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762908311; c=relaxed/simple;
-	bh=o6/tVyI+yNsoPPGBjBEmsEWC+dji0HNoZXNWSuyvdxA=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=n+Fwvpxlk/uJobh4brt3aGpZaBuuB9zdvMACT+msIm40TDzoFeFh4080gw+8yLZm0z2rmlB3ofs2B9sroR7mI0WFh2pnPRqvgp9MiSu342w4s2spa68+3iazo/W2J+YQt5vUOT2e4nPGHOaNENO57JW3ZTxRE/vHGAJHKWJS1Yo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=K9DgNGF2; arc=fail smtp.client-ip=40.107.208.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=q1Xoj56241jdY1oFsOvcE2ut3sn/fDKfff9JtaGyGQ9Unp6cxy/j3U0GfTei2ZKKW1Yuf/FdCnlMZ+mCQy55rzmkixOh6IDWMiW1Fct4TYfqM1f4bHlYFbxEI7aKM3UpueZAETdnZgGqbXWAu4SrCzyWtTZR2YPOsu7OhaA6z98cduiKj9meyDdCQgqnAM3u+ZuQI1+GcfbZ73J7JKKAlqZxvQjjdd3M+Tr5lR+UzNpdhQpMrQrK2u+vAjnfU7eX3SldJqLX9FmTKytIX8lxbu3lEYO5iP//npzqfphyNclWEad/rzXOWUMAgYVycm+CzUfAtaONG6q79YY7uKJwXQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=o6/tVyI+yNsoPPGBjBEmsEWC+dji0HNoZXNWSuyvdxA=;
- b=gJF9Dk/VVvRS3UwdrN/0uecq/OMx9r2uABQWRbvjedBCfcwHZKmA3PTvK/NcNp2y0s+Cxgc0n6n5+ZQePHyzIm+NS7H3aLoxS5wAxuyWraMDWfI2Ed3M4kGdUoQ2sqyfXM28tZ4ETQ+PanD6qObY0b4Nef70XGya2283TRWlkfgqpy4Lm1wMRnz1OLLURQvTrs3wriOwGQNmDkLnDYb/dV/3zOdO3t1oylKQDjrNKrN3H68r6d1b3/VvF1OSx3oaB4YotpSowP5mlJV4mut2/VMCZpoOq219Z5kxqG36d5wPkHsKmKAMJfz0ojL59Q7dQZpp1xsTi8eKPxUq4RD9fA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=o6/tVyI+yNsoPPGBjBEmsEWC+dji0HNoZXNWSuyvdxA=;
- b=K9DgNGF2esiWmywNQrHUjLPba1B6+Lr9o9sNu2MBsiHH2MdJe94ps97hyDPmcmq9yvHZlaOlIk1YhuzndZQjxlP9yI/lHLLs/K06kEYWIrQibgxpoFvuhM2g+wNEKLq++Hkq1NPcKeiOvqnG2BF38lNwaBWleibwJQnvyIeyfAvxmuEi6k1BVUZJNH+edAelHZpMUpN7su+e/BCVRBEtaTp8ir0sqMRXGEZ4KbdLyKM9TuY+/Elg5E90GSGe0bATPcEySpyoqI7PRm1aUMOCPtimEi5ekKsvUqkLk+1VPOP6CqE+IurZmepkEJF8TVQ47bPco6TIsf/me8cWa/1mgg==
-Received: from LV3PR12MB9404.namprd12.prod.outlook.com (2603:10b6:408:219::9)
- by IA1PR12MB9030.namprd12.prod.outlook.com (2603:10b6:208:3f2::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Wed, 12 Nov
- 2025 00:45:04 +0000
-Received: from LV3PR12MB9404.namprd12.prod.outlook.com
- ([fe80::57ac:82e6:1ec5:f40b]) by LV3PR12MB9404.namprd12.prod.outlook.com
- ([fe80::57ac:82e6:1ec5:f40b%5]) with mapi id 15.20.9298.015; Wed, 12 Nov 2025
- 00:45:04 +0000
-From: Chaitanya Kulkarni <chaitanyak@nvidia.com>
-To: "alistair23@gmail.com" <alistair23@gmail.com>, "kbusch@kernel.org"
-	<kbusch@kernel.org>, "axboe@kernel.dk" <axboe@kernel.dk>, "hch@lst.de"
-	<hch@lst.de>, "sagi@grimberg.me" <sagi@grimberg.me>, "hare@suse.de"
-	<hare@suse.de>, Chaitanya Kulkarni <chaitanyak@nvidia.com>,
-	"linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alistair
- Francis <alistair.francis@wdc.com>
-Subject: Re: [PATCH v2 4/4] nvme: Allow reauth from sysfs
-Thread-Topic: [PATCH v2 4/4] nvme: Allow reauth from sysfs
-Thread-Index: AQHcU2VTAf4mi6UwdUGzcgokUO+MjbTuNF+A
-Date: Wed, 12 Nov 2025 00:45:03 +0000
-Message-ID: <69f44147-3c9e-41b5-9b26-5e235a418f6c@nvidia.com>
-References: <20251111234519.3467440-1-alistair.francis@wdc.com>
- <20251111234519.3467440-5-alistair.francis@wdc.com>
-In-Reply-To: <20251111234519.3467440-5-alistair.francis@wdc.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Mozilla Thunderbird
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: LV3PR12MB9404:EE_|IA1PR12MB9030:EE_
-x-ms-office365-filtering-correlation-id: 444829be-2677-4bb0-a6c7-08de2184b809
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|366016|1800799024|10070799003|38070700021|7053199007;
-x-microsoft-antispam-message-info:
- =?utf-8?B?M1lGMU9YMXcyakU1dTBoUVFmVFdPZzZPWnNPRm5VODhaQkU5b1R4NlVYaGk1?=
- =?utf-8?B?Z0RGdnpWd1VWMjBNVXlGOGs2c1hVN3E0U3pKOVdrUXRMUXBPWFpCa1FXMFRR?=
- =?utf-8?B?ajMyRFBpYzgwTHlUTllVYk5neVhwN2gzeXFFeVZISXExbnhYVHEwb0U1bndw?=
- =?utf-8?B?Y2prUmRGaEhjYk1KbGt2U09PUHVpbktIYzZYUStMdUdxaHphYml0K1cxSlhN?=
- =?utf-8?B?aTB3dy9Jc3pzMEd1U1o1RVRCQmRGSlJENGFLbzNKeVA0QmZHYnJZWThZOFJk?=
- =?utf-8?B?bCtqU1NsK1I2aFNad2d0ZzQ3ekVkMFhLK29QV3JEazJDMENSQVJab29CUTJu?=
- =?utf-8?B?TWY3N09BS2xsbW9HVmova3ROajJIQUNvZnExOE1VUDY3M1YxSld0c2ZpSEFC?=
- =?utf-8?B?NWVGL0lLdDN2bTdvaEZDY2xRK3gyK0NsRGMvQkhrbUFpNFg2ZWNVYTlDZWdi?=
- =?utf-8?B?WHRBRi9mRk1qakwxc0E3SGw2WjZjdEFUNjRrdXdEZnkwUEdmQVdQZmdxZDBE?=
- =?utf-8?B?eHVzTUk3QkpRdWVsS3o0QS94OEpYMkk2Z2trOC9WNWFlTWdnK1p0Nk9HV2Jn?=
- =?utf-8?B?VTVTaFlvcEFVYVo3YnlEYW56QnNLN2Y3K0xobk9lUEZtRGZSQnFRTnFyVTlk?=
- =?utf-8?B?Nk95eGtCQWhpSE1qNkl1eTlVa2VUZDEybXBWV01yR3Vlb3M0MiswZWxCWWoy?=
- =?utf-8?B?ZGdjTDJvd1FFUFJqdWd5YklmdUFNbG8xMzFKLzlJWkFwb2huT1gvVkxkVENQ?=
- =?utf-8?B?VkVNMURHNXE3WS9xKzJyOWYxUytTTVhCT0h2UlBoSVlTdER2M1RPblhBUmhm?=
- =?utf-8?B?NUZhMDY5ZU9GNWgzVUc2ejllbnNpMDFyVkE1QW4xUnhoblpUSFdtelRZczdO?=
- =?utf-8?B?NDV4a05NdWFVYmlaZ2cwZGdxMXVHSXdoT0xBdzdnMElDbE5vZlEvc1VsSEdl?=
- =?utf-8?B?M0pud3FCUXRNd3ZCQ3k3WXFYK3ovUkNTMzhndVYxYnZwK25KMXVjTzc0Undn?=
- =?utf-8?B?c0UvOTlSWEh5VDJqcXFHdlhkakxKZVBPK202cE5KR0d4dExIMWVENEc4Rmsx?=
- =?utf-8?B?dFIyZElHZEFORmhJVm8vU05sUG9WVEdRb0NTS2txY2NUMkJGdkd2am1taGxr?=
- =?utf-8?B?c2Fad0EzS0VtaHJkdEVDYnc2V09zUTIxNFlreVpoRFRuUGZ6L0JkbXlOY051?=
- =?utf-8?B?ZG83bkhMQ0dsd0wzWG9ud3d0ckFoZ2VTTURzTGJydlNCUm15WTZZeUs1WmxH?=
- =?utf-8?B?QlJRdzBiWERrVjFKelJlMS9iTG40OEtZUm1TaVhVVkNzcW9sOXJvQ2xUeUF2?=
- =?utf-8?B?bWc1UVBPWGxsRlJlWEVIWGhGNnFXT0ZoTkhibzJ0MDh0RnpDOXAyU00yUFBk?=
- =?utf-8?B?NGJrUG5LNnNseGYyQktCcVEzVm9KY0ljZ0hWV1Y3TnlTanRqWkZUZkQvcHJj?=
- =?utf-8?B?MWVPNHhtNVZEcTcyYWdSV2hzU0VRK0J3U3lKY1kxUFhBWkFIbFFBRklvd2Js?=
- =?utf-8?B?b0NsekJGVGhhTVQ0dFcreE44Z0RVdnNpUGZRbHY4Q3Z3L2x3VE1QZTc3WGlt?=
- =?utf-8?B?OGNQU1NIdzlrVUpVbnRuUkJBVGpLbHc4bFFyditERUJVQzFQcW9GQ0lrZUpj?=
- =?utf-8?B?aEh0WTgzLytFNCtZRGtvWXZreWdvVVMvWHVLbzZUcnVYZHgyTDNRQmwrYXdt?=
- =?utf-8?B?ejNPNmJDeDdLZ0k3WmhpMzVQcFA4TXk5UFI2b1F4M0FRUXpwaUJPNWI1aWw2?=
- =?utf-8?B?dkFIK0xrYlIyN3JTQTRUOENZNHdpd1hhM2VBS1NDczlLV0NmRVFiTlZpSmQ2?=
- =?utf-8?B?dzI0YVJVYWoxOWM3Vm8zT3dpSTlMTzFLOXJ5UzU3MFBKOWxlMGZtenhHZUs0?=
- =?utf-8?B?RnZGRnRvWkFYL1NVbHdWenFSc1Y4RURGc3JIOHZaVUFROTIxTjE3NERXWmNx?=
- =?utf-8?B?ZG5MSTFQUk4yRGlYL3k0cmJRbEw0aUI3QjdQcXpmS25BNC81UkFicmxMWTcy?=
- =?utf-8?B?aFBxank3RnZtays1ZGEwRHB5b3ZZSVBLTmt2N3RXT0YzZ2E3TWF1Z01ySEVQ?=
- =?utf-8?Q?HYwgDT?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR12MB9404.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(10070799003)(38070700021)(7053199007);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?NEZBSDcxZ1A0U3FCYndxdjRlcmh4TzB0NjRGeHJ2RFFjMmQrdWh6MXZiYytD?=
- =?utf-8?B?TlFobW5Zbk5zd2tndG9lbS9LNWJ5MDFwSHptNUt5VWFDZ2RXVWJYUjBpQkRp?=
- =?utf-8?B?dFQxeml6MGdCNXNVWVA3V2E0RGpGUGRwYTg2ZWExYzNGTUhJNXJEMEd0dHh4?=
- =?utf-8?B?WHZ5bVNLOXBiYmJWNDRMbnZzZDYyZUIvZVQ2UUd6aCt4Z2M4YWpXbmVFUFVp?=
- =?utf-8?B?TjVjTTlacUdMYXcxdUhwYTBzc3czZlYySTljU2swUlI3VmtlM3RqWVFNOGtz?=
- =?utf-8?B?T2kwTFcyd0pQaXEwWlBHQXV4YzZEZkl5K2JOZWVMUDhqRHgvT0VvSjg4WjYr?=
- =?utf-8?B?NlpzcUJLNHl4V0kwZFR6ZjVGMytkMGJuUkRoSy81QzIrcVpnTFNEM1FWcG1q?=
- =?utf-8?B?aGtxM3Y1SWR3S2VaZmlZSC9qOGxnNFRSQjVHZXdKM00rV1I3cHh6NExWcnVE?=
- =?utf-8?B?dERuQ1R2a1RnaVI2U0lYM3l2TkJ3YWJDbWN1eXowanZvSjVvZGMyT3ZPZUxB?=
- =?utf-8?B?Rm1xb1VQY0pvNmFPM3c0Mlh0NEczRTRVOUl3YVU3SzdsWmwyTlY1OWw0L3pa?=
- =?utf-8?B?a0c5Y0FnT0FSamkrdE81QmRQV1V3QjdaelYrQk5YbnU4T2ZvVWkvVmMvR3Jr?=
- =?utf-8?B?ZWw1WGNiU1JqOUVaNFJET0Iwekt3T2dmNDBjcjZXL1dJVmZkczE0ODZpeWMv?=
- =?utf-8?B?NVpnTFNoVmN0YmlzaUhteFhGOTI4Wk1vWGtqclpISjNqODVWV2thWVdrVmtV?=
- =?utf-8?B?V2V4Sys4dzFJTHdvSEZyM3BEU1RkVUhTVExKYjBwTHJyRkRrUElCbnFrd21v?=
- =?utf-8?B?M2w5Qyt2Z2RSRkFIMEdlYzBuR0dvZjFXS2kwY1d1OUUzSTNzR2VCU0pCZVpV?=
- =?utf-8?B?SWRwMlB0WW5UOE1vOVEvN2I1R0xzeldML2tGUkxuSE03c0hSU1RXeERvUi9Q?=
- =?utf-8?B?cm1nM0FVU0RldjJzOTFNbWp0Szh2SitqWlNPbFo1QldsZm5JRmsyZFh3QS9T?=
- =?utf-8?B?ZGFidHp2NWNhRFBSY29ldmxuSVJ4aW9MNFJGVVphbFlmeHZuc0pnVzN3bFJk?=
- =?utf-8?B?WGFVMjhwWmd4ZFFpQk5XZVRuU0IwbXhQblh0ZUl4Y2dOZWQvMnAxZTEvc2hF?=
- =?utf-8?B?aHdld1JBWFNLd3BMRmRnMnUyRHBhQTFRM0NHczA4YStUWjhMS2kvZ0gvdGlD?=
- =?utf-8?B?QjliSHVGK3RFTHVmelZxLzY1T0lCSzVYd0FSeFBRa3BCVFh6Mlc2VjcwajBl?=
- =?utf-8?B?d3ZHbTFieE1Ubjg5M09Ha1dFSldabytQVE03ODdidEhhNHhja1AwVXN2K3ZD?=
- =?utf-8?B?SE9VNG5Ccyt0K0xmUlcvd1RXSDdtMUx4UVpRWU83c0dKUlFSMit4UzdJVmhM?=
- =?utf-8?B?VTNtQzFlaGpCSTUyc2FXZ3FpdDdzNkxmVjBaZy90elZ0ZC9JbDA3UWNGeXVL?=
- =?utf-8?B?QnhBcG9ISlVrWU9hUzZBZ0dHcWVSY1JySFU0RGt3YnQ0TGsyWVp5Zkh3T05S?=
- =?utf-8?B?ME5nM1I1VTI5WUY0RkVHRHpadDc3M0R1THRaMDNMWjN0UCtwVHFkWnpPQ0xI?=
- =?utf-8?B?ZkhqZm1SS0dvQ2hnU0RFckZqNWltSXpSRTY4M3N6aHV0OEs0c2diUmp6dDRM?=
- =?utf-8?B?Q0NjTnlPRS8wU3dzZHVvWlhTU2FmSzNSekxuQ3ZQWFZkeGtGcGh1bEFPWU81?=
- =?utf-8?B?NDdkYnF1WWNpdGpKbHhUWWIrUDVCWnZCclI0MkNYd09WcGF3ZlUxY1Nsdjdm?=
- =?utf-8?B?Z3JSU0t3aWpqdzBsT1RWeDllcnRFMW9XN2NZelRLamZhbFlpZW5DZk9WamVH?=
- =?utf-8?B?Yno3NHhFNVVKMnFmQ2RCbFE1b3d0bklWZ1l6VTRMODAwVnJKWld0UGYyeGY3?=
- =?utf-8?B?Vy9OZWNoZFc4Wm1rdHhMblpoT2I4bHpBT1dGbHNybllnZ0x6WkZEUlowUWVz?=
- =?utf-8?B?TWpRL1BtdXN2QXhsNHFXQkg2YXZaNFpDUmpuKzdlWVhtbnhLUHdCTUo2ODlU?=
- =?utf-8?B?d3hhZHhLb25vRE9JeG81RE5YSTNpOEFUM0tCcnJPWnZVWjhGc0dCWlFrNStT?=
- =?utf-8?B?TXhkdkR0eStwZzlqUW1jS2UyT1FLcnZtakR0c29rODhKakhJRDdhdzY4WXhi?=
- =?utf-8?B?THZ3OU1KTy9TTGh2clFFdDhGUjYyQUxQMWVSMGNGYmtYc3JxNjNFdTVFcnVC?=
- =?utf-8?Q?0yGMrMTUnqKATeGP+DMm3mj2joB9pMQ6oqbSVs9Btpu/?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <0A941315CA5817428A3F8CE32C69401F@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59780219A8E
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 00:45:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762908319; cv=none; b=BcCi36PFaLYQL4Dm4TLKHA9u2FBNuazo7lHacsZiVKSTIuOCe5WTnvFc64LFidYUbEpxK8nfjgZ8dgG5s6ouJd8M15oJN3ZFKJ50ywBNpODKJibpI8jq1IVJBmEN+WGqOhbNhgsdCylQ6B0c3S5OmBAS9xX2l3ztQx1OzUWLRzI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762908319; c=relaxed/simple;
+	bh=lwJTs6uHwfB3pFaBhGYmVTJmlthxkPebRAjqEgLlcXA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=UPv3kPMTMsYwCqpW8HhFOtS+rifLZsg2ZZ0T165pEqrJNexVdPcIWMLRdERiH3c0iAx+j7ntyRBKwy7PpBVHp3LgEVlPufmCi9kHipzGhUnjyvc46nt5ho7VmsljaNtWC9iivV9iXRwA15IAHE494QKnqYJ9s6se//qfTDohawg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=i4BGXkob; arc=none smtp.client-ip=209.85.160.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4edb8d6e98aso175101cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 16:45:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762908316; x=1763513116; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UJZAJpAbAEi7uff3FpFnrKv4oBXpITt048DY9Jv0DOM=;
+        b=i4BGXkob3F+TnS2JspIPB2wkpU3wGpLlsuRWSc23cvFgDeKKKm0LCmsq+Vd7dnZfvr
+         Wfn4VVe+iY3OOtTSN9tceRHjpphq+1tzSGWz+wcjS57CHH1oT7gYhI+M2BjdiGwS5Obq
+         EjeOWTw3uuHJzUAtHtWWwG+x5erAB+rWgIefhvoqOWB4D0PsOzzPDQO5Kra1nHHVRCWc
+         JagnQQt/tzjYIuDgxW5E1EUFnJykeGJS8BpgCxiQmaXOYuEuBU/4wmvBcocD6uqEW3nL
+         aC/gNpR7kCtwysJ6ouyOAWPV2/WdjE6T4vgCJp9q9SNL3AX7JnCHunRSMFxDoyU3krFO
+         4icQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762908316; x=1763513116;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=UJZAJpAbAEi7uff3FpFnrKv4oBXpITt048DY9Jv0DOM=;
+        b=VvZGEhA/XCLd4UmY+PKlwgJPRELz08HZtgRmNacNnfmL7EaFLloij2/bnNARCOawBF
+         uFNl0jWdLb0ACyn2hL7Z55zPleImBt4vNI7gfFztm6p2KytAhj1BJUUdy0ly5UDjIrXL
+         MyEKAXn0b0w9QjEMjpn8CA13eKj8r3s3p4p0DoivImqNtrHaBUDo2xvRnJDEtHXjFJKd
+         NzgyRKSWEbgFSxkKq89fKd4b6TcaZCtAZOBpRIKTHmNYrPsggVrtioBFFCb6ZBWdVjF6
+         zO3O+m74lZoUnEIdC9T0g1+bR70IJAYn5Dq6gqLFXhZXPcBZhy8qrgXnUpKUrn+qKH91
+         XA+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXd4vGKvo1llhUx0/gDbFfOtwE4C/DpuJEQp7oTuQjKgwqTw3KLMJSzmObMy9lFL5z52EFjdk2zH77xrDo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwD+KxiiV0L9pcm20QKKSXwjnUHRLCLbfMNuK3M19eTxFagGMaO
+	jFWlA9ls17SUyOQdJCUsbLDPKpXTUcvHTQJcPrjWRwXP2W8rbbvpw+6DOpqYT1uIk8KRm7ZPxox
+	yCOkLWGx6xXPUk/ZAlLVMtuT0baIs+CL0uarLaOED
+X-Gm-Gg: ASbGnct4xZIqSbTCOgpJ62l3JJFSih5PMlKz9TqDKzsLDhuKFtNjTStLd9twyC3xzrh
+	wyYBymWAouto0gbRPY5mEmkHBRZGTxyANyNg5oGaFi/alhhPkIAayBF4GnaR/ls7E/VXFQ5cjPn
+	0tMZ9RK09Bnom957nB+MPxo4friny4lBr66eAbpNylJCQPLczGUNEy2i7Zfbw/TTJ37UOWKkdnk
+	EjmP6ql1XlSNrEjli21AiG2ZAashxpavj3VBQ/LPA1PKfZEdqJrcvjwNYpoLr4/MnMgvUzU9YK7
+	q79jwFabwqU2a4eBOdze0Ks7iOhcjJ5oD/RfAwn8qpjlmOM=
+X-Google-Smtp-Source: AGHT+IHq3zhZ6RZDfm8+qlwrB06Heotrr0OpxA12uYFqb9GHqIYHhe+FtLnMFGAwYOGYRsGMcofhaTJmJdtZLZv+D90=
+X-Received: by 2002:ac8:7c4c:0:b0:4ed:2f7d:bd46 with SMTP id
+ d75a77b69052e-4eddd0280b2mr1699761cf.13.1762908315789; Tue, 11 Nov 2025
+ 16:45:15 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: LV3PR12MB9404.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 444829be-2677-4bb0-a6c7-08de2184b809
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Nov 2025 00:45:04.0163
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Kh/3roZ74jBmg+8ROS4f07WoNW25VBGgDFXZIDpnhsiWoP99pCY+e9hHB3y+PDzzP0Z5GnKzrAKX4/OmbfvmuQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB9030
+References: <20251111215605.1721380-1-Liam.Howlett@oracle.com>
+ <8219599b-941e-4ffd-875f-6548e217c16c@suse.cz> <CAJuCfpESKECudgqvm8CQ_whi761hWRPAhurR5efRVC4Hp2r8Qw@mail.gmail.com>
+ <kfqzb2dfxubn6twcbiu3frihfkf6u34g2rcnui2m63rbc4x4kk@dh3bxvpzpnmp>
+In-Reply-To: <kfqzb2dfxubn6twcbiu3frihfkf6u34g2rcnui2m63rbc4x4kk@dh3bxvpzpnmp>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Tue, 11 Nov 2025 16:45:03 -0800
+X-Gm-Features: AWmQ_bk114MOn3d9XOqHpHR5NA3nrBE7uEUv2RhXge-xST0T5Pe14_lgGcp5zrI
+Message-ID: <CAJuCfpEWMD-Z1j=nPYHcQW4F7E2Wka09KTXzGv7VE7oW1S8hcw@mail.gmail.com>
+Subject: Re: [PATCH] mm/mmap_lock: Reset maple state on lock_vma_under_rcu() retry
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Suren Baghdasaryan <surenb@google.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Shakeel Butt <shakeel.butt@linux.dev>, Jann Horn <jannh@google.com>, stable@vger.kernel.org, 
+	syzbot+131f9eb2b5807573275c@syzkaller.appspotmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-T24gMTEvMTEvMjUgMzo0NSBQTSwgYWxpc3RhaXIyM0BnbWFpbC5jb20gd3JvdGU6DQo+IEZyb206
-IEFsaXN0YWlyIEZyYW5jaXM8YWxpc3RhaXIuZnJhbmNpc0B3ZGMuY29tPg0KPg0KPiBBbGxvdyB1
-c2Vyc3BhY2UgdG8gdHJpZ2dlciBhIHJlYXV0aCAoUkVQTEFDRVRMU1BTSykgZnJvbSBzeXNmcy4N
-Cj4gVGhpcyBjYW4gYmUgZG9uZSBieSB3cml0aW5nIHRvIHRoZSBzeXNmcyBmaWxlLg0KPg0KPiBl
-Y2hvIDAgPiAvc3lzL2RldmljZXMvdmlydHVhbC9udm1lLWZhYnJpY3MvY3RsL252bWUwL3Rsc19j
-b25maWd1cmVkX2tleQ0KPg0KPiBTaWduZWQtb2ZmLWJ5OiBBbGlzdGFpciBGcmFuY2lzPGFsaXN0
-YWlyLmZyYW5jaXNAd2RjLmNvbT4NCg0KDQpMR1RNLA0KDQpSZXZpZXdlZC1ieTogQ2hhaXRhbnlh
-IEt1bGthcm5pIDxrY2hAbnZpZGlhLmNvbT4gLWNrDQoNCg==
+On Tue, Nov 11, 2025 at 4:20=E2=80=AFPM Liam R. Howlett <Liam.Howlett@oracl=
+e.com> wrote:
+>
+> * Suren Baghdasaryan <surenb@google.com> [251111 19:11]:
+> > On Tue, Nov 11, 2025 at 2:18=E2=80=AFPM Vlastimil Babka <vbabka@suse.cz=
+> wrote:
+> > >
+> > > On 11/11/25 22:56, Liam R. Howlett wrote:
+> > > > The retry in lock_vma_under_rcu() drops the rcu read lock before
+> > > > reacquiring the lock and trying again.  This may cause a use-after-=
+free
+> > > > if the maple node the maple state was using was freed.
+> >
+> > Ah, good catch. I didn't realize the state is RCU protected.
+> >
+> > > >
+> > > > The maple state is protected by the rcu read lock.  When the lock i=
+s
+> > > > dropped, the state cannot be reused as it tracks pointers to object=
+s
+> > > > that may be freed during the time where the lock was not held.
+> > > >
+> > > > Any time the rcu read lock is dropped, the maple state must be
+> > > > invalidated.  Resetting the address and state to MA_START is the sa=
+fest
+> > > > course of action, which will result in the next operation starting =
+from
+> > > > the top of the tree.
+> > > >
+> > > > Prior to commit 0b16f8bed19c ("mm: change vma_start_read() to drop =
+RCU
+> > > > lock on failure"), the rcu read lock was dropped and NULL was retur=
+ned,
+> > > > so the retry would not have happened.  However, now that the read l=
+ock
+> > > > is dropped regardless of the return, we may use a freed maple tree =
+node
+> > > > cached in the maple state on retry.
+> >
+> > Hmm. The above paragraph does not sound right to me, unless I
+> > completely misunderstood it. Before 0b16f8bed19c we would keep RCU
+> > lock up until the end of lock_vma_under_rcu(),
+>
+> Ah.. usually, yes?  But.. if (unlikely(vma->vm_mm !=3D mm)), then we'd
+> drop and reacquire the rcu read lock, but return NULL.  This was fine
+> because we wouldn't return -EAGIAN and so the read lock was toggled..
+> but it didn't matter since we wouldn't reuse the maple state.
+>
+> I wanted to make it clear that the dropping/reacquiring of the rcu lock
+> prior to 0b16f8bed19c does not mean we have to backport the fix
+> further.. which I failed to do, I guess.
+
+Ah, ok, now I get it. You were talking about vma_start_read() and RCU
+being dropped there... Would this explanation be a bit better?
+
+Prior to commit 0b16f8bed19c ("mm: change vma_start_read() to drop RCU
+lock on failure"), vma_start_read() would drop rcu read lock and
+return NULL, so the retry would not have happened. However, now that
+vma_start_read() drops rcu read lock on failure followed by a retry,
+we may end up using a freed maple tree node cached in the maple state.
+
+>
+> > so retries could still
+> > happen but we were not dropping the RCU lock while doing that. After
+> > 0b16f8bed19c we drop RCU lock if vma_start_read() fails, so retrying
+> > after such failure becomes unsafe. So, if you agree with me assessment
+> > then I suggest changing it to:
+> >
+> > Prior to commit 0b16f8bed19c ("mm: change vma_start_read() to drop RCU
+> > lock on failure"), the retry after vma_start_read() failure was
+> > happening under the same RCU lock. However, now that the read lock is
+> > dropped on failure, we may use a freed maple tree node cached in the
+> > maple state on retry.
+>
+> This is also true, but fails to capture the fact that returning NULL
+> after toggling the lock prior to 0b16f8bed19c is okay.
+>
+> >
+> > > >
+> > > > Cc: Suren Baghdasaryan <surenb@google.com>
+> > > > Cc: stable@vger.kernel.org
+> > > > Fixes: 0b16f8bed19c ("mm: change vma_start_read() to drop RCU lock =
+on failure")
+> > >
+> > > The commit is 6.18-rc1 so we don't need Cc: stable, but it's a mm-hot=
+fixes
+> > > material that must go to Linus before 6.18.
+> > >
+> > > > Reported-by: syzbot+131f9eb2b5807573275c@syzkaller.appspotmail.com
+> > > > Closes: https://syzkaller.appspot.com/bug?extid=3D131f9eb2b58075732=
+75c
+> > > > Signed-off-by: Liam R. Howlett <Liam.Howlett@oracle.com>
+> > >
+> > > Acked-by: Vlastimil Babka <vbabka@suse.cz>
+> >
+> > With the changelog text sorted out.
+> >
+> > Reviewed-by: Suren Baghdasaryan <surenb@google.com>
+> >
+> > Thanks!
+> >
+> > >
+> > > > ---
+> > > >  mm/mmap_lock.c | 1 +
+> > > >  1 file changed, 1 insertion(+)
+> > > >
+> > > > diff --git a/mm/mmap_lock.c b/mm/mmap_lock.c
+> > > > index 39f341caf32c0..f2532af6208c0 100644
+> > > > --- a/mm/mmap_lock.c
+> > > > +++ b/mm/mmap_lock.c
+> > > > @@ -257,6 +257,7 @@ struct vm_area_struct *lock_vma_under_rcu(struc=
+t mm_struct *mm,
+> > > >               if (PTR_ERR(vma) =3D=3D -EAGAIN) {
+> > > >                       count_vm_vma_lock_event(VMA_LOCK_MISS);
+> > > >                       /* The area was replaced with another one */
+> > > > +                     mas_set(&mas, address);
+> > > >                       goto retry;
+> > > >               }
+> > > >
+> > >
 
