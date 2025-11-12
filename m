@@ -1,81 +1,81 @@
-Return-Path: <linux-kernel+bounces-896978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B2DDC51B47
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:37:59 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FE3DC51B62
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:38:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B659D3B3DE5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:30:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1381B4F7755
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:31:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A09830C342;
-	Wed, 12 Nov 2025 10:29:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5075130DEC7;
+	Wed, 12 Nov 2025 10:29:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wgxAQFOG"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WhDK3/RB"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 945A5309EEA
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 10:29:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A91A330B50B
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 10:29:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762943359; cv=none; b=HdVEoO+FKOXGG0S4Obi6j18rmVTEdnS58D6l3TtgiwNS4YEc8wXLMhSq6u7JmZG8oAw2tzrgNN8S3ZnirGIXbwRsphTEe1e1V3+fWRSoGIByOiGJAu42gphwb5IMIMVWh5poOkFksYrrCcxV21BUclPfOS5l+koSCYZ2v5uu6CM=
+	t=1762943361; cv=none; b=a+dkZSvK3L64g7ao0tZJ0tjE8Cw8Osj99HC/2IQVsQYWv/H46JzwtSNU0U5tcrBN65UTncDgzKN+TA+ii5AAQYnu2E1iAH19y93KRORgWkHG9hc9VIKwwSmgYvh7VqVcHc4sEd9JAScOFVi2e59ZQ+5mlMfzYuMy5ctT5u7HX28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762943359; c=relaxed/simple;
-	bh=81jTJshG5U8dunGjPlokrsbh1X84C4sADnDFTx0hch0=;
+	s=arc-20240116; t=1762943361; c=relaxed/simple;
+	bh=kT5IA0GtAEQVfWhYH3L9qEziSnbAJtbqUptdjRPcgUw=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=XkbQLLCQacQuSgT4fzWyYqDqQpCE9f+7QwFgYZDnEPHLzcKgxSnq8KvfwdJ47zIyZHllD/LjuQqMcHSwq5lbfXFu83OAKwbWIWcd6HHBI41LXOr/qoojJvKbjCZmtDWp+x/xAgrOACadquu6m1pIr/OBGx9BaDE/bGCQ6MqY9Ws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wgxAQFOG; arc=none smtp.client-ip=209.85.128.53
+	 In-Reply-To:To:Cc; b=QlaF7JGj3U0zn9FIXoPEMzxbAQWqk/ytzlj+bRrDGZf+ACbQCMH8sOjVaXqvN9uO/7EPPis/7sh4GEjyjv30myESZngnb62EHSE6x/WXTQLns1s6+6VFvCJKpqNqtWi9qAJexxFgFne/nlgwCqLeYbEoU8RyvuFvdmMLSVaVbGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WhDK3/RB; arc=none smtp.client-ip=209.85.221.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-477632e4923so69605e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 02:29:16 -0800 (PST)
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-42b2cff817aso98813f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 02:29:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762943355; x=1763548155; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1762943357; x=1763548157; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=lTTwfl+8zqu4m1wm1arK7XbgGiT9bQGfagDjMk+wU6o=;
-        b=wgxAQFOG9Anw9uOyjFx2pTNCFI/4mLtXZ6uITKqA72v83m4U39KMpIDU0FoUxqLvpv
-         Dd4KzAvJiS/QyvBeIx3sOcsq2BSW670xNIgo9U8i/lMMPlJGigSFpURjyEks480xOMxy
-         JfQNz1S0UqKii1F4Ud0HZ6EuWaWopy8dzy9fCIZT85IQ4UcrSGUBZBkcNrQgAzJMqTCz
-         foLvEofcgVb7sQfkPZWpHNh99Xvr9sQRiVDrtjaZW9K7U7TZEGSaEiyRhIAj0cli2Se9
-         5a44jK9tHREcQD02tnpfKcWWGj8rercieFRwRVhA9LF25lyCZIjgFtSiDixMdpVwqZD1
-         bGzA==
+        bh=kBavdG36JhZKmN/pedjw25qWHClEhA6t5bxsk6oa0rs=;
+        b=WhDK3/RBVYDPnB9yUvRMIpmxuzu7NabzaXD6my13CRIPaKCeKN8jf9QQQ8JwtJKTch
+         byw7aXhqu0CrspkxHTR4sEYidaXck3oZ4csuEo7ZUcQsWEO56MBMgbfcfVfiyWcjuf/p
+         0S73GGOfHxWjyOmGSgq0gywSSbsliz/ffSu4qibE/PTXqZJb3tFkvUiF5ZMTL8tVvr0i
+         IHulXuKEU88l4v+mpfht3ZPcSwrB+WV851G7UkUVrxscIf/AOGIiflvS1lMOZivNWrrg
+         xK3qCcYbZMG+k7JTrctGLdQOKOnyli6UwqNDsQcT/KgjVxbLgkemoq4neqgm/RNqxLH0
+         YJzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762943355; x=1763548155;
+        d=1e100.net; s=20230601; t=1762943357; x=1763548157;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=lTTwfl+8zqu4m1wm1arK7XbgGiT9bQGfagDjMk+wU6o=;
-        b=WhdXwmX/tAIwTBG9geCL/jdEMRArbjqEgvS758jUzfgnczzkyoyWkbo+jP+JMv34S1
-         OuJw5t30dCviKoYva/MheSuOP5Tqz+7E7VNiwdUo69/F2wyjRrMSfjdAUMvgD9jsK+E0
-         6qaQK6tXz2XbOOGOTSyOP5MGem6Fc4bnEoC7/DMa1Jgw8Byfk+HvGG2lZUgvEjeLaMXL
-         el4NWB87jCTtYWRsac7zi/5ZHyoOHY3vFWz0T5KV4tfPfMB34trimAt4VJW21NJaFBss
-         0fpACa5AW3jAnbFhPLz/L0licg5z3DUuoZchZuN/gnSIRbJ9HSzAVPBooUTPgiywB+uc
-         J4sQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXPK/IUqPx3D3KvyI71Uld4uNgjhsw2gwzJNeYT9kx7d6hgwucovNgxt/QeKsGg6xoRQTJx+IUUIRj11R8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YweCDoENIheTUHhx5IDbIMZ+PMTnExj6j6+lKmY1elSkerb5ZRl
-	bTD9QCLo904mnfDacMFIBBISuGnjVaJDf6WViiE32Jj7f942W0ELyGIwaz86PY2Iiu8=
-X-Gm-Gg: ASbGnctc3hZmyeZVAIdJt6jY7d9nHCOH1rg3seLF1FR7snN37xunSDPWbz0ejBbQnkF
-	NQwIWd4Dyp+LZvCv53FhFuLAKPcue5oVmk6WEXn5XEkgb4S+yD9BAgWRuxKQnW4si5OnEWiabQF
-	TMZ6RVRKjpE75/2TEyO0yuDGMe1uDyC7t0BSe7mbFFkrhBGgahxuSWze21Hc7AVlj+jbRuu/VbA
-	80YEO6MCBn3CAnOwLvgzpSPfw7grEQaduOD23t7TlIN6IdfWSJ0vfluyfX+ECdhzB1WpkaWneMz
-	CV2cyqoC4JHYajolBok4M5IMMC2iewahwLbTRBq7Y1GDAFdgCFLzvpDTPnTmBFooU2ZnDrHOasL
-	FLicp/kuK6K3T3cHZSEO5hPbJEALYrCeBNInBXeJ4T0ZYrqa2XoBmMB3grfIsPBj0JhTx5Mx44z
-	27vi7uVO/3N1qe1pil
-X-Google-Smtp-Source: AGHT+IGrKXMvZPgqQESuBAhxDftEhNsnWrEuywC4iLSQ8rVCnZlglSobGl6lS0FycwtWDDujVctuoA==
-X-Received: by 2002:a05:600c:138f:b0:477:79a0:515 with SMTP id 5b1f17b1804b1-477871eedfemr12412855e9.8.1762943354825;
-        Wed, 12 Nov 2025 02:29:14 -0800 (PST)
+        bh=kBavdG36JhZKmN/pedjw25qWHClEhA6t5bxsk6oa0rs=;
+        b=PKoh92d9J23QXmbKDHryeP9MQX7gURv9cMfjpbQCZlCZvhDp3xDrWz2hQvh+0qGmNh
+         8QnVgNKltLmCW4AHO7QnFKjNNq0PN4BsAh140l+UZpyqlp9r9arzu8h0gfDkMfON9Kew
+         6W1GCMp3bgLV/1XHUprqrbqUkbIcOZ8Ttg7iNIjuBqD2EN1aojODeyvmGutAlI8TMRyZ
+         2ZIw7g7KLbnwkbbdtMFo7miyxNTuOjRKbrMu0n4N47Js/RjEZK5W6SB/yjKJU0hogeNQ
+         TBfr639KKNpf03JzMftK/IPU7EkdXufOlMkd2pzXHUToEFok3QN0AG13aLz9P0vVSEI9
+         0CMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUzF1Cm11FrCYbcF4LI0caYRS1Xw97HMHNIfHuccENO5k9tcToRrlSas7iP4tcEkd1vLPI3IX+7lcF/6LE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0qgdpgMbQZr98HAFYEqpyn9GJI+NmmkraBcAoA6rkv10id/Px
+	quk+7cnBjqoNDcQz4yBskMlwWst6JNX4mo6KPgD3ZQlzYUqH1uYFcyRU6fCAByCyyEY=
+X-Gm-Gg: ASbGncun9oKk4Zg60C0WItAUaq8BYEVf3GOFLsmv35NvPZLU9l2ACXMedhvSIwyNgW8
+	kWw/uWMNo4tT8lJQD5tXoG7HX5UwEUMvwqehIM2OwuEHTWyhtYz8fxD7t5YTfzFEQOk8d5EMOEy
+	qvTIqsCLKBTLMNcqy6Nvk+KaiaDdVd55PcGPy5VdJbAhgwCShn7MS1GDnc+xcS47ar10LXJCVzC
+	W4EzzvB5ydkoK/aMl1uStSGzzB0riviav0ed7XzGDKXnHhAK2aj7lXx7uzIZkg/kS1IqM0hBnuU
+	F3ifCrf6SPECSA5e9bWyNcSQ2Jh6JrAlmPjgFKgDRSRmepXWmmu3rStkOFxbVrs0QunHdVTi6XU
+	QlLLg1zMVdDILmcsUW6B4eD+Y4SSBFv8oaxX5ci/Otx3G4E78AyBeBQVqedzow7Uk5U5MB37MC1
+	JclcljHRvD4sDytk2y
+X-Google-Smtp-Source: AGHT+IFcsJyQX0vQHIxt0g6rxRaeK4KQcZ7ubS4Xn6BHNva6HYRONLKZdEpigTSHkx+N3rxTuPNAQA==
+X-Received: by 2002:a05:6000:2888:b0:429:d4c2:caf3 with SMTP id ffacd0b85a97d-42b4bddfecfmr917139f8f.10.1762943356808;
+        Wed, 12 Nov 2025 02:29:16 -0800 (PST)
 Received: from [127.0.1.1] ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b32ecf522sm22020001f8f.45.2025.11.12.02.29.13
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b32ecf522sm22020001f8f.45.2025.11.12.02.29.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Nov 2025 02:29:14 -0800 (PST)
+        Wed, 12 Nov 2025 02:29:16 -0800 (PST)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Wed, 12 Nov 2025 11:28:50 +0100
-Subject: [PATCH v2 05/11] cpuidle: big_little: Simplify with
+Date: Wed, 12 Nov 2025 11:28:51 +0100
+Subject: [PATCH v2 06/11] firmware: qcom: scm: Simplify with
  of_machine_device_match()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -85,7 +85,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251112-b4-of-match-matchine-data-v2-5-d46b72003fd6@linaro.org>
+Message-Id: <20251112-b4-of-match-matchine-data-v2-6-d46b72003fd6@linaro.org>
 References: <20251112-b4-of-match-matchine-data-v2-0-d46b72003fd6@linaro.org>
 In-Reply-To: <20251112-b4-of-match-matchine-data-v2-0-d46b72003fd6@linaro.org>
 To: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
@@ -113,65 +113,74 @@ Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
  linux-mediatek@lists.infradead.org, linux-sunxi@lists.linux.dev, 
  linux-arm-msm@vger.kernel.org, platform-driver-x86@vger.kernel.org, 
- linux-tegra@vger.kernel.org, 
+ linux-tegra@vger.kernel.org, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1143;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1468;
  i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=81jTJshG5U8dunGjPlokrsbh1X84C4sADnDFTx0hch0=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBpFGFnyTG8g3Dv3wVreirAjpYs3pAX3qJ3UXkuT
- K35vq/FMbKJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaRRhZwAKCRDBN2bmhouD
- 17JZD/981Aty8LTyqThGaZ2jPZnQRqILA4jQLUdlyGHSD3o1JOkc/OejeGBa2XG43Vs68nAkJAD
- joLQtVvcic7O5R3bHLdubIg/nwmSiJf4E3lzP/egNMDXmQGhpjFr+JbWrafzPx5AkJOcZkYqz6N
- YUgS2cJxbZYonK2umjv++lLOLQnSeIo2E+KprbWM0yjX6kUbPE4epGQaM065McRy0AIwdI4fxoW
- T6NV0F+1HAANoi65DBqfvOzIdaeldH2t1qyaOaX3hEtYzvDDKNjh/Ut1AmmH7gSnlsU7EfG0AwF
- O/P4RyK/k0twGUZr83j3MngPkzj6XIIc800HONG4zXqQcRu5Wl+UDmvPMfhu+G8hCTlD7pTKc7B
- 3yRo8XhIdgJZL4BIBD3ZMaD/sfeWkS5N2HQce+sfgszMJWRCRiAIdL4jq2lZ87zhxw3NaR7MQUI
- LnKOqV7KTzrZndBUoFckzLoGxG9iwlS/Q2z/F/FzJK9Wcw7CYIjpNYhIrVxg8XbNbtfnvevBGif
- fIEC9fmM1ZsBP88jyZMpC/z4Jsfhbfv33/tx+L/MkGKxM47rhKd3kvDjANqxXGKWFhO2FB6auwC
- +Cv6k4NIK1sSTmE+jFxF9lSfYVoaZadbNr4XM6w+OP766Lilq7Fe1l29ZMNe+NsXwsVo4jys4VG
- Bx3+BfE9uyjqLNA==
+ bh=kT5IA0GtAEQVfWhYH3L9qEziSnbAJtbqUptdjRPcgUw=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBpFGFoaaq85XzS8Gm+QHLYdjGk6xAwN9M9CcUpd
+ yKEYT6rj7WJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaRRhaAAKCRDBN2bmhouD
+ 10RbD/0QYyKGuzIytM2noX3te8ScA/nUleatTJOM6knZFKx9CzhpYG1nOZVLI10Q72t5HzseI+4
+ Oi4wEKdkIUc6XVheTGBlr8XH/Ezs2NIXUugeMoQ28U1w20QF+5sOdKiBJ8lFGbqUkaW5ErSIVt/
+ /3YLlicO6MacIZ4wG1GV3ODj0yi29Vwzsw8iQ6oINdD7te+YPp7eyFYr3u9hVy7D9m+AtgpqlhE
+ 1jwS8nFRrDTRBr3vIOIiXi6uTMdXTyROOufwqlETGtvxuy6WC0fZnONEg2PJ8qVsPQNOyCBh0Qe
+ KuXhHY2766mkdS+jVh41HhZh7SIw5e2xVOU2um3CFI40O24+xT7NU210IHtd0D59Tlt7f8ahqeT
+ gqgGRTtrIZEtR1EJqjwVRMIFU03xVQa0xRCSi0n0lLlN+IbtqaO6q7tuszNI5dmnr83xoxqPSmw
+ +ADtjoptZfcndaqEjxeun09qQBsRMAEB6TRQESSXEFwnhpgJx5nYI/WyXlNdMqRoWjIPW9dVcVZ
+ 2tmiITlPOWGxzTM7M0qFmJKgZds1jse18mQQhDI4U8b1YwJ5dY51NFWt/lDicye1EK9A1LMjS2h
+ EuQHxg4sJU6eEe4Iuvo3xH1mzT4yrfSHABnMOF76JT3JLeDs1x8Mp3J67S03B0BKK8z92LlIU4Y
+ mvucL86lWwzH1vQ==
 X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
  fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
 Replace open-coded getting root OF node and matching against it with
 new of_machine_device_match() helper.
 
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
 ---
 
 Depends on the first OF patch.
 ---
- drivers/cpuidle/cpuidle-big_little.c | 11 +----------
- 1 file changed, 1 insertion(+), 10 deletions(-)
+ drivers/firmware/qcom/qcom_scm.c | 17 +----------------
+ 1 file changed, 1 insertion(+), 16 deletions(-)
 
-diff --git a/drivers/cpuidle/cpuidle-big_little.c b/drivers/cpuidle/cpuidle-big_little.c
-index 4abba42fcc31..08f6bf2f6409 100644
---- a/drivers/cpuidle/cpuidle-big_little.c
-+++ b/drivers/cpuidle/cpuidle-big_little.c
-@@ -166,20 +166,11 @@ static const struct of_device_id compatible_machine_match[] = {
- static int __init bl_idle_init(void)
+diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
+index e777b7cb9b12..1a6f85e463e0 100644
+--- a/drivers/firmware/qcom/qcom_scm.c
++++ b/drivers/firmware/qcom/qcom_scm.c
+@@ -2018,21 +2018,6 @@ static const struct of_device_id qcom_scm_qseecom_allowlist[] __maybe_unused = {
+ 	{ }
+ };
+ 
+-static bool qcom_scm_qseecom_machine_is_allowed(void)
+-{
+-	struct device_node *np;
+-	bool match;
+-
+-	np = of_find_node_by_path("/");
+-	if (!np)
+-		return false;
+-
+-	match = of_match_node(qcom_scm_qseecom_allowlist, np);
+-	of_node_put(np);
+-
+-	return match;
+-}
+-
+ static void qcom_scm_qseecom_free(void *data)
  {
- 	int ret;
--	struct device_node *root = of_find_node_by_path("/");
--	const struct of_device_id *match_id;
--
--	if (!root)
--		return -ENODEV;
+ 	struct platform_device *qseecom_dev = data;
+@@ -2064,7 +2049,7 @@ static int qcom_scm_qseecom_init(struct qcom_scm *scm)
  
- 	/*
- 	 * Initialize the driver just for a compliant set of machines
- 	 */
--	match_id = of_match_node(compatible_machine_match, root);
--
--	of_node_put(root);
--
--	if (!match_id)
-+	if (!of_machine_device_match(compatible_machine_match))
- 		return -ENODEV;
+ 	dev_info(scm->dev, "qseecom: found qseecom with version 0x%x\n", version);
  
- 	if (!mcpm_is_available())
+-	if (!qcom_scm_qseecom_machine_is_allowed()) {
++	if (!of_machine_device_match(qcom_scm_qseecom_allowlist)) {
+ 		dev_info(scm->dev, "qseecom: untested machine, skipping\n");
+ 		return 0;
+ 	}
 
 -- 
 2.48.1
