@@ -1,149 +1,102 @@
-Return-Path: <linux-kernel+bounces-897890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EF8FC53E2A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:20:20 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2044DC53E21
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:19:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7F25434501F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:19:49 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1324C344FDB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:19:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B2BA34B42C;
-	Wed, 12 Nov 2025 18:19:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48C5434A3B4;
+	Wed, 12 Nov 2025 18:19:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ar64TOml"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kor5iehC"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B5C534B424
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 18:19:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E42A42D97AF;
+	Wed, 12 Nov 2025 18:19:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762971556; cv=none; b=r/Yoxd3CPwmUWYsievZZmxlpd45nA7vtLtqlpt8xZr4dfLOzZQGUpzQoyG8V+QCRfqhSg+lglU2R0843dcYVzZhNIZFIbT1lHlTW3nNsGTOWlutkdzmCi6LmwS5cAGsX5QTVs3JR92f2HCYEGmS7YO7Tv97ewYqkmR+iedWtSC0=
+	t=1762971552; cv=none; b=j9uJi2J0ur5rZqdtgarR55zvgTde2/ZUBsssmghaAQOFbQHBNV4IDqJmi1lUk0dn0g/I9ZAtbwl2LbojmqdqhKlxsBII3ov7TNiS6ZeqKw9I/VogvvRc4uF3e3+C1uBuOb2wywajarL7TaoSxIw+Srl7Zg9uSuxTsopCyp+3aFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762971556; c=relaxed/simple;
-	bh=JSk2wiQKBahdJ8dYGksFv11VvJ1NPd2DXSatLhgaWEI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TJop/8Hpm/vm8E6d7ibiI2ROddp0N+NoQkCKkA0wQ8LPebS/vNZODe8lZL3SN2JaPy6iZoblLNw5DOMotQEOijhemOl+HjRhUYNc+b7Hg1jkoNXvSFqZSJpOdeNMha3bjiRX1E+rJwIK/qsn5pxTOi52C02oC/DbO1w5CYcrrB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ar64TOml; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-297d4a56f97so11973465ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 10:19:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762971554; x=1763576354; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ajL3qyJYFc6tD7lnGfH4M98Ye8+T06Aj5rRcRA12Okk=;
-        b=Ar64TOmlxe3N161cZTBVfb/dIqX1VLovG5y6PwyGIPc2VMxhhcM+Gj7EAubKCkIpGN
-         Fktk6wYT9DWPnzsYTrOoDCDAXoOgle6N583gZmaELsF/ifk8dI2YrwoccXb5f2yOmmIa
-         Jz6QYNA8wx+hEvHER/Yey2e7TbLKBsAHuRr2G2o7jCzYSCjuQ7b/jq8owxs2nfEMuy9U
-         IeX2v0wQrbU7gcBdDUMF9IzRitozq1Fy2Quu34FNEarVMSFyTuMRYA2RcLApmey0jDmP
-         +OEQ8d2FwLumogpVUO/8IBqS6kLyNrE1eudUPMrSrTLPUP2nNLjN/v1gShWSp7zztx7j
-         jMdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762971554; x=1763576354;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ajL3qyJYFc6tD7lnGfH4M98Ye8+T06Aj5rRcRA12Okk=;
-        b=G/WCHkkxpRxWGzengZCJTWvmohQ2FaLh4ko9HpVOm2emLrvo3q9vQz/5avL3nTunK6
-         /W7ab6MbbGWprC17+7wkWMd3oPwjfXQll+IPgP6MlTnGZL6IqOpQlwuiz/Y9tc/L2lB0
-         NZA/1prrnc13JekVGMS1W+de9wnwDgsOO4z8y4vrScVvuHj7dkbFQw5GtkrPTnj0Amjv
-         qWADQbFKp/s+1N6IB5dyTtfinlF+2hZm29r3ZT6Bb3Epzcw2LWQzkRiWRKNtED/R7s/w
-         voRbeWOLPwa5SrviO2+DM7SyIX6XMuf8OXPPZwSZ3wFRkgk5CeuNjAlMQ1xNwlGq27mr
-         xxTw==
-X-Forwarded-Encrypted: i=1; AJvYcCXEmjD1FQsyryeEU3g/MMtijSWc9W6skKUUHeTZKw/3NEW6aKfqTcHTOJkWIcpXY/bGA71Q/SakvOxie/U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzq+Se3/+Up/Ar4MMc+AcPImK2W6o3rOi8SCXWxufMermh74b+O
-	zEKi6nasdeeWJMlEHtu/75hno5LF9sAknWy4SfT8jwj8gh+r2CjtA135
-X-Gm-Gg: ASbGnctmL405BiPhK5txCYJaSIkRkj+0xjtG1hBg72KozANfb4lv/6Yyg12SuPcfqM9
-	Mlb2bYW6Q3gfadmmpqAwBV8WwGSiqjoylqBXL12anjU/p9e8ssds1YQ/vbwkyNn0YvZZAs+bFHG
-	BgtlS0hczHnyWu1finloH+ID5WRsMQYxh+nzB7EWsEPqLdtIv+8f09tAV8WBQwly1ojQYrSBnQk
-	abmeHksrCTHSH+1nfHkcjKoHo+ufz0kEUx7zIKAybDDDmGDp9+ssGyhCLv4+UYhrVhBH7JejeLP
-	K4I9BY2n5rJHVuZ+P8ephgJleelZUVzthOjQPXyKCEhsRzwRI8bfXD57sL2xR+DhIFi781eVZMv
-	oWudqYYPzNRFaWOjzNesVW94A0d0zGWDO10ynPY7W22/At+tdLI393klpb5fgFoMhd0rIWvWg/k
-	/9jTHdrvL30uLvlsAJ
-X-Google-Smtp-Source: AGHT+IHlsgCrOCxbH1xUwfriUBHh5Wzt3eZZ8m1hSbR+IpGy4PwSajaGLSMmb7HAExzbcjFaVH+8vA==
-X-Received: by 2002:a17:903:28c:b0:27e:f018:d2fb with SMTP id d9443c01a7336-2984ed2b896mr48147475ad.6.1762971554462;
-        Wed, 12 Nov 2025 10:19:14 -0800 (PST)
-Received: from gmail.com ([157.50.185.205])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2984dc9f8f1sm37051095ad.54.2025.11.12.10.19.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Nov 2025 10:19:13 -0800 (PST)
-From: hariconscious@gmail.com
-To: cezary.rojewski@intel.com,
-	liam.r.girdwood@linux.intel.com,
-	peter.ujfalusi@linux.intel.com,
-	yung-chuan.liao@linux.intel.com,
-	ranjani.sridharan@linux.intel.com,
-	kai.vehmanen@linux.intel.com,
-	pierre-louis.bossart@linux.dev,
-	broonie@kernel.org
-Cc: perex@perex.cz,
-	tiwai@suse.com,
-	amadeuszx.slawinski@linux.intel.com,
-	sakari.ailus@linux.intel.com,
-	khalid@kernel.org,
-	shuah@kernel.org,
-	david.hunter.linux@gmail.com,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	HariKrishna Sagala <hariconscious@gmail.com>
-Subject: [PATCH v2] ASoC: Intel: avs: Fix potential buffer overflow by snprintf()
-Date: Wed, 12 Nov 2025 23:48:51 +0530
-Message-ID: <20251112181851.13450-1-hariconscious@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1762971552; c=relaxed/simple;
+	bh=pvFB1yXBR3JiIIWoaQ0Ii4iHpiJNJJBG5p0BNDR+YRI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GKx/ON0kafZRBuCbpcSsVNE5GDwOJGAGQvUkT6loS+wgOLwM4QYroyPlqZ62fx7IiaYPdnwtJE4WTeMFSY5axDc/4wZwV0dowc+GRm25X0aFc2lFHXA7pwG8kzzPtM+lHQY+9Wb3YHV2+3B/s56U5kKKoWLPBxXJZSdzALkjaVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kor5iehC; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762971551; x=1794507551;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=pvFB1yXBR3JiIIWoaQ0Ii4iHpiJNJJBG5p0BNDR+YRI=;
+  b=kor5iehCnZjOiu7BL6tdc8arAPbub3cinPmC1/45HLZVqTmW+mYXoL5k
+   a88SCIS9S50fheL828S+k13RYj5rTyUqiOGBMUqBjwmOZFhAPvDadXaep
+   AIjZuG/7Np7tjUtqLi3N8kfVi0CQpPNuySh+uNMlVXC5NDxEBg0fVYbIt
+   4SCA3437uuf/vnL4aVLE/JTZU2v2+kTTUU7fGG4T1rqgi5FZ6egUtl9/k
+   K0boYpD1lvDY0NDM5NHGD2XZdaZEKrea45ZHQWsCHUI8he8xjm4iRko8y
+   +j2xbObvtzf3W2u6OMXPnOI4iZlUL5rKwEGROMeVmmKmjkUN8OkR9oyKT
+   w==;
+X-CSE-ConnectionGUID: UBE0vzcvQViwcwh1GOIcFw==
+X-CSE-MsgGUID: 1jQxY5IDSLelLJ2Mvw1TiQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11611"; a="64249885"
+X-IronPort-AV: E=Sophos;i="6.19,300,1754982000"; 
+   d="scan'208";a="64249885"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2025 10:19:10 -0800
+X-CSE-ConnectionGUID: oQHVh8B8RfO4NEA1G42ZuQ==
+X-CSE-MsgGUID: F6jmC2UPTHSEQqTZ8HV65g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,300,1754982000"; 
+   d="scan'208";a="188934873"
+Received: from guptapa-desk.jf.intel.com (HELO desk) ([10.165.239.46])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2025 10:19:10 -0800
+Date: Wed, 12 Nov 2025 10:19:05 -0800
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Brendan Jackman <jackmanb@google.com>
+Subject: Re: [PATCH v4 1/8] x86/bugs: Use VM_CLEAR_CPU_BUFFERS in VMX as well
+Message-ID: <20251112181905.nvdurg5zsogixp4z@desk>
+References: <20251031003040.3491385-1-seanjc@google.com>
+ <20251031003040.3491385-2-seanjc@google.com>
+ <20251103181840.kx3egw5fwgzpksu4@desk>
+ <20251107190534.GTaQ5C_l_UsZmQR1ph@fat_crate.local>
+ <aROyvB0kZSQYmCh0@google.com>
+ <20251112102336.GAaRRgKJ6lHCKQgxdd@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251112102336.GAaRRgKJ6lHCKQgxdd@fat_crate.local>
 
-From: HariKrishna Sagala <hariconscious@gmail.com>
+On Wed, Nov 12, 2025 at 11:23:36AM +0100, Borislav Petkov wrote:
+> On Tue, Nov 11, 2025 at 02:03:40PM -0800, Sean Christopherson wrote:
+> > How about:
+> > 
+> > /* If necessary, emit VERW on exit-to-userspace to clear CPU buffers. */
+> > #define CLEAR_CPU_BUFFERS \
+> > 	ALTERNATIVE "", __CLEAR_CPU_BUFFERS, X86_FEATURE_CLEAR_CPU_BUF
+> 
+> By the "If necessary" you mean whether X86_FEATURE_CLEAR_CPU_BUF is set or
+> not, I presume...
+> 
+> I was just wondering whether this macro is going to be used somewhere else
+> *except* on the kernel->user vector.
 
-snprintf() returns the would-be-filled size when the string overflows
-the given buffer size, hence using this value may result in a buffer
-overflow (although it's unrealistic).
-
-This patch replaces it with a safer version, scnprintf() for papering
-over such a potential issue.
-Link: https://github.com/KSPP/linux/issues/105
-'Fixes: 5a565ba23abe ("ASoC: Intel: avs: Probing and firmware tracing
-over debugfs")'
-
-Signed-off-by: HariKrishna Sagala <hariconscious@gmail.com>
----
-Thank you for the feedback and the suggestions.
-Corrected the indentation & commit message.
-V1:
-https://lore.kernel.org/all/20251112120235.54328-2-hariconscious@gmail.com/
- sound/soc/intel/avs/debugfs.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/sound/soc/intel/avs/debugfs.c b/sound/soc/intel/avs/debugfs.c
-index 3534de46f9e4..cdb82392b9ee 100644
---- a/sound/soc/intel/avs/debugfs.c
-+++ b/sound/soc/intel/avs/debugfs.c
-@@ -119,9 +119,9 @@ static ssize_t probe_points_read(struct file *file, char __user *to, size_t coun
- 	}
- 
- 	for (i = 0; i < num_desc; i++) {
--		ret = snprintf(buf + len, PAGE_SIZE - len,
--			       "Id: %#010x  Purpose: %d  Node id: %#x\n",
--			       desc[i].id.value, desc[i].purpose, desc[i].node_id.val);
-+		ret = scnprintf(buf + len, PAGE_SIZE - len,
-+					"Id: %#010x  Purpose: %d  Node id: %#x\n",
-+					desc[i].id.value, desc[i].purpose, desc[i].node_id.val);
- 		if (ret < 0)
- 			goto free_desc;
- 		len += ret;
-
-base-commit: 24172e0d79900908cf5ebf366600616d29c9b417
--- 
-2.43.0
-
+I believe the intent is to use it only at kernel->user transition.
 
