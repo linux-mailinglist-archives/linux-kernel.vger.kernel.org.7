@@ -1,677 +1,136 @@
-Return-Path: <linux-kernel+bounces-896368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 800E1C50356
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 02:29:16 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9F14C50371
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 02:31:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 106BB18973E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 01:29:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9DE984E9836
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 01:30:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F5D4236453;
-	Wed, 12 Nov 2025 01:29:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB5882727EB;
+	Wed, 12 Nov 2025 01:30:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="B9nxgAJx"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="kFf+EOmV"
+Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F4ECDF72
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 01:29:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EF1D241695;
+	Wed, 12 Nov 2025 01:30:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762910950; cv=none; b=UsaBeqjyUmfFufUQ4M9YlOoUzspIkmKQYuCipx8lLtL0+xUmls2DA3wm49S0A5TQaZiIUwSkouj+oNJib9J54R0K/R6ja5qHWGKMb8BgQLID07V1+AedgNKe+gUlAUieST02o90Mh0fENEO8H/7YNT5bionWETEvN5J1ilVm+m4=
+	t=1762911046; cv=none; b=m+iGVXqMgxPlOo/0CfA+Ry+glZb5j4CJvOcGPi9/jI6+yZRV3Y39w7tF5Tc43UTBpaEvdt/Pge4nN3W6eLiqnJe8NwNqHhUZqoBJ3vigdser3ckFCy2CKenB0hXwC+0XmTD2iNASorzq+B8SeGFEYN8N5xph58Z1bpM17DKtdhY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762910950; c=relaxed/simple;
-	bh=JmPyepJ2YdQAH//77cPGYnK/mrcnvWY6oqHOrl+49To=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qoV/aTerOuPY70nI1vQg9aBGJPJcVDxRrl4WVY81lOWXnp3zahB3kFM9Va7lP53uDWei/ra9CfLYtkbozeki/XUi/uTRNOEnfgsuybVNivsrBA452PR1nIt6LmKgFzDiJlS398UNQji7y4/N7UibgxnCiqTvBHrsoz5utBPfJmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=B9nxgAJx; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-47777136777so24575e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 17:29:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762910945; x=1763515745; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=owZnNTvalHie3X3MWIReu1pb9Hpq5jejlIW0+p14dW4=;
-        b=B9nxgAJxLueDhCdC49lX1B1Z9y1MjEBKyHiIs0vF9b7a3N5ggx79vZtBfOVcTmOmD0
-         KzlS4PuTTu7gE597a9GKA57T21SJtVmi0zdDskbFWMPV+nTsJV/AbMCliOrVxBlXxfK4
-         exo6h8ZDz51SZtkSmP1hZidSzzZgddj+E43Tca9tWWpBAVRqhChiTmfh5hXTVRGDUMe5
-         /e92MRX9K1VWBxBNbKoWSyuSemZN4DX/Y7Tr9Rz8FVQHTyYSqTwYAe2SX8X4D8tchsr5
-         1rfxTEm1H4S+lAr0JbO9OpnBzVSJS//BOFiUOoWUviMP7b141UhliecaFe0NmozZvX1s
-         5uUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762910945; x=1763515745;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=owZnNTvalHie3X3MWIReu1pb9Hpq5jejlIW0+p14dW4=;
-        b=tCtZSAmle6Lb3BgX9PacAMJePAanWALVIGcSTtPs9QDOMV6pT0Z07OwQm46C1O8j/D
-         dXgC3x8g5luNlQlzTEsANvOmw2ZVdlTp1FpdqYGtCkvorMLGZT20SrVxmbvKyVS83bnD
-         dFsXiF8EukcozlWNfzxP5r/szbl4JeRSC58yBfNlGVCSL1MMGezUeyFTmOD2zUZKULxf
-         0ESGCOu/JiK0+oWoPGIndgo4MbjdFevWhOOz2VyXH5/hdWTFsgHkAncNoPYipovGgYVy
-         PnRx279tBoaMQ4rSbbayBmmMX9kfi2UkvxUOFcYYRKqpdJVD1BN5ZHh5AD/oluwPr0QH
-         XYVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW9km7kWGnI1BPOVxzYNPVeVCRC6srzuE5PvZh9qSVdk3DEbCVj1z3Nr0cNBVmlRAdZUjsaYIykjHLx0dg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9ps4fhwB07V940A6RLl11S0TLqtefvGFKzSZri6uWgW0xhmH8
-	73lKiDD44zTiWi9gt8a4sSHlXe5NC/kzOPblDRKFgxX5aigGcNVvfBICaEk5cZyizZ6ZTrrlLeh
-	643qHNdWtsy2ogewNVT0lOntcnsqXvl0nogzDuedL
-X-Gm-Gg: ASbGncuY272mmNKkLm8v1gsUJ9qybugZA6ONXlkYY/2MF947+pp1Mom0XLuhrtrnArx
-	cVE6DlyGvwbfvDmUo5f67lKSVO0Y/JHhGL3Ro/yuSZ8O932y3CJWSLXwnMY5/0viuf0N+9UgknU
-	RO7ttPNdPNnFnd9e+5s/YQKv2zg58+DZv/HZs37ZfwxBZK1fjIh3HuLQ2dI7dsX26JIuIcRb51G
-	gcrz4xmk8ZiVRiiXHDf4AeISbWDknWsipQtNkSDd9GkLLoZYg0v4sXd22ITiyq4DnzFD3p0ZX/n
-	e6hWn0ngIMJmbMgeqQg6Qd978ojVXeHbrtfx
-X-Google-Smtp-Source: AGHT+IGL2v0R/DB2BbwNwRSpcSF4R0O2YrzUanoHsSJXw2R9hxcbLlm93iZS/VxCmjUZbKgpZIS1gj3Tl7G719NoJMY=
-X-Received: by 2002:a05:600c:4f50:b0:477:73f4:26b with SMTP id
- 5b1f17b1804b1-47787e10f86mr467035e9.3.1762910944363; Tue, 11 Nov 2025
- 17:29:04 -0800 (PST)
+	s=arc-20240116; t=1762911046; c=relaxed/simple;
+	bh=xhfGb6ZycktLx6DtRtGPeWPXRKJb3uLgZoLIbraIZjw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kEQ9Ce67pVcjoVWEw/rDUN1RzBaKBuglNQHPhzZ7Jos3xmT+nDtTFkUBrv6KayhLEpS0TGj2ZjuZXF7Y9EFAukcKwxg2iJEs1wxJeA6B23ZcfNoYVW8qQv+2kFD9US860vZKcLnhT+tV4Tc8Beh0ytez9WM8zkYVk1EjuDu4bqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=kFf+EOmV; arc=none smtp.client-ip=91.218.175.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1762911042;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=tESTeWnloD3F0ybR0jqLCnFnlk32UlwI6uI9VspQVOg=;
+	b=kFf+EOmVstthelOt+ZjpHloeenyojPkMLFg09AVDN6fh1quxJCWu3i84tByqPuEJ9s6xwD
+	etQgT2PN54g1T2Cow383hG+Cz58ERuZPSJ2u97smFIXafbqX4o0Xx4gBsCg9SCTC7e1LaG
+	FPVehE99blTxlEtltWFSfu3wiKcCPAU=
+From: Yosry Ahmed <yosry.ahmed@linux.dev>
+To: Paolo Bonzini <pbonzini@redhat.com>,
+	Sean Christopherson <seanjc@google.com>
+Cc: kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yosry Ahmed <yosry.ahmed@linux.dev>,
+	stable@vger.kernel.org
+Subject: [PATCH] KVM: SVM: Fix redundant updates of LBR MSR intercepts
+Date: Wed, 12 Nov 2025 01:30:17 +0000
+Message-ID: <20251112013017.1836863-1-yosry.ahmed@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250919155832.1084091-1-william.roche@oracle.com>
- <CACw3F521fi5HWhCKi_KrkNLXkw668HO4h8+DjkP2+vBuK-=org@mail.gmail.com>
- <aPjXdP63T1yYtvkq@hyeyoo> <CACw3F50As2jPzy1rRjzpm3uKOALjX_9WmKxMPGnQcok96OfQkA@mail.gmail.com>
- <aQBqGupCN_v8ysMX@hyeyoo> <d3d35586-c63f-c1be-c95e-fbd7aafd43f3@huawei.com>
- <CACw3F51qaug5aWFNcjB54dVEc8yH+_A7zrkGcQyKXKJs6uVvgA@mail.gmail.com>
- <aQhk4WtDSaQmFFFo@harry> <aQhti7Dt_34Yx2jO@harry> <CACw3F503FG01yQyA53hHAo7q0yE3qQtMuT9kOjNHpp8Q9qHKPQ@mail.gmail.com>
- <aQxSSjyPsI0MT8mp@harry>
-In-Reply-To: <aQxSSjyPsI0MT8mp@harry>
-From: Jiaqi Yan <jiaqiyan@google.com>
-Date: Tue, 11 Nov 2025 17:28:52 -0800
-X-Gm-Features: AWmQ_bnLyiOlms588iE7RxqqFJJc1I_V2hzoeqXEHn5hpQKGL1FRmzkW8zKex6I
-Message-ID: <CACw3F51VGxg4q9nM_eQN7OXs7JaZo9K-nvDwxtZgtjFSNyjQaw@mail.gmail.com>
-Subject: Re: [RFC PATCH v1 0/3] Userspace MFR Policy via memfd
-To: Harry Yoo <harry.yoo@oracle.com>, =?UTF-8?Q?=E2=80=9CWilliam_Roche?= <william.roche@oracle.com>, 
-	Miaohe Lin <linmiaohe@huawei.com>
-Cc: Ackerley Tng <ackerleytng@google.com>, jgg@nvidia.com, akpm@linux-foundation.org, 
-	ankita@nvidia.com, dave.hansen@linux.intel.com, david@redhat.com, 
-	duenwen@google.com, jane.chu@oracle.com, jthoughton@google.com, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, muchun.song@linux.dev, nao.horiguchi@gmail.com, 
-	osalvador@suse.de, peterx@redhat.com, rientjes@google.com, 
-	sidhartha.kumar@oracle.com, tony.luck@intel.com, wangkefeng.wang@huawei.com, 
-	willy@infradead.org, vbabka@suse.cz, surenb@google.com, mhocko@suse.com, 
-	jackmanb@google.com, hannes@cmpxchg.org, ziy@nvidia.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Nov 5, 2025 at 11:54=E2=80=AFPM Harry Yoo <harry.yoo@oracle.com> wr=
-ote:
->
-> On Mon, Nov 03, 2025 at 08:57:08AM -0800, Jiaqi Yan wrote:
-> > On Mon, Nov 3, 2025 at 12:53=E2=80=AFAM Harry Yoo <harry.yoo@oracle.com=
-> wrote:
-> > >
-> > > On Mon, Nov 03, 2025 at 05:16:33PM +0900, Harry Yoo wrote:
-> > > > On Thu, Oct 30, 2025 at 10:28:48AM -0700, Jiaqi Yan wrote:
-> > > > > On Thu, Oct 30, 2025 at 4:51=E2=80=AFAM Miaohe Lin <linmiaohe@hua=
-wei.com> wrote:
-> > > > > > On 2025/10/28 15:00, Harry Yoo wrote:
-> > > > > > > On Mon, Oct 27, 2025 at 09:17:31PM -0700, Jiaqi Yan wrote:
-> > > > > > >> On Wed, Oct 22, 2025 at 6:09=E2=80=AFAM Harry Yoo <harry.yoo=
-@oracle.com> wrote:
-> > > > > > >>> On Mon, Oct 13, 2025 at 03:14:32PM -0700, Jiaqi Yan wrote:
-> > > > > > >>>> On Fri, Sep 19, 2025 at 8:58=E2=80=AFAM =E2=80=9CWilliam R=
-oche <william.roche@oracle.com> wrote:
-> > > > > > >>> But even after fixing that we need to fix the race conditio=
-n.
-> > > > > > >>
-> > > > > > >> What exactly is the race condition you are referring to?
-> > > > > > >
-> > > > > > > When you free a high-order page, the buddy allocator doesn't =
-not check
-> > > > > > > PageHWPoison() on the page and its subpages. It checks PageHW=
-Poison()
-> > > > > > > only when you free a base (order-0) page, see free_pages_prep=
-are().
-> > > > > >
-> > > > > > I think we might could check PageHWPoison() for subpages as wha=
-t free_page_is_bad()
-> > > > > > does. If any subpage has HWPoisoned flag set, simply drop the f=
-olio. Even we could
-> > > > >
-> > > > > Agree, I think as a starter I could try to, for example, let
-> > > > > free_pages_prepare scan HWPoison-ed subpages if the base page is =
-high
-> > > > > order. In the optimal case, HugeTLB does move PageHWPoison flag f=
-rom
-> > > > > head page to the raw error pages.
-> > > >
-> > > > [+Cc page allocator folks]
-> > > >
-> > > > AFAICT enabling page sanity check in page alloc/free path would be =
-against
-> > > > past efforts to reduce sanity check overhead.
-> > > >
-> > > > [1] https://lore.kernel.org/linux-mm/1460711275-1130-15-git-send-em=
-ail-mgorman@techsingularity.net/
-> > > > [2] https://lore.kernel.org/linux-mm/1460711275-1130-16-git-send-em=
-ail-mgorman@techsingularity.net/
-> > > > [3] https://lore.kernel.org/all/20230216095131.17336-1-vbabka@suse.=
-cz
-> > > >
-> > > > I'd recommend to check hwpoison flag before freeing it to the buddy
-> > > > when we know a memory error has occurred (I guess that's also what =
-Miaohe
-> > > > suggested).
-> > > >
-> > > > > > do it better -- Split the folio and let healthy subpages join t=
-he buddy while reject
-> > > > > > the hwpoisoned one.
-> > > > > >
-> > > > > > >
-> > > > > > > AFAICT there is nothing that prevents the poisoned page to be
-> > > > > > > allocated back to users because the buddy doesn't check PageH=
-WPoison()
-> > > > > > > on allocation as well (by default).
-> > > > > > >
-> > > > > > > So rather than freeing the high-order page as-is in
-> > > > > > > dissolve_free_hugetlb_folio(), I think we have to split it to=
- base pages
-> > > > > > > and then free them one by one.
-> > > > > >
-> > > > > > It might not be worth to do that as this would significantly in=
-crease the overhead
-> > > > > > of the function while memory failure event is really rare.
-> > > > >
-> > > > > IIUC, Harry's idea is to do the split in dissolve_free_hugetlb_fo=
-lio
-> > > > > only if folio is HWPoison-ed, similar to what Miaohe suggested
-> > > > > earlier.
-> > > >
-> > > > Yes, and if we do the check before moving HWPoison flag to raw page=
-s,
-> > > > it'll be just a single folio_test_hwpoison() call.
-> > > >
-> > > > > BTW, I believe this race condition already exists today when
-> > > > > memory_failure handles HWPoison-ed free hugetlb page; it is not
-> > > > > something introduced via this patchset. I will fix or improve thi=
-s in
-> > > > > a separate patchset.
-> > > >
-> > > > That makes sense.
-> > >
-> > > Wait, without this patchset, do we even free the hugetlb folio when
-> > > its subpage is hwpoisoned? I don't think we do, but I'm not expert at=
- MFR...
-> >
-> > Based on my reading of try_memory_failure_hugetlb, me_huge_page, and
-> > __page_handle_poison, I think mainline kernel frees dissolved hugetlb
-> > folio to buddy allocator in two cases:
-> > 1. it was a free hugetlb page at the moment of try_memory_failure_huget=
-lb
->
-> Right.
->
-> > 2. it was an anonomous hugetlb page
->
-> Right.
->
-> Thanks. I think you're right that poisoned hugetlb folios can be freed
-> to the buddy even without this series (and poisoned pages allocated back =
-to
-> users instead of being isolated due to missing PageHWPoison() checks on
-> alloc/free).
+svm_update_lbrv() always updates LBR MSRs intercepts, even when they are
+already set correctly. This results in force_msr_bitmap_recalc always
+being set to true on every nested transition, essentially undoing the
+hyperv optimization in nested_svm_merge_msrpm().
 
-Fortunately today at maximum only 1 raw HWPoison-ed page, with the
-high-order folio containing it, will get free to buddy allocator.
+Fix it by keeping track of whether LBR MSRs are intercepted or not and
+only doing the update if needed, similar to x2avic_msrs_intercepted.
 
-But with my memfd MFR series, raw HWPoison-ed pages can accumulate
-while userspace still holds the hugetlb folio. So I would like a
-solution to this.
+Avoid using svm_test_msr_bitmap_*() to check the status of the
+intercepts, as an arbitrary MSR will need to be chosen as a
+representative of all LBR MSRs, and this could theoretically break if
+some of the MSRs intercepts are handled differently from the rest.
 
->
-> So the plan is to post RFC v2 of this series and the race condition fix
-> as a separate series, right? (that sounds good to me!)
+Also, using svm_test_msr_bitmap_*() makes backports difficult as it was
+only recently introduced with no direct alternatives in older kernels.
 
-Yes, I am preparing RFC v2 in the meanwhile.
+Fixes: fbe5e5f030c2 ("KVM: nSVM: Always recalculate LBR MSR intercepts in svm_update_lbrv()")
+Cc: stable@vger.kernel.org
+Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
+---
+ arch/x86/kvm/svm/svm.c | 9 ++++++++-
+ arch/x86/kvm/svm/svm.h | 1 +
+ 2 files changed, 9 insertions(+), 1 deletion(-)
 
->
-> I still think it'd be best to split the hugetlb folio to order-0 pages an=
-d
-> free them when we know the hugetlb folio is poisoned because:
->
-> - We don't have to implement a special version of __free_pages() that
->   knows how to handle freeing of a high-order page where its one or more
->   sub-pages are poisoned.
->
-> - We can avoid re-enabling page sanity checks (and introducing overhead)
->   all the time.
-
-Agreed, after I tried a couple of alternative and unsuccessful
-approaches, now I have a working prototype that works exactly the same
-way as Harry suggested.
-
-My code roughly work like this (if you can't tolerate the prototype
-code attached at the end):
-
-__update_and_free_hugetlb_folio()
-   hugetlb_free_hwpoison_folio() (new code, instead of hugetlb_free_folio)
-        folios =3D __split_unmapped_folio()
-        for folio in folios
-            free_frozen_pages if not HWPoison-ed
-
-It took me some time to test my implementation with some test-only
-code to check pcplist and freelist (i.e. check_zone_free_list and
-page_count_in_pcplist), but I have validated with several tests that,
-after freeing high-order folio containing multiple HWPoison-ed pages,
-only healthy pages go to buddy allocator or per-cpu-pages lists:
-1. some pages are still zone->per_cpu_pageset because pcp-count is not
-high enough
-2. all the others are, after merging, in some order's
-zone->free_area[order].free_list
-
-For example:
-- when hugepagesize=3D2M, 512 - x 0-order pages (x=3Dnumber of HWPoison-ed
-ones) are all placed in pcp list.
-- when hugepagesize=3D1G, most pages are merged to buddy blocks of order
-0 to 10, and some left over in pcp list.
-
-I am in the middle of refining my working prototype (attached below),
-and then send it out as separate patch.
-
-Code below is just for illustrating my idea to see if it is correct in
-general, not asking for code review :).
-
-commit d54cc323608d383ee0136ca95932b535fed55def
-Author: Jiaqi Yan <jiaqiyan@google.com>
-Date:   Mon Nov 10 19:46:21 2025 +0000
-
-    mm: memory_failure: avoid free HWPoison pages when dissolve free
-hugetlb folio
-
-    1. expose __split_unmapped_folio
-    2. introduce hugetlb_free_hwpoison_folio
-    3. simplify filemap_offline_hwpoison_folio_hugetlb
-    4. introduce page_count_in_pcplist and check_zone_free_list for testing
-
-    Tested with page_count_in_pcplist and check_zone_free_list.
-
-    Change-Id: I7af5fc40851e3a26eaa37bb3191d319437202bc1
-
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index f327d62fc9852..5619d8931c4bf 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -367,6 +367,9 @@ unsigned long thp_get_unmapped_area_vmflags(struct
-file *filp, unsigned long add
- bool can_split_folio(struct folio *folio, int caller_pins, int *pextra_pin=
-s);
- int split_huge_page_to_list_to_order(struct page *page, struct list_head *=
-list,
-                unsigned int new_order);
-+int __split_unmapped_folio(struct folio *folio, int new_order,
-+                          struct page *split_at, struct xa_state *xas,
-+                          struct address_space *mapping, bool uniform_spli=
-t);
- int min_order_for_split(struct folio *folio);
- int split_folio_to_list(struct folio *folio, struct list_head *list);
- bool uniform_split_supported(struct folio *folio, unsigned int new_order,
-@@ -591,6 +594,14 @@ split_huge_page_to_list_to_order(struct page
-*page, struct list_head *list,
-        VM_WARN_ON_ONCE_PAGE(1, page);
-        return -EINVAL;
+diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
+index 10c21e4c5406f..9d29b2e7e855d 100644
+--- a/arch/x86/kvm/svm/svm.c
++++ b/arch/x86/kvm/svm/svm.c
+@@ -705,7 +705,11 @@ void *svm_alloc_permissions_map(unsigned long size, gfp_t gfp_mask)
+ 
+ static void svm_recalc_lbr_msr_intercepts(struct kvm_vcpu *vcpu)
+ {
+-	bool intercept = !(to_svm(vcpu)->vmcb->control.virt_ext & LBR_CTL_ENABLE_MASK);
++	struct vcpu_svm *svm = to_svm(vcpu);
++	bool intercept = !(svm->vmcb->control.virt_ext & LBR_CTL_ENABLE_MASK);
++
++	if (intercept == svm->lbr_msrs_intercepted)
++		return;
+ 
+ 	svm_set_intercept_for_msr(vcpu, MSR_IA32_LASTBRANCHFROMIP, MSR_TYPE_RW, intercept);
+ 	svm_set_intercept_for_msr(vcpu, MSR_IA32_LASTBRANCHTOIP, MSR_TYPE_RW, intercept);
+@@ -714,6 +718,8 @@ static void svm_recalc_lbr_msr_intercepts(struct kvm_vcpu *vcpu)
+ 
+ 	if (sev_es_guest(vcpu->kvm))
+ 		svm_set_intercept_for_msr(vcpu, MSR_IA32_DEBUGCTLMSR, MSR_TYPE_RW, intercept);
++
++	svm->lbr_msrs_intercepted = intercept;
  }
-+static inline int __split_unmapped_folio(struct folio *folio, int new_orde=
-r,
-+                                        struct page *split_at, struct
-xa_state *xas,
-+                                        struct address_space *mapping,
-+                                        bool uniform_split)
-+{
-+       VM_WARN_ON_ONCE_FOLIO(1, folio);
-+       return -EINVAL;
-+}
- static inline int split_huge_page(struct page *page)
- {
-        VM_WARN_ON_ONCE_PAGE(1, page);
-diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
-index b7733ef5ee917..fad53772c875c 100644
---- a/include/linux/hugetlb.h
-+++ b/include/linux/hugetlb.h
-@@ -873,6 +873,7 @@ int dissolve_free_hugetlb_folios(unsigned long start_pf=
-n,
- extern void folio_clear_hugetlb_hwpoison(struct folio *folio);
- extern bool hugetlb_should_keep_hwpoison_mapped(struct folio *folio,
-                                                struct address_space *mappi=
-ng);
-+extern void hugetlb_free_hwpoison_folio(struct folio *folio);
- #else
- static inline void folio_clear_hugetlb_hwpoison(struct folio *folio)
- {
-@@ -882,6 +883,9 @@ static inline bool
-hugetlb_should_keep_hwpoison_mapped(struct folio *folio
- {
-        return false;
- }
-+static inline void hugetlb_free_hwpoison_folio(struct folio *folio)
-+{
-+}
- #endif
+ 
+ void svm_vcpu_free_msrpm(void *msrpm)
+@@ -1221,6 +1227,7 @@ static int svm_vcpu_create(struct kvm_vcpu *vcpu)
+ 	}
+ 
+ 	svm->x2avic_msrs_intercepted = true;
++	svm->lbr_msrs_intercepted = true;
+ 
+ 	svm->vmcb01.ptr = page_address(vmcb01_page);
+ 	svm->vmcb01.pa = __sme_set(page_to_pfn(vmcb01_page) << PAGE_SHIFT);
+diff --git a/arch/x86/kvm/svm/svm.h b/arch/x86/kvm/svm/svm.h
+index c856d8e0f95e7..dd78e64023450 100644
+--- a/arch/x86/kvm/svm/svm.h
++++ b/arch/x86/kvm/svm/svm.h
+@@ -336,6 +336,7 @@ struct vcpu_svm {
+ 	bool guest_state_loaded;
+ 
+ 	bool x2avic_msrs_intercepted;
++	bool lbr_msrs_intercepted;
+ 
+ 	/* Guest GIF value, used when vGIF is not enabled */
+ 	bool guest_gif;
 
- #ifdef CONFIG_ARCH_ENABLE_HUGEPAGE_MIGRATION
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 1b81680b4225f..6ca70ec2fb7cd 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -3408,9 +3408,9 @@ static void __split_folio_to_order(struct folio
-*folio, int old_order,
-  * For !uniform_split, when -ENOMEM is returned, the original folio might =
-be
-  * split. The caller needs to check the input folio.
-  */
--static int __split_unmapped_folio(struct folio *folio, int new_order,
--               struct page *split_at, struct xa_state *xas,
--               struct address_space *mapping, bool uniform_split)
-+int __split_unmapped_folio(struct folio *folio, int new_order,
-+                          struct page *split_at, struct xa_state *xas,
-+                          struct address_space *mapping, bool uniform_spli=
-t)
- {
-        int order =3D folio_order(folio);
-        int start_order =3D uniform_split ? new_order : order - 1;
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index d499574aafe52..7e408d6ce91d7 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -1596,6 +1596,7 @@ static void
-__update_and_free_hugetlb_folio(struct hstate *h,
-                                                struct folio *folio)
- {
-        bool clear_flag =3D folio_test_hugetlb_vmemmap_optimized(folio);
-+       bool has_hwpoison =3D folio_test_hwpoison(folio);
+base-commit: 8a4821412cf2c1429fffa07c012dd150f2edf78c
+-- 
+2.51.2.1041.gc1ab5b90ca-goog
 
-        if (hstate_is_gigantic(h) && !gigantic_page_runtime_supported())
-                return;
-@@ -1638,12 +1639,15 @@ static void
-__update_and_free_hugetlb_folio(struct hstate *h,
-         * Move PageHWPoison flag from head page to the raw error pages,
-         * which makes any healthy subpages reusable.
-         */
--       if (unlikely(folio_test_hwpoison(folio)))
-+       if (unlikely(has_hwpoison))
-                folio_clear_hugetlb_hwpoison(folio);
-
-        folio_ref_unfreeze(folio, 1);
-
--       hugetlb_free_folio(folio);
-+       if (has_hwpoison)
-+               hugetlb_free_hwpoison_folio(folio);
-+       else
-+               hugetlb_free_folio(folio);
- }
-
- /*
-diff --git a/mm/internal.h b/mm/internal.h
-index 1561fc2ff5b83..6ee56aea01a91 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -829,6 +829,7 @@ struct page *__alloc_frozen_pages_noprof(gfp_t,
-unsigned int order, int nid,
- #define __alloc_frozen_pages(...) \
-        alloc_hooks(__alloc_frozen_pages_noprof(__VA_ARGS__))
- void free_frozen_pages(struct page *page, unsigned int order);
-+int page_count_in_pcplist(struct zone *zone);
- void free_unref_folios(struct folio_batch *fbatch);
-
- #ifdef CONFIG_NUMA
-diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-index fa281461f38a6..7dd82c787cea7 100644
---- a/mm/memory-failure.c
-+++ b/mm/memory-failure.c
-@@ -2044,13 +2044,134 @@ int __get_huge_page_for_hwpoison(unsigned
-long pfn, int flags,
-        return ret;
- }
-
-+static int calculate_overlap(int s1, int e1, int s2, int e2) {
-+       /* Calculate the start and end of the potential overlap. */
-+       unsigned long overlap_start =3D max(s1, s2);
-+       unsigned long overlap_end =3D min(e1, e2);
-+
-+       if (overlap_start <=3D overlap_end)
-+               return (overlap_end - overlap_start + 1);
-+       else
-+               return 0UL;
-+}
-+
-+static void check_zone_free_list(struct zone *zone,
-+                                enum migratetype migrate_type,
-+                                unsigned long target_start_pfn,
-+                                unsigned long target_end_pfn)
-+{
-+       int order;
-+       struct list_head *list;
-+       struct page *page;
-+       unsigned long pages_in_block;
-+       unsigned long nr_free;
-+       unsigned long start_pfn, end_pfn;
-+       unsigned long flags;
-+       unsigned long nr_pages =3D target_end_pfn - target_start_pfn + 1;
-+       unsigned long overlap;
-+
-+       pr_info("%s:%d: search 0~%d order free areas\n", __func__,
-__LINE__, NR_PAGE_ORDERS);
-+
-+       spin_lock_irqsave(&zone->lock, flags);
-+       for (order =3D 0; order < NR_PAGE_ORDERS; ++order) {
-+               pages_in_block =3D 1UL << order;
-+               nr_free =3D zone->free_area[order].nr_free;
-+
-+               if (nr_free =3D=3D 0) {
-+                       pr_info("%s:%d: empty free area for order=3D%d\n",
-+                               __func__, __LINE__, order);
-+                       continue;
-+               }
-+
-+               pr_info("%s:%d: free area order=3D%d, nr_free=3D%lu blocks
-in total\n",
-+                       __func__, __LINE__, order, nr_free);
-+               list =3D &zone->free_area[order].free_list[migrate_type];
-+               list_for_each_entry(page, list, buddy_list) {
-+                       start_pfn =3D page_to_pfn(page);
-+                       end_pfn =3D start_pfn + pages_in_block - 1;
-+                       overlap =3D calculate_overlap(target_start_pfn,
-+                                                   target_end_pfn,
-+                                                   start_pfn,
-+                                                   end_pfn);
-+                       nr_pages -=3D overlap;
-+                       if (overlap > 0)
-+                               pr_warn("%s:%d: found [%#lx, %#lx]
-overlap %lu pages with [%#lx, %#lx]\n",
-+                                       __func__, __LINE__,
-+                                       target_start_pfn, target_end_pfn,
-+                                       overlap, start_pfn, end_pfn);
-+               }
-+       }
-+       spin_unlock_irqrestore(&zone->lock, flags);
-+       pr_err("%s:%d: %lu pages not found in free list\n", __func__,
-__LINE__, nr_pages);
-+}
-+
-+void hugetlb_free_hwpoison_folio(struct folio *folio)
-+{
-+       struct folio *curr, *next;
-+       struct folio *end_folio =3D folio_next(folio);
-+       int ret;
-+       unsigned long start_pfn =3D folio_pfn(folio);
-+       unsigned long end_pfn =3D start_pfn + folio_nr_pages(folio) - 1;
-+       struct zone *zone =3D folio_zone(folio);
-+       int migrate_type =3D folio_migratetype(folio);
-+       int pcp_count_init, pcp_count;
-+
-+       pr_info("%s:%d: folio start_pfn=3D%#lx, end_pfn=3D%#lx\n",
-__func__, __LINE__, start_pfn, end_pfn);
-+       /* Expect folio's refcount=3D=3D1. */
-+       drain_all_pages(folio_zone(folio));
-+
-+       pcp_count_init =3D page_count_in_pcplist(zone);
-+
-+       pr_warn("%#lx: %s:%d: split-to-zero folio: order=3D%d,
-refcount=3D%d, nid=3D%d, zone=3D%d, migratetype=3D%d\n",
-+               folio_pfn(folio), __func__, __LINE__,
-folio_order(folio), folio_ref_count(folio),
-+               folio_nid(folio), folio_zonenum(folio),
-folio_migratetype(folio));
-+
-+       ret =3D __split_unmapped_folio(folio, /*new_order=3D*/0,
-+                                    /*split_at=3D*/&folio->page,
-+                                    /*xas=3D*/NULL, /*mapping=3D*/NULL,
-+                                    /*uniform_split=3D*/true);
-+       if (ret) {
-+               pr_err("%#lx: failed to split free %d-order folio with
-HWPoison-ed page(s): %d\n",
-+                       folio_pfn(folio), folio_order(folio), ret);
-+               return;
-+       }
-+
-+       /* Expect 1st folio's refcount=3D=3D1, and other's refcount=3D=3D0.=
- */
-+       for (curr =3D folio; curr !=3D end_folio; curr =3D next) {
-+               next =3D folio_next(curr);
-+
-+               VM_WARN_ON_FOLIO(folio_order(curr), curr);
-+
-+               if (PageHWPoison(&curr->page)) {
-+                       if (curr !=3D folio)
-+                               folio_ref_inc(curr);
-+
-+                       VM_WARN_ON_FOLIO(folio_ref_count(curr) !=3D 1, curr=
-);
-+                       pr_warn("%#lx: prevented freeing HWPoison
-page\n", folio_pfn(curr));
-+                       continue;
-+               }
-+
-+               if (curr =3D=3D folio)
-+                       folio_ref_dec(curr);
-+
-+               VM_WARN_ON_FOLIO(folio_ref_count(curr), curr);
-+               free_frozen_pages(&curr->page, folio_order(curr));
-+       }
-+
-+       pcp_count =3D page_count_in_pcplist(zone);
-+       pr_err("%s:%d: delta pcp_count: %d - %d =3D %d\n",
-+              __func__, __LINE__, pcp_count, pcp_count_init,
-+              pcp_count - pcp_count_init);
-+
-+       check_zone_free_list(zone, migrate_type, start_pfn, end_pfn);
-+}
-+
- static void filemap_offline_hwpoison_folio_hugetlb(struct folio *folio)
- {
-        int ret;
-        struct llist_node *head;
-        struct raw_hwp_page *curr, *next;
-        struct page *page;
--       unsigned long pfn;
-
-        /*
-         * Since folio is still in the folio_batch, drop the refcount
-@@ -2063,38 +2184,20 @@ static void
-filemap_offline_hwpoison_folio_hugetlb(struct folio *folio)
-         * Release references hold by try_memory_failure_hugetlb, one per
-         * HWPoison-ed page in the raw hwp list.
-         */
--       llist_for_each_entry(curr, head, node)
--               folio_put(folio);
--
--       /* Refcount now should be zero and ready to dissolve folio. */
--       ret =3D dissolve_free_hugetlb_folio(folio);
--       if (ret) {
--               pr_err("failed to dissolve hugetlb folio: %d\n", ret);
--               llist_for_each_entry(curr, head, node) {
--                       page =3D curr->page;
--                       pfn =3D page_to_pfn(page);
--                       /*
--                        * Maybe we also need to roll back the count
--                        * incremented during inline handling, depending
--                        * on what me_huge_page returned.
--                        */
--                       update_per_node_mf_stats(pfn, MF_FAILED);
--               }
--               return;
--       }
--
-        llist_for_each_entry_safe(curr, next, head, node) {
-+               folio_put(folio);
-                page =3D curr->page;
--               pfn =3D page_to_pfn(page);
--               drain_all_pages(page_zone(page));
--               if (!take_page_off_buddy(page))
--                       pr_warn("%#lx: unable to take off buddy
-allocator\n", pfn);
--
-                SetPageHWPoison(page);
--               page_ref_inc(page);
-+               pr_info("%#lx: %s:%d moved HWPoison flag\n",
-page_to_pfn(page), __func__, __LINE__);
-                kfree(curr);
--               pr_info("%#lx: pending hard offline completed\n", pfn);
-        }
-+
-+       pr_info("%#lx: %s:%d before dissolve refcount=3D%d\n",
-+               page_to_pfn(&folio->page), __func__, __LINE__,
-folio_ref_count(folio));
-+       /* Refcount now should be zero and ready to dissolve folio. */
-+       ret =3D dissolve_free_hugetlb_folio(folio);
-+       if (ret)
-+               pr_err("failed to dissolve HWPoison-ed hugetlb folio:
-%d\n", ret);
- }
-
- void filemap_offline_hwpoison_folio(struct address_space *mapping,
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 600d9e981c23d..0b3507a1880ec 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -1333,6 +1333,7 @@ __always_inline bool free_pages_prepare(struct page *=
-page,
-        }
-
-        if (unlikely(PageHWPoison(page)) && !order) {
-+               VM_BUG_ON_PAGE(1, page);
-                /* Do not let hwpoison pages hit pcplists/buddy */
-                reset_page_owner(page, order);
-                page_table_check_free(page, order);
-@@ -2939,6 +2940,24 @@ static void __free_frozen_pages(struct page
-*page, unsigned int order,
-        pcp_trylock_finish(UP_flags);
- }
-
-+int page_count_in_pcplist(struct zone *zone)
-+{
-+       unsigned long __maybe_unused UP_flags;
-+       struct per_cpu_pages *pcp;
-+       int page_count =3D 0;
-+
-+       pcp_trylock_prepare(UP_flags);
-+       pcp =3D pcp_spin_trylock(zone->per_cpu_pageset);
-+       if (pcp) {
-+               page_count =3D pcp->count;
-+               pcp_spin_unlock(pcp);
-+       }
-+       pcp_trylock_finish(UP_flags);
-+
-+       pr_info("%s:%d: #pages in pcp list=3D%d\n", __func__, __LINE__,
-page_count);
-+       return page_count;
-+}
-+
- void free_frozen_pages(struct page *page, unsigned int order)
- {
-        __free_frozen_pages(page, order, FPI_NONE);
-
-
->
-> --
-> Cheers,
-> Harry / Hyeonggon
 
