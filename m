@@ -1,284 +1,215 @@
-Return-Path: <linux-kernel+bounces-896372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F9A2C50380
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 02:39:19 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 458A2C50383
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 02:39:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6E4B3B2B45
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 01:39:00 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 89C734E60CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 01:39:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7EAA2741C0;
-	Wed, 12 Nov 2025 01:38:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E488C2727E5;
+	Wed, 12 Nov 2025 01:39:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="LXM0CK+8"
-Received: from out30-113.freemail.mail.aliyun.com (out30-113.freemail.mail.aliyun.com [115.124.30.113])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BSoUN6En"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AE2923A994
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 01:38:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.113
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2238E271A7B;
+	Wed, 12 Nov 2025 01:39:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762911534; cv=none; b=OSUYF4FAhsABbLo8ydKALTU+Vq7dG/OosrWv12Xw1HqaDk5ZEK4XwmX09CpQ1+8WGixOzuHSacRCVUK+ba7CLdhsmhCIBlF4xAoZHYc7NmM2d4JzvvcNWop3HHxFrIh/e/BpqSuDh63yScFelD/zK721Cb+aelh8hb32bzRkV3M=
+	t=1762911544; cv=none; b=Y6frkJ5Ts3fe+5DgT9j/hiZ1q1LzzlJdSU+1vAUh+0zzTlLgBQdqDrOvNXSwaYq8pEBbYHZ/g6lrdS/34lanymhfu25HbfnxrizfW6CQ4D62rLptQuJh0YFYipNvuqEZ746ZekxFDl8tmw4iE60z9okV4Y4XHG5mB7l6UV6o0J4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762911534; c=relaxed/simple;
-	bh=Dlk0mdjvhHghBtyxkECupg8hZNKSoS1GQJfTe7zvHTc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=fREakUxq9U5BFfWaXGNv7OJt/4dfrAjhsGKYOFuwKJcW+5O1EFFBb0sZrH7CR4Qq+dTITPhyQ6N5hYYE2cDj6oDdXVMbL0wPAqS1FnaNm1d5ME+YlP5uFcSd0L0lpmoeRcWlEkX/5ekBtt7u/KgoSqmvIo9Fb1IB5YAwUa0G1UY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=LXM0CK+8; arc=none smtp.client-ip=115.124.30.113
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1762911528; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=na5gxhjJoOyHwtyIYzc9OFiJbyudA6K7ZwaxzwkGzmw=;
-	b=LXM0CK+8mFGinTJRn2g+pmFWJ2E19D1LV6fWAsbPKGROWHUl9i85dZH2tPk4Fq9zZjTxnSTzkqxnGB1Oq6EwmwUSn/iVOjbhDR7khiUXe9rHB99cKGCr9c9FMMmOCUW2VCMU1O8IehxexCjl8OKigyljj1oq37ySBE7HigYE3d4=
-Received: from localhost.localdomain(mailfrom:ying.huang@linux.alibaba.com fp:SMTPD_---0WsEIP3T_1762911526 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 12 Nov 2025 09:38:46 +0800
-From: Huang Ying <ying.huang@linux.alibaba.com>
-To: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@redhat.com>
-Cc: Huang Ying <ying.huang@linux.alibaba.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Barry Song <baohua@kernel.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Zi Yan <ziy@nvidia.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Yang Shi <yang@os.amperecomputing.com>,
-	"Christoph Lameter (Ampere)" <cl@gentwo.org>,
-	Dev Jain <dev.jain@arm.com>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	Kefeng Wang <wangkefeng.wang@huawei.com>,
-	Kevin Brodsky <kevin.brodsky@arm.com>,
-	Yin Fengwei <fengwei_yin@linux.alibaba.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: [PATCH -v5 2/2] arm64, tlbflush: don't TLBI broadcast if page reused in write fault
-Date: Wed, 12 Nov 2025 09:38:22 +0800
-Message-Id: <20251112013822.54334-3-ying.huang@linux.alibaba.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20251112013822.54334-1-ying.huang@linux.alibaba.com>
-References: <20251112013822.54334-1-ying.huang@linux.alibaba.com>
+	s=arc-20240116; t=1762911544; c=relaxed/simple;
+	bh=dC5aByELFmakgvk0wqr11T7toMH8Eh9BJChORDfYCKM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dmZrmp5GhMK4NxtxS+OPBaAsdrdmpjJUgcX0bSz2nvZpNDQqFwGdyAYfLVNhrp3fJeEVcJOAON60d9bm2fS5c9s90WhKGA3M+Vq+//APRwXdUyl08RZJmZSvBE+Mks29pJQHYw2xt5RZ9TF1JSVVBLx5ca+J+hl+rnQqDoTjHZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BSoUN6En; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762911542; x=1794447542;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=dC5aByELFmakgvk0wqr11T7toMH8Eh9BJChORDfYCKM=;
+  b=BSoUN6EnAeY+eqoJ1ONkr2LOzR7m83ZIiNggAFJoakYfS78skFFHac8z
+   UFlqBSZ3pPblq/3LhwXSekKF9tQklsBQNqUXlm3YKI3arKSJ1T55Kyw3c
+   cA632UEe2Ek08DiomYg7a8LUUeEJx4BddaZ9FeefrdP0CUNmqQQL3ucdk
+   n10VZwVa3FiFbjFBa68vlMZw0reb0VqJ8aPj3/QblLT8ubzG2oJ8XQKHB
+   awyRdhFZm+cdpUBTr9gkRVLBP4EpiQZPDoFTnfEo03Xf31I3Bz6Z/doa3
+   YWv0MAreKPykar7a+O0psjG17GeKttZufRCIyw8WlM+EzWgtpgDH5xQa9
+   A==;
+X-CSE-ConnectionGUID: u4r0Hiq5Qfi1Z3IhV3nkwA==
+X-CSE-MsgGUID: fsSUfhVtSsqwCgFd5A+c1Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11610"; a="75652808"
+X-IronPort-AV: E=Sophos;i="6.19,298,1754982000"; 
+   d="scan'208";a="75652808"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 17:39:02 -0800
+X-CSE-ConnectionGUID: DkEeFC4/RZiI0XjFcN+m2A==
+X-CSE-MsgGUID: 0+wKW6W9RGico2I0c3OxGw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,298,1754982000"; 
+   d="scan'208";a="189345608"
+Received: from jbunyan-mobl1.amr.corp.intel.com (HELO [10.125.164.106]) ([10.125.164.106])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 17:39:01 -0800
+Message-ID: <48f84128-bd74-4d82-8095-4b21e386bd81@intel.com>
+Date: Tue, 11 Nov 2025 17:39:00 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] perf test: Add a perf event fallback test
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+ Adrian Hunter <adrian.hunter@intel.com>, Ingo Molnar <mingo@redhat.com>,
+ Jiri Olsa <jolsa@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Ian Rogers <irogers@google.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+ thomas.falcon@intel.com, dapeng1.mi@linux.intel.com, xudong.hao@intel.com
+References: <20251111224246.73673-1-zide.chen@intel.com>
+ <aRPdmoNdUWIlWhJU@google.com>
+Content-Language: en-US
+From: "Chen, Zide" <zide.chen@intel.com>
+In-Reply-To: <aRPdmoNdUWIlWhJU@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-A multi-thread customer workload with large memory footprint uses
-fork()/exec() to run some external programs every tens seconds.  When
-running the workload on an arm64 server machine, it's observed that
-quite some CPU cycles are spent in the TLB flushing functions.  While
-running the workload on the x86_64 server machine, it's not.  This
-causes the performance on arm64 to be much worse than that on x86_64.
 
-During the workload running, after fork()/exec() write-protects all
-pages in the parent process, memory writing in the parent process
-will cause a write protection fault.  Then the page fault handler
-will make the PTE/PDE writable if the page can be reused, which is
-almost always true in the workload.  On arm64, to avoid the write
-protection fault on other CPUs, the page fault handler flushes the TLB
-globally with TLBI broadcast after changing the PTE/PDE.  However, this
-isn't always necessary.  Firstly, it's safe to leave some stale
-read-only TLB entries as long as they will be flushed finally.
-Secondly, it's quite possible that the original read-only PTE/PDEs
-aren't cached in remote TLB at all if the memory footprint is large.
-In fact, on x86_64, the page fault handler doesn't flush the remote
-TLB in this situation, which benefits the performance a lot.
 
-To improve the performance on arm64, make the write protection fault
-handler flush the TLB locally instead of globally via TLBI broadcast
-after making the PTE/PDE writable.  If there are stale read-only TLB
-entries in the remote CPUs, the page fault handler on these CPUs will
-regard the page fault as spurious and flush the stale TLB entries.
+On 11/11/2025 5:06 PM, Namhyung Kim wrote:
+> On Tue, Nov 11, 2025 at 02:42:46PM -0800, Zide Chen wrote:
+>> This adds test cases to verify the precise ip fallback logic:
+>>
+>> - If the system supports precise ip, for an event given with the maximum
+>>   precision level, it should be able to decrease precise_ip to find a
+>>   supported level.
+>> - The same fallback behavior should also work in more complex scenarios,
+>>   such as event groups or when PEBS is involved
+>>
+>> Additional fallback tests, such as those covering missing feature cases,
+>> can be added in the future.
+>>
+>> Suggested-by: Ian Rogers <irogers@google.com>
+>> Reviewed-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+>> Signed-off-by: Zide Chen <zide.chen@intel.com>
+>> ---
+>>  .../tests/shell/test_event_open_fallback.sh   | 86 +++++++++++++++++++
+>>  1 file changed, 86 insertions(+)
+>>  create mode 100755 tools/perf/tests/shell/test_event_open_fallback.sh
+>>
+>> diff --git a/tools/perf/tests/shell/test_event_open_fallback.sh b/tools/perf/tests/shell/test_event_open_fallback.sh
+>> new file mode 100755
+>> index 000000000000..72c1ac32c785
+>> --- /dev/null
+>> +++ b/tools/perf/tests/shell/test_event_open_fallback.sh
+>> @@ -0,0 +1,86 @@
+>> +#!/bin/bash
+>> +# Perf event open fallback test
+>> +# SPDX-License-Identifier: GPL-2.0
+>> +
+>> +skip_cnt=0
+>> +ok_cnt=0
+>> +err_cnt=0
+>> +
+>> +cleanup()
+>> +{
+>> +	rm -f perf.data
+>> +	rm -f perf.data.old
+>> +	trap - EXIT TERM INT
+>> +}
+>> +
+>> +trap_cleanup()
+>> +{
+>> +	cleanup
+>> +	exit 1
+>> +}
+>> +
+>> +trap trap_cleanup EXIT TERM INT
+>> +
+>> +perf_record()
+>> +{
+>> +	perf record "$@" -- true 1>/dev/null 2>&1
+>> +}
+>> +
+>> +test_decrease_precise_ip()
+>> +{
+>> +	echo "Decrease precise ip test"
+>> +
+>> +	perf list pmu | grep -q 'cycles' || return 2
+>> +
+>> +	if ! perf_record -e cycles; then
+>> +		return 2
+>> +	fi
+>> +
+>> +	# It should reduce precision level down to 0 if needed.
+>> +	if ! perf_record -e cycles:ppp; then
+> 
+> I think you need 'P' instead of 'ppp' for automatic precision.
 
-To test the patchset, make the usemem.c from
-vm-scalability (https://git.kernel.org/pub/scm/linux/kernel/git/wfg/vm-scalability.git).
-support calling fork()/exec() periodically.  To mimic the behavior of
-the customer workload, run usemem with 4 threads, access 100GB memory,
-and call fork()/exec() every 40 seconds.  Test results show that with
-the patchset the score of usemem improves ~40.6%.  The cycles% of TLB
-flush functions reduces from ~50.5% to ~0.3% in perf profile.
+Yes, it's better with "-e cycles:P" to explicitly set evsel.precise_max
+to 1.
 
-Signed-off-by: Huang Ying <ying.huang@linux.alibaba.com>
-Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
-Reviewed-by: Barry Song <baohua@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: David Hildenbrand <david@redhat.com>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: Zi Yan <ziy@nvidia.com>
-Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
-Cc: Yang Shi <yang@os.amperecomputing.com>
-Cc: "Christoph Lameter (Ampere)" <cl@gentwo.org>
-Cc: Dev Jain <dev.jain@arm.com>
-Cc: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: Kefeng Wang <wangkefeng.wang@huawei.com>
-Cc: Kevin Brodsky <kevin.brodsky@arm.com>
-Cc: Yin Fengwei <fengwei_yin@linux.alibaba.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org
----
- arch/arm64/include/asm/pgtable.h  | 14 +++++---
- arch/arm64/include/asm/tlbflush.h | 56 +++++++++++++++++++++++++++++++
- arch/arm64/mm/contpte.c           |  3 +-
- arch/arm64/mm/fault.c             |  8 +++--
- 4 files changed, 72 insertions(+), 9 deletions(-)
-
-diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-index 0944e296dd4a..9e1ff5195bde 100644
---- a/arch/arm64/include/asm/pgtable.h
-+++ b/arch/arm64/include/asm/pgtable.h
-@@ -130,12 +130,16 @@ static inline void arch_leave_lazy_mmu_mode(void)
- #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
- 
- /*
-- * Outside of a few very special situations (e.g. hibernation), we always
-- * use broadcast TLB invalidation instructions, therefore a spurious page
-- * fault on one CPU which has been handled concurrently by another CPU
-- * does not need to perform additional invalidation.
-+ * We use local TLB invalidation instruction when reusing page in
-+ * write protection fault handler to avoid TLBI broadcast in the hot
-+ * path.  This will cause spurious page faults if stale read-only TLB
-+ * entries exist.
-  */
--#define flush_tlb_fix_spurious_fault(vma, address, ptep) do { } while (0)
-+#define flush_tlb_fix_spurious_fault(vma, address, ptep)	\
-+	local_flush_tlb_page_nonotify(vma, address)
-+
-+#define flush_tlb_fix_spurious_fault_pmd(vma, address, pmdp)	\
-+	local_flush_tlb_page_nonotify(vma, address)
- 
- /*
-  * ZERO_PAGE is a global shared page that is always zero: used
-diff --git a/arch/arm64/include/asm/tlbflush.h b/arch/arm64/include/asm/tlbflush.h
-index 18a5dc0c9a54..682a01df71d2 100644
---- a/arch/arm64/include/asm/tlbflush.h
-+++ b/arch/arm64/include/asm/tlbflush.h
-@@ -249,6 +249,19 @@ static inline unsigned long get_trans_granule(void)
-  *		cannot be easily determined, the value TLBI_TTL_UNKNOWN will
-  *		perform a non-hinted invalidation.
-  *
-+ *	local_flush_tlb_page(vma, addr)
-+ *		Local variant of flush_tlb_page().  Stale TLB entries may
-+ *		remain in remote CPUs.
-+ *
-+ *	local_flush_tlb_page_nonotify(vma, addr)
-+ *		Same as local_flush_tlb_page() except MMU notifier will not be
-+ *		called.
-+ *
-+ *	local_flush_tlb_contpte(vma, addr)
-+ *		Invalidate the virtual-address range
-+ *		'[addr, addr+CONT_PTE_SIZE)' mapped with contpte on local CPU
-+ *		for the user address space corresponding to 'vma->mm'.  Stale
-+ *		TLB entries may remain in remote CPUs.
-  *
-  *	Finally, take a look at asm/tlb.h to see how tlb_flush() is implemented
-  *	on top of these routines, since that is our interface to the mmu_gather
-@@ -282,6 +295,33 @@ static inline void flush_tlb_mm(struct mm_struct *mm)
- 	mmu_notifier_arch_invalidate_secondary_tlbs(mm, 0, -1UL);
- }
- 
-+static inline void __local_flush_tlb_page_nonotify_nosync(struct mm_struct *mm,
-+							  unsigned long uaddr)
-+{
-+	unsigned long addr;
-+
-+	dsb(nshst);
-+	addr = __TLBI_VADDR(uaddr, ASID(mm));
-+	__tlbi(vale1, addr);
-+	__tlbi_user(vale1, addr);
-+}
-+
-+static inline void local_flush_tlb_page_nonotify(struct vm_area_struct *vma,
-+						 unsigned long uaddr)
-+{
-+	__local_flush_tlb_page_nonotify_nosync(vma->vm_mm, uaddr);
-+	dsb(nsh);
-+}
-+
-+static inline void local_flush_tlb_page(struct vm_area_struct *vma,
-+					unsigned long uaddr)
-+{
-+	__local_flush_tlb_page_nonotify_nosync(vma->vm_mm, uaddr);
-+	mmu_notifier_arch_invalidate_secondary_tlbs(vma->vm_mm, uaddr & PAGE_MASK,
-+						(uaddr & PAGE_MASK) + PAGE_SIZE);
-+	dsb(nsh);
-+}
-+
- static inline void __flush_tlb_page_nosync(struct mm_struct *mm,
- 					   unsigned long uaddr)
- {
-@@ -472,6 +512,22 @@ static inline void __flush_tlb_range(struct vm_area_struct *vma,
- 	dsb(ish);
- }
- 
-+static inline void local_flush_tlb_contpte(struct vm_area_struct *vma,
-+					   unsigned long addr)
-+{
-+	unsigned long asid;
-+
-+	addr = round_down(addr, CONT_PTE_SIZE);
-+
-+	dsb(nshst);
-+	asid = ASID(vma->vm_mm);
-+	__flush_tlb_range_op(vale1, addr, CONT_PTES, PAGE_SIZE, asid,
-+			     3, true, lpa2_is_enabled());
-+	mmu_notifier_arch_invalidate_secondary_tlbs(vma->vm_mm, addr,
-+						    addr + CONT_PTE_SIZE);
-+	dsb(nsh);
-+}
-+
- static inline void flush_tlb_range(struct vm_area_struct *vma,
- 				   unsigned long start, unsigned long end)
- {
-diff --git a/arch/arm64/mm/contpte.c b/arch/arm64/mm/contpte.c
-index c0557945939c..589bcf878938 100644
---- a/arch/arm64/mm/contpte.c
-+++ b/arch/arm64/mm/contpte.c
-@@ -622,8 +622,7 @@ int contpte_ptep_set_access_flags(struct vm_area_struct *vma,
- 			__ptep_set_access_flags(vma, addr, ptep, entry, 0);
- 
- 		if (dirty)
--			__flush_tlb_range(vma, start_addr, addr,
--							PAGE_SIZE, true, 3);
-+			local_flush_tlb_contpte(vma, start_addr);
- 	} else {
- 		__contpte_try_unfold(vma->vm_mm, addr, ptep, orig_pte);
- 		__ptep_set_access_flags(vma, addr, ptep, entry, dirty);
-diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
-index d816ff44faff..4ecdfa6bcdbb 100644
---- a/arch/arm64/mm/fault.c
-+++ b/arch/arm64/mm/fault.c
-@@ -233,9 +233,13 @@ int __ptep_set_access_flags(struct vm_area_struct *vma,
- 		pteval = cmpxchg_relaxed(&pte_val(*ptep), old_pteval, pteval);
- 	} while (pteval != old_pteval);
- 
--	/* Invalidate a stale read-only entry */
-+	/*
-+	 * Invalidate the local stale read-only entry.  Remote stale entries
-+	 * may still cause page faults and be invalidated via
-+	 * flush_tlb_fix_spurious_fault().
-+	 */
- 	if (dirty)
--		flush_tlb_page(vma, address);
-+		local_flush_tlb_page(vma, address);
- 	return 1;
- }
- 
--- 
-2.39.5
+> Thanks,
+> Namhyung
+> 
+> 
+>> +		return 1
+>> +	fi
+>> +	return 0
+>> +}
+>> +
+>> +test_decrease_precise_ip_complicated()
+>> +{
+>> +	echo "Decrease precise ip test (complicated case)"
+>> +
+>> +	perf list pmu | grep -q 'mem-loads-aux' || return 2
+>> +
+>> +	if ! perf_record -e '{cpu/mem-loads-aux/S,cpu/mem-loads/PS}'; then
+>> +		return 1
+>> +	fi
+>> +	return 0
+>> +}
+>> +
+>> +count_result()
+>> +{
+>> +	if [ "$1" -eq 2 ] ; then
+>> +		skip_cnt=$((skip_cnt + 1))
+>> +		return
+>> +	fi
+>> +	if [ "$1" -eq 0 ] ; then
+>> +		ok_cnt=$((ok_cnt + 1))
+>> +		return
+>> +	fi
+>> +	err_cnt=$((err_cnt + 1))
+>> +}
+>> +
+>> +ret=0
+>> +test_decrease_precise_ip		|| ret=$? ; count_result $ret ; ret=0
+>> +test_decrease_precise_ip_complicated	|| ret=$? ; count_result $ret ; ret=0
+>> +
+>> +cleanup
+>> +
+>> +if [ ${err_cnt} -gt 0 ] ; then
+>> +	exit 1
+>> +fi
+>> +
+>> +if [ ${ok_cnt} -gt 0 ] ; then
+>> +	exit 0
+>> +fi
+>> +
+>> +# Skip
+>> +exit 2
+>> -- 
+>> 2.51.1
+>>
 
 
