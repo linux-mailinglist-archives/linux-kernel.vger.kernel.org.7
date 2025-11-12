@@ -1,269 +1,521 @@
-Return-Path: <linux-kernel+bounces-897578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1822AC53759
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:40:44 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D28C6C53227
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:46:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9362D6252B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:33:48 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 60589354961
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:33:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F2D83101A6;
-	Wed, 12 Nov 2025 15:33:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ncEr8Ywh";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="igFPrUJB"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8539269811;
-	Wed, 12 Nov 2025 15:33:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762961615; cv=fail; b=tPTZmJnWPcZhejD9Q07Q27rTf6aUTT33I3H+Go17QqVoXsEMWEWypvvXdUuu2Mc+8rSRqd8H6D6xgnQMEr1TjqXIVo2hzcCTh9Xl6tn/BiPRJDRSXTl2MbHN45/2sRvoa4gh1tM/I4krP3MpFLoDP/jsHuw3PjID2KT5E8tRACA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762961615; c=relaxed/simple;
-	bh=97rSpIvUBiAaU4+2zqqpnDbGpdovwHtIA3IC/9o6ZUs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=cQeQOtfgkWhL2/Y1b7rzfa8pBkVDFEHsGdDUUmQQHP8K/aVdtg2TLI/SZ/5sUt8LoJo2r0FQ5YaWtmDrd/iwP20Obm9Qph+6fDVU3GO1pdy7QW3I+Dax+IaDD5W+1zYEwhwD1fhBabg71gLn5gK/s/7HMa4O5CtWjE1iR77K/z4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=ncEr8Ywh; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=igFPrUJB; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5ACFSRwd020574;
-	Wed, 12 Nov 2025 15:32:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=lEZuC53QDsqzFgVIFn
-	EOr8fxyzZvswm87kGa9AzEq0g=; b=ncEr8YwhbAvjw94rHJOJCBk4BaCo4fvPBB
-	s5+oLxpCq1+QyEzsvVC3wtAWFDgA1b7GngTKwY7Fhzh/MI9Dftk/KImI+F8Z6nZ6
-	zS6bOr/M4OameatSdbc+wOW57o14s/KCO/IvrjOZ3j5WymqGnift/O3Jv+E6MkVE
-	n+fxE9VSjw2PgOzwasM8IBAVp3e9Ho1ACYn+G8bvHa0KORTbm2eFq46giOL4WCMK
-	aaf2ZHqtxBmVThNwqYopEumIlBQpV4PBmM+TqTtHPXsBKht6YFoK/NE41AzdfB/a
-	T+gGt9hw6ac197JwHfsXzT/v4aS9utuB5B94o4RitPjwOV6OjmHA==
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4acum886nf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 12 Nov 2025 15:32:22 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5ACEG4V7018657;
-	Wed, 12 Nov 2025 15:32:21 GMT
-Received: from cy7pr03cu001.outbound.protection.outlook.com (mail-westcentralusazon11010067.outbound.protection.outlook.com [40.93.198.67])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4a9vaaudku-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 12 Nov 2025 15:32:21 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ARPMzQISFMGnBW/d2qNxk3PZhwLrL0tBMxjKy1BkJ1U1LjzUN6bRHYVVgEx7wcJPRTawiNw1r9A0p9wl+7LqmCWk0ndh9bxtM+o4YwtjKEomvQGrcmhhEaakc4eJQTpagoEjiMzZ+5GfdGZv2bn1cUdJX5KOggH7FLj5SYue6LP0UJ/y6InJW5c3oiLAAWXalUvA+6Ux0z9ltk3hFs7cXFi93vlHn3GG9JBxQNRZXDKSwEs9C/5jznkrtbFLtMMkOH+acL0uty+/sRZW5m/4Gw1hGLU1ZmVIVknQCLIiuJj4fUfSGenx9V9XsOG/YNdoeo/PDzI5lDdxyBNcJOWNLg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=lEZuC53QDsqzFgVIFnEOr8fxyzZvswm87kGa9AzEq0g=;
- b=CQJQKXkyfImTKRe4gaIYEJa7pwNvT1xXyhIAiz9KI3NUCJoJBJJj5waUyc8J05k/NybB/CoFDmcTAyeRcjLXQru5ij5x6Z5Q30pZ4g789Kze/UNifBEb62ez2DQBI/6N0pr8d0rZhZcFTyVpzz2zDZsOfQEB4TE1bUKls2k+t7zsKfnKVCIswCJjRAYgqPShWtAybn2lyGm0JgCXMc85OMwRlqOm8gp0c0hO418KhOay0K9ilnQkj9COdjIUKYhcdo+T4PZ3ra4yywKefePgI5chNBbhyD8pcKn/vTtnPTGLGDZCt6x6YcZezTJ4E5jTv5u1D3jjxyg0FfyFIfUP0w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lEZuC53QDsqzFgVIFnEOr8fxyzZvswm87kGa9AzEq0g=;
- b=igFPrUJBZyxWNR8KTT0yl5wGqOVOpARYcHCkK+MEHWM9oRTl6Njy4xF3FtJH9fZbNOJBWjxPFZJZkL5QdjoUCjBig1B/XpOIfCpuc5kA1/y2iAGUf+nTJJKSftXmhLyg/XZAwY6WARPfd+pEinJ8m+cadSNpDg63bbnjM2hIfXM=
-Received: from BL4PR10MB8229.namprd10.prod.outlook.com (2603:10b6:208:4e6::14)
- by MW5PR10MB5808.namprd10.prod.outlook.com (2603:10b6:303:19b::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.16; Wed, 12 Nov
- 2025 15:32:16 +0000
-Received: from BL4PR10MB8229.namprd10.prod.outlook.com
- ([fe80::552b:16d2:af:c582]) by BL4PR10MB8229.namprd10.prod.outlook.com
- ([fe80::552b:16d2:af:c582%6]) with mapi id 15.20.9320.013; Wed, 12 Nov 2025
- 15:32:16 +0000
-Date: Wed, 12 Nov 2025 15:32:14 +0000
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        Claudio Imbrenda <imbrenda@linux.ibm.com>,
-        David Hildenbrand <david@redhat.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>, Peter Xu <peterx@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-        Arnd Bergmann <arnd@arndb.de>, Zi Yan <ziy@nvidia.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
-        Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
-        Lance Yang <lance.yang@linux.dev>, Muchun Song <muchun.song@linux.dev>,
-        Oscar Salvador <osalvador@suse.de>, Vlastimil Babka <vbabka@suse.cz>,
-        Mike Rapoport <rppt@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
-        Matthew Brost <matthew.brost@intel.com>,
-        Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
-        Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>,
-        Ying Huang <ying.huang@linux.alibaba.com>,
-        Alistair Popple <apopple@nvidia.com>,
-        Axel Rasmussen <axelrasmussen@google.com>,
-        Yuanchu Xie <yuanchu@google.com>, Wei Xu <weixugc@google.com>,
-        Kemeng Shi <shikemeng@huaweicloud.com>,
-        Kairui Song <kasong@tencent.com>, Nhat Pham <nphamcs@gmail.com>,
-        Baoquan He <bhe@redhat.com>, Chris Li <chrisl@kernel.org>,
-        SeongJae Park <sj@kernel.org>, Matthew Wilcox <willy@infradead.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
-        Xu Xin <xu.xin16@zte.com.cn>,
-        Chengming Zhou <chengming.zhou@linux.dev>,
-        Jann Horn <jannh@google.com>, Miaohe Lin <linmiaohe@huawei.com>,
-        Naoya Horiguchi <nao.horiguchi@gmail.com>,
-        Pedro Falcato <pfalcato@suse.de>,
-        Pasha Tatashin <pasha.tatashin@soleen.com>,
-        Rik van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>,
-        Hugh Dickins <hughd@google.com>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, damon@lists.linux.dev
-Subject: Re: [PATCH v3 02/16] mm: introduce leaf entry type and use to
- simplify leaf entry logic
-Message-ID: <68ef211d-8aaf-4b13-888a-d00dfcebfef4@lucifer.local>
-References: <cover.1762812360.git.lorenzo.stoakes@oracle.com>
- <c879383aac77d96a03e4d38f7daba893cd35fc76.1762812360.git.lorenzo.stoakes@oracle.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c879383aac77d96a03e4d38f7daba893cd35fc76.1762812360.git.lorenzo.stoakes@oracle.com>
-X-ClientProxiedBy: LO4P302CA0002.GBRP302.PROD.OUTLOOK.COM
- (2603:10a6:600:2c2::8) To BL4PR10MB8229.namprd10.prod.outlook.com
- (2603:10b6:208:4e6::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1206B32D0F2;
+	Wed, 12 Nov 2025 15:33:09 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFFE22BE03D;
+	Wed, 12 Nov 2025 15:33:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762961588; cv=none; b=C84un0nlXY5XMSiAByfB0lJV6D/SiMAzoe97LPErrmVkgrzvJW58b/4Oy/anZLN1TOwiIkemu9aLiOoQ41cgNMX66Y9HBu0Tbc3X0TCL0aUt+M69cN49mNs2NIqFOEz3DNEoOIdKFD1YlennsXcGRVFosJveAqu5lmtqnQivR2k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762961588; c=relaxed/simple;
+	bh=hJG4mORyBX4EkyEoNAxykxgfA/y6DRF79lt33YV3ch4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VwSyt3H9RFSNjOdcEInpzIsfzVwZjVDa+r2KjSGFqkOJe7ZNCtLfQpNcGchuZxFFt9Sppwq8WdOEPEQ8rHUqZ6TbjKBMgENxXEmiMVUIZFoigcEpTv8bSy76A0Mp7iIwJfM1yHLOflTMGpPERyxvAGOpuMR2Dwg5i84uvbelilM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4B0681515;
+	Wed, 12 Nov 2025 07:32:56 -0800 (PST)
+Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 261973F66E;
+	Wed, 12 Nov 2025 07:32:59 -0800 (PST)
+Message-ID: <85ce2f10-d174-472d-b74c-a3e34dc4a40f@arm.com>
+Date: Wed, 12 Nov 2025 15:32:57 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL4PR10MB8229:EE_|MW5PR10MB5808:EE_
-X-MS-Office365-Filtering-Correlation-Id: 630c1422-8eba-427c-46c8-08de2200a8b1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?IC8ZfZ0YBKoZxK8NmydlmT8RTvuGkB9q+C6sEsIj06IL1pIjVj3FaapQ+EfT?=
- =?us-ascii?Q?jJaORq0fmSrs4nsXUIyQEn4mV+h0+gu3BTF8Ci9XSAfiYnKHHpcbTq2CDotA?=
- =?us-ascii?Q?Kr2qHaUTuEKhO5r78akfBx3+bWSk5H2Vpx/DOKml+3+jmMq4lcvbGu4tR1F+?=
- =?us-ascii?Q?p7QOh0r5kvH8lQrMbTCMf1BZPjZ4XNHeR5yv4T+thHWZmIMxNfMMf7oMhJVN?=
- =?us-ascii?Q?bX1fita7SJpOyfTaQT6lavfF7mfXfSnI9U0I4GKlu8uVXI6hYnUTlDrJDU2v?=
- =?us-ascii?Q?wV6vXrZixzawItZgzNx60yZ2w56a3jL9cDNAVn3Ou2yrNnvQdeDBhFpetpBR?=
- =?us-ascii?Q?pmz4olITesEL8FfED6UhMWrkXi/QAUK/LPOp9mi9D7iruR01OLYTyrmj/oNN?=
- =?us-ascii?Q?jLKv+BUIwxJabHmPlHw0IKK9lAcqHy5xVn7aX7lYrOg5Hlz45Mg7wcCMp4WB?=
- =?us-ascii?Q?3nd99Vo7cEXCWBIPi0MBHK1CXbcJR80ntd0ZYwKOelFy/f2z52FCiBpI2T1k?=
- =?us-ascii?Q?HNHEyCRFzMVLKeOwTgds7bslEWNCtoRMuLNJCMcVlkQeQ/1Ox3rIXaBfz+Yn?=
- =?us-ascii?Q?2cKUTbPgqO32CaJcWvJwHfwstg1xqOs0ZeNDraZ1OKDz7/e5yuIz3WlRe4HS?=
- =?us-ascii?Q?ZJWkgaueFeN5ZAmSgny8CwqEE8i5G/G4i0JKm+z0hiSb8uNu3iZYL1DLBkAE?=
- =?us-ascii?Q?OZJw6wpwun5BB03xGhCjPrRqlVJL+/nuC+jSIb5P/S0z/jBvKeDlsOymy9WR?=
- =?us-ascii?Q?HGRF1r3uuj9O+rS3cDC6Tqdl4oSR+0HFUTRXLXSVeeuiiqxTRYDJKTFf4RUn?=
- =?us-ascii?Q?dRaWM5iW6RDLLcwZbihiFbKC5RFATQE7aDU/c5S5HNMfzPKEKpIcbOmanbrU?=
- =?us-ascii?Q?vg6EJ1oHSuj+7Oo7aTQUABm3a75U2eLHnZ9DU5lI2tgUv8WCL8NLYGZqj+6a?=
- =?us-ascii?Q?P+xHlpbDrwyDlWKE7NoRZjgfw8JIoPf1c4R9GDUPTHkTvr7lx6oa3/UbuCRA?=
- =?us-ascii?Q?4bxIVkeK5HgnN1ZxJv9hQj5mrSW5GCHlqAbwW5cbTYiLuk9bTHmWC/vddUn7?=
- =?us-ascii?Q?2CnAMwnB2YxiT+YXzglZ3YkAg1FGW/SSw7hpw6/FXMkU+kI8HG4XLZrqz44M?=
- =?us-ascii?Q?PdWt6uOReXdqg2aMLu36k+gBdUG6/vMt3idF8rMY90JVtoUmoMrEstQydmCf?=
- =?us-ascii?Q?y+Nr4rC9nsi4CDR/ixYKn82l/lGxVW/pHmiKtdnbEeZXOYlOBMyMZV6kL1Ii?=
- =?us-ascii?Q?1Ac/u6WQ8hU4rDeMGcB5USpBPb1gnbWgkz/GsD0rXuJZxXXKkAJDVt1S2O2q?=
- =?us-ascii?Q?a9hlyQiuxYmTo6Q0WSPu1ivTWALkFRfW6k8UaqD8cKbEkTwLQd2TseIWVV/M?=
- =?us-ascii?Q?CsgpOypFnlFE/Aw7N9eU1nPDA8DFahbfVjeVJ5UallW0S5LZMPpZATl4kI2m?=
- =?us-ascii?Q?59p4STs2IcJEXxamIa+SH/lhxKbw6BSj?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL4PR10MB8229.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?FqtZYme+IRsQHN7nCsiak0Tq2gBW6VE1nntN85sy6PGRDWWq6sW3rnE7NIhH?=
- =?us-ascii?Q?NyYCqEinpYV2wtKe3gBdMWidVJV2qqAALHSNijpEJkJHwTzFmDIn7JphvX7B?=
- =?us-ascii?Q?Rs/3osBd/6QRCITjMxvny1/NDHPy2tDGBL7pSvBC4WVcJIDsCSHvzbHcS3Hy?=
- =?us-ascii?Q?EDn/Oc8fdQt2QWBtoroG/GyWkteN0k9rNlu7ddhSB7lM0/hFJ4MZZsjc+UiJ?=
- =?us-ascii?Q?E0RV380e5TtgYOuNTIgBvAOfaHb0execqqsVbxK1735Qx2TaF5KDAZEPFhHO?=
- =?us-ascii?Q?IBXP++OqwexQyw+xbdt5t9kfcCkBXl7KPHz2UWzq+07Orws0STLQUfmTbmg6?=
- =?us-ascii?Q?eaxouGAzUsOP3mmhn0W2Afr7mbVJA1xKS5Tak0z8wEdV7lDfnCZCcxBU+YQh?=
- =?us-ascii?Q?oerqwYwgg9H4TcGpbgP3o+aM59opmBrup9F+K/W2iKgJu3+pnoSeXGIZXwTN?=
- =?us-ascii?Q?f0U0v4Gls/4if6GikFJGhfxw3GfdjaGtPaVc3pwJsQL0vahhVubP1xOoUXIq?=
- =?us-ascii?Q?GMGdQIIqgVaxsxg2UIeIQ+Uol8WlRMLX9Uj+kJH9Cp0hgIFZWwnZKjuJqzcp?=
- =?us-ascii?Q?lc77GBmuwwYvxkSPx9Dcl8JNW6FqlQ5sFqJXRXtY83sum9RNXkXMNX4NGVNp?=
- =?us-ascii?Q?J9Vc6NsKFXihGzgmf4bG83NoKEDRGv0ggn1RB35SJxvrQNfFuJil9A31JIXI?=
- =?us-ascii?Q?tu6y6qv1XVEPzC4rsd2A1JtPtcIhpfRL5BnMzTyT5hoIx6m4uH4ZCNwEvGP6?=
- =?us-ascii?Q?5UMof7+g9u7IfJrMnshEDb5x50hMDqeBA2FhZheyzo8D/FudIv5FH4lBasX+?=
- =?us-ascii?Q?ICxmjIi8g398xeStaL01D6/ox/raxXCYLojXfABemyQdDUq0mbkG2MePiQrK?=
- =?us-ascii?Q?qU1cuSeQSpDkr+UDc+o4hou9958MacgCGuL7s/L1IRpoGcD/a6R6msREQvDh?=
- =?us-ascii?Q?LDCg5GC1Y0+sLqfAd3Jli8Nv4hahdRm65/JLnoPciQPXHwGMg7tPzMvGQxXN?=
- =?us-ascii?Q?nnl7q7mlbUXyg/ZAuAsWLc+1Lg6fvnUZcAbvQjG5kv2qPWlzH7UsYFAiMYyZ?=
- =?us-ascii?Q?vfkTXCQ89YdAOch7dy2ZCw6ATUytU0BP3lr0gAtllwpcBrgKUEPSC3g3fsx4?=
- =?us-ascii?Q?0BTMx1ZnFZ9guQqSIOEVtcNVD7rotpMLtgd5xYOLV6Lnuf+gdS+n1uXoNSDo?=
- =?us-ascii?Q?/obWWn6IIMf7CIQ+7w/UXDeunR9y4Dsl7OIXGZHPlOwb/YpJ932TxgdCxW0A?=
- =?us-ascii?Q?4WQRuPmg/QC84dV2ubf4nbFgCyFkHs9YCLdXEXVdiYsNtyH2pfu5cFjsgMiP?=
- =?us-ascii?Q?hFYbovc8NUwDiCbWh9ogI2YLnudX9yv/s7u8x4pwTLt+Y1iYi7ZQDk+0MJRE?=
- =?us-ascii?Q?zyT+NFr3tYOAeDHeR6cLDkL/vvAUuFaiHdycnGs46MCoHZ4GJ43ITxic1cs+?=
- =?us-ascii?Q?EgOttfTNyppLN6LL3sf+4sDeVHAMz/FBIB1LnqsfYUM20Mw7J1znekzPrOrg?=
- =?us-ascii?Q?TVPaoAvrtOSy/JIX9eXceZ8wPOfs/X7wksJ5R8evSZ/dLUkUd7uPg2Fede1/?=
- =?us-ascii?Q?QrmVdqnStiz44yrMhuGsYxJPjo7zGUWc8ax80rVT80bmo1M0JP1IiKeJEh60?=
- =?us-ascii?Q?wA=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	nT4ZS68uPZ9UtI7yuPyqtcgoBv2FPa3PlRLgu//hMfHLuGciCToXFwb3JboFdv9WtvTlcJG7rfcdXYl0G3KDBkKMgBZa6mYy/PuqVCEzDCAoBBcpP5pbudBfciV+3f5WtSwAP6KxuxMkIqc5NlKUKLXukJBctF322o+Q6bOM/GE4iWFJfHvW+09dcEgfqDrCCbkwfRf9uHukMbGWHVyavU8rrZ8qSYnB+0npZ5vqPEyMLLdeJ+rjuKYkSbJmKmm/cWYc+Q3L0Fopy//KQKROHxdSArOxaBPIGo5mF94y5vOUn0lP7SCpbWO5btgD+tiJLMFRE6RYT00JlapGgustjBPuhzcLQoXOnSHJb9UW/280KI90kWmS5HQT/ibV1Uu5A1c4zhQ1kowvAajlwKWaPmpy+IymAR8sY4WDd35xVpdERrO5YkWN9VgLtuAb1NUSlSPsb7xd8Q4C3hKC0FGC2/ME0TPJR0D+aeYQgOwDZEJdL0exGUzDmV9N+tfoZTP7uzTp87xHurc3CJG0TuG7tsPR4JavEvAAg+lkv9e1rRy/lG4b8cYYEUQEpagS1vUzQuaaBgAq4Rd3MzqjdOz4WUv/VHPVGDrLki4P7PzEARk=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 630c1422-8eba-427c-46c8-08de2200a8b1
-X-MS-Exchange-CrossTenant-AuthSource: BL4PR10MB8229.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2025 15:32:15.9471
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 4m3yxH1OTFtZtzwwYyeK1qE7+moQyAp/E5IJN2nGRAa80copGDrpv/FFslr3HczmGdT0A//Q4AiwDF5EN3b4dtWgUlaqURemcN7PyCvZ+uY=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW5PR10MB5808
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-12_05,2025-11-11_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxscore=0 phishscore=0
- mlxlogscore=836 spamscore=0 suspectscore=0 bulkscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2510240000
- definitions=main-2511120124
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEyMDExMyBTYWx0ZWRfXwOKXJ7ybjf7F
- 5Uy3hRZVVpsxrxDgAYFdM8C8Zr9N6BYtneLqeos3ZKJIfmrTHhj37nFioD6T4GNXWPIDfQjisKq
- HKQ9BycPBOMwP7JUrvxR7sq1wds7v29apaaGsGb5FS/fmJqNmfO117rnlHHiXd7H3Ar9Ob2dkVi
- WQffCY7i7FDD00kzbfPAau8XEJ1R8ATTszwHr6ifArTB6jOoeIV3TMoSxxln3yFlesWAYQ/S3m/
- TFnOIJS4+pa4khix1BWGNtUGDfblk2VtrYWBBX3VdDZkERE3RC5LuRFyddlmaXPgZEOwRg56SXF
- DZu6AysYp08uibkU+ZWCt992NgLglqvShSnLhVz/plbduvubTSr1MSFV35kjiZPO2COqSP2PmC6
- MXaGXakYyUFpdsmeCygUH3IsZwp+fQ==
-X-Proofpoint-ORIG-GUID: 1TFDxFApOZY0ycJAFvkbB77qMu6R7YOX
-X-Authority-Analysis: v=2.4 cv=KNhXzVFo c=1 sm=1 tr=0 ts=6914a886 b=1 cx=c_pps
- a=WeWmnZmh0fydH62SvGsd2A==:117 a=WeWmnZmh0fydH62SvGsd2A==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=6UeiqGixMTsA:10 a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=fAjwdPMav6DNvfFMvhQA:9 a=CjuIK1q_8ugA:10
-X-Proofpoint-GUID: 1TFDxFApOZY0ycJAFvkbB77qMu6R7YOX
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 10/33] arm_mpam: Add probe/remove for mpam msc driver and
+ kbuild boiler plate
+To: Gavin Shan <gshan@redhat.com>, james.morse@arm.com
+Cc: amitsinght@marvell.com, baisheng.gao@unisoc.com,
+ baolin.wang@linux.alibaba.com, bobo.shaobowang@huawei.com,
+ carl@os.amperecomputing.com, catalin.marinas@arm.com, dakr@kernel.org,
+ dave.martin@arm.com, david@redhat.com, dfustini@baylibre.com,
+ fenghuay@nvidia.com, gregkh@linuxfoundation.org, guohanjun@huawei.com,
+ jeremy.linton@arm.com, jonathan.cameron@huawei.com, kobak@nvidia.com,
+ lcherian@marvell.com, lenb@kernel.org, linux-acpi@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ lpieralisi@kernel.org, peternewman@google.com, quic_jiles@quicinc.com,
+ rafael@kernel.org, robh@kernel.org, rohit.mathew@arm.com,
+ scott@os.amperecomputing.com, sdonthineni@nvidia.com, sudeep.holla@arm.com,
+ tan.shaopeng@fujitsu.com, will@kernel.org, xhao@linux.alibaba.com,
+ Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
+References: <20251107123450.664001-1-ben.horgan@arm.com>
+ <20251107123450.664001-11-ben.horgan@arm.com>
+ <5b9136d6-b6c0-4f24-a8d2-05d7700140a8@redhat.com>
+From: Ben Horgan <ben.horgan@arm.com>
+Content-Language: en-US
+In-Reply-To: <5b9136d6-b6c0-4f24-a8d2-05d7700140a8@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Andrew,
+Hi Gavin,
 
-Could we replace:
+On 11/8/25 09:28, Gavin Shan wrote:
+> Hi Ben,
+> 
+> On 11/7/25 10:34 PM, Ben Horgan wrote:
+>> From: James Morse <james.morse@arm.com>
+>>
+>> Probing MPAM is convoluted. MSCs that are integrated with a CPU may
+>> only be accessible from those CPUs, and they may not be online.
+>> Touching the hardware early is pointless as MPAM can't be used until
+>> the system-wide common values for num_partid and num_pmg have been
+>> discovered.
+>>
+> 
+> I'm not sure if below commit log is more clearer as I'm not a English
+> native speaker:
 
-On Mon, Nov 10, 2025 at 10:21:20PM +0000, Lorenzo Stoakes wrote:
-> The kernel maintains leaf page table entries which contain either:
->
-> - Nothing ('none' entries)
-> - Present entries (that is stuff the hardware can navigate without fault)
-> - Everything else that will cause a fault which the kernel handles
+Thanks for the detailed review of the messages and comments. I've
+skipped the ones that I think don't improve the clarity. (I see Jonathan
+has a detailed reply which matches my understanding of English.)
 
-With:
+> 
+> MPAM probing is convoluted. MSCs that are integrated to a set of CPUs
+> may only be accessible from those CPUs, ...
+> 
+>> Start with driver probe/remove and mapping the MSC.
+>>
+>> CC: Carl Worth <carl@os.amperecomputing.com>
+>> Tested-by: Fenghua Yu <fenghuay@nvidia.com>
+>> Tested-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
+>> Tested-by: Peter Newman <peternewman@google.com>
+>> Signed-off-by: James Morse <james.morse@arm.com>
+>> Signed-off-by: Ben Horgan <ben.horgan@arm.com>
+>> ---
+>> Changes since v3:
+>>  From Jonathan:
+>> Include cleanup
+>> Use devm_mutex_init()
+>> Add an ERR_CAST()
+>> Fenghua:
+>> Return zero from update_msc_accessibility()
+>> Additional:
+>> Fail probe if MSC doesn't have an MMIO interface
+>> ---
+>>   arch/arm64/Kconfig              |   1 +
+>>   drivers/Kconfig                 |   2 +
+>>   drivers/Makefile                |   1 +
+>>   drivers/resctrl/Kconfig         |  15 +++
+>>   drivers/resctrl/Makefile        |   4 +
+>>   drivers/resctrl/mpam_devices.c  | 194 ++++++++++++++++++++++++++++++++
+>>   drivers/resctrl/mpam_internal.h |  49 ++++++++
+>>   7 files changed, 266 insertions(+)
+>>   create mode 100644 drivers/resctrl/Kconfig
+>>   create mode 100644 drivers/resctrl/Makefile
+>>   create mode 100644 drivers/resctrl/mpam_devices.c
+>>   create mode 100644 drivers/resctrl/mpam_internal.h
+>>
+>> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+>> index c5e66d5d72cd..004d58cfbff8 100644
+>> --- a/arch/arm64/Kconfig
+>> +++ b/arch/arm64/Kconfig
+>> @@ -2025,6 +2025,7 @@ config ARM64_TLB_RANGE
+>>     config ARM64_MPAM
+>>       bool "Enable support for MPAM"
+>> +    select ARM64_MPAM_DRIVER if EXPERT    # does nothing yet
+>>       select ACPI_MPAM if ACPI
+>>       help
+>>         Memory System Resource Partitioning and Monitoring (MPAM) is an
+>> diff --git a/drivers/Kconfig b/drivers/Kconfig
+>> index 4915a63866b0..3054b50a2f4c 100644
+>> --- a/drivers/Kconfig
+>> +++ b/drivers/Kconfig
+>> @@ -251,4 +251,6 @@ source "drivers/hte/Kconfig"
+>>     source "drivers/cdx/Kconfig"
+>>   +source "drivers/resctrl/Kconfig"
+>> +
+>>   endmenu
+>> diff --git a/drivers/Makefile b/drivers/Makefile
+>> index 8e1ffa4358d5..20eb17596b89 100644
+>> --- a/drivers/Makefile
+>> +++ b/drivers/Makefile
+>> @@ -194,6 +194,7 @@ obj-$(CONFIG_HTE)        += hte/
+>>   obj-$(CONFIG_DRM_ACCEL)        += accel/
+>>   obj-$(CONFIG_CDX_BUS)        += cdx/
+>>   obj-$(CONFIG_DPLL)        += dpll/
+>> +obj-y                += resctrl/
+>>     obj-$(CONFIG_DIBS)        += dibs/
+>>   obj-$(CONFIG_S390)        += s390/
+>> diff --git a/drivers/resctrl/Kconfig b/drivers/resctrl/Kconfig
+>> new file mode 100644
+>> index 000000000000..ef2f3adf64a9
+>> --- /dev/null
+>> +++ b/drivers/resctrl/Kconfig
+>> @@ -0,0 +1,15 @@
+>> +menuconfig ARM64_MPAM_DRIVER
+>> +    bool "MPAM driver"
+>> +    depends on ARM64 && ARM64_MPAM && EXPERT
+>> +    help
+>> +      Memory System Resource Partitioning and Monitoring (MPAM)
+>> driver for
+>> +      System IP, e,g. caches and memory controllers.
+>> +
+>> +if ARM64_MPAM_DRIVER
+>> +
+>> +config ARM64_MPAM_DRIVER_DEBUG
+>> +    bool "Enable debug messages from the MPAM driver"
+>> +    help
+>> +      Say yes here to enable debug messages from the MPAM driver.
+>> +
+>> +endif
+> 
+> I am asking myself why "depends on ARM64_MPAM_DRIVER" can't be used
+> here? :-)
+> 
+>> diff --git a/drivers/resctrl/Makefile b/drivers/resctrl/Makefile
+>> new file mode 100644
+>> index 000000000000..898199dcf80d
+>> --- /dev/null
+>> +++ b/drivers/resctrl/Makefile
+>> @@ -0,0 +1,4 @@
+>> +obj-$(CONFIG_ARM64_MPAM_DRIVER)            += mpam.o
+>> +mpam-y                        += mpam_devices.o
+>> +
+>> +ccflags-$(CONFIG_ARM64_MPAM_DRIVER_DEBUG)    += -DDEBUG
+>> diff --git a/drivers/resctrl/mpam_devices.c b/drivers/resctrl/
+>> mpam_devices.c
+>> new file mode 100644
+>> index 000000000000..6c6be133d73a
+>> --- /dev/null
+>> +++ b/drivers/resctrl/mpam_devices.c
+>> @@ -0,0 +1,194 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +// Copyright (C) 2025 Arm Ltd.
+>> +
+>> +#define pr_fmt(fmt) "%s:%s: " fmt, KBUILD_MODNAME, __func__
+>> +
+>> +#include <linux/acpi.h>
+>> +#include <linux/arm_mpam.h>
+>> +#include <linux/cacheinfo.h>
+>> +#include <linux/cpumask.h>
+>> +#include <linux/device.h>
+>> +#include <linux/errno.h>
+>> +#include <linux/gfp.h>
+>> +#include <linux/list.h>
+>> +#include <linux/lockdep.h>
+>> +#include <linux/mutex.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/printk.h>
+>> +#include <linux/srcu.h>
+>> +#include <linux/types.h>
+>> +
+>> +#include "mpam_internal.h"
+>> +
+>> +/*
+>> + * mpam_list_lock protects the SRCU lists when writing. Once the
+>> + * mpam_enabled key is enabled these lists are read-only,
+>> + * unless the error interrupt disables the driver.
+>> + */
+> 
+> s/when writing/for writing
+> s/are read-only/become read-only
+> 
+>> +static DEFINE_MUTEX(mpam_list_lock);
+>> +static LIST_HEAD(mpam_all_msc);
+>> +
+>> +struct srcu_struct mpam_srcu;
+>> +
+>> +/*
+>> + * Number of MSCs that have been probed. Once all MSC have been
+>> probed MPAM
+>> + * can be enabled.
+>> + */
+> 
+> s/all MSC/all MSCs  (?)
+Changed.
+> 
+>> +static atomic_t mpam_num_msc;
+>> +
+>> +/*
+>> + * An MSC can control traffic from a set of CPUs, but may only be
+>> accessible
+>> + * from a (hopefully wider) set of CPUs. The common reason for this
+>> is power
+>> + * management. If all the CPUs in a cluster are in PSCI:CPU_SUSPEND, the
+>> + * corresponding cache may also be powered off. By making accesses from
+>> + * one of those CPUs, we ensure this isn't the case.
+>> + */
+> 
+> s/An MSC/A MSC (?)
+> s/from a/from the
+> s/isn't the case/is the case (?)
+Updated this last one to be:
 
-The kernel maintains leaf page table entries which contain either:
+By making accesses from one of those CPUs, we ensure we don't access a
+cache that's powered off.
 
- - Nothing ('none' entries)
- - Present entries*
- - Everything else that will cause a fault which the kernel handles
+> 
+>> +static int update_msc_accessibility(struct mpam_msc *msc)
+>> +{
+>> +    u32 affinity_id;
+>> +    int err;
+>> +
+>> +    err = device_property_read_u32(&msc->pdev->dev, "cpu_affinity",
+>> +                       &affinity_id);
+>> +    if (err)
+>> +        cpumask_copy(&msc->accessibility, cpu_possible_mask);
+>> +    else
+>> +        acpi_pptt_get_cpus_from_container(affinity_id,
+>> +                          &msc->accessibility);
+>> +    return 0;
+>> +}
+>> +
+> 
+> {} is needed for the block spanning multiple lines.
 
-* Present entries are either entries the hardware can navigate without page
-  fault or special cases like NUMA hint protnone or PMD with cleared
-  present bit which contain hardware-valid entries modulo the present bit.
+Made it one line.
 
+> 
+> I would validate msc->accessibility here instead of its caller
+> (do_mpam_msc_drv_probe()).
+> 
+>         if (cpumask_empty(&msc->accessibility))
+>             return {-EINVAL, -ENOENT};
+> 
+>> +static int fw_num_msc;
+>> +
+>> +static void mpam_msc_destroy(struct mpam_msc *msc)
+>> +{
+>> +    struct platform_device *pdev = msc->pdev;
+>> +
+>> +    lockdep_assert_held(&mpam_list_lock);
+>> +
+>> +    list_del_rcu(&msc->all_msc_list);
+>> +    platform_set_drvdata(pdev, NULL);
+>> +}
+>> +
+>> +static void mpam_msc_drv_remove(struct platform_device *pdev)
+>> +{
+>> +    struct mpam_msc *msc = platform_get_drvdata(pdev);
+>> +
+>> +    if (!msc)
+>> +        return;
+> 
+> 'msc' is unlikely to be NULL here, so the check could be droped.
 
-Thanks, Lorenzo
+Dropped.
+
+> 
+>> +
+>> +    mutex_lock(&mpam_list_lock);
+>> +    mpam_msc_destroy(msc);
+>> +    mutex_unlock(&mpam_list_lock);
+>> +
+>> +    synchronize_srcu(&mpam_srcu);
+>> +}
+>> +
+>> +static struct mpam_msc *do_mpam_msc_drv_probe(struct platform_device
+>> *pdev)
+>> +{
+>> +    int err;
+>> +    u32 tmp;
+>> +    struct mpam_msc *msc;
+>> +    struct resource *msc_res;
+>> +    struct device *dev = &pdev->dev;
+>> +
+>> +    lockdep_assert_held(&mpam_list_lock);
+>> +
+>> +    msc = devm_kzalloc(&pdev->dev, sizeof(*msc), GFP_KERNEL);
+>> +    if (!msc)
+>> +        return ERR_PTR(-ENOMEM);
+>> +
+>> +    err = devm_mutex_init(dev, &msc->probe_lock);
+>> +    if (err)
+>> +        return ERR_PTR(err);
+>> +    err = devm_mutex_init(dev, &msc->part_sel_lock);
+>> +    if (err)
+>> +        return ERR_PTR(err);
+>> +    msc->id = pdev->id;
+>> +    msc->pdev = pdev;
+>> +    INIT_LIST_HEAD_RCU(&msc->all_msc_list);
+>> +    INIT_LIST_HEAD_RCU(&msc->ris);
+>> +
+>> +    err = update_msc_accessibility(msc);
+>> +    if (err)
+>> +        return ERR_PTR(err);
+>> +    if (cpumask_empty(&msc->accessibility)) {
+>> +        dev_err_once(dev, "MSC is not accessible from any CPU!");
+>> +        return ERR_PTR(-EINVAL);
+>> +    }
+>> +
+> 
+> As suggested above, this check would be done inside
+> update_msc_accessibility().
+
+Unless you object I'll keep this as is and make void
+update_msc_accessibility() a void function. I think this works better
+with the naming.
+
+> 
+>> +    if (device_property_read_u32(&pdev->dev, "pcc-channel", &tmp))
+>> +        msc->iface = MPAM_IFACE_MMIO;
+>> +    else
+>> +        msc->iface = MPAM_IFACE_PCC;
+>> +
+>> +    if (msc->iface == MPAM_IFACE_MMIO) {
+>> +        void __iomem *io;
+>> +
+>> +        io = devm_platform_get_and_ioremap_resource(pdev, 0,
+>> +                                &msc_res);
+>> +        if (IS_ERR(io)) {
+>> +            dev_err_once(dev, "Failed to map MSC base address\n");
+>> +            return ERR_CAST(io);
+>> +        }
+>> +        msc->mapped_hwpage_sz = msc_res->end - msc_res->start;
+>> +        msc->mapped_hwpage = io;
+>> +    } else {
+>> +        return ERR_PTR(-ENOENT);
+> 
+> Would be:
+>         return ERR_PTR(-EINVAL);
+
+Sure.
+
+> 
+>> +    }
+>> +
+>> +    list_add_rcu(&msc->all_msc_list, &mpam_all_msc);
+>> +    platform_set_drvdata(pdev, msc);
+>> +
+>> +    return msc;
+>> +}
+>> +
+>> +static int mpam_msc_drv_probe(struct platform_device *pdev)
+>> +{
+>> +    int err;
+>> +    struct mpam_msc *msc = NULL;
+>> +    void *plat_data = pdev->dev.platform_data;
+>> +
+>> +    mutex_lock(&mpam_list_lock);
+>> +    msc = do_mpam_msc_drv_probe(pdev);
+>> +    mutex_unlock(&mpam_list_lock);
+>> +    if (!IS_ERR(msc)) {
+>> +        /* Create RIS entries described by firmware */
+>> +        err = acpi_mpam_parse_resources(msc, plat_data);
+>> +        if (err)
+>> +            mpam_msc_drv_remove(pdev);
+>> +    } else {
+>> +        err = PTR_ERR(msc);
+>> +    }
+>> +
+>> +    if (!err && atomic_add_return(1, &mpam_num_msc) == fw_num_msc)
+>> +        pr_info("Discovered all MSC\n");
+> 
+> s/all MSC/all MSCs
+> 
+>> +
+>> +    return err;
+>> +}
+>> +
+>> +static struct platform_driver mpam_msc_driver = {
+>> +    .driver = {
+>> +        .name = "mpam_msc",
+>> +    },
+>> +    .probe = mpam_msc_drv_probe,
+>> +    .remove = mpam_msc_drv_remove,
+>> +};
+>> +
+>> +static int __init mpam_msc_driver_init(void)
+>> +{
+>> +    if (!system_supports_mpam())
+>> +        return -EOPNOTSUPP;
+>> +
+>> +    init_srcu_struct(&mpam_srcu);
+>> +
+>> +    fw_num_msc = acpi_mpam_count_msc();
+>> +
+>> +    if (fw_num_msc <= 0) {
+>> +        pr_err("No MSC devices found in firmware\n");
+>> +        return -EINVAL;
+>> +    }
+>> +
+>> +    return platform_driver_register(&mpam_msc_driver);
+>> +}
+>> +subsys_initcall(mpam_msc_driver_init);
+>> diff --git a/drivers/resctrl/mpam_internal.h b/drivers/resctrl/
+>> mpam_internal.h
+>> new file mode 100644
+>> index 000000000000..540066903eca
+>> --- /dev/null
+>> +++ b/drivers/resctrl/mpam_internal.h
+>> @@ -0,0 +1,49 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +// Copyright (C) 2025 Arm Ltd.
+>> +
+>> +#ifndef MPAM_INTERNAL_H
+>> +#define MPAM_INTERNAL_H
+>> +
+>> +#include <linux/arm_mpam.h>
+>> +#include <linux/cpumask.h>
+>> +#include <linux/io.h>
+>> +#include <linux/mutex.h>
+>> +#include <linux/types.h>
+>> +
+>> +struct platform_device;
+>> +
+>> +struct mpam_msc {
+>> +    /* member of mpam_all_msc */
+>> +    struct list_head    all_msc_list;
+>> +
+>> +    int            id;
+>> +    struct platform_device    *pdev;
+>> +
+>> +    /* Not modified after mpam_is_enabled() becomes true */
+>> +    enum mpam_msc_iface    iface;
+>> +    u32            nrdy_usec;
+>> +    cpumask_t        accessibility;
+>> +
+>> +    /*
+>> +     * probe_lock is only taken during discovery. After discovery these
+>> +     * properties become read-only and the lists are protected by SRCU.
+>> +     */
+>> +    struct mutex        probe_lock;
+>> +    unsigned long        ris_idxs;
+>> +    u32            ris_max;
+>> +
+>> +    /* mpam_msc_ris of this component */
+>> +    struct list_head    ris;
+>> +
+>> +    /*
+>> +     * part_sel_lock protects access to the MSC hardware registers
+>> that are
+>> +     * affected by MPAMCFG_PART_SEL. (including the ID registers that
+>> vary
+>> +     * by RIS).
+>> +     * If needed, take msc->probe_lock first.
+>> +     */
+>> +    struct mutex        part_sel_lock;
+>> +
+>> +    void __iomem        *mapped_hwpage;
+>> +    size_t            mapped_hwpage_sz;
+>> +};
+>> +#endif /* MPAM_INTERNAL_H */
+> 
+> Thanks,
+> Gavin
+> 
+
+Thanks,
+
+Ben
+
 
