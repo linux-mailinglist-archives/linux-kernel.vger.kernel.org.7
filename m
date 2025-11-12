@@ -1,163 +1,157 @@
-Return-Path: <linux-kernel+bounces-898187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BCD9C54865
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 21:58:06 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CC7CC5484B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 21:56:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E19EA4E1321
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 20:56:20 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BA07434972C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 20:56:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 536EC299AA3;
-	Wed, 12 Nov 2025 20:56:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3ED22D839B;
+	Wed, 12 Nov 2025 20:55:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="FT4eMaE3"
-Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nb7qiCwn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA13A263C9F;
-	Wed, 12 Nov 2025 20:55:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44127299AA3;
+	Wed, 12 Nov 2025 20:55:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762980959; cv=none; b=Q2np5BnwPOUHUSYdxST++c6I01sHmc5GQCxMPDJeVd4N2BnEk0qa4dQxjkyHNWh5LX5i+tGg+CNefbMy7PVulvlI7tC8InMs89yDJHpDDy9Fx5JhjF74KerYHDmNp3Ca03j7068j7MJpG3T5LAV147yNAJTMT0owmfuXtM4gMGE=
+	t=1762980953; cv=none; b=ICuzTfbzNND8KYfPEi+NbGc7UObAygBaVvH8qdo9JPQAmQCzonrTSxxTPiRoMXlb1EnGymNUxYoI2TnkPibnbl6n5H5KUSmEuQzZqXFhGSmC24rAGivdC10Sv+/BnrX0Ggc6Bcyj+Yzq7uT1TsygpidudZ4u9K72VIPDFvilfPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762980959; c=relaxed/simple;
-	bh=2xhUvtMSX2Py/tg024qnleIQO6c6FibNRMJPrHXfmX0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oEhH2oioulj7ji+yhoDfJ+BtB3Pxthw1UYic7KqTrw0gvo78sRavzu8GQxbXXtMDAr8/SL7fzyKqiK0lsZMBRRuv2c3gYOd5Rw8R8TG+UNkWDUVnlktsZZDY6f6uJgLYDFOlZXe7EHIhjBGwbvFFoMGxiGzwHrMsQurRD7zrMzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=FT4eMaE3; arc=none smtp.client-ip=199.89.3.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 003.mia.mailroute.net (Postfix) with ESMTP id 4d6Fzw4B9czlgqW0;
-	Wed, 12 Nov 2025 20:55:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1762980954; x=1765572955; bh=BYieuYvWdrPkEWUDJXfeMQSD
-	1AjAzeKuKjhOJWuyxQs=; b=FT4eMaE3uRQEtis8vd1tu3rVe/X5XL6vdlf113jI
-	I0qIOsysyZLNtGa8JEYGN+SC4ydJrBrpMTy8NKCwiu50HjYAhvBSLJoFAvz3EuJf
-	MVLZTprZ19vvpzREE/7xKWkf2tO7jfa1YPrueoxAuAfqU3/TFcPF4+BdCLCYF/Cq
-	i21GE7r7kxgaHzmZEmfZLlK/5uI4Mkw6a8HQaTTm1FxH7OQNZNeQ6ZBCMMdgy4L6
-	PWlJDA3ANjV2qmd4bRT2fuyB5OycbZHcAUBfikhk1fcPBdL7vupz3z7HB1eRLQF4
-	IzVMYjJV3rf+kRvuHjJo7xMxTLQoYA5I2H9Ffbz/LlV6Pg==
-X-Virus-Scanned: by MailRoute
-Received: from 003.mia.mailroute.net ([127.0.0.1])
- by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id 6RrlvvJ-mdZW; Wed, 12 Nov 2025 20:55:54 +0000 (UTC)
-Received: from [100.119.48.131] (unknown [104.135.180.219])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4d6Fzj5yBRzltMJC;
-	Wed, 12 Nov 2025 20:55:44 +0000 (UTC)
-Message-ID: <562fa035-c732-4bfc-8439-2279d029f72a@acm.org>
-Date: Wed, 12 Nov 2025 12:55:43 -0800
+	s=arc-20240116; t=1762980953; c=relaxed/simple;
+	bh=u9LmrEU/UvD3HmrDpdPbJVYRs1xAIxsoSOUYJsiJhbM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Taje7woZ5RHX10XHkFt+Jd6DIT7XXQ2TxZa4bUp1E8LLOfn4GsnBxv/AD9J29wnb6GZQ3hNxjS4fNOrR3PbQAWj03yN7Nth0eaZMtoyVX8snolNFHGLVhfvjk/yFfj9sQTTkWjO5jgAm9rS+CQKYR4Gh68wPOhPc3P9IPtIqkpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nb7qiCwn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A16A3C16AAE;
+	Wed, 12 Nov 2025 20:55:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762980952;
+	bh=u9LmrEU/UvD3HmrDpdPbJVYRs1xAIxsoSOUYJsiJhbM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nb7qiCwnhPto2pgEl1/YJZWf8v8VutOtnoIDpx0ty3mtsRHdkdGOnCGFELPA1rSNT
+	 LM5PW7nFf1xDLRFStZhD3Fwr4tIm5aF424LfGdKxbMfetOpxfl6mHvvbblyhEwZPgC
+	 7BBageWFnPyKejQpAyZ9CE/4V0NoNahtGvmRTMOslrdInQT6aGI44hP38qw3cGC+cb
+	 FybHGYHwVi45ZJtfO/6DLk9jeBCrG51IUlUt2Z3EFgHMJwhgOzqqheg3vOCiSUtl4W
+	 x7JU8Z7ecosRmmuKt0yMiIgn4Di+2LIL6piMmZJ0nZzvbh16AkX63sVUiy2qsZ5uRY
+	 mGPLGg43yOsXA==
+Date: Wed, 12 Nov 2025 14:55:51 -0600
+From: Rob Herring <robh@kernel.org>
+To: Yuntao Wang <yuntao.wang@linux.dev>
+Cc: Saravana Kannan <saravanak@google.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	AKASHI Takahiro <takahiro.akashi@linaro.org>,
+	James Morse <james.morse@arm.com>,
+	Chen Zhou <chenzhou10@huawei.com>, Baoquan He <bhe@redhat.com>,
+	Zhen Lei <thunder.leizhen@huawei.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Changyuan Lyu <changyuanl@google.com>,
+	Alexander Graf <graf@amazon.com>,
+	"Mike Rapoport (Microsoft)" <rppt@kernel.org>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 00/10] of/fdt: Some bug fixes and cleanups
+Message-ID: <20251112205551.GC2155854-robh@kernel.org>
+References: <20251112143520.233870-1-yuntao.wang@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFT v2] driver/scsi/mpi3mr: Fix build warning for
- mpi3mr_start_watchdog
-To: Bartlomiej Kubik <kubik.bartlomiej@gmail.com>,
- sathya.prakash@broadcom.com, kashyap.desai@broadcom.com,
- sumit.saxena@broadcom.com, sreekanth.reddy@broadcom.com
-Cc: martin.petersen@oracle.com, mpi3mr-linuxdrv.pdl@broadcom.com,
- linux-scsi@vger.kernel.org, skhan@linuxfoundation.org, khalid@kernel.org,
- david.hunter.linux@gmail.com,
- linux-kernel-mentees@lists.linuxfoundation.org, linux-kernel@vger.kernel.org
-References: <20251028145534.95457-1-kubik.bartlomiej@gmail.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20251028145534.95457-1-kubik.bartlomiej@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251112143520.233870-1-yuntao.wang@linux.dev>
 
-On 10/28/25 7:55 AM, Bartlomiej Kubik wrote:
-> -	char watchdog_work_q_name[50];
-> +	char watchdog_work_q_name[MPI3MR_WATCHDOG_NAME_LENGTH];
-
- From include/linux/workqueue.h:
-
-	WQ_NAME_LEN		= 32,
-
-	char			name[WQ_NAME_LEN]; /* I: workqueue name */
-
-In other words, increasing the workqueue name length beyond 32
-characters is not useful because it will get truncated to 32 characters
-anyway. The workqueue implementation complains about longer names as one
-can see in kernel/workqueue.c:
-
-	if (name_len >= WQ_NAME_LEN)
-		pr_warn_once("workqueue: name exceeds WQ_NAME_LEN. Truncating to: %s\n",
-			     wq->name);
-
-> diff --git a/drivers/scsi/mpi3mr/mpi3mr_fw.c b/drivers/scsi/mpi3mr/mpi3mr_fw.c
-> index 8fe6e0bf342e..18b176e358c5 100644
-> --- a/drivers/scsi/mpi3mr/mpi3mr_fw.c
-> +++ b/drivers/scsi/mpi3mr/mpi3mr_fw.c
-> @@ -2879,8 +2879,7 @@ void mpi3mr_start_watchdog(struct mpi3mr_ioc *mrioc)
+On Wed, Nov 12, 2025 at 10:35:10PM +0800, Yuntao Wang wrote:
+> This patch series fixes several bugs related to dt_root_addr_cells and
+> dt_root_size_cells, and performs some cleanup.
 > 
->   	INIT_DELAYED_WORK(&mrioc->watchdog_work, mpi3mr_watchdog_work);
->   	snprintf(mrioc->watchdog_work_q_name,
-> -	    sizeof(mrioc->watchdog_work_q_name), "watchdog_%s%d", mrioc->name,
-> -	    mrioc->id);
-> +	    sizeof(mrioc->watchdog_work_q_name), "watchdog_%s", mrioc->name);
->   	mrioc->watchdog_work_q = alloc_ordered_workqueue(
->   		"%s", WQ_MEM_RECLAIM, mrioc->watchdog_work_q_name);
->   	if (!mrioc->watchdog_work_q) {
-Leaving out mrioc->id from the workqueue name seems like an unacceptable
-behavior change to me.
+> Links to the previous related patches:
+> 
+> https://lore.kernel.org/lkml/CAL_JsqJxar7z+VcBXwPTw5-Et2oC9bQmH_CtMtKhoo_-=zN2XQ@mail.gmail.com/
+> 
+> Yuntao Wang (10):
+>   of/fdt: Introduce dt_root_addr_size_cells() and
+>     dt_root_addr_size_bytes()
+>   of/reserved_mem: Use dt_root_addr_size_bytes() instead of open-coding
+>     it
+>   of/reserved_mem: Use dt_root_addr_size_bytes() instead of open-coding
+>     it
+>   of/reserved_mem: Use dt_root_addr_size_bytes() instead of open-coding
+>     it
 
-Please consider replacing the proposed changed with this untested patch:
+Your aim in writing subjects should be to write something that is unique 
+for every commit in the past or future. Because you can never make the 
+same change twice, right? (I'm excluding 'fix typos/spelling' type 
+commits). Certainly the same subject in one series is never right.
 
-diff --git a/drivers/scsi/mpi3mr/mpi3mr.h b/drivers/scsi/mpi3mr/mpi3mr.h
-index 6742684e2990..050dcf111a4c 100644
---- a/drivers/scsi/mpi3mr/mpi3mr.h
-+++ b/drivers/scsi/mpi3mr/mpi3mr.h
-@@ -1076,7 +1076,6 @@ struct scmd_priv {
-   * @fwevt_worker_thread: Firmware event worker thread
-   * @fwevt_lock: Firmware event lock
-   * @fwevt_list: Firmware event list
-- * @watchdog_work_q_name: Fault watchdog worker thread name
-   * @watchdog_work_q: Fault watchdog worker thread
-   * @watchdog_work: Fault watchdog work
-   * @watchdog_lock: Fault watchdog lock
-@@ -1265,7 +1264,6 @@ struct mpi3mr_ioc {
-  	spinlock_t fwevt_lock;
-  	struct list_head fwevt_list;
+>   of/fdt: Use dt_root_addr_size_bytes() instead of open-coding it
+>   of/fdt: Fix the len check in early_init_dt_check_for_elfcorehdr()
+>   of/fdt: Fix the len check in
+>     early_init_dt_check_for_usable_mem_range()
+>   of/fdt: Use dt_root_addr_size_bytes() instead of open-coding it
 
--	char watchdog_work_q_name[50];
-  	struct workqueue_struct *watchdog_work_q;
-  	struct delayed_work watchdog_work;
-  	spinlock_t watchdog_lock;
-diff --git a/drivers/scsi/mpi3mr/mpi3mr_fw.c 
-b/drivers/scsi/mpi3mr/mpi3mr_fw.c
-index 8fe6e0bf342e..b564fe5980a6 100644
---- a/drivers/scsi/mpi3mr/mpi3mr_fw.c
-+++ b/drivers/scsi/mpi3mr/mpi3mr_fw.c
-@@ -2878,11 +2878,8 @@ void mpi3mr_start_watchdog(struct mpi3mr_ioc *mrioc)
-  		return;
+This is not what I meant. We have multiple copies of this where only 
+the property name changes: 
 
-  	INIT_DELAYED_WORK(&mrioc->watchdog_work, mpi3mr_watchdog_work);
--	snprintf(mrioc->watchdog_work_q_name,
--	    sizeof(mrioc->watchdog_work_q_name), "watchdog_%s%d", mrioc->name,
--	    mrioc->id);
-  	mrioc->watchdog_work_q = alloc_ordered_workqueue(
--		"%s", WQ_MEM_RECLAIM, mrioc->watchdog_work_q_name);
-+		"watchdog_%s%d", WQ_MEM_RECLAIM, mrioc->name, mrioc->id);
-  	if (!mrioc->watchdog_work_q) {
-  		ioc_err(mrioc, "%s: failed (line=%d)\n", __func__, __LINE__);
-  		return;
+	prop = of_get_flat_dt_prop(node, "linux,elfcorehdr", &len);
+	if (!prop || (len < (dt_root_addr_cells + dt_root_size_cells)))
+		return;
 
-Thanks,
+	elfcorehdr_addr = dt_mem_next_cell(dt_root_addr_cells, &prop);
+	elfcorehdr_size = dt_mem_next_cell(dt_root_size_cells, &prop);
 
-Bart.
+Instead, add a function something like this:
+
+static void early_init_dt_read_address(unsigned long node, const char 
+*prop, u64 *addr, u64*size)
+{
+        prop = of_get_flat_dt_prop(node, prop, &len);
+        if (!prop || (len < (dt_root_addr_cells + dt_root_size_cells)))
+                return;
+
+        *addr = dt_mem_next_cell(dt_root_addr_cells, &prop);
+        *size = dt_mem_next_cell(dt_root_size_cells, &prop);
+}
+
+Then we only have the length checks in one place.
+
+
+That still leaves the cases with more than 1 entry open coded. So 
+instead, to cover that case to something like this:
+
+const __be32 *of_get_flat_dt_address_prop(unsigned long node, const char 
+*propname, int *len)
+{
+	prop = of_get_flat_dt_prop(node, propname, &len);
+	if (!prop || (*len % (dt_root_addr_cells + dt_root_size_cells))) {
+		*len = 0;
+		return NULL;
+	}
+
+	*len /= (dt_root_addr_cells + dt_root_size_cells) * sizeof(__be32);
+	return prop;
+}
+
+And then a user would look something like this:
+
+prop = of_get_flat_dt_address(node, "linux,usable-memory-range", &len);
+for (i = 0; i < len; i++) {
+	of_read_address_idx(prop, i, &addr, &size);
+	...
+}
+
+Here 'len' is number of addr+size entries.
+
+And the simple case of reading 1 entry could be just:
+
+of_read_address_idx(of_get_flat_dt_address(node, "linux,elfcorehdr", NULL), 0, &addr, &size);
+
+Rob
 
