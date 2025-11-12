@@ -1,104 +1,177 @@
-Return-Path: <linux-kernel+bounces-896818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B2E9C51436
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:05:16 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56770C51444
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:05:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id CC84B34DB55
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:05:15 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 036BD34DB7C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:05:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A43D22FD7D8;
-	Wed, 12 Nov 2025 09:05:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bvZfnM1r"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 596BC2F9998
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:05:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E7BE2FD7A7;
+	Wed, 12 Nov 2025 09:05:35 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 520972F7AD0
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:05:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762938310; cv=none; b=A9OgKE/OMBm61LPofPLW39dZTEojpUzgzEVWtS++4rqr9BtQrwzBXEeUzfj7rtsHZGM39xVE18PgDN+ZGaPM3iBcEjEtlOrbtHciVutm2b6grO8xu5h8kVOIo4IMLv0ZPwFy4mOkbKY7QBX7P4BkZYx3NPxTe/vHhIVaDnZEuWA=
+	t=1762938335; cv=none; b=VolzbWkB91+iKoSVZxALm3dhi721Qvt39Zkaw1rpf0/8sQr+ZUML4H6R/9DpKtNb1vh47kBTBP9Y7bBPr7L6Hohx0y90KWVsNKCV4Z7+q8HO/9cX3kLvtGBzB6WedaZSzfBaQ844dw26B7TiqlGGjK8dycgCRwin99m059YGj68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762938310; c=relaxed/simple;
-	bh=UjaEv8WTllVOjp2zrTZ7c9iuJ7T6Yqki2atcrwtghNk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AY++C69sNGaNyTK11oGcqDAOoeAUSgdAL4u5aazW4/Z5PcXz5DeqeLDUEjb05cpq5xr2YxbzT2EUWB3L0yIz99UMbUiusM/nqJLgm7t+a7siua3/S5dTjM8s6+zxSDoZ0MvniC1WKwitdWstnTr9IL41sGAHT9lbcNoN9iIi7rc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bvZfnM1r; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4775895d69cso2987685e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 01:05:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762938307; x=1763543107; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=UjaEv8WTllVOjp2zrTZ7c9iuJ7T6Yqki2atcrwtghNk=;
-        b=bvZfnM1r6TGNZEc+NLKIWh6Y528SGhy2rfevQRXLl+3T8zubzDrcwefcG7VMaV6OBD
-         lsBzX3fnbQfk9rxz5YjOQv9+YjSnp3HOggXt1TDUd4yRNu6sadcnsZEz8H+NK0v6uNPy
-         7JHflRMLcK62I/Zv5w3Z51hgL9sR4NXdZ4Uu4iLN4+MhbxM3rip5Ju02TDot5ZAudnm0
-         R4VYvgDsUoUU+anqx1DkQNuIi6gr3NuIjzMCFf0+jLm6c01/UXIsrGZorC81zpxjj0Ve
-         kmyEcAVM1Wq9mfhCGHQoU9R25ml9CzIzctgHbkMWOpllSeEh0Y5aLwWdwWYb+DZHI3s/
-         IYzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762938307; x=1763543107;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UjaEv8WTllVOjp2zrTZ7c9iuJ7T6Yqki2atcrwtghNk=;
-        b=UwAw7GsucoOj85HYQFDcK+XQhBGmGaodU+yTK7HvXE+FwOzwuwSwBWwXskUYdv8JLg
-         7ro7eXd493CWli+60oqhehcPsKsT5UppF+32/X4o0RNe270enrXBSKMpmR0b94hx65/Q
-         szXto5+fi7yTipEvF1UNifi98KZ7JpeOIrKHBw6GsS6+244xqbBFty1MLuYrvgs5vXWc
-         XyiHwqK9tGNda5HauZk1/pOrSyMjFGFgbeERgnVSWGKLEDvub+SetX5+dqySlAjOBH3K
-         yvjway2wrLDp06i1+wiVzJEnMZPYS9ZKKBtNYg5ZWunXKho+zc9PJMgBSa0btxdq7MGM
-         EohQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUHKhyBdjFBOKP+0bspLo9yZVO7E175Xo4N6CN9RCH2xwUKNEJZvZcZ1Icx75p2gzKMSBpvOyWnpxbwFDc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHNFiupMfgYN0GpsowIvtEQkj0O6SjQEyKeoHF1nKWWQIN1de2
-	YvuRQ+yDSsT9F5qOv6BcbTvArgkdSEnVHqc4+2n0nx5qRsJSEHwJ/LzmEQaKNJZjMzQ=
-X-Gm-Gg: ASbGncvKCe8Rf81SaXkqqKcBJaQ+3t7KROHkzpJnmPivHseCtq22LnNKqoe15pzWaPm
-	FsjoVmlgXhxMnfJCPohH16yL1AuuoxFMy7OBWsiZzGnr4J7VOjezzUFiFprOpIE8api+TT9eWJb
-	k1ZFjUKlcQbNrPpKFVKJpdgUoiTtGdo9P6GzWAcnPN6xz2tRxhEwUjE8LJoev73uahvU4u+riOe
-	5L+VvP4mIKXGzOk59dO51j19lmlvpAgjAFnbh6QRQRWN3ROAYyaFjZUnI2CxRDtBkHX+Igmk/m9
-	3OhJ6AH6ino9TG+fqcfewEEMxm7mkl6JRAdDktjfaj8Bohol04kZKrroWPFOLTUgo5x78prVtar
-	bpDMoUwtNeSB05Od5rEiBj0wLpkUqHMk21UawPMFIrgE3PM0V5qKhm9DZ9hhQjYsUFSSZcvMHy5
-	exFGh+rCbFo5/ySobG
-X-Google-Smtp-Source: AGHT+IFaZAuEWTwFLR51iHXsJE+bCjGRqn5WR46Rg3eXCp8SfPQgRrpAHKL6EvATHfPuewRU3oUExw==
-X-Received: by 2002:a05:600c:3590:b0:470:fe3c:a3b7 with SMTP id 5b1f17b1804b1-47787070651mr22036785e9.5.1762938306837;
-        Wed, 12 Nov 2025 01:05:06 -0800 (PST)
-Received: from [10.11.12.107] ([5.12.85.52])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42abe63ba87sm33666226f8f.14.2025.11.12.01.05.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Nov 2025 01:05:06 -0800 (PST)
-Message-ID: <7363d995-f96a-49f6-ab44-3e9581b59617@linaro.org>
-Date: Wed, 12 Nov 2025 11:05:05 +0200
+	s=arc-20240116; t=1762938335; c=relaxed/simple;
+	bh=/bDpZgay3LWVFdpeWe0oDcxNAbPY+Mi5dboVZ09/wLU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EFX79ULxNgzCfmAHMKHHBq0v81RzFBt+Izjqfa6umjND8Ra3R0VQ4oMIucUGkD9kR55quc+ommTxrZOaqaC761VkLHlR//LNT+hKpDqCeFX5yVPaQuqpx5fiZQM2O589EL4WXqbDRd86FJfNxxtg8oqwxhpL1tFweSkbRQdD4s8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.2.5.213])
+	by gateway (Coremail) with SMTP id _____8Cx77_YTRRpMV4iAA--.6790S3;
+	Wed, 12 Nov 2025 17:05:28 +0800 (CST)
+Received: from localhost.localdomain (unknown [10.2.5.213])
+	by front1 (Coremail) with SMTP id qMiowJDxqcDXTRRpx1gwAQ--.51587S2;
+	Wed, 12 Nov 2025 17:05:28 +0800 (CST)
+From: Bibo Mao <maobibo@loongson.cn>
+To: Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>
+Cc: loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] LoongArch: Fix numa node parsing with memblk on virt machine
+Date: Wed, 12 Nov 2025 17:05:09 +0800
+Message-Id: <20251112090511.2431689-1-maobibo@loongson.cn>
+X-Mailer: git-send-email 2.39.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/5] mtd: spi-nor: micron-st: use SFDP of mt35xu512aba
-To: Haibo Chen <haibo.chen@nxp.com>, Pratyush Yadav <pratyush@kernel.org>,
- Michael Walle <mwalle@kernel.org>, Miquel Raynal
- <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>,
- Vignesh Raghavendra <vigneshr@ti.com>
-Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
- imx@lists.linux.dev
-References: <20251112-nor-v3-0-20aaff727c7d@nxp.com>
- <20251112-nor-v3-3-20aaff727c7d@nxp.com>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <20251112-nor-v3-3-20aaff727c7d@nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowJDxqcDXTRRpx1gwAQ--.51587S2
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
+	ZEXasCq-sGcSsGvfJ3UbIjqfuFe4nvWSU5nxnvy29KBjDU0xBIdaVrnUUvcSsGvfC2Kfnx
+	nUUI43ZEXa7xR_UUUUUUUUU==
 
-Wonderful, thanks!
+On physical machine, numa node comes high bit 44:48 of physical address.
+However it is not true on virt machine. With general method, it comes
+from ACPI SRAT table.
 
-Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+Here common function numa_memblks_init() is used to add numa node
+information with memblk.
+
+Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+---
+ arch/loongarch/kernel/numa.c | 82 +-----------------------------------
+ 1 file changed, 2 insertions(+), 80 deletions(-)
+
+diff --git a/arch/loongarch/kernel/numa.c b/arch/loongarch/kernel/numa.c
+index d6e73e8f9c0b..987496c3b915 100644
+--- a/arch/loongarch/kernel/numa.c
++++ b/arch/loongarch/kernel/numa.c
+@@ -157,74 +157,6 @@ static void __init node_mem_init(unsigned int node)
+ }
+ 
+ #ifdef CONFIG_ACPI_NUMA
+-
+-/*
+- * add_numamem_region
+- *
+- * Add a uasable memory region described by BIOS. The
+- * routine gets each intersection between BIOS's region
+- * and node's region, and adds them into node's memblock
+- * pool.
+- *
+- */
+-static void __init add_numamem_region(u64 start, u64 end, u32 type)
+-{
+-	u32 node = pa_to_nid(start);
+-	u64 size = end - start;
+-	static unsigned long num_physpages;
+-
+-	if (start >= end) {
+-		pr_debug("Invalid region: %016llx-%016llx\n", start, end);
+-		return;
+-	}
+-
+-	num_physpages += (size >> PAGE_SHIFT);
+-	pr_info("Node%d: mem_type:%d, mem_start:0x%llx, mem_size:0x%llx Bytes\n",
+-		node, type, start, size);
+-	pr_info("       start_pfn:0x%llx, end_pfn:0x%llx, num_physpages:0x%lx\n",
+-		start >> PAGE_SHIFT, end >> PAGE_SHIFT, num_physpages);
+-	memblock_set_node(start, size, &memblock.memory, node);
+-}
+-
+-static void __init init_node_memblock(void)
+-{
+-	u32 mem_type;
+-	u64 mem_end, mem_start, mem_size;
+-	efi_memory_desc_t *md;
+-
+-	/* Parse memory information and activate */
+-	for_each_efi_memory_desc(md) {
+-		mem_type = md->type;
+-		mem_start = md->phys_addr;
+-		mem_size = md->num_pages << EFI_PAGE_SHIFT;
+-		mem_end = mem_start + mem_size;
+-
+-		switch (mem_type) {
+-		case EFI_LOADER_CODE:
+-		case EFI_LOADER_DATA:
+-		case EFI_BOOT_SERVICES_CODE:
+-		case EFI_BOOT_SERVICES_DATA:
+-		case EFI_PERSISTENT_MEMORY:
+-		case EFI_CONVENTIONAL_MEMORY:
+-			add_numamem_region(mem_start, mem_end, mem_type);
+-			break;
+-		case EFI_PAL_CODE:
+-		case EFI_UNUSABLE_MEMORY:
+-		case EFI_ACPI_RECLAIM_MEMORY:
+-			add_numamem_region(mem_start, mem_end, mem_type);
+-			fallthrough;
+-		case EFI_RESERVED_TYPE:
+-		case EFI_RUNTIME_SERVICES_CODE:
+-		case EFI_RUNTIME_SERVICES_DATA:
+-		case EFI_MEMORY_MAPPED_IO:
+-		case EFI_MEMORY_MAPPED_IO_PORT_SPACE:
+-			pr_info("Resvd: mem_type:%d, mem_start:0x%llx, mem_size:0x%llx Bytes\n",
+-					mem_type, mem_start, mem_size);
+-			break;
+-		}
+-	}
+-}
+-
+ /*
+  * fake_numa_init() - For Non-ACPI systems
+  * Return: 0 on success, -errno on failure.
+@@ -249,22 +181,12 @@ int __init init_numa_memory(void)
+ 	for (i = 0; i < NR_CPUS; i++)
+ 		set_cpuid_to_node(i, NUMA_NO_NODE);
+ 
+-	numa_reset_distance();
+-	nodes_clear(numa_nodes_parsed);
+-	nodes_clear(node_possible_map);
+-	nodes_clear(node_online_map);
+-	WARN_ON(memblock_clear_hotplug(0, PHYS_ADDR_MAX));
+-
+ 	/* Parse SRAT and SLIT if provided by firmware. */
+-	ret = acpi_disabled ? fake_numa_init() : acpi_numa_init();
++	ret = acpi_disabled ? numa_memblks_init(fake_numa_init, false) :
++			numa_memblks_init(acpi_numa_init, false);
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	node_possible_map = numa_nodes_parsed;
+-	if (WARN_ON(nodes_empty(node_possible_map)))
+-		return -EINVAL;
+-
+-	init_node_memblock();
+ 	if (!memblock_validate_numa_coverage(SZ_1M))
+ 		return -EINVAL;
+ 
+
+base-commit: e9a6fb0bcdd7609be6969112f3fbfcce3b1d4a7c
+-- 
+2.39.3
+
 
