@@ -1,314 +1,289 @@
-Return-Path: <linux-kernel+bounces-896599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1DAFC50BEB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 07:42:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 142CCC50BA3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 07:36:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3E81734ACB4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 06:42:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 277763B43B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 06:36:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FEDC2DF6F4;
-	Wed, 12 Nov 2025 06:42:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B9CB2DCC03;
+	Wed, 12 Nov 2025 06:36:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=birger-koblitz.de header.i=@birger-koblitz.de header.b="LVZTWTl5";
-	dkim=pass (2048-bit key) header.d=birger-koblitz.de header.i=@birger-koblitz.de header.b="xgSAa4FE"
-Received: from bkemail.birger-koblitz.de (bkemail.birger-koblitz.de [23.88.97.239])
+	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="ch5vWKID"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D48F21990C7;
-	Wed, 12 Nov 2025 06:42:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=23.88.97.239
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762929762; cv=none; b=EZOKlS9lACzvCZKKweXfYfNRiv+dRhbAqK4zV3PRw0x3YPW4NRlbEjhZ5xb8Cu9/QSDpPA0BYqS9qpD9Qylw3I94dloVenS0sO9GNVtJu3R4J49Q3MG/4FmjFgg+N8T/X1N+oGd5biO8ir3K91GVGCmKgSDY6KUV/noG0XdfP3Q=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762929762; c=relaxed/simple;
-	bh=MR+W2xs0MEU9a8GMC7b+h4/FrmDMwMIKo6V4o6PhWUY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=r1h7ItSiIjV9CJSIsxe5+odW5yjrb0FhswikF9PBvTHS/4TIszaemloFhvtKmrYkojVxgKD/ujL4exKSwPg914J6G998eFVnzs4zq8C+pR4JY6RgEkVFEve2D+5+f+Ssg8MwHWAZYP3W4zxquBgtcJv0Yxdwd3KfGj4Nq81GURQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=birger-koblitz.de; spf=pass smtp.mailfrom=birger-koblitz.de; dkim=pass (2048-bit key) header.d=birger-koblitz.de header.i=@birger-koblitz.de header.b=LVZTWTl5; dkim=pass (2048-bit key) header.d=birger-koblitz.de header.i=@birger-koblitz.de header.b=xgSAa4FE; arc=none smtp.client-ip=23.88.97.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=birger-koblitz.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=birger-koblitz.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=birger-koblitz.de;
-	s=default; t=1762929279;
-	bh=MR+W2xs0MEU9a8GMC7b+h4/FrmDMwMIKo6V4o6PhWUY=;
-	h=From:Date:Subject:To:Cc:From;
-	b=LVZTWTl5GQMzPHyWuQuQ8lLWBzRn+kUjE6TCLvVVnnDgtF95cVBs7EMxVNDO1q4lF
-	 VVztr5LTyvLquikgwugb/+MDisogUhVisiFk6nf2Er9v508sR2ffKHFe17HPOBZ2gr
-	 kCX9XgaGagibcluVe7D3k5gHk+2RZoa003x1/ySIRbWynmGQtCN05Q4bVTmvW6IB5z
-	 WpzGYyBmyF8gv7pyIP2my9vOR119PtMgxOnu1rawpPPhfK/rtaBcRBSod0EeFsqa4J
-	 06pVVvq2ZqidruWBfHLH8Pwd+HEEUq8jejmEonpImArvfBeFibt5AmtiOJ6S4PUs58
-	 kIe/L7Lpj2YIw==
-Received: by bkemail.birger-koblitz.de (Postfix, from userid 109)
-	id 5ED09493D3; Wed, 12 Nov 2025 06:34:39 +0000 (UTC)
-X-Spam-Level: 
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=birger-koblitz.de;
-	s=default; t=1762929277;
-	bh=MR+W2xs0MEU9a8GMC7b+h4/FrmDMwMIKo6V4o6PhWUY=;
-	h=From:Date:Subject:To:Cc:From;
-	b=xgSAa4FEPceRmV8qXMKWM7zRt7yCtxkCwLu3KO7JEZTlfFjfnN17pZIAoAhLKFsCR
-	 pMOUxLfl8ZQ/rFf+BvIW9A0TR4/06+SCcIhXnBKK+s1MUnPmJ0Jp8KAfM8x22VK/PZ
-	 UEHT7qN/whD5LyXH4Pu+11Ent3oFaaW5hdsrcm66TE3Ih7da0DJWH7cw648lfCbnrB
-	 B9u8X0xOqpM5NJVAEfYnP9SVMcopI+11OYci1kiZjRoHddisGBj5DdtVKTUScPRANw
-	 yUVTI+isFYeofC4QNa72fUcgwxvSHlDS4cop8Sr86QWM9olOZGupvSsIcLb0+3/kDL
-	 YwGrw5/OhcoIQ==
-Received: from AMDDesktop.lan (unknown [IPv6:2a00:6020:47a3:e800:94d3:d213:724a:4e07])
-	by bkemail.birger-koblitz.de (Postfix) with ESMTPSA id 83F5F493BF;
-	Wed, 12 Nov 2025 06:34:37 +0000 (UTC)
-From: Birger Koblitz <mail@birger-koblitz.de>
-Date: Wed, 12 Nov 2025 07:34:34 +0100
-Subject: [PATCH net-next v5] ixgbe: Add 10G-BX support
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7C4B26A1B6;
+	Wed, 12 Nov 2025 06:35:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762929361; cv=pass; b=COzBMRojsLuD651LcIdBKbcTCaBi1/xlPkKzCCgiGcJMwfvabRcRqfaK/Oye7lmMeFx9K1ZjrlzTsofW/xtzfcANNDeXEwR5JNAtWU1TFYJptM9tLQRiBquhS5AuAHp/4tqoEG4iITY6ATJzmV/8bs3qQqi6DIB8Ewt/mdWSie8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762929361; c=relaxed/simple;
+	bh=xKsQlV845zxz9U5PbOytS7Kz5N2R+e9EeH8xknJAi8o=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=LQNQR7+o+1VvXl1Vdw9iqhlWAWqSYwnlZF06mg+e0pZtEsCLYcP+uO+bVLUMeNfySBCLjQqkFJpdJksUJ54ot+3cS7nS6BRq8lKCxuoNVpCDlWN2kE27wD+WPbNXQoJOJMXWPQd2UeIaWbq7HZMQ1RE0Cp5nbP+RRjp7zHAxRwo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=ch5vWKID; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
+ARC-Seal: i=1; a=rsa-sha256; t=1762929296; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=D/jXUG+Y0X6TSNIG7hfAn9bLNf/bI7jb3LNVZKsZ26HwL+hEtPcNqxqY7aGwEt7M29ZHfm6qaz5YgChQ0LL374wcGc7+FvD/CjvcJYVhHnT3r4v5tNF4rIIJMizZAb8op38KK5ANYKjIZQmI+YzDBxRCJRSyplBOLCtarWlsSlA=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1762929296; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=xKsQlV845zxz9U5PbOytS7Kz5N2R+e9EeH8xknJAi8o=; 
+	b=IU8LYBC5vthshjpc/tL2oJm2FOOWp1mCKLpOIQI9xm2Aol7ErxPQFPS7W3JNxn3K2s7dJwfHWenjPIHviiXv0CVYLczvgXt8ZXz6tXt5tEUvdFQqXOSeRnBGKkQXOpThsKaQFEtOJRN+PAZ5qfr8Rv9ve98H1N6IcG8o1wo+3Lg=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=icenowy.me;
+	spf=pass  smtp.mailfrom=uwu@icenowy.me;
+	dmarc=pass header.from=<uwu@icenowy.me>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1762929296;
+	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
+	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
+	bh=xKsQlV845zxz9U5PbOytS7Kz5N2R+e9EeH8xknJAi8o=;
+	b=ch5vWKIDHc0tBmR3ywllKxhno/8vwT3oI99n+5vADEvBFWNPdoCWL/cRrwwsh0zj
+	OeUOrFTlhDc/ZvvRDPLOtE/49nB3JzWLSr5vozXgfAI+wzzcw9Ks3RBj0VWB4IVbEEy
+	qIyTJl2TJOCekgJh8mkAGr+Iz3+YYVQVMRV9Vz18mGOG6+/91Hczxhf5MtXakZFsXGV
+	DHu7drXyK3pdAATJMPFbqjcN+6kcaeGRDzcI31RyG3UZnOQaTgMJ5P/wDKt7RxLDm3g
+	q+rx4ftJyCGvxqcYIPy5jWSZHSUOp0j818HfO0mFy1cPWR2Mp75D7q8vEyvoiHEG4Wn
+	UM0Zu014WA==
+Received: by mx.zohomail.com with SMTPS id 17629292938968.120405118539338;
+	Tue, 11 Nov 2025 22:34:53 -0800 (PST)
+Message-ID: <0d8e3a626b037dd348378e5ebca8005c1e715871.camel@icenowy.me>
+Subject: Re: [PATCH RFC 01/13] dt-bindings: soc: starfive: Add
+ vout-subsystem IP block
+From: Icenowy Zheng <uwu@icenowy.me>
+To: Conor Dooley <conor@kernel.org>, Michal Wilczynski
+	 <m.wilczynski@samsung.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+  Emil Renner Berthing <kernel@esmil.dk>, Hal Feng
+ <hal.feng@starfivetech.com>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Xingyu
+ Wu <xingyu.wu@starfivetech.com>, Vinod Koul <vkoul@kernel.org>, Kishon
+ Vijay Abraham I <kishon@kernel.org>, Andrzej Hajda
+ <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+ Robert Foss <rfoss@kernel.org>, Laurent Pinchart
+ <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+ Thomas Zimmermann <tzimmermann@suse.de>, Lee Jones <lee@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
+ <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, Marek Szyprowski
+ <m.szyprowski@samsung.com>, Maud Spierings <maudspierings@gocontroll.com>, 
+ Andy Yan <andyshrk@163.com>, Heiko Stuebner <heiko@sntech.de>,
+ devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org,  linux-phy@lists.infradead.org,
+ dri-devel@lists.freedesktop.org,  linux-riscv@lists.infradead.org
+Date: Wed, 12 Nov 2025 14:34:39 +0800
+In-Reply-To: <20251111-unsaid-rockslide-67b88b2e34bd@spud>
+References: <20251108-jh7110-clean-send-v1-0-06bf43bb76b1@samsung.com>
+	 <CGME20251108010453eucas1p2403ec0dd2c69ae7f3eabe19cf686f345@eucas1p2.samsung.com>
+	 <20251108-jh7110-clean-send-v1-1-06bf43bb76b1@samsung.com>
+	 <20251111-massager-twistable-1e88f03d82f8@spud>
+	 <20251111-unsaid-rockslide-67b88b2e34bd@spud>
+Organization: Anthon Open-Source Community
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+User-Agent: Evolution 3.44.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251112-10gbx-v5-1-12cab4060bc8@birger-koblitz.de>
-X-B4-Tracking: v=1; b=H4sIAHkqFGkC/3WOyw6CMBBFf8V0bU2ntFhc+R/GRR8DNhoxhRCU8
- O8ORBIWuLw3c87cgTWYIjbstBtYwi42sX5S0Psd8zf7rJDHQJlJITUIkBxE5XpunTLSa4SgFaP
- bV8Iy9rPncqV8i01bp/es7WBqF0P2M3TAgTSFKXJbZkGbs4upwsTvtXvE9nMIyCZTJ9e0Wmgaw
- gsjvJYKAPD4j842aRrBtfDBmlweofj7W63pfKFJw4X1VLtS59Zv0eM4fgHdSVtvXAEAAA==
-X-Change-ID: 20251012-10gbx-ab482c5e1d54
-To: Tony Nguyen <anthony.l.nguyen@intel.com>, 
- Przemek Kitszel <przemyslaw.kitszel@intel.com>, 
- Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Birger Koblitz <mail@birger-koblitz.de>, 
- Andrew Lunn <andrew@lunn.ch>, Paul Menzel <pmenzel@molgen.mpg.de>, 
- Aleksandr Loktionov <aleksandr.loktionov@intel.com>, 
- Rinitha S <sx.rinitha@intel.com>
-X-Mailer: b4 0.14.2
+X-ZohoMailClient: External
 
-Add support for 10G-BX modules, i.e. 10GBit Ethernet over a single strand
-Single-Mode fiber.
-The initialization of a 10G-BX SFP+ is the same as for a 10G SX/LX module,
-and is identified according to SFF-8472 table 5-3, footnote 3 by the
-10G Ethernet Compliance Codes field being empty, the Nominal Bit
-Rate being compatible with 12.5GBit, and the module being a fiber module
-with a Single Mode fiber link length.
-
-This was tested using a Lightron WSPXG-HS3LC-IEA 1270/1330nm 10km
-transceiver:
-$ sudo ethtool -m enp1s0f1
-   Identifier                          : 0x03 (SFP)
-   Extended identifier                 : 0x04 (GBIC/SFP defined by 2-wire interface ID)
-   Connector                           : 0x07 (LC)
-   Transceiver codes                   : 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00
-   Encoding                            : 0x01 (8B/10B)
-   BR Nominal                          : 10300MBd
-   Rate identifier                     : 0x00 (unspecified)
-   Length (SMF)                        : 10km
-   Length (OM2)                        : 0m
-   Length (OM1)                        : 0m
-   Length (Copper or Active cable)     : 0m
-   Length (OM3)                        : 0m
-   Laser wavelength                    : 1330nm
-   Vendor name                         : Lightron Inc.
-   Vendor OUI                          : 00:13:c5
-   Vendor PN                           : WSPXG-HS3LC-IEA
-   Vendor rev                          : 0000
-   Option values                       : 0x00 0x1a
-   Option                              : TX_DISABLE implemented
-   BR margin max                       : 0%
-   BR margin min                       : 0%
-   Vendor SN                           : S142228617
-   Date code                           : 140611
-   Optical diagnostics support         : Yes
-
-Signed-off-by: Birger Koblitz <mail@birger-koblitz.de>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
-Reviewed-by: Aleksandr Loktionov <aleksandr.loktionov@intel.com>
-Tested-by: Rinitha S <sx.rinitha@intel.com>
----
-Changes in v5:
-  Added "Tested-by" 
-- Link to v4: https://lore.kernel.org/r/20251016-10gbx-v4-1-0ac202bf56ac@birger-koblitz.de
-
-Changes in v4:
-  Added "Reviewed-bys".
-  Slight rewording of commit message.
-- Link to v3: https://lore.kernel.org/r/20251014-10gbx-v3-1-50cda8627198@birger-koblitz.de
-
-Changes in v3:
-  Added "Reviewed-by". There also was a possible mailserver DKIM misconfiguration
-  that may have prevented recipients to recieve the previous mails 
-- Link to v2: https://lore.kernel.org/r/20251014-10gbx-v2-1-980c524111e7@birger-koblitz.de
-
-Changes in v2:
-  Allow also modules with only Byte 15 (100m SM link length) set to
-  be identified as BX
----
- drivers/net/ethernet/intel/ixgbe/ixgbe_82599.c   |  7 ++++
- drivers/net/ethernet/intel/ixgbe/ixgbe_ethtool.c |  2 ++
- drivers/net/ethernet/intel/ixgbe/ixgbe_phy.c     | 43 +++++++++++++++++++++---
- drivers/net/ethernet/intel/ixgbe/ixgbe_phy.h     |  2 ++
- drivers/net/ethernet/intel/ixgbe/ixgbe_type.h    |  2 ++
- 5 files changed, 51 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_82599.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_82599.c
-index d5b1b974b4a33e7dd51b7cfe5ea211ff038a36f0..892a73a4bc6b0bb1c976ca95bf874059b987054f 100644
---- a/drivers/net/ethernet/intel/ixgbe/ixgbe_82599.c
-+++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_82599.c
-@@ -342,6 +342,13 @@ static int ixgbe_get_link_capabilities_82599(struct ixgbe_hw *hw,
- 		return 0;
- 	}
- 
-+	if (hw->phy.sfp_type == ixgbe_sfp_type_10g_bx_core0 ||
-+	    hw->phy.sfp_type == ixgbe_sfp_type_10g_bx_core1) {
-+		*speed = IXGBE_LINK_SPEED_10GB_FULL;
-+		*autoneg = false;
-+		return 0;
-+	}
-+
- 	/*
- 	 * Determine link capabilities based on the stored value of AUTOC,
- 	 * which represents EEPROM defaults.  If AUTOC value has not been
-diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_ethtool.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_ethtool.c
-index 2d660e9edb80af8fc834e097703dfd6a82b8c45b..76edf02bc47e5dd24bb0936f730f036181f6dc2a 100644
---- a/drivers/net/ethernet/intel/ixgbe/ixgbe_ethtool.c
-+++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_ethtool.c
-@@ -351,6 +351,8 @@ static int ixgbe_get_link_ksettings(struct net_device *netdev,
- 		case ixgbe_sfp_type_1g_lx_core1:
- 		case ixgbe_sfp_type_1g_bx_core0:
- 		case ixgbe_sfp_type_1g_bx_core1:
-+		case ixgbe_sfp_type_10g_bx_core0:
-+		case ixgbe_sfp_type_10g_bx_core1:
- 			ethtool_link_ksettings_add_link_mode(cmd, supported,
- 							     FIBRE);
- 			ethtool_link_ksettings_add_link_mode(cmd, advertising,
-diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_phy.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_phy.c
-index 2449e4cf2679ddf3277f4ada7619303eb618d393..ad6a1eae6042bb16e329fb817bcfcb87e9008ce8 100644
---- a/drivers/net/ethernet/intel/ixgbe/ixgbe_phy.c
-+++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_phy.c
-@@ -1541,6 +1541,8 @@ int ixgbe_identify_sfp_module_generic(struct ixgbe_hw *hw)
- 	u8 identifier = 0;
- 	u8 cable_tech = 0;
- 	u8 cable_spec = 0;
-+	u8 sm_length_km = 0;
-+	u8 sm_length_100m = 0;
- 	int status;
- 
- 	if (hw->mac.ops.get_media_type(hw) != ixgbe_media_type_fiber) {
-@@ -1678,6 +1680,31 @@ int ixgbe_identify_sfp_module_generic(struct ixgbe_hw *hw)
- 			else
- 				hw->phy.sfp_type =
- 					ixgbe_sfp_type_1g_bx_core1;
-+		/* Support Ethernet 10G-BX, checking the Bit Rate
-+		 * Nominal Value as per SFF-8472 to be 12.5 Gb/s (67h) and
-+		 * Single Mode fibre with at least 1km link length
-+		 */
-+		} else if ((!comp_codes_10g) && (bitrate_nominal == 0x67) &&
-+			   (!(cable_tech & IXGBE_SFF_DA_PASSIVE_CABLE)) &&
-+			   (!(cable_tech & IXGBE_SFF_DA_ACTIVE_CABLE))) {
-+			status = hw->phy.ops.read_i2c_eeprom(hw,
-+					    IXGBE_SFF_SM_LENGTH_KM,
-+					    &sm_length_km);
-+			if (status != 0)
-+				goto err_read_i2c_eeprom;
-+			status = hw->phy.ops.read_i2c_eeprom(hw,
-+					    IXGBE_SFF_SM_LENGTH_100M,
-+					    &sm_length_100m);
-+			if (status != 0)
-+				goto err_read_i2c_eeprom;
-+			if (sm_length_km > 0 || sm_length_100m >= 10) {
-+				if (hw->bus.lan_id == 0)
-+					hw->phy.sfp_type =
-+						ixgbe_sfp_type_10g_bx_core0;
-+				else
-+					hw->phy.sfp_type =
-+						ixgbe_sfp_type_10g_bx_core1;
-+			}
- 		} else {
- 			hw->phy.sfp_type = ixgbe_sfp_type_unknown;
- 		}
-@@ -1768,7 +1795,9 @@ int ixgbe_identify_sfp_module_generic(struct ixgbe_hw *hw)
- 	      hw->phy.sfp_type == ixgbe_sfp_type_1g_sx_core0 ||
- 	      hw->phy.sfp_type == ixgbe_sfp_type_1g_sx_core1 ||
- 	      hw->phy.sfp_type == ixgbe_sfp_type_1g_bx_core0 ||
--	      hw->phy.sfp_type == ixgbe_sfp_type_1g_bx_core1)) {
-+	      hw->phy.sfp_type == ixgbe_sfp_type_1g_bx_core1 ||
-+	      hw->phy.sfp_type == ixgbe_sfp_type_10g_bx_core0 ||
-+	      hw->phy.sfp_type == ixgbe_sfp_type_10g_bx_core1)) {
- 		hw->phy.type = ixgbe_phy_sfp_unsupported;
- 		return -EOPNOTSUPP;
- 	}
-@@ -1786,7 +1815,9 @@ int ixgbe_identify_sfp_module_generic(struct ixgbe_hw *hw)
- 	      hw->phy.sfp_type == ixgbe_sfp_type_1g_sx_core0 ||
- 	      hw->phy.sfp_type == ixgbe_sfp_type_1g_sx_core1 ||
- 	      hw->phy.sfp_type == ixgbe_sfp_type_1g_bx_core0 ||
--	      hw->phy.sfp_type == ixgbe_sfp_type_1g_bx_core1)) {
-+	      hw->phy.sfp_type == ixgbe_sfp_type_1g_bx_core1 ||
-+	      hw->phy.sfp_type == ixgbe_sfp_type_10g_bx_core0 ||
-+	      hw->phy.sfp_type == ixgbe_sfp_type_10g_bx_core1)) {
- 		/* Make sure we're a supported PHY type */
- 		if (hw->phy.type == ixgbe_phy_sfp_intel)
- 			return 0;
-@@ -2016,20 +2047,22 @@ int ixgbe_get_sfp_init_sequence_offsets(struct ixgbe_hw *hw,
- 		return -EOPNOTSUPP;
- 
- 	/*
--	 * Limiting active cables and 1G Phys must be initialized as
-+	 * Limiting active cables, 10G BX and 1G Phys must be initialized as
- 	 * SR modules
- 	 */
- 	if (sfp_type == ixgbe_sfp_type_da_act_lmt_core0 ||
- 	    sfp_type == ixgbe_sfp_type_1g_lx_core0 ||
- 	    sfp_type == ixgbe_sfp_type_1g_cu_core0 ||
- 	    sfp_type == ixgbe_sfp_type_1g_sx_core0 ||
--	    sfp_type == ixgbe_sfp_type_1g_bx_core0)
-+	    sfp_type == ixgbe_sfp_type_1g_bx_core0 ||
-+	    sfp_type == ixgbe_sfp_type_10g_bx_core0)
- 		sfp_type = ixgbe_sfp_type_srlr_core0;
- 	else if (sfp_type == ixgbe_sfp_type_da_act_lmt_core1 ||
- 		 sfp_type == ixgbe_sfp_type_1g_lx_core1 ||
- 		 sfp_type == ixgbe_sfp_type_1g_cu_core1 ||
- 		 sfp_type == ixgbe_sfp_type_1g_sx_core1 ||
--		 sfp_type == ixgbe_sfp_type_1g_bx_core1)
-+		 sfp_type == ixgbe_sfp_type_1g_bx_core1 ||
-+		 sfp_type == ixgbe_sfp_type_10g_bx_core1)
- 		sfp_type = ixgbe_sfp_type_srlr_core1;
- 
- 	/* Read offset to PHY init contents */
-diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_phy.h b/drivers/net/ethernet/intel/ixgbe/ixgbe_phy.h
-index 81179c60af4e0199a8b9d0fcdf34654b02eedfac..039ba4b6c120f3e824c93cb00fdd9483e7cf9cba 100644
---- a/drivers/net/ethernet/intel/ixgbe/ixgbe_phy.h
-+++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_phy.h
-@@ -32,6 +32,8 @@
- #define IXGBE_SFF_QSFP_1GBE_COMP	0x86
- #define IXGBE_SFF_QSFP_CABLE_LENGTH	0x92
- #define IXGBE_SFF_QSFP_DEVICE_TECH	0x93
-+#define IXGBE_SFF_SM_LENGTH_KM		0xE
-+#define IXGBE_SFF_SM_LENGTH_100M	0xF
- 
- /* Bitmasks */
- #define IXGBE_SFF_DA_PASSIVE_CABLE		0x4
-diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_type.h b/drivers/net/ethernet/intel/ixgbe/ixgbe_type.h
-index b1bfeb21537acc44c31aedcb0584374e8f6ecd45..61f2ef67defddeab9ff4aa83c8f017819594996b 100644
---- a/drivers/net/ethernet/intel/ixgbe/ixgbe_type.h
-+++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_type.h
-@@ -3286,6 +3286,8 @@ enum ixgbe_sfp_type {
- 	ixgbe_sfp_type_1g_lx_core1 = 14,
- 	ixgbe_sfp_type_1g_bx_core0 = 15,
- 	ixgbe_sfp_type_1g_bx_core1 = 16,
-+	ixgbe_sfp_type_10g_bx_core0 = 17,
-+	ixgbe_sfp_type_10g_bx_core1 = 18,
- 
- 	ixgbe_sfp_type_not_present = 0xFFFE,
- 	ixgbe_sfp_type_unknown = 0xFFFF
-
----
-base-commit: 67029a49db6c1f21106a1b5fcdd0ea234a6e0711
-change-id: 20251012-10gbx-ab482c5e1d54
-
-Best regards,
--- 
-Birger Koblitz <mail@birger-koblitz.de>
+5ZyoIDIwMjUtMTEtMTHmmJ/mnJ/kuoznmoQgMTg6MzYgKzAwMDDvvIxDb25vciBEb29sZXnlhpnp
+gZPvvJoKPiBPbiBUdWUsIE5vdiAxMSwgMjAyNSBhdCAwNjoxODoxNlBNICswMDAwLCBDb25vciBE
+b29sZXkgd3JvdGU6Cj4gPiBPbiBTYXQsIE5vdiAwOCwgMjAyNSBhdCAwMjowNDozNUFNICswMTAw
+LCBNaWNoYWwgV2lsY3p5bnNraSB3cm90ZToKPiA+ID4gQWRkIHRoZSBkdC1iaW5kaW5nIGRvY3Vt
+ZW50YXRpb24gZm9yIHRoZSBTdGFyRml2ZSBKSDcxMTAgVmlkZW8KPiA+ID4gT3V0cHV0Cj4gPiA+
+IChWT1VUKSBzdWJzeXN0ZW0uCj4gPiA+IAo+ID4gPiBUaGlzIG5vZGUgYWN0cyBhcyBhIHBhcmVu
+dCBmb3IgYWxsIGRldmljZXMgd2l0aGluIHRoZSBWT1VUIHBvd2VyCj4gPiA+IGRvbWFpbiwKPiA+
+ID4gaW5jbHVkaW5nIHRoZSBEQzgyMDAgZGlzcGxheSBjb250cm9sbGVyLCB0aGUgVk9VVENSRyBj
+bG9jawo+ID4gPiBnZW5lcmF0b3IsCj4gPiA+IGFuZCB0aGUgSERNSSBNRkQgYmxvY2suIEl0cyBk
+cml2ZXIgaXMgcmVzcG9uc2libGUgZm9yIG1hbmFnaW5nCj4gPiA+IHRoZQo+ID4gPiBzaGFyZWQg
+cG93ZXIgZG9tYWluIGFuZCB0b3AtbGV2ZWwgYnVzIGNsb2NrcyBmb3IgdGhlc2UgY2hpbGRyZW4u
+Cj4gPiA+IAo+ID4gPiBJdCBpcyBhIGJpdCBzaW1pbGFyIHRvIHRoZSBkaXNwbGF5IHN1YnN5c3Rl
+bSBxY29tLHNkbTg0NS1tZHNzIERUCj4gPiA+IG5vZGUuCj4gPiA+IAo+ID4gPiBTaWduZWQtb2Zm
+LWJ5OiBNaWNoYWwgV2lsY3p5bnNraSA8bS53aWxjenluc2tpQHNhbXN1bmcuY29tPgo+ID4gPiAt
+LS0KPiA+ID4gwqAuLi4vc3RhcmZpdmUvc3RhcmZpdmUsamg3MTEwLXZvdXQtc3Vic3lzdGVtLnlh
+bWzCoMKgIHwgMTU2Cj4gPiA+ICsrKysrKysrKysrKysrKysrKysrKwo+ID4gPiDCoE1BSU5UQUlO
+RVJTwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHzCoMKgIDUgKwo+ID4gPiDCoDIgZmlsZXMgY2hhbmdl
+ZCwgMTYxIGluc2VydGlvbnMoKykKPiA+ID4gCj4gPiA+IGRpZmYgLS1naXQKPiA+ID4gYS9Eb2N1
+bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3Mvc29jL3N0YXJmaXZlL3N0YXJmaXZlLGpoNzEx
+MC0KPiA+ID4gdm91dC1zdWJzeXN0ZW0ueWFtbAo+ID4gPiBiL0RvY3VtZW50YXRpb24vZGV2aWNl
+dHJlZS9iaW5kaW5ncy9zb2Mvc3RhcmZpdmUvc3RhcmZpdmUsamg3MTEwLQo+ID4gPiB2b3V0LXN1
+YnN5c3RlbS55YW1sCj4gPiA+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0Cj4gPiA+IGluZGV4Cj4gPiA+
+IDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAuLjRhZDk0MjNlYTEzOWE1
+MzdiNGNmZWEyCj4gPiA+IDZiMGVkNGVkMjYzYWExNGExCj4gPiA+IC0tLSAvZGV2L251bGwKPiA+
+ID4gKysrCj4gPiA+IGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3NvYy9zdGFy
+Zml2ZS9zdGFyZml2ZSxqaDcxMTAtCj4gPiA+IHZvdXQtc3Vic3lzdGVtLnlhbWwKPiA+ID4gQEAg
+LTAsMCArMSwxNTYgQEAKPiA+ID4gKyMgU1BEWC1MaWNlbnNlLUlkZW50aWZpZXI6IChHUEwtMi4w
+LW9ubHkgT1IgQlNELTItQ2xhdXNlKQo+ID4gPiArJVlBTUwgMS4yCj4gPiA+ICstLS0KPiA+ID4g
+KyRpZDoKPiA+ID4gaHR0cDovL2RldmljZXRyZWUub3JnL3NjaGVtYXMvc29jL3N0YXJmaXZlL3N0
+YXJmaXZlLGpoNzExMC12b3V0LXN1YnN5c3RlbS55YW1sIwo+ID4gPiArJHNjaGVtYTogaHR0cDov
+L2RldmljZXRyZWUub3JnL21ldGEtc2NoZW1hcy9jb3JlLnlhbWwjCj4gPiA+ICsKPiA+ID4gK3Rp
+dGxlOiBTdGFyRml2ZSBKSDcxMTAgVk9VVCAoVmlkZW8gT3V0cHV0KSBTdWJzeXN0ZW0KPiA+ID4g
+Kwo+ID4gPiArbWFpbnRhaW5lcnM6Cj4gPiA+ICvCoCAtIE1pY2hhbCBXaWxjenluc2tpIDxtLndp
+bGN6eW5za2lAc2Ftc3VuZy5jb20+Cj4gPiA+ICsKPiA+ID4gK2Rlc2NyaXB0aW9uOgo+ID4gPiAr
+wqAgVGhlIEpINzExMCB2aWRlbyBvdXRwdXQgc3Vic3lzdGVtIGlzIGFuIElQIGJsb2NrIHRoYXQg
+Y29udGFpbnMKPiA+ID4gK8KgIHRoZSBkaXNwbGF5IGNvbnRyb2xsZXIgKERDODIwMCksIEhETUkg
+Y29udHJvbGxlci9QSFksIGFuZCBWT1VUCj4gPiA+ICvCoCBjbG9jayBnZW5lcmF0b3IgKFZPVVRD
+UkcpLgo+ID4gPiArCj4gPiA+ICtwcm9wZXJ0aWVzOgo+ID4gPiArwqAgY29tcGF0aWJsZToKPiA+
+ID4gK8KgwqDCoCBjb25zdDogc3RhcmZpdmUsamg3MTEwLXZvdXQtc3Vic3lzdGVtCj4gPiA+ICsK
+PiA+ID4gK8KgIHJlZzoKPiA+ID4gK8KgwqDCoCBtYXhJdGVtczogMQo+ID4gPiArCj4gPiA+ICvC
+oCBwb3dlci1kb21haW5zOgo+ID4gPiArwqDCoMKgIG1heEl0ZW1zOiAxCj4gPiA+ICsKPiA+ID4g
+K8KgIGNsb2NrczoKPiA+ID4gK8KgwqDCoCBtYXhJdGVtczogMQo+ID4gPiArCj4gPiA+ICvCoCBy
+ZXNldHM6Cj4gPiA+ICvCoMKgwqAgbWF4SXRlbXM6IDEKPiA+ID4gKwo+ID4gPiArwqAgcmFuZ2Vz
+OiB0cnVlCj4gPiA+ICsKPiA+ID4gK8KgICcjYWRkcmVzcy1jZWxscyc6Cj4gPiA+ICvCoMKgwqAg
+Y29uc3Q6IDIKPiA+ID4gKwo+ID4gPiArwqAgJyNzaXplLWNlbGxzJzoKPiA+ID4gK8KgwqDCoCBj
+b25zdDogMgo+ID4gPiArCj4gPiA+ICtwYXR0ZXJuUHJvcGVydGllczoKPiA+ID4gK8KgICJeZGlz
+cGxheUBbMC05YS1mXSskIjoKPiA+IAo+ID4gUGVyc29uYWxseSBJJ2QgbGlrZSB0byBzZWUgdGhl
+c2UgYmVpbmcgcmVndWxhciBwcm9wZXJ0aWVzLCBzaW5jZQo+ID4gdGhlcmUncwo+ID4gZXhhY3Rs
+eSBvbmUgcG9zc2libGUgc2V0dXAgZm9yIHRoaXMuCj4gPiAKPiA+ID4gK8KgwqDCoCB0eXBlOiBv
+YmplY3QKPiA+ID4gK8KgwqDCoCBkZXNjcmlwdGlvbjogVmVyaXNpbGljb24gREM4MjAwIERpc3Bs
+YXkgQ29udHJvbGxlciBub2RlLgo+ID4gCj4gPiBDYW4geW91IGFkZCB0aGUgcmVsZXZhbnQgcmVm
+ZXJlbmNlcyBoZXJlIGluc3RlYWQgb2YgYWxsb3dpbmcgYW55Cj4gPiBvYmplY3Q/Cj4gCj4gSSBk
+b24ndCB0aGluayB0aGF0IGlmIHlvdSBkaWQsIHRoaXMgd291bGQgcGFzcyB0aGUgYmluZGluZyBj
+aGVja3MsCj4gYmVjYXVzZSB0aGVyZSdzIG5vICJ2ZXJpc2lsaWNvbixkYyIgYmluZGluZy4gSSB0
+aGluayBJIHNhdyBvbmUgaW4KPiBwcm9ncmVzcywgYnV0IHdpdGhvdXQgdGhlIHNvYy1zcGVjaWZp
+YyBjb21wYXRpYmxlIHRoYXQgSSBhbSBnb2luZyB0bwo+IHJlcXVpcmUgaGVyZSAtIGlmIGZvciBu
+byByZWFzb24gb3RoZXIgdGhhbiBtYWtpbmcgc3VyZSB0aGF0IHRoZQo+IGNsb2Nrcwo+IGV0YyBh
+cmUgcHJvdmlkZWQgY29ycmVjdGx5IGZvciB0aGlzIGRldmljZS4KCldlbGwgSSBkaWRuJ3Qgc3Bl
+Y2lmeSBhbnkgc29jLXNwZWNpZmljIGNvbXBhdGlibGUgYmVjYXVzZSB0aGF0IElQIGhhcwppdHMg
+b3duIGlkZW50aWZpY2F0aW9uIHJlZ2lzdGVycy4KCj4gCj4gPiAKPiA+IENoZWVycywKPiA+IENv
+bm9yLgo+ID4gCj4gPiA+ICsKPiA+ID4gK8KgICJeaGRtaUBbMC05YS1mXSskIjoKPiA+ID4gK8Kg
+wqDCoCB0eXBlOiBvYmplY3QKPiA+ID4gK8KgwqDCoCBkZXNjcmlwdGlvbjogU3RhckZpdmUgSERN
+SSBNRkQgKFBIWSArIENvbnRyb2xsZXIpIG5vZGUuCj4gPiA+ICsKPiA+ID4gK8KgICJeY2xvY2st
+Y29udHJvbGxlckBbMC05YS1mXSskIjoKPiA+ID4gK8KgwqDCoCB0eXBlOiBvYmplY3QKPiA+ID4g
+K8KgwqDCoCBkZXNjcmlwdGlvbjogU3RhckZpdmUgVk9VVCBDbG9jayBHZW5lcmF0b3IgKFZPVVRD
+UkcpIG5vZGUuCj4gPiA+ICsKPiA+ID4gK8KgICJec3lzY29uQFswLTlhLWZdKyQiOgo+ID4gPiAr
+wqDCoMKgIHR5cGU6IG9iamVjdAo+ID4gPiArwqDCoMKgIGRlc2NyaXB0aW9uOiBTdGFyRml2ZSBW
+T1VUIFN5c2NvbiBub2RlLgo+ID4gPiArCj4gPiA+ICtyZXF1aXJlZDoKPiA+ID4gK8KgIC0gY29t
+cGF0aWJsZQo+ID4gPiArwqAgLSByZWcKPiA+ID4gK8KgIC0gcG93ZXItZG9tYWlucwo+ID4gPiAr
+wqAgLSBjbG9ja3MKPiA+ID4gK8KgIC0gcmVzZXRzCj4gPiA+ICvCoCAtIHJhbmdlcwo+ID4gPiAr
+wqAgLSAnI2FkZHJlc3MtY2VsbHMnCj4gPiA+ICvCoCAtICcjc2l6ZS1jZWxscycKPiA+ID4gKwo+
+ID4gPiArYWRkaXRpb25hbFByb3BlcnRpZXM6IGZhbHNlCj4gPiA+ICsKPiA+ID4gK2V4YW1wbGVz
+Ogo+ID4gPiArwqAgLSB8Cj4gPiA+ICvCoMKgwqAgI2luY2x1ZGUgPGR0LWJpbmRpbmdzL2Nsb2Nr
+L3N0YXJmaXZlLGpoNzExMC1jcmcuaD4KPiA+ID4gK8KgwqDCoCAjaW5jbHVkZSA8ZHQtYmluZGlu
+Z3MvcG93ZXIvc3RhcmZpdmUsamg3MTEwLXBtdS5oPgo+ID4gPiArwqDCoMKgICNpbmNsdWRlIDxk
+dC1iaW5kaW5ncy9yZXNldC9zdGFyZml2ZSxqaDcxMTAtY3JnLmg+Cj4gPiA+ICsKPiA+ID4gK8Kg
+wqDCoCBzb2Mgewo+ID4gPiArwqDCoMKgwqDCoMKgwqAgI2FkZHJlc3MtY2VsbHMgPSA8Mj47Cj4g
+PiA+ICvCoMKgwqDCoMKgwqDCoCAjc2l6ZS1jZWxscyA9IDwyPjsKPiA+ID4gKwo+ID4gPiArwqDC
+oMKgwqDCoMKgwqAgdm91dF9zdWJzeXN0ZW06IGRpc3BsYXktc3Vic3lzdGVtQDI5NDAwMDAwIHsK
+PiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqAgY29tcGF0aWJsZSA9ICJzdGFyZml2ZSxqaDcx
+MTAtdm91dC1zdWJzeXN0ZW0iOwo+ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCByZWcgPSA8
+MHgwIDB4Mjk0MDAwMDAgMHgwIDB4MjAwMDAwPjsKPiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKg
+wqAgI2FkZHJlc3MtY2VsbHMgPSA8Mj47Cj4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgICNz
+aXplLWNlbGxzID0gPDI+Owo+ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCByYW5nZXM7Cj4g
+PiA+ICsKPiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqAgcG93ZXItZG9tYWlucyA9IDwmcHdy
+YyBKSDcxMTBfUERfVk9VVD47Cj4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGNsb2NrcyA9
+IDwmc3lzY3JnIEpINzExMF9TWVNDTEtfTk9DX0JVU19ESVNQX0FYST47Cj4gPiA+ICvCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgIHJlc2V0cyA9IDwmc3lzY3JnIEpINzExMF9TWVNSU1RfTk9DX0JVU19E
+SVNQX0FYST47Cj4gPiA+ICsKPiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqAgZGM4MjAwOiBk
+aXNwbGF5QDI5NDAwMDAwIHsKPiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBj
+b21wYXRpYmxlID0gInZlcmlzaWxpY29uLGRjIjsKPiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoCByZWcgPSA8MHgwIDB4Mjk0MDAwMDAgMHgwIDB4MjgwMD47Cj4gPiA+ICvCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgaW50ZXJydXB0cyA9IDw5NT47Cj4gPiA+ICvCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgY2xvY2tzID0gPCZ2b3V0Y3JnIEpINzExMF9WT1VU
+Q0xLX0RDODIwMF9DT1JFPiwKPiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoCA8JnZvdXRjcmcgSkg3MTEwX1ZPVVRDTEtfREM4MjAwX0FYST4sCj4g
+PiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgPCZ2
+b3V0Y3JnIEpINzExMF9WT1VUQ0xLX0RDODIwMF9BSEI+LAo+ID4gPiArwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIDwmdm91dGNyZyBKSDcxMTBfVk9VVENM
+S19EQzgyMDBfUElYMD4sCj4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqAgPCZ2b3V0Y3JnIEpINzExMF9WT1VUQ0xLX0RDODIwMF9QSVgxPjsKPiA+
+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBjbG9jay1uYW1lcyA9ICJjb3JlIiwg
+ImF4aSIsICJhaGIiLCAicGl4MCIsCj4gPiA+ICJwaXgxIjsKPiA+ID4gK8KgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoCByZXNldHMgPSA8JnZvdXRjcmcgSkg3MTEwX1ZPVVRSU1RfREM4MjAw
+X0FYST4sCj4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqAgPCZ2b3V0Y3JnIEpINzExMF9WT1VUUlNUX0RDODIwMF9BSEI+LAo+ID4gPiArwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIDwmdm91dGNyZyBKSDcx
+MTBfVk9VVFJTVF9EQzgyMDBfQ09SRT47Cj4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqAgcmVzZXQtbmFtZXMgPSAiYXhpIiwgImFoYiIsICJjb3JlIjsKPiA+ID4gK8KgwqDCoMKg
+wqDCoMKgwqDCoMKgwqAgfTsKPiA+ID4gKwo+ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBo
+ZG1pX21mZDogaGRtaUAyOTU5MDAwMCB7Cj4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqAgY29tcGF0aWJsZSA9ICJzdGFyZml2ZSxqaDcxMTAtaGRtaS1tZmQiOwo+ID4gPiArwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHJlZyA9IDwweDAgMHgyOTU5MDAwMCAweDAgMHg0
+MDAwPjsKPiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBpbnRlcnJ1cHRzID0g
+PDk5PjsKPiA+ID4gKwo+ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGhkbWlf
+cGh5OiBwaHkgewo+ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAg
+Y29tcGF0aWJsZSA9ICJzdGFyZml2ZSxqaDcxMTAtaW5uby1oZG1pLQo+ID4gPiBwaHkiOwo+ID4g
+PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgY2xvY2tzID0gPCZ4aW4y
+NG0+Owo+ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgY2xvY2st
+bmFtZXMgPSAicmVmb2NsayI7Cj4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoCAjY2xvY2stY2VsbHMgPSA8MD47Cj4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoCBjbG9jay1vdXRwdXQtbmFtZXMgPSAiaGRtaV9wY2xrIjsKPiA+ID4g
+K8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgICNwaHktY2VsbHMgPSA8MD47
+Cj4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfTsKPiA+ID4gKwo+ID4gPiAr
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGhkbWlfY29udHJvbGxlcjogY29udHJvbGxl
+ciB7Cj4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBjb21wYXRp
+YmxlID0gInN0YXJmaXZlLGpoNzExMC1pbm5vLWhkbWktCj4gPiA+IGNvbnRyb2xsZXIiOwo+ID4g
+PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgaW50ZXJydXB0cyA9IDw5
+OT47Cj4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBjbG9ja3Mg
+PSA8JnZvdXRjcmcKPiA+ID4gSkg3MTEwX1ZPVVRDTEtfSERNSV9UWF9TWVM+LAo+ID4gPiArwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgPCZ2
+b3V0Y3JnCj4gPiA+IEpINzExMF9WT1VUQ0xLX0hETUlfVFhfTUNMSz4sCj4gPiA+ICvCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCA8JnZvdXRj
+cmcKPiA+ID4gSkg3MTEwX1ZPVVRDTEtfSERNSV9UWF9CQ0xLPiwKPiA+ID4gK8KgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIDwmaGRtaV9waHk+
+Owo+ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgY2xvY2stbmFt
+ZXMgPSAic3lzIiwgIm1jbGsiLCAiYmNsayIsICJwY2xrIjsKPiA+ID4gK8KgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHJlc2V0cyA9IDwmdm91dGNyZwo+ID4gPiBKSDcxMTBf
+Vk9VVFJTVF9IRE1JX1RYX0hETUk+Owo+ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqAgcmVzZXQtbmFtZXMgPSAiaGRtaV90eCI7Cj4gPiA+ICvCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBwaHlzID0gPCZoZG1pX3BoeT47Cj4gPiA+ICvCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBwaHktbmFtZXMgPSAiaGRtaS1waHki
+Owo+ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIH07Cj4gPiA+ICvCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgIH07Cj4gPiA+ICsKPiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqAg
+dm91dGNyZzogY2xvY2stY29udHJvbGxlckAyOTVjMDAwMCB7Cj4gPiA+ICvCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqAgY29tcGF0aWJsZSA9ICJzdGFyZml2ZSxqaDcxMTAtdm91dGNyZyI7
+Cj4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgcmVnID0gPDB4MCAweDI5NWMw
+MDAwIDB4MCAweDEwMDAwPjsKPiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBj
+bG9ja3MgPSA8JnN5c2NyZyBKSDcxMTBfU1lTQ0xLX1ZPVVRfU1JDPiwKPiA+ID4gK8KgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCA8JnN5c2NyZyBKSDcxMTBf
+U1lTQ0xLX1ZPVVRfVE9QX0FIQj4sCj4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqAgPCZzeXNjcmcgSkg3MTEwX1NZU0NMS19WT1VUX1RPUF9BWEk+
+LAo+ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+IDwmc3lzY3JnCj4gPiA+IEpINzExMF9TWVNDTEtfVk9VVF9UT1BfSERNSVRYMF9NQ0xLPiwKPiA+
+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCA8JnN5
+c2NyZyBKSDcxMTBfU1lTQ0xLX0kyU1RYMF9CQ0xLPiwKPiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCA8JmhkbWlfcGh5PjsKPiA+ID4gK8KgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBjbG9jay1uYW1lcyA9ICJ2b3V0X3NyYyIsICJ2b3V0
+X3RvcF9haGIiLAo+ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoCAidm91dF90b3BfYXhpIiwKPiA+ID4gInZvdXRfdG9wX2hkbWl0
+eDBfbWNsayIsCj4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgICJpMnN0eDBfYmNsayIsICJoZG1pdHgwX3BpeGVsY2xrIjsKPiA+
+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCByZXNldHMgPSA8JnN5c2NyZyBKSDcx
+MTBfU1lTUlNUX1ZPVVRfVE9QX1NSQz47Cj4gPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqAgcmVzZXQtbmFtZXMgPSAidm91dF90b3AiOwo+ID4gPiArwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgICNjbG9jay1jZWxscyA9IDwxPjsKPiA+ID4gK8KgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoCAjcmVzZXQtY2VsbHMgPSA8MT47Cj4gPiA+ICvCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgIH07Cj4gPiA+ICvCoMKgwqDCoMKgwqDCoCB9Owo+ID4gPiArwqDCoMKgIH07Cj4gPiA+
+ICsKPiA+ID4gKy4uLgo+ID4gPiBkaWZmIC0tZ2l0IGEvTUFJTlRBSU5FUlMgYi9NQUlOVEFJTkVS
+Uwo+ID4gPiBpbmRleAo+ID4gPiAzNDhjYWFhYTkyOWE1MTliYzBlYzVjMGM3YjU4NzQ2OGVmNzUz
+MmQ1Li45OTQzNGU1NGRjMzk0OTQxNTM2NzdhNgo+ID4gPiBjYTM1OWQ3MGYyYmEyZGRiMyAxMDA2
+NDQKPiA+ID4gLS0tIGEvTUFJTlRBSU5FUlMKPiA+ID4gKysrIGIvTUFJTlRBSU5FUlMKPiA+ID4g
+QEAgLTI0MDQ0LDYgKzI0MDQ0LDExIEBAIFM6wqDCoMKgwqDCoE1haW50YWluZWQKPiA+ID4gwqBG
+OsKgwqDCoMKgwqBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbmV0L3N0YXJmaXZl
+LGpoNzExMC0KPiA+ID4gZHdtYWMueWFtbAo+ID4gPiDCoEY6wqDCoMKgwqDCoGRyaXZlcnMvbmV0
+L2V0aGVybmV0L3N0bWljcm8vc3RtbWFjL2R3bWFjLXN0YXJmaXZlLmMKPiA+ID4gwqAKPiA+ID4g
+K1NUQVJGSVZFIEpINzExMCBESVNQTEFZIFNVQlNZU1RFTQo+ID4gPiArTTrCoMKgwqDCoMKgTWlj
+aGFsIFdpbGN6eW5za2kgPG0ud2lsY3p5bnNraUBzYW1zdW5nLmNvbT4KPiA+ID4gK1M6wqDCoMKg
+wqDCoE1haW50YWluZWQKPiA+ID4gK0Y6wqDCoMKgwqDCoERvY3VtZW50YXRpb24vZGV2aWNldHJl
+ZS9iaW5kaW5ncy9zb2Mvc3RhcmZpdmUvc3RhcmZpdmUsago+ID4gPiBoNzExMC12b3V0LXN1YnN5
+c3RlbS55YW1sCj4gPiA+ICsKPiA+ID4gwqBTVEFSRklWRSBKSDcxMTAgRFBIWSBSWCBEUklWRVIK
+PiA+ID4gwqBNOsKgwqDCoMKgwqBKYWNrIFpodSA8amFjay56aHVAc3RhcmZpdmV0ZWNoLmNvbT4K
+PiA+ID4gwqBNOsKgwqDCoMKgwqBDaGFuZ2h1YW5nIExpYW5nIDxjaGFuZ2h1YW5nLmxpYW5nQHN0
+YXJmaXZldGVjaC5jb20+Cj4gPiA+IAo+ID4gPiAtLSAKPiA+ID4gMi4zNC4xCj4gPiA+IAo+IAo+
+IAoK
 
 
