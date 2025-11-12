@@ -1,156 +1,137 @@
-Return-Path: <linux-kernel+bounces-896917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06402C517EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:55:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95B69C517FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:55:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B36B1188290D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:54:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C5B61881CE2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:55:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B16682FFDE3;
-	Wed, 12 Nov 2025 09:53:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2EE821C194;
+	Wed, 12 Nov 2025 09:55:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="RPC0Lukz";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="cEyYM2Fr"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="VR1sSncF"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 813542FE579
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:53:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 970042FF15A;
+	Wed, 12 Nov 2025 09:55:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762941232; cv=none; b=fPYer4AB5uX2ngkQN+MLrLxl5ql8rd4Sf3xfqEIcEhxxZ4bm0iZvnK3MveZbedk3Epy9Ox9X/2FcHl5hwf6szIXRHLOrrhnYMpV+8UDZNYXm1TJ2ekzzoWNjpVJAJY64OJ7AOTHIrRWRGEv5NfDKsPcm3CWLjRIHr2ORaAkxjYE=
+	t=1762941321; cv=none; b=f/OAerXxwq/pboA8USMOOUKGMiw6szCC/A+QsUuefeLgRIfCkQTUMpH0OYRbJbhEifJO/33Nwzzu48WUdhjkjtOfnNaxvpxlo798Pp5QWQ+Z3GlJ6BG9s/hOzu6tKqwSLg7h2aO5RVSFUbsuNe4zxj4UJ53/aEb+BBmoiJjvWVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762941232; c=relaxed/simple;
-	bh=TgvD0GubU8kF5Dfy3yLeHAPf74ErAVmKpBp9wpxBJv8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ozu8hQW330gA4lSzRI5iPaWdFQBiNVJHaL8xS/oTZ4YXbqZ7jgVzWFdnMtT1Pwml+s0h0rqcvCMs/xWlXCDWcNdxy2dKflovKD1jKl2b1qbHBSMqX2hYHywKlOYYTrYk4MuutNaiRoxdUBIbE6HcMsfYOELM55idxWC3b3nbHM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=RPC0Lukz; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=cEyYM2Fr; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AC6I1vB317874
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:53:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	/KzO6isyjPn2hyAKKNSXVgFgpCnyrIGaSRJ+1HYcQtk=; b=RPC0Lukz8Vjp4c5b
-	YZxpkhFV9UNCzerc/gqcKh3Blepepc14LZGA3v8ZVzUWggPa2MFnPF2q+jsP5BB0
-	VOUfKD+HKGtyedbtiMZQtalRJuBgrO0tBulbx7inwN2FhyybZjqISnoy2WAFn8rC
-	ijFSrPM/VGCtfIKUUW6isAfKeQCAarZ4+m0BuWHq/S+ShuAT2MEJTVcL/fGbMSqH
-	yt3ibZh6QREEFtw7uDaF48gkqhWeZ1SxfzY1tS3TWFgvl5Gi1F6uaIU1kKbUPlQB
-	ljv9pfKpS800leAC7SQDKrVAmc45cVmfkFUOHD8qUddOKlOIXIIM/0G8pf0/z/cP
-	VsRsgA==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4acmumgrg3-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:53:49 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4edace8bc76so2180401cf.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 01:53:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1762941229; x=1763546029; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/KzO6isyjPn2hyAKKNSXVgFgpCnyrIGaSRJ+1HYcQtk=;
-        b=cEyYM2FrOQLdhfyAYpU+jh7lyIP4FVOMvw1AejNwyowukFQcS2/QR4v0mFBKj3OvbA
-         55kHFbPIY/lYKUKm0Itx/ht5wSt6uwlRsBDZLl6kz+Lw5ghM4DaetPYAYUzNG7EecG9H
-         PldpHmwAxFzfA8A9h9m1tWuub3dEtpABJdwU9pEeoT72ik8+TsdFmxTuTW1yoNFtTr3w
-         drEQDHaumQ3gmq/C7BR4gsvNWHxhOLaP2LA2wua1IBp/4BNlUANsSv+f8mAEDjWcNQTc
-         +4FC6GQNqxiE+haxv+XAWEtIVHXxGmeFOdFXieO83mo4kWYpsWC+oEHUygUBty3s+zsk
-         rBfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762941229; x=1763546029;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/KzO6isyjPn2hyAKKNSXVgFgpCnyrIGaSRJ+1HYcQtk=;
-        b=lDxsbE3w0gvYNlFdOOdURYwVR+fwsrKF2EM5m608zG5w/ZbH8zI897XdZX4WSAEd8k
-         CrCIiCq+kdklbAbP7DWGQqgycU3ugV0P36Hb2oXc326hoMVqz71z2tLCPTf6XYdm//cQ
-         2U3PZbGQNR7r/H/Vx3YRQTCb7LKCY+VWk1q34LtwXuYZPa3BiZtQ9wDPd9YY5jgJFsKj
-         Uu0xB9Ep/6/478/cPjoqhjY4fIzH8Cg97zdiEaWqBpwL9YEKWaE/Zv4WSoPHogi6QUYi
-         kYdWrYXC/WrmqkIR8YgIex/+O68ZQOqyfUxtgFvlCo4iwbqrkGNU/KZo7qrwMXc5opN8
-         EFrA==
-X-Forwarded-Encrypted: i=1; AJvYcCU1zYRXuq9IaSnSqhTRvVewAXbtTXpTglrdRxWLNDBMtlXHiwpnQasBRxHL6HFxvRWdEv7cpQ9N/7hIsuY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCPVmfD4cLz02yIrMzdP1pRdC2whwoB9YCwVtqf2vv6ApMxadK
-	n6IEzMDpQsVj/NFPLm8/2kYPdhkWrBFqD0cmS3vN2zm5kbEGCDOIfQdv4onBGBZZG2i9XShqz5Q
-	NRUExRbmcBxBJvm7saZykWG74mogLppcthEiBnyQz/4O1NEELLyEfSZfbPirP6Al1Ur4=
-X-Gm-Gg: ASbGncuWPp1TV0rNh2khcs4T7bUjL7GRcjMfpF2rW2RMlpQKm3KIdxB1PCE285RizCw
-	4gyj7wQDZYORQl2g7wp0VSP8a4Euljoo7Taec6P0a6fbFFEZfysBYBVvDkvrx7DuNbxI1mfiGo7
-	35Y6uv0EdodZCr/sL0+hJoB7aAEft1F9bClhGMO2kHd6nsxVLn78Nb7na4Q0lVfgnvQB+CpG3K/
-	+Dm1fYTDJotmhOmJCTjoduC90cm+PypvxJ2UepMqo9eWysOogpZOqw6OX+elE4fYA/xoS3vgLLX
-	WFZ6AHAWHSo5R2zhJU8ISAcvmBOB7UfbDfL8297vBCIaedmaefIyjFK2tZCfPW3wMdRsefFGX44
-	DKnk8Uc5jXG0VC6PtU/zwLE+j0oEwiYuORvzXcTRARR4hS/uEGOk6oemK
-X-Received: by 2002:a05:622a:14cc:b0:4eb:7dac:7b8d with SMTP id d75a77b69052e-4eddbc942a5mr18534481cf.6.1762941228831;
-        Wed, 12 Nov 2025 01:53:48 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHnd1F8QeBMdY8tN7HVPZ+812BJ4TBuAQZwB/mZkcDLFhNBaBtv8CdDSSmrvJaNNTNixuwdWQ==
-X-Received: by 2002:a05:622a:14cc:b0:4eb:7dac:7b8d with SMTP id d75a77b69052e-4eddbc942a5mr18534321cf.6.1762941228171;
-        Wed, 12 Nov 2025 01:53:48 -0800 (PST)
-Received: from [192.168.119.202] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-64179499189sm8534460a12.8.2025.11.12.01.53.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Nov 2025 01:53:47 -0800 (PST)
-Message-ID: <0df692e3-7e39-4a7e-916a-c385015a2821@oss.qualcomm.com>
-Date: Wed, 12 Nov 2025 10:53:45 +0100
+	s=arc-20240116; t=1762941321; c=relaxed/simple;
+	bh=SFI9MM3tuC+Bivwx7QPVbtLlk+ybwULToKZLNrhJT38=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Rly784UDLHEabmbabTkfaNZNy1QWaVJj+2l9PvSsBi1D91qFuw7emLdPUnG/SjHwZ+pcf0GCXhd5lSsZpqx8dGt/JhxQM39djUFDjiFKSoNtSTH5+fsh+FWQtUPt6S8dcAHsbrfpw6xCQTvKv45ev32ijrq1NvLZd4Se/7AHpas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=VR1sSncF; arc=none smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5AC8cWMe025757;
+	Wed, 12 Nov 2025 09:54:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=corp-2025-04-25; bh=dmkHiVLSvORdYgKy
+	1/Um6NDsCxamLB7VRZ94gczACkY=; b=VR1sSncF/Dfu2KPGNwCsEvp190ta9FpI
+	zz5TlnRH8vPBUs6VJiDEOGqEZOM5aexxdYQ2BC/h2pc9J4HW+ZewBmJIErXz59kK
+	eNhoHdleaDCEKyId6GaGpdP7n8mTBR7+rmzrEcToVa2CezwHYs75FpR4jJdxkhJX
+	CW2NvIT5nx8EuHG0jCno9MTSM1x6gk+LhJp/7Ss1oYTiXWOGfJlCYp5ky9uq9O/e
+	Ctx4HEcfY7TTwYLBHjxlTvSERiho5OC0u87DveUI+2JLn1rnfVWpqGEK283nL4fs
+	In50tcvllS69GJUzh4TW2eymptQ/FxoaKMuzZ6gz2qVoeQjiABTYtA==
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4acpg686e8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 12 Nov 2025 09:54:45 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5AC7ml82021018;
+	Wed, 12 Nov 2025 09:54:45 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4a9vaagc8t-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 12 Nov 2025 09:54:45 +0000
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 5AC9siwH015703;
+	Wed, 12 Nov 2025 09:54:44 GMT
+Received: from lab61.no.oracle.com (lab61.no.oracle.com [10.172.144.82])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 4a9vaagc7r-1;
+	Wed, 12 Nov 2025 09:54:44 +0000
+From: =?UTF-8?q?H=C3=A5kon=20Bugge?= <haakon.bugge@oracle.com>
+To: Bjorn Helgaas <bhelgaas@google.com>, Sinan Kaya <okaya@codeaurora.org>
+Cc: =?UTF-8?q?H=C3=A5kon=20Bugge?= <haakon.bugge@oracle.com>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] PCI: Do not attempt to set ExtTag for VFs
+Date: Wed, 12 Nov 2025 10:54:40 +0100
+Message-ID: <20251112095442.1913258-1-haakon.bugge@oracle.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] Bluetooth: btqca: Add WCN6855 firmware priority
- selection feature
-To: Shuai Zhang <quic_shuaz@quicinc.com>, Bartosz Golaszewski
- <brgl@bgdev.pl>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-        linux-kernel@vger.kernel.org, quic_chejiang@quicinc.com,
-        quic_jiaymao@quicinc.com, quic_chezhou@quicinc.com
-References: <20251112074638.1592864-1-quic_shuaz@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20251112074638.1592864-1-quic_shuaz@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEyMDA3OCBTYWx0ZWRfX9KBN2uOKT/xx
- 1bFTNdLu5OfvAIpVY5JpEg00hAeY5cvwrNSD0IM4ORGE+dOMDwcb6ScItSNSIp/BK3CY+lDSu75
- JJrZoKTcNmSybXaZMPUdVep1S0Xm4efvDpFgWGtezTicNxYL3KjvziSwyGezr03YOZAQWxzjkLj
- K5Mq55nCu5Xl/HEBM8Itk/66sYsxeF4ffIgOZQ0uYfnbfA6ssYuMOc744czbo5efgQq8J3uu0vG
- KyseGXFcGEQJmgSPHUlKF7gulDW3PuBw0+fQEPPYx/9Yk0h18xoS/xticGkv71/4aVQV81ChqmV
- UcXu4DLHantStXhu5v38xga8f9MssUinmsSFxAys4Dv3QqbQlxhbnziwM6tchEX2+pjeDRDYHAg
- MwctnbzZwgDTlySp+OF8El+7m+ELrQ==
-X-Proofpoint-ORIG-GUID: 9Iac0E-zLOCPXcKpFpNdia8bDeTmdF8X
-X-Authority-Analysis: v=2.4 cv=dZONHHXe c=1 sm=1 tr=0 ts=6914592d cx=c_pps
- a=JbAStetqSzwMeJznSMzCyw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=COk6AnOGAAAA:8 a=bFTT718uMvuJoUpks6AA:9
- a=QEXdDO2ut3YA:10 a=uxP6HrT_eTzRwkO_Te1X:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: 9Iac0E-zLOCPXcKpFpNdia8bDeTmdF8X
+Content-Transfer-Encoding: 8bit
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
  definitions=2025-11-12_03,2025-11-11_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 clxscore=1015 bulkscore=0 adultscore=0 spamscore=0
- lowpriorityscore=0 impostorscore=0 phishscore=0 malwarescore=0
- priorityscore=1501 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
- definitions=main-2511120078
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 malwarescore=0
+ adultscore=0 bulkscore=0 suspectscore=0 spamscore=0 mlxscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2510240000 definitions=main-2511120079
+X-Authority-Analysis: v=2.4 cv=FK8WBuos c=1 sm=1 tr=0 ts=69145966 cx=c_pps
+ a=OOZaFjgC48PWsiFpTAqLcw==:117 a=OOZaFjgC48PWsiFpTAqLcw==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=M51BFTxLslgA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=yPCof4ZbAAAA:8 a=mnBHqYny2I4Dg18uI9AA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: L1_0lufocTbI3epD7E9WtsQPQKPhC-CN
+X-Proofpoint-ORIG-GUID: L1_0lufocTbI3epD7E9WtsQPQKPhC-CN
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEyMDA2NCBTYWx0ZWRfXymYuhkNsVWbg
+ VsJwo+Mhg+9EBcSgHO14/inP4aE0Q7LVoPBfP/+/0cMn+vMsrViJB3iyZrSJ9NB23uS29mTnbJT
+ bD5g2Ls+RatisXbx2H/p520zLP4qVcg1HdXNRyCJlwu6lhRHQaIAbcnS7ES7BmNsxHYw3OiL0OT
+ PrFYLR8phOC1cSgZFMO/cNpux4caipIvyAQKWhqB+A1RxE7V1QNgRMXe3RNvt6/shkN6JPXNIPP
+ Lg4H0v5jqiUjXvMKdDoRwHhwxZgbkRbEEXsZfTCeg4SIFeZHuc91XG90FMK3kCThv3/3C5d81RJ
+ 5hnWHBum5bpRQedlmecYN2yopx3X666yaid0giFtka4WsDoXt+/guRVTbST1dkWdeR8Of5jmEgC
+ UpW81Lfn4+tD4eHhzoliznByvBVWFw==
 
-On 11/12/25 8:46 AM, Shuai Zhang wrote:
-> For WCN6855: download wcnhpbtfwxx.tlv and wcnhpnvxx.xxx;
-> if they do not exist, download hpbtfwxx.tlv and hpnvxx.xxx instead.
-> 
-> Signed-off-by: Shuai Zhang <quic_shuaz@quicinc.com>
-> ---
+The bit for enabling extended tags is Reserved and Preserved (RsvdP)
+for VFs, according to PCIe r7.0 section 7.5.3.4 table 7.21.  Hence,
+bail out early from pci_configure_extended_tags() if the device is a
+VF.
 
-Would these files be fundamentally any different, or is it a workaround
-for someone else being creative with filenames?
+Otherwise, we may see incorrect log messages such as:
 
-Konrad
+	   kernel: pci 0000:af:00.2: enabling Extended Tags
+
+(af:00.2 is a VF)
+
+Fixes: 60db3a4d8cc9 ("PCI: Enable PCIe Extended Tags if supported")
+Signed-off-by: Håkon Bugge <haakon.bugge@oracle.com>
+
+---
+
+v1 -> v2: Added ref to PCIe spec
+---
+ drivers/pci/probe.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+index 0ce98e18b5a87..014017e15bcc8 100644
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@ -2244,7 +2244,8 @@ int pci_configure_extended_tags(struct pci_dev *dev, void *ign)
+ 	u16 ctl;
+ 	int ret;
+ 
+-	if (!pci_is_pcie(dev))
++	/* PCI_EXP_DEVCTL_EXT_TAG is RsvdP in VFs */
++	if (!pci_is_pcie(dev) || dev->is_virtfn)
+ 		return 0;
+ 
+ 	ret = pcie_capability_read_dword(dev, PCI_EXP_DEVCAP, &cap);
+-- 
+2.43.5
+
 
