@@ -1,63 +1,98 @@
-Return-Path: <linux-kernel+bounces-897605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51D54C53521
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:14:22 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7C21C53870
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:56:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8C53B54514E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:44:46 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 30D5C541428
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:42:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 391B43446C9;
-	Wed, 12 Nov 2025 15:42:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CEEF340A44;
+	Wed, 12 Nov 2025 15:41:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R37Sx87/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MiB7AZDp"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83A1633D6EE;
-	Wed, 12 Nov 2025 15:42:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 378D233ADA0
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 15:41:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762962127; cv=none; b=gfeHgTDUbJC3NYree0ZkB13a+2ivTrZIUY7apql60nvR2aAwlcDbbYcbjzeZsFsI1cH2AkToHcw/EtdUfmpKkYc5JCRZYKtLV1NLPx48bOKMsTwjbh13Mwq6mGDLzNfigWMT3Vxoo4k3YkInEgZ5aWizFlWL++CJrg7GGIkDCf4=
+	t=1762962091; cv=none; b=E9DFEok2Ih5RLV9z1zb11n6D3KFiXxwzgiECcHvHhbiHjuIbLYvIXkSakjzIG8enYAgASsIjIfhpRIJsLFCiYEn42KyhmCoHeKR/51AR02Z72E0ea+RjHfF1uwsezgnkjgCZodhT2lsx52bl8fLcQKcj7yAxtdUEH1IFMx0eHYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762962127; c=relaxed/simple;
-	bh=NiZ7ea35pME1fM3maEI5aXEnDEDvdt1SSghBc/AiFyk=;
+	s=arc-20240116; t=1762962091; c=relaxed/simple;
+	bh=CRIWp0n5HwRdlkmssRO+ntsNrIka6hpB8QMW7u3mkwY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sYydFLrRPEI8kxH9/em+b2S9b7o18kH/wRbrmcXsLb41UbTPdLrrjKcGIFr94rZQgC1pK2SUhTwYcSDWHK4WS0D1p7l75tiav5s/o36SFPeaqX5qvUqyAXOp0GHXspUyU3k5MsInLg4IjHD5s2L/NY6HqI6YohtZbNb9OrZczKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R37Sx87/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36B4EC19423;
-	Wed, 12 Nov 2025 15:42:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762962127;
-	bh=NiZ7ea35pME1fM3maEI5aXEnDEDvdt1SSghBc/AiFyk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=R37Sx87/i8ZHQBhoTFE3dFsIlhXKSfafQa9RFcrnozAwKjGlQ6I43Gj+nu9r3YpI1
-	 wZJuXfNsCUjC5eZyWKbnO5syAAPhPOKJabI09QgxpnHGorsMMlgnyOKVbdwhnUS63I
-	 ONJdbjKKxW3SWgYr6p9SSeI/5zfJWBN355f90Acup8ovlYRmnS3yayYk1LT5pXP8Br
-	 Ewgc0WKL3TTUXbHtqcJb+uioWEM+TVWg4aBVN9oCiR4ovVv3IWjz/JkFd/EUnK9hTp
-	 P0UCtkGfo2OiALXDr5eMNuDw4caLVt5Mn+NZCCPvg8I5x+7XgkLkOQWt2Q8Nt25VSP
-	 mc6lX1AxKFFuw==
-From: SeongJae Park <sj@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: SeongJae Park <sj@kernel.org>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	damon@lists.linux.dev,
+	 MIME-Version; b=NoXeqPIst6kYPfMrtWAEfQzK3M00OgMJ9v9p6XPsNcHiCFfBNckQzNdt0EzE5mprblQxjtaeyn0xu3ms3PNxAaT3XnysknS2KvSbsfPMIG5I/G6ydWJb2iVNfwoXZ36DgToNopG2LR4rqHKRsFgf7wURFWVrUYLrZ+gHiJrXkJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MiB7AZDp; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-b403bb7843eso214869266b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 07:41:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762962087; x=1763566887; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Gq3AgUTPzY+a4pOL3uaAaWkPNx0akFqHFeupvGebgG4=;
+        b=MiB7AZDpz3iz5OGP653WkZmtYMl9BYDhrwCxdS6oiwevvUknTaz6LAGwQYn8Nmu5pT
+         DuuUvJc462kKcrxbOCjS0AVZ6zpOgl1JZ3PKbYJ0O1P4kbVsaXH9A1ByLMaCtw19UAiP
+         Eie9I6te1ejtPTfe67VV0F7q1L1+qJc2+nsOOfJCOGKa+2FhWvOshyBrCZXhRg4mm3ND
+         mtP6OWB+gmio05ifLgCQmz5I+K16LAxRFVBTOqpm2ivo8oVJXFzJqIhuknZFkoCdjk45
+         jgVTzzXEL5o5+isjfmIaV3epwM2xM82TPRPZImML+IlOEFAr+WN7si0vEvWrSLazDLRS
+         KDXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762962087; x=1763566887;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=Gq3AgUTPzY+a4pOL3uaAaWkPNx0akFqHFeupvGebgG4=;
+        b=hw17yEgMK3Vk/qWjdThLM2yc2cKHTwNWNp8alSUcV2OxTDphyKjgT3B9nt0WLMl4OB
+         /lJ/00gLxiniE/+5AwI+6sbpUuczMdc1FGouba6JyePsI/nZLKzlK6Z9i2Sd7C9whc52
+         9sQWV/lolZcVsF146Kb/oVMkZoiFJ4/cicNEvuYfyfdXUXt5eVtcPodV7OVySHPCBk/g
+         A0xWG5lfE9SKXPcOE72bNd7xeqO4eHl+cltNvayiqnqZgcH5acxW8WV2VIChe5Q54sSj
+         HbcIn9HQqwB+DZLHbHLVXOfWe+3MMtADQpQ2NU+PLzTcIf5l2v/bzJlLk6qtkucO5Gld
+         jYaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX70RrM87PoQyUDR+h5qvW1nsQS20/Gf/u+aynO6BiICO84zwdVCvmxy0kcBweuAaH3Du5z4KdHzC/fudg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5JWBVkakccqNsSdfbb+/4Bk412Q3P+uTb23aXL66K3ApJt6ua
+	Y/JOqF46Tmadq7bdzl9UCHxYwoJn/4BjHDT/ab35GXiB2x3HYcBTmzeo
+X-Gm-Gg: ASbGncvBv6j+aaWb5BE3M5aJy7akgwLXuGDF0lP7iPCDwZSobHedj8FFZAmo002i5Lt
+	eU9nmdn1JiUb3qB5MgAryWMkaJJQxC9Ncdnh7DEcjxi3JeUeZY6QBCSx56RtN90gPQcV1HmGPOm
+	d4oOaQcxfzQxTJRtNCHPENoqb9RoXMMpCGV71ANta/2lCoq6XhKFxhNTjrehbdRNsFfQHd4/6ig
+	Klm6QqcQFCEpTXpW23pyw+NKbL/FXs6FeKBS4LUq9EMQKnBOGOBLkcmO+Uqe0bZwh6VY2J9fEyz
+	XLyh0MNnfyV2XNOuZIrrw4yx1M59BgxGcb8gYnfzoZpzr7O6SL96KzT7gSl/6jUrm42IBtsipUt
+	FZkvJ9HnmFxjRwdfyXIIsZuhzJ708URJ48/u4XU8lWy0HKUDseFoUPfyrgo1GFXIjKI4wZpwFso
+	9asscjf4Leg3Galx3tor2S08oKNaEDdDOD91o1RvAW95Xfnzslit6T20cJN0FtCv1S/wUuHwevY
+	xfUTQ==
+X-Google-Smtp-Source: AGHT+IH+xX5hJrZOC7Qu2lNDzak2vwnr1s8A5ixFZilatjPXkva5IprmaQlq2uvPjZRQHXlOLziFqg==
+X-Received: by 2002:a17:907:3f0b:b0:b73:2df0:9fa9 with SMTP id a640c23a62f3a-b7331aec6fcmr309681866b.59.1762962087420;
+        Wed, 12 Nov 2025 07:41:27 -0800 (PST)
+Received: from localhost.localdomain (host86-162-200-138.range86-162.btcentralplus.com. [86.162.200.138])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bf97d456sm1670023566b.39.2025.11.12.07.41.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Nov 2025 07:41:27 -0800 (PST)
+From: Biju <biju.das.au@gmail.com>
+X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
+To: Biju Das <biju.das.jz@bp.renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>
+Cc: linux-sound@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	llvm@lists.linux.dev
-Subject: [PATCH 1/9] mm/damon: rename damos core filter helpers to have word core
-Date: Wed, 12 Nov 2025 07:41:04 -0800
-Message-ID: <20251112154114.66053-2-sj@kernel.org>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251112154114.66053-1-sj@kernel.org>
-References: <20251112154114.66053-1-sj@kernel.org>
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Biju Das <biju.das.au@gmail.com>
+Subject: [PATCH 3/7] ASoC: renesas: rz-ssi: Use dev variable in probe()
+Date: Wed, 12 Nov 2025 15:41:04 +0000
+Message-ID: <20251112154115.1048298-4-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20251112154115.1048298-1-biju.das.jz@bp.renesas.com>
+References: <20251112154115.1048298-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,116 +101,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-DAMOS filters handled by the core layer are called core filters, while
-those handled by the ops layer are called ops filters.  They share the
-same type but are managed in different places since core filters are
-evaluated before the ops filters.  They also have different helper
-functions that depend on their managed places.
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-The helper functions for ops filters have '_ops_' keyword on their name,
-so it is easy to know they are for ops filters.  Meanwhile, the helper
-functions for core filters are not having the 'core' keyword on their
-name.  This makes it easy to be mistakenly used for ops filters.
-Actually there was such a bug.
+Replace '&pdev->dev'->dev in probe(), this makes few error paths shorter.
 
-To avoid future mistakes from similar confusions, rename DAMOS core
-filters helper functions to have a keyword 'core' on their names.
-
-Signed-off-by: SeongJae Park <sj@kernel.org>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- .clang-format         |  4 ++--
- include/linux/damon.h |  4 ++--
- mm/damon/core.c       | 14 +++++++-------
- 3 files changed, 11 insertions(+), 11 deletions(-)
+ sound/soc/renesas/rz-ssi.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/.clang-format b/.clang-format
-index f371a13b4d19..748efbe791ad 100644
---- a/.clang-format
-+++ b/.clang-format
-@@ -140,8 +140,8 @@ ForEachMacros:
-   - 'damon_for_each_scheme_safe'
-   - 'damon_for_each_target'
-   - 'damon_for_each_target_safe'
--  - 'damos_for_each_filter'
--  - 'damos_for_each_filter_safe'
-+  - 'damos_for_each_core_filter'
-+  - 'damos_for_each_core_filter_safe'
-   - 'damos_for_each_ops_filter'
-   - 'damos_for_each_ops_filter_safe'
-   - 'damos_for_each_quota_goal'
-diff --git a/include/linux/damon.h b/include/linux/damon.h
-index f3566b978cdf..6e3db165fe60 100644
---- a/include/linux/damon.h
-+++ b/include/linux/damon.h
-@@ -871,10 +871,10 @@ static inline unsigned long damon_sz_region(struct damon_region *r)
- #define damos_for_each_quota_goal_safe(goal, next, quota) \
- 	list_for_each_entry_safe(goal, next, &(quota)->goals, list)
+diff --git a/sound/soc/renesas/rz-ssi.c b/sound/soc/renesas/rz-ssi.c
+index 039bec32cb5e..c7d5576c8283 100644
+--- a/sound/soc/renesas/rz-ssi.c
++++ b/sound/soc/renesas/rz-ssi.c
+@@ -1123,19 +1123,16 @@ static int rz_ssi_probe(struct platform_device *pdev)
  
--#define damos_for_each_filter(f, scheme) \
-+#define damos_for_each_core_filter(f, scheme) \
- 	list_for_each_entry(f, &(scheme)->filters, list)
+ 	audio_clk = devm_clk_get(dev, "audio_clk1");
+ 	if (IS_ERR(audio_clk))
+-		return dev_err_probe(&pdev->dev, PTR_ERR(audio_clk),
+-				     "no audio clk1");
++		return dev_err_probe(dev, PTR_ERR(audio_clk), "no audio clk1");
  
--#define damos_for_each_filter_safe(f, next, scheme) \
-+#define damos_for_each_core_filter_safe(f, next, scheme) \
- 	list_for_each_entry_safe(f, next, &(scheme)->filters, list)
+ 	ssi->audio_clk_1 = clk_get_rate(audio_clk);
+ 	audio_clk = devm_clk_get(dev, "audio_clk2");
+ 	if (IS_ERR(audio_clk))
+-		return dev_err_probe(&pdev->dev, PTR_ERR(audio_clk),
+-				     "no audio clk2");
++		return dev_err_probe(dev, PTR_ERR(audio_clk), "no audio clk2");
  
- #define damos_for_each_ops_filter(f, scheme) \
-diff --git a/mm/damon/core.c b/mm/damon/core.c
-index a14cc73c2cab..d4cb11ced13f 100644
---- a/mm/damon/core.c
-+++ b/mm/damon/core.c
-@@ -450,7 +450,7 @@ void damon_destroy_scheme(struct damos *s)
- 	damos_for_each_quota_goal_safe(g, g_next, &s->quota)
- 		damos_destroy_quota_goal(g);
+ 	ssi->audio_clk_2 = clk_get_rate(audio_clk);
+ 	if (!(ssi->audio_clk_1 || ssi->audio_clk_2))
+-		return dev_err_probe(&pdev->dev, -EINVAL,
+-				     "no audio clk1 or audio clk2");
++		return dev_err_probe(dev, -EINVAL, "no audio clk1 or audio clk2");
  
--	damos_for_each_filter_safe(f, next, s)
-+	damos_for_each_core_filter_safe(f, next, s)
- 		damos_destroy_filter(f);
+ 	ssi->audio_mck = ssi->audio_clk_1 ? ssi->audio_clk_1 : ssi->audio_clk_2;
  
- 	damos_for_each_ops_filter_safe(f, next, s)
-@@ -864,12 +864,12 @@ static int damos_commit_quota(struct damos_quota *dst, struct damos_quota *src)
- 	return 0;
- }
- 
--static struct damos_filter *damos_nth_filter(int n, struct damos *s)
-+static struct damos_filter *damos_nth_core_filter(int n, struct damos *s)
- {
- 	struct damos_filter *filter;
- 	int i = 0;
- 
--	damos_for_each_filter(filter, s) {
-+	damos_for_each_core_filter(filter, s) {
- 		if (i++ == n)
- 			return filter;
- 	}
-@@ -923,15 +923,15 @@ static int damos_commit_core_filters(struct damos *dst, struct damos *src)
- 	struct damos_filter *dst_filter, *next, *src_filter, *new_filter;
- 	int i = 0, j = 0;
- 
--	damos_for_each_filter_safe(dst_filter, next, dst) {
--		src_filter = damos_nth_filter(i++, src);
-+	damos_for_each_core_filter_safe(dst_filter, next, dst) {
-+		src_filter = damos_nth_core_filter(i++, src);
- 		if (src_filter)
- 			damos_commit_filter(dst_filter, src_filter);
- 		else
- 			damos_destroy_filter(dst_filter);
- 	}
- 
--	damos_for_each_filter_safe(src_filter, next, src) {
-+	damos_for_each_core_filter_safe(src_filter, next, src) {
- 		if (j++ < i)
- 			continue;
- 
-@@ -1767,7 +1767,7 @@ static bool damos_filter_out(struct damon_ctx *ctx, struct damon_target *t,
- 	struct damos_filter *filter;
- 
- 	s->core_filters_allowed = false;
--	damos_for_each_filter(filter, s) {
-+	damos_for_each_core_filter(filter, s) {
- 		if (damos_filter_match(ctx, t, r, filter, ctx->min_sz_region)) {
- 			if (filter->allow)
- 				s->core_filters_allowed = true;
 -- 
-2.47.3
+2.43.0
+
 
