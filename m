@@ -1,86 +1,153 @@
-Return-Path: <linux-kernel+bounces-897247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 648E3C525E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:04:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8C3CC525B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:00:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 544C64FA622
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 12:57:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 959381887C23
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 13:01:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10E2633555E;
-	Wed, 12 Nov 2025 12:57:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 313A9335BAF;
+	Wed, 12 Nov 2025 13:00:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tt7BT9fq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ysoft.com header.i=@ysoft.com header.b="fXH+LZJS"
+Received: from uho.ysoft.cz (uho.ysoft.cz [81.19.3.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59042306482;
-	Wed, 12 Nov 2025 12:57:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5183291C13;
+	Wed, 12 Nov 2025 13:00:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.19.3.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762952263; cv=none; b=rOQjSRvBPeULoI8khI9uvyDithQwTDvbACYWuehD3HhbpjlfDiAuyavI69FfsoGrPsf/tZtoUJJNmhOAPOt7SpL1E3HZScV3fN6zOHdIT/an8Qy4WAzLihrWSrx3UkGmAOO1qPu6kaDC5Rx3wfTX5qv0yzIgUDyv2Lx80V1Zy8E=
+	t=1762952440; cv=none; b=BreNYSiOKcjqkyGaVcGTprqCWcB2j/X+p51MrWwmtjKxpBtuX8UFEVT+sPEvjNpM5A+gJZrvy4ini61Gzt0vBhnkcgc0kRRLQBGdG2Evsc3R3Z9q84Y+PdIYgWJxe8sjqjhteLJdKUG9f5DvWbUvxvHZFKZO8TOIWRguz4vrEJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762952263; c=relaxed/simple;
-	bh=Y/Te0HzAS1xw4J1YENHr8HkxRQWKOBx9e2X1tTKC/14=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LrLWrGVAIjHV6yYhACgWw5hFGLYHdux4hV8y8PuzGXRpuNZOdFf4nBKTGWBJ7Q+WKjKfgovn6fOlsqMbJzrR2U8b+zIUuoXR+Dvhpw+r3tmz6TKjqlyu18IlICkbGsRVa9PNRyKNGs8suEeOEKDUo1iTfJJXDEQIOhH249eEiDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tt7BT9fq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A73B7C4CEF5;
-	Wed, 12 Nov 2025 12:57:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762952262;
-	bh=Y/Te0HzAS1xw4J1YENHr8HkxRQWKOBx9e2X1tTKC/14=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Tt7BT9fqYmX2s6rGY/Y5Pn+fl3hnelplJ/8G0XdVownkJMcqeUveEY+c+6sqke1CN
-	 TIaaRP3aqhelwpqNdbgb5keCkIHsI7reg9X4Vfa67Q17ngwXdm54TKsaD+rMJ5IGSG
-	 CgUWWJDMwPlWnsNuanNbkA13zr0DimaRrwd3hZcFirPMrznvZmKK4ActGNGP+6ZIVl
-	 jtc0m9iRz+ebyDSEj2Snmz04lyNxP1yv0R8iiCM4YkObOP7FBFWy3iPwltL4OtBisp
-	 WZ2VcEC7SlBQhTcV7rw4Uv8eYCdnMtBs7sSn75QwBdVMi0ExoeDEoiW1NpGvZ2rI9p
-	 zBApvYzKSz4Mw==
-Date: Wed, 12 Nov 2025 06:57:41 -0600
-From: Rob Herring <robh@kernel.org>
-To: Shenwei Wang <shenwei.wang@nxp.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>,
-	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-imx@nxp.com
-Subject: Re: [PATCH v5 3/5] docs: staging: gpio-rpmsg: gpio over rpmsg bus
-Message-ID: <20251112125741.GB1319094-robh@kernel.org>
-References: <20251104203315.85706-1-shenwei.wang@nxp.com>
- <20251104203315.85706-4-shenwei.wang@nxp.com>
+	s=arc-20240116; t=1762952440; c=relaxed/simple;
+	bh=GMKeJf8ppi1Exy1OWQvHssXhELc7JoVxgyCgXEVPBXo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JDxlQO/+u6FKfAFWxUiXbSLY7PXrdcCbvPdVnRri4Grq+Xfsvm1vbx334rM54ChK1XG71yFNGzb0tQL29dAB82K3gFau7dkNf9a/Lzkl2gIsJ1vVhrvrpGIm2Vucn3sD+fqolOFGinszZ9p3mJYPJJ4g32IxixfTg4xzJ9jgAYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ysoft.com; spf=pass smtp.mailfrom=ysoft.com; dkim=pass (1024-bit key) header.d=ysoft.com header.i=@ysoft.com header.b=fXH+LZJS; arc=none smtp.client-ip=81.19.3.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ysoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ysoft.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ysoft.com;
+	s=20160406-ysoft-com; t=1762952430;
+	bh=qk9AdDEOIVPftrsh6xF8w4j0IpPuB/mszbihGW0UAZg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=fXH+LZJSWd16C3AiRjyXbyfNxXlVM3luODXrEF/pLQycXsYkP/iFToBAYt9j/315O
+	 8M01F5OrPb1RNN1Ehxf2YJyVlX5UFWNUcxUJRmySIcayPYzjbb3ODhWgqV/Y0U0bgc
+	 DamdtUJZfzSWTS8cAY6heYOO3PRd2SmezwOBgPK8=
+Received: from vokac-nb.ysoft.local (unknown [10.1.8.111])
+	by uho.ysoft.cz (Postfix) with ESMTP id D27E4A01C0;
+	Wed, 12 Nov 2025 14:00:30 +0100 (CET)
+From: =?UTF-8?q?Michal=20Vok=C3=A1=C4=8D?= <michal.vokac@ysoft.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Fabio Estevam <festevam@gmail.com>,
+	=?UTF-8?q?Michal=20Vok=C3=A1=C4=8D?= <michal.vokac@ysoft.com>
+Subject: [PATCH] Input: pixcir_i2c_ts - add support for one-time total calibration
+Date: Wed, 12 Nov 2025 14:00:19 +0100
+Message-ID: <20251112130019.1488005-1-michal.vokac@ysoft.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251104203315.85706-4-shenwei.wang@nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Nov 04, 2025 at 02:33:13PM -0600, Shenwei Wang wrote:
-> Describes the gpio rpmsg transport protocol over the rpmsg bus between
-> the cores.
-> 
-> Signed-off-by: Shenwei Wang <shenwei.wang@nxp.com>
-> ---
->  Documentation/staging/gpio-rpmsg.rst | 202 +++++++++++++++++++++++++++
->  Documentation/staging/index.rst      |   1 +
+The Pixcir Tango controller has support for a one-time total calibration
+(manual calibration) procedure. Its purpose is to measure the capacitance
+offsets of the electrode system and to store these values into EEPROM.
 
-Why is this in staging when none of the drivers are?
+During normal operation this calibration data is subtracted from the values
+measured. This calibration should be necessary only once in the product
+lifetime. It should be performed as part of the final adjustment after
+the panel is mounted in the product.
 
-Rob
+Add support for the calibration with sysfs interface.
+
+Signed-off-by: Michal Vokáč <michal.vokac@ysoft.com>
+---
+ drivers/input/touchscreen/pixcir_i2c_ts.c | 34 +++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
+
+diff --git a/drivers/input/touchscreen/pixcir_i2c_ts.c b/drivers/input/touchscreen/pixcir_i2c_ts.c
+index dad5786e82a4..2215e56b1458 100644
+--- a/drivers/input/touchscreen/pixcir_i2c_ts.c
++++ b/drivers/input/touchscreen/pixcir_i2c_ts.c
+@@ -24,6 +24,7 @@
+  */
+ #define PIXCIR_REG_POWER_MODE	51
+ #define PIXCIR_REG_INT_MODE	52
++#define PIXCIR_REG_SPECOP	58
+ 
+ /*
+  * Power modes:
+@@ -82,6 +83,7 @@ struct pixcir_i2c_ts_data {
+ 	const struct pixcir_i2c_chip_data *chip;
+ 	struct touchscreen_properties prop;
+ 	bool running;
++	struct mutex sysfs_mutex;
+ };
+ 
+ struct pixcir_report_data {
+@@ -462,6 +464,35 @@ static int pixcir_i2c_ts_resume(struct device *dev)
+ static DEFINE_SIMPLE_DEV_PM_OPS(pixcir_dev_pm_ops,
+ 				pixcir_i2c_ts_suspend, pixcir_i2c_ts_resume);
+ 
++static ssize_t calibrate_store(struct device *dev,
++			       struct device_attribute *attr,
++			       const char *buf, size_t count)
++{
++	struct i2c_client *client = to_i2c_client(dev);
++	struct pixcir_i2c_ts_data *ts = i2c_get_clientdata(client);
++	static const u8 cmd = 0x03;
++	int error;
++
++	error = mutex_lock_interruptible(&ts->sysfs_mutex);
++	if (error)
++		return error;
++
++	error = i2c_smbus_write_byte_data(ts->client, PIXCIR_REG_SPECOP, cmd);
++	if (error)
++		dev_err(dev, "calibrate command failed: %d\n", error);
++
++	mutex_unlock(&ts->sysfs_mutex);
++	return error ?: count;
++}
++
++static DEVICE_ATTR_WO(calibrate);
++
++static struct attribute *pixcir_i2c_ts_attrs[] = {
++	&dev_attr_calibrate.attr,
++	NULL,
++};
++ATTRIBUTE_GROUPS(pixcir_i2c_ts);
++
+ static int pixcir_i2c_ts_probe(struct i2c_client *client)
+ {
+ 	const struct i2c_device_id *id = i2c_client_get_device_id(client);
+@@ -488,6 +519,8 @@ static int pixcir_i2c_ts_probe(struct i2c_client *client)
+ 		return -ENOMEM;
+ 	}
+ 
++	mutex_init(&tsdata->sysfs_mutex);
++
+ 	tsdata->client = client;
+ 	tsdata->input = input;
+ 
+@@ -600,6 +633,7 @@ MODULE_DEVICE_TABLE(of, pixcir_of_match);
+ static struct i2c_driver pixcir_i2c_ts_driver = {
+ 	.driver = {
+ 		.name	= "pixcir_ts",
++		.dev_groups = pixcir_i2c_ts_groups,
+ 		.pm	= pm_sleep_ptr(&pixcir_dev_pm_ops),
+ 		.of_match_table = of_match_ptr(pixcir_of_match),
+ 	},
+-- 
+2.43.0
+
 
