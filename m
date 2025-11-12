@@ -1,206 +1,114 @@
-Return-Path: <linux-kernel+bounces-897764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41084C53882
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:57:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82844C53900
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:02:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7E25506B3B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:37:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55EB84A4804
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:49:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 225A933A026;
-	Wed, 12 Nov 2025 16:37:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZrpAvmtL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69A632550AF;
-	Wed, 12 Nov 2025 16:37:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DD68340A62;
+	Wed, 12 Nov 2025 16:49:05 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47C5C2D130C;
+	Wed, 12 Nov 2025 16:49:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762965464; cv=none; b=cNg243BdKyOkUOSTfYMtru/Ix1UmeHuCNbO4Oz+RJVmzCUNk3XRyJLT4KzdfqdzLuLhno1KzPGn+sX4qLkWhPiiHXQyQGttiw3C0zM4OKnmWVXk9bMDSMKyYmzblpc84DmLutU8zYlI0XiapN382xss5oTGhHZNoM1Xbnku0lPY=
+	t=1762966144; cv=none; b=r/Ym7fwG1Z7tawQ3VaaoWE8OUtWyorMaJkdMTqoZVY+XcGGqns0wIWULPzBzTgj5vdxotDC2f/mQqpwI9D4vOj9Mh8kL6VbvV0wdjB8G0MtjU/Tg/P2RyGkTVt05wSgODKzoiWUJsHWf8IqAw7ZoVfHBbyDAR3vVUeJ82Twldfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762965464; c=relaxed/simple;
-	bh=l4GXyKV/Cz3Ck66FAmBPqfmbKasFWSaJ+quqBmgBNs8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r1f8i0jiyNuQnb+434q1bmXEXJBAyr945LGGC66y0od2emoQ64lYyV2/HtUi94JfwYYaRe9teYDex9CKojIF3Ynvpfh6C98Fxai/wguFdDjyuY0TclFMsDJ++KPxrjn7Uj4BMO9NFw0ZjhNspdWuRGM8gseRD0uzQ+DnJhHwr68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZrpAvmtL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8849CC19422;
-	Wed, 12 Nov 2025 16:37:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762965464;
-	bh=l4GXyKV/Cz3Ck66FAmBPqfmbKasFWSaJ+quqBmgBNs8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZrpAvmtLt9Ubvlp82eqYMhmf/3mDVFBfrpDB2DtxMTRawTJS9mzRHdt569DiVjjCG
-	 PcVWx2OdnuD67pWlLwrw8R/mbqLXZtm3TztFFwQt4nhp4333UT1Ey+VohkBXIcxpuo
-	 LJNeNGWUULQjp1dv/SpYWpI1XtjjFDVyZUDpdrn0dHFUNrwk9DKeu97ly1VZHGNc/n
-	 8fEgxpEW3yiP8zzmsm1hiDiPxIcxJ7da4YM3MH9ozx4nSymKxIN4XQRvY0GU++qpK7
-	 4GT1yvGTZnHsYDPnOCcL650IxlkivIZnwclQF6+KtPl9TtNtfEb/lQ8+X/UyHb5lBF
-	 DM3AtQHqPCr0A==
-Date: Wed, 12 Nov 2025 10:42:01 -0600
-From: Bjorn Andersson <andersson@kernel.org>
-To: Dawei Li <dawei.li@linux.dev>
-Cc: mathieu.poirier@linaro.org, linux-remoteproc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, set_pte_at@outlook.com, Dan Carpenter <dan.carpenter@linaro.org>
-Subject: Re: [PATCH] rpmsg: char: Fix UAF and memory leak
-Message-ID: <mxctlnzpywrdahcvuahmxaa4h5vttz6p5yiu7jvtsemahjcsgj@bflvnu7viwff>
-References: <20251112142813.33708-1-dawei.li@linux.dev>
+	s=arc-20240116; t=1762966144; c=relaxed/simple;
+	bh=DCABuo/lM5b9CfFj5tLkGlhYnZKy/VPRvWllwjqP8rA=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=eGTbjyOPec85+qGhprliRJ3FpKIUMmFvY0oOSoJK4FjsrHj31QhBlPyyX65QFBhwljjdLagj3o3lDQJ5reNNW9Ma7+6qhPyAGlaxS/55q7SBXi5VMB3/PaYoQIhQi1oaHStiT3tdkjj/9sn31qswxaj7bcvgP+ARbZIJ1gqNiNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BCC38497;
+	Wed, 12 Nov 2025 08:48:53 -0800 (PST)
+Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B08343F63F;
+	Wed, 12 Nov 2025 08:48:56 -0800 (PST)
+Message-ID: <365d8625-17fc-41f1-b7ab-d7ef3ab06b92@arm.com>
+Date: Wed, 12 Nov 2025 16:48:55 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251112142813.33708-1-dawei.li@linux.dev>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 11/33] arm_mpam: Add the class and component structures
+ for firmware described ris
+From: Ben Horgan <ben.horgan@arm.com>
+To: Gavin Shan <gshan@redhat.com>, james.morse@arm.com
+Cc: amitsinght@marvell.com, baisheng.gao@unisoc.com,
+ baolin.wang@linux.alibaba.com, bobo.shaobowang@huawei.com,
+ carl@os.amperecomputing.com, catalin.marinas@arm.com, dakr@kernel.org,
+ dave.martin@arm.com, david@redhat.com, dfustini@baylibre.com,
+ fenghuay@nvidia.com, gregkh@linuxfoundation.org, guohanjun@huawei.com,
+ jeremy.linton@arm.com, jonathan.cameron@huawei.com, kobak@nvidia.com,
+ lcherian@marvell.com, lenb@kernel.org, linux-acpi@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ lpieralisi@kernel.org, peternewman@google.com, quic_jiles@quicinc.com,
+ rafael@kernel.org, robh@kernel.org, rohit.mathew@arm.com,
+ scott@os.amperecomputing.com, sdonthineni@nvidia.com, sudeep.holla@arm.com,
+ tan.shaopeng@fujitsu.com, will@kernel.org, xhao@linux.alibaba.com,
+ Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
+References: <20251107123450.664001-1-ben.horgan@arm.com>
+ <20251107123450.664001-12-ben.horgan@arm.com>
+ <2c81664f-45c0-43e4-91e9-79d0c84376b6@redhat.com>
+ <3350b73e-1021-4091-87f1-4b946da22f4e@arm.com>
+Content-Language: en-US
+In-Reply-To: <3350b73e-1021-4091-87f1-4b946da22f4e@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Nov 12, 2025 at 10:28:13PM +0800, Dawei Li wrote:
-> Potential UAF and memory leak exsit in exception handling paths for
-> rpmsg_anonymous_eptdev_create(), fix them.
+Hi Gavin,
 
-Please describe the condition where this happens.
+I was a bit hasty on one of those changes.
 
+On 11/12/25 16:39, Ben Horgan wrote:
+> Hi Gavin,
 > 
-> While at it, rework the error handling of rpmsg_eptdev_add() and its
-> callers, following rule of "release resource where it's allocated".
+> On 11/9/25 00:07, Gavin Shan wrote:
+>> Hi Ben,
+>>
+>> On 11/7/25 10:34 PM, Ben Horgan wrote:
+>>> From: James Morse <james.morse@arm.com>
+>>>
+>>> An MSC is a container of resources, each identified by their RIS index.
+>>> Some RIS are described by firmware to provide their position in the
+>>> system.
+>>> Others are discovered when the driver probes the hardware.
+>>>
+>>> To configure a resource it needs to be found by its class, e.g. 'L2'.
+>>> There are two kinds of grouping, a class is a set of components, which
+>>> are visible to user-space as there are likely to be multiple instances
+>>> of the L2 cache. (e.g. one per cluster or package)
+>>>
+>>> Add support for creating and destroying structures to allow a hierarchy
+>>> of resources to be created.
+>>>
+>>> CC: Ben Horgan <ben.horgan@arm.com>
+>>> Tested-by: Fenghua Yu <fenghuay@nvidia.com>
+>>> Tested-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
+>>> Tested-by: Peter Newman <peternewman@google.com>
+>>> Signed-off-by: James Morse <james.morse@arm.com>
+>>> Signed-off-by: Ben Horgan <ben.horgan@arm.com>
 
-Can this be done in a separate patch, to limit the impact of the two
-parts of this change?
+>> This function is only used in mpam_devices.c and won't be exposed in the
+>> future, we can make it 'static' and 'inline'.
+> 
+> Done
 
-Regards,
-Bjorn
+Gets used later in mpam_resctl.c so I'll keep as is.
 
-> 
-> Fixes: 2410558f5f11 ("rpmsg: char: Implement eptdev based on anonymous inode")
-> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Closes: https://lore.kernel.org/all/aPi6gPZE2_ztOjIW@stanley.mountain/
-> 
-> Signed-off-by: Dawei Li <dawei.li@linux.dev>
-> ---
->  drivers/rpmsg/rpmsg_char.c | 59 +++++++++++++++++++++-----------------
->  1 file changed, 32 insertions(+), 27 deletions(-)
-> 
-> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
-> index 34b35ea74aab..de058a8b99ff 100644
-> --- a/drivers/rpmsg/rpmsg_char.c
-> +++ b/drivers/rpmsg/rpmsg_char.c
-> @@ -460,44 +460,34 @@ static int rpmsg_eptdev_add(struct rpmsg_eptdev *eptdev,
->  
->  	eptdev->chinfo = chinfo;
->  
-> -	if (cdev) {
-> -		ret = ida_alloc_max(&rpmsg_minor_ida, RPMSG_DEV_MAX - 1, GFP_KERNEL);
-> -		if (ret < 0)
-> -			goto free_eptdev;
-> -
-> -		dev->devt = MKDEV(MAJOR(rpmsg_major), ret);
-> -	}
-> -
->  	/* Anonymous inode device still need device name for dev_err() and friends */
->  	ret = ida_alloc(&rpmsg_ept_ida, GFP_KERNEL);
->  	if (ret < 0)
-> -		goto free_minor_ida;
-> +		return ret;
->  	dev->id = ret;
->  	dev_set_name(dev, "rpmsg%d", ret);
->  
-> -	ret = 0;
-> -
->  	if (cdev) {
-> +		ret = ida_alloc_max(&rpmsg_minor_ida, RPMSG_DEV_MAX - 1, GFP_KERNEL);
-> +		if (ret < 0) {
-> +			ida_free(&rpmsg_ept_ida, dev->id);
-> +			return ret;
-> +		}
-> +
-> +		dev->devt = MKDEV(MAJOR(rpmsg_major), ret);
-> +
->  		ret = cdev_device_add(&eptdev->cdev, &eptdev->dev);
-> -		if (ret)
-> -			goto free_ept_ida;
-> +		if (ret) {
-> +			ida_free(&rpmsg_ept_ida, dev->id);
-> +			ida_free(&rpmsg_minor_ida, MINOR(dev->devt));
-> +			return ret;
-> +		}
->  	}
->  
->  	/* We can now rely on the release function for cleanup */
->  	dev->release = rpmsg_eptdev_release_device;
->  
-> -	return ret;
-> -
-> -free_ept_ida:
-> -	ida_free(&rpmsg_ept_ida, dev->id);
-> -free_minor_ida:
-> -	if (cdev)
-> -		ida_free(&rpmsg_minor_ida, MINOR(dev->devt));
-> -free_eptdev:
-> -	put_device(dev);
-> -	kfree(eptdev);
-> -
-> -	return ret;
-> +	return 0;
->  }
->  
->  static int rpmsg_chrdev_eptdev_add(struct rpmsg_eptdev *eptdev, struct rpmsg_channel_info chinfo)
-> @@ -509,12 +499,17 @@ int rpmsg_chrdev_eptdev_create(struct rpmsg_device *rpdev, struct device *parent
->  			       struct rpmsg_channel_info chinfo)
->  {
->  	struct rpmsg_eptdev *eptdev;
-> +	int ret;
->  
->  	eptdev = rpmsg_chrdev_eptdev_alloc(rpdev, parent);
->  	if (IS_ERR(eptdev))
->  		return PTR_ERR(eptdev);
->  
-> -	return rpmsg_chrdev_eptdev_add(eptdev, chinfo);
-> +	ret = rpmsg_chrdev_eptdev_add(eptdev, chinfo);
-> +	if (ret)
-> +		kfree(eptdev);
-> +
-> +	return ret;
->  }
->  EXPORT_SYMBOL(rpmsg_chrdev_eptdev_create);
->  
-> @@ -546,6 +541,11 @@ int rpmsg_anonymous_eptdev_create(struct rpmsg_device *rpdev, struct device *par
->  	ret =  rpmsg_eptdev_add(eptdev, chinfo, false);
->  	if (ret) {
->  		dev_err(&eptdev->dev, "failed to add %s\n", eptdev->chinfo.name);
-> +		/*
-> +		 * Avoid put_device() or WARN() will be triggered due to absence of
-> +		 * device::release(), refer to device_release().
-> +		 */
-> +		kfree(eptdev);
->  		return ret;
->  	}
->  
-> @@ -571,6 +571,7 @@ static int rpmsg_chrdev_probe(struct rpmsg_device *rpdev)
->  	struct rpmsg_channel_info chinfo;
->  	struct rpmsg_eptdev *eptdev;
->  	struct device *dev = &rpdev->dev;
-> +	int ret;
->  
->  	memcpy(chinfo.name, rpdev->id.name, RPMSG_NAME_SIZE);
->  	chinfo.src = rpdev->src;
-> @@ -589,7 +590,11 @@ static int rpmsg_chrdev_probe(struct rpmsg_device *rpdev)
->  	 */
->  	eptdev->default_ept->priv = eptdev;
->  
-> -	return rpmsg_chrdev_eptdev_add(eptdev, chinfo);
-> +	ret = rpmsg_chrdev_eptdev_add(eptdev, chinfo);
-> +	if (ret)
-> +		kfree(eptdev);
-> +
-> +	return ret;
->  }
->  
->  static void rpmsg_chrdev_remove(struct rpmsg_device *rpdev)
-> -- 
-> 2.25.1
-> 
+Thanks,
+
+Ben
+
 
