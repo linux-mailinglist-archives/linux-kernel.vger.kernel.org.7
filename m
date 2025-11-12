@@ -1,252 +1,192 @@
-Return-Path: <linux-kernel+bounces-897779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22204C538E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:01:56 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FB4FC538E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:01:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7EF10544DD4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:49:48 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 42AA4344E5B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:00:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C4B6341ADD;
-	Wed, 12 Nov 2025 16:49:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30434343204;
+	Wed, 12 Nov 2025 16:59:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vD7tEPop"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XxxxjSUN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86C23342144;
-	Wed, 12 Nov 2025 16:49:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60E15341ACA
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 16:59:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762966159; cv=none; b=sUOIMzDN9jOWdYjgqER6pElMvRBbaY868s9y95IxDSrQDzJzOyhpvA3S75YnBz7ObbE1BZrwlCbG58UVw1gpxQpa28VGwa4MfuQ7bdR1xKSPzDderajGJ5xajn6mI7PaBxjFXMtCe8wbBw5DOXkZv7IrrP9rbKdrziBvxj2ip3U=
+	t=1762966795; cv=none; b=p3Qiu9Iam+pKf1TbXxJoreocNLq72Yg6HPN+bivU9pyFRVEyqukhWVGEfwYd9YIkwGvi66HCnUZvCKhz2DreHFEwPa4BAtO2fBnQhqfOFUYMd+90KbTifnfsWbu7FogE6kAcl29OfcAdRapn/SJP//8/qmRJTyhc5GxQuxYeRfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762966159; c=relaxed/simple;
-	bh=0UxzDI5/2OOPFiLuL/ETR5cvUWQJ9noAD30qrtcyp4o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BlKvcbpJXDD4y3oZkaqZ9rwMOFDhzz38Dp9sxIl9So1uumohQh3RXsvGgDRod7Mw+KXRI2ophuhq/5bCgEucc4XrLQyCiPEygz8O/C0OF56b5+3BRbQE6jRopn6pRrBBakY6DRA+I4v7famOMKHbNYK52Qy2sysdJMPq+AdJEYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vD7tEPop; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87F31C4CEF5;
-	Wed, 12 Nov 2025 16:49:18 +0000 (UTC)
+	s=arc-20240116; t=1762966795; c=relaxed/simple;
+	bh=RVOBomhYRdwmTIvo3d1upFxr9xv6m2ioRcySu2Zct+c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sc0CLqxGZ68bgUbkgsvU24PcDEoHXrSRbTVwEhuMdXTNpIdjL8qxZGd9PffwUQnbRJpcXlOnMgQu9gF3OnpsiAcaYvhlC0eOVc7whHB0fVkO+VIhGlVGikkhQXOj5qzI9UHmoA24BVC2SOXPThjEXORb06Coomq2LdHLsC/AcTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XxxxjSUN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25099C2BCB0
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 16:59:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762966159;
-	bh=0UxzDI5/2OOPFiLuL/ETR5cvUWQJ9noAD30qrtcyp4o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vD7tEPopA8xg0x3lHgCAEMBLbYNDe9Ek7+YnfNqQxcSE7Whx1AkVpTqfc9Oz45jIV
-	 9lG/1xebJhOAS6NwBJ/8Oodww/WmwQQjS0gK8O8lTE/4oJTHkdBlx4wIvADVOthqMo
-	 +7R0Kx0PRPtNS2c18wtKViAb5IoqV9znoDudUOt8WBg77FAnr6KloLdwkUAENxdppg
-	 iZlrR91lUBvCsTG6zr7fu/jm3rh+Xa3FwbAT0+57rB4V+ZzTt+ffYLgtwUi8DVgFZ0
-	 Exile5ZYpuKX8kQdOpjuc//MYOvAenDUm6jckTJemEB3NQSiD+zr92Ku8169uNnZOu
-	 /A46aVpdm1kUA==
-Date: Wed, 12 Nov 2025 10:53:36 -0600
-From: Bjorn Andersson <andersson@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Gopi Botlagunta <venkata.botlagunta@oss.qualcomm.com>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	venkata.valluru@oss.qualcomm.com, jessica.zhang@oss.qualcomm.com, 
-	Yi Zhang <zhanyi@qti.qualcomm.com>
-Subject: Re: [PATCH 1/2] arm64: dts: qcom: Enable lvds panel-DV215FHM-R01 for
- rb3gen2 industrial mezzanine
-Message-ID: <qps5fkbgdqqvoqa3m5l4naksyc4aoq4xqnciyrpkrbs5qcno7c@aa6ync6sk4ju>
-References: <20251112-add-lt9211c-bridge-for-rb3gen2-industrial-mezzanine-v1-0-6eab844ec3ac@oss.qualcomm.com>
- <20251112-add-lt9211c-bridge-for-rb3gen2-industrial-mezzanine-v1-1-6eab844ec3ac@oss.qualcomm.com>
- <kosvayxmpbngn56v7t734f4qqrc2rptkjdd7q5q23brg22dvov@cxs7kzzuapim>
+	s=k20201202; t=1762966795;
+	bh=RVOBomhYRdwmTIvo3d1upFxr9xv6m2ioRcySu2Zct+c=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=XxxxjSUNde86wmg/dcnOrvIfN2jepikxpY7GV4lYOLhagr1EawmOpBYrVV2HAdtyO
+	 3TUYFKqPEPkY1rdnnXhBeoPa2xNa0hRO7yO1zs7ZhIVNnGwrszehllb7MZvKJSI+AF
+	 uMKxv9JnbGqVlPiq5Py5LSOsJpDK+jw9LCdAbRWbGK5UddHigpNjs2JQWovpDwxDMr
+	 SC6Bd8xvqKR5FbdKSYdtaX5S0iq5ObFngQn+ArfsBJw4HLkKHHe438BTi8m43lqaQJ
+	 W4DENohKvqRFDeQMktCHwYehTOpkJbeMA8rq58HHHrJFxIJsWMjthzdqM4TcXtCWYA
+	 ODaKBn0IoFE+Q==
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-64166a57f3bso1656787a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 08:59:55 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWQb9XMUrcPz4/sfDiWr+XeCDg3q82YjJKIvYO4tw31Rh15xr63sqW6KArrWEutOlssRYC7PG0J45Ipq20=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxV7i45DvrCr5a69cb4tS5gNtfeBnj3vv7Zoiqzj3AlyFr/Z5VB
+	p5myKEcumYT1xPVnK20/0nOwEVW4Nxa200BJI3bQ96ZOJpwEL7T5wFp9nNl7rpOEF5uvAV3gNIN
+	zL79k5e9kBgDM/Ph9hTJP86hvBC9GMg==
+X-Google-Smtp-Source: AGHT+IEOqt/wJY8Cvt+ACAz7CBaI8+ZUOPnH6TL37Ek0ZSDGOQg0lL8OZ1nhy6LAM/AdjuxvzXmeIb2YLoCTlRThoLE=
+X-Received: by 2002:a17:907:3fa8:b0:b70:b077:b957 with SMTP id
+ a640c23a62f3a-b733198f04fmr406767266b.15.1762966793516; Wed, 12 Nov 2025
+ 08:59:53 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <kosvayxmpbngn56v7t734f4qqrc2rptkjdd7q5q23brg22dvov@cxs7kzzuapim>
+References: <20251031175926.1465360-1-robh@kernel.org> <aRN0fdOAV0B728qo@p14s>
+ <20251111195923.GA3629535-robh@kernel.org> <CANLsYkwcbrTaKASdr5fj0m9ARS4xUgzVH8iWQKwTCvEsoZDDsQ@mail.gmail.com>
+In-Reply-To: <CANLsYkwcbrTaKASdr5fj0m9ARS4xUgzVH8iWQKwTCvEsoZDDsQ@mail.gmail.com>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 12 Nov 2025 10:59:42 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqL7HcDkPgJjcqJSagdN=gH2rv6noVS57QMGNRp0YCxUBw@mail.gmail.com>
+X-Gm-Features: AWmQ_bmxZCkzBm3PwPqC-n2_BEF69Zs3agW7isLAr86xc9rjwe66yE2yHIz-vl4
+Message-ID: <CAL_JsqL7HcDkPgJjcqJSagdN=gH2rv6noVS57QMGNRp0YCxUBw@mail.gmail.com>
+Subject: Re: [PATCH v6] remoteproc: Use of_reserved_mem_region_* functions for "memory-region"
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Magnus Damm <magnus.damm@gmail.com>, Patrice Chotard <patrice.chotard@foss.st.com>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>, Peng Fan <peng.fan@nxp.com>, 
+	linux-remoteproc@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 12, 2025 at 05:02:20PM +0200, Dmitry Baryshkov wrote:
-> On Wed, Nov 12, 2025 at 08:18:11PM +0530, Gopi Botlagunta wrote:
-> > Below is the routing diagram of dsi lanes from qcs6490 soc to
-> > mezzanine.
-> > 
-> > DSI0 --> SW1403.4 --> LT9611uxc --> hdmi port
-> >                  |
-> >                   --> SW2700.1 --> dsi connector
-> >                               |
-> >                                --> LT9211c --> LVDS connector
-> > 
-> > Disable hdmi connector for industrial mezzanine and enable
-> > LT9211c bridge and lvds panel node.
-> > LT9211c is powered by default with reset gpio connected to 117.
-> > 
-> > Signed-off-by: Yi Zhang <zhanyi@qti.qualcomm.com>
-> > Signed-off-by: Gopi Botlagunta <venkata.botlagunta@oss.qualcomm.com>
-> > ---
-> >  .../qcom/qcs6490-rb3gen2-industrial-mezzanine.dtso | 106 +++++++++++++++++++++
-> >  1 file changed, 106 insertions(+)
-> > 
-> > diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2-industrial-mezzanine.dtso b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2-industrial-mezzanine.dtso
-> > index 619a42b5ef48..cc8ee1643167 100644
-> > --- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2-industrial-mezzanine.dtso
-> > +++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2-industrial-mezzanine.dtso
-> > @@ -8,6 +8,112 @@
-> >  #include <dt-bindings/clock/qcom,gcc-sc7280.h>
-> >  #include <dt-bindings/pinctrl/qcom,pmic-gpio.h>
-> >  
-> > +/ {
-> > +
-> > +	hdmi-connector {
-> > +		status = "disabled";
-> > +	};
-> > +
-> > +	panel_lvds: panel-lvds@0 {
-> > +		compatible = "panel-lvds";
-> 
-> Please describe the actual panel using compatible, etc. It's not that
-> this is some generic uknown LVDS panel.
-> 
+On Wed, Nov 12, 2025 at 9:43=E2=80=AFAM Mathieu Poirier
+<mathieu.poirier@linaro.org> wrote:
+>
+> On Tue, 11 Nov 2025 at 12:59, Rob Herring <robh@kernel.org> wrote:
+> >
+> > On Tue, Nov 11, 2025 at 10:38:05AM -0700, Mathieu Poirier wrote:
+> > > Hi Rob,
+> > >
+> > > Please see may comment for st_remoteproc.c
+> > >
+> > > On Fri, Oct 31, 2025 at 12:59:22PM -0500, Rob Herring (Arm) wrote:
+> > > > Use the newly added of_reserved_mem_region_to_resource() and
+> > > > of_reserved_mem_region_count() functions to handle "memory-region"
+> > > > properties.
 
-I presume the mezzanine doesn't have a panel, so how do we provide the
-description of the mezzanine such that a developer can quickly get up to
-speed with their specific panel connected to it?
+[...]
 
-Do we leave this node disabled, just for reference, or do we specify a
-specific panel and then have the developer copy and adopt this to their
-panel?
+> > > > diff --git a/drivers/remoteproc/st_remoteproc.c b/drivers/remotepro=
+c/st_remoteproc.c
+> > > > index e6566a9839dc..043348366926 100644
+> > > > --- a/drivers/remoteproc/st_remoteproc.c
+> > > > +++ b/drivers/remoteproc/st_remoteproc.c
+> > > > @@ -120,40 +120,37 @@ static int st_rproc_parse_fw(struct rproc *rp=
+roc, const struct firmware *fw)
+> > > >     struct device *dev =3D rproc->dev.parent;
+> > > >     struct device_node *np =3D dev->of_node;
+> > > >     struct rproc_mem_entry *mem;
+> > > > -   struct reserved_mem *rmem;
+> > > > -   struct of_phandle_iterator it;
+> > > > -   int index =3D 0;
+> > > > -
+> > > > -   of_phandle_iterator_init(&it, np, "memory-region", NULL, 0);
+> > > > -   while (of_phandle_iterator_next(&it) =3D=3D 0) {
+> > > > -           rmem =3D of_reserved_mem_lookup(it.node);
+> > > > -           if (!rmem) {
+> > > > -                   of_node_put(it.node);
+> > > > -                   dev_err(dev, "unable to acquire memory-region\n=
+");
+> > > > -                   return -EINVAL;
+> > > > -           }
+> > > > +   int index =3D 0, mr =3D 0;
+> > > > +
+> > > > +   while (1) {
+> > > > +           struct resource res;
+> > > > +           int ret;
+> > > > +
+> > > > +           ret =3D of_reserved_mem_region_to_resource(np, mr++, &r=
+es);
+> > > > +           if (ret)
+> > > > +                   return 0;
+> > >
+> > > The original code calls rproc_elf_load_rsc_table() [1] after iteratin=
+g through
+> > > the memory region, something that won't happen with the above.
+> >
+> > Indeed. it needs the following incremental change. It is slightly
+> > different in that rproc_elf_load_rsc_table() is not called if
+> > 'memory-region' is missing, but the binding says that's required.
+> >
+> > 8<--------------------------------------------------
+> >
+> > diff --git a/drivers/remoteproc/st_remoteproc.c b/drivers/remoteproc/st=
+_remoteproc.c
+> > index 043348366926..cb09c244fdb5 100644
+> > --- a/drivers/remoteproc/st_remoteproc.c
+> > +++ b/drivers/remoteproc/st_remoteproc.c
+> > @@ -120,15 +120,19 @@ static int st_rproc_parse_fw(struct rproc *rproc,=
+ const struct firmware *fw)
+> >         struct device *dev =3D rproc->dev.parent;
+> >         struct device_node *np =3D dev->of_node;
+> >         struct rproc_mem_entry *mem;
+> > -       int index =3D 0, mr =3D 0;
+> > +       int index =3D 0;
+> >
+> >         while (1) {
+> >                 struct resource res;
+> >                 int ret;
+> >
+> > -               ret =3D of_reserved_mem_region_to_resource(np, mr++, &r=
+es);
+> > -               if (ret)
+> > -                       return 0;
+> > +               ret =3D of_reserved_mem_region_to_resource(np, index, &=
+res);
+> > +               if (ret) {
+> > +                       if (index)
+> > +                               break;
+> > +                       else
+> > +                               return ret;
+> > +               }
+>
+> This looks brittle and I'm not sure it would work.
+>
+> Going back to the original implementation, the only time we want to
+> "break" is when @index is equal to the amount of memory regions _and_
+> ret is -EINVAL.  Any other condition should return.
 
-The benefit of doing it like that is that we provide a complete example
-and something we can test. But at the same time, If I presume we might
-have users of the mezzanine without an attached LVDS panel?
+@index equal to number of entries returns -ENODEV, so that condition
+is impossible. We can simply it to this:
 
-> > +		data-mapping = "vesa-24";
-> > +		width-mm = <476>;
-> > +		height-mm = <268>;
+if (ret =3D=3D -ENODEV && index)
+    break;
+else
+    return ret;
 
-The way this patch is written we certainly have some specific panel in
-mind...
+If you want to keep the prior behavior when 'memory-region' is
+missing, then '&& index' can be removed, but I think that was wrong
+behavior.
 
-Regards,
-Bjorn
-
-> > +
-> > +		status = "okay";
-> > +
-> > +		panel-timing {
-> > +			clock-frequency = <148500000>;
-> > +			hactive = <1920>;
-> > +			vactive = <1080>;
-> > +			hfront-porch = <88>;
-> > +			hback-porch = <148>;
-> > +			hsync-len = <44>;
-> > +			vfront-porch = <4>;
-> > +			vback-porch = <36>;
-> > +			vsync-len = <5>;
-> > +			de-active = <1>;
-> > +		};
-> > +
-> > +		ports {
-> > +			#address-cells = <1>;
-> > +			#size-cells = <0>;
-> > +
-> > +			port@0 {
-> > +				reg = <0>;
-> > +
-> > +				dual-lvds-odd-pixels;
-> 
-> Add one empty line between properties and subnodes. Drop empty line
-> between reg and dual-foo-pixels.
-> 
-> > +				panel_in_lvds_odd: endpoint {
-> > +					remote-endpoint = <&lt9211c_out_odd>;
-> > +				};
-> > +			};
-> > +
-> > +			port@1 {
-> > +				reg = <1>;
-> > +
-> > +				dual-lvds-even-pixels;
-> > +				panel_in_lvds_even: endpoint {
-> > +					remote-endpoint = <&lt9211c_out_even>;
-> > +				};
-> > +
-> > +			};
-> > +		};
-> > +	};
-> > +
-> > +};
-> > +
-> > +&i2c1 {
-> > +	status = "okay";
-> 
-> No clock-frequency?
-> 
-> > +
-> > +	lvds_bridge: lvds-bridge@29 {
-> > +		compatible = "lontium,lt9211c";
-> 
-> Not supported in mainline and not described as a dependency in the cover
-> letter.
-> 
-> > +		reg = <0x29>;
-> > +		reset-gpios = <&tlmm 117 1>;
-> 
-> Use GPIO_ACTIVE_foo
-> 
-> > +
-> > +		status = "okay";
-> > +
-> > +		ports {
-> > +			#address-cells = <1>;
-> > +			#size-cells = <0>;
-> > +
-> > +			port@0 {
-> > +				reg = <0>;
-> > +
-> > +				lt9211c_in: endpoint {
-> > +					data-lanes = <0 1 2 3>;
-> > +					remote-endpoint = <&mdss_dsi0_out>;
-> > +				};
-> > +			};
-> > +
-> > +			port@2 {
-> > +				reg = <2>;
-> > +
-> > +				lt9211c_out_odd: endpoint {
-> > +					remote-endpoint = <&panel_in_lvds_odd>;
-> > +				};
-> > +			};
-> > +
-> > +			port@3 {
-> > +				reg = <3>;
-> > +
-> > +				lt9211c_out_even: endpoint {
-> > +					remote-endpoint = <&panel_in_lvds_even>;
-> > +				};
-> > +			};
-> > +		};
-> > +	};
-> > +
-> > +
-> > +};
-> > +
-> > +&lt9611_codec {
-> > +	status = "disabled";
-> > +};
-> > +
-> > +&mdss_dsi0_out {
-> > +	remote-endpoint = <&lt9211c_in>;
-> > +};
-> > +
-> >  &spi11 {
-> >  	#address-cells = <1>;
-> >  	#size-cells = <0>;
-> > 
-> > -- 
-> > 2.34.1
-> > 
-> 
-> -- 
-> With best wishes
-> Dmitry
+Rob
 
