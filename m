@@ -1,83 +1,44 @@
-Return-Path: <linux-kernel+bounces-896608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B378FC50C33
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 07:50:59 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13749C50C51
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 07:53:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73A7A189986F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 06:51:24 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 565A34EBCBD
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 06:53:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C99928C2BF;
-	Wed, 12 Nov 2025 06:50:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Hraxjkrw"
-Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11010012.outbound.protection.outlook.com [52.101.201.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F15F28468D;
+	Wed, 12 Nov 2025 06:53:10 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A07A35CBC5;
-	Wed, 12 Nov 2025 06:50:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.201.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762930250; cv=fail; b=bjXXM+mV7DdpnoHG2RsVPfxOS7YL3gK2k7QLgpFE5gIkj+DeoPxfadHVHHhyBDxXf2b0TUUuaEryphykqJ0JfYAMHCj/Vp2UTt3mTbRe77Ikh7Ft728ajYdVmOmlckN2SkWNQBMEKCUUBzb0LaBoF28WKTgYK9Wk5eKadft+VIE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762930250; c=relaxed/simple;
-	bh=zlfA18QPFThNe1dIwGI+55AGNm9J1xZ8ttbiGB2qNa8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=aoCSAr32RVF2KEdBvFFKVAaTKH5HWj9p+y13CcEHfMcSd+kJFE14ZJ8DuVFZeFiUFA+gkDGCN600sDnzPOv98FtMnLjxPX3dF1ZGCynDo4p21MuJVpAcIInlRul8NIrmVW0a3aLtz3O3YNcTADwAZHc2athY10VbBkwD/6YM4Uo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Hraxjkrw; arc=fail smtp.client-ip=52.101.201.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=d+aHu0heeVBISA8TPY8QH68Dg4lmJEJA1Pq2ixcYsrIiX8XVYI2zJ3ljMcA6C0xobG5C9cVTNXUXC0CHxF5zr7y340K+bRhmzM7KkeaFBd+adlfAySudT2A3qjlpchBMn65WlsnmvGJcSgYXC88nYW42gvuT4+mMvMQ3sL+0B46Y23GM+TSPedKWvQbOfFROjvTOFvrCpgWVvSOqxO1CVRN+OLhMzjLjJmRbtE8NuTnV+Ee3U1IQhWwJfuhaNq5E70AJQhcazOLOXB/YEsd+Dc164BzoHxceerbK6k8Umvf/JIGchQfe3LObUykNfGZvVWKBPzkb7UXgZO4iuIPBxQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4kz0u9OYwHqi6xvBKpOTV/rBre4PpPtFRzpgfCoZAqc=;
- b=FP8jwRaV2CFvX72Ca8GFu/yBQ9OaDxVhXr0ijFco9JpT8lYPeid99cG9oAoZGWvYA3spsnffH8DIeugOKasmz/80FKunvAgC6VcNiqHzYcRQ86waIPRjfzGGhDOWto5m2XECppcYCbSN910N6MtJ2MFYhJ6IJd2OLd63DhQb+8Ep98zfOBgBUQRwq4Nog12vnm9+tQNz9/ino2NnGEfKwxuxZVILiRhp5B0lwjCllS8HlON4+lPo1LHXdwQrTqvE4lU/mR9maTsO21gOygHYpxr23hza6wB2t/IY2L2W3AIMfGa7faiTAUDwVNm8Z76AE0FGkJBHLxM/8hfXXBFxNw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=gmail.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4kz0u9OYwHqi6xvBKpOTV/rBre4PpPtFRzpgfCoZAqc=;
- b=Hraxjkrw0/6mxuxWHof02+CWLIPuVL+FGYlnB89yi02iDLk9lKfUkzH/w4hvMfAyMv06mbBLLR8Y7nmlpQNopSe8ZFZG74/wZ1uypyIRDFEa1sNbJ54IyzKEjTELq9oN7/5MlTBfnecCzrgek4fXkMh2sn0JUgwJ7WDYKd+wtos=
-Received: from DS7PR03CA0223.namprd03.prod.outlook.com (2603:10b6:5:3ba::18)
- by MW5PR12MB5684.namprd12.prod.outlook.com (2603:10b6:303:1a1::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Wed, 12 Nov
- 2025 06:50:41 +0000
-Received: from CY4PEPF0000EDD7.namprd03.prod.outlook.com
- (2603:10b6:5:3ba:cafe::6a) by DS7PR03CA0223.outlook.office365.com
- (2603:10b6:5:3ba::18) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9298.13 via Frontend Transport; Wed,
- 12 Nov 2025 06:50:41 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
-Received: from satlexmb08.amd.com (165.204.84.17) by
- CY4PEPF0000EDD7.mail.protection.outlook.com (10.167.241.203) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9320.13 via Frontend Transport; Wed, 12 Nov 2025 06:50:40 +0000
-Received: from SATLEXMB04.amd.com (10.181.40.145) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.17; Tue, 11 Nov
- 2025 22:50:40 -0800
-Received: from satlexmb07.amd.com (10.181.42.216) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 12 Nov
- 2025 00:50:40 -0600
-Received: from [172.31.184.125] (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
- Transport; Tue, 11 Nov 2025 22:50:37 -0800
-Message-ID: <74b13a0d-9f49-4a5d-8554-3e68be7cca88@amd.com>
-Date: Wed, 12 Nov 2025 12:20:31 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AF7421ABAA;
+	Wed, 12 Nov 2025 06:53:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762930390; cv=none; b=A0eBhIduwd82KChvIDFaIZf4wtzBYTBg2mZrM5iMIRx2bDaBnD5MMc306FA7dDQ2T2PLo/2sTVnMDQ9+Y/BjbzvXBmoxjRnmWMdXk53EbAZdOFnk/Fpi5U19tW25rqXbJE7YS0S1hMTadG5aE/mA0DEQd7z6V5PMbzeH/cBFdlI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762930390; c=relaxed/simple;
+	bh=Nk5NuzsIX9ZX+PzytblDuYOmPvDFXRWzyh0yApWMWcE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dMALDpBpg0zru2vPdnaOgZcC0Mjz0DtozlVT0fZEsRNYKlx3cfss5YkXKg+n2o49JTU7xoY+xICuB/8muJKG/g6t9c/4116PDV6p9oJTtjgHGDvhqTanLwtX2FqUShi4mqhruepCzdGeobswYyA86gLmn+2byb/rQwbiZcPDZl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4d5vGx33BmzKHMM9;
+	Wed, 12 Nov 2025 14:52:41 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id 9C9531A01A6;
+	Wed, 12 Nov 2025 14:52:58 +0800 (CST)
+Received: from [10.174.178.152] (unknown [10.174.178.152])
+	by APP2 (Coremail) with SMTP id Syh0CgBHpXvILhRpaIHZAQ--.3258S3;
+	Wed, 12 Nov 2025 14:52:58 +0800 (CST)
+Message-ID: <b1b73115-4b4d-49ac-b773-0d17fc72e002@huaweicloud.com>
+Date: Wed, 12 Nov 2025 14:52:56 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,164 +46,161 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 03/10] sched/fair: Add cgroup LCA finder for hierarchical
- yield
-To: Wanpeng Li <kernellwp@gmail.com>, Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, "Paolo
- Bonzini" <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>
-CC: Steven Rostedt <rostedt@goodmis.org>, Vincent Guittot
-	<vincent.guittot@linaro.org>, Juri Lelli <juri.lelli@redhat.com>,
-	<linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>, Wanpeng Li
-	<wanpengli@tencent.com>
-References: <20251110033232.12538-1-kernellwp@gmail.com>
- <20251110033232.12538-4-kernellwp@gmail.com>
+Subject: Re: [PATCH v3 21/24] ext4: make data=journal support large block size
+To: libaokun@huaweicloud.com, linux-ext4@vger.kernel.org
+Cc: tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz,
+ linux-kernel@vger.kernel.org, kernel@pankajraghav.com, mcgrof@kernel.org,
+ ebiggers@kernel.org, willy@infradead.org, yangerkun@huawei.com,
+ chengzhihao1@huawei.com, libaokun1@huawei.com
+References: <20251111142634.3301616-1-libaokun@huaweicloud.com>
+ <20251111142634.3301616-22-libaokun@huaweicloud.com>
 Content-Language: en-US
-From: K Prateek Nayak <kprateek.nayak@amd.com>
-In-Reply-To: <20251110033232.12538-4-kernellwp@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+In-Reply-To: <20251111142634.3301616-22-libaokun@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Received-SPF: None (SATLEXMB04.amd.com: kprateek.nayak@amd.com does not
- designate permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000EDD7:EE_|MW5PR12MB5684:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3f4d77d4-c64a-4575-7719-08de21b7cb6e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|82310400026|7416014|376014|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?dmhvZ3B4UnNBaFVaTm8wRDMzU1FvRTJGQnJmSTBvZ0ExZjdDYmhsZm91RXdQ?=
- =?utf-8?B?eWEwRTRGcms2SlRiN2RIWnlOckVYU0FDY05Qclp0TFhEZ0d0R3U4cHFCcFh1?=
- =?utf-8?B?WTNoS3N0N09oMFNodG8rc3VpLytBc3hjdmNtTnhkM254aUN3U3BnSkYyTERi?=
- =?utf-8?B?dDVvcUFUR0pleTF4LzNCdWRXQ01lUFJXVC82cWVQOFBPWXFKSTlJcjhyYXB0?=
- =?utf-8?B?N1FMT3FndHArK25JNVNXbWJPQVNPOS9sUk1xTVlOTlpWSG5TYUpERytDaElN?=
- =?utf-8?B?NDJGZEF2cjZyMmFUVjQ1b3U2YXNIMzhUTW84Z0V5MExsUHdZYWN2RnZnRXdi?=
- =?utf-8?B?aC9vbmRaZ3ZtNXZMdTZvL05kTzdzRGFRdmtpU2hFY0JKZ3hkaGNOK3d0UGg1?=
- =?utf-8?B?TitGamp0eGJ1NHRiSHk5OHo3U0o2UGF2NjljNWlEdUYwcTFMK24vR3lTMkN0?=
- =?utf-8?B?dFN3M2JYTEV6Z1hpNnVDTThpclZSZzNFc3JHOGVXZjNja05vb1pKZ1M3Mkdm?=
- =?utf-8?B?SW4wYXFqWXNPOWMyQXZOaTVFMnc1ekZSVlhKMzkvTEpvTkYvNFFoV0ZRYUEr?=
- =?utf-8?B?b2Q4Rm5xNnowNEFCYUgyMnlHWnlRRTRQNGpVbzRyV3g3c1NaM2RkNGRneFZu?=
- =?utf-8?B?UkZHQ05lSE9IS0prdk9TdnVyZzFTZ1VlTVA2OXZXbWtra3RyL3p6YlNxZDls?=
- =?utf-8?B?VVorQVVmY2EreUQwRFZUekZWTllqbDl4VGxxRXI1VlduQVZaNllMVHk0Qk41?=
- =?utf-8?B?TXhGeThYTW1pV0g1TWE1OVk5Wm4zeGNKYWlNZmJEUWVjK0lVdExOamI2UHh6?=
- =?utf-8?B?Zi82N2FMbUJNK2h6NElhaDlSaFZwUzVkWmJiL0d0cWEvanc4L3l2a3QvS09V?=
- =?utf-8?B?SERIUGJUVGxGN1FiekRFWjJJaHltbEVNMDRGWjBsYnFWc3RIODVQRVFIeC9H?=
- =?utf-8?B?Y0lFazBJejJYWllpY2FnRE1hZStLblRDNWIyTWFDZ3pxQjJqYmhDeEk1elRl?=
- =?utf-8?B?SXlpeHB4dVc5WWtIOWhVUkQzcE9Rc0ZBakI4d2hzZVZTRWQzR1BiNCs0S0Fs?=
- =?utf-8?B?SlpTcjVSd0NlWFNLditxRlNQTUxrZHJCK2N5MkxMSWtqcUQwWlU1ZVloajdL?=
- =?utf-8?B?N2FYd2hLRHMxbjRIV3I2MXJNeGdmMHZrSWtrMUFNVVYwV2dIZ1lqc2p0cmtR?=
- =?utf-8?B?dDJjOHN6MEZXMzAwS2NXM1ZVdmtBZ2dhN04rUUNjNlAxU1hWMmMxSm5ENk1l?=
- =?utf-8?B?bXZ1WExPMzVzMFRPenk4N0Y0aXBvOGN3RjVNNlF2bXl0Z05aYlR4NEx3Z3FH?=
- =?utf-8?B?UHVwYjI5YTlIOHRMcGdSU3JJQXlzQ1JKZ1BFS3ZRUXI5VzFHcGZqYzNyS3ky?=
- =?utf-8?B?UDVkTUZmbzUxSGJWRkFXRVAraTJ2d3I3THQ0YWFha3N5UjVYb2U5NGoxVUEw?=
- =?utf-8?B?R3drTjRNYzNCYUJ6TkczWmV0aHM5U0Y0d3ZzMWVDMDN3Rkg2M3hPUVphRE1z?=
- =?utf-8?B?a1FiWmE2R0NSb0llbjhnejhjWUtvUTJ6R2hHaHJtM1pUUUR2TDltOTJGSFVw?=
- =?utf-8?B?RHV5Tk55MmFJallCMndYSGtEVWdHdzVRR0RYeGdnV25pU1hIN255bG1INmtY?=
- =?utf-8?B?TktTSkpCYzI5Zk1NbENNY2xrdUF1K1hueWtmREpHbzZHL1M1QmFsdEE3U3ln?=
- =?utf-8?B?RnlrNnl6M2RxalMyU0ZNTllmK2g1YTRjell5T1lVTkcvV293UmN6QUNIN2dJ?=
- =?utf-8?B?WUU2S3dOWERycEdtRG1vSDg4Q1JuYmp6ajZ2TDZ0K3EwdStoN0lwd29GOUk4?=
- =?utf-8?B?aDcvRWtrRzZTUXZpVlJpRkt3WUpIYUg2TkNxMnNuNy9SMHI5WjVobWJ4dVhR?=
- =?utf-8?B?a1pvZitTRmhHNUpHNXRGN1lGV25UNkdwcjZ1OEtNaE5MRnI2SXlSOVNSaEps?=
- =?utf-8?B?Y0p4bTk1OXowdHpTOHgzM2dXd2JTcWxYRUY2cmQwOWxGZEkyc3YyWCtjTDRH?=
- =?utf-8?B?V2N2VXlMSEZCT2dvR3o3b1FXOC83Y0hyclMxL3UxWEN4NG9NbVlUQmxrcG1H?=
- =?utf-8?B?TmtPL1FnemFaWDJlQjJHaUJWbTFYeEJ5OFEydktwMXhjT2VydHA3VDlJNDBl?=
- =?utf-8?Q?/9cY=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(7416014)(376014)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2025 06:50:40.8063
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3f4d77d4-c64a-4575-7719-08de21b7cb6e
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000EDD7.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW5PR12MB5684
+X-CM-TRANSID:Syh0CgBHpXvILhRpaIHZAQ--.3258S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxKw1kXry8Xr13ur18Gry5CFg_yoW7GFyDpF
+	y3GryrJ3ykXFyq9r4xta1UZr1Yq3WxK3yUA3s3u3Z7Zw1DJ34xKF4jkFn7AFWUJrZ7Ww4S
+	qF4IkryxG3ZIk37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
+	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1
+	7KsUUUUUU==
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-Hello Wanpeng,
+On 11/11/2025 10:26 PM, libaokun@huaweicloud.com wrote:
+> From: Baokun Li <libaokun1@huawei.com>
+> 
+> Currently, ext4_set_inode_mapping_order() does not set max folio order
+> for files with the data journalling flag. For files that already have
+> large folios enabled, ext4_inode_journal_mode() ignores the data
+> journalling flag once max folio order is set.
+> 
+> This is not because data journalling cannot work with large folios, but
+> because credit estimates will go through the roof if there are too many
+> blocks per folio.
+> 
+> Since the real constraint is blocks-per-folio, to support data=journal
+> under LBS, we now set max folio order to be equal to min folio order for
+> files with the journalling flag. When LBS is disabled, the max folio order
+> remains unset as before.
+> 
+> Therefore, before ext4_change_inode_journal_flag() switches the journalling
+> mode, we call truncate_pagecache() to drop all page cache for that inode,
+> and filemap_write_and_wait() is called unconditionally.
+> 
+> After that, once the journalling mode has been switched, we can safely
+> reset the inode mapping order, and the mapping_large_folio_support() check
+> in ext4_inode_journal_mode() can be removed.
+> 
+> Suggested-by: Jan Kara <jack@suse.cz>
+> Signed-off-by: Baokun Li <libaokun1@huawei.com>
 
-On 11/10/2025 9:02 AM, Wanpeng Li wrote:
-> +/*
-> + * Find the lowest common ancestor (LCA) in the cgroup hierarchy for EEVDF.
-> + * We walk up both entity hierarchies under rq->lock protection.
-> + * Task migration requires task_rq_lock, ensuring parent chains remain stable.
-> + * We locate the first common cfs_rq where both entities coexist, representing
-> + * the appropriate level for vruntime adjustments and EEVDF field updates
-> + * (deadline, vlag) to maintain scheduler consistency.
-> + */
-> +static bool __maybe_unused yield_deboost_find_lca(struct sched_entity *se_y, struct sched_entity *se_t,
-> +				    struct sched_entity **se_y_lca_out,
-> +				    struct sched_entity **se_t_lca_out,
-> +				    struct cfs_rq **cfs_rq_common_out)
-> +{
-> +	struct sched_entity *se_y_lca, *se_t_lca;
-> +	struct cfs_rq *cfs_rq_common;
+Looks good to me.
+
+Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
+
+> ---
+>  fs/ext4/ext4_jbd2.c |  3 +--
+>  fs/ext4/inode.c     | 32 ++++++++++++++++++--------------
+>  2 files changed, 19 insertions(+), 16 deletions(-)
+> 
+> diff --git a/fs/ext4/ext4_jbd2.c b/fs/ext4/ext4_jbd2.c
+> index a0e66bc10093..05e5946ed9b3 100644
+> --- a/fs/ext4/ext4_jbd2.c
+> +++ b/fs/ext4/ext4_jbd2.c
+> @@ -16,8 +16,7 @@ int ext4_inode_journal_mode(struct inode *inode)
+>  	    ext4_test_inode_flag(inode, EXT4_INODE_EA_INODE) ||
+>  	    test_opt(inode->i_sb, DATA_FLAGS) == EXT4_MOUNT_JOURNAL_DATA ||
+>  	    (ext4_test_inode_flag(inode, EXT4_INODE_JOURNAL_DATA) &&
+> -	    !test_opt(inode->i_sb, DELALLOC) &&
+> -	    !mapping_large_folio_support(inode->i_mapping))) {
+> +	    !test_opt(inode->i_sb, DELALLOC))) {
+>  		/* We do not support data journalling for encrypted data */
+>  		if (S_ISREG(inode->i_mode) && IS_ENCRYPTED(inode))
+>  			return EXT4_INODE_ORDERED_DATA_MODE;  /* ordered */
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index 22d215f90c64..613a989bf750 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -5152,9 +5152,6 @@ static bool ext4_should_enable_large_folio(struct inode *inode)
+>  
+>  	if (!S_ISREG(inode->i_mode))
+>  		return false;
+> -	if (test_opt(sb, DATA_FLAGS) == EXT4_MOUNT_JOURNAL_DATA ||
+> -	    ext4_test_inode_flag(inode, EXT4_INODE_JOURNAL_DATA))
+> -		return false;
+>  	if (ext4_has_feature_verity(sb))
+>  		return false;
+>  	if (ext4_has_feature_encrypt(sb))
+> @@ -5172,12 +5169,20 @@ static bool ext4_should_enable_large_folio(struct inode *inode)
+>  		umin(MAX_PAGECACHE_ORDER, (11 + (i)->i_blkbits - PAGE_SHIFT))
+>  void ext4_set_inode_mapping_order(struct inode *inode)
+>  {
+> +	u32 max_order;
 > +
-> +#ifdef CONFIG_FAIR_GROUP_SCHED
-> +	se_t_lca = se_t;
-> +	se_y_lca = se_y;
+>  	if (!ext4_should_enable_large_folio(inode))
+>  		return;
+>  
+> +	if (test_opt(inode->i_sb, DATA_FLAGS) == EXT4_MOUNT_JOURNAL_DATA ||
+> +	    ext4_test_inode_flag(inode, EXT4_INODE_JOURNAL_DATA))
+> +		max_order = EXT4_SB(inode->i_sb)->s_min_folio_order;
+> +	else
+> +		max_order = EXT4_MAX_PAGECACHE_ORDER(inode);
 > +
-> +	while (se_t_lca && se_y_lca && se_t_lca->depth != se_y_lca->depth) {
-> +		if (se_t_lca->depth > se_y_lca->depth)
-> +			se_t_lca = se_t_lca->parent;
-> +		else
-> +			se_y_lca = se_y_lca->parent;
-> +	}
-> +
-> +	while (se_t_lca && se_y_lca) {
-> +		if (cfs_rq_of(se_t_lca) == cfs_rq_of(se_y_lca)) {
-> +			cfs_rq_common = cfs_rq_of(se_t_lca);
-> +			goto found_lca;
-> +		}
-> +		se_t_lca = se_t_lca->parent;
-> +		se_y_lca = se_y_lca->parent;
-> +	}
-> +	return false;
-> +#else
-> +	if (cfs_rq_of(se_y) != cfs_rq_of(se_t))
-> +		return false;
-> +	cfs_rq_common = cfs_rq_of(se_y);
-> +	se_y_lca = se_y;
-> +	se_t_lca = se_t;
-> +#endif
-> +
-> +found_lca:
-> +	if (!se_y_lca || !se_t_lca)
-> +		return false;
-
-Can that even happen? They should meet at the root cfs_rq.
-Also all of this seems to be just find_matching_se() from
-fair.c. Can't we just reuse that?
-
-> +
-> +	if (cfs_rq_common->nr_queued <= 1)
-> +		return false;
-> +
-> +	if (!se_y_lca->slice)
-> +		return false;
-
-Is that even possible?
-
-> +
-> +	*se_y_lca_out = se_y_lca;
-> +	*se_t_lca_out = se_t_lca;
-> +	*cfs_rq_common_out = cfs_rq_common;
-
-Again, find_matching_se() does pretty much similar thing
-and you can just use cfs_rq_of(se) to get the common cfs_rq.
-
-> +	return true;
-> +}
-> +
->  /*
->   * sched_yield() is very simple
->   */
-
--- 
-Thanks and Regards,
-Prateek
+>  	mapping_set_folio_order_range(inode->i_mapping,
+>  				      EXT4_SB(inode->i_sb)->s_min_folio_order,
+> -				      EXT4_MAX_PAGECACHE_ORDER(inode));
+> +				      max_order);
+>  }
+>  
+>  struct inode *__ext4_iget(struct super_block *sb, unsigned long ino,
+> @@ -6553,14 +6558,14 @@ int ext4_change_inode_journal_flag(struct inode *inode, int val)
+>  	 * dirty data which can be converted only after flushing the dirty
+>  	 * data (and journalled aops don't know how to handle these cases).
+>  	 */
+> -	if (val) {
+> -		filemap_invalidate_lock(inode->i_mapping);
+> -		err = filemap_write_and_wait(inode->i_mapping);
+> -		if (err < 0) {
+> -			filemap_invalidate_unlock(inode->i_mapping);
+> -			return err;
+> -		}
+> +	filemap_invalidate_lock(inode->i_mapping);
+> +	err = filemap_write_and_wait(inode->i_mapping);
+> +	if (err < 0) {
+> +		filemap_invalidate_unlock(inode->i_mapping);
+> +		return err;
+>  	}
+> +	/* Before switch the inode journalling mode evict all the page cache. */
+> +	truncate_pagecache(inode, 0);
+>  
+>  	alloc_ctx = ext4_writepages_down_write(inode->i_sb);
+>  	jbd2_journal_lock_updates(journal);
+> @@ -6585,12 +6590,11 @@ int ext4_change_inode_journal_flag(struct inode *inode, int val)
+>  		ext4_clear_inode_flag(inode, EXT4_INODE_JOURNAL_DATA);
+>  	}
+>  	ext4_set_aops(inode);
+> +	ext4_set_inode_mapping_order(inode);
+>  
+>  	jbd2_journal_unlock_updates(journal);
+>  	ext4_writepages_up_write(inode->i_sb, alloc_ctx);
+> -
+> -	if (val)
+> -		filemap_invalidate_unlock(inode->i_mapping);
+> +	filemap_invalidate_unlock(inode->i_mapping);
+>  
+>  	/* Finally we can mark the inode as dirty. */
+>  
 
 
