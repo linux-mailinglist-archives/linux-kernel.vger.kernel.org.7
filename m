@@ -1,130 +1,125 @@
-Return-Path: <linux-kernel+bounces-898286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 775E0C54C42
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 23:58:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFE0CC54C59
+	for <lists+linux-kernel@lfdr.de>; Thu, 13 Nov 2025 00:01:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id AD8C03462AC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 22:57:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25C203AAB32
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 23:01:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99F852F0C7C;
-	Wed, 12 Nov 2025 22:57:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 162F92E717C;
+	Wed, 12 Nov 2025 23:01:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LiFN5J2o"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="COEHRRoB"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54C352EFD8A
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 22:57:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE54D186294;
+	Wed, 12 Nov 2025 23:01:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762988253; cv=none; b=nKcqW+10+2xWrydF4/vkG46HwjB5JTurJYq/W7t3OKH1oL3qgF13GnyBP3JH1wQqUkokYT8hS7vyaD2FGyJ3QYTiUSNW0RSsmUzFX3+6ICseNX8P4jB8BFZiuUE+dcfGt49Ex/uAZT1/CmwbUuDtBTh2sr8M/I4yPRpQT9DjJ74=
+	t=1762988506; cv=none; b=YeKGU4Ph/AD1WfCkEAUNojrc6+fl/68vSZqaPB7TLxjyuTa7SdftvubIzw96n53G93Hc2HqfYZm/TyKGIEcVvQO6nr1muTvaDvvUwE71sangamSSDxpVRWrdsJiOrkspYPe4qrFqycPUl4SOyY4GtCZRbCT/11Z6kt/YOWzLweI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762988253; c=relaxed/simple;
-	bh=gC1f61DmLG1P9pAkwLU/JjaVxGu82BLBwYykpQQ5tcw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=NLd9Z1QNUHrNs//h4t/2d0RCT5tIVrqpopcDr4yCqB6K9goYN5uuIqv5PBtjevmbnZiz7sI8SjMOv2XsgtoTfbxO22GzZ3R8yju2yZs8LMnejlAUc2bVXkYQUpPv2oAVWWk7ftGb+/j9qjOaF4A4HQy8X3Sa4/o8x1AQEnBu6q0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LiFN5J2o; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-42b32a3e78bso170106f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 14:57:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762988250; x=1763593050; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vDdGU9f1AjnbUUZofpssnIOwmqCSincQK/z8WMfUJ40=;
-        b=LiFN5J2oICD8D4UpNq73/60lM1jSqqtCN12XSVyGH/O2b89rwteB8yEdBsFR6UIju8
-         NJm2HJ4uMfn9SFdyGwq+Rm4i/G8dGJNyvDv9Zzr8hIeBpsYT6vZG4clhGssAdkM+m2yY
-         lKikoOLaGfbQovsexzhgs7OxIy5d0UZsm5WStgE8Odi8E+aIreC3sTGcaDAhytS1es+r
-         Ph9s/elcaQ3BYbGdvW+To5+UHeySz1pzDHjxnvqCxDSaYcscvAmZ4dgtPOZcQrfvKQdq
-         4mqRC0zRuvLZhk47f8WKOb1cytakM25DKg+UhAcgsQuLW670bHSq2GnCAgyJ0LhK5E39
-         qUDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762988250; x=1763593050;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=vDdGU9f1AjnbUUZofpssnIOwmqCSincQK/z8WMfUJ40=;
-        b=SiKXT9tKzQjsKy3MZ2UCrpb20TQP0SmFOkBFWfcOk4ekgwJ+CdsQ2WBoyTcIvpOM7s
-         Eg7NA280QvMusDrLlX00L+z+Osho2q6NkXRXxFoYYqn+Y/xvWPmlXVeEMspJPJrV6sSm
-         LOZTyH+5DxPtIgGcB2tC/HnmilJXbCVzA0100ERWCQ7xHreqGoklbCpqb+OiCrwNfdyE
-         S5zt6Hf0lmqeD/JGRqg01eDDSA9irN9vLH5EVaG//vYuVVhMYdjqXKrarXLPXNGpZDTi
-         +CxBxw/4oAJLaJ2VgbiHrb8IPVP8lsHD7FO2q59teuogRQNvHXMzQU273EPkTGZxsZhm
-         WAKg==
-X-Forwarded-Encrypted: i=1; AJvYcCWyhpb5eOCJgCpeTybmeYMlTC53nA4WzeatbbYbbjxJ/db/rIOylYy9zUn9QhehgSe2wmt3EmijKED5pDQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywig2z4DUL5FMoyvJsIQjbIUB7Lk2zK/kiqLXitvFWVr9pFUHC9
-	oaj2LEvO+BncDq5xpBKDHrIxXfP0z+u2u2DUeh03oYnG374+UBZ7Ih1e
-X-Gm-Gg: ASbGncsdSy6j6uzFY3WgFOaO8CKzRQS/2B9/bL81b1e4tPF/qrvr11Eb0YvQySbrnwN
-	6qz1X8UZLoPPMrAvL4qtVpddJEYwEXODycH1nAuMlzAxfSmL5A6jXvG7SpaE7yN6VlryxZU9rMo
-	VK+sf4yFPEA4uizhi5XhlbMIsfWI14Pd9t/AeCi4XouYYR4OOGtyZSyLgDe5sL5CPOCad2t2R4V
-	xL60KnvI4CIqCLsMcUeGBAG2KNB+QXXziHy/XS1pPK5I2j5dMeG3kQ46wGATRFW8sayQykAxV59
-	ZgYAUUwfad9FBDqtXtw28fPcFkrTo2TIvJcjw5+O7+NUtortT6smiyo+rn1OgklT4EvCGjfqwcb
-	1RFOqiO5PnWhbhIN4nPPR8K7+ip5ikjskUA13AZ+oa8+UKEE1RCAAMb4F9CdPxUvl37XC7cIO
-X-Google-Smtp-Source: AGHT+IHd2ghe5/cUirh89dZkN5PNcB58L5BDtdQaut5HE/Jd3Vznjz6w0+Wyr/d7Bgq1xX0pEP1YUw==
-X-Received: by 2002:a05:6000:4008:b0:429:d6dc:ae1a with SMTP id ffacd0b85a97d-42b4bd9bca6mr5035268f8f.30.1762988249643;
-        Wed, 12 Nov 2025 14:57:29 -0800 (PST)
-Received: from localhost.localdomain ([78.209.131.33])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b53e85cc0sm236979f8f.17.2025.11.12.14.57.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Nov 2025 14:57:29 -0800 (PST)
-From: Antoni Pokusinski <apokusinski01@gmail.com>
-To: jic23@kernel.org,
-	dlechner@baylibre.com,
-	nuno.sa@analog.com,
-	andy@kernel.org,
-	marcelo.schmitt1@gmail.com
-Cc: linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Antoni Pokusinski <apokusinski01@gmail.com>
-Subject: [PATCH v4 3/3] iio: ABI: document pressure event attributes
-Date: Wed, 12 Nov 2025 23:57:01 +0100
-Message-Id: <20251112225701.32158-4-apokusinski01@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20251112225701.32158-1-apokusinski01@gmail.com>
-References: <20251112225701.32158-1-apokusinski01@gmail.com>
+	s=arc-20240116; t=1762988506; c=relaxed/simple;
+	bh=ptpQHUkjOPekkiQOHwD58jsF0L267w/KGg8/nZu2zTM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qWtO4hlsTd5eMSiDPmifueyxXzKbXiHBCpihDcJxSYyHjI1qDXGY5sGqTtuFJiokyU6XMA0+Hm4Om8YQEBJNXKXvjXRcXMiO24YAP7+B71QzPDo6EpU8OGfIHL/rLgo1P34HPJTZy5sXnqMw6Sh8uK4gzgBkRhGoyAK3VJ+7ASo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=COEHRRoB; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762988505; x=1794524505;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ptpQHUkjOPekkiQOHwD58jsF0L267w/KGg8/nZu2zTM=;
+  b=COEHRRoBGUvkLAx/VFNzBolb23Ugg0bcNOJzpcljxA2zE534odU+4bRv
+   uPC2ZdDrAguIpMoOpcGw3J7k1LdhdxtLE/ovNNCDXpXmeKtzgYqYynWx6
+   OrYHMrcXLIFjdauUP7nuLdQn7b05EUs69WSjGYYageagc2AUAJU9lvOLU
+   ZP4zs5NVg1Lkyfstl4P2gXREvKvX0Qdn2+YhPw37aScqMoQmaNjQ7wWej
+   RvS50sosLLFFxQ+W3jh9M1zDX+u92xlU96CEYakAAKGAO243pc2a0rSt9
+   elH4NGRVWjZWwKXdzXHAU2GcBDp/XVbkWCUqYvnXZcq20qM/6u5gs3rEr
+   w==;
+X-CSE-ConnectionGUID: tZwwttguTJKIKb9oSuh00Q==
+X-CSE-MsgGUID: woettoVLS2KXDXbnjAo1Ug==
+X-IronPort-AV: E=McAfee;i="6800,10657,11611"; a="75371715"
+X-IronPort-AV: E=Sophos;i="6.19,300,1754982000"; 
+   d="scan'208";a="75371715"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2025 15:01:44 -0800
+X-CSE-ConnectionGUID: /Ik4MOPGRX60m5ZRK8SEQw==
+X-CSE-MsgGUID: CR5Znu9hQVKOq1mhyKZqKQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,300,1754982000"; 
+   d="scan'208";a="193734035"
+Received: from guptapa-desk.jf.intel.com (HELO desk) ([10.165.239.46])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2025 15:01:45 -0800
+Date: Wed, 12 Nov 2025 15:01:38 -0800
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Borislav Petkov <bp@alien8.de>, Paolo Bonzini <pbonzini@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Brendan Jackman <jackmanb@google.com>
+Subject: Re: [PATCH v4 4/8] KVM: VMX: Handle MMIO Stale Data in VM-Enter
+ assembly via ALTERNATIVES_2
+Message-ID: <20251112230138.nepccbv3wf5em5ra@desk>
+References: <20251031003040.3491385-1-seanjc@google.com>
+ <20251031003040.3491385-5-seanjc@google.com>
+ <20251112164144.GAaRS4yKgF0gQrLSnR@fat_crate.local>
+ <aRTAlEaq-bI5AMFA@google.com>
+ <20251112183836.GBaRTULLaMWA5hkfT9@fat_crate.local>
+ <aRTubGCENf2oypeL@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aRTubGCENf2oypeL@google.com>
 
-Add sysfs pressure event attributes exposed by the mpl3115 driver. These
-allow controlling the threshold value and the enable state.
+On Wed, Nov 12, 2025 at 12:30:36PM -0800, Sean Christopherson wrote:
+> VMX "needs" to abuse RFLAGS no matter what, because RFLAGS is the only register
+> that's available at the time of VMLAUNCH/VMRESUME.  On Intel, only RSP and
+> RFLAGS are context switched via the VMCS, all other GPRs need to be context
+> switch by software.  Which is why I didn't balk at Pawan's idea to use RFLAGS.ZF
+> to track whether or not a VERW for MMIO is needed.
+> 
+> Hmm, actually, @flags is already on the stack because it's needed at VM-Exit.
+> Using EBX was a holdover from the conversion from inline asm to "proper" asm,
+> e.g. from commit 77df549559db ("KVM: VMX: Pass @launched to the vCPU-run asm via
+> standard ABI regs").
+> 
+> Oooh, and if we stop using bt+RFLAGS.CF, then we drop the annoying SHIFT definitions
+> in arch/x86/kvm/vmx/run_flags.h.
+> 
+> Very lightly tested at this point, but I think this can all be simplified to
+> 
+> 	/*
+> 	 * Note, ALTERNATIVE_2 works in reverse order.  If CLEAR_CPU_BUF_VM is
+> 	 * enabled, do VERW unconditionally.  If CPU_BUF_VM_MMIO is enabled,
+> 	 * check @flags to see if the vCPU has access to host MMIO, and do VERW
+> 	 * if so.  Else, do nothing (no mitigations needed/enabled).
+> 	 */
+> 	ALTERNATIVE_2 "",									  \
+> 		      __stringify(testl $VMX_RUN_CLEAR_CPU_BUFFERS_FOR_MMIO, WORD_SIZE(%_ASM_SP); \
 
-Reviewed-by: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-Signed-off-by: Antoni Pokusinski <apokusinski01@gmail.com>
----
- Documentation/ABI/testing/sysfs-bus-iio | 2 ++
- 1 file changed, 2 insertions(+)
+WORD_SIZE(%_ASM_SP) is still a bit fragile, but this is definitely an
+improvement.
 
-diff --git a/Documentation/ABI/testing/sysfs-bus-iio b/Documentation/ABI/testing/sysfs-bus-iio
-index 352ab7b8476c..5f87dcee78f7 100644
---- a/Documentation/ABI/testing/sysfs-bus-iio
-+++ b/Documentation/ABI/testing/sysfs-bus-iio
-@@ -898,6 +898,7 @@ What:		/sys/.../iio:deviceX/events/in_tempY_thresh_rising_en
- What:		/sys/.../iio:deviceX/events/in_tempY_thresh_falling_en
- What:		/sys/.../iio:deviceX/events/in_capacitanceY_thresh_rising_en
- What:		/sys/.../iio:deviceX/events/in_capacitanceY_thresh_falling_en
-+What:		/sys/.../iio:deviceX/events/in_pressure_thresh_rising_en
- KernelVersion:	2.6.37
- Contact:	linux-iio@vger.kernel.org
- Description:
-@@ -1047,6 +1048,7 @@ What:		/sys/.../events/in_capacitanceY_thresh_rising_value
- What:		/sys/.../events/in_capacitanceY_thresh_falling_value
- What:		/sys/.../events/in_capacitanceY_thresh_adaptive_rising_value
- What:		/sys/.../events/in_capacitanceY_thresh_falling_rising_value
-+What:		/sys/.../events/in_pressure_thresh_rising_value
- KernelVersion:	2.6.37
- Contact:	linux-iio@vger.kernel.org
- Description:
--- 
-2.25.1
-
+> 				  jz .Lskip_clear_cpu_buffers;					  \
+> 				  VERW;								  \
+> 				  .Lskip_clear_cpu_buffers:),					  \
+> 		      X86_FEATURE_CLEAR_CPU_BUF_VM_MMIO,					  \
+> 		      __stringify(VERW), X86_FEATURE_CLEAR_CPU_BUF_VM
+> 
+> 	/* Check if vmlaunch or vmresume is needed */
+> 	testl $VMX_RUN_VMRESUME, WORD_SIZE(%_ASM_SP)
+> 	jz .Lvmlaunch
 
