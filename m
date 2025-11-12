@@ -1,121 +1,146 @@
-Return-Path: <linux-kernel+bounces-896444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94C51C5062E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 04:04:33 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1BC9C5069A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 04:15:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF73E3B23DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 03:03:00 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 66E6734A1FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 03:15:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F3AA29E0E1;
-	Wed, 12 Nov 2025 03:02:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21A7F23D7D7;
+	Wed, 12 Nov 2025 03:15:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UHyFydut"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="aLIRsccX"
+Received: from mail-m4921.qiye.163.com (mail-m4921.qiye.163.com [45.254.49.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E2131494DB;
-	Wed, 12 Nov 2025 03:02:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25956186294;
+	Wed, 12 Nov 2025 03:15:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762916574; cv=none; b=OAeSWXOWrjcVsDZ7as5bKd6rpNkdGOlafatKmGIPv9kYGfaCIiJC5L/Bhsfa9W10CUppcgxptGEmh6+OWqFOe6k6g0rTeePXa/r57lfCnSHfcfJo+RzKwUnWEvF2/MC5rNtwy/tBIi4HwVt+psJ0Tg9Tpix07Q6wPXTEaDcfdXc=
+	t=1762917322; cv=none; b=Ld/Zu9Ao8+7nSDtCSwa7BC329FWXSKsNngyZ9yp1pCA6OD+HZikCL9x+ppxcw2XdhN+ULeBmB1eU/Lc+XSm5Ag2CxVNq0W7h4TTGcnB2+spQFusIs9CTr6HKKktBL6eqqHAdEGmGn5p+D34ot1BxJ57IgCqImvHWDYlYOaG4v8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762916574; c=relaxed/simple;
-	bh=0CzASL4FQtni4BE+5yAo9I0TqTLhNXvwqY61AaPkOZs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=n3JCglCb35fIe/3Dj0lnE9mwUocxVDAiYWK0T3yc/Tj/QqMT3vkQmlA1y4ac1uK6xc5VlFCEqGcyLG7lTa3s+zDmVsYDlkbEH7GZKlTCe0ZNGqFU1GgGLPzy0N8GGExEMn5lK0uCoxEwBCyXES4zbktcIiLVc1yCdZeKlC6Xy+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UHyFydut; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762916573; x=1794452573;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=0CzASL4FQtni4BE+5yAo9I0TqTLhNXvwqY61AaPkOZs=;
-  b=UHyFydutvHb/NWKQpfxT+biV/hu/PC3aATklzjyjzAPv8wOvlYzIHGtl
-   pIp1eCKs3BRJVSIAT3lzHT9DtVdomUXmwWSBnoe5OIh8q8zEfSoNml3li
-   FETz4dbzIbkmTvsR/SyeTmHdl2BvcPyfSy1nTBWKmcZS/nN99Ng3aHSl3
-   6YJoEzYBQxfBPEMg610M0JJwkYUQOT1B9SFIw8olE2B6zAD3qr46hULOB
-   O25Z3BqQqQeCzviAcPUnNFbzQUbhmAND44sAgQmLoznGobMl51Y1dmeji
-   ZrAXPrDvZmag/zia3OLFT0G8SsoeTgVWVgulmBFxGxtsVkmO/oXXV8Vyp
-   w==;
-X-CSE-ConnectionGUID: P8LTB1xXS4ecAFQYawj+UQ==
-X-CSE-MsgGUID: AxeW4Y2dSFqRmcz4ug12yw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11610"; a="63981337"
-X-IronPort-AV: E=Sophos;i="6.19,298,1754982000"; 
-   d="scan'208";a="63981337"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 19:02:53 -0800
-X-CSE-ConnectionGUID: vPPwIXwoShCC59bAM+JeaQ==
-X-CSE-MsgGUID: mJrBIcSfTDGkGIwwzBS3AA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,298,1754982000"; 
-   d="scan'208";a="189531161"
-Received: from unknown (HELO [10.238.2.7]) ([10.238.2.7])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 19:02:49 -0800
-Message-ID: <a101fe80-ca0b-4b4b-94b1-f08db1b164fc@intel.com>
-Date: Wed, 12 Nov 2025 11:02:47 +0800
+	s=arc-20240116; t=1762917322; c=relaxed/simple;
+	bh=ous4ekECHCVh+bwS4QqLshbet6cQu7pTxp9rlTcxeGg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qVHgO+77n5AU9szGFaev47abwHAuQChUVbzH9ntLKRnQH17IJ3fMVNCS8pLsKZys1vb1g++eq5CDkUHtvOFwGCHm4aS784jMjI2WQ90LDkiA7vGPKq6Ap47FMpNX8BRHoyE/wBe15jbvIiROfh/E7zGfk7n2vYyG/kQbH85wkqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=aLIRsccX; arc=none smtp.client-ip=45.254.49.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from rockchip.. (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 2941ca600;
+	Wed, 12 Nov 2025 09:59:41 +0800 (GMT+08:00)
+From: Elaine Zhang <zhangqing@rock-chips.com>
+To: zhangqing@rock-chips.com,
+	mkl@pengutronix.de,
+	kernel@pengutronix.de,
+	mailhol.vincent@wanadoo.fr,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	heiko@sntech.de,
+	cl@rock-chips.com
+Cc: linux-can@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [RESEND PATCH v8 0/4] rockchip: add can for RK3576 Soc
+Date: Wed, 12 Nov 2025 09:59:36 +0800
+Message-Id: <20251112015940.3695638-1-zhangqing@rock-chips.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND] lib/group_cpus: make group CPU cluster aware
-To: Ming Lei <ming.lei@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Thomas Gleixner <tglx@linutronix.de>, Keith Busch <kbusch@kernel.org>,
- Jens Axboe <axboe@fb.com>, Christoph Hellwig <hch@lst.de>,
- Sagi Grimberg <sagi@grimberg.me>, linux-kernel@vger.kernel.org,
- linux-nvme@lists.infradead.org, virtualization@lists.linux-foundation.org,
- linux-block@vger.kernel.org, Tianyou Li <tianyou.li@intel.com>,
- Tim Chen <tim.c.chen@linux.intel.com>, Dan Liang <dan.liang@intel.com>
-References: <20251111020608.1501543-1-wangyang.guo@intel.com>
- <aRKssW96lHFrT2ZN@fedora> <b94a0d74-0770-4751-9064-2ef077fada14@intel.com>
- <aRMnR5DRdsU8lGtU@fedora>
-Content-Language: en-US
-From: "Guo, Wangyang" <wangyang.guo@intel.com>
-In-Reply-To: <aRMnR5DRdsU8lGtU@fedora>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a9a75ca43d503a3kunm5e00f3261f06da
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQ0xCTlYeQk1MSU5DGU5JTktWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=aLIRsccXD6OHTYMdNKhB6kfs1DxMOUvutw9+ms35cehDXC065xL9yF/088jZrkgBlm4B6eWysIV5bnzspS5kcdZ4KF2qx1a2Tr/HJdvZqfDFJSYAFl/5Tdutm0G62qCfG8j56DFT8K1/yQYUYV9zu1H1oDaiqWsjw/16TpAbbY4=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=au2n4rrZx8SO4PVuqq8XAKDLJGp5zKXJpUNLmozR0c8=;
+	h=date:mime-version:subject:message-id:from;
 
-On 11/11/2025 8:08 PM, Ming Lei wrote:
-> On Tue, Nov 11, 2025 at 01:31:04PM +0800, Guo, Wangyang wrote:
->> On 11/11/2025 11:25 AM, Ming Lei wrote:
->>> On Tue, Nov 11, 2025 at 10:06:08AM +0800, Wangyang Guo wrote:
->>>> As CPU core counts increase, the number of NVMe IRQs may be smaller than
->>>> the total number of CPUs. This forces multiple CPUs to share the same
->>>> IRQ. If the IRQ affinity and the CPU’s cluster do not align, a
->>>> performance penalty can be observed on some platforms.
->>>
->>> Can you add details why/how CPU cluster isn't aligned with IRQ
->>> affinity? And how performance penalty is caused?
->>
->> Intel Xeon E platform packs 4 CPU cores as 1 module (cluster) and share the
->> L2 cache. Let's say, if there are 40 CPUs in 1 NUMA domain and 11 IRQs to
->> dispatch. The existing algorithm will map first 7 IRQs each with 4 CPUs and
->> remained 4 IRQs each with 3 CPUs each. The last 4 IRQs may have cross
->> cluster issue. For example, the 9th IRQ which pinned to CPU32, then for
->> CPU31, it will have cross L2 memory access.
-> 
-> 
-> CPUs sharing L2 usually have small number, and it is common to see one queue
-> mapping includes CPUs from different L2.
-> 
-> So how much does crossing L2 hurt IO perf?
-We see 15%+ performance difference in FIO libaio/randread/bs=8k.
+rk3576 can is a new controller,new register layout and Bit position
+definition:
+Support CAN protocol.
+Support Dma.
 
-> They still should share same L3 cache, and cpus_share_cache() should be
-> true when the IO completes on the CPU which belong to different L2 with the
-> submission CPU, and remote completion via IPI won't be triggered.
-Yes, remote IPI not triggered.
+There are major differences from the previous rk3568.
+All errata on the rk3568 have been fixed and redesigned.
+
+RK3576 CANFD requires authorization and permission. The software
+code is not open by default and needs to be authorized separately.
+
+Change in V8:
+[PATCH v8 1/4]: Drop CANFD, correction format warning.
+[PATCH v8 2/4]: Drop fifo_setup of rkcanfd_devtype_data.
+[PATCH v8 3/4]: Drop CANFD.
+[PATCH v8 4/4]: Drop CANFD.
+
+Change in V7:
+[PATCH v7 1/4]: Correction format warning.
+[PATCH v7 2/4]: No change.
+[PATCH v7 3/4]: Correct the writing of some registers and
+                correct the annotations.
+[PATCH v7 4/4]: Optimize the structure parameters and
+                ensure error handling.
+
+Change in V6:
+[PATCH v6 1/4]: Fix dma is support only for rk3576.
+[PATCH v6 2/4]: Fix the compilation warning.
+[PATCH v6 3/4]: Fix the compilation warning.
+[PATCH v6 4/4]: Fix the compilation warning.
+
+Change in V5:
+[PATCH v5 1/4]: Add rk3576 canfd to rockchip,rk3568v2-canfd.yaml, remove
+                rockchip,rk3576-canfd.yaml
+[PATCH v5 2/4]: Encapsulate some hardware operation functions into
+                rkcanfd_devtype_data to provide differentiated
+                implementations for different models
+                (such as RK3568v2/v3)..
+[PATCH v5 3/4]: Add rk3576 canfd,fix the register naming rule,
+                Delete the variables used by rockchip itself.
+[PATCH v5 4/4]: Fix .h sorting.
 
 
-BR
-Wangyang
+Change in V4:
+[PATCH v4 1/3]: Correct the format and add explanations.
+[PATCH v4 2/3]: No change.
+[PATCH v4 3/3]: No change.
+
+Change in V3:
+[PATCH v3 1/3]: Add documentation for the rk3576 CAN-FD.
+[PATCH v3 2/3]: Adjust the differentiated code section and
+                add dma function.
+[PATCH v3 3/3]: Remove dma, no use dma by default.
+
+Change in V2:
+[PATCH v2 1/2]: remove rk3576_canfd.c, use the rockchip_canfd driver
+[PATCH v2 2/2]: code style.
+
+Elaine Zhang (4):
+  dt-bindings: can: rockchip_canfd: add rk3576 CAN controller
+  net: can: rockchip: Refactor the rkcanfd_devtype_data structure
+  net: can: rockchip: add can for RK3576 Soc
+  net: can: rockchip: support dma for rk3576 rx
+
+ .../net/can/rockchip,rk3568v2-canfd.yaml      |  52 +-
+ .../net/can/rockchip/rockchip_canfd-core.c    | 581 ++++++++++++++++--
+ drivers/net/can/rockchip/rockchip_canfd-rx.c  | 212 +++++++
+ drivers/net/can/rockchip/rockchip_canfd-tx.c  |  20 +
+ drivers/net/can/rockchip/rockchip_canfd.h     | 277 +++++++++
+ 5 files changed, 1094 insertions(+), 48 deletions(-)
+
+-- 
+2.34.1
+
 
