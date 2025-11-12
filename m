@@ -1,200 +1,130 @@
-Return-Path: <linux-kernel+bounces-897772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2A7BC539ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:17:03 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D58DC53CBE
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:52:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14ADE5635FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:42:44 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7E15D4FD113
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:12:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 909A333B977;
-	Wed, 12 Nov 2025 16:42:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46EF9345CA4;
+	Wed, 12 Nov 2025 17:12:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cVAtPhmY"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="KTYxyHGT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54AD033970D
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 16:42:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 774ED3451CA;
+	Wed, 12 Nov 2025 17:12:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762965754; cv=none; b=OlNWnHSgmeixyoOu9h6GiSEGeG+sKqmsNqO8uoHuJR9Ipt7B9kb9/xcnM2sA/PPcaql5f2BAUoNASJfP0+XpjOzzt4uXgheV+i+eU7nMff9PILM90CvcTpXftoQHQgn+MyqgL4TzS4EO2w+gVBLWjZToVkANNckHIROf71AGnok=
+	t=1762967535; cv=none; b=NQ7oUA3eh78tDJHy9E9Fe/YCQPr2UTLnwpoIub1RpGSLwsVa0l+zL7vBsEKnLcCwJHdrvqBa+iINY97/qQvacGkOhTAO3YBX+4WVehEmhwYudG+cYnZ2MsC228HB/Ie9nz857Uu2h71mNDqD0Hs+8/8tgffp9DuTBtlFcEhYcQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762965754; c=relaxed/simple;
-	bh=/bSxAcGrhRp7L4ufXIbZzzWuihJrDC7nvf+26+tVFgo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BATzKiFEP7KZsePv9kpC2WeucpxKMDvyvUQhOBOtQ+gIJYw9v098SoXFYovhrV5mlypRWoQwb8+KqpMdgJ/iGdeIHO0jXuXoT5ZPA5Y9xtwXA047JZd96rGXJHclF6Rnx9HD2D4nZIchZFT0GPm41pRHTpq7ynclvkZDCAvl/DE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cVAtPhmY; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2980343d9d1so191555ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 08:42:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762965753; x=1763570553; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oylNPE4uVKQhn2NkMu29EXgAYx+J4vN9SweT4O8izLI=;
-        b=cVAtPhmYDHzakEg5I05otGSgoMSQ+hFCpqXQ9Vw5waHd4Aj5E8PkH3m8w8P8WCH4jb
-         cciBTzdDTLVKfOa8gy7lPWDAxc7Cwn+d+JWrf7u+NwO1Dg+vv0WcaCcy8WL/2f0mVMua
-         JCfc2Omp5bEw7Wc4xlcmr071zl3cks1iZC5HJcttoOoznjChZfeNhtbH5OLBuKapZmFr
-         GJI8DJqlVmicfyHMv7nBgLAkcS7hRJ3TM+tXYmd02KteJqrS7snG44d8FSYkXdNWgLWx
-         scSrjRiByAIdaplGhXR5we/JZ0KWn/5HqTknpxwQlVDE6Xemo6lRVt+dY0oCr1IxWa3a
-         I1yA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762965753; x=1763570553;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=oylNPE4uVKQhn2NkMu29EXgAYx+J4vN9SweT4O8izLI=;
-        b=Z2RNJSAy33E6D7EGte6JiZk6PP0cEl8eE0E9cteFBN9+k9mOvhwjZvbRm6IlEAcEQ/
-         tGjeLlbTwwAxM5pxUu2ZYCOg84uu8WQqi4+pBrYA4oybivHBLvwIuqpAgf3EttYbJn0b
-         iTkCMiF5GdNRzrEGNLslcxpgNqOrC6kMJjUmcBCTAi+ijb9VRceNuyaB90FjgOqe5cgz
-         U3tz6BFyuoZ4gQFqjRSUIlvJx6pMt3Dk9otY9ZmS9SYw9NP6oihFDRtcaKDHjVXRGVs6
-         UsVdthFQwApKWaYGLmowlTh1I/h8OGvNd/64ryT9CERynzS47z8ktvJmMzcvVQ+bR482
-         rc5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWG7CV3dZ9+CQfWEdHrb5td4KmQ8ifyaslgLaaCcdDPRPSbwIU5kUSBaBv0KgMUAwcPUxyi/73X+RJth/s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSGzgxb2tH4uqP+C8/yz83TpP6XfjMMIBatFU+0N5cljhk3jj0
-	gbXebNZflNcrnU9Bl8Vej9yZ9nUUsGsMuUKOgxeSxCz0dXkFngJlC5IfJZtbBF2vNdUhQ8/h7GZ
-	L0ZD52b407RSbuwDnmOpZJrNz7DvTBhIuGdPkyF5E
-X-Gm-Gg: ASbGncuGykR5iSIanpgBqPvOp4R/a5oMb+XaIPY0fOuvWpklN00hiiwdpsiiuwunX37
-	qlRyA80AZJlebNhbeLAIN1n1lfiA1y5YNN05hznkxUy30CihRDCQloWWFrZgLaZhPUTcP6P4r3l
-	4PLes6QkJprNXwuxmq2od5a4GW3aEJkPt3ZiteEXil4K1j26qhoXE2fsnT6Iy2Zh1rZrzXCzIb2
-	LvsgF6hGdNvZir0AeaVdypFLsb+xaog/JnkyKdMWkJiSb4SqmtlxwwPwnc6UuP/pmeVsYjO9iQv
-	iCXx+2fsmaCf074cFh5hMpv2pSKVPRaqreZ8
-X-Google-Smtp-Source: AGHT+IGcvt334Z1FGLlZNlTy5sWbRse8K04gLzU4vGzUmOzboVYYpE+qoTjqfj4wk2TEaL9VZwvq7RS13Bg49n/566w=
-X-Received: by 2002:a17:903:1a68:b0:295:5138:10f2 with SMTP id
- d9443c01a7336-29850761942mr2777945ad.11.1762965752176; Wed, 12 Nov 2025
- 08:42:32 -0800 (PST)
+	s=arc-20240116; t=1762967535; c=relaxed/simple;
+	bh=LfwDw5nDHN9mjQ61ppHmMZFw8Tz8l0KhDqOCjnLSsZs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g9vHbF18bmmneTHi6wc8HNZXGMzJ97E1fgekDIrmapSSQB7q4zy1ggivBNqlsmehdPWPp5OMMN7EPw3Aw3on/P4UdNJTsfc7HJ+/tWHlErZBLdaVzRa7wsub8lMkYhljgwq8wRvsAcuFnbLp3z0OyiqYsMlzR/AyFsabino30fo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=KTYxyHGT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0021C113D0;
+	Wed, 12 Nov 2025 17:12:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1762967533;
+	bh=LfwDw5nDHN9mjQ61ppHmMZFw8Tz8l0KhDqOCjnLSsZs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KTYxyHGTfO4RZ7Qp+aEhY9+SN67VWZDd2oFFjjTfeAaciwJQIETuyG3VBpSKtwpeE
+	 MPDhM71JtUblUCmp8YZVjUEVNwdCsrJ9CCW9xAme1tvzqI1vdSMVDqCcoZlu7cR83o
+	 7OYGS2MbE1Df5kVTccsRCPaZegHiw6nKxsc83dd0=
+Date: Wed, 12 Nov 2025 11:46:50 -0500
+From: Greg KH <gregkh@linuxfoundation.org>
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Theodore Ts'o <tytso@mit.edu>, Maarten Brock <Maarten.Brock@sttls.nl>,
+	"linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+	"linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: RFC: Serial port DTR/RTS - O_NRESETDEV
+Message-ID: <2025111241-domestic-moonstone-f75f@gregkh>
+References: <dc42f5d4-a707-4442-bda6-1c1990666f54@zytor.com>
+ <20251110033556.GC2988753@mit.edu>
+ <ADB50E23-DC8B-43D0-A345-E10396A3DFD4@zytor.com>
+ <AMBPR05MB11925DA076098B05E418BF64283CEA@AMBPR05MB11925.eurprd05.prod.outlook.com>
+ <20251110201933.GH2988753@mit.edu>
+ <0F8021E8-F288-4669-8195-9948844E36FD@zytor.com>
+ <20251111035143.GJ2988753@mit.edu>
+ <D4AF3E24-8698-4EEC-9D52-655D69897111@zytor.com>
+ <2025111214-doily-anyway-b24b@gregkh>
+ <6DBB5931-ACD4-4174-9FCE-96C45FFC4603@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251112080526.3971392-1-dapeng1.mi@linux.intel.com>
-In-Reply-To: <20251112080526.3971392-1-dapeng1.mi@linux.intel.com>
-From: Ian Rogers <irogers@google.com>
-Date: Wed, 12 Nov 2025 08:42:21 -0800
-X-Gm-Features: AWmQ_bnM7jWScBcxYA5ih0EnQ4GPvFcr1HhXobUst0RWyHfyQ_qayf9TvN2n1hc
-Message-ID: <CAP-5=fUW2CdFnZ3sSOAnEHHqgDV3OB-p3FbfL+KKkvJJ6_smNg@mail.gmail.com>
-Subject: Re: [PATCH] perf: Fix 0 count issue of cpu-clock
-To: Dapeng Mi <dapeng1.mi@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Andi Kleen <ak@linux.intel.com>, 
-	Eranian Stephane <eranian@google.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, Dapeng Mi <dapeng1.mi@intel.com>, 
-	Zide Chen <zide.chen@intel.com>, Falcon Thomas <thomas.falcon@intel.com>, 
-	Xudong Hao <xudong.hao@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6DBB5931-ACD4-4174-9FCE-96C45FFC4603@zytor.com>
 
-On Wed, Nov 12, 2025 at 12:07=E2=80=AFAM Dapeng Mi <dapeng1.mi@linux.intel.=
-com> wrote:
->
-> Currently cpu-clock event always returns 0 count, e.g.,
->
-> perf stat -e cpu-clock -- sleep 1
->
->  Performance counter stats for 'sleep 1':
->                  0      cpu-clock                        #    0.000 CPUs =
-utilized
->        1.002308394 seconds time elapsed
->
-> The root cause is the commit 'bc4394e5e79c ("perf: Fix the throttle
->  error of some clock events")' adds PERF_EF_UPDATE flag check before
-> calling cpu_clock_event_update() to update the count, however the
-> PERF_EF_UPDATE flag is never set when the cpu-clock event is stopped in
-> counting mode (pmu->dev() -> cpu_clock_event_del() ->
-> cpu_clock_event_stop()). This leads to the cpu-clock event count is
-> never updated.
->
-> To fix this issue, force to set PERF_EF_UPDATE flag for cpu-clock event
-> just like what task-clock does. Besides, or flags with PERF_EF_UPDATE
-> for task-clock although currently the flags argument would always be 0.
->
-> Fixes: bc4394e5e79c ("perf: Fix the throttle error of some clock events")
-> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+On Wed, Nov 12, 2025 at 08:09:45AM -0800, H. Peter Anvin wrote:
+> On November 12, 2025 3:22:56 AM PST, Greg KH <gregkh@linuxfoundation.org> wrote:
+> >On Mon, Nov 10, 2025 at 07:57:22PM -0800, H. Peter Anvin wrote:
+> >> Honestly, though, I'm far less interested in what 8250-based hardware does than e.g. USB.
+> >
+> >hahahahahahaha {snort}
+> >
+> >Hah.  that's a good one.
+> >
+> >Oh, you aren't kidding.
+> >
+> >Wow, good luck with this.  USB-serial adaptors are all over the place,
+> >some have real uarts in them (and so do buffering in the device, and
+> >line handling in odd ways when powered up), and some are almost just a
+> >straight pipe through to the USB host with control line handling ideas
+> >tacked on to the side as an afterthought, if at all.
+> >
+> >There is no standard here, they all work differently, and even work
+> >differently across the same device type with just barely enough hints
+> >for us to determine what is going on.
+> >
+> >So don't worry about USB, if you throw that into the mix, all bets are
+> >off and you should NEVER rely on that.
+> >
+> >Remeber USB->serial was explicitly rejected by the USB standard group,
+> >only to have it come back in the "side door" through the spec process
+> >when it turned out that Microsoft hated having to write a zillion
+> >different vendor-specific drivers because the vendor provided ones kept
+> >crashing user's machines.  So what we ended up with was "just enough" to
+> >make it through the spec process, and even then line signals are
+> >probably never tested so you can't rely on them.
+> >
+> >good luck!
+> >
+> >greg "this brought up too many bad memories" k-h
+> 
+> Ugh.
+> 
+> I have made it very clear that I am very aware that there is broken hardware. 
 
-Thanks Dapeng! This is a fairly major regression and I'm surprised my
-kernel picked it up so quickly. For those interested the relevant part
-of the breaking change is requiring PERF_EF_UPDATE:
+I would posit that there is NO "non-broken" usb->serial devices out
+there.  The closest I have seen was the old IO-Edgeport devices, but
+they were expensive and got bought out by some other company and in the
+end didn't succeed due to all of the "cheap" devices/chips out there
+that just did dumb tx/rx transfers over a fake serial connection.
 
-```
-@@ -11829,7 +11834,8 @@ static void cpu_clock_event_start(struct
-perf_event *event, int flags)
- static void cpu_clock_event_stop(struct perf_event *event, int flags)
- {
-        perf_swevent_cancel_hrtimer(event);
--       cpu_clock_event_update(event);
-+       if (flags & PERF_EF_UPDATE)
-+               cpu_clock_event_update(event);
- }
- ```
+> What I'm trying to do is to deal with the (occasional) case of
+> *non*-broken hardware. Right now Linux breaks the non-broken hardware
+> for it, and I don't think the existence of broken hardware is a good
+> justification for that.
 
-Reviewed-by: Ian Rogers <irogers@google.com>
+No, but we have to handle both somehow.
 
-Hopefully a maintainer can pick this up quickly. Thanks,
-Ian
+And given that we still get brand-new UART drivers sent to use every few
+months, there is just more and more "broken" hardware out there overall.
 
-> ---
->
-> With this change, both cpu-clock and task-clock can do counting and
-> samping correctly.
->
-> 1. perf stat -e cpu-clock,task-clock -- true
->
->  Performance counter stats for 'true':
->            240,636      cpu-clock                        #    0.358 CPUs =
-utilized
->            243,319      task-clock                       #    0.362 CPUs =
-utilized
->
-> 2. perf record -e cpu-clock -c 10000 -Iax,bx -- sleep 1
-> [ perf record: Woken up 2 times to write data ]
-> [ perf record: Captured and wrote 0.028 MB perf.data (36 samples) ]
->
-> 3. perf record -e task-clock -c 10000 -Iax,bx -- sleep 1
-> [ perf record: Woken up 1 times to write data ]
-> [ perf record: Captured and wrote 0.029 MB perf.data (41 samples) ]
->
->  kernel/events/core.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index f6a08c73f783..77d3af5959c1 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -11964,7 +11964,7 @@ static int cpu_clock_event_add(struct perf_event =
-*event, int flags)
->
->  static void cpu_clock_event_del(struct perf_event *event, int flags)
->  {
-> -       cpu_clock_event_stop(event, flags);
-> +       cpu_clock_event_stop(event, flags | PERF_EF_UPDATE);
->  }
->
->  static void cpu_clock_event_read(struct perf_event *event)
-> @@ -12043,7 +12043,7 @@ static int task_clock_event_add(struct perf_event=
- *event, int flags)
->
->  static void task_clock_event_del(struct perf_event *event, int flags)
->  {
-> -       task_clock_event_stop(event, PERF_EF_UPDATE);
-> +       task_clock_event_stop(event, flags | PERF_EF_UPDATE);
->  }
->
->  static void task_clock_event_read(struct perf_event *event)
->
-> base-commit: 2093d8cf80fa5552d1025a78a8f3a10bf3b6466e
-> prerequisite-patch-id: a15bcd62a8dcd219d17489eef88b66ea5488a2a0
-> prerequisite-patch-id: 2a0eefce67b21d1f30c272fd8115b0dc1aca3897
-> --
-> 2.34.1
->
+Anyway, good luck coming up with a scheme to handle your crazy
+connections, I would push back and say "any device that treats a serial
+control line as a power signal is broken to start with" :)
+
+greg k-h
 
