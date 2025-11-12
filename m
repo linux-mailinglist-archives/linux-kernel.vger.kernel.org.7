@@ -1,79 +1,78 @@
-Return-Path: <linux-kernel+bounces-898042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C446C542C1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 20:37:48 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E488C54261
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 20:33:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFBC73B87CB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:31:11 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4DA00342E9C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:31:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02013350A2F;
-	Wed, 12 Nov 2025 19:29:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87B8A350D45;
+	Wed, 12 Nov 2025 19:30:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="U21woACI"
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="aTwvNscC"
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 255A434E769
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 19:29:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20652350A16
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 19:29:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762975798; cv=none; b=NScNDQeK913vZmmoZGvERM/gb2IX/txM4yCd7eOuZSLIi7IRdBvZj1lHne5GgBa9t87CmtVgDth/Td59JT5UQYntcbK6wA6gKVTeMrE4zILvc7Yk1dfPth8ls8KDQuCQfgLCPy3NyVM9ZrLhaHZxoaF6AaEcvQBKy4V0vCiX730=
+	t=1762975799; cv=none; b=OnRaAs67uDPSPWco2O/EvJSzJ35kL58V/j70tPjdi7D87odipTfvO4QP9ykHnb5JmTYHNg4bkGCWA4HuUF3HDhM0xmyd9+6K9+5FGD5TT/q7amkqFPuDGSDo+0/obW9XWX81rrtpGDLq+l8Z//em9vCNXrn0cOxld6qMRLPaG6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762975798; c=relaxed/simple;
-	bh=LBAE8kZkJPq29k1iLwOntoOZutywPK8fvxCPXpNAG00=;
+	s=arc-20240116; t=1762975799; c=relaxed/simple;
+	bh=0RDVQa7L0OnIu08nxQH3yL1ogWBg2dkj/2taZUo7yjs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=S7bwL85DlMUT3Ef66HY3c2ShY7N6cw1N+jrb0tWsbrY54QKCinsuZ2crCJd+xPCLSMfbBlN0CfhR4ry3NNkUXX9fagDjQD1lzYfcgb6ddPETj555mueeQlP+33AkLpSr/fbtSSsvMCrHtVuTMeH6uEhe1w2489G0+ULcukPjmpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=U21woACI; arc=none smtp.client-ip=209.85.160.180
+	 MIME-Version; b=aoUOkGuO3W8N5Lrky4Ocmrznxxv7RLpyUmg6o3xrli137Z0zacwsQmOAxo7sP7oXeEG9GuC393Dkt/6mTV0obv9jdO3KnSHFv+HUYab9xowavvTgWEyn1w+prgB27hh+l8Ahb54haEiJvv1WR+vtcXtHA2sPS+ty7FHal/KLzR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=aTwvNscC; arc=none smtp.client-ip=209.85.222.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4ed9c19248bso10850661cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 11:29:55 -0800 (PST)
+Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-8b28f983333so4543385a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 11:29:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1762975794; x=1763580594; darn=vger.kernel.org;
+        d=gourry.net; s=google; t=1762975797; x=1763580597; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=sCG0uhUeeA1he7Dw5Q3elz2n5ZNHYlg7H15kRGg6IlY=;
-        b=U21woACIC0IijHo6RyKeSPCm+5RbJUW5pOEKTWR5JuSXcjxbSz03302AaVefkaK1mN
-         1YSVR62/CcaXLISutnAmS1VBXtnnQxUQorFfdAqXHmnpfJjHVI9Y7K2tvRHVushO6Oue
-         6PE+SEbCrKLR5O5I0CMqw7INddgtmB1xDuFlZR47qzU9xB/XZcDuKnxcz5zp5vrhP1u5
-         plxt8n3Ig/WrOi1pSpkE1Fpa82gKW5jxb9Y+utSlJnAzYiPrcSPro5ew2TTkSBC0sa/J
-         XH9oigqx1GQ7eMvy4tVul+1+agNbfLI2NA4/qEpTCwAn6mUbboDZXtJ9kIfO3RT4OIQE
-         PgtA==
+        bh=Nze/QytclSTH4fFVa9JSQZznz6m85tFFzurTQmWSt3g=;
+        b=aTwvNscCNINUUy1Sifr92j+E6x4+KZxRLycf5i1o5rm86Fqd3MYahZywGTryVCqANs
+         ZUh/JKvGp51yrCxyyTH1h1BVLSO3PGnTCADcDxHrSkHefQPVgrMpwbvjFzLfAmWVmr8f
+         AL9LXgZO8hEzfx6eMenGwYlIgsi+HdAyIXQQgj3jO6Y1iJ3KwAAXHT77R3WF3yl0Bf9b
+         G4UsVoMj+AaF52ZeLKLOv8QfmCyOxAaY8gBebVoQx5BeDkIhvt94Kmx6vOdBnPCY5a6c
+         WSGTM34laehVBAoFnzTTNYmEYFKvsRveLuUbhpF8Kj+ReI4jl1tB8wa/toeD3Ok0f64l
+         /btg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762975794; x=1763580594;
+        d=1e100.net; s=20230601; t=1762975797; x=1763580597;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=sCG0uhUeeA1he7Dw5Q3elz2n5ZNHYlg7H15kRGg6IlY=;
-        b=SxnvTxqFSG92i8vi5XLy3uw2Ej5GbaplJFkEMtdgzms/uIYhGJ2QafMmOpVwpQgpYg
-         DcHSUsa9aiUtcz9uBmLN3LtQAFkb/zt39jwjFHL+cnGu7Iv+Y8rNYkKOtQdhdjh/N42y
-         Zy9DcbVH9BQ43RiwzriAa43zl0xz9huCwaq7YA9KyrIHqqyZwSfaxJj9sSHI+DwwvmJb
-         JeZeNc7xJ+TlRJPRNBL/2qONanWWverzAeFI5WIxQd7SS9E/Qs8hQgxikfwzEQyQmD0u
-         I2TwlubGp7dpdrvaTAg8oLGBOp0JGniFAtS2Q9/EUwybT05f8+/upIQRUCdu5l+YmuXu
-         WcZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVh7KKCCbY+Qsa2/idmvWj2ZpkbREqjJJL07PYC02Gwu6zTIfVLd7vr4xk60xN2uKz8fEZC/BySrSEPwts=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxttvQ1wv4WnuR49J5bxM4K9By2i1haepwAyobo1WeqPHXH4AKY
-	NJ+ewabs2NXgvt3iXFxuI751bnw9q9e/YfQzc+ynghjY//B7YTNuHoKWkIFV5NbppeI=
-X-Gm-Gg: ASbGncuprVYdj8pljVPrObIkQncr7ceVzQ6CQz9CORT8NNCr4dVfMRcPSoO29uB84Sh
-	h1a4MNhjAZ/YGNLLpZDU7Qr51yR8AjFHvB79zPwXoxCv5DKCb4qZSUnP6ICewyCQS/bTKXek+Hc
-	zzJQ8aL2QImawoNg6EgYm3aOAKG0dlILPz0zoeMeaRlxhnoNNjZtymTsnaeG6LlI8n4WK2jUWGE
-	Gl1AumssEwBbtVmNUaC718GtK61WrRSxyf2ZtIWJ/MhVlpWBKYT7s2M2L040n9dON3GhxQ2ksj8
-	V3mo89VdRUQU5NmmVbLwjVlYKw7yDIaVIooAt9qcurJnKgIk38Yjg86ERjkD2VHYktkmnTaLRs+
-	PmjI5ruR8DdR7dtcuUR3O22z9GfFC9BSn9NzUEp1o4lRsDmu1/PU8PL1QZCVRcE8ror58aMmnUU
-	cCJGn7Kc8IioG12S60JojAGmQXtKIYEQTvLdzBghmqDm3p6W5nx7wWpUGDVF+SzAG7TtvKAY5Al
-	9E=
-X-Google-Smtp-Source: AGHT+IHnM9b4iMhaMM3Umfgp794GytPagXJHdOPIuSBhJp6PMVhTsTQsQQE9eWpDhS66Z0o2IvV+zA==
-X-Received: by 2002:a05:622a:2d6:b0:4db:db96:15d3 with SMTP id d75a77b69052e-4eddbd61fe9mr49171401cf.31.1762975793923;
-        Wed, 12 Nov 2025 11:29:53 -0800 (PST)
+        bh=Nze/QytclSTH4fFVa9JSQZznz6m85tFFzurTQmWSt3g=;
+        b=aO6wMs3bACjYQPkfsVRitFmOY1iUw9gizzbmEkOVw9pcOUBZXHVpsBhi8j20OfAoRu
+         knEfn98MY0FOVEk8deXRRh6Yt0XmVusNyDFFTRQU8PbO9AnvocShLuUyvGh+ZXokE6nC
+         6KaF8oGcyi0gbwP+Vx4spfqRBsTeABJdJfUnArPyAz5pmWMyMWu1cjbkFr4+J5D+yD7P
+         eiglU+EkHpRC9a0xQg18ryLBGd3bfQNM3+87fUT38TZENOJFERahPyd4b2IlGbhDEAwV
+         SmUxwlmOZNgNZlhqJVGz9XTjIwfFY4zEWTyruOpa7R9OYNwk+CHXNZ6rATrWSfirIy5j
+         JNAA==
+X-Forwarded-Encrypted: i=1; AJvYcCVRzaIe6haqcTu5lwrkBKcrYKWaLTHcnZVIf3yzmV194vyNrJ5KI0RFGfDh8+QcCPNdi+47LzrlTVd0XKw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwB17MQ5cgLNOUVqUluM3EW6glrm9P+mzuFyjSN56YfNr9Pf+8R
+	u8TyCm5v6FyD05UHeFBRp2XP3YN8lCCQu0YX4IRcb/W1G36jkxR11LOv3sJZDwff8A0=
+X-Gm-Gg: ASbGncvp1O8RpHhsVG1cEN3s9ABcX3qymSMEdK5FGgkR7MLYK71/4HH+a+yQEDEpQGB
+	KbaWjHe87KzkxdvfMfxdFtgoauOVfRY49G61EyCiJVVy+eXdsIAGOB6sJr+U5s1iWlcGnNCTSWN
+	2xipOrvGbZB6e/KIfqrEFKlrQoQxFWgfeQnu25yiHllRGuGdGXBBNtlkIDWUXM+XBVCyuhZqnQL
+	ic8L33pOtY0Sa9kiByttikBW1pOo7jWhdIyztql12dXu1fAfZp8BPh6N5oVMl3qIll9yclPA0qy
+	IKLdmsPjYzLkfXA0ygMYfDkwFutVUoOxrdmz7IBCMJByuaBpyh/UK7qWytk5NhBiCnA1B3A0302
+	10DOWqoquoxHWtfwzVB/qzfyyeGkjYIu+LtL+HFEyMls4MYZ593Gbi0ZuQN9vECXUUqcE5P8aEY
+	bi4eLY/g0xGDHuqkYrkMEaNNhpiG5YjgvfCwowWmhqVUbvXflIMta3UPPNvZVC+StE
+X-Google-Smtp-Source: AGHT+IH1lDcByGDzgs1svKTRXfQs8NRaQexk4Q0+NImfdOthU+jf0vqFA5hw/PqFsiRTGmnVj1m8eQ==
+X-Received: by 2002:a05:620a:1a0f:b0:890:2e24:a543 with SMTP id af79cd13be357-8b29b77b3c0mr590594985a.34.1762975796840;
+        Wed, 12 Nov 2025 11:29:56 -0800 (PST)
 Received: from gourry-fedora-PF4VCD3F.lan (pool-96-255-20-138.washdc.ftas.verizon.net. [96.255.20.138])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b29aa0082esm243922885a.50.2025.11.12.11.29.52
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b29aa0082esm243922885a.50.2025.11.12.11.29.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Nov 2025 11:29:53 -0800 (PST)
+        Wed, 12 Nov 2025 11:29:56 -0800 (PST)
 From: Gregory Price <gourry@gourry.net>
 To: linux-mm@kvack.org
 Cc: kernel-team@meta.com,
@@ -143,9 +142,9 @@ Cc: kernel-team@meta.com,
 	namcao@linutronix.de,
 	escape@linux.alibaba.com,
 	dongjoo.seo1@samsung.com
-Subject: [RFC PATCH v2 02/11] mm: change callers of __cpuset_zone_allowed to cpuset_zone_allowed
-Date: Wed, 12 Nov 2025 14:29:18 -0500
-Message-ID: <20251112192936.2574429-3-gourry@gourry.net>
+Subject: [RFC PATCH v2 03/11] gfp: Add GFP_SPM_NODE for Specific Purpose Memory (SPM) allocations
+Date: Wed, 12 Nov 2025 14:29:19 -0500
+Message-ID: <20251112192936.2574429-4-gourry@gourry.net>
 X-Mailer: git-send-email 2.51.1
 In-Reply-To: <20251112192936.2574429-1-gourry@gourry.net>
 References: <20251112192936.2574429-1-gourry@gourry.net>
@@ -157,79 +156,51 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-All current callers of __cpuset_zone_allowed() presently check if
-cpusets_enabled() is true first - which is the first check of the
-cpuset_zone_allowed() function.
+GFP_SPM_NODE changes the nodemask checks in the page allocator to include
+the full set memory nodes, rather than just SysRAM nodes.
 
 Signed-off-by: Gregory Price <gourry@gourry.net>
 ---
- mm/compaction.c |  7 +++----
- mm/page_alloc.c | 19 ++++++++-----------
- 2 files changed, 11 insertions(+), 15 deletions(-)
+ include/linux/gfp_types.h | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/mm/compaction.c b/mm/compaction.c
-index 1e8f8eca318c..d2176935d3dd 100644
---- a/mm/compaction.c
-+++ b/mm/compaction.c
-@@ -2829,10 +2829,9 @@ enum compact_result try_to_compact_pages(gfp_t gfp_mask, unsigned int order,
- 					ac->highest_zoneidx, ac->nodemask) {
- 		enum compact_result status;
+diff --git a/include/linux/gfp_types.h b/include/linux/gfp_types.h
+index 65db9349f905..525ae891420e 100644
+--- a/include/linux/gfp_types.h
++++ b/include/linux/gfp_types.h
+@@ -58,6 +58,7 @@ enum {
+ #ifdef CONFIG_SLAB_OBJ_EXT
+ 	___GFP_NO_OBJ_EXT_BIT,
+ #endif
++	___GFP_SPM_NODE_BIT,
+ 	___GFP_LAST_BIT
+ };
  
--		if (cpusets_enabled() &&
--			(alloc_flags & ALLOC_CPUSET) &&
--			!__cpuset_zone_allowed(zone, gfp_mask))
--				continue;
-+		if ((alloc_flags & ALLOC_CPUSET) &&
-+		    !cpuset_zone_allowed(zone, gfp_mask))
-+			continue;
+@@ -103,6 +104,7 @@ enum {
+ #else
+ #define ___GFP_NO_OBJ_EXT       0
+ #endif
++#define ___GFP_SPM_NODE		BIT(___GFP_SPM_NODE_BIT)
  
- 		if (prio > MIN_COMPACT_PRIORITY
- 					&& compaction_deferred(zone, order)) {
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index fd5401fb5e00..bcaf1125d109 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -3750,10 +3750,9 @@ get_page_from_freelist(gfp_t gfp_mask, unsigned int order, int alloc_flags,
- 		struct page *page;
- 		unsigned long mark;
+ /*
+  * Physical address zone modifiers (see linux/mmzone.h - low four bits)
+@@ -145,6 +147,8 @@ enum {
+  * %__GFP_ACCOUNT causes the allocation to be accounted to kmemcg.
+  *
+  * %__GFP_NO_OBJ_EXT causes slab allocation to have no object extension.
++ *
++ * %__GFP_SPM_NODE allows the use of Specific Purpose Memory Nodes
+  */
+ #define __GFP_RECLAIMABLE ((__force gfp_t)___GFP_RECLAIMABLE)
+ #define __GFP_WRITE	((__force gfp_t)___GFP_WRITE)
+@@ -152,6 +156,7 @@ enum {
+ #define __GFP_THISNODE	((__force gfp_t)___GFP_THISNODE)
+ #define __GFP_ACCOUNT	((__force gfp_t)___GFP_ACCOUNT)
+ #define __GFP_NO_OBJ_EXT   ((__force gfp_t)___GFP_NO_OBJ_EXT)
++#define __GFP_SPM_NODE	((__force gfp_t)___GFP_SPM_NODE)
  
--		if (cpusets_enabled() &&
--			(alloc_flags & ALLOC_CPUSET) &&
--			!__cpuset_zone_allowed(zone, gfp_mask))
--				continue;
-+		if ((alloc_flags & ALLOC_CPUSET) &&
-+		    !cpuset_zone_allowed(zone, gfp_mask))
-+			continue;
- 		/*
- 		 * When allocating a page cache page for writing, we
- 		 * want to get it from a node that is within its dirty
-@@ -4553,10 +4552,9 @@ should_reclaim_retry(gfp_t gfp_mask, unsigned order,
- 		unsigned long min_wmark = min_wmark_pages(zone);
- 		bool wmark;
- 
--		if (cpusets_enabled() &&
--			(alloc_flags & ALLOC_CPUSET) &&
--			!__cpuset_zone_allowed(zone, gfp_mask))
--				continue;
-+		if ((alloc_flags & ALLOC_CPUSET) &&
-+		    !cpuset_zone_allowed(zone, gfp_mask))
-+			continue;
- 
- 		available = reclaimable = zone_reclaimable_pages(zone);
- 		available += zone_page_state_snapshot(zone, NR_FREE_PAGES);
-@@ -5052,10 +5050,9 @@ unsigned long alloc_pages_bulk_noprof(gfp_t gfp, int preferred_nid,
- 	for_next_zone_zonelist_nodemask(zone, z, ac.highest_zoneidx, ac.nodemask) {
- 		unsigned long mark;
- 
--		if (cpusets_enabled() && (alloc_flags & ALLOC_CPUSET) &&
--		    !__cpuset_zone_allowed(zone, gfp)) {
-+		if ((alloc_flags & ALLOC_CPUSET) &&
-+		    !cpuset_zone_allowed(zone, gfp))
- 			continue;
--		}
- 
- 		if (nr_online_nodes > 1 && zone != zonelist_zone(ac.preferred_zoneref) &&
- 		    zone_to_nid(zone) != zonelist_node_idx(ac.preferred_zoneref)) {
+ /**
+  * DOC: Watermark modifiers
 -- 
 2.51.1
 
