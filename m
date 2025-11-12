@@ -1,270 +1,369 @@
-Return-Path: <linux-kernel+bounces-896712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EE63C51082
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:59:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 561F9C5107F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:59:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A8E9189C9D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 07:59:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4453188B34E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 07:59:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 442D52F25E3;
-	Wed, 12 Nov 2025 07:58:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D74702F2616;
+	Wed, 12 Nov 2025 07:58:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="epwXyD4F"
-Received: from GVXPR05CU001.outbound.protection.outlook.com (mail-swedencentralazon11013021.outbound.protection.outlook.com [52.101.83.21])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="em99TkqX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B34C62F0C67;
-	Wed, 12 Nov 2025 07:58:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.83.21
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762934331; cv=fail; b=asrlrXqoCLZIPMUXYXCI+muumH436Jbv1hxTwO2yxDT8+CP/Yy5G6W2mc/zjR+3ufdlZu22DAN2zHVNQcEbSed7FRVy/4x701MLarqjpNMkMQKOfknvdxV+3N2QDNbFKSOhUp5shIhGWcK+XFzKGyaPaFeYJL/gEOrvwi9/U6M4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762934331; c=relaxed/simple;
-	bh=tNrv7ya+uNbfaXlDYuT98hw8OAyfShg6h8SzaMkWDZY=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=azdF+ykrVH+yTqDsO6l+UlLslGhuFSe5yMt1SgamRWAPrhoRxGPUtDdAvCdc8Ak5RBLs6NKcy1b8LjJGI8K1F4grcLCRJRc+RbCQZZcx/YWgoZ2hhmCoPEqlJoT3rvdd0GvXK6o2M67rLUSJ5087bvaUmEXGOGJLmuFRj4gfj68=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=epwXyD4F; arc=fail smtp.client-ip=52.101.83.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=PpTPc9g3HMvrxwYSQGDvIn2cm+7m9FOwbod3RsnIJtHJYPOw1lhJViYavflLnVVN6QWfQC0CiisSxVlxQWHLQyyXBK+A+Z5zvrg183hQ6CBV9//1VQGb3GG6LJ/nZpBtIjezRD/x7HaBU/1KODKt2u5Ya+PcS1sjfTOV0oULu3hjJqta+19SHxDCYMIXuTujSWn/hveHgxkKBzA4gnUdcKoww/6A4NXPuDGM2rLZ1ykjM495EacQ+6/NhKhID3CbfmvJLeYH6Lixj4uc7IYd3nM0vaR5q36pW6IAOKFtoSkjOejvVW7vKLfn3eT64GV4UUnNcOYCHi2SM5PukgobtQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0DUj8fjD+HZZcEMbJNtKwwaFlmtaLR2NdVje4FZMhKk=;
- b=r77LvpYWHDYsjktwwhgmdKgk6rZL7URwKwUjBosKXS7Si82MLNgnVjWq7lji5QruFGgcC5tqr5FB3NuPXDGT0kI0WNObS7SWYI/lLuBr9pN7RAG6qlv5OSBCGCn496lxjEYRacqN+NtBPu8AqPiT8zjUI+G3z8yYFjRSF03az9VSPt0KdHFGA+atCM4cJbW9STh82AQKe7kvDbhsXGbvdUoxWdA0+jUhI+wzYMcRSPpEnSsQJsllIhHAw6r612BScKsSHt8BHEVo1t7ZOaY9RgOZ3nXE7lzL6cqUxujNVyjqQRxmLZXlKP6uQfHirv/Gqn1++pDejGNHSI2ygJ8RvA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0DUj8fjD+HZZcEMbJNtKwwaFlmtaLR2NdVje4FZMhKk=;
- b=epwXyD4Fi/HzoGhr2Wk7CeTYwkZF1wyfvLQvUrEXA3E9Jc5tHrPmJrmVXGCOureZbaUB3GRYeMhhHGVREPE0tsC7ht8vTo8g5GbGavAoMy9rA5uoiI145KY8nWrNLkouXwldKRzUxIAVfI1XPzruM9k2EaKbI3CQNblqLSZzcFsfngNLIUoJE/16Rm6WcA4JOJrjQ9wtk3fem6DNfc7nH+E7e1ZGiPKsFI1w6na8AGW2GKJpz1r2l4TGwdjYyW1XDDsZVD9V5NJIk5D8rLMZFuwyUydZHwarlVEwzyN4z4+NxMNAnEVdviv9sxDwPlaIC/htOkj8kLLC3MB6rpGBmg==
-Received: from AM9PR04MB8825.eurprd04.prod.outlook.com (2603:10a6:20b:408::7)
- by MRWPR04MB11287.eurprd04.prod.outlook.com (2603:10a6:501:79::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.16; Wed, 12 Nov
- 2025 07:58:35 +0000
-Received: from AM9PR04MB8825.eurprd04.prod.outlook.com
- ([fe80::67fa:3e46:acd8:78d0]) by AM9PR04MB8825.eurprd04.prod.outlook.com
- ([fe80::67fa:3e46:acd8:78d0%3]) with mapi id 15.20.9320.013; Wed, 12 Nov 2025
- 07:58:35 +0000
-From: "Jan Petrous (OSS)" <jan.petrous@oss.nxp.com>
-To: Jared Kangas <jkangas@redhat.com>, Aisheng Dong <aisheng.dong@nxp.com>,
-	Fabio Estevam <festevam@gmail.com>, Shawn Guo <shawnguo@kernel.org>, Jacky
- Bai <ping.bai@nxp.com>, Pengutronix Kernel Team <kernel@pengutronix.de>,
-	dl-S32 <S32@nxp.com>, Chester Lin <chester62515@gmail.com>, Matthias Brugger
-	<mbrugger@suse.com>, "Ghennadi Procopciuc (OSS)"
-	<ghennadi.procopciuc@oss.nxp.com>, Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-CC: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [EXT] [PATCH 1/2] pinctrl: s32cc: fix uninitialized memory in
- s32_pinctrl_desc
-Thread-Topic: [EXT] [PATCH 1/2] pinctrl: s32cc: fix uninitialized memory in
- s32_pinctrl_desc
-Thread-Index: AQHcU1Xe5NynO3K0fkG/uJzE7FWB3rTurICA
-Date: Wed, 12 Nov 2025 07:58:35 +0000
-Message-ID:
- <AM9PR04MB88259A7792EA2022133F310FE2CCA@AM9PR04MB8825.eurprd04.prod.outlook.com>
-References: <20251111-pinctrl-s32cc-alloc-init-v1-0-071b3485b776@redhat.com>
- <20251111-pinctrl-s32cc-alloc-init-v1-1-071b3485b776@redhat.com>
-In-Reply-To: <20251111-pinctrl-s32cc-alloc-init-v1-1-071b3485b776@redhat.com>
-Accept-Language: cs-CZ, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: AM9PR04MB8825:EE_|MRWPR04MB11287:EE_
-x-ms-office365-filtering-correlation-id: a3b595b9-1e32-47ee-2f5c-08de21c14830
-x-ms-exchange-sharedmailbox-routingagent-processed: True
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|7416014|366016|1800799024|19092799006|921020|38070700021;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?bprKMGM3qH5iSZpy5ty4rZc0Tl1LVnET4Tx+C/KLCkQbYJ8JEvCHq6Qprnn8?=
- =?us-ascii?Q?ASTAL4+qTYymbVwz1VTvRC2BTl9ooECkfPqcyO1VVnjfeQ79t55garIpZM14?=
- =?us-ascii?Q?EIcLlhQK0TMIPlLr9g2oBaO+lP1lQiRsGL5fzR6brX6pq0ahxCnFE9B3kpyj?=
- =?us-ascii?Q?VF18OxunDn1Hjs48BV1B4t76SMq1SIiyRhpJp0Lsz17BSO8oB6Yr5swhYghQ?=
- =?us-ascii?Q?eoFsptaL+uUC51jQSPSaXnrFsJ1J6jDnTondBoecDNfq4a01BYjFOh7p92ch?=
- =?us-ascii?Q?jKAaxr0zTo7Hwp0MOciHku4EscWX8JkXUHY3w9RCUhJijvaRbYx/2OU2Tr7R?=
- =?us-ascii?Q?pRltcVQWG0cLVs7wu9UhN0gT0oNUUmmhCAAZyRcgzANl1HyjkAMNIdkcPHHG?=
- =?us-ascii?Q?UdW9V98sqEsr2+ysK/LwX/iIhEyzkR5lKtnsCCw9VLKwspQ6TCq5zvDJK001?=
- =?us-ascii?Q?5spQt2DboUbiEbT/9KQ/SsvjgBVa+Bn9yYzXm5OlNW2iElR5cmrRqZhpQoj5?=
- =?us-ascii?Q?xe13x8LdCKvD0GGEgjxHxNkYsanH51TEPjMFtcb39Yn89LWi6RB2YNmFdzDh?=
- =?us-ascii?Q?yk7YHkKBUtfB9CZ1Dh+Yemcr4YzmAZCXTS/PxLhdghSdjPW75Vmh2iRMF1sT?=
- =?us-ascii?Q?ulVc/Nj9u5NCQyVNu8Oe/o9eTTAb1PJlaJm3zKkIyO14QSvqqHX/PMA4TYcM?=
- =?us-ascii?Q?3fPwVg8+1VLYToSDF4Fjr9nlkxPiVDgayd0aBhIKKmMC9SMz+S1RLEMR+cH9?=
- =?us-ascii?Q?5C2Hafnj35LkZo3mztz4PZvOCoHYpGNVoRbLGTiqyB3tZib0XkyxKlcjauq4?=
- =?us-ascii?Q?j9CoGZ83bscJaLYo/8d6S8RmOcdExmWQQZfpJA8vB/zWNL4ZJPB4cQWHI3Ao?=
- =?us-ascii?Q?ZUNP7XYzEh1xkHBnmztrKUXaqSagiDcASQJc/Pu+6ntMSVLaAzTmDra4Avao?=
- =?us-ascii?Q?qN0wfTpSujKztzgTp+6iBPHtxn/G/nr2IC32BDCL0Zx+p3pvR/Cuzsf7r9QA?=
- =?us-ascii?Q?UkiQhQfQSEzM2CI0VWA/epaKtC2OTk6jmtcGz77yJnfemOH1xjIzuLDknJzX?=
- =?us-ascii?Q?L6r7SW8RHzD2RjsmkSnwzzzpUtaI+6LY9jI9c+U57MhQ1TFxvShcDlCv9s6P?=
- =?us-ascii?Q?w6Ka2nU5glCdXYkIirUVGgj5qNqXULwEuk73yJFUyvkds0fTRFMhXVrnzWBR?=
- =?us-ascii?Q?YNZirll/nqPYxlgPFkiZgU7qxYKVLRN94lgQpBc5AFSZCqlb37EP1Nhz+aXV?=
- =?us-ascii?Q?GlhacbIBQEEBw19a2tzn1aiE+fk0STla+ExCgmH/lbsxK29eG7vIjHWtKcBe?=
- =?us-ascii?Q?3fE2tU5JR0hzd8SdyxGwv0OKDD+aC47ToYaD41WE6cVyaA0mF5ZKBzEO9UOd?=
- =?us-ascii?Q?Qu1Anmhc9Hq6o63ybQegQDGEuZLiVnMG/IZ2f1B+mwHlDgoqZxw3NwaY4Vr8?=
- =?us-ascii?Q?hQ9IWOqKpEe3JuB/MtC6nMvPCoMJ3F2xMvzCzEzmu1G+IwGntWjvy8gJLG8m?=
- =?us-ascii?Q?B+mjJQIlSR8k2QBnCgJKdM2XHJC4i2QuFO45OH02x7WVL4ufOxbwk8C+mg?=
- =?us-ascii?Q?=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR04MB8825.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(19092799006)(921020)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?jQ/Yt+pvcQggxh7d9nUZd+9XZWmfEM+y0dwS1EDvdcXPVfTw3wD/ZO6H3cdR?=
- =?us-ascii?Q?yHm0OQZ/pCcENBBBe89MWugzUMsRoCbpoKborS6F0PUIUHe3h7CsYYnkUD+Q?=
- =?us-ascii?Q?GOGTBlKhvgt1jwt5oi6Tv68uFM4rJCWl5hsms5TQKPNQsS/oYbpX3hzbQvBb?=
- =?us-ascii?Q?j8q4QPKxXmh10nrJg5halDkV2L3IdFaOuNJ7J2Xrr5/47uAy1hSTslJ+NvFP?=
- =?us-ascii?Q?UBVHf8778OwmKcsbfb4Z8FqWxgEnONSbRs1NIhZLfE81T4HEr1D3l4/f47kH?=
- =?us-ascii?Q?q6+QAM9aE9EoLnk8dWeQRNgdagakVgU5Gp4Ih7ZmJxr89UXvXv0RlmkaYQ8c?=
- =?us-ascii?Q?Nf+D/9xZYjVYcVjrigXshwyK1Hn1dUZe1Gc7caJw7h9VV3zn1T5OGQTcQU82?=
- =?us-ascii?Q?4bvRzhvv3iAfHJwpaKOZ/ezdU3v6RETGax56LXs+YHWJvLPN8aNTPhv13qM6?=
- =?us-ascii?Q?eiFZRy2gkIRxHubQH3wc/qIAisCIKbHCK3u+sP+yRs1/y9aN0gHIgB6FN6Vz?=
- =?us-ascii?Q?/7TyEhuxp8Rg5+SCM2Q6HaQusfiNIvrX70Bo4D56X8NxDP1ByBBDxncCBit1?=
- =?us-ascii?Q?F7ttrzM6vAgwblmoxDBgNLpxQ9NhfbkvSQb2j4iC3CBH8OnawHvJQ4yMpI/m?=
- =?us-ascii?Q?kQm6BeiVfDLEBc4go+ERmxs8NFHpTmQAFtrZrqQlht9SAC3C8zXvWYtapxgz?=
- =?us-ascii?Q?sZKBSJSEHDQu5gN9ESuVb9bZmZpDGK9WM5FxZblDdNvaxiIPHPKykoYzlDD1?=
- =?us-ascii?Q?pPoiEfZZ/73SUi296HZjTa5v4neLueo0gAJaFdG8SIBENNqRsT0lzWZloTTE?=
- =?us-ascii?Q?OHozwKQlnp5GGCdk1vAJU+Vfc7qHGOyoVJBlj4+s3G+W+dm6N7WSvOvtX7eF?=
- =?us-ascii?Q?bY5VCpJgmkrbecoJj1d4MZs4PjRNvBSSIYt2zNFSBnrCr80tTxemsGC0yON2?=
- =?us-ascii?Q?2DmUhRG4Dkj0Ta4VI4aCjiXW6iMF4s+RU2h/pSpiuyux1g+lumXfRawHZCDK?=
- =?us-ascii?Q?jEG7oWs11vHRaU9C43j64SN6v37jAcx8C7lano7/UNUEIQaMDgp66Jg94pnW?=
- =?us-ascii?Q?IrFS/wlTH5OzuX5hiV3FzEEA1Oi/BJ5dWIYbzoeMuwaXx7gZyhkbczEgn/RC?=
- =?us-ascii?Q?DTTrDzYg+16zxHInIrD7VI9gyU2nbw0vrwAYCcAVWvbTPDuGtBVCiQbZ+HZF?=
- =?us-ascii?Q?u3uFq3xJU7EIQ4LycgQwge6e6iWzLX2H1u6r7jdguzCdObuajUt37GbzMvtz?=
- =?us-ascii?Q?d/ws6lQxouNCI0b6Z4ZNnglgxUisMpPcQMn+ppdv1CkzrS4hYaTRr+3IZ/6j?=
- =?us-ascii?Q?DBr4MCBCkBe3z//lwKvPS0kHw0LTOpW4ZqTDo8RtBdHmrnPNs3zWqVUsUbGt?=
- =?us-ascii?Q?NGe+gGgZW/7lERMkk62578t+Lfol0VzQAByjoXdJHl121aKPC3Axlbz3Y15u?=
- =?us-ascii?Q?Ui6pCRhQ7K/tpAtjroC9cbxzN5UcZbNKKW128Rehy+7VaNPW2kRxN4mHTgmB?=
- =?us-ascii?Q?99LDk8kcozU1W2VUWgyHLQ/QldmUQ6tLJ8VPW+OkTxyKC9sUN+KrEqXNpCOH?=
- =?us-ascii?Q?KFiPMI8fpFAare2c6Ok=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9F3C2F1FCF;
+	Wed, 12 Nov 2025 07:58:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762934325; cv=none; b=mkgk6SNbmLgs/66tAKGxUFr9Bpc5GML2Ur8c2viB1lQDCxvfqlsohBaV/I5ef+Bd7lRTYQwNbIz3l9X2XSgO0RyLuqF8diX4cHUi4Z8AnYy52iZDkRebKgF7SVM/zVC+xXelBZLzfrW+4LuY1ogH5GJUsCDnEUVb21ll5yW4/no=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762934325; c=relaxed/simple;
+	bh=LCcm4OEFjR8DYGyKj6LSbU8hEZdIWWL61ysKlxDrze8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TT1vuwwLcJZWNsR2EQjwyCVM59i8fa0lnvTsP3n4gSBXpeI76vV0WNvurCO5aKOpoOOPVjj9aTO+l6bVOqQUJq+7r+47RChfiCuz7hweCZ5ubkXX+wzqA1WseVQSfirXxCXaO2JCV6ZxKeetvFXHu9GYq9dEoefhlq13QdNlPp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=em99TkqX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7176C19425;
+	Wed, 12 Nov 2025 07:58:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762934325;
+	bh=LCcm4OEFjR8DYGyKj6LSbU8hEZdIWWL61ysKlxDrze8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=em99TkqXV9U4/QWNHpLXP61LEDKwoh7NyP1c/sGdZHcHYecqBvDgK4BBa4wdDKjgT
+	 jfcppFD9Brk5YirkwYEijLZMbmfDQAddoa2X+y1y/xl7HA5Y3/TJaJqHMgAk6/gZzC
+	 dOWCGbn3lx2ttiBBesuIpvLYgKzxBuv+9s+rEzMmuL5kmMBaZqg7FIVHraFyKLvLTN
+	 +ypehuDtw80VoK6bHLEfZLVAE9cJVsrjfchF/rEFM26+LsB9PW4+Np0yCeizqMbhwe
+	 GTkRKPTzmKlOBL9jqf2p+Gg3OObRGb7n9+EH3+qM+WYIQEkqm6CnWKfVag3A4MTvOi
+	 c+5zuT5Q18ahQ==
+Message-ID: <05c833f0-15bc-4a86-9ac4-daf835fe4393@kernel.org>
+Date: Wed, 12 Nov 2025 08:58:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AM9PR04MB8825.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a3b595b9-1e32-47ee-2f5c-08de21c14830
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Nov 2025 07:58:35.6131
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: keIrTo85ivMuq0lAMxk221i8CY+B6hrZUM7HV+3+9zsJbVacD4yJYA9bQFihJFyDDhvVGWCoGbjBIVixxGBs5g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MRWPR04MB11287
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] dt-bindings: arm: google: Add bindings for
+ frankel/blazer/mustang
+To: Douglas Anderson <dianders@chromium.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Peter Griffin <peter.griffin@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, Roy Luo <royluo@google.com>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Chen-Yu Tsai <wenst@chromium.org>, Julius Werner <jwerner@chromium.org>,
+ William McVicker <willmcvicker@google.com>, linux-kernel@vger.kernel.org
+References: <20251111192422.4180216-1-dianders@chromium.org>
+ <20251111112158.1.I72a0b72562b85d02fee424fed939fea9049ddda9@changeid>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
+ QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
+ +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
+ ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
+ 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
+ hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
+ tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
+ 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
+ naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
+ hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
+ whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
+ qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
+ RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
+ Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
+ H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
+ dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
+ AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
+ jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
+ zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
+ XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
+In-Reply-To: <20251111112158.1.I72a0b72562b85d02fee424fed939fea9049ddda9@changeid>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
->=20
-> s32_pinctrl_desc is allocated with devm_kmalloc(), but not all of its
-> fields are initialized. Notably, num_custom_params is used in
-> pinconf_generic_parse_dt_config(), resulting in intermittent allocation
-> errors, such as the following splat when probing i2c-imx:
->=20
->         WARNING: CPU: 0 PID: 176 at mm/page_alloc.c:4795
-> __alloc_pages_noprof+0x290/0x300
->         [...]
->         Hardware name: NXP S32G3 Reference Design Board 3 (S32G-VNP-RDB3)
-> (DT)
->         [...]
->         Call trace:
->          __alloc_pages_noprof+0x290/0x300 (P)
->          ___kmalloc_large_node+0x84/0x168
->          __kmalloc_large_node_noprof+0x34/0x120
->          __kmalloc_noprof+0x2ac/0x378
->          pinconf_generic_parse_dt_config+0x68/0x1a0
->          s32_dt_node_to_map+0x104/0x248
->          dt_to_map_one_config+0x154/0x1d8
->          pinctrl_dt_to_map+0x12c/0x280
->          create_pinctrl+0x6c/0x270
->          pinctrl_get+0xc0/0x170
->          devm_pinctrl_get+0x50/0xa0
->          pinctrl_bind_pins+0x60/0x2a0
->          really_probe+0x60/0x3a0
->         [...]
->          __platform_driver_register+0x2c/0x40
->          i2c_adap_imx_init+0x28/0xff8 [i2c_imx]
->         [...]
->=20
-> This results in later parse failures that can cause issues in dependent
-> drivers:
->=20
->         s32g-siul2-pinctrl 4009c240.pinctrl: /soc@0/pinctrl@4009c240/i2c0=
--
-> pins/i2c0-grp0: could not parse node property
->         s32g-siul2-pinctrl 4009c240.pinctrl: /soc@0/pinctrl@4009c240/i2c0=
--
-> pins/i2c0-grp0: could not parse node property
->         [...]
->         pca953x 0-0022: failed writing register: -6
->         i2c i2c-0: IMX I2C adapter registered
->         s32g-siul2-pinctrl 4009c240.pinctrl: /soc@0/pinctrl@4009c240/i2c2=
--
-> pins/i2c2-grp0: could not parse node property
->         s32g-siul2-pinctrl 4009c240.pinctrl: /soc@0/pinctrl@4009c240/i2c2=
--
-> pins/i2c2-grp0: could not parse node property
->         i2c i2c-1: IMX I2C adapter registered
->         s32g-siul2-pinctrl 4009c240.pinctrl: /soc@0/pinctrl@4009c240/i2c4=
--
-> pins/i2c4-grp0: could not parse node property
->         s32g-siul2-pinctrl 4009c240.pinctrl: /soc@0/pinctrl@4009c240/i2c4=
--
-> pins/i2c4-grp0: could not parse node property
->         i2c i2c-2: IMX I2C adapter registered
->=20
-> Fix this by initializing s32_pinctrl_desc with devm_kzalloc() instead of
-> devm_kmalloc() in s32_pinctrl_probe(), which sets the previously
-> uninitialized fields to zero.
->=20
-> Fixes: fd84aaa8173d ("pinctrl: add NXP S32 SoC family support")
-> Signed-off-by: Jared Kangas <jkangas@redhat.com>
+On 11/11/2025 20:22, Douglas Anderson wrote:
+> Add top-level DT bindings useful for Pixel 10 (frankel), Pixel 10 Pro
+> (blazer), and Pixel 10 Pro XL (mustang).
+> 
+> Since overlays are fairly well-supported these days and the downstream
+> Pixel bootloader assumes that the SoC is the base overlay and specific
+> board revisions are overlays, reflect the SoC / board split in the
+> bindings.
+> 
+> The SoC in the Pixel 10 series has the marketing name of "Tensor
+> G5". Despite the fact that it sounds very similar to the "Tensor G4",
+> it's a very different chip. Tensor G4 was, for all intents and
+> purposes, a Samsung Exynos offshoot whereas Tensor G5 is entirely its
+> own SoC. This SoC is known internally as "laguna" and canonically
+> referred to in code as "lga". There are two known revisions of the
+> SoC: an A0 pre-production variant (ID 0x000500) and a B0 variant (ID
+> 0x000510) used in production. The ID is canonicaly broken up into a
+> 16-bit SoC product ID, a 4-bit major rev, and a 4-bit minor rev.
+> 
+> The dtb for all supported SoC revisions is appended to one of the boot
+> partitions and the bootloader will look at the device trees and pick
+> the correct one. The current bootloader uses a downstream
+> `soc_compatible` node to help it pick the correct device tree. It
+> looks like this:
+>   soc_compatible {
+>     B0 {
+>       description = "LGA B0";
+>       product_id = <0x5>;
+>       major = <0x1>;
+>       minor = <0x0>;
+>       pkg_mode = <0x0>;
+>     };
+>   };
+> Note that `pkg_mode` isn't currently part of the ID on the SoC and the
+> bootloader always assumes 0 for it.
+> 
+> In this patch, put the SoC IDs straight into the compatible. Though
+> the bootloader doesn't look at the compatible at the moment, this
+> should be easy to teach the bootloader about.
+> 
+> Boards all know their own platform_id / product_id / stage / major /
+> minor / variant. For instance, Google Pixel 10 Pro XL MP1 is:
+> * platform_id (8-bits): 0x07 - frankel/blazer/mustang
+> * product_id (8-bits):  0x05 - mustang
+> * stage (4-bits):       0x06 - MP
+> * major (8-bits):       0x01 - MP 1
+> * minor (8-bits):       0x00 - MP 1.0
+> * variant (8-bits):     0x00 - No special variant
+> 
+> When board overlays are packed into the "dtbo" partition, a tool
+> (`mkdtimg`) extracts a board ID and board rev from the overlay and
+> stores that as metadata with the overlay. Downstream, the dtso
+> intended for the Pixel 10 Pro XL MP1 has the following properties at
+> its top-level:
+>   board_id = <0x70506>;
+>   board_rev = <0x010000>;
+> 
+> The use of top-level IDs can probably be used for overlays upstream as
+> well, but also add the IDs to the compatible string in case it's
+> useful.
+> 
+> Compatible strings are added for all board revisions known to be
+> produced based on downstream sources.
+> 
+> A few notes:
+> * If you look at `/proc/device-tree/compatible` and
+>   `/proc/device-tree/model` on a running device, that won't
+>   necessarily be an exact description of the hardware you're running
+>   on. If the bootloader can't find a device tree that's an exact match
+>   then it will pick the best match (within reason--it will never pick
+>   a device tree for a different product--just for different revs of
+>   the same product).
+> * There is no merging of the top-level compatible from the SoC and
+>   board. The compatible string containing IDs for the SoC will not be
+>   found in the device-tree passed to the OS.
+> 
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
 > ---
->  drivers/pinctrl/nxp/pinctrl-s32cc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/pinctrl/nxp/pinctrl-s32cc.c b/drivers/pinctrl/nxp/pi=
-nctrl-
-> s32cc.c
-> index
-> 501eb296c76050aa05386c51ef6ae0f97d4c76c3..51ecb8d0fb7e8a203e10cbe9
-> 65dfec308eaa5f30 100644
-> --- a/drivers/pinctrl/nxp/pinctrl-s32cc.c
-> +++ b/drivers/pinctrl/nxp/pinctrl-s32cc.c
-> @@ -951,7 +951,7 @@ int s32_pinctrl_probe(struct platform_device *pdev,
->         spin_lock_init(&ipctl->gpio_configs_lock);
->=20
->         s32_pinctrl_desc =3D
-> -               devm_kmalloc(&pdev->dev, sizeof(*s32_pinctrl_desc),
-> GFP_KERNEL);
-> +               devm_kzalloc(&pdev->dev, sizeof(*s32_pinctrl_desc), GFP_K=
-ERNEL);
->         if (!s32_pinctrl_desc)
->                 return -ENOMEM;
->=20
->=20
-> --
-> 2.51.1
+> In the past, attempts to have the SoC as a base device tree and boards
+> supported as overlays has been NAKed. From a previous discussion [1]
+> "Nope, boards are not overlays. Boards are DTB." I believe this needs
+> to be relitigated.
+> 
+> In the previous NAK, I didn't see any links to documentation
+> explicitly stating that DTBs have to represent boards. It's also
+> unclear, at least to me, _why_ a DTB would be limited to represent a
+> "board" nor what the definition of a "board" is.
+> 
+> As at least one stab at why someone might not want an overlay scheme
+> like this, one could point out that the top-level compatible can be a
+> bit of a mess. Specifically in this scheme the board "compatible" from
+> the overlay will fully replace/hide the SoC "compatible" from the base
+> SoC. If this is truly the main concern, it wouldn't be terribly hard
+> to add a new semantic (maybe selectable via a new additional
+> property?) that caused the compatible strings to be merged in a
+> reasonable way.
+> 
+> Aside from dealing with the compatible string, let's think about what
+> a "board" is. I will make the argument here that the SoC qualifies as
+> a "board" and that the main PCB of a phone can be looked at as a
+> "cape" for this SoC "board". While this may sound like a stretch, I
+> would invite a reader to propose a definition of "board" that excludes
+> this. Specifically, it can be noted:
+> * I have a development board at my desk that is "socketed". That is, I
+>   can pull the SoC out and put a different one in. I can swap in a
+>   "rev A0" or a "rev B0" SoC into this socket. Conceivably, I could
+>   even put a "Tensor G6", G7, G8, or G999 in the socket if it was
+>   compatible. In this sense, the "SoC" is a standalone thing that can
+>   be attached to the devboard "cape". The SoC being a standalone thing
+>   is in the name. It's a "system" on a chip.
+> * In case the definition of a board somehow needs a PCB involved, I
+>   can note that on my dev board the CPU socket is soldered onto to a
+>   CPU daughtercard (a PCB!) that then has a board-to-board connector
+>   to the main PCB.
+> * Perhaps one could argue that a dev board like I have describe would
+>   qualify for this SoC/board overlay scheme but that a normal cell
+>   phone wouldn't because the SoC isn't removable. Perhaps removability
+>   is a requirement here? If so, imagine if some company took a
+>   Raspberry Pi, soldered some components directly onto the "expansion"
+>   pins, and resold that to consumers. Does this mean they can't use
+>   overlays?
+> 
+> To me, the above arguments justify why SoC DTBs + "board" overlays
+> should be accepted. As far as I can tell, there is no downside and
+> many people who would be made happy with this.
+> 
+> [1] https://lore.kernel.org/all/dbeb28be-1aac-400b-87c1-9764aca3a799@kernel.org/
+> 
+>  .../devicetree/bindings/arm/google.yaml       | 87 +++++++++++++++----
+>  1 file changed, 68 insertions(+), 19 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/google.yaml b/Documentation/devicetree/bindings/arm/google.yaml
+> index 99961e5282e5..f9f9ea1c8050 100644
+> --- a/Documentation/devicetree/bindings/arm/google.yaml
+> +++ b/Documentation/devicetree/bindings/arm/google.yaml
+> @@ -13,27 +13,18 @@ description: |
+>    ARM platforms using SoCs designed by Google branded "Tensor" used in Pixel
+>    devices.
+>  
+> -  Currently upstream this is devices using "gs101" SoC which is found in Pixel
+> -  6, Pixel 6 Pro and Pixel 6a.
+> +  These bindings for older Pixel devices don't use device tree overlays so
+> +  no separate SoC entry is added. This may change in the future.
+>  
+> -  Google have a few different names for the SoC:
+> -  - Marketing name ("Tensor")
+> -  - Codename ("Whitechapel")
+> -  - SoC ID ("gs101")
+> -  - Die ID ("S5P9845")
+> -
+> -  Likewise there are a couple of names for the actual device
+> -  - Marketing name ("Pixel 6")
+> -  - Codename ("Oriole")
+> -
+> -  Devicetrees should use the lowercased SoC ID and lowercased board codename,
+> -  e.g. gs101 and gs101-oriole.
+> +  Newer Pixel devices are expected to have the SoC device tree as the base
+> +  and specific board device trees as overlays.
+>  
+>  properties:
+>    $nodename:
+>      const: '/'
+>    compatible:
+>      oneOf:
+> +      # Google Tensor G1 AKA gs101 AKA whitechapel AKA Die ID S5P9845 boards
+>        - description: Google Pixel 6 or 6 Pro (Oriole or Raven)
+>          items:
+>            - enum:
+> @@ -41,13 +32,71 @@ properties:
+>                - google,gs101-raven
+>            - const: google,gs101
+>  
+> +      # Google Tensor G5 AKA lga (laguna) SoC and boards
+> +      - description: Tensor G5 SoC (laguna)
+> +        items:
+> +          - enum:
+> +              - google,soc-id-0005-rev-00  # A0
+> +              - google,soc-id-0005-rev-10  # B0
 
-Thanks for the fix (I had it on my list too).
+SoCs cannot be final compatibles. Your commit msg does not explain what
+is 'soc-id' or 'soc_id' in this context.
 
-Tested-by: Jan Petrous (OSS) <jan.petrous@oss.nxp.com>
+> +          - const: google,lga
+> +      - description: Google Pixel 10 Board (Frankel)
+> +        items:
+> +          - enum:
+> +              - google,pixel-id-070302-rev-000000  # Proto 0
+> +              - google,pixel-id-070302-rev-010000  # Proto 1
+> +              - google,pixel-id-070302-rev-010100  # Proto 1.1
+> +              - google,pixel-id-070303-rev-010000  # EVT 1
+> +              - google,pixel-id-070303-rev-010100  # EVT 1.1
+> +              - google,pixel-id-070303-rev-010101  # EVT 1.1 Wingboard
+> +              - google,pixel-id-070304-rev-010000  # DVT 1
+> +              - google,pixel-id-070305-rev-010000  # PVT 1
+> +              - google,pixel-id-070306-rev-010000  # MP 1
+> +          - const: google,lga-frankel
+> +          - const: google,lga
+
+So what is the lga? What is lga-frankel?
+
+> +      - description: Google Pixel 10 Pro Board (Blazer)
+> +        items:
+> +          - enum:
+> +              - google,pixel-id-070402-rev-000000  # Proto 0
+> +              - google,pixel-id-070402-rev-010000  # Proto 1
+> +              - google,pixel-id-070402-rev-010100  # Proto 1.1
+> +              - google,pixel-id-070403-rev-010000  # EVT 1
+> +              - google,pixel-id-070403-rev-010100  # EVT 1.1
+> +              - google,pixel-id-070404-rev-010000  # DVT 1
+> +              - google,pixel-id-070405-rev-010000  # PVT 1
+> +              - google,pixel-id-070406-rev-010000  # MP 1
+> +          - const: google,lga-blazer
+> +          - const: google,lga
+> +      - description: Google Pixel 10 Pro XL Board (Mustang)
+> +        items:
+> +          - enum:
+> +              - google,pixel-id-070502-rev-000000  # Proto 0
+> +              - google,pixel-id-070502-rev-010000  # Proto 1
+> +              - google,pixel-id-070502-rev-010100  # Proto 1.1
+> +              - google,pixel-id-070502-rev-010101  # Proto 1.1 Wingboard
+> +              - google,pixel-id-070503-rev-010000  # EVT 1
+> +              - google,pixel-id-070503-rev-010100  # EVT 1.1
+> +              - google,pixel-id-070503-rev-010101  # EVT 1.1 Wingboard
+> +              - google,pixel-id-070504-rev-010000  # DVT 1
+> +              - google,pixel-id-070505-rev-010000  # PVT 1
+> +              - google,pixel-id-070506-rev-010000  # MP 1
+> +          - const: google,lga-mustang
+> +          - const: google,lga
+> +
+> +allOf:
+>    # Bootloader requires empty ect node to be present
+> -  ect:
+> -    type: object
+> -    additionalProperties: false
+
+Please keep it here
+
+> +  - if:
+> +      properties:
+> +        compatible:
+
+not:
+
+> +          contains:
+> +            const: google,gs101
+
+> +    then:
+> +      properties:
+> +        ect:
+
+ect: false, instead
 
 
+Best regards,
+Krzysztof
 
