@@ -1,234 +1,119 @@
-Return-Path: <linux-kernel+bounces-897706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D374FC53B83
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:38:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F75FC53BE6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:42:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BE946542EAC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:14:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4FE6B58570F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:16:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6214F34FF76;
-	Wed, 12 Nov 2025 16:07:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19493345CBB;
+	Wed, 12 Nov 2025 16:10:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="g7QUJdO7"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="gs7yr+ih"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD9903446A9
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 16:07:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6926133F388;
+	Wed, 12 Nov 2025 16:10:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762963638; cv=none; b=vEThJOjxvfxHLMMGgb6a+BUCU/7MukKQHubVPro4es+zTyPh9mYkw4GqJEMA+wFdzse3bOT4bJ7Nfoge+UXbvZ8/f0sU42xkRppt/94zGEJiogKCf6XRUQ1XRlirqpPcvMiOKBNm4qwYVFPjNLJk9CcTz59AfQsSM19/YN6pT/s=
+	t=1762963805; cv=none; b=iyq02dXakIVvKJJtHjmtZegkvuX+Ki1j13u31GVnbUzH09h0ceU2YCNmWaNljOh4alT6cuYzatYxmtlTCZVQ+u3pp5K/xLIAfu8o0847rTbq4t6Y9xPyr+4zpX0ZOybg2cTenfFRPVwGBWzsrqQGhcinMU2CQPkrIjUHijzIEJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762963638; c=relaxed/simple;
-	bh=rcoXkrER8UQqtVDDcBsXRfRyMxzZ7C3Dm11vbqk1f6I=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=QAnImbxJwup1RifCOdu4Pui4/ORoB3+Qx3Fw4SnrLdS+Pm83jw31hJIee0QKsRIFop19juJlj51VTns7J0EOBtarS0PLk7eQ4iEkhosyCTIQjFnZH7EKa44Ht8S/iU+HacHwYEcTcvYK72wTJ17sw8XKlINBISJuuTxKMJm0Was=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=g7QUJdO7; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b5edecdf94eso1974504a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 08:07:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762963636; x=1763568436; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=bCzRXVVfXNZOo2hC0W4eg4zwEOxmih4nLIdPA+K4xx0=;
-        b=g7QUJdO78zoDrjHtnBtlSXGxkEuyHsgjZJjClGhCpNlNHIYUmzFsYaHrq+KwwEHQjg
-         vSqFn0y6C/UOQ+o3WEeYlnr+fvs9y2XfwVEbMbIJYsPHihPKEOJikwPuC9Ic8U1Lk9c0
-         3WbDtGaE9PBlvnQJlymd2j6iZYHlm2IiY17bLNazPkpmeIETqQZu0JL7SVG2ek8uHGel
-         Fi7j+bIvHyb0xtxf4iO2WhYuxsiPJssfdzrCDpiTZIl6KxH64Ubk0lCPSo679ovvAFHb
-         QX8N3vyBbZwx+cFRlvnhRBeTQtEuLJYZSW0kfA/L6xS85pOkYlEosBKi+FkTAm8OwJCY
-         oAGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762963636; x=1763568436;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bCzRXVVfXNZOo2hC0W4eg4zwEOxmih4nLIdPA+K4xx0=;
-        b=dVWmcl6coffIUkmTFYBvGWA6b2f+GyirQMc2ist/r7n9QPkE1qNcx70MpeMGUs+5PP
-         IDexyM3KHzFJWYt3/5W0+/ql8M4vokTSAAa4vv0rlAp3IcQ2rQcy9yf21cUQaKvoP/gg
-         WBj/QkEiqSa3qJAi+h6YsNP8IDHA5TCjs9uy4LMwih+yqc+PS9+XZ6yhm10fwknsa92L
-         VKOwzR5S+brkFVIlBCVQnSsSyM93rTL4sfz9mt94oxTzok4jIrNUzvGpDZ26n0aUFhYw
-         6pJdoS4+oIu0PkyD5F1KnPyp3Pr3jacx0mtvvgcQ+rbn6N7IY6+8bBb+DU+DtC/vpYeg
-         bEzA==
-X-Forwarded-Encrypted: i=1; AJvYcCWLDm7ae8HFjmFFqmor8EsGn6avv3uB/qkI9hTbjjGtpNabsIC3NEcU9WzIyQsr8cdIJ6Y9tynN+uA8qYM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YybjfsZ6tRHVaZU6xYjUnRWBMkjleCwUtgwoc1eRUJfFwIqEa0y
-	+nT5ok6M2eZu6mOB5SpASUTRN1467nW2fPnzire+asOKEGllFuMvsGxmH/RKf+JG/kPKXUh84+L
-	PcbdRQQ==
-X-Google-Smtp-Source: AGHT+IGKPunQm5ISPEqmOuS0fN1GRnuQRNFwIf0v6JN1Vqk0oMGs54IRqGDPeVp9726Ni0Fsf0MNaCVFefI=
-X-Received: from plhs17.prod.google.com ([2002:a17:903:3211:b0:298:88:c005])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:d485:b0:298:33c9:ed91
- with SMTP id d9443c01a7336-2984ede99cfmr43566815ad.32.1762963635961; Wed, 12
- Nov 2025 08:07:15 -0800 (PST)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Wed, 12 Nov 2025 08:07:06 -0800
-In-Reply-To: <20251112160708.1343355-1-seanjc@google.com>
+	s=arc-20240116; t=1762963805; c=relaxed/simple;
+	bh=6+90iYt8yHn6fLVeRcRMn5yECTpBE605bYsebObkKiA=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=MmLevz4BdhQsNSb86nYL2h2099Mjk1208FFxj7cquL4QBKGniTpiZOuo4B6lzmo6NH1Js5hBHxCQjE84rCe1+LSjSiN227H4b1Grla6DHJx8Z2+5446WMAjp76I4/lTnwBN4ijXTsyxFzvW+BnfjMXmd6NsMrOS+vFITouBTfJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=fail (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=gs7yr+ih reason="signature verification failed"; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from ehlo.thunderbird.net ([172.59.162.180])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 5ACG9qKk858789
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Wed, 12 Nov 2025 08:09:53 -0800
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 5ACG9qKk858789
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025102301; t=1762963794;
+	bh=heGREnEy97DJ/3PBLnuPWHyDMClDirtaVhwc7KBGZD8=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=gs7yr+ihaeLF4QpSBvoh3wuHOzShTiGaY57Urvlxkap6MmKJc1LlzHWO8CyOn61+w
+	 gVc4aoheKzEVojPfU+eJLDUTceZKBHKeQA5ZBTuBYuDySrmcBbwp/mTK17UsHdv++V
+	 Fc8e9dfkZOfVe39kPFZHq3+01Y/RkFXsU2OFZ7YvJl3/+Ua5mCGyhZn2uoSXiDplg/
+	 AgRtj/73RtezqVMns+B4X6//QBzpPZOW7XDloRZquelz0jW8k8ZezvL2jDA8BW6VG5
+	 VAvhXF7riHKl4rbJdyHP7LP8Zf7SqAid5Q97nOlBgM/ViIUvT6rQKpFfkDDy+E+U8a
+	 TaQxHrwbgkxQA==
+Date: Wed, 12 Nov 2025 08:09:45 -0800
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: Greg KH <gregkh@linuxfoundation.org>
+CC: "Theodore Ts'o" <tytso@mit.edu>, Maarten Brock <Maarten.Brock@sttls.nl>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: RFC: Serial port DTR/RTS - O_NRESETDEV
+User-Agent: K-9 Mail for Android
+In-Reply-To: <2025111214-doily-anyway-b24b@gregkh>
+References: <bb44f856-10a2-40c7-a3f7-be50c8e4b0a9@zytor.com> <20251107173743.GA3131573@mit.edu> <dc42f5d4-a707-4442-bda6-1c1990666f54@zytor.com> <20251110033556.GC2988753@mit.edu> <ADB50E23-DC8B-43D0-A345-E10396A3DFD4@zytor.com> <AMBPR05MB11925DA076098B05E418BF64283CEA@AMBPR05MB11925.eurprd05.prod.outlook.com> <20251110201933.GH2988753@mit.edu> <0F8021E8-F288-4669-8195-9948844E36FD@zytor.com> <20251111035143.GJ2988753@mit.edu> <D4AF3E24-8698-4EEC-9D52-655D69897111@zytor.com> <2025111214-doily-anyway-b24b@gregkh>
+Message-ID: <6DBB5931-ACD4-4174-9FCE-96C45FFC4603@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251112160708.1343355-1-seanjc@google.com>
-X-Mailer: git-send-email 2.51.2.1041.gc1ab5b90ca-goog
-Message-ID: <20251112160708.1343355-4-seanjc@google.com>
-Subject: [PATCH 3/5] x86/sgx: Document structs and enums with '@', not '%'
-From: Sean Christopherson <seanjc@google.com>
-To: Jarkko Sakkinen <jarkko@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org
-Cc: linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Stephen Rothwell <sfr@canb.auug.org.au>, Sean Christopherson <seanjc@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Use '@' to document structure members and enum values in kernel-doc markup,
-as per Documentation/doc-guide/kernel-doc.rst and flagged by make htmldocs.
+On November 12, 2025 3:22:56 AM PST, Greg KH <gregkh@linuxfoundation=2Eorg>=
+ wrote:
+>On Mon, Nov 10, 2025 at 07:57:22PM -0800, H=2E Peter Anvin wrote:
+>> Honestly, though, I'm far less interested in what 8250-based hardware d=
+oes than e=2Eg=2E USB=2E
+>
+>hahahahahahaha {snort}
+>
+>Hah=2E  that's a good one=2E
+>
+>Oh, you aren't kidding=2E
+>
+>Wow, good luck with this=2E  USB-serial adaptors are all over the place,
+>some have real uarts in them (and so do buffering in the device, and
+>line handling in odd ways when powered up), and some are almost just a
+>straight pipe through to the USB host with control line handling ideas
+>tacked on to the side as an afterthought, if at all=2E
+>
+>There is no standard here, they all work differently, and even work
+>differently across the same device type with just barely enough hints
+>for us to determine what is going on=2E
+>
+>So don't worry about USB, if you throw that into the mix, all bets are
+>off and you should NEVER rely on that=2E
+>
+>Remeber USB->serial was explicitly rejected by the USB standard group,
+>only to have it come back in the "side door" through the spec process
+>when it turned out that Microsoft hated having to write a zillion
+>different vendor-specific drivers because the vendor provided ones kept
+>crashing user's machines=2E  So what we ended up with was "just enough" t=
+o
+>make it through the spec process, and even then line signals are
+>probably never tested so you can't rely on them=2E
+>
+>good luck!
+>
+>greg "this brought up too many bad memories" k-h
 
-  WARNING: arch/x86/include/uapi/asm/sgx.h:17 Enum value 'SGX_PAGE_MEASURE'
-           not described in enum 'sgx_page_flags'
+Ugh=2E
 
-Opportunistically add a missing ':' for SGX_CHILD_PRESENT.
+I have made it very clear that I am very aware that there is broken hardwa=
+re=2E=20
 
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Closes: https://lore.kernel.org/all/20251106145506.145fc620@canb.auug.org.au
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- arch/x86/include/asm/sgx.h      | 60 ++++++++++++++++-----------------
- arch/x86/include/uapi/asm/sgx.h |  2 +-
- 2 files changed, 31 insertions(+), 31 deletions(-)
-
-diff --git a/arch/x86/include/asm/sgx.h b/arch/x86/include/asm/sgx.h
-index c2c4c0d22ca4..a88c4ab95edd 100644
---- a/arch/x86/include/asm/sgx.h
-+++ b/arch/x86/include/asm/sgx.h
-@@ -66,19 +66,19 @@ enum sgx_encls_function {
- 
- /**
-  * enum sgx_return_code - The return code type for ENCLS, ENCLU and ENCLV
-- * %SGX_EPC_PAGE_CONFLICT:	Page is being written by other ENCLS function.
-- * %SGX_NOT_TRACKED:		Previous ETRACK's shootdown sequence has not
-+ * @SGX_EPC_PAGE_CONFLICT:	Page is being written by other ENCLS function.
-+ * @SGX_NOT_TRACKED:		Previous ETRACK's shootdown sequence has not
-  *				been completed yet.
-- * %SGX_CHILD_PRESENT		SECS has child pages present in the EPC.
-- * %SGX_INVALID_EINITTOKEN:	EINITTOKEN is invalid and enclave signer's
-+ * @SGX_CHILD_PRESENT:		SECS has child pages present in the EPC.
-+ * @SGX_INVALID_EINITTOKEN:	EINITTOKEN is invalid and enclave signer's
-  *				public key does not match IA32_SGXLEPUBKEYHASH.
-- * %SGX_PAGE_NOT_MODIFIABLE:	The EPC page cannot be modified because it
-+ * @SGX_PAGE_NOT_MODIFIABLE:	The EPC page cannot be modified because it
-  *				is in the PENDING or MODIFIED state.
-- * %SGX_INSUFFICIENT_ENTROPY:	Insufficient entropy in RNG.
-- * %SGX_NO_UPDATE:		EUPDATESVN could not update the CPUSVN because the
-+ * @SGX_INSUFFICIENT_ENTROPY:	Insufficient entropy in RNG.
-+ * @SGX_NO_UPDATE:		EUPDATESVN could not update the CPUSVN because the
-  *				current SVN was not newer than CPUSVN. This is the most
-  *				common error code returned by EUPDATESVN.
-- * %SGX_UNMASKED_EVENT:		An unmasked event, e.g. INTR, was received
-+ * @SGX_UNMASKED_EVENT:		An unmasked event, e.g. INTR, was received
-  */
- enum sgx_return_code {
- 	SGX_EPC_PAGE_CONFLICT		= 7,
-@@ -96,7 +96,7 @@ enum sgx_return_code {
- 
- /**
-  * enum sgx_miscselect - additional information to an SSA frame
-- * %SGX_MISC_EXINFO:	Report #PF or #GP to the SSA frame.
-+ * @SGX_MISC_EXINFO:	Report #PF or #GP to the SSA frame.
-  *
-  * Save State Area (SSA) is a stack inside the enclave used to store processor
-  * state when an exception or interrupt occurs. This enum defines additional
-@@ -113,16 +113,16 @@ enum sgx_miscselect {
- 
- /**
-  * enum sgx_attributes - the attributes field in &struct sgx_secs
-- * %SGX_ATTR_INIT:		Enclave can be entered (is initialized).
-- * %SGX_ATTR_DEBUG:		Allow ENCLS(EDBGRD) and ENCLS(EDBGWR).
-- * %SGX_ATTR_MODE64BIT:		Tell that this a 64-bit enclave.
-- * %SGX_ATTR_PROVISIONKEY:      Allow to use provisioning keys for remote
-+ * @SGX_ATTR_INIT:		Enclave can be entered (is initialized).
-+ * @SGX_ATTR_DEBUG:		Allow ENCLS(EDBGRD) and ENCLS(EDBGWR).
-+ * @SGX_ATTR_MODE64BIT:		Tell that this a 64-bit enclave.
-+ * @SGX_ATTR_PROVISIONKEY:      Allow to use provisioning keys for remote
-  *				attestation.
-- * %SGX_ATTR_KSS:		Allow to use key separation and sharing (KSS).
-- * %SGX_ATTR_EINITTOKENKEY:	Allow to use token signing key that is used to
-+ * @SGX_ATTR_KSS:		Allow to use key separation and sharing (KSS).
-+ * @SGX_ATTR_EINITTOKENKEY:	Allow to use token signing key that is used to
-  *				sign cryptographic tokens that can be passed to
-  *				EINIT as an authorization to run an enclave.
-- * %SGX_ATTR_ASYNC_EXIT_NOTIFY:	Allow enclaves to be notified after an
-+ * @SGX_ATTR_ASYNC_EXIT_NOTIFY:	Allow enclaves to be notified after an
-  *				asynchronous exit has occurred.
-  */
- enum sgx_attribute {
-@@ -195,7 +195,7 @@ struct sgx_secs {
- 
- /**
-  * enum sgx_tcs_flags - execution flags for TCS
-- * %SGX_TCS_DBGOPTIN:	If enabled allows single-stepping and breakpoints
-+ * @SGX_TCS_DBGOPTIN:	If enabled allows single-stepping and breakpoints
-  *			inside an enclave. It is cleared by EADD but can
-  *			be set later with EDBGWR.
-  */
-@@ -260,11 +260,11 @@ struct sgx_pageinfo {
- 
- /**
-  * enum sgx_page_type - bits in the SECINFO flags defining the page type
-- * %SGX_PAGE_TYPE_SECS:	a SECS page
-- * %SGX_PAGE_TYPE_TCS:	a TCS page
-- * %SGX_PAGE_TYPE_REG:	a regular page
-- * %SGX_PAGE_TYPE_VA:	a VA page
-- * %SGX_PAGE_TYPE_TRIM:	a page in trimmed state
-+ * @SGX_PAGE_TYPE_SECS:	a SECS page
-+ * @SGX_PAGE_TYPE_TCS:	a TCS page
-+ * @SGX_PAGE_TYPE_REG:	a regular page
-+ * @SGX_PAGE_TYPE_VA:	a VA page
-+ * @SGX_PAGE_TYPE_TRIM:	a page in trimmed state
-  *
-  * Make sure when making changes to this enum that its values can still fit
-  * in the bitfield within &struct sgx_encl_page
-@@ -282,14 +282,14 @@ enum sgx_page_type {
- 
- /**
-  * enum sgx_secinfo_flags - the flags field in &struct sgx_secinfo
-- * %SGX_SECINFO_R:	allow read
-- * %SGX_SECINFO_W:	allow write
-- * %SGX_SECINFO_X:	allow execution
-- * %SGX_SECINFO_SECS:	a SECS page
-- * %SGX_SECINFO_TCS:	a TCS page
-- * %SGX_SECINFO_REG:	a regular page
-- * %SGX_SECINFO_VA:	a VA page
-- * %SGX_SECINFO_TRIM:	a page in trimmed state
-+ * @SGX_SECINFO_R:	allow read
-+ * @SGX_SECINFO_W:	allow write
-+ * @SGX_SECINFO_X:	allow execution
-+ * @SGX_SECINFO_SECS:	a SECS page
-+ * @SGX_SECINFO_TCS:	a TCS page
-+ * @SGX_SECINFO_REG:	a regular page
-+ * @SGX_SECINFO_VA:	a VA page
-+ * @SGX_SECINFO_TRIM:	a page in trimmed state
-  */
- enum sgx_secinfo_flags {
- 	SGX_SECINFO_R			= BIT(0),
-diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
-index 0d408f001ac6..3c4d52072189 100644
---- a/arch/x86/include/uapi/asm/sgx.h
-+++ b/arch/x86/include/uapi/asm/sgx.h
-@@ -10,7 +10,7 @@
- 
- /**
-  * enum sgx_page_flags - page control flags
-- * %SGX_PAGE_MEASURE:	Measure the page contents with a sequence of
-+ * @SGX_PAGE_MEASURE:	Measure the page contents with a sequence of
-  *			ENCLS[EEXTEND] operations.
-  */
- enum sgx_page_flags {
--- 
-2.51.2.1041.gc1ab5b90ca-goog
+What I'm trying to do is to deal with the (occasional) case of *non*-broke=
+n hardware=2E Right now Linux breaks the non-broken hardware for it, and I =
+don't think the existence of broken hardware is a good justification for th=
+at=2E
 
 
