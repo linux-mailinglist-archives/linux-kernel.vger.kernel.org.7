@@ -1,118 +1,159 @@
-Return-Path: <linux-kernel+bounces-897349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00A93C5298C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:03:17 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85E89C52A6B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:19:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A5CF4341A16
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:03:15 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5AE8250060E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 13:59:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCDAA247291;
-	Wed, 12 Nov 2025 14:02:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 894A5316918;
+	Wed, 12 Nov 2025 13:57:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EjS32SFB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fkQAr3bH"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4688B22541C
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 14:02:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 677B81519B4
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 13:57:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762956169; cv=none; b=pO5QlS0e91hbCDdlVmyLdUV6djNt/5eLlPKSB6tPrFHW2hWrAwnGB+yoRWtAQmwzCVpmniteTaeSKOcDsaMrGkt7zNiUWIp6V3s6rPZixcHjz5QdF5dLIP4+HenBvKPKPxllbeydV0qvAZOMPLXSiFohvFVAxq4SZZh47KEJcVg=
+	t=1762955854; cv=none; b=HuJUs1TIp6a4WlRZZ0QPoN48Uz2df2/0Y+Wm3o3KBohTiCYqKr8u3U2olq+lZLoP8A/6I27FlvMs+HN0XS4PF2aMFgsD8FVf1ACUQfJWKFTJIwEDoDiH3mu9UyyuMNhKdO4aWf/cSek+jyKUGM1FnmBPPQJIJBO0mfRrochyd6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762956169; c=relaxed/simple;
-	bh=tHJOhNS/6u7uEkNaEtbiVXZYwmle7ISnqeBqpq4Kzqg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WhJ0Ni9DtwtRQehkv5rxbLnUVgd87EAS7pu5J9DOoLQnNzwfx5gh4lJExn3r9yvCa77fkXlSCYeeZ190aYjXaqOUPlThFuw/2ypu0Hf5YDlPiBe2hghdEiolh7Y3q9onEFnCRQoWPgiufwOSi3ur6XaEZbyZ3b45ZHFDBEaA8lU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EjS32SFB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C367FC4AF1C
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 14:02:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762956167;
-	bh=tHJOhNS/6u7uEkNaEtbiVXZYwmle7ISnqeBqpq4Kzqg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=EjS32SFBYen9eAiNQDbTQjnNUt4y+hR057IIkiS7r91b6IW0aRUG1RHrKBp6H7CGp
-	 88Xd/LQF37I8D+AVU0xzh6iVABD5lNIZcMO9+zeNvVa7XjlEIbL3WyEjV8oKBJGeYk
-	 vGHHiVTSUHZAq9NiB/ZsCCxiJXI58etg0TWjnqnUt4UQ+yWkXg9AEtUV4a68Hb+jNz
-	 ggqmUBijGEXbZRNPXbgRTIfaTOqIwNky4wIg2CE7MYx7UlUyPd2HjDKmt6+v2EvLOl
-	 +QK/CZ6+eZ5nWXG8N5Zxfb7n9v/4ge85Af+KY6UBRTyTWG3ewERO6n+a4LVnOrqngZ
-	 lzc6bfp6SmhoA==
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-37b96cbd875so3493181fa.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 06:02:47 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCW92lQ/N2sLkfoDlWAuNyOSMLGRR8/3A2Lem6V4Nwvu4Q1s9hL9/03ou2HM92vZqGvsNzMn93FNlTAnLAA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjBC3KtwHmyJ4HYJHOmaCml8iw+bwsvUc06Ena+7QCiNlaygUO
-	kxpR0Vx3xp3Sm8zIiBvxNqWOt6O2WQ8jf26QQ2hiiCB+PoJkVNSKODMxPp9MndMHO9dpbDT7bLj
-	iYlv+obByTW32MllAUT2J1c7YCi1nWlg=
-X-Google-Smtp-Source: AGHT+IGXAF4rUi9O4+ZXVKR3NNYktKS/FyFWJQfBYe693cP1LOAh54szQzCs9X+fzOsFf3NVrgtQ+SBmqveiSr5SGIo=
-X-Received: by 2002:a05:6512:400c:b0:595:765f:a5de with SMTP id
- 2adb3069b0e04-59576e653aemr992791e87.42.1762955827202; Wed, 12 Nov 2025
- 05:57:07 -0800 (PST)
+	s=arc-20240116; t=1762955854; c=relaxed/simple;
+	bh=k2G+UAOlxryfN7Ts6BKG6DLQwr8X02cUPkX0Arp69f0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WK9zLKTSn/EtRNtvn0j97zezMf8gE+tTeq+5RrBmweWXOPQ4n/enNp+T4NKjlBxX2p9x5IWTILDSfwDAou950uDB1EyC2mewRlOPEqVC3k6DIcJ/QERrsHzNYDlCOwuW+OkE2Ap1poRbm7/55eWiMcXXFPs/1C65fdXS2FD4oSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fkQAr3bH; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-7aace33b75bso870233b3a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 05:57:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762955853; x=1763560653; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Lt/l+8Leq/bLhALiuQnMosDsUZRfKXTeoOFBaF6JTLw=;
+        b=fkQAr3bH3AuLuM0DP7CIc02Zg9Iq30NQIVufcrlpZTNRJisyIoHQu0IH88lHd2OtvW
+         fxIKN/UFOiaJMoJ7uK0huTo0Nc3tSZ482+NC1P3hm9Lrl7pmeBbG9TEzKn2eaoyW6Xnf
+         ipWc+7HAg/cWq1sbT91iLPpKRzJfByYX8d5LOTGrNfTFZHUluCdYuvILV2g6Jfp4m+rp
+         nelLGlEmNzpmLhMKKruPNID52ikJIOabNbhcI2Yc48Tr5/gSqn1Vo4/S8mLQfqUrgfMb
+         ny7VR4kKGeL9/34SUfi/jhIy5kaFkAliBx4GmBUpTQaEekLftmJ8kzdc+cYjScV1BYSs
+         JTqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762955853; x=1763560653;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Lt/l+8Leq/bLhALiuQnMosDsUZRfKXTeoOFBaF6JTLw=;
+        b=xHuYI4D4tPfQamTiuHvKgM157YTk/Kj5YFwj+CPaK1dfYJ76QsUuVI8TRqgfF+Z3IV
+         kkfhl47dXq9R1v7KQILadN/85CLNxCvdxevlgHD0NLhgwVXh0nJstggPqaX43JNhQ7f8
+         4b0vSfQkR4KaqJGPOn8BPM0jrU+OYZx7YfiShkvrpFM9/Z4yjNNt5F583LTow/q5PD6e
+         h2f+qXv+OuKmoe2o8X9lFe5rgQ8eZWEWfDqddUTXVlHpz0A4AHqm1e1/63uzms1JRQRU
+         ovV/PV2tVDYQ/lFE41LervDXRFCNaiYx9FWk2/yWmKKLnCb3NeoCPDX+GwaT9x3MW4cS
+         Kdpw==
+X-Forwarded-Encrypted: i=1; AJvYcCVeXhbkZcYWXFgEAtJI883J6OC/J3qHfFydJBWPgEdpFxYWoNani58xEB9EA5AQu6oIjZg5tkmSPhAXs0Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJXTIVD82HaZ3Q5WMAzdGTDneWpbanygNwuvw6TjKnuV+6QdpG
+	k11hwp5Nd/F7Up4qL7Vua/67Vec8dtJqKWL/9pz8Es30IGohQPq30alG
+X-Gm-Gg: ASbGncvg9lOVZfaKkBDEKxOWZl67NNjN2OXgyeEds9gLrMaaPAOrBWgUkohakXrxjPh
+	VvQwjKjaRNcXCWAon3O3bt4y+TGTKh94BKRgc8XnPDey/wMAxbheciNicL/T2C8J0oPwDBFwDnO
+	rRgf3eTeREYf7IiMugoVpxIfAdpTR2w9S7u1MFI+JYscDOiwDeu7p1jENemqJv0qAZwn21HDoic
+	jzqK8esFG3TBqbBpXrLvZHQi2HDw5V/ITCJkPL6t5P04d2xIW5/P0Mn9WAIXwbYtUYtUJ2wPLIw
+	ObHn/3Hnr0BaAkj78ev2d2GkzN7634e1ZzrBob3TZVvRHqyjyPwC6hcrBGCztPTFnE+NRWTkARo
+	BpVRr5venlr0c/R6mmZCpUw6jR04kwrKrwTd2Ytsw7hVhdjLpHW8dIbn/DhmG6sSDe+6Jagxo6o
+	KUf+B8xsPpdZfWFpaT/Mm7
+X-Google-Smtp-Source: AGHT+IHZ/VsvfL1qBauYYeHFVM1I2oce6UrmCkeGZ0waGhdgmzOFEbz48XMrpfJQfxZr/VfEUub6bA==
+X-Received: by 2002:a05:6a00:124e:b0:7b8:758c:7e86 with SMTP id d2e1a72fcca58-7b8759bc702mr941901b3a.15.1762955852653;
+        Wed, 12 Nov 2025 05:57:32 -0800 (PST)
+Received: from iku.. ([2401:4900:1c07:5748:1c6:5ce6:4f04:5b55])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7b0f9aabfc0sm18361299b3a.13.2025.11.12.05.57.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Nov 2025 05:57:31 -0800 (PST)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Horatiu Vultur <horatiu.vultur@microchip.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+	Parthiban.Veerasooran@microchip.com
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH net-next v4 0/4] net: phy: mscc: Add support for PHY LED control
+Date: Wed, 12 Nov 2025 13:57:11 +0000
+Message-ID: <20251112135715.1017117-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251029210310.1155449-1-sohil.mehta@intel.com>
- <20251029210310.1155449-5-sohil.mehta@intel.com> <29f2d16f-361f-475c-957e-0ebcefcd1a8c@intel.com>
-In-Reply-To: <29f2d16f-361f-475c-957e-0ebcefcd1a8c@intel.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Wed, 12 Nov 2025 14:56:56 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXHvfgMqFncvP5A6ed=2qEPkNkS8ecoM6iXMect51Tpz4w@mail.gmail.com>
-X-Gm-Features: AWmQ_blXGWjy7m-ZL23HpefUvy7djJ90ttXhT8zFrf_zvGN5o6-zn9r3GtsUR7Y
-Message-ID: <CAMj1kXHvfgMqFncvP5A6ed=2qEPkNkS8ecoM6iXMect51Tpz4w@mail.gmail.com>
-Subject: Re: [PATCH v11 4/9] x86/alternatives: Disable LASS when patching
- kernel code
-To: Sohil Mehta <sohil.mehta@intel.com>
-Cc: x86@kernel.org, Borislav Petkov <bp@alien8.de>, Jonathan Corbet <corbet@lwn.net>, 
-	"H . Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, "Kirill A . Shutemov" <kas@kernel.org>, Xin Li <xin@zytor.com>, 
-	David Woodhouse <dwmw@amazon.co.uk>, Sean Christopherson <seanjc@google.com>, 
-	Rick Edgecombe <rick.p.edgecombe@intel.com>, Vegard Nossum <vegard.nossum@oracle.com>, 
-	Andrew Cooper <andrew.cooper3@citrix.com>, Randy Dunlap <rdunlap@infradead.org>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Mon, 10 Nov 2025 at 19:15, Sohil Mehta <sohil.mehta@intel.com> wrote:
->
-> Hi Boris,
->
-> On 10/29/2025 2:03 PM, Sohil Mehta wrote:
-> > +/*
-> > + * LASS enforcement is based on bit 63 of the virtual address. The
-> > + * kernel is not allowed to touch memory in the lower half of the
-> > + * virtual address space.
-> > + *
-> > + * Use lass_disable()/lass_enable() to toggle the AC bit for kernel data
-> > + * accesses (!_PAGE_USER) that are blocked by LASS, but not by SMAP.
-> > + *
-> > + * Even with the AC bit set, LASS will continue to block instruction
-> > + * fetches from the user half of the address space. To allow those,
-> > + * clear CR4.LASS to disable the LASS mechanism entirely.
-> > + *
->
-> Based on the EFI discussion,
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Which discussion is that?
+Hi All,
 
-> it looks like we would now need to toggle
-> CR4.LASS every time we switch to efi_mm. The lass_enable()/_disable()
-> naming would be more suitable for those wrappers.
->
+This patch series adds support for controlling the PHY LEDs on the
+VSC85xx family of PHYs from Microsemi (now part of Renesas).
+The first two patches simplify and consolidate existing probe code
+the third patch introduces the LED control functionality.
+The LED control feature allows users to configure the LED behavior
+based on link activity, speed, and other criteria.
 
-Note that Linux/x86 uses SetVirtualAddressMap() to remap all EFI
-runtime regions into the upper [kernel] half of the address space.
+v3->v4:
+- Sorted the members of vsc85xx_probe_config struct to avoid the
+  holes
+- Fixed Reverse Christmas tree in vsc85xx_led_combine_disable_set()
+- Added Reviewed-by tag
+- Added new patch 4/4 to handle devm_phy_package_join()
+  failure in vsc85xx_probe_common()
 
-SetVirtualAddressMap() itself is a terrible idea, but given that we
-are already stuck with it, we should be able to rely on ordinary EFI
-runtime calls to only execute from the upper address range. The only
-exception is the call to SetVirtualAddressMap() itself, which occurs
-only once during early boot.
+v2->v3:
+- Added Reviewed-by tag to patches 1/3 and 3/3.
+- Grouped check_rate_magic check in patch 2/3.
+- Formatted the patches with `--diff-algorithm=patience` option to
+  improve readability.
+
+v1->v2:
+- Patches 1/3 and 2/3 are new.
+- Added LED control support to all VSC85xx PHY variants.
+- Renamed led callbacks to vsc85xx_* for consistency.
+- Defaulted the LEDs on probe to the default array before parsing DT.
+- Used phy_modify() in vsc85xx_led_brightness_set()
+- Return value of phy_read() checked in vsc85xx_led_hw_control_get()
+- Reverse Christmas tree in vsc85xx_led_hw_is_supported()
+- Updated the commit message to clarify the LED combine feature behavior.
+
+Cheers,
+Prabhakar
+
+Lad Prabhakar (4):
+  net: phy: mscc: Simplify LED mode update using phy_modify()
+  net: phy: mscc: Consolidate probe functions into a common helper
+  net: phy: mscc: Add support for PHY LED control
+  net: phy: mscc: Handle devm_phy_package_join() failure in
+    vsc85xx_probe_common()
+
+ drivers/net/phy/mscc/mscc.h      |   4 +
+ drivers/net/phy/mscc/mscc_main.c | 497 +++++++++++++++++++++++--------
+ 2 files changed, 379 insertions(+), 122 deletions(-)
+
+-- 
+2.43.0
+
 
