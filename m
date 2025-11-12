@@ -1,101 +1,103 @@
-Return-Path: <linux-kernel+bounces-897186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F152C523B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 13:22:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0679AC523D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 13:24:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D9CFC4E3A29
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 12:14:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E79DD422450
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 12:14:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3C4B31B11E;
-	Wed, 12 Nov 2025 12:13:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B4D831B11C;
+	Wed, 12 Nov 2025 12:14:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="Iz3dSmV8"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="E8POWZ4S"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7BCC3191A5;
-	Wed, 12 Nov 2025 12:13:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 325A631A813
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 12:14:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762949638; cv=none; b=fjTFH+DLnWFkEGmjoL17admdywvm2NL4rTq9aejctsg8rqZ0YY0FCqJyhMyC3EGN61s0bf9gIq5vFtdv+ZRccWswpWbApgTTTL/w9SqGohOGg61/yEofvCfmrjk2abF7IL5cYdr/wtCmo6ZYnRO8rnR3+7vEIUwRWCyBC3JXbzI=
+	t=1762949656; cv=none; b=WXImFr3042eDdzrljzFYmuRTENwGEdMrzI48Jay7mSxMeQ9Zyyxx2b1d9v2Hld0WSVb8d9VpNVRugRcKTXtSvo7Nkg1Rr+aDfKWpy621wV7wLBM3DpBh2RQMGrKsMaEkO4RKAxNTGMYu3YWZorfdoAjf0aqG/sygWZAxD8678ng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762949638; c=relaxed/simple;
-	bh=LeZBMdb0VjGDbBq/p3y0Gg3Hhmbrd7oXXF61lD0zekM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=CYpTnZkiL+ETeo7FoGqULMwHNb3WaYr/8fpNrByddW55YVGu1tR3TQz/lHstJRd0/S6wlZivyGWI3ub9cRvvzTA9K3HVu2dY8CmdS90XB4nuIUW+v3ST9xf8InkahHn4D4SCMzpS3Ims47GOD5IjbSF1n4asDh89Bu96wN2fST8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=Iz3dSmV8; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=LeZBMdb0VjGDbBq/p3y0Gg3Hhmbrd7oXXF61lD0zekM=;
-	t=1762949635; x=1764159235; b=Iz3dSmV8mfDi8RiKpnFmCHQDyL/TZ0veXY+bVJgdsQCgbBv
-	kA1YoIeLs2BhKzKZAqXsDFZhy6bprVuJCnD8KtBYTBd7gq9U2TIqx8xEL6Sl1Lm8VG19shz3ytQ0r
-	zYVr2tAxJKw+IxvbqiFmJXkHn/ZbaRkbPVQBrO05mVfxDXnLTp15fU2SJmL5cLvcN7DuNQ4vAehT1
-	BG/xDwuw6khtlrUF77zzq67AMRlG1JVkumBwRuEHGwqPJ818V+dU1mOg10J8MaUMH5YFs6uM2zZ0o
-	JSUYWfSuRj1mxpdLnbiIxiI0lKR2XJ5Ao22uVewbL4nfSgW8ZXfvVnj7df2bowAg==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98.2)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1vJ9jP-00000001Gma-1CJ3;
-	Wed, 12 Nov 2025 13:13:47 +0100
-Message-ID: <2083602a6dac97bb87b32d8832e8ac7e33506fbc.camel@sipsolutions.net>
-Subject: Re: wifi: mac80211: make n_channels updated absolutely before
- accessing channels[]
-From: Johannes Berg <johannes@sipsolutions.net>
-To: xu.xin16@zte.com.cn
-Cc: kees@kernel.org, concord@gentoo.org, linux-wireless@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, qiu.yutan@zte.com.cn
-Date: Wed, 12 Nov 2025 13:13:46 +0100
-In-Reply-To: <20251112165040828QPfTMyxpU6TF3SvlWuQdq@zte.com.cn>
-References: 
-	20251112163750463kAkOIyBxvHkYWh9Cgdypb@zte.com.cn,494afbf2ca5b18f230b02b03f122c4d427dd08ee.camel@sipsolutions.net <20251112165040828QPfTMyxpU6TF3SvlWuQdq@zte.com.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1762949656; c=relaxed/simple;
+	bh=7uPcYg2lVHFfpp+yzhBu7ox/Uy6wawl4Hrvj0i9hYfk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VAtlNsOWdJxkHZkVbE9/OkOTiI0BB7iSh4OL9VywgvTUQ48y6g1NNZoQFxcFc5R0gelckK1DNqjzdT+6SJK4IbohD0Kkeh5W7NnXHbRrcYmdcTfzQAALbCKwgPnCJHqXQVIWDRCXCfitFbJxapX4oLFW38zGx+E2dn6DRH9/Ab0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=E8POWZ4S; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-477632d45c9so5566785e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 04:14:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1762949652; x=1763554452; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7uPcYg2lVHFfpp+yzhBu7ox/Uy6wawl4Hrvj0i9hYfk=;
+        b=E8POWZ4S1gqsLQ/VtHBqeaVnes5P7kDH+FtPQUwFBJ4eT2GcS7CJIRZg/JgIsimfYN
+         eE7U9INocW9J6B4KZQ2vNivTIhMHptHV/awujlk2IzOr5o1n5K90hstpBInvXuWgVMZ1
+         V8AvsAvuW4KZ7ZFTL81fLLXnk6Ji4hC5kZA1eSFtvdW2QO0qVhGhE0R4T82RQwpHGtUj
+         YqVosqmQFO4g3w6VdYKe5YRMTRBrhBBEoEq2IFKDCPp6j/sgSmNobxIY8Nto4Qa8urBg
+         5kDBvWxbUrVgBWsg5EQeCSsangSyLJZfz477x5ivLb1pWZr9OJGuYGAKpAw/ouxx5i7g
+         NTiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762949652; x=1763554452;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7uPcYg2lVHFfpp+yzhBu7ox/Uy6wawl4Hrvj0i9hYfk=;
+        b=eXKcC9FZFinstlrSCCYyTKhbQfNCrD6VFjfsZjeJwG5srLW7mf3oKK1rC1DwwG8y94
+         4wEs7VsX8mH3MFIWGvl9nImNv9QQzpXoxBUSpQU5sbJTQx8co+E3/DVM4Fepmrrawn61
+         rtJe4YQKbP7srTiCdj2MRkb/e0MCnZSspWnjE8SD8WZe4hJoau61jrFqRO6ASDEB7KsT
+         VkMcMolkHbvrp1n+iiuosOvHu6ZBtr6jO3y1zG6DvYF+U+WhPp6m+jgVA/WsFOLGllUv
+         svcze1Lb261D4sIY1aXUgFCMu8GmkOe9s1iYwzeZ/8bX/heCOyJhv+88G2HXth32rS2W
+         QUyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX9ikakArhZQutkF9rEIFT0k2gh+Yagb5JNnNqoP1Q0CtZzPYnXFd6kgvwFeZiV/GpDLLiw+FGELELvlSw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlMlkjH3/SCFBp/cH3kvUA1fxeAVGaRU+hMxufr1PLq+rLkzZX
+	QvZW2CVwJxoow2nFmssQHfAbhXR+sWngLz9tzj6PucQpLXELVwXV3j8s72AgqDnKhCE=
+X-Gm-Gg: ASbGncso6LoGPfuxO145p1E9Iwcuw931Y0EI4evGMK+ioeO8vbukli53Ae8YTzqO9Fn
+	2b1B/4RehiSSfCg6b6tfnGpQMjEOXydz1WUrYTRjiHGqXc7lhGhCbUEY+OtiMGWxXchlhf15V2X
+	rTGNM84nsDFszwgwjLVnMfzxz1w3rwyz7+kDeZt7sD/sOKE8J2V5VxHtTulr703u3xrek/jeh3C
+	OSeoNqQ5I5nSEv+KqMB+gsQL1mVEE2N8RPevfVgG1kRimDV4FP+s/qYT312B4wZvZbZkKqJ9pQm
+	aKF6fuqnNGJ4Xs9lK4VQyPNUvKd6OlOg/FjHEAW5i7GenEOGbESNfQ3sFF8X9Z3GA3pkkPZLiiO
+	TDPa2UO+u00NPh6A2cIhhwZUJhuCb6sZEIiXlpssXVU4zqqpyfM2E/yKIs5uyAUxPxVNEEyp6Ge
+	13dXY6+g==
+X-Google-Smtp-Source: AGHT+IHE9gQcKzRZRfVJPwal2CO92YTTNKWhjd3PMe37ZiWw8lo0M7TWEe/XDmM7RYwtcvi4g7le8w==
+X-Received: by 2002:a05:600c:3511:b0:477:54cd:2021 with SMTP id 5b1f17b1804b1-47787041346mr27268155e9.8.1762949652523;
+        Wed, 12 Nov 2025 04:14:12 -0800 (PST)
+Received: from [10.11.12.107] ([5.12.85.52])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47787e8f3d6sm31531675e9.16.2025.11.12.04.14.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Nov 2025 04:14:12 -0800 (PST)
+Message-ID: <984524c4-e51b-45af-a775-477977df2695@linaro.org>
+Date: Wed, 12 Nov 2025 14:14:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 4/5] mtd: spi-nor: micron-st: add mt35xu01gbba support
+To: Haibo Chen <haibo.chen@nxp.com>, Pratyush Yadav <pratyush@kernel.org>,
+ Michael Walle <mwalle@kernel.org>, Miquel Raynal
+ <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>,
+ Vignesh Raghavendra <vigneshr@ti.com>
+Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+ imx@lists.linux.dev
+References: <20251112-nor-v4-0-e4637be82a0a@nxp.com>
+ <20251112-nor-v4-4-e4637be82a0a@nxp.com>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <20251112-nor-v4-4-e4637be82a0a@nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, 2025-11-12 at 16:50 +0800, xu.xin16@zte.com.cn wrote:
-> > > From: xu xin <xu.xin16@zte.com.cn>
-> > >=20
-> > > The commit 2663d0462eb3 ("wifi: mac80211: Avoid address calculations =
-via out of
-> > > bounds array indexing") said that req->n_channels must be set before
-> > > req->channels[] can be used. But there&apos;s still the case that req=
-.channels
-> > > accessing was prior to n_channels++.
-> > >=20
-> > > This does not fix any visible bug, just making n_channels updated bef=
-ore
-> > > accessing channels[] absolutely, to avoid potential UBSAN out of inde=
-xing
-> > > warning.
-> >=20
-> > I reverted the annotations, so this isn't necessary.
->=20
-> Excuse me, what is the annotations you reverted ? Maybe I missed somthing=
-.
-
-You missed multiple things, for example the fact that your changes do
-nothing.
-
-Please, everyone, don't submit changes when you don't understand _both_
-the original code (at least mostly) and your "own" changes.
-
-Otherwise we'll just think you used an LLM to cause us work and never
-take you seriously again.
-
-johannes
+Super!
+Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 
