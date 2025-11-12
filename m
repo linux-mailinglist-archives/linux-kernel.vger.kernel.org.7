@@ -1,104 +1,127 @@
-Return-Path: <linux-kernel+bounces-897856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3858C53D03
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:57:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E2361C53D09
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:58:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 848BA3A736D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:49:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 886683A89D8
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:50:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D273348479;
-	Wed, 12 Nov 2025 17:49:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8A2A347FCA;
+	Wed, 12 Nov 2025 17:50:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PzZ4hmIt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OU0Od5ja"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3A5E347BDD;
-	Wed, 12 Nov 2025 17:49:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0DA8346E66
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 17:50:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762969764; cv=none; b=k+cp3+zwV9rx4aQVnwMuP9jmyTdUJBorf41FZt167S/HHVIJvp0P/yHAZCIyIpT0sJpUNWmUn4YjNnWAPoIgZg0pWBa+2nNt04ROOsF9k20Vzf9HkE+y114Up1r4gPemiemn04mmJD92OxSn8XMy06M30+uBIBJhCV3f5t+FNEU=
+	t=1762969827; cv=none; b=HtEI5v4TdwRGa5hm2qjmDmdGOwgMbxZXRjnTlb9P5H3tfQuXkCESbk+4A5dBUmUOPiJz6Ym4NZIOcUtCs+TbYNv1FLR059k6x0cOJZB/rDidY48Q49eq8HXIM8rykahSJ8U4e1IWP8PESRGOTAwv2SiE8zdoxSE7hBHcaq6wJ3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762969764; c=relaxed/simple;
-	bh=6vy0ElT/Q0TyjMx1ZDJ9J63lSlYEuag73UWY0ZaJ71M=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=HnZKpfqBArjehDAy2SVpPHZFsERfK/jzw5FXYJCt0Fuh8PWWji/ox1oJNuvysBH7nYsjJ7SvZoF7OBkEbDoOukYDMbMx58nX04DiQPTYE7g8ZmxdEy9Uawjh0JqEIgQ0DZY7OGYsJQPf72fa+SL+oiuYB/XGYzLFlDgiEVl8QAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PzZ4hmIt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EEC4C113D0;
-	Wed, 12 Nov 2025 17:49:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762969764;
-	bh=6vy0ElT/Q0TyjMx1ZDJ9J63lSlYEuag73UWY0ZaJ71M=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=PzZ4hmItEEPta7eH1rHr9//KQTJw84VoUQUd5m05JBz/dN8R5h59WxOKyx2Of+tlP
-	 uL6uUlp/O67UIEqWe4gJ5npGt2G84hbxkwSyyr0WgH9XdCELBaVRcyw4CsV98e6eHF
-	 3HJj9+Y8E1vLgMqsH2xzanocd8YQzGjhCqW1VkyZN4q5RxqUSnh+8GIbk/TaIehptT
-	 kvmv40OZ5j9/q+enp2yURa5AewL44pyzin90v5bHRfycQxMpSwsEDXs7Su1sy0+COr
-	 FCyS+EdV0tsDU+2XCx9sZXQzxjLeOFumV9/884zwyL3ydIAQJMfe3ceHduU1DbENYz
-	 9hx/1Qm9+tIgg==
-From: Mark Brown <broonie@kernel.org>
-To: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
- avifishman70@gmail.com, tali.perry1@gmail.com, joel@jms.id.au, 
- venture@google.com, yuenn@google.com, benjaminfair@google.com, 
- andrew@codeconstruct.com.au, Tomer Maimon <tmaimon77@gmail.com>
-Cc: openbmc@lists.ozlabs.org, devicetree@vger.kernel.org, 
- linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20251112150950.1680154-1-tmaimon77@gmail.com>
-References: <20251112150950.1680154-1-tmaimon77@gmail.com>
-Subject: Re: [PATCH v2] spi: dt-bindings: nuvoton,npcm-pspi: Convert to DT
- schema
-Message-Id: <176296976083.48834.13469679974248275009.b4-ty@kernel.org>
-Date: Wed, 12 Nov 2025 17:49:20 +0000
+	s=arc-20240116; t=1762969827; c=relaxed/simple;
+	bh=+cAG+ko5uM8TEZvbuwYzPAx3F/UlyZhqlO1nIWyAXms=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=GVC/AjR7RAbvbz1sm5aFjOzIj6bvk1v8s0yQNwwupVWSdBbnqc/U6GT+OWgVDwkCF3WW6ffpMVEnGEnYINjaoj4iEWjP2IrhscW/zx9dK0u+gQC+9eoFiZLNzaPRqnAtfuUmgD1vGpklER/nwBDSvUyauQBdzyIhbbdUNMLmbFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OU0Od5ja; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762969825; x=1794505825;
+  h=date:from:to:cc:subject:message-id;
+  bh=+cAG+ko5uM8TEZvbuwYzPAx3F/UlyZhqlO1nIWyAXms=;
+  b=OU0Od5jaNDlqfSCAeEfcVVDlP6nrw3jCfaRkOHEPoiFKOF6gI7MFIL5u
+   kgRH7UUWyfooSBbQ2DHJhYSwd1epoJJO/Ima1YnByMJFc6OSJbRAsS167
+   PgBxNiyGKWmMigAEX19hU56T98OWRycbnjPekRSoytWV2nfakjBKuigBJ
+   3pdKWwV/XSOaGGlA8LKB4loOpdScO+QJy4xBukNfvPrD0ey6gnOdlIRue
+   mO1y0PxeH5zDGLLVfGReX8nNEX1zFnbMFtZwI51PdicU4W9jr5OXhoQHd
+   FMR1WarA9t5kQux5gyJPoqEaAQzxKBAs7XPPhMtRtpKzglK5za4ncSHMG
+   w==;
+X-CSE-ConnectionGUID: btKxEa1yRnSlZ7EinmInKA==
+X-CSE-MsgGUID: Pg4QgEwiRPaXAOTMAxTySw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11611"; a="64946929"
+X-IronPort-AV: E=Sophos;i="6.19,300,1754982000"; 
+   d="scan'208";a="64946929"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2025 09:50:24 -0800
+X-CSE-ConnectionGUID: DoTIOdbwSx2CCkmAu9bfQw==
+X-CSE-MsgGUID: xD0xGCeQTHaCXmjwc+GJ1A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,300,1754982000"; 
+   d="scan'208";a="194472007"
+Received: from lkp-server01.sh.intel.com (HELO 7b01c990427b) ([10.239.97.150])
+  by orviesa005.jf.intel.com with ESMTP; 12 Nov 2025 09:50:24 -0800
+Received: from kbuild by 7b01c990427b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vJEz7-0004Uu-2k;
+	Wed, 12 Nov 2025 17:50:21 +0000
+Date: Thu, 13 Nov 2025 01:49:57 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:x86/sev] BUILD SUCCESS
+ b2c1dd6c6f70a5a519532227358c82d4cfda5b36
+Message-ID: <202511130152.hw4QVtXJ-lkp@intel.com>
+User-Agent: s-nail v14.9.25
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-88d78
 
-On Wed, 12 Nov 2025 17:09:50 +0200, Tomer Maimon wrote:
-> Convert the Nuvoton NPCM PSPI binding to DT schema format.
-> 
-> Also update the binding to fix shortcoming:
->  * Drop clock-frequency property: it is never read in the NPCM PSPI
->    driver and has no effect.
-> 
-> 
-> [...]
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/sev
+branch HEAD: b2c1dd6c6f70a5a519532227358c82d4cfda5b36  x86/coco/sev: Convert has_cpuflag() to use cpu_feature_enabled()
 
-Applied to
+elapsed time: 1541m
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+configs tested: 35
+configs skipped: 135
 
-Thanks!
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-[1/1] spi: dt-bindings: nuvoton,npcm-pspi: Convert to DT schema
-      commit: 1d562ba0aa7df81335bf96c02be77efe8d5bab87
+tested configs:
+i386                          allnoconfig    gcc-14
+i386    buildonly-randconfig-001-20251112    clang-20
+i386    buildonly-randconfig-002-20251112    gcc-14
+i386    buildonly-randconfig-003-20251112    clang-20
+i386    buildonly-randconfig-004-20251112    clang-20
+i386    buildonly-randconfig-005-20251112    gcc-13
+i386    buildonly-randconfig-006-20251112    clang-20
+i386              randconfig-001-20251112    gcc-14
+i386              randconfig-002-20251112    gcc-14
+i386              randconfig-003-20251112    gcc-14
+i386              randconfig-004-20251112    clang-20
+i386              randconfig-005-20251112    clang-20
+i386              randconfig-006-20251112    clang-20
+i386              randconfig-007-20251112    gcc-13
+i386              randconfig-011-20251112    gcc-14
+i386              randconfig-012-20251112    gcc-14
+i386              randconfig-013-20251112    clang-20
+i386              randconfig-014-20251112    clang-20
+i386              randconfig-015-20251112    clang-20
+i386              randconfig-016-20251112    gcc-14
+i386              randconfig-017-20251112    clang-20
+x86_64                        allnoconfig    clang-20
+x86_64  buildonly-randconfig-001-20251112    clang-20
+x86_64  buildonly-randconfig-002-20251112    clang-20
+x86_64  buildonly-randconfig-003-20251112    clang-20
+x86_64  buildonly-randconfig-004-20251112    clang-20
+x86_64  buildonly-randconfig-005-20251112    gcc-14
+x86_64  buildonly-randconfig-006-20251112    gcc-14
+x86_64                          defconfig    gcc-14
+x86_64            randconfig-011-20251112    clang-20
+x86_64            randconfig-012-20251112    gcc-14
+x86_64            randconfig-013-20251112    gcc-14
+x86_64            randconfig-014-20251112    clang-20
+x86_64            randconfig-015-20251112    clang-20
+x86_64            randconfig-016-20251112    clang-20
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
