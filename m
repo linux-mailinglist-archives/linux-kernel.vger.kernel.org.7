@@ -1,108 +1,113 @@
-Return-Path: <linux-kernel+bounces-896803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61399C513C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:59:34 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB5C2C513FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:02:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0C41C34DCDB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:59:34 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B754D4E754A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:59:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 603672FE570;
-	Wed, 12 Nov 2025 08:59:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 730792C026D;
+	Wed, 12 Nov 2025 08:58:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=listout.xyz header.i=@listout.xyz header.b="inncpehu"
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="L9n5zMRs"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56A022F5302;
-	Wed, 12 Nov 2025 08:59:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 106622F5302
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 08:58:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762937943; cv=none; b=td7+SuBZ0Jo1TkhujtG1RZJqNUhYr1sYX6LkFVIL6Jl/SOU9Eik197XZmGlGc6neuSQj0vh6OeWwQDwBo0UY3RAmq2tAGNiCFr5Qqkf6aBXYu/5pkUmZz2gFRk21nSZqvLe8i9pcM04mF70/iMaPObzQT+bce+qxVoF6/iG54QM=
+	t=1762937935; cv=none; b=tK1rgsTW0BAhb6lbOu0MjEW+1l3rV29fBg9UcGynlc81q2ceJPoLG7N3IB9bf9dYRKQ8BDpnULYV7UoCZuG6dFvdEbfRzzGhAgs7ObcQoKFsC+3bvYDuufnQVjGFUx4Qs063gSxu/X2tkj1cVOB9AnvB4QN84uv+Nh/Zuawa2do=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762937943; c=relaxed/simple;
-	bh=9amyeYc92k+dh3EErWyp+iwvLmzuSYuv7EQjPxC75lE=;
+	s=arc-20240116; t=1762937935; c=relaxed/simple;
+	bh=BvJ9QOK1WudzEqe/mVP9Qch6KeES8Cz5wJTG2FvjEcQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GrTBtR2zg179RkdFO5RiK0ZZxShpVOxWsvB2UUBqK5JTzpYz6gJnx2HmnIcnCir1IicSGhDe0DcL5ikJaYcEUhMeNWMHhy1UVaEo+CLObVxq+4EHRgsHxo27ugo0biS04i9Vd3NiK+67dasQCFrS3PAvpsyJCH04JmwR6Ft3Q0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=listout.xyz; spf=pass smtp.mailfrom=listout.xyz; dkim=pass (2048-bit key) header.d=listout.xyz header.i=@listout.xyz header.b=inncpehu; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=listout.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=listout.xyz
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4d5y4d47dqz9thT;
-	Wed, 12 Nov 2025 09:58:57 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=listout.xyz; s=MBO0001;
-	t=1762937937;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=e4NwBu444Fxxr5f31vIxL0G3G0TwtuKwmojIyCJCoDA=;
-	b=inncpehutSLukdPOHHtzwKdWCFiBYZ0zxnYlwpfHMevTmw5TXoxZ1h8pZcrQPcEt2NGXR5
-	Zz1v6n/JwOIsw8iuIZWupwTgaugSOCMbouBdgLBKGinx5SK5JFTaVbr4IMPVO360qZBuWJ
-	fYiEDs+CYe0kTuL/LGEB7Vki2xhDFdAd+P1fmBpMVDtrfoia/DzyEBnbOm27Bn8DJ6EyVu
-	RLZchl1fNjqG413ueK5fCv1i3lKaqlrKE5SjWxCAySEZ9Xjea0aTy47v+ewS98EJsIg1eb
-	G1BzifhJt4HCOhTnf8rArKhWNmrqfWodulbwKa5u/cLo3JHyFXxeZr5VjKZPAg==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=none;
-	spf=pass (outgoing_mbo_mout: domain of listout@listout.xyz designates 2001:67c:2050:b231:465::102 as permitted sender) smtp.mailfrom=listout@listout.xyz
-Date: Wed, 12 Nov 2025 14:28:44 +0530
-From: Brahmajit Das <listout@listout.xyz>
-To: "Lecomte, Arnaud" <contact@arnaud-lcm.com>
-Cc: syzbot+d1b7fa1092def3628bd7@syzkaller.appspotmail.com, 
-	andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, daniel@iogearbox.net, 
-	eddyz87@gmail.com, haoluo@google.com, john.fastabend@gmail.com, jolsa@kernel.org, 
-	kpsingh@kernel.org, linux-kernel@vger.kernel.org, martin.lau@linux.dev, 
-	netdev@vger.kernel.org, sdf@fomichev.me, song@kernel.org, 
-	syzkaller-bugs@googlegroups.com, yonghong.song@linux.dev
-Subject: Re: [PATCH bpf-next v3] bpf: Clamp trace length in __bpf_get_stack
- to fix OOB write
-Message-ID: <mdlw2a6pjibyn4flt6a3a74mvd4pyuckzoieiz4owbkzrkrpyy@k4lkhzim4sow>
-References: <691231dc.a70a0220.22f260.0101.GAE@google.com>
- <20251111081254.25532-1-listout@listout.xyz>
- <3f79436c-d343-46ff-8559-afb7da24a44d@arnaud-lcm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=k6oRaro/1tny3k/iD3xIF+tUze+nq2bqBzzFta5f465XVjaoit92X9AT0uDFPpIj04FkNERjFHO6F6LtZVhxv4MM5DLqlyM4vq/8pcPOG6JvdXRIUym393nBJBmC+0Yicd/ENNOgJrwkfOB15IDpkRXmaRmDydEduwxcQo+KOig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=L9n5zMRs; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-47777000dadso3648635e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 00:58:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1762937932; x=1763542732; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=2PM3V5SUOmIRwUEw+SelsziXLyJorncDb0vBfck6mjc=;
+        b=L9n5zMRs+o+zZfxlG77C4v/E7UOyD2TnHRPNuFe0C4f9WeJGTI8wP75Qs+Tnry2TaC
+         uKpy3WsT6pPvvTdMbfScfHNj6BWQdl6svZ4gnDBl6HBQ7TBbVnnMm1Yuu+FxEoZvltwO
+         J6BVRFp2jKAKKaqSq0nCBjFxP+psQhJ7hVCPb6s8gYcK3oYQ6WGtyCBUnW4pjaykbwyC
+         DrCRsA8s85f/i08GV5vp7FoKsg0uU4YsO9CzX8GYSRfOygifXkiPGJmgOeWwkN8H3HKU
+         abQnoXZbrwVGXsgiZ9QkEtU50RzoxQiYEMDPWJz75CzJp/2FjERA9xelnNQ7uN291e3e
+         a9hA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762937932; x=1763542732;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2PM3V5SUOmIRwUEw+SelsziXLyJorncDb0vBfck6mjc=;
+        b=SGnccI0YXpNGkvngY3RjMHdWp6SEOq3xUV32ln+vzZnwig8V3YwpIBY7Di/Dj8xTVC
+         3sNup9uDC7d1zRbtH1Joe4elNijd1jR2adVt11qTX4coavLzunwuhC/1zdCVF7CmqWiM
+         xyODKJiZ6Nk8ZiIcozCJnI8lvR9SawItWQeWdR9gnI5cs0Yfr0Oa2tnRcY8KGkEd3hBu
+         LgtQ9E/1HZK5E5S2DxsT+6LtQVJCzy9OCQZ0H7LnI+MZpvXEkhCD0AAREK2cfW41uT3O
+         TASfOGB8sB+JFtqOe0stdpONHQzJLzPMR25fkWhJFw6CFmj4Hx91qxMnZRz1jhHrHVR6
+         TGew==
+X-Forwarded-Encrypted: i=1; AJvYcCWEl9WXNtUXsfDIMv4BTD5ETW5h3a4AsOwyOYXPwvDCSbTDFseVxZdoOCiz7yoJlmLTl4Fyid9q3fRTE50=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6+OH6S7R3TqAu4kBJaIcfeuDulrogYKliEu5Q9HJ3P5ifXQWM
+	8FZXJgspWtMe3xlpOdtth6zoV96TNYB3f24BjRM2I04srBP9eSf07bXHovVzC/TIY4c=
+X-Gm-Gg: ASbGncus5qLO/oeRUd6QFpyYvTg0VMAO3rhzYfJSLXPBwK4rslc0ujPeuAbnoRUySf/
+	Nu70ghW036zVKtCaOTEkLRQ/pzF7n579t1zBKq/GOQOvAZbQBN+NeArJjvu4e55Ju9uStEv9t+S
+	a/+dCOeVu5HjyhjuZwG+Xs8PUiNqxZu2KKZ0CHPvrlO5tAvjuPmTWG6BC15j/zuhcYkOE69VkNO
+	wJyZHUbbgAHpPaRxEQoHp23UFKws0dr41xFt9yIZrWwRC4JTdj6ZhKIV+KnN7otYhPQcHKmHZbg
+	BufJNe8VoNrSTudVzRihJwHmyk2kLsm6iG7wF1k4kVxohDxebK8ua0UWJFDz4KLF/wl3gJrvBRP
+	zWkn99gwo1nyzK7YjI/mHYuMs7NfIVbG8/YQKttyvC+nj3JJ6OgiPuSvdajBuB1sJIz1sErar
+X-Google-Smtp-Source: AGHT+IGGVYvDUcqcUiPZLSUtoqDWfq0dWOAgjoDY5T7sj0q34JOuNXmckY/tBFbuwEb7ShY09sMSJg==
+X-Received: by 2002:a05:600c:4703:b0:46e:506b:20c5 with SMTP id 5b1f17b1804b1-47787086800mr14036335e9.26.1762937932076;
+        Wed, 12 Nov 2025 00:58:52 -0800 (PST)
+Received: from linaro.org ([86.121.7.169])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47787e48853sm23640245e9.6.2025.11.12.00.58.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Nov 2025 00:58:51 -0800 (PST)
+Date: Wed, 12 Nov 2025 10:58:49 +0200
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Haotian Zhang <vulab@iscas.ac.cn>
+Cc: abelvesa@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, 
+	shawnguo@kernel.org, s.hauer@pengutronix.de, peng.fan@nxp.com, kernel@pengutronix.de, 
+	festevam@gmail.com, linux-clk@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] clk: imx: imx95-blk-ctl: Fix clock leak in error paths
+Message-ID: <y6ospgarjnretdsankhgtudttqqjfhltjyt2u6hnejgeufbkcb@yhk7ejuexvr5>
+References: <20251111114123.2075-1-vulab@iscas.ac.cn>
+ <20251112023025.793-1-vulab@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <3f79436c-d343-46ff-8559-afb7da24a44d@arnaud-lcm.com>
-X-Rspamd-Queue-Id: 4d5y4d47dqz9thT
+In-Reply-To: <20251112023025.793-1-vulab@iscas.ac.cn>
 
-On 12.11.2025 08:40, 'Lecomte, Arnaud' via syzkaller-bugs wrote:
-> I am a not sure this is the right solution and I am scared that by
-> forcing this clamping, we are hiding something else.
-> If we have a look at the code below:
-> ```
+On 25-11-12 10:30:25, Haotian Zhang wrote:
+> The probe function enables bc->clk_apb early but fails to disable it
+> when bc_data is NULL or clk_hw_data allocation fails. The cleanup
+> path also misses pm_runtime_put_sync() when rpm is enabled.
 > 
-> |
+> Switch to devm_clk_get_enabled() to automatically manage the clock
+> resource. Add pm_runtime_put_sync() in cleanup path when rpm
+> is enabled.
 > 
-> 	if (trace_in) {
-> 		trace = trace_in;
-> 		trace->nr = min_t(u32, trace->nr, max_depth);
-> 	} else if (kernel && task) {
-> 		trace = get_callchain_entry_for_task(task, max_depth);
-> 	} else {
-> 		trace = get_perf_callchain(regs, kernel, user, max_depth,
-> 					crosstask, false, 0);
-> 	} ``` trace should be (if I remember correctly) clamped there. If not, it
-> might hide something else. I would like to have a look at the return for
-> each if case through gdb. |
+> Fixes: 5224b189462f ("clk: imx: add i.MX95 BLK CTL clk driver")
+> Suggested-by: Peng Fan <peng.fan@nxp.com>
+> Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
 
-Sure, I can do that.
+Next time, please do not send the new version as a reply to the old one.
 
-> 
-> Thanks,
-> Arnaud
+Everything else LGTM:
 
--- 
-Regards,
-listout
+Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
 
