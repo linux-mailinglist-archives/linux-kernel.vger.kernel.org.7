@@ -1,171 +1,112 @@
-Return-Path: <linux-kernel+bounces-896966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B204EC51A39
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:26:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A327C51A84
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:30:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 584561886A44
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:24:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94FF53AA438
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:24:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C717A303A0C;
-	Wed, 12 Nov 2025 10:24:04 +0000 (UTC)
-Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1441A302165;
+	Wed, 12 Nov 2025 10:24:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="QCLCeGU4"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAF833019BE
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 10:24:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C35192FD1D5;
+	Wed, 12 Nov 2025 10:23:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762943044; cv=none; b=aKTjfR5h/PNVT9DAKzeGGM4KfopEB7KG34OLM2iugdB5nLWKy5t/W0wRh3KBtl7TklSljQCHKS/oR57su/ieq6YrHUyOTX8uC8uUW/x9G5YfjInOw7XmFVdTk7RfGgfM8/DzmotJiedvBqTrBj12K/sMVE77PF9QB9BBfi4/xRs=
+	t=1762943042; cv=none; b=tDS+LsKIl01/58+taCi87VU4atHZg2FLJzEjLF893jUKwyHdsEX4NDnzQbV/CNGc/U4SBoO2Sz7AGA3ecL9xIAHpcV/riZ8TxNEXpreFuvXRkRiuHfF19TFmcpmTn3RWogwaziPJyu6d650545EhPLWDAm/f0eGLJCYmHaUEs3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762943044; c=relaxed/simple;
-	bh=7buZIml+vYNlKuOKSsFWE1hHtW5O4S3qAolR1oHcodI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=biA3ETFs49t7LsAVLy6zOc8mM+UkT5D/ajAEryMEpMPUsp5no9WfcwtBvVychxYdQ1Ka0LoHJlozzctfk3c/tpPYF1Dh5eMxTyccUi4isbaqBm/P5HqtZKp1m2WKGf5CElnm9TkEY7c0+t6KpStztzRBOwnOXSXNL5PSensgJhA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-3e4228e0fb7so364770fac.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 02:24:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762943042; x=1763547842;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gmjMGG+9uwYrdBaFaG40pgpWI5m/ssDILFCqYef0GKw=;
-        b=HziUOBFIHV5NIjIf1o5ji9teCd7DSln3ScbkEBcMGeVXX0V8BAQ1F16ECXeKm2pjEh
-         ByMicNZ/GpFukJV7qf0ESYM2ZqtuJb/zx4lwDQBSpOqV04xa4TUgEUZ8PcQTmdv22Nlf
-         Q8nmZQXykMGOSDnXSa5zLK1Zsw1pbvqADot06FezSqSjDMuCGAAjoBPPI94LwWcyomNO
-         P2YTnGS7PS0yH+rQpOltjTD41iM/xWYNJCnR3m+IkFLTSGPt1QmcObZ8MHmqnufFuUaH
-         4zeLvKIE1YeeFUkCiLfWrjC5emPJWCbpn2dSYZSxkrLnsSYmzKuyUS11ij49mWYQza1r
-         LhLg==
-X-Forwarded-Encrypted: i=1; AJvYcCWoMryKQBSYQ0RASeYJ5GTwfTpSDpzdQrKe7rvgXBgGPu7mM6roxMnqyO8t4lq1gY9comOpvbO0BNdY9mk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtyicPElxsfRFpjnlzq0cbtCRl+R5j/tU5YbLiSyIM3MqjcO/d
-	pqhFsFQe9GHioOnG/6SFNViLBipd+AXE/to1clZ8FLyZKNvZjYBZHG2i5Ja9uQ==
-X-Gm-Gg: ASbGncsAScIIb1aNf8m0ICUYx0yQw7ewYLKwTNW/alPWDvagpdU3SIcVo38qUxVvlR/
-	+Hgw0U2qdMIs88R3iS8VD04dzfaVbuTuDU10w8Dlj2pAE+9EYtr3/i/slqgzsaXqSTQww7+anKO
-	mhLmdlMncUJe+j7QgZP+tgeqYpLAX0R4ZBSFks+VcGrnBnLiK1R+XKx/hpN1dAS1PoDz6EzYRwV
-	Nh8zwzotVNG+5L81V5MpvraAsWzzigwv2BP+54ba+EbnbErWIaYuUWyDHqeNKAAxQt2WKAf6eOH
-	aaPM5c0F99Hiao8hzE+5jr/jaLIIbnbpbvvelKc5YHhiZSpnioDQy+CY5PB482mZs7cT7cPfH6a
-	jxKg4KoxPcBu+7RMkUijBrxpwHg3J/aPV0iw+mGiTEnoZYvZ8f/+fKEGE71fIp0Rx+n9cTSrJum
-	os1n0=
-X-Google-Smtp-Source: AGHT+IFFIe5XwMM0YpIX3Lc90l+/3mxxUxY0eH6uX9Bidfv2T/GEpqWLRifC3V1aiew7ppov4DZUmA==
-X-Received: by 2002:a05:6870:a913:b0:3d8:9e0d:17da with SMTP id 586e51a60fabf-3e833f7baadmr924714fac.7.1762943041721;
-        Wed, 12 Nov 2025 02:24:01 -0800 (PST)
-Received: from localhost ([2a03:2880:10ff:71::])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-3e41f1c5675sm9255065fac.17.2025.11.12.02.24.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Nov 2025 02:24:01 -0800 (PST)
-From: Breno Leitao <leitao@debian.org>
-Date: Wed, 12 Nov 2025 02:23:04 -0800
-Subject: [PATCH net-next] net: ixgbe: convert to use .get_rx_ring_count
+	s=arc-20240116; t=1762943042; c=relaxed/simple;
+	bh=hMphcSWzvjciJLgu8O9mNBZ6tS/PYXaz6WZrCbUlq6I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EH0lh76CE2cOviV+sh1i0ZS7HruUF84311pIZaRSkIFHLrj1hgf/WFlhE9LyEh8aMD3kfTRl6uk9lWrdbLqlHxFiAsc8RFGaantYNlW1k8CyuU4bueXRTKmQ1Qzw4hTDK8awKO7RFqeeadYvXa7FkLN4K1jL8vvE43cGWkwVM0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=QCLCeGU4; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 107B840E0191;
+	Wed, 12 Nov 2025 10:23:56 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id cEK6losoTe2o; Wed, 12 Nov 2025 10:23:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1762943032; bh=DcWrLzxh17tqGrEc3eGZpJOg3tUTZgcl6XBpECD3q3I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QCLCeGU4V+yvIzX5bcSbdkHOamA01FY2W275TAbREMQo0bCVVP6kaf7H0LVUN0R/a
+	 6WLPS2YEeC2IKT22s37kdUwhgIEQbZzkc+kSt+CFdGltJhuVdVSNd5pilnz/pJzOQ8
+	 bg/Jy6t//rvWs6wafimEELgl/y+N6aHRznna0a0IZoUSOFRrlOI6dLRtj6521yxv8g
+	 jQe2OA7RDPOUZVQp5vETlKjmFlOr4WQrRHfLLiGCFLJ9glf37K3HVKj/t6PNAiIjvV
+	 LNsLBkhXh9B3EJuecxXFKnw/1pj82Ef2Ivl/tWFX5d8qLb+yo3JAixv5zXmU9zF3Zq
+	 evZ5MQqhDYnWnEwNyKwKNt41dnHIydEl5d0MR40gPt/LcIZmpc06UzVZHtnIa0rhgY
+	 fR3uTShVgMjmzANFYidcgPO5mOuCaDR58l+hwEoa9SiBn7Pa9t/4hlNrnIBNaAoc8U
+	 mgnVZBZUNyQv6UisC75CNhCBxS9cJlvN0TsCirkCJ58HAfF3yAQR3Bb9dzqTNYPZYA
+	 qRNe6FydRNa1610zpJprke3I3CrEh1Isi91a5p5SNVVXhLMnsuEXnHnwGZOCEpsH82
+	 hxFmUTkM4K3Lgbz3FBKU+MudGNp9hPd8Ov/4sUqH+zWN7NDzo/HUwkNxaIpNrzPDyi
+	 RiUvpJtg8HJvniTT1lTy4Szc=
+Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 6F29740E01CD;
+	Wed, 12 Nov 2025 10:23:43 +0000 (UTC)
+Date: Wed, 12 Nov 2025 11:23:36 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Brendan Jackman <jackmanb@google.com>
+Subject: Re: [PATCH v4 1/8] x86/bugs: Use VM_CLEAR_CPU_BUFFERS in VMX as well
+Message-ID: <20251112102336.GAaRRgKJ6lHCKQgxdd@fat_crate.local>
+References: <20251031003040.3491385-1-seanjc@google.com>
+ <20251031003040.3491385-2-seanjc@google.com>
+ <20251103181840.kx3egw5fwgzpksu4@desk>
+ <20251107190534.GTaQ5C_l_UsZmQR1ph@fat_crate.local>
+ <aROyvB0kZSQYmCh0@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251112-ixgbe_gxrings-v1-1-960e139697fa@debian.org>
-X-B4-Tracking: v=1; b=H4sIAAdgFGkC/x3MSwqAMAwFwKuEt7ZgCir0KiLiJ9ZsorQiBfHug
- nOAeZAlqWQEepDk1qyHIRBXhGWfLIrTFYHga98ws3da4ixjLEktZtfy0m4drx37GRXhTLJp+b8
- eJpczKReG9/0A+T47lmkAAAA=
-X-Change-ID: 20251112-ixgbe_gxrings-61c6f71d712b
-To: Tony Nguyen <anthony.l.nguyen@intel.com>, 
- Przemek Kitszel <przemyslaw.kitszel@intel.com>, 
- Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, kernel-team@meta.com, 
- Breno Leitao <leitao@debian.org>
-X-Mailer: b4 0.15-dev-a6db3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2569; i=leitao@debian.org;
- h=from:subject:message-id; bh=7buZIml+vYNlKuOKSsFWE1hHtW5O4S3qAolR1oHcodI=;
- b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBpFGBAd+OmxF+aCLlLNOP1At7YER2YtTmmHxYWP
- s2PX5WCRp+JAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCaRRgQAAKCRA1o5Of/Hh3
- bZpgEACglF3dSw3Lu5l7IIR19b2hXkkRgxiqC8O+6j9IHaK989ZfaP+mdimCb3DPYCTp9bYYUbf
- 3hGX8CS/H9UQaESFMunujdFlhXSEIs36x5YoLCrb3QxtEEEsmI7ZQBdr/Ld8lsS5i3BrlH+8U2M
- bYRRQaWrsb0rENrQrfiDTru9l3qZyE2TaXMoZUpvm63qOVmnSQv2vJVwxk+owSDyr8K5FVmUX+J
- EO08J/K2Up72F1ntL4BZf+Z1lcwaajZvD5mjbLTFOXYOrkbYlb1sfNHtYD/Gtq6GTwFVbvK8BTg
- nFR3Gmu7nRcKa9T3HioT0gh2OB5rNRre5OM2BMFH8eJlJfMBDwXe/QPrE+1PXlP+xLHDFNlUaZR
- OVlXIJ+JrCIo2Yg7+unJHVxJE3YfAiejGUPgBfsh/chHUjEIne9Sfeiq0d062XqeY9I+o0DuStl
- V6YVV/NJGXSVCR/OvAYJKEhbIpt5JR/iwWA1iEgPlDGqAmOHfCKCG1NrZ2oGTR4Hfd/XjxUAm1O
- WpepxzVqr1xmJM38mef+S4czustgWXbKuDsgqjdWIlWlmU8FrB4M7xHOYnBdgmXGMB8nCwMYNDv
- D4j4KpU5/WpDPOskzbn9i1CWn2Euk4IRm43n4LN2lDDgOKkJzpiG4cWkFFlZXAiHhSnp9PgEnr8
- ZkSISIkzrjDcTiw==
-X-Developer-Key: i=leitao@debian.org; a=openpgp;
- fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <aROyvB0kZSQYmCh0@google.com>
 
-Convert the ixgbe driver to use the new .get_rx_ring_count ethtool
-operation for handling ETHTOOL_GRXRINGS command. This simplifies the
-code by extracting the ring count logic into a dedicated callback.
+On Tue, Nov 11, 2025 at 02:03:40PM -0800, Sean Christopherson wrote:
+> How about:
+> 
+> /* If necessary, emit VERW on exit-to-userspace to clear CPU buffers. */
+> #define CLEAR_CPU_BUFFERS \
+> 	ALTERNATIVE "", __CLEAR_CPU_BUFFERS, X86_FEATURE_CLEAR_CPU_BUF
 
-The new callback provides the same functionality in a more direct way,
-following the ongoing ethtool API modernization.
+By the "If necessary" you mean whether X86_FEATURE_CLEAR_CPU_BUF is set or
+not, I presume...
 
-Signed-off-by: Breno Leitao <leitao@debian.org>
----
- drivers/net/ethernet/intel/ixgbe/ixgbe_ethtool.c | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+I was just wondering whether this macro is going to be used somewhere else
+*except* on the kernel->user vector.
 
-diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_ethtool.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_ethtool.c
-index 2d660e9edb80..2ad81f687a84 100644
---- a/drivers/net/ethernet/intel/ixgbe/ixgbe_ethtool.c
-+++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_ethtool.c
-@@ -2805,6 +2805,14 @@ static int ixgbe_rss_indir_tbl_max(struct ixgbe_adapter *adapter)
- 		return 64;
- }
- 
-+static u32 ixgbe_get_rx_ring_count(struct net_device *dev)
-+{
-+	struct ixgbe_adapter *adapter = ixgbe_from_netdev(dev);
-+
-+	return min_t(u32, adapter->num_rx_queues,
-+		     ixgbe_rss_indir_tbl_max(adapter));
-+}
-+
- static int ixgbe_get_rxnfc(struct net_device *dev, struct ethtool_rxnfc *cmd,
- 			   u32 *rule_locs)
- {
-@@ -2812,11 +2820,6 @@ static int ixgbe_get_rxnfc(struct net_device *dev, struct ethtool_rxnfc *cmd,
- 	int ret = -EOPNOTSUPP;
- 
- 	switch (cmd->cmd) {
--	case ETHTOOL_GRXRINGS:
--		cmd->data = min_t(int, adapter->num_rx_queues,
--				  ixgbe_rss_indir_tbl_max(adapter));
--		ret = 0;
--		break;
- 	case ETHTOOL_GRXCLSRLCNT:
- 		cmd->rule_cnt = adapter->fdir_filter_count;
- 		ret = 0;
-@@ -3743,6 +3746,7 @@ static const struct ethtool_ops ixgbe_ethtool_ops = {
- 	.get_ethtool_stats      = ixgbe_get_ethtool_stats,
- 	.get_coalesce           = ixgbe_get_coalesce,
- 	.set_coalesce           = ixgbe_set_coalesce,
-+	.get_rx_ring_count	= ixgbe_get_rx_ring_count,
- 	.get_rxnfc		= ixgbe_get_rxnfc,
- 	.set_rxnfc		= ixgbe_set_rxnfc,
- 	.get_rxfh_indir_size	= ixgbe_rss_indir_size,
-@@ -3791,6 +3795,7 @@ static const struct ethtool_ops ixgbe_ethtool_ops_e610 = {
- 	.get_ethtool_stats      = ixgbe_get_ethtool_stats,
- 	.get_coalesce           = ixgbe_get_coalesce,
- 	.set_coalesce           = ixgbe_set_coalesce,
-+	.get_rx_ring_count	= ixgbe_get_rx_ring_count,
- 	.get_rxnfc		= ixgbe_get_rxnfc,
- 	.set_rxnfc		= ixgbe_set_rxnfc,
- 	.get_rxfh_indir_size	= ixgbe_rss_indir_size,
+> Ya, and this goes away (moved into SVM) by the end of the series.
 
----
-base-commit: bde974ef62569a7da12aa71d182a760cd6223c36
-change-id: 20251112-ixgbe_gxrings-61c6f71d712b
+Aha, lemme look at the rest too then.
 
-Best regards,
---  
-Breno Leitao <leitao@debian.org>
+Thx.
 
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
