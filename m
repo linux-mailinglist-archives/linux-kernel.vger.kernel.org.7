@@ -1,207 +1,258 @@
-Return-Path: <linux-kernel+bounces-896552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BF0DC50A86
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 06:59:48 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF3CCC50A88
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 07:00:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 282284E47B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 05:59:47 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 674954E34DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 06:00:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F25332DC34F;
-	Wed, 12 Nov 2025 05:59:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f9zFwtCB"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5373A15D1;
-	Wed, 12 Nov 2025 05:59:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762927179; cv=fail; b=ByRwn8n1LnXyfMqegteyQyGYSwHFvOyflcSZztOkPT5m/g20ei4tWL26wtGc2zZZGTwtF7lLTGbu46LlWTMY/9fGxaYcy5Auj5ELw++3VZd9w6VhUep8aBi7QtBLo/FJi/v7MM5OGDGIlGT428qZdk3P/WWvfEZpZfczSESYcXA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762927179; c=relaxed/simple;
-	bh=lj7SFBjR1jLml5y6B92RLF4A+wSuWn/uFA/owJIFpdM=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=ZZgAF59e8auWAg8HBIHE8OYChbCudtWYLfM+91CyLRjagRXoEnc0XpkWOmIfFXxKBnWVhhap/We4BsmPDDZ43Ixq3IXsjXzpVL28zo8TfQyz5ZDlodPvHSJF8MjGawKvM4xC6DPqisw+1j66tc/UxXWPbfVA56oTiNqj87Lw89Q=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f9zFwtCB; arc=fail smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762927178; x=1794463178;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=lj7SFBjR1jLml5y6B92RLF4A+wSuWn/uFA/owJIFpdM=;
-  b=f9zFwtCBu7hWO7g9d4n8Pg5ZFyV3den9FNaJa7WkdwEM/r3g0Y722pGY
-   IvVO4Q2QzsgGrAEvraA/qbPSv7xJ7TjApFM/qGGb+ep3QWbPZuMro6cti
-   oq6EOYPwssqEbDXjCli27BBjQdJ3pW+MH+QwVZUoHJeE7DLEs6yjZsW85
-   6ucMHstwNmnm8Og18U7/HOPxJAWEzOwsTaCAPAWUYbeve7FarpFP1wMEK
-   U7XxPuHMSp77YHibFMJnWzi5mHd0Hz/WRiKcaBDarCZqm9syiXBbrTSgM
-   1slUJzcZUBj1DaMiVAiDq7YtAynC8wlvainPEC0M5e2U8efjrM7LcYZmx
-   g==;
-X-CSE-ConnectionGUID: hC2N0oa1Qs+VuarfckG93w==
-X-CSE-MsgGUID: tA09xJO9TUmweZAhvBWs4Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11610"; a="68846804"
-X-IronPort-AV: E=Sophos;i="6.19,298,1754982000"; 
-   d="scan'208";a="68846804"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 21:59:36 -0800
-X-CSE-ConnectionGUID: xrqoI9GKSEKOwI0DXAsuog==
-X-CSE-MsgGUID: kt+fAINQSkKdFiP37FCrBg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,298,1754982000"; 
-   d="scan'208";a="212526595"
-Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
-  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 21:59:36 -0800
-Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
- fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Tue, 11 Nov 2025 21:59:35 -0800
-Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
- FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Tue, 11 Nov 2025 21:59:35 -0800
-Received: from SN4PR2101CU001.outbound.protection.outlook.com (40.93.195.30)
- by edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Tue, 11 Nov 2025 21:59:35 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=AUCTU85pQQz9rP99A13AnEyny17ZFUSo2f87Q9aqpe0mkYGWaBX3MjYfIDr40hiMFs+/MOaMVMRMPcvOroExvosRdOG6+7m1RuABeIB1H2b6Jrlez279rD8VgQy6G0BKVX0GHc9oB5iqjkm0c1HixFXPemBxid0VXlH3/lwDi5EAGqfPw+9n9yqI00piTA3vlI2sZ+W+EVJewk28INoDyNcjbuGUYilkto0xtcevBBBq9Uuo1i3Yy9FDr+I9kMaR657zlDHUUqL7cNsmLpGLs00y19vE9g6R+TCYDeZVsToarmphE5WY9mbPhsHwZc1fCjK08DRQWJzxtrxzUx4eeQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=lj7SFBjR1jLml5y6B92RLF4A+wSuWn/uFA/owJIFpdM=;
- b=tc2EKvxT7aK1OpRf0+JPgeeT+ng+B+7oS54qt5VBqiccA0AsqN6fJn+IdoTl5e2QU4dwCc1/UpFrpbcJG/tvP2wK1CdgGpNXwOM0df74CN2xGckOiqndMtwxBltPZ9Gs54itD8Zhq6uJEs3fFg4iMK76ib9X3WbGuvD19EUKXPudqnT/pMY0w7aQEEtuhbEQ89VBuoDgOpnJKvH0c/emv8He675LpzvbUG+ifWcPwq9KRc+vret+42aM/zuR9MCncEcB5qek9t4Clbf8vplr55Tz/WC108Mh4pUBF/qb0QgpxFTt4LLNErirIvjyjQW/JJqCFxJZejG+uloDQKRTYw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from CH3PR11MB8660.namprd11.prod.outlook.com (2603:10b6:610:1ce::13)
- by CY5PR11MB6258.namprd11.prod.outlook.com (2603:10b6:930:25::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.15; Wed, 12 Nov
- 2025 05:59:33 +0000
-Received: from CH3PR11MB8660.namprd11.prod.outlook.com
- ([fe80::cfad:add4:daad:fb9b]) by CH3PR11MB8660.namprd11.prod.outlook.com
- ([fe80::cfad:add4:daad:fb9b%4]) with mapi id 15.20.9320.013; Wed, 12 Nov 2025
- 05:59:33 +0000
-Date: Wed, 12 Nov 2025 13:59:21 +0800
-From: Chao Gao <chao.gao@intel.com>
-To: "Xin Li (Intel)" <xin@zytor.com>
-CC: <linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>, <pbonzini@redhat.com>, <seanjc@google.com>,
-	<corbet@lwn.net>, <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
-	<dave.hansen@linux.intel.com>, <x86@kernel.org>, <hpa@zytor.com>,
-	<luto@kernel.org>, <peterz@infradead.org>, <andrew.cooper3@citrix.com>,
-	<hch@infradead.org>, <sohil.mehta@intel.com>
-Subject: Re: [PATCH v9 09/22] KVM: VMX: Save/restore guest FRED RSP0
-Message-ID: <aRQiOVfJg2PwyEdk@intel.com>
-References: <20251026201911.505204-1-xin@zytor.com>
- <20251026201911.505204-10-xin@zytor.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20251026201911.505204-10-xin@zytor.com>
-X-ClientProxiedBy: SG2PR02CA0018.apcprd02.prod.outlook.com
- (2603:1096:3:17::30) To CH3PR11MB8660.namprd11.prod.outlook.com
- (2603:10b6:610:1ce::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CD042DC32B;
+	Wed, 12 Nov 2025 05:59:59 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09FA52D94B0;
+	Wed, 12 Nov 2025 05:59:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762927198; cv=none; b=r3j//BbW8sxbnB478iMK3MYHNcwBxritOCAR/zx/hYJThmJvO/+SPbJOJmBr/TEcLAq63WOBcy2NGM5ylXfWBwaNtkgSvr0wP9TYukgof43NA66ZWxRpYAQyFGjgv75KI42WW4bOEEu9cHj2PvdzTMJtbE52qhyugvcdmBcIGhM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762927198; c=relaxed/simple;
+	bh=C1/oJK2wYGuK/+FJA6qFTyGGPX/WVbKbEQyRYZjJds8=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=gDN2FFn9W8sgMsWLEjK7Lc1ZWjBYtsiz4e6YNdWzljSlRqlRhdgF1FONxoSX4S23gYU4DWCoCshXK8L4/tR2erdx+VDsluiaKJz/E+TPzZHPr19obSaIysHXoDMiYwlzX9fapASc1r7kXarFJU64TlQM3VuYsQF7867hTlEM33o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 43AEB1515;
+	Tue, 11 Nov 2025 21:59:47 -0800 (PST)
+Received: from [10.164.18.56] (unknown [10.164.18.56])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1FE343F5A1;
+	Tue, 11 Nov 2025 21:59:51 -0800 (PST)
+Message-ID: <0d660898-241b-450f-a3f0-3d09a1c97ae0@arm.com>
+Date: Wed, 12 Nov 2025 11:29:48 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR11MB8660:EE_|CY5PR11MB6258:EE_
-X-MS-Office365-Filtering-Correlation-Id: a0302078-0368-4c15-6199-08de21b0a6db
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014|7053199007;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?RgsEOQL6xylhUgY0uv8QvqK9/f/3O3P87VxFC10hgKMaVI5a6L5JLOlpbD+s?=
- =?us-ascii?Q?486aRErD7YnlEh9gBrgMVm0p9VmOGfPcJkY9agqdLziUjKpC4UM6kYmDkqWM?=
- =?us-ascii?Q?Ip27TJ4br9GembZCAl7/bXJZuoI0W2K1qbs9HGl0VKjkKocSKgS4tMUIzFtA?=
- =?us-ascii?Q?/4llQMRPZfbkOPubdOvKCuPxTLc4446yFhr651gShzeKCpNQqr7QCeYsfjvy?=
- =?us-ascii?Q?P+zxC5Sl6zYtYHTWTr7zUJL4CNS2Vk0jpgeagg/dgnocPoigJHMW9J1HibvL?=
- =?us-ascii?Q?dzYBVOe5h8+zTdJxg0N6G1Rag/HgM8u9PRZTOwtWoGSGUs7PiTzJcKkxMas7?=
- =?us-ascii?Q?7REAMRBSCBnfrW7Fp4bAYNR4SoooCb/jdpaMSZnxlJYlLioKWZy5Cpa41KiB?=
- =?us-ascii?Q?h6kXMishq4HWxSDUeGZl625k7XDzYxJv7X5TvogW+PKZe8QREfDpPeHs2IvI?=
- =?us-ascii?Q?AZQrhgEgpbxBjw036gOcdR/3L8igMfBH9G1yTGOIGC+VN6jLTAP269U3dVL6?=
- =?us-ascii?Q?21ImBSrO/W0K33fqNzr3iPuOuPEbRRK61T2mRRSH9YAnQ0CPpbvfZ90zJYlJ?=
- =?us-ascii?Q?enOIOPMwwD0o56uusJBwA2k238JG4kDagZkBjshk/yWYJA85abLAM+hmBdc4?=
- =?us-ascii?Q?L/jKjeRDgJVE/VO6oTVsIARM6S04ivzjrZ2O8uFPUqbOKVTtQEE6oZokXT6k?=
- =?us-ascii?Q?4eCVfzj/O7NGx2/PodNZUGOdRz7juiPqfqe421cCmtwztGb2393fd9FygP2W?=
- =?us-ascii?Q?oQpPNVsJTAMIniNZf+qPwKMQM3UD+AkF8Rppq+zh5Y/6D/7Xc+JohyJBhOCt?=
- =?us-ascii?Q?bvOHyUooW8nMiauxW6GGtbsk0QFSsFqXj8ZeNvdOBB2BraVCWRYgPkAPLCRk?=
- =?us-ascii?Q?AHCkWV8LMBX9kkazg91GdC9USidvxGHJ9pnu6PzD1RtBLKnxBSyv0YGx6sxu?=
- =?us-ascii?Q?4b0f+ML+hkt1ZLT6ThqODOmvakzplp0l/TuShQN6QBQAbz2z3bCSdAXQBRPI?=
- =?us-ascii?Q?H0yho12D2K6RHRbt8D8oU6LJOqf3kHfHzNzzqijP1Y5dq0FKu3kK0Eez0oXH?=
- =?us-ascii?Q?Nls7cBfRcBptdOSQfTHyVd3+DmhjrQQqhpBOMOc/07CobrhibvmtT+nxjub7?=
- =?us-ascii?Q?ZZpHsaTJlyM3Uzj5/8/7BotqQxetMMzwiYK/v3D6roziCAeB4mbYpeOSFOhN?=
- =?us-ascii?Q?Vz1FYJsMTB/mkG60V2FlMIDE/MEptjJjvBZ4w3ATXF8Cfk9JeiBxzr3SBcmR?=
- =?us-ascii?Q?DEkcAoY7ZSuV6e92uDLOR/sspn27R3rUvUBu/NtxIPfox3BvmT+tPUaClNjc?=
- =?us-ascii?Q?LnkxdKE6qEVEDAhYsrMrJi41Ps2cI02aiHD/rNzg4tauDZey6ZcIR+KPlLkk?=
- =?us-ascii?Q?H5ok0AeoWvOvqVeuqsitbrZWh4zvFj0h4tRMDI+xFUT8WaqNYaDhgONs/FGQ?=
- =?us-ascii?Q?5myDLGyUOhpzAOQ+687YBGC3+2xRTl7B?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR11MB8660.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?n9Ynn9zS+D1ldeyTemaAFFpNl4zOCHp/TsdjjhSZqG9vbaeAwsqpdlo7KC+0?=
- =?us-ascii?Q?ajRejR3M6Y5C92+tUcRiObZa4VbJcqL7ZTGOoslvKVojBx9mXHBbpwQmfNif?=
- =?us-ascii?Q?O6YIB77ipvGfT2PNSKXGn8cKyDTCGyeI4Z72auMSQsFzEFFZdEMaQcaJIUR7?=
- =?us-ascii?Q?e+9BdvwJDMCB8oN6/QxpwBifc2NrlbupNHHPY4DtqTV5kf52qFIHNX8jze8I?=
- =?us-ascii?Q?oUtCKvTzjMIuODo6UNL58Q7WFay3Q4VERdl8V9yyEIC0dddZK3fSFeNjpLaP?=
- =?us-ascii?Q?qTxBaht1BNsaHbNkaUYLJ8AIvkHfHVMl7xhXLcKlvfAdklnIkiZhqtWU0dBW?=
- =?us-ascii?Q?xHch+WgEqbkZAR5qTIDbGSL0H8CfBFe/Q0DTncjTGkmc0aXb24ZvyJBfpLqd?=
- =?us-ascii?Q?QrwQ0izXr+HPZ+srXgYBqejhZ6+ZRheR0052gF2VRMipi7EbHjR9DlXBVX3a?=
- =?us-ascii?Q?rmb78gCX8qWhdYrcGqDVdkWkPWJ9tq72ByI+vDRwO+CglNwsQ+khUfvKhEjy?=
- =?us-ascii?Q?U/4Uivw5nseBHMCQmN5Ohn86SlHtAX0XTxpap1aENYsZgm2OzDgfXuf7AiNn?=
- =?us-ascii?Q?1sVluJI2qhnePeYYKfMQWxyv4Al1h6wnR/3pFJeyfrNqBP2PLdfwdtavC9eX?=
- =?us-ascii?Q?7cu16HBvtRUWM9WONj2rDbBhAbw907ONvaP97uRwwOCjLNDI2DiAW2vBXaDR?=
- =?us-ascii?Q?rRh4+9zElD7iTyLwNmRufYKzfQAjSo0Rn66KpZnOiwMinIqwWVa6MDKIGxQK?=
- =?us-ascii?Q?365NugX+mwfUrxOYGJ6EMZh7VizlUO3poQuOI1g6NpbymBf80c5j3z8gnBnK?=
- =?us-ascii?Q?5h7l2lfehJ5iBoik4haWo21wxfJD5elKKRT40BV/JcNO+ffMsJiBDW1SSx50?=
- =?us-ascii?Q?sSsD0Fi0OrEPwCINqALemA39ssfFRxaaaWzyUTli6BT5e7l+WLOeCH2Zla7u?=
- =?us-ascii?Q?MNmR2SzAMGN26g3Jllc35j4gLmJVvgLPTtwmhOH+1CHSqJ3d8E5H0IhDBR1X?=
- =?us-ascii?Q?SRkF0g/7kTrH/eZ0DGwDTD4k3OPYG7bDU7oS6lMRcu9NRHzINaTrQ81p7h29?=
- =?us-ascii?Q?k+R0LtRtLISP2IylhCXCk2bQzKX8DoPhYiSxOA+gbxZe4yxacXZ+bcjB8VBO?=
- =?us-ascii?Q?h4R4B9F6oc9emVABPN8FkRAWAf9FCfJWio3nBfjwZG+atAvkSGmhm/J8tC0S?=
- =?us-ascii?Q?LFE/56H5og6giBzlnSpfvCdWjq6wZCbRH9lQUjXuZQyOGbgF2zONE37Jq0XR?=
- =?us-ascii?Q?j3a2dlwfM6EOzBtU4theTyIMjSW5ATaBeK/K5NeqTxKS0fcWEhMbMWLoPywe?=
- =?us-ascii?Q?KJyfTLBUSZAe2R0UfTvCLqRG7EL3EB102O/AsFj5qY2XGjbnBjGQWZ3QNYSg?=
- =?us-ascii?Q?pq7gqQx9IIGavNKoSjg8WHbVO2dZqZxD1I4pypbOQ9HEALudsJJ4Iw3dytYv?=
- =?us-ascii?Q?36F0PwdvQ2dauM9gNDTGD+PJyDnJY3sdBQdgKAOMUJG4JIZniBPpjL83obTq?=
- =?us-ascii?Q?Rr1JVAoZQdLOLKpprhoprtCjns+1b576UZ3/XMAzlGNI4fkUoqBtbP5LIVzH?=
- =?us-ascii?Q?+uT2eIjYU6y5yU3RR4+S9MgTcjZEuFdtEeil69HQ?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: a0302078-0368-4c15-6199-08de21b0a6db
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR11MB8660.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2025 05:59:33.2941
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7cFM0uBKRp/GcrOIMqCBCW2+FU7Fkde9L7HtJCkvd46Q3QF9E0Padbg4C21DmUnwWLOA06MeiThxjrSFTFKxRQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR11MB6258
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64/pageattr: Propagate return value from
+ __change_memory_common
+From: Dev Jain <dev.jain@arm.com>
+To: Yang Shi <yang@os.amperecomputing.com>, Will Deacon <will@kernel.org>
+Cc: catalin.marinas@arm.com, ryan.roberts@arm.com, rppt@kernel.org,
+ shijie@os.amperecomputing.com, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20251103061306.82034-1-dev.jain@arm.com>
+ <aQjHQt2rYL6av4qw@willie-the-truck>
+ <f594696b-ba33-4c04-9cf5-e88767221ae0@os.amperecomputing.com>
+ <f8b899cf-d377-4dc7-a57c-82826ea5e1ea@arm.com>
+ <aQn4EwKar66UZ7rz@willie-the-truck>
+ <586b8d19-a5d2-4248-869b-98f39b792acb@arm.com>
+ <17eed751-e1c5-4ea5-af1d-e96da16d5e26@arm.com>
+ <c1701ce9-c8b7-4ac8-8dd4-930af3dad7d2@os.amperecomputing.com>
+ <938fc839-b27a-484f-a49c-6dc05b3e9983@arm.com>
+Content-Language: en-US
+In-Reply-To: <938fc839-b27a-484f-a49c-6dc05b3e9983@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Sun, Oct 26, 2025 at 01:18:57PM -0700, Xin Li (Intel) wrote:
->From: Xin Li <xin3.li@intel.com>
->
->Save guest FRED RSP0 in vmx_prepare_switch_to_host() and restore it
->in vmx_prepare_switch_to_guest() because MSR_IA32_FRED_RSP0 is passed
->through to the guest, thus is volatile/unknown.
->
->Note, host FRED RSP0 is restored in arch_exit_to_user_mode_prepare(),
->regardless of whether it is modified in KVM.
->
->Signed-off-by: Xin Li <xin3.li@intel.com>
->Signed-off-by: Xin Li (Intel) <xin@zytor.com>
->Tested-by: Shan Kang <shan.kang@intel.com>
->Tested-by: Xuelian Guo <xuelian.guo@intel.com>
 
-Reviewed-by: Chao Gao <chao.gao@intel.com>
+On 11/11/25 10:07 am, Dev Jain wrote:
+>
+> On 11/11/25 9:47 am, Yang Shi wrote:
+>>
+>>
+>> On 11/10/25 7:39 PM, Dev Jain wrote:
+>>>
+>>> On 05/11/25 9:27 am, Dev Jain wrote:
+>>>>
+>>>> On 04/11/25 6:26 pm, Will Deacon wrote:
+>>>>> On Tue, Nov 04, 2025 at 09:06:12AM +0530, Dev Jain wrote:
+>>>>>> On 04/11/25 12:15 am, Yang Shi wrote:
+>>>>>>> On 11/3/25 7:16 AM, Will Deacon wrote:
+>>>>>>>> On Mon, Nov 03, 2025 at 11:43:06AM +0530, Dev Jain wrote:
+>>>>>>>>> Post a166563e7ec3 ("arm64: mm: support large block mapping when
+>>>>>>>>> rodata=full"),
+>>>>>>>>> __change_memory_common has a real chance of failing due to split
+>>>>>>>>> failure.
+>>>>>>>>> Before that commit, this line was introduced in c55191e96caa,
+>>>>>>>>> still having
+>>>>>>>>> a chance of failing if it needs to allocate pagetable memory in
+>>>>>>>>> apply_to_page_range, although that has never been observed to 
+>>>>>>>>> be true.
+>>>>>>>>> In general, we should always propagate the return value to the 
+>>>>>>>>> caller.
+>>>>>>>>>
+>>>>>>>>> Cc: stable@vger.kernel.org
+>>>>>>>>> Fixes: c55191e96caa ("arm64: mm: apply r/o permissions of VM
+>>>>>>>>> areas to its linear alias as well")
+>>>>>>>>> Signed-off-by: Dev Jain <dev.jain@arm.com>
+>>>>>>>>> ---
+>>>>>>>>> Based on Linux 6.18-rc4.
+>>>>>>>>>
+>>>>>>>>>    arch/arm64/mm/pageattr.c | 5 ++++-
+>>>>>>>>>    1 file changed, 4 insertions(+), 1 deletion(-)
+>>>>>>>>>
+>>>>>>>>> diff --git a/arch/arm64/mm/pageattr.c b/arch/arm64/mm/pageattr.c
+>>>>>>>>> index 5135f2d66958..b4ea86cd3a71 100644
+>>>>>>>>> --- a/arch/arm64/mm/pageattr.c
+>>>>>>>>> +++ b/arch/arm64/mm/pageattr.c
+>>>>>>>>> @@ -148,6 +148,7 @@ static int change_memory_common(unsigned
+>>>>>>>>> long addr, int numpages,
+>>>>>>>>>        unsigned long size = PAGE_SIZE * numpages;
+>>>>>>>>>        unsigned long end = start + size;
+>>>>>>>>>        struct vm_struct *area;
+>>>>>>>>> +    int ret;
+>>>>>>>>>        int i;
+>>>>>>>>>          if (!PAGE_ALIGNED(addr)) {
+>>>>>>>>> @@ -185,8 +186,10 @@ static int change_memory_common(unsigned
+>>>>>>>>> long addr, int numpages,
+>>>>>>>>>        if (rodata_full && (pgprot_val(set_mask) == PTE_RDONLY ||
+>>>>>>>>>                    pgprot_val(clear_mask) == PTE_RDONLY)) {
+>>>>>>>>>            for (i = 0; i < area->nr_pages; i++) {
+>>>>>>>>> - __change_memory_common((u64)page_address(area->pages[i]),
+>>>>>>>>> +            ret =
+>>>>>>>>> __change_memory_common((u64)page_address(area->pages[i]),
+>>>>>>>>>                               PAGE_SIZE, set_mask, clear_mask);
+>>>>>>>>> +            if (ret)
+>>>>>>>>> +                return ret;
+>>>>>>>> Hmm, this means we can return failure half-way through the 
+>>>>>>>> operation. Is
+>>>>>>>> that something callers are expecting to handle? If so, how can 
+>>>>>>>> they tell
+>>>>>>>> how far we got?
+>>>>>>> IIUC the callers don't have to know whether it is half-way or not
+>>>>>>> because the callers will change the permission back (e.g. to RW) 
+>>>>>>> for the
+>>>>>>> whole range when freeing memory.
+>>>>>> Yes, it is the caller's responsibility to set 
+>>>>>> VM_FLUSH_RESET_PERMS flag.
+>>>>>> Upon vfree(), it will change the direct map permissions back to RW.
+>>>>> Ok, but vfree() ends up using update_range_prot() to do that and 
+>>>>> if we
+>>>>> need to worry about that failing (as per your commit message), then
+>>>>> we're in trouble because the calls to set_area_direct_map() are 
+>>>>> unchecked.
+>>>>>
+>>>>> In other words, this patch is either not necessary or it is 
+>>>>> incomplete.
+>>>>
+>>>> Here is the relevant email, in the discussion between Ryan and Yang:
+>>>>
+>>>> https://lore.kernel.org/all/fe52a1d8-5211-4962-afc8-c3f9caf64119@os.amperecomputing.com/ 
+>>>>
+>>>>
+>>>> We had concluded that all callers of set_memory_ro() or 
+>>>> set_memory_rox() (which require the
+>>>> linear map perm change back to default, upon vfree() ) will call it 
+>>>> for the entire region (vm_struct).
+>>>> So, when we do the set_direct_map_invalid_noflush, it is guaranteed 
+>>>> that the region has already
+>>>> been split. So this call cannot fail.
+>>>>
+>>>> https://lore.kernel.org/all/f8898c87-8f49-4ef2-86ae-b60bcf67658c@os.amperecomputing.com/ 
+>>>>
+>>>>
+>>>> This email notes that there is some code doing set_memory_rw() and 
+>>>> unnecessarily setting the VM_FLUSH_RESET_PERMS
+>>>> flag, but in that case we don't care about the 
+>>>> set_direct_map_invalid_noflush call failing because the protections
+>>>> are already RW.
+>>>>
+>>>> Although we had also observed that all of this is fragile and 
+>>>> depends on the caller doing the
+>>>> correct thing. The real solution should be somehow getting rid of 
+>>>> the BBM style invalidation.
+>>>> Ryan had proposed some methods in that email thread.
+>>>>
+>>>> One solution which I had thought of, is that, observe that we are 
+>>>> doing an overkill by
+>>>> setting the linear map to invalid and then default, for the 
+>>>> *entire* region. What we
+>>>> can do is iterate over the linear map alias of the vm_struct *area 
+>>>> and only change permission
+>>>> back to RW for the pages which are *not* RW. And, those relevant 
+>>>> mappings are guaranteed to
+>>>> be split because they were changed from RW to not RW.
+>>>
+>>> @Yang and Ryan,
+>>>
+>>> I saw Yang's patch here:
+>>> https://lore.kernel.org/all/20251023204428.477531-1-yang@os.amperecomputing.com/ 
+>>>
+>>> and realized that currently we are splitting away the linear map 
+>>> alias of the *entire* region.
+>>>
+>>> Shouldn't this then imply that set_direct_map_invalid_noflush will 
+>>> never fail, since even
+>>>
+>>> a set_memory_rox() call on a single page will split the linear map 
+>>> for the entire region,
+>>>
+>>> and thus there is no fragility here which we were discussing about? 
+>>> I may be forgetting
+>>>
+>>> something, this linear map stuff is confusing enough already.
+>>
+>> It still may fail due to page table allocation failure when doing 
+>> split. But it is still fine. We may run into 3 cases:
+>>
+>> 1. set_memory_rox succeed to split the whole range, then 
+>> set_direct_map_invalid_noflush() will succeed too
+>> 2. set_memory_rox fails to split, for example, just change partial 
+>> range permission due to page table allocation failure, then 
+>> set_direct_map_invalid_noflush() may
+>>    a. successfully change the permission back to default till where 
+>> set_memory_rox fails at since that range has been successfully split. 
+>> It is ok since the remaining range is actually not changed to ro by 
+>> set_memory_rox at all
+>>    b. successfully change the permission back to default for the 
+>> whole range (for example, memory pressure is mitigated when 
+>> set_direct_map_invalid_noflush() is called). It is definitely fine as 
+>> well
+>
+> Correct, what I mean to imply here is that, your patch will break 
+> this? If set_memory_* is applied on x till y, your patch changes the 
+> linear map alias
+>
+> only from x till y - set_direct_map_invalid_noflush instead operates 
+> on 0 till size - 1, where 0 <=x <=y <= size - 1. So, it may encounter 
+> a -ENOMEM
+>
+> on [0, x) range while invalidating, and that is *not* okay because we 
+> must reset back [0, x) to default?
+
+Okay I realize this is wrong, please read the last bit as "and this is 
+okay because [0, x) is default already", and therefore
+
+your patch is correct.
+
+
+Let me send a patch documenting this so we don't get confused in the 
+future, it is easy to forget all of this.
+
+
+>
+>
+>>
+>> Hopefully I don't miss anything.
+>>
+>> Thanks,
+>> Yang
+>>
+>>
+>>>
+>>>
+>>>>
+>>>>>
+>>>>> Will
+>>>>
+>>
+>
 
