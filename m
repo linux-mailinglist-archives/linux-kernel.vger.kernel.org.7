@@ -1,47 +1,101 @@
-Return-Path: <linux-kernel+bounces-896903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id EED1AC51839
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:57:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D63E3C5184E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:58:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 333B84FC91C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:49:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F408E42313C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:51:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B68F13002DE;
-	Wed, 12 Nov 2025 09:49:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EF3530505C;
+	Wed, 12 Nov 2025 09:49:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PTz8vIdx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Tri/oO1Z";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="BYyU5yWA"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 811862FFFA5;
-	Wed, 12 Nov 2025 09:49:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33E3E30277A
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:49:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762940943; cv=none; b=PgUiXbuD1wiXiZwGzzVecy1giRPBVQqVprWtWCzg2neDBUqrUlRsvqnCVjpkM2Wkqu83lQGLzCfw7y6qHCQDsLyYaLjaqjfSCPMeSKRtlHzPYQGzWssQ730FFRMELd0FnBzAckbPNn/vPpJCPb39V3uxhauNijoREHeb07++2cc=
+	t=1762940951; cv=none; b=I3xkuIjvDer3rhBsxHGZHcnitg6DKGmVyTkvUDCLIG3i0knpeJdQSADC9Y+jTnynbQmnx+9BjTT+eCVn6MBRjz8lkA6gCO3B3BsgeJ976OH2Thi8PBeXk5S31zp7OwqepgqHzASphfF1tIx9eVDUalkZwEJa9tI1WTkCeJ42Cqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762940943; c=relaxed/simple;
-	bh=cv+A0Rv4b6lrzkLMP+XQea/RkP4alO9eM9auJHAeB7k=;
+	s=arc-20240116; t=1762940951; c=relaxed/simple;
+	bh=wTui7CYgiy+K6A4DwIyIpanabpofRNM0sn205OFN0K0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UVdLpPMEfLiyeNP9nh2duVzP/AHdn8AzuK+3lTVmkQ0JwX5CJ+L+bNccG2qBMLV8y1zgn7SmuEqYulB68bjKXY+IEixJqu0WdMDydgamiQw7Dg6WlNdIkL2XJL3zTzPf+kjGEnsUMwbeNxEpvzka6qWJHNAy3eDGaPIKGmFCl8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PTz8vIdx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A21C8C4CEF8;
-	Wed, 12 Nov 2025 09:48:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762940943;
-	bh=cv+A0Rv4b6lrzkLMP+XQea/RkP4alO9eM9auJHAeB7k=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=PTz8vIdxtSj3/VXZCWtGx5HxaUpBY+G/6h1LPqn7seq3v0wAI67GLIMDM967O/6re
-	 ex77pnTeevTT9PlHJwahNhiORDJ6SWtyvatWksBi2jd1TQD+ODzBU6/ILy6dC3sc5Y
-	 oAr/mwwxkt12d3lgDSMOlwMKoY30EqNxtsBS9h48sYdvN9P0XhkNdV2SI/nkBZIzJE
-	 Btp6k4bdwaHSY7AUexNzZS7BxL7KsmB79uETuIefoifN/Dli3p7QOXrcS+PRUGechV
-	 YXyCHuSSAfjlPesSTL9P2wxlSWmdoROX/iwB4myGfPQvLWyn57Ya48PdQvVGmynML0
-	 MLMXq0baf3N1g==
-Message-ID: <312ca473-77a6-4b95-b558-bb121294fbc9@kernel.org>
-Date: Wed, 12 Nov 2025 10:48:57 +0100
+	 In-Reply-To:Content-Type; b=NVZV1uITCXm8/Z1xEjveaCEq4IRet53gd/W80QVbZLdtnMuk33aVhAjk8HtUzjPcpgAXwoIGagrzNHQ3hSrlaOJFew5toWqf9yV8E3B24rbVHNCmkIhJfDe+F7y9FFNuhDwOW9/6w14JXe7iN7ePMi2nv20W7oj486hMSThmaA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Tri/oO1Z; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=BYyU5yWA; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AC9hUZh907408
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:49:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	+dPJ4QZdBUlMpVPRyGvKtHV7b42+J5SfL4CezhrPsEM=; b=Tri/oO1ZEG/NXnXj
+	LZ7eUv/Z4t5Xpb9bTEJ/YzsUOMgVtx55KaPtO6P1rg/gKKagVqtARxR66yqlMfXF
+	Ba4NWIJ6sfBdpgI8Ci98+8p48bSh3al5LCHotjlL25X5gcmdgIh3Rq7Og1k+/kZk
+	iwc3j8n/K+ztzRkkV/l4P8IVQfN1uSos8ObPgx8IA1b2epBcan8o5MBRhVb2wOhK
+	nyROZc6CCrMkjRSi8+ZT/jQlxIWRS2smP8pgiut+sgB1SgR7Jm+Nxn0W0DSxjift
+	76jWYAICf9fX95WAvBfZMrTQiNqq0mzoIBKG+FKdvb7yv7DCh+zAZzcqBdTA++3y
+	d67QyQ==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4acqur80y7-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:49:08 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4edace8bc76so2172761cf.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 01:49:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1762940947; x=1763545747; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+dPJ4QZdBUlMpVPRyGvKtHV7b42+J5SfL4CezhrPsEM=;
+        b=BYyU5yWAzNjmSjF0db+II+H5IL4CxtRMmKrta2O86LW9BoVRVca50EOlyJ1Csws1na
+         VXIjg+0QOC3IYyRve5/R25xPOvBjiaKNnO9Mmcbz9J3VAoIQcmLRQ0Rqan5q82teMrhd
+         KrmjkW4cs361zLjk0HgqlC05Utg4est/0lE+cK0QH8NtjpXMFk8R6qvSqDOkWFJZJvVl
+         cECr9wkDrU7eUnZuiTeBE5YQsv1i8GtB18FuJkDfGY0FjUFdiiDzHEimoDgjJ77Iy21m
+         YdZ2lc7SkYLhNwDBN385SlQpwt5jtfNhLp/l2naZJ+mqitQuyePdI6VqFpdiQCs0nR7e
+         Vb9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762940947; x=1763545747;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+dPJ4QZdBUlMpVPRyGvKtHV7b42+J5SfL4CezhrPsEM=;
+        b=SGoU0kwt2Q1i/qKQjUOspk2OB7kCJvX5xHc/Th4s4M4q/F5Kea4G/UeU3hXgFQItdF
+         7VEQ28XBrjhyXrVkGLnkdmwEr4ldIdFQ7NKLI70P7xq9iFLAlw3KbMooYlN9B1jrMUfY
+         7zZN6j4PNHq7bnkvULFxG2RDASmarPr9UN94T8w7xbIrbzv3GWxjAxpDUrozxtzdoIGI
+         TIOlSXg+Fafndiwk8dSGHivaWSzQp779zLtdh8t0nJIkvnUnuaw3bOG3BBGogfSXCepL
+         Iral0L+my2hqpirX7VtaLXKCaQnsTmODooHZ/ZAqXnPnJuJ8vC5mCcow7AEcL7GwUj4f
+         V5mg==
+X-Forwarded-Encrypted: i=1; AJvYcCVCpHzQf1AF9obXwWUGD+0RnDtlmdLLjH0qOgPVKP+0pHjw+8eiujEa8r8R6ySXsotkzCCzemq6N70MoxY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNaPydyGxrPHnwlWAbYnbesZUKhg0s6PHha17gQpuEnTWgUY1N
+	fj/MwaSKfFlIqYAv76HzCzB5gVleL5lpnHtqwSb9pqjLkxtxNVVI1wyy8fnU2skuXpRGnO5wPx8
+	P/6NonU6CW4CWghgi9N8EVWBB8o5p4tf64n/Ju7iA4alHP2laEUb/WYJpQ2K4xggY75Y=
+X-Gm-Gg: ASbGncs3WOs8f00Acg2ztjre7dSky+c4wUWDyCqG6O7d71s6eZhm2aZl10PqwbasimT
+	cnb//xVJOw2gfmk4GNa7Oa6PMBIxCUbZOweriJ2wdHSMZwLe40Ri+R+C6BX611SqugOuSTZoTfU
+	QY1Gq4ZsPeckF+852g+wfRSORh6pfz1r9UgNeabWNXJKc5aD7leQATxwFWZZWwR5QH8lYm/kTiD
+	+1vvMUW8xe4nvIw0WHVOVKW/nSGmR5idMB1pD4hAw6RRRuam1i9sS2kZWMZ9wzyI1SUVGBphwZf
+	RGDw++LPPDAeieto/oRxJaPdLZ2rXaBShSYN1OkLWyljINAmmcREyCRMdAmWdow2rXanm3ZvtTi
+	zqSe3mE5jx+gCtph/4M6XINDzKUquRSQMGhdBeXbrFQdKHbS/Y7IPAzI4
+X-Received: by 2002:a05:622a:11c4:b0:4ed:b0fe:54af with SMTP id d75a77b69052e-4eddbdc11d9mr20202611cf.13.1762940947371;
+        Wed, 12 Nov 2025 01:49:07 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFPqrzdXmGbyKJf1zyUJ/6/lZ60CvdT07rxfc/WOc785KhcfTTcn2HopItZGmkx92ctB3AEQw==
+X-Received: by 2002:a05:622a:11c4:b0:4ed:b0fe:54af with SMTP id d75a77b69052e-4eddbdc11d9mr20202511cf.13.1762940946968;
+        Wed, 12 Nov 2025 01:49:06 -0800 (PST)
+Received: from [192.168.119.202] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bdbc9656sm1568734666b.7.2025.11.12.01.49.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Nov 2025 01:49:06 -0800 (PST)
+Message-ID: <2bde5922-6519-4b6d-9edf-94fd0e7dbc9d@oss.qualcomm.com>
+Date: Wed, 12 Nov 2025 10:49:03 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,269 +103,108 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] arm64: dts: google: Add initial dts for frankel,
- blazer, and mustang
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: Douglas Anderson <dianders@chromium.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Peter Griffin <peter.griffin@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>, linux-samsung-soc@vger.kernel.org,
- Roy Luo <royluo@google.com>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, Julius Werner <jwerner@chromium.org>,
- William McVicker <willmcvicker@google.com>, linux-kernel@vger.kernel.org
-References: <20251111192422.4180216-1-dianders@chromium.org>
- <20251111112158.4.I5032910018cdd7d6be7aea78870d04c0dc381d6e@changeid>
- <40e67c6d-2430-483b-b4b1-0220ffbd6418@kernel.org>
- <CAGXv+5Gx+skrUR3PXt=RSL8YyKZYeQCkJ-3qW9wtrHrr9aqWAg@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] arm64: dts: qcom: lemans-evk: Enable Bluetooth support
+To: Wei Deng <wei.deng@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        stable@vger.kernel.org, cheng.jiang@oss.qualcomm.com,
+        quic_jiaymao@quicinc.com, quic_chezhou@quicinc.com,
+        quic_shuaz@quicinc.com
+References: <20251110055709.319587-1-wei.deng@oss.qualcomm.com>
+ <28ffece5-29b7-4d6f-a6cf-5fdf3b8259ef@oss.qualcomm.com>
+ <ee04e03a-ffd0-43c0-ba77-c7ee20aaac43@oss.qualcomm.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <CAGXv+5Gx+skrUR3PXt=RSL8YyKZYeQCkJ-3qW9wtrHrr9aqWAg@mail.gmail.com>
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <ee04e03a-ffd0-43c0-ba77-c7ee20aaac43@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEyMDA3OCBTYWx0ZWRfX36f/0erD+f5J
+ 2vuAOOvyikDGvzmD39aU+OxeiDP0tI4Lk6Gnl+h6oGFr80Dp4fYLJtOnMOkhk73M8aDUJNC0U3r
+ R2zcNkJ4DbPdYoMf1iuyh7TXu+XT5/6xwgU4iYc8yiGioD28Lted3bXvFxZPxS/QK2nZWFPUmJI
+ X3QafzIak6KcjhdO9Bgrnq7TU3ngXKZ/KMdo+ddLA/jczrwF9qtpe/S6I4nPs/T9aBJ453hqsz9
+ ABT5+r68LrExvTdk5aV9ql3VRkhcNO7Pk60N2PO6Q8zVqRDtm/Yqfiwkr1GEPqmGENIx5V4LrQo
+ GlSqrv9RM67aD6zY6pnoEEuou6oj40VCK1MgS47iNeRgq5HtQuOuV0zh6drHMj5zImdhwezMtsU
+ rN0GryJ8J4Ni/kiAj9OKbx67ATFgfA==
+X-Proofpoint-GUID: 2kXsLc3hou2e46T8ZsJe_QHM931K6epe
+X-Authority-Analysis: v=2.4 cv=bbBmkePB c=1 sm=1 tr=0 ts=69145814 cx=c_pps
+ a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=iyyYdLundppeB2c9LQAA:9
+ a=QEXdDO2ut3YA:10 a=dawVfQjAaf238kedN5IG:22
+X-Proofpoint-ORIG-GUID: 2kXsLc3hou2e46T8ZsJe_QHM931K6epe
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-12_03,2025-11-11_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 bulkscore=0 impostorscore=0 lowpriorityscore=0
+ priorityscore=1501 malwarescore=0 phishscore=0 spamscore=0 clxscore=1015
+ adultscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
+ definitions=main-2511120078
 
-On 12/11/2025 10:35, Chen-Yu Tsai wrote:
-> On Wed, Nov 12, 2025 at 4:14 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>
->> On 11/11/2025 20:22, Douglas Anderson wrote:
->>> Add barebones device trees for frankel (Pixel 10), blazer (Pixel 10
->>> Pro), and mustang (Pixel 10 Pro XL). These device trees are enough to
->>> boot to a serial prompt using an initramfs.
+On 11/11/25 1:24 PM, Wei Deng wrote:
+> Hi Konrad,
+> 
+> Thanks for your comments.
+> 
+> On 11/10/2025 7:49 PM, Konrad Dybcio wrote:
+>> On 11/10/25 6:57 AM, Wei Deng wrote:
+>>> There's a WCN6855 WiFi/Bluetooth module on an M.2 card. To make
+>>> Bluetooth work, we need to define the necessary device tree nodes,
+>>> including UART configuration and power supplies.
 >>>
->>> Many things can be noted about these device trees:
+>>> Since there is no standard M.2 binding in the device tree at present,
+>>> the PMU is described using dedicated PMU nodes to represent the
+>>> internal regulators required by the module.
 >>>
->>> 1. They are organized as "dts" files for the main SoC and "dtso"
->>>    overlays for the boards. There is discussion about this in the
->>>    bindings patch ("dt-bindings: arm: google: Add bindings for
->>>    frankel/blazer/mustang").
->>> 2. They won't boot with the currently shipping bootloader. The current
->>>    bootloader hardcodes several paths to nodes that it wants to update
->>>    and considers it a fatal error if it can't find these nodes.
->>>    Interested parties will need to wait for fixes to land and a new
->>>    bootloader to be rolled out before attempting to use these.
->>> 3. They only add one revision (MP1) of each of frankel, blazer, and
->>>    mustang. With this simple barebones device tree, there doesn't
->>>    appear to be any difference between the revisions. More revisions
->>>    will be added as needed in the future. The heuristics in the
->>>    bootloader will pick the MP1 device tree if there are not any
->>>    better matches.
->>> 4. They only add the dts for the B0 SoC for now. The A0 SoC support
->>>    can be added later if we find the need.
->>> 5. Even newer versions of the bootloader will still error out if they
->>>    don't find a UFS node to add calibration data to. Until UFS is
->>>    supported, we provide a bogus UFS node for the bootloader. While
->>>    the bootloader could be changed, there is no long-term benefit
->>>    since eventually the device tree will have a UFS node.
->>> 6. They purposely choose to use the full 64-bit address and size cells
->>>    for the root node and the `soc@0` node. Although I haven't tested
->>>    the need for this, I presume the arguments made in commit
->>>    bede7d2dc8f3 ("arm64: dts: qcom: sdm845: Increase address and size
->>>    cells for soc") would apply here.
->>> 7. Though it looks as if the UART is never enabled, the bootloader
->>>    knows to enable the UART when the console is turned on. Baud rate
->>>    is configurable in the bootloader so is never hardcoded in the
->>>    device tree.
+>>> The 3.3V supply for the module is assumed to come directly from the
+>>> main board supply, which is 12V. To model this in the device tree, we
+>>> add a fixed 12V regulator node as the DC-IN source and connect it to
+>>> the 3.3V regulator node.
 >>>
->>> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+>>> Signed-off-by: Wei Deng <wei.deng@oss.qualcomm.com>
 >>> ---
->>> To avoid fragmenting the discussion, IMO:
->>> * Let's have the discussion about using the "dts" for SoC and the
->>>   "dtso" for the boards in response to the bindings (patch #1).
 >>
->> That's discussion here, bindings are irrelevant to this.
+>> [...]
 >>
->>> * If we want to have a discussion about putting "board-id" and
->>>   "model-id" at the root of the board overlays, we can have it
->>>   here. I'll preemptively note that the "board-id" and "model-id"
->>>   won't show up in the final combined device tree and they are just
->>>   used by the tool (mkdtimg). We could change mkdtimg to parse the
->>>   "compatible" strings of the overlays files (since I've put the IDs
->>>   there too), but official the docs [1] seem to indicate that
->>>   top-level properties like this are OK.
->>>
->>> In order for these device trees to pass validation without warnings,
->>> it's assumed you have my dtc patches:
->>> * https://lore.kernel.org/r/20251110204529.2838248-1-dianders@chromium.org
->>> * https://lore.kernel.org/r/20251110204529.2838248-2-dianders@chromium.org
->>>
->>> [1] https://git.kernel.org/pub/scm/utils/dtc/dtc.git/tree/Documentation/dt-object-internal.txt?h=main
->>>
->>>  arch/arm64/boot/dts/google/Makefile           |   9 +
->>>  arch/arm64/boot/dts/google/lga-b0.dts         | 391 ++++++++++++++++++
->>>  .../arm64/boot/dts/google/lga-blazer-mp1.dtso |  22 +
->>>  .../boot/dts/google/lga-frankel-mp1.dtso      |  22 +
->>>  .../boot/dts/google/lga-mustang-mp1.dtso      |  22 +
->>>  .../boot/dts/google/lga-muzel-common.dtsi     |  17 +
->>>  6 files changed, 483 insertions(+)
->>>  create mode 100644 arch/arm64/boot/dts/google/lga-b0.dts
->>>  create mode 100644 arch/arm64/boot/dts/google/lga-blazer-mp1.dtso
->>>  create mode 100644 arch/arm64/boot/dts/google/lga-frankel-mp1.dtso
->>>  create mode 100644 arch/arm64/boot/dts/google/lga-mustang-mp1.dtso
->>>  create mode 100644 arch/arm64/boot/dts/google/lga-muzel-common.dtsi
->>>
->>> diff --git a/arch/arm64/boot/dts/google/Makefile b/arch/arm64/boot/dts/google/Makefile
->>> index a6b187e2d631..276001e91632 100644
->>> --- a/arch/arm64/boot/dts/google/Makefile
->>> +++ b/arch/arm64/boot/dts/google/Makefile
->>> @@ -1 +1,10 @@
->>>  # SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
+>>>  &apps_rsc {
+>>> @@ -627,6 +708,22 @@ &qupv3_id_2 {
+>>>  	status = "okay";
+>>>  };
+>>>  
+>>> +&qup_uart17_cts {
+>>> +	bias-disable;
+>>> +};
 >>> +
->>> +dtb-$(CONFIG_ARCH_GOOGLE) += \
->>> +     lga-blazer-mp1.dtb \
->>> +     lga-frankel-mp1.dtb \
->>> +     lga-mustang-mp1.dtb
+>>> +&qup_uart17_rts {
+>>> +	bias-pull-down;
+>>> +};
 >>> +
->>> +lga-blazer-mp1-dtbs          := lga-b0.dtb lga-blazer-mp1.dtbo
->>> +lga-frankel-mp1-dtbs         := lga-b0.dtb lga-frankel-mp1.dtbo
->>> +lga-mustang-mp1-dtbs         := lga-b0.dtb lga-mustang-mp1.dtbo
->>> diff --git a/arch/arm64/boot/dts/google/lga-b0.dts b/arch/arm64/boot/dts/google/lga-b0.dts
->>> new file mode 100644
->>> index 000000000000..83c2db4f20ef
->>> --- /dev/null
->>> +++ b/arch/arm64/boot/dts/google/lga-b0.dts
->>> @@ -0,0 +1,391 @@
->>> +// SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
->>> +/*
->>> + * Google Tensor G5 (laguna) SoC rev B0
->>> + *
->>> + * Copyright 2024-2025 Google LLC.
->>> + */
+>>> +&qup_uart17_tx {
+>>> +	bias-pull-up;
+>>> +};
 >>> +
->>> +/dts-v1/;
->>> +
->>> +#include <dt-bindings/interrupt-controller/arm-gic.h>
->>> +#include <dt-bindings/interrupt-controller/irq.h>
->>> +
->>> +/ {
->>> +     model = "Google Tensor G5 rev B0";
->>> +     compatible = "google,soc-id-0005-rev-10", "google,lga";
+>>> +&qup_uart17_rx {
+>>> +	bias-pull-down;
+>>> +};
 >>
->> So that's SoC, thus must not be a DTS file, but DTSI.
+>> This is notably different than all other platforms' bluetooth pin
+>> settings - for example pulling down RX sounds odd, since UART signal
+>> is supposed to be high at idle
 >>
->> ...
+>> see hamoa.dtsi : qup_uart14_default as an example
 >>
->>
->> ...
->>
->>
->>> diff --git a/arch/arm64/boot/dts/google/lga-frankel-mp1.dtso b/arch/arm64/boot/dts/google/lga-frankel-mp1.dtso
->>> new file mode 100644
->>> index 000000000000..133494de7a9b
->>> --- /dev/null
->>> +++ b/arch/arm64/boot/dts/google/lga-frankel-mp1.dtso
->>
->> And that's a board, so DTS.
->>
->>> @@ -0,0 +1,22 @@
->>> +// SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
->>> +/*
->>> + * Google Pixel 10 (frankel) MP 1
->>> + *
->>> + * Copyright 2024-2025 Google LLC.
->>> + */
->>> +
->>> +/dts-v1/;
->>> +/plugin/;
->>> +
->>> +#include "lga-muzel-common.dtsi"
->>> +
->>> +/ {
->>> +     board-id = <0x070306>;
->>> +     board-rev = <0x010000>;
->>
->> Undocumented ABI, which you cannot document because these properties are
->> not allowed. You cannot have them.
 > 
-> This is part of the discussion I want to have at Plumbers. But I suppose
-> we can start here.
+> I followed the qup_uart17 settings from lemans-ride-common.dtsi. Since these configurations are not required for Bluetooth functionality. I will remove this configuration in the next patch.
 
-Then the patch should be called RFC as not yet ready for merging. :)
+This feels like you're essentially saying you don't know/care why you
+did this before and don't know why you're changing it again. This
+doesn't give me a lot of confidence. Are you testing your changes on
+real hw, running an upstream kernel with some distro userland?
 
-> 
-> The Android DTB partition format uses six 32-bit integers for matching,
-> as opposed to a compatible string used in FIT images. Two of the integers
-> are the "id" and "rev" numbers in the example above. The remaining four
-> are custom and left up to the (vendor) bootloader implementation.
-> 
-> The values for these fields need to be stored somewhere with the .dts.
-> The compiled DTB is useless if the user cannot build a proper image for
-> the bootloader to consume, and that involves putting in the right numbers
-> in these fields. The android "mkdtimg" tool can either take the values
-> from some known properties within the DTB, or have them fed to it
-> externally.
-> 
-> So if we don't want these numbers in the dts itself, then we should come
-> up with some format to store them beside the dts files.
-
-Re-iterating comment from Rob long time ago: adding such new properties
-is fine, but they must come for more than one user and be universal
-across these users.
-
-And of course the ABI needs to be documented which did not happen here.
-
-I indeed said incorrectly that "properties are not allowed". The
-properties could be allowed if we document them according to above Rob's
-comment, but that did not happen.
-
-Adding these properties per one SoC vendor is not really allowed, like
-qcom,board-id and qcom,msm-id, but maybe you intend to make it generic.
-
-> 
-> 
-> On a similar note, we would have a similar problem with FIT images and
-> overlays. The FIT image format maps a (series of) compatible string(s)
-> to one DTB and any number of overlays. If overlays are involved, then
-> the compatible string cannot come from the DTB itself, and the mapping
-> must be stored somewhere.
-
-I recall, although cannot find now references to, a email talk on the
-list saying that such overlays should have their own compatible, thus
-solving this mapping problem.
-
-
-Best regards,
-Krzysztof
+Konrad
 
