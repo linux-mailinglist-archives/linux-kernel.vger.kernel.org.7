@@ -1,180 +1,208 @@
-Return-Path: <linux-kernel+bounces-896445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40F12C50637
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 04:05:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2147C50640
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 04:06:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64F3F1890B49
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 03:03:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A40D1886C9F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 03:06:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A3872BE03D;
-	Wed, 12 Nov 2025 03:03:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86F0D2C3257;
+	Wed, 12 Nov 2025 03:06:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="f4vbFE/f"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="t4p+Fheg"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 551B0B652
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 03:03:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 762261AAE13
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 03:06:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762916601; cv=none; b=KQ/f7On1qnoR+6L5m+h/pxmPmG7k4DU0OUih+aV6q6fNYDAifhAuMPvgJogKfHeAy2AEquhD9gGj1ogKg4AJz6IRCCMHJY+CVYE1ZwxD96ZVNL/XwR1f1u3W54dEsatbubfvDJZKsymAe+stCvnblB5EoUHP67PinvUDYlicAZA=
+	t=1762916786; cv=none; b=CUD8jEw9b6uLlT97rxLe91BxxHrXk7T6u00+rOiOvSRFQl4gFM7rgwZQL2YUbiKqjy5RX99DKPKrB95Z97Pb0prwRi94Lxg1rYHa9B/2d71lgrOGaa1G/L1khhwUziciBhl6BEF09eJjRh/ZxPPqgBo2HbZMTiOd5ZflUQ1W2mQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762916601; c=relaxed/simple;
-	bh=wZWws+fIBp+8PUP6tmrutIa0sWhFQjnrwwm6369ndT4=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=qyb0DC9qLlYKdb9uiSRR9wL+3i4cFkxp0ppoz6AusTytQZyV861SMGoWJ5jGXdc5J2GiPqOV2qqnXavj+J2k5nCnmghQ7PcHdzSdOXThdOqgGwtHW9sPwCLpYZ4FTxJjZHNR8XKkYUU8F4Fo2mNsP+dEfF8JnG+bcFMonIoXBp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=f4vbFE/f; arc=none smtp.client-ip=203.254.224.24
+	s=arc-20240116; t=1762916786; c=relaxed/simple;
+	bh=3b6wIYgewbLW+NSlJo3hwLCgNV7d/iwK2UN4TDIMNug=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:MIME-Version:
+	 Content-Type:References; b=EKiIgeHX7V4zbN3ezfFjvCyJBRdGmEx1anGPzpzmZKutlzGMJCaecJ3lclINwyHFp47lR3Fnq0ZEGPpTUBrH4MNU0iNXNbbVTav2GIwZ0/WW4RlWP4iDbTKkHQCp3Bv4x5j44KD+kYz9RHO3DvS+5f/3B+0GESrIPIXCtiqCKjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=t4p+Fheg; arc=none smtp.client-ip=203.254.224.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20251112030316epoutp015b745f478524a2c2fdc21c2db4590538~3I03Tln9M1188211882epoutp01H
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 03:03:16 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20251112030316epoutp015b745f478524a2c2fdc21c2db4590538~3I03Tln9M1188211882epoutp01H
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20251112030621epoutp03b2cdf9db2cb6a8224c7128afe0bc9e66~3I3juGcVb0704307043epoutp03y
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 03:06:21 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20251112030621epoutp03b2cdf9db2cb6a8224c7128afe0bc9e66~3I3juGcVb0704307043epoutp03y
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1762916596;
-	bh=wZWws+fIBp+8PUP6tmrutIa0sWhFQjnrwwm6369ndT4=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=f4vbFE/fEybqSTzTEG/CwpBGc8s78tHf/tyiCXT8RV932R+byWDmew2gIFUJmPuFV
-	 s+7FkhnZSRewt/qK15fjDgaWZEN2Ox5It922ujCiDwmAhOCFUBKlxoNQXNnkLs8U8t
-	 IdrwAaLTxOLNmU8tKsEED8ynMv3IFn/hGhzFCZjE=
-Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
-	epcas2p1.samsung.com (KnoxPortal) with ESMTPS id
-	20251112030315epcas2p1982cfce34da8bf2aca9203fdfbe5dbbc~3I02yJO4E2083120831epcas2p1Q;
-	Wed, 12 Nov 2025 03:03:15 +0000 (GMT)
-Received: from epcas2p3.samsung.com (unknown [182.195.38.203]) by
-	epsnrtp03.localdomain (Postfix) with ESMTP id 4d5pBC2vPKz3hhTC; Wed, 12 Nov
-	2025 03:03:15 +0000 (GMT)
+	s=mail20170921; t=1762916781;
+	bh=qi/SRWVOW0xIZ/a8mTLL5M3ulFk+K1NrsEeMRhZKiBs=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=t4p+Fheg78VXRA+vFOUM6egns7mnHyk1+TBPYmr4TmsIMPxkFcfR50+eVWKM70F8T
+	 8y5pH9ISSmODjWUU4ws36VWg91RRa8oPETwHnXmrfTagJVWJa07tt/KXoyNlc35gZF
+	 yHMLR8fMm/dfhbYhvP/LJDVWLHncg9lYftNO2gAU=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
+	20251112030618epcas5p2b77987c3c152c6f2aae57d6c55319a2e~3I3g7HXMP2194821948epcas5p2J;
+	Wed, 12 Nov 2025 03:06:18 +0000 (GMT)
+Received: from epcas5p3.samsung.com (unknown [182.195.38.92]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4d5pFj597Lz2SSKY; Wed, 12 Nov
+	2025 03:06:17 +0000 (GMT)
 Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas2p1.samsung.com (KnoxPortal) with ESMTPA id
-	20251112030314epcas2p1310eb02cf25788eafc5165541ed77063~3I017jHwb2083120831epcas2p1J;
-	Wed, 12 Nov 2025 03:03:14 +0000 (GMT)
-Received: from KORCO180968 (unknown [12.80.207.170]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20251112030314epsmtip2252084f69954c4044b7444d64956a445~3I011vSbr0649406494epsmtip2E;
-	Wed, 12 Nov 2025 03:03:14 +0000 (GMT)
-From: <hy_fifty.lee@samsung.com>
-To: "'Inki Dae'" <daeinki@gmail.com>
-Cc: "'Seung-Woo Kim'" <sw0312.kim@samsung.com>, "'Kyungmin Park'"
-	<kyungmin.park@samsung.com>, "'David Airlie'" <airlied@gmail.com>, "'Simona
- Vetter'" <simona@ffwll.ch>, "'Krzysztof Kozlowski'" <krzk@kernel.org>,
-	"'Alim	Akhtar'" <alim.akhtar@samsung.com>,
-	<dri-devel@lists.freedesktop.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-In-Reply-To: <CAAQKjZNCpK4rq6DFUtiQ2rxCeb_34Mp54quVto+9LRJMH3=ZhQ@mail.gmail.com>
-Subject: RE: [PATCH 2/3] drm/exynos: Convert to drmm_mode_config_init() and
- drop manual cleanup
-Date: Wed, 12 Nov 2025 12:03:14 +0900
-Message-ID: <000101dc5380$e33e1c10$a9ba5430$@samsung.com>
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20251112030559epcas5p13358e7b05ca6b39688530b9c8178527e~3I3PJB8K42139521395epcas5p1D;
+	Wed, 12 Nov 2025 03:05:59 +0000 (GMT)
+Received: from testpc12933.samsungds.net (unknown [109.105.129.33]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20251112030558epsmtip2b33ea712c5d5fea407d8bbe45771d3c6~3I3OCeoma0649406494epsmtip20;
+	Wed, 12 Nov 2025 03:05:58 +0000 (GMT)
+From: "zheng.gong" <zheng.gong@samsung.com>
+To: linux-scsi@vger.kernel.org
+Cc: avri.altman@wdc.com, bvanassche@acm.org, quic_cang@quicinc.com,
+	alim.akhtar@samsung.com, martin.petersen@oracle.com, ebiggers@kernel.org,
+	linux-kernel@vger.kernel.org, "zheng.gong" <zheng.gong@samsung.com>
+Subject: [PATCH 1/1] scsi: ufs: crypto: Add
+ ufs_hba_variant_ops::crypto_keyslot_remap
+Date: Wed, 12 Nov 2025 11:05:24 +0800
+Message-ID: <20251112030524.3545394-2-zheng.gong@samsung.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20251112030524.3545394-1-zheng.gong@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQISjSe4EPKM2z52xGofwApISJwl9QDk05gtAfIIk1QBrzY+fbRa/MNw
-Content-Language: ko
-X-CMS-MailID: 20251112030314epcas2p1310eb02cf25788eafc5165541ed77063
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20251112030559epcas5p13358e7b05ca6b39688530b9c8178527e
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-cpgsPolicy: CPGSC10-234,Y
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-505,Y
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250929042917epcas2p2569e213500997dfa6ba43c8f361f50f7
-References: <CGME20250929042917epcas2p2569e213500997dfa6ba43c8f361f50f7@epcas2p2.samsung.com>
-	<20250929043110.3631025-1-hy_fifty.lee@samsung.com>
-	<20250929043110.3631025-3-hy_fifty.lee@samsung.com>
-	<CAAQKjZNCpK4rq6DFUtiQ2rxCeb_34Mp54quVto+9LRJMH3=ZhQ@mail.gmail.com>
+X-CMS-RootMailID: 20251112030559epcas5p13358e7b05ca6b39688530b9c8178527e
+References: <20251112030524.3545394-1-zheng.gong@samsung.com>
+	<CGME20251112030559epcas5p13358e7b05ca6b39688530b9c8178527e@epcas5p1.samsung.com>
 
-> -----Original Message-----
-> From: Inki Dae <daeinki=40gmail.com>
-> Sent: Monday, November 10, 2025 2:22 PM
-> To: Hoyoung Lee <hy_fifty.lee=40samsung.com>
-> Cc: Seung-Woo Kim <sw0312.kim=40samsung.com>; Kyungmin Park
-> <kyungmin.park=40samsung.com>; David Airlie <airlied=40gmail.com>; Simona
-> Vetter <simona=40ffwll.ch>; Krzysztof Kozlowski <krzk=40kernel.org>; Alim
-> Akhtar <alim.akhtar=40samsung.com>; dri-devel=40lists.freedesktop.org; li=
-nux-
-> arm-kernel=40lists.infradead.org; linux-samsung-soc=40vger.kernel.org; li=
-nux-
-> kernel=40vger.kernel.org
-> Subject: Re: =5BPATCH 2/3=5D drm/exynos: Convert to drmm_mode_config_init=
-()
-> and drop manual cleanup
->=20
-> 2025=EB=85=84=209=EC=9B=94=2029=EC=9D=BC=20(=EC=9B=94)=20=EC=98=A4=ED=9B=
-=84=201:54,=20Hoyoung=20Lee=20<hy_fifty.lee=40samsung.com>=EB=8B=98=EC=9D=
-=B4=20=EC=9E=91=0D=0A>=20=EC=84=B1:=0D=0A>=20>=0D=0A>=20>=20Switch=20mode-c=
-onfig=20initialization=20to=20drmm_mode_config_init()=20so=20that=0D=0A>=20=
->=20the=20lifetime=20is=20tied=20to=20drm_device.=20Remove=20explicit=0D=0A=
->=20>=20drm_mode_config_cleanup()=20from=20error=20and=20unbind=20paths=20s=
-ince=20cleanup=20is=0D=0A>=20now=20managed=20by=20DRM.=0D=0A>=20>=0D=0A>=20=
->=20No=20functional=20change=20intended.=0D=0A>=20>=0D=0A>=20>=20Signed-off=
--by:=20Hoyoung=20Lee=20<hy_fifty.lee=40samsung.com>=0D=0A>=20>=20---=0D=0A>=
-=20>=20=20drivers/gpu/drm/exynos/exynos_drm_drv.c=20=7C=204=20+---=0D=0A>=
-=20>=20=201=20file=20changed,=201=20insertion(+),=203=20deletions(-)=0D=0A>=
-=20>=0D=0A>=20>=20diff=20--git=20a/drivers/gpu/drm/exynos/exynos_drm_drv.c=
-=0D=0A>=20>=20b/drivers/gpu/drm/exynos/exynos_drm_drv.c=0D=0A>=20>=20index=
-=206cc7bf77bcac..1aea71778ab1=20100644=0D=0A>=20>=20---=20a/drivers/gpu/drm=
-/exynos/exynos_drm_drv.c=0D=0A>=20>=20+++=20b/drivers/gpu/drm/exynos/exynos=
-_drm_drv.c=0D=0A>=20>=20=40=40=20-257,7=20+257,7=20=40=40=20static=20int=20=
-exynos_drm_bind(struct=20device=20*dev)=0D=0A>=20>=20=20=20=20=20=20=20=20=
-=20dev_set_drvdata(dev,=20drm);=0D=0A>=20>=20=20=20=20=20=20=20=20=20drm->d=
-ev_private=20=3D=20(void=20*)private;=0D=0A>=20>=0D=0A>=20>=20-=20=20=20=20=
-=20=20=20drm_mode_config_init(drm);=0D=0A>=20>=20+=20=20=20=20=20=20=20drmm=
-_mode_config_init(drm);=0D=0A>=20>=0D=0A>=20>=20=20=20=20=20=20=20=20=20exy=
-nos_drm_mode_config_init(drm);=0D=0A>=20>=0D=0A>=20>=20=40=40=20-297,7=20+2=
-97,6=20=40=40=20static=20int=20exynos_drm_bind(struct=20device=20*dev)=0D=
-=0A>=20>=20=20err_unbind_all:=0D=0A>=20>=20=20=20=20=20=20=20=20=20componen=
-t_unbind_all(drm->dev,=20drm);=0D=0A>=20>=20=20err_mode_config_cleanup:=0D=
-=0A>=20>=20-=20=20=20=20=20=20=20drm_mode_config_cleanup(drm);=0D=0A>=20=0D=
-=0A>=20In=20the=20current=20implementation,=20there=20is=20a=20potential=20=
-dereference=20issue=0D=0A>=20because=20the=20private=20object=20may=20be=20=
-freed=20before=20to_dma_dev(dev)=20is=20called.=0D=0A>=20When=20drmm_mode_c=
-onfig_init()=20is=20invoked,=20it=20registers=0D=0A>=20drm_mode_config_clea=
-nup()=20as=20a=20managed=20action.=20This=20means=20that=20the=20cleanup=0D=
-=0A>=20function=20will=20be=20automatically=20executed=20later=20when=0D=0A=
->=20drm_dev_put()=20is=20called.=0D=0A>=20=0D=0A>=20The=20problem=20arises=
-=20when=20drm_dev_put()=20is=20called=20without=20explicitly=0D=0A>=20invok=
-ing=20drm_mode_config_cleanup()=20first,=20as=20in=20the=20original=20code.=
-=20In=20that=0D=0A>=20case,=20the=20managed=20cleanup=20is=20performed=20la=
-ter,=20which=20allows=0D=0A>=20to_dma_dev(dev)=20to=20be=20called=20after=
-=20the=20private=20object=20has=20already=20been=0D=0A>=20released.=0D=0A>=
-=20=0D=0A>=20For=20reference,=20the=20following=20sequence=20may=20occur=20=
-internally=20when=0D=0A>=20drm_mode_config_cleanup()=20is=20executed:=0D=0A=
->=201.=20drm_mode_config_cleanup()=20is=20called.=0D=0A>=202.=20During=20th=
-e=20cleanup=20of=20FBs,=20planes,=20CRTCs,=20encoders,=20and=20connectors,=
-=0D=0A>=20framebuffers=20or=20GEM=20objects=20may=20be=20released.=0D=0A>=
-=203.=20At=20this=20point,=20Exynos-specific=20code=20could=20invoke=20to_d=
-ma_dev(dev).=0D=0A>=20=0D=0A>=20Therefore,=20the=20private=20object=20must=
-=20remain=20valid=20until=0D=0A>=20drm_mode_config_cleanup()=20completes.=
-=0D=0A>=20It=20would=20be=20safer=20to=20adjust=20the=20code=20so=20that=20=
-kfree(private)=20is=20performed=0D=0A>=20after=20drm_dev_put(drm)=20to=20en=
-sure=20the=20private=20data=20remains=20available=20during=0D=0A>=20cleanup=
-.=0D=0A>=20=0D=0A>=20Thanks,=0D=0A>=20Inki=20Dae=0D=0A>=20=0D=0A>=20>=20=20=
-=20=20=20=20=20=20=20exynos_drm_cleanup_dma(drm);=0D=0A>=20>=20=20=20=20=20=
-=20=20=20=20kfree(private);=0D=0A>=20>=20=20=20=20=20=20=20=20=20dev_set_dr=
-vdata(dev,=20NULL);=0D=0A>=20>=20=40=40=20-317,7=20+316,6=20=40=40=20static=
-=20void=20exynos_drm_unbind(struct=20device=20*dev)=0D=0A>=20>=20=20=20=20=
-=20=20=20=20=20drm_atomic_helper_shutdown(drm);=0D=0A>=20>=0D=0A>=20>=20=20=
-=20=20=20=20=20=20=20component_unbind_all(drm->dev,=20drm);=0D=0A>=20>=20-=
-=20=20=20=20=20=20=20drm_mode_config_cleanup(drm);=0D=0A>=20=0D=0A>=20Ditto=
-.=0D=0A>=20=0D=0A>=20>=20=20=20=20=20=20=20=20=20exynos_drm_cleanup_dma(drm=
-);=0D=0A>=20>=0D=0A>=20>=20=20=20=20=20=20=20=20=20kfree(drm->dev_private);=
-=0D=0A>=20>=20--=0D=0A>=20>=202.34.1=0D=0A>=20>=0D=0A>=20>=0D=0A=0D=0AHi,=
-=20Inki=0D=0AThanks=20for=20the=20review=20and=20for=20pointing=20out=20the=
-=20to_dma_dev()=20path=0D=0A=0D=0AIf=20I=20understand=20you=20correctly,=20=
-fine=20with=20using=20DRMM,=20but=20kfree(priv)=20should=20occur=20after=20=
-drm_dev_put(drm)=0D=0AThat=20would=20mean=20releasing=20the=20drm_device=20=
-first=20and=20freeing=20dev_private=20afterwards.=0D=0AOf=20course,=20we=20=
-will=20also=20need=20to=20adjust=20the=20probe()=20error-unwind=20(err_free=
-)=20order=20accordingly.=0D=0ADo=20you=20anticipate=20any=20side=20effects=
-=20from=20this=20ordering=20change?=20I=E2=80=99d=20appreciate=20your=20tho=
-ughts.=0D=0A=0D=0ABRs,=0D=0AHoyoung=20Lee=0D=0A=0D=0A
+Add a new variant operation crypto_keyslot_remap to allow platform-specific
+remapping of crypto keyslot indices before sending requests to the UFS
+controller. This is required on platforms that partition the UFS crypto
+engine's keyslots among multiple domains (e.g.virtual machines),
+where each domain has a keyslot offset.
+
+To support this, pass the UFS HBA pointer to ufshcd_prepare_lrbp_crypto(),
+so the callback can access platform context.
+
+This functionality is used on Samsung ExynosAuto UFS platforms, where
+keyslot allocation is per-VM and a runtime offset is applied based on
+the VM ID.
+
+Signed-off-by: zheng.gong <zheng.gong@samsung.com>
+---
+ drivers/ufs/core/ufshcd-crypto.h | 10 ++++++++--
+ drivers/ufs/core/ufshcd.c        |  9 +++++----
+ include/ufs/ufshcd.h             |  6 ++++++
+ 3 files changed, 19 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/ufs/core/ufshcd-crypto.h b/drivers/ufs/core/ufshcd-crypto.h
+index 89bb97c14c15..6dcba6817590 100644
+--- a/drivers/ufs/core/ufshcd-crypto.h
++++ b/drivers/ufs/core/ufshcd-crypto.h
+@@ -13,7 +13,8 @@
+ 
+ #ifdef CONFIG_SCSI_UFS_CRYPTO
+ 
+-static inline void ufshcd_prepare_lrbp_crypto(struct request *rq,
++static inline void ufshcd_prepare_lrbp_crypto(struct ufs_hba *hba,
++					      struct request *rq,
+ 					      struct ufshcd_lrb *lrbp)
+ {
+ 	if (!rq || !rq->crypt_keyslot) {
+@@ -22,6 +23,10 @@ static inline void ufshcd_prepare_lrbp_crypto(struct request *rq,
+ 	}
+ 
+ 	lrbp->crypto_key_slot = blk_crypto_keyslot_index(rq->crypt_keyslot);
++
++	if (hba && hba->vops && hba->vops->crypto_keyslot_remap)
++		return hba->vops->crypto_keyslot_remap(hba, lrbp);
++
+ 	lrbp->data_unit_num = rq->crypt_ctx->bc_dun[0];
+ }
+ 
+@@ -74,7 +79,8 @@ void ufshcd_crypto_register(struct ufs_hba *hba, struct request_queue *q);
+ 
+ #else /* CONFIG_SCSI_UFS_CRYPTO */
+ 
+-static inline void ufshcd_prepare_lrbp_crypto(struct request *rq,
++static inline void ufshcd_prepare_lrbp_crypto(struct ufs_hba *hba,
++					      struct request *rq,
+ 					      struct ufshcd_lrb *lrbp) { }
+ 
+ static inline void
+diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+index 8339fec975b9..7417c6bec81a 100644
+--- a/drivers/ufs/core/ufshcd.c
++++ b/drivers/ufs/core/ufshcd.c
+@@ -2902,20 +2902,21 @@ static void ufshcd_comp_scsi_upiu(struct ufs_hba *hba, struct ufshcd_lrb *lrbp)
+ 	ufshcd_prepare_utp_scsi_cmd_upiu(lrbp, upiu_flags);
+ }
+ 
+-static void __ufshcd_setup_cmd(struct ufshcd_lrb *lrbp, struct scsi_cmnd *cmd, u8 lun, int tag)
++static void __ufshcd_setup_cmd(struct ufs_hba *hba, struct ufshcd_lrb *lrbp,
++				  struct scsi_cmnd *cmd, u8 lun, int tag)
+ {
+ 	memset(lrbp->ucd_req_ptr, 0, sizeof(*lrbp->ucd_req_ptr));
+ 
+ 	lrbp->cmd = cmd;
+ 	lrbp->task_tag = tag;
+ 	lrbp->lun = lun;
+-	ufshcd_prepare_lrbp_crypto(cmd ? scsi_cmd_to_rq(cmd) : NULL, lrbp);
++	ufshcd_prepare_lrbp_crypto(hba, cmd ? scsi_cmd_to_rq(cmd) : NULL, lrbp);
+ }
+ 
+ static void ufshcd_setup_scsi_cmd(struct ufs_hba *hba, struct ufshcd_lrb *lrbp,
+ 				  struct scsi_cmnd *cmd, u8 lun, int tag)
+ {
+-	__ufshcd_setup_cmd(lrbp, cmd, lun, tag);
++	__ufshcd_setup_cmd(hba, lrbp, cmd, lun, tag);
+ 	lrbp->intr_cmd = !ufshcd_is_intr_aggr_allowed(hba);
+ 	lrbp->req_abort_skip = false;
+ 
+@@ -3083,7 +3084,7 @@ static int ufshcd_queuecommand(struct Scsi_Host *host, struct scsi_cmnd *cmd)
+ static void ufshcd_setup_dev_cmd(struct ufs_hba *hba, struct ufshcd_lrb *lrbp,
+ 			     enum dev_cmd_type cmd_type, u8 lun, int tag)
+ {
+-	__ufshcd_setup_cmd(lrbp, NULL, lun, tag);
++	__ufshcd_setup_cmd(hba, lrbp, NULL, lun, tag);
+ 	lrbp->intr_cmd = true; /* No interrupt aggregation */
+ 	hba->dev_cmd.type = cmd_type;
+ }
+diff --git a/include/ufs/ufshcd.h b/include/ufs/ufshcd.h
+index 9425cfd9d00e..86b7bcc1da33 100644
+--- a/include/ufs/ufshcd.h
++++ b/include/ufs/ufshcd.h
+@@ -336,6 +336,10 @@ struct ufs_pwr_mode_info {
+  * @config_esi: called to config Event Specific Interrupt
+  * @config_scsi_dev: called to configure SCSI device parameters
+  * @freq_to_gear_speed: called to map clock frequency to the max supported gear speed
++ * @crypto_keyslot_remap: called to adjust the keyslot index before sending
++ *	a request to the UFS controller. This allows the platform to apply a
++ *	hardware-specific keyslot offset or other mapping logic to determine
++ *	the correct keyslot for inline encryption.
+  */
+ struct ufs_hba_variant_ops {
+ 	const char *name;
+@@ -385,6 +389,8 @@ struct ufs_hba_variant_ops {
+ 	int	(*config_esi)(struct ufs_hba *hba);
+ 	void	(*config_scsi_dev)(struct scsi_device *sdev);
+ 	u32	(*freq_to_gear_speed)(struct ufs_hba *hba, unsigned long freq);
++	void	(*crypto_keyslot_remap)(struct ufs_hba *hba,
++						struct ufshcd_lrb *lrbp);
+ };
+ 
+ /* clock gating state  */
+-- 
+2.50.1
+
 
