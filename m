@@ -1,113 +1,160 @@
-Return-Path: <linux-kernel+bounces-897755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56A26C5397A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:10:59 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDF05C53AAA
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:26:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56EAA3BE971
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:35:35 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 410B5504CC3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:36:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 924403446AD;
-	Wed, 12 Nov 2025 16:34:16 +0000 (UTC)
-Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFA6F33DEE8;
+	Wed, 12 Nov 2025 16:34:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="1V81eMYT"
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7325342521
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 16:34:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 736F02773DE
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 16:34:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762965256; cv=none; b=JQ4puqeeCUnAFN1JQ7BjFEcAefR7ZPApoSsg/6zjh6amVHpQ+OWed86pDqwC8I9SzvK+M1AwRxZosWf/beUR2D1QUj+RNCH9v8vKShztJOCKts7Ma20cOI9RjRVNNUkLXcUKpnU3/6dGzcOXN0NPWtgn5uT6nrvlE3coPVrw/iI=
+	t=1762965297; cv=none; b=g8e2k4kT/IjhfKR8ihUXQQ7ZEoIEIVQR7Qlv1njiPe5vRrzYRelSJFTsjcduktJmVyXF6IoJhw1XeiJADRWBM5s5UXBU/wB9CEkU1OyWif6KPGAViyBDzF5YZ46TVAN575TEMrnJ5mzYqnXgqxIDEbuffOLpwYrLX7uoxnYZLEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762965256; c=relaxed/simple;
-	bh=Fk0J+zK46wIQApbBjlvq2ChgVdufMM6T9AYTaAjGlc0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qr27Q/QlxFoEmm8W3a36NlzxEMyP9jHK/Y8HuCslv/dXEqgNAGCkjQi/WDPpZknWu6EIkd2gRz1qk6ViPfHrxkI9TRmowWBP6m2xm3yNmgB9wqW3jwlxP36Tl8i1KeqRsuOlxAtSPaUWM3YuaNFQkR9y1/C9AycFrvtXqU3vgrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-55ae07cf627so159361e0c.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 08:34:14 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762965253; x=1763570053;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IDEEJFh8t7UvWDMq1bo6nlPggBAlwU9GoyBV8Ur7xmw=;
-        b=ErYUn7HkWNj8rcYyd0iF/1hknrIHKTMzVqEWvUojKehcVeMosoUjzBX0zJ/waqrAEQ
-         yzrrkP4IeMskszQVk505zQYJG4IPW8GxhmwnIDz37BgpvUwNPMe9PJUU9pH1PhL9v1Ei
-         s1fK7aA3S6e12/mB/ipsov3P9t1yDISGVPzyVIYJTs7ISlNmvZixcgFnd0eUn957kl3J
-         lvpQp5DoXjIVFGIrUd4ByUE8RmuU0hs9kQqnm3e63++FO76gp7/p67OoVyED+8tEX6BO
-         O7R+dMuvhHwztla6GTnHZvDJNM4qQPy8T7tyb1JxLOsGvbbQS+11LE8ZfZhprwptZs7w
-         BvwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXE15bURK42ijJQGGZirzOxCmuwH484k7UO+cvjsUkg9B/T8B8AtNjE9T7blwWzE5Pp45dN7NFOSkYhHUc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrCzOteFyAZMQlvpjLQDdPMRAXhXwLZe/BNPNWB8Pxt+DWFE/D
-	L1YnLfABMDpavYlBZ4WzjwvEg0KmKuEHzoCLfEwFzBArln3XuMNsoqG9wxbLrIzf
-X-Gm-Gg: ASbGncutxb4fRe+kONClerc4QvJ6CMaKP4/390i8PxlS7i3Mh0L0VBZDcubRW22ZOGd
-	Eyt5D/EsQGmYWj1FwROb9wUA/Kkyoa3K9eSlyJxgcaTUF4W3Rb6CcTxGlmG7D/XVunpg0HIyov/
-	Nnt5j9j/tmpK9QCRJnZ7/yAa1OpeaUDDdyIYgXyWzhkoLn0GVPKz6OMUiwIUv+NdrpUCd2nFAKE
-	K5u5JrtuGNs55uwJnwq5ePybzY2kcZXv42oKO2oyRo4cPNetfdAxOyR/JO+KEzoEsIKhvGC6+eM
-	VU8fG2KPjgk6JgvEioBnwvyk8Q31smh768ssfhOnVQvEzjoP8yFuTLwRpB7F6wT0ir3kRJN3Y2C
-	zCTeUED8HCGSH87PtF0nfxjcvMG1eDSlrE+JvYLYCr8iIzqYPoxSeGnXYSjSPCbaQMW2nnXA6gW
-	6phfFFIsMJGfzpmA6/Ccuda1VvpwAYfbJlTuAlLA==
-X-Google-Smtp-Source: AGHT+IHcZCEQKxkMKFc5Y4phvOxpPtTYaF1NSSksHiZUj6aKCH/nTOMeKhkCXFPgdbi6R0c9QgI7UQ==
-X-Received: by 2002:a05:6122:3c91:b0:54a:9927:7ab7 with SMTP id 71dfb90a1353d-559e7c4949cmr1529344e0c.4.1762965253043;
-        Wed, 12 Nov 2025 08:34:13 -0800 (PST)
-Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com. [209.85.222.54])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-559958286c8sm9991351e0c.17.2025.11.12.08.34.11
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Nov 2025 08:34:12 -0800 (PST)
-Received: by mail-ua1-f54.google.com with SMTP id a1e0cc1a2514c-9371f6f2813so333888241.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 08:34:11 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUK8LOiZqd4n4NhFh2ekyTeo9HiGdW5KAYd3b2Y+px/S8M9A9evhN2Ka5ammXrDg7NOX+K4UazOO2/6eCE=@vger.kernel.org
-X-Received: by 2002:a05:6102:508b:b0:4e6:a338:a421 with SMTP id
- ada2fe7eead31-5de07d0b089mr1033465137.6.1762965251527; Wed, 12 Nov 2025
- 08:34:11 -0800 (PST)
+	s=arc-20240116; t=1762965297; c=relaxed/simple;
+	bh=kDraSpCMB82zgs7PtoOChgg35gllkE459gpfmn/FWHs=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=OmhXRxNjDWe9bmMDU+MzETNnJGB4FvuIG9ssrHwTYycELfb1/M7+Ac1lM48fV4sL2n9t/SK5OwZ3A6DD+gUQ9Tx0ofwbaq9DM+eHvVUvp91y/X09MHMj/jE5RVs1GqeWxSNPVNAUIEUACxy0dJLu1S5Y3Cu2xa4DeAaMBpl8AVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=1V81eMYT; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id AB2861A1A3D;
+	Wed, 12 Nov 2025 16:34:51 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 6FECA6070B;
+	Wed, 12 Nov 2025 16:34:51 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 7B3AF102F194E;
+	Wed, 12 Nov 2025 17:34:46 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1762965290; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=EFQ/d0mDDHLA3p6JwHrNOVGaA5Lyvd3F8ihxq1rPJ40=;
+	b=1V81eMYTV0tVPKpVTdfqUbEBGLkExMv/CZ4OE9izM91q/+T6INLU4rb5Q7r/+ftVEuyf2d
+	VQ3PFToTtL0I7IFcnNnOfQyq7r/CBjhpDGgi/qn3G9qRBWYkxJ+3uD7XUi5mCPFaeXdYhB
+	XGMPMnhSMn0gVUiBj6pNg3JVFgUmg9d5CPMmuDd5UpoZAnJL4julCJ+E5EZSjuvT5AeWuT
+	RZ/DayR1oGMHILQnyOrD5ZD25/OIpnRJnRp9fsVeg7i34Er8tLBWvQtHbf4eUpZ6cxAmyx
+	zdC+LbP40v/+JzSRItmGU3yvrXp1I9M1Wu3f2A4rcmqyBaZ5+Gk4Agis/jORWw==
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Subject: [PATCH v3 0/2] drm/bridge: handle gracefully atomic updates during
+ bridge removal
+Date: Wed, 12 Nov 2025 17:34:33 +0100
+Message-Id: <20251112-drm-bridge-atomic-vs-remove-v3-0-85db717ce094@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251112143520.233870-1-yuntao.wang@linux.dev> <20251112143520.233870-9-yuntao.wang@linux.dev>
-In-Reply-To: <20251112143520.233870-9-yuntao.wang@linux.dev>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 12 Nov 2025 17:33:58 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVNXqVXsDuMeExFn7AozDKu9GD99XMk7ux=Zuw4qvL_gA@mail.gmail.com>
-X-Gm-Features: AWmQ_bkkzAqLKDG_QzADFeNR5gEvcuVzXh2HazsgAbVtmvpBS87jteFgQs7jYog
-Message-ID: <CAMuHMdVNXqVXsDuMeExFn7AozDKu9GD99XMk7ux=Zuw4qvL_gA@mail.gmail.com>
-Subject: Re: [PATCH 08/10] of/fdt: Use dt_root_addr_size_bytes() instead of
- open-coding it
-To: Yuntao Wang <yuntao.wang@linux.dev>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, James Morse <james.morse@arm.com>, 
-	Baoquan He <bhe@redhat.com>, Zhen Lei <thunder.leizhen@huawei.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Changyuan Lyu <changyuanl@google.com>, 
-	Alexander Graf <graf@amazon.com>, "Mike Rapoport (Microsoft)" <rppt@kernel.org>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIABm3FGkC/43NzQ6CMAzA8VchO1szRoDNk+9hPOyjSBPHzEYWD
+ eHdHVyMF+Px3za/LixhJEzsVC0sYqZEYSrRHCpmRz3dEMiVZoKLlksuwUUPJpIrGz0HTxZygog
+ +ZITa9caUSytxYEV4RBzoueuXa+mR0hzia3+W6236n5tr4KBbgappDJdank0I852mow2ebXIWH
+ 02J7rcmitapoXet1bVW4ltb1/UNikiIWRYBAAA=
+X-Change-ID: 20250808-drm-bridge-atomic-vs-remove-1d7bb202c8ef
+To: Maxime Ripard <mripard@kernel.org>, Simona Vetter <simona@ffwll.ch>, 
+ Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>
+Cc: Hui Pu <Hui.Pu@gehealthcare.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+ Dmitry Baryshkov <lumag@kernel.org>
+X-Mailer: b4 0.14.2
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Wed, 12 Nov 2025 at 15:38, Yuntao Wang <yuntao.wang@linux.dev> wrote:
-> Use dt_root_addr_size_bytes() instead of open-coding it in
-> early_init_dt_check_kho() to improve code maintainability.
->
-> Signed-off-by: Yuntao Wang <yuntao.wang@linux.dev>
+This is a first attempt at gracefully handling the case of atomic updates
+happening concurrently to physical removal of DRM bridges.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+This is part of the work to support hotplug of DRM bridges. The grand plan
+was discussed in [1].
 
-But please combine with the other patch with the same subject.
+Here's the work breakdown (➜ marks the current series):
 
-Gr{oetje,eeting}s,
+ 1. … add refcounting to DRM bridges (struct drm_bridge)
+    (based on devm_drm_bridge_alloc() [0])
+    A. ✔ add new alloc API and refcounting (v6.16)
+    B. ✔ convert all bridge drivers to new API (v6.17)
+    C. ✔ kunit tests (v6.17)
+    D. ✔ add get/put to drm_bridge_add/remove() + attach/detach()
+         and warn on old allocation pattern (v6.17)
+    E. … add get/put on drm_bridge accessors
+       1. ✔ drm_bridge_chain_get_first_bridge(), add cleanup action (v6.18)
+       2. ✔ drm_bridge_get_prev_bridge() (v6.18)
+       3. ✔ drm_bridge_get_next_bridge() (v6.19)
+       4. ✔ drm_for_each_bridge_in_chain() (v6.19)
+       5. ✔ drm_bridge_connector_init (v6.19)
+       6. … protect encoder bridge chain with a mutex
+       7. of_drm_find_bridge
+       8. drm_of_find_panel_or_bridge, *_of_get_bridge
+       9. ✔ enforce drm_bridge_add before drm_bridge_attach (v6.19)
+    F. ✔ debugfs improvements
+       1. ✔ add top-level 'bridges' file (v6.16)
+       2. ✔ show refcount and list lingering bridges (v6.19)
+ 2. ➜ handle gracefully atomic updates during bridge removal
+    A. ➜ Add drm_dev_enter/exit() to protect device resources
+    B. … protect private_obj removal from list
+ 3. … DSI host-device driver interaction
+ 4. ✔ removing the need for the "always-disconnected" connector
+ 5. finish the hotplug bridge work, moving code to the core and potentially
+    removing the hotplug-bridge itself (this needs to be clarified as
+    points 1-3 are developed)
 
-                        Geert
+The idea was proposed by Maxime [1] and is based on the existing
+drm_dev_enter/exit() already existing for the DRM device.
 
+This small series implements the core mechanism in drm_bridge.c and uses it
+in the ti-sn65dsi83 driver. This prevents usage of device resources by
+various code paths that can happen concurrently to unplug of the SN65DSI8x
+bridge.
+
+[0] https://lore.kernel.org/lkml/20250206-hotplug-drm-bridge-v6-0-9d6f2c9c3058@bootlin.com/#t
+[1] https://lore.kernel.org/all/20250106-vigorous-talented-viper-fa49d9@houat/
+
+Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+---
+Changes in v3:
+- Call drm_bridge_remove() in drm_bridge_unplug() as suggested by Maxime
+- Fix kerneldoc errors (reported here:
+  https://lore.kernel.org/lkml/202509271654.j3IsjsAJ-lkp@intel.com/)
+- Some cleanups in patch 2
+- Link to v2: https://lore.kernel.org/r/20250926-drm-bridge-atomic-vs-remove-v2-0-69f7d5ca1a92@bootlin.com
+
+Changes in v2:
+- No changes to patch 1, discussion pending
+- Use devres instead of a flag in patch 2
+- Link to v1: https://lore.kernel.org/r/20250808-drm-bridge-atomic-vs-remove-v1-0-a52e933b08a8@bootlin.com
+
+---
+Luca Ceresoli (2):
+      drm/bridge: add drm_bridge_unplug() and drm_bridge_enter/exit()
+      drm/bridge: ti-sn65dsi83: protect device resources on unplug
+
+ drivers/gpu/drm/bridge/ti-sn65dsi83.c | 86 +++++++++++++++++++++++++++--------
+ drivers/gpu/drm/drm_bridge.c          | 62 +++++++++++++++++++++++++
+ include/drm/drm_bridge.h              | 12 +++++
+ 3 files changed, 140 insertions(+), 20 deletions(-)
+---
+base-commit: 604046a2d68bf5a67f111579d749a046c3a26669
+change-id: 20250808-drm-bridge-atomic-vs-remove-1d7bb202c8ef
+
+Best regards,
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Luca Ceresoli <luca.ceresoli@bootlin.com>
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
