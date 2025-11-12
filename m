@@ -1,142 +1,73 @@
-Return-Path: <linux-kernel+bounces-897110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2F18C51F97
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 12:29:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B7795C51FA0
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 12:30:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 686E734DDA6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:29:54 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6314D34DE4B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:30:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75AC730F942;
-	Wed, 12 Nov 2025 11:29:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D094306B11;
+	Wed, 12 Nov 2025 11:30:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Gu4k97dS"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TsJyWf8R"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 196A730DD0C;
-	Wed, 12 Nov 2025 11:29:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB05630DEC7;
+	Wed, 12 Nov 2025 11:30:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762946968; cv=none; b=u/j1CX/j4gSaEAazU12zzdkxwF5CRzGgbLgA4D+AR+FKyZlKN5vZ8YU75J/xN4qK4zRjXOGfEqy1ZJ2OyqyTSnqF0evl3Rxiq552IB4dWNDJXCA5GfRexgMTW7UwqoclHlgfZPaivnOD3UM17KpsACmD7EjVTtZp5sU3giJxIeY=
+	t=1762947012; cv=none; b=FaDe/TkfNgamfBRNs4ud8uRUFXxY69hw1J4yUjC5jFzfmP/9bpXsLEE6gkc6xTGMEvSIeF7wU6CI+zTtbLdVf8l1bnGuv8odQgD2UCez3OBAdk+Afp91Ya6DvWpIQ73j3bQzn/isXAsGYCnl9I2b05bjKvI1vBx6cjTI1Oj678Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762946968; c=relaxed/simple;
-	bh=6o7lJdSmPYz3CSs464Iw4AQ9hN14Oy7ACMwHI0Ol1Qk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=CyS62W6k+K+LjQ2SZIeLPaEFJdHwgpJAUVilUjnsEE302JOa2cLQ3QmUml8j5AWpUf8lTMDywoF2KF+QzeBTDAv6i+EaeJeDOH37OP3fFPtOUkCh7UZDXMGn09p8RvbX/1SRg5thNWLTZZWzL413OeKOUNxYrM9phoDdDo1Zo4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Gu4k97dS; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AC9fUQ2721987;
-	Wed, 12 Nov 2025 11:29:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	JYcNZaT5ZeY0Dk+c0VhKXnCB5fbAqUDNS+tyU5vX0dg=; b=Gu4k97dSkyKUkw8C
-	tAOTREkI8702/zA+pP4CuCkkg/GVGgooyh6xZFI6Uvf1pbr4VPiVhvqkaRpU4fqH
-	r8t6tEyc09fBLKGY5zdZNnxKp6TZ/F27U5bPe0XtX/6cLyBeesxecaX62a4EjbtS
-	98pTSW+PbsZOWDm9rkBl+XGnpMT6XJ7MEElFi02wGeYx6pL6w1XcqtLWSLneZ/HU
-	F7+spvufb1JHtTh+trLIxkbz61JyOdwgCKNIkPn/beeOYPbQVDzwuQRu0khZox6+
-	xkYsPiODoiWDqr70y0LRH3HgWgVkSSCkKKIiYzdu34sz6QjCWOPmFPfLtVRJUxjQ
-	z3SzuA==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4acqu1rbbh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Nov 2025 11:29:22 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5ACBTMqu028488
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Nov 2025 11:29:22 GMT
-Received: from [10.239.96.215] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Wed, 12 Nov
- 2025 03:29:19 -0800
-Message-ID: <093749fb-5eee-4a1c-a29e-8232e0c9dd6d@quicinc.com>
-Date: Wed, 12 Nov 2025 19:29:16 +0800
+	s=arc-20240116; t=1762947012; c=relaxed/simple;
+	bh=5NcL0onrz85oA6rav/6xZTGHtyFk94xzteC1b/nZZt4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TdHz6FINmZ8jrEBB1Ikw6diVhwkE3izu5pbB2CHvI5JhFxO/ZwEK5C4LP/17io3PmiMUEhZm9L2DMtSUuygtLocduuiHUPX3zYrGve4cpKGrOsPJudqmsdgXn/UBmUgjBMJX1iJq5xV/NJp2KvqZT3P3eTiBoT+9zCJ/8U8vSMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TsJyWf8R; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FD6AC4CEF8;
+	Wed, 12 Nov 2025 11:30:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762947011;
+	bh=5NcL0onrz85oA6rav/6xZTGHtyFk94xzteC1b/nZZt4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TsJyWf8R0fbynnMDd+ZYx22ydqx97+0R3B4GVH4lUdL9TEEMpvn/3OPTy653VFXNT
+	 YugY8u07wfx+UNN8R0QYGfajzzuD4rPGQeVB/1dFA8p7kokXUfoPNXxMo7xI3N9/fZ
+	 vCQT9qP4WHVOVWLuHgqvSm6cdl46KvhWhFp3R5+Yqi9j51t9dZRoAsVtOaD+yeUyQM
+	 i1jYXLvneqxiMy+S2C1j5rJHgQV1o8mfdxcFQgGxtRyFC338kV356tFVBOQe0iWKhI
+	 u/RDgNiTtEe+aptaIpH0dbk698X7dAnjd9YlDm7VYTgZbKex9VDwtLmeZrfCaVMf3A
+	 vw7+hCYUKmzFQ==
+Date: Wed, 12 Nov 2025 13:30:05 +0200
+From: Leon Romanovsky <leon@kernel.org>
+To: Tuo Li <islituo@gmail.com>
+Cc: krzysztof.czurylo@intel.com, tatyana.e.nikolova@intel.com, jgg@ziepe.ca,
+	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] RDMA/irdma: Fix possible null-pointer dereference in
+ irdma_create_user_ah()
+Message-ID: <20251112113005.GC17382@unreal>
+References: <20251112074513.63321-1-islituo@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] Bluetooth: btqca: Add WCN6855 firmware priority
- selection feature
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Bartosz Golaszewski
-	<brgl@bgdev.pl>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        "Luiz Augusto von
- Dentz" <luiz.dentz@gmail.com>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-bluetooth@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <quic_chejiang@quicinc.com>,
-        <quic_jiaymao@quicinc.com>, <quic_chezhou@quicinc.com>
-References: <20251112074638.1592864-1-quic_shuaz@quicinc.com>
- <0df692e3-7e39-4a7e-916a-c385015a2821@oss.qualcomm.com>
-Content-Language: en-US
-From: Shuai Zhang <quic_shuaz@quicinc.com>
-In-Reply-To: <0df692e3-7e39-4a7e-916a-c385015a2821@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 2e6eSQpIqRN2AslMGH3jwWIuBKfpZmaS
-X-Authority-Analysis: v=2.4 cv=Hpl72kTS c=1 sm=1 tr=0 ts=69146f92 cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=COk6AnOGAAAA:8 a=VCngsZfJQ2ioK8oHzuEA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-GUID: 2e6eSQpIqRN2AslMGH3jwWIuBKfpZmaS
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEyMDA5MiBTYWx0ZWRfX8vygm7JlRZWS
- rdiJr1a4rTtaF+PVI0H7ao4gOldELXw9raVmNdk0usl0bAkovGZB7PNDcybu9PEqPj5/PDDeRqa
- Svden6tdFBSEJMCiijmLHLysAq3oWhwBdvBQtVis6R0xeJlqBw7uRYbATxXan3dx3aFzeHtVfb5
- ZuhusG/f5Z646y2cfxW0v/NxnvPo/fPygo1tuc5Otn3QHUzOMuaG4bPLVtLZcEJbu15HGC1C5R+
- xXY01mVv3Mm+fMs9DpI9HPPoQJqDtyRV5E3jlcXoKtegB281Z7wp4oQptVgPHdZCVRtjLyQdVua
- d5sNa/0rUQ7fUrORCkNiUyr12U/75MNxc5psD5o0z95hTcEgKfIExTbh+braCe7+dYPnCUAefnG
- /vGO7g39E7c0Mc5ArW6fOB7d4Bms0A==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-12_03,2025-11-11_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 impostorscore=0 malwarescore=0 spamscore=0 suspectscore=0
- adultscore=0 phishscore=0 lowpriorityscore=0 clxscore=1015 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511120092
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251112074513.63321-1-islituo@gmail.com>
 
-Hi Konrad
-
-Thank you for your review.
-On 11/12/2025 5:53 PM, Konrad Dybcio wrote:
-> On 11/12/25 8:46 AM, Shuai Zhang wrote:
->> For WCN6855: download wcnhpbtfwxx.tlv and wcnhpnvxx.xxx;
->> if they do not exist, download hpbtfwxx.tlv and hpnvxx.xxx instead.
->>
->> Signed-off-by: Shuai Zhang <quic_shuaz@quicinc.com>
->> ---
+On Wed, Nov 12, 2025 at 03:45:12PM +0800, Tuo Li wrote:
+> The variable udata is checked at the beginning of irdma_create_user_as(),
+> indicating that it can be NULL:
 > 
-> Would these files be fundamentally any different, or is it a workaround
-> for someone else being creative with filenames?
-> 
+>   if (udata && udata->outlen < IRDMA_CREATE_AH_MIN_RESP_LEN)
+>     return -EINVAL;
 
-The prefix “wcn” corresponds to the WCN685x chip, while entries without
-the “wcn” prefix correspond to the QCA2066 chip. There are some feature
-differences between the two. 
+Just delete "udata" check from this if(). irdma_create_user_ah() always
+receives udate.
 
-However, due to historical reasons, the WCN685x chip has been using firmware
-without the “wcn” prefix. We are now correcting the mapping between the chip
-and its corresponding firmware.
-
-If it is necessary to add a comment to explain this, I will submit a new patch.
-
-> Konrad
-
-Best,regard
-Shuai
+Thanks
 
