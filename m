@@ -1,109 +1,173 @@
-Return-Path: <linux-kernel+bounces-896756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58182C5124E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:38:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08947C51359
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:54:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A02A189602C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:38:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F25B3B8B17
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:50:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEE542F83CB;
-	Wed, 12 Nov 2025 08:38:27 +0000 (UTC)
-Received: from mxde.zte.com.cn (mxde.zte.com.cn [209.9.37.142])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E19192FE58D;
+	Wed, 12 Nov 2025 08:50:13 +0000 (UTC)
+Received: from plesk.hostmyservers.fr (plesk.hostmyservers.fr [45.145.164.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88DFB2874F1;
-	Wed, 12 Nov 2025 08:38:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.9.37.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D1812FDC4B;
+	Wed, 12 Nov 2025 08:50:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.164.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762936707; cv=none; b=Uy2MnG5y1tWrQJSAvSSWcEUCNcaBVZTgzYU7pYiEwl68iGCijTFRAFrH/1RUiIr1RQafPXCrFaI8lefcgl2ZLqAoEyp9ZoQDcz5I70SAvK/gNVC2BUcNqTEYMKEcAyU6uh1wABeFOtUf2FfRrore8zfRJL5IfvqVR2DmWoZtJdM=
+	t=1762937413; cv=none; b=T4ztP0kXk6tBNG8NE+s1n+Bd6giid4ElaRqIoIVdyosYsVlu1vcdxrXW9xgJUsiXcRjXldKdwHr4ZZ/f28jTRx96F8z9X0yvGbpZnPHRD8ZzLYK1RLa/FX2FSknCxlC1bGO6pGW13/dXcSoEfawbDE/Fd8WatNnjqlyIBQohnlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762936707; c=relaxed/simple;
-	bh=PmFVKdAFXpT//sA84uyvtwBWGBm2dj+YcJxcsrXBlOw=;
-	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=AxjA83UFWo8+achXPT8MSjJF3UQzxknmKPgqJy7c7q2EbLyr/msTgo0EiIMSqjahrsywqp9U0k8zwjqLQrr5JxtGjttP8a1xrKmcZn5k+tTfS8HemV3F4esJUZzEJ7XDuTUwNzh2GdvnsDrQyr37bjoZ48Mq9r5FENM6gJe6/Sw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=209.9.37.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mxhk.zte.com.cn (unknown [192.168.250.138])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mxde.zte.com.cn (FangMail) with ESMTPS id 4d5xcn0VkkzBQkJn;
-	Wed, 12 Nov 2025 16:38:17 +0800 (CST)
-Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4d5xcb3fVHz6FyC0;
-	Wed, 12 Nov 2025 16:38:07 +0800 (CST)
-Received: from xaxapp04.zte.com.cn ([10.99.98.157])
-	by mse-fl2.zte.com.cn with SMTP id 5AC8bmtf069322;
-	Wed, 12 Nov 2025 16:37:48 +0800 (+08)
-	(envelope-from xu.xin16@zte.com.cn)
-Received: from mapi (xaxapp04[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Wed, 12 Nov 2025 16:37:50 +0800 (CST)
-Date: Wed, 12 Nov 2025 16:37:50 +0800 (CST)
-X-Zmail-TransId: 2afb6914475e04c-94783
-X-Mailer: Zmail v1.0
-Message-ID: <20251112163750463kAkOIyBxvHkYWh9Cgdypb@zte.com.cn>
+	s=arc-20240116; t=1762937413; c=relaxed/simple;
+	bh=oSXNIlCJ4nUuItwxkksnV1j0nQ9O8xQlEqMORgnbj3g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SV115SZZHzyFO1dlO7Zz5LWEcOmKOWSJ4UVGbElR5pchX+cWXrtvFhQFZZ9gNH3OxmWFttqGiE8FwHy4v9fX1jawPJLue7CSjCtTTWLg7HiCyozO6BFcOFwmENdYlUOrBP0finnje5ZqH+8XdX0ka5/hv1gWI0fiWR1tjcanIf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com; spf=pass smtp.mailfrom=arnaud-lcm.com; arc=none smtp.client-ip=45.145.164.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arnaud-lcm.com
+Received: from [10.17.112.36] (unknown [15.248.2.224])
+	by plesk.hostmyservers.fr (Postfix) with ESMTPSA id 73D8540037;
+	Wed, 12 Nov 2025 08:40:35 +0000 (UTC)
+Authentication-Results: Plesk;
+        spf=pass (sender IP is 15.248.2.224) smtp.mailfrom=contact@arnaud-lcm.com smtp.helo=[10.17.112.36]
+Received-SPF: pass (Plesk: connection is authenticated)
+Message-ID: <3f79436c-d343-46ff-8559-afb7da24a44d@arnaud-lcm.com>
+Date: Wed, 12 Nov 2025 08:40:34 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <xu.xin16@zte.com.cn>
-To: <johannes@sipsolutions.net>
-Cc: <kees@kernel.org>, <concord@gentoo.org>, <linux-wireless@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <qiu.yutan@zte.com.cn>
-Subject: =?UTF-8?B?d2lmaTogbWFjODAyMTE6IG1ha2Ugbl9jaGFubmVscyB1cGRhdGVkIGFic29sdXRlbHkgYmVmb3JlIGFjY2Vzc2luZyBjaGFubmVsc1td?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl2.zte.com.cn 5AC8bmtf069322
-X-TLS: YES
-X-SPF-DOMAIN: zte.com.cn
-X-ENVELOPE-SENDER: xu.xin16@zte.com.cn
-X-SPF: None
-X-SOURCE-IP: 192.168.250.138 unknown Wed, 12 Nov 2025 16:38:17 +0800
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 69144777.000/4d5xcn0VkkzBQkJn
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next v3] bpf: Clamp trace length in __bpf_get_stack to
+ fix OOB write
+To: Brahmajit Das <listout@listout.xyz>,
+ syzbot+d1b7fa1092def3628bd7@syzkaller.appspotmail.com
+Cc: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org,
+ daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com,
+ john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org,
+ linux-kernel@vger.kernel.org, martin.lau@linux.dev, netdev@vger.kernel.org,
+ sdf@fomichev.me, song@kernel.org, syzkaller-bugs@googlegroups.com,
+ yonghong.song@linux.dev
+References: <691231dc.a70a0220.22f260.0101.GAE@google.com>
+ <20251111081254.25532-1-listout@listout.xyz>
+Content-Language: en-US
+From: "Lecomte, Arnaud" <contact@arnaud-lcm.com>
+In-Reply-To: <20251111081254.25532-1-listout@listout.xyz>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-PPP-Message-ID: <176293683631.16609.1825395533128077628@Plesk>
+X-PPP-Vhost: arnaud-lcm.com
 
-From: xu xin <xu.xin16@zte.com.cn>
+I am a not sure this is the right solution and I am scared that by
+forcing this clamping, we are hiding something else.
+If we have a look at the code below:
+```
 
-The commit 2663d0462eb3 ("wifi: mac80211: Avoid address calculations via out of
-bounds array indexing") said that req->n_channels must be set before
-req->channels[] can be used. But there&apos;s still the case that req.channels
-accessing was prior to n_channels++.
+|
 
-This does not fix any visible bug, just making n_channels updated before
-accessing channels[] absolutely, to avoid potential UBSAN out of indexing
-warning.
+	if (trace_in) {
+		trace = trace_in;
+		trace->nr = min_t(u32, trace->nr, max_depth);
+	} else if (kernel && task) {
+		trace = get_callchain_entry_for_task(task, max_depth);
+	} else {
+		trace = get_perf_callchain(regs, kernel, user, max_depth,
+					crosstask, false, 0);
+	} ``` trace should be (if I remember correctly) clamped there. If not, 
+it might hide something else. I would like to have a look at the return 
+for each if case through gdb. |
 
-Fixes: 2663d0462eb3 ("wifi: mac80211: Avoid address calculations via out of bounds array indexing")
-Signed-off-by: xu xin <xu.xin16@zte.com.cn>
----
-net/mac80211/scan.c | 4 +++-
-1 file changed, 3 insertions(+), 1 deletion(-)
+On 11/11/2025 08:12, Brahmajit Das wrote:
+> syzbot reported a stack-out-of-bounds write in __bpf_get_stack()
+> triggered via bpf_get_stack() when capturing a kernel stack trace.
+>
+> After the recent refactor that introduced stack_map_calculate_max_depth(),
+> the code in stack_map_get_build_id_offset() (and related helpers) stopped
+> clamping the number of trace entries (`trace_nr`) to the number of elements
+> that fit into the stack map value (`num_elem`).
+>
+> As a result, if the captured stack contained more frames than the map value
+> can hold, the subsequent memcpy() would write past the end of the buffer,
+> triggering a KASAN report like:
+>
+>      BUG: KASAN: stack-out-of-bounds in __bpf_get_stack+0x...
+>      Write of size N at addr ... by task syz-executor...
+>
+> Restore the missing clamp by limiting `trace_nr` to `num_elem` before
+> computing the copy length. This mirrors the pre-refactor logic and ensures
+> we never copy more bytes than the destination buffer can hold.
+>
+> No functional change intended beyond reintroducing the missing bound check.
+>
+> Reported-by: syzbot+d1b7fa1092def3628bd7@syzkaller.appspotmail.com
+> Fixes: e17d62fedd10 ("bpf: Refactor stack map trace depth calculation into helper function")
+> Signed-off-by: Brahmajit Das <listout@listout.xyz>
+> ---
+> Changes in v3:
+> Revert back to num_elem based logic for setting trace_nr. This was
+> suggested by bpf-ci bot, mainly pointing out the chances of underflow
+> when  max_depth < skip.
+>
+> Quoting the bot's reply:
+> The stack_map_calculate_max_depth() function can return a value less than
+> skip when sysctl_perf_event_max_stack is lowered below the skip value:
+>
+>      max_depth = size / elem_size;
+>      max_depth += skip;
+>      if (max_depth > curr_sysctl_max_stack)
+>          return curr_sysctl_max_stack;
+>
+> If sysctl_perf_event_max_stack = 10 and skip = 20, this returns 10.
+>
+> Then max_depth - skip = 10 - 20 underflows to 4294967286 (u32 wraps),
+> causing min_t() to not limit trace_nr at all. This means the original OOB
+> write is not fixed in cases where skip > max_depth.
+>
+> With the default sysctl_perf_event_max_stack = 127 and skip up to 255, this
+> scenario is reachable even without admin changing sysctls.
+>
+> Changes in v2:
+> - Use max_depth instead of num_elem logic, this logic is similar to what
+> we are already using __bpf_get_stackid
+> Link: https://lore.kernel.org/all/20251111003721.7629-1-listout@listout.xyz/
+>
+> Changes in v1:
+> - RFC patch that restores the number of trace entries by setting
+> trace_nr to trace_nr or num_elem based on whichever is the smallest.
+> Link: https://lore.kernel.org/all/20251110211640.963-1-listout@listout.xyz/
+> ---
+>   kernel/bpf/stackmap.c | 4 +++-
+>   1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
+> index 2365541c81dd..cef79d9517ab 100644
+> --- a/kernel/bpf/stackmap.c
+> +++ b/kernel/bpf/stackmap.c
+> @@ -426,7 +426,7 @@ static long __bpf_get_stack(struct pt_regs *regs, struct task_struct *task,
+>   			    struct perf_callchain_entry *trace_in,
+>   			    void *buf, u32 size, u64 flags, bool may_fault)
+>   {
+> -	u32 trace_nr, copy_len, elem_size, max_depth;
+> +	u32 trace_nr, copy_len, elem_size, num_elem, max_depth;
+>   	bool user_build_id = flags & BPF_F_USER_BUILD_ID;
+>   	bool crosstask = task && task != current;
+>   	u32 skip = flags & BPF_F_SKIP_FIELD_MASK;
+> @@ -480,6 +480,8 @@ static long __bpf_get_stack(struct pt_regs *regs, struct task_struct *task,
+>   	}
+>   
+>   	trace_nr = trace->nr - skip;
+> +	num_elem = size / elem_size;
+> +	trace_nr = min_t(u32, trace_nr, num_elem);
+>   	copy_len = trace_nr * elem_size;
+>   
+>   	ips = trace->ip + skip;
 
-diff --git a/net/mac80211/scan.c b/net/mac80211/scan.c
-index 5ef315ed3b0f..86bd85ac36be 100644
---- a/net/mac80211/scan.c
-+++ b/net/mac80211/scan.c
-@@ -406,7 +406,9 @@ static bool ieee80211_prep_hw_scan(struct ieee80211_sub_if_data *sdata)
- 				if (req->channels[i]->band !=
- 				local->hw_scan_band)
- 					continue;
--				local->hw_scan_req->req.channels[(*n_chans)++] =
-+				(*n_chans)++;
-+				/* Use *n_chans - 1 to access the index that was valid before incrementing */
-+				local->hw_scan_req->req.channels[*n_chans - 1] =
- 							req->channels[i];
+Thanks,
+Arnaud
 
- 				bands_used |= BIT(req->channels[i]->band);
---
-2.25.1
 
