@@ -1,125 +1,100 @@
-Return-Path: <linux-kernel+bounces-896753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B1D1C51230
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:35:16 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFBF5C5142C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:04:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77F113B708C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:32:42 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5A250343FF2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:04:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57EC32F617C;
-	Wed, 12 Nov 2025 08:32:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCF222FDC5E;
+	Wed, 12 Nov 2025 09:04:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q0FshDGY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="miMbDpEI"
+Received: from m16.mail.126.com (m16.mail.126.com [220.197.31.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8C292D1F4E;
-	Wed, 12 Nov 2025 08:32:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7235C2BE02C;
+	Wed, 12 Nov 2025 09:04:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762936356; cv=none; b=N2sDXgiY1e0k4a/FNFjHwLQsxJ+J4AxHFJXU/uHg0Sln1e20O3D6qfXQu/mlMXMUgvgYzawGIxONT+iWNXSLIxMJW2rNTghfbPCUKNJnWScFWIMLQFq08ZmcGmX4O45WSmjdTkNqZDPdI9xUEC7A2520DPj3nO9DbkmT5GRw0OU=
+	t=1762938274; cv=none; b=XZRWBLzPcZM5ENEaj4f+3ZyU7RdNcrN4uHskauo21+EKF5EQfanM3WgHWxJotvKbvUtBmWNZLsLYQZEJ7N2nAh+Tm0fTRps+ow6sq/1QHQbtTq9WqtgX0KvrzpkLAEmpvWD4/C5PTobijLFCnKPr6u+/I6HhbvyipRo87LK3ZX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762936356; c=relaxed/simple;
-	bh=HLgjcXexC7pF9CiIspXb6LGzy7iOI12i9DXTENjQK1w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=add50/d6d3Sc3V5+xj0s6pW+uPxY+6lY/uSdQXeht5mlsgHFKyAOYTgcPgFzkoaRnCD8HXjmgWVopPv/RU5QsnlDJMn5+NDt67NUvpNbjEo+dhh2h4gEeICmd9tF7lK2ezSTbi5JTOCXmyFw1zngZ4AtuuJ95GazXCA7pMVQEVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q0FshDGY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99523C4CEF8;
-	Wed, 12 Nov 2025 08:32:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762936356;
-	bh=HLgjcXexC7pF9CiIspXb6LGzy7iOI12i9DXTENjQK1w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Q0FshDGYRzjn07iHUHbVMBW8fPmDhBKmWCPzT00v75yPduJYGW2UmC2/VKp9vxj+7
-	 MnCplljpJw87Koy57fVoNRxcUGDoxMdUrXq2eIPT3n3Xqf/R9PBn5JQ0OM85yZBo8i
-	 9/EXi274/+HFzeskwFpZGIsDTbCg0iZWrNb+Gzzo8rTeuBMI/PGPn0+7QDMolXxGiy
-	 5dq0Mg/RA9jpB+No8NXN3jgCRg44e8sS/qBeu6E/+NjYI5QD+8DaI4gbLYCsXpl56z
-	 cHRpZRRNhIIIMv7kebKpg6Z6IxLEm7HJu2hy3xXrhThe6GwyTK2uAMh/+m1Q004QjA
-	 1g58dONx5oGKg==
-Date: Wed, 12 Nov 2025 09:32:33 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Roy Luo <royluo@google.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Peter Griffin <peter.griffin@linaro.org>, 
-	=?utf-8?B?QW5kcsOp?= Draszik <andre.draszik@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
-	Joy Chakraborty <joychakr@google.com>, Naveen Kumar <mnkumar@google.com>, 
-	Badhri Jagan Sridharan <badhri@google.com>, Doug Anderson <dianders@google.com>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH v5 1/2] dt-bindings: usb: dwc3: Add Google Tensor G5 DWC3
-Message-ID: <20251112-logical-grebe-of-modernism-dcf83b@kuoka>
-References: <20251111130624.3069704-1-royluo@google.com>
- <20251111130624.3069704-2-royluo@google.com>
+	s=arc-20240116; t=1762938274; c=relaxed/simple;
+	bh=lyjZXUrlphIxuixvBVLAjK9KndUJkhS7WQvlj7IaeTA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HarwMxwn3ZQj+uNa02alnAzTuGB29hgHDQ/czZzWQ1/OlV5XdQYTMrvpk/olfoabPEl9x/G+cWgney1ilLQP0My2tMK3sHgrIOp3le4+Tc7I6RyIa3OpI0GP47blG+D48WTw5uLJXWASWv3JYHYeLxv/s0C6/ctNJMoLfxRQcRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=miMbDpEI; arc=none smtp.client-ip=220.197.31.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=b1
+	zPTdN/hA5mnggfUMyqH4kKpci5g4qd+230XAq5yYg=; b=miMbDpEIFgkCUJax5z
+	1Gx5VNj82HQNZAeN+X6tBVeJAbFn+e89ov37pzyGcESM9YRmdIOIZQHOTnr2W50f
+	X7kcBUqeN29DtrYsA9YTXjDmYJq3sO0sQfKdY74+c0HsxvFXqk4YrbQIEh3LauAS
+	M5PmYjtAUbmv2FTrJR78Tf94E=
+Received: from DESKTOP-IUGILCF.localdomain (unknown [])
+	by gzsmtp4 (Coremail) with SMTP id PykvCgD3v75iRhRpBsW3BQ--.41139S2;
+	Wed, 12 Nov 2025 16:33:38 +0800 (CST)
+From: HsuehBo@126.com
+To: linux-kernel@vger.kernel.org,
+	trondmy@kernel.org,
+	anna@kernel.org
+Cc: linux-nfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	HsuehBo@outlook.com,
+	Hsueh Bo <HsuehBo@126.com>
+Subject: [PATCH] nls: fix byte order conversion warnings in get_utf16()
+Date: Wed, 12 Nov 2025 16:33:24 +0800
+Message-ID: <20251112083324.60209-1-HsuehBo@126.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251111130624.3069704-2-royluo@google.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:PykvCgD3v75iRhRpBsW3BQ--.41139S2
+X-Coremail-Antispam: 1Uf129KBjvdXoWruw48ZF1UAF1rCr4xKw1Utrb_yoWfKwc_A3
+	yIgFyDXFyqgF4xuFy7CFyDXr42gay0gr1UJan2g390kF17GFy5ta1kurn8G34DWa17Arn3
+	KFy8CFyS9FySkjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU8dwIDUUUUU==
+X-CM-SenderInfo: pkvxvxler6ij2wof0z/1tbi3BIE3GkUP8ZYywABsA
 
-On Tue, Nov 11, 2025 at 01:06:23PM +0000, Roy Luo wrote:
-> Document the device tree bindings for the DWC3 USB controller found in
-> Google Tensor SoCs, starting with the G5 generation.
-> 
-> The Tensor G5 silicon represents a complete architectural departure from
-> previous generations (like gs101), including entirely new clock/reset
-> schemes, top-level wrapper and register interface. Consequently,
-> existing Samsung/Exynos DWC3 USB bindings are incompatible, necessitating
-> this new device tree binding.
-> 
-> The USB controller on Tensor G5 is based on Synopsys DWC3 IP and features
-> Dual-Role Device single port with hibernation support.
-> 
-> Signed-off-by: Roy Luo <royluo@google.com>
-> ---
->  .../bindings/usb/google,gs5-dwc3.yaml         | 140 ++++++++++++++++++
->  1 file changed, 140 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/usb/google,gs5-dwc3.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/usb/google,gs5-dwc3.yaml b/Documentation/devicetree/bindings/usb/google,gs5-dwc3.yaml
-> new file mode 100644
-> index 000000000000..bfaf6cbdfec3
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/usb/google,gs5-dwc3.yaml
-> @@ -0,0 +1,140 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +# Copyright (c) 2025, Google LLC
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/usb/google,gs5-dwc3.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Google Tensor Series (G5+) DWC3 USB SoC Controller
-> +
-> +maintainers:
-> +  - Roy Luo <royluo@google.com>
-> +
-> +description:
-> +  Describes the DWC3 USB controller block implemented on Google Tensor SoCs,
-> +  starting with the G5 generation. Based on Synopsys DWC3 IP, the controller
-> +  features Dual-Role Device single port with hibernation add-on.
-> +
-> +properties:
-> +  compatible:
-> +    const: google,gs5-dwc3
+From: Hsueh Bo <HsuehBo@126.com>
 
-Doug just said SoC is lga, not gs5, so you need both to align on that.
-Actually not only you both, but whoever else is upstreaming from Google.
+Add proper __force type casting to resolve sparse warnings
+about restricted __le16/__be16 conversions in get_utf16() function.
 
-It is not the community who should synchronize and organize way how
-Google works on their own stuff. Google should organize how Google works
-on your Google's stuff.
+This fixes the following sparse warnings:
+fs/nls/nls_base.c:180:24: warning: cast to restricted __le16
+fs/nls/nls_base.c:182:24: warning: cast to restricted __be16
 
-Best regards,
-Krzysztof
+Signed-off-by: Hsueh Bo <HsuehBo@126.com>
+---
+ fs/nls/nls_base.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/nls/nls_base.c b/fs/nls/nls_base.c
+index 18d597e49a19..4c6fa02e01d6 100644
+--- a/fs/nls/nls_base.c
++++ b/fs/nls/nls_base.c
+@@ -177,9 +177,9 @@ static inline unsigned long get_utf16(unsigned c, enum utf16_endian endian)
+ 	default:
+ 		return c;
+ 	case UTF16_LITTLE_ENDIAN:
+-		return __le16_to_cpu(c);
++		return __le16_to_cpu((__force __le16)c);
+ 	case UTF16_BIG_ENDIAN:
+-		return __be16_to_cpu(c);
++		return __be16_to_cpu((__force __be16)c);
+ 	}
+ }
+ 
+-- 
+2.43.0
 
 
