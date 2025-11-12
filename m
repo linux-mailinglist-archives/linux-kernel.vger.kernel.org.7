@@ -1,260 +1,115 @@
-Return-Path: <linux-kernel+bounces-897517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 931E3C52F65
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:20:53 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAC40C5305E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:28:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4CECC34FE55
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:12:58 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B707A358A63
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:13:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22D5A344031;
-	Wed, 12 Nov 2025 15:05:25 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FA7E3446C5;
+	Wed, 12 Nov 2025 15:06:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="Kb93L7gb"
+Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE99D3431FD
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 15:05:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B42B524E4A1;
+	Wed, 12 Nov 2025 15:05:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762959924; cv=none; b=EtA2UtzvVnM+43Q5QCEFFYl9S5XQEy+gdBPtCFLqmRcJUWqP3QdBjRdyXH7xhVh9YV9eIi2TluQOj+pNmfmhSzmd+rlx2tZy8iGYreZrGanLIEPq2Qb+I7E5QxFM8lQc2b7Ozw72oxO6gnExqW7w65CVRiMTJp4RHppVj3HT/k0=
+	t=1762959962; cv=none; b=TFQ0Hrb3YR816hnmFIW8peSm92nhHY2KPkiBjX2WrH1wEfpYX+Zxield1Y3fCtNi6/qw0p6qrQtZMJJlHGUkRwJ99J5UWlUcBHgj3yBWp8g509q0xzHqpny1bIonWZbLQUO3GLR5swPBjHdNJ+4ljcnocpcn7adZ4leCmajeaZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762959924; c=relaxed/simple;
-	bh=Oiw3CxTvM1cncQ+TriE+d0MVdoOZK0B04yT6liE6dN4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LLrlR4KtfCJNH1mtU+6hwUPdm3dDTumNODsaB1yYm/QKDGDQTudPpeyIxpxWbJVQaQzVA6kcym40daBAMsuWKhJ5SF5SmIozq3ty1k7qyBgSppsXESBJgOT2HHcMB1LwHD+8dEwN9+bSAea5I2wXRYZlTVeNMFDCV6yzqNkfPKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1vJCP7-0005AM-QV; Wed, 12 Nov 2025 16:05:01 +0100
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1vJCP7-0006PJ-14;
-	Wed, 12 Nov 2025 16:05:01 +0100
-Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1vJCP7-00GVCq-0g;
-	Wed, 12 Nov 2025 16:05:01 +0100
-Date: Wed, 12 Nov 2025 16:05:01 +0100
-From: Marco Felsch <m.felsch@pengutronix.de>
-To: Pankaj Gupta <pankaj.gupta@nxp.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	Frank Li <frank.li@nxp.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [EXT] Re: [PATCH v19 0/7] firmware: imx: driver for NXP
- secure-enclave
-Message-ID: <20251112150501.qkjclsoq2bg75ed5@pengutronix.de>
-References: <20250927-imx-se-if-v19-0-d1e7e960c118@nxp.com>
- <20251016114151.jzmapaecsmmnkpt3@pengutronix.de>
- <AM9PR04MB8604C2AAA70406883320C5C995FCA@AM9PR04MB8604.eurprd04.prod.outlook.com>
- <20251103190811.wp4o7hlnus6ynn32@pengutronix.de>
- <AM9PR04MB8604AA80EC97E06AADBF334695C3A@AM9PR04MB8604.eurprd04.prod.outlook.com>
- <20251111131442.nddhk3475oapf2zh@pengutronix.de>
- <AM9PR04MB86047231B5320C01759BFCAE95CCA@AM9PR04MB8604.eurprd04.prod.outlook.com>
+	s=arc-20240116; t=1762959962; c=relaxed/simple;
+	bh=VUu6rg9WeAG8NL8ra1Iz9AfU0kJOiJvpx61Ja/1F73o=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=n4IubmUwM3ErBsSdTKeqk/giWKXrRBeMMYFefAyfE65xGcsBHmNJYB9lQNXXNHWXKHVi2VfhUUGW2zCIKz7fcIs1o2BoFMsu8xUlv7VCo51wTKqznH0eEHPtJD6RF/sAyZx1VQPiHp7VrLNPdcSPjwMIx0AdqpVwDabD7lkVsKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=Kb93L7gb; arc=none smtp.client-ip=198.37.111.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1762959958;
+	bh=VUu6rg9WeAG8NL8ra1Iz9AfU0kJOiJvpx61Ja/1F73o=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=Kb93L7gbN56o/vSf+4EJQ0mbMxzZr6RyrhVgdUdec0MeXsYzMO1L9bob480tqh/vH
+	 QnMUH+2Ez7GC9jB4b0cZhVluwKECL+TSFzyydeDrCYxmHSCrSUnoi1hwSoTA/sO4PQ
+	 1fWJ3FeqkwlB2iSEWVoisTkFfMmGUSUu0xp29jaM=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519)
+	(No client certificate requested)
+	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 4D6B41C027D;
+	Wed, 12 Nov 2025 10:05:58 -0500 (EST)
+Message-ID: <a78b70383de5fbde95bd853f1c52eace114e9c69.camel@HansenPartnership.com>
+Subject: Re: [PATCH 2/2] sign-file: Remove support for signing with PKCS#7
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Petr Pavlu <petr.pavlu@suse.com>
+Cc: David Howells <dhowells@redhat.com>, David Woodhouse
+ <dwmw2@infradead.org>,  Luis Chamberlain <mcgrof@kernel.org>, Daniel Gomez
+ <da.gomez@kernel.org>, Sami Tolvanen <samitolvanen@google.com>, Aaron
+ Tomlin <atomlin@atomlin.com>,  keyrings@vger.kernel.org,
+ linux-modules@vger.kernel.org,  linux-kernel@vger.kernel.org
+Date: Wed, 12 Nov 2025 10:05:57 -0500
+In-Reply-To: <e624c242-b297-4bb7-a76a-cbb18b027472@suse.com>
+References: <20251111154923.978181-1-petr.pavlu@suse.com>
+	 <20251111154923.978181-3-petr.pavlu@suse.com>
+	 <922480ff44bda3b6ecfda1ae780c659644560f94.camel@HansenPartnership.com>
+	 <e624c242-b297-4bb7-a76a-cbb18b027472@suse.com>
+Autocrypt: addr=James.Bottomley@HansenPartnership.com;
+ prefer-encrypt=mutual;
+ keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.3 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <AM9PR04MB86047231B5320C01759BFCAE95CCA@AM9PR04MB8604.eurprd04.prod.outlook.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On 25-11-12, Pankaj Gupta wrote:
+On Wed, 2025-11-12 at 14:51 +0100, Petr Pavlu wrote:
+> On 11/11/25 5:53 PM, James Bottomley wrote:
+> > On Tue, 2025-11-11 at 16:48 +0100, Petr Pavlu wrote:
+> > > The PKCS#7 code in sign-file allows for signing only with SHA-1.
+> > > Since SHA-1 support for module signing has been removed, drop
+> > > PKCS#7 support in favor of using only CMS.
+> >=20
+> > The change log is a bit alarmist.=C2=A0 CMS really *is* PKCS7 and most
+> > literature will refer to CMS as PKCS7.=C2=A0 What you're really
+> > deprecating is the use of the PKCS7_sign() API which can only
+> > produce SHA-1 Signatures ... openssl is fully capable of producing
+> > any hash PKCS7 signatures using a different PKCS7_... API set but
+> > the CMS_... API is newer.
+> >=20
+> > The point being the module signature type is still set to
+> > PKEY_ID_PKCS7 so it doesn't square with the commit log saying "drop
+> > PKCS#7 support". What you really mean is only use the openssl
+> > CMS_... API for producing PKCS7 signatures.
+>=20
+> Ok, I plan to update the description to the following in v2:
+>=20
+> sign-file: Use only the OpenSSL CMS API for signing
+>=20
+> The USE_PKCS7 code in sign-file utilizes PKCS7_sign(), which allows
+> signing only with SHA-1. Since SHA-1 support for module signing has
+> been removed, drop the use of the OpenSSL PKCS7 API by the tool in
+> favor of using only the newer CMS API.
 
-...
-
-> > > Voltage regulation for i.MX93 in Linux kernel, is done by ELE.
-> > >
-> > > During Linux suspend-resume, Secure-enclave (V2X on i.MX95) part of
-> > > wake-up domain, will be managed by secure-enclaves(ELE) part of
-> > > always-on domain.
-> > 
-> > So to sum-up, please correct me if I got it wrong:
-> > 
-> >  - NXP puts the ELE into the non-secure world, in case only one MU
-> >    exists. The reason for this is that the ELE is also used to handle
-> >    power-management.
->
-> For NXP SoCs with multi-MU(s) too, NXP proposes to put ELE driver into
-> non-secure world.
-
-With the ELE-FW and OP-TEE OS fix applied both worlds can communicate.
-Therefore it doesn't matter and I didn't mentioned it explicit above.
-
-That beeing said, with both worlds capable to talk to ELE and the ELE
-beeing very system critical, both worlds have to agree to the
-responsibilities, e.g. OP-TEE OS is not allow to manipulate the
-power-state behind the back of Linux.
-
-> >  - NXP exposes an uAPI which can be used to send arbitrary commands from
-> >    userspace to the ELE. (no filtering done yet)
->
-> It is not correct to say that no filtering is done.
-> Before sending as well as after receiving the message, the message header of the buffers
-> are parsed to check:
-> - TX-buffer with Command-tag is allowed to be sent, RX-buffer with response-tag is allowed to be received, without logging errors.
-
-I really don't want to step to deep into this, but that beeing said. If
-you refer to cmd_tag, than this tag is used by your below mentioned
-library also for NVM access. NVM is clearly something we do have a
-linux-framework and uAPI for.
-
-> - TX buffer size & Rx-Buffer size should match the size mentioned in the buffer.
-> - FW version from the header is checked, if required secondary or runtime FW Is loaded, before forwarding the request to ELE.
-> - In certain cases especially for exceptions, the message IDs are also compared.
-> 
-> > 
-> >  --> Sounds to me that the userpace can influence the system behavior
-> >      very badly.
-> > 
->
-> Messages created and sent by User-space
-> library(https://github.com/nxp-imx/imx-secure-enclave), are
-> scrutinized as stated above in the kernel driver.
-
-This is uAPI which can be used by everyone and because your library may
-not implement access to power-managment calls doesn't mean that other
-libs do. I'm not sure if your proposed driver will block such attempts
-from userspace.
-
-> Moreover,
-> As part of this library, message creation, send-receive, IOCTLS etc.
-> kernel interface implementation logic, is not exposed to users of this
-> library.
-
-Your library is not the interface, the interface is the uAPI exposed by
-the kernel. This interface/your driver needs to handle valid and invalid
-access, e.g. hsm -> valid, nvm -> not valid since it is abstracted via
-NVMEM.
-
-> With the help of secure-boot and IMA-EVM, rootfs can be restricted to
-> not allow any new application or modified userspace library, to
-> execute.
->
-> This way bad impact to the system behavior can be prevented.
-
-Sorry but I really have to say that I have to NACK. Your interface is
-the kernel uAPI and not some NXP userspace library.
-
-An attacker could gain runtime system access and poke the ELE with
-arbitrary commands till he finds a fw-bug using the kernel uAPI (not
-your library of course).
-
-> > > > > * Linux HWRNG.
-> > > > > * Loading the secondary runtime fw.
-> > > >
-> > > > What is a secondary runtime-fw?
-> > > ELE FW size is larger than the size of ELE internal secure memory.
-> > > Hence FW is split into two.
-> > >
-> > > Primary FW, is the FW, that enables features that helps for SoC boot-up.
-> > > Secondary runtime FW, is the FW, that enables features like HSM.
-> > 
-> > Ah okay, thanks for the input.
-> > 
-> > > > To conclude this longly discussion:
-> > 
-> > ...
-> > 
-> > > > I still have mixed feeling about the fusing (including the 1-MU
-> > > > case), since it requires a secure-world OS in place once the LOCK_DOWN
-> > fuse was burned.
-> > > > It's fine by me if NXP wants to have and wants to maintain a multi-path
-> > here.
-> > >
-> > > Write fuse API will be added, to allow writing fuses from secure world
-> > > too.
-> > 
-> > This is a device life-cycle problem and if NXP decides to maintain multiple write
-> > paths, depending on the runtime-SoC state, this is fine by me.
-> > 
-> > What needs to be ensured is, that the fuse-issue doesn't exist for the 1-MU
-> > case (i.MX8ULP) as you said.
->
-> As said above "Write fuse API will be added, to allow writing fuses
-> from secure world too."
-> This will be true for 1 MU or multi-MU.
-
-In your previous mail you just said that there is no such issue with the
-write path. Now you say that the single-MU case needs the same
-workaround.. At least I have read it that way.
-
-> > > > Last but least, the uAPI which can be used to send arbitrary ELE
-> > > > commands seems unusual. But I don't know how secure-enclaves are
-> > > > abstracted within the kernel, so these are just my two cents.
-> > >
-> > > it's not unusual at all. The pattern of userspace sending commands
-> > > directly to the kernel via a queue is quite common like:
-> > >
-> > > GPUs: As you mentioned, userspace drivers (like those in Vulkan or
-> > > CUDA) often build command buffers and submit them directly to the
-> > > kernel or hardware.
-> > 
-> > That's right, but these drivers do at least some filtering on the OPs and check if
-> > they are allowed. According your patchset, you just write
-> > (se_if_fops_write()) the provided userspace buffer.
-> 
-> We are validating the buffer size against the size mentioned in the
-> buffer header.
-> Refer above comments for more details.
-> 
-> > > Secure Enclaves: In systems like Intel SGX or AMD SEV, userspace
-> > > applications interact with enclaves via ioctl or mmap interfaces,
-> > > often sending structured commands or messages.
-> > 
-> > What I'm aware of is, that most secure-enclaves are switching to the standard
-> > TPM API.
->
-> In case of NXP SoC with ELE HW IP, ELE is considered as on-SoC TPM. No
-> additional or external TPM is needed, if ELE is present on SoC.
-
-I said "TPM API" not "TPM device", may it be fTPM or dTPM. I think AMD
-switched to fTPM, so no special userspace-requirements must be
-fulfilled. However, this is also off-topic.
+Much better, thanks!
 
 Regards,
-  Marco
 
+James
 
-> 
-> > 
-> > Regards,
-> >   Marco
-> > 
-> 
-> Regards
-> Pankaj
-> 
-
--- 
-#gernperDu 
-#CallMeByMyFirstName
-
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | https://www.pengutronix.de/ |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-9    |
 
