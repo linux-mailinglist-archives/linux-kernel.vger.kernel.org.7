@@ -1,112 +1,142 @@
-Return-Path: <linux-kernel+bounces-896390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B682C503F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 02:54:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BAFCC503A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 02:44:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 623C11889C30
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 01:54:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D08A53B251C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 01:44:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BDF028D8CC;
-	Wed, 12 Nov 2025 01:54:13 +0000 (UTC)
-Received: from r9206.ps.combzmail.jp (r9206.ps.combzmail.jp [160.16.62.99])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F63D27FD40;
+	Wed, 12 Nov 2025 01:44:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="YVia3w17"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 929B6261B9C
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 01:54:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.16.62.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5232327B359
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 01:44:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762912453; cv=none; b=M2Xa0zMiS63zm0/quOwSlbbWvyX/sHfZgY26bJa+5VVFSgnkdWiazDjQsiIfZMftRLM2dgPHRST0B25YsjDmogrG6WUcVw5MhhYcRywVVpByrrfye3OGy3iyNO3szqMFhqxlfVj2DEmWvUIgJs7TOMXyBecAED7pRi2GFA90a0k=
+	t=1762911872; cv=none; b=bmlFwkmHFlWQR2leFh3dqLFFebBZXd9Cn1amblyRMEYj177vJuh7oQynMEVHtlQZg3U4zDGJa2EbeE/jIYhSxEGzp6uOfkx9p+wZo5HAOEV+blUTroLkhgeJTFz+saLXRxUN13TDxqlfgTaF8tMIm+tC6/uz4ZpNgjt67isghOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762912453; c=relaxed/simple;
-	bh=MbJdxlQuC72L2/Wk4PEfLWempqScnpfV07BvSd1zw9M=;
-	h=To:From:Subject:Mime-Version:Content-Type:Message-Id:Date; b=tK0ilYKK0fDxImTKuGv3CovIm+If5GEcHdajLhyN+6Obhv/8Vss10IailTsJEqJXDro4Z47jL5Ixb+lqsSO2CVL4+F5pEhfxAxgi402EyxGhbbCufCFtNNHGhbrQP92wWcm5lSjrOJxa2Dr8DKQDaZm09MGP+fnMfxsM/ovzMXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gosso.biz; spf=pass smtp.mailfrom=magerr.combzmail.jp; arc=none smtp.client-ip=160.16.62.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gosso.biz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=magerr.combzmail.jp
-Received: by r9206.ps.combzmail.jp (Postfix, from userid 99)
-	id D618E1034A2; Wed, 12 Nov 2025 10:43:09 +0900 (JST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 r9206.ps.combzmail.jp D618E1034A2
-To: linux-kernel@vger.kernel.org
-From: =?ISO-2022-JP?B?GyRCJEgkLSRvRGIlVSVpJXMlQSVjJSQlOjt2TDM2SRsoQg==?= <info@gosso.biz>
-X-Ip: 19936271597168
-X-Ip-source: k85gj76048dnsareu0p6gd
-Precedence: bulk
-List-Unsubscribe-Post: List-Unsubscribe=One-Click
-Subject: =?ISO-2022-JP?B?GyRCQ08waCRLIUk9aSFJPVBFOSRHQUAkJiEiGyhC?=
- =?ISO-2022-JP?B?GyRCPkZGeSVeITwlMSVDJUgbKEI=?=
+	s=arc-20240116; t=1762911872; c=relaxed/simple;
+	bh=HGl4RmpFu84gj76U4PQa4Vp95wD0o4Jckxg3KXNlwxI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SOWK8r8iWYPuMjoZuervLS8Kemyzm1opIUFdm6ojloQdR190p+2V4p3we+7SB20xCFfqEcseVtqpj7h5TU++at6NsGtdwgcUp6Cr7N0d6M9dM409XtwTfcVchJY0MDh0ejtDPsOGPlCpUuBuCDQGR+mCw4fH1fLNuuZiDtjyAKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=YVia3w17; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-b63e5da0fdeso44692a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 17:44:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1762911870; x=1763516670; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HGl4RmpFu84gj76U4PQa4Vp95wD0o4Jckxg3KXNlwxI=;
+        b=YVia3w171u5knPgbighujbP5v9rBubbB2FNrtOBtVV5O47YWrXyc/Pn5Ci56qYqy7C
+         wtsq5ItmPRXn/THYU9nemte8nEXv1P7GjvARUNNGn98Ycti1mrsQA08bsc5N95BC8W/4
+         3TFfadCa3EH5l0GKBq4hcqXsPsKkBlVGpo6wFb+UgbCczuhwZQsba5Adv+Xq04us3clD
+         /I9xYN/3+JyiTDKshSDHkyRxH49LmEEAPHILn6ZfAuDl5xmlh0lYxveQS2degWpS2g/g
+         YO+cj/rLUQEE0eK7KYnJ2zi4/ITzTAJYV8wLC3bk4AdnQCWjeePPHwNhiYzZBpwu5Jy+
+         vicg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762911870; x=1763516670;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=HGl4RmpFu84gj76U4PQa4Vp95wD0o4Jckxg3KXNlwxI=;
+        b=RR/m1PiqZOBEFE8SVScB3067lcwflRSas+Ecx54LA94tb8w3mAFLhixqfcVvKJx52i
+         9ZDAXENqxn2rsCEYKkNz4L99oqQH0l5GsIvuiAkJl8pBx9LJ4G3H4aogiXVQcvBCnM6k
+         vu8FZc8JBXEHbGjHOY7AVZmEg8TVGjGWg8ef4OVKqrIlSl94HDadtuUbeH2/M1NpOc4A
+         mra22aD7LcQrGFwk+fl1Bk3+A3gV7eGT48ieiNPgGTMRWcAJyDhcg5WAtILF+Sc8R8lv
+         0QnObTvV6P5JO1/L60Sm+0/qRXT+rpeppvviylAo2dwRE3nBWPgk+qlZwBZuKK/56nK6
+         3CZg==
+X-Forwarded-Encrypted: i=1; AJvYcCX+khxFKVnAa8Y7HTZIJaZIKcEu9zJuBH88tbLpGWQR3Qg3eAd9S2cQ/iOfFfOxhHJS6Mvz0zeidYgNIJA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPGDn5Qr1CrrIXPgR+6ltR7rctOruMv9Ok4oErrp3gvKmoKcPG
+	MJ2zB3jLWQUzvIKJFDwHqRNP1nSnLgNE+g7yBzVyLR6a5Jrh7Nlw8FgaRJ5gZBMHd4LL4Kdouml
+	eNDQ3tRqmHbK2lI8nTsSc9xyOw2ikDT+K+yYDT/4HIA==
+X-Gm-Gg: ASbGncvrmmYWs0r0CGDdejKaZ5p1JlFQL/PknQVZKzUOdlfrxhvGiZz8pv3MJKGm/hM
+	jVX0Q5G2QAiTFP+fGaaXe3HP04oQPj6pu7hTiJfhEY/RXn18TXL6T2O3fZLEi0ADq5TWQMqaRDu
+	JQHT91Uyh0/zCf8756S+ywsE5wxdMnnDp0g54dDq5+oV6szBYzHFNsRp5H0x4ghIa851Puczhh7
+	1Vx8iCJlBlFwLDUPtDiLzvPwonNYSgx+lFP8cM4B5Y0J0NAcVjI+xGauNJuRLshPNSfp6K8
+X-Google-Smtp-Source: AGHT+IGGJzsPUNQafoq4PvUv0D7ILT2uewqou7SB/zBZxjLSeaobS11qhsqkImiirH/dj7vmyyEFOkI6mNDh5iM3Jto=
+X-Received: by 2002:a17:902:c951:b0:295:f926:c030 with SMTP id
+ d9443c01a7336-2984ed34944mr9164955ad.2.1762911870295; Tue, 11 Nov 2025
+ 17:44:30 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-2022-jp
-Content-Transfer-Encoding: 7bit
-X-MagazineId: 60re
-X-uId: 6763325039485967644955161020
-X-Sender: CombzMailSender
-X-Url: http://www.combzmail.jp/
-Message-Id: <20251112014339.D618E1034A2@r9206.ps.combzmail.jp>
-Date: Wed, 12 Nov 2025 10:43:09 +0900 (JST)
+MIME-Version: 1.0
+References: <20251111191530.1268875-1-csander@purestorage.com> <aRPcdmpZoet2fwbu@fedora>
+In-Reply-To: <aRPcdmpZoet2fwbu@fedora>
+From: Caleb Sander Mateos <csander@purestorage.com>
+Date: Tue, 11 Nov 2025 17:44:18 -0800
+X-Gm-Features: AWmQ_bn5L0BHdz5rRKs386fOtrXPE9SRJa4pEt-kLJPqzJYTQF4qFEB9j2C4mwg
+Message-ID: <CADUfDZovn5fPh_E6GGvGkPYbW12L2z6BS4jPkpQjuEjNd=bRGA@mail.gmail.com>
+Subject: Re: [PATCH] io_uring/rsrc: don't use blk_rq_nr_phys_segments() as
+ number of bvecs
+To: Ming Lei <ming.lei@redhat.com>
+Cc: Keith Busch <kbusch@kernel.org>, Chaitanya Kulkarni <kch@nvidia.com>, Jens Axboe <axboe@kernel.dk>, 
+	linux-block@vger.kernel.org, io-uring@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-　
-　
-　新たな事業をお考えの経営者様へ
-　
-　
-　いつもお世話になります。
-　
-　待ち時間0秒の飲み放題　を提供する、
-　焼肉酒場「 ときわ亭 」のフランチャイズシステム説明会をご案内いたします。
-　
-　
-　わずか2年半で全国80店舗展開した
-　「0秒レモンサワー　ときわ亭」の
-　
-　ビジネスモデル、収益性や最新の飲食市場実態を
-　オンラインによる説明会形式でご案内します。
-　
-　
-　第二部では、
-　「融資を満額引き出す 事業計画書の書き方」
-　についても徹底解説いたしますので
-　
-　・銀行融資を受けやすくなるコツをしりたい
-　・飲食店の経営に興味がある
-　・焼肉屋の経営実態がしりたい
+On Tue, Nov 11, 2025 at 5:01=E2=80=AFPM Ming Lei <ming.lei@redhat.com> wrot=
+e:
+>
+> On Tue, Nov 11, 2025 at 12:15:29PM -0700, Caleb Sander Mateos wrote:
+> > io_buffer_register_bvec() currently uses blk_rq_nr_phys_segments() as
+> > the number of bvecs in the request. However, bvecs may be split into
+> > multiple segments depending on the queue limits. Thus, the number of
+> > segments may overestimate the number of bvecs. For ublk devices, the
+> > only current users of io_buffer_register_bvec(), virt_boundary_mask,
+> > seg_boundary_mask, max_segments, and max_segment_size can all be set
+> > arbitrarily by the ublk server process.
+> > Set imu->nr_bvecs based on the number of bvecs the rq_for_each_bvec()
+> > loop actually yields. However, continue using blk_rq_nr_phys_segments()
+> > as an upper bound on the number of bvecs when allocating imu to avoid
+> > needing to iterate the bvecs a second time.
+> >
+> > Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
+> > Fixes: 27cb27b6d5ea ("io_uring: add support for kernel registered bvecs=
+")
+>
+> Reviewed-by: Ming Lei <ming.lei@redhat.com>
+>
+> BTW, this issue may not be a problem because ->nr_bvecs is only used in
+> iov_iter_bvec(), in which 'offset' and 'len' can control how far the
+> iterator can reach, so the uninitialized bvecs won't be touched basically=
+.
 
-　こういった方は、ぜひお気軽にご視聴くださいませ。
-　
-　
-　▼　オンライン説明会のご視聴予約はこちら　▼
-　　　https://tokiwatei-fc.work/online/
+I see your point, but what about iov_iter_extract_bvec_pages()? That
+looks like it only uses i->nr_segs to bound the iteration, not
+i->count. Hopefully there aren't any other helpers relying on nr_segs.
+If you really don't think it's a problem, I'm fine deferring the patch
+to 6.19. We haven't encountered any problems caused by this bug, but
+we haven't tested with any non-default virt_boundary_mask,
+seg_boundary_mask, max_segments, or max_segment_size on the ublk
+device.
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━
+>
+> Otherwise, the issue should have been triggered somewhere.
+>
+> Also the bvec allocation may be avoided in case of single-bio request,
+> which can be one future optimization.
 
-　■　ご説明するフランチャイズシステム
-　　0秒レモンサワー　仙台ホルモン焼肉酒場ときわ亭
+I'm not sure what you're suggesting. The bio_vec array is a flexible
+array member of io_mapped_ubuf, so unless we add another pointer
+indirection, I don't see how to reuse the bio's bi_io_vec array.
+io_mapped_ubuf is also used for user registered buffers, where this
+optimization isn't possible, so it may not be a clear win.
 
-　■　開催日程
-　・11月25日（火）15時〜17時　＠オンライン開催
-　
-　■　定員
-　・10社
-　
-　■　参加費
-　・不要
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-本メールが不要の方には大変失礼しました。
-今後ご案内が不要な際は、下記URLにて配信解除を承っています。
-https://tokiwatei-fc.work/mail/
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-主催：GOSSO株式会社（ときわ亭フランチャイズ本部）
-東京都渋谷区宇田川町14-13 宇田川ビルディング6F
-03-6316-8191　
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Best,
+Caleb
 
