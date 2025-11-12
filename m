@@ -1,131 +1,137 @@
-Return-Path: <linux-kernel+bounces-897774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC2D5C53A3B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:21:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AEA92C53B68
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:36:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2A0C64FACE1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:48:08 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CA766504D50
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:48:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB29033F8BE;
-	Wed, 12 Nov 2025 16:48:04 +0000 (UTC)
-Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD84534028D;
+	Wed, 12 Nov 2025 16:48:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ONiq9J/n"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7ED3287269
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 16:48:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FBB72D130C;
+	Wed, 12 Nov 2025 16:48:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762966084; cv=none; b=kk2pvRNZAflfIAymDjyuyYgM5VcdtFS5fjgtEL+oP1dRDWxVH98f56jN3nyOYfoteVscXGsKc5G1pstKqy7HUL08gXYxuLlilcVQB3OVbqGz4Ljpse56QZzUBRjzNmtcJbi/jCAzURRaHX3dFC9kwuHlumbZ9MTVw6wQGzp9NNQ=
+	t=1762966103; cv=none; b=K8yoONJ96WlAk3Q/ktvhots212ElYcGNoCE+RoUOMVPcLehHGbqcq7h0X2SttK2U/UpAhLF4ZOn5kJqZXGdvkx3ODc+1/tPt9gMaxMzKBcmDSKwVrAdvF2sb3oBDVzx4pDOfcoDOdbBxB9d8/lbWkH6w5c0bZy5SyGwaDdeGqUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762966084; c=relaxed/simple;
-	bh=BwRQFFjStra3DsF4NaVbCbesa2D7H6XBGB1YtS1E5Wk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RTFPw01XZ6ltAtwWGkSmWyt1bFuV/r+cm+Pw7BP4J2NN/A4Z8wCBVIy5RJFbaomP2bqnEIXbP9nY5F1o38jWTBEGq8e52BDmBZXjOwkTEWM4bFYI1WBRWiPOmcJYgHdsAKk0qWRlzlbeNWhi9wPHXZm4vV2Dlxud7+Q01HSoyDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-5563c36f5dfso246760e0c.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 08:48:01 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762966080; x=1763570880;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fznzNSl69lKMgOov3QZ4fMUSrBwsRp9eCNzvWDgHwfg=;
-        b=DnMWgB53yHsEwt9VgSIPKWFmhBGgd/u6MjjfePH6+wDjuJuJwe9aZgVPzKK3AdMwwe
-         v3SVZlmtgTlZjartqBM06wdn1s2xczswJQxAtF6UMmsvf9SnXwGOF1L5jXodpGNeKwzc
-         z62g392dZMpE+P41g79XdlEDHTF7o4Dt9743ZhGCUJtFI0P/nROBM+xqoe99W3goQBKs
-         86HNG/eKsYEDb1YcvnGcMsa/4L6GF1TGVGL66tUPyXo3DdjtSrXTSF7vIsnz4ajyRKDG
-         w2R3louZhey8eJmChtTYAGHISwjjOrkzJlqGNIDouU/tu6Z4UU6fm2H7EFIsk25DzMFU
-         0N4g==
-X-Forwarded-Encrypted: i=1; AJvYcCXm5crO6UQ7XHEOIrmfguUaPhRIObKbzpRSu9oHwizQMH/ekOGdAiUqjabNetRTYWFbZCtZay9NpDU9/1I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3B9eWb8wdLIUwpuC/KpjAj9zwhK63yq6Ff7L7SnxAl/EvC6SQ
-	TnWDj1fnJmImI7FnTLe3cJNqetqHNizy+VcjhTX0Xnr7vnFuJ/hej+LOjx538WEC
-X-Gm-Gg: ASbGncvTTom7WBC8SCIFr+DqmP/XtJ+8I2Mb4Y5XVEm0ZcE8WADN2xRyN/zWgJLiR+O
-	WxRz64hyKzYlyZ10ODAjo/p9hU9HcMBBikwQSoulu6VdKmx1QF73eumBCKsARsQcOXl3BiZ64ys
-	RG9YQJAkbkRtTf4SPsnu7PTW6oI2jb8KbHduGRF67QhDmv5tdReNWt0qeqrVFW9PdQ9NVlWHyVq
-	kyNktBVXHIUnD3PKgYNluF/hoI+bnNbXeGkwJa2+ayD/ARPAvTQUel608TpxxnnTUMGynh/kkcV
-	slgK0ZD4E15yydQZ2m9PR1TSUUKkHfxusRyMXZ2XyYdO7NmW7GYfmLGdmEIHeCi39p+CgZ5daIA
-	UK/7LtPh+bPeWGwr1r76r5i3bibBUa+Ziu79AIxgV6suJ4gj1njd9ZlZPTxsRoI879QSzKdz+xv
-	OFcPLTElkKKPiDuY+qLP/WZcMikuuxXA7frIkacA==
-X-Google-Smtp-Source: AGHT+IHMm0JfOGAR9Q48WsVjAh2Zgv4kwOdeYAq57IgZ3JvqpTTaoUXUi2vFvDQc05uJQ4aQd3Y5YQ==
-X-Received: by 2002:a05:6122:2045:b0:559:f0a2:4ab5 with SMTP id 71dfb90a1353d-559f0a24eb1mr578258e0c.11.1762966080475;
-        Wed, 12 Nov 2025 08:48:00 -0800 (PST)
-Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com. [209.85.217.49])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-559958286c8sm10005567e0c.17.2025.11.12.08.48.00
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Nov 2025 08:48:00 -0800 (PST)
-Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-5dbe6304b79so443333137.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 08:48:00 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXyag1AZ9zMEc/PVla521vYb4QeOrrTnq35w6SE5YuFOcn+3lTk+Efmd9W7WYBMS/GV4WbaEXe75WTgRa0=@vger.kernel.org
-X-Received: by 2002:a05:6102:c03:b0:5db:dad4:803 with SMTP id
- ada2fe7eead31-5de07ed2044mr1042935137.35.1762966080037; Wed, 12 Nov 2025
- 08:48:00 -0800 (PST)
+	s=arc-20240116; t=1762966103; c=relaxed/simple;
+	bh=jNXBwcauIctGxZlYI7hnjg2/rQapqiJy1yTJJHRlDGo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tAxLyoWJ1pdzEKKiacUOX7XW0GTgL/25lO4mQpZOtgvgIpFhgYwlONIUrdfw727kO9UIUE4dmq7l5phgJeGQinvQdtF9a4u36pOy2c2amAswWgtFtx897JrNwnyyJP7H4+sInwf81QLFCDiRFnXWJanYKfYwRxSC81vJfZS0GA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ONiq9J/n; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FFDEC4CEF7;
+	Wed, 12 Nov 2025 16:48:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762966102;
+	bh=jNXBwcauIctGxZlYI7hnjg2/rQapqiJy1yTJJHRlDGo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ONiq9J/nOYCU6JIsjV6en5nGh0WX/LkzKvKhs2tOxHnJZu1BLYUBrLW7EIBnRHqnZ
+	 4FSoHQxhcCyhy+XBsZB6lDf2/Bj4kIBQ5WtQ1+uHvBnl+jOt1nEeSujImRug3xm567
+	 LMtGvGIk4oDbA4tUk4Yb+6+tI2l2UlYfLlhvSAU6PBwMJR/pyiWfa666NNXxH0caSo
+	 rgORdw8NH66/Wc8d9DW/n+pHGysjx6oMdla5IHnxk9x97UrvW7bXx1U6j2MBclLXfI
+	 ZN8ODIPV/g5dTzXxnAgTsj4CRlFUs4Vw2b8loiPc9Hn2OBcshgJuYrCdWsgAOvfuEv
+	 RWrz8s3sKUduQ==
+Received: from johan by xi.lan with local (Exim 4.98.2)
+	(envelope-from <johan@kernel.org>)
+	id 1vJE17-000000007Kr-3lAr;
+	Wed, 12 Nov 2025 17:48:22 +0100
+Date: Wed, 12 Nov 2025 17:48:21 +0100
+From: Johan Hovold <johan@kernel.org>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Nicolas Schier <nicolas.schier@linux.dev>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>, linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [PATCH] modpost: drop '*_probe' from section check whitelist
+Message-ID: <aRS6VQCKB7dXGbXx@hovoldconsulting.com>
+References: <20251020091613.22562-1-johan@kernel.org>
+ <20251022203955.GA3256590@ax162>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251112143520.233870-1-yuntao.wang@linux.dev> <20251112143520.233870-8-yuntao.wang@linux.dev>
-In-Reply-To: <20251112143520.233870-8-yuntao.wang@linux.dev>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 12 Nov 2025 17:47:48 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUj1G74d9WoNJFNjeQ6tOENW8kZfr7YMwRvLUaQnuW6pA@mail.gmail.com>
-X-Gm-Features: AWmQ_bl96eJ0z2R9z9MwX4iTUg9zDacFdfuBv9uJoul9zbfPX5vA8c0U1fmngLQ
-Message-ID: <CAMuHMdUj1G74d9WoNJFNjeQ6tOENW8kZfr7YMwRvLUaQnuW6pA@mail.gmail.com>
-Subject: Re: [PATCH 07/10] of/fdt: Fix the len check in early_init_dt_check_for_usable_mem_range()
-To: Yuntao Wang <yuntao.wang@linux.dev>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, James Morse <james.morse@arm.com>, 
-	Baoquan He <bhe@redhat.com>, Zhen Lei <thunder.leizhen@huawei.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Changyuan Lyu <changyuanl@google.com>, 
-	Alexander Graf <graf@amazon.com>, "Mike Rapoport (Microsoft)" <rppt@kernel.org>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251022203955.GA3256590@ax162>
 
-Hi Yuntao,
+Hi Nathan,
 
-On Wed, 12 Nov 2025 at 15:38, Yuntao Wang <yuntao.wang@linux.dev> wrote:
-> The len value is in bytes, while `dt_root_addr_cells + dt_root_size_cells`
-> is in cells (4 bytes per cell).
->
-> The modulo calculation between them is incorrect, the units must be
-> converted first.
+On Wed, Oct 22, 2025 at 10:39:55PM +0200, Nathan Chancellor wrote:
+> On Mon, Oct 20, 2025 at 11:16:13AM +0200, Johan Hovold wrote:
+> > Several symbol patterns used to be whitelisted to allow drivers to refer
+> > to functions annotated with __devinit and __devexit, which have since
+> > been removed.
+> > 
+> > Commit e1dc1bfe5b27 ("modpost: remove more symbol patterns from the
+> > section check whitelist") removed most of these patterns but left
+> > '*_probe' after a reported warning in an irqchip driver.
+> > 
+> > Turns out that was indeed an incorrect reference which has now been
+> > fixed by commit 9b685058ca93 ("irqchip/qcom-irq-combiner: Fix section
+> > mismatch").
+> > 
+> > A recently added clocksource driver also relies on this suffix to
+> > suppress another valid warning, and that is being fixed separately. [1]
+> > 
+> > Note that drivers with valid reasons for suppressing the warnings can
+> > use the __ref macros.
+> > 
+> > Link: https://lore.kernel.org/lkml/20251017054943.7195-1-johan@kernel.org/ [1]
+> > Signed-off-by: Johan Hovold <johan@kernel.org>
+> > ---
+> > 
+> > As mentioned above there are still two drivers relying on the "_probe"
+> > pattern to suppress valid warnings so perhaps it's best to hold off on
+> > merging this until the corresponding fixes are in mainline (e.g. next
+> > cycle or so unless Thomas can fast-track them).
+> 
+> Yeah, if it were fast tracked as a fix for 6.18, we could either use
+> that tag as the base for kbuild-next (as we have not take any patches
+> for 6.19 yet) or if they are 6.19 material, Thomas could provide us with
+> a signed tag or stable shared branch so that we could take this for 6.19
+> and have a clean tree. Whatever works.
 
-Thanks for your patch!
+Daniel has queued the clocksource fix for 6.19 now so I guess we can
+just wait until both fixes hit mainline and either send this one to
+Linus after that for -rc1 (or -rc2), or just wait until 6.20.
 
-> Fixes: fb319e77a0e7 ("of: fdt: Add memory for devices by DT property "linux,usable-memory-range"")
+I'll send a reminder when both are in Linus's tree.
+ 
+> Reviewed-by: Nathan Chancellor <nathan@kernel.org>
 
-That commit merely changed "<" to "%".
+Thanks for reviewing.
 
-The code that added the bad expression was:
-Fixes: 2af2b50acf9b9c38 ("of: fdt: Add generic support for handling
-usable memory range property")
-However, that code was copied from:
-Fixes: 8f579b1c4e347b23 ("arm64: limit memory regions based on DT
-property, usable-memory-range")
+> >  scripts/mod/modpost.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
+> > index 47c8aa2a6939..5c499dace0bb 100644
+> > --- a/scripts/mod/modpost.c
+> > +++ b/scripts/mod/modpost.c
+> > @@ -953,7 +953,7 @@ static int secref_whitelist(const char *fromsec, const char *fromsym,
+> >  	/* symbols in data sections that may refer to any init/exit sections */
+> >  	if (match(fromsec, PATTERNS(DATA_SECTIONS)) &&
+> >  	    match(tosec, PATTERNS(ALL_INIT_SECTIONS, ALL_EXIT_SECTIONS)) &&
+> > -	    match(fromsym, PATTERNS("*_ops", "*_probe", "*_console")))
+> > +	    match(fromsym, PATTERNS("*_ops", "*_console")))
+> >  		return 0;
+> >  
+> >  	/* Check for pattern 3 */
+> > -- 
+> > 2.49.1
+> > 
 
-So I think you want to list these two Fixes-tags instead.
-
-> Signed-off-by: Yuntao Wang <yuntao.wang@linux.dev>
-
-For the actual change:
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Johan
 
