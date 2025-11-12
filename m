@@ -1,201 +1,181 @@
-Return-Path: <linux-kernel+bounces-898222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66B32C54A0E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 22:35:25 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4D55C549F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 22:34:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EEBA24E61BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 21:33:53 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 85F1F3407E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 21:34:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAE9B2E041D;
-	Wed, 12 Nov 2025 21:33:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 938652E1726;
+	Wed, 12 Nov 2025 21:34:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mIANc/2+"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="X7uT0URi"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01D852D73A8
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 21:33:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DEC32D73A8;
+	Wed, 12 Nov 2025 21:34:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762983229; cv=none; b=WWqvLXNaac8zeLO9zR/1AX4acaeTqVaRKHnFuWaho4tX+eNGZK9aIoQU889M1cnfKgmSCTaN3vCoaruO+au6RbhR0XRYma7hobqXPEWYjfmvyTNZEvNBBYLqUV1qz3pnrQarX8RUQ5lHKltUaWQqLa3vwVcuk/SI0y0fOafgTtg=
+	t=1762983248; cv=none; b=CeBB0Rf6v639p/eY3Sn1HJHP6Bs/g67NvEezoeDLbf8ekt1dOTnC0kO2tLykPjEtpPejL0rlKWHnjgO7KofUVd+MnUEmgwebBTbIkp2dA+eLX5fwSn8CNsXrJ73pB8CtUGgwIAY07plvHYrmHRqqMH/JsvTyieo+/PpTeyx2wxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762983229; c=relaxed/simple;
-	bh=RUni6X+A6uSvIucase6v27wSyZurYIsLZgd0uLbzINw=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=iHUU9bqlac8GVzLGC2RxSUVkgsJzkHYQtBesNxXibUfCq/rOFBgb+PbHt3h1Gt7DoqXth7nSV4CeIhvBIzbb6hwOEh/Qv5HPegXriWK3kCS4zRWtRnKMxH91f2I1co1GHRRkCH+/LyvxAoXleBNrcWuYc45P5m/6puRWDNsv7Gg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mIANc/2+; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762983227; x=1794519227;
-  h=date:from:to:cc:subject:message-id;
-  bh=RUni6X+A6uSvIucase6v27wSyZurYIsLZgd0uLbzINw=;
-  b=mIANc/2+vCv6gGPmIWuVZGxmhVaGuo//Hp3V13nQsU7gSuw1S33xTKZa
-   65JP2gnf7pilwTy0BALrovXoKAMhWOSf6wm9pZdOdWXpsOwtkUqx81iD+
-   fgAAvoKU3h0nXLaD6BSzn9BQ3mi2/JavmKnI393fj7wutk7aKvcsKwoT3
-   XD1Tl2d8gY5qVHJOdvqz5igBZyvdTK1HLENW6IkWWHXs/c+8+ZI3BvrMw
-   IlnOStWNFl4FJIfi3Isp7kfGYJE1CkOUe75BVaA9RoyyUaie1pikhuv9a
-   UUMg+u2e+wvxPXF9JOVXJ8ptAJ2HXDoZ0ovhDm/z84fKufbLSUl33iJ1O
-   g==;
-X-CSE-ConnectionGUID: /JTQi7lLTPGQGTHaBIyFBw==
-X-CSE-MsgGUID: eSziUWIiSm6wyAONqBkolw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="64982258"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="64982258"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2025 13:33:47 -0800
-X-CSE-ConnectionGUID: AzHGDMh1S+m9mlONT4jjgw==
-X-CSE-MsgGUID: XYpP38aIT6GI9Gisf4hLTg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,300,1754982000"; 
-   d="scan'208";a="194313625"
-Received: from lkp-server01.sh.intel.com (HELO 7b01c990427b) ([10.239.97.150])
-  by fmviesa004.fm.intel.com with ESMTP; 12 Nov 2025 13:33:45 -0800
-Received: from kbuild by 7b01c990427b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vJITG-0004er-2u;
-	Wed, 12 Nov 2025 21:33:42 +0000
-Date: Thu, 13 Nov 2025 05:33:27 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:sched/core] BUILD SUCCESS
- 65177ea9f64d7402a0b8028e0dbbd01e8a9d1b1d
-Message-ID: <202511130522.6tumDntv-lkp@intel.com>
-User-Agent: s-nail v14.9.25
+	s=arc-20240116; t=1762983248; c=relaxed/simple;
+	bh=+99mi3GXqGSdilKN5M7zMYOleRr3BiyHhhEzp+cSvWg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fvSEjQwLO80UrsG3O2nQoNTvRXt82Ijj+cv741kCDRY4hLAzWxl9/eBMPI/1/Ryg8nlcH5TELkWbpIUUdXroz9xp4BiWRgZnoVj7AZ3YblznXi6mVpqwta9xU2+8++F4PZ7FCa0ykjKDf5WEsWMrPfcqGeCUpzU7zdWe84c0E1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=X7uT0URi; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=Ijl2d5txxx1muG7LOy+sOf2K0f9ZIGcMU1J5ip5lOhg=; b=X7uT0URitTKZFJr1kumOjmk6eQ
+	ClK5aHNgEMNkJljPp3g5keM78actOLbUFP57etFiiy+kWf8HULuXIqXCbT4hQHj0vp5EgR5qCBqA4
+	H59Wnbl8t9wccQxXU9tlD5+Oy4+fur1+4udmhevjUdUYCxolGmQ6T+rZHVkEpWnVtY6gAn7fGf+M1
+	zZbxlTY+4QAokn1/rMIlXRDSBV17AhYkweyrmz9JD+fKOCUVuxxALOJXQ5LKkz1Nh9CGr/KgkYdI3
+	h7ggGLlPnWcoKxk6VwVPogUGULuqqBy4FdonjWq0t1meZ8SRAiVZGVNbbQEgxn6CnNAXwoL5/57y4
+	/AQUj9tQ==;
+Received: from i53875b63.versanet.de ([83.135.91.99] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1vJITK-0003p1-29; Wed, 12 Nov 2025 22:33:46 +0100
+From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
+To: Jonas Karlman <jonas@kwiboo.se>, Andrew Lunn <andrew@lunn.ch>
+Cc: "robh@kernel.org" <robh@kernel.org>,
+ "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "ukleinek@debian.org" <ukleinek@debian.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>
+Subject:
+ Re: [PATCH 2/6] arm64: dts: rockchip: Fix the 1Ghz ethernet on Qnap TS433
+Date: Wed, 12 Nov 2025 22:33:44 +0100
+Message-ID: <3380318.aeNJFYEL58@diego>
+In-Reply-To: <e4d3127b-c879-4931-9ea0-de7449bc508c@lunn.ch>
+References:
+ <20250925092923.2184187-1-heiko@sntech.de>
+ <da752790-da17-4d26-b9b2-8240b38b3276@kwiboo.se>
+ <e4d3127b-c879-4931-9ea0-de7449bc508c@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git sched/core
-branch HEAD: 65177ea9f64d7402a0b8028e0dbbd01e8a9d1b1d  sched/deadline: Minor cleanup in select_task_rq_dl()
+Am Donnerstag, 25. September 2025, 19:11:29 Mitteleurop=C3=A4ische Normalze=
+it schrieb Andrew Lunn:
+> On Thu, Sep 25, 2025 at 06:58:06PM +0200, Jonas Karlman wrote:
+> > Hi Heiko,
+> >=20
+> > On 9/25/2025 11:29 AM, Heiko Stuebner wrote:
+> > > While I want to remember that the dwmac on the TS433 was working at s=
+ome
+> > > point, it seems I had my network always connected to the 2.5G nic aft=
+er
+> > > that "point". And testing now revealed that the gmac does not actually
+> > > manages to transfer data.
+> > >=20
+> > > Currently the gmac is set to rgmii-id with no rx-/tx-delay values set
+> > > which makes the driver use default values. Setting the delays to 0
+> > > also does not provide a working interface.
+> > >=20
+> > > The vendor kernel is running with phy-mode set to rgmii and delays of
+> > >     tx_delay =3D 0x3c, rx_delay =3D 0x2f
+> > >=20
+> > > As Andrew points out often, those delay values "are magic" and rgmii-=
+id
+> > > should definitly be used "with small values" for delays, if really ne=
+eded.
+> > >=20
+> > > The Rockchip vendor-kernel actually contains additional code in the d=
+wmac
+> > > driver to use the loopback function of a phy to find a window of usab=
+le
+> > > delay values. Code can be found for example on [0] and the process is
+> > > described in a document called "Rockchip GMAC RGMII Delayline Guide"
+> > > which has made its way onto the internet in a lot of places [1].
+> > >=20
+> > > So I used this process, with the interface set to rgmii-id to get val=
+ues
+> > > for this mode, which are in face lower than the ones for rgmii with
+> > >     tx_delay =3D 0x21, rx_delay =3D 0x15
+> > > and results in a working interface on the dwmac.
+> > >=20
+> > > [0] https://github.com/armbian/linux-rockchip/blob/rk-6.1-rkr6.1/driv=
+ers/net/ethernet/stmicro/stmmac/dwmac-rk-tool.c
+> > > [1] https://gitlab.com/firefly-linux/docs/-/blob/rk356x/firefly/Commo=
+n/GMAC/Rockchip_Developer_Guide_Linux_GMAC_RGMII_Delayline_EN.pdf
+> > >=20
+> > > Cc: Andrew Lunn <andrew@lunn.ch>
+> > > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> > > ---
+> > >  arch/arm64/boot/dts/rockchip/rk3568-qnap-ts433.dts | 2 ++
+> > >  1 file changed, 2 insertions(+)
+> > >=20
+> > > diff --git a/arch/arm64/boot/dts/rockchip/rk3568-qnap-ts433.dts b/arc=
+h/arm64/boot/dts/rockchip/rk3568-qnap-ts433.dts
+> > > index 5656554ca284..e8af92a011d6 100644
+> > > --- a/arch/arm64/boot/dts/rockchip/rk3568-qnap-ts433.dts
+> > > +++ b/arch/arm64/boot/dts/rockchip/rk3568-qnap-ts433.dts
+> > > @@ -257,6 +257,8 @@ &gmac0_tx_bus2
+> > >  		     &gmac0_rx_bus2
+> > >  		     &gmac0_rgmii_clk
+> > >  		     &gmac0_rgmii_bus>;
+> > > +	rx_delay =3D <0x15>;
+> > > +	tx_delay =3D <0x21>;
+> >=20
+> > I do not understand why defining rx/tx_delay would change anything.
+>=20
+> I was also wondering why these two properties are added but no change
+> to phy-mode.
+>=20
+> >=20
+> > Setting these should currently not have any effect on the driver code
+> > when phy-mode=3Drgmii-id is used, see below (next-20250924, dwmac-rk.c):
+> >=20
+> >=20
+> > 	switch (bsp_priv->phy_iface) {
+> > 	case PHY_INTERFACE_MODE_RGMII:
+> > 		dev_info(dev, "init for RGMII\n");
+> > 		bsp_priv->ops->set_to_rgmii(bsp_priv, bsp_priv->tx_delay,
+> > 					    bsp_priv->rx_delay);
+> > 		break;
+> > 	case PHY_INTERFACE_MODE_RGMII_ID:
+> > 		dev_info(dev, "init for RGMII_ID\n");
+> > 		bsp_priv->ops->set_to_rgmii(bsp_priv, 0, 0);
+> > 		break;
+>=20
+> And this explains it, thanks.
+>=20
+> > I have played around with a few patches that changes this and apply the
+> > rx/tx_delay for rgmii-id modes (both Linux and U-Boot), see top of [2]
+> > for Linux patches. Will try to get them on ML in a few days.
+>=20
+> We should not really be expanding the use of rx_delay and
+> tx_delay. The standardized properties {tx|rx}-internal-delay-ps should
+> be used.
 
-elapsed time: 1691m
+as Jonas wrote the delays do nothing for rgmii-id. So the whole thing
+must have been me doing something wonky, because on re-testing
+everything, it is as expected - no delays necessary and ethernet just
+works.
 
-configs tested: 109
-configs skipped: 4
+So I'll drop this patch altogether and adapt the TS233 one.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+Heiko
 
-tested configs:
-alpha                             allnoconfig    gcc-15.1.0
-alpha                               defconfig    gcc-15.1.0
-arc                               allnoconfig    gcc-15.1.0
-arc                                 defconfig    gcc-15.1.0
-arm                               allnoconfig    clang-22
-arm                                 defconfig    clang-22
-arm64                             allnoconfig    gcc-15.1.0
-arm64                               defconfig    gcc-15.1.0
-arm64                 randconfig-001-20251112    clang-22
-arm64                 randconfig-002-20251112    gcc-10.5.0
-arm64                 randconfig-003-20251112    gcc-8.5.0
-arm64                 randconfig-004-20251112    clang-22
-csky                              allnoconfig    gcc-15.1.0
-csky                                defconfig    gcc-15.1.0
-csky                  randconfig-001-20251112    gcc-13.4.0
-csky                  randconfig-002-20251112    gcc-15.1.0
-hexagon                           allnoconfig    clang-22
-hexagon                             defconfig    clang-22
-hexagon               randconfig-001-20251112    clang-16
-hexagon               randconfig-002-20251112    clang-22
-i386                              allnoconfig    gcc-14
-i386        buildonly-randconfig-001-20251113    clang-20
-i386        buildonly-randconfig-002-20251113    gcc-14
-i386        buildonly-randconfig-003-20251113    gcc-14
-i386        buildonly-randconfig-004-20251113    gcc-12
-i386        buildonly-randconfig-005-20251113    gcc-14
-i386        buildonly-randconfig-006-20251113    clang-20
-i386                                defconfig    clang-20
-i386                  randconfig-002-20251112    gcc-14
-i386                  randconfig-011-20251112    gcc-14
-i386                  randconfig-012-20251112    gcc-14
-i386                  randconfig-013-20251112    clang-20
-i386                  randconfig-014-20251112    clang-20
-i386                  randconfig-015-20251112    clang-20
-i386                  randconfig-016-20251112    gcc-14
-i386                  randconfig-017-20251112    clang-20
-loongarch                         allnoconfig    clang-22
-loongarch                           defconfig    clang-19
-loongarch             randconfig-001-20251112    gcc-15.1.0
-loongarch             randconfig-002-20251112    gcc-13.4.0
-m68k                              allnoconfig    gcc-15.1.0
-m68k                         amcore_defconfig    gcc-15.1.0
-m68k                                defconfig    gcc-15.1.0
-m68k                       m5475evb_defconfig    gcc-15.1.0
-microblaze                        allnoconfig    gcc-15.1.0
-microblaze                          defconfig    gcc-15.1.0
-mips                              allnoconfig    gcc-15.1.0
-mips                         db1xxx_defconfig    clang-22
-nios2                             allnoconfig    gcc-11.5.0
-nios2                               defconfig    gcc-11.5.0
-nios2                 randconfig-001-20251112    gcc-11.5.0
-nios2                 randconfig-002-20251112    gcc-11.5.0
-openrisc                          allnoconfig    gcc-15.1.0
-openrisc                            defconfig    gcc-15.1.0
-parisc                            allnoconfig    gcc-15.1.0
-parisc                              defconfig    gcc-15.1.0
-parisc                randconfig-001-20251112    gcc-9.5.0
-parisc                randconfig-002-20251112    gcc-8.5.0
-parisc64                            defconfig    gcc-15.1.0
-powerpc                           allnoconfig    gcc-15.1.0
-powerpc               randconfig-001-20251112    clang-22
-powerpc               randconfig-002-20251112    clang-22
-powerpc64             randconfig-001-20251112    clang-22
-powerpc64             randconfig-002-20251112    clang-22
-riscv                             allnoconfig    gcc-15.1.0
-riscv                               defconfig    clang-22
-riscv                 randconfig-001-20251113    gcc-8.5.0
-riscv                 randconfig-002-20251113    gcc-11.5.0
-s390                              allnoconfig    clang-22
-s390                                defconfig    clang-22
-s390                  randconfig-001-20251113    clang-22
-s390                  randconfig-002-20251113    clang-17
-sh                                allnoconfig    gcc-15.1.0
-sh                                  defconfig    gcc-15.1.0
-sh                          kfr2r09_defconfig    gcc-15.1.0
-sh                    randconfig-001-20251113    gcc-15.1.0
-sh                    randconfig-002-20251113    gcc-11.5.0
-sh                           se7750_defconfig    gcc-15.1.0
-sparc                             allnoconfig    gcc-15.1.0
-sparc                               defconfig    gcc-15.1.0
-sparc                 randconfig-001-20251112    gcc-8.5.0
-sparc                 randconfig-002-20251112    gcc-14.3.0
-sparc64                             defconfig    clang-20
-sparc64               randconfig-001-20251112    gcc-8.5.0
-sparc64               randconfig-002-20251112    clang-20
-um                                allnoconfig    clang-22
-um                                  defconfig    clang-22
-um                             i386_defconfig    gcc-14
-um                    randconfig-001-20251112    gcc-14
-um                    randconfig-002-20251112    gcc-14
-um                           x86_64_defconfig    clang-22
-x86_64                            allnoconfig    clang-20
-x86_64      buildonly-randconfig-001-20251112    clang-20
-x86_64      buildonly-randconfig-002-20251112    clang-20
-x86_64      buildonly-randconfig-003-20251112    clang-20
-x86_64      buildonly-randconfig-004-20251112    clang-20
-x86_64      buildonly-randconfig-005-20251112    gcc-14
-x86_64      buildonly-randconfig-006-20251112    gcc-14
-x86_64                              defconfig    gcc-14
-x86_64                randconfig-071-20251112    clang-20
-x86_64                randconfig-072-20251112    clang-20
-x86_64                randconfig-073-20251112    clang-20
-x86_64                randconfig-074-20251112    gcc-13
-x86_64                randconfig-075-20251112    clang-20
-x86_64                randconfig-076-20251112    clang-20
-xtensa                            allnoconfig    gcc-15.1.0
-xtensa                randconfig-001-20251112    gcc-12.5.0
-xtensa                randconfig-002-20251112    gcc-8.5.0
-xtensa                    xip_kc705_defconfig    gcc-15.1.0
+Heiko
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+
 
