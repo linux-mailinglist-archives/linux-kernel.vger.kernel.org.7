@@ -1,138 +1,115 @@
-Return-Path: <linux-kernel+bounces-897743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0B33C53786
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:42:26 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E614C53726
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:38:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B6B793577A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:30:15 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 73675354EA9
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:30:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9C0B2D130B;
-	Wed, 12 Nov 2025 16:29:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="Lex7gHuB"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7162341648;
+	Wed, 12 Nov 2025 16:29:49 +0000 (UTC)
+Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com [209.85.222.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7654C33F8A4;
-	Wed, 12 Nov 2025 16:29:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BF5C33A026
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 16:29:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762964988; cv=none; b=OF+27crK6HiBHwwu6svUang67QWwsnX1icYIeoHyBXmA4AKK/D3B+RcF/87dplOBSy4vXZqvkp+eQHegqFL3RiEk+4txhRFSaqTXAhLlOaZqClZFlm3c3JMHY4c907cFdQ4yEkwYSGCptiTDAd8BrcLfA1YX0ikKGjVSYanZhUI=
+	t=1762964989; cv=none; b=rNFWf0y9AbbeXV3b/Kof+QdPysv0ueJmAyo5ajwgb6TWErbf1hnAFFVd5xUE5TsNcxCC0RdgfuDaoXNpL2MjBso5aFF/QVsY2TwUKUUxjf5uD8yIzLXqvUAQ+B3KN55ih+2QUsiWm5BJZ8TmFnKM76uGZM7fLCBYZsr/eGcE2F8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762964988; c=relaxed/simple;
-	bh=CE16kltFzFqjrddLzR7/Ik/75YYEnP3wOW2uBkiaABM=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=nGn/jF2Qw8IUIkPDwVjwmVkXhcJdOaVj+XXTULhzYbkbFoIsMisx7SjcZgCf5eOhBwNaooKzD1AqGBn4s8iNGXC5zVQ2gs+r0nIMlEf4ZVLLftZHZPPluKNiFNAkemVCmhiIkj9OqdTv5XQZ2UuGxFojbyHRmhID/QtDH/hiTdg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=Lex7gHuB; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from ehlo.thunderbird.net (c-76-133-66-138.hsd1.ca.comcast.net [76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 5ACGT53V870373
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Wed, 12 Nov 2025 08:29:06 -0800
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 5ACGT53V870373
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025102301; t=1762964947;
-	bh=CE16kltFzFqjrddLzR7/Ik/75YYEnP3wOW2uBkiaABM=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=Lex7gHuBbvK5cqsPYm7W/VXfOJuAR1NRyMhcQaqPG9PemQgiXgrJYsOmznbsnt3W5
-	 i0YkCz88MeUXYPLmbMaSsOQbG3OJzxfcbEoL+xc1O7IzrvAed+gqC0CDixOS4qlO+c
-	 zUDwJEyxDElDMrBAbF/c4Q8tCp5/u5hANGJqkgQcZoZj+DXQxs/AdnQviySwjSMXOK
-	 KMGoQVXgHDERu+0sinl9ZSqFy0NkpGkG9NVzzcCx+npfx+ilkKyghDSUxT5ugkgqfO
-	 ap8JFS6hXAGK+ALMLR+LkFgJPyx3pZlzFQSCHYobhQqMG+6cdsFyriNEDSO6cV69uX
-	 F/HgSnHyA17GA==
-Date: Wed, 12 Nov 2025 08:29:05 -0800
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: Sohil Mehta <sohil.mehta@intel.com>, Ard Biesheuvel <ardb@kernel.org>
-CC: Dave Hansen <dave.hansen@intel.com>, x86@kernel.org,
-        Borislav Petkov <bp@alien8.de>, Jonathan Corbet <corbet@lwn.net>,
-        Andy Lutomirski <luto@kernel.org>,
-        Josh Poimboeuf <jpoimboe@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Kirill A . Shutemov" <kas@kernel.org>, Xin Li <xin@zytor.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Sean Christopherson <seanjc@google.com>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Vegard Nossum <vegard.nossum@oracle.com>,
-        Andrew Cooper <andrew.cooper3@citrix.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>, Kees Cook <kees@kernel.org>,
-        Tony Luck <tony.luck@intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-efi@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v11_4/9=5D_x86/alternatives=3A_?=
- =?US-ASCII?Q?Disable_LASS_when_patching_kernel_code?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <6ab6e4d3-0caa-41e6-8231-2f3f45949876@intel.com>
-References: <20251029210310.1155449-1-sohil.mehta@intel.com> <20251029210310.1155449-5-sohil.mehta@intel.com> <29f2d16f-361f-475c-957e-0ebcefcd1a8c@intel.com> <CAMj1kXHvfgMqFncvP5A6ed=2qEPkNkS8ecoM6iXMect51Tpz4w@mail.gmail.com> <7c26ae81-3495-457b-9f64-f5b2e169a63b@intel.com> <DDEF6164-D1E6-4003-A251-804738CB59E0@zytor.com> <CAMj1kXGyTo=4Va1PevMQyCauEKSutfSPo6je0Ps09TabhTe4zQ@mail.gmail.com> <E9396874-5D2D-413D-A5D1-A28E4D429C51@zytor.com> <CAMj1kXECkKeDUDdjmrQjcYk=2Y5ydTV2L1Pg73X7uCC-=DC9Ww@mail.gmail.com> <6ab6e4d3-0caa-41e6-8231-2f3f45949876@intel.com>
-Message-ID: <FF519694-C4F5-4843-8E68-FE9C06FDC357@zytor.com>
+	s=arc-20240116; t=1762964989; c=relaxed/simple;
+	bh=ooqPLYgT35A3bEL0/xnB1JjqBchWAKRzEk/UuyfrXgo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kvYBIfIKStk35NcAUSikLFO3qVgGn8GcpZjnyIBIwPQjGTAdiqygBdQoVQ7TztEk/lpKARwZWWfpQ9V3Oi0jcqCrbKOwulUb4/9r0GZV82/PiCJ18Ep16t2f+waW7t88d3JD/yoilO+1rY9V+x87H44D+w7Z9yMI8kZvY/ezaJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f45.google.com with SMTP id a1e0cc1a2514c-89018e9f902so599055241.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 08:29:47 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762964986; x=1763569786;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BZ9QkedKrbl8l0TkhBp4GhEXOSA8xdv451nd8vqtfOo=;
+        b=lY7/FMC10KpzlDWJwwoLuOY3GfNkJnPwuWFGQiAUxgGiKO8vsCFKNrHFe2R39yyP/T
+         tObfGMrKzkCLvZyKxSsvniQ/b/+8Go6XmkWhVOnygfGBNmd23LzTSUnS2NzOi9TIY7uv
+         juHxYR+Pv9sfZ3vLkV8Rfks0Eydgrlcmsn6eUZb5lTBY5G4hX8z6wwgit+vYg+9sLSO1
+         GDEuE90bdYfwgCn6JJ61x8AvtCLGqctRfEBO+jfu/S0mXhcm1uXrXcDuUrq352IGlvcv
+         vQXwGvz2PYF0zXew/vS4Kg4GKCUwZt05uUZs/0bHrNLVH6QM6ZlrPWBhPkmgELp+D4Mc
+         1isg==
+X-Forwarded-Encrypted: i=1; AJvYcCXAdBzE/qFEhtvDZYk/JN82QyR7d4NLo9YWoL+4Kj6725w1lizIzjAHst4w/lYYGjGj5y6cw7nqBGCW8d4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzctbgXH+JKNOmu8V/8JeHYYy3mTA6i4rFM7q+Cbf6TqyKz5uIT
+	8k/uAL5QtkNQlsiAS+cM7NwH7MEgv1dch0rjHQQnmCiBm0bqnWF1goGRR+oyOJ/7
+X-Gm-Gg: ASbGncsu/sQ1du309KzkM7weEkhn13K/LSGRcdMQdenS2iuZHHxZyj8dE9ql9uAL9DH
+	J9EzszmHaNVXFRsT5tluj5E7wDr6RkVEe9XgLrSgSrqHDN9JHYqqrLCegzWXldopj/xpxV4ucqW
+	TKbGycnXMjn7o+9w5mTSxl9wUHtjxIBZ+Mzf1qqk1KqvjHslYu/J6ATbAtIsxJ04KavHXHF3Tpg
+	YpEwvReq6VJYr5bN7vbDuzONz6BI/vnUbSGUNvenA7TwqJwNyjK3e5ONGzFjmriJxJMYI5K9Cd5
+	xNaLJDSWiHit8G9ZXJQaWv1UAQQQQ64FlcO0Y81loh305CS5VZhezYL+noSrcmmD1ZT1ONddptH
+	u4fzFK+B7SQxOGGKeNFNKhHyszb+EvjV4I/+dhldXwkvRrVnLfNH/ulTmGpQow4OpbEUStdgXZn
+	PjH9WdlVCmDGNR/l+8zCUkuYxPoH1YWqP4jCdcgeG+9w==
+X-Google-Smtp-Source: AGHT+IGgBGv0vf12EsNaP2JUSN/31TglgJkiMftjQxcKrvmHs8yy1vEayRDJ1SjagUJhHeXyWDoGVg==
+X-Received: by 2002:a05:6102:4414:b0:5dd:888a:5d54 with SMTP id ada2fe7eead31-5de07e67c33mr1259985137.33.1762964986071;
+        Wed, 12 Nov 2025 08:29:46 -0800 (PST)
+Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com. [209.85.222.48])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-93727691ea7sm4982144241.8.2025.11.12.08.29.45
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Nov 2025 08:29:45 -0800 (PST)
+Received: by mail-ua1-f48.google.com with SMTP id a1e0cc1a2514c-9374ecdccb4so557510241.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 08:29:45 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUWIyDLAbEAqJBPP19zIrJ9elDG4L41UZN2iLdhMvw7vAc6seeD1Wv1m/vuCszw6ZhZRD8AlK+iAxaVwRM=@vger.kernel.org
+X-Received: by 2002:a05:6102:3a09:b0:529:fc9e:84ae with SMTP id
+ ada2fe7eead31-5de07e07256mr1206304137.24.1762964984856; Wed, 12 Nov 2025
+ 08:29:44 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+References: <20251112143520.233870-1-yuntao.wang@linux.dev> <20251112143520.233870-4-yuntao.wang@linux.dev>
+In-Reply-To: <20251112143520.233870-4-yuntao.wang@linux.dev>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 12 Nov 2025 17:29:32 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVUaWzqhq72vAXCTvDzB5ErE1Gc40BULACBpOo=iTap5g@mail.gmail.com>
+X-Gm-Features: AWmQ_bkC0_Wg5fCJJPXQ6L_Q8L_w-f8b7m8ocLXvvZvYMQwFGXBxxwK4Ooi7Isk
+Message-ID: <CAMuHMdVUaWzqhq72vAXCTvDzB5ErE1Gc40BULACBpOo=iTap5g@mail.gmail.com>
+Subject: Re: [PATCH 03/10] of/reserved_mem: Use dt_root_addr_size_bytes()
+ instead of open-coding it
+To: Yuntao Wang <yuntao.wang@linux.dev>
+Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, AKASHI Takahiro <takahiro.akashi@linaro.org>, 
+	James Morse <james.morse@arm.com>, Chen Zhou <chenzhou10@huawei.com>, Baoquan He <bhe@redhat.com>, 
+	Zhen Lei <thunder.leizhen@huawei.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Changyuan Lyu <changyuanl@google.com>, Alexander Graf <graf@amazon.com>, 
+	"Mike Rapoport (Microsoft)" <rppt@kernel.org>, 
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On November 12, 2025 8:18:20 AM PST, Sohil Mehta <sohil=2Emehta@intel=2Ecom=
-> wrote:
->On 11/12/2025 7:28 AM, Ard Biesheuvel wrote:
+On Wed, 12 Nov 2025 at 15:37, Yuntao Wang <yuntao.wang@linux.dev> wrote:
+> Use dt_root_addr_size_bytes() instead of open-coding it in
+> fdt_scan_reserved_mem_reg_nodes() to improve code maintainability.
 >
->>>> d) calling SetVirtualAddressMap() does not result in all 1:1
->>>> references being converted to the new mapping=2E
->>>>
->>>>
->>>> To address d), the x86_64 implementation of efi_map_region() indeed
->>>> maps an 1:1 alias of each remapped runtime regions, so that stray
->>>> accesses don't fault=2E But the code addresses are all remapped, and =
-so
->>>> the firmware routines are always invoked via their remapped aliases i=
-n
->>>> the kernel VA space=2E Not calling SetVirtualAddressMap() at all, or
->>>> calling it with a 1:1 mapping is not feasible, essentially because
->>>> Windows doesn't do that, and that is the only thing that is tested on
->>>> all x86 PCs by the respective OEMs=2E
->>>>
->>>> Given that remapping the code is dealt with by the firmware's PE/COFF
->>>> loader, whereas remapping [dynamically allocated] data requires effor=
-t
->>>> on the part of the programmer, I'd hazard a guess that 99=2E9% of tho=
-se
->>>> bugs do not involve attempts to execute via the lower mapping, but
->>>> stray references to data objects that were not remapped properly=2E
->>>>
->>>> So we might consider
->>>> a) remapping those 1:1 aliases NX, so we don't have those patches of
->>>> RWX memory around
->>>> b) keeping LASS enabled during ordinary EFI runtime calls, as you sug=
-gest=2E
->>>
->>> Unless someone has a code pointer in their code=2E
->>=20
->> That is a good point, especially because the EFI universe is
->> constructed out of GUIDs and so-called protocols, which are just
->> structs with function pointers=2E
->>=20
->> However, EFI protocols are only supported at boot time, and the
->> runtime execution context is much more restricted=2E So I'd still expec=
-t
->> the code pointer case to be much less likely=2E
->
->But, that still leaves the stray data accesses=2E We would still need to
->disable the LASS data access enforcement by toggling RFLAGS=2EAC during
->the runtime calls=2E
->
->Can we rely on EFI to not mess up RFLAGS and keep the AC bit intact?
+> Signed-off-by: Yuntao Wang <yuntao.wang@linux.dev>
 
-Let's not muck with this now; it is lately pointless and as you can see it=
-'s a rathole=2E
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+But please combine with the previous patch with the same subject.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
