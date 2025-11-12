@@ -1,148 +1,150 @@
-Return-Path: <linux-kernel+bounces-897107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20613C520A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 12:43:40 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6822C52048
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 12:38:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 954F8502B7A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:28:36 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 008C7506972
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:29:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7682630EF6E;
-	Wed, 12 Nov 2025 11:28:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73A783101C8;
+	Wed, 12 Nov 2025 11:28:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="InzW8DU0"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jQVxioWc";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="UcAd8N0D"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A96ED30C364
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 11:28:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FF6D30FF1D
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 11:28:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762946891; cv=none; b=e9379rvxGmcWK7SSz/xY7A0by4FBme8zyc+5vNGLAS1HW3v2charCGAGj9WuAPc1zO2YOmP2PiP+StjSuKECvt1pe30PBF8Idi5CmqkfVPz4FdG+Pc6OuokO5Y91cn0LshI85tbUQC/1iWxDBi0qMMdbI/Kcc9jeKBRie+T3XEs=
+	t=1762946897; cv=none; b=dql/yMQCKgvFYtNtzwOeBUBNnLNquhpmbd9XyY3FtaEk5g+CPlx6k+IvKqNrX3Sv66GWLqzK8yJPGg+DpQr/9IzKAbQnQI2yyhLnvPwjeQz6Kapsfa5Y0lesia66XN/QuJXggSfGcj9MKigbvfDmTC7NfJnYraq/00wJcc5BPFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762946891; c=relaxed/simple;
-	bh=3yZy0mK7fi7h6dEgV7OqbQEEpOmuSBi+BOgpbLpu8Xo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dChLA3tP54STOHI+HuEsv9GonQRAaVoBDIt9DYTHvOcqAqaGymYwRG6966GqJ65iMnwrdoiAGVDCmycyfRm3hqfhib0dyHMd0SvnOU4ehPHHQrPba7rkPcfnusVGb3/d9OH/VkmPndBuXVGsiyw1t8DyBYpRE7CAhejP1yqHtuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=InzW8DU0; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4775ae5684fso3529895e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 03:28:09 -0800 (PST)
+	s=arc-20240116; t=1762946897; c=relaxed/simple;
+	bh=w9b2RxEPIpBQFFaebpQtwOH3HfQgFg+EyEqHMhWr7p4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fZrFzv7IInwJKh+qeMp3PKzTJxExi6pXqn4t+NPaMSHmGXIH7EPx3Dy0IhDANHQBs3uTMno+RuwWcKiswBU5LukhXTOQKW8zDt/4ENzuk4oaoVa1mOKqvqkKUpQy9r+BX7XlCzoNsUyYpePgzUqyIEImJzAxB7ijPL8y3fBdX0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jQVxioWc; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=UcAd8N0D; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762946895;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cXbr75syi7AqX8YAj0Uq0xwyVkaRbUdxvBGBY9PH2cY=;
+	b=jQVxioWcqTqSRT9YcOr+iMl0pjlcqzaEtV4Gtrs5FzVEnclIVWc0XjK8hfXP6tqpBQBV30
+	A5L9V0+4wxH1E2kEycn660zdD0UuT5n8M1Zp0RVcfMsxr0jdZlUceNkOR9kzbA/4ctke8g
+	dGfO41ZS35vIJvemyWD9gCEArD9dmS4=
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
+ [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-313-6s6tOPlpPyqkJjtWnk1WxA-1; Wed, 12 Nov 2025 06:28:13 -0500
+X-MC-Unique: 6s6tOPlpPyqkJjtWnk1WxA-1
+X-Mimecast-MFC-AGG-ID: 6s6tOPlpPyqkJjtWnk1WxA_1762946893
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-8804b991a54so26732156d6.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 03:28:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762946888; x=1763551688; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=mmJ4jMrcViTktpRfcYtKz9oOeK7QX8lRd9IhgtDkEoo=;
-        b=InzW8DU0QLvbnIx8lXgh/SZICb/2z8/shpDpoGlryNAdfLGQzNTchwxoIYyC9Eg+j8
-         pk3+L/VUHgj8uz038kRnt/S0jKoE9PxNvpMegevwR52xijYY1ugkbo+s6uGygHrGgGSR
-         wKWBa+o4JUqPOyk7MqM67EHj7Oxa1vDTF64X63A2sJkybiQ9lzRbx902Lyq7NUdZMa1r
-         MK35WZ3ur901ELRLoepo+yDIatToXYLansuulph6pPIxm2R0dZ5n2c3e6F7vbQzlu30D
-         j8Q+ZXSl226LpaNjVLkaf5e/Ao/p5F3Siup7e5KZseh/3MM5t6jnDOUg4KVOARtDWSji
-         HueQ==
+        d=redhat.com; s=google; t=1762946893; x=1763551693; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=cXbr75syi7AqX8YAj0Uq0xwyVkaRbUdxvBGBY9PH2cY=;
+        b=UcAd8N0DErhar9fdaQ1F4OZvc0G/9LAs90XoqqiIbWoJH0uZtg13duTIZvta02E2Ek
+         DNkdX8YCAy/7sUjbliF4Q+YEv09aTx47g3wFEI2kbofCZZEvREnlrqXbwUybF70bcq/I
+         FwhfCScCXEK6gpUfdlQgrATTnkq/yoCpaOiJ4KkIqX86YAGfc4Ktb6hf0JeU5JyPY568
+         nKYiZUMrcHZY1k/b4NcrgTSEyE/NdXrDnOy5+yhTcTCXp0sXvxTWGdGRJyEtuL1i59cS
+         OzMGdDgR+DJ08RZsDDl4f1/5exMr5xYUtjo6Knj1Gki/qcYtt3DnYoX7gIfRYZTIU34d
+         iCnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762946888; x=1763551688;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mmJ4jMrcViTktpRfcYtKz9oOeK7QX8lRd9IhgtDkEoo=;
-        b=TErzC/7/3A9ab8gbKmM04ecCURLMAvBBBqoZppKXAXoZbSeGClD/2MnEz+Vl6+ai8Z
-         JPcC7PbPboVeHqkcbv3O9+b0mtB8KtIzDyxIIstXXN2APW9Qb8BKm9aLrFk6NBnXOoQp
-         01YcVeJ3/A1cllkOJqLYHiTRPJvc3Xek/xVvEJ3PItgfl9MmbG0Stje8KinQFQs9xcWz
-         7/enNSozCgOJHAxmR6E+iu0bSUtStl9YCAvHUnEhglRwX9qRJ+IZVNGzdGDXtMqYmjsG
-         osTCyrvcfaKyoe/OZ9giclmi0l3HBUK1p1rGdUiPJ5mN8rqsvUZEYU1ZbYkVAfbM8m/W
-         QUBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU8Z2x4OMUBlgqJI/z8EZtjuP5+qKLWcIr2rRoqOcvCc1aEOd5ltgA1bz8D3IPEoHtAttMl8RTjEU1ZflY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjMb+R86Vkkzetql1CRTSByFE4K4DN/T0I5dl1iaZuwgAG7SF/
-	z/wIEcgiPuTj+lJ/OoN8F1T2FYPOZAvkaN4tmYjo6ccu/h7mhGELNSJ5
-X-Gm-Gg: ASbGnctKKIO0B/XuYX1JoCd0mJJLZoIwCbewPgMjHsL0vxx0oWT2Ii7H/63Qg6qNyOv
-	Hec/D+5KQ/E1CSVwC2R+bnsbyjVeRl37nKK67jyYTQxU4XfJEtbEOsDXyhOcwpDpYhCo24abFXn
-	mgbMSIniMXWcyRauugKnMXffvbKHFcXof9pZq7kUo3XIqE4burJBA58lNm0xLjDTg5btR+VDhXY
-	GvMUV1zLMCkNKVnVT7hGuaE1dGoPc+Las3lWgyc3Xv/yY+ydjIa3WzughR+dgEBgcAjfAsTc9c9
-	d/UAXw+pQMOAdPAkttOl79TZ6HTcCQ/h/XdDPYb5IwpBI9lAFan0VXGi1XZU5VzTFxOGfa+nSbz
-	WAGDaIqLRuvpUhn3GiSNQ1ZDGQbBQMYTHXbXaWfEIxxvQRH98Er4k4+4UxRsOnoZWdTr91XT5h+
-	kD08bxaj8+DpA/e0oWYseKt/w=
-X-Google-Smtp-Source: AGHT+IHUkDj9skJWx5O8Mgj0/LeNZAj9+4nbV8r5lwtFtUHPHAFFww+gS/qpBq+lZu7XXIyqqV4v1w==
-X-Received: by 2002:a05:600c:4fd3:b0:46e:37a7:48d1 with SMTP id 5b1f17b1804b1-477871c588emr26721795e9.34.1762946887589;
-        Wed, 12 Nov 2025 03:28:07 -0800 (PST)
-Received: from [10.125.200.88] ([165.85.126.46])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47787ea39ccsm29171795e9.15.2025.11.12.03.28.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Nov 2025 03:28:07 -0800 (PST)
-Message-ID: <893e8d23-121b-43ef-90a9-370a745d4341@gmail.com>
-Date: Wed, 12 Nov 2025 13:28:05 +0200
+        d=1e100.net; s=20230601; t=1762946893; x=1763551693;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cXbr75syi7AqX8YAj0Uq0xwyVkaRbUdxvBGBY9PH2cY=;
+        b=sCE4yTUTmfrWSN9IvBNCV0/JxSUq8ps0J9zfMXIYlTPkrq8bB3Zgc72wxUx42jWPCo
+         e1j/1SQYqub6hOi6S8DeNvGwQB3jcSdSjat9q6jcoBDPIt4wFn43TP1P4wVsTcv9/bOK
+         oyWB4vt5UwydnjObJ5nYLWI9LokSvBm7Q2eMU9Hvgm2evEJKS8PMF/pB2vhQQVrrOh2i
+         ZHTXkrsounoxygaf6JEQCOsYUVar49jbJePzChDa/Va/rffJsPKSgwTJtQTmx8mLCayM
+         X8vXOW3CJwjoUUfjoy2+kXJFEQwKxCsf08An+UgNKiZEAcVzaXpTFnaiHdLVPHyMQYuC
+         WO6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWeQ3vcLVDi+FU9bwEM7XUHjsF22Z4kOpY7XGeEeRsd1LWFXs3Z/tS1dKatBZuODQ5i7lgnTSzTmt6skOI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw83bjaueia4Bp2MHXGe2yddtUKtQP3gEU6DeGjIyXo1t2Ac1cw
+	6V5wni6jrizzcrNqv8xn+kQ8Iqspg4YzjslmGBb+nBwyf4g4MxmgIonmv9uLoy1ZVm7gWI+qA7n
+	csHNDBUPWo6xku6ZOFzpmDwi5RwgdZPOM0skrC67gHak7vBUmlcMvjpI26MUDERfPaQ==
+X-Gm-Gg: ASbGnctBYkjSX7whl6/ovnuafmR/n5QCB8IVzgHZ7wXa9Hqkw2aDhiWDGShRnQ0yTkR
+	MfxkjNBTtEQY1b9mK00gyB/0KM2ME3yLSGmmuo7H2TDqW9n2mpO5NghHwXCWmDV1XtdKAI1J15K
+	Pe47U/07tvSOlPNXrjGCHSV2wuorb2LWB8+7l+dcUPMC4C5X3Sho2kJxlDkqxCgl+FKhTlTbTdX
+	gfjCnPJb/DjmOKNxRG2mJAV+fVQnuK/zhNiWBUoCo+doh40h1aqhiAfN1/T9JxHg5rM8QnJc/Y7
+	8gyzv9AquBiwYmooHF8qi/HWCoV5Bh9gehx5UfWRRJqS6ZsY+/62HJVtIbPW6Ik0dSJ41eUk0vr
+	9D4YbMoSuFBz04WZbNwNDF449V/OSNnPylb+KgxwwjeAkelmTqts=
+X-Received: by 2002:a05:6214:2248:b0:880:298b:3a6d with SMTP id 6a1803df08f44-88271a2a00emr36352996d6.35.1762946893352;
+        Wed, 12 Nov 2025 03:28:13 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGnA7ozYlvXHQMnpycDhkhnMaFa5erx7IOPg689k7NBMlvaatOo3MEwHXk4xMfYTAwAfX3oqA==
+X-Received: by 2002:a05:6214:2248:b0:880:298b:3a6d with SMTP id 6a1803df08f44-88271a2a00emr36352786d6.35.1762946892999;
+        Wed, 12 Nov 2025 03:28:12 -0800 (PST)
+Received: from sgarzare-redhat (host-79-46-200-153.retail.telecomitalia.it. [79.46.200.153])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8823896a8d9sm92866156d6.17.2025.11.12.03.28.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Nov 2025 03:28:12 -0800 (PST)
+Date: Wed, 12 Nov 2025 12:28:08 +0100
+From: Stefano Garzarella <sgarzare@redhat.com>
+To: Bobby Eshleman <bobbyeshleman@gmail.com>
+Cc: Shuah Khan <shuah@kernel.org>, virtualization@lists.linux.dev, 
+	netdev@vger.kernel.org, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Simon Horman <horms@kernel.org>, Bobby Eshleman <bobbyeshleman@meta.com>
+Subject: Re: [PATCH net-next v4 12/12] selftests/vsock: disable shellcheck
+ SC2317 and SC2119
+Message-ID: <r5uyojkue5zgoiixgmrjoew6pe6p7jzhd4hsudoxdirwummht3@fclnufaabg6g>
+References: <20251108-vsock-selftests-fixes-and-improvements-v4-0-d5e8d6c87289@meta.com>
+ <20251108-vsock-selftests-fixes-and-improvements-v4-12-d5e8d6c87289@meta.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 6/6] net/mlx5e: Support XDP target xmit with
- dummy program
-To: =?UTF-8?Q?Toke_H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
- Tariq Toukan <tariqt@nvidia.com>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>
-Cc: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
- Mark Bloch <mbloch@nvidia.com>, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>,
- Jesper Dangaard Brouer <hawk@kernel.org>,
- John Fastabend <john.fastabend@gmail.com>, netdev@vger.kernel.org,
- linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
- bpf@vger.kernel.org, Gal Pressman <gal@nvidia.com>,
- Leon Romanovsky <leonro@nvidia.com>, Moshe Shemesh <moshe@nvidia.com>,
- William Tu <witu@nvidia.com>, Dragos Tatulea <dtatulea@nvidia.com>,
- Nimrod Oren <noren@nvidia.com>, Alex Lazar <alazar@nvidia.com>
-References: <1762939749-1165658-1-git-send-email-tariqt@nvidia.com>
- <1762939749-1165658-7-git-send-email-tariqt@nvidia.com>
- <877bvvlf19.fsf@toke.dk>
-Content-Language: en-US
-From: Tariq Toukan <ttoukan.linux@gmail.com>
-In-Reply-To: <877bvvlf19.fsf@toke.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20251108-vsock-selftests-fixes-and-improvements-v4-12-d5e8d6c87289@meta.com>
 
+On Sat, Nov 08, 2025 at 08:01:03AM -0800, Bobby Eshleman wrote:
+>From: Bobby Eshleman <bobbyeshleman@meta.com>
+>
+>Disable shellcheck rules SC2317 and SC2119. These rules are being
+>triggered due to false positives. For SC2317, many `return
+>"${KSFT_PASS}"` lines are reported as unreachable, even though they are
+>executed during normal runs. For SC2119, the fact that
+>log_guest/log_host accept either stdin or arguments triggers SC2119,
+>despite being valid.
+>
+>Signed-off-by: Bobby Eshleman <bobbyeshleman@meta.com>
+>---
+> tools/testing/selftests/vsock/vmtest.sh | 2 ++
+> 1 file changed, 2 insertions(+)
 
+Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
 
-On 12/11/2025 12:29, Toke Høiland-Jørgensen wrote:
-> Tariq Toukan <tariqt@nvidia.com> writes:
-> 
->> Save per-channel resources in default.
->>
->> As no better API exist, make the XDP-redirect-target SQ available by
->> loading a dummy XDP program.
-> 
-> This is a user-visible change, though, no? I.e., after this patch
-> xdp_redirect mlx5 devices will no longer work as an xdp_redirect target
-> out of the box?
-> 
+>
+>diff --git a/tools/testing/selftests/vsock/vmtest.sh b/tools/testing/selftests/vsock/vmtest.sh
+>index 42e155b45602..c7b270dd77a9 100755
+>--- a/tools/testing/selftests/vsock/vmtest.sh
+>+++ b/tools/testing/selftests/vsock/vmtest.sh
+>@@ -7,6 +7,8 @@
+> #		* virtme-ng
+> #		* busybox-static (used by virtme-ng)
+> #		* qemu	(used by virtme-ng)
+>+#
+>+# shellcheck disable=SC2317,SC2119
+>
+> readonly SCRIPT_DIR="$(cd -P -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
+> readonly KERNEL_CHECKOUT=$(realpath "${SCRIPT_DIR}"/../../../../)
+>
+>-- 
+>2.47.3
+>
 
-Right, we introduce an explicit behavior change here.
-Due to the lack of a standard control, we're aligning to other drivers 
-and use the dummy program trick.
-Having the feature always on by default wastes HW and SW resources for 
-users who are not interested in the feature (and cannot explicitly 
-disable it), in addition to the significant extra latency it adds in 
-configuration flow.
-
-> We have userspace code listing the driver support in various places
-> (e.g., here in xdp-tools:
-> https://github.com/xdp-project/xdp-tools/commit/1dad1d6e0ccb086b8a31496931f21a165b42b700);
-> I'm sure there will be other places. Since such code would up until now
-> assume that mlx5 just works, this will end up being a regression in such
-> cases, no?
-> 
-> -Toke
-> 
-> 
-
-Yes, it is indeed a change in behavior.
-Now the feature can be turned off, and actually defaults to off.
-Now we should add "mlx5" to this list driver_pass_list[].
 
