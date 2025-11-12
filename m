@@ -1,120 +1,200 @@
-Return-Path: <linux-kernel+bounces-897771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BFFDC53B50
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:34:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C2A7BC539ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:17:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 248C3621FD0
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:42:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14ADE5635FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:42:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A7DA342175;
-	Wed, 12 Nov 2025 16:42:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 909A333B977;
+	Wed, 12 Nov 2025 16:42:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="YVflLx5u"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cVAtPhmY"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED6552D130B;
-	Wed, 12 Nov 2025 16:42:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54AD033970D
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 16:42:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762965730; cv=none; b=HbnSRM7nTdly5XItZR0+mVnj+FWcS/VP4+kQxBQadn4jc4jCXEzj50Nm60DtSWKC8VUFtkZftwhF/bp+lOzNfuQ4k4NwFKh8m7XsTphQOLvrB3wfaia4ENUwIFXIs1764zsTCo2Xe3NdWt3Hlb30sacgBW+fDX//err61V+fs3Q=
+	t=1762965754; cv=none; b=OlNWnHSgmeixyoOu9h6GiSEGeG+sKqmsNqO8uoHuJR9Ipt7B9kb9/xcnM2sA/PPcaql5f2BAUoNASJfP0+XpjOzzt4uXgheV+i+eU7nMff9PILM90CvcTpXftoQHQgn+MyqgL4TzS4EO2w+gVBLWjZToVkANNckHIROf71AGnok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762965730; c=relaxed/simple;
-	bh=brfumpB1KjtZ0tUjUYidieOKFPOMGTQ3pQPql8DRWmo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GbMhQJsFb8oRVEZe4cuewlnKXBWSddf75/i1SfWWAMLoByd9043s1mDvZheFfUNu2AzSBLpAoqZhfpZBcKqTwNZo7//QF7H2YFhgz4F1V1rFy4CGx2TlCDEo7biY7l6DYxgqigIE0xjC2aKmLrpZEWjmNvvha/JSaaTM1cXbiQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=YVflLx5u; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 3C0BC40E021A;
-	Wed, 12 Nov 2025 16:42:04 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id mkZIj2Z67Xik; Wed, 12 Nov 2025 16:42:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1762965720; bh=H8fRy6CI1BAGBCKXWP6X0lxiw1OBfzCJ+bndBBtYOlo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YVflLx5uUbPoetXq3ohWhwyFBO14QTqiMcu1aA2NVNerXvN+EztQOA/LmJgWTsaot
-	 tQeOW+4lF1+6hkLMFgVwtAIQ1XHJvCupXPjLo3PWzhKnsb/qbo/qOUJqIqFVpECS2J
-	 1LGgK/GBf7m13rUsjRF9+IyMzCGdYcQiGUFMLiujsQB9G3AgZHpPI56XWcDTWFwLX4
-	 zmgv9oIjf3AE7WsbAPfBaX196OJtwWnTVKTn9iuK7HD5040W5Z+QlybaJIDdrZbL4s
-	 CsEkg6saAHLhwGkRRpdhI0PPDVHG9hRYLbTCzaCyadGuKZ2EE/kxW1FQVYdvYsVFcg
-	 uN4muSsByls/rhP1/X9lDHXRITzg63Hf1oozWUUuaKq/BBEg2mDY7JStj0eepCat6x
-	 lb19XkemtaonygVt/GE02GxWHMHM9Tkr/YmjfJ5+U3hiI6SYkOpEGYfkHJan8PZ2XA
-	 SmJ/Gzy7Ecjn2TEm2uJB9tH8enEx6lwwK1Mp63qoYu6HMjWsf6XZpA3U1Uwxb1Pegh
-	 xQDsHA2S6/Gql5NloFt2ROtKrJHdkJfireVfH1dQKapcRqc4tdWOcDP8g7eu/bhPhh
-	 Eu5ubqJVkyp1/KEYgO1BSmLFBluhgo8ld53ERP/Qkt5/m+WZ6eovucOqz2tKEHS5oU
-	 1d5JHe5AUzY3RsE4ylGaWInI=
-Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 2CEBD40E00DA;
-	Wed, 12 Nov 2025 16:41:51 +0000 (UTC)
-Date: Wed, 12 Nov 2025 17:41:44 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Brendan Jackman <jackmanb@google.com>
-Subject: Re: [PATCH v4 4/8] KVM: VMX: Handle MMIO Stale Data in VM-Enter
- assembly via ALTERNATIVES_2
-Message-ID: <20251112164144.GAaRS4yKgF0gQrLSnR@fat_crate.local>
-References: <20251031003040.3491385-1-seanjc@google.com>
- <20251031003040.3491385-5-seanjc@google.com>
+	s=arc-20240116; t=1762965754; c=relaxed/simple;
+	bh=/bSxAcGrhRp7L4ufXIbZzzWuihJrDC7nvf+26+tVFgo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BATzKiFEP7KZsePv9kpC2WeucpxKMDvyvUQhOBOtQ+gIJYw9v098SoXFYovhrV5mlypRWoQwb8+KqpMdgJ/iGdeIHO0jXuXoT5ZPA5Y9xtwXA047JZd96rGXJHclF6Rnx9HD2D4nZIchZFT0GPm41pRHTpq7ynclvkZDCAvl/DE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cVAtPhmY; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2980343d9d1so191555ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 08:42:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762965753; x=1763570553; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oylNPE4uVKQhn2NkMu29EXgAYx+J4vN9SweT4O8izLI=;
+        b=cVAtPhmYDHzakEg5I05otGSgoMSQ+hFCpqXQ9Vw5waHd4Aj5E8PkH3m8w8P8WCH4jb
+         cciBTzdDTLVKfOa8gy7lPWDAxc7Cwn+d+JWrf7u+NwO1Dg+vv0WcaCcy8WL/2f0mVMua
+         JCfc2Omp5bEw7Wc4xlcmr071zl3cks1iZC5HJcttoOoznjChZfeNhtbH5OLBuKapZmFr
+         GJI8DJqlVmicfyHMv7nBgLAkcS7hRJ3TM+tXYmd02KteJqrS7snG44d8FSYkXdNWgLWx
+         scSrjRiByAIdaplGhXR5we/JZ0KWn/5HqTknpxwQlVDE6Xemo6lRVt+dY0oCr1IxWa3a
+         I1yA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762965753; x=1763570553;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=oylNPE4uVKQhn2NkMu29EXgAYx+J4vN9SweT4O8izLI=;
+        b=Z2RNJSAy33E6D7EGte6JiZk6PP0cEl8eE0E9cteFBN9+k9mOvhwjZvbRm6IlEAcEQ/
+         tGjeLlbTwwAxM5pxUu2ZYCOg84uu8WQqi4+pBrYA4oybivHBLvwIuqpAgf3EttYbJn0b
+         iTkCMiF5GdNRzrEGNLslcxpgNqOrC6kMJjUmcBCTAi+ijb9VRceNuyaB90FjgOqe5cgz
+         U3tz6BFyuoZ4gQFqjRSUIlvJx6pMt3Dk9otY9ZmS9SYw9NP6oihFDRtcaKDHjVXRGVs6
+         UsVdthFQwApKWaYGLmowlTh1I/h8OGvNd/64ryT9CERynzS47z8ktvJmMzcvVQ+bR482
+         rc5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWG7CV3dZ9+CQfWEdHrb5td4KmQ8ifyaslgLaaCcdDPRPSbwIU5kUSBaBv0KgMUAwcPUxyi/73X+RJth/s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSGzgxb2tH4uqP+C8/yz83TpP6XfjMMIBatFU+0N5cljhk3jj0
+	gbXebNZflNcrnU9Bl8Vej9yZ9nUUsGsMuUKOgxeSxCz0dXkFngJlC5IfJZtbBF2vNdUhQ8/h7GZ
+	L0ZD52b407RSbuwDnmOpZJrNz7DvTBhIuGdPkyF5E
+X-Gm-Gg: ASbGncuGykR5iSIanpgBqPvOp4R/a5oMb+XaIPY0fOuvWpklN00hiiwdpsiiuwunX37
+	qlRyA80AZJlebNhbeLAIN1n1lfiA1y5YNN05hznkxUy30CihRDCQloWWFrZgLaZhPUTcP6P4r3l
+	4PLes6QkJprNXwuxmq2od5a4GW3aEJkPt3ZiteEXil4K1j26qhoXE2fsnT6Iy2Zh1rZrzXCzIb2
+	LvsgF6hGdNvZir0AeaVdypFLsb+xaog/JnkyKdMWkJiSb4SqmtlxwwPwnc6UuP/pmeVsYjO9iQv
+	iCXx+2fsmaCf074cFh5hMpv2pSKVPRaqreZ8
+X-Google-Smtp-Source: AGHT+IGcvt334Z1FGLlZNlTy5sWbRse8K04gLzU4vGzUmOzboVYYpE+qoTjqfj4wk2TEaL9VZwvq7RS13Bg49n/566w=
+X-Received: by 2002:a17:903:1a68:b0:295:5138:10f2 with SMTP id
+ d9443c01a7336-29850761942mr2777945ad.11.1762965752176; Wed, 12 Nov 2025
+ 08:42:32 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251031003040.3491385-5-seanjc@google.com>
+References: <20251112080526.3971392-1-dapeng1.mi@linux.intel.com>
+In-Reply-To: <20251112080526.3971392-1-dapeng1.mi@linux.intel.com>
+From: Ian Rogers <irogers@google.com>
+Date: Wed, 12 Nov 2025 08:42:21 -0800
+X-Gm-Features: AWmQ_bnM7jWScBcxYA5ih0EnQ4GPvFcr1HhXobUst0RWyHfyQ_qayf9TvN2n1hc
+Message-ID: <CAP-5=fUW2CdFnZ3sSOAnEHHqgDV3OB-p3FbfL+KKkvJJ6_smNg@mail.gmail.com>
+Subject: Re: [PATCH] perf: Fix 0 count issue of cpu-clock
+To: Dapeng Mi <dapeng1.mi@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Andi Kleen <ak@linux.intel.com>, 
+	Eranian Stephane <eranian@google.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, Dapeng Mi <dapeng1.mi@intel.com>, 
+	Zide Chen <zide.chen@intel.com>, Falcon Thomas <thomas.falcon@intel.com>, 
+	Xudong Hao <xudong.hao@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 30, 2025 at 05:30:36PM -0700, Sean Christopherson wrote:
-> @@ -137,6 +138,12 @@ SYM_FUNC_START(__vmx_vcpu_run)
->  	/* Load @regs to RAX. */
->  	mov (%_ASM_SP), %_ASM_AX
->  
-> +	/* Stash "clear for MMIO" in EFLAGS.ZF (used below). */
+On Wed, Nov 12, 2025 at 12:07=E2=80=AFAM Dapeng Mi <dapeng1.mi@linux.intel.=
+com> wrote:
+>
+> Currently cpu-clock event always returns 0 count, e.g.,
+>
+> perf stat -e cpu-clock -- sleep 1
+>
+>  Performance counter stats for 'sleep 1':
+>                  0      cpu-clock                        #    0.000 CPUs =
+utilized
+>        1.002308394 seconds time elapsed
+>
+> The root cause is the commit 'bc4394e5e79c ("perf: Fix the throttle
+>  error of some clock events")' adds PERF_EF_UPDATE flag check before
+> calling cpu_clock_event_update() to update the count, however the
+> PERF_EF_UPDATE flag is never set when the cpu-clock event is stopped in
+> counting mode (pmu->dev() -> cpu_clock_event_del() ->
+> cpu_clock_event_stop()). This leads to the cpu-clock event count is
+> never updated.
+>
+> To fix this issue, force to set PERF_EF_UPDATE flag for cpu-clock event
+> just like what task-clock does. Besides, or flags with PERF_EF_UPDATE
+> for task-clock although currently the flags argument would always be 0.
+>
+> Fixes: bc4394e5e79c ("perf: Fix the throttle error of some clock events")
+> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
 
-Oh wow. Alternatives interdependence. What can go wrong. :)
+Thanks Dapeng! This is a fairly major regression and I'm surprised my
+kernel picked it up so quickly. For those interested the relevant part
+of the breaking change is requiring PERF_EF_UPDATE:
 
-> +	ALTERNATIVE_2 "",								\
-> +		      __stringify(test $VMX_RUN_CLEAR_CPU_BUFFERS_FOR_MMIO, %ebx), 	\
+```
+@@ -11829,7 +11834,8 @@ static void cpu_clock_event_start(struct
+perf_event *event, int flags)
+ static void cpu_clock_event_stop(struct perf_event *event, int flags)
+ {
+        perf_swevent_cancel_hrtimer(event);
+-       cpu_clock_event_update(event);
++       if (flags & PERF_EF_UPDATE)
++               cpu_clock_event_update(event);
+ }
+ ```
 
-So this VMX_RUN_CLEAR_CPU_BUFFERS_FOR_MMIO bit gets set here:
+Reviewed-by: Ian Rogers <irogers@google.com>
 
-        if (cpu_feature_enabled(X86_FEATURE_CLEAR_CPU_BUF_MMIO) &&
-            kvm_vcpu_can_access_host_mmio(&vmx->vcpu))
-                flags |= VMX_RUN_CLEAR_CPU_BUFFERS_FOR_MMIO;
+Hopefully a maintainer can pick this up quickly. Thanks,
+Ian
 
-So how static and/or dynamic is this?
-
-IOW, can you stick this into a simple variable which is unconditionally
-updated and you can use it in X86_FEATURE_CLEAR_CPU_BUF_MMIO case and
-otherwise it simply remains unused?
-
-Because then you get rid of that yuckiness.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+> ---
+>
+> With this change, both cpu-clock and task-clock can do counting and
+> samping correctly.
+>
+> 1. perf stat -e cpu-clock,task-clock -- true
+>
+>  Performance counter stats for 'true':
+>            240,636      cpu-clock                        #    0.358 CPUs =
+utilized
+>            243,319      task-clock                       #    0.362 CPUs =
+utilized
+>
+> 2. perf record -e cpu-clock -c 10000 -Iax,bx -- sleep 1
+> [ perf record: Woken up 2 times to write data ]
+> [ perf record: Captured and wrote 0.028 MB perf.data (36 samples) ]
+>
+> 3. perf record -e task-clock -c 10000 -Iax,bx -- sleep 1
+> [ perf record: Woken up 1 times to write data ]
+> [ perf record: Captured and wrote 0.029 MB perf.data (41 samples) ]
+>
+>  kernel/events/core.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index f6a08c73f783..77d3af5959c1 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -11964,7 +11964,7 @@ static int cpu_clock_event_add(struct perf_event =
+*event, int flags)
+>
+>  static void cpu_clock_event_del(struct perf_event *event, int flags)
+>  {
+> -       cpu_clock_event_stop(event, flags);
+> +       cpu_clock_event_stop(event, flags | PERF_EF_UPDATE);
+>  }
+>
+>  static void cpu_clock_event_read(struct perf_event *event)
+> @@ -12043,7 +12043,7 @@ static int task_clock_event_add(struct perf_event=
+ *event, int flags)
+>
+>  static void task_clock_event_del(struct perf_event *event, int flags)
+>  {
+> -       task_clock_event_stop(event, PERF_EF_UPDATE);
+> +       task_clock_event_stop(event, flags | PERF_EF_UPDATE);
+>  }
+>
+>  static void task_clock_event_read(struct perf_event *event)
+>
+> base-commit: 2093d8cf80fa5552d1025a78a8f3a10bf3b6466e
+> prerequisite-patch-id: a15bcd62a8dcd219d17489eef88b66ea5488a2a0
+> prerequisite-patch-id: 2a0eefce67b21d1f30c272fd8115b0dc1aca3897
+> --
+> 2.34.1
+>
 
