@@ -1,103 +1,103 @@
-Return-Path: <linux-kernel+bounces-896535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E82FC509AC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 06:21:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2C6EC509CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 06:26:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 530944EAFF1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 05:21:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9E713AF058
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 05:26:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 723AD2D8360;
-	Wed, 12 Nov 2025 05:21:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A29302D97A9;
+	Wed, 12 Nov 2025 05:26:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b="NNCY4PvK"
-Received: from mail-m155101.qiye.163.com (mail-m155101.qiye.163.com [101.71.155.101])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CEPWaH13"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E53E10942;
-	Wed, 12 Nov 2025 05:21:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB6D1146588;
+	Wed, 12 Nov 2025 05:26:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762924890; cv=none; b=raICKSkvqSkZo4hGe9EpQlZVQ37VBqDeONHaJDYTHsonXo0B2SBs8FLJW5Me+Ow7/RW8nhC1xU2P/jlvBD4rTXJyh0RkUoFCdUWwZqNrY9AK5CEtJ1Er0ytxTzAj2fQYEHeLpmt2VxuZcoNWS+hkpq6rYHtLn6roolmqq+YG2aM=
+	t=1762925208; cv=none; b=qhX2KpYxvKDD5UI+L+1aQIWIOvImhdgVKC3sldCWDd4xxUUXEU22vCuDAvASfxupiflAcsYjpBEDk9BpeXsyV1Hl7++owt+X3Zf7xSMKPzQg3jovEKt6687WJ+ePFKsx9iP9wBaDANfhQ+/lYGQhoFunCF/ZEb2rFOHwBeMfYhc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762924890; c=relaxed/simple;
-	bh=mI8T5qp75RMZvOo14g5Udf1hFjg7nPChgpTmabXEfjs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=e+LwiOn5YJxZr3JkQkovyM8D55sKMjAkECd+vXjp1g1BpAcmKudAvdfxl/xe94+Sa/t9Q2LX5n4Hqf5X5ILlW7TjY46+cRlFXWaKCNUTsVjnyw9mG3Y+rp0+4SGxPSNqNjv5sjYPst/vUVWF5FFHvia1goj5mb7zMOMZjg4KIsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn; spf=pass smtp.mailfrom=seu.edu.cn; dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b=NNCY4PvK; arc=none smtp.client-ip=101.71.155.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seu.edu.cn
-Received: from LAPTOP-N070L597.localdomain (unknown [58.241.16.34])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 29483f4ca;
-	Wed, 12 Nov 2025 13:21:17 +0800 (GMT+08:00)
-From: Zilin Guan <zilin@seu.edu.cn>
-To: idosch@nvidia.com
-Cc: petrm@nvidia.com,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	jianhao.xu@seu.edu.cn,
-	Zilin Guan <zilin@seu.edu.cn>
-Subject: [PATCH] mlxsw: spectrum: Fix memory leak in mlxsw_sp_flower_stats()
-Date: Wed, 12 Nov 2025 05:21:14 +0000
-Message-Id: <20251112052114.1591695-1-zilin@seu.edu.cn>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1762925208; c=relaxed/simple;
+	bh=J2yCx8gANXEoEptcoVy/jvxBGR0sLdZaZJNtdCJDhDQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gch/8+hOKsq8/aK41tX1OusqUI/zOYQfcoBoElxyUAIaQDstg3lv0lBnNhNVrXM+9k4kSJ0W1WOzvHEKPJKq0yQ3ARWueRpj+uctJgMroP2d8MpZOqVvHEtAWWi3xs3JkkzYHcVSxrCC1Ikf35xL40tr8/XSI+b7PSK2xxrSTs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CEPWaH13; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762925206; x=1794461206;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=J2yCx8gANXEoEptcoVy/jvxBGR0sLdZaZJNtdCJDhDQ=;
+  b=CEPWaH13QuEHeyuMYIU1ab3uCDunT91ibG8+ITiwmGV/4rNBp0FVol4V
+   0z8xBgPDrfPVWk6HdgpC7Defilr/MJa2GtSZlzk/NFTxtJTK4UUlkOSsO
+   p4CnXaCDA+h8F/7Tf801CtamAQhuPe5m4e5ACvbPLk+MIlzHAn7QU+Og6
+   uyfLG5LJSqBnGZkt3qk2HDAHbCGwgxZkk9c9KUjcFXz+5NeM5QArLRCYk
+   BeMQu+wJlrIl3ov+RTlVM+ko2m6a07fPGEKkiiHhCu7le1LXoNVBDOZrQ
+   Qpvk2HC/+VA3cRMgMFkeYN5WIAK95wLxmoWU7QPM3X7qInRxl7nYBrbmB
+   w==;
+X-CSE-ConnectionGUID: 0XBEb4WGQSm14BHCoeKlrw==
+X-CSE-MsgGUID: 4RcpEAYDR3qVrZgGX7I63A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11610"; a="76331295"
+X-IronPort-AV: E=Sophos;i="6.19,298,1754982000"; 
+   d="scan'208";a="76331295"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 21:26:45 -0800
+X-CSE-ConnectionGUID: 2KuqqVv9TuS5cZ/Ryocc5Q==
+X-CSE-MsgGUID: jYiQEfIURoe/1ab0ampM7A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,298,1754982000"; 
+   d="scan'208";a="189381942"
+Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 21:26:41 -0800
+Message-ID: <f6e4ca74-2b76-4662-97eb-a1c5eab62c9a@linux.intel.com>
+Date: Wed, 12 Nov 2025 13:22:38 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a9a7682d66903a1kunme2d3ae7bb6ce8e
-X-HM-MType: 10
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkZSUtKVk9KTh4YSh4ZHx4aQlYeHw5VEwETFhoSFy
-	QUDg9ZV1kYEgtZQVlOQ1VJT0pVSk1VSE9ZV1kWGg8SFR0UWUFZT0tIVUpLSUJDQ0xVSktLVUtZBg
-	++
-DKIM-Signature: a=rsa-sha256;
-	b=NNCY4PvKv3/tuAgShApIXnMbMFdwt630jeZiEC6UocbFgRT2xdEjLISatyUWMAdf6ZF0Cpi7poNmyt7uhaLp3+j2NRhczXqhBPftkIByu1EibM32XJSaJ1/wep1e8nEpSPhaYtobypZ13x3wumVa7FbeOOE42KFvkLo0tGvEDaE=; s=default; c=relaxed/relaxed; d=seu.edu.cn; v=1;
-	bh=ctO8x7yP9+riKFZtMGesTZv10tCnO11ZkNJa5/sXgFM=;
-	h=date:mime-version:subject:message-id:from;
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 2/5] iommu: Tiny domain for iommu_setup_dma_ops()
+To: Nicolin Chen <nicolinc@nvidia.com>, joro@8bytes.org, afael@kernel.org,
+ bhelgaas@google.com, alex@shazbot.org, jgg@nvidia.com, kevin.tian@intel.com
+Cc: will@kernel.org, robin.murphy@arm.com, lenb@kernel.org,
+ linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+ linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+ linux-pci@vger.kernel.org, kvm@vger.kernel.org, patches@lists.linux.dev,
+ pjaroszynski@nvidia.com, vsethi@nvidia.com, helgaas@kernel.org,
+ etzhao1900@gmail.com
+References: <cover.1762835355.git.nicolinc@nvidia.com>
+ <431cccb8279eb84376c641981f57e9ceece8febf.1762835355.git.nicolinc@nvidia.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <431cccb8279eb84376c641981f57e9ceece8febf.1762835355.git.nicolinc@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The function mlxsw_sp_flower_stats() calls mlxsw_sp_acl_ruleset_get() to
-obtain a ruleset reference. If the subsequent call to
-mlxsw_sp_acl_rule_lookup() fails to find a rule, the function returns
-an error without releasing the ruleset reference, causing a memory leak.
+On 11/11/25 13:12, Nicolin Chen wrote:
+> This function can only be called on the default_domain. Trivally pass it
+> in. In all three existing cases, the default domain was just attached to
+> the device.
+> 
+> This avoids iommu_setup_dma_ops() calling iommu_get_domain_for_dev() the
+> that will be used by external callers.
+> 
+> Suggested-by: Jason Gunthorpe<jgg@nvidia.com>
+> Signed-off-by: Nicolin Chen<nicolinc@nvidia.com>
+> ---
+>   drivers/iommu/dma-iommu.h | 5 +++--
+>   drivers/iommu/dma-iommu.c | 4 +---
+>   drivers/iommu/iommu.c     | 6 +++---
+>   3 files changed, 7 insertions(+), 8 deletions(-)
 
-Fix this by using a goto to the existing error handling label, which
-calls mlxsw_sp_acl_ruleset_put() to properly release the reference.
-
-Fixes: 7c1b8eb175b69 ("mlxsw: spectrum: Add support for TC flower offload statistics")
-Signed-off-by: Zilin Guan <zilin@seu.edu.cn>
----
- drivers/net/ethernet/mellanox/mlxsw/spectrum_flower.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_flower.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum_flower.c
-index 6a4a81c63451..353fd9ca89a6 100644
---- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_flower.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_flower.c
-@@ -830,8 +830,10 @@ int mlxsw_sp_flower_stats(struct mlxsw_sp *mlxsw_sp,
- 		return -EINVAL;
- 
- 	rule = mlxsw_sp_acl_rule_lookup(mlxsw_sp, ruleset, f->cookie);
--	if (!rule)
--		return -EINVAL;
-+	if (!rule) {
-+		err = -EINVAL;
-+		goto err_rule_get_stats;
-+	}
- 
- 	err = mlxsw_sp_acl_rule_get_stats(mlxsw_sp, rule, &packets, &bytes,
- 					  &drops, &lastuse, &used_hw_stats);
--- 
-2.34.1
-
+Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
 
