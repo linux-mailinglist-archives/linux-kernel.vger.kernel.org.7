@@ -1,737 +1,486 @@
-Return-Path: <linux-kernel+bounces-897464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7F81C5304F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:27:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C770C53561
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:17:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA27050052D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:55:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84AC4422ABC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:56:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E6413451DB;
-	Wed, 12 Nov 2025 14:46:06 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5883A1EB9E3;
-	Wed, 12 Nov 2025 14:46:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81AE4345754;
+	Wed, 12 Nov 2025 14:46:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="daaqerkF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F33D4345757;
+	Wed, 12 Nov 2025 14:46:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762958764; cv=none; b=Tbzg4qZ/wIBJlD71bqFc5lMQFfoczCNS3TDykIZgXuLy5+hhjle2KKd+DHslvsHuKOS0RQwSZrXl+9VuO2Dgj3DEOyMui3qvkT62Mm2DOChCgToQ8eio27xhOjiECKzz3QMrdU2IrhvctBKAgGK8H+OyUmxMI1YyYi8HgXdBfgk=
+	t=1762958793; cv=none; b=Hkbl/5VMPuuKSD0BcbG74ZqWOOQwzXt8DL+R1SWsssvH4y998GljXUWko/4Xgupd5IEzcRHa7CWKqHKV17Sc9siHCgs0X6BIDiBHQXW18kIfmm2NdYI4EdFZDFNiNl3xQALnYMUhQxAd611BHUQsbd+8S+L4Ojra917XrIDb/Fs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762958764; c=relaxed/simple;
-	bh=vdxCzjupZOmId8zuylxKqKD1e5qaNAhFmfAYp2u/DNw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pA2tLIjgjgHFcgaFZdCNKQ3h72pl1L1mMwFBvaEl2/7zqe07lZZeJOZyBq90T7ov/ivi3umosUhaGzdS/ddy9bjNkqraQvGkv6nSEO91bQDHsZuKIckGqi2ZTKeB8Mod+5MCuo7yWa+LmHPgxeRhXAD9KPpsMKs1wa/GsPySbHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 011EE1515;
-	Wed, 12 Nov 2025 06:45:52 -0800 (PST)
-Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CB7A03F5A1;
-	Wed, 12 Nov 2025 06:45:54 -0800 (PST)
-Message-ID: <203167e2-4543-4fc1-9107-6a57aa92c5ed@arm.com>
-Date: Wed, 12 Nov 2025 14:45:53 +0000
+	s=arc-20240116; t=1762958793; c=relaxed/simple;
+	bh=W09oq+HYxVgVN/kosChQDcZ+ebdWtAbR+9uFU7ZwbLc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=QT7hXbcgd7Iget85biBwR1ENfTXqV5goRml2q88sW+FDNZBPs8lpTGXG6TQsPqXKppFBQYXf+JN91bbGaYnnZR/XXWO9LguiHau+wonBqkokxDXjSlcsJnChmgZVOrFTx1mBgK5uPVVYqJBWF6J9BQuXnrC5VTP039U1Vble1dY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=daaqerkF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8509AC4CEF5;
+	Wed, 12 Nov 2025 14:46:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762958791;
+	bh=W09oq+HYxVgVN/kosChQDcZ+ebdWtAbR+9uFU7ZwbLc=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=daaqerkF6xj5TaEr/77ce8B3DNX8JX+Dus7t1apkIl0GhPUei/291tbqIexB+BB0p
+	 /KyoISnE0t4xdRZpcMs2CoZOiudDrK3GHCcgq2yTHfzHeln2cpGxm/+npJ6AOX/yDA
+	 opHo54wDKao8o8/BwHwKA3SJkdsD2N/5bCmm21v7zgrRNps5sj4UsJ5U7rhh1VrE0R
+	 +GPXdxqc/Y7ui4Bh0kd0DS1ZceyVKxs4UX2f9XcTV6++mn1yYXr9t9x7Ng0VW3r09u
+	 A7YTdwC64Tkume+ZmW0WRawFCOwySmDmjGb7G3zZJRsCWEL9ZZ5m6Gc+U8yWq8ble0
+	 ys72mKLOArnPg==
+Message-ID: <32e65149e7678ac3cbc7f8dbed26429fd9c7ae78.camel@kernel.org>
+Subject: Re: [PATCH v5 02/14] VFS: introduce start_dirop() and end_dirop()
+From: Jeff Layton <jlayton@kernel.org>
+To: NeilBrown <neil@brown.name>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner
+	 <brauner@kernel.org>, Amir Goldstein <amir73il@gmail.com>
+Cc: Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, Chris Mason	
+ <clm@fb.com>, David Sterba <dsterba@suse.com>, David Howells
+ <dhowells@redhat.com>,  Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich	
+ <dakr@kernel.org>, Tyler Hicks <code@tyhicks.com>, Miklos Szeredi	
+ <miklos@szeredi.hu>, Chuck Lever <chuck.lever@oracle.com>, Olga
+ Kornievskaia	 <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, Namjae
+ Jeon	 <linkinjeon@kernel.org>, Steve French <smfrench@gmail.com>, Sergey
+ Senozhatsky	 <senozhatsky@chromium.org>, Carlos Maiolino <cem@kernel.org>,
+ John Johansen	 <john.johansen@canonical.com>, Paul Moore
+ <paul@paul-moore.com>, James Morris	 <jmorris@namei.org>, "Serge E. Hallyn"
+ <serge@hallyn.com>, Stephen Smalley	 <stephen.smalley.work@gmail.com>,
+ Ondrej Mosnacek <omosnace@redhat.com>,  Mateusz Guzik <mjguzik@gmail.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Stefan Berger	
+ <stefanb@linux.ibm.com>, "Darrick J. Wong" <djwong@kernel.org>, 
+	linux-kernel@vger.kernel.org, netfs@lists.linux.dev,
+ ecryptfs@vger.kernel.org, 	linux-nfs@vger.kernel.org,
+ linux-unionfs@vger.kernel.org, 	linux-cifs@vger.kernel.org,
+ linux-xfs@vger.kernel.org, 	linux-security-module@vger.kernel.org,
+ selinux@vger.kernel.org
+Date: Wed, 12 Nov 2025 09:46:27 -0500
+In-Reply-To: <20251106005333.956321-3-neilb@ownmail.net>
+References: <20251106005333.956321-1-neilb@ownmail.net>
+	 <20251106005333.956321-3-neilb@ownmail.net>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.1 (3.58.1-1.fc43) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 09/33] ACPI / MPAM: Parse the MPAM table
-To: Gavin Shan <gshan@redhat.com>, james.morse@arm.com
-Cc: amitsinght@marvell.com, baisheng.gao@unisoc.com,
- baolin.wang@linux.alibaba.com, bobo.shaobowang@huawei.com,
- carl@os.amperecomputing.com, catalin.marinas@arm.com, dakr@kernel.org,
- dave.martin@arm.com, david@redhat.com, dfustini@baylibre.com,
- fenghuay@nvidia.com, gregkh@linuxfoundation.org, guohanjun@huawei.com,
- jeremy.linton@arm.com, jonathan.cameron@huawei.com, kobak@nvidia.com,
- lcherian@marvell.com, lenb@kernel.org, linux-acpi@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- lpieralisi@kernel.org, peternewman@google.com, quic_jiles@quicinc.com,
- rafael@kernel.org, robh@kernel.org, rohit.mathew@arm.com,
- scott@os.amperecomputing.com, sdonthineni@nvidia.com, sudeep.holla@arm.com,
- tan.shaopeng@fujitsu.com, will@kernel.org, xhao@linux.alibaba.com,
- Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
-References: <20251107123450.664001-1-ben.horgan@arm.com>
- <20251107123450.664001-10-ben.horgan@arm.com>
- <835b49a3-cbe2-41b0-a442-f7cabaa644fd@redhat.com>
-From: Ben Horgan <ben.horgan@arm.com>
-Content-Language: en-US
-In-Reply-To: <835b49a3-cbe2-41b0-a442-f7cabaa644fd@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 
-Hi Gavin,
+On Thu, 2025-11-06 at 11:50 +1100, NeilBrown wrote:
+> From: NeilBrown <neil@brown.name>
+>=20
+> The fact that directory operations (create,remove,rename) are protected
+> by a lock on the parent is known widely throughout the kernel.
+> In order to change this - to instead lock the target dentry  - it is
+> best to centralise this knowledge so it can be changed in one place.
+>=20
+> This patch introduces start_dirop() which is local to VFS code.
+> It performs the required locking for create and remove.  Rename
+> will be handled separately.
+>=20
+> Various functions with names like start_creating() or start_removing_path=
+(),
+> some of which already exist, will export this functionality beyond the VF=
+S.
+>=20
+> end_dirop() is the partner of start_dirop().  It drops the lock and
+> releases the reference on the dentry.
+> It *is* exported so that various end_creating etc functions can be inline=
+.
+>=20
+> As vfs_mkdir() drops the dentry on error we cannot use end_dirop() as
+> that won't unlock when the dentry IS_ERR().  For now we need an explicit
+> unlock when dentry IS_ERR().  I hope to change vfs_mkdir() to unlock
+> when it drops a dentry so that explicit unlock can go away.
+>=20
+> end_dirop() can always be called on the result of start_dirop(), but not
+> after vfs_mkdir().  After a vfs_mkdir() we still may need the explicit
+> unlock as seen in end_creating_path().
+>=20
+> As well as adding start_dirop() and end_dirop()
+> this patch uses them in:
+>  - simple_start_creating (which requires sharing lookup_noperm_common()
+>         with libfs.c)
+>  - start_removing_path / start_removing_user_path_at
+>  - filename_create / end_creating_path()
+>  - do_rmdir(), do_unlinkat()
+>=20
+> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+> Signed-off-by: NeilBrown <neil@brown.name>
+> ---
+>  fs/internal.h      |  3 ++
+>  fs/libfs.c         | 36 ++++++++---------
+>  fs/namei.c         | 98 ++++++++++++++++++++++++++++++++++------------
+>  include/linux/fs.h |  2 +
+>  4 files changed, 95 insertions(+), 44 deletions(-)
+>=20
+> diff --git a/fs/internal.h b/fs/internal.h
+> index 9b2b4d116880..d08d5e2235e9 100644
+> --- a/fs/internal.h
+> +++ b/fs/internal.h
+> @@ -67,6 +67,9 @@ int vfs_tmpfile(struct mnt_idmap *idmap,
+>  		const struct path *parentpath,
+>  		struct file *file, umode_t mode);
+>  struct dentry *d_hash_and_lookup(struct dentry *, struct qstr *);
+> +struct dentry *start_dirop(struct dentry *parent, struct qstr *name,
+> +			   unsigned int lookup_flags);
+> +int lookup_noperm_common(struct qstr *qname, struct dentry *base);
+> =20
+>  /*
+>   * namespace.c
+> diff --git a/fs/libfs.c b/fs/libfs.c
+> index 1661dcb7d983..2d6657947abd 100644
+> --- a/fs/libfs.c
+> +++ b/fs/libfs.c
+> @@ -2290,27 +2290,25 @@ void stashed_dentry_prune(struct dentry *dentry)
+>  	cmpxchg(stashed, dentry, NULL);
+>  }
+> =20
+> -/* parent must be held exclusive */
+> +/**
+> + * simple_start_creating - prepare to create a given name
+> + * @parent: directory in which to prepare to create the name
+> + * @name:   the name to be created
+> + *
+> + * Required lock is taken and a lookup in performed prior to creating an
+> + * object in a directory.  No permission checking is performed.
+> + *
+> + * Returns: a negative dentry on which vfs_create() or similar may
+> + *  be attempted, or an error.
+> + */
+>  struct dentry *simple_start_creating(struct dentry *parent, const char *=
+name)
+>  {
+> -	struct dentry *dentry;
+> -	struct inode *dir =3D d_inode(parent);
+> +	struct qstr qname =3D QSTR(name);
+> +	int err;
+> =20
+> -	inode_lock(dir);
+> -	if (unlikely(IS_DEADDIR(dir))) {
+> -		inode_unlock(dir);
+> -		return ERR_PTR(-ENOENT);
+> -	}
+> -	dentry =3D lookup_noperm(&QSTR(name), parent);
+> -	if (IS_ERR(dentry)) {
+> -		inode_unlock(dir);
+> -		return dentry;
+> -	}
+> -	if (dentry->d_inode) {
+> -		dput(dentry);
+> -		inode_unlock(dir);
+> -		return ERR_PTR(-EEXIST);
+> -	}
+> -	return dentry;
+> +	err =3D lookup_noperm_common(&qname, parent);
+> +	if (err)
+> +		return ERR_PTR(err);
+> +	return start_dirop(parent, &qname, LOOKUP_CREATE | LOOKUP_EXCL);
+>  }
+>  EXPORT_SYMBOL(simple_start_creating);
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 39c4d52f5b54..231e1ffd4b8d 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -2765,6 +2765,48 @@ static int filename_parentat(int dfd, struct filen=
+ame *name,
+>  	return __filename_parentat(dfd, name, flags, parent, last, type, NULL);
+>  }
+> =20
+> +/**
+> + * start_dirop - begin a create or remove dirop, performing locking and =
+lookup
+> + * @parent:       the dentry of the parent in which the operation will o=
+ccur
+> + * @name:         a qstr holding the name within that parent
+> + * @lookup_flags: intent and other lookup flags.
+> + *
+> + * The lookup is performed and necessary locks are taken so that, on suc=
+cess,
+> + * the returned dentry can be operated on safely.
+> + * The qstr must already have the hash value calculated.
+> + *
+> + * Returns: a locked dentry, or an error.
+> + *
+> + */
+> +struct dentry *start_dirop(struct dentry *parent, struct qstr *name,
+> +			   unsigned int lookup_flags)
+> +{
+> +	struct dentry *dentry;
+> +	struct inode *dir =3D d_inode(parent);
+> +
+> +	inode_lock_nested(dir, I_MUTEX_PARENT);
+> +	dentry =3D lookup_one_qstr_excl(name, parent, lookup_flags);
+> +	if (IS_ERR(dentry))
+> +		inode_unlock(dir);
+> +	return dentry;
+> +}
+> +
+> +/**
+> + * end_dirop - signal completion of a dirop
+> + * @de: the dentry which was returned by start_dirop or similar.
+> + *
+> + * If the de is an error, nothing happens. Otherwise any lock taken to
+> + * protect the dentry is dropped and the dentry itself is release (dput(=
+)).
+> + */
+> +void end_dirop(struct dentry *de)
+> +{
+> +	if (!IS_ERR(de)) {
+> +		inode_unlock(de->d_parent->d_inode);
+> +		dput(de);
+> +	}
+> +}
+> +EXPORT_SYMBOL(end_dirop);
+> +
+>  /* does lookup, returns the object with parent locked */
+>  static struct dentry *__start_removing_path(int dfd, struct filename *na=
+me,
+>  					   struct path *path)
+> @@ -2781,10 +2823,9 @@ static struct dentry *__start_removing_path(int df=
+d, struct filename *name,
+>  		return ERR_PTR(-EINVAL);
+>  	/* don't fail immediately if it's r/o, at least try to report other err=
+ors */
+>  	error =3D mnt_want_write(parent_path.mnt);
+> -	inode_lock_nested(parent_path.dentry->d_inode, I_MUTEX_PARENT);
+> -	d =3D lookup_one_qstr_excl(&last, parent_path.dentry, 0);
+> +	d =3D start_dirop(parent_path.dentry, &last, 0);
+>  	if (IS_ERR(d))
+> -		goto unlock;
+> +		goto drop;
+>  	if (error)
+>  		goto fail;
+>  	path->dentry =3D no_free_ptr(parent_path.dentry);
+> @@ -2792,10 +2833,9 @@ static struct dentry *__start_removing_path(int df=
+d, struct filename *name,
+>  	return d;
+> =20
+>  fail:
+> -	dput(d);
+> +	end_dirop(d);
+>  	d =3D ERR_PTR(error);
+> -unlock:
+> -	inode_unlock(parent_path.dentry->d_inode);
+> +drop:
+>  	if (!error)
+>  		mnt_drop_write(parent_path.mnt);
+>  	return d;
+> @@ -2910,7 +2950,7 @@ int vfs_path_lookup(struct dentry *dentry, struct v=
+fsmount *mnt,
+>  }
+>  EXPORT_SYMBOL(vfs_path_lookup);
+> =20
+> -static int lookup_noperm_common(struct qstr *qname, struct dentry *base)
+> +int lookup_noperm_common(struct qstr *qname, struct dentry *base)
+>  {
+>  	const char *name =3D qname->name;
+>  	u32 len =3D qname->len;
+> @@ -4223,21 +4263,18 @@ static struct dentry *filename_create(int dfd, st=
+ruct filename *name,
+>  	 */
+>  	if (last.name[last.len] && !want_dir)
+>  		create_flags &=3D ~LOOKUP_CREATE;
+> -	inode_lock_nested(path->dentry->d_inode, I_MUTEX_PARENT);
+> -	dentry =3D lookup_one_qstr_excl(&last, path->dentry,
+> -				      reval_flag | create_flags);
+> +	dentry =3D start_dirop(path->dentry, &last, reval_flag | create_flags);
+>  	if (IS_ERR(dentry))
+> -		goto unlock;
+> +		goto out_drop_write;
+> =20
+>  	if (unlikely(error))
+>  		goto fail;
+> =20
+>  	return dentry;
+>  fail:
+> -	dput(dentry);
+> +	end_dirop(dentry);
+>  	dentry =3D ERR_PTR(error);
+> -unlock:
+> -	inode_unlock(path->dentry->d_inode);
+> +out_drop_write:
+>  	if (!error)
+>  		mnt_drop_write(path->mnt);
+>  out:
+> @@ -4256,11 +4293,26 @@ struct dentry *start_creating_path(int dfd, const=
+ char *pathname,
+>  }
+>  EXPORT_SYMBOL(start_creating_path);
+> =20
+> +/**
+> + * end_creating_path - finish a code section started by start_creating_p=
+ath()
+> + * @path: the path instantiated by start_creating_path()
+> + * @dentry: the dentry returned by start_creating_path()
+> + *
+> + * end_creating_path() will unlock and locks taken by start_creating_pat=
+h()
+> + * and drop an references that were taken.  It should only be called
+> + * if start_creating_path() returned a non-error.
+> + * If vfs_mkdir() was called and it returned an error, that error *shoul=
+d*
+> + * be passed to end_creating_path() together with the path.
+> + */
+>  void end_creating_path(const struct path *path, struct dentry *dentry)
+>  {
+> -	if (!IS_ERR(dentry))
+> -		dput(dentry);
+> -	inode_unlock(path->dentry->d_inode);
+> +	if (IS_ERR(dentry))
+> +		/* The parent is still locked despite the error from
+> +		 * vfs_mkdir() - must unlock it.
+> +		 */
+> +		inode_unlock(path->dentry->d_inode);
+> +	else
+> +		end_dirop(dentry);
+>  	mnt_drop_write(path->mnt);
+>  	path_put(path);
+>  }
+> @@ -4592,8 +4644,7 @@ int do_rmdir(int dfd, struct filename *name)
+>  	if (error)
+>  		goto exit2;
+> =20
+> -	inode_lock_nested(path.dentry->d_inode, I_MUTEX_PARENT);
+> -	dentry =3D lookup_one_qstr_excl(&last, path.dentry, lookup_flags);
+> +	dentry =3D start_dirop(path.dentry, &last, lookup_flags);
+>  	error =3D PTR_ERR(dentry);
+>  	if (IS_ERR(dentry))
+>  		goto exit3;
+> @@ -4602,9 +4653,8 @@ int do_rmdir(int dfd, struct filename *name)
+>  		goto exit4;
+>  	error =3D vfs_rmdir(mnt_idmap(path.mnt), path.dentry->d_inode, dentry);
+>  exit4:
+> -	dput(dentry);
+> +	end_dirop(dentry);
+>  exit3:
+> -	inode_unlock(path.dentry->d_inode);
+>  	mnt_drop_write(path.mnt);
+>  exit2:
+>  	path_put(&path);
+> @@ -4721,8 +4771,7 @@ int do_unlinkat(int dfd, struct filename *name)
+>  	if (error)
+>  		goto exit2;
+>  retry_deleg:
+> -	inode_lock_nested(path.dentry->d_inode, I_MUTEX_PARENT);
+> -	dentry =3D lookup_one_qstr_excl(&last, path.dentry, lookup_flags);
+> +	dentry =3D start_dirop(path.dentry, &last, lookup_flags);
+>  	error =3D PTR_ERR(dentry);
+>  	if (!IS_ERR(dentry)) {
+> =20
+> @@ -4737,9 +4786,8 @@ int do_unlinkat(int dfd, struct filename *name)
+>  		error =3D vfs_unlink(mnt_idmap(path.mnt), path.dentry->d_inode,
+>  				   dentry, &delegated_inode);
+>  exit3:
+> -		dput(dentry);
+> +		end_dirop(dentry);
+>  	}
+> -	inode_unlock(path.dentry->d_inode);
+>  	if (inode)
+>  		iput(inode);	/* truncate the inode here */
+>  	inode =3D NULL;
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 03e450dd5211..9e7556e79d19 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -3196,6 +3196,8 @@ extern void iterate_supers_type(struct file_system_=
+type *,
+>  void filesystems_freeze(void);
+>  void filesystems_thaw(void);
+> =20
+> +void end_dirop(struct dentry *de);
+> +
+>  extern int dcache_dir_open(struct inode *, struct file *);
+>  extern int dcache_dir_close(struct inode *, struct file *);
+>  extern loff_t dcache_dir_lseek(struct file *, loff_t, int);
 
-On 11/8/25 08:54, Gavin Shan wrote:
-> Hi Ben,
-> 
-> On 11/7/25 10:34 PM, Ben Horgan wrote:
->> From: James Morse <james.morse@arm.com>
->>
->> Add code to parse the arm64 specific MPAM table, looking up the cache
->> level from the PPTT and feeding the end result into the MPAM driver.
->>
->> This happens in two stages. Platform devices are created first for the
->> MSC devices. Once the driver probes it calls acpi_mpam_parse_resources()
->> to discover the RIS entries the MSC contains.
->>
->> For now the MPAM hook mpam_ris_create() is stubbed out, but will update
->> the MPAM driver with optional discovered data about the RIS entries.
->>
->> CC: Carl Worth <carl@os.amperecomputing.com>
->> Link: https://developer.arm.com/documentation/den0065/3-0bet/?lang=en
->> Reviewed-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
->> Tested-by: Fenghua Yu <fenghuay@nvidia.com>
->> Tested-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
->> Tested-by: Peter Newman <peternewman@google.com>
->> Signed-off-by: James Morse <james.morse@arm.com>
->> Signed-off-by: Ben Horgan <ben.horgan@arm.com>
->> ---
->> Changes since v3:
->> return irq from acpi_mpam_register_irq (Jonathan)
->> err -> len rename (Jonathan)
->> Move table initialisation after checking (Jonathan)
->> Add sanity checking in acpi_mpam_count_msc() (Jonathan)
->> ---
->>   arch/arm64/Kconfig          |   1 +
->>   drivers/acpi/arm64/Kconfig  |   3 +
->>   drivers/acpi/arm64/Makefile |   1 +
->>   drivers/acpi/arm64/mpam.c   | 403 ++++++++++++++++++++++++++++++++++++
->>   drivers/acpi/tables.c       |   2 +-
->>   include/linux/arm_mpam.h    |  47 +++++
->>   6 files changed, 456 insertions(+), 1 deletion(-)
->>   create mode 100644 drivers/acpi/arm64/mpam.c
->>   create mode 100644 include/linux/arm_mpam.h
->>
-> 
-> With the following minor comments addressed:
-> 
-> Reviewed-by: Gavin Shan <gshan@redhat.com>
-> 
->> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
->> index 67015d51f7b5..c5e66d5d72cd 100644
->> --- a/arch/arm64/Kconfig
->> +++ b/arch/arm64/Kconfig
->> @@ -2025,6 +2025,7 @@ config ARM64_TLB_RANGE
->>     config ARM64_MPAM
->>       bool "Enable support for MPAM"
->> +    select ACPI_MPAM if ACPI
->>       help
->>         Memory System Resource Partitioning and Monitoring (MPAM) is an
->>         optional extension to the Arm architecture that allows each
->> diff --git a/drivers/acpi/arm64/Kconfig b/drivers/acpi/arm64/Kconfig
->> index b3ed6212244c..f2fd79f22e7d 100644
->> --- a/drivers/acpi/arm64/Kconfig
->> +++ b/drivers/acpi/arm64/Kconfig
->> @@ -21,3 +21,6 @@ config ACPI_AGDI
->>     config ACPI_APMT
->>       bool
->> +
->> +config ACPI_MPAM
->> +    bool
->> diff --git a/drivers/acpi/arm64/Makefile b/drivers/acpi/arm64/Makefile
->> index 05ecde9eaabe..9390b57cb564 100644
->> --- a/drivers/acpi/arm64/Makefile
->> +++ b/drivers/acpi/arm64/Makefile
->> @@ -4,6 +4,7 @@ obj-$(CONFIG_ACPI_APMT)     += apmt.o
->>   obj-$(CONFIG_ACPI_FFH)        += ffh.o
->>   obj-$(CONFIG_ACPI_GTDT)     += gtdt.o
->>   obj-$(CONFIG_ACPI_IORT)     += iort.o
->> +obj-$(CONFIG_ACPI_MPAM)     += mpam.o
->>   obj-$(CONFIG_ACPI_PROCESSOR_IDLE) += cpuidle.o
->>   obj-$(CONFIG_ARM_AMBA)        += amba.o
->>   obj-y                += dma.o init.o
->> diff --git a/drivers/acpi/arm64/mpam.c b/drivers/acpi/arm64/mpam.c
->> new file mode 100644
->> index 000000000000..c199944862ed
->> --- /dev/null
->> +++ b/drivers/acpi/arm64/mpam.c
->> @@ -0,0 +1,403 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +// Copyright (C) 2025 Arm Ltd.
->> +
->> +/* Parse the MPAM ACPI table feeding the discovered nodes into the
->> driver */
->> +
->> +#define pr_fmt(fmt) "ACPI MPAM: " fmt
->> +
->> +#include <linux/acpi.h>
->> +#include <linux/arm_mpam.h>
->> +#include <linux/bits.h>
->> +#include <linux/cpu.h>
->> +#include <linux/cpumask.h>
->> +#include <linux/platform_device.h>
->> +
->> +#include <acpi/processor.h>
->> +
->> +/*
->> + * Flags for acpi_table_mpam_msc.*_interrupt_flags.
->> + * See 2.1.1 Interrupt Flags, Table 5, of DEN0065B_MPAM_ACPI_3.0-bet.
->> + */
->> +#define ACPI_MPAM_MSC_IRQ_MODE                              BIT(0)
->> +#define ACPI_MPAM_MSC_IRQ_TYPE_MASK                        
->> GENMASK(2, 1)
->> +#define ACPI_MPAM_MSC_IRQ_TYPE_WIRED                        0
->> +#define ACPI_MPAM_MSC_IRQ_AFFINITY_TYPE_MASK                BIT(3)
->> +#define ACPI_MPAM_MSC_IRQ_AFFINITY_TYPE_PROCESSOR           0
->> +#define ACPI_MPAM_MSC_IRQ_AFFINITY_TYPE_PROCESSOR_CONTAINER 1
->> +#define ACPI_MPAM_MSC_IRQ_AFFINITY_VALID                    BIT(4)
->> +
->> +/*
->> + * Encodings for the MSC node body interface type field.
->> + * See 2.1 MPAM MSC node, Table 4 of DEN0065B_MPAM_ACPI_3.0-bet.
->> + */
->> +#define ACPI_MPAM_MSC_IFACE_MMIO   0x00
->> +#define ACPI_MPAM_MSC_IFACE_PCC    0x0a
->> +
->> +static bool _is_ppi_partition(u32 flags)
->> +{
->> +    u32 aff_type, is_ppi;
->> +    bool ret;
->> +
->> +    is_ppi = FIELD_GET(ACPI_MPAM_MSC_IRQ_AFFINITY_VALID, flags);
->> +    if (!is_ppi)
->> +        return false;
->> +
-> 
-> A error message may be needed since the driver won't fully function without
-> interrupt enabled. The error message gives a clear indication on what has
-> happened to system administrator.
-
-I don't think extra error messages are needed as the error interrupts
-can only be caused by driver programming errors and overflow interrupts
-are currently not considered.
-
-> 
->> +    aff_type = FIELD_GET(ACPI_MPAM_MSC_IRQ_AFFINITY_TYPE_MASK, flags);
->> +    ret = (aff_type ==
->> ACPI_MPAM_MSC_IRQ_AFFINITY_TYPE_PROCESSOR_CONTAINER);
->> +    if (ret)
->> +        pr_err_once("Partitioned interrupts not supported\n");
->> +
->> +    return ret;
->> +}
->> +
->> +static int acpi_mpam_register_irq(struct platform_device *pdev,
->> +                  int intid, u32 flags)
->> +{
-> 
-> s/int intid/u32 intid
-> 
-> All the callers pass a 'u32' parameter instead of 'int'.
-> 
->> +    int irq;
->> +    u32 int_type;
->> +    int trigger;
->> +
->> +    if (!intid)
->> +        return -EINVAL;
->> +
->> +    if (_is_ppi_partition(flags))
->> +        return -EINVAL;
->> +
->> +    trigger = FIELD_GET(ACPI_MPAM_MSC_IRQ_MODE, flags);
->> +    int_type = FIELD_GET(ACPI_MPAM_MSC_IRQ_TYPE_MASK, flags);
->> +    if (int_type != ACPI_MPAM_MSC_IRQ_TYPE_WIRED)
->> +        return -EINVAL;
->> +
-> 
-> Same as above, a error message may be needed here.
-
-I'd rather leave this as is, see above.
-
-> 
->> +    irq = acpi_register_gsi(&pdev->dev, intid, trigger,
->> ACPI_ACTIVE_HIGH);
->> +    if (irq <= 0)
->> +        pr_err_once("Failed to register interrupt 0x%x with ACPI\n",
->> intid);
->> +
-> 
-> s/if (irq <= 0)/if (irq < 0)
-
-Done
-
-> 
-> It's impossible for acpi_register_gsi() to return 0, which has been
-> translated
-> to -EINVAL in the function.
-> 
->> +    return irq;
->> +}
->> +
->> +static void acpi_mpam_parse_irqs(struct platform_device *pdev,
->> +                 struct acpi_mpam_msc_node *tbl_msc,
->> +                 struct resource *res, int *res_idx)
->> +{
->> +    u32 flags, intid;
->> +    int irq;
->> +
->> +    intid = tbl_msc->overflow_interrupt;
->> +    flags = tbl_msc->overflow_interrupt_flags;
->> +    irq = acpi_mpam_register_irq(pdev, intid, flags);
->> +    if (irq > 0)
->> +        res[(*res_idx)++] = DEFINE_RES_IRQ_NAMED(irq, "overflow");
->> +
->> +    intid = tbl_msc->error_interrupt;
->> +    flags = tbl_msc->error_interrupt_flags;
->> +    irq = acpi_mpam_register_irq(pdev, intid, flags);
->> +    if (irq > 0)
->> +        res[(*res_idx)++] = DEFINE_RES_IRQ_NAMED(irq, "error");
->> +}
->> +
->> +static int acpi_mpam_parse_resource(struct mpam_msc *msc,
->> +                    struct acpi_mpam_resource_node *res)
->> +{
->> +    int level, nid;
->> +    u32 cache_id;
->> +
->> +    switch (res->locator_type) {
->> +    case ACPI_MPAM_LOCATION_TYPE_PROCESSOR_CACHE:
->> +        cache_id = res->locator.cache_locator.cache_reference;
->> +        level = find_acpi_cache_level_from_id(cache_id);
->> +        if (level <= 0) {
->> +            pr_err_once("Bad level (%d) for cache with id %u\n",
->> level, cache_id);
->> +            return -EINVAL;
->> +        }
->> +        return mpam_ris_create(msc, res->ris_index, MPAM_CLASS_CACHE,
->> +                       level, cache_id);
->> +    case ACPI_MPAM_LOCATION_TYPE_MEMORY:
->> +        nid = pxm_to_node(res->locator.memory_locator.proximity_domain);
->> +        if (nid == NUMA_NO_NODE) {
->> +            pr_debug("Bad proxmity domain %lld, using node 0 instead\n",
->> +                 res->locator.memory_locator.proximity_domain);
->> +            nid = 0;
->> +        }
->> +        return mpam_ris_create(msc, res->ris_index, MPAM_CLASS_MEMORY,
->> +                       255, nid);
->> +    default:
->> +        /* These get discovered later and are treated as unknown */
->> +        return 0;
->> +    }
->> +}
->> +
->> +int acpi_mpam_parse_resources(struct mpam_msc *msc,
->> +                  struct acpi_mpam_msc_node *tbl_msc)
->> +{
->> +    int i, err;
->> +    char *ptr, *table_end;
->> +    struct acpi_mpam_resource_node *resource;
->> +
->> +    ptr = (char *)(tbl_msc + 1);
->> +    table_end = ptr + tbl_msc->length;
->> +    for (i = 0; i < tbl_msc->num_resource_nodes; i++) {
->> +        u64 max_deps, remaining_table;
->> +
->> +        if (ptr + sizeof(*resource) > table_end)
->> +            return -EINVAL;
->> +
->> +        resource = (struct acpi_mpam_resource_node *)ptr;
->> +
->> +        remaining_table = table_end - ptr;
->> +        max_deps = remaining_table / sizeof(struct acpi_mpam_func_deps);
->> +        if (resource->num_functional_deps > max_deps) {
->> +            pr_debug("MSC has impossible number of functional
->> dependencies\n");
->> +            return -EINVAL;
->> +        }
->> +
->> +        err = acpi_mpam_parse_resource(msc, resource);
->> +        if (err)
->> +            return err;
->> +
->> +        ptr += sizeof(*resource);
->> +        ptr += resource->num_functional_deps * sizeof(struct
->> acpi_mpam_func_deps);
->> +    }
->> +
->> +    return 0;
->> +}
->> +
->> +/*
->> + * Creates the device power management link and returns true if the
->> + * acpi id is valid and usable for cpu affinity.  This is the case
->> + * when the linked device is a processor or a processor container.
->> + */
->> +static bool __init parse_msc_pm_link(struct acpi_mpam_msc_node *tbl_msc,
->> +                     struct platform_device *pdev,
->> +                     u32 *acpi_id)
->> +{
->> +    char hid[sizeof(tbl_msc->hardware_id_linked_device) + 1] = { 0 };
->> +    bool acpi_id_valid = false;
->> +    struct acpi_device *buddy;
->> +    char uid[11];
->> +    int len;
->> +
->> +    memcpy(hid, &tbl_msc->hardware_id_linked_device,
->> +           sizeof(tbl_msc->hardware_id_linked_device));
->> +
->> +    if (!strcmp(hid, ACPI_PROCESSOR_CONTAINER_HID)) {
->> +        *acpi_id = tbl_msc->instance_id_linked_device;
->> +        acpi_id_valid = true;
->> +    }
->> +
->> +    len = snprintf(uid, sizeof(uid), "%u",
->> +               tbl_msc->instance_id_linked_device);
->> +    if (len >= sizeof(uid)) {
->> +        pr_debug("Failed to convert uid of device for power
->> management.");
->> +        return acpi_id_valid;
->> +    }
->> +
->> +    buddy = acpi_dev_get_first_match_dev(hid, uid, -1);
->> +    if (buddy)
->> +        device_link_add(&pdev->dev, &buddy->dev, DL_FLAG_STATELESS);
->> +
->> +    return acpi_id_valid;
->> +}
->> +
->> +static int decode_interface_type(struct acpi_mpam_msc_node *tbl_msc,
->> +                 enum mpam_msc_iface *iface)
->> +{
->> +    switch (tbl_msc->interface_type) {
->> +    case ACPI_MPAM_MSC_IFACE_MMIO:
->> +        *iface = MPAM_IFACE_MMIO;
->> +        return 0;
->> +    case ACPI_MPAM_MSC_IFACE_PCC:
->> +        *iface = MPAM_IFACE_PCC;
->> +        return 0;
->> +    default:
->> +        return -EINVAL;
->> +    }
->> +}
->> +
->> +static struct platform_device * __init acpi_mpam_parse_msc(struct
->> acpi_mpam_msc_node *tbl_msc)
->> +{
->> +    struct platform_device *pdev __free(platform_device_put) =
->> +        platform_device_alloc("mpam_msc", tbl_msc->identifier);
->> +    int next_res = 0, next_prop = 0, err;
->> +    /* pcc, nrdy, affinity and a sentinel */
->> +    struct property_entry props[4] = { 0 };
->> +    /* mmio, 2xirq, no sentinel. */
->> +    struct resource res[3] = { 0 };
->> +    struct acpi_device *companion;
->> +    enum mpam_msc_iface iface;
->> +    char uid[16];
->> +    u32 acpi_id;
->> +
->> +    if (!pdev)
->> +        return ERR_PTR(-ENOMEM);
->> +
->> +    /* Some power management is described in the namespace: */
->> +    err = snprintf(uid, sizeof(uid), "%u", tbl_msc->identifier);
->> +    if (err > 0 && err < sizeof(uid)) {
->> +        companion = acpi_dev_get_first_match_dev("ARMHAA5C", uid, -1);
->> +        if (companion)
->> +            ACPI_COMPANION_SET(&pdev->dev, companion);
->> +        else
->> +            pr_debug("MSC.%u: missing namespace entry\n",
->> +                 tbl_msc->identifier);
->> +    }
->> +
-> 
-> { } is needed for the block of code spanning multiple lines.
-
-Just made it one line.
-
-> 
->> +    if (decode_interface_type(tbl_msc, &iface)) {
->> +        pr_debug("MSC.%u: unknown interface type\n", tbl_msc-
->> >identifier);
->> +        return ERR_PTR(-EINVAL);
->> +    }
->> +
->> +    if (iface == MPAM_IFACE_MMIO)
->> +        res[next_res++] = DEFINE_RES_MEM_NAMED(tbl_msc->base_address,
->> +                               tbl_msc->mmio_size,
->> +                               "MPAM:MSC");
->> +    else if (iface == MPAM_IFACE_PCC)
->> +        props[next_prop++] = PROPERTY_ENTRY_U32("pcc-channel",
->> +                            tbl_msc->base_address);
->> +
-> 
-> As above, {} is needed here.
-
-Done
-
-> 
->> +    acpi_mpam_parse_irqs(pdev, tbl_msc, res, &next_res);
->> +
->> +    WARN_ON_ONCE(next_res > ARRAY_SIZE(res));
->> +    err = platform_device_add_resources(pdev, res, next_res);
->> +    if (err)
->> +        return ERR_PTR(err);
->> +
->> +    props[next_prop++] = PROPERTY_ENTRY_U32("arm,not-ready-us",
->> +                        tbl_msc->max_nrdy_usec);
->> +
->> +    /*
->> +     * The MSC's CPU affinity is described via its linked power
->> +     * management device, but only if it points at a Processor or
->> +     * Processor Container.
->> +     */
->> +    if (parse_msc_pm_link(tbl_msc, pdev, &acpi_id))
->> +        props[next_prop++] = PROPERTY_ENTRY_U32("cpu_affinity",
->> acpi_id);
->> +
->> +    WARN_ON_ONCE(next_prop > ARRAY_SIZE(props));
->> +    err = device_create_managed_software_node(&pdev->dev, props, NULL);
->> +    if (err)
->> +        return ERR_PTR(err);
->> +
->> +    /*
->> +     * Stash the table entry for acpi_mpam_parse_resources() to discover
->> +     * what this MSC controls.
->> +     */
->> +    err = platform_device_add_data(pdev, tbl_msc, tbl_msc->length);
->> +    if (err)
->> +        return ERR_PTR(err);
->> +
->> +    err = platform_device_add(pdev);
->> +    if (err)
->> +        return ERR_PTR(err);
->> +
->> +    return_ptr(pdev);
->> +}
->> +
->> +static int __init acpi_mpam_parse(void)
->> +{
->> +    char *table_end, *table_offset;
->> +    struct acpi_mpam_msc_node *tbl_msc;
->> +    struct platform_device *pdev;
->> +
->> +    if (acpi_disabled || !system_supports_mpam())
->> +        return 0;
->> +
->> +    struct acpi_table_header *table __free(acpi_put_table) =
->> +        acpi_get_table_ret(ACPI_SIG_MPAM, 0);
->> +
->> +    if (IS_ERR(table))
->> +        return 0;
->> +
->> +    if (table->revision < 1)
->> +        return 0;
->> +
-> 
-> It's correct to return zero on IS_ERR(table) with an error message, but
-> a message printed by pr_debug() may be worthywhile on "if (table-
->>revison < 1)".
-
-Ok, adding:
-pr_debug("MPAM ACPI table revision %d not supported\n",
-          table->revision);
-
-> 
->> +    table_offset = (char *)(table + 1);
->> +    table_end = (char *)table + table->length;
->> +
->> +    while (table_offset < table_end) {
->> +        tbl_msc = (struct acpi_mpam_msc_node *)table_offset;
->> +        table_offset += tbl_msc->length;
->> +
->> +        if (table_offset > table_end) {
->> +            pr_err("MSC entry overlaps end of ACPI table\n");
->> +            return -EINVAL;
->> +        }
->> +
-> 
-> Would be:
-> 
->         if (table_offset + sizeof(*tbl_msc) > table_end)
-
-As Jonathan said I don't think this is quite valid but we can add a
-check that makes sure ->length is within the table bounds. I've changed
-this to be:
-
-tbl_msc = (struct acpi_mpam_msc_node *)table_offset;
-if (table_offset + sizeof(*tbl_msc) > table_end ||
-    table_offset + tbl_msc->length > table_end) {
-	pr_err("MSC entry overlaps end of ACPI table\n");
-		return -EINVAL;
-}
-table_offset += tbl_msc->length;
-
-> 
->> +        /*
->> +         * If any of the reserved fields are set, make no attempt to
->> +         * parse the MSC structure. This MSC will still be counted by
->> +         * acpi_mpam_count_msc(), meaning the MPAM driver can't probe
->> +         * against all MSC, and will never be enabled. There is no way
->> +         * to enable it safely, because we cannot determine safe
->> +         * system-wide partid and pmg ranges in this situation.
->> +         */
->> +        if (tbl_msc->reserved || tbl_msc->reserved1 || tbl_msc-
->> >reserved2) {
->> +            pr_err_once("Unrecognised MSC, MPAM not usable\n");
->> +            pr_debug("MSC.%u: reserved field set\n", tbl_msc-
->> >identifier);
->> +            continue;
->> +        }
->> +
->> +        if (!tbl_msc->mmio_size) {
->> +            pr_debug("MSC.%u: marked as disabled\n", tbl_msc-
->> >identifier);
->> +            continue;
->> +        }
->> +
->> +        pdev = acpi_mpam_parse_msc(tbl_msc);
->> +        if (IS_ERR(pdev))
->> +            return PTR_ERR(pdev);
->> +    }
->> +
->> +    return 0;
->> +}
->> +
->> +/**
->> + * acpi_mpam_count_msc() - Count the number of MSC described by
->> firmware.
->> + *
->> + * Returns the number of MSC, or zero for an error.
-> 
-> s/MSC/MSCs
-
-Ack
-
-> 
->> + *
->> + * This can be called before or in parallel with acpi_mpam_parse().
->> + */
->> +int acpi_mpam_count_msc(void)
->> +{
->> +    char *table_end, *table_offset;
->> +    struct acpi_mpam_msc_node *tbl_msc;
->> +    int count = 0;
->> +
->> +    if (acpi_disabled || !system_supports_mpam())
->> +        return 0;
->> +
->> +    struct acpi_table_header *table __free(acpi_put_table) =
->> +        acpi_get_table_ret(ACPI_SIG_MPAM, 0);
->> +
->> +    if (IS_ERR(table))
->> +        return 0;
->> +
->> +    if (table->revision < 1)
->> +        return 0;
->> +
->> +    table_offset = (char *)(table + 1);
->> +    table_end = (char *)table + table->length;
->> +
->> +    while (table_offset < table_end) {
->> +        tbl_msc = (struct acpi_mpam_msc_node *)table_offset;
->> +
-> 
-> Would be worthy to check:
-> 
->         if (table_offset + sizeof(*tbl_msc) > table_end)
->             return -EINVAL;
-
-Ok, it will ensure tbl_msc->length exists.
-
-> 
->> +        if (tbl_msc->length < sizeof(*tbl_msc))
->> +            return -EINVAL;
->> +        if (tbl_msc->length > table_end - table_offset)
->> +            return -EINVAL;
->> +        table_offset += tbl_msc->length;
->> +
->> +        if (!tbl_msc->mmio_size)
->> +            continue;
->> +
->> +        count++;
->> +    }
->> +
->> +    return count;
->> +}
->> +
->> +/*
->> + * Call after ACPI devices have been created, which happens behind
->> acpi_scan_init()
->> + * called from subsys_initcall(). PCC requires the mailbox driver,
->> which is
->> + * initialised from postcore_initcall().
->> + */
->> +subsys_initcall_sync(acpi_mpam_parse);
->> diff --git a/drivers/acpi/tables.c b/drivers/acpi/tables.c
->> index 57fc8bc56166..4286e4af1092 100644
->> --- a/drivers/acpi/tables.c
->> +++ b/drivers/acpi/tables.c
->> @@ -408,7 +408,7 @@ static const char table_sigs[][ACPI_NAMESEG_SIZE]
->> __nonstring_array __initconst
->>       ACPI_SIG_PSDT, ACPI_SIG_RSDT, ACPI_SIG_XSDT, ACPI_SIG_SSDT,
->>       ACPI_SIG_IORT, ACPI_SIG_NFIT, ACPI_SIG_HMAT, ACPI_SIG_PPTT,
->>       ACPI_SIG_NHLT, ACPI_SIG_AEST, ACPI_SIG_CEDT, ACPI_SIG_AGDI,
->> -    ACPI_SIG_NBFT, ACPI_SIG_SWFT};
->> +    ACPI_SIG_NBFT, ACPI_SIG_SWFT, ACPI_SIG_MPAM};
->>     #define ACPI_HEADER_SIZE sizeof(struct acpi_table_header)
->>   diff --git a/include/linux/arm_mpam.h b/include/linux/arm_mpam.h
->> new file mode 100644
->> index 000000000000..a3828ef91aee
->> --- /dev/null
->> +++ b/include/linux/arm_mpam.h
->> @@ -0,0 +1,47 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
->> +/* Copyright (C) 2025 Arm Ltd. */
->> +
->> +#ifndef __LINUX_ARM_MPAM_H
->> +#define __LINUX_ARM_MPAM_H
->> +
->> +#include <linux/acpi.h>
->> +#include <linux/types.h>
->> +
->> +#define GLOBAL_AFFINITY        ~0
->> +
->> +struct mpam_msc;
->> +
->> +enum mpam_msc_iface {
->> +    MPAM_IFACE_MMIO,    /* a real MPAM MSC */
->> +    MPAM_IFACE_PCC,        /* a fake MPAM MSC */
->> +};
->> +
->> +enum mpam_class_types {
->> +    MPAM_CLASS_CACHE,       /* Caches, e.g. L2, L3 */
->> +    MPAM_CLASS_MEMORY,      /* Main memory */
->> +    MPAM_CLASS_UNKNOWN,     /* Everything else, e.g. SMMU */
->> +};
->> +
->> +#ifdef CONFIG_ACPI_MPAM
->> +int acpi_mpam_parse_resources(struct mpam_msc *msc,
->> +                  struct acpi_mpam_msc_node *tbl_msc);
->> +
->> +int acpi_mpam_count_msc(void);
->> +#else
->> +static inline int acpi_mpam_parse_resources(struct mpam_msc *msc,
->> +                        struct acpi_mpam_msc_node *tbl_msc)
->> +{
->> +    return -EINVAL;
->> +}
->> +
->> +static inline int acpi_mpam_count_msc(void) { return -EINVAL; }
->> +#endif
->> +
->> +static inline int mpam_ris_create(struct mpam_msc *msc, u8 ris_idx,
->> +                  enum mpam_class_types type, u8 class_id,
->> +                  int component_id)
->> +{
->> +    return -EINVAL;
->> +}
->> +
->> +#endif /* __LINUX_ARM_MPAM_H */
-> 
-> Thanks,
-> Gavin
-> 
-
--- 
-Thanks,
-
-Ben
-
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
