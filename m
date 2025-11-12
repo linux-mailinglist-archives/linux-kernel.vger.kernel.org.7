@@ -1,175 +1,172 @@
-Return-Path: <linux-kernel+bounces-896327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C832C501D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 01:11:04 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C084C50205
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 01:32:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40A153B21F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 00:11:01 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6916C4E5813
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 00:32:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8DFD44C63;
-	Wed, 12 Nov 2025 00:10:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 881FE1B808;
+	Wed, 12 Nov 2025 00:32:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Mcn77Ai1"
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C/h2+19x"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4F4714A9B
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 00:10:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6C23155C97;
+	Wed, 12 Nov 2025 00:32:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762906257; cv=none; b=i0BI/iDSHEcm9MZNiNru05CjbmhMvvIvwlDzu+kPgTCdBuCeXWPaxjAhNXc9cGIQGQ/BqiPt0Exa+fN1691AGs6qyVcEs6jGzoMThF+boeDaTh71rPaActR2yAnlGRMSB1T/PKIH3T/Q5c0T/O4ZMeIgMt1FniNIz34+I1am7Hs=
+	t=1762907534; cv=none; b=GQujTM/9iE9DaYhneW23sW+o6K4tS453kAwEvpRFWtIle4ah3jLqxyf/QcSngq0zdpmagunjAnwwpsF2RdLT4HPvYrg/c6BZZJF1oamouZNWfy3ipT7JasoFpc8lyM6OVJyC8qd8iD2HbzadUDjSywWxZttNCI/OARSeclDF5Pk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762906257; c=relaxed/simple;
-	bh=DN1Fe5een/t3qa9Cu485Iq092WLt4D7xS4UEK4Wo+l8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=d0usnkkk7SgdwKTBgDzndNY/H57tfw9jnHdMCiLJ8xcf4Ip6pTtxhx0Mk6tkBhu3OyyvVYvcu2+h50vCFY3N2L4Igb7f8xolsS6gV0ML4zxL6dBSUr0AOCIYKgWN0jCEKnhgHsaD0qghnFfujougxYVD9DTsd9F1JYtuwMcCbds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Mcn77Ai1; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4ed67a143c5so123311cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 16:10:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762906254; x=1763511054; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TofOimS+W4wPqm1YozjJKcKMNkewdNdNRtQ6Og3Qixg=;
-        b=Mcn77Ai1GprVUyaVgJ7yuh4ywK9CRmtpJ+sS1ivK8jPxVH/EtzNpAitfvi0o5JJpom
-         LBlgaeuyzQ1m9KdvWy38V1SnffZjGk3BZ8S/CJPQ/ckANzDbUQjqX+2icvkYBKHbcABG
-         rnsi3Rrp7rbmoy8ne0m78hW3tcza3YAsZJXdXRV4a6pGxDVJDh4DN3DtikEMR1/1mhmj
-         1XY5HEw1vXfjNru09R8DzdLis9fvzr4HBp8e46sFkX1w+kKgtWSI7NlnVtjOii9t+vmd
-         zQl87oYWeyJjFonuu1pdO6RRii+MoNgVhJJPw8iMeybkXnrZwduEOgl5Xfu4+XYd5783
-         MQXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762906254; x=1763511054;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=TofOimS+W4wPqm1YozjJKcKMNkewdNdNRtQ6Og3Qixg=;
-        b=XFFvNHK9kHEjJpPIjVQbOrCJx41auGaaNHCjd9/UijakXLXYporZWd9rh4cdgOAc3s
-         bauTN7GsgIOGPLlsDv9T9TcCVPZCpzwCg9s4DOrPmOvtRQvgln8Z2/3Mi8DCpDC2+zmm
-         J3Ap62y0IWfgTMlrfsolzesLDP0ZO+z9Rw9Le0Xks9pl0FLfvrP3TlegHAKQCOTqR+3j
-         Hi2znwnNzrg7RgKM+FkCRP5OwK8GBuAAe3fH25egJ/fyzffhXleOAYc4dIE233x6C2tm
-         1ofb7sWP59BkRzqomF7E2JfpfJTlRn7ObmI6C2biTbRrp8NiwNAFXbT2zqA3mB6V/C0q
-         KRQA==
-X-Forwarded-Encrypted: i=1; AJvYcCVLDHjfyIkNSladl+ZZc3Y3CsZTh+MaeIaedbpa3rmlwFQ3M0YFhNVR5XKlif2j+2ZBERsv2dvHQ9K+COA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyf2X2cyldlZf8EJHFeXNjbQoGSW6DZJ/dYBWZ+rnqapjTeVaEs
-	f3OdjP8vXuCVb7mRDo7kGz/x+2ifWGm/7yPCCeVArKAKcmTM4kOS/kuSs4OWak9KHeCvrj5S1DW
-	WcCJf3LDtRc964LRCCe7hvqBwM8Sq2gT3Jdkj3Gu1
-X-Gm-Gg: ASbGnctPl0an5kJwZID4FZTdRlTZmi8pWRmJmZl+mkZLWW6ZzBWUFyyqBor1E8XT2TG
-	Hu1OgDAb07Tt2rE5Terz8tEYKpo7+h1vJYqoFTe+dRULh46we4WMnBVMc8qKDCHXxjg2pc+URd/
-	ETH2B6ngD/9/yatey0v5wKZYZPNropbVl4WKF/3hsKLpSjaqQE5icGpvuBabYeazx2/fZLRd9Pg
-	vbbxoJphC7I2bcdcITMh/RnKLLWrC6xmQcYLpCMemEDA54e0iauvGLuaOQ6rMpRWpRsyh8a3XZ4
-	LXahZ9gqyi8/JVHzr7oV7+L+dnAaiaOT98s=
-X-Google-Smtp-Source: AGHT+IG1ecyNEMTs/bPngxeeJjhChHGBg4qLSCj1E5+5//1j9A4bIiyry1IsaHfEA9GI8rjBudj4rW/glVxvWiugGjQ=
-X-Received: by 2002:a05:622a:2d5:b0:4ed:7c45:9908 with SMTP id
- d75a77b69052e-4eddc1171d0mr2843151cf.10.1762906254090; Tue, 11 Nov 2025
- 16:10:54 -0800 (PST)
+	s=arc-20240116; t=1762907534; c=relaxed/simple;
+	bh=EKQB2ioNu47riqAdcpw9niW4VnYXoNetzqx4WN7e1II=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bp3kGpx9UCSzI5GoIRd9ws+0xlJDixan8bF/CYfoBibODQj8PqVp/k2zoGm39fqDA2WLcrFZ0ATaQO67GCN+4Q9mXQLO5P4UEjMqTtabPnsH2E57933jlkRmQUMs3yWTRKX3Hmp0RzLWST+3X8gfuibgL/0R6r4nj34PyZvllTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C/h2+19x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63479C4AF09;
+	Wed, 12 Nov 2025 00:32:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762907533;
+	bh=EKQB2ioNu47riqAdcpw9niW4VnYXoNetzqx4WN7e1II=;
+	h=From:To:Cc:Subject:Date:From;
+	b=C/h2+19xISoHknJ4bm1dQpALU3kL9x7AstdRma/pnKIFMsSduI6zXJkfF+UwE7qxr
+	 EKFmxvyzQwsZ/mf70DuDd8Yyq2OSwt9uk5VnwLNwvJRKiibNvbkYKuDBB60bhL8DkI
+	 TTlDj5NVPtRiyNn/Fmqw+jT8DTi4XkNIyAYFqRXuHKKtDW2xZvkFlHogqVTPxYMceH
+	 tp8J9gCGbjbkImy0p7a3Qe9OzF+s3Z/uc4Ocqh0mJTG6B9eMX7qjIJ+m44Qtq/RKW9
+	 c5thc60VFBr8yboSZHxA6uKeOMTivDk1gAX9iff0YwaQ6JwUp84HcrkJXbqrnpTp6B
+	 nErJhLQSS1u1Q==
+From: Jisheng Zhang <jszhang@kernel.org>
+To: Adrian Hunter <adrian.hunter@intel.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>
+Cc: linux-mmc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] mmc: sdhci-of-dwcmshc: Promote the th1520 reset handling to ip level
+Date: Wed, 12 Nov 2025 08:14:26 +0800
+Message-ID: <20251112001426.17252-1-jszhang@kernel.org>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251111215605.1721380-1-Liam.Howlett@oracle.com> <8219599b-941e-4ffd-875f-6548e217c16c@suse.cz>
-In-Reply-To: <8219599b-941e-4ffd-875f-6548e217c16c@suse.cz>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Tue, 11 Nov 2025 16:10:42 -0800
-X-Gm-Features: AWmQ_bkHdozyKSgPF1d5Bsi9z5t37_9KCgiztdRPoTJRYXVkpDN0VkjU8MHCXMY
-Message-ID: <CAJuCfpESKECudgqvm8CQ_whi761hWRPAhurR5efRVC4Hp2r8Qw@mail.gmail.com>
-Subject: Re: [PATCH] mm/mmap_lock: Reset maple state on lock_vma_under_rcu() retry
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Shakeel Butt <shakeel.butt@linux.dev>, 
-	Jann Horn <jannh@google.com>, stable@vger.kernel.org, 
-	syzbot+131f9eb2b5807573275c@syzkaller.appspotmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Nov 11, 2025 at 2:18=E2=80=AFPM Vlastimil Babka <vbabka@suse.cz> wr=
-ote:
->
-> On 11/11/25 22:56, Liam R. Howlett wrote:
-> > The retry in lock_vma_under_rcu() drops the rcu read lock before
-> > reacquiring the lock and trying again.  This may cause a use-after-free
-> > if the maple node the maple state was using was freed.
+Commit 27e8fe0da3b7 ("mmc: sdhci-of-dwcmshc: Prevent stale command
+interrupt handling") clears pending interrupts when resetting
+host->pending_reset to ensure no pending stale interrupts after
+sdhci_threaded_irq restores interrupts. But this fix is only added for
+th1520 platforms, in fact per my test, this issue exists on all
+dwcmshc users, such as cv1800b, sg2002, and synaptics platforms.
 
-Ah, good catch. I didn't realize the state is RCU protected.
+So promote the above reset handling from th1520 to ip level.
 
-> >
-> > The maple state is protected by the rcu read lock.  When the lock is
-> > dropped, the state cannot be reused as it tracks pointers to objects
-> > that may be freed during the time where the lock was not held.
-> >
-> > Any time the rcu read lock is dropped, the maple state must be
-> > invalidated.  Resetting the address and state to MA_START is the safest
-> > course of action, which will result in the next operation starting from
-> > the top of the tree.
-> >
-> > Prior to commit 0b16f8bed19c ("mm: change vma_start_read() to drop RCU
-> > lock on failure"), the rcu read lock was dropped and NULL was returned,
-> > so the retry would not have happened.  However, now that the read lock
-> > is dropped regardless of the return, we may use a freed maple tree node
-> > cached in the maple state on retry.
+Fixes: 017199c2849c ("mmc: sdhci-of-dwcmshc: Add support for Sophgo CV1800B and SG2002")
+Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
+---
+ drivers/mmc/host/sdhci-of-dwcmshc.c | 35 ++++++++++++++++-------------
+ 1 file changed, 20 insertions(+), 15 deletions(-)
 
-Hmm. The above paragraph does not sound right to me, unless I
-completely misunderstood it. Before 0b16f8bed19c we would keep RCU
-lock up until the end of lock_vma_under_rcu(), so retries could still
-happen but we were not dropping the RCU lock while doing that. After
-0b16f8bed19c we drop RCU lock if vma_start_read() fails, so retrying
-after such failure becomes unsafe. So, if you agree with me assessment
-then I suggest changing it to:
+diff --git a/drivers/mmc/host/sdhci-of-dwcmshc.c b/drivers/mmc/host/sdhci-of-dwcmshc.c
+index eebd45389956..c17168edc9fd 100644
+--- a/drivers/mmc/host/sdhci-of-dwcmshc.c
++++ b/drivers/mmc/host/sdhci-of-dwcmshc.c
+@@ -289,6 +289,19 @@ static void dwcmshc_adma_write_desc(struct sdhci_host *host, void **desc,
+ 	sdhci_adma_write_desc(host, desc, addr, len, cmd);
+ }
+ 
++static void dwcmshc_reset(struct sdhci_host *host, u8 mask)
++{
++	sdhci_reset(host, mask);
++
++	/* The dwcmshc does not comply with the SDHCI specification
++	 * regarding the "Software Reset for CMD line should clear 'Command
++	 * Complete' in the Normal Interrupt Status Register." Clear the bit
++	 * here to compensate for this quirk.
++	 */
++	if (mask & SDHCI_RESET_CMD)
++		sdhci_writel(host, SDHCI_INT_RESPONSE, SDHCI_INT_STATUS);
++}
++
+ static unsigned int dwcmshc_get_max_clock(struct sdhci_host *host)
+ {
+ 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+@@ -686,7 +699,7 @@ static void rk35xx_sdhci_reset(struct sdhci_host *host, u8 mask)
+ 		reset_control_deassert(priv->reset);
+ 	}
+ 
+-	sdhci_reset(host, mask);
++	dwcmshc_reset(host, mask);
+ }
+ 
+ static int dwcmshc_rk35xx_init(struct device *dev, struct sdhci_host *host,
+@@ -832,15 +845,7 @@ static void th1520_sdhci_reset(struct sdhci_host *host, u8 mask)
+ 	struct dwcmshc_priv *priv = sdhci_pltfm_priv(pltfm_host);
+ 	u16 ctrl_2;
+ 
+-	sdhci_reset(host, mask);
+-
+-	/* The T-Head 1520 SoC does not comply with the SDHCI specification
+-	 * regarding the "Software Reset for CMD line should clear 'Command
+-	 * Complete' in the Normal Interrupt Status Register." Clear the bit
+-	 * here to compensate for this quirk.
+-	 */
+-	if (mask & SDHCI_RESET_CMD)
+-		sdhci_writel(host, SDHCI_INT_RESPONSE, SDHCI_INT_STATUS);
++	dwcmshc_reset(host, mask);
+ 
+ 	if (priv->flags & FLAG_IO_FIXED_1V8) {
+ 		ctrl_2 = sdhci_readw(host, SDHCI_HOST_CONTROL2);
+@@ -886,7 +891,7 @@ static void cv18xx_sdhci_reset(struct sdhci_host *host, u8 mask)
+ 	struct dwcmshc_priv *priv = sdhci_pltfm_priv(pltfm_host);
+ 	u32 val, emmc_caps = MMC_CAP2_NO_SD | MMC_CAP2_NO_SDIO;
+ 
+-	sdhci_reset(host, mask);
++	dwcmshc_reset(host, mask);
+ 
+ 	if ((host->mmc->caps2 & emmc_caps) == emmc_caps) {
+ 		val = sdhci_readl(host, priv->vendor_specific_area1 + CV18XX_SDHCI_MSHC_CTRL);
+@@ -958,7 +963,7 @@ static void cv18xx_sdhci_post_tuning(struct sdhci_host *host)
+ 	val |= SDHCI_INT_DATA_AVAIL;
+ 	sdhci_writel(host, val, SDHCI_INT_STATUS);
+ 
+-	sdhci_reset(host, SDHCI_RESET_CMD | SDHCI_RESET_DATA);
++	dwcmshc_reset(host, SDHCI_RESET_CMD | SDHCI_RESET_DATA);
+ }
+ 
+ static int cv18xx_sdhci_execute_tuning(struct sdhci_host *host, u32 opcode)
+@@ -1080,7 +1085,7 @@ static inline void sg2042_sdhci_phy_init(struct sdhci_host *host)
+ 
+ static void sg2042_sdhci_reset(struct sdhci_host *host, u8 mask)
+ {
+-	sdhci_reset(host, mask);
++	dwcmshc_reset(host, mask);
+ 
+ 	if (mask & SDHCI_RESET_ALL)
+ 		sg2042_sdhci_phy_init(host);
+@@ -1100,7 +1105,7 @@ static const struct sdhci_ops sdhci_dwcmshc_ops = {
+ 	.set_bus_width		= sdhci_set_bus_width,
+ 	.set_uhs_signaling	= dwcmshc_set_uhs_signaling,
+ 	.get_max_clock		= dwcmshc_get_max_clock,
+-	.reset			= sdhci_reset,
++	.reset			= dwcmshc_reset,
+ 	.adma_write_desc	= dwcmshc_adma_write_desc,
+ 	.irq			= dwcmshc_cqe_irq_handler,
+ };
+@@ -1121,7 +1126,7 @@ static const struct sdhci_ops sdhci_dwcmshc_bf3_ops = {
+ 	.set_bus_width		= sdhci_set_bus_width,
+ 	.set_uhs_signaling	= dwcmshc_set_uhs_signaling,
+ 	.get_max_clock		= dwcmshc_get_max_clock,
+-	.reset			= sdhci_reset,
++	.reset			= dwcmshc_reset,
+ 	.adma_write_desc	= dwcmshc_adma_write_desc,
+ 	.irq			= dwcmshc_cqe_irq_handler,
+ 	.hw_reset		= dwcmshc_bf3_hw_reset,
+-- 
+2.50.0
 
-Prior to commit 0b16f8bed19c ("mm: change vma_start_read() to drop RCU
-lock on failure"), the retry after vma_start_read() failure was
-happening under the same RCU lock. However, now that the read lock is
-dropped on failure, we may use a freed maple tree node cached in the
-maple state on retry.
-
-> >
-> > Cc: Suren Baghdasaryan <surenb@google.com>
-> > Cc: stable@vger.kernel.org
-> > Fixes: 0b16f8bed19c ("mm: change vma_start_read() to drop RCU lock on f=
-ailure")
->
-> The commit is 6.18-rc1 so we don't need Cc: stable, but it's a mm-hotfixe=
-s
-> material that must go to Linus before 6.18.
->
-> > Reported-by: syzbot+131f9eb2b5807573275c@syzkaller.appspotmail.com
-> > Closes: https://syzkaller.appspot.com/bug?extid=3D131f9eb2b5807573275c
-> > Signed-off-by: Liam R. Howlett <Liam.Howlett@oracle.com>
->
-> Acked-by: Vlastimil Babka <vbabka@suse.cz>
-
-With the changelog text sorted out.
-
-Reviewed-by: Suren Baghdasaryan <surenb@google.com>
-
-Thanks!
-
->
-> > ---
-> >  mm/mmap_lock.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/mm/mmap_lock.c b/mm/mmap_lock.c
-> > index 39f341caf32c0..f2532af6208c0 100644
-> > --- a/mm/mmap_lock.c
-> > +++ b/mm/mmap_lock.c
-> > @@ -257,6 +257,7 @@ struct vm_area_struct *lock_vma_under_rcu(struct mm=
-_struct *mm,
-> >               if (PTR_ERR(vma) =3D=3D -EAGAIN) {
-> >                       count_vm_vma_lock_event(VMA_LOCK_MISS);
-> >                       /* The area was replaced with another one */
-> > +                     mas_set(&mas, address);
-> >                       goto retry;
-> >               }
-> >
->
 
