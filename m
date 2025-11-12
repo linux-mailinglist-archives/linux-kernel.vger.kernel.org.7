@@ -1,139 +1,104 @@
-Return-Path: <linux-kernel+bounces-897818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4146CC53C13
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:44:32 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AFD0C53C31
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:45:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92D7B4247E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:21:31 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4D0B2544046
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:21:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03D1D345CB7;
-	Wed, 12 Nov 2025 17:21:17 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 440F53446AA;
-	Wed, 12 Nov 2025 17:21:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A21F43446AA;
+	Wed, 12 Nov 2025 17:21:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="M+EjCIk8"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32EAB3446A2
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 17:21:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762968076; cv=none; b=I0d3at1HzwOCLAexyNAGqRPNfy554tukXgkY+dRJRhw8PYLdIcB8g73Ip6CNxShpKROETRpeMcVvWeKW/1XUW6t+ynC4RVBQRcXlUvClz4d8n+1Rjcwbo3VTBKZQ67TanPOcG3r+CB0t3GgIwaCjlM1Pt1N/JkXnRHs/ui0GzyM=
+	t=1762968095; cv=none; b=nMKkVdhc7r8PRYeWQZcPYjmnT3ixGHD7GbvtH5buUxsksXMfRLzEq6CJROCZ90es2bqLMLTP8dOG9GeNxKwArbsxZKDT0Hpj6bEr/BtjNs6aS+0RYXkMn77ExPVE4BgYEMkkNsTWk17BtF67G6wb9nudzVVh6sXlW4vuHf9LGAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762968076; c=relaxed/simple;
-	bh=8KTlR3+G/KRddrmRdJEIaKZw3jPDeR/xXj2CzrP5esA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ULb8gyem3JPUNoV/r5ttUXRxvv+YkNHzblhcgK268NmkVNDdb0jVKbO9k65lfQG4U2ZnO+s8NBiXv/ftibNnljovo28kcufIYKIb3zO2pEOioDRHHLm4cXd1GWt/cXBb+o6whMk6n5bMKQFKTlgWR93/6VyO1vM2yer6BIDDBgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 715731515;
-	Wed, 12 Nov 2025 09:21:05 -0800 (PST)
-Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6D85D3F66E;
-	Wed, 12 Nov 2025 09:21:08 -0800 (PST)
-Message-ID: <4d68d1b7-e3c9-4692-aba8-4361156e8b80@arm.com>
-Date: Wed, 12 Nov 2025 17:21:07 +0000
+	s=arc-20240116; t=1762968095; c=relaxed/simple;
+	bh=0PPqTUWpeQYo+DLwooIV0l43RIAbTn4FYl99vVTYWgo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TR2INrqOxmSbE2zNG/ShPSAL1SeGc/Tl+xMU9rT1rN5DHwwmznFfBnekWCys/JEEzNjKC6PgHdb0Xtfn4cGFUGgBFXdJpehrfmrFruaxaXUB11EsEThPBcu6LVkUP8Gaa35sH2n0bYIBMT+FIy7AdaRhs7gihKg0dZnTxAMgDa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=M+EjCIk8; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id E6B0940E0191;
+	Wed, 12 Nov 2025 17:21:29 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id LY-csmP1W9MH; Wed, 12 Nov 2025 17:21:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1762968086; bh=+X1dgcso8muvjHmSC3HEKtHeLBiJaK6T2iMBss0NMsM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=M+EjCIk8AHOoDeY3+mL6+3eQ6/ER9ZFvVg2/xakqzlyy5zNjQDDNK1GVhn6X4DeQF
+	 pA0eL9TZmEPydj4eDxZlcNjVgBo7OWO80m1GlD55XJcnQZu9My0EZyYjNBmkbITVVy
+	 qgyVhIWopR4YRRxJtAEsZGFEMplUWjRSKwNX4npQTIdPxzWvl/cYiB/GB4RGUcOYdN
+	 KNPjNZBd6x0u6uAFVWTmRCwuJkwZ31CrJS7cvUJHrnLU8HG89ajq2/cFIh3NBM8MFH
+	 WSTisBTYRvxqPcw/PuPhjixcr7/AxCpc9sK04/qlPGEyEVMrPw2Z/XO2K96fsT47On
+	 Ra/08tBM79Iji0os65lHweK4MP/9Q3qQvORcCHLuOhLYrVG8GaPxgU5qpj5giP58IZ
+	 4owFU+hj7LiwFl9n/c0oaHjbtxxhB4TPAeI6UloZlKejadas1teCf78yQFs4KJSFR7
+	 TXgPkVMlpV+M7qrfj5c+29ylWe9IxC5Btb8b2WrF4PTUbMiW8S8/VvWXr3vo/uieQ/
+	 n7IQH5IxBOin9tVxPPCJJlNkMKuqps5zEKhDpAqDFqOs6BWm/zobsTwymYo7vym+wj
+	 voEKy+wf/jn2LTqzfPoP8PBI+BH7r1kU6cVhNjl/PwjbEylrXOuvzjFfI6iPf/nsjk
+	 zRvdhbuvKA9h9vU8S/cTXgGA=
+Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 1574A40E01CD;
+	Wed, 12 Nov 2025 17:21:20 +0000 (UTC)
+Date: Wed, 12 Nov 2025 18:21:13 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Mario Limonciello <mario.limonciello@amd.com>
+Cc: Yazen Ghannam <yazen.ghannam@amd.com>, x86@kernel.org,
+	linux-kernel@vger.kernel.org, Michal Pecio <michal.pecio@gmail.com>,
+	Eric DeVolder <eric.devolder@oracle.com>
+Subject: Re: [PATCH] x86/acpi/boot: Correct acpi_is_processor_usable() check
+ again
+Message-ID: <20251112172113.GFaRTCCfu2H6JpkZWB@fat_crate.local>
+References: <20251111145357.4031846-1-yazen.ghannam@amd.com>
+ <20251112135618.GCaRSSAkqagSF_gr9j@fat_crate.local>
+ <c430ae05-74ca-4620-bb11-ff40d2eb62f6@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 11/33] arm_mpam: Add the class and component structures
- for firmware described ris
-To: Jonathan Cameron <jonathan.cameron@huawei.com>
-Cc: james.morse@arm.com, amitsinght@marvell.com, baisheng.gao@unisoc.com,
- baolin.wang@linux.alibaba.com, bobo.shaobowang@huawei.com,
- carl@os.amperecomputing.com, catalin.marinas@arm.com, dakr@kernel.org,
- dave.martin@arm.com, david@redhat.com, dfustini@baylibre.com,
- fenghuay@nvidia.com, gregkh@linuxfoundation.org, gshan@redhat.com,
- guohanjun@huawei.com, jeremy.linton@arm.com, kobak@nvidia.com,
- lcherian@marvell.com, lenb@kernel.org, linux-acpi@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- lpieralisi@kernel.org, peternewman@google.com, quic_jiles@quicinc.com,
- rafael@kernel.org, robh@kernel.org, rohit.mathew@arm.com,
- scott@os.amperecomputing.com, sdonthineni@nvidia.com, sudeep.holla@arm.com,
- tan.shaopeng@fujitsu.com, will@kernel.org, xhao@linux.alibaba.com,
- Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
-References: <20251107123450.664001-1-ben.horgan@arm.com>
- <20251107123450.664001-12-ben.horgan@arm.com>
- <20251110171041.00000a0d@huawei.com>
-From: Ben Horgan <ben.horgan@arm.com>
-Content-Language: en-US
-In-Reply-To: <20251110171041.00000a0d@huawei.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <c430ae05-74ca-4620-bb11-ff40d2eb62f6@amd.com>
 
-Hi Jonathan,
+On Wed, Nov 12, 2025 at 10:35:13AM -0600, Mario Limonciello wrote:
+> What version does the MADT in QEMU report today?  Presumably not all
+> virtualization solutions make this assumption about this bit.
+> 
+> IE rather than clump all virtualization should we just detect QEMU and <
+> ACPI 6.3?
 
-On 11/10/25 17:10, Jonathan Cameron wrote:
-> On Fri,  7 Nov 2025 12:34:28 +0000
-> Ben Horgan <ben.horgan@arm.com> wrote:
-> 
->> From: James Morse <james.morse@arm.com>
->>
->> An MSC is a container of resources, each identified by their RIS index.
->> Some RIS are described by firmware to provide their position in the system.
->> Others are discovered when the driver probes the hardware.
->>
->> To configure a resource it needs to be found by its class, e.g. 'L2'.
->> There are two kinds of grouping, a class is a set of components, which
->> are visible to user-space as there are likely to be multiple instances
->> of the L2 cache. (e.g. one per cluster or package)
->>
->> Add support for creating and destroying structures to allow a hierarchy
->> of resources to be created.
->>
->> CC: Ben Horgan <ben.horgan@arm.com>
-> Hi Ben,
-> 
-> Remember to clear out CC'ing yourself.
-> 
->> Tested-by: Fenghua Yu <fenghuay@nvidia.com>
->> Tested-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
->> Tested-by: Peter Newman <peternewman@google.com>
->> Signed-off-by: James Morse <james.morse@arm.com>
->> Signed-off-by: Ben Horgan <ben.horgan@arm.com>
->> ---
->> Changes since v3:
->> Jonathan:
->> Code reordering.
-> 
-> I'm guessing I may have sent things in a slightly less than ideal directly.
-> 
-> Why can't we have ordering as follows (with no forwards declarations)
-> 
-> mpam_class_alloc()
-> mpam_class_destroy()
-> //maybe other mpam_class stuff here
-> mpam_component_alloc()
-> mpam_component_destroy() - needs mpam_class_destroy()
-> //maybe other mpam_component stuff here
-> mpam_vmsc_alloc()
-> mpam_vmsc_destroy() - needs mpam_component_destroy()
-> //other mpam_vmsc here
+Version 3. Yah, no idea what that means.
 
-This works and then I need to add mpam_ris_get_affinity() as
-mpam_ris_create_locked() depends on it.
+There's some discussion here:
 
-I also add the helper functions it depends on
-mpam_get_cpumask_from_cache_id() and get_cpumask_from_node_id().
+https://lore.kernel.org/qemu-devel/20230510174510.089ecb14@imammedo.users.ipa.redhat.com/
 
-> mpam_ris_create_locked() - needs all the destroys.
-> mpam_ris_destroy() - needs mpam vmsc_destroy()
+but I'm not fixing the kernel because qemu is doing what it desires.
+ 
+-- 
+Regards/Gruss,
+    Boris.
 
-> 
-> I may well have missed a more complex dependency chain.
-> 
-> Other than that, LGTM. Given any change in ordering can be trivially verified
-> by building it and Gavin's comments seem simple to resolve.
-> 
-> Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
-
-Thanks,
-
-Ben
-
+https://people.kernel.org/tglx/notes-about-netiquette
 
