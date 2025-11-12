@@ -1,108 +1,125 @@
-Return-Path: <linux-kernel+bounces-897617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDA3FC53365
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:56:14 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3643AC5334A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:55:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id AA5C835602B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:47:38 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6F6903561F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:47:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D2E22BCF6C;
-	Wed, 12 Nov 2025 15:45:08 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0013.hostedemail.com [216.40.44.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33FFA33970D;
+	Wed, 12 Nov 2025 15:45:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VYkHACNf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B679C35CBBD;
-	Wed, 12 Nov 2025 15:45:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93E532C0277
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 15:45:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762962307; cv=none; b=OmV0TuqXZ6K4fCNeA7Uz+V871X+OLejM56+5PPOxXn85rjslE10xtFv97WGR0MuMsvny7FEUj8UcEeUF3lEo1mmYSOaO5Ulq5cONvCdaed9nzcdwaHOdLC5+jH0ZoRf9SHRW/DRQ3YmfZ93YfJPbHE+3SmDoSVvjY8uRCruNfhY=
+	t=1762962345; cv=none; b=STpFOmdqkRjNAJNhM1Rw+gd/hsrBPnY5wAqiPS1EfW+EpFXaLKgGIVYge1uxpxT/wcIJYmOAD98WYKOJTOoWbMkF5OYpGKfvAuzVwCrP7LrS8EHaRLX/RcE5gitQl8ohIObsWRsvCyw28Sxk3wWoPJXaohozvydSsp6mKJlsOjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762962307; c=relaxed/simple;
-	bh=K2NgcdDSsNIpmukvk9ZTuvgP7S9Fzwf2iF4Zv9Lx6wY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=leXAdLaQkqqzZSqNz8R19YiKx2ctsJQ2Czn3ObHL1Lg08cll6DpjA3lE3iiVFnI8P6LA4qcq+noNXa3O1rWVuIpVvBlsl7ZHobeHZbJ077nZyW8ZJdhZUxJI0qBThMI7NXmJH6uuAvItVvbreSJCWCv0GfZGTNgAkwAsuigg3W0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf18.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay08.hostedemail.com (Postfix) with ESMTP id CDD17140573;
-	Wed, 12 Nov 2025 15:45:00 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf18.hostedemail.com (Postfix) with ESMTPA id C85DD32;
-	Wed, 12 Nov 2025 15:44:55 +0000 (UTC)
-Date: Wed, 12 Nov 2025 10:45:08 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Harry Yoo
- <harry.yoo@oracle.com>, Qi Zheng <qi.zheng@linux.dev>, hannes@cmpxchg.org,
- hughd@google.com, mhocko@suse.com, roman.gushchin@linux.dev,
- muchun.song@linux.dev, david@redhat.com, lorenzo.stoakes@oracle.com,
- ziy@nvidia.com, imran.f.khan@oracle.com, kamalesh.babulal@oracle.com,
- axelrasmussen@google.com, yuanchu@google.com, weixugc@google.com,
- akpm@linux-foundation.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, Muchun Song
- <songmuchun@bytedance.com>, Qi Zheng <zhengqi.arch@bytedance.com>, Clark
- Williams <clrkwllms@kernel.org>, linux-rt-devel@lists.linux.dev
-Subject: Re: [PATCH v1 04/26] mm: vmscan: refactor move_folios_to_lru()
-Message-ID: <20251112104508.5500ad9b@gandalf.local.home>
-In-Reply-To: <jzihvbb6w26d4codfigy2o7b2h26izb4ahihouw54cvuzau54d@jyaa6rgpzuai>
-References: <366385a3-ed0e-440b-a08b-9cf14165ee8f@linux.dev>
-	<aQ3yLER4C4jY70BH@harry>
-	<hfutmuh4g5jtmrgeemq2aqr2tvxz6mnqaxo5l5vddqnjasyagi@gcscu5khrjxm>
-	<aRFKY5VGEujVOqBc@hyeyoo>
-	<2a68bddf-e6e6-4960-b5bc-1a39d747ea9b@linux.dev>
-	<aRF7eYlBKmG3hEFF@hyeyoo>
-	<aqdvjyzfk6vpespzcszfkmx522iy7hvddefcjgusrysglpdykt@uqedtngotzmy>
-	<8d6655f8-2756-45bb-85c1-223c3a5e656c@linux.dev>
-	<aRKqm24Lrg-JnCoh@hyeyoo>
-	<20251111084900.babaOj0w@linutronix.de>
-	<jzihvbb6w26d4codfigy2o7b2h26izb4ahihouw54cvuzau54d@jyaa6rgpzuai>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1762962345; c=relaxed/simple;
+	bh=fWzdt03epAh2bmGfOPbBWcrVtXBwXu7O11/dwAK+SiI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dUb/oMXTfPbk12d+EqFlYFvY1d4NRJo8CxAll47RHINlmPerJ1wLdExbBZ0FvSFuXX5/oBVQpaswTC+2XP+851hFDWcgUZfS/lNXkEkcYVhFs+n0Fte8gp0fanpPGFZvj7HKmPNy8ssTEDnL4UD8mUZdeFrDVfmc50yhRGJzJv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VYkHACNf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4AFAC19421;
+	Wed, 12 Nov 2025 15:45:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762962345;
+	bh=fWzdt03epAh2bmGfOPbBWcrVtXBwXu7O11/dwAK+SiI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VYkHACNfJ1ngpwGdfRFYHnm4iy+vKxU+8xN3k5Eb5ZbWEgcz5DypeaPesbwZFSMtS
+	 mHscskwVjxVPH9NNTmVkM4u4GDUB8nNHv3nv5zSNTjP4SUOy64pXz95dSpLl62Cazd
+	 bWTXEUhTb3cD72a5iFTd4Kohn7SvGB6J5H43VeIcItpI9cDMRQ2f775m42MKmJddsQ
+	 s5HDX24Dtw5Xj6O+C9jD6IpSaL4+WRBbL9aGe2b2JvVgIp04mxcaQgOpYNuX/vpRJJ
+	 b969oadgg5HW/uQWrR4exEft7aAurHkxqHD6tZpJWFWJAzTDW72hmUT4TRrWtOXZqI
+	 p+hDROIpuLUxA==
+Date: Wed, 12 Nov 2025 16:45:42 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Gabriele Monaco <gmonaco@redhat.com>
+Cc: linux-kernel@vger.kernel.org,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Waiman Long <llong@redhat.com>
+Subject: Re: [PATCH v14 1/7] timers: Rename tmigr 'online' bit to 'available'
+Message-ID: <aRSrpgytUvrP6Res@localhost.localdomain>
+References: <20251104104740.70512-1-gmonaco@redhat.com>
+ <20251104104740.70512-2-gmonaco@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: 8i46fu3i1uexab3gcai9n6jo5zxtnjew
-X-Rspamd-Server: rspamout03
-X-Rspamd-Queue-Id: C85DD32
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1/zzJBKVnQjnF7+vD3iE7NPwFKeizQlGh4=
-X-HE-Tag: 1762962295-724363
-X-HE-Meta: U2FsdGVkX18sZXyIcTgAaFZzEaJim5B3AdsBNcnSuhkN2xVPR14V+jN/a1c5qbKBwiNNEDsYnm/64J4ywfekI1ESXBN6UJspS6OQJv2pFY4ePIxPhNzVl9Rm+8vU67m3SqAyq9LTVgOoNLhlzs0tmR4GFlK36oZ2M//1r6/uqVtRYmW841FrUMVYjYit8fHlXYKbBGeroJSS3BFYTvoXIMH5Z70gftOSU00Kt1bZvIjYFPdOyzv8A9vwq3mX3ifD5SZC3t2J5qSG6sJo6DrZkw5hpFnMuHHE12uSwei8c4W8RtEV9QEVyxIuOx7wSpSY
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251104104740.70512-2-gmonaco@redhat.com>
 
-On Tue, 11 Nov 2025 08:44:14 -0800
-Shakeel Butt <shakeel.butt@linux.dev> wrote:
-
-> Harry is talking about mod_node_page_state() on
-> !CONFIG_HAVE_CMPXCHG_LOCAL which is disabling irqs.
+Le Tue, Nov 04, 2025 at 11:47:33AM +0100, Gabriele Monaco a écrit :
+> The timer migration hierarchy excludes offline CPUs via the
+> tmigr_is_not_available function, which is essentially checking the
+> online bit for the CPU.
 > 
-> void mod_node_page_state(struct pglist_data *pgdat, enum node_stat_item item,
-> 					long delta)
-> {
-> 	unsigned long flags;
+> Rename the online bit to available and all references in function names
+> and tracepoint to generalise the concept of available CPUs.
 > 
-> 	local_irq_save(flags);
-> 	__mod_node_page_state(pgdat, item, delta);
-> 	local_irq_restore(flags);
-> }
+> Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+> Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
+> ---
+>  include/trace/events/timer_migration.h |  4 ++--
+>  kernel/time/timer_migration.c          | 22 +++++++++++-----------
+>  kernel/time/timer_migration.h          |  2 +-
+>  3 files changed, 14 insertions(+), 14 deletions(-)
 > 
-> Is PREEMPT_RT fine with this?
+> diff --git a/include/trace/events/timer_migration.h b/include/trace/events/timer_migration.h
+> index 47db5eaf2f9ab..61171b13c687c 100644
+> --- a/include/trace/events/timer_migration.h
+> +++ b/include/trace/events/timer_migration.h
+> @@ -173,14 +173,14 @@ DEFINE_EVENT(tmigr_cpugroup, tmigr_cpu_active,
+>  	TP_ARGS(tmc)
+>  );
+>  
+> -DEFINE_EVENT(tmigr_cpugroup, tmigr_cpu_online,
+> +DEFINE_EVENT(tmigr_cpugroup, tmigr_cpu_available,
+>  
+>  	TP_PROTO(struct tmigr_cpu *tmc),
+>  
+>  	TP_ARGS(tmc)
+>  );
+>  
+> -DEFINE_EVENT(tmigr_cpugroup, tmigr_cpu_offline,
+> +DEFINE_EVENT(tmigr_cpugroup, tmigr_cpu_unavailable,
+>  
+>  	TP_PROTO(struct tmigr_cpu *tmc),
+>  
+> diff --git a/kernel/time/timer_migration.c b/kernel/time/timer_migration.c
+> index c0c54dc5314c3..78700f90944f0 100644
+> --- a/kernel/time/timer_migration.c
+> +++ b/kernel/time/timer_migration.c
+> @@ -427,7 +427,7 @@ static DEFINE_PER_CPU(struct tmigr_cpu, tmigr_cpu);
+>  
+>  static inline bool tmigr_is_not_available(struct tmigr_cpu *tmc)
+>  {
+> -	return !(tmc->tmgroup && tmc->online);
+> +	return !(tmc->tmgroup && tmc->available);
 
-But should be:
+Please rebase and test your patchset on top of:
 
-void mod_node_page_state(struct pglist_data *pgdat, enum node_stat_item item,
-					long delta)
-{
-	guard(irqsave)();
-	__mod_node_page_state(pgdat, item, delta);
-}
+git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git
+	timers/core
 
--- Steve
+There is one more "->online" field to rename there.
+
+Thanks.
+
+-- 
+Frederic Weisbecker
+SUSE Labs
 
