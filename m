@@ -1,87 +1,149 @@
-Return-Path: <linux-kernel+bounces-897962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E0E2C5406D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:56:59 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AFB8C54107
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 20:08:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E21FA4E4D1F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:49:38 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 27F13346652
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:08:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 402FB34B1B6;
-	Wed, 12 Nov 2025 18:49:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0E9734CFBA;
+	Wed, 12 Nov 2025 19:07:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j/hD8IGn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mail.selcloud.ru header.i=@mail.selcloud.ru header.b="AON2eK7/";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=foxido.dev header.i=@foxido.dev header.b="qfmc4ERz";
+	dkim=pass (2048-bit key) header.d=foxido.dev header.i=@foxido.dev header.b="bU5gDKsc";
+	dkim=permerror (0-bit key) header.d=foxido.dev header.i=@foxido.dev header.b="2MTf/o/z"
+Received: from sender8.mail.selcloud.ru (sender8.mail.selcloud.ru [5.8.75.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9740A1B3925;
-	Wed, 12 Nov 2025 18:49:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A13A934888E;
+	Wed, 12 Nov 2025 19:07:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.8.75.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762973373; cv=none; b=h3Kg8fOv2DJRuzDW76dXzHb6vfHlA3gAk2Ah/htwsI2keWUZAYq9HQ19fugcG3jWYPi8YzKz22F+ZN+Q2EIiDVeQc5DdSBBJxX7WFTdZeLTE/zB3dCmc3saXoEh6yom5z0LwCoAqed0YdAG8txJFTPUG+x6BuunEibcQz66dWuE=
+	t=1762974469; cv=none; b=ZGeH1zd2Ks/D6R/jLnfFzXaktB+5xk3lvfwfXNbD1gQ3BMozdZlTl0OX9lFLLcPzEefNLrzZvBAc3yu4533xk58onmkTkR6rrU1P7wD2NsU/J1rNWBRkJ5zOa0/j4wn9GF87X4IdQbzmpJMTKUaCNhNfIVkW28wNW9tVK9wvV/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762973373; c=relaxed/simple;
-	bh=9DyqYhTVr+ET9PloHfUUoxUdfC+ZS9pwHUh1FrcT11k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=flnSatJX7JqVDPcBDXY3op/mmbevlAUg2GjaYK8SOPXBNHdp1qg46X1kpWSr6phkaMZ6lOIgjgrk08eMqZR2aAl1L4cFR9rPF3dEhU5Y9VB2AM/4QWn5pZKwTmI4t7Jww3gP00Y10rsE1y+xQkVPa/SZ89PV707yRE1JXv0aLrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j/hD8IGn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C5DDC16AAE;
-	Wed, 12 Nov 2025 18:49:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762973372;
-	bh=9DyqYhTVr+ET9PloHfUUoxUdfC+ZS9pwHUh1FrcT11k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=j/hD8IGn4k3nGs1deCFbvPkATaE2YeiYjoZhwtT9+V5Dp/fkl7jo75GraV13cjXXu
-	 zM6yI8SIQUz7ysX6z44hZStuk8v0kjUTL0ZqtYSos2ZZfgZDjhjX445ev5SfiOkBbj
-	 Bh5CFP1aH/wKN2V+igHPH1tyFMyaWXvY0e7vHjds629LP7D588fvvGNW9f+0bqi6U8
-	 BJTntb+UttZMxIGpV3z5b3VN2OBK0Uaxf/x5+D/5Cm9Lh85sfRNxqhQFe4Bk8DvKqn
-	 n6SsCU8kzQtZ9r2YaA0N27QOGJRW8WA71l6zkqMm1CHD8K6ZnUnvcu5udTnKidK85u
-	 K64MxSrHAVlMg==
-Date: Wed, 12 Nov 2025 18:49:28 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Robert Marko <robert.marko@sartura.hr>
-Cc: srini@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, horatiu.vultur@microchip.com,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	daniel.machon@microchip.com, luka.perkov@sartura.hr
-Subject: Re: [PATCH v2 1/2] dt-bindings: nvmem: lan9662-otpc: Add LAN969x
- series
-Message-ID: <20251112-enlarging-deed-f0ca3281f35e@spud>
-References: <20251112130213.842337-1-robert.marko@sartura.hr>
+	s=arc-20240116; t=1762974469; c=relaxed/simple;
+	bh=onFtvHF637PkHfokYGmMMhhMnra8N2YkWhTjb4IwbhM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=VlIwem7zjWbOwoBIfHBLutU+WWlo5Ee7IrJVKIIx5NvUXbkGB6jXN0T9Kbm+t5eu1OyjPVTK2N+ecdzOlbTiMu1glwsI/MtfpVLJ6n9udz6elONh11RLDRdxOleUMHacvAGuriO42aoigRo+bct4V/3HuLEWYQwmSppllwmv6ws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=foxido.dev; spf=pass smtp.mailfrom=mail.selcloud.ru; dkim=pass (1024-bit key) header.d=mail.selcloud.ru header.i=@mail.selcloud.ru header.b=AON2eK7/; dkim=pass (1024-bit key) header.d=foxido.dev header.i=@foxido.dev header.b=qfmc4ERz; dkim=pass (2048-bit key) header.d=foxido.dev header.i=@foxido.dev header.b=bU5gDKsc; dkim=permerror (0-bit key) header.d=foxido.dev header.i=@foxido.dev header.b=2MTf/o/z; arc=none smtp.client-ip=5.8.75.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=foxido.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.selcloud.ru
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=mail.selcloud.ru; s=selcloud; h=Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:List-id:
+	List-Unsubscribe:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	List-Help:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=om8sf8stEkxllM3ntHfWOkinWEynYIsowhngY8eZid4=; t=1762974465; x=1763147265;
+	 b=AON2eK7/BhFNG60+PVnMj+De+IymPmCZWx7bOvHc0r8bnXF0Gdo8/Cdz1PhUxx2OziRdaAjDqY
+	l4ChkdgvOEygpFTlcmFNj3HbuHnHOShMWkdfGuuljR/UhQNPQlYM4niuIov8gj08XDMSJA18rYOF5
+	4xG3xVXE0kpEAVWAWD1k=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=foxido.dev;
+	 s=selcloud; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
+	Message-ID:Date:Subject:Cc:To:From:List-id:List-Unsubscribe:Sender:Reply-To:
+	Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Help:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=om8sf8stEkxllM3ntHfWOkinWEynYIsowhngY8eZid4=; t=1762974465; x=1763147265;
+	 b=qfmc4ERzZ2P9TfIaVsJZFY6WEc6eln5f51TE0mNnEuV8su8hXxrWSziPxT8jUtD4ieaB0eFfUc
+	F/HhnibIfVpQC1GXhYAk6SFSnhea9UPxCLmSco51hpkrGJYXo+nxiKToEccgmPWrO9imk2cZliHZO
+	K0S6GcBQ9mW2CuUXS0/M=;
+Precedence: bulk
+X-Issuen: 1428244
+X-User: 149890965
+X-Postmaster-Msgtype: 3849
+Feedback-ID: 1428244:15965:3849:samotpravil
+X-From: foxido.dev
+X-from-id: 15965
+X-MSG-TYPE: bulk
+List-Unsubscribe-Post: List-Unsubscribe=One-Click
+X-blist-id: 3849
+X-Gungo: 20251107.120132
+X-SMTPUID: mlgnr62
+DKIM-Signature: v=1; a=rsa-sha256; s=202508r; d=foxido.dev; c=relaxed/relaxed;
+	h=Message-ID:Date:Subject:To:From; t=1762973418; bh=om8sf8stEkxllM3ntHfWOki
+	nWEynYIsowhngY8eZid4=; b=bU5gDKsculcs8v3vKqFw0Afw+hnvhS2luuDKGls2snVuqiaydm
+	7rrmKqbS6UyuMSGIe2AU4fcKVDJgTAP30/SJIIuW67AxeP7WZVPwQXr12kprzjrZuVmcryLZC0F
+	ZPAjkvbfIjWNLiENV9OqGLSRhyEj9gXSSicWXMWlRMkHCNBAQeULcUFC/goGfETtnwOYI1nWZWO
+	cjVxDcFLVHPrCNZjGYRVpNoTP5PSkr1LrAz6EkougAXgZL79SccmN+2qQPQNO0r3znknqxtj1Ln
+	Pc2Fo2hE0SDD2zDUIa+1aiFgpjHeDCEXS/IUcFXbeZICe3SCuYhwxf767hKPV6InKYA==;
+DKIM-Signature: v=1; a=ed25519-sha256; s=202508e; d=foxido.dev; c=relaxed/relaxed;
+	h=Message-ID:Date:Subject:To:From; t=1762973418; bh=om8sf8stEkxllM3ntHfWOki
+	nWEynYIsowhngY8eZid4=; b=2MTf/o/zVzkWKZf5S66bhosjObwo8Tb3T3OG4Wb7bZIuWKVydX
+	O/u9d8ezEMgk6At6dHLpek5Nl0EbtDpgeeCQ==;
+From: Gladyshev Ilya <foxido@foxido.dev>
+To: foxido@foxido.dev
+Cc: Chris Mason <clm@fb.com>,
+	David Sterba <dsterba@suse.com>,
+	linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [RFC PATCH 1/8] btrfs: remove redundant label in __del_qgroup_relation
+Date: Wed, 12 Nov 2025 21:49:37 +0300
+Message-ID: <0893b79051c610f44757521a42f410ebdcf48282.1762972845.git.foxido@foxido.dev>
+X-Mailer: git-send-email 2.51.1.dirty
+In-Reply-To: <cover.1762972845.git.foxido@foxido.dev>
+References: <cover.1762972845.git.foxido@foxido.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="k2yE/U1BfqNR5hr7"
-Content-Disposition: inline
-In-Reply-To: <20251112130213.842337-1-robert.marko@sartura.hr>
+Content-Transfer-Encoding: 8bit
 
+The 'out' label in __del_qgroup_relation only contains a direct return,
+with no actual cleanup operations. Replace all 'goto out' statements
+with direct return statements to improve readability.
 
---k2yE/U1BfqNR5hr7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Gladyshev Ilya <foxido@foxido.dev>
+---
+ fs/btrfs/qgroup.c | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-pw-bot: not-applicable
-(Although idk anything about the device despite my employer, I am just
-reviewing th binding)
+diff --git a/fs/btrfs/qgroup.c b/fs/btrfs/qgroup.c
+index 31ad8580322a..9904bcfd3a60 100644
+--- a/fs/btrfs/qgroup.c
++++ b/fs/btrfs/qgroup.c
+@@ -1600,10 +1600,8 @@ static int __del_qgroup_relation(struct btrfs_trans_handle *trans, u64 src,
+ 	int ret = 0;
+ 	int ret2;
+ 
+-	if (!fs_info->quota_root) {
+-		ret = -ENOTCONN;
+-		goto out;
+-	}
++	if (!fs_info->quota_root)
++		return -ENOTCONN;
+ 
+ 	member = find_qgroup_rb(fs_info, src);
+ 	parent = find_qgroup_rb(fs_info, dst);
+@@ -1625,10 +1623,10 @@ static int __del_qgroup_relation(struct btrfs_trans_handle *trans, u64 src,
+ delete_item:
+ 	ret = del_qgroup_relation_item(trans, src, dst);
+ 	if (ret < 0 && ret != -ENOENT)
+-		goto out;
++		return ret;
+ 	ret2 = del_qgroup_relation_item(trans, dst, src);
+ 	if (ret2 < 0 && ret2 != -ENOENT)
+-		goto out;
++		return ret;
+ 
+ 	/* At least one deletion succeeded, return 0 */
+ 	if (!ret || !ret2)
+@@ -1640,7 +1638,6 @@ static int __del_qgroup_relation(struct btrfs_trans_handle *trans, u64 src,
+ 		ret = quick_update_accounting(fs_info, src, dst, -1);
+ 		spin_unlock(&fs_info->qgroup_lock);
+ 	}
+-out:
+ 	return ret;
+ }
+ 
+-- 
+2.51.1.dirty
 
---k2yE/U1BfqNR5hr7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaRTWtwAKCRB4tDGHoIJi
-0n8yAQCJ3K01O7eOJJmyiglKn74p0A/nstYW9kAvF2eKzAjCaAD/cJjUsF7zUife
-hntWlvxLy7s9ayYUvB+PkWqz7jCb9AE=
-=ksNA
------END PGP SIGNATURE-----
-
---k2yE/U1BfqNR5hr7--
 
