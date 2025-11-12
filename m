@@ -1,214 +1,129 @@
-Return-Path: <linux-kernel+bounces-898200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2C14C548ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 22:10:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26BD3C548F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 22:11:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16CB23B6059
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 21:10:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC0073B5920
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 21:10:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CFBD2D97BD;
-	Wed, 12 Nov 2025 21:10:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1A972BD5BF;
+	Wed, 12 Nov 2025 21:10:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bi+12BAQ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BXhSghs5"
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6C7129B22F
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 21:10:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A29D29B22F
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 21:10:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762981818; cv=none; b=Ot0XgauEWagelEoUB6FGR3qW97UrOLv0Ol80En1WvI+t/Sx/I/WlkxHqsmMsZhevDIDEnQHAlTzFOWVFkC/WGozY/OPCBEaQ1Suy9wMYlsfyTKiccf2rcJTqqur3rSxct14z/5chr4XMpfE199T4Q5XSA887Zu9xlVyui9Oyx4o=
+	t=1762981835; cv=none; b=CuRQorhigTAMwJGSpOk1FkLbdqWqCPrVIUiCF6s4PAp26W7TdMYTY9fA773yq4dd9SLp1ae7ARPdtz17rpBHqOuGFqgNy0yXHsFPDiWT5Jp6bpUeRguo54aLmwEo2kZpAiQgPLCixjhibZHNlzSn2O4hnJRNPqBPz3wiU1hbc5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762981818; c=relaxed/simple;
-	bh=+TSxyVVPp8zfG/MM9qXJgfikIrCe/iQHqRmicfEhc64=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=exYYRAGJPgMEz7Q5H5iLocpTlg/MwSdafwATzpuaqWO78/3nAi+HyzO1L3KwymtcfXn487u5mthufL/7zYViwjgWs2zxuRcHhHCe3QSx04ZNX9fCWm+4Xe/zuFZ3NddmqgveyaX6zjmKTchN+NVLDaV2Ew+BXWL6RkQ1SfnMS5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bi+12BAQ; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762981816; x=1794517816;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=+TSxyVVPp8zfG/MM9qXJgfikIrCe/iQHqRmicfEhc64=;
-  b=bi+12BAQeWqUX531EYmdawI/MIlCjzXdfaju8FdoWkqRnq8WZBTsVo/j
-   2urTrint7/hRSom4ySNY3wjpUgRXvFYdB3nb/Fq779mNWoMv44kHcirG+
-   xN8oYn7ZGHllXxY4mTGzKQw5lnD3QMeV6bR7HpoAQ1W254ofiajdn0ak5
-   TROK6oYDwbX2a3DPt7R4ACEvxt09jmRxUfOH499nSIMpyeXVJea3I5RxH
-   JvVN76+59fEnP2dKC165tZG7jaypvXWiIxjfZXuQKy2/jaO9AqBIOC1QG
-   W7+KLajVQEBSviArAB/Sh2MZlXr69VWPxIGZbuG5BRuRUDv0kMpd9vyT9
-   A==;
-X-CSE-ConnectionGUID: yt85N4unS3WkdlgqgWzYiQ==
-X-CSE-MsgGUID: 8to+/bcMSJi/M+D+Hn6eXw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11611"; a="76403594"
-X-IronPort-AV: E=Sophos;i="6.19,300,1754982000"; 
-   d="scan'208";a="76403594"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2025 13:10:15 -0800
-X-CSE-ConnectionGUID: eF8OQFEEQwuopAOz9L+BAg==
-X-CSE-MsgGUID: Vh475kz5RLGJluRoOctI9w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,300,1754982000"; 
-   d="scan'208";a="193716136"
-Received: from unknown (HELO [10.241.243.18]) ([10.241.243.18])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2025 13:10:15 -0800
-Message-ID: <c6fe7ac0f6de4d51705bb2f24f82df2c3018804f.camel@linux.intel.com>
-Subject: Re: [PATCH v4] sched/fair: Skip sched_balance_running cmpxchg when
- balance is not due
-From: Tim Chen <tim.c.chen@linux.intel.com>
-To: Peter Zijlstra <peterz@infradead.org>, Shrikanth Hegde
-	 <sshegde@linux.ibm.com>
-Cc: Ingo Molnar <mingo@kernel.org>, Chen Yu <yu.c.chen@intel.com>, Doug
- Nelson	 <doug.nelson@intel.com>, Mohini Narkhede
- <mohini.narkhede@intel.com>, 	linux-kernel@vger.kernel.org, Vincent Guittot
- <vincent.guittot@linaro.org>, K Prateek Nayak <kprateek.nayak@amd.com>,
- Srikar Dronamraju <srikar@linux.ibm.com>, Linus Torvalds	
- <torvalds@linux-foundation.org>
-Date: Wed, 12 Nov 2025 13:10:15 -0800
-In-Reply-To: <20251112112113.GO278048@noisy.programming.kicks-ass.net>
-References: 
-	<6fed119b723c71552943bfe5798c93851b30a361.1762800251.git.tim.c.chen@linux.intel.com>
-	 <aRQ_D1vyNfGVo-xK@linux.ibm.com>
-	 <20251112103740.GF4067720@noisy.programming.kicks-ass.net>
-	 <20251112104555.GE4068168@noisy.programming.kicks-ass.net>
-	 <55e02921-6477-4ed0-9ef6-16c3f34594a8@linux.ibm.com>
-	 <20251112112113.GO278048@noisy.programming.kicks-ass.net>
-Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual;
- keydata=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
- uQ==
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1762981835; c=relaxed/simple;
+	bh=NFCiZbCWZdsDuxKkR+3uhYDtGTTOmadQRYG4/hTK6zg=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=UbbJduVJz7T8+S1TfbcIGoTgkxXvAkdWIvoDScGpo2RoP8DrI6xqZ+iYJ5m7cRigXYhlC79T0yOcn/FP94ENXlnwbNWS+tWNR4gUcI2MjRzZNvYfKfC3olTTzR75DC/9jhqkSKIhGaqMOXTBs5bVLNXPHM2rmmgkuDQVfLHBw/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BXhSghs5; arc=none smtp.client-ip=209.85.222.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-8b22b1d3e7fso12131885a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 13:10:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762981832; x=1763586632; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Q8qaWvPN3J8o3Bl5ry+HYdP7j93QWDZn/Cnz56U1Aog=;
+        b=BXhSghs50a4FDsSg7n2sUOYCsKoT4fFgVOH0h0skFAqQOf9/jjLFIffeb+UpAfGDMK
+         NE/WGDzbcd0mG9sfFjWNiL1+a8o0BPTtAkN8eFxDavC+ySyYvuZGA9A6SMBAQ8NM66Zb
+         lda6ZctYFFJ3gzp9tEnKAH1uGEg3lJ83cRV3jFU/78uEUGhpXVQtBxJRhPGI9uzVFeOl
+         QMY21Mucaja6n/nVW12U56g45k84rGr0/3VZ7Pl3SQRyVzEVRNsMJtp7e09RnAO2Sr/X
+         MOhlDTpDplVk14+UxzJcEkjjd2N9foC0i7PfvXygOqgIkNNrIBzl/M3CMEM1drkxTLIB
+         jygw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762981832; x=1763586632;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q8qaWvPN3J8o3Bl5ry+HYdP7j93QWDZn/Cnz56U1Aog=;
+        b=XNv8pfEeh0Ua+Qm/JyxUEoatkSAtisy7DbgniAS3S9IF73m3/61k58mQEcSP/RPtAN
+         CjtCOofzyXzMBwCOUfsUMMbItMmhsx9sTwnWGB5auU+k9du1LCopE34AZJJfEY7+9kre
+         pKZXjHaGkuoNGm8psVlenhOkeba/4rTubXWHCfwyWIpNLgpNfFyCv/felk7qyR9voQq7
+         bvE2UCBPGaPV0HAvvp6e3W7d/H2DqRqdvNQClJz3pQ5kstBWTzsGpEjga7ntcFZcCzog
+         vtR7Icz4ieugfAWJXPdQmop696RFDbVPRApS/yqrxX1dwvblVSO1buS+yc7uvF3DaIDw
+         64OQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVmK5pm3vI4OLHuvFBhq5LtHW22IFlcxJKf4icY+3yok2o3h8e6ZFBS17swUDNpPusZBTV+LxMoYjYvCYc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmOFYkdSubggv0tJLib7pS7m5MvX1tatmfR/NZFf28nkoOb7z/
+	D8PQ3MMP5GnGNbi2AmdDTOscnOT712kE93uSLzRxk9mNKEYK4Yk/1RjP
+X-Gm-Gg: ASbGnctKHiC8+zPDp7pBI89v1pTTm2243+7JycndHYxuy26RGqtYDKPAy2CpP3ROu23
+	PpF/U5MjX5RBSxJ+1jh7LEt3fwaawGyGAR0qjtID2CP2RunnugVWGwc4vxj9pwufBjsrBC6due5
+	iZvPw7j/9A2ZLI78FCQoJImcH8LRXP39TuyXDHgAe6aeHJ7hdx5yqrk5ZH9No+9bgm7JIYsr2FU
+	ATurQzDESdkSyDVXdJ4UHzccPQb19EUO7Ss+moxlW6hkoeG2VYAw1MBncY7b3JVGqlr5wRvTf9j
+	tS9+wevjA7njTv55y1hlbQgU7V24Y2cf+KtYWOVysUB8YVIiDBFfrL9JT7Yi/iNCCTBZonHleLB
+	+ok9ecDmx6gR1/LAFoWoha4Nt8litn+ZIozRxJVgXxE3C5vkwGcTnZWJaSzDmxJhT9W2M8Lxtuh
+	dPWdoCpk8IIYyJ7OobllJbqgySGds=
+X-Google-Smtp-Source: AGHT+IFofS0tn+1q/BFHwqg8tHswBktjEiPFttAd7/GfZAqUecg++L2+A/6CVudzDds3JxckzQyKcg==
+X-Received: by 2002:a05:6214:48c:b0:882:4a63:63a7 with SMTP id 6a1803df08f44-88271a4232bmr71218726d6.60.1762981832057;
+        Wed, 12 Nov 2025 13:10:32 -0800 (PST)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8823892b84bsm103123356d6.10.2025.11.12.13.10.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Nov 2025 13:10:31 -0800 (PST)
+Message-ID: <845a2c50-8d2c-49bf-bb47-2f6ee1c31d61@gmail.com>
+Date: Wed, 12 Nov 2025 13:10:27 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+From: Florian Fainelli <f.fainelli@gmail.com>
+Subject: Re: [PATCH 6.17 000/849] 6.17.8-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, rwarsow@gmx.de, conor@kernel.org,
+ hargar@microsoft.com, broonie@kernel.org, achill@achill.org,
+ sr@sladewatkins.com
+References: <20251111004536.460310036@linuxfoundation.org>
+Content-Language: en-US
+In-Reply-To: <20251111004536.460310036@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, 2025-11-12 at 12:21 +0100, Peter Zijlstra wrote:
-> On Wed, Nov 12, 2025 at 04:39:43PM +0530, Shrikanth Hegde wrote:
-> >=20
-> >=20
->=20
-> > > So perhaps this is the better option -- or did I overlook something w=
-ith
-> > > should_we_balance? It doesn't look like that will make a different
-> > > decision on the retry.
-> > >=20
-> >=20
-> > I think in newidle balance, these checks are there in swb to bail of lo=
-ad balance.
-> > redo logic catches it right?
->=20
-> Urgh, my brain still thinks we're not serializing on newidle. Perhaps I
-> should make this 2 patches, one moving the serializing and one adding it
-> to newidle.
->=20
-> > env->dst_rq lock is taken only in attach_tasks, meanwhile, if the wakeu=
-p happened,
-> > pending would be set. is irq enabled or remote CPU can set ttwu_pending=
- on this rq?
-> >=20
-> >         if (env->idle =3D=3D CPU_NEWLY_IDLE) {
-> >                 if (env->dst_rq->nr_running > 0 || env->dst_rq->ttwu_pe=
-nding)
-> >                         return 0;
-> >                 return 1;
-> >         }
->=20
-> Right, that could get tickled.
 
-How about something like the following on top of v4 patch?
-This will avoid releasing the lock and take care of the NEWLY_IDLE case.
 
-Tim
+On 11/10/2025 4:32 PM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.17.8 release.
+> There are 849 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu, 13 Nov 2025 00:43:57 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.17.8-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.17.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 43c5ec039633..26179f4b77f6 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -11772,14 +11772,13 @@ static int sched_balance_rq(int this_cpu, struct =
-rq *this_rq,
- 		.fbq_type	=3D all,
- 		.tasks		=3D LIST_HEAD_INIT(env.tasks),
- 	};
--	bool need_unlock;
-+	bool need_unlock =3D false;
-=20
- 	cpumask_and(cpus, sched_domain_span(sd), cpu_active_mask);
-=20
- 	schedstat_inc(sd->lb_count[idle]);
-=20
- redo:
--	need_unlock =3D false;
- 	if (!should_we_balance(&env)) {
- 		*continue_balancing =3D 0;
- 		goto out_balanced;
-@@ -11916,9 +11915,9 @@ static int sched_balance_rq(int this_cpu, struct rq=
- *this_rq,
- 			if (!cpumask_subset(cpus, env.dst_grpmask)) {
- 				env.loop =3D 0;
- 				env.loop_break =3D SCHED_NR_MIGRATE_BREAK;
--				if (need_unlock)
--					atomic_set_release(&sched_balance_running, 0);
--
-+				if (env->idle =3D=3D CPU_NEWLY_IDLE &&
-+				    (env->dst_running > 0 || env->dst_rq->ttwu_pending))
-+					goto out;
- 				goto redo;
- 			}
- 			goto out_all_pinned;
+On ARCH_BRCMSTb using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
+
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
+
 
