@@ -1,47 +1,54 @@
-Return-Path: <linux-kernel+bounces-897130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67FE1C52102
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 12:47:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5473EC52111
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 12:48:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B70BE189D372
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:46:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91EB3189F06A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:46:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48FCD3148B9;
-	Wed, 12 Nov 2025 11:44:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0108C316194;
+	Wed, 12 Nov 2025 11:44:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FyXu+/73"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="cK21f6Gt"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97A8D31327B;
-	Wed, 12 Nov 2025 11:44:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABE60313E24;
+	Wed, 12 Nov 2025 11:44:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762947890; cv=none; b=A3oL05t0KSgXVrRBX6iIP8h+3j9uPYI1FCvwt2/H88pqBHnm3TIJApixTpXg2KbQM3R/IfluhM9zBksD9kQ2WvrFuJqZRXGShKJ0W5Sccr5IHeTMOiihMIBTyA7flLGTBnAn6m/Giwyu+W8AQJhsKFj0Znu10zGFMPTPp6J4LbQ=
+	t=1762947896; cv=none; b=Eru+RW9Jb9kcGLXjQJd9ZfeCEXnoaYAkGaF/kiRhSkRNNr158KgPiWKI8v1KFRNplwH5vpMuZKabBqmd41aHztc4i1fRKSbY04T31LPnLnO0937iGOVrAKiZ5RCtp71Y7uuqwrcH+IsOgOEcN8qR5HA5njW8e5Tlt1ga+mLTWmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762947890; c=relaxed/simple;
-	bh=Wj/4q1C1ArnQ7Q4ixJ7EiiawvGxLIH7JDw3b8s+7UQk=;
+	s=arc-20240116; t=1762947896; c=relaxed/simple;
+	bh=txQYXefWwC2PZqEQ4vuwFQ5aaHRR6QGqriUDT6flUq0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=K7Npz7JKzpHA4H4gXuWKPMuCtC6FZqsFbwFaSg17tqZxZuiVvAbbz71+oK0fOaDrtFfTeqJkbnFaOdx1WszoFqR4M37uVFJZTis/690OdsFafnwfISmILbGFMCApRjg7n8fXIaZDmR+mXyI//IrwOoCSr3pKP/y55U2wfTrfsMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FyXu+/73; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69803C4CEF7;
-	Wed, 12 Nov 2025 11:44:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762947890;
-	bh=Wj/4q1C1ArnQ7Q4ixJ7EiiawvGxLIH7JDw3b8s+7UQk=;
+	 In-Reply-To:Content-Type; b=Hu48YhNPe/8hS3HD+Y9BVLbLx4uj6QZgbY1xBEygkAvNBQijkYHlEJ/3H9dDSNjdd40T3+GYNTwgsFkFPTClvDcbResqrNwzc2owrqwzzyqSYZeA/7xOoB7tu7D2RTF1lQYPcA6JqSNKLa9BRPzoYeOPNqNIsQo4leRObSDRTUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=cK21f6Gt; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1762947893;
+	bh=txQYXefWwC2PZqEQ4vuwFQ5aaHRR6QGqriUDT6flUq0=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=FyXu+/73fldy/N9aF3u1xUDUGJiObxFLxZZGQhuJ7inI7zDlB+KnAcT4c2tZlz9sC
-	 UKPZDozEAjr1L6hpJF+xTP8CKVu7qTZH2UHes9izH5opdFzdciysPSWizGXeeQ+mej
-	 MEPSu1l20VwPcnP75gh82oftOZZvJfc42pUMu0ZOzsv2iqfiwdqkTsm06PShgbY+VX
-	 MH23jxelP4g06YyGWqLJJQoeO0oNfOQnO6GELdouoJDl94E2Eq+0JbBM/M7YxoD/rg
-	 dZ4K5lVyLs0s9vo04NQf5U250KVefbpOjIdtwl5L8IUVUWS8rq3ok9s3+UpREtyhJs
-	 TcUGKdtezFBVA==
-Message-ID: <9c4cac95-adbf-4236-a872-5213a2a797da@kernel.org>
-Date: Wed, 12 Nov 2025 12:44:46 +0100
+	b=cK21f6Gt4ebuuEMkr8T4xExWaiZikMRwdU3xD+guk8+7Gm5W1VgzofKs7cog+vdRx
+	 o9LtWn3ArAHcp0G74dAZOwCtgDJIc07BZFnETnImHBG2CVWiI4whIFgYBG1I28Q2Xe
+	 dwCJxnHLYerOzf2j9uwg3t1wi63zGW3fMwtEM6/4zifIuViwq7kQ9WbLnkUyXq9Ocf
+	 zRyNsEq4KYlUDBo4smccBlW6+d8U3oVHeU5U/jEHxoLjGpG3J6GQg8U0idnseanwfM
+	 rulu1XG6f/eYKL+2rVYk7U13TP39NzkX5q6/+5A/tUJlTGEFsUKZc/57XqqKMxmJAO
+	 xM6CEeQYaXfFA==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id DDED017E129C;
+	Wed, 12 Nov 2025 12:44:51 +0100 (CET)
+Message-ID: <e6d208a2-b4a3-4c9e-abe2-1da1e5ae1245@collabora.com>
+Date: Wed, 12 Nov 2025 12:44:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,57 +56,48 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] shmem: fix tmpfs reconfiguration (remount) when noswap is
- set
-To: Mike Yuan <me@yhndnzj.com>, linux-mm@kvack.org,
- linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Luis Chamberlain <mcgrof@kernel.org>,
- Christian Brauner <brauner@kernel.org>, Hugh Dickins <hughd@google.com>,
- stable@vger.kernel.org
-References: <20251108190930.440685-1-me@yhndnzj.com>
-From: "David Hildenbrand (Red Hat)" <david@kernel.org>
+Subject: Re: [PATCH v2 06/11] firmware: qcom: scm: Simplify with
+ of_machine_device_match()
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>, Yangtao Li
+ <tiny.windzz@gmail.com>, Chen-Yu Tsai <wens@kernel.org>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Thomas Gleixner
+ <tglx@linutronix.de>, Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ Maximilian Luz <luzmaximilian@gmail.com>, Hans de Goede <hansg@kernel.org>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Daniel Lezcano <daniel.lezcano@kernel.org>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, linux-sunxi@lists.linux.dev,
+ linux-arm-msm@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+ linux-tegra@vger.kernel.org, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+References: <20251112-b4-of-match-matchine-data-v2-0-d46b72003fd6@linaro.org>
+ <20251112-b4-of-match-matchine-data-v2-6-d46b72003fd6@linaro.org>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Content-Language: en-US
-In-Reply-To: <20251108190930.440685-1-me@yhndnzj.com>
+In-Reply-To: <20251112-b4-of-match-matchine-data-v2-6-d46b72003fd6@linaro.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 08.11.25 20:09, Mike Yuan wrote:
-> In systemd we're trying to switch the internal credentials setup logic
-> to new mount API [1], and I noticed fsconfig(FSCONFIG_CMD_RECONFIGURE)
-> consistently fails on tmpfs with noswap option. This can be trivially
-> reproduced with the following:
+Il 12/11/25 11:28, Krzysztof Kozlowski ha scritto:
+> Replace open-coded getting root OF node and matching against it with
+> new of_machine_device_match() helper.
 > 
-> ```
-> int fs_fd = fsopen("tmpfs", 0);
-> fsconfig(fs_fd, FSCONFIG_SET_FLAG, "noswap", NULL, 0);
-> fsconfig(fs_fd, FSCONFIG_CMD_CREATE, NULL, NULL, 0);
-> fsmount(fs_fd, 0, 0);
-> fsconfig(fs_fd, FSCONFIG_CMD_RECONFIGURE, NULL, NULL, 0);  <------ EINVAL
-> ```
-> 
-> After some digging the culprit is shmem_reconfigure() rejecting
-> !(ctx->seen & SHMEM_SEEN_NOSWAP) && sbinfo->noswap, which is bogus
-> as ctx->seen serves as a mask for whether certain options are touched
-> at all. On top of that, noswap option doesn't use fsparam_flag_no,
-> hence it's not really possible to "reenable" swap to begin with.
-> Drop the check and redundant SHMEM_SEEN_NOSWAP flag.
-> 
-> [1] https://github.com/systemd/systemd/pull/39637
-> 
-> Fixes: 2c6efe9cf2d7 ("shmem: add support to ignore swap")
-> Signed-off-by: Mike Yuan <me@yhndnzj.com>
-> Cc: Luis Chamberlain <mcgrof@kernel.org>
-> Cc: Christian Brauner <brauner@kernel.org>
-> Cc: Hugh Dickins <hughd@google.com>
-> Cc: <stable@vger.kernel.org>
-> ---
+> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Makes sense to me
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-Reviewed-by: David Hildenbrand (Red Hat) <david@kernel.org>
-
--- 
-Cheers
-
-David
 
