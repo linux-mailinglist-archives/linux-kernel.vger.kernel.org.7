@@ -1,238 +1,195 @@
-Return-Path: <linux-kernel+bounces-896545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C418C50A32
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 06:49:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E3BBC50A4A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 06:53:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 816583B4B6C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 05:49:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DF803B488A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 05:53:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0F8E2D9EDD;
-	Wed, 12 Nov 2025 05:49:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Zs4s2ffF"
-Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11010051.outbound.protection.outlook.com [52.101.56.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 408A8E56A;
-	Wed, 12 Nov 2025 05:49:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762926574; cv=fail; b=WAu4o8lZdapzoorVL3uowwYqry3bcfaD+ClgzZ2dFhzDP6RhLYJ6RLLEPFu6ywSfpgxW0BaVO62B+DIfa3lZOmakuIpnEwJNqKDxLY1je1kHkl8LcGH7UcpAbZDLo4eU+FJAI3CkX3XxoEBbsu2U5FbJG+y5e3l/QCIiyYfeEHA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762926574; c=relaxed/simple;
-	bh=BtfJXjo5eyi0Sp3kKqxNUNpLf+2ufIILujZQrAkpHUM=;
-	h=MIME-Version:Content-Type:Date:Message-ID:To:CC:Subject:From:
-	 References:In-Reply-To; b=k0SQ8lTsKe+zmUG5jOnhYbGvepqtmCUCwoCiXkOPqo8f6LcTZKFhkRJlWZWbKwR9eDmCXvgb1wkFYqzYqkeSb1If0+401l4QrfGOrfOaBAdhMSFYRGv3+VYzaWuQQzmimfYwkTxyKnXWIL7llAZD87iS4u2O4t77vq91YIllBvE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Zs4s2ffF; arc=fail smtp.client-ip=52.101.56.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Tx98LVV9y10a/Kz+8gSST7CXB7z57/nwvm9ym+E2e0ufFhnSueQxS8DCb4/t2S6ifgZrZ1LCi0OhfdmCJKmOHcS+xUPBjY40H4FEP9tihqfDcVYlihVKVXZysd1gmm86CiEe1JmznqLz3SPwJhWSRX+EELJjTqfbYL6Ap+r9yMGj9ydb7UiZRGY7MW7tkhQPrQAzV1+9U8V0PK3xHyviyBfxkgxcdGE1UBMaH95QHVAZLqzTeWZ/Mjq2aO3NpczQ2NrNeZI7zNp3f4UVxf90LUCcfCLKxoRSy2ybAYORhVZpiDANM1aK+UwsqGXJZF8y5ml09O9gk4SD0gRkZ40N4w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=k8Q398y4bqFWxBv1tTdB34IcME7Y6YxFO0srZdL2lBA=;
- b=O6KkAlQZKuFE4ZHpvrPM4MAXboMBETH43oPEp10g+RrOaOeX/UPOUM+wlfyaZpHcSUmikRJmB5nswJcumuyEYCOyZMl5M4fbJMWPDFNz6MtRQBp8IgOeVvE4e6DesTUYox5CvfQXf64eMB7R7P/8ZJ3eiON2mm/4UFHvoJrkLbVNhOHH8wfpapvRIiZuc805A/KG6i/vX8ukgtS8yGspKMnvmUb140tw0rF9zKMczailQPGQTqq6vf6wwWlAXrqzB/JHGTO7nm/IK45sHCODfOZFObr9o46RRxWjzp0CIk8vcHsKraR6o93N3FUq9V419og+9iKFYjUn4/e4/OPb9A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 198.47.21.195) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=ti.com;
- dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=k8Q398y4bqFWxBv1tTdB34IcME7Y6YxFO0srZdL2lBA=;
- b=Zs4s2ffFdFAKhw9PII/EvjeLtyC+DYNg0TMzxP2ehsvCv4Uz7MOwM/lqSxBKh8IsZoghQe0+fDzTzr/f1RYSdjMOUBibfEFvN8ZzbMRaQgbJeesqfbOKsJjqrCaTnnbOISZPpUsvDCIIVvlduq2x7pG0s9yxXsoUlJer2450bkE=
-Received: from BYAPR01CA0067.prod.exchangelabs.com (2603:10b6:a03:94::44) by
- DS4PPFA1C1B9420.namprd10.prod.outlook.com (2603:10b6:f:fc00::d3c) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.15; Wed, 12 Nov
- 2025 05:49:28 +0000
-Received: from CO1PEPF000044FA.namprd21.prod.outlook.com
- (2603:10b6:a03:94:cafe::ed) by BYAPR01CA0067.outlook.office365.com
- (2603:10b6:a03:94::44) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9320.16 via Frontend Transport; Wed,
- 12 Nov 2025 05:50:44 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.21.195)
- smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
- action=none header.from=ti.com;
-Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
- 198.47.21.195 as permitted sender) receiver=protection.outlook.com;
- client-ip=198.47.21.195; helo=flwvzet201.ext.ti.com; pr=C
-Received: from flwvzet201.ext.ti.com (198.47.21.195) by
- CO1PEPF000044FA.mail.protection.outlook.com (10.167.241.200) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9343.0 via Frontend Transport; Wed, 12 Nov 2025 05:49:25 +0000
-Received: from DFLE208.ent.ti.com (10.64.6.66) by flwvzet201.ext.ti.com
- (10.248.192.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 11 Nov
- 2025 23:49:21 -0600
-Received: from DFLE207.ent.ti.com (10.64.6.65) by DFLE208.ent.ti.com
- (10.64.6.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 11 Nov
- 2025 23:49:21 -0600
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE207.ent.ti.com
- (10.64.6.65) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Tue, 11 Nov 2025 23:49:21 -0600
-Received: from localhost (dhcp-172-24-233-105.dhcp.ti.com [172.24.233.105])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5AC5nKNo2173818;
-	Tue, 11 Nov 2025 23:49:20 -0600
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE1A52DA757;
+	Wed, 12 Nov 2025 05:52:56 +0000 (UTC)
+Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [13.76.142.27])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B5BB1B87C9;
+	Wed, 12 Nov 2025 05:52:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.76.142.27
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762926776; cv=none; b=qSzD3bIegbTWj5ebXi7xgQGeGkQB6xSPqkXTwt5C04Z/NcN8xD2CA8Zr7kKJmxEClSq3faYzqRWtkb7E9yJ/zn9ujZrNwQAhGRfxB5DI9e52F8/KqdM8QPvVpQKL1mtbKWAE3EoteR0ve9+3S208MuaP8NdQt9oBQ8d6vyOEOak=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762926776; c=relaxed/simple;
+	bh=BP/VZhhjFMlzny6ykV73squvQ1IA6zZrpaDr16JsXnI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gH6QIi5cr/DycxakT6xq6B3pjIYSvq+/21fPoHz4RX5D1p7TnDLYpH4C6A6aD9KSVKKvH0X1wAxtfJ9u8GHHYWmOtVdC69dRpz3LJeaAm5o5582qEvcDRj+AcRt9+bUnMHmdDBjHftIeOTU7XEnm5oTsM0bHfBsgc7iacCGWubE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=13.76.142.27
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
+Received: from E0006493LT.eswin.cn (unknown [10.127.112.153])
+	by app1 (Coremail) with SMTP id TAJkCgB3cGihIBRpC+x6AA--.28338S4;
+	Wed, 12 Nov 2025 13:52:35 +0800 (CST)
+From: caohang@eswincomputing.com
+To: gregkh@linuxfoundation.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	Thinh.Nguyen@synopsys.com,
+	p.zabel@pengutronix.de,
+	linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	devicetree@vger.kernel.org
+Cc: ningyu@eswincomputing.com,
+	linmin@eswincomputing.com,
+	pinkesh.vaghela@einfochips.com,
+	Hang Cao <caohang@eswincomputing.com>,
+	kernel test robot <lkp@intel.com>
+Subject: [PATCH v8 0/2] Add driver support for ESWIN EIC7700 SoC USB controller
+Date: Wed, 12 Nov 2025 13:52:30 +0800
+Message-ID: <20251112055230.1609-1-caohang@eswincomputing.com>
+X-Mailer: git-send-email 2.45.1.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="UTF-8"
-Date: Wed, 12 Nov 2025 11:19:19 +0530
-Message-ID: <DE6HB50YE2YA.101VZ1IK9JUBT@ti.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Anshul Dalal <anshuld@ti.com>,
-	Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>, "Santosh
- Shilimkar" <ssantosh@kernel.org>, Rob Herring <robh@kernel.org>, "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Vignesh Raghavendra <vigneshr@ti.com>
-Subject: Re: [PATCH RFC] dt-bindings: arm: keystone: add boot_* mailboxes
-From: Anshul Dalal <anshuld@ti.com>
-X-Mailer: aerc 0.21.0-0-g5549850facc2
-References: <20251111-k3_syscon_add_boot_mailboxes-v1-1-529a27f21076@ti.com>
- <f372ea12-b8ed-4372-8657-96f09a6d4fec@kernel.org>
-In-Reply-To: <f372ea12-b8ed-4372-8657-96f09a6d4fec@kernel.org>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000044FA:EE_|DS4PPFA1C1B9420:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4a830d40-46eb-4d39-4949-08de21af3ceb
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|36860700013|1800799024|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?SFlIczd5VndZZ200WEE1NjZvSlpNZE5iNENldUJPUnJvSHFydXNZUHNTQXcz?=
- =?utf-8?B?ak03NHFXMVQ1NHNDRmxzRDBPN1hiQ0R2YkpKNzQrYlJ0bXhsRzliajZJYVVV?=
- =?utf-8?B?MGNEMVJHQW4zTzJibFhNM0l4dFh4NDZQZHU3a1IxNXU3ZnhMOE5rVW5kRVZJ?=
- =?utf-8?B?dmc3TGZCYlZlVUttQ3J4M2h6ZHN2TkFURmF6YTRQZk1XeXUvT2dtR2ZzcEtG?=
- =?utf-8?B?b25ZSGVSZDNlQWhyUWJKMVhENE54WVl0Y2JNY0NUdy9qT0VFS1lmRFJadmp1?=
- =?utf-8?B?TVhYbjFaS3NIam5OdHhuOGx1VC9EMlVBV0h1Qmk5Q01CUGV6OGpxUXNKeWZv?=
- =?utf-8?B?WCt1WXlPR1FNU01vZHhtZ3MvNGpZbzY5UzZ6Q3BOTVdndkNUWDNNdFRmUUsw?=
- =?utf-8?B?NG1kenRMRVM4NUFreEhpR1p5dUtSMEh5QWNjaTQxVk5SME43aTYzcWhXeUl0?=
- =?utf-8?B?QkdMcEQ5bWdyeFVlT3ZnbGJlRWlhOUh0T1oxUTA5VkNDOE1UczRWMU1KenBt?=
- =?utf-8?B?QldwTytlZ3VZQ3JWZm9ocWx6R1hDbjh6WHczOWxtT0tjTjJmQVdYSXQ2S05M?=
- =?utf-8?B?NGRrMW05T1l0VGkxd2VIWXhaMUZRNk5OM2dvazBFTDM0SmtUV2JYL1piSmU5?=
- =?utf-8?B?NG9USVpZaGlVOEFwbXgwYU5xV29WRkUzcW9RZjN1UWF6T25ENXFWSDcvOEtt?=
- =?utf-8?B?VjZsUGs4dWE3UG1rY2dEcWV6b05KeWx2RzBRb3RVMS9jcko2czljU3JZQmFS?=
- =?utf-8?B?VnU2L1E5NVhONFowMG9TZStROUV6VHRseFJkNFhSMXpVckRrOWUrZXptSUV1?=
- =?utf-8?B?bHNRNjFabE5ZNnllcHphSmVabmxFaXd4a0o2Q0Y0RDM5azl1Vy9pSnE0UDlZ?=
- =?utf-8?B?bFNYK1RvQWhLOWEzM0pxb1NSZjRmUkpkbENKNVNOME1lVUxoWjQwRVIrTzhn?=
- =?utf-8?B?OXBmS3lwTHUycDlVY1U4OGF4bFlydzFNTnBkSW0yMUVaSzd1TFl4ZldENEl5?=
- =?utf-8?B?dXVxSkRQYWFzQlAvaEJHWTgwSXY4eUQ4SnZ4REswVWpKcEdDMjRWdUUyMHA1?=
- =?utf-8?B?Q1RCbU1zL3AxckRXVVliMkF6RG9vTU9MZ3lULzZhZFd1SWhvSCtpTHhCQTBu?=
- =?utf-8?B?dXdnS1RXZjd3MUNrT2poN1huc3ZYdXNsVWprR2pUZ1VYZDZuWmN4eHZjRXEz?=
- =?utf-8?B?V1NPV2h0NFlPR3h4NWRMVy90bVdlRzNUOFVhR0dldHM1Vk1jRXhZQStTUEZ5?=
- =?utf-8?B?OEV3dEhiMmErZy9JZmN6ZzVJblRHa0lsMUUvV0VpUkZQRWxPU2xRQWlvaDRB?=
- =?utf-8?B?RFBySk9jdmxDV04vM3RtMlRDaS83RjhKQmR4dDlJUkxXTkhQMWhkc2oyT3RV?=
- =?utf-8?B?NG1nTEdtQ2IxVkN3ZGZ6ZzdEL0x2cEdyNG50MnFwb1k3NnRLMkE0d0NXNVp0?=
- =?utf-8?B?WGVBYzVpQXBBeXA2bUpYMTVLT2VZQlZ0RlJjMEF4VDJ4Y21scE9BdGVhb3Yx?=
- =?utf-8?B?bm1qYmNaTEkyVHVUY2oydXB5dFZIVTRhdWFjWStzbGZLbndBR3pNVXJFU1hi?=
- =?utf-8?B?VUs2TDhPT2dHWFBqRDN4R1N4YXdHdkpHWXFjSXFlSHlsL3hDOVkvTHppS0hm?=
- =?utf-8?B?ZTNIR0NDcDREcnVhcExvenQwMmJ4SjNKK1RkaG92YVVxcUU5YWRRRXAwZWNa?=
- =?utf-8?B?NWZMQ3hOM1FoV2VrUytFcTJTdklLeVQwZnpLTmNBVUV3R0VCdFMwN3R5NnJu?=
- =?utf-8?B?TXlzbzZZOVFXU1NEdko3YkwvREp1dEJrbmRwcWJJRWFONmFqWXcraWgySjFU?=
- =?utf-8?B?UXNOTXZCaXdzYUhXRTY4NnN5Z0V0ZkpwelU0bHYrcHVIaWdVOElKRDhUZGZw?=
- =?utf-8?B?cHhSQlhHUDNJUDlzYXYrVUNUQmtKVGdiR1F4VktJY1VxTGNIRkJoY0FjVlpE?=
- =?utf-8?B?Y1NhYmE0OCtNLzhTUjNIQ0ZYL3ZVUlFWcUJySGVQRW5vMGtOK241ZnpBcm04?=
- =?utf-8?B?eVhTTlk4a3BtWjhiUlNCRWo0VnhqbkYzTm1lcW8yKzUzL2VHVUI1UktxTXIx?=
- =?utf-8?B?UXo1MFZtcG9xZ1RrRGt3VmdyZVNiMm5ZMHpEKy9LMThuZUhBTHJ3RmFQelc0?=
- =?utf-8?Q?L2Jc=3D?=
-X-Forefront-Antispam-Report:
-	CIP:198.47.21.195;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:flwvzet201.ext.ti.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(376014)(36860700013)(1800799024)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: ti.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2025 05:49:25.7399
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4a830d40-46eb-4d39-4949-08de21af3ceb
-X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.21.195];Helo=[flwvzet201.ext.ti.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CO1PEPF000044FA.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS4PPFA1C1B9420
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:TAJkCgB3cGihIBRpC+x6AA--.28338S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxXrW5Wr1xuFykWr1DZryxKrg_yoW7JrWxpa
+	yvkrW5Crs5Jryxtan7K3WFvF4fGanrXF45Kr1Iqw12vw4jg3W7JrWI9F4YvrWDCwn3u34Y
+	yFW3Wa9Yka4DZ37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBv14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lw4CEc2x0rVAKj4xxMxkF7I0En4kS14v26r1q6r43MxkIecxEwVCm-wCF04
+	k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18
+	MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr4
+	1lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1l
+	IxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4
+	A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUmjgxUUUUU=
+X-CM-SenderInfo: xfdrxt1qj6v25zlqu0xpsx3x1qjou0bp/
 
-On Tue Nov 11, 2025 at 4:22 PM IST, Krzysztof Kozlowski wrote:
-> On 11/11/2025 11:37, Anshul Dalal wrote:
->> The bootloader on K3 devices makes use of mailboxes as per the ROM spec
->> which might be different than one's available to the kernel (firmware
->> spec).
->
-> Why is this RFC? You don't expect review?
->
+From: Hang Cao <caohang@eswincomputing.com>
 
-Oh my bad, I forgot to reset the b4 prefix. This patch isn't meant to be
-an RFC.
+Add support for ESWIN EIC7700 USB driver controller.
 
-I will incorporate rest of your feedback as well and post a v2.
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202511110121.BwTv4Fex-lkp@intel.com/
+Closes: https://lore.kernel.org/oe-kbuild-all/202511110504.qfGuRVHY-lkp@intel.com/
 
-Thanks for the review!
-Anshul
+Changes in v8->v7:
+- Updates: dwc3-generic-plat.c
+  - Update commit message with acked-by.
+  - Fix build error in in probe function.
+- Link to V7:https://lore.kernel.org/all/20251110024339.73-1-caohang@eswincomputing.com/
 
->>=20
->> Therefore, this patch adds the missing mailbox entries to the DT binding
->> to represent the mailboxes exposed by the hardware during boot for the
->> purpose of loading the firmware.
->>=20
->> Signed-off-by: Anshul Dalal <anshuld@ti.com>
->> ---
->>  Documentation/devicetree/bindings/arm/keystone/ti,sci.yaml | 10 +++++++=
-++-
->>  1 file changed, 9 insertions(+), 1 deletion(-)
->>=20
->> diff --git a/Documentation/devicetree/bindings/arm/keystone/ti,sci.yaml =
-b/Documentation/devicetree/bindings/arm/keystone/ti,sci.yaml
->> index 25a2b42105e541cb3c8ad12a0dfec1af038fa907..b5f48647a0f09bb930f052ea=
-0f84a78525c925eb 100644
->> --- a/Documentation/devicetree/bindings/arm/keystone/ti,sci.yaml
->> +++ b/Documentation/devicetree/bindings/arm/keystone/ti,sci.yaml
->> @@ -51,15 +51,23 @@ properties:
->>      minItems: 1
->> =20
->>    mbox-names:
->> +    minItems: 2
->> +    maxItems: 6
->>      description: |
->>        Specifies the mailboxes used to communicate with TI-SCI Controlle=
-r
->> -      made available from TI-SCI controller.
->> +      made available from TI-SCI controller. All boot_* mailboxes are u=
-sed by
->> +      the first stage bootloader to load firmware for the device.
->
-> Description does not go to mbox-names, but to mboxes.
->
->>      items:
->>        - const: rx
->>        - const: tx
->> +      - const: notify
->> +      - const: boot_rx
->> +      - const: boot_tx
->> +      - const: boot_notify
->> =20
->>    mboxes:
->>      minItems: 2
->> +    maxItems: 6
->
-> You need to list the items instead.
->
->> =20
->>    ti,host-id:
->>      $ref: /schemas/types.yaml#/definitions/uint32
->
-> You should update the example so it will be complete.
->
-> Best regards,
-> Krzysztof
+Changes in v7->v6:
+- Updates: dwc3-generic-plat.c
+  - Rename dwc3_plat_config to dwc3_generic_config.
+  - Refine the error message in probe function.
+- Link to V6:https://lore.kernel.org/all/20251106104938.1386-1-caohang@eswincomputing.com/
+
+Changes in v6->v5:
+- Updates: dwc3-generic-plat.c
+  - Update commit message.
+  - Add dwc3_plat_config structure.
+  - Add dwc3_eic7700_init function.
+- Link to V5:https://lore.kernel.org/all/20251104065045.1464-1-caohang@eswincomputing.com/
+
+Changes in v5->v4:
+- Updates: eswin,eic7700-usb.yaml
+  -  Remove the unnecessary properties of quirk.
+
+- Updates: dwc3-generic-plat.c
+  - Rebase to usb-testing branch of gregkh/usb.git.
+  - Removed .data
+- Link to V4:https://lore.kernel.org/all/20251016094654.708-1-caohang@eswincomputing.com/
+- Link to gregkh/usb.git:https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git/tree/?h=usb-next
+
+Changes in v4->v3:
+- Updates:
+  - Removed config option patch dependency from cover letter, because the patch
+    was applied.
+  - Remove dwc3-eic7700.c instead of dwc3-generic-plat.c.
+
+- Updates: eswin,eic7700-usb.yaml
+  - Add usb_en clock.
+  - Add usb_rst reset.
+  - Update eswin,hsp-sp-csr description.
+  - Remove the last two unused items of eswin,hsp-sp-csr.
+
+- Updates: dwc3-generic-plat.c
+  - Add eswin,eic7700-dwc3 to the compatible table.
+  - Add the dwc3_generic_match_data structure.
+  - Add the eic7700_dwc3_bus_init function to initialize the bus.
+  - Add the init_ops callback in the probe function.
+- Link to V3: https://lore.kernel.org/all/20250915085329.2058-1-caohang@eswincomputing.com/
+
+Changes in v3->v2:
+- Updates: eswin,eic7700-usb.yaml
+  - Sort the attributes according to the DTS coding style.
+  - Remove the #address-cells and #size-cells attributes.
+  - Fold the child node into the parent.
+  - Update commit message.
+
+- Updates: dwc3-eic7700.c
+  - Use dwc3 core as a library.
+  - Add system and runtime pm.
+  - Use pm_ptr and remove the __maybe_unused tags.
+  - Add new author name
+  - Add prepare and complete function
+  - Update commit message.
+- Link to V2: https://lore.kernel.org/lkml/20250730073953.1623-1-zhangsenchuan@eswincomputing.com/
+
+Changes in v2->v1:
+- Updates: eswin,eic7700-usb.yaml
+  - Drop the redundant descriptions.
+  - Supplement the constraints of resets.
+  - Replace "eswin,hsp_sp_csr" with "eswin,hsp-sp-csr"
+    and add items description.
+  - Drop numa-node-id, This is not necessary.
+  - Add patternProperties and match the rules defined
+    in the "snps,dwc3.yaml" file.
+  - Add "#address-cells" "#size-cells".
+  - Update the space indentation, remove the redundant labels,
+    and sort the attributes according to the DTS encoding style.
+  - Drop the "status = "disabled" attribute.
+  - Update the common usb node names and fold the child
+    nodes into the parent nodes.
+  - The warning detected by the robot has been resolved.
+
+- Updates: dwc3-eic7700.c
+  - Remove dwc3_mode_show dwc3_mode_store dwc3_eswin_get_extcon_dev,
+    dwc3_eswin_device_notifier and dwc3_eswin_host_notifier, usb role
+    detection and switching are not supported.
+  - Remove the hub-rst attribute, remove the dwc3_hub_rst_show and
+    dwc3_hub_rst_store functions, this feature is not supported.
+  - Use syscon_regmap_lookup_by_phandle_args instead of the
+    syscon_regmap_lookup_by_phandle function.
+  - Use dev_err_probe in probe function.
+  - Drop mutex_lock, which is not required.
+  - Remove clk_prepare_enable and of_clk_get, and manage multiple
+    clocks using devm_clk_bulk_get_all_enabled.
+  - Remove the device_init_wakeup related functions, which were
+    used incorrectly.
+  - Remove MODULE_ALIAS, which is used incorrectly.
+  - The warning detected by the robot has been resolved.
+- Link to V1: https://lore.kernel.org/lkml/20250516095237.1516-1-zhangsenchuan@eswincomputing.com/
+
+Hang Cao (2):
+  dt-bindings: usb: Add ESWIN EIC7700 USB controller
+  usb: dwc3: eic7700: Add EIC7700 USB driver
+
+ .../bindings/usb/eswin,eic7700-usb.yaml       | 94 +++++++++++++++++++
+ drivers/usb/dwc3/dwc3-generic-plat.c          | 71 ++++++++++++--
+ 2 files changed, 158 insertions(+), 7 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/usb/eswin,eic7700-usb.yaml
+
+--
+2.34.1
 
 
