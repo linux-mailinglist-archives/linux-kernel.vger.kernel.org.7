@@ -1,197 +1,182 @@
-Return-Path: <linux-kernel+bounces-898149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B8F6C547A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 21:36:41 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37309C5474B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 21:31:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E3DBB4E418F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 20:30:49 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 412D03430AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 20:31:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10BB12D1911;
-	Wed, 12 Nov 2025 20:30:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F7AC2D131D;
+	Wed, 12 Nov 2025 20:31:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="y6zEPjHL"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="fKQ/aivs"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBED71531F9
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 20:30:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 703C32C15A0
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 20:30:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762979440; cv=none; b=Bbz314jAWqkdY5ZWyLhuX2A9Z0rlsrc1t58iYAn5b5nIV6+f0fFAld4uZPAt1b/rqe0NLriksEEfrjJ6l6rJ3vbwrFKI29+AjC8ysWKj/yrt3uATyPeu2xvts5ZQNaE+VunGE1Ons5B/IgefP+HKVrVkQmWiI2ODXEAPr8CFbgE=
+	t=1762979461; cv=none; b=DiTrVChgfZR20rviRx9Rcw49B/b7b38V3cld9PHz7WVFkOB67+Xbg9OmPx63huiVMHHvJA1uBniSbHNdxsBu+f/EC1cxH54XF5+vL4Ks2moG4Wbr2LMJUXOl6DkUhzqsZUHEQsA9oFaQji3VT7MCi5cE/vTPB8kLWufQl7/Lx5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762979440; c=relaxed/simple;
-	bh=pP25ULvqx4PA1SCsXvq9hbO/tKY4zzuP1G83Y3q2i8k=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=RnN8IxpZ/AAE8EG5RaCEeMYH0/MSoOMOmJZOJybYjIjCWSa5SuNG5rtfyD790t3jkFBzzLw/fLTWY/zhF+c6W4D9zyAJZfMtfZ5jJZ60C1bB0DOr1mWqVa+h+P469EnSCJO8XbXa//s0R0zWmG5I+s6fUirKQO8j0DXaxxR8M5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=y6zEPjHL; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b609c0f6522so129876a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 12:30:38 -0800 (PST)
+	s=arc-20240116; t=1762979461; c=relaxed/simple;
+	bh=kOM7+BU1YIthguYmgcMSdOiBt9UUIb0U6mtzZrgVI6g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=b54nQKm/4OsoDBV/EFiHm2fITi7E5vktfXfxbevndGVTQR4fUgqrCbKuubBSbR19K7uSkq1o1Ju1hTs4+/XXBZiicsfU7YzSVH/dhAdm+kBE0oztGEDTS0YXnwMT1lJgEj/B5/jiQykv0kLQityZvSP34HNMNUvRqR7IfF+gvvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=fKQ/aivs; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-429c82bf86bso55312f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 12:30:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762979438; x=1763584238; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=L3dNSj7TiHzSrBzKacws1VRc8Up4SYRhBM3gT9JOJwI=;
-        b=y6zEPjHL+zBXXVQsZ5BUO7efB1QOsJa08mAvWFEhu1znVuf8Hjfaj3oWk/Eh6x4akP
-         umKUNVKZOafUZyJeVID2f7L28CLsOMhSpQqnhG6a3cXWH43JGlL+eVNi4XQBbbO0IaNh
-         sKCMbXSLzHYUmykZNzG0dpC0JqFkylww2epBrE8D8JoCsPAkOdVOum8vaFTtM/w5DeR4
-         axPqGYfQGyARFdpSJLejL5r99u4uegP/TI0hmXTJif/40LY93hLwD+FZ0ybqfolvNeYW
-         p/MJ/nVX4nWtSCzjc7UoZJVeUCgEpy0jPRvQhe7emCG6JRlI9gxh4gIF7MbVkYv/QjdI
-         TUaQ==
+        d=suse.com; s=google; t=1762979458; x=1763584258; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=AP2d64WqTFzGeOFQ+5qPzI1m1QRdrXsf+Q314tyBbEo=;
+        b=fKQ/aivsD69B/2AQG4mPWIR6Ppgt7hSBJ1Fh1Ig9copOOByesNCtzXhnzK7iJmDp2c
+         rdnYyVRsMbTlJ5xVOfSao3JNEo0m9cW5mY0V8eFhvKV15uGCrosh1nmeKjKaOl9xhmF/
+         Bv4xfYR808KQf3j84OcVXLnuHuHziFvLp/RK4atGuvm0Nq4uiTgTOK+a8B13XHNdGSua
+         NDzpZogJGl9hpQSYKkl9mDJ4E0Xx12N0xrqyQYlmp3DkuLKShB0v4t4lSN1jLcJ5Hndy
+         cKIOBcTdOj7U2PoAVVEM9t66z19DFSzImJA3duN4KT+bkFmFPqr+h7M7DY5IFXtF/koZ
+         yH1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762979438; x=1763584238;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=L3dNSj7TiHzSrBzKacws1VRc8Up4SYRhBM3gT9JOJwI=;
-        b=TnuuO1vetf3rCiZmTeDcHCXB0rGR524qLdEiIE/rcl26dyqWA5Lt+0zSENeDQZOllI
-         cyvbCHqQWh70wRgyGFDub0yfHuGwnnWeKOj7uZ65O3otWIbDfLXBnnPZvKG2ri51gdn9
-         LtjREe76R8oOYJuOlrVGq6q45QtHrz+u3cONOoWe3H9W4Y5aVfSUXwiCDHSN/d/MEK0T
-         2KlmifXUQp0CKqAhehDt3kvL+mUFxcYk+J6Od4QWrEEj7v3C2Spm8lGAh6TfHI68Vfrl
-         oSRBGSubQf0XTKdQHWgno8K+NV00gSJhvnO0kWQERv+pkTMQchopPxb+KB6g2bpzywEn
-         KX2g==
-X-Forwarded-Encrypted: i=1; AJvYcCUDBcRYnCSOISz5OEbSsxqsqEA4GcvUGJmRlR0aVB6y2wEEuCIbImdr8dOZvYmiJo4c9Cz5boAHLdnTNN4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIR84W438HIQKONzu+QSXkXb2CRoHkCvjZdKNmSCcuse1Wsq/v
-	vQUsVLT4XTiMbJ50thP9/Hsqm0lN2IulBEtFjQpc42vrfFLRdqV7UeWomzBjkynGNp45dnoNNYz
-	sokHnCA==
-X-Google-Smtp-Source: AGHT+IFHpp7bNY375rv69dfJVKRP14JO7bDZ6Qzp4pJXKIQ9Tx1TN/S1z7ykvM7IVkTTEWv8EepdbXFLQ7U=
-X-Received: from pgbcw3.prod.google.com ([2002:a05:6a02:4283:b0:bac:a20:5eec])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:3d09:b0:346:331:97e4
- with SMTP id adf61e73a8af0-3590bd0b3e8mr5777964637.56.1762979438181; Wed, 12
- Nov 2025 12:30:38 -0800 (PST)
-Date: Wed, 12 Nov 2025 12:30:36 -0800
-In-Reply-To: <20251112183836.GBaRTULLaMWA5hkfT9@fat_crate.local>
+        d=1e100.net; s=20230601; t=1762979458; x=1763584258;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AP2d64WqTFzGeOFQ+5qPzI1m1QRdrXsf+Q314tyBbEo=;
+        b=pTaQ3CkxoWfPx3WfI1mNVIsRtmZViGs6DAieJOvIj15tmtGz6E43ffGmDW9nSz1iwm
+         4m9oLdFMMWPCTuPD8ibX7HL0splfhssckWJAj+iJGo44NSBbqnVFd2sIIgKWMCxw6Fje
+         lX3j6C7s99OK13XdNJpbKkoSSZ0C+5HcTpS8X+DG8bGogjKkkV8aRC8PJ++5M2yx5WOP
+         fGM7XgGMvIhd2mzFqAdjR3UZxq2D13HqEBk2lK2wcilVkyJs2AxIS9SmMwwm1B2I2OCH
+         15PJ5W369Zy1Xghs6f1c7P2j9aZ04QtQ1M8AQzAqJOeXKMiilUxnSB4YsivENeSsMB/U
+         Rl3w==
+X-Forwarded-Encrypted: i=1; AJvYcCWXnlf6c9dvO4LUhk0+95ZZmQ1Ca4/6QmQMDBaZbQhiLQuGGxU+girtmX2KiKnDOwy/tfYbvakYEpEgspg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQxC1FxjIGvXfy4KOrTOP7+JxeyM4yDg7rQJRZDcKLz4nvLuav
+	TwGYMf8+VA027Nf6Pz2pAiUuxsYNS5lSOITcP5O5P31wA72VmSx6HUcIv3FufQ5IErU=
+X-Gm-Gg: ASbGnctJdCqP4nasa+JmCfpcOw3M/Nl3EsPGuSEFY8w9/o9oJ+rS/5ahg0+CXEUDssI
+	+6P/7SgL+dePp27DmoxGTynnIw3c5SW3sHU+x33+0nILH9ScuHHNKkhLB5D/McgGowsIQY6JSSK
+	3C0YTUQEDESgjuP/wf/C1ElBy+ZJFdZkSkC+9Wqcm0Kh8R5PFIqYq/4n0kQ6OsC6WUUJeosdKNv
+	ifqKbUWAhYD+cNN0w14V62RBENyL0fty0f+JJhQZ2ejh13yx8LXQHNSA/q9ai1ApcV7cES6OiHT
+	Krm8LhD8OmVsjskJPQ9ywiMBbpX8KORBM/8QaUV6M6DScwRzHCWP69YAsaZpJuPNxt/ejCn1Uox
+	WvVZtaqxs4vMLe5kVfS3xym/hDX/cGClBeIeYI7bFzoM819YKYqqZhkdTvqNNOnneCJhBHt/cPD
+	vJDXoGljdX3nnH2/R82sHPagHB9qfq
+X-Google-Smtp-Source: AGHT+IH7qoeEeaDSvivNQBoKbfmaf8s+0DfrcnZwbNGDV0U23zo4yYtXfaWYobPSvm+PX/e3u4SgLQ==
+X-Received: by 2002:a05:6000:24c7:b0:40e:31a2:7efe with SMTP id ffacd0b85a97d-42b4bb98114mr4420838f8f.14.1762979457689;
+        Wed, 12 Nov 2025 12:30:57 -0800 (PST)
+Received: from ?IPV6:2403:580d:fda1::299? (2403-580d-fda1--299.ip6.aussiebb.net. [2403:580d:fda1::299])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7b750e400fdsm4249900b3a.17.2025.11.12.12.30.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Nov 2025 12:30:57 -0800 (PST)
+Message-ID: <74034783-1715-4020-a22b-45db6cd389be@suse.com>
+Date: Thu, 13 Nov 2025 07:00:53 +1030
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251031003040.3491385-1-seanjc@google.com> <20251031003040.3491385-5-seanjc@google.com>
- <20251112164144.GAaRS4yKgF0gQrLSnR@fat_crate.local> <aRTAlEaq-bI5AMFA@google.com>
- <20251112183836.GBaRTULLaMWA5hkfT9@fat_crate.local>
-Message-ID: <aRTubGCENf2oypeL@google.com>
-Subject: Re: [PATCH v4 4/8] KVM: VMX: Handle MMIO Stale Data in VM-Enter
- assembly via ALTERNATIVES_2
-From: Sean Christopherson <seanjc@google.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, 
-	Brendan Jackman <jackmanb@google.com>
-Content-Type: text/plain; charset="us-ascii"
-
-On Wed, Nov 12, 2025, Borislav Petkov wrote:
-> On Wed, Nov 12, 2025 at 09:15:00AM -0800, Sean Christopherson wrote:
-> > On Wed, Nov 12, 2025, Borislav Petkov wrote:
-> > > So this VMX_RUN_CLEAR_CPU_BUFFERS_FOR_MMIO bit gets set here:
-> > > 
-> > >         if (cpu_feature_enabled(X86_FEATURE_CLEAR_CPU_BUF_MMIO) &&
-> > >             kvm_vcpu_can_access_host_mmio(&vmx->vcpu))
-> > >                 flags |= VMX_RUN_CLEAR_CPU_BUFFERS_FOR_MMIO;
-> > > 
-> > > So how static and/or dynamic is this?
-> > 
-> > kvm_vcpu_can_access_host_mmio() is very dynamic.  It can be different between
-> > vCPUs in a VM, and can even change on back-to-back runs of the same vCPU.
-> 
-> Hmm, strange. Because looking at those things there:
-> 
-> root->has_mapped_host_mmio and vcpu->kvm->arch.has_mapped_host_mmio
-> 
-> they both read like something that a guest would set up once and that's it.
-> But what do I know...
-
-They're set based on what memory is mapped into the KVM-controlled page tables,
-e.g. into the EPT/NPT tables, that will be used by the vCPU for that VM-Enter.
-root->has_mapped_host_mmio is per page table.  vcpu->kvm->arch.has_mapped_host_mmio
-exists because of nastiness related to shadow paging; for all intents and purposes,
-I would just mentally ignore that one.
-
-> > > IOW, can you stick this into a simple variable which is unconditionally
-> > > updated and you can use it in X86_FEATURE_CLEAR_CPU_BUF_MMIO case and
-> > > otherwise it simply remains unused?
-> > 
-> > Can you elaborate?  I don't think I follow what you're suggesting.
-> 
-> So I was thinking if you could set a per-guest variable in
-> C - vmx_per_guest_clear_per_mmio or so and then test it in asm:
-> 
-> 		testb $1,vmx_per_guest_clear_per_mmio(%rip)
-> 		jz .Lskip_clear_cpu_buffers;
-> 		CLEAR_CPU_BUFFERS_SEQ;
-> 
-> .Lskip_clear_cpu_buffers:
-> 
-> gcc -O3 suggests also
-> 
-> 		cmpb   $0x0,vmx_per_guest_clear_per_mmio(%rip)
-> 
-> which is the same insn size...
-> 
-> The idea is to get rid of this first asm stashing things and it'll be a bit
-> more robust, I'd say.
-
-VMX "needs" to abuse RFLAGS no matter what, because RFLAGS is the only register
-that's available at the time of VMLAUNCH/VMRESUME.  On Intel, only RSP and
-RFLAGS are context switched via the VMCS, all other GPRs need to be context
-switch by software.  Which is why I didn't balk at Pawan's idea to use RFLAGS.ZF
-to track whether or not a VERW for MMIO is needed.
-
-Hmm, actually, @flags is already on the stack because it's needed at VM-Exit.
-Using EBX was a holdover from the conversion from inline asm to "proper" asm,
-e.g. from commit 77df549559db ("KVM: VMX: Pass @launched to the vCPU-run asm via
-standard ABI regs").
-
-Oooh, and if we stop using bt+RFLAGS.CF, then we drop the annoying SHIFT definitions
-in arch/x86/kvm/vmx/run_flags.h.
-
-Very lightly tested at this point, but I think this can all be simplified to
-
-	/*
-	 * Note, ALTERNATIVE_2 works in reverse order.  If CLEAR_CPU_BUF_VM is
-	 * enabled, do VERW unconditionally.  If CPU_BUF_VM_MMIO is enabled,
-	 * check @flags to see if the vCPU has access to host MMIO, and do VERW
-	 * if so.  Else, do nothing (no mitigations needed/enabled).
-	 */
-	ALTERNATIVE_2 "",									  \
-		      __stringify(testl $VMX_RUN_CLEAR_CPU_BUFFERS_FOR_MMIO, WORD_SIZE(%_ASM_SP); \
-				  jz .Lskip_clear_cpu_buffers;					  \
-				  VERW;								  \
-				  .Lskip_clear_cpu_buffers:),					  \
-		      X86_FEATURE_CLEAR_CPU_BUF_VM_MMIO,					  \
-		      __stringify(VERW), X86_FEATURE_CLEAR_CPU_BUF_VM
-
-	/* Check if vmlaunch or vmresume is needed */
-	testl $VMX_RUN_VMRESUME, WORD_SIZE(%_ASM_SP)
-	jz .Lvmlaunch
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 2/8] btrfs: move kfree out of btrfs_create_qgroup's
+ cleanup path
+To: Gladyshev Ilya <foxido@foxido.dev>
+Cc: Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
+ linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1762972845.git.foxido@foxido.dev>
+ <79f3f83eb5f693ad88b0cad9d37e2db214ba1491.1762972845.git.foxido@foxido.dev>
+Content-Language: en-US
+From: Qu Wenruo <wqu@suse.com>
+Autocrypt: addr=wqu@suse.com; keydata=
+ xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
+ 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
+ 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
+ 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
+ gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
+ AAHNGFF1IFdlbnJ1byA8d3F1QHN1c2UuY29tPsLAlAQTAQgAPgIbAwULCQgHAgYVCAkKCwIE
+ FgIDAQIeAQIXgBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXVgBQkQ/lqxAAoJEMI9kfOh
+ Jf6o+jIH/2KhFmyOw4XWAYbnnijuYqb/obGae8HhcJO2KIGcxbsinK+KQFTSZnkFxnbsQ+VY
+ fvtWBHGt8WfHcNmfjdejmy9si2jyy8smQV2jiB60a8iqQXGmsrkuR+AM2V360oEbMF3gVvim
+ 2VSX2IiW9KERuhifjseNV1HLk0SHw5NnXiWh1THTqtvFFY+CwnLN2GqiMaSLF6gATW05/sEd
+ V17MdI1z4+WSk7D57FlLjp50F3ow2WJtXwG8yG8d6S40dytZpH9iFuk12Sbg7lrtQxPPOIEU
+ rpmZLfCNJJoZj603613w/M8EiZw6MohzikTWcFc55RLYJPBWQ+9puZtx1DopW2jOwE0EWdWB
+ rwEIAKpT62HgSzL9zwGe+WIUCMB+nOEjXAfvoUPUwk+YCEDcOdfkkM5FyBoJs8TCEuPXGXBO
+ Cl5P5B8OYYnkHkGWutAVlUTV8KESOIm/KJIA7jJA+Ss9VhMjtePfgWexw+P8itFRSRrrwyUf
+ E+0WcAevblUi45LjWWZgpg3A80tHP0iToOZ5MbdYk7YFBE29cDSleskfV80ZKxFv6koQocq0
+ vXzTfHvXNDELAuH7Ms/WJcdUzmPyBf3Oq6mKBBH8J6XZc9LjjNZwNbyvsHSrV5bgmu/THX2n
+ g/3be+iqf6OggCiy3I1NSMJ5KtR0q2H2Nx2Vqb1fYPOID8McMV9Ll6rh8S8AEQEAAcLAfAQY
+ AQgAJgIbDBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXWBBQkQ/lrSAAoJEMI9kfOhJf6o
+ cakH+QHwDszsoYvmrNq36MFGgvAHRjdlrHRBa4A1V1kzd4kOUokongcrOOgHY9yfglcvZqlJ
+ qfa4l+1oxs1BvCi29psteQTtw+memmcGruKi+YHD7793zNCMtAtYidDmQ2pWaLfqSaryjlzR
+ /3tBWMyvIeWZKURnZbBzWRREB7iWxEbZ014B3gICqZPDRwwitHpH8Om3eZr7ygZck6bBa4MU
+ o1XgbZcspyCGqu1xF/bMAY2iCDcq6ULKQceuKkbeQ8qxvt9hVxJC2W3lHq8dlK1pkHPDg9wO
+ JoAXek8MF37R8gpLoGWl41FIUb3hFiu3zhDDvslYM4BmzI18QgQTQnotJH8=
+In-Reply-To: <79f3f83eb5f693ad88b0cad9d37e2db214ba1491.1762972845.git.foxido@foxido.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
-> And you don't rely on registers...
-> 
-> and when I say that, I now realize this is 32-bit too and you don't want to
-> touch regs - that's why you're stashing it - and there's no rip-relative on
-> 32-bit...
-> 
-> I dunno - it might get hairy but I would still opt for a different solution
-> instead of this fragile stashing in ZF. You could do a function which pushes
-> and pops a scratch register where you put the value, i.e., you could do
-> 
-> 	push %reg
-> 	mov var, %reg
-> 	test or cmp ...
-> 	...
-> 	jz skip...
-> skip:
-> 	pop %reg
-> 
-> It is still all together in one place instead of spreading it around like
-> that.
 
-FWIW, all GPRs except RSP are off limits.  But as above, getting at @flags via
-RSP is trivial.
+在 2025/11/13 05:19, Gladyshev Ilya 写道:
+> Relocate kfree() from the generic cleanup path to the specific error
+> exit where the allocation could leak. This prepares for future
+> simplification by allowing removal of the 'out' label and use of
+> mutex_guard for cleaner resource management.
+> 
+> Signed-off-by: Gladyshev Ilya <foxido@foxido.dev>
+> ---
+>   fs/btrfs/qgroup.c | 8 ++++----
+>   1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/btrfs/qgroup.c b/fs/btrfs/qgroup.c
+> index 9904bcfd3a60..a8474d0a9c58 100644
+> --- a/fs/btrfs/qgroup.c
+> +++ b/fs/btrfs/qgroup.c
+> @@ -1659,7 +1659,7 @@ int btrfs_create_qgroup(struct btrfs_trans_handle *trans, u64 qgroupid)
+>   	struct btrfs_fs_info *fs_info = trans->fs_info;
+>   	struct btrfs_root *quota_root;
+>   	struct btrfs_qgroup *qgroup;
+> -	struct btrfs_qgroup *prealloc = NULL;
+> +	struct btrfs_qgroup *prealloc;
+>   	int ret = 0;
+>   
+>   	mutex_lock(&fs_info->qgroup_ioctl_lock);
+> @@ -1681,18 +1681,18 @@ int btrfs_create_qgroup(struct btrfs_trans_handle *trans, u64 qgroupid)
+>   	}
+>   
+>   	ret = add_qgroup_item(trans, quota_root, qgroupid);
+> -	if (ret)
+> +	if (ret) {
+> +		kfree(prealloc);
+>   		goto out;
+> +	}
+>   
+>   	spin_lock(&fs_info->qgroup_lock);
+>   	qgroup = add_qgroup_rb(fs_info, prealloc, qgroupid);
+>   	spin_unlock(&fs_info->qgroup_lock);
+> -	prealloc = NULL;
+>   
+>   	ret = btrfs_sysfs_add_one_qgroup(fs_info, qgroup);
+>   out:
+>   	mutex_unlock(&fs_info->qgroup_ioctl_lock);
+
+You're not on the latest for-next branch, which has the following patch 
+applied doing the extra sanity checks:
+
+https://lore.kernel.org/linux-btrfs/20251024102143.236665-5-mssola@mssola.com/
+
+With the extra ASSERT()s, the old code makes more sense.
+
+Thanks,
+Qu
+> -	kfree(prealloc);
+>   	return ret;
+>   }
+>   
+
 
