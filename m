@@ -1,151 +1,187 @@
-Return-Path: <linux-kernel+bounces-896501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17BF2C508B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 05:39:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3592C508C9
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 05:41:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D483B3A8FB9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 04:38:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73EEF3B260E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 04:40:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6F852D73A8;
-	Wed, 12 Nov 2025 04:38:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8139F2D3231;
+	Wed, 12 Nov 2025 04:40:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="D7WNS7Eb"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DBWnBuvF"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78730262FF6;
-	Wed, 12 Nov 2025 04:38:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2D262D77F6
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 04:40:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762922331; cv=none; b=ervQ5RDh+VjeIUB4ACCUnUsV3p+R+pJsErm1AEl1rrLlE8Jjy6t2vj0rRbylL+++r6w74ikygGrXRnrYmTnHaIjsI1LeKoLR5SY+m9JOHQXlBqRO+5ztKdS1ktrpXWOKHP5oGyq3u+IncMKgjp2ysGlmh7ECd/B6rsxBX2D1Wic=
+	t=1762922406; cv=none; b=qB+oa1rA9zYA1/Mj5mZkuU3ig0efjl5grcYeRCJpSfIBZLEoZjnRcLq5L5SNULMXlkp8yjK/EA6nF0ITrMX6PVQp2srDOx4Ux6jqYWJ0o1rHG8fEB9SRkpdPV97yLDv4PIU1ZUD2wD0N3eV2jWl52H/Ni7c825FtEATSC33QSx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762922331; c=relaxed/simple;
-	bh=wrfnXTqj1a54O3v0leFzikk/6KI95YcRoT9sTgch9BM=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Chi+X5ABWzN0y6va9G031O+dSJyvUPB8H8tj/VTpF26htRsaOd1gk7MBoVbwTCSeFahWqFRPNlL2KbygiR16MBKfveIxN7cxOUwhmAG6zEONk+GUU4RVfYibxhp/d3hute5oBGntsU+LizC8LOkZsQVvXmRg+8amW/GHweuB130=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=D7WNS7Eb; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from mail.zytor.com (c-76-133-66-138.hsd1.ca.comcast.net [76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 5AC4bYDV542538
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-	Tue, 11 Nov 2025 20:37:51 -0800
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 5AC4bYDV542538
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025102301; t=1762922272;
-	bh=GMMOcY5k7WMRbb5RjzJJtEFLgKhj6ZkdpyvvaWniwlU=;
-	h=From:To:Subject:Date:In-Reply-To:References:From;
-	b=D7WNS7EbpirDhdlVdB86gK7uihe3y5A5N/RIwZLiGL8TO45lYCCPqR/KNi3sNWimE
-	 iyKjMIEFgzUQUr2FIjmvaS2Y5JbInKCBOo62CPe9x3AZMsNPwb4u+xzhFk5sB3LVxD
-	 zhQDlx99DArdwnKHQj2YA3O0f5obsoumWPfYaCjl7tT+O52dT41sIOxUGXbfwPxbJU
-	 Hlp6AnLql4DQQEgI/NSGfGkJIms2dV0toBRKwcbhxL2G7KeX1dOZcX5YSdBfLYVOAZ
-	 7iQBfnlgL7DxeFcghKxiB0wHCSmC+niGvrvdCcwQIV0KOSfFs+XfW2/PKhLuUmT7Af
-	 9ewipLxNs73wA==
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: "H. Peter Anvin" <hpa@zytor.com>, "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        =?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
-        Xin Li <xin@zytor.com>, Andrew Cooper <andrew.cooper3@citrix.com>,
-        Andy Lutomirski <luto@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
-        Borislav Petkov <bp@alien8.de>, Brian Gerst <brgerst@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>, James Morse <james.morse@arm.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Josh Poimboeuf <jpoimboe@kernel.org>, Kees Cook <kees@kernel.org>,
-        Nam Cao <namcao@linutronix.de>, Oleg Nesterov <oleg@redhat.com>,
-        Perry Yuan <perry.yuan@amd.com>, Thomas Gleixner <tglx@linutronix.de>,
-        Thomas Huth <thuth@redhat.com>, Uros Bizjak <ubizjak@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-sgx@vger.kernel.org, x86@kernel.org
-Subject: [PATCH v2 9/9] x86/entry/vdso32: when using int $0x80, use it directly
-Date: Tue, 11 Nov 2025 20:37:27 -0800
-Message-ID: <20251112043730.992152-10-hpa@zytor.com>
-X-Mailer: git-send-email 2.51.1
-In-Reply-To: <20251112043730.992152-1-hpa@zytor.com>
-References: <20251112043730.992152-1-hpa@zytor.com>
+	s=arc-20240116; t=1762922406; c=relaxed/simple;
+	bh=xzToIIp55hU2mNO52Zr9stfCSg2l608ZVtlIKKe4c3g=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=MM89Cw5qtl4+QBfVlSMl2ky33jxEHpuZhV/2zpaKNwUoDbMDQATyg+5y7qilpHxOoqmC+P0YEUDkIA3HL0Odrw83n2PY+UWj+G5CkxyBA5z+RscHRF9CottLf8kJV5rk9zaSChkFqANlUqEz3+WjVDeDFhOXSXqhHIfHMhkrVKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DBWnBuvF; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762922405; x=1794458405;
+  h=date:from:to:cc:subject:message-id;
+  bh=xzToIIp55hU2mNO52Zr9stfCSg2l608ZVtlIKKe4c3g=;
+  b=DBWnBuvFI09JB0mhte7WRtyTZdvvTPtEf7G990nrKlNXPuEn99POSwqr
+   k7zK2W09TfT6PLUmXCR+Qe8NYNXuM8lR983AhjEE1zmz0ofWk/dEkM6fe
+   VY6Pg1/EcRLv5SoB64z+yGKM6NxDVyFt1iD9qsMghWTrUPt12H6+Ki77i
+   xrPymlAyWpzxcSmaYMkL8GfUGFkBKffP8LzUflTWnHXq1h4OhvOzoWr6z
+   nkvOWrzM5EgGf2YO95jtua3bY34QkV/FvAFVgM+vJfY6i7etrYgMffjZH
+   GpQjCgQuYAPvBhhAEhyITmiWcrk9uDl1BWb6j4BTBHWhK3MHNJn6N+JII
+   A==;
+X-CSE-ConnectionGUID: MOfIVhkfQf66xHnfhpFTug==
+X-CSE-MsgGUID: 4RD8D3OtQAKTatXazRCGXQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11610"; a="90452782"
+X-IronPort-AV: E=Sophos;i="6.19,298,1754982000"; 
+   d="scan'208";a="90452782"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 20:40:04 -0800
+X-CSE-ConnectionGUID: QXldvjDnRRerMU0VaWSzFQ==
+X-CSE-MsgGUID: TiZ9aa/QS1G8Fkb7QZng6w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,298,1754982000"; 
+   d="scan'208";a="188886527"
+Received: from lkp-server01.sh.intel.com (HELO 7b01c990427b) ([10.239.97.150])
+  by orviesa009.jf.intel.com with ESMTP; 11 Nov 2025 20:40:03 -0800
+Received: from kbuild by 7b01c990427b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vJ2eG-0003pj-1h;
+	Wed, 12 Nov 2025 04:40:00 +0000
+Date: Wed, 12 Nov 2025 12:39:27 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+Subject: [gustavoars:testing/wfamnae-next20251110] BUILD REGRESSION
+ be928bdef109364ada67e15d004067a1770a36f0
+Message-ID: <202511121220.RJfA4kDQ-lkp@intel.com>
+User-Agent: s-nail v14.9.25
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-When neither sysenter32 nor syscall32 is available (on either
-FRED-capable 64-bit hardware or old 32-bit hardware), there is no
-reason to do a bunch of stack shuffling in __kernel_vsyscall.
-Unfortunately, just overwriting the initial "push" instructions will
-mess up the CFI annotations, so suffer the 3-byte NOP if not
-applicable.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git testing/wfamnae-next20251110
+branch HEAD: be928bdef109364ada67e15d004067a1770a36f0  RDMA/rxe: Avoid -Wflex-array-member-not-at-end warnings
 
-Similarly, inline the int $0x80 when doing inline system calls in the
-vdso instead of calling __kernel_vsyscall.
+Error/Warning (recently discovered and may have been fixed):
 
-Signed-off-by: H. Peter Anvin (Intel) <hpa@zytor.com>
----
- arch/x86/entry/vdso/vdso32/system_call.S | 18 ++++++++++++++----
- arch/x86/include/asm/vdso/sys_call.h     |  4 +++-
- 2 files changed, 17 insertions(+), 5 deletions(-)
+    https://lore.kernel.org/oe-kbuild-all/202511111408.FUkLQsGp-lkp@intel.com
+    https://lore.kernel.org/oe-kbuild-all/202511111702.50G2mceU-lkp@intel.com
 
-diff --git a/arch/x86/entry/vdso/vdso32/system_call.S b/arch/x86/entry/vdso/vdso32/system_call.S
-index 7b1c0f16e511..9157cf9c5749 100644
---- a/arch/x86/entry/vdso/vdso32/system_call.S
-+++ b/arch/x86/entry/vdso/vdso32/system_call.S
-@@ -14,6 +14,18 @@
- 	ALIGN
- __kernel_vsyscall:
- 	CFI_STARTPROC
-+
-+	/*
-+	 * If using int $0x80, there is no reason to muck about with the
-+	 * stack here. Unfortunately just overwriting the push instructions
-+	 * would mess up the CFI annotations, but it is only a 3-byte
-+	 * NOP in that case. This could be avoided by patching the
-+	 * vdso symbol table (not the code) and entry point, but that
-+	 * would a fair bit of tooling work or by simply compiling
-+	 * two different vDSO images, but that doesn't seem worth it.
-+	 */
-+	ALTERNATIVE "int $0x80; ret", "", X86_FEATURE_SYSFAST32
-+
- 	/*
- 	 * Reshuffle regs so that all of any of the entry instructions
- 	 * will preserve enough state.
-@@ -52,11 +64,9 @@ __kernel_vsyscall:
- 	#define SYSENTER_SEQUENCE	"movl %esp, %ebp; sysenter"
- 	#define SYSCALL_SEQUENCE	"movl %ecx, %ebp; syscall"
- 
--	/* If SYSENTER (Intel) or SYSCALL32 (AMD) is available, use it. */
--	ALTERNATIVE_2 "", SYSENTER_SEQUENCE, X86_FEATURE_SYSFAST32, \
--			  SYSCALL_SEQUENCE,  X86_FEATURE_SYSCALL32
-+	ALTERNATIVE SYSENTER_SEQUENCE, SYSCALL_SEQUENCE, X86_FEATURE_SYSCALL32
- 
--	/* Enter using int $0x80 */
-+	/* Re-enter using int $0x80 */
- 	int	$0x80
- SYM_INNER_LABEL(int80_landing_pad, SYM_L_GLOBAL)
- 
-diff --git a/arch/x86/include/asm/vdso/sys_call.h b/arch/x86/include/asm/vdso/sys_call.h
-index 6b1fbcdcbd5c..603ad8a83c66 100644
---- a/arch/x86/include/asm/vdso/sys_call.h
-+++ b/arch/x86/include/asm/vdso/sys_call.h
-@@ -27,7 +27,9 @@
- #define __sys_reg5	"r8"
- #define __sys_reg6	"r9"
- #else
--#define __sys_instr	"call __kernel_vsyscall"
-+#define __sys_instr	ALTERNATIVE("ds;ds;ds;int $0x80",	\
-+				    "call __kernel_vsyscall",	\
-+				    X86_FEATURE_SYSFAST32)
- #define __sys_clobber	"memory"
- #define __sys_nr(x,y)	__NR_ ## x ## y
- #define __sys_reg1	"ebx"
--- 
-2.51.1
+    drivers/scsi/aic94xx/aic94xx_sas.h:323:35: error: field 'ssp_cmd' has incomplete type
+    drivers/scsi/hisi_sas/hisi_sas.h:617:26: error: field has incomplete type 'struct ssp_command_iu'
+    drivers/scsi/hisi_sas/hisi_sas.h:617:47: error: field 'task' has incomplete type
+    drivers/scsi/hisi_sas/hisi_sas_v1_hw.c:1002:11: error: invalid application of 'sizeof' to an incomplete type 'struct ssp_command_iu'
+    drivers/scsi/hisi_sas/hisi_sas_v1_hw.c:1002:32: error: invalid application of 'sizeof' to incomplete type 'struct ssp_command_iu'
+    drivers/scsi/hisi_sas/hisi_sas_v2_hw.c:1779:11: error: invalid application of 'sizeof' to an incomplete type 'struct ssp_command_iu'
+    drivers/scsi/hisi_sas/hisi_sas_v2_hw.c:1779:25: error: invalid application of 'sizeof' to incomplete type 'struct ssp_command_iu'
 
+Error/Warning ids grouped by kconfigs:
+
+recent_errors
+|-- arc-randconfig-001-20251111
+|   |-- drivers-scsi-hisi_sas-hisi_sas.h:error:field-task-has-incomplete-type
+|   |-- drivers-scsi-hisi_sas-hisi_sas_v1_hw.c:error:invalid-application-of-sizeof-to-incomplete-type-struct-ssp_command_iu
+|   `-- drivers-scsi-hisi_sas-hisi_sas_v2_hw.c:error:invalid-application-of-sizeof-to-incomplete-type-struct-ssp_command_iu
+|-- s390-allmodconfig
+|   |-- drivers-scsi-hisi_sas-hisi_sas.h:error:field-has-incomplete-type-struct-ssp_command_iu
+|   |-- drivers-scsi-hisi_sas-hisi_sas_v1_hw.c:error:invalid-application-of-sizeof-to-an-incomplete-type-struct-ssp_command_iu
+|   `-- drivers-scsi-hisi_sas-hisi_sas_v2_hw.c:error:invalid-application-of-sizeof-to-an-incomplete-type-struct-ssp_command_iu
+`-- sparc-allmodconfig
+    `-- drivers-scsi-aic94xx-aic94xx_sas.h:error:field-ssp_cmd-has-incomplete-type
+
+elapsed time: 1481m
+
+configs tested: 71
+configs skipped: 2
+
+tested configs:
+alpha                   allnoconfig    gcc-15.1.0
+arc                     allnoconfig    gcc-15.1.0
+arc         randconfig-001-20251112    gcc-8.5.0
+arc         randconfig-002-20251112    gcc-9.5.0
+arm                     allnoconfig    clang-22
+arm                ep93xx_defconfig    clang-22
+arm                gemini_defconfig    clang-20
+arm            jornada720_defconfig    clang-22
+arm         randconfig-001-20251112    gcc-8.5.0
+arm         randconfig-002-20251112    clang-22
+arm         randconfig-003-20251112    clang-22
+arm         randconfig-004-20251112    gcc-14.3.0
+arm64                   allnoconfig    gcc-15.1.0
+arm64       randconfig-001-20251112    clang-22
+arm64       randconfig-002-20251112    gcc-10.5.0
+arm64       randconfig-003-20251112    gcc-8.5.0
+arm64       randconfig-004-20251112    clang-22
+csky                    allnoconfig    gcc-15.1.0
+csky        randconfig-001-20251112    gcc-13.4.0
+csky        randconfig-002-20251112    gcc-15.1.0
+hexagon                 allnoconfig    clang-22
+hexagon     randconfig-001-20251111    clang-22
+hexagon     randconfig-002-20251111    clang-16
+i386                    allnoconfig    gcc-14
+i386        randconfig-011-20251112    gcc-14
+i386        randconfig-012-20251112    gcc-14
+i386        randconfig-013-20251112    clang-20
+i386        randconfig-014-20251112    clang-20
+loongarch               allnoconfig    clang-22
+loongarch   randconfig-001-20251111    gcc-15.1.0
+loongarch   randconfig-002-20251111    gcc-15.1.0
+m68k                    allnoconfig    gcc-15.1.0
+microblaze              allnoconfig    gcc-15.1.0
+mips                    allnoconfig    gcc-15.1.0
+nios2                   allnoconfig    gcc-11.5.0
+nios2       randconfig-001-20251111    gcc-8.5.0
+nios2       randconfig-002-20251111    gcc-11.5.0
+openrisc                allnoconfig    gcc-15.1.0
+openrisc                  defconfig    gcc-15.1.0
+openrisc          or1ksim_defconfig    gcc-15.1.0
+parisc                  allnoconfig    gcc-15.1.0
+parisc      randconfig-001-20251111    gcc-9.5.0
+parisc      randconfig-002-20251111    gcc-8.5.0
+powerpc                 allnoconfig    gcc-15.1.0
+powerpc           ppa8548_defconfig    gcc-15.1.0
+powerpc             ppc64_defconfig    clang-22
+powerpc           rainier_defconfig    gcc-15.1.0
+powerpc     randconfig-001-20251111    gcc-8.5.0
+powerpc     randconfig-002-20251111    clang-22
+powerpc64   randconfig-002-20251111    gcc-12.5.0
+riscv                   allnoconfig    gcc-15.1.0
+s390                    allnoconfig    clang-22
+sh                      allnoconfig    gcc-15.1.0
+sh                        defconfig    gcc-15.1.0
+sh              edosk7760_defconfig    gcc-15.1.0
+sparc                   allnoconfig    gcc-15.1.0
+sparc       randconfig-001-20251112    gcc-8.5.0
+sparc       randconfig-002-20251112    gcc-14.3.0
+sparc64                   defconfig    clang-20
+sparc64     randconfig-001-20251112    gcc-8.5.0
+sparc64     randconfig-002-20251112    clang-20
+um                      allnoconfig    clang-22
+um                        defconfig    clang-22
+um                   i386_defconfig    gcc-14
+um          randconfig-001-20251112    gcc-14
+um          randconfig-002-20251112    gcc-14
+um                 x86_64_defconfig    clang-22
+x86_64                  allnoconfig    clang-20
+x86_64                    defconfig    gcc-14
+xtensa                  allnoconfig    gcc-15.1.0
+xtensa      randconfig-002-20251112    gcc-8.5.0
+
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
