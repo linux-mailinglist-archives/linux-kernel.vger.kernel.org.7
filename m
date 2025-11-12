@@ -1,381 +1,242 @@
-Return-Path: <linux-kernel+bounces-896506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64E7FC508BD
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 05:39:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C558FC508A8
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 05:38:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D931934C44E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 04:39:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C5283A93F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 04:37:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80C272E173B;
-	Wed, 12 Nov 2025 04:38:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FC062D5936;
+	Wed, 12 Nov 2025 04:37:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="i/IQlisW"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="YRUVOYqH";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="ZNWskUH0"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 786A22594BD;
-	Wed, 12 Nov 2025 04:38:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34F38262FF6
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 04:37:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762922331; cv=none; b=nNPshbnlC2gchhCunN5c3krjePovjAmkel3SzTGelRsHA9kaST408EbYP8AQVTGnpGQx3a/RrVXZuXGCFpaTCANTnEX6EDxW2E83YPkOUdLiFOd/PTbUedXT0Jjwe9QSU3h/AxTq6Nyf+3RrIyhAZvoBTPGAjWEFskn16r1hUZg=
+	t=1762922259; cv=none; b=u4uYOLhInkkQ6+AbayyltD7NiVTIJtbH1bMsWsfzV1jr/ngADTE9cel9Rp9i7eBO5KhuQmI8m9DQp6hfCqvh7o4IEe58kyxNqahvxUJfWsV3oUxENCvyC3n9PRxaljlYjFJrC3EufeWvOAG/gd3aVYcMO6zy+yaRRWb2GzzTjaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762922331; c=relaxed/simple;
-	bh=Z2D64GuUMELOolw9cKf4hzojFFY66C+zfDABA364ROY=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KSmhVBBgbj/v1Mt2ORJvC3vtpNEBWbJKBzEwJ/cEfAemtfS1Q6bBXveszR/bMnmZVj+T+aWvcn3jDeQqqbaQtHbqiwhK1e7MAA8tVb/s/zmWsACfIAbusCWE7iWRkQ4lRohZMUXHyULLPdJP2UvIjoJ6g9jxG1hxZc7HKHggOs0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=i/IQlisW; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from mail.zytor.com (c-76-133-66-138.hsd1.ca.comcast.net [76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 5AC4bYDT542538
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-	Tue, 11 Nov 2025 20:37:47 -0800
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 5AC4bYDT542538
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025102301; t=1762922269;
-	bh=DMqdBX9HO8+AZngQ2hCIyYV6RLWAiIgEKxARiQLqOYw=;
-	h=From:To:Subject:Date:In-Reply-To:References:From;
-	b=i/IQlisWVBkqsZ6VqZoTW83K3NVYrvQYBx0Y3VkaFX9h4lgeU4fUuaWq30rZcuIfu
-	 XxS/8UghVlWbL0SCp+tLs8Fk2bfBUHUipw/HU6f/H/nc0F2JzQYokibRdQER9Ie4hj
-	 c0RHigxm1QzqyUHYFgj3dOqwCl1+cnp4EXzXWDWsjiujzBy+V55yG8akBI7m236YLU
-	 fMMeyjFmYgfkdjPkTZMozP2KakLOnmUdmszea/IKCcggFtzUEQHAt0JRRp1xPis5og
-	 fFV3A9zysNWH0QZLfWebtuLgf82jFhrCqMVCOJX0gl+5XFk/9aL7qrfrGqvQQ201hn
-	 p7Q6pDw2hu7Sg==
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: "H. Peter Anvin" <hpa@zytor.com>, "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        =?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
-        Xin Li <xin@zytor.com>, Andrew Cooper <andrew.cooper3@citrix.com>,
-        Andy Lutomirski <luto@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
-        Borislav Petkov <bp@alien8.de>, Brian Gerst <brgerst@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>, James Morse <james.morse@arm.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Josh Poimboeuf <jpoimboe@kernel.org>, Kees Cook <kees@kernel.org>,
-        Nam Cao <namcao@linutronix.de>, Oleg Nesterov <oleg@redhat.com>,
-        Perry Yuan <perry.yuan@amd.com>, Thomas Gleixner <tglx@linutronix.de>,
-        Thomas Huth <thuth@redhat.com>, Uros Bizjak <ubizjak@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-sgx@vger.kernel.org, x86@kernel.org
-Subject: [PATCH v2 7/9] x86/vdso: abstract out vdso system call internals
-Date: Tue, 11 Nov 2025 20:37:25 -0800
-Message-ID: <20251112043730.992152-8-hpa@zytor.com>
-X-Mailer: git-send-email 2.51.1
-In-Reply-To: <20251112043730.992152-1-hpa@zytor.com>
-References: <20251112043730.992152-1-hpa@zytor.com>
+	s=arc-20240116; t=1762922259; c=relaxed/simple;
+	bh=V0vl5PYqOwt6P32dIC0YxQDIkv9JT71y2bFJQpFNggw=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=LFCKTsp282fMFF5gO72FBZ/uaCKaCTcIhL1tCXrB8cDDZ7esJpNiGKyBhjz+xs4zxmsA31mtVHZ7sti4JSbk9ZOsqw7yrhhK9jvMm4J0pOZnyd+U3gdcf2M7KNTL/1xLShv6I82hWAqAeOX10OXJYak2+GrIaUHbGxrOrPEeMDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=YRUVOYqH; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=ZNWskUH0; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AC0vJHn4006241
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 04:37:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	JVQKND3i2NbrdQnKxtCPDowADDAfakYZ28GFem/SIZo=; b=YRUVOYqHydXvvqvJ
+	HUw75CnuM4GykvZ71R0PbxjB03A3TQ6r2hZBoVoKba5/xTfAymnPHkc2K2HaZmm4
+	voV/kxXijn7kKo9kaGGOH5PrAvNlPPnVCcuQwYFeG0p+RD8ywA/lb2qpvbxHCn5k
+	+N9Qo4sVhGJkFxG7xS5nT93pGokTUL5mXzNMkltyrh+Rgsp9Gfd1yEVX1tm/T6Ia
+	kzGIV+pRmwAkVS0U63qw9EHmB3qW85DTPUebeHZrkdKGRCZuJMx4P/GkpWXAcJP6
+	NMiwJmfcnpQTLBPn7HGZPoV/VyEDAc2uFYIYF1koBp/6q2NikbvwygGJ1pVc3qnw
+	V3qgqw==
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4acg5bghm6-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 04:37:37 +0000 (GMT)
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-297d50cd8c4so10400415ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 20:37:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1762922256; x=1763527056; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=JVQKND3i2NbrdQnKxtCPDowADDAfakYZ28GFem/SIZo=;
+        b=ZNWskUH0w3LUaxoL87B6zSeGa4rF2raYomVC14qjWB8I1AG2xBrs++sgP1GEzJouY7
+         wETZHSvSQVsQTwiGiXFJF5KcPCfrIYPfsk5aUN1/rPmE99QAtZkZ6ZMa6RlG3I4YMM7R
+         Fhu5bJvWuU4wfEwYgp9V3jdUbg/en3lcS1nZigwnYkxx9mRfW8OXmKexeF2kzOu04Ocu
+         FD9WrvASdq5Py6ZHgKPZLO8t3iUcxaQ7UbWC3t52fRSapnrmvqRiDBvSbbR86Bq8pkaV
+         dVtR6CHMX/fDqiefbUpHFUYamYYwo6YQTHxWy6O7hirlMeb9orRMHUI3uSELZc6OLt+F
+         1A4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762922256; x=1763527056;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JVQKND3i2NbrdQnKxtCPDowADDAfakYZ28GFem/SIZo=;
+        b=MQyXrgDPI7mXDWv3gWrsKPGvpML+ipi8xu4DwiO7P5vVef+niDkKLqmmbp0EzTGIaL
+         Hh7VwKm3fzFXntxlyH/X8KLlOn8o8ZS6KUZC1DE/8iJII6uhl9IV4n/IEybuMZ11kX+C
+         emx9MTSdnqvcdjX/TjzLqRy3MbEruH4uMQbtQYtvIcryKXLwm03dD7QdHTzlB89Su7HM
+         1lQoYM9bcbmcETLf6Z2RGVuPOfoX4OCvAgKvzdC1vAGaFsvWMagkDigVjzVs2L3MeOCI
+         9x3udLuBhkRhRMdP4qktsLqyi9Zhjrw9IrxC9oD4L0XUSCmOzGJLCOQvrwYZc8tCEMHq
+         kBRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVsT2d6FPwknGvqp5T/Uwpn41cA7/bQrR8MlXLRjiRZB9O96f1WY0eWApgjmnenRvOUOJlwwrdOykGumUU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVt7yKM23dB3mNRr+bMfddd4tpB6IclOdpqSAu8+oopP/WsG2c
+	ikt4ogKOa5EhimJFBKZr2yHrbwECf5oMtpg/tZr5A3Y8mwQreYyzA1eNEwABE0blGVRN+4My7HB
+	9pOWOPjw+5b3wXSNlx9V9pS5pc9pSYbD2GhyF12Uw5zQNdomChrQBS2bDVQpZgdAxOlU=
+X-Gm-Gg: ASbGnct01WvfVII9bb/ID4kfh59ShY90Zn3/r42FmcULbcId/eIafBt3W5+v33qnuyO
+	I3ZLcQCRLbnrCesMgwny2ZujfZX6uZTXz5Q+glQt9WslgBqllahJzU/vsDD4I88FvaQhfSsLRdf
+	E4ODStYn6bv7HrN/BmsjWPf9SGZoWku9F/EsYQmk/9c4B+nVZNLGdmte4IYFL3hLOm53r0q3+32
+	2XW93oe67kCgacUBrU+MMiNto60+QMgvXUIZUbFfaIh1F36YeJeee7Uz9g38VT/AeuTLx5V/qa8
+	85vndqDB5pVNm3BcQy3x+4sC+ZCiPhHb+dwkaPzc6zZjMNfurBDUmkgqWQaE0x25MEpRrydcOnM
+	RUC9YhfPaR+xfYVRX2p/4+PN9V1JTWS/7emVOHkg=
+X-Received: by 2002:a17:902:d54f:b0:295:34ba:7afa with SMTP id d9443c01a7336-2984eddf6a5mr21874075ad.43.1762922256131;
+        Tue, 11 Nov 2025 20:37:36 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGgxphywwo7rj2wEd9u2tLC3LhciITf/QsO2ACTfPA2oFJMOF4ZYzAGhbaKJALeAsYksHv/aQ==
+X-Received: by 2002:a17:902:d54f:b0:295:34ba:7afa with SMTP id d9443c01a7336-2984eddf6a5mr21873455ad.43.1762922255302;
+        Tue, 11 Nov 2025 20:37:35 -0800 (PST)
+Received: from [192.168.31.147] ([49.43.242.220])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29852391df0sm2680995ad.3.2025.11.11.20.37.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Nov 2025 20:37:34 -0800 (PST)
+Message-ID: <68dbaf42-0d64-45f7-8410-ebcbae2da612@oss.qualcomm.com>
+Date: Wed, 12 Nov 2025 10:07:26 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+From: Hrishabh Rajput <hrishabh.rajput@oss.qualcomm.com>
+Subject: Re: [PATCH v5 1/2] firmware: qcom: scm: Register gunyah watchdog
+ device
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Pavan Kondeti <pavan.kondeti@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck
+ <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+References: <20251107-gunyah_watchdog-v5-0-4c6e3fb6eb17@oss.qualcomm.com>
+ <20251107-gunyah_watchdog-v5-1-4c6e3fb6eb17@oss.qualcomm.com>
+ <hbxtbaoavlsw7pbmg3cfkbyx4nacjfiikckhqgpvlggbh6hu5b@jyporqecfzni>
+ <263d1390-eff5-4846-b2c2-31f96fc3248e@quicinc.com>
+ <3794bb0e-5e2c-4d5e-8d81-d302fa36677c@quicinc.com>
+ <56aqammkwte3tcdzni2unufjp4t4yaqazzdkigrwqsxp3ghcqe@ppe2pjwg3hrl>
+ <60583236-692f-4605-9f56-f7dadb46558d@kernel.org>
+ <zbwcg5pkdspkcnvaitac6y5iko346qyuzuipqhkoedcaqm2dpa@zmszuwhm5q7z>
+ <6bebcf6c-9328-4cd6-b77c-a147338d607a@oss.qualcomm.com>
+ <nkh73mo4h5kj2lrz7paop7fn3ow2itxl5vh43muw6n5dxgmco3@tgvbmdxhbiqo>
+Content-Language: en-US
+In-Reply-To: <nkh73mo4h5kj2lrz7paop7fn3ow2itxl5vh43muw6n5dxgmco3@tgvbmdxhbiqo>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: BydYTIhO2OLZ4nMN724TCe4GP8kmlZ1s
+X-Proofpoint-GUID: BydYTIhO2OLZ4nMN724TCe4GP8kmlZ1s
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEyMDAzNCBTYWx0ZWRfX8F6GCZoStO+Q
+ Z+v+FCVL3PSQMSBKctYlyfGG/s7SjnIG5mZSXQA7l34/Fy9BgG3Bp3gEn0N53Qa5Vm+QBVVgWsi
+ 7b/NFV80URCn8xuJZ6HUjwjgSofSTVrlHpdd/W3TT6puFhIpFF5RaP0eF4QAON1Cd4UQepkYyHd
+ WTJV4xvG1eAIdayG0QUidj+ZZYydbW7LBHtnfmxeSnfzRuP7YZh1sotr6er1FmaRP3cYe3rTUxo
+ 21ePcYz9VjdNHc///3tl4p6KGW667pA6f9j+KBuPGgnnxJM7E3mKrH6t76qUd0vIg1V/BpYyZd8
+ KxM9pwnJI42pPTbPDH8dRHIGqpH8mgB+CFPoh+qqib5RvflGHa0NdpB4jR3ObbFozEDTqOgMi5I
+ EgQtaw2Pcp+bZiJ6lmdsyS0j+bjJ7g==
+X-Authority-Analysis: v=2.4 cv=YYawJgRf c=1 sm=1 tr=0 ts=69140f11 cx=c_pps
+ a=IZJwPbhc+fLeJZngyXXI0A==:117 a=5O+OyBe/A2HhBAuNR3RTDA==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=wXnSqrKzETg_ePB1FBQA:9 a=QEXdDO2ut3YA:10
+ a=uG9DUKGECoFWVXl0Dc02:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-12_01,2025-11-11_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 suspectscore=0 impostorscore=0 malwarescore=0 spamscore=0
+ priorityscore=1501 phishscore=0 lowpriorityscore=0 adultscore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511120034
 
-Abstract out the calling of true system calls from the vdso into
-macros.
 
-It has been a very long time since gcc did not allow %ebx or %ebp in
-inline asm in 32-bit PIC mode; remove the corresponding hacks.
+On 11/11/2025 8:35 PM, Dmitry Baryshkov wrote:
+> On Tue, Nov 11, 2025 at 07:30:59PM +0530, Hrishabh Rajput wrote:
+>> On 11/11/2025 5:52 PM, Dmitry Baryshkov wrote:
+>>> On Tue, Nov 11, 2025 at 11:41:51AM +0100, Krzysztof Kozlowski wrote:
+>>>> On 11/11/2025 11:34, Dmitry Baryshkov wrote:
+>>>>> On Tue, Nov 11, 2025 at 10:51:43AM +0530, Pavan Kondeti wrote:
+>>>>>> On Mon, Nov 10, 2025 at 09:43:53AM +0530, Pavan Kondeti wrote:
+>>>>>>> On Sat, Nov 08, 2025 at 07:26:46PM +0200, Dmitry Baryshkov wrote:
+>>>>>>>>> +static void qcom_scm_gunyah_wdt_free(void *data)
+>>>>>>>>> +{
+>>>>>>>>> +	struct platform_device *gunyah_wdt_dev = data;
+>>>>>>>>> +
+>>>>>>>>> +	platform_device_unregister(gunyah_wdt_dev);
+>>>>>>>>> +}
+>>>>>>>>> +
+>>>>>>>>> +static void qcom_scm_gunyah_wdt_init(struct qcom_scm *scm)
+>>>>>>>>> +{
+>>>>>>>>> +	struct platform_device *gunyah_wdt_dev;
+>>>>>>>>> +	struct device_node *np;
+>>>>>>>>> +	bool of_wdt_available;
+>>>>>>>>> +	int i;
+>>>>>>>>> +	uuid_t gunyah_uuid = UUID_INIT(0xc1d58fcd, 0xa453, 0x5fdb, 0x92, 0x65,
+>>>>>>>> static const?
+>>>>>>>>
+>>>>>>>>> +				       0xce, 0x36, 0x67, 0x3d, 0x5f, 0x14);
+>>>>>>>>> +	static const char * const of_wdt_compatible[] = {
+>>>>>>>>> +		"qcom,kpss-wdt",
+>>>>>>>>> +		"arm,sbsa-gwdt",
+>>>>>>>>> +	};
+>>>>>>>>> +
+>>>>>>>>> +	/* Bail out if we are not running under Gunyah */
+>>>>>>>>> +	if (!arm_smccc_hypervisor_has_uuid(&gunyah_uuid))
+>>>>>>>>> +		return;
+>>>>>>>> This rquires 'select HAVE_ARM_SMCCC_DISCOVERY'
+>>>>>>>>
+>>>>>>> Probably `depends on HAVE_ARM_SMCCC_DISCOVERY` is correct here.
+>>>>>>>
+>>>>>> Dmitry / Bjorn,
+>>>>>>
+>>>>>> We are debating on this internally on how to resolve this dependency
+>>>>>>
+>>>>>> - QCOM_SCM depends on HAVE_ARM_SMCCC_DISCOVERY which means restricting
+>>>>>>     QCOM_SCM compilation than what it is today.
+>>>>>>
+>>>>>> - Adding #ifdefry around arm_smccc_hypervisor_has_uuid usage in qcom scm driver
+>>>>>>
+>>>>>> - Adding stub for `arm_smccc_hypervisor_has_uuid()` which is not done
+>>>>>>     for any of the functions defined in drivers/firmware/smccc/smccc.c
+>>>>>>
+>>>>>> We are trending towards the first option above. Please let us know if
+>>>>>> you think otherwise.
+>>>>> The same as before: 'select HAVE_ARM_SMCCC_DISCOVERY'.
+>>>> HAVE_ARM_SMCCC_DISCOVERY has a dependency which is not always selected
+>>>> (e.g. ARM32), thus selecting it might lead to warnings of unmet
+>>>> dependencies.
+>>> Then `if (!IS_ENABLED(CONFIG_HAVE_ARM_SMCCC_DISCOVERY))` might be a good
+>>> option here (and depend on GICv3 selecting it).
+>> Thanks a lot Dmitry, wemade the change below and compile tested on various
+>> architectures (ARM64, ARM32, x86, PowerPC, RISC-V and MIPS) and it was
+>> success.
+>>
+>> We will include it in our next patch version, if there are no further
+>> concerns.
+>>
+>> }; /* Bail out if we are not running under Gunyah */ - if
+>> (!arm_smccc_hypervisor_has_uuid(&gunyah_uuid)) + if
+>> (!IS_ENABLED(CONFIG_HAVE_ARM_SMCCC_DISCOVERY) || +
+>> !arm_smccc_hypervisor_has_uuid(&gunyah_uuid)) return; /*
+> Unreadable. Don't you read what you are sending?
 
-Remove the use of memory output constraints in gettimeofday.h in favor
-of "memory" clobbers. The resulting code is identical for the current
-use cases, as the system call is usually a terminal fallback anyway,
-and it merely complicates the macroization.
+Sorry, my mail client messed up the formatting while sending. Here is 
+the proper version:
 
-This patch adds only a handful of more lines of code than it removes,
-and in fact could be made substantially smaller by removing the macros
-for the argument counts that aren't currently used, however, it seems
-better to be general from the start.
+/* Bail out if we are not running under Gunyah */
+-	if (!arm_smccc_hypervisor_has_uuid(&gunyah_uuid))
++	if (!IS_ENABLED(CONFIG_HAVE_ARM_SMCCC_DISCOVERY) ||
++	    !arm_smccc_hypervisor_has_uuid(&gunyah_uuid))
+		return;
 
-Signed-off-by: H. Peter Anvin (Intel) <hpa@zytor.com>
----
- arch/x86/include/asm/vdso/gettimeofday.h | 108 ++------------------
- arch/x86/include/asm/vdso/sys_call.h     | 119 +++++++++++++++++++++++
- 2 files changed, 127 insertions(+), 100 deletions(-)
- create mode 100644 arch/x86/include/asm/vdso/sys_call.h
-
-diff --git a/arch/x86/include/asm/vdso/gettimeofday.h b/arch/x86/include/asm/vdso/gettimeofday.h
-index 73b2e7ee8f0f..3cf214cc4a75 100644
---- a/arch/x86/include/asm/vdso/gettimeofday.h
-+++ b/arch/x86/include/asm/vdso/gettimeofday.h
-@@ -18,6 +18,7 @@
- #include <asm/msr.h>
- #include <asm/pvclock.h>
- #include <clocksource/hyperv_timer.h>
-+#include <asm/vdso/sys_call.h>
- 
- #define VDSO_HAS_TIME 1
- 
-@@ -53,130 +54,37 @@ extern struct ms_hyperv_tsc_page hvclock_page
- 	__attribute__((visibility("hidden")));
- #endif
- 
--#ifndef BUILD_VDSO32
--
- static __always_inline
- long clock_gettime_fallback(clockid_t _clkid, struct __kernel_timespec *_ts)
- {
--	long ret;
--
--	asm ("syscall" : "=a" (ret), "=m" (*_ts) :
--	     "0" (__NR_clock_gettime), "D" (_clkid), "S" (_ts) :
--	     "rcx", "r11");
--
--	return ret;
-+	return VDSO_SYSCALL2(clock_gettime,64,_clkid,_ts);
- }
- 
- static __always_inline
- long gettimeofday_fallback(struct __kernel_old_timeval *_tv,
- 			   struct timezone *_tz)
- {
--	long ret;
--
--	asm("syscall" : "=a" (ret) :
--	    "0" (__NR_gettimeofday), "D" (_tv), "S" (_tz) : "memory");
--
--	return ret;
-+	return VDSO_SYSCALL2(gettimeofday,,_tv,_tz);
- }
- 
- static __always_inline
- long clock_getres_fallback(clockid_t _clkid, struct __kernel_timespec *_ts)
- {
--	long ret;
--
--	asm ("syscall" : "=a" (ret), "=m" (*_ts) :
--	     "0" (__NR_clock_getres), "D" (_clkid), "S" (_ts) :
--	     "rcx", "r11");
--
--	return ret;
-+	return VDSO_SYSCALL2(clock_getres,_time64,_clkid,_ts);
- }
- 
--#else
--
--static __always_inline
--long clock_gettime_fallback(clockid_t _clkid, struct __kernel_timespec *_ts)
--{
--	long ret;
--
--	asm (
--		"mov %%ebx, %%edx \n"
--		"mov %[clock], %%ebx \n"
--		"call __kernel_vsyscall \n"
--		"mov %%edx, %%ebx \n"
--		: "=a" (ret), "=m" (*_ts)
--		: "0" (__NR_clock_gettime64), [clock] "g" (_clkid), "c" (_ts)
--		: "edx");
--
--	return ret;
--}
-+#ifndef CONFIG_X86_64
- 
- static __always_inline
- long clock_gettime32_fallback(clockid_t _clkid, struct old_timespec32 *_ts)
- {
--	long ret;
--
--	asm (
--		"mov %%ebx, %%edx \n"
--		"mov %[clock], %%ebx \n"
--		"call __kernel_vsyscall \n"
--		"mov %%edx, %%ebx \n"
--		: "=a" (ret), "=m" (*_ts)
--		: "0" (__NR_clock_gettime), [clock] "g" (_clkid), "c" (_ts)
--		: "edx");
--
--	return ret;
--}
--
--static __always_inline
--long gettimeofday_fallback(struct __kernel_old_timeval *_tv,
--			   struct timezone *_tz)
--{
--	long ret;
--
--	asm(
--		"mov %%ebx, %%edx \n"
--		"mov %2, %%ebx \n"
--		"call __kernel_vsyscall \n"
--		"mov %%edx, %%ebx \n"
--		: "=a" (ret)
--		: "0" (__NR_gettimeofday), "g" (_tv), "c" (_tz)
--		: "memory", "edx");
--
--	return ret;
-+	return VDSO_SYSCALL2(clock_gettime,,_clkid,_ts);
- }
- 
- static __always_inline long
--clock_getres_fallback(clockid_t _clkid, struct __kernel_timespec *_ts)
--{
--	long ret;
--
--	asm (
--		"mov %%ebx, %%edx \n"
--		"mov %[clock], %%ebx \n"
--		"call __kernel_vsyscall \n"
--		"mov %%edx, %%ebx \n"
--		: "=a" (ret), "=m" (*_ts)
--		: "0" (__NR_clock_getres_time64), [clock] "g" (_clkid), "c" (_ts)
--		: "edx");
--
--	return ret;
--}
--
--static __always_inline
--long clock_getres32_fallback(clockid_t _clkid, struct old_timespec32 *_ts)
-+clock_getres32_fallback(clockid_t _clkid, struct old_timespec32 *_ts)
- {
--	long ret;
--
--	asm (
--		"mov %%ebx, %%edx \n"
--		"mov %[clock], %%ebx \n"
--		"call __kernel_vsyscall \n"
--		"mov %%edx, %%ebx \n"
--		: "=a" (ret), "=m" (*_ts)
--		: "0" (__NR_clock_getres), [clock] "g" (_clkid), "c" (_ts)
--		: "edx");
--
--	return ret;
-+	return VDSO_SYSCALL2(clock_getres,,_clkid,_ts);
- }
- 
- #endif
-diff --git a/arch/x86/include/asm/vdso/sys_call.h b/arch/x86/include/asm/vdso/sys_call.h
-new file mode 100644
-index 000000000000..6b1fbcdcbd5c
---- /dev/null
-+++ b/arch/x86/include/asm/vdso/sys_call.h
-@@ -0,0 +1,119 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Macros for issuing an inline system call from the vDSO.
-+ */
-+
-+#ifndef X86_ASM_VDSO_SYS_CALL_H
-+#define X86_ASM_VDSO_SYS_CALL_H
-+
-+#include <linux/compiler.h>
-+#include <asm/cpufeatures.h>
-+#include <asm/alternative.h>
-+
-+/*
-+ * Note: only three arguments are currently supported,
-+ * because there are no constraint letters for r10, r8, r9.
-+ */
-+#ifdef CONFIG_X86_64
-+/* Using dummy output registers instead of clobbers avoids messing up
-+   user-specified clobbers. */
-+#define __sys_instr	"syscall"
-+#define __sys_clobber	"rcx", "r11", "memory"
-+#define __sys_nr(x,y)	__NR_ ## x
-+#define __sys_reg1	"rdi"
-+#define __sys_reg2	"rsi"
-+#define __sys_reg3	"rdx"
-+#define __sys_reg4	"r10"
-+#define __sys_reg5	"r8"
-+#define __sys_reg6	"r9"
-+#else
-+#define __sys_instr	"call __kernel_vsyscall"
-+#define __sys_clobber	"memory"
-+#define __sys_nr(x,y)	__NR_ ## x ## y
-+#define __sys_reg1	"ebx"
-+#define __sys_reg2	"ecx"
-+#define __sys_reg3	"edx"
-+#define __sys_reg4	"esi"
-+#define __sys_reg5	"edi"
-+#define __sys_reg6	"ebp"
-+#endif
-+
-+/*
-+ * Example usage:
-+ *
-+ * result = VDSO_SYSCALL3(foo,64,x,y,z);
-+ *
-+ * ... calls foo(x,y,z) on 64 bits, and foo64(x,y,z) on 32 bits.
-+ */
-+#define _VDSO_SYSCALL(name,suf32,...)					\
-+	({								\
-+		long _sys_num_ret = __sys_nr(name,suf32);		\
-+		asm_inline volatile(					\
-+			__sys_instr					\
-+			: "+a" (_sys_num_ret)				\
-+			: __VA_ARGS__					\
-+			: __sys_clobber);				\
-+		_sys_num_ret;						\
-+	})
-+
-+#define VDSO_SYSCALL0(name,suf32)					\
-+	_VDSO_SYSCALL(name,suf32)
-+#define VDSO_SYSCALL1(name,suf32,a1)					\
-+	({								\
-+		register long _sys_arg1 asm(__sys_reg1) = (long)(a1);	\
-+		_VDSO_SYSCALL(name,suf32,				\
-+			      "r" (_sys_arg1));				\
-+	})
-+#define VDSO_SYSCALL2(name,suf32,a1,a2)				\
-+	({								\
-+		register long _sys_arg1 asm(__sys_reg1) = (long)(a1);	\
-+		register long _sys_arg2 asm(__sys_reg2) = (long)(a2);	\
-+		_VDSO_SYSCALL(name,suf32,				\
-+			      "r" (_sys_arg1), "r" (_sys_arg2));	\
-+	})
-+#define VDSO_SYSCALL3(name,suf32,a1,a2,a3)				\
-+	({								\
-+		register long _sys_arg1 asm(__sys_reg1) = (long)(a1);	\
-+		register long _sys_arg2 asm(__sys_reg2) = (long)(a2);	\
-+		register long _sys_arg3 asm(__sys_reg3) = (long)(a3);	\
-+		_VDSO_SYSCALL(name,suf32,				\
-+			      "r" (_sys_arg1), "r" (_sys_arg2),		\
-+			      "r" (_sys_arg3));				\
-+	})
-+#define VDSO_SYSCALL4(name,suf32,a1,a2,a3,a4)				\
-+	({								\
-+		register long _sys_arg1 asm(__sys_reg1) = (long)(a1);	\
-+		register long _sys_arg2 asm(__sys_reg2) = (long)(a2);	\
-+		register long _sys_arg3 asm(__sys_reg3) = (long)(a3);	\
-+		register long _sys_arg4 asm(__sys_reg4) = (long)(a4);	\
-+		_VDSO_SYSCALL(name,suf32,				\
-+			      "r" (_sys_arg1), "r" (_sys_arg2),		\
-+			      "r" (_sys_arg3), "r" (_sys_arg4));	\
-+	})
-+#define VDSO_SYSCALL5(name,suf32,a1,a2,a3,a4,a5)			\
-+	({								\
-+		register long _sys_arg1 asm(__sys_reg1) = (long)(a1);	\
-+		register long _sys_arg2 asm(__sys_reg2) = (long)(a2);	\
-+		register long _sys_arg3 asm(__sys_reg3) = (long)(a3);	\
-+		register long _sys_arg4 asm(__sys_reg4) = (long)(a4);	\
-+		register long _sys_arg5 asm(__sys_reg5) = (long)(a5);	\
-+		_VDSO_SYSCALL(name,suf32,				\
-+			      "r" (_sys_arg1), "r" (_sys_arg2),		\
-+			      "r" (_sys_arg3), "r" (_sys_arg4),		\
-+			      "r" (_sys_arg5));				\
-+	})
-+#define VDSO_SYSCALL6(name,suf32,a1,a2,a3,a4,a5,a6)			\
-+	({								\
-+		register long _sys_arg1 asm(__sys_reg1) = (long)(a1);	\
-+		register long _sys_arg2 asm(__sys_reg2) = (long)(a2);	\
-+		register long _sys_arg3 asm(__sys_reg3) = (long)(a3);	\
-+		register long _sys_arg4 asm(__sys_reg4) = (long)(a4);	\
-+		register long _sys_arg5 asm(__sys_reg5) = (long)(a5);	\
-+		register long _sys_arg6 asm(__sys_reg6) = (long)(a6);	\
-+		_VDSO_SYSCALL(name,suf32,				\
-+			      "r" (_sys_arg1), "r" (_sys_arg2),		\
-+			      "r" (_sys_arg3), "r" (_sys_arg4),		\
-+			      "r" (_sys_arg5), "r" (_sys_arg6));	\
-+	})
-+
-+#endif /* X86_VDSO_SYS_CALL_H */
--- 
-2.51.1
+Thanks,
+Hrishabh
 
 
