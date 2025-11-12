@@ -1,169 +1,96 @@
-Return-Path: <linux-kernel+bounces-896847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB531C51618
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:36:42 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EAEEC5161B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:37:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 33A094F9653
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:29:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 58BB54F5E8D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:30:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 831B02FD665;
-	Wed, 12 Nov 2025 09:29:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95CA12DE71A;
+	Wed, 12 Nov 2025 09:30:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NM+LYDEE"
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gNv//GMs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56DE1274B28
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:29:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0A2835CBBE;
+	Wed, 12 Nov 2025 09:30:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762939789; cv=none; b=L90q3/dViJTLKV6XykK1JKozJ6BkujdwRgnGgq9H7ZdXrZS5UufppPk42e8p9Twab5/nd9mcJ8KZhOZmeI4FD+NBZl2VzbFM9/bX4sZ1wv/W4z0FbZkfymlfTPNn1l7mxg5QE4DS3AiRjhMY81a5tVyrMAMdl98lhJfsdCFAwew=
+	t=1762939821; cv=none; b=Qznb3/tIAx/cPjmg4J81VczQJIQ9KSjPG+UH9kAOa/29ozwts8ub+yq0L4gV5XaZk7JRFtnGbok60iOakEfqRV/rI8GpLglsLKmtKCSv4SC2wQxEN87KujzNcixevG845tuh3ipfgR3ENT150mmT3C5SRY01qRsdKLdp2X8jo7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762939789; c=relaxed/simple;
-	bh=/SrrSeNMAopqflkaPGG2jrixna9JAS5KOvMi4P6Q/Rk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uzJiu7OHEJztc3cxJ19J6yxd5w+kGKjMxXYabubwF8CZLxfvcob4tAhmBWAYYpbqw2NGCrCkD47TQ3bz1fWqWH8jAdytyI1YHogNXlmct3G+KaeLyV1xOr3sp51MfcI9z3aA+DYLKmDzacAVZy1dSU5HWCESLzoMHmu2LsdgfAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NM+LYDEE; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4ede12521d4so67251cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 01:29:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762939787; x=1763544587; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=a5TSHEBlUSLVv3QGJ9/nVqxUrLzu7sFbsdH5gS1hKkU=;
-        b=NM+LYDEEeU7PtJ/Dq5oG29OS1r3Z9aM1ZUApE0ApB3NfmPvibfZ7F+0zUgAxMtf6Ax
-         /kuA45pFkX5oY4CiDuGsv2ij0Epg8oZ4nnr5WEX10KNO91BJDIv1D5xOqdRwkE3eUNtj
-         QOksfLXKgjWK9+55B7JHzijB/HjAUQPpeSqNSMXisuWcK3drJeaj09VauYC5KuTwznB3
-         IOutVeb/GXBD/E6b3RGbxQdEmDZgtmCyIKFiS9aWiG+5dM450bClxwHabzBON3gR2zfV
-         A7KIlhyfxBDgwGHYp5b93eAPw9HP9PFYA5UeVoSohcdd3fqM7ZWZ+YPq4OjTibq6IY4a
-         XS1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762939787; x=1763544587;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=a5TSHEBlUSLVv3QGJ9/nVqxUrLzu7sFbsdH5gS1hKkU=;
-        b=WFk/v6erYxIgtO2YG+zv1lzYuhZfGKWDT9sjnRnnme3I2uFZHIcYSoeZCatwgZ4i2N
-         XGuN64gdTbmLomHilgUE2voyLmjEvYctUCD7+7abgh2DagdKbisT2xa/g3Mwz4IDZht/
-         dCHsyfD3GinftN2djWwX98vKqs7RLUV9o0VU5Zy5Ldqmtn52vaN82Ye7ufgvFvBhmuQ0
-         wNgvasJpjKHLwjDKiMJtHYr49k+xIC0jDXQHOqWNzQZclL1OebqHJ9JoWtEnBwugFFBd
-         zk6agbz8ucTkOgPSodWcK887bKcii9NFSgMJ3e5H+TdKY+JiMISBFqaHIbMXCfo9lf5E
-         1wOg==
-X-Forwarded-Encrypted: i=1; AJvYcCWT/rPiw7bGI25G/nJ7S63l6XwCMIcpq2cH1MN1YuRlwi1D4AAgTpd/czEPOBTbTKKGYt2Vgl7r5i3uaAY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTxz4DZdRdYp1haCSz2/XwKRVQtMJkue2rRxsrGiB/vTcpY54g
-	9Nyv3+HWGVEZBSezeu1zeBdGQcb04rdVpK5DBahAPMijxdcP+UwI2oiwB8642bkuFfEix+ItSHE
-	C8FP2rPr8tqVW16lR2wJQgUgzB5C2vkhqslTep3/T
-X-Gm-Gg: ASbGnctkNlzWNLUoBb3pQ22Qm9wGp//UGbfLlypsKqZBKOzUjWoLesgnxbWey7+aFll
-	QoS59r86DUptFiTALeye+2jQA6kZ0c7GnOk43qbHbbqv/bLqRx+jAuaSnXwWltvmrFJLFFgRz6X
-	/SG5RH1RcYeciOJvAAplk5I4HOcyb+YqczhAw6g0MQtriRkppIP0Cowj5F5oR7V7kbogJEAamwp
-	E470ANtomVNVHaWx2roZyM6HyYpLpzS1vbaa7CDCwiSHdamnzcPMCOxXE+c0s0iLQE8MExMaf5Y
-	mgk=
-X-Google-Smtp-Source: AGHT+IE1UnP9YAjW69wspkWvib/yFN91pFbf8yTPtTGC65vwyZrBTJvG/kZSA6tQtuJ7wkmUzlaLCIchCCfo3Zfw9WI=
-X-Received: by 2002:a05:622a:11c3:b0:4e4:f2b9:55aa with SMTP id
- d75a77b69052e-4eddd22ec83mr3792801cf.17.1762939786978; Wed, 12 Nov 2025
- 01:29:46 -0800 (PST)
+	s=arc-20240116; t=1762939821; c=relaxed/simple;
+	bh=myZtnclAawPVgzBw7lD6Ax1fgEcvob0QYVCxl9A+ZN8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Hx7iXj0ByOeiQDpdDGsv32r6uUuxUs5Tk5fkWylyBv8qJIOgWylPP2OlDe7bIaK2/7rJjoBjVyBTqIl4iFFWDpY8XHtJk8Zzj7pVPmzozlkRBT1HcH1c4I+W89LNObKnjCB2u8prTEhF1ZUvBbrKETdE2YEGYcUrgTxPRD7/WKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gNv//GMs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AAC8C19421;
+	Wed, 12 Nov 2025 09:30:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762939820;
+	bh=myZtnclAawPVgzBw7lD6Ax1fgEcvob0QYVCxl9A+ZN8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=gNv//GMskcRHIxfvcGAYa3jLxbGJOPeorWMZjF/r8ffpMVN+hC/1/2rJo3hOzvWxu
+	 rhK4NfBXR0NWkGa0zWgQQd4bXCXvhIjGNJrW/4J79UbdWOaSJDThzoLOcA3czGhLxp
+	 ZJ2E8VkHRXihBY/fhYlWWfQSDqCthTykZRHpAMfXCKQL7d4FMkUh+eUdx7672aZok8
+	 lmQyZDWbW3W4LVcXv09jriOKrgezGSIp42MIcVjuDEmseCYmmadHd3zFiOgikLn0iz
+	 2KsxG8h6vMT1yMhfchX/3bUedeqtagoswogBxrjd6ONoxGx85qJFlcqMVUlPCAhFwP
+	 YDGNjHaIrwoFA==
+From: Christian Brauner <brauner@kernel.org>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	viro@zeniv.linux.org.uk
+Subject: Re: [PATCH v2] fs: move fd_install() slowpath into a dedicated routine and provide commentary
+Date: Wed, 12 Nov 2025 10:30:15 +0100
+Message-ID: <20251112-mondfinsternis-rednerpult-f3efbf92cf8a@brauner>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20251110095634.1433061-1-mjguzik@gmail.com>
+References: <20251110095634.1433061-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251112063214.1195761-1-powenkao@google.com> <7d964e31162bf93f583e6e78a3044152894ecb94.camel@mediatek.com>
- <CA+=0d2YnrDL41DXtC8kDmtXioy4+hohGsmrOPxJY31jqt22uww@mail.gmail.com>
-In-Reply-To: <CA+=0d2YnrDL41DXtC8kDmtXioy4+hohGsmrOPxJY31jqt22uww@mail.gmail.com>
-From: Brian Kao <powenkao@google.com>
-Date: Wed, 12 Nov 2025 17:29:34 +0800
-X-Gm-Features: AWmQ_bm6yVAxBQBYLc5dlpBZPSzRJBuD2oWZ9PsLsko59Gxdh4yxUm5oFNzq8YQ
-Message-ID: <CA+=0d2ZpZkTw_2Wdnz4NKS3ZuoQHH5rESxKNkUNwkxdeM2tKMg@mail.gmail.com>
-Subject: Re: [PATCH 1/1] scsi: ufs: core: Fix EH failure after wlun resume error
-To: =?UTF-8?B?UGV0ZXIgV2FuZyAo546L5L+h5Y+LKQ==?= <peter.wang@mediatek.com>
-Cc: "beanhuo@micron.com" <beanhuo@micron.com>, "avri.altman@wdc.com" <avri.altman@wdc.com>, 
-	"quic_nguyenb@quicinc.com" <quic_nguyenb@quicinc.com>, 
-	"linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "bvanassche@acm.org" <bvanassche@acm.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"alim.akhtar@samsung.com" <alim.akhtar@samsung.com>, 
-	"adrian.hunter@intel.com" <adrian.hunter@intel.com>, "mani@kernel.org" <mani@kernel.org>, 
-	"James.Bottomley@HansenPartnership.com" <James.Bottomley@hansenpartnership.com>, 
-	"martin.petersen@oracle.com" <martin.petersen@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1070; i=brauner@kernel.org; h=from:subject:message-id; bh=myZtnclAawPVgzBw7lD6Ax1fgEcvob0QYVCxl9A+ZN8=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSKBC+XzjlQ5VxhalBR9uzaXqWsk7+2Kx5u+mf4Z0P6n DfJs8zPdZSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAExEqIGR4cP0HHZZHSHJH9Wd vRVVm+5nhHG8OpVfIKqaZPLX1+KME8P/8v2pse+7K5+vf5p+l9HspXTa1EUvgyfOemk6Qzg1YcU PDgA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-[RESEND using plain text]
+On Mon, 10 Nov 2025 10:56:34 +0100, Mateusz Guzik wrote:
+> On stock kernel gcc 14 emits avoidable register spillage:
+> 	endbr64
+> 	call   ffffffff81374630 <__fentry__>
+> 	push   %r13
+> 	push   %r12
+> 	push   %rbx
+> 	sub    $0x8,%rsp
+> 	[snip]
+> 
+> [...]
 
-Hi Peter,
+Applied to the vfs-6.19.misc branch of the vfs/vfs.git tree.
+Patches in the vfs-6.19.misc branch should appear in linux-next soon.
 
-This log actually is triggered by fault injection when wlun is suspended
-echo 0xf > /sys/kernel/debug/ufshcd/3c2d0000.ufs/saved_uic_err
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-In a real-world scenario, this situation can occur when an error
-interrupt calls `ufshcd_check_errors()`, which schedules the error
-handler before the system reaches `ufshcd_set_dev_pwr_mode()`.
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-Thanks,
-Brian
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.19.misc
 
-On Wed, Nov 12, 2025 at 5:18=E2=80=AFPM Brian Kao <powenkao@google.com> wro=
-te:
->
-> Hi Peter,
->
-> This log actually is triggered by fault injection when wlun is suspended
-> echo 0xf > /sys/kernel/debug/ufshcd/3c2d0000.ufs/saved_uic_err
->
-> In a real-world scenario, this situation can occur when an error interrup=
-t calls `ufshcd_check_errors()`, which schedules the error handler before t=
-he system reaches `ufshcd_set_dev_pwr_mode()`.
->
-> Thanks,
-> Brian
->
->
-> On Wed, Nov 12, 2025 at 4:17=E2=80=AFPM Peter Wang (=E7=8E=8B=E4=BF=A1=E5=
-=8F=8B) <peter.wang@mediatek.com> wrote:
->>
->> On Wed, 2025-11-12 at 06:32 +0000, Po-Wen Kao wrote:
->> >   google-ufshcd 3c2d0000.ufs: ufshcd_err_handler started; HBA state
->> > eh_fatal; ...
->> >   ufs_device_wlun 0:0:0:49488: START_STOP failed for power mode: 1,
->> > result 40000
->> >   ufs_device_wlun 0:0:0:49488: ufshcd_wl_runtime_resume failed: -5
->> >   ...
->> >   ufs_device_wlun 0:0:0:49488: runtime PM trying to activate child
->> > device 0:0:0:49488 but parent (target0:0:0) is not active
->> >
->>
->> Hi Brian,
->>
->> How is ufshcd_err_handler triggered before the parent device
->> resumes? I mean, what causes ufshcd_err_handler to be
->> triggered, an error interrupt or something else?
->>
->> Thanks
->> Peter
->>
->>
->> ************* MEDIATEK Confidentiality Notice
->>  ********************
->> The information contained in this e-mail message (including any
->> attachments) may be confidential, proprietary, privileged, or otherwise
->> exempt from disclosure under applicable laws. It is intended to be
->> conveyed only to the designated recipient(s). Any use, dissemination,
->> distribution, printing, retaining or copying of this e-mail (including i=
-ts
->> attachments) by unintended recipient(s) is strictly prohibited and may
->> be unlawful. If you are not an intended recipient of this e-mail, or bel=
-ieve
->>
->> that you have received this e-mail in error, please notify the sender
->> immediately (by replying to this e-mail), delete any and all copies of
->> this e-mail (including any attachments) from your system, and do not
->> disclose the content of this e-mail to any other person. Thank you!
+[1/1] fs: move fd_install() slowpath into a dedicated routine and provide commentary
+      https://git.kernel.org/vfs/vfs/c/6ecf5292038e
 
