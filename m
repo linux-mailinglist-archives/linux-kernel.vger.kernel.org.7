@@ -1,140 +1,149 @@
-Return-Path: <linux-kernel+bounces-898226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBF2EC54A26
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 22:38:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B630EC54A32
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 22:39:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2ADE73B0865
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 21:37:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55C233B19A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 21:38:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA0702E2F05;
-	Wed, 12 Nov 2025 21:37:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14B012E1F03;
+	Wed, 12 Nov 2025 21:38:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iYrwUZUP"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SgTEENXw"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA6C22DC338
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 21:37:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F116C2DC338
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 21:37:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762983465; cv=none; b=imFVoHPu2mE+CPBS2TDgEkqpxhQXnH1o096XnvSAylv1vymkntKojtdDpdQW+Z+bMHNTeIRzo8VYqKadbiNS5qvBNhtcUFNikcV3dxZHbGdSNdZzAxKiE67jN0WMEAE/m40mO//hMbJ8jWsHiKARDCgnAVq9ViwpYfQrC3iCwE4=
+	t=1762983480; cv=none; b=G9Ivz9FmfW03oid6MvGioKSUxC/lXeGhdLF5QGb/WDBiDLuheRNC60fwRonVtsYSzmd9LKUAVuAffdaqVep2CLjI14VJw6QqeAkUEO6ENaxWNyk1hSae5kt1kVMBsuzCey+38kYOVZuIbV2UruO/ILVFzt7OhfA0XPwAcWPzupI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762983465; c=relaxed/simple;
-	bh=HUjRpcgFxZlsaHDR5Oqy1tRZ/gEUVjG9KwG6dKCpQwc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=auelAvOU/ITesJK4rnIA5H9fipg4DxK8cYn/pGf2SrP1HWg5lSEar9tP5X93VDdT+Q+8oI176sVEbdcpt+dBx2W21qRHfL3gXlYZtvyXAFFUW0lEgBgab5CJB/HAc0mpdLxtkluYsvh3hO1mwUcCc6hQnSUrxcxn/0RJQV5rb90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iYrwUZUP; arc=none smtp.client-ip=209.85.128.47
+	s=arc-20240116; t=1762983480; c=relaxed/simple;
+	bh=+bUleK0B8PiE7Fk0SaUF+J+QNb/VCv1zue5xnjCOWY8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J1y/KUmodGhWzHM/rASdkpBySxOI7ZRosgIP1Wvco5zL2YSlbBxnXj7tqeI5eM1W5OmdrENhgtGcUgIJFo/PrymDTimv54INVAVOrRQIIXUBiduePmMCPvjz0yFz1e/0reHKTKOHB+xoV9PN3wvgAYmRcqazHOMIpFkVxBgTJIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SgTEENXw; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-47728f914a4so953125e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 13:37:42 -0800 (PST)
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4777707a7c2so10534375e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 13:37:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762983461; x=1763588261; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AMNC/ZxkQfI0c8vktPmv03MO9ljLn0+pOW6ecFqMx5g=;
-        b=iYrwUZUPJ7mnhRrogjjl/7mIb8tshRGbgPCsEAy3HhYGRECWVAy9QIc2nMe0Lb3U8j
-         joNPnKjx9fEeyvkwg28Sob9n2pbBM6cK/+mLKpjO3xPqFAUOrnZRuQknUeB6zh1FxcEC
-         /lRF5ZmkbxyRNSI2wnfzLbrDqGgGBCHs0BHJn7E4BcdIaDQ2qqeoiRA+V1DYVIuY174I
-         JAE5d+fEN6MkiFE0qAy6BPBckM9m5lrHTM3GO4n2i6xkTsQgk/CsGKALmFXKCr9Hgqnl
-         h3lYTu2/j9hedq3zipRfroXmuz9uBGY3sYuvq20HXpd11qHup5Z3czL9CoCZzPMvMsDT
-         jj5Q==
+        d=gmail.com; s=20230601; t=1762983477; x=1763588277; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4evj7W1RMWi1DGU6HCMJFRDOHQDQQckuWXz5qPHKAuA=;
+        b=SgTEENXwXrs74kTMQbThyXnkys1A6gZLa3d1WHDrC6/TMD2l3++C49aCIiKGttnrih
+         ConG8RSwlQk13NCsGtQqov+KrOZsNUVgYM75HAkfcAz370LT4dfAkZlfvbQ+oLUTSvVz
+         /0IK3Izf8I/+tjfaUnxK2hu6+dwJCeutLY/oD9wskfeZYLqk5ludPX1Rgzi5uh+GZwmo
+         dKbhwxbUT1I68+D2FnxU7+shM+aTpJpqf2JaGqplFyeYbGkybwL9Z7bbgwnOPVabkd3R
+         sBlfQa6pBC0YtnNAHaW9iVGRuMD0ssASooVXLxZxlzjb7pg/C58jOqtlL4rcFn+8r37B
+         WGig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762983461; x=1763588261;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=AMNC/ZxkQfI0c8vktPmv03MO9ljLn0+pOW6ecFqMx5g=;
-        b=UtBqM87V989I37v8SEdYOo1Dd5gGZKFhexfgsXjs2wIXvb0e3G8SwNaVZ6ffCd3Wrn
-         s0MjUImH/H4zFsQIolHNh2XwoN48Qn9sUYjWUYqOioefVwztVnBG5nkSh4rpGFWYxrWs
-         cbEEWBcFmb36xvz3Op8EM3J6ZKuZ935lOGwuepApK23IXvVnpkYbaaf618y9kM596qor
-         ObTBR9Ejt9kxEsB1+8e+6jK93/3VpgqLQCgI2uXI1zQ31LeatPrhLBUqyTKNS/BH5Y9q
-         RHGzO9iAvddYtwVAO0fHgloMkKy/kZa4IwfuM+Bt+YUW6lnzS/wwF+iJQriD9iICr2Mq
-         rSww==
-X-Forwarded-Encrypted: i=1; AJvYcCVJAciaVUj13oYHaenfSCVRhpmqyBv7spq4RisBU4Cbdun7BFEZzcsoEzIj/p8An2qpSTcjJ7M/Ac5X6N4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXYdMArbXFQXSJnqgepJ7axlXWFInOybyzfCfHhL3MOVzoMixv
-	AF4eagTYorX1iKOekM9tyljpKAphlZ8ClSLgbUg8PtZB53tCkhGbCTGI
-X-Gm-Gg: ASbGncsRRTtpkvcKFw0j9K9tXTKDJ1j/zsF+kWBXglLYm0CIAB8vW/4OSretvAaDBli
-	bhCUK4XpQe+MxuvP3J2h5gzi1b7I5HRxyzxbHWz3BCAzmcnTQmLv4MHbVkpLoDzDeDmbHjZn5sD
-	3m8Sr/EEPFj7touEY7sssvawYxNL/xWrN4zmBU++w9tyO9b9fmU6agaqYW/7KU/YosqbzSQuP9q
-	zBUfQLT3SydUHrY8Q7gOTzlA87til7IyGLA8I1so454SURvXLxyXxiknLaNC39XTcpELwXQqgua
-	yDTVGk1+wzmfm7iW/GObPcRYwD0uyHQ3FKW8A9d2OIvMZDqFSGEj9VbzTbKQN0viQPi9sql9BUx
-	2mHZHUH/mRbuqpTKT5hpMbyMrraYvTDayJqyfVONQ75mBWvtB/u7EPv/bfrgxk96apa2raKlZse
-	ISwN0fIw0dtuBAXX2iaqwFibAq60royAXg7lrVX8w5yg==
-X-Google-Smtp-Source: AGHT+IEDSNODJ3nVTpsyc0L/4cxRnEnvAJ/B+BZ/K+v6Nx94yhuMxFrpIqibz96viADsSJoC80InpA==
-X-Received: by 2002:a05:600c:4594:b0:477:7b16:5f88 with SMTP id 5b1f17b1804b1-477870623f5mr42996915e9.6.1762983461012;
-        Wed, 12 Nov 2025 13:37:41 -0800 (PST)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4778c8479b7sm12365e9.3.2025.11.12.13.37.40
+        d=1e100.net; s=20230601; t=1762983477; x=1763588277;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4evj7W1RMWi1DGU6HCMJFRDOHQDQQckuWXz5qPHKAuA=;
+        b=ZZnxh2u5Rcwl6rihEfuXZHBnu449S/3iTtioYfFpIWCEtXsW0OFpMCYCnuIrgKZOVp
+         7QU4g3vM8qnjm1nymhlql+JmOVExSNe4l4x/FGyGebAmr+I7dnE/iflf3uRzUQHQyqN4
+         ZR9Y4awdgy5p5z+8MtXBf2k5GZERxhpbTdZk98Gk85H28MaXqhYSh8nJRGwXA+peLVf1
+         kNy8uD1MRleCG/dW0gFQavXBDDCYzJJ0wUcu8cvdr/DB12R3bYl3dg1kBUXtUp2tnB9Q
+         +qX2V6GKw4/Xb9TJUOsfbDz4HhvWlQ8d8WgXfDS8URD0o/QWfoYCfJ9W0jH1AAXZalUr
+         LVMg==
+X-Forwarded-Encrypted: i=1; AJvYcCX1pnJVMWC1jaJl+T52F89JnAVoxCW3wKEdX5pxnehrXzmSyCemKkC13E32A7lkqscHVRw1G7CkzXOLQx8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTN/hCsBzsWIhKKXf/BbkTPiYJsNampduxe2jPapwxj4SKqGff
+	ieUHWxAbqLsO6Pw4kVQwMMLpH54ffrpG0grZ0ofISdMELH9yBgsFyLsm
+X-Gm-Gg: ASbGncv6PJW62U0YVjWyy81MJ2v8Opt5nSwtn8rS+wMiCD12CQIyUJ3/LF3Dcfd68Io
+	qqhC6Fya93iexHaCQD1PDujgTpvFcIbMQiNIagI7R9No0YbSEJX0ahQvrNqAtoNIxhPHqjo69HD
+	AW7U4iWwRSkFCcJqfEkAy1tquNaeDEeCfcB/PeS7EesFMOeFsP1Xk4TMJZpB7/Ob7qDiWps+j4m
+	Kkiiy0CcwQoBchvFjgpssMtzTTKZHdwnMe794PhncNPdfI3YdT9RU/Zchcm2WqgfVzN9sPQTmBC
+	DXejUWnwKpzsglcdT8CKXcYNXETkAmv7OuqErZaVysKj5wuxtntcNADZROLmJn7PtjtvNLuLlsf
+	dJQ3tMj9KG9Tz5CA7eAJaAtMO1svWRTG8yUQ847Q778aBOfCoQBZWil8Dks9FrvL1NSBBmwju+j
+	MctsOAKeLeMEOyuqxU13zYdsRWM+5sbaPiKRGJKYcn1MNLfiiIKWA62SC1dGsoD2w4K+iF48uyH
+	4nCjMuXu6OYQNX/fsC5YFdl2r8cQwEFcQHUv/O6BgOc6toQ
+X-Google-Smtp-Source: AGHT+IFVREUT6iLk315iqZFQJC6ImzRQ9dAqU1Gfy56ootTo9We7Wq3zsRANNkZ3GC+r7RPmOIr7dg==
+X-Received: by 2002:a05:600c:4ed0:b0:475:d9de:952e with SMTP id 5b1f17b1804b1-4778bd2ccf9mr9501615e9.1.1762983477135;
+        Wed, 12 Nov 2025 13:37:57 -0800 (PST)
+Received: from HYB-DlYm71t3hSl.ad.analog.com (aftr-82-135-81-2.dynamic.mnet-online.de. [82.135.81.2])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47787e953e3sm54307145e9.14.2025.11.12.13.37.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Nov 2025 13:37:40 -0800 (PST)
-Date: Wed, 12 Nov 2025 21:37:39 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: "Lecomte, Arnaud" <contact@arnaud-lcm.com>
-Cc: Brahmajit Das <listout@listout.xyz>,
- syzbot+d1b7fa1092def3628bd7@syzkaller.appspotmail.com, andrii@kernel.org,
- ast@kernel.org, bpf@vger.kernel.org, daniel@iogearbox.net,
- eddyz87@gmail.com, haoluo@google.com, john.fastabend@gmail.com,
- jolsa@kernel.org, kpsingh@kernel.org, linux-kernel@vger.kernel.org,
- martin.lau@linux.dev, netdev@vger.kernel.org, sdf@fomichev.me,
- song@kernel.org, syzkaller-bugs@googlegroups.com, yonghong.song@linux.dev
-Subject: Re: [PATCH bpf-next v3] bpf: Clamp trace length in __bpf_get_stack
- to fix OOB write
-Message-ID: <20251112213739.40123684@pumpkin>
-In-Reply-To: <fead1ceb-c3a2-4e61-9b11-f30da188d93a@arnaud-lcm.com>
-References: <691231dc.a70a0220.22f260.0101.GAE@google.com>
-	<20251111081254.25532-1-listout@listout.xyz>
-	<20251112133546.4246533f@pumpkin>
-	<u34sykpbi6vw7xyalqnsjqt4aieayjotyppl3dwilv3hq7kghf@prx4ktfpk36o>
-	<fead1ceb-c3a2-4e61-9b11-f30da188d93a@arnaud-lcm.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+        Wed, 12 Nov 2025 13:37:56 -0800 (PST)
+Date: Wed, 12 Nov 2025 22:37:55 +0100
+From: Jorge Marques <gastmaier@gmail.com>
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Jorge Marques <jorge.marques@analog.com>, 
+	Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
+	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iio: accel: Change adxl345 depend to negate adxl35x
+Message-ID: <whsmsygljixaqh3mfs34fnnlcyptxxxxlsujljawdj7jyl2ce2@a6oshhvsi6dv>
+References: <20251031-adxl345-allow-adxl34x-mod-v1-1-cd65749ba89c@analog.com>
+ <aQSL0wCr56zr5Y35@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aQSL0wCr56zr5Y35@smile.fi.intel.com>
 
-On Wed, 12 Nov 2025 16:11:41 +0000
-"Lecomte, Arnaud" <contact@arnaud-lcm.com> wrote:
-
-> On 12/11/2025 14:47, Brahmajit Das wrote:
-> > On 12.11.2025 13:35, David Laight wrote:  
-> >> On Tue, 11 Nov 2025 13:42:54 +0530
-> >> Brahmajit Das <listout@listout.xyz> wrote:
-> >>  
-> > ...snip...  
-> >> Please can we have no unnecessary min_t().
-> >> You wouldn't write:
-> >> 	x = (u32)a < (u32)b ? (u32)a : (u32)b;
-> >>
-> >>      David
-> >>     
-> >>>   	copy_len = trace_nr * elem_size;
-> >>>   
-> >>>   	ips = trace->ip + skip;  
-> > Hi David,
-> >
-> > Sorry, I didn't quite get that. Would prefer something like:
-> > 	trace_nr = (trace_nr <= num_elem) ? trace_nr : num_elem;  
+On Fri, Oct 31, 2025 at 12:13:39PM +0200, Andy Shevchenko wrote:
+> On Fri, Oct 31, 2025 at 11:05:08AM +0100, Jorge Marques wrote:
+> > Change 'depends on INPUT_ADXL34X=n' to '!(INPUT_ADXL34X)' to allow both
+> > drivers to be compiled as modules. The user then can use the blacklist
+> > to block loading one.
 > 
-> min_t is a min with casting which is unnecessary in this case as 
-> trace_nr and num_elem are already u32.
-
-Correct
-
-	David
-
+> > ---
+> > There are two drivers for the compatible:
+> > 
+> > - adi,adxl345
+> > 
+> > * IIO: 
+> >   drivers/iio/accel/adxl345_core.c
+> >   drivers/iio/accel/adxl345_spi.c
+> >   drivers/iio/accel/adxl345_i2c.c
+> > * Inputs:
+> >   drivers/input/misc/adxl34x-spi.c
+> >   drivers/input/misc/adxl34x-i2c.c
+> > 
+> > To disallows both being complied, the depends INPUT_ADXL34X=n
+> > was added to ADXL345 symbols. However, it should be possible to compile
+> > both as modules, then blacklist one of them in the /etc/modprobe.d/blacklist.conf
+> > file. This patch changes the rule to !(INPUT_ADXL34X) to allow both as
+> > modules, but still disallow INPUT_ADXL34X to be built-in and ADXL345 as
+> > module.
+> > 
+> > The following compatibles are not shared between both drivers:
+> > 
+> > * IIO:
+> >   adi,adxl375 spi/i2c
+> > * Inputs:
+> >   adi,adxl34x i2c
 > 
-> > The pre-refactor code.
-> >  
-> 
+> I like the idea, but I think this needs to be clearly stated in the Kconfig
+> help for both symbols. So user will _know_ that in such a case it's their
+> responsibility of properly made choice. On top of that you might want to
+> investigate existing DTS in the kernel and see if some of the choices may be
+> made at the platform / CPU level.
 
+Sure, I will add a info for the user in the symbols. I think the choice
+is on the defconfig that the user uses, the driver is a accelerometer,
+but one exposes as an IIO device while the other as input (e.g., for
+screen rotation).
+
+Best regards,
+Jorge
+> 
+> -- 
+> With Best Regards,
+> Andy Shevchenko
+> 
+> 
 
