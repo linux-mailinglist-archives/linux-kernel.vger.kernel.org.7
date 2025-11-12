@@ -1,293 +1,238 @@
-Return-Path: <linux-kernel+bounces-896539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B25F3C509D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 06:27:30 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E15FBC509FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 06:34:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 75D2D4E5F46
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 05:27:29 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9ABEB4E3853
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 05:34:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBCC52D839C;
-	Wed, 12 Nov 2025 05:27:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C1DA2D29C2;
+	Wed, 12 Nov 2025 05:33:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aQYU7e/J"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="eURhOrui"
+Received: from TYVP286CU001.outbound.protection.outlook.com (mail-japaneastazon11011053.outbound.protection.outlook.com [52.101.125.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 454211514DC
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 05:27:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762925245; cv=none; b=FJxa3nzTOnLOSW9wMFp81gymwsZy0LHflG0TFfKh3opc2KGx48P+qVYElA158bbSTL6cuKf+t+zP7vdEHYyEVFCnNPWQtU5anygPXUWmKdmqev5IEjKKL4PpkNEF0loVOxuM5z/79vJYJIvP+dt1WGpoc1Ugdhci7qarv9zjjeU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762925245; c=relaxed/simple;
-	bh=CwgHrpQttJ9JEif/wCfZWfWACrIIISVZ0PQBMV+bREA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YvOrXdmc2hHjp5BPbZDWQnwR6YbBi8y9i2bKbwpGT8SQXiQY8INkN9sNZqW28B4wZS68PD/dwVX8I04ngl3DKJ0z2MExsMoiPrHruHz3EDYKqQAiKmrDEFAMgSx4L9LDwR51FX/14Bxy3z4xR1/Ao3M3vryOLRoCUkiXeWII5+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aQYU7e/J; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b72134a5125so70894966b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 21:27:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762925242; x=1763530042; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HCo98k5zVGcrJMaFgGPWpScUCs9iIxNEITQOsVqAKIo=;
-        b=aQYU7e/Jj+pjc7T9IOjCFn7lDzn3Dgs9gou/855HzmcAChrQcOB1U/amdNVscpXywS
-         8tw8YurZh62DxviWXJ+158ESkoX9eowl/kCYgmQDrQ5pHY1j346+BmijVErQ9Onw0HCL
-         XQpzt5QMZ5fN8oUXcxdE17IVm5JIKk9VA3boAn08vNkvMNV8F8av+rQQJZjNB39O0YJY
-         Ix8blMjV5FUdDCuOmDx5iqek6PPhBAxZt7/jJhCHlHLNnBv+We3/ub1v1k48HNNBbhh8
-         LlwLHtUuCpp2DDc0M0uiRDu5yQak9ri79qId8bqQBbpcmCXj+0bAjDUopBOr8yjNWPjx
-         ME2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762925242; x=1763530042;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=HCo98k5zVGcrJMaFgGPWpScUCs9iIxNEITQOsVqAKIo=;
-        b=Z9ZrEkCLufA5mNs7rc2gmUqEi3ELVYQGcAO56pO+OWDwhficOULByVlsMU5GTiGFr7
-         vWQw1ocFS6KS4+imjyTPWkg2LL1MOIws+wBiKXk/Oao2XMpXkyWFumg6f/TQhweup5XS
-         JZjrs5+6Wd6ZPkAIrmXstJgmy0/fQU/hJfMZySwnrBu0dh6REKWgsxS3ZmhSAkmmrWau
-         aOrjhabaPGJk845m9nTj0MIw7EzPbiDl+ecVrLC0nEaC0AdWOCYnamYMSPw+KbaAnt1a
-         F3Bik32J9XUoofZHwuGs7U5xe9X7vY4AR0u+gICCpAI8lWqCF3rS5+HniAZENITKiyGs
-         o1Eg==
-X-Forwarded-Encrypted: i=1; AJvYcCXzI1fdsGmQs597ZKuYSWLGmy6aVvvx7RCE/T8TUN5p49BukQBEO+TUrUNQoGBhYOkzE5GwFu8lq2x2Dtk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdYChbuvSSVXf+WvKtkHlyRA81Xpn5lf2PVzvhZWcbz1Si4KYF
-	7fsFcwfb1I68MSwf0aBWetDymTp+IS0nNbEVeW/a4/Zh+gH6tgL1tAFj/wTVX9zesCM8dquD6ty
-	M86JH+sZsl5bUdtaTVmQCVLKxJ6ED7Gw=
-X-Gm-Gg: ASbGnct/xq4g6262EipEvbKLyDDORMgcK/DX7gJGo/bqTcrvS6dCybHDsnflNvF+6+d
-	/y41JKK98A0duY1nzqHsMinoGLJFSTLFc4nqeX82d1dK6aMJiaBdj0whwzCpv6pTYqRc+Ze8POD
-	zzGpgY9HcjBoYs4NkhQbnCD1ljH8jOeVUD15EwcYHplE6r57Z3VyqGGthbfYhud/XBc5pF9/lIX
-	IW+OAcWLec38tzbTmKC3BgoDMa5v0iFd1Fr2QKFS+GQAqWyat/0c23Qqso/
-X-Google-Smtp-Source: AGHT+IFTh1AedixfwUaVcieQDb69lpIZKCzgYFFppt1bkt2eJhfVvzZzY1/8j+gyAXu2Ck/cIyuG9vJylgn49QZX6mk=
-X-Received: by 2002:a17:907:6d0d:b0:b70:b5b9:1f82 with SMTP id
- a640c23a62f3a-b7331a6ef31mr189013366b.31.1762925241289; Tue, 11 Nov 2025
- 21:27:21 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6D001C3F36;
+	Wed, 12 Nov 2025 05:33:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.125.53
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762925636; cv=fail; b=m7jvzCTbXkTz8fL2mFkGp6JUht2If4Rn+O5ZGEsORE7cqZf/L2/8XJXb1wYpk7p6o6ou96n+uUtF1PDrUfNF0MXrfk6095ol8dbBwH0wktCB3T3Mq220mgnK8XUFFwtlEGPPjr5CExrS2a58IoVzgwONpt0HbVx9eEwiVThYYww=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762925636; c=relaxed/simple;
+	bh=+F1GWHSymF9oL2VdI/hMQbc9TAr8YFl1mv/Xnu9Dl2U=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=s8meumdHgx4RrhvzoUn872M+soEye32nk0vjC5G/WiS/vW2ul9ANs8BH8A+ZEA55aF1pCnFXrZvuftzFUv2Cu/FD241ga1y82ti6SUT7Eb6F725oNoM1BR/cTHmaFhh8IvoDOyYmzOa8VuD3SOY9qMA94tmmd5p6WPmJodRVfiE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com; spf=pass smtp.mailfrom=fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=eURhOrui; arc=fail smtp.client-ip=52.101.125.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fujitsu.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=J4eQPkXZKwc1mWFtsIqsR2fVakn6oZ2wbINNm8qMJC2kuIB6oEKrmXIdXULnLTs3PU69wGWZKZsktCD87Ho7jtKeKDbPJNGNCqyNGqSFwQwSRHPvcZQKx4+e8dn47bpeVWCsdi+wR6B12ilrL4sKanYA9/ATQwXMOKHsXld/E/LsTbyQfmFULhgb6JeHggjwsNDGPsrNFVr5zDYNoXv8E8FKX6TnvZUF6HJG0VkqrzzrSkCjBug+1SFV28IuZL9y28c8WQJ8yYcKSMP3/YA5hIYzPgRcueryfrAZRTB38wEaAh2UFxkQYlVTMRLUIPDiHKohGTgj5SWCqZJrXSSj0g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+F1GWHSymF9oL2VdI/hMQbc9TAr8YFl1mv/Xnu9Dl2U=;
+ b=bCyhqKYiJvdvr7kbxZ8eJLz1SU2VgN8mrXC7G7+v2SxQk/gEreXJwNjaCNZzqYwS9u/GeKqrcXl3/oDXC9Y8Pa4YhVBTzbS6j9J0ZaR4FqRSrcsX4gVvLJ9LyJrX8lJfZfes70FMgfUHkgWy1KSSuzCQY1ZmnFklR/rlLrY0XKiHudrV64RoDkfrSmxuLXdERL35kBxo/zz64fUYko5bUsGWxhKyloTRFC0Gcf8Z0/i3vAVBu2G7dXuFsI/jqKVF/ViQ0w9GHkY3Cv8rHR4C+nkLgl4bO7IJKDw22Omti69RgRYFo2CB7DNPzHWS5qS3FyZwCn4DiIYIM+96pjfl/Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=fujitsu.com; dmarc=pass action=none header.from=fujitsu.com;
+ dkim=pass header.d=fujitsu.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fujitsu.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+F1GWHSymF9oL2VdI/hMQbc9TAr8YFl1mv/Xnu9Dl2U=;
+ b=eURhOrui2C0dlTa2Qn1afvY5jwCp4MsX3SmfX71R8zhkdxjXhLZBlRVy+wQeeqXeCzCg7NJkq/kBy7ju9PPE8uLNuzA3RSkpJeO1CaiHllGXsLfEqknGlevIKdEZULEmMCpT0QkmeRmxB+3KzfLbctdPd/rGSgDFVj+n8ydKIS83drkaJ9zVkjv/vz1Xhq1Bs7eXC0oNswSgUS04+ho7486kQ5gpBx7b9e0zlja1clDomYUv8GqsJ9BO2o+7o5t4Q3SL340E1IJY+7pc3t0mqnTfJVxKbXNUnQoYVwQhF2J0jXtz+tnAPhxSGV+IgR/zRF1aCmV8U11N8uGU9CypPA==
+Received: from OSZPR01MB8798.jpnprd01.prod.outlook.com (2603:1096:604:15f::6)
+ by OSZPR01MB8799.jpnprd01.prod.outlook.com (2603:1096:604:15b::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.15; Wed, 12 Nov
+ 2025 05:33:52 +0000
+Received: from OSZPR01MB8798.jpnprd01.prod.outlook.com
+ ([fe80::e366:d390:4474:8cfa]) by OSZPR01MB8798.jpnprd01.prod.outlook.com
+ ([fe80::e366:d390:4474:8cfa%6]) with mapi id 15.20.9320.013; Wed, 12 Nov 2025
+ 05:33:52 +0000
+From: "Shaopeng Tan (Fujitsu)" <tan.shaopeng@fujitsu.com>
+To: 'Ben Horgan' <ben.horgan@arm.com>, "james.morse@arm.com"
+	<james.morse@arm.com>
+CC: "amitsinght@marvell.com" <amitsinght@marvell.com>,
+	"baisheng.gao@unisoc.com" <baisheng.gao@unisoc.com>,
+	"baolin.wang@linux.alibaba.com" <baolin.wang@linux.alibaba.com>,
+	"bobo.shaobowang@huawei.com" <bobo.shaobowang@huawei.com>,
+	"carl@os.amperecomputing.com" <carl@os.amperecomputing.com>,
+	"catalin.marinas@arm.com" <catalin.marinas@arm.com>, "dakr@kernel.org"
+	<dakr@kernel.org>, "dave.martin@arm.com" <dave.martin@arm.com>,
+	"david@redhat.com" <david@redhat.com>, "dfustini@baylibre.com"
+	<dfustini@baylibre.com>, "fenghuay@nvidia.com" <fenghuay@nvidia.com>,
+	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, "gshan@redhat.com"
+	<gshan@redhat.com>, "guohanjun@huawei.com" <guohanjun@huawei.com>,
+	"jeremy.linton@arm.com" <jeremy.linton@arm.com>,
+	"jonathan.cameron@huawei.com" <jonathan.cameron@huawei.com>,
+	"kobak@nvidia.com" <kobak@nvidia.com>, "lcherian@marvell.com"
+	<lcherian@marvell.com>, "lenb@kernel.org" <lenb@kernel.org>,
+	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "lpieralisi@kernel.org"
+	<lpieralisi@kernel.org>, "peternewman@google.com" <peternewman@google.com>,
+	"quic_jiles@quicinc.com" <quic_jiles@quicinc.com>, "rafael@kernel.org"
+	<rafael@kernel.org>, "robh@kernel.org" <robh@kernel.org>,
+	"rohit.mathew@arm.com" <rohit.mathew@arm.com>, "scott@os.amperecomputing.com"
+	<scott@os.amperecomputing.com>, "sdonthineni@nvidia.com"
+	<sdonthineni@nvidia.com>, "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
+	"will@kernel.org" <will@kernel.org>, "xhao@linux.alibaba.com"
+	<xhao@linux.alibaba.com>
+Subject: RE: [PATCH 26/33] arm_mpam: Add mpam_msmon_read() to read monitor
+ value
+Thread-Topic: [PATCH 26/33] arm_mpam: Add mpam_msmon_read() to read monitor
+ value
+Thread-Index: AQHcT+NVTdMv8w6Fwke7d6sF3Uk7Y7Tui8Pw
+Date: Wed, 12 Nov 2025 05:33:51 +0000
+Message-ID:
+ <OSZPR01MB87989B45DC4B155FD665F3CE8BCCA@OSZPR01MB8798.jpnprd01.prod.outlook.com>
+References: <20251107123450.664001-1-ben.horgan@arm.com>
+ <20251107123450.664001-27-ben.horgan@arm.com>
+In-Reply-To: <20251107123450.664001-27-ben.horgan@arm.com>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+ MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_ActionId=8e3b03d6-6bd3-461b-9ff1-63da6b455b98;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_ContentBits=0;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_Enabled=true;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_Method=Standard;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_Name=FUJITSU-RESTRICTED?;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_SetDate=2025-11-12T05:32:43Z;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_SiteId=a19f121d-81e1-4858-a9d8-736e267fd4c7;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_Tag=10,
+ 3, 0, 1;
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=fujitsu.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: OSZPR01MB8798:EE_|OSZPR01MB8799:EE_
+x-ms-office365-filtering-correlation-id: 461d06f1-9447-4cf6-34cf-08de21ad105f
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|376014|7416014|366016|1800799024|38070700021|1580799027;
+x-microsoft-antispam-message-info:
+ =?iso-2022-jp?B?YWwyM3dLY2xtcXVvdEpETGJ0dEdpTjJNWGZueVR2eFRqWFZMU2JndmNE?=
+ =?iso-2022-jp?B?dGd1ZjR1c2dVU3E2VDdlUFVobHBybTc5RXdlS0kxOGZiT3FLUktFdkNQ?=
+ =?iso-2022-jp?B?KzYxV0hHOENkY2YyQ2FOYUxTdmd6OWVrU3BiMnUzVmwrTDE2bjVzendQ?=
+ =?iso-2022-jp?B?QzBON2xMS05qaSs5ckNqWTcxM1grZWp4UHVENEltODZnQWVBaUdMY2FY?=
+ =?iso-2022-jp?B?RTVxZTZsei8vNS9KVDg2R0xMWjdhM0pNZUovUVUyNllNQ1JXaCtUK2gy?=
+ =?iso-2022-jp?B?QzgyNkxsZjNuc0loSWZMUUpmWkNDVzAzVDAzY2FqV3BkeExPWi9RZ0hi?=
+ =?iso-2022-jp?B?Mldhc3c5OXIzZ0M4UTROWG9RMlVHeHJaSkpwRTdOYzRPc1AzWDhZSU96?=
+ =?iso-2022-jp?B?Z28xU2w1RVhtSmxSMmtKaHVtMWVlR2Q1djZLbWVuQ2I5dWJCQklFNnRR?=
+ =?iso-2022-jp?B?TXhpcEVINUxtUUthb0NuWnN4NU9MTTk2OW9jbHBxUGozZzBuOUQvU2o4?=
+ =?iso-2022-jp?B?cDVCK0dkZUQyUDJTUTZzVWc1QmxrdHJrNlpTUXM1VkVJV012Vkk5SG0v?=
+ =?iso-2022-jp?B?YlZ3VnhBV1lRL0sweStYZSt2a1NuVHZ6MEVOS0JQVFJ4b0dwNzVkR1U1?=
+ =?iso-2022-jp?B?QlFZQ3V1VGppekRudVBwUjZrNFBtVDFOY0NHZGtaSzJiclB5NTh5K0xx?=
+ =?iso-2022-jp?B?b0lmTHJ1S1poYnRBcVBmYmVReEMycjl1MVVvejlkYlpjbHdPK1FRRndP?=
+ =?iso-2022-jp?B?TGF1OUZpVkdGL2Z3a1pmWUZNRC9BTDVJOWZUcVg1bFNNMmRoRFFMZldI?=
+ =?iso-2022-jp?B?eERLVEVzM2RoS0pxeVRNZmVBalh3NmFHUThnS1UvbHNuUllXSDA5N2JJ?=
+ =?iso-2022-jp?B?YjJuSEZidXFacm85bnJ4M3BOU2kzV2VXeEFyM05Kd0FMTExwZGs4Rk11?=
+ =?iso-2022-jp?B?RUFlWmZ4dGlOTG9JWE9ncHVCKytMS0wrbXh0QldMSHo4dVVQdngxck1o?=
+ =?iso-2022-jp?B?UUh4cXRDbGo1M1gyYVprczNIRGZDemd0eGhOelUxMDIzdU5DMHZmL1dT?=
+ =?iso-2022-jp?B?aEhJN1VoNTluVHlSN0h5QTZhQjc2a294eXlacWlCSEc1VzRjSjVDeGxB?=
+ =?iso-2022-jp?B?cFZWQ0xsZFQ1aFZ6R3NNemtNN0xsSDMrdUppOWRVcXJzNlNEYXVKL0ky?=
+ =?iso-2022-jp?B?c2RiMzUzVy9MNUZnaFh4ME5Dd2VtK0VMUDFDNlNHZnR2ZThYdWUrbFo2?=
+ =?iso-2022-jp?B?d0ZQRytqa0RselZSYzJWOVlSOCtNVjJxaFdCeVBpMUV1Vlc3UmNuelM1?=
+ =?iso-2022-jp?B?STFBUlFRVGRCdDhCSHk4cHJrYTNVcE1mb1A3dVFjMzF3Ky9GaG5qOCtl?=
+ =?iso-2022-jp?B?eThSck45OHRoanZmUGt5MThMUlYrVzNUQjFGM1krVStGclF2VTZLREpD?=
+ =?iso-2022-jp?B?QU13RDBjcm5uOFNWQjlLZjIyZFJFZ1JRZUZ0MFBCZ0t1MEpuV2p4a3NN?=
+ =?iso-2022-jp?B?SmozMkVCNmNZK3ZPOE1pZGNOL0NiM0NYSW85R3Z0SGZuNEF2UzFDdDhp?=
+ =?iso-2022-jp?B?T2pyaU4yVjhPZzRKUkJSODNyeUxweTBUT3B4dkNDUjZoSVpqdERVdEFu?=
+ =?iso-2022-jp?B?cXNTVGhjd3ZiWjRySjRySjVmYk9pYlRFK2d5L1NEclJDY1B3V2FBSitu?=
+ =?iso-2022-jp?B?c3Z1Q0VIUkdKUVZXQ3M1U2hESm9UMEMyWWVUdnYxbWFKQU9uemV3di9J?=
+ =?iso-2022-jp?B?a2VZK1FabEUwM2NkK2g2bysyU040d1BnanFpbEtRRFJiSDZNdHZDM3M5?=
+ =?iso-2022-jp?B?d2pidndSZGM3L0lESW9xSkR0eW15M2ROeU1mN0taa3BXYjNVa0t3Ti9U?=
+ =?iso-2022-jp?B?bllMdzJJRDlBRVFDdFpjQkRhcTRSbTFyRUJXQmM1S3hNODYrSm1FOXN2?=
+ =?iso-2022-jp?B?MFZzaUNuZzE4aUM0R2hRRW16eWJCK0Rqc1ZObUkySU01QWxHVTV6MlZj?=
+ =?iso-2022-jp?B?K0daYW11WnhIajYrS0ZIdFI3Nis3YXBKdFNuaDZacVhuNnhpN0IvUFdC?=
+ =?iso-2022-jp?B?czhPSjAzZzMvd1psVkdBdkM1RUNsNGg5WnE3b29rakNQNFhoWS9hY0Fn?=
+ =?iso-2022-jp?B?TE41ZjRKQ0cvaTZaUHkybmJtK2t5QXpoNFA5VTVxVW5IdkdTcnhMK3Fv?=
+ =?iso-2022-jp?B?RWUwcllNVUZ4VkRZZWl5VUYyYThwYnZPY1ZTWFREWktPenBpTWZJNE53?=
+ =?iso-2022-jp?B?T3lrQT09?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSZPR01MB8798.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(38070700021)(1580799027);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?iso-2022-jp?B?QU9BdVErZnk4L3IybW5WUWIzRk1LZmRlcmNOaDF5L2xiSUlNeDZXdEwv?=
+ =?iso-2022-jp?B?NU5CYjRyM0dVTlFhVUxESzFBdmlBblVjME1LRFo4NnpGcGVNczlXdVBW?=
+ =?iso-2022-jp?B?eE9yQWkxc1UvclNDSjRjTllNMThUSFcrZFJBZ1J6UkZXUU1JeTc4K2l5?=
+ =?iso-2022-jp?B?NTM1WEVjOGJDRnpKSDFvQVduMyt1NFhhV0NTUjAzUHBraldrMXQ2bVpH?=
+ =?iso-2022-jp?B?Znh5bUY0WXgxUjRUSnFuWHdpd0pCby96clp1V0dBTDhvRWc0UmZ5QWRB?=
+ =?iso-2022-jp?B?VEFDVWM2T3g3Z0xLZHRvWURHRlVuNFYwaFZHVnFxWVVUUld1cGhOVktH?=
+ =?iso-2022-jp?B?ZnM5VEY4VXhIcDBPTjRBTEdvUER2VzdnYktJb2hpTmlEaEt4KzBOY0c5?=
+ =?iso-2022-jp?B?Z0loa0pwaC9DM3ZkOUtvbG84dXJTZHNRNDBzNkpMVHJqTFA3R2cvRWl4?=
+ =?iso-2022-jp?B?TnMvOTlpRnhHQXAwdmdBMFFDM2g3US9KZDhxOVVUT1JtU0pQcC9wdVpD?=
+ =?iso-2022-jp?B?U2cwclNMT0xTbVliN0wxQjAyQTJWYSsyc2ZhNlVobnBYZ1RneDZ2YS93?=
+ =?iso-2022-jp?B?Tnp0UGRReDl3UnoyNllKdk1HVWJGbjcwYksyYzJIdmltbUVFcnRkR2VS?=
+ =?iso-2022-jp?B?OFdYNXphdDF4QStCZnVpbFNPWkhnK3FSdzdqVGdiZldvVkRrMVBkdk9n?=
+ =?iso-2022-jp?B?bU44UlI4M21xT0NEdDM3MDlqNjJZWXJhM2NSWXIwZSthd3I1UU92MmtI?=
+ =?iso-2022-jp?B?eWgzNEQ2SkoxbmRjVkNiMmw3U1JDSzUzcUh4dm9uSXRSeis4M0pGTDZs?=
+ =?iso-2022-jp?B?VXhmMnJxZW1ZVUU2VkZ6TVdrT1F2ZkhncldLQ04zKzdvSXdLYndleEVP?=
+ =?iso-2022-jp?B?b09CVVBrWnZSU3ErYVJEeGw0c1RvamZyUzg2QTBOaWJwQTA4ZEo1YkVC?=
+ =?iso-2022-jp?B?SmNIcnlVNU9abUwzcmMyRlI5VmEveENaUXdoMkZ1cTNrRG1HWVRWN21R?=
+ =?iso-2022-jp?B?NWNhUTZIQ1FFU3VnZUZRQ3BkVm5TbmN6Ym1hSU12Z1k0TGlRUGo2RDU4?=
+ =?iso-2022-jp?B?a0tNK2xZdmwvNDhJd3ZsRnp6YjFmS05BNFhzMk0xMFJhTmJodTgyc2V1?=
+ =?iso-2022-jp?B?UE5uUGcyRjBiM0pxSjBhODMvb2dwemFkTUhMS0N6MXBPUUgza3YxZXk2?=
+ =?iso-2022-jp?B?eEFBSFljZnM5MVppMlZ5WTl6ZzIzV1gycVVsOEppWmVpdTNXNXpvTGR1?=
+ =?iso-2022-jp?B?MWNiSXA3cmJzMEZibkxuM1ZJUTFCMkFoMEU3OEorR1pCWTMyS040aEJx?=
+ =?iso-2022-jp?B?NWp2VUduL3B6S3pIakszVVFJa0xGR05xdHA4aTBsZC9aM0oxZUxBRlg4?=
+ =?iso-2022-jp?B?SGJGMGo3bGVPeWJnRC9MalZGZFpZeXpwaWh6TlRnaGU1YWRNWXZkSXRt?=
+ =?iso-2022-jp?B?OUUzWWZtWTB5NjJEYmFJalJtYzdLenA4QnNLU3lmRGdrc1JCbTRUcFlm?=
+ =?iso-2022-jp?B?Mm45VitXTVduVHBUZzJkUzNmU3JNQTdlRUxsZGdITll1UEdncjAvQ3pQ?=
+ =?iso-2022-jp?B?L3p1dkNVejZzalE3WDd3Z1AxcFFNMENWbmlmVTlRdlRuM3QyNHZpbDdo?=
+ =?iso-2022-jp?B?NW1UZ0ZVTDJaYW0yVHBNcnZxUnkycFFQcnUzc2dvS3dhQTltaXdnNWx6?=
+ =?iso-2022-jp?B?cldwSDhLU2RrZWlPUGNMTjliRElPUk9XS245ZWhrSTNLYlZlNFZiNnR6?=
+ =?iso-2022-jp?B?OVg3QUM1VTRiQldoK1NvbFQzcG1RdFhaZ3JvRERhdTNFaTF0MWlZYmVi?=
+ =?iso-2022-jp?B?ZFVudit5YnozaTNiTlNvODRndVVPUTdCV3NIOTZsQU0rdDVUb294SjRm?=
+ =?iso-2022-jp?B?bEJJYyszclFzdkQ0Y0hSU2s2TDlCUm9vaG1pdUZITU5lYWhUZ1UzZWV0?=
+ =?iso-2022-jp?B?OUMya1hPUm15YXlDUzZLZ2pURG9aNEVzelZqWDRwQXcrc1pqdmdGaVFx?=
+ =?iso-2022-jp?B?L1U5eE9KY0I0TE1EQnRJNzRPcTlaWjkyaGc1WHpVUE5zN1llTDh1UGZl?=
+ =?iso-2022-jp?B?M0Jld1FZbTdhNEZIM1l6cXJ4aEhUbmtEMkRVamQrVmVwdkE1T2FCaUxG?=
+ =?iso-2022-jp?B?bHN3ZlFMV1dYQVRvcXhGMC9TZnVqeExGU2JkNUN5eHRjL25JaEhTM1hN?=
+ =?iso-2022-jp?B?ZVpHenk5eTlLbFhwOGk1SWJkT09uRUpmT0VsczVnVitzMlgrWUkxYXFH?=
+ =?iso-2022-jp?B?bDJkT2VWVVkyYkhwSzhuRCtwYXh3WSt1MUs4NEtTdGtzdEFJVW9rK2ow?=
+ =?iso-2022-jp?B?RHZKQWVBa09xd1Q0dTFBcUVtYWdZT0x4UHc9PQ==?=
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251015114952.4014352-1-leonylgao@gmail.com> <20251110183854.48b33b50@gandalf.local.home>
- <20251111081314.j8CFfAD6@linutronix.de> <20251111102739.2a0a64cf@gandalf.local.home>
-In-Reply-To: <20251111102739.2a0a64cf@gandalf.local.home>
-From: Yongliang Gao <leonylgao@gmail.com>
-Date: Wed, 12 Nov 2025 13:27:10 +0800
-X-Gm-Features: AWmQ_bmnu2v8TbyZK6CGcTDW02AMhsuIyjYsDXPPjpZO667gKjMESzrWwoQr1Bw
-Message-ID: <CAJxhyqDCFRT_fPWHb67x-PUu+Om91UrbrQEifcF7m+dkZ35dqA@mail.gmail.com>
-Subject: Re: [PATCH] trace/pid_list: optimize pid_list->lock contention
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>, mhiramat@kernel.org, 
-	mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, Yongliang Gao <leonylgao@tencent.com>, 
-	Huang Cun <cunhuang@tencent.com>, frankjpliu@tencent.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: fujitsu.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: OSZPR01MB8798.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 461d06f1-9447-4cf6-34cf-08de21ad105f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Nov 2025 05:33:52.0786
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a19f121d-81e1-4858-a9d8-736e267fd4c7
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: qKd7dodq0l6BlnC2UPBhx4deBB7ZZEn8J7ISPbmOVISWPahodGVp2NIEsoJywKcN2b5M2G0L6M42WW7ouemttNsNSc0WRZEYWi9l02HaM4Q=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSZPR01MB8799
 
-Hi Steven,
 
-Thank you for your detailed response and the proposed RCU-like approach.
+> From: James Morse <james.morse@arm.com>
+>=20
+> Reading a monitor involves configuring what you want to monitor, and read=
+ing
+> the value. Components made up of multiple MSC may need values from each
+> MSC. MSCs may take time to configure, returning 'not ready'.
+> The maximum 'not ready' time should have been provided by firmware.
+>=20
+> Add mpam_msmon_read() to hide all this. If (one of) the MSC returns not r=
+eady,
+> then wait the full timeout value before trying again.
+>=20
+> CC: Shanker Donthineni <sdonthineni@nvidia.com>
+> Cc: Shaopeng Tan (Fujitsu) <tan.shaopeng@fujitsu.com>
+> Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+> Tested-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
+> Tested-by: Peter Newman <peternewman@google.com>
+> Signed-off-by: James Morse <james.morse@arm.com>
+> Signed-off-by: Ben Horgan <ben.horgan@arm.com>
 
-I've looked into using a regular seqlock instead of the current
-implementation, but as you pointed out, the write side is indeed a
-critical path. More importantly, I found that even with seqlock, the
-write_seqlock() function internally uses spin_lock() which on
-PREEMPT_RT gets converted to an mutex. This would cause the same
-issues we're trying to avoid - potential sleep in atomic contexts.
-
-bool trace_pid_list_is_set(struct trace_pid_list *pid_list, unsigned int pi=
-d)
-{
-    union upper_chunk *upper_chunk;
-    union lower_chunk *lower_chunk;
-    unsigned int seq;
-    unsigned long flags;
-    unsigned int upper1;
-    unsigned int upper2;
-    unsigned int lower;
-    bool ret =3D false;
-
-    if (!pid_list)
-        return false;
-
-    if (pid_split(pid, &upper1, &upper2, &lower) < 0)
-        return false;
-
-    do {
-        local_irq_save(flags);
-        seq =3D read_seqbegin(&pid_list->lock);
-        ret =3D false;
-        upper_chunk =3D pid_list->upper[upper1];
-        if (upper_chunk) {
-            lower_chunk =3D upper_chunk->data[upper2];
-            if (lower_chunk)
-                ret =3D test_bit(lower, lower_chunk->data);
-        }
-        local_irq_restore(flags);
-    } while (read_seqretry(&pid_list->lock, seq));
-
-    return ret;
-}
-
- BUG: sleeping function called from invalid context at
-kernel/locking/spinlock_rt.c:48
- in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 192, name: bash
- preempt_count: 1, expected: 0
- RCU nest depth: 0, expected: 0
- CPU: 3 UID: 0 PID: 192 Comm: bash Not tainted 6.18.0-rc5+ #84 PREEMPT_{RT,=
-LAZY}
- Hardware name: QEMU Standard PC (i440FX + PIIX, 1996)
- Call Trace:
-  <TASK>
-  dump_stack_lvl+0x4f/0x70
-  __might_resched+0x113/0x160
-  rt_spin_lock+0x41/0x130
-  trace_pid_list_set+0x52/0x150
-  ftrace_pid_follow_sched_process_fork+0x19/0x30
-  kernel_clone+0x1b8/0x3e0
-  __do_sys_clone+0x65/0x90
-  do_syscall_64+0x48/0xa60
-  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-
-Your proposed solution using atomic counters and memory barriers
-should provide the lock-free read path we need while maintaining code
-correctness. However, to achieve this correctly requires careful
-consideration of all memory ordering scenarios, and I'm concerned
-about introducing subtle bugs given the complexity.
-
-Would you be willing to submit a patch implementing your approach?
-
-On Tue, Nov 11, 2025 at 11:27=E2=80=AFPM Steven Rostedt <rostedt@goodmis.or=
-g> wrote:
->
-> On Tue, 11 Nov 2025 09:13:14 +0100
-> Sebastian Andrzej Siewior <bigeasy@linutronix.de> wrote:
->
-> > Nope, no read-write lock that can be used in atomic sections. Well,
-> > there is RCU.
->
-> Well, it can't simply be replaced by RCU as the write side is also a
-> critical path. It happens when new tasks are spawned.
->
-> Now we could possibly do some RCU like magic, and remove the lock in the
-> read, but it would need some care with the writes.
->
-> Something like this (untested):
->
-> bool trace_pid_list_is_set(struct trace_pid_list *pid_list, unsigned int =
-pid)
-> {
->         union upper_chunk *upper_chunk;
->         union lower_chunk *lower_chunk;
->         unsigned long flags;
->         unsigned int upper1;
->         unsigned int upper2;
->         unsigned int lower;
->         bool ret =3D false;
->
->         if (!pid_list)
->                 return false;
->
->         if (pid_split(pid, &upper1, &upper2, &lower) < 0)
->                 return false;
->
->         upper_chunk =3D READ_ONCE(pid_list->upper[upper1]);
->         if (upper_chunk) {
->                 lower_chunk =3D READ_ONCE(upper_chunk->data[upper2]);
->                 if (lower_chunk)
->                         ret =3D test_bit(lower, lower_chunk->data);
->         }
->
->         return ret;
-> }
->
-> Now when all the bits of a chunk is cleared, it goes to a free-list. And
-> when a new chunk is needed, it acquires it from that free-list. We need t=
-o
-> make sure that the chunk acquired in the read hasn't gone through the
-> free-list.
->
-> Now we could have an atomic counter in the pid_list and make this more of=
- a
-> seqcount? That is, have the counter updated when a chunk goes to the free
-> list and also when it is taken from the free list. We could then make thi=
-s:
->
->  again:
->         counter =3D atomic_read(&pid_list->counter);
->         smp_rmb();
->         upper_chunk =3D READ_ONCE(pid_list->upper[upper1]);
->         if (upper_chunk) {
->                 lower_chunk =3D READ_ONCE(upper_chunk->data[upper2]);
->                 if (lower_chunk) {
->                         ret =3D test_bit(lower, lower_chunk->data);
->                         smp_rmb();
->                         if (unlikely(counter !=3D atomic_read(&pid_list->=
-counter))) {
->                                 ret =3D false;
->                                 goto again;
->                         }
->                 }
->         }
->
->
-> And in the set we need:
->
->         upper_chunk =3D pid_list->upper[upper1];
->         if (!upper_chunk) {
->                 upper_chunk =3D get_upper_chunk(pid_list);
->                 if (!upper_chunk) {
->                         ret =3D -ENOMEM;
->                         goto out;
->                 }
->                 atomic_inc(&pid_list->counter);
->                 smp_wmb();
->                 WRITE_ONCE(pid_list->upper[upper1], upper_chunk);
->         }
->         lower_chunk =3D upper_chunk->data[upper2];
->         if (!lower_chunk) {
->                 lower_chunk =3D get_lower_chunk(pid_list);
->                 if (!lower_chunk) {
->                         ret =3D -ENOMEM;
->                         goto out;
->                 }
->                 atomic_inc(&pid_list->counter);
->                 smp_wmb();
->                 WRITE_ONCE(upper_chunk->data[upper2], lower_chunk);
->         }
->
-> and in the clear:
->
->         if (find_first_bit(lower_chunk->data, LOWER_MAX) >=3D LOWER_MAX) =
-{
->                 put_lower_chunk(pid_list, lower_chunk);
->                 WRITE_ONCE(upper_chunk->data[upper2], NULL);
->                 smp_wmb();
->                 atomic_inc(&pid_list->counter);
->                 if (upper_empty(upper_chunk)) {
->                         put_upper_chunk(pid_list, upper_chunk);
->                         WRITE_ONCE(pid_list->upper[upper1], NULL);
->                         smp_wmb();
->                         atomic_inc(&pid_list->counter);
->                 }
->         }
->
-> That is, the counter gets updated after setting the chunk to NULL and
-> before assigning it a new value. And reading it, the counter is read befo=
-re
-> looking at any of the chunks, and tested after getting the result. If the
-> value is the same, then the chunks are for the correct PID and haven't
-> swapped in a free/alloc swap where it's looking at a chunk for a differen=
-t
-> PID.
->
-> This would allow for the read to not take any locks.
->
-> -- Steve
+Reviewed-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
 
