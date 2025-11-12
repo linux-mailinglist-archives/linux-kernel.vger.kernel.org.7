@@ -1,132 +1,135 @@
-Return-Path: <linux-kernel+bounces-896561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53C3CC50AE2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 07:15:00 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF1D1C50B5C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 07:30:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 526314E6B11
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 06:14:58 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7884434BD5D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 06:30:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7938E2DC32B;
-	Wed, 12 Nov 2025 06:14:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 956012DCC03;
+	Wed, 12 Nov 2025 06:30:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="dsv+t/L0"
-Received: from smtpbgau2.qq.com (smtpbgau2.qq.com [54.206.34.216])
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="3XOqYvCL"
+Received: from canpmsgout09.his.huawei.com (canpmsgout09.his.huawei.com [113.46.200.224])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 952A92D97B5;
-	Wed, 12 Nov 2025 06:14:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.34.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8E3C202F9C;
+	Wed, 12 Nov 2025 06:30:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.224
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762928093; cv=none; b=h0bimNrKqdGrtasOzoImYH+p4UlGgJW9mk2vci7r20h6RUyy0Xo+Xcc6xHEY7J1nWMlyCJor6rvIkBxkPQFebyNl+Khag/yWFzpsj2c08GOYc4C43tPuEKhWlPhqid3S+kuUj5QVz3rDnj9BfEOzTvTnD3K86eS0ilr+fiZVOuQ=
+	t=1762929012; cv=none; b=KiJ4x7JIVRz0A8ibJ0HLhKFVjfVrddaDevr6Mt9AqLs644CzKV+dGvqm+eRQGK2y6F/AIyjGtjqENnYfd15Qov/ZUdS+uvx9gLF5zkM4Qmw/i2e2OgHvhMidws2+rEDkBfBnaV/CZGmf00OAuZoqClOq2ARKd4892oiheWQlJpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762928093; c=relaxed/simple;
-	bh=ZzwUCfCOYUTbEaBhH3v6UCAZXDLHw9mxwZkVmB9i0/A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S0QiEccohOpMoa4Cvgp2s7SA6VpCgTbPOh0F0rs6d4Sl6qNZYchbZLbaUrxI9ocD6uAfVa5awzWuVZ44RCYPQByCVJYWvKqZqkvSs/0n9qzCzD/8oCb20m9ZiF4yTXUHSEE5kXOxqalkfsjJPVkTdX4CghNAsKi1BLkNvnIohLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=dsv+t/L0; arc=none smtp.client-ip=54.206.34.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
-	s=mxsw2412; t=1762928085;
-	bh=T8n6eKWtt9uTv/6xGBgqlzn+awiCOgVLvVexDCR5CIA=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version;
-	b=dsv+t/L0hZpxmzM25xtrzvlpzl/6ym7opx1xRp9CftNoGZAA/4jjPvgKvQ5N6Ih8J
-	 Fg31AtsAMtb0STpgv+HXTsISny+8mGoMkZEZM8ek/Ew28pogUfAimAtm2hyE8R1b2V
-	 sIXYYTFRorH4QjdDJBOXfdPku6xxvk26fkM2JQkg=
-X-QQ-mid: esmtpsz10t1762928081t5c587094
-X-QQ-Originating-IP: kbEYhoF8GacQU0UCEfUev11PykziyM/ntLfoFyAF7Zo=
-Received: from = ( [120.239.196.22])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Wed, 12 Nov 2025 14:14:40 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 12126374271057103050
-EX-QQ-RecipientCnt: 13
-Date: Wed, 12 Nov 2025 14:14:38 +0800
-From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-To: Lee Jones <lee@kernel.org>, Yixun Lan <dlan@gentoo.org>,
-	Alex Elder <elder@riscstar.com>, Andi Shyti <andi.shyti@kernel.org>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev, linux-i2c@vger.kernel.org,
-	linux-rtc@vger.kernel.org,
-	Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Subject: Re: [PATCH v2 2/4] i2c: spacemit: configure ILCR for accurate SCL
- frequency
-Message-ID: <01C031AEFDAD4CE5+aRQlzq76t3huDaLg@kernel.org>
-References: <20251027-p1-kconfig-fix-v2-0-49688f30bae8@linux.spacemit.com>
- <20251027-p1-kconfig-fix-v2-2-49688f30bae8@linux.spacemit.com>
+	s=arc-20240116; t=1762929012; c=relaxed/simple;
+	bh=Wazx6jWArPi5hlBgtqnEmzLdaAEYpi5VGgrqSmnHRX4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KD3bS3zORe1gDJ+UDBc1P/flBJ2CqDD30qmtsmVZ/XKIEe7a8LW1vZYfmPJBeRo1BgyeemEcJskn73IQXIsUFDIifedonqxwoFXUk0v5XewTfkGj7lgta6+KsRkVTP2mVEoYNxR07nLhp5H3FTDerB38MEYN0N2qYyP1r7xxNXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=3XOqYvCL; arc=none smtp.client-ip=113.46.200.224
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=lY6cQ7KxBIYOYros9QrVDrG6tiuFNXUR7hTsPWOK194=;
+	b=3XOqYvCLFX80YxJ9ENVokqyC/kaKLmqB/FyTeHFbts6CXUhsfaiVYetlpMThBXja3qRB1kiR/
+	WXBis9tWdTnnCkWhg1jcVxe5HU121vTwQWQY933lINtZUWNIGtxUoRBLGMy17FlzVv81CIpd+sg
+	BGGWO4n2DtBAxKFR9izX35I=
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by canpmsgout09.his.huawei.com (SkyGuard) with ESMTPS id 4d5tkz6dVyz1cyNs;
+	Wed, 12 Nov 2025 14:28:27 +0800 (CST)
+Received: from dggpemr200006.china.huawei.com (unknown [7.185.36.167])
+	by mail.maildlp.com (Postfix) with ESMTPS id B18221402CC;
+	Wed, 12 Nov 2025 14:30:07 +0800 (CST)
+Received: from hulk-vt.huawei.com (10.67.175.28) by
+ dggpemr200006.china.huawei.com (7.185.36.167) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 12 Nov 2025 14:30:07 +0800
+From: Xinyu Zheng <zhengxinyu6@huawei.com>
+To: Shuah Khan <shuah@kernel.org>
+CC: Moon Hee Lee <moonhee.lee.ca@gmail.com>, <yifei.l.liu@oracle.com>,
+	<zhujun2@cmss.chinamobile.com>, <linux-kselftest@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <zouyipeng@huawei.com>,
+	<zhengxinyu6@huawei.com>
+Subject: [PATCH] selftests: breakpoints: check RTC wakeup alarm support before test
+Date: Wed, 12 Nov 2025 06:15:32 +0000
+Message-ID: <20251112061532.2867859-1-zhengxinyu6@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251027-p1-kconfig-fix-v2-2-49688f30bae8@linux.spacemit.com>
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpsz:linux.spacemit.com:qybglogicsvrgz:qybglogicsvrgz3a-0
-X-QQ-XMAILINFO: OLiMdF5B5RXDirk+iOar4cHbn/oBh9NiY7VH8rCICYxlTi4PIxJeIKi5
-	eQy9J80mzoft/dgGoNX6br99A7raws5YsFxPzsC1XtpqYysuR9vJV3VCF6gfLlx7T1Wga9I
-	b1NBSoZv/ylxg8qk7IC9nDHRjhdDAQY42AVX5hZjsQXYVmhMHCR70IwXzo19/OGMRJ8EIVK
-	beXQ874kf0rGmvMT8R/6WnZHdwiv7V5lDPrvPjc+G2Afi9njImiCef11uIK3wrRI0XHkFH9
-	dx649kUtADjckxhx67v0t+uxGrs3iz2059TsFYh2H6PkMwKmRLxkrKLWkLj1b72EhsPI0Xk
-	T0fzdRM2d3tz5DWCY+y6Awh7DKaBAwRRbEHL5HuxOZB1YYLJm5UKg43Sht27lGHX0PPB7Ya
-	obmaSrTKLby9YZe7KLBUsRSbAOibV4EdnqI9S9040IaZehiPQAg5utsGwOyq8byP1GkT70V
-	yvboqwRLYlCUOFEPp3w+/ma2hl4zzgxRUmY52sbkwe5rRUxRZejOMbeY6Aj+dwuXFgV6tiJ
-	RqntBnsUxxsutXeJ7Ha9HIhCUCv8D8juC6JzrDB+inBsn8UYm3qRBnyxaRUBj1Y8GoZarQt
-	fSKG51MXZxRFirFUKpQi0U/3ix/HyAZkGMjBOIUFfEmIFqBGu14LAcUoyS+OmiItqMrJo1J
-	UNZtShUGffic7g9CGVYRuSz+gUc/aP9LgI1PE0/gws4Z5qI1UrL/EHoEGLk5ONw+x0kmmRq
-	9eTMErroZb3SMZncrKZAg+wP07656iKcv4eGBBjuQr9D+lKL8x7tdqMFYqqcPda++qWgjve
-	MfoQ8AhvzxYQnqDMg1YuL0cDLwJp6A9etwkQJuclzBK9KfWsiYuJUxm3UnLoSt/jmKkt7KH
-	Xna6M0qBkddSTfYWK3oOBZ+M9NbbpLKOYGaJM0fJ5onDkjmNcvhYuQ9G8DXTwJrxt9QxjS5
-	orbwx7POjvddmYozYOxOmqLE1wTZ79HSRn8h5UZWQJbRGnxyzVfJlEyitCaTspwOh8eLrnY
-	UNlqFtxqD7o3kFH4WUIDuy614DbaCY6Xdij0bWhOXRiIhBNTt+yDQPyQ+Sv3ytVdsl1g5Xk
-	Uo17uxdFkxQzlBXLG5Bn/tPpyZZpTVf56SIKf7asyTg
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-X-QQ-RECHKSPAM: 0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
+ dggpemr200006.china.huawei.com (7.185.36.167)
 
-On Mon, Oct 27, 2025 at 01:48:06PM +0800, Troy Mitchell wrote:
-> The SpacemiT I2C controller's SCL (Serial Clock Line) frequency for
-> master mode operations is determined by the ILCR (I2C Load Count Register).
-> Previously, the driver relied on the hardware's reset default
-> values for this register.
-> 
-> The hardware's default ILCR values (SLV=0x156, FLV=0x5d) yield SCL
-> frequencies lower than intended. For example, with the default
-> 31.5 MHz input clock, these default settings result in an SCL
-> frequency of approximately 93 kHz (standard mode) when targeting 100 kHz,
-> and approximately 338 kHz (fast mode) when targeting 400 kHz.
-> These frequencies are below the 100 kHz/400 kHz nominal speeds.
-> 
-> This patch integrates the SCL frequency management into
-> the Common Clock Framework (CCF). Specifically, the ILCR register,
-> which acts as a frequency divider for the SCL clock, is now registered
-> as a managed clock (scl_clk) within the CCF.
-> 
-> This patch also cleans up unnecessary whitespace
-> in the included header files.
-> 
-> Reviewed-by: Yixun Lan <dlan@gentoo.org>
-> Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-> ---
-> This patch was affected by the P1 Kconfig, which caused the maintainer
-> to revert it.
-> The current commit is a direct cherry-pick and reserves the original changelog.
-> This note is to clarify for anyone who sees the cover letter marked as v2
-> while the changelog entries reach v4.
-Hi Andi,
-Since the issue affecting the I2C patch has been fixed [1],
-I think it should be ready to be merged now. What do you think?
+If RTC wakeup alarm feature is unsupported, this testcase may cause
+infinite suspend if there is no other wakeup source. To solve this
+problem, set wakeup alarm up before we trigger suspend. In this case,
+we can test if RTC support RTC_FEATURE_ALARM and efi_set_alarm function.
 
-Link: https://lore.kernel.org/all/176244506110.1925720.10807118665958896958.b4-ty@kernel.org/ [1]
+Signed-off-by: Xinyu Zheng <zhengxinyu6@huawei.com>
+---
+ .../breakpoints/step_after_suspend_test.c     | 23 +++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-                                    - Troy
+diff --git a/tools/testing/selftests/breakpoints/step_after_suspend_test.c b/tools/testing/selftests/breakpoints/step_after_suspend_test.c
+index 8d233ac95696..e738af896ce1 100644
+--- a/tools/testing/selftests/breakpoints/step_after_suspend_test.c
++++ b/tools/testing/selftests/breakpoints/step_after_suspend_test.c
+@@ -13,6 +13,8 @@
+ #include <stdio.h>
+ #include <string.h>
+ #include <unistd.h>
++#include <linux/rtc.h>
++#include <sys/ioctl.h>
+ #include <sys/ptrace.h>
+ #include <sys/stat.h>
+ #include <sys/timerfd.h>
+@@ -159,10 +161,30 @@ void suspend(void)
+ 	int count_before;
+ 	int count_after;
+ 	struct itimerspec spec = {};
++	char *rtc_file = "/dev/rtc0";
++	int rtc_fd;
++	struct rtc_wkalrm alarm = { 0 };
++	time_t secs;
+ 
+ 	if (getuid() != 0)
+ 		ksft_exit_skip("Please run the test as root - Exiting.\n");
+ 
++	rtc_fd = open(rtc_file, O_RDONLY);
++	if (rtc_fd < 0)
++		ksft_exit_fail_msg("open rtc0 failed\n");
++
++	err = ioctl(rtc_fd, RTC_RD_TIME, &alarm.time);
++	if (err < 0)
++		ksft_exit_fail_msg("get rtc time failed\n");
++
++	secs = timegm((struct tm *)&alarm.time) + 3;
++	gmtime_r(&secs, (struct tm *)&alarm.time);
++	alarm.enabled = 1;
++
++	err = ioctl(rtc_fd, RTC_WKALM_SET, &alarm);
++	if (err < 0)
++		ksft_exit_fail_msg("set wake alarm test failed, errno %d\n", errno);
++
+ 	timerfd = timerfd_create(CLOCK_BOOTTIME_ALARM, 0);
+ 	if (timerfd < 0)
+ 		ksft_exit_fail_msg("timerfd_create() failed\n");
+@@ -180,6 +202,7 @@ void suspend(void)
+ 	if (count_after <= count_before)
+ 		ksft_exit_fail_msg("Failed to enter Suspend state\n");
+ 
++	close(rtc_fd);
+ 	close(timerfd);
+ }
+ 
+-- 
+2.34.1
+
 
