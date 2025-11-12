@@ -1,130 +1,144 @@
-Return-Path: <linux-kernel+bounces-897943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BF43C53F7D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:45:59 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C326C53F6E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:45:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C5CA24F81BD
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:39:17 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8AEAB349228
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:39:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 427AF34FF65;
-	Wed, 12 Nov 2025 18:29:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HO5qqAZ2"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFC1C34DB67;
+	Wed, 12 Nov 2025 18:29:43 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D46B23EAAA
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 18:29:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C873931B11E;
+	Wed, 12 Nov 2025 18:29:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762972198; cv=none; b=oHDfYmycY4QUzEYZCWBW5N4bOJW389NX2srmwffmmcDObaHD8MXSXbImjU/NsNFhpQ6bjMBhO0ghvfIPC4OxI07Ik522DZq2mVR1OFXpUXh0gVKJER4UBqtFDe1L9Zg+hPtqMkz/HgKpr4VBpcZK/fOF1LApLtcHtsJ9tyg03ec=
+	t=1762972183; cv=none; b=Ok0cl04HjqfWFQWEeSz4SrA8GMl1L6T9RvyxBEpKrVMUDGxgVtcgcv/3fQHIolnk9rYOSrdLpW0Q5rK6uIGN32ipq1KJwC3239kbHijEtryI5XNg7bPvsOSDAO9Jq5u8EVoiN7Wwc/kY8QlHpDnciNhVH/YSBS9Unl17uoKprBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762972198; c=relaxed/simple;
-	bh=m+1Ia7kTgcgwak0tup6RnzackIUD2uj9VJ66wpL5vGU=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=P88Hs+GPgaFySKfcAk2PfnqAfNPaRAVEmoRaXJBJtNzow5TEdSflIGzKMZeBZzGSQH1o1P4dUYfoq31Ztvvzyx1q7iJ4fCN31cTg9Z4oXXgzyp+9ZJcw1rRPdNQdIT09qmdoe80RKB5tMsxayrcIdgOuXJ9aDUUHN2WPZnY5Nmc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HO5qqAZ2; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-297dd95ffe4so10924415ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 10:29:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762972196; x=1763576996; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=m+1Ia7kTgcgwak0tup6RnzackIUD2uj9VJ66wpL5vGU=;
-        b=HO5qqAZ2+Gl5VjkG2JSxHnyizcDJJvWMPSuF1MP/DI6trW1yhrZRkin+PzYaYHUjS2
-         RBcDDcacxNXxzTpkQ/9QSU8fDNFrnL3ojfLUMFAHe6rrP5dycCLZCJR2tOaEHv4GroS3
-         vk5iiwOrc79Da3t+l4gAEAkQLQwCl4cvMyasv2eAP7TtSuNngSJwsg3EDzbRKarxMB4j
-         CMLdpb9tw8Uo08ghQ046tPNG5SYpAxjbAymnPkLiuOTc9QR3XE1IMJrXuLAaui5sHjDB
-         pXuJL2WENAvfEN1rNqM8iUhPKOX0ptF3OIQMAGOtcy1ZhDcsox6MwrRyW6w/1JAip8oC
-         2Iwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762972196; x=1763576996;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-gg:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=m+1Ia7kTgcgwak0tup6RnzackIUD2uj9VJ66wpL5vGU=;
-        b=TOAsWxfLPCejEUoRPN4tk+49k1f3wtrHydwQFeOxj1YjzzFxo6etwVfwZTqTTwccpU
-         SdUx13g7f93U7NGoEUH3r4et199sTkh7Gm3HjYpBWSRNwWocLFZsvcBOWXa6meB8BzXs
-         i84FryqepgN10EGuAIL3xs8Z9xVlzXu8A7Tj7hxctENm1wt7n8V8CbeDlp2MjLoBW9ZW
-         k00gaOc8W4nEK0Sgz4zoiAmKXVZzzinWRCEx0PlNVeEl5NYZNO3Mqvp+bpsu3nVxXGXh
-         L/15ez2CKlLNgiWX9uzcRHa1M8k3OgXK13GvBpGr7T3kz8gq8WdgcyeIxMVreTYZJX11
-         tnTg==
-X-Forwarded-Encrypted: i=1; AJvYcCV1m3pGCytr+HRlRtPxe5Agxq0HEMVMt7HZhkaOUE3u0Qn4ctk5+mk9Hop2iKCCJct1nGCMOfEv7kOkw+8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YywGMFRmMSd82j/s9eR7Gzs2zHeOTZyBnrESJt8LwcdsLO1z3q/
-	J7r7ULqiFiIxcmGaZ2mwUVEZdvnD+UWoCNj3we61czCsmdx2RjmLUAQM
-X-Gm-Gg: ASbGncvaMD7nN2qBwbGzch0iMA8EB17BBxVAAK1k7I0DOZPcLkBgXWXzBick3s1dvWg
-	XvPzRe/SbxsK4hb6ONUc6kxyRTx5mA8ra2Pmqg7lj3s2QGCrL3T+PU35IVVP6/d0jECZ6o/71J6
-	DVF7q9kY2pbvE9FfMIJaWIT4MYiDN0JZX+dQoYKRyTg+AEWEK8RQ6uDjmfXEPCpTleZgKNNvYFD
-	uwsAhuGLXryn62yl2rYdUbyYqxX8tRxy6q1rdFwtPMWaLTxejEU3qyWuoUDfKqle9hrkCaPfHWf
-	6q8coxJLOlIw+zzuT0y8pQuI7edTVXpddMEDJU/C+xd7BHTu54B/nBiSU3R4wCrDXuvzFHG/quP
-	fns3llFhK8ggvKGlcU1pbPSxw2TcJfACega3tZI+regS+csFJf5fG4Hd5B7NNNakR1HDWQMPOIQ
-	Q7JU53
-X-Google-Smtp-Source: AGHT+IFVnSebX+tve6ow5sKGnu/YjQAUbucUwHpAyxG58VlkbMSagtb5MvrLUf3x+LSxMJMf4HjlNQ==
-X-Received: by 2002:a17:903:286:b0:295:4d24:31bd with SMTP id d9443c01a7336-2984ed45e40mr49939405ad.17.1762972196331;
-        Wed, 12 Nov 2025 10:29:56 -0800 (PST)
-Received: from localhost ([2405:201:3017:184:2d1c:8c4c:2945:3f7c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2984dc9f8f1sm37254355ad.54.2025.11.12.10.29.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Nov 2025 10:29:55 -0800 (PST)
+	s=arc-20240116; t=1762972183; c=relaxed/simple;
+	bh=3utautM/I1JvEJAAbf+4rjrS0aJiSSOCpsXk7us/aJ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=eAonEimcnhtn+Dm9cX+kb7DfzRqC7iTEWoeUbkVyAKCwGW9/Fb+vg3wIOQp1VMqEj+YUWGA8s6BJpL7zEmi76SZXJNhw0yBAgM4WnoPMHGLRogNaUl46L3g9GXlTD6XG0e39vNbpB4inG/szgk2pv8Vn+A4rF70SwNf/Shp8LbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf05.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay05.hostedemail.com (Postfix) with ESMTP id 00AC659DC6;
+	Wed, 12 Nov 2025 18:29:38 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf05.hostedemail.com (Postfix) with ESMTPA id D6F222000E;
+	Wed, 12 Nov 2025 18:29:36 +0000 (UTC)
+Date: Wed, 12 Nov 2025 13:29:50 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Yongliang Gao <leonylgao@gmail.com>
+Cc: mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
+ bigeasy@linutronix.de, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, frankjpliu@tencent.com, Yongliang Gao
+ <leonylgao@tencent.com>, Huang Cun <cunhuang@tencent.com>
+Subject: Re: [PATCH v2] trace/pid_list: optimize pid_list->lock contention
+Message-ID: <20251112132950.60a165f9@gandalf.local.home>
+In-Reply-To: <20251112181456.473864-1-leonylgao@gmail.com>
+References: <20251112181456.473864-1-leonylgao@gmail.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 12 Nov 2025 23:59:48 +0530
-Message-Id: <DE6XHERVPQ7Y.163VOB8V2BURD@gmail.com>
-Cc: "Alexander Viro" <viro@zeniv.linux.org.uk>, "Christian Brauner"
- <brauner@kernel.org>, <linux-fsdevel@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <criu@lists.linux.dev>, "Aleksa Sarai"
- <cyphar@cyphar.com>, "Pavel Tikhomirov" <ptikhomirov@virtuozzo.com>, "Jan
- Kara" <jack@suse.cz>, "John Garry" <john.g.garry@oracle.com>, "Arnaldo
- Carvalho de Melo" <acme@redhat.com>, "Darrick J . Wong"
- <djwong@kernel.org>, "Namhyung Kim" <namhyung@kernel.org>, "Ingo Molnar"
- <mingo@kernel.org>, "Alexander Mikhalitsyn" <alexander@mihalicyn.com>
-Subject: Re: [PATCH v5] statmount: accept fd as a parameter
-From: "Bhavik Sachdev" <b.sachdev1904@gmail.com>
-To: "Andrei Vagin" <avagin@gmail.com>, "Bhavik Sachdev"
- <b.sachdev1904@gmail.com>
-X-Mailer: aerc 0.21.0
-References: <20251109053921.1320977-2-b.sachdev1904@gmail.com>
- <CANaxB-wjqGDiy523w6s+CDKpC0JbQLsQB6ZipW20jieNPe3G6Q@mail.gmail.com>
-In-Reply-To: <CANaxB-wjqGDiy523w6s+CDKpC0JbQLsQB6ZipW20jieNPe3G6Q@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: 84pj5zx7gpkheb4jsc96i8gxanm7sb6f
+X-Rspamd-Server: rspamout03
+X-Rspamd-Queue-Id: D6F222000E
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX19pMuM56FwXwSkiKEKvUXe3kiOkGV1dz6U=
+X-HE-Tag: 1762972176-932112
+X-HE-Meta: U2FsdGVkX1+l0Pvk6Yn4iRM92dGnSiTjk7RpdIewBn6pmUd/xn2zETqRUBtnfIodVkk7Jcf+IpOb37V8mzLF2Pnr2TiO9A726yTiNg9/lKxUaMesEdrlQvw2xdJVRDtCNmV7TLo0SyJgJrbUuSsmHWogVKaIEn5rFW++WXdJHHyP516WbbcYp05+qVJOVuvguv3MmjniEjDw/hjSGqvgtPyCj0Ir7S9hhfueUf9bantCdNELM/W/5bevF4uIGJdb/liESJHZR0uZhA8waEbZNaU87IgL+dPEYUZcznD2EHK9IgnbYYe3Iauc6lF8aEw8z2OpN3TiqcV+Rb/aQRsR82vtdE8bpTvWHdGB9FktByFIYTSdHwzsFFEqSX1UACOX
 
-On Wed Nov 12, 2025 at 11:30 PM IST, Andrei Vagin wrote:
-> On Sat, Nov 8, 2025 at 9:40=E2=80=AFPM Bhavik Sachdev <b.sachdev1904@gmai=
-l.com> wrote:
->>
->> Extend `struct mnt_id_req` to take in a fd and introduce STATMOUNT_BY_FD
->> flag. When a valid fd is provided and STATMOUNT_BY_FD is set, statmount
->> will return mountinfo about the mount the fd is on.
->
-> It would be great to add self-tests for this new feature in
-> `tools/testing/selftests/filesystems/statmount/`. These tests would
-> serve two purposes:
-> demonstrate the functionality of the new feature and ensure its
-> continued stability
-> against future changes.
->
+On Thu, 13 Nov 2025 02:14:56 +0800
+Yongliang Gao <leonylgao@gmail.com> wrote:
 
-We are currently working on adding selftests!
+> @@ -271,7 +277,6 @@ int trace_pid_list_next(struct trace_pid_list *pid_list, unsigned int pid,
+>  {
+>  	union upper_chunk *upper_chunk;
+>  	union lower_chunk *lower_chunk;
+> -	unsigned long flags;
+>  	unsigned int upper1;
+>  	unsigned int upper2;
+>  	unsigned int lower;
+> @@ -282,27 +287,44 @@ int trace_pid_list_next(struct trace_pid_list *pid_list, unsigned int pid,
+>  	if (pid_split(pid, &upper1, &upper2, &lower) < 0)
+>  		return -EINVAL;
+>  
+> -	raw_spin_lock_irqsave(&pid_list->lock, flags);
+> -	for (; upper1 <= UPPER_MASK; upper1++, upper2 = 0) {
+> -		upper_chunk = pid_list->upper[upper1];
+> +	do {
+> +		unsigned int start_upper1 = upper1;
+> +		unsigned int start_upper2 = upper2;
+> +		unsigned int start_lower = lower;
+> +		unsigned int seq;
+>  
+> -		if (!upper_chunk)
+> -			continue;
+> +		seq = read_seqcount_begin(&pid_list->seqcount);
+>  
+> -		for (; upper2 <= UPPER_MASK; upper2++, lower = 0) {
+> -			lower_chunk = upper_chunk->data[upper2];
+> -			if (!lower_chunk)
+> +		for (; upper1 <= UPPER_MASK; upper1++, upper2 = 0) {
+> +			upper_chunk = pid_list->upper[upper1];
+> +
+> +			if (!upper_chunk)
+>  				continue;
+>  
+> -			lower = find_next_bit(lower_chunk->data, LOWER_MAX,
+> -					    lower);
+> -			if (lower < LOWER_MAX)
+> -				goto found;
+> +			for (; upper2 <= UPPER_MASK; upper2++, lower = 0) {
+> +				lower_chunk = upper_chunk->data[upper2];
+> +				if (!lower_chunk)
+> +					continue;
+> +
+> +				lower = find_next_bit(lower_chunk->data, LOWER_MAX,
+> +						    lower);
+> +				if (lower < LOWER_MAX)
+> +					goto found;
+> +			}
+>  		}
+> -	}
+>  
+> +		upper1 = UPPER_MASK + 1; /* Mark as not found */
+>   found:
+> -	raw_spin_unlock_irqrestore(&pid_list->lock, flags);
+> +		if (read_seqcount_retry(&pid_list->seqcount, seq)) {
+> +			/* Retry if write happened during read */
+> +			upper1 = start_upper1;
+> +			upper2 = start_upper2;
+> +			lower = start_lower;
+> +			continue;
+> +		}
+> +		break;
+> +	} while (1);
+> +
+>  	if (upper1 > UPPER_MASK)
+>  		return -1;
 
-You can see the progress on this branch on github [1] and this commit
-[2]. We will try to send a patch as soon as possible.
+Honestly, I wouldn't modify trace_pid_list_next(). It is simply used for
+printing of the pids in /sys/kernel/tracing/set_*_pid files. It's not a
+critical section, and it shouldn't affect scheduling like
+trace_pid_list_is_set() does.
 
-[1]: https://github.com/bsach64/linux/tree/statmount-fd-tests
-[2]: https://github.com/bsach64/linux/commit/9ad91e5e2f01d5c7a8ac24b6e13c79=
-42457a5270
+Just keep it taking the raw spin lock, as that will keep it from being
+modified by the writers. It also keeps the code from becoming more complex.
 
-Kind Regards,
-Bhavik
+-- Steve
+
 
