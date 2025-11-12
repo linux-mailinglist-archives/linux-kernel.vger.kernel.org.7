@@ -1,232 +1,124 @@
-Return-Path: <linux-kernel+bounces-898210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FB28C54950
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 22:15:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E11AC549B4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 22:20:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4D6FF4E356A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 21:14:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F7C73B9359
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 21:14:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAE4A2DE6F7;
-	Wed, 12 Nov 2025 21:14:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CCD12DF12C;
+	Wed, 12 Nov 2025 21:14:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="qNL/slCP"
-Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11010015.outbound.protection.outlook.com [52.101.201.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rMbd1t3d"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29ED62D97BD
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 21:14:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.201.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762982057; cv=fail; b=m5twt7OoJYPgT6acag0dCcoj5zX5mzJDUNzCYCd9HEPmx5M3rBES+KeE8pHk/+/ZgmlQB5vNQHDhn49WVOKADTjKBgl70AnV+KRUE2js4BbvCulpGb8V6gll8EO5CZkOWcM/cfL8OyRr/inPS+q1TQvDNoNheU7kXYWfOlXy/FI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762982057; c=relaxed/simple;
-	bh=sdYzJ8YLtMFJFMrLaZQaL7fnGkmDwpGluwf5JiaSD3o=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RYZHaJeFQfFbiInkbA/sMWXiLFlYxbzkcm+luHsmnD4sb6kBdN2SAx6vK2YMhR0CnqWPnvIqUH6F/P9dOZxEIKIQeFUnv2wAAb5oTuUQW8wsf9nJC712RjtidbGk+1qH5YpkmVPJDuy7CjIwxZSAMqxRI/G/QqM5bDrGSn0074U=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=qNL/slCP; arc=fail smtp.client-ip=52.101.201.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jmeml/MPrWqVzFQMCU+I+/QiVneW0Whp4RamcBI78py3CJVbheJDv6S5Tlc0X2CKgyRc3lHTAxfdC9AwCKgmMArHCBQ8udCH5fh/ByYtR96ZJb5R/xK2LX2bePBpNk5VX4q9h5wWsXDEsfIeWwUzQlRNPPZKOl4EjsKTwJGrRcGYndu/uY0A2DHEbJWkeNWJeyDvOxDHMkK9xMgSvm0Krg2f/l3/QfxJdiBkZdLLZexZ86Ho+Fw618LDG2Fk7y34LehoYGlCtqRejfOsq7pLD96fJHDmQ5sPQZJt9uL3rPedJ7UG/u7M11zB2Mpiyfks8wFI+B1t/CHi8X27oIa+1Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=28gKj/7c0YNaNX2BY3OWEkWUjuJccSOUyAahqOymQlw=;
- b=w1qbrUWcuHRehK/TAmxg03yQ06f1IEtwwTkXfZu0teq4rbrwQhO/66ypZhnEpwz7ShEygwBeR2+mj7j4QcUMQNr+jngBo0DoQcNHXjlHgp1TZudH+ZNUw7cK6PxHieUYvyfhrb2EFqIU3lHDblUtTRKk32g9UbkrdNa9JEp+F+/Qnk2zmmT9TqXDqQnbAYpDqZlYhj43srMy234G14E+MYjGvkzNGKHKHbmOGfaZ0I4Nr92Qtowj7hMRcW3zXzv3Wppw5/MeXHsTHbPOKvN6c9Ag1QusgbWOFe6lKzRLlq/Kp9XG/tUHLOh/sojVGs7yqlB35WqPMZLjDXFoc3y28Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=8bytes.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=28gKj/7c0YNaNX2BY3OWEkWUjuJccSOUyAahqOymQlw=;
- b=qNL/slCPWlJ64chWK+1DTGg0eHamWh6Z3Nqp2Q8MCV3p2SD/wJy6Rvv26Ba6ij58RALrNIGaEQfqwRaFwXuzMw44zfQJtSrgjfnlgk+rVfCYixgRPQHiMd6LRyGNMGPDPMl+XVaurcfFeXYd/hL1b8irvZ9tFy3QTt0ysyRi5zw=
-Received: from SA1P222CA0165.NAMP222.PROD.OUTLOOK.COM (2603:10b6:806:3c3::11)
- by IA0PR12MB8327.namprd12.prod.outlook.com (2603:10b6:208:40e::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.15; Wed, 12 Nov
- 2025 21:14:11 +0000
-Received: from SA2PEPF00001507.namprd04.prod.outlook.com
- (2603:10b6:806:3c3:cafe::16) by SA1P222CA0165.outlook.office365.com
- (2603:10b6:806:3c3::11) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9320.16 via Frontend Transport; Wed,
- 12 Nov 2025 21:14:09 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- SA2PEPF00001507.mail.protection.outlook.com (10.167.242.39) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9320.13 via Frontend Transport; Wed, 12 Nov 2025 21:14:10 +0000
-Received: from BLRDHSRIVAS.amd.com (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Wed, 12 Nov
- 2025 13:14:06 -0800
-From: Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>
-To: <joro@8bytes.org>, <will@kernel.org>, <robin.murphy@arm.com>,
-	<iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>
-CC: <suravee.suthikulpanit@amd.com>, <Vasant.Hegde@amd.com>,
-	<Santosh.Shukla@amd.com>, Dheeraj Kumar Srivastava
-	<dheerajkumar.srivastava@amd.com>, Ankit Soni <Ankit.Soni@amd.com>
-Subject: [PATCH v5] iommu/amd: Enhance "Completion-wait Time-out" error message
-Date: Thu, 13 Nov 2025 02:43:50 +0530
-Message-ID: <20251112211350.894-1-dheerajkumar.srivastava@amd.com>
-X-Mailer: git-send-email 2.25.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E60652D97BD
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 21:14:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762982048; cv=none; b=Pc2zB+9BNv9E8w5ijQv9iCnr9XAipSs8vK8J47TejFnusW722Bj27Ov0vIQjCuXfBDLz75Zsb1k3Zr/5t4rm++VoRSU1Ddl0YsAag6XERknRSJcQh/NemBvJHwjDFIg5nPrEiXhrku7qotaYO1BtfPzBi2DWr3QPoLuTm6PKmm4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762982048; c=relaxed/simple;
+	bh=d9CscdDYoao8HLVGid7qesd5VVIUGE3ZUvy4CEqb3i4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OfJn3hHmHmTKErJ6WUO1QZTQr8EsPchT35nwDR5Tz6XTyaAmIrDIYuNXjAXPmvbLFREN25bTagJlbyx5EVkTtFBLKTxCAaK8iKNlO4Uk8rVOYlPYP185LFias4WDrop4yxb9Q3BDcJse5bM8oT93NGHOMaFzRojq9WJ27AiCoeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rMbd1t3d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90E75C2BCB5
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 21:14:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762982047;
+	bh=d9CscdDYoao8HLVGid7qesd5VVIUGE3ZUvy4CEqb3i4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=rMbd1t3dQAZKvP1P+dl/+/3pkuELjMN3JotqSxAuKEXEwr2f4ewnMB+CBjX6PxESq
+	 GH2G1wovl8X6X42l6xFChpTx5r8Ih4yMC25kq490tyji5qE6bWnqzjoR0zVTeRbzJQ
+	 dPM1vLivzxV//UxW7dpJ673mNpOSzeh7DufOyG81nC4ehBgiCiRD76lRaPR4IVUsnh
+	 2a2GE4WZfa1T7ih5lKTCY1w9EBEwK5ifNWXpMSZ40mOKxRJEzGfTOivqLr376LT0Xo
+	 DJh2uVA/E42QWsh12WOL/BkyQ21kHuQD4815fmmDSlkfoDhtTPO6pwsPN0PXEASTqy
+	 GLFuxizjryb9A==
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-64162c04f90so202313a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 13:14:07 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWZnu+mLPN91c5rPCLIVkbAts/zb1FiSLJUOmrAnZYxWndoh8ECBwzi11+jB5mtWnh66wPd/MNVe28aVDI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUUWChuGv127t66WxpiBJPi9crCYnBgQ+UrEjKdCiO0ZXndVZB
+	UUeK8RXN96ImU9dYv6SPuawLSNtmV7p1pj5yQ776Euef2H904cSiG7YhpL70uNcGKiU3llDawj6
+	gpoEa3325fB0JXQrXV2x0Djzvo/4uKg==
+X-Google-Smtp-Source: AGHT+IGoTsQoCL6ji1eL4R4EPErqkBB9/ZPpkzWQ7QknL5cqA3ACnTP5l2VR8ru+GLXFcCnF3dsP1vre7ovgV9UMEbI=
+X-Received: by 2002:a17:906:38ce:b0:b73:4006:1882 with SMTP id
+ a640c23a62f3a-b7340063656mr148670166b.38.1762982045993; Wed, 12 Nov 2025
+ 13:14:05 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: satlexmb08.amd.com (10.181.42.217) To satlexmb07.amd.com
- (10.181.42.216)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF00001507:EE_|IA0PR12MB8327:EE_
-X-MS-Office365-Filtering-Correlation-Id: 488d8f33-425a-4285-211c-08de22306c7e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|36860700013|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?DKhtE9G+KIqiD8CgaVNJSQj9iLSHh3JpANwjI1rMak6qnlTvVBPm555ELsj6?=
- =?us-ascii?Q?0l4r+lLHwxDaQFcuTbJ6nGbXj7VxJVyrP6RM0eEbcyeQcrazntWXmQeB+ZMz?=
- =?us-ascii?Q?pVwwelu4C8BgPMLBB8oMu7jouUTZd5Z2z6LvyU2G6kd0UnJlOULCrnE+JfHT?=
- =?us-ascii?Q?hxSa4EAFLelZWPuP60jDPNsnzX+Um+LM3bGGVgsJRCtutqsjy7QjPsoiCzUE?=
- =?us-ascii?Q?sMd0rH9fpUjoQXbP5jPIE3uGMSuU87/FfjWdj9nXKidDNAhujqNeR3RRomgv?=
- =?us-ascii?Q?uAOhJOmVfdsquD80q0RmjNMuZwHtvuJ9DfRUvV2uzRGj6fuuVDwRwMN/JDBC?=
- =?us-ascii?Q?7pQs7V4fn/cDFzHFZ1q6tO9V6eLEQ67RhBfAb+IIEeY607MEQLLolZOCMaJf?=
- =?us-ascii?Q?Gb2BTztdJL9mbAU0n+jszzt6jZKnxFPhLWmvvnJmx0BcVhosHCa2P97/DKp3?=
- =?us-ascii?Q?2/kfIVc9ggArvY0n3TKXxylG3fC/4Y3RjtE422TKsQ4gxeIjfY4n2Lwlu8Ff?=
- =?us-ascii?Q?+D/sLhyb4cIzEhSmdnFj4IUC0r2B+mTVVHSPZ9485/N+F3OkWedcd718jNIi?=
- =?us-ascii?Q?QDJa14fbXol73A5pLeES2MA/9Y02yo6SlRrQdoqKUjvcsYr4CKbSOLTPh4/M?=
- =?us-ascii?Q?L3V1XIJdArhtZAmyO7F/vkRn2t++GgQpzbhs9SEFjd4nx1mVmfYjUwWvED8f?=
- =?us-ascii?Q?KZ1GNV1cDUwX8cgscnOyhZ2eTb2zbsXkyoTQRjJhGFTkaU75dQ4Vj/4WSGsv?=
- =?us-ascii?Q?lqYxbi9RURug6nAapLxNHMKmbCNgQ7jXcd5zbBSci2+7qC/EmMKSitk2gw3t?=
- =?us-ascii?Q?IWjRFA62UCZ6PO7FrEE/llURPugG9GblUNP8AfwnrrRYf/mLd2Efl/TCR1u7?=
- =?us-ascii?Q?J08aTjIdYPqWdaXqKLzSHkCAZaDHcwmupEBaupsxTtnUP9ExMUXbcpZY1FRy?=
- =?us-ascii?Q?JJKr7ABZ8M5EfPpVTXjK0WSbEfY9b2QFIjS9YG3SMLJ+2mowaidsHtQgu6Ff?=
- =?us-ascii?Q?TmCUrus6pyTWn00CZXzLhpOxQNT9yxhk7Cmy/ljfpBRcX5DrKSfLk3EReLjt?=
- =?us-ascii?Q?9pOD5nnlShUhvfEJtD7QQKjEhiiu+lPs+F+X9Km9hEQ+YEFlh8ArLu4Hue+y?=
- =?us-ascii?Q?vHRMc7bLQfcO1DrmhEoeRALrpabpLi8ckgQs8BjikRHx4QpO6a84n2jrE+9u?=
- =?us-ascii?Q?cIVpo4Zu2DAh9gwosoRE0wuX9jY+Du/+OeGnQ21wa+to4iF8wRbnrju0CsiH?=
- =?us-ascii?Q?hUXRmJs+ReV4m0PBfpj/DwtLFktz3bcofL5q9CGoMZIzriJyFRN06s585tQQ?=
- =?us-ascii?Q?Bcx/atCjzpkPCdpnj2ZNxzVZb/7IEOPwo8K+bbLbPPvCGaUjJ9hVddEosfjk?=
- =?us-ascii?Q?2qSCyoVtZzbhbSLKSNRtJ0UIytrer0bohuJ7hAlRYBd6wwsfc87yfhbQmtBg?=
- =?us-ascii?Q?dCr7vo7N6KfH6rcUd17hi1xPk/c03PDo38qpt8e0bhZYPsaFL7XAKEMSY2rf?=
- =?us-ascii?Q?MnHvG2QgX0V64vG1YQkwaGAFqRd6aLLizkCn+YuOdiz9AYLvelEJxFvi3Wlq?=
- =?us-ascii?Q?YiFW1AjNCtKNUgikIRI=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2025 21:14:10.6515
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 488d8f33-425a-4285-211c-08de22306c7e
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SA2PEPF00001507.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8327
+References: <20251112-pci-m2-e-v1-0-97413d6bf824@oss.qualcomm.com> <20251112-pci-m2-e-v1-1-97413d6bf824@oss.qualcomm.com>
+In-Reply-To: <20251112-pci-m2-e-v1-1-97413d6bf824@oss.qualcomm.com>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 12 Nov 2025 15:13:54 -0600
+X-Gmail-Original-Message-ID: <CAL_Jsq+dZOUCosma1QJ-aqtjWs4NDLRkAdB3Aaro=8_Ep7Y0Rg@mail.gmail.com>
+X-Gm-Features: AWmQ_bn9JcCoc3dA8k21kD5vpGQMTEoPaksSR81OwmvZvJ9jTIsLpoNTgRKEaZo
+Message-ID: <CAL_Jsq+dZOUCosma1QJ-aqtjWs4NDLRkAdB3Aaro=8_Ep7Y0Rg@mail.gmail.com>
+Subject: Re: [PATCH 1/9] serdev: Convert to_serdev_device() and
+ to_serdev_controller() helpers to macros
+To: manivannan.sadhasivam@oss.qualcomm.com
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas.schier@linux.dev>, 
+	Hans de Goede <hansg@kernel.org>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+	Mark Pearson <mpearson-lenovo@squebb.ca>, "Derek J. Clark" <derekjohn.clark@gmail.com>, 
+	Manivannan Sadhasivam <mani@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Marcel Holtmann <marcel@holtmann.org>, Luiz Augusto von Dentz <luiz.dentz@gmail.com>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, platform-driver-x86@vger.kernel.org, 
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-bluetooth@vger.kernel.org, 
+	linux-pm@vger.kernel.org, Stephan Gerhold <stephan.gerhold@linaro.org>, 
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Current IOMMU driver prints "Completion-wait Time-out" error message with
-insufficient information to further debug the issue.
+On Wed, Nov 12, 2025 at 8:45=E2=80=AFAM Manivannan Sadhasivam via B4 Relay
+<devnull+manivannan.sadhasivam.oss.qualcomm.com@kernel.org> wrote:
+>
+> From: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+>
+> If these helpers receive the 'const struct device' pointer, then the cons=
+t
+> qualifier will get dropped, leading to below warning:
+>
+> warning: passing argument 1 of =E2=80=98to_serdev_device_driver=E2=80=99 =
+discards 'const'
+> qualifier from pointer target type [-Wdiscarded-qualifiers]
+>
+> This is not an issue as of now, but with the future commits adding serdev
+> device based driver matching, this warning will get triggered. Hence,
+> convert these helpers to macros so that the qualifier get preserved.
+>
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.=
+com>
+> ---
+>  include/linux/serdev.h | 10 ++--------
+>  1 file changed, 2 insertions(+), 8 deletions(-)
+>
+> diff --git a/include/linux/serdev.h b/include/linux/serdev.h
+> index 34562eb99931d808e885ce5022b8aa4577566885..ab185cac556380dfa3cdf94b7=
+af6ee168b677587 100644
+> --- a/include/linux/serdev.h
+> +++ b/include/linux/serdev.h
+> @@ -49,10 +49,7 @@ struct serdev_device {
+>         struct mutex write_lock;
+>  };
+>
+> -static inline struct serdev_device *to_serdev_device(struct device *d)
+> -{
+> -       return container_of(d, struct serdev_device, dev);
 
-Enhancing the error message as following:
-1. Log IOMMU PCI device ID in the error message.
-2. With "amd_iommu_dump=1" kernel command line option, dump entire
-   command buffer entries including Head and Tail offset.
+See container_of_const()
 
-Dump the entire command buffer only on the first 'Completion-wait Time-out'
-to avoid dmesg spam.
-
-Signed-off-by: Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>
-Reviewed-by: Ankit Soni <Ankit.Soni@amd.com>
----
-Changes since v4:
--> Changed head and tail variables from int to u32 in dump_command_buffer()
-   to match readl() return type and updated pr_err() format specifiers from
-   %d to %u accordingly for head and tail. (Ankit)
-
-Changes since v3:
--> Dump the entire command buffer only on the first 'Completion-wait Time-out'
-   when amd_iommu_dump=1, instead of dumping it on every occurrence.
-
- drivers/iommu/amd/amd_iommu_types.h |  4 ++++
- drivers/iommu/amd/iommu.c           | 28 +++++++++++++++++++++++++++-
- 2 files changed, 31 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/iommu/amd/amd_iommu_types.h b/drivers/iommu/amd/amd_iommu_types.h
-index 95f63c5f6159..c20798fc644d 100644
---- a/drivers/iommu/amd/amd_iommu_types.h
-+++ b/drivers/iommu/amd/amd_iommu_types.h
-@@ -247,6 +247,10 @@
- #define CMD_BUFFER_ENTRIES 512
- #define MMIO_CMD_SIZE_SHIFT 56
- #define MMIO_CMD_SIZE_512 (0x9ULL << MMIO_CMD_SIZE_SHIFT)
-+#define MMIO_CMD_HEAD_MASK	GENMASK_ULL(18, 4)	/* Command buffer head ptr field [18:4] */
-+#define MMIO_CMD_BUFFER_HEAD(x) FIELD_GET(MMIO_CMD_HEAD_MASK, (x))
-+#define MMIO_CMD_TAIL_MASK	GENMASK_ULL(18, 4)	/* Command buffer tail ptr field [18:4] */
-+#define MMIO_CMD_BUFFER_TAIL(x) FIELD_GET(MMIO_CMD_TAIL_MASK, (x))
- 
- /* constants for event buffer handling */
- #define EVT_BUFFER_SIZE		8192 /* 512 entries */
-diff --git a/drivers/iommu/amd/iommu.c b/drivers/iommu/amd/iommu.c
-index eb348c63a8d0..c68b0fdc5433 100644
---- a/drivers/iommu/amd/iommu.c
-+++ b/drivers/iommu/amd/iommu.c
-@@ -1156,6 +1156,25 @@ irqreturn_t amd_iommu_int_handler(int irq, void *data)
-  *
-  ****************************************************************************/
- 
-+static void dump_command_buffer(struct amd_iommu *iommu)
-+{
-+	struct iommu_cmd *cmd;
-+	u32 head, tail;
-+	int i;
-+
-+	head = readl(iommu->mmio_base + MMIO_CMD_HEAD_OFFSET);
-+	tail = readl(iommu->mmio_base + MMIO_CMD_TAIL_OFFSET);
-+
-+	pr_err("CMD Buffer head=%llu tail=%llu\n", MMIO_CMD_BUFFER_HEAD(head),
-+	       MMIO_CMD_BUFFER_TAIL(tail));
-+
-+	for (i = 0; i < CMD_BUFFER_ENTRIES; i++) {
-+		cmd = (struct iommu_cmd *)(iommu->cmd_buf + i * sizeof(*cmd));
-+		pr_err("%3d: %08x %08x %08x %08x\n", i, cmd->data[0], cmd->data[1], cmd->data[2],
-+		       cmd->data[3]);
-+	}
-+}
-+
- static int wait_on_sem(struct amd_iommu *iommu, u64 data)
- {
- 	int i = 0;
-@@ -1166,7 +1185,14 @@ static int wait_on_sem(struct amd_iommu *iommu, u64 data)
- 	}
- 
- 	if (i == LOOP_TIMEOUT) {
--		pr_alert("Completion-Wait loop timed out\n");
-+
-+		pr_alert("IOMMU %04x:%02x:%02x.%01x: Completion-Wait loop timed out\n",
-+			 iommu->pci_seg->id, PCI_BUS_NUM(iommu->devid),
-+			 PCI_SLOT(iommu->devid), PCI_FUNC(iommu->devid));
-+
-+		if (amd_iommu_dump)
-+			DO_ONCE_LITE(dump_command_buffer, iommu);
-+
- 		return -EIO;
- 	}
- 
--- 
-2.25.1
-
+> -}
+> +#define to_serdev_device(d) container_of(d, struct serdev_device, dev)
 
