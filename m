@@ -1,190 +1,112 @@
-Return-Path: <linux-kernel+bounces-897794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02959C53C2E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:45:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 80C22C53BB6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:40:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3FC8F561476
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:00:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 01B8254310A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:02:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB12D3451CA;
-	Wed, 12 Nov 2025 17:00:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30D393451A3;
+	Wed, 12 Nov 2025 17:02:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1Vzekm/U"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Oi31aoAG"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3886A3446B2
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 17:00:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DACFA340277
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 17:02:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762966812; cv=none; b=Ib0wLnja2i+T03SL4fMIHLS8iqxdx24zi+wD4FLljnrtYJKF3ghLsi27U46V9jbXQcO5LcvNb+3voJTlrGmWMePBnOWEep5jMfvpwSOlCeexHHhzd06AMR04LpTvtQbNbVV2RQ9lkuaOJ74Xkl09taav3QeytP8eOMGmiCJYpA4=
+	t=1762966949; cv=none; b=srodLdI1XkwYvDRxQdpl63K++WZQWwbyMCTwg6XOMpVfSeQ2F9jZq3GtSo2PBC58jwcP0HdBmL5wqmr1gpY02hC4VFgBVtVHeI8n/TWnq00N4ZtzMSfi9uR5q8iXqz2t+bLNwjqSQfGeXxPJbg2dVgKHmJIexanPonGk5m4Dmzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762966812; c=relaxed/simple;
-	bh=OUe+i0yH614qxh5dXGbsQFtPU1q5ASZItjxnY/0ztIs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kYhJPQrZ2nB8gDcNsfx4bAP1HWbjvisbWFgZFiLYcH6NzMpnr0IqHWc2WVkvSZp8jhFtpXDsBBp1E/qKhetinrdqbiHvgcyNF2f9A762f/xbFCJB9z4yRRZtYYFFwagKnWjK+xkUqfbjuZJdX1CwARV5TW3cypuBxJ8y4T5htxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1Vzekm/U; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-297e13bf404so221205ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:00:06 -0800 (PST)
+	s=arc-20240116; t=1762966949; c=relaxed/simple;
+	bh=ngNDA+yZ4zTUwtZtG5I6JVuMZQa4L9vej78HoJgmWmU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=R4yNysX2Ir+cCfuWweXsb+VUO7Y1x2BNwmio9SZEii194KUhJqdlUUgW1JE68ZUnWQAyiv4cZnUtYqKR+hyPaWvSqxvZQowxznO7S3l5JnuTfehsuNhOHR6dAyy25klmmX/DeS4DoKSRFWoeKO213FLnJNo9JYbNDvSJtKaKTNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Oi31aoAG; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-47118259fd8so8224595e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:02:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762966806; x=1763571606; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=N1P20WNcj3mXYsq9G1MhsNUTXtMdI6bPIKWJ6kbQB3A=;
-        b=1Vzekm/UU1h7CVzcDE+WEPreExkEw2BZ14LMiIDXNpZtfIgfINdGwNK+th4orTYbhI
-         Lg/lwfxl5ST8JOTfMSk/JHNxFYQtVTOQjdFcq5RfnYZ5D1IYoFORiATL6z2GJ4TlIVaK
-         B0y4tmNgThcgvoCEijwyLslJTz3p5QgRIxQuVte7hkbGJ8uqbiyqZ40qrunebLZzE4Q2
-         j52j4fLgSwO1qxv5ayFN/gHxqND0GbtoSuPlEo25JsLZ+GMbuzeU8oRLl+GASsSVQj8p
-         PiKVfluJ/35TP7h4k+tCSuztIQrW568TX+XfWn9OBhRGlgqEF3JFu1YVu0MWh/xe7vH4
-         K00g==
+        d=gmail.com; s=20230601; t=1762966946; x=1763571746; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=RpxJUrH68rRTzK3W6ebRdgdts3S5XzYIMF8TSgTuh94=;
+        b=Oi31aoAGL1nMlYO4k3gIK/VrlUUSqUjMbWbqrZb7AixDFm0D1S76WZ8MSH94nrotr5
+         WWM0s3TvD3/X0uQ4l4iLKW67oW4jojSpXf7IHDoG+sFegGF1E6ShUaMye51AllJj8OyX
+         0+3umsknEjlP3Qx7ad0nMEXdHmAV7dLvgd/NWPNcvkxqlKRgnhJkqjui+ybbO7elpsJs
+         WYEp/VqK2zaKIhor/YYbPbGAwbdyq4Ga7bYx4dFvJq8LjRD6MOkJgPYTgKjJkarhCzMA
+         4qX9jgYRARqD1IIhmZAn6QMqiV9lmpg5mvaKhH5CAP1Gltiy1Q5uyvbijqWCEFNyrNJb
+         R2RA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762966806; x=1763571606;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=N1P20WNcj3mXYsq9G1MhsNUTXtMdI6bPIKWJ6kbQB3A=;
-        b=v4HZgFVJxl2V4Ork6WTmAwsaq9wbdGikT6Zo5Cj4y7L9Bl+0175Jp1erWg7v0a5p77
-         3dB5iGh/YdnOV3t+18bou69WAyF24IRrezr9QgfEYL0TI2exgkJCkLHXOkBNx0BkgyY/
-         3QSgrjSwbOu0p0Xh4Zri8Fc+gIKVmZt1O0c+hosBdK2xEETUXiqTNQVcIS1jxFTr2fBU
-         tk2naxBb6ojfVaf3X3UZKVx5lkx/vLSQbOivLMMWKqsNvIhwypCZT90KQ9CL9ox4uIo0
-         Ap2yTbNa+9I2dxJ18ruNpAykdx3of8v+cKock8bzg8S7ZsS7jyWAo3V5bL2ur76xELB3
-         AkxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXjZLM+iDXYuqThSrOqoT7IN3/f+TId2sHfTXQKWIqLim0hXhQT/rU/UBN8MNPKjhhlvBwC3mM2ieLyYmI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyU8eQ/t2hyvJZcq7DqxXPZOJZ6txKBGMTzNJ5oAkzsyYzytE5O
-	x44a1CUFJ6Sf61c114GlSHnjbqU8pxvbK54C34zeGYlL90nqzlhi1uXfutcai828h2HdiVwX2ix
-	UtGanihc1P7mUbQQoXVAWuLWy8/I1dIUvxtFMAUHC
-X-Gm-Gg: ASbGnctjTq3Ku7srukO2d5PlFB9JSLDFcv5dL+dI0QJe1YBsaEd1FHSHxCms9HgKdW/
-	nY8OFATXP8GCHNM37wgPyQ/epaJuLn0QI//ThGluDPYkVKQ/2xwydhv2ee14BuMazQbuvCraa6V
-	dr3eQ/MdhyDHT5SKM+zJdts6IUuboAdvEnL7ORgNklIPlkvXtxIWFSAW35sEwlhHtFwHBwOFd6v
-	i/NBxgvoUHBRipQqkO/bmI/U6KPliPdgYWSh1VGFH/TCeuqg32YAvwSKak8eR7gsvzow1fJBcFW
-	D41Y0HxWLxCMASD3QtoGFRpqtFGlOuGSjtNF
-X-Google-Smtp-Source: AGHT+IEC06rGle+UIW5ANn2hQ8uIBqNe7nL5BGNBktN6KUTeAETqYMHCENlZJVa01/UdsEb2OweFn4FjFx/aca4afaM=
-X-Received: by 2002:a17:903:2352:b0:291:6488:5af5 with SMTP id
- d9443c01a7336-29850709f33mr5717185ad.1.1762966805002; Wed, 12 Nov 2025
- 09:00:05 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762966946; x=1763571746;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RpxJUrH68rRTzK3W6ebRdgdts3S5XzYIMF8TSgTuh94=;
+        b=EryYpwwHw4DkhbN9I/4lB8PQ/TP1BUkfLnaGm+p5OuJmKqDeFk4dRFTT2OmmK4xGGr
+         FGYam1Gwxu4OIjk8teRNFsPobWk7/8eOQTXz/wNdCisgAKb/I3BNKkI8Tnju3Kj1Zdgc
+         zjdZw2cztLVPiXIDKLhN6KcF5YY4PQCqFg3YOua4RSSpqKblcfirJL0hLgrT7fN9B2xy
+         XLB2XsH0uqjJ0znp5a+eekUF9HLfRsV26hEWlW7tseRKY5IKho8dPzIutxmgAHuwxSH/
+         94iN3tHoN4OlmJBurUDj0oslaRA4CyH3BCXM2Sp60T6W5BWs6ZSaAQDi4DzfkDB/KzMA
+         LwmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWFrsITz/pW9CoEpqb1YuXza1zaQDd+18KkM8FBRjyyNWI2mTg5wCiOuYolCLIKy0j9LzxI7fMW4YOfvwQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0eJtUymgvvHSMuR279PxDH/3znUa7xpzntUlDuK+aqHQJtwyf
+	KquPJ5mSZd+QGcl/ZdpJUED5fYwG3+w+OmCP2z+2opE8OkQwGT2wdeOYDmL5lQ==
+X-Gm-Gg: ASbGnctW8j7GOuQTbEXF73d5VizyB8IrfNfnk0zXE0oHb2yDcQ8F/7fXj8JRV+VwC3m
+	X34eFyYxGtCsQGgzv7gIPORprTb0L8bFYWNJI0xUNH30RAcR5z0fwgX4sEEVwSZg+lVB5wBDSGO
+	swwgjumkyKOeScDcKtvoTSBgmYswl6RUvAF+tB90zWDcMixtfTx+4efm3dKU+Av0nHl7KzTfNAz
+	9hbKapxPiVNcV469LR0pVRLg0M1znbXNDURWN4NB7GodqfM0NsomH/i7wv0oa6soLE8364U6nDu
+	KDdP6ED7l74xum5Nf0J5EREdFSpbbcWzqp5UpQ3NOj97Le+SIQohs4+7ikaqXyIGUgRdx5+F6By
+	88k4WpQarA9lOWs+ogNCv2UIClKBdyRMUKpP4CsYPIaNupkxxNQI+4Vg9P5wIqixa9qPNS+1/lb
+	CeG9ODDD/r8ZRUohYDNjPb6KtwlINGJ9dl3XyxUL0XgwmoJsIVBQzUAoEaMn4IWhhFNCTwuv1xs
+	RHlYTaPlWNcKp1LPl4UJjJiNIW+X9neoPAI2zGaYrc=
+X-Google-Smtp-Source: AGHT+IF3A2FgIRBiOzC9kR2tSI0jG4eAs6wb/P/xtcFVm2dyctb5r1FI1LpdlWldxO25ClS2vaHfKw==
+X-Received: by 2002:a05:600c:3511:b0:45d:e28c:875a with SMTP id 5b1f17b1804b1-477871c33damr35789965e9.31.1762966945872;
+        Wed, 12 Nov 2025 09:02:25 -0800 (PST)
+Received: from ?IPV6:2003:ea:8f26:f700:b18b:e3d1:83c0:fb24? (p200300ea8f26f700b18be3d183c0fb24.dip0.t-ipconnect.de. [2003:ea:8f26:f700:b18b:e3d1:83c0:fb24])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42abe63e131sm35578303f8f.20.2025.11.12.09.02.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Nov 2025 09:02:25 -0800 (PST)
+Message-ID: <85f7b9de-9f00-4238-878b-6ba73ab01134@gmail.com>
+Date: Wed, 12 Nov 2025 18:02:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250603181634.1362626-1-ctshao@google.com> <9413e707-35d2-4c9a-9058-d14112ebb2cc@linux.intel.com>
-In-Reply-To: <9413e707-35d2-4c9a-9058-d14112ebb2cc@linux.intel.com>
-From: Ian Rogers <irogers@google.com>
-Date: Wed, 12 Nov 2025 08:59:51 -0800
-X-Gm-Features: AWmQ_bkj9-1UtHq-Wg4bf-5hpNakikJbXzE2v4UnHphTg1wxWXHdq7CMbKEijqs
-Message-ID: <CAP-5=fX0-W5BKha32qZu5zhJN=7Jvocz+ZwxLzXxYw_g2Zsz4Q@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] perf: Reveal PMU type in fdinfo
-To: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-Cc: Chun-Tse Shao <ctshao@google.com>, linux-kernel@vger.kernel.org, peterz@infradead.org, 
-	mingo@redhat.com, acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com, 
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org, adrian.hunter@intel.com, 
-	kan.liang@linux.intel.com, james.clark@linaro.org, howardchu95@gmail.com, 
-	weilin.wang@intel.com, linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v2] r8169: add support for RTL8125K
+To: javen <javen_xu@realsil.com.cn>, nic_swsd@realtek.com,
+ andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, horms@kernel.org
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251111092851.3371-1-javen_xu@realsil.com.cn>
+Content-Language: en-US
+From: Heiner Kallweit <hkallweit1@gmail.com>
+In-Reply-To: <20251111092851.3371-1-javen_xu@realsil.com.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 29, 2025 at 8:12=E2=80=AFPM Mi, Dapeng <dapeng1.mi@linux.intel.=
-com> wrote:
->
->
-> On 6/4/2025 2:15 AM, Chun-Tse Shao wrote:
-> > It gives useful info on knowing which PMUs are reserved by this process=
-.
-> > Also add config which would be useful.
-> > Testing cycles:
-> >
-> >   $ ./perf stat -e cycles &
-> >   $ cat /proc/`pidof perf`/fdinfo/3
-> >   pos:    0
-> >   flags:  02000002
-> >   mnt_id: 16
-> >   ino:    3081
-> >   perf_event_attr.type:   0
-> >   perf_event_attr.config: 0
-> >
-> > Testing L1-dcache-load-misses:
-> >
-> >   $ ./perf stat -e L1-dcache-load-misses &
-> >   $ cat /proc/`pidof perf`/fdinfo/3
-> >   pos:    0
-> >   flags:  02000002
-> >   mnt_id: 16
-> >   ino:    1072
-> >   perf_event_attr.type:   3
-> >   perf_event_attr.config: 65536
-> >
-> > Reviewed-by: Ian Rogers <irogers@google.com>
-> > Signed-off-by: Chun-Tse Shao <ctshao@google.com>
-> > ---
-> > v4:
-> >   Removed the first patch in v3 since it is merged.
-> >   Retested to make sure the patch still work.
-> >
-> > v3: lore.kernel.org/20241106003007.2112584-2-ctshao@google.com
-> >
-> >  kernel/events/core.c | 10 ++++++++++
-> >  1 file changed, 10 insertions(+)
-> >
-> > diff --git a/kernel/events/core.c b/kernel/events/core.c
-> > index 95e703891b24..bad563692d63 100644
-> > --- a/kernel/events/core.c
-> > +++ b/kernel/events/core.c
-> > @@ -56,6 +56,7 @@
-> >  #include <linux/buildid.h>
-> >  #include <linux/task_work.h>
-> >  #include <linux/percpu-rwsem.h>
-> > +#include <linux/seq_file.h>
-> >
-> >  #include "internal.h"
-> >
-> > @@ -7077,6 +7078,14 @@ static int perf_fasync(int fd, struct file *filp=
-, int on)
-> >       return 0;
-> >  }
-> >
-> > +static void perf_show_fdinfo(struct seq_file *m, struct file *f)
-> > +{
-> > +     struct perf_event *event =3D f->private_data;
-> > +
-> > +     seq_printf(m, "perf_event_attr.type:\t%u\n", event->orig_type);
-> > +     seq_printf(m, "perf_event_attr.config:\t%llu\n", (unsigned long l=
-ong)event->attr.config);
->
-> Could we print the config field with hexadecimal format? It makes the eve=
-nt
-> is more easily recognized. Thanks.
+On 11/11/2025 10:28 AM, javen wrote:
+> This adds support for chip RTL8125K. Its XID is 0x68a. It is basically
+> based on the one with XID 0x688, but with different firmware file.
+> 
+> Signed-off-by: javen <javen_xu@realsil.com.cn>
+> ---
+> v2: This adds support for chip RTL8125K. Reuse RTL_GIGA_MAC_VER_64 as its
+> chip version number.
+> 
+> 
+> ---
 
-I think this is a reasonable suggestion. I think it would also be
-useful to dump the config1, config2 and config3 values. I also think
-the state of the event would be useful for debugging.
-
-Thanks,
-Ian
-
-> > +}
-> > +
-> >  static const struct file_operations perf_fops =3D {
-> >       .release                =3D perf_release,
-> >       .read                   =3D perf_read,
-> > @@ -7085,6 +7094,7 @@ static const struct file_operations perf_fops =3D=
- {
-> >       .compat_ioctl           =3D perf_compat_ioctl,
-> >       .mmap                   =3D perf_mmap,
-> >       .fasync                 =3D perf_fasync,
-> > +     .show_fdinfo            =3D perf_show_fdinfo,
-> >  };
-> >
-> >  /*
-> > --
-> > 2.49.0.1204.g71687c7c1d-goog
-> >
-> >
+Reviewed-by: Heiner Kallweit <hkallweit1@gmail.com>
 
