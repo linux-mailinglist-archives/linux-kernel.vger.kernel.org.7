@@ -1,236 +1,187 @@
-Return-Path: <linux-kernel+bounces-896333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE761C5020B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 01:34:32 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35440C5020E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 01:35:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0158B3B1F97
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 00:34:31 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E5ABD4E5181
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 00:35:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F5491ACED5;
-	Wed, 12 Nov 2025 00:34:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 687531A38F9;
+	Wed, 12 Nov 2025 00:35:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b="b1ShWNPQ"
-Received: from PH0PR06CU001.outbound.protection.outlook.com (mail-westus3azon11011066.outbound.protection.outlook.com [40.107.208.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lLRxDIeq"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5E3135CBB1;
-	Wed, 12 Nov 2025 00:34:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.208.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762907665; cv=fail; b=G7vp0pBjIqCL9q8Ye/+FMAuN+dK6/96gNt4JZ5KhI6jqjovbDKnCkeoTG4glexClV3gNxEoiiXSK09Wim+Q6lBHGtWCbT5TQkLXdI5a5nqwk0eFzAHm4jm4DqU1UACa6+mRPEYAeSEos4aWx23OsEhttqKajGKzcQAcW3gfjtwo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762907665; c=relaxed/simple;
-	bh=QA/eRlZ1a9119Vk/mxp5gEnxgT0Nk+RPV/LMfR3LBXY=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=jBswl57x4Ubpg5upywPLpAyRnj6r9b0udzFP3plwBDU3QMPyrqSBYv35Sck5eBiz5UB53ApFzC1buMty+FDgZtOxeQKupHJVPzo9mESXncKW2Pxs3IqFhe+u1ssfJ+uAImdzxzQ95YqCNu3G9TOAJ87Nt1pCWcz1DR14ZguCWPs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com; spf=pass smtp.mailfrom=altera.com; dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b=b1ShWNPQ; arc=fail smtp.client-ip=40.107.208.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altera.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VmnhlYrZFtHAjf+37iOc/RWv+HzqNBkUINTOX4hnB+hWqsjKwCs1TExRAcmeFdMl4sBsT3jY1PHCEmfwIObXaHUd4mE80SXXy8SBsBCvF1H7JBJ9Z7fRN1tCQeAE8Kq5vLB+QEnwvdjU54yCDSlaCXKeKEXaywgK2XlGmLtjjw1sTglM0sH2/OxOaxRXH7Z9XF/doPeSqcGaIq56HXqocMt7ffxk63KGBfIWKKFs/r+5lWvlQR+tRZ0+kRTUWeBtVhvzTeOuh85yXp6M46oTOa95hot4daF22xzdpJN2zp+V0uuWIgzjVNjH2/M9kSc83GfRC+ut23Lx++Vwrt0U+g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LGUDhw7LnW2e0Q+TSvTC8+e6io66wmqH6eb94xKVoWI=;
- b=xzn38qijC37jCieE+D4TIuw5IVQSosaRlj0bCPSASVCTUzfL+L7RqDUdn4MPA+cCabkE6DmYQAA94NriuGG29+Up1wS+o0WgQDuYwuxcM7bLZu3SVfxG4mnGL3EB0PJlYHvcszzulbUAO3rhRWNvkJhi+Q2RzYyQLFcY62GQYfJGbh4QZB/9J4biRmmGSZmrXvT3L9bSOvMtX3thYwlgIQZiOD2doWJIJhdGdyU7cXXJSjnOA7wsICtrXQcXOlalCz5TgyawRpSb7Sv89mrYaGWdUAMBcg8XoRPHWuaBS7IWrIMcCApxDGsJZeUAsiuHpKbnkdIkrm63TlN0McwdPg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=altera.com; dmarc=pass action=none header.from=altera.com;
- dkim=pass header.d=altera.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=altera.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LGUDhw7LnW2e0Q+TSvTC8+e6io66wmqH6eb94xKVoWI=;
- b=b1ShWNPQwZzguXjTaJYJAsiAS3ft50uEKhPJ3uo2of9bjo93FbO3wGcsxcdvXD76O9/x+nh4mI/nlvwhdJXY6Vqid/5yHZMbfGSicj3azBLLo7Pf3ylxgy7kEVsOy/svAQV82K5N5A3EMizb4mPq22p2GhmZ18zwPKjVOHS1Oxw1KqCXaVkwBt1v1YInWAVtKd1L0UV40qCcVkZDaT+34yeyuzbj1hjCWnqp+uMQ9ySbpM4OxD/+IF13sYR2P6vHlgatWgqHl8PWjckbEn8aNfOrJWhnul7d4jsf1cSJncyliUIcJEGqoExT+658pD6c5jeYI/gDRMg9AicUHpxi5A==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=altera.com;
-Received: from BL1PR03MB6037.namprd03.prod.outlook.com (2603:10b6:208:309::10)
- by CO6PR03MB6211.namprd03.prod.outlook.com (2603:10b6:303:13b::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Wed, 12 Nov
- 2025 00:34:20 +0000
-Received: from BL1PR03MB6037.namprd03.prod.outlook.com
- ([fe80::9413:f1a2:1d92:93f1]) by BL1PR03MB6037.namprd03.prod.outlook.com
- ([fe80::9413:f1a2:1d92:93f1%3]) with mapi id 15.20.9320.013; Wed, 12 Nov 2025
- 00:34:20 +0000
-Message-ID: <76d281f3-4349-47c0-aa76-2e9716ba53f6@altera.com>
-Date: Wed, 12 Nov 2025 08:34:13 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] dt-bindings: intel: Add Agilex3 SoCFPGA board
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Dinh Nguyen <dinguyen@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <cover.1762840092.git.niravkumarlaxmidas.rabara@altera.com>
- <e9d398bacb299c996f14c9993bf041a9a6740cbf.1762840092.git.niravkumarlaxmidas.rabara@altera.com>
- <20251111-nuthatch-of-amusing-attraction-06ea70@kuoka>
-Content-Language: en-US
-From: Niravkumar L Rabara <niravkumarlaxmidas.rabara@altera.com>
-In-Reply-To: <20251111-nuthatch-of-amusing-attraction-06ea70@kuoka>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: KU1PR03CA0031.apcprd03.prod.outlook.com
- (2603:1096:802:19::19) To BL1PR03MB6037.namprd03.prod.outlook.com
- (2603:10b6:208:309::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03BFE35CBB1
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 00:35:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762907708; cv=none; b=sBtyLzJZ6OzxFffyijFo7Xzg6U9FuQTbWW8NFONock22LTaZiW7lOJ3F1JYTvyAc+JupdbnC0gsRqb4lZAEh52NFLDBCMY/ZhdPlmIwLiWFfNmmdlhJvDlykrcsSk/h+BS+qgr8JzurMRbvbqiOodpO7i91Ixw8z3U80paSgX6s=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762907708; c=relaxed/simple;
+	bh=/uddJhBBzzW8L+E3X13d+vydY17/3a+z2ohQB6rVS6M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NzFB7Sh371b3zav3lnqqT7aMRpE94bS3s5yyfYIHHC+6X4TBNGlsrMqNr+xDkyJBp9O26SUpQr07E12yjqSfyuZVYwqzCoT9vYA6+tic3fVRHMvWVAkmHuDjwp4E8QHqo8L/ETFAn0J+Ur9y7PtgGqrNmaTt1MvM8EZWk6KlKas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lLRxDIeq; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-b73301e6ab5so52935166b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 16:35:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762907704; x=1763512504; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q8bA5fyqCC+W6u0vk7OwR/d5lvOlTqdfez3AJaemrP4=;
+        b=lLRxDIeqpWVSjy4aNVeVN/KjYWHErAt+n6I2YfgUZK1vsm0QKU9D4XExHJWxxYQM98
+         ZCPQqfZ+bf4uqq7tU0EldzfQbVl/Ss4E4AZYLgDZ8Kv20O3WU313bIo+YD/JdSe7CVwe
+         Fwkk5tnKwmJ8BH8d5C4lwrwj4IDVQ+/+eyZUyMBlD8WGLQeim89f6UqQ60qi/KlG349N
+         mj30GspfrfyAGlHxi5n0aNCSoAWAqWowEaacIBoAJ7CZDisa6j2DIxe4ELP6JPYOgiow
+         K+yJJYUs4+LNhOgHZb4yCtyxhX/GxM5Kcb0T7BRTwr1174lfI9SKmCZ+4Z1L1GwJ/JtL
+         7XwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762907704; x=1763512504;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Q8bA5fyqCC+W6u0vk7OwR/d5lvOlTqdfez3AJaemrP4=;
+        b=ThZvrqljCYCdcdd4LDhH4kBBh1oi774srDwNNnWmDR51z/HE1i0vxgRcGYDLsviEVd
+         xRVgd93kOqUMfqWxRBbFWkANNTtgjJxh0rkg2wESloCHpmhS5eevQXjAkKyWRVtv3MWN
+         txslwvy1wifVpVcruEtDG55Qh/vVKjbnqmFoxxg7dk1Cr/CiaWPNaLIPmw0l6Ns8siBi
+         fvTgbt9Mnk0+5lzq19azbyk+NMO7pcZjdJYbWpGSiZZ8OAxOXzbwKpxCtY+xrI2147be
+         tOkbL1zcyhbOSIMChrg7HzX21iBMJVSFVh0hypHe6ocUnms5YpDCxNG1WKVbg6OhupGG
+         IOlA==
+X-Forwarded-Encrypted: i=1; AJvYcCWsov6czTJ7lSRXvAJXxpzMJwsyrnuaAq7b78FhzM8FCyAtpKvaUd2vNOezFv2XyitXAbC1OxjWUqY2NWY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxo+sLm/aekLRWZFMCuvNqBhEpgWgS9Xc4o3ciYpjAq7ZQkIZPB
+	IGoOwPUgfiCWy4Gkz9WDjrDyzq2YEf8T+Ho9K9Cb9FFvyLgiQiIFtHkEiXXD6PXP
+X-Gm-Gg: ASbGnct+n91iCEtTic7mZQw35w6ifdRe0q2AY+U2SAKMPHdnETA7QxHXBFlT9BABUa3
+	KK/SXuTOT3tQIjoQTwKjxwvoIuIfs2lTJbd7YQkkQAZUiN43D/vGsUepVejIdFZ05vbhR52dF4w
+	PUL6M2KW+AAcZFDHcVXzLvtkaIDvDBYSgMmGebfudpYZWHve6MZi5JC8S3xkPmjplx0hCJusb7V
+	9XzgYwr9TLoEK+KOsr11Q1txlLZLM8nlB++n/eYlYPbmI3dZT6/y79n6yQ+1JEsO1ITfsdhCRRA
+	uKhxEVKEQ/xEYFWL0FQRrOnmZnoYx+BajUywG+ipXrRMvyYAoZfHgxsf0c2DXNMjaGyZC3F0r9D
+	VFGMg8JXzPKNgEac94frnAPrMKp5sMpWYvj0onF0OoCnisMhG0owZgQ7C20nDGwtITbd5svircl
+	imVpUi5675ZLw=
+X-Google-Smtp-Source: AGHT+IGqrNbW7Y2frs0SjkA276j6v0NPZI9klOiEtgkLEjlg+yLRP1GOA3gr1+LqrmTZn0GT7QZWpQ==
+X-Received: by 2002:a17:907:3e1e:b0:b6f:9da9:4b46 with SMTP id a640c23a62f3a-b7331bb64cdmr106614966b.43.1762907704029;
+        Tue, 11 Nov 2025 16:35:04 -0800 (PST)
+Received: from localhost.localdomain ([46.10.223.24])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bdbcb0aasm1434568666b.11.2025.11.11.16.35.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Nov 2025 16:35:03 -0800 (PST)
+From: "Nikola Z. Ivanov" <zlatistiv@gmail.com>
+To: jiri@resnulli.us,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	david.hunter.linux@gmail.com,
+	khalid@kernel.org,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	"Nikola Z. Ivanov" <zlatistiv@gmail.com>,
+	syzbot+a2a3b519de727b0f7903@syzkaller.appspotmail.com
+Subject: [PATCH net] team: Move team device type change at the end of team_port_add
+Date: Wed, 12 Nov 2025 02:34:44 +0200
+Message-ID: <20251112003444.2465-1-zlatistiv@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL1PR03MB6037:EE_|CO6PR03MB6211:EE_
-X-MS-Office365-Filtering-Correlation-Id: 02a5cd47-02ab-4006-d8bc-08de2183387d
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|10070799003;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MWJjRmVlSDhKcnVmWFUyTllLMDB3cTNEK3JBeEU0K3UvckozSkIzWkhaR2hu?=
- =?utf-8?B?akhFNVU2VFJnSSsvYnpZT0FiMExNbVhUbnFVUmxwTmgwV2VOUDYvd1JJRkly?=
- =?utf-8?B?M3ZGQ0d1S3RSQUdTSmtEL3RXcE1JTWVGY3RDRk5sVXJHVGZrNFZZclpFN0Rl?=
- =?utf-8?B?MlB1UGRxR2g5TmdyeHNXQml5N2lSVGFOdlBIWHAzODRwZER0Y1hzNHZYalFj?=
- =?utf-8?B?MGtCVFExT0REUFJMeG5POGdvVDZyWm1Rd1YxL1g1WWVUa0U1bnIxTW53Y1Ry?=
- =?utf-8?B?MVhUeVJqVkVUWVZGK29FNUh1b29JWmdBU1RpcU9DSmtIQ0xKSXRxOFNKY3Qx?=
- =?utf-8?B?L1BhQlNuQi9maDVOdXh2YzNsbUpOVy9TTFVVUFF0SWY0ZEh0NGJUSUs1VzFT?=
- =?utf-8?B?LzVPcXZkRXc3UmRrbGQ1cnM3dkhiZW1nNStISVdrV09kbnNkNFBzMEdUZ0Q2?=
- =?utf-8?B?a0k1SDdWcXVQWi9nM2Nhck0yVU81Z1VKbHBJWlpydGxsZDhXTlZDSWVib2Y1?=
- =?utf-8?B?aUp1bnFPbURkcS8vdytBSlYwMmQwN05DOHBwSGFtc3k1OHJJYmduUTlRcVow?=
- =?utf-8?B?Uk5QQlUvU3NoaUhqeUc2VmJ1Nms1L2V5UU9RSktPUmJoYlNuTE55RWkyWndP?=
- =?utf-8?B?U3lIK21kRWdmcWtZWXVaTjEwVFo1Mzhlc200UHFGZTdiSTZTNFZsNi9PMENK?=
- =?utf-8?B?NThNemNzWnlkQktvR0wxSFRTYkc0SSszdTI1MWR5UWNpWVBJYTdicTdGMjdP?=
- =?utf-8?B?WkZ1MWJCdkQwalZZM0xKVm9NaHBMUUdQeC95SVZld1d2ZTBuV1J1YVBNWUZL?=
- =?utf-8?B?Vkh2N1dQL21ITFFwT2tLcDZtdE9OTnZDeDdkc0ZYc0laMDY4ZjJ2MjlyVEVw?=
- =?utf-8?B?aHpqL0FvcjI0YldaMWFWQU9YaHdKLzJzd210ZTVZZkJ3ZEE3WW1hcjRpczNT?=
- =?utf-8?B?a1N5Wno5TDRXSXVTWTZvMTl2dXhEWC9NVWpXWkJGNXM5dCtieExneUFpUWJi?=
- =?utf-8?B?UDFyaFZPMWpML0pwNkxEdjlhQlJtQjh1QXBZNzRZK3ptQnp1ek93d2hGV1lm?=
- =?utf-8?B?WWtxRjYycmFjYkhLREswbGFhSXBUQU5iZmszRTA4V2g1TmlUQlVXemRlUW9u?=
- =?utf-8?B?UlRMQkp0VWZ3SGFzQnpIWVFkb2VkL3RiaXA0VTN6cVl4VHh0T1NYbE5IWC9l?=
- =?utf-8?B?dFJ2SHNDNnppbG81OWNtQXkxSVNzblhPZXhnVzlwQUEzeVg3UXpjNUNsQnh2?=
- =?utf-8?B?dUJ5ZFhCem5VNldWb0RuSEVXeDM0cFVpazJkcWhqNnJtV0FMQWh1MjllN3lS?=
- =?utf-8?B?ejNId2Y5am1LZ3lPSGNzRnVza2FBeUNtYys3djhyNFZJd2M0LzFLdlREeUVr?=
- =?utf-8?B?MDc5TVFQSFVNSVhZQmNIWEVaeVhXL05McG1RQXozTHVGaXpqMCt0QWtrQ3Fu?=
- =?utf-8?B?WlZPRVA5RkM4M1o3TFJ6Q3BJaVBxVG02ZWx2SlZsZ3dGZkVISUVTcDQzbFB0?=
- =?utf-8?B?WnlPcDdsc2pYZTY4TWpaUFZJWkZGcHJMZmlqeGp0dFZPZHRFKzNKcUNpYkZG?=
- =?utf-8?B?N0ZZalo2cW1rdzBQY09zTEhlSzRoZmM3ait5cFRsUFNXM3o0M015WHc3VnFo?=
- =?utf-8?B?b0N6MEpqSHA3a05sbFY2S1NEMitSRDJ6T3hSRGdkQUU1ZzVyN0tzUmVTR3c2?=
- =?utf-8?B?T21DY05abE1KUURrZWtEemhPaWVWSFRkTXVPUTk4SnJ3SDRGelpLRjg3Z1Bo?=
- =?utf-8?B?RWhPUW9rdE1kVm5nUzRxQVJ2OU8xOTE2anRyZzd0QWh4ZWhQazZjWEdhbE5Q?=
- =?utf-8?B?bGNFWTlJQzVZUHByWVhUNmNPQS9hTkptYjk4dGl1Vkw4SElCUkdBdEtLLzFH?=
- =?utf-8?B?YmdsdWlKS3Y0T3BZQStjL01jVGwvbHBrZFR0enp3RXRPTlN3Qy9aMG5mZTFX?=
- =?utf-8?B?dGkxL0dtYnFua2p6c2o4aXBSNkdhYjlrMVVjOVE3RGRaTHp2VUl4clNNNHhX?=
- =?utf-8?B?Q0IwcmJGMVRBPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR03MB6037.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(10070799003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?VVJBazRNOGxmWjc3TXprRHpvUFo0YWYrVTZJUWVNc3JhakdmSDNGcWpYQ1BB?=
- =?utf-8?B?RTJ2dldIYk1RVUVUeCtSR3BCYUJSVmlGMTJoQzE4WnBMWmJLMlNGTm1BazE5?=
- =?utf-8?B?ZUw4Z1ZGOHhNVWpHSnYyeVA0aDZBdzR0RWttcFV4VWtkWVRsR2s5dFArSGJh?=
- =?utf-8?B?TTE0b3pHaHhhYllJT3FIb1JKaHFyKzRNRVNPdGtSWUhHYTdRWW42WDgzNlJY?=
- =?utf-8?B?QzJvUFIyZzRzeGlWSys0Vm4zOEx2eC9wc3R5a05leThLNElOcWdibTJMUTRP?=
- =?utf-8?B?MGR4NG9GOEN3WmhiNmdxVHZLTTNEQ1RnUjVtZG9TaVF3U0NZS1pGMXg2NWly?=
- =?utf-8?B?cFFlZjJPSmRtcHRNdW0wcGl0YnVGekd1V1VlN1hJdll6RTJ6NjlZUG1IbTU3?=
- =?utf-8?B?Q05pTnJoeGVJL2UvNU0wTXp6QkZlUGJIYzB3eU05WmE1Tnl0OVFGRVVxNVZR?=
- =?utf-8?B?aDlvMTRzck5xWW9tVCtuRWl0dkFYV1dJVko4eGwxZU9GM05jM0M2cHJtcnpB?=
- =?utf-8?B?cWxmV0s4KzlWQXVMbDAwNEdWd2RBZk4zc0pJeWg5ZldUZ3cxTzVFNTNXZ1Yz?=
- =?utf-8?B?TU4vQXdBWjdGZnNacnhBRXdqOUVPVk9nejJEcDZZczJ6VjRhWTlrMVN6Ly9D?=
- =?utf-8?B?bjlhUE1VQXB0M2tVaEl4aEZxMFAzSjEzM21kUE5BeGxEMWJJY3NZM3pNYkwx?=
- =?utf-8?B?ZzdEdHhUQ3BOM0tzVnBVKzM0YW51bHhOazQ0ZExkNlVGQWFnME1tcTRISGEx?=
- =?utf-8?B?WjV3K0NYamRXVkNuRlB1U3dnNHRGVnpoM1NMcXdUdFpPRVNMZGZ1NmwxT2hJ?=
- =?utf-8?B?OWZBaUUwMUhnb1ROcWxGY3FseFpDT2FNSjZ1VWxzSzVINGhqOWtKQXNOam1O?=
- =?utf-8?B?VXYwQXRUeGROditjWDYycGlnd2tULzJUMUdyd0hFdFppaFpGcFd0RzcvQldt?=
- =?utf-8?B?RDN0SUtrLzNyZTNaRVVYOHBLKzZybFoyZS8xS3h3Nm84aEpMUmgxSTBaNFY5?=
- =?utf-8?B?ZGdRb3lLZExCc3liWHJSTll2MG94MnhjemRwdC9vdUE2TUFLL0QzdUZYUlUw?=
- =?utf-8?B?VDc2OFZveExLZU9BN1ZsRU5xYUJ1YnVQYVhmdnNJQ1UvQmtqNEtOa3JMSmNE?=
- =?utf-8?B?ek85dXlzSU94bzRVMGpkdjdrdU80ajJYVlZ4RXlpbGFVdkhvS2hTOVZtQWVr?=
- =?utf-8?B?OUNZNE0yM09vN2Jtd2VsOHZ0UkZOWDB5MnY2aDJwenltQlEvSkF1OERXK3lH?=
- =?utf-8?B?dENUVUJJbDd0MkxNUXQzQUpzTnoxdjI1OGE5OFRyS2xSYjNoRFllWGRCa1Qy?=
- =?utf-8?B?OTdBTEpWS0xuM0doUGxYb0xIRUNRUldPTXd4TFRKRFBhZzZEYkVSZ3E0Z2Rp?=
- =?utf-8?B?bE1qdVNzZndzelhSNE1UNVA2cXF5clM4Y1I0Vmdpcng5cHF2c1FTSi9GUEc4?=
- =?utf-8?B?L3k3VGcxbWg5dlM3VlJSYkhtalY4c05EdUR0WGx5VDlINUJkbUJqdDVoL2pN?=
- =?utf-8?B?L0EvbFJLWFRoTndRSHVCNW1nUGphM01HV1RGT01GRzdpY0NKclJuMVM1alpn?=
- =?utf-8?B?WnB0d1NCRkxGMW9zZDJpeDFCVURuTXowbnRMUUlkMWZQWFFwM1FKcWgraGVa?=
- =?utf-8?B?KzQ4NlVxVUtDZEJ4S0txZjlyWlF0MDJST0o0K3NqKzFvYXdVdjFyak9vdy94?=
- =?utf-8?B?cCtYb3IzTXlTTzVHaCtXcGdCd29UOFYzeDRJbk1rZWhQZFBubTUrUGtxWk5x?=
- =?utf-8?B?K2J0amcxd2IydVpOdUQ1aW8rSUNWcVltZHZFZmtwb285MEZZVHpVT3hYVm0x?=
- =?utf-8?B?M1ZHczdYZjBEd2tUUXlRM2NVbE56WEZiTHFGNDVGWlhwZDM5M3VFL1p3STU1?=
- =?utf-8?B?bEI1OFR3TjVPZk9mTHArYVRDZDdGcjlIa0ZTdWNtRVB4SkJ6Qktxc1JOdk1D?=
- =?utf-8?B?N2JqQzBBZVBRRk5qc0dZbU5hTXBrYzRTMnlwekVoK2RWRTRDYnh5M09nYzJL?=
- =?utf-8?B?dlFlVk41RDhRN0VsNHBxbjN6TEh0am1GWnF2QWpXRVZZNCtIZVd1QWZlOG5J?=
- =?utf-8?B?QlNPbTZ3RExueGlaU2RtcGFSUXZrRys4am9QdFhFVXZ3OHc5Vi9KcEIyOHNL?=
- =?utf-8?B?c2s0MDBrd2QxcVlxU3Q5RitGUllwR0dwSEpJOXMySDA0U1B3S1pUS1RvVVZW?=
- =?utf-8?B?SkF0bWRuR0RJUExIdzF0ZzB1R3RnNXNid3ZJSWdyNkNsTHlrMjRxY2tvMkFH?=
- =?utf-8?Q?vXjy+09HYEsqxW4hiVzhxx65+W81r9h6TyW4WnY780=3D?=
-X-OriginatorOrg: altera.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 02a5cd47-02ab-4006-d8bc-08de2183387d
-X-MS-Exchange-CrossTenant-AuthSource: BL1PR03MB6037.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2025 00:34:20.6877
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: fbd72e03-d4a5-4110-adce-614d51f2077a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: JbtqJm4PWIzjDWGGtsLt/hys9VqqDoGt3DvSvv1CrvDOSf8Qb7oW1REupPnNSFQ1KvOUuKGRKmJk/mBo4YnwzPLlu8TAzWcQRUNqjP9yVgJ9HXPX9Pctbl2pNUfASBhM
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO6PR03MB6211
+Content-Transfer-Encoding: 8bit
 
+Attempting to add a port device that is already up will expectedly fail,
+but not before modifying the team device header_ops.
 
+In the case of the syzbot reproducer the gre0 device is
+already in state UP when it attempts to add it as a
+port device of team0, this fails but before that
+header_ops->create of team0 is changed from eth_header to ipgre_header
+in the call to team_dev_type_check_change.
 
-On 11/11/2025 3:51 pm, Krzysztof Kozlowski wrote:
-> On Tue, Nov 11, 2025 at 02:17:38PM +0800, niravkumarlaxmidas.rabara@altera.com wrote:
->> From: Niravkumar L Rabara <niravkumarlaxmidas.rabara@altera.com>
->>
->> Add compatible string for Agilex3 SoCFPGA board, which shares the same
->> architecture as Agilex5 but with two fewer CPU cores.
->>
->> Signed-off-by: Niravkumar L Rabara <niravkumarlaxmidas.rabara@altera.com>
->> ---
->>
->> v2 changes:
->>   - Add separate agilex3 compatible instead of using agilex5 context.
->>
->> v1 link:
->> https://lore.kernel.org/all/51ecc7f4eb7e419c00ee51fc26156e25686dfece.1762756191.git.niravkumarlaxmidas.rabara@altera.com/
->>
->>   Documentation/devicetree/bindings/arm/intel,socfpga.yaml | 5 +++++
->>   1 file changed, 5 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/arm/intel,socfpga.yaml b/Documentation/devicetree/bindings/arm/intel,socfpga.yaml
->> index cf7a91dfec8a..e5a8141dc6cb 100644
->> --- a/Documentation/devicetree/bindings/arm/intel,socfpga.yaml
->> +++ b/Documentation/devicetree/bindings/arm/intel,socfpga.yaml
->> @@ -21,6 +21,11 @@ properties:
->>                 - intel,socfpga-agilex-n6000
->>                 - intel,socfpga-agilex-socdk
->>             - const: intel,socfpga-agilex
->> +      - description: Agilex3 boards
->> +        items:
->> +          - enum:
->> +              - intel,socfpga-agilex3-socdk
->> +          - const: intel,socfpga-agilex3
-> 
-> This is confusing, where is the fallback? You said this is fully
-> compatible with Agilex5, no?
-> 
-> Best regards,
-> Krzysztof
-> 
+Later when we end up in ipgre_header() struct *ip_tunnel points to nonsense
+as the private data of the device still holds a struct team.
 
-Yes, I should have "const: intel,socfpga-agilex5" as well for the fallback.
+Move team_dev_type_check_change down where all other checks have passed
+as it changes the dev type with no way to restore it in case
+one of the checks that follow it fail.
 
-+      - description: Agilex3 boards
-+        items:
-+          - enum:
-+              - intel,socfpga-agilex3-socdk
-+          - const: intel,socfpga-agilex3
-+          - const: intel,socfpga-agilex5
+Also make sure to preserve the origial mtu assignment:
+  - If port_dev is not the same type as dev, dev takes mtu from port_dev
+  - If port_dev is the same type as dev, port_dev takes mtu from dev
 
-I will add this in v3.
+Testing:
+  - team device driver in-tree selftests
+  - Add/remove various devices as slaves of team device
+  - syzbot
 
-Thanks,
-Nirav
+Reported-by: syzbot+a2a3b519de727b0f7903@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=a2a3b519de727b0f7903
+Signed-off-by: Nikola Z. Ivanov <zlatistiv@gmail.com>
+---
+ drivers/net/team/team_core.c | 19 +++++++++++--------
+ 1 file changed, 11 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/net/team/team_core.c b/drivers/net/team/team_core.c
+index 29dc04c299a3..94c149e89231 100644
+--- a/drivers/net/team/team_core.c
++++ b/drivers/net/team/team_core.c
+@@ -1134,10 +1134,6 @@ static int team_port_add(struct team *team, struct net_device *port_dev,
+ 		return -EPERM;
+ 	}
+ 
+-	err = team_dev_type_check_change(dev, port_dev);
+-	if (err)
+-		return err;
+-
+ 	if (port_dev->flags & IFF_UP) {
+ 		NL_SET_ERR_MSG(extack, "Device is up. Set it down before adding it as a team port");
+ 		netdev_err(dev, "Device %s is up. Set it down before adding it as a team port\n",
+@@ -1155,10 +1151,12 @@ static int team_port_add(struct team *team, struct net_device *port_dev,
+ 	INIT_LIST_HEAD(&port->qom_list);
+ 
+ 	port->orig.mtu = port_dev->mtu;
+-	err = dev_set_mtu(port_dev, dev->mtu);
+-	if (err) {
+-		netdev_dbg(dev, "Error %d calling dev_set_mtu\n", err);
+-		goto err_set_mtu;
++	if (dev->type == port_dev->type) {
++		err = dev_set_mtu(port_dev, dev->mtu);
++		if (err) {
++			netdev_dbg(dev, "Error %d calling dev_set_mtu\n", err);
++			goto err_set_mtu;
++		}
+ 	}
+ 
+ 	memcpy(port->orig.dev_addr, port_dev->dev_addr, port_dev->addr_len);
+@@ -1233,6 +1231,10 @@ static int team_port_add(struct team *team, struct net_device *port_dev,
+ 		}
+ 	}
+ 
++	err = team_dev_type_check_change(dev, port_dev);
++	if (err)
++		goto err_set_dev_type;
++
+ 	if (dev->flags & IFF_UP) {
+ 		netif_addr_lock_bh(dev);
+ 		dev_uc_sync_multiple(port_dev, dev);
+@@ -1251,6 +1253,7 @@ static int team_port_add(struct team *team, struct net_device *port_dev,
+ 
+ 	return 0;
+ 
++err_set_dev_type:
+ err_set_slave_promisc:
+ 	__team_option_inst_del_port(team, port);
+ 
+-- 
+2.51.0
+
 
