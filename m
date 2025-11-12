@@ -1,133 +1,172 @@
-Return-Path: <linux-kernel+bounces-898124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CF5AC546B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 21:21:16 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7B1DC546D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 21:23:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D4AE3A7B66
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 20:21:04 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 03D1E3450C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 20:23:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A8EF2C0F96;
-	Wed, 12 Nov 2025 20:20:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2ED82D0610;
+	Wed, 12 Nov 2025 20:22:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qRsbEJHX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="WhhQ7EuK"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62CB02C11C5
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 20:20:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 084DF2609CC;
+	Wed, 12 Nov 2025 20:22:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762978827; cv=none; b=rULcAcLDn7m/gnJr9nNOeUfG8vOA8XcWXZ7yxeADtmptK9VQojlRUsiivZraXaAOcG/P1bhtOOr1Ob9lnGqKe7rQ4a9asRWatUoev47RGh/5bzln0qG5nMVYzgpC0undgvGltEHG1enL/9qiF7d9Byk6Cwr2IjEru0uFYx5k2r8=
+	t=1762978972; cv=none; b=gS08EWSHQuAYegQOhkDUHSMWaR+QHIjYhqkUiytlrQ+P7/NzyabNQ4ln38znvts1IsyiGrMc5fn1r5n3Kj+kVEJbxK8DyeOyA6NDAJ7VX1nzs8qsP11OpSe0cYKM1ZVY+gLr4HqyDwk0z5N+JwhrIqTW1jsvtTp39Y5xZ5jiA+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762978827; c=relaxed/simple;
-	bh=Qeo9aHn3CQrAoVrazqXz8CGRHXh8hkmtGDI+H25IESI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Hd1m+QLTbsDoy60BE7TX1Xmnw6G1yW3g+gjfW1V5fcsA/+jFMjINJbjOf/A71ad4A1Yav88Q8/3rRI4zmFGYwAK6jq2B0SeXCMtmHtjuOEoSq9i9mXYQp/HYhrio9MaJU2F/whlKPCg4Sdsxgra0t35uKeRdo0RL3+nd7JFFmMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qRsbEJHX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19AE0C2BC9E
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 20:20:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762978827;
-	bh=Qeo9aHn3CQrAoVrazqXz8CGRHXh8hkmtGDI+H25IESI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=qRsbEJHXf4QulqlxR8dmZA5KoKsY4wsTFBoI9Jx8Z0f4PT0qNbrvqSpUfGMBRnTI1
-	 Ha7CZHAEQZzpRE7L4fZediyDulYW8uoaJiQ7i+74z7+eLXPwwulqh6zIZHdiXk2sA/
-	 Rdn7qNb7c3P1t7qtJdu0v39KkQHIhJmC5SyM4bUV0HYOqReJxRFnLIJREIZehduI8Y
-	 DWIQY6lQVlMBbFZY6dTp9raMsmr7xS/fBBmek87ScaFWFcfVLw2Yoora8dg930pKde
-	 EGm3s+4nPGlXSh3Mi866SQEr51sYbDchdFz9N7XozKkL6piKXJAq43LSb4nNOTbeJ9
-	 eHiDjaiucFzZA==
-Received: by mail-oi1-f169.google.com with SMTP id 5614622812f47-44f7be0adcfso10648b6e.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 12:20:27 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCV8sHNyVLBb/U8kGAhZqqSDrEPlYNV9XRv1ip4Sjr8QZdL5sHhecrhra1l/qNOibF8B7fCDR7M9B7GQCIc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzuZazP1m7+2QTxMqDuM189EmZBoQvNWFSLZ4GsJxKWBf7Argxm
-	lK4lWtPRguUnnSzBShXLFDlWimQwR+QS9g7ZuPtFa+mvGgc3lHfralTDqXCMNiQ0bOmeXoibUBp
-	L0385Kg/v3v2IaPfUNHbfS5OZYFGtyXc=
-X-Google-Smtp-Source: AGHT+IGLAbCGoAJqBEIJCopoA5S9ObG1EhGOks1U7N4nzFZ5JFU7tcvXYcmonUdu9hjgKAe8nPCDOXdFQtMcvhu8zqs=
-X-Received: by 2002:a05:6808:218e:b0:44d:aa6b:a578 with SMTP id
- 5614622812f47-450745ccfbdmr2271145b6e.66.1762978826269; Wed, 12 Nov 2025
- 12:20:26 -0800 (PST)
+	s=arc-20240116; t=1762978972; c=relaxed/simple;
+	bh=Qc+ZX9T/f2W+RDw2MY8se8ehYAGsJxhh8u3/jBxkUvE=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=W7IgVJOBGR7CH+c1HUxoQ14rhsduukuSjeOB4B0NAjZVHWxxFRquYqlK9lnbuzqGceunJ/Z9dKoQ/SZLEvHztazMGSj20YebU6jk323rDD3RvWU8LuKHBlINnOxIHTkzTUJ928oOIQaR66Ki0Yr6Jdq7q+2s6ezgT7m4olFE/wo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=WhhQ7EuK; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from mail.zytor.com (c-76-133-66-138.hsd1.ca.comcast.net [76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 5ACKLxgd978289
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+	Wed, 12 Nov 2025 12:22:00 -0800
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 5ACKLxgd978289
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025102301; t=1762978922;
+	bh=GacBjPJEXkeyFGvcySDne54yt1x9SXUnR3yJ7bSJhAE=;
+	h=From:To:Subject:Date:From;
+	b=WhhQ7EuKwYOXytPktFek3puY7Ka0XqBpn7jBOERZqLlcy7SfXWCNsSw4KzTyrdilv
+	 xf34DKl84eb9wbp02eojRF1Arl3k73RGpmWbST7W1aDH5jgCFvity/lWEY3JsDu/66
+	 uXn03ol/zqhoxm9wKKTvyWGhWcjKy1nt3b2wdtHuOktdHSOgmEQUbTK9TaRpNeFqna
+	 GMKGGeMijqYo3e0UVhsVSvu/vfq6aj6nsMTELnn0OwBKjCJlGdM6QBeaOwImY1fAO8
+	 BHm9EGykwgLoNslkep5UQch3jg45qyLBcV9GUZgL1RCODGmny3vbFlwxdy1QCUoeVl
+	 ei6m6DpOShsyw==
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: "H. Peter Anvin" <hpa@zytor.com>, "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        =?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+        Xin Li <xin@zytor.com>, Andrew Cooper <andrew.cooper3@citrix.com>,
+        Andy Lutomirski <luto@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
+        Borislav Petkov <bp@alien8.de>, Brian Gerst <brgerst@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>, James Morse <james.morse@arm.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Josh Poimboeuf <jpoimboe@kernel.org>, Kees Cook <kees@kernel.org>,
+        Nam Cao <namcao@linutronix.de>, Oleg Nesterov <oleg@redhat.com>,
+        Perry Yuan <perry.yuan@amd.com>, Thomas Gleixner <tglx@linutronix.de>,
+        Thomas Huth <thuth@redhat.com>, Uros Bizjak <ubizjak@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-sgx@vger.kernel.org, x86@kernel.org
+Subject: [PATCH v3 0/3] x86/entry/vdso: clean up the vdso build, vdso updates
+Date: Wed, 12 Nov 2025 12:21:45 -0800
+Message-ID: <20251112202155.1310587-1-hpa@zytor.com>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251106011909.2189279-1-luriwen@kylinos.cn>
-In-Reply-To: <20251106011909.2189279-1-luriwen@kylinos.cn>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 12 Nov 2025 21:20:15 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0h-FtZ3gOmP8yVFAbWFzNijRY0MHUxUnqtqBT+rvpwjOQ@mail.gmail.com>
-X-Gm-Features: AWmQ_bkJzo0PSrW171LCOutPyZ9KH-EcJS1xmXxaO3-QkO2F--p2kKyf2aoMBsQ
-Message-ID: <CAJZ5v0h-FtZ3gOmP8yVFAbWFzNijRY0MHUxUnqtqBT+rvpwjOQ@mail.gmail.com>
-Subject: Re: [PATCH v2] PM: suspend: Make pm_test delay interruptible by
- wakeup events
-To: Riwen Lu <luriwen@kylinos.cn>
-Cc: rafael@kernel.org, pavel@kernel.org, lenb@kernel.org, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	xiongxin <xiongxin@kylinos.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Nov 6, 2025 at 2:19=E2=80=AFAM Riwen Lu <luriwen@kylinos.cn> wrote:
->
-> Modify the suspend_test() function to make the test delay can be
-> interrupted by wakeup events.
->
-> This improves the responsiveness of the system during suspend testing
-> when wakeup events occur, allowing the suspend process to proceed
-> without waiting for the full test delay to complete when wakeup events
-> are detected.
->
-> Additionally, using msleep() instead of mdelay() avoids potential soft
-> lockup "CPU stuck" issues when long test delays are configured.
->
-> Signed-off-by: Riwen Lu <luriwen@kylinos.cn>
-> Signed-off-by: xiongxin <xiongxin@kylinos.cn>
+This patchset cleans up the vdso build by building the 32- and 64-bit
+vdsos in separate directories, moving the vdso2c tool to
+arch/x86/tools, and by merging common code and especially Makefile
+rules between the 32- and 64-bit vdsos to the greatest extent
+possible.
 
-This is confusing.
+Be more strict about sanitizing and standardizing the vdso build
+options.
 
-If you send somebody else's patch, there needs to be a From: header
-pointing to them in addition to the S-o-b tag.
+Disable CFI for the vdso until the kernel adds user space IBT support.
 
-If you collaborated with somebody else on this patch, there needs to
-be a Co-developed-by: tag pointing to them in addition to the S-o-b
-tag.
+Modernize the DWARF generation vdso32/sigreturn.S.
 
-If none of the above is the case, the additional S-o-b tag should not
-be present.
+Add macros to cleanly call system calls from vdso source code.
 
-Thanks!
+Add the GNU_PROPERTY and GNU_STACK PHDRs to the vdso.
 
-> ---
->  kernel/power/suspend.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
->
-> diff --git a/kernel/power/suspend.c b/kernel/power/suspend.c
-> index 4bb4686c1c08..a8e80ba8ac2c 100644
-> --- a/kernel/power/suspend.c
-> +++ b/kernel/power/suspend.c
-> @@ -344,10 +344,14 @@ MODULE_PARM_DESC(pm_test_delay,
->  static int suspend_test(int level)
->  {
->  #ifdef CONFIG_PM_DEBUG
-> +       int i;
-> +
->         if (pm_test_level =3D=3D level) {
->                 pr_info("suspend debug: Waiting for %d second(s).\n",
->                                 pm_test_delay);
-> -               mdelay(pm_test_delay * 1000);
-> +               for (i =3D 0; i < pm_test_delay && !pm_wakeup_pending(); =
-i++)
-> +                       msleep(1000);
-> +
->                 return 1;
->         }
->  #endif /* !CONFIG_PM_DEBUG */
-> --
-> 2.25.1
->
+When using int $0x80 (old 32-bit hardware or FRED-capable 64-bit
+hardware) skip the stack stuff in the 32-bit kernel entry code and
+call int $0x80 directly when used from C code.
+
+Changes from v3:
+
+  In arch/x86/include/asm/vdso/sys_call.h:
+  - remove stray comment from prototyping (Uros Biszjak)
+  - remove VDSO_SYSCALL6() since it would require special
+    handling on 32 bits with frame pointers and is
+    currently unused. (Uros Biszjak)
+  - indent nested preprocessor directives.
+
+Changes from v2:
+
+  Too many to count - much of the patchset has been reworked
+
+Patches:
+
+	x86/entry/vdso: rename vdso_image_* to vdso*_image
+	x86/entry/vdso: refactor the vdso build
+	x86/entry/vdso32: don't rely on int80_landing_pad for adjusting ip
+	x86/entry/vdso32: remove SYSCALL_ENTER_KERNEL macro in sigreturn.S
+	x86/entry/vdso32: remove open-coded DWARF in sigreturn.S
+	x86/entry/vdso: include GNU_PROPERTY and GNU_STACK PHDRs
+	x86/vdso: abstract out vdso system call internals
+	x86/cpufeature: replace X86_FEATURE_SYSENTER32 with X86_FEATURE_SYSFAST32
+	x86/entry/vdso32: when using int $0x80, use it directly
+
+--- 
+ arch/x86/Kconfig.cpufeatures                       |   8 +
+ arch/x86/Makefile                                  |   2 +-
+ arch/x86/entry/syscall_32.c                        |   2 +-
+ arch/x86/entry/vdso/.gitignore                     |  11 +-
+ arch/x86/entry/vdso/Makefile                       | 162 +--------------------
+ arch/x86/entry/vdso/common/Makefile.include        |  89 +++++++++++
+ arch/x86/entry/vdso/{vdso-note.S => common/note.S} |   5 +-
+ arch/x86/entry/vdso/{ => common}/vclock_gettime.c  |   0
+ arch/x86/entry/vdso/{ => common}/vdso-layout.lds.S |  51 ++++---
+ arch/x86/entry/vdso/{ => common}/vgetcpu.c         |   0
+ arch/x86/entry/vdso/vdso32/Makefile                |  24 +++
+ arch/x86/entry/vdso/vdso32/note.S                  |  19 +--
+ arch/x86/entry/vdso/vdso32/sigreturn.S             | 152 +++++--------------
+ arch/x86/entry/vdso/vdso32/system_call.S           |  22 ++-
+ arch/x86/entry/vdso/vdso32/vclock_gettime.c        |   5 +-
+ arch/x86/entry/vdso/vdso32/vdso32.lds.S            |   2 +-
+ arch/x86/entry/vdso/vdso32/vgetcpu.c               |   4 +-
+ arch/x86/entry/vdso/vdso64/Makefile                |  45 ++++++
+ arch/x86/entry/vdso/vdso64/note.S                  |   1 +
+ arch/x86/entry/vdso/vdso64/vclock_gettime.c        |   1 +
+ .../entry/vdso/{vdso.lds.S => vdso64/vdso64.lds.S} |   2 +-
+ arch/x86/entry/vdso/{ => vdso64}/vdsox32.lds.S     |   2 +-
+ arch/x86/entry/vdso/vdso64/vgetcpu.c               |   1 +
+ .../entry/vdso/{ => vdso64}/vgetrandom-chacha.S    |   0
+ arch/x86/entry/vdso/{ => vdso64}/vgetrandom.c      |   2 +-
+ arch/x86/entry/vdso/{ => vdso64}/vsgx.S            |   0
+ arch/x86/entry/vdso/vma.c                          |  24 ++-
+ arch/x86/include/asm/cpufeatures.h                 |   2 +-
+ arch/x86/include/asm/dwarf2.h                      |   1 +
+ arch/x86/include/asm/elf.h                         |   2 +-
+ arch/x86/include/asm/vdso.h                        |   6 +-
+ arch/x86/include/asm/vdso/gettimeofday.h           | 108 +-------------
+ arch/x86/include/asm/vdso/sys_call.h               | 105 +++++++++++++
+ arch/x86/kernel/asm-offsets.c                      |   6 +
+ arch/x86/kernel/cpu/centaur.c                      |   3 -
+ arch/x86/kernel/cpu/common.c                       |   8 +
+ arch/x86/kernel/cpu/intel.c                        |   4 +-
+ arch/x86/kernel/cpu/zhaoxin.c                      |   4 +-
+ arch/x86/kernel/fred.c                             |   2 +-
+ arch/x86/kernel/process_64.c                       |   6 +-
+ arch/x86/kernel/signal_32.c                        |   4 +-
+ arch/x86/tools/Makefile                            |  15 +-
+ arch/x86/{entry/vdso => tools}/vdso2c.c            |   0
+ arch/x86/{entry/vdso => tools}/vdso2c.h            |   0
+ arch/x86/xen/setup.c                               |  28 ++--
+ arch/x86/xen/smp_pv.c                              |   5 +-
+ arch/x86/xen/xen-ops.h                             |   1 -
+ 47 files changed, 448 insertions(+), 498 deletions(-)
 
