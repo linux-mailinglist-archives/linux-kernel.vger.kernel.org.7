@@ -1,176 +1,282 @@
-Return-Path: <linux-kernel+bounces-896680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82F5AC50F86
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:39:23 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD39CC50F89
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:40:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CA503AA43F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 07:36:15 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 44E304F3434
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 07:36:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D57F2DC791;
-	Wed, 12 Nov 2025 07:36:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D872E2E2F15;
+	Wed, 12 Nov 2025 07:36:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="q+brhiHo"
-Received: from BL0PR03CU003.outbound.protection.outlook.com (mail-eastusazon11012048.outbound.protection.outlook.com [52.101.53.48])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="sVxBMO2I"
+Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013010.outbound.protection.outlook.com [40.93.201.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A24E2D9797;
-	Wed, 12 Nov 2025 07:36:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.53.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BC0D2DC76F
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 07:36:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.10
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762932965; cv=fail; b=JXd9YUrsGNwOk8BdJmItQ+c9obi4an8hQnrDGvUDSb/kFjw+EaPCP2WB9bXzTtxNXx779gHkbWlRUPnc/gBi0uAyq5X8X7NYfUPTwbPw1N9cuA0GVQl4PMVzR959sX9VnQeaZHwbvBVMi2c9ZwsC+wqxcaO4iuwq2q/bD2exN0I=
+	t=1762932975; cv=fail; b=LupCswuKaG0FnO3JWgCNa/aKwiLfppUGpQgm+TlFWn9Q3jMn1SkcLkFeXNk5GUuMjiGqgi+6yfAXkLUmqKRg6Ao4sXYXkAhfdLNDxnR4+3nuRrOzht5+I9k9EGAVF0gO5QKXIXedpIa3GL/ee0GEa2PRU687d5iaHkZrYF4Ha4Y=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762932965; c=relaxed/simple;
-	bh=BEexXEbNxl1DLaC4CH7VtCU3QVUg7GFfIy0SuU7vLgI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=iayP3FhWXeuARPH9dvq5LH/wUKoSPSIlEieJve9lBzOB0b4jV5/2xOYYn0uUK3z7H6C5Zw9Q7kjqd4iWtkzAtSiqqVQwCbCqsIw/6FbeNJjXCORcgKBQ2WoV9THIJTp/GUNoIpm9nwpc3PqZ6NEL6QwdriI6A6yPvwzayS4iHFw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=q+brhiHo; arc=fail smtp.client-ip=52.101.53.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	s=arc-20240116; t=1762932975; c=relaxed/simple;
+	bh=gDPrpekXfomt3Xv9TieMHtKPJkjeWeELVsfma9fVx0Y=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fkR2r0tzvbY5cEJ0jLnCvbwMsEk3xSVcvY+yAm/4EPyATrQlmxUR3oZ0Gmj59OJT3PXmJ4ix16H/wKFLgil9yDUJaMgkwq5dYWrxg00zPjlvqyHOubgGMyYx5No3jVL+KT2CnL7JCuObDhnXLjLVHSgClG3K4pWUogTJF3XZrHU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=sVxBMO2I; arc=fail smtp.client-ip=40.93.201.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=N5PJLfJ8qkBkdhNWs1cpJ0aNNX0fR0WVZFF+SmeCCsK8aSUlpotvUfdYpU9pnOPA+4OE7IxpxxDR2nNhr1O2nA/Jc5Q3YKxP1RGKGP407GTwbqOmmfEa9W8L3dkOAXRXEP/6454+99CNUGcU1nCAWczVyMzyf8qwCux1TXLO56QcQqO4UaFYUs0zz791DwILQc9UakRGkyLfKEs44S4mw1/U56I7dnG2O3j1QFHMckcaz41qjk8L2bh9HC68+lq4rjwbHDg8fioyN2jNyPRa2vut6361DaMmMUSAGUmr6GJzh+lrWnhvPop3+SYKUlNNlNNSESyavegyPtYfaOpWaw==
+ b=xR0U5NayTWzUpfBzND4KTseEbcpt8O/tejgMpd1oIIYDxrzO/lrVoGcHQ9I8fbP1BGziXs+eoWA+rM2u4csfiiZ80jv8zE9Cdez80qmTc0MArrNDUQx5ZToH/Vq2FtrK5P1o3gTS1wdVRjNRf6fh1EpcFB1jpSWW/t53GisqTJIslydyBfJXVyP9apWtXRHsPt2WkBhWrvuUYVpMR6HEdfz05UdJenSjMw2qYNbq2g3j7B45UUNDS/aCAdUuYwIlApFC1dnuQVl67OghaKNxl0xhCGL13QMAwk/tlVVY1Jd7AP/P40TBjrHk7S0hLkIc7TOTWiGnTiOJObszkeoFLg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=oDGu2tojwPneZu16bKFCc8jEd32FU/WaAJVxQ0X9uHk=;
- b=IcP0fz8qAsv3UXdXUM9v8cQdY2+5A34jMQ+3JszT3nPgBOsmewB/pWrMBI94QlSptnXMFe8lAR86q58js68zczGssYwljmK0ZhJ+6HBokmom30yNuPpWDYafcuLIHl4ZEWGlpMT/4RmwpbyHj94JSLIVC+j8Taig7zoShXAHDxHORTRpp2H8kvYNz2rxfC0JK14n77+bKTnX1Ff98bUv66328QtjD4nBQMW1wg/xdLaw61DBOCqm6lb9X4SNOQmtCLLCS5H1QoE86BcjdSa4yvWo2PH8QULFFbbzhZazS5c4WuRt2O6vcofu4ysOk2k+32fVcQTMEs51+hNc7xaLUQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
+ bh=Gs0Pky3GDoOKhuYlvj2+bMquUrfqu40FMFQWLzO8gkM=;
+ b=OM+Rxjix27i6N/4RV7ZDCfiHf7kPMU1gYJBGoa3YOSBfCwep6ytPgTyvl5BrbXkbMeIjUYigaFRIrLqnn45RFQRO8xcVy+B60b2fu8RBEli/TMx9ixhOzzfZ8XdBUgfWFb62OQ+GkfFZZlr5oyChtq1T7NCyoQs5dFUEL2VMinjNXAC2bLIHx0GDLRZZeSA51CF+U0BCZLGrFkN0/bksNv0IQwUa3PROS080gfQgMQkzyAol74v9uLdsJEh9bTeApHervmyC23X1ZuBPvANtSK3GreqyZu6yysSHYeDIgaSspJzmeM9BZcUtxwTUyiaHQb5hj3k4qvepEg9d3yKUig==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=collabora.com smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oDGu2tojwPneZu16bKFCc8jEd32FU/WaAJVxQ0X9uHk=;
- b=q+brhiHovyiQ7TdIVcPN6KtI1c3t9EsZNtv3+28WsbOeqjF6vxdJGV0B1QTb8QaKQ5aj+eu2/Vj+40VnKrzI1f6VyY+lgbMfTX3PobNS0Ue9DbSstcIHX/rsS216KVIZM3Z+It1FiQPtJwwNpc4d083T+sq+usH2l/jBmkERXHUImQjVXNiC0y7oelG1kos2AAaxCjZFKkOVSDpu+qt1+K7uJ2O7e892bl8nAqb9k1SIcm6l7Y/ISnkeRSn5j4PdqUMJeJ3UdrbJ1LqiIKiVssFqNesAeMdNOBRPQj0w007K0q+wNXZnlQrjfVkO/CU2EIQXD1neeWQiHTQH9oufig==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS0PR12MB7900.namprd12.prod.outlook.com (2603:10b6:8:14e::10)
- by SA5PPF9D25F0C6D.namprd12.prod.outlook.com (2603:10b6:80f:fc04::8d9) with
+ bh=Gs0Pky3GDoOKhuYlvj2+bMquUrfqu40FMFQWLzO8gkM=;
+ b=sVxBMO2IYwLcp5GRNoI0EbIhcxcPsxijVAwfMvU2HW8eBKELfJ9uPhRaCLRRQ5o9SPr09Ea0MLdkXMbKgAmOpwR7YYw+5L9SCzo7yevV5BBWX4s75XsnNEtZYC3p8c7FShOwCyyl6ktdTSoxZ/SNos736rLa3oQyd1tAd3GDh+I=
+Received: from PH7P220CA0089.NAMP220.PROD.OUTLOOK.COM (2603:10b6:510:32c::14)
+ by BY5PR12MB4209.namprd12.prod.outlook.com (2603:10b6:a03:20d::22) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.16; Wed, 12 Nov
- 2025 07:35:57 +0000
-Received: from DS0PR12MB7900.namprd12.prod.outlook.com
- ([fe80::3033:67fc:3646:c62f]) by DS0PR12MB7900.namprd12.prod.outlook.com
- ([fe80::3033:67fc:3646:c62f%4]) with mapi id 15.20.9320.013; Wed, 12 Nov 2025
- 07:35:57 +0000
-Date: Wed, 12 Nov 2025 09:35:47 +0200
-From: Ido Schimmel <idosch@nvidia.com>
-To: Zilin Guan <zilin@seu.edu.cn>
-Cc: petrm@nvidia.com, andrew+netdev@lunn.ch, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	jianhao.xu@seu.edu.cn
-Subject: Re: [PATCH] mlxsw: spectrum: Fix memory leak in
- mlxsw_sp_flower_stats()
-Message-ID: <aRQ408dXG888TKQo@shredder>
-References: <20251112052114.1591695-1-zilin@seu.edu.cn>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251112052114.1591695-1-zilin@seu.edu.cn>
-X-ClientProxiedBy: TL0P290CA0007.ISRP290.PROD.OUTLOOK.COM
- (2603:1096:950:5::11) To DS0PR12MB7900.namprd12.prod.outlook.com
- (2603:10b6:8:14e::10)
+ 2025 07:36:09 +0000
+Received: from CY4PEPF0000E9D3.namprd03.prod.outlook.com
+ (2603:10b6:510:32c:cafe::bc) by PH7P220CA0089.outlook.office365.com
+ (2603:10b6:510:32c::14) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9320.16 via Frontend Transport; Wed,
+ 12 Nov 2025 07:36:09 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
+Received: from satlexmb07.amd.com (165.204.84.17) by
+ CY4PEPF0000E9D3.mail.protection.outlook.com (10.167.241.138) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9320.13 via Frontend Transport; Wed, 12 Nov 2025 07:36:09 +0000
+Received: from honglei-remote.amd.com (10.180.168.240) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Tue, 11 Nov
+ 2025 23:36:05 -0800
+From: Honglei Huang <honglei1.huang@amd.com>
+To: <Felix.Kuehling@amd.com>, <alexander.deucher@amd.com>,
+	<christian.koenig@amd.com>, <Ray.Huang@amd.com>
+CC: <dmitry.osipenko@collabora.com>, <Xinhui.Pan@amd.com>,
+	<airlied@gmail.com>, <daniel@ffwll.ch>, <amd-gfx@lists.freedesktop.org>,
+	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+	<linux-mm@kvack.org>, <akpm@linux-foundation.org>, <honghuan@amd.com>,
+	Honglei Huang <Honglei1.Huang@amd.com>
+Subject: [RFC PATCH 0/5] drm/amdkfd: Add batch SVM range registration support
+Date: Wed, 12 Nov 2025 15:35:49 +0800
+Message-ID: <20251112073549.3717925-1-honglei1.huang@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: satlexmb08.amd.com (10.181.42.217) To satlexmb07.amd.com
+ (10.181.42.216)
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR12MB7900:EE_|SA5PPF9D25F0C6D:EE_
-X-MS-Office365-Filtering-Correlation-Id: 17b1fc5b-03d4-4e39-4c48-08de21be1e06
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000E9D3:EE_|BY5PR12MB4209:EE_
+X-MS-Office365-Filtering-Correlation-Id: e9277661-10ef-4702-bd76-08de21be25da
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|7053199007;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|376014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?y3Ny0quEA66WC0Wykuxv1L5GsLXnhlTq/i+eP0Zz5KG5NrOxoNzW1Y7eBFvj?=
- =?us-ascii?Q?V54hsJj35CQENob08RVXKdF4tRwWMXeLxYEiZ/Cmm+h+MPkIhoZYLs9f+bJO?=
- =?us-ascii?Q?OO3ZYoEVQf7EIsQUtBkoS/uNoMb2NO6RyLyMLrvK4r6v7AfSMnRWLGO6TWJp?=
- =?us-ascii?Q?lu/4C0gZZkzFk7UOwLiLMZkHhFX5KCONug5r+yeHX/X9L9UN8F24C1kvfIh6?=
- =?us-ascii?Q?QQFFwaxgft4u2YEMQZ2D2PWETZk8u6E8Qwv7NnrYM0qz0SNqNZC1RxWRj8Af?=
- =?us-ascii?Q?pax+eBg4KgQCefuk74LPe22sl1qm8yznaro74EObcO0SjvyjUYdtLLdkA0vt?=
- =?us-ascii?Q?YDsYRKlrBnj3LIKxB0cpkLpgRgpFGeXJC+7n1Z/AfCumt3/qfHX7n8Stuh69?=
- =?us-ascii?Q?N2r96aq8VDFaHwOFim+x2bV9sT0jga2No4hPb90Q0YWo+ENo+67kwEb7mIL2?=
- =?us-ascii?Q?hleAaQAix8TmB9BJLrVFw062iu6txZllF8XKwJ83VZ9r+M6Rmv0uX6pBQi4H?=
- =?us-ascii?Q?0TRmkj7S+RxxaxKhxp8ItvxnrKkbdhLFuw063mHEGXgg9G7m2T97EkIW/5zi?=
- =?us-ascii?Q?gC83JqrkpHHP0J8M47oih7Z6Sx1sbl00vQ8sJB7cQG7445O1yqwTx/YLAxR/?=
- =?us-ascii?Q?Bjx9nSs86qjOLCOIpt0KEeTry2CoLgJnFWZNu9uNFlwT/yrT33o0FHNrhtTw?=
- =?us-ascii?Q?QbafdxktjofhTajSSN+TQFShcGO3gyzEViWvPjGjXJP2uYbMI9c6QqGYvmqq?=
- =?us-ascii?Q?eucaaCRIMWFIrE0hYhVZRXFg/W5m7EOUIE7IJG/4hv79hrgiKPchqqPkPLge?=
- =?us-ascii?Q?o29Vcab3Upa0XBRlbg7Hw6nLT47uEc5SDSDoxN7sHprw+8WnhGH5IZjgqyjB?=
- =?us-ascii?Q?N1Lra8KlcgPA7yAXSq3lI744MPOCnwLAJRScUI1U0hU+pAOkBcer9KOdG2rE?=
- =?us-ascii?Q?RMJix4dygxBtd2luBYvThLj+5wAwkS+UjcBJhdw1lgKxlIkEtj+YSOiNtGhW?=
- =?us-ascii?Q?JWav1pOTW9Bse1aE8V5P8TJCZdbru/qdyktE7Fr2oygVzWTIQzh1jHkILhjv?=
- =?us-ascii?Q?ZhMt2y/xllR7872zH8cccxzSsk+ZSH8CL5vRca+SvHK4WtC0WpYotlIydTVC?=
- =?us-ascii?Q?r7OtsBMROdMuaLFSyBQHhUdiK73NpY3i0uz9Teaek+mvpiMUp1a1eYR3pUOK?=
- =?us-ascii?Q?oq8hau1DoHKkiNwDOroFY9GsXjqG+2OuZzAK8unvOkq6mXpmnt6hDzOgnB2n?=
- =?us-ascii?Q?Q21j86JBnntohfFlHQ2xqi3lIRCg+53MRM7IDTLsQ5PXPTj8iOz60NBWpC6k?=
- =?us-ascii?Q?FxmQGZbOye9n4c45lbKIQeBsJYS3BZICStIvoVvVXJJslFG3amyDNI62cgiS?=
- =?us-ascii?Q?uJ+BGJUyiW/mo/qwXlzCWQxmxy2q6r2FL7lzEIsxWEQvq9J8Q9uYsT9xqADr?=
- =?us-ascii?Q?SM0zaoyuTUzgzqti38Kn4hyKi34xSe8mZ/+iM6KaIHN4uPYx+uJ6nw=3D=3D?=
+	=?us-ascii?Q?vVcZJaJYo00iAJqVxQxhPPGy0hMBNx8EUSapPIRovnGpXcY16txxjJZ9TuFW?=
+ =?us-ascii?Q?W0ih7NYAc07B3lTQ6r18r5PFUyQmTkXMkVJJy2BvwMApNVJoSo5bBxEDnTGg?=
+ =?us-ascii?Q?AlMA/1TRqDFGPFnJp635LtQX5i2q2roUPYPAwGGCeh6Yn/acwJPN/lcHA2pK?=
+ =?us-ascii?Q?3/qrZg4QckE4SmrmmXgVbd5nNiy3TT8blROrZLamtjVoVkQU77qQY4jondPm?=
+ =?us-ascii?Q?PZ0DiDTagUi/ergvb4Gq1eDuxSYs+xVG9G3feph5zABwFuHOUZCNx36E7Clg?=
+ =?us-ascii?Q?QIeLgBaGp2bb1QEzRGgBZQY6t01di+jPk5M7UR4ALoRlvJs7mX4VhW/yCvWs?=
+ =?us-ascii?Q?IWo6ELztDle3ruDk/i4XhEopFt+FvUCZHTWpeOy/PzgAR6O7gAwZdcgOo0On?=
+ =?us-ascii?Q?6aNUefTc8cVt4NlbbukfdwloSm8t5MOmVNmIKZrjGoFngVlaP+xveALjtx5z?=
+ =?us-ascii?Q?YOYIqJXY7kvXHCareDclXavsZL4IyivShU6FCDD9+jJOwatEumV1ixVkWXtH?=
+ =?us-ascii?Q?PCQ6AQ9/xvD7Hw6T6phLbs5m+k+CUFZXd/rM2+0EsUoE7RQJv4keBy6u/fOf?=
+ =?us-ascii?Q?XHRCGAqk5uymsdMgKDC1NiBfZCcWBIYr2++4dkXIkDCrhtS4AD8humyTITXQ?=
+ =?us-ascii?Q?gXv9rvnHMjV+PdGArt9fm45a7TNckhT1cFHmkBEwrHBnrr4t1Z5IJ+U3qIgn?=
+ =?us-ascii?Q?YXg84xYIE1bkqJdqyJLoGhQ8kBsm/cZ+hKOIVtpZyTz9dTwTocenLEfUEYCw?=
+ =?us-ascii?Q?youDQu9qUxjK+9YdbgxK3pgy8UKrbPPzQixbrGT3iOP88u13yC5AVNQuT6PZ?=
+ =?us-ascii?Q?g6HzzD8vB8obBC/OY4DHu9yHYZN0dzFINfpcQWHrCShI2frx97tdLcGl6n6z?=
+ =?us-ascii?Q?C8V9pRd62Mqorq4AJ4IaGZSv3HfUriMwBmBmjCmxFOB23Q8ngidKEQv7rB0v?=
+ =?us-ascii?Q?rDlz93TGJ+mDRoeLNF82OBI5KvtjSAh7jPy/AATpJ7tGmYYpsA79lUOO5XTD?=
+ =?us-ascii?Q?M+RZFipsGqwOOic9YvMUmTLq+2KeGkr0OleQ8W1N0QNkGWPENrsO5P/OzUBv?=
+ =?us-ascii?Q?jF0ZvDBaHVC4ZqsLzH5yJZjCpw4glT1ZywUOeTpvaA6vaqrodOQjNyGoTr1N?=
+ =?us-ascii?Q?o3RkvFkgFtcei/qPgzCgoBH8HyckjCyEEVhw3P2xTk6vAdKzEtfaGSZyyrbF?=
+ =?us-ascii?Q?yQuruuucbLoORvJPq99PArIK9n9O0r/Q1iGTJH2sJFSA5u/ILrYAb/ux/jUG?=
+ =?us-ascii?Q?f6uE+hk13XMXhu+oIrar7q8oYB06SCE8ys6CUOABAG3PH5L9Ld0m0+kwOH2u?=
+ =?us-ascii?Q?zOrpUYF0r7rwPTfkcnpziA5dgdvI/9DaE9CCz9KOXwIQAy6CZzJbDFuOGgeL?=
+ =?us-ascii?Q?qHVsmjDLGKFans+kMLd+VDreNXBkSpCCXI7WauqlsZkwuqJUOFjH2s8/9TM7?=
+ =?us-ascii?Q?2WcT9Ck3hXwCQq4+uqINEgawdEo5+YRrWeu9wQxXOZf/elgjD10T+is0B7ol?=
+ =?us-ascii?Q?e5WLu3CvUHKL4UzEAHYqDooXLRgRS0Rc6Pv/WCQeWkZ/zmx8i789Sogy6jEU?=
+ =?us-ascii?Q?11rj/39JHzadgpXVtPc=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB7900.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?YpkevpOYB/v1UdZlbDvt+2kOfrdtEbZ3JLcyv6qWKpGox9Pvc0EvQfN38Th2?=
- =?us-ascii?Q?DdnxqmfpBEK6ZJftRR7PNd0vmXU+NYDb3eF+WA2dhu5nHzKf/97FgnfdM6J6?=
- =?us-ascii?Q?0yvttkkx9cu1OFUvLYQe9i1SagXhfUiUy7UXKSRUZak1KTCf3aoiM5coxfSX?=
- =?us-ascii?Q?8UNwYx9v4T1xKpqwSBdioRkvacS6033DUZGp9+0Yf+DtATmyoxcBaB7UWlMs?=
- =?us-ascii?Q?qHS63lF4zAUwp5KeK8P205TpRSF7ekuX8jwjAPYlD2XuvsP4pqaZLIZmsxfb?=
- =?us-ascii?Q?Qd0NsvX1gdCqSAJrTf4Ja0Ol85O90d8ieNP0/B3Oais1s//Q23Mv35Md28Og?=
- =?us-ascii?Q?D4NJYRxECoU/rpbZVPtXTQi9gn6CGRJQpLQLYqSx40ln8VqIScVXAWUObnrV?=
- =?us-ascii?Q?zlI0iyHdjxt2tu2FFRagsxGrxH3z4ZkrHI3aIy1oXd+mvbSs9fOJhsCwyXej?=
- =?us-ascii?Q?DA8vXOIv6VCGiapxWXv1iYFvBGsGh4dq/3jNZReTOPvw6GDFNK3xTWRvzijc?=
- =?us-ascii?Q?AYmsf4iqYsMtNZb3UggVXi2YhmwYSCZLre2jQRvRlJg/nukBsH7/H1Kgq/P5?=
- =?us-ascii?Q?JO7Y4M1LV3WJaZNBjTT8F9ymo+1GJRcfZxBzmivZaW7xAj2o+kckLMwDceBk?=
- =?us-ascii?Q?2+oyJnWucdS4ZArChwfD4vG46xYhOA/OuABlJBDzo+I4UzTVdA2JtI+YjrrQ?=
- =?us-ascii?Q?mMdqN9TRnegCEfVt/yRb7yLvsbwwP5ccJzUhtfn2c8ksTf7v7+w9yO3TcUpg?=
- =?us-ascii?Q?/wghgTs9u5tRFfEAwjB9UiAl7YjBb9iqkQJkqd7ROeB62B6qL3DuLzxHrMsU?=
- =?us-ascii?Q?DrkbO2KCvC/mi6Ey3ARMur0lpUmcuxPfWkIlo31KdPsFBIZiAlx56D1iq4nT?=
- =?us-ascii?Q?1kSqDeAE2P96WG0tpmXQ2a+P6GSwAGhfxeIqO92H0yFlBaHEwTCmb3vxa34A?=
- =?us-ascii?Q?WsuqRNfAX0mY80kbBr+iSS54KijkzS1YH4en+3lvRjyzT0lTh+Ys10w6ljVF?=
- =?us-ascii?Q?INRZinSu7/DkrOXHo07SXQnjoKLEqZwOS4w408AqxXp144Da0MilXBmjJRe6?=
- =?us-ascii?Q?Yl4+0Gk9pEC4GBpOUulrNyfVl7GH1HNWWW0+JKKUMl+Tpkle5UxOMlAS6SW7?=
- =?us-ascii?Q?h5WPQRqdTASgFhBgiV4+t1nrGyHI+QffM+H5pq4JH54X6YV6he69W7YdnDtj?=
- =?us-ascii?Q?0oYrKM2tOZxUsP37LwCVIwk8CXfyXfUNVu2Zhc+C3uOvrntMoBoKTfR2Nq02?=
- =?us-ascii?Q?/baVCLCA0/YVhYdzydzpv+V3Hz5Aqn+sxbZKNyjW5/C88fxVPDiyTwcH6Rcs?=
- =?us-ascii?Q?C28UJvPzCiiOo/B3L4N0WSFzwvsLAmjDon7y9lqoXnAN3Gr8WXHBkitLxY7M?=
- =?us-ascii?Q?G40ciMJN8wY3KHv49Oh8s0N1yquABKYenAywB+/DJNvSjztMggyfsYsaiWHu?=
- =?us-ascii?Q?vI5/Xzh7Zn69euufe/zQqLZ/YxnWJE1AgbNeUwRwJ1WCiNcc5Cf/XVil60J+?=
- =?us-ascii?Q?UWAR/4cNl2eWeWz22zQQp7amqjZ2xqExi3fHEXJe33ff8UxahnAZtPpQYpu8?=
- =?us-ascii?Q?MT0TRchOq26UIQe0apPI8AUSD7XSIVhdq++Beshj?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 17b1fc5b-03d4-4e39-4c48-08de21be1e06
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB7900.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2025 07:35:57.0176
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2025 07:36:09.4918
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: D9w0AiYJNDrYqhSH/r/tuQCQCSw0jwcwfQf6ZbZWQJr025raGwsmePkGzj/pb5HQhV8srT7IdNyy/+KbLlhRdA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA5PPF9D25F0C6D
+X-MS-Exchange-CrossTenant-Network-Message-Id: e9277661-10ef-4702-bd76-08de21be25da
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY4PEPF0000E9D3.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4209
 
-On Wed, Nov 12, 2025 at 05:21:14AM +0000, Zilin Guan wrote:
-> The function mlxsw_sp_flower_stats() calls mlxsw_sp_acl_ruleset_get() to
-> obtain a ruleset reference. If the subsequent call to
-> mlxsw_sp_acl_rule_lookup() fails to find a rule, the function returns
-> an error without releasing the ruleset reference, causing a memory leak.
-> 
-> Fix this by using a goto to the existing error handling label, which
-> calls mlxsw_sp_acl_ruleset_put() to properly release the reference.
-> 
-> Fixes: 7c1b8eb175b69 ("mlxsw: spectrum: Add support for TC flower offload statistics")
-> Signed-off-by: Zilin Guan <zilin@seu.edu.cn>
+From: Honglei Huang <Honglei1.Huang@amd.com>
 
-Reviewed-by: Ido Schimmel <idosch@nvidia.com>
+Hi all,
 
-Subject prefix should be "[PATCH net]". See [1] for next time.
+This RFC patch series introduces a new mechanism for batch registration of
+multiple non-contiguous SVM (Shared Virtual Memory) ranges in a single ioctl
+call. The primary goal of this series is to start a discussion about the best
+approach to handle scattered user memory allocations in GPU workloads.
 
-Thanks
+Background and Motivation
+==========================
 
-[1] https://docs.kernel.org/process/maintainer-netdev.html
+Current applications using ROCm/HSA often need to register many scattered
+memory buffers (e.g., multiple malloc() allocations) for GPU access. With the
+existing AMDKFD_IOC_SVM ioctl, each range must be registered individually,
+leading to:
+- Blocking issue in some special use cases with many memory ranges
+- High system call overhead when dealing with dozens or hundreds of ranges
+- Inefficient resource management
+- Complexity in userspace applications
+
+Use Case Example
+================
+
+Consider a typical ML/HPC workload that allocates 100+ small buffers across
+different parts of the address space. Currently, this requires 100+ separate
+ioctl calls. The proposed batch interface reduces this to a single call.
+
+Paravirtualized environments exacerbate this issue, as KVM's memory backing
+is often non-contiguous at the host level. In virtualized environments, guest
+physical memory appears contiguous to the VM but is actually scattered across
+host memory pages. This fragmentation means that what appears as a single
+large allocation in the guest may require multiple discrete SVM registrations
+to properly handle the underlying host memory layout, further multiplying the
+number of required ioctl calls.
+
+Current Implementation - A Workaround Approach
+===============================================
+
+This patch series implements a WORKAROUND solution that pins user pages in
+memory to enable batch registration. While functional, this approach has
+several significant limitations:
+
+**Major Concern: Memory Pinning**
+- The implementation uses pin_user_pages_fast() to lock pages in RAM
+- This defeats the purpose of SVM's on-demand paging mechanism
+- Prevents memory oversubscription and dynamic migration
+- May cause memory pressure on systems with limited RAM
+- Goes against the fundamental design philosophy of HMM-based SVM
+
+**Known Limitations:**
+1. Increased memory footprint due to pinned pages
+2. Potential for memory fragmentation
+3. No support for transparent huge pages in pinned regions
+4. Limited interaction with memory cgroups and resource controls
+5. Complexity in handling VMA operations and lifecycle management
+6. May interfere with NUMA optimization and page migration
+
+Why Submit This RFC?
+====================
+
+Despite the limitations above, I am submitting this series to:
+
+1. **Start the Discussion**: I want community feedback on whether batch
+   registration is a useful feature worth pursuing.
+
+2. **Explore Better Alternatives**: Is there a way to achieve batch
+   registration without pinning? Could I extend HMM to better support
+   this use case?
+
+3. **Understand Trade-offs**: For some workloads, the performance benefit
+   of batch registration might outweigh the drawbacks of pinning. I'd
+   like to understand where the balance lies.
+
+Questions for the Community
+============================
+
+1. Are there existing mechanisms in HMM or mm that could support batch
+   operations without pinning?
+
+2. Would a different approach (e.g., async registration, delayed validation)
+   be more acceptable?
+
+Alternative Approaches Considered
+==================================
+
+I've considered several alternatives:
+
+A) **Pure HMM approach**: Register ranges without pinning, rely entirely on
+
+B) **Userspace batching library**: Hide multiple ioctls behind a library.
+
+Patch Series Overview
+=====================
+
+Patch 1: Add KFD_IOCTL_SVM_ATTR_MAPPED attribute type
+Patch 2: Define data structures for batch SVM range registration
+Patch 3: Add new AMDKFD_IOC_SVM_RANGES ioctl command
+Patch 4: Implement page pinning mechanism for scattered ranges
+Patch 5: Wire up the ioctl handler and attribute processing
+
+Testing
+=======
+
+The series has been tested with:
+- Multiple scattered malloc() allocations (2-2000+ ranges)
+- Various allocation sizes (4KB to 1G+)
+- GPU compute workloads using the registered ranges
+- Memory pressure scenarios
+- OpecnCL CTS in KVM guest environment
+- HIP catch tests in KVM guest environment
+- Some AI applications like Stable Diffusion, ComfyUI, 3B LLM models based
+  on HuggingFace transformers
+
+I understand this approach is not ideal and are committed to working on a
+better solution based on community feedback. This RFC is the starting point
+for that discussion.
+
+Thank you for your time and consideration.
+
+Best regards,
+Honglei Huang
+
+Honglei Huang (5):
+  drm/amdkfd: Add KFD_IOCTL_SVM_ATTR_MAPPED attribute
+  drm/amdkfd: Add SVM ranges data structures
+  drm/amdkfd: Add AMDKFD_IOC_SVM_RANGES ioctl command
+  drm/amdkfd: Add support for pinned user pages in SVM ranges
+  drm/amdkfd: Wire up SVM ranges ioctl handler
+
+ drivers/gpu/drm/amd/amdkfd/kfd_chardev.c |  67 +++++++
+ drivers/gpu/drm/amd/amdkfd/kfd_svm.c     | 232 ++++++++++++++++++++++-
+ drivers/gpu/drm/amd/amdkfd/kfd_svm.h     |   3 +
+ include/uapi/linux/kfd_ioctl.h           |  52 ++++-
+ 4 files changed, 345 insertions(+), 9 deletions(-)
+
+-- 
+2.34.1
+
 
