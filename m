@@ -1,140 +1,106 @@
-Return-Path: <linux-kernel+bounces-897903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33728C53EB1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:31:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 10107C53E87
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:25:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id F2DA5346584
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:29:02 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C51CE343AC0
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:25:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3359F34FF63;
-	Wed, 12 Nov 2025 18:25:16 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 498E934B415;
-	Wed, 12 Nov 2025 18:25:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF4E234B1A7;
+	Wed, 12 Nov 2025 18:24:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ino744AJ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 956483451D1;
+	Wed, 12 Nov 2025 18:24:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762971915; cv=none; b=chUg0hPRCpFa75gz36Cr08S/w1C2PO605xIykeQtGOuiUhtrFkecOC7w9eqGeZk7cpS9ZIlqeopnmq+ObXNMSDWlkubOMJdgfHkVT29MEnfn+jI6L0iC3xT9LzcqmdV/a5bj4L/DxC0m/qYZocW8KdZVd6hKI3JBjLi/KfqZjBw=
+	t=1762971883; cv=none; b=WjOFUPcS4QKABRkxTq9OoObWaJOlaD4aq3gbGWMy8h8GoH/BS88x2rJdSf1cy6qMC63Es703AsvoDb7cQ/lUhqQZWOk0QZwpfdNDDKxgWrIXukXUKjow9v3vNXOzWTvtxrGtEJdO+sIY6HUgsIpuSXXOWSbvosrpcKI5OTD4MdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762971915; c=relaxed/simple;
-	bh=pOn+OweUnZMaNTqqQtY3ZTLc4P+MyZzHAa72JWfU/kw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Vy5oGpQTVj4EfLZ8MiVVxHkNiAOUrs7JH0UVe3vNzZCD0HV17iTaFDSjh+B4g2CM47eCuG+xdi5xrQlzXrZpTm8BPAB0jb7GibAhmEp1nZQRftU0YLeWjOWXQKld5UJCEIAAjd54guj0N5P4u+514vame28W9ZlWQLL+gtfuffo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0A4281595;
-	Wed, 12 Nov 2025 10:25:05 -0800 (PST)
-Received: from e132581.arm.com (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CC1683F63F;
-	Wed, 12 Nov 2025 10:25:10 -0800 (PST)
-From: Leo Yan <leo.yan@arm.com>
-Date: Wed, 12 Nov 2025 18:24:35 +0000
-Subject: [PATCH v3 09/25] perf arm_spe: Introduce data processing macro for
- SVE operations
+	s=arc-20240116; t=1762971883; c=relaxed/simple;
+	bh=IWByMhcBEVGO1q2CUX2wnKZSyBUhuihycTfOsSlR/O8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fz9jjsko2EPYYnXuF89Fk0zfqAu38q/25/xkxprYdQcSzy1KZfgtNRH3fiGAEaJAHLffgPscUUaQQl7A7fM8cbCODvpL9+8m6XQjTJ2PV9gDtDccBtGfpZDQbfObPSIVqL1pqaxJ7ZP2QK0pZQvqvlM/hFVRQVklesi2En1txas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ino744AJ; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762971882; x=1794507882;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=IWByMhcBEVGO1q2CUX2wnKZSyBUhuihycTfOsSlR/O8=;
+  b=Ino744AJ8NPcXDIdiisz2fEUynuqEZtBxQd75K0w7Se92pEnBW/1ewDg
+   g2j4qdKg8ngiWipb9cehXgrNedZFUL+2j5HrnOdFGSn++8UEUWP1AehW5
+   i55vkAp36KKhdz2i2MRsbWbG9h7TxkvKrlUsmdvNuHjaHLQU8oiqzrqG7
+   HcM1+B+2ECK5OzlVGFG3ACYNKADXWxSNxtP9mHl+cV9RxnKTT1t+hp40H
+   2p4fz7DUcr1FzA+kSmliix5T3NH0Oh4TaFEC2eONnVtT9U/xZWx/bI9P5
+   HBM+Q6qPXcO7yWg7Y8QDkL/8koBRwt5XNWrQuCWZYMz7urlEvV7KsrRfE
+   A==;
+X-CSE-ConnectionGUID: YwvNZ16nR4C45j9rzmaMIw==
+X-CSE-MsgGUID: ZdPHkW33TPampU9Qw1ec3w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11611"; a="76503000"
+X-IronPort-AV: E=Sophos;i="6.19,300,1754982000"; 
+   d="scan'208";a="76503000"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2025 10:24:41 -0800
+X-CSE-ConnectionGUID: RlvbgsRNSJe30YkqPUgNLw==
+X-CSE-MsgGUID: K9OyEaFbSsWoa1nTotGOkQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,300,1754982000"; 
+   d="scan'208";a="189136444"
+Received: from guptapa-desk.jf.intel.com (HELO desk) ([10.165.239.46])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2025 10:24:41 -0800
+Date: Wed, 12 Nov 2025 10:24:35 -0800
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Brendan Jackman <jackmanb@google.com>
+Subject: Re: [PATCH v4 3/8] x86/bugs: Use an X86_FEATURE_xxx flag for the
+ MMIO Stale Data mitigation
+Message-ID: <20251112182435.od5oelwiitdueork@desk>
+References: <20251031003040.3491385-1-seanjc@google.com>
+ <20251031003040.3491385-4-seanjc@google.com>
+ <20251112144655.GZaRSd32GC0lZdDOWg@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251112-perf_support_arm_spev1-3-v3-9-e63c9829f9d9@arm.com>
-References: <20251112-perf_support_arm_spev1-3-v3-0-e63c9829f9d9@arm.com>
-In-Reply-To: <20251112-perf_support_arm_spev1-3-v3-0-e63c9829f9d9@arm.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
- Arnaldo Carvalho de Melo <acme@kernel.org>, 
- Namhyung Kim <namhyung@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
- Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
- James Clark <james.clark@linaro.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>, 
- linux-perf-users@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Leo Yan <leo.yan@arm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1762971891; l=3135;
- i=leo.yan@arm.com; s=20250604; h=from:subject:message-id;
- bh=pOn+OweUnZMaNTqqQtY3ZTLc4P+MyZzHAa72JWfU/kw=;
- b=Uj09w5o4mpLmc/OH6B3x0sC437+uDPHL1CFpYDrOFCfgmY1V2Z1tLwkNnyTvjnOuJV8Q2Z7To
- xo7tTj7vSySDwbLV1PyCVLqwfRbwMschUG8I2vFXgnMo+qfp+/+/JUp
-X-Developer-Key: i=leo.yan@arm.com; a=ed25519;
- pk=k4BaDbvkCXzBFA7Nw184KHGP5thju8lKqJYIrOWxDhI=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251112144655.GZaRSd32GC0lZdDOWg@fat_crate.local>
 
-Introduce the ARM_SPE_OP_DP (data processing) macro as associated
-information for SVE operations. For SVE register access, only
-ARM_SPE_OP_SVE is set; for SVE data processing, both ARM_SPE_OP_SVE and
-ARM_SPE_OP_DP are set together.
+On Wed, Nov 12, 2025 at 03:46:55PM +0100, Borislav Petkov wrote:
+> > diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
+> > index 7129eb44adad..d1d7b5ec6425 100644
+> > --- a/arch/x86/include/asm/cpufeatures.h
+> > +++ b/arch/x86/include/asm/cpufeatures.h
+> > @@ -501,6 +501,7 @@
+> >  #define X86_FEATURE_ABMC		(21*32+15) /* Assignable Bandwidth Monitoring Counters */
+> >  #define X86_FEATURE_MSR_IMM		(21*32+16) /* MSR immediate form instructions */
+> >  #define X86_FEATURE_X2AVIC_EXT		(21*32+17) /* AMD SVM x2AVIC support for 4k vCPUs */
+> > +#define X86_FEATURE_CLEAR_CPU_BUF_MMIO	(21*32+18) /* Clear CPU buffers using VERW before VMRUN, iff the vCPU can access host MMIO*/
+> 							   ^^^^^^^
+> 
+> Yes, you can break the line and format it properly. :-)
+> 
+> Also, this should be called then
+> 
+> X86_FEATURE_CLEAR_CPU_BUF_VM_MMIO
+> 
+> as it is a VM-thing too.
 
-Signed-off-by: Leo Yan <leo.yan@arm.com>
----
- tools/perf/util/arm-spe-decoder/arm-spe-decoder.c | 4 ++--
- tools/perf/util/arm-spe-decoder/arm-spe-decoder.h | 4 ++--
- tools/perf/util/arm-spe.c                         | 5 +----
- 3 files changed, 5 insertions(+), 8 deletions(-)
-
-diff --git a/tools/perf/util/arm-spe-decoder/arm-spe-decoder.c b/tools/perf/util/arm-spe-decoder/arm-spe-decoder.c
-index 847c29385bea8618e14b2eb21a08896041890d89..6974f594f37c9916fff591ced1e9c2d60cf84f14 100644
---- a/tools/perf/util/arm-spe-decoder/arm-spe-decoder.c
-+++ b/tools/perf/util/arm-spe-decoder/arm-spe-decoder.c
-@@ -201,12 +201,12 @@ static int arm_spe_read_record(struct arm_spe_decoder *decoder)
- 				else
- 					decoder->record.op |= ARM_SPE_OP_LD;
- 				if (SPE_OP_PKT_LDST_SUBCLASS_SVE_SME_REG(payload))
--					decoder->record.op |= ARM_SPE_OP_SVE_LDST;
-+					decoder->record.op |= ARM_SPE_OP_SVE;
- 				break;
- 			case SPE_OP_PKT_HDR_CLASS_OTHER:
- 				decoder->record.op |= ARM_SPE_OP_OTHER;
- 				if (SPE_OP_PKT_OTHER_SUBCLASS_SVE(payload))
--					decoder->record.op |= ARM_SPE_OP_SVE_OTHER;
-+					decoder->record.op |= ARM_SPE_OP_SVE | ARM_SPE_OP_DP;
- 				break;
- 			case SPE_OP_PKT_HDR_CLASS_BR_ERET:
- 				decoder->record.op |= ARM_SPE_OP_BRANCH_ERET;
-diff --git a/tools/perf/util/arm-spe-decoder/arm-spe-decoder.h b/tools/perf/util/arm-spe-decoder/arm-spe-decoder.h
-index b555e2cc1dc36f209c23b0d84378da0ee65c1ab3..acab6d11096b19b1d31a553c83cba9732ecf5ddb 100644
---- a/tools/perf/util/arm-spe-decoder/arm-spe-decoder.h
-+++ b/tools/perf/util/arm-spe-decoder/arm-spe-decoder.h
-@@ -43,8 +43,7 @@ enum arm_spe_2nd_op_ldst {
- 	ARM_SPE_OP_UNSPEC_REG		= 1 << 9,
- 	ARM_SPE_OP_NV_SYSREG		= 1 << 10,
- 	ARM_SPE_OP_SIMD_FP		= 1 << 11,
--	ARM_SPE_OP_SVE_OTHER		= 1 << 12,
--	ARM_SPE_OP_SVE_LDST		= 1 << 13,
-+	ARM_SPE_OP_SVE			= 1 << 12,
- 
- 	/* Assisted information for memory / SIMD */
- 	ARM_SPE_OP_LD			= 1 << 20,
-@@ -52,6 +51,7 @@ enum arm_spe_2nd_op_ldst {
- 	ARM_SPE_OP_ATOMIC		= 1 << 22,
- 	ARM_SPE_OP_EXCL			= 1 << 23,
- 	ARM_SPE_OP_AR			= 1 << 24,
-+	ARM_SPE_OP_DP			= 1 << 25,	/* Data processing */
- };
- 
- enum arm_spe_2nd_op_branch {
-diff --git a/tools/perf/util/arm-spe.c b/tools/perf/util/arm-spe.c
-index 614ce032f87e46d1f3754258f51bb1693ec128b7..881257d3958705e725f1b7d47b41a93defd231ea 100644
---- a/tools/perf/util/arm-spe.c
-+++ b/tools/perf/util/arm-spe.c
-@@ -346,10 +346,7 @@ static struct simd_flags arm_spe__synth_simd_flags(const struct arm_spe_record *
- {
- 	struct simd_flags simd_flags = {};
- 
--	if ((record->op & ARM_SPE_OP_LDST) && (record->op & ARM_SPE_OP_SVE_LDST))
--		simd_flags.arch |= SIMD_OP_FLAGS_ARCH_SVE;
--
--	if ((record->op & ARM_SPE_OP_OTHER) && (record->op & ARM_SPE_OP_SVE_OTHER))
-+	if (record->op & ARM_SPE_OP_SVE)
- 		simd_flags.arch |= SIMD_OP_FLAGS_ARCH_SVE;
- 
- 	if (record->type & ARM_SPE_SVE_PARTIAL_PRED)
-
--- 
-2.34.1
-
++1. This is a VM-only flag.
 
