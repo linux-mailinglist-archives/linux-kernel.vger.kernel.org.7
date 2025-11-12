@@ -1,296 +1,134 @@
-Return-Path: <linux-kernel+bounces-896703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D06BC51067
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:54:59 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7C0AC5100A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:49:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9E833A5131
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 07:49:53 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9409634D633
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 07:49:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2BAC2ED86E;
-	Wed, 12 Nov 2025 07:49:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C36F2EDD76;
+	Wed, 12 Nov 2025 07:49:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="rJYSQAWK"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="f2HB/A/h";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="l0o/LkGf"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 013DA2DC34F
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 07:49:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6331B2D9ED1;
+	Wed, 12 Nov 2025 07:49:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762933788; cv=none; b=KyB8f0a6MSwkVoDNHkXrM43JleMD7DsH3gSpk0WfBHQ+m6ss63Hwp75pzXjAFc6mYJcpGpFRjsofePITlF7fVbT8YLIVOnnb/ix3PkmS3ul35bP6eK6Y8pA3qGd3+I2p31RkcbtOXQoG5JMP5xYCnmunKWPdxmoHP5Bi/6rQ0BQ=
+	t=1762933775; cv=none; b=rZD0OdrdIhHcx8SnX0ukdeL7opDz/KyqhPevwZ4+zTBCOEppsGrnopNwQ0m9qzztkcZxu5wZp8MeVP2uQN6A85oJJibRr2u3ym8OgoE83OiPv9DAbonmJHskoxo2WN5tF9pNM0a57x/9LT/Suc3qMFLN+2z+l0WyaIKEjvuUyLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762933788; c=relaxed/simple;
-	bh=4VKcRTiTrnOeJNXjAR2rxi/fF6bKdMIx6jSUw/1kOog=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aLLHRQMQgLxRW67ekyFKV6pP9cZQsbeSnjnM7WuotaX6IT0Zy64lQW24fXltOnwA9M6UR9NT4UhcIom2onIk4Eyn1wCFm0JMvBaGyNeaFIM6YVPrjTn7xNapF6qzEFeMPxFfkzu2b7ZPEX6CyFixofuh2Kt96O+L56gKymcAFfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=rJYSQAWK; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5AC5163a023600;
-	Wed, 12 Nov 2025 07:49:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pp1; bh=IeasLi6tJZCSJTT4jvd92KlZnCpNxzwF6qmUZxsIb
-	Qc=; b=rJYSQAWKI4Z3VDtNF2RBgy4ytm432/dBkUiCf9Es7Dms0gfhT3QKSoEfN
-	vk3gAVtFLp1LJGhkAHc0yQdHtE6HVTw6CUV/UST57Xt2+q1JT8PKC0NnzM1RqZVi
-	J7IuKk09xVH8Fb5o59SLBE8ZAHVdmCyIe4BTumhHSKcRd2LfZr3zfnQdX8vE536z
-	vD6CptqcVpAu/6Nydcw2smna3jm0v8M5Dhc+VgHDhZxRyNqewSj91GffWG0v9Dk3
-	X31tzP9v1jOzriwfc6vyF43Z0FF7fe3xSrMDdgaOTJQTuXMFivhcrdEuh7eN4+Aq
-	mLCxKn6HO04eWWZsN5fqjQFBWZ7HA==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4aa5tjxte7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Nov 2025 07:49:10 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5AC7klnU028890;
-	Wed, 12 Nov 2025 07:49:10 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4aa5tjxte5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Nov 2025 07:49:09 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5AC63SSK011605;
-	Wed, 12 Nov 2025 07:49:09 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4aajw1en3w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Nov 2025 07:49:09 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5AC7n5d238273446
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 12 Nov 2025 07:49:05 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id EA53A2004D;
-	Wed, 12 Nov 2025 07:49:04 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3644420043;
-	Wed, 12 Nov 2025 07:49:03 +0000 (GMT)
-Received: from sapthagiri.in.ibm.com (unknown [9.124.211.234])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 12 Nov 2025 07:49:03 +0000 (GMT)
-From: Srikar Dronamraju <srikar@linux.ibm.com>
-To: linuxppc-dev@lists.ozlabs.org
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
-        linux-kernel@vger.kernel.org,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Shrikanth Hegde <sshegde@linux.ibm.com>,
-        Srikar Dronamraju <srikar@linux.ibm.com>
-Subject: [PATCH v2] powerpc/smp: Expose die_id and die_cpumask
-Date: Wed, 12 Nov 2025 13:18:59 +0530
-Message-ID: <20251112074859.814087-1-srikar@linux.ibm.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1762933775; c=relaxed/simple;
+	bh=xbvMcM1IoFXOayGu/dX6p8mJi1v8/NnppEEb+PdNlEU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pzPhLPBwxxW47eFjd4oRBtG8OFS3KlseKuDOlp92OhtiwVN1XBVBGcNhaRK5fb7vEnAKhXTwnKD7lBlKAHZUpmQ+5yrwIHLrCOcg5S0mgBKC4XL5LsW1oP8Z1QnP63n/WHV4W/X77wyqXAEgcdGVpgNiMs3mHG3eG9wCJFsG41k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=f2HB/A/h; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=l0o/LkGf; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 12 Nov 2025 08:49:30 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1762933772;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hjmsQNbabVrHMjgajgEZibUL+efg9RjKcTRD2S+ysQ8=;
+	b=f2HB/A/hb6zPD+MvHy/KC6OdmWpC1V68JL0jW4qNfv0jLBEggJ0szbe/6OorO2hbDxG684
+	ArYQRJhVOGOBDvhNEI2ERthAEZnlBT2HjBfL/kf0+8KhcCPVsge0dLNgregR4MX6nJg5oo
+	bpS9gAPhIWKi072xVwjJTvnB0IiQKxoKaQNhLFwvkVDMFFkJ7UIf+oDNa48WnLmlaNROEq
+	5h/cgHgPc0QS7fhyI9Ff7mQduVeKdQ5HLfc6YYwGKQbSuZEok9BR/stoGLsi4VpqGFRO3c
+	EeLwmycKHbL72hmLC4HFwiReBONSFKPSBT/oOafm0ECnUZHz10SG/AKDCb3VVg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1762933772;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hjmsQNbabVrHMjgajgEZibUL+efg9RjKcTRD2S+ysQ8=;
+	b=l0o/LkGfxoyEmPkG6koDawTBPXTEvwbAYcuza/5SjiqDSmJto9UrhdHQKSLqA10+aCQusg
+	Q2gtdV349a9ij4Dg==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Harry Yoo <harry.yoo@oracle.com>, Qi Zheng <qi.zheng@linux.dev>,
+	hannes@cmpxchg.org, hughd@google.com, mhocko@suse.com,
+	roman.gushchin@linux.dev, muchun.song@linux.dev, david@redhat.com,
+	lorenzo.stoakes@oracle.com, ziy@nvidia.com, imran.f.khan@oracle.com,
+	kamalesh.babulal@oracle.com, axelrasmussen@google.com,
+	yuanchu@google.com, weixugc@google.com, akpm@linux-foundation.org,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	cgroups@vger.kernel.org, Muchun Song <songmuchun@bytedance.com>,
+	Qi Zheng <zhengqi.arch@bytedance.com>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	linux-rt-devel@lists.linux.dev
+Subject: Re: [PATCH v1 04/26] mm: vmscan: refactor move_folios_to_lru()
+Message-ID: <20251112074930.mKu1J__U@linutronix.de>
+References: <aQ3yLER4C4jY70BH@harry>
+ <hfutmuh4g5jtmrgeemq2aqr2tvxz6mnqaxo5l5vddqnjasyagi@gcscu5khrjxm>
+ <aRFKY5VGEujVOqBc@hyeyoo>
+ <2a68bddf-e6e6-4960-b5bc-1a39d747ea9b@linux.dev>
+ <aRF7eYlBKmG3hEFF@hyeyoo>
+ <aqdvjyzfk6vpespzcszfkmx522iy7hvddefcjgusrysglpdykt@uqedtngotzmy>
+ <8d6655f8-2756-45bb-85c1-223c3a5e656c@linux.dev>
+ <aRKqm24Lrg-JnCoh@hyeyoo>
+ <20251111084900.babaOj0w@linutronix.de>
+ <jzihvbb6w26d4codfigy2o7b2h26izb4ahihouw54cvuzau54d@jyaa6rgpzuai>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: xlvXidZWXkvSHj8_-mOPw2qUXunJhQmV
-X-Proofpoint-ORIG-GUID: RTVaL4WkZMBbQz6x-ys6VvuZQGxdabJA
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA4MDA5OSBTYWx0ZWRfX6AeVpa4QxTcB
- naEcD8QMCaiv5o/5rK7OHemX7k0Zk81tCPeCsuB7lXR3Q8f7c3qmq9azhKyq9ElL1tUDYllqRi1
- 60+VSbMC62Vh5nOvQZxvrGN3rAA/Olf/iw5/aICJwXCvr5ckgc6yV893ZgHWuHugBzM2rRzxW5/
- BAWmELDbOj0J4vdkkQHPGr4R4xzU81bmUVYqQutz3Wjzuz/C4yfZ7JXC9dCX29lkxicqbFeUhst
- JImktDeRHDvpbIuiXahld8ubQssLCvnc9DKODpT6rudAD2McGwfxZ5aF+rQ6HL+R++ZD9A+8X1f
- 4R6VCBhjeZlTvj8w192fu3xOfaSW2Bdqi2Euwv3Ki48UbyBO8aaeuA0TSrqNGfTZVleIupJmon8
- 8npIYVwpNCobIFjY7LniFXlpT46caw==
-X-Authority-Analysis: v=2.4 cv=V6xwEOni c=1 sm=1 tr=0 ts=69143bf6 cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8
- a=_0LhuuOVu_CDEUY1ngwA:9 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-12_02,2025-11-11_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 lowpriorityscore=0 adultscore=0 malwarescore=0 impostorscore=0
- suspectscore=0 priorityscore=1501 phishscore=0 bulkscore=0 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2511080099
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <jzihvbb6w26d4codfigy2o7b2h26izb4ahihouw54cvuzau54d@jyaa6rgpzuai>
 
-From Power10 processors onwards, each chip has 2 hemispheres. For LPARs
-running on PowerVM Hypervisor, hypervisor determines the allocation of
-CPU groups to each LPAR, resulting in two LPARs with the same number of
-CPUs potentially having different numbers of CPUs from each hemisphere.
-Additionally, it is not feasible to ascertain the hemisphere based
-solely on the CPU number.
+On 2025-11-11 08:44:14 [-0800], Shakeel Butt wrote:
+> On Tue, Nov 11, 2025 at 09:49:00AM +0100, Sebastian Andrzej Siewior wrote:
+> > On 2025-11-11 12:16:43 [+0900], Harry Yoo wrote:
+> > > > However, in the !CONFIG_HAVE_CMPXCHG_LOCAL case, mod_node_page_state()
+> > > > still calls local_irq_save(). Is this feasible in the PREEMPT_RT kernel?
+> > > 
+> > > Hmm I was going to say it's necessary, but AFAICT we don't allocate
+> > > or free memory in hardirq context on PREEMPT_RT (that's the policy)
+> > > and so I'd say it's not necessary to disable IRQs.
+> > > 
+> > > Sounds like we still want to disable IRQs only on !PREEMPT_RT on
+> > > such architectures?
+> > > 
+> > > Not sure how seriously do PREEMPT_RT folks care about architectures
+> > > without HAVE_CMPXCHG_LOCAL. (riscv and loongarch have ARCH_SUPPORTS_RT
+> > > but doesn't have HAVE_CMPXCHG_LOCAL).
+> > 
+> > We take things seriously and you shouldn't make assumption based on
+> > implementation. Either the API can be used as such or not.
+> > In case of mod_node_page_state(), the non-IRQ off version
+> > (__mod_node_page_state()) has a preempt_disable_nested() to ensure
+> > atomic update on PREEMPT_RT without disabling interrupts.
+> > 
+> 
+> Harry is talking about mod_node_page_state() on
+> !CONFIG_HAVE_CMPXCHG_LOCAL which is disabling irqs.
+> 
+> void mod_node_page_state(struct pglist_data *pgdat, enum node_stat_item item,
+> 					long delta)
+> {
+> 	unsigned long flags;
+> 
+> 	local_irq_save(flags);
+> 	__mod_node_page_state(pgdat, item, delta);
+> 	local_irq_restore(flags);
+> }
+> 
+> Is PREEMPT_RT fine with this?
 
-Users wishing to assign their workload to all CPUs, or a subset of CPUs
-within a specific hemisphere, encounter difficulties in identifying the
-cpumask. To address this, it is proposed to expose hemisphere
-information as a die in sysfs. This aligns with other architectures
-and facilitates the identification of CPUs within the same hemisphere.
-Tools such as lstopo can also access this information.
+Yes.
+The local_irq_save() is not strictly needed but I am fine with it to
+keep it simple. The inner part is just counting.
 
-Please note: The hypervisor reveals the locality of the CPUs to
-hemispheres only in dedicated mode. Consequently, in systems where
-hemisphere information is unavailable, such as shared LPARs, the
-die_cpus information in sysfs will mirror package_cpus, with
-die_id set to -1.
-
-Without this change.
-$ grep . /sys/devices/system/cpu/cpu16/topology/{die*,package*} 2>/dev/null
-/sys/devices/system/cpu/cpu16/topology/package_cpus:000000,000000ff,ffff0000
-/sys/devices/system/cpu/cpu16/topology/package_cpus_list:16-39
-
-With this change.
-$ grep . /sys/devices/system/cpu/cpu16/topology/{die*,package*} 2>/dev/null
-/sys/devices/system/cpu/cpu16/topology/die_cpus:000000,00000000,00ff0000
-/sys/devices/system/cpu/cpu16/topology/die_cpus_list:16-23
-/sys/devices/system/cpu/cpu16/topology/die_id:2
-/sys/devices/system/cpu/cpu16/topology/package_cpus:000000,000000ff,ffff0000
-/sys/devices/system/cpu/cpu16/topology/package_cpus_list:16-39
-
-snipped lstopo-no-graphics o/p
-  Group0 L#0 (total=8747584KB)
-    Package L#0 (total=3564096KB CPUModel="POWER10 (architected), altivec supported" CPURevision="2.0 (pvr 0080 0200)")
-      NUMANode L#0 (P#0 local=3564096KB total=3564096KB)
-      Die L#0 (P#0)
-        Core L#0 (P#0)
-<snipped>
-    Package L#1 (total=5183488KB CPUModel="POWER10 (architected), altivec supported" CPURevision="2.0 (pvr 0080 0200)")
-      NUMANode L#1 (P#1 local=5183488KB total=5183488KB)
-      Die L#2 (P#2)
-        Core L#2 (P#16)
-          L3Cache L#4 (size=4096KB linesize=128 ways=16)
-            L2Cache L#4 (size=1024KB linesize=128 ways=8)
-              L1dCache L#4 (size=32KB linesize=128 ways=8)
-                L1iCache L#4 (size=48KB linesize=128 ways=6)
-                  PU L#16 (P#16)
-                  PU L#17 (P#18)
-                  PU L#18 (P#20)
-                  PU L#19 (P#22)
-          L3Cache L#5 (size=4096KB linesize=128 ways=16)
-            L2Cache L#5 (size=1024KB linesize=128 ways=8)
-              L1dCache L#5 (size=32KB linesize=128 ways=8)
-                L1iCache L#5 (size=48KB linesize=128 ways=6)
-                  PU L#20 (P#17)
-                  PU L#21 (P#19)
-                  PU L#22 (P#21)
-                  PU L#23 (P#23)
-      Die L#3 (P#3)
-        Core L#3 (P#24)
-          L3Cache L#6 (size=4096KB linesize=128 ways=16)
-            L2Cache L#6 (size=1024KB linesize=128 ways=8)
-              L1dCache L#6 (size=32KB linesize=128 ways=8)
-                L1iCache L#6 (size=48KB linesize=128 ways=6)
-                  PU L#24 (P#24)
-                  PU L#25 (P#26)
-                  PU L#26 (P#28)
-                  PU L#27 (P#30)
-          L3Cache L#7 (size=4096KB linesize=128 ways=16)
-            L2Cache L#7 (size=1024KB linesize=128 ways=8)
-              L1dCache L#7 (size=32KB linesize=128 ways=8)
-                L1iCache L#7 (size=48KB linesize=128 ways=6)
-                  PU L#28 (P#25)
-                  PU L#29 (P#27)
-                  PU L#30 (P#29)
-                  PU L#31 (P#31)
-        Core L#4 (P#32)
-          L3Cache L#8 (size=4096KB linesize=128 ways=16)
-            L2Cache L#8 (size=1024KB linesize=128 ways=8)
-              L1dCache L#8 (size=32KB linesize=128 ways=8)
-                L1iCache L#8 (size=48KB linesize=128 ways=6)
-                  PU L#32 (P#32)
-                  PU L#33 (P#34)
-                  PU L#34 (P#36)
-                  PU L#35 (P#38)
-          L3Cache L#9 (size=4096KB linesize=128 ways=16)
-            L2Cache L#9 (size=1024KB linesize=128 ways=8)
-              L1dCache L#9 (size=32KB linesize=128 ways=8)
-                L1iCache L#9 (size=48KB linesize=128 ways=6)
-                  PU L#36 (P#33)
-                  PU L#37 (P#35)
-                  PU L#38 (P#37)
-                  PU L#39 (P#39)
-  Group0 L#1 (total=7736896KB)
-    Package L#2 (total=5170880KB CPUModel="POWER10 (architected), altivec supported" CPURevision="2.0 (pvr 0080 0200)")
-      NUMANode L#2 (P#2 local=5170880KB total=5170880KB)
-      Die L#4 (P#4)
-<snipped>
-
-Reviewed-by: Shrikanth Hegde <sshegde@linux.ibm.com>
-Signed-off-by: Srikar Dronamraju <srikar@linux.ibm.com>
----
-Changelog v1: v2:
-v1: https://lore.kernel.org/all/20251028105734.1894998-1-srikar@linux.ibm.com/t/#u
-Updated changelog and few nits as suggested by Shrikanth
-
- arch/powerpc/include/asm/topology.h | 11 +++++++----
- arch/powerpc/kernel/smp.c           | 23 +++++++++++++++++++++++
- 2 files changed, 30 insertions(+), 4 deletions(-)
-
-diff --git a/arch/powerpc/include/asm/topology.h b/arch/powerpc/include/asm/topology.h
-index f19ca44512d1..66ed5fe1b718 100644
---- a/arch/powerpc/include/asm/topology.h
-+++ b/arch/powerpc/include/asm/topology.h
-@@ -132,15 +132,18 @@ static inline int cpu_to_coregroup_id(int cpu)
- #include <asm/cputable.h>
- 
- struct cpumask *cpu_coregroup_mask(int cpu);
-+const struct cpumask *cpu_die_mask(int cpu);
-+int cpu_die_id(int cpu);
- 
- #ifdef CONFIG_PPC64
- #include <asm/smp.h>
- 
- #define topology_physical_package_id(cpu)	(cpu_to_chip_id(cpu))
--
--#define topology_sibling_cpumask(cpu)	(per_cpu(cpu_sibling_map, cpu))
--#define topology_core_cpumask(cpu)	(per_cpu(cpu_core_map, cpu))
--#define topology_core_id(cpu)		(cpu_to_core_id(cpu))
-+#define topology_sibling_cpumask(cpu)		(per_cpu(cpu_sibling_map, cpu))
-+#define topology_core_cpumask(cpu)		(per_cpu(cpu_core_map, cpu))
-+#define topology_core_id(cpu)			(cpu_to_core_id(cpu))
-+#define topology_die_id(cpu)			(cpu_die_id(cpu))
-+#define topology_die_cpumask(cpu)		(cpu_die_mask(cpu))
- 
- #endif
- #endif
-diff --git a/arch/powerpc/kernel/smp.c b/arch/powerpc/kernel/smp.c
-index 68edb66c2964..338142cd97db 100644
---- a/arch/powerpc/kernel/smp.c
-+++ b/arch/powerpc/kernel/smp.c
-@@ -1085,6 +1085,29 @@ static int __init init_big_cores(void)
- 	return 0;
- }
- 
-+/*
-+ * die_mask and die_id are only available on systems which support
-+ * multiple coregroups within a same package. On all other systems, die_mask
-+ * would be same as package mask and die_id would be set to -1.
-+ */
-+const struct cpumask *cpu_die_mask(int cpu)
-+{
-+	if (has_coregroup_support())
-+		return per_cpu(cpu_coregroup_map, cpu);
-+	else
-+		return cpu_node_mask(cpu);
-+}
-+EXPORT_SYMBOL_GPL(cpu_die_mask);
-+
-+int cpu_die_id(int cpu)
-+{
-+	if (has_coregroup_support())
-+		return cpu_to_coregroup_id(cpu);
-+	else
-+		return -1;
-+}
-+EXPORT_SYMBOL_GPL(cpu_die_id);
-+
- void __init smp_prepare_cpus(unsigned int max_cpus)
- {
- 	unsigned int cpu, num_threads;
--- 
-2.43.7
-
+Sebastian
 
