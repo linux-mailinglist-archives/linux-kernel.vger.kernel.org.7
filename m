@@ -1,81 +1,87 @@
-Return-Path: <linux-kernel+bounces-896926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63C20C51899
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:02:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74594C51947
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:11:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10A79189F730
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:01:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDC2C3B6A84
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:00:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F5DC30148E;
-	Wed, 12 Nov 2025 10:00:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AE48284672;
+	Wed, 12 Nov 2025 10:00:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="C3Gk2B/G"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="NI8iF8lL"
+Received: from CY7PR03CU001.outbound.protection.outlook.com (mail-westcentralusazon11010025.outbound.protection.outlook.com [40.93.198.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA1B12F5302
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 10:00:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762941610; cv=none; b=Bt4XfIGrjaXxuxTOwg5jb2HZxOZDQgLaJzbTBr5vdVmtEq7v+bhtY/LGABcLJeqNkmz6vp3pxXUoZzUHtsrdKEiDXHnDOMtikqrFvZswRCIfTTK0TwO1Bc8oBirdYqr6YBy82c/xT1c6WtmK2R0jb+ATzib19HXRdWrVecCXoP0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762941610; c=relaxed/simple;
-	bh=mCHVGSY5nG2xTagjSNTDjVhzMzoCaNY36P98eDp+ROI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=S/OQKQ/8QLcDQ0dTjHvl5U2d62ei13vm/X+u8y6+SG6kK0XNrZNYeYQiPMEMYxzKjucgT7/OHBr6c7Dpsg0JSKgThOsszvBvYMCZ+NfshkKMjY/RVwYwuK44XVZ2YHb9BTB/8aJ402EdlTl6yDKj5MqFLGIxWp6YK/hHIvrJwR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=C3Gk2B/G; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-477632cc932so2661455e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 02:00:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762941607; x=1763546407; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=L8f8+DXKONCmTI8/qphYme8tsG5/HEsqS5J6Z0v2BCY=;
-        b=C3Gk2B/G1iEdWvrm3NSoVst92G4SArZEZ2De8KynNOwJ4QNMW9akDifu2JjbQTPuSB
-         I3Oif/nHpBulNmpVASkVtsDThVnDiSo066DS26ZTJoyOGvgIkE5ssPwe1MSO4Dnw8iXk
-         O56ZRAXCO/CK8tC+4wt4bsRIkGp0cLmcebthvF4JVYLhQLMyJXJiBetYZVpyyImKoweh
-         4TLAWIt+OHx2ffOzJFuZ4ylTrLdBiq1/utlT+ktjenV4Rk0QBbhN7FHdizri6nPw0/h+
-         sM2WaauzaaGTTaQQhazX+HLquQX7FFMbmT1Q8Qp5VOfDgu1nfj0xNldcNIMg6F1F8QEM
-         HMeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762941607; x=1763546407;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=L8f8+DXKONCmTI8/qphYme8tsG5/HEsqS5J6Z0v2BCY=;
-        b=WioXhfA4QRF6EHtI4LKl+/FUXuIFmTyZyG4tjWOTYsiQ0Qta68p1OjUx9Xv32id/OW
-         6Ob/O4NyDmRgwpTcf0F4kwluQjGfi56C5wSqOK6Z+inTOD+wszRKCQOIEbXTKXgEN8xn
-         Nki/NfFUshUmN9HnDsEJsJ9T6lxQLjq2FIvbXC32shX5AlxauvOqzRY9YkIC6vKSrZDK
-         /IcNxwA1iqRsnU7tF+auzh8/vlROUjhCOEu5N+REzP3Ns+MiLL71H9m3GttDh68Vh1WC
-         zS1ap/Fo4iTyXujL7vJ+YAZ/HTu9+rzhVwf0EIKJs5z+FonKfoJoep1BICO3knIuX+TE
-         y+wg==
-X-Gm-Message-State: AOJu0YwyYRKBSV9gKgx/m5IB/l7iW7N23BjmeQxY/hLXaS1eKHaD+Yzu
-	SgOiI5X8BeGl5PBAQOq2fiU73YXTPne3aI8u5UZMItdfxQ3Y6JTZvxNQTBzVTPWGjVT4tug9sf8
-	HuxN8HGY=
-X-Gm-Gg: ASbGncsIJdncFYTUN+tRgkcWDu29P5TBFmRbq/pA54I30qEd+P0olxSu95IGfpJ63Cg
-	QQ/oIRXETFp0UE+4gUc0cG+iYtPUr/8WHP4mr3nD15YuovmbS1DWl8/FGLxEHgDXNGR8aCpNhEP
-	ugAtfjd7iprwO6puGz1h2Z2koyStYW6bbPoB97vo5ggk6hq4SEdN19kaotfAmJCemDnn+uM8gFP
-	/JY2zUZPJqv5t0KYkonSLXttRbFPh4pJ4DIRHv7Jiy8Wpy0T8p4f7N5QQDX1EQHEgSgtNaibJVI
-	bZ+F+l446CdHvUU+IHjKpRzlY2mOKgG3dhhbl+cN8jedo3ZXLsIu2ufJ9/SlD9SSNmv1AfUXVD2
-	u+x2IIl51kYm7zoWVO/0ikTi26Cu/lcGqUFfNBwc9NDtbQonv/dSTe6NE9vbz1vYxe9FqXm3MbN
-	xwAdXw3QkSzSYNawp7olO5FqqNPXXlZ48MTi+4XaJZgiuDwZj8rHqQ
-X-Google-Smtp-Source: AGHT+IHfrI00g3adREBO4Qxu+SQTGFO6r7DZm9ogYWhFWl3K82QfsvudPlF4mksK/RmSAUszY3/OLg==
-X-Received: by 2002:a05:600c:3114:b0:477:1bb6:17e5 with SMTP id 5b1f17b1804b1-477871c4b45mr20891125e9.30.1762941607010;
-        Wed, 12 Nov 2025 02:00:07 -0800 (PST)
-Received: from ?IPV6:2a05:6e02:1041:c10:23e5:17c0:bfdb:f0d? ([2a05:6e02:1041:c10:23e5:17c0:bfdb:f0d])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-47788a1f823sm9867465e9.2.2025.11.12.02.00.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Nov 2025 02:00:06 -0800 (PST)
-Message-ID: <6336a324-3597-4726-b2ff-fe0f561c59bc@linaro.org>
-Date: Wed, 12 Nov 2025 11:00:05 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7DD126F467
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 10:00:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.198.25
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762941635; cv=fail; b=Jmu0Vlp8TrfvTmrWajhFu5d4i50MnpZRE6heVQc7KsJBrxIC3OTjvbq6wIWAr/+PNfrf0NKG533FYENkPVEz+URm/5adgzFU4G/RGVlrDQm3cwYLqH2S6ZoQnrNzxGTexeZ9psRm8Vw00IhizrgVHO43TzUAQaLjuFUZyAxorUM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762941635; c=relaxed/simple;
+	bh=2erpsvx5cTF2cxkODCZ8LvRGAGsV7j3MzkxDucbTEgc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Km4XIfhT/TMYSq2xXraj5IVJHFCMpFt6TFvs5FcRDVVgiN3vNZdUH3YL9FngusMOf9qDQKCqUDT0y6xoMikmWuWy9OoXGBi4HOl4B7QuJ6XzN0O1H0rcwLyH0ZLrYcoYrrM9b6H/cYivhQGjyladG/rRVkgRd/i12h824dQdduE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=NI8iF8lL; arc=fail smtp.client-ip=40.93.198.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=OwLlvYj16RF5SKGjwHhdNxFaQAhSdelMR4zH1TI8fE70mKzToPl6xbdEWvJUxm5EG83avmfQVnbiYG9y5Ubr1Ia3UEmlEpvWBkiww9ca8bVYsMg1OIuKpGJtsWOFhZ2QvywX7Ntqj1seCqkXqztLq3Zr6ucSogk2yk9CuLDqHOEjeN2Na1WcikndyVOqqNlT8TwxmpwvnMoJC0PQlF7sLlrn4a314Xf9iZ1NqU/N9B9/dfc3s8xHJ3Emr43CbCE59XLBGEXjNdOWfQuawWbzkrcD1jcQSND66+2Cmy2DQz/4xU3chGGnTUk7xOsG75lakxEa6QGa2RtOL3MjX9z/wA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=nfzyAAN7B0lzihRXdR9otvj7aD3JWia5OqIPuRqC0X4=;
+ b=h3CIrqimQichOwV99yqnNXSuQYAHqzrgZXnrqeryRTF+7od/vJLMW1Z8kSJOJFx9HZAb7nbYtZKCycm/2Gwjprz4j0oAWBJn48dZwmnr11U2UqFMS+K1Rl0reCmHtN2JGqyRWGOEU06BRJpeB5IJr8caszpx0Xy5xRp54ood4UtIQqTO2v/vALRFRg2ZWjxsg7+q0aa2sjaGQ+IXSG/YEgNf9PkJggQ93I13b1KN+QvyOM1ZQJckp9zj3PdmwG48DhnNYQWO5OE1hOfML2bryV/2zqxK/IkVSfG5GI5Uf2k2YfCsR77Jqg/Yz4M3If/GGHQQ8rKEntx6rNYQLy5jhw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 198.47.23.194) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=ti.com;
+ dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nfzyAAN7B0lzihRXdR9otvj7aD3JWia5OqIPuRqC0X4=;
+ b=NI8iF8lLdQ3FzIbArcXvdz3xVQlG3iBoXIKX5KrrzrzPDxWBuKldD7OpbFJrPM3IGhoQ+aY5CULyB9Y7/zYKSs4g4PU8ExtrLkBb/pvB09x5m89VKDW2hahYjXEeHxo1LdDSszDnwFTI+KNkIVin8Csgi7BUQbrWn9sQdxQyjLU=
+Received: from SN6PR04CA0088.namprd04.prod.outlook.com (2603:10b6:805:f2::29)
+ by CO1PR10MB4769.namprd10.prod.outlook.com (2603:10b6:303:98::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Wed, 12 Nov
+ 2025 10:00:29 +0000
+Received: from SN1PEPF00036F43.namprd05.prod.outlook.com
+ (2603:10b6:805:f2:cafe::6a) by SN6PR04CA0088.outlook.office365.com
+ (2603:10b6:805:f2::29) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9320.16 via Frontend Transport; Wed,
+ 12 Nov 2025 10:00:29 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.23.194)
+ smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
+ action=none header.from=ti.com;
+Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
+ 198.47.23.194 as permitted sender) receiver=protection.outlook.com;
+ client-ip=198.47.23.194; helo=lewvzet200.ext.ti.com; pr=C
+Received: from lewvzet200.ext.ti.com (198.47.23.194) by
+ SN1PEPF00036F43.mail.protection.outlook.com (10.167.248.27) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9320.13 via Frontend Transport; Wed, 12 Nov 2025 10:00:29 +0000
+Received: from DLEE214.ent.ti.com (157.170.170.117) by lewvzet200.ext.ti.com
+ (10.4.14.103) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 12 Nov
+ 2025 04:00:28 -0600
+Received: from DLEE202.ent.ti.com (157.170.170.77) by DLEE214.ent.ti.com
+ (157.170.170.117) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 12 Nov
+ 2025 04:00:28 -0600
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE202.ent.ti.com
+ (157.170.170.77) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Wed, 12 Nov 2025 04:00:28 -0600
+Received: from [172.24.233.20] (a0512632.dhcp.ti.com [172.24.233.20])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5ACA0NOV2468286;
+	Wed, 12 Nov 2025 04:00:24 -0600
+Message-ID: <d0ab6151-3ac7-4366-bdae-0b3c58518fb9@ti.com>
+Date: Wed, 12 Nov 2025 15:30:23 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,57 +89,344 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] clocksource/drivers/nxp-pit: Prevent driver unbind
-To: Johan Hovold <johan@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Marc Zyngier <maz@kernel.org>, Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org
-References: <20251111153226.579-1-johan@kernel.org>
- <20251111153226.579-3-johan@kernel.org>
+Subject: Re: [PATCH v8 1/2] drm/tidss: Remove max_pclk_khz and min_pclk_khz
+ from tidss display features
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	<aradhya.bhatia@linux.dev>, <devarsht@ti.com>, <mripard@kernel.org>,
+	<jyri.sarha@iki.fi>, <maarten.lankhorst@linux.intel.com>, <simona@ffwll.ch>,
+	<airlied@gmail.com>, <tzimmermann@suse.de>, <h-shenoy@ti.com>
+CC: <praneeth@ti.com>, <u-kumar1@ti.com>, <vigneshr@ti.com>,
+	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+References: <20251104151422.307162-1-s-jain1@ti.com>
+ <20251104151422.307162-2-s-jain1@ti.com>
+ <5fc8eb00-9ecc-494b-8bf3-6239d2a7e1ab@ideasonboard.com>
+ <864e6b80-2287-4473-afb8-c1ba29613067@ti.com>
+ <8f8b63cb-6ea4-4620-afec-5f4f228eb743@ideasonboard.com>
 Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <20251111153226.579-3-johan@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Swamil Jain <s-jain1@ti.com>
+In-Reply-To: <8f8b63cb-6ea4-4620-afec-5f4f228eb743@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN1PEPF00036F43:EE_|CO1PR10MB4769:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5bee8580-97b4-47cb-75c9-08de21d24f78
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|7416014|376014|82310400026|36860700013|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?UDNqUVRpZVgyUTlIVldhT3M2RlZyV3A5N0h2K2EzaVl0NjJSQVhYODhzTzNv?=
+ =?utf-8?B?OEFMOVlOdFZhYWp2bm9rTGxFRDMrREVjNXh2YlRGMzRaeldCaEszQ1JTNHlO?=
+ =?utf-8?B?ejc3RWNnVitudTAzYmp6VHplczZPNmFuNXVIdlo2YnpwbEZoMzJWTmpIclR0?=
+ =?utf-8?B?T3VTYWRzNGQ0c3FVZWxPVEdaQUk5NEk2TWRjQXNqVzZob0hBT2wxYU1DTkhV?=
+ =?utf-8?B?VGp5MHdUTGlZSUVlNTRIQjRPbER0K2xnWmtHZkRMUE5KN1VZRnVIaTh4Kysv?=
+ =?utf-8?B?VlR3SjdSU29xOFNsMXFsS0hRNFExK2hXRUtnNXlsMmpOaUFzNDFxaTBNVVNh?=
+ =?utf-8?B?T0tzTzFRV2NoRVJnUTlVdGtJWU5QN2IxNGJ4QUE2aEl6YVpKRExxOEJ1cWxD?=
+ =?utf-8?B?UlpYa2VCQlZsNTJxckplc3Z6YXRCQlNhckhiK0tnUVRWMzlqbG1rNGxnWld0?=
+ =?utf-8?B?QkNtQ3I4TWExakhZbnlabzVnSXNHT1J2OEJwZzJkcTlMVW1Jb1lLY01nT21x?=
+ =?utf-8?B?Lzk0cmRHSDF0YkNkUElYaml1cEl6dU82K1hCL0hkTFlGakZQK1FEcFBOMi9q?=
+ =?utf-8?B?VUZIUzBwWGc2aitieTU5ZkF0RXAzUUdwQUU4UENxVWhnRnVDVXZCbGkzM2RY?=
+ =?utf-8?B?NHBDUGhKWnJ2dTQ4aDhLWTN0R2xzRFRleFpWNm5pWWxxeUd4Y1BHNzhwZmY3?=
+ =?utf-8?B?cG5xdk5KZTNEenBxRUdJY1NCZEpCdUhsWWIwaHV4OGY1ZHlJV0lTRGlUTkQ2?=
+ =?utf-8?B?TExzcEVGWmdLdmM0VTFCOU4rU2IrT0NhbFhSajArNzFMZnJPM3JScXVIRVJk?=
+ =?utf-8?B?N0gxRlVSOXF0TmdZVlhrZ3ZFTXBkSEROR1NsQmEzWnZtdkw1S1hxUWFPdzRX?=
+ =?utf-8?B?N3k5VVM0YytwNWg3WExVUjNWbXJQWVBWZnBQZWsvNklUaHFEWC8vSlNIaVdq?=
+ =?utf-8?B?amZNSXhWUkhkYnFabGs1WU1UWlkyZTRsVGxoL2xpWTQ1Z0MwNTg2dGFLNG9z?=
+ =?utf-8?B?QnkzMXRLUXlBcVBFcHhmempwQTEzTjBRNlpmY1h5ZGg1M2djQ2lVeGtBTXJu?=
+ =?utf-8?B?YndwOE1YVzlHeENkYlpNWDNkQURyaVhoSGpQQys2dWVZbGpmMnE4ODY3cWZq?=
+ =?utf-8?B?ZEtGaGlCVGlnK3F6cFgyWU5PMkd0aUUzWEVISXdOUXlZRFpLVWNMN1FqZ01P?=
+ =?utf-8?B?Y0JDUEJlMDh5NlBiVkxtMVlhNGNINHZaZUoyUGpORVpjNHM0d0pHQmJZM3h0?=
+ =?utf-8?B?aU5tZkpwejhJRlF6LzI5cEMwa2NpSTFGSVdvY0YySzlRdGFyai8xTWN3WlRZ?=
+ =?utf-8?B?VTJvOWNCemM1a3FGdStnWmI2MDQ5em1zQ3I4MHo1UkhoOS90dDZ5eExoUDdj?=
+ =?utf-8?B?NVlxSThDb0dVZmNvRFdCNFBHRWVVWUYxc1pEdlQvcTl5eFBvOWdlc2pnWFhT?=
+ =?utf-8?B?c3ltNSt0U1FPSVNTdnVXbERwM1VPdksxRHhBY0pVZGt1akYvVEZlUzd2Qi9K?=
+ =?utf-8?B?SjEzK2ZwY3FTdDRucnA5WXNWMFR4eXNzZjVhUFFjM3JEcm8rRXVYeGUvMitw?=
+ =?utf-8?B?ZUFqVmp5N2NlT3Bad09aUjJ2cTF6NC94ZmF0MUthVWsyeE85TmJlR3FBNVJv?=
+ =?utf-8?B?OE4ybGE1djJwZXpiQk1rZFE3WnAwMXVBSkZRcjBqaUxhZTFxNkhVRS9KcXpx?=
+ =?utf-8?B?djBWY0JPcVBXSHZkMlp0cVBrVU9jVkJneU1mNXJOQ05VVVhTSEp3VDFlK2Ro?=
+ =?utf-8?B?S3p3RVZCZXFMRm9YZEZiTWFuVlorampjUmI3bUFNck0xcG1lZHNxb1NpWnc3?=
+ =?utf-8?B?TEpwUDZlSWsvTlJnQVJPZGoreDdVTXNtK0lyTEVvMmM3ZHlOZDVVdU84YmNv?=
+ =?utf-8?B?QlY3ZDRnejN0MGhXS3NhMXlFSzJJUWpjbTNzOEVHbklLcE1ueDNuNEYzYVcx?=
+ =?utf-8?B?SEpNVHFpRUM0cVp6RTFEYVVJSmFwOWloTFMyWGsxbTkxNTNqb1hjMmlGUjR1?=
+ =?utf-8?B?UE00MlZnUXJlazl6ei9BWmEzaWtMeXpGa0VMUFloaHNibHY0bEh6SGF5VHZT?=
+ =?utf-8?B?K2V0ZE8xVXBGV1k4bHlYbUR2SUxtQXVFdk4rVFo4M2Y0NlMvNWxtMVZpdlRS?=
+ =?utf-8?Q?ArXkNJ+kmsSfd3qufetESvRrQ?=
+X-Forefront-Antispam-Report:
+	CIP:198.47.23.194;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:lewvzet200.ext.ti.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(82310400026)(36860700013)(921020);DIR:OUT;SFP:1101;
+X-OriginatorOrg: ti.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2025 10:00:29.2804
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5bee8580-97b4-47cb-75c9-08de21d24f78
+X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.23.194];Helo=[lewvzet200.ext.ti.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SN1PEPF00036F43.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR10MB4769
 
-On 11/11/25 16:32, Johan Hovold wrote:
-> The driver does not support unbinding (e.g. as clockevents cannot be
-> deregistered) so suppress the bind attributes to prevent the driver from
-> being unbound and rebound after registration (and disabling the timer
-> when reprobing fails).
+Hi Tomi,
+
+On 11/12/25 15:21, Tomi Valkeinen wrote:
+> Hi,
 > 
-> Even if the driver can currently only be built-in, also switch to
-> builtin_platform_driver() to prevent it from being unloaded should
-> modular builds ever be enabled.
+> On 12/11/2025 11:43, Swamil Jain wrote:
+>> Hi Tomi,
+>>
+>> On 11/12/25 15:10, Tomi Valkeinen wrote:
+>>> Hi,
+>>>
+>>> On 04/11/2025 17:14, Swamil Jain wrote:
+>>>> From: Jayesh Choudhary <j-choudhary@ti.com>
+>>>>
+>>>> The TIDSS hardware does not have independent maximum or minimum pixel
+>>>> clock limits for each video port. Instead, these limits are determined
+>>>> by the SoC's clock architecture. Previously, this constraint was
+>>>> modeled using the 'max_pclk_khz' and 'min_pclk_khz' fields in
+>>>> 'dispc_features', but this approach is static and does not account for
+>>>> the dynamic behavior of PLLs.
+>>>>
+>>>> This patch removes the 'max_pclk_khz' and 'min_pclk_khz' fields from
+>>>> 'dispc_features'. The correct way to check if a requested mode's pixel
+>>>> clock is supported is by using 'clk_round_rate()' in the 'mode_valid()'
+>>>> hook. If the best frequency match for the mode clock falls within the
+>>>> supported tolerance, it is approved. TIDSS supports a 5% pixel clock
+>>>> tolerance, which is now reflected in the validation logic.
+>>>>
+>>>> This change allows existing DSS-compatible drivers to be reused across
+>>>> SoCs that only differ in their pixel clock characteristics. The
+>>>> validation uses 'clk_round_rate()' for each mode, which may introduce
+>>>> additional delay (about 3.5 ms for 30 modes), but this is generally
+>>>> negligible. Users desiring faster validation may bypass these calls
+>>>> selectively, for example, checking only the highest resolution mode,
+>>>> as shown here[1].
+>>>>
+>>>> [1]: https://lore.kernel.org/all/20250704094851.182131-3-j-
+>>>> choudhary@ti.com/
+>>>>
+>>>> Tested-by: Michael Walle <mwalle@kernel.org>
+>>>> Reviewed-by: Devarsh Thakkar <devarsht@ti.com>
+>>>> Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+>>>> Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
+>>>> Signed-off-by: Swamil Jain <s-jain1@ti.com>
+>>>> ---
+>>>>    drivers/gpu/drm/tidss/tidss_dispc.c | 86 +++++++++++------------------
+>>>>    drivers/gpu/drm/tidss/tidss_dispc.h |  3 -
+>>>>    2 files changed, 31 insertions(+), 58 deletions(-)
+>>>>
+>>>> diff --git a/drivers/gpu/drm/tidss/tidss_dispc.c b/drivers/gpu/drm/
+>>>> tidss/tidss_dispc.c
+>>>> index d0b191c470ca..b11880178cba 100644
+>>>> --- a/drivers/gpu/drm/tidss/tidss_dispc.c
+>>>> +++ b/drivers/gpu/drm/tidss/tidss_dispc.c
+>>>> @@ -57,12 +57,6 @@ static const u16
+>>>> tidss_k2g_common_regs[DISPC_COMMON_REG_TABLE_LEN] = {
+>>>>    };
+>>>>      const struct dispc_features dispc_k2g_feats = {
+>>>> -    .min_pclk_khz = 4375,
+>>>> -
+>>>> -    .max_pclk_khz = {
+>>>> -        [DISPC_VP_DPI] = 150000,
+>>>> -    },
+>>>> -
+>>>>        /*
+>>>>         * XXX According TRM the RGB input buffer width up to 2560 should
+>>>>         *     work on 3 taps, but in practice it only works up to 1280.
+>>>> @@ -145,11 +139,6 @@ static const u16
+>>>> tidss_am65x_common_regs[DISPC_COMMON_REG_TABLE_LEN] = {
+>>>>    };
+>>>>      const struct dispc_features dispc_am65x_feats = {
+>>>> -    .max_pclk_khz = {
+>>>> -        [DISPC_VP_DPI] = 165000,
+>>>> -        [DISPC_VP_OLDI_AM65X] = 165000,
+>>>> -    },
+>>>> -
+>>>>        .scaling = {
+>>>>            .in_width_max_5tap_rgb = 1280,
+>>>>            .in_width_max_3tap_rgb = 2560,
+>>>> @@ -245,11 +234,6 @@ static const u16
+>>>> tidss_j721e_common_regs[DISPC_COMMON_REG_TABLE_LEN] = {
+>>>>    };
+>>>>      const struct dispc_features dispc_j721e_feats = {
+>>>> -    .max_pclk_khz = {
+>>>> -        [DISPC_VP_DPI] = 170000,
+>>>> -        [DISPC_VP_INTERNAL] = 600000,
+>>>> -    },
+>>>> -
+>>>>        .scaling = {
+>>>>            .in_width_max_5tap_rgb = 2048,
+>>>>            .in_width_max_3tap_rgb = 4096,
+>>>> @@ -316,11 +300,6 @@ const struct dispc_features dispc_j721e_feats = {
+>>>>    };
+>>>>      const struct dispc_features dispc_am625_feats = {
+>>>> -    .max_pclk_khz = {
+>>>> -        [DISPC_VP_DPI] = 165000,
+>>>> -        [DISPC_VP_INTERNAL] = 170000,
+>>>> -    },
+>>>> -
+>>>>        .scaling = {
+>>>>            .in_width_max_5tap_rgb = 1280,
+>>>>            .in_width_max_3tap_rgb = 2560,
+>>>> @@ -377,15 +356,6 @@ const struct dispc_features dispc_am625_feats = {
+>>>>    };
+>>>>      const struct dispc_features dispc_am62a7_feats = {
+>>>> -    /*
+>>>> -     * if the code reaches dispc_mode_valid with VP1,
+>>>> -     * it should return MODE_BAD.
+>>>> -     */
+>>>> -    .max_pclk_khz = {
+>>>> -        [DISPC_VP_TIED_OFF] = 0,
+>>>> -        [DISPC_VP_DPI] = 165000,
+>>>> -    },
+>>>> -
+>>>>        .scaling = {
+>>>>            .in_width_max_5tap_rgb = 1280,
+>>>>            .in_width_max_3tap_rgb = 2560,
+>>>> @@ -442,10 +412,6 @@ const struct dispc_features dispc_am62a7_feats = {
+>>>>    };
+>>>>      const struct dispc_features dispc_am62l_feats = {
+>>>> -    .max_pclk_khz = {
+>>>> -        [DISPC_VP_DPI] = 165000,
+>>>> -    },
+>>>> -
+>>>>        .subrev = DISPC_AM62L,
+>>>>          .common = "common",
+>>>> @@ -1333,33 +1299,54 @@ static void dispc_vp_set_default_color(struct
+>>>> dispc_device *dispc,
+>>>>                DISPC_OVR_DEFAULT_COLOR2, (v >> 32) & 0xffff);
+>>>>    }
+>>>>    +/*
+>>>> + * Calculate the percentage difference between the requested pixel
+>>>> clock rate
+>>>> + * and the effective rate resulting from calculating the clock
+>>>> divider value.
+>>>> + */
+>>>> +unsigned int dispc_pclk_diff(unsigned long rate, unsigned long
+>>>> real_rate)
+>>>> +{
+>>>> +    int r = rate / 100, rr = real_rate / 100;
+>>>> +
+>>>> +    return (unsigned int)(abs(((rr - r) * 100) / r));
+>>>> +}
+>>>> +
+>>>> +static inline int check_pixel_clock(struct dispc_device *dispc,
+>>>> +                 u32 hw_videoport, unsigned long clock)
+>>>> +{
+>>>
+>>> Ah... Sorry, I was quite unclear in my comment to v7. I did not mean
+>>> mark it as inline. I meant "move it inline", i.e. move this code into
+>>> the dispc_vp_mode_valid function. This is just a few lines, and having
+>>> it in a separate function makes it a bit more difficult to understand
+>>> what are all the checks done in dispc_vp_mode_valid().
+>>>
+>>> I can do that change when applying the patches, if that's ok for you.
+>>>
+>>
+>> Thanks Tomi, please do the required changes.
 > 
-> Fixes: bee33f22d7c3 ("clocksource/drivers/nxp-pit: Add NXP Automotive s32g2 / s32g3 support")
-> Signed-off-by: Johan Hovold <johan@kernel.org>
-> ---
->   drivers/clocksource/timer-nxp-pit.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
+> Actually, now that I was about to do the change, I realized the next
+> patch adds an if check here. So maybe it's better to keep it as a
+> separate function. I'll just drop the "inline".
+
+Yeah, I think we can move it inline and accordingly modify the next 
+patch also. But I think having a separate function makes it clear that 
+we are skipping check for VPs with external clocking and we are having a 
+similar check within the bridge driver. Please drop the "inline". Thanks 
+for the re-work.
+
+Regards,
+Swamil
+
 > 
-> diff --git a/drivers/clocksource/timer-nxp-pit.c b/drivers/clocksource/timer-nxp-pit.c
-> index 2d0a3554b6bf..d1740f18f718 100644
-> --- a/drivers/clocksource/timer-nxp-pit.c
-> +++ b/drivers/clocksource/timer-nxp-pit.c
-> @@ -374,9 +374,10 @@ static struct platform_driver nxp_pit_driver = {
->   	.driver = {
->   		.name = "nxp-pit",
->   		.of_match_table = pit_timer_of_match,
-> +		.suppress_bind_attrs = true,
->   	},
->   	.probe = pit_timer_probe,
->   };
-> -module_platform_driver(nxp_pit_driver);
-> +builtin_platform_driver(nxp_pit_driver);
+>   Tomi
+> 
+>>
+>> Regards,
+>> Swamil
+>>
+>>>    Tomi
+>>>
+>>>> +    unsigned long round_clock;
+>>>> +
+>>>> +    round_clock = clk_round_rate(dispc->vp_clk[hw_videoport], clock);
+>>>> +    /*
+>>>> +     * To keep the check consistent with dispc_vp_set_clk_rate(), we
+>>>> +     * use the same 5% check here.
+>>>> +     */
+>>>> +    if (dispc_pclk_diff(clock, round_clock) > 5)
+>>>> +        return -EINVAL;
+>>>> +
+>>>> +    return 0;
+>>>> +}
+>>>> +
+>>>>    enum drm_mode_status dispc_vp_mode_valid(struct dispc_device *dispc,
+>>>>                         u32 hw_videoport,
+>>>>                         const struct drm_display_mode *mode)
+>>>>    {
+>>>>        u32 hsw, hfp, hbp, vsw, vfp, vbp;
+>>>>        enum dispc_vp_bus_type bus_type;
+>>>> -    int max_pclk;
+>>>>          bus_type = dispc->feat->vp_bus_type[hw_videoport];
+>>>>    -    max_pclk = dispc->feat->max_pclk_khz[bus_type];
+>>>> -
+>>>> -    if (WARN_ON(max_pclk == 0))
+>>>> +    if (WARN_ON(bus_type == DISPC_VP_TIED_OFF))
+>>>>            return MODE_BAD;
+>>>>    -    if (mode->clock < dispc->feat->min_pclk_khz)
+>>>> -        return MODE_CLOCK_LOW;
+>>>> -
+>>>> -    if (mode->clock > max_pclk)
+>>>> -        return MODE_CLOCK_HIGH;
+>>>> -
+>>>>        if (mode->hdisplay > 4096)
+>>>>            return MODE_BAD;
+>>>>          if (mode->vdisplay > 4096)
+>>>>            return MODE_BAD;
+>>>>    +    if (check_pixel_clock(dispc, hw_videoport, mode->clock * 1000))
+>>>> +        return MODE_CLOCK_RANGE;
+>>>> +
+>>>>        /* TODO: add interlace support */
+>>>>        if (mode->flags & DRM_MODE_FLAG_INTERLACE)
+>>>>            return MODE_NO_INTERLACE;
+>>>> @@ -1423,17 +1410,6 @@ void dispc_vp_disable_clk(struct dispc_device
+>>>> *dispc, u32 hw_videoport)
+>>>>        clk_disable_unprepare(dispc->vp_clk[hw_videoport]);
+>>>>    }
+>>>>    -/*
+>>>> - * Calculate the percentage difference between the requested pixel
+>>>> clock rate
+>>>> - * and the effective rate resulting from calculating the clock
+>>>> divider value.
+>>>> - */
+>>>> -unsigned int dispc_pclk_diff(unsigned long rate, unsigned long
+>>>> real_rate)
+>>>> -{
+>>>> -    int r = rate / 100, rr = real_rate / 100;
+>>>> -
+>>>> -    return (unsigned int)(abs(((rr - r) * 100) / r));
+>>>> -}
+>>>> -
+>>>>    int dispc_vp_set_clk_rate(struct dispc_device *dispc, u32
+>>>> hw_videoport,
+>>>>                  unsigned long rate)
+>>>>    {
+>>>> diff --git a/drivers/gpu/drm/tidss/tidss_dispc.h b/drivers/gpu/drm/
+>>>> tidss/tidss_dispc.h
+>>>> index 60c1b400eb89..42279312dcc1 100644
+>>>> --- a/drivers/gpu/drm/tidss/tidss_dispc.h
+>>>> +++ b/drivers/gpu/drm/tidss/tidss_dispc.h
+>>>> @@ -77,9 +77,6 @@ enum dispc_dss_subrevision {
+>>>>    };
+>>>>      struct dispc_features {
+>>>> -    int min_pclk_khz;
+>>>> -    int max_pclk_khz[DISPC_VP_MAX_BUS_TYPE];
+>>>> -
+>>>>        struct dispc_features_scaling scaling;
+>>>>          enum dispc_dss_subrevision subrev;
+>>>
+>>
+> 
 
-Do not use builtin_platform here. You can add the tristate Kconfig 
-option for this driver, I tested it.
-
-
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
 
