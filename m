@@ -1,518 +1,97 @@
-Return-Path: <linux-kernel+bounces-897248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE1F0C525F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:05:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FE35C5260A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:07:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B3D644F3546
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 12:58:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB96D3A8767
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 12:57:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A822F332ED6;
-	Wed, 12 Nov 2025 12:58:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1330C335BC1;
+	Wed, 12 Nov 2025 12:57:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="Ci94QM90"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yhclw4Yu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D84A309F03;
-	Wed, 12 Nov 2025 12:58:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762952305; cv=pass; b=Q+FKYPIlo9nyohZ9jSCXbcN+irLGCtBbIgkUqCLNfn3sZmsa4d/4viW0MPe+0Xr2c9O440Ip7IXHnUrLhtCej3+uFXvAuJTaZr8ubCiXCvhgZ7RIr5cjjP2ZtctKEWU7WFMxzDVKkBOOVy8qC3BRZ0obZl7iSkPdm0WmD8uqKyw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762952305; c=relaxed/simple;
-	bh=CK7ywSC2eDQARxdoxDFhbt8fd8seOQIHPp65BpGGpHU=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=KnczcntK9xtMfRIjzcrQWNxf4L4ffoebzCnUzaOQ7jznUGiZm+S1jClQwPQql3sVwvaluSna9j4K0ISfpSXFBrKFaGa9UC3x2bjUXAFFQjR+24VAv0LYnsSQd8nsaAPcLuK6ah+lmu3RwblwzOy++U1Y7nMSSCzoEQlGY9axblI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=Ci94QM90; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1762952251; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=HNxVywEwIxfryAuD5zzBYhvkZC8198SP2RK6ZvKxet5z0bGYTqWkIxOxIQibJ+Ukz1YFM12TUMOjcTcAla3bzEfQJpAfOPRZaD5bG9FkwhvqxsnlGNItSD3lQa28gLV78pwMO0t8Lae2BvqCxgGQMr7dcwvJzwsMfGI8d6EBG7A=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1762952251; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=lasbNH8TFs9tBmW5oYJnfXJbOCbLUtFN2LPxxb7aoxY=; 
-	b=RqvRMYn00Dpqc00LRjIeYBstNocwYYrxaD7eB5TsLmb0rm6MUKzpyb69SMl1yy4J6wNZp0+ztpM27BijDkmBv5/cMy1JU6ahbv2y87PEp4R7d41U04kRtVN/FBOnCmOFdSLsiewKfN6Be3jbi6EHzwOZcV8elByutEn0JHWYm94=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1762952251;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=lasbNH8TFs9tBmW5oYJnfXJbOCbLUtFN2LPxxb7aoxY=;
-	b=Ci94QM905kNJ+PitS0LYcmnnz4ycpBfxUXsZkHrpvQLVC8WkX9ft/6VbCL0AuQmZ
-	mFfWyhITrj3SV2yZ4Us49BCDBxG2KjaO3Wu0mI+67fxGo55Fwa0sithHJ7E5q2986Yj
-	8bdlxynaZGtK2IPJD3Pxuae909V1tjQ9lixMFork=
-Received: by mx.zohomail.com with SMTPS id 1762952249485202.59169507502338;
-	Wed, 12 Nov 2025 04:57:29 -0800 (PST)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04D24328B73;
+	Wed, 12 Nov 2025 12:57:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762952244; cv=none; b=m8wq+CXo6PQo4zFmRDIOBh8QYsYhIWLUaVwYLnj0PmNuTPFXzBuD5WgfjnYXOZ3Ss5Ahaqi1ZJJKJA82zwAEmozdPbAcVHxuf8TBU3MXAj5V5Dif9zeX7L+sxoeHBi1mSx16Bs8pGy0axVWj4FCW7+L/tz3fXUtQnG2VCfqQqcU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762952244; c=relaxed/simple;
+	bh=dhaRUvSmwrrEzm722nO20RVYYV4MggIRD2VI3fVuqZo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=KP+6GJ2SCfoWVL5Xdw6t+0motHOG2m682Tm1um3Zz9c/yPD9VP7+g0dXN0mAcvobW3fR4XBm2unAL4yecP6daS+aVAPev0YKHrFuzno9tirE5rGlKlr1ah2Dlq03ujceoMS976beulnrvDCXPG3Fhu1jWT++tjxDT+FU8Re9n/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yhclw4Yu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AB7AC4CEF7;
+	Wed, 12 Nov 2025 12:57:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762952243;
+	bh=dhaRUvSmwrrEzm722nO20RVYYV4MggIRD2VI3fVuqZo=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Yhclw4Yulib9HPJdsVXRTo2PjHbGxKyTz3/CGA5hj+pD0w/fJYSELChR4ncOmumLu
+	 VM1/IehXOQhrA3lxW7cov3XPl6v3DJfNpPe6RjruevdBxoiYP/0LU4dPWkYPtPbQrd
+	 Auuo7prOklr1RBL4aWBffMFjmikrLdsi9iOww/Oa1/EilavKfiJz1Mu8X8nrnA+z2M
+	 OqLAEvbhxUAd52ysU2PrHxmgRc3J95MBmiFnUHsFralSEluJSSKLHMDW+PD0YqlcEE
+	 DketIBIru5A7fV7BbHXN3c9wnOtlfAWrja+io8Y5/ZLS7hmxyC3FXu/Zs85CeheEOC
+	 an4AWWopUt9XA==
+From: Miguel Ojeda <ojeda@kernel.org>
+To: gregkh@linuxfoundation.org
+Cc: achill@achill.org,
+	akpm@linux-foundation.org,
+	broonie@kernel.org,
+	conor@kernel.org,
+	f.fainelli@gmail.com,
+	hargar@microsoft.com,
+	jonathanh@nvidia.com,
+	linux-kernel@vger.kernel.org,
+	linux@roeck-us.net,
+	lkft-triage@lists.linaro.org,
+	patches@kernelci.org,
+	patches@lists.linux.dev,
+	pavel@denx.de,
+	rwarsow@gmx.de,
+	shuah@kernel.org,
+	sr@sladewatkins.com,
+	stable@vger.kernel.org,
+	sudipm.mukherjee@gmail.com,
+	torvalds@linux-foundation.org,
+	Miguel Ojeda <ojeda@kernel.org>
+Subject: Re: [PATCH 6.17 000/849] 6.17.8-rc1 review
+Date: Wed, 12 Nov 2025 13:57:09 +0100
+Message-ID: <20251112125709.142950-1-ojeda@kernel.org>
+In-Reply-To: <20251111004536.460310036@linuxfoundation.org>
+References: <20251111004536.460310036@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [PATCH v3] io: add io_pgtable abstraction
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20251112-io-pgtable-v3-1-b00c2e6b951a@google.com>
-Date: Wed, 12 Nov 2025 09:57:09 -0300
-Cc: Miguel Ojeda <ojeda@kernel.org>,
- Will Deacon <will@kernel.org>,
- Boris Brezillon <boris.brezillon@collabora.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Trevor Gross <tmgross@umich.edu>,
- Danilo Krummrich <dakr@kernel.org>,
- Joerg Roedel <joro@8bytes.org>,
- Robin Murphy <robin.murphy@arm.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Asahi Lina <lina+kernel@asahilina.net>,
- linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org,
- iommu@lists.linux.dev,
- linux-mm@kvack.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <8A5C6836-992B-477A-A77C-EE0736166552@collabora.com>
-References: <20251112-io-pgtable-v3-1-b00c2e6b951a@google.com>
-To: Alice Ryhl <aliceryhl@google.com>
-X-Mailer: Apple Mail (2.3826.700.81)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Hi Alice,
+On Tue, 11 Nov 2025 09:32:50 +0900 Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.17.8 release.
+> There are 849 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 13 Nov 2025 00:43:57 +0000.
+> Anything received after that time might be too late.
 
-> On 12 Nov 2025, at 07:15, Alice Ryhl <aliceryhl@google.com> wrote:
->=20
-> From: Asahi Lina <lina+kernel@asahilina.net>
->=20
-> This will be used by the Tyr driver to create and modify the page =
-table
-> of each address space on the GPU. Each time a mapping gets created or
-> removed by userspace, Tyr will call into GPUVM, which will figure out
-> which calls to map_pages and unmap_pages are required to map the data =
-in
-> question in the page table so that the GPU may access those pages when
-> using that address space.
->=20
-> The Rust type wraps the struct using a raw pointer rather than the =
-usual
-> Opaque+ARef approach because Opaque+ARef requires the target type to =
-be
-> refcounted.
->=20
-> Signed-off-by: Asahi Lina <lina+kernel@asahilina.net>
-> Co-Developed-by: Alice Ryhl <aliceryhl@google.com>
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> ---
-> This patch is based on [1] but I have rewritten and simplified large
-> parts of it. The Asahi driver no longer uses the io-pgtable =
-abstraction,
-> and Nova never planned to (since NVIDIA has its own separate memory).
-> Therefore, I have simplified these abstractions to fit the needs of =
-the
-> Tyr GPU driver.
->=20
-> This series depends on the PhysAddr typedef [2].
->=20
-> [1]: =
-https://lore.kernel.org/all/20250623-io_pgtable-v2-1-fd72daac75f1@collabor=
-a.com/
-> [2]: =
-https://lore.kernel.org/all/20251112-resource-phys-typedefs-v2-0-538307384=
-f82@google.com/
-> ---
-> rust/bindings/bindings_helper.h |   3 +-
-> rust/kernel/io.rs               |   1 +
-> rust/kernel/io/pgtable.rs       | 254 =
-++++++++++++++++++++++++++++++++++++++++
-> 3 files changed, 257 insertions(+), 1 deletion(-)
->=20
-> diff --git a/rust/bindings/bindings_helper.h =
-b/rust/bindings/bindings_helper.h
-> index =
-2e43c66635a2c9f31bd99b9817bd2d6ab89fbcf2..faab6bc9463321c092a8bbcb6281175e=
-490caccd 100644
-> --- a/rust/bindings/bindings_helper.h
-> +++ b/rust/bindings/bindings_helper.h
-> @@ -56,8 +56,9 @@
-> #include <linux/fdtable.h>
-> #include <linux/file.h>
-> #include <linux/firmware.h>
-> -#include <linux/interrupt.h>
-> #include <linux/fs.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/io-pgtable.h>
-> #include <linux/ioport.h>
-> #include <linux/jiffies.h>
-> #include <linux/jump_label.h>
-> diff --git a/rust/kernel/io.rs b/rust/kernel/io.rs
-> index =
-56a435eb14e3a1ce72dd58b88cbf296041f1703e..5913e240d5a9814ceed52c6dc1a798e6=
-4158d567 100644
-> --- a/rust/kernel/io.rs
-> +++ b/rust/kernel/io.rs
-> @@ -8,6 +8,7 @@
-> use crate::{bindings, build_assert, ffi::c_void};
->=20
-> pub mod mem;
-> +pub mod pgtable;
-> pub mod poll;
-> pub mod resource;
->=20
-> diff --git a/rust/kernel/io/pgtable.rs b/rust/kernel/io/pgtable.rs
-> new file mode 100644
-> index =
-0000000000000000000000000000000000000000..fe05bc1673f9a7741a887a3c9bbad866=
-dd17a2b5
-> --- /dev/null
-> +++ b/rust/kernel/io/pgtable.rs
-> @@ -0,0 +1,254 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +//! IOMMU page table management.
-> +//!
-> +//! C header: [`include/io-pgtable.h`](srctree/include/io-pgtable.h)
-> +
-> +use core::{
-> +    marker::PhantomData,
-> +    ptr::NonNull, //
-> +};
-> +
-> +use crate::{
-> +    alloc,
-> +    bindings,
-> +    device::{Bound, Device},
-> +    devres::Devres,
-> +    error::to_result,
-> +    io::PhysAddr,
-> +    prelude::*, //
-> +};
-> +
-> +use bindings::io_pgtable_fmt;
-> +
-> +/// Protection flags used with IOMMU mappings.
-> +pub mod prot {
-> +    /// Read access.
-> +    pub const READ: u32 =3D bindings::IOMMU_READ;
-> +    /// Write access.
-> +    pub const WRITE: u32 =3D bindings::IOMMU_WRITE;
-> +    /// Request cache coherency.
-> +    pub const CACHE: u32 =3D bindings::IOMMU_CACHE;
-> +    /// Request no-execute permission.
-> +    pub const NOEXEC: u32 =3D bindings::IOMMU_NOEXEC;
-> +    /// MMIO peripheral mapping.
-> +    pub const MMIO: u32 =3D bindings::IOMMU_MMIO;
-> +    /// Privileged mapping.
-> +    pub const PRIV: u32 =3D bindings::IOMMU_PRIV;
-> +}
-> +
-> +/// Represents a requested `io_pgtable` configuration.
-> +pub struct Config {
-> +    /// Quirk bitmask (type-specific).
-> +    pub quirks: usize,
-> +    /// Valid page sizes, as a bitmask of powers of two.
-> +    pub pgsize_bitmap: usize,
-> +    /// Input address space size in bits.
-> +    pub ias: u32,
-> +    /// Output address space size in bits.
-> +    pub oas: u32,
-> +    /// IOMMU uses coherent accesses for page table walks.
-> +    pub coherent_walk: bool,
-> +}
-> +
-> +/// An io page table using a specific format.
-> +///
-> +/// # Invariants
-> +///
-> +/// The pointer references a valid io page table.
-> +pub struct IoPageTable<F> {
-> +    ptr: NonNull<bindings::io_pgtable_ops>,
-> +    _marker: PhantomData<F>,
-> +}
-> +
-> +// SAFETY: `struct io_pgtable_ops` is not restricted to a single =
-thread.
-> +unsafe impl<F> Send for IoPageTable<F> {}
-> +// SAFETY: `struct io_pgtable_ops` may be accessed concurrently.
-> +unsafe impl<F> Sync for IoPageTable<F> {}
-> +
-> +/// The format used by this page table.
-> +pub trait IoPageTableFmt: 'static {
-> +    /// The value representing this format.
-> +    const FORMAT: io_pgtable_fmt;
-> +}
-> +
-> +impl<F: IoPageTableFmt> IoPageTable<F> {
-> +    /// Create a new `IoPageTable` as a device resource.
-> +    #[inline]
-> +    pub fn new(
-> +        dev: &Device<Bound>,
-> +        config: Config,
-> +    ) -> impl PinInit<Devres<IoPageTable<F>>, Error> + '_ {
-> +        // SAFETY: Devres ensures that the value is dropped during =
-device unbind.
-> +        Devres::new(dev, unsafe { Self::new_raw(dev, config) })
-> +    }
-> +
-> +    /// Create a new `IoPageTable`.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// If successful, then the returned value must be dropped before =
-the device is unbound.
-> +    #[inline]
-> +    pub unsafe fn new_raw(dev: &Device<Bound>, config: Config) -> =
-Result<IoPageTable<F>> {
-> +        let mut raw_cfg =3D bindings::io_pgtable_cfg {
-> +            quirks: config.quirks,
-> +            pgsize_bitmap: config.pgsize_bitmap,
-> +            ias: config.ias,
-> +            oas: config.oas,
-> +            coherent_walk: config.coherent_walk,
-> +            tlb: &raw const NOOP_FLUSH_OPS,
-> +            iommu_dev: dev.as_raw(),
-> +            // SAFETY: All zeroes is a valid value for `struct =
-io_pgtable_cfg`.
-> +            ..unsafe { core::mem::zeroed() }
-> +        };
-> +
-> +        // SAFETY:
-> +        // * The raw_cfg pointer is valid for the duration of this =
-call.
-> +        // * The provided `FLUSH_OPS` contains valid function =
-pointers that accept a null pointer
-> +        //   as cookie.
-> +        // * The caller ensures that the io pgtable does not outlive =
-the device.
-> +        let ops =3D unsafe {
-> +            bindings::alloc_io_pgtable_ops(F::FORMAT, &mut raw_cfg, =
-core::ptr::null_mut())
-> +        };
-> +        // INVARIANT: We successfully created a valid page table.
-> +        Ok(IoPageTable {
-> +            ptr: NonNull::new(ops).ok_or(ENOMEM)?,
-> +            _marker: PhantomData,
-> +        })
-> +    }
-> +
-> +    /// Obtain a raw pointer to the underlying `struct =
-io_pgtable_ops`.
-> +    #[inline]
-> +    pub fn raw_ops(&self) -> *mut bindings::io_pgtable_ops {
-> +        self.ptr.as_ptr()
-> +    }
-> +
-> +    /// Obtain a raw pointer to the underlying `struct io_pgtable`.
-> +    #[inline]
-> +    pub fn raw_pgtable(&self) -> *mut bindings::io_pgtable {
-> +        // SAFETY: The io_pgtable_ops of an io-pgtable is always the =
-ops field of a io_pgtable.
-> +        unsafe { kernel::container_of!(self.raw_ops(), =
-bindings::io_pgtable, ops) }
-> +    }
-> +
-> +    /// Obtain a raw pointer to the underlying `struct =
-io_pgtable_cfg`.
-> +    #[inline]
-> +    pub fn raw_cfg(&self) -> *mut bindings::io_pgtable_cfg {
-> +        // SAFETY: The `raw_pgtable()` method returns a valid =
-pointer.
-> +        unsafe { &raw mut (*self.raw_pgtable()).cfg }
-> +    }
-> +
+Boot-tested under QEMU for Rust x86_64, arm64 and riscv64; built-tested
+for arm and loongarch64:
 
-I don=E2=80=99t think that drivers need these three accessors above to =
-be pub.
+Tested-by: Miguel Ojeda <ojeda@kernel.org>
 
-> +    /// Map a physically contiguous range of pages of the same size.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// * This page table must not contain any mapping that overlaps =
-with the mapping created by
-> +    ///   this call.
+Thanks!
 
-I don't think there is a restriction that forbids you from mapping a =
-region that has already been mapped.
-
-If A->B->C are adjacent regions, and you try to map A -> C when B->C is =
-already mapped, I think this
-call will simply return length(A->B).
-
-> +    /// * If this page table is live, then the caller must ensure =
-that it's okay to access the
-> +    ///   physical address being mapped for the duration in which it =
-is mapped.
-> +    #[inline]
-> +    pub unsafe fn map_pages(
-> +        &self,
-> +        iova: usize,
-> +        paddr: PhysAddr,
-> +        pgsize: usize,
-> +        pgcount: usize,
-> +        prot: u32,
-> +        flags: alloc::Flags,
-> +    ) -> Result<usize> {
-> +        let mut mapped: usize =3D 0;
-> +
-> +        // SAFETY: The `map_pages` function in `io_pgtable_ops` is =
-never null.
-> +        let map_pages =3D unsafe { =
-(*self.raw_ops()).map_pages.unwrap_unchecked() };
-> +
-> +        // SAFETY: The safety requirements of this method are =
-sufficient to call `map_pages`.
-> +        to_result(unsafe {
-> +            (map_pages)(
-> +                self.raw_ops(),
-> +                iova,
-> +                paddr,
-> +                pgsize,
-> +                pgcount,
-> +                prot as i32,
-> +                flags.as_raw(),
-> +                &mut mapped,
-> +            )
-> +        })?;
-> +
-> +        Ok(mapped)
-> +    }
-> +
-> +    /// Unmap a range of virtually contiguous pages of the same size.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// This page table must contain a mapping at `iova` that =
-consists of exactly `pgcount` pages
-> +    /// of size `pgsize`.
-
-Same here. I don=E2=80=99t think the above is necessarily a requirement.
-
-> +    #[inline]
-> +    pub unsafe fn unmap_pages(&self, iova: usize, pgsize: usize, =
-pgcount: usize) -> usize {
-> +        // SAFETY: The `unmap_pages` function in `io_pgtable_ops` is =
-never null.
-> +        let unmap_pages =3D unsafe { =
-(*self.raw_ops()).unmap_pages.unwrap_unchecked() };
-> +
-> +        // SAFETY: The safety requirements of this method are =
-sufficient to call `unmap_pages`.
-> +        unsafe { (unmap_pages)(self.raw_ops(), iova, pgsize, pgcount, =
-core::ptr::null_mut()) }
-> +    }
-> +}
-> +
-> +// These bindings are currently designed for use by GPU drivers, =
-which use this page table together
-> +// with GPUVM. When using GPUVM, a single mapping operation may be =
-translated into many operations
-> +// on the page table, and in that case you generally want to flush =
-the TLB only once per GPUVM
-> +// operation. Thus, do not use these callbacks as they would flush =
-more often than needed.
-> +static NOOP_FLUSH_OPS: bindings::iommu_flush_ops =3D =
-bindings::iommu_flush_ops {
-> +    tlb_flush_all: Some(rust_tlb_flush_all_noop),
-> +    tlb_flush_walk: Some(rust_tlb_flush_walk_noop),
-> +    tlb_add_page: None,
-> +};
-> +
-> +#[no_mangle]
-> +extern "C" fn rust_tlb_flush_all_noop(_cookie: *mut =
-core::ffi::c_void) {}
-> +
-> +#[no_mangle]
-> +extern "C" fn rust_tlb_flush_walk_noop(
-> +    _iova: usize,
-> +    _size: usize,
-> +    _granule: usize,
-> +    _cookie: *mut core::ffi::c_void,
-> +) {
-> +}
-> +
-> +impl<F> Drop for IoPageTable<F> {
-> +    fn drop(&mut self) {
-> +        // SAFETY: The caller of `ttbr` promised that the page table =
-is not live when this
-> +        // destructor runs.
-> +        unsafe { bindings::free_io_pgtable_ops(self.0.ops) };
-> +    }
-> +}
-> +
-> +/// The `ARM_64_LPAE_S1` page table format.
-> +pub enum ARM64LPAES1 {}
-> +
-> +impl IoPageTableFmt for ARM64LPAES1 {
-> +    const FORMAT: io_pgtable_fmt =3D =
-bindings::io_pgtable_fmt_ARM_64_LPAE_S1 as io_pgtable_fmt;
-> +}
-> +
-> +impl IoPageTable<ARM64LPAES1> {
-> +    /// Access the `ttbr` field of the configuration.
-> +    ///
-> +    /// This is the physical address of the page table, which may be =
-passed to the device that
-> +    /// needs to use it.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// The caller must ensure that the device stops using the page =
-table before dropping it.
-> +    #[inline]
-> +    pub unsafe fn ttbr(&self) -> u64 {
-> +        // SAFETY: `arm_lpae_s1_cfg` is the right cfg type for =
-`ARM64LPAES1`.
-> +        unsafe { =
-(*self.raw_cfg()).__bindgen_anon_1.arm_lpae_s1_cfg.ttbr }
-> +    }
-> +
-> +    /// Access the `mair` field of the configuration.
-> +    #[inline]
-> +    pub fn mair(&self) -> u64 {
-> +        // SAFETY: `arm_lpae_s1_cfg` is the right cfg type for =
-`ARM64LPAES1`.
-> +        unsafe { =
-(*self.raw_cfg()).__bindgen_anon_1.arm_lpae_s1_cfg.mair }
-> +    }
-
-The two above will indeed be used by drivers, so it makes sense for them =
-to be pub.
-
-> +}
->=20
-> ---
-> base-commit: ffee675aceb9f44b0502a8bec912abb0c4f4af62
-> change-id: 20251111-io-pgtable-fe0822b4ebdd
-> prerequisite-change-id: =
-20251106-resource-phys-typedefs-6db37927d159:v2
-> prerequisite-patch-id: 350421d8dbaf3db51b1243d82077c5eb88f54db5
-> prerequisite-patch-id: ac0166fb3cd235de76841789173051191a4d2434
-> prerequisite-patch-id: f4bca02c77c40093690b66cdf477f928784bdbf4
-> prerequisite-patch-id: 083d1c22b1a7eb0dcae37052b926362543c68e8a
->=20
-> Best regards,
-> --=20
-> Alice Ryhl <aliceryhl@google.com>
->=20
->=20
-
-This overall looks ok to me, and I quite like how much cleaner it is =
-now.
-
-However, I think a discussion will naturally emerge from making
-map/unmap_pages unsafe functions, and it seems like the safety =
-requirements
-do not apply.
-
-=E2=80=94 Daniel=
+Cheers,
+Miguel
 
