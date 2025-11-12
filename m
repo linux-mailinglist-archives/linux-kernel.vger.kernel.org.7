@@ -1,148 +1,248 @@
-Return-Path: <linux-kernel+bounces-896727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B6A6C5112B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:17:50 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54424C51149
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:21:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5536C4F264C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:13:37 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 997584F3F1D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:16:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 668DC2F12C4;
-	Wed, 12 Nov 2025 08:13:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EYm3OOIK"
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 458942D5C7A;
+	Wed, 12 Nov 2025 08:16:31 +0000 (UTC)
+Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11023097.outbound.protection.outlook.com [52.101.127.97])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 577912C08C2
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 08:13:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762935211; cv=none; b=ebaURBPCByyy+SOSUs4gzykLA7mjCrkeBMyHAIJiKqNmcjuii5BKY5iFTuGnaK7SaIIPsPPmk/KyzSuYWkfV71cJCgzs2EHX0RQNH7rJg9OZXiRGL5BydwOCBSqTYMLzjkrAC0XhLK8SCEtoN/kKit0mfGGGT0ZaOD1hu1IV9kM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762935211; c=relaxed/simple;
-	bh=qLBafia/PKtEtA26Adnrbq1J4wPUztP9+12xCkx0pVM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kEsTsmrpwhDj4c1ENGFxmp7rU0UTktbGkTYIKrtepkShDgOfS2CTlrJuV96CL0a4mTsZb5PxGssW+k96JowFITuSaJz70uJkheatJdVyEAf5geAxyxeVEZ3erbLUP2n9r8WGzWF4t0wjZZghjRvp8fGB6h4U8VYaIB5g5Ot3MbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EYm3OOIK; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-b98a619f020so470961a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 00:13:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762935210; x=1763540010; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qLBafia/PKtEtA26Adnrbq1J4wPUztP9+12xCkx0pVM=;
-        b=EYm3OOIKouzUfIvsndgG5kC13qDFyZ+OaxHph4kCFhjd2oLSSgOmp83KfY+GkYNs+r
-         ySMsDuprl6457LbQVHp4d+Y+0Wsypo2OtBaEWDO1TjIw/MPrWzBRE1idQeR1JdRWFhxh
-         aGbeTmSk9cSjr+JeKcYutIbdfjaEdMv4PU8jaMIgK2JtOc8DQyN+bl5vBlibKbR8Xv0p
-         9Cn2oxQGWug3yS8/oFb/TU7JOCjg3RDy4HggV9ZFDfyqWcFwk7a0XmFRjBHG5FWlgZfa
-         X53HauSDDY7znqNA1EipFMHZ7uu03jiCyTO34MRc+3kOQLk76/ZwzwArsjbbO0DegfMO
-         Jy2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762935210; x=1763540010;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=qLBafia/PKtEtA26Adnrbq1J4wPUztP9+12xCkx0pVM=;
-        b=iXAKtGiGufqm2xgFLPYp14vKGzaAfTTCZPG56C4JQ67+pS2jVrUADFwTcvAK/OP8aF
-         +o0Wlxtdaj7fUSiP84SibFFhTOZWwkbFCcEj/gvQ4bdRw3IfQklVJcC15x+g4DYoS7NA
-         bBnyYCmjrZ4afdQnzUmzC88ahOd+YFHpe0mqRGRJ6rA2d7UmKEaAEOhM2aCh17+zElu+
-         V1zIkHS+qv2nnV2t5zm15eyI3UHqE9Y/frO43/Izn9yF4dRQiV00zdN3EroSJCJK2Flq
-         eafdXATNv/Ipa8j/vfNhm5ULyNURouk5CLylAN1Lw4e0Hp8Y6PaB4SDpw6nf8uB7s/aU
-         9CiA==
-X-Forwarded-Encrypted: i=1; AJvYcCVo1ifDKUgLPkgueIpDtmzPOjfDiHV69NpI/nwWNMJS+SCfGN9FMGB3LZTI2f0fnV8A7Ax9NFLDHnRs2jo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSgi2gFpRpk7LPcsKeDkRBxD8PLrillCb7iNGc/j9jufcyUNwK
-	Und2yNJg7v4f4g2QEv5g7bC85ZvsHIofuZHnhGfLuMVaI4Hlo6358wyP6ngei2aBL5ZdB4uW/aL
-	jeDwlDjmUzGiKoV0PniTynO2xjRN1qys=
-X-Gm-Gg: ASbGncvU4pkBu31KSmAWOXdhf1E5Sipoi8nkfq8vv0mUFQxwVgQLNWACRnOnFVuTTbb
-	h9+cTV+NNxP+4RJY0ZOAY9KuoaiejuseXNYt9k1AzKXRWeFCeEcx+d4rprHRvd43Uad0kp7je9G
-	cqqYKpybQgaTfztE/qK6IVyTu5LO2IE0j+8AVQdGzhzuyJbmxCRZg592eaEbtA3Dvn6izI8m72E
-	WMitBoQcDpAoDlMDr+JR7airf+A0WCv8OcL2eZ7QwQ44VqhSEw7Ww0CrQ==
-X-Google-Smtp-Source: AGHT+IFnRin4gbmaFXUeI1BQiFdRCsNStgXxem0kbVw96MxrNLtIH0I6wkHre4CD95K+KCuFYtCNaztTRJvt/f8NODg=
-X-Received: by 2002:a17:902:ef48:b0:295:6d30:e263 with SMTP id
- d9443c01a7336-2984ee02133mr29024415ad.40.1762935209636; Wed, 12 Nov 2025
- 00:13:29 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FD49192B75;
+	Wed, 12 Nov 2025 08:16:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.97
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762935390; cv=fail; b=RLCtEO1HmPJV0IlAv9VRxlDYZGx0sGWEkq/mJxSXjNG8YSr/+wJ0WhwTiOoCrSvclrriEMN6cR1eQYaDC8BJbqgJuKR4UiOW1baWuOQQB1OdiXxGQobMiD6WnHDQT3Tr1u6Oeu16t/yyisx+srIb6hYPc2cYE1CJyvQTopWx3vg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762935390; c=relaxed/simple;
+	bh=B4vmzwFeFhNfcQh/hJdyaOTxemHAtP/wYr7DTEixFg0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gWptPuH3csM/r7HR+RbExCbsop+ec0kBnzqGrf9B6R9SsrSVtkv/8Ak+H22kCiU3Ksx7UNdnQDhfzQ8z9vo1xvrGjq+7Qcvj6Jg+kr9XR9OyNamykRRPQN3+fYywwIzfji/UAty/gsQgXa3TwjBvOL0AKjVKzCWCkda+DlKzM6s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; arc=fail smtp.client-ip=52.101.127.97
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=WFQN9kbz7tUhVBf6Z0m9J8OPwskgW9EN/m89bHuXgTea6Ua5buYKpTn+ak+5lhjmpbM0XRBBTUQ3A1YXB4XhjLEEeiGursOc5ijV/REbDItcMkDEB9O72rqpCpcPcDyLGf56i1hNHGls+HJPUEl1UeewNyWP8jhmrIabdQKhdUx2h0+5sS5zEjAMvbwtRXmzZuwfNOkaZsOWIo0JYtacXAg6FcAf0UDMxUEOA8kDAtx52Aemv2EeNwxWvcmlmM7h8dFFWFA4yEdm9EC+0WytBNYIeh6KoriLWg3ql15Zbj45/tTsJLD7Jq2zOaaEcCLO3a+uLgulbFPbd5LxM1lvAw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=pfS25oS8hY1os5ebwj4UanmRQauctaa+HiRFK34WJts=;
+ b=U7cuRJ1Tcg7nmMpbmmHEcUoMvFl+j45ltkiqXH81U4s7KWoQMl0hMc2qm2nKngv+IkLBcq0sVLy1VuagrtNbnPsu+aA5Mmd9I4tkAnaA68OAZFXLHXZc6vREcD66o8Ip6C1sd9nfnXMkJBQJrYWXKQsTYc6qWD8WzCVe9xT1Kh/bSK6NBoA7h/Bdl3d5cNohLqn5oUFEFGP50ibqZr+V+RMW63l6KkHNUG4xnFdYJle9kkSSV+PUvNZvDm+CUuEDGvdWMjsidxMAozAjrbDCKCyt5rVh4v5LbLX9tXbrmB7G/s8ir8YbfnHC2L81ag968oibR/CmBz7h36iquvZ42g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 222.71.101.198) smtp.rcpttodomain=163.com smtp.mailfrom=cixtech.com;
+ dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
+ not signed); arc=none (0)
+Received: from SG2PR02CA0004.apcprd02.prod.outlook.com (2603:1096:3:17::16) by
+ SEZPR06MB6871.apcprd06.prod.outlook.com (2603:1096:101:197::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.12; Wed, 12 Nov
+ 2025 08:16:23 +0000
+Received: from SG1PEPF000082E5.apcprd02.prod.outlook.com
+ (2603:1096:3:17:cafe::74) by SG2PR02CA0004.outlook.office365.com
+ (2603:1096:3:17::16) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9320.16 via Frontend Transport; Wed,
+ 12 Nov 2025 08:16:22 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 222.71.101.198)
+ smtp.mailfrom=cixtech.com; dkim=none (message not signed)
+ header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
+Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
+ 222.71.101.198 as permitted sender) receiver=protection.outlook.com;
+ client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
+Received: from smtprelay.cixcomputing.com (222.71.101.198) by
+ SG1PEPF000082E5.mail.protection.outlook.com (10.167.240.8) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9320.13 via Frontend Transport; Wed, 12 Nov 2025 08:16:22 +0000
+Received: from [172.16.96.116] (unknown [172.16.96.116])
+	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id 9515941C0160;
+	Wed, 12 Nov 2025 16:16:20 +0800 (CST)
+Message-ID: <58b37b3a-7bb7-46bb-8ad4-f4d2f152bf1f@cixtech.com>
+Date: Wed, 12 Nov 2025 16:16:20 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251109214515.121742-1-rpimentel.silva@gmail.com>
- <20251109214515.121742-2-rpimentel.silva@gmail.com> <9d48a54c-0585-4524-b9d5-30696f5ecc8b@kernel.org>
- <CAEnQRZCvpXzGt=7NGv7-s+y0gvOg7Jx4OqbfbW3uv8jDp-jroQ@mail.gmail.com>
- <CAOMZO5CU09fcBB8oUOO=qC=Du3Q9gnJOQacK=6v+pnSQViex3g@mail.gmail.com> <CAEnQRZCHKemw2YVT=WVJvUMr9CCWoZ3MORt_mU1V-62C53n-3w@mail.gmail.com>
-In-Reply-To: <CAEnQRZCHKemw2YVT=WVJvUMr9CCWoZ3MORt_mU1V-62C53n-3w@mail.gmail.com>
-From: Daniel Baluta <daniel.baluta@gmail.com>
-Date: Wed, 12 Nov 2025 10:15:53 +0200
-X-Gm-Features: AWmQ_blLufo9e8_weYIhkdYf5Y61ajIvynO_fKPgAnclvKt8xEjxER44mrl124g
-Message-ID: <CAEnQRZBBJ4PGDOk7hBP_qsk7bBiec8pHb0DYKs2mhOAahNyKww@mail.gmail.com>
-Subject: Re: [PATCH v4 2/2] arm64: dts: add support for NXP i.MX8MP FRDM board
-To: Fabio Estevam <festevam@gmail.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rogerio Pimentel <rpimentel.silva@gmail.com>, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, shawnguo@kernel.org, 
-	s.hauer@pengutronix.de, kernel@pengutronix.de, 
-	alexander.stein@ew.tq-group.com, dario.binacchi@amarulasolutions.com, 
-	marex@denx.de, Markus.Niebel@tq-group.com, y.moog@phytec.de, 
-	joao.goncalves@toradex.com, frieder.schrempf@kontron.de, josua@solid-run.com, 
-	francesco.dolcini@toradex.com, primoz.fiser@norik.com, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Xiaofeng Wei <xiaofeng.wei@nxp.com>, 
-	Daniel Baluta <daniel.baluta@nxp.com>, Joseph Guo <qijian.guo@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 0/2] PCI: Configure Root Port MPS during host probing
+To: Mahesh Vaidya <mahesh.vaidya@altera.com>, Hans Zhang
+ <18255117159@163.com>, lpieralisi@kernel.org, kwilczynski@kernel.org,
+ bhelgaas@google.com, helgaas@kernel.org, heiko@sntech.de, mani@kernel.org,
+ yue.wang@Amlogic.com
+Cc: pali@kernel.org, neil.armstrong@linaro.org, robh@kernel.org,
+ jingoohan1@gmail.com, khilman@baylibre.com, jbrunet@baylibre.com,
+ martin.blumenstingl@googlemail.com, cassel@kernel.org,
+ linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org,
+ linux-rockchip@lists.infradead.org
+References: <20251104165125.174168-1-18255117159@163.com>
+ <e940eae5-16bb-46e1-83aa-47c6ff747083@altera.com>
+Content-Language: en-US
+From: Hans Zhang <hans.zhang@cixtech.com>
+In-Reply-To: <e940eae5-16bb-46e1-83aa-47c6ff747083@altera.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SG1PEPF000082E5:EE_|SEZPR06MB6871:EE_
+X-MS-Office365-Filtering-Correlation-Id: 06fa7845-5242-434b-f508-08de21c3c3f3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|82310400026|1800799024|36860700013|13003099007|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?WEFGUTg0V1BwSWJuc1I3ZWYxM2hWMk1PR3FZeUhHY0QyeDN1U0RPRC83OWsv?=
+ =?utf-8?B?N3VkbENBNS9CVXdPUEUvSml4Tlo2TmJLVzF5cEFRSmgxVk9GR3FXOGJjUUlB?=
+ =?utf-8?B?a2RzK0ZsaVpSczRXQUN6V3VFTjZoUDBYZFdUQ2ZyZ0s5U2MvNFpHZFlWUVNS?=
+ =?utf-8?B?OFIrRWZsQTVyVzhnaGFBN2VRSnRYQmY1QmZEUWNOM3FjY1liYmZ2NmI5VXRl?=
+ =?utf-8?B?c045TmkvNE85VGFaRlhIaTVjNVNJK0E5UUVWWUFSQ0ZHREpobkxzYlpiM3Fj?=
+ =?utf-8?B?aFBlaDArOEc5OU1KLzcyWGYrQnNOR0NJZytZWEc1VC9CdHg3ekFWS253Q05M?=
+ =?utf-8?B?Z3NTUVZEQUg3eVg3NHFtVjRRdnRUam5RZDFodllVRWF0d0ZzNGF2Ykp6MVBX?=
+ =?utf-8?B?SjJCbWtZRnZNZmltdHJtQjgxQStCZHhwdzl1alBqbVltdFZOV2tWd0pKcWR5?=
+ =?utf-8?B?ekErS005Vmpvc1I1QnM1eGF2OHRnY0hya0ZueEQyRjJkMW1TZW1sT25DN1RB?=
+ =?utf-8?B?WVp4MllpT24zWWZGZWc0VTg0SkJPNmpQc0Z4Rmp2OFR1R0FWcWQyQUV2TEUz?=
+ =?utf-8?B?WmlPMGYxZ3gyM2g4ckc5MGRKL0l1NVc4eEtzU2Q1VHhxczFKQy9jZytJdDFX?=
+ =?utf-8?B?dGtXeGdOa2ZDUFRUOXMrc0NrdllaQnRRWmErWVlCTW5JMm5peHRvQ3U1SEwz?=
+ =?utf-8?B?Q3grdE5LMEFIaTBCalJwR0xWWlgweDFTdTdvMkE3czBXWXhGTzRPaXByZFJH?=
+ =?utf-8?B?UDRPMUJUemtGbkZLSjNKSkFEclBjOUdOWGFXNTZyem9UTWl2UGl0MW9LVDhx?=
+ =?utf-8?B?eFZEK3dEVlFWQ21SZzRWYklvQVU3R3ZCbE5DQURKZEtteTBiWlNWeXBZNkNs?=
+ =?utf-8?B?T2JXcVRGQXpTdEJ6dWdTUldqN3N5djJWM2NnMVdNMGdtaXlwSjBJTkdsZzNM?=
+ =?utf-8?B?MzFUWEZCS09kT1JXSzVZY3d6OUdaZSs1bzBvSDRJaEk3NmlIWmNBd2ZpdC8z?=
+ =?utf-8?B?aDdjWnd0Sy9lb2dQZVlLcVdBak1mT2FWVlAxcDhYa090SDRxbTEzVmx5eXg1?=
+ =?utf-8?B?dWlGL2pvbVN0MDhIWTFjaGR2akJITlFhTHhuU1ZKZWd0THRrK1o5Vld1ZDEr?=
+ =?utf-8?B?dlBVS2s4d1YzK202N0hBTXlrcU5kMWlLamRsOGw0eWZISXhWdmRaSWtqOGlF?=
+ =?utf-8?B?a3F6MHljK2FPL2hPbGxubytKM1YycVhoZmkwNldhZU9DYkFuaUQzSDVET0Nk?=
+ =?utf-8?B?czBZeUdOL2F3aER1dGNCUCtpd1NoMC9ILzBySTlXKzIvV2MvQXRoajRmZ1Ux?=
+ =?utf-8?B?Q3k4Wm5JNDhzQWhPT0ZGWnFCbzd2UzYzYmIwdFc5blRhbUx4M0UrTlVWYy9U?=
+ =?utf-8?B?cTd3TjNhc3hxWCt4aktOekRpN040Y0U5OGF0YmJDQjNhSjZYeFVvc2RWWk5a?=
+ =?utf-8?B?NStVUDRSNHNiS2tUMHl5bVpTMURPVWZlMWFMb0VDdGJZUkNuVjFuS1c0Q2d5?=
+ =?utf-8?B?bzhtMkVOcGppdThCcGpsSXBQb3laTEJhcE5xM1dmdmp4NlQrV1luNGlxM21L?=
+ =?utf-8?B?WjJESmxVTjZMMEdaSFNYTUlEQjNFSkpHMHJnZlpQZG5ONVV4YjJJcHhLSmRn?=
+ =?utf-8?B?TkI5OTZadHQ3OGg3ZklKZ0I3MWZSY1FNTUFXczJHZHh1VU8xRGF1eHE0eGVC?=
+ =?utf-8?B?RlRWbStIY0pmeTI2U0hyZkRGd1VEZjM2cnluT0xBOHpEd3FFRnBjMlBPYnZO?=
+ =?utf-8?B?VzN0a1I4ZE1adUNiRFdsR3FFdnJKSVlXZUhWUmxEWWROVWVRajM5QjlqWUhU?=
+ =?utf-8?B?NXFxaElFWnhIeGlyaExmVE5TY05ZTk1ieFROVEtsT2RtYTFBYWhYeE9BREFo?=
+ =?utf-8?B?SDg0N21ka3IwcUxIaUNpN3ZNNDB0amxsT2RBaUNNQUIwQkNQZE04RlVaNXhB?=
+ =?utf-8?B?VW0yUFlOTUM2NGJUc3dJR1EwR0ZOVjc0N2l0RWd6QlMrTmd3UXRBS1pBMkE2?=
+ =?utf-8?B?NnFTSDkwVXhvcEJJOWYvT2tadmFlNXc1dnRNTmpZTjZ4WW52WlFNRjM2a1Z3?=
+ =?utf-8?B?SEdYT3gyZXZ3VzZGTFVJUnVEWFBrNlF2emlUUlh0dC85UWRNTkZFNkluV1Ro?=
+ =?utf-8?Q?2ehE=3D?=
+X-Forefront-Antispam-Report:
+	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(376014)(82310400026)(1800799024)(36860700013)(13003099007)(7053199007);DIR:OUT;SFP:1102;
+X-OriginatorOrg: cixtech.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2025 08:16:22.1239
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 06fa7845-5242-434b-f508-08de21c3c3f3
+X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SG1PEPF000082E5.apcprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB6871
 
-On Tue, Nov 11, 2025 at 2:49=E2=80=AFPM Daniel Baluta <daniel.baluta@gmail.=
-com> wrote:
->
-> On Tue, Nov 11, 2025 at 1:50=E2=80=AFPM Fabio Estevam <festevam@gmail.com=
-> wrote:
-> >
-> > Hi Daniel,
-> >
-> > On Tue, Nov 11, 2025 at 5:45=E2=80=AFAM Daniel Baluta <daniel.baluta@gm=
-ail.com> wrote:
-> >
-> > > In addition to that, Rogerio please read:
-> > >
-> > > https://docs.kernel.org/process/submitting-patches.html
-> > >
-> > > At this moment I think you should keep the original author of the
-> > > patch.
-> >
-> > Right, but NXP makes a total mess with authorship.
->
-> I cannot disagree with you on this, let me clarify it internally with
-> NXP colleagues
-> and sort everything out.
 
-Hi Fabio & Rogerio,
 
-Checked internally and to track the correct authorship and development work
-here is how NXP would prefer to get credit.
+On 11/12/2025 4:06 PM, Mahesh Vaidya wrote:
+> [You don't often get email from mahesh.vaidya@altera.com. Learn why this 
+> is important at https://aka.ms/LearnAboutSenderIdentification ]
+> 
+> EXTERNAL EMAIL
+> 
+> On 04-11-2025 22:21, Hans Zhang wrote:
+>> Current PCIe initialization exhibits a key optimization gap: Root Ports
+>> may operate with non-optimal Maximum Payload Size (MPS) settings. While
+>> downstream device configuration is handled during bus enumeration, Root
+>> Port MPS values inherited from firmware or hardware defaults often fail
+>> to utilize the full capabilities supported by controller hardware. This
+>> results in suboptimal data transfer efficiency throughout the PCIe
+>> hierarchy.
+>>
+>> This patch series addresses this by:
+>>
+>> 1.  Core PCI enhancement (Patch 1):
+>> - Proactively configures Root Port MPS during host controller probing
+>> - Sets initial MPS to hardware maximum (128 << dev->pcie_mpss)
+>> - Conditional on PCIe bus tuning being enabled (PCIE_BUS_TUNE_OFF unset)
+>> - Maintains backward compatibility via PCIE_BUS_TUNE_OFF check
+>> - Preserves standard MPS negotiation during downstream enumeration
+>>
+>> 2.  Driver cleanup (Patch 2):
+>> - Removes redundant MPS configuration from Meson PCIe controller driver
+>> - Functionality is now centralized in PCI core
+>> - Simplifies driver maintenance long-term
+>>
+>> ---
+>> Changes for v6:
+>> - Modify the commit message and comments. (Bjorn)
+>> - Patch 1/2 code logic: Add !bridge check to configure MPS only for 
+>> Root Ports
+>>    without an upstream bridge (root bridges), avoiding incorrect 
+>> handling of
+>>    non-root-bridge Root Ports (Niklas).
+> Tested this patch series on Agilex 7.
+> 
+> Tested-by: Mahesh Vaidya <mahesh.vaidya@altera.com>
+> 
 
-#Use git commit --amend --author=3D"Xiaofeng Wei <xiaofeng.wei@nxp.com>"
-Author: Xiaofeng Wei <xiaofeng.wei@nxp.com>
+Hi Mahesh,
 
-Signed-off-by: Xiaofeng Wei <xiaofeng.wei@nxp.com>
+Thank you for your test.
 
-Co-developed-by: Joseph Guo <qijian.guo@nxp.com>
-Signed-off-by: Joseph Guo <qijian.guo@nxp.com>
+Best regards,
+Hans
 
-Co-developed-by: Steven Yang <steven.yang@nxp.com>
-Signed-off-by: Steven Yang <steven.yang@nxp.com>
+>>
+>> Changes for v5:
+>> https://patchwork.kernel.org/project/linux-pci/ 
+>> patch/20250620155507.1022099-1-18255117159@163.com/
+>>
+>> - Use pcie_set_mps directly instead of pcie_write_mps.
+>> - The patch 1 commit message were modified.
+>>
+>> Changes for v4:
+>> https://patchwork.kernel.org/project/linux-pci/ 
+>> patch/20250510155607.390687-1-18255117159@163.com/
+>>
+>> - The patch [v4 1/2] add a comment to explain why it was done this way.
+>> - The patch [v4 2/2] have not been modified.
+>> - Drop patch [v3 3/3]. The Maintainer of the pci-aardvark.c file suggests
+>>    that this patch cannot be submitted. In addition, Mani also suggests
+>>    dropping this patch until this series of issues is resolved.
+>>
+>> Changes for v3:
+>> https://patchwork.kernel.org/project/linux-pci/ 
+>> patch/20250506173439.292460-1-18255117159@163.com/
+>>
+>> - The new split is patch 2/3 and 3/3.
+>> - Modify the patch 1/3 according to Niklas' suggestion.
+>>
+>> Changes for v2:
+>> https://patchwork.kernel.org/project/linux-pci/ 
+>> patch/20250425095708.32662-1-18255117159@163.com/
+>>
+>> - According to the Maintainer's suggestion, limit the setting of MPS
+>>    changes to platforms with controller drivers.
+>> - Delete the MPS code set by the SOC manufacturer.
+>> ---
+>>
+>> Hans Zhang (2):
+>>    PCI: Configure Root Port MPS during host probing
+>>    PCI: dwc: Remove redundant MPS configuration
+>>
+>>   drivers/pci/controller/dwc/pci-meson.c | 17 -----------------
+>>   drivers/pci/probe.c                    | 12 ++++++++++++
+>>   2 files changed, 12 insertions(+), 17 deletions(-)
+>>
+>>
+>> base-commit: 691d401c7e0e5ea34ac6f8151bc0696db1b2500a
+> 
 
-Co-developed-by: Lei Xu <lei.xu@nxp.com>
-Signed-off-by: Lei Xu <lei.xu@nxp.com>
-
-Then you can add your own C-d-b and S-o-b.
-
-Thanks,
-Daniel.
 
