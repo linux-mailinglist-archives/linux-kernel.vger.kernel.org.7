@@ -1,47 +1,101 @@
-Return-Path: <linux-kernel+bounces-896827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5644AC51510
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:22:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 93B0CC51519
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:23:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E4973A37F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:15:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 359A93A7F54
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:15:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DAAA22DFB8;
-	Wed, 12 Nov 2025 09:15:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A70CA2BD5AD;
+	Wed, 12 Nov 2025 09:15:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Kacnw2cs"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Doa5BFkw";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="M0zDt9PE"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4003A1A5B9E
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:15:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6081E21FF30
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:15:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762938935; cv=none; b=iv/AN9XDDUcgtomwGbymFqRZQ9A0EauyT58t/QvCj51/0m586EIUeEgWQvhw1checKz5EOjMlsQdj05ZiI+p5YWoTRaEfLSI5ClgcqYS6LLsev5OgoTAa4NyORfitj0KgCxcfvw1vRGfX/nwsF/PTCek/hBrCTVt8SUHfjn8lT4=
+	t=1762938946; cv=none; b=NCptrRNvr9RWtz3faxZBNPXDF/AZZQPjmOO5lJhJQcJ7xCMGnK8gvbBhaDWnFX3acnUE5ENp6NgpZtCspjOpGlIu3mlpAsrbOOhh6HbiUA4vswlggjd+osbyF9vX6vAOtSCvPBOa61YfkysEFS+XDMORXkg/awdebJ2NxwLdSYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762938935; c=relaxed/simple;
-	bh=hkJvQF9lkK0c2JJZhoiJIbPTERkesPVbSpePbvoKW2w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
-	 In-Reply-To:Content-Type; b=YnzgX8A8dru5uBWVmZPTCPMF5nPiHQOgYfJ1m1FJibWmlFunw6lRzaNVOSrrjBMlN7Rac1LRghe3uZPYNjKCrFQkmnqor8YtRRerhkhibX6U1Gb1xv0zD/Sq9P7pABVNPfMMN336WLVeFxpVPXtznRwUcO+/8j2sQu3vM63thZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Kacnw2cs; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 13A0182E;
-	Wed, 12 Nov 2025 10:13:29 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1762938810;
-	bh=hkJvQF9lkK0c2JJZhoiJIbPTERkesPVbSpePbvoKW2w=;
-	h=Date:Subject:To:References:From:Cc:In-Reply-To:From;
-	b=Kacnw2csA6RIRCyzhQQJmUOla22pnN9KDaap4vEyP1uSzZS69SMtVtm+uwfpCM2gd
-	 M3348g/I/km/uNoJ2RczyA8VP2Fko6Gbk4gLaGUeO1YTqhG7UN7Tw8P2X1kfDdREDJ
-	 WUoZe9tQQFdT8+9Bbksttageov2m2T/S0Ni3hw1Q=
-Message-ID: <0aabf4ae-2877-409c-a047-5286085bd9a3@ideasonboard.com>
-Date: Wed, 12 Nov 2025 11:15:25 +0200
+	s=arc-20240116; t=1762938946; c=relaxed/simple;
+	bh=rlf8y0snDV9ee74P7g1N2IjYrAAhAKaZER9lUpbbuiU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SIGu/ATGuHjbZZFpVC6qrK6S4Ia+CV2y22ivU+J/yTn3a83ekb2xCwjVNi8KosA08UHUBUPEE4LI9KLBAGfCoWBk85jn472rEAT5r3EVMGMdylc3IGDKAjoA/0L9EQ4PZT0NUwxYe0JwmeMUYw47+xUfqUC9S06ZGFN8AXayJv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Doa5BFkw; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=M0zDt9PE; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AC2dpSY2820769
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:15:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	3PUnj++Jn64hBRSEDXwukit2wa8UGEl9FRtBeYAMRBk=; b=Doa5BFkw/Zs/X+nL
+	KBN+Vxy4zE9s1VKhe18qUQVuzoiGeq4eoywSmAVOIRZDYMEYUSzPUZNGyKqj5CKJ
+	3IwGEUkhoGWeqUR1m3nwseJIrk6pFcgCOZyoemObsjRNQsvusohGHhukTGaJV13C
+	d7mR95RO38IWA9QHPSF+IMEu1n2CTJYcmrBwi62jBW0fLiuEQyX3UsMKOGZN01J/
+	LIjth3N0Y8Ym4N+V+2o+v1DL2EW/lYbvHjM8E9KR+RPjObZeNSqdU4SCscxqR0Kx
+	sobE4YgDUwt8CdIQ0VjNdRQlk7Ld6nUMMph2zXuPDoe0nyT2M7fLwPNQyNz2EkyF
+	wFFvlA==
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ac855jmqj-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:15:44 +0000 (GMT)
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4ed861df509so1739821cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 01:15:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1762938944; x=1763543744; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3PUnj++Jn64hBRSEDXwukit2wa8UGEl9FRtBeYAMRBk=;
+        b=M0zDt9PEqK66vfpAzzSbXJrKNPYCzOscPIniJXqJ5fhqxt7+v/oeSTfrpcSasM/OeP
+         Q2d1xPUyz0eW1e+pB0n+OX9WyWv3FBZt/fH+s5EwJuaml9lZr2e7Il3SchGn/ebuHbQl
+         S1WyiJyIkhY6hyw9zFSMuSajR2nBDQS59KM68FoHmOJ+0I59bJVmqQPnD+zPFPBHfiuP
+         JMoceHVeOeuKuyw8uDa/RGlvj5caRy1RzlTOLiYjhsWngqBKGLmok2GcpS/6+KEo6six
+         sqAdH12x1Nlx3xVuKjLcF/Apl3agY+F6sz1RqU6CmIfSmqzUb0C6OX4XYJ7RXcQN4GvD
+         Q2YA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762938944; x=1763543744;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3PUnj++Jn64hBRSEDXwukit2wa8UGEl9FRtBeYAMRBk=;
+        b=LaKNRe4Rk9oR9o4FDsIrd+AjNojXRiBEx1msc7ej2CfxybxCQVO8yJXv15VkHY1OvO
+         Zjz58/ZRQumKqFeBW2BMu6dZIlRHGn5/v2ykxNg9cMcsyVdukpsKd6IIWY1SN+fPyND3
+         qrDASiGRRPpGZDukJBawUTL6sT3+TR6KScffSHGXmbQdCUeOlcBZPJ5AllgEAm/vBEZp
+         Qb3/5amgxXQsSRhHKmopoAUHNeXFIUiGwidhlCQ4+EFQQNpjkzv8MgKuFv7WR4Fmj7/D
+         3KGBdZP2+6rPqi/FtzXvu2gLEdw/8IIo9EXSGcW2H8/1LZFO74M4AW6D+LlofBWcPaIF
+         jb9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUae8cZBlmu1sZP4KeIvH7gRi+SRZIB1iC625n65fSH4ExVGKEXlsTw56kEqczMUf+CUpYs42ZjZaSFZL4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9Wks5MXGA4ZNbQYRS7DnySPueCcl6ZkMX2ahCR/3FeEeeF+js
+	4XAZmFAZmd35IdQoZeUi+2IK8ncHr/ye9fEIneo313xAXYAZocXc0wZgCSDOa+38Y66w8fgxnxi
+	l74rKwxx+4d7KAXfzepRxMcc6U4bjwaNPHs6iBsOv1duW++SnwSAAfureef1j/cRPsXE=
+X-Gm-Gg: ASbGnctzjQr2TnCZgTUkB0fiIKvU9t2doo0Zg5a7yhNk7SGwFYewuwj0VDaT3GXOaSP
+	rZvctx05v1zkEOg/DsTRKuD2l1Hi6MhkjPMFi98hSSxlNaGtU+mbw72OPIsKVhE2+l/m/1VoI5P
+	8jBXhMrlqgoFQZfCqlZagIT2Pd90ez/1jsTzK2Lcc9I1vKzny9rVKqxGTPfcIPpqFr2nAByAY3r
+	D+YeUwkxRDlKx+EgCR+BKvzkyoydq+v7vcbyoJhhPze4EjfvKb28YNgOCTpgpNsOU4EzwY45ZIc
+	XstBjgbpXfPKU41xKMOtpCEBfpt+E2jgya1dPifuZgbu2/tzQeUMAkkTD++SCCx2NN070E1xeCi
+	BjkR8IaGPi76dyIdNK8liyIJ/Sc9ytk7FYWqby0002EBo8tvi9snpC+GI
+X-Received: by 2002:a05:622a:1316:b0:4ed:b409:ca27 with SMTP id d75a77b69052e-4eddbd65605mr19011791cf.10.1762938943563;
+        Wed, 12 Nov 2025 01:15:43 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGIdhR2DGreZqzZEtahMhnF+t1wp8gNXxchmAbpfq57uIBaqNWhaIUDo4VDLqiBRn37Rf8YVQ==
+X-Received: by 2002:a05:622a:1316:b0:4ed:b409:ca27 with SMTP id d75a77b69052e-4eddbd65605mr19011641cf.10.1762938943105;
+        Wed, 12 Nov 2025 01:15:43 -0800 (PST)
+Received: from [192.168.119.202] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bf9bc214sm1602419566b.52.2025.11.12.01.15.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Nov 2025 01:15:42 -0800 (PST)
+Message-ID: <66b634ef-6a69-4275-b28d-2b148df22b24@oss.qualcomm.com>
+Date: Wed, 12 Nov 2025 10:15:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,217 +103,69 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 4/6] drm/bridge: cadence: cdns-mhdp8546*: Change
- drm_connector from structure to pointer
-To: Harikrishna Shenoy <h-shenoy@ti.com>
-References: <20251014094527.3916421-1-h-shenoy@ti.com>
- <20251014094527.3916421-5-h-shenoy@ti.com>
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Subject: Re: [PATCH] arm64: dts: qcom: monaco-evk: Enable PCIe0 and PCIe1 on
+ monaco-evk
+To: Sushrut Shree Trivedi <quic_sushruts@quicinc.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ziyue.zhang@oss.qualcomm.com,
+        krishna.chundru@oss.qualcomm.com
+References: <20251111-monaco-evk-pci-v1-1-8013d0d6a7ca@quicinc.com>
 Content-Language: en-US
-Cc: Laurent.pinchart@ideasonboard.com, airlied@gmail.com,
- andrzej.hajda@intel.com, andy.yan@rock-chips.com, aradhya.bhatia@linux.dev,
- devarsht@ti.com, dianders@chromium.org, dri-devel@lists.freedesktop.org,
- javierm@redhat.com, jernej.skrabec@gmail.com, jonas@kwiboo.se,
- linux-kernel@vger.kernel.org, linux@treblig.org, luca.ceresoli@bootlin.com,
- lumag@kernel.org, lyude@redhat.com, maarten.lankhorst@linux.intel.com,
- mordan@ispras.ru, mripard@kernel.org, neil.armstrong@linaro.org,
- rfoss@kernel.org, s-jain1@ti.com, simona@ffwll.ch, tzimmermann@suse.de,
- u-kumar1@ti.com
-Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
- 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
-In-Reply-To: <20251014094527.3916421-5-h-shenoy@ti.com>
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20251111-monaco-evk-pci-v1-1-8013d0d6a7ca@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: hD6NKwWA7zWC63uRTG9XaAKp2n2mLa1D
+X-Authority-Analysis: v=2.4 cv=DYwaa/tW c=1 sm=1 tr=0 ts=69145040 cx=c_pps
+ a=JbAStetqSzwMeJznSMzCyw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=COk6AnOGAAAA:8
+ a=9FffyO56NNMGgoAXEYMA:9 a=QEXdDO2ut3YA:10 a=zZCYzV9kfG8A:10
+ a=uxP6HrT_eTzRwkO_Te1X:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: hD6NKwWA7zWC63uRTG9XaAKp2n2mLa1D
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEyMDA3MyBTYWx0ZWRfX3TvkTQQZryPb
+ 38UyzMl/IItv4c8DE48/9Fcgr2xBrYAFCN+uAtGhJC/uPmvP0oeg0QkU2I5mGE/eq+04j17h8LI
+ XKNRmsB1Lcpdihnlk2wdteKNKjXWshGjhxTOePGz+N9zCs22+L0KIdAPBRaNh1ui2fuh7FQ932V
+ dmf+KrZRcZ2Ls2qBJ5OA/0wNcKSYJGAGic4OJM2xy0xFWJBt3DCoYO5+qVOv/Etbqb0kqIl3LJw
+ KpTOVovcdh0EBqnwN5B2fIer3INyo+O6fDAJHqXyDAHH4+gAdLPXh2plTkcfJZf00ogBW1zBPk+
+ J2UfZrgwlZIbrrJ/9VTovr36RsUg+sX+CZJZrmPev1MlE4Nq3OxmpYSF/d+kLHZjuXGWekPUsTY
+ q/kek33W9CLAKFBkv6YUr8xl+X0UtQ==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-12_03,2025-11-11_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 lowpriorityscore=0 bulkscore=0 adultscore=0 suspectscore=0
+ priorityscore=1501 impostorscore=0 spamscore=0 clxscore=1015 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511120073
 
-Hi,
-
-On 14/10/2025 12:45, Harikrishna Shenoy wrote:
-> From: Jayesh Choudhary <j-choudhary@ti.com>
+On 11/11/25 11:08 AM, Sushrut Shree Trivedi wrote:
+> Enables PCIe0 and PCIe1 controller and phy-nodes.
 > 
-> After adding DBANC framework, mhdp->connector is not initialised during
-> bridge_attach(). The connector is however required in few driver calls
-> like cdns_mhdp_hdcp_enable() and cdns_mhdp_modeset_retry_fn().
-> Now that we have dropped the legacy code which became redundant
-> with introduction of DBNAC usecase in driver, we can cleanly switch
-> to drm_connector pointer instead of structure.
+> PCIe0 is routed to an m.2 E key connector on the mainboard for wifi
+> attaches while PCIe1 routes to a standard PCIe x4 expansion slot.
 > 
-> Set it in bridge_enable() and clear it in bridge_disable(),
-> and make appropriate changes.
-> 
-> This allows us to dynamically set the reference in bridge_enable() when
-> the connector becomes available and clear it in bridge_disable().
-> This change is necessary to properly integrate with the DBANC framework
-> while maintaining all connector-dependent functionality in the driver.
-> 
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
-> Signed-off-by: Harikrishna Shenoy <h-shenoy@ti.com>
+> Signed-off-by: Sushrut Shree Trivedi <quic_sushruts@quicinc.com>
 > ---
->  drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c | 12 ++++++------
->  drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.h |  3 +--
->  drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-hdcp.c |  8 ++++----
->  3 files changed, 11 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
-> index 31256ad69602..fe2da567ec66 100644
-> --- a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
-> +++ b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
-> @@ -1765,12 +1765,12 @@ static void cdns_mhdp_atomic_enable(struct drm_bridge *bridge,
->  
->  	mutex_lock(&mhdp->link_mutex);
->  
-> -	mhdp->connector_ptr = drm_atomic_get_new_connector_for_encoder(state,
-> -								       bridge->encoder);
-> -	if (WARN_ON(!mhdp->connector_ptr))
-> +	mhdp->connector = drm_atomic_get_new_connector_for_encoder(state,
-> +								   bridge->encoder);
-> +	if (WARN_ON(!mhdp->connector))
->  		goto out;
->  
-> -	conn_state = drm_atomic_get_new_connector_state(state, mhdp->connector_ptr);
-> +	conn_state = drm_atomic_get_new_connector_state(state, mhdp->connector);
+> This patch depends on the series:
+> https://lore.kernel.org/all/20251024095609.48096-1-ziyue.zhang@oss.qualcomm.com/
+> ---
 
-These kind of changes make sense: earlier we had connector and
-connector_ptr:
+[...]
 
-struct drm_connector connector;
-struct drm_connector *connector_ptr;
+> +		perst-pins {
+> +			pins = "gpio2";
+> +			function = "gpio";
+> +			drive-strength = <2>;
+> +			bias-pull-down;
+> +		};
 
-and for !DBANC, ptr pointed to the above connector struct, whereas for
-DBANC ptr pointed to the separate connector. Now we drop the above
-connector field, and rename connector_ptr. So that's fine. But...
+Neither of the two active-low reset pins should be pull-down, use
+bias-disable to avoid spurious assertions
 
->  	if (WARN_ON(!conn_state))
->  		goto out;
->  
-> @@ -1869,7 +1869,7 @@ static void cdns_mhdp_atomic_disable(struct drm_bridge *bridge,
->  	if (mhdp->info && mhdp->info->ops && mhdp->info->ops->disable)
->  		mhdp->info->ops->disable(mhdp);
->  
-> -	mhdp->connector_ptr = NULL;
-> +	mhdp->connector = NULL;
->  	mutex_unlock(&mhdp->link_mutex);
->  }
->  
-> @@ -2156,7 +2156,7 @@ static void cdns_mhdp_modeset_retry_fn(struct work_struct *work)
->  
->  	mhdp = container_of(work, typeof(*mhdp), modeset_retry_work);
->  
-> -	conn = mhdp->connector_ptr;
-> +	conn = mhdp->connector;
->  
->  	/* Grab the locks before changing connector property */
->  	mutex_lock(&conn->dev->mode_config.mutex);
-> diff --git a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.h b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.h
-> index a76775c76895..b297db53ba28 100644
-> --- a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.h
-> +++ b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.h
-> @@ -375,8 +375,7 @@ struct cdns_mhdp_device {
->  	 */
->  	struct mutex link_mutex;
->  
-> -	struct drm_connector connector;
-> -	struct drm_connector *connector_ptr;
-> +	struct drm_connector *connector;
->  	struct drm_bridge bridge;
->  
->  	struct cdns_mhdp_link link;
-> diff --git a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-hdcp.c b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-hdcp.c
-> index 42248f179b69..59f18c3281ef 100644
-> --- a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-hdcp.c
-> +++ b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-hdcp.c
-> @@ -394,7 +394,7 @@ static int _cdns_mhdp_hdcp_disable(struct cdns_mhdp_device *mhdp)
->  	int ret;
->  
->  	dev_dbg(mhdp->dev, "[%s:%d] HDCP is being disabled...\n",
-> -		mhdp->connector.name, mhdp->connector.base.id);
-> +		mhdp->connector->name, mhdp->connector->base.id);
-
-... what's this? Here the code being removed still uses mhdp->connector.
-But that was essentially disabled in the previous patch. I would expect
-the only changes in this patch to be renaming connector_ptr ->
-connector, but this change and the ones below hint that there's an issue
-in the earlier patches. So if, before this patch, we ever ran DBANC and
-called this function, we'd be using mhdp->connector, which hasn't been
-initialized.
-
-The mdhp->connector should go away in the previous patch. This patch
-should only do the rename.
-
-However, I think the use of mhdp->connector with DBANC should be fixed
-already earlier. Sounds like patch 1 content, which already fixes
-similar issues?
-
- Tomi
-
->  
->  	ret = cdns_mhdp_hdcp_set_config(mhdp, 0, false);
->  
-> @@ -445,7 +445,7 @@ static int cdns_mhdp_hdcp_check_link(struct cdns_mhdp_device *mhdp)
->  
->  	dev_err(mhdp->dev,
->  		"[%s:%d] HDCP link failed, retrying authentication\n",
-> -		mhdp->connector.name, mhdp->connector.base.id);
-> +		mhdp->connector->name, mhdp->connector->base.id);
->  
->  	ret = _cdns_mhdp_hdcp_disable(mhdp);
->  	if (ret) {
-> @@ -487,13 +487,13 @@ static void cdns_mhdp_hdcp_prop_work(struct work_struct *work)
->  	struct cdns_mhdp_device *mhdp = container_of(hdcp,
->  						     struct cdns_mhdp_device,
->  						     hdcp);
-> -	struct drm_device *dev = mhdp->connector.dev;
-> +	struct drm_device *dev = mhdp->connector->dev;
->  	struct drm_connector_state *state;
->  
->  	drm_modeset_lock(&dev->mode_config.connection_mutex, NULL);
->  	mutex_lock(&mhdp->hdcp.mutex);
->  	if (mhdp->hdcp.value != DRM_MODE_CONTENT_PROTECTION_UNDESIRED) {
-> -		state = mhdp->connector.state;
-> +		state = mhdp->connector->state;
->  		state->content_protection = mhdp->hdcp.value;
->  	}
->  	mutex_unlock(&mhdp->hdcp.mutex);
-
+Konrad
 
