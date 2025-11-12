@@ -1,47 +1,81 @@
-Return-Path: <linux-kernel+bounces-896925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7E38C51896
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:02:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63C20C51899
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:02:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BA9118865F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:00:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10A79189F730
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:01:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 280252D6624;
-	Wed, 12 Nov 2025 10:00:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F5DC30148E;
+	Wed, 12 Nov 2025 10:00:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="akwA/QS5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="C3Gk2B/G"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AA6A2FF658
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 10:00:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA1B12F5302
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 10:00:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762941609; cv=none; b=CjfQ6DiVV1e4y47FRzZv49R0fvNwKbW5BLANs2qPeOUbAt77DWOQUciV23QDps+Mr0RTRU+KXA1nbD3l1lbXlKkWMasrBp4sho/sZThO3Ym+L2U6TPlURwh6oQZVx1/m67DSAu8bqeBfla7TuFZ/pxD0eJsvL6GsHI+i9uZ3vkE=
+	t=1762941610; cv=none; b=Bt4XfIGrjaXxuxTOwg5jb2HZxOZDQgLaJzbTBr5vdVmtEq7v+bhtY/LGABcLJeqNkmz6vp3pxXUoZzUHtsrdKEiDXHnDOMtikqrFvZswRCIfTTK0TwO1Bc8oBirdYqr6YBy82c/xT1c6WtmK2R0jb+ATzib19HXRdWrVecCXoP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762941609; c=relaxed/simple;
-	bh=Hc9SpvODoEKqXyT0Yv/Hs9C9gFsaCYRYLwLn+AbBGok=;
+	s=arc-20240116; t=1762941610; c=relaxed/simple;
+	bh=mCHVGSY5nG2xTagjSNTDjVhzMzoCaNY36P98eDp+ROI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cCq+iGYFWtk8CKtvqXW2ETT96wyYuK9SgNincoROryOgLHWuOxMHxb6YjigqA1bSafJQLaHisc0yRIqXKuZX/w/ivfMekBpXvp5/QkiadkcYCWARCmoxGd4z+YHX1wkJkDtp/taKVaNABXgrQq5w2/TJwFlL/GTbtZryYkYhwr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=akwA/QS5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BB55C4CEF8;
-	Wed, 12 Nov 2025 10:00:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762941608;
-	bh=Hc9SpvODoEKqXyT0Yv/Hs9C9gFsaCYRYLwLn+AbBGok=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=akwA/QS5z6CaUXVEzunr+7pQgnrxiS05TwnBHMPu9G9K7v9c/3R8iUIoq0Fcs1D4g
-	 uZyFVcYDoifzu15xZtQHiFBAIMDuqArYYZlBjJXdyvuagQ+WofFYu/yGFfMBt2KwOe
-	 G+n6vnPF/RN8DkE0+tTxciwrHE1uEt6TYEil166dlKMJggi3wQvLptrv9X9lU6PxgQ
-	 XNAr6Fr9I8+mApELE0Zj+iZ1Qiz442z8ZyH6mke/U0LWo9Hx0HSVCUoO8RPKVSBGnf
-	 CUy8XhqDiIhiws23n55El8P4yhgadO8ReX6Eikf6sUhqd0LFCEWkHzOmC++LncJ0+w
-	 wQDl9Ia2iQ4lw==
-Message-ID: <048134fd-6a3d-4a6c-a2eb-9a9911c3b35f@kernel.org>
-Date: Wed, 12 Nov 2025 11:00:01 +0100
+	 In-Reply-To:Content-Type; b=S/OQKQ/8QLcDQ0dTjHvl5U2d62ei13vm/X+u8y6+SG6kK0XNrZNYeYQiPMEMYxzKjucgT7/OHBr6c7Dpsg0JSKgThOsszvBvYMCZ+NfshkKMjY/RVwYwuK44XVZ2YHb9BTB/8aJ402EdlTl6yDKj5MqFLGIxWp6YK/hHIvrJwR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=C3Gk2B/G; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-477632cc932so2661455e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 02:00:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1762941607; x=1763546407; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=L8f8+DXKONCmTI8/qphYme8tsG5/HEsqS5J6Z0v2BCY=;
+        b=C3Gk2B/G1iEdWvrm3NSoVst92G4SArZEZ2De8KynNOwJ4QNMW9akDifu2JjbQTPuSB
+         I3Oif/nHpBulNmpVASkVtsDThVnDiSo066DS26ZTJoyOGvgIkE5ssPwe1MSO4Dnw8iXk
+         O56ZRAXCO/CK8tC+4wt4bsRIkGp0cLmcebthvF4JVYLhQLMyJXJiBetYZVpyyImKoweh
+         4TLAWIt+OHx2ffOzJFuZ4ylTrLdBiq1/utlT+ktjenV4Rk0QBbhN7FHdizri6nPw0/h+
+         sM2WaauzaaGTTaQQhazX+HLquQX7FFMbmT1Q8Qp5VOfDgu1nfj0xNldcNIMg6F1F8QEM
+         HMeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762941607; x=1763546407;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=L8f8+DXKONCmTI8/qphYme8tsG5/HEsqS5J6Z0v2BCY=;
+        b=WioXhfA4QRF6EHtI4LKl+/FUXuIFmTyZyG4tjWOTYsiQ0Qta68p1OjUx9Xv32id/OW
+         6Ob/O4NyDmRgwpTcf0F4kwluQjGfi56C5wSqOK6Z+inTOD+wszRKCQOIEbXTKXgEN8xn
+         Nki/NfFUshUmN9HnDsEJsJ9T6lxQLjq2FIvbXC32shX5AlxauvOqzRY9YkIC6vKSrZDK
+         /IcNxwA1iqRsnU7tF+auzh8/vlROUjhCOEu5N+REzP3Ns+MiLL71H9m3GttDh68Vh1WC
+         zS1ap/Fo4iTyXujL7vJ+YAZ/HTu9+rzhVwf0EIKJs5z+FonKfoJoep1BICO3knIuX+TE
+         y+wg==
+X-Gm-Message-State: AOJu0YwyYRKBSV9gKgx/m5IB/l7iW7N23BjmeQxY/hLXaS1eKHaD+Yzu
+	SgOiI5X8BeGl5PBAQOq2fiU73YXTPne3aI8u5UZMItdfxQ3Y6JTZvxNQTBzVTPWGjVT4tug9sf8
+	HuxN8HGY=
+X-Gm-Gg: ASbGncsIJdncFYTUN+tRgkcWDu29P5TBFmRbq/pA54I30qEd+P0olxSu95IGfpJ63Cg
+	QQ/oIRXETFp0UE+4gUc0cG+iYtPUr/8WHP4mr3nD15YuovmbS1DWl8/FGLxEHgDXNGR8aCpNhEP
+	ugAtfjd7iprwO6puGz1h2Z2koyStYW6bbPoB97vo5ggk6hq4SEdN19kaotfAmJCemDnn+uM8gFP
+	/JY2zUZPJqv5t0KYkonSLXttRbFPh4pJ4DIRHv7Jiy8Wpy0T8p4f7N5QQDX1EQHEgSgtNaibJVI
+	bZ+F+l446CdHvUU+IHjKpRzlY2mOKgG3dhhbl+cN8jedo3ZXLsIu2ufJ9/SlD9SSNmv1AfUXVD2
+	u+x2IIl51kYm7zoWVO/0ikTi26Cu/lcGqUFfNBwc9NDtbQonv/dSTe6NE9vbz1vYxe9FqXm3MbN
+	xwAdXw3QkSzSYNawp7olO5FqqNPXXlZ48MTi+4XaJZgiuDwZj8rHqQ
+X-Google-Smtp-Source: AGHT+IHfrI00g3adREBO4Qxu+SQTGFO6r7DZm9ogYWhFWl3K82QfsvudPlF4mksK/RmSAUszY3/OLg==
+X-Received: by 2002:a05:600c:3114:b0:477:1bb6:17e5 with SMTP id 5b1f17b1804b1-477871c4b45mr20891125e9.30.1762941607010;
+        Wed, 12 Nov 2025 02:00:07 -0800 (PST)
+Received: from ?IPV6:2a05:6e02:1041:c10:23e5:17c0:bfdb:f0d? ([2a05:6e02:1041:c10:23e5:17c0:bfdb:f0d])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-47788a1f823sm9867465e9.2.2025.11.12.02.00.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Nov 2025 02:00:06 -0800 (PST)
+Message-ID: <6336a324-3597-4726-b2ff-fe0f561c59bc@linaro.org>
+Date: Wed, 12 Nov 2025 11:00:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,177 +83,57 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/huge_memory.c: introduce split_unmapped_folio_to_order
-To: Balbir Singh <balbirs@nvidia.com>, linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
- Zi Yan <ziy@nvidia.com>, Joshua Hahn <joshua.hahnjy@gmail.com>,
- Rakie Kim <rakie.kim@sk.com>, Byungchul Park <byungchul@sk.com>,
- Gregory Price <gourry@gourry.net>, Ying Huang
- <ying.huang@linux.alibaba.com>, Alistair Popple <apopple@nvidia.com>,
- Oscar Salvador <osalvador@suse.de>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, Lyude Paul <lyude@redhat.com>,
- Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Ralph Campbell <rcampbell@nvidia.com>,
- =?UTF-8?Q?Mika_Penttil=C3=A4?= <mpenttil@redhat.com>,
- Matthew Brost <matthew.brost@intel.com>,
- Francois Dugast <francois.dugast@intel.com>
-References: <20251112044634.963360-1-balbirs@nvidia.com>
-From: "David Hildenbrand (Red Hat)" <david@kernel.org>
+Subject: Re: [PATCH 2/3] clocksource/drivers/nxp-pit: Prevent driver unbind
+To: Johan Hovold <johan@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Marc Zyngier <maz@kernel.org>, Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kernel@vger.kernel.org
+References: <20251111153226.579-1-johan@kernel.org>
+ <20251111153226.579-3-johan@kernel.org>
 Content-Language: en-US
-In-Reply-To: <20251112044634.963360-1-balbirs@nvidia.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <20251111153226.579-3-johan@kernel.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 12.11.25 05:46, Balbir Singh wrote:
-> Unmapped was added as a parameter to __folio_split() and related
-> call sites to support splitting of folios already in the midst
-> of a migration. This special case arose for device private folio
-> migration since during migration there could be a disconnect between
-> source and destination on the folio size.
+On 11/11/25 16:32, Johan Hovold wrote:
+> The driver does not support unbinding (e.g. as clockevents cannot be
+> deregistered) so suppress the bind attributes to prevent the driver from
+> being unbound and rebound after registration (and disabling the timer
+> when reprobing fails).
 > 
-> Introduce split_unmapped_folio_to_order() to handle this special case.
-> This in turn removes the special casing introduced by the unmapped
-> parameter in __folio_split().
-
-As raised recently, I would hope that we can find a way to make all 
-these splitting functions look more similar in the long term, ideally 
-starting with "folio_split" / "folio_try_split".
-
-What about
-
-	folio_split_unmapped()
-
-Do we really have to spell out the "to order" part in the function name?
-
-And if it's more a mostly-internal helper, maybe
-
-	__folio_split_unmapped()
-
-subject: "mm/huge_memory: introduce ..."
-
+> Even if the driver can currently only be built-in, also switch to
+> builtin_platform_driver() to prevent it from being unloaded should
+> modular builds ever be enabled.
 > 
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: David Hildenbrand <david@redhat.com>
-> Cc: Zi Yan <ziy@nvidia.com>
-> Cc: Joshua Hahn <joshua.hahnjy@gmail.com>
-> Cc: Rakie Kim <rakie.kim@sk.com>
-> Cc: Byungchul Park <byungchul@sk.com>
-> Cc: Gregory Price <gourry@gourry.net>
-> Cc: Ying Huang <ying.huang@linux.alibaba.com>
-> Cc: Alistair Popple <apopple@nvidia.com>
-> Cc: Oscar Salvador <osalvador@suse.de>
-> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
-> Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-> Cc: Nico Pache <npache@redhat.com>
-> Cc: Ryan Roberts <ryan.roberts@arm.com>
-> Cc: Dev Jain <dev.jain@arm.com>
-> Cc: Barry Song <baohua@kernel.org>
-> Cc: Lyude Paul <lyude@redhat.com>
-> Cc: Danilo Krummrich <dakr@kernel.org>
-> Cc: David Airlie <airlied@gmail.com>
-> Cc: Simona Vetter <simona@ffwll.ch>
-> Cc: Ralph Campbell <rcampbell@nvidia.com>
-> Cc: Mika Penttilä <mpenttil@redhat.com>
-> Cc: Matthew Brost <matthew.brost@intel.com>
-> Cc: Francois Dugast <francois.dugast@intel.com>
-> 
-> Suggested-by: Zi Yan <ziy@nvidia.com>
-> Signed-off-by: Balbir Singh <balbirs@nvidia.com>
+> Fixes: bee33f22d7c3 ("clocksource/drivers/nxp-pit: Add NXP Automotive s32g2 / s32g3 support")
+> Signed-off-by: Johan Hovold <johan@kernel.org>
 > ---
->   include/linux/huge_mm.h |   5 +-
->   mm/huge_memory.c        | 135 ++++++++++++++++++++++++++++++++++------
->   mm/migrate_device.c     |   3 +-
->   3 files changed, 120 insertions(+), 23 deletions(-)
+>   drivers/clocksource/timer-nxp-pit.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-> index e2e91aa1a042..9155e683c08a 100644
-> --- a/include/linux/huge_mm.h
-> +++ b/include/linux/huge_mm.h
-> @@ -371,7 +371,8 @@ enum split_type {
->   
->   bool can_split_folio(struct folio *folio, int caller_pins, int *pextra_pins);
->   int __split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
-> -		unsigned int new_order, bool unmapped);
-> +		unsigned int new_order);
-> +int split_unmapped_folio_to_order(struct folio *folio, unsigned int new_order);
->   int min_order_for_split(struct folio *folio);
->   int split_folio_to_list(struct folio *folio, struct list_head *list);
->   bool folio_split_supported(struct folio *folio, unsigned int new_order,
-> @@ -382,7 +383,7 @@ int folio_split(struct folio *folio, unsigned int new_order, struct page *page,
->   static inline int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
->   		unsigned int new_order)
->   {
-> -	return __split_huge_page_to_list_to_order(page, list, new_order, false);
-> +	return __split_huge_page_to_list_to_order(page, list, new_order);
->   }
->   static inline int split_huge_page_to_order(struct page *page, unsigned int new_order)
->   {
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index 0184cd915f44..942bd8410c54 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -3747,7 +3747,6 @@ bool folio_split_supported(struct folio *folio, unsigned int new_order,
->    * @lock_at: a page within @folio to be left locked to caller
->    * @list: after-split folios will be put on it if non NULL
->    * @split_type: perform uniform split or not (non-uniform split)
-> - * @unmapped: The pages are already unmapped, they are migration entries.
->    *
->    * It calls __split_unmapped_folio() to perform uniform and non-uniform split.
->    * It is in charge of checking whether the split is supported or not and
-> @@ -3763,7 +3762,7 @@ bool folio_split_supported(struct folio *folio, unsigned int new_order,
->    */
->   static int __folio_split(struct folio *folio, unsigned int new_order,
->   		struct page *split_at, struct page *lock_at,
-> -		struct list_head *list, enum split_type split_type, bool unmapped)
-> +		struct list_head *list, enum split_type split_type)
+> diff --git a/drivers/clocksource/timer-nxp-pit.c b/drivers/clocksource/timer-nxp-pit.c
+> index 2d0a3554b6bf..d1740f18f718 100644
+> --- a/drivers/clocksource/timer-nxp-pit.c
+> +++ b/drivers/clocksource/timer-nxp-pit.c
+> @@ -374,9 +374,10 @@ static struct platform_driver nxp_pit_driver = {
+>   	.driver = {
+>   		.name = "nxp-pit",
+>   		.of_match_table = pit_timer_of_match,
+> +		.suppress_bind_attrs = true,
+>   	},
+>   	.probe = pit_timer_probe,
+>   };
+> -module_platform_driver(nxp_pit_driver);
+> +builtin_platform_driver(nxp_pit_driver);
 
-Yeah, nice to see that go.
-
->   {
->   	struct deferred_split *ds_queue;
->   	XA_STATE(xas, &folio->mapping->i_pages, folio->index);
-> @@ -3809,14 +3808,12 @@ static int __folio_split(struct folio *folio, unsigned int new_order,
->   		 * is taken to serialise against parallel split or collapse
->   		 * operations.
->   		 */
-> -		if (!unmapped) {
-> -			anon_vma = folio_get_anon_vma(folio);
-> -			if (!anon_vma) {
-> -				ret = -EBUSY;
-> -				goto out;
-> -			}
-> -			anon_vma_lock_write(anon_vma);
-> +		anon_vma = folio_get_anon_vma(folio);
-> +		if (!anon_vma) {
-> +			ret = -EBUSY;
-> +			goto out;
->   		}
-> +		anon_vma_lock_write(anon_vma);
->   		mapping = NULL;
->   	} else {
->   		unsigned int min_order;
-> @@ -3882,8 +3879,7 @@ static int __folio_split(struct folio *folio, unsigned int new_order,
->   		goto out_unlock;
->   	}
->   
-> -	if (!unmapped)
-> -		unmap_folio(folio);
-> +	unmap_folio(folio);
->   
-
-Hm, I would have hoped that we could factor out the core logic and reuse 
-it for the new helper, instead of duplicating code.
-
-Did you look into that?
+Do not use builtin_platform here. You can add the tristate Kconfig 
+option for this driver, I tested it.
 
 
 -- 
-Cheers
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-David
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
