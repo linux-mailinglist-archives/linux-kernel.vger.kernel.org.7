@@ -1,146 +1,153 @@
-Return-Path: <linux-kernel+bounces-896899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9C1BC5173A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:49:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A6FAC51836
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:57:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47C031888452
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:47:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E49E3ACA07
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:47:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 688E22FDC36;
-	Wed, 12 Nov 2025 09:47:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 091EB280025;
+	Wed, 12 Nov 2025 09:47:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ursulin.net header.i=@ursulin.net header.b="N3AmSTTA"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="GQr9aP7O"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 267CE280025
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:47:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 638862F998D;
+	Wed, 12 Nov 2025 09:47:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762940823; cv=none; b=l1ch33Ox4KYd/Jj4e1san9vk+jf+vlySmRkzjJP0FA7K3DWUqRxMvE+Im7CZixChY3pDvswz7ofA17br4KXHR9YG47qQMqEAxp/a8nJIBPPPKTyqhLfKyPYL+u5eN72jG6DXHtd7M2a5MpFsOSqpvFXsEvNfvx4EAi9Iy5W/MPo=
+	t=1762940867; cv=none; b=bGeCZypuQ8Y9N9mbjGYvGi+Nd6ZvHw08fafdNDNpsdjhZIllfX+q0Aj/Gq3RyNbZpeWY5yH2B0reWYiDwpiY16/ss9VBrlUgmimsV7nBP6XWkO5uZ0MGoJpSeVSXwiaGibWFEHAHaF59FK8m6esY4bCXjMxImiiz7Z5a+ix3u90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762940823; c=relaxed/simple;
-	bh=P39/eJ2a7f5kUNYNzFuQlOYl9DtM6wBUqGzvlaX6QlE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HboBwx5oVybQCRppl82rKGWXxLXfdJxVxIzU70KHlJL2KSsXfoAQB7dYemyPWyI8QBRluhWxaohTAePsG7sa9hZ+EAxCtvzOu2qZDP0BgBMdPRVmNOLjNkkoIkd1BegZ0KlP/Asu0P2p2/t0acXavyn0VghRBn3cWSDF6rcCpSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ursulin.net; spf=pass smtp.mailfrom=ursulin.net; dkim=pass (2048-bit key) header.d=ursulin.net header.i=@ursulin.net header.b=N3AmSTTA; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ursulin.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ursulin.net
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-42b3720e58eso525132f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 01:47:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ursulin.net; s=google; t=1762940820; x=1763545620; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zH4o3q1L44X/0peS5m4xN21r8Fva++k7ZzB8YahQa/0=;
-        b=N3AmSTTA/JzynFch2WA5C2RiNmjyA19W9SgXH8aHazyO705ekHwgWAWctIYbT/hqNT
-         cBAQAUYu+HkGPIJmEYx8fnq4BPMEa0bDPXgYmzp1wKjn+UEZ4JuMt+NeMDUr0pcUzwnT
-         ctJpZ2zDrvH0WpmU4jbDdL15k7MR6/lITqqRrCbCxb+SU14PIfwKGrHS582acKpS1+F6
-         6WjPJ5JYRWe2aTiMlhtyFfnmkVsvK2Y++9J6S/av5B1IvyBwpH3F+uWu5FPV8DslQyCv
-         OAVo+qqGqrGaCot7T+vCAXAKAniDcInARAAumEwf841i9CL5SEeaUi1FZySf7vgEjVe5
-         /VwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762940820; x=1763545620;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zH4o3q1L44X/0peS5m4xN21r8Fva++k7ZzB8YahQa/0=;
-        b=DKZDcSFcj9urmhvAXK37HQa3PDqaebL4ELJygAyjO9jUx4QPYHYhC1GxjwuryKQDf3
-         BAyNX9ww3rdNc7ojVfIy2Mni0M4Yl00ZJX1ntxsIl163l1m0sNYYMjKildFJd2P6O6DG
-         r6z/21M7ZJUr0ndWxN4OwUV0k8hTZFyV5GALLVkbiD32EATbPq9KPG1PTukb9o1slGEr
-         nrTR1wF4ePQ/Aty80bEQzj3w5C1f6pE1SNZmvi8w/mj31pSc0dPR/tSsqwXkqcglXFKz
-         GjyPRBwOz7a8R7avG0jIYfAUlDhtJ8dIC0s1yWM5OPDoaJtpDBE3YCzGWASNBeLaPSDz
-         PjdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXdJSmCxTVeiaVLA6la0dZFJai5lkiBQVBTJAIfEgP22j1+fc7tTGMWqliJmbwARsVTYNxmtNE9qGi1g2o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyakKejHToz4AZdZtElAqEk9P6KYAw01G3f/xztxscU0gHteahJ
-	/ks8CbgCoMx7uA/3T+dnwaLsEHZWkDJBP0Z0D7Wo+q1xBueqGHBHaseNpDwDFJCn/m4=
-X-Gm-Gg: ASbGnctbNO0c09MeESzjBKGqbKOqkRD9PsV54fWrGm1ZANlsMglytJQcVQE+/dQZsVF
-	tzzz5RDJK9+Kb7NbyHJ96mWTLDZB/5jS4LptZ+0YoYawv1hkPU1C3gTJFdIjD135QKq57pElpH9
-	LiSkDNWt7QDXB2SLD9vYdyYUdcCzysbSqnT3CUYlDe8CnPGiXHpadRzx4oqUvX6XqqBNZpmvaZi
-	lw7B43nqkyL1VGTTFDw6Rh8LFm2l9kPYdVBwrmV09JjvVULxaK3pjeasP3GyBIxAAoFgVEJOoVG
-	trdVnwDHla//1/VlKxtoTxsR6AgExPCDWZPK/dNKwSmWYZKxU8Z0Rmm8AV125YS1H26uGIAlehz
-	6T5sLw+R/T/syvl+S/MFx7OwuQ42vM3fQSIADoJImhBh7JnOQc4Mpw8TCm+ONozf4umQFCYqL61
-	OhHWm8uRgjEMBgohNHflpLrQ==
-X-Google-Smtp-Source: AGHT+IHpBCwExuuhQRu+JrqnaJ14VJBUuNzDyQ7kpmml24vqKQH0DF8Jy1NpPafZMFNAmZMwbTbYfw==
-X-Received: by 2002:a05:6000:4008:b0:42b:394a:9e0 with SMTP id ffacd0b85a97d-42b4bdb2becmr2036730f8f.32.1762940820435;
-        Wed, 12 Nov 2025 01:47:00 -0800 (PST)
-Received: from [192.168.0.101] ([90.240.106.137])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42ac6794f6esm37288938f8f.41.2025.11.12.01.46.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Nov 2025 01:47:00 -0800 (PST)
-Message-ID: <1e71b41d-38ba-425a-a370-1bb92a772014@ursulin.net>
-Date: Wed, 12 Nov 2025 09:46:59 +0000
+	s=arc-20240116; t=1762940867; c=relaxed/simple;
+	bh=uQlw9n9vkNkHMlNxgHtHye18JiC1YKtz5ZIUPvK5eWU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IMhEtj44p0IzmkGnckCMOhT1ugTk+6SCJ3N33S041s0GXq/9LwkQea7PfwkYqAE621/rgjil8f3V1d75GuggMGJcQymCobokuDUKUsvruACw2+edBN3YdAa1EMn1dR1O8ky/P2PSapltKGbuMuPZQs6pZOSEqrJZzYhp4NmDg4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=GQr9aP7O; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from francesco-nb (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id 64C831F928;
+	Wed, 12 Nov 2025 10:47:41 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1762940862;
+	bh=3SYq7/Ls6CuDLQxN3kb3YD34nt8HriJZ18tYljiOVG0=; h=From:To:Subject;
+	b=GQr9aP7OU/Icb3c2EW7UG5FUGaeEeJDpVyVK/yTK8xPtVNzsm8ZfrO4M1hRFKIzAT
+	 hd+6FSD0JKBfSJsSZykP2Q6MTlsGvunfDDio/ZKsoZf5B7cZfGZy3ttOtKxOsboYHM
+	 sMqAmEMz2KOzP8/lwP3r3nopCCBi+CqWKj2b54TlFiawFCboQd/AgDWiY6RYRsvx9d
+	 ILlNnLI75q2gv8Rbg6IsjYaLftjw+cagpSLmyTJl7mPz1LXinEwTW+8P5DjZf62RFm
+	 JNXxLl1xrzRXEF0FMm2hP0yStcly3emOSlHhA95pyjIHBC+U8PJ/5UGW3o6q1MN8sM
+	 4qdbEHAQJe4rA==
+Date: Wed, 12 Nov 2025 10:47:37 +0100
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	"Kirill A. Shutemov" <kas@kernel.org>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>,
+	Max Krummenacher <max.krummenacher@toradex.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	Ernest Van Hoecke <ernest.vanhoecke@toradex.com>,
+	Emanuele Ghidoli <emanuele.ghidoli@toradex.com>,
+	=?iso-8859-1?Q?Jo=E3o_Paulo_Gon=E7alves?= <joao.goncalves@toradex.com>,
+	Vitor Soares <vitor.soares@toradex.com>,
+	Francesco Dolcini <francesco.dolcini@toradex.com>
+Subject: Re: [PATCH v2 2/2] arm64: dts: freescale: add Toradex SMARC iMX95
+Message-ID: <20251112094737.GA5126@francesco-nb>
+References: <20251111151618.70132-1-francesco@dolcini.it>
+ <20251111151618.70132-3-francesco@dolcini.it>
+ <aRNeMJWsCTRO3j6X@lizhi-Precision-Tower-5810>
+ <aRN562k3NXCMghEl@gaggiata.pivistrello.it>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] drm/sched: Don't crash kernel on wrong params
-To: Philipp Stanner <phasta@kernel.org>,
- Matthew Brost <matthew.brost@intel.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20251112091851.104443-3-phasta@kernel.org>
-Content-Language: en-GB
-From: Tvrtko Ursulin <tursulin@ursulin.net>
-In-Reply-To: <20251112091851.104443-3-phasta@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aRN562k3NXCMghEl@gaggiata.pivistrello.it>
 
-
-On 12/11/2025 09:18, Philipp Stanner wrote:
-> drm_sched_job_arm() just panics the kernel with BUG_ON() in case of an
-> entity being NULL. If the entity is NULL, subsequent accesses will crash
-> the particular CPU anyways with a NULL pointer exception backtrace.
+On Tue, Nov 11, 2025 at 07:01:15PM +0100, Francesco Dolcini wrote:
+> Hello Frank,
 > 
-> Remove the BUG_ON().
+> On Tue, Nov 11, 2025 at 11:02:56AM -0500, Frank Li wrote:
+> > On Tue, Nov 11, 2025 at 04:16:14PM +0100, Francesco Dolcini wrote:
+> > > From: Max Krummenacher <max.krummenacher@toradex.com>
+> > >
+> > > Add DT support for Toradex SMARC iMX95 SoM and Development carrier
+> > > board.
+> > >
+> > > The module consists of an NXP i.MX95 family SoC, up to 16GB of LPDDR5
+> > > RAM and up to 128GB of storage, a USB 3.0 Host Hub and 2.0 OTG, two
+> > > Gigabit Ethernet PHYs, a 10 Gigabit Ethernet interface, an I2C EEPROM
+> > > and Temperature Sensor, an RX8130 RTC, a Quad/Dual lane CSI interface,
+> > > and some optional addons: TPM 2.0, DSI, LVDS, DisplayPort (through a
+> > > DSI-DP bridge), and Wi-Fi/BT module.
+> > >
+> > > Link: https://www.toradex.com/computer-on-modules/smarc-arm-family/nxp-imx95
+> > > Link: https://www.toradex.com/products/carrier-board/smarc-development-board-kit
+> > > Signed-off-by: Max Krummenacher <max.krummenacher@toradex.com>
+> > > Co-developed-by: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
+> > > Signed-off-by: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
+> > > Co-developed-by: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
+> > > Signed-off-by: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
+> > > Co-developed-by: João Paulo Gonçalves <joao.goncalves@toradex.com>
+> > > Signed-off-by: João Paulo Gonçalves <joao.goncalves@toradex.com>
+> > > Co-developed-by: Vitor Soares <vitor.soares@toradex.com>
+> > > Signed-off-by: Vitor Soares <vitor.soares@toradex.com>
+> > > Co-developed-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+> > > Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+> > > ---
+> > > v2:
+> > >  - move enable-active-high after gpio
+> > >  - add newline between properties and child node in som_dsi2dp_bridge
+> > > ---
+> > >  arch/arm64/boot/dts/freescale/Makefile        |    1 +
+> > >  .../dts/freescale/imx95-toradex-smarc-dev.dts |  277 ++++
+> > >  .../dts/freescale/imx95-toradex-smarc.dtsi    | 1155 +++++++++++++++++
+> > >  3 files changed, 1433 insertions(+)
+> > >  create mode 100644 arch/arm64/boot/dts/freescale/imx95-toradex-smarc-dev.dts
+> > >  create mode 100644 arch/arm64/boot/dts/freescale/imx95-toradex-smarc.dtsi
+> > >
+> > > diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
+> > > index 75676b908299..28f8eaf18471 100644
+> > > --- a/arch/arm64/boot/dts/freescale/Makefile
+> > > +++ b/arch/arm64/boot/dts/freescale/Makefile
+> > > @@ -390,6 +390,7 @@ dtb-$(CONFIG_ARCH_MXC) += imx943-evk.dtb
+> > >  dtb-$(CONFIG_ARCH_MXC) += imx95-15x15-evk.dtb
+> > >  dtb-$(CONFIG_ARCH_MXC) += imx95-19x19-evk.dtb
+> > >  dtb-$(CONFIG_ARCH_MXC) += imx95-19x19-evk-sof.dtb
+> > > +dtb-$(CONFIG_ARCH_MXC) += imx95-toradex-smarc-dev.dtb
+> > >  dtb-$(CONFIG_ARCH_MXC) += imx95-tqma9596sa-mb-smarc-2.dtb
+> > >
+> > ...
+> > > +
+> > > +/* SMARC PCIE_A / M2 Key B */
+> > > +&pcie0 {
+> > > +	status = "okay";
+> > 
+> > Nit: if there are next version, please consider add supports-clkreq.
 > 
-> Signed-off-by: Philipp Stanner <phasta@kernel.org>
-> ---
-> Changes in v2:
->    - Drop BUG_ON() instead of replacing it. (Tvrtko)
+> What do you expect exactly?
+> Maybe what you are looking for is in imx95-toradex-smarc.dtsi?
 
-The option of removing the BUG_ON was conditional on brainstorming a bit 
-whether we think the null pointer dereference is the worst that can 
-happen or not.
+Found it, you are referring to https://github.com/devicetree-org/dt-schema/blob/main/dtschema/schemas/pci/pci-bus-common.yaml#L155
 
-Other option was "WARN_ON_ONCE() return" in arm and push.
+We would not be able to test it, the required changes in the PCIe driver
+are not merged yet, so I would prefer to skip it for this series for the
+moment.
 
-Problem being, if we allow it to continue, are we opening up the 
-possibly to mess up the kernel in a worse way.
-
-For example push job writes to the entity. Okay offsets are low so is 
-the zero page always safe to write? I don't know but sounds scary. From 
-that point of view BUG_ON or WARN_ON_ONCE with exit are safer options.
-
-Regards,
-
-Tvrtko
-
-> ---
->   drivers/gpu/drm/scheduler/sched_main.c | 1 -
->   1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/scheduler/sched_main.c
-> index 1d4f1b822e7b..05eb50d4cf08 100644
-> --- a/drivers/gpu/drm/scheduler/sched_main.c
-> +++ b/drivers/gpu/drm/scheduler/sched_main.c
-> @@ -857,7 +857,6 @@ void drm_sched_job_arm(struct drm_sched_job *job)
->   	struct drm_gpu_scheduler *sched;
->   	struct drm_sched_entity *entity = job->entity;
->   
-> -	BUG_ON(!entity);
->   	drm_sched_entity_select_rq(entity);
->   	sched = entity->rq->sched;
->   
+Francesco
 
 
