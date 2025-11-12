@@ -1,205 +1,328 @@
-Return-Path: <linux-kernel+bounces-897238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DFC5C52519
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 13:49:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8D7AC52552
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 13:53:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B701534D5B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 12:49:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65EDD188F125
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 12:51:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1CFA329E61;
-	Wed, 12 Nov 2025 12:49:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2D9832C95D;
+	Wed, 12 Nov 2025 12:50:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mlwtMY7v"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Z7AprRyt"
+Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012064.outbound.protection.outlook.com [52.101.43.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50E0530748A
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 12:49:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762951790; cv=none; b=SjTRaMtx+KxtBClY7dGOzJm+jn2g0EtOZDcbrT3GMChmcuZuNCS842hzT6fjNHAm7w6w8KKHQFOL+0Tn/BaKoKfvWsVmcrfQHOiJf1N/drHHlOW2b8yIP8QTLm1Qn/LaKXGJGkDrDPhLt/hw4M1XCOWfcA+vJaS/YdiZkeHKiHM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762951790; c=relaxed/simple;
-	bh=U2nCPDVgub9kzMy0prsUD9BkRtn7QIEjv/VMM9n70Ok=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hWNUJUKB5e5R/xhMtepY+O6symHRemcP5c6yzOMj2CBKdS5sfJX7zrNyWgd5+yazy47H0hxWqy1hUH/VihaCaAHfj0kSh6d9f3rSfVfTQotfCj3sx0Q0NktQfn7nf+mIvXBanMh7UqtG70rk6o0DiMmZXdRWOK34Q1NBBWT5X5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mlwtMY7v; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-42b32900c8bso443564f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 04:49:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762951787; x=1763556587; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JluyTZuEy1ost+3VmBmjhG1H0YDL31io4EOh18G1QBo=;
-        b=mlwtMY7vn9O4XgLtQLAuOFV8EGEJdV9e4Q5dwmAzHllzCy7IEjd2nCmU0z5ipcTqpq
-         6Z34oRGsevDPrha1reaKbCyNiU44dUMwsJVT7MIg97AKLBjM5JlCuCGLUEM06xOWdU87
-         9pxUyzC5ntRPl8QRieDTCYWAaX7J3dxYVg307B+reSA3h8yDTNPmHRLwedwdQpZQxQNI
-         mbReYFBnJ8GFWNoQiSJbKXKx28ob13i4GRCJakau7TEfs1Y0UhYValP5yFHFrRmPxOfG
-         NB09PvS6U8R0t9RAqCTVdlbO0DPJ6aHo3phZLeB+ri/deE2yurRZaojhhY8X+NCKFna4
-         AQAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762951787; x=1763556587;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=JluyTZuEy1ost+3VmBmjhG1H0YDL31io4EOh18G1QBo=;
-        b=tzx6JiVtkf2E+roIaEugdzFdBH4lbpVCTSFE8k45Xf0etKTRzNTJs5SG4xL65MhD0M
-         fFIgPIV7CvMhJAuPpVYyvUrW8npE38HSi1bdwlc0heg4D1A9OlanotOhlXZQCAMRD34D
-         5PzzIO6y11KiW2Pn8qCkpdZ648FAwUXO5H2Jt2r706KvF8i0Dk2sIDp8/cybfKQjev4n
-         2oUOe5PHykSyNJ8R0OiOoBNaVaIxlXIxVuLD5Ryhy2ViarKQikXlJUiUNTuARrYr7x8H
-         V+i6JcJyg4Az04nDoYnTYlnAPspMfqWWzpg/9MzipiGziHwuTg4gDN7yr60xXEy5MMfB
-         fzQA==
-X-Forwarded-Encrypted: i=1; AJvYcCWKZE5DgukIYrBcc6CWUjDJ38OqhT91RRlhyTDwmjrVs36i2zXOCvUnHP5GawVHL0Nb3jamyzQdQXfpadc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUPBtZ5PvZafRPlGjS6D68NAd3j6NzfkClarMuthhawKo+ZKo+
-	8EnRlDHSUbojVRauYLzQfs0a6Wo4hQcsdF0fCfKAsGtYcwe8TbFbeyFu7KzyIJjyfzUX5/Ecq0/
-	nfTIxXGsF+phq2SOi+RtnGa1faJ9ZZQJZYo83d38p
-X-Gm-Gg: ASbGnctlvAo/fQ9cHq9V2VBESjytaQCYeOOgQW7NGjKdu9ObyOckBQFH86m+Q8fEmNt
-	CR3Z7YvyNt7trtEVWhhXD4yG64f0dbJ+5j3O97m3XWaB88xl92GtGniX1hSl61eveG1M+3sWzVe
-	nVV1BvQXoe98wKqXpp367Ih1trwzps4RG3X/8wWWbHyX5RRTtsfpjnnvwV0qMBit14Tbd2SxU8t
-	BKVINjzKJai7ei0Gqx51ade4ayMxsOCFtupCmjAW730SYXFVV2V+pb0B2ECtLT7dKWrsyrLKQUu
-	s/LkvlGi+kAfGT8nFpYahMar+g8PbvMYUb2SFAXu9hekmI0=
-X-Google-Smtp-Source: AGHT+IEX6hcBCVCZ/in8kvl8FDzHHsXIOXcK9NpB3+wH4Z36BJiEYLMz3bRVH9PF6csB3JhXsNc3R4eeabioVZCYlC4=
-X-Received: by 2002:a05:6000:2888:b0:42b:3da6:6d32 with SMTP id
- ffacd0b85a97d-42b4bb94f09mr2305903f8f.23.1762951786364; Wed, 12 Nov 2025
- 04:49:46 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 199F332C33C
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 12:50:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.64
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762951852; cv=fail; b=E032u2fGwmyztddQj0qlLRxDAEduIakqOqagpxTEso1uTLfR4BmfXQ8AX9lg+v/PnBi/uBZSg++nE5tAnlJdwOm2t+fT35M/LmH8kwkNI/e4tQfSHp97U7ITPSVogKP1UL18dizbSrYrwmGroRoNwwbQhXzGHH59Yz58El3OkXs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762951852; c=relaxed/simple;
+	bh=MWy3OnN6nPvXVFVR7Fta+HxQ4V1FGEzthHsuXPUJ3Aw=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=V2r2GMXnGKbUl48Hz4wduq8Ds/myRyqufnpShq3aEKxdwN3fw2PeM2w8Y/CB50VUwr89F96znyXxXigGFO66eh6Ma2SxP8voFo8fGNboYgFusLb2DnmtZEiRn8jpGBA1R4dOgTeNFQpIjaYlvjR9moffRvZJcTmrIsdkh3Bllv0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Z7AprRyt; arc=fail smtp.client-ip=52.101.43.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=K9rmdnYL/uXeWFMlExwySTgw6eNKPY5cqZgKn3g94vdButQzTLR8s5cJI9QU65KoTbV8o9TxJXY6lDqfICjdlQcnR6GTwZeFznhn8WAWkbpHaD+MonFAsLS0qJJQElC7BbGQs31TGO3bu/Ooqq6+F8OelutO6fxlsEn6aMV9nELwJN2PWlfVmNka9P5oWVGEo7ZLtMCYRzGIjTJaIuROhwoUplKAG+/PJg515hDqAgE+0b+H3kieYZ+zUIL5JeQx+ZNj73vEd1wXArPVN/b0/jyVxqX9+BX0j58Ou4DrKcnROMnTk6Llrxx6hm1NGyL1GUmfEnG5g6aJ0gqIPSQuRQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6pcK81sDiySzeK/tuQgk0eeeSiODaCg7Fico8bmbIJA=;
+ b=WmDBdJw03i1tmeJko7f2qFcg4wwV3zvwhZdcoBu5+3pWi7yx6gr13OARZhMaQ5BUmj/0wHAlEU6pG81i/NcrUtNwAJ+9JeRNUfoK+mG5X8p4eDX74z/ML/RI7ot6uFhxk17BO8fO2DLd/zeqUxmmHVMW3TflwKrTwCbeZhdN1Zxt5H6pW2uRNC2tYyQVlus7cDbihgKKhN+ETavi5M7M7N0JvK5Aeqx9B9dw1ufLL+vG2fF+6CekTygC5zMLd/W2kqWptM/uEgvKEO6RZu9r/5MttzLxIZqH22yMwL3kspMtG2u62yOIUhHDSWcgCstYnCjOstuqnrAvMyIWqyUfPQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6pcK81sDiySzeK/tuQgk0eeeSiODaCg7Fico8bmbIJA=;
+ b=Z7AprRytn5BALucJdkZBqWGMbw2WqCTi5iS89BJQ5rFGzeGeKWcaOBMPQtQIp+b5hm5DbVw9qnK77yXxngLkbQNStPZRwAblK0Xz4cu+1LIYfUkoPWtmcStaWBIlFbItCoo7j1KqyASH4F2AXTCz1ueuH205dBwUG7GkDNiZsT4=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
+ by DS7PR12MB9042.namprd12.prod.outlook.com (2603:10b6:8:ed::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.16; Wed, 12 Nov
+ 2025 12:50:45 +0000
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5%4]) with mapi id 15.20.9320.013; Wed, 12 Nov 2025
+ 12:50:44 +0000
+Message-ID: <5488f98e-4101-42c1-a0ff-0e0054e0e08c@amd.com>
+Date: Wed, 12 Nov 2025 13:50:39 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 0/5] drm/amdkfd: Add batch SVM range registration
+ support
+To: "Honglei1.Huang@amd.com" <honghuan@amd.com>
+Cc: Felix.Kuehling@amd.com, alexander.deucher@amd.com, Ray.Huang@amd.com,
+ dmitry.osipenko@collabora.com, Xinhui.Pan@amd.com, airlied@gmail.com,
+ daniel@ffwll.ch, amd-gfx@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, akpm@linux-foundation.org,
+ Honglei Huang <honglei1.huang@amd.com>
+References: <20251112072910.3716944-1-honglei1.huang@amd.com>
+ <32a918b6-37bc-4d83-ae72-35010d4f1a8d@amd.com>
+ <03b8be5c-64e0-4577-b4f0-0d505eff04bf@amd.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+In-Reply-To: <03b8be5c-64e0-4577-b4f0-0d505eff04bf@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: FR4P281CA0036.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:c7::9) To PH7PR12MB5685.namprd12.prod.outlook.com
+ (2603:10b6:510:13c::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251110-binder-bitmap-v4-0-5ed8a7fab1b9@google.com>
- <20251110-binder-bitmap-v4-1-5ed8a7fab1b9@google.com> <CAJ-ks9kvMQ9tUMZyM07jRr8O+pJ6RRvCZodenB==tzDChhHT=A@mail.gmail.com>
- <aRH0oRU5JXKpAKpB@google.com> <aRH-ScufjvGYPx5W@yury> <aRIAp3LHs0NsEKvL@google.com>
- <aRIHPX4d_CF-wfhY@yury>
-In-Reply-To: <aRIHPX4d_CF-wfhY@yury>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Wed, 12 Nov 2025 13:49:34 +0100
-X-Gm-Features: AWmQ_bliX846jcbhOZ77cU5skl4FOpn5FxaWHK8FBJFEbU9xH4B1NEKznGFOltE
-Message-ID: <CAH5fLgiiUafMoXhN14m3xHfL=0=YB9S7+U-QPvpOi0YZ19TDhA@mail.gmail.com>
-Subject: Re: [PATCH v4 1/6] rust: bitmap: add MAX_LEN and NO_ALLOC_MAX_LEN constants
-To: Yury Norov <yury.norov@gmail.com>
-Cc: Tamir Duberstein <tamird@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	=?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
-	Joel Fernandes <joelagnelf@nvidia.com>, Christian Brauner <brauner@kernel.org>, 
-	Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>, Burak Emir <bqe@google.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|DS7PR12MB9042:EE_
+X-MS-Office365-Filtering-Correlation-Id: b3114d91-f2e6-42f6-13b9-08de21ea1829
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?QWZsRmhlc2F3VXZTcXJxMmg2ejFud0xweFpDN3lBUVFzRG1HeVJIejJPUnk5?=
+ =?utf-8?B?bU1mOFNJUDNIS00ydnh2eTVqcFZwbFU1ZjFRWnl6dXVLTjZGTndxamcrZHJu?=
+ =?utf-8?B?ZXJZYnMycHNKZ1FRU2I5bWJHREQ3R2dFSmtpeTZsV2hXOW5MaFlySnpaOTJE?=
+ =?utf-8?B?Q3hnR1VYcERiVHpocXV4ZklTQ3B6eUFVczVjT0NsTkZReGt6VmpQb0VRQUEr?=
+ =?utf-8?B?NDlNQmlXT1RGdnhkRGZkTVRmMDVaZXhjbnpCL281Q2lMWjZtd2xvWTQycUF3?=
+ =?utf-8?B?T3ZhalpPbkdKbEYrUWdPc3p3Z25KQU0wTEs3Yi9CaUFQNkJZNE1leVNyTEN4?=
+ =?utf-8?B?dlJIaG1RYk1paUc2d2tDUzFjS21JNXZrcUJFSzY0TDZQUUUrUkRVcysrZWh6?=
+ =?utf-8?B?bit2TzZjMmFLdVVPWkpOU3BLelRKU05lUUtIQUcxWmdEZWNQUk4yanI1RFpu?=
+ =?utf-8?B?ZUQ5TEhkeEVKZ2c4RXVBSTNBOXRHWDJ5dXpheDVWR2Z4U244VHQ0emdCeUlj?=
+ =?utf-8?B?VlIwU3ViTDJ6Wnc4WEhGZlZpMWZZWE9ITmRIWFdUYXZKQkxoZkZtVWFKdjA4?=
+ =?utf-8?B?aCt0Y1BzdklnQ3BabWJ4OHk5d011b1l5Tk1STGUyS1RLZnJxZWV6Yk5yOXRY?=
+ =?utf-8?B?MnVBdXgvSnRsd25pbFAweGVKUlB1cGM0dmpadUdBMDNpcHFHaGo2aThxWDBW?=
+ =?utf-8?B?MDhUdXN6TE1PdDF5R0xGNi9rVGgyUjI1WVBKMktOcnA4bGNMdUR5ZUFMYVp5?=
+ =?utf-8?B?a2MzamFSeEpSNU9YaFJlV3Y4K3JHejZZc1dTZllueTRRS01FRFJGQmdjc3Y5?=
+ =?utf-8?B?Nnc3SHBuRytvWjd0elNBYTFWZk1yYkFUaXZJZnNUb1phYnV1cWhETDFPZWcv?=
+ =?utf-8?B?UStMOEFNQzlpSXZkY3FYWU5kOGFvWWRVa1RqTzNpRnNDZGRFTlh0d1cvcThT?=
+ =?utf-8?B?S1huS2dUeUNQR3ovZjhVS3MvU2FvZVIyUG9PejRYTGRNdGQ4U3J3TjZJd0Vw?=
+ =?utf-8?B?ZDAyVmRxYjN1dlVCZHlWU1dqSDNSRm5uVmEvbFJldXhaTTZoeTF2d0toMktL?=
+ =?utf-8?B?M0UzdGZVZDRrd1dYendmUlhnZ1RPTEJnVUJDSnprOHNkTjBHOEVrWVppN3VE?=
+ =?utf-8?B?NjJEUFZXTWhGMHpOaDBkdGV2NlF0dlZKZlVRYzg0aEUrOCtrczMrUnlid1Vp?=
+ =?utf-8?B?dGE5TGM5U2tySzR3ODFYazE0Q2diV1k2bzhLN0dmcWFaUlJhS2t6a1MxZEJI?=
+ =?utf-8?B?YllMc3dXRmI0V1RZRGVXeGVENVJyVFZNeDE0ek5XeFRJWUJGbjdpb045YlhV?=
+ =?utf-8?B?a3EvNWo4ZTROVTdhWkJzOTd1L2tYeDRMN2J3blo0UDVIU0pvV2RES0RHS3pz?=
+ =?utf-8?B?c2xYNThMTUhsMzRYa1ljQnBpb0s2QUFnVWJFbjFtcDZVeEYwSnNVTFZUbXpm?=
+ =?utf-8?B?STdwb2lVRVlkV1N5MktHNjkrZVRDMEZKU044dG1SVldXSlhyUUwyTE14UmtE?=
+ =?utf-8?B?R1crb3VGS3I5QTlueFlZK1ltYWdPd01ZaGJhT2hVc1UvVTROQzkvb1UvaitM?=
+ =?utf-8?B?Zm1qZSs0YmdqNVlJTks0UzFJd3FTeVcvOGpWbWoxMXczSnBoUFpCbnZMNURq?=
+ =?utf-8?B?NWhhSTVxek5nTFgzMUYxNXJIUnNjV3crOEpqb0JUNFByOVk3Zlh3R1dUaGFw?=
+ =?utf-8?B?ZzhEUzRjTnp1Q21GQ3crNjBFVVh0OVIwMkNGb0IvZk1rRmpiTkUwRDN4RkN1?=
+ =?utf-8?B?UysyZG9XaU9NNHhGbUN2NmQwbE93Qi9zZE14SlBuc1kxWWxNSWtlUGhtalhv?=
+ =?utf-8?B?NE1kaHRRUUdaU2FsYVNseEZ6VFdRR1A5N1kyck5MNXU2N3BWN3MvZi9SWVBh?=
+ =?utf-8?B?REhpT3o3N2tJR1dlcE9lQTUyK0pYTVd1eHhFOHZ0RjhrRlRNVnp5NlIxbW1V?=
+ =?utf-8?B?OFYwclVWVW9LeERKM1Ezb2g5NEJCQXA2WXdjTm5ETWR2QngwNnBwTG9TL1Fp?=
+ =?utf-8?B?aW1rUUQ5RnRBPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?TXMwbVVGQk1iZUhJdytmZjVLUzVaemMwTloreUR4WjhlYWRSR2gwc3FFLzRo?=
+ =?utf-8?B?ZDZwNlNVeVVMbzJlTnMvSFdFNmhyYitNVlhWOTlnLzB4dTFpZVl1aDZNdUZ0?=
+ =?utf-8?B?SlU5ZHlWemR2aFFzekR5bUcvRldlUWxwWkRhaFVneUNtSjBidVJkNXVWcXJn?=
+ =?utf-8?B?SGNaNzdvUFh3eHpOOXdySmU4M1kyQ0lhV0dxbkF1N1NnTWFEVUROb1RWTFVL?=
+ =?utf-8?B?WDltUHd5ZlV1Y2lPZ1poSUhHWit6Y2FWcUlJMzM1OGgxdC9MODErWWdvVzdq?=
+ =?utf-8?B?Qlp2eXcvSjBFRERwRUVTU0dTUEt4NURaaDArblZsZXREUjR0UWl5RTNtOE1n?=
+ =?utf-8?B?TFRYMTdhTlVLUnJ6YnNNeVl0UXkxSldUU3hWWllNc09KZkR6cGVkQXlsRTJY?=
+ =?utf-8?B?MXdpQi9pT3QwS1hYUnpvQ2l6dU04Z1lJelB6Mk55c1ZYS0h6L2orRWlES0ZE?=
+ =?utf-8?B?Y3BFZXUxM3lwbnI1N3I0WG5HWkNnTkJONWdyaldZNkhEQWFtd3I0eWJPbG84?=
+ =?utf-8?B?Y0JHaEJvc0RKb3RoSUpOZDlIVXZPM0tyYzFMQXAvM1pwQWtXMlcxeWNhTTN2?=
+ =?utf-8?B?ZjNtRExZc0ZIZlJFdHJaMHovSVhMQkduSWNMSlVjTU00YUR6MUordmJUMU02?=
+ =?utf-8?B?VHM2N1gwL2UvQ1YrQmlWbndNSHJ4UDRWZVRqd1NoWkZMSlVLQmpabHovamIx?=
+ =?utf-8?B?ejN2MU5GbDdlaURhcEtIMS9mMUpiZVBWcmdOcTlGZElBYTExQmx2SHpDd2xS?=
+ =?utf-8?B?Szc2NDRRNEplQUg5MndvOVM4bUhkQ3hQN0dvQStwVEZlQllEZFdvQ2ZGazNn?=
+ =?utf-8?B?QW9XMkxiUDZEcU9FVzhSWG84NVFJTmROZmVIc2duNDZISktRSGdVb1VKRHZo?=
+ =?utf-8?B?aXRDUzJJeHpuQTA3YjhYRFNxbHRVR1BqdWZCQnZuR3Vzdk50LzdjNkI3KzBO?=
+ =?utf-8?B?Z05RUUZ4NUNwbmJ4dmtjS2w2YTUzZ1gvaE51YXFITnFWM29abG9rTi85WTV3?=
+ =?utf-8?B?dm03WFJsdjF1bGlKVmd5VzllTnlxS0tGbXBIVE93ZmpWTldpM2tWZlB2blNW?=
+ =?utf-8?B?SkhtZTFoM2MwdnpQalVDa0J0QzRrdUZicXNuRFhrcU9hblBhZU1QOU9zMVdR?=
+ =?utf-8?B?dEw1VDRHcmprVUdiV1daQjZBZExEcnRpTWMxbEZjVGJZeEdnSGtjOUJhTE9v?=
+ =?utf-8?B?SksxVGdPQmtQR2ZiWktCbGdGZE1kQWNaUC96ckU3N21FSEZsSHVEc29yREJq?=
+ =?utf-8?B?Vlpla1Z3TklONVFRVERSYXk1WEFaU2d0ekNVQSsrVnYvSGJoRDA2NUtRQUdG?=
+ =?utf-8?B?SThaY1dNK29UNStINElqOCsrckZSUlNiUUg3eTZMYzA4VHdpUEtDVjMycURP?=
+ =?utf-8?B?YmZ0aGZMdDhFelNTKzhJZDhHMXJNNTJPRnBVR1RxS3U5YUpkVURCYktnNWV2?=
+ =?utf-8?B?dytNU2dGS053RW1tTHp1YXNrKzZNWUY5cFlCSWtNSmkrbUFiUGlHZzg2NW1K?=
+ =?utf-8?B?ZzhwMWVpbTQ1clFZN0xBTEJROTdJcnlUV3RQSFVxaXF0SlJoa1F5UkJkK3ln?=
+ =?utf-8?B?U2lxbytmTHBvVzA1ZFZWQ0NaYVVHY0JZSnpxMnBFRkdWRE14R2V2ZU5rMTFB?=
+ =?utf-8?B?S2laNDJXUEdMK1Z2b1NkRk14OXlVTUNvaFF2TXR1Qmt1WWprRm4weXc3MGpN?=
+ =?utf-8?B?NERQZTdQUEhVT1FHVWNhQlVaTG5CRUU3SmNsdUF0TkVvdnpoVUYyMGhJM3hu?=
+ =?utf-8?B?S3VyTnNpbzMrREo0YTdLRHNPUEU1MCs0MEJtajlzRmhZbWoyK0szYmxWNXgz?=
+ =?utf-8?B?M1RKRnVTWGYzdWVuMFRKZ0ZZbnBKVXNDcWZoZW9JVHNxSE9nbzNKUHkzUm1m?=
+ =?utf-8?B?NjZWQkQxeGI0QUJmdlJicjluSGN0Zzc4NjRaSC82Z3RDQXBsSEpjMm5FRy9w?=
+ =?utf-8?B?WFNub0RsNFdrOUUwYmdMSGN4cGZRZmJWbThJREN2cGhrTlBxMFY0akRrcUta?=
+ =?utf-8?B?bnhQS2d3RlVrS09BczlQRHY4SGRLb1RLTWpqOWtVeHlWbFFQR2dYTWJhU0FV?=
+ =?utf-8?B?dEx0eithUTU5a1hUalljeVBDMkZlNkdlOG56L1k5YWFOakxNa0xzWU9iVHBS?=
+ =?utf-8?Q?CBC6LL8jGzVbTA9Nnw8FpInnI?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b3114d91-f2e6-42f6-13b9-08de21ea1829
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2025 12:50:44.7099
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: T+/1A83palQGbDfl5KpWCErfR5+NCX4nNzfyxw30wJgdqBhMrCKFIuQZ6h6ag/4R
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB9042
 
-On Mon, Nov 10, 2025 at 4:39=E2=80=AFPM Yury Norov <yury.norov@gmail.com> w=
-rote:
->
-> On Mon, Nov 10, 2025 at 03:11:35PM +0000, Alice Ryhl wrote:
-> > On Mon, Nov 10, 2025 at 10:01:29AM -0500, Yury Norov wrote:
-> > > On Mon, Nov 10, 2025 at 02:20:17PM +0000, Alice Ryhl wrote:
-> > > > On Mon, Nov 10, 2025 at 08:59:36AM -0500, Tamir Duberstein wrote:
-> > > > > On Mon, Nov 10, 2025 at 8:06=E2=80=AFAM Alice Ryhl <aliceryhl@goo=
-gle.com> wrote:
-> > > > > >
-> > > > > > To avoid hard-coding these values in drivers, define constants =
-for them
-> > > > > > that drivers can reference.
-> > > > > >
-> > > > > > Acked-by: Danilo Krummrich <dakr@kernel.org>
-> > > > > > Reviewed-by: Burak Emir <bqe@google.com>
-> > > > > > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> > > > > > ---
-> > > > > >  rust/kernel/bitmap.rs | 16 +++++++++++-----
-> > > > > >  1 file changed, 11 insertions(+), 5 deletions(-)
-> > > > > >
-> > > > > > diff --git a/rust/kernel/bitmap.rs b/rust/kernel/bitmap.rs
-> > > > > > index aa8fc7bf06fc99865ae755d8694e4bec3dc8e7f0..15fa23b45054b92=
-72415fcc000e3e3b52c74d7c1 100644
-> > > > > > --- a/rust/kernel/bitmap.rs
-> > > > > > +++ b/rust/kernel/bitmap.rs
-> > > > > > @@ -149,14 +149,14 @@ macro_rules! bitmap_assert_return {
-> > > > > >  ///
-> > > > > >  /// # Invariants
-> > > > > >  ///
-> > > > > > -/// * `nbits` is `<=3D i32::MAX` and never changes.
-> > > > > > +/// * `nbits` is `<=3D MAX_LEN`.
-> > > > > >  /// * if `nbits <=3D bindings::BITS_PER_LONG`, then `repr` is =
-a `usize`.
-> > > > >
-> > > > > Should this and other references to bindings::BITS_PER_LONG be
-> > > > > `NO_ALLOC_MAX_LEN` instead?
-> > > >
-> > > > Ah yeah it probably makes sense to update this in a bunch of places=
-.
-> > >
-> > > Yes, please.
-> > >
-> > > NO_ALLOC sounds a bit weird in exported API. Maybe NBITS_INPLACE
-> > > or similar?
-> >
-> > Ah, good point. We started using the "inplace" wording in other places,
-> > so lets also do so here.
-> >
-> > > Also, at this point we're really close to:
-> > >
-> > >    pub const NBITS_INPLACE: usize =3D CONFIG_NBITS_INPLACE;
-> > >
-> > >    union BitmapRepr {
-> > >        bitmap: [usize, BITS_TO_LONGS(NBITS_INPLACE)]
-> > >        ptr: NonNull<usize>,
-> > >    }
-> > >
-> > > That would be a very useful addition for some particular scenarios,
-> > > I believe. Even if you don't want to make it configurable, let's
-> > > keep this option in mind?
-> >
-> > Actually, one option here is to define BitmapVec like this:
-> >
-> > pub struct BitmapVec<const INPLACE_LEN: usize =3D 1> {
-> >     repr: BitmapRepr<INPLACE_LEN>,
-> >     nbits: usize,
-> > }
-> >
-> > union BitmapRepr<const INPLACE_LEN: usize> {
-> >     bitmap: [usize; INPLACE_LEN],
-> >     ptr: NonNull<usize>,
-> > }
-> >
-> > This way, the driver can specify this by saying: BitmapVec<4> for a
-> > BitmapVec where the inline capacity is 4 longs.
-> >
-> > And if Binder wanted to make that configurable, Binder could define a
-> > constant based on a Binder specific CONFIG_* that controls what value
-> > Binder passes.
-> >
-> > Since I wrote `=3D 1` in the struct, you may also write BitmapVec witho=
-ut
-> > specifying any number and get the default.
-> >
-> > It may be possible to specify the number in bits rather than longs too,
-> > but then we have to decide what to do if it's not divisible by
-> > BITS_PER_LONG.
-> >
-> > (But in the case of Rust Binder, the value we want is one long worth of
-> > bits.)
->
-> It's better to define the actual number of bits. One reason is 32 vs
-> 64 bit portability. Another one is readability - when dealing with
-> bit structures, it's better to think of it as a set of bits.
->
-> Those providing unaligned defaults... - you can drop a comment for
-> them. :)
+Hi Honglei,
 
-Makes sense. I'm not going to do it in this series, but it seems like
-a reasonable idea.
+On 11/12/25 13:10, Honglei1.Huang@amd.com wrote:
+>>> Paravirtualized environments exacerbate this issue, as KVM's memory backing
+>>> is often non-contiguous at the host level. In virtualized environments, guest
+>>> physical memory appears contiguous to the VM but is actually scattered across
+>>> host memory pages. This fragmentation means that what appears as a single
+>>> large allocation in the guest may require multiple discrete SVM registrations
+>>> to properly handle the underlying host memory layout, further multiplying the
+>>> number of required ioctl calls.
+>> SVM with dynamic migration under KVM is most likely a dead end to begin with.
+>>
+>> The only possibility to implement it is with memory pinning which is basically userptr.
+>>
+>> Or a rather slow client side IOMMU emulation to catch concurrent DMA transfers to get the necessary information onto the host side.
+>>
+>> Intel calls this approach colIOMMU: https://www.usenix.org/system/files/atc20-paper236-slides-tian.pdf
+>>
+> 
+> This is very helpful context.Your confirmation that memory pinning (userptr-style) is the practical approach helps me understand that what I initially saw as a "workaround" is actually the intended solution for this use case.
 
-Alice
+Well "intended" is maybe not the right term, I would rather say "possible" with the current SW/HW stack design in virtualization.
+
+In general fault based SVM/HMM would still be nice to have even under virtualization environment, it's just simply not really feasible at the moment.
+
+> For colIOMMU, I'll study it to better understand the alternatives and their trade-offs.
+
+I haven't looked into it in detail either. It's mostly developed with the pass-through use case in mind, but avoiding pinning memory on the host side which is one of many per-requisites to have some HMM based migration working as well.
+
+...>>> Why Submit This RFC?
+>>> ====================
+>>>
+>>> Despite the limitations above, I am submitting this series to:
+>>>
+>>> 1. **Start the Discussion**: I want community feedback on whether batch
+>>>     registration is a useful feature worth pursuing.
+>>>
+>>> 2. **Explore Better Alternatives**: Is there a way to achieve batch
+>>>     registration without pinning? Could I extend HMM to better support
+>>>     this use case?
+>>
+>> There is an ongoing unification project between KFD and KGD, we are currently looking into the SVM part on a weekly basis.
+>>
+>> Saying that we probably need a really good justification to add new features to the KFD interfaces cause this is going to delay the unification.
+>>
+>> Regards,
+>> Christian.
+> 
+> Thank you for sharing this critical information. Is there a public discussion forum or mailing list for the KFD/KGD unification where I could follow progress and understand the design direction?
+
+Alex is driving this. No mailing list, but IIRC Alex has organized a lot of topics on some confluence page, but I can't find it of hand.
+
+> Regarding the use case justification: I need to be honest here - the
+> primary driver for this feature is indeed KVM/virtualized environments.
+> The scattered allocation problem exists in native environments too, but
+> the overhead is tolerable there. However, I do want to raise one consideration for the unified interface design:
+> 
+> GPU computing in virtualized/cloud environments is growing rapidly, major cloud providers (AWS, Azure) now offer GPU instances ROCm in containers/VMs is becoming more common.So while my current use case is specific to KVM, the virtualized GPU workload pattern may become more prevalent.
+> 
+> So during the unified interface design, please keep the door open for batch-style operations if they don't complicate the core design.
+
+Oh, yes! That's definitely valuable information to have and a more or less a new requirement for the SVM userspace API.
+
+I already expected that we sooner or later run into such things, but having it definitely confirmed is really good to have.
+
+Regards,
+Christian.
+
+> 
+> I really appreciate your time and guidance on this.
+> 
+> Regards,
+> Honglei
+> 
+> 
+> 
+>>
+>>>
+>>> 3. **Understand Trade-offs**: For some workloads, the performance benefit
+>>>     of batch registration might outweigh the drawbacks of pinning. I'd
+>>>     like to understand where the balance lies.
+>>>
+>>> Questions for the Community
+>>> ============================
+>>>
+>>> 1. Are there existing mechanisms in HMM or mm that could support batch
+>>>     operations without pinning?
+>>>
+>>> 2. Would a different approach (e.g., async registration, delayed validation)
+>>>     be more acceptable?
+>>>
+>>> Alternative Approaches Considered
+>>> ==================================
+>>>
+>>> I've considered several alternatives:
+>>>
+>>> A) **Pure HMM approach**: Register ranges without pinning, rely entirely on
+>>>
+>>> B) **Userspace batching library**: Hide multiple ioctls behind a library.
+>>>
+>>> Patch Series Overview
+>>> =====================
+>>>
+>>> Patch 1: Add KFD_IOCTL_SVM_ATTR_MAPPED attribute type
+>>> Patch 2: Define data structures for batch SVM range registration
+>>> Patch 3: Add new AMDKFD_IOC_SVM_RANGES ioctl command
+>>> Patch 4: Implement page pinning mechanism for scattered ranges
+>>> Patch 5: Wire up the ioctl handler and attribute processing
+>>>
+>>> Testing
+>>> =======
+>>>
+>>> The series has been tested with:
+>>> - Multiple scattered malloc() allocations (2-2000+ ranges)
+>>> - Various allocation sizes (4KB to 1G+)
+>>> - GPU compute workloads using the registered ranges
+>>> - Memory pressure scenarios
+>>> - OpecnCL CTS in KVM guest environment
+>>> - HIP catch tests in KVM guest environment
+>>> - Some AI applications like Stable Diffusion, ComfyUI, 3B LLM models based
+>>>    on HuggingFace transformers
+>>>
+>>> I understand this approach is not ideal and are committed to working on a
+>>> better solution based on community feedback. This RFC is the starting point
+>>> for that discussion.
+>>>
+>>> Thank you for your time and consideration.
+>>>
+>>> Best regards,
+>>> Honglei Huang
+>>>
+>>> ---
+>>>
+>>> Honglei Huang (5):
+>>>    drm/amdkfd: Add KFD_IOCTL_SVM_ATTR_MAPPED attribute
+>>>    drm/amdkfd: Add SVM ranges data structures
+>>>    drm/amdkfd: Add AMDKFD_IOC_SVM_RANGES ioctl command
+>>>    drm/amdkfd: Add support for pinned user pages in SVM ranges
+>>>    drm/amdkfd: Wire up SVM ranges ioctl handler
+>>>
+>>>   drivers/gpu/drm/amd/amdkfd/kfd_chardev.c |  67 +++++++++++
+>>>   drivers/gpu/drm/amd/amdkfd/kfd_svm.c     | 232 +++++++++++++++++++++++++++++--
+>>>   drivers/gpu/drm/amd/amdkfd/kfd_svm.h     |   3 +
+>>>   include/uapi/linux/kfd_ioctl.h           |  52 +++++++-
+>>>   4 files changed, 348 insertions(+), 6 deletions(-)
+>>
+> 
+
 
