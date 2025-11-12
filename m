@@ -1,100 +1,139 @@
-Return-Path: <linux-kernel+bounces-896575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52E8DC50B46
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 07:28:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A2F6C50B49
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 07:28:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 600FB4EAA34
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 06:28:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 245AD3B591F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 06:27:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 356932E718B;
-	Wed, 12 Nov 2025 06:27:40 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DC012E7182
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 06:27:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B76F22DCF6E;
+	Wed, 12 Nov 2025 06:27:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="NlA8x3YU"
+Received: from canpmsgout09.his.huawei.com (canpmsgout09.his.huawei.com [113.46.200.224])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DBB42D7818;
+	Wed, 12 Nov 2025 06:27:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.224
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762928859; cv=none; b=FNeBlct/OAe3g+NN9t9v8hqmPsqBkLzJ226BsKa8kMcAY3XQq+Lbyg0IKpq+fvmwvgJSa5noA1sK370pz+q9Tklka6bYUrW0Y746BgzgP4IPr1nq7zddLVdGjxEKjzqtkWK3nv1dqSMgNQtGdWvVoGXoGWkzTHTeOLa/HR1RhVw=
+	t=1762928853; cv=none; b=md3Om1iw2v6doYdbhQ50V+D4nijiKU1fcGkUiQhQsPfs0P2PF/AOGMbpVGsMjrxlec3r8egARwS5FXLvIjDxoCx1ABsncNbiWa1BBhtCpO/kimRycdDWfluc398Q7yMRLsAXaXsgCcTP/cjJcQYQpF1RSBHOqNSybSqOegk0x38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762928859; c=relaxed/simple;
-	bh=//xwDxJGPkAJ9Y89CWiFQFsY8WI4ZLyZdRn+QVzwaKI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=W9uJozTPrPDgr2rPlznAQSEoUxSH4FZieHJ1c4Aq6ntAOjovRhkyeD1SvwES1iRUgGe2yQZayGTiUjM/l6mI69G+KBaQ+U0x//tTlir7uvoyKkQY9KsYmjK26glTA7MFYUWJC7YepBv8xAlETJ9SeoBpdOZ28tFLEpGojC0560g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 51F4B1515;
-	Tue, 11 Nov 2025 22:27:30 -0800 (PST)
-Received: from MacBook-Pro.blr.arm.com.com (unknown [10.164.18.56])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id E6C543F5A1;
-	Tue, 11 Nov 2025 22:27:34 -0800 (PST)
-From: Dev Jain <dev.jain@arm.com>
-To: catalin.marinas@arm.com,
-	will@kernel.org
-Cc: ryan.roberts@arm.com,
-	rppt@kernel.org,
-	shijie@os.amperecomputing.com,
-	yang@os.amperecomputing.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Dev Jain <dev.jain@arm.com>
-Subject: [PATCH 2/2] arm64/mm: Document why linear map split failure upon vm_reset_perms is not problematic
-Date: Wed, 12 Nov 2025 11:57:16 +0530
-Message-Id: <20251112062716.64801-3-dev.jain@arm.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20251112062716.64801-1-dev.jain@arm.com>
-References: <20251112062716.64801-1-dev.jain@arm.com>
+	s=arc-20240116; t=1762928853; c=relaxed/simple;
+	bh=s9eFlodwgeafLMC+k9IpaX3BxvXzU+E4w7LZ82PAoyg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Q8R9oVTClDSeFJ/mKoh8FMfYGH+CfGhxWxVkbmgj7MIJp4Pvzox+mnaXHAlROq31kFzAL8CpRh7clDCEHFziFXFDLgaN2/KrsmpjoqCkVvwxtn5kZI+DmwgsSp0BgOW4CPbbStgt7lK6m6lWmOwpKVkENXJ6trhzLj80T7aRi2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=NlA8x3YU; arc=none smtp.client-ip=113.46.200.224
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=mj7+88DMlG12jwejTb95ywDm+ONWgn6IUgAnm79v/0g=;
+	b=NlA8x3YUr33sbz4J/iNTpGsfRCeL2xlJvO6Ti13J2tmcw8xo+xarCL2OcS7lqPgptPkHpgYEf
+	E7+TTPOLvQ4iaGkXIcdGMhS/6rz6L1d9/eJI+58Gan+M6zKvUvyt1uQCiGV0UnFba3c2bc8KCSL
+	hLO8h2clpzfxcJoCj2ULq3g=
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by canpmsgout09.his.huawei.com (SkyGuard) with ESMTPS id 4d5tgn4JMcz1cyNs;
+	Wed, 12 Nov 2025 14:25:41 +0800 (CST)
+Received: from dggpemf500013.china.huawei.com (unknown [7.185.36.188])
+	by mail.maildlp.com (Postfix) with ESMTPS id 5CFE01A0188;
+	Wed, 12 Nov 2025 14:27:21 +0800 (CST)
+Received: from [127.0.0.1] (10.174.178.254) by dggpemf500013.china.huawei.com
+ (7.185.36.188) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 12 Nov
+ 2025 14:27:20 +0800
+Message-ID: <21efa577-a577-48ce-a82b-bce446539fba@huawei.com>
+Date: Wed, 12 Nov 2025 14:27:19 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 00/24] ext4: enable block size larger than page size
+Content-Language: en-GB
+To: Theodore Ts'o <tytso@mit.edu>
+CC: <linux-ext4@vger.kernel.org>, <adilger.kernel@dilger.ca>, <jack@suse.cz>,
+	<linux-kernel@vger.kernel.org>, <kernel@pankajraghav.com>,
+	<mcgrof@kernel.org>, <ebiggers@kernel.org>, <willy@infradead.org>,
+	<yi.zhang@huawei.com>, <yangerkun@huawei.com>, <chengzhihao1@huawei.com>,
+	Baokun Li <libaokun@huaweicloud.com>, Baokun Li <libaokun1@huawei.com>,
+	"Darrick J. Wong" <djwong@kernel.org>
+References: <20251112040220.GO2988753@mit.edu>
+From: Baokun Li <libaokun1@huawei.com>
+In-Reply-To: <20251112040220.GO2988753@mit.edu>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+ dggpemf500013.china.huawei.com (7.185.36.188)
 
-Consider the following code path:
+On 2025-11-12 12:02, Theodore Ts'o wrote:
+> On Wed, Nov 12, 2025 at 10:19:06AM +0800, Baokun Li wrote:
+>> I am using a slightly older version of xfstests, and when running the
+>> 64k tests I also encountered similar failures. The cover letter stated
+>> "no Oops" for the 64k tests rather than "no new failures," meaning that
+>> some cases did fail, but no severe issues such as BUG_ON or softlock
+>> were observed.
+> Sorry, I misread your cover letter.  It's good you are seeing similar
+> failures.
 
-(1) vmalloc -> (2) set_vm_flush_reset_perms -> (3) set_memory_ro/set_memory_rox
--> .... (4) use the mapping .... -> (5) vfree -> (6) vm_reset_perms
--> (7) set_area_direct_map.
-Or, it may happen that we encounter failure at (3) and directly jump to (5).
+Sorry, my description wasn’t clear enough.
 
-In both cases, (7) may fail due to linear map split failure. But, we care
-about its success *only* for the region which got successfully changed by
-(3). Such a region is guaranteed to be pte-mapped.
+>
+>
+> On Wed, Nov 12, 2025 at 10:49:19AM +0800, Baokun Li wrote:
+>> I checked the code of the swapon syscall in mm/swapfile.c, and currently
+>> the swapfile does not support LBS. Therefore, some failing test cases can
+>> be filtered out based on this.
+> Ah, OK. What's happening is with XFS the swap tests are being skipped
+> automatically if the swapon fails.  From _require_scratch_swapfils:
+>
+> 	*)
+> 		if ! swapon "$SCRATCH_MNT/swap" >/dev/null 2>&1; then
+> 			_scratch_unmount
+> 			_notrun "swapfiles are not supported"
+> 		fi
+> 		;;
+>
+>
+> But ext4 has different logic:
+>
+> 	# ext* has supported all variants of swap files since their
+> 	# introduction, so swapon should not fail.
+>
+> << famous last words >>
+😄
+>
+> 	case "$FSTYP" in
+> 	ext2|ext3|ext4)
+> 		if ! swapon "$SCRATCH_MNT/swap" >/dev/null 2>&1; then
+> 			if _check_s_dax "$SCRATCH_MNT/swap" 1 >/dev/null; then
+> 				_scratch_unmount
+> 				_notrun "swapfiles are not supported"
+> 			else
+> 				_scratch_unmount
+> 				_fail "swapon failed for $FSTYP"
+> 			fi
+> 		fi
+> 		;;
+>
+>
+> I guess we could add logic to _require_scratch_swapfile in common/rc
+> to also _notrun if swapon fails and block size is greater that page
+> size.  Or I might just add an exclusion in my test appliance runner
+> for now for all tests in group swap.
 
-The TLDR is that (7) will surely succeed for the regions we care about.
+Darrick’s reply in another thread has already made a similar change,
+so we can apply that patch first for testing.
 
-Signed-off-by: Dev Jain <dev.jain@arm.com>
----
- arch/arm64/mm/pageattr.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
 
-diff --git a/arch/arm64/mm/pageattr.c b/arch/arm64/mm/pageattr.c
-index b4ea86cd3a71..dc05f06a47f2 100644
---- a/arch/arm64/mm/pageattr.c
-+++ b/arch/arm64/mm/pageattr.c
-@@ -185,6 +185,15 @@ static int change_memory_common(unsigned long addr, int numpages,
- 	 */
- 	if (rodata_full && (pgprot_val(set_mask) == PTE_RDONLY ||
- 			    pgprot_val(clear_mask) == PTE_RDONLY)) {
-+		/*
-+		 * Note: One may wonder what happens if the calls to
-+		 * set_area_direct_map() in vm_reset_perms() fail due ENOMEM on
-+		 * linear map split failure. Observe that we care about those
-+		 * calls to succeed *only* for the region whose permissions
-+		 * are not default. Such a region is guaranteed to be
-+		 * pte-mapped, because the below call can change those
-+		 * permissions to non-default only after splitting that region.
-+		 */
- 		for (i = 0; i < area->nr_pages; i++) {
- 			ret = __change_memory_common((u64)page_address(area->pages[i]),
- 					       PAGE_SIZE, set_mask, clear_mask);
--- 
-2.30.2
+Cheers,
+Baokun
 
 
