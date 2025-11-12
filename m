@@ -1,116 +1,510 @@
-Return-Path: <linux-kernel+bounces-897869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0296C53DA0
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:07:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E3C1C53DB1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:08:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B8E204F6128
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:00:00 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 23FCD4EEB7F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:01:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82A8734A771;
-	Wed, 12 Nov 2025 17:59:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20CC03491F3;
+	Wed, 12 Nov 2025 18:01:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H+lODzMA"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nE+xa5Uq"
+Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 313DF336ED3
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 17:59:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AE5C2C11E3
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 18:01:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762970384; cv=none; b=o56OfbUtTzmDIymWO9m7rW7KmmqIvrKlLfQgLdHDa/M+yJ7fMOniM8rYtsCGd/nAV9XSFxBoJ3X4uwOCVN3Iq/tjgA+jtnax75saOM0xcHo5NL95FSLudRrI6L9afBLeKCjt/CKA4NqnfQ+/RHFCPgrjRN6Td22gYwIQUDr1OWM=
+	t=1762970473; cv=none; b=uox/rBOVgjYXWcF9A2Gklzp0kOmV/58v9PAeZ3LwF+iomJLjF3LEMvxfdWxoC1HW/0IKII43tF2SQP2rrtyBkgYLvnAIDG2gJefWrBb0M3FVhz0zA/UUzHTKCzX9gVviplFytETICn8nugRn7mt6TmP/83N6FIOYKDvA7LVX6tQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762970384; c=relaxed/simple;
-	bh=VMAUbEYSF7PdWXFDavrRElWyYpN1b3ZWMA2LzFa6Y2k=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Pb+dTrdZ3J8oBxuKYeslfF6Hk9aLNYJ8V86n53TW0cgKhyANHWqqb/r4jx1GyWAdVxk07qSB+50JwIS/i4m/r7bp5AmlEfVQhljSJEaDeOs3kR40a/XrlaaEvQm/hVbTX8zqG02Hb2Oy9m8DeRdbtd/9qbgCN7Evdb1MPrSlJD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H+lODzMA; arc=none smtp.client-ip=209.85.221.47
+	s=arc-20240116; t=1762970473; c=relaxed/simple;
+	bh=4qD1jUco1jr47ENGds1DcMO4dfiXyeaiJTxui3XN5t8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bTtmUZjw7xn7b0pGs+xavuJLuw11z5Q8dqlUGC69o3miLZ6q0k4erDrcZi3OKJ2dsUbeLLH7a+dUic9loQ1sBtYaDdjfVPCqeas41QDHZiKGoKW2e9phq5eadXA7/YvkE/RAbyjDmpca3XC+h+vPNxwZZCXAVNXKREyHKUmTlEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nE+xa5Uq; arc=none smtp.client-ip=209.85.160.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-42b31c610fcso995241f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:59:42 -0800 (PST)
+Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-3e12fd71984so706935fac.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 10:01:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762970381; x=1763575181; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=VMAUbEYSF7PdWXFDavrRElWyYpN1b3ZWMA2LzFa6Y2k=;
-        b=H+lODzMACjD7fg/L1U6+HbCwcOMolOc0aTrT63QKgmM6SXru/m/q4Ye139eRW2IwHj
-         HMFGQIvhbPgv5AavISf1FOsZSsQdhJG9ltjyuoKaSmOIGV7ZYvKiOEHgxXe3LVOUfAIr
-         ieL9O//2ZM9oScIp03rc7rXiCknlUlr3FBNGHGZctVfKrz4HqW+ZoLSKi90p/+oE+ISZ
-         zoMDXIT6rpsOHO8DzdzwOO9uXhXg2L/ys4MtOEJ/0CiTJL+pyIQlo08T9hySsloZ3dhG
-         Uy0l3F2PFrDuGWZ9O7u+fXJy4dbISyK3yY4E6HH5MFyMf4iBDjYR2ynjdFjHqpWGyOei
-         0x4w==
+        d=gmail.com; s=20230601; t=1762970470; x=1763575270; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bYHff2DoQzWoHno1pJ6Z7AZPPk8OrhvVJJd5+s+K1QA=;
+        b=nE+xa5Uq4+9n7+FVxYSxRd01LY3EppjH8NzeSs4Ajo2BB1LTGNogyO3FwxgN2L/nlj
+         FqwJe2Htw8NC41uV8QsxpgA2TsV4hpGsBR7hdzkhvIsOGrLJFm7vhfYXZ8FHtD+YUX27
+         I+h+z4pSMSyyyNOj0QZ3sT5gphTmTnmGGjL+edEaN2qsJF41ThgXMPiFUwietyioKsUi
+         S1aM49305lVOLOzLL4OSU4DqdZw7cV6CoMFGLuw8kN9dlqtCPnkgP6FUdNq9Mq9nP9YR
+         U8Sb/3bElUG/m320atUTwYF2tyV5fepZ6DEJPihiGhNxDeOFrq7rEl3//A55X2alPWmG
+         I8ow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762970381; x=1763575181;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VMAUbEYSF7PdWXFDavrRElWyYpN1b3ZWMA2LzFa6Y2k=;
-        b=k91TJIELkVGK0QnS5MRot0G37Q1eMw/ma7f7Xnq9w5hOWh2EyZ+5B9Uhmptio47Y04
-         cTQtt4RgWxzoL7P/sErQJsztFo2knXo6+jZragXhwJkEahHriMQwHN1gXgqOd6DmZ2kM
-         sRGf0nIMD+fd3+Iegdx4buW3Ft8EyCAOfrNyCMmGN/fg+HlbB/zsBQiNjbjXZ28yFHZs
-         JM5JYqGK8mi/RutOGvh87qQPXFT8IP83qmR4FvLiUkkOioJrQ0xqefNXBZDw54AIAQB+
-         eCqHo7aj2dLp6wj7sYe9RPYhhy3/dvEyRn9Y8wBQzyKhAJBvgw6YydFIR7WuOTcLEOw+
-         2SRw==
-X-Forwarded-Encrypted: i=1; AJvYcCUe7nnn4i61fCHpV/0KW30nKEGbUz6cD5PwdwOpPDI1RA6MeEF+NktZYEIIpAWyRqSKOqeu6Zapjff5mAg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzycribytUtVYmw85FvgFaYCitRtpKLbCr0lZRXIpbLV3GrpqsX
-	5x2cxzTKjCTlxI2eoDRkihUK7HiqYMBT4uwgSXQAXoZ1MTfqM/xvXSEZ
-X-Gm-Gg: ASbGncs30K6fqYWuNvL5HSfWxsqSJkzm3FBrgpf8fVLzD0Tbvi1Oao8OM/npcp3dWEY
-	49Qc85DpQPItlkF5fvuHfwChAbZxTVgGq4sTA/BF/Ep71nPmAUE5duM2C0UDFdo7h4T//dY0AgW
-	EShg/pDKTU9hE/HXd3e2ERsUewWrtV6J3ftn37EQ4QpeunNbsc2eZrVBmVMe7t8YelCkYELXZIa
-	ovi12Ofa9Tu6D7tC0XPJ9IDe0ycO3jB/o1P5dMCNU/8FNF9mGRUByxI58H4C8xxTcuEQa3M5rh3
-	0ckrqdWPaGDCQ3xLF/6YWITYGrKq5KOBgPoS4K/XlkOz7DVw/a02pIUktPHHedmZcgytpbNDpsa
-	5vg86nWXSxk4m5rDZaV0fTTjtEqIMqTIDxmaiMYF96KkAh6vo//wjRgKxqX7aHL+9Xwld4U7H2/
-	BcAKw5WhcUJrQwO18sQt0D/GHYt3uj66Y3QgQ0C5wi/YD3Y/xB
-X-Google-Smtp-Source: AGHT+IF0tXIDjvKHKVJyTGY8/nCli7RyVbquCxKAUvzuud0KSAJ9auI/vjzj6364H+ausPb7LeEufA==
-X-Received: by 2002:a05:6000:2dc3:b0:42b:2c61:86f1 with SMTP id ffacd0b85a97d-42b4bdaeb66mr3081729f8f.35.1762970381278;
-        Wed, 12 Nov 2025 09:59:41 -0800 (PST)
-Received: from ?IPv6:2001:818:ea56:d000:94c4:fb0e:28f:2a8d? ([2001:818:ea56:d000:94c4:fb0e:28f:2a8d])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b316775f2sm25264899f8f.16.2025.11.12.09.59.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Nov 2025 09:59:40 -0800 (PST)
-Message-ID: <0ec0086b91528e67c9a5c1fe4c27b65a3cc9f8aa.camel@gmail.com>
-Subject: Re: [PATCH v1 0/3] iio: core: fix error path in iio_device_alloc()
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Jonathan Cameron
-	 <Jonathan.Cameron@huawei.com>, linux-iio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Cc: Jonathan Cameron <jic23@kernel.org>, David Lechner
- <dlechner@baylibre.com>,  Nuno =?ISO-8859-1?Q?S=E1?=	 <nuno.sa@analog.com>,
- Andy Shevchenko <andy@kernel.org>
-Date: Wed, 12 Nov 2025 18:00:42 +0000
-In-Reply-To: <20251112145735.2075527-1-andriy.shevchenko@linux.intel.com>
-References: <20251112145735.2075527-1-andriy.shevchenko@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+        d=1e100.net; s=20230601; t=1762970470; x=1763575270;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=bYHff2DoQzWoHno1pJ6Z7AZPPk8OrhvVJJd5+s+K1QA=;
+        b=n+V1mlsLlXlXSfvBE16hSQspo1dfIYr8SX+Q9Xg8bmYnBbS9Lj6pcLGV0JQtnjQuaU
+         ITxa4KdfuDWvDr7llumxqhRYIeYckHKiXnXaQAJOIaUXD4K5qYHES7PKPi6jyrrXRQXO
+         nzSEGY9CAdcSeg3yF8+jhnkpsxa87rjpVavzJrZI0i+gDaeC64Cl4VeNMxj60q9GGTWO
+         qIT97ydLNYtlPX6s+JaCQPzaBCHb0GLlHRvjV8xShoJ7STGGH3O0z8vKv41P4lgVcmEi
+         MXirf7S2NbFFLVo2H/naJQJChPajpdcuZiqEzJVtb/5hkGbxkUPMsX7k0lCndS18NYOt
+         4mZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVb6Xxw45TxMhcmyi2TYKvx4kK2A1kJF/NeE7ft2/NCsIgIFgPYMxrOAgubtLQh0DgLN1FpKvb0g5iEYdI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWRtmslhYu5CPRZHCHI9ntTPhcaGqQeRBFGNLGXANkUVDut+V3
+	ReRPvjKzg4zghqG+jjakm+sNcc+T6HHon7Y9HqM/1QD1JAhTz3u/NKnGqWfPqmSqeGcA9keR2SM
+	w4R1ebF8dxtR76b42Afwi5tEJTKoNNe8=
+X-Gm-Gg: ASbGncutr2B7eNbNKRbrdbeUoqLGLBj+SdyXvm0bQxj5Fggi53QI115WxVfhjamMPwA
+	Z5BkDTgnNJA5jEL2JFF8vhTg/Kf4F/MwzlEfqYFbLbfINtK85XIU6b6mSX6G62C3XLzkB+k9ULu
+	sbZmLBnn9+mRFMOHp9PjP7yjFLoovqXzxMmpwW45oZrjtdHdtgS/fLqirWI/LgO0wK7b79GU0CX
+	rvHwuopbyPa6Ek//3thzAraxIgnSLFDAeX6BAp3pqvIQIBwc0bKRSzYoRR11o3bKHj/wSslmdr6
+	b7yp4DF2QMvxI7ko73938ts=
+X-Google-Smtp-Source: AGHT+IF1ABAWiADbaJ5KokPc8XM9rC4iC3qtmBG6QWPxfuxgASEL+w7DHekPkzBrZdqOsGOVj60GWu2qML+pQscx5Vk=
+X-Received: by 2002:a05:6871:1c9:b0:3d3:5ea0:5dd3 with SMTP id
+ 586e51a60fabf-3e833fc8ec2mr1950483fac.10.1762970468945; Wed, 12 Nov 2025
+ 10:01:08 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20251109053921.1320977-2-b.sachdev1904@gmail.com>
+In-Reply-To: <20251109053921.1320977-2-b.sachdev1904@gmail.com>
+From: Andrei Vagin <avagin@gmail.com>
+Date: Wed, 12 Nov 2025 10:00:57 -0800
+X-Gm-Features: AWmQ_blpB86EJX2qEbD8jXOZ0UVykpyfmWXZSJ5d8AtMIY8m5hyNfayw5ES0u5U
+Message-ID: <CANaxB-wjqGDiy523w6s+CDKpC0JbQLsQB6ZipW20jieNPe3G6Q@mail.gmail.com>
+Subject: Re: [PATCH v5] statmount: accept fd as a parameter
+To: Bhavik Sachdev <b.sachdev1904@gmail.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	criu@lists.linux.dev, Aleksa Sarai <cyphar@cyphar.com>, 
+	Pavel Tikhomirov <ptikhomirov@virtuozzo.com>, Jan Kara <jack@suse.cz>, 
+	John Garry <john.g.garry@oracle.com>, Arnaldo Carvalho de Melo <acme@redhat.com>, 
+	"Darrick J . Wong" <djwong@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Ingo Molnar <mingo@kernel.org>, 
+	Alexander Mikhalitsyn <alexander@mihalicyn.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 2025-11-12 at 15:55 +0100, Andy Shevchenko wrote:
-> The series is induced by the similar fixes in viio_trigger_alloc().
-> Basically two things happen here: 1) add missed mutex_destroy()
-> calls, and 2) refactor to make sure we clean resources with put_device()
-> when appropriate.
->=20
-> Andy Shevchenko (3):
-> =C2=A0 iio: core: add missing mutex_destroy in iio_dev_release()
-> =C2=A0 iio: core: Clean up device correctly on iio_device_alloc() failure
-> =C2=A0 iio: core: Replace lockdep_set_class() + mutex_init() by combined =
-call
->=20
-> =C2=A0drivers/iio/industrialio-core.c | 18 +++++++++++-------
-> =C2=A01 file changed, 11 insertions(+), 7 deletions(-)
+On Sat, Nov 8, 2025 at 9:40=E2=80=AFPM Bhavik Sachdev <b.sachdev1904@gmail.=
+com> wrote:
+>
+> Extend `struct mnt_id_req` to take in a fd and introduce STATMOUNT_BY_FD
+> flag. When a valid fd is provided and STATMOUNT_BY_FD is set, statmount
+> will return mountinfo about the mount the fd is on.
 
-LGTM,
+It would be great to add self-tests for this new feature in
+`tools/testing/selftests/filesystems/statmount/`. These tests would
+serve two purposes:
+demonstrate the functionality of the new feature and ensure its
+continued stability
+against future changes.
 
-Reviewed-by: Nuno S=C3=A1 <nuno.sa@analog.com>
+>
+> This even works for "unmounted" mounts (mounts that have been umounted
+> using umount2(mnt, MNT_DETACH)), if you have access to a file descriptor
+> on that mount. These "umounted" mounts will have no mountpoint hence we
+> return "[unmounted]" and the mnt_ns_id to be 0.
+>
+> Co-developed-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+> Signed-off-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+> Signed-off-by: Bhavik Sachdev <b.sachdev1904@gmail.com>
+> ---
+> We would like to add support for checkpoint/restoring file descriptors
+> open on these "unmounted" mounts to CRIU (Checkpoint/Restore in
+> Userspace) [1].
+>
+> Currently, we have no way to get mount info for these "unmounted" mounts
+> since they do appear in /proc/<pid>/mountinfo and statmount does not
+> work on them, since they do not belong to any mount namespace.
+>
+> This patch helps us by providing a way to get mountinfo for these
+> "unmounted" mounts by using a fd on the mount.
+>
+> Changes from v4 [2] to v5:
+> Check only for s->root.mnt to be NULL instead of checking for both
+> s->root.mnt and s->root.dentry (I did not find a case where only one of
+> them would be NULL).
+>
+> * Only allow system root (CAP_SYS_ADMIN in init_user_ns) to call
+> statmount() on fd's on "unmounted" mounts. We (mostly Pavel) spent some
+> time thinking about how our previous approach (of checking the opener's
+> file credentials) caused problems.
+
+Probably a bit late to the discussion, but I think it is worth describing a=
+ll
+these aspects in the commit message.
+
+What specific information reported by `statmount` should be protected by
+`CAP_SYS_ADMIN`? We have some precedents where similar information is avail=
+able
+without capability checks:
+* `statfs` can be called on any file descriptor.
+* `/proc/<PID>/mountinfo` provides mount information for a process without
+  requiring any special capabilities.
+
+Is protecting *all* `statmount` information truly necessary, or could we be
+more selective?
+
+>
+> Please take a look at the linked pictures they describe everything more
+> clearly.
+>
+> Case 1: A fd is on a normal mount (Link to Picture: [3])
+> Consider, a situation where we have two processes P1 and P2 and a file
+> F1. F1 is opened on mount ns M1 by P1. P1 is nested inside user
+> namespace U1 and U2. P2 is also in U1. P2 is also in a pid namespace and
+> mount namespace separate from M1.
+>
+> P1 sends F1 to P2 (using a unix socket). But, P2 is unable to call
+> statmount() on F1 because since it is a separate pid and mount
+> namespace. This is good and expected.
+>
+> Case 2: A fd is on a "unmounted" mount (Link to Picture: [4])
+> Consider a similar situation as Case 1. But now F1 is on a mounted that
+> has been "unmounted". Now, since we used openers credentials to check
+> for permissions P2 ends up having the ability call statmount() and get
+> mount info for this "unmounted" mount.
+>
+> Hence, It is better to restrict the ability to call statmount() on fds
+> on "unmounted" mounts to system root only (There could also be other
+> cases than the one described above).
+>
+> Changes from v3 [5] to v4:
+> * Change the string returned when there is no mountpoint to be
+> "[unmounted]" instead of "[detached]".
+> * Remove the new DEFINE_FREE put_file and use the one already present in
+> include/linux/file.h (fput) [6].
+> * Inside listmount consistently pass 0 in flags to copy_mnt_id_req and
+> prepare_klistmount()->grab_requested_mnt_ns() and remove flags from the
+> prepare_klistmount prototype.
+> * If STATMOUNT_BY_FD is set, check for mnt_ns_id =3D=3D 0 && mnt_id =3D=
+=3D 0.
+>
+> Changes from v2 [7] to v3:
+> * Rename STATMOUNT_FD flag to STATMOUNT_BY_FD.
+> * Fixed UAF bug caused by the reference to fd_mount being bound by scope
+> of CLASS(fd_raw, f)(kreq.fd) by using fget_raw instead.
+> * Reused @spare parameter in mnt_id_req instead of adding new fields to
+> the struct.
+>
+> Changes from v1 [8] to v2:
+> v1 of this patchset, took a different approach and introduced a new
+> umount_mnt_ns, to which "unmounted" mounts would be moved to (instead of
+> their namespace being NULL) thus allowing them to be still available via
+> statmount.
+>
+> Introducing umount_mnt_ns complicated namespace locking and modified
+> performance sensitive code [9] and it was agreed upon that fd-based
+> statmount would be better.
+>
+> This code is also available on github [10].
+>
+> [1]: https://github.com/checkpoint-restore/criu/pull/2754
+> [2]: https://lore.kernel.org/all/20251029052037.506273-2-b.sachdev1904@gm=
+ail.com/
+> [3]: https://github.com/bsach64/linux/blob/statmount-fd-v5/fd_on_normal_m=
+ount.png
+> [4]: https://github.com/bsach64/linux/blob/statmount-fd-v5/file_on_unmoun=
+ted_mount.png
+> [5]: https://lore.kernel.org/all/20251024181443.786363-1-b.sachdev1904@gm=
+ail.com/
+> [6]: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/t=
+ree/include/linux/file.h#n97
+> [7]: https://lore.kernel.org/linux-fsdevel/20251011124753.1820802-1-b.sac=
+hdev1904@gmail.com/
+> [8]: https://lore.kernel.org/linux-fsdevel/20251002125422.203598-1-b.sach=
+dev1904@gmail.com/
+> [9]: https://lore.kernel.org/linux-fsdevel/7e4d9eb5-6dde-4c59-8ee3-358233=
+f082d0@virtuozzo.com/
+> [10]: https://github.com/bsach64/linux/tree/statmount-fd-v5
+> ---
+>  fs/namespace.c             | 101 ++++++++++++++++++++++++++-----------
+>  include/uapi/linux/mount.h |   7 ++-
+>  2 files changed, 77 insertions(+), 31 deletions(-)
+>
+> diff --git a/fs/namespace.c b/fs/namespace.c
+> index d82910f33dc4..153c0ea85386 100644
+> --- a/fs/namespace.c
+> +++ b/fs/namespace.c
+> @@ -5207,6 +5207,12 @@ static int statmount_mnt_root(struct kstatmount *s=
+, struct seq_file *seq)
+>         return 0;
+>  }
+>
+> +static int statmount_mnt_point_unmounted(struct kstatmount *s, struct se=
+q_file *seq)
+> +{
+> +       seq_puts(seq, "[unmounted]");
+> +       return 0;
+> +}
+> +
+>  static int statmount_mnt_point(struct kstatmount *s, struct seq_file *se=
+q)
+>  {
+>         struct vfsmount *mnt =3D s->mnt;
+> @@ -5262,7 +5268,10 @@ static int statmount_sb_source(struct kstatmount *=
+s, struct seq_file *seq)
+>  static void statmount_mnt_ns_id(struct kstatmount *s, struct mnt_namespa=
+ce *ns)
+>  {
+>         s->sm.mask |=3D STATMOUNT_MNT_NS_ID;
+> -       s->sm.mnt_ns_id =3D ns->ns.ns_id;
+> +       if (ns)
+> +               s->sm.mnt_ns_id =3D ns->ns.ns_id;
+> +       else
+> +               s->sm.mnt_ns_id =3D 0;
+>  }
+>
+>  static int statmount_mnt_opts(struct kstatmount *s, struct seq_file *seq=
+)
+> @@ -5431,7 +5440,10 @@ static int statmount_string(struct kstatmount *s, =
+u64 flag)
+>                 break;
+>         case STATMOUNT_MNT_POINT:
+>                 offp =3D &sm->mnt_point;
+> -               ret =3D statmount_mnt_point(s, seq);
+> +               if (!s->root.mnt)
+> +                       ret =3D statmount_mnt_point_unmounted(s, seq);
+> +               else
+> +                       ret =3D statmount_mnt_point(s, seq);
+>                 break;
+>         case STATMOUNT_MNT_OPTS:
+>                 offp =3D &sm->mnt_opts;
+> @@ -5572,29 +5584,33 @@ static int grab_requested_root(struct mnt_namespa=
+ce *ns, struct path *root)
+>
+>  /* locks: namespace_shared */
+>  static int do_statmount(struct kstatmount *s, u64 mnt_id, u64 mnt_ns_id,
+> -                       struct mnt_namespace *ns)
+> +                       struct mnt_namespace *ns, unsigned int flags)
+>  {
+>         struct mount *m;
+>         int err;
+>
+>         /* Has the namespace already been emptied? */
+> -       if (mnt_ns_id && mnt_ns_empty(ns))
+> +       if (!(flags & STATMOUNT_BY_FD) && mnt_ns_id && mnt_ns_empty(ns))
+>                 return -ENOENT;
+>
+> -       s->mnt =3D lookup_mnt_in_ns(mnt_id, ns);
+> -       if (!s->mnt)
+> -               return -ENOENT;
+> +       if (!(flags & STATMOUNT_BY_FD)) {
+> +               s->mnt =3D lookup_mnt_in_ns(mnt_id, ns);
+> +               if (!s->mnt)
+> +                       return -ENOENT;
+> +       }
+>
+> -       err =3D grab_requested_root(ns, &s->root);
+> -       if (err)
+> -               return err;
+> +       if (ns) {
+> +               err =3D grab_requested_root(ns, &s->root);
+> +               if (err)
+> +                       return err;
+> +       }
+>
+>         /*
+>          * Don't trigger audit denials. We just want to determine what
+>          * mounts to show users.
+>          */
+>         m =3D real_mount(s->mnt);
+> -       if (!is_path_reachable(m, m->mnt.mnt_root, &s->root) &&
+> +       if (ns && !is_path_reachable(m, m->mnt.mnt_root, &s->root) &&
+>             !ns_capable_noaudit(ns->user_ns, CAP_SYS_ADMIN))
+>                 return -EPERM;
+>
+> @@ -5718,7 +5734,7 @@ static int prepare_kstatmount(struct kstatmount *ks=
+, struct mnt_id_req *kreq,
+>  }
+>
+>  static int copy_mnt_id_req(const struct mnt_id_req __user *req,
+> -                          struct mnt_id_req *kreq)
+> +                          struct mnt_id_req *kreq, unsigned int flags)
+>  {
+>         int ret;
+>         size_t usize;
+> @@ -5736,11 +5752,16 @@ static int copy_mnt_id_req(const struct mnt_id_re=
+q __user *req,
+>         ret =3D copy_struct_from_user(kreq, sizeof(*kreq), req, usize);
+>         if (ret)
+>                 return ret;
+> -       if (kreq->spare !=3D 0)
+> -               return -EINVAL;
+> -       /* The first valid unique mount id is MNT_UNIQUE_ID_OFFSET + 1. *=
+/
+> -       if (kreq->mnt_id <=3D MNT_UNIQUE_ID_OFFSET)
+> -               return -EINVAL;
+> +       if (flags & STATMOUNT_BY_FD) {
+> +               if (kreq->mnt_id || kreq->mnt_ns_id)
+> +                       return -EINVAL;
+> +       } else {
+> +               if (kreq->fd !=3D 0)
+> +                       return -EINVAL;
+> +               /* The first valid unique mount id is MNT_UNIQUE_ID_OFFSE=
+T + 1. */
+> +               if (kreq->mnt_id <=3D MNT_UNIQUE_ID_OFFSET)
+> +                       return -EINVAL;
+> +       }
+>         return 0;
+>  }
+>
+> @@ -5749,20 +5770,21 @@ static int copy_mnt_id_req(const struct mnt_id_re=
+q __user *req,
+>   * that, or if not simply grab a passive reference on our mount namespac=
+e and
+>   * return that.
+>   */
+> -static struct mnt_namespace *grab_requested_mnt_ns(const struct mnt_id_r=
+eq *kreq)
+> +static struct mnt_namespace *grab_requested_mnt_ns(const struct mnt_id_r=
+eq *kreq,
+> +                                                  unsigned int flags)
+>  {
+>         struct mnt_namespace *mnt_ns;
+>
+> -       if (kreq->mnt_ns_id && kreq->spare)
+> +       if (kreq->mnt_ns_id && kreq->fd)
+>                 return ERR_PTR(-EINVAL);
+
+>
+>         if (kreq->mnt_ns_id)
+>                 return lookup_mnt_ns(kreq->mnt_ns_id);
+>
+> -       if (kreq->spare) {
+> +       if (!(flags & STATMOUNT_BY_FD) && kreq->fd) {
+>                 struct ns_common *ns;
+>
+> -               CLASS(fd, f)(kreq->spare);
+> +               CLASS(fd, f)(kreq->fd);
+>                 if (fd_empty(f))
+>                         return ERR_PTR(-EBADF);
+>
+> @@ -5788,23 +5810,39 @@ SYSCALL_DEFINE4(statmount, const struct mnt_id_re=
+q __user *, req,
+>  {
+>         struct mnt_namespace *ns __free(mnt_ns_release) =3D NULL;
+>         struct kstatmount *ks __free(kfree) =3D NULL;
+> +       struct file *file_from_fd __free(fput) =3D NULL;
+> +       struct vfsmount *fd_mnt;
+>         struct mnt_id_req kreq;
+>         /* We currently support retrieval of 3 strings. */
+>         size_t seq_size =3D 3 * PATH_MAX;
+>         int ret;
+>
+> -       if (flags)
+> +       if (flags & ~STATMOUNT_BY_FD)
+>                 return -EINVAL;
+>
+> -       ret =3D copy_mnt_id_req(req, &kreq);
+> +       ret =3D copy_mnt_id_req(req, &kreq, flags);
+>         if (ret)
+>                 return ret;
+>
+> -       ns =3D grab_requested_mnt_ns(&kreq);
+> -       if (!ns)
+> -               return -ENOENT;
+> +       if (flags & STATMOUNT_BY_FD) {
+> +               file_from_fd =3D fget_raw(kreq.fd);
+> +               if (!file_from_fd)
+> +                       return -EBADF;
+> +
+> +               fd_mnt =3D file_from_fd->f_path.mnt;
+> +               ns =3D real_mount(fd_mnt)->mnt_ns;
+> +               if (ns)
+> +                       refcount_inc(&ns->passive);
+> +               else
+> +                       if (!capable(CAP_SYS_ADMIN))
+> +                               return -ENOENT;
+
+We can consider moving this code into grab_requested_mnt_ns.
+
+> +       } else {
+> +               ns =3D grab_requested_mnt_ns(&kreq, flags);
+
+
+Actually, `grab_requested_mnt_ns` returns an error code. I found this while
+reviewing the patch. The issue was fixed in
+https://www.spinics.net/lists/kernel/msg5921099.html
+
+> +               if (!ns)
+> +                       return -ENOENT;
+> +       }
+>
+> -       if (kreq.mnt_ns_id && (ns !=3D current->nsproxy->mnt_ns) &&
+> +       if (ns && (ns !=3D current->nsproxy->mnt_ns) &&
+>             !ns_capable_noaudit(ns->user_ns, CAP_SYS_ADMIN))
+>                 return -ENOENT;
+>
+> @@ -5817,8 +5855,11 @@ SYSCALL_DEFINE4(statmount, const struct mnt_id_req=
+ __user *, req,
+>         if (ret)
+>                 return ret;
+>
+> +       if (flags & STATMOUNT_BY_FD)
+> +               ks->mnt =3D fd_mnt;
+> +
+>         scoped_guard(namespace_shared)
+> -               ret =3D do_statmount(ks, kreq.mnt_id, kreq.mnt_ns_id, ns)=
+;
+> +               ret =3D do_statmount(ks, kreq.mnt_id, kreq.mnt_ns_id, ns,=
+ flags);
+>
+>         if (!ret)
+>                 ret =3D copy_statmount_to_user(ks);
+> @@ -5927,7 +5968,7 @@ static inline int prepare_klistmount(struct klistmo=
+unt *kls, struct mnt_id_req *
+>         if (!kls->kmnt_ids)
+>                 return -ENOMEM;
+>
+> -       kls->ns =3D grab_requested_mnt_ns(kreq);
+> +       kls->ns =3D grab_requested_mnt_ns(kreq, 0);
+>         if (!kls->ns)
+>                 return -ENOENT;
+>
+> @@ -5957,7 +5998,7 @@ SYSCALL_DEFINE4(listmount, const struct mnt_id_req =
+__user *, req,
+>         if (!access_ok(mnt_ids, nr_mnt_ids * sizeof(*mnt_ids)))
+>                 return -EFAULT;
+>
+> -       ret =3D copy_mnt_id_req(req, &kreq);
+> +       ret =3D copy_mnt_id_req(req, &kreq, 0);
+>         if (ret)
+>                 return ret;
+>
+> diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
+> index 7fa67c2031a5..3eaa21d85531 100644
+> --- a/include/uapi/linux/mount.h
+> +++ b/include/uapi/linux/mount.h
+> @@ -197,7 +197,7 @@ struct statmount {
+>   */
+>  struct mnt_id_req {
+>         __u32 size;
+> -       __u32 spare;
+> +       __u32 fd;
+>         __u64 mnt_id;
+>         __u64 param;
+>         __u64 mnt_ns_id;
+> @@ -232,4 +232,9 @@ struct mnt_id_req {
+>  #define LSMT_ROOT              0xffffffffffffffff      /* root mount */
+>  #define LISTMOUNT_REVERSE      (1 << 0) /* List later mounts first */
+>
+> +/*
+> + * @flag bits for statmount(2)
+> + */
+> +#define STATMOUNT_BY_FD                0x0000001U /* want mountinfo for =
+given fd */
+> +
+>  #endif /* _UAPI_LINUX_MOUNT_H */
+> --
+> 2.51.1
+>
 
