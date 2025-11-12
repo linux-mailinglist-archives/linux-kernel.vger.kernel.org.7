@@ -1,365 +1,185 @@
-Return-Path: <linux-kernel+bounces-898265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C21EC54B63
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 23:27:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B9ECBC54B60
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 23:27:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1FDE74E0359
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 22:27:23 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7D4DD4E0253
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 22:27:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43A3D2E2DEF;
-	Wed, 12 Nov 2025 22:27:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED3922E9EB1;
+	Wed, 12 Nov 2025 22:27:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="l4pQ9z+w"
-Received: from MW6PR02CU001.outbound.protection.outlook.com (mail-westus2azon11012003.outbound.protection.outlook.com [52.101.48.3])
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="txeB+liG"
+Received: from mx0b-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7371F35CBB2
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 22:27:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.48.3
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762986440; cv=fail; b=FYYLJ6q++fkid+3NqP1ohIcTE2hMfuyWJT3qkDtzvgvkdiwU7/Qozh8zrvJv2WqSmuhXs8P9y1diZt+bIxk71ZMO2CbUV6Qe4ehXvB/LvS0uS1MzwdRqt76sLw/5lQSmDKWUI/twuVqmXuIS9cKzG4SYi3gj1iOlW9Sw+djyA1U=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762986440; c=relaxed/simple;
-	bh=u5bSmVGqksDvXUMgCP8jH8n+HxBGlydovgwtXXckhu8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fYHe5wC1h54tYUXDLXWEFu3K/GIiMA9X/i8yRuIBL9LD4ptjilR8ufvcVlt+6yKhTR//YhytQJ6ggW4LyX+HNG1Ubg8X/gv9f5vglrf/yZBDmlrqSrPAdATPdBV8Ng1s3eCAQvOQ0d8cMuk297WCuFgd2MG9TgiDOqqeOOnwoRU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=l4pQ9z+w; arc=fail smtp.client-ip=52.101.48.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=PUc8IhiVlhPf6fzAZ5ZhU1X8oA3IbD1q0GY/a1pqoiy8owg84p4DT6nyYJ13SauD2fsxWdx8SJfNHvp1/mXD6Nz9SMVuzVNBPmROYd0DfVK1tKgDWdZwsugA2iwDRXKmaWiEL8Qtor9zWBgP47alN8lmrQgnT2a0RDy371aIuQybTXQHpTtBy5wCvZ9XQd2ORRBsGBpNc5svMoN+NldWm9XZBWtOHk/DUxJDbo61xLu3BSXI38/C7xWJ5VoMNziZhQIoofnAjlZxdPS8Ip1uWn5PX8isy+f8OOHRySw7aYYk7q1cJ9uSbZuErRs1t4EhqelIDbLb3zMDhfAPnkhZyg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=W9awpognap/YT6iIJNxCWqkU+X3OWts3FBoskuj8cxY=;
- b=XgGgHoYpYTz2pQTpY4rb4j5Jucq3TPsBFu9f3Nnlac7aYb4uTDJLdT6k7sShV7N9ueFP58d5fh3+Fer28QfY2Uy5PGU7QSsbZMvFjDECAb3sB6+AIoMz8oSD5ePTIl9qCON4C2NW5Ux9PxJbHiKYzCbViE8XiAgH0MMmMfxKNkLD0g8DY+X/OgxyetxAlec1l3DaySJvViITlb9JGfZ8z1Ac7uSDyKouZ23IKJkDtcrn53oZeyUX6XIEaKe0F2WhF9ydR2BOtBuAs4sja4EObIB9BvZHi8qJj4Cim+LouYE/n98hsjbAcUyfFz3hI/qMuuZUw6jvoe+uYNNyAcJRdw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=ffwll.ch smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=W9awpognap/YT6iIJNxCWqkU+X3OWts3FBoskuj8cxY=;
- b=l4pQ9z+wS2pAoPOHXohRXqdN9cxPmrT7IxO86wSXWHJpZ+p67mGkuiifBd0g99F9Jwbi3BNINUjSlEsqWlssxgUNggVwrG7BDv1iQ0eL8k40RJezASWoRJtnZ4W2tYIVqtIVJCqMQ18wpcDtCHIPen3oAIWqqj6X/r7qfb5t4qM=
-Received: from SJ0PR13CA0036.namprd13.prod.outlook.com (2603:10b6:a03:2c2::11)
- by SA1PR12MB7318.namprd12.prod.outlook.com (2603:10b6:806:2b3::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Wed, 12 Nov
- 2025 22:27:12 +0000
-Received: from MWH0EPF000971E8.namprd02.prod.outlook.com
- (2603:10b6:a03:2c2:cafe::e1) by SJ0PR13CA0036.outlook.office365.com
- (2603:10b6:a03:2c2::11) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9343.5 via Frontend Transport; Wed,
- 12 Nov 2025 22:27:12 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- MWH0EPF000971E8.mail.protection.outlook.com (10.167.243.68) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9320.13 via Frontend Transport; Wed, 12 Nov 2025 22:27:11 +0000
-Received: from dogwood-dvt-marlim.amd.com (10.180.168.240) by
- satlexmb07.amd.com (10.181.42.216) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Wed, 12 Nov 2025 14:27:07 -0800
-From: Mario Limonciello <mario.limonciello@amd.com>
-To: Simona Vetter <simona@ffwll.ch>
-CC: Alex Deucher <alexander.deucher@amd.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, David Airlie
-	<airlied@gmail.com>, "open list:RADEON and AMDGPU DRM DRIVERS"
-	<amd-gfx@lists.freedesktop.org>, "open list:DRM DRIVERS"
-	<dri-devel@lists.freedesktop.org>, open list <linux-kernel@vger.kernel.org>,
-	Mario Limonciello <mario.limonciello@amd.com>, Simona Vetter
-	<simona.vetter@ffwll.ch>, Harry Wentland <Harry.Wentland@amd.com>
-Subject: [PATCH] drm/amd: Move adaptive backlight modulation property to drm core
-Date: Wed, 12 Nov 2025 16:26:46 -0600
-Message-ID: <20251112222646.495189-1-mario.limonciello@amd.com>
-X-Mailer: git-send-email 2.51.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A083C35CBB2;
+	Wed, 12 Nov 2025 22:27:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762986430; cv=none; b=W6i3cjxwMmURmpPmC935wQZiSrccFt95Fxt3VcW2SdeqNj5rUgiB3QQTF8jdP/Q69KfK+x3mmkkRy/mcWOzRpdQyz+XOfZ++gtzsIq9dCujoju/wVUJsUgNn9PAK2Alj+TIUvmfpsE+j0s8LN7ZZF6/9PD/172ugri5nBguS7x4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762986430; c=relaxed/simple;
+	bh=AabDN43ezE3GV8RzY1PXvs7ghSgatcrk8Z3ZbOkIUdQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=MuUvxzrs0mVZgSH7PDEuUpHNcHEeadqZ5/+pmWabZgpyn8BcyylaF7qfLrhD+OIbG3FViW+xGkwgMQEOYMik81Vb791ZogTlPOXBCRcnuogCNDV7PKm5KR8rQe5d/ycDBWq5rz/DQgLJPmdG9lI9T38p4ANrkxYa7EPtsJrPxkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=txeB+liG; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0375855.ppops.net [127.0.0.1])
+	by mx0b-00128a01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5ACKWPGh2490438;
+	Wed, 12 Nov 2025 17:27:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=ubtAnzLVB9storQ/KZhgdLsw3IP
+	IQe2Kbjl7FlWhP90=; b=txeB+liGKT7P6bp9/hsXk/fUgIWXgn+bRe0JzhmsAMp
+	QCZxI+RTuoCDLtXC/vCc19ET1wBIvO5AvrQ6D96tBpVgepmTuzqPIS1CX/mLbD3M
+	+tBz+QnUrhqCIGJosC8Mbu79nZ1vtJsFVuHJQo0rRc3pZUiDOf7++XmxSYPdleqC
+	9IJOoD3/JkDTEigw16DTDK+cpngewjde2LgPdedz1iw/9CA4WaL54ag5MNvWd0s4
+	LGyL5mASsWdTuLHdRWhY0kZaOn5vm89ViaQh2uebXeLGZGeJ/VYpj90VKu17zncV
+	kyxm3NWpFciyEK3K8j8rvpZ05UH8jCT7xcAhJZnmpgg==
+Received: from nwd2mta3.analog.com ([137.71.173.56])
+	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 4acpdkc2xw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Nov 2025 17:27:06 -0500 (EST)
+Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
+	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 5ACMR5In031439
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 12 Nov 2025 17:27:05 -0500
+Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by ASHBMBX8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.37; Wed, 12 Nov
+ 2025 17:27:05 -0500
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server id 15.2.1748.37 via Frontend
+ Transport; Wed, 12 Nov 2025 17:27:05 -0500
+Received: from HYB-DlYm71t3hSl.ad.analog.com ([10.66.6.192])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 5ACMQuCA002617;
+	Wed, 12 Nov 2025 17:26:58 -0500
+From: Jorge Marques <jorge.marques@analog.com>
+Date: Wed, 12 Nov 2025 23:26:49 +0100
+Subject: [PATCH] Input: adxl34x: Add warning on shared compatible with
+ adxl345
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: satlexmb08.amd.com (10.181.42.217) To satlexmb07.amd.com
- (10.181.42.216)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MWH0EPF000971E8:EE_|SA1PR12MB7318:EE_
-X-MS-Office365-Filtering-Correlation-Id: e375af5b-5060-40de-d7fd-08de223a9feb
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|36860700013|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?+v7Xmr3f4QW+gLEFCUjTbw1P1AohS9s0b2M3yAIxcF095s36ZpspvuJT/2/v?=
- =?us-ascii?Q?Bx/Je01WIVMwf5VnlyQEq5YwT9RhRgSUoDCA6wKAaTA6d7Oe2hPc4erpq8WL?=
- =?us-ascii?Q?wO34bNcd2n2u6R1jDOJzrd4LpnkO/fl39SGWEDqJskN1DyOaUzeZRLuEBJWw?=
- =?us-ascii?Q?/N3CkrDJ/Wt3QUnBfpW1ElW5ZGBu1IKTIX0cGO+6VtUtujywVret3+d1CMro?=
- =?us-ascii?Q?QMm0xTD72IU8a156ubYZ94cC67U5B+dGh4VsPnR/2dwiiGDhkm43jOM/XyVi?=
- =?us-ascii?Q?O3UUXNby8y65R+Sx6nwKh/gssxIHAFx7p+lAO3ilguIe+45fILidefygXEm8?=
- =?us-ascii?Q?HzjcOipKqbZrKZ+Vf7nxwjwyeOlg0ylwuVJo/s+50q7NwquxKEiLjV1usPLK?=
- =?us-ascii?Q?0NqJdk/vKh/FfBpBu6I2DfZFoIptcqyEcFx1MdfpZHtydBoljVwVskd1q2VT?=
- =?us-ascii?Q?7F7DFaRL9Z0KMBg3RXlK2bTFTXkYHjLqkg1So+Y+Fv5tm43khhD/H1TzCZ5V?=
- =?us-ascii?Q?CiWtho5TkA1hcrq5QlVwBfKJwqgOr5Dj8Mp5j5VAutXkDVfdWdfl6nhgv+dR?=
- =?us-ascii?Q?iyRGYIhP2fDaGvPJ8Vz8hwuXPRHdGIc6lfzIJKqMUPUjI8RHQvGjetIgxYy7?=
- =?us-ascii?Q?LPKuSCza2Jm20xPDqwcnkmXNdI1t0Ex+5yXrlpsCG4Di0iS7mm41bkIEUcqG?=
- =?us-ascii?Q?NToo+xRVPHRsCIlgRwgIJgcOdVh/EtTHeFUxEe7Uy1d5qDWi23mmxjFEihAA?=
- =?us-ascii?Q?fjXRpvoFSMAXSSgrWWMHWzMGsXHdIEpX/LdDmPUeQbXDcLD4D1jOtTGGLcfu?=
- =?us-ascii?Q?OIBC7SAj5c/QpJ44BAFLGHdM3In4Eq8exyG4gXYiVYo05YbdBNlzT6tJSqKg?=
- =?us-ascii?Q?pMCgZ/C/u2yZZ8GlzuSDnDmMGjzkhyk5bGRzkrxhAmH7mRDmuti5ieyt/MEo?=
- =?us-ascii?Q?66P93nUoV/OZ57ADDmjPU+lGYyoVRxwWVrgZNn1YAtNyCGkuWhtuN5gMhUC1?=
- =?us-ascii?Q?RuCHaiGcFA+RpU21zvwRxy5T5sxl55OkFEqjVZ3YzLfFaNuh5UA5FU9XeCPr?=
- =?us-ascii?Q?KSzBdPvvC9vviFAsmlnyAO1MYRytpIrdrngC8WiiK9Qb9oUBxr9229OLuRuM?=
- =?us-ascii?Q?Vm/585ArYjltlpKidu1IP3ZpwfPlade6ekFpEaS7AjzJQqI7J3P9D5sQP8XN?=
- =?us-ascii?Q?CxgtVptx6y38Z/BaXdcdztCkvmETh1DaXLRdoyR2NJnfWKStw6lwppn4yeNy?=
- =?us-ascii?Q?in1Z3W3a5jqo3pVbBvQFbNa0dWZ4JD2dJhP5sUaCqY3yR1g/0vnv1EvxSsz3?=
- =?us-ascii?Q?8u8JAkL+fa8L6chtIb7UrQ5CGe+8mDOu6xWeuiwWFOB79W8GoARd3Etg9bZA?=
- =?us-ascii?Q?tjBDIxuifaE433Va3bSOsn25cnejOoRojT0eF3EIxBcqelLy0IChdYMqZ+Ns?=
- =?us-ascii?Q?wm6T87qQovEEvN19n06eBO6PL/ikaczhyJOxlKcBUkkpnvVwFlXTw8PTY3VS?=
- =?us-ascii?Q?Mf+6ijDEUxauEr5DMXxd8rakytCSIZjhzT25fOyoQZmzHjTbTy2Bp3GPpmFw?=
- =?us-ascii?Q?Ry69y+X0PbuyJVuMYz8=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(36860700013)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2025 22:27:11.8330
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e375af5b-5060-40de-d7fd-08de223a9feb
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	MWH0EPF000971E8.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB7318
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20251112-input-adxl34x-v1-1-b7e21b3cea59@analog.com>
+X-B4-Tracking: v=1; b=H4sIAKgJFWkC/z3MQQ6CMBCF4auQWTvGFgrCynsYFrUdsUlpsQUkI
+ dzdBozL/yXvWyFSMBShyVYINJtovEvBThmol3QdodGpgV+4YIxxNG6YRpR6sXmxIKsrXomcuCo
+ 5pM8Q6GmW3bu3Rwd6T4kdjxF6ilHubJPt6CVnP06gtNZ//njvNc4MGSpdiqqoH/Jaq5t00vrur
+ HwP7bZ9Aem6ya3BAAAA
+X-Change-ID: 20251112-input-adxl34x-1972753e2c62
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+CC: <linux-input@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Jorge
+ Marques <jorge.marques@analog.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1762986416; l=2613;
+ i=jorge.marques@analog.com; s=20250303; h=from:subject:message-id;
+ bh=AabDN43ezE3GV8RzY1PXvs7ghSgatcrk8Z3ZbOkIUdQ=;
+ b=Kw3lSnw7KWRW7Tby5ue2tISHMiwHONG5qOIQ68uIhcIrYamUhr1oSZ0wWXRjDE+f0ZTlTkuvZ
+ mnMS1/j07ndCQPebxWYwfwUwN1GIw/NX7O9JuIJwZ8BOrvK5nLSMSgj
+X-Developer-Key: i=jorge.marques@analog.com; a=ed25519;
+ pk=NUR1IZZMH0Da3QbJ2tBSznSPVfRpuoWdhBzKGSpAdbg=
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Authority-Analysis: v=2.4 cv=AYu83nXG c=1 sm=1 tr=0 ts=691509ba cx=c_pps
+ a=PpDZqlmH/M8setHirZLBMw==:117 a=PpDZqlmH/M8setHirZLBMw==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=VwQbUJbxAAAA:8 a=gAnH3GRIAAAA:8 a=8h9VZS2awgx57zd0YUAA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEyMDE4MSBTYWx0ZWRfX1UAFwXO4XrYx
+ 77c+IvEj4wDeqLnnqBV2Kq152/YbG6hpRWtx8UZMCPtBzx8Mn5iEtyEPZAETloUjB2rlMhSOIqU
+ O178/KNOa+SJDp/UnDQ7IqX3i1c7wAZ8jro2jO+Ch4/euphwD2IZ4vez+XUhvvY4oIvMrrI91xB
+ W0yP+41M+EBcFJ1l+6cPBrUYu3j3ZP5UMbcMUw73e2xJEOAj9CWqQqQPOtAKW/jMTI/UKm2WSy8
+ 8h0YghpMEp1Y8MzAiXtjWB0JrYot5gRWUt+cUmlgAUWxz01OZL6BYKaxJrhoL4Yp9+bgiso6GaQ
+ xjEBebf36OsZKQfjcDTZQLFymckFY0mcnEJNeth+SaMJrEK7aqNlmFCnSRJ9zLbqSumCX8If13Y
+ VDTz4stXGRj/nsxXb1Vk0ddNFCJz4w==
+X-Proofpoint-GUID: g6R4f4Y_zYxN9ryqAn1oQ-JJmDLA_Ven
+X-Proofpoint-ORIG-GUID: g6R4f4Y_zYxN9ryqAn1oQ-JJmDLA_Ven
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-12_06,2025-11-12_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 malwarescore=0 spamscore=0 bulkscore=0 adultscore=0
+ clxscore=1011 suspectscore=0 priorityscore=1501 impostorscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511120181
 
-The adaptive backlight modulation property is supported on AMD hardware but
-compositors should be aware of it in standard DRM property documentation.
+INPUT_ADXL34X and ADXL345 share compatibles, previously it
+wasn't possible to compile ADXL345 if INPUT_ADXL34X was enabled.
+Changed to allow both as modules instead, then the user should blacklist
+to block loading one, if his config selects both.
 
-Move the helper to create the property and documentation into DRM.
-
-Suggested-by: Simona Vetter <simona.vetter@ffwll.ch>
-Reviewed-by: Harry Wentland <Harry.Wentland@amd.com>
-Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+Signed-off-by: Jorge Marques <jorge.marques@analog.com>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_display.c | 69 +++------------------
- drivers/gpu/drm/amd/amdgpu/amdgpu_display.h |  7 ---
- drivers/gpu/drm/drm_connector.c             | 63 +++++++++++++++++++
- include/drm/drm_connector.h                 |  8 +++
- 4 files changed, 80 insertions(+), 67 deletions(-)
+There are two drivers for the compatible:
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
-index f8b35c487b6c..3d840bef77bf 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
-@@ -1363,67 +1363,9 @@ static const struct drm_prop_enum_list amdgpu_dither_enum_list[] = {
- 	{ AMDGPU_FMT_DITHER_ENABLE, "on" },
- };
+- adi,adxl345
+
+* IIO:
+  drivers/iio/accel/adxl345_core.c
+  drivers/iio/accel/adxl345_spi.c
+  drivers/iio/accel/adxl345_i2c.c
+* Inputs:
+  drivers/input/misc/adxl34x-spi.c
+  drivers/input/misc/adxl34x-i2c.c
+
+To disallows both being complied, the depends INPUT_ADXL34X=n
+was added to ADXL345 symbols. However, it should be possible to compile
+both as modules, then blacklist one of them in the /etc/modprobe.d/blacklist.conf
+file.
+So patch
+https://lore.kernel.org/linux-iio/20251112-adxl345-allow-adxl34x-mod-v2-1-5b1561eae5a0@analog.com/T/#u
+changes the rule to !(INPUT_ADXL34X) to allow both as modules, but still
+disallow INPUT_ADXL34X to be built-in and ADXL345 as module.
+
+Add warning to the input Kconfig to inform users.
+---
+ drivers/input/misc/Kconfig | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/input/misc/Kconfig b/drivers/input/misc/Kconfig
+index cc2558630..df5c425c9 100644
+--- a/drivers/input/misc/Kconfig
++++ b/drivers/input/misc/Kconfig
+@@ -769,7 +769,9 @@ config INPUT_ADXL34X_I2C
+ 	  Say Y here if you have ADXL345/6 hooked to an I2C bus.
  
--/**
-- * DOC: property for adaptive backlight modulation
-- *
-- * The 'adaptive backlight modulation' property is used for the compositor to
-- * directly control the adaptive backlight modulation power savings feature
-- * that is part of DCN hardware.
-- *
-- * The property will be attached specifically to eDP panels that support it.
-- *
-- * The property is by default set to 'sysfs' to allow the sysfs file 'panel_power_savings'
-- * to be able to control it.
-- * If set to 'off' the compositor will ensure it stays off.
-- * The other values 'min', 'bias min', 'bias max', and 'max' will control the
-- * intensity of the power savings.
-- *
-- * Modifying this value can have implications on color accuracy, so tread
-- * carefully.
-- */
--static int amdgpu_display_setup_abm_prop(struct amdgpu_device *adev)
--{
--	const struct drm_prop_enum_list props[] = {
--		{ ABM_SYSFS_CONTROL, "sysfs" },
--		{ ABM_LEVEL_OFF, "off" },
--		{ ABM_LEVEL_MIN, "min" },
--		{ ABM_LEVEL_BIAS_MIN, "bias min" },
--		{ ABM_LEVEL_BIAS_MAX, "bias max" },
--		{ ABM_LEVEL_MAX, "max" },
--	};
--	struct drm_property *prop;
--	int i;
--
--	if (!adev->dc_enabled)
--		return 0;
--
--	prop = drm_property_create(adev_to_drm(adev), DRM_MODE_PROP_ENUM,
--				"adaptive backlight modulation",
--				6);
--	if (!prop)
--		return -ENOMEM;
--
--	for (i = 0; i < ARRAY_SIZE(props); i++) {
--		int ret;
--
--		ret = drm_property_add_enum(prop, props[i].type,
--						props[i].name);
--
--		if (ret) {
--			drm_property_destroy(adev_to_drm(adev), prop);
--
--			return ret;
--		}
--	}
--
--	adev->mode_info.abm_level_property = prop;
--
--	return 0;
--}
--
- int amdgpu_display_modeset_create_props(struct amdgpu_device *adev)
- {
--	int sz;
-+	int ret, sz;
+ 	  To compile this driver as a module, choose M here: the
+-	  module will be called adxl34x-i2c.
++	  module will be called adxl34x-i2c. ADXL345 share compatibles
++	  with this driver, choosing Y won't allow to select ADXL345.
++	  Do not add both modules to the kernel.
  
- 	adev->mode_info.coherent_mode_property =
- 		drm_property_create_range(adev_to_drm(adev), 0, "coherent", 0, 1);
-@@ -1467,7 +1409,14 @@ int amdgpu_display_modeset_create_props(struct amdgpu_device *adev)
- 					 "dither",
- 					 amdgpu_dither_enum_list, sz);
+ config INPUT_ADXL34X_SPI
+ 	tristate "support SPI bus connection"
+@@ -779,7 +781,9 @@ config INPUT_ADXL34X_SPI
+ 	  Say Y here if you have ADXL345/6 hooked to a SPI bus.
  
--	return amdgpu_display_setup_abm_prop(adev);
-+	adev->mode_info.abm_level_property = drm_create_abm_property(adev_to_drm(adev));
-+	if (IS_ERR(adev->mode_info.abm_level_property)) {
-+		ret = PTR_ERR(adev->mode_info.abm_level_property);
-+		adev->mode_info.abm_level_property = NULL;
-+		return ret;
-+	}
-+
-+	return 0;
- }
+ 	  To compile this driver as a module, choose M here: the
+-	  module will be called adxl34x-spi.
++	  module will be called adxl34x-spi. ADXL345 share compatibles
++	  with this driver, choosing Y won't allow to select ADXL345.
++	  Do not add both modules to the kernel.
  
- void amdgpu_display_update_priority(struct amdgpu_device *adev)
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.h b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.h
-index 2b1536a16752..dfa0d642ac16 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.h
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.h
-@@ -54,11 +54,4 @@ int amdgpu_display_resume_helper(struct amdgpu_device *adev);
- int amdgpu_display_get_scanout_buffer(struct drm_plane *plane,
- 				      struct drm_scanout_buffer *sb);
- 
--#define ABM_SYSFS_CONTROL	-1
--#define ABM_LEVEL_OFF		0
--#define ABM_LEVEL_MIN		1
--#define ABM_LEVEL_BIAS_MIN	2
--#define ABM_LEVEL_BIAS_MAX	3
--#define ABM_LEVEL_MAX		4
--
- #endif
-diff --git a/drivers/gpu/drm/drm_connector.c b/drivers/gpu/drm/drm_connector.c
-index 272d6254ea47..376169dac247 100644
---- a/drivers/gpu/drm/drm_connector.c
-+++ b/drivers/gpu/drm/drm_connector.c
-@@ -2603,6 +2603,69 @@ static int drm_mode_create_colorspace_property(struct drm_connector *connector,
- 	return 0;
- }
- 
-+/**
-+ * DOC: integrated panel properties
-+ *
-+ * adaptive backlight modulation:
-+ *	Adaptive backlight modulation (ABM) is a power savings feature that
-+ *	dynamically adjusts the backlight brightness based on the content
-+ *	displayed on the screen. By reducing the backlight brightness for
-+ *	darker images and increasing it for brighter images, ABM helps to
-+ *	conserve energy and extend battery life on devices with integrated
-+ *	displays.  This feature is part of AMD DCN hardware.
-+ *
-+ *	sysfs
-+ *		The ABM property is exposed to userspace via sysfs interface
-+ *		located at 'amdgpu/panel_power_savings' under the DRM device.
-+ *	off
-+ *		Adaptive backlight modulation is disabled.
-+ *	min
-+ *		Adaptive backlight modulation is enabled at minimum intensity.
-+ *	bias min
-+ *		Adaptive backlight modulation is enabled at a more intense
-+ *		level than 'min'.
-+ *	bias max
-+ *		Adaptive backlight modulation is enabled at a more intense
-+ *		level than 'bias min'.
-+ *	max
-+ *		Adaptive backlight modulation is enabled at maximum intensity.
-+ */
-+struct drm_property *drm_create_abm_property(struct drm_device *dev)
-+{
-+	const struct drm_prop_enum_list props[] = {
-+		{ ABM_SYSFS_CONTROL, "sysfs" },
-+		{ ABM_LEVEL_OFF, "off" },
-+		{ ABM_LEVEL_MIN, "min" },
-+		{ ABM_LEVEL_BIAS_MIN, "bias min" },
-+		{ ABM_LEVEL_BIAS_MAX, "bias max" },
-+		{ ABM_LEVEL_MAX, "max" },
-+	};
-+	struct drm_property *prop;
-+	int i;
-+
-+	prop = drm_property_create(dev, DRM_MODE_PROP_ENUM,
-+				"adaptive backlight modulation",
-+				6);
-+	if (!prop)
-+		return ERR_PTR(-ENOMEM);
-+
-+	for (i = 0; i < ARRAY_SIZE(props); i++) {
-+		int ret;
-+
-+		ret = drm_property_add_enum(prop, props[i].type,
-+						props[i].name);
-+
-+		if (ret) {
-+			drm_property_destroy(dev, prop);
-+
-+			return ERR_PTR(ret);
-+		}
-+	}
-+
-+	return prop;
-+}
-+EXPORT_SYMBOL(drm_create_abm_property);
-+
- /**
-  * drm_mode_create_hdmi_colorspace_property - create hdmi colorspace property
-  * @connector: connector to create the Colorspace property on.
-diff --git a/include/drm/drm_connector.h b/include/drm/drm_connector.h
-index 8f34f4b8183d..644c0d49500f 100644
---- a/include/drm/drm_connector.h
-+++ b/include/drm/drm_connector.h
-@@ -2454,6 +2454,7 @@ int drm_connector_attach_hdr_output_metadata_property(struct drm_connector *conn
- bool drm_connector_atomic_hdr_metadata_equal(struct drm_connector_state *old_state,
- 					     struct drm_connector_state *new_state);
- int drm_mode_create_aspect_ratio_property(struct drm_device *dev);
-+struct drm_property *drm_create_abm_property(struct drm_device *dev);
- int drm_mode_create_hdmi_colorspace_property(struct drm_connector *connector,
- 					     u32 supported_colorspaces);
- int drm_mode_create_dp_colorspace_property(struct drm_connector *connector,
-@@ -2563,4 +2564,11 @@ const char *drm_get_colorspace_name(enum drm_colorspace colorspace);
- 	drm_for_each_encoder_mask(encoder, (connector)->dev, \
- 				  (connector)->possible_encoders)
- 
-+#define ABM_SYSFS_CONTROL	-1
-+#define ABM_LEVEL_OFF		0
-+#define ABM_LEVEL_MIN		1
-+#define ABM_LEVEL_BIAS_MIN	2
-+#define ABM_LEVEL_BIAS_MAX	3
-+#define ABM_LEVEL_MAX		4
-+
- #endif
+ config INPUT_IBM_PANEL
+ 	tristate "IBM Operation Panel driver"
+
+---
+base-commit: a311c777f2987e6ddba2d2dd2f82f2135d65f8aa
+change-id: 20251112-input-adxl34x-1972753e2c62
+prerequisite-message-id: 20251031-adxl345-allow-adxl34x-mod-v1-1-cd65749ba89c@analog.com
+prerequisite-patch-id: ee005752c4daeb450e458f20d9de0ce7b24743ca
+
+Best regards,
 -- 
-2.51.2
+Jorge Marques <jorge.marques@analog.com>
 
 
