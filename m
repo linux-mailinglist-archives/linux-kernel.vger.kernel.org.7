@@ -1,82 +1,86 @@
-Return-Path: <linux-kernel+bounces-897815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DC08C53A89
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:24:23 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A39F2C53CB2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:52:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 650803489A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:20:30 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 14B38506ED1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:20:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58DB5345CD9;
-	Wed, 12 Nov 2025 17:20:05 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 354C93451D5;
+	Wed, 12 Nov 2025 17:20:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="TwU8osXX"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C44E43451A3;
-	Wed, 12 Nov 2025 17:20:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6700E2C0291
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 17:19:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762968005; cv=none; b=g2N2Byj0w5FB72c9MtrzT7lkkP2mnlh0eSi5Kr2tKMuEtKamLnRnsc5laClY24QUakiiCfblBBAcl9IOxOtIBJi+v90OF+H1wm3d+pPUBe3zzWlpAKuWRtweySBd04VlIGDUr/Ve77hGSQm15Ob+soPUEuB2Z87H4EYxoZyTKho=
+	t=1762968001; cv=none; b=btpeC6wlBt6GbH7SEr4qpBVfmOqd/9NveSDj4MG0S8utAo/cmX5DOswwkH8sSq72pLSwGtm2LK0Yq0Xsk76IYtHBbX54K9jdU4fON+FZf5hoAE193qG5gbw+jejv2+tgMf4r+nXurOPwN7Tzn0vi26oLKMOtnrfjKKUvzLwFp38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762968005; c=relaxed/simple;
-	bh=DbnY/x2YtJHNcfRvXqXgSvH0s1JmoypXph38fcRbzjE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=i7n82T821JgGYCr//7LppkjnjxMMVmtqVrfsgOuLljmp+NTeNjxNWsx3ydLwOo+ZwxlK/xu13g60UIwnQpS/ataxzWgQfrIDJ31PHfTfOa1OFEsaahCWRzQv1+bW2pj/uMFmLu/D1kRp+Yljckp+ox+utiFNoAuT9T1QukYSTUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: ceb250d6bfeb11f0a38c85956e01ac42-20251113
-X-CTIC-Tags:
-	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CC_NO_NAME, HR_CTE_8B
-	HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME
-	HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM, HR_SJ_PHRASE
-	HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT, HR_TO_NO_NAME
-	IP_UNTRUSTED, SRC_UNTRUSTED, IP_LOWREP, SRC_LOWREP, DN_TRUSTED
-	SRC_TRUSTED, SA_EXISTED, SN_EXISTED, SPF_NOPASS, DKIM_NOPASS
-	DMARC_NOPASS, CIE_BAD, CIE_GOOD, CIE_GOOD_SPF, GTI_FG_BS
-	GTI_RG_INFO, GTI_C_BU, AMN_GOOD, ABX_MISS_RDNS
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.6,REQID:0bf9be2b-6375-4dc2-9421-be126dd8db82,IP:10,U
-	RL:0,TC:0,Content:0,EDM:25,RT:0,SF:-30,FILE:0,BULK:0,RULE:Release_Ham,ACTI
-	ON:release,TS:5
-X-CID-INFO: VERSION:1.3.6,REQID:0bf9be2b-6375-4dc2-9421-be126dd8db82,IP:10,URL
-	:0,TC:0,Content:0,EDM:25,RT:0,SF:-30,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:5
-X-CID-META: VersionHash:a9d874c,CLOUDID:394edc65d7854e1d9a3c2af0a673f48f,BulkI
-	D:251113011956PDO1GP7J,BulkQuantity:0,Recheck:0,SF:10|66|78|102|850,TC:nil
-	,Content:0|15|50,EDM:5,IP:-2,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil
-	,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: ceb250d6bfeb11f0a38c85956e01ac42-20251113
-X-User: hehuiwen@kylinos.cn
-Received: from localhost.localdomain [(220.202.195.89)] by mailgw.kylinos.cn
-	(envelope-from <hehuiwen@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 434298174; Thu, 13 Nov 2025 01:19:55 +0800
-From: Huiwen He <hehuiwen@kylinos.cn>
-To: robin.clark@oss.qualcomm.com
-Cc: sean@poorly.run,
-	konradybcio@kernel.org,
-	lumag@kernel.org,
-	abhinav.kumar@linux.dev,
-	jesszhan0024@gmail.com,
-	marijn.suijten@somainline.org,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	linux-arm-msm@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	freedreno@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Huiwen He <hehuiwen@kylinos.cn>
-Subject: [PATCH] drm/msm: fix missing NULL check after kcalloc in crashstate_get_bos()
-Date: Thu, 13 Nov 2025 01:19:47 +0800
-Message-Id: <20251112171947.486220-1-hehuiwen@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1762968001; c=relaxed/simple;
+	bh=cIX1HljknQMLtdyrw/7vo4f6+C4rysEqzacl9pFRVCs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YhWdi66oI21aGUgZbqycpFXQpJvCcThUbsfR3sGyi9IAqfb5LoYu9fWgWeawRPqRUgwBWYy7kSJP8/aErvSakiyrLI2OC/+Kj0N8AR5XVXG1WOz/yMZeJcMtfteG6ILG9ZKAVAgL/++bdj2C/fyQJENf/1O8rU32k3WmWxnppn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=TwU8osXX; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-640bd9039fbso2027453a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:19:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google; t=1762967997; x=1763572797; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=htWCmp/HqOC3LZuhkUtvSCsNEkCvDxqHS6yOGkHh6Qw=;
+        b=TwU8osXXi1u3ZLeck+T/GmHnNqUHvsHvWCBdscw5uGz+cKdeBfybv+aJ0t9PzuN2Xk
+         0QHAQ03P68tnUfpCYgqz2i2FydWWGInD2rjIN4jBFiYZb6dEW7RzVOx2n3M2B2WPi0bj
+         BKinXKQMQA40gWPzGKhfVD4doT6frwlCWL5w4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762967997; x=1763572797;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=htWCmp/HqOC3LZuhkUtvSCsNEkCvDxqHS6yOGkHh6Qw=;
+        b=fC6mkg89H4YGr7jtWCI9IG+QqvzPJ9DYxX4bn3aY5I9p1RpGt+SJ1U0ZdwnMUed757
+         GNNP/3ErWxIn2t5iquyBMEc9P6eOkrhv+xGTr/Dxced/g5Cpbj4ZluG6gBSWAezpeKel
+         sA8suITKIUJYnJkGbTlOYaxp8l3izpkNMnosr7AMQfaVwpyACJr171NqIfQlTSxf/JQp
+         4nwG5d6wi1sAeH27jh6YvyFFQd6OMRtRzbzaSs7CAVB+GasmxcUgGinYYDBqejXcB946
+         ZQqpatx7NgmEsA4JHT8GzDzJB2tEvc2ICbeCnVocCsh2lWHpNnPMN4Ns83U+mejJl0Zm
+         +F2w==
+X-Gm-Message-State: AOJu0YyfsoKSJjxuKdjw7lXZsPla1k8V3Z79qTOZOAQ5p5J0NVLyBJxP
+	sB3FrpTTSQQ7u1a9DzTp5rC3g+YEVYY58uwQdQr9rCvkm+9LI3cLe+WoTOsY6Uu+4RZVL1w/hMH
+	/kqT5
+X-Gm-Gg: ASbGncvoif8OujZMU/YxkA60180QtBcZ5pKF2XjUQPxX7REJmX81MAQ6biO3Pf5LaFl
+	H9XF4i3Vkr20IbpHcvLR8MAhXCVukAlHHPjlxYRLjYXlxGoS999vut8sT+lajQsO9Vv/7t9lDNS
+	EucaXZMgG0lCV/w61jC5Un6T0kDN0miH/e2+DOsEgI/oKgRzzHmEKy5ut9RiTH6nJc5ryo6MQKR
+	KVzlukTSkhPcHKcpyKaELKsU1oPssYjjW+xfVTcB2b+KFEas62I6SoaGm9whAZHMUAdd4U909Yy
+	RHAoRWQHIXO5mqFWUeIRZ75tp7XN1xhKrjXveer/0KBUu7yVWhQyh4zpVxwa7gYDwNjKP0RFAtC
+	sy96mYeP3MG3VnaWSASsFYs38e9r0s3tRCo9UyJJkbuvHXWHd+JcXJ25mZuJuU4cjs1JCwM6ZPX
+	Yj9Me3gCao6I+5N8Sr85ouo3chU87bPD/+tsjsqqscfaWw2Qp/dv9XS9TGg8D3nlT9UvxYWLhT0
+	ej98sBX1Y3aRNO0VCkY+/NwoT6korh+ks5FLLIJQBqj
+X-Google-Smtp-Source: AGHT+IE7bK17fVUuGArh3EaIbNW9IKT2ffAI/pqUeoGXFPfQcnyo5QVy2bNe9piLDFmFF8y6mQJDQw==
+X-Received: by 2002:a17:906:c78b:b0:b72:b97b:b6fc with SMTP id a640c23a62f3a-b7331a5ac30mr292584666b.30.1762967997438;
+        Wed, 12 Nov 2025 09:19:57 -0800 (PST)
+Received: from dario-ThinkPad-P14s-Gen-5.homenet.telecomitalia.it (host-79-54-71-163.retail.telecomitalia.it. [79.54.71.163])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bfa11367sm1619860266b.68.2025.11.12.09.19.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Nov 2025 09:19:57 -0800 (PST)
+From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-amarula@amarulasolutions.com,
+	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Jens Reidel <adrian@mainlining.org>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	linux-input@vger.kernel.org
+Subject: [RESEND PATCH v2] Input: edt-ft5x06 - fix report rate handling by sysfs
+Date: Wed, 12 Nov 2025 18:19:50 +0100
+Message-ID: <20251112171953.4046990-1-dario.binacchi@amarulasolutions.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,52 +89,237 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The crashstate_get_bos() function allocates memory for `state->bos`
-using kcalloc(), but the vmbind path does not check for allocation
-failure before dereferencing it in the following drm_gpuvm_for_each_va()
-loop. This could lead to a NULL pointer dereference if memory allocation
-fails.
+In the driver probe, the report-rate-hz value from device tree is written
+directly to the M12 controller register, while for the M06 it is divided
+by 10 since the controller expects the value in units of 10 Hz. That logic
+was missing in the sysfs handling, leading to inconsistent behavior
+depending on whether the value came from device tree or sysfs.
 
-Fix this by wrapping the drm_gpuvm_for_each_va() loop with a NULL check
-on state->bos, similar to the safety check in the non-vmbind path.
+This patch makes the report-rate handling consistent by applying the same
+logic in both cases. Two dedicated functions, report_rate_hz_{show,store},
+were added for the following reasons:
 
-Fixes: af9aa6f316b3d ("drm/msm: Crashdump support for sparse")
-Signed-off-by: Huiwen He <hehuiwen@kylinos.cn>
+- Avoid modifying the more generic edt_ft5x06_setting_{show,store} and
+  thus prevent regressions.
+- Properly enforce lower and upper limits for the M06 case. The previous
+  version accepted invalid values for M06, since it relied on the M12
+  limits.
+- Return an error when the property is not supported (e.g. M09), to avoid
+  misleading users into thinking the property is handled by the
+  controller.
+
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+
 ---
- drivers/gpu/drm/msm/msm_gpu.c | 17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/gpu/drm/msm/msm_gpu.c b/drivers/gpu/drm/msm/msm_gpu.c
-index 17759abc46d7..a9b5f5106ebc 100644
---- a/drivers/gpu/drm/msm/msm_gpu.c
-+++ b/drivers/gpu/drm/msm/msm_gpu.c
-@@ -287,16 +287,17 @@ static void crashstate_get_bos(struct msm_gpu_state *state, struct msm_gem_submi
+Changes in v2:
+- Drop the patch:
+  1/2 Input: edt-ft5x06 - rename sysfs attribute report_rate to report_rate_hz
+  because not accepted.
+
+ drivers/input/touchscreen/edt-ft5x06.c | 158 +++++++++++++++++++++----
+ 1 file changed, 135 insertions(+), 23 deletions(-)
+
+diff --git a/drivers/input/touchscreen/edt-ft5x06.c b/drivers/input/touchscreen/edt-ft5x06.c
+index bf498bd4dea9..d7a269a0528f 100644
+--- a/drivers/input/touchscreen/edt-ft5x06.c
++++ b/drivers/input/touchscreen/edt-ft5x06.c
+@@ -516,9 +516,136 @@ static EDT_ATTR(offset_y, S_IWUSR | S_IRUGO, NO_REGISTER, NO_REGISTER,
+ /* m06: range 20 to 80, m09: range 0 to 30, m12: range 1 to 255... */
+ static EDT_ATTR(threshold, S_IWUSR | S_IRUGO, WORK_REGISTER_THRESHOLD,
+ 		M09_REGISTER_THRESHOLD, EV_REGISTER_THRESHOLD, 0, 255);
+-/* m06: range 3 to 14, m12: range 1 to 255 */
+-static EDT_ATTR(report_rate, S_IWUSR | S_IRUGO, WORK_REGISTER_REPORT_RATE,
+-		M12_REGISTER_REPORT_RATE, NO_REGISTER, 0, 255);
++
++static int edt_ft5x06_report_rate_get(struct edt_ft5x06_ts_data *tsdata)
++{
++	unsigned int val;
++	int error;
++
++	if (tsdata->reg_addr.reg_report_rate == NO_REGISTER)
++		return -EOPNOTSUPP;
++
++	error = regmap_read(tsdata->regmap, tsdata->reg_addr.reg_report_rate,
++			    &val);
++	if (error)
++		return error;
++
++	if (tsdata->version == EDT_M06)
++		val *= 10;
++
++	if (val != tsdata->report_rate) {
++		dev_warn(&tsdata->client->dev,
++			 "report-rate: read (%d) and stored value (%d) differ\n",
++			 val, tsdata->report_rate);
++		tsdata->report_rate = val;
++	}
++
++	return 0;
++}
++
++static ssize_t report_rate_show(struct device *dev,
++				struct device_attribute *dattr, char *buf)
++{
++	struct i2c_client *client = to_i2c_client(dev);
++	struct edt_ft5x06_ts_data *tsdata = i2c_get_clientdata(client);
++	size_t count;
++	int error;
++
++	mutex_lock(&tsdata->mutex);
++
++	if (tsdata->factory_mode) {
++		error = -EIO;
++		goto out;
++	}
++
++	error = edt_ft5x06_report_rate_get(tsdata);
++	if (error) {
++		dev_err(&tsdata->client->dev,
++			"Failed to fetch attribute %s, error %d\n",
++			dattr->attr.name, error);
++		goto out;
++	}
++
++	count = sysfs_emit(buf, "%d\n", tsdata->report_rate);
++out:
++	mutex_unlock(&tsdata->mutex);
++	return error ?: count;
++}
++
++static int edt_ft5x06_report_rate_set(struct edt_ft5x06_ts_data *tsdata,
++				      unsigned int val)
++{
++	if (tsdata->reg_addr.reg_report_rate == NO_REGISTER)
++		return -EOPNOTSUPP;
++
++	if (tsdata->version == EDT_M06)
++		tsdata->report_rate = clamp_val(val, 30, 140);
++	else
++		tsdata->report_rate = clamp_val(val, 1, 255);
++
++	if (val != tsdata->report_rate) {
++		dev_warn(&tsdata->client->dev,
++			 "report-rate %dHz is unsupported, use %dHz\n",
++			 val, tsdata->report_rate);
++		val = tsdata->report_rate;
++	}
++
++	if (tsdata->version == EDT_M06)
++		val /= 10;
++
++	return regmap_write(tsdata->regmap, tsdata->reg_addr.reg_report_rate,
++			    val);
++}
++
++static ssize_t report_rate_store(struct device *dev,
++				 struct device_attribute *dattr,
++				 const char *buf, size_t count)
++{
++	struct i2c_client *client = to_i2c_client(dev);
++	struct edt_ft5x06_ts_data *tsdata = i2c_get_clientdata(client);
++	unsigned int val;
++	u8 limit_low;
++	u8 limit_high;
++	int error;
++
++	mutex_lock(&tsdata->mutex);
++
++	if (tsdata->factory_mode) {
++		error = -EIO;
++		goto out;
++	}
++
++	error = kstrtouint(buf, 0, &val);
++	if (error)
++		goto out;
++
++	if (tsdata->version == EDT_M06) {
++		limit_low = 30;
++		limit_high = 140;
++	} else {
++		limit_low = 1;
++		limit_high = 255;
++	}
++
++	if (val < limit_low || val > limit_high) {
++		error = -ERANGE;
++		goto out;
++	}
++
++	error = edt_ft5x06_report_rate_set(tsdata, val);
++	if (error) {
++		dev_err(&tsdata->client->dev,
++			"Failed to update attribute %s, error: %d\n",
++			dattr->attr.name, error);
++		goto out;
++	}
++
++out:
++	mutex_unlock(&tsdata->mutex);
++	return error ?: count;
++}
++
++static DEVICE_ATTR_RW(report_rate);
  
- 		state->bos = kcalloc(cnt, sizeof(struct msm_gpu_state_bo), GFP_KERNEL);
+ static ssize_t model_show(struct device *dev, struct device_attribute *attr,
+ 			  char *buf)
+@@ -572,7 +699,7 @@ static struct attribute *edt_ft5x06_attrs[] = {
+ 	&edt_ft5x06_attr_offset_x.dattr.attr,
+ 	&edt_ft5x06_attr_offset_y.dattr.attr,
+ 	&edt_ft5x06_attr_threshold.dattr.attr,
+-	&edt_ft5x06_attr_report_rate.dattr.attr,
++	&dev_attr_report_rate.attr,
+ 	&dev_attr_model.attr,
+ 	&dev_attr_fw_version.attr,
+ 	&dev_attr_header_errors.attr,
+@@ -595,8 +722,7 @@ static void edt_ft5x06_restore_reg_parameters(struct edt_ft5x06_ts_data *tsdata)
+ 	if (reg_addr->reg_offset_y != NO_REGISTER)
+ 		regmap_write(regmap, reg_addr->reg_offset_y, tsdata->offset_y);
+ 	if (reg_addr->reg_report_rate != NO_REGISTER)
+-		regmap_write(regmap, reg_addr->reg_report_rate,
+-			     tsdata->report_rate);
++		edt_ft5x06_report_rate_set(tsdata, tsdata->report_rate);
+ }
  
--		drm_gpuvm_for_each_va (vma, submit->vm) {
--			bool dump = rd_full || (vma->flags & MSM_VMA_DUMP);
-+		if (state->bos)
-+			drm_gpuvm_for_each_va(vma, submit->vm) {
-+				bool dump = rd_full || (vma->flags & MSM_VMA_DUMP);
+ #ifdef CONFIG_DEBUG_FS
+@@ -1029,8 +1155,8 @@ static void edt_ft5x06_ts_get_parameters(struct edt_ft5x06_ts_data *tsdata)
+ 	if (reg_addr->reg_offset_y != NO_REGISTER)
+ 		regmap_read(regmap, reg_addr->reg_offset_y, &tsdata->offset_y);
+ 	if (reg_addr->reg_report_rate != NO_REGISTER)
+-		regmap_read(regmap, reg_addr->reg_report_rate,
+-			    &tsdata->report_rate);
++		edt_ft5x06_report_rate_get(tsdata);
++
+ 	tsdata->num_x = EDT_DEFAULT_NUM_X;
+ 	if (reg_addr->reg_num_x != NO_REGISTER) {
+ 		if (!regmap_read(regmap, reg_addr->reg_num_x, &val))
+@@ -1289,21 +1415,7 @@ static int edt_ft5x06_ts_probe(struct i2c_client *client)
+ 	if (tsdata->reg_addr.reg_report_rate != NO_REGISTER &&
+ 	    !device_property_read_u32(&client->dev,
+ 				      "report-rate-hz", &report_rate)) {
+-		if (tsdata->version == EDT_M06)
+-			tsdata->report_rate = clamp_val(report_rate, 30, 140);
+-		else
+-			tsdata->report_rate = clamp_val(report_rate, 1, 255);
+-
+-		if (report_rate != tsdata->report_rate)
+-			dev_warn(&client->dev,
+-				 "report-rate %dHz is unsupported, use %dHz\n",
+-				 report_rate, tsdata->report_rate);
+-
+-		if (tsdata->version == EDT_M06)
+-			tsdata->report_rate /= 10;
+-
+-		regmap_write(tsdata->regmap, tsdata->reg_addr.reg_report_rate,
+-			     tsdata->report_rate);
++		edt_ft5x06_report_rate_set(tsdata, report_rate);
+ 	}
  
--			/* Skip MAP_NULL/PRR VMAs: */
--			if (!vma->gem.obj)
--				continue;
-+				/* Skip MAP_NULL/PRR VMAs: */
-+				if (!vma->gem.obj)
-+					continue;
- 
--			msm_gpu_crashstate_get_bo(state, vma->gem.obj, vma->va.addr,
--						  dump, vma->gem.offset, vma->va.range);
--		}
-+				msm_gpu_crashstate_get_bo(state, vma->gem.obj, vma->va.addr,
-+							  dump, vma->gem.offset, vma->va.range);
-+			}
- 
- 		drm_exec_fini(&exec);
- 	} else {
+ 	dev_dbg(&client->dev,
 -- 
-2.25.1
+2.43.0
 
+base-commit: 24172e0d79900908cf5ebf366600616d29c9b417
+branch: edt-ft5x06-fix-report-rate
 
