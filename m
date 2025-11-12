@@ -1,288 +1,113 @@
-Return-Path: <linux-kernel+bounces-897740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9459C53AF6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:29:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B57EFC53A9E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:25:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3146C561670
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:28:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BEEB562DD5
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:30:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4B61342519;
-	Wed, 12 Nov 2025 16:27:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WxNu9eZn"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 003B6288505;
+	Wed, 12 Nov 2025 16:30:25 +0000 (UTC)
+Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4BE733F8BE
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 16:27:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 101622BF00B
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 16:30:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762964841; cv=none; b=gefyxrpBKPLS8EFCBYY38YMALjpZMCWsZKdPEWhJqrSG+bzIBmHF9uQFGdR1/gKtgR1UtkYGiAKghqS5z7MlEBwDNzL3mySAQLa9P4QkdfneLgJSiVJywkf5/ZK1YdABX5TQBR8rdaflVGC1+p2M2wRyYY3X4+sCtnDMmTS88Vg=
+	t=1762965024; cv=none; b=AbKy2GrnJG9Oybp99XD2usdaz8w2t2W/haTlmA+EjxsPzWqXruz/gr9zesVBgcT/xLj+37fYMemOC/pOGwmnjX6OKctVRk+XeExM9ls7Z00UmblStpbJ5OHbpYUQRaT5LuKg3XIxua30JZEWn5d4zR6nxMFsD4vHBwG2/yJ12AQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762964841; c=relaxed/simple;
-	bh=ZkTyvzs3kiErZLDD09beyCa4zgS6txIDoNMnbc53+tY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=NlTV+22a8P1SPTMzEbXT8LHFYgFgDqL1F0LKb55j/CIhTAj44CDLteHjnyLLV6OUh5tU6yih9fS3SnLvaPLFhaVD+JDD/jfG93D2FTureIWZrjaKULFeG9/K8OSVqQyaUPBffnSwieRBQ3tWdgfsrDDOor0Tlx3eQZuhqz9hsVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WxNu9eZn; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-477619f8ae5so8394775e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 08:27:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762964837; x=1763569637; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3zf+/GCTzFTCgE5kx1XIhvvkdps3fbhzPkXxT6Wkygo=;
-        b=WxNu9eZnecV6hErSsqtqoqRX8HCB+SxOqCUIsmINGXl43pNYzlNK96iCWQ87rVwFGK
-         faeI+JOzQRxZIBRXlNaAOrGKm5l6ASrzPmkdXLfmAaNWoXmAFRvnaKKxqBWp7KLPY7Z2
-         jZ8O84kYDyfO8aLbnxggVTddsXeAjYyGuhyqNsAJArnHqa/Xaa4yT4ilvthJqPHmdbIU
-         hSGeEXf79HcpSc0zVqEwy2PUxzQBaOnYyYjSPoeE+7UPEkIcE1FD2W6KgyGzTZ2zUyY1
-         IuJ0MGYs35/tKc5QPD4q+R8sBvmE4HGn7na2FSiU2VOELSpxdMEQjI0ibN6FUYhrIWrD
-         VVwA==
+	s=arc-20240116; t=1762965024; c=relaxed/simple;
+	bh=srIh8TEWLd3BA27yuqff8wSQOYv+jCbG5j9PAzoS22I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fAkVT6MHMS4XHOzkYVFb+S4VmYTgtIK2RHn6TIR+1BVlR3kxK+iycIePMbyZUzArpd5im009u2aI/CbdmGdaHX9JmE4VWCLRVQxRoLpfm78eM0QnLZ95m4fFIXcJFDRQyxm9MXtRo72qp4+EQOccPAFZBg8P+fnp4iE6Ii5JkD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-559748bcf99so809418e0c.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 08:30:22 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762964837; x=1763569637;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=3zf+/GCTzFTCgE5kx1XIhvvkdps3fbhzPkXxT6Wkygo=;
-        b=ePUpqryPZfnqexBWhEfTgJaUiwQRj/T6g2t/MkO+hRfTjzn7pFTxy4+CDwQ54jQGqa
-         CSgIhkX7bAIpUPGT8bvZtwVHmeVkkXqbDb5frcQFeNU2hoQG3Oovgs6KX4nvcUukCJ17
-         fp3vqmfyxofjW5rs4GJvjGTYeiFBZIWKeluvfYnXm3aCUyiaYyLZNqhSJjna3xnXMJoB
-         1KGifDSgx0zQwrqubJO1h3O7Iye0HQpCd6r8pOeZg6qwIt8wHBJTUUHtH0SoF1F1CQGY
-         K7ZXqHY33/HSyYx6138jCyTaeKRzbUJFi6xLZw9sVX3EmKuzhgjsYlQMHYuUcEwIwclf
-         rM3g==
-X-Forwarded-Encrypted: i=1; AJvYcCWaTSiI6ovJG1KuX6ctOuvxiRomM7GGc8rMlBuB6LSaNC40iMnd8lz4SnLtD4dz8cQyNRBDUZ2YIBVCjMI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+YwzDd9KMY1QOhEq7Hp8NLVchntUur6GiOKJVwBmJrvOdcpel
-	C1ZEy8leWDpeCoO328cq15b1PMzxKquJyrv4NVPdV8UMCXBq6urb2FEC3Kftqu4iAJI=
-X-Gm-Gg: ASbGnctLUF2PVPNODiwX3XJns5Vqt0754u0n89b/B8TQniJAy3hJMDC7CUE+9K1um01
-	975Kp2qmx0Nynz/J9epljqsfMGyIbD/10EN4d346A27mNl95zhUlqcOwYc+3s6Hw10SmhyJjrVp
-	ZgX2BYvSrfGXZ+miPofShIVw4aAEyj4haIu7bxpgjYXAZ+pwCVlf023YBCL/cqaN3BvhjVxp9Gf
-	rUQGnvikIq8nxe5nPuB6fdbnesQhZvpW7ingj8GtofML+NxleuJoxVhNiofhY+2p8wvezl6Yjj+
-	+QRXaXF1WavsTHPhgdnCuXo8RYAUjSV15by4CBEuCFXqHA+wnkW74ns5tOex8uxIwmVsCK8hbXc
-	g4IlwsNOA460LZnMA0JVlgMHM2pqAjN62vza+WSGZp4KRKlpWp/m0vrKpWK9h0btofGwJhtEGas
-	ZBo+eG1wvBastXDCTFwDEkZdOlzbKxzSQ=
-X-Google-Smtp-Source: AGHT+IGbQBT6h9D+QiV3NZeclPrdWfHO3lE+CnYRzD/4ItKJuieqX8JUgxpLYyCA2DaWGs9ABKZfZA==
-X-Received: by 2002:a05:600c:8b22:b0:477:63dc:be00 with SMTP id 5b1f17b1804b1-47787086655mr33058775e9.25.1762964837199;
-        Wed, 12 Nov 2025 08:27:17 -0800 (PST)
-Received: from gpeter-l.roam.corp.google.com ([145.224.66.100])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47787e36ca3sm48534815e9.5.2025.11.12.08.27.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Nov 2025 08:27:16 -0800 (PST)
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Wed, 12 Nov 2025 16:27:07 +0000
-Subject: [PATCH v5 2/2] phy: samsung: gs101-ufs: Add .notify_phystate() &
- hibern8 enter/exit values
+        d=1e100.net; s=20230601; t=1762965021; x=1763569821;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yrPXEPI0kQxUXG/szYw6Okg12C7PAk0aW4ESJ1E5iPg=;
+        b=Lq+BAYd8laTMefWyUnmC+gXaWL0EnuX34aEMxnOV9sIyHYLn8ZObc0MkwNfdFZ+lRm
+         teEcftRT7sjjeXJj3uahAMU9rxoAz00FP//xVbuFAYw3Ayd/PLn11tlmLAk/sCkrNbKZ
+         pUc4oh3knjRbidd0LjEWgydwZWuxWWJkUxxAPCo2Mi4kombb9JKQEgPH4HhY8JX0gs9g
+         lXZQJ+uvIqZDaoi4cWXOYVk0XI8p3CGG2m7aDCdNSaDJke7j5CuWNcDLxp4paM0RXuxz
+         c1G+KriU2lpgHkCcPLGP3wZxOvu9lcmud9qfqF2Zujq6YGhu4ftQ0kMyOdbTCUQBN+nL
+         YlVg==
+X-Forwarded-Encrypted: i=1; AJvYcCUIIKOt0iTtGTn6mG0hHDU7Y61ofZL64Vt/UYMHnDG5BiFkOOdV2Y+Sk4N6fDbUsDPjXpPppuSrnX/o7bk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMLLnLJgISFkJfIYkaSFe2+qnS6m1OQ9jk0o8GTyNiY5h33Dge
+	wBaFWg6E6UZiSHC+w/8U2Ee8/3FjEZdXPpF8jf3YeWRMcZMtnduRqzh+Wt6NVQmj
+X-Gm-Gg: ASbGncuO6QHGX92FsDEcpS0ze5NXiC/jS5lixequ71IMCPWH1bpH0HXlMhTbYKDkinR
+	/egNB7OGxQMRQ8Kz1sKUYw/eNLmaTCdroLndaLHzELvfbvXT+2BLFRAgEqb5QVD1IvB4+WyOvei
+	WxDc2vUAOHg1ClU28YsTi72S62KEUl0xL6UfmzGgScFDPUxTvhw9Wpa68q6yHB1wvTEVwPks92d
+	wtL0LpJFoH72aBzUhcWgxKQb+qoNTO8Xa5zOs3B265cAmoME3ANqHN2yp0wMRzvFosUQkfudisZ
+	tUxq+QrXCD7tCEAYM4FB5l1a76W6ygHghW9sTYRohzAIpt0JYkC74yEJewmblmScH9IOOfg41D+
+	aSy9rVhv6/iUg0F0jE4EOQ36TZuFtp3KBI4+JB38oUSL9vifKJPHtQgupk6B2VAUDJ9lIKYm6pT
+	1SOayb0pX+r6DeDFsLMdv5k6sJpOeqQf1Iyt3Idw==
+X-Google-Smtp-Source: AGHT+IGihIBhOayzkK5C6XrUCPK8W5NdgUIYticCY49GrOHkU0oEzf85A2HT8g7DtP2Mb9DY7Z18WA==
+X-Received: by 2002:a05:6102:38cf:b0:5db:eeb6:8125 with SMTP id ada2fe7eead31-5de07d2b07fmr1220762137.12.1762965021389;
+        Wed, 12 Nov 2025 08:30:21 -0800 (PST)
+Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com. [209.85.222.51])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5dda1d29399sm7913283137.4.2025.11.12.08.30.20
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Nov 2025 08:30:20 -0800 (PST)
+Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-93722262839so590039241.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 08:30:20 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUC1FuMpHXcjFVkYd+5SiVfOiyopLf9AzJO6Mx9wFJle7nJyXd4hwXBCS+pwAlXtNMApPRCKyLiWGaNjsw=@vger.kernel.org
+X-Received: by 2002:a05:6102:3a0a:b0:5db:cc92:26f9 with SMTP id
+ ada2fe7eead31-5de07ece779mr1298708137.39.1762965020092; Wed, 12 Nov 2025
+ 08:30:20 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251112-phy-notify-pmstate-v5-2-39df622d8fcb@linaro.org>
-References: <20251112-phy-notify-pmstate-v5-0-39df622d8fcb@linaro.org>
-In-Reply-To: <20251112-phy-notify-pmstate-v5-0-39df622d8fcb@linaro.org>
-To: Vinod Koul <vkoul@kernel.org>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, 
- Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- kernel-team@android.com, William Mcvicker <willmcvicker@google.com>, 
- Manivannan Sadhasivam <mani@kernel.org>, neil.armstrong@linaro.org, 
- Peter Griffin <peter.griffin@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5855;
- i=peter.griffin@linaro.org; h=from:subject:message-id;
- bh=ZkTyvzs3kiErZLDD09beyCa4zgS6txIDoNMnbc53+tY=;
- b=owEBbQKS/ZANAwAKAc7ouNYCNHK6AcsmYgBpFLVfwlZ5jst5dZK7+RF0jA51MBaOdzMVv/kjL
- xcH1R87WhSJAjMEAAEKAB0WIQQO/I5vVXh1DVa1SfzO6LjWAjRyugUCaRS1XwAKCRDO6LjWAjRy
- utY0D/4sWragFjlosVxmET+0kZGsxeZNRi/7KobzDWh8KPTwpWOjtFZ0jEYq7e/lCmyWaKbqRK3
- AopubMfgLd5aVJpavGeSQNki7Mclzw34Y013JC+5EK9+0fcQIZ+5XBY452ipzmXUqbILM51Psqw
- LxZwfTy5+KfWVNQtH1OjVmtBXZT4D4js5fAhw9svh7AHQefpQpOxxQd9Diq9ZVsNlivopmBxOwg
- tyq/Rk75SvyYCJVcwGNJIf8vkWRlzO0gL2UWAvElzvx1PckfqzsjscDntF1jvZC7zb//Cc7i/73
- MD7lm0YIpj9NTYMsrp/S57zXDEGsSkwuUfrinROfsDEt1GKVy0x5grhYLJlrikObGlgUPzVad3a
- s9VoVJAn1MMZzOlbY/TaHbzipsdBmzRS4Be1mnoVlmhVviBvZOdHQEwx1/E7R+tKQdB50jvnsEp
- QjDukapygIb9xPt9rSGE2eoRMbQWvG2wOm8LZHaQnsXS+oiXlf4AbuXMUE+TbwSReceSsD9Dufd
- szvDKlxO+kwk0oIvXhv0KrI/ffWkhL5xM+ehg98Xrl7rc49VCxo/6PqvRmkpdOc+J1zAMWdCm7a
- XrtXSrJbq4lJvzxooZA1CqBIMVtvY2GXgmTD40tnZj2RGiqg8Tk3hLMgvb/9kbC4g/3x0oDWXHl
- ysVzOtkmaxPD3Ag==
-X-Developer-Key: i=peter.griffin@linaro.org; a=openpgp;
- fpr=0EFC8E6F5578750D56B549FCCEE8B8D6023472BA
+References: <20251112143520.233870-1-yuntao.wang@linux.dev> <20251112143520.233870-5-yuntao.wang@linux.dev>
+In-Reply-To: <20251112143520.233870-5-yuntao.wang@linux.dev>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 12 Nov 2025 17:30:08 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWntw15nwUP_0aekE85t21YSCJ8pWxAQouCYMou4y601w@mail.gmail.com>
+X-Gm-Features: AWmQ_bmTnfy_5vi2sT0b0EhSO9dz10I3Eyl9AX2VJtEthHq6yIgXFifhVJFCFZ0
+Message-ID: <CAMuHMdWntw15nwUP_0aekE85t21YSCJ8pWxAQouCYMou4y601w@mail.gmail.com>
+Subject: Re: [PATCH 04/10] of/reserved_mem: Use dt_root_addr_size_bytes()
+ instead of open-coding it
+To: Yuntao Wang <yuntao.wang@linux.dev>
+Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, AKASHI Takahiro <takahiro.akashi@linaro.org>, 
+	James Morse <james.morse@arm.com>, Chen Zhou <chenzhou10@huawei.com>, Baoquan He <bhe@redhat.com>, 
+	Zhen Lei <thunder.leizhen@huawei.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Changyuan Lyu <changyuanl@google.com>, Alexander Graf <graf@amazon.com>, 
+	"Mike Rapoport (Microsoft)" <rppt@kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Implement the .notify_phystate() callback and provide the gs101 specific
-phy values that need to be programmed when entering and exiting the hibern8
-state.
+On Wed, 12 Nov 2025 at 15:37, Yuntao Wang <yuntao.wang@linux.dev> wrote:
+> Use dt_root_addr_size_bytes() instead of open-coding it in
+> __reserved_mem_alloc_size() to improve code maintainability.
+>
+> Signed-off-by: Yuntao Wang <yuntao.wang@linux.dev>
 
-Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
----
-Changes in v4
- - Resolve Intel 0-day warning
----
- drivers/phy/samsung/phy-gs101-ufs.c   | 28 ++++++++++++++++++++++++
- drivers/phy/samsung/phy-samsung-ufs.c | 40 +++++++++++++++++++++++++++++++++++
- drivers/phy/samsung/phy-samsung-ufs.h |  7 ++++++
- 3 files changed, 75 insertions(+)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/drivers/phy/samsung/phy-gs101-ufs.c b/drivers/phy/samsung/phy-gs101-ufs.c
-index 17b798da5b5761f8e367599517d2d97bf0bb6b74..a15e1f453f7f3cecd6d3aa75217633ac4b6085d0 100644
---- a/drivers/phy/samsung/phy-gs101-ufs.c
-+++ b/drivers/phy/samsung/phy-gs101-ufs.c
-@@ -108,12 +108,39 @@ static const struct samsung_ufs_phy_cfg tensor_gs101_post_pwr_hs_config[] = {
- 	END_UFS_PHY_CFG,
- };
- 
-+static const struct samsung_ufs_phy_cfg tensor_gs101_post_h8_enter[] = {
-+	PHY_TRSV_REG_CFG_GS101(0x262, 0x08, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x265, 0x0A, PWR_MODE_ANY),
-+	PHY_COMN_REG_CFG(0x1, 0x8,  PWR_MODE_ANY),
-+	PHY_COMN_REG_CFG(0x0, 0x86,  PWR_MODE_ANY),
-+	PHY_COMN_REG_CFG(0x8, 0x60,  PWR_MODE_HS_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x222, 0x08, PWR_MODE_HS_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x246, 0x01, PWR_MODE_HS_ANY),
-+	END_UFS_PHY_CFG,
-+};
-+
-+static const struct samsung_ufs_phy_cfg tensor_gs101_pre_h8_exit[] = {
-+	PHY_COMN_REG_CFG(0x0, 0xC6,  PWR_MODE_ANY),
-+	PHY_COMN_REG_CFG(0x1, 0x0C,  PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x262, 0x00, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x265, 0x00, PWR_MODE_ANY),
-+	PHY_COMN_REG_CFG(0x8, 0xE0,  PWR_MODE_HS_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x246, 0x03, PWR_MODE_HS_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x222, 0x18, PWR_MODE_HS_ANY),
-+	END_UFS_PHY_CFG,
-+};
-+
- static const struct samsung_ufs_phy_cfg *tensor_gs101_ufs_phy_cfgs[CFG_TAG_MAX] = {
- 	[CFG_PRE_INIT]		= tensor_gs101_pre_init_cfg,
- 	[CFG_PRE_PWR_HS]	= tensor_gs101_pre_pwr_hs_config,
- 	[CFG_POST_PWR_HS]	= tensor_gs101_post_pwr_hs_config,
- };
- 
-+static const struct samsung_ufs_phy_cfg *tensor_gs101_hibern8_cfgs[] = {
-+	[CFG_POST_HIBERN8_ENTER]	= tensor_gs101_post_h8_enter,
-+	[CFG_PRE_HIBERN8_EXIT]		= tensor_gs101_pre_h8_exit,
-+};
-+
- static const char * const tensor_gs101_ufs_phy_clks[] = {
- 	"ref_clk",
- };
-@@ -170,6 +197,7 @@ static int gs101_phy_wait_for_cdr_lock(struct phy *phy, u8 lane)
- 
- const struct samsung_ufs_phy_drvdata tensor_gs101_ufs_phy = {
- 	.cfgs = tensor_gs101_ufs_phy_cfgs,
-+	.cfgs_hibern8 = tensor_gs101_hibern8_cfgs,
- 	.isol = {
- 		.offset = TENSOR_GS101_PHY_CTRL,
- 		.mask = TENSOR_GS101_PHY_CTRL_MASK,
-diff --git a/drivers/phy/samsung/phy-samsung-ufs.c b/drivers/phy/samsung/phy-samsung-ufs.c
-index f3cbe6b17b235bb181b3fae628d75822f0c9183a..ee665f26c2361ff9c3933b10ac713bbd9085b459 100644
---- a/drivers/phy/samsung/phy-samsung-ufs.c
-+++ b/drivers/phy/samsung/phy-samsung-ufs.c
-@@ -217,6 +217,44 @@ static int samsung_ufs_phy_set_mode(struct phy *generic_phy,
- 	return 0;
- }
- 
-+static int samsung_ufs_phy_notify_state(struct phy *phy,
-+					union phy_notify state)
-+{
-+	struct samsung_ufs_phy *ufs_phy = get_samsung_ufs_phy(phy);
-+	const struct samsung_ufs_phy_cfg *cfg;
-+	int i, err = -EINVAL;
-+
-+	if (!ufs_phy->cfgs_hibern8)
-+		return 0;
-+
-+	if (state.ufs_state == PHY_UFS_HIBERN8_ENTER)
-+		cfg = ufs_phy->cfgs_hibern8[CFG_POST_HIBERN8_ENTER];
-+	else if (state.ufs_state == PHY_UFS_HIBERN8_EXIT)
-+		cfg = ufs_phy->cfgs_hibern8[CFG_PRE_HIBERN8_EXIT];
-+	else
-+		goto err_out;
-+
-+	for_each_phy_cfg(cfg) {
-+		for_each_phy_lane(ufs_phy, i) {
-+			samsung_ufs_phy_config(ufs_phy, cfg, i);
-+		}
-+	}
-+
-+	if (state.ufs_state == PHY_UFS_HIBERN8_EXIT) {
-+		for_each_phy_lane(ufs_phy, i) {
-+			if (ufs_phy->drvdata->wait_for_cdr) {
-+				err = ufs_phy->drvdata->wait_for_cdr(phy, i);
-+				if (err)
-+					goto err_out;
-+			}
-+		}
-+	}
-+
-+	return 0;
-+err_out:
-+	return err;
-+}
-+
- static int samsung_ufs_phy_exit(struct phy *phy)
- {
- 	struct samsung_ufs_phy *ss_phy = get_samsung_ufs_phy(phy);
-@@ -233,6 +271,7 @@ static const struct phy_ops samsung_ufs_phy_ops = {
- 	.power_off	= samsung_ufs_phy_power_off,
- 	.calibrate	= samsung_ufs_phy_calibrate,
- 	.set_mode	= samsung_ufs_phy_set_mode,
-+	.notify_phystate = samsung_ufs_phy_notify_state,
- 	.owner          = THIS_MODULE,
- };
- 
-@@ -287,6 +326,7 @@ static int samsung_ufs_phy_probe(struct platform_device *pdev)
- 	phy->dev = dev;
- 	phy->drvdata = drvdata;
- 	phy->cfgs = drvdata->cfgs;
-+	phy->cfgs_hibern8 = drvdata->cfgs_hibern8;
- 	memcpy(&phy->isol, &drvdata->isol, sizeof(phy->isol));
- 
- 	if (!of_property_read_u32_index(dev->of_node, "samsung,pmu-syscon", 1,
-diff --git a/drivers/phy/samsung/phy-samsung-ufs.h b/drivers/phy/samsung/phy-samsung-ufs.h
-index a28f148081d168344b47f2798b00cb098f0a8574..f2c2e744e5bae87c9cfcaa17f4a09456f134966a 100644
---- a/drivers/phy/samsung/phy-samsung-ufs.h
-+++ b/drivers/phy/samsung/phy-samsung-ufs.h
-@@ -92,6 +92,11 @@ enum {
- 	CFG_TAG_MAX,
- };
- 
-+enum {
-+	CFG_POST_HIBERN8_ENTER,
-+	CFG_PRE_HIBERN8_EXIT,
-+};
-+
- struct samsung_ufs_phy_cfg {
- 	u32 off_0;
- 	u32 off_1;
-@@ -108,6 +113,7 @@ struct samsung_ufs_phy_pmu_isol {
- 
- struct samsung_ufs_phy_drvdata {
- 	const struct samsung_ufs_phy_cfg **cfgs;
-+	const struct samsung_ufs_phy_cfg **cfgs_hibern8;
- 	struct samsung_ufs_phy_pmu_isol isol;
- 	const char * const *clk_list;
- 	int num_clks;
-@@ -124,6 +130,7 @@ struct samsung_ufs_phy {
- 	struct clk_bulk_data *clks;
- 	const struct samsung_ufs_phy_drvdata *drvdata;
- 	const struct samsung_ufs_phy_cfg * const *cfgs;
-+	const struct samsung_ufs_phy_cfg * const *cfgs_hibern8;
- 	struct samsung_ufs_phy_pmu_isol isol;
- 	u8 lane_cnt;
- 	int ufs_phy_state;
+But please combine with the previous patch with the same subject.
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-2.51.2.1041.gc1ab5b90ca-goog
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
