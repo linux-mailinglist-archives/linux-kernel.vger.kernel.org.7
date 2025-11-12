@@ -1,168 +1,83 @@
-Return-Path: <linux-kernel+bounces-896920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C9F0C51860
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:59:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01C0CC51917
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:09:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DCBF1882259
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:57:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EA603A9885
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:56:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08DD03009D3;
-	Wed, 12 Nov 2025 09:56:27 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 586F82FF663;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 268D62FF15A;
 	Wed, 12 Nov 2025 09:56:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B499921C194;
+	Wed, 12 Nov 2025 09:56:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762941386; cv=none; b=BvMDMgLem2ZfztCZfVRa5xwPEKgEVrVGGAUHKNzlVlwQT7a/tkwGQ301i3lzbW9vvIezYhr+BSZgpYWjmyPIO0fAE9Ws8QspxHdj/15NEMnZK8G4/GTthhq26gtUOKxNq8Y1l73gSYqTXohuFZftRK6rtQaX1VDgAEOSgPdUdn8=
+	t=1762941382; cv=none; b=ket+Grzwz4TSZTnUAdcEie4HFZCevdrXXwzgdtkzfDEr077gXdNIUmCE2MAs5q8imBusNSZDONd+dEprXhHwRC5ZJRE4OIu6v1N16lADJya8pPJ28rIaVe6iPbo5HVx87n4ohljzSiN5egqj0dJrd/OtfXbXpiIlAfgsovsbOpo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762941386; c=relaxed/simple;
-	bh=cslFZpQ7jV9CKrGaEhC7YVXSe928JWEpLIJ3j4lGY2w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cx/Bw8NFM+erSD2i/VF35ln603SeprQtNFiw0fV7HloljSeJ2Bm6bWBNDw0wJjjPnGZA8soMgTi3SatZ4gxwCgrxBM5LQUU7uPTzmTdZNWAlhEOtr6WntDp56eYX8ROdsK3q5U/hRfTnKZ6buKhxFtMGLO4YM6xY1mfxJzleXCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [192.168.2.215] (p57bd98fa.dip0.t-ipconnect.de [87.189.152.250])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 854F561CC3FD1;
-	Wed, 12 Nov 2025 10:56:02 +0100 (CET)
-Message-ID: <472c08c3-046a-4f16-ae88-c101ff6b7262@molgen.mpg.de>
-Date: Wed, 12 Nov 2025 10:55:58 +0100
+	s=arc-20240116; t=1762941382; c=relaxed/simple;
+	bh=8jt8rlBeGab/FL4KkfJu8liGWlNYNX8MU01la3kQr2Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JA1Y9u+0cU1gLmTWiNN62FDvaJJNxE7byP5wCkhIKLSrRmO5RejFU5C0RrcRB1TuGP7/wn4DiO3thOy2xofl1he49IxNlVkRNimg4WcqHGs50K18bKRaRxsU74lVsr2uU64z5opSyI4CyddSMB6ivg7Qp3aM+Y4AX5J+5sOWKpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
+Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
+	id 1vJ7aJ-0003qh-00; Wed, 12 Nov 2025 10:56:15 +0100
+Received: by alpha.franken.de (Postfix, from userid 1000)
+	id C7825C0256; Wed, 12 Nov 2025 10:56:05 +0100 (CET)
+Date: Wed, 12 Nov 2025 10:56:05 +0100
+From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To: "Maciej W. Rozycki" <macro@orcam.me.uk>
+Cc: Nick Bowler <nbowler@draconx.ca>, Jiaxun Yang <jiaxun.yang@flygoat.com>,
+	linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MIPS: mm: Prevent a TLB shutdown on initial
+ uniquification
+Message-ID: <aRRZtbBdCfEEhad9@alpha.franken.de>
+References: <alpine.DEB.2.21.2511110547430.25436@angie.orcam.me.uk>
+ <aRMrmjJcLJYR8QO-@alpha.franken.de>
+ <alpine.DEB.2.21.2511111340330.25436@angie.orcam.me.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] Bluetooth: Process Read Remote Version evt
-To: Gongwei Li <13875017792@163.com>
-Cc: Marcel Holtmann <marcel@holtmann.org>,
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
- Johan Hedberg <johan.hedberg@gmail.com>, linux-bluetooth@vger.kernel.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- Gongwei Li <ligongwei@kylinos.cn>
-References: <20251112094843.173238-1-13875017792@163.com>
- <20251112094843.173238-2-13875017792@163.com>
-Content-Language: en-US
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <20251112094843.173238-2-13875017792@163.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.2511111340330.25436@angie.orcam.me.uk>
 
-Dear Gongwei,
-
-
-Thank you for your patch. I’d spell out event in the commit message 
-summary/title.
-
-Am 12.11.25 um 10:48 schrieb Gongwei Li:
-> From: Gongwei Li <ligongwei@kylinos.cn>
+On Tue, Nov 11, 2025 at 03:41:50PM +0000, Maciej W. Rozycki wrote:
+> On Tue, 11 Nov 2025, Thomas Bogendoerfer wrote:
 > 
-> Add processing for HCI Process Read Remote Version event.
-> Used to query the lmp version of remote devices.
-
-How did you test it?
-
-> Signed-off-by: Gongwei Li <ligongwei@kylinos.cn>
-> ---
->   include/net/bluetooth/hci_core.h |  1 +
->   net/bluetooth/hci_event.c        | 23 +++++++++++++++++++++++
->   net/bluetooth/mgmt.c             |  5 +++++
->   3 files changed, 29 insertions(+)
+> > >  Can you please give it a try with your systems?
+> > 
+> > it's booting on my R4400 SGI Indy, but I see a lot of segmentation
+> > faults during system start. If I comment out r4k_tlb_uniquify() every-
+> > thing boots fine, which is kind of strange as there is a local_flush_tlb_all(),
+> > which should leave the TLB in the same stage.... No idea why, yet.
 > 
-> diff --git a/include/net/bluetooth/hci_core.h b/include/net/bluetooth/hci_core.h
-> index 32b1c08c8bba..bdd5e6ef3616 100644
-> --- a/include/net/bluetooth/hci_core.h
-> +++ b/include/net/bluetooth/hci_core.h
-> @@ -749,6 +749,7 @@ struct hci_conn {
->   
->   	__u8		remote_cap;
->   	__u8		remote_auth;
-> +	__u8		remote_ver;
->   
->   	unsigned int	sent;
->   
-> diff --git a/net/bluetooth/hci_event.c b/net/bluetooth/hci_event.c
-> index f20c826509b6..7f8e3f8ec01e 100644
-> --- a/net/bluetooth/hci_event.c
-> +++ b/net/bluetooth/hci_event.c
-> @@ -3737,6 +3737,26 @@ static void hci_remote_features_evt(struct hci_dev *hdev, void *data,
->   	hci_dev_unlock(hdev);
->   }
->   
-> +static void hci_remote_version_evt(struct hci_dev *hdev, void *data,
-> +				   struct sk_buff *skb)
-> +{
-> +	struct hci_ev_remote_version *ev = (void *)skb->data;
-> +	struct hci_conn *conn;
-> +
-> +	BT_DBG("%s", hdev->name);
-> +
-> +	hci_dev_lock(hdev);
-> +
-> +	conn = hci_conn_hash_lookup_handle(hdev, __le16_to_cpu(ev->handle));
-> +	if (!conn)
-> +		goto unlock;
-> +
-> +	conn->remote_ver = ev->lmp_ver;
-> +
-> +unlock:
-> +	hci_dev_unlock(hdev);
-> +}
-> +
->   static inline void handle_cmd_cnt_and_timer(struct hci_dev *hdev, u8 ncmd)
->   {
->   	cancel_delayed_work(&hdev->cmd_timer);
-> @@ -7448,6 +7468,9 @@ static const struct hci_ev {
->   	/* [0x0b = HCI_EV_REMOTE_FEATURES] */
->   	HCI_EV(HCI_EV_REMOTE_FEATURES, hci_remote_features_evt,
->   	       sizeof(struct hci_ev_remote_features)),
-> +	/* [0x0c = HCI_EV_REMOTE_VERSION] */
-> +	HCI_EV(HCI_EV_REMOTE_VERSION, hci_remote_version_evt,
-> +	       sizeof(struct hci_ev_remote_version)),
->   	/* [0x0e = HCI_EV_CMD_COMPLETE] */
->   	HCI_EV_REQ_VL(HCI_EV_CMD_COMPLETE, hci_cmd_complete_evt,
->   		      sizeof(struct hci_ev_cmd_complete), HCI_MAX_EVENT_SIZE),
-> diff --git a/net/bluetooth/mgmt.c b/net/bluetooth/mgmt.c
-> index 79762bfaea5f..c0bab45648f3 100644
-> --- a/net/bluetooth/mgmt.c
-> +++ b/net/bluetooth/mgmt.c
-> @@ -9728,6 +9728,9 @@ void mgmt_device_connected(struct hci_dev *hdev, struct hci_conn *conn,
->   {
->   	struct sk_buff *skb;
->   	struct mgmt_ev_device_connected *ev;
-> +	struct hci_cp_read_remote_version cp;
-> +
-> +	memset(&cp, 0, sizeof(cp));
->   	u16 eir_len = 0;
->   	u32 flags = 0;
->   
-> @@ -9774,6 +9777,8 @@ void mgmt_device_connected(struct hci_dev *hdev, struct hci_conn *conn,
->   	ev->eir_len = cpu_to_le16(eir_len);
->   
->   	mgmt_event_skb(skb, NULL);
-> +
-> +	hci_send_cmd(hdev, HCI_OP_READ_REMOTE_VERSION, sizeof(cp), &cp);
->   }
->   
->   static void unpair_device_rsp(struct mgmt_pending_cmd *cmd, void *data)
+>  Can you try the diagnostic patch below, which is what I used to verify 
+> this change, and report the entries produced?  Otherwise I wonder whether 
+> I haven't missed a barrier somewhere.
 
-The diff looks good. Please feel free to add:
+Update on the issue: Your patch is good and the segmentation faults,
+I'm seeing, have IMHO a different reason. Instead of removing the call
+to r4k_tlb_uniquify() I've replaced the jal in the binary with a nop.
+And the issue is still there with this patched kernel. I've seen
+something similair on a R12k Octanes, which comes and goes probably
+depeding on code layout. So far I wasn't able to nail this down :-(
 
-Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
+Do you want to send a v2 of the patch ? I'm fine with the current version
+for applying...
 
+Thomas.
 
-Kind regards,
-
-Paul
+-- 
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
 
