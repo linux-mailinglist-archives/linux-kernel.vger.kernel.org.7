@@ -1,162 +1,168 @@
-Return-Path: <linux-kernel+bounces-897071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DA92C51EB9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 12:23:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A7513C5220D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 12:58:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACE043B538C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:15:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3C043A8470
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:50:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17E3C2BDC2A;
-	Wed, 12 Nov 2025 11:15:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Tyzvjtvl";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="COdfgtHA"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA33524BBE4
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 11:15:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18DCA314A80;
+	Wed, 12 Nov 2025 11:50:43 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC0BF314A67;
+	Wed, 12 Nov 2025 11:50:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762946138; cv=none; b=CALIpQ1KWBSiHCtQaRy04lGdDJSgm2mxmC7oJdlHFxteISTDL+z51N86U2DhH42ijGXew1B1qcnfhkLDtE840k7XjjLh2Y+hK6VjL+mcMzD3TVKguhAV4bT76tmja48Pjzp+ziRMnsDRXVzNUgjYReanyijT3a0XgbccpEyACsc=
+	t=1762948242; cv=none; b=bXTojtJ9Ark+62/CdnGjH9GZS7c5yeakILwk5wSuUm0hJcWV2W9uY6WURJNkFJfFmUk6IpUTOrDlqEKSmmlzxqdCkZXWbXs7QfkpdWYbMD3mRbfsLQE81hI1KFnuFQ0807m/A1U3CufgyU/bmVjpi6+BmM5i9R6hvSE8yLwplXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762946138; c=relaxed/simple;
-	bh=KV9j6tjQ5QXn5f8pxeC8kmzLrI6wkQRac7WkDx7/HyU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pJ9wqnnT/EMYb5Iuf958mQFL5bQsbkHw7soIygUsbjyHPm7JDBJl6bYk3yInrcCLX/32o2cDfC6ApL+oV6bHKi7Dk+cava54IXHSOgs6ZYnGl8zFMNFeSCvFmy9WI7Zd7YkXozNTAoYezkWxmGvw0+VR3vl/a6o0z8AvKCRAnXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Tyzvjtvl; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=COdfgtHA; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762946135;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6VmL1OVkwxFNMuOuahfScs6JqfQbzrAAR04/d20fU04=;
-	b=Tyzvjtvl0U8n1hqfpCtfGSo1X8+DqHppuDbUPwgKRisSL9ul4NrPgdZRWqxablkUWyF2t4
-	JYfCUIibOw4oG1WApbg8qc3ZXi6Gr0gR0DDgm3ZYAdb7kTK9e5ys9jjQS4Wk3WOTNggj5b
-	TEKVmgsIq1UHYSgvPMWo134ClaeaNhY=
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
- [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-101-xWtZez17NZ2Lhexv5f6p4Q-1; Wed, 12 Nov 2025 06:15:34 -0500
-X-MC-Unique: xWtZez17NZ2Lhexv5f6p4Q-1
-X-Mimecast-MFC-AGG-ID: xWtZez17NZ2Lhexv5f6p4Q_1762946134
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4edaf9e48ecso26030561cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 03:15:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1762946134; x=1763550934; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6VmL1OVkwxFNMuOuahfScs6JqfQbzrAAR04/d20fU04=;
-        b=COdfgtHAszEd5Dj1x/EbjnDEZFSAzdwvZ0DtOrep6HOyGys8ISoSJyZB1z8lmeGgt3
-         nOQFQAzXGEj8/J0LrjwTcB1VBCxrgKobr9exmijFRTW6Ei17vzhq45HeKbrVo2AoLN5e
-         az7ZYMrQ/kn9ac4+TSj1LB9jGYlVz20rbmfymjJ4QEdmi9RuKdTlFtJdqThBVS0o10fD
-         kxEgetbwsbRY/6Z6GmPVGiQKIcegyB/0YU6yVtDJdsptKMq17Q95zREIHt+barJrfgof
-         FRnvmrzelMEwlwY0SfakHCR7Um9iHagm6pFFgqF8au6dj1yvLDUr1GX7XwPD/fBOQGWd
-         eyzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762946134; x=1763550934;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6VmL1OVkwxFNMuOuahfScs6JqfQbzrAAR04/d20fU04=;
-        b=rlNF3VHkvRYRFDOEmpNLkLQU0vrzJ29khWfTeH23fyr1IyypVnU6YELZRBcXUvLXHg
-         FnJolEvE44ccgLjVlCz2ZlAQaijDfiGnC9M0z7eDcv8VUMEEV7s7AiggqDLjkXoxPNuh
-         QOx43fA925Sg7zqvl6GXhsQV0JneEfec8VDJiP8mMlrNnBeBhMKi0V06ZfkklV6orvHS
-         HCNzfnbr+fy9qIjBo3E3C23MVYAAfMAFyU0Eb+ROlyA10Q20SrJnbGyBqYe5IQLGNpEm
-         UiIZUNcf0mUKPkvmUYW6m0dGFd3bhks2ftOftV/86YTwNlIUmodYoUgOKf/TZMKMkZc5
-         FPrA==
-X-Forwarded-Encrypted: i=1; AJvYcCUm43dEu0/5ozPUISRaZjZU+JGDJ+JmWKmeCk6/oxjcSi3Qru510vK2WjyPgr1Zl5vGe4GpGo/9KqLRalg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgWqDesmElmBEMGQMLQ0MVgwaQIvpDFDS5sueG5BYEeAGtz6y/
-	FSEzkF6d1NQ9XEMJB08bLcvfPk20pBx2Gy4iaasjQk/VBYi8p7mVuS9XkZdz+c/0dKXUV6DxlP9
-	Y2pu7vbYYzk2AoUlngDuw4fIn10n/5MQ53brNMo6HZiHbKY4fbFzOg4z1XVj08+FILg==
-X-Gm-Gg: ASbGncsWIh8Bptxpgi48iNFo8QbtweMYavkYIh8hjXZHR3t2FXNk/vHBXW3t4w0XSFa
-	sTMax+byd8KDFOHO1cB+H1F9q8AkmOdl/mPPafaw50OmSivj+pwJ505yfEImlumdZbDELnv+PAk
-	9+iEnaaO+XBM+OeQHzQXfik7pSmNGjKO953HEBPA3fIvghE4Zcywqll/kXrxWIN4A0yrJeF3stx
-	7z9Jj+cG1Poh0g2bmeDOILcLjAgqzvHxNEHwHYvMIwFSsZkVJ0ix/ceAkF7ZZh0TFQ+b7eL3tmh
-	9gOeQukQN8dAzLA3FjDiDsrgqfDZ3j/q627ZyNKDtRy9rCLnCpR0lNjCANWGFCVwQU1fqt42jMf
-	UgF3aHM/NeD5CXRgi+rEYeGm6hhyvwkfF/8ifsoDzX/irNNI02k8=
-X-Received: by 2002:a05:622a:54:b0:4ed:69c2:3b13 with SMTP id d75a77b69052e-4eddbc6a48bmr30774411cf.9.1762946134040;
-        Wed, 12 Nov 2025 03:15:34 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFzBmGdmGhOlYiVIRlWZU30TyBg9MVhguagEmUrNtm3qfqZ/uALNevR67J4XeGgywzJuDlfEw==
-X-Received: by 2002:a05:622a:54:b0:4ed:69c2:3b13 with SMTP id d75a77b69052e-4eddbc6a48bmr30774101cf.9.1762946133569;
-        Wed, 12 Nov 2025 03:15:33 -0800 (PST)
-Received: from sgarzare-redhat (host-79-46-200-153.retail.telecomitalia.it. [79.46.200.153])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4ede379ef71sm2086971cf.0.2025.11.12.03.15.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Nov 2025 03:15:32 -0800 (PST)
-Date: Wed, 12 Nov 2025 12:15:26 +0100
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: Bobby Eshleman <bobbyeshleman@gmail.com>
-Cc: Shuah Khan <shuah@kernel.org>, virtualization@lists.linux.dev, 
-	netdev@vger.kernel.org, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Simon Horman <horms@kernel.org>, Bobby Eshleman <bobbyeshleman@meta.com>
-Subject: Re: [PATCH net-next v4 02/12] selftests/vsock: make
- wait_for_listener() work even if pipefail is on
-Message-ID: <wlflavm4wt3focsl6w4ylu2p2itwz7jl3hbcnczuyi5mfew7nu@rd6wflle5gjt>
-References: <20251108-vsock-selftests-fixes-and-improvements-v4-0-d5e8d6c87289@meta.com>
- <20251108-vsock-selftests-fixes-and-improvements-v4-2-d5e8d6c87289@meta.com>
+	s=arc-20240116; t=1762948242; c=relaxed/simple;
+	bh=wH9YiYK5vf3a4Yc3A4ClIKZkBIbThYXlZe1vwVAK5SM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pnnL8CdK6O4ciiyezyMT1ZMNaIRO1/cC0QH2w1vIGqC1hYMxaJptZtneRH9Z4ErQ/DWrvxNXjL7X71cLu2hy373e6SXfEMpY4uRd3MAo2EELJdWXdBIPYCbVFmMFViTx3WrkRk6JNbn9gGgw0svKcUBHyd00wsCWVPaNYIYhGZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4d616J1lGlz9sSb;
+	Wed, 12 Nov 2025 12:15:36 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id IDngTuJZ3gRw; Wed, 12 Nov 2025 12:15:36 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4d616J0kqSz9sSZ;
+	Wed, 12 Nov 2025 12:15:36 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 03A088B76E;
+	Wed, 12 Nov 2025 12:15:36 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id WbBSOMNQv6aS; Wed, 12 Nov 2025 12:15:35 +0100 (CET)
+Received: from [192.168.235.99] (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 69C278B764;
+	Wed, 12 Nov 2025 12:15:35 +0100 (CET)
+Message-ID: <caf091d5-6122-4cd7-bdbd-88b3f9a4029e@csgroup.eu>
+Date: Wed, 12 Nov 2025 12:15:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20251108-vsock-selftests-fixes-and-improvements-v4-2-d5e8d6c87289@meta.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] powerpc, mm: Fix mprotect on book3s 32-bit
+To: Dave Vasilevsky <dave@vasilevsky.ca>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Nadav Amit <nadav.amit@gmail.com>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Ritesh Harjani <ritesh.list@gmail.com>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org, linux-mm@kvack.org
+References: <20251111-vasi-mprotect-g3-v2-1-881c94afbc42@vasilevsky.ca>
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+Content-Language: fr-FR
+In-Reply-To: <20251111-vasi-mprotect-g3-v2-1-881c94afbc42@vasilevsky.ca>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Sat, Nov 08, 2025 at 08:00:53AM -0800, Bobby Eshleman wrote:
->From: Bobby Eshleman <bobbyeshleman@meta.com>
->
->Rewrite wait_for_listener()'s pattern matching to avoid tripping the
->if-condition when pipefail is on.
->
->awk doesn't gracefully handle SIGPIPE with a non-zero exit code, so grep
->exiting upon finding a match causes false-positives when the pipefail
->option is used (grep exits, SIGPIPE emits, and awk complains with a
->non-zero exit code). Instead, move all of the pattern matching into awk
->so that SIGPIPE cannot happen and the correct exit code is returned.
->
->Signed-off-by: Bobby Eshleman <bobbyeshleman@meta.com>
->---
->Changes in v2:
->- use awk-only tcp port lookup
->- remove fixes tag because this problem is only introduced when a later
->  patch enables pipefail for other reasons (not yet in tree)
->---
-> tools/testing/selftests/vsock/vmtest.sh | 6 ++++--
-> 1 file changed, 4 insertions(+), 2 deletions(-)
 
-Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
 
->
->diff --git a/tools/testing/selftests/vsock/vmtest.sh b/tools/testing/selftests/vsock/vmtest.sh
->index bc16b13cdbe3..01ce16523afb 100755
->--- a/tools/testing/selftests/vsock/vmtest.sh
->+++ b/tools/testing/selftests/vsock/vmtest.sh
->@@ -251,9 +251,11 @@ wait_for_listener()
->
-> 	# for tcp protocol additionally check the socket state
-> 	[ "${protocol}" = "tcp" ] && pattern="${pattern}0A"
->+
-> 	for i in $(seq "${max_intervals}"); do
->-		if awk '{print $2" "$4}' /proc/net/"${protocol}"* | \
->-		   grep -q "${pattern}"; then
->+		if awk -v pattern="${pattern}" \
->+			'BEGIN {rc=1} $2" "$4 ~ pattern {rc=0} END {exit rc}' \
->+			/proc/net/"${protocol}"*; then
-> 			break
-> 		fi
-> 		sleep "${interval}"
->
->-- 
->2.47.3
->
+Le 11/11/2025 à 22:42, Dave Vasilevsky a écrit :
+> On 32-bit book3s with hash-MMUs, tlb_flush() was a no-op. This was
+> unnoticed because all uses until recently were for unmaps, and thus
+> handled by __tlb_remove_tlb_entry().
+> 
+> After commit 4a18419f71cd ("mm/mprotect: use mmu_gather") in kernel 5.19,
+> tlb_gather_mmu() started being used for mprotect as well. This caused
+> mprotect to simply not work on these machines:
+> 
+>    int *ptr = mmap(NULL, 4096, PROT_READ|PROT_WRITE,
+>                    MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
+>    *ptr = 1; // force HPTE to be created
+>    mprotect(ptr, 4096, PROT_READ);
+>    *ptr = 2; // should segfault, but succeeds
+> 
+> Fixed by making tlb_flush() actually flush TLB pages. This finally
+> agrees with the behaviour of boot3s64's tlb_flush().
+> 
+> Fixes: 4a18419f71cd ("mm/mprotect: use mmu_gather")
+> Signed-off-by: Dave Vasilevsky <dave@vasilevsky.ca>
+> Cc: stable@vger.kernel.org
+
+A small comment below
+
+Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+
+> ---
+> Changes in v2:
+> - Flush entire TLB if full mm is requested.
+> - Link to v1: https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Flore.kernel.org%2Fr%2F20251027-vasi-mprotect-g3-v1-1-3c5187085f9a%40vasilevsky.ca&data=05%7C02%7Cchristophe.leroy%40csgroup.eu%7C7b1beec4921c4c67c95108de216b416f%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638984941704616710%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=mJL3gS4YkTUAWmivSWL5AE9BlhAQ0R%2FI3eBwYwN26nA%3D&reserved=0
+> ---
+>   arch/powerpc/include/asm/book3s/32/tlbflush.h | 8 ++++++--
+>   arch/powerpc/mm/book3s32/tlb.c                | 9 +++++++++
+>   2 files changed, 15 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/powerpc/include/asm/book3s/32/tlbflush.h b/arch/powerpc/include/asm/book3s/32/tlbflush.h
+> index e43534da5207aa3b0cb3c07b78e29b833c141f3f..b8c587ad2ea954f179246a57d6e86e45e91dcfdc 100644
+> --- a/arch/powerpc/include/asm/book3s/32/tlbflush.h
+> +++ b/arch/powerpc/include/asm/book3s/32/tlbflush.h
+> @@ -11,6 +11,7 @@
+>   void hash__flush_tlb_mm(struct mm_struct *mm);
+>   void hash__flush_tlb_page(struct vm_area_struct *vma, unsigned long vmaddr);
+>   void hash__flush_range(struct mm_struct *mm, unsigned long start, unsigned long end);
+> +void hash__flush_gather(struct mmu_gather *tlb);
+>   
+>   #ifdef CONFIG_SMP
+>   void _tlbie(unsigned long address);
+> @@ -28,9 +29,12 @@ void _tlbia(void);
+>    */
+>   static inline void tlb_flush(struct mmu_gather *tlb)
+>   {
+> -	/* 603 needs to flush the whole TLB here since it doesn't use a hash table. */
+> -	if (!mmu_has_feature(MMU_FTR_HPTE_TABLE))
+> +	if (mmu_has_feature(MMU_FTR_HPTE_TABLE)) {
+> +		hash__flush_gather(tlb);
+> +	} else {
+> +		/* 603 needs to flush the whole TLB here since it doesn't use a hash table. */
+>   		_tlbia();
+> +	}
+
+You should keep the comment on 603 outside the if/else and remove the 
+braces, in line with 
+https://docs.kernel.org/process/coding-style.html#placing-braces-and-spaces
+
+>   }
+>   
+>   static inline void flush_range(struct mm_struct *mm, unsigned long start, unsigned long end)
+> diff --git a/arch/powerpc/mm/book3s32/tlb.c b/arch/powerpc/mm/book3s32/tlb.c
+> index 9ad6b56bfec96e989b96f027d075ad5812500854..e54a7b0112322e5818d80facd2e3c7722e6dd520 100644
+> --- a/arch/powerpc/mm/book3s32/tlb.c
+> +++ b/arch/powerpc/mm/book3s32/tlb.c
+> @@ -105,3 +105,12 @@ void hash__flush_tlb_page(struct vm_area_struct *vma, unsigned long vmaddr)
+>   		flush_hash_pages(mm->context.id, vmaddr, pmd_val(*pmd), 1);
+>   }
+>   EXPORT_SYMBOL(hash__flush_tlb_page);
+> +
+> +void hash__flush_gather(struct mmu_gather *tlb)
+> +{
+> +	if (tlb->fullmm || tlb->need_flush_all)
+> +		hash__flush_tlb_mm(tlb->mm);
+> +	else
+> +		hash__flush_range(tlb->mm, tlb->start, tlb->end);
+> +}
+> +EXPORT_SYMBOL(hash__flush_gather);
+> 
+> ---
+> base-commit: 24172e0d79900908cf5ebf366600616d29c9b417
+> change-id: 20251027-vasi-mprotect-g3-f8f5278d4140
+> 
+> Best regards,
 
 
