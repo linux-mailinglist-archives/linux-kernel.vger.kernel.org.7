@@ -1,128 +1,140 @@
-Return-Path: <linux-kernel+bounces-897381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97AEFC52EF5
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:16:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 286CBC52F17
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:17:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14AFA5011F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:23:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FFAB5006B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:23:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40F0128B4E2;
-	Wed, 12 Nov 2025 14:21:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0C863101B0;
+	Wed, 12 Nov 2025 14:21:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IOF6yc45"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S9WMmZ/Q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17997334C35
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 14:21:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C0E528B4E2
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 14:21:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762957291; cv=none; b=txCj34ZC8IUs1w2uSJ/wdjZsQqrK9v1ft3XTomy/kb5D/N5EIjFHQAor6u7oA1+x5PSRIy0itIZffDiGyY0qSPYsLcSMUgLsl4egT5hX0JMdFlQarzpbMv4ZOEeaZjfIxXWYtWTrlMswvEV/zbnrBGqdOC0dJWNIWHyxKxJnfOM=
+	t=1762957285; cv=none; b=H6acaSTQuGZ9mZEhYUjvBhKH86kg3cCKY3XKvzYc/x4yD++Ls5jU3qkXmd7ElAaZ9a7q3b07EXdxoGL6+Wg0GX+/wC6jTaVrTAAM8wu/37hmr7ziD3AOJ/JNUg0ZvQXzfrH1N93XK2h51qJrRB16q82+UMHNvC4+Z6T9JWgrCeU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762957291; c=relaxed/simple;
-	bh=4Kk0Pp+oyCwvBc7QFBhUC7pOI+Xlm4LfKjXcpcFHM+o=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=iBopxesQCNpO3BwJlPOshDtelLA2Y5C3OCwuYwzrrGG9EpAfylQa9RdQ3OivgWFzVHQ3B2wFs6ByXD3e8soofO8wOFv/ouyufVNZnm/uaTIlIVK6TRtshPoRrKBeMHQs2C1bd56BX1v0sGoX2hS8WoracgeHR33lrpnM6bsWLo4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IOF6yc45; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-295548467c7so10067765ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 06:21:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762957289; x=1763562089; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=c6aIKYL3h7TEPkfgMqOOs4CW+bxa3dLyjG+Cts4zApM=;
-        b=IOF6yc45CGHVll6i13RxaUkiZo0W5AjmXD5VM2AChzD81T2kZ8xsyM9VbIokEL9oUH
-         ydbgKAE9WFu7DrP2nwSIn7fYYaCHtmqK10t0DnrSSx1HUCCzBBn/unj6+cVn6GJRtbyE
-         ckpHsllqo4jh/hz6yT/lXNyzrtWrUwUetfeRY89Ir1dLIgBDLMOMv7e5+dYjlLx/CXG9
-         QLCAINCnbSFaNORUjjpsHSK2uJMLYXr6wIL73c2wzVbdGgmNPy/dlhQZeqP5DvwmfB5G
-         NklacGdrVA66x096jQdXbYS69iuRPsMIHV7uYoNaSMaJQAoigTKII+fJmJ17pVeozcnZ
-         HqVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762957289; x=1763562089;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=c6aIKYL3h7TEPkfgMqOOs4CW+bxa3dLyjG+Cts4zApM=;
-        b=Ufg7kH4GcDZukcX/Vqls/XMmbntZhnHClJ5+YXGyr2QTEZ0VFzt2s2asq8vWKlBe34
-         OtH86Ty/rjIzv6A+23necuKmLulru6P9jKrWuOL2aRqtyZXIteVc9BA3bWDmO1CEjem+
-         lO5dsl3+F8Sz5joKVNYdh4C6qIA1hjsm383jKIu2iLdklReyXc9QUTXdu1XDscN9CWks
-         CaeFMEAbo6CSu423PnQidHncmIAdF7ZKegBBExH6D9TPDpWl47GegVpZlOGj7E1QZPmY
-         lcEjA+yGVam0b3vGabhKb09YwYDmzrfGJjTjLGIdCS5/4AUmthHr0UheC6kEQX5L7Vvk
-         bCmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV6ZLL5TUc+5XRn6rGhx1Yg0yI5z5BcrOxThzjl4R551Oo4+1nW7JFFccqErI6CdzLqmPS7qfhJFxNdRv4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YystKtJtx5zk70bho0rbF7jPFBx9e3AfQ88D9gGzW2cKr7L/549
-	zn6XYs4KYb3v4B9/OGelwYaOx5U5j/3HB0JfSBVxM/Whilg8VVb/bo0=
-X-Gm-Gg: ASbGnct8x1sKUj1yyF2vwJCGgXYT2LCoOkdCLR0dTBc49bSKqP6T7gx8cLzaZKI2KCh
-	tdyyv7IAtq37AbUt8YPbLwFO1WrkonmMTEpAV9xdjvXKKBh9IJb870B2sJTs7UioknMhWApVoXn
-	fTkpYeWyGB2uxP14R5T80U1CTV2DYnpqnaUFRkhEv71jnxI66nxVPma49O8cCF/8OQ/ZolMSS3g
-	Jqx5+gQZzxxJib1YJpJY5AsDqQzxMkBjl6IejBb4flhoz8jyCcOWJme1D0lISK5cthn0xSg7YL4
-	oRmhtnb5tJ54OqfgLs9vg/6+3nEnXg7i+txpmafWS0xbtTZYQ2ZDOKuP6HwFykIVWZ9NaNup0Tj
-	LaNUeFqUkw6xOPJbnKLB1tRSKe55TqsolLiPqF77f7c6qZ7ccLXIXXZ5Mot777SDmclL+Vukt1d
-	kdWNTPfxsJhMuUqGmBQHsqKvPC8BUuMecsIbkdUmY=
-X-Google-Smtp-Source: AGHT+IFb5IKVYywJ2wTpqfYM36tnRXN86Br+2/MojU2W4hRCNkjZz/A639w8i7TDIc2oPdeJ+TJbWw==
-X-Received: by 2002:a17:903:3c27:b0:297:f527:a38f with SMTP id d9443c01a7336-2984ed35723mr42105695ad.18.1762957289302;
-        Wed, 12 Nov 2025 06:21:29 -0800 (PST)
-Received: from localhost.localdomain (173.242.118.39.16clouds.com. [173.242.118.39])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2984dca17ffsm33035385ad.71.2025.11.12.06.21.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Nov 2025 06:21:28 -0800 (PST)
-From: Linwei Wang <wanix1988@gmail.com>
-To: Aaron Lu <ziqianlu@bytedance.com>
-Cc: Linwei Wang <wanix1988@gmail.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>,
-	Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] sched/fair: remove redundant se initialization in unthrottle_cfs_rq
-Date: Wed, 12 Nov 2025 22:21:19 +0800
-Message-Id: <20251112142119.375184-1-wanix1988@gmail.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <CANCG0GdjAaXG5U=9etbC3qo5uY7fbpFTG_RqoKcgChVSrLOKWA@mail.gmail.com>
-References: <CANCG0GdjAaXG5U=9etbC3qo5uY7fbpFTG_RqoKcgChVSrLOKWA@mail.gmail.com>
+	s=arc-20240116; t=1762957285; c=relaxed/simple;
+	bh=/hOxQ9C2lk+N1NIFVh7E5xgqEFJaMmpx3AHeuX5+Zpg=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JYtPxPh8kj8pX0GLpxZzeffKlzrkn07OEk2oP+G3yXuYjtUbXF2QrC1dkCxi3NxAxP/J/3FpNXbBeY4lEdLQ5Jah1FYT/8Af69SFHGfq9aI8fPHrFdtIyc2DLZbdMScLBSgtXzHbayP3kXvgV4h6uNuqld7lspjJWpjgOzzUZXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S9WMmZ/Q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC674C4CEF1;
+	Wed, 12 Nov 2025 14:21:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762957284;
+	bh=/hOxQ9C2lk+N1NIFVh7E5xgqEFJaMmpx3AHeuX5+Zpg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=S9WMmZ/QWOtdikDnydmU61FjwbB33dU661tQCn0LGXCwTDjFjNyMN4nAabSqTbQQX
+	 zMofYdpo2BcBxGlJnV5HMtLCFuXnDYQNDvTu+q3mpqyZAvbo+Sa9LV87XW1KeufzDi
+	 WwEA2yI09w1qqI0sjrv3ScXYLoi3mo3DpmHIgUyAZaDc1bQUTeDMYjOvsm+QV582zX
+	 9ZzC1xGvrofsGKVNhyKWh0TKCfnARAMQfOOjSTtQcx68Gb7/Y0Edk7Funj/6mhQmCo
+	 1BzEGBIcLqj6xDaoz8Jjj4bQrLf4sIX8SvgxygQ5cNrDZFl4MMH1XVGaY84pKOr6tF
+	 6dYb9u2R7cGrQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1vJBis-00000004Z5y-2Y9g;
+	Wed, 12 Nov 2025 14:21:22 +0000
+Date: Wed, 12 Nov 2025 14:21:22 +0000
+Message-ID: <86v7jftjq5.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Breno Leitao <leitao@debian.org>
+Cc: catalin.marinas@arm.com,
+	will@kernel.org,
+	mark.rutland@arm.com,
+	paulmck@kernel.org,
+	mhiramat@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	kernel-team@meta.com
+Subject: Re: arm64: pseudo NMI bootconfig question
+In-Reply-To: <rs4igmsjrm6r2aio4nbe5jos3vcqk2u4bjhltjwtj2pn3cquip@kv3grgec7qrb>
+References: <rs4igmsjrm6r2aio4nbe5jos3vcqk2u4bjhltjwtj2pn3cquip@kv3grgec7qrb>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: leitao@debian.org, catalin.marinas@arm.com, will@kernel.org, mark.rutland@arm.com, paulmck@kernel.org, mhiramat@kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-team@meta.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Hi Aaron,
+On Wed, 12 Nov 2025 14:05:43 +0000,
+Breno Leitao <leitao@debian.org> wrote:
+>=20
+> Hello,
+>=20
+> In most major Linux distributions, it=E2=80=99s common to have a separate=
+ debug kernel
+> build. This variant is compiled with additional debug configuration optio=
+ns to
+> provide deeper observability and easier debugging, typically at the expen=
+se of
+> some performance.
+>=20
+> This approach is also used in several companies, including mine. The debug
+> flavor is usually a drop-in replacement deployed when investigating
+> issues, allowing quicker identification before more detailed manual
+> debugging.
+>=20
+> I=E2=80=99m currently debugging some hung tasks using the debug kernel fl=
+avor and
+> noticed that backtraces weren=E2=80=99t printed correctly because PSEUDO =
+NMI isn=E2=80=99t
+> enabled.
+>=20
+> AFAIK, to enable PSEUDO NMI on ARM, the following are required:
+>=20
+>  cmdline: irqchip.gicv3_pseudo_nmi=3D1
+>  config: CONFIG_ARM64_PSEUDO_NMI=3Dy
+>=20
+> I wanted to have pseudo NMI enabled by default in the debug kernel
+> (without relying on kernel command-line parameters), but this isn=E2=80=
+=99t
+> possible today. The reason is that `irqchip.gicv3_pseudo_nmi` is an early
+> parameter, which can=E2=80=99t be set through bootconfig, so, independent=
+ of my
+> .config, I need to hack cmdline arguments to have the debuggability
+> I need.
+>=20
+> Question:
+>=20
+> Would it make sense to provide an option to enable pseudo NMI in certain
+> kernel configuration without requiring an extra command-line parameter?
 
-Your commit 956dfda6a708 removes the duplicate assignment after the early
-return, but still initializes 'se' at declaration:
+[I wasn't asked, but I'll give my answer anyway]
 
-  struct sched_entity *se = cfs_rq->tg->se[cpu_of(rq)];
+The short answer is no. The long answer is that there is so much
+broken HW out there that dies a painful death when enabling pseudo-NMI
+that is isn't practical to do so. It also brings a measurable
+overhead to some of the most frequent operations (interrupt masking).
 
-This initialization happens before the early return check at line 6036-6037,
-so when runtime_remaining <= 0 causes an early return, the array access
-is wasted.
+Until someone weeds out the broken machines (in some cases, by prying
+them from my cold dead hands), the requirement for the option is
+likely to stick.
 
-My patch defers initialization until after the early return:
+Thanks,
 
-  - struct sched_entity *se = cfs_rq->tg->se[cpu_of(rq)];
-  + struct sched_entity *se;
-  ...
-  + se = cfs_rq->tg->se[cpu_of(rq)];
+	M.
 
-Your commit fixes the duplicate assignment; mine optimizes the early return
-path. They're independent optimizations.
-
-Should I rebase on top of 956dfda6a708?
-
-Thanks.
-
+--=20
+Without deviation from the norm, progress is not possible.
 
