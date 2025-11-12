@@ -1,216 +1,153 @@
-Return-Path: <linux-kernel+bounces-897758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40CC4C53864
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:55:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 248FDC5388C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:57:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0450C566943
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:36:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3340A5662E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:35:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2A81341661;
-	Wed, 12 Nov 2025 16:34:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7A75342527;
+	Wed, 12 Nov 2025 16:34:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="N5q44cJc"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="la1RCOx0"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86E9733A026
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 16:34:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C8CD328270;
+	Wed, 12 Nov 2025 16:34:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762965298; cv=none; b=TmXm9te561GQzEEh0PcYV3wbV5JIwLrb4PhDOCSCODnl7JS7ZrJYsCZP7GE9YlPNIUiPKd0i3XfusC20Mvfs+FGozRAfydxAfteItHq/weH9qquDxH1+fwZXZnDxFyeG0bTuyM0WED7g1fV/R6xT1jZ7dGyX3cdno72i5lbxMVg=
+	t=1762965279; cv=none; b=ZJXBStMZa/Y2nPIm6rC94i5RtyBBtKVbELoTSVdRlv7xWRtVLnuYUiII23NTnkU+G1wrm+9J7/lzwL0GoQ0BEhjCv593xMehfg00HFYjgCU4hpQd9ngerr4kfsikPyuw1dy7E3J2rPBGZNhoLFnqVMsSpu7f238kSC2dPhomAsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762965298; c=relaxed/simple;
-	bh=m7pFqUbehQFZT3TAGqXcOGURwuIsoFlYDExsqXsTh2M=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Q0+6B+t2fm7suhFCzBc2DnpiopB3QacsKSO62Thbk6KEk3Q+ffduD3ZNlIzG03yy4EKVyRFXKGAvWHr9oVQpbZ61md7vSUfW80EbAj/qIkm7I+iRhiCPmRdjx0orDxcvBo26A6g8KN4TqYizoVaRDqCA9nXhRJWTNQKd3hcj6vs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=N5q44cJc; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id DA370C0F574;
-	Wed, 12 Nov 2025 16:34:31 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 801DF6070B;
-	Wed, 12 Nov 2025 16:34:53 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 0D1DD102F084F;
-	Wed, 12 Nov 2025 17:34:50 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1762965292; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=AbBF9YK95hha/G3M+Fz+28OT4bWjR1IMawslI9+BHEU=;
-	b=N5q44cJcURD+I6ZaGZujoY1LJ5r+oAAO9Dn/gr8R9vqI56UPqbOCi5YrhPJwh9oijOD6Ay
-	zoRctqubfuVasY/rqGGVY/SK55fhWBh/60qss3SrDtXSUUuPiKZj+cPsJz+qJ4QdrEL3tZ
-	q4b3nra6CdfdshIGXnTN5oWiimBDKoP2045flPsJH6oKIim+a3EWx6xMRXsEj4fzSKiqbZ
-	coxHQdv9wghleS1WepYu3/3pOBZUTHviW2Oinv3gSSFpnxK+fr21OezJU0sN8DV9gTeuTs
-	a0MRxSR5/SMlTzDhxOh+3vNxMqOQOb4hUk83sgPpMFmk+h2m1FcoOntk/hvt9w==
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Date: Wed, 12 Nov 2025 17:34:34 +0100
-Subject: [PATCH v3 1/2] drm/bridge: add drm_bridge_unplug() and
- drm_bridge_enter/exit()
+	s=arc-20240116; t=1762965279; c=relaxed/simple;
+	bh=/l9AryvK0XODGKgVN8v4lcQFAVF222fvqL2WuzAN7xI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QGs6XP02xZB8V3Hr/Ijovyzngh8Ff+sAB4NVvkKzBjrwWaobmsriZ1DqkrH9KEQ+0MbkZpVE1+xGVcvkMEBMYJYrHGHDbjn8a5b5eOl41tmqWiuOGLRMo6YfeMw4f+HV5aly2S1ZHbsMatbcQs74o0EmRw+hZyybn7rM4S2a8zk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=la1RCOx0; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762965277; x=1794501277;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=/l9AryvK0XODGKgVN8v4lcQFAVF222fvqL2WuzAN7xI=;
+  b=la1RCOx0ux8ziX/4W0OsxzsZbgc6iIVZKdK0lfoFIHwcG7VWLyibuA8T
+   cXO29Tz7yCGUqeu8qUIHrWei8ZlrS0Kwxg5nKPtTIpInf5IF9LKrHsADF
+   ToEHcBLw18wGQSfHyEGtTUehN7aB3FcqrXuzvJCX1JSQ909ziYagBVCP0
+   Gd/0kpPWEL5tqLuGDqVLO3orYB/NKaJuw7KypFfGTDHSwH4GfWJu7FN/D
+   hnIMtkTUkZbqgSYhJf61b/C77yaBbP9eABxR5cCNxHNEE2jg8koFxFwHf
+   b3zkcTG1i7UCPOzjEAkQqtho5kY24Iy6qwHrop5ZPLM+V1XDVpkQBJtyL
+   w==;
+X-CSE-ConnectionGUID: dnhteoXQTBqdk8Ua+CTCrA==
+X-CSE-MsgGUID: BdWO9u6RRgqqn+b5YnAcdg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11611"; a="64917130"
+X-IronPort-AV: E=Sophos;i="6.19,299,1754982000"; 
+   d="scan'208";a="64917130"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2025 08:34:36 -0800
+X-CSE-ConnectionGUID: VJ0H4UPWRNueNF3K+BF+sA==
+X-CSE-MsgGUID: qrv1CK8wTvyDqxkZiIwaIA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,299,1754982000"; 
+   d="scan'208";a="188515630"
+Received: from spandruv-mobl4.amr.corp.intel.com (HELO [10.125.108.30]) ([10.125.108.30])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2025 08:34:36 -0800
+Message-ID: <6f1eaf10-071c-41ad-bda3-62eb6b1119e9@intel.com>
+Date: Wed, 12 Nov 2025 09:34:34 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 11/14] cxl/atl: Lock decoders that need address
+ translation
+To: Robert Richter <rrichter@amd.com>
+Cc: Alison Schofield <alison.schofield@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Davidlohr Bueso <dave@stgolabs.net>, linux-cxl@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Gregory Price <gourry@gourry.net>,
+ "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
+ Terry Bowman <terry.bowman@amd.com>, Joshua Hahn <joshua.hahnjy@gmail.com>
+References: <20251103184804.509762-1-rrichter@amd.com>
+ <20251103184804.509762-12-rrichter@amd.com>
+ <ae28560c-ed16-400b-bf3d-86e2cc8617cf@intel.com>
+ <aRMx-YYhaouP4LvR@rric.localdomain>
+From: Dave Jiang <dave.jiang@intel.com>
+Content-Language: en-US
+In-Reply-To: <aRMx-YYhaouP4LvR@rric.localdomain>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251112-drm-bridge-atomic-vs-remove-v3-1-85db717ce094@bootlin.com>
-References: <20251112-drm-bridge-atomic-vs-remove-v3-0-85db717ce094@bootlin.com>
-In-Reply-To: <20251112-drm-bridge-atomic-vs-remove-v3-0-85db717ce094@bootlin.com>
-To: Maxime Ripard <mripard@kernel.org>, Simona Vetter <simona@ffwll.ch>, 
- Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>
-Cc: Hui Pu <Hui.Pu@gehealthcare.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- Luca Ceresoli <luca.ceresoli@bootlin.com>, 
- Dmitry Baryshkov <lumag@kernel.org>
-X-Mailer: b4 0.14.2
-X-Last-TLS-Session-Version: TLSv1.3
 
-To allow DRM bridges to be removable, add synchronization functions
-allowing to tell when a bridge hardware has been physically unplugged and
-to mark a critical section that should not be entered after that.
 
-This is inspired by the drm_dev_unplugged/enter/exit() functions for struct
-drm_device.
 
-Suggested-by: Maxime Ripard <mripard@kernel.org>
-Link: https://lore.kernel.org/all/20250106-vigorous-talented-viper-fa49d9@houat/
-Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+On 11/11/25 5:54 AM, Robert Richter wrote:
+> On 04.11.25 10:13:34, Dave Jiang wrote:
+>>
+>>
+>> On 11/3/25 11:47 AM, Robert Richter wrote:
+>>> There is only support to translate addresses from an endpoint to its
+>>> CXL host bridge, but not in the opposite direction from the bridge to
+>>> the endpoint. Thus, the endpoint address range cannot be determined
+>>> and setup manually for a given SPA range of a region. If the endpoint
+>>> has address translation enabled, lock it to prevent the kernel from
+>>> reconfiguring it.
+>>>
+>>> Reviewed-by: Gregory Price <gourry@gourry.net>
+>>> Signed-off-by: Robert Richter <rrichter@amd.com>
+>>> ---
+>>>  drivers/cxl/core/atl.c | 10 ++++++++++
+>>>  1 file changed, 10 insertions(+)
+>>>
+>>> diff --git a/drivers/cxl/core/atl.c b/drivers/cxl/core/atl.c
+>>> index d6aa7e6d0ac5..5c15e4d12193 100644
+>>> --- a/drivers/cxl/core/atl.c
+>>> +++ b/drivers/cxl/core/atl.c
+>>> @@ -158,6 +158,16 @@ static int cxl_prm_translate_hpa_range(struct cxl_root *cxl_root, void *data)
+>>>  		return -ENXIO;
+>>>  	}
+>>>  
+>>> +	/*
+>>> +	 * There is only support to translate from the endpoint to its
+>>> +	 * parent port, but not in the opposite direction from the
+>>> +	 * parent to the endpoint. Thus, the endpoint address range
+>>> +	 * cannot be determined and setup manually. If the address range
+>>> +	 * was translated and modified, forbid reprogramming of the
+>>> +	 * decoders and lock them.
+>>> +	 */
+>>> +	cxld->flags |= CXL_DECODER_F_LOCK;
+>>
+>  
+>> Feels like this should be something the BIOS should enforce if that
+>> is the expectation? And the kernel checks and warns if that is not
+>> the case.
+> 
+> I think this is more a limitation of the kernel implementation rather
+> than the BIOS. The BIOS provides enought information by CFMWS, PRM,
+> HDM and PCI topology. In theory and if there is demand for it, support
+> could be added for driver region setup.
 
----
+But shouldn't the BIOS set the decoder lock rather than the kernel setting a software lock flag based on assumption of the PRM based setup?
 
-Changes in v3:
-- call drm_bridge_remove() in drm_bridge_unplug()
-- Fixed kerneldoc variable names (reported here:
-  https://lore.kernel.org/lkml/202509271654.j3IsjsAJ-lkp@intel.com/)
----
- drivers/gpu/drm/drm_bridge.c | 62 ++++++++++++++++++++++++++++++++++++++++++++
- include/drm/drm_bridge.h     | 12 +++++++++
- 2 files changed, 74 insertions(+)
+DJ
 
-diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
-index 8f355df883d8ac8de9d361ec302f4ccbf3bca0d6..db40c26d1cb354f818f12a5a53f9baa6a7fc3574 100644
---- a/drivers/gpu/drm/drm_bridge.c
-+++ b/drivers/gpu/drm/drm_bridge.c
-@@ -27,6 +27,7 @@
- #include <linux/media-bus-format.h>
- #include <linux/module.h>
- #include <linux/mutex.h>
-+#include <linux/srcu.h>
- 
- #include <drm/drm_atomic_state_helper.h>
- #include <drm/drm_bridge.h>
-@@ -202,6 +203,67 @@ static DEFINE_MUTEX(bridge_lock);
- static LIST_HEAD(bridge_list);
- static LIST_HEAD(bridge_lingering_list);
- 
-+DEFINE_STATIC_SRCU(drm_bridge_unplug_srcu);
-+
-+/**
-+ * drm_bridge_enter - Enter DRM bridge critical section
-+ * @bridge: DRM bridge
-+ * @idx: Pointer to index that will be passed to the matching drm_bridge_exit()
-+ *
-+ * This function marks and protects the beginning of a section that should not
-+ * be entered after the bridge has been unplugged. The section end is marked
-+ * with drm_bridge_exit(). Calls to this function can be nested.
-+ *
-+ * Returns:
-+ * True if it is OK to enter the section, false otherwise.
-+ */
-+bool drm_bridge_enter(struct drm_bridge *bridge, int *idx)
-+{
-+	*idx = srcu_read_lock(&drm_bridge_unplug_srcu);
-+
-+	if (bridge->unplugged) {
-+		srcu_read_unlock(&drm_bridge_unplug_srcu, *idx);
-+		return false;
-+	}
-+
-+	return true;
-+}
-+EXPORT_SYMBOL(drm_bridge_enter);
-+
-+/**
-+ * drm_bridge_exit - Exit DRM bridge critical section
-+ * @idx: index returned by drm_bridge_enter()
-+ *
-+ * This function marks the end of a section that should not be entered after
-+ * the bridge has been unplugged.
-+ */
-+void drm_bridge_exit(int idx)
-+{
-+	srcu_read_unlock(&drm_bridge_unplug_srcu, idx);
-+}
-+EXPORT_SYMBOL(drm_bridge_exit);
-+
-+/**
-+ * drm_bridge_unplug - declare a DRM bridge was unplugged and remove it
-+ * @bridge: DRM bridge
-+ *
-+ * This tells the bridge has been physically unplugged and no operations on
-+ * device resources must be done anymore. Entry-points can use
-+ * drm_bridge_enter() and drm_bridge_exit() to protect device resources in
-+ * a race free manner.
-+ *
-+ * Also unregisters the bridge.
-+ */
-+void drm_bridge_unplug(struct drm_bridge *bridge)
-+{
-+	bridge->unplugged = true;
-+
-+	synchronize_srcu(&drm_bridge_unplug_srcu);
-+
-+	drm_bridge_remove(bridge);
-+}
-+EXPORT_SYMBOL(drm_bridge_unplug);
-+
- static void __drm_bridge_free(struct kref *kref)
- {
- 	struct drm_bridge *bridge = container_of(kref, struct drm_bridge, refcount);
-diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
-index 0ff7ab4aa8689a022458f935a7ffb23a2b715802..d2683846cc619007f85a6f605b9d23ce971e04b3 100644
---- a/include/drm/drm_bridge.h
-+++ b/include/drm/drm_bridge.h
-@@ -1143,6 +1143,14 @@ struct drm_bridge {
- 	 */
- 	struct kref refcount;
- 
-+	/**
-+	 * @unplugged:
-+	 *
-+	 * Flag to tell if the bridge has been unplugged.
-+	 * See drm_bridge_enter() and drm_bridge_unplug().
-+	 */
-+	bool unplugged;
-+
- 	/** @driver_private: pointer to the bridge driver's internal context */
- 	void *driver_private;
- 	/** @ops: bitmask of operations supported by the bridge */
-@@ -1278,6 +1286,10 @@ drm_priv_to_bridge(struct drm_private_obj *priv)
- 	return container_of(priv, struct drm_bridge, base);
- }
- 
-+bool drm_bridge_enter(struct drm_bridge *bridge, int *idx);
-+void drm_bridge_exit(int idx);
-+void drm_bridge_unplug(struct drm_bridge *bridge);
-+
- struct drm_bridge *drm_bridge_get(struct drm_bridge *bridge);
- void drm_bridge_put(struct drm_bridge *bridge);
- 
-
--- 
-2.51.1
+> 
+> -Robert
+> 
+>>
+>>> +
+>>>  	ctx->hpa_range = hpa_range;
+>>>  	ctx->interleave_ways = ways;
+>>>  	ctx->interleave_granularity = gran;
+>>
+> ?
 
 
