@@ -1,113 +1,136 @@
-Return-Path: <linux-kernel+bounces-896829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75E50C514F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:20:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEE36C5153A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:24:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6228E4F5F34
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:16:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FDBD3AE222
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:17:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D17C92FDC5E;
-	Wed, 12 Nov 2025 09:15:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hyJxiRZt"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB4B42BFC85;
+	Wed, 12 Nov 2025 09:17:44 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74D982D0C9C;
-	Wed, 12 Nov 2025 09:15:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26FC79476;
+	Wed, 12 Nov 2025 09:17:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762938950; cv=none; b=ZsUKvPeOud2BvJKdBAGBoCSDzs8O7BtoZ976QmIrfVRgMCiUHTlzKu4tsvZq+bDuIKJ8am0f2+6eDByWmPwQxFPDbKdqvIJ3tlg1Df3ZvYOFIaHA8kFBNoU6AFyYWMJo3gNSZTkLj/6Vo5EtOIOIVdmaZCPGZ4HvoNozoDyU/jY=
+	t=1762939064; cv=none; b=QyQub8Hdw2v2akO1lA5pbSekfrg6t1DUrTz9ffacvzV5SyFbg7HdlVM6SrADwVN+H7f7hVDMRrvVsgcD1kJrQZN0FdwYpuMjldelGrxn3JNCKHOeXabBcljmMzeSa7EuJ9l2hLzLE+Juh4HDKgMLNW4eRnPS30uC4jx38HsBhYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762938950; c=relaxed/simple;
-	bh=XbY1+QXZkG156kRPTP5Y/1sq95brW261QGUMPJl1zGc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rwxWB4GnCkwsRrfvGNwB1w6H4LcXQkJu2ij2pKPKF8p62xjqcHT6n1wbfwhLYsVvtL7BsUnGJFnv+S/Snl5OdbXrv0r5mbpTnkkxN375AHhDhvNKu8NsNuOgXn27/Zh/+KSaRxDrmYI/6CjGG6L/eovxo7o1fRW07QSedDmN39c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hyJxiRZt; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762938949; x=1794474949;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=XbY1+QXZkG156kRPTP5Y/1sq95brW261QGUMPJl1zGc=;
-  b=hyJxiRZto1rIiMPjXKcuTWeAQMZ+2zSmXu41mMHctR0pAZF/Vt9HvE67
-   IfC9+j1w9B4GJdyul9u3Kk4W9Wr9isCQ2rfec6RfHY6qwWjhcf1r6+8dF
-   9g1zYV3M+yB97TuvJrNbxLfKtt7lHa+5Ey6dhg5uNTvvIm54g6pyEVgUR
-   k+wbdMjy7rh9jdt9998ZCwLx0Afxi83T7TbjI7GHnlPpd94VnN2IhEFVc
-   fWMNGgT2wt4RRBezf2iT8FmML6+6FlrVlmmH1CnuFJOZHqsfBRtH92EyW
-   H3pKzG8KAh8AUD0qxorDL48XAy2/MJBo659MPNXGiOFGPRWdY8rVNf0qT
-   A==;
-X-CSE-ConnectionGUID: oCBg2JEFRBGHL0MI55YDCA==
-X-CSE-MsgGUID: FmHX4lPXRrWXSA4Ww9rdxg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11610"; a="68848075"
-X-IronPort-AV: E=Sophos;i="6.19,299,1754982000"; 
-   d="scan'208";a="68848075"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2025 01:15:48 -0800
-X-CSE-ConnectionGUID: Oxk1tKr+SpKVERawQuJJwQ==
-X-CSE-MsgGUID: GueRUBMeQ0amt8bBvXYp8g==
-X-ExtLoop1: 1
-Received: from black.igk.intel.com ([10.91.253.5])
-  by fmviesa003.fm.intel.com with ESMTP; 12 Nov 2025 01:15:44 -0800
-Received: by black.igk.intel.com (Postfix, from userid 1003)
-	id 7A86F95; Wed, 12 Nov 2025 10:15:43 +0100 (CET)
-Date: Wed, 12 Nov 2025 10:15:43 +0100
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Peng Fan <peng.fan@nxp.com>
-Cc: Shenghao Ding <shenghao-ding@ti.com>, Kevin Lu <kevin-lu@ti.com>,
-	Baojun Xu <baojun.xu@ti.com>, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Alexander Stein <alexander.stein@ew.tq-group.com>,
-	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	Markus Niebel <Markus.Niebel@ew.tq-group.com>
-Subject: Re: [PATCH v2 0/3] ASoC: codec: Convert to GPIO descriptors for
- tlv320aic32x4
-Message-ID: <aRRQPz6xZyHJDps-@black.igk.intel.com>
-References: <20250710-asoc-gpio-1-v2-0-2233b272a1a6@nxp.com>
+	s=arc-20240116; t=1762939064; c=relaxed/simple;
+	bh=CIVTOGTXKLMcPeOaQW0Hfq3hpD/bebGN7BNWF8TMSuo=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=NBS2u9D1D1CZ9Tp89RGmmcVOB3uSVh2VGpWkuHk839o2ICwiajEwgu7wwCS8xqKGdjDrfIXdYbc0/7gB5tOJsBGsA/4ePRDXtyAWdwKy8uy4lLIbXwFDwNsUZlRx1In3csLSfVm45tbWbmylbZMb/ndyIQhf4kEF6gXpTs4bVSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost.localdomain (unknown [202.112.113.212])
+	by APP-03 (Coremail) with SMTP id rQCowAC3R9qlUBRpJUx3AA--.4432S2;
+	Wed, 12 Nov 2025 17:17:34 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: alexander.shishkin@linux.intel.com,
+	gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org,
+	akpm@linux-foundation.org,
+	Ma Ke <make24@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH v2] intel_th: Fix error handling in intel_th_output_open
+Date: Wed, 12 Nov 2025 17:17:23 +0800
+Message-Id: <20251112091723.35963-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.17.1
+X-CM-TRANSID:rQCowAC3R9qlUBRpJUx3AA--.4432S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Kr4fWw47tFy3ZrWkCw4xCrg_yoW8ZFWrpF
+	Wjqa90kFyUGwsFgws8XF4jvFyrKw1Iy3yFgFy8G3sYgFn5X3yYqrWrtFy5ZF15XrWrta4a
+	qF1akrW8GFWUZFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9l14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
+	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr
+	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IE
+	rcIFxwCY1x0262kKe7AKxVWUAVWUtwCY02Avz4vE14v_GFWl42xK82IYc2Ij64vIr41l4I
+	8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AK
+	xVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcV
+	AFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8I
+	cIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r
+	4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfU1v38DUUUU
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250710-asoc-gpio-1-v2-0-2233b272a1a6@nxp.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Thu, Jul 10, 2025 at 08:40:00PM +0800, Peng Fan wrote:
-> This patchset is a pick up of patch 1,2 from [1]. And I also collect
-> Linus's R-b for patch 2. After this patchset, there is only one user of
-> of_gpio.h left in sound driver(pxa2xx-ac97).
-> 
-> of_gpio.h is deprecated, update the driver to use GPIO descriptors.
-> 
-> Patch 1 is to drop legacy platform data which in-tree no users are using it
-> Patch 2 is to convert to GPIO descriptors
-> 
-> Checking the DTS that use the device, all are using GPIOD_ACTIVE_LOW
-> polarity for reset-gpios, so all should work as expected with this patch.
-> 
-> [1] https://lore.kernel.org/all/20250408-asoc-gpio-v1-0-c0db9d3fd6e9@nxp.com/
+intel_th_output_open() calls bus_find_device_by_devt() which
+internally increments the device reference count via get_device(), but
+this reference is not properly released in several error paths. When
+device driver is unavailable, file operations cannot be obtained, or
+the driver's open method fails, the function returns without calling
+put_device(), leading to a permanent device reference count leak. This
+prevents the device from being properly released and could cause
+resource exhaustion over time.
 
-Peng, if you are still interested in continuing this task, you can focus on
-converting the drivers that use gpio_request_one() and devm_gpio_request_one().
-These are some like a couple of dozens only (in comparison to the gpio_request()
-and devm_gpio_request() users). Some of them are resided in the ASoC subsystem.
+Found by code review.
 
+Cc: stable@vger.kernel.org
+Fixes: 39f4034693b7 ("intel_th: Add driver infrastructure for Intel(R) Trace Hub devices")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+---
+Changes in v2:
+- modified the patch to fix uninitialized variable 'err' warnings.
+---
+ drivers/hwtracing/intel_th/core.c | 20 +++++++++++++++-----
+ 1 file changed, 15 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/hwtracing/intel_th/core.c b/drivers/hwtracing/intel_th/core.c
+index 47d9e6c3bac0..fdb9d022d875 100644
+--- a/drivers/hwtracing/intel_th/core.c
++++ b/drivers/hwtracing/intel_th/core.c
+@@ -810,13 +810,17 @@ static int intel_th_output_open(struct inode *inode, struct file *file)
+ 	int err;
+ 
+ 	dev = bus_find_device_by_devt(&intel_th_bus, inode->i_rdev);
+-	if (!dev || !dev->driver)
+-		return -ENODEV;
++	if (!dev || !dev->driver) {
++		err = -ENODEV;
++		goto out_no_device;
++	}
+ 
+ 	thdrv = to_intel_th_driver(dev->driver);
+ 	fops = fops_get(thdrv->fops);
+-	if (!fops)
+-		return -ENODEV;
++	if (!fops) {
++		err = -ENODEV;
++		goto out_put_device;
++	}
+ 
+ 	replace_fops(file, fops);
+ 
+@@ -824,10 +828,16 @@ static int intel_th_output_open(struct inode *inode, struct file *file)
+ 
+ 	if (file->f_op->open) {
+ 		err = file->f_op->open(inode, file);
+-		return err;
++		if (err)
++			goto out_put_device;
+ 	}
+ 
+ 	return 0;
++
++out_put_device:
++	put_device(dev);
++out_no_device:
++	return err;
+ }
+ 
+ static const struct file_operations intel_th_output_fops = {
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.17.1
 
 
