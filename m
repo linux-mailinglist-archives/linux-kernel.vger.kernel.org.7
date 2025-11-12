@@ -1,151 +1,105 @@
-Return-Path: <linux-kernel+bounces-896784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F449C5138F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:57:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC9E5C5135C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:54:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B0533B9BDC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:51:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DDEC1887C06
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:52:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D1B92FD7B4;
-	Wed, 12 Nov 2025 08:51:43 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 744F92F90D3;
+	Wed, 12 Nov 2025 08:52:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ey6FdFtt"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C7862F616C
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 08:51:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9AB72FD1D5
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 08:52:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762937503; cv=none; b=Wkh2wuV0i2QqFjqx67R7r4MugFEJMiWEbv3z3ADM2bWjbpzBpS1daDiidRIoJPVPs7eyw07HT5lTvyZW+H26s0dtI5lXx4zKZjsVxBAzYtlSs+3pLdT92fzFeXPOuTHdRFYwv8xjsmdiokJxHu68vbIKR9pGSyOTLvSsU5O+0vU=
+	t=1762937549; cv=none; b=IlCLave6gfq0B1fO2Yxwy1h+D+nv3PfwWMhhsXFsapg5fd44goGPppANBEUggaijoBigX5Ftg+btRqgShQpM+Jc06jiGNs/pT0cEAbb/GCkih1GOsTIGQ170wr+80cV1ZMqIBLDbCud8OFVG9oKAs1AFS3bTdpzXXT3YENGKwok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762937503; c=relaxed/simple;
-	bh=ofDGwQnGMQnzPFS/07xi7dEXMK7njim+0IicHZYUAoY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=izRMWjHou0cCKiNiSzV0nQSBAkmGWmZ7Log1zlS9nf4lhs3Hs/VBuFLP92x13s6t8z3cLut6dYNE5WtN8zk7b08doSgszZaUw/zEBWtUARiukSDgaN0pJy2U5gzwe7DtLx/GColcNsu6SAPAKcOQ3+c1PmFq/H+XDQn/nf2cReg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1vJ6Zh-0002vV-QM; Wed, 12 Nov 2025 09:51:33 +0100
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1vJ6Zh-0003Iq-1s;
-	Wed, 12 Nov 2025 09:51:33 +0100
-Received: from pengutronix.de (p54b152ce.dip0.t-ipconnect.de [84.177.82.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 3F80B49D940;
-	Wed, 12 Nov 2025 08:51:33 +0000 (UTC)
-Date: Wed, 12 Nov 2025 09:51:32 +0100
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Chu Guangqing <chuguangqing@inspur.com>
-Cc: mailhol@kernel.org, linux-can@vger.kernel.org, 
+	s=arc-20240116; t=1762937549; c=relaxed/simple;
+	bh=/HupXrEtviHKeYqFWD2xOuGaa1w8dBZFeGJomcGBZZ8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iC/aIzDnpQgNqwrcXaJrEVAyg6boszA5RRU73+pD8sshrEhwe9UxsKFHhJ+BhVAXZbg7//rDGpZIbJ1d5UPVXM0MaZjum0bNigrS+OCfQWhPy7lzINRpkOllaR9i7TQnSAB4pDOexWUr5XKFCYMYFfWGm2BJOd1CxW/vIl+IUTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ey6FdFtt; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762937547; x=1794473547;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=/HupXrEtviHKeYqFWD2xOuGaa1w8dBZFeGJomcGBZZ8=;
+  b=Ey6FdFtt5tGy3GGU38CiF6gePomlLwHo15YNRD1BYn2Ud73Ug1K/CCmf
+   r+rOGS1JalwIrXm7RCfvHzAWZYJYA644VLA2hfC397bmGfjZzND+q4t6H
+   IC08Af4NU0U+Ew+vwP+YAq0U2vD01JKCkv0fNlPO9SnV0UJRgbHUdDXsZ
+   r7g8vj/eCb3SiLmhplzUhn58PNumQ6yMIASeS+SFU6hKYkUyYTAjp8+mQ
+   YQh3BHZI06SAfC4RUphUo6ccWRTiKkjqb3LIASwKg6pPo6paWEdyRj9Zl
+   jrmAAwQThkFIFt4r55FCUGpNKTMBx+zOPfA+eR8HVXtgc4RVHX2EGz0d6
+   w==;
+X-CSE-ConnectionGUID: g+jbIm0FQwOgWW+RWS1fLQ==
+X-CSE-MsgGUID: /ndqca4JSqKr8wYW+wp29Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11610"; a="64900539"
+X-IronPort-AV: E=Sophos;i="6.19,299,1754982000"; 
+   d="scan'208";a="64900539"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2025 00:52:26 -0800
+X-CSE-ConnectionGUID: PlNl9rPYTWWXs8v5DozB/g==
+X-CSE-MsgGUID: Yx4G9kIMTnG3StpM5ARJhw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,299,1754982000"; 
+   d="scan'208";a="219894591"
+Received: from black.igk.intel.com ([10.91.253.5])
+  by fmviesa001.fm.intel.com with ESMTP; 12 Nov 2025 00:52:25 -0800
+Received: by black.igk.intel.com (Postfix, from userid 1003)
+	id 4E2F295; Wed, 12 Nov 2025 09:52:24 +0100 (CET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Inochi Amaoto <inochiama@gmail.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-phy@lists.infradead.org,
+	sophgo@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] can: janz-ican3: Fix a typo error for DESC_INVALID
-Message-ID: <20251112-interesting-loutish-booby-aaf75f-mkl@pengutronix.de>
-References: <20251103064934.4611-1-chuguangqing@inspur.com>
+Cc: Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Chen Wang <unicorn_wang@outlook.com>
+Subject: [PATCH v1 1/1] phy: sophgo: Remove unused of_gpio.h
+Date: Wed, 12 Nov 2025 09:52:20 +0100
+Message-ID: <20251112085220.1452530-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="gf27c4y5fcurbnai"
-Content-Disposition: inline
-In-Reply-To: <20251103064934.4611-1-chuguangqing@inspur.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 
+of_gpio.h is deprecated and subject to remove.
+The driver doesn't use it, simply remove the unused header.
 
---gf27c4y5fcurbnai
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] can: janz-ican3: Fix a typo error for DESC_INVALID
-MIME-Version: 1.0
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/phy/sophgo/phy-cv1800-usb2.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-On 03.11.2025 14:49:34, Chu Guangqing wrote:
-> The macro definition DESC_IVALID should be DESC_INVALID, as there is a
-> spelling error here.
+diff --git a/drivers/phy/sophgo/phy-cv1800-usb2.c b/drivers/phy/sophgo/phy-cv1800-usb2.c
+index 64f8e37b4b52..6fe846534e9c 100644
+--- a/drivers/phy/sophgo/phy-cv1800-usb2.c
++++ b/drivers/phy/sophgo/phy-cv1800-usb2.c
+@@ -11,7 +11,6 @@
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+-#include <linux/of_gpio.h>
+ #include <linux/platform_device.h>
+ #include <linux/phy/phy.h>
+ #include <linux/regmap.h>
+-- 
+2.50.1
 
-Have you taken a look at the manual? Does it talk about IVALID or
-INVALID?
-
-regards,
-Marc
-
-> Signed-off-by: Chu Guangqing <chuguangqing@inspur.com>
-> ---
->  drivers/net/can/janz-ican3.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/net/can/janz-ican3.c b/drivers/net/can/janz-ican3.c
-> index 1efdd1fd8caa..7ae1f4ba4627 100644
-> --- a/drivers/net/can/janz-ican3.c
-> +++ b/drivers/net/can/janz-ican3.c
-> @@ -62,7 +62,7 @@
->  #define DESC_VALID		0x80
->  #define DESC_WRAP		0x40
->  #define DESC_INTERRUPT		0x20
-> -#define DESC_IVALID		0x10
-> +#define DESC_INVALID		0x10
->  #define DESC_LEN(len)		(len)
->
->  /* Janz ICAN3 Firmware Messages */
-> @@ -1723,11 +1723,11 @@ static netdev_tx_t ican3_xmit(struct sk_buff *skb=
-, struct net_device *ndev)
->  	ican3_put_echo_skb(mod, skb);
->
->  	/*
-> -	 * the programming manual says that you must set the IVALID bit, then
-> +	 * the programming manual says that you must set the INVALID bit, then
->  	 * interrupt, then set the valid bit. Quite weird, but it seems to be
->  	 * required for this to work
->  	 */
-> -	desc.control |=3D DESC_IVALID;
-> +	desc.control |=3D DESC_INVALID;
->  	memcpy_toio(desc_addr, &desc, sizeof(desc));
->
->  	/* generate a MODULbus interrupt to the microcontroller */
-> --
-> 2.43.7
->
->
->
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---gf27c4y5fcurbnai
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmkUSpEACgkQDHRl3/mQ
-kZykbQf/Uy5O2fZcbDo8YvVPBploWYszh6LQ2z7lJJoBub5ZiiT8bVNti53+sDVn
-OqjBLpV37FKdcaVB8Csstx6Nv3iLA0XDQdHI22oEFEpz/R+y9nhxkSFcwDscFcLU
-zM7f/Jz9MUqaJ5nYkGOF5ZOwl+y0MEphifDVACj3cM/U++lkVfJlnH9+Q7qItBy3
-cH3qkek3OQqoI8qwuREjbzLKEa3gHh492bss2M+9tyA7vAITupRfYa7Dzxv0XnPz
-gclyAOR5JQJdJrHt90Rpl7yCPSsZA8ZhaLmDdkw/orJJiqWYCEdCNL8L6n+dTMZk
-S30oeH4DWAwSNW21+iuPVGhvmRCtlQ==
-=4f0+
------END PGP SIGNATURE-----
-
---gf27c4y5fcurbnai--
 
