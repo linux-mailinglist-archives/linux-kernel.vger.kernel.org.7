@@ -1,383 +1,248 @@
-Return-Path: <linux-kernel+bounces-897405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 155E8C52C78
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:44:35 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9400C52BEB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:39:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B40974FEF8B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:35:21 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4ABB74EFC66
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:32:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62B4D33B6E8;
-	Wed, 12 Nov 2025 14:33:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A158C2BD5A2;
+	Wed, 12 Nov 2025 14:32:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oW/KcfEj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="du/YWjxN";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="H2zdUHjj"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 740B533AD95;
-	Wed, 12 Nov 2025 14:33:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762958021; cv=none; b=t/NmO3ui69EAjZt3+zflMhAPY2GGNxaSXSOF55RpdmockCz0GLw/WXh1HgpB2LEJ9BgncTmubukxvjKJiskpsWZlY/rCB57Y9cM/pRoJOIs61iOqT2S1v+KIF0CcoagjDU6qqlPYgJ2admNJWi6uvKR4xGgSL4kuWlypYRJV9vg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762958021; c=relaxed/simple;
-	bh=LBjDojUkNLsnNazLF79Jnlg6W/Xr6nS4KXkw69u7/T0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ut1qEKMLXm0cr/gTGnT18fqpKwlyRH/GIXLSjZODcGOc01qu/HCrCxoxw5MWS99GOZkd4ui0f+wIId8SekLWOgLm1NpYHdhp/CyZKUPnRUn3zQ3A9NfGjHbIImfrTkH4GnBNl1kaS3hX2F9n+6zHYJABdA5WsTpMGXtrdCV7Nq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oW/KcfEj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30C46C4CEF7;
-	Wed, 12 Nov 2025 14:33:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762958021;
-	bh=LBjDojUkNLsnNazLF79Jnlg6W/Xr6nS4KXkw69u7/T0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=oW/KcfEj+96/StIPAAok4dN7dznI1aucTbXxAjnFNXvEpGlxggpGf0NICC2l6QRiW
-	 CLwwY+L1qHHox4PkQeP4AXl0aWVX35M/ChGOHc2tcZQ1RJFk3uHYNNDXYBDnMxeuOY
-	 DS7wbbZJZqWGUpfxgz7Ybh8GKfHWQzSlF5QLTsVnFH6qStT9gJqHCMCmOfyZ3pMuM2
-	 Z03z8bnHt2N/1+MRO6IEBkJbpWdrpvJ7uC3D3ENy1hrSJ0cRXN9/A/uti/uvVIMUy+
-	 QOLkwdGUpPnCvcPG07ehhjBIR3EcFHTGrzdrVSo77OZQ32WVHI+zhjHQiwtwDXIfOB
-	 mAi8BzKjpkBnA==
-From: Conor Dooley <conor@kernel.org>
-To: linus.walleij@linaro.org
-Cc: conor@kernel.org,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Valentina.FernandezAlanis@microchip.com
-Subject: [RFC v1 4/4] riscv: dts: microchip: add pinctrl nodes for mpfs/icicle kit
-Date: Wed, 12 Nov 2025 14:31:15 +0000
-Message-ID: <20251112-splendid-spotting-b9fdc0c7c5c8@spud>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251112-lantern-sappy-bea86ff2a7f4@spud>
-References: <20251112-lantern-sappy-bea86ff2a7f4@spud>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 140B2197A7D;
+	Wed, 12 Nov 2025 14:32:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762957927; cv=fail; b=pmPcdgBPOZ+YaK7yeV+IvOlVKYsU63cPjWpITS+Ey4hRluLOtcE9UKV6E/7Dt5Ki/NRyxtIdxjxV7AtjDoRNz5I7NeE6sfQPYXqJAlpQ+qOzTgauUsaioLANr+qUU5tmXnVG4TABcfbSuQdiXR9EmIJr32dWJH3XVd0F1KzZD1E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762957927; c=relaxed/simple;
+	bh=snpU8F62gBRX6G/YLFoFXygE50PflbxZrK51mzV5XCw=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=doeLMja/FGvsYpZKiB1x8PIpUa3UB15GV9AzV5AS7etXR9V9+TSjotrAKDZhcrldUb+yzGd9AmYep4KUh9bDJp4sMp381f2Cj7pZ8KZjT5owAI3jamImzdNk6ePtY8DpgIgKyTLtvmOq84Ak4G5P4T4qse9AgwcQ6ebrtPc14bU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=du/YWjxN; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=H2zdUHjj; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5ACEEFw0012857;
+	Wed, 12 Nov 2025 14:31:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2025-04-25; bh=TQlMUe2yMCsFIu9cb9bODwXVgZQfAQ1x4eppba28ku4=; b=
+	du/YWjxN5wcRJx9LLvkYzYkZhldowcdvmJ0a20CVmHYFcIUN5WwSmIzCDD0uKRLS
+	1jytG0f6LUoaIJhJc+RJQf/z1KC5GTdh1z+aLyPVON4darJh5VO2OVDjNyuNkxlX
+	w9lG6sm79sjzJ44p/VNvLVczYaEejNq4mGWsJJfcS3C8Ybxvhoqf9oV4RCk/EdAi
+	bip5353Ki4L8myFnXCA8Jhzop4Ze0L1mqhRZJx0Jzid3perWEA1QTLxdqfWyQrn6
+	LHjWA2SYLaZfmButbb71R/2c/CDxnnMj+6IgzOI0mgpzN3oQjnnyc1fUAaCS3keg
+	v4BLZFLnICk6AVGeK20Ehw==
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4acu3tr4tq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 12 Nov 2025 14:31:43 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5ACEG4EH032464;
+	Wed, 12 Nov 2025 14:31:42 GMT
+Received: from ph0pr06cu001.outbound.protection.outlook.com (mail-westus3azon11011019.outbound.protection.outlook.com [40.107.208.19])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4a9vamh6r5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 12 Nov 2025 14:31:42 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=MazXwB+Ib/Z/5YuGIMARLULpnQcDre0prI0OxEMMNaQlV63PhWEqa4Q83uEYWonUkJiNe5vqCRzIY8x4MUEZILNVQzTXg8blaeIhBlryr1Lh3UlQ4PGVt/uwxhTXInhRmd0PoQ7ceSO/oGwKzxT10sKpA9MRiAqrF/G59Sn5SYWbLSVrG7l59r/+ppA4A8kmoGVr/mCGrxkcUrxv4q5bAa9QkGKzQgSpFjg982zvJTMaNxm4v4EwrdIBmzgKdeCNvcfohtOTgA1Vl3LKjJx9dsxXyDOWB/kYbPtp2rdGyYOFzmYtaR/YydVSaD0GecJ9/VaejTswdKM8/LGjhxUt9Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=TQlMUe2yMCsFIu9cb9bODwXVgZQfAQ1x4eppba28ku4=;
+ b=Bmclpfa5P927+a0upD0Jcttl4KTpOWCe25xD4f5jNDtirkZ3Gc9qPPwgvjrMHjFXG/s5ArMEpLc3t2I+lyqR+qsS8us7Kb+s9yutuENyfbiJx+K2EMcyaG0npSexDS3EKc1Uyyg7K3dCxW+U+PqcPcy3T0ItdDaqNsv6ZzwbCZ5gZijT2J4jGYbMwl+ZqZ/tQvWeNxKYlGmYSISvEBqHAnNb8c+b5paGkQtm9cH7IX1++DLlAwfAwHlevgKxFfDb9NS7nD/NkRAYS4pyi3N1YF3oXpTOIP4rFxBrGsjBHPAjaDBSgYoCl1CFncwblAHixYQDngrbkYDow4gU9cZvAw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TQlMUe2yMCsFIu9cb9bODwXVgZQfAQ1x4eppba28ku4=;
+ b=H2zdUHjjwP7IFOSwHzeObs2cHjVxfwPs26eWTKOR5AZhDQ/R/hkrj6E6JgLwJ1t/uYUa60L/dojXKFaRmlUEksBOAjgPT/NJa0YFXkb9zUBf9d8bPOEiIsK+wBAm6VcSVuhvvrEhZiMdnoXCJkG74YW2tZ8i8bInUrYQ7NkGcvw=
+Received: from BN0PR10MB5128.namprd10.prod.outlook.com (2603:10b6:408:117::24)
+ by SN4PR10MB5557.namprd10.prod.outlook.com (2603:10b6:806:200::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.16; Wed, 12 Nov
+ 2025 14:31:39 +0000
+Received: from BN0PR10MB5128.namprd10.prod.outlook.com
+ ([fe80::743a:3154:40da:cf90]) by BN0PR10MB5128.namprd10.prod.outlook.com
+ ([fe80::743a:3154:40da:cf90%4]) with mapi id 15.20.9298.010; Wed, 12 Nov 2025
+ 14:31:38 +0000
+Message-ID: <f7dd4e03-352f-48ba-8a0d-ab9e793ef385@oracle.com>
+Date: Wed, 12 Nov 2025 09:31:35 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 5/6] nvme-tcp: Support KeyUpdate
+To: Christoph Hellwig <hch@lst.de>, alistair23@gmail.com
+Cc: hare@kernel.org, kernel-tls-handshake@lists.linux.dev,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-nfs@vger.kernel.org, kbusch@kernel.org, axboe@kernel.dk,
+        sagi@grimberg.me, kch@nvidia.com, hare@suse.de,
+        Alistair Francis <alistair.francis@wdc.com>
+References: <20251112042720.3695972-1-alistair.francis@wdc.com>
+ <20251112042720.3695972-6-alistair.francis@wdc.com>
+ <20251112065925.GF4873@lst.de>
+Content-Language: en-US
+From: Chuck Lever <chuck.lever@oracle.com>
+In-Reply-To: <20251112065925.GF4873@lst.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: CH2PR11CA0006.namprd11.prod.outlook.com
+ (2603:10b6:610:54::16) To BN0PR10MB5128.namprd10.prod.outlook.com
+ (2603:10b6:408:117::24)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7227; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=fEwO3DGjjDDEOIY9sEMs2OumZHERME4ZBJJXvylQ2Gk=; b=owGbwMvMwCVWscWwfUFT0iXG02pJDJkis8xKj7z6mfWxe/79veaOQZeM1vamR0Q/kFGUlPpxx OyOwpLyjlIWBjEuBlkxRZbE230tUuv/uOxw7nkLM4eVCWQIAxenAExk3idGhjkKO8N+pnysWCLj lVXq/X6u8kENY70V+jXWEZHWG9TfFjL801fvZ5+zcb/FOrHI4sMrbNZ1PJLTnaFb1qvQ/VmxpIu NAQA=
-X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN0PR10MB5128:EE_|SN4PR10MB5557:EE_
+X-MS-Office365-Filtering-Correlation-Id: d86517ca-f932-4688-d3dc-08de21f830b4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ZXpxMnFEd05RMzVzenhnOTlCaUR3Y0tXdmUwaU1WMHFoSVpxaDg3dGFwbjUr?=
+ =?utf-8?B?d1hENmNBTDJCK0J2NXdsbE1LeThQeGpDQm0raUFrNXJWSEFoTXF6OUJ5eGNi?=
+ =?utf-8?B?Tm5iSTZReHh4WEk2YVpyWW9mMEV2ODlxTlFLcXJuaDFaMnlJZHEvWGxaNi9z?=
+ =?utf-8?B?dkVodEdKMFI1UjdCajhRcnRWaHJ6MUFjTGJxQW5vRE1WTXd4WnhLTkhBL3B5?=
+ =?utf-8?B?emFmZmFicVozWno1MGFrVnNremkzZUkzL05tTXRmemZDQlFacCtDeFljcXJr?=
+ =?utf-8?B?RS9GbXhkN0tXUGtZdkNjMmUwQ0dNeWFFcGQzcEI4RXVSaGVSbE80a3g4SzhM?=
+ =?utf-8?B?T20xUmxWQ1VLTDgzbHdZMjRVN2J5eElaTlNKWWVoUENwMmhXb3oyUlgrd2VN?=
+ =?utf-8?B?QnEvdWRyaGc3QUVSOHFXSXBZY0JhQUhzdkJtV2FXT3podVkzaWN3aVRwN0ZM?=
+ =?utf-8?B?MS85elFvTU80VkdoOXFVOUowU0FXcnZXWTVIVGdwS3pVTnA4M3V2MTQ4SFRS?=
+ =?utf-8?B?K1ZKSE8wOU9lNEFRd01UekRjZHN5UC9NNXJwbTcxalRuY2FWMUhsYWpMMkRi?=
+ =?utf-8?B?eEhyMnNIdzZCOVc0UEJtaWxqK0FYMXpWL1NzNURUUSt2RVYxME8vSlpBcVJB?=
+ =?utf-8?B?L0FPQXR6WlZNNjVJRWd6S2IySlZEZzB1d1ZhRmlGNjBtYXYvbVRXemJ2U0xX?=
+ =?utf-8?B?Tm5YRlA4bkEwTTIrMVhUZXF1cTJoSkMvRXFkV1JyRFpLeXhLNkdYL2lRK2U5?=
+ =?utf-8?B?MHFlek5mNzJuTkhRZktDMS95NWdCUldRaGpVeHEwdHdOOWhHSENCdUdsWkc3?=
+ =?utf-8?B?QkhqUUdqOFNsMld3VHdLTkFOcnJXZnFWMFdNSTVKSk5TUm4wM0x6ZGFhNW4v?=
+ =?utf-8?B?RzdmcEVUS1d6cUtwN01rSmlkR3g3ajBSVGlKZFBFeGF5eHBIMEFuRVNWVVhh?=
+ =?utf-8?B?VlpOYTZmQk53blBWUGxSMDk3cnZHS3lJVlhRZUZmQjg5alp6cy95cjlsSWRi?=
+ =?utf-8?B?K2JkT3BuYVQvUXhVVzNxZGYwbkVkWlVNbnlIUmpKcHMrRDVUTjhJTGp1YnV6?=
+ =?utf-8?B?eDZnTDN4YWxncUV0eThUNG9TaXd2R3VGK1UyR0pzM0NTSmFSVU05cUxCR085?=
+ =?utf-8?B?a21COGZraDNiMVBxYTFBYVhaVUt0MGRmY1VLN0IvcjBzMUo3ZFBRSnloVGJL?=
+ =?utf-8?B?dGNrRWlZbGt1RGpZM043WmF2T1pNejNid2NWNi9zWjEzclI5dnd3RDNoUWdk?=
+ =?utf-8?B?SnBXNnZ0TzVyOTRRTjlYZTkrS0lwTHpxYmdwNGhYUFhUQ0NHbFNGdlBSWW5o?=
+ =?utf-8?B?bDRLcnUzY0FxN0cybDBwdDdmTU5udTVOYUw2SHp3TDNYcVN6U3ZSVGRCektW?=
+ =?utf-8?B?Ymh6dUJzcmVtSVNRSlFTSmVJRk92UzdqNFdrVm8xR1pBVXN5a2VqYStPYWlE?=
+ =?utf-8?B?d3FWNHNzeVVTWHJ2TThNWTFSSzF2azNsak5kZzRyOE9qS3F0Mmt6WmtSMmRx?=
+ =?utf-8?B?MUFsY3NiS3lOTzRvT1JvWFlBb2VZdHhHdWFrUFd2TWhhUFA5QkNBNmZNTVJl?=
+ =?utf-8?B?QjJOcDZDekxRVVdodlFNdXVpb1ExTDUzazlWRGlYcUUyYTU3bmxGWWNVS3BT?=
+ =?utf-8?B?OGo4cVEzMmJxNUJOZVBEdjJTSGd3SDMwUTNCMkdlY2gyb01wQnMvd1VoR1Jz?=
+ =?utf-8?B?QjVQOGxVVzlsbjRXK3U1M3IyV3VyYUpRYm12QXE4clFYMGY1dFNra0xiMDNj?=
+ =?utf-8?B?ZGVCNEh0MzhBNGp3TXBCNDRWU0p6dFlaR1ZqWlczckxxNUFTUEtCT1BBQlQ3?=
+ =?utf-8?B?ZXNlWjBXeElkNnUybUkzeUswWnhHSFFUYmpkeWpZclUyczNIOTZzR2hISmpH?=
+ =?utf-8?B?bm5WNy9vVXZTRFNWb09tTHFiMUhyelVJMkt5R29uTGwvOHdkcFlKNUI1Mndp?=
+ =?utf-8?Q?YJJDOS6+3Tf7dsfxzR1sc+DXSOTvvEs3?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN0PR10MB5128.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?aTMzZzFtQXVMVXRQYXlKSHhEL3UxQnllT3BydXp2ZVFMVng2aG1USHdhYnZh?=
+ =?utf-8?B?ZDhNWDhGUjNZZ0Y3d1RnclgyaGhTWmJaNHg2VlRKQXBtNDJkZDA0Skpyckl5?=
+ =?utf-8?B?ZmxnaEtBSzRHVjJ2WmFIbU4wVEJTOVpwWXB2ckxEL0RTZnRUYWI0RXBYZ0Nz?=
+ =?utf-8?B?UXlPVmhWa1ZZYU9MbHVpbkc4L3NmcUN6d2ZwcUtsYVJNM2duRGhCdXdSWFBS?=
+ =?utf-8?B?VkZoeHJSdTFobysvYzVNUk5BR1RSNmZkekJKRGIvMWRDYUxGWjg4T3BLTHhv?=
+ =?utf-8?B?OEVNWDVSaUM3RllPQXNHMFppSWs1NmY3Yllqc21tSmVhS2FmYmRwYTVTcnVa?=
+ =?utf-8?B?cmpIZEdnY1c1V1hkeHNkN0s0akJ1Vi9BNEZNSkhLdWsrSTNRTGJJdDBkSTVX?=
+ =?utf-8?B?NUo0TXcrSDVmWWc4bzJ0TktwT1R5MmdsUXBmblk4QnZYU0Y5VklFdEQ4aEZl?=
+ =?utf-8?B?RGdYaFJjdlBjR3g1NXpQYStkK2VUd0wyVVlDczdnK3d5YjVSZGJlOHhOTm5C?=
+ =?utf-8?B?Q3dKcFNtM2JtWGx4MlFRREo1Y3hwUnhiM0F4aHp5VkhObThOVTI1UmRQbkdP?=
+ =?utf-8?B?TWRhQWU3c0Z1YkRiRzN6cHJYTHZ2Y0dCYVAwVkZOUDRuSS9GTUo4VnlMbHJB?=
+ =?utf-8?B?WVZOczNOMkdBTzZkM3N1ZDB1ZFpRdHlQNi9PaC93WTVjTTByR0NIbWx1dXp2?=
+ =?utf-8?B?RXowNC9tdFBUaEtzOGV4RkFteWRPdW9SU2NsdmdwcjY2MVVSS0FvZDF0R2w2?=
+ =?utf-8?B?b0VKb3R6VlBrWFRkVzhqODlzcGYwMXVTZlJIeFNlTURyOHhPT1h0cEFtOUhT?=
+ =?utf-8?B?ckN0TlpMaGtmTEIzcFpjbElhRmJsMFFxUXhiajgvM1NPM0I5a0l4UFVXRVY2?=
+ =?utf-8?B?Q0J2OWZ0cXR3Rmc5VzNUZEZqdXZyWjJHZ0tMS2I5Ym5ST1dacGFuNWRFWTRm?=
+ =?utf-8?B?Y3lTVGcranF0akVHanR4a3FWV21Ed0JWM1doMDBSUjA1ZXova2hIaDBOWHNH?=
+ =?utf-8?B?R2lNZDNGOENkU2g4eVNhSlZDOTA3cGV2eERwM3hJc0UwTGttNnF0RWxEUGRt?=
+ =?utf-8?B?cGRqRVVoYTY2TTF4QU1xenpUSGFNcVB2WUxDZ0ozdjdydWd0eVlDQ3pLcy8x?=
+ =?utf-8?B?cGpHbmR5MmZtNS95WjgrZEVORzRIV1dmQlZsYUF5M1FYQ2VTeWNwQ3BzOXQ5?=
+ =?utf-8?B?SmFCK1J1aFhpRlRDdzRJZ1Q2Z3BNVld1a3JaVXIrU0FqSFdmczNhRzVhOWtC?=
+ =?utf-8?B?SFhhTkxoVG04OHY1ekhSZUtNOCs1MFpHRUhtaW1WendhSjN4NVd6TU5yR0hH?=
+ =?utf-8?B?QjYwbGw2WjAwUVVVVzJOamRWbWZHeGR6ZGx0Q05kL0lDZ3R4K0FxL1VtZ1Zx?=
+ =?utf-8?B?QU5hN256RlBDVEI3NFBDaDliczcvU3IrNGk0OFc1eU96VkZmRHZ6SGRyeFkw?=
+ =?utf-8?B?eUswSjFlOTNSSWZuZkFRWnEzVTVRR29UUklMN0w3ZXVsQnk3YmRlOW11bXlR?=
+ =?utf-8?B?NWZIdXFTVWFub3lNZDNlTW5zV3A5Z1hML2p4dE9YQzU5YlFzeHl4UmNLWXJk?=
+ =?utf-8?B?RDNXbzdSMGZ6d1NaSUEzTGlsM1I0Y2JkQm1iS3lSeXhBaE40YXRMZlRJRW5l?=
+ =?utf-8?B?Z2VBcHZtZ2UwdEM2SWw3THJXalBOVFVLSUg3MUlrRGR1YTg2WWVSYmtsL2Zt?=
+ =?utf-8?B?MHVucUdUc3BpR0J1ZXg1R05Lb2pKMmNsRzdNbFBLd0tTSFp3REF3amtQVWVm?=
+ =?utf-8?B?cXRsT2ZGNjU4Q25nNGM4OWx2c2JrelhSYnpxZUt2WEtqR1pvNFBPRVRkZVVG?=
+ =?utf-8?B?RjdNWkJZL0J5SmhZSFBGckF6S01HZEljWnlVS1E3VGV1M3JZVzBZMDNISWRr?=
+ =?utf-8?B?YVFaQ0lwM093MHJwVXcwUXU3enV0QThQWnNreVdEL1FaTjVTUzJhZmhuVS9M?=
+ =?utf-8?B?NHZFRE05OURpbWp1akYxZmtzL0F2MTI3MTA1YmtwSXprbmd1alBpOFIrUjJJ?=
+ =?utf-8?B?ZWVtc3Z2QUdjMm1ZM2dEaTM0a2JmMkpMbWdMbUpYTSs0eVYzQ3dZbTRKMDBj?=
+ =?utf-8?B?YjNFeVR5amtiQXk1NEdmTHlnKzBCQzE3OGlZOUE4bWdmUndsS3FSdHNrZ1Z1?=
+ =?utf-8?Q?r8EsjmuESm624Ay2BwFf8HLGj?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	Qjnv8idzuCxVU0Tz3Am3IFxiuqFjee7SzmTJJCC+VjQPplYyjyG2Uu1m0f1teXdosjlvOGL1vHYNGgleX5zNSnvqHPyWm7tqRqhmNl9iaNHxCUneG8uax4/rgwdDOko8m/B/1qp5/KVuG8uEwfxr6XCS1GuNgX5kUziLmoSMpCxUfzCmwpDc2h4mbKepqgGJlNpa1mCV6vQWtCpuaY3eEwNk6+ydOoap//Sf51qbcWlOQMsJWPVLA46KzzmM+KLSJLDhe52aXiVle9ZKwo1vo7JaYiwdXfAZEAFPd1xKtZVb9XkCIyJGCgwnF9vAntERZkNx9jKUN+EAtBClVEwRYAxFtO7Ie1+LC2E98GlSGgakREx3kuQUhJEqoHa9bIjJsN9YCvId//pB9ZpGINfo4rVACYvom48koaIRgfypuIMcwoZaImU9UNi54FdpEVElqauzTIputgDPAV1bK/nyuI5fxyC8HVPIiCFyWUOeBlnKLeqwBesjUuuz6OQl8buMY/8slxy4jROflIJORWffR2Zr8d53kWKglQbcYqGZzQ6AzviWEZ4WY9NedTgaCcfJTAtls6rt1RmDMrxybvfnnXSfkayv+zg5kENSPJ+iJ3U=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d86517ca-f932-4688-d3dc-08de21f830b4
+X-MS-Exchange-CrossTenant-AuthSource: BN0PR10MB5128.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2025 14:31:38.8555
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: JjGFbM4H6hlEwGLA2B90YJ4k30zKDi3pMx4MwZvDB+w689SgrNpJPM4mUetIrB9RettFvmbSAcNcf5WnM2XJHg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN4PR10MB5557
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-12_04,2025-11-11_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 suspectscore=0 mlxscore=0
+ phishscore=0 mlxlogscore=935 spamscore=0 bulkscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2510240000
+ definitions=main-2511120117
+X-Proofpoint-ORIG-GUID: ddNpRfHh3aQhONqg39IRieBt9ACfXyHS
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEyMDEwOCBTYWx0ZWRfX28Ga3bJgXNl+
+ JIHkyNv2h5TXWEi8xlN1Hku7ChSrHd1RLTDCzbY7luvraiyO887ofDYn1A4vhkpcsLxtjXGU9p5
+ 50GmPCW/5lRPPZRtg3hVA2VrPxWvUDRRDD6YjmLJ2uL6RIKD85VpfMAUS5oY3oIglBoiJnpa2dg
+ bkrIQd2So0a0nUHg4zMMBYRTbIXmBWfjsD0/G09tI99birXS9qc8+SNapp+1vgLo/elEjekZIWq
+ AlZj17VzpMIw7+A1BD+gOa7uqQFeDnJgVEyy6wpmWReC6d9fvQKzjlPcGDuUIUUsw/0CvX0L97o
+ Na7isghmwUaDV47ryzQAPZwwB9nfuomET6IXZBz57B8Vzxtqhqcsk2iOF6fl+jaUxuRA/LpkgMI
+ lr58jkBfetDKD04h2zuSpZxpQOSC0VC+wk9lmtLzQFG952t5S8E=
+X-Proofpoint-GUID: ddNpRfHh3aQhONqg39IRieBt9ACfXyHS
+X-Authority-Analysis: v=2.4 cv=YeKwJgRf c=1 sm=1 tr=0 ts=69149a4f b=1 cx=c_pps
+ a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=6UeiqGixMTsA:10 a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=pGLkceISAAAA:8 a=5p6lPETQwYYAHmxNinUA:9 a=QEXdDO2ut3YA:10 cc=ntf
+ awl=host:12100
 
-From: Conor Dooley <conor.dooley@microchip.com>
+On 11/12/25 1:59 AM, Christoph Hellwig wrote:
+> On Wed, Nov 12, 2025 at 02:27:19PM +1000, alistair23@gmail.com wrote:
+>>  
+>>  		ret = sock_recvmsg(queue->sock, &msg, msg.msg_flags);
+>>  		if (ret < 0) {
+>> +			/* If MSG_CTRUNC is set, it's a control message,
+>> +			 * so let's read the control message.
+>> +			 */
+> This is not the normal kernel comment style, which would be:
+> 
+> 			/*
+> 			 * If MSG_CTRUNC is set, it's a control message, so
+> 			 * let's read the control message.
+> +			 */
 
-Add pinctrl nodes to PolarFire to demonstrate their use, matching the
-default configuration set by the HSS firmware for the Icicle kit's
-reference design, as a demonstration of use.
+But it is correct style for net/ .
 
-Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
----
- .../dts/microchip/mpfs-icicle-kit-common.dtsi |   1 -
- .../dts/microchip/mpfs-icicle-kit-fabric.dtsi |  63 +++++++
- .../boot/dts/microchip/mpfs-pinctrl.dtsi      | 165 ++++++++++++++++++
- arch/riscv/boot/dts/microchip/mpfs.dtsi       |  16 ++
- 4 files changed, 244 insertions(+), 1 deletion(-)
- create mode 100644 arch/riscv/boot/dts/microchip/mpfs-pinctrl.dtsi
 
-diff --git a/arch/riscv/boot/dts/microchip/mpfs-icicle-kit-common.dtsi b/arch/riscv/boot/dts/microchip/mpfs-icicle-kit-common.dtsi
-index b3f61c58e57c..5667805b4b14 100644
---- a/arch/riscv/boot/dts/microchip/mpfs-icicle-kit-common.dtsi
-+++ b/arch/riscv/boot/dts/microchip/mpfs-icicle-kit-common.dtsi
-@@ -3,7 +3,6 @@
- 
- /dts-v1/;
- 
--#include "mpfs.dtsi"
- #include "mpfs-icicle-kit-fabric.dtsi"
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/leds/common.h>
-diff --git a/arch/riscv/boot/dts/microchip/mpfs-icicle-kit-fabric.dtsi b/arch/riscv/boot/dts/microchip/mpfs-icicle-kit-fabric.dtsi
-index 71f724325578..785176dabcf1 100644
---- a/arch/riscv/boot/dts/microchip/mpfs-icicle-kit-fabric.dtsi
-+++ b/arch/riscv/boot/dts/microchip/mpfs-icicle-kit-fabric.dtsi
-@@ -1,6 +1,9 @@
- // SPDX-License-Identifier: (GPL-2.0 OR MIT)
- /* Copyright (c) 2020-2021 Microchip Technology Inc */
- 
-+#include "mpfs.dtsi"
-+#include "mpfs-pinctrl.dtsi"
-+
- / {
- 	core_pwm0: pwm@40000000 {
- 		compatible = "microchip,corepwm-rtl-v4";
-@@ -80,6 +83,16 @@ refclk_ccc: clock-cccref {
- 	};
- };
- 
-+&can0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&can0_fabric>;
-+};
-+
-+&can1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&ikrd_can1_cfg>;
-+};
-+
- &ccc_nw {
- 	clocks = <&refclk_ccc>, <&refclk_ccc>, <&refclk_ccc>, <&refclk_ccc>,
- 		 <&refclk_ccc>, <&refclk_ccc>;
-@@ -87,3 +100,53 @@ &ccc_nw {
- 		      "dll0_ref", "dll1_ref";
- 	status = "okay";
- };
-+
-+&i2c0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c0_fabric>;
-+};
-+
-+&i2c1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c1_fabric>;
-+};
-+
-+&mmuart1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&uart1_fabric>;
-+};
-+
-+&mmuart2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&uart2_fabric>;
-+};
-+
-+&mmuart3 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&uart3_fabric>;
-+};
-+
-+&mmuart4 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&uart4_fabric>;
-+};
-+
-+&mssio {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&spi1_mssio>, <&can1_mssio>, <&mdio0_mssio>, <&mdio1_mssio>;
-+};
-+
-+&qspi {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&qspi_fabric>;
-+};
-+
-+&spi0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&spi0_fabric>;
-+};
-+
-+&spi1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&ikrd_spi1_cfg>;
-+};
-diff --git a/arch/riscv/boot/dts/microchip/mpfs-pinctrl.dtsi b/arch/riscv/boot/dts/microchip/mpfs-pinctrl.dtsi
-new file mode 100644
-index 000000000000..47fc4a523c33
---- /dev/null
-+++ b/arch/riscv/boot/dts/microchip/mpfs-pinctrl.dtsi
-@@ -0,0 +1,165 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-+
-+&iomux0 {
-+	spi0_fabric: mux-spi0-fabric {
-+		function = "spi0";
-+		groups = "spi0_fabric";
-+	};
-+
-+	spi0_mssio: mux-spi0-mssio {
-+		function = "spi0";
-+		groups = "spi0_mssio";
-+	};
-+
-+	spi1_fabric: mux-spi1-fabric {
-+		function = "spi1";
-+		groups = "spi1_fabric";
-+	};
-+
-+	spi1_mssio: mux-spi1-mssio {
-+		function = "spi1";
-+		groups = "spi1_mssio";
-+	};
-+
-+	i2c0_fabric: mux-i2c0-fabric {
-+		function = "i2c0";
-+		groups = "i2c0_fabric";
-+	};
-+
-+	i2c0_mssio: mux-i2c0-mssio {
-+		function = "i2c0";
-+		groups = "i2c0_mssio";
-+	};
-+
-+	i2c1_fabric: mux-i2c1-fabric {
-+		function = "i2c1";
-+		groups = "i2c1_fabric";
-+	};
-+
-+	i2c1_mssio: mux-i2c1-mssio {
-+		function = "i2c1";
-+		groups = "i2c1_mssio";
-+	};
-+
-+	can0_fabric: mux-can0-fabric {
-+		function = "can0";
-+		groups = "can0_fabric";
-+	};
-+
-+	can0_mssio: mux-can0-mssio {
-+		function = "can0";
-+		groups = "can0_mssio";
-+	};
-+
-+	can1_fabric: mux-can1-fabric {
-+		function = "can1";
-+		groups = "can1_fabric";
-+	};
-+
-+	can1_mssio: mux-can1-mssio {
-+		function = "can1";
-+		groups = "can1_mssio";
-+	};
-+
-+	qspi_fabric: mux-qspi-fabric {
-+		function = "qspi";
-+		groups = "qspi_fabric";
-+	};
-+
-+	qspi_mssio: mux-qspi-mssio {
-+		function = "qspi";
-+		groups = "qspi_mssio";
-+	};
-+
-+	uart0_fabric: mux-uart0-fabric {
-+		function = "uart0";
-+		groups = "uart0_fabric";
-+	};
-+
-+	uart0_mssio: mux-uart0-mssio {
-+		function = "uart0";
-+		groups = "uart0_mssio";
-+	};
-+
-+	uart1_fabric: mux-uart1-fabric {
-+		function = "uart1";
-+		groups = "uart1_fabric";
-+	};
-+
-+	uart1_mssio: mux-uart1-mssio {
-+		function = "uart1";
-+		groups = "uart1_mssio";
-+	};
-+
-+	uart2_fabric: mux-uart2-fabric {
-+		function = "uart2";
-+		groups = "uart2_fabric";
-+	};
-+
-+	uart2_mssio: mux-uart2-mssio {
-+		function = "uart2";
-+		groups = "uart2_mssio";
-+	};
-+
-+	uart3_fabric: mux-uart3-fabric {
-+		function = "uart3";
-+		groups = "uart3_fabric";
-+	};
-+
-+	uart3_mssio: mux-uart3-mssio {
-+		function = "uart3";
-+		groups = "uart3_mssio";
-+	};
-+
-+	uart4_fabric: mux-uart4-fabric {
-+		function = "uart4";
-+		groups = "uart4_fabric";
-+	};
-+
-+	uart4_mssio: mux-uart4-mssio {
-+		function = "uart4";
-+		groups = "uart4_mssio";
-+	};
-+
-+	mdio0_fabric: mux-mdio0-fabric {
-+		function = "mdio0";
-+		groups = "mdio0_fabric";
-+	};
-+
-+	mdio0_mssio: mux-mdio0-mssio {
-+		function = "mdio0";
-+		groups = "mdio0_mssio";
-+	};
-+
-+	mdio1_fabric: mux-mdio1-fabric {
-+		function = "mdio1";
-+		groups = "mdio1_fabric";
-+	};
-+
-+	mdio1_mssio: mux-mdio1-mssio {
-+		function = "mdio1";
-+		groups = "mdio1_mssio";
-+	};
-+};
-+
-+&mssio {
-+	ikrd_can1_cfg: ikrd-can1-cfg {
-+		can1-pins {
-+			pins = <34>, <35>, <36>;
-+			function = "spi";
-+			bias-pull-up;
-+			drive-strength = <8>;
-+			microchip,ibufmd = <0x1>;
-+		};
-+	};
-+
-+	ikrd_spi1_cfg: ikrd-spi1-cfg {
-+		spi1-pins {
-+			pins = <30>, <31>, <32>, <33>;
-+			function = "spi";
-+			bias-pull-up;
-+			drive-strength = <8>;
-+			microchip,ibufmd = <0x1>;
-+		};
-+	};
-+};
-diff --git a/arch/riscv/boot/dts/microchip/mpfs.dtsi b/arch/riscv/boot/dts/microchip/mpfs.dtsi
-index 5c2963e269b8..0fb94581b6cb 100644
---- a/arch/riscv/boot/dts/microchip/mpfs.dtsi
-+++ b/arch/riscv/boot/dts/microchip/mpfs.dtsi
-@@ -254,7 +254,23 @@ pdma: dma-controller@3000000 {
- 		mss_top_sysreg: syscon@20002000 {
- 			compatible = "microchip,mpfs-mss-top-sysreg", "syscon", "simple-mfd";
- 			reg = <0x0 0x20002000 0x0 0x1000>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
- 			#reset-cells = <1>;
-+
-+			iomux0: pinctrl@200 {
-+				compatible = "microchip,mpfs-pinctrl-iomux0";
-+				reg = <0x200 0x4>;
-+				pinctrl-use-default;
-+
-+			};
-+
-+			mssio: pinctrl@204 {
-+				compatible = "microchip,mpfs-pinctrl-mssio";
-+				reg = <0x204 0x7c>;
-+				/* on icicle ref design at least */
-+				pinctrl-use-default;
-+			};
- 		};
- 
- 		sysreg_scb: syscon@20003000 {
 -- 
-2.51.0
-
+Chuck Lever
 
