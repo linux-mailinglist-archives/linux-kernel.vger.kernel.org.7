@@ -1,166 +1,132 @@
-Return-Path: <linux-kernel+bounces-896765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50810C512C3
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:48:30 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 037A7C512CC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:49:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71FCC3A274E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:47:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AE1F94F0A1C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:47:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E256B2FD1D9;
-	Wed, 12 Nov 2025 08:47:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 085052FD1D9;
+	Wed, 12 Nov 2025 08:47:35 +0000 (UTC)
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C177165F1A
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 08:47:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21DAB2F90D3
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 08:47:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762937244; cv=none; b=eaoKQS/DieLRP6lebu5jYiBeZM3T9rd1WBryCZ53xLuAdrii2fzDkzZK+wylfZggX7M+HIJM3w4DDGonDUVqWGMLdA4WWwmFtM7eyXVZtcNG2+FPs8pSGM4sXF67QJlqzTJd6crvQA8e5QyJ3w1mhvt0axapIHVwcLqoCkTCiy0=
+	t=1762937254; cv=none; b=TOpsUqjIKcSL3MKN3VqDStpzgmlyXs9qJNyJdNfSb4Hsxd7nMTW/ql20w5dSCPi4jtpqhjBSMFHpbzq5Tju+dxAZI9xyBY7Q5MC+I1yooMECmfB0+IkjlvMUyprdUtlBaJpog32jB0KFue2ysnYYFdH5UQ0DJUoWQDlu5m29QVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762937244; c=relaxed/simple;
-	bh=4jeqUNmPOMwzZ/GkaScD0IOS4S+tWByBRy2rtt22bj4=;
+	s=arc-20240116; t=1762937254; c=relaxed/simple;
+	bh=AWeQnti40jHnOJbmGeOlA0NmYMcbw2PDNWzz614QK/M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ADzyPFUfpjrYY3XQx5q54JdooSaAYHGVkejWaYGXeFm/SAZXvgzAVIYtmqmS/M71vQYJ3RyLCxPrTDJDF8srnBDCeiZU8cpLZdeDpUviXngRiaZeg0hlQUWrOuwn6WBu0HjU7HSA0mg8qlg9iMMwwOG1eFNXVdgUeUhQuulD3z8=
+	 Content-Type:Content-Disposition:In-Reply-To; b=LwTsnvl2PMhlNiaLPlvs8WSaf+Cqf0pxuRlw3Xsc4zrvUhCJmuWSxaPHcg7pcTbOUb/FE+jfrCiZkJvgJVx1p3Gz4EOOSCyjnjnXcRMc4LWT//C+FUIY9nSGP76+lao9MdtBEURgHoOTMTG8bz4zFWB9P0h98Pl2A/eEplExY6w=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
 Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
 	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
 	(Exim 4.92)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1vJ6VZ-0002Hl-IX; Wed, 12 Nov 2025 09:47:17 +0100
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	(envelope-from <mkl@pengutronix.de>)
+	id 1vJ6Vc-0002Je-Qv; Wed, 12 Nov 2025 09:47:20 +0100
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
 	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1vJ6VZ-0003IF-1D;
-	Wed, 12 Nov 2025 09:47:17 +0100
-Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1vJ6VZ-00GPvd-0q;
-	Wed, 12 Nov 2025 09:47:17 +0100
-Date: Wed, 12 Nov 2025 09:47:17 +0100
-From: Marco Felsch <m.felsch@pengutronix.de>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
-	imx@lists.linux.dev, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>, linux-kernel@vger.kernel.org,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Fabio Estevam <festevam@gmail.com>,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 0/2] Add support for Skov Rev.C HDMI variant
-Message-ID: <20251112084717.ea7fchu7jcz6dzsi@pengutronix.de>
-References: <20251107-v6-18-skov-revc-hdmi-v1-0-595549e5b496@pengutronix.de>
- <176278493286.154609.17548604407386943510.robh@kernel.org>
- <20251110145256.pxgfw3zu7wocguqs@pengutronix.de>
+	(envelope-from <mkl@pengutronix.de>)
+	id 1vJ6Vb-0003IJ-22;
+	Wed, 12 Nov 2025 09:47:19 +0100
+Received: from pengutronix.de (p54b152ce.dip0.t-ipconnect.de [84.177.82.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 55FAC49D92A;
+	Wed, 12 Nov 2025 08:47:19 +0000 (UTC)
+Date: Wed, 12 Nov 2025 09:47:19 +0100
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Biju <biju.das.au@gmail.com>
+Cc: Vincent Mailhol <mailhol@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, Tranh Ha <tranh.ha.xb@renesas.com>, 
+	Duy Nguyen <duy.nguyen.rh@renesas.com>, linux-can@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+	stable@vger.kernel.org
+Subject: Re: [PATCH] can: rcar_canfd: Fix controller mode setting for RZ/G2L
+ SoCs
+Message-ID: <20251112-warping-ninja-jaybird-22edde-mkl@pengutronix.de>
+References: <20251030120508.420377-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="lxeis23kjl3hmw2g"
 Content-Disposition: inline
-In-Reply-To: <20251110145256.pxgfw3zu7wocguqs@pengutronix.de>
+In-Reply-To: <20251030120508.420377-1-biju.das.jz@bp.renesas.com>
 X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Mail-From: mkl@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On 25-11-10, Marco Felsch wrote:
-> On 25-11-10, Rob Herring (Arm) wrote:
-> > 
-> > On Fri, 07 Nov 2025 15:49:50 +0100, Marco Felsch wrote:
-> > > Hi,
-> > > 
-> > > this small patchset adds the support for the Rev.C HDMI board variant.
-> > > 
-> > > Regards,
-> > >   Marco
-> > > 
-> > > Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
-> > > ---
-> > > Marco Felsch (2):
-> > >       dt-bindings: arm: fsl: add Skov Rev.C HDMI support
-> > >       arm64: dts: imx8mp-skov: add Rev.C HDMI support
-> > > 
-> > >  Documentation/devicetree/bindings/arm/fsl.yaml          | 1 +
-> > >  arch/arm64/boot/dts/freescale/Makefile                  | 1 +
-> > >  arch/arm64/boot/dts/freescale/imx8mp-skov-revc-hdmi.dts | 8 ++++++++
-> > >  3 files changed, 10 insertions(+)
-> > > ---
-> > > base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
-> > > change-id: 20251107-v6-18-skov-revc-hdmi-1e8d4bbac26a
-> > > 
-> > > Best regards,
-> > > --
-> > > Marco Felsch <m.felsch@pengutronix.de>
-> > > 
-> > > 
-> > > 
-> > 
-> > 
-> > My bot found new DTB warnings on the .dts files added or changed in this
-> > series.
-> > 
-> > Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-> > are fixed by another series. Ultimately, it is up to the platform
-> > maintainer whether these warnings are acceptable or not. No need to reply
-> > unless the platform maintainer has comments.
-> > 
-> > If you already ran DT checks and didn't see these error(s), then
-> > make sure dt-schema is up to date:
-> > 
-> >   pip3 install dtschema --upgrade
-> > 
-> > 
-> > This patch series was applied (using b4) to base:
-> >  Base: 3a8660878839faadb4f1a6dd72c3179c1df56787 (use --merge-base to override)
-> > 
-> > If this is not the correct base, please add 'base-commit' tag
-> > (or use b4 which does this automatically)
-> > 
-> > New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/freescale/' for 20251107-v6-18-skov-revc-hdmi-v1-0-595549e5b496@pengutronix.de:
-> > 
-> > arch/arm64/boot/dts/freescale/imx8mp-skov-revc-hdmi.dtb: switch@5f (microchip,ksz9893): pinctrl-names: ['default'] is too short
-> > 	from schema $id: http://devicetree.org/schemas/net/dsa/microchip,ksz.yaml
-> 
-> This may be a valid issue, but it's rather an additional patch worth it
-> since this patchset doesn't touch the imx8mp-skov-reva.dtsi include at
-> all.
 
-FTR: If I get the binding right, the regression is caused by commit
-https://lore.kernel.org/all/20250918-ksz-strap-pins-v3-2-16662e881728@bootlin.com/.
+--lxeis23kjl3hmw2g
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] can: rcar_canfd: Fix controller mode setting for RZ/G2L
+ SoCs
+MIME-Version: 1.0
 
-Since this commit, pinctrl-names always need to have the "default" and
-"reset" value, which is wrong.
+On 30.10.2025 12:05:04, Biju wrote:
+> From: Biju Das <biju.das.jz@bp.renesas.com>
+>
+> The commit 5cff263606a1 ("can: rcar_canfd: Fix controller mode setting")
+> applies to all SoCs except the RZ/G2L family of SoCs. As per RZ/G2L
+> hardware manual "Figure 28.16 CAN Setting Procedure after the MCU is
+> Reset" CAN mode needs to be set before channel reset. Add the
+> mode_before_ch_rst variable to struct rcar_canfd_hw_info to handle
+> this difference.
+>
+> The above commit also breaks CANFD functionality on RZ/G3E. Adapt this
+> change to RZ/G3E, as well=C2=A0as it works ok by following the initialisa=
+tion
+> sequence of RZ/G2L.
+>
+> Fixes: 5cff263606a1 ("can: rcar_canfd: Fix controller mode setting")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 
-Regards,
-  Marco
+Applied to linux-can.
 
+Thanks,
+Marc
 
-> 
-> Regards, Marco
-> 
-> > 
-> > 
-> > 
-> > 
-> > 
-> > 
-> 
-> -- #gernperDu #CallMeByMyFirstName
-> 
-> Pengutronix e.K.                           |
-> | Steuerwalder Str. 21                       |
-> https://www.pengutronix.de/ | 31137 Hildesheim, Germany
-> | Phone: +49-5121-206917-0    | Amtsgericht Hildesheim, HRA 2686
-> | Fax:   +49-5121-206917-9    |
-> 
-> 
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--lxeis23kjl3hmw2g
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmkUSZIACgkQDHRl3/mQ
+kZwuigf9F5PFg+qtPIWyiJ0SYay6CKVFjWfOfIo6j4qqRIYmT2K+uhZVhUaUkoYo
+KfqPGwX7NZFUGA5zVghfGDI4efNmI0uWY9YOYCiI1AIQhPj9RDYzouLHhXrubTh1
+dgqtnpY4lZ9NwR5diS8NoDHUHUfUz1oGCzSRJF8XZVKEsOAB99QqsgkKLuioPCB2
+0av+JbP8ElykswI8Zh+iALa4/funve5dN01tpl7Bnb80D816672a8tGv1JnkDg15
+rThLn7XQ8i8sqCPKwQK8d0QJTJ+W2YiSXkUUYjGsLsk+ScCckL1WQjghWgPhjfw5
+psUadcWpBqHziKPpH9CZ/eKuuSVbnQ==
+=4TVP
+-----END PGP SIGNATURE-----
+
+--lxeis23kjl3hmw2g--
 
