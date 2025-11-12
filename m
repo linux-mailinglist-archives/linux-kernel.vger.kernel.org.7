@@ -1,213 +1,171 @@
-Return-Path: <linux-kernel+bounces-897589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D187C53753
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:40:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACA18C53768
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:41:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95B01425F8F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:39:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 545BE560E43
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:41:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DB76306B3D;
-	Wed, 12 Nov 2025 15:39:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D94633BBA2;
+	Wed, 12 Nov 2025 15:41:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cFGBCpIy"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="a3g2VSp/"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EA92224B14
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 15:39:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADEC13396E5;
+	Wed, 12 Nov 2025 15:40:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762961993; cv=none; b=MdZwtIlCLlFyY6mcDpACZRITbn4nykTF7mKNcoFzSMSQbH+nnipNjOrpzF5IDOWO15CxHN2oj1VCOyb3/xf4UjtNSS/DCfmbR1Z3iGAuRch46O7X1kPh4oLTJ7KGROjJPVtgXOQPJfrK/omQKvOuFHTgTevpSV6s1zxua2+6784=
+	t=1762962060; cv=none; b=HpTRFjxy1uPNUxHIiudNVrCagwr19InUUP+8/dPbgS7OhHlZ3ZdNsT/6p2U+fQWo9eubQzJlhHBDzEH1+8kKaK0KelQ7uxZxefz6+Axkb20NiKe17T3qki5iirt6ncXD49XwJogBWMcchtHOHEem6tSzmfbvhAVRrqXFXpYlFwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762961993; c=relaxed/simple;
-	bh=JArvLajd0ZqdpVYVOCc9UsYN0DA2uy8SRtq5zfsPOkY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uGjmZmimAeYvxQk9IZ0d8pHbOUk/aoSOHuKKjZm4y200DeRezFoqiYarOi8qA88dWc1SGQpkoxVwGmuAqICELGHnkgWugg7z1XahR9E/XS6AJqiKSRyP9x6DT22rkxFhSm8xQeorYn/8f9cNinGc3U7uE2ATl8svtSU85j5SaWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cFGBCpIy; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-59469969bfeso947645e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 07:39:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762961990; x=1763566790; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=AQMGHeuVetKMPR9AyI2Wocgl9opG9fOrKP3UuI7HdsU=;
-        b=cFGBCpIyIO22HxoTQ3hy0meWBi1dchvpSst2c5awBB0TL54xtj8bedxB8Kd9ylyhus
-         Es2mA/Z0gqe+eS/3ZX44uVrDnMn/seirUw6CzSQKjt+1fg0nRGGoe6gaSkzeg3hRcmzG
-         GnWoSlvEbiPNhNBqfkmWH1+eD5V5a+wUPLGeysQ8FNs5UnbDBNZIsunVeUewHxDNxBDm
-         pGehXEkmoyqRqEjmt8BEZfncmN0dkKMlU3OX1WwuLWaoG5CDqCJB+/bGqNE4k8Io0cGa
-         oRw7jqKYxRM08O3U9OgYxnvFKhwr60DlniC7XJw5Wf6/cvq1PvaNoXzxwWkDjeTpa14f
-         1Faw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762961990; x=1763566790;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AQMGHeuVetKMPR9AyI2Wocgl9opG9fOrKP3UuI7HdsU=;
-        b=qqTUmtVaW7tb0R7FxvvOsLFKgqM4p4aWaeZd5ksXZXQsTfzG3eQCsWyT9+ja48/MZJ
-         tIQ2eikrc0GBunm1wmrLKTq48pFxW+si+C6367pBSHhIET9GFcJIYZffwLBhIDf6oU/p
-         UhqhkcdQtStvcpy8mbhyfmSn7oWQJyjx+gHUn8LZ6tSzEMpxYHGzmgxpHgsPgyE8HyOE
-         kwKsLVLntqjMg6rK4hqq5QfluUcYmn0PtoNOgn3OKuNmf7uVqJWriKwm5f+b2nwQoho1
-         uLN9/wVR9k3NQlo1+KubzwIwELNB9u4z8XzpWd+MsZi6YDE2/J2kQlQ8/qsbLzOPBZsV
-         pJeA==
-X-Forwarded-Encrypted: i=1; AJvYcCVg5MG9i/3hOvbaPPSMGQ7s2j2CZaYNtu3XpsNuYQYIzIbQZ9ikALCN5kbzZm3QW2LOrRZ04ivG6pUezj0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCUTGg5cmQGc5QrFhZ0E8oOSPTQVXp0tS15CuNeW3/nQ+OmuzD
-	VfM7HnSLMyhAGjHZpnSo1l+1OHiHBoXyINQj9UZf5uKj0XMpNzfqIwYeev1NOZCp
-X-Gm-Gg: ASbGncuLcYHbxfvyfQi87xzS6GnAaqUshBcy3b4xR/uA1NXkNIgxYzDedgh9PkCBC5v
-	DJVWesmTANdJe9HLUzpbee+0iEgP0OfzgCA5Ev4Oq2/+rOawmOIiEhmmgUtd4P18HmcbkAuei6g
-	mAZSgWjXKXlBoYhBnNeo67Yu7M4kIWMY5MxnegV8kP2uqKy5wm0Xu9Ig4SMfakvNP0kSEKqsd0w
-	kHxo2BSaghCWRZT29aa3/yTc+GDwD7BYqJitafZLnRJ6NEdhgvwICM6syRLupk1l57wmtXz3g7D
-	VKWkQwd+pMFy4Kps7xgMUhPi31H8EvdaHvKa3kTtp91p95FpX1BcND5Jfpf5Vlf3Nd/GL6Fwab9
-	pdLGdvVhLdldcLIP2S3rvMXE+VBxgx3fVdeu1/4NdTQ/SFiTZESiqSbVkhiEqt/sxwt7FhHx6Ui
-	/bnbHJkztrB7rdvNd8Wqi6YG9p9ZELBOqsvDZH
-X-Google-Smtp-Source: AGHT+IG6fxfn9Ejevg+kHxxkHAI8+e+Pp8yzrvtVeAeXPBB99bQNtGL7z+dS6UndPXzRJTWN+ZedwA==
-X-Received: by 2002:a05:6512:2390:b0:592:fc68:5b9d with SMTP id 2adb3069b0e04-59576df324dmr1311109e87.10.1762961989929;
-        Wed, 12 Nov 2025 07:39:49 -0800 (PST)
-Received: from gmail.com (83-233-6-197.cust.bredband2.com. [83.233.6.197])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5944a5a0b7esm5951757e87.109.2025.11.12.07.39.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Nov 2025 07:39:49 -0800 (PST)
-Date: Wed, 12 Nov 2025 16:39:47 +0100
-From: Marcus Folkesson <marcus.folkesson@gmail.com>
-To: Lars Rask <Lars.Rask@axis.com>
-Cc: "david@lechnology.com" <david@lechnology.com>,
-	"jagan@amarulasolutions.com" <jagan@amarulasolutions.com>,
-	"agx@sigxcpu.org" <agx@sigxcpu.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Kernel <Kernel@axis.com>, Amir Dawd Seid <Amir.Seid@axis.com>,
-	Johan Adolfsson <Johan.Adolfsson@axis.com>,
-	Daniel Larsson Persson <Daniel.Larsson.Persson@axis.com>
-Subject: Re: [RFC] What to base new driver for Raystar RDX0063 display panel
- using Sitronix ST75156 chip on?
-Message-ID: <aRSqQ8AFWhUFlOyT@gmail.com>
-References: <AS2PR02MB89157A26C4CFF62811208A739FCCA@AS2PR02MB8915.eurprd02.prod.outlook.com>
+	s=arc-20240116; t=1762962060; c=relaxed/simple;
+	bh=56oIiIxjRjHbcosJpMRlVvkX6VZcRwx2qtum8cebNYA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=OkQ2MaVZETBC3rTNF7ZRnnCBE0yfGYGVgVTW4I6+yq5KLf9aQ/kEpyfY0yI9eEQ8I1S1ZUOGfmCWUxSHBvG4ecmzL/Iu8Jo55QWk9oeJhT+vnAcks48kZYcnpXiQNE4z2GYaxSYuPcEaX7DPbpRLzCw2zlg0roi8wyg0upXr1A8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=a3g2VSp/; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5AC6U5PV028706;
+	Wed, 12 Nov 2025 15:40:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pp1; bh=fOUdlZ7Xpv82bnzaOS/n0TqiHqpO
+	idPgTMvsGbc/9hc=; b=a3g2VSp/hbV/alUV78pFuSE0cs+m62TxgnhdPwhFvT9O
+	28iDj/HmjgiXLALo7GYvlD4SuyZ5X9rFsmhmokDVOKo+psluiNg1+jN8NsGy+ppJ
+	x1rRXgGBgW4G3VTkJzetEnYp3eDYbXeuAkZ6epoLliYUuF8X73RbIhPUjuYTnAKL
+	iO8owtAOnm5bV1D4ZiPPqS9gvaJQ7/xphONkzdo8a1TjXNpbnCqJmm/Fb8TJs6eI
+	FODNUqXn2ZwbCgx1X8/LohxIaZcVtL2kAHfHZM+jlUirw7uBOE6AYUYzTcPVGQ32
+	eqrqTzQ4ENd3mwKr/Q6t4JECJ2adyKYE7zpqmyJ4lQ==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4aa3m8970x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Nov 2025 15:40:49 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5ACDHUCj014759;
+	Wed, 12 Nov 2025 15:40:49 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4aahpk8xee-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Nov 2025 15:40:48 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5ACFeiKW43254142
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 12 Nov 2025 15:40:44 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C842F2004D;
+	Wed, 12 Nov 2025 15:40:44 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9804E20043;
+	Wed, 12 Nov 2025 15:40:44 +0000 (GMT)
+Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 12 Nov 2025 15:40:44 +0000 (GMT)
+From: Tobias Schumacher <ts@linux.ibm.com>
+Subject: [PATCH 0/2] genirq: s390/pci: Migrate MSI interrupts to irqdomain
+ API
+Date: Wed, 12 Nov 2025 16:40:43 +0100
+Message-Id: <20251112-implement-msi-domain-v1-0-103dd123de14@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ijoNkkVX71GLNuQ2"
-Content-Disposition: inline
-In-Reply-To: <AS2PR02MB89157A26C4CFF62811208A739FCCA@AS2PR02MB8915.eurprd02.prod.outlook.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHuqFGkC/3XNQQ6CMBCF4auQri3plILiynsYF9AOMgltCUWCI
+ dzdQlwYo8v/JfPNwgIOhIGdk4UNOFEg72LAIWG6rdwdOZnYTAqZAwjFyfYdWnQjt4G48bYix40
+ GrASo/CSQxdN+wIbmnb3eYrcURj889y8TbOsbBPEbnIALLoWReVHrTIK5dOQec0q1TbW3bEMn+
+ QnBH0hGqCnEEQuVlSWqb2hd1xfnAXx4BQEAAA==
+X-Change-ID: 20251104-implement-msi-domain-dc1ea014580e
+To: Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Niklas Schnelle <schnelle@linux.ibm.com>,
+        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Gerd Bayer <gbayer@linux.ibm.com>, Halil Pasic <pasic@linux.ibm.com>,
+        Matthew Rosato <mjrosato@linux.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        Tobias Schumacher <ts@linux.ibm.com>
+X-Mailer: b4 0.14.2
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=MtZfKmae c=1 sm=1 tr=0 ts=6914aa81 cx=c_pps
+ a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=VnNF1IyMAAAA:8 a=pqOt2YAaywMWknw-Ev4A:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: Rey2d7S2hmuvynMUMYiWQvHgDSjvocIB
+X-Proofpoint-ORIG-GUID: Rey2d7S2hmuvynMUMYiWQvHgDSjvocIB
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA4MDA3OSBTYWx0ZWRfX9+ztPLvVFU06
+ 4RNuzMbBpPNI88sblZSHP/GBzos0zwbhGYMS1ZEi+kfnZsgb8In0b45PCmiYWCUFjU3I03ExcPT
+ dLvakKaonasMwe6666g+5ohLvL3GB18DVSVqAtT54QBqRR6ei+5UJ2FqL3SUG3augq0pFoR4ubz
+ H6GRAP6d3jV6wabE00BF2rjHf9SZrrqkZyKJBAraHi2WI6939+FGnsg+w4OJgSdlPsS3/FEUkA4
+ 5UJ6ec3QdT915eAlMoV/OlWC+waQ4j3dJ8zpXTY1IzDpToYzJ0XnAmFWMVaGr6gulPCQm/fY4Hx
+ ad4+a0JmU59qu3zNl0qkhQ9/i9vSa7T6yQMcCOKN8T/iTjIKZtTBXFZX0zRnpf+iNwbaaoz9xpS
+ GlDcnMskUoezlw4xvxz4CEUVigxZCA==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-12_04,2025-11-11_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 adultscore=0 priorityscore=1501 bulkscore=0 impostorscore=0
+ suspectscore=0 lowpriorityscore=0 clxscore=1011 phishscore=0 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2511080079
 
+This patch series reworks the PCIe interrupt handling on s390 by
+migrating it to use a proper MSI parent domain. Introducing a dedicated
+MSI domain hierarchy aligns s390 PCIe support with the generic Linux IRQ
+domain model. Currently s390 is one of the last architectures still using
+the legacy API.
 
---ijoNkkVX71GLNuQ2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The migration splits the existing code in the legacy functions
+arch_setup_msi_irqs() and arch_teardown_msi_irqs() into different
+callbacks of the newly created MSI parent domain:
 
-Hi Lars,
+- zpci_msi_prepare(): prepare the allocation of per-device MSI IRQs.
+      will be called once for each device before allocating individual
+      IRQs and sets up for example the adapter aisb and aibv.
+- zpci_msi_teardown(): reverts the effects of zpci_msi_prepare() and is
+      called after all MSI IRQs are freed.
+- zpci_msi_domain_alloc(): the allocation function for interrupts
+- zpci_msi_domain_free(): revert the effects of zpci_msi_domain_alloc()
+- zpci_compose_msi_msg(): create the MSI message to be written into the
+      correspoding PCI config space.
 
-On Wed, Nov 12, 2025 at 03:08:08PM +0000, Lars Rask wrote:
-> Hi,
-> I'm trying to create a driver for a small lcd display called Raystar RDX0=
-063 that is using the
-> Sitronix ST75156 chip. The display is used in SPI 4 wire mode similar to =
-many other tiny MIPI
-> DBI displays, but the register set and framebuffer format is not MIPI DBI=
- compliant, since each
-> byte sent is actually 1 column of 8 rows.
->=20
-> The datasheets for the Raystar RDX0063 display and the Sitronix ST75156 c=
-hip are unfortunately
-> not publicly available, but you can find the datasheet for Sitronix ST756=
-7 (which is similar to=20
-> ST75156) here: https://www.topwaydisplay.com/sites/default/files/2020-05/=
-ST7567.pdf
+* Patch 1 fixes an inconsistency in the irqdomain API. Internally, hw
+  irqs are represented by an unsigned long int (irq_hw_number_t) while
+  the external API in some cases takes an unsigned int as parameter.
+  This must be fixed to allow for the hwirq encoding used for s390. 
+* Patch 2 implements IRQ domains for s390 PCI
 
-Support for ST7567 is mainlined (st7571 driver), and once this [1] series
-is applied, it should also support the SPI interface.
+Since patch 1 changes common APIs, some build tests were done for x86_64
+and arm64. 
 
-Hard to tell without seeing the datasheet for ST75156, but if it's
-similar to ST7567, you might be able to just add an entry in the st7571
-driver for it.
+Signed-off-by: Tobias Schumacher <ts@linux.ibm.com>
+---
+Tobias Schumacher (2):
+      genirq: Change hwirq parameter to irq_hw_number_t
+      s390/pci: Migrate s390 IRQ logic to IRQ domain API
 
->=20
-> The main difference seems to be that ST75156 supports a higher resolution=
- than ST7567,
-> as can be seen here:=20
-> https://www.sitronix.com.tw/en/products/industrial-display-driver-ic/mono=
--stn-lcd-driver-ic
-
-This is how st7567 is defined:
-
-const struct st7571_panel_data st7567_config =3D {
-	.init =3D st7567_lcd_init,
-	.parse_dt =3D st7567_parse_dt,
-	.constraints =3D {
-		.min_nlines =3D 1,
-		.max_nlines =3D 64,
-		.min_ncols =3D 128,
-		.max_ncols =3D 128,
-		.support_grayscale =3D false,
-	},
-};
-
-I think a similar structure for ST75156 with is enough.
-
->=20
-> As a first attempt to create the driver, the panel-mipi-dbi driver was ex=
-tended with "tweaks"
-> to support non MIPI DBI panels. This seems to work. However, after some d=
-iscussion with the
-> maintainer that is no longer active (https://github.com/notro/panel-mipi-=
-dbi/discussions/14)
-> the conclusion was that these "tweaks" were not upstreamable, and that I =
-need to create a new
-> driver specifically for the Raystar RDX0063 display panel using the Sitro=
-nix st75156 chip
-> instead.
->=20
-> In order to make my driver upstreamable, which driver should I be "inspir=
-ed" by (i.e copy and modify)
-> and base my work on? The drivers in drivers/gpu/drm/sitronix/ and drivers=
-/gpu/drm/tiny/ usually uses
-> struct mipi_dbi_dev and mipi_db_command() helpers, but drivers/gpu/drm/pa=
-nel/panel-sitronix-st7789v.c
-> does not.
->=20
-> Should I create my new driver as /gpu/drm/sitronix/st75156.c and use mipi=
-_dbi helpers where applicable?
-> If it is preferable to avoid using the mipi dbi helpers, is there another=
- set of helper functions that
-> I should use instead?
->=20
-> Best regards
-> /Lars Rask
-
-[1] https://lists.freedesktop.org/archives/dri-devel/2025-October/532431.ht=
-ml
+ arch/s390/Kconfig           |   1 +
+ arch/s390/include/asm/pci.h |   1 +
+ arch/s390/pci/pci_bus.c     |   1 +
+ arch/s390/pci/pci_irq.c     | 323 +++++++++++++++++++++++++++-----------------
+ include/linux/irqdesc.h     |   6 +-
+ kernel/irq/irqdesc.c        |   6 +-
+ 6 files changed, 209 insertions(+), 129 deletions(-)
+---
+base-commit: 882489402b556fa6d916cba86051276fcc9a8953
+change-id: 20251104-implement-msi-domain-dc1ea014580e
 
 Best regards,
-Marcus Folkesson
+-- 
+Tobias Schumacher <ts@linux.ibm.com>
 
---ijoNkkVX71GLNuQ2
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEBVGi6LZstU1kwSxliIBOb1ldUjIFAmkUqj4ACgkQiIBOb1ld
-UjIwBRAAyVBRr+dj9P84ET1/ILprKUFBu+JfI+tKodLXmLdii2HbxF0cmHeA1RAt
-RRZKnPiJ57IWFI7dolRE4shsRvW026F9aRRIcKRP+cB+p+szTZryhbm6Hc61Uj1J
-nPYsAOSh6ynFsAFGJypFd1irqhTMIfhTrACZ7DXrd8jwKHJR1diyv4LT7QdLm0R5
-Hx73yvI5x19IkEEoIc+TR1BqSVSxgo860YdClgfsWubLLRV9GBV+FKz6BCD4fwXk
-mxgUtwcAh0iwKz7GVNs8wFiHVbYsaLtwmFElVlfKAhpN2O3mI3ubrwR14yUw9gGk
-7BbCQKoOh/cFBhE+5e19BBuXILZ9nJm4q/YqZgC3l8YeC2j0pwJprCV6PvhtHJly
-D6pjfcnyMnNXu3oZEolxNOcRwwc/XQp0ANDPQ2+G4dTwslKrpxN7n857/anRMKg1
-GdsHaTnMzwVARh2rBDfPbaPHYrY4a/GwHIBPYnVldehAVkIclcS/XCD824lAhhh/
-rx2Sxsv+zYN3qgZ1/ztZagkyyGe2jUECiEWdrxzptUeviPOtG5FNPaOTSFi0xpZS
-MJVFSD80ZCkUyT9vDgvp4ovxwmd8yKFTuyiow5RDzY2jqivNajHlKfmcJt6GPHQh
-Hgs2L5Pi+pj4fWuNk/4EMPFiRcUhVjH9aEH0ML7ZeRFTw6FtTyQ=
-=ZOZV
------END PGP SIGNATURE-----
-
---ijoNkkVX71GLNuQ2--
 
