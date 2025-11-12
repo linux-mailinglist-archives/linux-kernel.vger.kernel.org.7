@@ -1,95 +1,100 @@
-Return-Path: <linux-kernel+bounces-897891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63FEFC53E81
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:24:52 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EF8FC53E2A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:20:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 537DC3ABD67
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:20:58 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7F25434501F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:19:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B1E32D97AF;
-	Wed, 12 Nov 2025 18:20:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B2BA34B42C;
+	Wed, 12 Nov 2025 18:19:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GvdstYrc"
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ar64TOml"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 685F0340DA6
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 18:20:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B5C534B424
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 18:19:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762971648; cv=none; b=ChgcXng8oPQ4L05Yy8A28ya+WJx9QwWfpDc1f3+Ohk8SlOPC+EL+tlDZh30XNFPBEJM6fm94eVPzLPjkXKmuPHlADcLALplp6mFkwld6hnlAmDMvRd3twemnhYQnKIkoToJQOV9kE6tNQgypjMXuqc6nTiDaoUnMxjsgzI4+H34=
+	t=1762971556; cv=none; b=r/Yoxd3CPwmUWYsievZZmxlpd45nA7vtLtqlpt8xZr4dfLOzZQGUpzQoyG8V+QCRfqhSg+lglU2R0843dcYVzZhNIZFIbT1lHlTW3nNsGTOWlutkdzmCi6LmwS5cAGsX5QTVs3JR92f2HCYEGmS7YO7Tv97ewYqkmR+iedWtSC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762971648; c=relaxed/simple;
-	bh=UWTVi+79biUDXYVbP1Zfv1jqXnj1FUi+MQ3m7OOq1IY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZcXXEF08Mok/rqdwer259ZryWNNOjvS4qjS7rE5BzB4UXbFjbwKAZZJJ3RIi53oZXpYvYRlxvzvA+ElZQh9oMODFMIFyLoWkqyRQpRDcpdVMP08gUtlxklNe/S6xssLeQdN6ZVCJ5jxz2AR5vHQvv73x53zL/4dQ/yyrB2rbA9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GvdstYrc; arc=none smtp.client-ip=209.85.160.182
+	s=arc-20240116; t=1762971556; c=relaxed/simple;
+	bh=JSk2wiQKBahdJ8dYGksFv11VvJ1NPd2DXSatLhgaWEI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TJop/8Hpm/vm8E6d7ibiI2ROddp0N+NoQkCKkA0wQ8LPebS/vNZODe8lZL3SN2JaPy6iZoblLNw5DOMotQEOijhemOl+HjRhUYNc+b7Hg1jkoNXvSFqZSJpOdeNMha3bjiRX1E+rJwIK/qsn5pxTOi52C02oC/DbO1w5CYcrrB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ar64TOml; arc=none smtp.client-ip=209.85.214.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4ed75832448so14497701cf.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 10:20:47 -0800 (PST)
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-297d4a56f97so11973465ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 10:19:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762971646; x=1763576446; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Bm1UHN2KZxJ0B3W03H3cTsYhakxCO69X9Qr+GtDJfPk=;
-        b=GvdstYrccqKxeRmF2zQbbG230Gziq5f2liMevtY97kPVichOYfm+4MneI5nSlYiwS4
-         bpJqtz7zqx6kge8YfXnr61Te1lNSFP8OxLhEKIY1SGNoC6YsRWrttgTneX0mhK97pDr1
-         zqnSqIM8CuAJG2qBhWO0Ph89HHWbGIxIg9oy96Rkx44Q2TGo5bTT35ERge2rha1/mQ/c
-         xVpxahBH6S760pl/wbqaH7qXRgMk0cYLW5d3zBFCGBFEeJ+/aTa5paX6fhOhQnQ7rysZ
-         xh+uZu+XFYsmdEYkR5sF6YQ1hp1gOqDcHjs1seKhAeO/yxMneKCXszFMdp7PlkmKTvqS
-         SqYA==
+        d=gmail.com; s=20230601; t=1762971554; x=1763576354; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ajL3qyJYFc6tD7lnGfH4M98Ye8+T06Aj5rRcRA12Okk=;
+        b=Ar64TOmlxe3N161cZTBVfb/dIqX1VLovG5y6PwyGIPc2VMxhhcM+Gj7EAubKCkIpGN
+         Fktk6wYT9DWPnzsYTrOoDCDAXoOgle6N583gZmaELsF/ifk8dI2YrwoccXb5f2yOmmIa
+         Jz6QYNA8wx+hEvHER/Yey2e7TbLKBsAHuRr2G2o7jCzYSCjuQ7b/jq8owxs2nfEMuy9U
+         IeX2v0wQrbU7gcBdDUMF9IzRitozq1Fy2Quu34FNEarVMSFyTuMRYA2RcLApmey0jDmP
+         +OEQ8d2FwLumogpVUO/8IBqS6kLyNrE1eudUPMrSrTLPUP2nNLjN/v1gShWSp7zztx7j
+         jMdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762971646; x=1763576446;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Bm1UHN2KZxJ0B3W03H3cTsYhakxCO69X9Qr+GtDJfPk=;
-        b=JWdD6vegsgOX1z5zKGNIv3g1DoF4GZRo+IQxfb5snRSZSum+sNYJvsPgljQV7qh7i0
-         Td/Qom1pnhs1Wb/p2A2edtkLz5cQRgluj1BfICWmuE8ikIq/gFVbHb282pLh80tC0eDE
-         v7EeYILb6Yo6JTILNzUq4mR1eK6N6dI8/4DVguNO0cAComuUA4fyzB2eH8OtZDVjZbAW
-         AcGrCIJdPqqN7T3Moww3oTimiYbi7vp0t26+0B0p8G1wA7lCNmnxOrrpB3MXZtI05bFF
-         7882MujM3E7qB7RHHTITlrVEcPPlL82BbU4tX99t5In9dNNJm83O282KvQaShrKxkYBG
-         azZg==
-X-Forwarded-Encrypted: i=1; AJvYcCXo7JZJPFDNTzlhJ9cQo73m5TdmaCeqWTfcRVrLpPyv1E2q55nmoaS3Qcck7zMbQvSniPDsLEwnRtTWfmk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxcs7AfI9F6mFzRxqpQ1I8uv7TrIYuVZIHvmJn9SoZnvr9vU+sx
-	X3tCxaFSE2TlJ6VQ9515PDQfsXdGOCkOLSGY+0Ht2iejd4G1yZg5UEMR
-X-Gm-Gg: ASbGnctfcGZ02D5+1fHtoEKDJiC1CTZVuxaDbpp2ZCONFrHg6CwS5OTZgbNLxukIC+w
-	E1SUZdqs9u2tZGNpWR4yBvh0VRitgKgeVNmLu9XmaX3HjoOXZlFoAR/hpSKfLwJw8gFhQWhq4wE
-	O8SzldBzw1P4aNw+axjKh5O+bDkcblybBu8g7xn5gxJr+8E3a5Z9I+0dJ+G241k/x8w/yWKoqf5
-	3ha2PSMcMPxVgS5Vl/lR6ifqY3WKl7Q7+VofX8egewcZ+UElqqLpEsAf6Aa84CfC/q+uUCs4hdC
-	0DP0DTVo2GnAKfwCzV+p44rJ++wAJDoG6YxJhS+Cw8fshX8fgHQL4/Vu23sta/5IIjk72Lzpamh
-	E5VdrCc20zcclRJ2cjd3u+ck5Rkg7iz8e21WWb2KbSjQYJ2OICp3MPoBkMZw2ptN0H6pmw9mwUZ
-	oHmLnxUPtzKoq+nCeA1h0u
-X-Google-Smtp-Source: AGHT+IEuXqC6cY8OV3bFmpAtTGXgz+fn2i6JPBVrYLRDN+Z4yHegy+UVfSzEKFMHist/CiPMcek+nw==
-X-Received: by 2002:a05:622a:1ba3:b0:4ec:f073:4239 with SMTP id d75a77b69052e-4eddbc6a4f9mr52756321cf.6.1762971646334;
-        Wed, 12 Nov 2025 10:20:46 -0800 (PST)
-Received: from rpthibeault-XPS-13-9305.. ([23.233.177.113])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4eda5659cd2sm92260921cf.15.2025.11.12.10.20.45
+        d=1e100.net; s=20230601; t=1762971554; x=1763576354;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ajL3qyJYFc6tD7lnGfH4M98Ye8+T06Aj5rRcRA12Okk=;
+        b=G/WCHkkxpRxWGzengZCJTWvmohQ2FaLh4ko9HpVOm2emLrvo3q9vQz/5avL3nTunK6
+         /W7ab6MbbGWprC17+7wkWMd3oPwjfXQll+IPgP6MlTnGZL6IqOpQlwuiz/Y9tc/L2lB0
+         NZA/1prrnc13JekVGMS1W+de9wnwDgsOO4z8y4vrScVvuHj7dkbFQw5GtkrPTnj0Amjv
+         qWADQbFKp/s+1N6IB5dyTtfinlF+2hZm29r3ZT6Bb3Epzcw2LWQzkRiWRKNtED/R7s/w
+         voRbeWOLPwa5SrviO2+DM7SyIX6XMuf8OXPPZwSZ3wFRkgk5CeuNjAlMQ1xNwlGq27mr
+         xxTw==
+X-Forwarded-Encrypted: i=1; AJvYcCXEmjD1FQsyryeEU3g/MMtijSWc9W6skKUUHeTZKw/3NEW6aKfqTcHTOJkWIcpXY/bGA71Q/SakvOxie/U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzq+Se3/+Up/Ar4MMc+AcPImK2W6o3rOi8SCXWxufMermh74b+O
+	zEKi6nasdeeWJMlEHtu/75hno5LF9sAknWy4SfT8jwj8gh+r2CjtA135
+X-Gm-Gg: ASbGnctmL405BiPhK5txCYJaSIkRkj+0xjtG1hBg72KozANfb4lv/6Yyg12SuPcfqM9
+	Mlb2bYW6Q3gfadmmpqAwBV8WwGSiqjoylqBXL12anjU/p9e8ssds1YQ/vbwkyNn0YvZZAs+bFHG
+	BgtlS0hczHnyWu1finloH+ID5WRsMQYxh+nzB7EWsEPqLdtIv+8f09tAV8WBQwly1ojQYrSBnQk
+	abmeHksrCTHSH+1nfHkcjKoHo+ufz0kEUx7zIKAybDDDmGDp9+ssGyhCLv4+UYhrVhBH7JejeLP
+	K4I9BY2n5rJHVuZ+P8ephgJleelZUVzthOjQPXyKCEhsRzwRI8bfXD57sL2xR+DhIFi781eVZMv
+	oWudqYYPzNRFaWOjzNesVW94A0d0zGWDO10ynPY7W22/At+tdLI393klpb5fgFoMhd0rIWvWg/k
+	/9jTHdrvL30uLvlsAJ
+X-Google-Smtp-Source: AGHT+IHlsgCrOCxbH1xUwfriUBHh5Wzt3eZZ8m1hSbR+IpGy4PwSajaGLSMmb7HAExzbcjFaVH+8vA==
+X-Received: by 2002:a17:903:28c:b0:27e:f018:d2fb with SMTP id d9443c01a7336-2984ed2b896mr48147475ad.6.1762971554462;
+        Wed, 12 Nov 2025 10:19:14 -0800 (PST)
+Received: from gmail.com ([157.50.185.205])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2984dc9f8f1sm37051095ad.54.2025.11.12.10.19.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Nov 2025 10:20:45 -0800 (PST)
-From: Raphael Pinsonneault-Thibeault <rpthibeault@gmail.com>
-To: cem@kernel.org,
-	djwong@kernel.org,
-	chandanbabu@kernel.org,
-	bfoster@redhat.com
-Cc: linux-xfs@vger.kernel.org,
+        Wed, 12 Nov 2025 10:19:13 -0800 (PST)
+From: hariconscious@gmail.com
+To: cezary.rojewski@intel.com,
+	liam.r.girdwood@linux.intel.com,
+	peter.ujfalusi@linux.intel.com,
+	yung-chuan.liao@linux.intel.com,
+	ranjani.sridharan@linux.intel.com,
+	kai.vehmanen@linux.intel.com,
+	pierre-louis.bossart@linux.dev,
+	broonie@kernel.org
+Cc: perex@perex.cz,
+	tiwai@suse.com,
+	amadeuszx.slawinski@linux.intel.com,
+	sakari.ailus@linux.intel.com,
+	khalid@kernel.org,
+	shuah@kernel.org,
+	david.hunter.linux@gmail.com,
+	linux-sound@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-kernel-mentees@lists.linux.dev,
-	skhan@linuxfoundation.org,
-	syzbot+9f6d080dece587cfdd4c@syzkaller.appspotmail.com,
-	Raphael Pinsonneault-Thibeault <rpthibeault@gmail.com>
-Subject: [PATCH] xfs: reject log records with v2 size but v1 header version to avoid OOB
-Date: Wed, 12 Nov 2025 13:18:18 -0500
-Message-ID: <20251112181817.2027616-2-rpthibeault@gmail.com>
+	stable@vger.kernel.org,
+	HariKrishna Sagala <hariconscious@gmail.com>
+Subject: [PATCH v2] ASoC: Intel: avs: Fix potential buffer overflow by snprintf()
+Date: Wed, 12 Nov 2025 23:48:51 +0530
+Message-ID: <20251112181851.13450-1-hariconscious@gmail.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <aRSng1I6l1f7l7EB@infradead.org>
-References: <aRSng1I6l1f7l7EB@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,59 +103,46 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In xlog_do_recovery_pass(),
-commit 45cf976008dd ("xfs: fix log recovery buffer allocation for the
-legacy h_size fixup")
-added a fix to take the corrected h_size (from the xfsprogs bug
-workaround) into consideration for the log recovery buffer calculation.
-Without it, we would still allocate the buffer based on the incorrect
-on-disk size.
+From: HariKrishna Sagala <hariconscious@gmail.com>
 
-However, in a scenario similar to 45cf976008dd, syzbot creates a fuzzed
-record where xfs_has_logv2() but the xlog_rec_header h_version !=
-XLOG_VERSION_2. Meaning, we skip the log recover buffer calculation
-fix and allocate the buffer based on the incorrect on-disk size. Hence,
-a KASAN: slab-out-of-bounds read in xlog_do_recovery_pass() ->
-xlog_recover_process() -> xlog_cksum().
+snprintf() returns the would-be-filled size when the string overflows
+the given buffer size, hence using this value may result in a buffer
+overflow (although it's unrealistic).
 
-Fix by rejecting the record header for
-h_size > XLOG_HEADER_CYCLE_SIZE && !XLOG_VERSION_2
-since the larger h_size cannot work for v1 logs, and the log stripe unit
-adjustment is only a v2 feature.
+This patch replaces it with a safer version, scnprintf() for papering
+over such a potential issue.
+Link: https://github.com/KSPP/linux/issues/105
+'Fixes: 5a565ba23abe ("ASoC: Intel: avs: Probing and firmware tracing
+over debugfs")'
 
-Reported-by: syzbot+9f6d080dece587cfdd4c@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=9f6d080dece587cfdd4c
-Tested-by: syzbot+9f6d080dece587cfdd4c@syzkaller.appspotmail.com
-Fixes: 45cf976008dd ("xfs: fix log recovery buffer allocation for the legacy h_size fixup")
-Signed-off-by: Raphael Pinsonneault-Thibeault <rpthibeault@gmail.com>
+Signed-off-by: HariKrishna Sagala <hariconscious@gmail.com>
 ---
-changelog
-v1 -> v2: 
-- reject the mount for h_size > XLOG_HEADER_CYCLE_SIZE && !XLOG_VERSION_2
-- update commit subject and message
+Thank you for the feedback and the suggestions.
+Corrected the indentation & commit message.
+V1:
+https://lore.kernel.org/all/20251112120235.54328-2-hariconscious@gmail.com/
+ sound/soc/intel/avs/debugfs.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
- fs/xfs/xfs_log_recover.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+diff --git a/sound/soc/intel/avs/debugfs.c b/sound/soc/intel/avs/debugfs.c
+index 3534de46f9e4..cdb82392b9ee 100644
+--- a/sound/soc/intel/avs/debugfs.c
++++ b/sound/soc/intel/avs/debugfs.c
+@@ -119,9 +119,9 @@ static ssize_t probe_points_read(struct file *file, char __user *to, size_t coun
+ 	}
+ 
+ 	for (i = 0; i < num_desc; i++) {
+-		ret = snprintf(buf + len, PAGE_SIZE - len,
+-			       "Id: %#010x  Purpose: %d  Node id: %#x\n",
+-			       desc[i].id.value, desc[i].purpose, desc[i].node_id.val);
++		ret = scnprintf(buf + len, PAGE_SIZE - len,
++					"Id: %#010x  Purpose: %d  Node id: %#x\n",
++					desc[i].id.value, desc[i].purpose, desc[i].node_id.val);
+ 		if (ret < 0)
+ 			goto free_desc;
+ 		len += ret;
 
-diff --git a/fs/xfs/xfs_log_recover.c b/fs/xfs/xfs_log_recover.c
-index e6ed9e09c027..99a903e01869 100644
---- a/fs/xfs/xfs_log_recover.c
-+++ b/fs/xfs/xfs_log_recover.c
-@@ -3064,8 +3064,12 @@ xlog_do_recovery_pass(
- 		 * still allocate the buffer based on the incorrect on-disk
- 		 * size.
- 		 */
--		if (h_size > XLOG_HEADER_CYCLE_SIZE &&
--		    (rhead->h_version & cpu_to_be32(XLOG_VERSION_2))) {
-+		if (h_size > XLOG_HEADER_CYCLE_SIZE) {
-+			if (!(rhead->h_version & cpu_to_be32(XLOG_VERSION_2))) {
-+				error = -EFSCORRUPTED;
-+				goto bread_err1;
-+			}
-+
- 			hblks = DIV_ROUND_UP(h_size, XLOG_HEADER_CYCLE_SIZE);
- 			if (hblks > 1) {
- 				kvfree(hbp);
+base-commit: 24172e0d79900908cf5ebf366600616d29c9b417
 -- 
 2.43.0
 
