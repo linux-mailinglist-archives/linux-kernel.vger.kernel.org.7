@@ -1,67 +1,57 @@
-Return-Path: <linux-kernel+bounces-896941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6C00C5196B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:13:22 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD086C519E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:21:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67D391881EBB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:12:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 372424F90F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:12:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 234D52FE579;
-	Wed, 12 Nov 2025 10:11:35 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 279D73002DE;
+	Wed, 12 Nov 2025 10:12:02 +0000 (UTC)
+Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3D8829A326
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 10:11:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89DB72E54CC;
+	Wed, 12 Nov 2025 10:11:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762942294; cv=none; b=modoVN20QuMXckanAhYyhGCa6SpemRFJJmre2bvVI39KQ1apQxRXLNjDe6kIvVxNTqO2AdkcNbQeJedKRa/ylXpk2oXHKYSqH6Yyw/I33ncUbEMAVVgL599k8Yl5VlTw/TjlcJp1cqfMw8qUrpdDM9qd/nNU5eCjI3nN8u4YEAI=
+	t=1762942321; cv=none; b=P64UbQ98qTVhnJNSY1Dgmruc0kRDqvRhqY6d34Gzy2w482gQVweZ9YZ/pAHfMdzxJQpwEKcpRTmqpkJdjkn1UgvnmURxN3tYlXRcq6QcPa9SMfVanIwZ1/MLtnzKZ7pUfcTzkpQjWY3+PkyGHVr32kwujwQvdNqa4Vc4kgjq+m4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762942294; c=relaxed/simple;
-	bh=NCNXZ7EMg7YV6XHRPLwpZKUABPyf2sZYb/CbdpQER1I=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Fsejo9+4RAmG/8BhCOc3Wk974mWWLvsJaN8exZdEUSAbGzSBaEmfeFR0A0km0p0ghez5qRNVJi8/0D/i6h7doU/3yKkxx4csWiYDN22cMH48bqJ2sQ2yteqzNrm6S+TzRDgv3zn/XTlb3dHdJMle/7uuK3atkzOH3WFJT/Ic/Ns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1vJ7ov-0007eK-6d; Wed, 12 Nov 2025 11:11:21 +0100
-Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1vJ7ou-0003ub-0c;
-	Wed, 12 Nov 2025 11:11:20 +0100
-Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.98.2)
-	(envelope-from <ore@pengutronix.de>)
-	id 1vJ7ou-0000000F580-0TN0;
-	Wed, 12 Nov 2025 11:11:20 +0100
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: "David S. Miller" <davem@davemloft.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Eric Dumazet <edumazet@google.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	Woojung Huh <woojung.huh@microchip.com>,
-	Arun Ramadoss <arun.ramadoss@microchip.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	UNGLinuxDriver@microchip.com,
-	stable@vger.kernel.org
-Subject: [PATCH net v1 1/1] net: dsa: microchip: lan937x: Fix RGMII delay tuning
-Date: Wed, 12 Nov 2025 11:11:19 +0100
-Message-ID: <20251112101119.3594611-1-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.47.3
+	s=arc-20240116; t=1762942321; c=relaxed/simple;
+	bh=zKIjlffmNPsp0FtH07se+tzuBVInathCYu6f8jnZvUY=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=P76FUwrQ/BbHtdgnDiteg6fUgeSOP6BaplshhU7qD6A/5gO3xwxkP4TuGJP+WR2flo+PLEWf74NT/Hbj3icBpvE2rO9vI/hLaki2It11Ny0zln6ls2aLwl9mPpUN7KJ5kNK138Cd2JbFY/pifBGUpZ0Xlfc07al8QY1JZIl1xW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
+Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Wed, 12 Nov
+ 2025 18:11:57 +0800
+Received: from twmbx02.aspeed.com (192.168.10.13) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
+ Transport; Wed, 12 Nov 2025 18:11:57 +0800
+From: Ryan Chen <ryan_chen@aspeedtech.com>
+To: ryan_chen <ryan_chen@aspeedtech.com>, <bmc-sw@aspeedtech.com>, Rob Herring
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, Andrew Jeffery
+	<andrew@codeconstruct.com.au>, <jk@codeconstruct.com.au>, Lee Jones
+	<lee@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon
+	<will@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Bjorn Andersson
+	<bjorn.andersson@oss.qualcomm.com>, Geert Uytterhoeven
+	<geert@linux-m68k.org>, Nishanth Menon <nm@ti.com>,
+	<nfraprado@collabora.com>, Taniya Das <quic_tdas@quicinc.com>, Lad Prabhakar
+	<prabhakar.mahadev-lad.rj@bp.renesas.com>, Kuninori Morimoto
+	<kuninori.morimoto.gx@renesas.com>, Eric Biggers <ebiggers@kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-aspeed@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v8 0/4] Introduce ASPEED AST27xx BMC SoC
+Date: Wed, 12 Nov 2025 18:11:53 +0800
+Message-ID: <20251112101157.2149169-1-ryan_chen@aspeedtech.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,49 +59,104 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain
 
-Correct RGMII delay application logic in lan937x_set_tune_adj().
+This introduces initial support for the Aspeed AST27xx SoC and the AST2700
+Evaluation Board (EVB) to the Linux kernel. The AST27xx is the 8th
+generation Baseboard Management Controller (BMC) SoC from Aspeed,
+featuring improved performance, enhanced security, and expanded I/O
+capabilities compared to previous generations.
 
-The function was missing `data16 &= ~PORT_TUNE_ADJ` before setting the
-new delay value. This caused the new value to be bitwise-OR'd with the
-existing PORT_TUNE_ADJ field instead of replacing it.
+AST27xx SOC Family
+ - https://www.aspeedtech.com/server_ast2700/
+ - https://www.aspeedtech.com/server_ast2720/
+ - https://www.aspeedtech.com/server_ast2750/
 
-For example, when setting the RGMII 2 TX delay on port 4, the
-intended TUNE_ADJUST value of 0 (RGMII_2_TX_DELAY_2NS) was
-incorrectly OR'd with the default 0x1B (from register value 0xDA3),
-leaving the delay at the wrong setting.
+Bindings Dependencies:
+ check with "make CHECK_DTBS=y W=1 arch/arm64/boot/dts/aspeed/ dtbs"
 
-This patch adds the missing mask to clear the field, ensuring the
-correct delay value is written. Physical measurements on the RGMII TX
-lines confirm the fix, showing the delay changing from ~1ns (before
-change) to ~2ns.
+- scu/silicon-id: Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml
+- gpio: Documentation/devicetree/bindings/gpio/aspeed,ast2400-gpio.yaml
+Binding dependency patch:
+- intc: Documentation/devicetree/bindings/interrupt-controller/aspeed,ast2700-intc.yaml 
+ - https://lore.kernel.org/all/20251030060155.2342604-2-ryan_chen@aspeedtech.com/
+   (merged into the irq/drivers)
 
-While testing on i.MX 8MP showed this was within the platform's timing
-tolerance, it did not match the intended hardware-characterized value.
+v8:
+- Kconfig.platforms
+ - update commit message and help description.
+- aspeed-g7-a35.dtsi,aspeed-g7-common.dtsi,ast2700-evb.dts
+ - change license using a dual license of MIT + GPL2.0+
+ - add company copyright.
+- merge original v7 patch(3/5) and (4/5) to 1 v8patch(3/4)
+ - that can do build test with make CHECK_DTBS=y W=1 arch/arm64/boot/dts/aspeed/ dtbs
 
-Fixes: b19ac41faa3f ("net: dsa: microchip: apply rgmii tx and rx delay in phylink mac config")
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
----
- drivers/net/dsa/microchip/lan937x_main.c | 1 +
- 1 file changed, 1 insertion(+)
+v7:
+- remove aspeed,ast2x00-scu.yaml modify
+- separate aspeed-g7.dtsi to aspeed-g7-a35.dtsi and aspeed-g7-common.dtsi
+- move aliases to ast2700-evb.dts file
 
-diff --git a/drivers/net/dsa/microchip/lan937x_main.c b/drivers/net/dsa/microchip/lan937x_main.c
-index b1ae3b9de3d1..5a1496fff445 100644
---- a/drivers/net/dsa/microchip/lan937x_main.c
-+++ b/drivers/net/dsa/microchip/lan937x_main.c
-@@ -540,6 +540,7 @@ static void lan937x_set_tune_adj(struct ksz_device *dev, int port,
- 	ksz_pread16(dev, port, reg, &data16);
- 
- 	/* Update tune Adjust */
-+	data16 &= ~PORT_TUNE_ADJ;
- 	data16 |= FIELD_PREP(PORT_TUNE_ADJ, val);
- 	ksz_pwrite16(dev, port, reg, data16);
- 
+v6:
+- rebased on v6.18-rc1
+- aspeed,ast2x00-scu.yaml
+ - fixed dt-binding yaml issuse report.
+
+v5:
+- modify ast27XX 7th generation description to 8th generation.
+- aspeed.yaml
+ - modify missing blank line.
+- Kconfig.platforms
+ - modify ast27XX 7th generation to 8th generation.
+
+v4:
+- make CHECK_DTBS=y arch/arm64/boot/dts/aspeed/ fix.
+- modify commit message remove itemlize.
+- remove modify aspeed,ast2700-intc.yaml patch.
+- aspeed.yaml
+ - Add AST2700 board compatible.
+- aspeed-g7.dtsi
+ - modify all size-cells from 1 to 2.
+ - add serial aliases, gpio, mdio, uart0 ~ 14.
+ - add firmware for optee, reserved memory for atf and optee.
+ - modify cpu@0 to cpu0: cpu@0.
+ - fix intc-ic for yaml dependency.
+- ast2700-evb.dts
+ - update stdout-path = "serial12:115200n8";
+
+v3:
+- https://lore.kernel.org/all/20241212155237.848336-1-kevin_chen@aspeedtech.com/
+- Split clk and reset driver to other commits, which are in series of
+  "Add support for AST2700 clk driver".
+- For BMC console by UART12, add uart12 using ASPEED INTC architecture.
+
+aspeed,ast2700-intc.yaml
+- Add minItems to 1 to fix the warning by "make dtbs_check W=1".
+- Add intc1 into example.
+
+Kconfig.platforms
+  - Remove MACH_ASPEED_G7.
+
+Ryan Chen (4):
+  dt-bindings: arm: aspeed: Add AST2700 board compatible
+  arm64: Kconfig: Add ASPEED SoC family Kconfig support
+  arm64: dts: aspeed: Add initial AST27xx SoC device tree
+  arm64: configs: Update defconfig for AST2700 platform support
+
+ .../bindings/arm/aspeed/aspeed.yaml           |   6 +
+ arch/arm64/Kconfig.platforms                  |   6 +
+ arch/arm64/boot/dts/Makefile                  |   1 +
+ arch/arm64/boot/dts/aspeed/Makefile           |   4 +
+ arch/arm64/boot/dts/aspeed/aspeed-g7-a35.dtsi | 154 ++++++++
+ .../boot/dts/aspeed/aspeed-g7-common.dtsi     | 351 ++++++++++++++++++
+ arch/arm64/boot/dts/aspeed/ast2700-evb.dts    |  31 ++
+ arch/arm64/configs/defconfig                  |   1 +
+ 8 files changed, 554 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/aspeed/Makefile
+ create mode 100644 arch/arm64/boot/dts/aspeed/aspeed-g7-a35.dtsi
+ create mode 100644 arch/arm64/boot/dts/aspeed/aspeed-g7-common.dtsi
+ create mode 100644 arch/arm64/boot/dts/aspeed/ast2700-evb.dts
+
 -- 
-2.47.3
+2.34.1
 
 
