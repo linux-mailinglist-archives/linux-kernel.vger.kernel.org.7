@@ -1,197 +1,180 @@
-Return-Path: <linux-kernel+bounces-896725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBB1FC510EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:10:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5E3BC510F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:10:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0A16434C377
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:10:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E59B83AFD3B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:10:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 069D12F3C09;
-	Wed, 12 Nov 2025 08:10:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56A742F3C25;
+	Wed, 12 Nov 2025 08:10:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t+16XDEn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="F54h5VVk"
+Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E2D12DEA77;
-	Wed, 12 Nov 2025 08:10:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABC612F1FCF
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 08:10:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762935014; cv=none; b=Sme0W18qcbKrjGQx3KAWKksXtTdkgWhwY2oL7cQ4oTPG+/wOF42N5Xat5tjrwefgAvo/qO9jvSrVnkpm45V2cYKFwaWBAOpxo9uG1EAnqQ5FKXVaT6ZpeWeUieXu+24nlj1qSLLUPOeJx8TvBSqQdh9hmOgT+b96J17bWvE8kss=
+	t=1762935039; cv=none; b=kC/Bx1DBfAC6hl0lOinXfWZGdAsdhD0YadvnlZPNnWOtQhUnJw0akPaZoUit8VCh4fnGD2Wg53bJ5XjtlHLaLi5iBOAUSrhjgmamaQ72CmV5LLxtQgZBh3O6oXOdjENHC/iMr396TmvoPsCt3oasDJy6uTmcMK02Eyzh+BjqVgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762935014; c=relaxed/simple;
-	bh=iv/OPEfQvs2X2gEq4hDNQaM+Mdv+7H4qcOkVCuUzYvc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WfuYODuv1eh+k3LLknG7HYQiYtTh4ZPNNwJlYQR80L4jeejtXokc54LKzSoKC3bi76IUjvkpCEvIXL/pPXK4A3d5hFDxbudQNd3tShEC5v7zlcOGGdKyn9h9i2hAgdCTy5k9joOerrzLuXQB+vu0WEPXExuatVUXEjjps0m9sFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t+16XDEn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A9FAC16AAE;
-	Wed, 12 Nov 2025 08:10:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762935013;
-	bh=iv/OPEfQvs2X2gEq4hDNQaM+Mdv+7H4qcOkVCuUzYvc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=t+16XDEn2tz88QHz1qof4GA7lGaNoQ8SBVlOT4YHqqiRtEU/n0xdDxY70KEIN1Wlq
-	 5yj91quFLQHofrnrYAoI4AB88x5AcfpbI1KTRthlrRcclbAJQ99ykS9p/sHTVlrJtb
-	 6BZZd9MFBCGPVX/PJYmQKKAmcueOQYjbJnf7ZEGlQ6056yRXBN7WJcqQdlbKtT0/vg
-	 adASYXnaVFyHVDYqsVK70Z0ZRoomJTkoYMaOckyP3P9hGmyV/41wbjyjRoyv5Btf5P
-	 fLVoU+X8FkLDZJHnmemrY7QhmJHtdjqHxzURQGY2dedz6DD6J6HrCY6Kp9PsRKCDCJ
-	 jUfZALiZyMLvg==
-Message-ID: <b55d94f2-6b79-407f-af58-b9847db3c9a2@kernel.org>
-Date: Wed, 12 Nov 2025 09:10:07 +0100
+	s=arc-20240116; t=1762935039; c=relaxed/simple;
+	bh=0x3hyexB8RN1aORyPKlDT00oHNFF/g8ktIl6ddCB0rI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=By/etcc6i4zFrUe+jd/J108qccMxdYSk96z2MRf8eqtdK15T9LWoonnpNLExv8S4+wdczJ1c0s2GoBSxm2psOE45a6hqwfM3kgfbM9GAvGMvdOzc+iScCUNphWQmXyfppVNap8jfKLJ+nzjolcmLvOIXj26wFnvghWcKRo0GNWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=F54h5VVk; arc=none smtp.client-ip=91.218.175.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 12 Nov 2025 09:10:19 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1762935022;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DjA5G/w0hn6tSkNzMJ7TQLqDnTKycMpelEMAQRKSY3U=;
+	b=F54h5VVkGptEPuFFm5q4LVc3c0MS/iaqVvcqKW9bWq2CrJBG0uhU6Chihdg6THP6lmrCvG
+	AYSszUDVaswGW8iwTuE01LDjjnGp551W325W/7fvCQODjyC3l1rsXYJ1MBGg1NTxcHyluk
+	xaaftVv8JOU86Yejq85mKNXiQyJLO6Y=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Richard Leitner <richard.leitner@linux.dev>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-leds@vger.kernel.org, Hans Verkuil <hverkuil@kernel.org>
+Subject: Re: [PATCH v8 8/8] media: i2c: ov9282: dynamic flash_duration maximum
+Message-ID: <4ypovtmginw3ptunolxylxh7xhgfqf2ubhqqrxmywbukwspomx@gw6rnprfq6vx>
+References: <20251104-ov9282-flash-strobe-v8-0-b91dfef1c65a@linux.dev>
+ <20251104-ov9282-flash-strobe-v8-8-b91dfef1c65a@linux.dev>
+ <aRGat_G74zT1zaS0@kekkonen.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] arm64: dts: google: Add dts directory for
- Google-designed silicon
-To: Douglas Anderson <dianders@chromium.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Peter Griffin <peter.griffin@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, Roy Luo <royluo@google.com>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Chen-Yu Tsai <wenst@chromium.org>, Julius Werner <jwerner@chromium.org>,
- William McVicker <willmcvicker@google.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Arnd Bergmann <arnd@arndb.de>, Catalin Marinas <catalin.marinas@arm.com>,
- Drew Fustini <fustini@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
- Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org,
- soc@lists.linux.dev
-References: <20251111192422.4180216-1-dianders@chromium.org>
- <20251111112158.3.I35b9e835ac49ab408e5ca3e0983930a1f1395814@changeid>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251111112158.3.I35b9e835ac49ab408e5ca3e0983930a1f1395814@changeid>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aRGat_G74zT1zaS0@kekkonen.localdomain>
+X-Migadu-Flow: FLOW_OUT
 
-On 11/11/2025 20:22, Douglas Anderson wrote:
-> The first four Google Tensor SoCs were offshoots of Samsung Exynos
-> SoCs and their device trees were organized under the "exynos/google"
-> directory. Starting with the Google Tensor G5 SoC in Pixel 10 phones,
-> Google Tensor SoCs are now of Google's own design. Add a location in
-> the tree to store these device tree files.
+Hi Sakari,
+
+On Mon, Nov 10, 2025 at 09:56:39AM +0200, Sakari Ailus wrote:
+> On Tue, Nov 04, 2025 at 03:30:59PM +0100, Richard Leitner wrote:
+> > This patch sets the current exposure time as maximum for the
+> > flash_duration control. As Flash/Strobes which are longer than the
+> > exposure time have no effect.
+> > 
+> > Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
+> > ---
+> >  drivers/media/i2c/ov9282.c | 30 ++++++++++++++++++++++++++----
+> >  1 file changed, 26 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/drivers/media/i2c/ov9282.c b/drivers/media/i2c/ov9282.c
+> > index 7aa74feb3ee44..df7beedba0b9e 100644
+> > --- a/drivers/media/i2c/ov9282.c
+> > +++ b/drivers/media/i2c/ov9282.c
+> > @@ -198,6 +198,7 @@ struct ov9282_mode {
+> >   * @exp_ctrl: Pointer to exposure control
+> >   * @again_ctrl: Pointer to analog gain control
+> >   * @pixel_rate: Pointer to pixel rate control
+> > + * @flash_duration: Pointer to flash duration control
+> >   * @vblank: Vertical blanking in lines
+> >   * @noncontinuous_clock: Selection of CSI2 noncontinuous clock mode
+> >   * @cur_mode: Pointer to current selected sensor mode
+> > @@ -220,6 +221,7 @@ struct ov9282 {
+> >  		struct v4l2_ctrl *again_ctrl;
+> >  	};
+> >  	struct v4l2_ctrl *pixel_rate;
+> > +	struct v4l2_ctrl *flash_duration;
+> >  	u32 vblank;
+> >  	bool noncontinuous_clock;
+> >  	const struct ov9282_mode *cur_mode;
+> > @@ -611,6 +613,15 @@ static int ov9282_update_controls(struct ov9282 *ov9282,
+> >  					mode->vblank_max, 1, mode->vblank);
+> >  }
+> >  
+> > +static u32 ov9282_exposure_to_us(struct ov9282 *ov9282, u32 exposure)
+> > +{
+> > +	/* calculate exposure time in µs */
+> > +	u32 frame_width = ov9282->cur_mode->width + ov9282->hblank_ctrl->val;
+> > +	u32 trow_us = frame_width * 1000000UL / ov9282->pixel_rate->val;
 > 
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> ---
+> This can overflow.
+
+Good catch. Thank you! I will fix this by dividing the pixel_rate->val
+by 1000000UL instead of multiplying frame_width.
+
 > 
->  MAINTAINERS                         | 1 +
->  arch/arm64/Kconfig.platforms        | 6 ++++++
->  arch/arm64/boot/dts/Makefile        | 1 +
->  arch/arm64/boot/dts/google/Makefile | 1 +
->  4 files changed, 9 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/google/Makefile
+> > +
+> > +	return exposure * trow_us;
+> > +}
+> > +
+> >  /**
+> >   * ov9282_update_exp_gain() - Set updated exposure and gain
+> >   * @ov9282: pointer to ov9282 device
+> > @@ -622,9 +633,10 @@ static int ov9282_update_controls(struct ov9282 *ov9282,
+> >  static int ov9282_update_exp_gain(struct ov9282 *ov9282, u32 exposure, u32 gain)
+> >  {
+> >  	int ret;
+> > +	u32 exposure_us = ov9282_exposure_to_us(ov9282, exposure);
+> >  
+> > -	dev_dbg(ov9282->dev, "Set exp %u, analog gain %u",
+> > -		exposure, gain);
+> > +	dev_dbg(ov9282->dev, "Set exp %u (~%u us), analog gain %u",
+> > +		exposure, exposure_us, gain);
+> >  
+> >  	ret = ov9282_write_reg(ov9282, OV9282_REG_HOLD, 1, 1);
+> >  	if (ret)
+> > @@ -635,6 +647,12 @@ static int ov9282_update_exp_gain(struct ov9282 *ov9282, u32 exposure, u32 gain)
+> >  		goto error_release_group_hold;
+> >  
+> >  	ret = ov9282_write_reg(ov9282, OV9282_REG_AGAIN, 1, gain);
+> > +	if (ret)
+> > +		goto error_release_group_hold;
+> > +
+> > +	ret = __v4l2_ctrl_modify_range(ov9282->flash_duration,
+> > +				       0, exposure_us, 1,
+> > +				       OV9282_STROBE_FRAME_SPAN_DEFAULT);
+> >  
+> >  error_release_group_hold:
+> >  	ov9282_write_reg(ov9282, OV9282_REG_HOLD, 1, 0);
+> > @@ -1423,6 +1441,7 @@ static int ov9282_init_controls(struct ov9282 *ov9282)
+> >  	const struct ov9282_mode *mode = ov9282->cur_mode;
+> >  	struct v4l2_fwnode_device_properties props;
+> >  	u32 hblank_min;
+> > +	u32 exposure_us;
+> >  	u32 lpfr;
+> >  	int ret;
+> >  
+> > @@ -1495,8 +1514,11 @@ static int ov9282_init_controls(struct ov9282 *ov9282)
+> >  	v4l2_ctrl_new_std(ctrl_hdlr, &ov9282_ctrl_ops,
+> >  			  V4L2_CID_FLASH_STROBE_OE, 0, 1, 1, 0);
+> >  
+> > -	v4l2_ctrl_new_std(ctrl_hdlr, &ov9282_ctrl_ops, V4L2_CID_FLASH_DURATION,
+> > -			  0, 13900, 1, 8);
+> > +	exposure_us = ov9282_exposure_to_us(ov9282, OV9282_EXPOSURE_DEFAULT);
+> > +	ov9282->flash_duration = v4l2_ctrl_new_std(ctrl_hdlr,
+> > +						   &ov9282_ctrl_ops, V4L2_CID_FLASH_DURATION,
+> > +						   0, exposure_us,
+> > +						   1, OV9282_STROBE_FRAME_SPAN_DEFAULT);
+> >  
+> >  	ret = v4l2_fwnode_device_parse(ov9282->dev, &props);
+> >  	if (!ret) {
+> > 
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index ddecf1ef3bed..f73a247ec61c 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -10606,6 +10606,7 @@ C:	irc://irc.oftc.net/pixel6-kernel-dev
->  F:	Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
->  F:	Documentation/devicetree/bindings/soc/google/google,gs101-pmu-intr-gen.yaml
->  F:	arch/arm64/boot/dts/exynos/google/
-> +F:	arch/arm64/boot/dts/google/
->  F:	drivers/clk/samsung/clk-gs101.c
->  F:	drivers/phy/samsung/phy-gs101-ufs.c
->  F:	include/dt-bindings/clock/google,gs101.h
+> -- 
+> Kind regards,
+> 
+> Sakari Ailus
 
-
-I am fine with this but also please consider having separate maintainers
-entry, because, as you said, this is a completely different SoC.
-
-In any case, up to you folks.
-
-
-> diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-> index 13173795c43d..044af9a3b45f 100644
-> --- a/arch/arm64/Kconfig.platforms
-> +++ b/arch/arm64/Kconfig.platforms
-> @@ -138,6 +138,12 @@ config ARCH_EXYNOS
->  	help
->  	  This enables support for ARMv8 based Samsung Exynos SoC family.
->  
-> +config ARCH_GOOGLE
-> +	bool "Google-Designed SoC family"
-> +	help
-> +	  This enables support for Google Tensor chips starting at the
-> +	  Google Tensor G5.
-> +
->  config ARCH_K3
->  	bool "Texas Instruments Inc. K3 multicore SoC architecture"
->  	select SOC_TI
-> diff --git a/arch/arm64/boot/dts/Makefile b/arch/arm64/boot/dts/Makefile
-> index b0844404eda1..b4b5023d61d2 100644
-> --- a/arch/arm64/boot/dts/Makefile
-> +++ b/arch/arm64/boot/dts/Makefile
-> @@ -17,6 +17,7 @@ subdir-y += cavium
->  subdir-y += cix
->  subdir-y += exynos
->  subdir-y += freescale
-> +subdir-y += google
->  subdir-y += hisilicon
->  subdir-y += intel
->  subdir-y += lg
-> diff --git a/arch/arm64/boot/dts/google/Makefile b/arch/arm64/boot/dts/google/Makefile
-> new file mode 100644
-> index 000000000000..a6b187e2d631
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/google/Makefile
-> @@ -0,0 +1 @@
-> +# SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
-Drop the '+' in GPL license.
-
-
-Best regards,
-Krzysztof
+regards;rl
 
