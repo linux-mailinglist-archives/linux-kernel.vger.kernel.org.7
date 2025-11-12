@@ -1,95 +1,98 @@
-Return-Path: <linux-kernel+bounces-897770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 750A6C53C7F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:49:05 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51AF4C53C4C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:46:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7DC29508C1E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:42:12 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CC3125085F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:37:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B483933F8A6;
-	Wed, 12 Nov 2025 16:42:09 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0013.hostedemail.com [216.40.44.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A0A933B6D8;
+	Wed, 12 Nov 2025 16:37:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Wh0PCCqE"
+Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 258E133B977;
-	Wed, 12 Nov 2025 16:42:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0F032BF00B
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 16:37:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762965729; cv=none; b=nOgBjqbZsp7vZvmBI6klgtwQIpmvHinJOzlThj6hvHenS0vAhNdgqGo4MVbWjeTLKWwO7isCkeRpQANXJ+RRg/sBi85IaNb30oSW8e1Ea3NZZjDj2bWlYAC/c9GmfxkYQdlt620fp/o7CUvcgvozoRs1+n83/W2OYmUAfaQUzlI=
+	t=1762965445; cv=none; b=XC6XyhMNkZH9+F9ITpx98zXiug/2HBxTyfJluQ6S8eVUqUhqaFbpX07jlSP43rxrL39o/epb6oRYu2RXD4ZuV3jVirSk80SBWijiszALuw4j/gG4dqmoBAoNUFjLTKkcUsbsZJaNRryz/1fBxX1FbZmLuR5ityBhlO+u3iZThe0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762965729; c=relaxed/simple;
-	bh=XUlHr1sLgvDjgEANSq6/hOxPbp08g+wmtFX8QH4AtNo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=cKUBsEaeVUes5CPxVRmr7zK7lEnC0ZKMt0KEsyPRVTXuaOxFcsBy9Hnmk7PvKmDeA/XtMx7shkOdSKhsCMkMc+Sv9Wah6fkjQCKdxdK+TJMv2ZmbOExip3WGDllNWCrQjSDzGsCBJFY+WcyZcB9YC+17v6JRt/vwGJIqMWXxk00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf01.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay05.hostedemail.com (Postfix) with ESMTP id EDED759B7D;
-	Wed, 12 Nov 2025 16:35:44 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf01.hostedemail.com (Postfix) with ESMTPA id 1045C60011;
-	Wed, 12 Nov 2025 16:35:42 +0000 (UTC)
-Date: Wed, 12 Nov 2025 11:35:56 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>
-Cc: Tomas Glozar <tglozar@redhat.com>, Gabriele Monaco <gmonaco@redhat.com>,
- John Kacur <jkacur@redhat.com>, Crystal Wood <crwood@redhat.com>, Linus
- Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH] MAINTAINERS: Add Tomas Glozar as a maintainer to RTLA tool
-Message-ID: <20251112113556.47ec9d12@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1762965445; c=relaxed/simple;
+	bh=1DWc0mFPWuYlwrmYN4N/2p58Cj8JujiPs8naD1Ong/M=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=GwRpLxwIdRadKr2ATuomEj94yQIiNg7lqc0sTkN3HwJSRr5Cw7y6ql//vYisOXmuwlHBof6hUjksU0QKl87iwKPZFdoeuuCwgZiEPowPnu2zDa/3Us6OFmv8nsXSPuQgXOXlvXLpA6Rvmk4k5hg6VirGYZh8n9qVAvQlfCavBCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Wh0PCCqE; arc=none smtp.client-ip=91.218.175.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1762965441;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IuZkk1ecQ1y2YiIg61ZBzcctWSlR8+0B252L7V3ihsM=;
+	b=Wh0PCCqE3a6g2qnRUMXZ1g3BIMxO6mZ6y7v4sB2g+UnJbZBfkGUQ7BmVF9gblYKJEFO0LK
+	dkimfm3eG5fmJkuCNVSDL6U/VcZGlbifE4w5cwBp7d9r1g3Oa8628++g3z/VT9AgZtP6Hv
+	ZuhetIod+UxQ7KziDDdDSBYYdCb7ncg=
+From: Tiwei Bie <tiwei.bie@linux.dev>
+To: thehajime@gmail.com
+Cc: Liam.Howlett@oracle.com,
+	hch@infradead.org,
+	johannes@sipsolutions.net,
+	linux-kernel@vger.kernel.org,
+	linux-um@lists.infradead.org,
+	ricarkol@google.com,
+	tiwei.bie@linux.dev
+Subject: Re: [PATCH v13 00/13] nommu UML
+Date: Thu, 13 Nov 2025 00:36:51 +0800
+Message-Id: <20251112163651.3689244-1-tiwei.bie@linux.dev>
+In-Reply-To: <m2bjl7y6mv.wl-thehajime@gmail.com>
+References: <m2bjl7y6mv.wl-thehajime@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 1045C60011
-X-Stat-Signature: anew8nbad8on4zwothct64ot1cfrj1uu
-X-Rspamd-Server: rspamout06
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX18A4iwpcN6iSwH2bgQfoHEGKmK1O7Hcx8g=
-X-HE-Tag: 1762965342-326454
-X-HE-Meta: U2FsdGVkX1/Y7LtZbwmULy6u8+N126Bse1RKFff+f+X2Lr5EL+/fNeoNFsjDskJsnxeuNhsoy2olHzZtqBd+07l2urvqgJTzUeZVLI/Cyeb1o4DYPVPbaNHSfJNfOHFo0KTq3zNIkCunt0ll+UDFTiSubp0Er4sxaE/BtIC4mgvipcC1AYslKH3xNmBR1QyWf0u1bOGFxe3/ncPLpflsecwBSTra9P77L4EmsS0dzaV0xBr0Q6F2XRZ1PJuUBDQ0hzefbAs+OkfUm+mjKA+MvFEEsrRXFDL4ajtmKhaes/DU4o4s9WkpH+3yCN9G6MURj+zfKAbeitQgh94kY9Cq4FY1/ZbW9pzgs3kUC+AKARKdMRi9v/QQoPDqkQGihKmDw+XKiaDlI5DL7sew3fWjK9q3moPP6nyOk7g3dFZBETQ=
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-From: Steven Rostedt <rostedt@goodmis.org>
+On Wed, 12 Nov 2025 17:52:56 +0900, Hajime Tazaki wrote:
+[...]
+> > However, I'm not yet convinced that all of the complexities presented in
+> > this patchset (such as completely separate seccomp implementation) are
+> > actually necessary in support of _just_ the second bullet. These seem to
+> > me like design choices necessary to support the _first_ bullet [1].
+> 
+> separate seccomp implementation is indeed needed due to the design
+> choice we made, to use a single process to host a (um) userspace.  I
+> think there is no reason to unify the seccomp part because the
+> signal handlers and filter installation do the different jobs.
+> 
+> I don't see why you see this as a _complexity_, as functionally both
+> seccomp handling don't interfere each other.  we have prepared
+> separate sub-directories for nommu to avoid unnecessary if/else
+> clauses in .c/.h files.
 
-Tomas will start taking over managing the changes to the Real-time Linux
-Analysis (RTLA) tool. Make him officially one of the maintainers.
+I have the same concern about the complexities introduced by this
+patch set. The new processing paths it introduces (such as the
+separate handling for FP/SSE/AVX, FS, signal, syscall, ...) add a
+lot of unnecessary complexities. I think Johannes's suggestion is
+a great idea.
 
-Also update the RTLA entry to include the linux-kernel mailing list as
-well as list the patchwork and git repository that the patches will go
-through.
+> we haven't seen any functional regressions
+> since this RFC version (which was 6.12 kernel).
 
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- MAINTAINERS | 4 ++++
- 1 file changed, 4 insertions(+)
+I took a quick look at the code. It appears that patch 02/13 will
+break the mmu build when UML_TIME_TRAVEL_SUPPORT is enabled.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 95c32cd3b524..238c3c368517 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -21634,8 +21634,12 @@ F:	tools/testing/selftests/rtc/
- 
- Real-time Linux Analysis (RTLA) tools
- M:	Steven Rostedt <rostedt@goodmis.org>
-+M:	Tomas Glozar <tglozar@redhat.com>
- L:	linux-trace-kernel@vger.kernel.org
-+L:	linux-kernel@vger.kernel.org
- S:	Maintained
-+Q:	https://patchwork.kernel.org/project/linux-trace-kernel/list/
-+T:	git git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
- F:	Documentation/tools/rtla/
- F:	tools/tracing/rtla/
- 
--- 
-2.51.0
-
+Regards,
+Tiwei
 
