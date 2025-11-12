@@ -1,86 +1,49 @@
-Return-Path: <linux-kernel+bounces-897814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A39F2C53CB2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:52:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 902BAC53C28
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:44:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 14B38506ED1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:20:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50059421F30
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:20:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 354C93451D5;
-	Wed, 12 Nov 2025 17:20:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA07F341661;
+	Wed, 12 Nov 2025 17:20:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="TwU8osXX"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WNl4CBpu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6700E2C0291
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 17:19:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BA782BE650;
+	Wed, 12 Nov 2025 17:20:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762968001; cv=none; b=btpeC6wlBt6GbH7SEr4qpBVfmOqd/9NveSDj4MG0S8utAo/cmX5DOswwkH8sSq72pLSwGtm2LK0Yq0Xsk76IYtHBbX54K9jdU4fON+FZf5hoAE193qG5gbw+jejv2+tgMf4r+nXurOPwN7Tzn0vi26oLKMOtnrfjKKUvzLwFp38=
+	t=1762968038; cv=none; b=uilYzTHvIjv70NU3G/wxsv0x7J1gB+s496QlvG76/XBby5RcA/xZhjNR6oxpEpbGnNZS0XxomoaftSZyVdY8/kzaW01JFhbTwCWR8j0gU97GTMTTE2rzqB+mUKLekJEEz1m/5SnmAjTS0+3XQweX2u3MLNv37imBXaJmwbFjHB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762968001; c=relaxed/simple;
-	bh=cIX1HljknQMLtdyrw/7vo4f6+C4rysEqzacl9pFRVCs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YhWdi66oI21aGUgZbqycpFXQpJvCcThUbsfR3sGyi9IAqfb5LoYu9fWgWeawRPqRUgwBWYy7kSJP8/aErvSakiyrLI2OC/+Kj0N8AR5XVXG1WOz/yMZeJcMtfteG6ILG9ZKAVAgL/++bdj2C/fyQJENf/1O8rU32k3WmWxnppn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=TwU8osXX; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-640bd9039fbso2027453a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:19:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1762967997; x=1763572797; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=htWCmp/HqOC3LZuhkUtvSCsNEkCvDxqHS6yOGkHh6Qw=;
-        b=TwU8osXXi1u3ZLeck+T/GmHnNqUHvsHvWCBdscw5uGz+cKdeBfybv+aJ0t9PzuN2Xk
-         0QHAQ03P68tnUfpCYgqz2i2FydWWGInD2rjIN4jBFiYZb6dEW7RzVOx2n3M2B2WPi0bj
-         BKinXKQMQA40gWPzGKhfVD4doT6frwlCWL5w4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762967997; x=1763572797;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=htWCmp/HqOC3LZuhkUtvSCsNEkCvDxqHS6yOGkHh6Qw=;
-        b=fC6mkg89H4YGr7jtWCI9IG+QqvzPJ9DYxX4bn3aY5I9p1RpGt+SJ1U0ZdwnMUed757
-         GNNP/3ErWxIn2t5iquyBMEc9P6eOkrhv+xGTr/Dxced/g5Cpbj4ZluG6gBSWAezpeKel
-         sA8suITKIUJYnJkGbTlOYaxp8l3izpkNMnosr7AMQfaVwpyACJr171NqIfQlTSxf/JQp
-         4nwG5d6wi1sAeH27jh6YvyFFQd6OMRtRzbzaSs7CAVB+GasmxcUgGinYYDBqejXcB946
-         ZQqpatx7NgmEsA4JHT8GzDzJB2tEvc2ICbeCnVocCsh2lWHpNnPMN4Ns83U+mejJl0Zm
-         +F2w==
-X-Gm-Message-State: AOJu0YyfsoKSJjxuKdjw7lXZsPla1k8V3Z79qTOZOAQ5p5J0NVLyBJxP
-	sB3FrpTTSQQ7u1a9DzTp5rC3g+YEVYY58uwQdQr9rCvkm+9LI3cLe+WoTOsY6Uu+4RZVL1w/hMH
-	/kqT5
-X-Gm-Gg: ASbGncvoif8OujZMU/YxkA60180QtBcZ5pKF2XjUQPxX7REJmX81MAQ6biO3Pf5LaFl
-	H9XF4i3Vkr20IbpHcvLR8MAhXCVukAlHHPjlxYRLjYXlxGoS999vut8sT+lajQsO9Vv/7t9lDNS
-	EucaXZMgG0lCV/w61jC5Un6T0kDN0miH/e2+DOsEgI/oKgRzzHmEKy5ut9RiTH6nJc5ryo6MQKR
-	KVzlukTSkhPcHKcpyKaELKsU1oPssYjjW+xfVTcB2b+KFEas62I6SoaGm9whAZHMUAdd4U909Yy
-	RHAoRWQHIXO5mqFWUeIRZ75tp7XN1xhKrjXveer/0KBUu7yVWhQyh4zpVxwa7gYDwNjKP0RFAtC
-	sy96mYeP3MG3VnaWSASsFYs38e9r0s3tRCo9UyJJkbuvHXWHd+JcXJ25mZuJuU4cjs1JCwM6ZPX
-	Yj9Me3gCao6I+5N8Sr85ouo3chU87bPD/+tsjsqqscfaWw2Qp/dv9XS9TGg8D3nlT9UvxYWLhT0
-	ej98sBX1Y3aRNO0VCkY+/NwoT6korh+ks5FLLIJQBqj
-X-Google-Smtp-Source: AGHT+IE7bK17fVUuGArh3EaIbNW9IKT2ffAI/pqUeoGXFPfQcnyo5QVy2bNe9piLDFmFF8y6mQJDQw==
-X-Received: by 2002:a17:906:c78b:b0:b72:b97b:b6fc with SMTP id a640c23a62f3a-b7331a5ac30mr292584666b.30.1762967997438;
-        Wed, 12 Nov 2025 09:19:57 -0800 (PST)
-Received: from dario-ThinkPad-P14s-Gen-5.homenet.telecomitalia.it (host-79-54-71-163.retail.telecomitalia.it. [79.54.71.163])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bfa11367sm1619860266b.68.2025.11.12.09.19.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Nov 2025 09:19:57 -0800 (PST)
-From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-amarula@amarulasolutions.com,
-	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Jens Reidel <adrian@mainlining.org>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	linux-input@vger.kernel.org
-Subject: [RESEND PATCH v2] Input: edt-ft5x06 - fix report rate handling by sysfs
-Date: Wed, 12 Nov 2025 18:19:50 +0100
-Message-ID: <20251112171953.4046990-1-dario.binacchi@amarulasolutions.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1762968038; c=relaxed/simple;
+	bh=nW3H/DwEWgKnHgIH5rXpU/yUG/VcFQxcP/8RtuTjMsk=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=VEv9RFxXlUX0WM1utGOEI7rr6roE+TKftTwJtlAI6np2DOss/KRW+fhc0YS15wonZSkjXrdSFVGKtAqv9ySLDYlP37z4pP+rXrWZaocpgPcEKmpobqoOClU3K1BiJgEJS6pj51gaYzAwNvaXmuul0+cICv+tzUtDR96PIfZqjI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WNl4CBpu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11F68C4CEF7;
+	Wed, 12 Nov 2025 17:20:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762968038;
+	bh=nW3H/DwEWgKnHgIH5rXpU/yUG/VcFQxcP/8RtuTjMsk=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=WNl4CBpuS20B7vVmRJQ0e6wJfRyRb+9V7SJZ9jvkr/qIFrXGSFDenHOLV+dpSIGEp
+	 z+aQAuS0eM82PXUu6VkfElNNEi5TZn7/m2voNWUPolS4256YRyhyD88DMeqgtbw2U9
+	 cPxJRrHgOfC+g0UjDf9BMmH2Z11b7aI9FhyIyBt5Dc1V9iDSlt3IDujWoGokXg/EhE
+	 8qOGpsdYDGm2N4jsxA1OW+j/7Jo6gT6yhazq7Ff/2ZjDX/cUFiyDpZmXw75u8JIn1N
+	 2PU+nRAaVllbKRXzoRF+Hr79knF4eXtiLYOX7+GlDpJcEWZweE00yShebV+EZwaxnP
+	 r2qBJMwrr1/ew==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB13639EFA62;
+	Wed, 12 Nov 2025 17:20:08 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,238 +51,42 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v2] r8169: add support for RTL8125K
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <176296800777.91007.9216007329700190108.git-patchwork-notify@kernel.org>
+Date: Wed, 12 Nov 2025 17:20:07 +0000
+References: <20251111092851.3371-1-javen_xu@realsil.com.cn>
+In-Reply-To: <20251111092851.3371-1-javen_xu@realsil.com.cn>
+To: javen <javen_xu@realsil.com.cn>
+Cc: hkallweit1@gmail.com, nic_swsd@realtek.com, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ horms@kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-In the driver probe, the report-rate-hz value from device tree is written
-directly to the M12 controller register, while for the M06 it is divided
-by 10 since the controller expects the value in units of 10 Hz. That logic
-was missing in the sysfs handling, leading to inconsistent behavior
-depending on whether the value came from device tree or sysfs.
+Hello:
 
-This patch makes the report-rate handling consistent by applying the same
-logic in both cases. Two dedicated functions, report_rate_hz_{show,store},
-were added for the following reasons:
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-- Avoid modifying the more generic edt_ft5x06_setting_{show,store} and
-  thus prevent regressions.
-- Properly enforce lower and upper limits for the M06 case. The previous
-  version accepted invalid values for M06, since it relied on the M12
-  limits.
-- Return an error when the property is not supported (e.g. M09), to avoid
-  misleading users into thinking the property is handled by the
-  controller.
+On Tue, 11 Nov 2025 17:28:51 +0800 you wrote:
+> This adds support for chip RTL8125K. Its XID is 0x68a. It is basically
+> based on the one with XID 0x688, but with different firmware file.
+> 
+> Signed-off-by: javen <javen_xu@realsil.com.cn>
+> ---
+> v2: This adds support for chip RTL8125K. Reuse RTL_GIGA_MAC_VER_64 as its
+> chip version number.
+> 
+> [...]
 
-Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Here is the summary with links:
+  - [net-next,v2] r8169: add support for RTL8125K
+    https://git.kernel.org/netdev/net-next/c/1479493c91fc
 
----
-
-Changes in v2:
-- Drop the patch:
-  1/2 Input: edt-ft5x06 - rename sysfs attribute report_rate to report_rate_hz
-  because not accepted.
-
- drivers/input/touchscreen/edt-ft5x06.c | 158 +++++++++++++++++++++----
- 1 file changed, 135 insertions(+), 23 deletions(-)
-
-diff --git a/drivers/input/touchscreen/edt-ft5x06.c b/drivers/input/touchscreen/edt-ft5x06.c
-index bf498bd4dea9..d7a269a0528f 100644
---- a/drivers/input/touchscreen/edt-ft5x06.c
-+++ b/drivers/input/touchscreen/edt-ft5x06.c
-@@ -516,9 +516,136 @@ static EDT_ATTR(offset_y, S_IWUSR | S_IRUGO, NO_REGISTER, NO_REGISTER,
- /* m06: range 20 to 80, m09: range 0 to 30, m12: range 1 to 255... */
- static EDT_ATTR(threshold, S_IWUSR | S_IRUGO, WORK_REGISTER_THRESHOLD,
- 		M09_REGISTER_THRESHOLD, EV_REGISTER_THRESHOLD, 0, 255);
--/* m06: range 3 to 14, m12: range 1 to 255 */
--static EDT_ATTR(report_rate, S_IWUSR | S_IRUGO, WORK_REGISTER_REPORT_RATE,
--		M12_REGISTER_REPORT_RATE, NO_REGISTER, 0, 255);
-+
-+static int edt_ft5x06_report_rate_get(struct edt_ft5x06_ts_data *tsdata)
-+{
-+	unsigned int val;
-+	int error;
-+
-+	if (tsdata->reg_addr.reg_report_rate == NO_REGISTER)
-+		return -EOPNOTSUPP;
-+
-+	error = regmap_read(tsdata->regmap, tsdata->reg_addr.reg_report_rate,
-+			    &val);
-+	if (error)
-+		return error;
-+
-+	if (tsdata->version == EDT_M06)
-+		val *= 10;
-+
-+	if (val != tsdata->report_rate) {
-+		dev_warn(&tsdata->client->dev,
-+			 "report-rate: read (%d) and stored value (%d) differ\n",
-+			 val, tsdata->report_rate);
-+		tsdata->report_rate = val;
-+	}
-+
-+	return 0;
-+}
-+
-+static ssize_t report_rate_show(struct device *dev,
-+				struct device_attribute *dattr, char *buf)
-+{
-+	struct i2c_client *client = to_i2c_client(dev);
-+	struct edt_ft5x06_ts_data *tsdata = i2c_get_clientdata(client);
-+	size_t count;
-+	int error;
-+
-+	mutex_lock(&tsdata->mutex);
-+
-+	if (tsdata->factory_mode) {
-+		error = -EIO;
-+		goto out;
-+	}
-+
-+	error = edt_ft5x06_report_rate_get(tsdata);
-+	if (error) {
-+		dev_err(&tsdata->client->dev,
-+			"Failed to fetch attribute %s, error %d\n",
-+			dattr->attr.name, error);
-+		goto out;
-+	}
-+
-+	count = sysfs_emit(buf, "%d\n", tsdata->report_rate);
-+out:
-+	mutex_unlock(&tsdata->mutex);
-+	return error ?: count;
-+}
-+
-+static int edt_ft5x06_report_rate_set(struct edt_ft5x06_ts_data *tsdata,
-+				      unsigned int val)
-+{
-+	if (tsdata->reg_addr.reg_report_rate == NO_REGISTER)
-+		return -EOPNOTSUPP;
-+
-+	if (tsdata->version == EDT_M06)
-+		tsdata->report_rate = clamp_val(val, 30, 140);
-+	else
-+		tsdata->report_rate = clamp_val(val, 1, 255);
-+
-+	if (val != tsdata->report_rate) {
-+		dev_warn(&tsdata->client->dev,
-+			 "report-rate %dHz is unsupported, use %dHz\n",
-+			 val, tsdata->report_rate);
-+		val = tsdata->report_rate;
-+	}
-+
-+	if (tsdata->version == EDT_M06)
-+		val /= 10;
-+
-+	return regmap_write(tsdata->regmap, tsdata->reg_addr.reg_report_rate,
-+			    val);
-+}
-+
-+static ssize_t report_rate_store(struct device *dev,
-+				 struct device_attribute *dattr,
-+				 const char *buf, size_t count)
-+{
-+	struct i2c_client *client = to_i2c_client(dev);
-+	struct edt_ft5x06_ts_data *tsdata = i2c_get_clientdata(client);
-+	unsigned int val;
-+	u8 limit_low;
-+	u8 limit_high;
-+	int error;
-+
-+	mutex_lock(&tsdata->mutex);
-+
-+	if (tsdata->factory_mode) {
-+		error = -EIO;
-+		goto out;
-+	}
-+
-+	error = kstrtouint(buf, 0, &val);
-+	if (error)
-+		goto out;
-+
-+	if (tsdata->version == EDT_M06) {
-+		limit_low = 30;
-+		limit_high = 140;
-+	} else {
-+		limit_low = 1;
-+		limit_high = 255;
-+	}
-+
-+	if (val < limit_low || val > limit_high) {
-+		error = -ERANGE;
-+		goto out;
-+	}
-+
-+	error = edt_ft5x06_report_rate_set(tsdata, val);
-+	if (error) {
-+		dev_err(&tsdata->client->dev,
-+			"Failed to update attribute %s, error: %d\n",
-+			dattr->attr.name, error);
-+		goto out;
-+	}
-+
-+out:
-+	mutex_unlock(&tsdata->mutex);
-+	return error ?: count;
-+}
-+
-+static DEVICE_ATTR_RW(report_rate);
- 
- static ssize_t model_show(struct device *dev, struct device_attribute *attr,
- 			  char *buf)
-@@ -572,7 +699,7 @@ static struct attribute *edt_ft5x06_attrs[] = {
- 	&edt_ft5x06_attr_offset_x.dattr.attr,
- 	&edt_ft5x06_attr_offset_y.dattr.attr,
- 	&edt_ft5x06_attr_threshold.dattr.attr,
--	&edt_ft5x06_attr_report_rate.dattr.attr,
-+	&dev_attr_report_rate.attr,
- 	&dev_attr_model.attr,
- 	&dev_attr_fw_version.attr,
- 	&dev_attr_header_errors.attr,
-@@ -595,8 +722,7 @@ static void edt_ft5x06_restore_reg_parameters(struct edt_ft5x06_ts_data *tsdata)
- 	if (reg_addr->reg_offset_y != NO_REGISTER)
- 		regmap_write(regmap, reg_addr->reg_offset_y, tsdata->offset_y);
- 	if (reg_addr->reg_report_rate != NO_REGISTER)
--		regmap_write(regmap, reg_addr->reg_report_rate,
--			     tsdata->report_rate);
-+		edt_ft5x06_report_rate_set(tsdata, tsdata->report_rate);
- }
- 
- #ifdef CONFIG_DEBUG_FS
-@@ -1029,8 +1155,8 @@ static void edt_ft5x06_ts_get_parameters(struct edt_ft5x06_ts_data *tsdata)
- 	if (reg_addr->reg_offset_y != NO_REGISTER)
- 		regmap_read(regmap, reg_addr->reg_offset_y, &tsdata->offset_y);
- 	if (reg_addr->reg_report_rate != NO_REGISTER)
--		regmap_read(regmap, reg_addr->reg_report_rate,
--			    &tsdata->report_rate);
-+		edt_ft5x06_report_rate_get(tsdata);
-+
- 	tsdata->num_x = EDT_DEFAULT_NUM_X;
- 	if (reg_addr->reg_num_x != NO_REGISTER) {
- 		if (!regmap_read(regmap, reg_addr->reg_num_x, &val))
-@@ -1289,21 +1415,7 @@ static int edt_ft5x06_ts_probe(struct i2c_client *client)
- 	if (tsdata->reg_addr.reg_report_rate != NO_REGISTER &&
- 	    !device_property_read_u32(&client->dev,
- 				      "report-rate-hz", &report_rate)) {
--		if (tsdata->version == EDT_M06)
--			tsdata->report_rate = clamp_val(report_rate, 30, 140);
--		else
--			tsdata->report_rate = clamp_val(report_rate, 1, 255);
--
--		if (report_rate != tsdata->report_rate)
--			dev_warn(&client->dev,
--				 "report-rate %dHz is unsupported, use %dHz\n",
--				 report_rate, tsdata->report_rate);
--
--		if (tsdata->version == EDT_M06)
--			tsdata->report_rate /= 10;
--
--		regmap_write(tsdata->regmap, tsdata->reg_addr.reg_report_rate,
--			     tsdata->report_rate);
-+		edt_ft5x06_report_rate_set(tsdata, report_rate);
- 	}
- 
- 	dev_dbg(&client->dev,
+You are awesome, thank you!
 -- 
-2.43.0
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-base-commit: 24172e0d79900908cf5ebf366600616d29c9b417
-branch: edt-ft5x06-fix-report-rate
+
 
