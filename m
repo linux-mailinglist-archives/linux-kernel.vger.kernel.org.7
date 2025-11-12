@@ -1,83 +1,83 @@
-Return-Path: <linux-kernel+bounces-897948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 352E5C53F89
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:46:28 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1056BC53F98
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:47:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 01E1534D525
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:40:12 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BB6CB4E3AA4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:40:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C2C3352F82;
-	Wed, 12 Nov 2025 18:32:24 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 663BE352FAC;
+	Wed, 12 Nov 2025 18:33:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hoXrSCZS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3488E352923;
-	Wed, 12 Nov 2025 18:32:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B42E7343D6A;
+	Wed, 12 Nov 2025 18:33:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762972343; cv=none; b=WEheCfuqQ4TKK7uzMKWmqpcDgYzsDzCE7vwFEoDd71XHl3cjzRXCAHb/hvC0I9RuCbZoekEgFbR8+jqd/G0v+Z8pDzsST9HhF1WF8CHAJ+INyH67rGrX+IF6WrUrMzhU5l0/aoEgmyeMFcgBfjXyJyfNiq9qlqpSf0M3ZQLSjZo=
+	t=1762972396; cv=none; b=QcefIoM5Ov+rDPTethK/u5Rg8hccmiiBKMAzXoJfwOg55PW+e47X/+MJBpuMQe1UWpxxIYZvszdue718Gla2Xt3LJ+j8Bxe4OCsO9QD5aNjYt1W+KDM04gtelRaZMXYnfqMuJB5Pmz62ChdY2qUrd7OpiA+Zul1xrx1VjsGvEJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762972343; c=relaxed/simple;
-	bh=UtHNm1usebGCZn0rGgMyVlO5b0ua9KOlItKaddz0wXk=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ThLnwLcXl3ISjKwjZIZ9AoepvMaYWiwM5AGvbVlJgjLuM0IVj3s5n+k5cKkGpZWbrQ4jWkiOEByBNRiLeYQSPzw0/XUgZRn6Wbz4e0vjHxYgYh4eviw2uOYYwJTCDpDXot5Gqwc2w54Ucni+8IjKGUekrPSkFD8IG3W5auEqVPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4d6Bnb2YpmzJ46B9;
-	Thu, 13 Nov 2025 02:31:47 +0800 (CST)
-Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
-	by mail.maildlp.com (Postfix) with ESMTPS id 3EA731402FB;
-	Thu, 13 Nov 2025 02:32:20 +0800 (CST)
-Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
- (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.36; Wed, 12 Nov
- 2025 18:32:19 +0000
-Date: Wed, 12 Nov 2025 18:32:18 +0000
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Marc Zyngier <maz@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-acpi@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, "Mark
- Rutland" <mark.rutland@arm.com>, Will Deacon <will@kernel.org>, "Rafael J.
- Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, "Saravana
- Kannan" <saravanak@google.com>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, Sven Peter <sven@kernel.org>, Janne Grunau
-	<j@jannau.net>, Suzuki K Poulose <suzuki.poulose@arm.com>, James Clark
-	<james.clark@linaro.org>, Jinjie Ruan <ruanjinjie@huawei.com>, "Alexandru
- Elisei" <alexandru.elisei@arm.com>
-Subject: Re: [PATCH v4 20/26] coresight: trbe: Request specific affinities
- for percpu IRQ
-Message-ID: <20251112183218.000009a5@huawei.com>
-In-Reply-To: <20251020122944.3074811-21-maz@kernel.org>
-References: <20251020122944.3074811-1-maz@kernel.org>
-	<20251020122944.3074811-21-maz@kernel.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1762972396; c=relaxed/simple;
+	bh=YaM4MitBaEoWYE2OAO4lEQ4UZhqNzLI+jlRBaovkzmg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qdmQJKfLn6ywYxsVzJF6no6t037ZaJXki4pMdKrMFmEwXx+9pKAN2Nc/TgfKwM5SkW5GiYsoTVH50R83R3ZbRbwrItZ9AA67pdjII562qf26Rr3fwqgq1/vmKWl3QV6rxHlDGfWLC8792G40i09UOfM4yhLIkilns4jb7skIJiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hoXrSCZS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05000C4AF09;
+	Wed, 12 Nov 2025 18:33:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762972396;
+	bh=YaM4MitBaEoWYE2OAO4lEQ4UZhqNzLI+jlRBaovkzmg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=hoXrSCZS9Xf3fBk2X+DXNK8EP3lPIENztViVu3zCYEb/92xGlmw1je8RnrgQHKPut
+	 f2/vW474pdSQZbkzFol/e0IrvRm2QZOlbxlQ72NQZyOJCrHwErPjOb1y6ARFmgdBM9
+	 HVRo5UDuOEZT2Mju3v+TcGJqHJEx/j2zTu7Ad14+wormbA5LhfTG5jRka7PO2Wg9OA
+	 o6L3Vy4ZPldDQldQXxcj1D4dX0EP1hP8tUHh/D5g3IJsJkzwTIXxlo87rqBBbkHcRC
+	 b/aNs2Ha02pL14WnO8vO92lPNgR5pAkwrpDcF8E1E94ZqGoyKF/jHgybtZCS7bV0ea
+	 /evGeUraqX40g==
+From: Catalin Marinas <cmarinas@kernel.org>
+To: rostedt@goodmis.org,
+	mhiramat@kernel.org,
+	will@kernel.org,
+	maz@kernel.org,
+	oliver.upton@linux.dev,
+	Bo Liu <liubo03@inspur.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev
+Subject: Re: [PATCH] arm64: Fix double word in comments
+Date: Wed, 12 Nov 2025 18:33:00 +0000
+Message-ID: <176297238094.2053466.1065029098279843692.b4-ty@arm.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20251029071742.17732-1-liubo03@inspur.com>
+References: <20251029071742.17732-1-liubo03@inspur.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500009.china.huawei.com (7.191.174.84) To
- dubpeml100005.china.huawei.com (7.214.146.113)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Mon, 20 Oct 2025 13:29:37 +0100
-Marc Zyngier <maz@kernel.org> wrote:
+From: Catalin Marinas <catalin.marinas@arm.com>
 
-> Let the TRBE driver request IRQs with an affinity mask matching
-> the TRBE implementation affinity.
-> 
-> Acked-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> Tested-by: Will Deacon <will@kernel.org>
-> Signed-off-by: Marc Zyngier <maz@kernel.org>
-FWIW given how simple this is.
-Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+On Wed, 29 Oct 2025 15:17:42 +0800, Bo Liu wrote:
+> Remove the repeated word "the" in comments.
+
+Applied to arm64 (for-next/typos), thanks!
+
+[1/1] arm64: Fix double word in comments
+      https://git.kernel.org/arm64/c/337f7e3a4b4d
+
+-- 
+Catalin
 
 
