@@ -1,148 +1,201 @@
-Return-Path: <linux-kernel+bounces-898220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75984C549F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 22:34:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 66B32C54A0E
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 22:35:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 43C304E2AC9
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 21:32:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EEBA24E61BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 21:33:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4099B2DE711;
-	Wed, 12 Nov 2025 21:31:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAE9B2E041D;
+	Wed, 12 Nov 2025 21:33:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b="ks5XHpSB"
-Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mIANc/2+"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E421935CBD6;
-	Wed, 12 Nov 2025 21:31:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.145.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01D852D73A8
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 21:33:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762983117; cv=none; b=l3pAFtvbzClNL/OL8Omql1oXNiKQwdzrIVt/1MO6LHEuwOD/9aVlTZY3D5gyzdjRYSmHn8bmk7QoG1vwndsictMiclmPICfX84AigqHR8u1aiL2EaqHWLY4VphicPaOO3EagfZQlvzmRqvi4ulup4uYsdeQt3ZgTtzixvfhMB0g=
+	t=1762983229; cv=none; b=WWqvLXNaac8zeLO9zR/1AX4acaeTqVaRKHnFuWaho4tX+eNGZK9aIoQU889M1cnfKgmSCTaN3vCoaruO+au6RbhR0XRYma7hobqXPEWYjfmvyTNZEvNBBYLqUV1qz3pnrQarX8RUQ5lHKltUaWQqLa3vwVcuk/SI0y0fOafgTtg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762983117; c=relaxed/simple;
-	bh=NXavT7ThkFAlGBuDxqi1Rnvl5BvGu9ni8f7YELCEI0M=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NWo89OpfVxDQb4HiJ9AA56iuv8swAmfUpLxe34qlpoQcPVqDi7a4Y5Tcb6sTi1UiQk15hd/FOWmeAeNSn8tFsyR7GK2AhDevhl3zccNiNquxS3P1MvFUofK4xxlVlbKC8wxmvq4ADuHCjFoxBIkzI6RQgK60BN4r1KC2nMTlzxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b=ks5XHpSB; arc=none smtp.client-ip=67.231.145.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
-Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
-	by mx0a-00082601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5ACGQPZK1245993;
-	Wed, 12 Nov 2025 13:31:50 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=s2048-2025-q2; bh=Lvvg/PHh6A0GH1jtv9xb
-	Q6bl1Ps8OM5ohm1Q3wH5ZXE=; b=ks5XHpSBFg3BBbSy37/e49F3ZP4IvFsHtKJt
-	8AtxHDTRkiGdGhRoiTaUMOLXX4I6If1QUWL9h9FwK7HRI+IMPIoMvZbTRlznQFCi
-	3yGVX3+bvO5f1PkJad9lAYbTGiMByl8K8Dk3NJP/Qta+FOXU0TuoduzrQA65CeIl
-	TbnV58T+ZtEctHkhhq65B6l8pCjxU2cwCMN3kQSp60J3ar68D22VmBD8kv1HWOQq
-	Llm+os5AowgAAraB9w92pxKOMsICHQw3RT2yCVi9c2NolIpnHn+bFYr/LmcQiOuG
-	1k/pf/z+Gch0FOZ+FG+yxDuUopKztOBNKbIpv0YddzfUV/ptKw==
-Received: from maileast.thefacebook.com ([163.114.135.16])
-	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 4acwrv2t9h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Wed, 12 Nov 2025 13:31:50 -0800 (PST)
-Received: from devgpu015.cco6.facebook.com (2620:10d:c0a8:1b::2d) by
- mail.thefacebook.com (2620:10d:c0a9:6f::237c) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.2562.20; Wed, 12 Nov 2025 21:31:48 +0000
-Date: Wed, 12 Nov 2025 13:31:43 -0800
-From: Alex Mastro <amastro@fb.com>
-To: Alex Williamson <alex@shazbot.org>
-CC: David Matlack <dmatlack@google.com>, Shuah Khan <shuah@kernel.org>,
-        Jason
- Gunthorpe <jgg@ziepe.ca>, <kvm@vger.kernel.org>,
-        <linux-kselftest@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 0/4] vfio: selftests: update DMA mapping tests to use
- queried IOVA ranges
-Message-ID: <aRT8v4Yj8Lm5KlUk@devgpu015.cco6.facebook.com>
-References: <20251111-iova-ranges-v3-0-7960244642c5@fb.com>
- <20251112083005.542e0b7f.alex@shazbot.org>
+	s=arc-20240116; t=1762983229; c=relaxed/simple;
+	bh=RUni6X+A6uSvIucase6v27wSyZurYIsLZgd0uLbzINw=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=iHUU9bqlac8GVzLGC2RxSUVkgsJzkHYQtBesNxXibUfCq/rOFBgb+PbHt3h1Gt7DoqXth7nSV4CeIhvBIzbb6hwOEh/Qv5HPegXriWK3kCS4zRWtRnKMxH91f2I1co1GHRRkCH+/LyvxAoXleBNrcWuYc45P5m/6puRWDNsv7Gg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mIANc/2+; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762983227; x=1794519227;
+  h=date:from:to:cc:subject:message-id;
+  bh=RUni6X+A6uSvIucase6v27wSyZurYIsLZgd0uLbzINw=;
+  b=mIANc/2+vCv6gGPmIWuVZGxmhVaGuo//Hp3V13nQsU7gSuw1S33xTKZa
+   65JP2gnf7pilwTy0BALrovXoKAMhWOSf6wm9pZdOdWXpsOwtkUqx81iD+
+   fgAAvoKU3h0nXLaD6BSzn9BQ3mi2/JavmKnI393fj7wutk7aKvcsKwoT3
+   XD1Tl2d8gY5qVHJOdvqz5igBZyvdTK1HLENW6IkWWHXs/c+8+ZI3BvrMw
+   IlnOStWNFl4FJIfi3Isp7kfGYJE1CkOUe75BVaA9RoyyUaie1pikhuv9a
+   UUMg+u2e+wvxPXF9JOVXJ8ptAJ2HXDoZ0ovhDm/z84fKufbLSUl33iJ1O
+   g==;
+X-CSE-ConnectionGUID: /JTQi7lLTPGQGTHaBIyFBw==
+X-CSE-MsgGUID: eSziUWIiSm6wyAONqBkolw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="64982258"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="64982258"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2025 13:33:47 -0800
+X-CSE-ConnectionGUID: AzHGDMh1S+m9mlONT4jjgw==
+X-CSE-MsgGUID: XYpP38aIT6GI9Gisf4hLTg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,300,1754982000"; 
+   d="scan'208";a="194313625"
+Received: from lkp-server01.sh.intel.com (HELO 7b01c990427b) ([10.239.97.150])
+  by fmviesa004.fm.intel.com with ESMTP; 12 Nov 2025 13:33:45 -0800
+Received: from kbuild by 7b01c990427b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vJITG-0004er-2u;
+	Wed, 12 Nov 2025 21:33:42 +0000
+Date: Thu, 13 Nov 2025 05:33:27 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:sched/core] BUILD SUCCESS
+ 65177ea9f64d7402a0b8028e0dbbd01e8a9d1b1d
+Message-ID: <202511130522.6tumDntv-lkp@intel.com>
+User-Agent: s-nail v14.9.25
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20251112083005.542e0b7f.alex@shazbot.org>
-X-Proofpoint-GUID: EOUL9R4ULoSN3G97SLQ6JlZz0E1StJmB
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEyMDE3NCBTYWx0ZWRfX3tOI34qUrmTd
- o4kAcnh+1p8bZmR+sM8Z5nK8Q9QDCDkK28v60L2eWVquRiSAn/Rz+48CQM8KgN7xgoxkCGGT1PC
- ku05GYYmfzza0yDPUbWtb2bFkF0uCq5Lzs36AspKRywT8OylotACEUKWrrDolkmNbZM4+juOhH9
- K6fqVCUJI3nQbGgOH6Y5M/Rk8cqK3w51A5ohpwXGKbbS4peR2KLRpsFewarqkYzx8Oeg/AZYGoO
- wzdDQf+h2xnyakxBOcCO/PehlGTZuprkCxuAKD+oT+idAHtu+vtLGnXo71OZ6hHpGDxEKuIGRCL
- 54GOznJ2QJjO+Es1sYyBMmd8nSdL0guCuUsH86zzpAWzUDk/2tCM/Uk/Z+wWJazdQZ8yGFHBg82
- EhBMtA1ZWjK7xnpL8X70Adkg8nOx6A==
-X-Authority-Analysis: v=2.4 cv=Scv6t/Ru c=1 sm=1 tr=0 ts=6914fcc6 cx=c_pps
- a=MfjaFnPeirRr97d5FC5oHw==:117 a=MfjaFnPeirRr97d5FC5oHw==:17
- a=kj9zAlcOel0A:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VwQbUJbxAAAA:8 a=r1p2_3pzAAAA:8 a=1XWaLZrsAAAA:8 a=FOH2dFAWAAAA:8
- a=9jRdOu3wAAAA:8 a=84ljBqc_iw8H7pXuDXEA:9 a=CjuIK1q_8ugA:10
- a=r_pkcD-q9-ctt7trBg_g:22 a=ZE6KLimJVUuLrTuGpvhn:22 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-ORIG-GUID: EOUL9R4ULoSN3G97SLQ6JlZz0E1StJmB
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-12_06,2025-11-12_01,2025-10-01_01
 
-On Wed, Nov 12, 2025 at 08:30:05AM -0700, Alex Williamson wrote:
-> On Tue, 11 Nov 2025 10:48:23 -0800
-> Alex Mastro <amastro@fb.com> wrote:
-> 
-> > Not all IOMMUs support the same virtual address width as the processor,
-> > for instance older Intel consumer platforms only support 39-bits of
-> > IOMMU address space. On such platforms, using the virtual address as the
-> > IOVA and mappings at the top of the address space both fail.
-> > 
-> > VFIO and IOMMUFD have facilities for retrieving valid IOVA ranges,
-> > VFIO_IOMMU_TYPE1_INFO_CAP_IOVA_RANGE and IOMMU_IOAS_IOVA_RANGES,
-> > respectively. These provide compatible arrays of ranges from which we
-> > can construct a simple allocator.
-> > 
-> > Use this new allocator in place of reusing the virtual address, and
-> > incorporate the maximum supported IOVA into the limit testing.  This
-> > latter change doesn't test quite the same absolute end-of-address space
-> > behavior but still seems to have some value.
-> > 
-> > This series is based on Alex Williamson's "Incorporate IOVA range info"
-> > [1] along with feedback from the discussion in David Matlack's "Skip
-> > vfio_dma_map_limit_test if mapping returns -EINVAL" [2].
-> > 
-> > Given David's plans to split IOMMU concerns from devices as described
-> > in [3], this series' home for `struct iova_allocator` and IOVA
-> > range helpers are likely to be short lived, since they reside in
-> > vfio_pci_device.c. I assume that the rework can move this functionality
-> > to a more appropriate location next to other IOMMU-focused code, once
-> > such a place exists.
-> > 
-> > [1] https://lore.kernel.org/all/20251108212954.26477-1-alex@shazbot.org/#t
-> > [2] https://lore.kernel.org/all/20251107222058.2009244-1-dmatlack@google.com/
-> > [3] https://lore.kernel.org/all/aRIoKJk0uwLD-yGr@google.com/
-> > 
-> > To: Alex Williamson <alex@shazbot.org>
-> > To: David Matlack <dmatlack@google.com>
-> > To: Shuah Khan <shuah@kernel.org>
-> > To: Jason Gunthorpe <jgg@ziepe.ca>
-> > Cc: kvm@vger.kernel.org
-> > Cc: linux-kselftest@vger.kernel.org
-> > Cc: linux-kernel@vger.kernel.org
-> > Signed-off-by: Alex Mastro <amastro@fb.com>
-> > 
-> > Changes in v3:
-> > - Update capability chain cycle detection
-> > - Clarify the iova=vaddr commit message
-> > - Link to v2: https://lore.kernel.org/r/20251111-iova-ranges-v2-0-0fa267ff9b78@fb.com
-> 
-> Applied to vfio for-linus branch for v6.18.  Thanks for the quick
-> resolution on this!
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git sched/core
+branch HEAD: 65177ea9f64d7402a0b8028e0dbbd01e8a9d1b1d  sched/deadline: Minor cleanup in select_task_rq_dl()
 
-No problem, thanks for the reviews!
+elapsed time: 1691m
 
-> 
-> Alex
+configs tested: 109
+configs skipped: 4
+
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+tested configs:
+alpha                             allnoconfig    gcc-15.1.0
+alpha                               defconfig    gcc-15.1.0
+arc                               allnoconfig    gcc-15.1.0
+arc                                 defconfig    gcc-15.1.0
+arm                               allnoconfig    clang-22
+arm                                 defconfig    clang-22
+arm64                             allnoconfig    gcc-15.1.0
+arm64                               defconfig    gcc-15.1.0
+arm64                 randconfig-001-20251112    clang-22
+arm64                 randconfig-002-20251112    gcc-10.5.0
+arm64                 randconfig-003-20251112    gcc-8.5.0
+arm64                 randconfig-004-20251112    clang-22
+csky                              allnoconfig    gcc-15.1.0
+csky                                defconfig    gcc-15.1.0
+csky                  randconfig-001-20251112    gcc-13.4.0
+csky                  randconfig-002-20251112    gcc-15.1.0
+hexagon                           allnoconfig    clang-22
+hexagon                             defconfig    clang-22
+hexagon               randconfig-001-20251112    clang-16
+hexagon               randconfig-002-20251112    clang-22
+i386                              allnoconfig    gcc-14
+i386        buildonly-randconfig-001-20251113    clang-20
+i386        buildonly-randconfig-002-20251113    gcc-14
+i386        buildonly-randconfig-003-20251113    gcc-14
+i386        buildonly-randconfig-004-20251113    gcc-12
+i386        buildonly-randconfig-005-20251113    gcc-14
+i386        buildonly-randconfig-006-20251113    clang-20
+i386                                defconfig    clang-20
+i386                  randconfig-002-20251112    gcc-14
+i386                  randconfig-011-20251112    gcc-14
+i386                  randconfig-012-20251112    gcc-14
+i386                  randconfig-013-20251112    clang-20
+i386                  randconfig-014-20251112    clang-20
+i386                  randconfig-015-20251112    clang-20
+i386                  randconfig-016-20251112    gcc-14
+i386                  randconfig-017-20251112    clang-20
+loongarch                         allnoconfig    clang-22
+loongarch                           defconfig    clang-19
+loongarch             randconfig-001-20251112    gcc-15.1.0
+loongarch             randconfig-002-20251112    gcc-13.4.0
+m68k                              allnoconfig    gcc-15.1.0
+m68k                         amcore_defconfig    gcc-15.1.0
+m68k                                defconfig    gcc-15.1.0
+m68k                       m5475evb_defconfig    gcc-15.1.0
+microblaze                        allnoconfig    gcc-15.1.0
+microblaze                          defconfig    gcc-15.1.0
+mips                              allnoconfig    gcc-15.1.0
+mips                         db1xxx_defconfig    clang-22
+nios2                             allnoconfig    gcc-11.5.0
+nios2                               defconfig    gcc-11.5.0
+nios2                 randconfig-001-20251112    gcc-11.5.0
+nios2                 randconfig-002-20251112    gcc-11.5.0
+openrisc                          allnoconfig    gcc-15.1.0
+openrisc                            defconfig    gcc-15.1.0
+parisc                            allnoconfig    gcc-15.1.0
+parisc                              defconfig    gcc-15.1.0
+parisc                randconfig-001-20251112    gcc-9.5.0
+parisc                randconfig-002-20251112    gcc-8.5.0
+parisc64                            defconfig    gcc-15.1.0
+powerpc                           allnoconfig    gcc-15.1.0
+powerpc               randconfig-001-20251112    clang-22
+powerpc               randconfig-002-20251112    clang-22
+powerpc64             randconfig-001-20251112    clang-22
+powerpc64             randconfig-002-20251112    clang-22
+riscv                             allnoconfig    gcc-15.1.0
+riscv                               defconfig    clang-22
+riscv                 randconfig-001-20251113    gcc-8.5.0
+riscv                 randconfig-002-20251113    gcc-11.5.0
+s390                              allnoconfig    clang-22
+s390                                defconfig    clang-22
+s390                  randconfig-001-20251113    clang-22
+s390                  randconfig-002-20251113    clang-17
+sh                                allnoconfig    gcc-15.1.0
+sh                                  defconfig    gcc-15.1.0
+sh                          kfr2r09_defconfig    gcc-15.1.0
+sh                    randconfig-001-20251113    gcc-15.1.0
+sh                    randconfig-002-20251113    gcc-11.5.0
+sh                           se7750_defconfig    gcc-15.1.0
+sparc                             allnoconfig    gcc-15.1.0
+sparc                               defconfig    gcc-15.1.0
+sparc                 randconfig-001-20251112    gcc-8.5.0
+sparc                 randconfig-002-20251112    gcc-14.3.0
+sparc64                             defconfig    clang-20
+sparc64               randconfig-001-20251112    gcc-8.5.0
+sparc64               randconfig-002-20251112    clang-20
+um                                allnoconfig    clang-22
+um                                  defconfig    clang-22
+um                             i386_defconfig    gcc-14
+um                    randconfig-001-20251112    gcc-14
+um                    randconfig-002-20251112    gcc-14
+um                           x86_64_defconfig    clang-22
+x86_64                            allnoconfig    clang-20
+x86_64      buildonly-randconfig-001-20251112    clang-20
+x86_64      buildonly-randconfig-002-20251112    clang-20
+x86_64      buildonly-randconfig-003-20251112    clang-20
+x86_64      buildonly-randconfig-004-20251112    clang-20
+x86_64      buildonly-randconfig-005-20251112    gcc-14
+x86_64      buildonly-randconfig-006-20251112    gcc-14
+x86_64                              defconfig    gcc-14
+x86_64                randconfig-071-20251112    clang-20
+x86_64                randconfig-072-20251112    clang-20
+x86_64                randconfig-073-20251112    clang-20
+x86_64                randconfig-074-20251112    gcc-13
+x86_64                randconfig-075-20251112    clang-20
+x86_64                randconfig-076-20251112    clang-20
+xtensa                            allnoconfig    gcc-15.1.0
+xtensa                randconfig-001-20251112    gcc-12.5.0
+xtensa                randconfig-002-20251112    gcc-8.5.0
+xtensa                    xip_kc705_defconfig    gcc-15.1.0
+
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
