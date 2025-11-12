@@ -1,136 +1,128 @@
-Return-Path: <linux-kernel+bounces-897448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 821D1C52DCC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:00:34 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96510C52CED
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:52:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF7DF561602
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:49:14 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8C98335037D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:49:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B600339B41;
-	Wed, 12 Nov 2025 14:42:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A09D733ADB7;
+	Wed, 12 Nov 2025 14:43:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mMrqqJnV"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Nu1tFFT0"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41A912C0291;
-	Wed, 12 Nov 2025 14:42:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4283F2BEFF3;
+	Wed, 12 Nov 2025 14:43:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762958548; cv=none; b=ZxQWi6Vyrc8uhSrbb2kWLKB+UWENagMJB4pfVj0eVe2S+a+58jM3EsYiiGCy1WKuha2LJiJr2olfv4YXpXdhVMiPdqJ/su8qdh170NOe0djGqiXEsThBEHvoJJnyDdSThVC9KUIJqcrNzVszN2soGaB0GXt84ByC0SGhyzv+F+4=
+	t=1762958628; cv=none; b=EOot4TRDmhifI2VigAyse5QPES6e1fUnr5NoeQ8p38M9rIoFWNUwS1MAc6osWtOVY+IJhReQpsiC9wJVB88XTqLqqFmo+REQGJSK/SPEb2svh5QNEKxKmwj0HrT0PsZwQ+tXI+HGlVMTCOJB1SYyaP7SA5zh6KQARSDTiKgJxZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762958548; c=relaxed/simple;
-	bh=2xPu+tGjTlqnZqdYCqpWi5WR088t5dU8WW6n7sq6sr8=;
+	s=arc-20240116; t=1762958628; c=relaxed/simple;
+	bh=ilC6tGexmJ0iIDVMobFd8bh9Opvb8ZsC7ENTeTEJYZw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YS2TMiy2PVMxLMdjuJf+m2yCqMu3ccQB5gdWaHX9RcewuI7WASRhjf0LknXREwmmQrza76OVIdwdcFGmuvXXNKU55uyUy7CpyuozriwyClWCE4gURbXG+m5Tp+icOO2H2g6YQzKLnIZnVg6bnc9LgwCfP0owEloE+vMBmsQsCeU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mMrqqJnV; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZJYRizbsGUaUFcQCZr/8Ctrfjrlcg6Nwwtz1vDAyuDoxkQg7E1pYwRiqlO8qlEAHhoXRC/iHFA+kjIxdyV1iDVscsqhkIQ2XCXIT7R40UUMsIBMv/L6fpPm+Nm53KbwOvs0ZjtjhdsiynC7uCsHBI5/5rgf4t1uJXcQCQYbEjJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Nu1tFFT0; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762958547; x=1794494547;
+  t=1762958627; x=1794494627;
   h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=2xPu+tGjTlqnZqdYCqpWi5WR088t5dU8WW6n7sq6sr8=;
-  b=mMrqqJnVYwVLDCWik7NS0F8d5XhF19WO3dZa73h0GJKBMxUXbqemP7YX
-   WH7UtBntZWOE1CS0jLvU/sO4Egg0om3dt4+AWs0B521cBOzY1TA0AjWH+
-   QSTj3qTlWtA5ArV6Y/S0P1Cnoa3eU1MC/V0O/TePNCYrHZmVA3MMr/wU+
-   PFGXsI6uC2Hrnvs/F1FClfSN81SVitWFj7RwlArQRhJScIoKkoAobDpKE
-   MVwoWw3ny+5nDWIga7bzVjQ6nLq7xL4KxQIdpizKxYoMIjWH19tJ7IaQk
-   fF9rVZNPzQ2L/a7NU8WuExdtfHMi7IB00pA9yodPeQQETa7NJ8MjJ74Bt
-   Q==;
-X-CSE-ConnectionGUID: IQwL43rYRuGkTHTXlENM5A==
-X-CSE-MsgGUID: vVCZY85bR328s3jjwno6DA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11611"; a="76479664"
+   mime-version:in-reply-to;
+  bh=ilC6tGexmJ0iIDVMobFd8bh9Opvb8ZsC7ENTeTEJYZw=;
+  b=Nu1tFFT0ANv5EzPxsV+8iJpFp5r47Pmuk3lGBZIAwtbpBuWfci1VZp6x
+   G2uxoB3EiL9iDyz8m8GJogRaoIqUIf53Od1U2M/rUV7X7DvywLhb2tVmG
+   uKyh89lPYana+DilAvEHiIyFyZ6cMDfnQRNg3tFgyjewtcu+3UJ0SaBZ9
+   c34BrrGEG/MNu5Hb32n1w7KuOTtozQ7RChEcnwJmpvc29jGD+YHiWW7Ns
+   ozA1ZMqd127oQ0DNzu7TjU70/6Hys8OnbfQO0MaieiyTGHDt3ou1hYIfX
+   3RXwvKrr5iA+HrO3ihLmbeuHXDOvK8enk/+vnNL/VvqLTau80Eq/iGZyE
+   w==;
+X-CSE-ConnectionGUID: 6WGC9r3YQQKIbmTgcEjBvg==
+X-CSE-MsgGUID: fksfhszQQlGbstPrpl627w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11611"; a="87662344"
 X-IronPort-AV: E=Sophos;i="6.19,299,1754982000"; 
-   d="scan'208";a="76479664"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2025 06:42:26 -0800
-X-CSE-ConnectionGUID: HVgINgL/Q6ymdYwvsk1bCA==
-X-CSE-MsgGUID: 43gqJIMmRKqPPW5U2Zvjug==
+   d="scan'208";a="87662344"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2025 06:43:46 -0800
+X-CSE-ConnectionGUID: Tof3iMyERSKtKocPqcmnTA==
+X-CSE-MsgGUID: sm94GNjRSQmH4cACIOSAUQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.19,299,1754982000"; 
-   d="scan'208";a="193628214"
-Received: from smoticic-mobl1.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.214])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2025 06:42:25 -0800
-Received: from kekkonen.localdomain (localhost [IPv6:::1])
-	by kekkonen.fi.intel.com (Postfix) with ESMTP id 8F57D12055E;
-	Wed, 12 Nov 2025 16:42:21 +0200 (EET)
-Date: Wed, 12 Nov 2025 16:42:21 +0200
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Haotian Zhang <vulab@iscas.ac.cn>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ACPI: property: Fix fwnode refcount leak in
- acpi_fwnode_graph_parse_endpoint()
-Message-ID: <aRSczeIXvymTQN3D@kekkonen.localdomain>
-References: <20251111075000.1828-1-vulab@iscas.ac.cn>
- <CAJZ5v0gs8nor-fgwcY8x4bkd9Swiu8yJn9296U7RHRnQUYDpdA@mail.gmail.com>
+   d="scan'208";a="194217467"
+Received: from black.igk.intel.com ([10.91.253.5])
+  by fmviesa004.fm.intel.com with ESMTP; 12 Nov 2025 06:43:43 -0800
+Received: by black.igk.intel.com (Postfix, from userid 1003)
+	id EE0D195; Wed, 12 Nov 2025 15:43:41 +0100 (CET)
+Date: Wed, 12 Nov 2025 15:43:41 +0100
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Denis Benato <denis.benato@linux.dev>
+Cc: linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+	Hans de Goede <hansg@kernel.org>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	"Limonciello, Mario" <mario.limonciello@amd.com>,
+	"Luke D . Jones" <luke@ljones.dev>,
+	Alok Tiwari <alok.a.tiwari@oracle.com>,
+	Derek John Clark <derekjohn.clark@gmail.com>,
+	Mateusz Schyboll <dragonn@op.pl>, porfet828@gmail.com,
+	Denis Benato <benato.denis96@gmail.com>
+Subject: Re: [PATCH v17 0/9] platform/x86: Add asus-armoury driver
+Message-ID: <aRSdHcO1WCPmG63W@black.igk.intel.com>
+References: <20251102215319.3126879-1-denis.benato@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJZ5v0gs8nor-fgwcY8x4bkd9Swiu8yJn9296U7RHRnQUYDpdA@mail.gmail.com>
+In-Reply-To: <20251102215319.3126879-1-denis.benato@linux.dev>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Hi Rafael, Haotian,
-
-On Wed, Nov 12, 2025 at 02:48:30PM +0100, Rafael J. Wysocki wrote:
-> On Tue, Nov 11, 2025 at 8:50 AM Haotian Zhang <vulab@iscas.ac.cn> wrote:
-> >
-> > acpi_fwnode_graph_parse_endpoint() calls fwnode_get_parent() to obtain the
-> > parent fwnode but returns without calling fwnode_handle_put() on it. This
-> > leads to a fwnode refcount leak and prevents the parent node from being
-> > released properly.
-> >
-> > Call fwnode_handle_put() on the parent fwnode before returning to
-> > fix the leak.
-> >
-> > Fixes: 3b27d00e7b6d ("device property: Move fwnode graph ops to firmware specific locations")
-> > Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
-> > ---
-> >  drivers/acpi/property.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/drivers/acpi/property.c b/drivers/acpi/property.c
-> > index 1b997a5497e7..7f8790e8dc4e 100644
-> > --- a/drivers/acpi/property.c
-> > +++ b/drivers/acpi/property.c
-> > @@ -1714,6 +1714,7 @@ static int acpi_fwnode_graph_parse_endpoint(const struct fwnode_handle *fwnode,
-> >         if (fwnode_property_read_u32(fwnode, "reg", &endpoint->id))
-> >                 fwnode_property_read_u32(fwnode, "endpoint", &endpoint->id);
-> >
-> > +       fwnode_handle_put(port_fwnode);
-
-I'd add a newline here.
-
-> >         return 0;
-> >  }
-> >
-> > --
+On Sun, Nov 02, 2025 at 10:53:10PM +0100, Denis Benato wrote:
+> Hi all,
 > 
-> Andy, Sakari, this looks like a genuine fix to me, any comments?
+> the TL;DR:
+> 1. Introduce new module to contain bios attributes, using fw_attributes_class
+> 2. Deprecate all possible attributes from asus-wmi that were added ad-hoc
+> 3. Remove those in the next LTS cycle
+> 
+> The idea for this originates from a conversation with Mario Limonciello
+> https://lore.kernel.org/platform-driver-x86/371d4109-a3bb-4c3b-802f-4ec27a945c99@amd.com/
+> 
+> It is without a doubt much cleaner to use, easier to discover, and the
+> API is well defined as opposed to the random clutter of attributes I had
+> been placing in the platform sysfs. Given that Derek is also working on a
+> similar approach to Lenovo in part based on my initial work I'd like to think
+> that the overall approach is good and may become standardised for these types
+> of things.
+> 
+> Regarding PPT: it is intended to add support for "custom" platform profile
+> soon. If it's a blocker for this patch series being accepted I will drop the 
+> platform-x86-asus-armoury-add-ppt_-and-nv_-tuning.patch and get that done
+> separately to avoid holding the bulk of the series up. Ideally I would like
+> to get the safe limits in so users don't fully lose functionality or continue
+> to be exposed to potential instability from setting too low, or be mislead
+> in to thinking they can set limits higher than actual limit.
+> 
+> The bulk of the PPT patch is data, the actual functional part is relatively
+> small and similar to the last version.
+> 
+> Unfortunately I've been rather busy over the months and may not cover
+> everything in the v7 changelog but I've tried to be as comprehensive as I can.
 
-Thanks for cc'ing me.
-
-On ACPI fwnode_handle_put() is a nop, and presumably a parent of an ACPI
-node is an ACPI node as well. So this doesn't change fwnode refcounting but
-is nevertheless a good thing to do for API usage correctness.
-
-Reviewed-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+This is more files starter with asus in PDx86.
+Perhaps it's a time to have drivers/platform/x86/asus/ ?
 
 -- 
-Kind regards,
+With Best Regards,
+Andy Shevchenko
 
-Sakari Ailus
+
 
