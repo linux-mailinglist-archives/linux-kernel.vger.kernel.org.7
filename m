@@ -1,141 +1,217 @@
-Return-Path: <linux-kernel+bounces-896551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D265FC50A76
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 06:58:33 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90379C50ABB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 07:04:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 94EE44E56AC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 05:58:28 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 528DE4EC747
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 06:03:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E4F62DBF40;
-	Wed, 12 Nov 2025 05:58:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ED172DC793;
+	Wed, 12 Nov 2025 06:03:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YE7Nb+g1"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="oFcMwVhH"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 486A735CBDC
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 05:58:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B32F31E3DCD;
+	Wed, 12 Nov 2025 06:02:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762927101; cv=none; b=gQHjX/jOpl2TUzoccpx6HSmRrwiOyDPfcTwvQsNMstAcp1XQuB1OWJhYAcXT5GAWaKlF0VZz+V08fAOcXGxBPdWx6vnKdLmKgi1t2BCAQK1FTN2HfvvP9HYDyflCHKqMuzjUWXFUPv1dyKDvwW0T6lp+1FCBlfRmCWK5XQfE4gQ=
+	t=1762927382; cv=none; b=m/15Qz4b03sw4H3TVj1E+ooVZJVxPI4qVo6ohJJFT/xmcj1Ym6pZKvbSUgc0iX0ilEK4DnaPd/hmXeNQ1PWE5l/DDz9Vvx18KSWuTBCdWJJ9aJhfkxCa822Keu4vWfUYWP8oqHF3whMqJ3BMx4AA8Kdm9qmQGS+eVeNet51aTuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762927101; c=relaxed/simple;
-	bh=KMVPQU6AS/v7oNHJYF9l/1cd4YGs3GSrORGFBhYfvSg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iKzp5azAVfxDiXo59WewQsmE8DkV7xboZlaS/v41Ydd7a3esnngn0iJoy5awDY7Cn7a/6vJZfEpXGwzFzEwuP6MhxYpkD2NOZEEh08ANK9WdSJd1Aua9f0iSz+C7LnVC30WmZbaPdmqEfYfyVnII+Uh3hqa/o+4T/N2N68LJH6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YE7Nb+g1; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-7b22ffa2a88so327746b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Nov 2025 21:58:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762927100; x=1763531900; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zKHdK8U3MCmMakl9CmRgXs3sD+ncRr9aTOUvShNhzd8=;
-        b=YE7Nb+g1bQhSbfivBe8Yi8itWsgxsYIQkrC0V8Ek2jPsMbjkto41eF4DvKmHWuNIjI
-         wznTvi8X0qB+Gc/xmTGSffGKf1neMAenEOwWxwDx9WvH/flLcYxcf2KPrcGTJwjefuww
-         QiCqmDPseWjVar7DxbM+D3E6HvS5fL1gwGbf22GBrYDICS0ISLg22ugam/Y2OugZ3LGW
-         uDCWqArkBV+aBmK7EpHXwY/CnrBBqT2aD6gwosxAiskpdIWYSfKEcHhIDCL5RbowVcCE
-         7sGdqAhSY5LB8+lTeG10b1Ndmn+Wr9FvTf733B2q6L1rgbxXpmKn5uT8/7v9zomUWJ5a
-         xz8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762927100; x=1763531900;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zKHdK8U3MCmMakl9CmRgXs3sD+ncRr9aTOUvShNhzd8=;
-        b=nouzWFp+BdXqxaHBaLT7MJRwHAr0VKROxYfegN6sjAGDTmMaFZGtMdPUHEcjPl5OQ7
-         TpwC86ypzNLu24dJLvV1zNDk7buKOXwWOFnBm6VZayO9HRlePXUaiZU6Y3pYVdNrJ4I4
-         ebJqpXoJ3iG88Z/31mVaRj0IuWc2rr6W0B2ad/L2yj1Xr7Q4Zw1rcwHJgpz6/ZIElaHl
-         5xXLuEKCnbj/me8lQYJa1r5XhoRz+thKQOQjeiDfKOEFgQJ1OqNsR97MEW0ztiKz9xUJ
-         LW2AK+t1ovHIc4N8y/qR8YQrjex2MJxAXtiEpnNo/3feOLAfq9e8HPRcR9VzUVNSVbn7
-         QVgg==
-X-Forwarded-Encrypted: i=1; AJvYcCWfMsopNjgQgjoZlSoaJxvOpcmgY2DIDG3PQ9WCdLROZIFaP939f2yACN/KNf8SdgtlXqibYbRcJ+qQ2eo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxymxGECGDukYHZbsagXV7TOAAyznq11Ne+p6QKBvVSqUJ3nnfd
-	p6sPImRVU2ifp98+u5BXDe4EPxu3RYlm1hw+tr6oGrdUgIhNYZa/dOWW
-X-Gm-Gg: ASbGncvNEJjxGYBuTvEw/cVJHKCz6iTpukXFDPO+PqNsstOv5+K6JGff7snaImZCHQv
-	pU2UIcdHvSHDiG9VfdCF1zkmJRdUaGonSXHoSHmBbD19gTyhvlUHTYdqyMqpVPb/plR7Y1lIBG/
-	WO3lM+xc58jsRgYyT71kFStO+oQsAJ4vuI3e38X0IW0qkG/NoQwiNyh4Tq/2p+Ogq/APAggayyN
-	P6an6QAfVwTsaWCnXkfUm4pG+M7JvYLqesI5FegtqWm+WlRDBU8+OiMy1WgkRundk39agn97CRv
-	Tah2UVqgd/IAmVtH3WhJPTpQU7ItGQWpUa8XG8wDk7kCSSAD19v7a9WXTFEihGlGv2Di9k5WbWT
-	dKrAVAkbkxJRqXBJthQCh/pahPPiGbr9IRjkWhzEG213hUgNjXyk0HUQ/uNO1wVkUuZv+I71CPA
-	nE5nm1PRfWBaunkc1f
-X-Google-Smtp-Source: AGHT+IE3/tV0L6LmzB1TOOszkqRLe67V6aPM21N3b8BA8c6diEO/NirFT8DNeyb7sUBcqf1qNtSnQA==
-X-Received: by 2002:a05:6a20:7f9c:b0:352:eede:89cd with SMTP id adf61e73a8af0-359099863f0mr2318490637.17.1762927099543;
-        Tue, 11 Nov 2025 21:58:19 -0800 (PST)
-Received: from crl-3.node2.local ([125.63.65.162])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7b140210c75sm16395549b3a.11.2025.11.11.21.58.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Nov 2025 21:58:19 -0800 (PST)
-From: Kriish Sharma <kriish.sharma2006@gmail.com>
-To: Ivan Vecera <ivecera@redhat.com>,
-	Prathosh Satish <Prathosh.Satish@microchip.com>,
-	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
-	Jiri Pirko <jiri@resnulli.us>,
-	Jakub Kicinski <kuba@kernel.org>
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Kriish Sharma <kriish.sharma2006@gmail.com>
-Subject: [PATCH v2] dpll: zl3073x: fix kernel-doc name and missing parameter in fw.c
-Date: Wed, 12 Nov 2025 05:56:42 +0000
-Message-Id: <20251112055642.2597450-1-kriish.sharma2006@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1762927382; c=relaxed/simple;
+	bh=5P785U/6nIR5hmheHhi3SEIcKPyZPlJEhzUt1w6Lq7I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SCeigCO6rc4GA0DoONqN0ZB6PA+GGRDK3tHoCs3z7Yysn3hsTVGVBGerUCGTX3n+v7nUM+wOeYY95H/tveJKWMRjdREaaT/Mb0WkJrJWJKLft6m0iHtPTNwIGUoZ9yblBHeK6mH6Y0bYX/lITUYwHDiE4hJmjAT3M/msSU4hWwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=oFcMwVhH; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762927379; x=1794463379;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=5P785U/6nIR5hmheHhi3SEIcKPyZPlJEhzUt1w6Lq7I=;
+  b=oFcMwVhHKBIgYjEBlDIzQxuUfbluayiPAldPXMm211ntr4UMFdk5mz6q
+   PnVyXllorQkc7Pml2jAejxJuTiDne7Lqx64bCQctRJ1MCBNM09uiQseUy
+   t1MX8LO7ModSXpWIAovaSfXjGJD6D9gIEq5XSAeUPESqt6j4wOgTQ7OBd
+   NrPAWXyoDq9JXu2g4KkxNq80vMgqcoVEdTVwO63WnwcpscEAl5SprrpIy
+   tKZodCx9zpslZ5vCSky+hQt6NqoeqJ8uaFzapQbfoRyGdrZXrM4RCUTPn
+   RysTKAZ5ToYq8XDJVQoWAbNiiQzRO24E/CCwA0n/pkINx6on4PlupC5iQ
+   A==;
+X-CSE-ConnectionGUID: J3XQvOBvRaC1n4U0cpUfMQ==
+X-CSE-MsgGUID: QGYAZv4WRUuR9RNh5JXzcw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="64920252"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="64920252"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 22:02:59 -0800
+X-CSE-ConnectionGUID: h2IRcZemTGuOgw+Cz+mqmA==
+X-CSE-MsgGUID: SUtSziV9Qu6Uwss2XMdTJQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,298,1754982000"; 
+   d="scan'208";a="189864807"
+Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2025 22:02:55 -0800
+Message-ID: <d5445875-76bd-453d-b959-25989f5d3060@linux.intel.com>
+Date: Wed, 12 Nov 2025 13:58:51 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 3/5] iommu: Add iommu_driver_get_domain_for_dev()
+ helper
+To: Nicolin Chen <nicolinc@nvidia.com>, joro@8bytes.org, afael@kernel.org,
+ bhelgaas@google.com, alex@shazbot.org, jgg@nvidia.com, kevin.tian@intel.com
+Cc: will@kernel.org, robin.murphy@arm.com, lenb@kernel.org,
+ linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+ linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+ linux-pci@vger.kernel.org, kvm@vger.kernel.org, patches@lists.linux.dev,
+ pjaroszynski@nvidia.com, vsethi@nvidia.com, helgaas@kernel.org,
+ etzhao1900@gmail.com
+References: <cover.1762835355.git.nicolinc@nvidia.com>
+ <0303739735f3f49bcebc244804e9eeb82b1c41dc.1762835355.git.nicolinc@nvidia.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <0303739735f3f49bcebc244804e9eeb82b1c41dc.1762835355.git.nicolinc@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Documentation build reported:
+On 11/11/25 13:12, Nicolin Chen wrote:
+> There is a need to stage a resetting PCI device to temporally the blocked
+> domain and then attach back to its previously attached domain after reset.
+> 
+> This can be simply done by keeping the "previously attached domain" in the
+> iommu_group->domain pointer while adding an iommu_group->resetting_domain,
+> which gives troubles to IOMMU drivers using the iommu_get_domain_for_dev()
+> for a device's physical domain in order to program IOMMU hardware.
+> 
+> And in such for-driver use cases, the iommu_group->mutex must be held, so
+> it doesn't fit in external callers that don't hold the iommu_group->mutex.
+> 
+> Introduce a new iommu_driver_get_domain_for_dev() helper, exclusively for
+> driver use cases that hold the iommu_group->mutex, to separate from those
+> external use cases.
+> 
+> Add a lockdep_assert_not_held to the existing iommu_get_domain_for_dev()
+> and highlight that in a kdoc.
+> 
+> Reviewed-by: Kevin Tian <kevin.tian@intel.com>
+> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+> ---
+>   include/linux/iommu.h                       |  1 +
+>   drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c |  5 ++--
+>   drivers/iommu/iommu.c                       | 28 +++++++++++++++++++++
+>   3 files changed, 32 insertions(+), 2 deletions(-)
+> 
+> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+> index 801b2bd9e8d49..a42a2d1d7a0b7 100644
+> --- a/include/linux/iommu.h
+> +++ b/include/linux/iommu.h
+> @@ -910,6 +910,7 @@ extern int iommu_attach_device(struct iommu_domain *domain,
+>   extern void iommu_detach_device(struct iommu_domain *domain,
+>   				struct device *dev);
+>   extern struct iommu_domain *iommu_get_domain_for_dev(struct device *dev);
+> +struct iommu_domain *iommu_driver_get_domain_for_dev(struct device *dev);
+>   extern struct iommu_domain *iommu_get_dma_domain(struct device *dev);
+>   extern int iommu_map(struct iommu_domain *domain, unsigned long iova,
+>   		     phys_addr_t paddr, size_t size, int prot, gfp_t gfp);
+> diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+> index a33fbd12a0dd9..412d1a9b31275 100644
+> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+> @@ -3125,7 +3125,8 @@ int arm_smmu_set_pasid(struct arm_smmu_master *master,
+>   		       struct arm_smmu_domain *smmu_domain, ioasid_t pasid,
+>   		       struct arm_smmu_cd *cd, struct iommu_domain *old)
+>   {
+> -	struct iommu_domain *sid_domain = iommu_get_domain_for_dev(master->dev);
+> +	struct iommu_domain *sid_domain =
+> +		iommu_driver_get_domain_for_dev(master->dev);
+>   	struct arm_smmu_attach_state state = {
+>   		.master = master,
+>   		.ssid = pasid,
+> @@ -3191,7 +3192,7 @@ static int arm_smmu_blocking_set_dev_pasid(struct iommu_domain *new_domain,
+>   	 */
+>   	if (!arm_smmu_ssids_in_use(&master->cd_table)) {
+>   		struct iommu_domain *sid_domain =
+> -			iommu_get_domain_for_dev(master->dev);
+> +			iommu_driver_get_domain_for_dev(master->dev);
+>   
+>   		if (sid_domain->type == IOMMU_DOMAIN_IDENTITY ||
+>   		    sid_domain->type == IOMMU_DOMAIN_BLOCKED)
+> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+> index 1e322f87b1710..1f4d6ca0937bc 100644
+> --- a/drivers/iommu/iommu.c
+> +++ b/drivers/iommu/iommu.c
+> @@ -2217,6 +2217,15 @@ void iommu_detach_device(struct iommu_domain *domain, struct device *dev)
+>   }
+>   EXPORT_SYMBOL_GPL(iommu_detach_device);
+>   
+> +/**
+> + * iommu_get_domain_for_dev() - Return the DMA API domain pointer
+> + * @dev - Device to query
+> + *
+> + * This function can be called within a driver bound to dev. The returned
+> + * pointer is valid for the lifetime of the bound driver.
+> + *
+> + * It should not be called by drivers with driver_managed_dma = true.
 
-  Warning: drivers/dpll/zl3073x/fw.c:365 function parameter 'comp' not described in 'zl3073x_fw_component_flash'
-  Warning: drivers/dpll/zl3073x/fw.c:365 expecting prototype for zl3073x_flash_bundle_flash(). Prototype was for zl3073x_fw_component_flash() instead
-  Warning: drivers/dpll/zl3073x/fw.c:365 No description found for return value of 'zl3073x_fw_component_flash'
+"driver_managed_dma != true" means the driver will use the default
+domain allocated by the iommu core during iommu probe. The iommu core
+ensures that this domain stored at group->domain will not be changed
+during the driver's whole lifecycle. That's reasonable.
 
-The kernel-doc comment above `zl3073x_fw_component_flash()` used the wrong
-function name (`zl3073x_flash_bundle_flash`) and omitted the `@comp` parameter.
-This patch updates the comment to correctly document the
-`zl3073x_fw_component_flash()` function and its arguments.
+How about making some code to enforce this requirement? Something like
+below ...
 
-Fixes: ca017409da69 ("dpll: zl3073x: Add firmware loading functionality")
-Signed-off-by: Kriish Sharma <kriish.sharma2006@gmail.com>
----
-v2:
- - Added colon to fix kernel-doc warning for `Return:` line.
+> + */
+>   struct iommu_domain *iommu_get_domain_for_dev(struct device *dev)
+>   {
+>   	/* Caller must be a probed driver on dev */
+> @@ -2225,10 +2234,29 @@ struct iommu_domain *iommu_get_domain_for_dev(struct device *dev)
+>   	if (!group)
+>   		return NULL;
+>   
+> +	lockdep_assert_not_held(&group->mutex);
 
-v1: https://lore.kernel.org/all/20251110195030.2248235-1-kriish.sharma2006@gmail.com
+...
+	if (WARN_ON(!dev->driver || !group->owner_cnt || group->owner))
+		return NULL;
 
- drivers/dpll/zl3073x/fw.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+> +
+>   	return group->domain;
+>   }
+>   EXPORT_SYMBOL_GPL(iommu_get_domain_for_dev);
+>   
+> +/**
+> + * iommu_driver_get_domain_for_dev() - Return the driver-level domain pointer
+> + * @dev - Device to query
+> + *
+> + * This function can be called by an iommu driver that wants to get the physical
+> + * domain within an iommu callback function where group->mutex is held.
+> + */
+> +struct iommu_domain *iommu_driver_get_domain_for_dev(struct device *dev)
+> +{
+> +	struct iommu_group *group = dev->iommu_group;
+> +
+> +	lockdep_assert_held(&group->mutex);
+> +
+> +	return group->domain;
+> +}
+> +EXPORT_SYMBOL_GPL(iommu_driver_get_domain_for_dev);
+> +
+>   /*
+>    * For IOMMU_DOMAIN_DMA implementations which already provide their own
+>    * guarantees that the group and its default domain are valid and correct.
 
-diff --git a/drivers/dpll/zl3073x/fw.c b/drivers/dpll/zl3073x/fw.c
-index def37fe8d9b0..55b638247f4b 100644
---- a/drivers/dpll/zl3073x/fw.c
-+++ b/drivers/dpll/zl3073x/fw.c
-@@ -352,12 +352,12 @@ struct zl3073x_fw *zl3073x_fw_load(struct zl3073x_dev *zldev, const char *data,
- }
- 
- /**
-- * zl3073x_flash_bundle_flash - Flash all components
-+ * zl3073x_fw_component_flash - Flash all components
-  * @zldev: zl3073x device structure
-- * @components: pointer to components array
-+ * @comp: pointer to components array
-  * @extack: netlink extack pointer to report errors
-  *
-- * Returns 0 in case of success or negative number otherwise.
-+ * Return: 0 in case of success or negative number otherwise.
-  */
- static int
- zl3073x_fw_component_flash(struct zl3073x_dev *zldev,
--- 
-2.34.1
+Others look good to me.
 
+Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
 
