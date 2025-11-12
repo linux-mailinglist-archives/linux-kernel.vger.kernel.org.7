@@ -1,78 +1,66 @@
-Return-Path: <linux-kernel+bounces-898063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C99BC5443B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 20:52:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E2D5C544FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 21:00:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ABF4A4F36B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:39:31 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D95D14F5070
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:39:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7423834FF63;
-	Wed, 12 Nov 2025 19:36:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="oW/iBKuF";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="oW/iBKuF"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BFB934DB67;
+	Wed, 12 Nov 2025 19:36:53 +0000 (UTC)
 Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 974A034D913
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 19:36:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CF8934DB54
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 19:36:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762976205; cv=none; b=ixjttOYaACwCzJxrMcPi0fcUL8xRu+NdABmGcso123vG8ZA6cBGKEfEkX6K7aj+7LO6nlKs1Ye6BM2hnlYD8VyblhWhuHW8CA+ll2nJOagLZZQItCkHiMu8Alv7Q9UM850l5gnqAwjeeF4X2eUQ6jBQlPECmxuY7+N5k1+Hvb2Q=
+	t=1762976213; cv=none; b=hK6YFW+Wd81qWJIEURFTiLRqeKaSZleeju0i2WFpcHOQ7+0E8wcPL63N/0qSTWRNuq4bz9vbMLX06NfWPjCRy4t3m57c1LdVmATUX/Y2eMOssUAo0+QTRVPKbQ1hrYJ+TfvT0hvRELAuYByfhU7u3cC3Y0DEoxgTVyTBtK6/9H8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762976205; c=relaxed/simple;
-	bh=l7oyzcEX44cRo2M+qv3VzZOT8MFAZV6c7My6vj4Uucc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=c7BDOueWkBZaHXzmkntzoAprcbySApzc7gfBIu+8E6hv/UqgyfCiwNk4bSGICRix0fSDrIR0p0Tu5+bYS6o5yX+ZI259cQtUyasnyZdt/8CFHGy1JixyqC9tXU4HkxTsWBQridZb9AiV2jW/m8tHZj4a+Aa70/rZiqbcxRCH0hk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=oW/iBKuF; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=oW/iBKuF; arc=none smtp.client-ip=195.135.223.130
+	s=arc-20240116; t=1762976213; c=relaxed/simple;
+	bh=DF+MVdRWcVUZ/4TkEyR6yaW+AaoXs/sGpAXtLMqbLGw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=CS8NC0amWpGPztCidmaRAAWCEZKo224Q6AiYR4N82VfAQgDcEBEk/p2KJ0z+Zk1ATc3k/TtfnIY3hj0k56BIK9bAHlYCyf1lc4Ev5Kq+eo3yuP1w7aPZb1DT//8VvnJMbA46+SbaLkx3K9kYRnkUFcVzFG4MG+KYFOFgYH0rvw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id B27AA21B04;
-	Wed, 12 Nov 2025 19:36:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1762976200; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=SFk2ToHFrxW+zH55JOOcszH+KxLRNyXEtoCclgwSTlY=;
-	b=oW/iBKuFbXBPwxbBAWXeod/IReviSISBnm8VD+nciaU/ZuMzQ9M0gJi7Fa3XLdLA7rDSjh
-	55JtHz05oJdQc2sOc6+eQe8UJ1kJROOhdw3aEfJ8AdVGYgBH0QW441qWPFos34QDDLTEQe
-	eDz0ncfsQjsmtDmcx0L3eqR4fFozaZc=
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 3448521B61;
+	Wed, 12 Nov 2025 19:36:41 +0000 (UTC)
 Authentication-Results: smtp-out1.suse.de;
 	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1762976200; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=SFk2ToHFrxW+zH55JOOcszH+KxLRNyXEtoCclgwSTlY=;
-	b=oW/iBKuFbXBPwxbBAWXeod/IReviSISBnm8VD+nciaU/ZuMzQ9M0gJi7Fa3XLdLA7rDSjh
-	55JtHz05oJdQc2sOc6+eQe8UJ1kJROOhdw3aEfJ8AdVGYgBH0QW441qWPFos34QDDLTEQe
-	eDz0ncfsQjsmtDmcx0L3eqR4fFozaZc=
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9C9C83EA61;
-	Wed, 12 Nov 2025 19:36:40 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1A3A73EA61;
+	Wed, 12 Nov 2025 19:36:41 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Esm6JcjhFGm+YgAAD6G6ig
-	(envelope-from <neelx@suse.com>); Wed, 12 Nov 2025 19:36:40 +0000
+	id CJW8BcnhFGm+YgAAD6G6ig
+	(envelope-from <neelx@suse.com>); Wed, 12 Nov 2025 19:36:41 +0000
 From: Daniel Vacek <neelx@suse.com>
 To: Chris Mason <clm@fb.com>,
 	Josef Bacik <josef@toxicpanda.com>,
 	David Sterba <dsterba@suse.com>
 Cc: Daniel Vacek <neelx@suse.com>,
 	linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v6 0/8] btrfs: add fscrypt support, PART 1
-Date: Wed, 12 Nov 2025 20:36:00 +0100
-Message-ID: <20251112193611.2536093-1-neelx@suse.com>
+	linux-kernel@vger.kernel.org,
+	Omar Sandoval <osandov@osandov.com>,
+	Sweet Tea Dorminy <sweettea-kernel@dorminy.me>
+Subject: [PATCH v6 1/8] btrfs: disable various operations on encrypted inodes
+Date: Wed, 12 Nov 2025 20:36:01 +0100
+Message-ID: <20251112193611.2536093-2-neelx@suse.com>
 X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20251112193611.2536093-1-neelx@suse.com>
+References: <20251112193611.2536093-1-neelx@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,72 +68,82 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:mid];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	RCPT_COUNT_FIVE(0.00)[6];
-	RCVD_TLS_ALL(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Score: -2.80
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
 X-Spam-Level: 
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	REPLY(-4.00)[]
+X-Rspamd-Queue-Id: 3448521B61
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -4.00
 
-This is a revive of former work [1] of Omar, Sweet Tea and Josef to bring
-native encryption support to btrfs.
+From: Omar Sandoval <osandov@osandov.com>
 
-It will come in more parts. The first part this time is splitting the simple
-and isolated stuff out first to reduce the size of the final patchset.
+Initially, only normal data extents will be encrypted. This change
+forbids various other bits:
+- allows reflinking only if both inodes have the same encryption status
+- disable inline data on encrypted inodes
 
-Changes since v5 [1] are mostly rebase to the latest for-next and cleaning
-up the conflicts.
+Signed-off-by: Omar Sandoval <osandov@osandov.com>
+Signed-off-by: Sweet Tea Dorminy <sweettea-kernel@dorminy.me>
+Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+Signed-off-by: Daniel Vacek <neelx@suse.com>
+---
+v5 was 'Reviewed-by: Boris Burkov <boris@bur.io>' [1] but the rebase
+changed the code a bit so dropping.
 
-The remaining part needs further cleanup and a bit of redesign and it will
-follow later.
+[1] https://lore.kernel.org/linux-btrfs/20240124195303.GC1789919@zen.localdomain/
+---
+ fs/btrfs/inode.c   | 4 ++++
+ fs/btrfs/reflink.c | 7 +++++++
+ 2 files changed, 11 insertions(+)
 
-[1] https://lore.kernel.org/linux-btrfs/cover.1706116485.git.josef@toxicpanda.com/
-
-Josef Bacik (6):
-  btrfs: add a bio argument to btrfs_csum_one_bio
-  btrfs: add orig_logical to btrfs_bio
-  btrfs: don't rewrite ret from inode_permission
-  btrfs: move inode_to_path higher in backref.c
-  btrfs: don't search back for dir inode item in INO_LOOKUP_USER
-  btrfs: set the appropriate free space settings in reconfigure
-
-Omar Sandoval (1):
-  btrfs: disable various operations on encrypted inodes
-
-Sweet Tea Dorminy (1):
-  btrfs: disable verity on encrypted inodes
-
- fs/btrfs/backref.c   | 68 +++++++++++++++++++++-----------------------
- fs/btrfs/bio.c       | 14 +++++++--
- fs/btrfs/bio.h       |  3 ++
- fs/btrfs/disk-io.c   |  2 +-
- fs/btrfs/file-item.c | 19 ++++++-------
- fs/btrfs/file-item.h |  2 +-
- fs/btrfs/inode.c     |  4 +++
- fs/btrfs/ioctl.c     | 27 +++---------------
- fs/btrfs/reflink.c   |  7 +++++
- fs/btrfs/super.c     | 28 +++++++++---------
- fs/btrfs/super.h     |  3 +-
- fs/btrfs/verity.c    |  3 ++
- 12 files changed, 93 insertions(+), 87 deletions(-)
-
+diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+index 8737914e8552..b810e831fc23 100644
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -592,6 +592,10 @@ static bool can_cow_file_range_inline(struct btrfs_inode *inode,
+ 	if (size < i_size_read(&inode->vfs_inode))
+ 		return false;
+ 
++	/* Encrypted file cannot be inlined. */
++	if (IS_ENCRYPTED(&inode->vfs_inode))
++		return false;
++
+ 	return true;
+ }
+ 
+diff --git a/fs/btrfs/reflink.c b/fs/btrfs/reflink.c
+index 775a32a7953a..3c9c570d6493 100644
+--- a/fs/btrfs/reflink.c
++++ b/fs/btrfs/reflink.c
+@@ -1,6 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0
+ 
+ #include <linux/blkdev.h>
++#include <linux/fscrypt.h>
+ #include <linux/iversion.h>
+ #include "ctree.h"
+ #include "fs.h"
+@@ -789,6 +790,12 @@ static int btrfs_remap_file_range_prep(struct file *file_in, loff_t pos_in,
+ 		ASSERT(inode_in->vfs_inode.i_sb == inode_out->vfs_inode.i_sb);
+ 	}
+ 
++	/*
++	 * Can only reflink encrypted files if both files are encrypted.
++	 */
++	if (IS_ENCRYPTED(&inode_in->vfs_inode) != IS_ENCRYPTED(&inode_out->vfs_inode))
++		return -EINVAL;
++
+ 	/* Don't make the dst file partly checksummed */
+ 	if ((inode_in->flags & BTRFS_INODE_NODATASUM) !=
+ 	    (inode_out->flags & BTRFS_INODE_NODATASUM)) {
 -- 
 2.51.0
 
