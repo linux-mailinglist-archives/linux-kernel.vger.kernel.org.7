@@ -1,125 +1,178 @@
-Return-Path: <linux-kernel+bounces-897955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 524A9C53FBC
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:49:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C400C53FD7
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:50:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8B6204EEFB1
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:42:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 503433B9B48
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:42:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3829C34B40E;
-	Wed, 12 Nov 2025 18:38:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A8D434D911;
+	Wed, 12 Nov 2025 18:39:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C1YP64lT"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="bpK7oEWo"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E54D2BEC5E
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 18:38:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DA1F34B402;
+	Wed, 12 Nov 2025 18:38:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762972717; cv=none; b=J3SU2nu6cgHroxcKi3Ns076kHG442X9xkX4GbeWp2fCXwqDcFZvJ30fkzI0kEbv6KYUVgJpdciTw1HDsioi2wvEeV+GeXxb93fsLnasooNS9cCtCJnfyBePsuaShJrCg+I6LW8Y61db3af0eHrG+tN1ojMIlQt0G06JplKdw+GQ=
+	t=1762972742; cv=none; b=E6NiaB3Qle9XVeXswR+WcXzLypTTTWUD8O0RRQZp3W1F7xy+NvURTKTR39dCYJtXs3ZGO8AciE2O53hiy0XWydqPFRwxNnBEMlCaS9Y5PW5EptHXBE9Lm4ilSkJ5o0Opwg2b81GNusV7HCUv/Hf9KzJgC9vfCfucvavvlzxN00k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762972717; c=relaxed/simple;
-	bh=rjdI/hPxB57OWIfqIRPggSIvkjgsaZxLZ95HFelCcGY=;
+	s=arc-20240116; t=1762972742; c=relaxed/simple;
+	bh=POv7NkoF44sU+mFkRsPUnoPJGmeAATZEDnKOAGTsCOQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i8oXYz3g69zOIZZtXBTYpgvJsgUKVSW6Li4TysSRKdSPF38zESR50RZ1ldetrJ3XWURQk7aSfAU8YzMxQ9pEEDtkvS03beaTlEq+wSeMXnShwQGF/kn7WNgN/jLfdjaf4Dgj8xrUjvGplh9G6QepuaDpmQ1dKGgmPu4AnWh4pF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C1YP64lT; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-7b4933bc4bbso1034651b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 10:38:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762972715; x=1763577515; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=d+G8+iIuAhEgULEzocPDssGo8BH46zvY9bxVPTxi2Vs=;
-        b=C1YP64lTmpPR3rpAi4nXm4pajuWzRnGOvB/NwB50yogSmfuta7NKCFyVQUPL1Apj8V
-         mSr7bVW7YBn4Zbn0Zc4cMrEYNbKBouZfhtLRajLqWeSLcNH32SM3z1ccGl2UvNrcNV0H
-         xu/WKO56sfn6ZosM2QScFhK3NURNDmW9S000t2z3hfooLzRZ48YC7Q9wtN8cLEJEM20v
-         4WmISrgEaSt6FUIgteIWyQy/PBOgrWCikXbwgvIvYPaxXGlEZWhEvjE0EeKuqdx3P5VK
-         7xJ25EGDBb6lk7dvv7uQds+Z68578wq3lrroPGnICn/nIh7oLn9/Zdy8srwUJRa87NYg
-         lofg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762972715; x=1763577515;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=d+G8+iIuAhEgULEzocPDssGo8BH46zvY9bxVPTxi2Vs=;
-        b=GLbztXHHt6l1C2FL55Dzk3ueBE+tC+1eNa6380xMCOSpNjrAdYpt0RCGEuNRYRH85T
-         xtSYYC1XrR2itVf+dws3IicKl/QAg70BIIzwK1LoiMlghm0FUY8OLrm4e/L2YMKCW2/M
-         8JPjUdiPBmPAh5+BcNAQZ7aLh2iQ6OQ9ILyrAE+PcRtsFzAkaNrQKkQnpDxxk5lRYDqT
-         OSo2Kkm/0jTQTqPuiLmPALMJ5mZQd0XAZj9biMyop5GnG79gPrhISfzfjnSNp9NjIlL/
-         bgE1efwbtNIdASDaUzxherDYeHjlMSf80kfyXzY75XNxY4pVTxIrVbSW3w39hoVtG5xY
-         KLcg==
-X-Forwarded-Encrypted: i=1; AJvYcCU7QYmmAOELoOSGlDUB1R60zt1z1iBXO1dWh7AWTkBY5MjO9LiGQsmpJZgla+NOq3TNOg7Stzz2hjQ9qPM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzh+qCnhH94/KjqwEvlCgRU4cZVhf/bRaH8kk+jaTfh+QN82cFx
-	9zkpgVGAQu0yCOe/iq90P/gYl7885eRINQQGSo/fLRlCKO0QRuaifBrX
-X-Gm-Gg: ASbGncueVTrSk+GKDv2ZghGwEC80F8EemQcHqa05thCl1y94SKsFHLWhp2bo5BzgV3W
-	6RqIt+9mukzKbWvjsmX1Mm114FuqQs8xIrTDxZ6VrjCDhK6J0qhAA2haxUDbY9GLecZWBG8bsoE
-	lqSRFCqGvGijoBdnHHIrz8acdtzaD05+PzrFTple1rj8WkJFRyMkPjvJCy87q3zeZs2EAdQLSPX
-	1hUA5HU/KVpK88GJAEX7hqD2WJ3+R6/tfCdCI4Rn8IHHqGaQKEXKHcXAezvKv76cOXR29P2DhY9
-	jJ0bAyC/OfEwuKTL2641218KXqdeRiaCEu6bzPkrnRwaUT/xjfPgFtMP9sujfBVW3Br73+1V2En
-	lfaPtTtGR1hvLA0sEFpZ+2rXTc+5llf1Vq/nMXeApk3/zfWdbZJKrAswERIFEBr+G+7/ciHHy8U
-	8lakE5UCJYBJEu+GyL4UTXtoswzVmUPRaL
-X-Google-Smtp-Source: AGHT+IHkCPrM3gjJlcuUw/ai+5zW7z604YwPQxNzYFX5718wDwKJoqe+bSM0awd32yJLRzmocpTJQg==
-X-Received: by 2002:aa7:88d6:0:b0:7a2:7f45:5898 with SMTP id d2e1a72fcca58-7b8e01e21a5mr455797b3a.3.1762972715085;
-        Wed, 12 Nov 2025 10:38:35 -0800 (PST)
-Received: from fedora (c-67-164-59-41.hsd1.ca.comcast.net. [67.164.59.41])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7b0cc17a956sm19641876b3a.44.2025.11.12.10.38.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Nov 2025 10:38:34 -0800 (PST)
-Date: Wed, 12 Nov 2025 10:38:32 -0800
-From: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-To: Uladzislau Rezki <urezki@gmail.com>
-Cc: syzbot ci <syzbot+ci9989da8336cb2bc7@syzkaller.appspotmail.com>,
-	akpm@linux-foundation.org, hch@lst.de, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, syzbot@lists.linux.dev,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot ci] Re: make vmalloc gfp flags usage more apparent
-Message-ID: <aRTUKDMa8avHdvKp@fedora>
-References: <20251110160457.61791-1-vishal.moola@gmail.com>
- <69123b72.a70a0220.22f260.0105.GAE@google.com>
- <aROasppMPmek9Afh@milan>
- <aRQyMck_MeVvvCdX@infradead.org>
- <aRR3O7l2Ewx-VRoE@milan>
+	 Content-Type:Content-Disposition:In-Reply-To; b=aFEbjrHFaGtMGUtkrTUsmZlJC/gGr1EJVJv99CRh9lu8EJINmnAb1XT6TNQrvV7kGp+2gVgKTYHkWIdZZ0GGpyqV82b9MlitwT0Uc/VvSHeh+51YekqHvcofmZkencVA7CQvF5eufbhckp/DRM9K7qoTizAqCjg5Iau1uLjeRq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=bpK7oEWo; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 3F00440E01CD;
+	Wed, 12 Nov 2025 18:38:57 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id e05PRrtV6K6R; Wed, 12 Nov 2025 18:38:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1762972731; bh=0aGt+4sMYIhh0E/2xYmyk01i4uKCzPvyHNRoOm86K+k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bpK7oEWoXCfaEHu+FD7jo28m0ekyWR9OOpd7z9cY6lLs5uKhm7JWeWb10WUL0A/sj
+	 RXBSMeCaZxHUyrgfTUfMUrDuScNwqBfe1RshpnxrmpUaIPNhcrYjt4dAK0yVnFJ3gA
+	 7eFkWE8nlYg5rX0Y2og5+hEDG9H/sdKzOxkFJXcRnlHFqfzgnqWrMKDNAdPMAmyVOa
+	 mSAtNk+V2BIEFqSAthAoUkANmulRtWNb2w1Z1iV3CwWamlalU/OwwYfEfy1VDGpf9Y
+	 nHvWLdM3PIOyUZKk1wMbaPRYzx0CN0SIG6r60f4DhW1EeHEbh0KghKDqRLSaauGw8Q
+	 RzRtwusNWPoiMF13u8l39hC7CE9tz5U8PWnJs+O9Qjd4jZIy7MlscahUsqOMuZ0AwI
+	 sjzVVHxRH3oKM+LaoPTF7LZIbVBJxeXwOsPmbBqCKK3q2qWcVWCAudWnTx7Aswt8RR
+	 FJKfmNFgM7NNlkpw6a2RYqcmW0mgRTE6SDORpA3I/LCczNSrqAKGysW9eWzMRkwTpU
+	 sjt446jcbqRMwbF3ofHFxzlDaLwqWGAc3Jx8ocUBRlBp95kriXALKiGLWP8HN79lvL
+	 ifK4phPmkuzePgi3Y5lOeGmWXtUtcR6epu9w0499t3nFkY4+XKkgAHqM5T42PqYF4B
+	 +fr1kmtKeAz9nw2Qzc7ufxuw=
+Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 917FD40E0191;
+	Wed, 12 Nov 2025 18:38:42 +0000 (UTC)
+Date: Wed, 12 Nov 2025 19:38:36 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Brendan Jackman <jackmanb@google.com>
+Subject: Re: [PATCH v4 4/8] KVM: VMX: Handle MMIO Stale Data in VM-Enter
+ assembly via ALTERNATIVES_2
+Message-ID: <20251112183836.GBaRTULLaMWA5hkfT9@fat_crate.local>
+References: <20251031003040.3491385-1-seanjc@google.com>
+ <20251031003040.3491385-5-seanjc@google.com>
+ <20251112164144.GAaRS4yKgF0gQrLSnR@fat_crate.local>
+ <aRTAlEaq-bI5AMFA@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <aRR3O7l2Ewx-VRoE@milan>
+In-Reply-To: <aRTAlEaq-bI5AMFA@google.com>
 
-On Wed, Nov 12, 2025 at 01:02:03PM +0100, Uladzislau Rezki wrote:
-> On Tue, Nov 11, 2025 at 11:07:29PM -0800, Christoph Hellwig wrote:
-> > On Tue, Nov 11, 2025 at 09:21:06PM +0100, Uladzislau Rezki wrote:
-> > > > Unexpected gfp: 0x100000 (__GFP_HARDWALL). Fixing up to gfp: 0xdc0 (GFP_KERNEL|__GFP_ZERO). Fix your code!
-> > > >
-> > > It looks like we need to add __GFP_HARDWALL to the white-list-mask.
+On Wed, Nov 12, 2025 at 09:15:00AM -0800, Sean Christopherson wrote:
+> On Wed, Nov 12, 2025, Borislav Petkov wrote:
+> > On Thu, Oct 30, 2025 at 05:30:36PM -0700, Sean Christopherson wrote:
+> > > @@ -137,6 +138,12 @@ SYM_FUNC_START(__vmx_vcpu_run)
+> > >  	/* Load @regs to RAX. */
+> > >  	mov (%_ASM_SP), %_ASM_AX
+> > >  
+> > > +	/* Stash "clear for MMIO" in EFLAGS.ZF (used below). */
 > > 
-> > __GFP_HARDWALL is part of GFP_USER.  Doing GFP_USER vmalloc sounds like
-> > a bit of an odd idea to me, but there are a few users mostly in bpf
-> > and drm code (why do these always show up for odd API usage patterns?).
-> > 
-> > So I guess yes, we'll need to allow it for now, but I'd like to start
-> > a discussion if it really makes much sense.
-> > 
-> <snip>
-> 	/* plain bpf_prog allocation */
-> 	prog = bpf_prog_alloc(bpf_prog_size(attr->insn_cnt), GFP_USER);
-> 	if (!prog) {
-> <snip>
+> > Oh wow. Alternatives interdependence. What can go wrong. :)
 > 
-> I assume that was the place that triggered the splat.
-> 
-> Vishal, will you send the patch adding GFP_USER to address the splat?
+> Nothing, it's perfect. :-D
 
-Yes, I'll send a new version including __GFP_HARDWALL in the mask and
-update the comment accordingly.
+Yeah. :-P
+
+> 
+> > > +	ALTERNATIVE_2 "",								\
+> > > +		      __stringify(test $VMX_RUN_CLEAR_CPU_BUFFERS_FOR_MMIO, %ebx), 	\
+> > 
+> > So this VMX_RUN_CLEAR_CPU_BUFFERS_FOR_MMIO bit gets set here:
+> > 
+> >         if (cpu_feature_enabled(X86_FEATURE_CLEAR_CPU_BUF_MMIO) &&
+> >             kvm_vcpu_can_access_host_mmio(&vmx->vcpu))
+> >                 flags |= VMX_RUN_CLEAR_CPU_BUFFERS_FOR_MMIO;
+> > 
+> > So how static and/or dynamic is this?
+> 
+> kvm_vcpu_can_access_host_mmio() is very dynamic.  It can be different between
+> vCPUs in a VM, and can even change on back-to-back runs of the same vCPU.
+
+Hmm, strange. Because looking at those things there:
+
+root->has_mapped_host_mmio and vcpu->kvm->arch.has_mapped_host_mmio
+
+they both read like something that a guest would set up once and that's it.
+But what do I know...
+
+> > IOW, can you stick this into a simple variable which is unconditionally
+> > updated and you can use it in X86_FEATURE_CLEAR_CPU_BUF_MMIO case and
+> > otherwise it simply remains unused?
+> 
+> Can you elaborate?  I don't think I follow what you're suggesting.
+
+So I was thinking if you could set a per-guest variable in
+C - vmx_per_guest_clear_per_mmio or so and then test it in asm:
+
+		testb $1,vmx_per_guest_clear_per_mmio(%rip)
+		jz .Lskip_clear_cpu_buffers;
+		CLEAR_CPU_BUFFERS_SEQ;
+
+.Lskip_clear_cpu_buffers:
+
+gcc -O3 suggests also
+
+		cmpb   $0x0,vmx_per_guest_clear_per_mmio(%rip)
+
+which is the same insn size...
+
+The idea is to get rid of this first asm stashing things and it'll be a bit
+more robust, I'd say.
+
+And you don't rely on registers...
+
+and when I say that, I now realize this is 32-bit too and you don't want to
+touch regs - that's why you're stashing it - and there's no rip-relative on
+32-bit...
+
+I dunno - it might get hairy but I would still opt for a different solution
+instead of this fragile stashing in ZF. You could do a function which pushes
+and pops a scratch register where you put the value, i.e., you could do
+
+	push %reg
+	mov var, %reg
+	test or cmp ...
+	...
+	jz skip...
+skip:
+	pop %reg
+
+It is still all together in one place instead of spreading it around like
+that.
+
+Oh well.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
