@@ -1,125 +1,108 @@
-Return-Path: <linux-kernel+bounces-898253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A455C54B1A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 23:11:53 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDCBFC54B3F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 23:20:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE0263B1100
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 22:11:44 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3D0514E0527
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 22:20:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DC8A2EA72A;
-	Wed, 12 Nov 2025 22:11:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 907952EBDE0;
+	Wed, 12 Nov 2025 22:19:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="piS90BQR"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n/1DwiIo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 327AC2D839E;
-	Wed, 12 Nov 2025 22:11:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7B082E6CA0
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 22:19:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762985497; cv=none; b=GzqDPJlOxre7S00XHpIheCoiFf8xTHqlmItoR8WGQk6LMgQGS87Lrd8fKiwCa7We2RhyIne4E1JU10SYjoZgp763dJimu8xdmk6Ip0fM1a1MWyRRn2xydUa0ERk/crcK4HanCzsaI+ywCyp3jH9kkgGBipYrxYNvtYbqtVxLHnU=
+	t=1762985993; cv=none; b=tFCHLHkBZKPm0qE5koPvf+HlasIqrTnr7kmOQVlhFqazGPGnskv6CH1CzAD6iC7IAF7n34O0xqVppIAQU+aFIraJ1WqwVCAUqe0f1qd+wSIwdiW0XBGsq8im1NBkT7oi4b5Dme2PEkxhp9ToWd4+DujU1Yyr2gePvki8d41e4RY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762985497; c=relaxed/simple;
-	bh=3dbb1glMmN4Hc/HfJc1ZiSvcOet6dpQDyyNgXSY3pm0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bs98Jib59vFCYMTILgcjNuP87DPzBaeH/mIDHlR45IB9TjoouKWjRyNJDKE+dCMx9fnNuKmfzWii71WVI+z7dCJQZAr04cNSMKiPG+E1IBzflwSLzs9jDnMQ1gUIHp0KrujFxQt8jnoS0kvde4Ft+/9R9VdmZgKBmOdTmrThT68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=piS90BQR; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=dD3fqFseYEbF2xvDfha1nIzZW8UZrTPdcl3szlzJX38=; b=piS90BQRKYqNHfVdh3rf4wmY9X
-	MxDcJ3Uadg+v62kXwgzqB7sCgkOT1N7514BRvZNcaPbDDX82C1hbk2iXTJfJl/93ouXUvNbjddrhn
-	bVMv+fZOtyFrtQTix2k9UsRtGIi9uTLCaBjaItV+qYrJLUhUlIjtIOMuNH3eiQQ24mf3CcVdZ/gFk
-	aJNKWq33IcOSZ1ySkS9u+QqsX6YY5BeiTSgUhcex7Fi6l/2Dr0KH7xI3ECkN4rs2POqzDRKKijbut
-	lT0HN9I3roJAAYIKukQTl/Cgto/jNR/ZPKPx5/Y1VOIXnUs3SNTctvJtw7MPqK3Zqhh5+OnyBQ0uD
-	uWBr3gEQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:54020)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1vJJ3a-000000004c3-3no6;
-	Wed, 12 Nov 2025 22:11:14 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1vJJ3X-000000004Fi-180y;
-	Wed, 12 Nov 2025 22:11:11 +0000
-Date: Wed, 12 Nov 2025 22:11:11 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: =?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <clement.leger@bootlin.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH net-next 2/2] net: pcs: rzn1-miic: Add support for PHY
- link active-level configuration
-Message-ID: <aRUF_3K0BRInAp55@shell.armlinux.org.uk>
-References: <20251112201937.1336854-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20251112201937.1336854-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	s=arc-20240116; t=1762985993; c=relaxed/simple;
+	bh=VJWjXYGJBNwYFBaFjS8qpnnVAKIcI+JOJyyZM7I8U0Y=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=NuxI/s26YsK2tZQw+JfGMGUQDKXL4fPZAqerNWK88H7b2kowjhw7MJ5ywN7fwoVq7Fz8jxrdahA3hgEEOXUTbYrmDTmZ2TVGOpIlSFb9tL1zRLMzReAxydn2e/JDu2tPQAz+DyMYc2cNVRLLaaDtSrh18+TAeZgapxut35Lttbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n/1DwiIo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93A44C4CEF1;
+	Wed, 12 Nov 2025 22:19:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762985993;
+	bh=VJWjXYGJBNwYFBaFjS8qpnnVAKIcI+JOJyyZM7I8U0Y=;
+	h=Date:From:To:Cc:Subject:From;
+	b=n/1DwiIoW1s1L1bNVvGsHOKk33ZyQg7Sw/tUY7nSBPGIFGe41rIbQREirJKC8ULYd
+	 jFOIQO+87cTyFbgHObxEiNFLp+F6+M0LLreVgKe0Ho1gpgMmUF0uWvg3/gZzqoxRPy
+	 Je2hI4s/HhygJNhQszXxtm1MShHJejj3A3dbRqCBkBvphyVigrVUdhQZZVEvIxeHwA
+	 xXhcOAHoDsxkdZopzCWSP1ED+Xv+odylotIygRH00kCK7X0iNhuSm+ear9PXKs6F52
+	 ixh9w3vDPPGmVqUjO9TfRmDdp4cFQOZiiscBdyg8Zn+xWmlrRwOsBmgFrOLquDKE4c
+	 go6tGvTOQlaBw==
+Received: from rostedt by gandalf with local (Exim 4.98.2)
+	(envelope-from <rostedt@kernel.org>)
+	id 1vJJCA-00000001EVL-2QR0;
+	Wed, 12 Nov 2025 17:20:06 -0500
+Message-ID: <20251112221946.389142361@kernel.org>
+User-Agent: quilt/0.68
+Date: Wed, 12 Nov 2025 17:19:46 -0500
+From: Steven Rostedt <rostedt@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: Gabriele Monaco <gmonaco@redhat.com>,
+ Nam Cao <namcao@linutronix.de>,
+ =?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+Subject: [for-next][PATCH 0/5] rv: Updates for v6.19
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251112201937.1336854-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Wed, Nov 12, 2025 at 08:19:37PM +0000, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> 
-> Add support to configure the PHY link signal active level per converter
-> using the DT property "renesas,miic-phylink-active-low".
-> 
-> Introduce the MIIC_PHYLINK register definition and extend the MIIC driver
-> with a new `phylink` structure to store the mask and value for PHY link
-> configuration. Implement `miic_configure_phylink()` to determine the bit
-> position and polarity for each port based on the SoC type, such as RZ/N1
-> or RZ/T2H/N2H.
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+latency/for-next
 
-To echo what Andrew said... really really bad naming.
+Head SHA1: 69d8895cb9a9f6450374577af8584c2e21cb5a9f
 
-include/linux/phylink.h:struct phylink;
 
-This structure identifier is already in use, and what's more, this
-driver includes that header file.
+Gabriele Monaco (2):
+      selftest/ftrace: Generalise ftracetest to use with RV
+      selftests/verification: Add initial RV tests
 
-What exactly is this "PHY link signal" that you talk about in the
-commit description? Apart from the LED outputs, I'm not aware of
-generally PHYs having a hardware output to indicate link status.
+Thomas Weißschuh (3):
+      rv: Pass va_list to reactors
+      rv: Make rv_reacting_on() static
+      rv: Add explicit lockdep context for reactors
 
-If we're talking about the link status bit in the SGMII config
-word, if there's PHYs that have that bit inverted, they deserve to
-be broken, because they will be broken with most hardware that
-interprets the link state bit (I've never seen the facility to
-invert that bit in hardware.)
-
-Basically, please explain what this is for, what this is doing, and
-why it is necessary.
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+----
+ MAINTAINERS                                        |  1 +
+ include/linux/rv.h                                 | 11 ++--
+ include/rv/da_monitor.h                            | 35 +++-------
+ include/rv/ltl_monitor.h                           | 18 ++----
+ kernel/trace/rv/reactor_panic.c                    |  6 +-
+ kernel/trace/rv/reactor_printk.c                   |  6 +-
+ kernel/trace/rv/rv_reactors.c                      | 22 ++++++-
+ tools/testing/selftests/ftrace/ftracetest          | 34 +++++++---
+ .../ftrace/test.d/00basic/mount_options.tc         |  2 +-
+ tools/testing/selftests/ftrace/test.d/functions    |  6 +-
+ tools/testing/selftests/verification/.gitignore    |  2 +
+ tools/testing/selftests/verification/Makefile      |  8 +++
+ tools/testing/selftests/verification/config        |  1 +
+ tools/testing/selftests/verification/settings      |  1 +
+ .../selftests/verification/test.d/functions        | 39 +++++++++++
+ .../test.d/rv_monitor_enable_disable.tc            | 75 ++++++++++++++++++++++
+ .../verification/test.d/rv_monitor_reactor.tc      | 68 ++++++++++++++++++++
+ .../verification/test.d/rv_monitors_available.tc   | 18 ++++++
+ .../verification/test.d/rv_wwnr_printk.tc          | 30 +++++++++
+ .../selftests/verification/verificationtest-ktap   |  8 +++
+ 20 files changed, 322 insertions(+), 69 deletions(-)
+ create mode 100644 tools/testing/selftests/verification/.gitignore
+ create mode 100644 tools/testing/selftests/verification/Makefile
+ create mode 100644 tools/testing/selftests/verification/config
+ create mode 100644 tools/testing/selftests/verification/settings
+ create mode 100644 tools/testing/selftests/verification/test.d/functions
+ create mode 100644 tools/testing/selftests/verification/test.d/rv_monitor_enable_disable.tc
+ create mode 100644 tools/testing/selftests/verification/test.d/rv_monitor_reactor.tc
+ create mode 100644 tools/testing/selftests/verification/test.d/rv_monitors_available.tc
+ create mode 100644 tools/testing/selftests/verification/test.d/rv_wwnr_printk.tc
+ create mode 100755 tools/testing/selftests/verification/verificationtest-ktap
 
