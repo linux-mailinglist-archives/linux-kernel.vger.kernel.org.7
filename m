@@ -1,191 +1,160 @@
-Return-Path: <linux-kernel+bounces-896876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F150FC51650
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:40:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C6A08C516E3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:46:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69C88188F596
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:39:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A2F4189F8A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:44:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFD7D2FD7D8;
-	Wed, 12 Nov 2025 09:38:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0E5D2F90EA;
+	Wed, 12 Nov 2025 09:43:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iCk9qBeY"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="mw6t/RvO";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="QZAurFEf"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5140926CE04
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:38:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77DF82FE568
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:43:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762940321; cv=none; b=nDS7XD9RE3ZKk9aq/1P3ibd6rFIWwTnkt+eJ59mFha/V78Zqh4t9+d3TBREkcf8jYC2nkqNKecHli6KV88FHm2gdE7BNV5Wh8MbCAWLimNqqX8BM7TWpBP+ILRvVpwQALPiQ2IdShUrEj8PYwrkaTaRZpyM0C8hLHuEP9sp6LSs=
+	t=1762940606; cv=none; b=OfbwsfqOi6yAGj7TquUhIVtRjgCp6ZOl1nYOVxsKhuyeM1d64YcH1B4/qpAkpf2pcAC8SxXKD0TAgYOM29ear15gMizmx7FrEXmFLVWP2uLs4IEvCx3MIyRQtUV6rd7QfOQ2OPvNUk3mMDLgPiI+YLmNR5VcyPnMi0FjuFTZ+0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762940321; c=relaxed/simple;
-	bh=n+Gy/q1ZghdzRPER0WHQj+R4RyDqTABKPYlxa+KTZpE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XsQJ9MD3ysKbhuHRfrmebvHQeYMzBx8sy16i0/b0DLkbgYRbuaCwRhHlP7sJwvculm38/DGJn9xxFzZmBBSKMgJeMyudceqaU8Y+u5Hhnvgkn7StZHxtVJoivFnpIur+gubd2psnD1TYs0TqjAbAEFlwUIXwgssfRd94wswhj8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iCk9qBeY; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762940318;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Cepd6WU4kopEaHk/zWZiU+KNb4Y7n9nNigJMeAdOfi4=;
-	b=iCk9qBeYW1lxbHL03qVm1Lu0g5gnffzQDwalKp4txSkX/CAGyFBvC3CiUWJVqpHdqHngim
-	NsASmpV8dVss0aDLlrrc0sAPl8wEoChUCTJI24nEGHpd+V3dgq0ZKyj0UjZhK/KBq3ejjY
-	0ruUe19aUU8Gpk/LTPd5ULzi9jXE2+E=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-112-R7ByYcyAMdWGvtfupXNz7g-1; Wed,
- 12 Nov 2025 04:38:36 -0500
-X-MC-Unique: R7ByYcyAMdWGvtfupXNz7g-1
-X-Mimecast-MFC-AGG-ID: R7ByYcyAMdWGvtfupXNz7g_1762940315
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 198C018002CA;
-	Wed, 12 Nov 2025 09:38:35 +0000 (UTC)
-Received: from localhost (unknown [10.72.116.179])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id CDDC630044E0;
-	Wed, 12 Nov 2025 09:38:32 +0000 (UTC)
-From: Ming Lei <ming.lei@redhat.com>
-To: Jens Axboe <axboe@kernel.dk>,
-	linux-block@vger.kernel.org
-Cc: Caleb Sander Mateos <csander@purestorage.com>,
-	Uday Shankar <ushankar@purestorage.com>,
-	Ming Lei <ming.lei@redhat.com>,
-	Stefani Seibold <stefani@seibold.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH V3 01/27] kfifo: add kfifo_alloc_node() helper for NUMA awareness
-Date: Wed, 12 Nov 2025 17:37:39 +0800
-Message-ID: <20251112093808.2134129-2-ming.lei@redhat.com>
-In-Reply-To: <20251112093808.2134129-1-ming.lei@redhat.com>
-References: <20251112093808.2134129-1-ming.lei@redhat.com>
+	s=arc-20240116; t=1762940606; c=relaxed/simple;
+	bh=x9HZDMX3Zl7CIXyTCe51Kaaysc210oZGR++rzbzttjw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rWoVSkKJCLlumkETGjn8u55fQm5xMsH5RDtXgHY5Y8EYM+6G0+VzaVy+KJlgDFx5UpEdelAYL87kH5u6yQrC4d01Omq1/LAhC5GpXL5dTN74sqC+OatgmAJAFN0exB5nDJx1HMPs2sS99xp9N+cxrnK8r5xTderUm+0u3CHTH/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=mw6t/RvO; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=QZAurFEf; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AC9XnCg4077097
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:43:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	LP0rQwhtBnPbXDJLLh9Cb7GUk7T1lPnHvrnhjlBK9gk=; b=mw6t/RvOzawLe/O7
+	jAaHOnYA86/+4455aXIAk3wk5pIXd9CPeqaqhzPOkjVd7nvagTiMlJS3L2v5CLAE
+	hsB5REIrLL952+Qizg25AnjYyfzR3w6Rje+XDXF+Vxp34FkVVM+tnXXdMBecmoyR
+	HKdFSzB8LwByF4LNE/OcEIKbO9TK1aj6ezf6xGTUFckHl3wkXYsyrSAcIYdSIH6A
+	KfqY4sq3KKZSrSQrTnFNYFQ/P3tigo77ofhIxsNZz1EP4wbqBB02+rMoievKdhUN
+	56K5OsWXlSezcx9adFwde7mf3b238ffq/cL9k9jlwvqHH3AqiCGMAfTAizcU5bLa
+	FNYYVg==
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4acguahb34-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:43:24 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4ed6317be8cso2058021cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 01:43:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1762940354; x=1763545154; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=LP0rQwhtBnPbXDJLLh9Cb7GUk7T1lPnHvrnhjlBK9gk=;
+        b=QZAurFEfbI1AuhF0F5UZhJu9oTJX8EhqstrRbHAvGSiI6pRJJV1rncj0qI0cUUWGDM
+         DUAZaXcC0UjxsE6E/toelxgy02WjlpUagrp1gtwGA1N9rtcLAL2ACtvojEoFYPgsjwBQ
+         WJDFMEZGuKix35VBu6Ii4aZJ+J9K4RvwJHVRprLN//9CjXiIzcNC6hJn4JvgmRpAYajU
+         1S42WIZlFRGzGC26I/YNpFQ/ECEuZe3JaVagoKZ/qsZ0755mCFrSmVj4bS9CVc7AD1JY
+         JdwtxmDv9MIK5zmDvBBwME9GBLTqR9ycLwMqoA4vEoSv0RwngDiLlZ3B47U3KrDSoNmQ
+         yJew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762940354; x=1763545154;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LP0rQwhtBnPbXDJLLh9Cb7GUk7T1lPnHvrnhjlBK9gk=;
+        b=JsmqZSV6Zl2dx28z8RpV2YqUudB6rX6U4IIKLBc+AA78Mvp4gZYRU416FG5iIpCxIA
+         x0qs9gpn7sqK7V4kvsoPU/ZDpBsAxty39EQVreurPc1/39Wqa2jA3v/7JwWtqrW4lmdg
+         PmARFaLopnkTtw5GNGYWs7xuTfycg8Qvn/EMcdTz6Azer5AgPiJhJuclYxMoeRfNPdsh
+         SW56nCUKIcvJOBRI3uUylFQ4Csi1UHZA6jsVujNCFy1HxFtBFZjOc5NV6TwlH9SHiklj
+         65/M0Sjo5c8pvJvNpHQXhSRoNzr0wWsFHKaXGrIKRMTGgBaRj3pDahH1kXIsViV1Dp2S
+         vKSg==
+X-Forwarded-Encrypted: i=1; AJvYcCUfShPatYanX7a5pyiaSjNnqmVxIXi5HXlRbGohT10NWDwPSBcrHns4zjCl1EpRlc+0LYDcvpUgKcDj650=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKyMP4ZI4951Tn6Au7UTYnQCG+c2CwLtnBB4xK/2OsNnsQqRQI
+	OHXOO47iucxOiJQ0Lnwl6aosA2fRt1UD5+UcE+x1ml1KpD6H6NwoMy+UHxlwmje03vM7JYTD0Ac
+	Ma+MrBmQBTR5vktVHD4xPQX4GWwbf4gkXaBnxoimlH295pSuj1vIPQX7ZIwRWqrB95vM=
+X-Gm-Gg: ASbGncs1VlGVzW+kaGVVC7AHNP+zAqcUKR2sPZGO5IrFQOBI6zt56kkSgiPnW29b3ey
+	lS3OC9UG6uENGyCOGIgfxWoaDq7Oik04ezJLVslIIfw6Kv2ni2Qi7xpdp3ZS4N1rfOblEhKtcep
+	XRgOpTt+faONabCr6fKO0srDSgGA7JDxZrgiUX+h+nSiOftV9Vi0YqiX78ferVPvhlWao2KgqKH
+	jbYQzEo2M0GIsBddc0lQpJEFEbNhVrSc/yCknlVaNA7eb+Hbvwp6PLLpJP9uVZnleRhgOHJbcY/
+	D84V/n1X1eOLNMNN001DxoACzzeumWi9NkgxNRKLRGQPlAfTCZA75AIol3uulf0jhRV9ZwM2XaP
+	RqL8poor3SvjhnFjVrWAhVI/1OSz/rgEjR0CMS/MQTpP/7PmL8zBjuEGa
+X-Received: by 2002:ac8:5dc7:0:b0:4eb:9cb1:c290 with SMTP id d75a77b69052e-4eddbc9b895mr18101711cf.4.1762940354063;
+        Wed, 12 Nov 2025 01:39:14 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGCn/jV7wFdg3W1AVfUFL8B7J0xd9T8o01wXhaCJP9H2hJuRKsMlSsXgVFBDzEZebZV6pBNAA==
+X-Received: by 2002:ac8:5dc7:0:b0:4eb:9cb1:c290 with SMTP id d75a77b69052e-4eddbc9b895mr18101571cf.4.1762940353655;
+        Wed, 12 Nov 2025 01:39:13 -0800 (PST)
+Received: from [192.168.119.202] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bdbcea8csm1551575466b.8.2025.11.12.01.39.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Nov 2025 01:39:12 -0800 (PST)
+Message-ID: <db7ca9cc-46e7-4edf-8419-eb03782c2346@oss.qualcomm.com>
+Date: Wed, 12 Nov 2025 10:39:10 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] arm64: dts: qcom: hamoa-iot-evk: Add backlight support
+ for eDP panel
+To: Yongxing Mou <yongxing.mou@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>
+References: <20251112-hamoa_dvt_backlight-v3-1-f35b44af7fc4@oss.qualcomm.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20251112-hamoa_dvt_backlight-v3-1-f35b44af7fc4@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: YTTDyVZ2eVBRnuldxN4a9033PQWIoge8
+X-Authority-Analysis: v=2.4 cv=ao2/yCZV c=1 sm=1 tr=0 ts=691456bc cx=c_pps
+ a=WeENfcodrlLV9YRTxbY/uA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8
+ a=nPG1Do-yNho4o320QkMA:9 a=QEXdDO2ut3YA:10 a=kacYvNCVWA4VmyqE58fU:22
+ a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-ORIG-GUID: YTTDyVZ2eVBRnuldxN4a9033PQWIoge8
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEyMDA3NyBTYWx0ZWRfX2r9VnMsSJ77g
+ Wj3qu2W//j1eE02bJmiuJC+pmdpc4v1ubM5n0ejxGdPlR8yEG+CynaJg7fqZ9RaVaf+fAcGBda7
+ VLmAMwX/0sen0ND8YRQXIya2OfRA6ZJMYdpy5iMaC8+pqOZbLU8hBIqdE7d1I0YY3kMXNkON+1u
+ QDq7EnRkOSPfxe+YBJp//2gJX3TU+YW3XYqUSJzcNcCPQcjMNlR15II661dLd0L5bRRR9aJsZzL
+ OHjCOi7FCOmzE5Y7EjRWfC0aYW9OhPaU0Bf98cKYRwyz/vziGZHJpDl9NeKJOvdL4cgSVrH4VqR
+ 0QOBmmYKE8JkFwhl6a/1PzzfCDq8OMMTiRAPM+03Dst0rATlQXroLfc7lVilMXM1m+DQf8l/RUG
+ phJJ01goPHNHw1ftaf+CHnZ4Pit58g==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-12_03,2025-11-11_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 clxscore=1015 spamscore=0 phishscore=0 adultscore=0
+ priorityscore=1501 impostorscore=0 malwarescore=0 suspectscore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511120077
 
-Add __kfifo_alloc_node() by refactoring and reusing __kfifo_alloc(),
-and define kfifo_alloc_node() macro to support NUMA-aware memory
-allocation.
+On 11/12/25 5:21 AM, Yongxing Mou wrote:
+> The backlight on the Hamoa IoT EVK is controlled through a PWM signal.
+> Aligned with other x1e80100-based platforms: the PWM signal is controlled
+> by PMK8550, and the backlight enable signal is handled by PMC8380.
+> 
+> Describe the backlight device and connect it to the eDP panel to allow
+> for brightness control.
+> 
+> Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
+> Signed-off-by: Yongxing Mou <yongxing.mou@oss.qualcomm.com>
+> ---
 
-The new __kfifo_alloc_node() function accepts a NUMA node parameter
-and uses kmalloc_array_node() instead of kmalloc_array() for
-node-specific allocation. The existing __kfifo_alloc() now calls
-__kfifo_alloc_node() with NUMA_NO_NODE to maintain backward
-compatibility.
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-This enables users to allocate kfifo buffers on specific NUMA nodes,
-which is important for performance in NUMA systems where the kfifo
-will be primarily accessed by threads running on specific nodes.
-
-Cc: Stefani Seibold <stefani@seibold.net>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
----
- include/linux/kfifo.h | 27 +++++++++++++++++++++++++++
- lib/kfifo.c           | 13 ++++++++++---
- 2 files changed, 37 insertions(+), 3 deletions(-)
-
-diff --git a/include/linux/kfifo.h b/include/linux/kfifo.h
-index fd743d4c4b4b..61d1fe014a6c 100644
---- a/include/linux/kfifo.h
-+++ b/include/linux/kfifo.h
-@@ -369,6 +369,30 @@ __kfifo_int_must_check_helper( \
- }) \
- )
- 
-+/**
-+ * kfifo_alloc_node - dynamically allocates a new fifo buffer on a NUMA node
-+ * @fifo: pointer to the fifo
-+ * @size: the number of elements in the fifo, this must be a power of 2
-+ * @gfp_mask: get_free_pages mask, passed to kmalloc()
-+ * @node: NUMA node to allocate memory on
-+ *
-+ * This macro dynamically allocates a new fifo buffer with NUMA node awareness.
-+ *
-+ * The number of elements will be rounded-up to a power of 2.
-+ * The fifo will be release with kfifo_free().
-+ * Return 0 if no error, otherwise an error code.
-+ */
-+#define kfifo_alloc_node(fifo, size, gfp_mask, node) \
-+__kfifo_int_must_check_helper( \
-+({ \
-+	typeof((fifo) + 1) __tmp = (fifo); \
-+	struct __kfifo *__kfifo = &__tmp->kfifo; \
-+	__is_kfifo_ptr(__tmp) ? \
-+	__kfifo_alloc_node(__kfifo, size, sizeof(*__tmp->type), gfp_mask, node) : \
-+	-EINVAL; \
-+}) \
-+)
-+
- /**
-  * kfifo_free - frees the fifo
-  * @fifo: the fifo to be freed
-@@ -902,6 +926,9 @@ __kfifo_uint_must_check_helper( \
- extern int __kfifo_alloc(struct __kfifo *fifo, unsigned int size,
- 	size_t esize, gfp_t gfp_mask);
- 
-+extern int __kfifo_alloc_node(struct __kfifo *fifo, unsigned int size,
-+	size_t esize, gfp_t gfp_mask, int node);
-+
- extern void __kfifo_free(struct __kfifo *fifo);
- 
- extern int __kfifo_init(struct __kfifo *fifo, void *buffer,
-diff --git a/lib/kfifo.c b/lib/kfifo.c
-index a8b2eed90599..195cf0feecc2 100644
---- a/lib/kfifo.c
-+++ b/lib/kfifo.c
-@@ -22,8 +22,8 @@ static inline unsigned int kfifo_unused(struct __kfifo *fifo)
- 	return (fifo->mask + 1) - (fifo->in - fifo->out);
- }
- 
--int __kfifo_alloc(struct __kfifo *fifo, unsigned int size,
--		size_t esize, gfp_t gfp_mask)
-+int __kfifo_alloc_node(struct __kfifo *fifo, unsigned int size,
-+		size_t esize, gfp_t gfp_mask, int node)
- {
- 	/*
- 	 * round up to the next power of 2, since our 'let the indices
-@@ -41,7 +41,7 @@ int __kfifo_alloc(struct __kfifo *fifo, unsigned int size,
- 		return -EINVAL;
- 	}
- 
--	fifo->data = kmalloc_array(esize, size, gfp_mask);
-+	fifo->data = kmalloc_array_node(esize, size, gfp_mask, node);
- 
- 	if (!fifo->data) {
- 		fifo->mask = 0;
-@@ -51,6 +51,13 @@ int __kfifo_alloc(struct __kfifo *fifo, unsigned int size,
- 
- 	return 0;
- }
-+EXPORT_SYMBOL(__kfifo_alloc_node);
-+
-+int __kfifo_alloc(struct __kfifo *fifo, unsigned int size,
-+		size_t esize, gfp_t gfp_mask)
-+{
-+	return __kfifo_alloc_node(fifo, size, esize, gfp_mask, NUMA_NO_NODE);
-+}
- EXPORT_SYMBOL(__kfifo_alloc);
- 
- void __kfifo_free(struct __kfifo *fifo)
--- 
-2.47.0
-
+Konrad
 
