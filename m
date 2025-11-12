@@ -1,236 +1,224 @@
-Return-Path: <linux-kernel+bounces-897749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E000C53B74
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:37:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 077B9C53AC6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:27:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 938EC501638
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:33:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CFFA4A665B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:32:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F34B8340293;
-	Wed, 12 Nov 2025 16:32:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46600238C1B;
+	Wed, 12 Nov 2025 16:32:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Hc2A6lJ7"
-Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="iUv2T3X6"
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010011.outbound.protection.outlook.com [52.101.84.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5299C2D130B
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 16:32:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762965167; cv=none; b=aosW9hcKW1t5KNBoopHjlqHy7PfQ1sLQjGhXniwkYDbIB5xY6OD27V+K6UCA0DMTPA5NeY2HpCYAzun2nZgnZZzRdg4sJTYsldCPx4m04BazIfK+LEyp/gjd7sbf8xrsuIVBJcoXld2oO33+dSJCNptnX/FNU4oAa+gHdPwDPtY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762965167; c=relaxed/simple;
-	bh=RMRa8Q6ayawYi21qORb4H3++uTkFrXR1cUC5uQ7UhUo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gmi6pPsmPSCjv3kItNsx3OwXFDrLUSQvc+h6YQ2ewmyHaZ+4L+aXCaBC6jjwPbl/chFm+PjZEeAt88yhlzkSs5TH6Ez0nLcVf/QC0y0Fj5Z4KOLzer1QQT/qHbIyBS8fhjuDz1M4XRHhXEec5zGUzocBONX6cHc/MzCqLD0ViXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Hc2A6lJ7; arc=none smtp.client-ip=91.218.175.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1762965163;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mtXUOdznhUmZcR4XZKkageB0d5MGuAnQnq36wg+kOAg=;
-	b=Hc2A6lJ7AX0YAWwEH4hpV5gqPnSP+43TbPSYyaDnMauGYA5fZG/lbLB7qYx57o8TGDO3s2
-	OGXdAXhqWF/u0PrpI8ZSQjCuFSRkfu29mL7cPJ0hWu+VMpsn5kKF0Nt1jgKIqH46m0yIRa
-	KJdGaySHfDKBJgCt+gskfaSr9F2b46E=
-From: Tao Chen <chen.dylane@linux.dev>
-To: peterz@infradead.org,
-	mingo@redhat.com,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	kan.liang@linux.intel.com
-Cc: linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org,
-	Tao Chen <chen.dylane@linux.dev>
-Subject: [PATCH bpf-next v6 2/2] bpf: Hold the perf callchain entry until used completely
-Date: Thu, 13 Nov 2025 00:31:48 +0800
-Message-ID: <20251112163148.100949-3-chen.dylane@linux.dev>
-In-Reply-To: <20251112163148.100949-1-chen.dylane@linux.dev>
-References: <20251112163148.100949-1-chen.dylane@linux.dev>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 234273101A6;
+	Wed, 12 Nov 2025 16:31:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.11
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762965119; cv=fail; b=AszCdeDjIhl3ICdLxpg+VFrY3HfaMGP/HZibU9LQe15SYtk7unA4D7Ci4v4BkFfD8hk2yzJ7dlcQa5iUZCQeWqGogWdy/rVy7CAgSMY2uDLo35N63i1QoaGCPjmZ/nkeNj4HZG0KAFPHOnsiqu1ZrHh9wKUslMJqsNeqBLFvy4E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762965119; c=relaxed/simple;
+	bh=6OGS4cYpSB+yGxBO5Apb/pneCFZl1L5GLevDsl8pAvI=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=RTVFFCNbvubNZaxZNc1S6sKlTg9VdyvAesNycMLbBbt0WA8P255ieA44A/I+56F9QWXPfAg51u+fFHaLzjeCxKD7BncH06Czc5xyXKvMEcuT6pdO7p7IWGp2hN0sf4Ov9ntRvRRd02JDVyfV8L/ZSm0/AG+3OKdqtXHZJaN8v64=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=iUv2T3X6; arc=fail smtp.client-ip=52.101.84.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=uAG3RFMP8rPRQ1SXcMn/Fv9dEADG3/qvh0sS28lo/ujchOkQxCDOUqwKymEwOl4CVpdfrmofArx1x8Z+TrDIRRZ2ixlsRUj/AtMdV7+Cs/QivacADDwIbGAzuLCvfQECEc7ZmAQQPai8JbPx9QIXzgijUmGiM2rWq5f++B7e1aFfGTEsciS/g/pGWpq/6piHPcn/ULK0AkxlaW8+lZjyTCaI3XVJHbVvdzrq4eT9BzOQYH5UWx+V58GPw0ZDvIl4Pa/6Z8ElE8mrdEQ2TqvRuW5XPS1GGHbhYmr97W1OhX3z3YR6xdYf2cKEYPA1dd6+cMXDGjnfKswgxc5gbfJkuw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=nEk3efs5UmYqOp9HsUBbVk+JLXOej1iukWHljM6N/CA=;
+ b=fy/7+Ig3GbqQS0q8HB8TMKL/zLznNspfPjJDlC8DgZ/k4VpiqE31OezcQcFLsrS7g4wDJDZ0W9O0yEnE4/dVM4AY7Na1n7wToQ4dr3E6qkBiwxGVNsXVTfVV+fD347mlgindQNpj+I1cMXeOTvEWBwGjjFY14lVD+C/q4sT7sKTNNqwcOl8yJB5D3BPGXojKWVYEpC4Tj0Z/tEMon91L1p5rDncUJqq2wyhZME43rSnYVfn1/+UEu+rAS/T4GPPuTbSvZMNNdwQz5oz/eKXjEHYzf4DqX4qiIYrBobBECQNPl5DGxFQtsTY3uo/QRR5miPXa/XSnj380VhdYGE4qvA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nEk3efs5UmYqOp9HsUBbVk+JLXOej1iukWHljM6N/CA=;
+ b=iUv2T3X6VMT8zJijiATenWiMttFQfXc0yCSBGQCWeVvWruPBVfKgX/NAa/9CE7Y2SNhxee7CShWgo3nztt6My6yFdKsqYArMeEt3o7UnTiQ73qGXihGO64Xpg4ojrfSnePwVHsvnPsCTlOMwZtHSRjGVKJ4YnJRNIoGcsxrYAA5kltAaqtgJeYXKF99pNKrYYbKuhAbYXMsAoUgmvISHckwTU4R8wtxRMwUEyCRS0Ei5CkgaRtD0+tWzzbnOHKepjPyglBJUDjcl09PHgmSxa2FQNWOUU0/ccz2S+89srdV0NvkfVDpdCdc3yEufQ1VJuq4YY+n+kn6tcWgWouPD6g==
+Received: from PAXPR04MB9185.eurprd04.prod.outlook.com (2603:10a6:102:231::11)
+ by AM8PR04MB7329.eurprd04.prod.outlook.com (2603:10a6:20b:1d0::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.16; Wed, 12 Nov
+ 2025 16:31:53 +0000
+Received: from PAXPR04MB9185.eurprd04.prod.outlook.com
+ ([fe80::21bf:975e:f24d:1612]) by PAXPR04MB9185.eurprd04.prod.outlook.com
+ ([fe80::21bf:975e:f24d:1612%5]) with mapi id 15.20.9320.013; Wed, 12 Nov 2025
+ 16:31:52 +0000
+From: Shenwei Wang <shenwei.wang@nxp.com>
+To: Andrew Lunn <andrew@lunn.ch>
+CC: Linus Walleij <linus.walleij@linaro.org>, Bjorn Andersson
+	<andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
+	<s.hauer@pengutronix.de>, Jonathan Corbet <corbet@lwn.net>, Bartosz
+ Golaszewski <brgl@bgdev.pl>, Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>,
+	"linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-doc@vger.kernel.org"
+	<linux-doc@vger.kernel.org>, dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH v5 3/5] docs: staging: gpio-rpmsg: gpio over rpmsg bus
+Thread-Topic: [PATCH v5 3/5] docs: staging: gpio-rpmsg: gpio over rpmsg bus
+Thread-Index: AQHcU/HZrq6NLJx0oEuky2ze4vYHyg==
+Date: Wed, 12 Nov 2025 16:31:52 +0000
+Message-ID:
+ <PAXPR04MB91854DD6096AD550074FA16189CCA@PAXPR04MB9185.eurprd04.prod.outlook.com>
+References: <20251104203315.85706-1-shenwei.wang@nxp.com>
+ <20251104203315.85706-4-shenwei.wang@nxp.com>
+ <CACRpkdZR2C=+ssYOKnF=hyOqTakGjVxzp5_qz=3-uYRpzaZgNQ@mail.gmail.com>
+ <AS8PR04MB9176F105B09FF939B22B85E589CFA@AS8PR04MB9176.eurprd04.prod.outlook.com>
+ <9bcd63d2-f75f-4cb6-a81f-eefc983a99bb@lunn.ch>
+In-Reply-To: <9bcd63d2-f75f-4cb6-a81f-eefc983a99bb@lunn.ch>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAXPR04MB9185:EE_|AM8PR04MB7329:EE_
+x-ms-office365-filtering-correlation-id: 0774cfaa-f168-44c4-cb7b-08de2208fc60
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|19092799006|376014|366016|7416014|1800799024|38070700021;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?TuA2YYDMrKVzKtWwaZP/xElhvCWxNWIpnocSCjxiyRIb/EoJ8Kg7Ui4ZOTmY?=
+ =?us-ascii?Q?e8h2P3vnQaYH6JLvIKkTwf3mXzzTq2ZktFjkEscQn07OopG3HRiq3SZSymuj?=
+ =?us-ascii?Q?OYJfiwEwLrk3DteQGc9Rvs0SECaGFhtR+T1jRm7f/srtSgSw/fS7DlzjQkim?=
+ =?us-ascii?Q?QOraFSPi2GyrEWzAwhblmcc+Xqp3Oed4hF5kgqQNNxjcCeNyffuOiCMQnJru?=
+ =?us-ascii?Q?bZYgPoJeQx+vNvIV8oStwfUS+SqZ9kxHTKWadUXeMOoVIdYGoncvFGRQlXW0?=
+ =?us-ascii?Q?6AM7VVl6P6SbaOKBqL1IAMhelOZjoPwgaiPMHK2M/0XKfXT7US1S9QiubaS+?=
+ =?us-ascii?Q?2XnsBEtT9BlD1hPaZegjWwefmihnkA57nnHW3M72rQithyZ39dl+bNj1tbow?=
+ =?us-ascii?Q?TlWzm8R+sXbdQK/4tx+CqZQq5HXISvVlVDjnUot3klGLRqZXBJR0Z/I0WiIh?=
+ =?us-ascii?Q?Vmgq0CRYETD4ufihY8hDyH5mfcrnNx+n5GVFAVZkTE/YexIutx6bH11yFBnH?=
+ =?us-ascii?Q?Wc4Nv3KDUG4Woz+qoxRjduWlzSZMdJpLsfDveks5wHrNREbZjEbfT3WWEL0h?=
+ =?us-ascii?Q?CbOrfGzUHZgQ7TQa/CvplBVEmK0mDpQOWQITz2zpTWM1JCFCzYG59EBPcmZx?=
+ =?us-ascii?Q?5nYhH41v2sVWCNBJAueJfs3FU32jUIfquvWHnmX9jZxdw4izDI19Fs8JPYtD?=
+ =?us-ascii?Q?1qMkR/XP3IBNvvvMMdSLVCPr0oMb7gdz81kxsogESxdQxz0HSCzXUsiba929?=
+ =?us-ascii?Q?n3aDue9aJlAhOk8W5qvelABL3C/F3gK8fhVH3GKQySicqnMyy3rcrR286vnH?=
+ =?us-ascii?Q?f+m7mgZI7gGSklixZzs9URjrHORXqsoPgoULQL6g9Q/tF5YLAHG/mLvclGKP?=
+ =?us-ascii?Q?Bc7xPzd9kg1VJBFfuYDA37R6+BqlMCc8LIOVzRiF0Xi2iN634Wt5jhTXG2ZC?=
+ =?us-ascii?Q?mVn9melup1MnPO9zJs1S+1n2tWTaNreOTrOrzAxdqmFx+/BOE/fqkINe0jjE?=
+ =?us-ascii?Q?cddA4hZvhg3mT/4N5smT2m63FeiigJJnve9muA5QXXSNgu1Gnb714C/Ilf3K?=
+ =?us-ascii?Q?u3XXOb9rx3SN4yM+dLNXU5N9aerA2VoUtnzzxzNWfELCh52q+gxscxXCx9LK?=
+ =?us-ascii?Q?5Y1w/3y7nwIYuPN4H8qCB5G4VEk1FlQEnOf3d7/SeIgMWwmn2ZetCABsGCSa?=
+ =?us-ascii?Q?AVeJHZalaNhBIQYJQ2acQzyfyvBFZDu2f4LwfsSDqUoClxPFiRZFvNwrUjm1?=
+ =?us-ascii?Q?gtdYVRkyxC9+5dpRrsms0NhBQ1RFc4o2zDzzvPBIg9mb8yx/RcFCqaaHBHAX?=
+ =?us-ascii?Q?Yy04mdbXvkoaTrUOjli9PpuQ37X43JwP8xw0sCDjAwTnn+5iulzFyeaJl2uX?=
+ =?us-ascii?Q?5Xpf/iPrKTSAUP1+ZiF9WVD0AlFv0sAvO3GRGs6VJpmZdmy4iSYBsgNQ5ptD?=
+ =?us-ascii?Q?RN9dt5cH9H3mVpsuR89j+2KcQ1NeF1MvoXLnjM1bHYp50pOSI0nUHI9135NP?=
+ =?us-ascii?Q?+vXhOv6Ab3s3S/EB0j90wopDMuA6dv23+8Bp?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9185.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(376014)(366016)(7416014)(1800799024)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?JDCwVe917qONsx4FKHua0wavI28kwCPaplzU36WBtLR1t2OrxZnA5iOlZWPS?=
+ =?us-ascii?Q?unEHbepAr9fNJOCAC3c3ZoNP54+54zttv4gDyaTolNKyxmzsxUi5+wKGYwMw?=
+ =?us-ascii?Q?c+IAUc8JgzI44JhyJbLuJKi+JmFgfsoydT/MiJ0N/ecsOVeFW3LboXPNyrBf?=
+ =?us-ascii?Q?7hn6T4dAC32wz3aZDMoqIWOuDbvQZ+1mO02Wy+f7iy9oufb64MfM4l2l84m/?=
+ =?us-ascii?Q?Qbva7FiEqNvSSmQyK1lxqEUmA4Z6uGHNYrymlc6uOOTSsELLqmuM7u+1nBfw?=
+ =?us-ascii?Q?eDR6n0dx/4Mzq3ulwJSe5hUnz+EaUB8vx5r5EcfriGYaTGEl+3GMm9h/lE/m?=
+ =?us-ascii?Q?AyGrBgJZTlCoWCq0lO9ySavBqn4pbUjuyz3v1rXGxfmOL1YAiR9TCNz8V006?=
+ =?us-ascii?Q?cSY8yjwAABAZuBuZFoMdkJ/Hwn4PN5fCj6N/w5QB7HOAAPFxLRWV9AapNurf?=
+ =?us-ascii?Q?5JLEcdoU+8dsFAv7M4i7EUxjn/hqUHkgCr6pO8coHWD7x9fbSRW5Kup49gkA?=
+ =?us-ascii?Q?6Dd0G0BgSuJK224/YX/AGRwOLtitjr7ZBYRu7zwl+VB13wvmGDDrSXrILKmF?=
+ =?us-ascii?Q?ndrnogcEyJJTCwbyFS7/RbfCzU96XiYpOxtv/irbLtlO/43XkGngprcShpjp?=
+ =?us-ascii?Q?jFAsZKA4DelUCLwCBruCEDjPgU36yS+glXHJke/3Z4olwFsGH0kUvpxzhqKE?=
+ =?us-ascii?Q?stTW8wWtMvs9OL1u5qeBMSCZ1uaxJ8KOuX2Aa6C1N+7Z9ABNX5PPtvux70AU?=
+ =?us-ascii?Q?Ka8cI/Qzd0CTUO4jNl+vetuKaiIEb1B6DFxXPy3aijny0rYH6LAJbAvj33tX?=
+ =?us-ascii?Q?AgXJsbZiVmO2PUW1d+fEkQGhvfVG235jRGd+4F/sf3g4Z3RaPU9KJ8SrbCy1?=
+ =?us-ascii?Q?Fxzcc6nBvcDpGJyasOAgHYtEMso1XSY6v4YgdCvptxfNIGbBePOWXVPqjuYl?=
+ =?us-ascii?Q?XP8j8HKJvaCC5RtWfvfgS2pOuxPqjzNTVBIbNnpHuKDyeRuz87u4Ov7243x8?=
+ =?us-ascii?Q?/WZfkt+EASE3AFxbucFZdRh41YsLntkqajmLH45QG6WF5143Wl4GLE8L/pJv?=
+ =?us-ascii?Q?KC2Z0AFclCgmCPED1mjgP35GPE3CSgOpYhZX55Bjvb89EfWyjllDTZ9ujA6d?=
+ =?us-ascii?Q?UGqqAtZEr5Qsipg8ID7m7trglNGWs64aW0GoS/DrcVexyopYBcBsKcqpsBqO?=
+ =?us-ascii?Q?Pf87fDMEa9AFU+Bk3ssVkYw2z7m0Ck2eaTPV4Mm/8ER1VdgPxkUYdT/8xBgM?=
+ =?us-ascii?Q?mb3cirwVNxZ85+pOwKj67RUqiQcOPB3NZ9VXIu8tQT4whEEkZkzwoYW0Zl7N?=
+ =?us-ascii?Q?R9BNyMYjRjtnSjs0tDcC+0cOEWX3WZzlZEgVCYIWecoW/RM2jEoFP46a0d1/?=
+ =?us-ascii?Q?0oPJWG0+TuyYXib1ZI7qJqmjbHypqd6FnWyeEl/x0TFaoepVwzo2YbyCNyBh?=
+ =?us-ascii?Q?tdssTbCmtloxhUaNn97fvPtywlwia3wLVjA0EVGb5i8OMCreX59zDX1SsbuQ?=
+ =?us-ascii?Q?jUsvj6mLo6O/f4wCAhHGHx7BeVKZHaZK0PL3ttYCM0vpy7DxRVL4HtBmvChO?=
+ =?us-ascii?Q?ZkfDfUVu+TMJMNaZx1g=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9185.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0774cfaa-f168-44c4-cb7b-08de2208fc60
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Nov 2025 16:31:52.2038
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: fVSaI4HG91WRVVkIQ9svLmzy/T5jmYfLMFv8U5VDOlX/2jTEYteq2Pk8ljBWg7NcWmQCTgfz0evrFFdNOW3Mag==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM8PR04MB7329
 
-As Alexei noted, get_perf_callchain() return values may be reused
-if a task is preempted after the BPF program enters migrate disable
-mode. The perf_callchain_entres has a small stack of entries, and
-we can reuse it as follows:
 
-1. get the perf callchain entry
-2. BPF use...
-3. put the perf callchain entry
 
-And Peter suggested that get_recursion_context used with preemption
-disabled, so we should disable preemption at BPF side.
+> -----Original Message-----
+> From: Andrew Lunn <andrew@lunn.ch>
+> Sent: Wednesday, November 12, 2025 7:42 AM
+> To: Shenwei Wang <shenwei.wang@nxp.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>; Bjorn Andersson
+> <andersson@kernel.org>; Mathieu Poirier <mathieu.poirier@linaro.org>; Rob
+> Herring <robh@kernel.org>; Krzysztof Kozlowski <krzk+dt@kernel.org>; Cono=
+r
+> Dooley <conor+dt@kernel.org>; Shawn Guo <shawnguo@kernel.org>; Sascha
+> Hauer <s.hauer@pengutronix.de>; Jonathan Corbet <corbet@lwn.net>; Bartosz
+> Golaszewski <brgl@bgdev.pl>; Pengutronix Kernel Team
+> <kernel@pengutronix.de>; Fabio Estevam <festevam@gmail.com>; Peng Fan
+> <peng.fan@nxp.com>; linux-remoteproc@vger.kernel.org;
+> devicetree@vger.kernel.org; imx@lists.linux.dev; linux-arm-
+> kernel@lists.infradead.org; linux-kernel@vger.kernel.org; linux-
+> doc@vger.kernel.org; dl-linux-imx <linux-imx@nxp.com>
+> Subject: [EXT] Re: [PATCH v5 3/5] docs: staging: gpio-rpmsg: gpio over rp=
+msg bus
+>=20
+> Since this has not been merged yet, there are no existing systems.
+>=20
 
-Signed-off-by: Tao Chen <chen.dylane@linux.dev>
----
- kernel/bpf/stackmap.c | 67 +++++++++++++++++++++++++++++++++++--------
- 1 file changed, 55 insertions(+), 12 deletions(-)
+In this context, "system" refers to both Linux and the remote firmware. The=
+ remote firmware=20
+for i.MX platforms has already been released and widely used by our custome=
+rs. Maintaining=20
+compatibility with the existing firmware would provide a better solution fo=
+r customers.
 
-diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
-index 2365541c81d..64ace4ed50e 100644
---- a/kernel/bpf/stackmap.c
-+++ b/kernel/bpf/stackmap.c
-@@ -210,13 +210,14 @@ static void stack_map_get_build_id_offset(struct bpf_stack_build_id *id_offs,
- }
- 
- static struct perf_callchain_entry *
--get_callchain_entry_for_task(struct task_struct *task, u32 max_depth)
-+get_callchain_entry_for_task(int *rctx, struct task_struct *task, u32 max_depth)
- {
- #ifdef CONFIG_STACKTRACE
- 	struct perf_callchain_entry *entry;
--	int rctx;
- 
--	entry = get_callchain_entry(&rctx);
-+	preempt_disable();
-+	entry = get_callchain_entry(rctx);
-+	preempt_enable();
- 
- 	if (!entry)
- 		return NULL;
-@@ -238,8 +239,6 @@ get_callchain_entry_for_task(struct task_struct *task, u32 max_depth)
- 			to[i] = (u64)(from[i]);
- 	}
- 
--	put_callchain_entry(rctx);
--
- 	return entry;
- #else /* CONFIG_STACKTRACE */
- 	return NULL;
-@@ -320,6 +319,34 @@ static long __bpf_get_stackid(struct bpf_map *map,
- 	return id;
- }
- 
-+static struct perf_callchain_entry *
-+bpf_get_perf_callchain(int *rctx, struct pt_regs *regs, bool kernel, bool user,
-+		       int max_stack, bool crosstask)
-+{
-+	struct perf_callchain_entry_ctx ctx;
-+	struct perf_callchain_entry *entry;
-+
-+	preempt_disable();
-+	entry = get_callchain_entry(rctx);
-+	preempt_enable();
-+
-+	if (unlikely(!entry))
-+		return NULL;
-+
-+	__init_perf_callchain_ctx(&ctx, entry, max_stack, false);
-+	if (kernel)
-+		__get_perf_callchain_kernel(&ctx, regs);
-+	if (user && !crosstask)
-+		__get_perf_callchain_user(&ctx, regs);
-+
-+	return entry;
-+}
-+
-+static void bpf_put_perf_callchain(int rctx)
-+{
-+	put_callchain_entry(rctx);
-+}
-+
- BPF_CALL_3(bpf_get_stackid, struct pt_regs *, regs, struct bpf_map *, map,
- 	   u64, flags)
- {
-@@ -328,20 +355,24 @@ BPF_CALL_3(bpf_get_stackid, struct pt_regs *, regs, struct bpf_map *, map,
- 	struct perf_callchain_entry *trace;
- 	bool kernel = !user;
- 	u32 max_depth;
-+	int rctx, ret;
- 
- 	if (unlikely(flags & ~(BPF_F_SKIP_FIELD_MASK | BPF_F_USER_STACK |
- 			       BPF_F_FAST_STACK_CMP | BPF_F_REUSE_STACKID)))
- 		return -EINVAL;
- 
- 	max_depth = stack_map_calculate_max_depth(map->value_size, elem_size, flags);
--	trace = get_perf_callchain(regs, kernel, user, max_depth,
--				   false, false);
-+	trace = bpf_get_perf_callchain(&rctx, regs, kernel, user, max_depth,
-+				       false);
- 
- 	if (unlikely(!trace))
- 		/* couldn't fetch the stack trace */
- 		return -EFAULT;
- 
--	return __bpf_get_stackid(map, trace, flags);
-+	ret = __bpf_get_stackid(map, trace, flags);
-+	bpf_put_perf_callchain(rctx);
-+
-+	return ret;
- }
- 
- const struct bpf_func_proto bpf_get_stackid_proto = {
-@@ -435,6 +466,7 @@ static long __bpf_get_stack(struct pt_regs *regs, struct task_struct *task,
- 	bool kernel = !user;
- 	int err = -EINVAL;
- 	u64 *ips;
-+	int rctx;
- 
- 	if (unlikely(flags & ~(BPF_F_SKIP_FIELD_MASK | BPF_F_USER_STACK |
- 			       BPF_F_USER_BUILD_ID)))
-@@ -467,18 +499,26 @@ static long __bpf_get_stack(struct pt_regs *regs, struct task_struct *task,
- 		trace = trace_in;
- 		trace->nr = min_t(u32, trace->nr, max_depth);
- 	} else if (kernel && task) {
--		trace = get_callchain_entry_for_task(task, max_depth);
-+		trace = get_callchain_entry_for_task(&rctx, task, max_depth);
- 	} else {
--		trace = get_perf_callchain(regs, kernel, user, max_depth,
--					   crosstask, false);
-+		trace = bpf_get_perf_callchain(&rctx, regs, kernel, user, max_depth,
-+					       crosstask);
- 	}
- 
--	if (unlikely(!trace) || trace->nr < skip) {
-+	if (unlikely(!trace)) {
- 		if (may_fault)
- 			rcu_read_unlock();
- 		goto err_fault;
- 	}
- 
-+	if (trace->nr < skip) {
-+		if (may_fault)
-+			rcu_read_unlock();
-+		if (!trace_in)
-+			bpf_put_perf_callchain(rctx);
-+		goto err_fault;
-+	}
-+
- 	trace_nr = trace->nr - skip;
- 	copy_len = trace_nr * elem_size;
- 
-@@ -497,6 +537,9 @@ static long __bpf_get_stack(struct pt_regs *regs, struct task_struct *task,
- 	if (may_fault)
- 		rcu_read_unlock();
- 
-+	if (!trace_in)
-+		bpf_put_perf_callchain(rctx);
-+
- 	if (user_build_id)
- 		stack_map_get_build_id_offset(buf, trace_nr, user, may_fault);
- 
--- 
-2.48.1
+Thanks,
+Shenwei
 
+> It is well known that what gets merged into mainline is often different t=
+o the
+> initial out of tree version. You just need to deal with it. One option yo=
+u have is to
+> set the vendor byte to 1, so indicating NXP. If Linux uses vendor 0, it m=
+ight be
+> your out of tree vendor driver, not the in kernel driver. Just document i=
+n the
+> specification vendor 0 is reserved.
+>=20
+> You are going to have to modify your firmware anyway, level interrupts ar=
+e
+> broken. And this is an example of why quirks are needed.
+>=20
+>         Andrew
 
