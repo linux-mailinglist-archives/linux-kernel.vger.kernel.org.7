@@ -1,112 +1,132 @@
-Return-Path: <linux-kernel+bounces-896965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A327C51A84
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:30:49 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 337AFC51A6F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:29:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94FF53AA438
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:24:11 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0591F4F0F3A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:23:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1441A302165;
-	Wed, 12 Nov 2025 10:24:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2DF22957B6;
+	Wed, 12 Nov 2025 10:23:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="QCLCeGU4"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ejfzW4y0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C35192FD1D5;
-	Wed, 12 Nov 2025 10:23:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1D492F0696;
+	Wed, 12 Nov 2025 10:23:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762943042; cv=none; b=tDS+LsKIl01/58+taCi87VU4atHZg2FLJzEjLF893jUKwyHdsEX4NDnzQbV/CNGc/U4SBoO2Sz7AGA3ecL9xIAHpcV/riZ8TxNEXpreFuvXRkRiuHfF19TFmcpmTn3RWogwaziPJyu6d650545EhPLWDAm/f0eGLJCYmHaUEs3A=
+	t=1762943033; cv=none; b=N1LkuqBC+ZWxa/kKGVovacJIPMZ8ql9qrAn1ghaewhJWclh/dDWPEo+x/7NSGYhtoho3C30TZqho9v5rLtzfe25Q6Mn030mJ3NjAZdGcFipozf5EbTIKym0fX2l1UmL3ibqZ7mnxMmUL+sYfuV9Ki4394tOPgOC8Wz4Mb5J5UZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762943042; c=relaxed/simple;
-	bh=hMphcSWzvjciJLgu8O9mNBZ6tS/PYXaz6WZrCbUlq6I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EH0lh76CE2cOviV+sh1i0ZS7HruUF84311pIZaRSkIFHLrj1hgf/WFlhE9LyEh8aMD3kfTRl6uk9lWrdbLqlHxFiAsc8RFGaantYNlW1k8CyuU4bueXRTKmQ1Qzw4hTDK8awKO7RFqeeadYvXa7FkLN4K1jL8vvE43cGWkwVM0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=QCLCeGU4; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 107B840E0191;
-	Wed, 12 Nov 2025 10:23:56 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id cEK6losoTe2o; Wed, 12 Nov 2025 10:23:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1762943032; bh=DcWrLzxh17tqGrEc3eGZpJOg3tUTZgcl6XBpECD3q3I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QCLCeGU4V+yvIzX5bcSbdkHOamA01FY2W275TAbREMQo0bCVVP6kaf7H0LVUN0R/a
-	 6WLPS2YEeC2IKT22s37kdUwhgIEQbZzkc+kSt+CFdGltJhuVdVSNd5pilnz/pJzOQ8
-	 bg/Jy6t//rvWs6wafimEELgl/y+N6aHRznna0a0IZoUSOFRrlOI6dLRtj6521yxv8g
-	 jQe2OA7RDPOUZVQp5vETlKjmFlOr4WQrRHfLLiGCFLJ9glf37K3HVKj/t6PNAiIjvV
-	 LNsLBkhXh9B3EJuecxXFKnw/1pj82Ef2Ivl/tWFX5d8qLb+yo3JAixv5zXmU9zF3Zq
-	 evZ5MQqhDYnWnEwNyKwKNt41dnHIydEl5d0MR40gPt/LcIZmpc06UzVZHtnIa0rhgY
-	 fR3uTShVgMjmzANFYidcgPO5mOuCaDR58l+hwEoa9SiBn7Pa9t/4hlNrnIBNaAoc8U
-	 mgnVZBZUNyQv6UisC75CNhCBxS9cJlvN0TsCirkCJ58HAfF3yAQR3Bb9dzqTNYPZYA
-	 qRNe6FydRNa1610zpJprke3I3CrEh1Isi91a5p5SNVVXhLMnsuEXnHnwGZOCEpsH82
-	 hxFmUTkM4K3Lgbz3FBKU+MudGNp9hPd8Ov/4sUqH+zWN7NDzo/HUwkNxaIpNrzPDyi
-	 RiUvpJtg8HJvniTT1lTy4Szc=
-Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 6F29740E01CD;
-	Wed, 12 Nov 2025 10:23:43 +0000 (UTC)
-Date: Wed, 12 Nov 2025 11:23:36 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Brendan Jackman <jackmanb@google.com>
-Subject: Re: [PATCH v4 1/8] x86/bugs: Use VM_CLEAR_CPU_BUFFERS in VMX as well
-Message-ID: <20251112102336.GAaRRgKJ6lHCKQgxdd@fat_crate.local>
-References: <20251031003040.3491385-1-seanjc@google.com>
- <20251031003040.3491385-2-seanjc@google.com>
- <20251103181840.kx3egw5fwgzpksu4@desk>
- <20251107190534.GTaQ5C_l_UsZmQR1ph@fat_crate.local>
- <aROyvB0kZSQYmCh0@google.com>
+	s=arc-20240116; t=1762943033; c=relaxed/simple;
+	bh=KOJ0ISCnxoZGIBb9BERjq0F1E/gA0GfhIhpp772nckE=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=JGhjUFqP/4NPZaCqdXg/5hAHNcdC4Q5NPYxyEnlPZIMjRO6NFOSiOmApPnkC9yApI5Q8QR3pyN25cRBQaCqhQRwsoDIQbL/Rh8w2mtFkexGkHS+hQ4epmfoShZM/1nzpaY5O0+CI3Pnfpk6J+XqfYgoYWDfttT0D3lLq6pl4KC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ejfzW4y0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41F12C4CEF7;
+	Wed, 12 Nov 2025 10:23:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762943032;
+	bh=KOJ0ISCnxoZGIBb9BERjq0F1E/gA0GfhIhpp772nckE=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=ejfzW4y0R+DqqfayLuHNMAk1SuBIMD+R/8ZUCZrDP2BJXoIX/wBB2B4yLp9j31MUU
+	 O75pQXT0a28kXxa+diOOSLoes/sl9Z1+3dIadPmB8oRGfrgbthr1rePNSD/p1xyMlw
+	 lNVoJselOxE/4pys2b3tTKU/Jig0H/8PZDmS0wU7jO4nxkdmQScGBa3P3gWBht3eIq
+	 aJsMlxjkX+mWdEl4SgC1/MQRd7IZG6c0ZEGRBZxorYdzXLkts8YL3I5vlCJrNxKDSl
+	 QkZq3+Bw62aX2czzg+GtiR5lDPY5Gks9vB0LyX6gYELTpM5ztG892b3sBuDUikPpmG
+	 9ODoke8y6XXow==
+Message-ID: <065678f2-3fbe-448e-83ae-e8b3e7ba96b3@kernel.org>
+Date: Wed, 12 Nov 2025 11:23:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <aROyvB0kZSQYmCh0@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: soc: samsung: exynos-pmu: remove syscon
+ for google,gs101-pmu
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Peter Griffin <peter.griffin@linaro.org>
+Cc: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dan.carpenter@linaro.org, kernel-team@android.com, willmcvicker@google.com,
+ arnd@arndb.de
+References: <20251103-remove-pmu-syscon-compat-v1-0-f2cb7f9ade6f@linaro.org>
+ <20251103-remove-pmu-syscon-compat-v1-1-f2cb7f9ade6f@linaro.org>
+ <20251112-naughty-romantic-hamster-e213eb@kuoka>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20251112-naughty-romantic-hamster-e213eb@kuoka>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 11, 2025 at 02:03:40PM -0800, Sean Christopherson wrote:
-> How about:
+On 12/11/2025 11:22, Krzysztof Kozlowski wrote:
+>>      oneOf:
+>> +      - items:
 > 
-> /* If necessary, emit VERW on exit-to-userspace to clear CPU buffers. */
-> #define CLEAR_CPU_BUFFERS \
-> 	ALTERNATIVE "", __CLEAR_CPU_BUFFERS, X86_FEATURE_CLEAR_CPU_BUF
+> I expect new version (see other comment), so also please change items
+> into enum and drop const from below. items is redundant for one entry in
+> compatible (by convention) and having it as enum already makes it ready
+> for growing the enumeration for future devices.
+> 
+>> +          - const: google,gs101-pmu
+> 
 
-By the "If necessary" you mean whether X86_FEATURE_CLEAR_CPU_BUF is set or
-not, I presume...
 
-I was just wondering whether this macro is going to be used somewhere else
-*except* on the kernel->user vector.
+Ah, and there is also checkpatch warning about length of commit msg.
 
-> Ya, and this goes away (moved into SVM) by the end of the series.
-
-Aha, lemme look at the rest too then.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Best regards,
+Krzysztof
 
