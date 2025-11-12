@@ -1,30 +1,30 @@
-Return-Path: <linux-kernel+bounces-896944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D545C51980
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:15:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C80A1C519ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:21:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86DB31892463
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:12:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 645143BBB49
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:12:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C8FB3016F6;
-	Wed, 12 Nov 2025 10:12:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0172C302163;
+	Wed, 12 Nov 2025 10:12:06 +0000 (UTC)
 Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3AAE3002A3;
-	Wed, 12 Nov 2025 10:12:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1888301495;
+	Wed, 12 Nov 2025 10:12:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762942323; cv=none; b=ZJeyh9wqoiWOc/9hMZu+kMI1p7LZCmzQNkfB9kU3Jn3FIf/u5wXHmb0hC+jOn9znq0HoMJhm3XbeehHzG0MwrS09BmstyO95IWky/zY2zrFgk2JOrOigbyxTC9bsPM8r1E7LR8BZs5NRdturvszB5O5by+/nkrbQ6eFdTJSMgr4=
+	t=1762942325; cv=none; b=WHvVkLUYs9a8PT/rpXg8mtJnZmgOkl8VFPFUqplFqf/nJYq4wEn1nAkMIcALZP7Qf9Xw1+2G8reSrC+sth9KFg+vSRHlUxsuAekwSC4/f/2gHV8teb5KUrIruG48nAiRgiEoiy/+9DuzDPdSyiy5HMbEpQp5FjzyQuAA/JppUks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762942323; c=relaxed/simple;
-	bh=Obpd//VpUN2twV+EMu4LchAWePJkY0WgL7SJD42yqv8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WJwGP4iDYI+UVMZVkAM7u25B++NdfK55QtDvcCmpeE5m51chZWgTli2M1QvNvmxrvBE/grLljQNncUGNLkOCgrMiQOGTkW1fITNQGWqqS4J22y6sgpd1hblJpsNGXSgJMzeuC5rQnz+/Qu8NxWC50ldJajy6FUoufmT2iszjNYQ=
+	s=arc-20240116; t=1762942325; c=relaxed/simple;
+	bh=BAYMByeTWbf6H+zSOF0w2OtICBfA8D+kxFgeDUaNptY=;
+	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pmJmigsGEFtYYBTdAc1P7gK6nwmkgYb0hIBLxuMduLP16Fn349IgHFgoFZurwm/4RNyQEXZX0vL88jfsEvuoiCxVGYV6uZ5ftt5GlLO+6RyNQxUyNksu7hpX5mEr8728s+IYcnoGLjHVvVhWfOJ4l+F1P7k461ue0Nq1N2lvMAo=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
@@ -49,10 +49,9 @@ To: ryan_chen <ryan_chen@aspeedtech.com>, <bmc-sw@aspeedtech.com>, Rob Herring
 	<kuninori.morimoto.gx@renesas.com>, Eric Biggers <ebiggers@kernel.org>,
 	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
 	<linux-aspeed@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>
-CC: Conor Dooley <conor.dooley@microchip.com>
-Subject: [PATCH v8 1/4] dt-bindings: arm: aspeed: Add AST2700 board compatible
-Date: Wed, 12 Nov 2025 18:11:54 +0800
-Message-ID: <20251112101157.2149169-2-ryan_chen@aspeedtech.com>
+Subject: [PATCH v8 2/4] arm64: Kconfig: Add ASPEED SoC family Kconfig support
+Date: Wed, 12 Nov 2025 18:11:55 +0800
+Message-ID: <20251112101157.2149169-3-ryan_chen@aspeedtech.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20251112101157.2149169-1-ryan_chen@aspeedtech.com>
 References: <20251112101157.2149169-1-ryan_chen@aspeedtech.com>
@@ -65,32 +64,31 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 
-Add device tree compatible string for AST2700 based boards
-("aspeed,ast2700-evb" and "aspeed,ast2700") to the Aspeed SoC
-board bindings. This allows proper schema validation and
-enables support for AST2700 platforms.
+Add support for ASPEED SoC family like ast27XX 8th
+generation ASPEED BMCs.
 
 Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
 ---
- Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml | 6 ++++++
+ arch/arm64/Kconfig.platforms | 6 ++++++
  1 file changed, 6 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml b/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
-index aedefca7cf4a..1c1a12fc3a91 100644
---- a/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
-+++ b/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
-@@ -109,4 +109,10 @@ properties:
-               - ufispace,ncplite-bmc
-           - const: aspeed,ast2600
+diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+index 13173795c43d..ac304048a84e 100644
+--- a/arch/arm64/Kconfig.platforms
++++ b/arch/arm64/Kconfig.platforms
+@@ -47,6 +47,12 @@ config ARCH_ARTPEC
+ 	help
+ 	   This enables support for the ARMv8 based ARTPEC SoC Family.
  
-+      - description: AST2700 based boards
-+        items:
-+          - enum:
-+              - aspeed,ast2700-evb
-+          - const: aspeed,ast2700
++config ARCH_ASPEED
++	bool "Aspeed SoC family"
++	help
++	  This enables support for ASPEED SoC family like ast27XX 8th
++	  generation Aspeed BMCs.
 +
- additionalProperties: true
+ config ARCH_AXIADO
+ 	bool "Axiado SoC Family"
+ 	select GPIOLIB
 -- 
 2.34.1
 
