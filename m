@@ -1,150 +1,168 @@
-Return-Path: <linux-kernel+bounces-897990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3DB5C5416A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 20:16:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CBDAC54126
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 20:10:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42B113B7C4A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:10:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71C4E3B26F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:08:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2072334D4C1;
-	Wed, 12 Nov 2025 19:09:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07ED734DCF2;
+	Wed, 12 Nov 2025 19:07:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a59aUyku"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WEVCNybn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A080434CFC7
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 19:09:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3129334C808;
+	Wed, 12 Nov 2025 19:07:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762974554; cv=none; b=G0l0/vob77cf5nvkjSwqqP13/WfEFHXyH71JEg85n7X4A50S/3NezMUOQ7X40CGXxOAxu3eLbeX7NKUP2B6xO0tBafLHa152Kz8znlmoK8FTmp0iKKCJsl/Jht2TnVqabomW4Ay0SSPO0j/qizhkpXG/bmL/10nBvFXb0OZEdLg=
+	t=1762974476; cv=none; b=Eh46hqqfn5ZeudR2rmNCLsKmTk17iMHNk5O0HW5cLJxUhI1ug8Y6nrXAsiSbRR5mfhcZsHD0oiySQj+RGWoKxqRulwznzIRoJPQFX+mDsiXTlLtbeM6+3n3eyELZGmro/JDL4RlvXKm9YfyE3XtM08wgzfkyVgjg3HSkBFXLXs8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762974554; c=relaxed/simple;
-	bh=vCZSV1WWxWmjtBXURpOwW4cZm8n5J6wXTTO5rnBlH+I=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ayiuLSz+ECXm+phnY6k427ED9omJfJh9nZQlRNZYRgzYGJTpzUMjL8Tfn6WTNfdVzGf+o8i7Rx1v1GANaKy8y/4NmyNSVfl2uJvLXKFSR6wIzBO9N+63qCE62GvDtKlU98W8hNN3Mmaohm4pPJM/PA0YPvOZfe0UwUAsJ6oUy/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a59aUyku; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b4736e043f9so16864166b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 11:09:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762974551; x=1763579351; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=i4HxarC/0cHfwsXI7e4vj+A1IpTTWGHNmxw+3uenBi0=;
-        b=a59aUykuNRw4+z3fOG8ikc96jaHow3Q0L4qu/mex+YNiU8CneTyklFguK6oco36jOD
-         c3Iegn8U4IlzPlqkVp0htrKXaUx0HifdOur9VKnTXTiOl+N7U4NCtS06bwKZKYYzyEj2
-         h8jD0faL2eGyjnY/xwb7OO736aT5zxLBgluctFZbU/2jcVFTPaVn0rM36cjsqL1Zhhni
-         ZtYgHL6ODzjmifxrd9Eyi9t417FjvxIGQa1X7qDkLyEvq2lA/UH2UnMTS2MUb14BwVOo
-         yP2u23I1J0h4JCgjFnch6NNmAwAdGmPx1yQfxOtEGUfa3gFCsy1zHvVA+5wUSreDUP20
-         0ArQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762974551; x=1763579351;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=i4HxarC/0cHfwsXI7e4vj+A1IpTTWGHNmxw+3uenBi0=;
-        b=XFgN51LSKMrq901mLI9T9U1D4CAzAMoOMO08XnDS6EFoX34FIyolGEn0epVYsy2qYD
-         OcHs1m1J4Sp7c4LgvlYm6yqWCHP1UbaiIMw/+rKJ0FvrYBB/eADS9ZVS6Sfn8sqJyKu/
-         f21wF1owX6R6EYsJS43q94P+RMhHuPfyYhNGFjDwfuh4BAr2p6y8JtDC69s2yXRYldQu
-         rr9WDy5R5+KcKPxNYMXtWZval0mO9MGo5XghCVKfQSxbtX8xX4DVjJK7QNhoE6xBEEb6
-         TodLTCjYxeicp2K3va1hJwBakMwtSdqdEDfkXuYl0mAWSXBo3FUAIPLf4HtkVMzw4yoY
-         GAAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXifSPzcbGdDASaSruS0/S/8k6buh5avryHs7AXsviKJh4UJ0CgmfQPB4Ex4pnclHjMbD+gSkH6pGKXZXk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLaTT0tK1jG4o7JKNbQ08g3OYW2q/Hxts/rahTXUgLtDG8p5oS
-	xqtXLTxf9hCBQpuQvAwi1LkXk4EGGn7RiCX7PNanUp2IUuETib7+UhY=
-X-Gm-Gg: ASbGncvmtHjnzZaVHgQreR6SQ/o5viw+iy/i7GbpvROtahxuSQFn/VjN37neKIWWQg2
-	W4bLvtSlSfQ+8d5USSBp+6FIw2RT5GL/uSxGi3AIxDSSOoLvJD21uNPda1EOp7DXDDlIH1Oya3K
-	62Kps5K+64MbiIlRV4GI9SBusjG5psSM2Cg2iyIoQdSlZbgVcQ75HEBzMcee6triTteujGF28GA
-	FTl9rsLJHISZFJHiIVR+V9gj+tutxtjskB5gY+gBNUD5ExezEQAY5JJvSs/HAyVmNymyJrrM4GE
-	p1sYfW3jvT9FXINZXuZrcy9UW1JPDLMS//2P205MaeX2B4a8uLr35UgzpIZEuBJ4HPFXUSMr7aK
-	TF2qf3Om2Vib6yCK+VT1bb9ovtfKh3dhJ9txsQeopKlfD+K3xO30wxT8GiNrZGHTEsT9whxpCh5
-	augJAW4eFkV94UwnzXrx43Fhoc7HieomPySKmpNUw1cUHwMn7fA3RnRtc8iug2yCMfkOc=
-X-Google-Smtp-Source: AGHT+IHxy8pjSz5ZXQAhsov6reJ0AmK0QM7dpISGdovz9adYZVIS0mObDjcrOiPl+EMnu74xwF1Gww==
-X-Received: by 2002:a17:907:e895:b0:b5f:c2f6:a172 with SMTP id a640c23a62f3a-b7331a70378mr423238766b.30.1762974550736;
-        Wed, 12 Nov 2025 11:09:10 -0800 (PST)
-Received: from localhost ([2a02:810d:4a94:b300:ec52:7cf5:e31:cdb7])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-b72bfa24d14sm1659239866b.74.2025.11.12.11.09.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Nov 2025 11:09:10 -0800 (PST)
-From: Florian Fuchs <fuchsfl@gmail.com>
-To: Yoshinori Sato <ysato@users.sourceforge.jp>,
-	Rich Felker <dalias@libc.org>,
-	linux-sh@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	Florian Fuchs <fuchsfl@gmail.com>
-Subject: [PATCH] sh: maple: fix empty port handling
-Date: Wed, 12 Nov 2025 20:04:44 +0100
-Message-ID: <20251112190444.3631533-1-fuchsfl@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1762974476; c=relaxed/simple;
+	bh=4X5km6tMQI+rmQ+2RA+kgRbD/MaASgUWl21z9NvFxCc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q7xozPHM0m3fa4ooLrdt48ub8B2a/qTuXvKLmDpw37yTBlMHowsJc39Ehuw4uq4jj2i9keN5dPqkGiKFh1/Rb6vkovb4usAetXamff7SeZRXPIkH0ymnO85Q5kSDSxjXKdiY5Z/jGHK3pvyJ+CgqGF3bikaCR/Z6rO41oc43ahQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WEVCNybn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 580F6C4CEF8;
+	Wed, 12 Nov 2025 19:07:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762974475;
+	bh=4X5km6tMQI+rmQ+2RA+kgRbD/MaASgUWl21z9NvFxCc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WEVCNybnc6t6289XVBYkcWqOoxpXqCnrLBLYLoiHlIbKyjkbGJommYxYZ4GvUKdzk
+	 RvCaaYP4cH5e7LLxqfEh/U5J3NbcNb9zsGx7irU6L2ggZu686KokOvrxociihCrdz5
+	 dJwld8Pz0SSqtx5kTdGzsQdfnbx8hipENl9Wi6lNZNvCXnCb9b5gngZtmYSqEKO6wj
+	 5nkefY3+3deZoLjCDjmW1duP1O9r17D6AOg4pER2uFLTODAnUbspPTpahmODQvVy32
+	 cdL9DSF+KFzEqfM/EGASoFTjqu4im0ljDP7j6qlpVZV6ov6xCd8GSzIZLOvBJkNhd/
+	 +2SZ5Fb6iN0MQ==
+Date: Wed, 12 Nov 2025 19:07:51 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+Cc: gregkh@linuxfoundation.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, michal.simek@amd.com,
+	linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	git@amd.com
+Subject: Re: [PATCH] dt-bindings: usb: dwc3-xilinx: Describe the reset
+ constraint for the versal platform
+Message-ID: <20251112-bagging-diameter-4ebab1f9ed45@spud>
+References: <20251112155430.1326426-1-radhey.shyam.pandey@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="92AFPMtx3g8andt7"
+Content-Disposition: inline
+In-Reply-To: <20251112155430.1326426-1-radhey.shyam.pandey@amd.com>
 
-Handle timeout response from empty ports of the maple bus to prevent a
-stuck maple_sentq and a blocked maple bus.
 
-When only some ports are used, e.g. if only keyboard is connected and the
-other ports are empty, the device tends to timeout and return 0xff for
-the empty port. This needs to be handled, just like the
-MAPLE_RESPONSE_NONE response, to detect empty ports and to have usable
-peripherals, if not all of the ports are utilized. Previously, an empty
-port resulted in a never cleared maple_sentq which totally blocked the
-maple bus to be used.
+--92AFPMtx3g8andt7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Florian Fuchs <fuchsfl@gmail.com>
----
-Note: This patch was tested on real Sega Dreamcast hardware and resulted
-in a usable keyboard, even when only 1 or 2 ports where populated. The
-hot-plugging of the keyboard does also work fine.
+On Wed, Nov 12, 2025 at 09:24:30PM +0530, Radhey Shyam Pandey wrote:
+> AMD Versal platform USB 2.0 IP controller receives one reset input from
+> the SoC controlled by the CRL.RST_USB [RESET] register so accordingly
+> describe reset constraints.
+>=20
+> Signed-off-by: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+> ---
+>  .../devicetree/bindings/usb/dwc3-xilinx.yaml  | 43 +++++++++++++++----
+>  1 file changed, 34 insertions(+), 9 deletions(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/usb/dwc3-xilinx.yaml b/Doc=
+umentation/devicetree/bindings/usb/dwc3-xilinx.yaml
+> index 36f5c644d959..cd0cc9da242f 100644
+> --- a/Documentation/devicetree/bindings/usb/dwc3-xilinx.yaml
+> +++ b/Documentation/devicetree/bindings/usb/dwc3-xilinx.yaml
+> @@ -50,17 +50,22 @@ properties:
+>      description:
+>        A list of phandles for resets listed in reset-names.
+> =20
+> -    items:
+> -      - description: USB core reset
+> -      - description: USB hibernation reset
+> -      - description: USB APB reset
+> +    oneOf:
+> +      - items:
+> +          - description: USB controller reset
+> +      - items:
+> +          - description: USB core reset
+> +          - description: USB hibernation reset
+> +          - description: USB APB reset
+> =20
+>    reset-names:
+> -    items:
+> -      - const: usb_crst
+> -      - const: usb_hibrst
+> -      - const: usb_apbrst
+> -
+> +    oneOf:
+> +      - items:
+> +          - const: usb_crst
 
-The description of the timeout response can be obtained on the bottom of
-of the page: https://mc.pp.se/dc/maplebus.html: "If no response is
-received before the timeout, a word with all bits set (FFFFFFFF) is
-written at the Result address."
+Why do we need all this oneOf stuff if both have the same first reset?
+Can't you just set minItems: 1?
 
- drivers/sh/maple/maple.c | 1 +
- include/linux/maple.h    | 3 ++-
- 2 files changed, 3 insertions(+), 1 deletion(-)
+> +      - items:
+> +          - const: usb_crst
+> +          - const: usb_hibrst
+> +          - const: usb_apbrst
+>    phys:
+>      minItems: 1
+>      maxItems: 2
+> @@ -95,6 +100,26 @@ required:
+>    - resets
+>    - reset-names
+> =20
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - xlnx,versal-dwc3
+> +    then:
+> +      properties:
+> +        resets:
+> +          maxItems: 1
+> +        reset-names:
+> +          maxItems: 1
+> +    else:
+> +      properties:
+> +        resets:
+> +          minItems: 3
+> +        reset-names:
+> +          minItems: 3
+> +
+>  additionalProperties: false
+> =20
+>  examples:
+>=20
+> base-commit: b179ce312bafcb8c68dc718e015aee79b7939ff0
+> --=20
+> 2.34.1
+>=20
 
-diff --git a/drivers/sh/maple/maple.c b/drivers/sh/maple/maple.c
-index 6dc0549f7900..3d6c716cfc98 100644
---- a/drivers/sh/maple/maple.c
-+++ b/drivers/sh/maple/maple.c
-@@ -649,6 +649,7 @@ static void maple_dma_handler(struct work_struct *work)
- 			list_del_init(&mq->list);
- 			switch (code) {
- 			case MAPLE_RESPONSE_NONE:
-+			case MAPLE_RESPONSE_TIMEOUT:
- 				maple_response_none(mdev);
- 				break;
- 
-diff --git a/include/linux/maple.h b/include/linux/maple.h
-index 3be4e567473c..4ae3cc6678a8 100644
---- a/include/linux/maple.h
-+++ b/include/linux/maple.h
-@@ -27,7 +27,8 @@ enum maple_code {
- 	MAPLE_COMMAND_BWRITE,
- 	MAPLE_COMMAND_BSYNC,
- 	MAPLE_COMMAND_SETCOND,
--	MAPLE_COMMAND_MICCONTROL
-+	MAPLE_COMMAND_MICCONTROL,
-+	MAPLE_RESPONSE_TIMEOUT = 255
- };
- 
- enum maple_file_errors {
+--92AFPMtx3g8andt7
+Content-Type: application/pgp-signature; name="signature.asc"
 
-base-commit: 24172e0d79900908cf5ebf366600616d29c9b417
--- 
-2.43.0
+-----BEGIN PGP SIGNATURE-----
 
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaRTbBwAKCRB4tDGHoIJi
+0jX7AQCAHa54UizRxsLeHp9VJzAq+vFdLs6YxvkaigFx6sowxAEA+An2kZel0I/A
+Ftl+wdLtzBFFGVzZh6cSv2qGpvIuVAU=
+=Er4U
+-----END PGP SIGNATURE-----
+
+--92AFPMtx3g8andt7--
 
