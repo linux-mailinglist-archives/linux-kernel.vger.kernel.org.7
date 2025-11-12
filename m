@@ -1,101 +1,65 @@
-Return-Path: <linux-kernel+bounces-896910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D63E3C5184E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:58:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D919C517AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:53:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F408E42313C
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:51:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CCDE18859CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:52:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EF3530505C;
-	Wed, 12 Nov 2025 09:49:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 130162FDC5B;
+	Wed, 12 Nov 2025 09:50:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Tri/oO1Z";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="BYyU5yWA"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="Duqb3qa8"
+Received: from omta38.uswest2.a.cloudfilter.net (omta38.uswest2.a.cloudfilter.net [35.89.44.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33E3E30277A
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:49:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1944D2FFDE0
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:50:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762940951; cv=none; b=I3xkuIjvDer3rhBsxHGZHcnitg6DKGmVyTkvUDCLIG3i0knpeJdQSADC9Y+jTnynbQmnx+9BjTT+eCVn6MBRjz8lkA6gCO3B3BsgeJ976OH2Thi8PBeXk5S31zp7OwqepgqHzASphfF1tIx9eVDUalkZwEJa9tI1WTkCeJ42Cqo=
+	t=1762941041; cv=none; b=NtlVQr7tVrkv5GpcUhkMYmzTs/CuykMwQ/+PoR781gsD0C+qF3qDvqeygfFHOn29+QxKLFgGk8z54JNloBg380GZ1LzMi7fD6R7wSdKpgvLFcWdI7XLVXGzhtvSxHdGJY50pH9Nr4FII44djYJ3iRDsVIigi4uYLTFVktiWw6Qc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762940951; c=relaxed/simple;
-	bh=wTui7CYgiy+K6A4DwIyIpanabpofRNM0sn205OFN0K0=;
+	s=arc-20240116; t=1762941041; c=relaxed/simple;
+	bh=AC3MOhYO8DSa29GuaR3KdYqR1Gguu8KO06nIXg1bM1k=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NVZV1uITCXm8/Z1xEjveaCEq4IRet53gd/W80QVbZLdtnMuk33aVhAjk8HtUzjPcpgAXwoIGagrzNHQ3hSrlaOJFew5toWqf9yV8E3B24rbVHNCmkIhJfDe+F7y9FFNuhDwOW9/6w14JXe7iN7ePMi2nv20W7oj486hMSThmaA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Tri/oO1Z; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=BYyU5yWA; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AC9hUZh907408
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:49:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	+dPJ4QZdBUlMpVPRyGvKtHV7b42+J5SfL4CezhrPsEM=; b=Tri/oO1ZEG/NXnXj
-	LZ7eUv/Z4t5Xpb9bTEJ/YzsUOMgVtx55KaPtO6P1rg/gKKagVqtARxR66yqlMfXF
-	Ba4NWIJ6sfBdpgI8Ci98+8p48bSh3al5LCHotjlL25X5gcmdgIh3Rq7Og1k+/kZk
-	iwc3j8n/K+ztzRkkV/l4P8IVQfN1uSos8ObPgx8IA1b2epBcan8o5MBRhVb2wOhK
-	nyROZc6CCrMkjRSi8+ZT/jQlxIWRS2smP8pgiut+sgB1SgR7Jm+Nxn0W0DSxjift
-	76jWYAICf9fX95WAvBfZMrTQiNqq0mzoIBKG+FKdvb7yv7DCh+zAZzcqBdTA++3y
-	d67QyQ==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4acqur80y7-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:49:08 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4edace8bc76so2172761cf.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 01:49:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1762940947; x=1763545747; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+dPJ4QZdBUlMpVPRyGvKtHV7b42+J5SfL4CezhrPsEM=;
-        b=BYyU5yWAzNjmSjF0db+II+H5IL4CxtRMmKrta2O86LW9BoVRVca50EOlyJ1Csws1na
-         VXIjg+0QOC3IYyRve5/R25xPOvBjiaKNnO9Mmcbz9J3VAoIQcmLRQ0Rqan5q82teMrhd
-         KrmjkW4cs361zLjk0HgqlC05Utg4est/0lE+cK0QH8NtjpXMFk8R6qvSqDOkWFJZJvVl
-         cECr9wkDrU7eUnZuiTeBE5YQsv1i8GtB18FuJkDfGY0FjUFdiiDzHEimoDgjJ77Iy21m
-         YdZ2lc7SkYLhNwDBN385SlQpwt5jtfNhLp/l2naZJ+mqitQuyePdI6VqFpdiQCs0nR7e
-         Vb9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762940947; x=1763545747;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+dPJ4QZdBUlMpVPRyGvKtHV7b42+J5SfL4CezhrPsEM=;
-        b=SGoU0kwt2Q1i/qKQjUOspk2OB7kCJvX5xHc/Th4s4M4q/F5Kea4G/UeU3hXgFQItdF
-         7VEQ28XBrjhyXrVkGLnkdmwEr4ldIdFQ7NKLI70P7xq9iFLAlw3KbMooYlN9B1jrMUfY
-         7zZN6j4PNHq7bnkvULFxG2RDASmarPr9UN94T8w7xbIrbzv3GWxjAxpDUrozxtzdoIGI
-         TIOlSXg+Fafndiwk8dSGHivaWSzQp779zLtdh8t0nJIkvnUnuaw3bOG3BBGogfSXCepL
-         Iral0L+my2hqpirX7VtaLXKCaQnsTmODooHZ/ZAqXnPnJuJ8vC5mCcow7AEcL7GwUj4f
-         V5mg==
-X-Forwarded-Encrypted: i=1; AJvYcCVCpHzQf1AF9obXwWUGD+0RnDtlmdLLjH0qOgPVKP+0pHjw+8eiujEa8r8R6ySXsotkzCCzemq6N70MoxY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNaPydyGxrPHnwlWAbYnbesZUKhg0s6PHha17gQpuEnTWgUY1N
-	fj/MwaSKfFlIqYAv76HzCzB5gVleL5lpnHtqwSb9pqjLkxtxNVVI1wyy8fnU2skuXpRGnO5wPx8
-	P/6NonU6CW4CWghgi9N8EVWBB8o5p4tf64n/Ju7iA4alHP2laEUb/WYJpQ2K4xggY75Y=
-X-Gm-Gg: ASbGncs3WOs8f00Acg2ztjre7dSky+c4wUWDyCqG6O7d71s6eZhm2aZl10PqwbasimT
-	cnb//xVJOw2gfmk4GNa7Oa6PMBIxCUbZOweriJ2wdHSMZwLe40Ri+R+C6BX611SqugOuSTZoTfU
-	QY1Gq4ZsPeckF+852g+wfRSORh6pfz1r9UgNeabWNXJKc5aD7leQATxwFWZZWwR5QH8lYm/kTiD
-	+1vvMUW8xe4nvIw0WHVOVKW/nSGmR5idMB1pD4hAw6RRRuam1i9sS2kZWMZ9wzyI1SUVGBphwZf
-	RGDw++LPPDAeieto/oRxJaPdLZ2rXaBShSYN1OkLWyljINAmmcREyCRMdAmWdow2rXanm3ZvtTi
-	zqSe3mE5jx+gCtph/4M6XINDzKUquRSQMGhdBeXbrFQdKHbS/Y7IPAzI4
-X-Received: by 2002:a05:622a:11c4:b0:4ed:b0fe:54af with SMTP id d75a77b69052e-4eddbdc11d9mr20202611cf.13.1762940947371;
-        Wed, 12 Nov 2025 01:49:07 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFPqrzdXmGbyKJf1zyUJ/6/lZ60CvdT07rxfc/WOc785KhcfTTcn2HopItZGmkx92ctB3AEQw==
-X-Received: by 2002:a05:622a:11c4:b0:4ed:b0fe:54af with SMTP id d75a77b69052e-4eddbdc11d9mr20202511cf.13.1762940946968;
-        Wed, 12 Nov 2025 01:49:06 -0800 (PST)
-Received: from [192.168.119.202] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b72bdbc9656sm1568734666b.7.2025.11.12.01.49.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Nov 2025 01:49:06 -0800 (PST)
-Message-ID: <2bde5922-6519-4b6d-9edf-94fd0e7dbc9d@oss.qualcomm.com>
-Date: Wed, 12 Nov 2025 10:49:03 +0100
+	 In-Reply-To:Content-Type; b=edenI2DeDuWcgLZp3ZQVY/PCT7EAAXyY6lkDadDVmszolf4Wu8rHut9dYxNAd7bRZ+Qbu1RECeJC42f7TTbB4/ktKzfWbvjmveVn0naqvkqa3s4BlgPr+gkJYBzyhkM+/bRazVClCNFifYIDOxup8ipOUt43e9OcqNoqoIpZZqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=Duqb3qa8; arc=none smtp.client-ip=35.89.44.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-5005b.ext.cloudfilter.net ([10.0.29.189])
+	by cmsmtp with ESMTPS
+	id J5XmvAqHTeNqiJ7Usvfcrv; Wed, 12 Nov 2025 09:50:38 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id J7UrvXGVSMoIXJ7UrvWgVw; Wed, 12 Nov 2025 09:50:38 +0000
+X-Authority-Analysis: v=2.4 cv=R7wDGcRX c=1 sm=1 tr=0 ts=6914586e
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=/rTUtUX7FYEHxajpTiXOmQ==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=7T7KSl7uo7wA:10 a=VwQbUJbxAAAA:8
+ a=T12EsnaS-Ic_O6hANdoA:9 a=QEXdDO2ut3YA:10 a=xYX6OU9JNrHFPr8prv8u:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=/kv3ZpLKh6gznCrSgB5U7whYig4jSVMOfINntMIp8x0=; b=Duqb3qa867oEuxQl6tlQc9u4J5
+	HmmBofuVhSAhZ3A2I3bMMNGs+XpzZSFp3SwSjjNo5wnv0eRfyhpmHT81I/NS2xlbADrS7ZhDhPbA6
+	nEhHVMsB95su7zLFbQ2a5NUdF/gKn10BCdfHmQ3AMVS750xY/cVJ2KniWNRTkZJaFUjhAQANYxmWo
+	FGqlZGiRaQPKrLnEr+3XsfKT3ygOzQG2U0W3sHykmjo0tA0zpN1YMbMzdT81sg/X8s+1AvL038hIQ
+	kg5rXXnuAQMewwMFsVVpbUoqHDREbGnrjFEjGIFfNc5kcsC3/UTI+Y+LFXcDlgg6pu3qDwc3wzWv8
+	nCPwkyXA==;
+Received: from [61.251.99.135] (port=24341 helo=[10.28.115.44])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1vJ7Uq-00000000ru5-21T2;
+	Wed, 12 Nov 2025 03:50:37 -0600
+Message-ID: <01dde656-f41f-48f1-944c-b69cf1c3543e@embeddedor.com>
+Date: Wed, 12 Nov 2025 18:50:16 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -103,108 +67,240 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: qcom: lemans-evk: Enable Bluetooth support
-To: Wei Deng <wei.deng@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-        stable@vger.kernel.org, cheng.jiang@oss.qualcomm.com,
-        quic_jiaymao@quicinc.com, quic_chezhou@quicinc.com,
-        quic_shuaz@quicinc.com
-References: <20251110055709.319587-1-wei.deng@oss.qualcomm.com>
- <28ffece5-29b7-4d6f-a6cf-5fdf3b8259ef@oss.qualcomm.com>
- <ee04e03a-ffd0-43c0-ba77-c7ee20aaac43@oss.qualcomm.com>
+Subject: Re: [PATCH][next] RDMA/rxe: Avoid -Wflex-array-member-not-at-end
+ warnings
+To: Leon Romanovsky <leon@kernel.org>
+Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Zhu Yanjun <zyjzyj2000@gmail.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+ linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org
+References: <aRKu5lNV04Sq82IG@kspp> <20251111115621.GO15456@unreal>
+ <a9e5156b-2279-4ddd-992c-ca8ca7ab218a@embeddedor.com>
+ <20251111141945.GQ15456@unreal>
+ <d3336e9d-2b84-4698-a799-b49e3845f38f@embeddedor.com>
+ <20251112093226.GA17382@unreal>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <ee04e03a-ffd0-43c0-ba77-c7ee20aaac43@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <20251112093226.GA17382@unreal>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTEyMDA3OCBTYWx0ZWRfX36f/0erD+f5J
- 2vuAOOvyikDGvzmD39aU+OxeiDP0tI4Lk6Gnl+h6oGFr80Dp4fYLJtOnMOkhk73M8aDUJNC0U3r
- R2zcNkJ4DbPdYoMf1iuyh7TXu+XT5/6xwgU4iYc8yiGioD28Lted3bXvFxZPxS/QK2nZWFPUmJI
- X3QafzIak6KcjhdO9Bgrnq7TU3ngXKZ/KMdo+ddLA/jczrwF9qtpe/S6I4nPs/T9aBJ453hqsz9
- ABT5+r68LrExvTdk5aV9ql3VRkhcNO7Pk60N2PO6Q8zVqRDtm/Yqfiwkr1GEPqmGENIx5V4LrQo
- GlSqrv9RM67aD6zY6pnoEEuou6oj40VCK1MgS47iNeRgq5HtQuOuV0zh6drHMj5zImdhwezMtsU
- rN0GryJ8J4Ni/kiAj9OKbx67ATFgfA==
-X-Proofpoint-GUID: 2kXsLc3hou2e46T8ZsJe_QHM931K6epe
-X-Authority-Analysis: v=2.4 cv=bbBmkePB c=1 sm=1 tr=0 ts=69145814 cx=c_pps
- a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=iyyYdLundppeB2c9LQAA:9
- a=QEXdDO2ut3YA:10 a=dawVfQjAaf238kedN5IG:22
-X-Proofpoint-ORIG-GUID: 2kXsLc3hou2e46T8ZsJe_QHM931K6epe
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-12_03,2025-11-11_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 bulkscore=0 impostorscore=0 lowpriorityscore=0
- priorityscore=1501 malwarescore=0 phishscore=0 spamscore=0 clxscore=1015
- adultscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
- definitions=main-2511120078
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 61.251.99.135
+X-Source-L: No
+X-Exim-ID: 1vJ7Uq-00000000ru5-21T2
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([10.28.115.44]) [61.251.99.135]:24341
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 2
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfD5FgLTV3MpX0gFzvkE0wWpdXxW2uZIQ5Apo/BC+iLtkoKAQawFClYAvCE5EWAO83if6UBmaxcj1rQPJlPX9rxO2tPPZ0q79UYW3vpd42FO6NZxFCkW4
+ qOIGyQjLNS6QevZr0fRx9BOM78B3uRLwfwKzCAMF65KngdrOplKs818RVXzO7KC8k1AF+YZpI2Q39F5rJCmngUdqKVWpZMYaeJeGVO0Ud9whHV8krmf4rLJP
 
-On 11/11/25 1:24 PM, Wei Deng wrote:
-> Hi Konrad,
-> 
-> Thanks for your comments.
-> 
-> On 11/10/2025 7:49 PM, Konrad Dybcio wrote:
->> On 11/10/25 6:57 AM, Wei Deng wrote:
->>> There's a WCN6855 WiFi/Bluetooth module on an M.2 card. To make
->>> Bluetooth work, we need to define the necessary device tree nodes,
->>> including UART configuration and power supplies.
->>>
->>> Since there is no standard M.2 binding in the device tree at present,
->>> the PMU is described using dedicated PMU nodes to represent the
->>> internal regulators required by the module.
->>>
->>> The 3.3V supply for the module is assumed to come directly from the
->>> main board supply, which is 12V. To model this in the device tree, we
->>> add a fixed 12V regulator node as the DC-IN source and connect it to
->>> the 3.3V regulator node.
->>>
->>> Signed-off-by: Wei Deng <wei.deng@oss.qualcomm.com>
->>> ---
->>
->> [...]
->>
->>>  &apps_rsc {
->>> @@ -627,6 +708,22 @@ &qupv3_id_2 {
->>>  	status = "okay";
->>>  };
->>>  
->>> +&qup_uart17_cts {
->>> +	bias-disable;
->>> +};
->>> +
->>> +&qup_uart17_rts {
->>> +	bias-pull-down;
->>> +};
->>> +
->>> +&qup_uart17_tx {
->>> +	bias-pull-up;
->>> +};
->>> +
->>> +&qup_uart17_rx {
->>> +	bias-pull-down;
->>> +};
->>
->> This is notably different than all other platforms' bluetooth pin
->> settings - for example pulling down RX sounds odd, since UART signal
->> is supposed to be high at idle
->>
->> see hamoa.dtsi : qup_uart14_default as an example
->>
-> 
-> I followed the qup_uart17 settings from lemans-ride-common.dtsi. Since these configurations are not required for Bluetooth functionality. I will remove this configuration in the next patch.
 
-This feels like you're essentially saying you don't know/care why you
-did this before and don't know why you're changing it again. This
-doesn't give me a lot of confidence. Are you testing your changes on
-real hw, running an upstream kernel with some distro userland?
 
-Konrad
+On 11/12/25 18:32, Leon Romanovsky wrote:
+> On Wed, Nov 12, 2025 at 05:49:05PM +0900, Gustavo A. R. Silva wrote:
+>>
+>>
+>> On 11/11/25 23:19, Leon Romanovsky wrote:
+>>> On Tue, Nov 11, 2025 at 09:14:05PM +0900, Gustavo A. R. Silva wrote:
+>>>>
+>>>>
+>>>> On 11/11/25 20:56, Leon Romanovsky wrote:
+>>>>> On Tue, Nov 11, 2025 at 12:35:02PM +0900, Gustavo A. R. Silva wrote:
+>>>>>> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+>>>>>> getting ready to enable it, globally.
+>>>>>>
+>>>>>> Use the new TRAILING_OVERLAP() helper to fix the following warning:
+>>>>>>
+>>>>>> 21 drivers/infiniband/sw/rxe/rxe_verbs.h:271:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+>>>>>>
+>>>>>> This helper creates a union between a flexible-array member (FAM) and a
+>>>>>> set of MEMBERS that would otherwise follow it.
+>>>>>>
+>>>>>> This overlays the trailing MEMBER struct ib_sge sge[RXE_MAX_SGE]; onto
+>>>>>> the FAM struct rxe_recv_wqe::dma.sge, while keeping the FAM and the
+>>>>>> start of MEMBER aligned.
+>>>>>>
+>>>>>> The static_assert() ensures this alignment remains, and it's
+>>>>>> intentionally placed inmediately after the related structure --no
+>>>>>> blank line in between.
+>>>>>>
+>>>>>> Lastly, move the conflicting declaration struct rxe_resp_info resp;
+>>>>>> to the end of the corresponding structure.
+>>>>>>
+>>>>>> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+>>>>>> ---
+>>>>>>     drivers/infiniband/sw/rxe/rxe_verbs.h | 18 +++++++++++-------
+>>>>>>     1 file changed, 11 insertions(+), 7 deletions(-)
+>>>>>>
+>>>>>> diff --git a/drivers/infiniband/sw/rxe/rxe_verbs.h b/drivers/infiniband/sw/rxe/rxe_verbs.h
+>>>>>> index fd48075810dd..6498d61e8956 100644
+>>>>>> --- a/drivers/infiniband/sw/rxe/rxe_verbs.h
+>>>>>> +++ b/drivers/infiniband/sw/rxe/rxe_verbs.h
+>>>>>> @@ -219,12 +219,6 @@ struct rxe_resp_info {
+>>>>>>     	u32			rkey;
+>>>>>>     	u32			length;
+>>>>>> -	/* SRQ only */
+>>>>>> -	struct {
+>>>>>> -		struct rxe_recv_wqe	wqe;
+>>>>>> -		struct ib_sge		sge[RXE_MAX_SGE];
+>>>>>> -	} srq_wqe;
+>>>>>> -
+>>>>>>     	/* Responder resources. It's a circular list where the oldest
+>>>>>>     	 * resource is dropped first.
+>>>>>>     	 */
+>>>>>> @@ -232,7 +226,15 @@ struct rxe_resp_info {
+>>>>>>     	unsigned int		res_head;
+>>>>>>     	unsigned int		res_tail;
+>>>>>>     	struct resp_res		*res;
+>>>>>> +
+>>>>>> +	/* SRQ only */
+>>>>>> +	/* Must be last as it ends in a flexible-array member. */
+>>>>>> +	TRAILING_OVERLAP(struct rxe_recv_wqe, wqe, dma.sge,
+>>>>>> +		struct ib_sge		sge[RXE_MAX_SGE];
+>>>>>> +	) srq_wqe;
+>>>>>
+>>>>> Will this change be enough?
+>>>>>
+>>>>> diff --git a/drivers/infiniband/sw/rxe/rxe_verbs.h b/drivers/infiniband/sw/rxe/rxe_verbs.h
+>>>>> index fd48075810dd..9ab11421a585 100644
+>>>>> --- a/drivers/infiniband/sw/rxe/rxe_verbs.h
+>>>>> +++ b/drivers/infiniband/sw/rxe/rxe_verbs.h
+>>>>> @@ -219,12 +219,6 @@ struct rxe_resp_info {
+>>>>>            u32                     rkey;
+>>>>>            u32                     length;
+>>>>> -       /* SRQ only */
+>>>>> -       struct {
+>>>>> -               struct rxe_recv_wqe     wqe;
+>>>>> -               struct ib_sge           sge[RXE_MAX_SGE];
+>>>>> -       } srq_wqe;
+>>>>> -
+>>>>>            /* Responder resources. It's a circular list where the oldest
+>>>>>             * resource is dropped first.
+>>>>>             */
+>>>>> @@ -232,6 +226,12 @@ struct rxe_resp_info {
+>>>>>            unsigned int            res_head;
+>>>>>            unsigned int            res_tail;
+>>>>>            struct resp_res         *res;
+>>>>> +
+>>>>> +       /* SRQ only */
+>>>>> +       struct {
+>>>>> +               struct ib_sge           sge[RXE_MAX_SGE];
+>>>>> +               struct rxe_recv_wqe     wqe;
+>>>>> +       } srq_wqe;
+>>>>>     };
+>>>>
+>>>> The question is if this is really what you want?
+>>>>
+>>>> sge[RXE_MAX_SGE] is of the following type:
+>>>>
+>>>> struct ib_sge {
+>>>>           u64     addr;
+>>>>           u32     length;
+>>>>           u32     lkey;
+>>>> };
+>>>>
+>>>> and struct rxe_recv_wqe::dma.sge[] is of type:
+>>>>
+>>>> struct rxe_sge {
+>>>>           __aligned_u64 addr;
+>>>>           __u32   length;
+>>>>           __u32   lkey;
+>>>> };
+>>>>
+>>>> Both types are basically the same, and the original code looks
+>>>> pretty much like what people do when they want to pre-allocate
+>>>> a number of elements (of the same element type as the flex array)
+>>>> for a flexible-array member.
+>>>>
+>>>> Based on the above, the change you suggest seems a bit suspicious,
+>>>> and I'm not sure that's actually what you want?
+>>>
+>>> You wrote about this error: "warning: structure containing a flexible array
+>>> member is not at the end of another structure".
+>>>
+>>> My suggestion was simply to move that flex array to be the last element
+>>> and save us from the need to have some complex, magic macro in RXE.
+>>
+>> Yep, but as I commented above, that doesn't seem to be the right change.
+>>
+>> Look at the following couple of lines:
+>>
+>> drivers/infiniband/sw/rxe/rxe_resp.c-286-       size = sizeof(*wqe) + wqe->dma.num_sge*sizeof(struct rxe_sge);
+>> drivers/infiniband/sw/rxe/rxe_resp.c-287-       memcpy(&qp->resp.srq_wqe, wqe, size);
+>>
+>> Notice that line 286 is the open-coded arithmetic (struct_size(wqe,
+>> dma.sge, wqe->dma.num_sge) is preferred) to get the number of bytes
+>> to allocate for a flexible structure, in this case struct rxe_recv_wqe,
+>> and its flexible-array member, in this case struct rxe_recv_wqe::dma.sge[].
+>>
+>> So, `size` bytes are written in qp->resp.srq_wqe, and the reason this works
+>> seems to be because of the pre-allocation of RXE_MAX_SGE number of elements
+>> for flex array struct rxe_recv_wqe::dma.sge[] given by:
+>>
+>> struct {
+>> 	struct rxe_recv_wqe	wqe;
+>> 	struct ib_sge		sge[RXE_MAX_SGE];
+>> } srq_wqe;
+> 
+> So you are saying that it works because it is written properly, so what
+> is the problem? Why do we need to fix properly working and written code
+> to be less readable?
+
+No one said the original code is not working as expected. The issue here is
+that the FAM is not at the end, and this causes a -Wflex-array-member-not-at-end
+warning. The change I propose places the FAM at the end, and the functionality
+remains exactly the same.
+
+You're probably not aware of the work we've been doing to enable
+-Wflex-array-member-not-at-end in mainline. If you're interested, below you
+can take a look at other similar changes I (and others) have been doing to
+complete this work:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/log/?qt=grep&q=-Wflex-array-member-not-at-end
+
+> 
+>>
+>> So, unless I'm missing something, struct ib_sge sge[RXE_MAX_SGE];
+>> should be aligned with struct rxe_recv_wqe wqe::dma.sge[].
+> 
+> It is and moving to the end of struct will continue to keep it aligned.
+
+I think there is something you are missing here. The following pieces of
+code are no equivalent:
+
+struct {
+	struct rxe_recv_wqe	wqe;
+  	struct ib_sge		sge[RXE_MAX_SGE];
+} srq_wqe;
+
+struct {
+  	struct ib_sge		sge[RXE_MAX_SGE];
+	struct rxe_recv_wqe	wqe;
+} srq_wqe;
+
+What I'm understanding from your last couple of responses is that you think
+the above are equivalent. My previous response tried to explain why that is
+not the case.
+
+> 
+>>
+>> The TRAILING_OVERLAP() macro is also designed to ensure alignment in these
+>> cases (and the static_assert() to preserve it). See this thread:
+>>
+>> https://lore.kernel.org/linux-hardening/aLiYrQGdGmaDTtLF@kspp/
+>>
+
+Thanks
+-Gustavo
 
