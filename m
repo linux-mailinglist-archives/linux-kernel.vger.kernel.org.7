@@ -1,157 +1,101 @@
-Return-Path: <linux-kernel+bounces-897475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA224C52EB3
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:14:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1403FC52E7D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:10:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1721D3517FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:59:58 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A708A354D3F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:58:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED3833396E0;
-	Wed, 12 Nov 2025 14:48:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D814234889A;
+	Wed, 12 Nov 2025 14:48:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="hRtoCmSh"
-Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=listout.xyz header.i=@listout.xyz header.b="yC2KFtED"
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D6172BE037;
-	Wed, 12 Nov 2025 14:48:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2F5733F361;
+	Wed, 12 Nov 2025 14:48:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762958929; cv=none; b=ms6R5sARJQoh4w55C583584TRW1SN/oRhwyS/2Mu2ef8wChFPyUZ0ZBghXfNigiW04Id2CjbmMbt16o5D5ReBXV3bYfkRNza5DZhyJfEvQBoVL8++8wYRPiTkzrmefo7ZpgDKiNFDHPraFOmgl2pt6O7AKKnJzLiwgXxqeUbx+U=
+	t=1762958891; cv=none; b=h8U4d0vuUJwCwy17N5ihv31bijZAdmyEYO2rHTt3druUW/NACc19zorj1SVtvaTK9A7UKW2SDM1enSNL0wOaa+RhVdZoPOoccwd11GJ8WT7jt4WtdOpsoYI8a/AwYdXnirZiv0HjQM1C7OBkXSRz0Kcl7VHjqJPULKmEXFMRQzQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762958929; c=relaxed/simple;
-	bh=IT/Dnq0ccS70As0I4G0WtOpEjeCHhwrJsgYebPbDfXY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hEuGt9Ab9u4EVGGVswmXyUdwp+I9H+UwOiMGFDmlxq0lDXSjTIDnHzxk8DZ8AllVWw1uW8ItIUTrUFvUmskQIvqAGszWVtidQe4oVVBcIrsJfIz295qSzbpKP93V9HIR76nNNpILaAUGgmHrhcFvCYLRdfs1Fqov3nC1TVGcMFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=hRtoCmSh; arc=none smtp.client-ip=157.90.84.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
-Received: from wse-pc.fritz.box (p5de4574e.dip0.t-ipconnect.de [93.228.87.78])
-	(Authenticated sender: wse@tuxedocomputers.com)
-	by mail.tuxedocomputers.com (Postfix) with ESMTPA id 69D2A2FC0061;
-	Wed, 12 Nov 2025 15:48:43 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
-	s=default; t=1762958923;
+	s=arc-20240116; t=1762958891; c=relaxed/simple;
+	bh=IQuK8rL97BNEfgMOVveuyFpWPQ5iO0/Fn4mlb+DBFNA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BCJDR5BqyhmIbSK+QbkGT0brWZL5+kYniw1MVfWpn7EAKPA3DTsn7GoY0KG7Qv5NUyA1/rAqUyc3bFv2zUyiyQfnKgEYclydJ4xIG0zn3DBkd8RwNLpur9oR2BIycbLV2/a7ja0GpzCUqEFcWa1dqnDKCYUZDhlTfD6JYvU4Vb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=listout.xyz; spf=pass smtp.mailfrom=listout.xyz; dkim=pass (2048-bit key) header.d=listout.xyz header.i=@listout.xyz header.b=yC2KFtED; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=listout.xyz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=listout.xyz
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4d65qM3SY9z9tyC;
+	Wed, 12 Nov 2025 15:47:59 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=listout.xyz; s=MBO0001;
+	t=1762958879;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=KWZeRBD8f4/ogvJmkKfieACwVHo4T9P1x5/ma/Xj7UU=;
-	b=hRtoCmShWcFggkK16llxoH1BPNus45N89sIi8qt+1WESoJ8ikginpx3apPv+mZ/tyeEAME
-	AqKvcKiwwWCMnRLJS2mBaNgCYwgT4FI/J+u+vkY/Rkq+HVYqCU3eu7X7KRtbhhIZTF8cPC
-	8S2eZH2ijONgAUDbTinMMZ94Z/2g0Oc=
-Authentication-Results: mail.tuxedocomputers.com;
-	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
-From: Werner Sembach <wse@tuxedocomputers.com>
-To: Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>
-Cc: Werner Sembach <wse@tuxedocomputers.com>,
-	linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3] hid/hid-multitouch: Keep latency normal on deactivate for reactivation gesture
-Date: Wed, 12 Nov 2025 15:47:04 +0100
-Message-ID: <20251112144837.499782-1-wse@tuxedocomputers.com>
-X-Mailer: git-send-email 2.43.0
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ej6O0iHmvQV6vixUAEP8L03Ws5zQ5xmtbhyoD8rFeWw=;
+	b=yC2KFtEDXXB6ScrGVGkvVgkc2eU1Ea1KmmPsdRpGlil2FirEcx+FnYczmyaCfGelUjkUhv
+	GHzLRRXN9iT2lZJ7XntSGWMz16kU1iGvuWMAs43gpGBd/aBv2mWZhkNIMFg7ViiYeyOBQ2
+	Zgxjyh3ueSInG3uf2d+a0UlyLliKyEvhbb/fxD9BGrn+2o83ityVdzh9WkTj1St82/GE6I
+	Cn0vGIxN3Hk7IiKhbvniaQRFQKo+8vlInw1XdnDayozhKBvVqqaUMyuoNADcF3dR0AT/S1
+	ZqtQSGPzVEWWmcQGRn6UxsXzQcpQW0c9JzkQqfjNrCqJLRROFHl2nLBbdW4M4A==
+Date: Wed, 12 Nov 2025 20:17:47 +0530
+From: Brahmajit Das <listout@listout.xyz>
+To: David Laight <david.laight.linux@gmail.com>
+Cc: syzbot+d1b7fa1092def3628bd7@syzkaller.appspotmail.com, 
+	andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, contact@arnaud-lcm.com, 
+	daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com, john.fastabend@gmail.com, 
+	jolsa@kernel.org, kpsingh@kernel.org, linux-kernel@vger.kernel.org, 
+	martin.lau@linux.dev, netdev@vger.kernel.org, sdf@fomichev.me, song@kernel.org, 
+	syzkaller-bugs@googlegroups.com, yonghong.song@linux.dev
+Subject: Re: [PATCH bpf-next v3] bpf: Clamp trace length in __bpf_get_stack
+ to fix OOB write
+Message-ID: <u34sykpbi6vw7xyalqnsjqt4aieayjotyppl3dwilv3hq7kghf@prx4ktfpk36o>
+References: <691231dc.a70a0220.22f260.0101.GAE@google.com>
+ <20251111081254.25532-1-listout@listout.xyz>
+ <20251112133546.4246533f@pumpkin>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251112133546.4246533f@pumpkin>
 
-Uniwill devices have a built in gesture in the touchpad to de- and
-reactivate it by double taping the upper left corner. This gesture stops
-working when latency is set to high, so this patch keeps the latency on
-normal.
+On 12.11.2025 13:35, David Laight wrote:
+> On Tue, 11 Nov 2025 13:42:54 +0530
+> Brahmajit Das <listout@listout.xyz> wrote:
+> 
+...snip...
+> 
+> Please can we have no unnecessary min_t().
+> You wouldn't write:
+> 	x = (u32)a < (u32)b ? (u32)a : (u32)b;
+> 
+>     David
+>  
+> >  	copy_len = trace_nr * elem_size;
+> >  
+> >  	ips = trace->ip + skip;
+> 
 
-Signed-off-by: Werner Sembach <wse@tuxedocomputers.com>
-Cc: stable@vger.kernel.org
----
-V1->V2: Use a quirk to narrow down the devices this is applied to.
-V2->V3: Fix this patch breaking touchpads on some devices.
-        Add another device ID.
+Hi David,
 
-I have three Uniwill devices at hand right now that have at least two
-physically different touchpads, but same Vendor + Product ID combination.
-Maybe the vendor uses this product ID for all i2c connected touchpads, or
-it is used as some kind of subvendor ID to indicate Uniwill?
+Sorry, I didn't quite get that. Would prefer something like:
+	trace_nr = (trace_nr <= num_elem) ? trace_nr : num_elem;
+The pre-refactor code.
 
-To be able to really narrow it down to Uniwill only devices I would need to
-check DMI strings, but then I will probably narrow it down to much as I
-only know what we at TUXEDO use there.
-
- drivers/hid/hid-multitouch.c | 26 +++++++++++++++++++++++++-
- 1 file changed, 25 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
-index 179dc316b4b51..ed9eb4e0d5038 100644
---- a/drivers/hid/hid-multitouch.c
-+++ b/drivers/hid/hid-multitouch.c
-@@ -76,6 +76,7 @@ MODULE_LICENSE("GPL");
- #define MT_QUIRK_DISABLE_WAKEUP		BIT(21)
- #define MT_QUIRK_ORIENTATION_INVERT	BIT(22)
- #define MT_QUIRK_APPLE_TOUCHBAR		BIT(23)
-+#define MT_QUIRK_KEEP_LATENCY_ON_CLOSE	BIT(24)
- 
- #define MT_INPUTMODE_TOUCHSCREEN	0x02
- #define MT_INPUTMODE_TOUCHPAD		0x03
-@@ -211,6 +212,7 @@ static void mt_post_parse(struct mt_device *td, struct mt_application *app);
- #define MT_CLS_WIN_8_DISABLE_WAKEUP		0x0016
- #define MT_CLS_WIN_8_NO_STICKY_FINGERS		0x0017
- #define MT_CLS_WIN_8_FORCE_MULTI_INPUT_NSMU	0x0018
-+#define MT_CLS_WIN_8_KEEP_LATENCY_ON_CLOSE	0x0019
- 
- /* vendor specific classes */
- #define MT_CLS_3M				0x0101
-@@ -330,6 +332,15 @@ static const struct mt_class mt_classes[] = {
- 			MT_QUIRK_CONTACT_CNT_ACCURATE |
- 			MT_QUIRK_WIN8_PTP_BUTTONS,
- 		.export_all_inputs = true },
-+	{ .name = MT_CLS_WIN_8_KEEP_LATENCY_ON_CLOSE,
-+		.quirks = MT_QUIRK_ALWAYS_VALID |
-+			MT_QUIRK_IGNORE_DUPLICATES |
-+			MT_QUIRK_HOVERING |
-+			MT_QUIRK_CONTACT_CNT_ACCURATE |
-+			MT_QUIRK_STICKY_FINGERS |
-+			MT_QUIRK_WIN8_PTP_BUTTONS |
-+			MT_QUIRK_KEEP_LATENCY_ON_CLOSE,
-+		.export_all_inputs = true },
- 
- 	/*
- 	 * vendor specific classes
-@@ -1998,7 +2009,12 @@ static void mt_on_hid_hw_open(struct hid_device *hdev)
- 
- static void mt_on_hid_hw_close(struct hid_device *hdev)
- {
--	mt_set_modes(hdev, HID_LATENCY_HIGH, TOUCHPAD_REPORT_NONE);
-+	struct mt_device *td = hid_get_drvdata(hdev);
-+
-+	if (td->mtclass.quirks & MT_QUIRK_KEEP_LATENCY_ON_CLOSE)
-+		mt_set_modes(hdev, HID_LATENCY_NORMAL, TOUCHPAD_REPORT_NONE);
-+	else
-+		mt_set_modes(hdev, HID_LATENCY_HIGH, TOUCHPAD_REPORT_NONE);
- }
- 
- /*
-@@ -2375,6 +2391,14 @@ static const struct hid_device_id mt_devices[] = {
- 		MT_USB_DEVICE(USB_VENDOR_ID_UNITEC,
- 			USB_DEVICE_ID_UNITEC_USB_TOUCH_0A19) },
- 
-+	/* Uniwill touchpads */
-+	{ .driver_data = MT_CLS_WIN_8_KEEP_LATENCY_ON_CLOSE,
-+		HID_DEVICE(BUS_I2C, HID_GROUP_MULTITOUCH_WIN_8,
-+			USB_VENDOR_ID_PIXART, 0x0255) },
-+	{ .driver_data = MT_CLS_WIN_8_KEEP_LATENCY_ON_CLOSE,
-+		HID_DEVICE(BUS_I2C, HID_GROUP_MULTITOUCH_WIN_8,
-+			USB_VENDOR_ID_PIXART, 0x0274) },
-+
- 	/* VTL panels */
- 	{ .driver_data = MT_CLS_VTL,
- 		MT_USB_DEVICE(USB_VENDOR_ID_VTL,
 -- 
-2.43.0
-
+Regards,
+listout
 
