@@ -1,114 +1,151 @@
-Return-Path: <linux-kernel+bounces-897485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C5A5C53103
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:34:25 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA69EC530A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:30:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7FC2C507009
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:03:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ACB3A544644
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:03:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 482E53446AB;
-	Wed, 12 Nov 2025 14:55:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Wi0ImtrU"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2214D2857F6
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 14:55:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 426663451C1;
+	Wed, 12 Nov 2025 14:55:56 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2712E33C538;
+	Wed, 12 Nov 2025 14:55:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762959333; cv=none; b=dEM9/Q8tX/dLB04CH77Bp2MO43nBvgAlEyN4f002mIrFjA+VaXdfTls/O+G4+ScjB7vqa3a9QtwD0sX+xL4yGykxxJtHXn4A96N6CsMf5Tp1u1h+LN4CwkOYeyD2VDpvAE5+ADi2xAjZXywPCnya1lKIvNiCb64UPQ6r5iuqcVY=
+	t=1762959355; cv=none; b=jViOWprRy71WG1C56dzejqYxvq9Ml1/TG5qIIAz+vU9esUJPSjVkwuQ9Qw9uYkiwk0BTB+zSd3I4nzuEoNNU05o71/fuUFXqG8nCTAlxyhupFpzfm1cVg8DiP6CM9fcBEBXysG4Apqi9KTNe4e6jwuFsDorxC3w5r2Ux6JeXpkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762959333; c=relaxed/simple;
-	bh=VvaOpU8/UH8cMCHv+j437vMmYuAqux2R0UTK+ai0Se4=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=Mgdhf1Bwv8CdHcdshOu4RFEvDlRHXF10G9D96GCeD+tku+8AcYDranK6P045j+bNFNNfueHOpsy2z+61xbhEdHW28dGnTYeY5eWW3B1HCzFnxtP2G4d+0vlwb61L8LreJL54MzGYvguR4dXdTXLt6jDC9q+V+vaQ09p5ygEuJ5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Wi0ImtrU; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762959331;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XnEcES/eMdb8xcUNYxyYTP/uMJ28lCAKuvb73LvVDYA=;
-	b=Wi0ImtrUH3VQwMDch59MsyizGoveYU7r8Wpf0n419ahyGM0sPk73TBm05om6XfvJTBE5fj
-	x5VgtkzqZOQqBBxWKI2ykmyLY+AmkWeOwcWZSyUUOxUKvhfJaZcJuJ9B93HgfU4UoL9gFm
-	HvzhmgHr9gPfQ04TlCp8gWrqqxS3V3M=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-241-YfQTWq4hM2iYIckLzPN4Jw-1; Wed,
- 12 Nov 2025 09:55:28 -0500
-X-MC-Unique: YfQTWq4hM2iYIckLzPN4Jw-1
-X-Mimecast-MFC-AGG-ID: YfQTWq4hM2iYIckLzPN4Jw_1762959324
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EA89119373F3;
-	Wed, 12 Nov 2025 14:55:23 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.87])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 0EA1F30044E0;
-	Wed, 12 Nov 2025 14:55:18 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20251106192016.GA3318@quark>
-References: <20251106192016.GA3318@quark> <20251106174456.31818-1-dhowells@redhat.com> <20251106174456.31818-3-dhowells@redhat.com>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: dhowells@redhat.com, Herbert Xu <herbert@gondor.apana.org.au>,
-    Luis Chamberlain <mcgrof@kernel.org>,
-    Petr Pavlu <petr.pavlu@suse.com>, Daniel Gomez <da.gomez@kernel.org>,
-    Sami Tolvanen <samitolvanen@google.com>,
-    "Jason A .
- Donenfeld" <Jason@zx2c4.com>,
-    Ard Biesheuvel <ardb@kernel.org>,
-    Stephan Mueller <smueller@chronox.de>,
-    Lukas Wunner <lukas@wunner.de>,
-    Ignat Korchagin <ignat@cloudflare.com>, linux-crypto@vger.kernel.org,
-    keyrings@vger.kernel.org, linux-modules@vger.kernel.org,
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 2/8] crypto: Add ML-DSA/Dilithium verify support
+	s=arc-20240116; t=1762959355; c=relaxed/simple;
+	bh=4L01zClc8R6G+alNNCVxBvcGcFvDCVWg9HTtGTFYt5E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FcEofPHr9MR6HYZ18a9DN6wNWMwyC2Tl+l7lK6kM8lKaIRgeNEZSAv7KhZl9hxsCdPymkBiOeDoKjS/WKnfpyVi91X1GJkcMxatBMluz2JjBdQN9bPnHcEWLbBFT5p9+P2JCc6+8xLGIZEk3uI5XGn6NbsXnRWA5JjAS5taIhUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B993E1515;
+	Wed, 12 Nov 2025 06:55:45 -0800 (PST)
+Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D0D483F66E;
+	Wed, 12 Nov 2025 06:55:48 -0800 (PST)
+Message-ID: <a9edf77f-41d8-4e3c-b621-e2d37604a410@arm.com>
+Date: Wed, 12 Nov 2025 14:55:47 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1232847.1762959317.1@warthog.procyon.org.uk>
-Date: Wed, 12 Nov 2025 14:55:17 +0000
-Message-ID: <1232848.1762959317@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 09/33] ACPI / MPAM: Parse the MPAM table
+To: "Shaopeng Tan (Fujitsu)" <tan.shaopeng@fujitsu.com>,
+ "james.morse@arm.com" <james.morse@arm.com>
+Cc: "amitsinght@marvell.com" <amitsinght@marvell.com>,
+ "baisheng.gao@unisoc.com" <baisheng.gao@unisoc.com>,
+ "baolin.wang@linux.alibaba.com" <baolin.wang@linux.alibaba.com>,
+ "bobo.shaobowang@huawei.com" <bobo.shaobowang@huawei.com>,
+ "carl@os.amperecomputing.com" <carl@os.amperecomputing.com>,
+ "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+ "dakr@kernel.org" <dakr@kernel.org>,
+ "dave.martin@arm.com" <dave.martin@arm.com>,
+ "david@redhat.com" <david@redhat.com>,
+ "dfustini@baylibre.com" <dfustini@baylibre.com>,
+ "fenghuay@nvidia.com" <fenghuay@nvidia.com>,
+ "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+ "gshan@redhat.com" <gshan@redhat.com>,
+ "guohanjun@huawei.com" <guohanjun@huawei.com>,
+ "jeremy.linton@arm.com" <jeremy.linton@arm.com>,
+ "jonathan.cameron@huawei.com" <jonathan.cameron@huawei.com>,
+ "kobak@nvidia.com" <kobak@nvidia.com>,
+ "lcherian@marvell.com" <lcherian@marvell.com>,
+ "lenb@kernel.org" <lenb@kernel.org>,
+ "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "lpieralisi@kernel.org" <lpieralisi@kernel.org>,
+ "peternewman@google.com" <peternewman@google.com>,
+ "quic_jiles@quicinc.com" <quic_jiles@quicinc.com>,
+ "rafael@kernel.org" <rafael@kernel.org>, "robh@kernel.org"
+ <robh@kernel.org>, "rohit.mathew@arm.com" <rohit.mathew@arm.com>,
+ "scott@os.amperecomputing.com" <scott@os.amperecomputing.com>,
+ "sdonthineni@nvidia.com" <sdonthineni@nvidia.com>,
+ "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
+ "will@kernel.org" <will@kernel.org>,
+ "xhao@linux.alibaba.com" <xhao@linux.alibaba.com>
+References: <20251107123450.664001-1-ben.horgan@arm.com>
+ <20251107123450.664001-10-ben.horgan@arm.com>
+ <OSZPR01MB8798996B4D879FF695AE216C8BCCA@OSZPR01MB8798.jpnprd01.prod.outlook.com>
+From: Ben Horgan <ben.horgan@arm.com>
+Content-Language: en-US
+In-Reply-To: <OSZPR01MB8798996B4D879FF695AE216C8BCCA@OSZPR01MB8798.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Eric Biggers <ebiggers@kernel.org> wrote:
+Hi Shaopeng,
 
-> As I mentioned before
-> (https://lore.kernel.org/linux-crypto/20250613170456.GA1284@sol/), this
-> code should go in lib/crypto/.  There seems to be a clean API in
-> crypto/ml_dsa/dilithium.h already.  Just make that the library API.
+On 11/12/25 07:01, Shaopeng Tan (Fujitsu) wrote:
+> Hello Ben,
+> 
+>> From: James Morse <james.morse@arm.com>
+>>
+>> Add code to parse the arm64 specific MPAM table, looking up the cache level
+>> from the PPTT and feeding the end result into the MPAM driver.
+>>
+>> This happens in two stages. Platform devices are created first for the MSC
+>> devices. Once the driver probes it calls acpi_mpam_parse_resources() to
+>> discover the RIS entries the MSC contains.
+>>
+>> For now the MPAM hook mpam_ris_create() is stubbed out, but will update the
+>> MPAM driver with optional discovered data about the RIS entries.
+>>
+>> CC: Carl Worth <carl@os.amperecomputing.com>
+>> Link: https://developer.arm.com/documentation/den0065/3-0bet/?lang=en
+>> Reviewed-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
+>> Tested-by: Fenghua Yu <fenghuay@nvidia.com>
+>> Tested-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
+>> Tested-by: Peter Newman <peternewman@google.com>
+>> Signed-off-by: James Morse <james.morse@arm.com>
+>> Signed-off-by: Ben Horgan <ben.horgan@arm.com>
 
-It's not that simple, as it turns out.  Various of the API structures are
-dependent on the strength-specific #include magic stuff.
-dilithium_{44,65,87}.h (or parts thereof) are used in the generation of those
-structs.
+>> +static struct platform_device * __init acpi_mpam_parse_msc(struct
+>> +acpi_mpam_msc_node *tbl_msc) {
+>> +	struct platform_device *pdev __free(platform_device_put) =
+>> +		platform_device_alloc("mpam_msc", tbl_msc->identifier);
+>> +	int next_res = 0, next_prop = 0, err;
+>> +	/* pcc, nrdy, affinity and a sentinel */
+>> +	struct property_entry props[4] = { 0 };
+>> +	/* mmio, 2xirq, no sentinel. */
+>> +	struct resource res[3] = { 0 };
+>> +	struct acpi_device *companion;
+>> +	enum mpam_msc_iface iface;
+>> +	char uid[16];
+>> +	u32 acpi_id;
+>> +
+>> +	if (!pdev)
+>> +		return ERR_PTR(-ENOMEM);
+>> +
+>> +	/* Some power management is described in the namespace: */
+>> +	err = snprintf(uid, sizeof(uid), "%u", tbl_msc->identifier);
+> 
+> It's a bit strange to store the uid length in the variable err.
 
-Now, I can move all that stuff into one header file in include/crypto/, but
-it's exposing a lot of the internals.
+A little, yes. The value is only used for error checking and it's not
+that uncommon so I'll leave it as is.
 
-It also requires the caller to do some of the work in expanding the public key
-and signature into those API structs, so it's probably better to wrap the
-dilithium.h API to a simpler one with just init, update, fini and all-in-one
-functions and have the crypto_sig interface call those (the helper functions
-are pretty much the wrappers I need anyway).
+linux$ git grep 'err = snprintf' | wc -l
+17
 
-David
+> Reviewed-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
+> 
+
+Thanks!
+Thanks,
+
+Ben
 
 
