@@ -1,142 +1,192 @@
-Return-Path: <linux-kernel+bounces-897296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A05CC528BD
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:50:36 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6574DC528B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:49:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA97A3BEB1B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 13:38:20 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EF90E4FC7C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 13:38:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29B54339B28;
-	Wed, 12 Nov 2025 13:37:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0230B338929;
+	Wed, 12 Nov 2025 13:38:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZZ5y3ykm"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ursulin.net header.i=@ursulin.net header.b="J7hgV/vM"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A883E338936;
-	Wed, 12 Nov 2025 13:37:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62F10328B73
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 13:38:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762954678; cv=none; b=HRDFYAtNdTagm0LhneZGPRxqz0JjappLtAtGGFbKjJKuKDcW1WSyM9ib64OwHFPr03gXe40PvZbZo9bvh1TTPkN/tVyNORlrJxjiLaJeOMlr0/i36KGzmmLqzj3OuxBlcYxC/wz/2TRWz16bC0kQqBEiLzRdaiqfJ6olTu9dDdk=
+	t=1762954703; cv=none; b=UAOvXtxapCzVGGNH6AwvnJEGfph/cUKFbw+Wc8Pt2cYipLUaOl7/8dy3cbGsqHmk86HocV00hE0VySGz6/JtL9PT5LmN6+xubuuayflbDc0IotdGH+JkjO8LFOcvSwb++L9gMRqQRghVAd2pqm3VMIiSEsDUT9U7Bkv6wdmLSuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762954678; c=relaxed/simple;
-	bh=U7RoLsnYvGKocM2umwff9hFd9Cs4671agPc3xwEp9pA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EsWjTIOzbL7tc4VYkMKVz/SZTld0fyH+ZzH0j9+4Ct8K20kgWbvTLztvBXc+52NPALuCNTQyb7qapm5RpD6k5qmPhAd0Yh1y/98FuyJJHsR6POjCNeiLgYsm39OsQ0UfFAwZKx8HKf5tBBNTKTwe7c6aHdvOjpa6iLS4x22NmF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZZ5y3ykm; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762954677; x=1794490677;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=U7RoLsnYvGKocM2umwff9hFd9Cs4671agPc3xwEp9pA=;
-  b=ZZ5y3ykm2LRxNzmXN+4rx0Mf3qwNw/yXV+pAaIwfXPP/76U/cMUoEExw
-   WB0E0ULyRyndE0giUvI8JN6KiBXKSp8LjCbUTmMLo8eI8/Fdtl+qalZZS
-   i7EcC1cidK6lAx7ZPgNIYQJZnMBtFU08MlGJBDlZvwGtacAKPjQ7BRmNt
-   xrl1ETuWE1rB84Eg1rWsC+791OxNhni8CFeZdeCjLjSDbt11PK04rwok4
-   vvJwxECcOEwvWCnEFbzqsXNU+W1UebusT273pYMH+jTe1k3jEHs4C0pRM
-   ILKsTcpoh9i6Eiz2ymjCGCPAZBeqHQt3S54y/nYA7nJWxdOwVWMnGIdX+
-   A==;
-X-CSE-ConnectionGUID: SRvsRNEHR/CyvpqPnk2NYQ==
-X-CSE-MsgGUID: hUbwzqIfQHOUgtuDbcgeVA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11611"; a="76364778"
-X-IronPort-AV: E=Sophos;i="6.19,299,1754982000"; 
-   d="scan'208";a="76364778"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2025 05:37:56 -0800
-X-CSE-ConnectionGUID: j5tJq1vISKaxP6tLzTzBiw==
-X-CSE-MsgGUID: EK+QKkEiRNiaccr2y9qYkQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,299,1754982000"; 
-   d="scan'208";a="189071651"
-Received: from smoticic-mobl1.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.214])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2025 05:37:52 -0800
-Received: from kekkonen.localdomain (localhost [IPv6:::1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id A8E80121DDE;
-	Wed, 12 Nov 2025 15:37:49 +0200 (EET)
-Date: Wed, 12 Nov 2025 15:37:49 +0200
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: hariconscious@gmail.com
-Cc: cezary.rojewski@intel.com, liam.r.girdwood@linux.intel.com,
-	peter.ujfalusi@linux.intel.com, yung-chuan.liao@linux.intel.com,
-	ranjani.sridharan@linux.intel.com, kai.vehmanen@linux.intel.com,
-	pierre-louis.bossart@linux.dev, broonie@kernel.org, perex@perex.cz,
-	tiwai@suse.com, amadeuszx.slawinski@linux.intel.com,
-	khalid@kernel.org, shuah@kernel.org, david.hunter.linux@gmail.com,
-	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ASoC: Intel: avs: Replace snprintf() with scnprintf()
-Message-ID: <aRSNrXnmPTElmx5H@kekkonen.localdomain>
-References: <20251112120235.54328-2-hariconscious@gmail.com>
+	s=arc-20240116; t=1762954703; c=relaxed/simple;
+	bh=N9Ic65ImEH4X/1MrpWAA79WVZjpOb9FIUfY0l0yoqQ0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kIc26MWzydxgVw2FOfnpR/aRjrYb5/8LRg5hbS8k+sZt2ftxy5xmPJjr6s3w0nDBCpxITDdYIac+CONib3MhHm1gzbbMEtDxV4lIQ3/Kkv521ocfhUnjIatvGQ+MUl22zN0qWMINUvio6GNC7JsK0kPa1Pw49fKeQb0UroBH0bo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ursulin.net; spf=pass smtp.mailfrom=ursulin.net; dkim=pass (2048-bit key) header.d=ursulin.net header.i=@ursulin.net header.b=J7hgV/vM; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ursulin.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ursulin.net
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-47721743fd0so4806435e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 05:38:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ursulin.net; s=google; t=1762954699; x=1763559499; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=CKVPli+vtTdPK0Wb1LRFV8iDiJCBNe0ca15Qkt46LAw=;
+        b=J7hgV/vMiRYxWDYTguPXg21tDhPGBOy2QXk4Q4FkAZFLk+HR7D2cCUylQNIAxCS4hO
+         Sr5P1eq8vT6pGy8vavFimzTrJzUmkp29sI26hzbdlaxzpDXRLp4kyk3qYmUduWjpF6qi
+         8IOwCN5vRxZ7+xftc/jSddZ3ZMRkU0/DnqECI2WRGd9XQ4lyFVFDJRcvLHhC6XyMJ+Rb
+         riADfD4saHgQi6osBNqk2LC/jolCYp1zMwNi54kma4AAcaY62JOrBVdbWzvX4cjtD4SK
+         TpJrxgv4ay5MtkyfEFLcmYFr4O9mdB3mrm7mYvJV7pGqYibvRP7e12V4BDMuzx1IYfD3
+         +QFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762954699; x=1763559499;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CKVPli+vtTdPK0Wb1LRFV8iDiJCBNe0ca15Qkt46LAw=;
+        b=D4c9DEg0BexyubSlau2E2iwxEjfmEXiJWDZJw/PUDE3XccN7mV02miv1I4llffyms5
+         tdf7wwDHJkWVEgYUkuCf7Mwxk+8vqcfje7dB85FwKPPj8t187R4aOGVGOXkT0DePdpWP
+         thC0nUSaqYvNB2DuEnwFXkDBe057+G3P4EGWP4a+v3xYNF0KnWd1dziWXKdt+NAOW57s
+         ThFiiE8hAP+6h0voGZfB+GdI3pxls9giFf/1MkwkdAwXZYFOA+EeewaQRVi+ncZo0L34
+         kUdPCU0wsedWSjBWbx1KC8yTkzZExeyrKhqhxx+p7soS8DsRINfTFr5Efi1wLqyO6bE3
+         yWAA==
+X-Forwarded-Encrypted: i=1; AJvYcCUF0H3LBq6b31dJeVzcYeuTD+gAL6D6ZdZoBQV5Y8Mdryg8DNZz96r1bkvkuGTvGGv/fEpZcUiVmRzWePo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNMv9bp590lnGK7Ee3BVn2nhTVwTCUv9Ly/mWnQlRZ3FCF6qyt
+	RaaITTCN6uC/I0uWid3vYX2uNB0nt+oD2RiiLWVLNxltpoIKqKoylhs50CYLz/lm72TPq8OW8NV
+	Wi2qr
+X-Gm-Gg: ASbGnct1k0D6vNfXHoD5FvDL4qMGt21KxuTIIx0mX2ThOa1Aqnjh28HBqLCZ6NB0SEP
+	5mkM5l3fPQmjFIVcezIzX+vM7a9+kkFxqtdYK0E0APwGZ6MINHoVGJNl3ftkjzg2iufXYER5NHO
+	sQcRzI1EoNnVYuHj/0+qup9sNAevEjf81oCAz7TSBgxZ3krbdF1qQHDeGryTp6reg57lUidtxZe
+	z1Vy/WVZxkeEjRGh/0IM+cwsyEA70d6OcKXaStfh5sRSjsxJGf2y7ig9LmcbCJcFeZQ1oDAHNoM
+	hBhpQ9xGdRRoI2sYmt8HDEsL7F8AS4cjKntkgk+5e1FmVoHbgaeOkhaNu8brU/G0IdeLApTBePp
+	PWLOMeNlDzrqzhkDc/YCy284Kspw3SR1tGkfI/nSWwzwisZfVWOmTg3VBt8RxmJ3bsDR72RP++Z
+	jtNMm80itESSBRQeEuXDn81A==
+X-Google-Smtp-Source: AGHT+IHgmc5huq89+1MnpQMirmZYWR9B+FP7GHxP0enOBtoio6kTy/7iypYs8CCl2+rfT2RT9vY5dg==
+X-Received: by 2002:a05:600c:1d1b:b0:477:63db:c0fe with SMTP id 5b1f17b1804b1-477871c3589mr32958135e9.32.1762954699196;
+        Wed, 12 Nov 2025 05:38:19 -0800 (PST)
+Received: from [192.168.0.101] ([90.240.106.137])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47787e95327sm35065075e9.12.2025.11.12.05.38.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Nov 2025 05:38:18 -0800 (PST)
+Message-ID: <b7f66752-a80d-429e-9f00-c631b0490883@ursulin.net>
+Date: Wed, 12 Nov 2025 13:38:18 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251112120235.54328-2-hariconscious@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/sched: Document racy behavior of
+ drm_sched_entity_push_job()
+To: phasta@kernel.org, Matthew Brost <matthew.brost@intel.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20251112073138.93355-2-phasta@kernel.org>
+ <e9c02871-fa80-46c7-8b96-bad3a6a2c5b9@ursulin.net>
+ <38bce31a7cdea31738c161bb06af272d5f68af1a.camel@mailbox.org>
+ <babc3eae-42c2-4927-95db-7c529a282d6d@ursulin.net>
+ <cd7f6684f1d8bfca606c4a6ba75c130d07e3a7fe.camel@mailbox.org>
+Content-Language: en-GB
+From: Tvrtko Ursulin <tursulin@ursulin.net>
+In-Reply-To: <cd7f6684f1d8bfca606c4a6ba75c130d07e3a7fe.camel@mailbox.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi HariKrishna,
 
-On Wed, Nov 12, 2025 at 05:32:35PM +0530, hariconscious@gmail.com wrote:
-> From: HariKrishna Sagala <hariconscious@gmail.com>
+On 12/11/2025 13:31, Philipp Stanner wrote:
+> On Wed, 2025-11-12 at 13:13 +0000, Tvrtko Ursulin wrote:
+>>
+>> On 12/11/2025 12:15, Philipp Stanner wrote:
+>>> On Wed, 2025-11-12 at 09:42 +0000, Tvrtko Ursulin wrote:
+>>>>
+>>>> On 12/11/2025 07:31, Philipp Stanner wrote:
+>>>>> drm_sched_entity_push_job() uses the unlocked spsc_queue. It takes a
+>>>>> reference to that queue's tip at the start, and some time later removes
+>>>>> that entry from that list, without locking or protection against
+>>>>> preemption.
+>>>>
+>>>> I couldn't figure out what you refer to by tip reference at the start,
+>>>> and later removes it. Are you talking about the top level view from
+>>>> drm_sched_entity_push_job() or where exactly?
+>>>>> This is by design, since the spsc_queue demands single producer and
+>>>>> single consumer. It was, however, never documented.
+>>>>>
+>>>>> Document that you must not call drm_sched_entity_push_job() in parallel
+>>>>> for the same entity.
+>>>>>
+>>>>> Signed-off-by: Philipp Stanner <phasta@kernel.org>
+>>>>> ---
+>>>>>     drivers/gpu/drm/scheduler/sched_entity.c | 3 +++
+>>>>>     1 file changed, 3 insertions(+)
+>>>>>
+>>>>> diff --git a/drivers/gpu/drm/scheduler/sched_entity.c b/drivers/gpu/drm/scheduler/sched_entity.c
+>>>>> index 5a4697f636f2..b31e8d14aa20 100644
+>>>>> --- a/drivers/gpu/drm/scheduler/sched_entity.c
+>>>>> +++ b/drivers/gpu/drm/scheduler/sched_entity.c
+>>>>> @@ -562,6 +562,9 @@ void drm_sched_entity_select_rq(struct drm_sched_entity *entity)
+>>>>>      * drm_sched_entity_push_job - Submit a job to the entity's job queue
+>>>>>      * @sched_job: job to submit
+>>>>>      *
+>>>>> + * It is illegal to call this function in parallel, at least for jobs belonging
+>>>>> + * to the same entity. Doing so leads to undefined behavior.
+>>>>
+>>>> One thing that is documented in the very next paragraph is that the
+>>>> design implies a lock held between arm and push. At least to ensure
+>>>> seqno order matches the queue order.
+>>>>
+>>>> I did not get what other breakage you found, but I also previously did
+>>>> find something other than that. Hm.. if I could only remember what it
+>>>> was. Probably mine was something involving drm_sched_entity_select_rq(),
+>>>> drm_sched_entity_modify_sched() and (theoretical) multi-threaded
+>>>> userspace submit on the same entity. Luckily it seems no one does that.
+>>>>
+>>>> The issue you found is separate and not theoretically fixed by this
+>>>> hypothetical common lock held over arm and push?
+>>>
+>>> Well, if 2 CPUs should ever run in parallel in
+>>> drm_sched_entity_push_job() the spsc_queue will just explode. Most
+>>> notably, one CPU could get the job at the tip (the oldest job), then be
+>>> preempted, and then another CPU takes the same job and pops it.
+>>
+>> Ah, you are talking about the dequeue/pop side. First paragraph of the
+>> commit message can be clarified in that case.
+>>
+>> Pop is serialised by the worker so I don't think two simultaneous
+>> dequeues on the same scheduler are possible. How did you trigger it?
+>>> The API contract should be that the user doesn't have to know whether
+>>> there's a linked list or the magic spsc_queue.Luckily we moved the peek/pop helpers to sched_internal.h.
+>>
+>> Btw I thought you gave up on the scheduler and are working on the simple
+>> rust queue for firmware schedulers so how come you are finding subtle
+>> bugs in this code?
 > 
-> As per the C99 standard snprintf() returns the length of the data
-> that *would have been* written if there were enough space for it.
-> It's generally considered safer to use the scnprintf() variant.
-
-Not only that, but the code assumes scnprintf() behaviour to function
-correctly. This should be reflected in the commit message. I.e. this is a
-bugfix and should probably be cc'd to stable. Could you provide a Fixes:
-tag as well?
-
-The change itself seems fine to me, apart from indentation.
-
+> I'm a maintainer still, for a variety of reasons. That we work on
+> something for FW with a clean locking design doesn't mean we don't care
+> about existing infrastructure anymore. And I firmly believe in
+> documentation. People should know the rules from the API documentation,
+> not from looking into the implementation.
 > 
-> Link: https://github.com/KSPP/linux/issues/105
-> Signed-off-by: HariKrishna Sagala <hariconscious@gmail.com>
-> ---
-> This patch replaces snprintf() varaint with scnprintf() in
-> scenario to know the actual length of the data rather than *would
-> have been* written data of snprintf().
-> No functional changes intended.
-> Reference Links:
-> https://lwn.net/Articles/69419/
-> https://www.kernel.org/doc/html/latest/core-api/kernel-api.html#c.snprintf
+> It's kind of a crucial design info that you must only push into
+> entities sequentially, no?
 > 
-> Note:
-> Compile & boot tested with necessary config parameters.
-> Other areas of AVS uses scnprintf() variant.
-> 
->  sound/soc/intel/avs/debugfs.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/sound/soc/intel/avs/debugfs.c b/sound/soc/intel/avs/debugfs.c
-> index 3534de46f9e4..100b95bfcd78 100644
-> --- a/sound/soc/intel/avs/debugfs.c
-> +++ b/sound/soc/intel/avs/debugfs.c
-> @@ -119,7 +119,7 @@ static ssize_t probe_points_read(struct file *file, char __user *to, size_t coun
->  	}
->  
->  	for (i = 0; i < num_desc; i++) {
-> -		ret = snprintf(buf + len, PAGE_SIZE - len,
-> +		ret = scnprintf(buf + len, PAGE_SIZE - len,
->  			       "Id: %#010x  Purpose: %d  Node id: %#x\n",
->  			       desc[i].id.value, desc[i].purpose, desc[i].node_id.val);
->  		if (ret < 0)
-> 
-> base-commit: 24172e0d79900908cf5ebf366600616d29c9b417
+> This doesn't fix a bug, obviously, since it's just a line of docu.
+> Regardless, pushing into the spsc queue in parallel would explode.
+> Emphasizing that costs as nothing.
 
--- 
-Kind regards,
+It wasn't an argument. I was just curious if this is something you 
+managed to hit and how.
 
-Sakari Ailus
+Regards,
+
+Tvrtko
+
 
