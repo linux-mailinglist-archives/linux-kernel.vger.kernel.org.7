@@ -1,115 +1,145 @@
-Return-Path: <linux-kernel+bounces-897262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3AE7C52722
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:23:33 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1C54C526D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 14:19:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99674421B5F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 13:10:19 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2D0FC4E214D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 13:10:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21A52335BA6;
-	Wed, 12 Nov 2025 13:09:54 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E69B0329E61;
+	Wed, 12 Nov 2025 13:10:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="kUSxogkl"
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7C6D337B80
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 13:09:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96B8131196C
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 13:10:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762952993; cv=none; b=HXh6FtCX1PMfntBdvpm1swAvNAlVa3dHhufWuiEFlmHAAielqe064nncS3F84FfNXsFltBVzKEvz8Hl2Pq8qhSea1BuP/vx0agm10kQYjR+mvmri6zvOC+bfzk7RemcanhhL6ro1x3ZeLaQVDVvW7RC/Xh+2E9XELNceP7DFVec=
+	t=1762953048; cv=none; b=au6GbzhnCWy2Q+AepGAcca+4xHTREiwou3qWcLwVJKA/k1Nte+bgjntfRO0qwVRfMozW2h/GxnZ0ZoLQKJX/3jBMxyfXNHb+XGx/JSn4BeX++kAd81cdyRxpmDrAJ1DLbcSNHplk5AM431nx2RN5SShzn2zP6WKMuhqncsLQb/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762952993; c=relaxed/simple;
-	bh=7blo7W3QrwEHVBL5bm9NzbM26qsL4pvNMrpqzD7XhvA=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=AakU/Bq1qljmV9ZGTE+QKXsiNgjSfhvKf5ZUJ24ZNsHwcq55C2sTmw5LUZ92oqGj7EhIXCFI+3D3xMUtSuJpAVjzyVGOX/eSqC4+q6FNOxwQCK5BB+9ME9yB0Wpvu6Xns/vIjGp+rfZy2/qlA7a0zadQJDzRjtzHjq4XcvWpPdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-4337b5c3388so26830845ab.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 05:09:50 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762952990; x=1763557790;
-        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
-         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8JiPnVjMdo3Xe7L4WURoVzBm4/do7K08c/R9hRy2O5U=;
-        b=GUZazRRlXYjkxftwtqRQ17UQbX6B6rjJo2WXpUYUiLLpwztBz6hMZBXe58RsmLppZ+
-         OQZgwkkmw66+hBWbIwK59nlbZU1Uhdxuwln9137WFePVKsB8cn4yOxe77cBih/RdTTOC
-         +RgAU870eYUKGS82Y8UTTFm9JTwRdyL40d1xGh3iS1GbDwhMfX3m7WUVkWofAuGqz2Ek
-         poXNc89p9oCnzGnteOujE53qyrmQB63Z/Fbru9pQ93P7XD2huhZood36NekemOvDK7tg
-         zj6at5ZvZBBMZvvOOw/YGG/ey+vci8EQ2D79+N3ezcfVOhfGCECA+r67i7XTuHKo+h/8
-         Iupw==
-X-Gm-Message-State: AOJu0Yxs0oyMQD8jQ0yl+0YFsD9BWeEs2SG9Xa+HVs4Y40zNonukSmpE
-	lcGx4DuHraDBTFBWo+EXg8YSz+s0H5+9wDUuBX1uM8EjnKNa7s1tUhc5JR91BANDghsxAh3QJVo
-	aK0TSIM1nCrs8w7pmFUy8OFzfdgdcQ/SCoKvZSlAOCwtdcgS0+xnTdIInHyA=
-X-Google-Smtp-Source: AGHT+IH3YEYSHblbiv3MAe1kvj3pK1Wk5NqPibzwMeOpotHn9poQQ67sCu0BhWQW8tl3cjTemBBxtZY1AnDnyCRT/6ePGyc91Oja
+	s=arc-20240116; t=1762953048; c=relaxed/simple;
+	bh=2dGXt8VoW5CaG4YtnVqdqfl+eXlHLYQG2Tc1OSwxsg8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=uKjAEBu7U2juwd7UWdsIgDCJBKmpUsKDVSo4mHsHAlBR+tZIyoPDRC2a7bu1E1OaZNSNiaZQwBZe462LAUgJWZD8USrwssb8m/Kx46db4KYF6VNcL4Znc5Ypq2bgvLooHrQzNZC0yAoeeBvihUmYwx0w9M3+9e9LA/II1CNIQdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=kUSxogkl; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 284F74E4163B;
+	Wed, 12 Nov 2025 13:10:45 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id E40A36070B;
+	Wed, 12 Nov 2025 13:10:44 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 6D8E1102F16E2;
+	Wed, 12 Nov 2025 14:10:41 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1762953044; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=8FxSJ1YhSz/uKUxjGqRnSA5I1+h/hTb/Q5Ve6fg5lws=;
+	b=kUSxogklGuF/0uxGORVdT5LTnPw+kZ0d587IfLv40DmGK4Z+lBtSNKY2kGsYL7NAZNn9GE
+	T7DSGjkge483ANaLMiKbiIuGXV832f/B9VYsBmLgik+84PP9epSZm3NVJ2vsryC6L+Jz5U
+	sKIRhlgfBjP78+Xl3RGF0C8dSMoh5eRIqRUGLYLRSlcoO0xXN/9WCvp7g2DlIaTg0UC/GY
+	Jxivb3R41K5nCtbxNZWqXdmXFrHbEk1Ua5iH8AUPlrhMzi/xJ7GdS87upeh0vwkpEtmMWP
+	dbbVSitm57RO0F6D5eG5Sqj4yHEKf+8a2akWSQ/Sh+EKy0LrYBUj0V4hCOqjLw==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Sean Anderson <sean.anderson@linux.dev>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>,  Pratyush Yadav
+ <pratyush@kernel.org>,  Michael Walle <mwalle@kernel.org>,
+  linux-mtd@lists.infradead.org,  Richard Weinberger <richard@nod.at>,
+  linux-kernel@vger.kernel.org,  Vignesh Raghavendra <vigneshr@ti.com>
+Subject: Re: [PATCH] mtd: spi-nor: Enable locking for n25q00a
+In-Reply-To: <92e99a96-5582-48a5-a4f9-e9b33fcff171@linux.dev> (Sean Anderson's
+	message of "Tue, 14 Oct 2025 14:25:10 -0400")
+References: <20251006223409.3475001-1-sean.anderson@linux.dev>
+	<mafs0ecreontu.fsf@kernel.org>
+	<4888cefa-e8be-4f0d-9d4a-c82f9ff6cda0@linux.dev>
+	<mafs05xcpo9sz.fsf@kernel.org>
+	<26a795ac-e6ff-4363-a8b9-38793a9be794@linux.dev>
+	<mafs0ikgnn07u.fsf@kernel.org>
+	<d00d42ce-4262-4736-8c73-5d2544e86d33@linux.dev>
+	<33cbbac1-c247-4644-b555-998eea6e8305@linaro.org>
+	<92e99a96-5582-48a5-a4f9-e9b33fcff171@linux.dev>
+User-Agent: mu4e 1.12.7; emacs 30.2
+Date: Wed, 12 Nov 2025 14:10:40 +0100
+Message-ID: <871pm3iegf.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3e89:b0:433:31b5:572b with SMTP id
- e9e14a558f8ab-43473dabff2mr35656785ab.22.1762952989863; Wed, 12 Nov 2025
- 05:09:49 -0800 (PST)
-Date: Wed, 12 Nov 2025 05:09:49 -0800
-In-Reply-To: <68f6a48f.050a0220.91a22.0453.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6914871d.050a0220.3565dc.0000.GAE@google.com>
-Subject: Forwarded: Re: test KMSAN: uninit-value in cfg80211_classify8021d
-From: syzbot <syzbot+878ddc3962f792e9af59@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
+X-Last-TLS-Session-Version: TLSv1.3
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+Hello Sean,
 
-***
+> # flash_lock -u /dev/mtd/by-name/spi0.1
+> # flash_lock -i /dev/mtd/by-name/spi0.1
+> Device: /dev/mtd/by-name/spi0.1
+> Start: 0
+> Len: 0x8000000
+> Lock status: unlocked
+> Return code: 0
+> # test() {
+>> mtd=3D/dev/mtd/by-name/$1
+>> start=3D$(($2 * 64 * 1024))
+>> size=3D$(($3 * 64 * 1024))
+>> dd if=3D/dev/urandom of=3D$1 bs=3D64k count=3D$3 status=3Dnone && \
+>> mtd_debug erase $mtd $start $size && \
+>> mtd_debug write $mtd $start $size $1 && \
+>> dd if=3D$mtd bs=3D64k skip=3D$2 count=3D$3 status=3Dnone | sha256sum $1 =
+- && \
+>> rm $1
+>> }
 
-Subject: Re: test KMSAN: uninit-value in cfg80211_classify8021d
-Author: vnranganath.20@gmail.com
+I am also working on locking these days, have you already started
+writing extra SPI NOR Documentation/process based on this thread?
 
-#syz test
+I am also trying to clarify what is expected and what the API somehow
+does, as it was not fully clear for me at first sight.
 
-diff --git a/net/wireless/util.c b/net/wireless/util.c
-index 23bca5e687c1..c310876c6c72 100644
---- a/net/wireless/util.c
-+++ b/net/wireless/util.c
-@@ -963,13 +963,23 @@ unsigned int cfg80211_classify8021d(struct sk_buff *s=
-kb,
+[...]
 
-        switch (skb->protocol) {
-        case htons(ETH_P_IP):
--               if (!pskb_may_pull(skb, sizeof(struct iphdr)))
-+               struct iphdr iph, *ip;
-+
-+               ip =3D skb_header_pointer(skb, sizeof(struct ethhdr),
-+                                       sizeof(*ip), &iph);
-+               if (!ip)
-                        return 0;
-+
-                dscp =3D ipv4_get_dsfield(ip_hdr(skb)) & 0xfc;
-                break;
-        case htons(ETH_P_IPV6):
--               if (!pskb_may_pull(skb, sizeof(struct ipv6hdr)))
-+               struct ip6hdr ip6h, *ip6;
-+
-+               ip6 =3D skb_header_pointer(skb, sizeof(struct ethhdr),
-+                                       sizeof(*ip6), &ip6h);
-+               if (!ip6)
-                        return 0;
-+
-                dscp =3D ipv6_get_dsfield(ipv6_hdr(skb)) & 0xfc;
-                break;
-        case htons(ETH_P_MPLS_UC):
+> # flash_lock -u /dev/mtd/by-name/spi0.1
+> # test spi0.1 64
+> 83a8dc6125ec9672d18f7f18f92e16f867354dbe8e2f3b0aca52b9d0ad7d8ffe  spi0.1
+> 83a8dc6125ec9672d18f7f18f92e16f867354dbe8e2f3b0aca52b9d0ad7d8ffe  -
+> # flash_lock -l /dev/mtd/by-name/spi0.1 $((1024 * 64 * 1024)) 1024
+> # flash_lock -i /dev/mtd/by-name/spi0.1=20
+> Device: /dev/mtd/by-name/spi0.1
+> Start: 0
+> Len: 0x8000000
+> Lock status: unlocked <<<< Wrong!
 
-On Wed, Nov 12, 2025 at 12:48=E2=80=AFAM Ranganath V N <vnranganath.20@gmai=
-l.com> wrote:
->
-> #syz test
+This isn't wrong, even though at a first glance the output is
+misleading. The API apparently does not gives you all the
+locked/unlocked sectors, it is way more basic than that: it tells you
+whether the full range you asked for is indeed locked.
+
+When you run "# flash_lock -i /dev/mtd/by-name/spi0.1", you privide no
+start/length values to the command. Hence, the defaults are picked: the
+entire device is considered for the check. The tool asks the kernel
+whether the range 0-0x7ffffff is *fully* locked. Answer is no, it is not
+fully locked.
+
+In the kernel there are two helpers for that, and they won't give you
+opposite results all the time:
+- is locked:
+    - returns true if the given range is fully locked
+    - returns false otherwise
+- is unlocked:
+    - returns yes if the given range is fully unlocked
+    - returns false otherwise
+
+So if you want the tool to tell you "yes", you should instead use the
+exact range you locked (1024-2047) or any subset of it.
+
+Thanks, Miqu=C3=A8l
 
