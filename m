@@ -1,111 +1,114 @@
-Return-Path: <linux-kernel+bounces-897490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9F62C53383
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:56:56 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C5A5C53103
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:34:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 588AA4A513A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:04:50 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7FC2C507009
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:03:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 119CD346E66;
-	Wed, 12 Nov 2025 14:57:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 482E53446AB;
+	Wed, 12 Nov 2025 14:55:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hPgj24so"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Wi0ImtrU"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7611A346E41;
-	Wed, 12 Nov 2025 14:57:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2214D2857F6
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 14:55:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762959461; cv=none; b=YPPBCuh+jzyZ9PGbLZ9j6g3MI8VDygmPninz+3RZuy+psSDSIm4MW/yPIsUbixJqVo/7zi+E+oLFK+pVc63DZN6bkdqrP2Cf24mFYsplbSdbjgJ0KMVqX9tXrrvkkpt6URYmKlqFmMDBXF+kLMbzZJZxq992uT1XR8KJTh3FzGU=
+	t=1762959333; cv=none; b=dEM9/Q8tX/dLB04CH77Bp2MO43nBvgAlEyN4f002mIrFjA+VaXdfTls/O+G4+ScjB7vqa3a9QtwD0sX+xL4yGykxxJtHXn4A96N6CsMf5Tp1u1h+LN4CwkOYeyD2VDpvAE5+ADi2xAjZXywPCnya1lKIvNiCb64UPQ6r5iuqcVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762959461; c=relaxed/simple;
-	bh=dzPIN1K4a2crXL9FdXtllClPyLCjvr+amLRN6CCJ9DE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MHXje7MYDg67YF7mZz/ddKPj5rgxb9QZtuyP4MZLYuSHHkFJOLnOdj0hwByMjqVkXmekmR6EdiA1PlkUfhY4LHNixRtr3uIg4wu2inOGLnGcQY3sTcWTJW6Oaibe64wGPm4hacKors5AtIZu/ZaIj1XUaMBTGocT2MNf1+S1AmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hPgj24so; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762959459; x=1794495459;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=dzPIN1K4a2crXL9FdXtllClPyLCjvr+amLRN6CCJ9DE=;
-  b=hPgj24soos9MQ0bn94V+Ffm2mXCkY6Rq8qEbOB+1Kwp4X39SGYmsXE5Z
-   px4vZlnyRErYhCCbB3c8YXlFoNJBaf8RjQ/HM4HPms4rTVxgXJCJ6hb4X
-   yhyi4nMw5EijP7vBQ/GvtKZ6dAEX0DeoOsPyyTmBgAWClCZGwtYZPWXts
-   oLuvcnDKXQZ+zK8w17D3Vel1T0fguOF6f9iJdeP70GQdjJ40dQCv/s3IK
-   FEt6ILf7tRU/r9dQBQpCIPQfvEpO121WQQS3c60RAYPwRKHE1V8UKaZPj
-   JabYxHD+oPe9Te0gXkLx6x/J2TJUYg0p5coLN/aFco1Bpl57FDDiTWWWR
-   Q==;
-X-CSE-ConnectionGUID: DweKAa+IT3SNMpR2Sm7rng==
-X-CSE-MsgGUID: O2zy6zldTsaBY4HpBP3cTg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11611"; a="64728018"
-X-IronPort-AV: E=Sophos;i="6.19,299,1754982000"; 
-   d="scan'208";a="64728018"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2025 06:57:38 -0800
-X-CSE-ConnectionGUID: 7mz2q09mQNC7ixwOcD8f/g==
-X-CSE-MsgGUID: h0CL+YTFTgSZ8gNpn7iqHA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,299,1754982000"; 
-   d="scan'208";a="188874869"
-Received: from black.igk.intel.com ([10.91.253.5])
-  by fmviesa007.fm.intel.com with ESMTP; 12 Nov 2025 06:57:37 -0800
-Received: by black.igk.intel.com (Postfix, from userid 1003)
-	id 2C87798; Wed, 12 Nov 2025 15:57:36 +0100 (CET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 3/3] iio: core: Replace lockdep_set_class() + mutex_init() by combined call
-Date: Wed, 12 Nov 2025 15:55:10 +0100
-Message-ID: <20251112145735.2075527-4-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20251112145735.2075527-1-andriy.shevchenko@linux.intel.com>
-References: <20251112145735.2075527-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1762959333; c=relaxed/simple;
+	bh=VvaOpU8/UH8cMCHv+j437vMmYuAqux2R0UTK+ai0Se4=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=Mgdhf1Bwv8CdHcdshOu4RFEvDlRHXF10G9D96GCeD+tku+8AcYDranK6P045j+bNFNNfueHOpsy2z+61xbhEdHW28dGnTYeY5eWW3B1HCzFnxtP2G4d+0vlwb61L8LreJL54MzGYvguR4dXdTXLt6jDC9q+V+vaQ09p5ygEuJ5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Wi0ImtrU; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762959331;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XnEcES/eMdb8xcUNYxyYTP/uMJ28lCAKuvb73LvVDYA=;
+	b=Wi0ImtrUH3VQwMDch59MsyizGoveYU7r8Wpf0n419ahyGM0sPk73TBm05om6XfvJTBE5fj
+	x5VgtkzqZOQqBBxWKI2ykmyLY+AmkWeOwcWZSyUUOxUKvhfJaZcJuJ9B93HgfU4UoL9gFm
+	HvzhmgHr9gPfQ04TlCp8gWrqqxS3V3M=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-241-YfQTWq4hM2iYIckLzPN4Jw-1; Wed,
+ 12 Nov 2025 09:55:28 -0500
+X-MC-Unique: YfQTWq4hM2iYIckLzPN4Jw-1
+X-Mimecast-MFC-AGG-ID: YfQTWq4hM2iYIckLzPN4Jw_1762959324
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EA89119373F3;
+	Wed, 12 Nov 2025 14:55:23 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.87])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 0EA1F30044E0;
+	Wed, 12 Nov 2025 14:55:18 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <20251106192016.GA3318@quark>
+References: <20251106192016.GA3318@quark> <20251106174456.31818-1-dhowells@redhat.com> <20251106174456.31818-3-dhowells@redhat.com>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: dhowells@redhat.com, Herbert Xu <herbert@gondor.apana.org.au>,
+    Luis Chamberlain <mcgrof@kernel.org>,
+    Petr Pavlu <petr.pavlu@suse.com>, Daniel Gomez <da.gomez@kernel.org>,
+    Sami Tolvanen <samitolvanen@google.com>,
+    "Jason A .
+ Donenfeld" <Jason@zx2c4.com>,
+    Ard Biesheuvel <ardb@kernel.org>,
+    Stephan Mueller <smueller@chronox.de>,
+    Lukas Wunner <lukas@wunner.de>,
+    Ignat Korchagin <ignat@cloudflare.com>, linux-crypto@vger.kernel.org,
+    keyrings@vger.kernel.org, linux-modules@vger.kernel.org,
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 2/8] crypto: Add ML-DSA/Dilithium verify support
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1232847.1762959317.1@warthog.procyon.org.uk>
+Date: Wed, 12 Nov 2025 14:55:17 +0000
+Message-ID: <1232848.1762959317@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-Replace lockdep_set_class() + mutex_init() by combined call
-mutex_init_with_key().
+Eric Biggers <ebiggers@kernel.org> wrote:
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/iio/industrialio-core.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+> As I mentioned before
+> (https://lore.kernel.org/linux-crypto/20250613170456.GA1284@sol/), this
+> code should go in lib/crypto/.  There seems to be a clean API in
+> crypto/ml_dsa/dilithium.h already.  Just make that the library API.
 
-diff --git a/drivers/iio/industrialio-core.c b/drivers/iio/industrialio-core.c
-index 5d2f35cf18bc..f69deefcfb6f 100644
---- a/drivers/iio/industrialio-core.c
-+++ b/drivers/iio/industrialio-core.c
-@@ -1717,9 +1717,8 @@ struct iio_dev *iio_device_alloc(struct device *parent, int sizeof_priv)
- 	INIT_LIST_HEAD(&iio_dev_opaque->ioctl_handlers);
- 
- 	lockdep_register_key(&iio_dev_opaque->mlock_key);
--	lockdep_set_class(&iio_dev_opaque->mlock, &iio_dev_opaque->mlock_key);
- 
--	mutex_init(&iio_dev_opaque->mlock);
-+	mutex_init_with_key(&iio_dev_opaque->mlock, &iio_dev_opaque->mlock_key);
- 	mutex_init(&iio_dev_opaque->info_exist_lock);
- 
- 	indio_dev->dev.parent = parent;
--- 
-2.50.1
+It's not that simple, as it turns out.  Various of the API structures are
+dependent on the strength-specific #include magic stuff.
+dilithium_{44,65,87}.h (or parts thereof) are used in the generation of those
+structs.
+
+Now, I can move all that stuff into one header file in include/crypto/, but
+it's exposing a lot of the internals.
+
+It also requires the caller to do some of the work in expanding the public key
+and signature into those API structs, so it's probably better to wrap the
+dilithium.h API to a simpler one with just init, update, fini and all-in-one
+functions and have the crypto_sig interface call those (the helper functions
+are pretty much the wrappers I need anyway).
+
+David
 
 
