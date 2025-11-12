@@ -1,98 +1,85 @@
-Return-Path: <linux-kernel+bounces-897944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 586FEC53F71
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:45:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56B48C53F6B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:45:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 31E1634CC2E
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:39:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 732143B6CED
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:39:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5D68350A10;
-	Wed, 12 Nov 2025 18:30:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p0q3oWbE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6BFE351FA7;
+	Wed, 12 Nov 2025 18:31:08 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AE3934889A;
-	Wed, 12 Nov 2025 18:30:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78D6D350D50;
+	Wed, 12 Nov 2025 18:31:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762972249; cv=none; b=Qq9jCx3dFq5ouKXOgiuN2g+DQZ+kuYXniJHEu5uVVMZ4fTWd+kNtPRHCWf8OzifQczqwDgbrz6+/BpYBeVlyH4mw3xcnPx5Hx4CT0DhPe5Bs6pe+U9fdJ+vF9NqEmPkOdXXjdZ9GZZkKm08BpoLSGRRgVuPKPfigqFnBAqd33y4=
+	t=1762972268; cv=none; b=eYZkQzsw1Qqxpi1oRX0MJKszFEYKGV8+EjhFdriJnF75qXWOJmdhNeUTQp2rt0cHzJSbUvbbkM+w8Owp9nRMSnhdAht0U48qi/pFCiUaHQaweIWLS+MeAzOqW3PkE3ibZNMXMRwuhq3BP+Of1jfLp1vGhsl7FlJKPD9R8iiqT34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762972249; c=relaxed/simple;
-	bh=CNUuHy/bpt4vT9lybSu7TmV/AB42+O/pew00JBqknEg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ep5Vm4dhwd0qqITM4i8B8WlHCMNAqBSTSaTVxlrrNSwF0xDzHfojaQdvPdi4Kho3Hjv/XTz54034p26tQQxKUlD5mCyTtt65pXu8t+aoJD/JzPQUZEn/HWdFevNwVkgerjQelRvOZ5/ObZdACorNxTKW4reYW3Jk6tf5Km/DFE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p0q3oWbE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 627D5C4CEF7;
-	Wed, 12 Nov 2025 18:30:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762972247;
-	bh=CNUuHy/bpt4vT9lybSu7TmV/AB42+O/pew00JBqknEg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=p0q3oWbEBImXCu7pv/1N4lXSKrIYXeALiciQ7vUEJAcW7Z3DHOQldOJ4COJS2eNj6
-	 gJfu6pqiBaDj1+NWy2dV/IpBi2v2qTC7Rxc7TF+lXc4+rfEBNWe/5f+mUhmHOYxoBo
-	 EL2mH54mGM86fUWRoJlEFNGD8qYocRntJqvvhfH5wmDLxZn9yOW7pBz93QaQCV/XjP
-	 JNR11E4iY11h1gXstnR5sLOVnaCLcJcGFNvvH1SYFfRsFpw2aScDmQdYaz1hKtabqf
-	 TmC/dsqZAjGvDQnj6PGzibnqjMLLYucIypQwafYwbSYXwDgxAj+XOJ/xA34qPq8E6f
-	 RqjgKNcuDdlLw==
-Date: Wed, 12 Nov 2025 20:30:42 +0200
-From: Leon Romanovsky <leon@kernel.org>
-To: Keith Busch <kbusch@kernel.org>
-Cc: Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
-	Sagi Grimberg <sagi@grimberg.me>, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org
-Subject: Re: [PATCH v3 2/2] block-dma: properly take MMIO path
-Message-ID: <20251112183042.GA10544@unreal>
-References: <20251027-block-with-mmio-v3-0-ac3370e1f7b7@nvidia.com>
- <20251027-block-with-mmio-v3-2-ac3370e1f7b7@nvidia.com>
- <aRSbzwpS2AuP92_n@kbusch-mbp>
- <20251112151604.GF17382@unreal>
- <aRSmZ6IisXDmI9Yg@kbusch-mbp>
+	s=arc-20240116; t=1762972268; c=relaxed/simple;
+	bh=2OANVmOjY6k/qYyyYxQPlOo2fk/D07y1iLptz6WlO4k=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lo9Y+teIWFusDmnW2md/SOsc40FNe+0DZtwQ1TgnTPU0zpcCWXEIhdAasqIccTtV17iIYDCHMF9ij/f2yfeKHJWmNKtaQDkrdOa7xoxXE9VWlHJw13GmhOyRDECU7Jp9wijRV9WdEkKWwcg9fhhNMgFdYe0dcllB4xJ/DhEU++o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4d6Bm726nbzJ469q;
+	Thu, 13 Nov 2025 02:30:31 +0800 (CST)
+Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
+	by mail.maildlp.com (Postfix) with ESMTPS id 2F6C61402F5;
+	Thu, 13 Nov 2025 02:31:04 +0800 (CST)
+Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
+ (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.36; Wed, 12 Nov
+ 2025 18:31:03 +0000
+Date: Wed, 12 Nov 2025 18:31:02 +0000
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Marc Zyngier <maz@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-acpi@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, "Mark
+ Rutland" <mark.rutland@arm.com>, Will Deacon <will@kernel.org>, "Rafael J.
+ Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, "Saravana
+ Kannan" <saravanak@google.com>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, Sven Peter <sven@kernel.org>, Janne Grunau
+	<j@jannau.net>, Suzuki K Poulose <suzuki.poulose@arm.com>, James Clark
+	<james.clark@linaro.org>, Jinjie Ruan <ruanjinjie@huawei.com>, "Alexandru
+ Elisei" <alexandru.elisei@arm.com>
+Subject: Re: [PATCH v4 18/26] perf: arm_pmu: Request specific affinities for
+ percpu NMI/IRQ
+Message-ID: <20251112183102.000012bc@huawei.com>
+In-Reply-To: <20251020122944.3074811-19-maz@kernel.org>
+References: <20251020122944.3074811-1-maz@kernel.org>
+	<20251020122944.3074811-19-maz@kernel.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aRSmZ6IisXDmI9Yg@kbusch-mbp>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500009.china.huawei.com (7.191.174.84) To
+ dubpeml100005.china.huawei.com (7.214.146.113)
 
-On Wed, Nov 12, 2025 at 10:23:19AM -0500, Keith Busch wrote:
-> On Wed, Nov 12, 2025 at 05:16:04PM +0200, Leon Romanovsky wrote:
-> > On Wed, Nov 12, 2025 at 09:38:07AM -0500, Keith Busch wrote:
-> > > On Mon, Oct 27, 2025 at 09:30:21AM +0200, Leon Romanovsky wrote:
-> > > > @@ -732,13 +746,20 @@ static void nvme_unmap_metadata(struct request *req)
-> > > >  		return;
-> > > >  	}
-> > > >  
-> > > > -	if (!blk_rq_integrity_dma_unmap(req, dma_dev, &iod->meta_dma_state,
-> > > > -					iod->meta_total_len)) {
-> > > > +	if (iod->flags & IOD_META_P2P)
-> > > > +		map = PCI_P2PDMA_MAP_BUS_ADDR;
-> > > > +	if (iod->flags & IOD_META_MMIO) {
-> > > > +		map = PCI_P2PDMA_MAP_THRU_HOST_BRIDGE;
-> > > > +		attrs |= DMA_ATTR_MMIO;
-> > > > +	}
-> > > 
-> > > This should be an 'else if' no?
-> > 
-> > We can't have both IOD_META_P2P and IOD_META_MMIO. It can be only one or
-> > IOD_META_P2P or IOD_META_MMIO. In this case "else if' is not necessary.
+On Mon, 20 Oct 2025 13:29:35 +0100
+Marc Zyngier <maz@kernel.org> wrote:
+
+> From: Will Deacon <will@kernel.org>
 > 
-> I get that and I'm not saying this is a bug, but it just looks odd.
+> Let the PMU driver request both NMI and normal IRQs with an affinity
+> mask matching the PMU affinity.
+> 
+> Signed-off-by: Will Deacon <will@kernel.org>
+> Tested-by: Will Deacon <will@kernel.org>
+> Signed-off-by: Marc Zyngier <maz@kernel.org>
 
-Sorry, I didn't get the intent.
+Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
 
-Thanks
-
-> You're checking the conditions as if they're independent of each other
-> when they're not. If the first 'if' is true, there's no need to test the
-> second one as we know it's false, but this code flow will test it
-> anyway.
 
