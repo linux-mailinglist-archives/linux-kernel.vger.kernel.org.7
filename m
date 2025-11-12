@@ -1,192 +1,154 @@
-Return-Path: <linux-kernel+bounces-897792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FB4FC538E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:01:47 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09690C538F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 18:02:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 42AA4344E5B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:00:11 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id F26EE3452CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 17:00:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30434343204;
-	Wed, 12 Nov 2025 16:59:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82F0128697;
+	Wed, 12 Nov 2025 17:00:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XxxxjSUN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="dwz9Ugmd"
+Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60E15341ACA
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 16:59:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 422153451DB
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 16:59:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762966795; cv=none; b=p3Qiu9Iam+pKf1TbXxJoreocNLq72Yg6HPN+bivU9pyFRVEyqukhWVGEfwYd9YIkwGvi66HCnUZvCKhz2DreHFEwPa4BAtO2fBnQhqfOFUYMd+90KbTifnfsWbu7FogE6kAcl29OfcAdRapn/SJP//8/qmRJTyhc5GxQuxYeRfQ=
+	t=1762966801; cv=none; b=BP49WF4gejvQm+CguzJONkruPHcKwP1uCbsYdabJm8ScEz3cJR4BpoJ5D6LVvwSGNkae5WreJ8+/d5J1ur5tnCkAiII9UNFBNAL7iqHwNwhAkavJkNEgZBXEdNP5e859lfyq36XR1egQFiwPEuEAZwscX42V/VjphwTghsOf6Os=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762966795; c=relaxed/simple;
-	bh=RVOBomhYRdwmTIvo3d1upFxr9xv6m2ioRcySu2Zct+c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sc0CLqxGZ68bgUbkgsvU24PcDEoHXrSRbTVwEhuMdXTNpIdjL8qxZGd9PffwUQnbRJpcXlOnMgQu9gF3OnpsiAcaYvhlC0eOVc7whHB0fVkO+VIhGlVGikkhQXOj5qzI9UHmoA24BVC2SOXPThjEXORb06Coomq2LdHLsC/AcTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XxxxjSUN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25099C2BCB0
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 16:59:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762966795;
-	bh=RVOBomhYRdwmTIvo3d1upFxr9xv6m2ioRcySu2Zct+c=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=XxxxjSUNde86wmg/dcnOrvIfN2jepikxpY7GV4lYOLhagr1EawmOpBYrVV2HAdtyO
-	 3TUYFKqPEPkY1rdnnXhBeoPa2xNa0hRO7yO1zs7ZhIVNnGwrszehllb7MZvKJSI+AF
-	 uMKxv9JnbGqVlPiq5Py5LSOsJpDK+jw9LCdAbRWbGK5UddHigpNjs2JQWovpDwxDMr
-	 SC6Bd8xvqKR5FbdKSYdtaX5S0iq5ObFngQn+ArfsBJw4HLkKHHe438BTi8m43lqaQJ
-	 W4DENohKvqRFDeQMktCHwYehTOpkJbeMA8rq58HHHrJFxIJsWMjthzdqM4TcXtCWYA
-	 ODaKBn0IoFE+Q==
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-64166a57f3bso1656787a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 08:59:55 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWQb9XMUrcPz4/sfDiWr+XeCDg3q82YjJKIvYO4tw31Rh15xr63sqW6KArrWEutOlssRYC7PG0J45Ipq20=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxV7i45DvrCr5a69cb4tS5gNtfeBnj3vv7Zoiqzj3AlyFr/Z5VB
-	p5myKEcumYT1xPVnK20/0nOwEVW4Nxa200BJI3bQ96ZOJpwEL7T5wFp9nNl7rpOEF5uvAV3gNIN
-	zL79k5e9kBgDM/Ph9hTJP86hvBC9GMg==
-X-Google-Smtp-Source: AGHT+IEOqt/wJY8Cvt+ACAz7CBaI8+ZUOPnH6TL37Ek0ZSDGOQg0lL8OZ1nhy6LAM/AdjuxvzXmeIb2YLoCTlRThoLE=
-X-Received: by 2002:a17:907:3fa8:b0:b70:b077:b957 with SMTP id
- a640c23a62f3a-b733198f04fmr406767266b.15.1762966793516; Wed, 12 Nov 2025
- 08:59:53 -0800 (PST)
+	s=arc-20240116; t=1762966801; c=relaxed/simple;
+	bh=8wx44lorjmXobYAPjgirMKLJlUNzSsr5s3gulPDv6j0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qmoox9wKFnT9rws3fTajvtrH64g6Eb8EX/AfLGiSa+Xi7zc9UlgRZk2lGulr6jQ9dA6A45Fc8NZpniSSmu+66c6RgzCw0FiozbUHL31oi4gW0Rcsh83xUED/G0YiCOQVGfdJx2JtxQGbiwG3WVUW7at2c1jropOebeuIg6g8G1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=dwz9Ugmd; arc=none smtp.client-ip=209.85.161.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-656bb297df2so210543eaf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 08:59:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1762966798; x=1763571598; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9UBroaIpNSaiJuWFrz+qWW2HM0uYdQr3mWyR9bfJIIM=;
+        b=dwz9Ugmdt4tA8qi6929B5cM2xqwjHCY2sziOHziktlu15hr+e6pR0ZO6X9I4LWCo6i
+         mI8gpfA9IzRCnS7rfun2r6dZtrZdkBwT4g6ro1VOCO10ky1BJ2DqXicY2taSkHWzhEYc
+         tXYftMocbYP7EN2QB+FBfdNziCXNimUIUI8zYIX/9TL5pvjN4FkcNxCQgnlGz6FCMv66
+         D2BibSGCafSfGj4yYb0tODuc3lWYsiZjfj7RLcNm4VGVLWYaLgRcTTCxh5pr6S4FL+4m
+         TbUZZuDqUralxivWZydq+2Knhoj/520cHrH63BIAkwdunauvfFOtlaDM3nKPFycaS+TE
+         jtgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762966798; x=1763571598;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9UBroaIpNSaiJuWFrz+qWW2HM0uYdQr3mWyR9bfJIIM=;
+        b=WLuq0KEUKzdY7LlZND8EKYYipW1VWKhEFpCc6edYTPywn9jnjTLnidlYAXBd5gAtuw
+         6q9rA+dKEUzh6VodE6vM+tRcZTxZbsFo+zC5bw/3FYrU4uB5Fag+tLdkbyuJEYlP84Xy
+         GZqWO1nghp5MOvcTB5rxmd7rVrH0yUhvhpfiCSgFArai+2WQnhQMiIGDcZAmOnVhO232
+         Yeo6Vsx6fClKPSYSHCRAeBgnRIeXUUhG4ua1L9bqt0boNW7WrlHDRIfBWfZZAijg9qHp
+         gHQIdEzN9uymyp1vSP+cxjVn0WczHL00aOIc8B7/QoHcoDPmoXZGewb2dPVmjMoHIfBQ
+         5eOg==
+X-Forwarded-Encrypted: i=1; AJvYcCUkZBxZXR9KgQGzGdkkIGq+qhfuc8ODXOI3dTRfEfDcVSpl3Zg29zfKe0nnWvDan56DqSuCCwusA5Yabnc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywj1ufFf0E0QLotIlygq05ZUsL/VAlFb3zINGk1x+CVQtWTFyWq
+	fwWwAQNzOOgQfFmTY9DGlrLKFlI0+/nni3IahG+PkdT0eGb8uG3ufcheUad1aJjLY9A=
+X-Gm-Gg: ASbGncv8raRs1xkDRg0Bjs9TdtHZkHVLlPN1HWsO3ECzGgo6j6ZERuUd5pgjO6Sn6C2
+	DgFJv9O6TFZjwuaUrUvQhJF7gKCrOCw9bEB77he8JvbKQSSlGngl/r8xr+ffalJZhPQxdxPv3u6
+	w9TJrVK9MvuuKzt4jadezz3KPuZPoHv4NeoIiZwPwR8ya7YtH5K2rsQNzgyLD/vxA5Bf3qphCoh
+	OJYXYxTF8LOPaGzjGl9sQXrnJbNCgeIKIcZIHnKrFFxXfHEBi458LJfeEZg6OLGPAibHZZJsUW5
+	xMNe/tWbAvrfwCTT/rvSjXONXJWUXm2B0e+55ZhaaJH5zybNTAJUyTyTr3lQoBkKs0Ue5hNW4A4
+	ntQp75c/gUxsixDMthHRv6RjP6FIB7t8drpy7CUh45NAQ5raw4OjL3vu7Pvx567VTo7CrElG4j2
+	6z6oSox18H4XYAeh5ZYmjqEHqMlcVWYxLtdU6p95OKRm0/DowLSg==
+X-Google-Smtp-Source: AGHT+IGjGiA68SQxE2DOheehH23MBaQy65p8WqlrKArkfS9SuLVcwJ48eTHV9RHhY2eyZHq3Z4deyQ==
+X-Received: by 2002:a05:6808:3198:b0:442:2ce:46cf with SMTP id 5614622812f47-4507456e715mr1828413b6e.34.1762966797983;
+        Wed, 12 Nov 2025 08:59:57 -0800 (PST)
+Received: from ?IPV6:2600:8803:e7e4:500:d404:301b:b985:c499? ([2600:8803:e7e4:500:d404:301b:b985:c499])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-3e41f2583casm10124611fac.23.2025.11.12.08.59.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Nov 2025 08:59:57 -0800 (PST)
+Message-ID: <0e59d92f-7b3c-4ff6-b3ad-7fae2ded9b77@baylibre.com>
+Date: Wed, 12 Nov 2025 10:59:56 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251031175926.1465360-1-robh@kernel.org> <aRN0fdOAV0B728qo@p14s>
- <20251111195923.GA3629535-robh@kernel.org> <CANLsYkwcbrTaKASdr5fj0m9ARS4xUgzVH8iWQKwTCvEsoZDDsQ@mail.gmail.com>
-In-Reply-To: <CANLsYkwcbrTaKASdr5fj0m9ARS4xUgzVH8iWQKwTCvEsoZDDsQ@mail.gmail.com>
-From: Rob Herring <robh@kernel.org>
-Date: Wed, 12 Nov 2025 10:59:42 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqL7HcDkPgJjcqJSagdN=gH2rv6noVS57QMGNRp0YCxUBw@mail.gmail.com>
-X-Gm-Features: AWmQ_bmxZCkzBm3PwPqC-n2_BEF69Zs3agW7isLAr86xc9rjwe66yE2yHIz-vl4
-Message-ID: <CAL_JsqL7HcDkPgJjcqJSagdN=gH2rv6noVS57QMGNRp0YCxUBw@mail.gmail.com>
-Subject: Re: [PATCH v6] remoteproc: Use of_reserved_mem_region_* functions for "memory-region"
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Magnus Damm <magnus.damm@gmail.com>, Patrice Chotard <patrice.chotard@foss.st.com>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>, Peng Fan <peng.fan@nxp.com>, 
-	linux-remoteproc@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/6] spi: axi-spi-engine: support
+ SPI_MULTI_BUS_MODE_STRIPE
+To: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Marcelo Schmitt <marcelo.schmitt@analog.com>,
+ Michael Hennerich <michael.hennerich@analog.com>,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, Andy Shevchenko <andy@kernel.org>,
+ Sean Anderson <sean.anderson@linux.dev>, linux-spi@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-iio@vger.kernel.org
+References: <20251107-spi-add-multi-bus-support-v2-0-8a92693314d9@baylibre.com>
+ <20251107-spi-add-multi-bus-support-v2-4-8a92693314d9@baylibre.com>
+ <aRNSc1GEz0UNx17i@debian-BULLSEYE-live-builder-AMD64>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <aRNSc1GEz0UNx17i@debian-BULLSEYE-live-builder-AMD64>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Nov 12, 2025 at 9:43=E2=80=AFAM Mathieu Poirier
-<mathieu.poirier@linaro.org> wrote:
->
-> On Tue, 11 Nov 2025 at 12:59, Rob Herring <robh@kernel.org> wrote:
-> >
-> > On Tue, Nov 11, 2025 at 10:38:05AM -0700, Mathieu Poirier wrote:
-> > > Hi Rob,
-> > >
-> > > Please see may comment for st_remoteproc.c
-> > >
-> > > On Fri, Oct 31, 2025 at 12:59:22PM -0500, Rob Herring (Arm) wrote:
-> > > > Use the newly added of_reserved_mem_region_to_resource() and
-> > > > of_reserved_mem_region_count() functions to handle "memory-region"
-> > > > properties.
+On 11/11/25 9:12 AM, Marcelo Schmitt wrote:
+> Hi David,
+> 
+> The updates to spi-engine driver look good.
+> Only one comment about what happens if we have conflicting bus modes for the
+> offload case. Just to check I'm getting how this is working.
+> 
 
-[...]
+...
 
-> > > > diff --git a/drivers/remoteproc/st_remoteproc.c b/drivers/remotepro=
-c/st_remoteproc.c
-> > > > index e6566a9839dc..043348366926 100644
-> > > > --- a/drivers/remoteproc/st_remoteproc.c
-> > > > +++ b/drivers/remoteproc/st_remoteproc.c
-> > > > @@ -120,40 +120,37 @@ static int st_rproc_parse_fw(struct rproc *rp=
-roc, const struct firmware *fw)
-> > > >     struct device *dev =3D rproc->dev.parent;
-> > > >     struct device_node *np =3D dev->of_node;
-> > > >     struct rproc_mem_entry *mem;
-> > > > -   struct reserved_mem *rmem;
-> > > > -   struct of_phandle_iterator it;
-> > > > -   int index =3D 0;
-> > > > -
-> > > > -   of_phandle_iterator_init(&it, np, "memory-region", NULL, 0);
-> > > > -   while (of_phandle_iterator_next(&it) =3D=3D 0) {
-> > > > -           rmem =3D of_reserved_mem_lookup(it.node);
-> > > > -           if (!rmem) {
-> > > > -                   of_node_put(it.node);
-> > > > -                   dev_err(dev, "unable to acquire memory-region\n=
-");
-> > > > -                   return -EINVAL;
-> > > > -           }
-> > > > +   int index =3D 0, mr =3D 0;
-> > > > +
-> > > > +   while (1) {
-> > > > +           struct resource res;
-> > > > +           int ret;
-> > > > +
-> > > > +           ret =3D of_reserved_mem_region_to_resource(np, mr++, &r=
-es);
-> > > > +           if (ret)
-> > > > +                   return 0;
-> > >
-> > > The original code calls rproc_elf_load_rsc_table() [1] after iteratin=
-g through
-> > > the memory region, something that won't happen with the above.
-> >
-> > Indeed. it needs the following incremental change. It is slightly
-> > different in that rproc_elf_load_rsc_table() is not called if
-> > 'memory-region' is missing, but the binding says that's required.
-> >
-> > 8<--------------------------------------------------
-> >
-> > diff --git a/drivers/remoteproc/st_remoteproc.c b/drivers/remoteproc/st=
-_remoteproc.c
-> > index 043348366926..cb09c244fdb5 100644
-> > --- a/drivers/remoteproc/st_remoteproc.c
-> > +++ b/drivers/remoteproc/st_remoteproc.c
-> > @@ -120,15 +120,19 @@ static int st_rproc_parse_fw(struct rproc *rproc,=
- const struct firmware *fw)
-> >         struct device *dev =3D rproc->dev.parent;
-> >         struct device_node *np =3D dev->of_node;
-> >         struct rproc_mem_entry *mem;
-> > -       int index =3D 0, mr =3D 0;
-> > +       int index =3D 0;
-> >
-> >         while (1) {
-> >                 struct resource res;
-> >                 int ret;
-> >
-> > -               ret =3D of_reserved_mem_region_to_resource(np, mr++, &r=
-es);
-> > -               if (ret)
-> > -                       return 0;
-> > +               ret =3D of_reserved_mem_region_to_resource(np, index, &=
-res);
-> > +               if (ret) {
-> > +                       if (index)
-> > +                               break;
-> > +                       else
-> > +                               return ret;
-> > +               }
->
-> This looks brittle and I'm not sure it would work.
->
-> Going back to the original implementation, the only time we want to
-> "break" is when @index is equal to the amount of memory regions _and_
-> ret is -EINVAL.  Any other condition should return.
+>> @@ -284,6 +316,24 @@ static int spi_engine_precompile_message(struct spi_message *msg)
+>>  			min_bits_per_word = min(min_bits_per_word, xfer->bits_per_word);
+>>  			max_bits_per_word = max(max_bits_per_word, xfer->bits_per_word);
+>>  		}
+>> +
+>> +		if (xfer->rx_buf || xfer->offload_flags & SPI_OFFLOAD_XFER_RX_STREAM ||
+>> +		    xfer->tx_buf || xfer->offload_flags & SPI_OFFLOAD_XFER_TX_STREAM) {
+>> +			switch (xfer->multi_bus_mode) {
+>> +			case SPI_MULTI_BUS_MODE_SINGLE:
+>> +			case SPI_MULTI_BUS_MODE_STRIPE:
+>> +				break;
+>> +			default:
+>> +				/* Other modes, like mirror not supported */
+>> +				return -EINVAL;
+>> +			}
+>> +
+>> +			/* If all xfers have the same multi-bus mode, we can optimize. */
+>> +			if (multi_bus_mode == SPI_ENGINE_MULTI_BUS_MODE_UNKNOWN)
+>> +				multi_bus_mode = xfer->multi_bus_mode;
+>> +			else if (multi_bus_mode != xfer->multi_bus_mode)
+>> +				multi_bus_mode = SPI_ENGINE_MULTI_BUS_MODE_CONFLICTING;
+> 
+> Here we check all xfers have the same multi-bus mode and keep the mode that has
+> been set. Otherwise, we set this conflicting mode and the intent is to generate
+> SDI and SDO mask commands on demand on spi_engine_precompile_message(). OTOH,
 
-@index equal to number of entries returns -ENODEV, so that condition
-is impossible. We can simply it to this:
+s/spi_engine_precompile_message/spi_engine_compile_message/
 
-if (ret =3D=3D -ENODEV && index)
-    break;
-else
-    return ret;
+Probably just a typo, but just to be clear, the "on demand" bit happens in the
+compile function rather than precompile.
 
-If you want to keep the prior behavior when 'memory-region' is
-missing, then '&& index' can be removed, but I think that was wrong
-behavior.
-
-Rob
+> if all xfers have the same multi-bus mode, we can add just one pair of SDI/SDO
+> mask commands in spi_engine_trigger_enable() and one pair latter in
+> spi_engine_trigger_disable(). I guess this is the optimization mentioned in the
+> comment.
+> 
+Your understanding is correct.
 
