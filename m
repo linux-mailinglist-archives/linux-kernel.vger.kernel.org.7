@@ -1,170 +1,149 @@
-Return-Path: <linux-kernel+bounces-897106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 365C2C520DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 12:46:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7892FC51FEE
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 12:33:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 762885065F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:28:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 231DE188C385
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 11:28:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C24FD30E0C5;
-	Wed, 12 Nov 2025 11:28:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 394C330DD05;
+	Wed, 12 Nov 2025 11:27:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Agq4Gj7q"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LZwaMj6D";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="HwiNzKk/"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FC1F30B53F
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 11:28:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD3F230DD04
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 11:27:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762946890; cv=none; b=unNNNDYbELigJfG9Pl80WbW1Ozco0i8InDg8aLJvlOY26NAgInVSbrqkrQM9YNaCNDyfYf5cB0oWUvZOx+Apox0EDDD8v1dbsAn/vbGBKwcfp9Uf5GejpvZ1NE7CXZjroP5LxJlEnWEp4YM1/xPgTz1DJejP8C0l3G9j+un5GGo=
+	t=1762946861; cv=none; b=IgcffLLWA9zu1K8pfBiuL/qm9Rh6PgtMgl8srqhICgy8kJiK2lJbNv4YmUqXdhcQg+2d7KIociPGuWQwQhF1YBU4zU/fjffFktyYgMikT9QeZc6k2Hy5hqrrUsxWS7K9iXJFUPWFo1S2RKwdHBw8v+qMf7mw9Juj63zSlaReN3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762946890; c=relaxed/simple;
-	bh=1dYK7f4FkPzoZeJ51K8mDZvHGpP/FeIezNcDD5hERdU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pg0Ow9KP1JR5EJ+li/FJhUzMWzNU7Q37ldwSmVOuHkIU3MAUtDVWv8erxMk5Rn9Rl01od+ufTlwIEUGutXu4CWaTD+YyY5eHU37Gkca+fc/fdWPepjjdyM/EGjOvBU/CKLV0QnXqJAeMVSJVHR0jlaiiTdmbejbghj6oznwxtzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Agq4Gj7q; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2957850c63bso6266815ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 03:28:08 -0800 (PST)
+	s=arc-20240116; t=1762946861; c=relaxed/simple;
+	bh=xRBVszb46PCRdqH1h26lnmIbsU3o+gPYt33KkTm/MtY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XsH6Laa30FqfIGnyIERRRmwWmg+UyA3elcv+89LHxjboQLYOUjb7xRfjkaNrfWCLsdPyjxrRG4TYHmq20sLUDSmTfgQjW+MZ5iNsX2eCFOo18jlkno5obfy9HmhrqUxiyG3ORvkfrbn3Wb8ocCmXXn8wL3dORJ0lQjZr19foCWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LZwaMj6D; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=HwiNzKk/; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762946858;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bh9ROHXwX8NyJE0uRznqL1+0stTxgI+FrZIpPuJINh4=;
+	b=LZwaMj6Dtq6ABCD1HANIDVlWHgNSdd7fmGkp6h7TJH3Fagx5eJ8J4IVeRroWSlyG8UkHh4
+	HMkjaxzZful+afyPob9gHfYZDuSgaSZuBXKN1w1sFxTrWd8TOqBifZWGQUtE15IebE7Kgp
+	sHo20dDfPMWXoSqWOa5MbW9JE3E38dc=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-402-RYaWOWqDNO6v5ugsu6PP0w-1; Wed, 12 Nov 2025 06:27:37 -0500
+X-MC-Unique: RYaWOWqDNO6v5ugsu6PP0w-1
+X-Mimecast-MFC-AGG-ID: RYaWOWqDNO6v5ugsu6PP0w_1762946857
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-8b19a112b75so182607985a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 03:27:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762946888; x=1763551688; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ig8V7S9rFhIoVLkY+/XWuMwWvPcC3NWWv4ch5Z8G1nk=;
-        b=Agq4Gj7q75twnaldQoOyRwegmMpWfqRiAkSduaLyqfF9b0ngSBXUBtv38zNPxzZpju
-         2LpRH+6BJo6spdCm8zZPmto1MLnrBLRUm0IpN6/mSkVf51HqIIPjhyJgDMSLvcMO1oRM
-         MbjG3IMv5Lnbq8xDWQz1rKjXI92CnRArQ7ya+qWk/+lQyJy1mampYfS07KdJCS0becQa
-         YfWSz7irenPniI+wFEEq7tfeB4zn1FuHmSABqEcIdGoti6+7BD5XeI+HUliFBkUsEeCn
-         Oz+AG21bFX/eRk0++NhYJbsjsX5WIigS64HJwwEwNpZafC97iICeD7vbcHYl9cDYOLpx
-         02Ew==
+        d=redhat.com; s=google; t=1762946857; x=1763551657; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=bh9ROHXwX8NyJE0uRznqL1+0stTxgI+FrZIpPuJINh4=;
+        b=HwiNzKk/ipkanZInrPGA4dGIyMGH9MMLsIGqg81shKdAxMIWQn28to8u0YbdwtN5Kq
+         Ij1XFwQnrkcj28euGmHyUSPCZpAgxOtgTaUGotJbdzaPT+vfK5ZPC4oFO8s3exTKZcMd
+         7oyBNKwj3Mq0EV00hu/1e5YQ+12gFvjApRbCMkyeXHy1pkJhluZoMqu99TGq6PDd3bCb
+         QvRFSP/GJYrkM5WU2f/irGr4sBfTMzy99rGCE0YYv7dFIl4wCEdEwxfLXXpvxkzgZMiG
+         Ed06dtr3YBjR2oIkPKxBJyI/9C7P3JEUiMLfAWIYqI2FnummH3En8y5TLSlgHbBbi+GN
+         WxNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762946888; x=1763551688;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=ig8V7S9rFhIoVLkY+/XWuMwWvPcC3NWWv4ch5Z8G1nk=;
-        b=gHpY+024t8JliX4wg3lAAf035qKvvBBq7v0cmmLVjYz3WcxzeABHyj9Q/W+U66wmuS
-         oTMTUTTt2q7MZ2cKzqXru3qoogib8bQyP4qhg1CgSYAoxRGB9Xpg1+BRtxammMLMCdlK
-         CvsAp3wVS9L/BGmClKr1QcENnJcZKXUcOdQ4FULkZv/YHWdm9kY8Penn4OvYmSRxWxa4
-         IIXaV6xD+SQDoroNqyiFmWIAgbXBVZfWcVPCMm8gRu+ZhBLMmhDvijYh5eTgM80fJpgn
-         uwHxa79JVzjk7RawP7YYM6cO3zRmr+oc5WVNJB7UKjLdkZFoB4uFrf03tzPRp5jkFS/z
-         +qoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWQhn0k7Vk9DhoZdN7/t9WJB4YZ5qt7UztTThOQgIXeMSA8srfvaRBxhzR1SJw4H5vyo5SjtHaEtsscE+k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsV9czlen9FP+cobj3THSWHHjOV45X1ufj/CNvnxwpACbWUo4f
-	N2Pt+9CiX5KeJjHF31TWNZsbQeOrt7rri/+ZncH8ymtBoDOYWHO3BYo9aONm4P1RCUTAktcby+x
-	FGjnLd3Uv86lu9XTHVz1Q7z5LqDkA3SUbHmGFT5NF
-X-Gm-Gg: ASbGncujTM2aCE5mlv9Wk0+oo8oZCSpEg7+pZ2Rpo7/QKSuohL+IyHtUKBK6XWJ6z6x
-	jAf5xZ6ps4umMaxWY9S2WTV7I9mmfInE2yb+64IDWFMmpzGb1ApR6UivGE726X3VnmW3oi46AZg
-	zUUnmBGsgAKMy1PJsnkGtvAMJ/kOTpFU2g/D0LVJ/3BjzWvTg1AnpbRtwxOvL3f+QxfT/+5JlZ2
-	Hi2Ur7q7RrzHHfy8vriy1DWQi4H1RHqAE5BXdhRpNfjIH4qrVWEYrGh+lCEx8PnNNDV+gJVz2JB
-	kTa3BCuVph3Y/rUuxQzQXmdZbfLvKzzHOtnk
-X-Google-Smtp-Source: AGHT+IEzhYJUJIhP1itpJ8SMj4wfy7Edo9fDUXSWIfM11ytYomEi4CEvHvu/YvWNAK7+sehRmwWVHzbMhPckpBBMF6k=
-X-Received: by 2002:a17:903:234d:b0:296:5ebe:8fa with SMTP id
- d9443c01a7336-2984094a5bcmr70869985ad.23.1762946887940; Wed, 12 Nov 2025
- 03:28:07 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762946857; x=1763551657;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bh9ROHXwX8NyJE0uRznqL1+0stTxgI+FrZIpPuJINh4=;
+        b=PbJe+LItKxDEfJSoPggX9l28PuQkSkXUVKd/72pfHH+pG0iJNExiFTem7Tvp90TRsp
+         +qFsR1zvBRaVAUO2mvsi/ademHm2vatdBPX4aNcsmaKWcL5yswVZcL1cEcz/L9bCcIo5
+         M4mTLezPUkbuDNJ6L/An3GSz1zuCMD9H/nbDUIIqOF2yQAm5hIMxNBjPd+hV5OJ+VLm5
+         6SGNeRfskfIwFg0J4ldP/f+Hg7UinzHHLxefaiiowWzYa9AT/S3TkPC8TgmyVNpwDl2Z
+         DNpE+ON5dV1QZZqrA/92c2q8bY8U5hoRUhIYPOIFUgrTa9nERP4OQNcp+BWSf4+yJb/m
+         iGmA==
+X-Forwarded-Encrypted: i=1; AJvYcCUTftSULm3DV7XWWxPaCFB0rM+rM5rXMSz1KYcSEOH+MefttHE00FYXyRQMhN9fRx/U3rVVgy1ABBIGDos=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxqt7zL0+O0SlVXopTtB5GqzSi2AeRoOvaoYXbhiWbj4TAz7066
+	4kIsmzezdUddFzH3QAZXdboJ79EpxFZ4a1PuCxRWCKBpKIz8NG7UsVyKwhqcSoiqL+Je1NDQCh/
+	U3A0k3izkOkKGk3W4Bcs08hJAiN6ScQBy6M6vQcPIDqo+hTYF3EXJK6qJMMYXyYXLaQ==
+X-Gm-Gg: ASbGncvMAMKzZs137YIA1SO/OadTfaX23RAn7cl7hfl0r2AFMg54D1IrdOR5EsCQiDH
+	iBgWD1PK0jxGuGTtNSbCvxnnTZ8vCsXp0fpZ45MSXzr/avxW0Sxw3+gi6VWx4Dk6suaiwhJeEU2
+	EipN+Gcl/NZf4F0AJckWf/owXWRfIIViHTD0Pxs3AeQN3/56XUCBXsRQUqt/MPY4PIxREIDcp/e
+	r46ivP/K7wWdeRYoUWTaLwfYmlstcdM2XqPkouvKTFZ0ryftkPEl4H9/0mu1csRxJ4TXwv+U7O+
+	auUM0TxYd/qci110eTe/ykZxnt70FSgjWwzVUtaStpxHdKo1FWQs5fXg8cjhk0b+RdbY/yWti6I
+	N8KtheaJyr0a8ZRa+gJM1jVGwnpwAUBvtEj+PF0nfLa19VK04SNA=
+X-Received: by 2002:a05:620a:2911:b0:8a3:d644:6937 with SMTP id af79cd13be357-8b29b755312mr300897185a.6.1762946857230;
+        Wed, 12 Nov 2025 03:27:37 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IE1QM6xpF4cwT0P5BoTaUqTULeYAONrpImDd2Wx6DOvB/yt3c13Mp66Q8AvPTabRL1NdGvMrw==
+X-Received: by 2002:a05:620a:2911:b0:8a3:d644:6937 with SMTP id af79cd13be357-8b29b755312mr300895485a.6.1762946856845;
+        Wed, 12 Nov 2025 03:27:36 -0800 (PST)
+Received: from sgarzare-redhat (host-79-46-200-153.retail.telecomitalia.it. [79.46.200.153])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b29aa00850sm172322185a.44.2025.11.12.03.27.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Nov 2025 03:27:36 -0800 (PST)
+Date: Wed, 12 Nov 2025 12:27:32 +0100
+From: Stefano Garzarella <sgarzare@redhat.com>
+To: Bobby Eshleman <bobbyeshleman@gmail.com>
+Cc: Shuah Khan <shuah@kernel.org>, virtualization@lists.linux.dev, 
+	netdev@vger.kernel.org, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Simon Horman <horms@kernel.org>, Bobby Eshleman <bobbyeshleman@meta.com>
+Subject: Re: [PATCH net-next v4 09/12] selftests/vsock: add BUILD=0 definition
+Message-ID: <ay3utqbmbi52pizmrp6zrcitxjftyghfkotjamgeicwlwv52sj@j6jfpj35rssm>
+References: <20251108-vsock-selftests-fixes-and-improvements-v4-0-d5e8d6c87289@meta.com>
+ <20251108-vsock-selftests-fixes-and-improvements-v4-9-d5e8d6c87289@meta.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251111130624.3069704-1-royluo@google.com> <20251111130624.3069704-2-royluo@google.com>
- <20251112-logical-grebe-of-modernism-dcf83b@kuoka>
-In-Reply-To: <20251112-logical-grebe-of-modernism-dcf83b@kuoka>
-From: Roy Luo <royluo@google.com>
-Date: Wed, 12 Nov 2025 19:27:30 +0800
-X-Gm-Features: AWmQ_bn2RT6EbgSb3mHFWKckHPwcrvZ-s2OqhjevpH_GhYx3Lcain4Rs18PGkFc
-Message-ID: <CA+zupgxALZjF8m=PfYgb1QUgf0u+-Su0XYQ3VB=fCpM1dt9s_Q@mail.gmail.com>
-Subject: Re: [PATCH v5 1/2] dt-bindings: usb: dwc3: Add Google Tensor G5 DWC3
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Thinh Nguyen <Thinh.Nguyen@synopsys.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Peter Griffin <peter.griffin@linaro.org>, =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
-	Tudor Ambarus <tudor.ambarus@linaro.org>, Joy Chakraborty <joychakr@google.com>, 
-	Naveen Kumar <mnkumar@google.com>, Badhri Jagan Sridharan <badhri@google.com>, 
-	Doug Anderson <dianders@google.com>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20251108-vsock-selftests-fixes-and-improvements-v4-9-d5e8d6c87289@meta.com>
 
-On Wed, Nov 12, 2025 at 4:32=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.or=
-g> wrote:
+On Sat, Nov 08, 2025 at 08:01:00AM -0800, Bobby Eshleman wrote:
+>From: Bobby Eshleman <bobbyeshleman@meta.com>
 >
-> On Tue, Nov 11, 2025 at 01:06:23PM +0000, Roy Luo wrote:
-> > Document the device tree bindings for the DWC3 USB controller found in
-> > Google Tensor SoCs, starting with the G5 generation.
-> >
-> > The Tensor G5 silicon represents a complete architectural departure fro=
-m
-> > previous generations (like gs101), including entirely new clock/reset
-> > schemes, top-level wrapper and register interface. Consequently,
-> > existing Samsung/Exynos DWC3 USB bindings are incompatible, necessitati=
-ng
-> > this new device tree binding.
-> >
-> > The USB controller on Tensor G5 is based on Synopsys DWC3 IP and featur=
-es
-> > Dual-Role Device single port with hibernation support.
-> >
-> > Signed-off-by: Roy Luo <royluo@google.com>
-> > ---
-> >  .../bindings/usb/google,gs5-dwc3.yaml         | 140 ++++++++++++++++++
-> >  1 file changed, 140 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/usb/google,gs5-dw=
-c3.yaml
-> >
-> > diff --git a/Documentation/devicetree/bindings/usb/google,gs5-dwc3.yaml=
- b/Documentation/devicetree/bindings/usb/google,gs5-dwc3.yaml
-> > new file mode 100644
-> > index 000000000000..bfaf6cbdfec3
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/usb/google,gs5-dwc3.yaml
-> > @@ -0,0 +1,140 @@
-> > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> > +# Copyright (c) 2025, Google LLC
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/usb/google,gs5-dwc3.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Google Tensor Series (G5+) DWC3 USB SoC Controller
-> > +
-> > +maintainers:
-> > +  - Roy Luo <royluo@google.com>
-> > +
-> > +description:
-> > +  Describes the DWC3 USB controller block implemented on Google Tensor=
- SoCs,
-> > +  starting with the G5 generation. Based on Synopsys DWC3 IP, the cont=
-roller
-> > +  features Dual-Role Device single port with hibernation add-on.
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: google,gs5-dwc3
+>Add the definition for BUILD and initialize it to zero. This avoids
+>'bash -u vmtest.sh` from throwing 'unbound variable' when BUILD is not
+>set to 1 and is later checked for its value.
 >
-> Doug just said SoC is lga, not gs5, so you need both to align on that.
-> Actually not only you both, but whoever else is upstreaming from Google.
+>Signed-off-by: Bobby Eshleman <bobbyeshleman@meta.com>
+>---
+>Changes in v2:
+>- remove fixes tag because it doesn't fix breakage of kselftest, and
+>  just supports otherwise invoking with bash -u
+>---
+> tools/testing/selftests/vsock/vmtest.sh | 1 +
+> 1 file changed, 1 insertion(+)
+
+Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
+
 >
-> It is not the community who should synchronize and organize way how
-> Google works on their own stuff. Google should organize how Google works
-> on your Google's stuff.
+>diff --git a/tools/testing/selftests/vsock/vmtest.sh b/tools/testing/selftests/vsock/vmtest.sh
+>index a1c2969c44b6..e961b65b4c6e 100755
+>--- a/tools/testing/selftests/vsock/vmtest.sh
+>+++ b/tools/testing/selftests/vsock/vmtest.sh
+>@@ -548,6 +548,7 @@ run_shared_vm_test() {
+> 	return "${rc}"
+> }
 >
-> Best regards,
-> Krzysztof
+>+BUILD=0
+> QEMU="qemu-system-$(uname -m)"
+>
+> while getopts :hvsq:b o
+>
+>-- 
+>2.47.3
 >
 
-Ack, will align on the next patchset.
-
-Thanks,
-Roy Luo
 
