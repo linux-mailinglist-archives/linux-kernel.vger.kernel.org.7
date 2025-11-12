@@ -1,119 +1,87 @@
-Return-Path: <linux-kernel+bounces-897173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B107FC52372
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 13:16:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E6833C5237B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 13:16:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F4653B453F
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 12:03:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D04453B2193
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 12:03:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D79E7315D2D;
-	Wed, 12 Nov 2025 12:03:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WOo9g99c"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0409314A9B;
+	Wed, 12 Nov 2025 12:03:04 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6D482749C7
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 12:03:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF30E29BD95
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 12:03:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762948990; cv=none; b=l1lS+Og7bM1zv4JFCEjKfIeVpKiq5x4DdwT8u/+zcpo17nyVs6mYOa4718FzZcqE7cR1ddWg6vkh37EvrFiYdNqp1IAHjzR+x/SoKfVa7tTWHmTY9uvLkNUc86uk3/7RuwNoG7nXzNKREiPZz51/DuwHkVpwtIrkP7jey3dviws=
+	t=1762948984; cv=none; b=Udn8hh/Au9dkN1j0RxJoYPHPpy2ZX6Xi6/OOVvRdWw5Em8twUA/Fx32sOtx1U+NITtdViUvSjrUJa7Ygjzi8jEOczIU2F1wQyaJS1Zl0zSWtBw2i1Ta9sDomMo3XQAUZhK8kX/7zPIrj+YzRC4tHIw4TA2tuIBSwQnZv6K7z0LY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762948990; c=relaxed/simple;
-	bh=dmywMDxYR3I/zwmn8fb6UkL+Z5wEfHZ3kih2ppTvlI8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OcBlxrM6iumFgQXrWWFgPnpkO89c92f7GPgxrdgMCM5zYJFSpRbOK7/GkUzRdPv1BUi+OFJTJRWs1HasRxmA6YpBXshMg4FNRzm7nldoDtZ+7LkSrIVmZywsHMkhnH2OVrrqvjjuUYv94/pzidjraJm1EWwfRtgXjJzE7p4naZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WOo9g99c; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7ade456b6abso636207b3a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 04:03:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762948988; x=1763553788; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=otVWZ64buPz8pDhvcNsi4ASjJ/PcM+ziHnstNNH1WqQ=;
-        b=WOo9g99cEqZ+pHEMAqPPipeiCL84lfSDjNbXn0eqRMc7JMLZk5X/2zq1NSt3xke2k6
-         cvQOKQK7sy0+uw6clivFQBKoP+bK8EP778bTvvowhPPQnc2oyQ8pM1vdHomT5f0n+nYS
-         095FMQ9jniny5Wq90n9/aKz3/ZqtZiW6C2PZHip7y4nRHmrUO522s6BVx1WrVLM2vqTq
-         G4axJieNwSCeyTNG84aFaPosah08Q6iYvXPpRQx9nGY9jy+SXMhSEt5vzVaeNE34dV/l
-         kF+5M28kalanNo5ZrzJFQRyATqTdT4MZJaQrvj4LRJcNUP57J+EHg35yGd+8nDyhVM50
-         dcAQ==
+	s=arc-20240116; t=1762948984; c=relaxed/simple;
+	bh=5x+qCRKhUMuMUvqPsT6Z+I1Ei8XJVygq4FgkZUFPZOU=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=X1b6mMnVQ+q0ayeupp0EemcGFLMRR6rJ6FS6EBcuO0/3jpQYDgV/wY3KK09lByIaM2aYf7+WqmZgkv9Fg4lulbqlqu8XSqDRqYAy50G9N1p8kJBagQ2ZmpIDHT8OPBuRYu6DaJJTqs7d+Yf0zu32GyIIUHd7yCBRe5vtnkACwUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-432f8352633so16924905ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 04:03:02 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762948988; x=1763553788;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=otVWZ64buPz8pDhvcNsi4ASjJ/PcM+ziHnstNNH1WqQ=;
-        b=EnmrB0ljtlt3JZ0rWTFLx7kI3KxQbZO/3wfjtaHXLBEy3vFJXQpzLG/TF35Z80j5jK
-         Da89u8A5PxXR9+c5m4InF/DJWMwGAaJWriRpRebqCZJzv2LKKWYzxuFNvpYgpr9kR+NI
-         3UV0L9btGZCS3WdJvpj2tZrrJ+7wtcj+Y7U94lYoojuvEfuria9XQ2wb+Z1y1hfgf6sU
-         PT03e3JUtBs4W3ixN2Uo+aY7j8cinUxpKfpswzLHI5YU6ojVsNLRL7FJ8LBVzhyM/JBt
-         7yejTwORWweZzYtQ1FWfrB7j5EbpB6wdKx0kkPrA6JIip9+MbaZRHVw36b6CKKfSd+QI
-         NIxg==
-X-Forwarded-Encrypted: i=1; AJvYcCWOtCc+9KFEeAZF/cqKs8AtFVpdxTwREcehrXB+oAmhjBixu+BukOfzaOSSLMSbr/sQtXab6vX9J/IQ13s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzgdzO0SmgBGfV1bDe9JAPfCPk7cAjM9pyKyIp/A0YSELjmTB6R
-	FoUbE2NYqsm+KtC1v8uuqX6Uepjs6KvqT18JF8oZg62o2TpdEoGeyE4o
-X-Gm-Gg: ASbGnctiHBqzL6uvjysR39o4iAKiYn+09EPdJrX2J55vtHYhiQ56MAWEdnrjBLprMtL
-	2NkJqcUyr+OZrxZNJsziqDBEO/ul2/6cuUj5kr6WkdpUGO3YIn+DmO5h1puF71nOkHYaIfWeiIG
-	S4RQRH/vDE/pdmdL2P+P9unETcDjehiNRPyVRpdHc+PJ8qREFeFY/TP1j64onZCHh2nuik6aVs8
-	Y0wS2tTMNXNF2w7gh32RhtgL/Y0/zMtpK1slPlWwjkBAROofC1TFNRVmurwC7fx7yo0hfqQVlPd
-	145neeCQG7wiASQS3hA7nbzLL7yPPqib74f5ryQmt9GTlrgum0Rg+mT+/KclgCWsaoXoS1FaKUQ
-	BbSS9zH0j8Ii/hoSJtaFQs7uApwudEM2lXdIXSQO/F65xW8pvb3ULdOXq5NcSM16RTg==
-X-Google-Smtp-Source: AGHT+IF4hw2zR9LkezHiZj+TQdW5+kwzMar8ofxTlchBLpk94hK/dhLo2AjVNSCvpazqsVsABOfrRA==
-X-Received: by 2002:a05:6a00:4b4e:b0:781:157b:3d2e with SMTP id d2e1a72fcca58-7b7a4afa3afmr2857131b3a.21.1762948988116;
-        Wed, 12 Nov 2025 04:03:08 -0800 (PST)
-Received: from oslab.. ([2402:f000:4:1006:809:ffff:fffe:18ea])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7b0cc17a688sm18738044b3a.40.2025.11.12.04.03.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Nov 2025 04:03:07 -0800 (PST)
-From: Tuo Li <islituo@gmail.com>
-To: krzysztof.czurylo@intel.com,
-	tatyana.e.nikolova@intel.com,
-	jgg@ziepe.ca,
-	leon@kernel.org
-Cc: linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Tuo Li <islituo@gmail.com>
-Subject: [PATCH] RDMA/irdma: Remove redundant NULL check of udata in irdma_create_user_ah()
-Date: Wed, 12 Nov 2025 20:02:53 +0800
-Message-ID: <20251112120253.68945-1-islituo@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1762948982; x=1763553782;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=180wEFBJig+I/RsmC3t/es4PE30AJCzYiiRm3nDERps=;
+        b=BiOvFXf0GQhnUfODI/G+9xCIQqJDvQngwPQSoRQC07shWH7X41vcWaVx2BDhjMErUQ
+         BbGfZplP14SEmEkdlSFw+ErgMq5UKCx83dIn5DdMocBbqzYO0pGSZhU1NeXS4rB7z1EJ
+         Rfs3U0hoVyvUgk//H8EdHFkZi+pg+thBFd/ygxqOjVhz9f3yHlZf1O82Duh/tV8xf3Ii
+         jS6XcObMb08rOIsfvJz+nwDsMfCfxnjeb35G8URK5GbUtzZwOabaCA9AWEwcLzZ29slr
+         bDNaDfHXkJjYWG1hanojSDKlgUe7ozwWFrldD9xNvoAjLKF1dzexyCk0QjgYcbRYjqCa
+         gqjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW+ROgHfujm/O/e3fk8n4WYkj8H0I07AO2R3mQcMlYPzokoni4YJAxLFs0NbP+id5OSEd0PNVpKtUDYEXw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyX9x7F1fJkxxmKrdu0JCUF/xJu5YvGhMXjOoixh4lxrkCtlYFN
+	NqSLgc6pFKOuQVPt8K5azCmO8bfjHKxi9fC2HbjjLwkvQbwTz1msiVbUa78ou+25qo9AIIC2WRg
+	rYxW4xRf9C7m/wbzmbjIjs/C0mrQTJq3hGvo+HY2mv7MEjnb7WGdC0MMIdXw=
+X-Google-Smtp-Source: AGHT+IESn+iAMkX6JRfhX7qaQojzwcvxRWKxeFPfpvL0w3WY5ztpigCtMj3SkDphDxM6k43aisGuZPQ41Yl3ZgCMIN9tf53WhRZ0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:2384:b0:433:7900:f1c5 with SMTP id
+ e9e14a558f8ab-43473cf7741mr36488375ab.7.1762948982162; Wed, 12 Nov 2025
+ 04:03:02 -0800 (PST)
+Date: Wed, 12 Nov 2025 04:03:02 -0800
+In-Reply-To: <20251112112714.9203-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <69147776.a70a0220.3124cb.0000.GAE@google.com>
+Subject: Re: [syzbot] [hams?] WARNING: ODEBUG bug in handle_softirqs
+From: syzbot <syzbot+60db000b8468baeddbb1@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-The variable udata cannot be NULL because irdma_create_user_ah() always
-receives it. Therefore, the if() check can be safely removed.
+Hello,
 
-Thank Leon Romanovsky for helpful advice.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Signed-off-by: Tuo Li <islituo@gmail.com>
----
- drivers/infiniband/hw/irdma/verbs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Reported-by: syzbot+60db000b8468baeddbb1@syzkaller.appspotmail.com
+Tested-by: syzbot+60db000b8468baeddbb1@syzkaller.appspotmail.com
 
-diff --git a/drivers/infiniband/hw/irdma/verbs.c b/drivers/infiniband/hw/irdma/verbs.c
-index c883c9ea5a83..a9ae5a38d03d 100644
---- a/drivers/infiniband/hw/irdma/verbs.c
-+++ b/drivers/infiniband/hw/irdma/verbs.c
-@@ -5204,7 +5204,7 @@ static int irdma_create_user_ah(struct ib_ah *ibah,
- 	struct irdma_ah *parent_ah;
- 	int err;
- 
--	if (udata && udata->outlen < IRDMA_CREATE_AH_MIN_RESP_LEN)
-+	if (udata->outlen < IRDMA_CREATE_AH_MIN_RESP_LEN)
- 		return -EINVAL;
- 
- 	err = irdma_setup_ah(ibah, attr);
--- 
-2.43.0
+Tested on:
 
+commit:         b179ce31 Add linux-next specific files for 20251112
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=165a17cd980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=94a763b28bedecbc
+dashboard link: https://syzkaller.appspot.com/bug?extid=60db000b8468baeddbb1
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=103e8692580000
+
+Note: testing is done by a robot and is best-effort only.
 
