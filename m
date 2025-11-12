@@ -1,192 +1,286 @@
-Return-Path: <linux-kernel+bounces-897323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CB5DC52950
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:00:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23DDFC52A1C
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:13:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA1FF1896092
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 13:55:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D391D421813
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 13:55:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38AA92517AA;
-	Wed, 12 Nov 2025 13:54:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 524EE23F431;
+	Wed, 12 Nov 2025 13:55:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b="hsdpXgJM"
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rkBDN33T"
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 333FF226D18
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 13:54:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD8F21EB9E3
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 13:55:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762955657; cv=none; b=AvuYT5mXEyGogN34Rb/wPK6iaifdukpqVJmhQyaN+AGm34GDVB5dHj9bAqtQAXmw3h5/hsJ35ZDkcuDuQynWX6qjWhi/S41GH0phXVFYaUaBbkG3Q/qlJorjK2H2HsT/H1Z38nZaococlTI1BxrbiKNMfwKKM1m/QAR0BvmAvjg=
+	t=1762955723; cv=none; b=Sz30jjUvM8Y7Jar9leUuIVUR6QPrsYSlwfsQnr9ZyHgak6KznMNi9aTnHWQ50b/9888feHtEtrbd2D81UYX02JpbjLvD29mg9Oo5OLvcLRBhNETVsjxsrFF0+cT1M5zcqYSaomB3DQMrW4pK73n8+znRuqYV3CO+IjDWDGNJXvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762955657; c=relaxed/simple;
-	bh=I4I3WIzpcjfsDiSTgOlk8Atq3GBfqXf8GVaWSsFqgPk=;
-	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=M0+2BDXOiWJ23P0LvrA1STbaXyCH/wVOuynyO1yFTNUpQJmNm25ImWW7pnkMRM/D6CNbesWTmPK2us7wyhN3NQsH1h6pCPnRbsHdGOQ3Uk415E8TszA9Dbjeck8lLjFepuNoXVpEyUNP3yNw5GVrWW3l4Ih5iIQYXFklcDL/Fjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b=hsdpXgJM; arc=none smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com [209.85.218.69])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id F30283FE52
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 13:54:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20251003; t=1762955653;
-	bh=zw6ziSjkzQiRWUig0BOelMJ1uVjsDF/5GnnR77Yu8HA=;
-	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=hsdpXgJMAydUIOB7t7ofMm1qDz0A5vu797vtyyMnP2jp4IsYK4e341ND/8beHfh38
-	 hUi7/UpnjGORgczQdqNjPWInsVsQz0YlqcPxcDxkV+rklq4A54dsKca2wIQijmsGuB
-	 QST2DEYeq0AiR0vTh/ODHvoA2jxzDIzCohys3fmmpiJfw96yoecfghKxNp/8g38IYv
-	 KFegDqO7rXryAXIPpzHIq2akrWGcNHSo68DNQdHASUq35uQ4leuQekv6Oa+Pr+sto2
-	 Q3xpB2sjnGzHM6AFEoPDACFxld1ritDzMYIgrlDawC5v6mtGErKffmBbQVfPKkRXmA
-	 JBjCgPCmii7EtCkxqa0gH8UCPuRmbliAQIpC+FOcvdpCqS/QIvoLBdJQVbHXRuhvTE
-	 cn/48DlIVtVQ9Xu/OxWAoJEqoQTzU7KQo/7OQLgtu3F26DJgoQ/J9QWrsgAR03hciX
-	 hQsT1jsVvwuE4PmwcPh2Mp2DOIqj/OGjEWwPILcj5PEanzqtBl21DFxChzQgd9eOWB
-	 land2u42aClQ/SnDYcaUFTvhC6rCyZS4Wo+v4Z2qrka5PpkeExWXzsHg+hx0+m5kgr
-	 i+rZaI86Z49rt9z759t2RPLez1Rzi/VmQlX3ZK6OG7PpmBEL5VOUKqXIEsa34hVB9k
-	 ytBM1dBENuv8wFMyM+Pwncq8=
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-b7336ad128cso64073966b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 05:54:12 -0800 (PST)
+	s=arc-20240116; t=1762955723; c=relaxed/simple;
+	bh=mQTO3qMBrrbrec+vOaxyEQHikAOjUWJdth7psxqKQd8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FXqj9XSz0l19Qj8muCdj8MnAQDyQDkOh5wkqZPe6zRfCxqE3Sa/zwEghkX56MDoiBvRFMSPjPTWDcKLziPB/sHojsJrxrmXq2rRotdTyyg5z+yR/8jjI6//EzWUW76T/wUS/gVHUKl9+m7bepp1ikvL6YPZFwrzm0YK5mAic3eM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rkBDN33T; arc=none smtp.client-ip=209.85.160.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4ed9c1924adso7362401cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 05:55:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762955720; x=1763560520; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=olHOzv1HDFcRoKcRPLEDHq3xryx1qVQZjsYC+KidFkM=;
+        b=rkBDN33TmH8m8SbC49wKLYrQ8IUuqrxk8bJFNuT9qB91Timhuqs4SthYuzx/hXV5is
+         nXunJbot2eU0+D3yuMCLcmK74VkT+rl1iC/qcEN45oe3f9L3UV/w5FY0Y6XXpbKP1TU1
+         r7RWuyaC9B2xZtO2HdmQS1Pw38bQVxi187CHoeeyZ0AJVb+strUJZlnf7IkLeAS0RM4w
+         pf8UC/BV58GqIxqFoy8hNf86YFaVl2gh6Mtct6OHn35FqX3PySe0jKZ5z8Ew6lfnYlM2
+         b85J/EFpExGXhOvgt6sXajOE7ncZfIx7PJolb8+N5m81ZfgRHJSXDBkXQshiaZzT8VzT
+         PFPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762955652; x=1763560452;
-        h=cc:to:subject:message-id:date:user-agent:from:references
-         :in-reply-to:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zw6ziSjkzQiRWUig0BOelMJ1uVjsDF/5GnnR77Yu8HA=;
-        b=ZgN7SmVVk+AttWUXda5Eevc3Ur/Ti7hhAnaHWOAPSHoU9P4v4xgCZzEDNiTzsUACiw
-         nQxc6iUJEF2YhqgKckmuyZJdSeoKQ6TnzkX4OyGiRuTywqh/DxwXp7M6YQUStiRQo2vU
-         bbwD4xsH1vqP20yzD+jnBhVpN7OzSQeZDuzGF1692jEQS+riw3E++Y2wDP9b4RmcUz8M
-         3+NUF/a8YfqNi5Uq6bWdVJQHajxwBHurxLrwi1gc6jknma9ttITiN/672Q1yF7zqDkrg
-         7lwSVHgHf/oSSQxBXimnDxZPBVVOrxXXSuMGlT792t4+hgIeExelMCGQ9wIDvPVI4OCg
-         Manw==
-X-Forwarded-Encrypted: i=1; AJvYcCV030U2HAQ/WIBDh3pvujISuttjcLbnCEY7eJnRer46b7KzTcoR1ThSukj0dkQ8+0/jZfkhOgfaW5vSKaw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywh14xmY0m1k1i5Xmk8tXq6XT0BEDfj/hnhzzqfjj+lxD9LSn3E
-	jCJWsWKYIzItgEn1lugYJpNwZ4ZuhC6Eo0HXj4AnNEF4YpKuQ8wK3OgTQdSODhEqvgVTF4xLasG
-	F6YV+6aUwz7i6OJERu8zg1KJOKJU++2e57iiFLcSsJ3bueW1GkjJtxyZ/Kv0q8j1sgPspd8GnEG
-	n19SItfXy0TV4aMieGaFqt8/7zSvw066C7OvUCyEOMpQSoSV3psVgnB/ND
-X-Gm-Gg: ASbGnctoJR5a0TpLl5wpjbZypAT/XNGkGub7J81gJwYUrJLRePqFvA+4xGgmvAwd8Mr
-	YMfGTbZdpTc9WOw3YHsF9zW/5XIPo84fNjCg+Xn8dfgp4DMyqIb1AFtEVh5/rwbLipe9pfqwV5C
-	+fI68mdM6777XNhuUSuxTHvhjyunwR5wRWelcSoMFtZeaZHAAzZWTQEwQb26L4PZJuq+3a0j/cW
-	jk3NiE81Knd
-X-Received: by 2002:a17:907:3f0b:b0:b72:599:5385 with SMTP id a640c23a62f3a-b7331aed080mr274451966b.61.1762955651979;
-        Wed, 12 Nov 2025 05:54:11 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHASu3IyWs8sdfwZaJ3pNAVG0SXfiJ1YnPjXsl7ym/EOc9nMzNozT0R3ShCHNy28iULSDnVopmBypGnnGPw+tE=
-X-Received: by 2002:a17:907:3f0b:b0:b72:599:5385 with SMTP id
- a640c23a62f3a-b7331aed080mr274448466b.61.1762955651487; Wed, 12 Nov 2025
- 05:54:11 -0800 (PST)
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 12 Nov 2025 05:54:10 -0800
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 12 Nov 2025 05:54:09 -0800
+        d=1e100.net; s=20230601; t=1762955720; x=1763560520;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=olHOzv1HDFcRoKcRPLEDHq3xryx1qVQZjsYC+KidFkM=;
+        b=XbkFfcuC6F/V3I3CZN9pHJ5BSWpW/0lba2EdJG/1fdftrVETYQwQc516BLq4kPeYKT
+         PWYiG5z5wi7YgMOmiinPbJf+VIt1Ys+TEbL/9XHAAScni+lzTmGsfPe/k9VQ13uoXUKq
+         bJBeHP32JKylzUZf0AYUQGOR+cvJYGDPikHFUsX8Gdgx5DKI1BFXXkY1NJ2fnaR61R8d
+         HJPdFsqE3xvWOTDUmp6+zvCALjL90bn2SywtqUAdZjtmw0rWWevWdfaNLkPKppf2ZGj1
+         KBlIXNUGdbYe4sE5eIKHCiHmEA5+xhD9ctXfaj3wb79uKlBFutsl/Vn6ZH9agl5eWGan
+         zO/g==
+X-Forwarded-Encrypted: i=1; AJvYcCVCj0HCpTfSapMnk0sZt6SOQP1yY0CtauDh/hC0VoZt6cuGoRTqOmUSbfm14bfRlWyGXG4P2pHPC5/9s/Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFRmkSgXnlNDaIYjS7GBxd4zX3rh2yg+/N+4NMhlZ5HIx5uXj7
+	tCPP3SijOM90IvoPoO8tsg7i8wR0faUyWAhtWtlA6+N1TUVMJ/P7Hd8ABXs+nFpIwELWwGfZIq2
+	ahAUTRcZZHaucVvnllup6tHcowsEHQYy68E01VhM6
+X-Gm-Gg: ASbGncur1Mp0Np1vhVCAA+xjbWRUj/+cZz6OxPNsiYFZvFVOazs+SLqG+x3chePDVZ3
+	B0GQ+DZs3aHbvW0TdzXoLDiirZhXzR0lTNJ9sovsv4AKDNTvcNTrZct+2Hsw6U0oCw6HTH0yquz
+	JuS0iLLT4Lr+7cmMkU2uEIpFN8E1B2b/OTQgrZfrQRjx+CMdAoZ4TkFsGKWt+Qncw3RIG13jWDp
+	MctSu0xfSMszBkOBOpNCSrlxGSSFKMfWn2VimuxY1xR1Wu40lxI569At8Lms1kp63MjkPAU
+X-Google-Smtp-Source: AGHT+IH5mtOTw5ql/3tyCPfaJIqRYelbwEuY2GxwU9SpSn2Er1u7sqEWL7WpBlKzBs9sxmpYzFu7SfnMl4N6pUgTzCk=
+X-Received: by 2002:a05:622a:54e:b0:4ec:f07c:3e73 with SMTP id
+ d75a77b69052e-4eddbe1c28amr37326511cf.76.1762955720119; Wed, 12 Nov 2025
+ 05:55:20 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20251107095530.114775-1-hal.feng@starfivetech.com>
-References: <20251107095530.114775-1-hal.feng@starfivetech.com>
-From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-User-Agent: alot/0.0.0
-Date: Wed, 12 Nov 2025 05:54:09 -0800
-X-Gm-Features: AWmQ_bkCo556C5q4g3w_mabHlgyG7zuhHtzy3L72tGDQo2o37ahEt_qsjrthSBY
-Message-ID: <CAJM55Z_rczBo4D3HsC90QW1=fp3NWgK-tsEo6LHTZNXEBHTDqA@mail.gmail.com>
-Subject: Re: [PATCH v2 0/8] Add support for StarFive VisionFive 2 Lite board
-To: Albert Ou <aou@eecs.berkeley.edu>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Conor Dooley <conor+dt@kernel.org>, E Shattow <e@freeshell.de>, 
-	Hal Feng <hal.feng@starfivetech.com>, 
-	Heinrich Schuchardt <heinrich.schuchardt@canonical.com>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <pjw@kernel.org>, 
-	"Rafael J . Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Viresh Kumar <viresh.kumar@linaro.org>
-Cc: devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
+References: <1762952506-23593-1-git-send-email-gargaditya@linux.microsoft.com> <1762952506-23593-2-git-send-email-gargaditya@linux.microsoft.com>
+In-Reply-To: <1762952506-23593-2-git-send-email-gargaditya@linux.microsoft.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Wed, 12 Nov 2025 05:55:07 -0800
+X-Gm-Features: AWmQ_bluu1-AEflxU_3suMcewGFMw8kM6f7K2JJf4BGWU2evk1xj6w6Ga79O0hY
+Message-ID: <CANn89iL-RJ84WB9W8SoZn6_UMko8sLBb_FEGjjGZTEO+9KOpAg@mail.gmail.com>
+Subject: Re: [PATCH net-next v4 1/2] net: mana: Handle SKB if TX SGEs exceed
+ hardware limit
+To: Aditya Garg <gargaditya@linux.microsoft.com>
+Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org, 
+	decui@microsoft.com, andrew+netdev@lunn.ch, davem@davemloft.net, 
+	kuba@kernel.org, pabeni@redhat.com, longli@microsoft.com, 
+	kotaranov@microsoft.com, horms@kernel.org, shradhagupta@linux.microsoft.com, 
+	ssengar@linux.microsoft.com, ernis@linux.microsoft.com, 
+	dipayanroy@linux.microsoft.com, shirazsaleem@microsoft.com, leon@kernel.org, 
+	mlevitsk@redhat.com, yury.norov@gmail.com, sbhatta@marvell.com, 
+	linux-hyperv@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org, 
+	gargaditya@microsoft.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Quoting Hal Feng (2025-11-07 10:55:22)
-> VisionFive 2 Lite is a mini SBC based on the StarFive JH7110S industrial
-> SoC which can run at -40~85 degrees centigrade and up to 1.25GHz.
+On Wed, Nov 12, 2025 at 5:11=E2=80=AFAM Aditya Garg
+<gargaditya@linux.microsoft.com> wrote:
 >
-> Board features:
-> - JH7110S SoC
-> - 4/8 GiB LPDDR4 DRAM
-> - AXP15060 PMIC
-> - 40 pin GPIO header
-> - 1x USB 3.0 host port
-> - 3x USB 2.0 host port
-> - 1x M.2 M-Key (size: 2242)
-> - 1x MicroSD slot (optional non-removable 64GiB eMMC)
-> - 1x QSPI Flash
-> - 1x I2C EEPROM
-> - 1x 1Gbps Ethernet port
-> - SDIO-based Wi-Fi & UART-based Bluetooth
-> - 1x HDMI port
-> - 1x 2-lane DSI
-> - 1x 2-lane CSI
+> The MANA hardware supports a maximum of 30 scatter-gather entries (SGEs)
+> per TX WQE. Exceeding this limit can cause TX failures.
+> Add ndo_features_check() callback to validate SKB layout before
+> transmission. For GSO SKBs that would exceed the hardware SGE limit, clea=
+r
+> NETIF_F_GSO_MASK to enforce software segmentation in the stack.
+> Add a fallback in mana_start_xmit() to linearize non-GSO SKBs that still
+> exceed the SGE limit.
 >
-> VisionFive 2 Lite schematics: https://doc-en.rvspace.org/VisionFive2Lite/PDF/VF2_LITE_V1.10_TF_20250818_SCH.pdf
-> VisionFive 2 Lite Quick Start Guide: https://doc-en.rvspace.org/VisionFive2Lite/VisionFive2LiteQSG/index.html
-> More documents: https://doc-en.rvspace.org/Doc_Center/visionfive_2_lite.html
+> Also, Add ethtool counter for SKBs linearized
+>
+> Co-developed-by: Dipayaan Roy <dipayanroy@linux.microsoft.com>
+> Signed-off-by: Dipayaan Roy <dipayanroy@linux.microsoft.com>
+> Signed-off-by: Aditya Garg <gargaditya@linux.microsoft.com>
+> ---
+>  drivers/net/ethernet/microsoft/mana/mana_en.c | 37 ++++++++++++++++++-
+>  .../ethernet/microsoft/mana/mana_ethtool.c    |  2 +
+>  include/net/mana/gdma.h                       |  6 ++-
+>  include/net/mana/mana.h                       |  1 +
+>  4 files changed, 43 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/net/ethernet/microsoft/mana/mana_en.c b/drivers/net/=
+ethernet/microsoft/mana/mana_en.c
+> index cccd5b63cee6..67ae5421f9ee 100644
+> --- a/drivers/net/ethernet/microsoft/mana/mana_en.c
+> +++ b/drivers/net/ethernet/microsoft/mana/mana_en.c
+> @@ -11,6 +11,7 @@
+>  #include <linux/mm.h>
+>  #include <linux/pci.h>
+>  #include <linux/export.h>
+> +#include <linux/skbuff.h>
+>
+>  #include <net/checksum.h>
+>  #include <net/ip6_checksum.h>
+> @@ -329,6 +330,20 @@ netdev_tx_t mana_start_xmit(struct sk_buff *skb, str=
+uct net_device *ndev)
+>         cq =3D &apc->tx_qp[txq_idx].tx_cq;
+>         tx_stats =3D &txq->stats;
+>
+> +       if (MAX_SKB_FRAGS + 2 > MAX_TX_WQE_SGL_ENTRIES &&
+> +           skb_shinfo(skb)->nr_frags + 2 > MAX_TX_WQE_SGL_ENTRIES) {
+> +               /* GSO skb with Hardware SGE limit exceeded is not expect=
+ed here
+> +                * as they are handled in mana_features_check() callback
+> +                */
+> +               if (skb_linearize(skb)) {
+> +                       netdev_warn_once(ndev, "Failed to linearize skb w=
+ith nr_frags=3D%d and is_gso=3D%d\n",
+> +                                        skb_shinfo(skb)->nr_frags,
+> +                                        skb_is_gso(skb));
+> +                       goto tx_drop_count;
+> +               }
+> +               apc->eth_stats.linear_pkt_tx_cnt++;
+> +       }
+> +
+>         pkg.tx_oob.s_oob.vcq_num =3D cq->gdma_id;
+>         pkg.tx_oob.s_oob.vsq_frame =3D txq->vsq_frame;
+>
+> @@ -442,8 +457,6 @@ netdev_tx_t mana_start_xmit(struct sk_buff *skb, stru=
+ct net_device *ndev)
+>                 }
+>         }
+>
+> -       WARN_ON_ONCE(pkg.wqe_req.num_sge > MAX_TX_WQE_SGL_ENTRIES);
+> -
+>         if (pkg.wqe_req.num_sge <=3D ARRAY_SIZE(pkg.sgl_array)) {
+>                 pkg.wqe_req.sgl =3D pkg.sgl_array;
+>         } else {
+> @@ -518,6 +531,25 @@ netdev_tx_t mana_start_xmit(struct sk_buff *skb, str=
+uct net_device *ndev)
+>         return NETDEV_TX_OK;
+>  }
+>
 
 
-Hi Hal,
+#if MAX_SKB_FRAGS + 2 > MAX_TX_WQE_SGL_ENTRIES
 
-Currently the JH7110 device trees are layed out like this, with a nice
-separation between the SoC description and board descriptions:
+> +static netdev_features_t mana_features_check(struct sk_buff *skb,
+> +                                            struct net_device *ndev,
+> +                                            netdev_features_t features)
+> +{
+> +       if (MAX_SKB_FRAGS + 2 > MAX_TX_WQE_SGL_ENTRIES &&
+> +           skb_shinfo(skb)->nr_frags + 2 > MAX_TX_WQE_SGL_ENTRIES) {
+> +               /* Exceeds HW SGE limit.
+> +                * GSO case:
+> +                *   Disable GSO so the stack will software-segment the s=
+kb
+> +                *   into smaller skbs that fit the SGE budget.
+> +                * Non-GSO case:
+> +                *   The xmit path will attempt skb_linearize() as a fall=
+back.
+> +                */
+> +               if (skb_is_gso(skb))
 
-jh7110.dtsi               # JH7110 SoC description
-|- jh7110-common.dtsi     # Peripherals common to all JH7110 boards
-   |- jh7110-starfive-visionfive-2.dtsi # Peripherals common to VF2 boards
-   |  |- <VF2 boards>     # Final VF2 board descriptions
-   |- jh7110-milkv-marscm.dtsi # Peripherals common to Mars CM boards
-   |  |- <Mars CM boards> # Final Mars CM board descriptions
-   |- <other boards>      # Other JH7110 board descriptions
+No need to test skb_is_gso(skb), you can clear bits, this will be a
+NOP if the packet is non GSO anyway.
 
-With this series it moves to
+> +                       features &=3D ~NETIF_F_GSO_MASK;
+> +       }
+> +       return features;
+> +}
 
-jh711x.dtsi
-|- jh711x-common.dtsi
-   |- jh7110-common.dtsi
-   |  |- <jh7110 boards>
-   |- jh7110s-common.dtsi
-      |- <jh7110s boards>
+#endif
 
-..which I can't even give clear labels like above. In other words when new
-patches are sent in it would not be easy to explain exactly where each change
-should go and why.
-I'm also worried that you'll find that more of the peripherals on the JH7110S
-need special handling and a new jh7110s-... compatible string. Then I guess
-they'll need to jump from jh7110x.dtsi two levels down to jh7110{,s}-common.dtsi
-which then both describe SoC and board properties.
+> +
+>  static void mana_get_stats64(struct net_device *ndev,
+>                              struct rtnl_link_stats64 *st)
+>  {
+> @@ -878,6 +910,7 @@ static const struct net_device_ops mana_devops =3D {
+>         .ndo_open               =3D mana_open,
+>         .ndo_stop               =3D mana_close,
+>         .ndo_select_queue       =3D mana_select_queue,
+> +       .ndo_features_check     =3D mana_features_check,
 
-If you're serious about calling this a new SoC then I'd expect something more
-like this:
+Note that if your mana_features_check() is a nop if MAX_SKB_FRAGS is
+small enough,
+you could set a non NULL .ndo_features_check based on a preprocessor condit=
+ion
 
-jh711x.dtsi                  # Peripherals common to both SoCs
-|- jh7110.dtsi               # JH7110 SoC description
-|  |- jh7110-common.dtsi     # Peripherals common to all JH7110 boards
-|     |- jh7110-starfive-visionfive-2.dtsi # Peripherals common to VF2 boards
-|     |  |- <VF2 boards>     # Final VF2 board descriptions
-|     |- jh7110-milkv-marscm.dtsi # Peripherals common to Mars CM boards
-|     |  |- <Mars CM boards> # Final Mars CM board descriptions
-|     |- <other boards>      # Other JH7110 board descriptions
-|- jh7110s.dtsi              # JH7110S SoC description
-   |- jh7110s-common.dtsi    # Peripherals common to all JH7110S boards
-      |- <JH7110S boards>    # Final JH7110S board descriptions
+#if MAX_SKB_FRAGS + 2 > MAX_TX_WQE_SGL_ENTRIES
+    .ndo_features_check =3D ....
+#endif
 
-I know this will mean some duplication in jh7110{,s}-common.dtsi, but I would
-prefer that to not having a clear explanation of what each file describes.
+This would avoid an expensive indirect call when possible.
 
-Do you think this layout could work for you?
 
-/Emil
+>         .ndo_start_xmit         =3D mana_start_xmit,
+>         .ndo_validate_addr      =3D eth_validate_addr,
+>         .ndo_get_stats64        =3D mana_get_stats64,
+> diff --git a/drivers/net/ethernet/microsoft/mana/mana_ethtool.c b/drivers=
+/net/ethernet/microsoft/mana/mana_ethtool.c
+> index a1afa75a9463..fa5e1a2f06a9 100644
+> --- a/drivers/net/ethernet/microsoft/mana/mana_ethtool.c
+> +++ b/drivers/net/ethernet/microsoft/mana/mana_ethtool.c
+> @@ -71,6 +71,8 @@ static const struct mana_stats_desc mana_eth_stats[] =
+=3D {
+>         {"tx_cq_err", offsetof(struct mana_ethtool_stats, tx_cqe_err)},
+>         {"tx_cqe_unknown_type", offsetof(struct mana_ethtool_stats,
+>                                         tx_cqe_unknown_type)},
+> +       {"linear_pkt_tx_cnt", offsetof(struct mana_ethtool_stats,
+> +                                       linear_pkt_tx_cnt)},
+>         {"rx_coalesced_err", offsetof(struct mana_ethtool_stats,
+>                                         rx_coalesced_err)},
+>         {"rx_cqe_unknown_type", offsetof(struct mana_ethtool_stats,
+> diff --git a/include/net/mana/gdma.h b/include/net/mana/gdma.h
+> index 637f42485dba..84614ebe0f4c 100644
+> --- a/include/net/mana/gdma.h
+> +++ b/include/net/mana/gdma.h
+> @@ -592,6 +592,9 @@ enum {
+>  #define GDMA_DRV_CAP_FLAG_1_HANDLE_RECONFIG_EQE BIT(17)
+>  #define GDMA_DRV_CAP_FLAG_1_HW_VPORT_LINK_AWARE BIT(6)
+>
+> +/* Driver supports linearizing the skb when num_sge exceeds hardware lim=
+it */
+> +#define GDMA_DRV_CAP_FLAG_1_SKB_LINEARIZE BIT(20)
+> +
+>  #define GDMA_DRV_CAP_FLAGS1 \
+>         (GDMA_DRV_CAP_FLAG_1_EQ_SHARING_MULTI_VPORT | \
+>          GDMA_DRV_CAP_FLAG_1_NAPI_WKDONE_FIX | \
+> @@ -601,7 +604,8 @@ enum {
+>          GDMA_DRV_CAP_FLAG_1_DYNAMIC_IRQ_ALLOC_SUPPORT | \
+>          GDMA_DRV_CAP_FLAG_1_SELF_RESET_ON_EQE | \
+>          GDMA_DRV_CAP_FLAG_1_HANDLE_RECONFIG_EQE | \
+> -        GDMA_DRV_CAP_FLAG_1_HW_VPORT_LINK_AWARE)
+> +        GDMA_DRV_CAP_FLAG_1_HW_VPORT_LINK_AWARE | \
+> +        GDMA_DRV_CAP_FLAG_1_SKB_LINEARIZE)
+>
+>  #define GDMA_DRV_CAP_FLAGS2 0
+>
+> diff --git a/include/net/mana/mana.h b/include/net/mana/mana.h
+> index 8906901535f5..50a532fb30d6 100644
+> --- a/include/net/mana/mana.h
+> +++ b/include/net/mana/mana.h
+> @@ -404,6 +404,7 @@ struct mana_ethtool_stats {
+>         u64 hc_tx_err_gdma;
+>         u64 tx_cqe_err;
+>         u64 tx_cqe_unknown_type;
+> +       u64 linear_pkt_tx_cnt;
+>         u64 rx_coalesced_err;
+>         u64 rx_cqe_unknown_type;
+>  };
+> --
+> 2.43.0
+>
 
