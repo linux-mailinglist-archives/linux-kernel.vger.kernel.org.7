@@ -1,176 +1,112 @@
-Return-Path: <linux-kernel+bounces-896365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EAE6C5034D
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 02:26:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09007C5034A
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 02:25:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF7FF3B3940
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 01:25:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 206DE3B3040
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 01:24:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15A8F22A4E9;
-	Wed, 12 Nov 2025 01:24:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="PdLyK7NK"
-Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12A0F229B12;
+	Wed, 12 Nov 2025 01:24:32 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73CF52253A1
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 01:24:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80185146A66;
+	Wed, 12 Nov 2025 01:24:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762910698; cv=none; b=C+FLl7mc06Ysi7Gr3CQpJ6+kZk8dtKocX+nXGw23iRBFmvFckqZXfDLzPd48pwdAprWg1RnBmsl9A6kYZMbZ2Uj9qHimr4Kb23005bFAzf6ahkzbfAOdCTlWN5pVXH1fkO5pIWUH/d6z8arTuW5PLyu6P70RAgB+ZXEsvSuqa2M=
+	t=1762910671; cv=none; b=pFZ9Bt6t7O0BTCt1H75GxSp3sCKHqb/Et+40VhPU/8+21NuCw+7mZDIV2h7X6VPCKNzsZ5q08/rU0SNs8QONgApwG/lWk1iGLCQRocEgV2Mdgxe7xgwlne5GD7PR+cYbA/nLham2SGojEO4aBUiFwWN7B/8mpHfPWWoHOYFxRRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762910698; c=relaxed/simple;
-	bh=ERzhnnomwvujPwo520L90t0JWUy/gu8UtiK/UV0WaMk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nePTU+pAMDNG8g97LLFpJF/KTpnMmU+eEBRoliZQcD3qceXrsOCSoglS6TWQFpIuxqNixkBYxqzdzPZ2SY1S99Uk/f30N5PpBFz6TNmjTb1V+BrEqX7tsi4ITdTS8GCbV3jrDwJqMvUl+AAXhCh5THBAllHTv5n+FPcXPGkSAlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=PdLyK7NK; arc=none smtp.client-ip=95.215.58.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <c85c097a-b787-4582-aab5-dede9c43f040@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1762910684;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=D/i3GfIvLf3jSL0Nu3zD7O50gxNQg7kj48hWTHJwFyA=;
-	b=PdLyK7NKiAq/yogXtVDU5YUYnQTHtVPBeYOHEVxvW7Ni+Lb/4j4LOSqcj9rpsqvKJyoqwK
-	VwHDCAeS6MtGtjmDeCL1sWOvTXREvt/7e3TUTxI8y9Nfbu5f6MXUm2QcEnih4P0fggOtFS
-	HIHXieChvQBCmpTqDR6OVZeQC/i75eM=
-Date: Wed, 12 Nov 2025 09:24:00 +0800
+	s=arc-20240116; t=1762910671; c=relaxed/simple;
+	bh=L03mf8CZgQYOMyHQkBBodjsPRmXcEeszO3OzKMDpxWM=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=mmDo7H4+Hj2RHYh4PV+OVXO55IPwTXZGczVN0zLm8L7uOfSqjdQygdQew9VL8va9M7CuLJenQJ3ava34IR0iX4AN83rKpyNvxGyeUXTae5rg+LFQPw3pemOmCwaVuKe55pTrjREmyxpi6pIBDOdbqTCvMdxfEenx31w2j5wWtPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost.localdomain (unknown [202.112.113.212])
+	by APP-05 (Coremail) with SMTP id zQCowACXm2y34RNpHUlsAA--.22327S2;
+	Wed, 12 Nov 2025 09:24:14 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: suzuki.poulose@arm.com,
+	mike.leach@linaro.org,
+	james.clark@linaro.org,
+	alexander.shishkin@linux.intel.com,
+	mathieu.poirier@linaro.org
+Cc: coresight@lists.linaro.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	akpm@linux-foundation.org,
+	Ma Ke <make24@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH v2] coresight: etm-perf: Fix reference count leak in etm_setup_aux
+Date: Wed, 12 Nov 2025 09:24:05 +0800
+Message-Id: <20251112012405.11731-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.17.1
+X-CM-TRANSID:zQCowACXm2y34RNpHUlsAA--.22327S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7XryfuFW3XryfKFy5JF1DJrb_yoW8JF18pr
+	4DK3yYya4DGrWvv39rJw1DZFW5Wa1Sya1agFy3Kws5uF4YqF9FvF15KFyFvrs7CrW8JF93
+	Kws7tF4UZFyUXaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUPY14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr
+	1j6F4UJwAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40E
+	FcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr
+	0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8v
+	x2IErcIFxwACI402YVCY1x02628vn2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCY02Avz4
+	vE14v_KwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E
+	14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIx
+	kGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAF
+	wI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r
+	4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUmQ6LU
+	UUUU=
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Subject: Re: [PATCH net-next v4 3/3] net: stmmac: pci: Use generic PCI
- suspend/resume routines
-To: Yao Zi <ziyao@disroot.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Huacai Chen <chenhuacai@kernel.org>,
- "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
- Philipp Stanner <phasta@kernel.org>, Tiezhu Yang <yangtiezhu@loongson.cn>,
- Qunqin Zhao <zhaoqunqin@loongson.cn>,
- Vladimir Oltean <vladimir.oltean@nxp.com>, Furong Xu <0x1207@gmail.com>,
- Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
- Jacob Keller <jacob.e.keller@intel.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251111100727.15560-2-ziyao@disroot.org>
- <20251111101158.15630-1-ziyao@disroot.org>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yanteng Si <si.yanteng@linux.dev>
-In-Reply-To: <20251111101158.15630-1-ziyao@disroot.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
+In etm_setup_aux(), when a user sink is obtained via
+coresight_get_sink_by_id(), it increments the reference count of the
+sink device. However, if the sink is used in path building, the path
+holds a reference, but the initial reference from
+coresight_get_sink_by_id() is not released, causing a reference count
+leak. We should release the initial reference after the path is built.
 
-在 2025/11/11 18:11, Yao Zi 写道:
-> Convert STMMAC PCI glue driver to use the generic platform
-> suspend/resume routines for PCI controllers, instead of implementing its
-> own one.
->
-> Signed-off-by: Yao Zi <ziyao@disroot.org>
-Reviewed-by: Yanteng Si <siyanteng@cqsoftware.com.cn>
+Found by code review.
 
+Cc: stable@vger.kernel.org
+Fixes: 0e6c20517596 ("coresight: etm-perf: Allow an event to use different sinks")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+---
+Changes in v2:
+- modified the patch as suggestions.
+---
+ drivers/hwtracing/coresight/coresight-etm-perf.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Thanks,
-Yanteng
-> ---
->   drivers/net/ethernet/stmicro/stmmac/Kconfig   |  6 ++--
->   .../net/ethernet/stmicro/stmmac/stmmac_pci.c  | 36 ++-----------------
->   2 files changed, 6 insertions(+), 36 deletions(-)
->
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/Kconfig b/drivers/net/ethernet/stmicro/stmmac/Kconfig
-> index d2bff28fe409..00df980fd4e0 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/Kconfig
-> +++ b/drivers/net/ethernet/stmicro/stmmac/Kconfig
-> @@ -378,11 +378,8 @@ config DWMAC_LOONGSON
->   	  This selects the LOONGSON PCI bus support for the stmmac driver,
->   	  Support for ethernet controller on Loongson-2K1000 SoC and LS7A1000 bridge.
->   
-> -endif
-> -
->   config STMMAC_PCI
->   	tristate "STMMAC PCI bus support"
-> -	depends on STMMAC_ETH && PCI
->   	depends on COMMON_CLK
->   	help
->   	  This selects the platform specific bus support for the stmmac driver.
-> @@ -392,4 +389,7 @@ config STMMAC_PCI
->   	  If you have a controller with this interface, say Y or M here.
->   
->   	  If unsure, say N.
-> +
-> +endif
-> +
->   endif
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c
-> index 94b3a3b27270..fa92be672c54 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c
-> @@ -14,6 +14,7 @@
->   #include <linux/dmi.h>
->   
->   #include "stmmac.h"
-> +#include "stmmac_libpci.h"
->   
->   struct stmmac_pci_info {
->   	int (*setup)(struct pci_dev *pdev, struct plat_stmmacenet_data *plat);
-> @@ -139,37 +140,6 @@ static const struct stmmac_pci_info snps_gmac5_pci_info = {
->   	.setup = snps_gmac5_default_data,
->   };
->   
-> -static int stmmac_pci_suspend(struct device *dev, void *bsp_priv)
-> -{
-> -	struct pci_dev *pdev = to_pci_dev(dev);
-> -	int ret;
-> -
-> -	ret = pci_save_state(pdev);
-> -	if (ret)
-> -		return ret;
-> -
-> -	pci_disable_device(pdev);
-> -	pci_wake_from_d3(pdev, true);
-> -	return 0;
-> -}
-> -
-> -static int stmmac_pci_resume(struct device *dev, void *bsp_priv)
-> -{
-> -	struct pci_dev *pdev = to_pci_dev(dev);
-> -	int ret;
-> -
-> -	pci_restore_state(pdev);
-> -	pci_set_power_state(pdev, PCI_D0);
-> -
-> -	ret = pci_enable_device(pdev);
-> -	if (ret)
-> -		return ret;
-> -
-> -	pci_set_master(pdev);
-> -
-> -	return 0;
-> -}
-> -
->   /**
->    * stmmac_pci_probe
->    *
-> @@ -249,8 +219,8 @@ static int stmmac_pci_probe(struct pci_dev *pdev,
->   	plat->safety_feat_cfg->prtyen = 1;
->   	plat->safety_feat_cfg->tmouten = 1;
->   
-> -	plat->suspend = stmmac_pci_suspend;
-> -	plat->resume = stmmac_pci_resume;
-> +	plat->suspend = stmmac_pci_plat_suspend;
-> +	plat->resume = stmmac_pci_plat_resume;
->   
->   	return stmmac_dvr_probe(&pdev->dev, plat, &res);
->   }
+diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c b/drivers/hwtracing/coresight/coresight-etm-perf.c
+index f677c08233ba..8a5a59434cc9 100644
+--- a/drivers/hwtracing/coresight/coresight-etm-perf.c
++++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
+@@ -454,6 +454,11 @@ static void *etm_setup_aux(struct perf_event *event, void **pages,
+ 		goto err;
+ 
+ out:
++	if (user_sink) {
++		put_device(&user_sink->dev);
++		user_sink = NULL;
++	}
++
+ 	return event_data;
+ 
+ err:
+-- 
+2.17.1
+
 
