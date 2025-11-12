@@ -1,132 +1,124 @@
-Return-Path: <linux-kernel+bounces-896872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A9E0C516DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:45:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6A26C5180F
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 10:56:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5028050090B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:37:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7027B3A87C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 09:38:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DBDF2FD7D0;
-	Wed, 12 Nov 2025 09:37:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B38BE3002A3;
+	Wed, 12 Nov 2025 09:37:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FCvtRDLj"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WsF0FxMS"
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07D4A2264B8;
-	Wed, 12 Nov 2025 09:37:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0A622FFDFF
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 09:37:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762940248; cv=none; b=QAO+BmfcgB51aPGXkjBQz4FpYtnAJ1Bi8UYHuwQGTjguuA3RcAIjPHe//zc4vTlBqsN3dzemH9BbMHk35LGIqD3VYNQUnbdYSsUzYe0/UBSWnk7DuGjq97Z9GN2Qz+PBF32xjt9+ptwhxofWRV6l0upCR6azqzLzC2gM5sz6mYM=
+	t=1762940257; cv=none; b=otGQ5ZGo1L14hNxpVuomUAjIyZ6qG5WGxAaasYuhIfyIMaTuKM2PAjhgpGPzY8Nyf/jL/h0fTOr/iC8/yooFLxgsmu0Uzy6FxH7A7P7qjYoOCTO39NHuztf9ZBFqIG4sl5ipArUwDVwp0ecUl13pzuT9SELDF+NBn6zq/Bpo1FM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762940248; c=relaxed/simple;
-	bh=5+bPDfABTSbjsLLGKhxi1I1q3IpYd9dL+0JlpBz+J0E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BaOIXJg88s749uv6pLLaMA+c85kFXHCXLadhBLArA0r77SsmlL8gHWxej8PtatdppfcRjZ802r2bB1KAkyS2IJsY0wK0KILnttJQsooH5UPyBGoR/MKcIcsUuoSjwC4NtKTXojdqFp8X3Oalb3DHSkzPPEaHmzraaQgNPG1I9CE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=FCvtRDLj; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=5NdirOb8DJHe18dV/Aw9s3XZrGnwVYcrB7NCzcdUjYc=; b=FCvtRDLjkqL4h7PL6Ra/Rv5uGh
-	vpgcTOtNhDNcf0GdKSoUMP+opntbAikjbUygY4LtJXkiNC6zibDhukEjdts8s01DwL9OA1FB5DWNy
-	t6oqhR6umV8FGDTHC/vn9J4ub9HkeDREZ/PNANTI1JyYkU82H01DIbiCunjRJ+Ec1pZ/K3xQ3ixsX
-	xsliVHeDj+NTeX+qVKlGbU19rq6ez57ulpZEPsf5oF8+1r4Y1vEHwwL63OXiw+g82QBQiHbBDiIRV
-	st5tMkYMyubCEpMVGrpk8M9CVBpfqwhfduIjhvk6gQGynsZJlPqYtcVmG1n8flequ2RgRlvrxEHvj
-	CwglLzGw==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vJ6Q6-0000000F4jE-3GqQ;
-	Wed, 12 Nov 2025 08:41:39 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id C89AE30023C; Wed, 12 Nov 2025 10:37:04 +0100 (CET)
-Date: Wed, 12 Nov 2025 10:37:04 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Michael Kelley <mhklinux@outlook.com>
-Cc: Naman Jain <namjain@linux.microsoft.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Sean Christopherson <seanjc@google.com>,
-	"K . Y . Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"x86@kernel.org" <x86@kernel.org>,
-	Mukesh Rathor <mrathor@linux.microsoft.com>,
-	Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
-	Nuno Das Neves <nunodasneves@linux.microsoft.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	Saurabh Sengar <ssengar@linux.microsoft.com>,
-	ALOK TIWARI <alok.a.tiwari@oracle.com>
-Subject: Re: [PATCH v11 2/2] Drivers: hv: Introduce mshv_vtl driver
-Message-ID: <20251112093704.GC4067720@noisy.programming.kicks-ass.net>
-References: <20251110050835.1603847-1-namjain@linux.microsoft.com>
- <20251110050835.1603847-3-namjain@linux.microsoft.com>
- <20251110143834.GA3245006@noisy.programming.kicks-ass.net>
- <f32292e6-b152-4d6d-b678-fc46b8e3d1ac@linux.microsoft.com>
- <20251111081352.GD278048@noisy.programming.kicks-ass.net>
- <SN6PR02MB4157C399DB7624C28D0860AAD4CCA@SN6PR02MB4157.namprd02.prod.outlook.com>
+	s=arc-20240116; t=1762940257; c=relaxed/simple;
+	bh=hCDeVTqFeb8OCPymlEUvRNJIVTTjvVc1/ClAQBXXnOc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LZFMQjVtWbRx7y30CPo1dRLcO0WGAsy9VtAhmJdPhVoTKTxYVXu3ZLP8lLpVMcsKOS40I7lO/lRy0kEOKtrXPa3VnW2iId9C7jMGS3HRpAg/smx4+TNXyC+EbquTlGlJizJTGIhkWm0KCWegNZn3vvR30Qx973GrYbJ4glKhb10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WsF0FxMS; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-b6a42604093so81266a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 01:37:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762940255; x=1763545055; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VfWmqteduDoVLqj6JdhBgBiH8a4Ayud5Tb7Bt0CJ/gA=;
+        b=WsF0FxMS8mzXEeyWRR7r4qLWRZO3QGbSO39+9raslSbMBDM7uF3e3vgkocLsjZ278a
+         BYAU8rBorVNKWsZHM3+I44i1OurmXTuWZ0LwgLNUXYW883h2R69L3GXXqe8g1lOiCJxB
+         kyjv0K7P0ra9GSOpHWaJGGTHToKrOraFxDKibnMZm7LDj+0scKTDB/M0GKb292nJ3oYR
+         meLuSl/C+Gt+QB7Xz2gharKc/e99nCXIyNXzO6K/lpA7dUMO66xjnCREecQTSquqa7pM
+         xBfLuDoHfiwltF6xrNz8k5/hfD19IXO5+KB6pyMaq4ncy45n64VZipbXSl/YS0/UEbxQ
+         qQwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762940255; x=1763545055;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=VfWmqteduDoVLqj6JdhBgBiH8a4Ayud5Tb7Bt0CJ/gA=;
+        b=as7+sjM65pn1GTTmJxclXGPnWFYIvB8r3ioyvmYS8/L20+WJhOUT3Scl3utnWLAKqS
+         G5XL6yL1ZWwhQ3cRVRXc3HijXvMzQb5F3eJYgQ4+Hw7/WCloxjxlwPBBPvG/GzodTC05
+         n3r//Yrx2I7mzF6xQ2cNhYIlwUsB5CTm5NlPxYfFV7XlMbvOBg7l60LduamEbW5uhhwt
+         /j0n/hZ2MGvsO6+mpjjS8H8fND1G8e4oAZtm30FxCTZpd/NeavnRm4qAbwdFlU9G3YLn
+         TdeAbfG1dvq8bvniUHZ+AXHvqH/feFOAf3nlulBtN+scR8EZODf7lo48id5bzM0iMpQC
+         8cqw==
+X-Forwarded-Encrypted: i=1; AJvYcCUUSpm0JbSIT9jomkuKvgJpGatYcMhoDTrFnEzB4FCLJYymmEP4nkGO4+XW2wi0w36umKDRGQVQwBmAN98=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwqOmrdNRdBqouy/4/UgOWJuUSQqdse1snwg81hILkuvpeyKXj
+	6MVt9edoLurhAOfD3vhfwKRCqGwAXeYhVKQNfYKMmwjbyXze6hCMdamQ+3dFrpqwzrZSH+pelrb
+	Ux2SGuX6saDKcwW1l62EG0ivpdgmIiHk=
+X-Gm-Gg: ASbGnctnbBNP8xYHBOFGU4Zptu6fW70oU9uigYM4QtMOTBES7mEGPrAJlk3214tUWj+
+	lnB/ucqxEg+Yj4DLfWARHKeHnQpMZltH9FU1q1fQ9Njw8GhtjNw7+63mf8qpKGXcCURBFtHpvDX
+	Wd5f6K/jQ/nuBQ+0Q/lt0Z3MjXE8GCPtnMQOiufG4BVzyKho6yroDh3K/VPcxdvJZDQmOIRbjEF
+	lt/t8JM9Q2kXyRldkW+/sFv/ZOuLD2dtbPJpfPgHqvQtnZBThV1uuK7zemMkTZHv3idbtmLIGXD
+	1o76bs/4l3maWn+OQVomBaRFzRnCxILNhCnIXz83aygBglShjE8q0vNSIHsZqoM4M/FAXcqL0aN
+	EwKc=
+X-Google-Smtp-Source: AGHT+IF7dXQUMFsuDu6yVFEy1qQhkvdBAqpDcIJQlWtpA21Ok2PTF3w0o0PHF/4blQHATl8xPBVAytdXYF1ksZ+cx+0=
+X-Received: by 2002:a17:902:d507:b0:295:3f35:a31b with SMTP id
+ d9443c01a7336-2984ec8c0d5mr19207665ad.0.1762940255046; Wed, 12 Nov 2025
+ 01:37:35 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SN6PR02MB4157C399DB7624C28D0860AAD4CCA@SN6PR02MB4157.namprd02.prod.outlook.com>
+References: <20251101214629.10718-1-mt@markoturk.info> <aRRJPZVkCv2i7kt2@vps.markoturk.info>
+In-Reply-To: <aRRJPZVkCv2i7kt2@vps.markoturk.info>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Wed, 12 Nov 2025 10:37:22 +0100
+X-Gm-Features: AWmQ_bmCvbaIgHZdY2OvUnghnEILgb9lSGGzpn6r-4k_0J9xQP5iYx7rCXgAVnM
+Message-ID: <CANiq72kfy3RvCwxp7Y++fKTMrviP5CqC_Zts_NjtEtNCnpU3Mg@mail.gmail.com>
+Subject: Re: [PATCH] samples: rust: fix endianness issue in rust_driver_pci
+To: Marko Turk <mt@markoturk.info>, Dirk Behme <dirk.behme@de.bosch.com>
+Cc: dakr@kernel.org, bhelgaas@google.com, kwilczynski@kernel.org, 
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 12, 2025 at 04:12:08AM +0000, Michael Kelley wrote:
+On Wed, Nov 12, 2025 at 9:47=E2=80=AFAM Marko Turk <mt@markoturk.info> wrot=
+e:
+>
+> On Sat, Nov 01, 2025 at 10:46:54PM +0100, Marko Turk wrote:
+> > QEMU PCI test device specifies all registers as little endian. OFFSET
+> > register is converted properly, but the COUNT register is not.
+> >
+> > Apply the same conversion to the COUNT register also.
+> >
+> > Signed-off-by: Marko Turk <mt@markoturk.info>
+> > Fixes: 685376d18e9a ("samples: rust: add Rust PCI sample driver")
+>
+> Can someone take a look?
 
-> > @@ -96,3 +97,10 @@ SYM_FUNC_START(__mshv_vtl_return_call)
-> >  	pop %rbp
-> >  	RET
-> >  SYM_FUNC_END(__mshv_vtl_return_call)
-> > +
-> > +	.section	.discard.addressable,"aw"
-> > +	.align 8
-> > +	.type 	__UNIQUE_ID_addressable___SCK____mshv_vtl_return_hypercall_662.0, @object
-> > +	.size 	__UNIQUE_ID_addressable___SCK____mshv_vtl_return_hypercall_662.0, 8
-> > +__UNIQUE_ID_addressable___SCK____mshv_vtl_return_hypercall_662.0:
-> > +	.quad	__SCK____mshv_vtl_return_hypercall
-> 
-> This is pretty yucky itself. 
+Your message was in my spam folder -- that may be affecting who saw it.
 
-Definitely doesn't win any prizes, for sure. 
+From https://www.qemu.org/docs/master/specs/pci-testdev.html:
 
-> Why is it better than calling out to a C function?
+    "All registers are little endian."
 
-It keeps all the code in one place is a strong argument.
+So this seems right. A couple tags:
 
-> Is it because in spite of the annotations, there's no guarantee the C
-> compiler won't generate some code that messes up a register value? Or is
-> there some other reason?
+Cc: stable@vger.kernel.org
+Link: https://www.qemu.org/docs/master/specs/pci-testdev.html
 
-There is that too, a frame pointer build would be in its right to add a
-stack frame (although they typically won't in this case). And the C ABI
-doesn't provide the guarantees your need, so calling out into C is very
-much you get to keep the pieces.
+Cc'ing Dirk, since he tested the sample originally.
 
-> Does the magic "_662.0" have any significance?  Or is it just some
-> uniqueness salt on the symbol name?
+Thanks!
 
-Like Paolo already said, that's just the crazy generated by our
-__ADRESSABLE() macro, this name is mostly irrelevant, all we really need
-is a reference to that __SCK____mshv_vtl_return_hypercall symbol so it
-ends up in the symbol table. (And the final link will then complain if
-the symbol doesn't end up being resolved)
-
-Keeping the name somewhat in line with __ADDRESSABLE() has the advantage
-that you can clearly see where it comes from, but yeah, we can strip of
-the number if you like.
+Cheers,
+Miguel
 
