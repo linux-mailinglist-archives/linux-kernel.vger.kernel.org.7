@@ -1,51 +1,82 @@
-Return-Path: <linux-kernel+bounces-896632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-896656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5F8EC50DAE
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:07:32 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41342C50E23
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 08:16:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA1F63BCB15
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 07:01:51 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id DBBD034CF6B
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 07:16:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26C592E62D1;
-	Wed, 12 Nov 2025 06:58:23 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DF5429CB48;
+	Wed, 12 Nov 2025 07:16:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="qmwnyyFV"
+Received: from out203-205-221-202.mail.qq.com (out203-205-221-202.mail.qq.com [203.205.221.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9FAD24C076;
-	Wed, 12 Nov 2025 06:58:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97D26192D8A;
+	Wed, 12 Nov 2025 07:16:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762930702; cv=none; b=OocyGC9JNN+I/KlhPdf+py+dH2IivEjdNU4PilAualr1eInXZp8WW+CqcfkNDdTp23vEOgCBFX2+GC3FThvfTDUzsyD2Bqa35NQyEbHnaQ7qZSRaZ25XiAm+42GAM1vFRXEa3VlGava2fHcnf0e1h8w+oPXbTcLXEXtY4szBwa8=
+	t=1762931774; cv=none; b=Dp+DxwRKcLI0vuwUNgkF29QQyRGM2axlJK2BJqZAeD2gfTVZpBOdZhkwPNqLLsjoDo3RlfFAYG9AGcTtrp8C1aJXSrrTNvXylKQZnWWOPFma55/7PsG9HWRhQ4l3fWhhvw/Uf/bmkt7bDejaqITYsNlr8Sf2fYr/ZWwPp3CK4jw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762930702; c=relaxed/simple;
-	bh=Hin0DkjlRscjm/Jzcxyyon4GMA1Kyw8iTYefBGqeFfA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=i1PXje2kU3M25/DGm/nuZBQUvHouqHkAv5u29Do1Z7yCpMEp8m2WgQbqx8Kd5rHmBp4ChAgxDXdC0YunZnf4ZAgCaWmQC7DPBffhzOWHb3E/RyWZ2JjR5jPbixQBdrg2QcEztypQmyu8kBimOA2Q2u1n+m0u9d1mYh8f5WDw8+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from DESKTOP-L0HPE2S (unknown [124.16.141.245])
-	by APP-05 (Coremail) with SMTP id zQCowAA3PW71LxRpV8hzAA--.30824S2;
-	Wed, 12 Nov 2025 14:57:57 +0800 (CST)
-From: Haotian Zhang <vulab@iscas.ac.cn>
-To: kuninori.morimoto.gx@renesas.com,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	geert+renesas@glider.be,
-	magnus.damm@gmail.com
-Cc: linux-sound@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
+	s=arc-20240116; t=1762931774; c=relaxed/simple;
+	bh=Xcv2+AJm4TH1a1rjdj3gcabqSWqME7NMMLUOioPIm0c=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=guakrllMasXjKq3skS9Vl1xssWowsWU/6SEE1oVhQS6RpEi1B3gdaC+pTEtjpVpSqJXQXgFX5CvilA2mzTQgNj4VpS5AXFiUP+H2ep9iJznUiOvFoWL4mHrdBer41XJieP+chne6IPDJDkKqinO2ZL+0Vw9kXX5Tx7l4ZjuM/8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=qmwnyyFV; arc=none smtp.client-ip=203.205.221.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1762931463;
+	bh=aI1DtojJ3uIlfMHHyo3gbCN97mQw0Es8Q9FMf59dQ/0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=qmwnyyFVudo5FNg9tNff7bxheDeVYTJqfAdyFs6X9aYV4msYHJQb3eLVzlVLCluVz
+	 HTDvR29e+jHVxoMXA3wAhyPIZLB9CIyfYCW1wcgBTPms2fQCh254YnOpkUiqMygpep
+	 jfC6LdxDUAhQDqWxNnKUUi8DlqgHYvZbGeqoodoY=
+Received: from meizu-Precision-3660.meizu.com ([14.21.33.152])
+	by newxmesmtplogicsvrsza56-0.qq.com (NewEsmtp) with SMTP
+	id E6C29EB1; Wed, 12 Nov 2025 14:57:44 +0800
+X-QQ-mid: xmsmtpt1762930664t3r16dqsu
+Message-ID: <tencent_17B2F3A0BCCBAFD3AE942235EE98F1595707@qq.com>
+X-QQ-XMAILINFO: N7qqMxIPUfzlejnxzQ6ythel/a3Tm6mb1P8jrwVKo9It+HgpxUwJ7p6FhD9GwW
+	 6sBlZtFDtxdbIzunrvVRbintL1eAuUABZFf0n53X22tNuayQs9oQxTDv2W/AK/DqtfSHBbNrPo4Y
+	 6iIhsknA5vUgM+gsCHBaIS/vhyfq7Pg5KVbi60NeM8hgYDrswKYGAb3G8G1DJcEEDn/RbACj/49h
+	 ahWpe8BBeN5mxSXnNmOHInBw+1agxhJ9kxWyroctg9a7s4e1NG1Eba3fF3G2jg9c6J5ygMJxvc6L
+	 CpxtoRng7XOMwMjELhQqWlntGmfGXsb6Qnxt8tyHvYuIPRA+z4/btPyyASqe009XJqCGXPUe1lhX
+	 K4+hzj3JZqHdaD62ZSP2uUuP7jqksebAO2TdEm1ogqkUuKHNSBhIeTjpKleanyLp36y3nZMKWbbl
+	 GCbE7GiGeZTtkNL8CFJD1B2ZZhtGSQWYIj/AaLnQnmu+v/lgjUTKBUGUwKfIRMt3ERFUpggU5wYq
+	 HY765VN84IXnzkSpL9nrXooj4uc5Ii56oNPhQzmIX7jkajnI9BMpIfxRUixAGCY5bAXUbTFh2DPq
+	 bXLjZeSDOYkUunhZz/191z2XPgIeGvyJcG/sGtdoPS1GlQvLz/8bjQV/MKTBS0+UPg1aOMudWthG
+	 tiHPrq2dwEC3XbRMxLcj6sCMOLyU+aSKgTVOP/GQFaahImw768ahfc/tbTnUBFdgwOYJpLw+JcXe
+	 yKEPn9og42iS5B4GXJylvMjvt1jBkW9tFPBZjCJBab9RH2Oyyy+69/sI1cJozfWaM77sh7GQ82Cr
+	 htbvbHmUT26eD5W8HTVtSgE1xDZN1lL2qqmShYao3CRQnt+0id80CpFpR8b4FpwQ19tIa3GfFkNR
+	 odsT3BvrYGN8uvaIFmBqExAR+FG4EEsQFUUMXYUSAY/Cyhwh0nFoBIk0ZK7SA2uCQLuhOYazcGc+
+	 ZDNOa+ipxNAu1XEaXtGj1VwR1k3WsAa2t5FiEh2XHhwPzuXeKI5OQ1y0W1KC1fVZGqbr2sztBLLO
+	 ggSopnFNvrKVCJj2/wcuhybO16fLU=
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+From: Yuwen Chen <ywen.chen@foxmail.com>
+To: senozhatsky@chromium.org
+Cc: akpm@linux-foundation.org,
+	axboe@kernel.dk,
+	bgeffon@google.com,
+	licayy@outlook.com,
+	linux-block@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Haotian Zhang <vulab@iscas.ac.cn>
-Subject: [PATCH] ASoC: rsnd: fix OF node reference leak in rsnd_ssiu_probe()
-Date: Wed, 12 Nov 2025 14:57:09 +0800
-Message-ID: <20251112065709.1522-1-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.50.1.windows.1
+	linux-mm@kvack.org,
+	liumartin@google.com,
+	minchan@kernel.org,
+	richardycc@google.com,
+	ywen.chen@foxmail.com
+Subject: Re: [PATCH v4] zram: Implement multi-page write-back
+Date: Wed, 12 Nov 2025 14:57:44 +0800
+X-OQ-MSGID: <20251112065744.3293306-1-ywen.chen@foxmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <htycvrcqbnkk7ldhpaqxesy7uhz3lssymwqm7nzkhyhnid3krm@mfju626njxvb>
+References: <htycvrcqbnkk7ldhpaqxesy7uhz3lssymwqm7nzkhyhnid3krm@mfju626njxvb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,61 +84,41 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowAA3PW71LxRpV8hzAA--.30824S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7AF45ZFW3Xr4rGw4fGFyUKFg_yoW8Jw45pw
-	n8Gay5Kr45Gw4vkr1Fqr4kZay0kayFyF43JF48t3WSywn3Ary3WFnFvFyUuw15JFWF9FW5
-	Xryjgr1kAFWUuaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9E14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-	6r4UJwA2z4x0Y4vEx4A2jsIE14v26F4UJVW0owA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFylc2xSY4AK67AK6r47MxAIw28IcxkI7VAKI4
-	8JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xv
-	wVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjx
-	v20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20E
-	Y4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267
-	AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUjylkDUUUUU==
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiDAgEA2kUF81drAAAsV
 
-rsnd_ssiu_probe() leaks an OF node reference obtained by
-rsnd_ssiu_of_node(). The node reference is acquired but
-never released across all return paths.
+On Wed, 12 Nov 2025 14:16:20 +0900, Sergey Senozhatsky wrote:
+> The thing that I'm curious about is why does it help for flash storage?
+> It's not a spinning disk, where seek times dominate the IO time.
 
-Fix it by declaring the device node with the __free(device_node)
-cleanup construct to ensure automatic release when the variable goes
-out of scope.
+1. For flash-based storage devices such as UFS and NVMe, the Command Queue
+mechanism is implemented. Submitting multiple random write requests can
+fully utilize the bandwidth of their buses.
 
-Fixes: 4e7788fb8018 ("ASoC: rsnd: add SSIU BUSIF support")
-Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
----
- sound/soc/renesas/rcar/ssiu.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+2. When we submit consecutive pages separately instead of submitting them
+continuously together, the write amplification problem is more likely to
+occur. This is because there is an LBA (Logical Block Addressing) table in UFS.
 
-diff --git a/sound/soc/renesas/rcar/ssiu.c b/sound/soc/renesas/rcar/ssiu.c
-index faf351126d57..244fb833292a 100644
---- a/sound/soc/renesas/rcar/ssiu.c
-+++ b/sound/soc/renesas/rcar/ssiu.c
-@@ -509,7 +509,7 @@ void rsnd_parse_connect_ssiu(struct rsnd_dai *rdai,
- int rsnd_ssiu_probe(struct rsnd_priv *priv)
- {
- 	struct device *dev = rsnd_priv_to_dev(priv);
--	struct device_node *node;
-+	struct device_node *node __free(device_node) = rsnd_ssiu_of_node(priv);
- 	struct rsnd_ssiu *ssiu;
- 	struct rsnd_mod_ops *ops;
- 	const int *list = NULL;
-@@ -522,7 +522,6 @@ int rsnd_ssiu_probe(struct rsnd_priv *priv)
- 	 * see
- 	 *	rsnd_ssiu_bufsif_to_id()
- 	 */
--	node = rsnd_ssiu_of_node(priv);
- 	if (node)
- 		nr = rsnd_node_count(priv, node, SSIU_NAME);
- 	else
--- 
-2.50.1.windows.1
+3. Sequential writing has lower requirements for the bus bandwidth.
+
+> My next question is: what problem do you solve with this?  I mean,
+> do you use it production (somewhere).  If so, do you have a rough
+> number of how many MiBs you writeback and how often, and what's the
+> performance impact of this patch.  Again, if you use it in production.
+
+We haven't deployed this commit in the product yet. We're now deploying
+it on mobile phones running the Android system. Our ideas are as follows:
+
+1. When an app switches to the background, use process_madvise to swap out
+the app's anonymous pages to zram. When the system is idle, cache the app
+to the external UFS through the writeback interface.
+
+2. When the system memory is tight and the IO load is low, use the IO load to
+improve the memory release speed.
+
+On Wed, 12 Nov 2025 14:18:01 +0900, Sergey Senozhatsky wrote:
+> Why do you do this do-while loop here?
+
+When there are no free zram_wb_request structures in the req_pool,
+zram_writeback_next_request will return NULL. In this case, you need
+to retry once to obtain a zram_wb_request.
 
 
