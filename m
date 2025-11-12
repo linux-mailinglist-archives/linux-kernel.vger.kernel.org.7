@@ -1,125 +1,169 @@
-Return-Path: <linux-kernel+bounces-897618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-897619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3643AC5334A
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:55:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F17DAC533B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 16:58:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6F6903561F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:47:57 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C4D92356434
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 15:48:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33FFA33970D;
-	Wed, 12 Nov 2025 15:45:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C869D33F8C3;
+	Wed, 12 Nov 2025 15:47:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VYkHACNf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pk/BfAne"
+Received: from mail-yx1-f41.google.com (mail-yx1-f41.google.com [74.125.224.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93E532C0277
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 15:45:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88CDA2D130C
+	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 15:46:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762962345; cv=none; b=STpFOmdqkRjNAJNhM1Rw+gd/hsrBPnY5wAqiPS1EfW+EpFXaLKgGIVYge1uxpxT/wcIJYmOAD98WYKOJTOoWbMkF5OYpGKfvAuzVwCrP7LrS8EHaRLX/RcE5gitQl8ohIObsWRsvCyw28Sxk3wWoPJXaohozvydSsp6mKJlsOjQ=
+	t=1762962420; cv=none; b=sApU8UNCwgOrjHkMLPp+rSjvm4XG4bAzYCgy5z5keeuu2nc/ZH1FkzYyUdQF1swyPRLR7M6iIkp+V/CYD18jQVVHpEZEkktlPRFFOyUbw+Bslpe/nz7vuHJYjUnw0oMb40+4iLxEVZtcpzFO/QEbo5HxZTdhLfGM9P3OecQyRnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762962345; c=relaxed/simple;
-	bh=fWzdt03epAh2bmGfOPbBWcrVtXBwXu7O11/dwAK+SiI=;
+	s=arc-20240116; t=1762962420; c=relaxed/simple;
+	bh=qMFatwH+qRdBCYO6NtS5ZnxlfOaN4aF6q9dvUo7G0fQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dUb/oMXTfPbk12d+EqFlYFvY1d4NRJo8CxAll47RHINlmPerJ1wLdExbBZ0FvSFuXX5/oBVQpaswTC+2XP+851hFDWcgUZfS/lNXkEkcYVhFs+n0Fte8gp0fanpPGFZvj7HKmPNy8ssTEDnL4UD8mUZdeFrDVfmc50yhRGJzJv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VYkHACNf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4AFAC19421;
-	Wed, 12 Nov 2025 15:45:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762962345;
-	bh=fWzdt03epAh2bmGfOPbBWcrVtXBwXu7O11/dwAK+SiI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VYkHACNfJ1ngpwGdfRFYHnm4iy+vKxU+8xN3k5Eb5ZbWEgcz5DypeaPesbwZFSMtS
-	 mHscskwVjxVPH9NNTmVkM4u4GDUB8nNHv3nv5zSNTjP4SUOy64pXz95dSpLl62Cazd
-	 bWTXEUhTb3cD72a5iFTd4Kohn7SvGB6J5H43VeIcItpI9cDMRQ2f775m42MKmJddsQ
-	 s5HDX24Dtw5Xj6O+C9jD6IpSaL4+WRBbL9aGe2b2JvVgIp04mxcaQgOpYNuX/vpRJJ
-	 b969oadgg5HW/uQWrR4exEft7aAurHkxqHD6tZpJWFWJAzTDW72hmUT4TRrWtOXZqI
-	 p+hDROIpuLUxA==
-Date: Wed, 12 Nov 2025 16:45:42 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Gabriele Monaco <gmonaco@redhat.com>
-Cc: linux-kernel@vger.kernel.org,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Waiman Long <llong@redhat.com>
-Subject: Re: [PATCH v14 1/7] timers: Rename tmigr 'online' bit to 'available'
-Message-ID: <aRSrpgytUvrP6Res@localhost.localdomain>
-References: <20251104104740.70512-1-gmonaco@redhat.com>
- <20251104104740.70512-2-gmonaco@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=MKNEggvNFACmkoegMsS/6s4Wo6fC0b6hlTcYSMEqNKH1WofKBJeK9Hx/vwP1xB+2yfzVsf0aJH/59eo9lrLL4sGCc65GCz7m/KJvfND23jGw543nAfrLDlfO8ugU0QfklKnaCJWpvqf4dC+Tf3s3JI4TA1SqtOHg6g5KH3dJ4v8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pk/BfAne; arc=none smtp.client-ip=74.125.224.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yx1-f41.google.com with SMTP id 956f58d0204a3-63e19642764so911782d50.1
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 07:46:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762962417; x=1763567217; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=yjaOiSgy5Ro4vm88KAAre5JtSgOsFjJ/i4b/1e10pSc=;
+        b=Pk/BfAnemRYgGSy3Nwbao27DuJB/6VC3bxTVz9ZZG8y7+NGaFJSLwAI6vLKqh9SiB5
+         VijatWMdgD3z5JC8uBqEwOMY+527CM4KV8rBmWng9XQiCWobMGu9ICzFdsZohjfybqJK
+         elkbVbYoM9TtubihENnEN9l+8wxYbbVHrAWIHgrK6GY8h9Lot+IGwcHAehbs9u5uR6ER
+         EunFJg5HFmqp1EZr6J+ppEF8loVNsxTmeboaG1JSnSrDOCBQrx0+V/PVkqXYGOKf8Sah
+         L1HFqWREreKPjbAdM56EvuBUFa8idqBWTOOjXMSwmQwmgeSpF8fuIB0auefcwfzJ/idX
+         Z4Dg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762962417; x=1763567217;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yjaOiSgy5Ro4vm88KAAre5JtSgOsFjJ/i4b/1e10pSc=;
+        b=ViLkRuCVpc5YeQlcraC6lotCDVDUiAkcsbTtF0XQ+M/xaWstSDvIgE43Cg07xX8Igu
+         UqTPWatwoQEkf0CV0vu/aapAJKQRsCVR75h0v3c7pZYwPRe8XNcW8/27mZfhJf280Vpx
+         cEkhOm1mrPKyc0Q17lALPF0KH56HdzJDkbAyZDATrfvIMBFELLmrjeJW4i+iKXs0U0yd
+         aneIHFV6i9pWwUBJLOYGtMOhlbuyhTMg62tqI1knjsA6HLh0ecDUBdyi1cRsehrq7JfJ
+         gkpKccca6JTtfxy0AACIZBuiHAA1EFJ+vdXvTfQRKd31Tfls5LfE4j3CrjBX0/KZqMcy
+         g8YQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXbU+u6QeEXD61hU3l/wwznxejm4tJPRpD25S0BuP6DI0UdfyHeJAxM5Yw8ZBmHOmJF/YMUhkqKc3JbX+o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDl/JFT9sfjXK2TkMpMO1LIZhZnNEWvw7opv01p+fSOCtvHegu
+	ThIpFn+rWM2ajqBZG9X6BT+ftD5LgXOzIZ7/1nkFxyVZTGoC8xDKjHeW
+X-Gm-Gg: ASbGncvjXml3N2GuNq3aloYJMk0dsuHQJCiC0g17J9gUOcDmC31NKnUyM7vN8pAwu9A
+	fBZzWm5jK16ekwEuhS+Gc7hA+/5Zcx2RoUn8htDdiL3dhMfr/aqKwFdEK4j2TlL9+GgPyEZDbrI
+	ay/NY1pHUrCjEzcSaS7qUqTgArQN8unAXcmpS3w/W2DK7X9MBK0EPujtIbW1TxatH9M26aArf0d
+	Zv6faaSF9X3JT7Su3ldb0IFohzr8Y1TFeA6H+UaYG2LJ4qK7kXzoQMgDv1SZWXZqZDRRr0blMjg
+	mcHmF/CmyariivSYMJ0/kJudzFKWNiMLsOhl8IDJRJlSp4QHic49w5rxFoiUm6+aiog8Tt6FFK1
+	xqlu+bxzteicKGY2KcSEybklFOucpEr9IRN5ChTX0lcMki6W+2B1k7u5AmSaSYhp5a6B7v2YlEl
+	esaXsLUtgjGsaCwSJbafi0fESNo4J31T9/
+X-Google-Smtp-Source: AGHT+IHbAQTZP8cf5QDCra25NqFo3B6ThRnT0eE9+zyp+K6kNxF4aWBLjWEpCIerYpvI8+Ev5tdvVA==
+X-Received: by 2002:a05:690e:4289:20b0:63e:3011:58dc with SMTP id 956f58d0204a3-64101a9c447mr2465584d50.20.1762962417453;
+        Wed, 12 Nov 2025 07:46:57 -0800 (PST)
+Received: from localhost (c-73-105-0-253.hsd1.fl.comcast.net. [73.105.0.253])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-787d69ba6cfsm42457517b3.34.2025.11.12.07.46.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Nov 2025 07:46:56 -0800 (PST)
+Date: Wed, 12 Nov 2025 10:46:54 -0500
+From: Yury Norov <yury.norov@gmail.com>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Carlos Llamas <cmllamas@google.com>,
+	Suren Baghdasaryan <surenb@google.com>, Burak Emir <bqe@google.com>,
+	Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 3/6] rust: bitmap: rename IdPool::new() to
+ with_capacity()
+Message-ID: <aRSr7o_MU8zWAdLL@yury>
+References: <20251112-binder-bitmap-v5-0-8b9d7c7eca82@google.com>
+ <20251112-binder-bitmap-v5-3-8b9d7c7eca82@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251104104740.70512-2-gmonaco@redhat.com>
+In-Reply-To: <20251112-binder-bitmap-v5-3-8b9d7c7eca82@google.com>
 
-Le Tue, Nov 04, 2025 at 11:47:33AM +0100, Gabriele Monaco a écrit :
-> The timer migration hierarchy excludes offline CPUs via the
-> tmigr_is_not_available function, which is essentially checking the
-> online bit for the CPU.
+On Wed, Nov 12, 2025 at 12:47:21PM +0000, Alice Ryhl wrote:
+> We want to change ::new() to take no parameters and produce a pool that
+> is as large as possible while also being inline because that is the
+> constructor that Rust Binder actually needs.
 > 
-> Rename the online bit to available and all references in function names
-> and tracepoint to generalise the concept of available CPUs.
+> However, to avoid complications in examples, we still need the current
+> constructor. So rename it to with_capacity(), which is the idiomatic
+> Rust name for this kind constructor.
 > 
-> Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
-> Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
+> Reviewed-by: Burak Emir <bqe@google.com>
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 > ---
->  include/trace/events/timer_migration.h |  4 ++--
->  kernel/time/timer_migration.c          | 22 +++++++++++-----------
->  kernel/time/timer_migration.h          |  2 +-
->  3 files changed, 14 insertions(+), 14 deletions(-)
+>  rust/kernel/id_pool.rs | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
 > 
-> diff --git a/include/trace/events/timer_migration.h b/include/trace/events/timer_migration.h
-> index 47db5eaf2f9ab..61171b13c687c 100644
-> --- a/include/trace/events/timer_migration.h
-> +++ b/include/trace/events/timer_migration.h
-> @@ -173,14 +173,14 @@ DEFINE_EVENT(tmigr_cpugroup, tmigr_cpu_active,
->  	TP_ARGS(tmc)
->  );
+> diff --git a/rust/kernel/id_pool.rs b/rust/kernel/id_pool.rs
+> index 8f68b45a3da1f62dd0d010480837de49b9a343ba..90836b05c6155f98ab8393c8291749f408dbd4da 100644
+> --- a/rust/kernel/id_pool.rs
+> +++ b/rust/kernel/id_pool.rs
+> @@ -26,7 +26,7 @@
+>  /// use kernel::alloc::{AllocError, flags::GFP_KERNEL};
+>  /// use kernel::id_pool::IdPool;
+>  ///
+> -/// let mut pool = IdPool::new(64, GFP_KERNEL)?;
+> +/// let mut pool = IdPool::with_capacity(64, GFP_KERNEL)?;
+>  /// for i in 0..64 {
+>  ///     assert_eq!(i, pool.acquire_next_id(i).ok_or(ENOSPC)?);
+>  /// }
+> @@ -93,14 +93,14 @@ pub fn realloc(&self, flags: Flags) -> Result<PoolResizer, AllocError> {
+>  }
 >  
-> -DEFINE_EVENT(tmigr_cpugroup, tmigr_cpu_online,
-> +DEFINE_EVENT(tmigr_cpugroup, tmigr_cpu_available,
->  
->  	TP_PROTO(struct tmigr_cpu *tmc),
->  
->  	TP_ARGS(tmc)
->  );
->  
-> -DEFINE_EVENT(tmigr_cpugroup, tmigr_cpu_offline,
-> +DEFINE_EVENT(tmigr_cpugroup, tmigr_cpu_unavailable,
->  
->  	TP_PROTO(struct tmigr_cpu *tmc),
->  
-> diff --git a/kernel/time/timer_migration.c b/kernel/time/timer_migration.c
-> index c0c54dc5314c3..78700f90944f0 100644
-> --- a/kernel/time/timer_migration.c
-> +++ b/kernel/time/timer_migration.c
-> @@ -427,7 +427,7 @@ static DEFINE_PER_CPU(struct tmigr_cpu, tmigr_cpu);
->  
->  static inline bool tmigr_is_not_available(struct tmigr_cpu *tmc)
->  {
-> -	return !(tmc->tmgroup && tmc->online);
-> +	return !(tmc->tmgroup && tmc->available);
+>  impl IdPool {
+> -    /// Constructs a new [`IdPool`].
+> +    /// Constructs a new [`IdPool`] with space for a specific number of bits.
+>      ///
+>      /// A capacity below [`MAX_INLINE_LEN`] is adjusted to [`MAX_INLINE_LEN`].
+>      ///
+>      /// [`MAX_INLINE_LEN`]: BitmapVec::MAX_INLINE_LEN
+>      #[inline]
+> -    pub fn new(num_ids: usize, flags: Flags) -> Result<Self, AllocError> {
+> -        let num_ids = usize::max(num_ids, BitmapVec::MAX_INLINE_LEN);
+> +    pub fn with_capacity(num_ids: usize, flags: Flags) -> Result<Self, AllocError> {
+> +        let num_ids = usize::max(num_ids, BITS_PER_LONG);
 
-Please rebase and test your patchset on top of:
+           let num_ids = usize::max(num_ids, MAX_INLINE_LEN);
 
-git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git
-	timers/core
-
-There is one more "->online" field to rename there.
-
-Thanks.
-
--- 
-Frederic Weisbecker
-SUSE Labs
+>          let map = BitmapVec::new(num_ids, flags)?;
+>          Ok(Self { map })
+>      }
+> @@ -123,7 +123,7 @@ pub fn capacity(&self) -> usize {
+>      /// use kernel::alloc::{AllocError, flags::GFP_KERNEL};
+>      /// use kernel::id_pool::{ReallocRequest, IdPool};
+>      ///
+> -    /// let mut pool = IdPool::new(1024, GFP_KERNEL)?;
+> +    /// let mut pool = IdPool::with_capacity(1024, GFP_KERNEL)?;
+>      /// let alloc_request = pool.shrink_request().ok_or(AllocError)?;
+>      /// let resizer = alloc_request.realloc(GFP_KERNEL)?;
+>      /// pool.shrink(resizer);
+> 
+> -- 
+> 2.51.2.1041.gc1ab5b90ca-goog
 
