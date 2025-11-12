@@ -1,165 +1,371 @@
-Return-Path: <linux-kernel+bounces-898055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-898056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 240A4C5446B
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 20:54:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D79BC543C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 20:47:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 203AB4EF6BA
-	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:35:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D271E3A746D
+	for <lists+linux-kernel@lfdr.de>; Wed, 12 Nov 2025 19:36:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4DBF2857FA;
-	Wed, 12 Nov 2025 19:32:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47F1334F478;
+	Wed, 12 Nov 2025 19:33:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GDniVANR"
-Received: from mail-yx1-f44.google.com (mail-yx1-f44.google.com [74.125.224.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fKNemISZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 279FE212F98
-	for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 19:32:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 090ED212F98;
+	Wed, 12 Nov 2025 19:33:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762975977; cv=none; b=G7wYneM5gqIizThTdg2lfPnUUcjKGqlULF21JQeLlT8sogsUyGYMS/6jPW2csy3+5R8ssxFlZEQceFLz6SioxLeYHjaKsRBsHwWiTCcvpselMxVERJRE6WJfQF0q63LCAMrAY5kP/fOkrcK5DjnM0sA8bxDPy1NAJbtJ3AYhQy0=
+	t=1762975983; cv=none; b=gJJn58ce4KVyJCfbOuGlAaGVsk5gf5XsAGuyTYFXvQcAzO1t9el1zaJr3CQWZmgJdX91bLSHW7rCIltLX11laW59bp8l69DwczsjGuD5JXxWWfpi7evA5vfHH+hr0rqE/lS1J0BgXLp/T+A2eaqaGAyYQzXWVTGiThrHiMZin70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762975977; c=relaxed/simple;
-	bh=SUUhDfoBmuPhmMw0GL7Ir4bt1svau2Ajo0eTYsuBFqU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D5+ogWgNxYrLriIhcXbXl8bHZ4lRX3id5dh1G+WKp8BCLp0JHQ9JawaOefUNonYvcNs9bnjVA7A6F13wyrepnqxUUFVm4SFm7ys0m1gBPN36JJ8dobkGb2FLa+D8yVT3WdA4c5uf4WmmD2DrFZmOD4PSgiTjoaZOLKfEUgiovNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GDniVANR; arc=none smtp.client-ip=74.125.224.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yx1-f44.google.com with SMTP id 956f58d0204a3-63f95dc176fso1186390d50.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Nov 2025 11:32:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762975974; x=1763580774; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=lxubWASL3+7oeSYOF8cRfS3IaF1lf07GjfI/BFusVlo=;
-        b=GDniVANRw7/JIpN8NxtyzRFIGwATa9A2zCRzT3AyV9bYUYVYwu524FQVWDldPls9Sy
-         BpN03Dl612FtbGpNolRLv7VQcy21mEAgyRgKaz8iRgqv93oEknieZ6Y0/RngcZrd9SSC
-         GZNx04VANDM2Cuu0mcyR6voyECGLmNbytUFhlpwNU2hwygi9A3MsbOmnK+GLqGblJC70
-         Y3ZU/AOVaaXFGaQcTxJx45VWlQd1jjjEUDnf2OPYE2bbqLo78IVe58YmFOwQytbkPRWF
-         pfwpadEZKWx9TK1NMR2djxLbPfw4cn5kdJg3xSMPquTNqj/Yxa3mK++zs3NWcntr0n2w
-         ageA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762975974; x=1763580774;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lxubWASL3+7oeSYOF8cRfS3IaF1lf07GjfI/BFusVlo=;
-        b=UVptX/qMBRHtVFqpI5DsJNQR7GOEkiJmMJi7EFCbTOmJl35r9+qXgPHEwQtbrnnIiV
-         IVTfpIkPfpZ1/pqERJG7CeMR3jEsmqk7uRQytE9EfnHa5c7DMk+enurfueAOujbTt9Fc
-         8FaedJkXItxdKKLviQ65msrl0umL4TAeTbH66fC7xs7Sg1k63W8BvBbXkQeg3GGDcXlk
-         YtH4V5gDPpA0CXk24xmnyl6NHEPifrmyLyOXgjKWBY/UMMVxj9zddZMK72OCVomYc5c8
-         lUk0ohdbugc4HdEoxFDwJXPXZ6vHBi0sE619o+yqLl0KL/tJ+7zOZQt2Nj1M21aOLy7e
-         F4yA==
-X-Forwarded-Encrypted: i=1; AJvYcCUOPax9rB2PK3t5evhdC+eIzvZCAWWqrcOfPhJPL9fhzOU3gZGXLut6kq0EFreURe4V/a5eBM8kON3ekU8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxp6w/vrt8bGia6MS8FHEy5lzMgGvraQWjtZsuqJN/8ip/wPOlE
-	l9yPRvpw5s4fSpGy9ZRqkJ6P5BrsDNHtFAZVPfKoq35kqjEsiOI88rCk
-X-Gm-Gg: ASbGnctKj4BTe18FVWc6+5UZqn5geOvhT79xYoqi2H2i3OgIbWBFuBJ3gYa3GiavLGR
-	ha8lOQseJbVaBYEPz55DuqMQFfK6UscyrYOTUrp3kiXLq5JTQA6eRkuL4nvYY01Wdc6AxUqrnsU
-	Gzxp6fJdh/BAtrs2twC3mG145cxDCTGVyo+ZpE/0gc/WHv2J1ICQlmX20FPbd+6tXATjFmia5CZ
-	z27+heQiZEBbsFSIHWwQDRmSVK5xUZyZDzUZhdNhLqzK9u41R6NSTgVBR86DLwBotRXjSRhF6hm
-	IUji4nAlsGi82acNrxzSBeAa53wC18sQxE/LpC1HvYmk8DffD2Z2/o1MvgD6GsPntZuS5rS2YXD
-	I3tQLkmUACGKOHPiGvNcr3C9ixOp5MKQMxGeeS3zk+XiL4tXQuSf/jbirFJzPKOmlec+KYoQXAB
-	4AyztHArsIRuenASc/Iz8oLhD2rJxx071r90mM
-X-Google-Smtp-Source: AGHT+IG4MyRZebV1Szufgtc9uf8er54fQt94boVEX+HeLHRTnsDHzaHu6bkb0vk12BKBHmbmHT/a7Q==
-X-Received: by 2002:a53:b10f:0:b0:63f:a818:6d34 with SMTP id 956f58d0204a3-64101b29733mr3157363d50.32.1762975973985;
-        Wed, 12 Nov 2025 11:32:53 -0800 (PST)
-Received: from devvm11784.nha0.facebook.com ([2a03:2880:25ff:43::])
-        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-641015aece9sm1236185d50.3.2025.11.12.11.32.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Nov 2025 11:32:53 -0800 (PST)
-Date: Wed, 12 Nov 2025 11:32:51 -0800
-From: Bobby Eshleman <bobbyeshleman@gmail.com>
-To: Stefano Garzarella <sgarzare@redhat.com>
-Cc: Shuah Khan <shuah@kernel.org>, "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Stefan Hajnoczi <stefanha@redhat.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	Bryan Tan <bryan-bt.tan@broadcom.com>,
-	Vishnu Dasa <vishnu.dasa@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	virtualization@lists.linux.dev, netdev@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org, linux-hyperv@vger.kernel.org,
-	Sargun Dhillon <sargun@sargun.me>, berrange@redhat.com,
-	Bobby Eshleman <bobbyeshleman@meta.com>
-Subject: Re: [PATCH net-next v9 03/14] vsock/virtio: add netns support to
- virtio transport and virtio common
-Message-ID: <aRTg4/HyOOhYYMzp@devvm11784.nha0.facebook.com>
-References: <20251111-vsock-vmtest-v9-0-852787a37bed@meta.com>
- <20251111-vsock-vmtest-v9-3-852787a37bed@meta.com>
- <cah4sqsqbdp52byutxngl3ko44kduesbhan6luhk3ukzml7bs6@hlv4ckunx7jj>
- <aRSyPqNo1LhqGLBq@devvm11784.nha0.facebook.com>
- <bhc6s7anskmnnrnpp2r3xzjbesadsex24kmyi5tvsgup7c2rfi@arj4iw5ndnr3>
+	s=arc-20240116; t=1762975983; c=relaxed/simple;
+	bh=PCBh5Ag0/s5OYYV6w5TPneQXYKXNX/kaSbXwlQPReS4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ryE7ygg0QaCWg9lNbF0etZd/zYleSQDesRHoerP2rH79/Fv4EFt/b0Ba3WzX2AzxRzy+PYD5+wGUVYDAVPua5bDY1S1Kg/hCUlAGPDADSLJfleg2x+2wl5WL6sYYBRSICrhja56eyeNJy+xSBM0lluSFab8ySVFQIUjuwlgdx6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fKNemISZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD54AC4CEF5;
+	Wed, 12 Nov 2025 19:33:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762975982;
+	bh=PCBh5Ag0/s5OYYV6w5TPneQXYKXNX/kaSbXwlQPReS4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=fKNemISZs51CZxWBSzO6Ofp6zqIPylljeUQ2y9HTYJoaZP4plYfBuVyhCTR+C/Uw6
+	 aKZnENej2119CCUpfCX+LK4MFcQT6e1kUQO20t7gOQv28sEiLrVsf68p0+1wxj+CfY
+	 SV2RZwKJJrR7KbapszzTMsYC6H1zXHkts3RcSBdrpQ1BFTX50Oi2bKEGQhPnywHgBQ
+	 wtpybeVHUxSlwpxKKCKCsfX6891Udrmtf6WVFyiqJ/Hshq7EFMtv9Z9IQ7Ie4gejUj
+	 Gx3kCZk9Bca+TlfqfJpOP3V9sA0ogDVpfN94GMHthEjAvUSqfFOoB0PVs4uBnFYJco
+	 qfFboeIUWRWkg==
+Message-ID: <e0f3f20e-8788-4534-82d1-0ec2e4c41680@kernel.org>
+Date: Wed, 12 Nov 2025 13:33:01 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bhc6s7anskmnnrnpp2r3xzjbesadsex24kmyi5tvsgup7c2rfi@arj4iw5ndnr3>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v17 0/9] platform/x86: Add asus-armoury driver
+To: Denis Benato <benato.denis96@gmail.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: Denis Benato <denis.benato@linux.dev>, LKML
+ <linux-kernel@vger.kernel.org>, platform-driver-x86@vger.kernel.org,
+ Hans de Goede <hansg@kernel.org>,
+ "Limonciello, Mario" <mario.limonciello@amd.com>,
+ "Luke D . Jones" <luke@ljones.dev>, Alok Tiwari <alok.a.tiwari@oracle.com>,
+ Derek John Clark <derekjohn.clark@gmail.com>,
+ Mateusz Schyboll <dragonn@op.pl>, porfet828@gmail.com
+References: <20251102215319.3126879-1-denis.benato@linux.dev>
+ <6b5d7dab-1175-8096-64d0-fdf2cc693679@linux.intel.com>
+ <78d35771-02b6-4163-88da-ceae3146afe7@linux.dev>
+ <e73f74b9-6147-c3ce-c81b-da52082b258b@linux.intel.com>
+ <fe18a2f1-3e7b-423a-86ac-fd5abd994fa3@gmail.com>
+ <b6a234b6-7e16-24fc-760f-0e2a43fed84f@linux.intel.com>
+ <c36142f7-fee6-43be-b3b4-495f74872a75@kernel.org>
+ <cff6d090-f697-494c-8275-063839e76ebb@gmail.com>
+ <362f2353-8529-47a0-9cfb-d54015e7f9f3@kernel.org>
+ <e73f3301-51b2-4273-8e9e-63e4c6b1916b@gmail.com>
+Content-Language: en-US
+From: Mario Limonciello <superm1@kernel.org>
+In-Reply-To: <e73f3301-51b2-4273-8e9e-63e4c6b1916b@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Nov 12, 2025 at 06:39:22PM +0100, Stefano Garzarella wrote:
-> On Wed, Nov 12, 2025 at 08:13:50AM -0800, Bobby Eshleman wrote:
-> > On Wed, Nov 12, 2025 at 03:18:42PM +0100, Stefano Garzarella wrote:
-> > > On Tue, Nov 11, 2025 at 10:54:45PM -0800, Bobby Eshleman wrote:
-> > > > From: Bobby Eshleman <bobbyeshleman@meta.com>
-
-[...]
-
-> > > If it simplifies, I think we can eventually merge all changes to transports
-> > > that depends on virtio_transport_common in a single commit.
-> > > IMO is better to have working commits than better split.
-> > 
-> > That would be so much easier. Much of this patch is just me trying to
-> > find a way to keep total patch size reasonably small for review... if
-> > having them all in one commit is preferred then that makes life easier.
-> > 
-> > The answer to all of the above is that I was just trying to make the
-> > virtio_common changes in one place, but not break bisect/build by
-> > failing to update the transport-level call sites. So the placeholder
-> > values are primarily there to compile.
+On 11/12/25 1:30 PM, Denis Benato wrote:
 > 
-> In theory, they should compile, but they should also properly behave.
+> On 11/12/25 20:24, Mario Limonciello wrote:
+>> On 11/12/25 1:23 PM, Denis Benato wrote:
+>>>
+>>> On 11/12/25 14:44, Mario Limonciello wrote:
+>>>>
+>>>>
+>>>> On 11/12/25 6:42 AM, Ilpo Järvinen wrote:
+>>>>> On Tue, 11 Nov 2025, Denis Benato wrote:
+>>>>>> On 11/11/25 11:38, Ilpo Järvinen wrote:
+>>>>>>> On Mon, 10 Nov 2025, Denis Benato wrote:
+>>>>>>>> On 11/10/25 16:17, Ilpo Järvinen wrote:
+>>>>>>>>> On Sun, 2 Nov 2025, Denis Benato wrote:
+>>>>>>>>>
+>>>>>>>>>> the TL;DR:
+>>>>>>>>>> 1. Introduce new module to contain bios attributes, using fw_attributes_class
+>>>>>>>>>> 2. Deprecate all possible attributes from asus-wmi that were added ad-hoc
+>>>>>>>>>> 3. Remove those in the next LTS cycle
+>>>>>>>>>>
+>>>>>>>>>> The idea for this originates from a conversation with Mario Limonciello
+>>>>>>>>>> https://lore.kernel.org/platform-driver-x86/371d4109-a3bb-4c3b-802f-4ec27a945c99@amd.com/
+>>>>>>>>>>
+>>>>>>>>>> It is without a doubt much cleaner to use, easier to discover, and the
+>>>>>>>>>> API is well defined as opposed to the random clutter of attributes I had
+>>>>>>>>>> been placing in the platform sysfs. Given that Derek is also working on a
+>>>>>>>>>> similar approach to Lenovo in part based on my initial work I'd like to think
+>>>>>>>>>> that the overall approach is good and may become standardised for these types
+>>>>>>>>>> of things.
+>>>>>>>>>>
+>>>>>>>>>> Regarding PPT: it is intended to add support for "custom" platform profile
+>>>>>>>>>> soon. If it's a blocker for this patch series being accepted I will drop the
+>>>>>>>>>> platform-x86-asus-armoury-add-ppt_-and-nv_-tuning.patch and get that done
+>>>>>>>>>> separately to avoid holding the bulk of the series up. Ideally I would like
+>>>>>>>>>> to get the safe limits in so users don't fully lose functionality or continue
+>>>>>>>>>> to be exposed to potential instability from setting too low, or be mislead
+>>>>>>>>>> in to thinking they can set limits higher than actual limit.
+>>>>>>>>>>
+>>>>>>>>>> The bulk of the PPT patch is data, the actual functional part is relatively
+>>>>>>>>>> small and similar to the last version.
+>>>>>>>>>>
+>>>>>>>>>> Unfortunately I've been rather busy over the months and may not cover
+>>>>>>>>>> everything in the v7 changelog but I've tried to be as comprehensive as I can.
+>>>>>>>>>>
+>>>>>>>>>> Regards,
+>>>>>>>>>> Luke
+>>>>>>>>>>
+>>>>>>>>>> Changelog:
+>>>>>>>>>> - v1
+>>>>>>>>>>      - Initial submission
+>>>>>>>>>> - v2
+>>>>>>>>>>      - Too many changes to list, but all concerns raised in previous submission addressed.
+>>>>>>>>>>      - History: https://lore.kernel.org/platform-driver-x86/20240716051612.64842-1-luke@ljones.dev/
+>>>>>>>>>> - v3
+>>>>>>>>>>      - All concerns addressed.
+>>>>>>>>>>      - History: https://lore.kernel.org/platform-driver-x86/20240806020747.365042-1-luke@ljones.dev/
+>>>>>>>>>> - v4
+>>>>>>>>>>      - Use EXPORT_SYMBOL_NS_GPL() for the symbols required in this patch series
+>>>>>>>>>>      - Add patch for hid-asus due to the use of EXPORT_SYMBOL_NS_GPL()
+>>>>>>>>>>      - Split the PPT knobs out to a separate patch
+>>>>>>>>>>      - Split the hd_panel setting out to a new patch
+>>>>>>>>>>      - Clarify some of APU MEM configuration and convert int to hex
+>>>>>>>>>>      - Rename deprecated Kconfig option to ASUS_WMI_DEPRECATED_ATTRS
+>>>>>>>>>>      - Fixup cyclic dependency in Kconfig
+>>>>>>>>>> - v5
+>>>>>>>>>>      - deprecate patch: cleanup ``#if`, ``#endif` statements, edit kconfig detail, edit commit msg
+>>>>>>>>>>      - cleanup ppt* tuning patch
+>>>>>>>>>>      - proper error handling in module init, plus pr_err()
+>>>>>>>>>>      - ppt tunables have a notice if there is no match to get defaults
+>>>>>>>>>>      - better error handling in cpu core handling
+>>>>>>>>>>        - don't continue if failure
+>>>>>>>>>>      - use the mutex to gate WMI writes
+>>>>>>>>>> - V6
+>>>>>>>>>>      - correctly cleanup/unwind if module init fails
+>>>>>>>>>> - V7
+>>>>>>>>>>      - Remove review tags where the code changed significantly
+>>>>>>>>>>      - Add auto_screen_brightness WMI attribute support
+>>>>>>>>>>      - Move PPT patch to end
+>>>>>>>>>>      - Add support min/max PPT values for 36 laptops (and two handhelds)
+>>>>>>>>>>      - reword commit for "asus-wmi: export symbols used for read/write WMI"
+>>>>>>>>>>      - asus-armoury: move existing tunings to asus-armoury
+>>>>>>>>>>        - Correction to license header
+>>>>>>>>>>        - Remove the (initial) mutex use (added for core count only in that patch)
+>>>>>>>>>>        - Clarify some doc comments (attr_int_store)
+>>>>>>>>>>        - Cleanup pr_warn in dgpu/egpu/mux functions
+>>>>>>>>>>        - Restructure logic in asus_fw_attr_add()
+>>>>>>>>>>        - Check gpu_mux_dev_id and mini_led_dev_id before remove attrs
+>>>>>>>>>>      - asus-armoury: add core count control:
+>>>>>>>>>>        - add mutex to prevent possible concurrent write to the core
+>>>>>>>>>>          count WMI due to separated bit/little attributes
+>>>>>>>>>>      - asus-armoury: add ppt_* and nv_* tuning knobs:
+>>>>>>>>>>        - Move to end of series
+>>>>>>>>>>        - Refactor to use a table of allowed min/max values to
+>>>>>>>>>>          ensure safe settings
+>>>>>>>>>>        - General code cleanup
+>>>>>>>>>>      - Ensure checkpatch.pl returns clean for all
+>>>>>>>>>> - V8
+>>>>>>>>>>      - asus-armoury: move existing tunings to asus-armoury module
+>>>>>>>>>>        - Further cleanup: https://lore.kernel.org/platform-driver-x86/20250316230724.100165-2-luke@ljones.dev/T/#m72e203f64a5a28c9c21672406b2e9f554a8a8e38
+>>>>>>>>>>      - asus-armoury: add ppt_* and nv_* tuning knobs
+>>>>>>>>>>        - Address concerns in https://lore.kernel.org/platform-driver-x86/20250316230724.100165-2-luke@ljones.dev/T/#m77971b5c1e7f018954c16354e623fc06522c5e41
+>>>>>>>>>>        - Refactor struct asus_armoury_priv to record both AC and DC settings
+>>>>>>>>>>        - Tidy macros and functions affected by the above to be clearer as a result
+>>>>>>>>>>        - Move repeated strings such as "ppt_pl1_spl" to #defines
+>>>>>>>>>>        - Split should_create_tunable_attr() in to two functions to better clarify:
+>>>>>>>>>>          - is_power_tunable_attr()
+>>>>>>>>>>          - has_valid_limit()
+>>>>>>>>>>        - Restructure init_rog_tunables() to initialise AC and DC in a
+>>>>>>>>>>          way that makes more sense.
+>>>>>>>>>>        - Ensure that if DC setting table is not available then attributes
+>>>>>>>>>>          return -ENODEV only if on DC mode.
+>>>>>>>>>> - V9
+>>>>>>>>>>      - asus-armoury: move existing tunings to asus-armoury module
+>>>>>>>>>>        - return -EBUSY when eGPU/dGPU cannot be deactivated
+>>>>>>>>>>      - asus-armoury: add apu-mem control support
+>>>>>>>>>>        - discard the WMI presence bit fixing the functionality
+>>>>>>>>>>      - asus-armoury: add core count control
+>>>>>>>>>>        - replace mutex lock/unlock with guard
+>>>>>>>>>>        - move core count alloc for initialization in init_max_cpu_cores()
+>>>>>>>>>> - v10
+>>>>>>>>>>      - platform/x86: asus-wmi: export symbols used for read/write WMI
+>>>>>>>>>>        - fix error with redefinition of asus_wmi_set_devstate
+>>>>>>>>>>      - asus-armoury: move existing tunings to asus-armoury module
+>>>>>>>>>>        - hwmon or other -> hwmon or others
+>>>>>>>>>>        - fix wrong function name in documentation (attr_uint_store)
+>>>>>>>>>>        - use kstrtouint where appropriate
+>>>>>>>>>>        - (*) fix unreachable code warning: the fix turned out to be partial
+>>>>>>>>>>        - improve return values in case of error in egpu_enable_current_value_store
+>>>>>>>>>>      - asus-armoury: asus-armoury: add screen auto-brightness toggle
+>>>>>>>>>>        - actually register screen_auto_brightness attribute
+>>>>>>>>>> - v11
+>>>>>>>>>>      - cover-letter:
+>>>>>>>>>>        - reorganize the changelog of v10
+>>>>>>>>>>      - asus-armoury: move existing tunings to asus-armoury module
+>>>>>>>>>>        - move the DMIs list in its own include, fixing (*) for good
+>>>>>>>>>>      - asus-armoury: add ppt_* and nv_* tuning knobs
+>>>>>>>>>>        - fix warning about redefinition of ppt_pl2_sppt_def for GV601R
+>>>>>>>>>> - v12
+>>>>>>>>>>      - asus-armoury: add ppt_* and nv_* tuning knobs
+>>>>>>>>>>        - add min/max values for FA608WI and FX507VI
+>>>>>>>>>> - v13
+>>>>>>>>>>      - asus-armoury: add ppt_* and nv_* tuning knobs
+>>>>>>>>>>        - fix a typo in a comment about _def attributes
+>>>>>>>>>>        - add min/max values for GU605CW and G713PV
+>>>>>>>>>>      - asus-armoury: add apu-mem control support
+>>>>>>>>>>        - fix a possible out-of-bounds read in apu_mem_current_value_store
+>>>>>>>>>> - v14
+>>>>>>>>>>      - platform/x86: asus-wmi: rename ASUS_WMI_DEVID_PPT_FPPT
+>>>>>>>>>>        - added patch to rename the symbol for consistency
+>>>>>>>>>>      - platform/x86: asus-armoury: add ppt_* and nv_* tuning knobs
+>>>>>>>>>>        - remove the unchecked usage of dmi_get_system_info while
+>>>>>>>>>>          also increasing consistency with other messages
+>>>>>>>>>> - v15
+>>>>>>>>>>      - platform/x86: asus-wmi: export symbols used for read/write WMI
+>>>>>>>>>>        - fix kernel doc
+>>>>>>>>>>      - platform/x86: asus-armoury: move existing tunings to asus-armoury module
+>>>>>>>>>>        - avoid direct calls to asus-wmi and provide helpers instead
+>>>>>>>>>>        - rework xg mobile activation logic
+>>>>>>>>>>        - add helper for enum allowed attributes
+>>>>>>>>>>        - improve mini_led_mode_current_value_store
+>>>>>>>>>>        - improved usage of kstrtouint, kstrtou32 and kstrtobool
+>>>>>>>>>>        - unload attributes in reverse order of loading
+>>>>>>>>>>      - platform/x86: asus-armoury: add apu-mem control support
+>>>>>>>>>>        - fix return value in apu_mem_current_value_show
+>>>>>>>>>>      - platform/x86: asus-armoury: add core count control
+>>>>>>>>>>        - put more safeguards in place against possible bricking of laptops
+>>>>>>>>>>        - improve loading logic
+>>>>>>>>>>      - platform/x86: asus-wmi: deprecate bios features
+>>>>>>>>>>        - modified deprecation message
+>>>>>>>>>>      - platform/x86: asus-armoury: add ppt_* and nv_* tuning knobs
+>>>>>>>>>>        - make _store(s) to interfaces unusable in DC to fail,
+>>>>>>>>>>          instead of accepting 0 as a value (0 is also invalid)
+>>>>>>>>>>        - make it easier to understand AC vs DC logic
+>>>>>>>>>>        - improved init_rog_tunables() logic
+>>>>>>>>>>        - commas after every field in the table for consistency
+>>>>>>>>>>        - add support for RC73 handheld
+>>>>>>>>>> -v16
+>>>>>>>>>>      - platform/x86: asus-armoury: add ppt_* and nv_* tuning knobs
+>>>>>>>>>>        - add support for GU605CX
+>>>>>>>>>> -v17
+>>>>>>>>>>      - platform/x86: asus-armoury: add ppt_* and nv_* tuning knobs
+>>>>>>>>>>        - fix RC73 -> RC73AX as another RC73 exists
+>>>>>>>>>>      - platform/x86: asus-armoury: add core count control
+>>>>>>>>>>        - be more tolerant on out-or-range current CPU cores count
+>>>>>>>>>>      - platform/x86: asus-armoury: move existing tunings to asus-armoury module
+>>>>>>>>>>        - fix usage of undeclared static functions in macros
+>>>>>>>>> I've applied this to the review-ilpo-next branch. I'm still not entirely
+>>>>>>>>> happy with how the cpu cores change does store values without arrays but
+>>>>>>>>> it's not an end of the world (and could be fixed in tree).
+>>>>>>>> Hello and thanks.
+>>>>>>>>
+>>>>>>>> You would make me very happy applying things as Luke wrote them
+>>>>>>>> so that successive modifications are more easily compared to
+>>>>>>>> what those were doing before I changed them...
+>>>>>>> I just took them as they were so you should be "happy" now :-)
+>>>>>>>
+>>>>>>> ...Even if I didn't like having all those as separate variables requiring
+>>>>>>> if statements here and there, which could be avoided if core type would be
+>>>>>>> an array index so one could simply do:
+>>>>>>>
+>>>>>>>       ...
+>>>>>>>       case CPU_CORE_MAX:
+>>>>>>>           cpu_core_value = asus_armoury.cpu_cores[core_type]->max;
+>>>>>>>           break;
+>>>>>>>       ...
+>>>>>>>
+>>>>>>> Doing that transformation incrementally looks simple enough it should be
+>>>>>>> low risk after a careful review.
+>>>>>>>
+>>>>>>>
+>>>>>> Apparently one of the two new handhelds from asus reports
+>>>>>> weird numbers for core count so that area requires a bit of work
+>>>>>> anyway. I will soon move to investigate that hardware.
+>>>>>>
+>>>>>>>> Also if you have some more hints on how I could change that
+>>>>>>>> interface (while avoiding bad surprises due to index mismatch)
+>>>>>>>> I will try my best... without destroying any laptop...
+>>>>>>>> perhaps... Hopefully? Wish me luck.
+>>>>>>>>
+>>>>>>>>> I had to reorder a few includes to make the order alphabetical which
+>>>>>>>>> luckily worked out without causing conflicts within the subsequent
+>>>>>>>>> patches (and a need to respin the series). Please try to remember to
+>>>>>>>>> keep those in the alphabetical order.
+>>>>>>>> I have noticed a pair of warnings in this v17 I would like to solve:
+>>>>>>>> one line is too long, I should break it and one macro has an
+>>>>>>>> unused parameter.
+>>>>>>>>
+>>>>>>>> No semantic changes.
+>>>>>>>>
+>>>>>>>> I have seen one of those unordered includes in asus-armoury.h...
+>>>>>>>> That branch is public in your git tree: this means I can respin
+>>>>>>>> a v18 from a git format-path, correct?
+>>>>>>>
+>>>>>>> While I could replace the previous series with a new version, it would
+>>>>>>> probably just be better to send incremental patches and I can see myself
+>>>>>>> if I fold them into the existing patches or not.
+>>>>>>
+>>>>>> Ah forgive me, I am not used to the process and understood
+>>>>>> something totally different. All good, patches sent, thanks!
+>>>>>>
+>>>>>> Would you also want to break the long assignment line?
+>>>>>> Is it better if it's just one long line for clarity?
+>>>>>>
+>>>>>> ```
+>>>>>> const struct rog_tunables *const ac_rog_runables = ....
+>>>>>> ```
+>>>>>
+>>>>> I'm not sure what that second const gains us here so I'd prefer removing
+>>>>> it.
+>>>>>
+>>>>> It's a local variable so it doesn't look like protecting the variable
+>>>>> itself with const is that important (in contrast to things which are in
+>>>>> global scope where const for the variable too is good).
+>>>>>
+>>>>> Are you aware of scripts/checkpatch.pl? I think it would have caught this
+>>>>> (if one remembers to run it before sending patches, which is the hardest
+>>>>> part with that tool :-)).
+>>>>>
+>>>> In case you aren't aware, two other quality of life improvements I want to share to look into:
+>>>>
+>>>> 1) There is a vscode extension for checkpatch
+>>>>
+>>>> It can be configured to automatically run when you save the file and then will underline all the failures with blue squiggly lines.
+>>>>
+>>>> https://marketplace.visualstudio.com/items?itemName=idanp.checkpatch
+>>>>
+>>> It has been in place since the first time you recommended it to me,
+>>> but apparently it's only highlighting errors? In blue color?
+>>>
+>>> Why isn't it telling me about warnings? :(
+>>
+>> Make sure that you set the path for checkpatch.pl properly in the extension settings and that you set it to run on every save.
+>>
+> I have these settings:
 > 
-> BTW I strongly believe that having separate commits is a great thing, but we
-> shouldn't take things to extremes and complicate our lives when things are
-> too closely related, as in this case.
+> Checkpatch Path: checkpatch.pl (I have a link in /usr/bin)
+> Diagnostic level: Information (but I can only see errors in blue)
+> Run: onSave
+
+Yeah I have same settings.  If you want checkpatch to be "louder", 
+change it from information to something louder.
+
 > 
-> There is a clear dependency between these patches, so IMO, if the patch
-> doesn't become huge, it's better to have everything together. (I mean
-> between dependencies with virtio_transport_common).
- 
-Sounds good, let's give the combined commit a go, I think the
-transport-specific pieces are small enough for it to not balloon? 
+> Not sure If I am doing something wrong, but it is working for sure because
+> errors are reported.
+>>>> 2) There is a pre-commit hook for checkpatch
+>>>>
+>>>> This will help make sure that it's "automatically" run on every code commit you do at the right time you make the patch (ie on a per-patch basis).
+>>>>
+>>>> https://github.com/dloidolt/pre-commit-checkpatch
+>>> I am going to check this as well, thanks!
+>>
 
-> What we could perhaps do is have an initial commit where you make the
-> changes, but the behavior remains unchanged (continue to use global
-> everywhere, as for virtio_transport.c in this patch), and then specific
-> commits to just enable support for local/global.
-> 
-> Not sure if it's doable, but I'd like to remove the placeholders if
-> possibile. Let's discuss more about it if there are issues.
-
-Sounds good, I'll come back to this thread if the combined commit
-approach above balloons. For the combined commit, should the change log
-start at "Changes in v10" with any new changes, mention combining +
-links to the v9 patches that were combined?
-
-Best,
-Bobby
 
